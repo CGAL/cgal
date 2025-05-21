@@ -31,9 +31,9 @@ namespace Polygon_mesh_processing {
 /*!
 * \ingroup PMP_meshing_grp
 *
-* \short smooths a triangulated region of a polygon mesh.
+* \brief smooths a triangulated region of a polygon mesh.
 *
-* This function attempts to make the triangle angle and area distributions as uniform as possible
+* This function aims to make the triangle angle and area distributions as uniform as possible
 * by moving (non-constrained) vertices.
 *
 * Angle-based smoothing does not change the combinatorial information of the mesh. Area-based smoothing
@@ -134,7 +134,6 @@ void angle_and_area_smoothing(const FaceRange& faces,
                               TriangleMesh& tmesh,
                               const NamedParameters& np = parameters::default_values())
 {
-  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor               vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor             halfedge_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor                 edge_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor                 face_descriptor;
@@ -169,9 +168,9 @@ void angle_and_area_smoothing(const FaceRange& faces,
   typedef typename GeomTraits::Triangle_3                                             Triangle;
   typedef std::vector<Triangle>                                                       Triangle_container;
 
-  typedef CGAL::AABB_triangle_primitive<GeomTraits,
+  typedef CGAL::AABB_triangle_primitive_3<GeomTraits,
                                         typename Triangle_container::iterator>        AABB_Primitive;
-  typedef CGAL::AABB_traits<GeomTraits, AABB_Primitive>                               AABB_Traits;
+  typedef CGAL::AABB_traits_3<GeomTraits, AABB_Primitive>                             AABB_Traits;
   typedef CGAL::AABB_tree<AABB_Traits>                                                Tree;
 
   if(std::begin(faces) == std::end(faces))
@@ -209,14 +208,7 @@ void angle_and_area_smoothing(const FaceRange& faces,
   const bool use_Delaunay_flips = choose_parameter(get_parameter(np, internal_np::use_Delaunay_flips), true);
 
   VCMap vcmap = choose_parameter(get_parameter(np, internal_np::vertex_is_constrained),
-                                 get(Vertex_property_tag(), tmesh));
-
-  // If it's the default vcmap, manually set everything to false because the dynamic pmap has no default initialization
-  if((std::is_same<VCMap, Default_VCMap>::value))
-  {
-    for(vertex_descriptor v : vertices(tmesh))
-      put(vcmap, v, false);
-  }
+                                 get(Vertex_property_tag(), tmesh, false));
 
   ECMap ecmap = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
                                  Static_boolean_property_map<edge_descriptor, false>());
@@ -329,13 +321,33 @@ void angle_and_area_smoothing(const FaceRange& faces,
   }
 }
 
-///\cond SKIP_IN_MANUAL
+/*!
+* \ingroup PMP_meshing_grp
+*
+* \brief smooths a polygon mesh.
+*
+* This function aims to make the triangle angle and area distributions as uniform as possible
+* by moving (non-constrained) vertices.
+*
+* Angle-based smoothing does not change the combinatorial information of the mesh. Area-based smoothing
+* might change the combinatorial information, unless specified otherwise. It is also possible
+* to make the smoothing algorithm "safer" by rejecting moves that, when applied, would worsen the
+* quality of the mesh, e.g. that would decrease the value of the smallest angle around a vertex or
+* create self-intersections.
+*
+* Optionally, the points are reprojected after each iteration.
+*
+* See the overload which takes a face range as additional parameter for a comprehensive description
+* of the parameters.
+*/
 template <typename TriangleMesh, typename CGAL_NP_TEMPLATE_PARAMETERS>
 void angle_and_area_smoothing(TriangleMesh& tmesh, const CGAL_NP_CLASS& np = parameters::default_values())
 {
   angle_and_area_smoothing(faces(tmesh), tmesh, np);
 }
 
+
+///\cond SKIP_IN_MANUAL
 template<typename TriangleMesh, typename GeomTraits, typename Stream>
 void angles_evaluation(TriangleMesh& tmesh, GeomTraits traits, Stream& output)
 {

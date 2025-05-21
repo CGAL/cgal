@@ -264,7 +264,7 @@ namespace CGAL {
 
         FT distance_to_root;
 
-        bool search_nearest_neighbour;
+        bool search_nearest_neighbor;
 
         FT rd;
 
@@ -278,8 +278,8 @@ namespace CGAL {
 
           bool search_nearest;
 
-          Priority_higher(bool search_the_nearest_neighbour)
-            : search_nearest(search_the_nearest_neighbour)
+          Priority_higher(bool search_the_nearest_neighbor)
+            : search_nearest(search_the_nearest_neighbor)
           {}
 
           //highest priority is smallest distance
@@ -296,8 +296,8 @@ namespace CGAL {
 
           bool search_nearest;
 
-          Distance_smaller(bool search_the_nearest_neighbour)
-            :search_nearest(search_the_nearest_neighbour)
+          Distance_smaller(bool search_the_nearest_neighbor)
+            :search_nearest(search_the_nearest_neighbor)
           {}
 
           //highest priority is smallest distance
@@ -325,19 +325,19 @@ namespace CGAL {
         int number_of_internal_nodes_visited;
         int number_of_leaf_nodes_visited;
         int number_of_items_visited;
-        int number_of_neighbours_computed;
+        int number_of_neighbors_computed;
 
         // constructor
         Iterator_implementation(const Tree& tree, const Query_item& q,const Distance& tr,
                                 FT Eps, bool search_nearest)
-          : query_point(q), search_nearest_neighbour(search_nearest),
+          : query_point(q), search_nearest_neighbor(search_nearest),
           m_distance_helper(tr, tree.traits()),
           m_tree(tree),
           PriorityQueue(Priority_higher(search_nearest)),
           Item_PriorityQueue(Distance_smaller(search_nearest)),
           distance(tr), reference_count(1), number_of_internal_nodes_visited(0),
           number_of_leaf_nodes_visited(0), number_of_items_visited(0),
-          number_of_neighbours_computed(0)
+          number_of_neighbors_computed(0)
         {
           if (tree.empty()) return;
 
@@ -365,7 +365,7 @@ namespace CGAL {
 
           // rd is the distance of the top of the priority queue to q
           rd=The_Root->second;
-          Compute_the_next_nearest_neighbour();
+          Compute_the_next_nearest_neighbor();
         }
 
         // * operator
@@ -380,7 +380,7 @@ namespace CGAL {
         operator++()
         {
           Delete_the_current_item_top();
-          Compute_the_next_nearest_neighbour();
+          Compute_the_next_nearest_neighbor();
           return *this;
         }
 
@@ -404,8 +404,8 @@ namespace CGAL {
             number_of_leaf_nodes_visited << std::endl;
           s << "Number of points visited:" <<
             number_of_items_visited << std::endl;
-          s << "Number of neighbours computed:" <<
-            number_of_neighbours_computed << std::endl;
+          s << "Number of neighbors computed:" <<
+            number_of_neighbors_computed << std::endl;
           return s;
         }
 
@@ -459,21 +459,21 @@ namespace CGAL {
           // old top of PriorityQueue has been processed,
           // hence update rd
 
-          bool next_neighbour_found;
+          bool next_neighbor_found;
           if (!(PriorityQueue.empty()))
           {
             rd = PriorityQueue.top()->second;
-            next_neighbour_found = (search_furthest ?
+            next_neighbor_found = (search_furthest ?
               multiplication_factor*rd < Item_PriorityQueue.top()->second
               : multiplication_factor*rd > Item_PriorityQueue.top()->second);
           }
-          else // priority queue empty => last neighbour found
+          else // priority queue empty => last neighbor found
           {
-            next_neighbour_found = true;
+            next_neighbor_found = true;
           }
 
-          number_of_neighbours_computed++;
-          return next_neighbour_found;
+          number_of_neighbors_computed++;
+          return next_neighbor_found;
         }
 
         // Without cache
@@ -494,37 +494,37 @@ namespace CGAL {
           // old top of PriorityQueue has been processed,
           // hence update rd
 
-          bool next_neighbour_found;
+          bool next_neighbor_found;
           if (!(PriorityQueue.empty()))
           {
             rd = PriorityQueue.top()->second;
-            next_neighbour_found = (search_furthest ?
+            next_neighbor_found = (search_furthest ?
               multiplication_factor*rd < Item_PriorityQueue.top()->second
               : multiplication_factor*rd > Item_PriorityQueue.top()->second);
           }
-          else // priority queue empty => last neighbour found
+          else // priority queue empty => last neighbor found
           {
-            next_neighbour_found = true;
+            next_neighbor_found = true;
           }
 
-          number_of_neighbours_computed++;
-          return next_neighbour_found;
+          number_of_neighbors_computed++;
+          return next_neighbor_found;
         }
 
         void
-        Compute_the_next_nearest_neighbour()
+        Compute_the_next_nearest_neighbor()
         {
           // compute the next item
-          bool next_neighbour_found=false;
+          bool next_neighbor_found=false;
           if (!(Item_PriorityQueue.empty())) {
-            if (search_nearest_neighbour)
-              next_neighbour_found =
+            if (search_nearest_neighbor)
+              next_neighbor_found =
                 (multiplication_factor*rd > Item_PriorityQueue.top()->second);
             else
-              next_neighbour_found =
+              next_neighbor_found =
                 (rd < multiplication_factor*Item_PriorityQueue.top()->second);
           }
-          while ((!next_neighbour_found) && (!PriorityQueue.empty())) {
+          while ((!next_neighbor_found) && (!PriorityQueue.empty())) {
 
             Cell_with_distance* The_node_top = PriorityQueue.top();
             Node_const_handle N = The_node_top->first->node();
@@ -544,7 +544,7 @@ namespace CGAL {
               Node_box* upper_box = new Node_box(*B);
                 lower_box->split(*upper_box,new_cut_dim, new_cut_val);
               delete B;
-              if (search_nearest_neighbour) {
+              if (search_nearest_neighbor) {
                 FT distance_to_box_lower =
                   distance.min_distance_to_rectangle(query_point, *lower_box);
                 FT distance_to_box_upper =
@@ -597,12 +597,15 @@ namespace CGAL {
             number_of_leaf_nodes_visited++;
             if (node->size() > 0) {
               typename internal::Has_points_cache<Tree, internal::has_Enable_points_cache<Tree>::type::value>::type dummy;
-              next_neighbour_found = search_in_leaf(node, dummy, !search_nearest_neighbour);
+              next_neighbor_found = search_in_leaf(node, dummy, !search_nearest_neighbor);
             }
-          }   // next_neighbour_found or priority queue is empty
+          }   // next_neighbor_found or priority queue is empty
           // in the latter case also the item priority queue is empty
 
         }
+
+        CGAL_DEPRECATED void Compute_the_next_nearest_neighbour()
+        { void Compute_the_next_nearest_neighbor(); }
       }; // class Iterator_implementation
     }; // class iterator
   }; // class

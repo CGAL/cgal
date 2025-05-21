@@ -13,7 +13,7 @@ to the `Alpha_shape_3` class.
         By default, it is instantiated with `Triangulation_vertex_base_3<Traits>`,
         which is appropriate for basic alpha shapes.
 
-\cgalModels `FixedAlphaShapeVertex_3`
+\cgalModels{FixedAlphaShapeVertex_3}
 
 \sa `Alpha_shape_vertex_base_3`
 \sa `Triangulation_vertex_base_3`

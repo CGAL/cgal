@@ -1,3 +1,5 @@
+#include "output_helper.h"
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
 
@@ -8,8 +10,6 @@
 #include <iostream>
 #include <string>
 
-namespace AW3 = CGAL::Alpha_wraps_3;
-
 using K = CGAL::Exact_predicates_inexact_constructions_kernel;
 using Point_3 = K::Point_3;
 
@@ -18,8 +18,6 @@ using Mesh = CGAL::Surface_mesh<Point_3>;
 
 int main(int argc, char** argv)
 {
-  std::cout.precision(17);
-
   // Read the input
   const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("points_3/oni.pwn");
   std::cout << "Reading " << filename << "..." << std::endl;
@@ -27,9 +25,11 @@ int main(int argc, char** argv)
   Point_container points;
   if(!CGAL::IO::read_points(filename, std::back_inserter(points)) || points.empty())
   {
-    std::cerr << "Invalid input." << std::endl;
+    std::cerr << "Invalid input:" << filename << std::endl;
     return EXIT_FAILURE;
   }
+
+  std::cout << points.size() << " points" << std::endl;
 
   // Compute the alpha and offset values
   const double relative_alpha = (argc > 2) ? std::stod(argv[2]) : 10.;
@@ -41,6 +41,7 @@ int main(int argc, char** argv)
                                        CGAL::square(bbox.zmax() - bbox.zmin()));
   const double alpha = diag_length / relative_alpha;
   const double offset = diag_length / relative_offset;
+  std::cout << "absolute alpha = " << alpha << " absolute offset = " << offset << std::endl;
 
   // Construct the wrap
   CGAL::Real_timer t;
@@ -54,11 +55,8 @@ int main(int argc, char** argv)
   std::cout << "Took " << t.time() << " s." << std::endl;
 
   // Save the result
-  std::string input_name = std::string(filename);
-  input_name = input_name.substr(input_name.find_last_of("/") + 1, input_name.length() - 1);
-  input_name = input_name.substr(0, input_name.find_last_of("."));
-  std::string output_name = input_name + "_" + std::to_string(static_cast<int>(relative_alpha))
-                            + "_" + std::to_string(static_cast<int>(relative_offset)) + ".off";
+  const std::string output_name = generate_output_name(filename, relative_alpha, relative_offset);
+  std::cout << "Writing to " << output_name << std::endl;
   CGAL::IO::write_polygon_mesh(output_name, wrap, CGAL::parameters::stream_precision(17));
 
   return EXIT_SUCCESS;

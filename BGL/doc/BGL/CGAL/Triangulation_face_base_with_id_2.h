@@ -19,7 +19,7 @@ and must be a model of `TriangulationTraits_2`.
 `Triangulation_face_base_with_id_2` derives. It has the default
 value `Triangulation_face_base_2<TriangulationTraits_2>`.
 
-\cgalModels `TriangulationFaceBase_2`
+\cgalModels{TriangulationFaceBase_2}
 
 \sa `CGAL::Triangulation_face_base_2`
 */

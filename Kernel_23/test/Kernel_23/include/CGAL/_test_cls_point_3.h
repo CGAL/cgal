@@ -58,10 +58,10 @@ _test_cls_point_3(const R& )
  CGAL::Weighted_point_3<R> wp(p1);
  CGAL::Point_3<R> p7(wp);
 
- CGAL_static_assertion(!(boost::is_convertible<CGAL::Weighted_point_3<R>,
-                                               CGAL::Point_3<R> >::value));
- CGAL_static_assertion(!(boost::is_convertible<CGAL::Point_3<R>,
-                                               CGAL::Weighted_point_3<R> >::value));
+ static_assert(!std::is_convertible<CGAL::Weighted_point_3<R>,
+                                    CGAL::Point_3<R> >::value);
+ static_assert(!std::is_convertible<CGAL::Point_3<R>,
+                                    CGAL::Weighted_point_3<R> >::value);
 
  std::cout << '.';
 
@@ -86,11 +86,8 @@ _test_cls_point_3(const R& )
 
  assert( p0 == CGAL::ORIGIN);
  assert( p1 != CGAL::ORIGIN);
- // Doesn't work; Point_2::operator== can't be used :(
-#ifdef ENHANCED
  assert( CGAL::ORIGIN == p0 );
  assert( CGAL::ORIGIN != p1 );
-#endif // ENHANCED
 
  assert( p3.hx() == n1 );   // don't replace p3
  assert( p3.hy() == n2 );
@@ -194,7 +191,7 @@ _test_cls_point_3(const R& )
  assert(bb.zmin() <= -20.0);
  assert(bb.zmax() >= -20.0);
 
-  // test compound assignement operator
+  // test compound assignment operator
   CGAL::Point_3<R>  p_1(1,2,3);
   const CGAL::Point_3<R>  p_1_const = p_1;
   CGAL::Vector_3<R> v_1(4,5,6);

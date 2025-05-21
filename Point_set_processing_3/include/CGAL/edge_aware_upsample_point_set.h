@@ -17,7 +17,7 @@
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/property_map.h>
-#include <CGAL/point_set_processing_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/Point_set_processing_3/internal/Rich_grid.h>
 #include <CGAL/Real_timer.h>
 #include <CGAL/Memory_sizer.h>
@@ -147,8 +147,8 @@ update_new_point(
   typedef typename rich_grid_internal::Rich_point<Kernel> Rich_point;
 
   CGAL_assertion_code( unsigned int size = static_cast<unsigned int>(rich_point_set.size()) );
-  CGAL_point_set_processing_precondition(father_index < size);
-  CGAL_point_set_processing_precondition(mother_index < size);
+  CGAL_precondition(father_index < size);
+  CGAL_precondition(mother_index < size);
 
   // 1, get neighbor information from the two "parent points"
   Rich_point& new_v = rich_point_set[new_point_index];
@@ -367,7 +367,7 @@ edge_aware_upsample_point_set(
   typedef typename NP_helper::Geom_traits Kernel;
 
 
-  CGAL_static_assertion_msg(NP_helper::has_normal_map(), "Error: no normal map");
+  CGAL_assertion_msg(NP_helper::has_normal_map(points, np), "Error: no normal map");
 
   typedef typename Kernel::Point_3 Point;
   typedef typename Kernel::Vector_3 Vector;
@@ -386,16 +386,16 @@ edge_aware_upsample_point_set(
   typename PointRange::const_iterator end = points.end();
 
   // preconditions
-  CGAL_point_set_processing_precondition(begin != end);
-  CGAL_point_set_processing_precondition(sharpness_angle >= 0
-                                       &&sharpness_angle <= 90);
-  CGAL_point_set_processing_precondition(edge_sensitivity >= 0
-                                       &&edge_sensitivity <= 1);
+  CGAL_precondition(begin != end);
+  CGAL_precondition(sharpness_angle >= 0
+                    &&sharpness_angle <= 90);
+  CGAL_precondition(edge_sensitivity >= 0
+                    &&edge_sensitivity <= 1);
 
   edge_sensitivity *= 10;  // just project [0, 1] to [0, 10].
 
   std::size_t number_of_input = std::distance(begin, end);
-  CGAL_point_set_processing_precondition(number_of_output_points > number_of_input);
+  CGAL_precondition(number_of_output_points > number_of_input);
 
 
   const unsigned int nb_neighbors = 6; // 1 ring
@@ -424,7 +424,7 @@ edge_aware_upsample_point_set(
 
     rich_point_set[i].index = i;
     bbox += rich_point_set[i].pt.bbox();
-    CGAL_point_set_processing_precondition(rich_point_set[i].normal.squared_length() > 1e-10);
+    CGAL_precondition(rich_point_set[i].normal.squared_length() > 1e-10);
   }
 
   // compute neighborhood

@@ -134,7 +134,7 @@ protected:
   const Vertex_handle m_invalid_vertex;     // An invalid vertex handle.
 
 public:
-  /*! Constructor. */
+  /*! constructs. */
   Arr_construction_ss_visitor(Arrangement_2* arr) :
     m_helper(arr),
     m_arr(arr),
@@ -145,7 +145,7 @@ public:
     m_invalid_vertex()
   { m_helper.set_halfedge_indices_map(m_he_indices_table); }
 
-  /*! Destructor. */
+  /*! destructs. */
   virtual ~Arr_construction_ss_visitor() {}
 
   /// \name Sweep-line notifications.
@@ -157,14 +157,12 @@ public:
   /* A notification issued after the sweep process stops. */
   inline void after_sweep();
 
-  /*!
-   * A notification invoked before the sweep-line starts handling the given
+  /*! A notification invoked before the sweep-line starts handling the given
    * event.
    */
   inline void before_handle_event(Event* event);
 
-  /*!
-   * A notification invoked after the sweep-line finishes handling the given
+  /*! A notification invoked after the sweep-line finishes handling the given
    * event.
    */
   bool after_handle_event(Event* event, Status_line_iterator iter, bool flag);
@@ -176,7 +174,7 @@ public:
   /// \name Insertion functions.
   //@{
 
-  /*! Insert the given subcurve in the interior of a face.
+  /*! inserts the given subcurve in the interior of a face.
    * \param cv The geometric subcurve.
    * \param sc The sweep-line subcurve information.
    * \return A handle to the inserted halfedge.
@@ -184,7 +182,7 @@ public:
   virtual Halfedge_handle
   insert_in_face_interior(const X_monotone_curve_2& cv, Subcurve* sc);
 
-  /*! Insert the given subcurve given its left end-vertex.
+  /*! inserts the given subcurve given its left end-vertex.
    * \param cv The geometric entity.
    * \param prev The predecessor halfedge around the left vertex.
    * \param sc The sweep-line subcurve information.
@@ -194,7 +192,7 @@ public:
   insert_from_left_vertex(const X_monotone_curve_2& cv, Halfedge_handle he,
                           Subcurve* sc);
 
-  /*! Insert the given subcurve given its right end-vertex.
+  /*! inserts the given subcurve given its right end-vertex.
    * \param cv The geometric entity.
    * \param prev The predecessor halfedge around the right vertex.
    * \param sc The sweep-line subcurve information.
@@ -205,7 +203,7 @@ public:
                            Halfedge_handle prev,
                            Subcurve* sc);
 
-  /*! Insert the given subcurve given its two end-vertices.
+  /*! inserts the given subcurve given its two end-vertices.
    * \param cv The geometric subcurve.
    * \param prev1 The predecessor halfedge around the left vertex.
    * \param prev2 The predecessor halfedge around the right vertex.
@@ -219,7 +217,7 @@ public:
                                              Subcurve* sc,
                                              bool& new_face_created);
 
-  /*! Insert an isolated vertex into the arrangement.
+  /*! inserts an isolated vertex into the arrangement.
    * \param pt The point associated with the vertex.
    * \param iter The location of the corresponding event in the status line.
    * \return A handle to the inserted vertex.
@@ -227,7 +225,7 @@ public:
   virtual Vertex_handle insert_isolated_vertex(const Point_2& pt,
                                                Status_line_iterator iter);
 
-  /*! Relocate holes and isolated vertices inside a newly created face f2,
+  /*! relocates holes and isolated vertices inside a newly created face f2,
    * that was split from f1 after the insertion of a new edge.
    * \param he The halfedge that caused the face split. Its incident face is
    *           the new face f2, and the incident face of its twin is f1.
@@ -235,23 +233,21 @@ public:
   void relocate_in_new_face(Halfedge_handle he);
   //@}
 
-  /*! Get the last event associated with the given subcurve. */
+  /*! obtains the last event associated with the given subcurve. */
   Event* last_event_on_subcurve(Subcurve* sc) { return sc->last_event(); }
 
 private:
   /// \name Auxiliary functions.
   //@{
 
-  /*!
-   * Cast a Traits::Point_2 object into an Arrangement_2::Point_2 object.
+  /*! casts a Traits::Point_2 object into an Arrangement_2::Point_2 object.
    * These two types may not be the same when the addition visitor inherits
    * from this base class.
    */
   inline const typename Arrangement_2::Point_2& _point(const Point_2& p) const
   { return (static_cast<const typename Arrangement_2::Point_2&>(p)); }
 
-  /*!
-   * Cast a Traits::X_monotone_curve_2 object into an
+  /*! casts a Traits::X_monotone_curve_2 object into an
    * Arrangement_2::X_monotone_curve_2 object.
    * These two types may not be the same when the addition visitor inherits
    * from this base class.
@@ -262,18 +258,18 @@ private:
     return (static_cast<const typename Arrangement_2::X_monotone_curve_2&>(cv));
   }
 
-  /*! Map the given subcurve index to the given halfedge handle.
+  /*! maps the given subcurve index to the given halfedge handle.
    */
   void _map_new_halfedge(unsigned int i, Halfedge_handle he);
 
-  /*! Move halfedge indices from the top face to the last inserted curve.
+  /*! moves halfedge indices from the top face to the last inserted curve.
    * This is the implementation for the case where all 4 boundary sides are
    * oblivious.
    */
   void move_halfedge_indices(Event* event, Status_line_iterator iter,
                              Arr_all_sides_oblivious_tag);
 
-  /*! Move halfedge indices from the top face to the last inserted curve.
+  /*! moves halfedge indices from the top face to the last inserted curve.
    * This is the implementation for the case where all 4 boundary sides are
    * not oblivious.
    */
@@ -637,7 +633,7 @@ add_subcurve(const X_monotone_curve_2& cv, Subcurve* sc)
 #endif
   }
 
-  // Update the last event with the inserted halfegde (if necessary)
+  // Update the last event with the inserted halfedge (if necessary)
   // and check if we have to update the auxiliary information on the location
   // of holes.
   if ((last_event->number_of_left_curves() == 0) &&
@@ -747,7 +743,7 @@ insert_at_vertices(const X_monotone_curve_2& cv,
 #endif
 
   // Use the helper class to determine whether the order of predecessor
-  // halfedges should be swaped, to that the edge directed from prev1->target()
+  // halfedges should be swapped, to that the edge directed from prev1->target()
   // to prev2->target() is incident to the new face (in case a new face is
   // created).
   Halfedge_handle res;

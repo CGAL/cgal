@@ -29,7 +29,7 @@ class CGAL_EXPORT File_header_OFF
   : public File_header_extended_OFF
 {
 private:
-  // Publicly accessible file informations.
+  // Publicly accessible file information.
   std::size_t  n_vertices;
   std::size_t n_facets;
   bool m_skel; // SKEL format instead of OFF.
@@ -37,7 +37,7 @@ private:
   bool m_no_comments; // no comments in output.
   std::size_t  m_offset; // index offset for vertices, usually 0.
 
-  // Publicly accessible but not that well supported file informations.
+  // Publicly accessible but not that well supported file information.
   bool m_textures; // STOFF detected.
   bool m_colors; // COFF detected.
 protected:
@@ -46,7 +46,7 @@ protected:
 private:
   bool m_normals; // NOFF format stores also normals at vertices.
 
-  // More privately used file informations to scan the file.
+  // More privately used file information to scan the file.
   bool m_tag4; // 4OFF detected.
   bool m_tagDim; // nOFF detected (will not be supported).
   int  m_dim; // dimension for nOFF (will not be supported).

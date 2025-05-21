@@ -1,6 +1,6 @@
 #include <boost/graph/graph_traits.hpp>
 #include <CGAL/property_map.h>
-#include <boost/optional.hpp>
+#include <optional>
 #include <vector>
 #include <string>
 #include <fstream>
@@ -27,13 +27,13 @@ void init_indices(Polyhedron& poly) {
 
   vertex_iterator vb, ve;
   std::size_t counter = 0;
-  for(boost::tie(vb, ve) = vertices(poly); vb != ve; ++vb, ++counter) {
+  for(std::tie(vb, ve) = vertices(poly); vb != ve; ++vb, ++counter) {
     (*vb)->id() = counter;
   }
 
   counter = 0;
   halfedge_iterator heb, hee;
-  for(boost::tie(heb, hee) = halfedges(poly); heb != hee; ++heb, ++counter) {
+  for(std::tie(heb, hee) = halfedges(poly); heb != hee; ++heb, ++counter) {
     (*heb)->id() = counter;
   }
 }
@@ -59,7 +59,7 @@ read_rois(DeformMesh& deform_mesh,
   std::vector<vertex_descriptor> vvertices;
   vvertices.reserve(num_vertices(polyhedron));
   vertex_iterator vb, ve;
-  for(boost::tie(vb, ve) = vertices(polyhedron); vb != ve; ++vb) {
+  for(std::tie(vb, ve) = vertices(polyhedron); vb != ve; ++vb) {
     vvertices.push_back(*vb);
   }
   // load handles and roi from txt

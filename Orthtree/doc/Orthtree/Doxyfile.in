@@ -5,5 +5,7 @@ PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - Quadtrees, Octrees, and Orthtrees"
 EXTRACT_ALL                =  false
 HIDE_UNDOC_MEMBERS         =  true
 HIDE_UNDOC_CLASSES         =  true
+WARN_IF_UNDOCUMENTED       =  false
 
-EXAMPLE_PATH               =  ${CGAL_PACKAGE_DIR}/examples
+HTML_EXTRA_FILES           =  ${CGAL_PACKAGE_DOC_DIR}/fig/orthtree.png \
+                              ${CGAL_PACKAGE_DOC_DIR}/fig/orthtree_mesh.png

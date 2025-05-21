@@ -20,7 +20,14 @@ int main() {
   }
 
   int ite = 200000;
+
+#if EIGEN_VERSION_AT_LEAST(3,4,90)
+  Eigen::JacobiSVD<Eigen::Matrix3d, Eigen::ComputeFullU | Eigen::ComputeFullV> svd;
+#else
   Eigen::JacobiSVD<Eigen::Matrix3d> svd;
+#endif
+
+  Eigen::JacobiSVD<Eigen::Matrix3d, Eigen::ComputeFullU | Eigen::ComputeFullV> svd;
   Eigen::Matrix3d u, v, cov, r;
   Eigen::Vector3d w;
 
@@ -44,7 +51,12 @@ int main() {
   for (int i = 0; i < ite; i++)
   {
 
-    svd.compute( cov, Eigen::ComputeFullU | Eigen::ComputeFullV );
+#if EIGEN_VERSION_AT_LEAST(3,4,90)
+    svd.compute(cov);
+#else
+    svd.compute(cov, Eigen::ComputeFullU | Eigen::ComputeFullV);
+#endif
+
     u = svd.matrixU(); v = svd.matrixV(); w = svd.singularValues();
     r = v*u.transpose();
   }

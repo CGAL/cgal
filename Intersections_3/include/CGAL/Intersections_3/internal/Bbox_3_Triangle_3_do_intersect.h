@@ -273,13 +273,13 @@ do_intersect_bbox_or_iso_cuboid_impl(const std::array< std::array<FT, 3>, 3>& tr
   }};
 
   int forbidden_axis = -1;
-  int forbidden_size = -1;
+  int forbidden_side = -1;
   //determine whether one vector is collinear with an axis
   int tmp = collinear_axis<FT>(sides[0]);
   if(tmp != -1)
   {
     forbidden_axis = tmp;
-    forbidden_size = 0;
+    forbidden_side = 0;
   }
   else
   {
@@ -287,7 +287,7 @@ do_intersect_bbox_or_iso_cuboid_impl(const std::array< std::array<FT, 3>, 3>& tr
     if(tmp != -1)
     {
       forbidden_axis = tmp;
-      forbidden_size = 1;
+      forbidden_side = 1;
     }
     else
     {
@@ -295,7 +295,7 @@ do_intersect_bbox_or_iso_cuboid_impl(const std::array< std::array<FT, 3>, 3>& tr
       if(tmp != -1)
       {
         forbidden_axis = tmp;
-        forbidden_size = 2;
+        forbidden_side = 2;
       }
     }
   }
@@ -305,7 +305,7 @@ do_intersect_bbox_or_iso_cuboid_impl(const std::array< std::array<FT, 3>, 3>& tr
 
   if(forbidden_axis != 0)
   {
-    if(forbidden_size != 0)
+    if(forbidden_side != 0)
     {
       Uncertain<bool> b = do_axis_intersect<FT,Box3,0,0>(triangle, sides, bbox, do_axis_intersect_aux_impl);
       if(is_indeterminate(b))
@@ -314,7 +314,7 @@ do_intersect_bbox_or_iso_cuboid_impl(const std::array< std::array<FT, 3>, 3>& tr
         return false;
     }
 
-    if(forbidden_size != 1)
+    if(forbidden_side != 1)
     {
       Uncertain<bool> b = do_axis_intersect<FT,Box3,0,1>(triangle, sides, bbox, do_axis_intersect_aux_impl);
       if(is_indeterminate(b))
@@ -323,7 +323,7 @@ do_intersect_bbox_or_iso_cuboid_impl(const std::array< std::array<FT, 3>, 3>& tr
         return false;
     }
 
-    if(forbidden_size != 2)
+    if(forbidden_side != 2)
     {
       Uncertain<bool> b = do_axis_intersect<FT,Box3,0,2>(triangle, sides, bbox, do_axis_intersect_aux_impl);
       if(is_indeterminate(b))
@@ -335,7 +335,7 @@ do_intersect_bbox_or_iso_cuboid_impl(const std::array< std::array<FT, 3>, 3>& tr
 
   if(forbidden_axis != 1)
   {
-    if(forbidden_size != 0)
+    if(forbidden_side != 0)
     {
       Uncertain<bool> b = do_axis_intersect<FT,Box3,1,0>(triangle, sides, bbox, do_axis_intersect_aux_impl);
       if(is_indeterminate(b))
@@ -344,7 +344,7 @@ do_intersect_bbox_or_iso_cuboid_impl(const std::array< std::array<FT, 3>, 3>& tr
         return false;
     }
 
-    if(forbidden_size != 1)
+    if(forbidden_side != 1)
     {
       Uncertain<bool> b = do_axis_intersect<FT,Box3,1,1>(triangle, sides, bbox, do_axis_intersect_aux_impl);
       if(is_indeterminate(b))
@@ -353,7 +353,7 @@ do_intersect_bbox_or_iso_cuboid_impl(const std::array< std::array<FT, 3>, 3>& tr
         return false;
     }
 
-    if(forbidden_size != 2)
+    if(forbidden_side != 2)
     {
       Uncertain<bool> b = do_axis_intersect<FT,Box3,1,2>(triangle, sides, bbox, do_axis_intersect_aux_impl);
       if(is_indeterminate(b))
@@ -365,7 +365,7 @@ do_intersect_bbox_or_iso_cuboid_impl(const std::array< std::array<FT, 3>, 3>& tr
 
   if(forbidden_axis != 2)
   {
-    if(forbidden_size != 0)
+    if(forbidden_side != 0)
     {
       Uncertain<bool> b = do_axis_intersect<FT,Box3,2,0>(triangle, sides, bbox, do_axis_intersect_aux_impl);
       if(is_indeterminate(b))
@@ -374,7 +374,7 @@ do_intersect_bbox_or_iso_cuboid_impl(const std::array< std::array<FT, 3>, 3>& tr
         return false;
     }
 
-    if(forbidden_size != 1)
+    if(forbidden_side != 1)
     {
       Uncertain<bool> b = do_axis_intersect<FT,Box3,2,1>(triangle, sides, bbox, do_axis_intersect_aux_impl);
       if(is_indeterminate(b))
@@ -383,7 +383,7 @@ do_intersect_bbox_or_iso_cuboid_impl(const std::array< std::array<FT, 3>, 3>& tr
         return false;
     }
 
-    if(forbidden_size != 2)
+    if(forbidden_side != 2)
     {
       Uncertain<bool> b = do_axis_intersect<FT,Box3,2,2>(triangle, sides, bbox, do_axis_intersect_aux_impl);
       if(is_indeterminate(b))
@@ -397,9 +397,10 @@ do_intersect_bbox_or_iso_cuboid_impl(const std::array< std::array<FT, 3>, 3>& tr
 }
 
 template <class K, class Box3>
-bool do_intersect_bbox_or_iso_cuboid(const typename K::Triangle_3& a_triangle,
-                                     const Box3& a_bbox,
-                                     const K& k)
+typename K::Boolean
+do_intersect_bbox_or_iso_cuboid(const typename K::Triangle_3& a_triangle,
+                                const Box3& a_bbox,
+                                const K& k)
 {
   if(certainly_not(do_bbox_intersect<K>(a_triangle, a_bbox)))
     return false;
@@ -423,22 +424,23 @@ bool do_intersect_bbox_or_iso_cuboid(const typename K::Triangle_3& a_triangle,
     { a_triangle[2][0], a_triangle[2][1], a_triangle[2][2] }
   }};
 
-  // exception will be thrown in case the output is indeterminate
   return do_intersect_bbox_or_iso_cuboid_impl<FT>(triangle, a_bbox, do_axis_intersect_aux_impl);
 }
 
 template <class K>
-bool do_intersect(const typename K::Triangle_3& triangle,
-                  const CGAL::Bbox_3& bbox,
-                  const K& k)
+typename K::Boolean
+do_intersect(const typename K::Triangle_3& triangle,
+             const CGAL::Bbox_3& bbox,
+             const K& k)
 {
   return do_intersect_bbox_or_iso_cuboid(triangle, bbox, k);
 }
 
 template <class K>
-bool do_intersect(const CGAL::Bbox_3& bbox,
-                  const typename K::Triangle_3& triangle,
-                  const K& k)
+typename K::Boolean
+do_intersect(const CGAL::Bbox_3& bbox,
+             const typename K::Triangle_3& triangle,
+             const K& k)
 {
   return do_intersect_bbox_or_iso_cuboid(triangle, bbox, k);
 }

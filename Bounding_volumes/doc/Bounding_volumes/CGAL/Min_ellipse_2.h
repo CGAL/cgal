@@ -50,7 +50,7 @@ for validity each takes linear time.
 
 To illustrate the usage of `Min_ellipse_2` and to show that randomization
 can be useful in certain cases, we give an example. The example also
-shows how the coefficents of the constructed ellipse can be accessed.
+shows how the coefficients of the constructed ellipse can be accessed.
 
 \cgalExample{Min_ellipse_2/min_ellipse_2.cpp}
 

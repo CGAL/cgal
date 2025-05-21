@@ -32,8 +32,11 @@ int degeneracy_counter = 0;
 // This gives a rough idea of how degenerate a data set is.
 struct traits : public K
 {
-    struct Power_side_of_oriented_power_sphere_3 : public K::Power_side_of_oriented_power_sphere_3
+    struct Power_side_of_oriented_power_sphere_3
+      : public K::Power_side_of_oriented_power_sphere_3
     {
+      using Oriented_side = K::Oriented_side;
+
       typedef K::Weighted_point_3 Weighted_point;
         typedef K::Power_side_of_oriented_power_sphere_3 P3;
         Oriented_side operator() (const Weighted_point &p0,
@@ -288,16 +291,14 @@ bool test_case (std::istream &is)
 
     point_set points;
     Cls T;
-    int number = 0;
 
     do {
-        ++number;
         points.insert (*pi);
         T.insert (*pi);
     } while (++pi != pend);
     assert(T.is_valid());
 
-    for (int i = 0; !points.empty(); ++i) {
+    while(! points.empty()) {
         assert(T.number_of_vertices() != 0);
         Vertex_handle v = T.finite_vertices_begin();
         set_iterator pos = points.find (v->point());
@@ -331,7 +332,7 @@ int main(int argc, char **argv)
     }
 
     // Hardcoded seeds so that the test-suite is deterministic.
-    boost::int32_t seed0 = 42, seed1 = 43, seed2 = 42, seed3 = 42;
+    std::int32_t seed0 = 42, seed1 = 43, seed2 = 42, seed3 = 42;
 
     // You can also pass seeds on the command line.
     if (argc > 1) { std::istringstream iss(argv[1]); iss >>seed0; }
@@ -376,4 +377,3 @@ int main(int argc, char **argv)
 
     return 0;
 }
-

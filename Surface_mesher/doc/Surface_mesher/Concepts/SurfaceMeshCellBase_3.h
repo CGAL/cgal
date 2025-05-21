@@ -21,7 +21,7 @@ a three dimensional triangulation type
 The concept `SurfaceMeshCellBase_3` describes the cell base type
 required in this triangulation type.
 
-\cgalRefines `DelaunayTriangulationCellBase_3`
+\cgalRefines{DelaunayTriangulationCellBase_3}
 
 The concept `SurfaceMeshCellBase_3` adds four markers to mark
 the facets of the triangulation that belong to the two dimensional
@@ -37,8 +37,10 @@ of the restriction to the surface of a three dimensional
 triangulation.  In the following we call surface center of a facet,
 the center of its biggest Delaunay surface ball.
 
-\cgalHasModel `CGAL::Surface_mesh_cell_base_3<Gt,Vb>`
-\cgalHasModel `CGAL::Surface_mesh_default_triangulation_3::Cell`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Surface_mesh_cell_base_3<Gt,Vb>}
+\cgalHasModels{CGAL::Surface_mesh_default_triangulation_3::Cell}
+\cgalHasModelsEnd
 
 \sa `SurfaceMeshTriangulation_3`
 \sa `SurfaceMeshComplex_2InTriangulation_3`

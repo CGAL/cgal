@@ -50,7 +50,6 @@
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/Nef_3/SNC_point_locator.h>
 #include <CGAL/assertions.h>
 
@@ -61,9 +60,7 @@
 #include <CGAL/Projection_traits_xz_3.h>
 #include <CGAL/Constrained_triangulation_face_base_2.h>
 #include <list>
-
-#include <boost/type_traits/is_same.hpp>
-#include <boost/utility/enable_if.hpp>
+#include <type_traits>
 
 // RO: includes for "vertex cycle to Nef" constructor
 #include <CGAL/Nef_3/vertex_cycle_to_nef_3.h>
@@ -131,7 +128,7 @@ class Nef_polyhedron_3_rep
 /*{\Mdefinition
 An instance of data type |\Mname| is a subset of 3-space which is the
 result of forming complements and intersections starting from a set |H| of
-halfspaces. |\Mtype| is closed under all binary set opertions |intersection|,
+halfspaces. |\Mtype| is closed under all binary set operations |intersection|,
 |union|, |difference|, |complement| and under the topological operations
 |boundary|, |closure|, and |interior|.}*/
 
@@ -612,22 +609,6 @@ protected:
    simplify();
  }
 
- template <class T1, class T2,
-           template <class T31, class T32, class T33>
-           class T3, class T4 >
- Nef_polyhedron_3( CGAL::Polyhedron_3<T1,T2,T3,T4>& P)
-   : Nef_polyhedron_3(Private_tag{})
- {
-    CGAL_NEF_TRACEN("construction from Polyhedron_3");
-    reserve_for_vertices(P.size_of_vertices());
-    initialize_infibox_vertices(EMPTY);
-    polyhedron_3_to_nef_3
-      <CGAL::Polyhedron_3<T1,T2,T3,T4>, SNC_structure>( P, snc());
-    build_external_structure();
-    mark_bounded_volumes();
-    simplify();
-  }
-
  template <class PolygonMesh>
  explicit Nef_polyhedron_3(const PolygonMesh& pm)
    : Nef_polyhedron_3(Private_tag{})
@@ -635,7 +616,7 @@ protected:
     CGAL_NEF_TRACEN("construction from PolygonMesh with internal index maps");
     reserve_for_vertices(num_vertices(pm));
     initialize_infibox_vertices(EMPTY);
-    polygon_mesh_to_nef_3<PolygonMesh, SNC_structure>(const_cast<PolygonMesh&>(pm), snc());
+    polygon_mesh_to_nef_3<PolygonMesh, SNC_structure>(pm, snc());
     build_external_structure();
     mark_bounded_volumes();
     simplify();
@@ -645,15 +626,15 @@ protected:
  explicit Nef_polyhedron_3(const PolygonMesh& pm,
                            const HalfedgeIndexMap& him,
                            const FaceIndexMap& fim,
-                           typename boost::disable_if <
-                              boost::is_same<FaceIndexMap, bool>
-                           >::type* = nullptr // disambiguate with another constructor
+                           typename std::enable_if <
+                              !std::is_same<FaceIndexMap, bool>::value
+                           >* = nullptr // disambiguate with another constructor
   ) : Nef_polyhedron_3(Private_tag{})
   {
     CGAL_NEF_TRACEN("construction from PolygonMesh");
     reserve_for_vertices(num_vertices(pm));
     initialize_infibox_vertices(EMPTY);
-    polygon_mesh_to_nef_3<PolygonMesh, SNC_structure>(const_cast<PolygonMesh&>(pm), snc(), fim, him);
+    polygon_mesh_to_nef_3<PolygonMesh, SNC_structure>(pm, snc(), fim, him);
     build_external_structure();
     mark_bounded_volumes();
     simplify();
@@ -920,10 +901,11 @@ protected:
 
       Unique_hash_map<Vertex_const_handle, bool>& omit_vertex;
       int nov, nof;
+      bool hh;
 
     public:
       Find_holes(Unique_hash_map<Vertex_const_handle, bool>& omit_vertex_)
-        : omit_vertex(omit_vertex_), nov(0), nof(0) {}
+        : omit_vertex(omit_vertex_), nov(0), nof(0), hh(false) {}
 
       void visit(Halffacet_const_handle f) {
         ++nof;
@@ -936,10 +918,11 @@ protected:
             CGAL_For_all(sfc, send) {
               omit_vertex[sfc->source()->source()] = true;
               --nov;
+            hh=true;
             }
           } else if(fc.is_shalfloop()) {
             SHalfloop_const_handle sl(fc);
-            omit_vertex[sl->incident_sface()->center_vertex()];
+            omit_vertex[sl->incident_sface()->center_vertex()] = true;
             --nov;
           } else
             CGAL_error_msg( "wrong handle type");
@@ -954,6 +937,63 @@ protected:
 
       int number_of_vertices() const {
         return nov;
+      }
+
+      int number_of_facets() const {
+        return nof;
+      }
+
+      bool holes_detected() const {
+        return hh;
+      }
+    };
+
+    class Nested_holes {
+
+      Unique_hash_map<Vertex_const_handle, bool>& omit_vertex;
+      int norv, nof;
+
+    public:
+      Nested_holes(Unique_hash_map<Vertex_const_handle, bool>& omit_vertex_)
+        : omit_vertex(omit_vertex_), norv(0), nof(0) {}
+
+      void visit(Halffacet_const_handle f) {
+        Halffacet_cycle_const_iterator fc = f->facet_cycles_begin();
+        CGAL_assertion(fc.is_shalfedge());
+
+        SHalfedge_around_facet_const_circulator sfc(fc), send(sfc);
+        bool all_in=true;
+        bool all_out=true;
+        CGAL_For_all(sfc, send) {
+          if (omit_vertex[sfc->source()->source()])
+            all_in=false;
+          else
+            all_out=false;
+        }
+        if (!all_in && !all_out)
+        {
+          SHalfedge_around_facet_const_circulator sfc(fc), send(sfc);
+          ++nof;
+          CGAL_For_all(sfc, send) {
+            if (!omit_vertex[sfc->source()->source()])
+            {
+              omit_vertex[sfc->source()->source()]=true;
+              ++norv;
+            }
+          }
+        }
+        if (all_in)
+          ++nof;
+      }
+
+      void visit(Vertex_const_handle) {}
+      void visit(SFace_const_handle) {}
+      void visit(Halfedge_const_handle) {}
+      void visit(SHalfedge_const_handle) {}
+      void visit(SHalfloop_const_handle) {}
+
+      int number_of_removed_vertices() const {
+        return norv;
       }
 
       int number_of_facets() const {
@@ -1017,14 +1057,19 @@ protected:
         se = SHalfedge_const_handle(fc);
         CGAL_assertion(se!=0);
         if(omit_vertex[se->source()->source()]) return;
-        B.begin_facet();
+
         SHalfedge_around_facet_const_circulator hc_start(se);
         SHalfedge_around_facet_const_circulator hc_end(hc_start);
+        std::vector<std::size_t> vids;
         CGAL_For_all(hc_start,hc_end) {
-          CGAL_NEF_TRACEN("   add vertex " << hc_start->source()->center_vertex()->point());
-          B.add_vertex_to_facet(VI[hc_start->source()->center_vertex()]);
+          if (omit_vertex[hc_start->source()->center_vertex()])
+          {
+            std::cout << "issue with " << se->source()->source()->point() << "\n";
+            return;
+          }
+          vids.push_back(VI[hc_start->source()->center_vertex()]);
         }
-        B.end_facet();
+        B.add_facet (vids.begin(), vids.end());
       }
 
       void visit(SFace_const_handle) {}
@@ -1049,11 +1094,29 @@ protected:
 
       Polyhedron_incremental_builder_3<HDS> B(hds, true);
 
+      // first mark vertices of holes of each halffacet as omitted.
       Find_holes F(omit_vertex);
       scd.visit_shell_objects(sf, F);
+      std::size_t nb_v = F.number_of_vertices();
+      std::size_t nb_f = F.number_of_facets();
 
-      B.begin_surface(F.number_of_vertices(),
-                      F.number_of_facets(),
+      // then if a halffacet contains a vertex marked as omitted, all its vertices
+      // must be marked as such
+      if (F.holes_detected())
+      {
+        while(true)
+        {
+          Nested_holes F2(omit_vertex);
+          scd.visit_shell_objects(sf, F2);
+          if (F2.number_of_removed_vertices()==0) break;
+          nb_v-=F2.number_of_removed_vertices();
+          nb_f=F2.number_of_facets();
+        }
+      }
+
+
+      B.begin_surface(nb_v,
+                      nb_f,
                       F.number_of_vertices()+F.number_of_facets()-2);
 
       Add_vertices A(B,omit_vertex, VI);
@@ -1478,9 +1541,9 @@ protected:
 
   Nef_polyhedron_3<Kernel,Items, Mark>
   symmetric_difference(const Nef_polyhedron_3<Kernel,Items, Mark>& N1) const
-  /*{\Mop returns the symmectric difference |\Mvar - T| $\cup$
+  /*{\Mop returns the symmetric difference |\Mvar - T| $\cup$
           |T - \Mvar|. }*/ {
-    CGAL_NEF_TRACEN(" symmetic difference between nef3 "<<&*this<<" and "<<&N1);
+    CGAL_NEF_TRACEN(" symmetric difference between nef3 "<<&*this<<" and "<<&N1);
     if (is_empty()) return N1;
     if (N1.is_empty()) return *this;
     if (is_space()) return Nef_polyhedron_3(EMPTY);
@@ -1546,11 +1609,11 @@ protected:
   or equal, equality, inequality.}*/
 
   bool operator==(const Nef_polyhedron_3<Kernel,Items, Mark>& N1) const
-  { CGAL_NEF_TRACEN(" equality comparision between nef3 "<<&*this<<" and "<<&N1);
+  { CGAL_NEF_TRACEN(" equality comparison between nef3 "<<&*this<<" and "<<&N1);
     return symmetric_difference(N1).is_empty(); }
 
   bool operator!=(const Nef_polyhedron_3<Kernel,Items, Mark>& N1) const
-  { CGAL_NEF_TRACEN(" inequality comparision between nef3 "<<&*this<<" and "<<&N1);
+  { CGAL_NEF_TRACEN(" inequality comparison between nef3 "<<&*this<<" and "<<&N1);
     return !operator==(N1); }
 
   bool operator<(const Nef_polyhedron_3<Kernel,Items, Mark>& N1) const

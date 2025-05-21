@@ -5,7 +5,7 @@
 #include <CGAL/Surface_mesh_simplification/edge_collapse.h>
 
 // Stop-condition policy
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_stop_predicate.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_count_stop_predicate.h>
 
 #include <iostream>
 #include <fstream>
@@ -36,7 +36,7 @@ int main(int argc, char** argv)
   // In this example, the simplification stops when the number of undirected edges
   // left in the surface mesh drops below the specified number (1000)
   const std::size_t edge_count_treshold = (argc > 2) ? std::stoi(argv[2]) : 1000;
-  SMS::Count_stop_predicate<Surface_mesh> stop(edge_count_treshold);
+  SMS::Edge_count_stop_predicate<Surface_mesh> stop(edge_count_treshold);
 
   // This the actual call to the simplification algorithm.
   // The surface mesh and stop conditions are mandatory arguments.

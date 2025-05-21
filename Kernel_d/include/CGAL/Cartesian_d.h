@@ -21,7 +21,7 @@
 #include <CGAL/representation_tags.h>
 #include <CGAL/Kernel_d/function_objects.h>
 #include <CGAL/Linear_algebraCd.h>
-#include <vector>
+#include <CGAL/Kernel/Same_uncertainty.h>
 
 #include <CGAL/Kernel_d/Kernel_classesCd.h>
 #include <CGAL/Kernel_d/PointCd.h>
@@ -71,7 +71,7 @@ public:
 
   typedef typename Point_d_base::Cartesian_const_iterator Cartesian_const_iterator_d;
 
-    // Boolean   had originally been Bool. It was renamed to avoid a conflict
+    // Boolean had originally been Bool. It was renamed to avoid a conflict
     // between a macro defined in Xlib.h poorly chosen to have the same name,
     // that is 'Bool'.
     typedef typename Same_uncertainty_nt<bool, FT>::type

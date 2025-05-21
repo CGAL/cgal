@@ -37,7 +37,7 @@ int main()
 
 
   // approximate range searching using value 0.4 for fuzziness parameter
-  // We do not write into a list but directly in the outpout stream
+  // We do not write into a list but directly in the output stream
 
   std::cout << "The points in the fuzzy circle centered at (0., 0.) ";
   std::cout << "with fuzzy radius (0.1, 0.9) are: " << std::endl;

@@ -148,7 +148,7 @@ private:
     }
 
 
-    /* a^-1, using Bezout (extended Euclidian algorithm). */
+    /* a^-1, using Bezout (extended Euclidean algorithm). */
     static inline
     double RES_inv (double ri1){
         CGAL_precondition (ri1 != 0.0);

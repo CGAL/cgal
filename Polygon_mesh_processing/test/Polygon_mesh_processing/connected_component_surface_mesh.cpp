@@ -1,7 +1,7 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
 
-#include <CGAL/boost/graph/helpers.h>
+#include <CGAL/boost/graph/generators.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/property_map.h>
 
@@ -124,7 +124,7 @@ void test_CC_with_default_size_map(Mesh sm,
     if (i!=id_of_cc_to_remove)
       ff.push_back(one_face_per_cc[i]);
 
-  // default face size map, but explicitely passed
+  // default face size map, but explicitly passed
   PMP::keep_connected_components(copy1, ff,
      CGAL::parameters::edge_is_constrained_map(Constraint<Mesh, Kernel>(copy1, k, bound))
                       .face_size_map(CGAL::Constant_property_map<face_descriptor, std::size_t>(1)));
@@ -180,6 +180,7 @@ void test_CC_with_area_size_map(Mesh sm,
   // didn't actually remove anything
   assert(PMP::internal::number_of_connected_components(sm) == num);
   assert(num_vertices(sm) == nv);
+  assert(faces_to_remove.size() == 680);
 
   if(num > 2)
   {

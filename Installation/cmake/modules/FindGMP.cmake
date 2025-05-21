@@ -5,8 +5,6 @@
 #  GMP_LIBRARIES_DIR     - directory where the GMP libraries are located
 #  GMP_LIBRARIES         - Link these to use GMP
 
-# TODO: support MacOSX
-
 include(FindPackageHandleStandardArgs)
 include(${CMAKE_CURRENT_LIST_DIR}/CGAL_GeneratorSpecificSettings.cmake)
 
@@ -26,22 +24,25 @@ if( NOT GMP_in_cache )
             NAMES gmp.h
             HINTS ENV GMP_INC_DIR
                   ENV GMP_DIR
+                  $ENV{GMP_DIR}/include
                   ${CGAL_INSTALLATION_PACKAGE_DIR}/auxiliary/gmp/include
             PATH_SUFFIXES include
   	        DOC "The directory containing the GMP header files"
            )
 
-  find_library(GMP_LIBRARY_RELEASE NAMES gmp libgmp-10 mpir
+  find_library(GMP_LIBRARY_RELEASE NAMES gmp libgmp-10 gmp-10 mpir
     HINTS ENV GMP_LIB_DIR
           ENV GMP_DIR
+          $ENV{GMP_DIR}/lib
           ${CGAL_INSTALLATION_PACKAGE_DIR}/auxiliary/gmp/lib
     PATH_SUFFIXES lib
     DOC "Path to the Release GMP library"
     )
 
-  find_library(GMP_LIBRARY_DEBUG NAMES gmpd gmp libgmp-10 mpir
+  find_library(GMP_LIBRARY_DEBUG NAMES gmpd gmp libgmp-10 gmp-10 mpir
     HINTS ENV GMP_LIB_DIR
           ENV GMP_DIR
+          $ENV{GMP_DIR}/include
           ${CGAL_INSTALLATION_PACKAGE_DIR}/auxiliary/gmp/lib
     PATH_SUFFIXES lib
     DOC "Path to the Debug GMP library"

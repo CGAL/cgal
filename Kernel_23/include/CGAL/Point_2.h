@@ -20,10 +20,11 @@
 #include <CGAL/Origin.h>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/assertions.h>
-#include <boost/type_traits/is_same.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/representation_tags.h>
 #include <CGAL/Dimension.h>
+
+#include <type_traits>
 
 namespace CGAL {
 
@@ -36,7 +37,7 @@ class Point_2 : public R_::Kernel_base::Point_2
   typedef typename R_::Kernel_base::Point_2  RPoint_2;
 
   typedef Point_2                            Self;
-  CGAL_static_assertion((boost::is_same<Self, typename R_::Point_2>::value));
+  static_assert(std::is_same<Self, typename R_::Point_2>::value);
 
 public:
 
@@ -78,9 +79,11 @@ public:
     : Rep(wp.point())
   {}
 
-  template < typename T1, typename T2 >
-  Point_2(const T1 &x, const T2 &y)
-    : Rep(typename R::Construct_point_2()(Return_base_tag(), x, y))
+  template < typename T1, typename T2>
+  Point_2(T1&& x, T2&& y)
+    : Rep(typename R::Construct_point_2()(Return_base_tag(),
+                                          std::forward<T1>(x),
+                                          std::forward<T2>(y)))
   {}
 
   Point_2(const RT& hx, const RT& hy, const RT& hw)
@@ -254,7 +257,7 @@ extract(std::istream& is, Point_2<R>& p, const Cartesian_tag&)
         break;
     }
     if (is)
-      p = Point_2<R>(x, y);
+      p = Point_2<R>(std::move(x), std::move(y));
     return is;
 }
 

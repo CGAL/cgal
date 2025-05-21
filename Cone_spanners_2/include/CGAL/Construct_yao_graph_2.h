@@ -82,7 +82,7 @@ public:
 
       \param k     Number of cones to divide space into
       \param initial_direction  A direction denoting one of the rays dividing the
-                   cones. This allows arbitary rotations of the rays that divide
+                   cones. This allows arbitrary rotations of the rays that divide
                    the plane.  (default: positive x-axis)
       \param cones_selected  Indicates whether even, odd or all cones are
                    selected to construct graph.
@@ -179,13 +179,13 @@ protected:
         const Less_by_direction  orderD2 (g, cwBound);
 
         typename Graph_::vertex_iterator vit, ve;
-        boost::tie(vit, ve) = boost::vertices(g);
+        std::tie(vit, ve) = boost::vertices(g);
 
         // Step 1: Sort S according to order induced by D1
         std::vector<typename Graph_::vertex_descriptor> S(vit, ve);
         std::sort(S.begin (), S.end (), orderD1);
 
-        // Step 2: Initialise an empty set to store vertices sorted by orderD2
+        // Step 2: initialize an empty set to store vertices sorted by orderD2
         Point_set pst(orderD2);
 
         // Step 3: visit S in orderD1
@@ -205,7 +205,7 @@ protected:
                 typename Graph_::edge_descriptor existing_e;
                 bool                    existing;
                 // check whether the edge already exists
-                boost::tie(existing_e, existing)=boost::edge(*it, *min, g);
+                std::tie(existing_e, existing)=boost::edge(*it, *min, g);
                 if (!existing)
                     boost::add_edge(*it, *min, g);
             }

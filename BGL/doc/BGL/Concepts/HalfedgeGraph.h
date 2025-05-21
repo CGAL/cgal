@@ -34,12 +34,13 @@ An edge descriptor must be `DefaultConstructible`, `Assignable`, `EqualityCompar
 
 \cgalAssociatedTypesEnd
 
-\cgalRefines `IncidenceGraph`
-\cgalRefines `PropertyGraph`
+\cgalRefines{IncidenceGraph,PropertyGraph}
 
 A model of `HalfedgeGraph` must have the interior property `vertex_point` attached to its vertices.
 
-\cgalHasModel See \link PkgBGLTraits Boost Graph Traits Specializations \endlink
+\cgalHasModelsBegin
+\cgalHasModelsBare{See \link PkgBGLTraits Boost Graph Traits Specializations \endlink}
+\cgalHasModelsEnd
 
 \sa \link PkgBGLConcepts Graph Concepts \endlink
 */
@@ -61,7 +62,7 @@ returns one of the halfedges corresponding to `e`.
  */
 template <typename HalfedgeGraph>
 boost::graph_traits<HalfedgeGraph>::halfedge_descriptor
-halfedge(boost::graph_traits<HalfedgeGraph>::edge_descriptor f, const HalfedgeGraph& g);
+halfedge(boost::graph_traits<HalfedgeGraph>::edge_descriptor e, const HalfedgeGraph& g);
 
 /*! \relates HalfedgeGraph
 returns a halfedge with target `v`.

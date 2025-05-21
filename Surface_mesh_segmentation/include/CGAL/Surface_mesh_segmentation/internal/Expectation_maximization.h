@@ -66,7 +66,7 @@ private:
     }
     /**
      * Probability density function (pdf).
-     * Note that result is not devided to \f$ \sqrt {2\pi}  \f$ , since it does not effect EM algorithm.
+     * Note that result is not divided to \f$ \sqrt {2\pi}  \f$ , since it does not effect EM algorithm.
      * @param x data
      * @return pdf result (without dividing \f$ \sqrt {2\pi}  \f$)
      */
@@ -238,7 +238,7 @@ private:
     for(std::size_t i = 0; i < centers.size(); ++i) {
       if(member_count[i] == 0) {
         CGAL_assertion( false &&
-                        "There is a cluster which does not contain any points, it will not cause an error but associated probabilites to this cluster will be 0.");
+                        "There is a cluster which does not contain any points, it will not cause an error but associated probabilities to this cluster will be 0.");
       } else {
         centers[i].deviation = std::sqrt(centers[i].deviation / member_count[i]);
       }

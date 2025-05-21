@@ -2,17 +2,16 @@
 // Associating a color attribute with segments using the consolidated
 // curve-data traits.
 
-#include <CGAL/basic.h>
 #include <CGAL/Arr_consolidated_curve_data_traits_2.h>
 
 #include "arr_exact_construction_segments.h"
 
 enum Segment_color {RED, BLUE};
 
-typedef CGAL::Arr_consolidated_curve_data_traits_2<Traits, Segment_color>
-                                                           Data_traits;
-typedef Data_traits::Curve_2                               Colored_segment;
-typedef CGAL::Arrangement_2<Data_traits>                   Colored_arr;
+using Data_traits =
+  CGAL::Arr_consolidated_curve_data_traits_2<Traits, Segment_color>;
+using Colored_segment = Data_traits::Curve_2;
+using Colored_arr = CGAL::Arrangement_2<Data_traits>;
 
 int main() {
   Colored_arr arr;

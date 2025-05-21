@@ -51,14 +51,14 @@ Sphere_direction(const Sphere_circle<R>& c)
   : Base(c) {}
 
 Sphere_direction(const Sphere_point<R>& p, const Sphere_point<R>&q)
-  : Base(Point_3(0,0,0),p,q)
+  : Base(CGAL::ORIGIN,p,q)
 /*{\Mcreate creates a direction that describes the orientation of
 the great circle through $p$ and $q$ (oriented such that the segment
 $pq$ is the shorter one of the two possible ones. \precond $p$ and $q$
 are not opposite on $S_2$.}*/
 { CGAL_assertion(p!=q.opposite());
-  Point_3 p1(0,0,0), p4 = CGAL::ORIGIN + ((Base*) this)->orthogonal_vector();
-  if ( CGAL::orientation(p1,p,q,p4) != CGAL::POSITIVE )
+  Point_3 p4 = CGAL::ORIGIN + ((Base*) this)->orthogonal_vector();
+  if ( R().orientation_3_object()(CGAL::ORIGIN,p,q,p4) != CGAL::POSITIVE )
     *this = Sphere_direction(opposite());
 }
 
@@ -82,7 +82,7 @@ Plane_3 plane() const { return Base(*this); }
 /* We have:
    1) all directions fixed at p
    2) d1==d3 possible
-   return true iff d1,d2,d3 are stricly ccw ordered around p
+   return true iff d1,d2,d3 are strictly ccw ordered around p
    Note: Sphere_directions are Plane_3
          we therefore compare the normal vectors of the planes
          that underly the directions d1,d2,d3 in the plane
@@ -95,18 +95,20 @@ bool strictly_ordered_ccw_at(const Sphere_point<R>& p,
   const Sphere_direction<R>& d2,
   const Sphere_direction<R>& d3)
 { CGAL_assertion(d1.has_on(p) && d2.has_on(p) && d3.has_on(p));
-  typename R::Point_3 p0(0,0,0);
-  typename R::Point_3 p1(CGAL::ORIGIN + d1.orthogonal_vector());
-  typename R::Point_3 p2(CGAL::ORIGIN + d2.orthogonal_vector());
-  typename R::Point_3 p3(CGAL::ORIGIN + d3.orthogonal_vector());
+  typedef typename R::Vector_3 Vector_3;
+  Vector_3 v0 = p - CGAL::ORIGIN;
+  Vector_3 v1 = d1.orthogonal_vector();
+  Vector_3 v2 = d2.orthogonal_vector();
+  Vector_3 v3 = d3.orthogonal_vector();
 
   if ( d1 == d3 ) return false;
-  if ( CGAL::orientation(p0,p,p1,p3) == CGAL::POSITIVE ) {
-    return CGAL::orientation(p0,p,p1,p2) == CGAL::POSITIVE &&
-           CGAL::orientation(p0,p,p3,p2) == CGAL::NEGATIVE;
+  typename R::Orientation_3 orientation = R().orientation_3_object();
+  if ( orientation(v0,v1,v3) == CGAL::POSITIVE ) {
+    return orientation(v0,v1,v2) == CGAL::POSITIVE &&
+           orientation(v0,v3,v2) == CGAL::NEGATIVE;
   } else {
-    return CGAL::orientation(p0,p,p1,p2) == CGAL::POSITIVE ||
-           CGAL::orientation(p0,p,p3,p2) == CGAL::NEGATIVE;
+    return orientation(v0,v1,v2) == CGAL::POSITIVE ||
+           orientation(v0,v3,v2) == CGAL::NEGATIVE;
   }
 }
 

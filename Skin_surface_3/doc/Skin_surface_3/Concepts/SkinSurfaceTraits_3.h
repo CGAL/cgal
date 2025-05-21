@@ -8,9 +8,11 @@ This geometric traits concept is used for the construction of a
 polyhedral mesh approximating a skin surface
 `CGAL::Skin_surface_3`.
 
-\cgalRefines `RegularTriangulationTraits_3`
+\cgalRefines{RegularTriangulationTraits_3}
 
-\cgalHasModel `CGAL::Skin_surface_traits_3<K>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Skin_surface_traits_3<K>}
+\cgalHasModelsEnd
 
 \sa `CGAL::Skin_surface_3<SkinSurfaceTraits_3>`
 \sa `CGAL::Skin_surface_traits_3<K>`

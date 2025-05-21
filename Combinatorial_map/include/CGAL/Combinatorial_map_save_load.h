@@ -57,7 +57,7 @@ namespace CGAL {
   //   ...
   // </attributes>
 
-  // Here T is a Dart_const_handle so we don't need &
+  // Here T is a Dart_const_descriptor so we don't need &
   template<typename T>
   void write_cmap_dart_node(boost::property_tree::ptree & /*node*/, T)
   {}
@@ -161,7 +161,7 @@ namespace CGAL {
   struct My_functor_cmap_save_one_attrib<CMap, i, true, true>
   {
     static void run(CMap& amap, boost::property_tree::ptree& ptree,
-                    std::unordered_map<typename CMap::Dart_const_handle,
+                    std::unordered_map<typename CMap::Dart_const_descriptor,
                     typename CMap::size_type>& myDarts)
     {
       // add dimension & type
@@ -174,7 +174,7 @@ namespace CGAL {
       for (auto it=amap.template one_dart_per_cell<i>().begin(),
            itend=amap.template one_dart_per_cell<i>().end(); it!=itend; ++it)
       {
-        if (amap.template attribute<i>(it)!=nullptr)
+        if (amap.template attribute<i>(it)!=amap.null_descriptor)
         {
           // make composant, dart and property node
           boost::property_tree::ptree & nattr = ndim.add("a", "");
@@ -194,7 +194,7 @@ namespace CGAL {
   struct My_functor_cmap_save_one_attrib<CMap, i, false, true>
   {
     static void run(CMap& amap, boost::property_tree::ptree& ptree,
-                    std::unordered_map<typename CMap::Dart_const_handle,
+                    std::unordered_map<typename CMap::Dart_const_descriptor,
                     typename CMap::size_type>& myDarts)
     {
       // add dimension & type
@@ -207,7 +207,7 @@ namespace CGAL {
       for (auto it=amap.template one_dart_per_cell<i>().begin(),
            itend=amap.template one_dart_per_cell<i>().end(); it!=itend; ++it)
       {
-        if (amap.template attribute<i>(it)!=nullptr)
+        if (amap.template attribute<i>(it)!=amap.null_descriptor)
         {
           // make composant, dart and property node
           boost::property_tree::ptree & nattr = ndim.add("a", "");
@@ -226,7 +226,7 @@ namespace CGAL {
   struct My_functor_cmap_save_one_attrib<CMap, i, true, false>
   {
     static void run(CMap& amap, boost::property_tree::ptree& ptree,
-                    std::unordered_map<typename CMap::Dart_const_handle,
+                    std::unordered_map<typename CMap::Dart_const_descriptor,
                     typename CMap::size_type>& myDarts)
     {
       // add dimension & type
@@ -240,7 +240,7 @@ namespace CGAL {
       for (auto it=amap.template one_dart_per_cell<i>().begin(),
            itend=amap.template one_dart_per_cell<i>().end(); it!=itend; ++it)
       {
-        if (amap.template attribute<i>(it)!=nullptr)
+        if (amap.template attribute<i>(it)!=amap.null_descriptor)
         {
           // make composant, dart and property node
           boost::property_tree::ptree & nattr = ndim.add("a", "");
@@ -259,7 +259,7 @@ namespace CGAL {
   struct My_functor_cmap_save_one_attrib<CMap, i, false, false>
   {
     static void run(CMap& amap, boost::property_tree::ptree& ptree,
-                    std::unordered_map<typename CMap::Dart_const_handle,
+                    std::unordered_map<typename CMap::Dart_const_descriptor,
                     typename CMap::size_type>& myDarts)
     {
       // add dimension & type
@@ -272,7 +272,7 @@ namespace CGAL {
       for (auto it=amap.template one_dart_per_cell<i>().begin(),
            itend=amap.template one_dart_per_cell<i>().end(); it!=itend; ++it)
       {
-        if (amap.template attribute<i>(it)!=nullptr)
+        if (amap.template attribute<i>(it)!=amap.null_descriptor)
         {
           // make composant, dart and property node
           boost::property_tree::ptree & nattr = ndim.add("a", "");
@@ -288,7 +288,7 @@ namespace CGAL {
   {
     template <unsigned int i>
     static void run(CMap& amap, boost::property_tree::ptree& ptree,
-                    std::unordered_map<typename CMap::Dart_const_handle,
+                    std::unordered_map<typename CMap::Dart_const_descriptor,
                     typename CMap::size_type>& myDarts)
     {
       My_functor_cmap_save_one_attrib<CMap, i>::run(amap, ptree, myDarts);
@@ -297,7 +297,7 @@ namespace CGAL {
 
   template < class CMap >
   boost::property_tree::ptree cmap_save_darts
-  (CMap& amap, std::unordered_map<typename CMap::Dart_const_handle,
+  (CMap& amap, std::unordered_map<typename CMap::Dart_const_descriptor,
    typename CMap::size_type>& myDarts)
   {
     CGAL_assertion( myDarts.empty() );
@@ -341,13 +341,13 @@ namespace CGAL {
 
   template < class CMap >
   boost::property_tree::ptree cmap_save_attributes
-  (const CMap& amap, std::unordered_map<typename CMap::Dart_const_handle,
+  (const CMap& amap, std::unordered_map<typename CMap::Dart_const_descriptor,
    typename CMap::size_type>& myDarts)
   {
     using boost::property_tree::ptree;
     ptree pt;
 
-    // update pt adding nodes containing attributes informations
+    // update pt adding nodes containing attributes information
     CMap::Helper::template Foreach_enabled_attributes
       <My_functor_cmap_save_attrib<CMap> >::run(const_cast<CMap&>(amap), pt, myDarts);
 
@@ -371,11 +371,11 @@ namespace CGAL {
     tree.put("data", "");
 
     /** First we save general information of the map (by default nothing,
-        the fuction can be specialized by users). */
+        the function can be specialized by users). */
     f(tree);
 
     // map dart => number
-    std::unordered_map<typename CMap::Dart_const_handle, typename CMap::size_type> myDarts;
+    std::unordered_map<typename CMap::Dart_const_descriptor, typename CMap::size_type> myDarts;
 
     // Save darts
     ptree pt_darts=cmap_save_darts(amap, myDarts);
@@ -414,7 +414,7 @@ namespace CGAL {
     return save_combinatorial_map(amap, filename, f);
   }
 
-  // Here T is a Dart_handle so no need of &
+  // Here T is a Dart_descriptor so no need of &
   template<typename T>
   void read_cmap_dart_node
   (const boost::property_tree::ptree::value_type &/*v*/, T /*val*/)
@@ -505,7 +505,7 @@ namespace CGAL {
   struct My_functor_cmap_load_one_attrib<CMap, i, true, true>
   {
     static void run(const boost::property_tree::ptree& pt, CMap& amap,
-                    const std::vector<typename CMap::Dart_handle>& myDarts)
+                    const std::vector<typename CMap::Dart_descriptor>& myDarts)
     {
       for(const boost::property_tree::ptree::value_type& v0 :
           pt.get_child("data.attributes") )
@@ -547,7 +547,7 @@ namespace CGAL {
                   if( type==type_map && v2.first == "v" )
                   {
                     if (amap.template attribute<i>(myDarts[id_dart_cellule])
-                        ==nullptr )
+                        ==amap.null_descriptor )
                       amap.template set_attribute<i>
                         (myDarts[id_dart_cellule],
                          amap.template create_attribute<i>());
@@ -558,14 +558,15 @@ namespace CGAL {
                   if( ptype==ptype_map && v2.first == "p" )
                   {
                     if (amap.template attribute<i>(myDarts[id_dart_cellule])
-                        ==nullptr )
+                        ==amap.null_descriptor )
                       amap.template set_attribute<i>
                         (myDarts[id_dart_cellule],
                          amap.template create_attribute<i>());
                     read_cmap_attribute_node
                       (v2,
-                       amap.template attribute<i>(myDarts[id_dart_cellule])
-                       ->point());
+                       amap.template get_attribute<i>
+                       (amap.template attribute<i>(myDarts[id_dart_cellule])).
+                       point());
                   }
                 }
               }
@@ -581,7 +582,7 @@ namespace CGAL {
   struct My_functor_cmap_load_one_attrib<CMap, i, false, true>
   {
     static void run(const boost::property_tree::ptree& pt, CMap& amap,
-                    const std::vector<typename CMap::Dart_handle>& myDarts)
+                    const std::vector<typename CMap::Dart_descriptor>& myDarts)
     {
       for( const boost::property_tree::ptree::value_type &v0 :
                      pt.get_child("data.attributes") )
@@ -618,15 +619,16 @@ namespace CGAL {
                   if( v2.first == "p" )
                   {
                     if (amap.template attribute<i>
-                        (myDarts[id_dart_cellule])==nullptr )
+                        (myDarts[id_dart_cellule])==amap.null_descriptor )
                       amap.template set_attribute<i>
                         (myDarts[id_dart_cellule],
                          amap.template create_attribute<i>());
 
                     read_cmap_attribute_node
                       (v2,
-                       (amap.template attribute<i>
-                        (myDarts[id_dart_cellule])->point()));
+                       (amap.template get_attribute<i>
+                        (amap.template attribute<i>(myDarts[id_dart_cellule])).
+                        point()));
                   }
                 }
               }
@@ -642,7 +644,7 @@ namespace CGAL {
   struct My_functor_cmap_load_one_attrib<CMap, i, true, false>
   {
     static void run(const boost::property_tree::ptree& pt, CMap& amap,
-                    const std::vector<typename CMap::Dart_handle>& myDarts)
+                    const std::vector<typename CMap::Dart_descriptor>& myDarts)
     {
       for( const boost::property_tree::ptree::value_type &v0 :
                      pt.get_child("data.attributes") )
@@ -679,7 +681,7 @@ namespace CGAL {
                   if( v2.first == "v" )
                   {
                     if (amap.template attribute<i>
-                        (myDarts[id_dart_cellule])==nullptr)
+                        (myDarts[id_dart_cellule])==amap.null_descriptor)
                       amap.template set_attribute<i>
                         (myDarts[id_dart_cellule],
                          amap.template create_attribute<i>());
@@ -701,7 +703,7 @@ namespace CGAL {
   struct My_functor_cmap_load_one_attrib<CMap, i, false, false>
   {
     static void run(const boost::property_tree::ptree& pt, CMap& amap,
-                    const std::vector<typename CMap::Dart_handle>& myDarts)
+                    const std::vector<typename CMap::Dart_descriptor>& myDarts)
     {
       for( const boost::property_tree::ptree::value_type &v0 :
                      pt.get_child("data.attributes") )
@@ -723,7 +725,8 @@ namespace CGAL {
               {
                 id_dart_cellule=v1.second.get<unsigned int>("d")-1;
 
-                if (amap.template attribute<i>(myDarts[id_dart_cellule])==nullptr)
+                if (amap.template attribute<i>(myDarts[id_dart_cellule])==
+                    amap.null_descriptor)
                   amap.template set_attribute<i>
                     (myDarts[id_dart_cellule],
                    amap.template create_attribute<i>());
@@ -738,14 +741,14 @@ namespace CGAL {
   /** Functor called to load i-attributes.
    *  @param pt a boost::property_tree::ptree load from an xml file
    *  @param amap a pointer to the map to load into
-   *  @param myDarts an array of Dart_handle st myDarts[i] is the ith dart.
+   *  @param myDarts an array of Dart_descriptor st myDarts[i] is the ith dart.
    */
   template<class CMap>
   struct My_functor_cmap_load_attrib
   {
     template <unsigned int i>
     static void run(const boost::property_tree::ptree& pt, CMap& amap,
-                    const std::vector<typename CMap::Dart_handle>& myDarts)
+                    const std::vector<typename CMap::Dart_descriptor>& myDarts)
     {
        My_functor_cmap_load_one_attrib<CMap, i>::run(pt, amap, myDarts);
     }
@@ -753,7 +756,7 @@ namespace CGAL {
 
   template < class CMap >
   bool cmap_load_darts(boost::property_tree::ptree &pt, CMap& amap,
-                       std::vector<typename CMap::Dart_handle>& myDarts)
+                       std::vector<typename CMap::Dart_descriptor>& myDarts)
   {
     // use a boost::property_tree
     using boost::property_tree::ptree;
@@ -800,7 +803,7 @@ namespace CGAL {
 
   template < class CMap >
   void cmap_load_attributes(const boost::property_tree::ptree& pt, CMap& amap,
-                            const std::vector<typename CMap::Dart_handle>& myDarts)
+                            const std::vector<typename CMap::Dart_descriptor>& myDarts)
   {
     CMap::Helper::template Foreach_enabled_attributes
       <My_functor_cmap_load_attrib<CMap> >::run(pt, amap, myDarts);
@@ -815,11 +818,11 @@ namespace CGAL {
     read_xml(input, pt);
 
     /** First we load general information of the map (by default nothing,
-        the fuction can be specialized by users). */
+        the function can be specialized by users). */
     f(pt);
 
     // Then we load darts and attributes.
-    std::vector<typename CMap::Dart_handle> myDarts;
+    std::vector<typename CMap::Dart_descriptor> myDarts;
     cmap_load_darts(pt,amap,myDarts);
     cmap_load_attributes(pt,amap,myDarts);
     return true;

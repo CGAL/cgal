@@ -332,7 +332,7 @@ std::ostream& operator<<(std::ostream& os, const Edge_list<Traits>& edges)
    return os;
 }
 
-} // namesapce Partition_2
+} // namespace Partition_2
 
 template <class Traits_>
 class Partition_vertex_map

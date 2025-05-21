@@ -33,6 +33,7 @@
 #include <CGAL/Arr_conic_traits_2.h>
 #include <CGAL/Arr_circle_segment_traits_2.h>
 #include <CGAL/Arr_linear_traits_2.h>
+#include <CGAL/Arr_polyline_traits_2.h>
 
 namespace CGAL {
 
@@ -54,16 +55,18 @@ struct Default_arr_traits<CGAL::Arr_segment_2<Kernel> >
   typedef CGAL::Arr_segment_traits_2<Kernel>                            Traits;
 };
 
-template <typename SubcurveTraits>
-struct Default_arr_traits<CGAL::internal::Polycurve_2
-                          <SubcurveTraits, typename SubcurveTraits::Point_2> >
+template <typename Kernel>
+struct Default_arr_traits<CGAL::internal::Polycurve_2<
+                            CGAL::Arr_segment_2<Kernel>,
+                            typename Kernel::Point_2>>
 {
-  typedef CGAL::Arr_polyline_traits_2<SubcurveTraits>                   Traits;
+  using Subtraits = CGAL::Arr_segment_traits_2<Kernel>;
+  typedef CGAL::Arr_polyline_traits_2<Subtraits>                        Traits;
 };
 
 template <typename Rat_kernel_, class Alg_kernel_, class Nt_traits_>
-struct Default_arr_traits<CGAL::_Conic_arc_2<Rat_kernel_, Alg_kernel_,
-                                             Nt_traits_> >
+struct Default_arr_traits<CGAL::Conic_arc_2<Rat_kernel_, Alg_kernel_,
+                                            Nt_traits_> >
 {
   typedef CGAL::Arr_conic_traits_2<Rat_kernel_, Alg_kernel_, Nt_traits_>
                                                                         Traits;

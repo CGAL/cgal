@@ -46,7 +46,7 @@ the following function overloads are also available.
 The iterator versions of those functions can be used in conjunction
 with `Dispatch_output_iterator`.
 
-Since both the number of intersections, if any, and types of the interesection results
+Since both the number of intersections, if any, and types of the intersection results
 depend on the arguments, the function expects an output iterator on `K::Intersect_2(Type1, Type2)`
 as presented below.
 */

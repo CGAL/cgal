@@ -25,8 +25,8 @@
 #include <vector>
 #include <algorithm>
 
-#include <boost/tuple/tuple.hpp>
-#include <boost/optional.hpp>
+#include <tuple>
+#include <optional>
 
 #define CGAL_NUMBER_OF_MAD 1.5
 
@@ -90,11 +90,11 @@ private:
   typedef typename Tree::Primitive_id Primitive_id;
 
   // Sampled points from disk, t1 = coordinate-x, t2 = coordinate-y, t3 = weight.
-  typedef boost::tuple<double, double, double> Disk_sample;
+  typedef std::tuple<double, double, double> Disk_sample;
   typedef std::vector<Disk_sample>             Disk_samples_list;
 
   // DiskSampling class responsible for the sampling points in a disk. It is used for generating rays in the cones. For different example see Disk_samplers.h
-  typedef Vogel_disk_sampling<boost::tuple<double, double, double> >
+  typedef Vogel_disk_sampling<std::tuple<double, double, double> >
   Default_sampler;
 
 // member variables
@@ -200,7 +200,7 @@ public:
     disk_sampler(number_of_rays, std::back_inserter(disk_samples));
 
     for( ; facet_begin != facet_end; ++facet_begin) {
-      boost::optional<double> sdf_value = calculate_sdf_value_of_facet(*facet_begin,
+      std::optional<double> sdf_value = calculate_sdf_value_of_facet(*facet_begin,
                                           cone_angle, true, disk_samples);
 
       if(sdf_value) {
@@ -233,7 +233,7 @@ public:
    * \note: normal should have unit length
    */
   template<class SkipPrimitiveFunctor, class FirstIntersectionVisitor>
-  boost::optional<double> calculate_sdf_value_of_point(
+  std::optional<double> calculate_sdf_value_of_point(
     Point center,
     Vector normal,
     SkipPrimitiveFunctor skip,
@@ -250,7 +250,7 @@ public:
    * Overload for taking DiskSampling as template parameter
    */
   template<class SkipPrimitiveFunctor, class FirstIntersectionVisitor, class DiskSampling>
-  boost::optional<double> calculate_sdf_value_of_point(
+  std::optional<double> calculate_sdf_value_of_point(
     Point center,
     Vector normal,
     SkipPrimitiveFunctor skip,
@@ -270,7 +270,7 @@ public:
    * Overload for directly taking sampled points from disk as parameter
    */
   template<class SkipPrimitiveFunctor, class FirstIntersectionVisitor>
-  boost::optional<double> calculate_sdf_value_of_point(
+  std::optional<double> calculate_sdf_value_of_point(
     const Point& center,
     const Vector& normal,
     SkipPrimitiveFunctor skip,
@@ -303,8 +303,8 @@ public:
       Primitive_id closest_id;
 
       Vector disk_vector = sum_functor(
-                             scale_functor(v1, FT(disk_multiplier * sample_it->get<0>())),
-                             scale_functor(v2, FT(disk_multiplier * sample_it->get<1>())) );
+                             scale_functor(v1, FT(disk_multiplier * std::get<0>(*sample_it))),
+                             scale_functor(v2, FT(disk_multiplier * std::get<1>(*sample_it))) );
       Vector ray_direction = sum_functor(scaled_normal, disk_vector);
 
       if(use_diagonal) {
@@ -322,7 +322,7 @@ public:
                        "A degenerate segment is constructed. Most probable reason is using CGAL_PI as cone_angle parameter and also picking center of disk as a sample.");
         }
 
-        boost::tie(is_intersected, intersection_is_acute, min_distance, closest_id)
+        std::tie(is_intersected, intersection_is_acute, min_distance, closest_id)
           = cast_and_return_minimum(segment, skip, accept_if_acute);
       } else {
         Ray ray(center, ray_direction);
@@ -332,7 +332,7 @@ public:
                        "A degenerate ray is constructed. Most probable reason is using CGAL_PI as cone_angle parameter and also picking center of disk as a sample.");
         }
 
-        boost::tie(is_intersected, intersection_is_acute, min_distance, closest_id)
+        std::tie(is_intersected, intersection_is_acute, min_distance, closest_id)
           = ray_casting(ray, skip, accept_if_acute);
       }
 
@@ -342,14 +342,14 @@ public:
 
       visitor(closest_id, min_distance);
 
-      ray_distances.push_back(std::make_pair(min_distance, sample_it->get<2>()));
+      ray_distances.push_back(std::make_pair(min_distance, std::get<2>(*sample_it)));
     }
 
     if(ray_distances.empty()) {
-      return boost::none;
+      return std::nullopt;
     }
 
-    return boost::optional<double>(remove_outliers_and_calculate_sdf_value(
+    return std::optional<double>(remove_outliers_and_calculate_sdf_value(
                                      ray_distances));
   }
 
@@ -369,7 +369,7 @@ private:
    * @param samples sampled points from a unit-disk which are corresponds to rays picked from cone
    * @return calculated SDF value
    */
-  boost::optional<double> calculate_sdf_value_of_facet(
+  std::optional<double> calculate_sdf_value_of_facet(
     face_handle facet,
     double cone_angle,
     bool accept_if_acute,
@@ -379,11 +379,11 @@ private:
     const Point p2 = get(vertex_point_map,target(next(halfedge(facet,mesh),mesh),mesh));
     const Point p3 = get(vertex_point_map,target(prev(halfedge(facet,mesh),mesh),mesh));
     const Point center  = centroid_functor(p1, p2, p3);
-    if (collinear_functor(p1, p2, p3)) return boost::none;
+    if (collinear_functor(p1, p2, p3)) return std::nullopt;
     Vector normal = normal_functor(p2, p1, p3);
     normal=scale_functor(normal,
                          FT(1.0/std::sqrt(to_double(normal.squared_length()))));
-    if (normal!=normal) return boost::none;
+    if (normal!=normal) return std::nullopt;
     CGAL::internal::SkipPrimitiveFunctor<face_handle>
     skip(facet);
     CGAL::internal::FirstIntersectionVisitor<face_handle>
@@ -407,9 +407,9 @@ private:
    *   - get<3> Primitive_id : closest intersected primitive if get<0> is true, else Primitive_id()
    */
   template <class Query, class SkipPrimitiveFunctor>
-  boost::tuple<bool, bool, double, Primitive_id> cast_and_return_minimum(
+  std::tuple<bool, bool, double, Primitive_id> cast_and_return_minimum(
     const Query& query, SkipPrimitiveFunctor skip, bool accept_if_acute) const {
-    boost::tuple<bool, bool, double, Primitive_id>
+    std::tuple<bool, bool, double, Primitive_id>
     min_distance(false, false, 0.0, Primitive_id());
 
     typedef typename Tree:: template Intersection_and_primitive_id<Query>::Type Intersection_and_primitive_id;
@@ -434,22 +434,22 @@ private:
       }
 
       const Point* i_point;
-      if(!(i_point = boost::get<Point>(&object))) {
+      if(!(i_point = std::get_if<Point>(&object))) {
         continue;  // continue in case of segment.
       }
 
       Vector i_ray(*i_point, query.source());
       double new_distance = to_double( i_ray.squared_length() );
-      if(!min_distance.template get<0>()
-          || new_distance < min_distance.template get<2>()) {
-        min_distance.template get<3>() = id;
-        min_distance.template get<2>() = new_distance;
-        min_distance.template get<0>() = true;
+      if(!std::get<0>(min_distance)
+          || new_distance < std::get<2>(min_distance)) {
+        std::get<3>(min_distance) = id;
+        std::get<2>(min_distance) = new_distance;
+        std::get<0>(min_distance) = true;
         min_id = id;
         min_i_ray = i_ray;
       }
     }
-    if(!min_distance.template get<0>()) {
+    if(!std::get<0>(min_distance)) {
       return min_distance;
     }
 
@@ -467,32 +467,32 @@ private:
       }
     }
 
-    min_distance.template get<1>() = true; // founded intersection is acceptable.
-    min_distance.template get<2>() = std::sqrt(min_distance.template get<2>());
+    std::get<1>(min_distance) = true; // founded intersection is acceptable.
+    std::get<2>(min_distance) = std::sqrt(std::get<2>(min_distance));
     return min_distance;
   }
 
   // function similar to `cast_and_return_minimum()` but using the function
   // first_intersection with a Ray to get the closest intersected primitive
   template<typename SkipFunctor>
-  boost::tuple<bool, bool, double, Primitive_id> ray_casting(
+  std::tuple<bool, bool, double, Primitive_id> ray_casting(
     const Ray& query, SkipFunctor s, bool accept_if_acute) const {
 
-    const boost::optional< typename Tree::template Intersection_and_primitive_id<Ray>::Type >
+    const std::optional< typename Tree::template Intersection_and_primitive_id<Ray>::Type >
       min_intersection = tree.first_intersection(query, s);
     if(!min_intersection)
-      return boost::make_tuple(false, false, 0.0, Primitive_id());
+      return std::make_tuple(false, false, 0.0, Primitive_id());
 
-    const Point* i_point = boost::get<Point>( &min_intersection->first );
+    const Point* i_point = std::get_if<Point>( &min_intersection->first );
     if (!i_point) //segment case ignored
-      return boost::make_tuple(false, false, 0.0, Primitive_id());
+      return std::make_tuple(false, false, 0.0, Primitive_id());
 
     Vector min_i_ray(*i_point, query.source());
 
-    boost::tuple<bool, bool, double, Primitive_id>
+    std::tuple<bool, bool, double, Primitive_id>
     min_distance(true, false, to_double(min_i_ray.squared_length()), min_intersection->second);
 
-    const Primitive_id& min_id = min_distance.template get<3>();
+    const Primitive_id& min_id = std::get<3>(min_distance);
 
     if(accept_if_acute) {
       // check whether the ray makes acute angle with intersected facet
@@ -508,8 +508,8 @@ private:
       }
     }
 
-    min_distance.template get<1>() = true; // founded intersection is acceptable.
-    min_distance.template get<2>() = std::sqrt(min_distance.template get<2>());
+    std::get<1>(min_distance) = true; // founded intersection is acceptable.
+    std::get<2>(min_distance) = std::sqrt(std::get<2>(min_distance));
 
     return min_distance;
   }

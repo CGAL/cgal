@@ -2,7 +2,7 @@
 # CGAL_SetupBoost
 # ---------------
 #
-# The module searchs for the `Boost` headers and library, by calling
+# The module searches for the `Boost` headers and library, by calling
 #
 # .. code-block:: cmake
 #
@@ -10,16 +10,13 @@
 #
 # and defines the function :command:`use_CGAL_Boost_support`.
 
-if ( CGAL_Boost_Setup )
-  return()
-endif()
-set ( CGAL_Boost_Setup TRUE )
-
+include_guard(GLOBAL)
 include(${CMAKE_CURRENT_LIST_DIR}/CGAL_TweakFindBoost.cmake)
 
-find_package( Boost 1.48 REQUIRED )
+cmake_policy(VERSION 3.12...3.30)
+find_package( Boost 1.74 REQUIRED )
 
-if(Boost_FOUND AND Boost_VERSION VERSION_LESS 1.70)
+if(Boost_FOUND AND Boost_VERSION VERSION_LESS 1.74)
   if(DEFINED Boost_DIR AND NOT Boost_DIR)
     # Unset that cache variable that is set in the cache by FindBoost
     # (while it was searching for boost-cmake).

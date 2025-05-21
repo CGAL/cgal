@@ -19,7 +19,6 @@
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/property_map.h>
-#include <CGAL/point_set_processing_assertions.h>
 #include <CGAL/assertions.h>
 #include <CGAL/intersections.h>
 
@@ -59,8 +58,8 @@ is a vertex). The implementation follow \cgalCite{cgal:la-srpss-13}.
 \tparam Kernel a model of `EfficientRANSACTraits` that must provide in
 addition a function `Intersect_3 intersection_3_object() const` and a
 functor `Intersect_3` with:
-- `boost::optional< boost::variant< Traits::Plane_3, Traits::Line_3 > > operator()(typename Traits::Plane_3, typename Traits::Plane_3)`
-- `boost::optional< boost::variant< Traits::Line_3, Traits::Point_3 > > operator()(typename Traits::Line_3, typename Traits::Plane_3)`
+- `std::optional< std::variant< Traits::Plane_3, Traits::Line_3 > > operator()(typename Traits::Plane_3, typename Traits::Plane_3)`
+- `std::optional< std::variant< Traits::Line_3, Traits::Point_3 > > operator()(typename Traits::Line_3, typename Traits::Plane_3)`
 
 */
 template <typename Kernel>
@@ -234,8 +233,8 @@ public:
     typedef typename Point_set_processing_3::GetPlaneMap<PlaneRange, NamedParameters>::type PlaneMap;
     typedef typename Point_set_processing_3::GetPlaneIndexMap<NamedParameters>::type PlaneIndexMap;
 
-    CGAL_static_assertion_msg(NP_helper::has_normal_map(), "Error: no normal map");
-    CGAL_static_assertion_msg((!is_default_parameter<NamedParameters, internal_np::plane_index_t>()),
+    CGAL_assertion_msg(NP_helper::has_normal_map(points, np), "Error: no normal map");
+    static_assert(!is_default_parameter<NamedParameters, internal_np::plane_index_t>::value,
                               "Error: no plane index map");
 
     PointMap point_map = NP_helper::get_const_point_map(points, np);
@@ -257,7 +256,7 @@ public:
     {
       m_points.push_back (get(point_map, *it));
       m_normals.push_back (get(normal_map, *it));
-      int plane_index = get (index_map, idx);
+      int plane_index = static_cast<int>(get (index_map, idx));
       if (plane_index != -1)
       {
         m_indices_of_assigned_points[std::size_t(plane_index)].push_back(idx);
@@ -679,7 +678,7 @@ private:
           for (std::size_t i = 0; i < Nx; ++ i)
             if( point_map[i][j].size()>0)
               {
-                //inside: recenter (cell center) the first point of the cell and desactivate the others points
+                //inside: recenter (cell center) the first point of the cell and deactivate the others points
                 if (!Mask_border[i][j] && Mask[i][j])
                   {
                     double x2pt = (i+0.5) * grid_length + box_2d.xmin();
@@ -704,7 +703,7 @@ private:
                       m_status[point_map[i][j][np]] = SKIPPED;
                   }
 
-                //border: recenter (barycenter) the first point of the cell and desactivate the others points
+                //border: recenter (barycenter) the first point of the cell and deactivate the others points
                 else if (Mask_border[i][j] && Mask[i][j])
                   {
                     std::vector<Point> pts;
@@ -809,7 +808,7 @@ private:
             continue;
           }
 
-        if (const Line* l = boost::get<Line>(&*result))
+        if (const Line* l = std::get_if<Line>(&*result))
           m_edges[i].support = *l;
         else
           {
@@ -983,7 +982,7 @@ private:
                 std::size_t inde = division_tab[j][k];
 
                 if (CGAL::squared_distance (line, m_points[inde]) < d_DeltaEdge * d_DeltaEdge)
-                  m_status[inde] = SKIPPED; // Deactive points too close (except best, see below)
+                  m_status[inde] = SKIPPED; // Deactivate points too close (except best, see below)
 
                 double distance = CGAL::squared_distance (perfect, m_points[inde]);
                 if (distance < dist_min)
@@ -1030,7 +1029,7 @@ private:
             auto result = CGAL::intersection (plane1, ortho);
             if (result)
               {
-                if (const Line* l = boost::get<Line>(&*result))
+                if (const Line* l = std::get_if<Line>(&*result))
                   {
                     if (!(pts1.empty()))
                       {
@@ -1067,7 +1066,7 @@ private:
             result = CGAL::intersection (plane2,ortho);
             if (result)
               {
-                if (const Line* l = boost::get<Line>(&*result))
+                if (const Line* l = std::get_if<Line>(&*result))
                   {
                     if (!(pts2.empty()))
                       {
@@ -1194,12 +1193,12 @@ private:
         const auto result = CGAL::intersection(plane1, plane2);
         if (result)
           {
-            if (const Line* l = boost::get<Line>(&*result))
+            if (const Line* l = std::get_if<Line>(&*result))
               {
                 const auto result2 = CGAL::intersection(*l, plane3);
                 if (result2)
                   {
-                    if (const Point* p = boost::get<Point>(&*result2))
+                    if (const Point* p = std::get_if<Point>(&*result2))
                       m_corners[i].support = *p;
                     else
                       {

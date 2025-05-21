@@ -65,7 +65,7 @@ Data structures specialized to classify clusters.
 \cgalPkgPicture{data_classif.png}
 
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Simon Giraudot, Florent Lafarge}
+\cgalPkgAuthors{Simon Giraudot and Florent Lafarge}
 \cgalPkgDesc{This component implements an algorithm that classifies a data set into a user-defined set of labels (such as ground, vegetation, buildings, etc.). A flexible API is provided so that users can classify any type of data, compute their own local features on the input data set, and define their own labels.}
 \cgalPkgManuals{Chapter_Classification, PkgClassificationRef}
 \cgalPkgSummaryEnd
@@ -75,7 +75,7 @@ Data structures specialized to classify clusters.
 \cgalPkgDependsOn{\ref PkgSolverInterface, \ref PkgSpatialSearchingD}
 \cgalPkgBib{cgal:lm-clscm-12}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
-\cgalPkgDemo{Operations on Polyhedra,polyhedron_3.zip}
+\cgalPkgDemo{CGAL Lab,CGALlab.zip}
 \cgalPkgShortInfoEnd
 
 \cgalPkgDescriptionEnd

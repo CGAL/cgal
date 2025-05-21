@@ -2,7 +2,7 @@
 
 #include <CGAL/boost/graph/graph_traits_Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/boost/graph/iterator.h>
-#include <CGAL/boost/graph/IO/polygon_mesh_io.h>
+#include <CGAL/IO/polygon_mesh_io.h>
 
 #include <iostream>
 #include <fstream>
@@ -40,7 +40,7 @@ OutputIterator adjacent_vertices_V2(const LCC& g,
                                     OutputIterator out)
 {
   halfedge_around_target_iterator hi, he;
-  for(boost::tie(hi, he) = halfedges_around_target(halfedge(vd,g),g); hi != he; ++hi)
+  for(std::tie(hi, he) = halfedges_around_target(halfedge(vd,g),g); hi != he; ++hi)
   {
     *out++ = source(*hi,g);
   }

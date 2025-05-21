@@ -1,10 +1,11 @@
 #define CGAL_AW3_TIMER
 #define CGAL_AW3_DEBUG
+#define CGAL_AW3_DEBUG_MANIFOLDNESS
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/alpha_wrap_3.h>
-#include "alpha_wrap_validation.h"
+#include <CGAL/Alpha_wrap_3/internal/validation.h>
 
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/IO/polygon_soup_io.h>
@@ -36,7 +37,7 @@ void alpha_wrap_triangle_soup(Points& pr,
   namespace AW3 = CGAL::Alpha_wraps_3;
   namespace PMP = CGAL::Polygon_mesh_processing;
 
-  using Oracle = AW3::internal::Triangle_soup_oracle<Points, Faces, Kernel, int, false /*subdivide*/>;
+  using Oracle = AW3::internal::Triangle_soup_oracle<Kernel, int, false /*subdivide*/>;
 
   std::cout << "Input: " << pr.size() << " points, " << fr.size() << " faces" << std::endl;
 
@@ -52,7 +53,7 @@ void alpha_wrap_triangle_soup(Points& pr,
   // AW3
   Oracle oracle;
   oracle.add_triangle_soup(pr, fr);
-  AW3::internal::Alpha_wrap_3<Oracle> aw3(oracle);
+  AW3::internal::Alpha_wrapper_3<Oracle> aw3(oracle);
 
   Mesh wrap;
   aw3(alpha, offset, wrap, CGAL::parameters::do_enforce_manifoldness(false));

@@ -137,20 +137,20 @@ for faces of maximal dimension instead of faces.
 Locate is implemented by a line walk from a vertex of the face given
 as optional parameter (or from a finite vertex of
 `infinite_face()` if no optional parameter is given). It takes
-time \f$ O(n)\f$ in the worst case, but only \f$ O(\sqrt{n})\f$
+time \cgalBigO{n} in the worst case, but only \cgalBigO{\sqrt{n}}
 on average if the vertices are distributed uniformly at random.
 
 Insertion of a point is done by locating a face that contains the
 point, and then splitting this face.
 If the point falls outside the convex hull, the triangulation
 is restored by flips. Apart from the location, insertion takes a time
-time \f$ O(1)\f$. This bound is only an amortized bound
+time \cgalBigO{1}. This bound is only an amortized bound
 for points located outside the convex hull.
 
 Removal of a vertex is done by removing all adjacent triangles, and
-re-triangulating the hole. Removal takes time \f$ O(d^2)\f$ in the worst
+re-triangulating the hole. Removal takes time \cgalBigO{d^2} in the worst
 case, if \f$ d\f$ is the degree of the removed vertex,
-which is \f$ O(1)\f$ for a random vertex.
+which is \cgalBigO{1} for a random vertex.
 
 The face, edge, and vertex iterators on finite features
 are derived from their counterparts visiting all (finite and infinite)
@@ -413,7 +413,7 @@ Triangulation_2 operator=(const Triangulation_2<Traits,Tds>& tr);
 
 /*!
 The triangulations `tr` and `*this` are swapped.
-This method should be used instead of assignment of copy construtor.
+This method should be used instead of assignment of copy constructor.
 if `tr` is deleted after that.
 */
 void swap(Triangulation_2& tr);
@@ -545,12 +545,12 @@ int & i);
 
 /*!
 `true` if the line segment from `va` to `vb` includes
-an edge `e` incident to `va`. If `true`, `vbr` becomes
+an edge `e` incident to `va`. If `true`, `vbb` becomes
 the other vertex of `e`, `e` is the edge `(fr,i)` where
 `fr` is a handle to the face incident to `e` and
 on the right side `e` oriented from `va` to `vb`.
 */
-bool includes_edge(Vertex_handle va, Vertex_handle vb, Vertex_handle & vbr,
+bool includes_edge(Vertex_handle va, Vertex_handle vb, Vertex_handle & vbb,
 Face_handle& fr, int & i);
 
 /*!
@@ -785,6 +785,7 @@ is returned.
 */
 Vertex_handle move(Vertex_handle v, const Point & p);
 
+/// @}
 
 /// \name Specialized Modifiers
 /// The following member functions offer more specialized versions of
@@ -1190,6 +1191,18 @@ Returns the line segment corresponding to edge `*ei`.
 */
 Segment
 segment(const Edge_iterator& ei) const;
+
+/*!
+Returns the point given by vertex `i` of face `f`.
+\pre `t.dimension()` \f$ \geq0\f$ and \f$ i \in\{0,1,2\}\f$ in dimension 2, \f$ i \in\{0,1\}\f$ in dimension 1, \f$ i = 0\f$ in dimension 0, and the vertex is finite.
+*/
+const Point& point(Face_handle f, int i) const;
+
+/*!
+Same as the previous method for vertex `v`.
+\pre `t.dimension()` \f$ \geq0\f$ and the vertex is finite.
+*/
+const Point& point(Vertex_handle v) const;
 
 /*!
 Compute the circumcenter of the face pointed to by f. This function

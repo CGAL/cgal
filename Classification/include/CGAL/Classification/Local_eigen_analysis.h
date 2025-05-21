@@ -265,7 +265,7 @@ public:
     out.m_content->mean_range = 0.;
 
 #ifndef CGAL_LINKED_WITH_TBB
-    CGAL_static_assertion_msg (!(std::is_convertible<ConcurrencyTag, Parallel_tag>::value),
+    static_assert (!(std::is_convertible<ConcurrencyTag, Parallel_tag>::value),
                                "Parallel_tag is enabled but TBB is unavailable.");
 #else
     if (std::is_convertible<ConcurrencyTag,Parallel_tag>::value)
@@ -353,7 +353,7 @@ public:
     out.m_content->mean_range = 0.;
 
 #ifndef CGAL_LINKED_WITH_TBB
-    CGAL_static_assertion_msg (!(std::is_convertible<ConcurrencyTag, Parallel_tag>::value),
+    static_assert (!(std::is_convertible<ConcurrencyTag, Parallel_tag>::value),
                                "Parallel_tag is enabled but TBB is unavailable.");
 #else
     if (std::is_convertible<ConcurrencyTag,Parallel_tag>::value)
@@ -431,7 +431,7 @@ public:
 
 
 #ifndef CGAL_LINKED_WITH_TBB
-    CGAL_static_assertion_msg (!(std::is_convertible<ConcurrencyTag, Parallel_tag>::value),
+    static_assert (!(std::is_convertible<ConcurrencyTag, Parallel_tag>::value),
                                "Parallel_tag is enabled but TBB is unavailable.");
 #else
     if (std::is_convertible<ConcurrencyTag,Parallel_tag>::value)

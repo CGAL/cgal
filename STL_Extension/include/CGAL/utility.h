@@ -295,22 +295,8 @@ struct Default_using_type
   };
 };
 
-template <class T_ = Default_using_type>
-struct less_cpp14
-{
-  template <class T1, class T2>
-  bool operator() (T1&& t1, T2&& t2) const
-  {
-    typedef typename Default_using_type::Get<
-      T_,
-      typename std::common_type<typename std::decay<T1>::type,
-                                typename std::decay<T2>::type> >::type T;
-    return std::less<T>()(t1,t2);
-  }
-};
-
 template <class T = Default_using_type,
-          class Compare = less_cpp14<T>,
+          class Compare = std::less<>,
           class T1, class T2,
           class A = typename Default_using_type::Get<T,
             typename std::common_type<
@@ -321,6 +307,40 @@ inline P make_sorted_pair(T1&& t1, T2&& t2, Compare comp = Compare())
 {
   return comp(t1, t2) ? P(std::forward<T1>(t1), std::forward<T2>(t2))
                       : P(std::forward<T2>(t2), std::forward<T1>(t1));
+}
+
+template <class Pair>
+auto make_sorted_pair(Pair&& pair) {
+  auto&& [a, b] = std::forward<Pair>(pair);
+  return make_sorted_pair(std::forward<decltype(a)>(a), std::forward<decltype(b)>(b));
+}
+
+template <class F>
+class [[nodiscard]] Scope_exit {
+  CGAL_NO_UNIQUE_ADDRESS F exit_function;
+
+public:
+  template <typename G>
+  explicit Scope_exit(G&& g, std::enable_if_t<!std::is_same_v<std::decay_t<G>, Scope_exit>>* = nullptr)
+      : exit_function(std::forward<G>(g))
+  {
+  }
+
+  Scope_exit(const Scope_exit&) = delete;
+  Scope_exit& operator=(const Scope_exit&) = delete;
+  Scope_exit(Scope_exit&&) = delete;
+  Scope_exit& operator=(Scope_exit&&) = delete;
+
+  ~Scope_exit() {
+    exit_function();
+  }
+};
+
+template<typename F> Scope_exit(F) -> Scope_exit<F>;
+
+template <typename F>
+Scope_exit<F> make_scope_exit(F&& f) {
+  return Scope_exit<F>(std::forward<F>(f));
 }
 
 } //namespace CGAL

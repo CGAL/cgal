@@ -1,3 +1,2 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - Polygonal Surface Reconstruction"
-EXCLUDE = ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Polygonal_surface_reconstruction/internal

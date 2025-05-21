@@ -3,7 +3,7 @@
 \ingroup PkgCircularKernel2GeometricConcepts
 \cgalConcept
 
-\cgalRefines `Kernel::ConstructCircle_2`
+\cgalRefines{Kernel::ConstructCircle_2}
 
 \sa `CircularKernel::GetEquation`
 

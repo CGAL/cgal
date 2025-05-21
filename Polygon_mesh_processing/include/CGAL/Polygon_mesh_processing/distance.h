@@ -21,12 +21,12 @@
 #include <CGAL/Polygon_mesh_processing/bbox.h>
 
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
-#include <CGAL/AABB_triangle_primitive.h>
+#include <CGAL/AABB_traits_3.h>
+#include <CGAL/AABB_triangle_primitive_3.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/utility.h>
 #include <CGAL/Named_function_parameters.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/Spatial_sort_traits_adapter_3.h>
 #include <CGAL/spatial_sort.h>
@@ -43,7 +43,7 @@
 #include <tbb/blocked_range.h>
 #endif // CGAL_LINKED_WITH_TBB
 
-#include <boost/any.hpp>
+#include <any>
 
 #include <unordered_set>
 #include <algorithm>
@@ -144,20 +144,21 @@ struct Distance_computation
 #endif
 
 template <class Concurrency_tag,
-          class Kernel,
           class PointRange,
-          class AABBTree>
-double approximate_Hausdorff_distance_impl(const PointRange& sample_points,
-                                           const AABBTree& tree,
-                                           typename Kernel::Point_3 hint)
+          class AABBTree,
+          class Kernel>
+double max_distance_to_mesh_impl(const PointRange& sample_points,
+                                 const AABBTree& tree,
+                                 typename Kernel::Point_3 hint, // intentional copy
+                                 const Kernel& k)
 {
   using FT = typename Kernel::FT;
 
 #if !defined(CGAL_LINKED_WITH_TBB)
-  CGAL_static_assertion_msg (!(boost::is_convertible<Concurrency_tag, Parallel_tag>::value),
+  static_assert (!(std::is_convertible<Concurrency_tag, Parallel_tag>::value),
                              "Parallel_tag is enabled but TBB is unavailable.");
 #else
-  if(boost::is_convertible<Concurrency_tag,Parallel_tag>::value)
+  if(std::is_convertible<Concurrency_tag,Parallel_tag>::value)
   {
     Distance_computation<Kernel, AABBTree, PointRange> f(tree, hint, sample_points);
     tbb::parallel_reduce(tbb::blocked_range<std::size_t>(0, sample_points.size()), f);
@@ -167,7 +168,7 @@ double approximate_Hausdorff_distance_impl(const PointRange& sample_points,
 #endif
   {
     FT sq_hdist = 0;
-    typename Kernel::Compute_squared_distance_3 squared_distance;
+    typename Kernel::Compute_squared_distance_3 squared_distance = k.compute_squared_distance_3_object();
 
     for(const typename Kernel::Point_3& pt : sample_points)
     {
@@ -230,7 +231,7 @@ struct Triangle_structure_sampler_base
 
     if(use_gs || use_ms)
     {
-      if(is_default_parameter<NamedParameters, internal_np::random_uniform_sampling_t>())
+      if(is_default_parameter<NamedParameters, internal_np::random_uniform_sampling_t>::value)
         use_rs = false;
     }
 
@@ -350,12 +351,14 @@ sample_triangles(const FaceRange& triangles,
 {
   typedef typename boost::property_traits<VertexPointMap>::reference Point_ref;
   typedef typename Kernel::Vector_3 Vector_3;
-  typedef boost::graph_traits<TriangleMesh> GT;
-  typedef typename GT::face_descriptor face_descriptor;
-  typedef typename GT::halfedge_descriptor halfedge_descriptor;
 
-  std::unordered_set<typename GT::edge_descriptor> sampled_edges;
-  std::unordered_set<typename GT::vertex_descriptor> endpoints;
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor edge_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
+
+  std::unordered_set<edge_descriptor> sampled_edges;
+  std::unordered_set<vertex_descriptor> endpoints;
 
   for(face_descriptor fd : triangles)
   {
@@ -436,10 +439,9 @@ struct Triangle_structure_sampler_for_triangle_mesh
                                           Creator,
                                           Self>                             Base;
 
-  typedef boost::graph_traits<Mesh>                                         GT;
-  typedef typename GT::halfedge_descriptor                                  halfedge_descriptor;
-  typedef typename GT::edge_descriptor                                      edge_descriptor;
-  typedef typename GT::face_descriptor                                      face_descriptor;
+  typedef typename boost::graph_traits<Mesh>::halfedge_descriptor           halfedge_descriptor;
+  typedef typename boost::graph_traits<Mesh>::edge_descriptor               edge_descriptor;
+  typedef typename boost::graph_traits<Mesh>::face_descriptor               face_descriptor;
 
   typedef typename GeomTraits::FT                                           FT;
 
@@ -460,10 +462,12 @@ struct Triangle_structure_sampler_for_triangle_mesh
     using parameters::get_parameter;
     using parameters::is_default_parameter;
 
+    CGAL_assertion(!is_empty(tm));
+
     pmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
                             get_const_property_map(vertex_point, tm));
 
-    if(!(is_default_parameter<NamedParameters, internal_np::random_seed_t>()))
+    if(!(is_default_parameter<NamedParameters, internal_np::random_seed_t>::value))
       rnd = CGAL::Random(choose_parameter(get_parameter(np, internal_np::random_seed),0));
 
     min_sq_edge_length = (std::numeric_limits<double>::max)();
@@ -477,8 +481,8 @@ struct Triangle_structure_sampler_for_triangle_mesh
   void sample_points()
   {
     Property_map_to_unary_function<Vpm> unary(pmap);
-    this->out = std::copy(boost::make_transform_iterator(boost::begin(vertices(tm)), unary),
-                          boost::make_transform_iterator(boost::end(vertices(tm)), unary),
+    this->out = std::copy(boost::make_transform_iterator(std::begin(vertices(tm)), unary),
+                          boost::make_transform_iterator(std::end(vertices(tm)), unary),
                           this->out);
   }
 
@@ -644,7 +648,7 @@ struct Triangle_structure_sampler_for_triangle_soup
     using parameters::is_default_parameter;
 
     min_sq_edge_length = (std::numeric_limits<double>::max)();
-    if(!(is_default_parameter<NamedParameters, internal_np::random_seed_t>()))
+    if(!(is_default_parameter<NamedParameters, internal_np::random_seed_t>::value))
       rnd = CGAL::Random(choose_parameter(get_parameter(np, internal_np::random_seed),0));
   }
 
@@ -743,7 +747,7 @@ struct Triangle_structure_sampler_for_triangle_soup
  * @tparam TriangleMesh a model of the concepts `EdgeListGraph` and `FaceListGraph`
  * @tparam PointOutputIterator a model of `OutputIterator`
  *  holding objects of the same point type as
- *  the value type of the point type associated to the mesh `tm`, i.e. the value type of the vertex
+ *  the value type of the point type associated to the mesh `tm`, i.e., the value type of the vertex
  *  point map property map, if provided, or the value type of the internal point property map otherwise
  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
@@ -899,6 +903,8 @@ sample_triangle_mesh(const TriangleMesh& tm,
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type             GeomTraits;
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type   Vpm;
 
+  CGAL_precondition(!is_empty(tm) && is_triangle_mesh(tm));
+
   internal::Triangle_structure_sampler_for_triangle_mesh<
       TriangleMesh,
       PointOutputIterator,
@@ -1033,6 +1039,8 @@ sample_triangle_soup(const PointRange& points,
 
   static_assert(std::is_same<Point_3, typename GeomTraits::Point_3>::value, "Wrong point type.");
 
+  CGAL_precondition(!triangles.empty());
+
   internal::Triangle_structure_sampler_for_triangle_soup<
       PointRange,
       TriangleRange,
@@ -1045,130 +1053,9 @@ sample_triangle_soup(const PointRange& points,
   return performer.out;
 }
 
-template <class Concurrency_tag,
-          class Kernel,
-          class PointRange,
-          class TriangleMesh,
-          class VertexPointMap>
-double approximate_Hausdorff_distance(const PointRange& original_sample_points,
-                                      const TriangleMesh& tm,
-                                      VertexPointMap vpm)
-{
-  CGAL_assertion(is_triangle_mesh(tm));
-
-  typedef typename Kernel::Point_3 Point_3;
-
-  std::vector<Point_3> sample_points(std::begin(original_sample_points), std::end(original_sample_points));
-#ifdef CGAL_HAUSDORFF_DEBUG
-  std::cout << "Nb sample points " << sample_points.size() << "\n";
-#endif
-
-  spatial_sort(sample_points.begin(), sample_points.end());
-
-  typedef AABB_face_graph_triangle_primitive<TriangleMesh> Primitive;
-  typedef AABB_tree< AABB_traits<Kernel, Primitive> > Tree;
-
-  Tree tree(faces(tm).first, faces(tm).second, tm);
-  tree.build();
-
-  Point_3 hint = get(vpm, *vertices(tm).first);
-
-  return internal::approximate_Hausdorff_distance_impl<Concurrency_tag, Kernel>(sample_points, tree, hint);
-}
-
-template <class Concurrency_tag, class Kernel, class TriangleMesh,
-          class NamedParameters,
-          class VertexPointMap>
-double approximate_Hausdorff_distance(const TriangleMesh& tm1,
-                                      const TriangleMesh& tm2,
-                                      const NamedParameters& np,
-                                      VertexPointMap vpm_2)
-{
-  std::vector<typename Kernel::Point_3> sample_points;
-  sample_triangle_mesh(tm1, std::back_inserter(sample_points), np);
-
-  return approximate_Hausdorff_distance<Concurrency_tag, Kernel>(sample_points, tm2, vpm_2);
-}
-
-// documented functions
-
 /**
  * \ingroup PMP_distance_grp
- * computes the approximate Hausdorff distance from `tm1` to `tm2` by returning
- * the distance of the farthest point from `tm2` amongst a sampling of `tm1`
- * generated with the function `sample_triangle_mesh()` with
- * `tm1` and `np1` as parameter.
  *
- * A parallel version is provided and requires the executable to be
- * linked against the <a href="https://github.com/oneapi-src/oneTBB">Intel TBB library</a>.
- * To control the number of threads used, the user may use the `tbb::task_scheduler_init` class.
- * See the <a href="https://software.intel.com/content/www/us/en/develop/documentation/onetbb-documentation/top.html">TBB documentation</a>
- * for more details.
- *
- * @tparam Concurrency_tag enables sequential versus parallel algorithm.
- *                         Possible values are `Sequential_tag`, `Parallel_tag`, and `Parallel_if_available_tag`.
- * @tparam TriangleMesh a model of the concepts `EdgeListGraph` and `FaceListGraph`
- * @tparam NamedParameters1 a sequence of \ref bgl_namedparameters "Named Parameters" for `tm1`
- * @tparam NamedParameters2 a sequence of \ref bgl_namedparameters "Named Parameters" for `tm2`
- *
- * @param tm1 the triangle mesh that will be sampled
- * @param tm2 the triangle mesh to compute the distance to
- * @param np1 an optional sequence of \ref bgl_namedparameters "Named Parameters" forwarded to `sample_triangle_mesh()`
- *
- * @param np2 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
- *
- * \cgalNamedParamsBegin
- *   \cgalParamNBegin{vertex_point_map}
- *     \cgalParamDescription{a property map associating points to the vertices of `tm2`}
- *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
- *                    as key type and `%Point_3` as value type}
- *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm2)`}
- *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
- *                     must be available in `TriangleMesh`.}
- *   \cgalParamNEnd
- * \cgalNamedParamsEnd
- *
- * The function `CGAL::parameters::default_values()` can be used to indicate to use the default values
- * for `np1` and specify custom values for `np2`.
- */
-template< class Concurrency_tag,
-          class TriangleMesh,
-          class NamedParameters1 = parameters::Default_named_parameters,
-          class NamedParameters2 = parameters::Default_named_parameters>
-double approximate_Hausdorff_distance(const TriangleMesh& tm1,
-                                      const TriangleMesh& tm2,
-                                      const NamedParameters1& np1 = parameters::default_values(),
-                                      const NamedParameters2& np2 = parameters::default_values())
-{
-  typedef typename GetGeomTraits<TriangleMesh, NamedParameters1>::type GeomTraits;
-
-  return approximate_Hausdorff_distance<Concurrency_tag, GeomTraits>(
-        tm1, tm2, np1,
-        parameters::choose_parameter(parameters::get_parameter(np2, internal_np::vertex_point),
-                                     get_const_property_map(vertex_point, tm2)));
-}
-
-/**
- * \ingroup PMP_distance_grp
- * computes the approximate symmetric Hausdorff distance between `tm1` and `tm2`.
- * It returns the maximum of `approximate_Hausdorff_distance(tm1, tm2, np1, np2)`
- * and `approximate_Hausdorff_distance(tm2, tm1, np2, np1)`.
- */
-template <class Concurrency_tag,
-          class TriangleMesh,
-          class NamedParameters1 = parameters::Default_named_parameters,
-          class NamedParameters2 = parameters::Default_named_parameters>
-double approximate_symmetric_Hausdorff_distance(const TriangleMesh& tm1,
-                                                const TriangleMesh& tm2,
-                                                const NamedParameters1& np1 = parameters::default_values(),
-                                                const NamedParameters2& np2 = parameters::default_values())
-{
-  return (std::max)(approximate_Hausdorff_distance<Concurrency_tag>(tm1,tm2,np1,np2),
-                    approximate_Hausdorff_distance<Concurrency_tag>(tm2,tm1,np2,np1));
-}
-
-/**
- * \ingroup PMP_distance_grp
  * returns the distance to `tm` of the point from `points` that is the furthest from `tm`.
  *
  * @tparam PointRange a range of `Point_3`, model of `Range`. Its iterator type is `RandomAccessIterator`.
@@ -1196,6 +1083,8 @@ double approximate_symmetric_Hausdorff_distance(const TriangleMesh& tm1,
  *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
+ *
+ * @pre `tm` is a non-empty triangle mesh and `points` is not empty.
  */
 template< class Concurrency_tag,
           class TriangleMesh,
@@ -1205,16 +1094,125 @@ double max_distance_to_triangle_mesh(const PointRange& points,
                                      const TriangleMesh& tm,
                                      const NamedParameters& np = parameters::default_values())
 {
-  typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type GeomTraits;
+  CGAL_precondition(!is_empty(tm) && is_triangle_mesh(tm));
 
-  return approximate_Hausdorff_distance<Concurrency_tag, GeomTraits>(
-           points, tm,
-           parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
-                                        get_const_property_map(vertex_point, tm)));
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+
+  typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type             GeomTraits;
+  typedef typename GeomTraits::Point_3                                            Point_3;
+
+  GeomTraits gt = choose_parameter<GeomTraits>(get_parameter(np, internal_np::geom_traits));
+
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type  VPM;
+  VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                             get_const_property_map(vertex_point, tm));
+
+#ifdef CGAL_HAUSDORFF_DEBUG
+  std::cout << "Nb sample points " << points.size() << "\n";
+#endif
+
+  std::vector<Point_3> points_cpy(std::begin(points), std::end(points));
+  spatial_sort(points_cpy.begin(), points_cpy.end());
+
+  typedef AABB_face_graph_triangle_primitive<TriangleMesh, VPM> Primitive;
+  typedef AABB_traits_3<GeomTraits, Primitive> Tree_traits;
+  typedef AABB_tree<Tree_traits> Tree;
+
+  Tree_traits tgt/*(gt)*/;
+  Tree tree(tgt);
+  tree.insert(faces(tm).first, faces(tm).second, tm, vpm);
+
+  const Point_3& hint = get(vpm, *vertices(tm).first);
+
+  return internal::max_distance_to_mesh_impl<Concurrency_tag>(points_cpy, tree, hint, gt);
+}
+
+/**
+ * \ingroup PMP_distance_grp
+ *
+ * computes the approximate Hausdorff distance from `tm1` to `tm2` by returning
+ * the distance of the farthest point from `tm2` amongst a sampling of `tm1`
+ * generated with the function `sample_triangle_mesh()` with
+ * `tm1` and `np1` as parameter.
+ *
+ * A parallel version is provided and requires the executable to be
+ * linked against the <a href="https://github.com/oneapi-src/oneTBB">Intel TBB library</a>.
+ * To control the number of threads used, the user may use the `tbb::task_scheduler_init` class.
+ * See the <a href="https://software.intel.com/content/www/us/en/develop/documentation/onetbb-documentation/top.html">TBB documentation</a>
+ * for more details.
+ *
+ * @tparam Concurrency_tag enables sequential versus parallel algorithm.
+ *                         Possible values are `Sequential_tag`, `Parallel_tag`, and `Parallel_if_available_tag`.
+ * @tparam TriangleMesh a model of the concepts `EdgeListGraph` and `FaceListGraph`
+ * @tparam NamedParameters1 a sequence of \ref bgl_namedparameters "Named Parameters" for `tm1`
+ * @tparam NamedParameters2 a sequence of \ref bgl_namedparameters "Named Parameters" for `tm2`
+ *
+ * @param tm1 the triangle mesh that will be sampled
+ * @param tm2 the triangle mesh to compute the distance to
+ * @param np1 an optional sequence of \ref bgl_namedparameters "Named Parameters" forwarded to `sample_triangle_mesh()`
+ * @param np2 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+ *
+ * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{vertex_point_map}
+ *     \cgalParamDescription{a property map associating points to the vertices of `tm2`}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+ *                    as key type and `%Point_3` as value type}
+ *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm2)`}
+ *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+ *                     must be available in `TriangleMesh`.}
+ *   \cgalParamNEnd
+ * \cgalNamedParamsEnd
+ *
+ * @pre `tm1` and `tm2` are non-empty triangle meshes.
+ */
+template< class Concurrency_tag,
+          class TriangleMesh,
+          class NamedParameters1 = parameters::Default_named_parameters,
+          class NamedParameters2 = parameters::Default_named_parameters>
+double approximate_Hausdorff_distance(const TriangleMesh& tm1,
+                                      const TriangleMesh& tm2,
+                                      const NamedParameters1& np1 = parameters::default_values(),
+                                      const NamedParameters2& np2 = parameters::default_values())
+{
+  typedef typename GetGeomTraits<TriangleMesh, NamedParameters1>::type GeomTraits;
+  typedef typename GeomTraits::Point_3 Point_3;
+
+  CGAL_precondition(!is_empty(tm1) && is_triangle_mesh(tm1));
+  CGAL_precondition(!is_empty(tm2) && is_triangle_mesh(tm2));
+
+  std::vector<Point_3> sample_points;
+  sample_triangle_mesh(tm1, std::back_inserter(sample_points), np1);
+
+  return max_distance_to_triangle_mesh<Concurrency_tag>(sample_points, tm2, np2);
+}
+
+/**
+ * \ingroup PMP_distance_grp
+ *
+ * returns the approximate symmetric Hausdorff distance between `tm1` and `tm2`,
+ * that is the maximum of `approximate_Hausdorff_distance(tm1, tm2, np1, np2)`
+ * and `approximate_Hausdorff_distance(tm2, tm1, np2, np1)`.
+ *
+ * See the function `approximate_Hausdorff_distance()` for a complete description of the parameters
+ * and requirements.
+ */
+template <class Concurrency_tag,
+          class TriangleMesh,
+          class NamedParameters1 = parameters::Default_named_parameters,
+          class NamedParameters2 = parameters::Default_named_parameters>
+double approximate_symmetric_Hausdorff_distance(const TriangleMesh& tm1,
+                                                const TriangleMesh& tm2,
+                                                const NamedParameters1& np1 = parameters::default_values(),
+                                                const NamedParameters2& np2 = parameters::default_values())
+{
+  return (std::max)(approximate_Hausdorff_distance<Concurrency_tag>(tm1,tm2,np1,np2),
+                    approximate_Hausdorff_distance<Concurrency_tag>(tm2,tm1,np2,np1));
 }
 
 /*!
  *\ingroup PMP_distance_grp
+ *
  * returns an approximation of the distance between `points` and the point lying on `tm` that is the farthest from `points`.
  *
  * @tparam PointRange a range of `Point_3`, model of `Range`
@@ -1245,6 +1243,8 @@ double max_distance_to_triangle_mesh(const PointRange& points,
  *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
+ *
+ * @pre `tm` is a non-empty triangle mesh and `points` is not empty.
  */
 template< class TriangleMesh,
           class PointRange,
@@ -1254,18 +1254,22 @@ double approximate_max_distance_to_point_set(const TriangleMesh& tm,
                                              const double precision,
                                              const NamedParameters& np = parameters::default_values())
 {
-  typedef typename GetGeomTraits<TriangleMesh,
-                                 NamedParameters>::type GeomTraits;
-  typedef boost::graph_traits<TriangleMesh> GT;
+  CGAL_precondition(!is_empty(tm) && is_triangle_mesh(tm));
+  CGAL_precondition(!points.empty());
+
+  typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type GeomTraits;
+
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
 
   typedef Orthogonal_k_neighbor_search<Search_traits_3<GeomTraits> > Knn;
   typedef typename Knn::Tree Tree;
   Tree tree(points.begin(), points.end());
   CRefiner<GeomTraits> ref;
-  for(typename GT::face_descriptor f : faces(tm))
+  for(face_descriptor f : faces(tm))
   {
     typename GeomTraits::Point_3 points[3];
-    typename GT::halfedge_descriptor hd(halfedge(f,tm));
+    halfedge_descriptor hd(halfedge(f,tm));
     for(int i=0; i<3; ++i)
     {
       points[i] = get(parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
@@ -1445,6 +1449,8 @@ bounded_error_squared_Hausdorff_distance_impl(const TriangleMesh1& tm1,
   using Point_3 = typename Kernel::Point_3;
   using Triangle_3 = typename Kernel::Triangle_3;
 
+  auto midpoint = Kernel().construct_midpoint_3_object();
+
 #ifdef CGAL_HAUSDORFF_DEBUG
   std::cout << " -- Bounded Hausdorff --" << std::endl;
   std::cout << "error bound: " << error_bound << std::endl;
@@ -1479,7 +1485,7 @@ bounded_error_squared_Hausdorff_distance_impl(const TriangleMesh1& tm1,
   TM1_hd_traits traversal_traits_tm1(tm2_tree, tm1, tm2, vpm1, vpm2,
                                      infinity_value, sq_initial_bound, sq_distance_bound);
 
-  // Find candidate triangles in TM1, which might realise the Hausdorff bound.
+  // Find candidate triangles in TM1, which might realize the Hausdorff bound.
   // We build a sorted structure while collecting the candidates.
   const Point_3 stub(0, 0, 0); // dummy point given as query since it is not needed
 
@@ -1566,7 +1572,7 @@ bounded_error_squared_Hausdorff_distance_impl(const TriangleMesh1& tm1,
     candidate_triangles.pop();
 
     // Only process the triangle if it can contribute to the Hausdorff distance,
-    // i.e. if its upper bound is higher than the currently known best lower bound
+    // i.e., if its upper bound is higher than the currently known best lower bound
     // and the difference between the bounds to be obtained is larger than the
     // user-given error.
     const auto& triangle_bounds = triangle_and_bounds.bounds;
@@ -1641,9 +1647,9 @@ bounded_error_squared_Hausdorff_distance_impl(const TriangleMesh1& tm1,
     }
 
     // Subdivide the triangle into four smaller triangles.
-    const Point_3 v01 = CGAL::midpoint(v0, v1);
-    const Point_3 v02 = CGAL::midpoint(v0, v2);
-    const Point_3 v12 = CGAL::midpoint(v1, v2);
+    const Point_3 v01 = midpoint(v0, v1);
+    const Point_3 v02 = midpoint(v0, v2);
+    const Point_3 v12 = midpoint(v1, v2);
     const std::array<Triangle_3, 4> sub_triangles = { Triangle_3(v0, v01, v02), Triangle_3(v1 , v01, v12),
                                                       Triangle_3(v2, v02, v12), Triangle_3(v01, v02, v12) };
 
@@ -1814,10 +1820,10 @@ struct Bounded_error_preprocessing
 #ifdef CGAL_HAUSDORFF_DEBUG
   using Timer = CGAL::Real_timer;
 #endif
-  std::vector<boost::any>& tm_wrappers;
+  std::vector<std::any>& tm_wrappers;
 
   // Constructor.
-  Bounded_error_preprocessing(std::vector<boost::any>& tm_wrappers)
+  Bounded_error_preprocessing(std::vector<std::any>& tm_wrappers)
     : tm_wrappers(tm_wrappers)
   { }
 
@@ -1826,8 +1832,8 @@ struct Bounded_error_preprocessing
     : tm_wrappers(s.tm_wrappers)
   { }
 
-  bool is_tm1_wrapper(const boost::any& operand) const { return operand.type() == typeid(TM1Wrapper); }
-  bool is_tm2_wrapper(const boost::any& operand) const { return operand.type() == typeid(TM2Wrapper); }
+  bool is_tm1_wrapper(const std::any& operand) const { return operand.type() == typeid(TM1Wrapper); }
+  bool is_tm2_wrapper(const std::any& operand) const { return operand.type() == typeid(TM2Wrapper); }
 
   // TODO: make AABB tree build parallel!
   void operator()(const tbb::blocked_range<std::size_t>& range)
@@ -1845,12 +1851,12 @@ struct Bounded_error_preprocessing
       auto& tm_wrapper = tm_wrappers[i];
       if(is_tm1_wrapper(tm_wrapper))
       {
-        TM1Wrapper& object = boost::any_cast<TM1Wrapper&>(tm_wrapper);
+        TM1Wrapper& object = std::any_cast<TM1Wrapper&>(tm_wrapper);
         object.build_tree();
       }
       else if(is_tm2_wrapper(tm_wrapper))
       {
-        TM2Wrapper& object = boost::any_cast<TM2Wrapper&>(tm_wrapper);
+        TM2Wrapper& object = std::any_cast<TM2Wrapper&>(tm_wrapper);
         object.build_tree();
       }
       else
@@ -1991,8 +1997,8 @@ bounded_error_squared_one_sided_Hausdorff_distance_impl(const TriangleMesh1& tm1
                                                         OutputIterator& out)
 {
 #if !defined(CGAL_LINKED_WITH_TBB) || !defined(CGAL_METIS_ENABLED)
-  CGAL_static_assertion_msg(!(boost::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value),
-                            "Parallel_tag is enabled but at least TBB or METIS is unavailable.");
+  static_assert(!std::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value,
+                                      "Parallel_tag is enabled but at least TBB or METIS is unavailable.");
 #endif
 
   using FT = typename Kernel::FT;
@@ -2003,8 +2009,8 @@ bounded_error_squared_one_sided_Hausdorff_distance_impl(const TriangleMesh1& tm1
   using TM1_primitive = AABB_face_graph_triangle_primitive<TM1, VPM1>;
   using TM2_primitive = AABB_face_graph_triangle_primitive<TM2, VPM2>;
 
-  using TM1_traits = AABB_traits<Kernel, TM1_primitive>;
-  using TM2_traits = AABB_traits<Kernel, TM2_primitive>;
+  using TM1_traits = AABB_traits_3<Kernel, TM1_primitive>;
+  using TM2_traits = AABB_traits_3<Kernel, TM2_primitive>;
 
   using TM1_tree = AABB_tree<TM1_traits>;
   using TM2_tree = AABB_tree<TM2_traits>;
@@ -2020,14 +2026,14 @@ bounded_error_squared_one_sided_Hausdorff_distance_impl(const TriangleMesh1& tm1
 #if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_METIS_ENABLED) && defined(USE_PARALLEL_BEHD)
   using TMF           = CGAL::Face_filtered_graph<TM1>;
   using TMF_primitive = AABB_face_graph_triangle_primitive<TMF, VPM1>;
-  using TMF_traits    = AABB_traits<Kernel, TMF_primitive>;
+  using TMF_traits    = AABB_traits_3<Kernel, TMF_primitive>;
   using TMF_tree      = AABB_tree<TMF_traits>;
   using TM1_wrapper   = Triangle_mesh_wrapper<TMF, VPM1, TMF_tree>;
   using TM2_wrapper   = Triangle_mesh_wrapper<TM2, VPM2, TM2_tree>;
 
   std::vector<TMF> tm1_parts;
   std::vector<TMF_tree> tm1_trees;
-  std::vector<boost::any> tm_wrappers;
+  std::vector<std::any> tm_wrappers;
 #endif // defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_METIS_ENABLED)
 
 #ifdef CGAL_HAUSDORFF_DEBUG
@@ -2049,7 +2055,7 @@ bounded_error_squared_one_sided_Hausdorff_distance_impl(const TriangleMesh1& tm1
   std::cout << "* num cores: " << nb_cores << std::endl;
  #endif
 
-  if(boost::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value &&
+  if(std::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value &&
      nb_cores > 1 &&
      faces(tm1).size() >= min_nb_faces_to_split)
   {
@@ -2203,7 +2209,7 @@ bounded_error_squared_one_sided_Hausdorff_distance_impl(const TriangleMesh1& tm1
 #endif
 
 #if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_METIS_ENABLED) && defined(USE_PARALLEL_BEHD)
-  if(boost::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value &&
+  if(std::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value &&
      nb_cores > 1 &&
      faces(tm1).size() >= min_nb_faces_to_split)
   {
@@ -2266,8 +2272,8 @@ bounded_error_squared_symmetric_Hausdorff_distance_impl(const TriangleMesh1& tm1
                                                         OutputIterator2& out2)
 {
 #if !defined(CGAL_LINKED_WITH_TBB) || !defined(CGAL_METIS_ENABLED)
-  CGAL_static_assertion_msg(!(boost::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value),
-                            "Parallel_tag is enabled but at least TBB or METIS is unavailable.");
+  static_assert(!std::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value,
+                "Parallel_tag is enabled but at least TBB or METIS is unavailable.");
 #endif
 
   // Optimized version.
@@ -2279,8 +2285,8 @@ bounded_error_squared_symmetric_Hausdorff_distance_impl(const TriangleMesh1& tm1
   using TM1_primitive = AABB_face_graph_triangle_primitive<TriangleMesh1, VPM1>;
   using TM2_primitive = AABB_face_graph_triangle_primitive<TriangleMesh2, VPM2>;
 
-  using TM1_traits = AABB_traits<Kernel, TM1_primitive>;
-  using TM2_traits = AABB_traits<Kernel, TM2_primitive>;
+  using TM1_traits = AABB_traits_3<Kernel, TM1_primitive>;
+  using TM2_traits = AABB_traits_3<Kernel, TM2_primitive>;
 
   using TM1_tree = AABB_tree<TM1_traits>;
   using TM2_tree = AABB_tree<TM2_traits>;
@@ -2368,17 +2374,19 @@ typename Kernel::FT recursive_hausdorff_subdivision(const typename Kernel::Point
   using FT = typename Kernel::FT;
   using Point_3 = typename Kernel::Point_3;
 
+  auto midpoint = Kernel().construct_midpoint_3_object();
+  auto squared_distance = Kernel().compute_squared_distance_3_object();
   // If all edge lengths of the triangle are below the error bound,
   // return the maximum of the distances of the three points to TM2 (via TM2_tree).
-  const FT max_squared_edge_length = (CGAL::max)((CGAL::max)(CGAL::squared_distance(p0, p1),
-                                                             CGAL::squared_distance(p0, p2)),
-                                                             CGAL::squared_distance(p1, p2));
+  const FT max_squared_edge_length = (CGAL::max)((CGAL::max)(squared_distance(p0, p1),
+                                                             squared_distance(p0, p2)),
+                                                             squared_distance(p1, p2));
 
   if(max_squared_edge_length < sq_error_bound)
   {
-    return (CGAL::max)((CGAL::max)(CGAL::squared_distance(p0, tm2_tree.closest_point(p0)),
-                                   CGAL::squared_distance(p1, tm2_tree.closest_point(p1))),
-                                   CGAL::squared_distance(p2, tm2_tree.closest_point(p2)));
+    return (CGAL::max)((CGAL::max)(squared_distance(p0, tm2_tree.closest_point(p0)),
+                                   squared_distance(p1, tm2_tree.closest_point(p1))),
+                                   squared_distance(p2, tm2_tree.closest_point(p2)));
   }
 
   // Else subdivide the triangle and proceed recursively.
@@ -2411,7 +2419,7 @@ bounded_error_squared_Hausdorff_distance_naive_impl(const TriangleMesh1& tm1,
   using Triangle_3 = typename Kernel::Triangle_3;
 
   using TM2_primitive = AABB_face_graph_triangle_primitive<TriangleMesh2, VPM2>;
-  using TM2_traits = AABB_traits<Kernel, TM2_primitive>;
+  using TM2_traits = AABB_traits_3<Kernel, TM2_primitive>;
   using TM2_tree = AABB_tree<TM2_traits>;
 
   using TM1_face_to_triangle_map = Triangle_from_face_descriptor_map<TriangleMesh1, VPM1>;
@@ -2450,9 +2458,9 @@ bounded_error_squared_Hausdorff_distance_naive_impl(const TriangleMesh1& tm1,
 
 /**
  * \ingroup PMP_distance_grp
- * returns an estimate on the Hausdorff distance between `tm1` and `tm2` that
- * is at most `error_bound` away from the actual Hausdorff distance between
- * the two given meshes.
+ *
+ * returns an estimate on the Hausdorff distance from `tm1` to `tm2` that
+ * is at most `error_bound` away from the actual Hausdorff distance from `tm1` to `tm2`.
  *
  * @tparam Concurrency_tag enables sequential versus parallel algorithm.
  *                         Possible values are `Sequential_tag` and `Parallel_tag`.
@@ -2491,6 +2499,8 @@ bounded_error_squared_Hausdorff_distance_naive_impl(const TriangleMesh1& tm1,
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
+ * @pre `tm1` and `tm2` are non-empty triangle meshes.
+ *
  * @return the one-sided Hausdorff distance
  */
 template <class Concurrency_tag,
@@ -2510,7 +2520,8 @@ double bounded_error_Hausdorff_distance(const TriangleMesh1& tm1,
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
-  CGAL_precondition(is_triangle_mesh(tm1) && is_triangle_mesh(tm2));
+  CGAL_precondition(!is_empty(tm1) && is_triangle_mesh(tm1));
+  CGAL_precondition(!is_empty(tm2) && is_triangle_mesh(tm2));
 
   const auto vpm1 = choose_parameter(get_parameter(np1, internal_np::vertex_point),
                                      get_const_property_map(vertex_point, tm1));
@@ -2534,14 +2545,16 @@ double bounded_error_Hausdorff_distance(const TriangleMesh1& tm1,
 
 /**
  * \ingroup PMP_distance_grp
- * returns the maximum of `bounded_error_Hausdorff_distance(tm1, tm2, error_bound, np1, np2)`
+ *
+ * returns the the symmetric Hausdorff distance, that is
+ * the maximum of `bounded_error_Hausdorff_distance(tm1, tm2, error_bound, np1, np2)`
  * and `bounded_error_Hausdorff_distance(tm2, tm1, error_bound, np2, np1)`.
  *
  * This function optimizes all internal calls to shared data structures in order to
  * speed up the computation.
  *
- * @return the symmetric Hausdorff distance
- * @see `CGAL::Polygon_mesh_processing::bounded_error_Hausdorff_distance()`
+ * See the function `CGAL::Polygon_mesh_processing::bounded_error_Hausdorff_distance()`
+ * for a complete description of the parameters and requirements.
  */
 template <class Concurrency_tag,
           class TriangleMesh1,
@@ -2560,7 +2573,8 @@ double bounded_error_symmetric_Hausdorff_distance(const TriangleMesh1& tm1,
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
-  CGAL_precondition(is_triangle_mesh(tm1) && is_triangle_mesh(tm2));
+  CGAL_precondition(!is_empty(tm1) && is_triangle_mesh(tm1));
+  CGAL_precondition(!is_empty(tm2) && is_triangle_mesh(tm2));
 
   const auto vpm1 = choose_parameter(get_parameter(np1, internal_np::vertex_point),
                                      get_const_property_map(vertex_point, tm1));
@@ -2596,6 +2610,10 @@ double bounded_error_symmetric_Hausdorff_distance(const TriangleMesh1& tm1,
  * value, this function returns early if certain criteria show that the meshes
  * do not satisfy the provided `distance_bound`.
  *
+ * See the function `CGAL::Polygon_mesh_processing::bounded_error_Hausdorff_distance()`
+ * for a complete description of the parameters and requirements. The following extra named parameter
+ * is available for `np1`:
+ *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{use_one_sided_hausdorff}
  *     \cgalParamDescription{a boolean tag indicating if the one-sided Hausdorff distance should be used.}
@@ -2604,8 +2622,6 @@ double bounded_error_symmetric_Hausdorff_distance(const TriangleMesh1& tm1,
  *     \cgalParamExtra{If this tag is set to `false`, the symmetric Hausdorff distance is used.}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
- *
- * @see `CGAL::Polygon_mesh_processing::bounded_error_Hausdorff_distance()`
  */
 template< class Concurrency_tag,
           class TriangleMesh1,
@@ -2625,7 +2641,8 @@ bool is_Hausdorff_distance_larger(const TriangleMesh1& tm1,
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
-  CGAL_precondition(is_triangle_mesh(tm1) && is_triangle_mesh(tm2));
+  CGAL_precondition(!is_empty(tm1) && is_triangle_mesh(tm1));
+  CGAL_precondition(!is_empty(tm2) && is_triangle_mesh(tm2));
 
   if(distance_bound <= 0.)
     return true;
@@ -2642,6 +2659,7 @@ bool is_Hausdorff_distance_larger(const TriangleMesh1& tm1,
 
   CGAL_precondition(error_bound >= 0.);
   CGAL_precondition(distance_bound > 0.);
+
   const FT sq_distance_bound = square(FT(distance_bound));
 
   auto stub = CGAL::Emptyset_iterator();
@@ -2685,7 +2703,8 @@ double bounded_error_Hausdorff_distance_naive(const TriangleMesh1& tm1,
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
-  CGAL_precondition(is_triangle_mesh(tm1) && is_triangle_mesh(tm2));
+  CGAL_precondition(!is_empty(tm1) && is_triangle_mesh(tm1));
+  CGAL_precondition(!is_empty(tm2) && is_triangle_mesh(tm2));
 
   const auto vpm1 = choose_parameter(get_parameter(np1, internal_np::vertex_point),
                                      get_const_property_map(vertex_point, tm1));

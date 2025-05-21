@@ -19,7 +19,7 @@
 #include <CGAL/Triangulation_on_sphere_2.h>
 #include <CGAL/Triangulation_on_sphere_face_base_2.h>
 #include <CGAL/Triangulation_on_sphere_vertex_base_2.h>
-#include <CGAL/triangulation_assertions.h>
+#include <CGAL/assertions.h>
 
 #include <CGAL/enum.h>
 #include <CGAL/Origin.h>
@@ -27,7 +27,6 @@
 #include <CGAL/spatial_sort_on_sphere.h>
 #include <CGAL/Spatial_sort_traits_adapter_3.h>
 
-#include <boost/iterator/transform_iterator.hpp>
 #include <boost/property_map/function_property_map.hpp>
 
 #include <algorithm>
@@ -147,7 +146,7 @@ public:
   {
   }
 
-  // Assignement
+  // Assignment
   Delaunay_triangulation_on_sphere_2& operator=(Delaunay_triangulation_on_sphere_2 other) // intentional copy
   {
     Base::swap(static_cast<Base&>(other));
@@ -259,9 +258,9 @@ public:
   template <typename P>
   Vertex_handle insert(const P& p,
                        Face_handle f = Face_handle(),
-                       typename std::enable_if<!std::is_same<P, Point>::value>::type* = nullptr)
+                       std::enable_if_t<!std::is_same<P, Point>::value>* = nullptr)
   {
-    CGAL_triangulation_assertion((std::is_same<P, Point_3>::value));
+    CGAL_assertion((std::is_same<P, Point_3>::value));
 
     return insert(geom_traits().construct_point_on_sphere_2_object()(p), f);
   }
@@ -291,16 +290,16 @@ public:
   // Input range has value type Point, with Point != Point_3
   template <typename InputIterator>
   size_type insert(InputIterator first, InputIterator beyond,
-                   typename std::enable_if<
+                   std::enable_if_t<
                               !std::is_same<typename std::iterator_traits<InputIterator>::value_type,
-                                            Point_3>::value>::type* = nullptr);
+                                            Point_3>::value>* = nullptr);
 
   // Input range has value type Point_3, possibly with Point == Point_3
   template <typename InputIterator>
   size_type insert(InputIterator first, InputIterator beyond,
-                   typename std::enable_if<
+                   std::enable_if_t<
                               std::is_same<typename std::iterator_traits<InputIterator>::value_type,
-                                           Point_3>::value>::type* = nullptr);
+                                           Point_3>::value>* = nullptr);
 
   bool update_ghost_faces(Vertex_handle v, bool first = false);
 
@@ -328,9 +327,8 @@ public:
   Arc_on_sphere_2 dual_on_sphere(const All_edges_iterator ei) const { return dual_on_sphere(*ei); }
 
   // Validity
-  bool is_plane() const;
-  bool is_valid(bool verbose = false, int level = 0) const;
   bool is_valid_face(Face_handle fh, bool verbose = false, int level = 0) const;
+  bool is_valid(bool verbose = false, int level = 0) const;
 };
 
 // ------------------------ PREDICATES / CONSTRUCTIONS --------------------------------//
@@ -474,7 +472,7 @@ typename Triangulation_on_sphere_2<Gt, Tds>::Vertex_handle
 Delaunay_triangulation_on_sphere_2<Gt, Tds>::
 insert_third(const Point& p)
 {
-  CGAL_triangulation_assertion(number_of_vertices() == 2);
+  CGAL_assertion(number_of_vertices() == 2);
 
   Vertex_handle v = vertices_begin();
   Vertex_handle u = v->face()->neighbor(0)->vertex(0);
@@ -493,10 +491,10 @@ insert_third(const Point& p)
 
   nv->set_point(p);
 
-  CGAL_triangulation_assertion_code(Face_handle f = all_edges_begin()->first;)
-  CGAL_triangulation_assertion(orientation_on_sphere(point(f, 0),
-                                                     point(f, 1),
-                                                     point(f->neighbor(0), 1)) != RIGHT_TURN);
+  CGAL_assertion_code(Face_handle f = all_edges_begin()->first;)
+  CGAL_assertion(orientation_on_sphere(point(f, 0),
+                                       point(f, 1),
+                                       point(f->neighbor(0), 1)) != RIGHT_TURN);
 
   return nv;
 }
@@ -516,13 +514,13 @@ insert_outside_affine_hull_regular(const Point& p)
   const Point& p1 = point(f, 1);
   const Point& p2 = point(fn, 1);
 
-  CGAL_triangulation_assertion(orientation_on_sphere(p0, p1, p2) != NEGATIVE);
+  CGAL_assertion(orientation_on_sphere(p0, p1, p2) != NEGATIVE);
   Orientation orient2 = side_of_oriented_circle(p0, p1, p2, p);
 
   if(orient2 == POSITIVE)
     conform = true;
 
-  // find smallest vertex this step garanties a unique triangulation
+  // find smallest vertex this step guarantees a unique triangulation
   Vertex_handle w = vertices_begin();
   Vertices_iterator vi;
   for(vi=vertices_begin(); vi!=vertices_end(); ++vi)
@@ -587,7 +585,7 @@ insert(const Point& p, Locate_type lt, Face_handle loc, int /*li*/)
     }
   }
 
-  CGAL_triangulation_assertion(false);
+  CGAL_assertion(false);
   return v;
 }
 
@@ -606,7 +604,7 @@ insert(const Point& p, Face_handle start)
       return Vertex_handle();
     case TOO_CLOSE:
     {
-      CGAL_triangulation_assertion(loc != Face_handle());
+      CGAL_assertion(loc != Face_handle());
       return loc->vertex(li);
     }
     case VERTEX:
@@ -626,14 +624,14 @@ template <typename InputIterator>
 typename Delaunay_triangulation_on_sphere_2<Gt, Tds>::size_type
 Delaunay_triangulation_on_sphere_2<Gt, Tds>::
 insert(InputIterator first, InputIterator beyond,
-       typename std::enable_if<
+       std::enable_if_t<
                   !std::is_same<typename std::iterator_traits<InputIterator>::value_type,
-                                Point_3>::value>::type*)
+                                Point_3>::value>*)
 {
   typedef Point_3_with_iterator<Self>                                P3_wit;
 
-  CGAL_static_assertion((std::is_same<typename std::iterator_traits<InputIterator>::value_type, Point>::value));
-  CGAL_static_assertion(!(std::is_same<Point, Point_3>::value));
+  static_assert(std::is_same<typename std::iterator_traits<InputIterator>::value_type, Point>::value);
+  static_assert(!std::is_same<Point, Point_3>::value);
 
   const size_type n = number_of_vertices();
 
@@ -661,7 +659,7 @@ insert(InputIterator first, InputIterator beyond,
   points.reserve(input_points.size());
   for(const P3_wit& p3wi : p3_points)
   {
-    CGAL_triangulation_assertion(p3wi.input_point_ptr != nullptr);
+    CGAL_assertion(p3wi.input_point_ptr != nullptr);
     points.push_back(*(p3wi.input_point_ptr));
   }
 
@@ -682,9 +680,9 @@ template <typename InputIterator>
 typename Delaunay_triangulation_on_sphere_2<Gt, Tds>::size_type
 Delaunay_triangulation_on_sphere_2<Gt, Tds>::
 insert(InputIterator first, InputIterator beyond,
-       typename std::enable_if<
+       std::enable_if_t<
                   std::is_same<typename std::iterator_traits<InputIterator>::value_type,
-                               Point_3>::value>::type*)
+                               Point_3>::value>*)
 {
   const size_type n = number_of_vertices();
 
@@ -715,7 +713,7 @@ bool
 Delaunay_triangulation_on_sphere_2<Gt, Tds>::
 update_ghost_faces(Vertex_handle v, bool first)
 {
-  CGAL_triangulation_assertion(dimension() == 2);
+  CGAL_assertion(dimension() == 2);
 
   bool ghost_found = false;
 
@@ -736,7 +734,7 @@ update_ghost_faces(Vertex_handle v, bool first)
   }
   else // not first
   {
-    CGAL_triangulation_assertion(v != Vertex_handle());
+    CGAL_assertion(v != Vertex_handle());
     Face_circulator fc = this->incident_faces(v, v->face());
     Face_circulator done(fc);
     do
@@ -763,7 +761,7 @@ void
 Delaunay_triangulation_on_sphere_2<Gt, Tds>::
 remove_1D(Vertex_handle v)
 {
-  CGAL_triangulation_precondition(v != Vertex_handle());
+  CGAL_precondition(v != Vertex_handle());
 
   tds().remove_1D(v);
 }
@@ -792,7 +790,7 @@ void
 Delaunay_triangulation_on_sphere_2<Gt, Tds>::
 remove(Vertex_handle v)
 {
-  CGAL_triangulation_precondition(v != Vertex_handle());
+  CGAL_precondition(v != Vertex_handle());
 
   if(number_of_vertices() <= 3)
     tds().remove_dim_down(v);
@@ -824,7 +822,7 @@ test_dim_down(Vertex_handle v)
     if(it4 == vertices_end())
       break;
 
-    CGAL_triangulation_assertion(it != v && it2 != v && it3 != v && it4 != v);
+    CGAL_assertion(it != v && it2 != v && it3 != v && it4 != v);
 
     if(side_of_oriented_circle(it->point(), it2->point(), it3->point(), it4->point()) != ON_ORIENTED_BOUNDARY)
       return false;
@@ -1091,39 +1089,6 @@ dual_on_sphere(const Edge& e) const
 
 //-------------------------------------------CHECK------------------------------------------------//
 
-// checks whether a given triangulation is plane (all points are coplanar)
-template <typename Gt, typename Tds>
-bool
-Delaunay_triangulation_on_sphere_2<Gt, Tds>::
-is_plane() const
-{
-  if(number_of_vertices() <= 3)
-    return true;
-
-  bool plane = true;
-
-  Vertices_iterator it1 = vertices_begin(), it2(it1), it3(it1), it4(it1);
-  std::advance(it2, 1);
-  std::advance(it3, 2);
-  std::advance(it4, 3);
-
-  while(it4 != vertices_end())
-  {
-    Orientation s = side_of_oriented_circle(point(it1), point(it2), point(it3), point(it4));
-    plane = plane && s == ON_ORIENTED_BOUNDARY;
-
-    if(!plane)
-      return false;
-
-    ++it1;
-    ++it2;
-    ++it3;
-    ++it4;
-  }
-
-  return true;
-}
-
 template <typename Gt, typename Tds>
 bool
 Delaunay_triangulation_on_sphere_2<Gt, Tds>::
@@ -1134,7 +1099,7 @@ is_valid_face(Face_handle fh, bool verbose, int /*level*/) const
   {
     Orientation test = side_of_oriented_circle(fh, point(fh->vertex(i)));
     result = result && test == ON_ORIENTED_BOUNDARY;
-    CGAL_triangulation_assertion(result);
+    CGAL_assertion(result);
   }
 
   if(!result)
@@ -1146,7 +1111,7 @@ is_valid_face(Face_handle fh, bool verbose, int /*level*/) const
     }
   }
 
-  CGAL_triangulation_assertion(result);
+  CGAL_assertion(result);
   return result;
 }
 
@@ -1155,48 +1120,20 @@ bool
 Delaunay_triangulation_on_sphere_2<Gt, Tds>::
 is_valid(bool verbose, int level) const
 {
-  bool result = true;
-
-  if(!tds().is_valid(verbose, level))
+  // in any dimension
+  if(verbose)
   {
-    if(verbose)
-      std::cerr << "invalid data structure" << std::endl;
-
-    CGAL_triangulation_assertion(false);
-    return false;
+    std::cerr << " number of vertices " << number_of_vertices() << "\t" << std::endl;
+    std::cerr << " number of faces " << number_of_faces() << "\t" << std::endl;
   }
+
+  bool result = Base::is_valid(verbose, level);
+  CGAL_assertion(result);
 
   for(All_faces_iterator fit=all_faces_begin(); fit!=all_faces_end(); ++fit)
     result = result && is_valid_face(fit, verbose, level);
 
-  for(Vertices_iterator vit=vertices_begin(); vit!=vertices_end(); ++vit)
-    result = result && Base::is_valid_vertex(vit, verbose, level);
-
-  switch(dimension())
-  {
-    case 0:
-      break;
-    case 1:
-      CGAL_triangulation_assertion(this->is_plane());
-      break;
-    case 2:
-      for(All_faces_iterator it=all_faces_begin(); it!=all_faces_end(); ++it)
-      {
-        Orientation s = orientation_on_sphere(point(it, 0), point(it, 1), point(it, 2));
-        result = result && (s != NEGATIVE || it->is_ghost());
-        CGAL_triangulation_assertion(result);
-      }
-
-      result = result && (number_of_faces() == 2 * number_of_vertices() - 4);
-      CGAL_triangulation_assertion(result);
-      break;
-  }
-
-  // in any dimension
-  if(verbose)
-    std::cerr << " number of vertices " << number_of_vertices() << "\t" << std::endl;
-
-  CGAL_triangulation_assertion(result);
+  CGAL_assertion(result);
   return result;
 }
 

@@ -6,16 +6,13 @@
 /// \ingroup PkgPolyhedronRef
 
 /*!
-  \code
-   #include <CGAL/draw_polyhedron.h>
-  \endcode
+\cgalInclude{CGAL/draw_polyhedron.h}
 */
 /// \defgroup PkgDrawPolyhedron Draw a Polyhedron 3
 /// \ingroup PkgPolyhedronRef
 
 /*!
 \addtogroup PkgPolyhedronRef
-\todo check generated documentation
 \cgalPkgDescriptionBegin{3D Polyhedral Surface,PkgPolyhedron}
 \cgalPkgPicture{Polyhedron-teaser-small.png}
 \cgalPkgSummaryBegin
@@ -28,7 +25,7 @@
 \cgalPkgDependsOn{\ref PkgHalfedgeDS}
 \cgalPkgBib{cgal:k-ps}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
-\cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
+\cgalPkgDemo{CGAL Lab,CGALlab.zip}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 

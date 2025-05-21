@@ -55,7 +55,7 @@ bool is_pullout_direction
 {
   //NOT CHECKED AT ALL
   CGAL_precondition(pgn.is_simple());
-  CGAL_precondition(!internal::is_any_edge_colinear(pgn, traits));
+  CGAL_precondition(!internal::is_any_edge_collinear(pgn, traits));
 
   auto e_it = pgn.edges_begin();
   auto cc_in_between = traits.counterclockwise_in_between_2_object();
@@ -137,7 +137,7 @@ is_pullout_direction(const CGAL::Polygon_2<CastingTraits_2>& pgn,
   typedef typename Polygon_2::Edge_const_iterator       Edge_iter;
 
   CGAL_precondition(pgn.is_simple());
-  CGAL_precondition(!internal::is_any_edge_colinear(pgn, traits));
+  CGAL_precondition(!internal::is_any_edge_collinear(pgn, traits));
 
   Edge_iter e_it = pgn.edges_begin();
   auto segment_outer_circle =
@@ -151,7 +151,7 @@ is_pullout_direction(const CGAL::Polygon_2<CastingTraits_2>& pgn,
                                     segment_outer_circle.second,
                                     segment_outer_circle.first);
     if (!isordered) {
-      // unlikely, this if must be true atleast once for any polygon - add ref
+      // unlikely, this if must be true at least once for any polygon - add ref
       // to paper
       if (top_edge== pgn.edges_end()) top_edge=e_it;
       else return pgn.edges_end();
@@ -198,7 +198,7 @@ is_pullout_direction(const CGAL::Polygon_2<CastingTraits_2>& pgn,
 }
 
 } // namespace Single_mold_translational_casting
-} // namesapce Set_movable_separability_2
-} // namesapce CGAL
+} // namespace Set_movable_separability_2
+} // namespace CGAL
 
 #endif

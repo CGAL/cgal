@@ -4,7 +4,7 @@
 \cgalConcept
 
 This concept defines the requirements for traits classes of
-`Width_3<Traits>`.
+`CGAL::Width_3<Traits>`.
 
 \cgalHeading{Operations}
 
@@ -12,7 +12,9 @@ Whatever the coordinates of the points are, it is required for the
 width-algorithm to have access to the homogeneous representation of
 points.
 
-\cgalHasModel CGAL::Width_default_traits_3
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Width_default_traits_3}
+\cgalHasModelsEnd
 
 \sa `CGAL::Width_3<Traits>`
 
@@ -22,12 +24,12 @@ class WidthTraits_3 {
 public:
 
 /// \name Types
-/// <I>Notes:</I> If you want to compute the width of a <I>polyhedron</I> then you have to make sure that the point type in the traits class and the point type in the polyhedron class are the same! The same holds for `Traits::Plane_3` and `Polyhedron::Plane_3`.
+/// \note If you want to compute the width of a <I>polyhedron</I> then you have to make sure that the point type in the traits class and the point type in the polyhedron class are the same! The same holds for `Traits::Plane_3` and `Polyhedron::Plane_3`.
 /// @{
 
 /*!
 The point type. The (in)equality tests must be
-available. Access to the point coordinates is done via the `get_.()`
+available. Access to the point coordinates is done via the `get_...()`
 functions. Constructing a point is done with the `make_point( )`
 operation.
 */
@@ -35,7 +37,7 @@ typedef unspecified_type Point_3;
 
 /*!
 The plane type. Access to the coefficients of the
-plane is made via the `get_.()` functions. Constructing a plane is
+plane is made via the `get_...()` functions. Constructing a plane is
 done with the `make_plane()` operation.
 */
 typedef unspecified_type Plane_3;

@@ -16,14 +16,14 @@
 #include <CGAL/license/Triangulation_2.h>
 
 
-#include <CGAL/triangulation_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/Constrained_triangulation_2.h>
 #include <CGAL/Triangulation_2/insert_constraints.h>
 
 #ifndef CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 #include <CGAL/Spatial_sort_traits_adapter_2.h>
 #include <CGAL/STL_Extension/internal/info_check.h>
-#include <CGAL/is_iterator.h>
+#include <CGAL/type_traits/is_iterator.h>
 
 #include <boost/container/flat_set.hpp>
 #include <boost/iterator/zip_iterator.hpp>
@@ -40,7 +40,7 @@ struct Get_iterator_value_type{
 
 template <class T>
 struct Get_iterator_value_type<T,true>{
- typedef typename std::iterator_traits<T>::value_type type;
+  using type = typename std::iterator_traits<T>::value_type;
 };
 
 } } //namespace CGAL::internal
@@ -56,8 +56,8 @@ class Cdt_2_less_edge
 {
   const Tr* tr_ptr;
 
-  typedef typename Tr::Point  Point;
-  typedef typename Tr::Edge   Edge;
+  using Point = typename Tr::Point;
+  using Edge = typename Tr::Edge;
 
 public:
   Cdt_2_less_edge(const Tr* tr_ptr) : tr_ptr(tr_ptr) { }
@@ -94,39 +94,49 @@ class Constrained_Delaunay_triangulation_2
   : public  Constrained_triangulation_2<Gt, Tds_, Itag_>
 {
 public:
-  typedef Constrained_triangulation_2<Gt,Tds_,Itag_>            Ctr;
-  typedef typename Ctr::Tds Tds;
-  typedef typename Ctr::Itag Itag;
+  using Base = Constrained_triangulation_2<Gt,Tds_,Itag_>;
+  using Ctr = Base;
 
-  typedef Constrained_Delaunay_triangulation_2<Gt,Tds_,Itag_>    CDt;
-  typedef typename Ctr::Geom_traits      Geom_traits;
-  typedef typename Ctr::Intersection_tag Intersection_tag;
+  // using-declarations, to import types from the base class
+  //   (do not mix-up with type aliases)
+  // see:  https://en.cppreference.com/w/cpp/language/type_alias
+  //       https://en.cppreference.com/w/cpp/language/using_declaration
+  using typename Ctr::Tds;
+  using typename Ctr::Itag;
 
-  typedef typename Ctr::Constraint    Constraint;
-  typedef typename Ctr::Vertex_handle Vertex_handle;
-  typedef typename Ctr::Face_handle   Face_handle;
-  typedef typename Ctr::Edge          Edge;
-  typedef typename Ctr::Finite_faces_iterator Finite_faces_iterator;
-  typedef typename Ctr::Constrained_edges_iterator Constrained_edges_iterator;
-  typedef typename Ctr::Face_circulator       Face_circulator;
-  typedef typename Ctr::size_type             size_type;
-  typedef typename Ctr::Locate_type           Locate_type;
+  using typename Ctr::Geom_traits;
+  using typename Ctr::Intersection_tag;
 
-  typedef typename Ctr::List_edges List_edges;
-  typedef typename Ctr::List_faces List_faces;
-  typedef typename Ctr::List_vertices  List_vertices;
-  typedef typename Ctr::List_constraints List_constraints;
+  using typename Ctr::Constraint;
+#if defined(BOOST_MSVC) && (BOOST_MSVC < 1920)
+  using Vertex_handle = typename Ctr::Vertex_handle; // workaround for VC++ 19.16 (from MSVC 2017)
+#else
+  using typename Ctr::Vertex_handle;
+#endif
+  using typename Ctr::Face_handle;
+  using typename Ctr::Edge;
+  using typename Ctr::Finite_faces_iterator;
+  using typename Ctr::Constrained_edges_iterator;
+  using typename Ctr::Face_circulator;
+  using typename Ctr::size_type;
+  using typename Ctr::Locate_type;
 
-  typedef internal::Cdt_2_less_edge<CDt> Less_edge;
-  typedef boost::container::flat_set<Edge, Less_edge> Edge_set;
+  using typename Ctr::List_edges;
+  using typename Ctr::List_faces;
+  using typename Ctr::List_vertices;
+  using typename Ctr::List_constraints;
+
+  // type aliases (aka type defs)
+  using CDt = Constrained_Delaunay_triangulation_2<Gt,Tds_,Itag_>;
+  using Point = typename Geom_traits::Point_2;
 
   //Tag to distinguish Delaunay from regular triangulations
-  typedef Tag_false Weighted_tag;
+  using Weighted_tag = Tag_false;
 
   // Tag to distinguish periodic triangulations from others
-  typedef Tag_false Periodic_tag;
+  using Periodic_tag = Tag_false;
 
-#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
+  // using-declarations to import member functions from the base class
   using Ctr::geom_traits;
   using Ctr::number_of_vertices;
   using Ctr::finite_faces_begin;
@@ -151,9 +161,6 @@ public:
   using Ctr::delete_vertex;
   using Ctr::push_back;
   using Ctr::mirror_index;
-#endif
-
-  typedef typename Geom_traits::Point_2  Point;
 
   Constrained_Delaunay_triangulation_2(const Geom_traits& gt=Geom_traits())
     : Ctr(gt) { }
@@ -163,7 +170,7 @@ public:
     : Ctr(gt)
     {
       insert_constraints(lc.begin(), lc.end());
-      CGAL_triangulation_postcondition( is_valid() );
+      CGAL_postcondition( is_valid() );
     }
 
   template<class InputIterator>
@@ -173,10 +180,10 @@ public:
     : Ctr(gt)
     {
       insert_constraints(it, last);
-      CGAL_triangulation_postcondition( is_valid() );
+      CGAL_postcondition( is_valid() );
     }
 
-  virtual ~Constrained_Delaunay_triangulation_2() {}
+  ~Constrained_Delaunay_triangulation_2() override {}
 
 
   // Ensure rule-of-five: define the copy- and move- constructors
@@ -269,12 +276,14 @@ public:
     const Point& p0 = *first;
     Point p = p0;
     Vertex_handle v0 = insert(p0), v(v0), w(v0);
+    Face_handle hint = v0->face();
     ++first;
     for(; first!=last; ++first){
       const Point& q = *first;
       if(p != q){
-        w = insert(q);
+        w = insert(q,hint);
         insert_constraint(v,w);
+        hint = w->face();
         v = w;
         p = q;
       }
@@ -291,17 +300,17 @@ public:
   bool is_valid(bool verbose = false, int level = 0) const;
 
 protected:
-  virtual Vertex_handle virtual_insert(const Point & a,
-                                       Face_handle start = Face_handle());
-  virtual Vertex_handle virtual_insert(const Point& a,
-                                       Locate_type lt,
-                                       Face_handle loc,
-                                       int li );
+  Vertex_handle virtual_insert(const Point & a,
+                               Face_handle start = Face_handle()) override;
+  Vertex_handle virtual_insert(const Point& a,
+                               Locate_type lt,
+                               Face_handle loc,
+                               int li ) override;
 //Vertex_handle special_insert_in_edge(const Point & a, Face_handle f, int i);
   void remove_2D(Vertex_handle v );
-  virtual void triangulate_hole(List_faces& intersected_faces,
-                                List_edges& conflict_boundary_ab,
-                                List_edges& conflict_boundary_ba);
+  void triangulate_hole(List_faces& intersected_faces,
+                        List_edges& conflict_boundary_ab,
+                        List_edges& conflict_boundary_ba) override;
 
 public:
   // MESHING
@@ -313,12 +322,12 @@ public:
 #ifndef CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
   std::ptrdiff_t
   insert( InputIterator first, InputIterator last,
-          typename boost::enable_if<
-            boost::is_convertible<
+          std::enable_if_t<
+            std::is_convertible<
                 typename internal::Get_iterator_value_type< InputIterator >::type,
                 Point
-            >
-          >::type* = nullptr
+            >::value
+          >* = nullptr
   )
 #else
 #if defined(_MSC_VER)
@@ -339,6 +348,25 @@ public:
 
       return number_of_vertices() - n;
     }
+
+  // function usable only if no constraint has been inserted
+  void restore_Delaunay(Vertex_handle v)
+  {
+    if(this->dimension() <= 1) return;
+
+    Face_handle f=v->face();
+    Face_handle next;
+    int i;
+    Face_handle start(f);
+    do {
+      i = f->index(v);
+      next = f->neighbor(ccw(i));  // turn ccw around v
+      propagating_flip(f,i);
+      f = next;
+    } while(next != start);
+    return;
+  }
+
 
 #ifndef CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 private:
@@ -367,8 +395,8 @@ private:
       indices.push_back(index++);
     }
 
-    typedef typename Pointer_property_map<Point>::type Pmap;
-    typedef Spatial_sort_traits_adapter_2<Geom_traits,Pmap> Search_traits;
+    using Pmap = typename Pointer_property_map<Point>::type;
+    using Search_traits = Spatial_sort_traits_adapter_2<Geom_traits,Pmap>;
 
     spatial_sort(indices.begin(),
                  indices.end(),
@@ -395,12 +423,12 @@ public:
   std::ptrdiff_t
   insert( InputIterator first,
           InputIterator last,
-          typename boost::enable_if<
-            boost::is_convertible<
+          std::enable_if_t<
+            std::is_convertible<
               typename internal::Get_iterator_value_type< InputIterator >::type,
               std::pair<Point,typename internal::Info_check<typename Tds::Vertex>::type>
-            >
-          >::type* =nullptr
+            >::value
+          >* =nullptr
   )
   {
     return insert_with_info< std::pair<Point,typename internal::Info_check<typename Tds::Vertex>::type> >(first,last);
@@ -410,12 +438,10 @@ public:
   std::ptrdiff_t
   insert( boost::zip_iterator< boost::tuple<InputIterator_1,InputIterator_2> > first,
           boost::zip_iterator< boost::tuple<InputIterator_1,InputIterator_2> > last,
-          typename boost::enable_if<
-            boost::mpl::and_<
-              boost::is_convertible< typename std::iterator_traits<InputIterator_1>::value_type, Point >,
-              boost::is_convertible< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<typename Tds::Vertex>::type >
-            >
-          >::type* =nullptr
+          std::enable_if_t<
+              std::is_convertible_v< typename std::iterator_traits<InputIterator_1>::value_type, Point > &&
+              std::is_convertible_v< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<typename Tds::Vertex>::type >
+          >* =nullptr
   )
   {
     return insert_with_info< boost::tuple<Point,typename internal::Info_check<typename Tds::Vertex>::type> >(first,last);
@@ -429,6 +455,9 @@ public:
                                  IndicesIterator indices_first,
                                  IndicesIterator indices_beyond)
   {
+    if(indices_first == indices_beyond){
+      return insert(points_first, points_beyond);
+    }
     std::vector<Point> points(points_first, points_beyond);
     return internal::insert_constraints(*this,points, indices_first, indices_beyond);
   }
@@ -448,7 +477,7 @@ public:
                              OutputItFaces fit,
                              OutputItBoundaryEdges eit,
                              Face_handle start = Face_handle()) const {
-    CGAL_triangulation_precondition( dimension() == 2);
+    CGAL_precondition( dimension() == 2);
     int li;
     Locate_type lt;
     Face_handle fh = locate(p,lt,li, start);
@@ -467,7 +496,7 @@ public:
       pit = propagate_conflicts(p,fh,2,pit);
       return pit;
     }
-    CGAL_triangulation_assertion(false);
+    CGAL_assertion(false);
     return std::make_pair(fit,eit);
   }
 
@@ -582,6 +611,9 @@ public:
   Face_handle ni, f,ff;
   Edge ei,eni;
 
+  using Less_edge = internal::Cdt_2_less_edge<CDt>;
+  using Edge_set = boost::container::flat_set<Edge, Less_edge>;
+
   Less_edge less_edge(this);
   Edge_set edge_set(less_edge);
 
@@ -690,7 +722,7 @@ flip (Face_handle& f, int i)
   Face_handle g = f->neighbor(i);
   int j = mirror_index(f,i);
 
-  // save wings neighbors to be able to restore contraint status
+  // save wings neighbors to be able to restore constraint status
   Face_handle f1 = f->neighbor(cw(i));
   int i1 = mirror_index(f,cw(i));
   Face_handle f2 = f->neighbor(ccw(i));
@@ -702,7 +734,7 @@ flip (Face_handle& f, int i)
 
   // The following precondition prevents the test suit
   // of triangulation to work on constrained Delaunay triangulation
-  //CGAL_triangulation_precondition(is_flipable(f,i));
+  //CGAL_precondition(is_flipable(f,i));
   this->_tds.flip(f, i);
 
   // restore constraint status
@@ -903,7 +935,7 @@ template < class Gt, class Tds, class Itag >
 typename Constrained_Delaunay_triangulation_2<Gt,Tds,Itag>::Vertex_handle
 Constrained_Delaunay_triangulation_2<Gt,Tds,Itag>::
 insert(const Point& a, Locate_type lt, Face_handle loc, int li)
-// insert a point p, whose localisation is known (lt, f, i)
+// insert a point p, whose localization is known (lt, f, i)
 // constrained edges are updated
 // Delaunay property is restored
 {
@@ -945,9 +977,9 @@ remove(Vertex_handle v)
   // remove a vertex and updates the constrained edges of the new faces
   // precondition : there is no incident constraints
 {
-  CGAL_triangulation_precondition( v != Vertex_handle() );
-  CGAL_triangulation_precondition( ! is_infinite(v));
-  CGAL_triangulation_precondition( ! are_there_incident_constraints(v));
+  CGAL_precondition( v != Vertex_handle() );
+  CGAL_precondition( ! is_infinite(v));
+  CGAL_precondition( ! are_there_incident_constraints(v));
   if  (dimension() <= 1)    Ctr::remove(v);
   else  remove_2D(v);
   return;
@@ -961,7 +993,7 @@ remove(Vertex_handle v)
 //   // insert  point p in edge(f,i)
 //   // bypass the precondition for point a to be in edge(f,i)
 //   // update constrained status
-//   // this member fonction is not robust with exact predicates
+//   // this member function is not robust with exact predicates
 //   // and approximate construction. Should be removed
 // {
 //   Vertex_handle vh=Ctr::special_insert_in_edge(a,f,i);
@@ -1016,13 +1048,13 @@ Constrained_Delaunay_triangulation_2<Gt,Tds,Itag>::
 is_valid(bool verbose, int level) const
 {
   bool result = Ctr::is_valid(verbose, level);
-  CGAL_triangulation_assertion( result );
+  CGAL_assertion( result );
 
     Finite_faces_iterator fit= finite_faces_begin();
     for (; fit != finite_faces_end(); fit++) {
       for(int i=0;i<3;i++) {
         result = result && !is_flipable(fit,i, false);
-        CGAL_triangulation_assertion( result );
+        CGAL_assertion( result );
       }
     }
     return result;

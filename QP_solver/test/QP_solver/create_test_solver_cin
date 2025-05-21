@@ -32,7 +32,7 @@ function create_derivatives()
     ./master_mps_to_derivatives "$file" "$name" test_solver_data/derivatives
 }
 
-# echo usuage:
+# echo usage:
 if [ "x$1" == "xCGAL" ]; then
  echo "Generating CGAL testsuite."
 elif [ "x$1" == "xall" ]; then
@@ -89,7 +89,7 @@ GIT_UNVERSIONED=$(cd test_solver_data; git status --porcelain | awk '{if($1=="??
 #echo "$GIT_UNVERSIONED"
 
 # generate derivates and, in parallel, add them to the list of files that
-# will finally consitute test_solver.cin:
+# will finally constitute test_solver.cin:
 LIST=""
 MISSINGFILES=""
 echo "Generating derivates..."

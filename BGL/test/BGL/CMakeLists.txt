@@ -1,142 +1,77 @@
 # Created by the script cgal_create_cmake_script_with_options
 # This is the CMake script for compiling a set of CGAL applications.
 
-cmake_minimum_required(VERSION 3.1...3.22)
+cmake_minimum_required(VERSION 3.12...3.31)
 project(BGL_Tests)
 
 # CGAL and its components
 find_package(CGAL REQUIRED)
 
-# Boost and its components
-find_package(Boost)
-
-if(NOT Boost_FOUND)
-  message(
-    STATUS "This project requires the Boost library, and will not be compiled.")
-  return()
-endif()
-
-find_package(OpenMesh QUIET)
-
-if(OpenMesh_FOUND)
-  include(UseOpenMesh)
-  add_definitions(-DCGAL_USE_OPENMESH)
-else()
-  message(STATUS "Tests that use OpenMesh will not be compiled.")
-endif()
-
-# include for local package
-
-# Creating entries for all .cpp/.C files with "main" routine
-# ##########################################################
-
-if(OpenMesh_FOUND)
-  create_single_source_cgal_program("graph_concept_OpenMesh.cpp")
-  target_link_libraries(graph_concept_OpenMesh PRIVATE ${OPENMESH_LIBRARIES})
-endif()
-
 create_single_source_cgal_program("test_split.cpp")
-
 create_single_source_cgal_program("next.cpp")
-
 create_single_source_cgal_program("test_circulator.cpp")
-
 create_single_source_cgal_program("test_Gwdwg.cpp")
-
 create_single_source_cgal_program("test_bgl_dual.cpp")
-
 create_single_source_cgal_program("graph_concept_Polyhedron_3.cpp")
-
 create_single_source_cgal_program("graph_concept_Dual.cpp")
-
 create_single_source_cgal_program("graph_concept_Triangulation_2.cpp")
-
 create_single_source_cgal_program("graph_concept_Surface_mesh.cpp")
-
 create_single_source_cgal_program("graph_concept_Seam_mesh_Surface_mesh.cpp")
-
 create_single_source_cgal_program("graph_concept_Gwdwg_Surface_mesh.cpp")
-
 create_single_source_cgal_program("graph_concept_Linear_cell_complex.cpp")
-
 create_single_source_cgal_program("graph_concept_Arrangement_2.cpp")
-
-create_single_source_cgal_program( "graph_concept_Derived.cpp" )
-
-create_single_source_cgal_program( "test_clear.cpp" )
-
+create_single_source_cgal_program("graph_concept_Derived.cpp" )
+create_single_source_cgal_program("test_clear.cpp" )
 create_single_source_cgal_program("test_helpers.cpp")
-
 create_single_source_cgal_program("test_Has_member_clear.cpp")
-
 create_single_source_cgal_program("test_Has_member_id.cpp")
-
 create_single_source_cgal_program("test_bgl_read_write.cpp")
-
 create_single_source_cgal_program("graph_concept_Face_filtered_graph.cpp")
-
 create_single_source_cgal_program("test_Manifold_face_removal.cpp")
-
 create_single_source_cgal_program("test_Regularize_face_selection_borders.cpp")
-
 create_single_source_cgal_program("test_Face_filtered_graph.cpp")
-
 create_single_source_cgal_program("test_Euler_operations.cpp")
-
-create_single_source_cgal_program( "test_test_face.cpp" )
-
-create_single_source_cgal_program( "test_Collapse_edge.cpp" )
-
-create_single_source_cgal_program( "test_Collapse_edge_with_constraints.cpp" )
-
+create_single_source_cgal_program("test_test_face.cpp" )
+create_single_source_cgal_program("test_Collapse_edge.cpp" )
+create_single_source_cgal_program("test_Collapse_edge_with_constraints.cpp" )
 create_single_source_cgal_program("test_graph_traits.cpp")
-
 create_single_source_cgal_program("test_Properties.cpp")
-
-create_single_source_cgal_program(
-  "bench_read_from_stream_vs_add_face_and_add_faces.cpp")
-
-create_single_source_cgal_program( "graph_traits_inheritance.cpp" )
-
+create_single_source_cgal_program("bench_read_from_stream_vs_add_face_and_add_faces.cpp")
+create_single_source_cgal_program("graph_traits_inheritance.cpp" )
 create_single_source_cgal_program("test_deprecated_io.cpp")
 
+find_package(OpenMesh QUIET)
 if(OpenMesh_FOUND)
-  target_link_libraries(test_clear PRIVATE ${OPENMESH_LIBRARIES})
-  target_compile_definitions(test_clear PRIVATE -DCGAL_USE_OPENMESH)
-  target_link_libraries(test_Euler_operations PRIVATE ${OPENMESH_LIBRARIES})
-  target_compile_definitions(test_Euler_operations PRIVATE -DCGAL_USE_OPENMESH)
-  target_link_libraries(test_Collapse_edge PRIVATE ${OPENMESH_LIBRARIES})
-  target_compile_definitions(test_Collapse_edge PRIVATE -DCGAL_USE_OPENMESH)
-  target_link_libraries(test_Face_filtered_graph PRIVATE ${OPENMESH_LIBRARIES})
-  target_compile_definitions(test_Face_filtered_graph PRIVATE -DCGAL_USE_OPENMESH)
-  target_link_libraries(test_graph_traits PRIVATE ${OPENMESH_LIBRARIES} )
-  target_compile_definitions(test_graph_traits PRIVATE -DCGAL_USE_OPENMESH)
-  target_link_libraries(test_Properties PRIVATE ${OPENMESH_LIBRARIES})
-  target_compile_definitions(test_Properties PRIVATE -DCGAL_USE_OPENMESH)
-  target_link_libraries(test_bgl_read_write PRIVATE ${OPENMESH_LIBRARIES})
-  target_compile_definitions(test_bgl_read_write PRIVATE -DCGAL_USE_OPENMESH)
+  include(CGAL_OpenMesh_support)
+
+  target_link_libraries(test_clear PRIVATE CGAL::OpenMesh_support)
+  target_link_libraries(test_Euler_operations PRIVATE CGAL::OpenMesh_support)
+  target_link_libraries(test_Collapse_edge PRIVATE CGAL::OpenMesh_support)
+  target_link_libraries(test_Face_filtered_graph PRIVATE CGAL::OpenMesh_support)
+  target_link_libraries(test_graph_traits PRIVATE CGAL::OpenMesh_support )
+  target_link_libraries(test_Properties PRIVATE CGAL::OpenMesh_support)
+  target_link_libraries(test_bgl_read_write PRIVATE CGAL::OpenMesh_support)
+
+  create_single_source_cgal_program("graph_concept_OpenMesh.cpp")
+  target_link_libraries(graph_concept_OpenMesh PRIVATE CGAL::OpenMesh_support)
+
+  create_single_source_cgal_program("test_OpenMesh.cpp")
+  target_link_libraries(test_OpenMesh PRIVATE CGAL::OpenMesh_support)
+
+
+else()
+  message(STATUS "NOTICE: Tests that use OpenMesh will not be compiled.")
 endif()
 
-find_package(VTK QUIET COMPONENTS vtkCommonCore vtkIOCore vtkIOLegacy vtkIOXML vtkFiltersCore vtkFiltersSources)
-if (VTK_FOUND)
-  if(VTK_USE_FILE)
-    include(${VTK_USE_FILE})
-  endif()
-
-  if ("${VTK_VERSION_MAJOR}" GREATER "5" OR VTK_VERSION VERSION_GREATER 5)
-    if(TARGET VTK::CommonCore)
-      set(VTK_LIBRARIES VTK::CommonCore VTK::IOCore VTK::IOLegacy VTK::IOXML VTK::FiltersCore VTK::FiltersSources)
-    endif()
-
-    if(VTK_LIBRARIES)
-      target_link_libraries(test_bgl_read_write PRIVATE ${VTK_LIBRARIES})
-      target_compile_definitions(test_bgl_read_write PRIVATE -DCGAL_USE_VTK)
-      target_link_libraries(test_deprecated_io PRIVATE ${VTK_LIBRARIES})
-      target_compile_definitions(test_deprecated_io PRIVATE -DCGAL_USE_VTK)
-    else()
-      message(STATUS "Tests that use VTK will not be compiled.")
-    endif()
-  endif()
+find_package(VTK 9.0 QUIET COMPONENTS CommonCore IOCore IOLegacy IOXML FiltersCore FiltersSources)
+if (VTK_FOUND AND VTK_LIBRARIES)
+  message(STATUS "VTK ${VTK_VERSION} found ${VTK_LIBRARIES}")
+  target_link_libraries(test_bgl_read_write PRIVATE ${VTK_LIBRARIES})
+  target_compile_definitions(test_bgl_read_write PRIVATE -DCGAL_USE_VTK -DNOMINMAX)
+  target_link_libraries(test_deprecated_io PRIVATE ${VTK_LIBRARIES})
+  target_compile_definitions(test_deprecated_io PRIVATE -DCGAL_USE_VTK -DNOMINMAX)
+else()
+  message(STATUS "Tests that use VTK will not be compiled.")
 endif() #VTK_FOUND
 
 find_path(3MF_INCLUDE_DIR
@@ -150,5 +85,5 @@ if(3MF_LIBRARIES AND 3MF_INCLUDE_DIR  AND EXISTS "${3MF_INCLUDE_DIR}/Model/COM/N
   target_link_libraries(test_3mf_to_sm PRIVATE ${3MF_LIBRARIES})
   target_compile_definitions(test_3mf_to_sm PRIVATE -DCGAL_LINKED_WITH_3MF)
 else()
-  message(STATUS "NOTICE : This program requires the lib3MF library, and will not be compiled.")
+  message(STATUS "NOTICE: The test 'test_3mf_to_sm' requires the lib3MF library, and will not be compiled.")
 endif()

@@ -17,7 +17,7 @@
 
 
 #include <iterator>
-#include <CGAL/triangulation_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/tags.h>
 
 namespace CGAL {
@@ -109,7 +109,7 @@ void
 Triangulation_ds_edge_iterator_2<Tds>::
 increment()
 {
-  CGAL_triangulation_precondition(_tds->dimension() >= 1);
+  CGAL_precondition(_tds->dimension() >= 1);
   if (_tds->dimension() == 1) ++pos;
   else  if (edge.second == 2) {edge.second =  0; ++pos;}
   else       edge.second += 1;
@@ -122,7 +122,7 @@ void
 Triangulation_ds_edge_iterator_2<Tds>::
 decrement()
 {
-  CGAL_triangulation_precondition(_tds->dimension() >= 1);
+  CGAL_precondition(_tds->dimension() >= 1);
   if (_tds->dimension() == 1) --pos;
   else    if (edge.second == 0) { edge.second = 2; --pos;}
   else  edge.second -= 1;
@@ -145,7 +145,7 @@ Triangulation_ds_edge_iterator_2<Tds>&
 Triangulation_ds_edge_iterator_2<Tds>::
 operator++()
 {
-  //CGAL_triangulation_precondition(pos != Iterator_base() &&
+  //CGAL_precondition(pos != Iterator_base() &&
   //                               pos != _tds->faces().end());
   do     increment();
   while( pos != _tds->faces().end() && !associated_edge());
@@ -159,7 +159,7 @@ Triangulation_ds_edge_iterator_2<Tds>&
 Triangulation_ds_edge_iterator_2<Tds>::
 operator--()
 {
-  // CGAL_triangulation_precondition(pos != Iterator_base()
+  // CGAL_precondition(pos != Iterator_base()
   //                          && *this != Edge_iterator(_tds));
   do      decrement();
   while ( !associated_edge() && *this != Edge_iterator(_tds) );

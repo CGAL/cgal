@@ -108,7 +108,7 @@ public:
   {
     std::list<Meta_X_monotone_curve_2> curves_list;
 
-    unsigned int n_inf_pgn = 0; // number of infinte polygons (arrangement
+    unsigned int n_inf_pgn = 0; // number of infinite polygons (arrangement
                                 // with a contained unbounded face
     unsigned int n_pgn = 0;     // number of polygons (arrangements)
     unsigned int i;

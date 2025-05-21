@@ -16,7 +16,7 @@ appropriate base class interface functions (besides `draw()`).
 
 \cgal has chosen a different approach, since \cgal wants to avoid large
 class hierarchies. With the \cgal
-class `Object`, you can fake a common
+class `CGAL::Object`, you can fake a common
 base class, see \cgalFigureRef{FigObject}.
 
 \cgalFigureBegin{FigObject,Object.png }
@@ -24,10 +24,10 @@ UML class diagram for faked object hierarchies (since 2.2-I-4).
 \cgalFigureEnd
 
 Functions having a polymorphic return type create an object of the actual
-result type and wrap it into an object of type `Object`.
-Refer to the documentation of `#CGAL::Object` class for more details.
+result type and wrap it into an object of type `CGAL::Object`.
+Refer to the documentation of `CGAL::Object` class for more details.
 
-An alternative is to use a class handling several output iterators at the same time such as the classes `#CGAL::Dispatch_output_iterator`.
-and `#CGAL::Dispatch_or_drop_output_iterator`.
+An alternative is to use a class handling several output iterators at the same time such as the classes `CGAL::Dispatch_output_iterator`.
+and `CGAL::Dispatch_or_drop_output_iterator`.
 
 */

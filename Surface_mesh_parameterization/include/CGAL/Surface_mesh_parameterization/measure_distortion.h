@@ -50,7 +50,7 @@ double compute_L2_stretch(const VertexRange& vertex_range,
   Face_double_map area_2D = get(Face_double_tag(), tmesh);
   Face_double_map area_3D = get(Face_double_tag(), tmesh);
 
-  // iterate fpr all inner vertices and for each vertex
+  // iterate for all inner vertices and for each vertex
   std::vector<double> area_dist;
 
   double A_3D = 0.;

@@ -16,7 +16,7 @@
 #include <CGAL/license/Polygon_mesh_processing/locate.h>
 
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 #include <CGAL/AABB_tree.h>
 #include <CGAL/boost/graph/generators.h>
 #include <CGAL/boost/graph/helpers.h>
@@ -25,13 +25,13 @@
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/Kernel/global_functions.h>
 #include <CGAL/number_utils.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Random.h>
 #include <CGAL/use.h>
+#include <CGAL/squared_distance_3.h>
 
 #include <boost/graph/graph_traits.hpp>
-#include <boost/mpl/if.hpp>
-#include <boost/variant.hpp>
+#include <variant>
 
 #include <array>
 #include <iostream>
@@ -44,7 +44,7 @@
 
 // Everywhere in this file:
 // If `tm` is the input triangulated surface mesh and given the pair (`f`, `bc`)
-// such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondance
+// such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondence
 // between the coordinates in `bc` and the vertices of the face `f` is the following:
 // - `w0` corresponds to `source(halfedge(f, tm), tm)`
 // - `w1` corresponds to `target(halfedge(f, tm), tm)`
@@ -52,6 +52,36 @@
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
+
+/// \ingroup PMP_locate_grp
+///
+/// A variant used in the function `get_descriptor_from_location()`.
+template <typename TriangleMesh>
+using descriptor_variant = std::variant<typename boost::graph_traits<TriangleMesh>::vertex_descriptor,
+                                        typename boost::graph_traits<TriangleMesh>::halfedge_descriptor,
+                                        typename boost::graph_traits<TriangleMesh>::face_descriptor>;
+
+/// \ingroup PMP_locate_grp
+///
+/// A triplet of coordinates describing the barycentric coordinates of a point
+/// with respect to the vertices of a triangular face.
+///
+/// \sa `Face_location`
+template <typename FT>
+using Barycentric_coordinates = std::array<FT, 3>;
+
+/// \ingroup PMP_locate_grp
+///
+/// If `tm` is the input triangulated surface mesh and given the pair (`f`, `bc`)
+/// such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondence
+/// between the coordinates in `bc` and the vertices of the face `f` is the following:
+///   - `w0` corresponds to `source(halfedge(f, tm), tm)`
+///   - `w1` corresponds to `target(halfedge(f, tm), tm)`
+///   - `w2` corresponds to `target(next(halfedge(f, tm), tm), tm)`
+template <typename TriangleMesh, typename FT>
+using Face_location = std::pair<typename boost::graph_traits<TriangleMesh>::face_descriptor,
+                                Barycentric_coordinates<FT> >;
+
 namespace internal {
 
 // The Ray must have the same ambient dimension as the property map's value type (aka, the point type)
@@ -85,51 +115,20 @@ struct Location_traits
 
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor            face_descriptor;
 
-  typedef std::array<FT, 3>                                                      Barycentric_coordinates;
-  typedef std::pair<face_descriptor, Barycentric_coordinates>                    Face_location;
+  typedef CGAL::Polygon_mesh_processing::Barycentric_coordinates<FT>             Barycentric_coordinates;
+  typedef CGAL::Polygon_mesh_processing::Face_location<TriangleMesh, FT>         Face_location;
 };
 
 } // end namespace internal
 
-/// \ingroup PMP_locate_grp
-///
-/// A variant used in the function `get_descriptor_from_location()`.
-template <typename TriangleMesh>
-using descriptor_variant = boost::variant<typename boost::graph_traits<TriangleMesh>::vertex_descriptor,
-                                          typename boost::graph_traits<TriangleMesh>::halfedge_descriptor,
-                                          typename boost::graph_traits<TriangleMesh>::face_descriptor>;
-
-/// \ingroup PMP_locate_grp
-///
-/// A triplet of coordinates describing the barycentric coordinates of a point
-/// with respect to the vertices of a triangular face.
-///
-/// \sa `Face_location`
-template <typename FT>
-using Barycentric_coordinates = std::array<FT, 3>;
-
-/// \ingroup PMP_locate_grp
-///
-/// If `tm` is the input triangulated surface mesh and given the pair (`f`, `bc`)
-/// such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondance
-/// between the coordinates in `bc` and the vertices of the face `f` is the following:
-///   - `w0` corresponds to `source(halfedge(f, tm), tm)`
-///   - `w1` corresponds to `target(halfedge(f, tm), tm)`
-///   - `w2` corresponds to `target(next(halfedge(f, tm), tm), tm)`
-template <typename TriangleMesh, typename FT>
-using Face_location = std::pair<typename boost::graph_traits<TriangleMesh>::face_descriptor,
-                                Barycentric_coordinates<FT> >;
-
 // forward declarations
 template <typename FT, typename TriangleMesh>
-bool is_in_face(const std::pair<typename boost::graph_traits<TriangleMesh>::face_descriptor,
-                                std::array<FT, 3> >& loc,
+bool is_in_face(const Face_location<TriangleMesh, FT>& loc,
                 const TriangleMesh& tm);
 
 template <typename FT, typename TriangleMesh>
 descriptor_variant<TriangleMesh>
-get_descriptor_from_location(const std::pair<typename boost::graph_traits<TriangleMesh>::face_descriptor,
-                                             std::array<FT, 3> >& loc,
+get_descriptor_from_location(const Face_location<TriangleMesh, FT>& loc,
                              const TriangleMesh& tm);
 
 // end of forward declarations
@@ -138,8 +137,7 @@ namespace internal {
 
 template <typename FT, typename TriangleMesh, typename OutputIterator>
 OutputIterator
-incident_faces(const std::pair<typename boost::graph_traits<TriangleMesh>::face_descriptor,
-                               std::array<FT, 3> >& location,
+incident_faces(const Face_location<TriangleMesh, FT>& loc,
                const TriangleMesh& tm,
                OutputIterator out)
 {
@@ -147,15 +145,15 @@ incident_faces(const std::pair<typename boost::graph_traits<TriangleMesh>::face_
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor  halfedge_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor      face_descriptor;
 
-  const descriptor_variant<TriangleMesh> dv = get_descriptor_from_location(location, tm);
+  const descriptor_variant<TriangleMesh> dv = get_descriptor_from_location(loc, tm);
 
-  if(const vertex_descriptor* vd_ptr = boost::get<vertex_descriptor>(&dv))
+  if(const vertex_descriptor* vd_ptr = std::get_if<vertex_descriptor>(&dv))
   {
     const vertex_descriptor vd = *vd_ptr;
     for(face_descriptor fd : faces_around_target(halfedge(vd, tm), tm))
       *out++ = fd;
   }
-  else if(const halfedge_descriptor* hd_ptr = boost::get<halfedge_descriptor>(&dv))
+  else if(const halfedge_descriptor* hd_ptr = std::get_if<halfedge_descriptor>(&dv))
   {
     const halfedge_descriptor hd = *hd_ptr;
     *out++ = face(hd, tm);
@@ -163,7 +161,7 @@ incident_faces(const std::pair<typename boost::graph_traits<TriangleMesh>::face_
   }
   else
   {
-    const face_descriptor fd = boost::get<face_descriptor>(dv);
+    const face_descriptor fd = std::get<face_descriptor>(dv);
     *out++ = fd;
   }
 
@@ -173,7 +171,7 @@ incident_faces(const std::pair<typename boost::graph_traits<TriangleMesh>::face_
 // Snapping coordinates for robustness
 template <typename FT>
 bool
-snap_coordinates_to_border(std::array<FT, 3>& coords,
+snap_coordinates_to_border(Barycentric_coordinates<FT>& coords,
                            const FT tolerance = std::numeric_limits<FT>::epsilon())
 {
 #ifdef CGAL_PMP_LOCATE_DEBUG
@@ -224,8 +222,7 @@ snap_coordinates_to_border(std::array<FT, 3>& coords,
 
 template <typename FT, typename TriangleMesh>
 bool
-snap_location_to_border(std::pair<typename boost::graph_traits<TriangleMesh>::face_descriptor,
-                                  std::array<FT, 3> >& loc,
+snap_location_to_border(Face_location<TriangleMesh, FT>& loc,
                         const TriangleMesh /*tm*/,
                         const FT tolerance = std::numeric_limits<FT>::epsilon())
 {
@@ -235,7 +232,7 @@ snap_location_to_border(std::pair<typename boost::graph_traits<TriangleMesh>::fa
 template <typename K, typename P, int = P::Ambient_dimension::value>
 struct Barycentric_coordinate_calculator // 2D version
 {
-  std::array<typename K::FT, 3>
+  Barycentric_coordinates<typename K::FT>
   operator()(const P& ip, const P& iq, const P& ir, const P& iquery, const K& k) const
   {
     typedef typename K::FT                        FT;
@@ -273,7 +270,7 @@ struct Barycentric_coordinate_calculator // 2D version
 template <typename K, typename P>
 struct Barycentric_coordinate_calculator<K, P, 3 /*3D specialization*/>
 {
-  std::array<typename K::FT, 3>
+  Barycentric_coordinates<typename K::FT>
   operator()(const P& ip, const P& iq, const P& ir, const P& iquery, const K& k) const
   {
     typedef typename K::FT                        FT;
@@ -364,7 +361,7 @@ struct Barycentric_point_constructor<K, P, 3> // 3D version
 /// \pre `query` lies on the plane defined by `p`, `q`, and `r`.
 ///
 template <typename GeomTraits, typename Point>
-std::array<typename GeomTraits::FT, 3>
+Barycentric_coordinates<typename GeomTraits::FT>
 barycentric_coordinates(const Point& p, const Point& q, const Point& r, const Point& query,
                         const GeomTraits& gt)
 {
@@ -373,7 +370,7 @@ barycentric_coordinates(const Point& p, const Point& q, const Point& r, const Po
 }
 
 template <typename Point>
-std::array<typename CGAL::Kernel_traits<Point>::type::FT, 3>
+Barycentric_coordinates<typename CGAL::Kernel_traits<Point>::type::FT>
 barycentric_coordinates(const Point& p, const Point& q, const Point& r, const Point& query)
 {
   typedef typename CGAL::Kernel_traits<Point>::type                     Kernel;
@@ -411,7 +408,7 @@ random_location_on_halfedge(typename boost::graph_traits<TriangleMesh>::halfedge
   const int h_id = halfedge_index_in_face(hd, tm);
   const FT t(rnd.uniform_real(0., 1.));
 
-  std::array<FT, 3> coordinates;
+  Barycentric_coordinates<FT> coordinates;
   coordinates[h_id] = t;
   coordinates[(h_id+1)%3] = FT(1)-t;
   coordinates[(h_id+2)%3] = FT(0);
@@ -442,8 +439,8 @@ random_location_on_face(typename boost::graph_traits<TriangleMesh>::face_descrip
                         CGAL::Random& rnd = get_default_random())
 {
   CGAL_USE(tm);
-  CGAL_precondition(CGAL::is_triangle_mesh(tm));
-  CGAL_precondition(fd != boost::graph_traits<TriangleMesh>::null_face());
+  CGAL_precondition(is_valid_face_descriptor(fd, tm));
+  CGAL_precondition(is_triangle(halfedge(fd, tm), tm));
 
   // calling 'rnd.uniform real' with double in case FT comes from an EPECK kernel (which doesn't seem to work too well)
   FT u(rnd.uniform_real(0., 1.));
@@ -510,8 +507,7 @@ descriptor_variant<TriangleMesh>
 #ifdef DOXYGEN_RUNNING // just for convenience because template alias do not allow template deduction
 get_descriptor_from_location(const Face_location<TriangleMesh, FT>& loc,
 #else
-get_descriptor_from_location(const std::pair<typename boost::graph_traits<TriangleMesh>::face_descriptor,
-                                             std::array<FT, 3> >& loc,
+get_descriptor_from_location(const Face_location<TriangleMesh, FT>& loc,
 #endif
                              const TriangleMesh& tm)
 {
@@ -523,8 +519,8 @@ get_descriptor_from_location(const std::pair<typename boost::graph_traits<Triang
   const face_descriptor fd = loc.first;
   const Barycentric_coordinates& bar = loc.second;
 
-  CGAL_precondition(CGAL::is_triangle_mesh(tm));
-  CGAL_precondition(fd != boost::graph_traits<TriangleMesh>::null_face());
+  CGAL_precondition(is_valid_face_descriptor(fd, tm));
+  CGAL_precondition(is_triangle(halfedge(fd, tm), tm));
   CGAL_precondition(is_in_face(loc, tm));
 
   // the first barycentric coordinate corresponds to source(halfedge(fd, tm), tm)
@@ -589,12 +585,10 @@ get_descriptor_from_location(const std::pair<typename boost::graph_traits<Triang
 template <typename FT, typename TriangleMesh, typename NamedParameters = parameters::Default_named_parameters>
 #ifdef DOXYGEN_RUNNING
 Point
-construct_point(const Face_location<TriangleMesh, FT>& loc,
 #else
 typename internal::Location_traits<TriangleMesh, NamedParameters>::Point
-construct_point(const std::pair<typename boost::graph_traits<TriangleMesh>::face_descriptor,
-                                std::array<FT, 3> >& loc,
 #endif
+construct_point(const Face_location<TriangleMesh, FT>& loc,
                 const TriangleMesh& tm,
                 const NamedParameters& np = parameters::default_values())
 {
@@ -631,7 +625,7 @@ construct_point(const std::pair<typename boost::graph_traits<TriangleMesh>::face
 /// \brief Given a location, returns whether the location is on the vertex `vd` or not.
 ///
 /// \details If `tm` is the input triangulated surface mesh and given the pair (`f`, `bc`)
-///          such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondance
+///          such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondence
 ///          between the coordinates in `bc` and the vertices of the face `f` is the following:
 ///          - `w0` corresponds to `source(halfedge(f, tm), tm)`
 ///          - `w1` corresponds to `target(halfedge(f, tm), tm)`
@@ -648,12 +642,7 @@ construct_point(const std::pair<typename boost::graph_traits<TriangleMesh>::face
 ///
 template <typename FT, typename TriangleMesh>
 bool
-#ifdef DOXYGEN_RUNNING
 is_on_vertex(const Face_location<TriangleMesh, FT>& loc,
-#else
-is_on_vertex(const std::pair<typename boost::graph_traits<TriangleMesh>::face_descriptor,
-                             std::array<FT, 3> >& loc,
-#endif
              const typename boost::graph_traits<TriangleMesh>::vertex_descriptor vd,
              const TriangleMesh& tm)
 {
@@ -664,7 +653,7 @@ is_on_vertex(const std::pair<typename boost::graph_traits<TriangleMesh>::face_de
 
   const descriptor_variant<TriangleMesh> dv = get_descriptor_from_location(loc, tm);
 
-  if(const vertex_descriptor* vd_ptr = boost::get<vertex_descriptor>(&dv))
+  if(const vertex_descriptor* vd_ptr = std::get_if<vertex_descriptor>(&dv))
     return (vd == *vd_ptr);
 
   return false;
@@ -675,7 +664,7 @@ is_on_vertex(const std::pair<typename boost::graph_traits<TriangleMesh>::face_de
 /// \brief Given a location, returns whether this location is on the halfedge `hd` or not.
 ///
 /// \details If `tm` is the input triangulated surface mesh and given the pair (`f`, `bc`)
-///          such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondance
+///          such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondence
 ///          between the coordinates in `bc` and the vertices of the face `f` is the following:
 ///          - `w0` corresponds to `source(halfedge(f, tm), tm)`
 ///          - `w1` corresponds to `target(halfedge(f, tm), tm)`
@@ -692,12 +681,7 @@ is_on_vertex(const std::pair<typename boost::graph_traits<TriangleMesh>::face_de
 ///
 template <typename FT, typename TriangleMesh>
 bool
-#ifdef DOXYGEN_RUNNING
 is_on_halfedge(const Face_location<TriangleMesh, FT>& loc,
-#else
-is_on_halfedge(const std::pair<typename boost::graph_traits<TriangleMesh>::face_descriptor,
-                               std::array<FT, 3> >& loc,
-#endif
                const typename boost::graph_traits<TriangleMesh>::halfedge_descriptor hd,
                const TriangleMesh& tm)
 {
@@ -709,9 +693,9 @@ is_on_halfedge(const std::pair<typename boost::graph_traits<TriangleMesh>::face_
 
   const descriptor_variant<TriangleMesh> dv = get_descriptor_from_location(loc, tm);
 
-  if(const vertex_descriptor* vd_ptr = boost::get<vertex_descriptor>(&dv))
+  if(const vertex_descriptor* vd_ptr = std::get_if<vertex_descriptor>(&dv))
     return (*vd_ptr == source(hd, tm) || *vd_ptr == target(hd, tm));
-  else if(const halfedge_descriptor* hd_ptr = boost::get<halfedge_descriptor>(&dv))
+  else if(const halfedge_descriptor* hd_ptr = std::get_if<halfedge_descriptor>(&dv))
     return (*hd_ptr == hd);
 
   return false;
@@ -724,7 +708,7 @@ is_on_halfedge(const std::pair<typename boost::graph_traits<TriangleMesh>::face_
 ///        that is, if all the barycentric coordinates are positive.
 ///
 /// \details If `tm` is the input triangulated surface mesh and given the pair (`f`, `bc`)
-///          such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondance
+///          such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondence
 ///          between the coordinates in `bc` and the vertices of the face `f` is the following:
 ///          - `w0` corresponds to `source(halfedge(f, tm), tm)`
 ///          - `w1` corresponds to `target(halfedge(f, tm), tm)`
@@ -738,11 +722,7 @@ is_on_halfedge(const std::pair<typename boost::graph_traits<TriangleMesh>::face_
 ///
 template <typename FT, typename TriangleMesh>
 bool
-#ifdef DOXYGEN_RUNNING
 is_in_face(const Barycentric_coordinates<FT>& bar,
-#else
-is_in_face(const std::array<FT, 3>& bar,
-#endif
            const TriangleMesh& tm)
 {
   CGAL_USE(tm);
@@ -764,7 +744,7 @@ is_in_face(const std::array<FT, 3>& bar,
 /// \brief Given a location, returns whether the location is in the face (boundary included) or not.
 ///
 /// \details If `tm` is the input triangulated surface mesh and given the pair (`f`, `bc`)
-///          such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondance
+///          such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondence
 ///          between the coordinates in `bc` and the vertices of the face `f` is the following:
 ///          - `w0` corresponds to `source(halfedge(f, tm), tm)`
 ///          - `w1` corresponds to `target(halfedge(f, tm), tm)`
@@ -780,12 +760,7 @@ is_in_face(const std::array<FT, 3>& bar,
 ///
 template <typename FT, typename TriangleMesh>
 bool
-#ifdef DOXYGEN_RUNNING
 is_in_face(const Face_location<TriangleMesh, FT>& loc,
-#else
-is_in_face(const std::pair<typename boost::graph_traits<TriangleMesh>::face_descriptor,
-                           std::array<FT, 3> >& loc,
-#endif
            const TriangleMesh& tm)
 {
   return is_in_face(loc.second, tm);
@@ -796,7 +771,7 @@ is_in_face(const std::pair<typename boost::graph_traits<TriangleMesh>::face_desc
 /// \brief Given a location, returns whether the location is on the boundary of the face or not.
 ///
 /// \details If `tm` is the input triangulated surface mesh and given the pair (`f`, `bc`)
-///          such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondance
+///          such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondence
 ///          between the coordinates in `bc` and the vertices of the face `f` is the following:
 ///          - `w0` corresponds to `source(halfedge(f, tm), tm)`
 ///          - `w1` corresponds to `target(halfedge(f, tm), tm)`
@@ -812,12 +787,7 @@ is_in_face(const std::pair<typename boost::graph_traits<TriangleMesh>::face_desc
 ///
 template <typename FT, typename TriangleMesh>
 bool
-#ifdef DOXYGEN_RUNNING
 is_on_face_border(const Face_location<TriangleMesh, FT>& loc,
-#else
-is_on_face_border(const std::pair<typename boost::graph_traits<TriangleMesh>::face_descriptor,
-                                  std::array<FT, 3> >& loc,
-#endif
                   const TriangleMesh& tm)
 {
   if(!is_in_face(loc, tm))
@@ -837,7 +807,7 @@ is_on_face_border(const std::pair<typename boost::graph_traits<TriangleMesh>::fa
 /// \brief Given a location, returns whether the location is on the border of the mesh or not.
 ///
 /// \details If `tm` is the input triangulated surface mesh and given the pair (`f`, `bc`)
-///          such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondance
+///          such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondence
 ///          between the coordinates in `bc` and the vertices of the face `f` is the following:
 ///          - `w0` corresponds to `source(halfedge(f, tm), tm)`
 ///          - `w1` corresponds to `target(halfedge(f, tm), tm)`
@@ -853,12 +823,7 @@ is_on_face_border(const std::pair<typename boost::graph_traits<TriangleMesh>::fa
 ///
 template <typename FT, typename TriangleMesh>
 bool
-#ifdef DOXYGEN_RUNNING
 is_on_mesh_border(const Face_location<TriangleMesh, FT>& loc,
-#else
-is_on_mesh_border(const std::pair<typename boost::graph_traits<TriangleMesh>::face_descriptor,
-                                  std::array<FT, 3> >& loc,
-#endif
                   const TriangleMesh& tm)
 {
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
@@ -906,7 +871,7 @@ is_on_mesh_border(const std::pair<typename boost::graph_traits<TriangleMesh>::fa
 ///        and the barycentric coordinates of the vertex `vd` in that face.
 ///
 /// \details If `tm` is the input triangulated surface mesh and given the pair (`f`, `bc`)
-///          such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondance
+///          such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondence
 ///          between the coordinates in `bc` and the vertices of the face `f` is the following:
 ///          - `w0` corresponds to `source(halfedge(f, tm), tm)`
 ///          - `w1` corresponds to `target(halfedge(f, tm), tm)`
@@ -942,11 +907,10 @@ locate_vertex(typename boost::graph_traits<TriangleMesh>::vertex_descriptor vd,
     }
   }
 
-  CGAL_postcondition(!CGAL::is_border(hd, tm)); // must find a 'real' face incident to 'vd'
+  CGAL_postcondition(!is_border(hd, tm)); // must find a 'real' face incident to 'vd'
+  CGAL_assertion(target(hd, tm) == vd);
 
   face_descriptor fd = face(hd, tm);
-
-  CGAL_assertion(target(hd, tm) == vd);
   CGAL_assertion(fd != boost::graph_traits<TriangleMesh>::null_face());
 
   // isolated vertex
@@ -968,7 +932,7 @@ locate_vertex(typename boost::graph_traits<TriangleMesh>::vertex_descriptor vd,
 ///        of the vertex in `fd`.
 ///
 /// \details If `tm` is the input triangulated surface mesh and given the pair (`f`, `bc`)
-///          such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondance
+///          such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondence
 ///          between the coordinates in `bc` and the vertices of the face `f` is the following:
 ///          - `w0` corresponds to `source(halfedge(f, tm), tm)`
 ///          - `w1` corresponds to `target(halfedge(f, tm), tm)`
@@ -989,7 +953,7 @@ locate_vertex(const typename boost::graph_traits<TriangleMesh>::vertex_descripto
               const typename boost::graph_traits<TriangleMesh>::face_descriptor fd,
               const TriangleMesh& tm)
 {
-  CGAL_precondition(fd != boost::graph_traits<TriangleMesh>::null_face());
+  CGAL_precondition(is_valid_vertex_descriptor(vd, tm) && is_valid_face_descriptor(fd, tm));
 
   FT coords[3] = { FT(0), FT(0), FT(0) };
   std::size_t vertex_local_index = vertex_index_in_face(vd, fd, tm);
@@ -1007,7 +971,7 @@ locate_vertex(const typename boost::graph_traits<TriangleMesh>::vertex_descripto
 ///        barycentric coordinates of that location in that face.
 ///
 /// \details If `tm` is the input triangulated surface mesh and given the pair (`f`, `bc`)
-///          such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondance
+///          such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondence
 ///          between the coordinates in `bc` and the vertices of the face `f` is the following:
 ///          - `w0` corresponds to `source(halfedge(f, tm), tm)`
 ///          - `w1` corresponds to `target(halfedge(f, tm), tm)`
@@ -1047,7 +1011,7 @@ locate_on_halfedge(const typename boost::graph_traits<TriangleMesh>::halfedge_de
 ///        `query` with respect to the vertices of `fd`.
 ///
 /// \details If `tm` is the input triangulated surface mesh and given the pair (`f`, `bc`)
-///          such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondance
+///          such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondence
 ///          between the coordinates in `bc` and the vertices of the face `f` is the following:
 ///          - `w0` corresponds to `source(halfedge(f, tm), tm)`
 ///          - `w1` corresponds to `target(halfedge(f, tm), tm)`
@@ -1121,13 +1085,13 @@ locate_in_face(const typename internal::Location_traits<TriangleMesh, NamedParam
   using parameters::get_parameter;
   using parameters::choose_parameter;
 
+  CGAL_precondition(is_valid_face_descriptor(fd, tm));
+
   VertexPointMap vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
                                                     get_const_property_map(boost::vertex_point, tm));
   Geom_traits gt = choose_parameter<Geom_traits>(get_parameter(np, internal_np::geom_traits));
 
   FT snap_tolerance = choose_parameter(get_parameter(np, internal_np::snapping_tolerance), 0);
-
-  CGAL_precondition(fd != boost::graph_traits<TriangleMesh>::null_face());
 
   vertex_descriptor vd0 = source(halfedge(fd, tm), tm);
   vertex_descriptor vd1 = target(halfedge(fd, tm), tm);
@@ -1137,7 +1101,7 @@ locate_in_face(const typename internal::Location_traits<TriangleMesh, NamedParam
   const Point_reference p1 = get(vpm, vd1);
   const Point_reference p2 = get(vpm, vd2);
 
-  std::array<FT, 3> coords = barycentric_coordinates<Geom_traits, Point>(p0, p1, p2, query, gt);
+  Barycentric_coordinates<FT> coords = barycentric_coordinates<Geom_traits, Point>(p0, p1, p2, query, gt);
 
   if(snap_tolerance != FT(0) && !is_in_face(coords, tm))
   {
@@ -1158,7 +1122,7 @@ locate_in_face(const typename internal::Location_traits<TriangleMesh, NamedParam
 /// \brief Given a location and a second face adjacent to the first, returns the location of the point in the second face.
 ///
 /// \details If `tm` is the input triangulated surface mesh and given the pair (`f`, `bc`)
-///          such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondance
+///          such that `bc` is the triplet of barycentric coordinates `(w0, w1, w2)`, the correspondence
 ///          between the coordinates in `bc` and the vertices of the face `f` is the following:
 ///          - `w0` corresponds to `source(halfedge(f, tm), tm)`
 ///          - `w1` corresponds to `target(halfedge(f, tm), tm)`
@@ -1175,12 +1139,7 @@ locate_in_face(const typename internal::Location_traits<TriangleMesh, NamedParam
 ///
 template <typename FT, typename TriangleMesh>
 Face_location<TriangleMesh, FT>
-#ifdef DOXYGEN_RUNNING
 locate_in_adjacent_face(const Face_location<TriangleMesh, FT>& loc,
-#else
-locate_in_adjacent_face(const std::pair<typename boost::graph_traits<TriangleMesh>::face_descriptor,
-                                        std::array<FT, 3> >& loc,
-#endif
                         const typename boost::graph_traits<TriangleMesh>::face_descriptor fd,
                         const TriangleMesh& tm)
 {
@@ -1194,14 +1153,14 @@ locate_in_adjacent_face(const std::pair<typename boost::graph_traits<TriangleMes
   Face_location<TriangleMesh, FT> loc_in_fd = std::make_pair(fd, CGAL::make_array(FT(0), FT(0), FT(0)));
   const descriptor_variant<TriangleMesh> dv = get_descriptor_from_location(loc, tm);
 
-  if(const vertex_descriptor* vd_ptr = boost::get<vertex_descriptor>(&dv))
+  if(const vertex_descriptor* vd_ptr = std::get_if<vertex_descriptor>(&dv))
   {
     int index_of_vd = vertex_index_in_face(*vd_ptr, fd, tm);
     loc_in_fd.second[index_of_vd] = FT(1);
     // Note that the barycentric coordinates were initialized to 0,
     // so the second and third coordinates are already set up properly.
   }
-  else if(const halfedge_descriptor* hd_ptr = boost::get<halfedge_descriptor>(&dv))
+  else if(const halfedge_descriptor* hd_ptr = std::get_if<halfedge_descriptor>(&dv))
   {
     // Note that, here, we know that we are _not_ on a vertex
     const halfedge_descriptor hd = *hd_ptr;
@@ -1226,7 +1185,7 @@ locate_in_adjacent_face(const std::pair<typename boost::graph_traits<TriangleMes
   }
   else
   {
-    CGAL_assertion_code(const face_descriptor fd2 = boost::get<face_descriptor>(dv);)
+    CGAL_assertion_code(const face_descriptor fd2 = std::get<face_descriptor>(dv);)
     CGAL_assertion(fd2 != boost::graph_traits<TriangleMesh>::null_face());
     CGAL_assertion(fd2 != fd);
 
@@ -1248,11 +1207,9 @@ locate_in_adjacent_face(const std::pair<typename boost::graph_traits<TriangleMes
 // note: not returning the query location to emphasis that the known location can change too.
 template <typename FT, typename TriangleMesh, typename NamedParameters>
 bool
-locate_in_common_face(std::pair<typename boost::graph_traits<TriangleMesh>::face_descriptor,
-                                std::array<FT, 3> >& known_location,
+locate_in_common_face(Face_location<TriangleMesh, FT>& known_location,
                       const typename internal::Location_traits<TriangleMesh, NamedParameters>::Point& query,
-                      std::pair<typename boost::graph_traits<TriangleMesh>::face_descriptor,
-                                std::array<FT, 3> >& query_location,
+                      Face_location<TriangleMesh, FT>& query_location,
                       const TriangleMesh& tm,
                       const NamedParameters& np,
                       const FT tolerance = std::numeric_limits<FT>::epsilon())
@@ -1265,7 +1222,7 @@ locate_in_common_face(std::pair<typename boost::graph_traits<TriangleMesh>::face
 
   bool is_query_location_in_face = false;
 
-  if(const vertex_descriptor* vd_ptr = boost::get<vertex_descriptor>(&dv))
+  if(const vertex_descriptor* vd_ptr = std::get_if<vertex_descriptor>(&dv))
   {
     const vertex_descriptor vd = *vd_ptr;
     halfedge_descriptor hd = halfedge(vd, tm);
@@ -1285,13 +1242,12 @@ locate_in_common_face(std::pair<typename boost::graph_traits<TriangleMesh>::face
         break;
     }
   }
-  else if(const halfedge_descriptor* hd_ptr = boost::get<halfedge_descriptor>(&dv))
+  else if(const halfedge_descriptor* hd_ptr = std::get_if<halfedge_descriptor>(&dv))
   {
     const halfedge_descriptor hd = *hd_ptr;
-    face_descriptor fd = face(hd, tm);
-
-    if(fd != boost::graph_traits<TriangleMesh>::null_face())
+    if(!is_border(hd, tm))
     {
+      face_descriptor fd = face(hd, tm);
       query_location = locate_in_face(query, fd, tm, np);
       internal::snap_location_to_border<FT>(query_location, tm, tolerance); // @tmp keep or not ?
       is_query_location_in_face = is_in_face(query_location, tm);
@@ -1299,15 +1255,14 @@ locate_in_common_face(std::pair<typename boost::graph_traits<TriangleMesh>::face
 
     if(!is_query_location_in_face)
     {
-      fd = face(opposite(hd, tm), tm);
+      face_descriptor fd = face(opposite(hd, tm), tm);
       query_location = locate_in_face(query, fd, tm, np);
       is_query_location_in_face = is_in_face(query_location, tm);
     }
   }
   else
   {
-    const face_descriptor fd = boost::get<face_descriptor>(dv);
-
+    const face_descriptor fd = std::get<face_descriptor>(dv);
     CGAL_precondition(fd != boost::graph_traits<TriangleMesh>::null_face());
 
     query_location = locate_in_face(query, fd, tm, np);
@@ -1326,10 +1281,8 @@ locate_in_common_face(std::pair<typename boost::graph_traits<TriangleMesh>::face
 // - both locations must be known but can change
 template <typename FT, typename TriangleMesh>
 bool
-locate_in_common_face(std::pair<typename boost::graph_traits<TriangleMesh>::face_descriptor,
-                               std::array<FT, 3> >& first_location,
-                      std::pair<typename boost::graph_traits<TriangleMesh>::face_descriptor,
-                                std::array<FT, 3> >& second_location,
+locate_in_common_face(Face_location<TriangleMesh, FT>& first_location,
+                      Face_location<TriangleMesh, FT>& second_location,
                       const TriangleMesh& tm)
 {
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor      face_descriptor;
@@ -1492,13 +1445,13 @@ template <typename TriangleMesh, typename AABBTraits, typename VPM>
 void build_AABB_tree(const TriangleMesh& tm,
                      AABB_tree<AABBTraits>& outTree,
                      const VPM& wrapped_vpm,
-                     typename std::enable_if<
+                     std::enable_if_t<
                        std::is_same<
                          typename AABBTraits::Point_3, typename boost::property_traits<VPM>::value_type
-                       >::value>::type* = 0)
+                       >::value>* = 0)
 {
   typename boost::graph_traits<TriangleMesh>::face_iterator ffirst, fbeyond;
-  boost::tie(ffirst, fbeyond) = faces(tm);
+  std::tie(ffirst, fbeyond) = faces(tm);
   outTree.rebuild(ffirst, fbeyond, tm, wrapped_vpm);
   outTree.build();
 }
@@ -1507,10 +1460,10 @@ template <typename TriangleMesh, typename AABBTraits, typename VPM>
 void build_AABB_tree(const TriangleMesh& tm,
                      AABB_tree<AABBTraits>& outTree,
                      const VPM& vpm,
-                     typename std::enable_if<
+                     std::enable_if_t<
                        !std::is_same<
                          typename AABBTraits::Point_3, typename boost::property_traits<VPM>::value_type
-                       >::value>::type* = 0)
+                       >::value>* = 0)
 {
   typedef internal::Point_to_Point_3_VPM<TriangleMesh, VPM>              Wrapped_VPM;
   const Wrapped_VPM wrapped_vpm(vpm);
@@ -1570,7 +1523,7 @@ template <typename TriangleMesh, typename Point3VPM, typename NamedParameters = 
 void
 build_AABB_tree(const TriangleMesh& tm,
                 AABB_tree<
-                  AABB_traits<
+                  AABB_traits_3<
 #ifdef DOXYGEN_RUNNING
                     Geom_traits,
 #else
@@ -1644,12 +1597,12 @@ template <typename TriangleMesh, typename Point3VPM, typename NamedParameters = 
 #ifdef DOXYGEN_RUNNING
 Face_location<TriangleMesh, FT>
 locate_with_AABB_tree(const Point& p,
-                      const AABB_tree<AABB_traits<Geom_traits,
+                      const AABB_tree<AABB_traits_3<Geom_traits,
                                       AABB_face_graph_triangle_primitive<TriangleMesh, Point3VPM> > >& tree,
 #else
 typename internal::Location_traits<TriangleMesh, NamedParameters>::Face_location
 locate_with_AABB_tree(const typename internal::Location_traits<TriangleMesh, NamedParameters>::Point& p,
-                      const AABB_tree<AABB_traits<
+                      const AABB_tree<AABB_traits_3<
                                 typename GetGeomTraits<TriangleMesh, NamedParameters>::type,
                                 CGAL::AABB_face_graph_triangle_primitive<TriangleMesh, Point3VPM> > >& tree,
 #endif
@@ -1661,15 +1614,15 @@ locate_with_AABB_tree(const typename internal::Location_traits<TriangleMesh, Nam
 
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type                      Geom_traits;
   typedef typename CGAL::AABB_face_graph_triangle_primitive<TriangleMesh, Point3VPM>       Primitive;
-  typedef typename CGAL::AABB_traits<Geom_traits, Primitive>                               AABB_traits;
+  typedef typename CGAL::AABB_traits_3<Geom_traits, Primitive>                             AABB_traits;
 
   typedef typename Primitive::Point                                                        Point_3;
-  CGAL_static_assertion((std::is_same<Point_3, typename P_to_P3::Point_3>::value));
+  static_assert(std::is_same<Point_3, typename P_to_P3::Point_3>::value);
 
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type            VertexPointMap;
   typedef internal::Point_to_Point_3_VPM<TriangleMesh, VertexPointMap>                     WrappedVPM;
 
-  const Point_3& p3 = P_to_P3()(p);
+  const Point_3 p3 = P_to_P3()(p);
   typename AABB_tree<AABB_traits>::Point_and_primitive_id result = tree.closest_point_and_primitive(p3);
 
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type                     Geom_traits;
@@ -1749,7 +1702,7 @@ locate(const typename internal::Location_traits<TriangleMesh, NamedParameters>::
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type                    Geom_traits;
 
   typedef AABB_face_graph_triangle_primitive<TriangleMesh, WrappedVPM>                   AABB_face_graph_primitive;
-  typedef CGAL::AABB_traits<Geom_traits, AABB_face_graph_primitive>                      AABB_face_graph_traits;
+  typedef CGAL::AABB_traits_3<Geom_traits, AABB_face_graph_primitive>                    AABB_face_graph_traits;
 
   typedef internal::Point_to_Point_3<TriangleMesh, Intrinsic_point>                      P_to_P3;
   typedef typename AABB_face_graph_traits::Point_3                                       Point_3;
@@ -1757,7 +1710,7 @@ locate(const typename internal::Location_traits<TriangleMesh, NamedParameters>::
   using parameters::get_parameter;
   using parameters::choose_parameter;
 
-  CGAL_static_assertion((std::is_same<Point_3, typename P_to_P3::Point_3>::value));
+  static_assert(std::is_same<Point_3, typename P_to_P3::Point_3>::value);
 
   const VertexPointMap vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
                                                           get_const_property_map(boost::vertex_point, tm));
@@ -1766,7 +1719,7 @@ locate(const typename internal::Location_traits<TriangleMesh, NamedParameters>::
   AABB_tree<AABB_face_graph_traits> tree;
   build_AABB_tree(tm, tree, parameters::vertex_point_map(wrapped_vpm));
 
-  const Point_3& p3 = P_to_P3()(p);
+  const Point_3 p3 = P_to_P3()(p);
   return locate_with_AABB_tree(p3, tree, tm, parameters::vertex_point_map(wrapped_vpm));
 }
 
@@ -1820,12 +1773,12 @@ template <typename TriangleMesh, typename Point3VPM, typename NamedParameters = 
 #ifdef DOXYGEN_RUNNING
 Face_location<TriangleMesh, FT>
 locate_with_AABB_tree(const Ray& ray,
-                      const AABB_tree<AABB_traits<Geom_traits, AABB_face_graph_triangle_primitive<TriangleMesh, Point3VPM> > >& tree,
+                      const AABB_tree<AABB_traits_3<Geom_traits, AABB_face_graph_triangle_primitive<TriangleMesh, Point3VPM> > >& tree,
 #else
 typename internal::Location_traits<TriangleMesh, NamedParameters>::Face_location
 locate_with_AABB_tree(const typename internal::Location_traits<TriangleMesh, NamedParameters>::Ray& ray,
                       const AABB_tree<
-                        CGAL::AABB_traits<
+                        CGAL::AABB_traits_3<
                           typename GetGeomTraits<TriangleMesh, NamedParameters>::type,
                           CGAL::AABB_face_graph_triangle_primitive<TriangleMesh, Point3VPM>
                       > >& tree,
@@ -1846,10 +1799,10 @@ locate_with_AABB_tree(const typename internal::Location_traits<TriangleMesh, Nam
   typedef internal::Ray_to_Ray_3<TriangleMesh>                                               R_to_R3;
 
   typedef typename CGAL::AABB_face_graph_triangle_primitive<TriangleMesh, Point3VPM>         Primitive;
-  typedef typename CGAL::AABB_traits<Geom_traits, Primitive>                                 AABB_traits;
+  typedef typename CGAL::AABB_traits_3<Geom_traits, Primitive>                               AABB_traits;
   typedef AABB_tree<AABB_traits>                                                             AABB_face_graph_tree;
   typedef typename AABB_face_graph_tree::template Intersection_and_primitive_id<Ray_3>::Type Intersection_type;
-  typedef boost::optional<Intersection_type>                                                 Ray_intersection;
+  typedef std::optional<Intersection_type>                                                 Ray_intersection;
 
   using parameters::get_parameter;
   using parameters::choose_parameter;
@@ -1869,7 +1822,7 @@ locate_with_AABB_tree(const typename internal::Location_traits<TriangleMesh, Nam
   {
     if(intersections[i])
     {
-      Point_3* intersection_point = boost::get<Point_3>(&(intersections[i]->first));
+      Point_3* intersection_point = std::get_if<Point_3>(&(intersections[i]->first));
 
       if(intersection_point)
       {
@@ -1967,7 +1920,7 @@ locate(const typename internal::Location_traits<TriangleMesh, NamedParameters>::
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type               Geom_traits;
 
   typedef AABB_face_graph_triangle_primitive<TriangleMesh, VPM>                     AABB_face_graph_primitive;
-  typedef CGAL::AABB_traits<Geom_traits, AABB_face_graph_primitive>                 AABB_face_graph_traits;
+  typedef CGAL::AABB_traits_3<Geom_traits, AABB_face_graph_primitive>               AABB_face_graph_traits;
   using parameters::get_parameter;
   using parameters::choose_parameter;
 

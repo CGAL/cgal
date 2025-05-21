@@ -3,7 +3,7 @@
 #include <CGAL/Timer.h>
 
 #include <CGAL/Surface_mesh_simplification/edge_collapse.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_stop_predicate.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_count_stop_predicate.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk_cost.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk_placement.h>
 
@@ -19,13 +19,13 @@ namespace SMS = CGAL::Surface_mesh_simplification;
 struct Dummy_placement {
 
   template <typename Profile>
-  boost::optional<typename Profile::Point> operator()(const Profile&) const
+  std::optional<typename Profile::Point> operator()(const Profile&) const
   {
-    return boost::none;
+    return std::nullopt;
   }
 
  template <typename Profile>
- boost::optional<typename Profile::Point> operator()(const Profile&, const boost::optional<typename Profile::Point>& op) const
+ std::optional<typename Profile::Point> operator()(const Profile&, const std::optional<typename Profile::Point>& op) const
   {
     return op;
   }
@@ -52,8 +52,8 @@ int main(int argc, char** argv)
   // This is a stop predicate (defines when the algorithm terminates).
   // In this example, the simplification stops when the number of undirected edges
   // left in the surface mesh drops below the specified number
-  const std::size_t stop_n = (argc > 2) ? std::stoi(argv[2]) : num_halfedges(surface_mesh)/2 - 1;
-  SMS::Count_stop_predicate<Surface_mesh> stop(stop_n);
+  const std::size_t stop_n = (argc > 2) ? std::stoi(argv[2]) : num_edges(surface_mesh)/2 - 1;
+  SMS::Edge_count_stop_predicate<Surface_mesh> stop(stop_n);
 
   typedef SMS::LindstromTurk_placement<Surface_mesh> Placement;
 

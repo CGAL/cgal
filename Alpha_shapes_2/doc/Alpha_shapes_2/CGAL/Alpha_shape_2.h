@@ -47,7 +47,7 @@ how to convert from the camouflaged `CGAL::Point_3` to the two-dimensional point
 of `CGAL::Simple_cartesian<NT>`. In this case, a partial specialization of `Cartesian_converter`
 must be provided by the user. An example of such specialization is given in the example
 \ref Alpha_shapes_2/ex_alpha_projection_traits.cpp "ex_alpha_projection_traits.cpp".
-<li>The tag `ExactAlphaComparisonTag` cannot be used in conjonction with periodic triangulations.
+<li>The tag `ExactAlphaComparisonTag` cannot be used in conjunction with periodic triangulations.
 When the tag `ExactAlphaComparisonTag` is set to \link Tag_true `Tag_true`\endlink,
 the evaluations of predicates such as `Side_of_oriented_circle_2` are done lazily.
 Consequently, the predicates store pointers to the geometrical positions of the
@@ -80,7 +80,7 @@ use binary search.
 `Alpha_shape_2::number_of_solid_components()` performs a graph traversal and takes time
 linear in the number of faces of the underlying triangulation.
 `Alpha_shape_2::find_optimal_alpha()` uses binary search and takes time
-\f$ O(n \log n)\f$, where \f$ n\f$ is the number of points.
+\cgalBigO{n \log n}, where \f$ n\f$ is the number of points.
 
 */
 template< typename Dt, typename ExactAlphaComparisonTag >

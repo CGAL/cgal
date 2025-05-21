@@ -28,7 +28,7 @@
 #include <list>
 #include <functional>
 
-#include <boost/variant.hpp>
+#include <variant>
 
 namespace CGAL {
 
@@ -112,7 +112,7 @@ protected:
 
   public:
 
-    class clear_neighbors_visitor : public boost::static_visitor< void  >
+    class clear_neighbors_visitor
     {
     public:
       void operator()(Td_active_trapezoid& t) const
@@ -142,10 +142,10 @@ protected:
     //d'tor
     ~Node()
     {
-      boost::apply_visitor(clear_neighbors_visitor(), m_data);
+      std::visit(clear_neighbors_visitor(), m_data);
     }
 
-    bool is_inner_node() const //MICHAL: a node with only left child (like removed node) will be concidered as a leaf
+    bool is_inner_node() const //MICHAL: a node with only left child (like removed node) will be considered as a leaf
     {
       //return !!m_left_child && !!m_right_child;
       return (!m_left_child.is_null() && !m_right_child.is_null());

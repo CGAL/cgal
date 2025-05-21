@@ -18,10 +18,9 @@
 #include <CGAL/property_map.h>
 #include <CGAL/value_type_traits.h>
 #include <CGAL/Origin.h>
-#include <CGAL/point_set_processing_assertions.h>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/iterator.h>
-#include <CGAL/is_iterator.h>
+#include <CGAL/type_traits/is_iterator.h>
 
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
@@ -82,7 +81,7 @@ bool read_OFF(std::istream& is,
               PointOutputIterator output,
               const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-              , typename std::enable_if<CGAL::is_iterator<PointOutputIterator>::value>::type* = nullptr
+              , std::enable_if_t<CGAL::is_iterator<PointOutputIterator>::value>* = nullptr
 #endif
               )
 {
@@ -97,8 +96,6 @@ bool read_OFF(std::istream& is,
   typedef typename NP_helper::Normal_map NormalMap;
   typedef typename NP_helper::Geom_traits Kernel;
   typedef typename Kernel::FT FT;
-
-  bool has_normals = NP_helper::has_normal_map();
 
   PointMap point_map = NP_helper::get_point_map(np);
   NormalMap normal_map = NP_helper::get_normal_map(np);
@@ -183,8 +180,7 @@ bool read_OFF(std::istream& is,
 
         Enriched_point pwn;
         put(point_map,  pwn, point);  // point_map[&pwn] = point
-        if (has_normals)
-          put(normal_map, pwn, normal); // normal_map[&pwn] = normal
+        put(normal_map, pwn, normal); // normal_map[&pwn] = normal
 
         *output++ = pwn;
         ++pointsRead;
@@ -244,7 +240,7 @@ bool read_OFF(const std::string& fname,
               PointOutputIterator output,
               const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-              , typename std::enable_if<CGAL::is_iterator<PointOutputIterator>::value>::type* = nullptr
+              , std::enable_if_t<CGAL::is_iterator<PointOutputIterator>::value>* = nullptr
 #endif
               )
 {
@@ -258,14 +254,14 @@ bool read_OFF(const std::string& fname,
 template <typename OutputIterator,
           typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_OFF(std::istream& is, OutputIterator output, const CGAL_NP_CLASS& np = parameters::default_values(),
-              typename std::enable_if<CGAL::is_iterator<OutputIterator>::value>::type* = nullptr)
+              std::enable_if_t<CGAL::is_iterator<OutputIterator>::value>* = nullptr)
 {
   return read_OFF<typename value_type_traits<OutputIterator>::type>(is, output, np);
 }
 
 template <typename OutputIterator,typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_OFF(const std::string& fname, OutputIterator output, const CGAL_NP_CLASS& np = parameters::default_values(),
-              typename std::enable_if<CGAL::is_iterator<OutputIterator>::value>::type* = nullptr)
+              std::enable_if_t<CGAL::is_iterator<OutputIterator>::value>* = nullptr)
 {
   std::ifstream is(fname);
   return read_OFF<typename value_type_traits<OutputIterator>::type>(is, output, np);
@@ -414,12 +410,6 @@ bool read_off_points(std::istream& is, ///< input stream.
 
 /// \endcond
 
-/*!
- \ingroup PkgPointSetProcessing3IODeprecated
-
- \deprecated This function is deprecated since \cgal 5.3,
-             \link PkgPointSetProcessing3IOOff `CGAL::IO::read_OFF()` \endlink should be used instead.
-*/
 template <typename OutputIteratorValueType,
           typename OutputIterator,
           typename CGAL_NP_TEMPLATE_PARAMETERS>

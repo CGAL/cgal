@@ -1,0 +1,17 @@
+\documentclass[11pt]{report}
+\input{header}
+\pagestyle{empty}
+\begin{document}
+\begin{tikzpicture}[scale=1.0,thick]
+  \myAxes[4pt]{-2.5}{-1.5}{2.5}{2.5}
+  \foreach \x in {-2,...,2} \node[label={[label distance=-6pt]-45:{\scriptsize $\x$}}] at (\x,0) {};
+  \foreach \y in {-1,...,2} \node[label={[label distance=-6pt]135:{\scriptsize $\y$}}] at (0,\y) {};
+  \draw[step=1.0,dotted](-2,-1)grid(2,2);
+  \filldraw[fill=lightred,draw=darkred](-1,0)--(-0.5,1)--( 1,1)--cycle;
+  \arrpZ[45](-2,2.25){1}
+  \arrpZ[135](-1,0){2}
+  \arrpZ[135](-0.5,1){3}
+  \arrpZ[45]( 0.5,-1){4}
+  \arrpZ[45]( 1,1){5}
+\end{tikzpicture}%
+\end{document}

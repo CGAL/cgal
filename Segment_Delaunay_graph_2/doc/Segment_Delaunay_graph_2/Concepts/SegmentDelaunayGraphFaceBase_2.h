@@ -7,9 +7,11 @@ The concept `SegmentDelaunayGraphFaceBase_2` describes the
 requirements for the face base class of the
 `SegmentDelaunayGraphDataStructure_2` concept.
 
-\cgalRefines `TriangulationFaceBase_2`
+\cgalRefines{TriangulationFaceBase_2}
 
-\cgalHasModel `CGAL::Segment_Delaunay_graph_face_base_2<Gt>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Segment_Delaunay_graph_face_base_2<Gt>}
+\cgalHasModelsEnd
 
 \sa `SegmentDelaunayGraphDataStructure_2`
 \sa `SegmentDelaunayGraphTraits_2`

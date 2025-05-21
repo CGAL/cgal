@@ -8,7 +8,7 @@ namespace AlgebraicStructureTraits_{
 `AdaptableUnaryFunction`,
 returns true in case the argument is the one of the ring.
 
-\cgalRefines `AdaptableUnaryFunction`
+\cgalRefines{AdaptableUnaryFunction}
 
 \sa `AlgebraicStructureTraits`
 

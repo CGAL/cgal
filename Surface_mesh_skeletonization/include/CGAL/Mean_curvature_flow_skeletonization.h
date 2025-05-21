@@ -19,9 +19,13 @@
 #include <CGAL/Timer.h>
 #include <CGAL/Default.h>
 
-#include <CGAL/Polyhedron_3.h>
-#include <CGAL/Polyhedron_items_with_id_3.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
+#include <CGAL/HalfedgeDS_default.h>
+#include <CGAL/HalfedgeDS_vertex_max_base_with_id.h>
+#include <CGAL/HalfedgeDS_halfedge_max_base_with_id.h>
+#include <CGAL/HalfedgeDS_face_max_base_with_id.h>
+
+#include <CGAL/boost/graph/graph_traits_HalfedgeDS_default.h>
+#include <CGAL/boost/graph/properties_HalfedgeDS_default.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
 
 #include <boost/graph/graph_traits.hpp>
@@ -91,11 +95,19 @@ struct Skel_HDS_vertex_type : public HalfedgeDS_vertex_max_base_with_id<Refs, Po
 };
 
 template <class vertex_descriptor>
-struct Skel_polyhedron_items_3: CGAL::Polyhedron_items_with_id_3 {
+struct Skel_polyhedron_items_3 {
     template < class Refs, class Traits>
     struct Vertex_wrapper {
         typedef typename Traits::Point_3 Point;
       typedef Skel_HDS_vertex_type< Refs, Point, std::size_t, vertex_descriptor> Vertex;
+    };
+    template < class Refs, class Traits>
+    struct Halfedge_wrapper {
+        typedef HalfedgeDS_halfedge_max_base_with_id<Refs, std::size_t> Halfedge;
+    };
+    template < class Refs, class Traits>
+    struct Face_wrapper {
+        typedef HalfedgeDS_face_max_base_with_id< Refs, Tag_false, std::size_t>  Face;
     };
 };
 
@@ -192,7 +204,7 @@ public:
   typedef typename Traits::Vector_3                                             Vector;
 
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor  Input_vertex_descriptor;
-  typedef CGAL::Polyhedron_3<Traits,internal::Skel_polyhedron_items_3<Input_vertex_descriptor> > mTriangleMesh;
+  typedef CGAL::HalfedgeDS_default<Traits,internal::Skel_polyhedron_items_3<Input_vertex_descriptor> > mTriangleMesh;
   typedef typename boost::property_map<mTriangleMesh, CGAL::vertex_point_t>::type mVertexPointMap;
   typedef typename boost::property_map<mTriangleMesh, boost::vertex_index_t>::type VertexIndexMap;
   typedef typename boost::property_map<mTriangleMesh, boost::halfedge_index_t>::type HalfedgeIndexMap;
@@ -222,8 +234,12 @@ public:
   typedef typename boost::graph_traits<mTriangleMesh>::edge_descriptor         edge_descriptor;
   typedef typename boost::graph_traits<mTriangleMesh>::edge_iterator           edge_iterator;
 
+  struct Less_id {
+    bool operator()(const edge_descriptor& x, const edge_descriptor& y) const { return x.id() < y.id(); }
+  };
+
   // Get weight from the weight interface.
-  typedef CGAL::Weights::Cotangent_weight<mTriangleMesh>                       Weight_calculator;
+  typedef CGAL::Weights::Cotangent_weight<mTriangleMesh, mVertexPointMap, Traits> Weight_calculator;
 
   typedef internal::Curve_skeleton<mTriangleMesh,
                                    VertexIndexMap,
@@ -257,9 +273,9 @@ private:
   /** Traits class. */
   Traits m_traits;
 
-  /** Controling the velocity of movement and approximation quality. */
+  /** Controlling the velocity of movement and approximation quality. */
   double m_omega_H;
-  /** Controling the smoothness of the medial approximation. */
+  /** Controlling the smoothness of the medial approximation. */
   double m_omega_P;
   /** Edges with length less than `min_edge_length` will be collapsed. */
   double m_min_edge_length;
@@ -328,7 +344,7 @@ double diagonal_length(const Bbox_3& bbox)
 double init_min_edge_length()
 {
   vertex_iterator vb, ve;
-  boost::tie(vb, ve) = vertices(m_tmesh);
+  std::tie(vb, ve) = vertices(m_tmesh);
   Vertex_to_point v_to_p(m_tmesh_point_pmap);
   Bbox_3 bbox = CGAL::bbox_3(boost::make_transform_iterator(vb, v_to_p),
                              boost::make_transform_iterator(ve, v_to_p));
@@ -371,17 +387,19 @@ public:
   Mean_curvature_flow_skeletonization(const TriangleMesh& tmesh,
                                       VertexPointMap vertex_point_map,
                                       const Traits& traits = Traits())
-    : m_traits(traits), m_weight_calculator(true /* use_clamped_version */)
+    :
+      m_tmesh(),
+      m_tmesh_point_pmap(get(CGAL::vertex_point, m_tmesh)),
+      m_traits(traits),
+      m_weight_calculator(m_tmesh, m_tmesh_point_pmap, m_traits, true /* use_clamped_version */)
   {
     init(tmesh, vertex_point_map);
   }
 
   Mean_curvature_flow_skeletonization(const TriangleMesh& tmesh,
                                       const Traits& traits = Traits())
-    : m_traits(traits), m_weight_calculator(true /* use_clamped_version */)
-  {
-    init(tmesh);
-  }
+    : Mean_curvature_flow_skeletonization(tmesh, get(vertex_point, tmesh), traits)
+  { }
   #endif
   /// @} Constructor
 
@@ -499,6 +517,30 @@ public:
   void set_medially_centered_speed_tradeoff(double value)
   {
     m_omega_P = value;
+  }
+
+  /// \cgalAdvancedFunction
+  /// \cgalAdvancedBegin
+  /// sets the vertices in the range `[begin, end)` as fixed.  Fixed vertices will not be moved
+  /// during contraction and this will therefore prevent convergence
+  /// towards the skeleton if `contract_until_convergence()` is used.
+  /// It is useful only if the end goal is to retrieve the meso-skeleton
+  /// after a number of `contract_geometry()`, keeping the specified
+  /// vertices fixed in place.
+  /// \tparam InputIterator a model of `InputIterator` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as value type.
+  ///
+  /// \cgalAdvancedEnd
+  template<class InputIterator>
+  void set_fixed_vertices(InputIterator begin, InputIterator end)
+  {
+    std::unordered_set<Input_vertex_descriptor> set(begin, end);
+
+    for(vertex_descriptor vd : vertices(m_tmesh))
+    {
+      if (set.find(vd->vertices[0]) != set.end()) {
+        vd->is_fixed = true;
+      }
+    }
   }
 
   /// \cond SKIP_FROM_MANUAL
@@ -831,12 +873,13 @@ private:
   }
 
   /// Initialize some global data structures such as vertex id.
-  void init(const TriangleMesh& tmesh)
+  void init(const TriangleMesh& tmesh, VertexPointMap vpm)
   {
     typedef std::pair<Input_vertex_descriptor, vertex_descriptor> Vertex_pair;
     std::vector<Vertex_pair> v2v;
     copy_face_graph(tmesh, m_tmesh,
-                    CGAL::parameters::vertex_to_vertex_output_iterator(std::back_inserter(v2v)));
+                    CGAL::parameters::vertex_to_vertex_output_iterator(std::back_inserter(v2v))
+                                     .vertex_point_map(vpm));
 
     // copy input vertices to keep correspondence
     for(const Vertex_pair& vp : v2v)
@@ -883,11 +926,9 @@ private:
   void compute_edge_weight()
   {
     m_edge_weight.clear();
-    m_edge_weight.reserve(2 * num_edges(m_tmesh));
+    m_edge_weight.reserve(num_halfedges(m_tmesh));
     for(halfedge_descriptor hd : halfedges(m_tmesh))
-    {
-      m_edge_weight.push_back(m_weight_calculator(hd, m_tmesh, m_tmesh_point_pmap));
-    }
+      m_edge_weight.push_back(m_weight_calculator(hd));
   }
 
   /// Assemble the left hand side.
@@ -1193,7 +1234,7 @@ private:
       vertex_descriptor vk = target(ek, m_tmesh);
 
       // split the edge
-      halfedge_descriptor en = m_tmesh.split_edge(ei);
+      halfedge_descriptor en = Euler::split_edge(ei, m_tmesh);
       // split the incident faces
       Euler::split_face(en, next(ei,m_tmesh), m_tmesh);
       if (! is_border(ej,m_tmesh))
@@ -1389,7 +1430,7 @@ std::size_t Mean_curvature_flow_skeletonization<TriangleMesh, Traits_, VertexPoi
 {
   std::size_t cnt=0, prev_cnt=0;
 
-  std::set<edge_descriptor> edges_to_collapse, non_topologically_valid_collapses;
+  std::set<edge_descriptor,Less_id> edges_to_collapse, non_topologically_valid_collapses;
 
   for(edge_descriptor ed : edges(m_tmesh))
     if ( edge_should_be_collapsed(ed) )

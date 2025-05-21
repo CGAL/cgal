@@ -11,7 +11,7 @@
 
 //v1.7
 function diff_testsuites(baseTest, newTest){
-  var URL_suff='https://cgal.geometryfactory.com/~mgimeno/testsuite_comparison/list_of_suffixes.txt';
+  var URL_suff='https://cgal.geometryfactory.com/~cgaltest/testsuite_comparison/list_of_suffixes.txt';
   var URL_testsuite='https://cgal.geometryfactory.com/CGAL/Members/testsuite/';
   //get the list of suffixes
   var xhr = new XMLHttpRequest();

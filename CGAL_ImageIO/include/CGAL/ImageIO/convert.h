@@ -19,7 +19,7 @@
  *
  * AUTHOR:
  * Gregoire Malandain (greg@sophia.inria.fr)
- * http://www.inria.fr/epidaure/personnel/malandain/
+ * https://www-sop.inria.fr/members/Gregoire.Malandain/
  *
  * CREATION DATE:
  * June, 9 1998

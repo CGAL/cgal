@@ -12,7 +12,6 @@
 #ifndef CGAL_VECTOR_VECTOR_H
 #define CGAL_VECTOR_VECTOR_H
 #include <boost/type_traits/is_arithmetic.hpp>
-#include <boost/utility/enable_if.hpp>
 #include <CGAL/Dimension.h>
 #include <CGAL/NewKernel_d/utils.h>
 #include <vector>
@@ -30,7 +29,7 @@ template<class NT_,class Dim_,class Max_dim_=Dim_> struct Vector_vector {
         struct Rebind_dimension {
           typedef Vector_vector< NT, D2, D3 > Other;
         };
-        template<class> struct Property : boost::false_type {};
+        template<class> struct Property : std::false_type {};
 
         struct Construct_vector {
                 struct Dimension {

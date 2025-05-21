@@ -22,7 +22,7 @@
 #include <fastenvelope/FastEnvelope.h>
 #include <fastenvelope/Types.hpp>
 
-#include <boost/optional.hpp>
+#include <optional>
 
 #include <vector>
 #include <type_traits>
@@ -43,7 +43,7 @@ private:
   template <typename Profile>
   void initialize_envelope(const Profile& profile) const
   {
-    CGAL_static_assertion((std::is_same<GeomTraits, typename Profile::Geom_traits>::value));
+    static_assert(std::is_same<GeomTraits, typename Profile::Geom_traits>::value);
 
     typedef typename Profile::Triangle_mesh                                   Triangle_mesh;
     typedef typename boost::graph_traits<Triangle_mesh>::halfedge_descriptor  halfedge_descriptor;
@@ -97,8 +97,8 @@ public:
 
 
   template <typename Profile>
-  boost::optional<typename Profile::Point>
-  operator()(const Profile& profile, boost::optional<typename Profile::Point> op) const
+  std::optional<typename Profile::Point>
+  operator()(const Profile& profile, std::optional<typename Profile::Point> op) const
   {
     typedef typename Profile::Point Point;
     typedef typename Profile::vertex_descriptor_vector Link;
@@ -116,7 +116,7 @@ public:
 
       if(m_fast_envelope->is_outside(vecp)){
         // the new placement is outside envelope
-        return boost::none;
+        return std::nullopt;
       }
 
       const Link link = profile.link();
@@ -133,8 +133,8 @@ public:
         std::array<Vector3, 3> triangle = { vecp, vecv, vecw};
 
         if(m_fast_envelope->is_outside(triangle)){
-          // the triange intersects the envelope
-          return boost::none;
+          // the triangle intersects the envelope
+          return std::nullopt;
         }
         vecv = vecw;
 

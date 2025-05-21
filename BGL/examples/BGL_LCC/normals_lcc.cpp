@@ -1,7 +1,7 @@
 #include <CGAL/Simple_cartesian.h>
 
 #include <CGAL/boost/graph/graph_traits_Linear_cell_complex_for_combinatorial_map.h>
-#include <CGAL/boost/graph/IO/polygon_mesh_io.h>
+#include <CGAL/IO/polygon_mesh_io.h>
 #include <CGAL/property_map.h>
 
 #include <boost/graph/graph_traits.hpp>
@@ -31,7 +31,7 @@ void calculate_face_normals(const HalfedgeGraph& g,
   typedef typename boost::property_traits<NormalMap>::value_type normal;
 
   face_iterator fb, fe;
-  for(boost::tie(fb, fe) = faces(g); fb != fe; ++fb)
+  for(std::tie(fb, fe) = faces(g); fb != fe; ++fb)
   {
     halfedge_descriptor edg = halfedge(*fb, g);
     halfedge_descriptor edgb = edg;
@@ -74,7 +74,7 @@ int main(int argc, char** argv)
 
   // Ad hoc property_map to store normals. Face_index_map is used to
   // map face_descriptors to a contiguous range of indices. See
-  // http://www.boost.org/libs/property_map/doc/vector_property_map.html
+  // https://www.boost.org/libs/property_map/doc/vector_property_map.html
   // for details.
   boost::vector_property_map<Vector, Face_index_map>
     normals(static_cast<unsigned>(num_faces(lcc)), get(CGAL::face_index, lcc));

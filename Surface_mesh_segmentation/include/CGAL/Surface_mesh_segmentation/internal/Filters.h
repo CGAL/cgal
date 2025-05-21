@@ -28,7 +28,7 @@
 #include <queue>
 #include <cmath>
 
-#include <boost/optional.hpp>
+#include <optional>
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/double.h>
@@ -63,8 +63,8 @@ public:
   void operator()(const Polyhedron& mesh,
                   std::size_t window_size,
                   ValuePropertyMap values,
-                  boost::optional<double> spatial_parameter = boost::optional<double>(),
-                  boost::optional<double> range_parameter = boost::optional<double>()
+                  std::optional<double> spatial_parameter = std::optional<double>(),
+                  std::optional<double> range_parameter = std::optional<double>()
                  ) const {
     typedef typename boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
     typedef typename boost::graph_traits<Polyhedron>::face_iterator face_iterator;
@@ -80,7 +80,7 @@ public:
     smoothed_values.reserve(num_faces(mesh));
 
     face_iterator facet_it, fend;
-    for(boost::tie(facet_it,fend) = faces(mesh);
+    for(std::tie(facet_it,fend) = faces(mesh);
         facet_it != fend; ++facet_it) {
       std::map<face_descriptor, std::size_t> neighbors;
       NeighborSelector()(mesh,*facet_it, window_size,
@@ -126,7 +126,7 @@ public:
     }
     // put smoothed values back again to values pmap.
     std::vector<double>::iterator smoothed_value_it = smoothed_values.begin();
-    for(boost::tie(facet_it,fend) = faces(mesh);
+    for(std::tie(facet_it,fend) = faces(mesh);
         facet_it != fend;
         ++facet_it, ++smoothed_value_it) {
       put(values, *facet_it, *smoothed_value_it);
@@ -162,7 +162,7 @@ public:
     std::vector<double> smoothed_values;
     smoothed_values.reserve(num_faces(mesh));
     face_iterator facet_it, fend;
-    for(boost::tie(facet_it,fend) = faces(mesh);
+    for(std::tie(facet_it,fend) = faces(mesh);
         facet_it != fend; ++facet_it) {
       std::map<face_descriptor, std::size_t> neighbors;
       NeighborSelector()(mesh, *facet_it, window_size,
@@ -188,7 +188,7 @@ public:
     }
     // put smoothed values back again to values pmap.
     std::vector<double>::iterator smoothed_value_it = smoothed_values.begin();
-    for(boost::tie(facet_it,fend) = faces(mesh);
+    for(std::tie(facet_it,fend) = faces(mesh);
         facet_it != fend; ++facet_it) {
       values[*facet_it] = *smoothed_value_it;
     }
@@ -319,7 +319,7 @@ public:
               // if insertion is OK, then check its level
               facet_queue.push(
                 new_pair);                                      // if its level is equal to max_level do not put it in
-            }                                                                    // queue since we do not want to traverse its childs
+            }                                                                    // queue since we do not want to traverse its children
           }
         } while(++vertex_circulator != done);
       } while((edge = next(edge,polyhedron)) != halfedge(facet_front,polyhedron));

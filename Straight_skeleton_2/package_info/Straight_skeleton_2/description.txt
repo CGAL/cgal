@@ -1,1 +1,1 @@
-Straight Line Skeleton (SLS) computation of a 2D Polygon with Holes, and SLS-Based Polygon Offseting.
+Straight Line Skeleton (SLS) computation of a 2D Polygon with Holes, and SLS-Based Polygon Offsetting.

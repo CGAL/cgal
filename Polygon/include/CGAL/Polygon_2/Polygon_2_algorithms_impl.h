@@ -166,7 +166,7 @@ ForwardIterator left_vertex_2(ForwardIterator first,
                                    ForwardIterator last,
                                    const PolygonTraits&traits)
 {
-    CGAL_polygon_precondition(first != last);
+    CGAL_precondition(first != last);
     internal::Polygon_2::Compare_vertices<PolygonTraits>
         less(traits.less_xy_2_object());
     return std::min_element(first, last, less);
@@ -182,7 +182,7 @@ ForwardIterator right_vertex_2(ForwardIterator first,
                                     ForwardIterator last,
                                     const PolygonTraits &traits)
 {
-    CGAL_polygon_precondition(first != last);
+    CGAL_precondition(first != last);
     internal::Polygon_2::Compare_vertices<PolygonTraits>
         less(traits.less_xy_2_object());
     return std::max_element(first, last, less);
@@ -198,7 +198,7 @@ ForwardIterator top_vertex_2(ForwardIterator first,
                                   ForwardIterator last,
                                   const PolygonTraits&traits)
 {
-    CGAL_polygon_precondition(first != last);
+    CGAL_precondition(first != last);
     return std::max_element(first, last, traits.less_yx_2_object());
 }
 
@@ -212,7 +212,7 @@ ForwardIterator bottom_vertex_2(ForwardIterator first,
                                      ForwardIterator last,
                                      const PolygonTraits&traits)
 {
-    CGAL_polygon_precondition(first != last);
+    CGAL_precondition(first != last);
     return std::min_element(first, last, traits.less_yx_2_object());
 }
 
@@ -325,7 +325,7 @@ Oriented_side oriented_side_2(ForwardIterator first,
                                         const Traits& traits)
 {
   Orientation o = orientation_2(first, last, traits);
-  CGAL_polygon_assertion(o != COLLINEAR);
+  CGAL_assertion(o != COLLINEAR);
 
   Bounded_side b = bounded_side_2(first, last, point, traits);
   switch (b) {
@@ -369,7 +369,7 @@ int which_side_in_slab(Point const &point, Point const &low, Point const &high,
 // precondition: low.y < point.y < high.y
 {
     // first we try to decide on x coordinate values alone
-    // This is an optimisation (whether this is really faster for
+    // This is an optimization (whether this is really faster for
     // a homogeneous kernel is not clear, as comparisons can be expensive.
     Comparison_result low_x_comp_res = compare_x_2(point, low);
     Comparison_result high_x_comp_res = compare_x_2(point, high);
@@ -502,13 +502,17 @@ Bounded_side bounded_side_2(ForwardIterator first,
 // uses Traits::Less_xy_2 (used by left_vertex_2)
 //      Traits::orientation_2_object()
 
-template <class ForwardIterator, class Traits>
-Orientation orientation_2(ForwardIterator first,
-                                    ForwardIterator last,
-                                    const Traits& traits)
-{
-  CGAL_polygon_precondition(is_simple_2(first, last, traits));
+namespace Polygon {
+namespace internal {
 
+// This exists because the "is_simple_2" precondition in the orientation_2() function is in fact
+// stronger than necessary: it also works for strictly simple polygons, which matters for
+// Straight line skeletons, as the offset polygons might have non-manifoldness.
+template <class ForwardIterator, class Traits>
+Orientation orientation_2_no_precondition(ForwardIterator first,
+                                          ForwardIterator last,
+                                          const Traits& traits)
+{
   ForwardIterator i = left_vertex_2(first, last, traits);
 
   ForwardIterator prev = (i == first) ? last : i;
@@ -525,6 +529,18 @@ Orientation orientation_2(ForwardIterator first,
   // return the orientation of the triple (prev,i,next)
   typedef typename Traits::Point_2 Point;
   return traits.orientation_2_object()(Point(*prev), Point(*i), Point(*next));
+}
+
+} // namespace internal
+} // namespace Polygon
+
+template <class ForwardIterator, class Traits>
+Orientation orientation_2(ForwardIterator first,
+                          ForwardIterator last,
+                          const Traits& traits)
+{
+  CGAL_precondition(is_simple_2(first, last, traits));
+  return Polygon::internal::orientation_2_no_precondition(first, last, traits);
 }
 
 } //namespace CGAL

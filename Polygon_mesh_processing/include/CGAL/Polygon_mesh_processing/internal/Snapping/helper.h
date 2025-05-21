@@ -13,12 +13,12 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_INTERNAL_SNAPPING_HELPER_H
 #define CGAL_POLYGON_MESH_PROCESSING_INTERNAL_SNAPPING_HELPER_H
 
-#include <CGAL/license/Polygon_mesh_processing/repair.h>
+#include <CGAL/license/Polygon_mesh_processing/geometric_repair.h>
 
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/Named_function_parameters.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
@@ -67,7 +67,7 @@ void assign_tolerance_with_local_edge_length_bound(const HalfedgeRange& halfedge
   {
     const vertex_descriptor vd = target(hd, mesh);
     CGAL::Halfedge_around_target_iterator<PolygonMesh> hit, hend;
-    boost::tie(hit, hend) = CGAL::halfedges_around_target(vd, mesh);
+    std::tie(hit, hend) = CGAL::halfedges_around_target(vd, mesh);
     CGAL_assertion(hit != hend);
 
     FT sq_length = gt.compute_squared_distance_3_object()(get(vpm, source(*hit, mesh)),

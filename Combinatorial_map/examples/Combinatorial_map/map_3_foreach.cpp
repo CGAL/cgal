@@ -3,7 +3,7 @@
 #include <algorithm>
 
 typedef CGAL::Combinatorial_map<3> CMap_3;
-typedef CMap_3::Dart_handle        Dart_handle;
+typedef CMap_3::Dart_descriptor    Dart_descriptor;
 
 // Functor used to display all the vertices of a given volume
 template<class CMap, unsigned int i>
@@ -19,9 +19,9 @@ struct Display_vertices_of_cell : public CGAL::cpp98::unary_function<CMap, void>
     std::cout<<i<<"-cell "<<++nb_cell<<" : ";
     for (typename CMap::template One_dart_per_incident_cell_range<0,i>::
            const_iterator it=cmap.template one_dart_per_incident_cell<0,i>
-           (cmap.dart_handle(d)).begin(),
+           (cmap.dart_descriptor(d)).begin(),
            itend=cmap.template one_dart_per_incident_cell<0,i>
-           (cmap.dart_handle(d)).end();
+           (cmap.dart_descriptor(d)).end();
          it!=itend; ++it)
     {
       std::cout << cmap.darts().index(it) << "; ";
@@ -46,7 +46,7 @@ struct Remove_face : public CGAL::cpp98::unary_function<CMap, void>
 
   void operator() (typename CMap::Dart* d)
   {
-    cmap.template remove_cell<2>(cmap.dart_handle(*d));
+    cmap.template remove_cell<2>(cmap.dart_descriptor(*d));
     std::cout<<"CMap characteristics: ";
     cmap.display_characteristics(std::cout) << ", valid=" << cmap.is_valid()
                                             << std::endl;
@@ -70,8 +70,8 @@ int main()
   CMap_3 cmap;
 
   // Create two tetrahedra.
-  Dart_handle d1 = cmap.make_combinatorial_tetrahedron();
-  Dart_handle d2 = cmap.make_combinatorial_tetrahedron();
+  Dart_descriptor d1 = cmap.make_combinatorial_tetrahedron();
+  Dart_descriptor d2 = cmap.make_combinatorial_tetrahedron();
 
   // Display the vertices of each volume by iterating on darts.
   std::cout<<"********Volumes********"<<std::endl;

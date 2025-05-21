@@ -20,10 +20,10 @@
 #include <CGAL/Polygon_mesh_processing/internal/Isotropic_remeshing/remesh_impl.h>
 
 #include <CGAL/Named_function_parameters.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 
 #include <CGAL/Random.h>
@@ -67,7 +67,7 @@ namespace internal {
     typedef typename GT::Point_3    Point_3;
 
     typedef CGAL::AABB_face_graph_triangle_primitive<PM> Primitive;
-    typedef CGAL::AABB_traits<GT, Primitive> Traits;
+    typedef CGAL::AABB_traits_3<GT, Primitive> Traits;
     typedef CGAL::AABB_tree<Traits> Tree;
 
     Tree tree;

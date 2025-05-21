@@ -13,7 +13,7 @@ A ring element \f$ x\f$ is said to be a square iff there exists a ring element \
 that \f$ x= y*y\f$. In case the ring is a `UniqueFactorizationDomain`,
 \f$ y\f$ is uniquely defined up to multiplication by units.
 
-\cgalRefines `AdaptableBinaryFunction`
+\cgalRefines{AdaptableBinaryFunction}
 
 \sa `AlgebraicStructureTraits`
 

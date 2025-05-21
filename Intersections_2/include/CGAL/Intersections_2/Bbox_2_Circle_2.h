@@ -24,18 +24,19 @@ namespace Intersections {
 namespace internal {
 
 template <class K>
-bool do_intersect(const CGAL::Bbox_2& bbox,
-                  const typename K::Circle_2& circle,
-                  const K&)
+typename K::Boolean
+do_intersect(const CGAL::Bbox_2& bbox,
+             const typename K::Circle_2& circle,
+             const K&)
 {
   return do_intersect_circle_iso_rectangle_2(circle, bbox, K());
 }
 
-
 template <class K>
-bool do_intersect(const typename K::Circle_2& circle,
-                  const CGAL::Bbox_2& bbox,
-                  const K&)
+typename K::Boolean
+do_intersect(const typename K::Circle_2& circle,
+             const CGAL::Bbox_2& bbox,
+             const K&)
 {
   return do_intersect_circle_iso_rectangle_2(circle, bbox, K());
 }
@@ -44,15 +45,17 @@ bool do_intersect(const typename K::Circle_2& circle,
 } // namespace Intersections
 
 template<typename K>
-bool do_intersect(const CGAL::Bbox_2& a,
-                  const Circle_2<K>& b)
+typename K::Boolean
+do_intersect(const CGAL::Bbox_2& a,
+             const Circle_2<K>& b)
 {
   return K().do_intersect_2_object()(a, b);
 }
 
 template<typename K>
-bool do_intersect(const Circle_2<K>& a,
-                  const CGAL::Bbox_2& b)
+typename K::Boolean
+do_intersect(const Circle_2<K>& a,
+             const CGAL::Bbox_2& b)
 {
   return K().do_intersect_2_object()(a, b);
 }

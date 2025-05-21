@@ -75,7 +75,7 @@ struct Implicit_tester : public Tester<K>
 
 #ifdef CGAL_LINKED_WITH_TBB
     // Parallel
-    if (boost::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value)
+    if (std::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value)
     {
       this->verify(c3t3, domain, criteria, Bissection_tag(), 40, 65, 60, 110);
     }

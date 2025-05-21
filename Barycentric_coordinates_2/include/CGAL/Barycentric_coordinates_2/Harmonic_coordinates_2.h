@@ -587,8 +587,7 @@ namespace Barycentric_coordinates {
             const auto& p0 = m_domain.vertex(neighbors[jm]);
             const auto& p1 = m_domain.vertex(neighbors[j]);
             const auto& p2 = m_domain.vertex(neighbors[jp]);
-            const FT w = -Weights::cotangent_weight(
-              p0, p1, p2, query, m_traits) / FT(2);
+            const FT w = -Weights::cotangent_weight(p0, p1, p2, query, m_traits) / FT(2);
             W -= w;
 
             if (m_domain.is_on_boundary(idx)) {

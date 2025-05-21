@@ -19,8 +19,6 @@
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
-#include <boost/utility/enable_if.hpp>
-
 #include <fstream>
 #include <string>
 
@@ -136,7 +134,7 @@ bool read_PLY(std::istream& is,
               Graph& g,
               const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-              , typename boost::disable_if<internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr
+              , std::enable_if_t<!internal::is_Point_set_or_Range_or_Iterator<Graph>::value>* = nullptr
 #endif
               )
 {
@@ -211,7 +209,7 @@ bool read_PLY(const std::string& fname,
               Graph& g,
               const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-              , typename boost::disable_if<internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr
+              , std::enable_if_t<!internal::is_Point_set_or_Range_or_Iterator<Graph>::value>* = nullptr
 #endif
               )
 {
@@ -298,7 +296,7 @@ bool write_PLY(std::ostream& os,
                const std::string& comments,
                const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-               , typename boost::disable_if<internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr
+               , std::enable_if_t<!internal::is_Point_set_or_Range_or_Iterator<Graph>::value>* = nullptr
 #endif
                )
 {
@@ -326,8 +324,8 @@ bool write_PLY(std::ostream& os,
   VCM vcm = choose_parameter(get_parameter(np, internal_np::vertex_color_map), VCM());
   FCM fcm = choose_parameter(get_parameter(np, internal_np::face_color_map), FCM());
 
-  bool has_vcolor = !is_default_parameter<CGAL_NP_CLASS, internal_np::vertex_color_map_t>();
-  bool has_fcolor = !is_default_parameter<CGAL_NP_CLASS, internal_np::face_color_map_t>();
+  bool has_vcolor = !is_default_parameter<CGAL_NP_CLASS, internal_np::vertex_color_map_t>::value;
+  bool has_fcolor = !is_default_parameter<CGAL_NP_CLASS, internal_np::face_color_map_t>::value;
   VIMap vim = CGAL::get_initialized_vertex_index_map(g, np);
   Vpm vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                              get_const_property_map(boost::vertex_point, g));
@@ -421,7 +419,7 @@ bool write_PLY(std::ostream& os,
 
 template <typename Graph, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_PLY(std::ostream& os, const Graph& g, const CGAL_NP_CLASS& np = parameters::default_values(),
-               typename boost::disable_if<internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
+               std::enable_if_t<!internal::is_Point_set_or_Range_or_Iterator<Graph>::value>* = nullptr)
 {
   return write_PLY(os, g, std::string(), np);
 }
@@ -494,7 +492,7 @@ bool write_PLY(const std::string& fname,
                const std::string& comments,
                const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-               , typename boost::disable_if<internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr
+               , std::enable_if_t<!internal::is_Point_set_or_Range_or_Iterator<Graph>::value>* = nullptr
 #endif
                )
 {
@@ -518,7 +516,7 @@ bool write_PLY(const std::string& fname,
 
 template <typename Graph, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_PLY(const std::string& fname, const Graph& g, const CGAL_NP_CLASS& np = parameters::default_values(),
-               typename boost::disable_if<internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
+               std::enable_if_t<!internal::is_Point_set_or_Range_or_Iterator<Graph>::value>* = nullptr)
 {
   return write_PLY(fname, g, std::string(), np);
 }

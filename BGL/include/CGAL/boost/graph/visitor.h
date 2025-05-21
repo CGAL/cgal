@@ -14,13 +14,13 @@
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/tuple/tuple.hpp>
-#include <boost/ref.hpp>
+#include <utility>
 
 namespace boost
 {
   template<typename V, typename Graph>
   struct graph_traits<
-    boost::tuple<boost::reference_wrapper<V>, boost::reference_wrapper<Graph> > >
+    boost::tuple<std::reference_wrapper<V>, std::reference_wrapper<Graph> > >
     : boost::graph_traits< Graph >
   {
     typedef boost::graph_traits<Graph> Base;
@@ -29,20 +29,20 @@ namespace boost
 
   template<typename V, typename Graph>
   struct graph_traits<
-    boost::tuple<boost::reference_wrapper<V>, boost::reference_wrapper<Graph> > const >
+    boost::tuple<std::reference_wrapper<V>, std::reference_wrapper<Graph> > const >
     : boost::graph_traits< Graph >
   {};
 
   template<typename V, typename Graph, class PropertyTag>
   struct property_map<
-      boost::tuple<boost::reference_wrapper<V>, boost::reference_wrapper<Graph> >,
+      boost::tuple<std::reference_wrapper<V>, std::reference_wrapper<Graph> >,
       PropertyTag>
       : public property_map<Graph, PropertyTag>
   {};
 
   template<typename V, typename Graph, class PropertyTag>
   struct property_map<
-    const boost::tuple<boost::reference_wrapper<V>, boost::reference_wrapper<Graph> >,
+    const boost::tuple<std::reference_wrapper<V>, std::reference_wrapper<Graph> >,
     PropertyTag>
     : public property_map<Graph, PropertyTag>
   {};
@@ -52,11 +52,11 @@ namespace boost
 namespace CGAL
 {
 template<typename V, typename Graph>
-boost::tuple<boost::reference_wrapper<V>,
-             boost::reference_wrapper<Graph> >
+boost::tuple<std::reference_wrapper<V>,
+             std::reference_wrapper<Graph> >
 make_graph_with_visitor(V& v, Graph& g)
 {
-  return boost::make_tuple(boost::ref(v), boost::ref(g));
+  return boost::make_tuple(std::ref(v), std::ref(g));
 }
 
 template<typename Graph>
@@ -67,10 +67,7 @@ public:
   typedef typename gt::halfedge_descriptor halfedge_descriptor;
   typedef typename gt::edge_descriptor edge_descriptor;
   typedef typename gt::vertex_descriptor vertex_descriptor;
-
-
 };
-
 
 //// OVERLOADS FOR Visitor
 
@@ -260,119 +257,119 @@ void get(PropertyTag ptag, const Visitor_base<Graph>& w)
 
 template <class Graph, class Visitor>
 typename boost::graph_traits<Graph>::vertices_size_type
-num_vertices(const boost::tuple<boost::reference_wrapper<Visitor>,
-                                boost::reference_wrapper<Graph> >& w)
+num_vertices(const boost::tuple<std::reference_wrapper<Visitor>,
+                                std::reference_wrapper<Graph> >& w)
 {
-  num_vertices(boost::unwrap_ref(w.get<0>()));
-  return num_vertices(boost::unwrap_ref(w.get<1>()));
+  num_vertices(get<0>(w).get());
+  return num_vertices(get<1>(w).get());
 }
 
 template <class Graph, class Visitor>
 typename boost::graph_traits<Graph>::edges_size_type
-num_edges(const boost::tuple<boost::reference_wrapper<Visitor>,
-                             boost::reference_wrapper<Graph> >& w)
+num_edges(const boost::tuple<std::reference_wrapper<Visitor>,
+                             std::reference_wrapper<Graph> >& w)
 {
-  num_edges(boost::unwrap_ref(w.get<0>()));
-  return num_edges(boost::unwrap_ref(w.get<1>()));
+  num_edges(get<0>(w).get());
+  return num_edges(get<1>(w).get());
 }
 
 template <class Graph, class Visitor>
 typename boost::graph_traits<Graph>::degree_size_type
 degree(typename boost::graph_traits<Graph>::vertex_descriptor v
-     , const boost::tuple<boost::reference_wrapper<Visitor>,
-                          boost::reference_wrapper<Graph> >& w)
+     , const boost::tuple<std::reference_wrapper<Visitor>,
+                          std::reference_wrapper<Graph> >& w)
 {
-  degree(v, boost::unwrap_ref(w.get<0>()));
-  return degree(v, boost::unwrap_ref(w.get<1>()));
+  degree(v, get<0>(w).get());
+  return degree(v, get<1>(w).get());
 }
 
 template <class Graph, class Visitor>
 typename boost::graph_traits<Graph>::degree_size_type
 out_degree(typename boost::graph_traits<Graph>::vertex_descriptor v
-         , const boost::tuple<boost::reference_wrapper<Visitor>,
-                              boost::reference_wrapper<Graph> >& w)
+         , const boost::tuple<std::reference_wrapper<Visitor>,
+                              std::reference_wrapper<Graph> >& w)
 {
-  out_degree(v, boost::unwrap_ref(w.get<0>()));
-  return out_degree(v, boost::unwrap_ref(w.get<1>()));
+  out_degree(v, get<0>(w).get());
+  return out_degree(v, get<1>(w).get());
 }
 
 template <class Graph, class Visitor>
 typename boost::graph_traits<Graph>::degree_size_type
 in_degree(typename boost::graph_traits<Graph>::vertex_descriptor v
-        , const boost::tuple<boost::reference_wrapper<Visitor>,
-                             boost::reference_wrapper<Graph> >& w)
+        , const boost::tuple<std::reference_wrapper<Visitor>,
+                             std::reference_wrapper<Graph> >& w)
 {
-  in_degree(v, boost::unwrap_ref(w.get<0>()));
-  return in_degree(v, boost::unwrap_ref(w.get<1>()));
+  in_degree(v, get<0>(w).get());
+  return in_degree(v, get<1>(w).get());
 }
 
 template <class Graph, class Visitor>
 typename boost::graph_traits<Graph>::vertex_descriptor
 source(typename boost::graph_traits<Graph>::edge_descriptor e
-     , const boost::tuple<boost::reference_wrapper<Visitor>,
-                          boost::reference_wrapper<Graph> > & w)
+     , const boost::tuple<std::reference_wrapper<Visitor>,
+                          std::reference_wrapper<Graph> > & w)
 {
-  source(e, boost::unwrap_ref(w.get<0>()));
-  return source(e, boost::unwrap_ref(w.get<1>()));
+  source(e, get<0>(w).get());
+  return source(e, get<1>(w).get);
 }
 
 template <class Graph, class Visitor>
 typename boost::graph_traits<Graph>::vertex_descriptor
 target(typename boost::graph_traits<Graph>::edge_descriptor e
-     , const boost::tuple<boost::reference_wrapper<Visitor>,
-                          boost::reference_wrapper<Graph> > & w)
+     , const boost::tuple<std::reference_wrapper<Visitor>,
+                          std::reference_wrapper<Graph> > & w)
 {
-  target(e, boost::unwrap_ref(w.get<0>()));
-  return target(e, boost::unwrap_ref(w.get<1>()));
+  target(e, get<0>(w).get());
+  return target(e, get<1>(w).get());
 }
 
 template <class Graph, class Visitor>
 std::pair<typename boost::graph_traits<Graph>::edge_descriptor, bool>
 edge(typename boost::graph_traits<Graph>::vertex_descriptor u
    , typename boost::graph_traits<Graph>::vertex_descriptor v
-   , const boost::tuple<boost::reference_wrapper<Visitor>,
-                        boost::reference_wrapper<Graph> > & w)
+   , const boost::tuple<std::reference_wrapper<Visitor>,
+                        std::reference_wrapper<Graph> > & w)
 {
-  edge(u, v, boost::unwrap_ref(w.get<0>()));
-  return edge(u, v, boost::unwrap_ref(w.get<1>()));
+  edge(u, v, get<0>(w).get());
+  return edge(u, v, get<1>(w).get);
 }
 
 template <class Graph, class Visitor>
 inline CGAL::Iterator_range<typename boost::graph_traits<Graph>::vertex_iterator>
-vertices(const boost::tuple<boost::reference_wrapper<Visitor>,
-                            boost::reference_wrapper<Graph> >& w)
+vertices(const boost::tuple<std::reference_wrapper<Visitor>,
+                            std::reference_wrapper<Graph> >& w)
 {
-  vertices(boost::unwrap_ref(w.get<0>()));
-  return vertices(boost::unwrap_ref(w.get<1>()));
+  vertices(get<0>(w).get());
+  return vertices(get<1>(w).get());
 }
 
 template <class Graph, class Visitor>
 inline CGAL::Iterator_range<typename boost::graph_traits<Graph>::edge_iterator>
-edges(const boost::tuple<boost::reference_wrapper<Visitor>,
-                         boost::reference_wrapper<Graph> >& w)
+edges(const boost::tuple<std::reference_wrapper<Visitor>,
+                         std::reference_wrapper<Graph> >& w)
 {
-  edges(boost::unwrap_ref(w.get<0>()));
-  return edges(boost::unwrap_ref(w.get<1>()));
+  edges(get<0>(w).get());
+  return edges(get<1>(w).get());
 }
 
 template <class Graph, class Visitor>
 inline CGAL::Iterator_range<typename boost::graph_traits<Graph>::in_edge_iterator>
 in_edges(typename boost::graph_traits<Graph>::vertex_descriptor u
-       , const boost::tuple<boost::reference_wrapper<Visitor>,
-                            boost::reference_wrapper<Graph> >& w)
+       , const boost::tuple<std::reference_wrapper<Visitor>,
+                            std::reference_wrapper<Graph> >& w)
 {
-  in_edges(u, boost::unwrap_ref(w.get<0>()));
-  return in_edges(u, boost::unwrap_ref(w.get<1>()));
+  in_edges(u, get<0>(w).get());
+  return in_edges(u, get<1>(w).get());
 }
 
 template <class Graph, class Visitor>
 inline CGAL::Iterator_range<typename boost::graph_traits<Graph>::out_edge_iterator>
 out_edges(typename boost::graph_traits<Graph>::vertex_descriptor u
-        , const boost::tuple<boost::reference_wrapper<Visitor>,
-                             boost::reference_wrapper<Graph> >& w)
+        , const boost::tuple<std::reference_wrapper<Visitor>,
+                             std::reference_wrapper<Graph> >& w)
 {
-  out_edges(u, boost::unwrap_ref(w.get<0>()));
-  return out_edges(u, boost::unwrap_ref(w.get<1>()));
+  out_edges(u, get<0>(w).get());
+  return out_edges(u, get<1>(w).get());
 }
 
 //
@@ -381,72 +378,72 @@ out_edges(typename boost::graph_traits<Graph>::vertex_descriptor u
 
 template <class Graph, class Visitor>
 typename boost::graph_traits< Graph >::vertex_descriptor
-add_vertex(boost::tuple<boost::reference_wrapper<Visitor>,
-                        boost::reference_wrapper<Graph> >& w)
+add_vertex(boost::tuple<std::reference_wrapper<Visitor>,
+                        std::reference_wrapper<Graph> >& w)
 {
-  add_vertex(boost::unwrap_ref(w.get<0>()));
-  return add_vertex(boost::unwrap_ref(w.get<1>()));
+  add_vertex(get<0>(w).get());
+  return add_vertex(get<1>(w).get());
 }
 
 template <class Graph, class Visitor>
 typename boost::graph_traits< Graph >::vertex_descriptor
 add_vertex(const typename boost::graph_traits<Graph >::vertex_property_type& p
-         , boost::tuple<boost::reference_wrapper<Visitor>,
-                        boost::reference_wrapper<Graph> >& w)
+         , boost::tuple<std::reference_wrapper<Visitor>,
+                        std::reference_wrapper<Graph> >& w)
 {
-  add_vertex(p, boost::unwrap_ref(w.get<0>()));
-  return add_vertex(p, boost::unwrap_ref(w.get<1>()));
+  add_vertex(p, get<0>(w).get());
+  return add_vertex(p, get<1>(w).get());
 }
 
 template <class Graph, class Visitor>
 void
 remove_vertex(typename boost::graph_traits< Graph >::vertex_descriptor v
-            , boost::tuple<boost::reference_wrapper<Visitor>,
-                           boost::reference_wrapper<Graph> >& w)
+            , boost::tuple<std::reference_wrapper<Visitor>,
+                           std::reference_wrapper<Graph> >& w)
 {
-  remove_vertex(v, boost::unwrap_ref(w.get<0>()));
-  remove_vertex(v, boost::unwrap_ref(w.get<1>()));
+  remove_vertex(v, get<0>(w).get());
+  remove_vertex(v, get<1>(w).get());
 }
 
 template <class Graph, class Visitor>
 typename boost::graph_traits< Graph >::edge_descriptor
-add_edge(boost::tuple<boost::reference_wrapper<Visitor>,
-                      boost::reference_wrapper<Graph> >& w)
+add_edge(boost::tuple<std::reference_wrapper<Visitor>,
+                      std::reference_wrapper<Graph> >& w)
 {
-  add_edge(boost::unwrap_ref(w.get<0>()));
-  return add_edge(boost::unwrap_ref(w.get<1>()));
+  add_edge(get<0>(w).get());
+  return add_edge(get<1>(w).get());
 }
 
 template <class Graph, class Visitor>
 void
 remove_edge(typename boost::graph_traits< Graph >::edge_descriptor e
-, boost::tuple<boost::reference_wrapper<Visitor>,
-               boost::reference_wrapper<Graph> >& w)
+, boost::tuple<std::reference_wrapper<Visitor>,
+               std::reference_wrapper<Graph> >& w)
 {
-  remove_edge(e, boost::unwrap_ref(w.get<0>()));
-  remove_edge(e, boost::unwrap_ref(w.get<1>()));
+  remove_edge(e, get<0>(w).get());
+  remove_edge(e, get<1>(w).get());
 }
 
 template <class Graph, class Visitor>
 void
 set_target(typename boost::graph_traits< Graph >::halfedge_descriptor h1
 , typename boost::graph_traits< Graph >::vertex_descriptor v
-, boost::tuple<boost::reference_wrapper<Visitor>,
-               boost::reference_wrapper<Graph> >& w)
+, boost::tuple<std::reference_wrapper<Visitor>,
+               std::reference_wrapper<Graph> >& w)
 {
-  set_target(h1, v, boost::unwrap_ref(w.get<0>()));
-  set_target(h1, v, boost::unwrap_ref(w.get<1>()));
+  set_target(h1, v, get<0>(w).get());
+  set_target(h1, v, get<1>(w).get());
 }
 
 template <class Graph, class Visitor>
 void
 set_next(typename boost::graph_traits< Graph >::halfedge_descriptor h1
        , typename boost::graph_traits< Graph >::halfedge_descriptor h2
-       , boost::tuple<boost::reference_wrapper<Visitor >,
-                      boost::reference_wrapper<Graph> >& w)
+       , boost::tuple<std::reference_wrapper<Visitor >,
+                      std::reference_wrapper<Graph> >& w)
 {
-  set_next(h1, h2, boost::unwrap_ref(w.get<0>()));
-  set_next(h1, h2, boost::unwrap_ref(w.get<1>()));
+  set_next(h1, h2, get<0>(w).get());
+  set_next(h1, h2, get<1>(w).get());
 }
 
 //
@@ -454,65 +451,65 @@ set_next(typename boost::graph_traits< Graph >::halfedge_descriptor h1
 //
 template <class Graph, class Visitor>
 typename boost::graph_traits< Graph >::face_descriptor
-add_face(boost::tuple<boost::reference_wrapper<Visitor>,
-  boost::reference_wrapper<Graph> >& w)
+add_face(boost::tuple<std::reference_wrapper<Visitor>,
+  std::reference_wrapper<Graph> >& w)
 {
-  add_face(boost::unwrap_ref(w.get<0>()));
-  return add_face(boost::unwrap_ref(w.get<1>()));
+  add_face(get<0>(w).get());
+  return add_face(get<1>(w).get());
 }
 
 template <class InputIterator, class Graph, class Visitor>
 typename boost::graph_traits< Graph >::face_descriptor
 add_face(InputIterator begin,
          InputIterator end,
-         boost::tuple<boost::reference_wrapper<Visitor>,
-         boost::reference_wrapper<Graph> >& w)
+         boost::tuple<std::reference_wrapper<Visitor>,
+         std::reference_wrapper<Graph> >& w)
 {
-  add_face(begin, end, boost::unwrap_ref(w.get<0>()));
-  return add_face(begin, end, boost::unwrap_ref(w.get<1>()));
+  add_face(begin, end, get<0>(w).get());
+  return add_face(begin, end, get<1>(w).get());
 }
 
 template <class Graph, class Visitor>
 void
 remove_face(typename boost::graph_traits< Graph >::face_descriptor f
-, boost::tuple<boost::reference_wrapper<Visitor>,
-boost::reference_wrapper<Graph> >& w)
+, boost::tuple<std::reference_wrapper<Visitor>,
+std::reference_wrapper<Graph> >& w)
 {
-  remove_face(f, boost::unwrap_ref(w.get<0>()));
-  return remove_face(f, boost::unwrap_ref(w.get<1>()));
+  remove_face(f, get<0>(w).get());
+  return remove_face(f, get<1>(w).get());
 }
 
 template <class Graph, class Visitor>
 void
 set_face(typename boost::graph_traits< Graph >::halfedge_descriptor h
 , typename boost::graph_traits< Graph >::face_descriptor f
-, const boost::tuple<boost::reference_wrapper<Visitor>,
-boost::reference_wrapper<Graph> >& w)
+, const boost::tuple<std::reference_wrapper<Visitor>,
+std::reference_wrapper<Graph> >& w)
 {
-  set_face(h, f, boost::unwrap_ref(w.get<0>()));
-  set_face(h, f, boost::unwrap_ref(w.get<1>()));
+  set_face(h, f, get<0>(w).get());
+  set_face(h, f, get<1>(w).get());
 }
 
 template <class Graph, class Visitor>
 void
 set_halfedge(typename boost::graph_traits< Graph >::face_descriptor f
 , typename boost::graph_traits< Graph >::halfedge_descriptor h
-, boost::tuple<boost::reference_wrapper<Visitor>,
-boost::reference_wrapper<Graph> >& w)
+, boost::tuple<std::reference_wrapper<Visitor>,
+std::reference_wrapper<Graph> >& w)
 {
-  set_halfedge(f, h, boost::unwrap_ref(w.get<0>()));
-  set_halfedge(f, h, boost::unwrap_ref(w.get<1>()));
+  set_halfedge(f, h, get<0>(w).get());
+  set_halfedge(f, h, get<1>(w).get());
 }
 
 template <class Graph, class Visitor>
 void
 set_halfedge(typename boost::graph_traits< Graph >::vertex_descriptor v
 , typename boost::graph_traits< Graph >::halfedge_descriptor h
-, const boost::tuple<boost::reference_wrapper<Visitor>,
-boost::reference_wrapper<Graph> >& w)
+, const boost::tuple<std::reference_wrapper<Visitor>,
+std::reference_wrapper<Graph> >& w)
 {
-  set_halfedge(v, h, boost::unwrap_ref(w.get<0>()));
-  set_halfedge(v, h, boost::unwrap_ref(w.get<1>()));
+  set_halfedge(v, h, get<0>(w).get());
+  set_halfedge(v, h, get<1>(w).get());
 }
 
 //
@@ -521,31 +518,31 @@ boost::reference_wrapper<Graph> >& w)
 template <class Graph, class Visitor>
 typename boost::graph_traits< Graph >::edge_descriptor
 edge(typename boost::graph_traits< Graph >::halfedge_descriptor h
-, const boost::tuple<boost::reference_wrapper<Visitor>,
-                     boost::reference_wrapper<Graph> >& w)
+, const boost::tuple<std::reference_wrapper<Visitor>,
+                     std::reference_wrapper<Graph> >& w)
 {
-  edge(h, boost::unwrap_ref(w.get<0>()));
-  return edge(h, boost::unwrap_ref(w.get<1>()));
+  edge(h, get<0>(w).get());
+  return edge(h, get<1>(w).get());
 }
 
 template <class Graph, class Visitor>
 typename boost::graph_traits< Graph >::halfedge_descriptor
 halfedge(typename boost::graph_traits< Graph >::edge_descriptor e
-, const boost::tuple<boost::reference_wrapper<Visitor>,
-                     boost::reference_wrapper<Graph> >& w)
+, const boost::tuple<std::reference_wrapper<Visitor>,
+                     std::reference_wrapper<Graph> >& w)
 {
-  halfedge(e, boost::unwrap_ref(w.get<0>()));
-  return halfedge(e, boost::unwrap_ref(w.get<1>()));
+  halfedge(e, get<0>(w).get());
+  return halfedge(e, get<1>(w).get());
 }
 
 template <class Graph, class Visitor>
 typename boost::graph_traits< Graph >::halfedge_descriptor
 halfedge(typename boost::graph_traits< Graph >::vertex_descriptor v
-, const boost::tuple<boost::reference_wrapper<Visitor>,
-                     boost::reference_wrapper<Graph> >& w)
+, const boost::tuple<std::reference_wrapper<Visitor>,
+                     std::reference_wrapper<Graph> >& w)
 {
-  halfedge(v, boost::unwrap_ref(w.get<0>()));
-  return halfedge(v, boost::unwrap_ref(w.get<1>()));
+  halfedge(v, get<0>(w).get());
+  return halfedge(v, get<1>(w).get());
 }
 
 template <class Graph, class Visitor>
@@ -553,58 +550,58 @@ std::pair< typename boost::graph_traits< Graph >::halfedge_descriptor
   , bool>
   halfedge(typename boost::graph_traits< Graph >::vertex_descriptor u
   , typename boost::graph_traits< Graph >::vertex_descriptor v
-  , const boost::tuple<boost::reference_wrapper<Visitor>,
-                       boost::reference_wrapper<Graph> >& w)
+  , const boost::tuple<std::reference_wrapper<Visitor>,
+                       std::reference_wrapper<Graph> >& w)
 {
-  halfedge(u, v, boost::unwrap_ref(w.get<0>()));
-  return halfedge(u, v, boost::unwrap_ref(w.get<1>()));
+  halfedge(u, v, get<0>(w).get());
+  return halfedge(u, v, get<1>(w).get());
 }
 
 template <class Graph, class Visitor>
 typename boost::graph_traits< Graph >::halfedge_descriptor
 opposite(typename boost::graph_traits< Graph >::halfedge_descriptor h
-, const boost::tuple<boost::reference_wrapper<Visitor>,
-                      boost::reference_wrapper<Graph> >& w)
+, const boost::tuple<std::reference_wrapper<Visitor>,
+                      std::reference_wrapper<Graph> >& w)
 {
-  opposite(h, boost::unwrap_ref(w.get<0>()));
-  return opposite(h, boost::unwrap_ref(w.get<1>()));
+  opposite(h, get<0>(w).get());
+  return opposite(h, get<1>(w).get());
 }
 
 template <class Graph, class Visitor>
 typename boost::graph_traits< Graph >::vertex_descriptor
 source(typename boost::graph_traits< Graph >::halfedge_descriptor h
-, const boost::tuple<boost::reference_wrapper<Visitor>,
-                     boost::reference_wrapper<Graph> >& w)
+, const boost::tuple<std::reference_wrapper<Visitor>,
+                     std::reference_wrapper<Graph> >& w)
 {
-  source(h, boost::unwrap_ref(w.get<0>()));
-  return source(h, boost::unwrap_ref(w.get<1>()));
+  source(h, get<0>(w).get());
+  return source(h, get<1>(w).get());
 }
 
 template <class Graph, class Visitor>
 typename boost::graph_traits< Graph >::vertex_descriptor
 target(typename boost::graph_traits< Graph >::halfedge_descriptor h
-, const boost::tuple<boost::reference_wrapper<Visitor>, boost::reference_wrapper<Graph> >& w)
+, const boost::tuple<std::reference_wrapper<Visitor>, std::reference_wrapper<Graph> >& w)
 {
-  target(h, boost::unwrap_ref(w.get<0>()));
-  return target(h, boost::unwrap_ref(w.get<1>()));
+  target(h, get<0>(w).get());
+  return target(h, get<1>(w).get());
 }
 
 template <class Graph, class Visitor>
 typename boost::graph_traits< Graph >::halfedge_descriptor
 next(typename boost::graph_traits< Graph >::halfedge_descriptor outedge
-, const boost::tuple<boost::reference_wrapper<Visitor>, boost::reference_wrapper<Graph> >& w)
+, const boost::tuple<std::reference_wrapper<Visitor>, std::reference_wrapper<Graph> >& w)
 {
-  next(outedge, boost::unwrap_ref(w.get<0>()));
-  return next(outedge, boost::unwrap_ref(w.get<1>()));
+  next(outedge, get<0>(w).get());
+  return next(outedge, get<1>(w).get());
 }
 
 template <class Graph, class Visitor>
 typename boost::graph_traits< Graph >::halfedge_descriptor
 prev(typename boost::graph_traits< Graph >::halfedge_descriptor outedge
-, const boost::tuple<boost::reference_wrapper<Visitor>, boost::reference_wrapper<Graph> >& w)
+, const boost::tuple<std::reference_wrapper<Visitor>, std::reference_wrapper<Graph> >& w)
 {
-  prev(outedge, boost::unwrap_ref(w.get<0>()));
-  return prev(outedge, boost::unwrap_ref(w.get<1>()));
+  prev(outedge, get<0>(w).get());
+  return prev(outedge, get<1>(w).get());
 }
 
 //
@@ -612,73 +609,73 @@ prev(typename boost::graph_traits< Graph >::halfedge_descriptor outedge
 //
 template <class Graph, class Visitor>
 CGAL::Iterator_range<typename boost::graph_traits< Graph >::halfedge_iterator>
-halfedges(const boost::tuple<boost::reference_wrapper<Visitor>, boost::reference_wrapper<Graph> >& w)
+halfedges(const boost::tuple<std::reference_wrapper<Visitor>, std::reference_wrapper<Graph> >& w)
 {
-  halfedges(boost::unwrap_ref(w.get<0>()));
-  return halfedges(boost::unwrap_ref(w.get<1>()));
+  halfedges(get<0>(w).get());
+  return halfedges(get<1>(w).get());
 }
 
 template <class Graph, class Visitor>
 typename boost::graph_traits< Graph >::halfedges_size_type
-num_halfedges(const boost::tuple<boost::reference_wrapper<Visitor>, boost::reference_wrapper<Graph> >& w)
+num_halfedges(const boost::tuple<std::reference_wrapper<Visitor>, std::reference_wrapper<Graph> >& w)
 {
-  num_halfedges(boost::unwrap_ref(w.get<0>()));
-  return num_halfedges(boost::unwrap_ref(w.get<1>()));
+  num_halfedges(get<0>(w).get());
+  return num_halfedges(get<1>(w).get());
 }
 
 // Graph
 template <class Graph, class Visitor>
 typename boost::graph_traits< Graph >::face_descriptor
 face(typename boost::graph_traits< Graph >::halfedge_descriptor h
-, const boost::tuple<boost::reference_wrapper<Visitor>, boost::reference_wrapper<Graph> >& w)
+, const boost::tuple<std::reference_wrapper<Visitor>, std::reference_wrapper<Graph> >& w)
 {
-  face(h, boost::unwrap_ref(w.get<0>()));
-  return face(h, boost::unwrap_ref(w.get<1>()));
+  face(h, get<0>(w).get());
+  return face(h, get<1>(w).get());
 }
 
 template <class Graph, class Visitor>
 typename boost::graph_traits< Graph >::halfedge_descriptor
 halfedge(typename boost::graph_traits< Graph >::face_descriptor f
-, const boost::tuple<boost::reference_wrapper<Visitor>, boost::reference_wrapper<Graph> >& w)
+, const boost::tuple<std::reference_wrapper<Visitor>, std::reference_wrapper<Graph> >& w)
 {
-  halfedge(f, boost::unwrap_ref(w.get<0>()));
-  return halfedge(f, boost::unwrap_ref(w.get<1>()));
+  halfedge(f, get<0>(w).get());
+  return halfedge(f, get<1>(w).get());
 }
 
 template <class Graph, class Visitor>
 inline CGAL::Iterator_range<typename boost::graph_traits<Graph>::face_iterator >
-faces(const boost::tuple<boost::reference_wrapper<Visitor>, boost::reference_wrapper<Graph> >& w)
+faces(const boost::tuple<std::reference_wrapper<Visitor>, std::reference_wrapper<Graph> >& w)
 {
-  faces(boost::unwrap_ref(w.get<0>()));
-  return faces(boost::unwrap_ref(w.get<1>()));
+  faces(get<0>(w).get());
+  return faces(get<1>(w).get());
 }
 
 template <class Graph, class Visitor>
 typename boost::graph_traits<Graph>::faces_size_type
-num_faces(const boost::tuple<boost::reference_wrapper<Visitor>,
-                             boost::reference_wrapper<Graph> >& w)
+num_faces(const boost::tuple<std::reference_wrapper<Visitor>,
+                             std::reference_wrapper<Graph> >& w)
 {
-  num_faces(boost::unwrap_ref(w.get<0>()));
-  return num_faces(boost::unwrap_ref(w.get<1>()));
+  num_faces(get<0>(w).get());
+  return num_faces(get<1>(w).get());
 }
 
 template <class Graph, class Visitor>
-bool is_valid(const boost::tuple<boost::reference_wrapper<Visitor>,
-                                 boost::reference_wrapper<Graph> >& w
+bool is_valid(const boost::tuple<std::reference_wrapper<Visitor>,
+                                 std::reference_wrapper<Graph> >& w
               , bool verbose = false)
 {
-  is_valid(boost::unwrap_ref(w.get<0>()), verbose);
-  return is_valid(boost::unwrap_ref(w.get<1>()), verbose);
+  is_valid(get<0>(w).get(), verbose);
+  return is_valid(get<1>(w).get(), verbose);
 }
 
 template <class Graph, class PropertyTag, class Visitor>
 typename boost::property_map< Graph, PropertyTag >::type
 get(PropertyTag ptag,
-    const boost::tuple<boost::reference_wrapper<Visitor>,
-                       boost::reference_wrapper<Graph> >& w)
+    const boost::tuple<std::reference_wrapper<Visitor>,
+                       std::reference_wrapper<Graph> >& w)
 {
-  get(ptag, boost::unwrap_ref(w.get<0>()));
-  return get(ptag, boost::unwrap_ref(w.get<1>()));
+  get(ptag, get<0>(w).get());
+  return get(ptag, get<1>(w).get());
 }
 
 }//end namespace CGAL

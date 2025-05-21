@@ -32,6 +32,8 @@
 #include <string>
 #include <locale>
 #include <iostream>
+#include <optional>
+#include <variant>
 
 namespace CGAL {
 
@@ -150,7 +152,7 @@ typedef IO_rep_is_not_specialized_aux<void> IO_rep_is_not_specialized;
 
 The purpose of `Output_rep` is to provide a way to control output formatting that works independently of the object's stream output operator.
 
-If you dont specialize `Output_rep` for `T`, `T`'s stream output operator is called from within `Output_rep`, by default. If you want another behaviour for your type `T`, you have to provide a specialization for that type. Furthermore, you can provide specializations with a second template parameter (a formatting tag). The second template parameter defaults to `Null_tag` and means *default behaviour*.
+If you don't specialize `Output_rep` for `T`, `T`'s stream output operator is called from within `Output_rep`, by default. If you want another behavior for your type `T`, you have to provide a specialization for that type. Furthermore, you can provide specializations with a second template parameter (a formatting tag). The second template parameter defaults to `Null_tag` and means *default behavior*.
 
 Specializations of `Output_rep` should provide the following features:
 
@@ -181,9 +183,50 @@ class Output_rep
 
 public:
   //! initialize with a const reference to \a t.
-  Output_rep( const T& tt) : t(tt) {}
+  Output_rep( const T& tt, F = {}) : t(tt) {}
   //! perform the output, calls \c operator\<\< by default.
   std::ostream& operator()( std::ostream& os) const { return (os << t); }
+};
+
+template <class T, class F>
+class Output_rep<std::optional<T>, F>
+{
+  const std::optional<T>& t;
+
+public:
+  Output_rep( const std::optional<T>& tt) : t(tt) {}
+  std::ostream& operator()( std::ostream& os) const
+  {
+    if (t==std::nullopt) return (os << "--");
+    return (os << t.value());
+  }
+};
+
+template <class ... T, class F>
+class Output_rep<std::variant<T...>, F>
+{
+   const std::variant<T...>& t;
+
+public:
+  Output_rep( const std::variant<T...>& tt) : t(tt) {}
+  std::ostream& operator()( std::ostream& os) const
+  {
+    std::visit([&os](auto&& v) { os << v; }, t);
+    return os;
+  }
+};
+
+template <class Func>
+class Output_rep<Func, IO_manip_tag>
+{
+  Func f;
+
+public:
+  Output_rep(Func f) : f(f) {}
+  std::ostream& operator()(std::ostream& os) const
+  {
+    return f(os);
+  }
 };
 
 /*!
@@ -218,7 +261,12 @@ Convenience function to construct an output representation (`Output_rep`) for ty
 Generic IO for type `T` with formatting tag.
 */
 template <class T, class F>
-Output_rep<T,F> oformat( const T& t, F) { return Output_rep<T,F>(t); }
+Output_rep<T,F> oformat( const T& t, F format) {
+  if constexpr (std::is_constructible_v<Output_rep<T,F>, const T&, F>)
+    return Output_rep<T,F>(t, format);
+  else
+    return Output_rep<T,F>(t);
+}
 
 } // namespace IO
 
@@ -239,6 +287,23 @@ public:
 
   //! perform the input, calls \c operator\>\> by default.
   std::istream& operator()( std::istream& is) const { return (is >> t); }
+};
+
+template <class T>
+class Input_rep<std::optional<T>>
+{
+  std::optional<T>& t;
+
+public:
+  //! initialize with a reference to \a t.
+  Input_rep( std::optional<T>& tt) : t(tt) {}
+
+  //! perform the input, calls \c operator\>\> by default.
+  std::istream& operator()( std::istream& is) const {
+    T v;
+    if(is >> v) t = v;
+    return is;
+  }
 };
 
 #if CGAL_FORCE_IFORMAT_DOUBLE || \
@@ -698,6 +763,25 @@ inline const char* mode_name( IO::Mode m )
   return names[m];
 }
 
+namespace internal {
+
+template <class P> constexpr auto has_exact(int) -> decltype(exact(P()), bool()) { return true; }
+template <class P> constexpr bool has_exact(...) { return false; }
+
+}
+
+template <class P>
+auto
+serialize(const P& p) {
+  if constexpr (internal::has_exact<P>(0)) {
+    return exact(p);
+  } else {
+    return p;
+  }
+}
+
+
+
 } // IO namespace
 
 #ifndef CGAL_NO_DEPRECATED_CODE
@@ -923,6 +1007,96 @@ inline void read_float_or_quotient(std::istream& is, Rat &z)
 } // namespace internal
 
 } // namespace CGAL
+
+#if CGAL_CAN_USE_CXX20_FORMAT
+#  include <format>
+#  include <sstream>
+
+namespace std {
+
+template <typename T, typename F, typename CharT>
+struct formatter<CGAL::Output_rep<T, F>, CharT> : public std::formatter<std::basic_string<CharT>>
+{
+  using context = std::basic_format_parse_context<CharT>;
+  using context_iterator = typename context::iterator;
+
+  constexpr context_iterator parse_non_precision_chars(context_iterator it, context_iterator end)
+  {
+    constexpr std::array<CharT, 3> letters = {CharT('A'), CharT('B'), CharT('P')};
+    constexpr std::array<CGAL::IO::Mode, 3> modes = {CGAL::IO::ASCII, CGAL::IO::BINARY, CGAL::IO::PRETTY};
+
+    if(it == end)
+      throw "it != end is a precondition of `parse_non_precision_chars(it, end)`";
+
+    if(*it == CharT('}'))
+      return it;
+    if(*it == CharT('.'))
+      return it;
+
+    for(const auto& letter : letters) {
+      if(*it == letter) {
+        mode = modes[std::addressof(letter) - letters.data()];
+        return ++it;
+      }
+    }
+
+    throw std::format_error(R"(
+formatter for CGAL::Output_rep only support stream mode and precision, like `{:X.6}` where X is
+  - `A` (or missing) for ASCII mode,
+  - `B` for BINARY mode, or
+  - `P` for PRETTY mode
+)");
+  }
+
+  constexpr auto parse(std::basic_format_parse_context<CharT>& ctx)
+  {
+    auto it = ctx.begin();
+    const auto end = ctx.end();
+
+    if(it == end) return it;
+
+    {
+      auto next = it;
+      do {
+        next = parse_non_precision_chars(it, end);
+      } while(next != it && (it = next) != end);
+    }
+
+    if(it == end) return it;
+
+    if(*it != CharT('.')) {
+      if(*it == CharT('}')) return it;
+      throw std::format_error("formatter for CGAL::Output_rep only support precision, like `{:.6}`");
+    }
+    if(++it == end)
+      throw std::format_error("Missing precision");
+    if(*it < CharT('0') || *it > CharT('9'))
+      throw std::format_error("Invalid value for precision");
+    precision = *it - CharT('0');
+    while(++it != end) {
+      if(*it < CharT('0') || *it > CharT('9'))
+        return it;
+      precision = precision * 10 + (*it - CharT('0'));
+    }
+    return it;
+  }
+
+  template <typename FormatContext>
+  auto format(const CGAL::Output_rep<T, F> &rep, FormatContext& ctx) const
+  {
+    std::basic_stringstream<CharT> ss;
+    CGAL::IO::set_mode(ss, mode);
+    ss.precision(precision);
+    ss << rep;
+    return std::formatter<std::basic_string<CharT>>::format(ss.str(), ctx);
+  }
+
+  int precision = 17;
+  CGAL::IO::Mode mode = CGAL::IO::ASCII;
+};
+
+} // namespace std
+#endif // CGAL_CAN_USE_CXX20_FORMAT
 
 #include <CGAL/enable_warnings.h>
 

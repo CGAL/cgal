@@ -16,6 +16,11 @@
 
 #include <CGAL/license/Surface_mesher.h>
 
+#define CGAL_DEPRECATED_HEADER "<CGAL/Surface_mesher/Implicit_surface_oracle_3.h>"
+#define CGAL_DEPRECATED_MESSAGE_DETAILS \
+  "The 3D Mesh Generation package (see https://doc.cgal.org/latest/Mesh_3/) should be used instead."
+#include <CGAL/Installation/internal/deprecation_warning.h>
+
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/Surface_mesher/Null_oracle_visitor.h>
@@ -53,46 +58,6 @@ namespace CGAL {
 #endif
 
   namespace Surface_mesher {
-
-    /**
-       Type and functions required in GT:
-         - Compute_scalar_product_3             (from rev. 29646)
-         - Compute_squared_distance_3
-         - Compute_squared_radius_3
-         - Construct_center_3
-         - Construct_midpoint_3
-         - Construct_point_on_3                 (from rev. 29646)
-         - Construct_scaled_vector_3
-         - Construct_segment_3                  (from rev. 29646)
-         - Construct_translated_point_3
-         - Construct_vector_3
-         - FT
-         - Has_on_bounded_side_3                (from rev. 29646)
-         - Line_3
-         - Point_3
-         - Ray_3
-         - Segment_3
-         - Sphere_3
-         - Vector_3                             (from rev. 29646)
-         - compute_scalar_product_3_object      (from rev. 29646)
-         - compute_squared_distance_3_object
-         - compute_squared_radius_3_object
-         - construct_center_3_object
-         - construct_line_3_object              (no longer, since rev. 29646)
-         - construct_midpoint_3_object
-         - construct_point_on_3_object          (from rev. 29646)
-         - construct_scaled_vector_3_object
-         - construct_segment_3_object           (from rev. 29646)
-         - construct_translated_point_3_object
-         - construct_vector_3_object
-         - has_on_bounded_side_3_object         (from rev. 29646)
-(Computed by use of:
- perl -ne '/GT\(\)\.([a-zA-Z_0-9]+)/
-             && print "$1\n";' {implicit_surface_oracle_3.h,Sphere_oracle_3.h} | sort -u
- perl -ne '/GT::([a-zA-Z_0-9]+)/
-             && print "$1\n";' {implicit_surface_oracle_3.h,Sphere_oracle_3.h} | sort -u
-)
-    */
 
   namespace {
 
@@ -371,7 +336,7 @@ namespace CGAL {
 #ifdef CGAL_SURFACE_MESHER_DEBUG_CLIPPED_SEGMENT
             std::cerr << "=" << debug_point(surface, mid) << "\n";
 #endif
-            // the following function conditionnally call
+            // the following function conditionally call
             // mid.set_on_surface(...) if mid has such a function.
             set_on_surface(mid,
                            surface_identifiers_generator(value_at_p1,

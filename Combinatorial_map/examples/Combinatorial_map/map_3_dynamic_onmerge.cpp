@@ -16,7 +16,7 @@ struct Myitem
 
 // Definition of my combinatorial map.
 typedef CGAL::Combinatorial_map<3,Myitem> CMap_3;
-typedef CMap_3::Dart_handle               Dart_handle;
+typedef CMap_3::Dart_descriptor           Dart_descriptor;
 typedef CMap_3::Attribute_type<2>::type   Face_attribute;
 
 // Functor called when two faces are merged.
@@ -40,7 +40,7 @@ struct Split_functor
   // operator() automatically called after a split.
   void operator()(Face_attribute& ca1, Face_attribute& ca2)
   {
-     // We need to reinitalize the weight of the two faces
+     // We need to reinitialize the weight of the two faces
     CMap_3::size_type nb1=mmap.darts_of_cell<2>(ca1.dart()).size();
     CMap_3::size_type nb2=mmap.darts_of_cell<2>(ca2.dart()).size();
     mmap.info<2>(ca1.dart())*=(double(nb1)/(nb1+nb2));
@@ -71,8 +71,8 @@ int main()
   CMap_3 cm;
 
   // 0) Create 2 hexahedra.
-  Dart_handle dh1 = cm.make_combinatorial_hexahedron();
-  Dart_handle dh2 = cm.make_combinatorial_hexahedron();
+  Dart_descriptor d1 = cm.make_combinatorial_hexahedron();
+  Dart_descriptor d2 = cm.make_combinatorial_hexahedron();
 
   // 1) Create and initialize 2-attributes.
   for (CMap_3::One_dart_per_cell_range<2>::iterator
@@ -85,14 +85,14 @@ int main()
   cm.onmerge_functor<2>()=Merge_functor();
 
   // 3) 3-Sew the two hexahedra along one face. This calls 1 onmerge.
-  cm.sew<3>(dh1, dh2);
+  cm.sew<3>(d1, d2);
 
   // 4) Display all the values of 2-attributes.
   display_map_and_2attributes(cm);
 
   // 5) Insert a vertex in the face between the two hexahedra.
   //    This calls 3 onsplit.
-  Dart_handle resdart=cm.insert_cell_0_in_cell_2(dh2);
+  Dart_descriptor resdart=cm.insert_cell_0_in_cell_2(d2);
 
   // 6) Display all the values of 2-attributes.
   display_map_and_2attributes(cm);

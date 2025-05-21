@@ -20,15 +20,13 @@
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/property_map.h>
-#include <CGAL/point_set_processing_assertions.h>
 #include <CGAL/Iterator_range.h>
-
-#include <boost/utility/enable_if.hpp>
+#include <CGAL/assertions.h>
 
 #include <iostream>
 #include <fstream>
-#include <fstream>
 #include <iterator>
+#include <type_traits>
 
 namespace CGAL {
 namespace Point_set_processing_3 {
@@ -39,8 +37,6 @@ bool write_OFF_PSP(std::ostream& os,
                    const PointRange& points,
                    const CGAL_NP_CLASS& np = CGAL::parameters::default_values())
 {
-  using CGAL::parameters::choose_parameter;
-  using CGAL::parameters::get_parameter;
   using CGAL::parameters::is_default_parameter;
 
   // basic geometric types
@@ -48,12 +44,12 @@ bool write_OFF_PSP(std::ostream& os,
   typedef typename NP_helper::Const_point_map PointMap;
   typedef typename NP_helper::Normal_map NormalMap;
 
-  const bool has_normals = !(is_default_parameter<CGAL_NP_CLASS, internal_np::normal_t>());
+  const bool has_normals = NP_helper::has_normal_map(points, np);
 
   PointMap point_map = NP_helper::get_const_point_map(points, np);
   NormalMap normal_map = NP_helper::get_normal_map(points, np);
 
-  CGAL_point_set_processing_precondition(points.begin() != points.end());
+  CGAL_precondition(points.begin() != points.end());
 
   if(!os)
   {
@@ -135,7 +131,7 @@ bool write_OFF(std::ostream& os,
                const PointRange& points,
                const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-               , typename boost::enable_if<internal::is_Range<PointRange> >::type* = nullptr
+               , std::enable_if_t<internal::is_Range<PointRange>::value>* = nullptr
 #endif
                )
 {
@@ -191,7 +187,7 @@ bool write_OFF(const std::string& filename,
                const PointRange& points,
                const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-               , typename boost::enable_if<internal::is_Range<PointRange> >::type* = nullptr
+               , std::enable_if_t<internal::is_Range<PointRange>::value>* = nullptr
 #endif
                )
 {
@@ -295,12 +291,6 @@ bool write_off_points(std::ostream& os, ///< output stream.
 
 /// \endcond
 
-/**
-  \ingroup PkgPointSetProcessing3IODeprecated
-
-  \deprecated This function is deprecated since \cgal 5.3,
-              \link PkgPointSetProcessing3IOOff `CGAL::IO::write_OFF()` \endlink should be used instead.
-*/
 template <typename PointRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
 CGAL_DEPRECATED bool write_off_points(std::ostream& os, const PointRange& points, const CGAL_NP_CLASS& np = parameters::default_values())
 {

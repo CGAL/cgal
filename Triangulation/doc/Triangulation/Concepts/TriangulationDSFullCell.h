@@ -34,10 +34,12 @@ that the `CGAL::Triangulation_data_structure`
 actually uses as a base class for the class
 of `CGAL::Triangulation_data_structure::Vertex`.
 
-\cgalRefines `TriangulationDataStructure::FullCell`
+\cgalRefines{TriangulationDataStructure::FullCell}
 
-\cgalHasModel `CGAL::Triangulation_ds_full_cell<TriangulationDataStructure_, DSFullCellStoragePolicy>`
-\cgalHasModel `CGAL::Triangulation_full_cell<TriangulationTraits_, Data, TriangulationDSFullCell_>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Triangulation_ds_full_cell<TriangulationDataStructure_, DSFullCellStoragePolicy>}
+\cgalHasModels{CGAL::Triangulation_full_cell<TriangulationTraits_, Data, TriangulationDSFullCell_>}
+\cgalHasModelsEnd
 
 \sa `TriangulationDSVertex`
 \sa `TriangulationDSFace`

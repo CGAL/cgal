@@ -4,10 +4,12 @@
 
 The concept `Index` is a refinement of `Descriptor` which must be convertible from and to `std::size_t`, and must be incrementable and decrementable.
 
-\cgalRefines `Descriptor`
+\cgalRefines{Descriptor}
 
-\cgalHasModel int
-\cgalHasModel size_t
+\cgalHasModelsBegin
+\cgalHasModels{int}
+\cgalHasModels{size_t}
+\cgalHasModelsEnd
 
 \cgalHeading{Notation}
 

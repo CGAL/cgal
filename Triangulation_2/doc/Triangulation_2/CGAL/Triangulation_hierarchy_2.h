@@ -89,7 +89,7 @@ This design allows to use either the default
 vertex base class or a user customized
 vertex base with additional functionalities.
 
-\cgalModels `TriangulationHierarchyVertexBase_2`
+\cgalModels{TriangulationHierarchyVertexBase_2}
 
 \sa `TriangulationVertexBase_2`
 \sa `TriangulationHierarchyVertexBase_2`

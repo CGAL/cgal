@@ -5,7 +5,8 @@
 The concept `MeshCellBase_3` describes the requirements
 for the `Cell` type of the triangulation
 used in the 3D mesh generation process. The type `MeshCellBase_3`
-refines the concept `RegularTriangulationCellBaseWithWeightedCircumcenter_3`
+refines the concepts `SimplicialMeshCellBase_3` and
+`RegularTriangulationCellBaseWithWeightedCircumcenter_3`
 and must be copy constructible.
 The concept `MeshCellBase_3`
 includes a way to store and retrieve
@@ -40,11 +41,12 @@ and `is_facet_visited(1)` in parallel must be safe)
 Moreover, the parallel algorithms require an erase counter in
 each cell (see below).
 
-\cgalRefines `RegularTriangulationCellBaseWithWeightedCircumcenter_3`
-\cgalRefines `CopyConstructible`
+\cgalRefines{SimplicialMeshCellBase_3,RegularTriangulationCellBaseWithWeightedCircumcenter_3}
 
-\cgalHasModel `CGAL::Compact_mesh_cell_base_3<Gt,MD,Tds>`
-\cgalHasModel `CGAL::Mesh_cell_base_3<Gt,MD,Cb>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Compact_mesh_cell_base_3<GT,MD,Tds>}
+\cgalHasModels{CGAL::Mesh_cell_base_3<GT,MD,Cb>}
+\cgalHasModelsEnd
 
 \sa `CGAL::make_mesh_3()`
 \sa `MeshDomain_3`
@@ -172,8 +174,24 @@ void increment_erase_counter();
 /*! \name Internal
 These functions are used internally by mesh optimizers.
 The class should provide storage, accessors and modificators for two `Vertex_handle`
-and two `Cell_handle`.*/
+and two `Cell_handle`, and a cache value for sliverity.*/
 /// @{
+
+/*!
+*/
+void set_sliver_value(double value);
+
+/*!
+*/
+double sliver_value() const;
+
+/*!
+*/
+bool is_cache_valid() const;
+
+/*!
+*/
+void reset_cache_validity() const;
 
 /*!
 

@@ -45,7 +45,7 @@ typedef CGAL::Mesh_complex_3_in_triangulation_3<
 typedef CGAL::Mesh_criteria_3<Tr>                                   Periodic_mesh_criteria;
 
 // To avoid verbose function and named parameters call
-using namespace CGAL::parameters;
+namespace params = CGAL::parameters;
 
 // Implicit function
 static const FT cx = 0.51, cy = 0.51, cz = 0.5;
@@ -91,11 +91,11 @@ int main(int argc, char** argv)
       Periodic_function(cone_function, canonical_cube), canonical_cube);
 
   // Mesh criteria
-  Periodic_mesh_criteria criteria(edge_size = 0.02 * domain_size,
-                                  facet_angle = 0.05 * domain_size,
-                                  facet_size = 0.02 * domain_size,
-                                  cell_radius_edge_ratio = 2,
-                                  cell_size = 0.5);
+  Periodic_mesh_criteria criteria(params::edge_size(0.02 * domain_size)
+                                         .facet_angle(30)
+                                         .facet_size(0.02 * domain_size)
+                                         .cell_radius_edge_ratio(2)
+                                         .cell_size(0.5 * domain_size));
 
   // Create the features that we want to preserve
   Polylines polylines;
@@ -108,14 +108,18 @@ int main(int argc, char** argv)
   domain.add_corner(Point(0.51, 0.51, 0.5));
 
   // Mesh generation WITHOUT feature preservation (and no optimizers)
-  C3t3 c3t3 = CGAL::make_periodic_3_mesh_3<C3t3>(domain, criteria, no_features(),
-                                                 no_exude(), no_perturb());
+  C3t3 c3t3 = CGAL::make_periodic_3_mesh_3<C3t3>(domain, criteria,
+                                                 params::no_features().
+                                                         no_exude().
+                                                         no_perturb());
   std::ofstream medit_file("output_implicit_shape_without_protection.mesh");
   CGAL::IO::output_periodic_mesh_to_medit(medit_file, c3t3, number_of_copies_in_output);
 
   // Mesh generation WITH feature preservation (and no optimizers)
-  C3t3 c3t3_bis = CGAL::make_periodic_3_mesh_3<C3t3>(domain, criteria, features(),
-                                                     no_exude(), no_perturb());
+  C3t3 c3t3_bis = CGAL::make_periodic_3_mesh_3<C3t3>(domain, criteria,
+                                                     params::features().
+                                                             no_exude().
+                                                             no_perturb());
   std::ofstream medit_file_bis("output_implicit_shape_with_protection.mesh");
   CGAL::IO::output_periodic_mesh_to_medit(medit_file_bis, c3t3_bis, number_of_copies_in_output);
 

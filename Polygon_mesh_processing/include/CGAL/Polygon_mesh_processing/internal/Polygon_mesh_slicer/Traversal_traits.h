@@ -73,7 +73,7 @@ public:
     , do_intersect_3( m_traits.do_intersect_3_object() )
   {}
 
-  bool go_further() const { return true; }
+  constexpr bool go_further() const { return true; }
 
   void intersection(const typename Traits::Plane_3& plane, const typename AABBTraits::Primitive& primitive)
   {

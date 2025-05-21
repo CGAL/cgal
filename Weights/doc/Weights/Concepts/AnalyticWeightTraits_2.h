@@ -5,11 +5,12 @@
 A concept that describes the set of requirements of classes used in the computation
 of analytic weights in 2D.
 
-\cgalHasModel
-- All models of `Kernel`
-- `CGAL::Projection_traits_xy_3<K>`
-- `CGAL::Projection_traits_yz_3<K>`
-- `CGAL::Projection_traits_xz_3<K>`
+\cgalHasModelsBegin
+\cgalHasModelsBare{All models of the \cgal concept `Kernel`}
+\cgalHasModels{sCGAL:Projection_traits_xy_3<K>}
+\cgalHasModels{CGAL::Projection_traits_yz_3<K>}
+\cgalHasModels{CGAL::Projection_traits_xz_3<K>}
+\cgalHasModelsEnd
 */
 class AnalyticWeightTraits_2 {
 

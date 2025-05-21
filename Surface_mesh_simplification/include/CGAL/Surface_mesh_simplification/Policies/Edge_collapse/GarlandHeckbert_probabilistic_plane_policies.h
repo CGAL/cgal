@@ -64,7 +64,7 @@ public:
   { }
 
   Probabilistic_plane_quadric_calculator(TriangleMesh& tmesh,
-                                         typename boost::enable_if<std::is_same<Face_variance_map, Default_FVM> >::type* = nullptr)
+                                         std::enable_if_t<std::is_same<Face_variance_map, Default_FVM>::value >* = nullptr)
   {
     // try to initialize the face variance map using the estimated variance
     // parameters are constants defined for this class

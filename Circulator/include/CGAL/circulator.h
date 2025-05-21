@@ -27,8 +27,6 @@
 #include <functional>
 #include <iterator>
 
-#include <boost/type_traits/is_convertible.hpp>
-
 // These are name redefinitions for backwards compatibility
 // with the pre iterator-traits style adaptors.
 
@@ -193,45 +191,45 @@ template <class C> inline
 void Assert_circulator( const C &) {
     typedef typename Circulator_traits<C>::category category;
     CGAL_USE_TYPE(category);
-    CGAL_static_assertion((boost::is_convertible<category, Circulator_tag>::value));
+    static_assert(std::is_convertible<category, Circulator_tag>::value);
 }
 
 template <class I> inline
 void Assert_iterator( const I &) {
     typedef typename Circulator_traits<I>::category category;
     CGAL_USE_TYPE(category);
-    CGAL_static_assertion((boost::is_convertible<category, Iterator_tag>::value));
+    static_assert(std::is_convertible<category, Iterator_tag>::value);
 }
 template <class I> inline
 void Assert_input_category( const I &/*i*/) {
     typedef typename std::iterator_traits<I>::iterator_category category;
     CGAL_USE_TYPE(category);
-    CGAL_static_assertion((boost::is_convertible<category, std::input_iterator_tag>::value));
+    static_assert(std::is_convertible<category, std::input_iterator_tag>::value);
 }
 
 template <class I> inline
 void Assert_output_category( const I &/*i*/) {
   typedef typename std::iterator_traits<I>::iterator_category category;
   CGAL_USE_TYPE(category);
-  CGAL_static_assertion((boost::is_convertible<category, std::output_iterator_tag>::value));
+  static_assert(std::is_convertible<category, std::output_iterator_tag>::value);
 }
 template <class IC> inline
 void Assert_forward_category( const IC &/*ic*/) {
   typedef typename std::iterator_traits<IC>::iterator_category category;
   CGAL_USE_TYPE(category);
-  CGAL_static_assertion((boost::is_convertible<category, std::forward_iterator_tag>::value));
+  static_assert(std::is_convertible<category, std::forward_iterator_tag>::value);
 }
 template <class IC> inline
 void Assert_bidirectional_category( const IC &/*ic*/) {
   typedef typename std::iterator_traits<IC>::iterator_category category;
   CGAL_USE_TYPE(category);
-  CGAL_static_assertion((boost::is_convertible<category, std::bidirectional_iterator_tag>::value));
+  static_assert(std::is_convertible<category, std::bidirectional_iterator_tag>::value);
 }
 template <class IC> inline
 void Assert_random_access_category( const IC &/*ic*/) {
   typedef typename std::iterator_traits<IC>::iterator_category category;
   CGAL_USE_TYPE(category);
-  CGAL_static_assertion((boost::is_convertible<category, std::random_access_iterator_tag>::value));
+  static_assert(std::is_convertible<category, std::random_access_iterator_tag>::value);
 }
 // The assert at-least-category functions use the following
 // functions to resolve properly. Note the proper order of the
@@ -700,8 +698,18 @@ typedef Iterator_from_circulator< C, const_reference, const_pointer>
 };
 template <class Container>
 class Circulator_from_container {
+    static auto begin(Container* c) {
+        using std::begin;
+        return begin(*c);
+    }
+
+    static auto end(Container* c) {
+        using std::end;
+        return end(*c);
+    }
+
     typedef Circulator_from_container<Container>      Self;
-    typedef typename Container::iterator              iterator;
+    using iterator = decltype(begin(std::declval<Container*>()));
     typedef std::iterator_traits<iterator>            iterator_traits;
 public:
     typedef typename iterator_traits::value_type      value_type;
@@ -713,7 +721,7 @@ public:
         typename iterator_traits::iterator_category
         >::iterator_category                          iterator_category;
 
-    typedef typename Container::size_type size_type;
+    using size_type = decltype(std::size(std::declval<Container&>()));
 private:
     Container*     ctnr;
     iterator  i;
@@ -730,27 +738,27 @@ public:
     bool operator==( std::nullptr_t p) const {
         CGAL_USE(p);
         CGAL_assertion( p == nullptr);
-        return (ctnr == nullptr) || (ctnr->begin() == ctnr->end());
+        return (ctnr == nullptr) || (begin(ctnr) == end(ctnr));
     }
     bool operator!=( std::nullptr_t p) const { return !(*this == p); }
     bool operator==( const Self& c) const { return i == c.i; }
     bool operator!=( const Self& c) const { return !(*this == c); }
     reference  operator*() const {
         CGAL_assertion( ctnr != nullptr);
-        CGAL_assertion( i != ctnr->end());
+        CGAL_assertion( i != end(ctnr));
         return *i;
     }
     pointer  operator->() const {
         CGAL_assertion( ctnr != nullptr);
-        CGAL_assertion( i != ctnr->end());
+        CGAL_assertion( i != end(ctnr));
         return i.operator->();
     }
     Self& operator++() {
         CGAL_assertion( ctnr != nullptr);
-        CGAL_assertion( i != ctnr->end());
+        CGAL_assertion( i != end(ctnr));
         ++i;
-        if ( i == ctnr->end())
-            i = ctnr->begin();
+        if ( i == end(ctnr))
+            i = begin(ctnr);
         return *this;
     }
     Self operator++(int) {
@@ -760,9 +768,9 @@ public:
     }
     Self& operator--() {
         CGAL_assertion( ctnr != nullptr);
-        CGAL_assertion( i != ctnr->end());
-        if ( i == ctnr->begin())
-            i = ctnr->end();
+        CGAL_assertion( i != end(ctnr));
+        if ( i == begin(ctnr))
+            i = end(ctnr);
         --i;
         return *this;
     }
@@ -773,15 +781,15 @@ public:
     }
     Self& operator+=( difference_type n) {
         CGAL_assertion( ctnr != nullptr);
-        CGAL_assertion( i != ctnr->end());
-        typename Container::difference_type j    = i - ctnr->begin();
+        CGAL_assertion( i != end(ctnr));
+        typename Container::difference_type j    = i - begin(ctnr);
         typename Container::difference_type size = ctnr->size();
         CGAL_assertion( j    >= 0);
         CGAL_assertion( size >= 0);
         j = non_negative_mod( j + n, size);
         CGAL_assertion( j >= 0);
         CGAL_assertion( j < size);
-        i = ctnr->begin() + j;
+        i = begin(ctnr) + j;
         return *this;
     }
     Self operator+( difference_type n) const {

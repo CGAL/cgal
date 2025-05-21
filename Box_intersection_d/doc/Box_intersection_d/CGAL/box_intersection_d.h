@@ -77,7 +77,7 @@ namespace CGAL {
 \cgalHeading{Implementation}
 
   The algorithm is trivially testing all pairs and runs therefore in time
-  \f$ O(nm)\f$ where \f$ n\f$ is the size of the first sequence and \f$ m\f$ is the
+  \cgalBigO{nm} where \f$ n\f$ is the size of the first sequence and \f$ m\f$ is the
   size of the second sequence.
 */
 
@@ -219,12 +219,12 @@ void box_intersection_all_pairs_d(
   algorithm to the two-way-scan algorithm, see \cgalCite{cgal:ze-fsbi-02}
   for the details.
 
-  The streamed segment-tree algorithm needs \f$ O(n \log^d (n) + k)\f$
-  worst-case running time and \f$ O(n)\f$ space, where \f$ n\f$ is the number of
+  The streamed segment-tree algorithm needs \cgalBigO{n \log^d (n) + k}
+  worst-case running time and \cgalBigO{n} space, where \f$ n\f$ is the number of
   boxes in both input sequences, \f$ d\f$ the (constant) dimension of the
   boxes, and \f$ k\f$ the output complexity, i.e., the number of pairwise
-  intersections of the boxes. The two-way-scan algorithm needs \f$ O(n \log
-  (n) + l)\f$ worst-case running time and \f$ O(n)\f$ space, where \f$ l\f$ is the
+  intersections of the boxes. The two-way-scan algorithm needs \cgalBigO{n \log
+  (n) + l} worst-case running time and \cgalBigO{n} space, where \f$ l\f$ is the
   number of pairwise overlapping intervals in one dimensions (the
   dimension where the algorithm is used instead of the segment tree).
   Note that \f$ l\f$ is not necessarily related to \f$ k\f$ and using the
@@ -397,7 +397,7 @@ namespace CGAL {
 \cgalHeading{Implementation}
 
   The algorithm is trivially testing all pairs and runs therefore in time
-  \f$ O(n^2)\f$ where \f$ n\f$ is the size of the input sequence. This algorithm
+  \cgalBigO{n^2} where \f$ n\f$ is the size of the input sequence. This algorithm
   does not use the id-number of the boxes.
 
 */

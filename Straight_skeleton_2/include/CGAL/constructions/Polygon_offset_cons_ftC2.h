@@ -15,8 +15,7 @@
 
 #include <CGAL/constructions/Straight_skeleton_cons_ftC2.h>
 
-#include <boost/optional/optional.hpp>
-#include <boost/intrusive_ptr.hpp>
+#include <optional>
 
 namespace CGAL {
 
@@ -31,27 +30,33 @@ namespace CGAL_SS_i {
 //
 // POSTCONDITION: In case of overflow an empty optional is returned.
 //
-template<class K, class CoeffCache>
-boost::optional< Point_2<K> > construct_offset_pointC2 ( typename K::FT const& t,
-                                                         Segment_2_with_ID<K> const& e0,
-                                                         Segment_2_with_ID<K> const& e1,
-                                                         boost::intrusive_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& tri,
-                                                         CoeffCache& aCoeff_cache)
+template<class K, class Caches>
+std::optional< typename K::Point_2 >
+construct_offset_pointC2 ( typename K::FT const& t,
+                           Segment_2_with_ID<K> const& e0,
+                           typename K::FT const& w0,
+                           Segment_2_with_ID<K> const& e1,
+                           typename K::FT const& w1,
+                           Trisegment_2_ptr< Trisegment_2<K, Segment_2_with_ID<K> > > const& tri,
+                           Caches& aCaches)
 {
   typedef typename K::FT FT ;
 
-  typedef Point_2<K>  Point_2 ;
-  typedef Line_2<K>   Line_2 ;
+  typedef typename K::Point_2  Point_2 ;
+  typedef typename K::Line_2   Line_2 ;
 
-  typedef boost::optional<Point_2> Optional_point_2 ;
-  typedef boost::optional<Line_2>  Optional_line_2 ;
+  typedef std::optional<Point_2> Optional_point_2 ;
+  typedef std::optional<Line_2>  Optional_line_2 ;
 
   FT x(0.0),y(0.0) ;
 
-  CGAL_STSKEL_TRAITS_TRACE("Constructing offset point for t=" << t << " e0=" << s2str(e0) << " e1=" << s2str(e1) << " tri=" << tri ) ;
+  CGAL_STSKEL_TRAITS_TRACE("Constructing offset point for t=" << t ) ;
+  CGAL_STSKEL_TRAITS_TRACE("Edges e0=" << s2str(e0) << "w = " << w0 ) ;
+  CGAL_STSKEL_TRAITS_TRACE("      e1=" << s2str(e1) << "w = " << w1 ) ;
+  CGAL_STSKEL_TRAITS_TRACE("Event:\n" << tri);
 
-  Optional_line_2 l0 = compute_normalized_line_ceoffC2(e0, aCoeff_cache) ;
-  Optional_line_2 l1 = compute_normalized_line_ceoffC2(e1, aCoeff_cache) ;
+  Optional_line_2 l0 = compute_normalized_line_coeffC2(e0, aCaches) ;
+  Optional_line_2 l1 = compute_normalized_line_coeffC2(e1, aCaches) ;
 
   bool ok = false ;
 
@@ -63,8 +68,8 @@ boost::optional< Point_2<K> > construct_offset_pointC2 ( typename K::FT const& t
     {
       if ( ! CGAL_NTS is_zero(den) )
       {
-        FT numX = t * l1->b() - t * l0->b() + l0->b() * l1->c() - l1->b() * l0->c() ;
-        FT numY = t * l1->a() - t * l0->a() + l0->a() * l1->c() - l1->a() * l0->c() ;
+        FT numX = t * l1->b() / w0 - t * l0->b() / w1 + l0->b() * l1->c() - l1->b() * l0->c() ;
+        FT numY = t * l1->a() / w0 - t * l0->a() / w1 + l0->a() * l1->c() - l1->a() * l0->c() ;
 
         x = -numX / den ;
         y =  numY / den ;
@@ -75,7 +80,7 @@ boost::optional< Point_2<K> > construct_offset_pointC2 ( typename K::FT const& t
       {
         CGAL_STSKEL_TRAITS_TRACE("  DEGENERATE case: Collinear segments involved. Seed event " << ( !tri ? " ABSENT" : " exists." ) ) ;
 
-        Optional_point_2 q = tri ? construct_offset_lines_isecC2(tri, aCoeff_cache)
+        Optional_point_2 q = tri ? construct_offset_lines_isecC2(tri, aCaches)
                                  : compute_oriented_midpoint(e0,e1) ;
 
         if ( q )
@@ -87,8 +92,11 @@ boost::optional< Point_2<K> > construct_offset_pointC2 ( typename K::FT const& t
 
           CGAL_STSKEL_TRAITS_TRACE("  Projected seed point: (" << px << "," << py << ")" ) ;
 
-          x = px + l0->a() * t  ;
-          y = py + l0->b() * t  ;
+          // When reformulating the progression of the front using the line orthogonal
+          // to the input segment, the speed (weight) becomes inverted: a large weight
+          // in the coefficients of the line means the front moves slower
+          x = px + t * l0->a() / w0 ;
+          y = py + t * l0->b() / w0 ;
 
           ok = CGAL_NTS is_finite(x) && CGAL_NTS is_finite(y) ;
         }

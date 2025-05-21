@@ -18,6 +18,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Triangulation_vertex_base_3.h>
 #include <CGAL/Triangulation_ds_vertex_base_3.h>
+#include <CGAL/IO/io.h>
 
 namespace CGAL {
 
@@ -75,7 +76,7 @@ std::ostream&
 operator<<(std::ostream &os, const Regular_triangulation_vertex_base_3<GT, DSVb> &v)
   // non combinatorial information. Default = point
 {
-  return os << static_cast<const DSVb&>(v) << v.point();
+  return os << static_cast<const DSVb&>(v) << IO::serialize(v.point());
 }
 
 } //namespace CGAL

@@ -26,7 +26,7 @@ int main()
   Point query(0.0, 0.0, 0.0);
   Distance tr_dist;
 
-  // search K nearest neighbours
+  // search K nearest neighbors
   K_neighbor_search search(tree, query, K);
   for(K_neighbor_search::iterator it = search.begin(); it != search.end(); it++)
   {
@@ -34,7 +34,7 @@ int main()
               << tr_dist.inverse_of_transformed_distance(it->second) << std::endl;
   }
 
-  // search K furthest neighbour searching, with eps=0, search_nearest=false
+  // search K furthest neighbor searching, with eps=0, search_nearest=false
   K_neighbor_search search2(tree, query, K, 0.0, false);
 
   for(K_neighbor_search::iterator it = search2.begin(); it != search2.end(); it++)

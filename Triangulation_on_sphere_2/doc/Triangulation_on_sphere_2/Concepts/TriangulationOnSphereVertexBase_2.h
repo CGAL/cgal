@@ -2,14 +2,16 @@
 \ingroup PkgTriangulationOnSphere2Concepts
 \cgalConcept
 
-\cgalRefines `TriangulationDSVertexBase_2`
+\cgalRefines{TriangulationDSVertexBase_2}
 
 The concept `TriangulationOnSphereVertexBase_2` describes the requirements for the vertex base class
 of a triangulation data structure to be plugged in a triangulation on the sphere.
 It refines the concept `TriangulationDSVertexBase_2`, adding geometric information:
 the vertex base of a triangulation stores a point.
 
-\cgalHasModel `CGAL::Triangulation_on_sphere_vertex_base_2<Traits,Vb>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Triangulation_on_sphere_vertex_base_2<Traits,Vb>}
+\cgalHasModelsEnd
 
 \sa `TriangulationDataStructure_2`
 \sa `TriangulationOnSphereFaceBase_2`

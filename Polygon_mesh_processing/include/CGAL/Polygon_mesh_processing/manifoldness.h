@@ -13,10 +13,10 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_MANIFOLDNESS_H
 #define CGAL_POLYGON_MESH_PROCESSING_MANIFOLDNESS_H
 
-#include <CGAL/license/Polygon_mesh_processing/repair.h>
+#include <CGAL/license/Polygon_mesh_processing/combinatorial_repair.h>
 
 #include <CGAL/Named_function_parameters.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 
 #include <CGAL/algorithm.h>
 #include <CGAL/assertions.h>
@@ -33,7 +33,7 @@
 namespace CGAL {
 namespace Polygon_mesh_processing {
 
-/// \ingroup PMP_repairing_grp
+/// \ingroup PMP_combinatorial_repair_grp
 ///
 /// \brief returns whether a vertex of a polygon mesh is non-manifold.
 ///
@@ -58,9 +58,7 @@ bool is_non_manifold_vertex(typename boost::graph_traits<PolygonMesh>::vertex_de
   typedef typename boost::property_map<PolygonMesh, Halfedge_property_tag>::const_type  Visited_halfedge_map;
 
   // Dynamic pmaps do not have default initialization values (yet)
-  Visited_halfedge_map visited_halfedges = get(Halfedge_property_tag(), pm);
-  for(halfedge_descriptor h : halfedges(pm))
-    put(visited_halfedges, h, false);
+  Visited_halfedge_map visited_halfedges = get(Halfedge_property_tag(), pm, false);
 
   std::size_t incident_null_faces_counter = 0;
   for(halfedge_descriptor h : halfedges_around_target(v, pm))
@@ -284,7 +282,7 @@ std::size_t make_umbrella_manifold(typename boost::graph_traits<PolygonMesh>::ha
 
 } // end namespace internal
 
-/// \ingroup PMP_repairing_grp
+/// \ingroup PMP_combinatorial_repair_grp
 ///
 /// \brief collects the non-manifold vertices (if any) present in the mesh.
 ///
@@ -324,20 +322,11 @@ OutputIterator non_manifold_vertices(const PolygonMesh& pm,
   typedef CGAL::dynamic_halfedge_property_t<bool>                                       Halfedge_property_tag;
   typedef typename boost::property_map<PolygonMesh, Halfedge_property_tag>::const_type  Visited_halfedge_map;
 
-  Known_manifold_vertex_map known_nm_vertices = get(Vertex_bool_tag(), pm);
-  Visited_vertex_map visited_vertices = get(Vertex_halfedge_tag(), pm);
-  Visited_halfedge_map visited_halfedges = get(Halfedge_property_tag(), pm);
-
   halfedge_descriptor null_h = boost::graph_traits<PolygonMesh>::null_halfedge();
 
-  // Dynamic pmaps do not have default initialization values (yet)
-  for(vertex_descriptor v : vertices(pm))
-  {
-    put(known_nm_vertices, v, false);
-    put(visited_vertices, v, null_h);
-  }
-  for(halfedge_descriptor h : halfedges(pm))
-    put(visited_halfedges, h, false);
+  Known_manifold_vertex_map known_nm_vertices = get(Vertex_bool_tag(), pm, false);
+  Visited_vertex_map visited_vertices = get(Vertex_halfedge_tag(), pm, null_h);
+  Visited_halfedge_map visited_halfedges = get(Halfedge_property_tag(), pm, false);
 
   for(halfedge_descriptor h : halfedges(pm))
   {
@@ -394,7 +383,7 @@ OutputIterator non_manifold_vertices(const PolygonMesh& pm,
   return out;
 }
 
-/// \ingroup PMP_repairing_grp
+/// \ingroup PMP_combinatorial_repair_grp
 ///
 /// duplicates all the non-manifold vertices of the input mesh.
 ///

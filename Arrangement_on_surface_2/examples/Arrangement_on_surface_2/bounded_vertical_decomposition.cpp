@@ -3,14 +3,13 @@
 
 #include <list>
 
-#include <CGAL/basic.h>
 #include <CGAL/Arr_vertical_decomposition_2.h>
 
 #include "arr_exact_construction_segments.h"
 
-typedef std::pair<CGAL::Object, CGAL::Object>           Object_pair;
-typedef std::pair<Vertex_const_handle, Object_pair>     Vert_decomp_entry;
-typedef std::list<Vert_decomp_entry>                    Vert_decomp_list;
+using Object_pair = std::pair<CGAL::Object, CGAL::Object>;
+using Vert_decomp_entry = std::pair<Vertex_const_handle, Object_pair>;
+using Vert_decomp_list = std::list<Vert_decomp_entry>;
 
 int main() {
   // Construct the arrangement.

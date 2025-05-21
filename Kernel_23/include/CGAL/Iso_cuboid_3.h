@@ -18,22 +18,26 @@
 #define CGAL_ISO_CUBOID_3_H
 
 #include <CGAL/assertions.h>
-#include <boost/type_traits/is_same.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Dimension.h>
+
+#include <type_traits>
 
 namespace CGAL {
 
 template <class R_>
 class Iso_cuboid_3 : public R_::Kernel_base::Iso_cuboid_3
 {
+  typedef typename R_::Boolean            Boolean;
+  typedef typename R_::Bounded_side       Bounded_side;
   typedef typename R_::RT                 RT;
+  typedef typename R_::FT                 FT;
   typedef typename R_::Point_3            Point_3;
   typedef typename R_::Aff_transformation_3  Aff_transformation_3;
 
   typedef Iso_cuboid_3                    Self;
-  CGAL_static_assertion((boost::is_same<Self, typename R_::Iso_cuboid_3>::value));
+  static_assert(std::is_same<Self, typename R_::Iso_cuboid_3>::value);
 
 public:
 
@@ -83,8 +87,9 @@ public:
                                              max_hx, max_hy, max_hz)) {}
 
   Iso_cuboid_3(const Bbox_3& bbox)
-   : Rep(typename R::Construct_iso_cuboid_3()(Return_base_tag(), bbox.xmin(), bbox.ymin(), bbox.zmin(),
-                                                                 bbox.xmax(), bbox.ymax(), bbox.zmax())) {}
+   : Rep(typename R::Construct_iso_cuboid_3()(Return_base_tag(),
+                                              typename R::Construct_point_3()(FT(bbox.xmin()), FT(bbox.ymin()), FT(bbox.zmin())),
+                                              typename R::Construct_point_3()(FT(bbox.xmax()), FT(bbox.ymax()), FT(bbox.zmax())))) {}
 
   decltype(auto)
   min BOOST_PREVENT_MACRO_SUBSTITUTION () const
@@ -170,25 +175,25 @@ public:
        return zmax();
   }
 
-  bool
+  typename R::Boolean
   has_on_bounded_side(const Point_3 &p) const
   {
     return R().has_on_bounded_side_3_object()(*this,p);
   }
 
-  bool
+  Boolean
   has_on_unbounded_side(const Point_3 &p) const
   {
     return R().has_on_unbounded_side_3_object()(*this,p);
   }
 
-  bool
+  Boolean
   has_on_boundary(const Point_3 &p) const
   {
     return R().has_on_boundary_3_object()(*this,p);
   }
 
-  bool
+  Boolean
   has_on(const Point_3 &p) const
   {
     return has_on_boundary(p);
@@ -200,7 +205,7 @@ public:
     return R().bounded_side_3_object()(*this,p);
   }
 
-  bool
+  Boolean
   is_degenerate() const
   {
     return R().is_degenerate_3_object()(*this);

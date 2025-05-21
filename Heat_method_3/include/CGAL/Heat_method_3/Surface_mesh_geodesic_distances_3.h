@@ -21,10 +21,12 @@
 #include <CGAL/property_map.h>
 #include <CGAL/double.h>
 #include <CGAL/boost/graph/properties.h>
+#include <CGAL/Default.h>
 #include <CGAL/Dynamic_property_map.h>
 #include <CGAL/squared_distance_3.h>
-#include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/number_utils.h>
+#include <CGAL/Default.h>
+
 #ifdef CGAL_EIGEN3_ENABLED
 #include <CGAL/Eigen_solver_traits.h>
 #endif
@@ -90,43 +92,43 @@ protected:
   Face_id_map face_id_map;
 
 public:
+  /*!
+    \brief Constructor
+  */
+  Surface_mesh_geodesic_distances_3(const TriangleMesh& tm,
+                                    VertexPointMap vpm)
+    : vertex_id_map(get(Vertex_property_tag(), tm)),
+      face_id_map(get(Face_property_tag(), tm)),
+      v2v(tm),
+      tm(tm),
+      vpm(vpm)
+  {
+    build();
+  }
 
   /*!
     \brief Constructor
   */
   Surface_mesh_geodesic_distances_3(const TriangleMesh& tm)
-    : vertex_id_map(get(Vertex_property_tag(),tm)), face_id_map(get(Face_property_tag(),tm)), v2v(tm), tm(tm), vpm(get(vertex_point,tm))
+    : Surface_mesh_geodesic_distances_3(tm, get(vertex_point, tm))
   {
     build();
   }
-
-
-  /*!
-    \brief Constructor
-  */
-  Surface_mesh_geodesic_distances_3(const TriangleMesh& tm, VertexPointMap vpm)
-    : vertex_id_map(get(Vertex_property_tag(),tm)), face_id_map(get(Face_property_tag(),tm)), v2v(tm), tm(tm), vpm(vpm)
-  {
-    build();
-  }
-
 
   /**
    * returns the triangle mesh the algorithm is running on.
    */
-  const TriangleMesh& triangle_mesh() const{
+  const TriangleMesh& triangle_mesh() const
+  {
     return tm;
   }
 
-
 private:
-
   const Matrix&
   mass_matrix() const
   {
     return m_mass_matrix;
   }
-
 
   const Matrix&
   cotan_matrix() const
@@ -134,13 +136,11 @@ private:
     return m_cotan_matrix;
   }
 
-
   const VertexPointMap&
   vertex_point_map() const
   {
     return vpm;
   }
-
 
   const Vertex_id_map&
   get_vertex_id_map() const
@@ -149,7 +149,6 @@ private:
   }
 
 public:
-
   /**
    * adds `vd` to the source set, returning `false` iff `vd` is already in the set.
    */
@@ -176,7 +175,6 @@ public:
     }
   }
 
-
   /**
    * removes `vd` from the source set, returning `true` iff `vd` was in the set.
    */
@@ -187,7 +185,6 @@ public:
     m_source_change_flag = true;
     return (m_sources.erase(v2v(vd)) == 1);
   }
-
 
   /**
    * clears the current source set.
@@ -203,7 +200,6 @@ public:
   /**
    * returns the set of  source vertices.
    */
-
   const Vertex_const_range&
   sources() const
   {
@@ -211,7 +207,6 @@ public:
   }
 
 private:
-
   double
   summation_of_edges() const
   {
@@ -237,13 +232,11 @@ private:
     return edge_sum;
   }
 
-
   double
   time_step() const
   {
     return m_time_step;
   }
-
 
   void
   update_kronecker_delta()
@@ -263,13 +256,11 @@ private:
     m_kronecker.swap(K);
   }
 
-
   const Matrix&
   kronecker_delta() const
   {
     return m_kronecker;
   }
-
 
   void factor_cotan_laplace()
   {
@@ -293,7 +284,6 @@ private:
     }
   }
 
-
   void
   compute_unit_gradient()
   {
@@ -307,7 +297,7 @@ private:
     }
     CGAL::Vertex_around_face_iterator<TriangleMesh> vbegin, vend, vmiddle;
     for(face_descriptor f : faces(tm)) {
-      boost::tie(vbegin, vend) = vertices_around_face(halfedge(f,tm),tm);
+      std::tie(vbegin, vend) = vertices_around_face(halfedge(f,tm),tm);
       vertex_descriptor current = *(vbegin);
       vertex_descriptor neighbor_one = *(++vbegin);
       vertex_descriptor neighbor_two = *(++vbegin);
@@ -352,7 +342,6 @@ private:
     }
   }
 
-
   void
   compute_divergence()
   {
@@ -361,7 +350,7 @@ private:
     Matrix indexD(dimension,1);
     CGAL::Vertex_around_face_iterator<TriangleMesh> vbegin, vend, vmiddle;
     for(face_descriptor f : faces(tm)) {
-      boost::tie(vbegin, vend) = vertices_around_face(halfedge(f,tm),tm);
+      std::tie(vbegin, vend) = vertices_around_face(halfedge(f,tm),tm);
       vertex_descriptor current = *(vbegin);
       vertex_descriptor neighbor_one = *(++vbegin);
       vertex_descriptor neighbor_two = *(++vbegin);
@@ -400,7 +389,6 @@ private:
     indexD.swap(m_index_divergence);
   }
 
-
   // modifies m_solved_phi
   void
   value_at_source_set(const Vector& phi)
@@ -432,7 +420,6 @@ private:
     m_solved_phi.swap(source_set_val);
   }
 
-
   void
   factor_phi()
   {
@@ -442,7 +429,6 @@ private:
       CGAL_error_msg("Eigen Decomposition in solve_phi() failed");
     }
   }
-
 
   void
   solve_phi()
@@ -456,7 +442,6 @@ private:
     value_at_source_set(phi);
   }
 
-
   // this function returns a (number of vertices)x1 vector where
   // the ith index has the distance from the first vertex to the ith vertex
   const Vector&
@@ -466,7 +451,6 @@ private:
   }
 
 public:
-
   /**
    *  Updates the distance property map after changes in the source set.
    **/
@@ -494,7 +478,6 @@ public:
   }
 
 private:
-
   void
   build()
   {
@@ -507,13 +490,16 @@ private:
     }
     m_source_change_flag = false;
 
-    CGAL_precondition(is_triangle_mesh(tm));
     Index i = 0;
     for(vertex_descriptor vd : vertices(tm)){
       put(vertex_id_map, vd, i++);
     }
     Index face_i = 0;
     for(face_descriptor fd : faces(tm)){
+      // Do not use BGL's version because `tm` is not a valid halfedge graph due to its weird vertex descriptor:
+      // it fails checks such as halfedge(target(h, g), g) == h
+      CGAL_assertion_code(halfedge_descriptor hd = halfedge(fd, tm);)
+      CGAL_assertion(hd == next(next(next(hd,tm),tm),tm));
       put(face_id_map, fd, face_i++);
     }
     dimension = static_cast<int>(num_vertices(tm));
@@ -528,7 +514,7 @@ private:
     CGAL::Vertex_around_face_iterator<TriangleMesh> vbegin, vend, vmiddle;
 
     for(face_descriptor f : faces(tm)) {
-      boost::tie(vbegin, vend) = vertices_around_face(halfedge(f,tm),tm);
+      std::tie(vbegin, vend) = vertices_around_face(halfedge(f,tm),tm);
       vertex_descriptor current = *(vbegin);
       vertex_descriptor neighbor_one = *(++vbegin);
       vertex_descriptor neighbor_two = *(++vbegin);
@@ -545,22 +531,19 @@ private:
       pj = p_j;
       pk = p_k;
 
-      const double cotan_i = CGAL::to_double(
-        CGAL::Weights::cotangent(pk, pi, pj, traits));
+      const double cotan_i = CGAL::to_double(CGAL::Weights::cotangent(pk, pi, pj, traits));
       m_cotan_matrix.add_coef(j, k, -(1./2) * cotan_i);
       m_cotan_matrix.add_coef(k, j, -(1./2) * cotan_i);
       m_cotan_matrix.add_coef(j, j,  (1./2) * cotan_i);
       m_cotan_matrix.add_coef(k, k,  (1./2) * cotan_i);
 
-      const double cotan_j = CGAL::to_double(
-        CGAL::Weights::cotangent(pk, pj, pi, traits));
+      const double cotan_j = CGAL::to_double(CGAL::Weights::cotangent(pk, pj, pi, traits));
       m_cotan_matrix.add_coef(i, k, -(1./2) * cotan_j);
       m_cotan_matrix.add_coef(k, i, -(1./2) * cotan_j);
       m_cotan_matrix.add_coef(i, i,  (1./2) * cotan_j);
       m_cotan_matrix.add_coef(k, k,  (1./2) * cotan_j);
 
-      const double cotan_k = CGAL::to_double(
-        CGAL::Weights::cotangent(pj, pk, pi, traits));
+      const double cotan_k = CGAL::to_double(CGAL::Weights::cotangent(pj, pk, pi, traits));
       m_cotan_matrix.add_coef(i, j, -(1./2) * cotan_k);
       m_cotan_matrix.add_coef(j, i, -(1./2) * cotan_k);
       m_cotan_matrix.add_coef(i, i,  (1./2) * cotan_k);
@@ -569,8 +552,7 @@ private:
       const Vector_3 v_ij = construct_vector(p_i, p_j);
       const Vector_3 v_ik = construct_vector(p_i, p_k);
       const Vector_3 cross = cross_product(v_ij, v_ik);
-      const double norm_cross = CGAL::sqrt(
-        CGAL::to_double(scalar_product(cross, cross)));
+      const double norm_cross = CGAL::sqrt(CGAL::to_double(scalar_product(cross, cross)));
 
       //double area_face = CGAL::Polygon_mesh_processing::face_area(f,tm);
       //cross is 2*area
@@ -714,7 +696,7 @@ struct Base_helper<TriangleMesh, Traits, Intrinsic_Delaunay, LA, VertexPointMap>
 
 
 /**
- * \ingroup PkgHeatMethod
+ * \ingroup PkgHeatMethodRef
  *
  * Class `Surface_mesh_geodesic_distances_3` computes estimated geodesic distances for a set of source vertices where sources can be added and removed.
  * The class performs a preprocessing step that only depends on the mesh, so that the distance computation takes less
@@ -772,8 +754,8 @@ class Surface_mesh_geodesic_distances_3
     >
 #endif
 {
-  CGAL_static_assertion((std::is_same<Mode, Direct>::value) ||
-                        (std::is_same<Mode, Intrinsic_Delaunay>::value));
+  static_assert(std::is_same<Mode, Direct>::value ||
+                std::is_same<Mode, Intrinsic_Delaunay>::value);
 
   // extract real types from Default
 #ifdef CGAL_EIGEN3_ENABLED
@@ -788,6 +770,7 @@ class Surface_mesh_geodesic_distances_3
   typedef typename Default::Get<
     VertexPointMap,
     typename boost::property_map< TriangleMesh, vertex_point_t>::const_type>::type Vertex_point_map;
+
   typedef
     typename Default::Get<Traits,
                           typename Kernel_traits<
@@ -808,7 +791,6 @@ class Surface_mesh_geodesic_distances_3
   }
 
 public:
-
   /// Vertex descriptor type
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
   #ifndef DOXYGEN_RUNNING
@@ -906,7 +888,7 @@ public:
 };
 
 #if defined(DOXYGEN_RUNNING) || defined(CGAL_EIGEN3_ENABLED)
-/// \ingroup PkgHeatMethod
+/// \ingroup PkgHeatMethodRef
 /// computes for each vertex of the triangle mesh `tm` the estimated geodesic distance to a given source vertex.
 /// This function is provided only if \ref thirdpartyEigen "Eigen" 3.3 (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined.
 /// \tparam TriangleMesh a triangulated surface mesh, model of `FaceListGraph` and `HalfedgeListGraph`.
@@ -947,7 +929,7 @@ estimate_geodesic_distances(const TriangleMesh& tm,
 #endif
 
 
-/// \ingroup PkgHeatMethod
+/// \ingroup PkgHeatMethodRef
 /// computes for each vertex  of the triangle mesh `tm` the estimated geodesic distance to a given set of source vertices.
 /// This function is provided only if \ref thirdpartyEigen "Eigen" 3.3 (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined.
 /// \tparam TriangleMesh a triangulated surface mesh, model of `FaceListGraph` and `HalfedgeListGraph`
@@ -968,9 +950,9 @@ estimate_geodesic_distances(const TriangleMesh& tm,
                             const VertexConstRange& sources,
                             Mode
 #ifndef DOXYGEN_RUNNING
-                            , typename boost::enable_if<
-                              typename boost::has_range_const_iterator<VertexConstRange>
-                                     >::type* = 0
+                            , std::enable_if_t<
+                                boost::has_range_const_iterator<VertexConstRange>::value
+                                     >* = 0
 #endif
 )
 {
@@ -985,9 +967,9 @@ void
 estimate_geodesic_distances(const TriangleMesh& tm,
                             VertexDistanceMap vdm,
                             const VertexConstRange& sources,
-                            typename boost::enable_if<
-                              typename boost::has_range_const_iterator<VertexConstRange>
-                                     >::type* = 0)
+                            std::enable_if_t<
+                              boost::has_range_const_iterator<VertexConstRange>::value
+                                     >* = 0)
 {
   CGAL::Heat_method_3::Surface_mesh_geodesic_distances_3<TriangleMesh, Intrinsic_Delaunay> hm(tm);
   hm.add_sources(sources);

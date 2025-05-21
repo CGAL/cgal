@@ -17,7 +17,7 @@
 #include <CGAL/license/Mesh_2.h>
 
 
-#include <CGAL/triangulation_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/Constrained_triangulation_face_base_2.h>
 
 namespace CGAL {

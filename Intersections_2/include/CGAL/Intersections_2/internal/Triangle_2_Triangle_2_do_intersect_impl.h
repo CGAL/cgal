@@ -23,15 +23,15 @@ namespace Intersections {
 namespace internal {
 
 template <class K>
-bool intersection_test_vertex(const typename K::Point_2 *  P1,
-                              const typename K::Point_2 *  Q1,
-                              const typename K::Point_2 *  R1,
-                              const typename K::Point_2 *  P2,
-                              const typename K::Point_2 *  Q2,
-                              const typename K::Point_2 *  R2,
-                              const K & k ){
-
-
+typename K::Boolean
+intersection_test_vertex(const typename K::Point_2*  P1,
+                         const typename K::Point_2*  Q1,
+                         const typename K::Point_2*  R1,
+                         const typename K::Point_2*  P2,
+                         const typename K::Point_2*  Q2,
+                         const typename K::Point_2*  R2,
+                         const K& k)
+{
   CGAL_kernel_precondition( k.orientation_2_object() (*P1,*Q1,*R1)
                             == POSITIVE);
   CGAL_kernel_precondition( k.orientation_2_object() (*P2,*Q2,*R2)
@@ -65,16 +65,15 @@ bool intersection_test_vertex(const typename K::Point_2 *  P1,
 
 
 template <class K>
-bool intersection_test_edge(const typename K::Point_2 *  P1,
-                            const typename K::Point_2 *  Q1,
-                            const typename K::Point_2 *  R1,
-                            const typename K::Point_2 *  P2,
-                            const typename K::Point_2 *
-                              CGAL_kernel_precondition_code(Q2),
-                            const typename K::Point_2 *  R2,
-                            const K & k ){
-
-
+typename K::Boolean
+intersection_test_edge(const typename K::Point_2* P1,
+                       const typename K::Point_2* Q1,
+                       const typename K::Point_2* R1,
+                       const typename K::Point_2* P2,
+                       const typename K::Point_2* CGAL_kernel_precondition_code(Q2),
+                       const typename K::Point_2*  R2,
+                       const K& k)
+{
   CGAL_kernel_precondition( k.orientation_2_object() (*P1,*Q1,*R1)
                             == POSITIVE);
   CGAL_kernel_precondition( k.orientation_2_object() (*P2,*Q2,*R2)
@@ -99,12 +98,12 @@ bool intersection_test_edge(const typename K::Point_2 *  P1,
 
 }
 
-
 template <class K>
-bool do_intersect(const typename K::Triangle_2 &t1,
-                  const typename K::Triangle_2 &t2,
-                  const K & k ){
-
+typename K::Boolean
+do_intersect(const typename K::Triangle_2& t1,
+             const typename K::Triangle_2& t2,
+             const K& k)
+{
   CGAL_kernel_precondition( ! k.is_degenerate_2_object() (t1) );
   CGAL_kernel_precondition( ! k.is_degenerate_2_object() (t2) );
 
@@ -164,6 +163,6 @@ bool do_intersect(const typename K::Triangle_2 &t1,
 
 } // namespace internal
 } // namespace Intersections
-} //namespace CGAL
+} // namespace CGAL
 
-#endif //CGAL_TRIANGLE_2_TRIANGLE_2_DO_INTERSECT_H
+#endif // CGAL_TRIANGLE_2_TRIANGLE_2_DO_INTERSECT_H

@@ -12,8 +12,6 @@ OutputIterator
 ch_graham_anderson( InputIterator  first, InputIterator  beyond,
                     OutputIterator result, const Traits&  ch_traits)
 {
-  using namespace boost;
-
   typedef typename Traits::Point_2            Point_2;
   typedef typename Traits::Less_xy_2          Less_xy_2;
   typedef typename Traits::Less_rotate_ccw_2  Less_rotate_ccw_2;

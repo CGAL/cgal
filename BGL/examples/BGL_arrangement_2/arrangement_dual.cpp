@@ -10,7 +10,7 @@
 #include <CGAL/Arr_face_index_map.h>
 
 #include <climits>
-#include <boost/graph/breadth_first_search.hpp>
+#include <CGAL/boost/graph/breadth_first_search.h>
 #include <boost/graph/visitors.hpp>
 
 #include "arr_print.h"

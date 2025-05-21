@@ -13,9 +13,7 @@ This number type is provided by the
 \cgal defines the necessary functions so that this class complies to the
 requirements on number types.
 
-\cgalModels `FieldWithRootOf`
-\cgalModels `RealEmbeddable`
-\cgalModels `FromDoubleConstructible`
+\cgalModels{FieldWithRootOf,RealEmbeddable,FromDoubleConstructible}
 
 */
 class Expr {

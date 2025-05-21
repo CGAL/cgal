@@ -19,7 +19,10 @@
 #include <CGAL/Constrained_Delaunay_triangulation_face_base_2.h>
 #include <CGAL/Has_timestamp.h>
 
+
+
 namespace CGAL {
+
 
 template <class Gt,
           class Fb = Constrained_Delaunay_triangulation_face_base_2<Gt> >
@@ -75,7 +78,7 @@ public:
 
   void set_time_stamp(const std::size_t& ts) { time_stamp_ = ts; }
 
-  std::size_t time_stamp_;
+  std::size_t time_stamp_ = std::size_t(-2);
 };
 
 } // namespace CGAL

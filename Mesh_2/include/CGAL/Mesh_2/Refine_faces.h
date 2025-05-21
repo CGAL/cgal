@@ -212,7 +212,7 @@ public:
       }
   }
 
-  /** Restore markers in the star of \c v. */
+  /** Restore markers in the star of `v`. */
   void after_insertion_impl(const Vertex_handle& v)
   {
 #ifdef CGAL_MESH_2_VERBOSE
@@ -254,11 +254,11 @@ public:
   Mesh_2::Face_badness is_bad(Quality q) const;
 
   /**
-   * Adds the sequence [\c begin, \c end[ to the list
+   * Adds the sequence `[begin, end[` to the list
    * of bad faces.
-   * Use this overriden function if the list of bad faces can be
+   * Use this overridden function if the list of bad faces can be
    * computed easily without testing all faces.
-   * \param Fh_it is an iterator of \c Face_Handle.
+   * \param Fh_it is an iterator of `Face_Handle`.
    */
   template <class Fh_it>
   void set_bad_faces(Fh_it begin, Fh_it end)

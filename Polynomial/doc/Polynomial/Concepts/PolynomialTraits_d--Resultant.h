@@ -17,8 +17,18 @@ where
 \f[ g = g_nx^n + \dots + g_0. \f]
 The resultant of \f$ f\f$ and \f$ g\f$ is defined as the determinant of the <I>Sylvester matrix</I>:
 
-\image html sylvester_matrix.png
-\image latex sylvester_matrix.png
+\f[
+\begin{pmatrix}
+    f_{m} & \dots & f_{0}  \\
+    & f_{m} & \dots & f_{0}  \\
+    & & \ddots & & \ddots  \\
+    & & & f_{m} & \dots & f_{0}  \\
+    g_{n} & \dots & g_{0}  \\
+    & g_{n} & \dots & g_{0}  \\
+    & & \ddots & & \ddots  \\
+    & & & g_{n} & \dots & g_{0}
+\end{pmatrix}
+\f]
 
 Note that this is a \f$ (n+m)\times(n+m)\f$ matrix as there are \f$ n\f$ rows for \f$ f\f$
 and \f$ m\f$ rows that are used for \f$ g\f$. The blank spaces are supposed to be
@@ -44,9 +54,7 @@ which is a variant of the Euclidean Algorithm.
 More sophisticated methods may use modular arithmetic and interpolation.
 For more information we refer to, e.g., \cgalCite{gg-mca-99}.
 
-\cgalRefines `AdaptableBinaryFunction`
-\cgalRefines `CopyConstructible`
-\cgalRefines `DefaultConstructible`
+\cgalRefines{AdaptableBinaryFunction,CopyConstructible,DefaultConstructible}
 
 \sa `Polynomial_d`
 \sa `PolynomialTraits_d`

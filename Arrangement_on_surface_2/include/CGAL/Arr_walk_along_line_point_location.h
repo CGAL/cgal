@@ -183,7 +183,7 @@ protected:
   /*!
    * Find the first halfedge around a given target vertex, when going clockwise
    * from "6 o'clock" around this vertex (when shooting up) or starting from
-   * "12 o'clock (when shooting down).
+   * "12 o'clock" (when shooting down).
    * \param v The given vertex.
    * \param shoot_up If (true) we should start from "6 o'clock",
    *                 if (false) we should start from "12 o'clock".

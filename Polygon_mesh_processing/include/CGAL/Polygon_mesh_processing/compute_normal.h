@@ -17,7 +17,7 @@
 #include <CGAL/license/Polygon_mesh_processing/Compute_normal.h>
 
 #include <CGAL/Named_function_parameters.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/properties.h>
@@ -88,6 +88,8 @@ void sum_normals(const PM& pmesh,
   typedef typename boost::graph_traits<PM>::halfedge_descriptor         halfedge_descriptor;
 
   typedef typename boost::property_traits<VertexPointMap>::reference    Point_ref;
+
+  CGAL_precondition(is_valid_face_descriptor(f, pmesh));
 
   halfedge_descriptor he = halfedge(f, pmesh);
   vertex_descriptor v = source(he, pmesh);
@@ -171,6 +173,8 @@ compute_face_normal(typename boost::graph_traits<PolygonMesh>::face_descriptor f
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
+
+  CGAL_precondition(is_valid_face_descriptor(f, pmesh));
 
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type               GT;
   GT traits = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
@@ -612,9 +616,14 @@ compute_vertex_normal_as_sum_of_weighted_normals(typename boost::graph_traits<Po
 /**
 * \ingroup PMP_normal_grp
 *
-* computes the unit normal at vertex `v` as the average of the normals of incident faces.
+* \brief computes the unit normal at vertex `v` as a function of the normals of incident faces.
 *
-* @note The function `compute_vertex_normals()` should be prefered if normals are intended to be
+* The implementation is inspired by Aubry et al. "On the most 'normal' normal" \cgalCite{cgal:al-otmnn-08},
+* which aims to compute a normal that maximizes the visibility to the incident faces.
+* If such normal does not exist or if the optimization process fails to find it, a fallback normal is computed
+* as a sine-weighted sum of the normals of the incident faces.
+*
+* @note The function `compute_vertex_normals()` should be preferred if normals are intended to be
 *       computed at all vertices of the graph.
 *
 * @tparam PolygonMesh a model of `FaceGraph`
@@ -665,6 +674,8 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
   using parameters::is_default_parameter;
   using parameters::get_parameter;
 
+  CGAL_precondition(is_valid_vertex_descriptor(v, pmesh));
+
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor      halfedge_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::face_descriptor          face_descriptor;
 
@@ -685,7 +696,7 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
   Face_vector_map default_fvmap;
   Face_normal_map face_normals = choose_parameter(get_parameter(np, internal_np::face_normal),
                                                   Default_map(default_fvmap));
-  const bool must_compute_face_normals = is_default_parameter<NamedParameters, internal_np::face_normal_t>();
+  const bool must_compute_face_normals = is_default_parameter<NamedParameters, internal_np::face_normal_t>::value;
 
 #ifdef CGAL_PMP_COMPUTE_NORMAL_DEBUG_PP
   std::cout << "<----- compute vertex normal at " << get(vpmap, v)
@@ -802,7 +813,7 @@ void compute_vertex_normals(const PolygonMesh& pmesh,
                                                        Face_normal_dmap>::type   Face_normal_map;
   Face_normal_map face_normals = choose_parameter(get_parameter(np, internal_np::face_normal),
                                                   get(Face_normal_tag(), pmesh));
-  const bool must_compute_face_normals = is_default_parameter<NamedParameters, internal_np::face_normal_t>();
+  const bool must_compute_face_normals = is_default_parameter<NamedParameters, internal_np::face_normal_t>::value;
 
   if(must_compute_face_normals)
     compute_face_normals(pmesh, face_normals, np);

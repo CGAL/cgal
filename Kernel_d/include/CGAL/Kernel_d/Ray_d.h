@@ -45,7 +45,7 @@ class Ray_d : public Handle_for< Pair_d<p_R> > {
 
 /*{\Mdefinition
 An instance of data type |Ray_d| is a ray in $d$-dimensional
-Euclidian space. It starts in a point called the source of |\Mvar| and
+Euclidean space. It starts in a point called the source of |\Mvar| and
 it goes to infinity.}*/
 
 public:

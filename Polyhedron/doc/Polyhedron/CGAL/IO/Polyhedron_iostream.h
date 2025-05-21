@@ -75,7 +75,7 @@ This function overloads the generic function \link PkgBGLIoFuncsOFF `write_OFF(s
 \sa \link PkgPolyhedronIOFunc `operator>>(std::istream& in, Polyhedron_3<Traits>& P)` \endlink
 */
 template <class Traits>
-bool write_OFF( std::ostream& out, Polyhedron_3<Traits>& P);
+bool write_OFF( std::ostream& out, const Polyhedron_3<Traits>& P);
 
 /*!
 \relates Polyhedron_3
@@ -83,7 +83,7 @@ bool write_OFF( std::ostream& out, Polyhedron_3<Traits>& P);
             \link PkgPolyhedronIOFunc `CGAL::IO::write_OFF(std::ostream&, Polyhedron_3<Traits>&)` \endlink should be used instead.
 */
 template <class Traits>
-bool write_off( std::ostream& out, Polyhedron_3<Traits>& P);
+bool write_off( std::ostream& out, const Polyhedron_3<Traits>& P);
 
 /*!
 \relates Polyhedron_3
@@ -91,7 +91,6 @@ bool write_off( std::ostream& out, Polyhedron_3<Traits>& P);
 calls \link write_OFF() `write_OFF(out, P)` \endlink.
 */
 template <class Traits>
-std::ostream& operator<<( std::ostream& out, Polyhedron_3<Traits>& P);
+std::ostream& operator<<( std::ostream& out, const Polyhedron_3<Traits>& P);
 
 } /* namespace CGAL */
-

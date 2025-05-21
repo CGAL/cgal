@@ -2,6 +2,7 @@ Advancing_front_surface_reconstruction
 Algebraic_foundations
 Arithmetic_kernel
 BGL
+CGAL_Core
 Cartesian_kernel
 Circulator
 Distance_2
@@ -22,7 +23,6 @@ Number_types
 Polyhedron
 Profiling_tools
 Property_map
-Random_numbers
 STL_Extension
 Spatial_sorting
 Stream_support

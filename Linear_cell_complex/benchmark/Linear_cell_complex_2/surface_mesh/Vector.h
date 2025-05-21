@@ -122,14 +122,14 @@ public:
         return data_;
     }
 
-    /// get i'th element read-write
+    /// get i-th element read-write
     Scalar& operator[](unsigned int i)
     {
         assert(i<N);
         return data_[i];
     }
 
-    /// get i'th element read-only
+    /// get i-th element read-only
     const Scalar operator[](unsigned int i) const
     {
         assert(i<N);
@@ -137,7 +137,7 @@ public:
     }
 
 
-    /// assign a scalar to all componenets
+    /// assign a scalar to all components
     Vector<Scalar,N>& operator=(const Scalar s)
     {
         for (int i=0; i<N; ++i)

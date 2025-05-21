@@ -20,16 +20,14 @@
 #ifndef CGAL_KERNEL_FUNCTION_OBJECTS_H
 #define CGAL_KERNEL_FUNCTION_OBJECTS_H
 
+#include <CGAL/tags.h>
 #include <CGAL/Origin.h>
-#include <CGAL/Bbox_2.h>
-#include <CGAL/Bbox_3.h>
 #include <CGAL/squared_distance_2.h>
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/intersection_2.h>
 #include <CGAL/intersection_3.h>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Kernel/global_functions_3.h>
-
 
 #include <cmath> // for Compute_dihedral_angle
 
@@ -45,9 +43,7 @@ namespace CommonKernelFunctors {
     typedef typename K::Vector_3 Vector_3;
 
   public:
-    typedef int result_type;
-
-    result_type operator()(const Vector_3& vec) const
+    int operator()(const Vector_3& vec) const
     {
       if(certainly_not(is_zero(vec.hx()))){
         return 0;
@@ -73,6 +69,7 @@ namespace CommonKernelFunctors {
   template <typename K>
   class Are_ordered_along_line_2
   {
+    typedef typename K::Boolean     Boolean;
     typedef typename K::Point_2     Point_2;
     typedef typename K::Collinear_2 Collinear_2;
     typedef typename K::Collinear_are_ordered_along_line_2
@@ -80,16 +77,15 @@ namespace CommonKernelFunctors {
 
     Collinear_2 c;
     Collinear_are_ordered_along_line_2 cao;
-  public:
-    typedef typename K::Boolean     result_type;
 
+  public:
     Are_ordered_along_line_2() {}
     Are_ordered_along_line_2(const Collinear_2& c_,
                              const Collinear_are_ordered_along_line_2& cao_)
       : c(c_), cao(cao_)
     {}
 
-    result_type
+    Boolean
     operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
     { return c(p, q, r) && cao(p, q, r); }
   };
@@ -97,6 +93,7 @@ namespace CommonKernelFunctors {
   template <typename K>
   class Are_ordered_along_line_3
   {
+    typedef typename K::Boolean     Boolean;
     typedef typename K::Point_3     Point_3;
     typedef typename K::Collinear_3 Collinear_3;
     typedef typename K::Collinear_are_ordered_along_line_3
@@ -104,16 +101,15 @@ namespace CommonKernelFunctors {
 
     Collinear_3 c;
     Collinear_are_ordered_along_line_3 cao;
-  public:
-    typedef typename K::Boolean     result_type;
 
+  public:
     Are_ordered_along_line_3() {}
     Are_ordered_along_line_3(const Collinear_3& c_,
                              const Collinear_are_ordered_along_line_3& cao_)
       : c(c_), cao(cao_)
     {}
 
-    result_type
+    Boolean
     operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
     { return c(p, q, r) && cao(p, q, r); }
   };
@@ -121,6 +117,7 @@ namespace CommonKernelFunctors {
   template <typename K>
   class Are_strictly_ordered_along_line_2
   {
+    typedef typename K::Boolean     Boolean;
     typedef typename K::Point_2     Point_2;
     typedef typename K::Collinear_2 Collinear_2;
     typedef typename K::Collinear_are_strictly_ordered_along_line_2
@@ -128,9 +125,8 @@ namespace CommonKernelFunctors {
 
     Collinear_2 c;
     Collinear_are_strictly_ordered_along_line_2 cao;
-  public:
-    typedef typename K::Boolean     result_type;
 
+  public:
     Are_strictly_ordered_along_line_2() {}
     Are_strictly_ordered_along_line_2(
                                       const Collinear_2& c_,
@@ -138,7 +134,7 @@ namespace CommonKernelFunctors {
       : c(c_), cao(cao_)
     {}
 
-    result_type
+    Boolean
     operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
     { return c(p, q, r) && cao(p, q, r); }
   };
@@ -146,6 +142,7 @@ namespace CommonKernelFunctors {
   template <typename K>
   class Are_strictly_ordered_along_line_3
   {
+    typedef typename K::Boolean     Boolean;
     typedef typename K::Point_3     Point_3;
     typedef typename K::Collinear_3 Collinear_3;
     typedef typename K::Collinear_are_strictly_ordered_along_line_3
@@ -153,31 +150,27 @@ namespace CommonKernelFunctors {
 
     Collinear_3 c;
     Collinear_are_strictly_ordered_along_line_3 cao;
-  public:
-    typedef typename K::Boolean     result_type;
 
+  public:
     Are_strictly_ordered_along_line_3() {}
-    Are_strictly_ordered_along_line_3(
-                                      const Collinear_3& c_,
+    Are_strictly_ordered_along_line_3(const Collinear_3& c_,
                                       const Collinear_are_strictly_ordered_along_line_3& cao_)
       : c(c_), cao(cao_)
     {}
 
-    result_type
+    Boolean
     operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
     { return c(p, q, r) && cao(p, q, r); }
-  };
+  };;
 
   template <typename K>
   class Assign_2
   {
     typedef typename K::Object_2  Object_2;
-  public:
-    //typedef typename K::Boolean   result_type;
-    typedef bool                  result_type;
 
+  public:
     template <class T>
-    result_type
+    bool
     operator()(T& t, const Object_2& o) const
     { return assign(t, o); }
   };
@@ -186,26 +179,114 @@ namespace CommonKernelFunctors {
   class Assign_3
   {
     typedef typename K::Object_3        Object_3;
-  public:
-    //typedef typename K::Boolean         result_type;
-    typedef bool                        result_type;
 
+  public:
     template <class T>
-    result_type
+    bool
     operator()(T& t, const Object_3& o) const
     { return assign(t, o); }
   };
 
   template <typename K>
-  class Compare_dihedral_angle_3
+  class Compare_angle_3
   {
+    typedef typename K::Comparison_result  Comparison_result;
     typedef typename K::Point_3            Point_3;
     typedef typename K::Vector_3           Vector_3;
     typedef typename K::FT                 FT;
-  public:
-    typedef typename K::Comparison_result  result_type;
 
-    result_type
+  public:
+    Comparison_result
+    operator()(const Vector_3& ba1, const Vector_3& bc1,
+               const Vector_3& ba2, const Vector_3& bc2) const
+    {
+      typename K::Compute_scalar_product_3 scalar_product = K().compute_scalar_product_3_object();
+      typename K::Compute_squared_length_3 sq_length = K().compute_squared_length_3_object();
+
+      const FT sc_prod_1 = scalar_product(ba1, bc1);
+      const FT sc_prod_2 = scalar_product(ba2, bc2);
+
+      // Reminder: cos(angle) = scalar_product(ba, bc) / (length(ba)*length(bc))
+      // cosine is decreasing on 0, pi
+      // thus angle1 < angle2 is equivalent to cos(angle1) > cos(angle2)
+      if(sc_prod_1 >= 0) {
+        if(sc_prod_2 >= 0) {
+          // the two cosine are >= 0, we can compare the squares
+          // (square(x) is increasing when x>=0
+          return CGAL::compare(CGAL::square(sc_prod_2) * sq_length(ba1) * sq_length(bc1),
+                               CGAL::square(sc_prod_1) * sq_length(ba2) * sq_length(bc2));
+        } else {
+          return SMALLER;
+        }
+      } else {
+        if(sc_prod_2 < 0) {
+          // the two cosine are < 0, square(x) is decreasing when x<0
+          return CGAL::compare(CGAL::square(sc_prod_1) * sq_length(ba2) * sq_length(bc2),
+                               CGAL::square(sc_prod_2) * sq_length(ba1) * sq_length(bc1));
+        } else {
+          return LARGER;
+        }
+      }
+    }
+
+    Comparison_result
+    operator()(const Point_3& a1, const Point_3& b1, const Point_3& c1,
+               const Point_3& a2, const Point_3& b2, const Point_3& c2) const
+    {
+      typename K::Construct_vector_3 vector = K().construct_vector_3_object();
+
+      const Vector_3 ba1 = vector(b1, a1);
+      const Vector_3 bc1 = vector(b1, c1);
+      const Vector_3 ba2 = vector(b2, a2);
+      const Vector_3 bc2 = vector(b2, c2);
+
+      return this->operator()(ba1, bc1, ba2, bc2);
+    }
+
+    Comparison_result
+    operator()(const Point_3& a, const Point_3& b, const Point_3& c,
+               const FT& cosine) const
+    {
+      typename K::Compute_scalar_product_3 scalar_product = K().compute_scalar_product_3_object();
+      typename K::Construct_vector_3 vector = K().construct_vector_3_object();
+      typename K::Compute_squared_length_3 sq_length = K().compute_squared_length_3_object();
+
+      const Vector_3 ba = vector(b, a);
+      const Vector_3 bc = vector(b, c);
+
+      typename K::FT sc_prod = scalar_product(ba, bc);
+
+      if (sc_prod >= 0)
+      {
+        if (cosine >= 0)
+          return CGAL::compare(CGAL::square(cosine)
+                                * sq_length(ba)*sq_length(bc),
+                               CGAL::square(sc_prod));
+        else
+          return SMALLER;
+      }
+      else
+      {
+        if (cosine >= 0)
+          return LARGER;
+        else
+          return CGAL::compare(CGAL::square(sc_prod),
+                               CGAL::square(cosine)
+                                * sq_length(ba)*sq_length(bc));
+      }
+    }
+  };
+
+  template <typename K>
+  class Compare_dihedral_angle_3
+  {
+    typedef typename K::Comparison_result  Comparison_result;
+    typedef typename K::Point_3            Point_3;
+    typedef typename K::Vector_3           Vector_3;
+    typedef typename K::FT                 FT;
+
+  public:
+    Comparison_result
     operator()(const Point_3& a1, const Point_3& b1,
                const Point_3& c1, const Point_3& d1,
                const Point_3& a2, const Point_3& b2,
@@ -221,7 +302,7 @@ namespace CommonKernelFunctors {
       return this->operator()(ab1, ac1, ad1, ab2, ac2, ad2);
     }
 
-    result_type
+    Comparison_result
     operator()(const Point_3& a1, const Point_3& b1,
                const Point_3& c1, const Point_3& d1,
                const FT& cosine) const
@@ -233,10 +314,9 @@ namespace CommonKernelFunctors {
       return this->operator()(ab1, ac1, ad1, cosine);
     }
 
-    result_type
+    Comparison_result
     operator()(const Vector_3& ab1, const Vector_3& ac1, const Vector_3& ad1,
-               const FT& cosine)
-      const
+               const FT& cosine) const
     {
       typedef typename K::FT                                 FT;
       typedef typename K::Construct_cross_product_vector_3   Cross_product;
@@ -244,6 +324,7 @@ namespace CommonKernelFunctors {
 
       const Vector_3 abac1 = xproduct(ab1, ac1);
       const Vector_3 abad1 = xproduct(ab1, ad1);
+      if (abac1==NULL_VECTOR || abad1==NULL_VECTOR) return SMALLER;
       const FT sc_prod_1 = abac1 * abad1;
 
       CGAL_kernel_assertion_msg( abac1 != NULL_VECTOR,
@@ -274,7 +355,7 @@ namespace CommonKernelFunctors {
         }
     }
 
-    result_type
+    Comparison_result
     operator()(const Vector_3& ab1, const Vector_3& ac1, const Vector_3& ad1,
                const Vector_3& ab2, const Vector_3& ac2, const Vector_3& ad2)
       const
@@ -334,8 +415,6 @@ namespace CommonKernelFunctors {
     typedef typename K::Point_3                           Point_3;
     typedef typename K::Comparison_result                 Comparison_result;
 
-    typedef Comparison_result                             result_type;
-
     Comparison_result operator()(const Point_3 & p,
                                  const Weighted_point_3 & q,
                                  const Weighted_point_3 & r) const
@@ -353,8 +432,6 @@ namespace CommonKernelFunctors {
     typedef typename K::Weighted_point_3               Weighted_point_3;
     typedef typename K::Point_3                        Point_3;
     typedef typename K::FT                             FT;
-
-    typedef Point_3                                    result_type;
 
     Point_3 operator()(const Weighted_point_3 & p,
                        const Weighted_point_3 & q,
@@ -396,10 +473,10 @@ namespace CommonKernelFunctors {
   template < class K >
   class Power_side_of_bounded_power_circle_2
   {
-  public:
+    typedef typename K::Bounded_side                   Bounded_side;
     typedef typename K::Weighted_point_2               Weighted_point_2;
-    typedef Bounded_side                               result_type;
 
+  public:
     Bounded_side operator()(const Weighted_point_2& p,
                             const Weighted_point_2& q,
                             const Weighted_point_2& r,
@@ -410,10 +487,11 @@ namespace CommonKernelFunctors {
       typename K::Construct_point_2 wp2p = traits.construct_point_2_object();
       typename K::Power_side_of_oriented_power_circle_2 power_test =
         traits.power_side_of_oriented_power_circle_2_object();
+
       typename K::Orientation o = orientation(wp2p(p),wp2p(q),wp2p(r));
       typename K::Oriented_side os = power_test(p,q,r,t);
-
       CGAL_assertion(o != COPLANAR);
+
       return enum_cast<Bounded_side>(o * os);
     }
 
@@ -443,10 +521,9 @@ namespace CommonKernelFunctors {
   class Power_side_of_bounded_power_sphere_3
   {
   public:
+    typedef typename K::Bounded_side                   Bounded_side;
     typedef typename K::Weighted_point_3               Weighted_point_3;
     typedef typename K::Sign                           Sign;
-
-    typedef Bounded_side                               result_type;
 
     Bounded_side operator()(const Weighted_point_3 & p,
                             const Weighted_point_3 & q,
@@ -504,10 +581,8 @@ namespace CommonKernelFunctors {
   class Power_side_of_oriented_power_sphere_3
   {
   public:
-    typedef typename K::Weighted_point_3                  Weighted_point_3;
     typedef typename K::Oriented_side                     Oriented_side;
-
-    typedef Oriented_side                                 result_type;
+    typedef typename K::Weighted_point_3                  Weighted_point_3;
 
     Oriented_side operator()(const Weighted_point_3 & p,
                              const Weighted_point_3 & q,
@@ -569,11 +644,9 @@ namespace CommonKernelFunctors {
   {
   public:
     typedef typename K::Weighted_point_2               Weighted_point_2;
-    typedef typename K::FT                             Weight;
 
-    typedef const Weight&     result_type;
-
-    const Weight& operator()(const Weighted_point_2 & p) const
+    decltype(auto)
+    operator()(const Weighted_point_2 & p) const
     {
       return p.rep().weight();
     }
@@ -584,11 +657,9 @@ namespace CommonKernelFunctors {
   {
   public:
     typedef typename K::Weighted_point_3               Weighted_point_3;
-    typedef typename K::FT                             Weight;
 
-    typedef const Weight&                              result_type;
-
-    const Weight& operator()(const Weighted_point_3 & p) const
+    decltype(auto)
+    operator()(const Weighted_point_3 & p) const
     {
       return p.rep().weight();
     }
@@ -600,8 +671,6 @@ namespace CommonKernelFunctors {
   public:
     typedef typename K::Weighted_point_2               Weighted_point_2;
     typedef typename K::FT                             FT;
-
-    typedef FT                                         result_type;
 
     FT operator()(const Weighted_point_2 & p,
                   const Weighted_point_2 & q) const
@@ -618,8 +687,6 @@ namespace CommonKernelFunctors {
     typedef typename K::Weighted_point_3               Weighted_point_3;
     typedef typename K::FT                             FT;
 
-    typedef FT                                         result_type;
-
     FT operator()(const Weighted_point_3 & p,
                   const Weighted_point_3 & q) const
     {
@@ -634,8 +701,6 @@ namespace CommonKernelFunctors {
   public:
     typedef typename K::Weighted_point_2               Weighted_point_2;
     typedef typename K::FT                             FT;
-
-    typedef FT                                         result_type;
 
     FT operator()(const Weighted_point_2& p,
                   const Weighted_point_2& q,
@@ -665,8 +730,6 @@ namespace CommonKernelFunctors {
   public:
     typedef typename K::Weighted_point_3               Weighted_point_3;
     typedef typename K::FT                             FT;
-
-    typedef FT                                         result_type;
 
     FT operator()(const Weighted_point_3 & p,
                   const Weighted_point_3 & q,
@@ -710,13 +773,11 @@ namespace CommonKernelFunctors {
     typedef typename K::Weighted_point_3                  Weighted_point_3;
     typedef typename K::FT                                FT;
 
-    typedef FT                                            result_type;
-
-    result_type operator()(const Weighted_point_3 & p,
-                           const Weighted_point_3 & q,
-                           const Weighted_point_3 & r,
-                           const Weighted_point_3 & s,
-                           const Weighted_point_3 & t) const
+    FT operator()(const Weighted_point_3 & p,
+                  const Weighted_point_3 & q,
+                  const Weighted_point_3 & r,
+                  const Weighted_point_3 & s,
+                  const Weighted_point_3 & t) const
     {
       return power_distance_to_power_sphereC3 (p.x(),p.y(),p.z(),FT(p.weight()),
                                                q.x(),q.y(),q.z(),FT(q.weight()),
@@ -734,13 +795,12 @@ namespace CommonKernelFunctors {
     typedef typename K::Comparison_result                 Comparison_result;
     typedef typename K::FT                                FT;
 
-    typedef Comparison_result                             result_type;
-
-    result_type operator()(const Weighted_point_3 & p,
-                           const Weighted_point_3 & q,
-                           const Weighted_point_3 & r,
-                           const Weighted_point_3 & s,
-                           const FT& w) const
+    Needs_FT<Comparison_result>
+    operator()(const Weighted_point_3 & p,
+               const Weighted_point_3 & q,
+               const Weighted_point_3 & r,
+               const Weighted_point_3 & s,
+               const FT& w) const
     {
       return CGAL::compare(squared_radius_orthogonal_sphereC3(
                              p.x(),p.y(),p.z(),p.weight(),
@@ -750,10 +810,11 @@ namespace CommonKernelFunctors {
                            w);
     }
 
-    result_type operator()(const Weighted_point_3 & p,
-                           const Weighted_point_3 & q,
-                           const Weighted_point_3 & r,
-                           const FT& w) const
+    Needs_FT<Comparison_result>
+    operator()(const Weighted_point_3 & p,
+               const Weighted_point_3 & q,
+               const Weighted_point_3 & r,
+               const FT& w) const
     {
       return CGAL::compare(squared_radius_smallest_orthogonal_sphereC3(
                              p.x(),p.y(),p.z(),p.weight(),
@@ -762,9 +823,10 @@ namespace CommonKernelFunctors {
                            w);
     }
 
-    result_type operator()(const Weighted_point_3 & p,
-                           const Weighted_point_3 & q,
-                           const FT& w) const
+    Needs_FT<Comparison_result>
+    operator()(const Weighted_point_3 & p,
+               const Weighted_point_3 & q,
+               const FT& w) const
     {
       return CGAL::compare(squared_radius_smallest_orthogonal_sphereC3(
                              p.x(),p.y(),p.z(),p.weight(),
@@ -772,8 +834,8 @@ namespace CommonKernelFunctors {
                            w);
     }
 
-    result_type operator()(const Weighted_point_3 & p,
-                           const FT& w) const
+    Comparison_result operator()(const Weighted_point_3 & p,
+                                 const FT& w) const
     {
       return CGAL::compare(-p.weight(), w);
     }
@@ -782,12 +844,12 @@ namespace CommonKernelFunctors {
   template <typename K>
   class Compare_slope_3
   {
+    typedef typename K::Comparison_result  Comparison_result;
     typedef typename K::FT                 FT;
     typedef typename K::Point_3 Point_3;
-  public:
-    typedef typename K::Comparison_result  result_type;
 
-    result_type operator()(const Point_3& p, const Point_3& q, const Point_3& r, const Point_3& s) const
+  public:
+    Comparison_result operator()(const Point_3& p, const Point_3& q, const Point_3& r, const Point_3& s) const
     {
       Comparison_result sign_pq = CGAL::compare(q.z(),p.z());
       Comparison_result sign_rs = CGAL::compare(s.z(),r.z());
@@ -812,84 +874,75 @@ namespace CommonKernelFunctors {
   template <typename K>
   class Compare_squared_distance_2
   {
+    typedef typename K::Comparison_result  Comparison_result;
     typedef typename K::FT                 FT;
-  public:
-    typedef typename K::Comparison_result  result_type;
 
+  public:
     template <class T1, class T2>
-    result_type
+    Needs_FT<Comparison_result>
     operator()(const T1& p, const T2& q, const FT& d2) const
     {
-      return CGAL::compare(squared_distance(p, q), d2);
+      return CGAL::compare(internal::squared_distance(p, q, K()), d2);
     }
 
     template <class T1, class T2, class T3, class T4>
-    result_type
+    Needs_FT<Comparison_result>
     operator()(const T1& p, const T2& q, const T3& r, const T4& s) const
     {
-      return CGAL::compare(squared_distance(p, q), squared_distance(r, s));
+      return CGAL::compare(internal::squared_distance(p, q, K()),
+                           internal::squared_distance(r, s, K()));
     }
   };
 
   template <typename K>
   class Compare_squared_distance_3
   {
+    typedef typename K::Comparison_result  Comparison_result;
     typedef typename K::FT                 FT;
-  public:
-    typedef typename K::Comparison_result  result_type;
 
+  public:
     template <class T1, class T2>
-    result_type
+    Needs_FT<Comparison_result>
     operator()(const T1& p, const T2& q, const FT& d2) const
     {
-      return CGAL::compare(squared_distance(p, q), d2);
+      return internal::compare_squared_distance(p, q, K(), d2);
     }
 
     template <class T1, class T2, class T3, class T4>
-    result_type
+    Needs_FT<Comparison_result>
     operator()(const T1& p, const T2& q, const T3& r, const T4& s) const
     {
-      return CGAL::compare(squared_distance(p, q), squared_distance(r, s));
+      return internal::compare_squared_distance(p, q, K(), internal::squared_distance(r, s, K()));
     }
   };
 
  template <typename K>
  class Compute_approximate_angle_3
  {
+   typedef typename K::FT       FT;
    typedef typename K::Point_3 Point_3;
    typedef typename K::Vector_3 Vector_3;
 
  public:
-   typedef typename K::FT       result_type;
-
-    result_type
-    operator()(const Vector_3& u, const Vector_3& v) const
+   FT operator()(const Vector_3& u, const Vector_3& v) const
    {
      K k;
      typename K::Compute_scalar_product_3 scalar_product =
        k.compute_scalar_product_3_object();
 
-     double product = CGAL::sqrt(to_double(scalar_product(u,u)) * to_double(scalar_product(v,v)));
+     double product = to_double(approximate_sqrt(scalar_product(u,u) * scalar_product(v,v)));
 
      if(product == 0)
        return 0;
 
      // cosine
      double dot = to_double(scalar_product(u,v));
-     double cosine = dot / product;
-
-     if(cosine > 1.){
-       cosine = 1.;
-     }
-     if(cosine < -1.){
-       cosine = -1.;
-     }
-
+     double cosine = std::clamp(dot / product, -1., 1.);
      return std::acos(cosine) * 180./CGAL_PI;
    }
 
 
-   result_type
+   FT
    operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
    {
      K k;
@@ -905,11 +958,11 @@ namespace CommonKernelFunctors {
  template <typename K>
  class Compute_approximate_dihedral_angle_3
  {
+   typedef typename K::FT       FT;
     typedef typename K::Point_3 Point_3;
- public:
-   typedef typename K::FT       result_type;
 
-    result_type
+ public:
+    FT
     operator()(const Point_3& a, const Point_3& b, const Point_3& c,  const Point_3& d) const
    {
      K k;
@@ -929,11 +982,42 @@ namespace CommonKernelFunctors {
      const Vector_3 ad = vector(a,d);
 
      const Vector_3 abad = cross_product(ab,ad);
-     const double x = CGAL::to_double(scalar_product(cross_product(ab,ac), abad));
-     const double l_ab = CGAL::sqrt(CGAL::to_double(sq_distance(a,b)));
-     const double y = l_ab * CGAL::to_double(scalar_product(ac,abad));
+     const Vector_3 abac = cross_product(ab,ac);
 
-     return FT(std::atan2(y, x) * 180 / CGAL_PI );
+     // The dihedral angle we are interested in is the angle around the oriented
+     // edge ab which is the same (in absolute value) as the angle between the
+     // vectors ab^ac and ab^ad (cross-products).
+     // (abac points inside the tetra abcd if its orientation is positive and outside otherwise)
+     //
+     // We consider the vector abad in the basis defined by the three vectors
+     //    (<ab>, <abac>, <ab^abac>)
+     // where <u> denote the normalized vector u/|u|.
+     //
+     // In this orthonormal basis, the vector adab has the coordinates
+     //    x = <ab>      * abad
+     //    y = <abac>    * abad
+     //    z = <ab^abac> * abad
+     // We have x == 0, because abad and ab are orthogonal, and thus abad is in
+     // the plane (yz) of the new basis.
+     //
+     // In that basis, the dihedral angle is the angle between the y axis and abad
+     // which is the arctan of y/z, or atan2(z, y).
+     //
+     // (Note that ab^abac is in the plane abc, pointing outside the tetra if
+     //  its orientation is positive and inside otherwise).
+     //
+     // For the normalization, abad appears in both scalar products
+     // in the quotient so we can ignore its norm. For the second
+     // terms of the scalar products, we are left with ab^abac and abac.
+     // Since ab and abac are orthogonal, the sinus of the angle between the
+     // two vectors is 1.
+     // So the norms are |ab|.|abac| vs |abac|, which is why we have a
+     // multiplication by |ab| in y below.
+     const double l_ab = CGAL::sqrt(CGAL::to_double(sq_distance(a,b)));
+     const double y = l_ab * CGAL::to_double(scalar_product(abac, abad));
+     const double z = CGAL::to_double(scalar_product(cross_product(ab,abac),abad));
+
+     return FT(std::atan2(z, y) * 180 / CGAL_PI );
    }
  };
 
@@ -944,8 +1028,6 @@ namespace CommonKernelFunctors {
     typedef typename K::Point_3           Point_3;
     typedef typename K::Triangle_3        Triangle_3;
   public:
-    typedef FT               result_type;
-
     FT
     operator()( const Triangle_3& t ) const
     {
@@ -963,10 +1045,8 @@ namespace CommonKernelFunctors {
   class Compute_squared_distance_2
   {
     typedef typename K::FT   FT;
-  public:
-    typedef FT               result_type;
 
-    // There are 25 combinaisons, we use a template.
+  public:
     template <class T1, class T2>
     FT
     operator()( const T1& t1, const T2& t2) const
@@ -978,10 +1058,8 @@ namespace CommonKernelFunctors {
   {
     typedef typename K::FT        FT;
     typedef typename K::Point_3   Point_3;
-  public:
-    typedef FT               result_type;
 
-    // There are 25 combinaisons, we use a template.
+  public:
     template <class T1, class T2>
     FT
     operator()( const T1& t1, const T2& t2) const
@@ -1003,8 +1081,6 @@ namespace CommonKernelFunctors {
     typedef typename K::Segment_2   Segment_2;
     typedef typename K::Vector_2    Vector_2;
   public:
-    typedef FT               result_type;
-
     FT
     operator()( const Vector_2& v) const
     { return CGAL_NTS square(K().compute_x_2_object()(v)) +
@@ -1022,8 +1098,6 @@ namespace CommonKernelFunctors {
     typedef typename K::Segment_3   Segment_3;
     typedef typename K::Vector_3    Vector_3;
   public:
-    typedef FT               result_type;
-
     FT
     operator()( const Vector_3& v) const
     { return v.rep().squared_length(); }
@@ -1036,13 +1110,10 @@ namespace CommonKernelFunctors {
   template <typename K>
   class Compute_a_2
   {
-    typedef typename K::RT             RT;
     typedef typename K::Line_2         Line_2;
 
   public:
-    typedef RT               result_type;
-
-    RT
+    decltype(auto)
     operator()(const Line_2& l) const
     {
       return l.rep().a();
@@ -1052,13 +1123,10 @@ namespace CommonKernelFunctors {
   template <typename K>
   class Compute_a_3
   {
-    typedef typename K::RT             RT;
     typedef typename K::Plane_3        Plane_3;
 
   public:
-    typedef RT               result_type;
-
-    RT
+    decltype(auto)
     operator()(const Plane_3& l) const
     {
       return l.rep().a();
@@ -1069,13 +1137,10 @@ namespace CommonKernelFunctors {
   template <typename K>
   class Compute_b_2
   {
-    typedef typename K::RT             RT;
     typedef typename K::Line_2         Line_2;
 
   public:
-    typedef RT               result_type;
-
-    RT
+    decltype(auto)
     operator()(const Line_2& l) const
     {
       return l.rep().b();
@@ -1085,13 +1150,10 @@ namespace CommonKernelFunctors {
   template <typename K>
   class Compute_b_3
   {
-    typedef typename K::RT             RT;
     typedef typename K::Plane_3        Plane_3;
 
   public:
-    typedef RT               result_type;
-
-    RT
+    decltype(auto)
     operator()(const Plane_3& l) const
     {
       return l.rep().b();
@@ -1102,13 +1164,10 @@ namespace CommonKernelFunctors {
   template <typename K>
   class Compute_c_2
   {
-    typedef typename K::RT             RT;
     typedef typename K::Line_2         Line_2;
 
   public:
-    typedef RT               result_type;
-
-    RT
+    decltype(auto)
     operator()(const Line_2& l) const
     {
       return l.rep().c();
@@ -1118,13 +1177,10 @@ namespace CommonKernelFunctors {
   template <typename K>
   class Compute_c_3
   {
-    typedef typename K::RT             RT;
     typedef typename K::Plane_3        Plane_3;
 
   public:
-    typedef RT               result_type;
-
-    RT
+    decltype(auto)
     operator()(const Plane_3& l) const
     {
       return l.rep().c();
@@ -1134,13 +1190,10 @@ namespace CommonKernelFunctors {
   template <typename K>
   class Compute_d_3
   {
-    typedef typename K::RT             RT;
     typedef typename K::Plane_3        Plane_3;
 
   public:
-    typedef RT               result_type;
-
-    RT
+    decltype(auto)
     operator()(const Plane_3& l) const
     {
       return l.rep().d();
@@ -1155,8 +1208,6 @@ namespace CommonKernelFunctors {
     typedef typename K::Line_2         Line_2;
 
   public:
-    typedef FT               result_type;
-
     FT
     operator()(const Line_2& l, const FT& y) const
     {
@@ -1173,8 +1224,6 @@ namespace CommonKernelFunctors {
     typedef typename K::Line_2         Line_2;
 
   public:
-    typedef FT               result_type;
-
     FT
     operator()(const Line_2& l, const FT& x) const
     {
@@ -1193,8 +1242,6 @@ namespace CommonKernelFunctors {
     //typedef typename K::Cartesian_coordinate_type  Cartesian_coordinate_type;
 
   public:
-    typedef FT               result_type;
-
     Cartesian_coordinate_type
     operator()(const Iso_rectangle_2& r) const
     {
@@ -1211,8 +1258,6 @@ namespace CommonKernelFunctors {
     //typedef typename K::Cartesian_coordinate_type  Cartesian_coordinate_type;
 
   public:
-    typedef FT               result_type;
-
     Cartesian_coordinate_type
     operator()(const Iso_cuboid_3& r) const
     {
@@ -1229,8 +1274,6 @@ namespace CommonKernelFunctors {
     //typedef typename K::Cartesian_coordinate_type  Cartesian_coordinate_type;
 
   public:
-    typedef FT               result_type;
-
     Cartesian_coordinate_type
     operator()(const Iso_rectangle_2& r) const
     {
@@ -1247,8 +1290,6 @@ namespace CommonKernelFunctors {
     //typedef typename K::Cartesian_coordinate_type  Cartesian_coordinate_type;
 
   public:
-    typedef FT               result_type;
-
     Cartesian_coordinate_type
     operator()(const Iso_cuboid_3& r) const
     {
@@ -1265,8 +1306,6 @@ namespace CommonKernelFunctors {
     //typedef typename K::Cartesian_coordinate_type  Cartesian_coordinate_type;
 
   public:
-    typedef FT               result_type;
-
     Cartesian_coordinate_type
     operator()(const Iso_rectangle_2& r) const
     {
@@ -1283,8 +1322,6 @@ namespace CommonKernelFunctors {
     //typedef typename K::Cartesian_coordinate_type  Cartesian_coordinate_type;
 
   public:
-    typedef FT               result_type;
-
     Cartesian_coordinate_type
     operator()(const Iso_cuboid_3& r) const
     {
@@ -1301,8 +1338,6 @@ namespace CommonKernelFunctors {
     //typedef typename K::Cartesian_coordinate_type  Cartesian_coordinate_type;
 
   public:
-    typedef FT               result_type;
-
     Cartesian_coordinate_type
     operator()(const Iso_rectangle_2& r) const
     {
@@ -1319,8 +1354,6 @@ namespace CommonKernelFunctors {
     //typedef typename K::Cartesian_coordinate_type  Cartesian_coordinate_type;
 
   public:
-    typedef FT               result_type;
-
     Cartesian_coordinate_type
     operator()(const Iso_cuboid_3& r) const
     {
@@ -1337,8 +1370,6 @@ namespace CommonKernelFunctors {
     //typedef typename K::Cartesian_coordinate_type  Cartesian_coordinate_type;
 
   public:
-    typedef FT               result_type;
-
     Cartesian_coordinate_type
     operator()(const Iso_cuboid_3& r) const
     {
@@ -1355,8 +1386,6 @@ namespace CommonKernelFunctors {
     //typedef typename K::Cartesian_coordinate_type  Cartesian_coordinate_type;
 
   public:
-    typedef FT               result_type;
-
     Cartesian_coordinate_type
     operator()(const Iso_cuboid_3& r) const
     {
@@ -1371,9 +1400,7 @@ namespace CommonKernelFunctors {
     typedef typename K::Point_2         Point_2;
 
   public:
-    typedef FT               result_type;
-
-    result_type
+    FT
     operator()(const Point_2& p,
                const Point_2& q) const
     {
@@ -1389,9 +1416,7 @@ namespace CommonKernelFunctors {
     typedef typename K::Point_3         Point_3;
 
   public:
-    typedef FT               result_type;
-
-    result_type
+    FT
     operator()(const Point_3& p,
                const Point_3& q) const
     {
@@ -1406,10 +1431,9 @@ namespace CommonKernelFunctors {
   {
     typedef typename K::Point_2   Point_2;
     typedef typename K::Circle_2  Circle_2;
-  public:
-    typedef const Point_2&         result_type;
 
-    result_type
+  public:
+    decltype(auto)
     operator()(const Circle_2& c) const
     { return c.rep().center(); }
   };
@@ -1420,14 +1444,13 @@ namespace CommonKernelFunctors {
     typedef typename K::Point_3   Point_3;
     typedef typename K::Sphere_3  Sphere_3;
     typedef typename K::Circle_3  Circle_3;
-  public:
-    typedef const Point_3&          result_type;
 
-    result_type
+  public:
+    decltype(auto)
     operator()(const Sphere_3& s) const
     { return s.rep().center(); }
 
-    result_type
+    decltype(auto)
     operator()(const Circle_3& c) const
     { return c.rep().center(); }
 
@@ -1440,9 +1463,8 @@ namespace CommonKernelFunctors {
     typedef typename K::Point_2     Point_2;
     typedef typename K::Circle_2    Circle_2;
     typedef typename Circle_2::Rep  Rep;
-  public:
-    typedef Circle_2         result_type;
 
+  public:
     Rep // Circle_2
     operator()( Return_base_tag,
                 const Point_2& center, const FT& squared_radius,
@@ -1560,8 +1582,6 @@ namespace CommonKernelFunctors {
     typedef typename Circle_3::Rep    Rep;
 
   public:
-    typedef Circle_3                  result_type;
-
     Rep
     operator() (Return_base_tag, const Point_3& p,
                 const FT& sr, const Plane_3& plane) const
@@ -1644,9 +1664,8 @@ namespace CommonKernelFunctors {
     typedef typename K::Point_3       Point_3;
     typedef typename K::Iso_cuboid_3  Iso_cuboid_3;
     typedef typename Iso_cuboid_3::Rep  Rep;
-  public:
-    typedef Iso_cuboid_3      result_type;
 
+  public:
     Rep // Iso_cuboid_3
     operator()(Return_base_tag, const Point_3& p, const Point_3& q, int) const
     { return Rep(p, q, 0); }
@@ -1705,9 +1724,8 @@ namespace CommonKernelFunctors {
     typedef typename K::Line_3 Line;
     typedef typename K::Point_3 Point;
     typename K::Construct_line_3 construct_line;
-  public:
-    typedef Point result_type;
 
+  public:
     Point
     operator()(const Point& l11, const Point& l12,
                const Point& l21, const Point& l22) const
@@ -1716,8 +1734,8 @@ namespace CommonKernelFunctors {
       Line l2 = construct_line(l21, l22);
 
       const auto res = typename K::Intersect_3()(l1,l2);
-      CGAL_assertion(res!=boost::none);
-      const Point* e_pt = boost::get<Point>(&(*res));
+      CGAL_assertion(res!=std::nullopt);
+      const Point* e_pt = std::get_if<Point>(&(*res));
       CGAL_assertion(e_pt!=nullptr);
       return *e_pt;
     }
@@ -1726,17 +1744,15 @@ namespace CommonKernelFunctors {
   template <typename K>
   class Construct_max_vertex_2
   {
-    typedef typename K::Point_2          Point_2;
     typedef typename K::Segment_2        Segment_2;
     typedef typename K::Iso_rectangle_2  Iso_rectangle_2;
-  public:
-    typedef const Point_2&               result_type;
 
-    result_type
+  public:
+    decltype(auto)
     operator()(const Iso_rectangle_2& r) const
     { return (r.rep().max)(); }
 
-    result_type
+    decltype(auto)
     operator()(const Segment_2& s) const
     { return (s.max)(); }
   };
@@ -1745,37 +1761,31 @@ namespace CommonKernelFunctors {
   template <typename K>
   class Construct_min_vertex_2
   {
-    typedef typename K::Point_2          Point_2;
     typedef typename K::Segment_2        Segment_2;
     typedef typename K::Iso_rectangle_2  Iso_rectangle_2;
-  public:
-    typedef const Point_2&               result_type;
 
-    result_type
+  public:
+    decltype(auto)
     operator()(const Iso_rectangle_2& r) const
     { return (r.rep().min)(); }
 
-    result_type
+    decltype(auto)
     operator()(const Segment_2& s) const
     { return (s.min)(); }
   };
 
-
-
   template <typename K>
   class Construct_max_vertex_3
   {
-    typedef typename K::Point_3          Point_3;
     typedef typename K::Segment_3        Segment_3;
     typedef typename K::Iso_cuboid_3     Iso_cuboid_3;
-  public:
-    typedef const Point_3&           result_type;
 
-    result_type
+  public:
+    decltype(auto)
     operator()(const Iso_cuboid_3& r) const
     { return (r.rep().max)(); }
 
-    result_type
+    decltype(auto)
     operator()(const Segment_3& s) const
     { return (s.rep().max)(); }
   };
@@ -1783,17 +1793,15 @@ namespace CommonKernelFunctors {
   template <typename K>
   class Construct_min_vertex_3
   {
-    typedef typename K::Point_3          Point_3;
     typedef typename K::Segment_3        Segment_3;
     typedef typename K::Iso_cuboid_3     Iso_cuboid_3;
-  public:
-    typedef const Point_3&               result_type;
 
-    result_type
+  public:
+    decltype(auto)
     operator()(const Iso_cuboid_3& r) const
     { return (r.rep().min)(); }
 
-    result_type
+    decltype(auto)
     operator()(const Segment_3& s) const
     { return (s.rep().min)(); }
   };
@@ -1803,9 +1811,8 @@ namespace CommonKernelFunctors {
   {
     typedef typename K::Point_3          Point_3;
     typedef typename K::Vector_3         Vector_3;
-  public:
-    typedef Vector_3           result_type;
 
+  public:
     Vector_3
     operator()(const Point_3& p,const Point_3& q, const Point_3& r) const
     {
@@ -1819,9 +1826,8 @@ namespace CommonKernelFunctors {
   class Construct_object_2
   {
     typedef typename K::Object_2   Object_2;
-  public:
-    typedef Object_2         result_type;
 
+  public:
     template <class Cls>
     Object_2
     operator()( const Cls& c) const
@@ -1832,9 +1838,8 @@ namespace CommonKernelFunctors {
   class Construct_object_3
   {
     typedef typename K::Object_3   Object_3;
-  public:
-    typedef Object_3         result_type;
 
+  public:
     template <class Cls>
     Object_3
     operator()( const Cls& c) const
@@ -1845,9 +1850,8 @@ namespace CommonKernelFunctors {
   class Construct_opposite_circle_2
   {
     typedef typename K::Circle_2   Circle_2;
-  public:
-    typedef Circle_2         result_type;
 
+  public:
     Circle_2
     operator()( const Circle_2& c) const
     { return c.opposite(); }
@@ -1858,9 +1862,8 @@ namespace CommonKernelFunctors {
   {
     typedef typename K::Direction_2    Direction_2;
     typedef typename Direction_2::Rep  Rep;
-  public:
-    typedef Direction_2      result_type;
 
+  public:
     Direction_2
     operator()( const Direction_2& d) const
     {  return Rep(-d.dx(), -d.dy()); }
@@ -1871,9 +1874,8 @@ namespace CommonKernelFunctors {
   {
     typedef typename K::Direction_3    Direction_3;
     typedef typename Direction_3::Rep  Rep;
-  public:
-    typedef Direction_3      result_type;
 
+  public:
     Direction_3
     operator()( const Direction_3& d) const
     {  return Rep(-d.dx(), -d.dy(), -d.dz()); }
@@ -1883,9 +1885,8 @@ namespace CommonKernelFunctors {
   class Construct_opposite_line_2
   {
     typedef typename K::Line_2   Line_2;
-  public:
-    typedef Line_2           result_type;
 
+  public:
     Line_2
     operator()( const Line_2& l) const
     { return Line_2( -l.a(), -l.b(), -l.c()); }
@@ -1895,9 +1896,8 @@ namespace CommonKernelFunctors {
   class Construct_opposite_line_3
   {
     typedef typename K::Line_3   Line_3;
-  public:
-    typedef Line_3           result_type;
 
+  public:
     Line_3
     operator()( const Line_3& l) const
     { return l.rep().opposite(); }
@@ -1907,9 +1907,8 @@ namespace CommonKernelFunctors {
   class Construct_opposite_plane_3
   {
     typedef typename K::Plane_3   Plane_3;
-  public:
-    typedef Plane_3          result_type;
 
+  public:
     Plane_3
     operator()( const Plane_3& p) const
     { return p.rep().opposite(); }
@@ -1919,9 +1918,8 @@ namespace CommonKernelFunctors {
   class Construct_opposite_ray_2
   {
     typedef typename K::Ray_2   Ray_2;
-  public:
-    typedef Ray_2            result_type;
 
+  public:
     Ray_2
     operator()( const Ray_2& r) const
     { return r.opposite(); }
@@ -1931,9 +1929,8 @@ namespace CommonKernelFunctors {
   class Construct_opposite_ray_3
   {
     typedef typename K::Ray_3   Ray_3;
-  public:
-    typedef Ray_3            result_type;
 
+  public:
     Ray_3
     operator()( const Ray_3& r) const
     { return r.opposite(); }
@@ -1943,9 +1940,8 @@ namespace CommonKernelFunctors {
   class Construct_opposite_segment_2
   {
     typedef typename K::Segment_2  Segment_2;
-  public:
-    typedef Segment_2        result_type;
 
+  public:
     Segment_2
     operator()( const Segment_2& s) const
     { return Segment_2(s.target(), s.source()); }
@@ -1955,9 +1951,8 @@ namespace CommonKernelFunctors {
   class Construct_opposite_segment_3
   {
     typedef typename K::Segment_3  Segment_3;
-  public:
-    typedef Segment_3        result_type;
 
+  public:
     Segment_3
     operator()( const Segment_3& s) const
     { return s.rep().opposite(); }
@@ -1967,9 +1962,8 @@ namespace CommonKernelFunctors {
   class Construct_opposite_sphere_3
   {
     typedef typename K::Sphere_3   Sphere_3;
-  public:
-    typedef Sphere_3         result_type;
 
+  public:
     Sphere_3
     operator()( const Sphere_3& s) const
     { return s.rep().opposite(); }
@@ -1979,9 +1973,8 @@ namespace CommonKernelFunctors {
   class Construct_opposite_triangle_2
   {
     typedef typename K::Triangle_2  Triangle_2;
-  public:
-    typedef Triangle_2       result_type;
 
+  public:
     Triangle_2
     operator()( const Triangle_2& t) const
     { return Triangle_2(t.vertex(0), t.vertex(2), t.vertex(1));}
@@ -1993,9 +1986,8 @@ namespace CommonKernelFunctors {
     typedef typename K::Line_3    Line_3;
     typedef typename K::Point_3   Point_3;
     typedef typename K::Plane_3   Plane_3;
-  public:
-    typedef Line_3           result_type;
 
+  public:
     Line_3
     operator()( const Plane_3& pl, const Point_3& p) const
     { return pl.rep().perpendicular_line(p); }
@@ -2007,9 +1999,8 @@ namespace CommonKernelFunctors {
     typedef typename K::Line_3    Line_3;
     typedef typename K::Point_3   Point_3;
     typedef typename K::Plane_3   Plane_3;
-  public:
-    typedef Plane_3          result_type;
 
+  public:
     Plane_3
     operator()( const Line_3& l, const Point_3& p) const
     { return l.rep().perpendicular_plane(p); }
@@ -2028,9 +2019,8 @@ namespace CommonKernelFunctors {
     typedef typename K::Plane_3      Plane_3;
     typedef typename K::Circle_3     Circle_3;
     typedef typename Plane_3::Rep    Rep;
-  public:
-    typedef Plane_3          result_type;
 
+  public:
     Rep // Plane_3
     operator()(Return_base_tag, const RT& a, const RT& b, const RT& c, const RT& d) const
     { return Rep(a, b, c, d); }
@@ -2038,6 +2028,10 @@ namespace CommonKernelFunctors {
     Rep // Plane_3
     operator()(Return_base_tag, const Point_3& p, const Point_3& q, const Point_3& r) const
     { return Rep(p, q, r); }
+
+    Rep // Plane_3
+    operator()(Return_base_tag, Origin o, const Point_3& q, const Point_3& r) const
+    { return Rep(o, q, r); }
 
     Rep // Plane_3
     operator()(Return_base_tag, const Point_3& p, const Direction_3& d) const
@@ -2063,7 +2057,7 @@ namespace CommonKernelFunctors {
     operator()(Return_base_tag, const Segment_3& s, const Point_3& p) const
     { return Rep(s, p); }
 
-    Rep // Plane_3
+    decltype(auto)
     operator()(Return_base_tag, const Circle_3 & c) const
     { return c.rep().supporting_plane(); }
 
@@ -2095,10 +2089,9 @@ namespace CommonKernelFunctors {
     operator()(const Segment_3& s, const Point_3& p) const
     { return this->operator()(Return_base_tag(), s, p); }
 
-    Plane_3
+    decltype(auto)
     operator()(const Circle_3 & c) const
     { return this->operator()(Return_base_tag(), c); }
-
   };
 
   template <typename K>
@@ -2109,9 +2102,8 @@ namespace CommonKernelFunctors {
     typedef typename K::Point_3 Point;
     typename K::Construct_plane_3 construct_plane;
     typename K::Construct_line_3 construct_line;
-  public:
-    typedef Point result_type;
 
+  public:
     Point
     operator()(const Point& p1, const Point& p2, const Point& p3,
                const Point& l1, const Point& l2) const
@@ -2120,8 +2112,8 @@ namespace CommonKernelFunctors {
       Line line = construct_line( l1, l2 );
 
       const auto res = typename K::Intersect_3()(plane,line);
-      CGAL_assertion(res!=boost::none);
-      const Point* e_pt = boost::get<Point>(&(*res));
+      CGAL_assertion(res!=std::nullopt);
+      const Point* e_pt = std::get_if<Point>(&(*res));
       CGAL_assertion(e_pt!=nullptr);
       return *e_pt;
     }
@@ -2133,10 +2125,112 @@ namespace CommonKernelFunctors {
       Line line = construct_line( l1, l2 );
 
       const auto res = typename K::Intersect_3()(plane,line);
-      CGAL_assertion(res!=boost::none);
-      const Point* e_pt = boost::get<Point>(&(*res));
+      CGAL_assertion(res!=std::nullopt);
+      const Point* e_pt = std::get_if<Point>(&(*res));
       CGAL_assertion(e_pt!=nullptr);
       return *e_pt;
+    }
+  };
+
+  template <typename K>
+  class Construct_planes_intersection_point_3
+  {
+    typedef typename K::Plane_3 Plane;
+    typedef typename K::Point_3 Point;
+
+    typename K::Construct_plane_3 construct_plane;
+
+  public:
+    Point
+    operator()(const Point& p1, const Point& q1, const Point& r1,
+               const Point& p2, const Point& q2, const Point& r2,
+               const Point& p3, const Point& q3, const Point& r3) const
+    {
+      Plane plane1 = construct_plane(p1, q1, r1);
+      Plane plane2 = construct_plane(p2, q2, r2);
+      Plane plane3 = construct_plane(p3, q3, r3);
+
+      const auto res = typename K::Intersect_3()(plane1, plane2, plane3);
+      CGAL_assertion(res!=std::nullopt);
+      const Point* e_pt = std::get_if<Point>(&(*res));
+      CGAL_assertion(e_pt!=nullptr);
+      return *e_pt;
+    }
+
+    Point
+    operator()(const Plane& plane1, const Plane& plane2, const Plane& plane3) const
+    {
+      const auto res = typename K::Intersect_3()(plane1, plane2, plane3);
+      CGAL_assertion(res!=std::nullopt);
+      const Point* e_pt = std::get_if<Point>(&(*res));
+      CGAL_assertion(e_pt!=nullptr);
+      return *e_pt;
+    }
+  };
+
+  template <typename K>
+  class Construct_coplanar_segments_intersection_point_3
+  {
+    typedef typename K::Segment_3 Segment;
+    typedef typename K::Point_3 Point;
+
+    typename K::Construct_segment_3 construct_segment;
+
+  public:
+    Point
+    operator()(const Point& p1, const Point& q1,
+               const Point& p2, const Point& q2) const
+    {
+      Segment s1 = construct_segment(p1, q1);
+      Segment s2 = construct_segment(p2, q2);
+
+      const auto res = typename K::Intersect_3()(s1, s2);
+      CGAL_assertion(res!=std::nullopt);
+      const Point* e_pt = std::get_if<Point>(&(*res));
+      CGAL_assertion(e_pt!=nullptr);
+      return *e_pt;
+    }
+
+    Point
+    operator()(const Segment& s1, const Segment& s2) const
+    {
+      const auto res = typename K::Intersect_3()(s1, s2);
+      CGAL_assertion(res!=std::nullopt);
+      const Point* e_pt = std::get_if<Point>(&(*res));
+      CGAL_assertion(e_pt!=nullptr);
+      return *e_pt;
+    }
+  };
+
+  template <typename K>
+  class Compute_alpha_for_coplanar_triangle_intersection_3
+  {
+    typedef typename K::FT FT;
+    typedef typename K::Point_3 Point_3;
+    typedef typename K::Vector_3 Vector_3;
+
+  public:
+    FT
+    operator()(const Point_3& p1, const Point_3& p2,       // segment 1
+               const Point_3& p3, const Point_3& p4) const // segment 2
+    {
+      typename K::Construct_vector_3 vector = K().construct_vector_3_object();
+      typename K::Construct_cross_product_vector_3 cross_product =
+        K().construct_cross_product_vector_3_object();
+
+      const Vector_3 v1 = vector(p1, p2);
+      const Vector_3 v2 = vector(p3, p4);
+
+      CGAL_assertion(K().coplanar_3_object()(p1,p2,p3,p4));
+
+      const Vector_3 v3 = vector(p1, p3);
+      const Vector_3 v3v2 = cross_product(v3,v2);
+      const Vector_3 v1v2 = cross_product(v1,v2);
+      const typename K::FT sl = K().compute_squared_length_3_object()(v1v2);
+      CGAL_assertion(!certainly(is_zero(sl)));
+
+      const typename K::FT t = ((v3v2.x()*v1v2.x()) + (v3v2.y()*v1v2.y()) + (v3v2.z()*v1v2.z())) / sl;
+      return t; // p1 + (p2-p1) * t
     }
   };
 
@@ -2148,9 +2242,8 @@ namespace CommonKernelFunctors {
     typedef typename K::Segment_2  Segment_2;
     typedef typename K::Line_2     Line_2;
     typedef typename K::Ray_2      Ray_2;
-  public:
-    typedef Point_2          result_type;
 
+  public:
     Point_2
     operator()( const Line_2& l, const FT i) const
     { return l.point(i); }
@@ -2173,8 +2266,11 @@ namespace CommonKernelFunctors {
     typedef typename K::Line_3     Line_3;
     typedef typename K::Ray_3      Ray_3;
     typedef typename K::Plane_3    Plane_3;
+
   public:
-    typedef Point_3          result_type;
+    decltype(auto)
+    operator()( const Line_3& l) const
+    { return l.rep().point(); }
 
     Point_3
     operator()( const Line_3& l, const FT i) const
@@ -2188,7 +2284,7 @@ namespace CommonKernelFunctors {
     operator()( const Ray_3& r, const FT i) const
     { return r.rep().point(i); }
 
-    Point_3
+    decltype(auto)
     operator()( const Plane_3& p) const
     { return p.rep().point(); }
   };
@@ -2199,9 +2295,8 @@ namespace CommonKernelFunctors {
     typedef typename K::Point_2    Point_2;
     typedef typename K::Point_3    Point_3;
     typedef typename K::Plane_3    Plane_3;
-  public:
-    typedef Point_2          result_type;
 
+  public:
     Point_2
     operator()( const Plane_3& h, const Point_3& p) const
     {  return h.rep().to_2d(p); }
@@ -2216,9 +2311,8 @@ namespace CommonKernelFunctors {
     typedef typename K::Line_2       Line_2;
     typedef typename K::Ray_2        Ray_2;
     typedef typename Ray_2::Rep   Rep;
-  public:
-    typedef Ray_2            result_type;
 
+  public:
     Rep // Ray_2
     operator()(Return_base_tag, const Point_2& p, const Point_2& q) const
     {  return Rep(p, q); }
@@ -2262,9 +2356,8 @@ namespace CommonKernelFunctors {
     typedef typename K::Line_3       Line_3;
     typedef typename K::Ray_3        Ray_3;
     typedef typename Ray_3::Rep      Rep;
-  public:
-    typedef Ray_3            result_type;
 
+  public:
     Rep // Ray_3
     operator()(Return_base_tag, const Point_3& p, const Point_3& q) const
     {  return Rep(p, q); }
@@ -2305,9 +2398,8 @@ namespace CommonKernelFunctors {
     typedef typename K::Segment_2  Segment_2;
     typedef typename Segment_2::Rep  Rep;
     typedef typename K::Point_2    Point_2;
-  public:
-    typedef Segment_2        result_type;
 
+  public:
     Rep // Segment_2
     operator()(Return_base_tag, const Point_2& p, const Point_2& q) const
     {  return Rep(p, q); }
@@ -2323,9 +2415,8 @@ namespace CommonKernelFunctors {
     typedef typename K::Segment_3  Segment_3;
     typedef typename K::Point_3    Point_3;
     typedef typename Segment_3::Rep  Rep;
-  public:
-    typedef Segment_3        result_type;
 
+  public:
     Rep // Segment_3
     operator()(Return_base_tag, const Point_3& p, const Point_3& q) const
     {  return Rep(p, q); }
@@ -2335,23 +2426,18 @@ namespace CommonKernelFunctors {
     { return this->operator()(Return_base_tag(), p, q); }
   };
 
-
-
-
   template <typename K>
   class Construct_source_2
   {
     typedef typename K::Segment_2  Segment_2;
     typedef typename K::Ray_2      Ray_2;
-    typedef typename K::Point_2    Point_2;
-  public:
-    typedef const Point_2&                result_type;
 
-    result_type
+  public:
+    decltype(auto)
     operator()(const Segment_2& s) const
     {  return s.rep().source(); }
 
-    result_type
+    decltype(auto)
     operator()(const Ray_2& r) const
     {  return r.rep().source(); }
   };
@@ -2361,15 +2447,13 @@ namespace CommonKernelFunctors {
   {
     typedef typename K::Segment_3  Segment_3;
     typedef typename K::Ray_3      Ray_3;
-    typedef typename K::Point_3    Point_3;
-  public:
-    typedef const Point_3&         result_type;
 
-    result_type
+  public:
+    decltype(auto)
     operator()(const Segment_3& s) const
     {  return s.rep().source(); }
 
-    result_type
+    decltype(auto)
     operator()(const Ray_3& r) const
     {  return r.rep().source(); }
   };
@@ -2379,11 +2463,9 @@ namespace CommonKernelFunctors {
   class Construct_target_2
   {
     typedef typename K::Segment_2  Segment_2;
-    typedef typename K::Point_2    Point_2;
-  public:
-    typedef const Point_2&         result_type;
 
-    result_type
+  public:
+    decltype(auto)
     operator()(const Segment_2& s) const
     {  return s.rep().target(); }
   };
@@ -2392,11 +2474,9 @@ namespace CommonKernelFunctors {
   class Construct_target_3
   {
     typedef typename K::Segment_3  Segment_3;
-    typedef typename K::Point_3    Point_3;
-  public:
-    typedef const Point_3&         result_type;
 
-    result_type
+  public:
+    decltype(auto)
     operator()(const Segment_3& s) const
     {  return s.rep().target(); }
   };
@@ -2405,11 +2485,9 @@ namespace CommonKernelFunctors {
   class Construct_second_point_2
   {
     typedef typename K::Ray_2    Ray_2;
-    typedef typename K::Point_2  Point_2;
-  public:
-    typedef const Point_2&       result_type;
 
-    result_type
+  public:
+    decltype(auto)
     operator()(const Ray_2& r) const
     {  return r.rep().second_point(); }
   };
@@ -2418,11 +2496,9 @@ namespace CommonKernelFunctors {
   class Construct_second_point_3
   {
     typedef typename K::Ray_3    Ray_3;
-    typedef typename K::Point_3  Point_3;
-  public:
-    typedef Point_3              result_type;
 
-    result_type // const result_type& // Homogeneous...
+  public:
+    decltype(auto)
     operator()(const Ray_3& r) const
     {  return r.rep().second_point(); }
   };
@@ -2435,9 +2511,8 @@ namespace CommonKernelFunctors {
     typedef typename K::Sphere_3   Sphere_3;
     typedef typename K::Circle_3   Circle_3;
     typedef typename Sphere_3::Rep Rep;
-  public:
-    typedef Sphere_3               result_type;
 
+  public:
     Rep // Sphere_3
     operator()(Return_base_tag, const Point_3& center, const FT& squared_radius,
                 Orientation orientation = COUNTERCLOCKWISE) const
@@ -2463,7 +2538,7 @@ namespace CommonKernelFunctors {
                 Orientation orientation = COUNTERCLOCKWISE) const
     {  return Rep(center, orientation); }
 
-    Rep
+    decltype(auto)
     operator() (Return_base_tag, const Circle_3 & c) const
     { return c.rep().diametral_sphere(); }
 
@@ -2492,10 +2567,9 @@ namespace CommonKernelFunctors {
                 Orientation orientation = COUNTERCLOCKWISE) const
     { return this->operator()(Return_base_tag(), center, orientation); }
 
-    Sphere_3
+    decltype(auto)
     operator() (const Circle_3 & c) const
     { return this->operator()(Return_base_tag(), c); }
-
   };
 
   template <typename K>
@@ -2503,10 +2577,9 @@ namespace CommonKernelFunctors {
   {
     typedef typename K::Triangle_3  Triangle_3;
     typedef typename K::Plane_3     Plane_3;
-  public:
-    typedef Plane_3          result_type;
 
-    Plane_3
+  public:
+    decltype(auto)
     operator()( const Triangle_3& t) const
     { return t.rep().supporting_plane(); }
 
@@ -2518,9 +2591,8 @@ namespace CommonKernelFunctors {
     typedef typename K::Tetrahedron_3   Tetrahedron_3;
     typedef typename K::Point_3         Point_3;
     typedef typename Tetrahedron_3::Rep Rep;
-  public:
-    typedef Tetrahedron_3    result_type;
 
+  public:
     Rep // Tetrahedron_3
     operator()(Return_base_tag, const Point_3& p, const Point_3& q,
                 const Point_3& r, const Point_3& s) const
@@ -2538,9 +2610,8 @@ namespace CommonKernelFunctors {
     typedef typename K::Triangle_2   Triangle_2;
     typedef typename Triangle_2::Rep  Rep;
     typedef typename K::Point_2      Point_2;
-  public:
-    typedef Triangle_2       result_type;
 
+  public:
     Rep // Triangle_2
     operator()(Return_base_tag, const Point_2& p, const Point_2& q, const Point_2& r) const
     { return Rep(p, q, r); }
@@ -2556,9 +2627,8 @@ namespace CommonKernelFunctors {
     typedef typename K::Triangle_3   Triangle_3;
     typedef typename K::Point_3      Point_3;
     typedef typename Triangle_3::Rep Rep;
-  public:
-    typedef Triangle_3       result_type;
 
+  public:
     Rep // Triangle_3
     operator()(Return_base_tag, const Point_3& p, const Point_3& q, const Point_3& r) const
     { return Rep(p, q, r); }
@@ -2573,9 +2643,8 @@ namespace CommonKernelFunctors {
   {
     typedef typename K::Point_3          Point_3;
     typedef typename K::Vector_3         Vector_3;
-  public:
-    typedef Vector_3           result_type;
 
+  public:
     Vector_3
     operator()(const Point_3& p,const Point_3& q, const Point_3& r) const
     {
@@ -2594,21 +2663,21 @@ namespace CommonKernelFunctors {
     typedef typename K::Iso_cuboid_3     Iso_cuboid_3;
     typedef typename K::Triangle_3       Triangle_3;
     typedef typename K::Tetrahedron_3    Tetrahedron_3;
-  public:
 
-    const Point_3&
+  public:
+    decltype(auto)
     operator()( const Segment_3& s, int i) const
     { return s.rep().vertex(i); }
 
-    const Point_3&
+    decltype(auto)
     operator()( const Triangle_3& t, int i) const
     { return t.rep().vertex(i); }
 
-    Point_3
+    decltype(auto)
     operator()( const Iso_cuboid_3& r, int i) const
       { return r.rep().vertex(i); }
 
-    const Point_3&
+    decltype(auto)
     operator()( const Tetrahedron_3& t, int i) const
     { return t.rep().vertex(i); }
   };
@@ -2622,8 +2691,6 @@ namespace CommonKernelFunctors {
     Cartesian_const_iterator_2;
 
   public:
-    typedef Cartesian_const_iterator_2 result_type;
-
     Cartesian_const_iterator_2
     operator()( const Point_2& p) const
     {
@@ -2658,8 +2725,6 @@ namespace CommonKernelFunctors {
     Cartesian_const_iterator_3;
 
   public:
-    typedef Cartesian_const_iterator_3 result_type;
-
     Cartesian_const_iterator_3
     operator()( const Point_3& p) const
     {
@@ -2682,6 +2747,206 @@ namespace CommonKernelFunctors {
     operator()( const Vector_3& v, int) const
     {
       return v.rep().cartesian_end();
+    }
+  };
+
+  template <typename K>
+  class Construct_projected_point_2
+  {
+    bool
+      is_inside_triangle_2_aux(
+        const typename K::Point_2& p1,
+        const typename K::Point_2& p2,
+        const typename K::Point_2& q,
+        typename K::Point_2& result,
+        bool& outside,
+        const K& k)
+    {
+      typedef typename K::Vector_2 Vector_2;
+      typedef typename K::FT FT;
+
+      typename K::Construct_vector_2 vector =
+        k.construct_vector_2_object();
+      typename K::Construct_projected_point_2 projection =
+        k.construct_projected_point_2_object();
+      typename K::Construct_line_2 line =
+        k.construct_line_2_object();
+      typename K::Compute_scalar_product_2 scalar_product =
+        k.compute_scalar_product_2_object();
+      typename K::Construct_direction_2 direction =
+        k.construct_direction_2_object();
+      typename K::Construct_perpendicular_direction_2 perpendicular =
+        k.construct_perpendicular_direction_2_object();
+
+      // Check whether the point is cw or ccw with the triangle side (p1,p2)
+      Vector_2 orth = vector(p1, p2);
+
+      if (scalar_product(vector(p1, q), vector(perpendicular(direction(orth), CGAL::COUNTERCLOCKWISE))) < FT(0))
+      {
+        if (scalar_product(vector(p1, q), vector(p1, p2)) >= FT(0)
+          && scalar_product(vector(p2, q), vector(p2, p1)) >= FT(0))
+        {
+          result = projection(line(p1, p2), q);
+          return true;
+        }
+        outside = true;
+      }
+
+      return false;
+    }
+
+    /**
+     * Returns the nearest point of `p1`, `p2`, `p3` from origin
+     * @param origin the origin point
+     * @param p1 the first point
+     * @param p2 the second point
+     * @param p3 the third point
+     * @param k the kernel
+     * @return the nearest point from origin
+     */
+    typename K::Point_2
+      nearest_point_2(const typename K::Point_2& origin,
+        const typename K::Point_2& p1,
+        const typename K::Point_2& p2,
+        const typename K::Point_2& p3,
+        const K& k)
+    {
+      typedef typename K::FT FT;
+
+      typename K::Compute_squared_distance_2 sq_distance =
+        k.compute_squared_distance_2_object();
+
+      const FT dist_origin_p1 = sq_distance(origin, p1);
+      const FT dist_origin_p2 = sq_distance(origin, p2);
+      const FT dist_origin_p3 = sq_distance(origin, p3);
+
+      if (dist_origin_p2 >= dist_origin_p1
+        && dist_origin_p3 >= dist_origin_p1)
+      {
+        return p1;
+      }
+      if (dist_origin_p3 >= dist_origin_p2)
+      {
+        return p2;
+      }
+
+      return p3;
+    }
+
+    /**
+     * @brief returns true if p is inside triangle t. If p is not inside t,
+     * result is the nearest point of t from p.
+     * @param p the reference point
+     * @param t the triangle
+     * @param result if p is not inside t, the nearest point of t from p
+     * @param k the kernel
+     * @return true if p is inside t
+     */
+    bool
+      is_inside_triangle_2(const typename K::Point_2& p,
+        const typename K::Triangle_2& t,
+        typename K::Point_2& result,
+        const K& k)
+    {
+      typedef typename K::Point_2 Point_2;
+
+      typename K::Construct_vertex_2 vertex_on =
+        k.construct_vertex_2_object();
+
+      const Point_2& t0 = vertex_on(t, 0);
+      const Point_2& t1 = vertex_on(t, 1);
+      const Point_2& t2 = vertex_on(t, 2);
+
+      bool outside = false;
+      if (is_inside_triangle_2_aux(t0, t1, p, result, outside, k)
+        || is_inside_triangle_2_aux(t1, t2, p, result, outside, k)
+        || is_inside_triangle_2_aux(t2, t0, p, result, outside, k))
+      {
+        return false;
+      }
+
+      if (outside)
+      {
+        result = nearest_point_2(p, t0, t1, t2, k);
+        return false;
+      }
+      else
+      {
+        return true;
+      }
+    }
+
+  public:
+    typename K::Point_2
+      operator()(const typename K::Triangle_2& triangle,
+        const typename K::Point_2& origin,
+        const K& k)
+    {
+      typedef typename K::Point_2 Point_2;
+      typename K::Construct_vertex_2 vertex_on;
+      typename K::Construct_segment_2 segment;
+
+      // Check if triangle is degenerated to call segment operator.
+      const Point_2& t0 = vertex_on(triangle, 0);
+      const Point_2& t1 = vertex_on(triangle, 1);
+      const Point_2& t2 = vertex_on(triangle, 2);
+
+      if (t0 == t1)
+        return (*this)(segment(t1, t2), origin, k);
+      if (t1 == t2)
+        return (*this)(segment(t2, t0), origin, k);
+      if (t2 == t0)
+        return (*this)(segment(t0, t1), origin, k);
+
+      Point_2 moved_point;
+      bool inside = is_inside_triangle_2(origin, triangle, moved_point, k);
+
+      // If proj is inside triangle, return it
+      if (inside)
+      {
+        return origin;
+      }
+
+      // Else return the constructed point
+      return moved_point;
+    }
+
+    typename K::Point_2
+      operator()(const typename K::Segment_2& s,
+        const typename K::Point_2& query,
+        const K& k) {
+
+      typename K::Construct_vector_2 vector =
+        k.construct_vector_2_object();
+
+      typename K::Compute_scalar_product_2 scalar_product =
+        k.compute_scalar_product_2_object();
+
+      typename K::Construct_scaled_vector_2 scaled_vector =
+        k.construct_scaled_vector_2_object();
+
+      const typename K::Point_2& a = s.source();
+      const typename K::Point_2& b = s.target();
+      const typename K::Vector_2 d = vector(a, b);
+
+      typename K::FT sqlen = scalar_product(d, d);
+
+      // Degenerate segment
+      if (is_zero(sqlen))
+        return a;
+
+      const typename K::Vector_2 p = vector(a, query);
+
+      typename K::FT proj = (scalar_product(p, d)) / sqlen;
+
+      if (!is_positive(proj))
+        return a;
+
+      if (proj >= 1.0)
+        return b;
+
+      typename K::Construct_point_2 construct_point_2;
+      return construct_point_2(a + scaled_vector(d, proj));
     }
   };
 
@@ -2977,16 +3242,17 @@ namespace CommonKernelFunctors {
   template <typename K>
   class Coplanar_3
   {
+    typedef typename K::Boolean       Boolean;
     typedef typename K::Point_3       Point_3;
     typedef typename K::Orientation_3 Orientation_3;
-    Orientation_3 o;
-  public:
-    typedef typename K::Boolean       result_type;
 
+    Orientation_3 o;
+
+  public:
     Coplanar_3() {}
     Coplanar_3(const Orientation_3& o_) : o(o_) {}
 
-    result_type
+    Boolean
     operator()( const Point_3& p, const Point_3& q,
                 const Point_3& r, const Point_3& s) const
     {
@@ -2997,11 +3263,11 @@ namespace CommonKernelFunctors {
   template <typename K>
   class Counterclockwise_in_between_2
   {
+    typedef typename K::Boolean      Boolean;
     typedef typename K::Direction_2  Direction_2;
-  public:
-    typedef typename K::Boolean      result_type;
 
-    result_type
+  public:
+    Boolean
     operator()( const Direction_2& p, const Direction_2& q,
                 const Direction_2& r) const
     {
@@ -3015,35 +3281,40 @@ namespace CommonKernelFunctors {
   template <typename K>
   class Do_intersect_2
   {
-  public:
-    typedef typename K::Boolean     result_type;
+    typedef typename K::Boolean     Boolean;
 
+ public:
+    // Needs_FT because Line/Line (and variations) as well as Circle_2/X compute intersections
     template <class T1, class T2>
-    result_type
+    Needs_FT<Boolean>
     operator()(const T1& t1, const T2& t2) const
-    { return Intersections::internal::do_intersect(t1, t2, K()); }
+    { return { Intersections::internal::do_intersect(t1, t2, K())}; }
   };
 
   template <typename K>
   class Do_intersect_3
   {
-  public:
-    typedef typename K::Boolean     result_type;
+    typedef typename K::Boolean     Boolean;
 
+  public:
     template <class T1, class T2>
-    result_type
+    Boolean
     operator()(const T1& t1, const T2& t2) const
     { return Intersections::internal::do_intersect(t1, t2, K()); }
 
-    result_type
-    operator()(const typename K::Plane_3& pl1, const typename K::Plane_3& pl2, const typename K::Plane_3& pl3) const
-    { return Intersections::internal::do_intersect(pl1, pl2, pl3, K() ); }
-
+    Boolean
+    operator()(const typename K::Plane_3& pl1,
+               const typename K::Plane_3& pl2,
+               const typename K::Plane_3& pl3) const
+    {
+      return Intersections::internal::do_intersect(pl1, pl2, pl3, K());
+    }
   };
 
   template <typename K>
   class Equal_2
   {
+    typedef typename K::Boolean       Boolean;
     typedef typename K::Point_2       Point_2;
     typedef typename K::Vector_2      Vector_2;
     typedef typename K::Direction_2   Direction_2;
@@ -3055,51 +3326,49 @@ namespace CommonKernelFunctors {
     typedef typename K::Circle_2      Circle_2;
 
   public:
-    typedef typename K::Boolean       result_type;
-
-    result_type
+    Boolean
     operator()(const Point_2 &p, const Point_2 &q) const
     {
       return p.rep() == q.rep();
     }
 
-    result_type
+    Boolean
     operator()(const Vector_2 &v1, const Vector_2 &v2) const
     {
       return v1.rep() == v2.rep();
     }
 
-    result_type
+    Boolean
     operator()(const Vector_2 &v, const Null_vector &n) const
     {
       return v.rep() == n;
     }
 
-    result_type
+    Boolean
     operator()(const Direction_2 &d1, const Direction_2 &d2) const
     {
       return d1.rep() == d2.rep();
     }
 
-    result_type
+    Boolean
     operator()(const Segment_2 &s1, const Segment_2 &s2) const
     {
       return s1.source() == s2.source() && s1.target() == s2.target();
     }
 
-    result_type
+    Boolean
     operator()(const Line_2 &l1, const Line_2 &l2) const
     {
       return l1.rep() == l2.rep();
     }
 
-    result_type
+    Boolean
     operator()(const Ray_2& r1, const Ray_2& r2) const
     {
       return r1.source() == r2.source() && r1.direction() == r2.direction();
     }
 
-    result_type
+    Boolean
     operator()(const Circle_2& c1, const Circle_2& c2) const
     {
       return c1.center() == c2.center() &&
@@ -3107,7 +3376,7 @@ namespace CommonKernelFunctors {
         c1.orientation() == c2.orientation();
     }
 
-    result_type
+    Boolean
     operator()(const Triangle_2& t1, const Triangle_2& t2) const
     {
       int i;
@@ -3119,7 +3388,7 @@ namespace CommonKernelFunctors {
                    && t1.vertex(2) == t2.vertex(i+2);
     }
 
-    result_type
+    Boolean
     operator()(const Iso_rectangle_2& i1, const Iso_rectangle_2& i2) const
     {
       return CGAL_AND((i1.min)() == (i2.min)(), (i1.max)() == (i2.max)());
@@ -3129,6 +3398,7 @@ namespace CommonKernelFunctors {
   template <typename K>
   class Equal_3
   {
+    typedef typename K::Boolean       Boolean;
     typedef typename K::Point_3       Point_3;
     typedef typename K::Vector_3      Vector_3;
     typedef typename K::Direction_3   Direction_3;
@@ -3143,82 +3413,79 @@ namespace CommonKernelFunctors {
     typedef typename K::Circle_3      Circle_3;
 
   public:
-    typedef typename K::Boolean       result_type;
-
-    // Point_3 is special case since the global operator== would recurse.
-    result_type
+    Boolean
     operator()(const Point_3 &p, const Point_3 &q) const
     {
-      return CGAL_AND_3(p.x() == q.x(), p.y() == q.y(), p.z() == q.z());
+      return p.rep() == q.rep();
     }
 
-    result_type
+    Boolean
     operator()(const Plane_3 &v1, const Plane_3 &v2) const
     {
       return v1.rep() == v2.rep();
     }
 
-    result_type
+    Boolean
     operator()(const Iso_cuboid_3 &v1, const Iso_cuboid_3 &v2) const
     {
       return v1.rep() == v2.rep();
     }
 
-    result_type
+    Boolean
     operator()(const Sphere_3 &v1, const Sphere_3 &v2) const
     {
       return v1.rep() == v2.rep();
     }
 
-    result_type
+    Boolean
     operator()(const Tetrahedron_3 &v1, const Tetrahedron_3 &v2) const
     {
       return v1.rep() == v2.rep();
     }
 
-    result_type
+    Boolean
     operator()(const Triangle_3 &v1, const Triangle_3 &v2) const
     {
       return v1.rep() == v2.rep();
     }
 
-    result_type
+    Boolean
     operator()(const Ray_3 &v1, const Ray_3 &v2) const
     {
       return v1.rep() == v2.rep();
     }
 
-    result_type
+    Boolean
     operator()(const Line_3 &v1, const Line_3 &v2) const
     {
       return v1.rep() == v2.rep();
     }
 
-    result_type
+    Boolean
     operator()(const Direction_3 &v1, const Direction_3 &v2) const
     {
       return v1.rep() == v2.rep();
     }
 
-    result_type
+    Boolean
     operator()(const Segment_3 &v1, const Segment_3 &v2) const
     {
       return v1.rep() == v2.rep();
     }
 
-    result_type
+    Boolean
     operator()(const Vector_3 &v1, const Vector_3 &v2) const
     {
       return v1.rep() == v2.rep();
     }
 
-    result_type
+    Boolean
     operator()(const Vector_3 &v, const Null_vector &n) const
     {
       return v.rep() == n;
     }
 
-    result_type
+    Boolean
     operator()(const Circle_3 &v1, const Circle_3 &v2) const
     {
       return v1.rep() == v2.rep();
@@ -3228,22 +3495,22 @@ namespace CommonKernelFunctors {
   template <typename K>
   class Has_on_boundary_2
   {
+    typedef typename K::Boolean          Boolean;
     typedef typename K::Point_2          Point_2;
     typedef typename K::Iso_rectangle_2  Iso_rectangle_2;
     typedef typename K::Circle_2         Circle_2;
     typedef typename K::Triangle_2       Triangle_2;
-  public:
-    typedef typename K::Boolean          result_type;
 
-    result_type
+  public:
+    Boolean
     operator()( const Circle_2& c, const Point_2& p) const
     { return c.has_on_boundary(p); }
 
-    result_type
+    Boolean
     operator()( const Triangle_2& t, const Point_2& p) const
     { return t.has_on_boundary(p); }
 
-    result_type
+    Boolean
     operator()( const Iso_rectangle_2& r, const Point_2& p) const
     { return K().bounded_side_2_object()(r,p) == ON_BOUNDARY; }
   };
@@ -3251,23 +3518,23 @@ namespace CommonKernelFunctors {
   template <typename K>
   class Has_on_boundary_3
   {
+    typedef typename K::Boolean          Boolean;
     typedef typename K::Point_3          Point_3;
     typedef typename K::Iso_cuboid_3     Iso_cuboid_3;
     typedef typename K::Sphere_3         Sphere_3;
     typedef typename K::Tetrahedron_3    Tetrahedron_3;
     typedef typename K::Plane_3          Plane_3;
-  public:
-    typedef typename K::Boolean          result_type;
 
-    result_type
+  public:
+    Boolean
     operator()( const Sphere_3& s, const Point_3& p) const
     { return s.rep().has_on_boundary(p); }
 
-    result_type
+    Boolean
     operator()( const Tetrahedron_3& t, const Point_3& p) const
     { return t.rep().has_on_boundary(p); }
 
-    result_type
+    Boolean
     operator()( const Iso_cuboid_3& c, const Point_3& p) const
     { return c.rep().has_on_boundary(p); }
 
@@ -3276,22 +3543,22 @@ namespace CommonKernelFunctors {
   template <typename K>
   class Has_on_bounded_side_2
   {
+    typedef typename K::Boolean          Boolean;
     typedef typename K::Point_2          Point_2;
     typedef typename K::Iso_rectangle_2  Iso_rectangle_2;
     typedef typename K::Circle_2         Circle_2;
     typedef typename K::Triangle_2       Triangle_2;
-  public:
-    typedef typename K::Boolean          result_type;
 
-    result_type
+  public:
+    Boolean
     operator()( const Circle_2& c, const Point_2& p) const
     { return c.has_on_bounded_side(p); }
 
-    result_type
+    Boolean
     operator()( const Triangle_2& t, const Point_2& p) const
     { return t.has_on_bounded_side(p); }
 
-    result_type
+    Boolean
     operator()( const Iso_rectangle_2& r, const Point_2& p) const
     { return K().bounded_side_2_object()(r,p) == ON_BOUNDED_SIDE; }
   };
@@ -3299,27 +3566,27 @@ namespace CommonKernelFunctors {
   template <typename K>
   class Has_on_bounded_side_3
   {
+    typedef typename K::Boolean          Boolean;
     typedef typename K::Point_3          Point_3;
     typedef typename K::Iso_cuboid_3     Iso_cuboid_3;
     typedef typename K::Sphere_3         Sphere_3;
     typedef typename K::Tetrahedron_3    Tetrahedron_3;
     typedef typename K::Circle_3         Circle_3;
-  public:
-    typedef typename K::Boolean          result_type;
 
-    result_type
+  public:
+    Boolean
     operator()( const Sphere_3& s, const Point_3& p) const
     { return s.has_on_bounded_side(p); }
 
-    result_type
+    Boolean
     operator()( const Tetrahedron_3& t, const Point_3& p) const
     { return t.rep().has_on_bounded_side(p); }
 
-    result_type
+    Boolean
     operator()( const Iso_cuboid_3& c, const Point_3& p) const
     { return c.rep().has_on_bounded_side(p); }
 
-    result_type
+    Boolean
     operator()(const Circle_3& c, const Point_3& p) const
     {
       CGAL_kernel_precondition(
@@ -3328,8 +3595,10 @@ namespace CommonKernelFunctors {
       return c.rep().has_on_bounded_side(p);
     }
 
-    bool operator()(const Sphere_3& s1, const Sphere_3& s2,
-                    const Point_3& a, const Point_3& b) const
+    // returns true iff the line segment ab is inside the union of the bounded sides of s1 and s2.
+    Needs_FT<Boolean>
+    operator()(const Sphere_3& s1, const Sphere_3& s2,
+               const Point_3& a, const Point_3& b) const
     {
       typedef typename K::Circle_3  Circle_3;
       typedef typename K::Point_3   Point_3;
@@ -3341,27 +3610,23 @@ namespace CommonKernelFunctors {
       const bool a_in_s1 = has_on_bounded_side(s1, a);
       const bool a_in_s2 = has_on_bounded_side(s2, a);
 
-      if(!(a_in_s1 || a_in_s2)) return false;
+      if(!(a_in_s1 || a_in_s2)) return {false};
 
       const bool b_in_s1 = has_on_bounded_side(s1, b);
       const bool b_in_s2 = has_on_bounded_side(s2, b);
 
-      if(!(b_in_s1 || b_in_s2)) return false;
+      if(!(b_in_s1 || b_in_s2)) return {false};
 
-      if(a_in_s1 && b_in_s1) return true;
-      if(a_in_s2 && b_in_s2) return true;
+      if(a_in_s1 && b_in_s1) return {true};
+      if(a_in_s2 && b_in_s2) return {true};
 
-      if(!K().do_intersect_3_object()(s1, s2)) return false;
+      if(!K().do_intersect_3_object()(s1, s2)) return {false};
       const Circle_3 circ(s1, s2);
       const Plane_3& plane = circ.supporting_plane();
       const auto optional = K().intersect_3_object()(plane, Segment_3(a, b));
-      CGAL_kernel_assertion_msg(bool(optional) == true,
-                                "the segment does not intersect the supporting"
-                                " plane");
-      const Point_3* p = boost::get<Point_3>(&*optional);
-      CGAL_kernel_assertion_msg(p != 0,
-                                "the segment intersection with the plane is "
-                                "not a point");
+      CGAL_kernel_assertion_msg(bool(optional) == true, "the segment does not intersect the supporting plane");
+      const Point_3* p = std::get_if<Point_3>(&*optional);
+      CGAL_kernel_assertion_msg(p != 0, "the segment intersection with the plane is not a point");
       return squared_distance(circ.center(), *p) < circ.squared_radius();
     }
 
@@ -3370,22 +3635,22 @@ namespace CommonKernelFunctors {
   template <typename K>
   class Has_on_negative_side_2
   {
+    typedef typename K::Boolean          Boolean;
     typedef typename K::Point_2          Point_2;
     typedef typename K::Line_2           Line_2;
     typedef typename K::Circle_2         Circle_2;
     typedef typename K::Triangle_2       Triangle_2;
-  public:
-    typedef typename K::Boolean          result_type;
 
-    result_type
+  public:
+    Boolean
     operator()( const Circle_2& c, const Point_2& p) const
     { return c.has_on_negative_side(p); }
 
-    result_type
+    Boolean
     operator()( const Triangle_2& t, const Point_2& p) const
     { return t.has_on_negative_side(p); }
 
-    result_type
+    Boolean
     operator()( const Line_2& l, const Point_2& p) const
     { return l.has_on_negative_side(p); }
   };
@@ -3393,22 +3658,22 @@ namespace CommonKernelFunctors {
   template <typename K>
   class Has_on_negative_side_3
   {
+    typedef typename K::Boolean          Boolean;
     typedef typename K::Point_3          Point_3;
     typedef typename K::Plane_3          Plane_3;
     typedef typename K::Sphere_3         Sphere_3;
     typedef typename K::Tetrahedron_3    Tetrahedron_3;
-  public:
-    typedef typename K::Boolean          result_type;
 
-    result_type
+  public:
+    Boolean
     operator()( const Sphere_3& s, const Point_3& p) const
     { return s.has_on_negative_side(p); }
 
-    result_type
+    Boolean
     operator()( const Tetrahedron_3& t, const Point_3& p) const
     { return t.rep().has_on_negative_side(p); }
 
-    result_type
+    Boolean
     operator()( const Plane_3& pl, const Point_3& p) const
     { return pl.rep().has_on_negative_side(p); }
   };
@@ -3416,22 +3681,22 @@ namespace CommonKernelFunctors {
   template <typename K>
   class Has_on_positive_side_2
   {
+    typedef typename K::Boolean          Boolean;
     typedef typename K::Point_2          Point_2;
     typedef typename K::Line_2           Line_2;
     typedef typename K::Circle_2         Circle_2;
     typedef typename K::Triangle_2       Triangle_2;
-  public:
-    typedef typename K::Boolean          result_type;
 
-    result_type
+  public:
+    Boolean
     operator()( const Circle_2& c, const Point_2& p) const
     { return c.has_on_positive_side(p); }
 
-    result_type
+    Boolean
     operator()( const Triangle_2& t, const Point_2& p) const
     { return t.has_on_positive_side(p); }
 
-    result_type
+    Boolean
     operator()( const Line_2& l, const Point_2& p) const
     { return l.has_on_positive_side(p); }
   };
@@ -3439,22 +3704,22 @@ namespace CommonKernelFunctors {
   template <typename K>
   class Has_on_positive_side_3
   {
+    typedef typename K::Boolean          Boolean;
     typedef typename K::Point_3          Point_3;
     typedef typename K::Plane_3          Plane_3;
     typedef typename K::Sphere_3         Sphere_3;
     typedef typename K::Tetrahedron_3    Tetrahedron_3;
-  public:
-    typedef typename K::Boolean          result_type;
 
-    result_type
+  public:
+    Boolean
     operator()( const Sphere_3& s, const Point_3& p) const
     { return s.has_on_positive_side(p); }
 
-    result_type
+    Boolean
     operator()( const Tetrahedron_3& t, const Point_3& p) const
     { return t.rep().has_on_positive_side(p); }
 
-    result_type
+    Boolean
     operator()( const Plane_3& pl, const Point_3& p) const
     { return pl.rep().has_on_positive_side(p); }
   };
@@ -3462,22 +3727,22 @@ namespace CommonKernelFunctors {
   template <typename K>
   class Has_on_unbounded_side_2
   {
+    typedef typename K::Boolean          Boolean;
     typedef typename K::Point_2          Point_2;
     typedef typename K::Iso_rectangle_2  Iso_rectangle_2;
     typedef typename K::Circle_2         Circle_2;
     typedef typename K::Triangle_2       Triangle_2;
-  public:
-    typedef typename K::Boolean          result_type;
 
-    result_type
+  public:
+    Boolean
     operator()( const Circle_2& c, const Point_2& p) const
     { return c.has_on_unbounded_side(p); }
 
-    result_type
+    Boolean
     operator()( const Triangle_2& t, const Point_2& p) const
     { return t.has_on_unbounded_side(p); }
 
-    result_type
+    Boolean
     operator()( const Iso_rectangle_2& r, const Point_2& p) const
     {
       return K().bounded_side_2_object()(r,p)== ON_UNBOUNDED_SIDE;
@@ -3488,27 +3753,27 @@ namespace CommonKernelFunctors {
   template <typename K>
   class Has_on_unbounded_side_3
   {
+    typedef typename K::Boolean          Boolean;
     typedef typename K::Point_3          Point_3;
     typedef typename K::Iso_cuboid_3     Iso_cuboid_3;
     typedef typename K::Sphere_3         Sphere_3;
     typedef typename K::Circle_3         Circle_3;
     typedef typename K::Tetrahedron_3    Tetrahedron_3;
-  public:
-    typedef typename K::Boolean          result_type;
 
-    result_type
+  public:
+    Boolean
     operator()( const Sphere_3& s, const Point_3& p) const
     { return s.has_on_unbounded_side(p); }
 
-    result_type
+    Boolean
     operator()( const Tetrahedron_3& t, const Point_3& p) const
     { return t.rep().has_on_unbounded_side(p); }
 
-    result_type
+    Boolean
     operator()( const Iso_cuboid_3& c, const Point_3& p) const
     { return c.rep().has_on_unbounded_side(p); }
 
-    result_type
+    Boolean
     operator()(const Circle_3& c, const Point_3& p) const
     {
       CGAL_kernel_precondition(
@@ -3521,22 +3786,22 @@ namespace CommonKernelFunctors {
   template <typename K>
   class Has_on_2
   {
+    typedef typename K::Boolean          Boolean;
     typedef typename K::Point_2          Point_2;
     typedef typename K::Line_2           Line_2;
     typedef typename K::Ray_2            Ray_2;
     typedef typename K::Segment_2        Segment_2;
-  public:
-    typedef typename K::Boolean          result_type;
 
-    result_type
+  public:
+    Boolean
     operator()( const Line_2& l, const Point_2& p) const
     { return l.has_on(p); }
 
-    result_type
+    Boolean
     operator()( const Ray_2& r, const Point_2& p) const
     { return r.has_on(p); }
 
-    result_type
+    Boolean
     operator()( const Segment_2& s, const Point_2& p) const
     { return s.has_on(p); }
   };
@@ -3545,10 +3810,8 @@ namespace CommonKernelFunctors {
   class Intersect_2
   {
   public:
-
-    // 25 possibilities, so I keep the template.
     template <class T1, class T2>
-    decltype(auto)
+    typename CGAL::Intersection_traits<K,T1,T2>::result_type
     operator()(const T1& t1, const T2& t2) const
     { return Intersections::internal::intersection(t1, t2, K()); }
   };
@@ -3557,15 +3820,14 @@ namespace CommonKernelFunctors {
   class Intersect_3
   {
     typedef typename K::Plane_3     Plane_3;
-  public:
 
-    // n possibilities, so I keep the template.
+  public:
     template <class T1, class T2>
-    decltype(auto)
+    typename CGAL::Intersection_traits<K,T1,T2>::result_type
     operator()(const T1& t1, const T2& t2) const
     { return Intersections::internal::intersection(t1, t2, K() ); }
 
-    decltype(auto)
+    std::optional<std::variant<typename K::Point_3, typename K::Line_3, typename K::Plane_3> >
     operator()(const Plane_3& pl1, const Plane_3& pl2, const Plane_3& pl3)const
     { return Intersections::internal::intersection(pl1, pl2, pl3, K() ); }
   };
@@ -3582,7 +3844,7 @@ namespace CommonKernelFunctors {
     typedef typename K::Point_3     Point_3;
     typedef typename K::Line_3      Line_3;
     typedef typename K::Plane_3     Plane_3;
-    typedef typename boost::optional<Point_3> result_type;
+    typedef typename std::optional<Point_3> result_type;
 
     result_type
     operator()(const Plane_3& pl1, const Plane_3& pl2, const Plane_3& pl3) const
@@ -3601,6 +3863,7 @@ namespace CommonKernelFunctors {
   template <typename K>
   class Is_degenerate_2
   {
+    typedef typename K::Boolean           Boolean;
     typedef typename K::Circle_2          Circle_2;
     typedef typename K::Iso_rectangle_2   Iso_rectangle_2;
     typedef typename K::Line_2            Line_2;
@@ -3608,34 +3871,33 @@ namespace CommonKernelFunctors {
     typedef typename K::Segment_2         Segment_2;
     typedef typename K::Triangle_2        Triangle_2;
     typedef typename K::Circle_3          Circle_3;
-  public:
-    typedef typename K::Boolean           result_type;
 
-    result_type
+  public:
+    Boolean
     operator()( const Circle_2& c) const
     { return c.is_degenerate(); }
 
-    result_type
+    Boolean
     operator()( const Iso_rectangle_2& r) const
     { return (r.xmin() == r.xmax()) || (r.ymin() == r.ymax()); }
 
-    result_type
+    Boolean
     operator()( const Line_2& l) const
     { return CGAL_NTS is_zero(l.a())  && CGAL_NTS is_zero(l.b()); }
 
-    result_type
+    Boolean
     operator()( const Ray_2& r) const
     { return r.rep().is_degenerate(); }
 
-    result_type
+    Boolean
     operator()( const Segment_2& s) const
     { return s.source() == s.target(); }
 
-    result_type
+    Boolean
     operator()( const Triangle_2& t) const
     { return t.is_degenerate(); }
 
-    result_type
+    Boolean
     operator()( const Circle_3& c) const
     { return c.rep().is_degenerate(); }
   };
@@ -3643,6 +3905,7 @@ namespace CommonKernelFunctors {
   template <typename K>
   class Is_degenerate_3
   {
+    typedef typename K::Boolean           Boolean;
     typedef typename K::Iso_cuboid_3      Iso_cuboid_3;
     typedef typename K::Line_3            Line_3;
     typedef typename K::Circle_3          Circle_3;
@@ -3652,42 +3915,41 @@ namespace CommonKernelFunctors {
     typedef typename K::Sphere_3          Sphere_3;
     typedef typename K::Triangle_3        Triangle_3;
     typedef typename K::Tetrahedron_3     Tetrahedron_3;
-  public:
-    typedef typename K::Boolean           result_type;
 
-    result_type
+  public:
+    Boolean
     operator()( const Iso_cuboid_3& c) const
     { return c.rep().is_degenerate(); }
 
-    result_type
+    Boolean
     operator()( const Line_3& l) const
     { return l.rep().is_degenerate();  }
 
-    result_type
+    Boolean
     operator()( const Plane_3& pl) const
     { return pl.rep().is_degenerate(); }
 
-    result_type
+    Boolean
     operator()( const Ray_3& r) const
     { return r.rep().is_degenerate(); }
 
-    result_type
+    Boolean
     operator()( const Segment_3& s) const
     { return s.rep().is_degenerate(); }
 
-    result_type
+    Boolean
     operator()( const Sphere_3& s) const
     { return s.rep().is_degenerate(); }
 
-    result_type
+    Boolean
     operator()( const Triangle_3& t) const
     { return t.rep().is_degenerate(); }
 
-    result_type
+    Boolean
     operator()( const Tetrahedron_3& t) const
     { return t.rep().is_degenerate(); }
 
-    result_type
+    Boolean
     operator()( const Circle_3& t) const
     { return t.rep().is_degenerate(); }
 
@@ -3696,21 +3958,21 @@ namespace CommonKernelFunctors {
   template <typename K>
   class Is_horizontal_2
   {
+    typedef typename K::Boolean   Boolean;
     typedef typename K::Line_2    Line_2;
     typedef typename K::Segment_2 Segment_2;
     typedef typename K::Ray_2     Ray_2;
-  public:
-    typedef typename K::Boolean   result_type;
 
-    result_type
+  public:
+    Boolean
     operator()( const Line_2& l) const
     { return CGAL_NTS is_zero(l.a()); }
 
-    result_type
+    Boolean
     operator()( const Segment_2& s) const
     { return s.is_horizontal(); }
 
-    result_type
+    Boolean
     operator()( const Ray_2& r) const
     { return r.is_horizontal(); }
   };
@@ -3718,21 +3980,21 @@ namespace CommonKernelFunctors {
   template <typename K>
   class Is_vertical_2
   {
+    typedef typename K::Boolean   Boolean;
     typedef typename K::Line_2    Line_2;
     typedef typename K::Segment_2 Segment_2;
     typedef typename K::Ray_2     Ray_2;
-  public:
-    typedef typename K::Boolean   result_type;
 
-    result_type
+  public:
+    Boolean
     operator()( const Line_2& l) const
     { return CGAL_NTS is_zero(l.b()); }
 
-    result_type
+    Boolean
     operator()( const Segment_2& s) const
     { return s.is_vertical(); }
 
-    result_type
+    Boolean
     operator()( const Ray_2& r) const
     { return r.is_vertical(); }
   };
@@ -3740,16 +4002,17 @@ namespace CommonKernelFunctors {
   template <typename K>
   class Left_turn_2
   {
+    typedef typename K::Boolean        Boolean;
     typedef typename K::Point_2        Point_2;
     typedef typename K::Orientation_2  Orientation_2;
-    Orientation_2 o;
-  public:
-    typedef typename K::Boolean        result_type;
 
+    Orientation_2 o;
+
+  public:
     Left_turn_2() {}
     Left_turn_2(const Orientation_2& o_) : o(o_) {}
 
-    result_type
+    Boolean
     operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
     { return o(p, q, r) == LEFT_TURN; }
   };
@@ -3757,22 +4020,23 @@ namespace CommonKernelFunctors {
   template <typename K>
   class Less_rotate_ccw_2
   {
+    typedef typename K::Boolean        Boolean;
     typedef typename K::Point_2        Point_2;
     typedef typename K::Orientation_2  Orientation_2;
     typedef typename K::Collinear_are_ordered_along_line_2
+
     Collinear_are_ordered_along_line_2;
     Orientation_2 o;
     Collinear_are_ordered_along_line_2 co;
-  public:
-    typedef typename K::Boolean        result_type;
 
+  public:
     Less_rotate_ccw_2() {}
     Less_rotate_ccw_2(const Orientation_2& o_,
                       const Collinear_are_ordered_along_line_2& co_)
       : o(o_), co(co_)
     {}
 
-    result_type
+    Boolean
     operator()(const Point_2& r, const Point_2& p, const Point_2& q) const
     {
       typename K::Orientation ori = o(r, p, q);
@@ -3799,23 +4063,23 @@ namespace CommonKernelFunctors {
     typedef typename K::Plane_3        Plane_3;
     typedef typename K::Sphere_3       Sphere_3;
   public:
-    typedef typename K::Oriented_side  result_type;
+    typedef typename K::Oriented_side  Oriented_side;
 
-    result_type
+    Oriented_side
     operator()( const Sphere_3& s, const Point_3& p) const
     { return s.rep().oriented_side(p); }
 
-    result_type
+    Oriented_side
     operator()( const Plane_3& pl, const Point_3& p) const
     { return pl.rep().oriented_side(p); }
 
-    result_type
+    Oriented_side
     operator()( const Point_3& plane_pt, const Vector_3& plane_normal, const Point_3& query) const
     {
       return typename K::Construct_plane_3()(plane_pt, plane_normal).rep().oriented_side(query);
     }
 
-    result_type
+    Oriented_side
     operator()( const Tetrahedron_3& t, const Point_3& p) const
     { return t.rep().oriented_side(p); }
   };
@@ -3829,9 +4093,7 @@ public:
   typedef typename K::Point_2                  Point_2;
   typedef typename K::FT                       FT;
 
-  typedef Point_2       result_type;
-
-  result_type operator() (const Weighted_point_2 & p,
+  Point_2 operator() (const Weighted_point_2 & p,
                           const Weighted_point_2 & q,
                           const Weighted_point_2 & r) const
   {

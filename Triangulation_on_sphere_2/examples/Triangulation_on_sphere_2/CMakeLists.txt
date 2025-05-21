@@ -1,19 +1,17 @@
-cmake_minimum_required(VERSION 3.1...3.22)
+cmake_minimum_required(VERSION 3.12...3.31)
 
 project( Triangulation_on_sphere_2_Examples )
 
 find_package(CGAL REQUIRED COMPONENTS Core)
+find_package(LEDA QUIET)
 
-if ( CGAL_FOUND )
+create_single_source_cgal_program( "triang_on_sphere.cpp" )
+create_single_source_cgal_program( "triang_on_sphere_range.cpp" )
+create_single_source_cgal_program( "triang_on_sphere_proj.cpp" )
+create_single_source_cgal_program( "triang_on_sphere_geo.cpp" )
 
-  create_single_source_cgal_program( "triang_on_sphere.cpp" )
-  create_single_source_cgal_program( "triang_on_sphere_range.cpp" )
+if (CGAL_Core_FOUND OR LEDA_FOUND)
   create_single_source_cgal_program( "triang_on_sphere_exact.cpp" )
-  create_single_source_cgal_program( "triang_on_sphere_proj.cpp" )
-  create_single_source_cgal_program( "triang_on_sphere_geo.cpp" )
-
 else()
-
-    message(STATUS "This program requires the CGAL library, and will not be compiled.")
-
+  message("NOTICE: Some tests require CGAL_Core (or LEDA), and will not be compiled.")
 endif()

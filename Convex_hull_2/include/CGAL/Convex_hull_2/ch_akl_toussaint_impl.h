@@ -20,7 +20,7 @@
 #include <CGAL/convexity_check_2.h>
 #endif // CGAL_CH_NO_POSTCONDITIONS
 
-#include <CGAL/Convex_hull_2/ch_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/ch_selected_extreme_points_2.h>
 #include <CGAL/ch_graham_andrew.h>
 #include <CGAL/algorithm.h>
@@ -220,8 +220,6 @@ ch_akl_toussaint(ForwardIterator first, ForwardIterator last,
                  OutputIterator  result,
                  const Traits&   ch_traits)
 {
-  using namespace boost;
-
   typedef  typename Traits::Point_2                    Point_2;
   typedef  typename Traits::Left_turn_2                Left_of_line;
   // added
@@ -254,7 +252,7 @@ ch_akl_toussaint(ForwardIterator first, ForwardIterator last,
   region3.push_back( *e);
   region4.push_back( *n);
 
-  CGAL_ch_postcondition_code( ForwardIterator save_first = first; )
+  CGAL_postcondition_code( ForwardIterator save_first = first; )
 
   int duplicated_exteme_points =  (std::get<0>(ranges)==std::get<1>(ranges)?1:0) +
                                   (std::get<1>(ranges)==std::get<2>(ranges)?1:0) +
@@ -325,12 +323,12 @@ ch_akl_toussaint(ForwardIterator first, ForwardIterator last,
                                        res, ch_traits);
   }
 
-  CGAL_ch_postcondition_code( first = save_first; )
-  CGAL_ch_postcondition( \
+  CGAL_postcondition_code( first = save_first; )
+  CGAL_postcondition( \
       is_ccw_strongly_convex_2( res.output_so_far_begin(), \
                                      res.output_so_far_end(), \
                                      ch_traits));
-  CGAL_ch_expensive_postcondition( \
+  CGAL_expensive_postcondition( \
       ch_brute_force_check_2( \
           first, last, \
           res.output_so_far_begin(), res.output_so_far_end(), \

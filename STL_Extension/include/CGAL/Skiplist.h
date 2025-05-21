@@ -75,7 +75,7 @@ public:
       all_iterator
     , typename all_list::iterator
     , T
-    >
+    , std::bidirectional_iterator_tag>
   {
   public:
     all_iterator() {}
@@ -91,7 +91,7 @@ public:
       skip_iterator
     , typename skip_list::iterator
     , T
-    >
+    , std::bidirectional_iterator_tag>
   {
   public:
     skip_iterator() {}
@@ -234,8 +234,8 @@ public:
 
   void pop_back()
   {
-    all_.pop_back();
     skip_.pop_back();
+    all_.pop_back_and_dispose(Node_disposer());
   }
 
   /// Insert \c t before \c pos in the all_view. \t will not be inserted into the skip view.

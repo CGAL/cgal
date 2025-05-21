@@ -16,7 +16,7 @@
 #include <CGAL/license/Bounding_volumes.h>
 
 
-#include <CGAL/Optimisation/assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/circulator.h>
 #include <CGAL/algorithm.h>
 #include <algorithm>
@@ -75,7 +75,7 @@ struct Loc_domain {
   void
   update(int j, Citerator i)
   {
-    CGAL_optimisation_precondition(j >= 0 && j < 4);
+    CGAL_precondition(j >= 0 && j < 4);
     if (j < 2)
       if (j == 0) {
         if (traits.less_x_2_object()(*i, minx)) minx = *i;
@@ -106,9 +106,9 @@ struct Loc_domain {
     maxy(pts.front()),
     traits(t)
   {
-    CGAL_optimisation_precondition(b != e);
+    CGAL_precondition(b != e);
     Iterator i = pts.begin();
-    CGAL_optimisation_assertion(i != pts.end());
+    CGAL_assertion(i != pts.end());
     while (++i != pts.end()) {
       if (traits.less_x_2_object()(*i, minx)) minx = *i;
       if (traits.less_x_2_object()(maxx, *i)) maxx = *i;
@@ -124,7 +124,7 @@ struct Loc_domain {
   operator[](int i) const
   // return corner points (0 <-> bottom-left, 1 <-> bottom-right)
   {
-    CGAL_optimisation_precondition(i >= 0 && i < 4);
+    CGAL_precondition(i >= 0 && i < 4);
     if (i == 0)
       return traits.construct_point_2_above_right_implicit_point_2_object()(
         minx, miny, r);
@@ -142,7 +142,7 @@ struct Loc_domain {
   extreme(int i) const
   // return extreme points (0 <-> left, 1 <-> bottom)
   {
-    CGAL_optimisation_precondition(i >= 0 && i < 4);
+    CGAL_precondition(i >= 0 && i < 4);
     if (i > 1) return i == 2 ? maxx : maxy;
     return i == 0 ? minx : miny;
   }
@@ -151,7 +151,7 @@ struct Loc_domain {
   extreme(int i)
   // return extreme points (0 <-> left, 1 <-> bottom)
   {
-    CGAL_optimisation_precondition(i >= 0 && i < 4);
+    CGAL_precondition(i >= 0 && i < 4);
     if (i > 1) return i == 2 ? maxx : maxy;
     return i == 0 ? minx : miny;
   }
@@ -177,13 +177,13 @@ struct Loc_domain {
 
   void
   check() const {
-    CGAL_optimisation_expensive_assertion_code(
+    CGAL_expensive_assertion_code(
       Iterator i = pts.begin();
       do {
-        CGAL_optimisation_assertion(!traits.less_x_2_object()(*i, minx));
-        CGAL_optimisation_assertion(!traits.less_x_2_object()(maxx, *i));
-        CGAL_optimisation_assertion(!traits.less_y_2_object()(*i, miny));
-        CGAL_optimisation_assertion(!traits.less_y_2_object()(maxy, *i));
+        CGAL_assertion(!traits.less_x_2_object()(*i, minx));
+        CGAL_assertion(!traits.less_x_2_object()(maxx, *i));
+        CGAL_assertion(!traits.less_y_2_object()(*i, miny));
+        CGAL_assertion(!traits.less_y_2_object()(maxy, *i));
       } while (++i != end);
       )
   }
@@ -463,7 +463,7 @@ inline OutputIterator
 two_cover_points(
   InputIC f, InputIC l, OutputIterator o, bool& ok, const Traits& t)
 {
-  CGAL_optimisation_precondition(f != l);
+  CGAL_precondition(f != l);
 
   // compute location domain:
   Loc_domain< Traits > d(f, l, t);
@@ -475,7 +475,7 @@ inline OutputIterator
 three_cover_points(
   InputIC f, InputIC l, OutputIterator o, bool& ok, const Traits& t)
 {
-  CGAL_optimisation_precondition(f != l);
+  CGAL_precondition(f != l);
 
   // compute location domain:
   Loc_domain< Traits > d(f, l, t);
@@ -487,7 +487,7 @@ inline OutputIterator
 four_cover_points(
   InputIC f, InputIC l, OutputIterator o, bool& ok, const Traits& t)
 {
-  CGAL_optimisation_precondition(f != l);
+  CGAL_precondition(f != l);
 
   // compute location domain:
   Loc_domain< Traits > d(f, l, t);
@@ -562,7 +562,7 @@ three_cover_points(
   using std::less;
   using std::iter_swap;
 
-  CGAL_optimisation_precondition(!d.empty());
+  CGAL_precondition(!d.empty());
 
   // typedefs:
   typedef typename Traits::Point_2                 Point_2;
@@ -583,7 +583,7 @@ three_cover_points(
 
     // are all points already covered?
     if (i == d.end()) {
-      CGAL_optimisation_assertion(k == 0);
+      CGAL_assertion(k == 0);
       *o++ = d[0];
       ok = true;
       return o;
@@ -620,11 +620,11 @@ three_cover_points(
 
     // check disjoint for two-pierceability:
 
-    CGAL_optimisation_expensive_assertion(
+    CGAL_expensive_assertion(
       save_end == find_if(d.end(), save_end,
                          [&d, &dist, &corner](const Point_2& p)
                          { return d.r < dist(corner, p); }));
-    CGAL_optimisation_expensive_assertion(
+    CGAL_expensive_assertion(
       d.end() == find_if(d.begin(), d.end(),
                          [&d,&dist, &corner](const Point_2& p)
                          { return d.r >= dist(corner, p); }));
@@ -721,7 +721,7 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
 
     // are all points already covered?
     if (i == d.end()) {
-      CGAL_optimisation_assertion(k == 0);
+      CGAL_assertion(k == 0);
       *o++ = d[0];
       ok = true;
       return o;
@@ -758,11 +758,11 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
 
     // check disjoint for two-pierceability:
 
-    CGAL_optimisation_expensive_assertion(
+    CGAL_expensive_assertion(
       save_end == find_if(d.end(), save_end,
                           [&d,&dist,&corner](const Point_2& p)
                           { return d.r < dist(corner, p); }));
-    CGAL_optimisation_expensive_assertion(
+    CGAL_expensive_assertion(
       d.end() == find_if(d.begin(), d.end(),
                          [&d,&dist,&corner](const Point_2& p)
                          { return d.r >= dist(corner, p); }));
@@ -794,7 +794,7 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
   if (d.is_middle_empty()) {
 
     // now try to position the bottom piercing point in each
-    // of the intervalls formed by S_bt and S_br
+    // of the intervals formed by S_bt and S_br
     // (no need to consider S_bl, since we move from left
     // to right and leaving a rectangle won't make piercing easier)
 
@@ -813,7 +813,7 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
     Citerator br = d.brstc_begin();
     Citerator rt = d.rtstc_begin();
 
-    // make sure the top intervall is covered (left endpoint)
+    // make sure the top interval is covered (left endpoint)
     // (it might be that top_i.first determines the placement of
     //  the top square)
     Point_2 top = top_i.first;
@@ -826,14 +826,14 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
     if (tl != d.tlstc_end()) {
       for (;;) {
 
-        // make sure the top intervall is covered (right endpoint)
+        // make sure the top interval is covered (right endpoint)
         if (sdistx(top_i.second, top) > FT(2) * d.r)
           break;
 
         // compute position of left square
         Point_2 left = lessy(left_i.second, *tl) ? *tl : left_i.second;
 
-        // make sure the left intervall is covered
+        // make sure the left interval is covered
         if (sdisty(left, left_i.first) <= FT(2) * d.r) {
 
           // compute position of bottom square
@@ -844,7 +844,7 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
             break;
           Point_2 bottom = lessx(bottom_i.first, *lb) ? bottom_i.first : *lb;
 
-          // check the shared x-intervall
+          // check the shared x-interval
           if (!share.empty() && d.is_x_greater_y()) {
             // compute position of top in share
     #ifndef _MSC_VER
@@ -862,7 +862,7 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
                    sdistx(*(shl - 1), top) > FT(2) * d.r)
               --shl;
 
-            // make sure shared intervall is covered (left endpoint)
+            // make sure shared interval is covered (left endpoint)
     #ifndef _MSC_VER
            if ((shf != share.begin() || shl == share.end()) &&
                lessx(share.front(), bottom))
@@ -881,7 +881,7 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
           }
 
 
-          // make sure the bottom and the shared intervall (right endpoint)
+          // make sure the bottom and the shared interval (right endpoint)
           // are covered
     #ifndef _MSC_VER
           if (sdistx(bottom_i.second, bottom) <= FT(2) * d.r &&
@@ -907,7 +907,7 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
                 break;
               Point_2 right = lessy(right_i.first, *br) ? right_i.first : *br;
 
-              // check the shared y-intervall
+              // check the shared y-interval
               if (!share.empty() && !d.is_x_greater_y()) {
                 // compute position of left in share
     #ifndef _MSC_VER
@@ -926,7 +926,7 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
                        lessy(left, *(shl - 1)))
                   --shl;
 
-                // make sure shared intervall is covered (bottom endpoint)
+                // make sure shared interval is covered (bottom endpoint)
     #ifndef _MSC_VER
                 if ((shf != share.begin() || shl == share.end()) &&
                     lessy(share.front(), right))
@@ -945,7 +945,7 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
               }
 
 
-              // make sure the right intervall and the shared intervall
+              // make sure the right interval and the shared interval
               // (top endpoint) are covered
     #ifndef _MSC_VER
               if (sdisty(right_i.second, right) <= FT(2) * d.r &&
@@ -985,7 +985,7 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
 
               } // if (sdisty(right_i.second, right) <= FT(2) * d.r)
 
-            } // if (bottom and shared intervall are covered)
+            } // if (bottom and shared interval are covered)
 
         } // if (sdisty(left, left_i.first) <= FT(2) * d.r)
 

@@ -17,7 +17,7 @@
 
 
 #include <CGAL/config.h>
-#include <CGAL/triangulation_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/Triangulation_ds_face_base_2.h>
 
 namespace CGAL {

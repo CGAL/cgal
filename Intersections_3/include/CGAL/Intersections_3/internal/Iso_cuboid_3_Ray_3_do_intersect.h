@@ -20,16 +20,17 @@
 #include <CGAL/Intersections_3/internal/Bbox_3_Segment_3_do_intersect.h>
 // for CGAL::internal::do_intersect_bbox_segment_aux
 
-// inspired from http://cag.csail.mit.edu/~amy/papers/box-jgt.pdf
+// inspired from https://people.csail.mit.edu/amy/papers/box-jgt.pdf
 
 namespace CGAL {
 namespace Intersections {
 namespace internal {
 
 template <class K>
-bool do_intersect(const typename K::Ray_3& ray,
-                  const typename K::Iso_cuboid_3& ic,
-                  const K&)
+typename K::Boolean
+do_intersect(const typename K::Ray_3& ray,
+             const typename K::Iso_cuboid_3& ic,
+             const K&)
 {
   typedef typename K::FT FT;
   typedef typename K::Point_3 Point_3;
@@ -51,9 +52,11 @@ bool do_intersect(const typename K::Ray_3& ray,
 }
 
 template <class K>
-bool do_intersect(const typename K::Iso_cuboid_3& ic,
-                  const typename K::Ray_3& ray,
-                  const K& k) {
+typename K::Boolean
+do_intersect(const typename K::Iso_cuboid_3& ic,
+             const typename K::Ray_3& ray,
+             const K& k)
+{
   return do_intersect(ray, ic, k);
 }
 

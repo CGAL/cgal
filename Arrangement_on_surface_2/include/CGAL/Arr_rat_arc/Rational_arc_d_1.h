@@ -20,6 +20,7 @@
 #include <vector>
 #include <list>
 #include <ostream>
+#include <type_traits>
 #include <CGAL/Arr_enums.h>
 #include <CGAL/tags.h>
 #include <CGAL/Arr_tags.h>
@@ -34,7 +35,6 @@
 #include <CGAL/Arr_rat_arc/Rational_function.h>
 #include <CGAL/Arr_rat_arc/Rational_function_pair.h>
 
-#include <boost/type_traits/is_same.hpp>
 
 namespace CGAL {
 namespace Arr_rational_arc {
@@ -100,9 +100,9 @@ public:
 
   typedef Algebraic_point_2                                 Point_2;
 
-  CGAL_static_assertion((boost::is_same<Integer, Coefficient>::value));
-  CGAL_static_assertion((boost::is_same<Polynomial_1,
-                       typename FT_poly_rat_1::Numerator_type>::value));
+  static_assert(std::is_same<Integer, Coefficient>::value);
+  static_assert(std::is_same<Polynomial_1,
+                       typename FT_poly_rat_1::Numerator_type>::value);
 
 public:
   const Rational_function& get_rational_function(const Polynomial_1& numerator,
@@ -450,7 +450,7 @@ public:
     _info = (_info | IS_DIRECTED_RIGHT);
 
 
-    // Analyze the bahaviour of the rational function at x = -oo (the source).
+    // Analyze the behavior of the rational function at x = -oo (the source).
     Algebraic_real_1          y0;
     const Arr_parameter_space inf_s = _analyze_at_minus_infinity(P, Q, y0);
 
@@ -460,7 +460,7 @@ public:
       _info = (_info | SRC_AT_Y_PLUS_INFTY);
     else // if (inf_s == ARR_INTERIOR)
       _ps = Algebraic_point_2();   //the point is a dummy
-    //Analyze the bahaviour of the rational function at x = +oo (the target).
+    //Analyze the behavior of the rational function at x = +oo (the target).
     const Arr_parameter_space inf_t = _analyze_at_plus_infinity(P, Q, y0);
 
     if (inf_t == ARR_BOTTOM_BOUNDARY)
@@ -543,7 +543,7 @@ public:
     //check if the source point lies next to a pole.
     if (typename Algebraic_kernel::Sign_at_1()(Q, x_s) != CGAL::ZERO)
     {
-      // We have a nomral endpoint.
+      // We have a normal endpoint.
       //nothing to do....
     }
     else
@@ -644,7 +644,7 @@ public:
     //check if source point lies next to a pole.
     if (typename Algebraic_kernel::Sign_at_1()(Q,x_s) != CGAL::ZERO)
     {
-      // We have a nomral endpoint.
+      // We have a normal endpoint.
       //nothing to do ..
     }
     else
@@ -666,7 +666,7 @@ public:
     //check if target point lies next to a pole.
     if (typename Algebraic_kernel::Sign_at_1()(Q,x_t) != CGAL::ZERO)
     {
-      // We have a nomral endpoint.
+      // We have a normal endpoint.
       //nothing to do ..
     }
     else
@@ -949,7 +949,7 @@ public:
 
   Self split_at_pole(const Algebraic_real_1& x0)
   {
-    // Analyze the behaviour of the function near the given pole.
+    // Analyze the behavior of the function near the given pole.
     const std::pair<CGAL::Sign, CGAL::Sign>  signs = _analyze_near_pole(x0);
     const CGAL::Sign    sign_left = signs.first;
     const CGAL::Sign    sign_right = signs.second;
@@ -1010,7 +1010,7 @@ public:
   //Get the relative position of the point with respect to the rational arc.
   //param p The query point.
   //precondition: p is in the x-range of the arc.
-  //    both p's supporting curve and the rational arc are continous
+  //    both p's supporting curve and the rational arc are continuous
   //return SMALLER if the point is below the arc;
   //       LARGER if the point is above the arc;
   //       EQUAL if p lies on the arc.
@@ -1206,7 +1206,7 @@ public:
   // at their given intersection point.
   // param cv The given arc.
   // param p The intersection point.
-  // param mult Output: The mutiplicity of the intersection point.
+  // param mult Output: The multiplicity of the intersection point.
   // return SMALLER if (*this) slope is less than cv's;
   //      EQUAL if the two slopes are equal;
   //         LARGER if (*this) slope is greater than cv's.
@@ -1450,7 +1450,7 @@ protected:
   //-------------------------------
 
   //--------------------------------------------------------------------------
-  // Cannonicalize numerator and denominator such that:
+  // Canonicalize numerator and denominator such that:
   //  There are no common devisor
   //  If negative sign exists, it is in the numerator
   void _canonicalize(const Polynomial_1& P,const Polynomial_1& Q,
@@ -1852,7 +1852,7 @@ public:
   //typedef std::pair<Algebraic_point_2, unsigned int>  Intersection_point;
 
 
-  /// \name Constrcution methods.
+  /// \name Construction methods.
   //@{
 
   /*!
@@ -1863,7 +1863,7 @@ public:
   {}
 
   /*!
-   * Constrcutor from a base arc.
+   * Constructor from a base arc.
    */
   Continuous_rational_arc_d_1(const Base& arc) :
     Base(arc)
@@ -2038,8 +2038,6 @@ public:
   OutputIterator intersect(const Self& arc, OutputIterator oi,
                            const Cache& cache) const
   {
-    typedef boost::variant<Intersection_point, Self>    Intersection_result;
-
     CGAL_precondition(this->is_valid());
     CGAL_precondition(this->is_continuous());
     CGAL_precondition(arc.is_valid());
@@ -2047,7 +2045,7 @@ public:
 
     if (this->equals(arc)) {
       Self overlap_arc(*this);
-      *oi++ = Intersection_result(overlap_arc);
+      *oi++ = overlap_arc;
       return oi;
     }
 
@@ -2170,7 +2168,7 @@ public:
               (this->SRC_AT_Y_MINUS_INFTY | this->SRC_AT_Y_PLUS_INFTY) == 0)
           {
             Intersection_point ip(p_left, 0);
-            *oi++ = Intersection_result(ip);
+            *oi++ = ip;
           }
 
           return oi;
@@ -2189,7 +2187,7 @@ public:
                            this->IS_DIRECTED_RIGHT | this->IS_CONTINUOUS |
                            this->IS_VALID);
 
-      *oi++ = Intersection_result(overlap_arc);
+      *oi++ = overlap_arc;
       return oi;
     }
 
@@ -2221,7 +2219,7 @@ public:
         Algebraic_point_2 p(this->_f, *x_iter);
         // Output the intersection point:
         Intersection_point ip(p, *m_iter);
-        *oi++ = Intersection_result(ip);
+        *oi++ = ip;
       }
     }
 
@@ -2421,7 +2419,7 @@ public:
 
   typedef typename Base::Cache                          Cache;
 
-  /// \name Constrcution methods.
+  /// \name Construction methods.
   //@{
 
   /*!

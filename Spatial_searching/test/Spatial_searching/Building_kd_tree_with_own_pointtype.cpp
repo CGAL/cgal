@@ -34,7 +34,7 @@ void run(const std::vector<Point>& points)
 
   Point query(0.0, 0.0, 0.0);
 
-  // search K nearest neighbours
+  // search K nearest neighbors
   K_search search(tree, query, K);
 
   // do checking

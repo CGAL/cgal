@@ -18,9 +18,10 @@
 #define CGAL_HOMOGENEOUS_POINT_3_H
 
 #include <CGAL/Origin.h>
-#include <boost/utility/enable_if.hpp>
 #include <boost/mpl/and.hpp>
 #include <boost/mpl/logical.hpp>
+
+#include <type_traits>
 
 namespace CGAL {
 
@@ -51,9 +52,9 @@ public:
 
   template < typename Tx, typename Ty, typename Tz >
   PointH3(const Tx & x, const Ty & y, const Tz & z,
-          typename boost::enable_if< boost::mpl::and_< boost::mpl::and_< boost::is_convertible<Tx, RT>,
-                                                                         boost::is_convertible<Ty, RT> >,
-                                                       boost::is_convertible<Tz, RT> > >::type* = 0)
+          std::enable_if_t<std::is_convertible_v<Tx, RT> &&
+                           std::is_convertible_v<Ty, RT> &&
+                           std::is_convertible_v<Tz, RT>>* = 0)
     : base(x, y, z) {}
 
   PointH3(const FT& x, const FT& y, const FT& z)
@@ -89,8 +90,8 @@ public:
   Direction_3 direction() const;
   Point_3     transform( const Aff_transformation_3 & t) const;
 
-  bool  operator==( const PointH3<R>& p) const;
-  bool  operator!=( const PointH3<R>& p) const;
+  typename R::Boolean operator==( const PointH3<R>& p) const;
+  typename R::Boolean operator!=( const PointH3<R>& p) const;
 };
 
 
@@ -174,7 +175,7 @@ PointH3<R>::direction() const
 
 template < class R >
 inline
-bool
+typename R::Boolean
 PointH3<R>::operator==( const PointH3<R> & p) const
 {
   return base == p.base;
@@ -182,7 +183,7 @@ PointH3<R>::operator==( const PointH3<R> & p) const
 
 template < class R >
 inline
-bool
+typename R::Boolean
 PointH3<R>::operator!=( const PointH3<R> & p) const
 { return !(*this == p); }
 

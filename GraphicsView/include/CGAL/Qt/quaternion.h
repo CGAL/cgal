@@ -36,7 +36,7 @@ namespace qglviewer {
         You can apply the Quaternion \c q rotation to the OpenGL matrices using:
         \code
         glMultMatrixd(q.matrix());
-        // equvalent to glRotate(q.angle()*180.0/M_PI, q.axis().x, q.axis().y,
+        // equivalent to glRotate(q.angle()*180.0/M_PI, q.axis().x, q.axis().y,
    q.axis().z); \endcode
 
         Quaternion is part of the \c qglviewer namespace, specify \c

@@ -46,7 +46,7 @@ _test_cls_const_triang_plus_2( const TrP & )
   trp.push_back(Constraint(Point(4,3), Point(3,4)));
 
   // test access to the hierarchy
-  std::cout << " test acces to the constraint hierarchy" << std::endl;
+  std::cout << " test access to the constraint hierarchy" << std::endl;
   Vertices_in_constraint_iterator vit = trp.vertices_in_constraint_begin(cid);
   assert (*vit == vh[10] || *vit == vh[11] );
   Vertex_handle va = *++vit;
@@ -80,6 +80,9 @@ _test_cls_const_triang_plus_2( const TrP & )
           (*currentin1 == vb &&  *++currentin1 == va));
   assert( (*currentin2 == va &&  *++currentin2 == vb) ||
           (*currentin2 == vb &&  *++currentin2 == va));
+
+  //test copy of the hierarchy
+  auto hierarchy = trp.hierarchy_ref();
 
   //test copy and swap
   std::cout << "test copy and swap" << std::endl;
@@ -151,7 +154,7 @@ _test_cls_const_triang_plus_2( const TrP & )
     std::size_t n = 0;
     for(Constraint_iterator cit = trp.constraints_begin(); cit != trp.constraints_end(); ++cit){
       Constraint_id  cid = *cit;
-      n += cid.second->all_size();
+      n += cid.vl_ptr()->all_size();
     }
     assert( n == 9);
   }

@@ -4,7 +4,7 @@
 # ${CGAL_SOURCE_DIR} and to the root binary directory of the project as
 # ${CGAL_BINARY_DIR} or ${CGAL_BINARY_DIR}.
 if(NOT PROJECT_NAME)
-  cmake_minimum_required(VERSION 3.12...3.20)
+  cmake_minimum_required(VERSION 3.12...3.31)
   project(CGAL CXX C)
 endif()
 
@@ -24,8 +24,7 @@ include(GNUInstallDirs)
 
 if(CGAL_BRANCH_BUILD)
 
-  message(
-    STATUS "Build CGAL from ${CGAL_SCM_NAME}-branch: ${CGAL_SCM_BRANCH_NAME}")
+  message(STATUS "Build CGAL from ${CGAL_SCM_NAME}-branch: ${CGAL_SCM_BRANCH_NAME}")
 
   # list packages
   file(
@@ -74,11 +73,11 @@ if(CGAL_BRANCH_BUILD)
   set(CGAL_GRAPHICSVIEW_PACKAGE_DIR
       "${CGAL_SOURCE_DIR}/GraphicsView"
       CACHE INTERNAL "Directory containing the GraphicsView package")
+  file(GLOB INCLUDE_CGAL_QT_DIRECTORIES "${CGAL_SOURCE_DIR}/*/include/CGAL/Qt")
+  message(STATUS "Include CGAL/Qt directories: ${INCLUDE_CGAL_QT_DIRECTORIES}")
 
-  message(
-    STATUS "Installation package directory: ${CGAL_INSTALLATION_PACKAGE_DIR}")
-  message(
-    STATUS "Maintenance package directory: ${CGAL_MAINTENANCE_PACKAGE_DIR}")
+  message(STATUS "Installation package directory: ${CGAL_INSTALLATION_PACKAGE_DIR}")
+  message(STATUS "Maintenance package directory: ${CGAL_MAINTENANCE_PACKAGE_DIR}")
   message(STATUS "Core package directory: ${CGAL_CORE_PACKAGE_DIR}")
 
 else(CGAL_BRANCH_BUILD)
@@ -107,13 +106,20 @@ else(CGAL_BRANCH_BUILD)
   set(CGAL_GRAPHICSVIEW_PACKAGE_DIR
       "${CGAL_SOURCE_DIR}"
       CACHE INTERNAL "Directory containing the GraphicsView package")
+  set(INCLUDE_CGAL_QT_DIRECTORIES "${CGAL_SOURCE_DIR}/include/CGAL/Qt")
 
-  # Enable testing with BUILD_TESTING
-  option(BUILD_TESTING "Build the testing tree." OFF)
-  if(BUILD_TESTING)
+# Enable testing with CGAL_ENABLE_TESTING. Before CGAL-6.0, users would enable
+# the tests by specifying BUILD_TESTING. For compatibility, If BUILD_TESTING is
+# set, that is the default value for CGAL_ENABLE_TESTING. Otherwise, the default
+# value is OFF.
+option(CGAL_ENABLE_TESTING "Build the testing tree." ${BUILD_TESTING})
+  if(CGAL_ENABLE_TESTING)
     enable_testing()
   endif()
 endif(CGAL_BRANCH_BUILD)
+
+#allow to force disabling boost multiprecision support
+option(CGAL_DO_NOT_USE_BOOST_MP "Disable the support of boost multiprecision library" FALSE)
 
 #message(STATUS "Packages found: ${CGAL_CONFIGURED_PACKAGES}")
 
@@ -354,14 +360,18 @@ include(${CGAL_MODULES_DIR}/CGAL_Macros.cmake)
 include(${CGAL_MODULES_DIR}/CGAL_enable_end_of_configuration_hook.cmake)
 cgal_setup_module_path()
 
-if(RUNNING_CGAL_AUTO_TEST)
-  message(STATUS "Operating system:")
-  execute_process(
-    COMMAND uname -a
-    TIMEOUT 5
-    OUTPUT_VARIABLE uname_a
-    ERROR_VARIABLE uname_a)
-  message(STATUS "${uname_a}")
+if(RUNNING_CGAL_AUTO_TEST OR CGAL_TEST_SUITE)
+  find_program(LSB_RELEASE_EXEC lsb_release)
+  if(LSB_RELEASE_EXEC)
+    execute_process(
+      COMMAND ${LSB_RELEASE_EXEC} -ds
+      OUTPUT_VARIABLE LSB_RELEASE_ID_SHORT
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+    message(STATUS "Operating system: ${LSB_RELEASE_ID_SHORT} ${CMAKE_SYSTEM_PROCESSOR}")
+  else()
+    message(STATUS "Operating system: ${CMAKE_SYSTEM_NAME} ${CMAKE_SYSTEM_VERSION}")
+  endif()
   cgal_display_compiler_version()
 endif()
 
@@ -390,11 +400,9 @@ if(MSVC)
                      "-D_SCL_SECURE_NO_DEPRECATE;-D_SCL_SECURE_NO_WARNINGS")
   uniquely_add_flags(CGAL_CXX_FLAGS "/fp:strict")
   uniquely_add_flags(CGAL_CXX_FLAGS "/fp:except-")
-  uniquely_add_flags(CGAL_CXX_FLAGS "/wd4503"
-  )# Suppress warnings C4503 about "decorated name length exceeded"
   uniquely_add_flags(CGAL_CXX_FLAGS "/bigobj") # Use /bigobj by default
 
-  if(RUNNING_CGAL_AUTO_TEST)
+  if(RUNNING_CGAL_AUTO_TEST OR CGAL_TEST_SUITE)
     set(CMAKE_CXX_WARNING_LEVEL
         2
         CACHE STRING "MSVC C++ compiler warning level" FORCE)
@@ -425,12 +433,12 @@ if("${CMAKE_CXX_COMPILER}" MATCHES "icl" OR "${CMAKE_CXX_COMPILER}" MATCHES
     )
   else()
     message(
-      STATUS "Using Intel Compiler version 11 or later. Adding -fp-model strict"
+      STATUS "Using Intel Compiler version 11 or later. Adding -fp-model=strict"
     )
     if(WIN32)
       uniquely_add_flags(CGAL_CXX_FLAGS "/fp:strict")
     else()
-      uniquely_add_flags(CGAL_CXX_FLAGS "-fp-model strict")
+      uniquely_add_flags(CGAL_CXX_FLAGS "-fp-model=strict")
     endif()
   endif()
 endif()
@@ -447,7 +455,7 @@ if(CMAKE_COMPILER_IS_GNUCXX)
 
   if(GCC_FOUND)
 
-    if(RUNNING_CGAL_AUTO_TEST)
+    if(RUNNING_CGAL_AUTO_TEST OR CGAL_TEST_SUITE)
       uniquely_add_flags(CGAL_CXX_FLAGS "-Wall")
       # Remove -g from the relevant CMAKE_CXX_FLAGS. This will also
       # propagate to the rest of the tests, since we overwrite those
@@ -476,15 +484,18 @@ if(CMAKE_COMPILER_IS_GNUCXX)
 
 endif()
 
-message("== Generate version files (DONE) ==\n")
+if(CGAL_TEST_SUITE)
+  include(display-third-party-libs-versions)
+endif()
 
+message("== Generate version files (DONE) ==\n")
 #--------------------------------------------------------------------------------------------------
 #
 #                                    -= External libraries =-
 #
 #--------------------------------------------------------------------------------------------------
 
-if(CGAL_DEV_MODE OR RUNNING_CGAL_AUTO_TEST)
+if(CGAL_DEV_MODE OR RUNNING_CGAL_AUTO_TEST OR CGAL_TEST_SUITE)
   message("== Set up flags ==")
 
   # Ugly hack to be compatible with current CGAL testsuite process (as of
@@ -505,7 +516,7 @@ macro(set_special_prefix library prefix)
   set(CGAL_EXT_LIB_${library}_PREFIX ${prefix})
 endmacro()
 
-set_special_prefix(Qt5 QT)
+set_special_prefix(Qt6 QT)
 set_special_prefix(Eigen3 EIGEN3)
 set_special_prefix(Coin3D COIN3D)
 
@@ -594,10 +605,9 @@ set(CGAL_INSTALL_LIB_DIR
 )
 
 if(CGAL_WIN32_CMAKE_ON_CYGWIN)
-  exec_program(
-    cygpath ARGS
-    -w "${CMAKE_INSTALL_PREFIX}"
-    OUTPUT_VARIABLE CMAKE_INSTALL_PREFIX2)
+  execute_process(COMMAND cygpath -w ${CMAKE_INSTALL_PREFIX}
+                  OUTPUT_STRIP_TRAILING_WHITESPACE
+                  OUTPUT_VARIABLE CMAKE_INSTALL_PREFIX2)
   file(TO_CMAKE_PATH ${CMAKE_INSTALL_PREFIX2} CMAKE_INSTALL_PREFIX)
 endif()
 
@@ -652,20 +662,19 @@ cache_get(CGAL_3RD_PARTY_INCLUDE_DIRS  )
 cache_get(CGAL_3RD_PARTY_LIBRARIES     )
 cache_get(CGAL_3RD_PARTY_LIBRARIES_DIRS)
 
-install(DIRECTORY "${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/include/CGAL/Qt/" DESTINATION "${CGAL_INSTALL_INC_DIR}/CGAL/Qt" COMPONENT CGAL_Qt5)
+install(DIRECTORY ${INCLUDE_CGAL_QT_DIRECTORIES} DESTINATION "${CGAL_INSTALL_INC_DIR}/CGAL/" COMPONENT CGAL_Qt6)
 if(CGAL_BRANCH_BUILD)
-  install(DIRECTORY "${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/demo/resources/" DESTINATION "${CGAL_INSTALL_CMAKE_DIR}/demo/resources" COMPONENT CGAL_Qt5)
-  install(DIRECTORY "${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/demo/icons/" DESTINATION "${CGAL_INSTALL_CMAKE_DIR}/demo/icons" COMPONENT CGAL_Qt5)
+  install(DIRECTORY "${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/demo/resources/" DESTINATION "${CGAL_INSTALL_CMAKE_DIR}/demo/resources" COMPONENT CGAL_Qt6)
+  install(DIRECTORY "${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/demo/icons/" DESTINATION "${CGAL_INSTALL_CMAKE_DIR}/demo/icons" COMPONENT CGAL_Qt6)
 endif()
 
 #
 # Variables used when WITH_{demos|examples|tests} are TRUE
 #
-set(CGAL_USE_FILE ${CGAL_MODULES_DIR}/UseCGAL.cmake)
 get_property(CGAL_FOUND GLOBAL PROPERTY CGAL_FOUND)
 get_property(CGAL_Core_FOUND GLOBAL PROPERTY CGAL_Core_FOUND)
 get_property(CGAL_ImageIO_FOUND GLOBAL PROPERTY CGAL_ImageIO_FOUND)
-get_property(CGAL_Qt5_FOUND GLOBAL PROPERTY CGAL_Qt5_FOUND)
+get_property(CGAL_Qt6_FOUND GLOBAL PROPERTY CGAL_Qt6_FOUND)
 
 #
 # Repeat some problems
@@ -760,8 +769,6 @@ install(PROGRAMS ${scripts} DESTINATION ${CGAL_INSTALL_BIN_DIR})
 
 install(DIRECTORY ${CGAL_MODULES_REL_DIR}/
         DESTINATION ${CGAL_INSTALL_CMAKE_DIR})
-install(FILES ${CGAL_MODULES_REL_DIR}/UseCGAL.cmake
-        DESTINATION ${CGAL_INSTALL_CMAKE_DIR})
 
 if(IS_DIRECTORY auxiliary/gmp/include AND IS_DIRECTORY auxiliary/gmp/lib)
   install(DIRECTORY auxiliary/gmp/include/ DESTINATION ${CGAL_INSTALL_INC_DIR})
@@ -819,36 +826,44 @@ if(NOT TARGET ALL_CGAL_TARGETS)
   add_custom_target(ALL_CGAL_TARGETS)
 endif()
 
-macro(add_programs subdir target ON_OFF)
+function(CGAL_add_subdirectories subdir name ON_OFF)
+  cmake_minimum_required(VERSION 3.14)
+  # CMake>=3.14 for `if(DEFINED CACHE{...})`
+  #   see https://cmake.org/cmake/help/v3.31/command/if.html#defined
 
   cache_set(CGAL_EXECUTABLE_TARGETS "")
 
-  add_custom_target(${target})
-  add_dependencies(ALL_CGAL_TARGETS ${target})
+  add_custom_target(${name})
+  add_dependencies(ALL_CGAL_TARGETS ${name})
 
-  option(WITH_${target} "Select ${target}" ${ON_OFF})
-  if(WITH_${target})
-    add_subdirectory(${subdir} EXCLUDE_FROM_ALL)
+  if(DEFINED CACHE{WITH_${name}} AND "${WITH_${name}}" AND CMAKE_PROJECT_NAME STREQUAL "CGAL")
+    set(ON_OFF ON)
+  endif()
+  option(CGAL_WITH_${name} "Compile CGAL ${name}" ${ON_OFF})
+
+  if(CGAL_WITH_${name})
+    CGAL_handle_subdirectories(${subdir} ${name})
   endif()
 
   cache_get(CGAL_EXECUTABLE_TARGETS)
 
   foreach(CGAL_EXECUTABLE_TARGET ${CGAL_EXECUTABLE_TARGETS})
-    add_dependencies(${target} ${CGAL_EXECUTABLE_TARGET})
+    add_dependencies(${name} ${CGAL_EXECUTABLE_TARGET})
   endforeach()
 
-endmacro()
+endfunction()
 
 # This allows programs to locate CGALConfig.cmake
 set(CGAL_DIR ${CGAL_BINARY_DIR})
 
 if(NOT RUNNING_CGAL_AUTO_TEST)
 
-  add_programs(examples examples OFF)
-  add_programs(demo demos OFF)
+  CGAL_add_subdirectories(examples examples OFF)
+  CGAL_add_subdirectories(demo demos OFF)
   if(IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/test")
-    add_programs(test tests OFF)
+    CGAL_add_subdirectories(test tests OFF)
   endif()
+  CGAL_add_subdirectories(benchmark benchmarks OFF)
 endif()
 
 message("== Setting paths ==")
@@ -933,8 +948,11 @@ if(CGAL_BRANCH_BUILD)
     find_package(GMP REQUIRED)
     find_package(Doxygen REQUIRED)
     find_package(Eigen3 REQUIRED)
-    find_package(Qt5 COMPONENTS Core Widgets OpenGL Gui REQUIRED)
-    find_package(VTK COMPONENTS vtkImagingGeneral vtkIOImage NO_MODULE)
+    find_package(Qt6 COMPONENTS Core Widgets OpenGL Gui REQUIRED)
+    find_package(VTK COMPONENTS ImagingGeneral IOImage NO_MODULE)
+    if(VTK_FOUND)
+      get_target_property(VTK_INCLUDE_DIRS VTK::IOImage INTERFACE_INCLUDE_DIRECTORIES)
+    endif()
     find_package(IPE)
     find_package(RS3)
     find_package(LEDA)
@@ -944,11 +962,11 @@ if(CGAL_BRANCH_BUILD)
     set(compile_options
         "\
 ${CMAKE_CXX_FLAGS} -DCGAL_EIGEN3_ENABLED -DCGAL_PROFILE \
-${Qt5Widgets_DEFINITIONS} ${Qt5OpenGL_DEFINITIONS} ${Qt5Gui_DEFINITIONS} \
-${Qt5OpenGL_EXECUTABLE_COMPILE_FLAGS} -fPIC \
-${Qt5Gui_EXECUTABLE_COMPILE_FLAGS} \
-${CGAL_3RD_PARTY_DEFINITIONS} ${CGAL_Qt5_3RD_PARTY_DEFINITIONS} \
-${CGAL_DEFINITIONS}")
+${Qt6Widgets_DEFINITIONS} ${Qt6OpenGL_DEFINITIONS} ${Qt6Gui_DEFINITIONS} \
+${Qt6OpenGL_EXECUTABLE_COMPILE_FLAGS} -fPIC \
+${Qt6Gui_EXECUTABLE_COMPILE_FLAGS} \
+${CGAL_3RD_PARTY_DEFINITIONS} ${CGAL_Qt6_3RD_PARTY_DEFINITIONS} \
+${CGAL_DEFINITIONS}" -std=c++17)
     message("COMPILATION OPTIONS ARE :  ${compile_options}")
 
     if(NOT RS_FOUND AND NOT RS3_FOUND)
@@ -1037,11 +1055,11 @@ You must disable CGAL_ENABLE_CHECK_HEADERS.")
       ${RS_INCLUDE_DIR}
       ${EIGEN3_INCLUDE_DIR}
       ${GMP_INCLUDE_DIR}
-      ${Qt5OpenGL_INCLUDE_DIRS}
-      ${Qt5Widgets_INCLUDE_DIRS}
-      ${Qt5Gui_DEFINITIONS}
+      ${Qt6OpenGL_INCLUDE_DIRS}
+      ${Qt6Widgets_INCLUDE_DIRS}
+      ${Qt6Gui_DEFINITIONS}
       ${CGAL_3RD_PARTY_INCLUDE_DIRS}
-      ${CGAL_Qt5_3RD_PARTY_INCLUDE_DIRS})
+      ${CGAL_Qt6_3RD_PARTY_INCLUDE_DIRS})
       list(APPEND include_options "-I${incdir}")
     endforeach()
     include_directories(SYSTEM ${CGAL_3RD_PARTY_INCLUDE_DIRS})
@@ -1052,7 +1070,7 @@ You must disable CGAL_ENABLE_CHECK_HEADERS.")
     execute_process(
       COMMAND
         "${CMAKE_COMMAND}" -DCGAL_BUILD_THREE_DOC=TRUE
-        -DDOXYGEN_EXECUTABLE=${DOXYGEN_EXECUTABLE}
+        -DDOXYGEN_EXECUTABLE=${DOXYGEN_EXECUTABLE} -DBE_QUIET=TRUE
         "${CGAL_SOURCE_DIR}/Documentation/doc"
       WORKING_DIRECTORY "${DOC_DIR}")
     execute_process(
@@ -1202,8 +1220,7 @@ ${CMAKE_CURRENT_SOURCE_DIR}/../${package}/include/${header}"
       endif()
     endforeach() # loop on packages
     #Now check that a cpp file including all documented headers compiles
-    file(WRITE ${CGAL_BINARY_DIR}/test_headers.cpp
-         "#define  BOOST_PARAMETER_MAX_ARITY 12 \n")
+    file(WRITE ${CGAL_BINARY_DIR}/test_headers.cpp "#include <CGAL/Periodic_3_mesh_3/config.h>\n")
     foreach(header ${list_of_headers_to_test})
       file(APPEND ${CGAL_BINARY_DIR}/test_headers.cpp "#include <${header}>\n")
     endforeach() #loop on headers to include in test file
@@ -1241,7 +1258,7 @@ endif()
 
 #print some info about versions
 if(RUNNING_CGAL_AUTO_TEST OR CGAL_TEST_SUITE)
-  find_package(Qt5 QUIET COMPONENTS Core)
+  find_package(Qt6 QUIET COMPONENTS Core)
   find_package(Boost)
   if(NOT CGAL_DISABLE_GMP)
     find_package(GMP)
@@ -1255,7 +1272,7 @@ if(RUNNING_CGAL_AUTO_TEST OR CGAL_TEST_SUITE)
     STATUS
     "USING BOOST_VERSION = '${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION}.${Boost_SUBMINOR_VERSION}'"
     )
-  if(Qt5_FOUND)
-    message(STATUS "USING Qt5_VERSION = '${Qt5Core_VERSION_STRING}'")
-  endif()#Qt5_FOUND
-endif()#RUNNING_CGAL_AUTO_TEST
+  if(Qt6_FOUND)
+    message(STATUS "USING Qt6_VERSION = '${Qt6Core_VERSION}'")
+  endif()#Qt6_FOUND
+endif()#RUNNING_CGAL_AUTO_TEST OR CGAL_TEST_SUITE

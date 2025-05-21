@@ -10,6 +10,8 @@
 
 #include <CGAL/tetrahedral_remeshing.h>
 
+#include <string>
+
 // Domain
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
@@ -39,7 +41,7 @@ int main()
     std::cerr << "Error: Cannot read file " << filename << std::endl;
     return EXIT_FAILURE;
   }
-  Mesh_domain domain = Mesh_domain::create_labeled_image_mesh_domain(image, 1e-9);
+  Mesh_domain domain = Mesh_domain::create_labeled_image_mesh_domain(image, relative_error_bound = 1e-9);
 
   // Mesh criteria
   Facet_criteria facet_criteria(25, 20, 2); // angle, size, approximation

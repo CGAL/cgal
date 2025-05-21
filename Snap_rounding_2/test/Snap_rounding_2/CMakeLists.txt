@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.1...3.22)
+cmake_minimum_required(VERSION 3.12...3.31)
 project(Snap_rounding_2_Tests)
 
 find_package(CGAL REQUIRED)
@@ -35,7 +35,7 @@ function(add_Snap_rounding_tests name)
   endforeach()
 endfunction(add_Snap_rounding_tests)
 
-if(BUILD_TESTING)
+if(CGAL_ENABLE_TESTING)
   cgal_add_compilation_test(test_snap_rounding_2)
   add_snap_rounding_tests(test_snap_rounding_2)
 endif()

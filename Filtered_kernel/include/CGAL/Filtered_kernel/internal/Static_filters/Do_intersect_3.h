@@ -26,7 +26,7 @@
 
 #include <iostream>
 
-// inspired from http://cag.csail.mit.edu/~amy/papers/box-jgt.pdf
+// inspired from https://people.csail.mit.edu/amy/papers/box-jgt.pdf
 
 namespace CGAL {
 
@@ -39,18 +39,17 @@ template < typename K_base, typename SFK >
 class Do_intersect_3
   : public K_base::Do_intersect_3
 {
+  typedef typename K_base::Boolean   Boolean;
   typedef typename K_base::Point_3   Point_3;
   typedef typename K_base::Ray_3     Ray_3;
   typedef typename K_base::Segment_3 Segment_3;
   typedef typename K_base::Triangle_3 Triangle_3;
   typedef typename K_base::Tetrahedron_3 Tetrahedron_3;
   typedef typename K_base::Sphere_3 Sphere_3;
+
   typedef typename K_base::Do_intersect_3 Base;
 
 public:
-
-  typedef typename Base::result_type  result_type;
-
   using Base::operator();
 
   Sign sign_with_error(const double x, const double error) const {
@@ -67,32 +66,31 @@ public:
   // the  statically filtered kernel we avoid
   // that doubles are put into Interval_nt
   // to get taken out again with fit_in_double
-  result_type
+  Boolean
   operator()(const Segment_3 &s, const Triangle_3& t) const
   {
     return Intersections::internal::do_intersect(t,s, SFK());
   }
 
-  result_type
+  Boolean
   operator()(const Triangle_3& t, const Segment_3 &s) const
   {
     return Intersections::internal::do_intersect(t,s, SFK());
   }
 
-  result_type
+  Boolean
   operator()(const Triangle_3 &t0, const Triangle_3& t1) const
   {
     return Intersections::internal::do_intersect(t0,t1, SFK());
   }
 
-
-  result_type
+  Boolean
   operator()(const Bbox_3& b, const Segment_3 &s) const
   {
     return this->operator()(s, b);
   }
 
-  result_type
+  Boolean
   operator()(const Segment_3 &s, const Bbox_3& b) const
   {
     CGAL_BRANCH_PROFILER_3(std::string("semi-static failures/attempts/calls to   : ") +
@@ -111,7 +109,7 @@ public:
     {
       CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
 
-      const Uncertain<result_type> ub =
+      const Uncertain<Boolean> ub =
         Intersections::internal::do_intersect_bbox_segment_aux
         <double,
          true, // bounded at t=0
@@ -127,13 +125,13 @@ public:
     return Base::operator()(s,b);
   }
 
-  result_type
+  Boolean
   operator()(const Bbox_3& b, const Tetrahedron_3 &t) const
   {
     return this->operator()(t, b);
   }
 
-  result_type
+  Boolean
   operator()(const Tetrahedron_3 &t, const Bbox_3& b) const
   {
     CGAL_BRANCH_PROFILER_3(std::string("semi-static failures/attempts/calls to   : ") +
@@ -168,13 +166,13 @@ public:
     return Base::operator()(t,b);
   }
 
-  result_type
+  Boolean
   operator()(const Bbox_3& b, const Ray_3 &r) const
   {
     return this->operator()(r, b);
   }
 
-  result_type
+  Boolean
   operator()(const Ray_3 &r, const Bbox_3& b) const
   {
     CGAL_BRANCH_PROFILER_3(std::string("semi-static failures/attempts/calls to   : ") +
@@ -193,7 +191,7 @@ public:
     {
       CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
 
-      const Uncertain<result_type> ub =
+      const Uncertain<Boolean> ub =
         Intersections::internal::do_intersect_bbox_segment_aux
         <double,
          true, // bounded at t=0
@@ -209,8 +207,7 @@ public:
     return Base::operator()(r,b);
   }
 
-
-  result_type
+  Boolean
   operator()(const Bbox_3& b, const Triangle_3 &t) const
   {
     return this->operator()(t, b);
@@ -487,7 +484,7 @@ public:
     return false;
   };
 
-  result_type
+  Boolean
   operator()(const Triangle_3 &t, const Bbox_3& b) const
   {
     CGAL_BRANCH_PROFILER_3(std::string("semi-static failures/attempts/calls to   : ") +
@@ -509,6 +506,8 @@ public:
             (pts[i][1] >= b.ymin() && pts[i][1] <= b.ymax()) &&
             (pts[i][2] >= b.zmin() && pts[i][2] <= b.zmax()) )
         {
+          // If any of the three points of the triangle is inside the bbox,
+          // then the box and triangle intersect.
           return true;
         }
 
@@ -518,6 +517,21 @@ public:
       {
         return Base::operator()(t,b);
       }
+    }
+
+    // If the bbox of the triangle does not intersect `b`, then the bbox and
+    // the triangle do not intersect.
+    for(int i=0; i< 3; ++i) {
+      double triangle_bbox_min = pts[0][i];
+      double triangle_bbox_max = triangle_bbox_min;
+      for(int j=1; j<3; ++j) {
+        if(pts[j][i] < triangle_bbox_min)
+          triangle_bbox_min = pts[j][i];
+        if(pts[j][i] > triangle_bbox_max)
+          triangle_bbox_max = pts[j][i];
+      }
+      if(triangle_bbox_min > b.max_coord(i) || triangle_bbox_max < b.min_coord(i))
+        return false;
     }
 
     // copy of the regular code with do_axis_intersect_aux_impl statically filtered
@@ -599,14 +613,14 @@ public:
     return Base::operator()(t,b);
   }
 
-  result_type
+  Boolean
   operator()(const Bbox_3& b, const Sphere_3 &s) const
   {
     return this->operator()(s, b);
   }
 
   // The parameter overestimate is used to avoid a filter failure in AABB_tree::closest_point()
-  result_type
+  Boolean
   operator()(const Sphere_3 &s, const Bbox_3& b, bool overestimate = false) const
   {
     CGAL_BRANCH_PROFILER_3(std::string("semi-static failures/attempts/calls to   : ") +

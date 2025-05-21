@@ -93,7 +93,7 @@ CGAL_VERSION:        Defined in <CGAL/version.h>
 #  endif
 #elif defined(_MSC_VER) && !defined(__MWERKS__) && !defined(__EDG_VERSION__)
 //
-// C language compatability (no, honestly)
+// C language compatibility (no, honestly)
 //
 #  define BOOST_MSVC _MSC_VER
 #  define BOOST_STRINGIZE(X) BOOST_DO_STRINGIZE(X)

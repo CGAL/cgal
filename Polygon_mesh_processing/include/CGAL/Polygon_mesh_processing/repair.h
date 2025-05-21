@@ -14,7 +14,7 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_REPAIR_H
 #define CGAL_POLYGON_MESH_PROCESSING_REPAIR_H
 
-#include <CGAL/license/Polygon_mesh_processing/repair.h>
+#include <CGAL/license/Polygon_mesh_processing/geometric_repair.h>
 
 #include <CGAL/Polygon_mesh_processing/manifoldness.h>
 #include <CGAL/Polygon_mesh_processing/repair_degeneracies.h>
@@ -29,7 +29,7 @@
 namespace CGAL {
 namespace Polygon_mesh_processing {
 
-/// \ingroup PMP_repairing_grp
+/// \ingroup PMP_geometric_repair_grp
 ///
 /// \brief removes the isolated vertices from any polygon mesh.
 ///
@@ -60,7 +60,7 @@ std::size_t remove_isolated_vertices(PolygonMesh& pmesh)
   return nb_removed;
 }
 
-/// \ingroup PMP_repairing_grp
+/// \ingroup PMP_geometric_repair_grp
 ///
 /// \brief removes connected components whose area or volume is under a certain threshold value.
 ///
@@ -177,8 +177,8 @@ std::size_t remove_connected_components_of_negligible_size(TriangleMesh& tmesh,
   FT volume_threshold = choose_parameter(get_parameter(np, internal_np::volume_threshold), FT(-1));
 
   // If no threshold is provided, compute it as a % of the bbox
-  const bool is_default_area_threshold = is_default_parameter<NamedParameters, internal_np::area_threshold_t>();
-  const bool is_default_volume_threshold = is_default_parameter<NamedParameters, internal_np::volume_threshold_t>();
+  const bool is_default_area_threshold = is_default_parameter<NamedParameters, internal_np::area_threshold_t>::value;
+  const bool is_default_volume_threshold = is_default_parameter<NamedParameters, internal_np::volume_threshold_t>::value;
 
   const bool dry_run = choose_parameter(get_parameter(np, internal_np::dry_run), false);
 
@@ -218,7 +218,7 @@ std::size_t remove_connected_components_of_negligible_size(TriangleMesh& tmesh,
     area_threshold = CGAL::square(threshold_value);
 
   if(is_default_volume_threshold)
-    volume_threshold = CGAL::square(threshold_value);
+    volume_threshold = CGAL::square(threshold_value) * threshold_value;
 
   const bool use_areas = (is_default_area_threshold || area_threshold > 0);
   const bool use_volumes = (is_default_volume_threshold || volume_threshold > 0);

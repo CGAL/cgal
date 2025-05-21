@@ -21,10 +21,6 @@
 #include <CGAL/Kernel/Type_equality_wrapper.h>
 #include <CGAL/Exact_kernel_selector.h>
 
-#include <CGAL/MP_Float.h>
-#include <CGAL/Quotient.h>
-#include <CGAL/Number_types/internal/Exact_type_selector.h>
-
 #include <CGAL/Filtered_kernel/internal/Static_filters/Static_filters.h>
 #include <boost/type_traits.hpp>
 
@@ -77,14 +73,20 @@ struct Filtered_kernel_base
         typedef typename T::Feature_dimension type; // maybe not the right way...
     };
 
+    Exact_kernel exact_kernel() const { return {}; }
+    Approximate_kernel approximate_kernel() const { return {}; }
+
     // We change the predicates.
-#define CGAL_Kernel_pred(P, Pf) \
-    typedef Filtered_predicate<typename Exact_kernel::P, typename Approximate_kernel::P, C2E, C2F> P; \
+#define CGAL_Kernel_pred_RT_or_FT(P, Pf) \
+    typedef Filtered_predicate_RT_FT<typename Exact_kernel_rt::P, \
+                                     typename Exact_kernel::P, \
+                                     typename Approximate_kernel::P, \
+                                    C2E_rt, \
+                                    C2E, \
+                                    C2F> P; \
     P Pf() const { return P(); }
 
-#define CGAL_Kernel_pred_RT(P, Pf) \
-    typedef Filtered_predicate<typename Exact_kernel_rt::P, typename Approximate_kernel::P, C2E_rt, C2F> P; \
-    P Pf() const { return P(); }
+#define CGAL_Kernel_pred(P, Pf) CGAL_Kernel_pred_RT_or_FT(P, Pf)
 
     // We don't touch the constructions.
 #define CGAL_Kernel_cons(Y,Z)

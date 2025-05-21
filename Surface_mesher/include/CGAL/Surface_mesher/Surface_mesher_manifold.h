@@ -16,6 +16,11 @@
 
 #include <CGAL/license/Surface_mesher.h>
 
+#define CGAL_DEPRECATED_HEADER "<CGAL/Surface_mesher/Surface_mesher_manifold.h>"
+#define CGAL_DEPRECATED_MESSAGE_DETAILS \
+  "The 3D Mesh Generation package (see https://doc.cgal.org/latest/Mesh_3/) should be used instead."
+#include <CGAL/Installation/internal/deprecation_warning.h>
+
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/Surface_mesher/Surface_mesher_regular_edges.h>
@@ -107,15 +112,17 @@ namespace CGAL {
       {
 #ifdef CGAL_SURFACE_MESHER_VERBOSE
         std::cerr << "scanning vertices" << std::endl;
-#endif
         int n = 0;
+#endif
         for (Finite_vertices_iterator vit = SMMBB::tr.finite_vertices_begin();
              vit != SMMBB::tr.finite_vertices_end();
              ++vit) {
           if ( (SMMBB::c2t3.face_status(vit)  // @TODO: appeler is_regular
                 == C2t3::SINGULAR) ) {
             bad_vertices.insert( vit );
+#ifdef CGAL_SURFACE_MESHER_VERBOSE
             ++n;
+#endif
           }
         }
         bad_vertices_initialized = true;

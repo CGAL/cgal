@@ -26,7 +26,7 @@
 \cgalPkgPicture{circulator.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Olivier Devillers, Lutz Kettner, Sylvain Pion, Michael Seel, and Mariette Yvinec}
-\cgalPkgDesc{This package descibes handles and circulators. They are related to iterators. Handles allow to dereference but neither to increment nor to decrement. Circulators have no notion of past-the-end, and they are used in \cgal whenever we have cyclic stuctures. }
+\cgalPkgDesc{This package describes handles and circulators. They are related to iterators. Handles allow to dereference but neither to increment nor to decrement. Circulators have no notion of past-the-end, and they are used in \cgal whenever we have cyclic structures. }
 \cgalPkgManuals{Chapter_Handles_Ranges_and_Circulators,PkgHandlesAndCirculatorsRef}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
@@ -39,7 +39,7 @@
 The concept of iterators in the \stl is tailored for linear sequences.
 
 \cgal extends this in several directions.  First, it supports the notion
-of `Handle` (also sometimes refered to as the trivial iterator) which is
+of `Handle` (also sometimes referred to as the trivial iterator) which is
 used to document that no traversal operation is needed, only reference to an
 element.  It also uses the `Range` and `ConstRange` concepts which
 encapsulates the access to both the first and the past-the-end iterators of an

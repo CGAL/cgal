@@ -27,7 +27,7 @@
 #include <boost/tuple/tuple.hpp>
 
 #include <CGAL/Unique_hash_map.h>
-#include <CGAL/triangulation_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/Triangulation_utils_2.h>
 
 #include <CGAL/Compact_container.h>
@@ -162,7 +162,7 @@ public:
 public:
 // The face_iterator_base_begin  gives the possibility to iterate over all
 // faces in the container  independently of the dimension.
-  // public for the need of file_ouput() of Constrained triangulation
+  // public for the need of file_output() of Constrained triangulation
   // should be made private later
 
   Face_iterator face_iterator_base_begin() const    {
@@ -183,7 +183,7 @@ public:
   }
 
   Face_handles face_handles() const {
-    return make_prevent_deref_range(faces_begin(),faces_end());
+    return { faces_begin(), faces_end() };
   }
 
   Vertex_iterator vertices_begin() const  {
@@ -195,7 +195,7 @@ public:
   }
 
   Vertex_handles vertex_handles() const {
-    return make_prevent_deref_range(vertices_begin(),vertices_end());
+    return { vertices_begin(), vertices_end() };
   }
 
   Edge_iterator edges_begin() const {
@@ -240,8 +240,8 @@ public:
   Vertex_handle
   mirror_vertex(Face_handle f, int i) const
   {
-    CGAL_triangulation_precondition ( f->neighbor(i) != Face_handle()
-                                    && f->dimension() >= 1);
+    CGAL_precondition ( f->neighbor(i) != Face_handle()
+                        && f->dimension() >= 1);
   return f->neighbor(i)->vertex(mirror_index(f,i));
   }
 
@@ -249,8 +249,8 @@ public:
   mirror_index(Face_handle f, int i) const
   {
     // return the index of opposite vertex in neighbor(i);
-    CGAL_triangulation_precondition (f->neighbor(i) != Face_handle() &&
-                                     f->dimension() >= 1);
+    CGAL_precondition (f->neighbor(i) != Face_handle() &&
+                       f->dimension() >= 1);
     if (f->dimension() == 1) {
       CGAL_assertion(i<=1);
       const int j = f->neighbor(i)->index(f->vertex((i==0) ? 1 : 0));
@@ -263,8 +263,8 @@ public:
   Edge
   mirror_edge(const Edge e) const
   {
-    CGAL_triangulation_precondition(e.first->neighbor(e.second) != Face_handle()
-                                    && e.first->dimension() >= 1);
+    CGAL_precondition(e.first->neighbor(e.second) != Face_handle()
+                      && e.first->dimension() >= 1);
     return Edge(e.first->neighbor(e.second),
                 mirror_index(e.first,  e.second));
   }
@@ -461,7 +461,7 @@ public:
   void insert_in_hole(Vertex_handle v, FaceIt face_begin, FaceIt face_end)
   {
 
-    CGAL_triangulation_precondition(dimension() == 2);
+    CGAL_precondition(dimension() == 2);
 
     std::vector<Face_handle>  new_faces;
     std::vector<Edge>         bdry_edges;
@@ -604,7 +604,7 @@ public:
     // the triangulation is assumed to have dim=2
     // hole is supposed to be ccw oriented
   {
-    CGAL_triangulation_precondition(dimension() == 2);
+    CGAL_precondition(dimension() == 2);
     EdgeIt eit = edge_begin;
     FaceIt fit = face_begin;
 
@@ -742,7 +742,7 @@ void
 Triangulation_data_structure_2<Vb,Fb>::
 swap(Tds &tds)
 {
-  CGAL_triangulation_expensive_precondition(tds.is_valid() && is_valid());
+  CGAL_expensive_precondition(tds.is_valid() && is_valid());
   std::swap(_dimension, tds._dimension);
   faces().swap(tds.faces());
   vertices().swap(tds.vertices());
@@ -895,7 +895,7 @@ void
 Triangulation_data_structure_2<Vb,Fb>::
 flip(Face_handle f, int i)
 {
-  CGAL_triangulation_precondition( dimension()==2);
+  CGAL_precondition( dimension()==2);
   Face_handle n  = f->neighbor(i);
   int ni = mirror_index(f,i); //ni = n->index(f);
 
@@ -930,8 +930,8 @@ typename Triangulation_data_structure_2<Vb,Fb>::Vertex_handle
 Triangulation_data_structure_2<Vb,Fb>::
 insert_first( )
 {
-  CGAL_triangulation_precondition( number_of_vertices() == 0 &&
-                                   dimension()==-2 );
+  CGAL_precondition( number_of_vertices() == 0 &&
+                     dimension()==-2 );
   return insert_dim_up();
 }
 
@@ -940,8 +940,8 @@ typename Triangulation_data_structure_2<Vb,Fb>::Vertex_handle
 Triangulation_data_structure_2<Vb,Fb>::
 insert_second()
 {
-  CGAL_triangulation_precondition( number_of_vertices() == 1 &&
-                                   dimension()==-1 );
+  CGAL_precondition( number_of_vertices() == 1 &&
+                     dimension()==-1 );
   return insert_dim_up();
 
 }
@@ -953,7 +953,7 @@ Triangulation_data_structure_2<Vb,Fb>::
 insert_in_face(Face_handle f)
   // New vertex will replace f->vertex(0) in face f
 {
-  CGAL_triangulation_precondition( f != Face_handle() && dimension()== 2);
+  CGAL_precondition( f != Face_handle() && dimension()== 2);
   Vertex_handle  v = create_vertex();
 
   Vertex_handle v0 = f->vertex(0);
@@ -992,11 +992,11 @@ Triangulation_data_structure_2<Vb,Fb>::
 insert_in_edge(Face_handle f, int i)
   //insert in the edge opposite to vertex i of face f
 {
-  CGAL_triangulation_precondition(f != Face_handle() && dimension() >= 1);
-  if (dimension() == 1) {CGAL_triangulation_precondition(i == 2);}
-  if (dimension() == 2) {CGAL_triangulation_precondition(i == 0 ||
-                                                         i == 1 ||
-                                                         i == 2);}
+  CGAL_precondition(f != Face_handle() && dimension() >= 1);
+  if (dimension() == 1) {CGAL_precondition(i == 2);}
+  if (dimension() == 2) {CGAL_precondition(i == 0 ||
+                                           i == 1 ||
+                                           i == 2);}
   Vertex_handle v;
   if (dimension() == 1) {
     v = create_vertex();
@@ -1084,7 +1084,7 @@ insert_dim_up(Vertex_handle w,  bool orient)
         }
       }
 
-      // couldn't unify the code for reorientation mater
+      // couldn't unify the code for reorientation matter
       lfit = faces_list.begin() ;
       if (dim == 1){
         if (orient) {
@@ -1118,7 +1118,7 @@ insert_dim_up(Vertex_handle w,  bool orient)
     }
     break;
   default:
-    CGAL_triangulation_assertion(false);
+    CGAL_assertion(false);
     break;  }
   return v;
 }
@@ -1130,11 +1130,11 @@ Triangulation_data_structure_2<Vb,Fb>::
 remove_degree_3(Vertex_handle v, Face_handle f)
 // remove a vertex of degree 3
 {
-  CGAL_triangulation_precondition(v != Vertex_handle());
-  CGAL_triangulation_precondition(degree(v) == 3);
+  CGAL_precondition(v != Vertex_handle());
+  CGAL_precondition(degree(v) == 3);
 
   if (f == Face_handle()) {f= v->face();}
-  else { CGAL_triangulation_assertion( f->has_vertex(v));}
+  else { CGAL_assertion( f->has_vertex(v));}
 
   int i = f->index(v);
   Face_handle left = f->neighbor(cw(i));
@@ -1144,7 +1144,7 @@ remove_degree_3(Vertex_handle v, Face_handle f)
 
   Face_handle ll, rr;
   Vertex_handle q = left->vertex(li);
-  CGAL_triangulation_assertion( left->vertex(li) == right->vertex(ri));
+  CGAL_assertion( left->vertex(li) == right->vertex(ri));
 
   ll = left->neighbor(cw(li));
   if(ll != Face_handle()) {
@@ -1177,11 +1177,11 @@ void
 Triangulation_data_structure_2<Vb,Fb>::
 dim_down(Face_handle f, int i)
 {
-  CGAL_triangulation_expensive_precondition( is_valid() );
-  CGAL_triangulation_precondition( dimension() == 2 );
-  CGAL_triangulation_precondition( number_of_vertices() > 3 );
-  CGAL_triangulation_precondition( degree( f->vertex(i) ) ==
-                                   number_of_vertices()-1 );
+  CGAL_expensive_precondition( is_valid() );
+  CGAL_precondition( dimension() == 2 );
+  CGAL_precondition( number_of_vertices() > 3 );
+  CGAL_precondition( degree( f->vertex(i) ) ==
+                     number_of_vertices()-1 );
 
   Vertex_handle v = f->vertex(i);
   std::list<Face_handle > to_delete;
@@ -1236,7 +1236,7 @@ remove_dim_down(Vertex_handle v)
     break;
   case 1:
   case 2:
-//  CGAL_triangulation_precondition (
+//  CGAL_precondition (
 //           (dimension() == 1 &&  number_of_vertices() == 3) ||
 //           (dimension() == 2 && number_of_vertices() > 3) );
     // the faces incident to v are down graded one dimension
@@ -1282,12 +1282,12 @@ void
 Triangulation_data_structure_2<Vb,Fb>::
 remove_1D(Vertex_handle v)
 {
-  CGAL_triangulation_precondition( dimension() == 1 &&
-                                   number_of_vertices() > 3);
+  CGAL_precondition( dimension() == 1 &&
+                     number_of_vertices() > 3);
   Face_handle f = v->face();
   int i = f->index(v);
   if (i==0) {f = f->neighbor(1);}
-  CGAL_triangulation_assertion( f->index(v) == 1);
+  CGAL_assertion( f->index(v) == 1);
   Face_handle g= f->neighbor(0);
   f->set_vertex(1, g->vertex(1));
   set_adjacency(f, 0, g->neighbor(0), 1);
@@ -1304,8 +1304,8 @@ inline void
 Triangulation_data_structure_2<Vb,Fb>::
 remove_second(Vertex_handle v)
 {
-  CGAL_triangulation_precondition(number_of_vertices()== 2 &&
-                                   dimension() == 0);
+  CGAL_precondition(number_of_vertices()== 2 &&
+                    dimension() == 0);
   remove_dim_down(v);
   return;
 }
@@ -1316,8 +1316,8 @@ inline void
 Triangulation_data_structure_2<Vb,Fb>::
 remove_first(Vertex_handle v)
 {
-  CGAL_triangulation_precondition(number_of_vertices()== 1 &&
-                                   dimension() == -1);
+  CGAL_precondition(number_of_vertices()== 1 &&
+                    dimension() == -1);
   remove_dim_down(v);
   return;
 }
@@ -1351,9 +1351,9 @@ void
 Triangulation_data_structure_2<Vb,Fb>::
 make_hole(Vertex_handle v, List_edges& hole)
   // delete the faces incident to v and v
-  // and return the dscription of the hole in hole
+  // and return the description of the hole in hole
 {
- CGAL_triangulation_precondition(dimension() == 2);
+ CGAL_precondition(dimension() == 2);
  std::list<Face_handle> to_delete;
 
  Face_handle  f, fn;
@@ -1506,9 +1506,9 @@ inline void
 Triangulation_data_structure_2<Vb,Fb>::
 set_adjacency(Face_handle f0, int i0, Face_handle f1, int i1) const
 {
-  CGAL_triangulation_assertion(i0 >= 0 && i0 <= dimension());
-  CGAL_triangulation_assertion(i1 >= 0 && i1 <= dimension());
-  CGAL_triangulation_assertion(f0 != f1);
+  CGAL_assertion(i0 >= 0 && i0 <= dimension());
+  CGAL_assertion(i1 >= 0 && i1 <= dimension());
+  CGAL_assertion(f0 != f1);
   f0->set_neighbor(i0,f1);
   f1->set_neighbor(i1,f0);
 }
@@ -1518,10 +1518,10 @@ inline void
 Triangulation_data_structure_2<Vb,Fb>::
 delete_face(Face_handle f)
 {
-  CGAL_triangulation_expensive_precondition( dimension() != 2 || is_face(f));
-  CGAL_triangulation_expensive_precondition( dimension() != 1 || is_edge(f,2));
-  CGAL_triangulation_expensive_precondition( dimension() != 0 ||
-                                             is_vertex(f->vertex(0)) );
+  CGAL_expensive_precondition( dimension() != 2 || is_face(f));
+  CGAL_expensive_precondition( dimension() != 1 || is_edge(f,2));
+  CGAL_expensive_precondition( dimension() != 0 ||
+                               is_vertex(f->vertex(0)) );
   faces().erase(f);
 }
 
@@ -1530,7 +1530,7 @@ inline void
 Triangulation_data_structure_2<Vb,Fb>::
 delete_vertex(Vertex_handle v)
 {
-  CGAL_triangulation_expensive_precondition( is_vertex(v) );
+  CGAL_expensive_precondition( is_vertex(v) );
   vertices().erase(v);
 }
 
@@ -1542,7 +1542,7 @@ Triangulation_data_structure_2<Vb,Fb>::
 split_vertex(Vertex_handle v, Face_handle f1, Face_handle g1)
 {
   /*
-  // The following method preforms a split operation of the vertex v
+  // The following method performs a split operation of the vertex v
   // using the faces f1 and g1. The split operation is shown
   // below.
   // The names of the variables in the method correspond to the
@@ -1586,11 +1586,11 @@ split_vertex(Vertex_handle v, Face_handle f1, Face_handle g1)
   //
   */
 
-  CGAL_triangulation_expensive_precondition( is_valid() );
+  CGAL_expensive_precondition( is_valid() );
 
-  CGAL_triangulation_precondition( dimension() == 2 );
-  CGAL_triangulation_precondition( f1 != Face_handle() && f1->has_vertex(v) );
-  CGAL_triangulation_precondition( g1 != Face_handle() && g1->has_vertex(v) );
+  CGAL_precondition( dimension() == 2 );
+  CGAL_precondition( f1 != Face_handle() && f1->has_vertex(v) );
+  CGAL_precondition( g1 != Face_handle() && g1->has_vertex(v) );
 
   // 1. first we read some information that we will need
   int i1 = f1->index(v);
@@ -1604,7 +1604,7 @@ split_vertex(Vertex_handle v, Face_handle f1, Face_handle g1)
   Vertex_handle v3 = f1->vertex( ccw(i1) );
   Vertex_handle v4 = g1->vertex( ccw(j1) );
 
-  // lst is the list of faces adjecent to v stored in
+  // lst is the list of faces adjacent to v stored in
   // counterclockwise order from g2 to f1) inclusive.
   // the list idx contains the indices of v in the
   // faces in lst.
@@ -1657,7 +1657,7 @@ split_vertex(Vertex_handle v, Face_handle f1, Face_handle g1)
   g1->set_neighbor(  cw(j1), g );
   g2->set_neighbor( ccw(j2), g );
 
-  CGAL_triangulation_expensive_postcondition( is_valid() );
+  CGAL_expensive_postcondition( is_valid() );
 
   // 6. return the new stuff
   return Fourtuple(v1, v2, f, g);
@@ -1668,9 +1668,9 @@ typename Triangulation_data_structure_2<Vb,Fb>::Vertex_handle
 Triangulation_data_structure_2<Vb,Fb>::
 join_vertices(Face_handle f, int i, Vertex_handle v)
 {
-  CGAL_triangulation_expensive_precondition( is_valid() );
-  CGAL_triangulation_precondition( f != Face_handle() );
-  CGAL_triangulation_precondition( i >= 0 && i <= 2 );
+  CGAL_expensive_precondition( is_valid() );
+  CGAL_precondition( f != Face_handle() );
+  CGAL_precondition( i >= 0 && i <= 2 );
 
   // this methods does the "join"-operation and preserves
   // the vertex v among the two vertices that define the edge (f, i)
@@ -1678,7 +1678,7 @@ join_vertices(Face_handle f, int i, Vertex_handle v)
   Vertex_handle v1 = f->vertex( ccw(i) );
   Vertex_handle v2 = f->vertex( cw(i)  );
 
-  CGAL_triangulation_precondition( v == v1 || v == v2 );
+  CGAL_precondition( v == v1 || v == v2 );
 
   if ( v == v2 ) {
     return join_vertices(f->neighbor(i), mirror_index(f,i), v);
@@ -1686,7 +1686,7 @@ join_vertices(Face_handle f, int i, Vertex_handle v)
 
   size_type deg2 = degree(v2);
 
-  CGAL_triangulation_precondition( deg2 >= 3 );
+  CGAL_precondition( deg2 >= 3 );
 
   if ( deg2 == 3 ) {
     remove_degree_3(v2, f->neighbor(ccw(i)));
@@ -1694,7 +1694,7 @@ join_vertices(Face_handle f, int i, Vertex_handle v)
   }
 
   /*
-  // The following drawing corrsponds to the variables
+  // The following drawing corresponds to the variables
   // used in this part...
   // The vertex v1 is returned...
   //
@@ -1762,7 +1762,7 @@ join_vertices(Face_handle f, int i, Vertex_handle v)
     ++fc;
   } while ( fc != fc_start );
 
-  CGAL_triangulation_assertion(
+  CGAL_assertion(
     static_cast<size_type>(star_faces_of_v2.size()) == deg2 );
 
   // from this point and on we modify the values
@@ -1775,7 +1775,7 @@ join_vertices(Face_handle f, int i, Vertex_handle v)
   // contain v1
   for (unsigned int k = 0; k < star_faces_of_v2.size(); k++) {
     int id = star_indices_of_v2[k];
-    CGAL_triangulation_assertion( star_faces_of_v2[k]->vertex(id) == v2 );
+    CGAL_assertion( star_faces_of_v2[k]->vertex(id) == v2 );
     star_faces_of_v2[k]->set_vertex( id, v1 );
   }
 
@@ -1788,10 +1788,10 @@ join_vertices(Face_handle f, int i, Vertex_handle v)
   if ( v1->face() == f || v1->face() == g ) v1->set_face(tl);
 
 
-#if ! defined(CGAL_TRIANGULATION_NO_ASSERTIONS) && ! defined(CGAL_NO_ASSERTIONS)
+#if  ! defined(CGAL_NO_ASSERTIONS)
   for (Face_iterator fit = faces_begin(); fit != faces_end(); ++fit) {
     int id;
-    CGAL_triangulation_assertion( !fit->has_vertex(v2, id) );
+    CGAL_assertion( !fit->has_vertex(v2, id) );
   }
 #endif
 
@@ -1804,7 +1804,7 @@ join_vertices(Face_handle f, int i, Vertex_handle v)
 
   delete_vertex(v2);
 
-  CGAL_triangulation_expensive_postcondition( is_valid() );
+  CGAL_expensive_postcondition( is_valid() );
 
   return v1;
 }
@@ -1912,7 +1912,7 @@ is_valid(bool verbose, int level) const
 
 
   bool result = (dimension()>= -1);
-  CGAL_triangulation_assertion(result);
+  CGAL_assertion(result);
 
   //count and test the validity of the faces (for positive dimensions)
   Face_iterator ib = face_iterator_base_begin();
@@ -1922,25 +1922,25 @@ is_valid(bool verbose, int level) const
     count_stored_faces += 1;
     if (dimension()>= 0) {
       result = result && ib->is_valid(verbose,level);
-      CGAL_triangulation_assertion(result);
+      CGAL_assertion(result);
     }
   }
 
   result = result && (count_stored_faces == number_of_full_dim_faces());
-  CGAL_triangulation_assertion(
+  CGAL_assertion(
                  count_stored_faces == number_of_full_dim_faces());
 
   // vertex count
   size_type vertex_count = 0;
   for(Vertex_iterator vit = vertices_begin(); vit != vertices_end();
       ++vit) {
-    CGAL_triangulation_assertion( vit->face() != Face_handle());
+    CGAL_assertion( vit->face() != Face_handle());
     result = result && vit->is_valid(verbose,level);
-    CGAL_triangulation_assertion( result );
+    CGAL_assertion( result );
     ++vertex_count;
   }
   result = result && (number_of_vertices() == vertex_count);
-  CGAL_triangulation_assertion( number_of_vertices() == vertex_count );
+  CGAL_assertion( number_of_vertices() == vertex_count );
 
   //edge count
   size_type edge_count = 0;
@@ -1958,26 +1958,26 @@ is_valid(bool verbose, int level) const
   case -1:
     result = result && vertex_count == 1 && face_count == 0
       && edge_count == 0;
-    CGAL_triangulation_assertion(result);
+    CGAL_assertion(result);
     break;
   case 0:
     result = result && vertex_count == 2 && face_count == 0
       && edge_count == 0;
-    CGAL_triangulation_assertion(result);
+    CGAL_assertion(result);
     break;
   case 1:
     result = result &&  edge_count == vertex_count;
-    CGAL_triangulation_assertion(result);
+    CGAL_assertion(result);
     result = result &&  face_count == 0;
-    CGAL_triangulation_assertion(result);
+    CGAL_assertion(result);
     break;
   case 2:
     result = result &&  edge_count == 3*face_count/2 ;
-    CGAL_triangulation_assertion(edge_count == 3*face_count/2);
+    CGAL_assertion(edge_count == 3*face_count/2);
     break;
   default:
     result = false;
-    CGAL_triangulation_assertion(result);
+    CGAL_assertion(result);
   }
   return result;
 }
@@ -1992,7 +1992,7 @@ copy_tds(const TDS_src& tds_src,
         const ConvertFace& convert_face)
 {
   if (vert != typename TDS_src::Vertex_handle())
-    CGAL_triangulation_precondition( tds_src.is_vertex(vert));
+    CGAL_precondition( tds_src.is_vertex(vert));
 
   clear();
   set_dimension(tds_src.dimension());
@@ -2043,7 +2043,7 @@ copy_tds(const TDS_src& tds_src,
 
   // remove the post condition because it is false when copying the
   // TDS of a regular triangulation because of hidden vertices
-  // CGAL_triangulation_postcondition( is_valid() );
+  // CGAL_postcondition( is_valid() );
   return (vert == typename TDS_src::Vertex_handle())  ? Vertex_handle() : vmap[vert];
 }
 
@@ -2107,7 +2107,7 @@ void
 Triangulation_data_structure_2<Vb,Fb>::
 file_output( std::ostream& os, Vertex_handle v, bool skip_first) const
 {
-  // ouput to a file
+  // output to a file
   // if non nullptr, v is the vertex to be output first
   // if skip_first is true, the point in the first vertex is not output
   // (it may be for instance the infinite vertex of the triangulation)
@@ -2243,8 +2243,8 @@ void
 Triangulation_data_structure_2<Vb,Fb>::
 vrml_output( std::ostream& os, Vertex_handle v, bool skip_infinite) const
 {
-  // ouput to a vrml file style
-  // Point are assumed to be 3d points with a stream oprator <<
+  // output to a vrml file style
+  // Point are assumed to be 3d points with a stream operator <<
   // if non nullptr, v is the vertex to be output first
   // if skip_inf is true, the point in the first vertex is not output
   // and the faces incident to v are not output

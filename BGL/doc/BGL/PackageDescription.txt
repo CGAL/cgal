@@ -449,6 +449,9 @@ the requirement for traversal of all faces in a graph.
 /// \defgroup PkgBGLHelperFct Helper Functions
 /// \ingroup PkgBGLRef
 
+/// \defgroup PkgBGLGeneratorFct Generator Functions
+/// \ingroup PkgBGLRef
+
 /// \defgroup PkgBGLIterators Iterators and Circulators
 /// \ingroup PkgBGLRef
 
@@ -464,6 +467,9 @@ the requirement for traversal of all faces in a graph.
 /// \defgroup PkgBGLPartition Partitioning Operations
 /// \ingroup PkgBGLRef
 
+/// \defgroup PkgBGLTraversal Graph Traversal
+/// \ingroup PkgBGLRef
+
 /// \defgroup PkgBGLIOFct I/O Functions
 /// \ingroup PkgBGLRef
 
@@ -477,6 +483,10 @@ the requirement for traversal of all faces in a graph.
 
 /// \defgroup PkgBGLIoFuncsOBJ OBJ I/O Functions
 /// I/O Functions for the \ref IOStreamOBJ
+/// \ingroup PkgBGLIOFct
+
+/// \defgroup PkgBGLIoFuncsOM OM I/O Functions
+/// I/O Functions for the \ref IOStreamOM
 /// \ingroup PkgBGLIOFct
 
 /// \defgroup PkgBGLIoFuncsOFF OFF I/O Functions
@@ -520,7 +530,14 @@ by attaching and initializing external IDs to the elements of the graph.
 Generic convenience functions for testing if an edge is a border edge, if a mesh is triangular,
 for conversion between models of different `FaceGraph` concepts, etc.
 
-Most functions are in the header file `<CGAL/boost/graph/helpers.h>`
+All functions are in the header file `<CGAL/boost/graph/helpers.h>`
+*/
+
+/*!
+\addtogroup PkgBGLGeneratorrFct
+Generic convenience functions for generating meshes such as a triangle, a quad, or a grid.
+
+All functions are in the header file `<CGAL/boost/graph/generators.h>`
 */
 
 /*!
@@ -570,6 +587,12 @@ both in term of time and memory.
 Methods to split a mesh into subdomains, using the library
 <a href="http://glaros.dtc.umn.edu/gkhome/metis/metis/overview">METIS</a> or a graphcut
 implementation.
+*/
+
+/*!
+\addtogroup PkgBGLTraversal
+
+Methods to traverse a graph, for example to find the shortest path between two vertices.
 */
 
 /*!
@@ -667,6 +690,7 @@ user might encounter.
 - `CGAL::is_valid_face_graph()`
 - `CGAL::is_valid_polygon_mesh()`
 
+\cgalCRPSection{Generator Functions}
 - `CGAL::is_tetrahedron()`
 - `CGAL::is_hexahedron()`
 - `CGAL::make_triangle()`
@@ -679,6 +703,7 @@ user might encounter.
 - `CGAL::make_grid()`
 
 - `CGAL::clear()`
+- `CGAL::remove_all_elements()`
 - `CGAL::copy_face_graph()`
 
 - `CGAL::set_triangulation_ids()`
@@ -706,6 +731,7 @@ user might encounter.
 - `CGAL::Halfedge_around_target_circulator`
 - `CGAL::Halfedge_around_face_circulator`
 - `CGAL::Vertex_around_target_circulator`
+- `CGAL::Vertex_around_face_circulator`
 - `CGAL::Face_around_target_circulator`
 - `CGAL::Face_around_face_circulator`
 
@@ -724,6 +750,7 @@ user might encounter.
 - `CGAL::Euler::join_vertex()`
 - `CGAL::Euler::make_hole()`
 - `CGAL::Euler::remove_center_vertex()`
+- `CGAL::Euler::remove_degree_2_vertex()`
 - `CGAL::Euler::remove_face()`
 - `CGAL::Euler::split_edge()`
 - `CGAL::Euler::split_face()`
@@ -744,6 +771,9 @@ user might encounter.
 \cgalCRPSection{Conversion Functions}
 - `CGAL::split_graph_into_polylines()`
 
+\cgalCRPSection{Graph Traversal}
+- `CGAL::dijkstra_shortest_path()`
+
 \cgalCRPSection{Graph Adaptors}
 - `CGAL::Dual`
 - `CGAL::Face_filtered_graph`
@@ -758,7 +788,7 @@ user might encounter.
 - `CGAL::alpha_expansion_graphcut()`
 
 \cgalCRPSection{I/O Functions}
-- `CGAL::IO::read_polygon_mesh()`
+- \link PkgBGLIOFct `CGAL::IO::read_polygon_mesh()` \endlink
 - `CGAL::IO::write_polygon_mesh()`
 - \link PkgBGLIoFuncsSTL I/O for STL files \endlink
 - \link PkgBGLIoFuncsPLY I/O for PLY files \endlink

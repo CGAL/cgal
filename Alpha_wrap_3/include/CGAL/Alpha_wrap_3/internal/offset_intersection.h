@@ -7,7 +7,11 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : TBA
+// Author(s)     : Pierre Alliez
+//                 Cedric Portaneri,
+//                 Mael Rouxel-Labbé
+//                 Andreas Fabri
+//                 Michael Hemmer
 //
 #ifndef CGAL_ALPHA_WRAP_3_INTERNAL_OFFSET_INTERSECTION_H
 #define CGAL_ALPHA_WRAP_3_INTERNAL_OFFSET_INTERSECTION_H

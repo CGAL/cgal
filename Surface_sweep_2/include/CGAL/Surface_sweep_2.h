@@ -24,7 +24,6 @@
 #include <list>
 #include <vector>
 
-#include <CGAL/Object.h>
 #include <CGAL/No_intersection_surface_sweep_2.h>
 #include <CGAL/Surface_sweep_2/Random_access_output_iterator.h>
 #include <CGAL/algorithm.h>
@@ -43,7 +42,7 @@ namespace Surface_sweep_2 {
  *
  * The algorithm is also extended to support the following degenerate cases:
  * - vertical segments
- * - multiple (more then two) curves intersecting at one point
+ * - multiple (more than two) curves intersecting at one point
  * - curves beginning and ending on other curves.
  * - overlapping curves
  *
@@ -63,8 +62,8 @@ namespace Surface_sweep_2 {
  *               are calculated.
  * End
  *
- * Convensions through out the code:
- * In order to make the code as readable as possible, some convensions were
+ * Conventions through out the code:
+ * In order to make the code as readable as possible, some conventions were
  * made in regards to variable naming:
  *
  * xp - is the intersection point between two curves
@@ -102,7 +101,7 @@ public:
   typedef typename Base::Status_line_iterator           Status_line_iterator;
 
   typedef std::pair<Point_2, Multiplicity>              Intersection_point;
-  typedef boost::variant<Intersection_point, X_monotone_curve_2>
+  typedef std::variant<Intersection_point, X_monotone_curve_2>
                                                         Intersection_result;
   typedef std::vector<Intersection_result>              Intersection_vector;
   typedef Random_access_output_iterator<Intersection_vector>
@@ -122,12 +121,12 @@ protected:
   // Data members:
   Subcurve_container m_overlap_subCurves;
                                      // Contains all of the new sub-curves
-                                     // creaed by an overlap.
+                                     // created by an overlap.
 
   Intersection_vector m_x_objects;   // Auxiliary vector for storing the
                                      // intersection objects.
 
-  X_monotone_curve_2 m_sub_cv1;      // Auxiliary varibales
+  X_monotone_curve_2 m_sub_cv1;      // Auxiliary variables
   X_monotone_curve_2 m_sub_cv2;      // (for splitting curves).
 
 public:
@@ -145,7 +144,7 @@ public:
     Base(traits, visitor)
   {}
 
-  /*! Destrcut. */
+  /*! Destruct. */
   virtual ~Surface_sweep_2() {}
 
 protected:
@@ -184,10 +183,10 @@ protected:
    * \param overlap_cv the overlapping curve.
    * \param c1 first subcurve contributing to the overlap.
    * \param c2 second subcurve contributing to the overlap.
-   * \param all_leaves_diff not empty in case c1 and c2 have common ancesters.
+   * \param all_leaves_diff not empty in case c1 and c2 have common ancestors.
    *                        It contains the set of curves  not contained in first_parent
    *                        that are in the other subcurve
-   * \param first_parent only used when c1 and c2 have common ancesters.
+   * \param first_parent only used when c1 and c2 have common ancestors.
    *                     It is either c1 or c2 (the one having the more leaves)
    *
    */
@@ -222,7 +221,7 @@ protected:
    * \param c2 The second curve.
    */
   void _create_intersection_point(const Point_2& xp,
-                                  unsigned int mult,
+                                  Multiplicity mult,
                                   Subcurve*& c1,
                                   Subcurve*& c2);
 };

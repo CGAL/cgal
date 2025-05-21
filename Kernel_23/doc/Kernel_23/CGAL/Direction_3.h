@@ -13,7 +13,7 @@ or the direction normal to parallel planes that have the same orientation.
 For example, you can ask for the direction
 orthogonal to an oriented plane, or the direction of an oriented line.
 
-\cgalModels `Kernel::Direction_3`
+\cgalModels{Kernel::Direction_3}
 
 */
 template< typename Kernel >
@@ -26,6 +26,7 @@ public:
 /*!
 introduces a direction `d` initialized with the
 direction of vector `v`.
+\cgalEpicExact
 */
 Direction_3(const Vector_3<Kernel> &v);
 
@@ -47,6 +48,7 @@ Direction_3(const Segment_3<Kernel> &s);
 /*!
 introduces a direction `d` initialized with the direction
 from the origin to the point with %Cartesian coordinates \f$ (x, y, z)\f$.
+\cgalEpicExact
 */
 Direction_3(const Kernel::RT &x, const Kernel::RT &y, const Kernel::RT &z);
 
@@ -57,22 +59,27 @@ Direction_3(const Kernel::RT &x, const Kernel::RT &y, const Kernel::RT &z);
 
 /*!
 returns values, such that `d``== Direction_3<Kernel>(delta(0),delta(1),delta(2))`.
-\pre \f$ 0 \leq i \leq2\f$.
+\pre `0 <= i <= 2`.
+
+\cgalEpicExact
 */
 Kernel::RT delta(int i) const;
 
 /*!
 returns `delta(0)`.
+\cgalEpicExact
 */
 Kernel::RT dx() const;
 
 /*!
 returns `delta(1)`.
+\cgalEpicExact
 */
 Kernel::RT dy() const;
 
 /*!
 returns `delta(2)`.
+\cgalEpicExact
 */
 Kernel::RT dz() const;
 
@@ -88,11 +95,13 @@ bool operator!=(const Direction_3<Kernel> &e) const;
 
 /*!
 The direction opposite to `d`.
+\cgalEpicExact
 */
 Direction_3<Kernel> operator-() const;
 
 /*!
 returns a vector that has the same direction as `d`.
+\cgalEpicExact
 */
 Vector_3<Kernel> vector() const;
 

@@ -203,7 +203,7 @@ public:
     Simplex_iterator(Delaunay* x,  Base_iterator y,
       Delaunay_voronoi_kind z = NEAREST) : Base_iterator(y), DT(x)
     /* if the facet is not nil we set the current marker to
-       the facet and insert all it's neighbors into the
+       the facet and insert all its neighbors into the
        candidates stack */
     { CGAL_assertion(base() != Base_iterator());
       tf = (z == NEAREST ? lower_hull : upper_hull);
@@ -262,7 +262,7 @@ public:
     Simplex_const_iterator(const Delaunay* x,  Base_iterator y,
       Delaunay_voronoi_kind z = NEAREST) : Base_iterator(y), DT(x)
     /* if the facet is not nil we set the current marker to
-       the facet and insert all it's neighbors into the
+       the facet and insert all its neighbors into the
        candidates stack */
     { CGAL_assertion(base() != Base_iterator());
       tf = (z == NEAREST ? lower_hull : upper_hull);
@@ -830,7 +830,7 @@ locate(const Point_d& x) const
   // lift(p) is not a dimension jump
   std::list<Simplex_handle> candidates;
   std::size_t dummy1 = 0;
-  int loc = -1; // intialization is important
+  int loc = -1; // initialization is important
   Simplex_handle f;
   this -> visibility_search(origin_simplex_,lp,candidates,dummy1,loc,f);
   this -> clear_visited_marks(origin_simplex_);

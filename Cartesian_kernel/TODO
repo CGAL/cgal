@@ -3,7 +3,7 @@ Stuff to look at, as time permits:
 
 - Why Ray_3 and Line_3 don't have the same internal representation ???
 
-- Triangle-Triangle instersection (and predicate) :
+- Triangle-Triangle intersection (and predicate) :
     Tomas Möller. A fast triangle-triangle intersection test. Journal of
     Graphics Tools, 2(2):25-30, 1997
               A Fast Triangle-Triangle Intersection Test,  tompa@clarus.se
@@ -14,7 +14,7 @@ Stuff to look at, as time permits:
   > > > so-called advanced kernel and the tag used to distinguish coordinate
   > > > rep.
 
-  > > > I asekd for this long time ago, and that time, I got no reply ... :)
+  > > > I asked for this long time ago, and that time, I got no reply ... :)
 
   > > I see... :)  When was it ?  As you know, I'm back to work since october,
   > > so.

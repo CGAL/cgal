@@ -20,6 +20,10 @@
   #define CGAL_MESH_3_VERBOSE
 #endif
 
+#ifdef CGAL_MESH_3_CONFIG_H
+  #error "The header '<CGAL/Periodic_3_mesh_3/config.h>' must be included before '<CGAL/Mesh_3/config.h>'"
+#endif
+
 #include <CGAL/Mesh_3/config.h>
 
 // Whether to remove dummy points or not during the protection of sharp features
@@ -31,7 +35,7 @@
 // memory boolean in the vertex base
 #define CGAL_PERIODIC_TRIANGULATION_USE_VISITED_VERTEX_BOOLEAN
 
-// Avoid optimisations of Mesh_3
+// Avoid optimizations of Mesh_3
 #define CGAL_NO_STRUCTURAL_FILTERING
 #ifdef CGAL_MESH_3_SIZING_FIELD_INEXACT_LOCATE
   #undef CGAL_MESH_3_SIZING_FIELD_INEXACT_LOCATE

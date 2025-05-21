@@ -7,7 +7,7 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : TBA
+// Author(s)     : Mael Rouxel-Labbé
 //
 #ifndef CGAL_ALPHA_WRAP_3_INTERNAL_ORACLE_BASE_H
 #define CGAL_ALPHA_WRAP_3_INTERNAL_ORACLE_BASE_H
@@ -49,7 +49,7 @@ struct AABB_tree_oracle_helper
   using GT = typename AABB_traits::Geom_traits;
 
   using FT = typename AABB_traits::FT;
-  using Point_3 = typename AABB_traits::Point_3;
+  using Point_3 = typename AABB_traits::Point;
 
   template <typename Query>
   static bool do_intersect(const Query& query,
@@ -142,41 +142,87 @@ public:
   BaseOracle& base() { return static_cast<BaseOracle&>(*this); }
   const BaseOracle& base() const { return static_cast<const BaseOracle&>(*this); }
 
+  bool empty() const { return m_tree_ptr->empty(); }
+  bool do_call() const { return (!empty() || base().do_call()); }
+
+  void clear() { m_tree_ptr->clear() && base().clear(); }
+
 public:
   typename AABB_tree::Bounding_box bbox() const
   {
-    CGAL_precondition(!tree().empty());
+    CGAL_precondition(do_call());
 
-    return base().bbox() + tree().bbox();
+    typename AABB_tree::Bounding_box bb;
+
+    if(base().do_call())
+      bb += base().bbox();
+
+    if(!empty())
+      bb += tree().bbox();
+
+    return bb;
   }
 
   template <typename T>
   bool do_intersect(const T& t) const
   {
-    if(base().do_intersect(t))
+    CGAL_precondition(do_call());
+
+    if(base().do_call() && base().do_intersect(t))
       return true;
 
-    return AABB_helper::do_intersect(t, tree());
+    if(!empty())
+      return AABB_helper::do_intersect(t, tree());
+
+    return false;
   }
 
   FT squared_distance(const Point_3& p) const
   {
-    const FT base_sqd = base().squared_distance(p);
+    CGAL_precondition(do_call());
 
-    // @speed could do a smarter traversal, no need to search deeper than the current best
-    const FT this_sqd = AABB_helper::squared_distance(p, tree());
-
-    return (std::min)(base_sqd, this_sqd);
+    if(base().do_call())
+    {
+      if(!empty()) // both non empty
+      {
+        const FT base_sqd = base().squared_distance(p);
+        // @speed could do a smarter traversal, no need to search deeper than the current best
+        const FT this_sqd = AABB_helper::squared_distance(p, tree());
+        return (std::min)(base_sqd, this_sqd);
+      }
+      else // this level is empty
+      {
+        return base().squared_distance(p);
+      }
+    }
+    else // empty base
+    {
+      return AABB_helper::squared_distance(p, tree());
+    }
   }
 
   Point_3 closest_point(const Point_3& p) const
   {
-    const Point_3 base_c = base().closest_point(p);
+    CGAL_precondition(do_call());
 
-    // @speed could do a smarter traversal, no need to search deeper than the current best
-    const Point_3 this_c = AABB_helper::closest_point(p, tree());
-
-    return (compare_distance_to_point(p, base_c, this_c) == CGAL::SMALLER) ? base_c : this_c;
+    if(base().do_call())
+    {
+      if(!empty()) // both non empty
+      {
+        const Point_3 base_c = base().closest_point(p);
+        // @speed could do a smarter traversal, no need to search deeper than the current best
+        const Point_3 this_c = AABB_helper::closest_point(p, tree());
+        return (compare_distance_to_point(p, base_c, this_c) == CGAL::SMALLER) ? base_c : this_c;
+      }
+      else // this level is empty
+      {
+        return base().closest_point(p);
+      }
+    }
+    else // empty base
+    {
+      return AABB_helper::closest_point(p, tree());
+    }
   }
 
   bool first_intersection(const Point_3& p, const Point_3& q,
@@ -184,22 +230,38 @@ public:
                           const FT offset_size,
                           const FT intersection_precision) const
   {
-    Point_3 base_o;
-    bool base_b = base().first_intersection(p, q, base_o, offset_size, intersection_precision);
+    CGAL_precondition(do_call());
 
-    if(base_b)
+    if(base().do_call())
     {
-      // @speed could do a smarter traversal, no need to search deeper than the current best
-      Point_3 this_o;
-      bool this_b = AABB_helper::first_intersection(p, q, this_o, offset_size, intersection_precision, tree());
-      if(this_b)
-        o = (compare_distance_to_point(p, base_o, this_o) == SMALLER) ? base_o : this_o;
-      else
-        o = base_o;
+      if(!empty()) // both non empty
+      {
+        Point_3 base_o;
+        bool base_b = base().first_intersection(p, q, base_o, offset_size, intersection_precision);
 
-      return true;
+        if(base_b) // intersection found in base
+        {
+          // @speed could do a smarter traversal, no need to search deeper than the current best
+          Point_3 this_o;
+          bool this_b = AABB_helper::first_intersection(p, q, this_o, offset_size, intersection_precision, tree());
+          if(this_b)
+            o = (compare_distance_to_point(p, base_o, this_o) == SMALLER) ? base_o : this_o;
+          else
+            o = base_o;
+
+          return true;
+        }
+        else // no intersection found in non-empty base
+        {
+          return AABB_helper::first_intersection(p, q, o, offset_size, intersection_precision, tree());
+        }
+      }
+      else // this level is empty
+      {
+        return base().first_intersection(p, q, o, offset_size, intersection_precision);
+      }
     }
-    else
+    else // empty base
     {
       return AABB_helper::first_intersection(p, q, o, offset_size, intersection_precision, tree());
     }
@@ -250,38 +312,47 @@ public:
   AABB_tree& tree() { return *m_tree_ptr; }
   const AABB_tree& tree() const { return *m_tree_ptr; }
 
+  bool empty() const { return m_tree_ptr->empty(); }
+  bool do_call() const { return !empty(); }
+
+  void clear() { m_tree_ptr->clear(); }
+
 public:
   typename AABB_tree::Bounding_box bbox() const
   {
-    CGAL_precondition(!tree().empty());
-
+    CGAL_precondition(!empty());
     return tree().bbox();
   }
 
   template <typename T>
   bool do_intersect(const T& t) const
   {
+    CGAL_precondition(!empty());
     return AABB_helper::do_intersect(t, tree());
   }
 
   FT squared_distance(const Point_3& p) const
   {
+    CGAL_precondition(!empty());
     return AABB_helper::squared_distance(p, tree());
   }
 
   Point_3 closest_point(const Point_3& p) const
   {
+    CGAL_precondition(!empty());
     return AABB_helper::closest_point(p, tree());
   }
 
   bool first_intersection(const Point_3& p, const Point_3& q, Point_3& o,
                           const FT offset_size, const FT intersection_precision) const
   {
+    CGAL_precondition(!empty());
     return AABB_helper::first_intersection(p, q, o, offset_size, intersection_precision, tree());
   }
 
   bool first_intersection(const Point_3& p, const Point_3& q, Point_3& o, const FT offset_size) const
   {
+    CGAL_precondition(!empty());
     return AABB_helper::first_intersection(p, q, o, offset_size, 1e-2 * offset_size, tree());
   }
 

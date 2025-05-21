@@ -25,13 +25,18 @@
 
 namespace CGAL {
 
+#if (_MSC_VER == 1500)
+#undef SCIP_CALL(x)
+#define SCIP_CALL(x) (x)
+#endif
+
 /// \ingroup PkgSolverInterfaceMIP
 ///
 /// This class provides an interface for formulating and solving
 /// constrained or unconstrained mixed integer programs using
 /// \ref thirdpartySCIP (which must be available on the system).
 ///
-/// \cgalModels `MixedIntegerProgramTraits`
+/// \cgalModels{MixedIntegerProgramTraits}
 ///
 /// \sa `GLPK_mixed_integer_program_traits`
 template <typename FT>

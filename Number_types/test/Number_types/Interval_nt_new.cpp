@@ -11,7 +11,7 @@
     {                                                            \
         bool b = false;                                          \
         try{(void) expr;}catch(error){ b = true;}                \
-        if(!b) CGAL_error_msg( "Expr should throw expetion");        \
+        if(!b) CGAL_error_msg( "Expr should throw exception");   \
     }
 
 int main() {
@@ -122,7 +122,7 @@ int main() {
         CGAL_catch_error((bool)(I<=J),CGAL::Uncertain_conversion_exception&);
         CGAL_catch_error((bool)(I>=J),CGAL::Uncertain_conversion_exception&);
         CGAL_catch_error((bool)(J> I),CGAL::Uncertain_conversion_exception&);
-        CGAL_catch_error((bool)(J> I),CGAL::Uncertain_conversion_exception&);
+        CGAL_catch_error((bool)(J< I),CGAL::Uncertain_conversion_exception&);
         CGAL_catch_error((bool)(J>=I),CGAL::Uncertain_conversion_exception&);
         CGAL_catch_error((bool)(J<=I),CGAL::Uncertain_conversion_exception&);
 

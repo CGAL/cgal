@@ -18,21 +18,23 @@
 
 #include <CGAL/Polygon_mesh_processing/orientation.h>
 #include <CGAL/property_map.h>
-#include <boost/type_traits/is_const.hpp>
-#include <boost/type_traits/is_same.hpp>
-#include <boost/type_traits/remove_reference.hpp>
-#include <boost/mpl/if.hpp>
 #include <fstream>
 #include <sstream>
 #include <set>
+#include <type_traits>
+
 namespace CGAL {
 namespace Polygon_mesh_processing {
 namespace Corefinement {
 
+enum Boolean_operation_type {UNION = 0, INTERSECTION,
+                             TM1_MINUS_TM2, TM2_MINUS_TM1, NONE };
+
 template <typename G>
 struct No_mark
 {
-  friend bool get(No_mark<G>,
+  friend
+  bool get(No_mark<G>,
                   typename boost::graph_traits<G>::edge_descriptor)
   {
     return false;
@@ -253,7 +255,7 @@ struct Side_of_helper
   typedef Node_vector_exact_vertex_point_map<Node_id_map, VertexPointMap, NodeVector> VPM;
 
   typedef CGAL::AABB_face_graph_triangle_primitive<TriangleMesh, VPM> Primitive;
-  typedef CGAL::AABB_traits<typename NodeVector::Exact_kernel, Primitive> Traits;
+  typedef CGAL::AABB_traits_3<typename NodeVector::Exact_kernel, Primitive> Traits;
   typedef CGAL::AABB_tree<Traits> Tree_type;
 
   static
@@ -301,7 +303,7 @@ struct Side_of_helper
 
     typedef CGAL::Pointer_property_map<CGAL::Bbox_3>::type Id_to_box;
     Id_to_box id_to_box = CGAL::make_property_map(face_bboxes);
-    typedef Property_map_binder<FaceIdMap, Id_to_box> BPM;
+    typedef Compose_property_map<FaceIdMap, Id_to_box> BPM;
     BPM bpm(fid, id_to_box);
     Compute_bbox<BPM> compute_bbox(bpm);
 
@@ -329,7 +331,7 @@ struct Side_of_helper<TriangleMesh, Node_id_map, VertexPointMap, NodeVector, typ
   }
 
   typedef CGAL::AABB_face_graph_triangle_primitive<TriangleMesh, VPM> Primitive;
-  typedef CGAL::AABB_traits<typename NodeVector::Exact_kernel, Primitive> Traits;
+  typedef CGAL::AABB_traits_3<typename NodeVector::Exact_kernel, Primitive> Traits;
   typedef CGAL::AABB_tree<Traits> Tree_type;
 
 
@@ -382,32 +384,32 @@ struct TweakedGetVertexPointMap
 {
   typedef typename GetVertexPointMap<PolygonMesh,
                                      NamedParameters>::type Default_map;
-  typedef typename boost::is_same<Point_3,
+  typedef typename std::is_same<Point_3,
     typename boost::property_traits<Default_map>::value_type>::type Use_default_tag;
 
-  typedef typename boost::mpl::if_<
-    Use_default_tag,
+  typedef std::conditional_t<
+    Use_default_tag::value,
     Default_map,
     Dummy_default_vertex_point_map<Point_3,
       typename boost::graph_traits<PolygonMesh>::vertex_descriptor >
-  >::type type;
+  > type;
 };
 
 template <class PT, class NP, class PM>
-boost::optional< typename TweakedGetVertexPointMap<PT, NP, PM>::type >
-get_vpm(const NP& np, boost::optional<PM*> opm, boost::true_type)
+std::optional< typename TweakedGetVertexPointMap<PT, NP, PM>::type >
+get_vpm(const NP& np, std::optional<PM*> opm, std::true_type)
 {
-  if (boost::none == opm) return boost::none;
+  if (std::nullopt == opm) return std::nullopt;
   return parameters::choose_parameter(
            parameters::get_parameter(np, internal_np::vertex_point),
            get_property_map(boost::vertex_point, *(*opm)) );
 }
 
 template <class PT, class NP, class PM>
-boost::optional< typename TweakedGetVertexPointMap<PT, NP, PM>::type >
-get_vpm(const NP&, boost::optional<PM*> opm, boost::false_type)
+std::optional< typename TweakedGetVertexPointMap<PT, NP, PM>::type >
+get_vpm(const NP&, std::optional<PM*> opm, std::false_type)
 {
-  if (boost::none == opm) return boost::none;
+  if (std::nullopt == opm) return std::nullopt;
   return typename TweakedGetVertexPointMap<PT, NP, PM>::type();
 }
 //
@@ -426,6 +428,7 @@ struct Default_visitor{
   void before_face_copy(face_descriptor /*f_old*/, const TriangleMesh&, TriangleMesh&){}
   void after_face_copy(face_descriptor /*f_old*/, const TriangleMesh&,
                        face_descriptor /* f_new */, TriangleMesh&){}
+  void subface_of_coplanar_faces_intersection(face_descriptor /*f*/, TriangleMesh&) {}
 // edge visitor functions
   void before_edge_split(halfedge_descriptor /* h */, TriangleMesh& /* tm */){}
   void edge_split(halfedge_descriptor /* hnew */, TriangleMesh& /* tm */){}
@@ -460,9 +463,39 @@ struct Default_visitor{
   void before_vertex_copy(vertex_descriptor /*v_src*/, const TriangleMesh& /*tm_src*/, TriangleMesh& /*tm_tgt*/){}
   void after_vertex_copy(vertex_descriptor /*v_src*/, const TriangleMesh& /*tm_src*/,
                          vertex_descriptor /* v_tgt */, TriangleMesh& /*tm_tgt*/){}
-// calls commented in the code and probably incomplete due to the migration
-// see NODE_VISITOR_TAG
-/*
+
+  // progress tracking
+  void start_filtering_intersections() const {}
+  void progress_filtering_intersections(double ) const {}
+  void end_filtering_intersections() const {}
+
+  void start_triangulating_faces(std::size_t) const {}
+  void triangulating_faces_step() const {}
+  void end_triangulating_faces() const {}
+
+  void start_handling_intersection_of_coplanar_faces(std::size_t) const {}
+  void intersection_of_coplanar_faces_step() const {}
+  void end_handling_intersection_of_coplanar_faces() const {}
+
+  void start_handling_edge_face_intersections(std::size_t) const {}
+  void edge_face_intersections_step() const {}
+  void end_handling_edge_face_intersections() const {}
+
+  void start_building_output() const {}
+  void end_building_output() const {}
+
+// Required by Face_graph_output_builder
+  void filter_coplanar_edges() const {}
+  void detect_patches() const {}
+  void classify_patches() const {}
+  void classify_intersection_free_patches(const TriangleMesh&) const {}
+  void out_of_place_operation(Boolean_operation_type) const {}
+  void in_place_operation(Boolean_operation_type) const {}
+  void in_place_operations(Boolean_operation_type,Boolean_operation_type) const {}
+
+  // calls commented in the code and probably incomplete due to the migration
+  // see NODE_VISITOR_TAG
+  /*
   // autorefinement only
   void new_node_added_triple_face(std::size_t node_id,
                                   face_descriptor f1,
@@ -470,7 +503,7 @@ struct Default_visitor{
                                   face_descriptor f3,
                                   const TriangleMesh& tm)
   {}
-*/
+  */
 };
 
 template < class TriangleMesh,
@@ -746,6 +779,7 @@ struct Patch_container{
     Patch_description<PolygonMesh>& patch=this->operator[](i);
 
     std::stringstream ss;
+    ss.precision(17);
     std::map<vertex_descriptor, int> vertexid;
     int id=0;
     for(vertex_descriptor vh : patch.interior_vertices)
@@ -908,7 +942,7 @@ void import_polyline(
   halfedge_descriptor prev1=h1;
   halfedge_descriptor prev2=h2;
 
-  //set the correspondance
+  //set the correspondence
   pm1_to_output_edges.insert(
     std::make_pair(edge(prev1, pm1), edge(prev_out, output)) );
   pm2_to_output_edges.insert(
@@ -1234,6 +1268,7 @@ void append_patches_to_triangle_mesh(
     }
     set_next(h_out, candidate, output);
   }
+
   for(halfedge_descriptor h_out : border_halfedges_source_to_link)
   {
     halfedge_descriptor candidate =
@@ -1326,7 +1361,7 @@ void fill_new_triangle_mesh(
   typedef typename GT::vertex_descriptor vertex_descriptor;
   typedef typename GT::edge_descriptor edge_descriptor;
 
-  // this is the miminal number of edges that will be marked (intersection edge).
+  // this is the minimal number of edges that will be marked (intersection edge).
   // We cannot easily have the total number since some patch interior edges might be marked
   output_shared_edges.reserve(
                               std::accumulate(polylines.lengths.begin(),polylines.lengths.end(),std::size_t(0)) );

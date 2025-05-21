@@ -148,7 +148,7 @@ public:
 
     std::size_t nb_patches_tm1 =
       connected_components(tm1,
-                           bind_property_maps(fids1,make_property_map(&tm1_patch_ids[0])),
+                           make_compose_property_map(fids1,make_property_map(&tm1_patch_ids[0])),
                            parameters::edge_is_constrained_map(ecm1)
                                       .face_index_map(fids1));
 
@@ -228,7 +228,7 @@ public:
       }
     }
 
-    keep_connected_components(tm1, cc_to_keep, bind_property_maps(fids1,make_property_map(&tm1_patch_ids[0])));
+    keep_connected_components(tm1, cc_to_keep, make_compose_property_map(fids1,make_property_map(&tm1_patch_ids[0])));
   }
 };
 

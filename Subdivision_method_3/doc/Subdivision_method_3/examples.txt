@@ -2,6 +2,7 @@
 \example Subdivision_method_3/Customized_subdivision.cpp
 \example Subdivision_method_3/CatmullClark_subdivision.cpp
 \example Subdivision_method_3/DooSabin_subdivision.cpp
+\example Subdivision_method_3/Linear_subdivision.cpp
 \example Subdivision_method_3/Loop_subdivision.cpp
 \example Subdivision_method_3/Sqrt3_subdivision.cpp
 */

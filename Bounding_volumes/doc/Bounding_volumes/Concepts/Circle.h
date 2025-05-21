@@ -2,11 +2,11 @@
 \ingroup PkgBoundingVolumesConcepts
 \cgalConcept
 
-An object of the class `Circle` is a circle in two-dimensional
+An object `circle` of the class `Circle` is a circle in the two-dimensional
 Euclidean plane \f$ \E^2\f$. Its boundary splits the plane into a bounded
-and an unbounded side. By definition, an empty `Circle` has no
+and an unbounded side. By definition, an empty `circle` has no
 boundary and no bounded side, i.e.\ its unbounded side equals the
-whole plane \f$ \E^2\f$. A `Circle` containing exactly one point \f$ p\f$
+whole plane \f$ \E^2\f$. A `circle` containing exactly one point \f$ p\f$
 has no bounded side, its boundary is \f$ \{p\}\f$, and its unbounded side
 equals \f$ \E^2 \setminus \{p\}\f$.
 
@@ -42,21 +42,21 @@ typedef unspecified_type Distance;
 void set();
 
 /**
- * sets `circle` to the circle containing exactly \f$ \{\mbox{`p` }\}\f$.
+ * sets `circle` to the circle containing exactly `p`.
  */
 void  set( const Point& p);
 
 
 /*!
 sets `circle` to the circle with diameter equal to the segment
-connecting `p` and `q`. The algorithm guarantees that `set` is never
+connecting `p` and `q`. The algorithm guarantees that `set()` is never
 called with two equal points.
 */
 void  set( const Point& p, const Point& q);
 
 /*!
-sets `circle` to the circle through `p`,`q`,`r`.  The algorithm
-guarantees that `set` is never called with three collinear points.
+sets `circle` to the circle through `p`, `q`, and `r`.  The algorithm
+guarantees that `set()` is never called with three collinear points.
 */
 void  set( const Point& p, const Point& q, const Point& r);
 

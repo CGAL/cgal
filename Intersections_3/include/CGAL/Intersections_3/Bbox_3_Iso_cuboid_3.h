@@ -30,15 +30,17 @@
 namespace CGAL {
 
 template<typename K>
-bool do_intersect(const CGAL::Bbox_3& box,
-                  const Iso_cuboid_3<K>& ic)
+typename K::Boolean
+do_intersect(const CGAL::Bbox_3& box,
+             const Iso_cuboid_3<K>& ic)
 {
   return K().do_intersect_3_object()(box, ic);
 }
 
 template<typename K>
-bool do_intersect(const Iso_cuboid_3<K>& ic,
-                  const CGAL::Bbox_3& box)
+typename K::Boolean
+do_intersect(const Iso_cuboid_3<K>& ic,
+             const CGAL::Bbox_3& box)
 {
   return K().do_intersect_3_object()(ic, box);
 }

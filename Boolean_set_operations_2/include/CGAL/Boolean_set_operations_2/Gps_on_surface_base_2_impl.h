@@ -540,7 +540,7 @@ template <class Traits_, class TopTraits_, class ValidationPolicy>
 }
 
 //insert non-sipmle poloygons with holes (non incident edges may have
-// common vertex,  but they dont intersect at their interior
+// common vertex,  but they don't intersect at their interior
 template <class Traits_, class TopTraits_, class ValidationPolicy>
   void Gps_on_surface_base_2<Traits_, TopTraits_, ValidationPolicy>::
   _insert(const Polygon_with_holes_2 & pgn, Arrangement_on_surface_2 & arr)
@@ -631,7 +631,7 @@ template <class Traits_, class TopTraits_, class ValidationPolicy>
 
   typedef Arr_bfs_scanner<Arrangement_on_surface_2, Counting_output_iterator>
     Arr_bfs_scanner;
-  //counting_output_operator CTOR reqires a parameter
+  //counting_output_operator CTOR requires a parameter
   std::size_t cc = 0;
   Arr_bfs_scanner scanner(this->m_traits, Counting_output_iterator(&cc));
   scanner.scan(*(this->m_arr));

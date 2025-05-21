@@ -52,13 +52,13 @@ bool test_GMAP_4()
 {
   GMAP gmap;
 
-  typedef typename GMAP::Dart_handle Dart_handle;
+  typedef typename GMAP::Dart_descriptor Dart_descriptor;
 
   // Construction operations
   trace_test_begin();
-  Dart_handle dh1=gmap.make_edge();
-  Dart_handle dh2=gmap.make_edge();
-  Dart_handle dh3=gmap.make_edge();
+  Dart_descriptor dh1=gmap.make_edge();
+  Dart_descriptor dh2=gmap.make_edge();
+  Dart_descriptor dh3=gmap.make_edge();
   if ( !check_number_of_cells_4(gmap, 6, 3, 3, 3, 3, 3) )
     return false;
 
@@ -69,8 +69,8 @@ bool test_GMAP_4()
     return false;
 
   trace_test_begin();
-  Dart_handle dh5=gmap.make_combinatorial_polygon(3);
-  Dart_handle dh6=gmap.make_combinatorial_polygon(3);
+  Dart_descriptor dh5=gmap.make_combinatorial_polygon(3);
+  Dart_descriptor dh6=gmap.make_combinatorial_polygon(3);
   if ( !check_number_of_cells_4(gmap, 10, 9, 3, 3, 3, 3) )
     return false;
 
@@ -81,9 +81,9 @@ bool test_GMAP_4()
 
   trace_test_begin();
   gmap.clear();
-  Dart_handle dh7=gmap.make_combinatorial_hexahedron(); // f1
-  Dart_handle dh8=gmap.template alpha<2,1,0,1,2>(dh7); // f2 opposite to f1
-  Dart_handle dh9=gmap.template alpha<2>(dh7); // face incident to f1 and d2
+  Dart_descriptor dh7=gmap.make_combinatorial_hexahedron(); // f1
+  Dart_descriptor dh8=gmap.template alpha<2,1,0,1,2>(dh7); // f2 opposite to f1
+  Dart_descriptor dh9=gmap.template alpha<2>(dh7); // face incident to f1 and d2
 
   gmap.template remove_cell<2>(dh7);
   if ( !check_number_of_cells_4(gmap, 8, 12, 5, 1, 1, 1) )
@@ -95,13 +95,13 @@ bool test_GMAP_4()
     return false;
 
   trace_test_begin();
-  Dart_handle dh10=gmap.make_combinatorial_hexahedron();
+  Dart_descriptor dh10=gmap.make_combinatorial_hexahedron();
   gmap.template sew<3>(dh9,dh10);
   if ( !check_number_of_cells_4(gmap, 12, 20, 9, 2, 1, 1) )
     return false;
 
   trace_test_begin();
-  Dart_handle dh11=gmap.make_combinatorial_hexahedron();
+  Dart_descriptor dh11=gmap.make_combinatorial_hexahedron();
   gmap.template sew<4>(dh10,dh11);
   if ( !check_number_of_cells_4(gmap, 12, 20, 9, 2, 2, 1) )
     return false;

@@ -21,11 +21,12 @@
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/Lightweight_vector_3.h>
 #include <CGAL/property_map.h>
-#include <CGAL/surface_reconstruction_points_assertions.h>
+#include <CGAL/assertions.h>
 
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Delaunay_triangulation_cell_base_3.h>
 #include <CGAL/Triangulation_cell_base_with_info_3.h>
+#include <CGAL/Triangulation_structural_filtering_traits.h>
 
 #include <CGAL/algorithm.h>
 #include <CGAL/bounding_box.h>
@@ -145,6 +146,12 @@ template <class BaseGt>
 struct Reconstruction_triangulation_default_geom_traits_3 : public BaseGt
 {
   typedef Point_with_normal_3<BaseGt> Point_3;
+};
+
+
+template < class BaseGt >
+struct Triangulation_structural_filtering_traits<Reconstruction_triangulation_default_geom_traits_3<BaseGt> > {
+  typedef typename Triangulation_structural_filtering_traits<BaseGt>::Use_structural_filtering_tag  Use_structural_filtering_tag;
 };
 
 
@@ -348,12 +355,12 @@ public:
   /// Insert the [first, beyond) range of points in the triangulation using a spatial sort.
   /// Default type is INPUT.
   ///
-  /// @commentheading Template Parameters:
-  /// @param InputIterator iterator over input points.
-  /// @param PointPMap is a model of `ReadablePropertyMap` with a value_type = Point_3.
+  /// *Template Parameters:*
+  /// @tparam InputIterator iterator over input points.
+  /// @tparam PointPMap is a model of `ReadablePropertyMap` with a value_type = Point_3.
   ///        It can be omitted if InputIterator value_type is convertible to Point_3.
-  /// @param NormalPMap is a model of `ReadablePropertyMap` with a value_type = Vector_3.
-  ///
+  /// @tparam NormalPMap is a model of `ReadablePropertyMap` with a value_type = Vector_3.
+  /// @tparam Visitor the visitor type
   /// @return the number of inserted points.
 
   // This variant requires all parameters.

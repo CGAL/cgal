@@ -239,8 +239,8 @@ public:
     if(!is_1_cover())
       compute_too_long_edges();
 
-    CGAL_triangulation_expensive_postcondition(*this == tr);
-    CGAL_triangulation_expensive_postcondition(is_valid());
+    CGAL_expensive_postcondition(*this == tr);
+    CGAL_expensive_postcondition(is_valid());
   }
 
   Periodic_3_Delaunay_triangulation_3 operator=(Periodic_3_Delaunay_triangulation_3 tr)
@@ -304,9 +304,9 @@ public:
       Vertex_handle v_no = eit->first->vertex(i);
       if(squared_distance(p1,p2) > edge_length_threshold)
       {
-        CGAL_triangulation_assertion(find(too_long_edges[v_no].begin(),
-                                          too_long_edges[v_no].end(),
-                                          edge_to_add.second) == too_long_edges[v_no].end());
+        CGAL_assertion(find(too_long_edges[v_no].begin(),
+                            too_long_edges[v_no].end(),
+                            edge_to_add.second) == too_long_edges[v_no].end());
         too_long_edges[v_no].push_back(edge_to_add.second);
         ++too_long_edge_counter;
       }
@@ -316,8 +316,8 @@ public:
   void create_initial_triangulation()
   {
     // create the base for too_long_edges;
-    CGAL_triangulation_assertion( too_long_edges.empty() );
-    CGAL_triangulation_assertion(too_long_edge_counter == 0);
+    CGAL_assertion( too_long_edges.empty() );
+    CGAL_assertion(too_long_edge_counter == 0);
 
     for(Vertex_iterator vit = vertices_begin(); vit !=vertices_end(); ++vit )
       too_long_edges[vit] = std::list<Vertex_handle>();;
@@ -374,7 +374,7 @@ public:
   template <class CellIt>
   void insert_too_long_edges(Vertex_handle v, const CellIt begin, const CellIt end)
   {
-    CGAL_triangulation_precondition(number_of_vertices() != 0);
+    CGAL_precondition(number_of_vertices() != 0);
     // add newly added edges to too_long_edges, if necessary.
     Point p1,p2;
     std::pair< Vertex_handle, Vertex_handle > edge_to_add;
@@ -389,7 +389,7 @@ public:
           if(&*((*it)->vertex(j)) > &*((*it)->vertex(k))) continue;
           // make the offsets canonical (wrt. to some notion)
           // add to too_long_edges, if not yet added and if "too long"
-          CGAL_triangulation_precondition(
+          CGAL_precondition(
                 &*((*it)->vertex(j))< &*((*it)->vertex(k)));
 
           edge_to_add = std::make_pair((*it)->vertex(j), (*it)->vertex(k));
@@ -665,29 +665,6 @@ private:
   }
 
 public:
-  /** @name Geometric access functions */
-
-  Point point(const Periodic_point& pp) const
-  {
-    return point(pp, geom_traits().construct_point_3_object());
-  }
-
-  // The following functions return the "real" position in space (unrestrained
-  // to the fundamental domain) of the vertices v and c->vertex(idx),
-  // respectively
-
-  Point point(Vertex_handle v) const
-  {
-    return point(v, geom_traits().construct_point_3_object());
-  }
-
-  Point point(Cell_handle c, int idx) const
-  {
-    return point(c, idx, geom_traits().construct_point_3_object());
-  }
-
-  // end of geometric functions
-
   Periodic_point periodic_circumcenter(Cell_handle c) const {
     return Base::periodic_circumcenter(c, geom_traits().construct_circumcenter_3_object());
   }
@@ -906,7 +883,7 @@ typename Periodic_3_Delaunay_triangulation_3<GT,Tds>::Vertex_handle
 Periodic_3_Delaunay_triangulation_3<GT,Tds>::nearest_vertex_in_cell(
     const Cell_handle& c, const Point& p, const Offset& o) const
 {
-  CGAL_triangulation_precondition(number_of_vertices() != 0);
+  CGAL_precondition(number_of_vertices() != 0);
   Vertex_handle nearest = c->vertex(0);
   for(int i=1; i<4; i++) {
     nearest = (compare_distance(p,nearest->point(),c->vertex(i)->point(),
@@ -925,18 +902,9 @@ typename Periodic_3_Delaunay_triangulation_3<Gt,Tds>::Vertex_handle
 Periodic_3_Delaunay_triangulation_3<Gt,Tds>::
 move_point(Vertex_handle v, const Point& p)
 {
-  CGAL_triangulation_expensive_precondition(is_vertex(v));
-  // Remember an incident vertex to restart
-  // the point location after the removal.
-  // Cell_handle c = v->cell();
-  //Vertex_handle old_neighbor = c->vertex(c->index(v) == 0 ? 1 : 0);
-  //  CGAL_triangulation_assertion(old_neighbor != v);
-
+  CGAL_expensive_precondition(is_vertex(v));
   remove(v);
-
-  if(number_of_vertices() == 0)
-    return insert(p);
-  return insert(p);//, old_neighbor->cell());
+  return insert(p);
 }
 
 template < class Gt, class Tds >
@@ -953,7 +921,7 @@ void Periodic_3_Delaunay_triangulation_3<Gt,Tds>::remove(Vertex_handle v)
   Cover_manager cover_manager(*this);
 
   Base::remove(v, remover, ct, cover_manager);
-  CGAL_triangulation_expensive_assertion(is_valid());
+  CGAL_expensive_assertion(is_valid());
 }
 
 // Undocumented function that tries to remove 'v' but only does so if removal
@@ -964,7 +932,7 @@ bool
 Periodic_3_Delaunay_triangulation_3<Gt,Tds>::
 remove_if_no_cover_change(Vertex_handle v)
 {
-  CGAL_triangulation_precondition(this->is_1_cover());
+  CGAL_precondition(this->is_1_cover());
 
   // Since we are in a 1-sheet configuration, we can call directly periodic_remove()
   // and don't need the conflict tester. The rest is copied from above.
@@ -985,8 +953,8 @@ remove_if_no_cover_change(Vertex_handle v)
     return false; // removing would cause a cover change
   }
 
-  CGAL_triangulation_expensive_postcondition(is_valid());
-  CGAL_triangulation_postcondition(this->is_1_cover());
+  CGAL_expensive_postcondition(is_valid());
+  CGAL_postcondition(this->is_1_cover());
   return true; // successfully removed the vertex
 }
 
@@ -999,7 +967,7 @@ Periodic_3_Delaunay_triangulation_3<Gt,Tds>::find_conflicts(
     const Point& p, Cell_handle c, OutputIteratorBoundaryFacets bfit,
     OutputIteratorCells cit, OutputIteratorInternalFacets ifit) const
 {
-  CGAL_triangulation_precondition(number_of_vertices() != 0);
+  CGAL_precondition(number_of_vertices() != 0);
 
   std::vector<Facet> facets;
   facets.reserve(64);
@@ -1097,7 +1065,7 @@ _side_of_sphere(const Cell_handle& c, const Point& q,
   // 2 iterations are enough (cf paper)
   for(int i=4; i>2; --i) {
     if(points[i] == &pts[4]) {
-      CGAL_triangulation_assertion(orientation(p0, p1, p2, p3, o0, o1, o2, o3)
+      CGAL_assertion(orientation(p0, p1, p2, p3, o0, o1, o2, o3)
           == POSITIVE);
       // since p0 p1 p2 p3 are non coplanar and positively oriented
       return ON_UNBOUNDED_SIDE;
@@ -1121,7 +1089,7 @@ _side_of_sphere(const Cell_handle& c, const Point& q,
     }
   }
 
-  CGAL_triangulation_assertion(false);
+  CGAL_assertion(false);
   return ON_UNBOUNDED_SIDE;
 }
 
@@ -1129,7 +1097,7 @@ template < class Gt, class Tds >
 bool Periodic_3_Delaunay_triangulation_3<Gt,Tds>::
 is_Gabriel(const Cell_handle c, int i) const
 {
-  CGAL_triangulation_precondition(number_of_vertices() != 0);
+  CGAL_precondition(number_of_vertices() != 0);
   typename Geom_traits::Side_of_bounded_sphere_3
     side_of_bounded_sphere =
     geom_traits().side_of_bounded_sphere_3_object();
@@ -1300,7 +1268,7 @@ public:
   bool test_initial_cell(Cell_handle c, const Offset &off) const
   {
     if(!(operator()(c, off)))
-      CGAL_triangulation_assertion(false);
+      CGAL_assertion(false);
     return true;
   }
 
@@ -1339,11 +1307,11 @@ public:
   inline void hide_point(Cell_handle, const Point &) { }
 
   inline void hide(Point &, Cell_handle ) const {
-    CGAL_triangulation_assertion(false);
+    CGAL_assertion(false);
   }
 
   inline void do_hide(const Point &, Cell_handle ) const {
-    CGAL_triangulation_assertion(false);
+    CGAL_assertion(false);
   }
   template < class Tester >
   inline bool replace_vertex(const Point &, Vertex_handle ,
@@ -1463,7 +1431,7 @@ operator>> (std::istream& is, Periodic_3_Delaunay_triangulation_3<GT,TDS> &tr)
 
   tr.compute_too_long_edges();
 
-  CGAL_triangulation_expensive_assertion( tr.is_valid() );
+  CGAL_expensive_assertion( tr.is_valid() );
   return is;
 }
 

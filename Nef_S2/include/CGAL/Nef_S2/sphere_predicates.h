@@ -51,7 +51,7 @@ points are part of the equator first. Otherwise we sort according to
 the angle of the halfcircle through $S$, $N$, and the points with
 respect to the xy-plane. If both lie on the same halfcircle then the
 angle with respect to $OS$ decides. The parameter $pos=1$ does
-everthing in the positive halfsphere. If $pos=-1$ then we rotate the
+everything in the positive halfsphere. If $pos=-1$ then we rotate the
 whole scenery around the y-axis by $\pi$. Then the x-axis points left
 and the z-axis into the equatorial plane. */
 

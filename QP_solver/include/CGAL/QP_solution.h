@@ -297,7 +297,7 @@ public:
   Quadratic_program_solution ()
     : Handle_for<const QP_solver_base<ET>*>(), et0(0)
   {
-    *(this->ptr()) = 0; // unitialized solution
+    *(this->ptr()) = 0; // uninitialized solution
   }
 
   Quadratic_program_solution (const QP_solver_base<ET>* s)

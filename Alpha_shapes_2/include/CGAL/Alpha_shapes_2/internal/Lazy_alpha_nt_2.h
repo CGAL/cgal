@@ -144,12 +144,12 @@ class Lazy_alpha_nt_2
   typedef typename Types::Exact_point                                      Exact_point;
   typedef typename Types::Input_point                                      Input_point;
 
-  //Convertion functions
+  //Conversion functions
   Approx_point to_approx(const Input_point& wp) const
   {
     // The traits class' Point_2 must be convertible using the Cartesian converter
-    CGAL_static_assertion((Is_traits_point_convertible_2<
-                            Input_traits, Kernel_approx, Kernel_exact, Weighted_tag>::value));
+    static_assert(Is_traits_point_convertible_2<
+                            Input_traits, Kernel_approx, Kernel_exact, Weighted_tag>::value);
 
     To_approx converter;
     return converter(wp);
@@ -158,8 +158,8 @@ class Lazy_alpha_nt_2
   Exact_point to_exact(const Input_point& wp) const
   {
     // The traits class' Point_2 must be convertible using the Cartesian converter
-    CGAL_static_assertion((Is_traits_point_convertible_2<
-                            Input_traits, Kernel_approx, Kernel_exact, Weighted_tag>::value));
+    static_assert(Is_traits_point_convertible_2<
+                            Input_traits, Kernel_approx, Kernel_exact, Weighted_tag>::value);
 
     To_exact converter;
     return converter(wp);
@@ -167,7 +167,7 @@ class Lazy_alpha_nt_2
 
   //members
   //the members can be updated when calling method exact()
-  mutable boost::optional<NT_exact> exact_;
+  mutable std::optional<NT_exact> exact_;
   mutable NT_approx approx_;
 
   //private functions
@@ -235,7 +235,7 @@ public:
 
   const NT_exact& exact() const
   {
-    if (exact_ == boost::none) {
+    if (exact_ == std::nullopt) {
       update_exact();
       approx_=to_interval(*exact_);
     }
@@ -448,7 +448,7 @@ struct Alpha_nt_selector_2
              GeomTraits,
              // If the base traits is already exact then we don't need to do anything,
              // and we can simply directly use the traits class
-             Boolean_tag<boost::is_floating_point<typename GeomTraits::FT>::value &&
+             Boolean_tag<std::is_floating_point<typename GeomTraits::FT>::value &&
                          ExactAlphaComparisonTag::value >,
              Weighted_tag>
 { };

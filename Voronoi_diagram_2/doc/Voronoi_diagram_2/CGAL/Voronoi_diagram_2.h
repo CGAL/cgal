@@ -15,8 +15,7 @@ that is similar to that of \cgal's arrangements.
 
 \tparam AP must be a model of the `AdaptationPolicy_2` concept.  The third template parameter defaults to `CGAL::Identity_policy_2<DG,AT>`.
 
-\cgalRefines `DefaultConstructible,` \cgalRefines `CopyConstructible,` \cgalRefines `Assignable`
-
+\cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
 
 \sa `CGAL::Delaunay_triangulation_2<Traits,Tds>`
 \sa `CGAL::Regular_triangulation_2<Traits,Tds>`
@@ -40,11 +39,7 @@ public:
     `Voronoi_diagram_2<DG,AT,AP>` class for Voronoi faces. Below we
     present its interface.
 
-    \cgalModels `DefaultConstructible`
-    \cgalModels `CopyConstructible`
-    \cgalModels `Assignable`
-    \cgalModels `EqualityComparable`
-    \cgalModels `LessThanComparable`
+    \cgalModels{DefaultConstructible,CopyConstructible,Assignable,EqualityComparable,LessThanComparable}
 
     \sa `CGAL::Voronoi_diagram_2<DG,AT,AP>`
     \sa \link CGAL::Voronoi_diagram_2::Vertex `CGAL::Voronoi_diagram_2<DG,AT,AP>::Vertex` \endlink
@@ -168,11 +163,7 @@ public:
     `Voronoi_diagram_2<DG,AT,AP>` class for Voronoi halfedges.
     Below we present its interface.
 
-    \cgalModels `DefaultConstructible`
-    \cgalModels `CopyConstructible`
-    \cgalModels `Assignable`
-    \cgalModels `EqualityComparable`
-    \cgalModels `LessThanComparable`
+    \cgalModels{DefaultConstructible,CopyConstructible,Assignable,EqualityComparable,LessThanComparable}
 
     \sa `CGAL::Voronoi_diagram_2<DG,AT,AP>`
     \sa \link CGAL::Voronoi_diagram_2::Vertex `CGAL::Voronoi_diagram_2<DG,AT,AP>::Vertex` \endlink
@@ -408,11 +399,7 @@ public:
     The class `Vertex` is the Voronoi vertex class provided by the class
     `Voronoi_diagram_2<DG,AT,AP>` class. Below we present its interface.
 
-    \cgalModels `DefaultConstructible`
-    \cgalModels `CopyConstructible`
-    \cgalModels `Assignable`,
-    \cgalModels `EqualityComparable`
-    \cgalModels `LessThanComparable`
+    \cgalModels{DefaultConstructible,CopyConstructible,Assignable,,EqualityComparable,LessThanComparable}
 
     \sa `CGAL::Voronoi_diagram_2<DG,AT,AP>`
     \sa \link CGAL::Voronoi_diagram_2::Halfedge `CGAL::Voronoi_diagram_2<DG,AT,AP>::Halfedge` \endlink
@@ -721,7 +708,7 @@ typedef unspecified_type Site_iterator;
 /*!
 The result type of the point location queries.
 */
-typedef boost::variant<Face_handle,Halfedge_handle,Vertex_handle>
+typedef std::variant<Face_handle,Halfedge_handle,Vertex_handle>
 Locate_result;
 
 /// @}

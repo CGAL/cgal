@@ -70,13 +70,13 @@ The class `Linear_cell_complex_traits<d,K>` is a model of `LinearCellComplexTrai
 \subsection Linear_cell_complexLinearCellComplexItems Linear Cell Complex Items
 \anchor sseclccitem
 
-The `LinearCellComplexItems` concept refines the `GenericMapItems` concept by adding the requirement that 0-attributes are enabled, and associated with a type of attribute being a model of the `CellAttributeWithPoint` concept.
+The `LinearCellComplexItems` concept refines the `GenericMapItems` concept by adding the requirement that 0-attributes are enabled, and associated with a type of attribute being a model of the `CellAttributeWithPoint` concept. Like for combinatorial and generalized maps, it is possible to use indices instead of handles as descriptors, by defining CGAL::Tag_true for Use_index type in the item class.
 
 The class `Linear_cell_complex_min_items<d>` is a model of `LinearCellComplexItems`. It defines `void` as information associated to darts, and instances of `Cell_attribute_with_point` (which contain no information) associated to each vertex. All other attributes are `void`.
 
 \section Linear_cell_complexOperations Operations
 
-Several operations defined in the combinatorial maps or generalized maps package can be used on a linear cell complex. This is the case for all the iteration operations that do not modify the model (see example in Section \ref ssec3Dlcc "A 3D Linear Cell Complex"). This is also the case for all the operations that do not create new 0-cells: `sew`, `unsew`, \link GenericMap::remove_cell `remove_cell`\endlink,  \link GenericMap::insert_cell_1_in_cell_2 `insert_cell_1_in_cell_2`\endlink or \link GenericMap::insert_cell_2_in_cell_3 `insert_cell_2_in_cell_3`\endlink. Indeed, all these operations update non `void` attributes, and thus update vertex attributes of a linear cell complex. Note that some existing 0-attributes can be duplicated by the `unsew` method, but these 0-attributes are not new but copies of existing old 0-attributes.
+Several operations defined in the combinatorial maps or generalized maps package can be used on a linear cell complex. This is the case for all the iteration operations that do not modify the model (see example in Section \ref ssec3Dlcc "A 3D Linear Cell Complex"). This is also the case for all the operations that do not create new 0-cells: `sew`, `unsew`, \link GenericMap::remove_cell `remove_cell`\endlink,  \link GenericMap::insert_cell_1_in_cell_2 `insert_cell_1_in_cell_2`\endlink, \link GenericMap::insert_cell_1_between_two_cells_2 `insert_cell_1_between_two_cells_2`\endlink or \link GenericMap::insert_cell_2_in_cell_3 `insert_cell_2_in_cell_3`\endlink. Indeed, all these operations update non `void` attributes, and thus update vertex attributes of a linear cell complex. Note that some existing 0-attributes can be duplicated by the `unsew` method, but these 0-attributes are not new but copies of existing old 0-attributes.
 
 However, operations that create a new 0-cell can not be directly used since the new 0-cell would not be associated with a vertex attribute. Indeed, it is not possible for these operations to automatically decide which point to create. These operations are: \link GenericMap::insert_cell_0_in_cell_1 `insert_cell_0_in_cell_1`\endlink, \link GenericMap::insert_cell_0_in_cell_2 `insert_cell_0_in_cell_2`\endlink, \link GenericMap::insert_dangling_cell_1_in_cell_2 `insert_dangling_cell_1_in_cell_2`\endlink, plus all the creation operations. For these operations, new versions are proposed taking some points as additional parameters. Lastly, some new operations are defined, which use the geometry (see sections \ref ssecconstructionsop "Construction Operations" and \ref ssecmodifop "Modification Operations").
 
@@ -101,7 +101,7 @@ If \link GenericMap::set_automatic_attributes_management `set_automatic_attribut
 \subsection Linear_cell_complexConstructionOperations Construction Operations
 \anchor ssecconstructionsop
 
-There are several member functions allowing to insert specific configurations of darts into a linear cell complex. These functions return a `Dart_handle` to the new object. Note that the dimension of the linear cell complex must be large enough: darts must contain all the applications (\f$ \alpha\f$ or \f$ \beta\f$) used by the operation. All these methods add new darts in the current linear cell complex, existing darts are not modified. These functions are \link LinearCellComplex::make_segment `make_segment`\endlink, \link LinearCellComplex::make_triangle `make_triangle`\endlink, \link LinearCellComplex::make_tetrahedron `make_tetrahedron`\endlink and \link LinearCellComplex::make_hexahedron `make_hexahedron`\endlink.
+There are several member functions allowing to insert specific configurations of darts into a linear cell complex. These functions return a `Dart_descriptor` to the new object. Note that the dimension of the linear cell complex must be large enough: darts must contain all the applications (\f$ \alpha\f$ or \f$ \beta\f$) used by the operation. All these methods add new darts in the current linear cell complex, existing darts are not modified. These functions are \link LinearCellComplex::make_segment `make_segment`\endlink, \link LinearCellComplex::make_triangle `make_triangle`\endlink, \link LinearCellComplex::make_tetrahedron `make_tetrahedron`\endlink and \link LinearCellComplex::make_hexahedron `make_hexahedron`\endlink.
 
 There are two functions allowing to build a linear cell complex from two other \cgal data types:
 <UL>
@@ -114,22 +114,22 @@ Lastly, the function \link ::import_from_plane_graph `import_from_plane_graph(lc
 \subsection Linear_cell_complexModificationOperations Modification Operations
 \anchor ssecmodifop
 
-Some methods are defined in `LinearCellComplex` to modify a linear cell complex and update the vertex attributes. In the following, we denote by `dh0`, `dh1`, `dh2` the dart handles for the darts `d0`, `d1`, `d2`, respectively. That is `d0 == *dh0`.
+Some methods are defined in `LinearCellComplex` to modify a linear cell complex and update the vertex attributes. In the following, we denote by `d0`, `d1`, `d2` for three dart descriptors.
 
 \cgalFigureBegin{fig_lcc_insert_vertex,lcc_insert_vertex.svg}
 Example of \link LinearCellComplex::insert_barycenter_in_cell `insert_barycenter_in_cell<1>`\endlink and `remove_cell<0>` operations. <B>Left</B>: Initial linear cell complex. <B>Right</B>: After the insertion of a point in the barycenter of the 1-cell containing dart <I>d1</I>. Now if we remove the 0-cell containing dart <I>d2</I>, we obtain a linear cell complex isomorphic to the initial one.
 \cgalFigureEnd
 
 
-\link LinearCellComplex::insert_barycenter_in_cell `lcc.insert_barycenter_in_cell<unsigned int i>(dh0)`\endlink adds the barycenter of the <I>i</I>-cell containing dart `d0`. This operation is possible if `d0`\f$ \in\f$\link GenericMap::darts `lcc.darts()`\endlink (see examples on \cgalFigureRef{fig_lcc_insert_vertex} and \cgalFigureRef{fig_lcc_triangulation}).
+\link LinearCellComplex::insert_barycenter_in_cell `lcc.insert_barycenter_in_cell<unsigned int i>(d0)`\endlink adds the barycenter of the <I>i</I>-cell containing dart `d0`. This operation is possible if `d0`\f$ \in\f$\link GenericMap::darts `lcc.darts()`\endlink (see examples on \cgalFigureRef{fig_lcc_insert_vertex} and \cgalFigureRef{fig_lcc_triangulation}).
 
-\link LinearCellComplex::insert_point_in_cell `lcc.insert_point_in_cell<unsigned int i>(dh0,p)`\endlink is an operation similar to the previous operation, the only difference being that the coordinates of the new point are here given by `p` instead of being computed as the barycenter of the <I>i</I>-cell. Currently, these two operations are only defined for `i=1` to insert a point in an edge, or `i=2` to insert a point in a facet.
+\link LinearCellComplex::insert_point_in_cell `lcc.insert_point_in_cell<unsigned int i>(d0,p)`\endlink is an operation similar to the previous operation, the only difference being that the coordinates of the new point are here given by `p` instead of being computed as the barycenter of the <I>i</I>-cell. Currently, these two operations are only defined for `i=1` to insert a point in an edge, or `i=2` to insert a point in a facet.
 
 \cgalFigureBegin{fig_lcc_triangulation,lcc_triangulation.svg}
 Examples of \link LinearCellComplex::insert_barycenter_in_cell `insert_barycenter_in_cell<2>`\endlink operation.
 \cgalFigureEnd
 
-\link LinearCellComplex::insert_dangling_cell_1_in_cell_2 `lcc.insert_dangling_cell_1_in_cell_2(dh0,p)`\endlink adds a 1-cell in the 2-cell containing dart `d0`, the 1-cell being attached by only one of its vertex to the 0-cell containing dart `d0`. The second vertex of the new edge is associated with a new 0-attribute containing a copy of `p` as point. This operation is possible if `d0`\f$ \in\f$\link GenericMap::darts `lcc.darts()`\endlink (see example on \cgalFigureRef{fig_lcc_insert_edge}).
+\link LinearCellComplex::insert_dangling_cell_1_in_cell_2 `lcc.insert_dangling_cell_1_in_cell_2(d0,p)`\endlink adds a 1-cell in the 2-cell containing dart `d0`, the 1-cell being attached by only one of its vertex to the 0-cell containing dart `d0`. The second vertex of the new edge is associated with a new 0-attribute containing a copy of `p` as point. This operation is possible if `d0`\f$ \in\f$\link GenericMap::darts `lcc.darts()`\endlink (see example on \cgalFigureRef{fig_lcc_insert_edge}).
 
 \cgalFigureBegin{fig_lcc_insert_edge,lcc_insert_edge.svg}
 Example of \link LinearCellComplex::insert_dangling_cell_1_in_cell_2 `insert_dangling_cell_1_in_cell_2`\endlink, `insert_cell_1_in_cell_2` and `remove_cell<1>` operations. <B>Left</B>: Initial linear cell complex. <B>Right</B>: After the insertion of a dangling 1-cell in the 2-cell containing dart <I>d1</I>, and of a 1-cell in the 2-cell containing dart <I>d2</I>. Now if we remove the 1-cells containing dart <I>d4</I> and <I>d5</I>, we obtain a linear cell complex isomorphic to the initial one.
@@ -140,6 +140,14 @@ Some examples of use of these operations are given in Section \ref ssec5dexample
 \cgalAdvancedBegin
 If \link GenericMap::set_automatic_attributes_management `set_automatic_attributes_management(false)`\endlink is called, all the future insertion or removal operations will not update non void attributes. These attributes will be updated latter by the call to \link GenericMap::set_automatic_attributes_management `set_automatic_attributes_management(true)`\endlink. This can be useful to speed up an algorithm which uses several successive insertion and removal operations. See example \ref ssecAttributesManagement "Automatic attributes management".
 \cgalAdvancedEnd
+
+
+\subsection Linear_cell_complexIncrementalBuilder Incremental Builder
+
+A utility class `Linear_cell_complex_incremental_builder_3` helps in creating 2D and 3D linear cell complexes
+from a list of points followed by a list of facets that are represented as indices into the point list.
+Note that, compared to `Polyhedron_incremental_builder_3` it has only absolute indexing and no rollback
+mechanism.
 
 \section Linear_cell_complexExamples Examples
 
@@ -244,7 +252,7 @@ Before applying the sew operation, the eight vertices of the first cube are colo
 \subsection Linear_cell_complexAutomaticAttributesManagement Automatic Attribute Management
 \anchor ssecAttributesManagement
 
-The following example illustrates the use of the automatic attributes management for a linear cell complex. An off file is loaded into a 2D linear cell complex embedded in 3D. Then, a certain percentage of edges is removed from the linear cell complex. The same method is applied twice: the first time by using the automatic attributes management (which is the default behaviour) and the second time by calling first  \link GenericMap::set_automatic_attributes_management `set_automatic_attributes_management(false)`\endlink to disable the automatic updating of attributes.
+The following example illustrates the use of the automatic attributes management for a linear cell complex. An off file is loaded into a 2D linear cell complex embedded in 3D. Then, a certain percentage of edges is removed from the linear cell complex. The same method is applied twice: the first time by using the automatic attributes management (which is the default behavior) and the second time by calling first  \link GenericMap::set_automatic_attributes_management `set_automatic_attributes_management(false)`\endlink to disable the automatic updating of attributes.
 
 We can observe that the second run is faster than the first one. Indeed, updating attribute for each edge removal give a bigger complexity. Moreover, the gain increases when the percentage of removed edges increases.
 
@@ -257,11 +265,27 @@ A linear cell complex can be visualized by calling the \link PkgDrawLinearCellCo
 
 \cgalExample{Linear_cell_complex/draw_linear_cell_complex.cpp}
 
-This function requires `CGAL_Qt5`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined.
-Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt5` and add the definition `CGAL_USE_BASIC_VIEWER`.
+This function requires `CGAL_Qt6`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined.
+Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt6` and add the definition `CGAL_USE_BASIC_VIEWER`.
 
 \cgalFigureBegin{fig_draw_lcc,draw_lcc.png}
 Result of the run of the draw_linear_cell_complex program. A window shows two 3D cubes and allows to navigate through the 3D scene.
+\cgalFigureEnd
+
+\subsection Linear_cell_complexIncrementalBuilderExample Incremental Builder
+
+The following example shows the incremental builder.
+
+\cgalExample{Linear_cell_complex/linear_cell_complex_3_incremental_builder.cpp}
+
+\subsection Linear_cell_complexInsert Insert an Edge Between Two Different Faces
+
+The following example shows the use of \link GenericMap::insert_cell_1_between_two_cells_2 `insert_cell_1_between_two_cells_2`\endlink operation that inserts an edge between two different faces, thus creating an hole in the first face.
+
+\cgalExample{Linear_cell_complex/linear_cell_complex_3_insert.cpp}
+
+\cgalFigureBegin{fig_lcc_insert,lcc_insert_example.png}
+Result of the run of the linear_cell_complex_3_insert program. A window shows the 3D cube where one face has a hole.
 \cgalFigureEnd
 
 \section Linear_cell_complexDesign Design and Implementation History
@@ -270,4 +294,3 @@ This package was developed by Guillaume Damiand, with the help of Andreas Fabri,
 
 */
 } /* namespace CGAL */
-

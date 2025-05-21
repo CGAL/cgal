@@ -26,14 +26,14 @@ template <typename Tr, typename Crit>
 class Delaunay_mesher_no_edge_refinement_2
 {
 
-  /** \name \c Tr types */
+  /** \name `Tr` types */
   typedef typename Tr::Vertex_handle Vertex_handle;
   typedef typename Tr::Face_handle Face_handle;
   typedef typename Tr::Edge Edge;
 
   typedef typename Tr::Point Point;
 
-  /** \name Types needed for private member datas */
+  /** \name Types needed for private member data */
   typedef Mesh_2::Do_not_refine_edges<Tr,
     Mesh_2::Is_locally_conforming_Gabriel<Tr> > Edges_level_base;
   typedef Mesh_2::Refine_edges<Tr,
@@ -54,7 +54,7 @@ public:
   typedef Seeds_iterator Seeds_const_iterator;
 
 private:
-  // --- PRIVATE MEMBER DATAS ---
+  // --- PRIVATE MEMBER DATA ---
   Tr& tr;
   Criteria criteria;
   Null_mesher_level null_level;
@@ -63,7 +63,8 @@ private:
   Faces_level faces_level;
 
   Seeds seeds;
-  bool seeds_mark;
+  bool seeds_mark = false;
+  bool initialized = false;
 public:
   /** \name CONSTRUCTORS */
   Delaunay_mesher_no_edge_refinement_2(Tr& tr_, const Criteria& criteria_ = Criteria())
@@ -72,20 +73,18 @@ public:
       null_level(),
       null_visitor(),
       edges_level(tr, null_level),
-      faces_level(tr, criteria, edges_level),
-      initialized(false)
+      faces_level(tr, criteria, edges_level)
   {
   }
 
   Delaunay_mesher_no_edge_refinement_2(Tr& tr_, Edges_level& edges_level_,
-                    const Criteria& criteria_ = Criteria())
+                                       const Criteria& criteria_ = Criteria())
     : tr(tr_),
       criteria(criteria_),
       null_level(),
       null_visitor(),
       edges_level(edges_level_),
-      faces_level(tr, criteria, edges_level),
-      initialized(false)
+      faces_level(tr, criteria, edges_level)
   {
   }
 
@@ -101,18 +100,12 @@ public:
     return seeds.end();
   }
 
-private:
-  /** \name INITIALIZED */
-
-  bool initialized;
-
-public:
   /** \name MARKING FUNCTIONS */
 
-  /** The value type of \a InputIterator should be \c Point, and represents
+  /** The value type of \a InputIterator should be `Point`, and represents
       seeds. Connected components of seeds are marked with the value of
-      \a mark. Other components are marked with \c !mark. The connected
-      component of infinite faces is always marked with \c false.
+      \a mark. Other components are marked with `!mark`. The connected
+      component of infinite faces is always marked with `false`.
   */
   template <class InputIterator>
   void set_seeds(InputIterator b, InputIterator e,
@@ -181,7 +174,7 @@ public:
     propagate_marks(tr.infinite_face(), false);
   }
 
-  /** Propagates the mark \c mark recursivly. */
+  /** Propagates the mark `mark` recursively. */
   static void propagate_marks(const Face_handle fh, bool mark)
   {
     // std::queue only works with std::list on VC++6, and not with

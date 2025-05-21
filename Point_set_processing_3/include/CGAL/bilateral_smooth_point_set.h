@@ -21,7 +21,7 @@
 #include <CGAL/Point_set_processing_3/internal/Callback_wrapper.h>
 #include <CGAL/for_each.h>
 #include <CGAL/property_map.h>
-#include <CGAL/point_set_processing_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/squared_distance_3.h>
 #include <functional>
 
@@ -72,8 +72,8 @@ compute_denoise_projection(
   typename Kernel::FT sharpness_angle           ///< control sharpness(0-90)
 )
 {
-  CGAL_point_set_processing_precondition(radius > 0);
-  CGAL_point_set_processing_precondition(sharpness_angle > 0
+  CGAL_precondition(radius > 0);
+  CGAL_precondition(sharpness_angle > 0
                                          && sharpness_angle < 90);
 
   // basic geometric types
@@ -89,8 +89,8 @@ compute_denoise_projection(
   FT project_weight_sum = FT(0.0);
   Vector normal_sum = CGAL::NULL_VECTOR;
 
-  FT cos_sigma = cos(sharpness_angle * CGAL_PI / 180.0);
-  FT sharpness_bandwidth = CGAL::square((CGAL::max)(1e-8, 1 - cos_sigma));
+  FT cos_sigma = cos(FT(sharpness_angle * CGAL_PI / 180.0));
+  FT sharpness_bandwidth = CGAL::square((CGAL::max)(FT(1e-8), FT(1.) - cos_sigma));
 
   for (typename PointRange::iterator it : neighbor_pwns)
   {
@@ -150,7 +150,7 @@ compute_max_spacing(
      boost::make_function_output_iterator
      ([&](const typename NeighborQuery::input_iterator& it)
       {
-        double dist2 = CGAL::squared_distance (get(point_map, vt), get(point_map, *it));
+        FT dist2 = CGAL::squared_distance (get(point_map, vt), get(point_map, *it));
         max_distance = (CGAL::max)(dist2, max_distance);
       }));
 
@@ -278,7 +278,7 @@ bilateral_smooth_point_set(
   typedef typename Kernel::Point_3 Point_3;
   typedef typename Kernel::Vector_3 Vector_3;
 
-  CGAL_static_assertion_msg(NP_helper::has_normal_map(), "Error: no normal map");
+  CGAL_assertion_msg(NP_helper::has_normal_map(points, np), "Error: no normal map");
 
   typedef typename Kernel::FT FT;
 
@@ -286,8 +286,8 @@ bilateral_smooth_point_set(
   const std::function<bool(double)>& callback = choose_parameter(get_parameter(np, internal_np::callback),
                                                                  std::function<bool(double)>());
 
-  CGAL_point_set_processing_precondition(points.begin() != points.end());
-  CGAL_point_set_processing_precondition(k > 1);
+  CGAL_precondition(points.begin() != points.end());
+  CGAL_precondition(k > 1);
 
   // types for K nearest neighbors search structure
   typedef Point_set_processing_3::internal::Neighbor_query<Kernel, PointRange&, PointMap> Neighbor_query;

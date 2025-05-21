@@ -10,9 +10,7 @@ This `AdaptableFunctor` provides evaluation of a
 For instance the polynomial \f$ p = 5x^2y^3 + y\f$ is interpreted as the homogeneous polynomial
 \f$ p[x](u,v) = 5x^2u^3 + uv^2\f$ and evaluated as such.
 
-\cgalRefines `AdaptableFunctor`
-\cgalRefines `CopyConstructible`
-\cgalRefines `DefaultConstructible`
+\cgalRefines{AdaptableFunctor,CopyConstructible,DefaultConstructible}
 
 \sa `Polynomial_d`
 \sa `PolynomialTraits_d`

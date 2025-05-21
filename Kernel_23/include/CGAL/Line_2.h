@@ -18,11 +18,12 @@
 #define CGAL_LINE_2_H
 
 #include <CGAL/assertions.h>
-#include <boost/type_traits/is_same.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Dimension.h>
 #include <CGAL/IO/io.h>
 #include <CGAL/Kernel/mpl.h>
+
+#include <type_traits>
 
 namespace CGAL {
 
@@ -40,7 +41,7 @@ class Line_2 : public R_::Kernel_base::Line_2
   typedef typename R_::Kernel_base::Line_2   RLine_2;
 
   typedef Line_2                             Self;
-  CGAL_static_assertion((boost::is_same<Self, typename R_::Line_2>::value));
+  static_assert(std::is_same<Self, typename R_::Line_2>::value);
 
 public:
 
@@ -88,18 +89,17 @@ public:
     : RLine_2(typename R::Construct_line_2()(Return_base_tag(), p,v)) {}
 
 
-  // FIXME : Use Qrt<> here.
-  RT a() const
+  decltype(auto) a() const
   {
     return R().compute_a_2_object()(*this);
   }
 
-  RT b() const
+  decltype(auto) b() const
   {
     return R().compute_b_2_object()(*this);
   }
 
-  RT c() const
+  decltype(auto) c() const
   {
     return R().compute_c_2_object()(*this);
   }
@@ -223,19 +223,6 @@ public:
   {
     return R().construct_point_2_object()(*this,i);
   }
-
-  typename R::Boolean
-  operator==(const Line_2 &l) const
-  {
-    return R().equal_2_object()(*this, l);
-  }
-
-  typename R::Boolean
-  operator!=(const Line_2 &l) const
-  {
-    return !(*this == l);
-  }
-
 };
 
 

@@ -25,10 +25,11 @@
 #include <CGAL/circulator.h>
 #include <CGAL/Iterator_range.h>
 #include <CGAL/tuple.h>
+#include <CGAL/type_traits.h>
 #include <CGAL/use.h>
 
-#include <boost/variant.hpp>
-#include <boost/optional.hpp>
+#include <variant>
+#include <optional>
 #include <boost/config.hpp>
 
 #include <vector>
@@ -37,28 +38,34 @@
 
 namespace CGAL {
 
-template<typename I>
+template<typename I, typename Reference_type = const I&>
 class Prevent_deref
   : public boost::iterator_adaptor<
-  Prevent_deref<I>
+    Prevent_deref<I, Reference_type>
   , I // base
-  , I // value
+  , CGAL::cpp20::remove_cvref_t<Reference_type> // value
+  , boost::use_default // category
+  , Reference_type // ref
   >
 {
 public:
-  typedef boost::iterator_adaptor<
-  Prevent_deref<I>
+  using Value_type = CGAL::cpp20::remove_cvref_t<Reference_type>;
+  using Base = boost::iterator_adaptor<
+    Prevent_deref<I, Reference_type>
   , I // base
-  , I // value
-  > Base;
-  typedef typename Base::reference reference;
+  , Value_type // value
+  , boost::use_default // category
+  , Reference_type // ref
+  >;
   typedef typename std::pair<I, I> range;
 
-  Prevent_deref() : Base() {}
+  Prevent_deref() = default;
   Prevent_deref(const I& i) : Base(i) {}
 private:
   friend class boost::iterator_core_access;
-  reference dereference() const { return const_cast<typename boost::remove_reference<reference>::type&>(this->base_reference()); }
+  Reference_type dereference() const {
+    return this->base_reference();
+  }
 };
 
 template<typename I>
@@ -608,7 +615,7 @@ public:
   reference operator*() const { return *c_;  }
   pointer operator->() const  { return &*c_; }
   const Predicate& predicate() const { return p_; }
-  Iterator base() const { return c_; }
+  const Iterator& base() const { return c_; }
 
   Iterator end() const { return e_; }
   bool is_end() const { return (c_ == e_); }
@@ -1262,7 +1269,7 @@ filter_output_iterator(I e, const P& p)
 namespace internal {
 
 template<typename OutputIterator>
-struct Output_visitor : boost::static_visitor<OutputIterator&> {
+struct Output_visitor {
   Output_visitor(OutputIterator* it) : out(it) {}
   OutputIterator* out;
 
@@ -1279,23 +1286,40 @@ struct Output_visitor : boost::static_visitor<OutputIterator&> {
 
 namespace internal {
 
-template < typename D, typename V = std::tuple<>, typename O = std::tuple<> >
+template < typename D, bool with_drop, typename V = std::tuple<>, typename O = std::tuple<> >
 struct Derivator
 {
-  typedef Derivator<D, V, O> Self;
+  typedef Derivator<D, with_drop, V, O> Self;
+  Derivator() = default;
+  Derivator(const Self&) = default;
   Self& operator=(const Self&) = delete;
   template <class Tuple>
   void tuple_dispatch(const Tuple&)
   {}
 };
 
-template < typename D, typename V1, typename O1, typename... V, typename... O>
-struct Derivator<D, std::tuple<V1, V...>, std::tuple<O1, O...> >
-  : public Derivator<D, std::tuple<V...>, std::tuple<O...> >
+template < typename D>
+struct Derivator<D, true, std::tuple<>, std::tuple<>>
 {
-  typedef Derivator<D, std::tuple<V1, V...>, std::tuple<O1, O...> > Self;
-  typedef Derivator<D, std::tuple<V...>, std::tuple<O...> > Base;
+  typedef Derivator<D, true, std::tuple<>, std::tuple<>> Self;
+  Derivator() = default;
+  Derivator(const Self&) = default;
+  Self& operator=(const Self&) = delete;
+  template <class Tuple>
+  void tuple_dispatch(const Tuple&){}
+  template <class T>
+  Self& operator=(const T&) { return *this; } // dropping value
+};
 
+template < typename D, bool with_drop, typename V1, typename O1, typename... V, typename... O>
+struct Derivator<D, with_drop, std::tuple<V1, V...>, std::tuple<O1, O...> >
+  : public Derivator<D, with_drop, std::tuple<V...>, std::tuple<O...> >
+{
+  typedef Derivator<D, with_drop, std::tuple<V1, V...>, std::tuple<O1, O...> > Self;
+  typedef Derivator<D, with_drop, std::tuple<V...>, std::tuple<O...> > Base;
+
+  Derivator() = default;
+  Derivator(const Self&) = default;
   Self& operator=(const Self&) = delete;
 
   using Base::operator=;
@@ -1328,20 +1352,20 @@ auto to_tuple(std::tuple<Args...> &t, std::index_sequence<Is...>)
 
 // OutputIterator which accepts several types in *o++= and dispatches,
 // wraps several other output iterators, and dispatches accordingly.
-template < typename V, typename O >
-class Dispatch_output_iterator;
+template < typename V, typename O, bool drop_unknown_value_types>
+class Dispatch_output_iterator_impl;
 
-template < typename... V, typename... O >
-class Dispatch_output_iterator < std::tuple<V...>, std::tuple<O...> >
- : private internal::Derivator<Dispatch_output_iterator< std::tuple<V...>, std::tuple<O...> >, std::tuple<V...>, std::tuple<O...> >
+template < typename... V, typename... O,  bool drop_unknown_value_types>
+class Dispatch_output_iterator_impl < std::tuple<V...>, std::tuple<O...>, drop_unknown_value_types>
+ : private internal::Derivator<Dispatch_output_iterator_impl< std::tuple<V...>, std::tuple<O...>, drop_unknown_value_types >, drop_unknown_value_types, std::tuple<V...>, std::tuple<O...> >
  , public std::tuple<O...>
 {
-  CGAL_static_assertion_msg(sizeof...(V) == sizeof...(O),
+  static_assert(sizeof...(V) == sizeof...(O),
                 "The number of explicit template parameters has to match the number of arguments");
 
   static const int size = sizeof...(V);
 
-  template <typename D, typename V_, typename O_>
+  template <typename D, bool with_drop, typename V_, typename O_>
   friend struct internal::Derivator;
 
 public:
@@ -1357,18 +1381,18 @@ public:
 
 private:
 
-  typedef Dispatch_output_iterator Self;
-  typedef internal::Derivator<Self, Value_type_tuple, Iterator_tuple > Base;
+  typedef Dispatch_output_iterator_impl Self;
+  typedef internal::Derivator<Self, drop_unknown_value_types, Value_type_tuple, Iterator_tuple > Base;
 
 public:
 
   using Base::operator=;
   using Base::tuple_dispatch;
 
-  Dispatch_output_iterator(O... o) : std::tuple<O...>(o...) {}
+  Dispatch_output_iterator_impl(O... o) : std::tuple<O...>(o...) {}
 
 
-  Dispatch_output_iterator(const Dispatch_output_iterator&)=default;
+  Dispatch_output_iterator_impl(const Dispatch_output_iterator_impl&)=default;
 
   Self& operator=(const Self& s)
   {
@@ -1376,17 +1400,17 @@ public:
     return *this;
   }
 
-  template<BOOST_VARIANT_ENUM_PARAMS(typename T)>
-  Self& operator=(const boost::variant<BOOST_VARIANT_ENUM_PARAMS(T) >& t) {
+  template<typename ... T>
+  Self& operator=(const std::variant< T ... >& t) {
     internal::Output_visitor<Self> visitor(this);
-    t.apply_visitor(visitor);
+    std::visit(visitor, t);
     return *this;
   }
 
-  template<BOOST_VARIANT_ENUM_PARAMS(typename T)>
-  Self& operator=(const boost::optional< boost::variant<BOOST_VARIANT_ENUM_PARAMS(T) > >& t) {
+  template<typename ... T>
+  Self& operator=(const std::optional< std::variant< T ... > >& t) {
     internal::Output_visitor<Self> visitor(this);
-    if(t)  boost::apply_visitor(visitor, *t);
+    if(t)  std::visit(visitor, *t);
     return *this;
   }
 
@@ -1413,6 +1437,10 @@ public:
   }
 };
 
+
+template<class V, class O>
+using Dispatch_output_iterator = Dispatch_output_iterator_impl<V,O,false>;
+
 template < typename... V, typename... O>
 Dispatch_output_iterator<std::tuple<V...>, std::tuple<O...> >
 dispatch_output(O... o)
@@ -1424,37 +1452,8 @@ dispatch_output(O... o)
 // Same as Dispatch_output_iterator, but has a dummy *o++= for all other types
 // that drops the data (same as Emptyset_iterator).
 
-template < typename V, typename O >
-class Dispatch_or_drop_output_iterator;
-
-template < typename... V, typename... O >
-class Dispatch_or_drop_output_iterator < std::tuple<V...>, std::tuple<O...> >
- : public Dispatch_output_iterator< std::tuple<V...>, std::tuple<O...> >
-{
-  typedef Dispatch_or_drop_output_iterator Self;
-  typedef Dispatch_output_iterator< std::tuple<V...>, std::tuple<O...> > Base;
-
-  template <typename D, typename V_, typename O_>
-  friend struct internal::Derivator;
-
-public:
-
-  Dispatch_or_drop_output_iterator(O... o) : Base(o...) {}
-
-  Dispatch_or_drop_output_iterator(const Dispatch_or_drop_output_iterator&)=default;
-  Dispatch_or_drop_output_iterator& operator=(const Dispatch_or_drop_output_iterator&)=default;
-
-  using Base::operator=;
-
-  Self& operator*() { return *this; }
-  Self& operator++() { return *this; }
-  Self& operator++(int) { return *this; }
-
-  template <class T>
-  Self& operator=(const T&) { return *this; }
-
-};
-
+template<class V, class O>
+using Dispatch_or_drop_output_iterator = Dispatch_output_iterator_impl<V,O,true>;
 
 template < typename... V, typename... O>
 inline

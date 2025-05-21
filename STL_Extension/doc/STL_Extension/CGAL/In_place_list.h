@@ -723,7 +723,7 @@ void unique();
 /*!
 merges the list `ipl2`
 into the list `ipl` and `ipl2` becomes empty. It is stable.
-\pre Both lists are increasingly sorted. A suitable `operator<` for the type `T`.
+\pre Both lists are sorted in increasing order by means of a suitable `operator<` for the type `T`.
 */
 void merge(In_place_list<T,bool>& ipl2);
 
@@ -749,7 +749,7 @@ void reverse();
 /// @{
 /*!
 sorts the list `ipl` according to the
-`operator<` in time \f$ O(n \log n)\f$ where `n = size()`.
+`operator<` in time \cgalBigO{n \log n} where `n = size()`.
 It is stable.
 \pre a suitable `operator<` for the type `T`.
 */

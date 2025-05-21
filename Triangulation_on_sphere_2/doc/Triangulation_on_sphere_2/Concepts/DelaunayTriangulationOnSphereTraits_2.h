@@ -2,7 +2,7 @@
 \ingroup PkgTriangulationOnSphere2Concepts
 \cgalConcept
 
-\cgalRefines TriangulationOnSphereTraits_2
+\cgalRefines{TriangulationOnSphereTraits_2}
 
 The concept `DelaunayTriangulationOnSphereTraits_2` describes the set of requirements
 to be fulfilled by any class used to instantiate the first template
@@ -11,8 +11,10 @@ parameter of the class `CGAL::Delaunay_triangulation_on_sphere_2<Traits, Tds>`.
 To the requirements listed within the concept `TriangulationOnSphereTraits_2`,
 this concept adds types and functors requirements related to build the dual on the sphere.
 
-\cgalHasModel `CGAL::Delaunay_triangulation_on_sphere_traits_2`
-\cgalHasModel `CGAL::Projection_on_sphere_traits_3`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Delaunay_triangulation_on_sphere_traits_2}
+\cgalHasModels{CGAL::Projection_on_sphere_traits_3}
+\cgalHasModelsEnd
 */
 class DelaunayTriangulationOnSphereTraits_2
 {

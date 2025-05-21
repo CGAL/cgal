@@ -18,12 +18,11 @@
 
 #include <CGAL/property_map.h>
 #include <CGAL/value_type_traits.h>
-#include <CGAL/point_set_processing_assertions.h>
 #include <CGAL/Kernel_traits.h>
 
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
-#include <CGAL/is_iterator.h>
+#include <CGAL/type_traits/is_iterator.h>
 
 #include <boost/version.hpp>
 #include <boost/cstdint.hpp>
@@ -44,7 +43,7 @@
 #  pragma GCC diagnostic ignored "-Wstrict-aliasing"
 #endif
 
-#define USE_AS_DLL
+#define USE_AS_DLL 1
 #include <lasreader_las.hpp>
 #undef USE_AS_DLL
 
@@ -124,7 +123,7 @@ typedef Base<unsigned short, Id::I> I;
 /**
    \ingroup PkgPointSetProcessing3IOLas
 
-   Generates a %LAS property handler to read 3D points. Points are
+   generates a %LAS property handler to read 3D points. Points are
    constructed from the input the using 3 %LAS properties
    `LAS_property::X`, `LAS_property::Y` and `LAS_property::Z`.
 
@@ -385,7 +384,11 @@ bool read_LAS_with_properties(std::istream& is,
   if(!is)
     return false;
 
+#if LAS_TOOLS_VERSION < 240319
   LASreaderLAS lasreader;
+#else
+  LASreaderLAS lasreader(nullptr);
+#endif
   lasreader.open(is);
 
   while(lasreader.read_point())
@@ -476,7 +479,7 @@ bool read_LAS(std::istream& is,
 
 template <typename OutputIterator, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_LAS(std::istream& is, OutputIterator output, const CGAL_NP_CLASS& np = parameters::default_values(),
-              typename std::enable_if<CGAL::is_iterator<OutputIterator>::value>::type* = nullptr)
+              std::enable_if_t<CGAL::is_iterator<OutputIterator>::value>* = nullptr)
 {
   return read_LAS<typename value_type_traits<OutputIterator>::type>(is, output, np);
 }
@@ -575,11 +578,7 @@ bool read_las_points(std::istream& is, ///< input stream.
 
 /// \endcond
 
-/**
- \ingroup PkgPointSetProcessing3IODeprecated
 
- \deprecated This function is deprecated since \cgal 5.3, `CGAL::IO::read_LAS_with_properties()` should be used instead.
-*/
 template <typename OutputIteratorValueType,
           typename OutputIterator,
           typename ... PropertyHandler>
@@ -603,11 +602,6 @@ CGAL_DEPRECATED bool read_las_points_with_properties(std::istream& is,
 
 /// \endcond
 
-/**
- \ingroup PkgPointSetProcessing3IODeprecated
-
- \deprecated This function is deprecated since \cgal 5.3, `CGAL::IO::read_LAS()` should be used instead.
-*/
 template <typename OutputIteratorValueType,
           typename OutputIterator,
           typename CGAL_NP_TEMPLATE_PARAMETERS>

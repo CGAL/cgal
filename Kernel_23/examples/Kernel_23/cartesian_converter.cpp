@@ -30,7 +30,7 @@ int main(){
   // As we are sure that there IS an intersection
   // and that the intersection IS a point
   // we do not have to check for this, or put it in a try/catch
-  const EK::Point_3& exact_pt = boost::get<EK::Point_3>(*inter);
+  const EK::Point_3& exact_pt = std::get<EK::Point_3>(*inter);
 
   EK_to_IK to_inexact;
 

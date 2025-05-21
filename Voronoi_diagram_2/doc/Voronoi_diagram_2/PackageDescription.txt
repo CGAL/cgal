@@ -13,16 +13,13 @@
 /// \ingroup PkgVoronoiDiagram2Ref
 
 /*!
-  \code
-  #include <CGAL/draw_voronoi_diagram_2.h>
-  \endcode
+\cgalInclude{CGAL/draw_voronoi_diagram_2.h}
 */
 /// \defgroup PkgDrawVoronoiDiagram2 Draw a 2D Voronoi Diagram
 /// \ingroup PkgVoronoiDiagram2Ref
 
 /*!
 \addtogroup PkgVoronoiDiagram2Ref
-\todo check generated documentation
 \cgalPkgDescriptionBegin{2D Voronoi Diagram Adaptor,PkgVoronoiDiagram2}
 \cgalPkgPicture{voronoi.png}
 \cgalPkgSummaryBegin
@@ -92,6 +89,7 @@ performing this adaptation.
 \cgalCRPSection{Draw Voronoi Diagram}
 
 - \link PkgDrawVoronoiDiagram2 CGAL::draw<VD>() \endlink
-
+- `GraphicsSceneOptionsVoronoiDiagram2`
+- `CGAL::Graphics_scene_options_voronoi_2`
 
 */

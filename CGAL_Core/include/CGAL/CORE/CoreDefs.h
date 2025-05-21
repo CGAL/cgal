@@ -17,7 +17,7 @@
  *       Chen Li <chenli@cs.nyu.edu>
  *       Zilin Du <zilin@cs.nyu.edu>
  *
- * WWW URL: http://cs.nyu.edu/exact/
+ * WWW URL: https://cs.nyu.edu/exact/
  * Email: exact@cs.nyu.edu
  *
  * $URL$
@@ -79,7 +79,7 @@ CGAL_GLOBAL_STATE_VAR(bool, AbortFlag, true)
 CGAL_GLOBAL_STATE_VAR(std::atomic<bool>, AbortFlag, true)
 #endif
 
-/// Invalid Flag -- initiallly value is non-negative
+/// Invalid Flag -- initially value is non-negative
 /** If the Abort Flag is false, then the Invalid flag will be set to
  *  a negative value whenever an invalid expression is constructed.
  *  It is the user's responsibility to check this flag and to make

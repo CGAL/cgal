@@ -6,7 +6,7 @@
 Computes an open isolating interval for an `AlgebraicKernel_d_1::Algebraic_real_1`
 with respect to the real roots of a given univariate polynomial.
 
-\cgalRefines `AdaptableBinaryFunction`
+\cgalRefines{AdaptableBinaryFunction}
 
 \sa `AlgebraicKernel_d_1::ComputePolynomial_1`
 

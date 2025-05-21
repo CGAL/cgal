@@ -20,8 +20,7 @@
 #include "Utils/Utils.h"
 
 template <typename Arr_>
-class DeleteCurveCallback : public DeleteCurveCallbackBase
-{
+class DeleteCurveCallback : public DeleteCurveCallbackBase {
 public:
   typedef Arr_ Arrangement;
   typedef typename Arrangement::Halfedge_handle Halfedge_handle;
@@ -62,11 +61,12 @@ struct ExplicitLambda
   CGAL::Object& arr_obj;
   QObject* parent;
 };
+
 } // anonymous namespace
 
+//
 DeleteCurveCallbackBase* DeleteCurveCallbackBase::create(
-  demo_types::TraitsType tt, CGAL::Object arr_obj, QObject* parent)
-{
+  demo_types::TraitsType tt, CGAL::Object arr_obj, QObject* parent) {
   DeleteCurveCallbackBase* res;
   ExplicitLambda explicit_lambda{res, arr_obj, parent};
   demo_types::visitArrangementType(tt, explicit_lambda);
@@ -75,13 +75,14 @@ DeleteCurveCallbackBase* DeleteCurveCallbackBase::create(
 
 /*! Constructor */
 template <typename Arr_>
-DeleteCurveCallback<Arr_>::DeleteCurveCallback(
-  Arrangement* arr_, QObject* parent_) :
-    DeleteCurveCallbackBase(parent_),
-    highlightedCurve(new CGAL::Qt::CurveGraphicsItem<Traits>()), arr(arr_)
+DeleteCurveCallback<Arr_>::DeleteCurveCallback(Arrangement* arr_,
+                                               QObject* parent_) :
+  DeleteCurveCallbackBase(parent_),
+  highlightedCurve(new CGAL::Qt::CurveGraphicsItem<Traits>(*(arr_->geometry_traits()))),
+  arr(arr_)
 {
-  QObject::connect(
-    this, SIGNAL(modelChanged()), this->highlightedCurve, SLOT(modelChanged()));
+  QObject::connect(this, SIGNAL(modelChanged()),
+                   this->highlightedCurve, SLOT(modelChanged()));
 
   this->setDeleteMode(DeleteMode::DeleteOriginatingCuve);
 }
@@ -91,13 +92,13 @@ DeleteCurveCallback<Arr_>::DeleteCurveCallback(
   sets the current scene of the viewport
 */
 template <typename Arr_>
-void DeleteCurveCallback<Arr_>::setScene(QGraphicsScene* scene_)
-{
+void DeleteCurveCallback<Arr_>::setScene(QGraphicsScene* scene_) {
   CGAL::Qt::Callback::setScene(scene_);
   this->highlightedCurve->setScene(scene_);
   if (this->scene) { this->scene->addItem(this->highlightedCurve); }
 }
 
+//
 template <typename Arr_>
 void DeleteCurveCallback<Arr_>::reset()
 {
@@ -105,28 +106,25 @@ void DeleteCurveCallback<Arr_>::reset()
   this->removableHalfedge = Halfedge_handle();
 }
 
+//
 template <typename Arr_>
-void DeleteCurveCallback<Arr_>::mousePressEvent(
-  QGraphicsSceneMouseEvent* /* event */)
-{
+void DeleteCurveCallback<Arr_>::
+mousePressEvent(QGraphicsSceneMouseEvent* /* event */) {
   if (this->removableHalfedge == Halfedge_handle()) { return; }
 
-  if (this->deleteMode == DeleteMode::DeleteOriginatingCuve)
-  {
+  if (this->deleteMode == DeleteMode::DeleteOriginatingCuve) {
     Originating_curve_iterator it =
       this->arr->originating_curves_begin(this->removableHalfedge);
     Originating_curve_iterator it_end =
       this->arr->originating_curves_end(this->removableHalfedge);
-    while (it != it_end)
-    {
+    while (it != it_end) {
       Originating_curve_iterator temp = it;
       ++temp;
       CGAL::remove_curve(*(this->arr), it);
       it = temp;
     }
   }
-  else
-  {
+  else {
     // CGAL::remove_edge( *(this->arr), this->removableHalfedge->curve( ) );
     this->arr->remove_edge(this->removableHalfedge);
   }
@@ -134,16 +132,15 @@ void DeleteCurveCallback<Arr_>::mousePressEvent(
   Q_EMIT modelChanged();
 }
 
+//
 template <typename Arr_>
 void DeleteCurveCallback<Arr_>::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
-{
-  this->highlightNearestCurve(event);
-}
+{ this->highlightNearestCurve(event); }
 
+//
 template <typename Arr_>
-void DeleteCurveCallback<Arr_>::highlightNearestCurve(
-  QGraphicsSceneMouseEvent* event)
-{
+void DeleteCurveCallback<Arr_>::
+highlightNearestCurve(QGraphicsSceneMouseEvent* event) {
   typedef typename ArrTraitsAdaptor<Traits>::Kernel Kernel;
   typedef typename Kernel::Point_2 Point;
 
@@ -164,12 +161,11 @@ void DeleteCurveCallback<Arr_>::highlightNearestCurve(
 
   // create a curve graphics item and add it to the scene
   this->highlightedCurve->clear();
-  if (this->deleteMode == DeleteMode::DeleteOriginatingCuve)
-  { // highlight the originating curve
+  if (this->deleteMode == DeleteMode::DeleteOriginatingCuve) {
+    // highlight the originating curve
     Originating_curve_iterator ocit, temp;
     ocit = this->arr->originating_curves_begin(this->removableHalfedge);
-    while (ocit != this->arr->originating_curves_end(this->removableHalfedge))
-    {
+    while (ocit != this->arr->originating_curves_end(this->removableHalfedge)) {
       temp = ocit;
       ++temp;
 
@@ -184,8 +180,8 @@ void DeleteCurveCallback<Arr_>::highlightNearestCurve(
       ocit = temp;
     }
   }
-  else
-  { // highlight just the edge
+  else {
+    // highlight just the edge
     this->highlightedCurve->insert(this->removableHalfedge->curve());
   }
 

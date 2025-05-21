@@ -51,7 +51,11 @@ int main(int argc, char* argv[])
 
   std::cout<<"Cycle 1 (pink): "; display_cycle_info(sm, cycle1);
   std::cout<<"Cycle 2 (green): "; display_cycle_info(sm, cycle2);
-  if (draw) { CGAL::draw(sm, {cycle1, cycle2}); }
+  if (draw)
+  {
+    auto cycles={cycle1, cycle2};
+    CGAL::draw(sm, cycles);
+  }
 
   return EXIT_SUCCESS;
 }

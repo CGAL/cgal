@@ -20,14 +20,16 @@
   `Construct_`. If the result type is a number type, the name is prefixed by `Compute_`.
   When the result type is not determined, no prefix is used.
 
-  \cgalHasModel `CGAL::Cartesian<FieldNumberType>`
-  \cgalHasModel `CGAL::Homogeneous<RingNumberType>`
-  \cgalHasModel `CGAL::Simple_cartesian<FieldNumberType>`
-  \cgalHasModel `CGAL::Simple_homogeneous<RingNumberType>`
-  \cgalHasModel `CGAL::Filtered_kernel<CK>`
-  \cgalHasModel `CGAL::Exact_predicates_exact_constructions_kernel`
-  \cgalHasModel `CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt`
-  \cgalHasModel `CGAL::Exact_predicates_inexact_constructions_kernel`
+  \cgalHasModelsBegin
+  \cgalHasModels{CGAL::Cartesian<FieldNumberType>}
+  \cgalHasModels{CGAL::Homogeneous<RingNumberType>}
+  \cgalHasModels{CGAL::Simple_cartesian<FieldNumberType>}
+  \cgalHasModels{CGAL::Simple_homogeneous<RingNumberType>}
+  \cgalHasModels{CGAL::Filtered_kernel<CK>}
+  \cgalHasModels{CGAL::Exact_predicates_exact_constructions_kernel}
+  \cgalHasModels{CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt}
+  \cgalHasModels{CGAL::Exact_predicates_inexact_constructions_kernel}
+  \cgalHasModelsEnd
 
   \sa `Kernel_d`
   \sa `CGAL::Ambient_dimension`
@@ -1467,6 +1469,11 @@ public:
     a model of `Kernel::LessDistanceToPoint_3`
   */
   typedef unspecified_type Less_distance_to_point_3;
+
+  /*!
+    a model of `Kernel::CompareAngle_3`
+  */
+  typedef unspecified_type Compare_angle_3;
 
   /*!
     a model of `Kernel::CompareDihedralAngle_3`

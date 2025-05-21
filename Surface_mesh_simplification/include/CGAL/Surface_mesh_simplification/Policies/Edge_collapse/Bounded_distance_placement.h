@@ -15,14 +15,14 @@
 #include <CGAL/license/Surface_mesh_simplification.h>
 
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
-#include <CGAL/AABB_triangle_primitive.h>
+#include <CGAL/AABB_traits_3.h>
+#include <CGAL/AABB_triangle_primitive_3.h>
 #include <CGAL/assertions.h>
 #include <CGAL/Default.h>
 #include <CGAL/intersections.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
-#include <boost/optional.hpp>
+#include <optional>
 
 #include <vector>
 #include <type_traits>
@@ -41,15 +41,15 @@ class Bounded_distance_placement
   typedef std::vector<Triangle>                                               Triangle_container;
   typedef typename Triangle_container::iterator                               TC_iterator;
 
-  typedef CGAL::AABB_triangle_primitive<GeomTraits, TC_iterator>              Primitive;
-  typedef CGAL::AABB_traits<GeomTraits, Primitive>                            Traits;
+  typedef CGAL::AABB_triangle_primitive_3<GeomTraits, TC_iterator>            Primitive;
+  typedef CGAL::AABB_traits_3<GeomTraits, Primitive>                          Traits;
   typedef CGAL::AABB_tree<Traits>                                             AABB_tree;
 
 private:
   template <typename Profile>
   void initialize_tree(const Profile& profile) const
   {
-    CGAL_static_assertion((std::is_same<GeomTraits, typename Profile::Geom_traits>::value));
+    static_assert(std::is_same<GeomTraits, typename Profile::Geom_traits>::value);
 
     typedef typename Profile::Triangle_mesh                                   Triangle_mesh;
     typedef typename boost::graph_traits<Triangle_mesh>::halfedge_descriptor  halfedge_descriptor;
@@ -93,12 +93,12 @@ public:
   }
 
   template <typename Profile>
-  boost::optional<typename Profile::Point>
+  std::optional<typename Profile::Point>
   operator()(const Profile& profile) const
   {
     typedef typename Profile::Point                                           Point;
 
-    boost::optional<typename Profile::Point> op = m_base_placement(profile);
+    std::optional<typename Profile::Point> op = m_base_placement(profile);
     if(op)
     {
       if(m_tree_ptr == nullptr)
@@ -121,7 +121,7 @@ public:
          m_tree_ptr->do_intersect(CGAL::Sphere_3<Geom_traits>(p, m_sq_threshold_dist)))
         return op;
 
-      return boost::optional<Point>();
+      return std::optional<Point>();
     }
 
     return op;
@@ -153,13 +153,13 @@ public:
   { }
 
   template <typename Profile>
-  boost::optional<typename Profile::Point>
+  std::optional<typename Profile::Point>
   operator()(const Profile& profile) const
   {
     typedef typename Profile::Geom_traits                                     Geom_traits;
     typedef typename Profile::Point                                           Point;
 
-    boost::optional<typename Profile::Point> op = m_base_placement(profile);
+    std::optional<typename Profile::Point> op = m_base_placement(profile);
     if(op)
     {
       CGAL_assertion(m_tree_ptr != nullptr);
@@ -173,7 +173,7 @@ public:
          m_tree_ptr->do_intersect(CGAL::Sphere_3<Geom_traits>(p, m_sq_threshold_dist)))
         return op;
 
-      return boost::optional<Point>();
+      return std::optional<Point>();
     }
 
     return op;

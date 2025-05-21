@@ -45,7 +45,7 @@ public:
 
   typedef typename Points_vector::iterator                Point_iterator;
 
-  typedef typename boost::variant<Vertex_const_handle,
+  typedef typename std::variant<Vertex_const_handle,
                                   Halfedge_const_handle,
                                   Face_const_handle>      Cell_handle;
 
@@ -226,10 +226,10 @@ compare(const Cell_handle& expected, const Cell_handle& actual)
 {
   // Assign object to a face
   const Face_const_handle* fh_expected =
-    boost::get<Face_const_handle>(&(expected));
+    std::get_if<Face_const_handle>(&(expected));
   if (fh_expected) {
     const Face_const_handle* fh_actual =
-      boost::get<Face_const_handle>(&(actual));
+      std::get_if<Face_const_handle>(&(actual));
     if (fh_actual) {
       if ((*fh_actual) == (*fh_expected)) return true;
 
@@ -241,13 +241,13 @@ compare(const Cell_handle& expected, const Cell_handle& actual)
     std::cout << "Error: batched point location!" << std::endl;
     std::cout << "Expected a face."  << std::endl;
     const Halfedge_const_handle* hh_actual =
-      boost::get<Halfedge_const_handle>(&(actual));
+      std::get_if<Halfedge_const_handle>(&(actual));
     if (hh_actual) {
       std::cout << "Actual: a halfedge." << std::endl;
       return false;
     }
     const Vertex_const_handle* vh_actual =
-      boost::get<Vertex_const_handle>(&(actual));
+      std::get_if<Vertex_const_handle>(&(actual));
     if (vh_actual) {
       std::cout << "Actual: a vertex." << std::endl;
       return false;
@@ -258,10 +258,10 @@ compare(const Cell_handle& expected, const Cell_handle& actual)
 
   // Assign object to a halfedge
   const Halfedge_const_handle* hh_expected =
-    boost::get<Halfedge_const_handle>(&(expected));
+    std::get_if<Halfedge_const_handle>(&(expected));
   if (hh_expected) {
     const Halfedge_const_handle* hh_actual =
-      boost::get<Halfedge_const_handle>(&(actual));
+      std::get_if<Halfedge_const_handle>(&(actual));
     if (hh_actual) {
       if (((*hh_actual) == (*hh_expected)) ||
           ((*hh_actual)->twin() == (*hh_expected)))
@@ -279,13 +279,13 @@ compare(const Cell_handle& expected, const Cell_handle& actual)
     std::cout << "Expected: a halfedge, " << (*hh_expected)->curve()
               << std::endl;
     const Face_const_handle* fh_actual =
-      boost::get<Face_const_handle>(&(actual));
+      std::get_if<Face_const_handle>(&(actual));
     if (fh_actual) {
       std::cout << "Actual: a face." << std::endl;
       return false;
     }
     const Vertex_const_handle* vh_actual =
-      boost::get<Vertex_const_handle>(&(actual));
+      std::get_if<Vertex_const_handle>(&(actual));
     if (vh_actual) {
       std::cout << "Actual: a vertex." << std::endl;
       return false;
@@ -296,10 +296,10 @@ compare(const Cell_handle& expected, const Cell_handle& actual)
 
   // Assign object to a vertex
   const Vertex_const_handle* vh_expected =
-    boost::get<Vertex_const_handle>(&(expected));
+    std::get_if<Vertex_const_handle>(&(expected));
   if (vh_expected) {
     const Vertex_const_handle* vh_actual =
-      boost::get<Vertex_const_handle>(&(actual));
+      std::get_if<Vertex_const_handle>(&(actual));
     if (vh_actual) {
       if ((*vh_actual) == (*vh_expected)) return true;
 
@@ -313,13 +313,13 @@ compare(const Cell_handle& expected, const Cell_handle& actual)
     std::cout << "Error: batched point location!";
     std::cout << "Expected: a vertex, "<< (*vh_expected)->point() << std::endl;
     const Face_const_handle* fh_actual =
-      boost::get<Face_const_handle>(&(actual));
+      std::get_if<Face_const_handle>(&(actual));
     if (fh_actual) {
       std::cout << "Actual: a face" << std::endl;
       return false;
     }
     const Halfedge_const_handle* hh_actual =
-      boost::get<Halfedge_const_handle>(&(actual));
+      std::get_if<Halfedge_const_handle>(&(actual));
     if (hh_actual) {
       std::cout << "Actual: a halfedge." << std::endl;
       return false;
@@ -436,15 +436,15 @@ print(const std::pair<Point_2, Cell_handle>& res)
   // Print the results.
   std::cout << "The point (" << res.first << ") is located ";
   if (const Face_const_handle* f =
-      boost::get<Face_const_handle>(&(res.second)))       // inside a face
+      std::get_if<Face_const_handle>(&(res.second)))       // inside a face
     std::cout << "inside "
               << (((*f)->is_unbounded()) ? "the unbounded" : "a bounded")
               << " face." << std::endl;
   else if (const Halfedge_const_handle* e =
-           boost::get<Halfedge_const_handle>(&(res.second))) // on an edge
+           std::get_if<Halfedge_const_handle>(&(res.second))) // on an edge
     std::cout << "on an edge: " << (*e)->curve() << std::endl;
   else if (const Vertex_const_handle* v =
-           boost::get<Vertex_const_handle>(&(res.second)))  // on a vertex
+           std::get_if<Vertex_const_handle>(&(res.second)))  // on a vertex
     std::cout << "on "
               << (((*v)->is_isolated()) ? "an isolated" : "a")
               << " vertex: " << (*v)->point() << std::endl;

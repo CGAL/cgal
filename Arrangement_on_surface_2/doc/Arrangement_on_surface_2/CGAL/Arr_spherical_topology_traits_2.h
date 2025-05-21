@@ -9,19 +9,19 @@ namespace CGAL {
  *
  * The `Arr_spherical_topology_traits_2` template has two parameters:
  * <UL>
- * <LI>The `GeometryTraits_2` template-parameter should be instantiated with
- * a model of the `ArrangementBasicTraits_2` concept. The traits
+ * <LI>The `GeometryTraits_2` template-parameter should be substituted by
+ * a model of the `AosBasicTraits_2` concept. The traits
  * class defines the types of \f$x\f$-monotone curves and two-dimensional
- * points, namely `ArrangementBasicTraits_2::X_monotone_curve_2` and
- * `ArrangementBasicTraits_2::Point_2`,
+ * points, namely `AosBasicTraits_2::X_monotone_curve_2` and
+ * `AosBasicTraits_2::Point_2`,
  *   respectively, and supports basic geometric predicates on them.
- * <LI>The `Dcel` template-parameter should be instantiated with
- * a class that is a model of the `ArrangementDcel` concept. The
+ * <LI>The `Dcel` template-parameter should be substituted by
+ * a class that is a model of the `AosDcel` concept. The
  * value of this parameter is by default
  * `Arr_default_dcel<Traits>`.
  * </UL>
  *
- * \cgalModels `ArrangementBasicTopologyTraits`
+ * \cgalModels{AosBasicTopologyTraits}
  *
  * \sa `Arr_default_dcel<Traits>`
  * \sa `CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel,x,y>`
@@ -49,10 +49,10 @@ public:
   /// \name Creation
   /// @{
 
-  /*! Default constructor. */
+  /*! constructs default */
   Arr_spherical_topology_traits_2();
 
-  /*! Constructor from a geometry-traits object.
+  /*! constructs from a geometry-traits object.
    * \param traits the traits.
    */
   Arr_spherical_topology_traits_2(const GeometryTraits_2* traits);
@@ -62,36 +62,36 @@ public:
   /// \name Accessors
   /// @{
 
-  /*! Obtain the DCEL (const version). */
+  /*! obtains the \dcel (const version). */
   const Dcel& dcel() const;
 
-  /*! Obtain the DCEL (non-const version). */
+  /*! obtains the \dcel (non-const version). */
   Dcel& dcel();
 
-  /*! Obtain the spherical face (const version). */
+  /*! obtains the spherical face (const version). */
   const Face* spherical_face() const;
 
-  /*! Obtain the spherical face (non-const version). */
+  /*! obtains the spherical face (non-const version). */
   Face* spherical_face();
 
-  /*! Obtain the south pole (const version). */
+  /*! obtains the south pole (const version). */
   const Vertex* south_pole() const;
 
-  /*! Obtain the south pole (non-const version). */
+  /*! obtains the south pole (non-const version). */
   Vertex* south_pole();
 
-  /*! Obtain the north pole (const version). */
+  /*! obtains the north pole (const version). */
   const Vertex* north_pole() const;
 
-  /*! Obtain the north pole (non-const version). */
+  /*! obtains the north pole (non-const version). */
   Vertex* north_pole();
 
-  /*! Obtain a vertex on the line of discontinuity that corresponds to
+  /*! obtains a vertex on the line of discontinuity that corresponds to
    *  the given point (or return NULL if no such vertex exists).
    */
   const Vertex* discontinuity_vertex(const Point_2& pt) const;
 
-  /*! Obtain a vertex on the line of discontinuity that corresponds to
+  /*! obtains a vertex on the line of discontinuity that corresponds to
    *  the given point (or return NULL if no such vertex exists).
    */
   Vertex* discontinuity_vertex(const Point_2& pt);

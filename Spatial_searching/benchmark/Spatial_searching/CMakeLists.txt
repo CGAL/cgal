@@ -1,17 +1,19 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.1...3.20)
+cmake_minimum_required(VERSION 3.12...3.31)
 project(Spatial_searching_)
 
 find_package(CGAL REQUIRED COMPONENTS Core)
 
-include(${CGAL_USE_FILE})
-
-find_package(Eigen3 3.1.91) # (requires 3.2.0 or greater)
-include(CGAL_Eigen3_support)
-
 include_directories(BEFORE "include")
+
+find_package(Eigen3 3.1.91 QUIET) # (requires 3.1.91 or greater)
+include(CGAL_Eigen3_support)
+if(NOT TARGET CGAL::Eigen3_support)
+  message("NOTICE: These benchmarks require Eigen 3.1.91 (or greater), and will not be compiled.")
+  return()
+endif()
 
 # create_single_source_cgal_program("Compare_ANN_STANN_CGAL.cpp") # does not compile, missing dependency
 create_single_source_cgal_program("nanoflan.cpp")
@@ -44,5 +46,5 @@ foreach(
   sizeof
   # deque # see above
   )
-  target_link_libraries(${target} PUBLIC CGAL::Eigen3_support)
+  target_link_libraries(${target} PRIVATE CGAL::Eigen3_support)
 endforeach()

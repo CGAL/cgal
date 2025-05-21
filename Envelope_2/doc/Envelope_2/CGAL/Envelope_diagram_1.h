@@ -11,11 +11,11 @@ time, and the space needed to store the diagram class is linear in the
 complexity of the envelope.
 
 The envelope-diagram class is parameterized by a traits class, which is a
-model of the `ArrangementXMonotoneTraits_2` concept, in case we handle
+model of the `AosXMonotoneTraits_2` concept, in case we handle
 only envelopes of \f$ x\f$-monotone curves, or of the refined
-`ArrangementTraits_2` concept in case we handle arbitrary planar curves.
+`AosTraits_2` concept in case we handle arbitrary planar curves.
 
-\cgalModels `EnvelopeDiagram_1`
+\cgalModels{EnvelopeDiagram_1}
 
 */
 template< typename Traits >

@@ -30,15 +30,17 @@
 namespace CGAL {
 
 template<typename K>
-bool do_intersect(const CGAL::Bbox_3& box,
-                  const Ray_3<K>& r)
+typename K::Boolean
+do_intersect(const CGAL::Bbox_3& box,
+             const Ray_3<K>& r)
 {
   return K().do_intersect_3_object()(box, r);
 }
 
 template<typename K>
-bool do_intersect(const Ray_3<K>& r,
-                  const CGAL::Bbox_3& box)
+typename K::Boolean
+do_intersect(const Ray_3<K>& r,
+             const CGAL::Bbox_3& box)
 {
   return K().do_intersect_3_object()(r, box);
 }

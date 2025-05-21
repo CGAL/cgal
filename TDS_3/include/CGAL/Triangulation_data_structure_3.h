@@ -31,12 +31,15 @@
 #include <limits>
 
 #include <boost/unordered_set.hpp>
+#include <boost/container/flat_set.hpp>
+#include <boost/container/small_vector.hpp>
+#include <boost/iterator/function_output_iterator.hpp>
 #include <CGAL/utility.h>
 #include <CGAL/iterator.h>
 #include <CGAL/STL_Extension/internal/Has_member_visited.h>
 
 #include <CGAL/Unique_hash_map.h>
-#include <CGAL/triangulation_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/Triangulation_utils_3.h>
 
 #include <CGAL/Concurrent_compact_container.h>
@@ -130,7 +133,7 @@ public:
   >::type                                                Cell_range;
 
 # else
-  CGAL_static_assertion_msg
+  static_assert
     (!(std::is_convertible<Concurrency_tag, Parallel_tag>::value),
      "In CGAL triangulations, `Parallel_tag` can only be used with the Intel TBB library. "
      "Make TBB available in the build system and then define the macro `CGAL_LINKED_WITH_TBB`.");
@@ -338,14 +341,14 @@ public:
 
   Cell_handle create_face()
     {
-      CGAL_triangulation_precondition(dimension()<3);
+      CGAL_precondition(dimension()<3);
       return create_cell();
     }
 
   Cell_handle create_face(Vertex_handle v0, Vertex_handle v1,
                           Vertex_handle v2)
     {
-      CGAL_triangulation_precondition(dimension()<3);
+      CGAL_precondition(dimension()<3);
       return cells().emplace(v0, v1, v2, Vertex_handle());
     }
 
@@ -354,7 +357,7 @@ public:
                           Cell_handle f1, int i1,
                           Cell_handle f2, int i2)
     {
-      CGAL_triangulation_precondition(dimension() <= 2);
+      CGAL_precondition(dimension() <= 2);
       Cell_handle newf = create_face(f0->vertex(cw(i0)),
                                      f1->vertex(cw(i1)),
                                      f2->vertex(cw(i2)));
@@ -367,7 +370,7 @@ public:
   Cell_handle create_face(Cell_handle f0, int i0,
                           Cell_handle f1, int i1)
     {
-      CGAL_triangulation_precondition(dimension() <= 2);
+      CGAL_precondition(dimension() <= 2);
       Cell_handle newf = create_face(f0->vertex(cw(i0)),
                                      f1->vertex(cw(i1)),
                                      f1->vertex(ccw(i1)));
@@ -378,7 +381,7 @@ public:
 
   Cell_handle create_face(Cell_handle f, int i, Vertex_handle v)
     {
-      CGAL_triangulation_precondition(dimension() <= 2);
+      CGAL_precondition(dimension() <= 2);
       Cell_handle newf = create_face(f->vertex(cw(i)),
                                      f->vertex(ccw(i)),
                                      v);
@@ -397,13 +400,13 @@ public:
 
   void delete_vertex( Vertex_handle v )
   {
-      CGAL_triangulation_expensive_precondition( is_vertex(v) );
+      CGAL_expensive_precondition( is_vertex(v) );
       vertices().erase(v);
   }
 
   void delete_cell( Cell_handle c )
   {
-      CGAL_triangulation_expensive_precondition( is_simplex(c) );
+      CGAL_expensive_precondition( is_simplex(c) );
       cells().erase(c);
   }
 
@@ -504,7 +507,7 @@ public:
                                 Cell_handle begin, int i,
                                 Vertex_handle newv)
   {
-      CGAL_triangulation_precondition(begin != Cell_handle());
+      CGAL_precondition(begin != Cell_handle());
       // if begin == nullptr (default arg), we could compute one by walking in
       // CellIt.  At the moment, the functionality is not available, you have
       // to specify a starting facet.
@@ -639,7 +642,7 @@ public:
   // Change orientation of the whole TDS.
   void reorient()
   {
-      CGAL_triangulation_precondition(dimension() >= 1);
+      CGAL_precondition(dimension() >= 1);
       for (Cell_iterator i = cells().begin();
               i != cells().end(); ++i)
           change_orientation(i);
@@ -661,7 +664,7 @@ public:
 
   Cell_handles cell_handles() const
   {
-    return make_prevent_deref_range(cells_begin(), cells_end());
+    return { cells_begin(), cells_end() };
   }
 
   Cell_iterator raw_cells_begin() const
@@ -720,7 +723,7 @@ public:
 
   Vertex_handles vertex_handles() const
   {
-    return make_prevent_deref_range(vertices_begin(), vertices_end());
+    return { vertices_begin(), vertices_end() };
   }
 
   // CIRCULATOR METHODS
@@ -728,66 +731,66 @@ public:
   // cells around an edge
   Cell_circulator incident_cells(const Edge & e) const
   {
-    CGAL_triangulation_precondition( dimension() == 3 );
+    CGAL_precondition( dimension() == 3 );
     return Cell_circulator(e);
   }
   Cell_circulator incident_cells(Cell_handle ce, int i, int j) const
   {
-    CGAL_triangulation_precondition( dimension() == 3 );
+    CGAL_precondition( dimension() == 3 );
     return Cell_circulator(ce, i, j);
   }
 
   Cell_circulator incident_cells(const Edge &e, Cell_handle start) const
   {
-    CGAL_triangulation_precondition( dimension() == 3 );
+    CGAL_precondition( dimension() == 3 );
     return Cell_circulator(e, start);
   }
   Cell_circulator incident_cells(Cell_handle ce, int i, int j,
                                  Cell_handle start) const
   {
-    CGAL_triangulation_precondition( dimension() == 3 );
+    CGAL_precondition( dimension() == 3 );
     return Cell_circulator(ce, i, j, start);
   }
 
   //facets around an edge
   Facet_circulator incident_facets(const Edge & e) const
   {
-    CGAL_triangulation_precondition( dimension() == 3 );
+    CGAL_precondition( dimension() == 3 );
     return Facet_circulator(e);
   }
   Facet_circulator incident_facets(Cell_handle ce, int i, int j) const
   {
-    CGAL_triangulation_precondition( dimension() == 3 );
+    CGAL_precondition( dimension() == 3 );
     return Facet_circulator(ce, i, j);
   }
   Facet_circulator incident_facets(const Edge & e, const Facet & start) const
   {
-    CGAL_triangulation_precondition( dimension() == 3 );
+    CGAL_precondition( dimension() == 3 );
     return Facet_circulator(e, start);
   }
   Facet_circulator incident_facets(Cell_handle ce, int i, int j,
                                    const Facet & start) const
   {
-    CGAL_triangulation_precondition( dimension() == 3 );
+    CGAL_precondition( dimension() == 3 );
     return Facet_circulator(ce, i, j, start);
   }
   Facet_circulator incident_facets(const Edge & e,
                                    Cell_handle start, int f) const
   {
-    CGAL_triangulation_precondition( dimension() == 3 );
+    CGAL_precondition( dimension() == 3 );
     return Facet_circulator(e, start, f);
   }
   Facet_circulator incident_facets(Cell_handle ce, int i, int j,
                                    Cell_handle start, int f) const
   {
-    CGAL_triangulation_precondition( dimension() == 3 );
+    CGAL_precondition( dimension() == 3 );
     return Facet_circulator(ce, i, j, start, f);
   }
 
   // 2D : circulates on the faces adjacent to a vertex.
   Face_circulator incident_faces(Vertex_handle v) const
   {
-    CGAL_triangulation_precondition( dimension() == 2 );
+    CGAL_precondition( dimension() == 2 );
     return Face_circulator(v, v->cell());
   }
 
@@ -800,9 +803,9 @@ private:
                                  std::pair<IncidentCellIterator,
                                  IncidentFacetIterator> it) const
   {
-        CGAL_triangulation_precondition(dimension() == 3);
+        CGAL_precondition(dimension() == 3);
 
-        std::stack<Cell_handle> cell_stack;
+        std::stack<Cell_handle, boost::container::small_vector<Cell_handle, 128>> cell_stack;
         cell_stack.push(d);
         d->tds_data().mark_in_conflict();
         *it.first++ = d;
@@ -828,13 +831,16 @@ private:
         return it;
   }
 
-  template <class IncidentFacetIterator>
+  template <class IncidentFacetIterator, typename CellsContainers>
   void
   incident_cells_3_threadsafe(Vertex_handle v, Cell_handle d,
-                              std::vector<Cell_handle> &cells,
+                              CellsContainers &cells,
                               IncidentFacetIterator facet_it) const
   {
-    boost::unordered_set<Cell_handle, Handle_hash_function> found_cells;
+    boost::container::flat_set<Cell_handle,
+                               std::less<>,
+                               boost::container::small_vector<Cell_handle, 128>> found_cells;
+    // boost::unordered_set<Cell_handle, Handle_hash_function> found_cells;
 
     cells.push_back(d);
     found_cells.insert(d);
@@ -861,7 +867,7 @@ private:
   void just_incident_cells_3(Vertex_handle v,
                              std::vector<Cell_handle>& cells) const
   {
-    CGAL_triangulation_precondition(dimension() == 3);
+    CGAL_precondition(dimension() == 3);
 
     Cell_handle d = v->cell();
     cells.push_back(d);
@@ -890,7 +896,7 @@ private:
   incident_cells_2(Vertex_handle v, Cell_handle,
                    OutputIterator cells) const
   {
-      CGAL_triangulation_precondition(dimension() == 2);
+      CGAL_precondition(dimension() == 2);
 
       Face_circulator fc = incident_faces(v);
       Face_circulator done(fc);
@@ -1166,7 +1172,7 @@ public:
   OutputIterator
   incident_facets(Vertex_handle v, OutputIterator facets, Filter f = Filter()) const
   {
-    CGAL_triangulation_precondition( dimension() > 1 );
+    CGAL_precondition( dimension() > 1 );
     if(dimension() == 3)
         return visit_incident_cells<Facet_extractor<OutputIterator, Filter>, OutputIterator>(v, facets, f);
     else
@@ -1184,7 +1190,7 @@ public:
   OutputIterator
   incident_facets_threadsafe(Vertex_handle v, OutputIterator facets, Filter f = Filter()) const
   {
-    CGAL_triangulation_precondition( dimension() > 1 );
+    CGAL_precondition( dimension() > 1 );
     if(dimension() == 3)
         return visit_incident_cells_threadsafe<Facet_extractor<OutputIterator, Filter>, OutputIterator>(v, facets, f);
     else
@@ -1203,7 +1209,7 @@ public:
   incident_edges_1d(Vertex_handle v, OutputIterator edges, Filter f = Filter()) const
   {
     CGAL_assertion (dimension() == 1);
-    CGAL_triangulation_assertion( number_of_vertices() >= 3);
+    CGAL_assertion( number_of_vertices() >= 3);
     Cell_handle n0 = v->cell();
     const int index_v_in_n0 = n0->index(v);
     CGAL_assume(index_v_in_n0 <= 1);
@@ -1221,10 +1227,10 @@ public:
   OutputIterator
   incident_edges(Vertex_handle v, OutputIterator edges, Filter f = Filter()) const
   {
-    CGAL_triangulation_precondition( v != Vertex_handle() );
-    CGAL_triangulation_precondition( dimension() >= 1 );
-    CGAL_triangulation_expensive_precondition( is_vertex(v) );
-    CGAL_triangulation_expensive_precondition( is_valid() );
+    CGAL_precondition( v != Vertex_handle() );
+    CGAL_precondition( dimension() >= 1 );
+    CGAL_expensive_precondition( is_vertex(v) );
+    CGAL_expensive_precondition( is_valid() );
 
     if (dimension() == 1) {
       return incident_edges_1d(v, edges, f);
@@ -1240,10 +1246,10 @@ public:
   incident_edges_threadsafe(Vertex_handle v, OutputIterator edges,
                             Filter f = Filter()) const
   {
-    CGAL_triangulation_precondition( v != Vertex_handle() );
-    CGAL_triangulation_precondition( dimension() >= 1 );
-    CGAL_triangulation_expensive_precondition( is_vertex(v) );
-    CGAL_triangulation_expensive_precondition( is_valid() );
+    CGAL_precondition( v != Vertex_handle() );
+    CGAL_precondition( dimension() >= 1 );
+    CGAL_expensive_precondition( is_vertex(v) );
+    CGAL_expensive_precondition( is_valid() );
 
     if (dimension() == 1) {
       return incident_edges_1d(v, edges, f);
@@ -1273,10 +1279,10 @@ public:
   OutputIterator
   adjacent_vertices(Vertex_handle v, OutputIterator vertices, Filter f = Filter()) const
   {
-    CGAL_triangulation_precondition( v != Vertex_handle() );
-    CGAL_triangulation_precondition( dimension() >= -1 );
-    CGAL_triangulation_expensive_precondition( is_vertex(v) );
-    CGAL_triangulation_expensive_precondition( is_valid() );
+    CGAL_precondition( v != Vertex_handle() );
+    CGAL_precondition( dimension() >= -1 );
+    CGAL_expensive_precondition( is_vertex(v) );
+    CGAL_expensive_precondition( is_valid() );
 
     if (dimension() == -1)
     return vertices;
@@ -1288,7 +1294,7 @@ public:
     }
 
     if (dimension() == 1) {
-      CGAL_triangulation_assertion( number_of_vertices() >= 3);
+      CGAL_assertion( number_of_vertices() >= 3);
       Cell_handle n0 = v->cell();
       const int index_v_in_n0 = n0->index(v);
       CGAL_assume(index_v_in_n0 <= 1);
@@ -1335,10 +1341,10 @@ public:
   adjacent_vertices_threadsafe(Vertex_handle v, OutputIterator vertices,
                                Filter f = Filter()) const
   {
-    CGAL_triangulation_precondition(v != Vertex_handle());
-    CGAL_triangulation_precondition(dimension() >= -1);
-    CGAL_triangulation_expensive_precondition(is_vertex(v));
-    CGAL_triangulation_expensive_precondition(is_valid());
+    CGAL_precondition(v != Vertex_handle());
+    CGAL_precondition(dimension() >= -1);
+    CGAL_expensive_precondition(is_vertex(v));
+    CGAL_expensive_precondition(is_valid());
 
     if (dimension() == -1)
       return vertices;
@@ -1350,7 +1356,7 @@ public:
     }
 
     if (dimension() == 1) {
-      CGAL_triangulation_assertion(number_of_vertices() >= 3);
+      CGAL_assertion(number_of_vertices() >= 3);
       Cell_handle n0 = v->cell();
       const int index_v_in_n0 = n0->index(v);
       CGAL_assume(index_v_in_n0 <= 1);
@@ -1373,28 +1379,24 @@ public:
   OutputIterator
   visit_incident_cells(Vertex_handle v, OutputIterator output, Filter f) const
   {
-    CGAL_triangulation_precondition( v != Vertex_handle() );
-    CGAL_triangulation_expensive_precondition( is_vertex(v) );
+    CGAL_precondition( v != Vertex_handle() );
+    CGAL_expensive_precondition( is_vertex(v) );
 
     if ( dimension() < 2 )
     return output;
 
     Visitor visit(v, output, this, f);
 
-    std::vector<Cell_handle> tmp_cells;
-    tmp_cells.reserve(64);
+    boost::container::small_vector<Cell_handle, 128> tmp_cells;
     if ( dimension() == 3 )
     incident_cells_3(v, v->cell(), std::make_pair(std::back_inserter(tmp_cells), visit.facet_it()));
     else
     incident_cells_2(v, v->cell(), std::back_inserter(tmp_cells));
 
-    typename std::vector<Cell_handle>::iterator cit;
-    for(cit = tmp_cells.begin();
-        cit != tmp_cells.end();
-        ++cit)
+    for(auto c : tmp_cells)
     {
-      (*cit)->tds_data().clear();
-      visit(*cit);
+      c->tds_data().clear();
+      visit(c);
     }
 
     return visit.result();
@@ -1405,28 +1407,24 @@ public:
   visit_incident_cells_threadsafe(
     Vertex_handle v, OutputIterator output, Filter f) const
   {
-    CGAL_triangulation_precondition( v != Vertex_handle() );
-    CGAL_triangulation_expensive_precondition( is_vertex(v) );
+    CGAL_precondition( v != Vertex_handle() );
+    CGAL_expensive_precondition( is_vertex(v) );
 
     if ( dimension() < 2 )
     return output;
 
     Visitor visit(v, output, this, f);
 
-    std::vector<Cell_handle> tmp_cells;
-    tmp_cells.reserve(64);
+    boost::container::small_vector<Cell_handle, 128> tmp_cells;
     if ( dimension() == 3 )
       incident_cells_3_threadsafe(
         v, v->cell(), tmp_cells, visit.facet_it());
     else
       incident_cells_2(v, v->cell(), std::back_inserter(tmp_cells));
 
-    typename std::vector<Cell_handle>::iterator cit;
-    for(cit = tmp_cells.begin();
-        cit != tmp_cells.end();
-        ++cit)
+    for(auto c : tmp_cells)
     {
-      visit(*cit);
+      visit(c);
     }
 
     return visit.result();
@@ -1437,8 +1435,8 @@ public:
   visit_incident_cells(Vertex_handle v, OutputIterator output,
                        std::vector<Cell_handle> &cells, Filter f) const
   {
-    CGAL_triangulation_precondition( v != Vertex_handle() );
-    CGAL_triangulation_expensive_precondition( is_vertex(v) );
+    CGAL_precondition( v != Vertex_handle() );
+    CGAL_expensive_precondition( is_vertex(v) );
 
     if ( dimension() < 2 )
     return output;
@@ -1465,8 +1463,8 @@ public:
   OutputIterator
   visit_just_incident_cells(Vertex_handle v, OutputIterator output, Filter f) const
   {
-    CGAL_triangulation_precondition( v != Vertex_handle() );
-    CGAL_triangulation_expensive_precondition( is_vertex(v) );
+    CGAL_precondition( v != Vertex_handle() );
+    CGAL_expensive_precondition( is_vertex(v) );
 
     if ( dimension() < 2 )
     return output;
@@ -1499,10 +1497,10 @@ public:
                                 std::vector<Cell_handle> &cells,
                                 VertexFilter f = VertexFilter()) const
   {
-    CGAL_triangulation_precondition( v != Vertex_handle() );
-    CGAL_triangulation_precondition( dimension() == 3 );
-    CGAL_triangulation_expensive_precondition( is_vertex(v) );
-    CGAL_triangulation_expensive_precondition( is_valid() );
+    CGAL_precondition( v != Vertex_handle() );
+    CGAL_precondition( dimension() == 3 );
+    CGAL_expensive_precondition( is_vertex(v) );
+    CGAL_expensive_precondition( is_valid() );
 
     return
       visit_incident_cells
@@ -1554,16 +1552,16 @@ public:
   void set_adjacency(Cell_handle c0, int i0,
                      Cell_handle c1, int i1) const
   {
-      CGAL_triangulation_assertion(i0 >= 0 && i0 <= dimension());
-      CGAL_triangulation_assertion(i1 >= 0 && i1 <= dimension());
-      CGAL_triangulation_assertion(c0 != c1);
+      CGAL_assertion(i0 >= 0 && i0 <= dimension());
+      CGAL_assertion(i1 >= 0 && i1 <= dimension());
+      CGAL_assertion(c0 != c1);
       c0->set_neighbor(i0,c1);
       c1->set_neighbor(i1,c0);
   }
 
   int mirror_index(Cell_handle c, int i) const
   {
-      CGAL_triangulation_precondition ( i>=0 && i<4 );
+      CGAL_precondition ( i>=0 && i<4 );
       return c->neighbor(i)->index(c);
   }
 
@@ -1656,7 +1654,7 @@ public:
       convert_cell(c, *C[j]);
     }
 
-    CGAL_triangulation_assertion(is_valid(false));
+    CGAL_assertion(is_valid(false));
     return is;
   }
 
@@ -1698,9 +1696,9 @@ typename Triangulation_data_structure_3<Vb,Cb,Ct>::Cell_handle
 Triangulation_data_structure_3<Vb,Cb,Ct>::
 create_star_3(Vertex_handle v, Cell_handle c, int li, int prev_ind2)
 {
-    CGAL_triangulation_precondition( dimension() == 3);
-    CGAL_triangulation_precondition( c->tds_data().is_in_conflict() );
-    CGAL_triangulation_precondition( ! c->neighbor(li)->tds_data().is_in_conflict() );
+    CGAL_precondition( dimension() == 3);
+    CGAL_precondition( c->tds_data().is_in_conflict() );
+    CGAL_precondition( ! c->neighbor(li)->tds_data().is_in_conflict() );
 
     Cell_handle cnew = create_cell(c->vertex(0),
                                    c->vertex(1),
@@ -1724,7 +1722,7 @@ create_star_3(Vertex_handle v, Cell_handle c, int li, int prev_ind2)
       Cell_handle n = cur->neighbor(zz);
       // turn around the oriented edge vj1 vj2
       while ( n->tds_data().is_in_conflict() ) {
-        CGAL_triangulation_assertion( n != c );
+        CGAL_assertion( n != c );
         cur = n;
         zz = next_around_edge(n->index(vj1), n->index(vj2));
         n = cur->neighbor(zz);
@@ -1738,7 +1736,7 @@ create_star_3(Vertex_handle v, Cell_handle c, int li, int prev_ind2)
       Cell_handle nnn = n->neighbor(next_around_edge(jj2, jj1));
       int zzz = nnn->index(vvv);
       if (nnn == cur) {
-        // Neighbor relation is reciprocal, ie
+        // Neighbor relation is reciprocal, i.e.
         // the cell we are looking for is not yet created.
         nnn = create_star_3(v, nnn, zz, zzz);
       }
@@ -1756,9 +1754,9 @@ recursive_create_star_3(Vertex_handle v, Cell_handle c, int li,
                         int prev_ind2, int depth)
 {
     if ( depth == 100 ) return non_recursive_create_star_3(v,c,li,prev_ind2);
-    CGAL_triangulation_precondition( dimension() == 3);
-    CGAL_triangulation_precondition( c->tds_data().is_in_conflict() );
-    CGAL_triangulation_precondition( ! c->neighbor(li)->tds_data().is_in_conflict() );
+    CGAL_precondition( dimension() == 3);
+    CGAL_precondition( c->tds_data().is_in_conflict() );
+    CGAL_precondition( ! c->neighbor(li)->tds_data().is_in_conflict() );
 
     Cell_handle cnew = create_cell(c->vertex(0),
                                    c->vertex(1),
@@ -1782,7 +1780,7 @@ recursive_create_star_3(Vertex_handle v, Cell_handle c, int li,
       Cell_handle n = cur->neighbor(zz);
       // turn around the oriented edge vj1 vj2
       while ( n->tds_data().is_in_conflict() ) {
-        CGAL_triangulation_assertion( n != c );
+        CGAL_assertion( n != c );
         cur = n;
         zz = next_around_edge(n->index(vj1), n->index(vj2));
         n = cur->neighbor(zz);
@@ -1796,7 +1794,7 @@ recursive_create_star_3(Vertex_handle v, Cell_handle c, int li,
       Cell_handle nnn = n->neighbor(next_around_edge(jj2, jj1));
       int zzz = nnn->index(vvv);
       if (nnn == cur) {
-        // Neighbor relation is reciprocal, ie
+        // Neighbor relation is reciprocal, i.e.
         // the cell we are looking for is not yet created.
         nnn = recursive_create_star_3(v, nnn, zz, zzz,depth+1);
       }
@@ -1814,9 +1812,9 @@ typename Triangulation_data_structure_3<Vb,Cb,Ct>::Cell_handle
 Triangulation_data_structure_3<Vb,Cb,Ct>::
 non_recursive_create_star_3(Vertex_handle v, Cell_handle c, int li, int prev_ind2)
 {
-    CGAL_triangulation_precondition( dimension() == 3);
-    CGAL_triangulation_precondition( c->tds_data().is_in_conflict() );
-    CGAL_triangulation_precondition( ! c->neighbor(li)->tds_data().is_in_conflict() );
+    CGAL_precondition( dimension() == 3);
+    CGAL_precondition( c->tds_data().is_in_conflict() );
+    CGAL_precondition( ! c->neighbor(li)->tds_data().is_in_conflict() );
 
     Cell_handle cnew = create_cell(c->vertex(0),
                                    c->vertex(1),
@@ -1843,7 +1841,7 @@ non_recursive_create_star_3(Vertex_handle v, Cell_handle c, int li, int prev_ind
         Cell_handle n = cur->neighbor(zz);
         // turn around the oriented edge vj1 vj2
         while ( n->tds_data().is_in_conflict() ) {
-          CGAL_triangulation_assertion( n != c );
+          CGAL_assertion( n != c );
           cur = n;
           zz = next_around_edge(n->index(vj1), n->index(vj2));
           n = cur->neighbor(zz);
@@ -1857,14 +1855,14 @@ non_recursive_create_star_3(Vertex_handle v, Cell_handle c, int li, int prev_ind
         Cell_handle nnn = n->neighbor(next_around_edge(jj2, jj1));
         int zzz = nnn->index(vvv);
         if (nnn == cur) {
-          // Neighbor relation is reciprocal, ie
+          // Neighbor relation is reciprocal, i.e.
           // the cell we are looking for is not yet created.
           //re-run the loop
           adjacency_info_stack.push( iAdjacency_info(zzz,cnew,ii,c,li,prev_ind2) );
           c=nnn;  li=zz; prev_ind2=zzz; ii=0;
           //copy-pasted from beginning to avoid if ii==0
-          CGAL_triangulation_precondition( c->tds_data().is_in_conflict() );
-          CGAL_triangulation_precondition( ! c->neighbor(li)->tds_data().is_in_conflict() );
+          CGAL_precondition( c->tds_data().is_in_conflict() );
+          CGAL_precondition( ! c->neighbor(li)->tds_data().is_in_conflict() );
           cnew = create_cell(c->vertex(0),c->vertex(1),c->vertex(2),c->vertex(3));
           cnew->set_vertex(li, v);
           c_li = c->neighbor(li);
@@ -1891,7 +1889,7 @@ typename Triangulation_data_structure_3<Vb,Cb,Ct>::Cell_handle
 Triangulation_data_structure_3<Vb,Cb,Ct>::
 create_star_2(Vertex_handle v, Cell_handle c, int li )
 {
-  CGAL_triangulation_assertion( dimension() == 2 );
+  CGAL_assertion( dimension() == 2 );
   Cell_handle cnew;
 
   // i1 i2 such that v,i1,i2 positive
@@ -1980,7 +1978,7 @@ operator>>(std::istream& is, Triangulation_data_structure_3<Vb,Cb,Ct>& tds)
   std::size_t m;
 
   tds.read_cells(is, V, m, C);
-  CGAL_triangulation_assertion( tds.is_valid() );
+  CGAL_assertion( tds.is_valid() );
   return is;
 }
 
@@ -2022,7 +2020,7 @@ operator<<(std::ostream& os, const Triangulation_data_structure_3<Vb,Cb,Ct> &tds
   for (Vertex_iterator it=tds.vertices_begin(); it != tds.vertices_end(); ++it)
     V[it] = i++;
 
-  CGAL_triangulation_assertion( i == n );
+  CGAL_assertion( i == n );
 
   tds.print_cells(os, V);
 
@@ -2049,7 +2047,7 @@ bool
 Triangulation_data_structure_3<Vb,Cb,Ct>::
 is_vertex(Vertex_handle v) const
 {
-    return vertices().owns_dereferencable(v);
+    return vertices().owns_dereferenceable(v);
 }
 
 template <class Vb, class Cb, class Ct>
@@ -2059,29 +2057,67 @@ is_edge(Vertex_handle u, Vertex_handle v,
         Cell_handle &c, int &i, int &j) const
   // returns false when dimension <1 or when indices wrong
 {
-    CGAL_triangulation_expensive_precondition( is_vertex(u) && is_vertex(v) );
+  CGAL_expensive_precondition(is_vertex(u) && is_vertex(v));
 
-    if (u==v)
-        return false;
-
-    std::vector<Cell_handle> cells;
-    cells.reserve(64);
-    incident_cells(u, std::back_inserter(cells));
-
-    for (typename std::vector<Cell_handle>::iterator cit = cells.begin();
-              cit != cells.end(); ++cit)
-        if ((*cit)->has_vertex(v, j)) {
-            c = *cit;
-            i = c->index(u);
-            return true;
-        }
+  if(u == v)
     return false;
+
+  if(dimension() == 3) {
+    auto d = u->cell();
+    boost::container::small_vector<Cell_handle, 128> cells;
+    cells.emplace_back(d);
+    d->tds_data().mark_in_conflict();
+
+    auto cleanup_tds_data = make_scope_exit([&] {
+      for(auto c : cells) {
+        c->tds_data().clear();
+      }
+    });
+
+    int head = 0;
+    int tail = 1;
+    do {
+      Cell_handle ch = cells[head];
+
+      for(j = 0; j < 4; ++j) { // use parameter j on purpose
+        if(ch->vertex(j) == v) {
+          c = ch;
+          i = ch->index(u);
+          return true;
+        }
+        if(ch->vertex(j) == u)
+          continue;
+        Cell_handle next = ch->neighbor(j);
+        if(!next->tds_data().is_clear())
+          continue;
+        cells.emplace_back(next);
+        ++tail;
+        next->tds_data().mark_in_conflict();
+      }
+      ++head;
+    } while(head != tail);
+    return false;
+  }
+
+  bool edge_found = false;
+  // try {
+  incident_cells_threadsafe(u, boost::make_function_output_iterator([&](Cell_handle ch) {
+                              if(ch->has_vertex(v, j)) {
+                                c = ch;
+                                i = c->index(u);
+                                // throw true;
+                                edge_found = true;
+                              }
+                            }));
+  // } catch(bool b) {
+  //     result = b;
+  // }
+
+  return edge_found;
 }
 
 template <class Vb, class Cb, class Ct>
-bool
-Triangulation_data_structure_3<Vb,Cb,Ct>::
-is_edge(Vertex_handle u, Vertex_handle v) const
+bool Triangulation_data_structure_3<Vb, Cb, Ct>::is_edge(Vertex_handle u, Vertex_handle v) const
 {
     Cell_handle c;
     int i, j;
@@ -2102,7 +2138,7 @@ is_edge(Cell_handle c, int i, int j) const
   if ( (dimension() == 2) && ((i>2) || (j>2)) ) return false;
   if ((i>3) || (j>3)) return false;
 
-  return cells().owns_dereferencable(c);
+  return cells().owns_dereferenceable(c);
 }
 
 template <class Vb, class Cb, class Ct>
@@ -2113,7 +2149,7 @@ is_facet(Vertex_handle u, Vertex_handle v,
          Cell_handle & c, int & i, int & j, int & k) const
   // returns false when dimension <2 or when indices wrong
 {
-    CGAL_triangulation_expensive_precondition( is_vertex(u) &&
+    CGAL_expensive_precondition( is_vertex(u) &&
                                                is_vertex(v) &&
                                                is_vertex(w) );
 
@@ -2141,7 +2177,7 @@ bool
 Triangulation_data_structure_3<Vb,Cb,Ct>::
 is_facet(Cell_handle c, int i) const
 {
-    CGAL_triangulation_precondition(i>=0 && i<4);
+    CGAL_precondition(i>=0 && i<4);
 
     if ( dimension() < 2 )
         return false;
@@ -2149,7 +2185,7 @@ is_facet(Cell_handle c, int i) const
     if ( (dimension() == 2) && (i!=3) )
         return false;
 
-    return cells().owns_dereferencable(c);
+    return cells().owns_dereferenceable(c);
 }
 
 template <class Vb, class Cb, class Ct>
@@ -2161,7 +2197,7 @@ is_cell( Cell_handle c ) const
     if (dimension() < 3)
         return false;
 
-    return cells().owns_dereferencable(c);
+    return cells().owns_dereferenceable(c);
 }
 
 template <class Vb, class Cb, class Ct>
@@ -2172,7 +2208,7 @@ is_cell(Vertex_handle u, Vertex_handle v,
         Cell_handle & c, int & i, int & j, int & k, int & l) const
   // returns false when dimension <3
 {
-    CGAL_triangulation_expensive_precondition( is_vertex(u) &&
+    CGAL_expensive_precondition( is_vertex(u) &&
                                                is_vertex(v) &&
                                                is_vertex(w) &&
                                                is_vertex(t) );
@@ -2217,7 +2253,7 @@ has_vertex(Cell_handle c, int i, Vertex_handle v, int & j) const
   // facet (c,i)
   // j has no meaning if false is returned
 {
-  CGAL_triangulation_precondition( dimension() == 3 );
+  CGAL_precondition( dimension() == 3 );
   return ( c->has_vertex(v,j) && (j != i) );
 }
 
@@ -2228,7 +2264,7 @@ Triangulation_data_structure_3<Vb,Cb,Ct>::
 has_vertex(Cell_handle c, int i, Vertex_handle v) const
   // checks whether the query facet (c,i) has vertex v
 {
-  CGAL_triangulation_precondition( dimension() == 3 );
+  CGAL_precondition( dimension() == 3 );
   int j;
   return ( c->has_vertex(v,j) && (j != i) );
 }
@@ -2264,7 +2300,7 @@ are_equal(Cell_handle c, int i, Cell_handle n, int j) const
   //   if ( c->neighbor(i) != n ) return false;
   //   if ( n->neighbor(j) != c ) return false;
 {
-  CGAL_triangulation_precondition( dimension() == 3 );
+  CGAL_precondition( dimension() == 3 );
 
   if ( (c==n) && (i==j) ) return true;
 
@@ -2300,15 +2336,15 @@ flip( Cell_handle c, int i )
   // flips facet i of cell c
   // c will be replaced by one of the new cells
 {
-  CGAL_triangulation_precondition( (dimension() == 3) && (0<=i) && (i<4)
+  CGAL_precondition( (dimension() == 3) && (0<=i) && (i<4)
                                    && (number_of_vertices() >= 6) );
-  CGAL_triangulation_expensive_precondition( is_cell(c) );
+  CGAL_expensive_precondition( is_cell(c) );
 
   Cell_handle n = c->neighbor(i);
   int in = n->index(c);
 
   // checks that the facet is flippable,
-  // ie the future edge does not already exist
+  // i.e. the future edge does not already exist
   if (is_edge(c->vertex(i), n->vertex(in)))
       return false;
 
@@ -2323,16 +2359,16 @@ flip_flippable(Cell_handle c, int i )
   // flips facet i of cell c
   // c will be replaced by one of the new cells
 {
-  CGAL_triangulation_precondition( (dimension() == 3) && (0<=i) && (i<4)
+  CGAL_precondition( (dimension() == 3) && (0<=i) && (i<4)
                                    && (number_of_vertices() >= 6) );
-  CGAL_triangulation_expensive_precondition( is_cell(c) );
+  CGAL_expensive_precondition( is_cell(c) );
 
   Cell_handle n = c->neighbor(i);
   int in = n->index(c);
 
   // checks that the facet is flippable,
-  // ie the future edge does not already exist
-  CGAL_triangulation_expensive_precondition( !is_edge(c->vertex(i),
+  // i.e. the future edge does not already exist
+  CGAL_expensive_precondition( !is_edge(c->vertex(i),
                                                       n->vertex(in)));
   flip_really(c,i,n,in);
 }
@@ -2374,7 +2410,7 @@ flip_really( Cell_handle c, int i, Cell_handle n, int in )
   c->vertex(i2)->set_cell(c);
   n->vertex(in3)->set_cell(n);
   // to be implemented : 2d case
-  // CGAL_triangulation_precondition( (0<=i) && (i<3) );
+  // CGAL_precondition( (0<=i) && (i<3) );
 }
 
 template <class Vb, class Cb, class Ct>
@@ -2386,14 +2422,14 @@ flip( Cell_handle c, int i, int j )
   // flips edge i,j of cell c
   // c will be deleted
 {
-  CGAL_triangulation_precondition( (dimension() == 3)
+  CGAL_precondition( (dimension() == 3)
                                    && (0<=i) && (i<4)
                                    && (0<=j) && (j<4)
                                    && ( i != j )
                                    && (number_of_vertices() >= 6) );
-  CGAL_triangulation_expensive_precondition( is_cell(c) );
+  CGAL_expensive_precondition( is_cell(c) );
 
-  // checks that the edge is flippable ie degree 3
+  // checks that the edge is flippable, i.e. degree 3
   int degree = 0;
   Cell_circulator ccir = incident_cells(c,i,j);
   Cell_circulator cdone = ccir;
@@ -2436,24 +2472,24 @@ flip_flippable( Cell_handle c, int i, int j )
   // flips edge i,j of cell c
   // c will be deleted
 {
-  CGAL_triangulation_precondition( (dimension() == 3)
+  CGAL_precondition( (dimension() == 3)
                                    && (0<=i) && (i<4)
                                    && (0<=j) && (j<4)
                                    && ( i != j )
                                    && (number_of_vertices() >= 6) );
-  CGAL_triangulation_expensive_precondition( is_cell(c) );
+  CGAL_expensive_precondition( is_cell(c) );
 
-  // checks that the edge is flippable ie degree 3
-  CGAL_triangulation_precondition_code( int degree = 0; );
-  CGAL_triangulation_precondition_code
+  // checks that the edge is flippable, i.e. degree 3
+  CGAL_precondition_code( int degree = 0; );
+  CGAL_precondition_code
     ( Cell_circulator ccir = incident_cells(c,i,j); );
-  CGAL_triangulation_precondition_code( Cell_circulator cdone = ccir; );
-  CGAL_triangulation_precondition_code( do {
+  CGAL_precondition_code( Cell_circulator cdone = ccir; );
+  CGAL_precondition_code( do {
                                           ++degree;
                                           ++ccir;
                                         } while ( ccir != cdone ); );
 
-  CGAL_triangulation_precondition( degree == 3 );
+  CGAL_precondition( degree == 3 );
 
   int next = next_around_edge(i,j);
   Cell_handle c1 = c->neighbor( next );
@@ -2472,8 +2508,8 @@ flip_flippable( Cell_handle c, int i, int j )
 
   // checks that the edge is flippable,
   // is the future cells do not already exist
-  CGAL_triangulation_expensive_precondition( !is_cell(v1,v2,v3,c->vertex(i)) );
-  CGAL_triangulation_expensive_precondition( !is_cell(v1,v2,v3,c->vertex(j)) );
+  CGAL_expensive_precondition( !is_cell(v1,v2,v3,c->vertex(i)) );
+  CGAL_expensive_precondition( !is_cell(v1,v2,v3,c->vertex(j)) );
 
   flip_really(c,i,j,c1,v1,i1,j1,next1,c2,v2,i2,j2,next2,v3);
 }
@@ -2559,7 +2595,7 @@ read_cells(std::istream& is, const std::vector< Vertex_handle > &V,
     {
       m = 2;
       C.resize(m);
-      //      CGAL_triangulation_assertion( n == 2 );
+      //      CGAL_assertion( n == 2 );
       for (int i=0; i < 2; i++) {
         Cell_handle c = create_face(V[i], Vertex_handle(), Vertex_handle());
         C[i] = c;
@@ -2575,7 +2611,7 @@ read_cells(std::istream& is, const std::vector< Vertex_handle > &V,
     {
       m = 1;
       C.resize(m);
-      //      CGAL_triangulation_assertion( n == 1 );
+      //      CGAL_assertion( n == 1 );
       Cell_handle c = create_face(V[0], Vertex_handle(), Vertex_handle());
       C[0] = c;
       V[0]->set_cell(c);
@@ -2617,7 +2653,7 @@ print_cells(std::ostream& os, const Unique_hash_map<Vertex_handle, std::size_t> 
             write(os, V[it->vertex(j)]);
         }
       }
-      CGAL_triangulation_assertion( i == m );
+      CGAL_assertion( i == m );
 
       // write the neighbors
       for(it = cells_begin(); it != cells_end(); ++it) {
@@ -2660,7 +2696,7 @@ print_cells(std::ostream& os, const Unique_hash_map<Vertex_handle, std::size_t> 
           }
         }
       }
-      CGAL_triangulation_assertion( i == m );
+      CGAL_assertion( i == m );
 
       // write the neighbors
       for(it = facets_begin(); it != facets_end(); ++it) {
@@ -2703,7 +2739,7 @@ print_cells(std::ostream& os, const Unique_hash_map<Vertex_handle, std::size_t> 
           }
         }
       }
-      CGAL_triangulation_assertion( i == m );
+      CGAL_assertion( i == m );
 
       // write the neighbors
       for(it = edges_begin(); it != edges_end(); ++it) {
@@ -2732,7 +2768,7 @@ Triangulation_data_structure_3<Vb,Cb,Ct>::insert_first_finite_cell(
   Vertex_handle &v0, Vertex_handle &v1, Vertex_handle &v2, Vertex_handle &v3,
   Vertex_handle v_infinite)
 {
-  CGAL_triangulation_precondition(
+  CGAL_precondition(
     (v_infinite == Vertex_handle() && dimension() == -2)
     || (v_infinite != Vertex_handle() && dimension() == -1));
 
@@ -2778,9 +2814,9 @@ typename Triangulation_data_structure_3<Vb,Cb,Ct>::Vertex_handle
 Triangulation_data_structure_3<Vb,Cb,Ct>::
 insert_in_cell(Cell_handle c)
 {
-  CGAL_triangulation_precondition( dimension() == 3 );
-  CGAL_triangulation_precondition( c != Cell_handle() );
-  CGAL_triangulation_expensive_precondition( is_cell(c) );
+  CGAL_precondition( dimension() == 3 );
+  CGAL_precondition( c != Cell_handle() );
+  CGAL_expensive_precondition( is_cell(c) );
 
   Vertex_handle v = create_vertex();
 
@@ -2824,8 +2860,8 @@ Triangulation_data_structure_3<Vb,Cb,Ct>::
 insert_in_facet(Cell_handle c, int i)
 { // inserts v in the facet opposite to vertex i of cell c
 
-  CGAL_triangulation_precondition( c != Cell_handle() );
-  CGAL_triangulation_precondition( dimension() >= 2 );
+  CGAL_precondition( c != Cell_handle() );
+  CGAL_precondition( dimension() >= 2 );
 
   Vertex_handle v = create_vertex();
 
@@ -2833,8 +2869,8 @@ insert_in_facet(Cell_handle c, int i)
 
   case 3:
     {
-      CGAL_triangulation_expensive_precondition( is_cell(c) );
-      CGAL_triangulation_precondition( i == 0 || i == 1 ||
+      CGAL_expensive_precondition( is_cell(c) );
+      CGAL_precondition( i == 0 || i == 1 ||
                                        i == 2 || i == 3 );
       // c will be modified to have v replacing vertex(i+3)
       int i1,i2,i3;
@@ -2905,7 +2941,7 @@ insert_in_facet(Cell_handle c, int i)
     }
   case 2:
     {
-      CGAL_triangulation_expensive_precondition( is_facet(c,i) );
+      CGAL_expensive_precondition( is_facet(c,i) );
       Cell_handle n = c->neighbor(2);
       Cell_handle cnew = create_face(c->vertex(0),c->vertex(1),v);
       set_adjacency(cnew, 2, n, n->index(c));
@@ -2933,15 +2969,15 @@ Triangulation_data_structure_3<Vb,Cb,Ct>::
 insert_in_edge(Cell_handle c, int i, int j)
   // inserts a vertex in the edge of cell c with vertices i and j
 {
-  CGAL_triangulation_precondition( c != Cell_handle() );
-  CGAL_triangulation_precondition( i != j );
-  CGAL_triangulation_precondition( dimension() >= 1 );
+  CGAL_precondition( c != Cell_handle() );
+  CGAL_precondition( i != j );
+  CGAL_precondition( dimension() >= 1 );
 
   switch ( dimension() ) {
   case 3:
     {
-      CGAL_triangulation_expensive_precondition( is_cell(c) );
-      CGAL_triangulation_precondition( i>=0 && i<=3 && j>=0 && j<=3 );
+      CGAL_expensive_precondition( is_cell(c) );
+      CGAL_precondition( i>=0 && i<=3 && j>=0 && j<=3 );
 
       std::vector<Cell_handle > cells;
       cells.reserve(32);
@@ -2957,7 +2993,7 @@ insert_in_edge(Cell_handle c, int i, int j)
     }
   case 2:
     {
-      CGAL_triangulation_expensive_precondition( is_edge(c,i,j) );
+      CGAL_expensive_precondition( is_edge(c,i,j) );
 
       Vertex_handle v = create_vertex();
       int k=3-i-j; // index of the third vertex of the facet
@@ -2996,7 +3032,7 @@ insert_in_edge(Cell_handle c, int i, int j)
   default: // case 1:
     {
       Vertex_handle v = create_vertex();
-      CGAL_triangulation_expensive_precondition( is_edge(c,i,j) );
+      CGAL_expensive_precondition( is_edge(c,i,j) );
       Cell_handle cnew = create_face(v, c->vertex(1), Vertex_handle());
       c->vertex(1)->set_cell(cnew);
       c->set_vertex(1,v);
@@ -3019,15 +3055,15 @@ insert_increase_dimension(Vertex_handle star)
   // = nullptr only used to insert the 1st vertex (dimension -2 to dimension -1)
   // changes the dimension
 {
-  CGAL_triangulation_precondition( dimension() < 3);
+  CGAL_precondition( dimension() < 3);
 
   Vertex_handle v = create_vertex();
 
   int dim = dimension();
   if (dim != -2) {
-      CGAL_triangulation_precondition( star != Vertex_handle() );
+      CGAL_precondition( star != Vertex_handle() );
       // In this case, this precondition is not relatively expensive.
-      CGAL_triangulation_precondition( is_vertex(star) );
+      CGAL_precondition( is_vertex(star) );
   }
 
   // this is set now, so that it becomes allowed to reorient
@@ -3188,13 +3224,13 @@ void
 Triangulation_data_structure_3<Vb,Cb,Ct>::
 remove_decrease_dimension(Vertex_handle v, Vertex_handle w)
 {
-    CGAL_triangulation_expensive_precondition( is_valid() );
-    CGAL_triangulation_precondition( dimension() >= -1 );
-    CGAL_triangulation_precondition( dimension() != 1 ||
+    CGAL_expensive_precondition( is_valid() );
+    CGAL_precondition( dimension() >= -1 );
+    CGAL_precondition( dimension() != 1 ||
                                      number_of_vertices() == 3);
-    CGAL_triangulation_precondition( number_of_vertices() >
+    CGAL_precondition( number_of_vertices() >
                                      (size_type) dimension() + 1 );
-    CGAL_triangulation_precondition( degree(v) == number_of_vertices()-1 );
+    CGAL_precondition( degree(v) == number_of_vertices()-1 );
 
     if (dimension() <= 0) {
         delete_cell(v->cell());
@@ -3235,7 +3271,7 @@ remove_decrease_dimension(Vertex_handle v, Vertex_handle w)
     }
     delete_vertex(v);
     set_dimension(dimension()-1);
-    CGAL_triangulation_postcondition(is_valid());
+    CGAL_postcondition(is_valid());
 }
 
 template <class Vb, class Cb, class Ct>
@@ -3243,9 +3279,9 @@ typename Triangulation_data_structure_3<Vb,Cb,Ct>::Cell_handle
 Triangulation_data_structure_3<Vb,Cb,Ct>::
 remove_from_maximal_dimension_simplex(Vertex_handle v)
 {
-    CGAL_triangulation_precondition(dimension() >= 1);
-    CGAL_triangulation_precondition(degree(v) == (size_type) dimension() + 1);
-    CGAL_triangulation_precondition(number_of_vertices() >
+    CGAL_precondition(dimension() >= 1);
+    CGAL_precondition(degree(v) == (size_type) dimension() + 1);
+    CGAL_precondition(number_of_vertices() >
                                     (size_type) dimension() + 1);
 
     if (number_of_vertices() == (size_type) dimension() + 2) {
@@ -3267,9 +3303,9 @@ typename Triangulation_data_structure_3<Vb,Cb,Ct>::Cell_handle
 Triangulation_data_structure_3<Vb,Cb,Ct>::
 remove_degree_2(Vertex_handle v)
 {
-    CGAL_triangulation_precondition(dimension() == 1);
-    CGAL_triangulation_precondition(degree(v) == 2);
-    CGAL_triangulation_precondition(number_of_vertices() >= 4);
+    CGAL_precondition(dimension() == 1);
+    CGAL_precondition(degree(v) == 2);
+    CGAL_precondition(number_of_vertices() >= 4);
 
     // Cells to be killed.
     Cell_handle c0, c1;
@@ -3306,9 +3342,9 @@ typename Triangulation_data_structure_3<Vb,Cb,Ct>::Cell_handle
 Triangulation_data_structure_3<Vb,Cb,Ct>::
 remove_degree_3(Vertex_handle v)
 {
-    CGAL_triangulation_precondition(dimension() == 2);
-    CGAL_triangulation_precondition(degree(v) == 3);
-    CGAL_triangulation_precondition(number_of_vertices() >= 5);
+    CGAL_precondition(dimension() == 2);
+    CGAL_precondition(degree(v) == 3);
+    CGAL_precondition(number_of_vertices() >= 5);
 
     // Cells to be killed.
     Cell_handle c0, c1, c2;
@@ -3350,9 +3386,9 @@ typename Triangulation_data_structure_3<Vb,Cb,Ct>::Cell_handle
 Triangulation_data_structure_3<Vb,Cb,Ct>::
 remove_degree_4(Vertex_handle v)
 {
-    CGAL_triangulation_precondition(dimension() == 3);
-    CGAL_triangulation_precondition(degree(v) == 4);
-    CGAL_triangulation_precondition(number_of_vertices() >= 6);
+    CGAL_precondition(dimension() == 3);
+    CGAL_precondition(degree(v) == 4);
+    CGAL_precondition(number_of_vertices() >= 6);
 
     // Cells to be killed.
     Cell_handle c0, c1, c2, c3;
@@ -3400,11 +3436,11 @@ void
 Triangulation_data_structure_3<Vb,Cb,Ct>::
 decrease_dimension(Cell_handle c, int i)
 {
-  CGAL_triangulation_expensive_precondition( is_valid() );;
-  CGAL_triangulation_precondition( dimension() >= 2);
-  CGAL_triangulation_precondition( number_of_vertices() >
+  CGAL_expensive_precondition( is_valid() );;
+  CGAL_precondition( dimension() >= 2);
+  CGAL_precondition( number_of_vertices() >
                                    (size_type) dimension() + 1 );
-  CGAL_triangulation_precondition( degree(c->vertex(i)) == number_of_vertices()-1 );
+  CGAL_precondition( degree(c->vertex(i)) == number_of_vertices()-1 );
 
   Vertex_handle v = c->vertex(i);
   Vertex_handle w = c->vertex(i);
@@ -3530,7 +3566,7 @@ decrease_dimension(Cell_handle c, int i)
     v1->set_cell(c2);
   }
 
-  CGAL_triangulation_postcondition(is_valid());
+  CGAL_postcondition(is_valid());
 }
 
 
@@ -3556,7 +3592,7 @@ is_valid(bool verbose, int level ) const
       if(number_of_vertices() <= 4) {
         if (verbose)
           std::cerr << "wrong number of vertices" << std::endl;
-        CGAL_triangulation_assertion(false);
+        CGAL_assertion(false);
         return false;
       }
 
@@ -3566,13 +3602,19 @@ is_valid(bool verbose, int level ) const
       if ( number_of_vertices() != vertex_count ) {
         if (verbose)
           std::cerr << "wrong number of vertices" << std::endl;
-        CGAL_triangulation_assertion(false);
+        CGAL_assertion(false);
         return false;
       }
 
       size_type cell_count;
       if ( ! count_cells(cell_count,verbose,level) )
         return false;
+      if( number_of_cells() != cell_count ) {
+        if (verbose)
+          std::cerr << "wrong number of cells" << std::endl;
+        CGAL_assertion(false);
+        return false;
+      }
       size_type edge_count;
       if ( ! count_edges(edge_count,verbose,level) )
           return false;
@@ -3584,7 +3626,7 @@ is_valid(bool verbose, int level ) const
       if ( cell_count - facet_count + edge_count - vertex_count != 0 ) {
         if (verbose)
             std::cerr << "Euler relation unsatisfied" << std::endl;
-        CGAL_triangulation_assertion(false);
+        CGAL_assertion(false);
         return false;
       }
 
@@ -3596,7 +3638,7 @@ is_valid(bool verbose, int level ) const
       if(number_of_vertices() <= 3) {
         if (verbose)
           std::cerr << "wrong number of vertices" << std::endl;
-        CGAL_triangulation_assertion(false);
+        CGAL_assertion(false);
         return false;
       }
 
@@ -3607,7 +3649,7 @@ is_valid(bool verbose, int level ) const
       if ( number_of_vertices() != vertex_count ) {
         if (verbose)
             std::cerr << "false number of vertices" << std::endl;
-        CGAL_triangulation_assertion(false);
+        CGAL_assertion(false);
         return false;
       }
 
@@ -3619,7 +3661,7 @@ is_valid(bool verbose, int level ) const
         if (verbose)
             std::cerr << "Euler relation unsatisfied - edges/vertices"
                       << std::endl;
-        CGAL_triangulation_assertion(false);
+        CGAL_assertion(false);
         return false;
       }
 
@@ -3631,7 +3673,7 @@ is_valid(bool verbose, int level ) const
         if (verbose)
             std::cerr << "Euler relation unsatisfied - facets/vertices"
                       << std::endl;
-        CGAL_triangulation_assertion(false);
+        CGAL_assertion(false);
         return false;
       }
       break;
@@ -3642,7 +3684,7 @@ is_valid(bool verbose, int level ) const
       if(number_of_vertices() <= 1) {
         if (verbose)
           std::cerr << "wrong number of vertices" << std::endl;
-        CGAL_triangulation_assertion(false);
+        CGAL_assertion(false);
         return false;
       }
 
@@ -3652,7 +3694,7 @@ is_valid(bool verbose, int level ) const
       if ( number_of_vertices() != vertex_count ) {
         if (verbose)
             std::cerr << "false number of vertices" << std::endl;
-        CGAL_triangulation_assertion(false);
+        CGAL_assertion(false);
         return false;
       }
       size_type edge_count;
@@ -3662,7 +3704,7 @@ is_valid(bool verbose, int level ) const
       if ( edge_count != vertex_count ) {
         if (verbose)
             std::cerr << "false number of edges" << std::endl;
-        CGAL_triangulation_assertion(false);
+        CGAL_assertion(false);
         return false;
       }
       break;
@@ -3672,7 +3714,7 @@ is_valid(bool verbose, int level ) const
       if ( number_of_vertices() < 2 ) {
         if (verbose)
             std::cerr << "fewer than 2 vertices but dimension 0" << std::endl;
-        CGAL_triangulation_assertion(false);
+        CGAL_assertion(false);
         return false;
       }
       CGAL_FALLTHROUGH;
@@ -3682,7 +3724,7 @@ is_valid(bool verbose, int level ) const
       if ( number_of_vertices() < 1 ) {
         if (verbose)
           std::cerr << "no vertex but dimension -1" << std::endl;
-        CGAL_triangulation_assertion(false);
+        CGAL_assertion(false);
         return false;
       }
       // vertex count
@@ -3692,7 +3734,7 @@ is_valid(bool verbose, int level ) const
       if ( number_of_vertices() != vertex_count ) {
         if (verbose)
           std::cerr << "false number of vertices" << std::endl;
-        CGAL_triangulation_assertion(false);
+        CGAL_assertion(false);
         return false;
       }
     }
@@ -3712,7 +3754,7 @@ is_valid(Vertex_handle v, bool verbose, int level) const
   if ( ! result ) {
     if ( verbose )
       std::cerr << "invalid vertex" << std::endl;
-    CGAL_triangulation_assertion(false);
+    CGAL_assertion(false);
   }
   return result;
 }
@@ -3732,14 +3774,14 @@ is_valid(Cell_handle c, bool verbose, int level) const
       if ( c->vertex(0) == Vertex_handle() ) {
         if (verbose)
             std::cerr << "vertex 0 nullptr" << std::endl;
-        CGAL_triangulation_assertion(false);
+        CGAL_assertion(false);
         return false;
       }
       is_valid(c->vertex(0),verbose,level);
       if ( c->vertex(1) != Vertex_handle() || c->vertex(2) != Vertex_handle()) {
         if (verbose)
             std::cerr << "vertex 1 or 2 != nullptr" << std::endl;
-        CGAL_triangulation_assertion(false);
+        CGAL_assertion(false);
         return false;
       }
       if ( c->neighbor(0) != Cell_handle() ||
@@ -3747,7 +3789,7 @@ is_valid(Cell_handle c, bool verbose, int level) const
            c->neighbor(2) != Cell_handle()) {
         if (verbose)
             std::cerr << "one neighbor != nullptr" << std::endl;
-        CGAL_triangulation_assertion(false);
+        CGAL_assertion(false);
         return false;
       }
       break;
@@ -3758,35 +3800,35 @@ is_valid(Cell_handle c, bool verbose, int level) const
       if ( c->vertex(0) == Vertex_handle() ) {
         if (verbose)
             std::cerr << "vertex 0 nullptr" << std::endl;
-        CGAL_triangulation_assertion(false);
+        CGAL_assertion(false);
         return false;
       }
       is_valid(c->vertex(0),verbose,level);
       if ( c->neighbor (0) == Cell_handle() ) {
         if (verbose)
             std::cerr << "neighbor 0 nullptr" << std::endl;
-        CGAL_triangulation_assertion(false);
+        CGAL_assertion(false);
         return false;
       }
       if ( c->vertex(1) != Vertex_handle() ||
            c->vertex(2) != Vertex_handle() ) {
         if (verbose)
             std::cerr << "vertex 1 or 2 != nullptr" << std::endl;
-        CGAL_triangulation_assertion(false);
+        CGAL_assertion(false);
         return false;
       }
       if ( c->neighbor(1) != Cell_handle() ||
            c->neighbor(2) != Cell_handle() ) {
         if (verbose)
             std::cerr << "neighbor 1 or 2 != nullptr" << std::endl;
-        CGAL_triangulation_assertion(false);
+        CGAL_assertion(false);
         return false;
       }
 
       if ( ! c->neighbor(0)->has_vertex(c->vertex(0)) ) {
         if (verbose)
             std::cerr << "neighbor 0 does not have vertex 0" << std::endl;
-        CGAL_triangulation_assertion(false);
+        CGAL_assertion(false);
         return false;
       }
       break;
@@ -3802,7 +3844,7 @@ is_valid(Cell_handle c, bool verbose, int level) const
       if ( v0 == Vertex_handle() || v1 == Vertex_handle() ) {
         if (verbose)
             std::cerr << "vertex 0 or 1 nullptr" << std::endl;
-        CGAL_triangulation_assertion(false);
+        CGAL_assertion(false);
         return false;
       }
       is_valid(c->vertex(0),verbose,level);
@@ -3810,7 +3852,7 @@ is_valid(Cell_handle c, bool verbose, int level) const
       if ( n0 == Cell_handle() || n1 == Cell_handle() ) {
         if (verbose)
             std::cerr << "neighbor 0 or 1 nullptr" << std::endl;
-        CGAL_triangulation_assertion(false);
+        CGAL_assertion(false);
         return false;
       }
 
@@ -3818,14 +3860,14 @@ is_valid(Cell_handle c, bool verbose, int level) const
         if (verbose)
             std::cerr << "neighbor 1 does not have vertex 0 as vertex 1"
                       << std::endl;
-        CGAL_triangulation_assertion(false);
+        CGAL_assertion(false);
         return false;
       }
       if ( v1 != n0->vertex(0) ) {
         if (verbose)
             std::cerr << "neighbor 0 does not have vertex 1 as vertex 0"
                       << std::endl;
-        CGAL_triangulation_assertion(false);
+        CGAL_assertion(false);
         return false;
       }
 
@@ -3833,14 +3875,14 @@ is_valid(Cell_handle c, bool verbose, int level) const
         if (verbose)
             std::cerr << "neighbor 0 does not have this as neighbor 1"
                       << std::endl;
-        CGAL_triangulation_assertion(false);
+        CGAL_assertion(false);
         return false;
       }
       if ( n1->neighbor(0) != c ) {
         if (verbose)
             std::cerr << "neighbor 1 does not have this as neighbor 0"
                       << std::endl;
-        CGAL_triangulation_assertion(false);
+        CGAL_assertion(false);
         return false;
       }
 
@@ -3854,7 +3896,7 @@ is_valid(Cell_handle c, bool verbose, int level) const
            c->vertex(2) == Vertex_handle() ) {
         if (verbose)
             std::cerr << "vertex 0, 1, or 2 nullptr" << std::endl;
-        CGAL_triangulation_assertion(false);
+        CGAL_assertion(false);
         return false;
       }
       is_valid(c->vertex(0),verbose,level);
@@ -3867,14 +3909,14 @@ is_valid(Cell_handle c, bool verbose, int level) const
         if ( n == Cell_handle() ) {
           if (verbose)
               std::cerr << "neighbor " << i << " nullptr" << std::endl;
-          CGAL_triangulation_assertion(false);
+          CGAL_assertion(false);
           return false;
         }
         if ( ! n->has_vertex(c->vertex(cw(i)),in ) ) {
           if (verbose)
               std::cerr << "vertex " << cw(i)
                         << " not vertex of neighbor " << i << std::endl;
-          CGAL_triangulation_assertion(false);
+          CGAL_assertion(false);
           return false;
         }
         in = cw(in);
@@ -3883,7 +3925,7 @@ is_valid(Cell_handle c, bool verbose, int level) const
               std::cerr << "neighbor " << i
                         << " does not have this as neighbor "
                         << in << std::endl;
-          CGAL_triangulation_assertion(false);
+          CGAL_assertion(false);
           return false;
         }
         if ( c->vertex(ccw(i)) != n->vertex(cw(in)) ) {
@@ -3891,7 +3933,7 @@ is_valid(Cell_handle c, bool verbose, int level) const
               std::cerr << "vertex " << ccw(i)
                         << " is not vertex " << cw(in)
                         << " of neighbor " << i << std::endl;
-          CGAL_triangulation_assertion(false);
+          CGAL_assertion(false);
           return false;
         }
       }
@@ -3905,7 +3947,7 @@ is_valid(Cell_handle c, bool verbose, int level) const
           if ( c->vertex(i) == Vertex_handle() ) {
             if (verbose)
                 std::cerr << "vertex " << i << " nullptr" << std::endl;
-            CGAL_triangulation_assertion(false);
+            CGAL_assertion(false);
             return false;
           }
           is_valid(c->vertex(i),verbose,level);
@@ -3916,7 +3958,7 @@ is_valid(Cell_handle c, bool verbose, int level) const
           if ( n == Cell_handle() ) {
             if (verbose)
               std::cerr << "neighbor " << i << " nullptr" << std::endl;
-            CGAL_triangulation_assertion(false);
+            CGAL_assertion(false);
             return false;
           }
 
@@ -3929,37 +3971,37 @@ is_valid(Cell_handle c, bool verbose, int level) const
           if (in == 5) {
             if (verbose)
               std::cerr << "neighbor of c has not c as neighbor" << std::endl;
-            CGAL_triangulation_assertion(false);
+            CGAL_assertion(false);
             return false;
           }
 
           int j1n=4,j2n=4,j3n=4;
           if ( ! n->has_vertex(c->vertex((i+1)&3),j1n) ) {
-            if (verbose) { std::cerr << "vertex " << ((i+1)&3)
+            if (verbose) { std::cerr << "vertex (+1) " << ((i+1)&3)
                                      << " not vertex of neighbor "
                                      << i << std::endl; }
-            CGAL_triangulation_assertion(false);
+            CGAL_assertion(false);
             return false;
           }
           if ( ! n->has_vertex(c->vertex((i+2)&3),j2n) ) {
-            if (verbose) { std::cerr << "vertex " << ((i+2)&3)
+            if (verbose) { std::cerr << "vertex (+2) " << ((i+2)&3)
                                      << " not vertex of neighbor "
                                      << i << std::endl; }
-            CGAL_triangulation_assertion(false);
+            CGAL_assertion(false);
             return false;
           }
           if ( ! n->has_vertex(c->vertex((i+3)&3),j3n) ) {
-            if (verbose) { std::cerr << "vertex " << ((i+3)&3)
+            if (verbose) { std::cerr << "vertex (+3) " << ((i+3)&3)
                                      << " not vertex of neighbor "
                                      << i << std::endl; }
-            CGAL_triangulation_assertion(false);
+            CGAL_assertion(false);
             return false;
           }
 
           if ( in+j1n+j2n+j3n != 6) {
             if (verbose) { std::cerr << "sum of the indices != 6 "
                                      << std::endl; }
-            CGAL_triangulation_assertion(false);
+            CGAL_assertion(false);
             return false;
           }
 
@@ -3970,7 +4012,7 @@ is_valid(Cell_handle c, bool verbose, int level) const
                 if (verbose)
                   std::cerr << " pb orientation with neighbor "
                             << i << std::endl;
-                CGAL_triangulation_assertion(false);
+                CGAL_assertion(false);
                 return false;
               }
             }
@@ -3979,7 +4021,7 @@ is_valid(Cell_handle c, bool verbose, int level) const
                 if (verbose)
                   std::cerr << " pb orientation with neighbor "
                             << i << std::endl;
-                CGAL_triangulation_assertion(false);
+                CGAL_assertion(false);
                 return false;
               }
             }
@@ -3988,7 +4030,7 @@ is_valid(Cell_handle c, bool verbose, int level) const
                 if (verbose)
                   std::cerr << " pb orientation with neighbor "
                             << i << std::endl;
-                CGAL_triangulation_assertion(false);
+                CGAL_assertion(false);
                 return false;
               }
             }
@@ -3999,7 +4041,7 @@ is_valid(Cell_handle c, bool verbose, int level) const
                 if (verbose)
                   std::cerr << " pb orientation with neighbor "
                             << i << std::endl;
-                CGAL_triangulation_assertion(false);
+                CGAL_assertion(false);
                 return false;
               }
             }
@@ -4008,7 +4050,7 @@ is_valid(Cell_handle c, bool verbose, int level) const
                 if (verbose)
                   std::cerr << " pb orientation with neighbor "
                             << i << std::endl;
-                CGAL_triangulation_assertion(false);
+                CGAL_assertion(false);
                 return false;
               }
             }
@@ -4017,7 +4059,7 @@ is_valid(Cell_handle c, bool verbose, int level) const
                 if (verbose)
                   std::cerr << " pb orientation with neighbor "
                             << i << std::endl;
-                CGAL_triangulation_assertion(false);
+                CGAL_assertion(false);
                 return false;
               }
             }
@@ -4037,7 +4079,7 @@ copy_tds(const TDS_src& tds,
         const ConvertVertex& convert_vertex,
         const ConvertCell& convert_cell)
 {
-  CGAL_triangulation_expensive_precondition( vert == Vertex_handle()
+  CGAL_expensive_precondition( vert == Vertex_handle()
                                           || tds.is_vertex(vert) );
 
   clear();
@@ -4086,7 +4128,7 @@ copy_tds(const TDS_src& tds,
       F[cit2]->set_neighbor(j, F[cit2->neighbor(j)] );
   }
 
-  CGAL_triangulation_postcondition( is_valid() );
+  CGAL_postcondition( is_valid() );
 
   return (vert != typename TDS_src::Vertex_handle()) ? V[vert] : Vertex_handle();
 }
@@ -4149,7 +4191,7 @@ void
 Triangulation_data_structure_3<Vb,Cb,Ct>::
 swap(Tds & tds)
 {
-  CGAL_triangulation_expensive_precondition(tds.is_valid() && is_valid());
+  CGAL_expensive_precondition(tds.is_valid() && is_valid());
 
   std::swap(_dimension, tds._dimension);
   cells().swap(tds.cells());
@@ -4178,7 +4220,7 @@ count_vertices(size_type & i, bool verbose, int level) const
     if ( ! is_valid(it,verbose,level) ) {
       if (verbose)
           std::cerr << "invalid vertex" << std::endl;
-      CGAL_triangulation_assertion(false);
+      CGAL_assertion(false);
       return false;
     }
     ++i;
@@ -4198,7 +4240,7 @@ count_facets(size_type & i, bool verbose, int level) const
     if ( ! is_valid((*it).first,verbose, level) ) {
       if (verbose)
           std::cerr << "invalid facet" << std::endl;
-      CGAL_triangulation_assertion(false);
+      CGAL_assertion(false);
       return false;
     }
     ++i;
@@ -4218,7 +4260,7 @@ count_edges(size_type & i, bool verbose, int level) const
     if ( ! is_valid((*it).first,verbose, level) ) {
       if (verbose)
           std::cerr << "invalid edge" << std::endl;
-      CGAL_triangulation_assertion(false);
+      CGAL_assertion(false);
       return false;
     }
     ++i;
@@ -4238,7 +4280,7 @@ count_cells(size_type & i, bool verbose, int level) const
     if ( ! is_valid(it,verbose, level) ) {
       if (verbose)
           std::cerr << "invalid cell" << std::endl;
-      CGAL_triangulation_assertion(false);
+      CGAL_assertion(false);
       return false;
     }
     ++i;

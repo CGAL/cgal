@@ -75,11 +75,11 @@ private:
   // Data members:
   const Decomposition_strategy1* m_decomposition_strategy1;
   const Decomposition_strategy2* m_decomposition_strategy2;
-  bool m_own_strategy1;   // inidicates whether the stategy should be freed up.
-  bool m_own_strategy2;   // inidicates whether the stategy should be freed up.
+  bool m_own_strategy1;   // indicates whether the strategy should be freed up.
+  bool m_own_strategy2;   // indicates whether the strategy should be freed up.
 
   const Traits_2* m_traits;
-  bool m_own_traits;      // inidicates whether the kernel should be freed up.
+  bool m_own_traits;      // indicates whether the kernel should be freed up.
 
   Compare_angle_2         f_compare_angle;
   Translate_point_2       f_add;
@@ -348,7 +348,7 @@ public:
   }
 
 private:
-  /*! Merge mergable edges
+  /*! Merge mergeable edges
    * \param arr (in) The underlying arrangement.
    */
   void simplify(Arrangement_2& arr) const

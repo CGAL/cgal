@@ -32,12 +32,12 @@ int main(int argc, char* argv[])
   }
 
   //bbox
-  double xmin = points[0].x();
-  double xmax = points[0].x();
-  double ymin = points[0].y();
-  double ymax = points[0].y();
-  double zmin = points[0].z();
-  double zmax = points[0].z();
+  auto xmin = points[0].x();
+  auto xmax = points[0].x();
+  auto ymin = points[0].y();
+  auto ymax = points[0].y();
+  auto zmin = points[0].z();
+  auto zmax = points[0].z();
 
   for(const Point_3& p : points)
   {

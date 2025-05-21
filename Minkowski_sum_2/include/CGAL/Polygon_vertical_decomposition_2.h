@@ -77,12 +77,15 @@ private:
 
   // An arrangement observer, used to receive notifications of face splits and
   // face mergers.
-  class My_observer : public CGAL::Arr_observer<Arrangement_2> {
+  class My_observer : public Arrangement_2::Observer {
   public:
-    My_observer(Arrangement_2& arr) : Arr_observer<Arrangement_2>(arr) {}
+    using Base_aos = typename Arrangement_2::Base_aos;
+    using Face_handle = typename Base_aos::Face_handle;
+
+    My_observer(Base_aos& arr) : Arrangement_2::Observer(arr) {}
 
     virtual void after_split_face(Face_handle f, Face_handle new_f,
-                                  bool /* is_hole */)
+                                  bool /* is_hole */) override
     { if (f->contained()) new_f->set_contained(true); }
   };
 
@@ -93,7 +96,7 @@ private:
 
   // Data members:
   const Traits_2* m_traits;
-  bool m_own_traits;    // inidicates whether the kernel should be freed up.
+  bool m_own_traits;    // indicates whether the kernel should be freed up.
 
   Compare_x_2 f_cmp_x;
   Intersect_2 f_intersect;
@@ -274,13 +277,13 @@ private:
   // Construct the vertical decomposition of the given arrangement.
   void vertical_decomposition(Arrangement_2& arr) const
   {
-    // For each vertex in the arrangment, locate the feature that lies
+    // For each vertex in the arrangement, locate the feature that lies
     // directly below it and the feature that lies directly above it.
     Vert_decomp_list vd_list;
     CGAL::decompose(arr, std::back_inserter(vd_list));
 
     // Go over the vertices (given in ascending lexicographical xy-order),
-    // and add segements to the feautres below and above it.
+    // and add segments to the features below and above it.
     typename Vert_decomp_list::iterator it, prev = vd_list.end();
     for (it = vd_list.begin(); it != vd_list.end(); ++it) {
       // If the feature above the previous vertex is not the current vertex,

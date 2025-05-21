@@ -11,7 +11,7 @@ For example, an expression like
 `NT(0)/NT(0)` can result in an invalid number.
 Routines may have as a precondition that all values are valid.
 
-\cgalModels `AdaptableFunctor`
+\cgalModels{AdaptableFunctor}
 
 */
 template< typename T >
@@ -43,7 +43,7 @@ The default value for `Less` is `std::less`.
 Note that `T` must be a model of `LessThanComparable`
 in case `std::less` is used.
 
-\cgalModels `AdaptableFunctor`
+\cgalModels{AdaptableFunctor}
 
 */
 template< typename T, typename Less >
@@ -90,7 +90,7 @@ The default value for `Less` is `std::less`.
 Note that `T` must be a model of `LessThanComparable`
 in case `std::less` is used.
 
-\cgalModels `AdaptableFunctor`
+\cgalModels{AdaptableFunctor}
 
 */
 template< typename T, typename Less >

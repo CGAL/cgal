@@ -82,7 +82,7 @@ protected:
   {
     points.clear();
 
-    // Go over the arrangement vertices and construct their boundig box.
+    // Go over the arrangement vertices and construct their bounding box.
     const Arrangement_2* arr = this->arrangement();
     Vertex_const_iterator vit;
     double x_min = 0, x_max = 1, y_min = 0, y_max = 1;

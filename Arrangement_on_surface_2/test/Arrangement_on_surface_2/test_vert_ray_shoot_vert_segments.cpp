@@ -22,17 +22,17 @@ void vertical_ray_shooting_query
   if (shoot_up) std::cout << "  Shooting up from (" << q << ") : ";
   else std::cout << "  Shooting down from (" << q << ") : ";
 
-  if (auto* e_p = boost::get<Halfedge_const_handle>(&obj)) {
+  if (auto* e_p = std::get_if<Halfedge_const_handle>(&obj)) {
     // We hit an edge:
     std::cout << "hit an edge: " << (*e_p)->curve() << std::endl;
   }
-  else if (auto* v_p = boost::get<Vertex_const_handle>(&obj)) {
+  else if (auto* v_p = std::get_if<Vertex_const_handle>(&obj)) {
     // We hit a vertex:
     if ((*v_p)->is_isolated())
       std::cout << "hit an isolated vertex: " << (*v_p)->point() << std::endl;
     else std::cout << "hit a vertex: " << (*v_p)->point() << std::endl;
   }
-  else if (auto* f_p = boost::get<Face_const_handle>(&obj)) {
+  else if (auto* f_p = std::get_if<Face_const_handle>(&obj)) {
     // We did not hit anything:
     assert((*f_p)->is_unbounded());
 

@@ -13,7 +13,7 @@ while the actual point type is `Base_traits::Point_3`.
 \tparam PointPropertyMap must be a model of `ReadablePropertyMap`
 with value type `Base_traits::Point_3`.
 
-\cgalModels `SpatialSortingTraits_3`
+\cgalModels{SpatialSortingTraits_3}
 
 */
 template< typename Base_traits, typename PointPropertyMap >

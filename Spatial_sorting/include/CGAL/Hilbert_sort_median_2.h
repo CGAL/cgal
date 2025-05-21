@@ -17,8 +17,6 @@
 #include <CGAL/tags.h>
 #include <CGAL/Hilbert_sort_base.h>
 
-#include <boost/type_traits/is_convertible.hpp>
-
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/parallel_invoke.h>
 #endif
@@ -157,8 +155,8 @@ public:
 #ifndef CGAL_LINKED_WITH_TBB
     CGAL_USE(begin);
     CGAL_USE(end);
-    CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
-                               "Parallel_tag is enabled but TBB is unavailable.");
+    static_assert (!std::is_convertible<ConcurrencyTag, Parallel_tag>::value,
+                   "Parallel_tag is enabled but TBB is unavailable.");
 #else
     const int y = (x + 1) % 2;
     if (std::distance(begin,end) <= _limit)

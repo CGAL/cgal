@@ -4,7 +4,6 @@
 #include <CGAL/IO/Polyhedron_iostream.h>
 // HalfedgeGraph adapters for Polyhedron_3
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#include <CGAL/boost/graph/properties_Polyhedron_3.h>
 // #define CGAL_DEFORM_MESH_USE_EXPERIMENTAL_SR_ARAP
 #include <CGAL/Surface_mesh_deformation.h>
 
@@ -42,7 +41,7 @@ int main(int argc,char** argv)
 
   // Definition of the region of interest (use the whole mesh)
   vertex_iterator vb,ve;
-  boost::tie(vb, ve) = vertices(mesh);
+  std::tie(vb, ve) = vertices(mesh);
 
   //the selection is set by a file
   input.open(argv[2]);

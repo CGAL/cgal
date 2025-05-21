@@ -8,7 +8,7 @@ namespace AlgebraicStructureTraits_{
 `AdaptableUnaryFunction` providing the inverse element with
 respect to multiplication of a `Field`.
 
-\cgalRefines `AdaptableUnaryFunction`
+\cgalRefines{AdaptableUnaryFunction}
 
 \sa `AlgebraicStructureTraits`
 

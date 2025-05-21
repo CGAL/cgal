@@ -6,7 +6,7 @@ namespace CGAL {
 \anchor Chapter_3D_Alpha_wrapping
 \cgalAutoToc
 
-\authors TBA
+\authors Pierre Alliez, David Cohen-Steiner, Michael Hemmer, Cédric Portaneri, Mael Rouxel-Labbé
 
 <center>
 <img src="aw3_bike_lod.jpg" style="max-width:70%;"/>
@@ -264,7 +264,7 @@ Secondly, the farther the isosurface is from the input, the more new points are 
 through the first criterion (i.e., through intersection with dual Voronoi edge, see Section \ref aw3_algorithm);
 thus, the quality of the output improves in terms of angles of the triangle elements.
 Finally, and depending on the value of the alpha parameter, a large offset can also offer defeaturing capabilities.
-However using a small offset parameter will tend to better preserve sharp features as projection
+However, using a small offset parameter will tend to better preserve sharp features as projection
 Steiner points tend to project onto convex sharp features.
 
 \cgalFigureAnchor{6}
@@ -278,7 +278,7 @@ Impact of the offset parameter on the output.
 The offset parameter is decreasing from left to right, to respectively 1/50, 1/200 and 1/1000 of the longest diagonal of the input bounding box.
 The alpha parameter is equal to 1/50 of the longest diagonal of the input bounding box for all level of details.
 A larger offset will produce an output less complex with better triangle quality.
-However the sharp features (red edges) are well preserved when the offset parameter is small.
+However, the sharp features (red edges) are well-preserved when the offset parameter is small.
 \cgalFigureCaptionEnd
 
 \cgalFigureAnchor{7}
@@ -332,7 +332,7 @@ and values of alpha smaller than the size of the holes.
 Two-sided wrap.
 (Left) Wrapping a Bunny in 2D, with decreasing values for alpha.
 (Right) Wrapping a defect-laden Bunny in 3D. The rightmost column depicts a clipped visualization
-of the inside. When alpha is small enough with respect the diamater of the holes, the algorithm generates a two-sided wrap.
+of the inside. When alpha is small enough with respect the diameter of the holes, the algorithm generates a two-sided wrap.
 \cgalFigureCaptionEnd
 
 \section aw3_performance Performance
@@ -346,24 +346,28 @@ The charts below plots the computation times of the wrapping algorithm on the Th
 \cgalFigureCaptionBegin{9}
 Execution times and output complexity for different values of alpha on the Thingi10k data set.
 Alpha increases from 1/20 to 1/200 of the length of bounding box diagonal.
-The x axis represents the complexity of the output wrap mesh in number of triangle facets.
-The y axis represents the total computation time, in seconds.
+The x-axis represents the complexity of the output wrap mesh in number of triangle facets.
+The y-axis represents the total computation time, in seconds.
 The color and diameter of the dots represent the number of faces in the input triangle soup,
 ranging from 10 (green) to 3154000 (blue).
 \cgalFigureCaptionEnd
 
 \section aw3_examples Examples
 
-Here is an example with an input triangle mesh, with alpha set to 1/20 of the bounding box longest diagonal edge length,
+Here is an example with an input triangle mesh, with alpha set to 1/20 of the bounding box's longest diagonal edge length,
 and offset set to 1/30 of alpha (i.e., 1/600 of the bounding box diagonal edge length).
 
 \cgalExample{Alpha_wrap_3/triangle_mesh_wrap.cpp}
 
+Some triangle soups might not be representable as a mesh due to non-manifoldness or incompatible orientations.
+Such triangle soup is nevertheless a valid input for the wrapping algorithm, as illustrated
+in the following example.
+
+\cgalExample{Alpha_wrap_3/triangle_soup_wrap.cpp}
+
 Here is an example with a point cloud.
 
 \cgalExample{Alpha_wrap_3/point_set_wrap.cpp}
-
-\section aw3_history Design and Implementation History
 
 */
 

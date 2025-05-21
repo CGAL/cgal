@@ -10,8 +10,13 @@
 //
 // Author(s)     : Sven Schoenherr <sven@inf.ethz.ch>, Bernd Gaertner
 
+#ifndef CGAL_MIN_SPHERE_D_OPTIMISATION_CIRCLE_2_IMPL_H
+#define CGAL_MIN_SPHERE_D_OPTIMISATION_CIRCLE_2_IMPL_H
+
+#include <CGAL/license/Bounding_volumes.h>
+
 // includes
-#  include <CGAL/Optimisation/assertions.h>
+#  include <CGAL/assertions.h>
 
 namespace CGAL {
 
@@ -42,7 +47,7 @@ operator << ( std::ostream& os, const CGAL::Optimisation_circle_2<K_>& c)
         break;
 
       default:
-        CGAL_optimisation_assertion_msg( false,
+        CGAL_assertion_msg( false,
                                          "CGAL::IO::get_mode( os) invalid!");
         break; }
 
@@ -79,7 +84,7 @@ operator >> ( std::istream& is, CGAL::Optimisation_circle_2<K_>& c)
         break;
 
       default:
-        CGAL_optimisation_assertion_msg( false,
+        CGAL_assertion_msg( false,
                                          "CGAL::IO::get_mode( is) invalid!");
         break; }
 
@@ -89,3 +94,5 @@ operator >> ( std::istream& is, CGAL::Optimisation_circle_2<K_>& c)
 } //namespace CGAL
 
 // ===== EOF ==================================================================
+
+#endif //CGAL_MIN_SPHERE_D_OPTIMISATION_CIRCLE_2_IMPL_H

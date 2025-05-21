@@ -8,7 +8,7 @@ The class
 model for concept `MinSphereOfSpheresTraits`. It uses a pair of \cgal
 `Point_2` and `FT` to represent circles.
 
-\cgalModels `MinSphereOfSpheresTraits`
+\cgalModels{MinSphereOfSpheresTraits}
 
 
 The last two template parameters, `UseSqrt` and `Algorithm`, have

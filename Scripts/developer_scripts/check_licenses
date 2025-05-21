@@ -43,23 +43,23 @@ EXTENSIONS="C cpp h xpm gif pcx bmp jpeg png txt html vcproj sln dsp dsw cin cou
 CHECK_PATTERN="\.(`echo $EXTENSIONS | sed -e 's/ /\\|/g'`)"
 
 if [ -e $DIR ]; then
-	echo error: \'$DIR\' exists, this script needs \'$DIR\' for its own purposes
-	exit 1
+        echo error: \'$DIR\' exists, this script needs \'$DIR\' for its own purposes
+        exit 1
 fi
 
 mkdir $DIR
 rm -f $PREFIX1* $PREFIX2*
 
 if [ ! -f INSTALL.md ]; then
-	echo This script should be run from the top-level directory of an internal or external release.
-	exit 1
+        echo This script should be run from the top-level directory of an internal or external release.
+        exit 1
 fi
- 
+
 licensecheck -r * -c $CHECK_PATTERN | grep -Ev ': L?GPL \(v3 or later\)' | \
-	grep -v "^$DIR/\|^include/CGAL/CORE/\|^include/CGAL/OpenNL/\|^src/CGAL_Core/\|^src/CGAL_ImageIO/\|^config/support/\|test/\|^Packages/\|^developer_scripts/\|^winutils/\|^cmake/platforms" | sort >$PREFIX1 || true
-	
+        grep -v "^$DIR/\|^include/CGAL/CORE/\|^src/CGAL_Core/\|^src/CGAL_ImageIO/\|^config/support/\|test/\|^Packages/\|^developer_scripts/\|^winutils/\|^cmake/platforms" | sort >$PREFIX1 || true
+
 echo Note that files in the following directories are ignored:
-echo include/CGAL/CORE, include/CGAL/OpenNL,
+echo include/CGAL/CORE,
 echo src/CGAL_Core, src/CGAL_ImageIO, config/support,
 echo test, Packages, developer_scripts, doc, winutils
 
@@ -68,8 +68,8 @@ echo Results including examples and demo:
 echo
 
 for EXT in $EXTENSIONS; do
-	grep -i "\(\.\|/\)$EXT:" $PREFIX1 >$PREFIX1.$EXT || true
-	echo "$EXT `cat $PREFIX1.$EXT | wc -l`"
+        grep -i "\(\.\|/\)$EXT:" $PREFIX1 >$PREFIX1.$EXT || true
+        echo "$EXT `cat $PREFIX1.$EXT | wc -l`"
 done
 
 PATTERN=`echo $EXTENSIONS | sed -e 's/ /\\:\\\\|/g'`
@@ -85,8 +85,8 @@ echo
 grep -v "^examples/\|^demo/" $PREFIX1 >$PREFIX2 || true
 
 for EXT in $EXTENSIONS; do
-	grep -i "\(\.\|/\)$EXT:" $PREFIX2 >$PREFIX2.$EXT || true
-	echo "$EXT `cat $PREFIX2.$EXT | wc -l`"
+        grep -i "\(\.\|/\)$EXT:" $PREFIX2 >$PREFIX2.$EXT || true
+        echo "$EXT `cat $PREFIX2.$EXT | wc -l`"
 done
 
 PATTERN=`echo $EXTENSIONS | sed -e 's/ /\\:\\\\|/g'`
@@ -99,12 +99,12 @@ echo
 echo Detailed results excluding examples and demo:
 
 for EXT in $EXTENSIONS; do
-	if [ `cat $PREFIX2.$EXT | wc -l` -gt 0 ]; then
-		echo
-		echo $EXT files
-		echo
-		cat $PREFIX2.$EXT
-	fi
+        if [ `cat $PREFIX2.$EXT | wc -l` -gt 0 ]; then
+                echo
+                echo $EXT files
+                echo
+                cat $PREFIX2.$EXT
+        fi
 done
 
 echo

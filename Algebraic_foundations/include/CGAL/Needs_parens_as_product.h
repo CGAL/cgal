@@ -28,7 +28,7 @@ class Parens_as_product_tag {};
 
 /*! \ingroup NiX_io_parens
  *  \brief decides whether this number requires parentheses
- *  in case it appears within a produkt.
+ *  in case it appears within a product.
  */
 template <class NT>
 struct Needs_parens_as_product{
@@ -37,7 +37,7 @@ struct Needs_parens_as_product{
 
 /*! \ingroup NiX_io_parens
  *  \brief decides whether this number requires parentheses
- *  in case it appears within a produkt.
+ *  in case it appears within a product.
  */
 template <class NT>
 inline bool needs_parens_as_product(const NT& x){

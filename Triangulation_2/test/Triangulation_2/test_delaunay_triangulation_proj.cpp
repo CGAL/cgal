@@ -1,11 +1,13 @@
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
 #include <CGAL/Projection_traits_xy_3.h>
 #include <CGAL/Projection_traits_yz_3.h>
 #include <CGAL/Projection_traits_xz_3.h>
 #include <CGAL/Delaunay_triangulation_2.h>
-#include <iostream>
-
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
+
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
+#include <iostream>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Projection_traits_xy_3<Kernel>   Gt_xy;
@@ -20,6 +22,13 @@ typedef CGAL::Triangulation_data_structure_2 <
                        CGAL::Triangulation_vertex_base_2<Gt_xy>,
                        CGAL::Constrained_triangulation_face_base_2<Gt_xy> > CDT_TDS;
 typedef CGAL::Constrained_Delaunay_triangulation_2<Gt_xy,CDT_TDS,CGAL::Exact_predicates_tag> CDT;
+
+static_assert(CGAL::internal::can_construct_almost_exact_intersection_v<Kernel>,
+              "Static assert failure. See internal::can_construct_almost_exact_intersections"
+              " in <CGAL/Constrained_triangulation_2.h> ");
+static_assert(CGAL::internal::can_construct_almost_exact_intersection_v<Gt_xy>,
+              "Static assert failure. See internal::can_construct_almost_exact_intersections"
+              " in <CGAL/Constrained_triangulation_2.h> ");
 
 int main(){
   DT_xy t_xy;

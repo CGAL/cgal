@@ -32,7 +32,6 @@ int main()
 struct Node_1
 : public CGAL::Compact_container_base
 {
-  Node_1() {}
   bool operator==(const Node_1 &) const { return true; }
   bool operator!=(const Node_1 &) const { return false; }
   bool operator< (const Node_1 &) const { return false; }
@@ -45,7 +44,7 @@ struct Node_1
   void set_time_stamp(const std::size_t& ts) {
     time_stamp_ = ts;
   }
-  std::size_t time_stamp_;
+  std::size_t time_stamp_ = std::size_t(-2);
 };
 
 class Node_2
@@ -322,15 +321,15 @@ void test(const Cont &)
   assert(c11.size() == v1.size());
   assert(c10 == c11);*/
 
-  // owns() and owns_dereferencable().
+  // owns() and owns_dereferenceable().
   for(typename Cont::const_iterator it = c9.begin(), end = c9.end(); it != end; ++it) {
     assert(c9.owns(it));
-    assert(c9.owns_dereferencable(it));
+    assert(c9.owns_dereferenceable(it));
     assert(! c10.owns(it));
-    assert(! c10.owns_dereferencable(it));
+    assert(! c10.owns_dereferenceable(it));
   }
   assert(c9.owns(c9.end()));
-  assert(! c9.owns_dereferencable(c9.end()));
+  assert(! c9.owns_dereferenceable(c9.end()));
 
 
   c9.erase(c9.begin(), c9.end());

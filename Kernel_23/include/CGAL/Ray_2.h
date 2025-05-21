@@ -18,18 +18,20 @@
 #define CGAL_RAY_2_H
 
 #include <CGAL/assertions.h>
-#include <boost/type_traits/is_same.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/kernel_assertions.h>
 #include <CGAL/representation_tags.h>
 #include <CGAL/Dimension.h>
 #include <CGAL/IO/io.h>
 
+#include <type_traits>
+
 namespace CGAL {
 
 template <class R_>
 class Ray_2 : public R_::Kernel_base::Ray_2
 {
+  typedef typename R_::Boolean               Boolean;
   typedef typename R_::RT                    RT;
   typedef typename R_::FT                    FT;
   typedef typename R_::Point_2               Point_2;
@@ -41,7 +43,7 @@ class Ray_2 : public R_::Kernel_base::Ray_2
   typedef typename R_::Kernel_base::Ray_2    RRay_2;
 
   typedef Ray_2                              Self;
-  CGAL_static_assertion((boost::is_same<Self, typename R_::Ray_2>::value));
+  static_assert(std::is_same<Self, typename R_::Ray_2>::value);
 
 public:
 
@@ -116,17 +118,17 @@ public:
     return source();
   }
 
-  bool is_horizontal() const
+  Boolean is_horizontal() const
   {
     return R().equal_y_2_object()(source(), second_point());
   }
 
-  bool is_vertical() const
+  Boolean is_vertical() const
   {
     return R().equal_x_2_object()(source(), second_point());
   }
 
-  bool is_degenerate() const
+  Boolean is_degenerate() const
   {
     return R().is_degenerate_2_object()(*this);
   }
@@ -147,7 +149,7 @@ public:
     return construct_vector(source(), second_point());
   }
 
-  bool
+  Boolean
   has_on(const Point_2 &p) const
   {
     typename R::Construct_vector_2  construct_vector;
@@ -156,9 +158,7 @@ public:
            Direction_2(construct_vector( source(), p)) == direction() );
   }
 
-
-
-  bool
+  Boolean
   collinear_has_on(const Point_2 &p) const
   {
     return R().collinear_has_on_2_object()(*this, p);
@@ -174,18 +174,6 @@ public:
   supporting_line() const
   {
     return R().construct_line_2_object()(source(), second_point());
-  }
-
-  bool
-  operator==(const Ray_2& r) const
-  {
-    return R().equal_2_object()(*this, r);
-  }
-
-  bool
-  operator!=(const Ray_2& r) const
-  {
-    return !(*this == r);
   }
 
   Ray_2

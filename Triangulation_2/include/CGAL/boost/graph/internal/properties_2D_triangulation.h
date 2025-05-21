@@ -4,7 +4,7 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Mael Rouxel-Labbé
 
@@ -25,6 +25,9 @@
 // the rest of the file is the shared implementation of properties for all 2D triangulations
 #ifndef CGAL_BOOST_GRAPH_PROPERTIES_2D_TRIANGULATION_H
 #define CGAL_BOOST_GRAPH_PROPERTIES_2D_TRIANGULATION_H
+
+#include <CGAL/license/Triangulation_2.h>
+
 
 namespace CGAL {
 namespace internal {

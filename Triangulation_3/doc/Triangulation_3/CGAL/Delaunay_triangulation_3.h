@@ -19,14 +19,14 @@ respectively.
 
 \tparam LP is a tag which must be a `Location_policy<Tag>`:
 either `CGAL::Fast_location` or `CGAL::Compact_location`.
-`CGAL::Fast_location` offers faster (\f$ O(\log n)\f$ time) point
+`CGAL::Fast_location` offers faster (\cgalBigO{\log n} time) point
 location, which can be beneficial when performing point locations or random
 point insertions (with no good location hint) in large data sets.
 It is currently implemented using an additional triangulation
 hierarchy data structure \cgalCite{cgal:d-dh-02}.
 The default is `CGAL::Compact_location`, which saves memory (3-5%) by avoiding the need for this
 separate data structure, and point location is then performed roughly in
-\f$ O(n^{1/3})\f$ time.
+\cgalBigO{n^{1/3}} time.
 If the triangulation is parallel (see user manual), the default compact
 location policy must be used.
 Note that this argument can also come in second position, which can be useful when

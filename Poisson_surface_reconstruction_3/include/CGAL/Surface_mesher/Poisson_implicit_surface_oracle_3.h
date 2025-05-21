@@ -1,5 +1,5 @@
 // Copyright (c) 2003-2007  INRIA Sophia-Antipolis (France).
-// Copyright (c) 2008,2011  GeometryFactory Sarl (France)
+// Copyright (c) 2008,2011,2024  GeometryFactory Sarl (France)
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -17,9 +17,8 @@
 #include <CGAL/license/Poisson_surface_reconstruction_3.h>
 
 
-#include <CGAL/Surface_mesher/Null_oracle_visitor.h>
 #include <CGAL/point_generators_3.h>
-#include <CGAL/Surface_mesher/Sphere_oracle_3.h>
+#include <CGAL/Poisson_surface_reconstruction_3/internal/Poisson_sphere_oracle_3.h>
 #include <CGAL/Surface_mesher/Implicit_surface_oracle_3.h>
 #include <CGAL/Real_embeddable_traits.h>
 #include <CGAL/squared_distance_3.h>
@@ -46,46 +45,6 @@ namespace CGAL {
 
   namespace Surface_mesher {
 
-    /**
-       Type and functions required in GT:
-         - Compute_scalar_product_3             (from rev. 29646)
-         - Compute_squared_distance_3
-         - Compute_squared_radius_3
-         - Construct_center_3
-         - Construct_midpoint_3
-         - Construct_point_on_3                 (from rev. 29646)
-         - Construct_scaled_vector_3
-         - Construct_segment_3                  (from rev. 29646)
-         - Construct_translated_point_3
-         - Construct_vector_3
-         - FT
-         - Has_on_bounded_side_3                (from rev. 29646)
-         - Line_3
-         - Point_3
-         - Ray_3
-         - Segment_3
-         - Sphere_3
-         - Vector_3                             (from rev. 29646)
-         - compute_scalar_product_3_object      (from rev. 29646)
-         - compute_squared_distance_3_object
-         - compute_squared_radius_3_object
-         - construct_center_3_object
-         - construct_line_3_object              (no longer, since rev. 29646)
-         - construct_midpoint_3_object
-         - construct_point_on_3_object          (from rev. 29646)
-         - construct_scaled_vector_3_object
-         - construct_segment_3_object           (from rev. 29646)
-         - construct_translated_point_3_object
-         - construct_vector_3_object
-         - has_on_bounded_side_3_object         (from rev. 29646)
-(Computed by use of:
- perl -ne '/GT\(\)\.([a-zA-Z_0-9]+)/
-             && print "$1\n";' {implicit_surface_oracle_3.h,Sphere_oracle_3.h} | sort -u
- perl -ne '/GT::([a-zA-Z_0-9]+)/
-             && print "$1\n";' {implicit_surface_oracle_3.h,Sphere_oracle_3.h} | sort -u
-)
-    */
-
 
   template <
     class GT,
@@ -96,7 +55,7 @@ namespace CGAL {
       Return_min<typename Transform_functor_::result_type>,
     class Point_creator = Creator_uniform_3<typename GT::FT,
                                             typename GT::Point_3>,
-    class Visitor = Null_oracle_visitor
+    class Visitor = Poisson_null_oracle_visitor
     >
   class Poisson_implicit_surface_oracle_3
   {
@@ -108,7 +67,7 @@ namespace CGAL {
                                       Point_creator,
                                       Visitor> Self;
 
-    typedef Sphere_oracle_3<GT, Point_creator> Sphere_oracle;
+    typedef Poisson_sphere_oracle_3<GT, Point_creator> Sphere_oracle;
 
     typedef typename GT::Point_3 Point;
 
@@ -327,8 +286,8 @@ namespace CGAL {
         Cell_handle c1, c2;
         bool c1_is_inf, c2_is_inf;
 
-        boost::tie(value_at_p1, c1, c1_is_inf) = surface.function().special_func(p1);
-        boost::tie(value_at_p2, c2, c2_is_inf) = surface.function().special_func(p2);
+        std::tie(value_at_p1, c1, c1_is_inf) = surface.function().special_func(p1);
+        std::tie(value_at_p2, c2, c2_is_inf) = surface.function().special_func(p2);
 
         // If both extremities are in the same volume component, returns
         // no intersection.
@@ -361,7 +320,7 @@ namespace CGAL {
           Cell_handle c_at_mid;
           FT value_at_mid;
           bool c_is_inf;
-          boost::tie(value_at_mid, c_at_mid, c_is_inf) = surface.function().special_func(mid);
+          std::tie(value_at_mid, c_at_mid, c_is_inf) = surface.function().special_func(mid);
 
           if ( squared_distance(p1, p2) < squared_distance_bound )
           // If the two points are close, then we must decide
@@ -369,7 +328,7 @@ namespace CGAL {
 #ifdef CGAL_SURFACE_MESHER_DEBUG_CLIPPED_SEGMENT
             std::cerr << "=" << debug_point(surface, mid) << "\n";
 #endif
-            // the following function conditionnally call
+            // the following function conditionally call
             // mid.set_on_surface(...) if mid has such a function.
             set_on_surface(mid,
                            surface_identifiers_generator(transform_functor(value_at_p1),

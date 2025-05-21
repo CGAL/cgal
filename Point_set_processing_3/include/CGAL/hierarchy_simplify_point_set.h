@@ -25,7 +25,7 @@
 #include <CGAL/Dimension.h>
 #include <CGAL/Object.h>
 #include <CGAL/centroid.h>
-#include <CGAL/point_set_processing_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/Default_diagonalize_traits.h>
 #include <CGAL/PCA_util.h>
 #include <CGAL/squared_distance_3.h>
@@ -210,8 +210,8 @@ namespace CGAL {
     typedef typename std::list<cluster>::iterator cluster_iterator;
 
     CGAL_precondition (points.begin() != points.end());
-    CGAL_point_set_processing_precondition (size > 0);
-    CGAL_point_set_processing_precondition (var_max > 0.0);
+    CGAL_precondition (size > 0);
+    CGAL_precondition (var_max > 0.0);
 
     // The first cluster is the whole input point set
     clusters_stack.push_front (cluster (std::list<Input_type>(), Point (0., 0., 0.)));
@@ -242,7 +242,7 @@ namespace CGAL {
           }
 
         // Compute the covariance matrix of the set
-        std::array<FT, 6> covariance = {{ 0., 0., 0., 0., 0., 0. }};
+        std::array<double, 6> covariance = {{ 0., 0., 0., 0., 0., 0. }};
 
         for (typename std::list<Input_type>::iterator it = current_cluster->first.begin ();
              it != current_cluster->first.end (); ++ it)
@@ -257,8 +257,8 @@ namespace CGAL {
             covariance[5] += d.z () * d.z ();
           }
 
-        std::array<FT, 3> eigenvalues = {{ 0., 0., 0. }};
-        std::array<FT, 9> eigenvectors = {{ 0., 0., 0.,
+        std::array<double, 3> eigenvalues = {{ 0., 0., 0. }};
+        std::array<double, 9> eigenvectors = {{ 0., 0., 0.,
                                               0., 0., 0.,
                                               0., 0., 0. }};
         // Linear algebra = get eigenvalues and eigenvectors for
@@ -279,7 +279,7 @@ namespace CGAL {
             // The plane which splits the point set into 2 point sets:
             //  * Normal to the eigenvector with highest eigenvalue
             //  * Passes through the centroid of the set
-            Vector v (eigenvectors[6], eigenvectors[7], eigenvectors[8]);
+            Vector v (FT(eigenvectors.at(6)), FT(eigenvectors.at(7)), FT(eigenvectors.at(8)));
 
             std::size_t current_cluster_size = 0;
             typename std::list<Input_type>::iterator it = current_cluster->first.begin ();

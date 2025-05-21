@@ -16,9 +16,7 @@ The degree of the zero polynomial is set to \f$ 0\f$.
 From the mathematical point of view this should
 be \f$ -infinity\f$, but this would imply an inconvenient return type.
 
-\cgalRefines `AdaptableUnaryFunction`
-\cgalRefines `CopyConstructible`
-\cgalRefines `DefaultConstructible`
+\cgalRefines{AdaptableUnaryFunction,CopyConstructible,DefaultConstructible}
 
 \sa `Polynomial_d`
 \sa `PolynomialTraits_d`

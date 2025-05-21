@@ -39,7 +39,7 @@ class Vector_d : public Get_type<typename R_::Kernel_base, Vector_tag>::type
   typedef typename Get_functor<Kbase, Squared_length_tag>::type SLBase;
 
   typedef Vector_d                            Self;
-  CGAL_static_assertion((boost::is_same<Self, typename Get_type<R_, Vector_tag>::type>::value));
+  static_assert(std::is_same<Self, typename Get_type<R_, Vector_tag>::type>::value);
 
 public:
 
@@ -66,7 +66,7 @@ public:
 #  pragma warning(push)
 #  pragma warning(disable: 4309)
 #endif
-  template<class...U,class=typename std::enable_if<!std::is_same<std::tuple<typename std::decay<U>::type...>,std::tuple<Vector_d> >::value>::type> explicit Vector_d(U&&...u)
+  template<class...U,class=std::enable_if_t<!std::is_same<std::tuple<typename std::decay<U>::type...>,std::tuple<Vector_d> >::value>> explicit Vector_d(U&&...u)
           : Rep(CVBase()(std::forward<U>(u)...)){}
 
 #if defined(BOOST_MSVC) && (BOOST_MSVC == 1900)

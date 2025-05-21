@@ -102,14 +102,14 @@ protected:
   Halfedge_indices_map* m_he_ind_map_p;
 
 public:
-  /*! Constructor. */
+  /*! constructs. */
   Arr_spherical_construction_helper(Arrangement_2* arr) :
     m_top_traits(arr->topology_traits()),
     m_arr_access(*arr),
     m_he_ind_map_p(nullptr)
   {}
 
-  /*! Destructor. */
+  /*! destructs. */
   virtual ~Arr_spherical_construction_helper() {}
 
   /// \name Notification functions.
@@ -127,40 +127,40 @@ public:
   /*! A notification invoked when a new subcurve is created. */
   virtual void add_subcurve(Halfedge_handle , Subcurve* ) { return; }
 
-  /*! Collect a subcurve index that does not see any status-line from below.
+  /*! collects a subcurve index that does not see any status-line from below.
    */
   void add_subcurve_in_top_face(unsigned int index)
   { m_subcurves_at_nf.push_back(index); }
 
-  /*! Obtain the indices of the halfedges that "see" the north. */
+  /*! obtains the indices of the halfedges that "see" the north. */
   Indices_list& halfedge_indices_list() { return m_subcurves_at_nf; }
 
   /*! A notification invoked before the given event it deallocated. */
   void before_deallocate_event(Event* /* event */) {}
   //@}
 
-  /*! Set the map that maps each halfedge to the list of subcurve indices
+  /*! sets the map that maps each halfedge to the list of subcurve indices
    * that "see" the halfedge from below.
    */
   void set_halfedge_indices_map(Halfedge_indices_map& table)
   { m_he_ind_map_p = &table; }
 
-  /*! Determine if we should swap the order of predecessor halfedges when
+  /*! determines if we should swap the order of predecessor halfedges when
    * calling insert_at_vertices_ex() .
    */
   bool swap_predecessors(Event* event) const
   {
     // If we insert an edge whose right end lies on the north pole, we have
-    // to flip the order of predecessor halfegdes.
+    // to flip the order of predecessor halfedges.
     // TODO what about the corner?
     return (event->parameter_space_in_x() == ARR_INTERIOR &&
             event->parameter_space_in_y() == ARR_TOP_BOUNDARY);
   }
 
-  /*! Get the current top face. */
+  /*! obtains the current top face. */
   virtual Face_handle top_face() const { return m_spherical_face; }
 
-  /*! Splice the indices list of the given halfedge, inserting the
+  /*! splices the indices list of the given halfedge, inserting the
    * indices of the halfedges that "see" the north pole.
    */
   void splice_indices_list(Halfedge_handle he)
@@ -263,7 +263,7 @@ before_handle_event(Event* event)
 
   if (ps_x == ARR_RIGHT_BOUNDARY) {
     // Process a non-isolated event on the right identified boundary.
-    // Cannnot be vertical, only curves approaching the right side are possible.
+    // Cannot be vertical, only curves approaching the right side are possible.
     // If a vertex on the line of discontinuity does not exists, create one.
     DVertex* dv = m_top_traits->discontinuity_vertex(event->point());
     Vertex_handle v = (dv) ? Vertex_handle(dv) :

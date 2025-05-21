@@ -1,7 +1,7 @@
 #ifndef CGAL_TEST_CONFIGURATION_H
 #define CGAL_TEST_CONFIGURATION_H
 
-/*! This files contains define statements, include statement, and typedef
+/*! This file contains define statements, include statement, and typedef
  * of the number types, kernel, and traits used.
  *
  */

@@ -20,7 +20,7 @@ namespace CGAL {
     BOOST_MPL_HAS_XXX_TRAIT_DEF(Is_pretty) \
   } \
   template<class T,bool=internal::has_##Is_pretty<T>::value> \
-  struct Is_pretty : boost::false_type {}; \
+  struct Is_pretty : std::false_type {}; \
   template<class T> \
   struct Is_pretty<T,true> : T::Is_pretty {}
 

@@ -203,7 +203,7 @@ class Min_ellipse_2 {
     const Point&
     support_point( std::size_t i) const
     {
-        CGAL_optimisation_precondition(i <  number_of_support_points());
+        CGAL_precondition(i <  number_of_support_points());
         return( support_points[ i]);
     }
     // ellipse
@@ -281,7 +281,7 @@ class Min_ellipse_2 {
             tco.ellipse.set( );
             break;
           default:
-            CGAL_optimisation_assertion( ( n_support_points >= 0) &&
+            CGAL_assertion( ( n_support_points >= 0) &&
                                          ( n_support_points <= 5) ); }
     }
 
@@ -360,7 +360,7 @@ class Min_ellipse_2 {
         // initialize ellipse
         tco.ellipse.set();
 
-        CGAL_optimisation_postcondition( is_empty());
+        CGAL_postcondition( is_empty());
     }
 
     inline
@@ -373,7 +373,7 @@ class Min_ellipse_2 {
         // initialize ellipse
         tco.ellipse.set();
 
-        CGAL_optimisation_postcondition( is_empty());
+        CGAL_postcondition( is_empty());
     }
 
     // constructor for one point
@@ -388,7 +388,7 @@ class Min_ellipse_2 {
         support_points[ 0] = p;
         tco.ellipse.set( p);
 
-        CGAL_optimisation_postcondition( is_degenerate());
+        CGAL_postcondition( is_degenerate());
     }
 
     // constructor for two points
@@ -409,7 +409,7 @@ class Min_ellipse_2 {
         // compute me
         me( points.end(), 0);
 
-        CGAL_optimisation_postcondition( is_degenerate());
+        CGAL_postcondition( is_degenerate());
     }
 
     // constructor for three points

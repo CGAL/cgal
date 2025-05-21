@@ -1,16 +1,16 @@
+#include <CGAL/Polygon_mesh_processing/intersection.h>
+
+#include <CGAL/Surface_mesh.h>
+
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+
+#include <CGAL/Timer.h>
 
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
 #include <sstream>
-
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/Polygon_mesh_processing/intersection.h>
-
-#include <CGAL/Surface_mesh.h>
-
-#include <CGAL/Timer.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel     Epic;
 typedef CGAL::Exact_predicates_exact_constructions_kernel       Epec;
@@ -39,10 +39,8 @@ template<class Point>
 int load_polylines(std::ifstream& input,
                    std::vector<std::vector<Point> >& points)
 {
-  int counter = 0;
   std::size_t n;
   while(input >> n) {
-    ++counter;
     std::vector<Point> new_polyline;
     points.push_back(new_polyline);
     std::vector<Point>&polyline = points.back();

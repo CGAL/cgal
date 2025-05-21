@@ -122,7 +122,7 @@ void test_bgl_OFF(const std::string filename)
   assert(ok);
   assert(num_vertices(fg) != 0 && num_faces(fg) != 0);
   is.close();
-  fg.clear();
+  CGAL::clear(fg);
 
   is.open(filename, std::ios::binary);
   ok = CGAL::IO::read_OFF(is, fg);
@@ -286,7 +286,7 @@ void test_bgl_OFF(const std::string filename)
 
     for(auto f : faces(fg))
       assert(get(fcm2, f) != CGAL::IO::Color());
-    fg.clear();
+    CGAL::clear(fg);
     is.close();
 
     is.open("data/full.off");
@@ -478,7 +478,7 @@ void test_bgl_PLY(const std::string filename,
   assert(filename != CGAL::data_file_path("meshes/colored_tetra.ply") || (num_vertices(fg) == 4 && num_faces(fg) == 4));
    if(!binary)
    {
-     fg.clear();
+     CGAL::clear(fg);
      is.open(filename, std::ios::binary);
      bool ok = CGAL::IO::read_PLY(is, fg, CGAL::parameters::use_binary_mode(false));
      is.close();
@@ -711,7 +711,6 @@ void test_bgl_GOCAD(const char* filename)
   assert(num_vertices(fg) != 0 && num_faces(fg) != 0);
 
   is.seekg(0);
-  fg.clear();
   CGAL::clear(fg);
   std::pair<std::string, std::string> name_and_color;
   ok = CGAL::IO::read_GOCAD(is, name_and_color, fg);

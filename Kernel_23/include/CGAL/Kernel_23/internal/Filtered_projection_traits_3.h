@@ -27,12 +27,12 @@ class Filtered_projection_traits_3
   typedef Filtered_projection_traits_3<K> Self;
   typedef Projection_traits_base_3<K> Base;
 
+public:
   typedef typename K::Exact_kernel Exact_kernel;
   typedef typename K::Approximate_kernel Approximate_kernel;
   typedef typename K::C2E C2E;
   typedef typename K::C2F C2F;
 
-public:
   typedef Projection_traits_base_3<Exact_kernel> Exact_traits;
   typedef Projection_traits_base_3<Approximate_kernel> Filtering_traits;
 

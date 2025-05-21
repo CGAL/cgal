@@ -57,6 +57,9 @@ public:
     m_status( LCC_DEMO_VISIBLE | LCC_DEMO_FILLED )
   {}
 
+  friend bool operator==(const Volume_info& v1, const Volume_info& v2)
+  { return v1.m_color==v2.m_color && v1.m_status==v2.m_status; }
+
   CGAL::IO::Color& color()
   { return m_color; }
   const CGAL::IO::Color& color() const
@@ -101,6 +104,9 @@ private:
   char        m_status;
 };
 
+typedef CGAL::Linear_cell_complex_traits
+<3,CGAL::Exact_predicates_inexact_constructions_kernel> Mytraits;
+
 namespace CGAL
 {
 
@@ -126,7 +132,7 @@ inline void read_cmap_attribute_node<Volume_info>
   {}
 }
 
-// Definition of function allowing to save custon information.
+// Definition of function allowing to save custom information.
 template<>
 inline void write_cmap_attribute_node<Volume_info>(boost::property_tree::ptree & node,
                                                    const Volume_info& arg)
@@ -140,9 +146,13 @@ inline void write_cmap_attribute_node<Volume_info>(boost::property_tree::ptree &
 
 }
 
-class Myitems
+struct Myitems
 {
 public:
+#ifdef CMAP_WITH_INDEX
+  using Use_index=CGAL::Tag_true;
+#endif // CMAP_WITH_INDEX
+
   template < class Refs >
   struct Dart_wrapper
   {
@@ -150,16 +160,14 @@ public:
     typedef CGAL::Cell_attribute< Refs, Volume_info> Volume_attrib;
 
     typedef std::tuple<Vertex_attrib,void,void,
-                               Volume_attrib> Attributes;
+                       Volume_attrib> Attributes;
   };
 };
 
-typedef CGAL::Linear_cell_complex_traits
-<3,CGAL::Exact_predicates_inexact_constructions_kernel> Mytraits;
-
 typedef CGAL::Linear_cell_complex_for_combinatorial_map<3,3,Mytraits,Myitems> LCC;
-typedef LCC::Dart_handle      Dart_handle;
-typedef LCC::Vertex_attribute Vertex;
+typedef LCC::Dart_descriptor       Dart_descriptor;
+typedef LCC::Dart_const_descriptor Dart_const_descriptor;
+typedef LCC::Vertex_attribute      Vertex;
 
 typedef LCC::Point    Point_3;
 typedef LCC::Vector   Vector_3;
@@ -168,7 +176,7 @@ typedef CGAL::Timer Timer;
 
 struct Vertex_info
 {
-  Dart_handle dh;
+  Dart_descriptor dh;
   Vector_3 v;
 };
 

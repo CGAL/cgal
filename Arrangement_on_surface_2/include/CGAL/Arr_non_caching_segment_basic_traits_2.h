@@ -24,12 +24,13 @@
 #include <CGAL/disable_warnings.h>
 
 /*! \file The basic non-caching segment traits-class for the arrangement
- * package. This traits class handles x-monotone non-intersecting segments.
- * It is a model of the ArrangementBasicTraits_2 concept. The class is
+ * package. This traits class handles \f$x\f$-monotone non-intersecting
+ * segments. It is a model of the AosBasicTraits_2 concept. The class is
  * templated by a kernel and inherits from it all the types and many of the
  * functors required by the concept it models.
  */
 
+#include <CGAL/Cartesian.h>
 #include <CGAL/Algebraic_structure_traits.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/tags.h>
@@ -40,7 +41,7 @@
 namespace CGAL {
 
 /*! \class
- * A model of the ArrangementBasicTraits_2 concept that handles x-monotone
+ * A model of the AosBasicTraits_2 concept that handles \f$x\f$-monotone
  * non-intersecting line segments.
  */
 template <class T_Kernel>
@@ -72,9 +73,8 @@ public:
   typedef Arr_oblivious_side_tag                Top_side_category;
   typedef Arr_oblivious_side_tag                Right_side_category;
 
-  /*! Default Constructor */
-  Arr_non_caching_segment_basic_traits_2()
-  {}
+  /*! constructs default */
+  Arr_non_caching_segment_basic_traits_2() {}
 
   /// \name Types and functor inherited from the kernel
   //@{
@@ -84,25 +84,25 @@ public:
   typedef typename Kernel::Segment_2               X_monotone_curve_2;
   typedef unsigned int                             Multiplicity;
 
-  /*! Compare the x-coordinates of two points */
+  /*! Compare the \f$x\f$-coordinates of two points. */
   typedef typename Kernel::Compare_x_2             Compare_x_2;
 
-  /*! Compare two points lexigoraphically; by x, then by y */
+  /*! Compare two points lexigoraphically; by \f$x\f$, then by \f$y\f$. */
   typedef typename Kernel::Compare_xy_2            Compare_xy_2;
 
-  /*! Obtain the left endpoint of a given segment */
+  /*! Obtain the left endpoint of a given segment. */
   typedef typename Kernel::Construct_min_vertex_2  Construct_min_vertex_2;
 
-  /*! Obtain the right endpoint of a given segment */
+  /*! Obtain the right endpoint of a given segment. */
   typedef typename Kernel::Construct_max_vertex_2  Construct_max_vertex_2;
 
-  /*! Check whether a given segment is vertical */
+  /*! Check whether a given segment is vertical. */
   typedef typename Kernel::Is_vertical_2           Is_vertical_2;
 
-  /*! Return the location of a given point with respect to an input segment */
+  /*! Return the location of a given point with respect to an input segment. */
   typedef typename Kernel::Compare_y_at_x_2        Compare_y_at_x_2;
 
-  /*! Check if two segments or if two points are identical */
+  /*! Check if two segments or if two points are identical. */
   typedef typename Kernel::Equal_2                 Equal_2;
 
   //@}
@@ -115,17 +115,15 @@ public:
    */
   class Compare_y_at_x_left_2 {
   public:
-
-    /*
-     * Compare the y value of two segments immediately to the left of their
-     * intersection point.
+    /* compares the \f$y\f$-value of two segments immediately to the left of
+     * their intersection point.
      * \param cv1 The first segment.
      * \param cv2 The second segment.
      * \param p The intersection point.
-     * \pre The point p lies on both segments, and both of them must be also be
-     *      defined (lexicographically) to its left.
-     * \return The relative position of cv1 with respect to cv2 immdiately to
-     *         the left of p: SMALLER, LARGER or EQUAL.
+     * \pre The point `p` lies on both segments, and both of them must be also
+     *      be defined (lexicographically) to its left.
+     * \return The relative position of `cv1` with respect to `cv2` immdiately
+     *         to the left of `p`: `SMALLER`, `LARGER`, or `EQUAL`.
      */
     Comparison_result operator()(const X_monotone_curve_2& cv1,
                                  const X_monotone_curve_2& cv2,
@@ -163,28 +161,24 @@ public:
     }
   };
 
-  /*! Obtain a Compare_y_at_x_left_2 functor object. */
+  /*! obtains a `Compare_y_at_x_left_2` functor object. */
   Compare_y_at_x_left_2 compare_y_at_x_left_2_object() const
-  {
-    return Compare_y_at_x_left_2();
-  }
+  { return Compare_y_at_x_left_2(); }
 
   /*! \class
    * A functor for comparing two segments to the right of a point.
    */
   class Compare_y_at_x_right_2 {
   public:
-
-    /*!
-     * Compare the y value of two segments immediately to the right of their
-     * intersection point.
+    /*! compares the \f$y\f$-value of two segments immediately to the right of
+     * their intersection point.
      * \param cv1 The first segment.
      * \param cv2 The second segment.
      * \param p The intersection point.
-     * \pre The point p lies on both segments, and both of them must be also be
-     *      defined (lexicographically) to its right.
-     * \return The relative position of cv1 with respect to cv2 immdiately to
-     *         the right of p: SMALLER, LARGER or EQUAL.
+     * \pre The point `p` lies on both segments, and both of them must be also
+     *      be defined (lexicographically) to its right.
+     * \return The relative position of `cv1` with respect to `cv2` immdiately
+     *         to the right of `p`: `SMALLER`, `LARGER`, or `EQUAL`.
      */
 
     Comparison_result operator()(const X_monotone_curve_2 & cv1,
@@ -221,58 +215,80 @@ public:
     }
   };
 
-  /*! Obtain a Compare_y_at_x_right_2 functor object. */
+  /*! obtains a `Compare_y_at_x_right_2` functor object. */
   Compare_y_at_x_right_2 compare_y_at_x_right_2_object() const
-  {
-    return Compare_y_at_x_right_2();
-  }
+  { return Compare_y_at_x_right_2(); }
   //@}
 
   /// \name Functor definitions for the landmarks point-location strategy.
   //@{
-  typedef double                          Approximate_number_type;
+  typedef double                                        Approximate_number_type;
+  typedef CGAL::Cartesian<Approximate_number_type>      Approximate_kernel;
+  typedef Approximate_kernel::Point_2                   Approximate_point_2;
 
-  class Approximate_2
-  {
+  class Approximate_2 {
+  protected:
+    using Traits = Arr_non_caching_segment_basic_traits_2<Kernel>;
+
+    /*! The traits (in case it has state) */
+    const Traits& m_traits;
+
+    /*! constructs
+     * \param traits the traits.
+     */
+    Approximate_2(const Traits& traits) : m_traits(traits) {}
+
+    friend class Arr_non_caching_segment_basic_traits_2<Kernel>;
+
   public:
-
-    /*!
-     * Return an approximation of a point coordinate.
+    /*! obtains an approximation of a point coordinate.
      * \param p The exact point.
      * \param i The coordinate index (either 0 or 1).
-     * \pre i is either 0 or 1.
-     * \return An approximation of p's x-coordinate (if i == 0), or an
-     *         approximation of p's y-coordinate (if i == 1).
+     * \pre `i` is either 0 or 1.
+     * \return An approximation of `p`'s \f$x\f$-coordinate (if `i` == 0), or an
+     *         approximation of `p`'s \f$y\f$-coordinate (if `i` == 1).
      */
-    Approximate_number_type operator() (const Point_2& p,
-                                        int i) const
-    {
+    Approximate_number_type operator() (const Point_2& p, int i) const {
       CGAL_precondition (i == 0 || i == 1);
+      return (i == 0) ? (CGAL::to_double(p.x())) : (CGAL::to_double(p.y()));
+    }
 
-      if (i == 0)
-        return (CGAL::to_double(p.x()));
-      else
-        return (CGAL::to_double(p.y()));
+    /*! obtains an approximation of a point.
+     */
+    Approximate_point_2 operator()(const Point_2& p) const
+    { return Approximate_point_2(operator()(p, 0), operator()(p, 1)); }
+
+    /*! obtains an approximation of an \f$x\f$-monotone curve.
+     */
+    template <typename OutputIterator>
+    OutputIterator operator()(const X_monotone_curve_2& xcv, double /* error */,
+                              OutputIterator oi, bool l2r = true) const {
+      auto min_vertex = m_traits.construct_min_vertex_2_object();
+      auto max_vertex = m_traits.construct_max_vertex_2_object();
+      const auto& src = (l2r) ? min_vertex(xcv) : max_vertex(xcv);
+      const auto& trg = (l2r) ? max_vertex(xcv) : min_vertex(xcv);
+      auto xs = CGAL::to_double(src.x());
+      auto ys = CGAL::to_double(src.y());
+      auto xt = CGAL::to_double(trg.x());
+      auto yt = CGAL::to_double(trg.y());
+      *oi++ = Approximate_point_2(xs, ys);
+      *oi++ = Approximate_point_2(xt, yt);
+      return oi;
     }
   };
 
-  /*! Get an Approximate_2 functor object. */
-  Approximate_2 approximate_2_object () const
-  {
-    return Approximate_2();
-  }
+  /*! obtains an Approximate_2 functor object. */
+  Approximate_2 approximate_2_object () const { return Approximate_2(*this); }
 
   typedef typename Kernel::Construct_segment_2    Construct_x_monotone_curve_2;
 
-  /*! Get a Construct_x_monotone_curve_2 functor object. */
+  /*! obtains a `Construct_x_monotone_curve_2` functor object. */
   Construct_x_monotone_curve_2 construct_x_monotone_curve_2_object () const
-  {
-    return (this->construct_segment_2_object());
-  }
+  { return (this->construct_segment_2_object()); }
   //@}
 };
 
-} //namespace CGAL
+} // namespace CGAL
 
 #include <CGAL/enable_warnings.h>
 

@@ -19,24 +19,12 @@ typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_3 Point_3;
 typedef Kernel::Vector_3 Vector_3;
 
-const double epsilon = 5e-4;
+const double precision = 1e-8; // relates to 1e9 in write_LAS_with_properties
 
 template < typename Type >
-bool approx_equal_nt(const Type &t1, const Type &t2)
+bool approx_equal_nt(const Type &t1, const Type &t2, const double epsilon)
 {
-  if(t1 == t2)
-    return true;
-  if(CGAL::abs(t1 - t2) / (CGAL::max)(CGAL::abs(t1), CGAL::abs(t2)) < std::abs(t1)*epsilon)
-    return true;
-
-  std::cout << " Approximate comparison failed between : " << t1 << "  and  " << t2 << std::endl;
-  std::cout << "abs(t1 - t2) = " <<CGAL::abs(t1 - t2) << "n";
-  std::cout << "abs(t1) = " <<CGAL::abs(t1) << "n";
-  std::cout << "abs(t2) = " <<CGAL::abs(t2) << "n";
-  std::cout << "std::abs(t1)*epsilon = " <<std::abs(t1) * epsilon << "n";
-  std::cout << "CGAL::abs(t1 - t2) / (CGAL::max)(CGAL::abs(t1), CGAL::abs(t2) == "
-            << CGAL::abs(t1 - t2) / (CGAL::max)(CGAL::abs(t1), CGAL::abs(t2)) << std::endl;
-  return false;
+  return (std::abs(t1 - t2) < epsilon);
 }
 
 typedef std::pair<Point_3, Vector_3> PointVectorPair;
@@ -46,12 +34,19 @@ bool ps_are_equal(const CGAL::Point_set_3<Point_3, Vector_3>& ps,
   if(ps.size() != ps2.size())
     return false;
 
+  const auto bbox = bbox_3(ps.points().begin(), ps.points().end());
+  const auto dx = bbox.xmax() - bbox.xmin();
+  const auto dy = bbox.ymax() - bbox.ymin();
+  const auto dz = bbox.zmax() - bbox.zmin();
+
   typedef CGAL::Point_set_3<Point_3, Vector_3>::const_iterator Iterator;
   for(Iterator it1 = ps.begin(), it2 = ps2.begin(); it1!=ps.end() && it2!=ps2.end(); ++it1, ++it2)
   {
     const Point_3& p1 = ps.point(*it1);
     const Point_3& p2 = ps2.point(*it2);
-    if(!(approx_equal_nt(p1.x(), p2.x()) && approx_equal_nt(p1.y(), p2.y()) && approx_equal_nt(p1.z(), p2.z())))
+    if (!(approx_equal_nt(p1.x(), p2.x(), dx * precision) &&
+          approx_equal_nt(p1.y(), p2.y(), dy * precision) &&
+          approx_equal_nt(p1.z(), p2.z(), dz * precision)))
       return false;
   }
 
@@ -65,12 +60,19 @@ bool points_are_equal(const std::vector<Point_3>& ps,
   if(ps.size() != ps2.size())
     return false;
 
+  const auto bbox = bbox_3(ps.begin(), ps.end());
+  const auto dx = bbox.xmax() - bbox.xmin();
+  const auto dy = bbox.ymax() - bbox.ymin();
+  const auto dz = bbox.zmax() - bbox.zmin();
+
   typedef std::vector<Point_3>::const_iterator Iterator;
   for(Iterator it1 = ps.begin(), it2 = ps2.begin(); it1!=ps.end() && it2!=ps2.end(); ++it1, ++it2)
   {
     const Point_3& p1 = *it1;
     const Point_3& p2 = *it2;
-    if(!(approx_equal_nt(p1.x(), p2.x()) && approx_equal_nt(p1.y(), p2.y()) && approx_equal_nt(p1.z(), p2.z())))
+    if (!(approx_equal_nt(p1.x(), p2.x(), dx * precision) &&
+          approx_equal_nt(p1.y(), p2.y(), dy * precision) &&
+          approx_equal_nt(p1.z(), p2.z(), dz * precision)))
       return false;
   }
 

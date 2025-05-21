@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1...3.22)
+cmake_minimum_required(VERSION 3.12...3.31)
 project(Approximate_min_ellipsoid_d_Examples)
 
 find_package(CGAL REQUIRED)

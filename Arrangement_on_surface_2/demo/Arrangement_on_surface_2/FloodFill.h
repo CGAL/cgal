@@ -26,7 +26,7 @@ class FloodFill
 public:
   // this currently assumes that there is a "border" in the boundaries that
   // will prevent the flood fill from going there
-  // this way we don't check bounadry conditions!
+  // this way we don't check boundary conditions!
   void
   operator()(QRgb* raw_img, uint16_t width, uint16_t x, uint16_t y, QRgb color);
 

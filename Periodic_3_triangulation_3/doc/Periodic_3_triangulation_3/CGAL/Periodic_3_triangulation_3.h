@@ -313,8 +313,7 @@ The elements of the enum have the following meaning:
 /// @{
 
 /*!
-Introduces an empty triangulation `t` with `domain` as
-original domain.
+Introduces an empty triangulation `t` with `domain` as original domain.
 \pre `domain` is a cube.
 */
 Periodic_3_triangulation_3(const Iso_cuboid & domain = Iso_cuboid(0,0,0,1,1,1),
@@ -551,6 +550,24 @@ size_type number_of_stored_facets() const;
 /// The following functions return object of types `Periodic_segment`,
 /// `Periodic_triangle`, and `Periodic_tetrahedron`, which have inner type `Point`.
 /// @{
+
+/*!
+Converts the `Periodic_point` `pp` (point-offset pair) to the
+corresponding `Point` in \f$ \mathbb R^3\f$.
+*/
+Point point(const Periodic_point& pp) const;
+
+/*!
+Equivalent to
+the call `t.point(t.periodic_point(v));`
+*/
+Point point(Vertex_handle v) const;
+
+/*!
+Equivalent to
+the call `t.point(t.periodic_point(c,idx));`
+*/
+Point point(Cell_handle c, int idx) const;
 
 /*!
 Returns the periodic point given by vertex `v`. If `t` is

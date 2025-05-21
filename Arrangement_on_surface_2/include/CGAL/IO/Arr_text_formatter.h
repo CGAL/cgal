@@ -65,48 +65,48 @@ protected:
 
 public:
 
-  /*! Default constructor.*/
+  /*! constructs default.*/
   Arr_text_formatter():
     m_out(nullptr),
     m_in(nullptr)
   {}
 
-  /*! Construct an output formatter. */
+  /*! constructs an output formatter. */
   Arr_text_formatter(std::ostream& os) :
     m_out(&os),
     m_in(nullptr)
   {}
 
-  /*! Construct an input formatter. */
+  /*! constructs an input formatter. */
   Arr_text_formatter(std::istream& is) :
     m_out(nullptr),
     m_in(&is)
   {}
 
-  /*! Destructor. */
+  /*! destructs. */
   virtual ~Arr_text_formatter()
   {}
 
-  /*! Set the output stream. */
+  /*! sets the output stream. */
   void set_out(std::ostream& os)
   {
     m_out = &os;
   }
 
-  /*! Set the input stream. */
+  /*! sets the input stream. */
   void set_in(std::istream& is)
   {
     m_in = &is;
   }
 
-  /*! Get the output stream. */
+  /*! obtains the output stream. */
   inline std::ostream& out()
   {
     CGAL_assertion(m_out != nullptr);
     return (*m_out);
   }
 
-  /*! Get the input stream. */
+  /*! obtains the input stream. */
   inline std::istream& in()
   {
     CGAL_assertion(m_in != nullptr);
@@ -116,7 +116,7 @@ public:
   /// \name Global write functions.
   //@{
 
-  /*! Write a begin-arrangement comment. */
+  /*! writes a begin-arrangement comment. */
   void write_arrangement_begin()
   {
     CGAL_assertion(m_out != nullptr);
@@ -125,51 +125,51 @@ public:
     _write_comment("BEGIN ARRANGEMENT");
   }
 
-  /*! Write an end-arrangement comment. */
+  /*! writes an end-arrangement comment. */
   void write_arrangement_end()
   {
     _write_comment("END ARRANGEMENT");
     set_mode(*m_out, m_old_out_mode);
   }
 
-  /*! Write a labeled size value. */
+  /*! writes a labeled size value. */
   void write_size(const char *label, Size size)
   {
     _write_comment(label);
     out() << size << '\n';
   }
 
-  /*! Write a begin-vertices comment. */
+  /*! writes a begin-vertices comment. */
   void write_vertices_begin()
   {
     _write_comment("BEGIN VERTICES");
   }
 
-  /*! Write an end-vertices comment. */
+  /*! writes an end-vertices comment. */
   void write_vertices_end()
   {
     _write_comment("END VERTICES");
   }
 
-  /*! Write a begin-edges comment. */
+  /*! writes a begin-edges comment. */
   void write_edges_begin()
   {
     _write_comment("BEGIN EDGES");
   }
 
-  /*! Write an end-edges comment. */
+  /*! writes an end-edges comment. */
   void write_edges_end()
   {
     _write_comment("END EDGES");
   }
 
-  /*! Write a begin-faces comment. */
+  /*! writes a begin-faces comment. */
   void write_faces_begin()
   {
     _write_comment("BEGIN FACES");
   }
 
-  /*! Write an end-faces comment. */
+  /*! writes an end-faces comment. */
   void write_faces_end()
   {
     _write_comment("END FACES");
@@ -273,7 +273,7 @@ public:
   /// \name Global read functions.
   //@{
 
-  /*! Start reading an arrangement. */
+  /*! starts reading an arrangement. */
   void read_arrangement_begin()
   {
     CGAL_assertion(m_in != nullptr);
@@ -282,14 +282,14 @@ public:
     _skip_comments();
   }
 
-  /*! Read the arrangement edge. */
+  /*! reads the arrangement edge. */
   void read_arrangement_end()
   {
     _skip_comments();
     set_mode(*m_in, m_old_in_mode);
   }
 
-  /*! Read a size value (with a label comment line before it). */
+  /*! reads a size value (with a label comment line before it). */
   Size read_size(const char* /* title */ = nullptr)
   {
     std::size_t   val;
@@ -301,7 +301,7 @@ public:
     return (val);
   }
 
-  /*! Reading the arrangement vertices. */
+  /*! reads the arrangement vertices. */
   void read_vertices_begin()
   {
     _skip_comments();
@@ -312,7 +312,7 @@ public:
     _skip_comments();
   }
 
-  /*! Reading the arrangement edges. */
+  /*! reads the arrangement edges. */
   void read_edges_begin()
   {
     _skip_comments();
@@ -323,7 +323,7 @@ public:
     _skip_comments();
   }
 
-  /*! Reading the arrangement faces. */
+  /*! reads the arrangement faces. */
   void read_faces_begin()
   {
     _skip_comments();
@@ -431,13 +431,13 @@ public:
 
 protected:
 
-  /*! Write a comment line. */
+  /*! writes a comment line. */
   void _write_comment(const char *str)
   {
     out() << "# " << str << std::endl;
   }
 
-  /*! Skip until end of line. */
+  /*! skips until end of line. */
   void _skip_until_EOL()
   {
     CGAL_assertion(m_in != nullptr);
@@ -446,7 +446,7 @@ protected:
     while ((c = m_in->get()) != EOF && c != '\n') {};
   }
 
-  /*! Skip comment lines. */
+  /*! skips comment lines. */
   void _skip_comments()
   {
     CGAL_assertion(m_in != nullptr);
@@ -492,28 +492,28 @@ public:
   typedef typename Base::Halfedge_const_handle       Halfedge_const_handle;
   typedef typename Base::Face_const_handle           Face_const_handle;
 
-  /*! Default constructor.*/
+  /*! constructs default.*/
   Arr_face_extended_text_formatter() :
     Base()
   {}
 
-  /*! Construct an output formatter. */
+  /*! constructs an output formatter. */
   Arr_face_extended_text_formatter(std::ostream& os) :
     Base(os)
   {}
 
-  /*! Construct an input formatter. */
+  /*! constructs an input formatter. */
   Arr_face_extended_text_formatter(std::istream& is) :
     Base(is)
   {}
 
-  /*! Write the auxiliary data associated with the given face. */
+  /*! writes the auxiliary data associated with the given face. */
   virtual void write_face_data(Face_const_handle f)
   {
     this->out() << f->data() << '\n';
   }
 
-  /*! Read a face-data object and attach it to the given face. */
+  /*! reads a face-data object and attach it to the given face. */
   virtual void read_face_data(Face_handle f)
   {
     this->in() >> f->data();
@@ -524,7 +524,7 @@ public:
 /*! \class
  * A class defining a textual (\ascii) input/output format for arrangements
  * that store auxiliary dat with all their DCEL records, as they are templated
- * by a extended DCEL class.
+ * by an extended DCEL class.
  */
 template <class Arrangement_>
 class Arr_extended_dcel_text_formatter :
@@ -548,61 +548,61 @@ public:
   typedef typename Base::Halfedge_const_handle       Halfedge_const_handle;
   typedef typename Base::Face_const_handle           Face_const_handle;
 
-  /*! Default constructor.*/
-  Arr_extended_dcel_text_formatter() :
-    Base()
-  {}
+  /*! constructs default.*/
+  Arr_extended_dcel_text_formatter() : Base() {}
 
-  /*! Construct an output formatter. */
-  Arr_extended_dcel_text_formatter(std::ostream& os) :
-    Base(os)
-  {}
+  /*! constructs an output formatter. */
+  Arr_extended_dcel_text_formatter(std::ostream& os) : Base(os) {}
 
-  /*! Construct an input formatter. */
-  Arr_extended_dcel_text_formatter(std::istream& is) :
-    Base(is)
-  {}
+  /*! constructs an input formatter. */
+  Arr_extended_dcel_text_formatter(std::istream& is) : Base(is) {}
 
-  /*! Write the auxiliary data associated with the given vertex. */
+  /*! write the auxiliary data associated with the given vertex. */
   virtual void write_vertex_data(Vertex_const_handle v)
-  {
-    this->out() << '\n' << v->data();
-  }
+  { this->out() << '\n' << v->data(); }
 
-  /*! Read a vertex-data object and attach it to the given vertex. */
-  virtual void read_vertex_data(Vertex_handle v)
-  {
-    this->in() >> v->data();
+  /*! reads a vertex-data object and attach it to the given vertex. */
+  virtual void read_vertex_data(Vertex_handle v) {
+    using Vertex = typename Arrangement_2::Vertex;
+    using Type = decltype(std::declval<Vertex>().data());
+    using Data_type = typename std::remove_reference<Type>::type;
+    Data_type data;
+    this->in() >> data;
+    v->set_data(data);
     this->_skip_until_EOL();
   }
 
-  /*! Write the auxiliary data associated with the given halfedge. */
+  /*! writes the auxiliary data associated with the given halfedge. */
   virtual void write_halfedge_data(Halfedge_const_handle he)
-  {
-    this->out() << '\n' << he->data();
-  }
+  { this->out() << '\n' << he->data(); }
 
-  /*! Read a halfedge-data object and attach it to the given halfedge. */
-  virtual void read_halfedge_data(Halfedge_handle he)
-  {
-    this->in() >> he->data();
+  /*! reads a halfedge-data object and attach it to the given halfedge. */
+  virtual void read_halfedge_data(Halfedge_handle he) {
+    using Halfedge = typename Arrangement_2::Halfedge;
+    using Type = decltype(std::declval<Halfedge>().data());
+    using Data_type = typename std::remove_reference<Type>::type;
+    Data_type data;
+    this->in() >> data;
+    he->set_data(data);
     this->_skip_until_EOL();
   }
 
-  /*! Write the auxiliary data associated with the given face. */
+  /*! writes the auxiliary data associated with the given face. */
   virtual void write_face_data(Face_const_handle f)
-  {
-    this->out() << f->data() << '\n';
-  }
+  { this->out() << f->data() << '\n'; }
 
-  /*! Read a face-data object and attach it to the given face. */
-  virtual void read_face_data(Face_handle f)
-  {
-    this->in() >> f->data();
+  /*! reads a face-data object and attach it to the given face. */
+  virtual void read_face_data(Face_handle f) {
+    using Face = typename Arrangement_2::Face;
+    using Type = decltype(std::declval<Face>().data());
+    using Data_type = typename std::remove_reference<Type>::type;
+    Data_type data;
+    this->in() >> data;
+    f->set_data(data);
     this->_skip_until_EOL();
   }
 };
 
-} //namespace CGAL
+} // namespace CGAL
 
 #endif

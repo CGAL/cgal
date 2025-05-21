@@ -553,12 +553,12 @@ bool Construction_test<T_Geom_traits, T_Topol_traits>::test6()
     CGAL::insert_point(*m_arr, m_isolated_points[i]);
 #if TEST_TOPOL_TRAITS != SPHERICAL_TOPOL_TRAITS
   if (! CGAL::is_valid(*m_arr)) {
-    std::cout << "ERROR : (6) The aggregated x-monotone inertion test failed (invalid)."
+    std::cout << "ERROR : (6) The aggregated x-monotone insertion test failed (invalid)."
               << std::endl;
   }
 #endif
   if (! are_same_results()) {
-    std::cout << "ERROR : (6) The aggregated x-monotone inertion test failed."
+    std::cout << "ERROR : (6) The aggregated x-monotone insertion test failed."
               << std::endl;
      return false;
   }

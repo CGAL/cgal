@@ -69,8 +69,8 @@ bool test_shape(const Mesh &mesh, const std::size_t target_num_proxies)
   approx.run(num_iterations);
 
   // eliminate redundant area (local minima) by merging
-  boost::optional<std::pair<std::size_t, std::size_t> > best_pair = boost::none;
-  while ((best_pair = approx.find_best_merge(true)) != boost::none) {
+  std::optional<std::pair<std::size_t, std::size_t> > best_pair = std::nullopt;
+  while ((best_pair = approx.find_best_merge(true)) != std::nullopt) {
     approx.merge(best_pair->first, best_pair->second);
     approx.run(num_iterations);
   }
@@ -113,7 +113,7 @@ int main()
   mesh_cube2.collect_garbage();
   // the second parameter of operator+= should not have garbage, or merge will crash
   mesh_merged += mesh_cube2;
-  std::cout << "Mege done \n#F "
+  std::cout << "Merge done \n#F "
     << std::distance(faces(mesh_merged).first, faces(mesh_merged).second)
     << "\n#V " << std::distance(vertices(mesh_merged).first, vertices(mesh_merged).second)
     <<  std::endl;

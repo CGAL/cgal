@@ -4,13 +4,16 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Andreas Fabri
 
 #ifndef CGAL_PROPERTIES_POLYHEDRON_3_FEATURES_H
 #define CGAL_PROPERTIES_POLYHEDRON_3_FEATURES_H
+
+#include <CGAL/license/Polyhedron.h>
+
 
 #include <CGAL/Polyhedron_3.h>
 #include <set>
@@ -55,10 +58,9 @@ void put(Polyhedron_face_patch_id_pmap<Patch_id>, Handle_type h, Patch_id pid)
   h->set_patch_id(pid);
 }
 
-template <typename Patch_id>
-struct Polyhedron_property_map<CGAL::face_patch_id_t<Patch_id> >
+template <class Gt, class I, CGAL_HDS_PARAM_, class A, typename Patch_id>
+struct HDS_property_map<CGAL::Polyhedron_3<Gt, I, HDS, A>, CGAL::face_patch_id_t<Patch_id> >
 {
-  template<class Gt, class I, CGAL_HDS_PARAM_, class A>
   struct bind_
   {
     typedef Polyhedron_face_patch_id_pmap<Patch_id> type;
@@ -79,10 +81,9 @@ get(CGAL::face_patch_id_t<void>, const Polyhedron_3<Gt,I,HDS,A>&)
   return Pmap( std::pair<int,int>(0,1) );
 }
 
-template <>
-struct Polyhedron_property_map<CGAL::face_patch_id_t<void> >
+template<class Gt, class I, CGAL_HDS_PARAM_, class A>
+struct HDS_property_map<CGAL::Polyhedron_3<Gt, I, HDS, A>, CGAL::face_patch_id_t<void> >
 {
-  template<class Gt, class I, CGAL_HDS_PARAM_, class A>
   struct bind_
   {
     typedef typename internal::Get_static_property_map<Gt,I,HDS,A>::type type;
@@ -93,10 +94,9 @@ struct Polyhedron_property_map<CGAL::face_patch_id_t<void> >
 // Compatibility: when the `Patch_id` template argument of
 // `Polyhedron_mesh_domain` is `Tag_true` (because that argument was named
 // `UsePatchId` in previous versions of CGAL.
-template <>
-struct Polyhedron_property_map<CGAL::face_patch_id_t<CGAL::Tag_true> >
+template<class Gt, class I, CGAL_HDS_PARAM_, class A>
+struct HDS_property_map<CGAL::Polyhedron_3<Gt, I, HDS, A>, CGAL::face_patch_id_t<CGAL::Tag_true> >
 {
-  template<class Gt, class I, CGAL_HDS_PARAM_, class A>
   struct bind_
   {
     typedef Polyhedron_3<Gt,I,HDS,A> Polyhedron;
@@ -108,9 +108,9 @@ struct Polyhedron_property_map<CGAL::face_patch_id_t<CGAL::Tag_true> >
 // Compatibility: when the `Patch_id` template argument of
 // `Polyhedron_mesh_domain` is `Tag_false` (because that argument was named
 // `UsePatchId` in previous versions of CGAL.
-template <>
-struct Polyhedron_property_map<CGAL::face_patch_id_t<CGAL::Tag_false> >
-  : public Polyhedron_property_map<CGAL::face_patch_id_t<void> >
+template<class Gt, class I, CGAL_HDS_PARAM_, class A>
+struct HDS_property_map<CGAL::Polyhedron_3<Gt, I, HDS, A>, CGAL::face_patch_id_t<CGAL::Tag_false> >
+  : public HDS_property_map<CGAL::Polyhedron_3<Gt, I, HDS, A>, CGAL::face_patch_id_t<void> >
 {
 };
 
@@ -144,10 +144,9 @@ void put(Polyhedron_num_feature_edges_pmap, Handle_type h, int n)
 }
 
 
-template <>
-struct Polyhedron_property_map<CGAL::vertex_feature_degree_t>
+template<class Gt, class I, CGAL_HDS_PARAM_, class A>
+struct HDS_property_map<CGAL::Polyhedron_3<Gt, I, HDS, A>, CGAL::vertex_feature_degree_t>
 {
-  template<class Gt, class I, CGAL_HDS_PARAM_, class A>
   struct bind_
   {
     typedef Polyhedron_num_feature_edges_pmap type;
@@ -177,10 +176,9 @@ void put(Polyhedron_is_feature_edge_pmap, Handle_type e, bool b)
   e.halfedge()->opposite()->set_feature_edge(b);
 }
 
-template <>
-struct Polyhedron_property_map<CGAL::edge_is_feature_t>
+template<class Gt, class I, CGAL_HDS_PARAM_, class A>
+struct HDS_property_map<CGAL::Polyhedron_3<Gt, I, HDS, A>, CGAL::edge_is_feature_t>
 {
-  template<class Gt, class I, CGAL_HDS_PARAM_, class A>
   struct bind_
   {
     typedef Polyhedron_is_feature_edge_pmap type;
@@ -220,10 +218,9 @@ void put(Polyhedron_incident_patches_pmap<Patch_id>,
     h->add_incident_patch(n);
 }
 
-template <typename Patch_id>
-struct Polyhedron_property_map<CGAL::vertex_incident_patches_t<Patch_id> >
+template<class Gt, class I, CGAL_HDS_PARAM_, class A, class Patch_id>
+struct HDS_property_map<CGAL::Polyhedron_3<Gt, I, HDS, A>, CGAL::vertex_incident_patches_t<Patch_id> >
 {
-  template<class Gt, class I, CGAL_HDS_PARAM_, class A>
   struct bind_
   {
     typedef Polyhedron_incident_patches_pmap<Patch_id> type;

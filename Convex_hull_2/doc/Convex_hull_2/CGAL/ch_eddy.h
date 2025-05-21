@@ -9,6 +9,7 @@ The resulting sequence is placed starting at position
 `result`, and the past-the-end iterator for the resulting
 sequence is returned. It is not specified at which point the
 cyclic sequence of extreme points is cut into a linear sequence.
+
 \pre The source range [`first`,`beyond`) does not contain `result`.
 
 The default traits class `Default_traits` is the kernel in which the
@@ -25,7 +26,7 @@ functions that return instances of these types:
 <UL>
 <LI>`Traits::Point_2`,
 <LI>`Traits::Equal_2`,
-<LI>`Traits::Less_signed_distance_to_line_2`,
+<LI>`Traits::Compare_signed_distance_to_line_2`,
 <LI>`Traits::Left_turn_2`,
 <LI>`Traits::Less_xy_2`.
 </UL>
@@ -36,6 +37,8 @@ functions that return instances of these types:
 \sa `CGAL::ch_graham_andrew()`
 \sa `CGAL::ch_jarvis()`
 \sa `CGAL::ch_melkman()`
+\sa `CGAL::lower_hull_points_2()`
+\sa `CGAL::upper_hull_points_2()`
 \sa `CGAL::convex_hull_2()`
 
 \cgalHeading{Implementation}
@@ -44,15 +47,14 @@ This function implements Eddy's algorithm
 \cgalCite{e-nchap-77}, which is the two-dimensional version of the quickhull
 algorithm \cgalCite{bdh-qach-96}.
 
-This algorithm requires \f$ O(n h)\f$ time
+This algorithm requires \cgalBigO{n h} time
 in the worst case for \f$ n\f$ input points with \f$ h\f$ extreme points.
 
 */
 template <class InputIterator, class OutputIterator, class Traits>
 OutputIterator
-ch_eddy( InputIterator first,
-InputIterator beyond,
-OutputIterator result,
-const Traits & ch_traits = Default_traits);
+ch_eddy(InputIterator first, InputIterator beyond,
+        OutputIterator result,
+        const Traits& ch_traits = Default_traits);
 
 } /* namespace CGAL */

@@ -19,7 +19,7 @@
 
 /*! \file
  *
- * Defintion of the Default_event_base class.
+ * Definaition of the Default_event_base class.
  */
 
 #include <CGAL/Surface_sweep_2/No_overlap_event_base.h>
@@ -30,7 +30,7 @@ namespace Surface_sweep_2 {
 /*! \class Default_event_base
  *
  * A class associated with an event in a sweep line algorithm.
- * An intersection point in the sweep line algorithm is refered to as an event.
+ * An intersection point in the sweep line algorithm is referred to as an event.
  * This class contains the information that is associated with any given
  * event point. This information contains the following:
  * - the actual point
@@ -86,7 +86,7 @@ public:
       if ((curve == *iter) || (*iter)->is_inner_node(curve)) return;
 
       // Replace the existing curve in case of overlap, only if the set of
-      // ancesters of curve contains the set of ancesters of *iter
+      // ancestors of curve contains the set of ancestors of *iter
       if (curve->has_common_leaf(*iter)) {
         if (curve->number_of_original_curves() >
             (*iter)->number_of_original_curves())

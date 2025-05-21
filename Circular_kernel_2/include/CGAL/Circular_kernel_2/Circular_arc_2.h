@@ -656,7 +656,7 @@ public:
       return CGAL::CircularFunctors::circular_arc_bbox<CK>(*this);
     }
 
-    // Dont use this function, it is only for internal use
+    // Don't use this function, it is only for internal use
     void _setx_info(unsigned short int v_is_x_monotone,
                   unsigned short int v_two_end_points_on_upper_part,
                   unsigned short int v_is_complementary_x_monotone) const {
@@ -740,7 +740,7 @@ public:
 
   Filtered_bbox_circular_arc_2_base(const P_arc& arc) : P_arc(arc), bb(nullptr) {}
 
-  // otherwise it will lead to ambiguos definitions
+  // otherwise it will lead to ambiguous definitions
   explicit Filtered_bbox_circular_arc_2_base(const Circle_2 &c)
     : P_arc(c),bb(nullptr)
   {}

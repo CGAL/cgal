@@ -50,7 +50,7 @@
 #include <iomanip>
 #include <unordered_set>
 
-#define DEBUG_L0 1 // @fixme
+#define CGAL_SMP_IA_DEBUG_L0 0
 
 /// \file Iterative_authalic_parameterizer_3.h
 
@@ -69,7 +69,7 @@ namespace Surface_mesh_parameterization {
 /// the \f$ L_2\f$ stretch - as defined by Sander et al. \cgalCite{cgal:ssgh-tmpm-01} - over the mesh.
 ///
 /// \tparam TriangleMesh_ must be a model of `FaceGraph`.
-/// \tparam BorderParameterizer_ is a Strategy to parameterize the surface border
+/// \tparam BorderParameterizer_ is a strategy to parameterize the surface border
 ///         and must be a model of `Parameterizer_3`.<br>
 ///         <b>%Default:</b>
 /// \code
@@ -218,7 +218,7 @@ public:
 
     for(face_descriptor f : face_range)
     {
-      // get area in parameterised mesh
+      // get area in parameterized mesh
       const halfedge_descriptor h = halfedge(f, tmesh);
       const NT a_2D = abs(CGAL::area(get(uvmap, source(h, tmesh)),
                                      get(uvmap, target(h, tmesh)),
@@ -304,30 +304,6 @@ public:
   }
 
   // Computation helpers
-protected:
-  // `operator=(onst Matrix& other)` isn't part of the concept...
-  template <typename VertexIndexMap>
-  void copy_sparse_matrix(const Matrix& src,
-                          Matrix& dest,
-                          const Triangle_mesh& tmesh,
-                          const Vertex_set& vertices,
-                          const VertexIndexMap vimap)
-  {
-    CGAL_precondition(src.row_dimension() == dest.row_dimension());
-    CGAL_precondition(src.column_dimension() == dest.column_dimension());
-
-    for(vertex_descriptor vertex : vertices)
-    {
-      const int i = get(vimap, vertex);
-      vertex_around_target_circulator v_j(halfedge(vertex, tmesh), tmesh), end = v_j;
-      CGAL_For_all(v_j, end)
-      {
-        const int j = get(vimap, *v_j);
-        dest.set_coef(i, j, src.get_coef(i, j), false);
-      }
-    }
-  }
-
 private:
   double compute_vertex_L2(const Triangle_mesh& tmesh,
                            const vertex_descriptor v) const
@@ -478,7 +454,7 @@ private:
     double weight;
   };
 
-  NT determinant(Point_2& v0, Point_2& v1) const
+  NT determinant(const Point_2& v0, const Point_2& v1) const
   {
     return (v0.x() * v1.y() - v1.x() * v0.y());
   }
@@ -489,8 +465,8 @@ private:
     const NT det0 = determinant(uv1, uv2);
     const NT det1 = determinant(uv2, uv0);
     const NT det2 = determinant(uv0, uv1);
-    const NT det3 = CGAL::determinant(Vector_2<Kernel>(uv1.x()-uv0.x(), uv1.y()-uv0.y()),
-                                      Vector_2<Kernel>(uv2.x()-uv0.x(), uv2.y()-uv0.y()));
+    NT det3 = CGAL::determinant(Vector_2<Kernel>(uv1.x()-uv0.x(), uv1.y()-uv0.y()),
+                                Vector_2<Kernel>(uv2.x()-uv0.x(), uv2.y()-uv0.y()));
     CGAL_assertion(det3 > NT(0));
     if(det3 <= NT(0))
       det3 = NT(1);
@@ -527,7 +503,7 @@ private:
     {
       Neighbor_list NL;
       NL.vertex = *v_j;
-      NL.vector = Vector_3(get(ppmap, v), tmesh.point(*v_j));
+      NL.vector = Vector_3(get(ppmap, v), get(ppmap, *v_j));
       NL.length = sqrt(NL.vector.squared_length());
       neighbor_list.push_back(NL);
       ++neighborsCounter;
@@ -555,7 +531,7 @@ private:
         theta_sum += theta;
       }
 
-      // Normalise the angle
+      // Normalize the angle
       double factor = 2. / theta_sum;
       factor *= CGAL_PI;
       for(int n=0; n<neighborsCounter; ++n)
@@ -571,9 +547,9 @@ private:
 
       for(int j=0; j<neighborsCounter; ++j)
       {
-        // Given the j-th neighbour of node i, find the two neighbours by intersecting the
-        // line through nodes i and j with all segments of the polygon made by the neighbours.
-        // Take the two neighbours on either side. Only one segment intersects this line.
+        // Given the j-th neighbor of node i, find the two neighbors by intersecting the
+        // line through nodes i and j with all segments of the polygon made by the neighbors.
+        // Take the two neighbors on either side. Only one segment intersects this line.
         for(int k=0; k<neighborsCounter; ++k)
         {
           int kk = (k == neighborsCounter-1 ? 0 : k+1);
@@ -641,9 +617,6 @@ private:
     const PPM_ref position_v_i = get(ppmap, main_vertex_v_i);
     const PPM_ref position_v_j = get(ppmap, *neighbor_vertex_v_j);
 
-    const Vector_3 edge = position_v_i - position_v_j;
-    const NT squared_length = edge * edge;
-
     vertex_around_target_circulator previous_vertex_v_k = neighbor_vertex_v_j;
     --previous_vertex_v_k;
     const PPM_ref position_v_k = get(ppmap, *previous_vertex_v_k);
@@ -652,14 +625,10 @@ private:
     ++next_vertex_v_l;
     const PPM_ref position_v_l = get(ppmap, *next_vertex_v_l);
 
-    NT weight = NT(0);
-    CGAL_assertion(squared_length > NT(0)); // two points are identical!
-    if(squared_length != NT(0)) {
-      // This version was commented out to be an alternative weight
-      // in the original code by authors.
-      // weight = CGAL::Weights::authalic_weight(position_v_k, position_v_j, position_v_l, position_v_i) / NT(2);
-      weight = CGAL::Weights::cotangent_weight(position_v_k, position_v_j, position_v_l, position_v_i) / NT(2);
-    }
+    // This version was commented out to be an alternative weight in the original code by authors.
+//    NT weight = CGAL::Weights::authalic_weight(position_v_l, position_v_j, position_v_k, position_v_i) / NT(2);
+    NT weight = CGAL::Weights::cotangent_weight(position_v_l, position_v_j, position_v_k, position_v_i) / NT(2);
+
     return weight;
   }
 
@@ -723,7 +692,7 @@ private:
                                               VertexIndexMap& vimap) const
   {
     auto vpm = get_const_property_map(CGAL::vertex_point, tmesh);
-    const CGAL::Weights::Edge_tangent_weight<Triangle_mesh, decltype(vpm)> compute_mvc(tmesh, vpm);
+    const CGAL::Weights::Edge_tangent_weight<Triangle_mesh, decltype(vpm), Kernel> weight_calc(tmesh, vpm, Kernel());
 
     const int i = get(vimap, v);
 
@@ -733,7 +702,7 @@ private:
 
     for(halfedge_descriptor h : CGAL::halfedges_around_target(v, tmesh))
     {
-      NT w_ij = NT(-1) * compute_mvc(h);
+      NT w_ij = NT(-1) * weight_calc(h);
       // w_ii = - sum of w_ijs
       w_ii -= w_ij;
 
@@ -830,8 +799,8 @@ public:
   /// \param Bv the right hand side vector in the linear system of y coordinates
   /// \param tmesh a triangulated surface
   /// \param bhd a halfedge descriptor on the boundary of `mesh`
-  /// \param uvmap an instanciation of the class `VertexUVmap`
-  /// \param vimap an instanciation of the class `VertexIndexMap`
+  /// \param uvmap an instantiation of the class `VertexUVmap`
+  /// \param vimap an instantiation of the class `VertexIndexMap`
   ///
   /// \pre Vertices must be indexed (`vimap` must be initialized).
   /// \pre `A`, `Bu`, and `Bv` must be allocated.
@@ -914,7 +883,7 @@ public:
 
     NT area_3D = initialize_faces_areas(cc_faces, tmesh);
 
-    if(DEBUG_L0)
+    if(CGAL_SMP_IA_DEBUG_L0)
       std::cout << std::endl;
 
     unsigned int last_best_i = 0;
@@ -925,7 +894,7 @@ public:
     unsigned int i = 0;
     while(i < iterations)
     {
-      if(DEBUG_L0)
+      if(CGAL_SMP_IA_DEBUG_L0)
         std::cout << "Iteration " << i << ", gamma = " << gamma << std::flush;
 
       // update weights for inner vertices
@@ -960,11 +929,11 @@ public:
       // solve linear equations
       // Solve "A*Xu = Bu". On success, solution is (1/Du) * Xu.
       // Solve "A*Xv = Bv". On success, solution is (1/Dv) * Xv.
-      NT Du = 0, Dv = 0;
+      double Du = 0, Dv = 0;
       if(!get_linear_algebra_traits().linear_solver(A, Bu, Xu, Du) ||
          !get_linear_algebra_traits().linear_solver(A, Bv, Xv, Dv))
       {
-        if(DEBUG_L0)
+        if(CGAL_SMP_IA_DEBUG_L0)
           std::cout << " Linear solver failure #" << m_linear_solver_failures << std::endl;
 
         status = ERROR_CANNOT_SOLVE_LINEAR_SYSTEM;
@@ -997,8 +966,8 @@ public:
 //      for(std::size_t i=0; i<nv; ++i)
 //        std::cout << "Sol[" << i << "] = " << Xu[i] << " " << Xv[i] << std::endl;
 
-      // Copy A to A_prev, it is a computationally inefficient task but neccesary
-      copy_sparse_matrix(A, A_prev, tmesh, cc_vertices, vimap);
+      // Copy A to A_prev
+      A_prev = A;
 
       // Copy Xu and Xv coordinates into the (u,v) pair of each vertex
       for(vertex_descriptor v : cc_vertices)
@@ -1012,7 +981,7 @@ public:
         }
       }
 
-      if(DEBUG_L0)
+      if(CGAL_SMP_IA_DEBUG_L0)
       {
         std::ofstream out("last_solve.off");
         out.precision(17);
@@ -1025,7 +994,7 @@ public:
 
       err[i] = compute_area_distortion(cc_faces, area_3D, tmesh, uvmap);
 
-      if(DEBUG_L0)
+      if(CGAL_SMP_IA_DEBUG_L0)
         std::cout << " err " << err[i] << std::flush;
 
       if(err[i] <= err[last_best_i])
@@ -1035,10 +1004,10 @@ public:
         last_best_i = i;
         is_changed = false;
 
-        if(DEBUG_L0)
+        if(CGAL_SMP_IA_DEBUG_L0)
           std::cout << " *****" << std::flush;
       }
-      else if(err[i] > 100) // @fixme is that reasonnable
+      else if(err[i] > 100) // @fixme is that reasonable
       {
         break;
       }
@@ -1106,9 +1075,9 @@ public:
   ///
   /// \param tmesh a triangulated surface
   /// \param bhd a halfedge descriptor on the boundary of `mesh`
-  /// \param uvmap an instanciation of the class `VertexUVmap`
-  /// \param vimap an instanciation of the class `VertexIndexMap`
-  /// \param vpmap an instanciation of the class `VertexParameterizedMap`
+  /// \param uvmap an instantiation of the class `VertexUVmap`
+  /// \param vimap an instantiation of the class `VertexIndexMap`
+  /// \param vpmap an instantiation of the class `VertexParameterizedMap`
   /// \param iterations an integer number of iterations to run the parameterization
   ///
   /// \pre `tmesh` must be a triangular mesh.

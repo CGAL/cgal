@@ -1,11 +1,12 @@
 #define CGAL_AW3_TIMER
 #define CGAL_AW3_DEBUG
+#define CGAL_AW3_DEBUG_MANIFOLDNESS
 //#define CGAL_AW3_DEBUG_STEINER_COMPUTATION
 //#define CGAL_AW3_DEBUG_INITIALIZATION
 //#define CGAL_AW3_DEBUG_QUEUE
 
 #include <CGAL/alpha_wrap_3.h>
-#include "alpha_wrap_validation.h"
+#include <CGAL/Alpha_wrap_3/internal/validation.h>
 
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -45,7 +46,6 @@ void alpha_wrap_triangle_manifoldness(Mesh& input_mesh,
 
   Mesh nm_wrap;
   CGAL::alpha_wrap_3(input_mesh, alpha, offset, nm_wrap,
-                     CGAL::parameters::default_values(),
                      CGAL::parameters::do_enforce_manifoldness(false));
 
   std::cout << "Result: " << vertices(nm_wrap).size() << " vertices, " << faces(nm_wrap).size() << " faces" << std::endl;
@@ -67,7 +67,6 @@ void alpha_wrap_triangle_manifoldness(Mesh& input_mesh,
 
   Mesh m_wrap;
   CGAL::alpha_wrap_3(input_mesh, alpha, offset, m_wrap,
-                     CGAL::parameters::default_values(),
                      CGAL::parameters::do_enforce_manifoldness(true));
 
 //  CGAL::IO::write_polygon_mesh("last.off", wrap, CGAL::parameters::stream_precision(17));

@@ -18,25 +18,10 @@
 #define CGAL_PRECISE_NUMBERS_H
 
 #include <CGAL/config.h>
-#if defined CGAL_USE_GMPXX
-#  include <CGAL/gmpxx.h>
-typedef mpz_class                       Precise_integer;
-typedef mpq_class                       Precise_rational;
-#elif defined CGAL_USE_LEDA
-#  include <CGAL/leda_integer.h>
-#  include <CGAL/leda_rational.h>
-typedef leda_integer                    Precise_integer;
-typedef leda_rational                   Precise_rational;
-#elif defined CGAL_USE_GMP
-#  include <CGAL/Gmpz.h>
-#  include <CGAL/Gmpq.h>
-typedef CGAL::Gmpz                      Precise_integer;
-typedef CGAL::Gmpq                      Precise_rational;
-#else
-#  include <CGAL/MP_Float.h>
-#  include <CGAL/Quotient.h>
-typedef CGAL::MP_Float                  Precise_integer;
-typedef CGAL::Quotient<CGAL::MP_Float>  Precise_rational;
-#endif
+#include <CGAL/Exact_integer.h>
+#include <CGAL/Exact_rational.h>
+
+using Precise_integer = CGAL::Exact_integer;
+using Precise_rational = CGAL::Exact_rational;
 
 #endif // CGAL_PRECISE_NUMBERS_H

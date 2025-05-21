@@ -296,10 +296,12 @@ also inserts a small set of auxiliary vertices that belong to the triangulation
 but are isolated from the complex at the end of the meshing process.
 
 These so-called \em isolated vertices belong to the triangulation but not to any cell
-of the `C3T3`. They can be removed using the function `remove_isolated_vertices()`.
+of the `C3T3`. They can be removed using the function `remove_isolated_vertices()` of `CGAL::Mesh_complex_3_in_triangulation_3`.
 
 
 \section Mesh_3_section_interface Interface
+
+As of \cgal 5.6, this package uses \ref bgl_namedparameters to set parameters. More details are provided in  \ref FromBoostNPtoCGALNP.
 
 \subsection Mesh_3TheGlobalFunctions The Global Functions
 
@@ -307,23 +309,16 @@ A 3D mesh generation process is launched through a call
 to one of the two following functions:
 
 \code{.cpp}
-template <class C3T3, class MeshDomain, class MeshCriteria>
+template <class C3T3, class MeshDomain, class MeshCriteria, class NamedParameters>
 C3T3 make_mesh_3(const MeshDomain& domain,
                  const MeshCriteria& criteria,
-                 parameters::internal::Features_options features = parameters::features(domain),
-                 parameters::internal::Lloyd_options lloyd = parameters::no_lloyd(),
-                 parameters::internal::Odt_options odt = parameters::no_odt(),
-                 parameters::internal::Perturb_options perturb = parameters::perturb(),
-                 parameters::internal::Exude_options exude = parameters::exude());
+                 const NamedParameters& np);
 
-template <class C3T3, class MeshDomain, class MeshCriteria>
+template <class C3T3, class MeshDomain, class MeshCriteria, class NamedParameters>
 void refine_mesh_3(C3T3& c3t3,
                    const MeshDomain& domain,
                    const MeshCriteria& criteria,
-                   parameters::internal::Lloyd_options lloyd = parameters::no_lloyd(),
-                   parameters::internal::Odt_options odt = parameters::no_odt(),
-                   parameters::internal::Perturb_options perturb = parameters::perturb(),
-                   parameters::internal::Exude_options exude = parameters::exude());
+                   const NamedParameters& np);
 \endcode
 
 The function `make_mesh_3()` generates from scratch a mesh
@@ -427,7 +422,7 @@ Specifically, it is
 either a constant or a spatially variable scalar field. It
 provides an upper bound for the distance between the circumcenter
 of a surface facet and the center of a surface Delaunay ball of this facet.
-<LI><I>`facet_topology`.</I> This parameters controls the set of topological constraints
+<LI><I>`facet_topology`.</I> This parameter controls the set of topological constraints
 which have to be verified by each surface facet. By default, each vertex of a surface
 facet has to be located on a surface patch, on a curve, or on a corner. It can
 also be set to check whether the three vertices of a surface facet belongs to the same
@@ -499,7 +494,7 @@ protecting ball centers that are consecutive on a 1-feature. This parameter has 
 
 The four additional parameters are optimization parameters.
 They control which optimization processes are performed
-and allow the user to tune the parameters of the activated optimization processes.
+and enable the user to tune the parameters of the activated optimization processes.
 These parameters have internal types which are not described
 but the library provides global functions to generate
 appropriate values of these types:
@@ -566,10 +561,10 @@ for more details.
 
 \section Mesh_3_section_io Input/Output
 Several file formats are supported for writing a mesh:
- - \ref IOStreamVTK, using `CGAL::IO::output_to_vtu()`
- - \ref IOStreamAvizo, using `CGAL::IO::output_to_avizo()`
- - \ref IOStreamMedit, using `CGAL::IO::output_to_medit()`
- - \ref IOStreamTetgen, using `CGAL::IO::output_to_tetgen()`
+ - \ref IOStreamMedit, using \link CGAL::IO::write_MEDIT() `CGAL::IO::write_MEDIT()`\endlink
+ - \ref IOStreamVTK, using \link CGAL::IO::output_to_vtu() `CGAL::IO::output_to_vtu()`\endlink
+ - \ref IOStreamAvizo, using \link CGAL::IO::output_to_avizo `CGAL::IO::output_to_avizo()`\endlink
+ - \ref IOStreamTetgen, using \link CGAL::IO::output_to_tetgen `CGAL::IO::output_to_tetgen()`\endlink
 
 \section Mesh_3_section_examples Examples
 
@@ -581,7 +576,7 @@ is an isosurface defined by an implicit
 function. \cgalFigureRef{figureimplicit_domain} shows a cut view of the
 resulting mesh.
 
-Note the use of named parameters (from Boost library) in the
+Note the use of named parameters in the
 constructor of the `Mesh_criteria` instance.
 
 \cgalExample{Mesh_3/mesh_implicit_sphere.cpp}
@@ -671,7 +666,6 @@ View of 3D meshes produced from a polyhedral domain. (i) is a view of file out_1
 In the following example we have a "bounding polyhedron" which defines the meshing domain and two surfaces inside this domain.
 The surfaces inside the domain may be closed surfaces as well as surfaces with boundaries. In the case of a closed surface
 the volume delimited by this surface is also considered as inside the domain.
-previous subsection.
 
 
 \cgalExample{Mesh_3/mesh_polyhedral_domain_with_surface_inside.cpp}
@@ -683,8 +677,11 @@ View of 3D meshes produced from a polyhedral domain with a nested surface.
 \subsubsection Mesh_3RemeshingPolyhedralSurface Remeshing a Polyhedral Surface
 
 The following code creates a polyhedral domain, with only one polyhedron,
-and no "bounding polyhedron", so the volumetric part of the domain will be empty.
-This allows to remesh a surface, and is equivalent to the function `make_surface_mesh()`.
+and no "bounding polyhedron". The volumetric part of the domain may be empty
+and should not be meshed.
+In this case, it is recommended to use the `CGAL::parameters::surface_only()` parameter
+to speedup the meshing of the surface only.
+This enables to remesh a surface, and is equivalent to the function `make_surface_mesh()`.
 
 \cgalExample{Mesh_3/remesh_polyhedral_surface.cpp}
 
@@ -698,7 +695,7 @@ View of a remeshed surface. (Left) input mesh (Right) output mesh. Code from sub
 
 The following example produces a 3D mesh for a domain whose boundary surface
 is the isosurface associated to an isovalue inside the input gray-level
-3D image. In the distribution you can also find the example \ref Mesh_3/mesh_3D_gray_vtk_image.cpp which can deal with DICOM files as input.
+3D image. In the distribution you can also find the example \ref Mesh_3/mesh_3D_gray_vtk_image.cpp which can deal with `*.nii` as well as `DICOM` files as input.
 
 \cgalExample{Mesh_3/mesh_3D_gray_image.cpp}
 
@@ -730,7 +727,7 @@ to the voxels surface, causing an aliasing effect.
 A solution to generate a smooth and accurate output surface was described by Stalling et al in
 \cgalCite{stalling1998weighted}. It consists in generating a second input image, made
 of integer coefficients called *weights*, and use those weights to define smoother domain boundaries.
-The 3D image of weights can be generated using `CGAL::Mesh_3::generate_weights()` as shown in
+The 3D image of weights can be generated using `CGAL::Mesh_3::generate_label_weights()` as shown in
 the following example.
 
 \cgalExample{Mesh_3/mesh_3D_weighted_image.cpp}
@@ -740,57 +737,31 @@ Surface of the output mesh generated with a very small `facet_distance`
 without the weights (left, 25563 vertices) and with the weights (right, 19936 vertices).
 \cgalFigureEnd
 
-
 \subsubsection Mesh_3DomainsFrom3DImagesWithCustomInitialization Domains From 3D Images, with a Custom Initialization
 
-The example \ref Mesh_3/mesh_3D_image_with_custom_initialization.cpp is a modification
+The example \ref Mesh_3/mesh_3D_image_with_image_initialization.cpp is a modification
 of \ref Mesh_3/mesh_3D_image.cpp. The goal of that example is to show how
 the default initialization of the triangulation, using random rays, can be
 replaced by a new implementation. In this case, the initialization detects
 all connected components in the 3D segmented image, and inserts points in
 the triangulation for each connected component.
 
-For the meshing, in the previous example (\ref Mesh_3/mesh_3D_image.cpp), we called `make_mesh_3()` as follows.
+\snippet Mesh_3/mesh_3D_image_with_image_initialization.cpp Meshing
 
-\snippet Mesh_3/mesh_3D_image.cpp Meshing
+The parameter `CGAL::parameters::initial_points_generator` is used.
+It expects a functor that returns a set of points for the mesh
+initialization (following the concept `InitialPointsGenerator_3`). The functor
+`Construct_initial_points_labeled_image` is used in this example.
+It constructs points using the API of the mesh domain, as follows.
+First, the functor `construct_intersection` is created:
 
-In the example \ref Mesh_3/mesh_3D_image_with_custom_initialization.cpp,
-that call is replaced by:
-  -# the creation of an empty `%c3t3` object,
-  -# a call to a non-documented function
-    `initialize_triangulation_from_labeled_image()` that inserts points in
-    the triangulation,
-  -# then the call to `refine_mesh_3()`.
-
-\snippet Mesh_3/mesh_3D_image_with_custom_initialization.cpp Meshing
-
-The code of the function `initialize_triangulation_from_labeled_image()` is
-in the non-documented header \ref
-CGAL/Mesh_3/initialize_triangulation_from_labeled_image.h. As it is
-undocumented and may be removed or modified at any time, if you wish to
-use it then you should copy-paste it to your user code. The code of that
-function is rather complicated. The following lines show how to insert new
-points in the `%c3t3` object, with the calls to
-`MeshVertexBase_3::set_dimension()` and
-`MeshVertexBase_3::set_index()`.
-
-\snippet CGAL/Mesh_3/initialize_triangulation_from_labeled_image.h insert initial points
-
-The value of `index` must be consistent with the possible values of
-`Mesh_domain::Index`. In \ref
-CGAL/Mesh_3/initialize_triangulation_from_labeled_image.h, it is
-constructed using the API of the mesh domain, as follows. First the functor
-`construct_intersect` is created
-
-\dontinclude CGAL/Mesh_3/initialize_triangulation_from_labeled_image.h
-\skip Construct_intersection construct_intersection =
-\until construct_intersection_object
+\snippet CGAL/Mesh_3/Construct_initial_points_labeled_image.h construct intersection
 then the `%Mesh_domain::Intersection` object (a `%tuple` with three
 elements) is constructed using a call to the functor `construct_intersection`
-\skip Intersection intersect =
-\until construct_intersection
-and eventually `%index` is the element \#1 of `%intersect`.
-\skipline get<1>(intersect)
+\snippet CGAL/Mesh_3/Construct_initial_points_labeled_image.h use construct intersection
+and eventually `%intersect_index` is the element \#1 of `%intersect`.
+\snippet CGAL/Mesh_3/Construct_initial_points_labeled_image.h get construct intersection
+The dimension of the underlying simplex is stored as the element \#2 of `%intersect``.
 
 The result of the custom initialization can be seen in
 \cgalFigureRef{mesh3custominitimage3D}. The generated 3D image contains a
@@ -816,34 +787,25 @@ the center is meshed
 Right: the mesh generated after the initialization of all connected components
 \cgalFigureCaptionEnd
 
-
 Note that the example \ref
-Mesh_3/mesh_3D_image_with_custom_initialization.cpp also shows how to
+Mesh_3/mesh_3D_image_with_image_initialization.cpp also shows how to
 create a 3D image using the undocumented API of CGAL_ImageIO.
 
-\snippet Mesh_3/mesh_3D_image_with_custom_initialization.cpp Create the image
+\snippet Mesh_3/mesh_3D_image_with_image_initialization.cpp Create_the_image
 
 The code of the function `%random_labeled_image()` is in the header file \ref
 Mesh_3/random_labeled_image.h.
 
 
-The example \ref Mesh_3/mesh_3D_gray_image_with_custom_initialization.cpp is another
-custom initialization example, for meshing of 3D gray-level images. Similarly to
-the segmented image example above, the code consists in:
-  -# the creation of an empty `%c3t3` object,
-  -# a call to a non-documented function
-    `initialize_triangulation_from_gray_image()` that inserts points in
-    the triangulation,
-  -# then the call to `refine_mesh_3()`.
+The example \ref Mesh_3/mesh_3D_image_with_custom_initialization.cpp features
+a custom functor that initializes the triangulation.
 
-\snippet Mesh_3/mesh_3D_gray_image_with_custom_initialization.cpp Meshing
+A struct `Custom_Initial_points_generator` that places 1D-feature points
+alongside a line is created.
 
-The code of the function `initialize_triangulation_from_gray_image()` is
-in the non-documented header \ref
-CGAL/Mesh_3/initialize_triangulation_from_gray_image.h. As it is
-undocumented and may be removed or modified at any time, if you wish to
-use it then you should copy-paste it to your user code.
-
+Finally, the example \ref Mesh_3/mesh_3D_image_with_initial_points.cpp features
+a point container that initializes the triangulation using the meshing parameter
+`parameters::initial_points()`.
 
 \subsection Mesh_3UsingVariableSizingField Using Variable Sizing Field
 
@@ -931,23 +893,27 @@ The first modification is the type of the mesh domain. Instead of being
 
 \snippet Mesh_3/mesh_3D_image_with_features.cpp Domain definition
 
-Then, in the function `%main()`, after the `%domain` object has been created,
-a dedicated function computes the 1D-features, and adds them to the domain.
+In the %main() function, the domain is created with an additional argument - a
+dedicated functor that computes the one-dimensional features, which are then
+added to the domain.
 
-\snippet Mesh_3/mesh_3D_image_with_features.cpp Call add_1D_features
+\snippet Mesh_3/mesh_3D_image_with_detection_of_features.cpp Domain creation
 
-The function template `%add_1D_features()` is defined in the example
-file. It uses non-documented code from \cgal, that should be copy-pasted in
-any user-code willing to use similar code. It uses the undocumented
-function template `%CGAL::polylines_to_protect` that computes the
-1D-features that correspond to the intersection of the bounding box of the
-image with the surfaces defined by the image. At the same time, a few other
-polylines are added as 1D-features, to protect 1D curves in the interior of
-the image. Then, the method
-`CGAL::Mesh_domain_with_polyline_features_3::add_features` is called twice
-to add the computed 1D-features to the mesh domain.
+The `CGAL::Mesh_3::Detect_features_in_image` functor is defined in its own
+header file. It computes the one-dimensional features that correspond to the
+intersections of the bounding box of the image with the surfaces defined by the
+image, as well as polylines that lie at the intersection of three or more
+subdomains (including the outside). It then constructs a graph of these polyline
+features. The named constructor adds this feature graph to the domain for later
+feature protection. The original feature detection algorithm was described in
+\cgalCite{cgal:hssz-gmcabonbc-97}, which provides a list of possible voxel
+configurations. The feature detection implemented in \cgal generalizes this
+description.
 
-\snippet Mesh_3/mesh_3D_image_with_features.cpp Add 1D features
+The example \ref Mesh_3/mesh_3D_image_with_features.cpp shows how
+user-specified input polylines can further be added as 1D features to the mesh domain.
+
+\snippet Mesh_3/mesh_3D_image_with_features.cpp Domain creation
 
 In the meshing criteria, if 1D features are added to the domain, the user
 can define the parameter `edge_size` of the criteria class
@@ -975,7 +941,7 @@ protection of the 1D-features.
 Left: the mesh without any call to `%add_features()`.
 
 Middle: the mesh with only the 1D-features computed by
-`%CGAL::polylines_to_protect()`.
+`CGAL::Mesh_3::Detect_features_on_image_bbox()`.
 
 Right: the mesh with added 1D-features in the interior of the bounding box
 of the image.
@@ -1015,7 +981,51 @@ Right: the mesh with added 1D-features along sharp edges and edges shared
 by at least two of the input polyhedral surfaces forming the complex.
 \cgalFigureCaptionEnd
 
+\subsubsection Mesh_3EdgesSizingField Sizing Field for Feature Edges
 
+The following example shows how to generate a mesh from a polyhedral complex
+or a polyhedral surface with polyline features.
+Polyline features are covered by a set of so-called "protecting balls" which
+sizes are highly related to the edge length, and
+are driven by the size component of `Mesh_edge_criteria_3`
+(see Section \ref Mesh_3Protectionof0and1dimensionalExposed).
+The ideal size can be computed using
+`Sizing_field_with_aabb_tree` that helps start the feature protection
+and one-dimensional meshing process with a good initial guess.
+To fit the protecting balls requirements,
+no protecting ball can have its radius
+larger than half of the distance from the corresponding vertex (its center),
+to surface patches the
+current polyline feature does not belong to.
+
+\cgalExample{Mesh_3/mesh_polyhedral_domain_with_features_sizing.cpp}
+
+\subsubsection Mesh_WithEdgeDistanceCriterion Approximation Criterion for Feature Edges
+
+The following example shows how to generate a mesh with an approximation error criterion.
+Polyline features are covered by a set of so-called "protecting balls" which
+sizes are highly related to the `edge_size` and `edge_distance` criteria.
+This edge distance is driven by the distance component of `Mesh_edge_criteria_3`
+(see Section \ref Mesh_3Protectionof0and1dimensionalExposed).
+The parameter `edge_distance` enables the subdivision of edges that are too far away from the
+corresponding input sharp features. It may result in an output mesh with shorter edges along the
+input polyline features.
+\cgalExample{Mesh_3/mesh_polyhedral_domain_with_edge_distance.cpp}
+
+\cgalFigureAnchor{mesh3edge_distance}
+<center>
+<table border=0>
+<tr>
+<td><img border="0" src="./u_arch_no_edge_distance.png" alt="u_arch mesh without edge_distance criterion"></td>
+<td><img border="0" src="./u_arch_with_edge_distance.png" alt="u_arch mesh with edge_distance criterion"></td>
+</tr>
+</table>
+</center>
+\cgalFigureCaptionBegin{mesh3edge_distance}
+Left: the mesh without the `%edge_distance` criterion.
+
+Right: the mesh with the `%edge_distance` criterion set to the same value as `%facet_distance`.
+\cgalFigureCaptionEnd
 
 \subsection Mesh_3TuningMeshOptimization Tuning Mesh Optimization
 
@@ -1264,7 +1274,7 @@ vertices/second
 View of 3d image mesh generation result (size = 4).
 \cgalFigureEnd
 
-We mesh image number 2 from the 3D-IRCADb-01 (available at <A href="https://www.ircad.fr/softwares/3Dircadb/3Dircadb1/index.php">https://www.ircad.fr/softwares/3Dircadb/3Dircadb1/index.php</A>) public database.
+We mesh image number 2 from the 3D-IRCADb-01 (available at <A href="https://www.ircad.fr/research/data-sets/liver-segmentation-3d-ircadb-01/">https://www.ircad.fr/research/data-sets/liver-segmentation-3d-ircadb-01/</A>) public database.
 The size of this image is 512x512x172 voxels (about 45M voxels). The size of the voxels
 is 0.78mm x 0.78mm x 1.6mm. \cgalFigureRef{figuremesh_3_benchmark_3d_image}
 shows the mesh obtained for size set to 4.
@@ -1349,7 +1359,7 @@ We provide below speed-up charts generated using the parallel version of the mes
 The machine used is a PC running Windows 7 64-bits with two 6-core Intel Xeon CPU X5660 clocked at 2.80 GHz
 with 32GB of RAM. The program has been compiled with Microsoft Visual C++ 2012 in Release mode.
 
-Figure \cgalFigureRef{figure_refinement_speedup} shows mesh refinement speed-up, and figure \cgalFigureRef{figure_lloyd_speedup}
+\cgalFigureRef{figure_refinement_speedup} shows mesh refinement speed-up, and \cgalFigureRef{figure_lloyd_speedup}
 shows Lloyd optimization speed-up. ODT optimization exhibits similar speed-up.
 
 \cgalFigureBegin{figure_refinement_speedup,refinement_speedup.png}
@@ -1413,6 +1423,6 @@ and Mariette Yvinec. It appeared first in the release 3.8 of \cgal.
 
 In 2013, Clément Jamin made the meshing and optimization algorithms parallel
 on multi-core shared-memory architectures.
-\todo Add reference to paper or research report when it is available.
+
 */
 } /* namespace CGAL */

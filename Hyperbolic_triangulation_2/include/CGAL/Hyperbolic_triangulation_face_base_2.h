@@ -16,11 +16,44 @@
 #include <CGAL/license/Hyperbolic_triangulation_2.h>
 
 #include <CGAL/basic.h>
-#include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_ds_face_base_2.h>
 #include <CGAL/Object.h>
 
 namespace CGAL {
+
+class Hyperbolic_data
+{
+  typedef std::int8_t Id;
+
+private:
+  // - 2 for infinite face
+  // - 1 for finite, hyperbolic face
+  //   0 for finite, non hyperbolic with non-hyperbolic edge at index 0
+  //   2 for finite, non hyperbolic with non-hyperbolic edge at index 1
+  //   1 for finite, non hyperbolic with non-hyperbolic edge at index 2
+  Id _hyperbolic_tag;
+
+public:
+  Hyperbolic_data(Id id = -2) : _hyperbolic_tag(id) { }
+
+  void set_infinite() { _hyperbolic_tag = -2; }
+
+  // a finite face is non_hyperbolic if its circumscribing circle intersects the circle at infinity
+  void set_Delaunay_hyperbolic() { _hyperbolic_tag = -1; }
+
+  bool is_Delaunay_hyperbolic() const
+  {
+    return (_hyperbolic_tag == -1);
+  }
+
+  // set and get the non-hyperbolic property of the edge #i
+  void set_Delaunay_non_hyperbolic(int i) { _hyperbolic_tag = i; }
+
+  bool is_Delaunay_non_hyperbolic(int i) const
+  {
+    return (_hyperbolic_tag == i);
+  }
+};
 
 template<typename Gt,
          typename Fb = Triangulation_ds_face_base_2<> >
@@ -60,11 +93,11 @@ public:
   static int ccw(int i) {return Triangulation_cw_ccw_2::ccw(i);}
   static int  cw(int i) {return Triangulation_cw_ccw_2::cw(i);}
 
-  CGAL::Object& tds_data() { return this->_tds_data; }
-  const CGAL::Object& tds_data() const { return this->_tds_data; }
+  Hyperbolic_data& hyperbolic_data() { return this->_hyperbolic_data; }
+  const Hyperbolic_data& hyperbolic_data() const { return this->_hyperbolic_data; }
 
 private:
-  CGAL::Object         _tds_data;
+  Hyperbolic_data _hyperbolic_data;
 };
 
 } // namespace CGAL

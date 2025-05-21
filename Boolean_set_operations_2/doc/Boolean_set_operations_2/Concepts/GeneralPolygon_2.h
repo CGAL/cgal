@@ -3,7 +3,7 @@
 \ingroup PkgBooleanSetOperations2Concepts
 \cgalConcept
 
-\cgalRefines `GpsTraitsGeneralPolygon_2`
+\cgalRefines{GpsTraitsGeneralPolygon_2}
 
 A model of this concept represents a simple general-polygon. The
 geometric mapping of the edges of the polygon must be \f$ x\f$-monotone curves.
@@ -16,7 +16,9 @@ accordingly. Only counterclockwise oriented polygons are valid operands
 of Boolean set-operations. General polygon that represent holes must be
 clockwise oriented.
 
-\cgalHasModel `CGAL::General_polygon_2<ArrTraits>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::General_polygon_2<ArrTraits>}
+\cgalHasModelsEnd
 
 */
 

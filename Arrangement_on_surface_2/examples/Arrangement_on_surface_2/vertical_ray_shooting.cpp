@@ -1,15 +1,14 @@
 //! \file examples/Arrangement_on_surface_2/ex_vertical_ray_shooting.cpp
 // Answering vertical ray-shooting queries.
 
-#include <CGAL/basic.h>
 #include <CGAL/Arr_walk_along_line_point_location.h>
 #include <CGAL/Arr_trapezoid_ric_point_location.h>
 
 #include "arr_inexact_construction_segments.h"
 #include "point_location_utils.h"
 
-typedef CGAL::Arr_walk_along_line_point_location<Arrangement> Walk_pl;
-typedef CGAL::Arr_trapezoid_ric_point_location<Arrangement>   Trap_pl;
+using Walk_pl = CGAL::Arr_walk_along_line_point_location<Arrangement>;
+using Trap_pl = CGAL::Arr_trapezoid_ric_point_location<Arrangement>;
 
 int main() {
   // Construct the arrangement.

@@ -11,9 +11,11 @@ its four vertices and to its four neighbor faces. The vertices and
 neighbors are indexed 0, 1 and 2. Neighbor \f$ i\f$ lies opposite to
 vertex \f$ i\f$.
 
-\cgalRefines `TriangulationFaceBase_2`
+\cgalRefines{TriangulationFaceBase_2}
 
-\cgalHasModel `CGAL::Periodic_2_triangulation_face_base_2`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Periodic_2_triangulation_face_base_2}
+\cgalHasModelsEnd
 
 \sa `TriangulationDataStructure_2`
 \sa `TriangulationFaceBase_2`

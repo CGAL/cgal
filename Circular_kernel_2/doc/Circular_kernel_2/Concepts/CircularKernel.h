@@ -3,10 +3,12 @@
 \ingroup PkgCircularKernel2GeometricConcepts
 \cgalConcept
 
-\cgalRefines `Kernel`
+\cgalRefines{Kernel}
 
-\cgalHasModel `CGAL::Circular_kernel_2<Kernel,AlgebraicKernelForCircles>`
-\cgalHasModel `CGAL::Exact_circular_kernel_2`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Circular_kernel_2<Kernel,AlgebraicKernelForCircles>}
+\cgalHasModels{CGAL::Exact_circular_kernel_2}
+\cgalHasModelsEnd
 
 \sa `Kernel`
 

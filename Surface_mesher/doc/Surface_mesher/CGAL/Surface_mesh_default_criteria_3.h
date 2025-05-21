@@ -27,7 +27,7 @@ is the distance between the facet circumcenter and the
 center of its surface Delaunay ball.
 </UL>
 
-\cgalModels `SurfaceMeshFacetsCriteria_3`
+\cgalModels{SurfaceMeshFacetsCriteria_3}
 
 \sa `make_surface_mesh`
 

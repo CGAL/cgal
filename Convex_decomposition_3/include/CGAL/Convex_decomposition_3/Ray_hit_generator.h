@@ -17,6 +17,7 @@
 
 #include <CGAL/Modifier_base.h>
 #include <CGAL/Nef_3/SNC_decorator.h>
+#include <CGAL/Nef_3/SNC_point_locator.h>
 #include <CGAL/Nef_3/SNC_intersection.h>
 #include <CGAL/Convex_decomposition_3/SM_walls.h>
 

@@ -255,7 +255,7 @@ found in other \cgal components:
 
 Point sets are often used to sample objects with a higher dimension,
 typically a curve in 2D or a surface in 3D. In such cases, finding the
-scale of the objet is crucial, that is to say finding the minimal
+scale of the object is crucial, that is to say finding the minimal
 number of points (or the minimal local range) such that the subset of
 points has the appearance of a curve in 2D or a surface in 3D
 \cgalCite{cgal:gcsa-nasr-13}.
@@ -650,7 +650,7 @@ functions in this component.)
 \section Point_set_processing_3Simplification Simplification
 
 
-Four simplification functions are devised to reduce an input point set.
+Five simplification functions are devised to reduce an input point set.
 
 Function `random_simplify_point_set()` randomly deletes a
 user-specified fraction of points from the input point set. This
@@ -673,6 +673,10 @@ variation of the point set.
 Function `wlop_simplify_and_regularize_point_set()` not only simplifies,
 but also regularizes downsampled points. This is an implementation of
 the Weighted Locally Optimal Projection (WLOP) algorithm \cgalCite{wlop-2009}.
+
+Function `poisson_eliminate()` is a greedy down sampling method that generates
+a subset of the input points with Poisson disk property. This is an implementation of the
+<em>Sample Elimination for Generating Poisson Disk Sample Sets</em> method \cgalCite{cgal:y-sefpdss}.
 
 
 \subsection Point_set_processing_3Example_grid_simplification Grid Simplification Example
@@ -749,12 +753,49 @@ A parallel version of WLOP is provided and requires the executable to be linked 
 <a href="https://github.com/oneapi-src/oneTBB">Intel TBB library</a>.
 To control the number of threads used, the user may use the tbb::task_scheduler_init class.
 See the <a href="https://software.intel.com/content/www/us/en/develop/documentation/onetbb-documentation/top.html">TBB documentation</a>
-for more details. We provide below a speed-up chart generated using the parallel version of the WLOP algorithm. The machine used is a PC running Windows 7 64-bits with a 4-core i7-4700HQ@2.40GHz CPU with 8GB of RAM.
+for more details. We provide below a speed-up chart generated using the parallel version of the WLOP algorithm. The machine used is a PC running Windows 7 64-bits with a 4-core i7-4700HQ\@2.40GHz CPU with 8GB of RAM.
 
 \cgalFigureBegin{Point_set_processing_3figWLOP_parallel_performance, parallel_WLOP_performance.jpg}
 Parallel WLOP speed-up, compared to the sequential version of the algorithm.
 \cgalFigureEnd
 
+\subsection Point_set_processing_3PoissonElimination Poisson Sample Elimination
+The Poisson sample elimination is a greedy downsampling method that calculates a weight for each input point based on the density of its local neighborhood. Subsequently, the point with the highest weight is removed and the weights of the remaining points around it are updated until the target size is reached. A custom function to calculate the weight of a point can be provided.
+
+The Poisson sample elimination has the following parameters:
+- *dimension*: The dimension of the sampling domain of the point cloud, e.g., 2 if the point cloud is sampled from a surface, while the ambient dimension is typically 3. The default value is 2.
+- *weight_function*: A custom function can be provided to calculate the weight between two points. The type of the functor is as follows:
+\code{.cpp}
+double(*func)(const Point &p, const Point &n, double squared_distance, double r_max)
+\endcode
+The default weight is \f$\left(1 - \frac{d_{p,n}}{2r_{max}}\right)^8\f$ with \f$d_{p,n}\f$ being the distance between the point p and its neighbor n.
+- \f$r_{max}\f$: The \f$r_{max}\f$ parameter specifies the radius of the neighborhood, i.e., the neighboring points that are used to calculate the weight of a point. \f$r_{max}\f$ has to be provided if a custom *weight_function* is used. Only points within a distance of \f$r_{max}\f$ are used to calculate the weight of a point. A large value can thus cause a large running time. The default is calculated based in the bounding volume \f$V\f$ of the input points, the *dimension* parameter and the number of input points \f$N\f$:
+
+\f$\mathrm{dimension} = 2:\qquad\f$ \f$r_{max} = \sqrt{\frac{V}{2\sqrt{3}N}}\f$
+
+\f$\mathrm{dimension} = 3:\qquad\f$ \f$r_{max} = \sqrt{\frac{V}{4\sqrt{2}N}}\f$
+
+- *progressive*: The output points of the function can be reordered to be progressive. A progressive ordering will increase the running time by a factor of at most 2 as the function is internally applied several times on increasingly smaller subsets. The default value is false.
+
+\cgalFigureAnchor{Point_set_processing_3figPoisson_elimination}
+<center>
+<img src="poisson_elimination.png" style="max-width:80%;"/>
+</center>
+\cgalFigureCaptionBegin{Point_set_processing_3figPoisson_elimination}
+Poisson elimination on point cloud randomly sampled from a mesh with 20k points showing results with \f$\frac{1}{2}\f$, \f$\frac{1}{4}\f$ and \f$\frac{1}{8}\f$ of the input size.
+\cgalFigureCaptionEnd
+
+\subsubsection Point_set_processing_3Example_poisson_elimination Poisson Sample Elimination Example
+
+The following example reads a point cloud, applies Poisson elimination to reduce the point cloud to \f$\frac{1}{5}\f$ of its size and saves it into a file.
+
+\cgalExample{Point_set_processing_3/poisson_eliminate_example.cpp}
+
+\subsubsection Point_set_processing_3Example_poisson_elimination_on_mesh Poisson Sample Elimination from Mesh Example
+
+The following example first samples a point cloud from a surface mesh and then uses Poisson elimination to provide an evenly sampled point cloud.
+
+\cgalExample{Point_set_processing_3/poisson_eliminate_from_mesh_example.cpp}
 
 \section Point_set_processing_3Smoothing Smoothing
 
@@ -787,13 +828,14 @@ The following example reads a set of points with normals and smooths them via bi
 Comparison for two smoothing methods: Left: Input, 250K points, normal-color mapping. Middle: Jet smoothing result, 197 seconds. Right: Bilateral smoothing result, 110 seconds.
 \cgalFigureEnd
 
-\subsubsection Point_set_processing_3Bilateral_smoothing_parallel_performance Parallel
+\subsubsection Point_set_processing_3Bilateral_smoothing_parallel_performance Parallel Performance
 
-Performance:
 A parallel version of bilateral smoothing is provided and requires the executable to be linked against the
 <a href="https://github.com/oneapi-src/oneTBB">Intel TBB library</a>.
 The number of threads used is controlled through the tbb::task_scheduler_init class.
-See the <a href="https://software.intel.com/content/www/us/en/develop/documentation/onetbb-documentation/top.html">TBB documentation</a> for more details. We provide below a speed-up chart generated using the parallel version of the bilateral smoothing algorithm. The machine used is a PC running Windows 7 64-bits with a 4-core i7-4700HQ@2.40GHz CPU with 8GB of RAM.
+See the <a href="https://software.intel.com/content/www/us/en/develop/documentation/onetbb-documentation/top.html">TBB documentation</a> for more details.
+We provide below a speed-up chart generated using the parallel version of the bilateral smoothing algorithm.
+The machine used is a PC running Windows 7 64-bits with a 4-core i7-4700HQ\@2.40GHz CPU with 8GB of RAM.
 
 \cgalFigureBegin{Point_set_processing_3Bilateral_smoothing_parallel_performance, parallel_bilateral_smooth_point_set_performance.jpg}
 Parallel bilateral smoothing speed-up, compared to the sequential version of the algorithm.
@@ -1009,7 +1051,7 @@ as well as the normal and feature edge estimation functions based on it.
 Florent Lafarge with the help of Simon Giraudot contributed the point set structuring algorithm.
 Started from GSoC'2019, Necip Fazil Yildiran with the help of Nicolas Mellado and Simon Giraudot introduced the wrappers for OpenGR and PointMatcher
 libraries that perform registration on two point sets.
-
+Poisson sample elimination is a reimplementation by Sven Oesau based on \cgalCite{cgal:y-sefpdss}. The original source code <a href="https://github.com/cemyuksel/cyCodeBase/">cyCodeBase</a> was used as a reference.
 
 */
 } /* namespace CGAL */

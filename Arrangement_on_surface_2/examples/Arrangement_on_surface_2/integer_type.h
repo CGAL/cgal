@@ -5,13 +5,13 @@
 
 #if CGAL_USE_GMP && CGAL_USE_MPFI
 #include <CGAL/Gmpz.h>
-typedef CGAL::Gmpz      Integer;
+using Integer = CGAL::Gmpz;
 #elif CGAL_USE_CORE
 #include <CGAL/CORE_BigInt.h>
-typedef CORE::BigInt    Integer;
+using Integer = CORE::BigInt;
 #else
 #include <CGAL/leda_integer.h>
-typedef LEDA::integer   Integer;
+using Integer = LEDA::integer;
 #endif
 
 #endif

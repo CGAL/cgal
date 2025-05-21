@@ -15,6 +15,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/algorithm.h>
 #include <CGAL/Lazy.h>
+#include <CGAL/Lazy_exact_nt.h>
 #include <CGAL/Default.h>
 #include <CGAL/NewKernel_d/Filtered_predicate2.h>
 #include <CGAL/iterator_from_indices.h>
@@ -259,9 +260,9 @@ struct Lazy_cartesian :
     void set_dimension(int dim){ak.set_dimension(dim);ek.set_dimension(dim);}
 
     // For compilers that do not handle [[no_unique_address]]
-    typedef boost::mpl::and_<
-      internal::Do_not_store_kernel<AK_>,
-      internal::Do_not_store_kernel<EK_> > Do_not_store_kernel;
+    typedef std::bool_constant<
+      internal::Do_not_store_kernel<AK_>::value &&
+      internal::Do_not_store_kernel<EK_>::value > Do_not_store_kernel;
 
     typedef typename EK_::Dimension Dimension; // ?
     typedef Lazy_cartesian Self;

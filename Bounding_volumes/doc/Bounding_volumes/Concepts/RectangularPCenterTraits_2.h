@@ -7,7 +7,9 @@ The concept `RectangularPCenterTraits_2` defines types and operations
 needed to compute rectilinear \f$ p\f$-centers of a planar point set
 using the function `CGAL::rectangular_p_center_2()`.
 
-\cgalHasModel `CGAL::Rectangular_p_center_default_traits_2<K>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Rectangular_p_center_default_traits_2<K>}
+\cgalHasModelsEnd
 
 \sa `CGAL::rectangular_p_center_2()`
 
@@ -32,31 +34,31 @@ typedef unspecified_type Point_2;
 
 /*!
 model for
-`Kernel::Iso_rectangle_2`.
+`Kernel::IsoRectangle_2`.
 */
 typedef unspecified_type Iso_rectangle_2;
 
 /*!
 model for
-`Kernel::Less_x_2`.
+`Kernel::LessX_2`.
 */
 typedef unspecified_type Less_x_2;
 
 /*!
 model for
-`Kernel::Less_y_2`.
+`Kernel::LessY_2`.
 */
 typedef unspecified_type Less_y_2;
 
 /*!
 model for
-`Kernel::Construct_vertex_2`.
+`Kernel::ConstructVertex_2`.
 */
 typedef unspecified_type Construct_vertex_2;
 
 /*!
 model for
-`Kernel::Construct_iso_rectangle_2`.
+`Kernel::ConstructIsoRectangle_2`.
 */
 typedef unspecified_type Construct_iso_rectangle_2;
 

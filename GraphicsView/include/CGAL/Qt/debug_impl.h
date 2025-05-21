@@ -23,7 +23,6 @@
 #include <CGAL/Qt/debug.h>
 #include <QDir>
 #include <iostream>
-#include <QtOpenGL/qgl.h>
 #include <qopenglfunctions.h>
 namespace CGAL {
 namespace Qt {
@@ -51,5 +50,5 @@ void traverse_resources(const QString& name, const QString& dirname, int indent)
   }
 }
 
-} // namesapce Qt
+} // namespace Qt
 } // namespace CGAL

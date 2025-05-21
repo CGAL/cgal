@@ -1,20 +1,20 @@
 //#define CGAL_PMP_SNAP_DEBUG_PP
 //#define CGAL_PMP_SNAP_DEBUG_OUTPUT
 
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-
-#include <CGAL/Polyhedron_3.h>
-#include <CGAL/Polyhedron_items_with_id_3.h>
-#include <CGAL/Surface_mesh.h>
-
 #include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Polygon_mesh_processing/internal/Snapping/snap.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 
+#include <CGAL/Polyhedron_3.h>
+#include <CGAL/Polyhedron_items_with_id_3.h>
+#include <CGAL/Surface_mesh.h>
+
 #include <CGAL/property_map.h>
 #include <CGAL/IO/STL.h>
+
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <array>
 #include <iostream>
@@ -169,4 +169,3 @@ int main(int, char**)
 
   return EXIT_SUCCESS;
 }
-

@@ -70,7 +70,7 @@ namespace CGAL
                 typedef typename K::RT        RT;
                 typedef typename K::Plane_3   Plane_3;
                 typedef typename K::Point_3   Point_3;
-                typedef bool                  result_type;
+                typedef typename K::Boolean   result_type;
 
                 Equal_3_dual_point (Point_3 const& o = Point_3(0, 0, 0)) :
                     origin(o)
@@ -104,7 +104,7 @@ namespace CGAL
                 typedef typename K::RT        RT;
                 typedef typename K::Plane_3   Plane_3;
                 typedef typename K::Point_3   Point_3;
-                typedef bool                  result_type;
+                typedef typename K::Boolean   result_type;
 
                 Collinear_3_dual_point (Point_3 const& o = Point_3(0, 0, 0)) :
                     origin(o)
@@ -151,7 +151,7 @@ namespace CGAL
                 typedef typename K::RT        RT;
                 typedef typename K::Plane_3   Plane_3;
                 typedef typename K::Point_3   Point_3;
-                typedef bool                  result_type;
+                typedef typename K::Boolean   result_type;
 
                 Coplanar_3_dual_point (Point_3 const& o = Point_3(0, 0, 0)) :
                     origin(o)
@@ -200,8 +200,8 @@ namespace CGAL
             {
                 typedef typename K::RT         RT;
                 typedef typename K::Plane_3    Plane_3;
-                typedef typename K::Point_3   Point_3;
-                typedef bool                   result_type;
+                typedef typename K::Point_3    Point_3;
+                typedef typename K::Boolean    result_type;
 
                 Has_on_positive_side_3_dual_point (Point_3 const& o =
                                                    Point_3(0, 0, 0)) :
@@ -263,7 +263,7 @@ namespace CGAL
                 typedef typename K::RT        RT;
                 typedef typename K::Plane_3   Plane_3;
                 typedef typename K::Point_3   Point_3;
-                typedef bool                  result_type;
+                typedef typename K::Boolean   result_type;
 
                 Less_distance_to_point_3_dual_point (Point_3 const& o =
                                                      Point_3(0, 0, 0)) :
@@ -312,8 +312,8 @@ namespace CGAL
             {
                 typedef typename K::RT         RT;
                 typedef typename K::Plane_3    Plane_3;
-                typedef typename K::Point_3   Point_3;
-                typedef bool                   result_type;
+                typedef typename K::Point_3    Point_3;
+                typedef typename K::Boolean    result_type;
 
                 Less_signed_distance_to_plane_3_dual_point (Point_3 const& o =
                                                             Point_3(0, 0, 0)) :
@@ -377,7 +377,7 @@ namespace CGAL
             {
                 typedef typename K::RT         RT;
                 typedef typename K::Plane_3    Plane_3;
-                typedef typename K::Point_3   Point_3;
+                typedef typename K::Point_3    Point_3;
                 typedef CGAL::Oriented_side    result_type;
 
                 Oriented_side_3_dual_point (Point_3 const& o =
@@ -449,4 +449,3 @@ namespace CGAL
 } // namespace CGAL
 
 #endif // CGAL_CH3_DUAL_PREDICATES_H
-

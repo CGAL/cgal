@@ -15,6 +15,11 @@
 
 #include <CGAL/license/Surface_mesher.h>
 
+#define CGAL_DEPRECATED_HEADER "<CGAL/Surface_mesher/Surface_mesher_regular_edges.h>"
+#define CGAL_DEPRECATED_MESSAGE_DETAILS \
+  "The 3D Mesh Generation package (see https://doc.cgal.org/latest/Mesh_3/) should be used instead."
+#include <CGAL/Installation/internal/deprecation_warning.h>
+
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/Surface_mesher/Surface_mesher.h>
@@ -213,8 +218,8 @@ namespace CGAL {
       if(withBoundary)
         std::cerr << "(boundaries allowed)";
       std::cerr << "...\n";
-#endif
       int n = 0;
+#endif
       for (Finite_edges_iterator eit = SMB::tr.finite_edges_begin(); eit !=
              SMB::tr.finite_edges_end(); ++eit) {
         if ( (SMB::c2t3.face_status(*eit)
@@ -223,7 +228,9 @@ namespace CGAL {
                (SMB::c2t3.face_status(*eit)
                 == C2t3::BOUNDARY) ) ) {
           bad_edges.insert( edge_to_edgevv(*eit) );
+#ifdef CGAL_SURFACE_MESHER_VERBOSE
           ++n;
+#endif
         }
       }
       bad_edges_initialized = true;
