@@ -65,8 +65,11 @@ else
     echo "Benchmarks already compiled in $BUILD_DIR"
 fi
 
+valid_extensions=( -iname '*.off' -o -iname '*.obj' -o -iname '*.ply' -o -iname '*.stl' -o -iname '*.STL' -o -iname '*.ts' -o -iname '*.vtp' )
+
 if [ -d "$input_path" ]; then
-  find "$input_path" -type f | parallel -j"$virtual_thread" compute_benchmark_data "$CGAL_directory" "$Benchmark_output_dir" "$alpha_value" "$timeout_value" "$BUILD_DIR" {}
+  find "$input_path" -type f \( "${valid_extensions[@]}" \) | \
+    parallel -j"$virtual_thread" compute_benchmark_data "$CGAL_directory" "$Benchmark_output_dir" "$alpha_value" "$timeout_value" "$BUILD_DIR" {}
 else
   echo "Error: $input_path is not a valid directory."
   exit 1
