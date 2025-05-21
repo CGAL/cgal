@@ -199,18 +199,19 @@ template <class Point_type, class Converter, class Vector_3>
 const Point_type extreme_point(const Surface_mesh<Point_type>& C, const Vector_3 &dir, const Converter& converter) {
   using Point_3= typename Kernel_traits<Vector_3>::Kernel::Point_3;
   using Convex= Surface_mesh<Point_type>;
-  using FT= typename Kernel_traits<Vector_3>::Kernel::FT;
+  using K= typename Kernel_traits<Vector_3>::Kernel;
+  using FT= typename K::FT;
 
   // If the number of vertices is small, simply test all vertices
   if(C.vertices().size()<20){
     typename Convex::Vertex_index argmax=*C.vertices().begin();
-    FT tmax=Vector_3(ORIGIN, converter(C.point(argmax)))*dir;
+    FT tmax=K().construct_vector_3_object()(ORIGIN, converter(C.point(argmax)))*dir;
     for(auto vh=++(C.vertices().begin()); vh!=C.vertices().end(); ++vh){
       typename Convex::Vertex_index v=*vh;
 #ifdef CGAL_PROFILE_CONVEX_HULL_DO_INTERSECT
       ++nb_visited;
 #endif
-      FT p=Vector_3(ORIGIN, converter(C.point(v)))*dir;
+      FT p=K().construct_vector_3_object()(ORIGIN, converter(C.point(v)))*dir;
       if(compare(tmax, p)==SMALLER){
         tmax=p;
         argmax=v;
@@ -224,12 +225,12 @@ const Point_type extreme_point(const Surface_mesh<Point_type>& C, const Vector_3
 #ifdef CGAL_PROFILE_CONVEX_HULL_DO_INTERSECT
   ++nb_visited;
 #endif
-  FT tmax= Vector_3(ORIGIN, converter(C.point(argmax)))*dir;
+  FT tmax=K().construct_vector_3_object()(ORIGIN, converter(C.point(argmax)))*dir;
   bool is_local_max;
   do{
     is_local_max=true;
     for(auto v: vertices_around_target(argmax ,C)){
-      FT p=Vector_3(ORIGIN, converter(C.point(v)))*dir;
+      FT p=K().construct_vector_3_object()(ORIGIN, converter(C.point(v)))*dir;
 #ifdef CGAL_PROFILE_CONVEX_HULL_DO_INTERSECT
       ++nb_visited;
 #endif
@@ -245,13 +246,14 @@ const Point_type extreme_point(const Surface_mesh<Point_type>& C, const Vector_3
   return C.point(argmax);
 }
 
-template <class Range, class Vector_3, class Converter,>
-typename std::iterator_traits<Range::const_iterator>::value_type extreme_point_range(const Range& C, const Vector_3 &dir, const Converter &converter) {
-  using FT= typename Kernel_traits<Vector_3>::Kernel::FT;
+template <class Range, class Vector_3, class Converter>
+typename std::iterator_traits<typename Range::const_iterator>::value_type extreme_point_range(const Range& C, const Vector_3 &dir, const Converter &converter) {
+  using K= typename Kernel_traits<Vector_3>::Kernel;
+  using FT= typename K::FT;
   typename Range::const_iterator argmax=C.begin();
-  FT tmax= Vector_3(ORIGIN, converter(*argmax))*dir;
+  FT tmax=K().construct_vector_3_object()(ORIGIN, converter(*argmax))*dir;
   for(typename Range::const_iterator it=C.begin()+1; it!=C.end(); ++it){
-    FT v=Vector_3(ORIGIN, converter(*it))*dir;
+    FT v=K().construct_vector_3_object()(ORIGIN, converter(*it))*dir;
 #ifdef CGAL_PROFILE_CONVEX_HULL_DO_INTERSECT
     ++nb_visited;
 #endif
@@ -283,8 +285,8 @@ struct Functor_do_intersect{
     unsigned long planeStatPerPair = 0;
     do {
       Vector_3 dir = positiveBound.averageDirection();
-      Vector sp;
-      if constexpr(is_Range_v<c1> && is_Range_v<c2>)
+      Vector_3 sp;
+      if constexpr(::CGAL::IO::internal::is_Range_v<Convex>)
         sp = c1(extreme_point_range(a, dir, c1)) - c2(extreme_point_range(b, -dir, c2));
       else
         sp = c1(extreme_point(a, dir, c1)) - c2(extreme_point(b, -dir, c2));

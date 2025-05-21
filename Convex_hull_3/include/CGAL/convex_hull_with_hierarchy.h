@@ -118,14 +118,15 @@ struct Convex_hull_with_hierarchy{
   template <class Converter, class Vector_3>
   const P extreme_point(const Vector_3 &dir, const Converter& converter) const {
     using Point_3 = typename Kernel_traits<Vector_3>::Kernel::Point_3;
-    using FT= typename Kernel_traits<Vector_3>::Kernel::FT;
+    using K= typename Kernel_traits<Vector_3>::Kernel;
+    using FT= typename K::FT;
 
     size_t level=maxlevel();
 
     const Mesh &sm = hierarchy_sm[maxlevel()];
 
     Vertex_index argmax=*sm.vertices().begin();
-    FT tmax=Vector_3(ORIGIN, converter(sm.point(argmax)))*dir;
+    FT tmax=K().construct_vector_3_object()(ORIGIN, converter(sm.point(argmax)))*dir;
 
     if(sm.vertices().size() <= MAXSIZE_FOR_NAIVE_SEARCH){
       //If maxlevel is small, we simply go through all its vertices
@@ -134,7 +135,7 @@ struct Convex_hull_with_hierarchy{
   #ifdef CGAL_PROFILE_CONVEX_HULL_DO_INTERSECT
         ++nb_visited;
   #endif
-        FT p=Vector_3(ORIGIN, converter(sm.point(v)))*dir;
+        FT p=K().construct_vector_3_object()(ORIGIN, converter(sm.point(v)))*dir;
         if(compare(tmax, p)==SMALLER){
           tmax=p;
           argmax=v;
@@ -143,7 +144,7 @@ struct Convex_hull_with_hierarchy{
 
       // Go to under level
       if(level>0){
-        argmax=((sm.template property_map<Vertex_index, Vertex_index>("v:next_in_hierarchy")).first)[argmax];
+        argmax=(*(sm.template property_map<Vertex_index, Vertex_index>("v:next_in_hierarchy")))[argmax];
         --level;
       } else {
         return sm.point(argmax);
@@ -161,7 +162,7 @@ struct Convex_hull_with_hierarchy{
     #ifdef CGAL_PROFILE_CONVEX_HULL_DO_INTERSECT
           ++nb_visited;
     #endif
-          FT p=Vector_3(ORIGIN, converter(csm.point(v)))*dir;
+          FT p=K().construct_vector_3_object()(ORIGIN, converter(csm.point(v)))*dir;
           if(compare(tmax, p)==SMALLER){
             tmax=p;
             argmax=v;
@@ -171,7 +172,7 @@ struct Convex_hull_with_hierarchy{
         }
       } while(!is_local_max);
       if(level>0)
-        argmax=((csm.template property_map<Vertex_index, Vertex_index>("v:next_in_hierarchy")).first)[argmax];
+        argmax=(*(csm.template property_map<Vertex_index, Vertex_index>("v:next_in_hierarchy")))[argmax];
       else
         return csm.point(argmax);
     }
