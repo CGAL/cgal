@@ -384,3 +384,34 @@ div.summary
   transition: max-height 0.2s ease-out;
   background-color: white;
 }
+
+table.iotable caption {
+  caption-side: top;
+}
+
+table.iotable {
+  border-collapse: collapse;
+  margin-top: 4px;
+  margin-bottom: 4px;
+}
+
+table.iotable td,
+table.iotable th {
+  border: 1px solid #2D4068;
+  padding: 3px 7px 2px;
+}
+
+table.iotable th {
+  background-color: #374F7F;
+  color: #FFFFFF;
+  font-size: 110%;
+  padding-bottom: 4px;
+  padding-top: 5px;
+}
+
+table.iotable th a,
+table.iotable th a:visited {
+  font-weight: bold;
+  color: #FFFFFF;
+  text-decoration: underline;
+}
