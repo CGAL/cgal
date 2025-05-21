@@ -1152,7 +1152,7 @@ insert_and_give_new_cells(const Point  &p, OutputItCells fit, Cell_handle start)
   {
     Cell_handle c = tds.cell(v);
     *fit++ = c;
-    *fit++ = tds().neighbor(cm (~(tds().index(c,v)))&1);
+    *fit++ = tds().neighbor(c, (~(tds().index(c,v)))&1);
   }
   else // dimension = 0
   {
@@ -1823,8 +1823,8 @@ is_Gabriel(Cell_handle c, int i, int j) const
       // is inside the sphere defined by the edge e = (s, i,j)
       Cell_handle cc = (*fcirc).first;
       int ii = (*fcirc).second;
-      if(!is_infinite(tds().vertex(c, ii)) &&
-           side_of_bounded_sphere(v1->point(), v2->point(), tds().vertex(c, ii)->point())
+      if(!is_infinite(tds().vertex(cc, ii)) &&
+           side_of_bounded_sphere(v1->point(), v2->point(), tds().vertex(cc, ii)->point())
           == ON_BOUNDED_SIDE) return false;
   }
   while(++fcirc != fdone);

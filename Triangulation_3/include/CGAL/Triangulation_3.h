@@ -279,7 +279,8 @@ public:
     // Lock the element area on the grid
     for(int iVertex = 0 ; success && iVertex < 4 ; ++iVertex)
     {
-      // F: tds() is not known here
+      // AF: tds() is not known here
+      assert(false);
       // success = try_lock_vertex(tds().vertex(cell_handle, iVertex), lock_radius);
     }
     return success;
