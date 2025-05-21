@@ -1,9 +1,11 @@
-#include <CGAL/draw_constrained_triangulation_3.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/make_conforming_constrained_Delaunay_triangulation_3.h>
+#include <CGAL/IO/polygon_mesh_io.h>
+#include <CGAL/IO/write_MEDIT.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/polygon_mesh_to_polygon_soup.h>
 #include <CGAL/Surface_mesh/Surface_mesh.h>
+#include <CGAL/draw_constrained_triangulation_3.h>
+#include <CGAL/make_conforming_constrained_Delaunay_triangulation_3.h>
 
 #include <algorithm>
 #include <vector>
@@ -17,13 +19,10 @@ namespace PMP = CGAL::Polygon_mesh_processing;
 
 int main(int argc, char* argv[])
 {
-  CGAL::Surface_mesh<K::Point_3> mesh;
-  std::vector<K::Point_3> points;
-  std::vector<std::vector<std::size_t>> polygons;
-
   auto filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/cubes_one_patch_id_per_cc.off");
-  std::ifstream in(filename);
-  if(!in || !(in >> mesh)) {
+
+  CGAL::Surface_mesh<K::Point_3> mesh;
+    if(!CGAL::IO::read_polygon_mesh(filename, mesh)) {
     std::cerr << "Error: cannot read file " << filename << std::endl;
     return EXIT_FAILURE;
   }
@@ -41,6 +40,9 @@ int main(int argc, char* argv[])
                                   return fpmap[f1] < fpmap[f2];
                                 })] + 1
             << std::endl;
+
+  std::vector<K::Point_3> points;
+  std::vector<std::vector<std::size_t>> polygons;
   PMP::polygon_mesh_to_polygon_soup(mesh, points, polygons);
 
   auto polygon_to_patch_id = [&](std::size_t i) {
@@ -56,6 +58,9 @@ int main(int argc, char* argv[])
             << "Number of constrained facets in the CDT: "
             << ccdt.number_of_constrained_facets() << '\n';
 
+  std::ofstream ofs(argc > 2 ? argv[2] : "out.mesh");
+  ofs.precision(17);
+  CGAL::IO::write_MEDIT(ofs, ccdt);
 
   CGAL::draw(ccdt);
 
