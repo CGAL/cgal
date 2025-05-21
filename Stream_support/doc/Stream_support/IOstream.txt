@@ -306,17 +306,17 @@ The following table shows which file formats can be read from and written for po
       <td>Input</td>
       <td>`read_points()`</td>
       <td>\link PkgPointSetProcessing3IOOff `CGAL::IO::read_OFF()` \endlink</td>
-      <td>\link PkgPointSetProcessing3IOXyz `GAL::IO::read_XYZ()` \endlink</td>
-      <td>\link PkgPointSetProcessing3IOPly `GAL::IO::read_PLY()` \endlink</td>
-      <td>\link PkgPointSetProcessing3IOLas `GAL::IO::read_LAS()` \endlink</td>
+      <td>\link PkgPointSetProcessing3IOXyz `CGAL::IO::read_XYZ()` \endlink</td>
+      <td>\link PkgPointSetProcessing3IOPly `CGAL::IO::read_PLY()` \endlink</td>
+      <td>\link PkgPointSetProcessing3IOLas `CGAL::IO::read_LAS()` \endlink</td>
     </tr>
     <tr>
       <td>Output</td>
       <td>`write_points()`</td>
-      <td>\link PkgPointSetProcessing3IOOff `GAL::IO::write_OFF()` \endlink</td>
-      <td>\link PkgPointSetProcessing3IOXyz `GAL::IO::write_XYZ()` \endlink</td>
-      <td>\link PkgPointSetProcessing3IOPly `GAL::IO::write_PLY()` \endlink</td>
-      <td>\link PkgPointSetProcessing3IOLas `GAL::IO::write_LAS()` \endlink</td>
+      <td>\link PkgPointSetProcessing3IOOff `CGAL::IO::write_OFF()` \endlink</td>
+      <td>\link PkgPointSetProcessing3IOXyz `CGAL::IO::write_XYZ()` \endlink</td>
+      <td>\link PkgPointSetProcessing3IOPly `CGAL::IO::write_PLY()` \endlink</td>
+      <td>\link PkgPointSetProcessing3IOLas `CGAL::IO::write_LAS()` \endlink</td>
     </tr>
 </table>
 
@@ -346,18 +346,18 @@ The file formats supported for `CGAL::Point_set_3` are detailed in the table bel
     <tr>
       <td>Input</td>
       <td>`CGAL::IO::read_point_set()`</td>
-      <td>\link PkgPointSet3IOOFF `GAL::IO::read_OFF()` \endlink</td>
-      <td>\link PkgPointSet3IOXYZ `GAL::IO::read_XYZ()` \endlink</td>
-      <td>\link PkgPointSet3IOPLY `GAL::IO::read_PLY()` \endlink</td>
-      <td>\link PkgPointSet3IOLAS `GAL::IO::read_LAS()` \endlink</td>
+      <td>\link PkgPointSet3IOOFF `CGAL::IO::read_OFF()` \endlink</td>
+      <td>\link PkgPointSet3IOXYZ `CGAL::IO::read_XYZ()` \endlink</td>
+      <td>\link PkgPointSet3IOPLY `CGAL::IO::read_PLY()` \endlink</td>
+      <td>\link PkgPointSet3IOLAS `CGAL::IO::read_LAS()` \endlink</td>
     </tr>
     <tr>
       <td>Output</td>
       <td>`CGAL::IO::write_point_set()`</td>
-      <td>\link PkgPointSet3IOOFF `GAL::IO::write_OFF()` \endlink</td>
-      <td>\link PkgPointSet3IOXYZ `GAL::IO::write_XYZ()` \endlink</td>
-      <td>\link PkgPointSet3IOPLY `GAL::IO::write_PLY()` \endlink</td>
-      <td>\link PkgPointSet3IOLAS `GAL::IO::write_LAS()` \endlink</td>
+      <td>\link PkgPointSet3IOOFF `CGAL::IO::write_OFF()` \endlink</td>
+      <td>\link PkgPointSet3IOXYZ `CGAL::IO::write_XYZ()` \endlink</td>
+      <td>\link PkgPointSet3IOPLY `CGAL::IO::write_PLY()` \endlink</td>
+      <td>\link PkgPointSet3IOLAS `CGAL::IO::write_LAS()` \endlink</td>
     </tr>
 </table>
 
@@ -382,26 +382,26 @@ their indices per face (i.e a vector of 3 integers represent a triangle face).
     <tr>
       <td>Input</td>
       <td>`CGAL::IO::read_polygon_soup()`</td>
-      <td>\link PkgStreamSupportIoFuncsOFF `GAL::IO::read_OFF()` \endlink</td>
-      <td>\link PkgStreamSupportIoFuncsOBJ `GAL::IO::read_OBJ()` \endlink</td>
-      <td>\link PkgStreamSupportIoFuncsSTL `GAL::IO::read_STL()` \endlink</td>
-      <td>\link PkgStreamSupportIoFuncsPLY `GAL::IO::read_PLY()` \endlink</td>
-      <td>\link PkgStreamSupportIoFuncsVTK `GAL::IO::read_VTP()` \endlink</td>
-      <td>\link PkgStreamSupportIoFuncsGOCAD `GAL::IO::read_GOCAD()` \endlink</td>
-      <td>\link PkgStreamSupportIoFuncsWKT `GAL::IO::read_WKT()` \endlink</td>
-      <td>\link PkgStreamSupportIoFuncs3MF `GAL::IO::read_3MF()` \endlink</td>
+      <td>\link PkgStreamSupportIoFuncsOFF `CGAL::IO::read_OFF()` \endlink</td>
+      <td>\link PkgStreamSupportIoFuncsOBJ `CGAL::IO::read_OBJ()` \endlink</td>
+      <td>\link PkgStreamSupportIoFuncsSTL `CGAL::IO::read_STL()` \endlink</td>
+      <td>\link PkgStreamSupportIoFuncsPLY `CGAL::IO::read_PLY()` \endlink</td>
+      <td>\link PkgStreamSupportIoFuncsVTK `CGAL::IO::read_VTP()` \endlink</td>
+      <td>\link PkgStreamSupportIoFuncsGOCAD `CGAL::IO::read_GOCAD()` \endlink</td>
+      <td>\link PkgStreamSupportIoFuncsWKT `CGAL::IO::read_WKT()` \endlink</td>
+      <td>\link PkgStreamSupportIoFuncs3MF `CGAL::IO::read_3MF()` \endlink</td>
     </tr>
     <tr>
       <td>Output</td>
       <td>`CGAL::IO::write_polygon_soup()`</td>
-      <td>\link PkgStreamSupportIoFuncsOFF `GAL::IO::write_OFF()` \endlink</td>
-      <td>\link PkgStreamSupportIoFuncsOBJ `GAL::IO::write_OBJ()` \endlink</td>
-      <td>\link PkgStreamSupportIoFuncsSTL `GAL::IO::write_STL()` \endlink</td>
-      <td>\link PkgStreamSupportIoFuncsPLY `GAL::IO::write_PLY()` \endlink</td>
-      <td>\link PkgStreamSupportIoFuncsVTK `GAL::IO::write_VTP()` \endlink</td>
-      <td>\link PkgStreamSupportIoFuncsGOCAD `GAL::IO::write_GOCAD()` \endlink</td>
-      <td>\link PkgStreamSupportIoFuncsWKT `GAL::IO::write_WKT()` \endlink</td>
-      <td>\link PkgStreamSupportIoFuncs3MF `GAL::IO::write_3MF()` \endlink</td>
+      <td>\link PkgStreamSupportIoFuncsOFF `CGAL::IO::write_OFF()` \endlink</td>
+      <td>\link PkgStreamSupportIoFuncsOBJ `CGAL::IO::write_OBJ()` \endlink</td>
+      <td>\link PkgStreamSupportIoFuncsSTL `CGAL::IO::write_STL()` \endlink</td>
+      <td>\link PkgStreamSupportIoFuncsPLY `CGAL::IO::write_PLY()` \endlink</td>
+      <td>\link PkgStreamSupportIoFuncsVTK `CGAL::IO::write_VTP()` \endlink</td>
+      <td>\link PkgStreamSupportIoFuncsGOCAD `CGAL::IO::write_GOCAD()` \endlink</td>
+      <td>\link PkgStreamSupportIoFuncsWKT `CGAL::IO::write_WKT()` \endlink</td>
+      <td>\link PkgStreamSupportIoFuncs3MF `CGAL::IO::write_3MF()` \endlink</td>
     </tr>
 </table>
 
