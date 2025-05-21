@@ -48,7 +48,7 @@ The following table lists some \cgal data structures that have I/O functions com
   </tr>
   <tr>
     <td>`CGAL::Polyhedron_3`</td>
-    <td>\link PkgPolyhedronIOFunc CGAL::IO::read_OFF(const std::string&, CGAL::Polyhedron_3&)\endlink</td>
+    <td>\ref CGAL::IO::read_OFF(std::istream& in, CGAL::Polyhedron_3<Traits>& P)</td>
   </tr>
   <tr>
     <td>Any model of `MutableFaceGraph`</td>
@@ -76,7 +76,7 @@ The following table lists some \cgal data structures that have I/O functions com
   </tr>
   <tr>
     <td>`CGAL::Polyhedron_3`</td>
-    <td>\link PkgPolyhedronIOFunc CGAL::IO::write_OFF(const std::string&, const CGAL::Polyhedron_3&)\endlink</td>
+    <td>\ref CGAL::IO::write_OFF(std::ostream&, const CGAL::Polyhedron_3<Traits>&)</td>
   </tr>
   <tr>
     <td>Any model of `FaceGraph`</td>
@@ -526,7 +526,8 @@ in the appendices (section 7.2.1, page 36).
 
 - The `CGAL::Mesh_complex_3_in_triangulation_3` \cgal data structure can be exported into `.mesh`. This can be done using the function
   \ref CGAL::IO::write_MEDIT(std::ostream &, const CGAL::Mesh_complex_3_in_triangulation_3< T3, CornerIndex, CurveIndex >&, const NamedParameters &).
-- The `CGAL::Conforming_constrained_Delaunay_triangulation_3` \cgal data structure can be exported into `.mesh`. This can be done using the function \ref  CGAL::IO::write_MEDIT(std::ostream &os, const CGAL::Conforming_constrained_Delaunay_triangulation_3< Traits, Tr > &ccdt).
+- The `CGAL::Conforming_constrained_Delaunay_triangulation_3` \cgal data structure can be exported into `.mesh`. This can be done using the function
+  \ref CGAL::IO::write_MEDIT(std::ostream &os, const CGAL::Conforming_constrained_Delaunay_triangulation_3< Traits, Tr > &ccdt).
 
 
 \section IOStreamTetgen Tetgen File Format
