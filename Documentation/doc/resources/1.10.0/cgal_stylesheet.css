@@ -1,3 +1,76 @@
+/* Color and background rules */
+
+:root {
+  color-scheme: light dark;
+  /* Light defaults */
+  --back-nav-bg: #FAF9FB;
+  --cgaladvanced-bg: #eeb;
+  --cgaladvanced-border: #9e9e7d;
+  --cgaladvanced-shadow: #ccc;
+  --cgaldebug-bg: #c8a8d0;
+  --cgaldebug-border: #846f8a;
+  --cgaldebug-shadow: #777;
+  --cgalmodification-bg: #f85858;
+  --cgalmodification-border: #000000;
+  --cgalmodification-shadow: #777;
+  --collapsible-after-color: #7A93C5;
+  --collapsible-bg: #fff;
+  --collapsible-color: #602020;
+  --content-bg: #fff;
+  --content-color: #000;
+  --deprecated-bg: #d8c0a0;
+  --deprecated-border: #94836e;
+  --deprecated-shadow: #aaa;
+  --iotable-border-color: #2D4068;
+  --iotable-th-bg: #374F7F;
+  --iotable-th-color: #FFFFFF;
+  --iotable-th-link-color: #FFFFFF;
+  --modification-bg: #f85858;
+  --package-section-h1-bg: #EEEDF2;
+  --titlearea-bg: #FFFFFF;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --back-nav-bg: #1A1A1A;
+    --cgaladvanced-bg: #4f4f19;
+    --cgaladvanced-border: #9e9e7d;
+    --cgaladvanced-shadow: #ccc;
+    --cgaldebug-bg: #45244d;
+    --cgaldebug-border: #846f8a;
+    --cgaldebug-shadow: #777;
+    --cgalmodification-bg: #601616;
+    --cgalmodification-border: #000000;
+    --cgalmodification-shadow: #777;
+    --collapsible-after-color: #7A93C5;
+    --collapsible-bg: #000;
+    --collapsible-color: #B0B0B0;
+    --content-bg: #000;
+    --content-color: #fff;
+    --deprecated-bg: #684618;
+    --deprecated-border: #94836e;
+    --deprecated-shadow: #aaa;
+    --iotable-border-color: #5A6B9A;
+    --iotable-th-bg: #223055;
+    --iotable-th-color: #FFFFFF;
+    --iotable-th-link-color: #FFFFFF;
+    --modification-bg: #601616;
+    --package-section-h1-bg: #1A1A1A;
+    --titlearea-bg: #1A1A1A;
+  }
+}
+
+#titlearea {
+  background: var(--titlearea-bg);
+}
+
+.package_section h1 {
+  padding: 1ex 0 1ex 0;
+  background-color: var(--package-section-h1-bg);
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
 body,
 table,
 div,
@@ -15,6 +88,7 @@ dl {
 }
 
 #back-nav {
+  background-color: var(--back-nav-bg);
   border-bottom: 1px solid;
   padding: 0.5em;
 }
@@ -49,48 +123,48 @@ h2 {
 }
 
 .icon-namespace {
-    font-family: Arial, Helvetica;
-    font-weight: bold;
-    font-size: 12px;
-    height: 22px;
-    width: 16px;
-    display: inline-block;
-    background-color: #FF0000;
-    color: white;
-    text-align: center;
-    border-radius: 4px;
-    margin-left: 2px;
-    margin-right: 2px;
+  font-family: Arial, Helvetica;
+  font-weight: bold;
+  font-size: 12px;
+  height: 22px;
+  width: 16px;
+  display: inline-block;
+  background-color: #FF0000;
+  color: white;
+  text-align: center;
+  border-radius: 4px;
+  margin-left: 2px;
+  margin-right: 2px;
 }
 
 .icon-class {
-    font-family: Arial, Helvetica;
-    font-weight: bold;
-    font-size: 12px;
-    height: 22px;
-    width: 16px;
-    display: inline-block;
-    background-color: #0000FF;
-    color: white;
-    text-align: center;
-    border-radius: 4px;
-    margin-left: 2px;
-    margin-right: 2px;
+  font-family: Arial, Helvetica;
+  font-weight: bold;
+  font-size: 12px;
+  height: 22px;
+  width: 16px;
+  display: inline-block;
+  background-color: #0000FF;
+  color: white;
+  text-align: center;
+  border-radius: 4px;
+  margin-left: 2px;
+  margin-right: 2px;
 }
 
 .icon-concept {
-    font-family: Arial, Helvetica;
-    font-weight: bold;
-    font-size: 12px;
-    height: 22px;
-    width: 16px;
-    display: inline-block;
-    background-color: #67489A;
-    color: white;
-    text-align: center;
-    border-radius: 4px;
-    margin-left: 2px;
-    margin-right: 2px;
+  font-family: Arial, Helvetica;
+  font-weight: bold;
+  font-size: 12px;
+  height: 22px;
+  width: 16px;
+  display: inline-block;
+  background-color: #67489A;
+  color: white;
+  text-align: center;
+  border-radius: 4px;
+  margin-left: 2px;
+  margin-right: 2px;
 }
 
 h1.groupheader {
@@ -268,6 +342,24 @@ dl.deprecated {
   border-color: #505050;
 }
 
+div.CGALAdvanced {
+  background: var(--cgaladvanced-bg);
+  border: 1px solid var(--cgaladvanced-border);
+  box-shadow: 0.5ex 0.5ex var(--cgaladvanced-shadow);
+}
+
+div.CGALDebug {
+  background: var(--cgaldebug-bg);
+  border: 1px solid var(--cgaldebug-border);
+  box-shadow: 0.5ex 0.5ex var(--cgaldebug-shadow);
+}
+
+dl.deprecated {
+  background: var(--deprecated-bg);
+  border: 1px solid var(--deprecated-border);
+  box-shadow: 0.5ex 0.5ex var(--deprecated-shadow);
+}
+
 div.CGALAdvanced,
 div.CGALDebug,
 dl.deprecated {
@@ -280,6 +372,9 @@ dl.deprecated {
 }
 
 div.CGALModification {
+  background: var(--cgalmodification-bg);
+  border: 1px solid var(--cgalmodification-border);
+  box-shadow: 0.5ex 0.5ex var(--cgalmodification-shadow);
   border-radius: 1ex;
   padding-top: 0.5ex;
   padding-bottom: 0.25ex;
@@ -289,6 +384,7 @@ div.CGALModification {
 }
 
 .Modification {
+  background: var(--modification-bg);
   border: 0px;
   padding-top: 0ex;
   padding-bottom: 0ex;
@@ -336,6 +432,9 @@ div.summary {
 }
 
 .collapsible {
+  background-color: var(--collapsible-bg);
+  color: var(--collapsible-color);
+  cursor: pointer;
   padding: 3px;
   width: 100%;
   border: none;
@@ -345,7 +444,13 @@ div.summary {
   user-select: auto;
 }
 
+.active,
+.collapsible:hover {
+  background-color: var(--collapsible-bg);
+}
+
 .collapsible:after {
+  color: var(--collapsible-after-color);
   content: '\25B6';
   font-weight: bold;
   float: left;
@@ -358,6 +463,8 @@ div.summary {
 }
 
 .content {
+  color: var(--content-color);
+  background-color: var(--content-bg);
   padding: 0 18px;
   max-height: 0;
   overflow: hidden;
@@ -374,147 +481,33 @@ div.summary {
   }
 }
 
-/* Color and background rules */
-:root {
-  color-scheme: light dark;
+table.iotable caption {
+  caption-side: top;
 }
 
-@media (prefers-color-scheme: light) {
-
-  #back-nav {
-    background-color: #FAF9FB;
-  }
-
-  #titlearea {
-    background: white;
-  }
-
-  .package_section h1 {
-    padding: 1ex 0 1ex 0;
-    background-color: #EEEDF2;
-    margin-top: 0;
-    margin-bottom: 0;
-  }
-
-  div.CGALAdvanced {
-    background: #eeb;
-    border: 1px solid #9e9e7d;
-    box-shadow: 0.5ex 0.5ex #ccc;
-  }
-
-  div.CGALDebug {
-    background: #c8a8d0;
-    border: 1px solid #846f8a;
-    box-shadow: 0.5ex 0.5ex #777;
-  }
-
-  dl.deprecated {
-    background: #d8c0a0;
-    border: 1px solid #94836e;
-    box-shadow: 0.5ex 0.5ex #aaa;
-  }
-
-  div.CGALModification {
-    background: #f85858;
-    border: 1px solid #000000;
-    box-shadow: 0.5ex 0.5ex #777;
-  }
-
-  .Modification {
-    background: #f85858;
-  }
-
-  .collapsible {
-    background-color: white;
-    color: #602020;
-    cursor: pointer;
-  }
-
-  .active,
-  .collapsible:hover {
-    background-color: white;
-  }
-
-  .active,
-  .collapsible:hover {
-    background-color: white;
-  }
-
-  .collapsible:after {
-    color: #7A93C5;
-  }
-
-  .content {
-    color: black;
-    background-color: white;
-  }
+table.iotable {
+  border-collapse: collapse;
+  margin-top: 4px;
+  margin-bottom: 4px;
 }
 
-@media (prefers-color-scheme: dark) {
+table.iotable td,
+table.iotable th {
+  border: 1px solid var(--iotable-border-color, #2D4068);
+  padding: 3px 7px 2px;
+}
 
-  .image > img {
-    border-radius: 1ex;
-    background: white;
-  }
+table.iotable th {
+  background-color: var(--iotable-th-bg, #374F7F);
+  color: var(--iotable-th-color, #FFFFFF);
+  font-size: 110%;
+  padding-bottom: 4px;
+  padding-top: 5px;
+}
 
-  #back-nav {
-    background-color: #1A1A1A;
-  }
-
-  #titlearea {
-    background: #1A1A1A;
-  }
-
-  div.CGALAdvanced {
-    background: #4f4f19;
-    border: 1px solid #9e9e7d;
-    box-shadow: 0.5ex 0.5ex #ccc;
-  }
-
-  div.CGALDebug {
-    background: #45244d;
-    border: 1px solid #846f8a;
-    box-shadow: 0.5ex 0.5ex #777;
-  }
-
-  dl.deprecated {
-    background: #684618;
-    border: 1px solid #94836e;
-    box-shadow: 0.5ex 0.5ex #aaa;
-  }
-
-  div.CGALModification {
-    background: #601616;
-    border: 1px solid #000000;
-    box-shadow: 0.5ex 0.5ex #777;
-  }
-
-  .Modification {
-    background: #601616;
-  }
-
-  .collapsible {
-    background-color: black;
-    color: #B0B0B0;
-    cursor: pointer;
-  }
-
-  .active,
-  .collapsible:hover {
-    background-color: black;
-  }
-
-  .active,
-  .collapsible:hover {
-    background-color: black;
-  }
-
-  .collapsible:after {
-    color: #7A93C5;
-  }
-
-  .content {
-    color: white;
-    background-color: black;
-  }
+table.iotable th a,
+table.iotable th a:visited {
+  font-weight: bold;
+  color: var(--iotable-th-link-color, #FFFFFF);
+  text-decoration: underline;
 }

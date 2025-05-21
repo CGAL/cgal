@@ -294,30 +294,36 @@ A set of points - possibly with normals - is the basic input of many algorithms.
 The following table shows which file formats can be read from and written for point ranges.
 
 <table class="iotable">
-    <tr>
-      <th colspan="1"></th>
-      <th colspan="1">Generic</th>
-      <th colspan="1">\ref IOStreamOFF "OFF"</th>
-      <th colspan="1">\ref IOStreamXYZ "XYZ"</th>
-      <th colspan="1">\ref IOStreamPLY "PLY"</th>
-      <th colspan="1">\ref IOStreamLAS "LAS"</th>
-    </tr>
-    <tr>
-      <td>Input</td>
-      <td>`read_points()`</td>
-      <td>\link PkgPointSetProcessing3IOOff `CGAL::IO::read_OFF()` \endlink</td>
-      <td>\link PkgPointSetProcessing3IOXyz `CGAL::IO::read_XYZ()` \endlink</td>
-      <td>\link PkgPointSetProcessing3IOPly `CGAL::IO::read_PLY()` \endlink</td>
-      <td>\link PkgPointSetProcessing3IOLas `CGAL::IO::read_LAS()` \endlink</td>
-    </tr>
-    <tr>
-      <td>Output</td>
-      <td>`write_points()`</td>
-      <td>\link PkgPointSetProcessing3IOOff `CGAL::IO::write_OFF()` \endlink</td>
-      <td>\link PkgPointSetProcessing3IOXyz `CGAL::IO::write_XYZ()` \endlink</td>
-      <td>\link PkgPointSetProcessing3IOPly `CGAL::IO::write_PLY()` \endlink</td>
-      <td>\link PkgPointSetProcessing3IOLas `CGAL::IO::write_LAS()` \endlink</td>
-    </tr>
+  <tr>
+    <th></th>
+    <th>Input</th>
+    <th>Output</th>
+  </tr>
+  <tr>
+    <th>Generic</th>
+    <td>`CGAL::IO::read_points()`</td>
+    <td>`CGAL::IO::write_points()`</td>
+  </tr>
+  <tr>
+    <th>\ref IOStreamOFF "OFF"</th>
+    <td>\link PkgPointSetProcessing3IOOff `CGAL::IO::read_OFF()` \endlink</td>
+    <td>\link PkgPointSetProcessing3IOOff `CGAL::IO::write_OFF()` \endlink</td>
+  </tr>
+  <tr>
+    <th>\ref IOStreamXYZ "XYZ"</th>
+    <td>\link PkgPointSetProcessing3IOXyz `CGAL::IO::read_XYZ()` \endlink</td>
+    <td>\link PkgPointSetProcessing3IOXyz `CGAL::IO::write_XYZ()` \endlink</td>
+  </tr>
+  <tr>
+    <th>\ref IOStreamPLY "PLY"</th>
+    <td>\link PkgPointSetProcessing3IOPly `CGAL::IO::read_PLY()` \endlink</td>
+    <td>\link PkgPointSetProcessing3IOPly `CGAL::IO::write_PLY()` \endlink</td>
+  </tr>
+  <tr>
+    <th>\ref IOStreamLAS "LAS"</th>
+    <td>\link PkgPointSetProcessing3IOLas `CGAL::IO::read_LAS()` \endlink</td>
+    <td>\link PkgPointSetProcessing3IOLas `CGAL::IO::write_LAS()` \endlink</td>
+  </tr>
 </table>
 
 All of these functions (with the exception of the LAS format) can read
@@ -335,30 +341,36 @@ for the coordinates of the points, and is able to work with dynamic properties.
 The file formats supported for `CGAL::Point_set_3` are detailed in the table below.
 
 <table class="iotable">
-    <tr>
-      <th colspan="1"></th>
-      <th colspan="1">Generic</th>
-      <th colspan="1">\ref IOStreamOFF "OFF"</th>
-      <th colspan="1">\ref IOStreamXYZ "XYZ"</th>
-      <th colspan="1">\ref IOStreamPLY "PLY"</th>
-      <th colspan="1">\ref IOStreamLAS "LAS"</th>
-    </tr>
-    <tr>
-      <td>Input</td>
-      <td>`CGAL::IO::read_point_set()`</td>
-      <td>\link PkgPointSet3IOOFF `CGAL::IO::read_OFF()` \endlink</td>
-      <td>\link PkgPointSet3IOXYZ `CGAL::IO::read_XYZ()` \endlink</td>
-      <td>\link PkgPointSet3IOPLY `CGAL::IO::read_PLY()` \endlink</td>
-      <td>\link PkgPointSet3IOLAS `CGAL::IO::read_LAS()` \endlink</td>
-    </tr>
-    <tr>
-      <td>Output</td>
-      <td>`CGAL::IO::write_point_set()`</td>
-      <td>\link PkgPointSet3IOOFF `CGAL::IO::write_OFF()` \endlink</td>
-      <td>\link PkgPointSet3IOXYZ `CGAL::IO::write_XYZ()` \endlink</td>
-      <td>\link PkgPointSet3IOPLY `CGAL::IO::write_PLY()` \endlink</td>
-      <td>\link PkgPointSet3IOLAS `CGAL::IO::write_LAS()` \endlink</td>
-    </tr>
+  <tr>
+    <th></th>
+    <th>Input</th>
+    <th>Output</th>
+  </tr>
+  <tr>
+    <th>Generic</th>
+    <td>`CGAL::IO::read_point_set()`</td>
+    <td>`CGAL::IO::write_point_set()`</td>
+  </tr>
+  <tr>
+    <th>\ref IOStreamOFF "OFF"</th>
+    <td>\link PkgPointSet3IOOFF `CGAL::IO::read_OFF()` \endlink</td>
+    <td>\link PkgPointSet3IOOFF `CGAL::IO::write_OFF()` \endlink</td>
+  </tr>
+  <tr>
+    <th>\ref IOStreamXYZ "XYZ"</th>
+    <td>\link PkgPointSet3IOXYZ `CGAL::IO::read_XYZ()` \endlink</td>
+    <td>\link PkgPointSet3IOXYZ `CGAL::IO::write_XYZ()` \endlink</td>
+  </tr>
+  <tr>
+    <th>\ref IOStreamPLY "PLY"</th>
+    <td>\link PkgPointSet3IOPLY `CGAL::IO::read_PLY()` \endlink</td>
+    <td>\link PkgPointSet3IOPLY `CGAL::IO::write_PLY()` \endlink</td>
+  </tr>
+  <tr>
+    <th>\ref IOStreamLAS "LAS"</th>
+    <td>\link PkgPointSet3IOLAS `CGAL::IO::read_LAS()` \endlink</td>
+    <td>\link PkgPointSet3IOLAS `CGAL::IO::write_LAS()` \endlink</td>
+  </tr>
 </table>
 
 \subsection IOstreamPolygonSoupIO Polygon Soup IO
@@ -367,42 +379,56 @@ stored in a two containers: one storing the points, and the other one storing
 their indices per face (i.e a vector of 3 integers represent a triangle face).
 
 <table class="iotable">
-    <tr>
-      <th colspan="1"></th>
-      <th colspan="1">Generic</th>
-      <th colspan="1">\ref IOStreamOFF "OFF"</th>
-      <th colspan="1">\ref IOStreamOBJ "OBJ"</th>
-      <th colspan="1">\ref IOStreamSTL "STL"</th>
-      <th colspan="1">\ref IOStreamPLY "PLY"</th>
-      <th colspan="1">\ref IOStreamVTK "VTP"</th>
-      <th colspan="1">\ref IOStreamGocad "GOCAD"</th>
-      <th colspan="1">\ref IOStreamWKT "WKT"</th>
-      <th colspan="1">\ref IOStream3MF "3MF"</th>
-    </tr>
-    <tr>
-      <td>Input</td>
-      <td>`CGAL::IO::read_polygon_soup()`</td>
-      <td>\link PkgStreamSupportIoFuncsOFF `CGAL::IO::read_OFF()` \endlink</td>
-      <td>\link PkgStreamSupportIoFuncsOBJ `CGAL::IO::read_OBJ()` \endlink</td>
-      <td>\link PkgStreamSupportIoFuncsSTL `CGAL::IO::read_STL()` \endlink</td>
-      <td>\link PkgStreamSupportIoFuncsPLY `CGAL::IO::read_PLY()` \endlink</td>
-      <td>\link PkgStreamSupportIoFuncsVTK `CGAL::IO::read_VTP()` \endlink</td>
-      <td>\link PkgStreamSupportIoFuncsGOCAD `CGAL::IO::read_GOCAD()` \endlink</td>
-      <td>\link PkgStreamSupportIoFuncsWKT `CGAL::IO::read_WKT()` \endlink</td>
-      <td>\link PkgStreamSupportIoFuncs3MF `CGAL::IO::read_3MF()` \endlink</td>
-    </tr>
-    <tr>
-      <td>Output</td>
-      <td>`CGAL::IO::write_polygon_soup()`</td>
-      <td>\link PkgStreamSupportIoFuncsOFF `CGAL::IO::write_OFF()` \endlink</td>
-      <td>\link PkgStreamSupportIoFuncsOBJ `CGAL::IO::write_OBJ()` \endlink</td>
-      <td>\link PkgStreamSupportIoFuncsSTL `CGAL::IO::write_STL()` \endlink</td>
-      <td>\link PkgStreamSupportIoFuncsPLY `CGAL::IO::write_PLY()` \endlink</td>
-      <td>\link PkgStreamSupportIoFuncsVTK `CGAL::IO::write_VTP()` \endlink</td>
-      <td>\link PkgStreamSupportIoFuncsGOCAD `CGAL::IO::write_GOCAD()` \endlink</td>
-      <td>\link PkgStreamSupportIoFuncsWKT `CGAL::IO::write_WKT()` \endlink</td>
-      <td>\link PkgStreamSupportIoFuncs3MF `CGAL::IO::write_3MF()` \endlink</td>
-    </tr>
+  <tr>
+    <th></th>
+    <th>Input</th>
+    <th>Output</th>
+  </tr>
+  <tr>
+    <th>Generic</th>
+    <td>`CGAL::IO::read_polygon_soup()`</td>
+    <td>`CGAL::IO::write_polygon_soup()`</td>
+  </tr>
+  <tr>
+    <th>\ref IOStreamOFF "OFF"</th>
+    <td>\link PkgStreamSupportIoFuncsOFF `CGAL::IO::read_OFF()` \endlink</td>
+    <td>\link PkgStreamSupportIoFuncsOFF `CGAL::IO::write_OFF()` \endlink</td>
+  </tr>
+  <tr>
+    <th>\ref IOStreamOBJ "OBJ"</th>
+    <td>\link PkgStreamSupportIoFuncsOBJ `CGAL::IO::read_OBJ()` \endlink</td>
+    <td>\link PkgStreamSupportIoFuncsOBJ `CGAL::IO::write_OBJ()` \endlink</td>
+  </tr>
+  <tr>
+    <th>\ref IOStreamSTL "STL"</th>
+    <td>\link PkgStreamSupportIoFuncsSTL `CGAL::IO::read_STL()` \endlink</td>
+    <td>\link PkgStreamSupportIoFuncsSTL `CGAL::IO::write_STL()` \endlink</td>
+  </tr>
+  <tr>
+    <th>\ref IOStreamPLY "PLY"</th>
+    <td>\link PkgStreamSupportIoFuncsPLY `CGAL::IO::read_PLY()` \endlink</td>
+    <td>\link PkgStreamSupportIoFuncsPLY `CGAL::IO::write_PLY()` \endlink</td>
+  </tr>
+  <tr>
+    <th>\ref IOStreamVTK "VTP"</th>
+    <td>\link PkgStreamSupportIoFuncsVTK `CGAL::IO::read_VTP()` \endlink</td>
+    <td>\link PkgStreamSupportIoFuncsVTK `CGAL::IO::write_VTP()` \endlink</td>
+  </tr>
+  <tr>
+    <th>\ref IOStreamGocad "GOCAD"</th>
+    <td>\link PkgStreamSupportIoFuncsGOCAD `CGAL::IO::read_GOCAD()` \endlink</td>
+    <td>\link PkgStreamSupportIoFuncsGOCAD `CGAL::IO::write_GOCAD()` \endlink</td>
+  </tr>
+  <tr>
+    <th>\ref IOStreamWKT "WKT"</th>
+    <td>\link PkgStreamSupportIoFuncsWKT `CGAL::IO::read_WKT()` \endlink</td>
+    <td>\link PkgStreamSupportIoFuncsWKT `CGAL::IO::write_WKT()` \endlink</td>
+  </tr>
+  <tr>
+    <th>\ref IOStream3MF "3MF"</th>
+    <td>\link PkgStreamSupportIoFuncs3MF `CGAL::IO::read_3MF()` \endlink</td>
+    <td>\link PkgStreamSupportIoFuncs3MF `CGAL::IO::write_3MF()` \endlink</td>
+  </tr>
 </table>
 
 \subsection IOstreamPolygonMeshIO Polygon Mesh IO
@@ -412,39 +438,51 @@ a complete definition can be found \ref PMPDef "here".
 The table above only lists the functions that work with any polygon mesh.
 
 <table class="iotable">
-    <tr>
-      <th colspan="1"></th>
-      <th colspan="1">Generic</th>
-      <th colspan="1">\ref IOStreamOFF "OFF"</th>
-      <th colspan="1">\ref IOStreamSTL "STL"</th>
-      <th colspan="1">\ref IOStreamVTK "VTP"</th>
-      <th colspan="1">\ref IOStreamOBJ "OBJ"</th>
-      <th colspan="1">\ref IOStreamGocad "GOCAD"</th>
-      <th colspan="1">\ref IOStreamWRL "WRL"</th>
-      <th colspan="1">\ref IOStreamOM "OpenMesh (OM)"</th>
-    </tr>
-    <tr>
-      <td>Input</td>
-      <td>`CGAL::IO::read_polygon_mesh()`</td>
-      <td>`CGAL::IO::read_OFF()`</td>
-      <td>`CGAL::IO::read_STL()`</td>
-      <td>`CGAL::IO::read_VTP()`</td>
-      <td>`CGAL::IO::read_OBJ()`</td>
-      <td>`CGAL::IO::read_GOCAD()`</td>
-      <td>`CGAL::IO::read_OM()`</td>
-      <td><center> - </center></td>
-    </tr>
-    <tr>
-      <td>Output</td>
-      <td>``CGAL::IO::write_polygon_mesh()`</td>
-      <td>`CGAL::IO::write_OFF()`</td>
-      <td>`CGAL::IO::write_STL()`</td>
-      <td>`CGAL::IO::write_VTP()`</td>
-      <td>`CGAL::IO::write_OBJ()`</td>
-      <td>`CGAL::IO::write_GOCAD()`</td>
-      <td>`CGAL::IO::write_WRL()`</td>
-      <td>`CGAL::IO::write_OM()`</td>
-    </tr>
+  <tr>
+    <th></th>
+    <th>Input</th>
+    <th>Output</th>
+  </tr>
+  <tr>
+    <th>Generic</th>
+    <td>`CGAL::IO::read_polygon_mesh()`</td>
+    <td>`CGAL::IO::write_polygon_mesh()`</td>
+  </tr>
+  <tr>
+    <th>\ref IOStreamOFF "OFF"</th>
+    <td>`CGAL::IO::read_OFF()`</td>
+    <td>`CGAL::IO::write_OFF()`</td>
+  </tr>
+  <tr>
+    <th>\ref IOStreamSTL "STL"</th>
+    <td>`CGAL::IO::read_STL()`</td>
+    <td>`CGAL::IO::write_STL()`</td>
+  </tr>
+  <tr>
+    <th>\ref IOStreamVTK "VTP"</th>
+    <td>`CGAL::IO::read_VTP()`</td>
+    <td>`CGAL::IO::write_VTP()`</td>
+  </tr>
+  <tr>
+    <th>\ref IOStreamOBJ "OBJ"</th>
+    <td>`CGAL::IO::read_OBJ()`</td>
+    <td>`CGAL::IO::write_OBJ()`</td>
+  </tr>
+  <tr>
+    <th>\ref IOStreamGocad "GOCAD"</th>
+    <td>`CGAL::IO::read_GOCAD()`</td>
+    <td>`CGAL::IO::write_GOCAD()`</td>
+  </tr>
+  <tr>
+    <th>\ref IOStreamWRL "WRL"</th>
+    <td><center> - </center></td>
+    <td>`CGAL::IO::write_WRL()`</td>
+  </tr>
+  <tr>
+    <th>\ref IOStreamOM "OpenMesh (OM)"</th>
+    <td><center> - </center></td>
+    <td>`CGAL::IO::write_OM()`</td>
+  </tr>
 </table>
 
 Some particular polygon mesh data structures such as `CGAL::Surface_mesh` have specific overloads
@@ -471,28 +509,32 @@ You can find more information about WKT \ref PkgStreamSupportRef "here".
 The following table summarizes the most useful functions. Note that the name deviates
 from the standard \cgal I/O functions.
 
-<table>
-<tr>
-<th colspan="1"></th>
-<th colspan="1">Generic</th>
-<th colspan="1">Points</th>
-<th colspan="1">Polylines</th>
-<th colspan="1">Polygons</th>
-</tr>
-<tr>
-<td>Input</td>
-<td>`CGAL::IO::read_WKT()`</td>
-<td>`CGAL::IO::read_multi_point_WKT()`</td>
-<td>`CGAL::IO::read_multi_linestring_WKT()`</td>
-<td>`CGAL::IO::read_multi_polygon_WKT()`</td>
-</tr>
-<tr>
-<td>Output</td>
-<td><center> - </center></td>
-<td>`CGAL::IO::write_multi_point_WKT()`</td>
-<td>`CGAL::IO::write_multi_linestring_WKT()`</td>
-<td>`CGAL::IO::write_multi_polygon_WKT()`</td>
-</tr>
+<table class="iotable">
+  <tr>
+    <th></th>
+    <th>Input</th>
+    <th>Output</th>
+  </tr>
+  <tr>
+    <th>Generic</th>
+    <td>`CGAL::IO::read_WKT()`</td>
+    <td><center> - </center></td>
+  </tr>
+  <tr>
+    <th>Points</th>
+    <td>`CGAL::IO::read_multi_point_WKT()`</td>
+    <td>`CGAL::IO::write_multi_point_WKT()`</td>
+  </tr>
+  <tr>
+    <th>Polylines</th>
+    <td>`CGAL::IO::read_multi_linestring_WKT()`</td>
+    <td>`CGAL::IO::write_multi_linestring_WKT()`</td>
+  </tr>
+  <tr>
+    <th>Polygons</th>
+    <td>`CGAL::IO::read_multi_polygon_WKT()`</td>
+    <td>`CGAL::IO::write_multi_polygon_WKT()`</td>
+  </tr>
 </table>
 
 \subsection IOstreamOtherIO Other Data Structures
