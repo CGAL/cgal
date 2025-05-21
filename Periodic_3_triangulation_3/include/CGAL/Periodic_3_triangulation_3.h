@@ -1745,11 +1745,21 @@ public:
     return _tds.cells_end();
   }
 
+  auto all_cell_handles() const
+  {
+    return _tds.cell_handles();
+  }
+
   All_vertices_iterator all_vertices_begin() const {
     return _tds.vertices_begin();
   }
   All_vertices_iterator all_vertices_end() const {
     return _tds.vertices_end();
+  }
+
+  auto all_vertex_handles() const
+  {
+    return _tds.vertex_handles();
   }
 
   All_edges_iterator all_edges_begin() const {
