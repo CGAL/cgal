@@ -2,6 +2,7 @@ Algebraic_foundations
 Arithmetic_kernel
 BGL
 Basic_viewer
+Box_intersection_d
 CGAL_Core
 Cartesian_kernel
 Circulator
@@ -22,11 +23,13 @@ Modular_arithmetic
 Number_types
 Polygon
 Polygon_mesh_processing
+Principal_component_analysis_LGPL
 Profiling_tools
 Property_map
 Random_numbers
 SMDS_3
 STL_Extension
+Solver_interface
 Spatial_sorting
 Stream_support
 Surface_mesh
@@ -35,3 +38,4 @@ TDS_3
 Triangulation_2
 Triangulation_3
 Union_find
+Weights
