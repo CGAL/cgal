@@ -389,8 +389,8 @@ detect_corners_of_regions(
   using Segment_map        = typename Polyline_graph::Segment_map;
   using Item               = typename Polyline_graph::Item;
 
-  using Line_region  = CGAL::Shape_detection::Segment_set::Least_squares_line_fit_region<Traits, Item, Segment_map>;
-  using Line_sorting = CGAL::Shape_detection::Segment_set::Least_squares_line_fit_sorting<Traits, Item, Polyline_graph, Segment_map>;
+  using Line_region  = CGAL::Shape_detection::Segment_set::Line_segment_region<Traits, Item, Segment_map>;
+  using Line_sorting = CGAL::Shape_detection::Segment_set::Segment_length_sorting<Traits, Item, Segment_map>;
   using RG_lines     = CGAL::Shape_detection::Region_growing<Polyline_graph, Line_region>;
 
   // mark as constrained edges at the interface of two regions
@@ -441,7 +441,7 @@ detect_corners_of_regions(
   if (!segment_range.empty())
   {
     Line_sorting line_sorting(
-      segment_range, pgraph, CGAL::parameters::segment_map(pgraph.segment_map()));
+      segment_range, CGAL::parameters::segment_map(pgraph.segment_map()));
     line_sorting.sort();
 
     RG_lines rg_lines(
