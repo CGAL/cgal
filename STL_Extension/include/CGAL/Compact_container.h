@@ -177,6 +177,8 @@ namespace internal {
     template <typename Element>
     static void set_erase_counter(Element &, unsigned int) {}
     template <typename Element>
+    static void restore_erase_counter(Element*, unsigned int) {}
+    template <typename Element>
     static void increment_erase_counter(Element &) {}
   };
 
@@ -193,9 +195,21 @@ namespace internal {
     }
 
     template <typename Element>
+    static unsigned int erase_counter(Element* e)
+    {
+      return e->erase_counter();
+    }
+
+    template <typename Element>
     static void set_erase_counter(Element &e, unsigned int c)
     {
       e.set_erase_counter(c);
+    }
+
+    template <typename Element>
+    static void restore_erase_counter(Element* e, unsigned int c)
+    {
+      e->set_erase_counter(c);
     }
 
     template <typename Element>
@@ -392,13 +406,18 @@ public:
   iterator
   emplace(const Args&... args)
   {
+    typedef internal::Erase_counter_strategy<
+      internal::has_increment_erase_counter<T>::value> EraseCounterStrategy;
+
     if (free_list == nullptr)
       allocate_new_block();
 
     pointer ret = free_list;
     free_list = clean_pointee(ret);
     std::size_t ts;
+    const auto ec = EraseCounterStrategy::erase_counter(ret);
     CGAL_USE(ts);
+
     if constexpr (Time_stamper::has_timestamp) {
       ts = ret->time_stamp();
     }
@@ -407,6 +426,7 @@ public:
       ret->set_time_stamp(ts);
     }
     Time_stamper::set_time_stamp(ret, time_stamp);
+    EraseCounterStrategy::restore_erase_counter(ret, ec);
     CGAL_assertion(type(ret) == USED);
     ++size_;
     return iterator(ret, 0);
@@ -414,6 +434,9 @@ public:
 
   iterator insert(const T &t)
   {
+    typedef internal::Erase_counter_strategy<
+      internal::has_increment_erase_counter<T>::value> EraseCounterStrategy;
+
     if (free_list == nullptr)
       allocate_new_block();
 
@@ -421,6 +444,8 @@ public:
     free_list = clean_pointee(ret);
     std::size_t ts;
     CGAL_USE(ts);
+    const auto ec = EraseCounterStrategy::erase_counter(ret);
+
     if constexpr (Time_stamper::has_timestamp) {
       ts = ret->time_stamp();
     }
@@ -429,6 +454,8 @@ public:
       ret->set_time_stamp(ts);
     }
     Time_stamper::set_time_stamp(ret, time_stamp);
+    EraseCounterStrategy::restore_erase_counter(ret, ec);
+
     CGAL_assertion(type(ret) == USED);
     ++size_;
     return iterator(ret, 0);
@@ -455,6 +482,7 @@ public:
 
     CGAL_precondition(type(&*x) == USED);
     EraseCounterStrategy::increment_erase_counter(*x);
+    const auto ec = EraseCounterStrategy::erase_counter(*x);
     std::size_t ts;
     CGAL_USE(ts);
     if constexpr (Time_stamper::has_timestamp) {
@@ -464,6 +492,8 @@ public:
     if constexpr (Time_stamper::has_timestamp) {
       x->set_time_stamp(ts);
     }
+    EraseCounterStrategy::restore_erase_counter(&*x, ec);
+
 
     put_on_free_list(&*x);
     --size_;
