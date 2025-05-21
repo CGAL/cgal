@@ -40,6 +40,10 @@ create_single_source_cgal_program("fast.cpp")
 create_single_source_cgal_program("rotated_cubes_autorefinement.cpp")
 create_single_source_cgal_program("coplanar_cubes_autorefinement.cpp")
 
+create_single_source_cgal_program("Performance/performance_snap_polygon_soup.cpp")
+create_single_source_cgal_program("Robustness/robustness_snap_polygon_soup.cpp")
+create_single_source_cgal_program("Quality/quality_snap_polygon_soup.cpp")
+
 create_single_source_cgal_program("polygon_mesh_slicer.cpp")
 target_link_libraries(polygon_mesh_slicer PRIVATE CGAL::Eigen3_support)
 
