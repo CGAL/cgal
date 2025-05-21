@@ -44,9 +44,9 @@ int main(int argc, char* argv[])
             << "Number of constrained facets in the CDT: "
             << ccdt.number_of_constrained_facets() << '\n';
 
-  std::ofstream out("ccdt.mesh");
-  CGAL::IO::write_MEDIT(out, ccdt);
-  out.close();
+  std::ofstream ofs(argc > 2 ? argv[2] : "out.mesh");
+  ofs.precision(17);
+  CGAL::IO::write_MEDIT(ofs, ccdt);
 
   return EXIT_SUCCESS;
 }
