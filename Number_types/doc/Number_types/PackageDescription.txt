@@ -15,6 +15,9 @@
 /// \defgroup nt_gmp GMP
 /// \ingroup PkgNumberTypesRef
 
+/// \defgroup nt_boost boost multiprecision
+/// \ingroup PkgNumberTypesRef
+
 /// \defgroup nt_cgal CGAL Number Types
 /// \ingroup PkgNumberTypesRef
 

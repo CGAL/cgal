@@ -115,6 +115,15 @@ requirements.
 
 To use these classes, \gmp and \mpfr must be installed.
 
+
+\section Number_typesBoost Number Types Provided by boost
+
+\anchor boostnt
+
+Boost provides an arbitrary precision integer and rational number type.
+These number types can have \gmp as backend, but they can also be used
+with a native backend.
+
 \section Number_typesLEDA Number Types Provided by LEDA
 
 \anchor ledant
