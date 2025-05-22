@@ -32,7 +32,7 @@ namespace CGAL{
   ///  is optimized for very fast intersection tests.
   ///
   /// @tparam PolygonMesh The polygon mesh structure used to construct each level of the hierarchy. Must be a model of ` MutableFaceGraph`.
-  ///         an internal property map for CGAL::vertex_point_t must be available
+  ///         an internal property map for  ` CGAL::vertex_point_t` must be available
   ///         A point type `Point` is deduced from it. There is no requirement on `Point`,
   ///         besides being default constructible and assignable.
   ///         In typical use cases it will be a 3D point type.
@@ -65,7 +65,7 @@ struct Convex_hull_hierarchy{
   }
 
   /**
-  * constructor taking the points associated to the vertices of g.
+  * constructor taking the points associated to the vertices of  `g`.
   *
   * @tparam VertexListGraph: a model of `VertexListGraph`
   * @tparam NamedParameters: a sequence of named parameters
@@ -75,9 +75,9 @@ struct Convex_hull_hierarchy{
   *
   * \cgalNamedParamsBegin
   *   \cgalParamNBegin{vertex_point_map}
-  *     \cgalParamDescription{a property map associating points to the vertices of g}
+  *     \cgalParamDescription{a property map associating points to the vertices of  `g`}
   *     \cgalParamType{a model of `ReadWritePropertyMap` whose value type is a point type}
-  *     \cgalParamDefault{If this parameter is omitted, an internal property map for CGAL::vertex_point_t must be available in `VertexListGraph`}
+  *     \cgalParamDefault{If this parameter is omitted, an internal property map for ` CGAL::vertex_point_t`  must be available in `VertexListGraph`}
   *   \cgalParamNEnd
   * \cgalNamedParamsEnd
   */
@@ -108,11 +108,11 @@ struct Convex_hull_hierarchy{
   };
 
    /**
-  * constructor taking the points in the range [first, last).
+  * constructor taking the points in the range `[first, last)`.
   *
-  * @tparam RangeIterator: must be an input iterator with a value type equivalent to Traits::Point_3
-  * @tparam Traits: must be a model of the concept ConvexHullTraits_3. For the purposes of checking the postcondition that the convex hull is valid,
-  * Traits must also be a model of the concept `IsStronglyConvexTraits_3`. Furthermore, Traits must define a type `PolygonMesh` that is a model of `MutableFaceGraph`.
+  * @tparam RangeIterator must be an input iterator with a value type equivalent to `Traits::Point_3`
+  * @tparam Traits must be a model of the concept ConvexHullTraits_3. For the purposes of checking the postcondition that the convex hull is valid,
+  * Traits must also be a model of the concept `IsStronglyConvexTraits_3`. Furthermore, `Traits` must define a type `PolygonMesh` that is a model of `MutableFaceGraph`.
   */
   template <typename RangeIterator, typename Traits = typename Convex_hull_3::internal::Default_traits_for_Chull_3<Point>::type>
   Convex_hull_hierarchy(RangeIterator begin, RangeIterator end, const Traits &traits=Traits()){
