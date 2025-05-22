@@ -378,21 +378,23 @@ template <typename Point,
           typename... Default_value_args>
 auto get(Dynamic_property_tag, const Surface_mesh<Point>& sm, Default_value_args&&... default_value_args) {
   using graph_traits = boost::graph_traits<Surface_mesh<Point>>;
-  using vertex_descriptor = typename graph_traits::vertex_descriptor;
   using face_descriptor = typename graph_traits::face_descriptor;
   using edge_descriptor = typename graph_traits::edge_descriptor;
   using halfedge_descriptor = typename graph_traits::halfedge_descriptor;
-  auto num_elements = CGAL::overloaded{
-    [&](vertex_descriptor) { return num_vertices(sm); },
-    [&](halfedge_descriptor) { return num_halfedges(sm); },
-    [&](edge_descriptor) { return num_edges(sm); },
-    [&](face_descriptor) { return num_faces(sm); }
-  };
+
   using descriptor = typename Dynamic_property_tag::template property_map<Surface_mesh<Point>>::descriptor;
   using value_type = typename Dynamic_property_tag::value_type;
+
+  auto num_elements = num_vertices(sm);
+  if constexpr(std::is_same_v<descriptor, edge_descriptor>) {
+    num_elements = num_edges(sm);
+  } else if constexpr(std::is_same_v<descriptor, halfedge_descriptor>) {
+    num_elements = num_halfedges(sm);
+  } else if constexpr(std::is_same_v<descriptor, face_descriptor>) {
+    num_elements = num_faces(sm);
+  }
   return CGAL::internal::Dynamic_with_index<descriptor, value_type>(
-      num_elements(descriptor{}),
-      std::forward<Default_value_args>(default_value_args)...);
+      num_elements, std::forward<Default_value_args>(default_value_args)...);
 }
 
 // implementation detail: required by Dynamic_property_map_deleter
