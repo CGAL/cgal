@@ -27,11 +27,11 @@
 namespace CGAL{
 
   /// \ingroup PkgConvexHull3Ref
-  /// This class wrapp a convex hull with a data structure optimized for finding the extreme point of the convex
-  /// hull in a given direction. In particular, this operation is called by `CGAL::Convex_hull_3::do_intersect` and therefore, this class
+  /// This class wraps a convex hull with a data structure optimized for finding the extreme point of the convex
+  /// hull in a given direction. In particular, this operation is called by `CGAL::Convex_hull_3::do_intersect()` and therefore, this class
   ///  is optimized for very fast intersection tests.
   ///
-  /// @tparam PolygonMesh The polygon mesh structure used to construct each level of the hierarchy. Must be a model of MutableFaceGraph.
+  /// @tparam PolygonMesh The polygon mesh structure used to construct each level of the hierarchy. Must be a model of ` MutableFaceGraph`.
   ///         an internal property map for CGAL::vertex_point_t must be available
   ///         A point type `Point` is deduced from it. There is no requirement on `Point`,
   ///         besides being default constructible and assignable.
@@ -134,7 +134,7 @@ struct Convex_hull_hierarchy{
   *   \cgalParamNBegin{vertex_point_map}
   *     \cgalParamDescription{a property map associating points to the vertices of the convex hull}
   *     \cgalParamType{a model of `ReadWritePropertyMap` whose value type is a point type}
-  *     \cgalParamDefault{If this parameter is omitted, `Point` have to be a 3D point type of the same kernel that `dir`}
+  *     \cgalParamDefault{If this parameter is omitted, `Point` must be a 3D point type of the same kernel than `dir`}
   *   \cgalParamNEnd
   * \cgalNamedParamsEnd
   *
@@ -147,12 +147,12 @@ struct Convex_hull_hierarchy{
   // /**
   // * Compute and return the extreme point of the convex hull along the provide direction.
   // *
-  // * Using a converter, this function is typically used in filtered_predicate to compute the extreme_point with a different Kernel that the one of `Point`.
+  // * Using a converter, this function is typically used in filtered_predicate to compute the extreme_point with a different kernel than the one of `Point`.
   // * (TODO Maybe not documented this function)
   // *
   // * @tparam NamedParameters: a sequence of named parameters
-  // * @tparam Traits: A trais class providing Vector_3, Point_3, ConstrustVector3 and CrossProductVector3
-  // * @tparam Converter: A converter that convert the type `Point` to `Traits::Point_3`
+  // * @tparam Traits: A traits class providing ` Vector_3`, `Point_3`, `ConstructVector_3` and `CrossProductVector_3`
+  // * @tparam Converter: A converter that converts the type `Point` to `Traits::Point_3`
   // *
   // */
   /// @private

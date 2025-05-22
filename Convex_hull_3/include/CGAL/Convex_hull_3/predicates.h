@@ -507,7 +507,7 @@ make_do_intersect_traits_with_point_maps(const PointMap& pmap1, const PointMap& 
 *
 * indicates if the convex hull of point sets provide intersect or not.
 *
-* @tparam PointRange: is a model of `ConstRange`. The value type of its iterator is the key type of the named parameter point_map.
+* @tparam PointRange: is a model of `ConstRange`. The value type of its iterator is the key type of the named parameter `point_map`.
 * @tparam NamedParameters_1 a sequence of \ref bgl_namedparameters "Named Parameters"
 * @tparam NamedParameters_2 a sequence of \ref bgl_namedparameters "Named Parameters"
 *
@@ -565,7 +565,7 @@ bool do_intersect(const PointRange& r1, const PointRange& r2,
 *     \cgalParamDescription{a property map associating points to the vertices of `g1` (`g2`)}
 *     \cgalParamType{a model of `ReadablePropertyMap` whose value types are the same for `np1` and `np2`}
 *     \cgalParamDefault{boost::get(CGAL::vertex_point, g)}
-*     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t` must be available in `IncidentGraph`.}
+*     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t` must be available in `AdjacencyGraph`.}
 *   \cgalParamNEnd
 *   \cgalParamNBegin{geom_traits}
 *     \cgalParamDescription{An instance of a geometric traits class}
@@ -636,8 +636,8 @@ bool do_intersect(const AdjacencyGraph& g1, const AdjacencyGraph& g2,
 * @tparam NamedParameters_1 a sequence of \ref bgl_namedparameters "Named Parameters"
 * @tparam NamedParameters_2 a sequence of \ref bgl_namedparameters "Named Parameters"
 *
-* @param ch1 the first hull convex considered in the do-intersect test
-* @param ch2 the second hull convex considered in the do-intersect test
+* @param ch1 the first convex hull
+* @param ch2 the second convex hull 
 * @param np1 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 * @param np2 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
@@ -722,7 +722,7 @@ bool do_intersect(const Convex1& c1, const Convex2& c2,
 *     \cgalParamDescription{a property map associating points to the vertices of `g`}
 *     \cgalParamType{a model of `ReadablePropertyMap`}
 *     \cgalParamDefault{boost::get(CGAL::vertex_point, g)}
-*     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t` must be available in `AdjacencyGraph`.}
+*     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t` must be available in `Graph`.}
 *   \cgalParamNEnd
 *   \cgalParamNBegin{geom_traits}
 *     \cgalParamDescription{An instance of a geometric traits class}
@@ -730,9 +730,9 @@ bool do_intersect(const Convex1& c1, const Convex2& c2,
 *     \cgalParamDefault{a \cgal Kernel deduced from `Direction_3`, using `CGAL::Kernel_traits`}
 *   \cgalParamNEnd
 *   \cgalParamNBegin{geom_traits_converter}
-*     \cgalParamDescription{A Converter from the point type of `vertex_point_map` to the point type of `geom_traits`}
+*     \cgalParamDescription{A converter from the point type of `vertex_point_map` to the point type of `geom_traits`}
 *     \cgalParamType{a class model of `NT_Converter`}
-*     \cgalParamDefault{a \cgal `Cartesian_converter` deduced from vertex_point_map and `geom_traits`, using `CGAL::Kernel_traits`}
+*     \cgalParamDefault{a \cgal `Cartesian_converter` deduced from ` vertex_point_map`  and `geom_traits`, using `CGAL::Kernel_traits`}
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
@@ -745,7 +745,7 @@ Point_3 extreme_point(const Graph& g, const Direction_3 &dir, const NamedParamet
 *
 * computes the furthest point of the range along the direction.
 *
-* @tparam PointRange: is a model of `ConstRange`. The value type of its iterator is the key type of the named parameter point_map.
+* @tparam PointRange: is a model of `ConstRange`. The value type of its iterator is the key type of the named parameter ` point_map`.
 * @tparam Direction_3: is a model of CGAL::Direction_3.
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
@@ -767,7 +767,7 @@ Point_3 extreme_point(const Graph& g, const Direction_3 &dir, const NamedParamet
 *   \cgalParamNBegin{geom_traits_converter}
 *     \cgalParamDescription{A Converter from the point type of `vertex_point_map` to the point type of `geom_traits`}
 *     \cgalParamType{a class model of `NT_Converter`}
-*     \cgalParamDefault{a \cgal `Cartesian_converter` deduced from point_map and `geom_traits`, using `CGAL::Kernel_traits`}
+*     \cgalParamDefault{a \cgal `Cartesian_converter` deduced from ` point_map` and `geom_traits`, using `CGAL::Kernel_traits`}
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
@@ -803,7 +803,7 @@ Point_3 extreme_point(const PointRange& r, const Direction_3 &dir, const NamedPa
 *   \cgalParamNBegin{geom_traits_converter}
 *     \cgalParamDescription{A Converter from the point type of `vertex_point_map` to the point type of `geom_traits`}
 *     \cgalParamType{a class model of `NT_Converter`}
-*     \cgalParamDefault{a \cgal `Cartesian_converter` deduced from vertex_point_map and `geom_traits`, using `CGAL::Kernel_traits`}
+*     \cgalParamDefault{a \cgal `Cartesian_converter` deduced from ` vertex_point_map` and `geom_traits`, using `CGAL::Kernel_traits`}
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
@@ -897,12 +897,12 @@ typename Kernel_traits<Direction_3>::Kernel::Point_3 extreme_point(const Object&
 *
 * provides a lower bound on the distance between the two convex hull of point sets provide.
 *
-* @tparam PointRange: is a model of `ConstRange`. The value type of its iterator is the key type of the named parameter point_map.
+* @tparam PointRange: is a model of `ConstRange`. The value type of its iterator is the key type of the named parameter `point_map`.
 * @tparam NamedParameters_1 a sequence of \ref bgl_namedparameters "Named Parameters"
 * @tparam NamedParameters_2 a sequence of \ref bgl_namedparameters "Named Parameters"
 *
-* @param r1 range points of the first convex considered in the do-intersect test
-* @param r2 range points of the second convex considered in the do-intersect test
+* @param r1 first point range
+* @param r2 second point range
 * @param np1 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 * @param np2 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
@@ -945,8 +945,8 @@ FT separation_distance(const PointRange& r1, const PointRange& r2,
 * @tparam NamedParameters_1 a sequence of \ref bgl_namedparameters "Named Parameters"
 * @tparam NamedParameters_2 a sequence of \ref bgl_namedparameters "Named Parameters"
 *
-* @param g1 the first convex graph considered in the do-intersect test
-* @param g2 the second convex graph considered in the do-intersect test
+* @param g1 the first convex graph 
+* @param g2 the second convex graph 
 * @param np1 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 * @param np2 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
@@ -955,7 +955,7 @@ FT separation_distance(const PointRange& r1, const PointRange& r2,
 *     \cgalParamDescription{a property map associating points to the vertices of `g1` (`g2`)}
 *     \cgalParamType{a model of `ReadablePropertyMap` whose value types are the same for `np1` and `np2`}
 *     \cgalParamDefault{boost::get(CGAL::vertex_point, g)}
-*     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t` must be available in `IncidentGraph`.}
+*     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t` must be available in ` AdjacencyGraph`.}
 *   \cgalParamNEnd
 *   \cgalParamNBegin{geom_traits}
 *     \cgalParamDescription{An instance of a geometric traits class}
@@ -965,9 +965,9 @@ FT separation_distance(const PointRange& r1, const PointRange& r2,
 *   \cgalParamNEnd
 *   \cgalParamNBegin{number_of_iterations}
 *     \cgalParamDescription{if not `0` (no limit), indicates the maximum number of iterations that the algorithm is allowed to do.
-*                           If this value is not `0`, then an intersection might be reported even if the convex hulls does not intersect.
+*                           If this value is not `0`, then an intersection might be reported even if the convex hulls do not intersect.
 *                           However, if the convex hulls are reported not to intersect, this is guaranteed.}
-*     \cgalParamType{an positive integer convertible to `std::size_t`}
+*     \cgalParamType{a positive integer convertible to `std::size_t`}
 *     \cgalParamExtra{`np1` only}
 *     \cgalParamDefault{`0`}
 *   \cgalParamNEnd
@@ -998,13 +998,13 @@ FT separation_distance(const AdjacencyGraph& g1, const AdjacencyGraph& g2,
 // *   \cgalParamNBegin{geom_traits}
 // *     \cgalParamDescription{An instance of a geometric traits class}
 // *     \cgalParamType{a class model of `Kernel`}
-// *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+// *     \cgalParamDefault{a \cgal kernel deduced from the point type, using `CGAL::Kernel_traits`}
 // *   \cgalParamNEnd
 // *   \cgalParamNBegin{number_of_iterations}
 // *     \cgalParamDescription{if not `0` (no limit), indicates the maximum number of iterations that the algorithm is allowed to do.
 // *                           If this value is not `0`, then an intersection might be reported even if the convex hulls does not intersect.
 // *                           However, if the convex hulls are reported not to intersect, this is guaranteed.}
-// *     \cgalParamType{an positive integer convertible to `std::size_t`}
+// *     \cgalParamType{a positive integer convertible to `std::size_t`}
 // *     \cgalParamDefault{`0`}
 // *   \cgalParamNEnd
 // * \cgalNamedParamsEnd
@@ -1026,8 +1026,8 @@ FT separation_distance(const AdjacencyGraph& g1, const AdjacencyGraph& g2,
 * @tparam NamedParameters_1 a sequence of \ref bgl_namedparameters "Named Parameters"
 * @tparam NamedParameters_2 a sequence of \ref bgl_namedparameters "Named Parameters"
 *
-* @param ch1 the first hull convex considered in the do-intersect test
-* @param ch2 the second hull convex considered in the do-intersect test
+* @param ch1 the first convex hull 
+* @param ch2 the second convex hull 
 * @param np1 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 * @param np2 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
@@ -1036,7 +1036,7 @@ FT separation_distance(const AdjacencyGraph& g1, const AdjacencyGraph& g2,
 *     \cgalParamDescription{a property map associating points to the vertices of `ch1` (`ch2`)}
 *     \cgalParamType{a model of `ReadablePropertyMap` whose value types are the same for `np1` and `np2`}
 *     \cgalParamDefault{boost::get(CGAL::vertex_point, g)}
-*     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t` must be available in `IncidentGraph`.}
+*     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t` must be available in `IncidenceGraph`.}
 *   \cgalParamNEnd
 *   \cgalParamNBegin{geom_traits}
 *     \cgalParamDescription{An instance of a geometric traits class}
@@ -1046,9 +1046,9 @@ FT separation_distance(const AdjacencyGraph& g1, const AdjacencyGraph& g2,
 *   \cgalParamNEnd
 *   \cgalParamNBegin{number_of_iterations}
 *     \cgalParamDescription{if not `0` (no limit), indicates the maximum number of iterations that the algorithm is allowed to do.
-*                           If this value is not `0`, then an intersection might be reported even if the convex hulls does not intersect.
+*                           If this value is not `0`, then an intersection might be reported even if the convex hulls do not intersect.
 *                           However, if the convex hulls are reported not to intersect, this is guaranteed.}
-*     \cgalParamType{an positive integer convertible to `std::size_t`}
+*     \cgalParamType{a positive integer convertible to `std::size_t`}
 *     \cgalParamExtra{`np1` only}
 *     \cgalParamDefault{`0`}
 *   \cgalParamNEnd
@@ -1067,16 +1067,16 @@ FT separation_distance(const Convex_hull_hierarchy<PolygonMesh>& ch1, const Conv
 /**
 * \ingroup PkgConvexHull3Predicates
 *
-* provides a lower bound on the distance between the two convex. Consider the convex hull of point sets provide.
+* provides a lower bound on the distance between two convex sets. Consider the convex hull of point sets provide.
 *
 * @tparam Convex1: can be a model of the concept `Container`, `IncidenceGraph`, `Convex_hull_hierarchy` or any object 'M'
-* such that it exists a function 'extreme_point(M, Kernel::Vector_3, Converter)' returning a Kernel::Point_3
+* such that exists a function 'extreme_point(M, Kernel::Vector_3, Converter)' returning a Kernel::Point_3
 * @tparam Convex2: same as Convex1
 * @tparam NamedParameters_1 a sequence of \ref bgl_namedparameters "Named Parameters"
 * @tparam NamedParameters_2 a sequence of \ref bgl_namedparameters "Named Parameters"
 *
-* @param c1 first convex considered in the do-intersect test
-* @param c2 second convex considered in the do-intersect test
+* @param c1 first convex set considered in the do-intersect test
+* @param c2 second convex set considered in the do-intersect test
 * @param np1 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 * @param np2 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
