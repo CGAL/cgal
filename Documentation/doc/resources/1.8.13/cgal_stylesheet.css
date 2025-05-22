@@ -415,3 +415,23 @@ table.iotable th a:visited {
   color: #FFFFFF;
   text-decoration: underline;
 }
+
+th.associated-type {
+  box-sizing: border-box;
+  width: 780px;
+}
+
+th.description {
+  box-sizing: border-box;
+  width: 600px;
+}
+
+th.return-type {
+  box-sizing: border-box;
+  width: 450px;
+}
+
+th.valid-expression {
+  box-sizing: border-box;
+  width: 330px;
+}
