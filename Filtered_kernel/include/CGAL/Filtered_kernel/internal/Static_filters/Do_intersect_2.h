@@ -31,6 +31,7 @@ class Do_intersect_2
   typedef typename K_base::Boolean   Boolean;
   typedef typename K_base::Point_2   Point_2;
   typedef typename K_base::Segment_2 Segment_2;
+  typedef typename K_base::Circle_2  Circle_2;
 
   typedef typename K_base::Do_intersect_2 Base;
 
@@ -61,7 +62,6 @@ public:
   {
     return Intersections::internal::do_intersect(p,t, SFK());
   }
-
 };
 } // Static_filters_predicates
 } // internal
