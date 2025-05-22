@@ -20,7 +20,7 @@ lot of cache misses, leading to non-optimal performance. This is the case
 for example when indices are stored inside the tree,
 or to a lesser extent when the points coordinates are stored
 in a dynamically allocated array (e.g., `Epick_d` with dynamic
-dimension) &mdash; we says "to a lesser extent" because the points
+dimension) &mdash; we say "to a lesser extent" because the points
 are re-created by the kd-tree in a cache-friendly order after its construction,
 so the coordinates are more likely to be stored in a near-optimal order on the
 heap. When `EnablePointsCache` is set to `Tag_true`, the points
@@ -209,7 +209,7 @@ OutputIterator search(OutputIterator it, FuzzyQueryItem q) const;
 Returns a const iterator to the first point in the tree.
 \note Starting with \cgal 4.6, the order of the points in the iterator range
 `[begin() , end())` is not the order of  insertion of the points into the tree.
-This was not guaranteed before but might have beeen observed and exploited.
+This was not guaranteed before but might have been observed and exploited.
 */
 iterator begin() const;
 

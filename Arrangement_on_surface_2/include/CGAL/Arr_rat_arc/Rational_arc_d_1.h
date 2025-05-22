@@ -450,7 +450,7 @@ public:
     _info = (_info | IS_DIRECTED_RIGHT);
 
 
-    // Analyze the behaviour of the rational function at x = -oo (the source).
+    // Analyze the behavior of the rational function at x = -oo (the source).
     Algebraic_real_1          y0;
     const Arr_parameter_space inf_s = _analyze_at_minus_infinity(P, Q, y0);
 
@@ -460,7 +460,7 @@ public:
       _info = (_info | SRC_AT_Y_PLUS_INFTY);
     else // if (inf_s == ARR_INTERIOR)
       _ps = Algebraic_point_2();   //the point is a dummy
-    //Analyze the behaviour of the rational function at x = +oo (the target).
+    //Analyze the behavior of the rational function at x = +oo (the target).
     const Arr_parameter_space inf_t = _analyze_at_plus_infinity(P, Q, y0);
 
     if (inf_t == ARR_BOTTOM_BOUNDARY)
@@ -543,7 +543,7 @@ public:
     //check if the source point lies next to a pole.
     if (typename Algebraic_kernel::Sign_at_1()(Q, x_s) != CGAL::ZERO)
     {
-      // We have a nomral endpoint.
+      // We have a normal endpoint.
       //nothing to do....
     }
     else
@@ -644,7 +644,7 @@ public:
     //check if source point lies next to a pole.
     if (typename Algebraic_kernel::Sign_at_1()(Q,x_s) != CGAL::ZERO)
     {
-      // We have a nomral endpoint.
+      // We have a normal endpoint.
       //nothing to do ..
     }
     else
@@ -666,7 +666,7 @@ public:
     //check if target point lies next to a pole.
     if (typename Algebraic_kernel::Sign_at_1()(Q,x_t) != CGAL::ZERO)
     {
-      // We have a nomral endpoint.
+      // We have a normal endpoint.
       //nothing to do ..
     }
     else
@@ -949,7 +949,7 @@ public:
 
   Self split_at_pole(const Algebraic_real_1& x0)
   {
-    // Analyze the behaviour of the function near the given pole.
+    // Analyze the behavior of the function near the given pole.
     const std::pair<CGAL::Sign, CGAL::Sign>  signs = _analyze_near_pole(x0);
     const CGAL::Sign    sign_left = signs.first;
     const CGAL::Sign    sign_right = signs.second;
@@ -1206,7 +1206,7 @@ public:
   // at their given intersection point.
   // param cv The given arc.
   // param p The intersection point.
-  // param mult Output: The mutiplicity of the intersection point.
+  // param mult Output: The multiplicity of the intersection point.
   // return SMALLER if (*this) slope is less than cv's;
   //      EQUAL if the two slopes are equal;
   //         LARGER if (*this) slope is greater than cv's.

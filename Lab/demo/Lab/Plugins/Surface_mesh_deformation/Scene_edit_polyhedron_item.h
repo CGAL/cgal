@@ -379,7 +379,6 @@ public:
     }
   };
 
-  std::optional<std::size_t> get_minimum_isolated_component();
   template<typename Mesh>
   struct Select_roi_output{
     typedef typename CGAL::Surface_mesh_deformation<Mesh, CGAL::Default, CGAL::Default, CGAL::ORIGINAL_ARAP

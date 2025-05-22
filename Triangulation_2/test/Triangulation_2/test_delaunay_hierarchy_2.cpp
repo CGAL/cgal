@@ -19,13 +19,15 @@
 //
 // coordinator   : INRIA Sophia-Antipolis
 // ============================================================================
-#include <iostream>
-
-#include <CGAL/Simple_cartesian.h>
 
 #include <CGAL/Triangulation_data_structure_2.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Triangulation_hierarchy_2.h>
+
+#include <CGAL/Simple_cartesian.h>
+
+#include <iostream>
+
 #include <CGAL/_test_cls_delaunay_hierarchy_2.h>
 
 typedef double                      Coord_type;

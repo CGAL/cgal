@@ -60,7 +60,7 @@ int main(int argc, char** argv)
 
   // Select and insert the vertices of the region of interest
   vertex_iterator vb, ve;
-  boost::tie(vb,ve) = vertices(mesh);
+  std::tie(vb,ve) = vertices(mesh);
   std::vector<vertex_descriptor> roi = extract_k_ring(mesh, *std::next(vb, 47), 9);
   deform_mesh.insert_roi_vertices(roi.begin(), roi.end());
 

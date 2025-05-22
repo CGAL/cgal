@@ -4,7 +4,7 @@ namespace CGAL {
 \anchor Chapter_PolygonMeshProcessing
 
 \cgalAutoToc
-\authors David Coeurjolly, Jaques-Olivier Lachaud,  Konstantinos Katrioplas, Sébastien Loriot, Ivan Pađen, Mael Rouxel-Labbé, Hossam Saeed, Jane Tournois, and Ilker %O. Yaz
+\authors David Coeurjolly, Jaques-Olivier Lachaud,  Konstantinos Katrioplas, Sébastien Loriot, Ivan Pađen, Mael Rouxel-Labbé, Hossam Saeed, Jane Tournois, Sébastien Valette, and Ilker %O. Yaz
 
 \image html neptun_head.jpg
 \image latex neptun_head.jpg
@@ -107,7 +107,7 @@ maximizes the minimum angle of all the angles of the triangles in the triangulat
 
 \subsubsection Remeshing
 
-\paragraph Local Isotropic Incremental Remeshing
+\paragraph isorem Local Isotropic Incremental Remeshing
 The incremental triangle-based isotropic remeshing algorithm introduced by Botsch et al
  \cgalCite{botsch2004remeshing}, \cgalCite{botsch2010PMP} is implemented in this package.
 This algorithm incrementally performs simple operations such as edge splits, edge collapses,
@@ -125,7 +125,7 @@ provided: a uniform and a curvature-adaptive sizing field. With `CGAL::Polygon_m
 all triangle edges are targeted to have equal lengths. With `CGAL::Polygon_mesh_processing::Adaptive_sizing_field`, triangle edge lengths depend on the local curvature --
 shorter edges appear in regions with a higher curvature and vice versa. The outline of the adaptive sizing
 field algorithm is available in \cgalCite{dunyach2013curvRemesh}. The distinction between uniform and adaptive
-sizing fields is depicted in figure \cgalFigureRef{uniform_and_adaptive}.
+sizing fields is depicted in \cgalFigureRef{uniform_and_adaptive}.
 
 As the number of iterations increases, the mesh tends to be smoother and closer to the target edge length.
 
@@ -148,7 +148,7 @@ Sizing fields in isotropic remeshing.
 (b) Curvature-based adaptive sizing field.
 \cgalFigureEnd
 
-\paragraph Delaunay-Based Surface Remeshing
+\paragraph mesh3rem Delaunay-Based Surface Remeshing
 The mesh generation algorithm implemented in the \ref PkgMesh3 package can be used to remesh a given triangulated surface mesh.
 The algorithm, based on Delaunay refinement of a restricted Delaunay triangulation,
 generates a triangle surface mesh that provably has the required properties on simplices size,
@@ -167,7 +167,29 @@ An example of how to remesh a given triangulated surface mesh with the Delaunay 
 algorithm while preserving the detected sharp edges
 is given in \ref Polygon_mesh_processing/delaunay_remeshing_example.cpp
 
-\paragraph Decimate Remeshing of (Almost) Planar Patches
+\paragraph acvdrem Approximated Discrete Centroidal Voronoi Diagram (ACVD) Remeshing
+This remeshing algorithm uses clustering on polygonal meshes as to approximate a Centroidal Voronoi Diagram construction.
+It is inspired by the method presented in \cgalCite{cgal:vc-acvdupmc-04} and further developed in \cgalCite{cgal:audette2011approach} and \cgalCite{cgal:vcp-grtmmdvd-08}.
+The algorithm is similar to Lloyd's algorithm (or k-means) where random input vertices are picked to initialize clusters of vertices, which are then grown to minimize a particular energy, until convergence.
+Upon convergence, output vertices are computed from the vertices of each cluster.
+The function `CGAL::Polygon_mesh_processing::approximated_centroidal_Voronoi_diagram_remeshing()` takes as input a triangle mesh and
+an expected number of output vertices, and updates the mesh with the remeshed version.
+Note that the final vertex count may exceed the input parameter if the input mesh is not closed,
+or if the specified vertex budget was insufficient to generate a manifold mesh.
+In this case, the uniformity of the output triangles may be affected.
+Note that there is no guarantee that the output mesh will have the same topology as the input. For example, if
+a small handle is entirely contained in a cluster then this handle will not be part of the output.
+If the input mesh contains sharp features or corners, it is possible to use quadric error metrics to either
+move output vertices (fast but can produce bad looking triangles), of to use quadric error metrics directly into the energy formulation of each cluster (slower but produces better quality triangles).
+Additionally, adaptive remeshing based on surface curvature is possible.
+
+
+\cgalFigureBegin{acvd_remeshing, acvd_remeshing.png}
+ACVD remeshing.
+From left to right: Input; with default parameters; using adaptative option; using QEM based energy.
+\cgalFigureEnd
+
+\paragraph decimate Remeshing of (Almost) Planar Patches
 When many triangles are used to describe a planar region of a model, one might wish to simplify the mesh
 in this region to use few elements, or even a single large polygonal face when the region makes up a simply connected patch.
 This can be achieved using the function `CGAL::Polygon_mesh_processing::remesh_planar_patches()`.
@@ -602,7 +624,7 @@ reports all pairs of intersecting triangles.
 \subsubsection SIExample Self Intersections Example
 
 The following example illustrates the detection of self intersection in the `pig.off` mesh.
-The detected self-intersection is illustrated on Figure \cgalFigureRef{SelfIntersections}.
+The detected self-intersection is illustrated on \cgalFigureRef{SelfIntersections}.
 
 \cgalExample{Polygon_mesh_processing/self_intersections_example.cpp}
 
@@ -996,15 +1018,13 @@ to derive new closed-form equations for the corrected curvature measures. These 
 curvature measures are the first step for computing the curvatures. For a triangle \f$ \tau_{ijk} \f$,
 with vertices \a i, \a j, \a k:
 
-\f[
-  \begin{align*}
+\f{align*}{
   \mu^{(0)}(\tau_{ijk}) = &\frac{1}{2} \langle \bar{\mathbf{u}} \mid (\mathbf{x}_j - \mathbf{x}_i) \times (\mathbf{x}_k - \mathbf{x}_i) \rangle, \\
   \mu^{(1)}(\tau_{ijk}) = &\frac{1}{2} \langle \bar{\mathbf{u}} \mid (\mathbf{u}_k - \mathbf{u}_j) \times \mathbf{x}_i + (\mathbf{u}_i - \mathbf{u}_k) \times \mathbf{x}_j + (\mathbf{u}_j - \mathbf{u}_i) \times \mathbf{x}_k \rangle, \\
   \mu^{(2)}(\tau_{ijk}) = &\frac{1}{2} \langle \mathbf{u}_i \mid \mathbf{u}_j \times \mathbf{u}_k \rangle, \\
   \mu^{\mathbf{X},\mathbf{Y}}(\tau_{ijk}) = & \frac{1}{2} \big\langle \bar{\mathbf{u}} \big| \langle \mathbf{Y} | \mathbf{u}_k -\mathbf{u}_i \rangle \mathbf{X} \times (\mathbf{x}_j - \mathbf{x}_i) \big\rangle
     -\frac{1}{2} \big\langle \bar{\mathbf{u}} \big| \langle \mathbf{Y} | \mathbf{u}_j -\mathbf{u}_i \rangle \mathbf{X} \times (\mathbf{x}_k - \mathbf{x}_i) \big\rangle,
-  \end{align*}
-\f]
+\f}
 where \f$ \langle \cdot \mid \cdot \rangle \f$ denotes the usual scalar product,
 \f$ \bar{\mathbf{u}}=\frac{1}{3}( \mathbf{u}_i + \mathbf{u}_j + \mathbf{u}_k )\f$.
 
@@ -1227,6 +1247,17 @@ compute the curvatures on a specific vertex.
 
 \cgalExample{Polygon_mesh_processing/interpolated_corrected_curvatures_vertex.cpp}
 
+\subsection DCurvartures Discrete Curvatures
+
+The package also provides methods to compute the standard, non-interpolated discrete mean and Gaussian
+curvatures on triangle meshes, based on the work of Meyer et al. \cgalCite{cgal:mdsb-ddgot-02}.
+These curvatures are computed at each vertex of the mesh, and are based on the angles of the incident
+triangles. The functions are:
+- `CGAL::Polygon_mesh_processing::discrete_mean_curvature()`
+- `CGAL::Polygon_mesh_processing::discrete_mean_curvatures()`
+- `CGAL::Polygon_mesh_processing::discrete_Gaussian_curvature()`
+- `CGAL::Polygon_mesh_processing::discrete_Gaussian_curvatures()`
+
 ****************************************
 \section PMPSlicer Slicer
 
@@ -1440,6 +1471,12 @@ supervision of David Coeurjolly, Jaques-Olivier Lachaud, and Sébastien Loriot. 
 used as a reference during the project.
 
 The curvature-based sizing field version of isotropic remeshing was added by Ivan Pađen during GSoC 2023, under the supervision of Sébastien Loriot and Jane Tournois.
+
+The implementation of the ACVD Remeshing method was initiated by Hossam Saeed during GSoC 2023, under
+supervision of Sébastien Valette and Sébastien Loriot, who later finalized the work.
+The implementation is based on \cgalCite{cgal:vcp-grtmmdvd-08}. and
+preceding work. <a href="https://www.creatis.insa-lyon.fr/~valette/public/project/acvd/">ACVD's implementation</a> was also
+used as a reference during the project.
 
 */
 } /* namespace CGAL */

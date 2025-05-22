@@ -467,6 +467,9 @@ the requirement for traversal of all faces in a graph.
 /// \defgroup PkgBGLPartition Partitioning Operations
 /// \ingroup PkgBGLRef
 
+/// \defgroup PkgBGLTraversal Graph Traversal
+/// \ingroup PkgBGLRef
+
 /// \defgroup PkgBGLIOFct I/O Functions
 /// \ingroup PkgBGLRef
 
@@ -480,6 +483,10 @@ the requirement for traversal of all faces in a graph.
 
 /// \defgroup PkgBGLIoFuncsOBJ OBJ I/O Functions
 /// I/O Functions for the \ref IOStreamOBJ
+/// \ingroup PkgBGLIOFct
+
+/// \defgroup PkgBGLIoFuncsOM OM I/O Functions
+/// I/O Functions for the \ref IOStreamOM
 /// \ingroup PkgBGLIOFct
 
 /// \defgroup PkgBGLIoFuncsOFF OFF I/O Functions
@@ -580,6 +587,12 @@ both in term of time and memory.
 Methods to split a mesh into subdomains, using the library
 <a href="http://glaros.dtc.umn.edu/gkhome/metis/metis/overview">METIS</a> or a graphcut
 implementation.
+*/
+
+/*!
+\addtogroup PkgBGLTraversal
+
+Methods to traverse a graph, for example to find the shortest path between two vertices.
 */
 
 /*!
@@ -737,6 +750,7 @@ user might encounter.
 - `CGAL::Euler::join_vertex()`
 - `CGAL::Euler::make_hole()`
 - `CGAL::Euler::remove_center_vertex()`
+- `CGAL::Euler::remove_degree_2_vertex()`
 - `CGAL::Euler::remove_face()`
 - `CGAL::Euler::split_edge()`
 - `CGAL::Euler::split_face()`
@@ -756,6 +770,9 @@ user might encounter.
 
 \cgalCRPSection{Conversion Functions}
 - `CGAL::split_graph_into_polylines()`
+
+\cgalCRPSection{Graph Traversal}
+- `CGAL::dijkstra_shortest_path()`
 
 \cgalCRPSection{Graph Adaptors}
 - `CGAL::Dual`

@@ -336,7 +336,7 @@ Ridge_approximation(const TriangleMesh &p,
 {
   //init the is_visited_map and check that the mesh is a triangular one.
   face_iterator itb,ite;
-  boost::tie(itb,ite) = faces(P);
+  std::tie(itb,ite) = faces(P);
   for(;itb!=ite;itb++) {
     is_visited_map[*itb] = false;
   }
@@ -411,10 +411,10 @@ compute_ridges(Ridge_interrogation_type r_type, OutputIterator ridge_lines_it, R
 
   //reinit the is_visited_map
   face_iterator itb,ite;
-  boost::tie(itb,ite) = faces(P);
+  std::tie(itb,ite) = faces(P);
   for(;itb!=ite;itb++) is_visited_map[*itb] = false;
 
-  boost::tie(itb,ite) = faces(P);
+  std::tie(itb,ite) = faces(P);
   for(;itb!=ite;itb++)
     {
       face_descriptor f = *itb;

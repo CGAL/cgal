@@ -19,6 +19,7 @@
 #include <CGAL/Default.h>
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/property_map.h>
+#include <CGAL/Dimension.h>
 
 #include <boost/mpl/has_xxx.hpp>
 
@@ -356,6 +357,22 @@ struct GetPolygonSoupGeomTraits
                    > ::type                                                         type;
 };
 
+namespace internal {
+template <class Point, int d = CGAL::Ambient_dimension<Point>::value>
+struct Vector_matching_point {
+  typedef typename Kernel_traits<Point>::Kernel::Vector_d type;
+};
+
+template <class Point>
+struct Vector_matching_point<Point, 2> {
+  typedef typename Kernel_traits<Point>::Kernel::Vector_2 type;
+};
+
+template <class Point>
+struct Vector_matching_point<Point, 3> {
+  typedef typename Kernel_traits<Point>::Kernel::Vector_3 type;
+};
+}
 
 template <class PointRange, class NamedParameters, class PointMap = Default, class NormalMap = Default>
 struct Point_set_processing_3_np_helper
@@ -380,7 +397,7 @@ struct Point_set_processing_3_np_helper
 
   typedef typename Geom_traits::FT FT; // public
 
-  typedef Constant_property_map<Value_type, typename Geom_traits::Vector_3> DummyNormalMap;
+  typedef Constant_property_map<Value_type, typename internal::Vector_matching_point<Point>::type> DummyNormalMap;
   typedef typename Default::Get<NormalMap, DummyNormalMap>::type DefaultNMap;
 
   typedef typename internal_np::Lookup_named_param_def<

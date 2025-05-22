@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.1...3.23)
+cmake_minimum_required(VERSION 3.12...3.31)
 project(Surface_sweep_2_Tests)
 
 find_package(CGAL REQUIRED COMPONENTS Core)
@@ -20,9 +20,9 @@ function(compile name source_file point_location traits)
   add_executable(${name} ${source_file})
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS ${name})
   if(TARGET CGAL::CGAL_Core)
-    target_link_libraries(${name} CGAL::CGAL CGAL::CGAL_Core)
+    target_link_libraries(${name} PRIVATE CGAL::CGAL CGAL::CGAL_Core)
   else()
-    target_link_libraries(${name} CGAL::CGAL)
+    target_link_libraries(${name} PRIVATE CGAL::CGAL)
   endif()
   target_compile_definitions(
     ${name} PRIVATE -DCGAL_ARR_TEST_POINT_LOCATION=${point_location}

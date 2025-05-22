@@ -1572,7 +1572,7 @@ void Scene_edit_polyhedron_item_priv::read_roi(const char* file_name, Mesh* mesh
   std::vector<mesh_vd> all_vertices;
   all_vertices.reserve(num_vertices(fs.get_deform_mesh(mesh)->halfedge_graph()));
   mesh_vi vb, ve;
-  for(boost::tie(vb, ve) = vertices(fs.get_deform_mesh(mesh)->halfedge_graph()); vb != ve; ++vb) {
+  for(std::tie(vb, ve) = vertices(fs.get_deform_mesh(mesh)->halfedge_graph()); vb != ve; ++vb) {
     all_vertices.push_back(*vb);
   }
   // read roi
@@ -1619,28 +1619,6 @@ void Scene_edit_polyhedron_item::reset_deform_object()
 {
   d->deform_sm_mesh->reset();
   refresh_all_group_centers();
-}
-
-std::optional<std::size_t> Scene_edit_polyhedron_item::get_minimum_isolated_component() {
-  Travel_isolated_components<SMesh>::Minimum_visitor visitor;
-  Travel_isolated_components<SMesh>(*surface_mesh()).travel<sm_vertex_descriptor>
-      (vertices(*surface_mesh()).first, vertices(*surface_mesh()).second,
-       num_vertices(*surface_mesh()), Is_selected<SMesh>(d->deform_sm_mesh), visitor);
-  return visitor.minimum;
-}
-
-
-std::optional<std::size_t> Scene_edit_polyhedron_item::select_isolated_components(std::size_t threshold) {
-    typedef boost::function_output_iterator<Select_roi_output<SMesh> > Output_iterator;
-    Output_iterator out(d->deform_sm_mesh);
-
-    Travel_isolated_components<SMesh>::Selection_visitor<Output_iterator> visitor(threshold, out);
-    Travel_isolated_components<SMesh>(*surface_mesh()).travel<sm_vertex_descriptor>
-        (vertices(*surface_mesh()).first, vertices(*surface_mesh()).second,
-         num_vertices(*surface_mesh()), Is_selected<SMesh>(d->deform_sm_mesh), visitor);
-
-    if(visitor.any_inserted) { invalidateOpenGLBuffers(); Q_EMIT itemChanged(); }
-    return visitor.minimum_visitor.minimum;
 }
 
 bool Scene_edit_polyhedron_item::is_there_any_ctrl_vertices_group()
@@ -1753,7 +1731,7 @@ void Scene_edit_polyhedron_item::update_normals() {
 void Scene_edit_polyhedron_item::set_all_vertices_as_roi()
 {
   boost::graph_traits<SMesh>::vertex_iterator vb, ve;
-  for(boost::tie(vb, ve) = vertices(*surface_mesh()); vb != ve; ++vb)
+  for(std::tie(vb, ve) = vertices(*surface_mesh()); vb != ve; ++vb)
   {
     insert_roi_vertex<SMesh>(*vb, surface_mesh());
   }

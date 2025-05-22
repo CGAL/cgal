@@ -170,7 +170,7 @@ public:
   /// @}
 
   /// \name
-  /// The following functions must be provided only if the methods of `Hyperbolic_Delaunay_triangulation_2`
+  /// The following functions must be provided only if the methods of `CGAL::Hyperbolic_Delaunay_triangulation_2`
   /// that return elements of the Voronoi diagram are instantiated:
   /// @{
         Construct_hyperbolic_segment_2       construct_hyperbolic_segment_2_object();

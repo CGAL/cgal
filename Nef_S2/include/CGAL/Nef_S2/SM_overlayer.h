@@ -1020,7 +1020,7 @@ check_sphere(const Seg_list& L, bool compute_halfsphere[3][2]) const {
 //    int l = it->compare_length_to_halfcircle();
     CGAL_NEF_TRACEN("source " << it->source());
     CGAL_NEF_TRACEN("target " << it->target());
-    CGAL_NEF_TRACEN("cicle  " << it->sphere_circle());
+    CGAL_NEF_TRACEN("circle " << it->sphere_circle());
     CGAL_NEF_TRACEN("is long " << it->is_long());
 
     if(it->is_short()) continue;

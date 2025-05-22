@@ -325,14 +325,14 @@ supporting `s`.
 const Sphere_circle& sphere_circle() ;
 
 /*!
-returns the sperical
+returns the spherical
 segment oriented from `target()` to `source()` with the same
 point set as `s`.
 */
 Sphere_segment opposite() ;
 
 /*!
-returns the sperical
+returns the spherical
 segment oriented from `target()` to `source()` with the
 point set completing `s` to a full circle.
 */
@@ -1072,7 +1072,7 @@ Nef_polyhedron_S2<K> difference(const Nef_polyhedron_S2<K>&
 N1) ;
 
 /*!
-returns the symmectric difference
+returns the symmetric difference
 `N - T` \f$ \cup\f$ `T - N`.
 */
 Nef_polyhedron_S2<K> symmetric_difference( const

@@ -7,13 +7,8 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-//
 // Author(s)     : Stéphane Tayeb, Aymeric PELLE
-//
-//******************************************************************************
-// File Description :
-// class Labeled_mesh_domain_3. See class description.
-//******************************************************************************
+
 
 #ifndef CGAL_LABELED_MESH_DOMAIN_3_H
 #define CGAL_LABELED_MESH_DOMAIN_3_H
@@ -875,17 +870,15 @@ public:
    * function.  The domain to be discretized is assumed to be the domain where
    * the function has negative values.
    *
-   * The method takes as argument a bounding sphere which is required to
-   * circumscribe the surface and to have its center inside the domain.
-   *
    * \tparam Function a type compatible with the signature `FT(Point_3)`: it takes a point as argument,
    *                  and returns a scalar value. That object must be model of `CopyConstructible`
    * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
    * \tparam Bounding_object either a bounding sphere (of type `Sphere_3`), a bounding box (type `Bbox_3`),
-   *                         or a bounding `Iso_cuboid_3`
+   *                         or a bounding `Iso_cuboid_3` which is required to circumscribe
+   *                         the surface and to have its center inside the domain.
    *
    * \param function the implicit function
-   * \param bounding_object object boundint the meshable domain and its center is inside the domain.
+   * \param bounding_object object bounding the meshable domain and its center is inside the domain.
    * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
    *
    * \cgalNamedParamsBegin
@@ -936,12 +929,11 @@ public:
 /// @}
 #ifndef DOXYGEN_RUNNING
   template<typename CGAL_NP_TEMPLATE_PARAMETERS>
-  static Labeled_mesh_domain_3 create_implicit_mesh_domain(const CGAL_NP_CLASS& np = parameters::default_values())
+  static Labeled_mesh_domain_3 create_implicit_mesh_domain(const CGAL_NP_CLASS &np)
   {
     static_assert(!parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::function_param_t>::value, "Value for required parameter not found");
     static_assert(!parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::bounding_object_param_t>::value, "Value for required parameter not found");
 
-    using parameters::get_parameter;
     return create_implicit_mesh_domain(parameters::get_parameter(np, internal_np::function_param),
                                        parameters::get_parameter(np, internal_np::bounding_object_param),
                                        np);
@@ -1097,7 +1089,7 @@ public:
     Surface_patch operator()(const Point_3& a, const Point_3& b) const
     {
       // If f(a) != f(b), then [a,b] intersects some surface. Here we consider
-      // [a,b] intersects surface_patch labelled <f(a),f(b)> (or <f(b),f(a)>).
+      // [a,b] intersects surface_patch labeled <f(a),f(b)> (or <f(b),f(a)>).
       // It may be false, further rafinement will improve precision
       const Subdomain_index value_a = r_domain_.function_(a);
       const Subdomain_index value_b = r_domain_.function_(b);
@@ -1139,11 +1131,7 @@ public:
   /*
    * Returns a point in the intersection of the primitive `type`
    * with some boundary surface.
-   * `Type1` is either `Segment_3`, `Ray_3` or `Line_3`.
-   * The integer `dimension` is set to the dimension of the lowest
-   * dimensional face in the input complex containing the returned point, and
-   * `index` is set to the index to be stored at a mesh vertex lying
-   * on this face.
+   * `Type` is either `Segment_3`, `Ray_3` or `Line_3`.
    */
   struct Construct_intersection
   {
@@ -1170,10 +1158,10 @@ public:
 
   private:
     /*
-     * Returns a point in the intersection of [a,b] with the surface
-     *  `a` must be the source point, and `b` the out point. It's important
+     * Returns a point in the intersection of `[a,b]` with the surface
+     *  `a` must be the source point, and `b` the out point. It is important
      * because it drives bisection cuts.
-     * Indeed, the returned point is the first intersection from  `[a,b]`
+     * Indeed, the returned point is the first intersection of `[a,b]`
      * with a subdomain surface.
      */
     Intersection operator()(const Point_3& a, const Point_3& b) const
@@ -1196,7 +1184,7 @@ public:
 
       // If both extremities are in the same subdomain,
       // there is no intersection.
-      // This should not happen...
+      // Should only be able to happen during initial point generation.
       if( value_at_p1 == value_at_p2 )
       {
         return Intersection();
