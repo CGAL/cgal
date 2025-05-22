@@ -509,7 +509,7 @@ class Alpha_expansion_MaxFlow_impl;
      \cgalParamNEnd
    \cgalNamedParamsEnd
 
-   \note The `MaxFlow` implementation is provided by the \ref PkgSurfaceMeshSegmentationRef
+   \note The `MaxFlow` implementation is provided by the \ref PkgSurfaceMeshSegmentation
    under GPL license. The header `<CGAL/boost/graph/Alpha_expansion_MaxFlow_tag.h>`
    must be included if users want to use this implementation.
 */

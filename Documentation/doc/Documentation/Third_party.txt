@@ -143,7 +143,7 @@ The \eigen web site is <A HREF="https://eigen.tuxfamily.org/index.php?title=Main
 
 \opengr is a set C++ libraries for 3D Global Registration released under the terms of the APACHE V2 license.
 
-\cgal provides wrappers for the Super4PCS algorithm of \opengr in the \ref PkgPointSetProcessing3Ref
+\cgal provides wrappers for the Super4PCS algorithm of \opengr in the \ref PkgPointSetProcessing3
 packages. In order to use \opengr in \cgal programs, the executables should be linked with the CMake imported target `CGAL::OpenGR_support` provided in `CGAL_OpenGR_support.cmake`.
 
 The \opengr web site is <A HREF="https://github.com/STORM-IRIT/OpenGR">`https://github.com/STORM-IRIT/OpenGR`</A>.
@@ -152,7 +152,7 @@ The \opengr web site is <A HREF="https://github.com/STORM-IRIT/OpenGR">`https://
 
 \libpointmatcher is a modular library implementing the Iterative Closest Point (ICP) algorithm for aligning point clouds, released under a permissive BSD license.
 
-\cgal provides wrappers for the ICP algorithm of \libpointmatcher in the \ref PkgPointSetProcessing3Ref
+\cgal provides wrappers for the ICP algorithm of \libpointmatcher in the \ref PkgPointSetProcessing3
 packages. In order to use \libpointmatcher in \cgal programs, the
 executables should be linked with the CMake imported target
 `CGAL::pointmatcher_support` provided in
@@ -276,7 +276,7 @@ for instance, on Windows, you can download it from <A HREF="https://www.zlib.net
 
 \ceres is an open source C++ library for modeling and solving large, complicated optimization problems.
 
-In \cgal, \ceres is used by the \ref PkgPolygonMeshProcessingRef package for mesh smoothing, which
+In \cgal, \ceres is used by the \ref PkgPolygonMeshProcessing package for mesh smoothing, which
 requires solving complex non-linear least squares problems.
 
 Visit the official website of the library at <A HREF="http://ceres-solver.org/index.html">`ceres-solver.org`</A>

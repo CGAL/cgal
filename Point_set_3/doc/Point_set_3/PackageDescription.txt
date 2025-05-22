@@ -25,7 +25,7 @@
 /// header or by the LAS standard.
 ///
 /// For a complete documentation of these functions, please refer to the
-/// \ref PkgPointSetProcessing3Ref manual.
+/// \ref PkgPointSetProcessing3Ref "Point Set Processing Reference Manual".
 
 /// \defgroup PkgPointSet3IOLAS Input/Output (LAS)
 /// I/O Functions for the \ref IOStreamLAS
