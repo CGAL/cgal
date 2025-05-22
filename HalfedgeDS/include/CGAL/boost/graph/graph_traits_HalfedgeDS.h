@@ -111,6 +111,11 @@ struct HDS_edge {
                       i.halfedge():i.halfedge()->opposite());
   }
 
+  friend std::ostream& operator<<(std::ostream& os, const HDS_edge& e)
+  {
+    os << e.halfedge_;
+    return os;
+  }
 private:
   Halfedge_handle halfedge_;
 };
