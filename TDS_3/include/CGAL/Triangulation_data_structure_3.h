@@ -1156,7 +1156,7 @@ public:
 
     void operator()(Cell_handle c) {
       for (int j=0; j<= t->dimension(); ++j) {
-        Vertex_handle w = vertex(c, j);
+        Vertex_handle w = t->vertex(c, j);
         if(filter(w))
           continue;
         if (w != v) {
@@ -1487,21 +1487,21 @@ public:
       return vertices;
 
     if (dimension() == 0) {
-      Vertex_handle v1 = v->cell()->neighbor(0)->vertex(0);
+      Vertex_handle v1 = vertex(neighbor(cell(v), 0), 0);
       if (!f(v1)) *vertices++ = v1;
       return vertices;
     }
 
     if (dimension() == 1) {
       CGAL_assertion(number_of_vertices() >= 3);
-      Cell_handle n0 = v->cell();
-      const int index_v_in_n0 = n0->index(v);
+      Cell_handle n0 = cell(v);
+      const int index_v_in_n0 = index(n0, v);
       CGAL_assume(index_v_in_n0 <= 1);
-      Cell_handle n1 = n0->neighbor(1 - index_v_in_n0);
-      const int index_v_in_n1 = n1->index(v);
+      Cell_handle n1 = neighbor(n0, 1 - index_v_in_n0);
+      const int index_v_in_n1 = index(n1, v);
       CGAL_assume(index_v_in_n1 <= 1);
-      Vertex_handle v1 = n0->vertex(1 - index_v_in_n0);
-      Vertex_handle v2 = n1->vertex(1 - index_v_in_n1);
+      Vertex_handle v1 = vertex(n0, 1 - index_v_in_n0);
+      Vertex_handle v2 = vertex(n1, 1 - index_v_in_n1);
       if (!f(v1)) *vertices++ = v1;
       if (!f(v2)) *vertices++ = v2;
       return vertices;

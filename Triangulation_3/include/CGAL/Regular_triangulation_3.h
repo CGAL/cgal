@@ -330,7 +330,7 @@ private:
 
         c = locate(*it_p, lt, li, lj, hint);
         Vertex_handle v = insert(*it_p, lt, c, li, lj);
-        hint = (v == Vertex_handle() ? c : v->cell());
+        hint = (v == Vertex_handle() ? c : tds().cell(v));
 
         far_sphere_vertices.push_back(v);
       }
@@ -414,11 +414,11 @@ public:
         c = locate(points[i], lt, li, lj, hint);
         Vertex_handle v = insert (points[i], lt, c, li, lj);
 
-        hint = (v == Vertex_handle() ? c : v->cell());
+        hint = (v == Vertex_handle() ? c : tds().cell(v));
         ++i;
       }
 
-      Hint tls_hint(hint->vertex(0));
+      Hint tls_hint(tds().vertex(hint, 0));
       tbb::parallel_for(tbb::blocked_range<size_t>(i, num_points),
                         Insert_point<Self>(*this, points, tls_hint));
 
@@ -441,7 +441,7 @@ public:
 
         Vertex_handle v = insert(*p, lt, c, li, lj);
 
-        hint = v == Vertex_handle() ? c : v->cell();
+        hint = v == Vertex_handle() ? c : tds().cell(v);
       }
     }
 #ifdef CGAL_TRIANGULATION_3_PROFILING
@@ -542,7 +542,7 @@ private:
         if(v != Vertex_handle())
         {
           v->info() = infos[indices[i]];
-          hint = v->cell();
+          hint = tds().cell(v);
         }
         else
           hint = c;
@@ -576,7 +576,7 @@ private:
         if(v!=Vertex_handle())
         {
           v->info()=infos[*it];
-          hint=v->cell();
+          hint=tds().cell(v);
         }
         else
         {
@@ -629,7 +629,7 @@ public:
                        bool *could_lock_zone = nullptr)
   {
     return insert(p,
-                  hint == Vertex_handle() ? this->infinite_cell() : hint->cell(),
+                  hint == Vertex_handle() ? this->infinite_cell() : tds().cell(hint),
                   could_lock_zone);
   }
 
@@ -1128,7 +1128,7 @@ protected:
 
   bool in_conflict_0(const Weighted_point& p, const Cell_handle c) const
   {
-    return power_test(c->vertex(0)->point(), p) == ON_POSITIVE_SIDE;
+    return power_test(tds().vertex(c, 0)->point(), p) == ON_POSITIVE_SIDE;
   }
 
   bool in_conflict(const Weighted_point& p, const Cell_handle c) const
@@ -1283,11 +1283,11 @@ protected:
 
         for(int i=0; i<=dim; i++)
         {
-          Vertex_handle v = (*start)->vertex(i);
-          if(v->cell() != Cell_handle())
+          Vertex_handle v = t->tds().vertex(*start,i);
+          if(t->tds().cell(v) != Cell_handle())
           {
             vertices.push_back(v);
-            v->set_cell(Cell_handle());
+            t->tds().set_cell(v, Cell_handle());
           }
         }
         start ++;
@@ -1296,11 +1296,11 @@ protected:
 
     void reinsert_vertices(Vertex_handle v)
     {
-      Cell_handle hc = v->cell();
+      Cell_handle hc = t->tds().cell(v);
       for(typename std::vector<Vertex_handle>::iterator
            vi = vertices.begin(); vi != vertices.end(); ++vi)
       {
-        if((*vi)->cell() != Cell_handle())
+        if(t->tds().cell(*vi) != Cell_handle())
           continue;
 
         hc = t->locate((*vi)->point(), hc);
@@ -1320,7 +1320,7 @@ protected:
 
     Vertex_handle replace_vertex(Cell_handle c, int index, const Weighted_point& p)
     {
-      Vertex_handle v = c->vertex(index);
+      Vertex_handle v = t->tds().vertex(c, index);
       hide_point(c, v->point());
       v->set_point(p);
       return v;
@@ -1358,11 +1358,11 @@ protected:
 
         for(int i=0; i<=dim; i++)
         {
-          Vertex_handle v = (*start)->vertex(i);
-          if(v->cell() != Cell_handle())
+          Vertex_handle v = t->tds().vertex(*start, i);
+          if(t->tds().cell(v) != Cell_handle())
           {
             vertices.local().push_back(v);
-            v->set_cell(Cell_handle());
+            t->tds().set_cell(v, Cell_handle());
           }
         }
         start ++;
@@ -1371,11 +1371,11 @@ protected:
 
     void reinsert_vertices(Vertex_handle v)
     {
-      Cell_handle hc = v->cell();
+      Cell_handle hc = t->tds().cell(v);
       for(typename std::vector<Vertex_handle>::iterator
            vi = vertices.local().begin(); vi != vertices.local().end(); ++vi)
       {
-        if((*vi)->cell() != Cell_handle())
+        if(t->tds().cell(*vi) != Cell_handle())
           continue;
 
         hc = t->locate((*vi)->point(), hc);
@@ -1395,7 +1395,7 @@ protected:
 
     Vertex_handle replace_vertex(Cell_handle c, int index, const Weighted_point& p)
     {
-      Vertex_handle v = c->vertex(index);
+      Vertex_handle v = t->tds().vertex(c, index);
       hide_point(c, v->point());
       v->set_point(p);
       return v;
@@ -1458,7 +1458,7 @@ protected:
           // does not get its position changed to P2 != P1.
           if(m_rt.try_lock_point(hint_point_mem) && m_rt.try_lock_point(p))
           {
-            // Make sure that the hint is still valid (so that we can safely take hint->cell()) and
+            // Make sure that the hint is still valid (so that we can safely take tds().cell(hint)) and
             // that its position hasn't changed to ensure that we will start the locate from where
             // we have locked.
             if(!vertex_validity_check(hint, m_rt.tds()) ||
@@ -1473,14 +1473,14 @@ protected:
             Locate_type lt;
             int li, lj;
 
-            Cell_handle c = m_rt.locate(p, lt, li, lj, hint->cell(), &could_lock_zone);
+            Cell_handle c = m_rt.locate(p, lt, li, lj, m_rt.tds().cell(hint), &could_lock_zone);
             Vertex_handle v;
             if(could_lock_zone)
               v = m_rt.insert(p, lt, c, li, lj, &could_lock_zone);
 
             if(could_lock_zone)
             {
-              vertex_hint_and_point = (v == Vertex_handle() ? c->vertex(0) : v);
+              vertex_hint_and_point = (v == Vertex_handle() ? m_rt.tds().vertex(c, 0) : v);
               m_rt.unlock_all_elements();
               success = true;
 #ifdef CGAL_CONCURRENT_TRIANGULATION_3_PROFILING
@@ -1565,7 +1565,7 @@ protected:
           // does not get its position changed to P2 != P1.
           if(m_rt.try_lock_point(hint_point_mem) && m_rt.try_lock_point(p))
           {
-            // Make sure that the hint is still valid (so that we can safely take hint->cell()) and
+            // Make sure that the hint is still valid (so that we can safely take tds().cell(hint)) and
             // that its position hasn't changed to ensure that we will start the locate from where
             // we have locked.
             if(!vertex_validity_check(hint, m_rt.tds()) ||
@@ -1580,7 +1580,7 @@ protected:
             Locate_type lt;
             int li, lj;
 
-            Cell_handle c = m_rt.locate(p, lt, li, lj, hint->cell(), &could_lock_zone);
+            Cell_handle c = m_rt.locate(p, lt, li, lj, m_rt.tds().cell(hint), &could_lock_zone);
             Vertex_handle v;
             if(could_lock_zone)
               v = m_rt.insert(p, lt, c, li, lj, &could_lock_zone);
@@ -1589,7 +1589,7 @@ protected:
             {
               if(v == Vertex_handle())
               {
-                vertex_hint_and_point = c->vertex(0);
+                vertex_hint_and_point = m_rt.tds().vertex(c, 0);
               }
               else
               {
@@ -1687,12 +1687,12 @@ nearest_power_vertex_in_cell(const Bare_point& p, Cell_handle c) const
 // power distance  to p.
 {
   CGAL_precondition(dimension() >= 1);
-  Vertex_handle nearest = nearest_power_vertex(p, c->vertex(0), c->vertex(1));
+  Vertex_handle nearest = nearest_power_vertex(p, tds().vertex(c, 0), tds().vertex(c, 1));
   if(dimension() >= 2)
   {
-    nearest = nearest_power_vertex(p, nearest, c->vertex(2));
+    nearest = nearest_power_vertex(p, nearest, tds().vertex(c, 2));
     if(dimension() == 3)
-      nearest = nearest_power_vertex(p, nearest, c->vertex(3));
+      nearest = nearest_power_vertex(p, nearest, tds().vertex(c, 3));
   }
   return nearest;
 }
@@ -1763,7 +1763,7 @@ void
 Regular_triangulation_3<Gt,Tds,Lds>::
 dual_segment(Cell_handle c, int i, Bare_point& p, Bare_point&q) const
 {
-  Cell_handle n = c->neighbor(i);
+  Cell_handle n = tds().neighbor(c, i);
   CGAL_assertion(! is_infinite(c) && ! is_infinite(n));
 
   p = dual(c);
@@ -1783,13 +1783,13 @@ void
 Regular_triangulation_3<Gt,Tds,Lds>::
 dual_ray(Cell_handle c, int i, Ray& ray) const
 {
-  Cell_handle n = c->neighbor(i);
+  Cell_handle n = tds().neighbor(c, i);
   CGAL_precondition((!is_infinite(c) != !is_infinite(n))); // xor
   // either n or c is infinite
   int in;
   if(is_infinite(c))
   {
-    in = n->index(c);
+    in = tds().index(n,c);
   }
   else
   {
@@ -1797,14 +1797,14 @@ dual_ray(Cell_handle c, int i, Ray& ray) const
     in = i;
   }
 
-  // n now denotes a finite cell, either c or c->neighbor(i)
+  // n now denotes a finite cell, either c or tds().neighbor(c, i)
   int ind[3] = {(in+1)&3,(in+2)&3,(in+3)&3};
   if((in&1) == 1)
     std::swap(ind[0], ind[1]);
 
-  const Weighted_point& p = n->vertex(ind[0])->point();
-  const Weighted_point& q = n->vertex(ind[1])->point();
-  const Weighted_point& r = n->vertex(ind[2])->point();
+  const Weighted_point& p = tds().vertex(n, ind[0])->point();
+  const Weighted_point& q = tds().vertex(n, ind[1])->point();
+  const Weighted_point& r = tds().vertex(n, ind[2])->point();
   const Bare_point& bp = construct_point(p);
   const Bare_point& bq = construct_point(q);
   const Bare_point& br = construct_point(r);
@@ -1846,17 +1846,17 @@ dual_segment_exact(const Facet& facet, Bare_point& p, Bare_point&q) const
 
   Cell_handle c = facet.first;
   int i = facet.second;
-  Cell_handle n = c->neighbor(i);
+  Cell_handle n = tds().neighbor(c, i);
 
-  const typename Exact_Rt::Weighted_point_3& cp = to_exact(c->vertex(0)->point());
-  const typename Exact_Rt::Weighted_point_3& cq = to_exact(c->vertex(1)->point());
-  const typename Exact_Rt::Weighted_point_3& cr = to_exact(c->vertex(2)->point());
-  const typename Exact_Rt::Weighted_point_3& cs = to_exact(c->vertex(3)->point());
+  const typename Exact_Rt::Weighted_point_3& cp = to_exact(tds().vertex(c, 0)->point());
+  const typename Exact_Rt::Weighted_point_3& cq = to_exact(tds().vertex(c, 1)->point());
+  const typename Exact_Rt::Weighted_point_3& cr = to_exact(tds().vertex(c, 2)->point());
+  const typename Exact_Rt::Weighted_point_3& cs = to_exact(tds().vertex(c, 3)->point());
 
-  const typename Exact_Rt::Weighted_point_3& np = to_exact(n->vertex(0)->point());
-  const typename Exact_Rt::Weighted_point_3& nq = to_exact(n->vertex(1)->point());
-  const typename Exact_Rt::Weighted_point_3& nr = to_exact(n->vertex(2)->point());
-  const typename Exact_Rt::Weighted_point_3& ns = to_exact(n->vertex(3)->point());
+  const typename Exact_Rt::Weighted_point_3& np = to_exact(tds().vertex(n, 0)->point());
+  const typename Exact_Rt::Weighted_point_3& nq = to_exact(tds().vertex(n, 1)->point());
+  const typename Exact_Rt::Weighted_point_3& nr = to_exact(tds().vertex(n, 2)->point());
+  const typename Exact_Rt::Weighted_point_3& ns = to_exact(tds().vertex(n, 3)->point());
 
   p = back_from_exact(exact_weighted_circumcenter(cp, cq, cr, cs));
   q = back_from_exact(exact_weighted_circumcenter(np, nq, nr, ns));
@@ -1869,13 +1869,13 @@ dual_ray_exact(const Facet& facet, Ray& ray) const
 {
   Cell_handle c = facet.first;
   int i = facet.second;
-  Cell_handle n = c->neighbor(i);
+  Cell_handle n = tds().neighbor(c, i);
   CGAL_precondition(!is_infinite(c) != !is_infinite(n)); // xor
   // either n or c is infinite
   int in;
   if(is_infinite(c))
   {
-    in = n->index(c);
+    in = tds().index(n, c);
   }
   else
   {
@@ -1883,7 +1883,7 @@ dual_ray_exact(const Facet& facet, Ray& ray) const
     in = i;
   }
 
-  // n now denotes a finite cell, either c or c->neighbor(i)
+  // n now denotes a finite cell, either c or tds().neighbor(c, i)
   int ind[3] = {(in+1)&3,(in+2)&3,(in+3)&3};
   if((in&1) == 1)
     std::swap(ind[0], ind[1]);
@@ -1907,10 +1907,10 @@ dual_ray_exact(const Facet& facet, Ray& ray) const
   Exact_Rt::Construct_ray_3 exact_ray_3 = Exact_Rt().construct_ray_3_object();
   Exact_Rt::Construct_point_3 exact_point_3 = Exact_Rt().construct_point_3_object();
 
-  const typename Exact_Rt::Weighted_point_3& p = to_exact(n->vertex(ind[0])->point());
-  const typename Exact_Rt::Weighted_point_3& q = to_exact(n->vertex(ind[1])->point());
-  const typename Exact_Rt::Weighted_point_3& r = to_exact(n->vertex(ind[2])->point());
-  const typename Exact_Rt::Weighted_point_3& s = to_exact(n->vertex(in)->point());
+  const typename Exact_Rt::Weighted_point_3& p = to_exact(tds().vertex(n, ind[0])->point());
+  const typename Exact_Rt::Weighted_point_3& q = to_exact(tds().vertex(n, ind[1])->point());
+  const typename Exact_Rt::Weighted_point_3& r = to_exact(tds().vertex(n, ind[2])->point());
+  const typename Exact_Rt::Weighted_point_3& s = to_exact(tds().vertex(n, in)->point());
 
   const typename Exact_Rt::Point_3& bp = exact_point_3(p);
   const typename Exact_Rt::Point_3& bq = exact_point_3(q);
@@ -1934,13 +1934,13 @@ dual(Cell_handle c, int i) const
   if(dimension() == 2)
   {
     CGAL_precondition(i == 3);
-    return construct_object(construct_weighted_circumcenter(c->vertex(0)->point(),
-                                                            c->vertex(1)->point(),
-                                                            c->vertex(2)->point()));
+    return construct_object(construct_weighted_circumcenter(tds().vertex(c, 0)->point(),
+                                                            tds().vertex(c, 1)->point(),
+                                                            tds().vertex(c, 2)->point()));
   }
 
   // dimension() == 3
-  Cell_handle n = c->neighbor(i);
+  Cell_handle n = tds().neighbor(c, i);
   if(! is_infinite(c) && ! is_infinite(n))
   {
     // dual is a segment
@@ -2036,13 +2036,13 @@ side_of_power_sphere(Cell_handle c, const Weighted_point& p, bool perturb) const
 {
   CGAL_precondition(dimension() == 3);
   int i3=3;
-  if(! c->has_vertex(infinite_vertex(), i3))
+  if(! tds().has_vertex(c, infinite_vertex(), i3))
   {
-    return Bounded_side(side_of_oriented_power_sphere(c->vertex(0)->point(),
-                                                       c->vertex(1)->point(),
-                                                       c->vertex(2)->point(),
-                                                       c->vertex(3)->point(),
-                                                       p, perturb));
+    return Bounded_side(side_of_oriented_power_sphere(tds().vertex(c, 0)->point(),
+                                                      tds().vertex(c, 1)->point(),
+                                                      tds().vertex(c, 2)->point(),
+                                                      tds().vertex(c, 3)->point(),
+                                                      p, perturb));
   }
 
   // else infinite cell :
@@ -2061,16 +2061,16 @@ side_of_power_sphere(Cell_handle c, const Weighted_point& p, bool perturb) const
   }
 
   // general case
-  Orientation o = orientation(c->vertex(i0)->point(),
-                              c->vertex(i1)->point(),
-                              c->vertex(i2)->point(), p);
+  Orientation o = orientation(tds().vertex(c, i0)->point(),
+                              tds().vertex(c, i1)->point(),
+                              tds().vertex(c, i2)->point(), p);
   if(o != ZERO)
     return Bounded_side(o);
 
   // else p coplanar with i0,i1,i2
-  return side_of_bounded_power_circle(c->vertex(i0)->point(),
-                                      c->vertex(i1)->point(),
-                                      c->vertex(i2)->point(),
+  return side_of_bounded_power_circle(tds().vertex(c, i0)->point(),
+                                      tds().vertex(c, i1)->point(),
+                                      tds().vertex(c, i2)->point(),
                                       p, perturb);
 }
 
@@ -2150,16 +2150,16 @@ side_of_power_circle(Cell_handle c, int i, const Weighted_point& p,
     CGAL_precondition(i == 3);
     // the triangulation is supposed to be valid, i.e. the facet
     // with vertices 0 1 2 in this order is positively oriented
-    if(! c->has_vertex(infinite_vertex(), i3))
-      return Bounded_side(side_of_oriented_power_circle(c->vertex(0)->point(),
-                                                         c->vertex(1)->point(),
-                                                         c->vertex(2)->point(),
+    if(! tds().has_vertex(c, infinite_vertex(), i3))
+      return Bounded_side(side_of_oriented_power_circle(tds().vertex(c, 0)->point(),
+                                                         tds().vertex(c, 1)->point(),
+                                                         tds().vertex(c, 2)->point(),
                                                          p, perturb));
     // else infinite facet
     // v1, v2 finite vertices of the facet such that v1,v2,infinite
     // is positively oriented
-    Vertex_handle v1 = c->vertex(ccw(i3)),
-                  v2 = c->vertex(cw(i3));
+    Vertex_handle v1 = tds().vertex(c, ccw(i3)),
+                  v2 = tds().vertex(c, cw(i3));
     CGAL_assertion(
       coplanar_orientation(v1->point(), v2->point(), mirror_vertex(c, i3)->point()) == NEGATIVE);
 
@@ -2175,7 +2175,7 @@ side_of_power_circle(Cell_handle c, int i, const Weighted_point& p,
 
   // else dimension == 3
   CGAL_precondition((i >= 0) && (i < 4));
-  if((! c->has_vertex(infinite_vertex(),i3)) || (i3 != i))
+  if((! tds().has_vertex(c, infinite_vertex(),i3)) || (i3 != i))
   {
     // finite facet
     // initialization of i0 i1 i2, vertices of the facet positively
@@ -2183,28 +2183,28 @@ side_of_power_circle(Cell_handle c, int i, const Weighted_point& p,
     int i0 = (i>0) ? 0 : 1;
     int i1 = (i>1) ? 1 : 2;
     int i2 = (i>2) ? 2 : 3;
-    CGAL_precondition(this->coplanar(c->vertex(i0)->point(),
-                                     c->vertex(i1)->point(),
-                                     c->vertex(i2)->point(), p));
-    return side_of_bounded_power_circle(c->vertex(i0)->point(),
-                                        c->vertex(i1)->point(),
-                                        c->vertex(i2)->point(),
+    CGAL_precondition(this->coplanar(tds().vertex(c, i0)->point(),
+                                     tds().vertex(c, i1)->point(),
+                                     tds().vertex(c, i2)->point(), p));
+    return side_of_bounded_power_circle(tds().vertex(c, i0)->point(),
+                                        tds().vertex(c, i1)->point(),
+                                        tds().vertex(c, i2)->point(),
                                         p, perturb);
   }
   //else infinite facet
   // v1, v2 finite vertices of the facet such that v1,v2,infinite
   // is positively oriented
-  Vertex_handle v1 = c->vertex(next_around_edge(i3,i)),
-                v2 = c->vertex(next_around_edge(i,i3));
+  Vertex_handle v1 = tds().vertex(c, next_around_edge(i3,i)),
+                v2 = tds().vertex(c, next_around_edge(i,i3));
   Orientation o = (Orientation)
                     (coplanar_orientation(v1->point(), v2->point(),
-                                          c->vertex(i)->point()) *
+                                          tds().vertex(c, i)->point()) *
                      coplanar_orientation(v1->point(), v2->point(), p));
   // then the code is duplicated from 2d case
   if(o != ZERO)
     return Bounded_side(-o);
   // because p is in f iff
-  // it is not on the same side of v1v2 as c->vertex(i)
+  // it is not on the same side of v1v2 as tds().vertex(c, i)
   // case when p collinear with v1v2 :
   return side_of_bounded_power_segment(v1->point(),
                                        v2->point(),
@@ -2246,8 +2246,8 @@ side_of_power_segment(Cell_handle c, const Weighted_point& p, bool perturb) cons
 {
   CGAL_precondition(dimension() == 1);
   if(! is_infinite(c,0,1))
-    return side_of_bounded_power_segment(c->vertex(0)->point(),
-                                         c->vertex(1)->point(),
+    return side_of_bounded_power_segment(tds().vertex(c, 0)->point(),
+                                         tds().vertex(c, 1)->point(),
                                          p, perturb);
 
   Locate_type lt; int i;
@@ -2256,10 +2256,10 @@ side_of_power_segment(Cell_handle c, const Weighted_point& p, bool perturb) cons
     return soe;
 
   // Either we compare weights, or we use the finite neighboring edge
-  Cell_handle finite_neighbor = c->neighbor(c->index(infinite_vertex()));
+  Cell_handle finite_neighbor = tds().neighbor(c, tds().index(c, infinite_vertex()));
   CGAL_assertion(!is_infinite(finite_neighbor,0,1));
-  return side_of_bounded_power_segment(finite_neighbor->vertex(0)->point(),
-                                       finite_neighbor->vertex(1)->point(),
+  return side_of_bounded_power_segment(tds().vertex(finite_neighbor, 0)->point(),
+                                       tds().vertex(finite_neighbor, 1)->point(),
                                        p, perturb);
 }
 
@@ -2291,21 +2291,21 @@ is_Gabriel(Cell_handle c, int i) const
       side_of_bounded_orthogonal_sphere =
       geom_traits().power_side_of_bounded_power_sphere_3_object();
 
-  if((!is_infinite(c->vertex(i))) &&
-     side_of_bounded_orthogonal_sphere(c->vertex(vertex_triple_index(i,0))->point(),
-                                       c->vertex(vertex_triple_index(i,1))->point(),
-                                       c->vertex(vertex_triple_index(i,2))->point(),
-                                       c->vertex(i)->point()) == ON_BOUNDED_SIDE)
+  if((!is_infinite(tds().vertex(c, i))) &&
+     side_of_bounded_orthogonal_sphere(tds().vertex(c, vertex_triple_index(i,0))->point(),
+                                       tds().vertex(c, vertex_triple_index(i,1))->point(),
+                                       tds().vertex(c, vertex_triple_index(i,2))->point(),
+                                       tds().vertex(c, i)->point()) == ON_BOUNDED_SIDE)
     return false;
 
-  Cell_handle neighbor = c->neighbor(i);
-  int in = neighbor->index(c);
+  Cell_handle neighbor = tds().neighbor(c, i);
+  int in = tds().index(neighbor, c);
 
-  if((!is_infinite(neighbor->vertex(in))) &&
-     side_of_bounded_orthogonal_sphere(c->vertex(vertex_triple_index(i,0))->point(),
-                                       c->vertex(vertex_triple_index(i,1))->point(),
-                                       c->vertex(vertex_triple_index(i,2))->point(),
-                                       neighbor->vertex(in)->point()) == ON_BOUNDED_SIDE)
+  if((!is_infinite(tds().vertex(neighbor, in))) &&
+     side_of_bounded_orthogonal_sphere(tds().vertex(c, vertex_triple_index(i,0))->point(),
+                                       tds().vertex(c, vertex_triple_index(i,1))->point(),
+                                       tds().vertex(c, vertex_triple_index(i,2))->point(),
+                                       tds().vertex(neighbor, in)->point()) == ON_BOUNDED_SIDE)
     return false;
 
   return true;
@@ -2330,18 +2330,18 @@ is_Gabriel(Cell_handle c, int i, int j) const
       geom_traits().power_side_of_bounded_power_sphere_3_object();
 
   Facet_circulator fcirc = incident_facets(c,i,j), fdone(fcirc);
-  Vertex_handle v1 = c->vertex(i);
-  Vertex_handle v2 = c->vertex(j);
+  Vertex_handle v1 = tds().vertex(c, i);
+  Vertex_handle v2 = tds().vertex(c, j);
   do
   {
     // test whether the vertex of cc opposite to *fcirc
     // is inside the sphere defined by the edge e = (s, i,j)
     Cell_handle cc = (*fcirc).first;
     int ii = (*fcirc).second;
-    if(!is_infinite(cc->vertex(ii)) &&
+    if(!is_infinite(tds().vertex(cc, ii)) &&
         side_of_bounded_orthogonal_sphere(v1->point(),
                                            v2->point(),
-                                           cc->vertex(ii)->point()) == ON_BOUNDED_SIDE)
+                                           tds().vertex(cc, ii)->point()) == ON_BOUNDED_SIDE)
       return false;
   }
   while(++fcirc != fdone);
@@ -2358,7 +2358,7 @@ is_Gabriel(Vertex_handle v) const
     side_of_bounded_orthogonal_sphere = geom_traits().power_side_of_bounded_power_sphere_3_object();
 
   Vertex_handle nearest_v = nearest_power_vertex(geom_traits().construct_point_3_object()(v->point()),
-                                                                                          v->cell());
+                                                                                          tds().cell(v));
 
   return (side_of_bounded_orthogonal_sphere(v->point(), nearest_v->point()) != CGAL::ON_BOUNDED_SIDE);
 }
@@ -2544,7 +2544,7 @@ remove(Vertex_handle v)
 {
   Cell_handle c;
   if(dimension() > 0)
-    c = v->cell()->neighbor(v->cell()->index(v));
+    c = tds().neighbor(tds().cell(v), tds().index(tds().cell(v), v));
 
   Self tmp;
   Vertex_remover<Self> remover(tmp);
@@ -2557,7 +2557,7 @@ remove(Vertex_handle v)
   {
     Vertex_handle hv = insert(*hi, c);
     if(hv != Vertex_handle())
-      c = hv->cell();
+      c = tds().cell(hv);
   }
   CGAL_expensive_postcondition(is_valid());
 }
@@ -2585,7 +2585,7 @@ remove(Vertex_handle v, bool *could_lock_zone)
 #ifndef CGAL_LINKED_WITH_TBB
     using Vertex_handle_and_point = Vertex_handle;
 #endif // not CGAL_LINKED_WITH_TBB
-    Vertex_handle_and_point hint_and_point{v->cell()->vertex(0) == v ? v->cell()->vertex(1) : v->cell()->vertex(0)};
+    Vertex_handle_and_point hint_and_point{tds().vertex(tds().cell(v), 0) == v ? tds().vertex(tds().cell(v), 1) : tds().vertex(tds().cell(v), 0)};
 #ifdef CGAL_LINKED_WITH_TBB
     const Vertex_handle& hint = hint_and_point.vh;
     const Weighted_point& hint_point_mem = hint_and_point.wpt;
@@ -2628,7 +2628,7 @@ remove(Vertex_handle v, bool *could_lock_zone)
 
           if(this->try_lock_point(hint_point_mem) && this->try_lock_point(wp))
           {
-            // Make sure that the hint is still valid (so that we can safely take hint->cell()) and
+            // Make sure that the hint is still valid (so that we can safely take tds().cell(hint)) and
             // that its position hasn't changed to ensure that we will start the locate from where
             // we have locked.
             if(!vertex_validity_check(hint, tds()) ||
@@ -2717,11 +2717,11 @@ is_valid(bool verbose, int level) const
         is_valid_finite(it, verbose, level);
         for(int i=0; i<4; i++)
         {
-          if(!is_infinite(it->neighbor(i)->vertex(it->neighbor(i)->index(it))))
+          if(!is_infinite(tds().vertex(tds().neighbor(it, i), tds().index(tds().neighbor(it, i), it))))
           {
             if(side_of_power_sphere(it,
-                                    it->neighbor(i)->vertex(
-                                      it->neighbor(i)->index(it))->point()) == ON_BOUNDED_SIDE)
+                                    tds().vertex(tds().neighbor(it, i),
+                                      tds().index(tds().neighbor(it, i), it))->point()) == ON_BOUNDED_SIDE)
             {
               if(verbose)
                 std::cerr << "non-empty sphere " << std::endl;
@@ -2741,13 +2741,12 @@ is_valid(bool verbose, int level) const
         is_valid_finite((*it).first, verbose, level);
         for(int i=0; i<3; i++)
         {
-          if(!is_infinite((*it).first->neighbor(i)->vertex(
-                            (((*it).first)->neighbor(i))->index((*it).first))))
+
+          if(!is_infinite(tds().vertex(tds().neighbor((*it).first, i),
+                            tds().index(tds().neighbor(((*it).first), i), (*it).first))))
           {
             if(side_of_power_circle((*it).first, 3,
-                                    (*it).first->neighbor(i)->
-                                    vertex((((*it).first)->neighbor(i))
-                                           ->index((*it).first))->point()) == ON_BOUNDED_SIDE)
+                                    tds().vertex(tds().neighbor((*it).first, i), tds().index(tds().neighbor(((*it).first), i), (*it).first))->point()) == ON_BOUNDED_SIDE)
             {
               if(verbose)
                 std::cerr << "non-empty circle " << std::endl;
@@ -2769,13 +2768,11 @@ is_valid(bool verbose, int level) const
         for(int i=0; i<2; i++)
         {
           if(!is_infinite
-              ((*it).first->neighbor(i)->vertex(
-                 (((*it).first)->neighbor(i))->index((*it).first))))
+              (tds().vertex(tds().neighbor((*it).first, i), tds().index((tds().neighbor(((*it).first), i)), (*it).first))))
+
           {
             if(side_of_power_segment((*it).first,
-                                     (*it).first->neighbor(i)->vertex(
-                                       (((*it).first)->neighbor(i))->index(
-                                         (*it).first))->point()) == ON_BOUNDED_SIDE)
+                                     tds().vertex(tds().neighbor((*it).first, i), tds().index(tds().neighbor((*it).first, i),(*it).first))->point()) == ON_BOUNDED_SIDE)
             {
               if(verbose)
                 std::cerr << "non-empty edge " << std::endl;
