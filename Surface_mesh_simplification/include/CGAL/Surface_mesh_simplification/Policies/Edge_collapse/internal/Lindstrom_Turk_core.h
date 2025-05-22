@@ -152,7 +152,8 @@ private :
   }
 #endif
 
-  static Vector SL_cross_product(const Vector& a, const Vector& b)
+   // balanced solution based on abusing the fact that here we expect u and v to have similar coordinates
+  static Vector robust_cross_product(const Vector& a, const Vector& b)
   {
     const FT ax=a.x(), ay=a.y(), az=a.z();
     const FT bx=b.x(), by=b.y(), bz=b.z();
@@ -184,9 +185,10 @@ private :
     exv.exact();
     return to_approx(exv);
   }
-#endif
 
-  static Vector X_product(const Vector& u, const Vector& v)
+
+
+  static Vector experimental_cross_product(const Vector& u, const Vector& v)
   {
 #if 0
     // this can create large errors and spiky meshes for kernels with inexact constructions
@@ -201,18 +203,18 @@ private :
     return { diff_of_products(u.y(), v.z(), u.z(), v.y()),
              diff_of_products(u.z(), v.x(), u.x(), v.z()),
              diff_of_products(u.x(), v.y(), u.y(), v.x()) };
-#elif 1
-    // balanced solution based on abusing the fact that here we expect u and v to have similar coordinates
-    return SL_cross_product(u, v);
 #elif 0
     // obviously too slow
     return exact_cross_product(u, v);
 #endif
   }
 
+#endif
+
+
   static Vector point_cross_product(const Point& a, const Point& b)
   {
-    return X_product(a-ORIGIN, b-ORIGIN);
+    return robust_cross_product(a-ORIGIN, b-ORIGIN);
   }
 
   // This is the (uX)(Xu) product described in the Lindstrom-Turk paper
@@ -334,7 +336,7 @@ extract_triangle_data()
     Vector v01 = p1 - p0;
     Vector v02 = p2 - p0;
 
-    Vector lNormalV = X_product(v01,v02);
+    Vector lNormalV = robust_cross_product(v01,v02);
     FT lNormalL = point_cross_product(p0,p1) * (p2 - ORIGIN);
 
     CGAL_SMS_LT_TRACE(1, "  Extracting triangle v" << tri.v0 << "->v" << tri.v1 << "->v" << tri.v2
@@ -660,10 +662,10 @@ add_constraint_if_alpha_compatible(const Vector& Ai,
     FT l = CGAL_NTS sqrt(slai);
     CGAL_SMS_LT_TRACE(3, "      l: " << n_to_string(l));
 
-    // Due to double number type, l may have a small value instead of zero (example sum of the face normals of a tetrahedron for volumic constraint)
+    // Due to double number type, l may have a small value instead of zero (example sum of the face normals of a tetrahedron for volume constraint)
     // if bi is greater than maxBb, we consider that l is zero
     CGAL_SMS_LT_TRACE(3, "      error consider: " << (CGAL::abs(bi) / maxBb));
-    if(l > (std::abs(bi) / maxBb))
+    if(l > (CGAL::abs(bi) / maxBb))
     {
       Vector Ain = Ai / l;
       FT bin = bi / l;

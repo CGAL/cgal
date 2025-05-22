@@ -52,6 +52,7 @@ namespace CGAL {
     return a*b - c*d;
   }
 
+
 } // namespace CGAL
 
 #endif // CGAL_CARTESIAN_CROSSPRODUCT_H //
