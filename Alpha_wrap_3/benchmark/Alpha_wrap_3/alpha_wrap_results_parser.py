@@ -74,6 +74,7 @@ def get_robustness(file_name, benchmark_results_dir):
 def process_all_files(meshes_dir, benchmark_results_dir, summary_json_path):
     valid_extensions = {'.off', '.obj', '.ply', '.stl', '.STL', '.ts', '.vtp'}
     results = {}
+    dataset_file_counts = {}
 
     for root, _, files in os.walk(meshes_dir):
         for file in files:
@@ -85,13 +86,16 @@ def process_all_files(meshes_dir, benchmark_results_dir, summary_json_path):
                 rel_path = os.path.relpath(file_path, meshes_dir)
                 sub_dirs = os.path.dirname(rel_path).split(os.sep)
                 top_dir = sub_dirs[0] if sub_dirs else ""
-                sub_path = os.path.join(*sub_dirs[1:]) if len(sub_dirs) > 1 else ""
+
+                if top_dir not in dataset_file_counts:
+                    dataset_file_counts[top_dir] = 0
+                dataset_file_counts[top_dir] += 1
 
                 if top_dir not in results:
                     results[top_dir] = {}
 
                 metrics = {
-                    "path": sub_path + "/" if sub_path else "",
+                    "path": file_path,
                     "Performance": get_performance(file_name, benchmark_results_dir),
                     "Quality": get_quality(file_name, benchmark_results_dir),
                     "Robustness": get_robustness(file_name, benchmark_results_dir)
@@ -102,6 +106,7 @@ def process_all_files(meshes_dir, benchmark_results_dir, summary_json_path):
     final_json = {
         "Alpha_wrap_3": {
             **results,
+            "dataset_file_counts": dataset_file_counts,
             "finished_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         }
     }
