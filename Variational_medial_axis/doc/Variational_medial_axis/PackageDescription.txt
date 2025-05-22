@@ -10,6 +10,7 @@
 /// \ingroup PkgVMASRef
 
 /*!
+\addtogroup PkgVMASRef
 \cgalPkgDescriptionBegin{Dynamic Skeletonization Via Variational Medial Axis Sampling,PkgVMAS}
 \cgalPkgPicture{pkg-vmas.png}
 
