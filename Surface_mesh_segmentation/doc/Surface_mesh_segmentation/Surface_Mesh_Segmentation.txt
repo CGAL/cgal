@@ -229,7 +229,7 @@ Segmented a sword into 5 segments, a cactus into 4 segments, an elephant into 16
             The input SDF values can be any set of scalar values associated to each facet as long as they have been normalized between 0 and 1.
             This function allows using the same SDF values with different parameters for the segmentation stage.
             The segment or cluster ids are associated to the facets using a property map.
-	      - `segmentation_via_sdf_values()` : combines the three functions above.
+        - `segmentation_via_sdf_values()` : combines the three functions above.
         - `concavity_values()` : computes the concavity value of a segment described by an id in a triangle mesh or the concavity value of the triangle mesh itself.
         - `approximate_convex_segmentation()` : computes approximate convex segmentation of a triangle mesh, which is the smallest set of segments satisfying concavity constraint.
 
