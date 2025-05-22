@@ -154,6 +154,10 @@ that is model of the concept `MutableFaceGraph`, e.g. `Polyhedron_3` and `Surfac
 
 \cgalExample{Convex_hull_3/dynamic_hull_3.cpp}
 
+\section Intersection test of Convex hulls
+
+Fast intersection test of convex hulls can be achieved using the class ``
+
 \section Convex_hull_3Performance Performance
 
 In the following, we compare the running times of the two approaches to compute 3D convex hulls.
