@@ -1,6 +1,4 @@
-// The Heat Method
-
-/// \defgroup PkgHeatMethodRef Heat Method Reference
+/// \defgroup PkgHeatMethodRef Reference Manual
 
 /// \defgroup PkgHeatMethodConcepts Concepts
 /// \ingroup PkgHeatMethodRef

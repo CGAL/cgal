@@ -1,4 +1,4 @@
-/// \defgroup PkgPointSet3Ref 3D Point Set Reference
+/// \defgroup PkgPointSet3Ref Reference Manual
 
 /*!
 \cgalInclude{CGAL/draw_point_set_3.h}
