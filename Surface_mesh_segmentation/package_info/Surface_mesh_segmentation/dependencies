@@ -3,11 +3,14 @@ Algebraic_foundations
 Arithmetic_kernel
 BGL
 Cartesian_kernel
+CGAL_Core
 Circulator
 Convex_hull_2
 Convex_hull_3
 Distance_2
 Distance_3
+Filtered_kernel
+Hash_map
 Installation
 Intersections_2
 Intersections_3
@@ -15,6 +18,7 @@ Interval_support
 Kernel_23
 Modular_arithmetic
 Number_types
+Polygon_mesh_processing
 Profiling_tools
 Property_map
 Random_numbers
@@ -23,4 +27,3 @@ Spatial_searching
 Stream_support
 Surface_mesh_segmentation
 TDS_2
-Triangulation_2
