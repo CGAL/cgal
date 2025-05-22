@@ -166,7 +166,7 @@ public:
   // INSERT REMOVE
   Vertex_handle insert(const Point &p, Vertex_handle hint)
   {
-    return insert(p, hint == Vertex_handle() ? this->infinite_cell() : hint->cell());
+    return insert(p, hint == Vertex_handle() ? this->infinite_cell() : hierarchy[0]->tds().cell(hint));
   }
 
   Vertex_handle insert(const Point &p, Cell_handle start = Cell_handle ());
@@ -619,7 +619,7 @@ insert(const Point &p, Locate_type lt, Cell_handle loc, int li, int lj)
     int i, j;
     // locate using hierarchy
     locs positions[maxlevel];
-    locate(p, lt, i, j, positions, vertex->cell());
+    locate(p, lt, i, j, positions, hierarchy[0]->tds().cell(vertex));  // AF: Is 0 ok?
 
     int level = 1;
     while (level <= vertex_level ){
@@ -826,7 +826,7 @@ locate(const Point& p, Locate_type& lt, int& li, int& lj,
 
     // go at the same vertex on level below
     nearest = nearest->down();
-    position = nearest->cell();                // incident cell
+    position = hierarchy[level-1]->tds().cell(nearest);                // incident cell
     --level;
   }
 

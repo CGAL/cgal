@@ -72,23 +72,23 @@ auto vertices_of_simplex(Simplex simplex) -> std::array<Vertex_handle, 4> {
     }
     case 1: {
       const auto [c, index1, index2] = static_cast<Edge>(simplex);
-      vertices[0] = c->vertex(index1);
-      vertices[1] = c->vertex(index2);
+      vertices[0] = dt.tds().vertex(c, index1);
+      vertices[1] = dt.tds().vertex(c, index2);
       break;
     }
     case 2: {
       const auto [c, index] = static_cast<Facet>(simplex);
-      vertices[0] = c->vertex(DT::vertex_triple_index(index, 0));
-      vertices[1] = c->vertex(DT::vertex_triple_index(index, 1));
-      vertices[2] = c->vertex(DT::vertex_triple_index(index, 2));
+      vertices[0] = dt.tds().vertex(c, DT::vertex_triple_index(index, 0));
+      vertices[1] = dt.tds().vertex(c, DT::vertex_triple_index(index, 1));
+      vertices[2] = dt.tds().vertex(c, DT::vertex_triple_index(index, 2));
       break;
     }
     case 3: {
       const auto c = static_cast<Cell_handle>(simplex);
-      vertices[0] = c->vertex(0);
-      vertices[1] = c->vertex(1);
-      vertices[2] = c->vertex(2);
-      vertices[3] = c->vertex(3);
+      vertices[0] = dt.tds().vertex(c, 0);
+      vertices[1] = dt.tds().vertex(c, 1);
+      vertices[2] = dt.tds().vertex(c, 2);
+      vertices[3] = dt.tds().vertex(c, 3);
       break;
     }
     default: CGAL_unreachable();
@@ -107,20 +107,20 @@ std::variant<Point_3, Segment_3, Triangle_3, Tetrahedron_3> get_simplex_geometry
     }
     case 1: {
       const auto [c, index1, index2] = static_cast<Edge>(simplex);
-      return Segment_3(c->vertex(index1)->point(), c->vertex(index2)->point());
+      return Segment_3(dt.tds().vertex(c, index1)->point(), dt.tds().vertex(c, index2)->point());
     }
     case 2: {
       const auto [c, index] = static_cast<Facet>(simplex);
-      return Triangle_3(c->vertex(DT::vertex_triple_index(index, 0))->point(),
-                        c->vertex(DT::vertex_triple_index(index, 1))->point(),
-                        c->vertex(DT::vertex_triple_index(index, 2))->point());
+      return Triangle_3(dt.tds().vertex(c, DT::vertex_triple_index(index, 0))->point(),
+                        dt.tds().vertex(c, DT::vertex_triple_index(index, 1))->point(),
+                        dt.tds().vertex(c, DT::vertex_triple_index(index, 2))->point());
     }
     case 3: {
       const auto c = static_cast<Cell_handle>(simplex);
-      return Tetrahedron_3(c->vertex(0)->point(),
-                           c->vertex(1)->point(),
-                           c->vertex(2)->point(),
-                           c->vertex(3)->point());
+      return Tetrahedron_3(dt.tds().vertex(c, 0)->point(),
+                           dt.tds().vertex(c, 1)->point(),
+                           dt.tds().vertex(c, 2)->point(),
+                           dt.tds().vertex(c, 3)->point());
     }
     default: CGAL_unreachable();
   }
@@ -255,9 +255,9 @@ bool test_a_simple_tetrahedron(const std::vector<Point_3>& points) {
       DT::Locate_type lt;
       int i, j;
       auto c = dt.locate(a, lt, i, j);
-      if(lt == DT::VERTEX) va = c->vertex(i);
+      if(lt == DT::VERTEX) va = dt.tds().vertex(c, i);
       c = dt.locate(b, lt, i, j);
-      if(lt == DT::VERTEX) vb = c->vertex(i);
+      if(lt == DT::VERTEX) vb = dt.tds().vertex(c, i);
       if(va != Vertex_handle{} && vb != Vertex_handle{}) {
         std::clog << "from vertex" << display_vert(va) << " to vertex" << display_vert(vb) << ")\n";
         do_it(va, vb);

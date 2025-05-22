@@ -123,7 +123,8 @@ template <typename Tds, typename Concurrency_tag, typename Lock_data_structure_>
 class Triangulation_3_base
 {
 protected:
-Tds _tds;
+  Tds _tds;
+
 public:
   // If Lock_data_structure_ = Default => void
   typedef typename Default::Get<

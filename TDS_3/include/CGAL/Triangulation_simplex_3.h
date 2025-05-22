@@ -25,10 +25,12 @@ namespace CGAL {
 
 template < class TriangulationDataStructure_3 >
 class Triangulation_simplex_3 {
-  typedef TriangulationDataStructure_3         TDS;
+  typedef TriangulationDataStructure_3           TDS;
   typedef Triangulation_simplex_3<TDS>           Self;
+
+
 public:
-  typedef Self                                 Simplex;
+  typedef Self                                   Simplex;
 
   typedef typename TDS::Vertex_handle            Vertex_handle;
   typedef typename TDS::Edge                     Edge;
@@ -46,30 +48,46 @@ public:
   // Default constructor initializes to undefined simplex:
   Triangulation_simplex_3() : ref(-1), ch() { }
 
-  Triangulation_simplex_3(Vertex_handle vh) {
+  Triangulation_simplex_3(const TDS& tds, Vertex_handle vh)
+  : tds_(const_cast<TDS*>(&tds))
+  {
     set_vertex(vh);
   }
-  Triangulation_simplex_3(const Edge &e) {
+  Triangulation_simplex_3(const TDS& tds, const Edge &e)
+  : tds_(const_cast<TDS*>(&tds))
+   {
     set_edge(e);
   }
-  Triangulation_simplex_3(const Facet &f) {
+  Triangulation_simplex_3(const TDS& tds, const Facet &f)
+  : tds_(const_cast<TDS*>(&tds))
+   {
     set_facet(f);
   }
-  Triangulation_simplex_3(Cell_handle ch_) {
+  Triangulation_simplex_3(const TDS& tds, Cell_handle ch_)
+  : tds_(const_cast<TDS*>(&tds))
+   {
     set_cell(ch_);
   }
 
-  Triangulation_simplex_3(Cell_circulator ccir) {
+  Triangulation_simplex_3(const TDS& tds, Cell_circulator ccir)
+  : tds_(const_cast<TDS*>(&tds))
+   {
     set_cell(ccir);
   }
-  Triangulation_simplex_3(Facet_circulator fcir) {
+  Triangulation_simplex_3(const TDS& tds, Facet_circulator fcir)
+  : tds_(const_cast<TDS*>(&tds))
+   {
     set_facet(*fcir);
   }
 
-  Triangulation_simplex_3(Edge_iterator eit) {
+  Triangulation_simplex_3(const TDS& tds, Edge_iterator eit)
+  : tds_(const_cast<TDS*>(&tds))
+   {
     set_edge(*eit);
   }
-  Triangulation_simplex_3(Facet_iterator fit) {
+  Triangulation_simplex_3(const TDS& tds, Facet_iterator fit)
+  : tds_(const_cast<TDS*>(&tds))
+   {
     set_facet(*fit);
   }
 
@@ -77,7 +95,7 @@ public:
   operator Vertex_handle () const
   {
     CGAL_assertion(dimension() == 0);
-    return ch->vertex(index(0));
+    return tds_->vertex(ch, index(0));
   }
   operator Edge () const
   {
@@ -113,6 +131,11 @@ public:
   friend bool operator< (Triangulation_simplex_3<TDS2> s0,
                          Triangulation_simplex_3<TDS2> s1);
 
+  const TDS& tds() const {
+    CGAL_assertion (tds_ != nullptr);
+    return *tds_;
+  }
+
 private:
   void set_vertex(const Vertex_handle vh) {
     ch = tds().cell(vh);
@@ -138,11 +161,6 @@ private:
   inline int index(int i) const {
     CGAL_assertion (i==0 || ((i==1) && (dimension()==1)));
     return (ref >> (2*(i+1))) & 3;
-  }
-
-  const TDS& tds() const {
-    CGAL_assertion (tds_ != nullptr);
-    return *tds_;
   }
 
   const TDS* tds_; // AF we have to pass the TDS to the constructor
@@ -172,20 +190,20 @@ operator==(Triangulation_simplex_3<TriangulationDataStructure_3> s0,
   switch (s0.dimension()) {
   case -1: return s1.dimension() == -1;
   case (0): // Vertex
-    return (s0.ch->vertex(s0.index(0)) == s1.ch->vertex(s1.index(0)));
+    return (s0.tds().vertex(s0.ch, s0.index(0)) == s1.tds().vertex(s1.ch, s1.index(0)));
   case (1): // Edge
-    return ((s0.ch->vertex(s0.index(0)) == s1.ch->vertex(s1.index(0)) &&
-             s0.ch->vertex(s0.index(1)) == s1.ch->vertex(s1.index(1))) ||
-            (s0.ch->vertex(s0.index(1)) == s1.ch->vertex(s1.index(0)) &&
-             s0.ch->vertex(s0.index(0)) == s1.ch->vertex(s1.index(1))));
+    return ((s0.tds().vertex(s0.ch, s0.index(0)) == s1.tds().vertex(s1.ch, s1.index(0)) &&
+             s0.tds().vertex(s0.ch, s0.index(1)) == s1.tds().vertex(s1.ch, s1.index(1))) ||
+            (s0.tds().vertex(s0.ch, s0.index(1)) == s1.tds().vertex(s1.ch, s1.index(0)) &&
+             s0.tds().vertex(s0.ch, s0.index(0)) == s1.tds().vertex(s1.ch, s1.index(1))));
   case (2):
     if (s0.ch == s1.ch && s0.index(0) == s1.index(0)) {
       return true;
     }
 
-    neighbor = s0.ch->neighbor(s0.index(0));
+    neighbor = s0.tds().neighbor(s0.ch, s0.index(0));
     if (neighbor == s1.ch &&
-        neighbor->index(s0.ch) == s1.index(0)) {
+        s0.tds().index(neighbor, s0.ch) == s1.index(0)) {
       return true;
     }
     return false;
@@ -211,14 +229,14 @@ operator<(Triangulation_simplex_3<TriangulationDataStructure_3> s0,
   typename Sim::Vertex_handle vh1, vh2, vh3, vh4;
   switch (s0.dimension()) {
   case (0): // Vertex
-    // Vertextices are not equal
-    return (&(*s0.ch->vertex(s0.index(0))) <
-            &(*s1.ch->vertex(s1.index(0))));
+    // Vertices are not equal
+    return (&(*s0.tds().vertex(s0.ch, s0.index(0))) <
+            &(*s1.tds().vertex(s1.ch, s1.index(0))));
   case (1): // Edge
-    vh1 = s0.ch->vertex(s0.index(0));
-    vh2 = s0.ch->vertex(s0.index(1));
-    vh3 = s1.ch->vertex(s1.index(0));
-    vh4 = s1.ch->vertex(s1.index(1));
+    vh1 = s0.tds().vertex(s0.ch, s0.index(0));
+    vh2 = s0.tds().vertex(s0.ch, s0.index(1));
+    vh3 = s1.tds().vertex(s1.ch, s1.index(0));
+    vh4 = s1.tds().vertex(s1.ch, s1.index(1));
 
     if ((std::min)(&(*vh1), &(*vh2)) < (std::min)(&(*vh3), &(*vh4)))
       return true;
@@ -231,8 +249,8 @@ operator<(Triangulation_simplex_3<TriangulationDataStructure_3> s0,
 
     return false;
   case (2): // Facet
-    ch1 = s0.ch->neighbor(s0.index(0));
-    ch2 = s1.ch->neighbor(s1.index(0));
+    ch1 = s0.tds().neighbor(s0.ch, s0.index(0));
+    ch2 = s1.tds().neighbor(s1.ch, s1.index(0));
 
     if ((std::min)(&(*s0.ch), &(*ch1)) < (std::min)(&(*s1.ch), &(*ch2)))
       return true;
@@ -267,21 +285,21 @@ operator<< (std::ostream& os,
       break;
     case 1:
       e = s;
-      os << &*(e.first->vertex(e.second)) << " "
-         << &*(e.first->vertex(e.third));
+      os << &*(s.tds().vertex(e.first, e.second)) << " "
+         << &*(vertex(e.first, e.third));
       break;
     case 2:
       f = s;
-      os << &*(f.first->vertex((f.second+1)&3)) << " "
-         << &*(f.first->vertex((f.second+2)&3)) << " "
-         << &*(f.first->vertex((f.second+3)&3));
+      os << &*(s.tds().vertex(f.first, (f.second+1)&3)) << " "
+         << &*(s.tds().vertex(f.first, (f.second+2)&3)) << " "
+         << &*(s.tds().vertex(f.first, (f.second+3)&3));
       break;
     case 3:
       ch = s;
-      os << &*(ch->vertex(0)) << " "
-         << &*(ch->vertex(1)) << " "
-         << &*(ch->vertex(2)) << " "
-         << &*(ch->vertex(3));
+      os << &*(s.tds().vertex(ch, 0)) << " "
+         << &*(s.tds().vertex(ch, 1)) << " "
+         << &*(s.tds().vertex(ch, 2)) << " "
+         << &*(s.tds().vertex(ch, 3));
       break;
   }
   return os;

@@ -33,25 +33,25 @@ struct Debug_simplex {
       case 1: {
         const auto [c, index1, index2] = static_cast<Edge>(simplex);
         os << "- edge "
-           << display_vert(c->vertex(index1)) << " - "
-           << display_vert(c->vertex(index2));
+           << display_vert(simplex.tds().vertex(c, index1)) << " - "
+           << display_vert(simplex.tds().vertex(c, index2));
         break;
       }
       case 2: {
         const auto [c, index] = static_cast<Facet>(simplex);
         os << "- facet "
-           << display_vert(c->vertex(DT::vertex_triple_index(index, 0))) << " - "
-           << display_vert(c->vertex(DT::vertex_triple_index(index, 1))) << " - "
-           << display_vert(c->vertex(DT::vertex_triple_index(index, 2)));
+           << display_vert(simplex.tds().vertex(c, DT::vertex_triple_index(index, 0))) << " - "
+           << display_vert(simplex.tds().vertex(c, DT::vertex_triple_index(index, 1))) << " - "
+           << display_vert(simplex.tds().vertex(c, DT::vertex_triple_index(index, 2)));
         break;
       }
       case 3: {
         const auto c = static_cast<Cell_handle>(simplex);
         os << "- cell "
-           << display_vert(c->vertex(0)) << " - "
-           << display_vert(c->vertex(1)) << " - "
-           << display_vert(c->vertex(2)) << " - "
-           << display_vert(c->vertex(3));
+           << display_vert(simplex.tds().vertex(c, 0)) << " - "
+           << display_vert(simplex.tds().vertex(c, 1)) << " - "
+           << display_vert(simplex.tds().vertex(c, 2)) << " - "
+           << display_vert(simplex.tds().vertex(c, 3));
         break;
       }
       default: CGAL_assume(false);

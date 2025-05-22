@@ -550,7 +550,7 @@ private:
         ++i;
       }
 
-      Hint tls_hint(hint->vertex(0));
+      Hint tls_hint(tds().vertex(hint, 0));
       tbb::parallel_for(tbb::blocked_range<size_t>(i, num_points),
                         Insert_point_with_info<Self>(*this, points, infos, indices, tls_hint));
 
@@ -703,7 +703,7 @@ public:
     for(typename std::vector<Facet>::iterator fit = facets.begin();
                                               fit != facets.end(); ++fit)
     {
-      fit->first->neighbor(fit->second)->tds_data().clear();
+      tds().tds_data(tds().neighbor(fit->first, fit->second)).clear();
       *bfit++ = *fit;
     }
 
@@ -711,7 +711,7 @@ public:
     for(typename std::vector<Cell_handle>::iterator ccit = cells.begin();
                                                     ccit != cells.end(); ++ccit)
     {
-      (*ccit)->tds_data().clear();
+      tds().tds_data(*ccit).clear();
       *cit++ = *ccit;
     }
     return make_triple(bfit, cit, ifit);
@@ -752,7 +752,7 @@ public:
         end = cells.end(); it != end; ++it)
     {
       for(int i = 0; i <= d; ++i)
-        vertices.insert((*it)->vertex(i));
+        vertices.insert(tds().vertex(*it, i));
     }
     // Then extract the vertices of the boundary and remove them from
     // 'vertices'
@@ -761,9 +761,9 @@ public:
       for(typename std::vector<Facet>::const_iterator i = facets.begin();
            i != facets.end(); ++i)
       {
-        vertices.erase(i->first->vertex((i->second+1)&3));
-        vertices.erase(i->first->vertex((i->second+2)&3));
-        vertices.erase(i->first->vertex((i->second+3)&3));
+        vertices.erase(tds().vertex(i->first, (i->second+1)&3));
+        vertices.erase(tds().vertex(i->first, (i->second+2)&3));
+        vertices.erase(tds().vertex(i->first, (i->second+3)&3));
       }
     }
     else
@@ -771,8 +771,8 @@ public:
       for(typename std::vector<Facet>::const_iterator i = facets.begin();
            i != facets.end(); ++i)
       {
-        vertices.erase(i->first->vertex(cw(i->second)));
-        vertices.erase(i->first->vertex(ccw(i->second)));
+        vertices.erase(tds().vertex(i->first, cw(i->second)));
+        vertices.erase(tds().vertex(i->first, ccw(i->second)));
       }
     }
 
@@ -809,16 +809,16 @@ public:
       for(typename std::vector<Facet>::const_iterator i = facets.begin();
                                                       i != facets.end(); ++i)
       {
-        vertices.insert(i->first->vertex((i->second+1)&3));
-        vertices.insert(i->first->vertex((i->second+2)&3));
-        vertices.insert(i->first->vertex((i->second+3)&3));
+        vertices.insert(tds().vertex(i->first, (i->second+1)&3));
+        vertices.insert(tds().vertex(i->first, (i->second+2)&3));
+        vertices.insert(tds().vertex(i->first, (i->second+3)&3));
       }
     } else {
       for(typename std::vector<Facet>::const_iterator i = facets.begin();
                                                       i != facets.end(); ++i)
       {
-        vertices.insert(i->first->vertex(cw(i->second)));
-        vertices.insert(i->first->vertex(ccw(i->second)));
+        vertices.insert(tds().vertex(i->first, cw(i->second)));
+        vertices.insert(tds().vertex(i->first, ccw(i->second)));
       }
     }
 

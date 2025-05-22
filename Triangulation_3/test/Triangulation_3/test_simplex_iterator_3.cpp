@@ -46,8 +46,8 @@ void test_vertex_edge_vertex(const DT& dt, const std::size_t& nb_tests)
 
   for (std::size_t i = 0; i < nb_tests; ++i)
   {
-    Vertex_handle v1 = edges[i].first->vertex(edges[i].second);
-    Vertex_handle v2 = edges[i].first->vertex(edges[i].third);
+    Vertex_handle v1 = dt.tds().vertex(edges[i].first, edges[i].second);
+    Vertex_handle v2 = dt.tds().vertex(edges[i].first, edges[i].third);
     Vector_3 v(v1->point(), v2->point());
 
     std::cout << "TEST " << i << " (" << v1->point()
@@ -74,8 +74,8 @@ void test_vertex_edge_vertex(const DT& dt, const std::size_t& nb_tests)
         std::cout << st->dimension() << " ";
         assert(st->dimension() == 1);
         Edge e(*st);
-        Vertex_handle ve1 = e.first->vertex(e.second);
-        Vertex_handle ve2 = e.first->vertex(e.third);
+        Vertex_handle ve1 = dt.tds().vertex(e.first, e.second);
+        Vertex_handle ve2 = dt.tds().vertex(e.first, e.third);
         assert((ve1 == v1 && ve2 == v2)
             || (ve1 == v2 && ve2 == v1));
 
@@ -102,9 +102,9 @@ void test_edge_facet_edge(const DT& dt, const std::size_t& nb_tests)
   for (std::size_t i = 0; i < nb_tests; ++i)
   {
     const int fi = facets[i].second;
-    Vertex_handle v1 = facets[i].first->vertex((fi + 1) % 4);
-    Vertex_handle v2 = facets[i].first->vertex((fi + 2) % 4);
-    Vertex_handle v3 = facets[i].first->vertex((fi + 3) % 4);
+    Vertex_handle v1 = dt.tds().vertex(facets[i].first, (fi + 1) % 4);
+    Vertex_handle v2 = dt.tds().vertex(facets[i].first, (fi + 2) % 4);
+    Vertex_handle v3 = dt.tds().vertex(facets[i].first, (fi + 3) % 4);
 
     Point_3 p1 = CGAL::midpoint(v1->point(), v2->point());
     Point_3 p2 = CGAL::midpoint(v2->point(), v3->point());
@@ -129,8 +129,8 @@ void test_edge_facet_edge(const DT& dt, const std::size_t& nb_tests)
       if (st->dimension() == 1)
       {
         Edge e = *st;
-        Vertex_handle va = e.first->vertex(e.second);
-        Vertex_handle vb = e.first->vertex(e.third);
+        Vertex_handle va = dt.tds().vertex(e.first, e.second);
+        Vertex_handle vb = dt.tds().vertex(e.first, e.third);
         if ((va == v1 && vb == v2)
           || (va == v2 && vb == v1))
         {
@@ -142,8 +142,8 @@ void test_edge_facet_edge(const DT& dt, const std::size_t& nb_tests)
           std::cout << st->dimension() << " ";
           assert(st->dimension() == 1);
           Edge e2 = *st;
-          Vertex_handle va2 = e2.first->vertex(e2.second);
-          Vertex_handle vb2 = e2.first->vertex(e2.third);
+          Vertex_handle va2 = dt.tds().vertex(e2.first, e2.second);
+          Vertex_handle vb2 = dt.tds().vertex(e2.first, e2.third);
           assert(va == va2 || va == vb2 || vb == va2 || vb == vb2);
         }
       }
@@ -165,9 +165,9 @@ void test_edge_facet_vertex(const DT& dt, const std::size_t& nb_tests)
   for (std::size_t i = 0; i < nb_tests; ++i)
   {
     const int fi = facets[i].second;
-    Vertex_handle v1 = facets[i].first->vertex((fi + 1) % 4);
-    Vertex_handle v2 = facets[i].first->vertex((fi + 2) % 4);
-    Vertex_handle v3 = facets[i].first->vertex((fi + 3) % 4);
+    Vertex_handle v1 = dt.tds().vertex(facets[i].first, (fi + 1) % 4);
+    Vertex_handle v2 = dt.tds().vertex(facets[i].first, (fi + 2) % 4);
+    Vertex_handle v3 = dt.tds().vertex(facets[i].first, (fi + 3) % 4);
 
     Point_3 p1 = CGAL::midpoint(v1->point(), v2->point());
     Point_3 p2 = v3->point();
@@ -190,8 +190,8 @@ void test_edge_facet_vertex(const DT& dt, const std::size_t& nb_tests)
       if (st->dimension() == 1)
       {
         Edge e = *st;
-        Vertex_handle va = e.first->vertex(e.second);
-        Vertex_handle vb = e.first->vertex(e.third);
+        Vertex_handle va = dt.tds().vertex(e.first, e.second);
+        Vertex_handle vb = dt.tds().vertex(e.first, e.third);
         if ((va == v1 && vb == v2) || (va == v2 && vb == v1))
         {
           ++st;
@@ -232,9 +232,9 @@ void test_vertex_facet_edge(const DT& dt, const std::size_t& nb_tests)
   for (std::size_t i = 0; i < nb_tests; ++i)
   {
     const int fi = facets[i].second;
-    Vertex_handle v1 = facets[i].first->vertex((fi + 1) % 4);
-    Vertex_handle v2 = facets[i].first->vertex((fi + 2) % 4);
-    Vertex_handle v3 = facets[i].first->vertex((fi + 3) % 4);
+    Vertex_handle v1 = dt.tds().vertex(facets[i].first, (fi + 1) % 4);
+    Vertex_handle v2 = dt.tds().vertex(facets[i].first, (fi + 2) % 4);
+    Vertex_handle v3 = dt.tds().vertex(facets[i].first, (fi + 3) % 4);
 
     Point_3 p1 = v1->point();
     Point_3 p2 = CGAL::midpoint(v2->point(), v3->point());
@@ -265,8 +265,8 @@ void test_vertex_facet_edge(const DT& dt, const std::size_t& nb_tests)
         std::cout << st->dimension() << " ";
         assert(st->dimension() == 1);
         Edge e(*st);
-        Vertex_handle va = e.first->vertex(e.second);
-        Vertex_handle vb = e.first->vertex(e.third);
+        Vertex_handle va = dt.tds().vertex(e.first, e.second);
+        Vertex_handle vb = dt.tds().vertex(e.first, e.third);
         assert((va == v2 && vb == v3) || (va == v3 && vb == v2));
       }
     }
