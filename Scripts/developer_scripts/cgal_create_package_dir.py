@@ -47,6 +47,7 @@ r"""// PRETTY PACKAGE NAME should equal the project title in Doxyfile.in
 /// \ingroup PkgPACKAGERef
 
 /*!
+\addtogroup PkgPACKAGERef
 \cgalPkgDescriptionBegin{PACKAGE NAME,PkgPACKAGE}
 \cgalPkgPicture{pkg-small.png}
 
