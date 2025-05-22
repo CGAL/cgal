@@ -4,7 +4,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <string>
-#include "Utils.h" 
+#include "Utils.h"
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
@@ -15,7 +15,7 @@ template <typename Concurrency_tag>
 bool test_on_convex_mesh(const std::string& path)
 {
   Polyhedron mesh;
-  if (!read_to_polyhedron(path.c_str(), mesh)) return false;    
+  if (!read_to_polyhedron(path.c_str(), mesh)) return false;
 
   double concavity = CGAL::concavity_values<Concurrency_tag>(mesh);
 
@@ -25,7 +25,7 @@ bool test_on_convex_mesh(const std::string& path)
     std::cerr << "Concavity value of a cube must be zero since it's convex" << std::endl;
     return false;
   }
-  
+
   return true;
 }
 

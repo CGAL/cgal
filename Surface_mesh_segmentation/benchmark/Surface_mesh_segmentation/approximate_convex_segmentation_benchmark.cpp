@@ -23,7 +23,7 @@ template<class Mesh>
 double compute_and_time_concavity(const Mesh& mesh)
 {
   Timer timer;
-  
+
   timer.start();
   double concavity = CGAL::concavity_values<Concurrency_tag>(mesh);
   timer.stop();
@@ -57,7 +57,7 @@ std::vector<double> read_and_run(const std::string& file_name)
 {
   std::cout << "File name " << file_name;
   std::vector<double> timings;
-  
+
   Mesh mesh;
   std::ifstream input(file_name.c_str());
   if (!input || !(input >> mesh) || CGAL::is_empty(mesh) || !CGAL::is_triangle_mesh(mesh))
@@ -111,7 +111,7 @@ int main()
   {
     std::cout << "| "
               << std::setw(11) << timings_epick[i][0] << "|"
-              << std::setw(15)  << timings_epick[i][1] * 1000.  << "|" << std::endl; 
+              << std::setw(15)  << timings_epick[i][1] * 1000.  << "|" << std::endl;
   }
   std::cout << "+------------+---------------+" << std::endl;
 
@@ -122,7 +122,7 @@ int main()
   std::cout << "+------------+-----------------+-----------------+----------------+" << std::endl;
   for (std::size_t i = 0; i < timings_epick.size(); ++i)
   {
-    std::cout << "| " 
+    std::cout << "| "
               << std::setw(11) << timings_epick[i][0] << "|"
               << std::setw(17) << timings_epick[i][2] << "|"
               << std::setw(17) << timings_epick[i][3] << "|"

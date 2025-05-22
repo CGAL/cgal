@@ -94,9 +94,9 @@ public Q_SLOTS:
   void on_segment_button_clicked()
   {
     std::cout << "Segmenting..." << std::endl;
-    
+
     CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
-    
+
     Scene_surface_mesh_item* item = qobject_cast<Scene_surface_mesh_item*>(scene->item(index));
     if (item)
     {
@@ -109,7 +109,7 @@ public Q_SLOTS:
     std::cout << "Computing concavity values..." << std::endl;
 
     CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
-    
+
     Scene_surface_mesh_item* item = qobject_cast<Scene_surface_mesh_item*>(scene->item(index));
     if (item)
     {
@@ -129,9 +129,9 @@ private:
   {
     typedef typename FacegraphItem::Face_graph Facegraph;
     typedef typename boost::graph_traits<Facegraph>::face_descriptor face_descriptor;
-    
+
     typedef typename boost::property_map<Facegraph, CGAL::face_patch_id_t<int> >::type Patch_id_pmap;
-    
+
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
     // parameters
@@ -147,7 +147,7 @@ private:
     // create a new item and use it for segmentation
     FacegraphItem* segmentation_item = new FacegraphItem(*item->face_graph());
     segmentation_item->setFlatPlusEdgesMode();
-    
+
     // segmenation mesh
     Facegraph& segmentation_mesh = *segmentation_item->face_graph();
 
@@ -174,10 +174,10 @@ private:
                                                              use_closest_point(use_shortest_method).
                                                              segment_size_threshold(segment_size_threshold));
     timer.stop();
-    
+
     std::cout << "Elapsed time: " << timer.time() << " seconds" << std::endl;
     std::cout << "Number of segments: " << segments_num << std::endl;
-  
+
     std::vector<QColor> colors;
     generate_colors(colors, segments_num);
 
@@ -198,13 +198,13 @@ private:
       // add to the scene
       scene->addItem(segmentation_item);
       segmentation_item->setFlatPlusEdgesMode();
-      
+
       // refresh item
       segmentation_item->invalidateOpenGLBuffers();
       scene->itemChanged(scene->item_id(segmentation_item));
     }
 
-    // extract convex hulls if the corresponding flag is set 
+    // extract convex hulls if the corresponding flag is set
     if (extract_convex_hulls)
     {
       Scene_group_item *group = new Scene_group_item(tr("%1-convex-hulls-[%2,%3]").arg(segments_num).arg(concavity_threshold).arg(min_number_of_segments));
@@ -245,7 +245,7 @@ private:
     typedef typename boost::graph_traits<Facegraph>::halfedge_descriptor halfedge_descriptor;
     typedef typename boost::graph_traits<Facegraph>::vertex_descriptor vertex_descriptor;
     typedef typename boost::property_map<Facegraph, CGAL::face_patch_id_t<int> >::type Patch_id_pmap;
-    
+
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
     // parameters
@@ -253,7 +253,7 @@ private:
 
     // create new item for concavity values
     FacegraphItem* concavity_values_item = new FacegraphItem(*item->face_graph());
-      
+
     concavity_values_item->setFlatPlusEdgesMode();
     Facegraph& concavity_values_mesh = *concavity_values_item->face_graph();
 
@@ -277,7 +277,7 @@ private:
 
       double dist = 0;
       BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(face, concavity_values_mesh), concavity_values_mesh))
-      {   
+      {
         dist += distances_map[target(hd, concavity_values_mesh)];
       }
       dist /= 3.;
@@ -285,16 +285,16 @@ private:
       max_distance = std::max(max_distance, dist);
       distances.push_back(dist);
     }
-      
+
     std::vector<QColor>& colors = concavity_values_item->color_vector();
     colors.clear();
-    
+
     for (int i = 0; i < face_id; ++i)
     {
       int step = distances[i] > 0 ? std::min(255, int(std::pow(distances[i] / max_distance, 0.3) * 255)) : 0;
       colors.push_back(m_gradient_colors[step]);
     }
-   
+
     concavity_values_item->setItemIsMulticolor(true);
     if(use_shortest_method)
       concavity_values_item->setName(tr("%1-concavity-values-with-closest-point").arg(item->name()));
@@ -306,7 +306,7 @@ private:
     item->setVisible(false);
     concavity_values_item->setVisible(true);
     concavity_values_item->setFlatMode();
-      
+
     // refresh item
     concavity_values_item->invalidateOpenGLBuffers();
     scene->itemChanged(scene->item_id(concavity_values_item));
@@ -343,7 +343,7 @@ private:
                    CGAL::get_default_random().get_int(41, 255));
       colors.push_back(color);
     }
-    
+
   }
 
   void init_gradient_colors()

@@ -19,10 +19,10 @@ int main(int argc, char* argv[])
 {
   // read mesh
   Surface_mesh mesh;
-  
+
   const char* filename = (argc > 1) ? argv[1] : "data/sword.off";
   std::ifstream input(filename);
-  
+
   if (!input || !(input >> mesh))
   {
     std::cout << "Failed to read mesh" << std::endl;

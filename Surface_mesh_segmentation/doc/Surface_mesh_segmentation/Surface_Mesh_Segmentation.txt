@@ -157,7 +157,7 @@ Clusters and segments. The input number of clusters is set to 5. <b>(a)</b> Resu
 \cgalFigureEnd
 
 
-\section Surface_mesh_segmentationApprCvxDmpOverview Overview of the Approximate Convex Segmentation 
+\section Surface_mesh_segmentationApprCvxDmpOverview Overview of the Approximate Convex Segmentation
 
 \subsection Surface_mesh_segmentationConcavity Concavity Value
 

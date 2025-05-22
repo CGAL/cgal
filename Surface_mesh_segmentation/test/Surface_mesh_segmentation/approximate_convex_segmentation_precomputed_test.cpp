@@ -42,7 +42,7 @@ int main()
   }
 
   std::cout << "Number of segments: " << segments_num << std::endl;
-  
+
   int i = 0;
   BOOST_FOREACH(face_descriptor face, faces(mesh))
   {
