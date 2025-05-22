@@ -560,6 +560,8 @@ bool do_intersect(const PointRange& r1, const PointRange& r2,
 * @param np1 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 * @param np2 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
+* @warning The input graph must represent a convex object to guarantee a correct answer.
+*
 * \cgalNamedParamsBegin
 *   \cgalParamNBegin{vertex_point_map}
 *     \cgalParamDescription{a property map associating points to the vertices of `g1` (`g2`)}
@@ -949,6 +951,8 @@ FT separation_distance(const PointRange& r1, const PointRange& r2,
 * @param g2 the second convex graph 
 * @param np1 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 * @param np2 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+*
+* @warning The input graph must represent a convex object to guarantee a correct answer.
 *
 * \cgalNamedParamsBegin
 *   \cgalParamNBegin{vertex_point_map}

@@ -154,9 +154,21 @@ that is model of the concept `MutableFaceGraph`, e.g. `Polyhedron_3` and `Surfac
 
 \cgalExample{Convex_hull_3/dynamic_hull_3.cpp}
 
-\section Intersection test of Convex hulls
+\section Convex_hull_3Do_intersect Intersection test of Convex hulls
 
-Fast intersection test of convex hulls can be achieved using the class ``
+The `do_intersect()` functions provide an implementation of the algorithm computing the intersection of two convex hulls by searching on the 2-sphere \cgalCite{TODO}.
+Input convex hulls can be provided in three forms: as range of points, as graph of points or as instance of the Convex_hull_hierarchy class.
+
+The algorithm accesses the convex hulls using the `extreme_point()` function, which returns the point on the hull that is furthest in a specified direction.
+The Convex_hull_hierarchy class is a data structure that represents a convex hull and is optimized for efficient `extreme_point()` queries, which in turn makes `do_intersect()` particularly fast when using this representation.
+
+The computational complexities of `extreme_point()` and consequently `do_intersect()` depend on the input type:  \f$O(n)\f$ for a range of point, \f$O(\sqrt{n})\f$ on average for a graph and \f$O(\log{n})\f$ on average for a Convex_hull_hierarchy.
+
+A Convex_hull_hierarchy can be constructed from either a range of points or a mesh. During construction, it is assumed that the resulting convex hull is non-degenerate.
+
+\subsection Do_intersectExample Example
+The following program reads points from two input files, computes their convex hulls with `Convex_hull_hierarchy` and prints if their intersect or not.
+\cgalExample{Convex_hull_3/do_intersect_ch3.cpp}
 
 \section Convex_hull_3Performance Performance
 

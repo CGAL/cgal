@@ -73,11 +73,21 @@ defining `CGAL_CHECK_EXPENSIVE`.
 - `CGAL::Convex_hull_traits_3<R>`
 - `CGAL::Extreme_points_traits_adapter_3`
 
+\cgalCRPSection{Predicates}
+
+- `CGAL::Convex_hull_3::do_intersect`
+- `CGAL::Convex_hull_3::extreme_point`
+- `CGAL::Convex_hull_3::separation_distance`
+
 \cgalCRPSection{Convex Hull Functions}
 
 - `CGAL::convex_hull_3`
 - `CGAL::extreme_points_3`
 - `CGAL::make_extreme_points_traits_adapter`
+
+\cgalCRPSection{Convex_hull_hierarchy}
+
+- `CGAL::Convex_hull_hierarchy`
 
 \cgalCRPSection{Convexity Checking Function}
 
