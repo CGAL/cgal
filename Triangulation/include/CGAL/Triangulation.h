@@ -459,12 +459,12 @@ public:
     Finite_full_cell_const_iterator finite_full_cells_end() const
     { return Finite_full_cell_const_iterator(Finiteness_predicate(*this), full_cells_end(), full_cells_end()); }
 #else
-/*
-Finite_full_cell_iterator finite_full_cells_begin()
+
+    Finite_full_cell_iterator finite_full_cells_begin()
     { return CGAL::filter_iterator(full_cells_end(), Infiniteness_predicate(*this), full_cells_begin()); }
     Finite_full_cell_iterator finite_full_cells_end()
-    { return CGAL::filter_iterator(full_cells_end(), Finiteness_predicate(*this) ); }
-*/
+    { return CGAL::filter_iterator(full_cells_end(), Infiniteness_predicate(*this) ); }
+
     Finite_full_cell_const_iterator finite_full_cells_begin() const
     { return CGAL::filter_iterator(full_cells_end(), Infiniteness_predicate(*this), full_cells_begin()); }
     Finite_full_cell_const_iterator finite_full_cells_end() const
