@@ -1007,6 +1007,7 @@ cmake_install.cmake
 .*~
 *~
 .#*
+*.swp
 
 # macOS file https://en.wikipedia.org/wiki/.DS_Store
 .DS_Store

@@ -1,3 +1,8 @@
+/// \example Surface_mesh_segmentation/approximate_convex_segmentation_convex_hulls_example.cpp
+/// \example Surface_mesh_segmentation/approximate_convex_segmentation_example.cpp
+/// \example Surface_mesh_segmentation/approximate_convex_segmentation_SM_example.cpp
+/// \example Surface_mesh_segmentation/concavity_value_example.cpp
+/// \example Surface_mesh_segmentation/concavity_value_SM_example.cpp
 /// \example Surface_mesh_segmentation/sdf_values_example.cpp
 /// \example Surface_mesh_segmentation/segmentation_from_sdf_values_example.cpp
 /// \example Surface_mesh_segmentation/segmentation_from_sdf_values_SM_example.cpp

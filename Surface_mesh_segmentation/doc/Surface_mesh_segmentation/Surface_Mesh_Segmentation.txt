@@ -4,7 +4,7 @@ namespace CGAL {
 \anchor Chapter_3D_SurfaceSegmentation
 
 \cgalAutoToc
-\author Ilker %O. Yaz and Sébastien Loriot
+\author Ilker %O. Yaz, Liubomyr Piadyk, and Sébastien Loriot
 
 \cgalFigureBegin{Segmentation_Elephant_main,elephant_sdf_partition.png}
 The shape diameter function applied to the elephant and the corresponding segmentation (using 6 clusters).
@@ -15,18 +15,24 @@ Mesh segmentation is the process of decomposing a mesh into smaller and meaningf
 This process is used in applications such as modeling, rigging, texturing, shape-retrieval, deformation ...
 We refer to a comprehensive survey on mesh segmentation \cgalCite{Shamir2008SegmentationSurvey} for different segmentation techniques.
 
-This package provides an implementation of the algorithm relying on the <em>Shape Diameter Function</em> \cgalCite{Shapira2008Consistent} (SDF).
+This package provides implementations of two different algorithms:
+
+- The first one is an implementation of the algorithm relying on the <em>Shape Diameter Function</em> \cgalCite{Shapira2008Consistent} (SDF).
 Given a triangulated surface mesh (simply <em>mesh</em> in the following) bounding a 3D solid object,
 the SDF provides an estimate of the local object diameter for each facet of the mesh (the SDF values).
 The segmentation algorithm first applies a soft clustering on the facets using the associated SDF values.
 The final segmentation is then obtained via a graph-cut algorithm that considers surface-based features (dihedral-angle and concavity)
-together with the result of the soft clustering.
-
-This package offers the computation of the SDF values and the mesh segmentation result as independent functions.
+together with the result of the soft clustering. The computation of the SDF values and the mesh segmentation result are offered as independent functions.
 This allows an alternative implementation of the SDF to be directly plugged into the segmentation algorithm,
 and also to reuse the SDF values several times with different parameters for the segmentation algorithm.
 
-\section Surface_mesh_segmentationOverviewoftheSegmentation Overview of the Segmentation Process
+- The second one is an implementation of the approximate convex segmentation algorithm proposed by
+Mamou and Ghorbel \cgalCite{mamou2009simple}. It is based on an iterative edge collapsed in the
+dual graph of the input triangle mesh, so as to minimize the concavity value and aspect ratio of each segment
+at each collapse. The computation of the concavity value and the approximate convex segmentation
+computation are provided as separated functions.
+
+\section Surface_mesh_segmentationOverviewoftheSegmentation Overview of the Segmentation Process using SDF values
 
 \subsection Surface_mesh_segmentationShapeDiameterFunction Shape Diameter Function
 The Shape Diameter Function provides a connection between the surface mesh and the volume of the subtended 3D bounded object.
@@ -151,9 +157,69 @@ Clusters and segments. The input number of clusters is set to 5. <b>(a)</b> Resu
 \cgalFigureEnd
 
 
+\section Surface_mesh_segmentationApprCvxDmpOverview Overview of the Approximate Convex Segmentation
+
+\subsection Surface_mesh_segmentationConcavity Concavity Value
+
+In this package, the concavity of a triangle mesh \f$ S \f$ is defined as the maximal distance of the points of the vertices of the triangle mesh to the convex hull of the mesh. More specifically, it is defined as:
+
+\f$ C(S) = \max\limits_{v \in vertices(S)} ||p(v) - proj(p(v))|| \f$, where \f$p(v)\f$ is the point of vertex \f$v\f$ and \f$ proj(M) \f$ is the projection of the point \f$ M \f$ on the convex hull of \f$S\f$. See Figure \cgalFigureRef{Concavity_value} for an illustration).
+
+The projection used can be either the projection onto the convex hull along the normal of the vertex, or the projection to the convex hull that minimizes the distance to the convex hull. See Figure \cgalFigureRef{Concavity_values_elephant_demo} for a comparision of the result of the two different projections.
+
+Note that the formula given above is also valid for a subset of vertices of a triangle mesh, in which case the maximum is taken over the points of those vertices, and the convex hull computed only using those points.
+
+\cgalFigureBegin{Concavity_value,concavity_value.png}
+Distance computation of the point \f$ M_0 \f$ to its projection \f$ Proj(M_0) \f$ on the convex hull \f$ CH(S) \f$ of \f$ S \f$.
+\cgalFigureEnd
+
+\cgalFigureBegin{Concavity_values_elephant_demo,concavity_values-elephant.png, concavity_values-elephant-shortest.png}
+\b Left: Concavity per face using the projection along the vertex normal; \b Right: Concavity per face using the projection to the closest point.
+Concavity per face is estimated as the average value of concavities per vertices of the face in the Polyhedron demo.
+\cgalFigureEnd
+
+The concavity value is used as cost in the dual edge collapse process. It affects the order in which dual edges are collapsed and thus the produced segmentation.
+
+\subsection Surface_mesh_segmentationDecimation Segmentation Procedure
+
+The approximate convex segmentation is an iterative algorithm based on the collapse of dual edges.
+At the beginning each dual vertex is considered to belong to its own segment.
+At each step, the dual edge (`v`, `w`) with the lowest collapse cost is selected and collapsed.
+The collapse process consists in merging dual vertices `v` and `w` as well as the segments they belong to.
+The collapse costs are updated for all modified and new edges.
+The algorithm stops when the minimal concavity value for all remaining dual edges is above the input threshold,
+or if the number of segments is equal to the requested number.
+The current segmentation is then returned.
+
+The collapse cost of the edge between vertices `v` and `w` is computed as follows:
+<table border="0">
+    <tr>
+        <td>
+            \f$ E(v, w) = \frac{C(S(v, w))}{D} + \alpha E_{shape}(S(v, w)) \f$
+        </td>
+        <td>
+            where:
+            - \f$S(v, w)\f$ denotes the set of faces that belongs to the segments of the dual vertices \f$ v \f$ and \f$ w \f$,
+            - \f$ C(S(v, w)) \f$ the concavity value of the vertices of \f$ S(v, w) \f$,
+            - \f$ D \f$ denotes a normalization factor equal to the length of the diagonal of the bounding box of \f$ S \f$,
+            - \f$ E_{shape}{(S(v, w))} = \frac{\rho^2(S(v, w))}{4 \pi \times \sigma(S(v, w))} \f$ with \f$ \rho(S(v, w)) \f$ the perimeter of \f$S(v, w)\f$ (sum of the length of edges on the boundary of the patch) and \f$ \sigma(S(v, w)) \f$ the area of \f$ S(v, w) \f$.
+            - \f$ \alpha \f$ denotes a parameter controlling the contribution of the aspect ratio \f$ E_{shape}(v, w) \f$ with respect to the concavity cost.
+        </td>
+    </tr>
+</table>
+
+The cost \f$ E_{shape} \f$ was introduced in order to favor the generation of compact clusters.
+In the case of a disk this cost equals to one.
+The more irregular a surface is the higher its aspect ratio.
+
+Some results of the approximate convex segmentation algorithm:
+
+\cgalFigureBegin{ApproxDecompExamples,approximate_convex_segmentation_examples.png}
+Segmented a sword into 5 segments, a cactus into 4 segments, an elephant into 16 segments, and a dino into 10 segments using normal projection method to compute concavity values. The top images depict the segmentations, while the bottom images - the convex hulls of each segment.
+\cgalFigureEnd
 
 \subsection Surface_mesh_segmentationAPI Summary
-Four functions are provided:
+6 functions are provided:
         - `sdf_values()` : computes the SDF value of each facet of an input mesh in either raw or post-processed form.
            SDF values are associated to facets using a property map (see \ref Chapter_CGAL_and_Boost_Property_Maps
 "CGAL and Boost Property Maps").
@@ -164,18 +230,20 @@ Four functions are provided:
             This function allows using the same SDF values with different parameters for the segmentation stage.
             The segment or cluster ids are associated to the facets using a property map.
         - `segmentation_via_sdf_values()` : combines the three functions above.
+        - `concavity_values()` : computes the concavity value of a segment described by an id in a triangle mesh or the concavity value of the triangle mesh itself.
+        - `approximate_convex_segmentation()` : computes approximate convex segmentation of a triangle mesh, which is the smallest set of segments satisfying concavity constraint.
 
 These functions expect as input a triangulated surface mesh bounding a 3D solid object, with
 the following properties:
 - Combinatorially 2-manifold;
-- The vertices of the facets are oriented counterclockwise when seen from outside of the object;
 - Intersection-free;
-- Boundary free.
+- The vertices of the facets are oriented counterclockwise when seen from outside of the object;
+- Boundary free (but for the convexity value and the approximate convex segmentation computations).
 
-\note The current implementation executes fine on meshes that do not match
+\note The current implementations execute fine on meshes that do not match
 some of these properties but may produce unreliable or meaningless segmentations.
 
-The current implementation of the computation of the SDF values relies on the \ref PkgAABBTree package.
+The current implementation of the computation of the SDF and concavity values relies on the \ref PkgAABBTree package.
 This operation is reliable when the `AABBTraits` model provided has exact predicates.
 `::CGAL::Exact_predicates_inexact_constructions_kernel` is recommended as geometric traits for this algorithm.
 
@@ -207,21 +275,41 @@ When using a `Surface_mesh`, you can use the built-in property mechanism.
 
 \cgalExample{Surface_mesh_segmentation/segmentation_from_sdf_values_SM_example.cpp}
 
-\subsection Surface_mesh_segmentationIndependentmeshpersegment Independent TriangleMesh per Segment
+\subsection Surface_mesh_segmentationIndependantmeshpersegment Independent Triangle Mesh per Segment
  It is possible to consider each segment as an independent triangle mesh, like in the following example, where the area of each segment is computed.
 
 \cgalExample{Surface_mesh_segmentation/extract_segmentation_into_mesh_example.cpp}
 
+\subsection Concavity_value_polyhedron Computation of Concavity Value
+The following example shows how to compute the concavity of a triangle mesh.
+
+\cgalExample{Surface_mesh_segmentation/concavity_value_example.cpp}
+
+\subsubsection Concavity_value_SM Using a Surface_mesh
+The same example as the previous one but uses a `Surface_mesh` datatype.
+\cgalExample{Surface_mesh_segmentation/concavity_value_SM_example.cpp}
+
+\subsection Approx_convex_segmentation_polyhedron Approximate Convex Segmentation
+\cgalExample{Surface_mesh_segmentation/approximate_convex_segmentation_example.cpp}
+
+\subsubsection Approx_convex_segmentation_SM Using Built-in Properties of a Surface_mesh
+This example uses the `Surface_mesh` datatype instead of `Polyhedron_3` together with its built-in property mechanism.
+\cgalExample{Surface_mesh_segmentation/approximate_convex_segmentation_SM_example.cpp}
+
+\subsubsection Approx_convex_segmentation_convex_hulls Extracting Convex Hulls
+Extends the base example with the computation of convex hull per segment.
+\cgalExample{Surface_mesh_segmentation/approximate_convex_segmentation_convex_hulls_example.cpp}
+
 <BR>
 \section Performances Performances
-<!-- \subsection SMSRuntime Runtime of the functions sdf_values() and segmentation_from_sdf_values() -->
+<!-- \subsection SMSRuntime Run-time of the functions sdf_values() and segmentation_from_sdf_values() -->
 
 The following tables provide the runtime of the functions `sdf_values()` and `segmentation_from_sdf_values()`.
 The results were produced with the release 4.4 of \cgal, on an Intel i7 3.2 GHz laptop with 8 GB RAM, compiled by Visual C++ 2010 with /O2 option.
 The polyhedron types are using `Polyhedron_items_with_id_3` as item class.
 The models used for the benchmarks are the <i>dinosaur</i> model with 7,828 facets,  the <i>bear</i> model with 20,188 facets and the <i>elephant</i> model with 88,928 facets.
 
-Runtime in seconds of `sdf_values()` with 25 rays showing the cost of the robustness:
+Run-time in seconds of `sdf_values()` with 25 rays showing the cost of the robustness:
 
 <center>
 Number of triangles  | `%Simple_cartesian<double>` | `%Exact_predicates_inexact_constructions_kernel` (`EPICK`)
@@ -241,7 +329,7 @@ Number of triangles  | `%Simple_cartesian<double>` | `%Exact_predicates_inexact_
 </center>
 -->
 
-Runtime in milliseconds of `segmentation_from_sdf_values()` (using `%Simple_cartesian<double>` or `EPICK` gives the same results),
+Run-time in milliseconds of `segmentation_from_sdf_values()` (using `%Simple_cartesian<double>` or `EPICK` gives the same results),
 the graph-cut part is using the library <a href="http://pub.ist.ac.at/~vnk/software.html">MaxFlow</a> v2.21:
 
 <center>
@@ -252,9 +340,35 @@ Number of triangles  | Number of cluster = 2 | Number of cluster = 5 | Number of
 88,928               |   314                 | 1,260                 |  2,736                 |   4,239
 </center>
 
+<!-- \subsection ACDRuntime Runtime of the functions concavity_values() and convex_segmentation() -->
+
+The following tables describe the run-times of `concavity_values()` and `approximate_convex_segmentation()` functions.
+All the run-times were produced using the release build of \cgal 4.12 on an Intel i7 laptop, compiled by g++ 7.2.0 under VMware.
+In all the benchmarks `%Exact_predicates_inexact_constructions_kernel` (`EPICK`) was used as the kernel.
+Used meshes: sword.off (1036 triangles), cactus.off (1236 triangles), elephant.off (5558 triangles), dino.off (7828 triangles).
+
+<center>
+Number of triangles  |  Run-time (ms)
+---------------------| -------------:
+ 1,036               |  2.9
+ 1,236               |  1.7
+ 5,558               |  7.9
+ 7,828               |  9.9
+</center>
+
+Each cell of the next table contains run-time in seconds. It's clearly visible that the run-time not only depends on the number of triangles but also on the structure of a mesh (the more distinct segments it has the faster the algorithm executes).
+
+<center>
+Number of triangles  | Concavity threshold = 0.01 | Concavity threshold = 0.05 | Concavity threshold = 0.5
+---------------------| ------------------------:  | ------------------------:  | ---------------------:
+ 1,036               | 3.8                        | 3.9                        | 3.9
+ 1,236               | 10.8                       | 14.2                       | 20.4
+ 5,558               | 32.7                       | 59.3                       | 365.9
+ 7,828               | 20.9                       | 43.4                       | 148.7
+</center>
 
 <!-- Internal for developers:
-These are the runtimes in case CGAL_DO_NOT_USE_BOYKOV_KOLMOGOROV_MAXFLOW_SOFTWARE is defined, in which
+These are the run-times in case CGAL_DO_NOT_USE_BOYKOV_KOLMOGOROV_MAXFLOW_SOFTWARE is defined, in which
 case boost::boykov_kolmogorov_max_flow is used instead of MaxFlow
 <center>
 Number of triangles  | Number of cluster = 2 | Number of cluster = 5 | Number of cluster = 10 | Number of cluster = 15
@@ -289,7 +403,8 @@ score of XXX. The code used in the benchmark is provided as an example XXX.
 \section Surface_mesh_segmentationImplementationhistory Design and Implementation History
 The initial implementation of this package is the result of the work of Ilker O. Yaz during the 2012 season
 of the Google Summer of Code. He has been mentored by Sébastien Loriot who also contributed to the documentation
-and the API definition.
+and the API definition. The addition of the approximate convex segmentation method has been done during the 2018 season
+of the Google Summer of Code by Liubomyr Piadyk, also mentored by Sébastien Loriot.
 
 */
 } /* namespace CGAL */

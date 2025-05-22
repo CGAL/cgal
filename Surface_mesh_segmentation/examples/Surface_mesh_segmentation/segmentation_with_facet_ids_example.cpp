@@ -34,7 +34,7 @@ private:
     std::vector<ValueType>& internal_vector;
 };
 
-int main()
+int main(int argc, char* argv[])
 {
     // create and read Polyhedron
     Polyhedron mesh;

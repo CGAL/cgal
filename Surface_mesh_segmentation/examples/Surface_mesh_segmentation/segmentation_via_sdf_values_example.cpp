@@ -11,7 +11,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 typedef boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
 
-int main()
+int main(int argc, char* argv[])
 {
   // create and read Polyhedron
   Polyhedron mesh;

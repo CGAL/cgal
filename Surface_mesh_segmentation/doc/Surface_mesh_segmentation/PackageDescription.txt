@@ -11,18 +11,20 @@
 \cgalPkgPicture{segmentation_ico.png}
 
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Ilker %O. Yaz and Sébastien Loriot}
-\cgalPkgDesc{This package provides a method to generate a segmentation of
-              a triangulated surface mesh. The algorithm first computes the
+\cgalPkgAuthors{Ilker %O. Yaz, Liubomyr Piadyk, and Sébastien Loriot}
+\cgalPkgDesc{This package provides two methods to generate a segmentation of
+              a triangulated surface mesh. The first algorithm computes the
               <em>Shape Diameter Function</em> (SDF) for all facets and applies a
               graph-cut based algorithm over these values. Low level functions are
-              provided to replace any intermediate step by a custom one. }
+              provided to replace any intermediate step by a custom one. The second
+              algorithm finds a set of nearly convex surfaces that
+              satisfy specified concavity constraint.}
 \cgalPkgManuals{Chapter_3D_SurfaceSegmentation,PkgSurfaceMeshSegmentationRef}
 \cgalPkgSummaryEnd
 
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.4}
-\cgalPkgDependsOn{\ref PkgAABBTree}
+\cgalPkgDependsOn{\ref PkgAABBTree and \ref PkgConvexHull3}
 \cgalPkgBib{cgal:y-smsimpl}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{CGAL Lab,CGALlab.zip}
@@ -36,6 +38,8 @@
 - `#SegmentationGeomTraits`
 
 \cgalCRPSection{Main Functions}
+- `#CGAL::approximate_convex_segmentation()`
+- `#CGAL::concavity_values()`
 - `#CGAL::sdf_values()`
 - `#CGAL::sdf_values_postprocessing()`
 - `#CGAL::segmentation_from_sdf_values()`

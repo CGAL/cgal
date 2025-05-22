@@ -8,3 +8,5 @@ AABB_tree
 BGL
 Property_map
 Surface_mesh
+Convex_hull_3
+Polyhedron

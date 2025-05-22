@@ -24,10 +24,25 @@ if(NOT CGAL_DISABLE_GMP)
     message(STATUS "NOTICE: Eigen 3.1 (or greater) was not found. The Parameterization plugin will not be available.")
   endif()
 
+  find_package(TBB QUIET)
+  include(CGAL_TBB_support)
+
   qt6_wrap_ui(segmentationUI_FILES Mesh_segmentation_widget.ui)
   cgal_lab_plugin(mesh_segmentation_plugin Mesh_segmentation_plugin
                          ${segmentationUI_FILES})
+
   target_link_libraries(mesh_segmentation_plugin PRIVATE scene_surface_mesh_item)
+
+  if (TARGET CGAL::TBB_support)
+    message(STATUS "TBB found")
+    target_link_libraries(mesh_segmentation_plugin PRIVATE  CGAL::TBB_support)
+  else()
+    message(STATUS "TBB not found")
+  endif()
+
+  qt6_wrap_ui(approximate_convex_segmentationUI_FILES Approximate_convex_segmentation_widget.ui)
+  cgal_lab_plugin(approximate_convex_segmentation_plugin Approximate_convex_segmentation_plugin ${approximate_convex_segmentationUI_FILES})
+  target_link_libraries(approximate_convex_segmentation_plugin PRIVATE scene_surface_mesh_item)
 
   if(CGAL_ENABLE_TESTING AND NOT CMAKE_VS_MSBUILD_COMMAND)
     set_tests_properties(

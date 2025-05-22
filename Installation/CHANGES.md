@@ -1,5 +1,9 @@
 # Release History
 
+### Surface mesh segmentation package
+-   Added new functions:
+    -   `CGAL::concavity_values()` computes the concavity value of a set of faces in a triangle mesh
+    -   `CGAL::approximate_convex_segmentation()` computes approximate convex segmentation of a triangle mesh
 
 ## [Release 6.1](https://github.com/CGAL/cgal/releases/tag/v6.1)
 

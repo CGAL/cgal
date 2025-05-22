@@ -235,6 +235,12 @@ CGAL_add_named_parameter(scanline_id_t, scanline_id_map, scanline_id_map)
 CGAL_add_named_parameter(min_points_per_cell_t, min_points_per_cell, min_points_per_cell)
 CGAL_add_named_parameter(scalar_t, scalar_map, scalar_map)
 
+// List of named parameters that we use in the package 'Surface Mesh Segmentation'
+CGAL_add_named_parameter(min_number_of_segments_t, min_number_of_segments, min_number_of_segments)
+CGAL_add_named_parameter(convex_hulls_of_segments_t, convex_hulls_of_segments, convex_hulls_of_segments)
+CGAL_add_named_parameter(use_closest_point_t, use_closest_point, use_closest_point)
+CGAL_add_named_parameter(segment_size_threshold_t, segment_size_threshold, segment_size_threshold)
+
 // List of named parameters used in Surface_mesh_approximation package
 CGAL_add_named_parameter(verbose_level_t, verbose_level, verbose_level)
 CGAL_add_named_parameter(seeding_method_t, seeding_method, seeding_method)
