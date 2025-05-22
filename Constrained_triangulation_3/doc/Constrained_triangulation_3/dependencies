@@ -7,6 +7,7 @@ Property_map
 SMDS_3
 STL_Extension
 Stream_support
+Surface_mesh
 TDS_3
 Tetrahedral_remeshing
 Triangulation_3
