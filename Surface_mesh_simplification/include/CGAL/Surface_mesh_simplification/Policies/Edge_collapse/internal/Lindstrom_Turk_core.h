@@ -155,10 +155,14 @@ private :
    // balanced solution based on abusing the fact that here we expect u and v to have similar coordinates
   static Vector robust_cross_product(const Vector& a, const Vector& b)
   {
-    const FT ax=a.x(), ay=a.y(), az=a.z();
-    const FT bx=b.x(), by=b.y(), bz=b.z();
+    const FT& ax=a.x();
+    const FT& ay=a.y();
+    const FT& az=a.z();
+    const FT& bx=b.x();
+    const FT& by=b.y();
+    const FT& bz=b.z();
 
-    auto minor = [](auto ai, auto bi, auto aj, auto bj)
+    auto minor = [](const FT& ai, const FT& bi, const FT& aj, const FT& bj)
     {
       // The main idea is that we expect ai and bi (and aj and bj) to have roughly the same magnitude
       // since this function is used to compute the cross product of two vectors that are defined
