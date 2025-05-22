@@ -66,7 +66,7 @@ concavity_values(const TriangleMesh& mesh,
                  FacePropertyMap face_ids,
                  std::size_t segment_id,
                  DistancesPropertyMap distances,
-                 const NamedParameters& np)
+                 const NamedParameters& np = CGAL::parameters::default_values())
 {
   using Vpm = typename CGAL::GetVertexPointMap<TriangleMesh, NamedParameters>::const_type;
   using Geom_traits = typename GetGeomTraits<TriangleMesh, NamedParameters>::type;
@@ -80,7 +80,6 @@ concavity_values(const TriangleMesh& mesh,
   CGAL_precondition(is_triangle_mesh(mesh));
 
   bool use_closest_point = choose_parameter(get_parameter(np, internal_np::use_closest_point), false);
-  //const double w2 = parameters::choose_parameter(parameters::get_parameter(np1, internal_np::point_to_plane_weight), 2);
 
   internal::Concavity<TriangleMesh, Vpm, Geom_traits, ConcurrencyTag> algorithm(mesh, vpm, geom_traits, use_closest_point);
   return algorithm.compute(face_ids, segment_id, distances);
@@ -88,16 +87,6 @@ concavity_values(const TriangleMesh& mesh,
 
 
 #ifndef DOXYGEN_RUNNING
-template <class ConcurrencyTag, class TriangleMesh, class FacePropertyMap, class DistancesPropertyMap>
-double
-concavity_values(const TriangleMesh& mesh,
-                 FacePropertyMap face_ids,
-                 std::size_t segment_id,
-                 DistancesPropertyMap distances)
-{
-    return concavity_values<ConcurrencyTag>(mesh, face_ids, segment_id, distances, Polygon_mesh_processing::parameters::all_default());
-}
-
 template <class ConcurrencyTag, class TriangleMesh, class FacePropertyMap>
 double
 concavity_values(const TriangleMesh& mesh,
@@ -106,7 +95,7 @@ concavity_values(const TriangleMesh& mesh,
 {
     CGAL::Constant_property_map<typename boost::graph_traits<TriangleMesh>::vertex_descriptor, double > distances_pmap(0);
 
-    return concavity_values<ConcurrencyTag>(mesh, face_ids, segment_id, distances_pmap, Polygon_mesh_processing::parameters::all_default());
+    return concavity_values<ConcurrencyTag>(mesh, face_ids, segment_id, distances_pmap, CGAL::parameters::default_values());
 }
 #endif
 
@@ -170,7 +159,7 @@ double
 concavity_values(const TriangleMesh& mesh,
                  DistancesPropertyMap distances)
 {
-    return concavity_values<ConcurrencyTag>(mesh, distances, Polygon_mesh_processing::parameters::all_default());
+    return concavity_values<ConcurrencyTag>(mesh, distances);
 }
 
 template <class ConcurrencyTag, class TriangleMesh>
@@ -179,7 +168,7 @@ concavity_values(const TriangleMesh& mesh)
 {
     CGAL::Constant_property_map<typename boost::graph_traits<TriangleMesh>::vertex_descriptor, double > distances_pmap(0);
 
-    return concavity_values<ConcurrencyTag>(mesh, distances_pmap, Polygon_mesh_processing::parameters::all_default());
+    return concavity_values<ConcurrencyTag>(mesh, distances_pmap);
 }
 #endif
 

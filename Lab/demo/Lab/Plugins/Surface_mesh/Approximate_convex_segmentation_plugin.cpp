@@ -7,8 +7,7 @@
 //#define CGAL_APPROXIMATE_CONVEX_SEGMENTATION_VERBOSE
 #include <CGAL/approximate_convex_segmentation.h>
 #include <CGAL/Real_timer.h>
-#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
-#include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
+#include <CGAL/Three/CGAL_Lab_plugin_helper.h>
 #include <CGAL/property_map.h>
 #include <CGAL/Random.h>
 #include <CGAL/boost/graph/Face_filtered_graph.h>
@@ -37,10 +36,10 @@ typedef CGAL::Real_timer Timer;
     typedef CGAL::Parallel_tag Concurrency_tag;
 #endif
 
-class Polyhedron_demo_approximate_convex_segmentation_plugin : public QObject, public Polyhedron_demo_plugin_helper
+class Polyhedron_demo_approximate_convex_segmentation_plugin : public QObject, public CGAL_Lab_plugin_helper
 {
   Q_OBJECT
-  Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
+  Q_INTERFACES(CGAL::Three::CGAL_Lab_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 public:
