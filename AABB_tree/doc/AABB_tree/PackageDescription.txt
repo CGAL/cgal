@@ -1,4 +1,4 @@
-/// \defgroup PkgAABBTreeRef AABB Tree Reference
+/// \defgroup PkgAABBTreeRef Reference Manual
 
 /// \defgroup PkgAABBTreeConcepts Concepts
 /// \ingroup PkgAABBTreeRef

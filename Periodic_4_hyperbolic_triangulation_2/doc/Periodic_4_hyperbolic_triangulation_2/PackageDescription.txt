@@ -1,4 +1,4 @@
-/// \defgroup PkgPeriodic4HyperbolicTriangulation2Ref 2D Periodic Hyperbolic Triangulations Reference
+/// \defgroup PkgPeriodic4HyperbolicTriangulation2Ref Reference Manual
 
 /// \defgroup PkgPeriodic4HyperbolicTriangulation2Concepts Concepts
 /// \ingroup PkgPeriodic4HyperbolicTriangulation2Ref

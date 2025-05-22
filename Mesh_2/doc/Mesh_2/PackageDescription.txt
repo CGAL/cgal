@@ -1,4 +1,4 @@
-/// \defgroup PkgMesh2Ref 2D Conforming Triangulations and Meshes Reference
+/// \defgroup PkgMesh2Ref Reference Manual
 
 /// \defgroup PkgMesh2Concepts Concepts
 /// \ingroup PkgMesh2Ref

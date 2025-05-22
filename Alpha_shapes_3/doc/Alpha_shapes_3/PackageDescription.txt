@@ -1,4 +1,4 @@
-/// \defgroup PkgAlphaShapes3Ref 3D Alpha Shapes Reference
+/// \defgroup PkgAlphaShapes3Ref Reference Manual
 /// \defgroup PkgAlphaShapes3Concepts Concepts
 /// \ingroup PkgAlphaShapes3Ref
 /*!

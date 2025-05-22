@@ -698,7 +698,7 @@ using one of the following tags:
 - `CGAL::Alpha_expansion_boost_adjacency_list_tag` (default)
 - `CGAL::Alpha_expansion_boost_compressed_sparse_raw_tag`
 - `CGAL::Alpha_expansion_MaxFlow_tag`, released under GPL
-  license and provided by the \ref PkgSurfaceMeshSegmentationRef
+  license and provided by the \ref PkgSurfaceMeshSegmentation
   package
 
 All these implementations produce the exact same result but behave

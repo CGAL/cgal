@@ -1,4 +1,4 @@
-/// \defgroup PkgArrangementOnSurface2Ref 2D Arrangement Reference
+/// \defgroup PkgArrangementOnSurface2Ref Reference Manual
 
 /// \defgroup PkgArrangementOnSurface2Concepts Concepts
 /// \ingroup PkgArrangementOnSurface2Ref

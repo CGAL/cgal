@@ -1,4 +1,4 @@
-/// \defgroup PkgNumberTypesRef Number Types Reference
+/// \defgroup PkgNumberTypesRef Reference Manual
 
 /// \defgroup PkgNumberTypesConcepts Concepts
 /// \ingroup PkgNumberTypesRef
