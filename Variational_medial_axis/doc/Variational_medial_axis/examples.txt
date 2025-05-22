@@ -1,0 +1,3 @@
+/*!
+\example Variational_medial_axis/vmas_example.cpp
+*/

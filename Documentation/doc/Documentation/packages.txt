@@ -119,6 +119,7 @@
 \package_listing{Surface_mesh_parameterization}
 \package_listing{Surface_mesh_shortest_path}
 \package_listing{Surface_mesh_skeletonization}
+\package_listing{Variational_medial_axis}
 \package_listing{Surface_mesh_approximation}
 \package_listing{Ridges_3}
 \package_listing{Jet_fitting_3}
