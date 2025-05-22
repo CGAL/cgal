@@ -102,7 +102,7 @@ private:
     std::cout << "\t" << target(next(opposite(h,pmesh),pmesh),pmesh) << ": " << s << std::endl;
 #endif
 
-    if(internal::should_flip(edge(h, pmesh), pmesh, vpmap, traits))
+    if(internal::should_flip(edge(h, pmesh), pmesh, vpmap, traits, -0.939692621)) // TODO: should it be a named parameter?
     {
       if(flippable(h)) {
         Euler::flip_edge(h,pmesh);
