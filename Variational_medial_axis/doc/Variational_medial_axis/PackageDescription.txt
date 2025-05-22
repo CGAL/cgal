@@ -1,4 +1,4 @@
-/// \defgroup PkgVMASRef Dynamic Skeletonization Via Variational Medial Axis Sampling Reference
+/// \defgroup PkgVMASRef Reference Manual
 
 /// \defgroup PkgVMASAlgorithmClasses Algorithm Classes
 /// \ingroup PkgVMASRef
