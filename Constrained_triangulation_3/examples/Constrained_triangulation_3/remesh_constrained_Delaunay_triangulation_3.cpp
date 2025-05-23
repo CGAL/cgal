@@ -59,8 +59,9 @@ int main(int argc, char* argv[])
 
   //! [move ccdt to tr]
   namespace np = CGAL::parameters;
-  Tr tr = CGAL::convert_to_triangulation_3(std::move(ccdt),
-                                           np::edge_is_constrained_map(constraints_pmap));
+  namespace Tet_remesh = CGAL::Tetrahedral_remeshing;
+  Tr tr = Tet_remesh::get_remeshing_triangulation(std::move(ccdt),
+                                              np::edge_is_constrained_map(constraints_pmap));
   //! [move ccdt to tr]
   std::cout << "Number of vertices in tr: " << tr.number_of_vertices() << std::endl;
 
