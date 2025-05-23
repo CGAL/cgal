@@ -21,8 +21,7 @@
 
 #include <CGAL/Kernel_23/internal/Has_boolean_tags.h>
 
-#include <CGAL/Surface_mesh.h>
-#include <CGAL/convex_hull_hierarchy.h>
+#include <CGAL/Convex_hull_hierarchy.h>
 
 #include <CGAL/IO/helpers.h>
 
