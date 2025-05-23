@@ -560,7 +560,7 @@ bool do_intersect(const PointRange& r1, const PointRange& r2,
 * @param np1 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 * @param np2 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
-* @precondition The input graph must represent a convex object to guarantee a correct answer.
+* \pre The input graph must represent a convex object to guarantee a correct answer.
 *
 * \cgalNamedParamsBegin
 *   \cgalParamNBegin{vertex_point_map}
