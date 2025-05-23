@@ -196,7 +196,7 @@ ALIASES                = "cgal=%CGAL" \
                          "cgalClassifedRefPages=\htmlonly[block] <h2 class=\"groupheader\">Classified Reference Pages</h2> \endhtmlonly" \
                          "cgalCRPSection{1}=<h2>\1</h2>" \
                          "cgalCRPSubsection{1}=<h3>\1</h3>" \
-                         "cgalCite{1}=<!-- -->\cite \1" \
+                         "cgalCite{1}=<!-- -->\cite{shortauthor} \1" \
                          "cgalPackageSection{2}=\htmlonly[block] <div style=\"background-color: #EEEDF2;\">\endhtmlonly \section \1 \2 ^^ \htmlonly[block] </div>\endhtmlonly" \
                          "cgalNamedParamsBegin=<dl class=\"params\"><dt>Optional Named Parameters</dt><dd> <table class=\"params\">" \
                          "cgalNamedParamsBegin{1}=<dl class=\"params\"><dt>\1</dt><dd> <table class=\"params\">" \
