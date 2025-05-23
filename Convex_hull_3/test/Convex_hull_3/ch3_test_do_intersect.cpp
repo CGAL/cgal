@@ -8,7 +8,7 @@
 
 #include <CGAL/Convex_hull_3/predicates.h>
 #include <CGAL/convex_hull_3.h>
-#include <CGAL/convex_hull_hierarchy.h>
+#include <CGAL/Convex_hull_hierarchy.h>
 
 #include <boost/property_map/vector_property_map.hpp>
 
@@ -55,15 +55,12 @@ struct Test{
     // assert(CGAL::Convex_hull_3::Do_intersect_traits<K>().do_intersect_object()(a, b, 0)==result);
     assert(CGAL::Convex_hull_3::do_intersect(a, b)==result);
     assert(CGAL::Convex_hull_3::do_intersect(b, a)==result);
-    CGAL::Surface_mesh<P> sma, smb;
+    Mesh sma, smb;
     CGAL::convex_hull_3(a.begin(), a.end(), sma);
     CGAL::convex_hull_3(b.begin(), b.end(), smb);
     assert(CGAL::Convex_hull_3::do_intersect(sma, smb)==result);
     assert(CGAL::Convex_hull_3::do_intersect(smb, sma)==result);
-    // std::cout << CGAL::Convex_hull_3::extreme_point(a, typename K::Direction_3(1,2,3)) << std::endl;
-
-    // assert(CGAL::Convex_hull_3::extreme_point(a, typename K::Direction_3(1,2,3)) == CGAL::Convex_hull_3::extreme_point(sma, typename K::Direction_3(1,2,3)));
-    // CGAL::Convex_hull_with_hierarchy<P> hsma(sma), hsmb(smb);
+    // CGAL::Convex_hull_hierarchy<Mesh> hsma(sma), hsmb(smb);
     // assert(CGAL::Convex_hull_3::do_intersect(hsma, hsmb)==result);
     // assert(CGAL::Convex_hull_3::do_intersect(hsmb, hsma)==result);
 
@@ -76,18 +73,24 @@ struct Test{
     std::vector< size_t > pma(a.size(),0), pmb(b.size(), 0); //Vector d'indices
     std::iota(pma.begin(), pma.end(), 0);
     std::iota(pmb.begin(), pmb.end(), 0);
-    assert(CGAL::Convex_hull_3::do_intersect(pma, pmb, CGAL::parameters::point_map(va), CGAL::parameters::point_map(vb))==result);
-    assert(CGAL::Convex_hull_3::do_intersect(pmb, pma, CGAL::parameters::point_map(vb), CGAL::parameters::point_map(va))==result);
+    // assert(CGAL::Convex_hull_3::do_intersect(pma, pmb, CGAL::parameters::point_map(va), CGAL::parameters::point_map(vb))==result);
+    // assert(CGAL::Convex_hull_3::do_intersect(pmb, pma, CGAL::parameters::point_map(vb), CGAL::parameters::point_map(va))==result);
 
-    // CGAL::Surface_mesh<size_t> sma_pm, smb_pm;
-    // CGAL::convex_hull_3(pma.begin(), pma.end(), sma_pm, CGAL::make_extreme_points_traits_adapter(va));
-    // CGAL::convex_hull_3(pmb.begin(), pmb.end(), smb_pm, CGAL::make_extreme_points_traits_adapter(vb));
+    CGAL::Surface_mesh<size_t> sma_pm, smb_pm;
+    CGAL::convex_hull_3(pma.begin(), pma.end(), sma_pm, CGAL::make_extreme_points_traits_adapter(va));
+    CGAL::convex_hull_3(pmb.begin(), pmb.end(), smb_pm, CGAL::make_extreme_points_traits_adapter(vb));
+    assert(CGAL::Convex_hull_3::do_intersect(sma_pm, smb_pm, CGAL::parameters::vertex_point_map(make_compose_property_map(sma_pm.points(), va)),
+                                                             CGAL::parameters::vertex_point_map(make_compose_property_map(smb_pm.points(), vb)))==result);
+    assert(CGAL::Convex_hull_3::do_intersect(smb_pm, sma_pm, CGAL::parameters::vertex_point_map(make_compose_property_map(smb_pm.points(), vb)),
+                                                             CGAL::parameters::vertex_point_map(make_compose_property_map(sma_pm.points(), va)))==result);
 
-    CGAL::Surface_mesh< typename Mesh::Vertex_index > sma_pm, smb_pm;
-    CGAL::convex_hull_3(vertices(sma).begin(), vertices(sma).end(), sma_pm, CGAL::make_extreme_points_traits_adapter(sma.points()));
-    CGAL::convex_hull_3(vertices(smb).begin(), vertices(smb).end(), smb_pm, CGAL::make_extreme_points_traits_adapter(smb.points()));
-    assert(CGAL::Convex_hull_3::do_intersect(sma_pm, smb_pm, CGAL::parameters::vertex_point_map(make_compose_property_map(sma_pm.points(), sma.points())),
-                                                             CGAL::parameters::vertex_point_map(make_compose_property_map(smb_pm.points(), smb.points())))==result);
+    CGAL::Surface_mesh< typename Mesh::Vertex_index > sma_pm2, smb_pm2;
+    CGAL::convex_hull_3(vertices(sma).begin(), vertices(sma).end(), sma_pm2, CGAL::make_extreme_points_traits_adapter(sma.points()));
+    CGAL::convex_hull_3(vertices(smb).begin(), vertices(smb).end(), smb_pm2, CGAL::make_extreme_points_traits_adapter(smb.points()));
+    assert(CGAL::Convex_hull_3::do_intersect(sma_pm2, smb_pm2, CGAL::parameters::vertex_point_map(make_compose_property_map(sma_pm2.points(), sma.points())),
+                                                               CGAL::parameters::vertex_point_map(make_compose_property_map(smb_pm2.points(), smb.points())))==result);
+    assert(CGAL::Convex_hull_3::do_intersect(smb_pm2, sma_pm2, CGAL::parameters::vertex_point_map(make_compose_property_map(smb_pm2.points(), smb.points())),
+                                                               CGAL::parameters::vertex_point_map(make_compose_property_map(sma_pm2.points(), sma.points())))==result);
 
 
     // assert(CGAL::Convex_hull_3::do_intersect(sma_pm, smb_pm, CGAL::Convex_hull_3::make_do_intersect_traits_with_point_maps(va, vb))==result);

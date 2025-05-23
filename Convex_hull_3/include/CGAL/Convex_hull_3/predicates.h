@@ -660,8 +660,10 @@ bool do_intersect(const Convex1& c1, const Convex2& c2,
   using CGAL::parameters::get_parameter;
 
   //TODO get the Geomtraits
-
+  //TODO get convex hull hierarchy
+  //TODO TODO use new documented extreme_point and hide converter in the named parameter
   if constexpr(::CGAL::IO::internal::is_Range_v<Convex1> && ::CGAL::IO::internal::is_Range_v<Convex2>){
+    //TODO get the point maps
     using Point=std::remove_cv_t<typename std::iterator_traits<typename Convex1::iterator>::value_type>;
     using Kernel = typename Kernel_traits<Point>::Kernel;
     return Do_intersect_traits<Kernel>().do_intersect_object()(c1, c2, 0);
@@ -693,6 +695,8 @@ bool do_intersect(const Convex1& c1, const Convex2& c2,
 * @param g the convex graph
 * @param dir the direction
 * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+*
+* \pre The input graph must represent a convex object to guarantee a correct answer.
 *
 * \cgalNamedParamsBegin
 *   \cgalParamNBegin{vertex_point_map}
