@@ -64,15 +64,10 @@ struct Cell_converter
 {
   template <typename Src> auto operator()(const Src& input_c) const
   {
-    const auto default_patch = typename Cell::Surface_patch_index();
-
     Cell result_c;
-    result_c.set_subdomain_index(0);
+    result_c.set_subdomain_index(input_c.subdomain_index());
     for(int i = 0; i < 4; ++i) {
-      if(input_c.ccdt_3_data().is_facet_constrained(i))
-        result_c.set_surface_patch_index(i, input_c.ccdt_3_data().face_constraint_index(i));
-      else
-        result_c.set_surface_patch_index(i, default_patch);
+      result_c.set_surface_patch_index(i, input_c.surface_patch_index(i));
     }
     return result_c;
   }
