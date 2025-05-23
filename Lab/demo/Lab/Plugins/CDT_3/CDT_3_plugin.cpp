@@ -145,7 +145,8 @@ class CDT_3_plugin : public QObject, public CGAL_Lab_plugin_interface
     auto triangulation_item = std::make_unique<Scene_c3t3_item>();
     auto& item_tr = triangulation_item->triangulation();
 
-    const auto cdt_tr = CGAL::convert_to_triangulation_3(std::move(cdt));
+    namespace Tet_remesh = CGAL::Tetrahedral_remeshing;
+    const auto cdt_tr = Tet_remesh::get_remeshing_triangulation(std::move(cdt));
     auto inf_v =
         item_tr.tds().copy_tds(cdt_tr.tds(), cdt_tr.infinite_vertex(), Vertex_converter(&cdt), Cell_converter());
     item_tr.set_infinite_vertex(inf_v);

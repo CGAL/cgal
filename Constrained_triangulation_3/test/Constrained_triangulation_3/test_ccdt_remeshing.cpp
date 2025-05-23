@@ -46,7 +46,8 @@ int main(int argc, char* argv[])
   assert(cdt.number_of_constrained_facets() == cdt2.number_of_constrained_facets());
   assert(cdt.number_of_constrained_facets() > mesh.num_faces());
 
-  Tr tr = CGAL::convert_to_triangulation_3(std::move(cdt));
+  namespace Tet_remesh = CGAL::Tetrahedral_remeshing;
+  Tr tr = Tet_remesh::get_remeshing_triangulation(std::move(cdt));
 
   CGAL::tetrahedral_isotropic_remeshing(tr, 2.,
                                         CGAL::parameters::number_of_iterations(3)

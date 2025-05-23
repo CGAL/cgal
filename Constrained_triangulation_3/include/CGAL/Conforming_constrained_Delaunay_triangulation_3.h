@@ -3977,6 +3977,8 @@ protected:
 #endif // DOXYGEN_RUNNING
 
 
+namespace Tetrahedral_remeshing {
+
 /*!
 * \ingroup PkgConstrainedTriangulation3Functions
 * creates a triangulation that can be used for \ref Chapter_Tetrahedral_Remeshing "tetrahedral remeshing".
@@ -4015,7 +4017,7 @@ protected:
 * \return a triangulation of type `CGAL::Triangulation_3` that can be used for tetrahedral remeshing
 */
 template <typename Traits, typename Tr, typename CGAL_NP_TEMPLATE_PARAMETERS>
-auto convert_to_triangulation_3(Conforming_constrained_Delaunay_triangulation_3<Traits, Tr> ccdt,
+auto get_remeshing_triangulation(Conforming_constrained_Delaunay_triangulation_3<Traits, Tr> ccdt,
                                 const CGAL_NP_CLASS& np = parameters::default_values())
     -> CGAL::Triangulation_3<Traits,
                              typename Conforming_constrained_Delaunay_triangulation_3<Traits, Tr>::Triangulation::
@@ -4126,6 +4128,8 @@ auto convert_to_triangulation_3(Conforming_constrained_Delaunay_triangulation_3<
   }
   return tr;
 }
+
+} // end namespace Tetrahedral_remeshing
 
 } // end CGAL
 
