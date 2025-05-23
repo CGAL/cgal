@@ -4089,7 +4089,7 @@ auto get_remeshing_triangulation(Conforming_constrained_Delaunay_triangulation_3
     }
     for(auto [c, index] : tr.finite_facets()) {
       if(c->ccdt_3_data().is_facet_constrained(index)) {
-        auto patch = c->ccdt_3_data().face_constraint_index(index);
+        auto patch = c->ccdt_3_data().face_constraint_index(index) + 1;
         c->set_surface_patch_index(index, patch);
       }
     }
@@ -4120,7 +4120,7 @@ auto get_remeshing_triangulation(Conforming_constrained_Delaunay_triangulation_3
       if(f.first->ccdt_3_data().is_facet_constrained(f.second) ||
           mf.first->ccdt_3_data().is_facet_constrained(mf.second))
       {
-        auto patch = f.first->ccdt_3_data().face_constraint_index(f.second);
+        auto patch = f.first->ccdt_3_data().face_constraint_index(f.second) + 1;
         f.first->set_surface_patch_index(f.second, patch);
         mf.first->set_surface_patch_index(mf.second, patch);
       }
