@@ -505,7 +505,7 @@ make_do_intersect_traits_with_point_maps(const PointMap& pmap1, const PointMap& 
 /**
 * \ingroup PkgConvexHull3Predicates
 *
-* indicates if the convex hull of point sets provide intersect or not.
+* indicates if the convex hulls of the two point sets intersect or not.
 *
 * @tparam PointRange: is a model of `ConstRange`. The value type of its iterator is the key type of the named parameter `point_map`.
 * @tparam NamedParameters_1 a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -529,8 +529,8 @@ make_do_intersect_traits_with_point_maps(const PointMap& pmap1, const PointMap& 
 *     \cgalParamExtra{`np1` only}
 *   \cgalParamNEnd
 *   \cgalParamNBegin{number_of_iterations}
-*     \cgalParamDescription{if not `0` (no limit), indicates the maximum number of iterations that the algorithm is allowed to do.
-*                           If this value is not `0`, then an intersection might be reported even if the convex hulls does not intersect.
+*     \cgalParamDescription{if not `0` (no limit), the maximum number of iterations that the algorithm is allowed to do.
+*                           If this value is not `0`, then an intersection might be reported even if the convex hulls do not intersect.
 *                           However, if the convex hulls are reported not to intersect, this is guaranteed.}
 *     \cgalParamType{an positive integer convertible to `std::size_t`}
 *     \cgalParamExtra{`np1` only}
@@ -549,18 +549,18 @@ bool do_intersect(const PointRange& r1, const PointRange& r2,
 /**
 * \ingroup PkgConvexHull3Predicates
 *
-* indicates if the convex graph provide intersect or not.
+* indicates if the two convex graphs intersect or not.
 *
 * @tparam AdjacencyGraph: is a model of `AdjacencyGraph`.
 * @tparam NamedParameters_1 a sequence of \ref bgl_namedparameters "Named Parameters"
 * @tparam NamedParameters_2 a sequence of \ref bgl_namedparameters "Named Parameters"
 *
-* @param g1 the first convex graph considered in the do-intersect test
-* @param g2 the second convex graph considered in the do-intersect test
+* @param g1 the first convex graph
+* @param g2 the second convex graph
 * @param np1 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 * @param np2 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
-* @warning The input graph must represent a convex object to guarantee a correct answer.
+* @precondition The input graph must represent a convex object to guarantee a correct answer.
 *
 * \cgalNamedParamsBegin
 *   \cgalParamNBegin{vertex_point_map}
@@ -576,8 +576,8 @@ bool do_intersect(const PointRange& r1, const PointRange& r2,
 *     \cgalParamExtra{`np1` only}
 *   \cgalParamNEnd
 *   \cgalParamNBegin{number_of_iterations}
-*     \cgalParamDescription{if not `0` (no limit), indicates the maximum number of iterations that the algorithm is allowed to do.
-*                           If this value is not `0`, then an intersection might be reported even if the convex hulls does not intersect.
+*     \cgalParamDescription{if not `0` (no limit), the maximum number of iterations that the algorithm is allowed to do.
+*                           If this value is not `0`, then an intersection might be reported even if the convex hulls do not intersect.
 *                           However, if the convex hulls are reported not to intersect, this is guaranteed.}
 *     \cgalParamType{an positive integer convertible to `std::size_t`}
 *     \cgalParamExtra{`np1` only}
@@ -639,7 +639,7 @@ bool do_intersect(const AdjacencyGraph& g1, const AdjacencyGraph& g2,
 * @tparam NamedParameters_2 a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * @param ch1 the first convex hull
-* @param ch2 the second convex hull 
+* @param ch2 the second convex hull
 * @param np1 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 * @param np2 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
@@ -747,8 +747,8 @@ Point_3 extreme_point(const Graph& g, const Direction_3 &dir, const NamedParamet
 *
 * computes the furthest point of the range along the direction.
 *
-* @tparam PointRange: is a model of `ConstRange`. The value type of its iterator is the key type of the named parameter ` point_map`.
-* @tparam Direction_3: is a model of CGAL::Direction_3.
+* @tparam PointRange is a model of `ConstRange`. The value type of its iterator is the key type of the named parameter ` point_map`.
+* @tparam Direction_3 is a model of CGAL::Direction_3.
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * @param r the range of points
@@ -782,7 +782,7 @@ Point_3 extreme_point(const PointRange& r, const Direction_3 &dir, const NamedPa
 *
 * computes the furthest point of the convex hull along the direction.
 *
-* @tparam PolygonMesh: is a model of `MutableFaceGraph`, more details in `CGAL::Convex_hull_hierarchy`
+* @tparam PolygonMesh: is a model of `MutableFaceGraph` For more details see in  `CGAL::Convex_hull_hierarchy`
 * @tparam Direction_3: is a model of CGAL::Direction_3.
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
@@ -897,7 +897,7 @@ typename Kernel_traits<Direction_3>::Kernel::Point_3 extreme_point(const Object&
 /**
 * \ingroup PkgConvexHull3Predicates
 *
-* provides a lower bound on the distance between the two convex hull of point sets provide.
+* provides a lower bound on the distance between the convex hulls of the two point sets.
 *
 * @tparam PointRange: is a model of `ConstRange`. The value type of its iterator is the key type of the named parameter `point_map`.
 * @tparam NamedParameters_1 a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -921,8 +921,8 @@ typename Kernel_traits<Direction_3>::Kernel::Point_3 extreme_point(const Object&
 *     \cgalParamExtra{`np1` only}
 *   \cgalParamNEnd
 *   \cgalParamNBegin{number_of_iterations}
-*     \cgalParamDescription{if not `0` (no limit), indicates the maximum number of iterations that the algorithm is allowed to do.
-*                           If this value is not `0`, then an intersection might be reported even if the convex hulls does not intersect.
+*     \cgalParamDescription{if not `0` (no limit), the maximum number of iterations that the algorithm is allowed to do.
+*                           If this value is not `0`, then an intersection might be reported even if the convex hulls do not intersect.
 *                           However, if the convex hulls are reported not to intersect, this is guaranteed.}
 *     \cgalParamType{an positive integer convertible to `std::size_t`}
 *     \cgalParamExtra{`np1` only}
@@ -941,14 +941,14 @@ FT separation_distance(const PointRange& r1, const PointRange& r2,
 /**
 * \ingroup PkgConvexHull3Predicates
 *
-* provides a lower bound on the distance between the two convex graph.
+* provides a lower bound on the distance between the two convex graphs.
 *
 * @tparam AdjacencyGraph: is a model of `AdjacencyGraph`.
 * @tparam NamedParameters_1 a sequence of \ref bgl_namedparameters "Named Parameters"
 * @tparam NamedParameters_2 a sequence of \ref bgl_namedparameters "Named Parameters"
 *
-* @param g1 the first convex graph 
-* @param g2 the second convex graph 
+* @param g1 the first convex graph
+* @param g2 the second convex graph
 * @param np1 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 * @param np2 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
@@ -968,7 +968,7 @@ FT separation_distance(const PointRange& r1, const PointRange& r2,
 *     \cgalParamExtra{`np1` only}
 *   \cgalParamNEnd
 *   \cgalParamNBegin{number_of_iterations}
-*     \cgalParamDescription{if not `0` (no limit), indicates the maximum number of iterations that the algorithm is allowed to do.
+*     \cgalParamDescription{if not `0` (no limit), the maximum number of iterations that the algorithm is allowed to do.
 *                           If this value is not `0`, then an intersection might be reported even if the convex hulls do not intersect.
 *                           However, if the convex hulls are reported not to intersect, this is guaranteed.}
 *     \cgalParamType{a positive integer convertible to `std::size_t`}
@@ -1030,8 +1030,8 @@ FT separation_distance(const AdjacencyGraph& g1, const AdjacencyGraph& g2,
 * @tparam NamedParameters_1 a sequence of \ref bgl_namedparameters "Named Parameters"
 * @tparam NamedParameters_2 a sequence of \ref bgl_namedparameters "Named Parameters"
 *
-* @param ch1 the first convex hull 
-* @param ch2 the second convex hull 
+* @param ch1 the first convex hull
+* @param ch2 the second convex hull
 * @param np1 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 * @param np2 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *

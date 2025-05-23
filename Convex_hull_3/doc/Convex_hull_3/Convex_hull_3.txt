@@ -37,7 +37,7 @@ The function
 implementation of the quickhull algorithm \cgalCite{bdh-qach-96}.
 There are two versions of this
 function available, one that can be used when it is known that the output
-will be a polyhedron (<I>i.e.</I>, there are more than three points and
+will be a polyhedron (i.e., there are more than three points and
 they are not all collinear) and one that handles all degenerate cases
 and returns an `Object`, which may be a point, a segment, a
 triangle, or a polyhedron. Both versions accept a range of input
@@ -84,7 +84,7 @@ Note that the latter may also be planar polygon with a border.
 
 \cgalExample{Convex_hull_3/quickhull_any_dim_3.cpp}
 
-\subsection Convex_hull_3ExtremePoints Extreme points
+\subsection Convex_hull_3ExtremePoints Extreme Points
 In addition to the `convex_hull_3()` function, the function `extreme_points_3()` is also
 provided in case only the points on the convex hull are required (without the connectivity
 information). In addition the traits class adapter `CGAL::Extreme_points_traits_adapter_3`
@@ -133,7 +133,7 @@ point set or not. This function is used in postcondition testing for
 
 Fully dynamic maintenance of a convex hull can be achieved by using the
 class `Delaunay_triangulation_3`. This class supports insertion
-and removal of points (<I>i.e.</I>, vertices of the triangulation) and the
+and removal of points (i.e., vertices of the triangulation) and the
 convex hull edges are simply the finite edges of infinite faces.
 The following example illustrates the dynamic construction of a convex hull.
 First, random points from a sphere of a certain radius are generated and are
@@ -154,20 +154,23 @@ that is model of the concept `MutableFaceGraph`, e.g. `Polyhedron_3` and `Surfac
 
 \cgalExample{Convex_hull_3/dynamic_hull_3.cpp}
 
-\section Convex_hull_3Do_intersect Intersection test of Convex hulls
+\section Convex_hull_3Do_intersect Intersection test of Convex Hulls
 
-The `do_intersect()` functions provide an implementation of the algorithm computing the intersection of two convex hulls by searching on the 2-sphere \cgalCite{TODO}.
-Input convex hulls can be provided in three forms: as range of points, as graph of points or as instance of the Convex_hull_hierarchy class.
+The `do_intersect()` functions provide an implementation of the algorithm computing the intersection of two convex hulls by searching on the 2-sphere
+@todo Add \ cgalCite{TODO}.
+Input convex hulls can be provided in three forms: as range of points, as graph of points or as instance of the `Convex_hull_hierarchy` class.
 
 The algorithm accesses the convex hulls using the `extreme_point()` function, which returns the point on the hull that is furthest in a specified direction.
-The Convex_hull_hierarchy class is a data structure that represents a convex hull and is optimized for efficient `extreme_point()` queries, which in turn makes `do_intersect()` particularly fast when using this representation.
+The `Convex_hull_hierarchy` class is a data structure that represents a convex hull and is optimized for efficient `extreme_point()` queries,
+which in turn makes `do_intersect()` particularly fast when using this representation.
 
-The computational complexities of `extreme_point()` and consequently `do_intersect()` depend on the input type:  \f$O(n)\f$ for a range of point, \f$O(\sqrt{n})\f$ on average for a graph and \f$O(\log{n})\f$ on average for a Convex_hull_hierarchy.
+The computational complexities of `extreme_point()` and consequently `do_intersect()` depend on the input type:  \f$O(n)\f$ for a range of point,
+\f$O(\sqrt{n})\f$ on average for a graph and \f$O(\log{n})\f$ on average for a Convex_hull_hierarchy.
 
-A Convex_hull_hierarchy can be constructed from either a range of points or a mesh. During construction, it is assumed that the resulting convex hull is non-degenerate.
+A `Convex_hull_hierarchy` can be constructed from either a range of points or a mesh. During construction, it is assumed that the resulting convex hull is non-degenerate.
 
 \subsection Do_intersectExample Example
-The following program reads points from two input files, computes their convex hulls with `Convex_hull_hierarchy` and prints if their intersect or not.
+The following program reads points from two input files, computes their convex hulls with `Convex_hull_hierarchy` and prints if they intersect or not.
 \cgalExample{Convex_hull_3/do_intersect_ch3.cpp}
 
 \section Convex_hull_3Performance Performance

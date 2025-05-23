@@ -32,9 +32,8 @@ namespace CGAL{
   ///  is optimized for very fast intersection tests.
   ///
   /// @tparam PolygonMesh The polygon mesh structure used to construct each level of the hierarchy. Must be a model of ` MutableFaceGraph`.
-  ///         an internal property map for  ` CGAL::vertex_point_t` must be available
-  ///         A point type `Point` is deduced from it. There is no requirement on `Point`,
-  ///         besides being default constructible and assignable.
+  ///         An internal property map for  ` CGAL::vertex_point_t` must be available, from which the point type `Point` is deduced.
+  ///         There is no requirement on `Point`, besides being default constructible and assignable.
   ///         In typical use cases it will be a 3D point type.
 template < class PolygonMesh>
 struct Convex_hull_hierarchy{
@@ -52,13 +51,13 @@ struct Convex_hull_hierarchy{
   /// The point type.
   typedef typename PolygonMesh::Point Point;
 
-  // /// return the number of the higher level of the hierarchy.
+  // /// returns the number of the higher level of the hierarchy.
   /// @private
   std::size_t maxlevel() const{
     return hierarchy_sm.size()-1;
   }
 
-  // /// return the mesh of the corresponding level of the hierarchy.
+  // /// returns the mesh of the corresponding level of the hierarchy.
   /// @private
   const PolygonMesh& mesh(std::size_t level) const{
     return hierarchy_sm[level];
@@ -112,7 +111,7 @@ struct Convex_hull_hierarchy{
   *
   * @tparam RangeIterator must be an input iterator with a value type equivalent to `Traits::Point_3`
   * @tparam Traits must be a model of the concept ConvexHullTraits_3. For the purposes of checking the postcondition that the convex hull is valid,
-  * Traits must also be a model of the concept `IsStronglyConvexTraits_3`. Furthermore, `Traits` must define a type `PolygonMesh` that is a model of `MutableFaceGraph`.
+  *         `Traits` must also be a model of the concept `IsStronglyConvexTraits_3`. Furthermore, `Traits` must define a type `PolygonMesh` that is a model of `MutableFaceGraph`.
   */
   template <typename RangeIterator, typename Traits = typename Convex_hull_3::internal::Default_traits_for_Chull_3<Point>::type>
   Convex_hull_hierarchy(RangeIterator begin, RangeIterator end, const Traits &traits=Traits()){
