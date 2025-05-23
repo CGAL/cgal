@@ -76,12 +76,12 @@ defining `CGAL_CHECK_EXPENSIVE`.
 \cgalCRPSection{Predicates}
 
 - `CGAL::Convex_hull_3::do_intersect()`
-- `CGAL::Convex_hull_3::extreme_point()`
 - `CGAL::Convex_hull_3::separation_distance()`
 
 \cgalCRPSection{Convex Hull Functions}
 
 - `CGAL::convex_hull_3()`
+- `CGAL::Convex_hull_3::extreme_point()`
 - `CGAL::extreme_points_3()`
 - `CGAL::make_extreme_points_traits_adapter()`
 

@@ -706,7 +706,7 @@ bool do_intersect(const Convex1& c1, const Convex2& c2,
 #if DOXYGEN_RUNNING
 
 /**
-* \ingroup PkgConvexHull3Predicates
+* \ingroup PkgConvexHull3Functions
 *
 * computes the furthest point of the convex graph along the direction.
 *
@@ -742,7 +742,7 @@ template <class Graph, class Direction_3, class NamedParameters>
 Point_3 extreme_point(const Graph& g, const Direction_3 &dir, const NamedParameters &np);
 
 /**
-* \ingroup PkgConvexHull3Predicates
+* \ingroup PkgConvexHull3Functions
 *
 * computes the furthest point of the range along the direction.
 *
@@ -777,7 +777,7 @@ template <class PointRange, class Direction_3, class NamedParameters>
 Point_3 extreme_point(const PointRange& r, const Direction_3 &dir, const NamedParameters &np);
 
 /**
-* \ingroup PkgConvexHull3Predicates
+* \ingroup PkgConvexHull3Functions
 *
 * computes the furthest point of the convex hull along the direction.
 *
