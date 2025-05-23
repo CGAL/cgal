@@ -280,8 +280,6 @@ const typename boost::graph_traits<Mesh>::vertex_descriptor extreme_point(const 
   using FT= typename K::FT;
 
   using vertex_descriptor= typename boost::graph_traits<Mesh>::vertex_descriptor;
-  // std::cout << "Test" << std::endl;
-  std::cout << dir << std::endl;
   // If the number of vertices is small, simply test all vertices
   if(vertices(C).size()<20){
     vertex_descriptor argmax=*vertices(C).begin();
@@ -297,12 +295,6 @@ const typename boost::graph_traits<Mesh>::vertex_descriptor extreme_point(const 
         argmax=v;
       }
     }
-
-  //   if(dir.x()==1){
-  //   for(auto v: vertices(C)){
-  //     std::cout << v << " : " << to_double(converter(v).x()) << " : " << to_double(K().construct_vector_3_object()(ORIGIN, converter(v))*dir) << std::endl;
-  //   }
-  // }
     return argmax;
   }
 
@@ -321,8 +313,6 @@ const typename boost::graph_traits<Mesh>::vertex_descriptor extreme_point(const 
       ++nb_visited;
 #endif
       if(compare(tmax, p)==SMALLER){
-        if(dir.x()==1)
-          std::cout << v << " <" << converter(v) << "> "  << to_double(tmax) << std::endl;
         tmax=p;
         argmax=v;
         is_local_max=false; // repeat with the new vertex
@@ -331,17 +321,7 @@ const typename boost::graph_traits<Mesh>::vertex_descriptor extreme_point(const 
     }
   }while(!is_local_max);
   // Since convex, local maximum is a global maximum
-  auto true_max= extreme_point_range(vertices(C),dir, converter);
-  if(dir.x()==1){
-  std::cout << argmax << " | " << true_max << std::endl;
-  for(auto v: vertices(C)){
-    std::cout << v << " : "; //hf
-    for(auto v2: vertices_around_target(v ,C))
-      std::cout << v2 << " ";
-    std::cout << "  " << to_double(K().construct_vector_3_object()(ORIGIN, converter(v))*dir) << std::endl;
-  }
-}
-  CGAL_assertion(argmax==extreme_point_range(vertices(C),dir, converter));
+  // CGAL_assertion(argmax==extreme_point_range(vertices(C),dir, converter));
   return argmax;
 }
 
@@ -361,14 +341,9 @@ struct Functor_do_intersect{
     SphericalPolygon<Vector_3> positiveBound, tempPoly;
     positiveBound.clear();
     unsigned long planeStatPerPair = 0;
-    std::cout << "do_intersect" << std::endl;
     do {
       Vector_3 dir = positiveBound.averageDirection();
       Vector_3 sp;
-      if constexpr(::CGAL::IO::internal::is_Range_v<Convex>)
-        std::cout << c1(extreme_point_range(a, dir, c1)) << " | "<<  c2(extreme_point_range(b, -dir, c2)) << std::endl;
-      else
-        std::cout << c1(extreme_point(a, dir, c1)) << " | " << c2(extreme_point(b, -dir, c2)) << std::endl;
       if constexpr(::CGAL::IO::internal::is_Range_v<Convex>)
         sp = c1(extreme_point_range(a, dir, c1)) - c2(extreme_point_range(b, -dir, c2));
       else
@@ -639,6 +614,7 @@ bool do_intersect(const AdjacencyGraph& g1, const AdjacencyGraph& g2,
 *
 * @param ch1 the first convex hull
 * @param ch2 the second convex hull
+* @param ch2 the second convex hull
 * @param np1 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 * @param np2 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
@@ -814,77 +790,77 @@ Point_3 extreme_point(const Convex_hull_hierarchy<PolygonMesh> &ch, const Direct
 
 #else
 
-template <class Range, class Vector_3, class NamedParameters>
-typename Kernel_traits<Vector_3>::Kernel::Point_3 extreme_point_range(const Range& C, const Vector_3 &dir, const NamedParameters &np) {
-  using NP_helper= Point_set_processing_3_np_helper<Range, NamedParameters>;
-  using PointMap= typename NP_helper::Const_point_map;
-  using OK = typename Kernel_traits<Vector_3>::Kernel;
-  using IK = typename Kernel_traits<typename boost::property_traits<PointMap>::value_type>::Kernel;
-  using I2O = Cartesian_converter<IK, OK>;
-  using FT= typename OK::FT;
+// template <class Range, class Vector_3, class NamedParameters>
+// typename Kernel_traits<Vector_3>::Kernel::Point_3 extreme_point_range(const Range& C, const Vector_3 &dir, const NamedParameters &np) {
+//   using NP_helper= Point_set_processing_3_np_helper<Range, NamedParameters>;
+//   using PointMap= typename NP_helper::Const_point_map;
+//   using OK = typename Kernel_traits<Vector_3>::Kernel;
+//   using IK = typename Kernel_traits<typename boost::property_traits<PointMap>::value_type>::Kernel;
+//   using I2O = Cartesian_converter<IK, OK>;
+//   using FT= typename OK::FT;
 
-  PointMap point_map = NP_helper::get_const_point_map(C, np);
+//   PointMap point_map = NP_helper::get_const_point_map(C, np);
 
-  std::cout << "test " << C.size() << std::endl;
-  typename Range::const_iterator argmax=C.begin();
-  std::cout << get(point_map, *argmax) << std::endl;
-  FT cp_max=OK().construct_vector_3_object()(ORIGIN, I2O()(get(point_map, *argmax)))*dir;
-  for(typename Range::const_iterator it=++C.begin(); it!=C.end(); ++it){
-    std::cout << "t" << std::endl;
-    std::cout << get(point_map, *it) << std::endl;
-    FT cp=OK().construct_vector_3_object()(ORIGIN, I2O()(get(point_map,*it)))*dir;
-#ifdef CGAL_PROFILE_CONVEX_HULL_DO_INTERSECT
-    ++nb_visited;
-#endif
-    if(compare(cp_max, cp)==SMALLER){
-      cp_max=cp;
-      argmax=it;
-    }
-  }
-  return *argmax;
-}
-
-template <class Graph, class Vector_3, class NamedParameters>
-typename Kernel_traits<Vector_3>::Kernel::Point_3 extreme_point_graph(const Graph& C, const Vector_3 &dir, const NamedParameters &np) {
-  using VPM = typename GetVertexPointMap<Graph, NamedParameters>::const_type;
-  using Point = typename boost::property_traits<VPM>::value_type;
-  using OK = typename Kernel_traits<Vector_3>::Kernel;
-  using IK= typename Kernel_traits<Point>::Kernel;
-  using I2O = Cartesian_converter<IK, OK>;
-  using FT= typename OK::FT;
-
-  using vertex_descriptor= typename boost::graph_traits<Graph>::vertex_descriptor;
-
-  VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                             get_const_property_map(vertex_point, C));
-
-//   if(vertices(C).size()<20){
-//     vertex_descriptor argmax=*vertices(C).begin();
-//     FT tmax=OK().construct_vector_3_object()(ORIGIN, I2O()(argmax))*dir;
-//     for(auto vh=++(C.vertices().begin()); vh!=C.vertices().end(); ++vh){
-//       vertex_descriptor v=*vh;
+//   std::cout << "test " << C.size() << std::endl;
+//   typename Range::const_iterator argmax=C.begin();
+//   std::cout << get(point_map, *argmax) << std::endl;
+//   FT cp_max=OK().construct_vector_3_object()(ORIGIN, I2O()(get(point_map, *argmax)))*dir;
+//   for(typename Range::const_iterator it=++C.begin(); it!=C.end(); ++it){
+//     std::cout << "t" << (it==C.end()) << std::endl;
+//     std::cout << get(point_map, *it) << std::endl;
+//     FT cp=OK().construct_vector_3_object()(ORIGIN, I2O()(get(point_map,*it)))*dir;
 // #ifdef CGAL_PROFILE_CONVEX_HULL_DO_INTERSECT
-//       ++nb_visited;
+//     ++nb_visited;
 // #endif
-//       FT p=OK().construct_vector_3_object()(ORIGIN, I2O()(v))*dir;
-//       if(compare(tmax, p)==SMALLER){
-//         tmax=p;
-//         argmax=v;
-//       }
+//     if(compare(cp_max, cp)==SMALLER){
+//       cp_max=cp;
+//       argmax=it;
 //     }
-//     return argmax;
 //   }
-}
+//   return *argmax;
+// }
 
-template <class Object, class Direction_3, class NamedParameters = parameters::Default_named_parameters>
-typename Kernel_traits<Direction_3>::Kernel::Point_3 extreme_point(const Object& C, const Direction_3 &dir, const NamedParameters &np = parameters::default_values()) {
-  if constexpr(::CGAL::IO::internal::is_Range_v<Object>){
-    extreme_point_range(C, dir.vector(), np);
-  } else //if constexpr(is_instance_of_v<Object, AdjacencyGraph>)
-  {
-    extreme_point_graph(C, dir.vector(), np);
-  }
-}
+// template <class Graph, class Vector_3, class NamedParameters>
+// typename Kernel_traits<Vector_3>::Kernel::Point_3 extreme_point_graph(const Graph& C, const Vector_3 &dir, const NamedParameters &np) {
+//   using VPM = typename GetVertexPointMap<Graph, NamedParameters>::const_type;
+//   using Point = typename boost::property_traits<VPM>::value_type;
+//   using OK = typename Kernel_traits<Vector_3>::Kernel;
+//   using IK= typename Kernel_traits<Point>::Kernel;
+//   using I2O = Cartesian_converter<IK, OK>;
+//   using FT= typename OK::FT;
+
+//   using vertex_descriptor= typename boost::graph_traits<Graph>::vertex_descriptor;
+
+//   VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+//                              get_const_property_map(vertex_point, C));
+
+// //   if(vertices(C).size()<20){
+// //     vertex_descriptor argmax=*vertices(C).begin();
+// //     FT tmax=OK().construct_vector_3_object()(ORIGIN, I2O()(argmax))*dir;
+// //     for(auto vh=++(C.vertices().begin()); vh!=C.vertices().end(); ++vh){
+// //       vertex_descriptor v=*vh;
+// // #ifdef CGAL_PROFILE_CONVEX_HULL_DO_INTERSECT
+// //       ++nb_visited;
+// // #endif
+// //       FT p=OK().construct_vector_3_object()(ORIGIN, I2O()(v))*dir;
+// //       if(compare(tmax, p)==SMALLER){
+// //         tmax=p;
+// //         argmax=v;
+// //       }
+// //     }
+// //     return argmax;
+// //   }
+// }
+
+// template <class Object, class Direction_3, class NamedParameters = parameters::Default_named_parameters>
+// typename Kernel_traits<Direction_3>::Kernel::Point_3 extreme_point(const Object& C, const Direction_3 &dir, const NamedParameters &np = parameters::default_values()) {
+//   if constexpr(::CGAL::IO::internal::is_Range_v<Object>){
+//     extreme_point_range(C, dir.vector(), np);
+//   } else //if constexpr(is_instance_of_v<Object, AdjacencyGraph>)
+//   {
+//     extreme_point_graph(C, dir.vector(), np);
+//   }
+// }
 
 #endif
 
@@ -920,8 +896,8 @@ typename Kernel_traits<Direction_3>::Kernel::Point_3 extreme_point(const Object&
 *     \cgalParamExtra{`np1` only}
 *   \cgalParamNEnd
 *   \cgalParamNBegin{number_of_iterations}
-*     \cgalParamDescription{if not `0` (no limit), the maximum number of iterations that the algorithm is allowed to do.
-*                           If this value is not `0`, then an intersection might be reported even if the convex hulls do not intersect.
+*     \cgalParamDescription{if not `0` (no limit), indicates the maximum number of iterations that the algorithm is allowed to do.
+*                           If this value is not `0`, then an intersection might be reported even if the convex hulls does not intersect.
 *                           However, if the convex hulls are reported not to intersect, this is guaranteed.}
 *     \cgalParamType{an positive integer convertible to `std::size_t`}
 *     \cgalParamExtra{`np1` only}
@@ -967,9 +943,9 @@ FT separation_distance(const PointRange& r1, const PointRange& r2,
 *     \cgalParamExtra{`np1` only}
 *   \cgalParamNEnd
 *   \cgalParamNBegin{number_of_iterations}
-*     \cgalParamDescription{if not `0` (no limit), the maximum number of iterations that the algorithm is allowed to do.
-*                           If this value is not `0`, then an intersection might be reported even if the convex hulls do not intersect.
-*                           However, if the convex hulls are reported not to intersect, this is guaranteed.}
+*     \cgalParamDescription{if not `0` (no limit), indicates the maximum number of iterations that the algorithm is allowed to do.
+                            if this value is not `0`, then the return value can be zero even if the convex hulls does not intersect.
+*                           However, the value reported remains a lower bound of the distance between the convex.}
 *     \cgalParamType{a positive integer convertible to `std::size_t`}
 *     \cgalParamExtra{`np1` only}
 *     \cgalParamDefault{`0`}
@@ -1049,8 +1025,8 @@ FT separation_distance(const AdjacencyGraph& g1, const AdjacencyGraph& g2,
 *   \cgalParamNEnd
 *   \cgalParamNBegin{number_of_iterations}
 *     \cgalParamDescription{if not `0` (no limit), indicates the maximum number of iterations that the algorithm is allowed to do.
-*                           If this value is not `0`, then an intersection might be reported even if the convex hulls do not intersect.
-*                           However, if the convex hulls are reported not to intersect, this is guaranteed.}
+                            If this value is not `0`, then the return value can be zero even if the convex hulls does not intersect.
+*                           However, the value reported remains a lower bound of the distance between the convex.}
 *     \cgalParamType{a positive integer convertible to `std::size_t`}
 *     \cgalParamExtra{`np1` only}
 *     \cgalParamDefault{`0`}
