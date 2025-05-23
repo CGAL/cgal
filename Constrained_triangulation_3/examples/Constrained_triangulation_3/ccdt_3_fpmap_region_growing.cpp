@@ -1,7 +1,8 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/IO/write_MEDIT.h>
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
-#include <CGAL/Polygon_mesh_processing/detect_features.h>
+#include <CGAL/Polygon_mesh_processing/bbox.h>
+#include <CGAL/Polygon_mesh_processing/region_growing.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/make_conforming_constrained_Delaunay_triangulation_3.h>
 
@@ -25,10 +26,22 @@ int main(int argc, char* argv[])
   std::cout << "Read " << mesh.number_of_vertices() << " vertices and "
                        << mesh.number_of_faces() << " facets\n";
 
-  auto edge_is_feature_map = get(CGAL::edge_is_feature, mesh);
-  auto face_patch_map = get(CGAL::face_patch_id_t<int>(), mesh);
+  auto [face_patch_map, _] =mesh.add_property_map<face_descriptor, int>("f:patch_id", -1);
 
-  std::size_t number_of_patches = PMP::sharp_edges_segmentation(mesh, 10, edge_is_feature_map, face_patch_map);
+  const auto bbox = CGAL::Polygon_mesh_processing::bbox(mesh);
+  const double bbox_max_span = (std::max)({bbox.x_span(), bbox.y_span(), bbox.z_span()});
+
+  std::cout << "Merging facets into coplanar patches..." << std::endl;
+
+  auto number_of_patches = CGAL::Polygon_mesh_processing::region_growing_of_planes_on_faces(
+      mesh, face_patch_map,
+      CGAL::parameters::maximum_distance(bbox_max_span * 1.e-6).maximum_angle(5.));
+  for(auto f: faces(mesh)) {
+    // if region growing did not assign a patch id, assign one
+    if(get(face_patch_map, f) < 0) {
+      put(face_patch_map, f, number_of_patches++);
+    }
+  }
 
   std::cout << "Number of patches: " << number_of_patches << std::endl;
 
