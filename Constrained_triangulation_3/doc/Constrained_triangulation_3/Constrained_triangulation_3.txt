@@ -196,10 +196,10 @@ input polygon is assigned a unique face index.
 \cgalFigureRef{ccdt_fpmap} shows the input and output of this triangulation construction example.
 
 \cgalFigureBegin{ccdt_fpmap, ccdt_fpmap.png}
-Left: Input PLC;
-Middle-left: The corresponding conforming constrained Delaunay triangulation with one patch per input polygon;
-Middle-Right: Input PLC segmented according to sharp edges;
-Right: The corresponding conforming constrained Delaunay triangulation using the segmentation.
+From left to right: Input PLC;
+ The corresponding conforming constrained Delaunay triangulation with one patch per input polygon;
+ Input PLC segmented according to sharp edges;
+ The corresponding conforming constrained Delaunay triangulation using the segmentation.
 \cgalFigureEnd
 <!-- #camera 5.67784 5.7193 -5.46546 0.830007 -0.459002 0.09482 -0.302349 -->
 
