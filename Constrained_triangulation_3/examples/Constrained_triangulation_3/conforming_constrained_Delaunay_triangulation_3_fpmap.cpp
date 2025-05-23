@@ -16,7 +16,7 @@ namespace PMP = CGAL::Polygon_mesh_processing;
 
 int main(int argc, char* argv[])
 {
-  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/cross_quad.off");
+  std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/cross_quad.off");
 
   Mesh mesh;
   if(!PMP::IO::read_polygon_mesh(filename, mesh)) {
@@ -30,7 +30,11 @@ int main(int argc, char* argv[])
   EIFMap eif = get(CGAL::edge_is_feature, mesh);
   FPMap fpmap = get(CGAL::face_patch_id_t<int>(), mesh);
 
-  std::size_t number_of_patches = PMP::sharp_edges_segmentation(mesh, 80, eif, fpmap);
+  std::size_t number_of_patches = PMP::sharp_edges_segmentation(mesh, 10, eif, fpmap);
+
+  filename = argc > 2 ? argv[2] : "mesh.ply";
+  CGAL::IO::write_polygon_mesh(filename, mesh, CGAL::parameters::stream_precision(17));
+  std::cout << "Wrote segmented mesh to " << filename << "\n";
 
   std::cout << "Read " << mesh.number_of_vertices() << " vertices and "
                        << mesh.number_of_faces() << " faces\n"
@@ -44,9 +48,11 @@ int main(int argc, char* argv[])
             << "Number of constrained facets in the CDT: "
             << ccdt.number_of_constrained_facets() << '\n';
 
-  std::ofstream ofs(argc > 2 ? argv[2] : "out.mesh");
+  filename = argc > 3 ? argv[3] : "out.mesh";
+  std::ofstream ofs(filename);
   ofs.precision(17);
   CGAL::IO::write_MEDIT(ofs, ccdt);
+  std::cout << "Wrote CDT to " << filename << "\n";
 
   return EXIT_SUCCESS;
 }
