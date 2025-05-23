@@ -199,9 +199,7 @@ namespace CGAL {
     }
 
     /// returns the axis-aligned bounding box of the whole tree.
-    /// \pre `!empty()`
     const Bounding_box bbox() const {
-      CGAL_precondition(!empty());
       if(size() > 1)
         return root_node()->bbox();
       else
