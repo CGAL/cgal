@@ -116,7 +116,7 @@ class CDT_3_plugin : public QObject, public CGAL_Lab_plugin_interface
     using Vbb = CGAL::Tetrahedral_remeshing::Remeshing_vertex_base_3<K>;
     using Vb  = CGAL::Conforming_constrained_Delaunay_triangulation_vertex_base_3<K, Vbb>;
 
-    using Cbb  = CGAL::Tetrahedral_remeshing::Remeshing_cell_base_3<K>;
+    using Cbb = CGAL::Tetrahedral_remeshing::Remeshing_cell_base_3<K>;
     using Cb  = CGAL::Conforming_constrained_Delaunay_triangulation_cell_base_3<K, Cbb>;
 
     using Tds = CGAL::Triangulation_data_structure_3<Vb, Cb>;
@@ -129,16 +129,15 @@ class CDT_3_plugin : public QObject, public CGAL_Lab_plugin_interface
 
         if(patch_id_pmap_opt.has_value()) {
           cdt = CGAL::make_conforming_constrained_Delaunay_triangulation_3<CDT>(
-            *mesh, CGAL::parameters::face_patch_map(*patch_id_pmap_opt));
-        }
-        else {
+              *mesh, CGAL::parameters::face_patch_map(*patch_id_pmap_opt));
+        } else {
           cdt = CGAL::make_conforming_constrained_Delaunay_triangulation_3<CDT>(*mesh);
         }
       }
-      else if(soup_item) {
-        cdt = CGAL::make_conforming_constrained_Delaunay_triangulation_3<CDT>(
-            soup_item->points(), soup_item->polygons());
-
+      else
+        if(soup_item) {
+          cdt = CGAL::make_conforming_constrained_Delaunay_triangulation_3<CDT>(
+              soup_item->points(), soup_item->polygons());
       }
       return cdt;
     });
