@@ -1,4 +1,4 @@
-/// \defgroup PkgFrechetDistanceRef dD Fréchet Distance Reference
+/// \defgroup PkgFrechetDistanceRef Reference Manual
 /// \defgroup PkgFrechetDistanceConcepts Concepts
 /// \ingroup PkgFrechetDistanceRef
 /// \defgroup PkgFrechetDistanceFunctions Functions
