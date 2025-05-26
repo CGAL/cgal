@@ -15,6 +15,8 @@
 #include <QList>
 #include <QMessageBox>
 
+#include <functional>
+
 using namespace CGAL::Three;
 
 using Vertex = T3::Vertex;
@@ -103,9 +105,6 @@ class CDT_3_plugin : public QObject, public CGAL_Lab_plugin_interface
       return;
     }
 
-    auto* const mesh = mesh_item ? mesh_item->face_graph() : nullptr;
-    if(!mesh) return;
-
     using K = CGAL::Exact_predicates_inexact_constructions_kernel;
 
     using Vbb = CGAL::Tetrahedral_remeshing::Remeshing_vertex_base_3<K>;
@@ -120,6 +119,9 @@ class CDT_3_plugin : public QObject, public CGAL_Lab_plugin_interface
     CDT cdt = std::invoke([&] {
       CDT cdt;
       if(mesh_item) {
+        auto* const mesh = mesh_item ? mesh_item->face_graph() : nullptr;
+        if(!mesh) return cdt;
+
         auto patch_id_pmap_opt = mesh->property_map<SMesh::Face_index, int>("f:patch_id");
 
         if(patch_id_pmap_opt.has_value()) {
