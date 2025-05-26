@@ -8,8 +8,8 @@ namespace CGAL {
 \cgalAutoToc
 \author Laurent Rineau and Jane Tournois
 
-\image html vase_cdt.png
-\image latex vase_cdt.png
+\cgalFigureAnchor{CT_3_pyramid_fig}
+<img src="cdt_title_pyramid.png" style="max-width:60%;min-width=20%"/>
 <BR>
 
 \section CT_3_CCDT_3 Constrained Triangulations in 3D
