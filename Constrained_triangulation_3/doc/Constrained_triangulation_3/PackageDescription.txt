@@ -21,7 +21,7 @@
 
 \addtogroup PkgConstrainedTriangulation3Ref
 \cgalPkgDescriptionBegin{3D Constrained Triangulations,PkgConstrainedTriangulation3}
-\cgalPkgPicture{cdt3-small.png}
+\cgalPkgPicture{small-pyramid.png}
 
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Laurent Rineau and Jane Tournois}
