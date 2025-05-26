@@ -1,4 +1,4 @@
-/// \defgroup PkgSearchStructuresRef dD Range and Segment Trees Reference
+/// \defgroup PkgSearchStructuresRef Reference Manual
 /// \defgroup PkgSearchStructuresConcepts Concepts
 /// \ingroup PkgSearchStructuresRef
 

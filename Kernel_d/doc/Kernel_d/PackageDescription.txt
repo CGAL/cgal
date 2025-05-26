@@ -1,4 +1,4 @@
-/// \defgroup PkgKernelDRef dD Geometry Kernel Reference
+/// \defgroup PkgKernelDRef Reference Manual
 
 /// \defgroup PkgKernelDLinAlgConcepts Linear Algebra Concepts
 /// \ingroup PkgKernelDRef

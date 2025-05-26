@@ -1,4 +1,4 @@
-/// \defgroup PkgPolygonMeshProcessingRef Polygon Mesh Processing Reference
+/// \defgroup PkgPolygonMeshProcessingRef Reference Manual
 /// \defgroup PkgPolygonMeshProcessingConcepts Concepts
 /// \ingroup PkgPolygonMeshProcessingRef
 
