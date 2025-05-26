@@ -1,5 +1,5 @@
 /*!
-\defgroup PkgConstrainedTriangulation3Ref 3D Constrained Triangulations Reference
+\defgroup PkgConstrainedTriangulation3Ref Reference Manual
 
 \defgroup PkgConstrainedTriangulation3Concepts Concepts
 \ingroup PkgConstrainedTriangulation3Ref
