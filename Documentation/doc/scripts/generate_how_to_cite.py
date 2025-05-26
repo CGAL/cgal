@@ -73,9 +73,7 @@ The \cgal Project.
 
 
 """
-RESULT_TXT_FOOTER = r"""</td>
-</tr>
-</table><hr>
+RESULT_TXT_FOOTER = r"""</table><hr>
 */
 """
 
