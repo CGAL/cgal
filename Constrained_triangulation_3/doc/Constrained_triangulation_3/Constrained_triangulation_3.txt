@@ -233,7 +233,7 @@ but it requires the input mesh to be triangulated. Therefore, the input mesh mus
 using `CGAL::Polygon_mesh_processing::triangulate_faces()` before performing the self-intersection check.
 
 If self-intersections are found, the triangulated mesh is converted into a triangle soup, which can then be
-processed with `CGAL::Polygon_mesh_processing::autorefine_triangle_soup()` to remove the self-intersections.
+processed with `CGAL::Polygon_mesh_processing::autorefine_triangle_soup()` to resolve the self-intersections.
 
 \cgalExample{Constrained_triangulation_3/ccdt_3_preprocessing.cpp }
 
