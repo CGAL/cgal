@@ -3,6 +3,9 @@ project(Constrained_triangulation_3_Examples)
 
 find_package(CGAL REQUIRED COMPONENTS Qt6)
 
+find_package(Eigen3 QUIET)
+include(CGAL_Eigen3_support)
+
 add_compile_definitions(QT_NO_KEYWORDS)
 
 create_single_source_cgal_program(conforming_constrained_Delaunay_triangulation_3.cpp)
@@ -12,8 +15,12 @@ create_single_source_cgal_program(ccdt_3_from_soup_fpmap.cpp)
 create_single_source_cgal_program(ccdt_3_after_autorefinement.cpp)
 create_single_source_cgal_program(ccdt_3_preprocessing.cpp)
 create_single_source_cgal_program(ccdt_3_check_preconditions.cpp)
-create_single_source_cgal_program(ccdt_3_fpmap_region_growing)
 create_single_source_cgal_program(remesh_constrained_Delaunay_triangulation_3.cpp)
+
+if(TARGET CGAL::Eigen3_support)
+  create_single_source_cgal_program(ccdt_3_fpmap_region_growing.cpp)
+  target_link_libraries(ccdt_3_fpmap_region_growing PUBLIC CGAL::Eigen3_support)
+endif()
 
 if(CGAL_Qt6_FOUND)
   target_link_libraries(conforming_constrained_Delaunay_triangulation_3 PUBLIC CGAL::CGAL_Basic_viewer)
