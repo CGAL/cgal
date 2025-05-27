@@ -79,7 +79,7 @@ struct Cell {
     return index_;
   }
 
-  Vertex_handle vertex(int i)
+  Vertex_handle vertex(int i) const
   {
     return Vertex_handle(tds, tds->cell_connectivity()[index()].ivertices[i]);
   }
@@ -272,7 +272,7 @@ struct Vertex{
 
   const Point& point() const
   {
-    return Cell_handle(tds, tds->vertex_connectivity()[index()].point);
+    return tds->vertex_connectivity()[index()].point;
   }
 
   void set_point(const Point& p)
@@ -426,6 +426,10 @@ struct TDS {
   // Put this TDS inside the Vertex and Cell types.
   typedef typename Vb::template Rebind_TDS<Self>::Other  Vertex_handle;
   typedef typename Cb::template Rebind_TDS<Self>::Other  Cell_handle;
+
+  // AF Needed by Cell_circulator ??
+  typedef Vertex_handle Vertex;
+  typedef Cell_handle Cell;
 
   typedef std::pair<Cell_handle, int>              Facet;
   typedef Triple<Cell_handle, int, int>            Edge;
@@ -1014,6 +1018,11 @@ Facet_iterator facets_begin() const
     return Facets(facets_begin(), facets_end());
   }
 
+  Cell_circulator incident_cells(const Edge & e) const
+  {
+    CGAL_precondition( dimension() == 3 );
+    return Cell_circulator(e);
+  }
 
     Properties::Property_container<Self, Vertex_index> vprops_;
     Properties::Property_container<Self, Cell_index>   cprops_;
@@ -1049,11 +1058,20 @@ Facet_iterator facets_begin() const
 int main() {
   CGAL::TDS<> tds;
   using Vertex_handle = CGAL::TDS<>::Vertex_handle;
+  using Vertex_iterator = CGAL::TDS<>::Vertex_iterator;
+  using Cell_handle = CGAL::TDS<>::Cell_handle;
+  using Cell_circulator = CGAL::TDS<>::Cell_circulator;
+  using Edge = CGAL::TDS<>::Edge;
+
   Vertex_handle inf, v0, v1, v2, v3;
   inf = tds.insert_first_finite_cell(v0, v1, v2, v3);
 
   for(auto  v : tds.vertices()) {
     std::cout << v << std::endl;
+  }
+
+  for(Vertex_iterator vit = tds.vertices_begin(); vit != tds.vertices_end(); ++vit) {
+    std::cout << vit->point() << std::endl;
   }
 
   for(auto  c : tds.cells()) {
@@ -1063,6 +1081,18 @@ int main() {
   for(auto f : tds.facets()) {
     std::cout << f.first << " " << f.second << std::endl;
   }
+
+  Cell_handle c = inf->cell();
+  Edge e(c, 0, 1);
+
+  std::cout << "Incident cells to edge:\n";
+  Cell_circulator cc = tds.incident_cells(e), done(cc);
+  do {
+    Cell_handle ch = cc;
+    std::cout << ch << " ";
+    ++cc;
+  } while (cc != done);
+  std::cout << std::endl;
   return 0;
 }
 
