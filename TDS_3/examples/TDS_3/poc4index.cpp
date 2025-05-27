@@ -11,7 +11,7 @@
 #include <CGAL/Iterator_range.h>
 #include <CGAL/Surface_mesh/Surface_mesh.h>
 
-typedef int Point;
+using Point =  int;
 
 namespace CGAL {
 
@@ -209,12 +209,12 @@ template <>
 class Cell<void>
 {
 public:
-  typedef internal::Dummy_tds_3                         Triangulation_data_structure;
-  typedef Triangulation_data_structure::Vertex_handle   Vertex_handle;
-  typedef Triangulation_data_structure::Cell_handle     Cell_handle;
+  using Triangulation_data_structure = internal::Dummy_tds_3;
+  using  Vertex_handle = Triangulation_data_structure::Vertex_handle;
+  using Cell_handle =  Triangulation_data_structure::Cell_handle;
 
   template <typename TDS2>
-  struct Rebind_TDS { typedef Cell<TDS2> Other; };
+  struct Rebind_TDS { using Other = Cell<TDS2>; };
 };
 
 
@@ -315,9 +315,9 @@ template <>
 class Vertex<void>
 {
 public:
-  typedef internal::Dummy_tds_3                         Triangulation_data_structure;
-  typedef Triangulation_data_structure::Cell_handle     Cell_handle;
-  typedef Triangulation_data_structure::Vertex_handle   Vertex_handle;
+  using Triangulation_data_structure = internal::Dummy_tds_3;
+  using Cell_handle = Triangulation_data_structure::Cell_handle;
+  using Vertex_handle = Triangulation_data_structure::Vertex_handle;
 
   template <typename TDS2>
   struct Rebind_TDS { using Other = Vertex<TDS2>; };
@@ -330,8 +330,8 @@ class Vertex4Regular
 {
 template < typename TDS2 >
   struct Rebind_TDS {
-    typedef typename Vb::template Rebind_TDS<TDS2>::Other                 Vb2;
-    typedef Vertex4Regular<TDS2,Vb2>  Other;
+    using Vb2 = typename Vb::template Rebind_TDS<TDS2>::Other;
+    using Other = Vertex4Regular<TDS2,Vb2>;
   };
 
   void hide_point(const Point& p)
@@ -344,7 +344,7 @@ template<typename T>
     class Index
     {
     public:
-    typedef std::uint32_t size_type;
+    using size_type = std::uint32_t;
         /// Constructor. %Default construction creates an invalid index.
         /// We write -1, which is <a href="https://en.cppreference.com/w/cpp/types/numeric_limits">
         /// <tt>(std::numeric_limits<size_type>::max)()</tt></a>
@@ -410,29 +410,29 @@ struct TDS {
 
   using Self = TDS<Vb,Cb, ConcurrencyTag>;
 
-  typedef ConcurrencyTag Concurrency_tag;
+  using Concurrency_tag  = ConcurrencyTag;
 
   // Tools to change the Vertex and Cell types of the TDS.
   template < typename Vb2 >
   struct Rebind_vertex {
-    typedef TDS<Vb2, Cb, ConcurrencyTag> Other;
+    using Other = TDS<Vb2, Cb, ConcurrencyTag>;
   };
 
   template < typename Cb2 >
   struct Rebind_cell {
-    typedef TDS<Vb, Cb2, ConcurrencyTag> Other;
+    using Other = TDS<Vb, Cb2, ConcurrencyTag>;
   };
 
   // Put this TDS inside the Vertex and Cell types.
-  typedef typename Vb::template Rebind_TDS<Self>::Other  Vertex_handle;
-  typedef typename Cb::template Rebind_TDS<Self>::Other  Cell_handle;
+  using Vertex_handle = typename Vb::template Rebind_TDS<Self>::Other;
+  using Cell_handle = typename Cb::template Rebind_TDS<Self>::Other;
 
   // AF Needed by Cell_circulator ??
-  typedef Vertex_handle Vertex;
-  typedef Cell_handle Cell;
+  using Vertex = Vertex_handle;
+  using Cell = Cell_handle;
 
-  typedef std::pair<Cell_handle, int>              Facet;
-  typedef Triple<Cell_handle, int, int>            Edge;
+  using Facet = std::pair<Cell_handle, int>;
+  using Edge = Triple<Cell_handle, int, int>;
 
     /// The type used to represent an index.
   using size_type = std::uint32_t;
@@ -441,8 +441,9 @@ struct TDS {
   template <class I, class T>
   struct Property_map : Properties::Property_map_base<I, T, Property_map<I, T> >
   {
-    typedef Properties::Property_map_base<I, T, Property_map<I, T> > Base;
-    typedef typename Base::reference reference;
+    using Base = Properties::Property_map_base<I, T, Property_map<I, T> >;
+    using reference = typename Base::reference;
+
     Property_map() = default;
     Property_map(const Base& pm): Base(pm) {}
   };
@@ -451,7 +452,7 @@ struct TDS {
   // AF: factorize as also in Surface_mesh and Point_set_3
   template <typename Key, typename T>
   struct Get_property_map {
-    typedef Property_map<Key, T> type;
+    using type = Property_map<Key, T>;
   };
 
 
@@ -849,10 +850,10 @@ struct TDS {
                                        Handle_
                                        >
     {
-        typedef boost::iterator_facade< Index_iterator<Index_, Handle_>,
-                                        Handle_,
-                                        std::random_access_iterator_tag,
-                                        Handle_> Facade;
+        using Facade = boost::iterator_facade<Index_iterator<Index_, Handle_>,
+                                             Handle_,
+                                             std::random_access_iterator_tag,
+                                             Handle_>;
     public:
         Index_iterator() : hnd_(), tds_(nullptr) {}
         Index_iterator(const Index_& h, const Self* m)
@@ -947,8 +948,8 @@ struct TDS {
     };
 
     // AF:  The value type of the iterators should be the same as the value type of the handle. This is not the case now.
-    typedef Index_iterator<Vertex_index,Vertex_handle> Vertex_iterator;
-    typedef Iterator_range<Vertex_iterator> Vertex_range;
+    using Vertex_iterator = Index_iterator<Vertex_index,Vertex_handle>;
+    using Vertex_range = Iterator_range<Vertex_iterator>;
 
     Vertex_iterator vertices_begin() const
     {
@@ -966,8 +967,8 @@ struct TDS {
     }
 
 
-    typedef Index_iterator<Cell_index,Cell_handle> Cell_iterator;
-    typedef Iterator_range<Cell_iterator> Cell_range;
+    using Cell_iterator = Index_iterator<Cell_index,Cell_handle>;
+    using Cell_range = Iterator_range<Cell_iterator>;
 
     Cell_iterator cells_begin() const
     {
@@ -993,13 +994,13 @@ struct TDS {
 
 
 
-  typedef internal::Triangulation_ds_facet_iterator_3<Self>   Facet_iterator;
-  typedef internal::Triangulation_ds_edge_iterator_3<Self>    Edge_iterator;
-  typedef Iterator_range<Facet_iterator> Facets;
-  typedef Iterator_range<Edge_iterator> Edges;
+  using Facet_iterator = internal::Triangulation_ds_facet_iterator_3<Self>;
+  using Edge_iterator = internal::Triangulation_ds_edge_iterator_3<Self>;
+  using Facets = Iterator_range<Facet_iterator>;
+  using Edges = Iterator_range<Edge_iterator>;
 
-  typedef internal::Triangulation_ds_cell_circulator_3<Self>  Cell_circulator;
-  typedef internal::Triangulation_ds_facet_circulator_3<Self> Facet_circulator;
+  using Cell_circulator = internal::Triangulation_ds_cell_circulator_3<Self>;
+  using Facet_circulator = internal::Triangulation_ds_facet_circulator_3<Self>;
 
   Edge_iterator edges_begin() const
   {
