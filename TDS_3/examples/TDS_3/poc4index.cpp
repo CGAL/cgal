@@ -15,396 +15,396 @@ using Point =  int;
 
 namespace CGAL {
 
-template <typename TDS_3 = void>
-struct Vertex;
+  template <typename TDS_3 = void>
+  struct Vertex;
 
-template <typename TDS_3 = void>
-struct Cell;
+  template <typename TDS_3 = void>
+  struct Cell;
 
-template <typename Vb = Vertex<>, typename Cb = Cell<>, class ConcurrencyTag = Sequential_tag>
-struct TDS;
+  template <typename Vb = Vertex<>, typename Cb = Cell<>, class ConcurrencyTag = Sequential_tag>
+  struct TDS;
 
-template <typename TDS_3>
-struct Cell {
+  template <typename TDS_3>
+  struct Cell {
 
-  using Vertex_handle = typename TDS_3::Vertex_handle;
-  using Cell_handle   = typename TDS_3::Cell_handle;
-  using Vertex_index  = typename TDS_3::Vertex_index;
-  using Cell_index    = typename TDS_3::Cell_index;
-  using TDS_data      = typename TDS_3::Cell_data;
+    using Vertex_handle = typename TDS_3::Vertex_handle;
+    using Cell_handle   = typename TDS_3::Cell_handle;
+    using Vertex_index  = typename TDS_3::Vertex_index;
+    using Cell_index    = typename TDS_3::Cell_index;
+    using TDS_data      = typename TDS_3::Cell_data;
 
-  struct Connectivity {
-    std::array<Vertex_index,4> ivertices;
-    std::array<Cell_index,4>   ineighbors;
+    struct Connectivity {
+      std::array<Vertex_index,4> ivertices;
+      std::array<Cell_index,4>   ineighbors;
+    };
+
+    Cell()
+      : tds_(nullptr), index_()
+    {}
+
+    Cell(TDS_3* tds_, Cell_index index)
+      : tds_(tds_), index_(index)
+    {}
+
+    Cell& operator=(const Cell& other)
+    {
+      if (this != &other) {
+        tds_ = other.tds_;
+        index_ = other.index_;
+      }
+      return *this;
+    }
+
+    Cell(const Cell& other)
+      : tds_(other.tds_), index_(other.index_)
+    {}
+
+    bool operator==(const Cell& other) const
+    {
+      return tds_ == other.tds_ && index_ == other.index_;
+    }
+
+    bool operator!=(const Cell& other) const
+    {
+      return !(*this == other);
+    }
+
+    bool operator<(const Cell& other) const
+    {
+      return (tds_ == other.tds_) ? (index_ < other.index_) : (tds_ < other.tds_);
+    }
+
+    Cell_index index() const
+    {
+      return index_;
+    }
+
+    Vertex_handle vertex(int i) const
+    {
+      return Vertex_handle(tds_, tds_->cell_connectivity()[index()].ivertices[i]);
+    }
+
+    int index(Vertex_handle v) const
+    {
+      for (int i = 0; i < 4; ++i) {
+        if (v.index() == tds_->cell_connectivity()[index()].ivertices[i]) {
+          return i;
+        }
+      }
+      return -1; // Not found
+    }
+
+    bool has_vertex(Vertex_handle v) const
+    {
+      for (int i = 0; i < 4; ++i) {
+        if (v.index() == tds_->cell_connectivity()[index()].ivertices[i]) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    bool has_vertex(Vertex_handle v, int & i) const
+    {
+      for (i = 0; i < 4; ++i) {
+        if (v.index() == tds_->cell_connectivity()[index()].ivertices[i]) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    Cell_handle neighbor(int i) const
+    {
+      return Cell_handle(tds_, tds_->cell_connectivity()[index()].ineighbors[i]);
+    }
+
+    bool has_neighbor(Cell_handle n) const
+    {
+      for (int i = 0; i < 4; ++i) {
+        if (n.index() == tds_->cell_connectivity()[index()].ineighbors[i]) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    bool has_neighbor(Cell_handle n, int & i) const
+    {
+      for (i = 0; i < 4; ++i) {
+        if (n.index() == tds_->cell_connectivity()[index()].ineighbors[i]) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    void set_vertex(int i, Vertex_handle v)
+    {
+      tds_->cell_connectivity()[index()].ivertices[i] = v.index();
+    }
+
+    void set_neighbor(int i, Cell_handle n)
+    {
+      tds_->cell_connectivity()[index()].ineighbors[i] = n.index();
+    }
+
+    void set_vertices(Vertex_handle v0, Vertex_handle v1, Vertex_handle v2, Vertex_handle v3)
+    {
+      tds_->cell_connectivity()[index()].ivertices[0] = v0.index();
+      tds_->cell_connectivity()[index()].ivertices[1] = v1.index();
+      tds_->cell_connectivity()[index()].ivertices[2] = v2.index();
+      tds_->cell_connectivity()[index()].ivertices[3] = v3.index();
+    }
+
+    void set_neighbors(Cell_handle n0, Cell_handle n1, Cell_handle n2, Cell_handle n3)
+    {
+      tds_->cell_connectivity()[index()].ineighbors[0] = n0.index();
+      tds_->cell_connectivity()[index()].ineighbors[1] = n1.index();
+      tds_->cell_connectivity()[index()].ineighbors[2] = n2.index();
+      tds_->cell_connectivity()[index()].ineighbors[3] = n3.index();
+    }
+
+    // CHECKING
+    bool is_valid(bool verbose = false,
+                  int   level = 0) const
+    {
+      assert(false);
+      return true;
+    }
+
+    TDS_data& tds_data() {
+      return tds_->tds_data()[index()];
+    }
+
+    const TDS_data& tds_data() const {
+      return tds_->tds_data()[index()];
+    }
+
+    const Cell_handle* operator->() const {
+      return this;
+    }
+    Cell_handle* operator->() {
+      return this;
+    }
+
+    template <typename TDS>
+    struct Rebind_TDS {
+      using Other = Cell<TDS>;
+    };
+
+    TDS_3* tds() const
+    {
+      return tds_;
+    }
+
+    TDS_3* tds_;
+    Cell_index index_;
   };
 
-  Cell()
-  : tds_(nullptr), index_()
-  {}
-
-  Cell(TDS_3* tds_, Cell_index index)
-  : tds_(tds_), index_(index)
-  {}
-
-  Cell& operator=(const Cell& other)
+  template <typename TDS_3>
+  std::ostream& operator<<(std::ostream& os, const Cell<TDS_3>& c)
   {
-    if (this != &other) {
-      tds_ = other.tds_;
-      index_ = other.index_;
-    }
-    return *this;
+    os << "Cell " << c.index();
+    return os;
   }
 
-  Cell(const Cell& other)
-  : tds_(other.tds_), index_(other.index_)
-  {}
-
-  bool operator==(const Cell& other) const
+  // Specialization for void.
+  template <>
+  class Cell<void>
   {
-    return tds_ == other.tds_ && index_ == other.index_;
-  }
+  public:
+    using Triangulation_data_structure = internal::Dummy_tds_3;
+    using  Vertex_handle = Triangulation_data_structure::Vertex_handle;
+    using Cell_handle =  Triangulation_data_structure::Cell_handle;
 
-  bool operator!=(const Cell& other) const
-  {
-    return !(*this == other);
-  }
-
-  bool operator<(const Cell& other) const
-  {
-    return (tds_ == other.tds_) ? (index_ < other.index_) : (tds_ < other.tds_);
-  }
-
-  Cell_index index() const
-  {
-    return index_;
-  }
-
-  Vertex_handle vertex(int i) const
-  {
-    return Vertex_handle(tds_, tds_->cell_connectivity()[index()].ivertices[i]);
-  }
-
-  int index(Vertex_handle v) const
-  {
-    for (int i = 0; i < 4; ++i) {
-      if (v.index() == tds_->cell_connectivity()[index()].ivertices[i]) {
-        return i;
-      }
-    }
-    return -1; // Not found
-  }
-
-  bool has_vertex(Vertex_handle v) const
-  {
-    for (int i = 0; i < 4; ++i) {
-      if (v.index() == tds_->cell_connectivity()[index()].ivertices[i]) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  bool has_vertex(Vertex_handle v, int & i) const
-  {
-    for (i = 0; i < 4; ++i) {
-      if (v.index() == tds_->cell_connectivity()[index()].ivertices[i]) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  Cell_handle neighbor(int i) const
-  {
-    return Cell_handle(tds_, tds_->cell_connectivity()[index()].ineighbors[i]);
-  }
-
-  bool has_neighbor(Cell_handle n) const
-  {
-    for (int i = 0; i < 4; ++i) {
-      if (n.index() == tds_->cell_connectivity()[index()].ineighbors[i]) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  bool has_neighbor(Cell_handle n, int & i) const
-  {
-    for (i = 0; i < 4; ++i) {
-      if (n.index() == tds_->cell_connectivity()[index()].ineighbors[i]) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  void set_vertex(int i, Vertex_handle v)
-  {
-    tds_->cell_connectivity()[index()].ivertices[i] = v.index();
-  }
-
-  void set_neighbor(int i, Cell_handle n)
-  {
-    tds_->cell_connectivity()[index()].ineighbors[i] = n.index();
-  }
-
-  void set_vertices(Vertex_handle v0, Vertex_handle v1, Vertex_handle v2, Vertex_handle v3)
-  {
-    tds_->cell_connectivity()[index()].ivertices[0] = v0.index();
-    tds_->cell_connectivity()[index()].ivertices[1] = v1.index();
-    tds_->cell_connectivity()[index()].ivertices[2] = v2.index();
-    tds_->cell_connectivity()[index()].ivertices[3] = v3.index();
-  }
-
-  void set_neighbors(Cell_handle n0, Cell_handle n1, Cell_handle n2, Cell_handle n3)
-  {
-    tds_->cell_connectivity()[index()].ineighbors[0] = n0.index();
-    tds_->cell_connectivity()[index()].ineighbors[1] = n1.index();
-    tds_->cell_connectivity()[index()].ineighbors[2] = n2.index();
-    tds_->cell_connectivity()[index()].ineighbors[3] = n3.index();
-  }
-
-  // CHECKING
-   bool is_valid(bool verbose = false,
-                int   level = 0) const
-  {
-    assert(false);
-    return true;
-  }
-
-  TDS_data& tds_data() {
-    return tds_->tds_data()[index()];
-  }
-
-  const TDS_data& tds_data() const {
-    return tds_->tds_data()[index()];
-  }
-
-  const Cell_handle* operator->() const {
-    return this;
-  }
-  Cell_handle* operator->() {
-    return this;
-  }
-
-  template <typename TDS>
-  struct Rebind_TDS {
-    using Other = Cell<TDS>;
+    template <typename TDS2>
+    struct Rebind_TDS { using Other = Cell<TDS2>; };
   };
 
-  TDS_3* tds() const
-  {
-    return tds_;
-  }
-
-  TDS_3* tds_;
-  Cell_index index_;
-};
-
-template <typename TDS_3>
-std::ostream& operator<<(std::ostream& os, const Cell<TDS_3>& c)
-{
-  os << "Cell " << c.index();
-  return os;
-}
-
-// Specialization for void.
-template <>
-class Cell<void>
-{
-public:
-  using Triangulation_data_structure = internal::Dummy_tds_3;
-  using  Vertex_handle = Triangulation_data_structure::Vertex_handle;
-  using Cell_handle =  Triangulation_data_structure::Cell_handle;
-
-  template <typename TDS2>
-  struct Rebind_TDS { using Other = Cell<TDS2>; };
-};
 
 
+  template <typename TDS_3>
+  struct Vertex{
 
-template <typename TDS_3>
-struct Vertex{
+    using Cell_handle   = typename TDS_3::Cell_handle;
+    using Cell_index    = typename TDS_3::Cell_index;
+    using Vertex_index  = typename TDS_3::Vertex_index;
+    using Vertex_handle = typename TDS_3::Vertex_handle;
 
-  using Cell_handle   = typename TDS_3::Cell_handle;
-  using Cell_index    = typename TDS_3::Cell_index;
-  using Vertex_index  = typename TDS_3::Vertex_index;
-  using Vertex_handle = typename TDS_3::Vertex_handle;
+    struct Connectivity {
+      Point point;
+      Cell_index icell;
+    };
 
-  struct Connectivity {
-    Point point;
-    Cell_index icell;
+    Vertex()
+      : tds_(nullptr), index_()
+    {}
+
+    Vertex(TDS_3* tds, Vertex_index index)
+      : tds_(tds), index_(index)
+    {}
+
+    bool operator==(const Vertex& other) const
+    {
+      return tds_ == other.tds_ && index_ == other.index_;
+    }
+
+    bool operator!=(const Vertex& other) const
+    {
+      return !(*this == other);
+    }
+
+    bool operator<(const Vertex& other) const
+    {
+      return (tds_ == other.tds_) ? (index_ < other.index_) : (tds_ < other.tds_);
+    }
+
+    Vertex_index index() const
+    {
+      return index_;
+    }
+
+    Cell_handle cell() const
+    {
+      return Cell_handle(tds_, tds_->vertex_connectivity()[index()].icell);
+    }
+
+    void set_cell(Cell_handle c)
+    {
+      tds_->vertex_connectivity()[index()].icell = c.index();
+    }
+
+    const Point& point() const
+    {
+      return tds_->vertex_connectivity()[index()].point;
+    }
+
+    void set_point(const Point& p)
+    {
+      tds_->vertex_connectivity()[index()].point = p;
+    }
+
+    bool is_valid(bool verbose = false) const
+    {
+      assert(false); // This should be implemented
+      return true;
+    }
+
+    const Vertex_handle* operator->() const {
+      return this;
+    }
+
+    Vertex_handle* operator->() {
+      return this;
+    }
+
+    template <typename TDS>
+    struct Rebind_TDS {
+      using Other = Vertex<TDS>;
+    };
+
+    TDS_3* tds() const
+    {
+      return tds_;
+    }
+
+    TDS_3* tds_;
+    Vertex_index index_;
   };
 
-  Vertex()
-  : tds_(nullptr), index_()
-  {}
-
-  Vertex(TDS_3* tds, Vertex_index index)
-  : tds_(tds), index_(index)
-  {}
-
-  bool operator==(const Vertex& other) const
+  template <typename TDS_3>
+  std::ostream& operator<<(std::ostream& os, const Vertex<TDS_3>& v)
   {
-    return tds_ == other.tds_ && index_ == other.index_;
+    os << "Vertex " << v.index();
+    return os;
   }
 
-  bool operator!=(const Vertex& other) const
+  // Specialization for void.
+  template <>
+  class Vertex<void>
   {
-    return !(*this == other);
-  }
+  public:
+    using Triangulation_data_structure = internal::Dummy_tds_3;
+    using Cell_handle = Triangulation_data_structure::Cell_handle;
+    using Vertex_handle = Triangulation_data_structure::Vertex_handle;
 
-  bool operator<(const Vertex& other) const
-  {
-    return (tds_ == other.tds_) ? (index_ < other.index_) : (tds_ < other.tds_);
-  }
-
-  Vertex_index index() const
-  {
-    return index_;
-  }
-
-  Cell_handle cell() const
-  {
-    return Cell_handle(tds_, tds_->vertex_connectivity()[index()].icell);
-  }
-
-  void set_cell(Cell_handle c)
-  {
-    tds_->vertex_connectivity()[index()].icell = c.index();
-  }
-
-  const Point& point() const
-  {
-    return tds_->vertex_connectivity()[index()].point;
-  }
-
-  void set_point(const Point& p)
-  {
-    tds_->vertex_connectivity()[index()].point = p;
-  }
-
-  bool is_valid(bool verbose = false) const
-  {
-    assert(false); // This should be implemented
-    return true;
-  }
-
-  const Vertex_handle* operator->() const {
-    return this;
-  }
-
-  Vertex_handle* operator->() {
-    return this;
-  }
-
-  template <typename TDS>
-  struct Rebind_TDS {
-    using Other = Vertex<TDS>;
+    template <typename TDS2>
+    struct Rebind_TDS { using Other = Vertex<TDS2>; };
   };
-
-  TDS_3* tds() const
-  {
-    return tds_;
-  }
-
-  TDS_3* tds_;
-  Vertex_index index_;
-};
-
-template <typename TDS_3>
-std::ostream& operator<<(std::ostream& os, const Vertex<TDS_3>& v)
-{
-  os << "Vertex " << v.index();
-  return os;
-}
-
-// Specialization for void.
-template <>
-class Vertex<void>
-{
-public:
-  using Triangulation_data_structure = internal::Dummy_tds_3;
-  using Cell_handle = Triangulation_data_structure::Cell_handle;
-  using Vertex_handle = Triangulation_data_structure::Vertex_handle;
-
-  template <typename TDS2>
-  struct Rebind_TDS { using Other = Vertex<TDS2>; };
-};
 
 #if 0
-template <typename TDS_3, typename Vb = Vertex<TDS_3> >
-class Vertex4Regular
-: public Vb
-{
-template < typename TDS2 >
-  struct Rebind_TDS {
-    using Vb2 = typename Vb::template Rebind_TDS<TDS2>::Other;
-    using Other = Vertex4Regular<TDS2,Vb2>;
-  };
+  template <typename TDS_3, typename Vb = Vertex<TDS_3> >
+  class Vertex4Regular
+    : public Vb
+  {
+    template < typename TDS2 >
+    struct Rebind_TDS {
+      using Vb2 = typename Vb::template Rebind_TDS<TDS2>::Other;
+      using Other = Vertex4Regular<TDS2,Vb2>;
+    };
 
-  void hide_point(const Point& p)
-  {}
-};
+    void hide_point(const Point& p)
+    {}
+  };
 #endif
 
-// AF : factorize as also in Surface_mesh and Point_set_3
-template<typename T>
-    class Index
-    {
-    public:
+  // AF : factorize as also in Surface_mesh and Point_set_3
+  template<typename T>
+  class Index
+  {
+  public:
     using size_type = std::uint32_t;
-        /// Constructor. %Default construction creates an invalid index.
-        /// We write -1, which is <a href="https://en.cppreference.com/w/cpp/types/numeric_limits">
-        /// <tt>(std::numeric_limits<size_type>::max)()</tt></a>
-        /// as `size_type` is an unsigned type.
-        explicit Index(size_type _idx=(std::numeric_limits<size_type>::max)()) : idx_(_idx) {}
+    /// Constructor. %Default construction creates an invalid index.
+    /// We write -1, which is <a href="https://en.cppreference.com/w/cpp/types/numeric_limits">
+    /// <tt>(std::numeric_limits<size_type>::max)()</tt></a>
+    /// as `size_type` is an unsigned type.
+    explicit Index(size_type _idx=(std::numeric_limits<size_type>::max)()) : idx_(_idx) {}
 
-        /// Get the underlying index of this index
-        operator size_type() const { return idx_; }
+    /// Get the underlying index of this index
+    operator size_type() const { return idx_; }
 
-        /// reset index to be invalid (index=(std::numeric_limits<size_type>::max)())
-        void reset() { idx_=(std::numeric_limits<size_type>::max)(); }
+    /// reset index to be invalid (index=(std::numeric_limits<size_type>::max)())
+    void reset() { idx_=(std::numeric_limits<size_type>::max)(); }
 
-        /// return whether the index is valid, i.e., the index is not equal to `%std::numeric_limits<size_type>::max()`.
-        bool is_valid() const {
-          size_type inf = (std::numeric_limits<size_type>::max)();
-          return idx_ != inf;
-        }
+    /// return whether the index is valid, i.e., the index is not equal to `%std::numeric_limits<size_type>::max()`.
+    bool is_valid() const {
+      size_type inf = (std::numeric_limits<size_type>::max)();
+      return idx_ != inf;
+    }
 
-        // Compatibility with OpenMesh handle
-        size_type idx() const {
-          return idx_;
-        }
-        // For convenience
-        size_type id() const {
-          return idx_;
-        }
+    // Compatibility with OpenMesh handle
+    size_type idx() const {
+      return idx_;
+    }
+    // For convenience
+    size_type id() const {
+      return idx_;
+    }
 
-        /// increments the internal index. This operation does not
-        /// guarantee that the index is valid or undeleted after the
-        /// increment.
-        Index& operator++() { ++idx_; return *this; }
-        /// decrements the internal index. This operation does not
-        /// guarantee that the index is valid or undeleted after the
-        /// decrement.
-        Index& operator--() { --idx_; return *this; }
+    /// increments the internal index. This operation does not
+    /// guarantee that the index is valid or undeleted after the
+    /// increment.
+    Index& operator++() { ++idx_; return *this; }
+    /// decrements the internal index. This operation does not
+    /// guarantee that the index is valid or undeleted after the
+    /// decrement.
+    Index& operator--() { --idx_; return *this; }
 
-        /// increments the internal index. This operation does not
-        /// guarantee that the index is valid or undeleted after the
-        /// increment.
-        Index operator++(int) { Index tmp(*this); ++idx_; return tmp; }
-        /// decrements the internal index. This operation does not
-        /// guarantee that the index is valid or undeleted after the
-        /// decrement.
-        Index operator--(int) { Index tmp(*this); --idx_; return tmp; }
+    /// increments the internal index. This operation does not
+    /// guarantee that the index is valid or undeleted after the
+    /// increment.
+    Index operator++(int) { Index tmp(*this); ++idx_; return tmp; }
+    /// decrements the internal index. This operation does not
+    /// guarantee that the index is valid or undeleted after the
+    /// decrement.
+    Index operator--(int) { Index tmp(*this); --idx_; return tmp; }
 
-        Index operator+=(std::ptrdiff_t n) { idx_ = size_type(std::ptrdiff_t(idx_) + n); return *this; }
+    Index operator+=(std::ptrdiff_t n) { idx_ = size_type(std::ptrdiff_t(idx_) + n); return *this; }
 
-    protected:
-        size_type idx_;
-    };
+  protected:
+    size_type idx_;
+  };
 
   template <class T>
   std::size_t hash_value(const Index<T>&  i)
@@ -415,144 +415,144 @@ template<typename T>
 
 
 
-template <typename Vb, typename Cb, typename ConcurrencyTag>
-struct TDS {
+  template <typename Vb, typename Cb, typename ConcurrencyTag>
+  struct TDS {
 
-  using Self = TDS<Vb,Cb, ConcurrencyTag>;
+    using Self = TDS<Vb,Cb, ConcurrencyTag>;
 
-  using Concurrency_tag  = ConcurrencyTag;
+    using Concurrency_tag  = ConcurrencyTag;
 
-  // Tools to change the Vertex and Cell types of the TDS.
-  template < typename Vb2 >
-  struct Rebind_vertex {
-    using Other = TDS<Vb2, Cb, ConcurrencyTag>;
-  };
+    // Tools to change the Vertex and Cell types of the TDS.
+    template < typename Vb2 >
+    struct Rebind_vertex {
+      using Other = TDS<Vb2, Cb, ConcurrencyTag>;
+    };
 
-  template < typename Cb2 >
-  struct Rebind_cell {
-    using Other = TDS<Vb, Cb2, ConcurrencyTag>;
-  };
+    template < typename Cb2 >
+    struct Rebind_cell {
+      using Other = TDS<Vb, Cb2, ConcurrencyTag>;
+    };
 
-  // Put this TDS inside the Vertex and Cell types.
-  using Vertex_handle = typename Vb::template Rebind_TDS<Self>::Other;
-  using Cell_handle = typename Cb::template Rebind_TDS<Self>::Other;
+    // Put this TDS inside the Vertex and Cell types.
+    using Vertex_handle = typename Vb::template Rebind_TDS<Self>::Other;
+    using Cell_handle = typename Cb::template Rebind_TDS<Self>::Other;
 
-  // AF Needed by Cell_circulator ??
-  using Vertex = Vertex_handle;
-  using Cell = Cell_handle;
+    // AF Needed by Cell_circulator ??
+    using Vertex = Vertex_handle;
+    using Cell = Cell_handle;
 
-  using Facet = std::pair<Cell_handle, int>;
-  using Edge = Triple<Cell_handle, int, int>;
+    using Facet = std::pair<Cell_handle, int>;
+    using Edge = Triple<Cell_handle, int, int>;
 
     /// The type used to represent an index.
-  using size_type = std::uint32_t;
+    using size_type = std::uint32_t;
 
-  // AF: factorize as also in Surface_mesh and Point_set_3
-  template <class I, class T>
-  struct Property_map : Properties::Property_map_base<I, T, Property_map<I, T> >
-  {
-    using Base = Properties::Property_map_base<I, T, Property_map<I, T> >;
-    using reference = typename Base::reference;
+    // AF: factorize as also in Surface_mesh and Point_set_3
+    template <class I, class T>
+    struct Property_map : Properties::Property_map_base<I, T, Property_map<I, T> >
+    {
+      using Base = Properties::Property_map_base<I, T, Property_map<I, T> >;
+      using reference = typename Base::reference;
 
-    Property_map() = default;
-    Property_map(const Base& pm): Base(pm) {}
-  };
-
-
-  // AF: factorize as also in Surface_mesh and Point_set_3
-  template <typename Key, typename T>
-  struct Get_property_map {
-    using type = Property_map<Key, T>;
-  };
+      Property_map() = default;
+      Property_map(const Base& pm): Base(pm) {}
+    };
 
 
-  class Vertex_index
-  : public Index<Vertex_index>
+    // AF: factorize as also in Surface_mesh and Point_set_3
+    template <typename Key, typename T>
+    struct Get_property_map {
+      using type = Property_map<Key, T>;
+    };
+
+
+    class Vertex_index
+      : public Index<Vertex_index>
     {
     public:
 
-        Vertex_index() : Index<Vertex_index>((std::numeric_limits<size_type>::max)()) {}
+      Vertex_index() : Index<Vertex_index>((std::numeric_limits<size_type>::max)()) {}
 
-        explicit Vertex_index(size_type _idx) : Index<Vertex_index>(_idx) {}
+      explicit Vertex_index(size_type _idx) : Index<Vertex_index>(_idx) {}
 
-        template<class T> bool operator==(const T&) const = delete;
-        template<class T> bool operator!=(const T&) const = delete;
-        template<class T> bool operator<(const T&) const = delete;
+      template<class T> bool operator==(const T&) const = delete;
+      template<class T> bool operator!=(const T&) const = delete;
+      template<class T> bool operator<(const T&) const = delete;
 
-        /// are two indices equal?
-        bool operator==(const Vertex_index& _rhs) const {
-            return this->idx_ == _rhs.idx_;
-        }
+      /// are two indices equal?
+      bool operator==(const Vertex_index& _rhs) const {
+        return this->idx_ == _rhs.idx_;
+      }
 
-        /// are two indices different?
-        bool operator!=(const Vertex_index& _rhs) const {
-            return this->idx_ != _rhs.idx_;
-        }
+      /// are two indices different?
+      bool operator!=(const Vertex_index& _rhs) const {
+        return this->idx_ != _rhs.idx_;
+      }
 
-        /// Comparison by index.
-        bool operator<(const Vertex_index& _rhs) const {
-          return this->idx_ < _rhs.idx_;
-        }
+      /// Comparison by index.
+      bool operator<(const Vertex_index& _rhs) const {
+        return this->idx_ < _rhs.idx_;
+      }
 
 
-        friend std::ostream& operator<<(std::ostream& os, Vertex_index const& v)
-        {
-          return (os << 'v' << (size_type)v );
-        }
+      friend std::ostream& operator<<(std::ostream& os, Vertex_index const& v)
+      {
+        return (os << 'v' << (size_type)v );
+      }
     };
 
-  class Cell_index
- : public Index<Cell_index>
+    class Cell_index
+      : public Index<Cell_index>
     {
     public:
 
-        Cell_index() : Index<Cell_index>((std::numeric_limits<size_type>::max)()) {}
+      Cell_index() : Index<Cell_index>((std::numeric_limits<size_type>::max)()) {}
 
-        explicit Cell_index(size_type _idx) : Index<Cell_index>(_idx) {}
+      explicit Cell_index(size_type _idx) : Index<Cell_index>(_idx) {}
 
-        template<class T> bool operator==(const T&) const = delete;
-        template<class T> bool operator!=(const T&) const = delete;
-        template<class T> bool operator<(const T&) const = delete;
+      template<class T> bool operator==(const T&) const = delete;
+      template<class T> bool operator!=(const T&) const = delete;
+      template<class T> bool operator<(const T&) const = delete;
 
-        /// are two indices equal?
-        bool operator==(const Cell_index& _rhs) const {
-            return this->idx_ == _rhs.idx_;
-        }
+      /// are two indices equal?
+      bool operator==(const Cell_index& _rhs) const {
+        return this->idx_ == _rhs.idx_;
+      }
 
-        /// are two indices different?
-        bool operator!=(const Cell_index& _rhs) const {
-            return this->idx_ != _rhs.idx_;
-        }
+      /// are two indices different?
+      bool operator!=(const Cell_index& _rhs) const {
+        return this->idx_ != _rhs.idx_;
+      }
 
-        /// Comparison by index.
-        bool operator<(const Cell_index& _rhs) const {
-          return this->idx_ < _rhs.idx_;
-        }
+      /// Comparison by index.
+      bool operator<(const Cell_index& _rhs) const {
+        return this->idx_ < _rhs.idx_;
+      }
 
 
-        friend std::ostream& operator<<(std::ostream& os, Cell_index const& v)
-        {
-          return (os << 'c' << (size_type)v );
-        }
+      friend std::ostream& operator<<(std::ostream& os, Cell_index const& v)
+      {
+        return (os << 'c' << (size_type)v );
+      }
     };
 
-  class Cell_data {
-    unsigned char conflict_state;
-  public:
-    Cell_data() : conflict_state(0) {}
+    class Cell_data {
+      unsigned char conflict_state;
+    public:
+      Cell_data() : conflict_state(0) {}
 
-    void clear()            { conflict_state = 0; }
-    void mark_in_conflict() { conflict_state = 1; }
-    void mark_on_boundary() { conflict_state = 2; }
-    void mark_processed()   { conflict_state = 1; }
+      void clear()            { conflict_state = 0; }
+      void mark_in_conflict() { conflict_state = 1; }
+      void mark_on_boundary() { conflict_state = 2; }
+      void mark_processed()   { conflict_state = 1; }
 
-    bool is_clear()       const { return conflict_state == 0; }
-    bool is_in_conflict() const { return conflict_state == 1; }
-    bool is_on_boundary() const { return conflict_state == 2; }
-    bool processed() const { return conflict_state == 1; }
-  };
+      bool is_clear()       const { return conflict_state == 0; }
+      bool is_in_conflict() const { return conflict_state == 1; }
+      bool is_on_boundary() const { return conflict_state == 2; }
+      bool processed() const { return conflict_state == 1; }
+    };
 
-  using TDS_data = Cell_data;
+    using TDS_data = Cell_data;
 
 
     using Vertex_connectivity = Property_map<Vertex_index, typename Vertex_handle::Connectivity>;
@@ -560,25 +560,25 @@ struct TDS {
 
 
 
-  Cell_connectivity& cell_connectivity() { return cell_connectivity_; }
-  const Cell_connectivity& cell_connectivity() const { return cell_connectivity_; }
+    Cell_connectivity& cell_connectivity() { return cell_connectivity_; }
+    const Cell_connectivity& cell_connectivity() const { return cell_connectivity_; }
 
-  Vertex_connectivity& vertex_connectivity() { return vertex_connectivity_; }
-  const Vertex_connectivity& vertex_connectivity() const { return vertex_connectivity_; }
+    Vertex_connectivity& vertex_connectivity() { return vertex_connectivity_; }
+    const Vertex_connectivity& vertex_connectivity() const { return vertex_connectivity_; }
 
-  TDS_data& tds_data() { return tds_data_; }
-  const TDS_data& tds_data() const { return tds_data_; }
+    TDS_data& tds_data() { return tds_data_; }
+    const TDS_data& tds_data() const { return tds_data_; }
 
-  size_type num_vertices() const { return (size_type) vprops_.size(); }
-  size_type num_cells() const { return (size_type) cprops_.size(); }
+    size_type num_vertices() const { return (size_type) vprops_.size(); }
+    size_type num_cells() const { return (size_type) cprops_.size(); }
 
 
-  int dimension() const { return dimension_; }
+    int dimension() const { return dimension_; }
 
-  void set_dimension(int n) { dimension_ = n; }
+    void set_dimension(int n) { dimension_ = n; }
 
-  Vertex_handle create_vertex()
-  {
+    Vertex_handle create_vertex()
+    {
       size_type inf = (std::numeric_limits<size_type>::max)();
       if(recycle_ && (vertices_freelist_ != inf)){
         size_type idx = vertices_freelist_;
@@ -593,8 +593,8 @@ struct TDS {
       }
     }
 
-  Cell_handle create_cell()
-  {
+    Cell_handle create_cell()
+    {
       size_type inf = (std::numeric_limits<size_type>::max)();
       if(recycle_ && (cells_freelist_ != inf)){
         size_type idx = cells_freelist_;
@@ -612,8 +612,8 @@ struct TDS {
     // AF:  What about the equivalent to
     // https://doc.cgal.org/latest/TDS_3/classTriangulationDataStructure__3.html#a1432860206073c24ca43dbbdfb13b26e
 
-  Cell_handle create_cell(Vertex_handle v0, Vertex_handle v1,
-                          Vertex_handle v2, Vertex_handle v3)
+    Cell_handle create_cell(Vertex_handle v0, Vertex_handle v1,
+                            Vertex_handle v2, Vertex_handle v3)
     {
       Cell_handle c = create_cell();
       c.set_vertices(v0, v1, v2, v3);
@@ -622,9 +622,9 @@ struct TDS {
     }
 
     Cell_handle create_cell(Vertex_handle v0, Vertex_handle v1,
-                           Vertex_handle v2, Vertex_handle v3,
-                           Cell_handle n0, Cell_handle n1,
-                           Cell_handle n2, Cell_handle n3)
+                            Vertex_handle v2, Vertex_handle v3,
+                            Cell_handle n0, Cell_handle n1,
+                            Cell_handle n2, Cell_handle n3)
     {
       Cell_handle c = create_cell();
       c.set_vertices(v0, v1, v2, v3);
@@ -632,77 +632,77 @@ struct TDS {
       return c;
     }
 
-  void delete_vertex(Vertex_index v)
+    void delete_vertex(Vertex_index v)
     {
-        vremoved_[v] = true; ++removed_vertices_; garbage_ = true;
-        vertex_connectivity_[v].cell = Cell_index(vertices_freelist_);
-        vertices_freelist_ = (size_type)v;
+      vremoved_[v] = true; ++removed_vertices_; garbage_ = true;
+      vertex_connectivity_[v].cell = Cell_index(vertices_freelist_);
+      vertices_freelist_ = (size_type)v;
     }
 
-  void delete_cell(Cell_index c)
+    void delete_cell(Cell_index c)
     {
-        cremoved_[c] = true; ++removed_cells_; garbage_ = true;
-        cell_connectivity_[c].ivertices[0] = Vertex_index(cells_freelist_);
-        vertices_freelist_ = (size_type)c;
+      cremoved_[c] = true; ++removed_cells_; garbage_ = true;
+      cell_connectivity_[c].ivertices[0] = Vertex_index(cells_freelist_);
+      vertices_freelist_ = (size_type)c;
     }
 
 
-  size_type number_of_removed_vertices() const
-  {
-    return removed_vertices_;
-  }
+    size_type number_of_removed_vertices() const
+    {
+      return removed_vertices_;
+    }
 
-  size_type number_of_removed_cells() const
-  {
-    return removed_cells_;
-  }
+    size_type number_of_removed_cells() const
+    {
+      return removed_cells_;
+    }
 
-  size_type number_of_vertices() const
-  {
-    return num_vertices() - number_of_removed_vertices();
-  }
+    size_type number_of_vertices() const
+    {
+      return num_vertices() - number_of_removed_vertices();
+    }
 
-  size_type number_of_cells() const
-  {
-    return num_cells() - number_of_removed_cells();
-  }
+    size_type number_of_cells() const
+    {
+      return num_cells() - number_of_removed_cells();
+    }
 
 
-  bool is_vertex(Vertex_handle v) const
-  {
-    // AF: for Compact_container:   return vertices().owns_dereferenceable(v);
-    return this == v->tds()  && v->idx() < num_vertices() && (! vremoved_[v.index()]);
-  }
+    bool is_vertex(Vertex_handle v) const
+    {
+      // AF: for Compact_container:   return vertices().owns_dereferenceable(v);
+      return this == v->tds()  && v->idx() < num_vertices() && (! vremoved_[v.index()]);
+    }
 
-  //--------------------------------------------------- property handling
+    //--------------------------------------------------- property handling
 
-  // Property_selector maps an index type to a property_container, the
-  // dummy is necessary to make it a partial specialization (full
-  // specializations are only allowed at namespace scope).
-  template<typename, bool = true>
-  struct Property_selector {};
+    // Property_selector maps an index type to a property_container, the
+    // dummy is necessary to make it a partial specialization (full
+    // specializations are only allowed at namespace scope).
+    template<typename, bool = true>
+    struct Property_selector {};
 
-  template<bool dummy>
-  struct Property_selector<typename Vertex_index, dummy> {
-    Self * m_;
-    Property_selector(Self* m) : m_(m) {}
-    Properties::Property_container<Self,
-                                   Vertex_index>&
-    operator()() { return m_->vprops_; }
-    void resize_property_array() { m_->vprops_.resize_property_array(3); }
-  };
+    template<bool dummy>
+    struct Property_selector<typename Vertex_index, dummy> {
+      Self * m_;
+      Property_selector(Self* m) : m_(m) {}
+      Properties::Property_container<Self,
+                                     Vertex_index>&
+      operator()() { return m_->vprops_; }
+      void resize_property_array() { m_->vprops_.resize_property_array(3); }
+    };
 
-  template<bool dummy>
-  struct Property_selector<typename Cell_index, dummy> {
-    Self * m_;
-    Property_selector(Self* m) : m_(m) {}
-    Properties::Property_container<Self,
-                                   Cell_index>&
-    operator()() { return m_->cprops_; }
-    void resize_property_array() { m_->cprops_.resize_property_array(3); } // AF:  What is the 3 about?
-  };
+    template<bool dummy>
+    struct Property_selector<typename Cell_index, dummy> {
+      Self * m_;
+      Property_selector(Self* m) : m_(m) {}
+      Properties::Property_container<Self,
+                                     Cell_index>&
+      operator()() { return m_->cprops_; }
+      void resize_property_array() { m_->cprops_.resize_property_array(3); } // AF:  What is the 3 about?
+    };
 
-      /// adds a property map named `name` with value type `T` and default `t`
+    /// adds a property map named `name` with value type `T` and default `t`
     /// for index type `I`. Returns the property map together with a Boolean
     /// that is `true` if a new map was created. In case it already exists
     /// the existing map together with `false` is returned.
@@ -739,15 +739,15 @@ struct TDS {
     template<class I>
     void remove_property_maps()
     {
-        Property_selector<I>(this).resize_property_array();
+      Property_selector<I>(this).resize_property_array();
     }
 
     /// removes all property maps for all index types added by a call to `add_property_map()`.
     /// The memory allocated for those property maps is freed.
     void remove_all_property_maps()
     {
-        remove_property_maps<Vertex_index>();
-        remove_property_maps<Cell_index>();
+      remove_property_maps<Vertex_index>();
+      remove_property_maps<Cell_index>();
     }
 
     /// @cond CGAL_DOCUMENT_INTERNALS
@@ -773,83 +773,83 @@ struct TDS {
     }
 
 
-  TDS()
-  : dimension_(-2)
-  {
-    vertex_connectivity_  = add_property_map<Vertex_index, typename Vertex_handle::Connectivity>("v:connectivity").first;
-    cell_connectivity_    = add_property_map<Cell_index, typename Cell_handle::Connectivity>("c:connectivity").first;
-    cell_data_            = add_property_map<Cell_index, Cell_data>("c:data").first;
-    vremoved_             = add_property_map<Vertex_index, bool>("v:removed", false).first;
-    cremoved_             = add_property_map<Cell_index, bool>("c:removed", false).first;
+    TDS()
+      : dimension_(-2)
+    {
+      vertex_connectivity_  = add_property_map<Vertex_index, typename Vertex_handle::Connectivity>("v:connectivity").first;
+      cell_connectivity_    = add_property_map<Cell_index, typename Cell_handle::Connectivity>("c:connectivity").first;
+      cell_data_            = add_property_map<Cell_index, Cell_data>("c:data").first;
+      vremoved_             = add_property_map<Vertex_index, bool>("v:removed", false).first;
+      cremoved_             = add_property_map<Cell_index, bool>("c:removed", false).first;
 
-    removed_vertices_ = removed_cells_ = 0;
-    vertices_freelist_ = cells_freelist_  = (std::numeric_limits<size_type>::max)();
-    garbage_ = false;
-    recycle_ = true;
-    anonymous_property_ = 0;
+      removed_vertices_ = removed_cells_ = 0;
+      vertices_freelist_ = cells_freelist_  = (std::numeric_limits<size_type>::max)();
+      garbage_ = false;
+      recycle_ = true;
+      anonymous_property_ = 0;
 
-  }
+    }
 
-  void set_adjacency(Cell_handle c0, int i0,
-                     Cell_handle c1, int i1) const
-  {
+    void set_adjacency(Cell_handle c0, int i0,
+                       Cell_handle c1, int i1) const
+    {
       CGAL_assertion(i0 >= 0 && i0 <= dimension());
       CGAL_assertion(i1 >= 0 && i1 <= dimension());
       CGAL_assertion(c0 != c1);
       c0->set_neighbor(i0,c1);
       c1->set_neighbor(i1,c0);
-  }
+    }
 
-  Vertex_handle insert_first_finite_cell(Vertex_handle &v0,
-                                         Vertex_handle &v1,
-                                         Vertex_handle &v2,
-                                         Vertex_handle &v3,
-                                         Vertex_handle v_infinite = Vertex_handle())
-{
-  CGAL_precondition(
-    (v_infinite == Vertex_handle() && dimension() == -2)
-    || (v_infinite != Vertex_handle() && dimension() == -1));
+    Vertex_handle insert_first_finite_cell(Vertex_handle &v0,
+                                           Vertex_handle &v1,
+                                           Vertex_handle &v2,
+                                           Vertex_handle &v3,
+                                           Vertex_handle v_infinite = Vertex_handle())
+    {
+      CGAL_precondition(
+                        (v_infinite == Vertex_handle() && dimension() == -2)
+                        || (v_infinite != Vertex_handle() && dimension() == -1));
 
-  if (v_infinite == Vertex_handle())
-    v_infinite = create_vertex();
+      if (v_infinite == Vertex_handle())
+        v_infinite = create_vertex();
 
-  set_dimension(3);
+      set_dimension(3);
 
-  v0 = create_vertex();
-  v1 = create_vertex();
-  v2 = create_vertex();
-  v3 = create_vertex();
+      v0 = create_vertex();
+      v1 = create_vertex();
+      v2 = create_vertex();
+      v3 = create_vertex();
 
-  Cell_handle c0123 = create_cell(v0,         v1,   v2,   v3);
-  Cell_handle ci012 = create_cell(v_infinite, v0,   v1,   v2);
-  Cell_handle ci103 = create_cell(v_infinite, v1,   v0,   v3);
-  Cell_handle ci023 = create_cell(v_infinite, v0,   v2,   v3);
-  Cell_handle ci132 = create_cell(v_infinite, v1,   v3,   v2);
+      Cell_handle c0123 = create_cell(v0,         v1,   v2,   v3);
+      Cell_handle ci012 = create_cell(v_infinite, v0,   v1,   v2);
+      Cell_handle ci103 = create_cell(v_infinite, v1,   v0,   v3);
+      Cell_handle ci023 = create_cell(v_infinite, v0,   v2,   v3);
+      Cell_handle ci132 = create_cell(v_infinite, v1,   v3,   v2);
 
-  v_infinite->set_cell(ci012);
-  v0->set_cell(c0123);
-  v1->set_cell(c0123);
-  v2->set_cell(c0123);
-  v3->set_cell(c0123);
+      v_infinite->set_cell(ci012);
+      v0->set_cell(c0123);
+      v1->set_cell(c0123);
+      v2->set_cell(c0123);
+      v3->set_cell(c0123);
 
-  set_adjacency(c0123, 0, ci132, 0);
-  set_adjacency(c0123, 1, ci023, 0);
-  set_adjacency(c0123, 2, ci103, 0);
-  set_adjacency(c0123, 3, ci012, 0);
+      set_adjacency(c0123, 0, ci132, 0);
+      set_adjacency(c0123, 1, ci023, 0);
+      set_adjacency(c0123, 2, ci103, 0);
+      set_adjacency(c0123, 3, ci012, 0);
 
-  set_adjacency(ci012, 3, ci103, 3);
-  set_adjacency(ci012, 2, ci023, 3);
-  set_adjacency(ci012, 1, ci132, 2);
-  set_adjacency(ci103, 1, ci023, 2);
-  set_adjacency(ci023, 1, ci132, 1);
-  set_adjacency(ci103, 2, ci132, 3);
+      set_adjacency(ci012, 3, ci103, 3);
+      set_adjacency(ci012, 2, ci023, 3);
+      set_adjacency(ci012, 1, ci132, 2);
+      set_adjacency(ci103, 1, ci023, 2);
+      set_adjacency(ci023, 1, ci132, 1);
+      set_adjacency(ci103, 2, ci132, 3);
 
-  return v_infinite;
-}
+      return v_infinite;
+    }
 
     bool has_garbage() const { return garbage_; }
 
-/// returns whether the index of vertex `v` is valid, that is within the current array bounds.
+    /// returns whether the index of vertex `v` is valid, that is within the current array bounds.
     bool has_valid_index(Vertex_index v) const
     {
       return ((size_type)v < num_vertices());
@@ -863,14 +863,14 @@ struct TDS {
     /// \sa `collect_garbage()`
     bool is_removed(Vertex_index v) const
     {
-        return vremoved_[v];
+      return vremoved_[v];
     }
 
     bool is_removed(Cell_index c) const
     {
-        return cremoved_[c];
+      return cremoved_[c];
     }
-//------------------------------------------------------ iterator types
+    //------------------------------------------------------ iterator types
     template<typename Index_, typename Handle_>
     class Index_iterator
       : public boost::iterator_facade< Index_iterator<Index_, Handle_>,
@@ -879,100 +879,100 @@ struct TDS {
                                        Handle_
                                        >
     {
-        using Facade = boost::iterator_facade<Index_iterator<Index_, Handle_>,
-                                             Handle_,
-                                             std::random_access_iterator_tag,
-                                             Handle_>;
+      using Facade = boost::iterator_facade<Index_iterator<Index_, Handle_>,
+                                            Handle_,
+                                            std::random_access_iterator_tag,
+                                            Handle_>;
     public:
-        Index_iterator() : hnd_(), tds_(nullptr) {}
-        Index_iterator(const Index_& h, const Self* m)
-          : hnd_(h), tds_(m) {
-          if (tds_ && tds_->has_garbage()){
-              while (tds_->has_valid_index(hnd_) && tds_->is_removed(hnd_)) ++hnd_;
-          }
+      Index_iterator() : hnd_(), tds_(nullptr) {}
+      Index_iterator(const Index_& h, const Self* m)
+        : hnd_(h), tds_(m) {
+        if (tds_ && tds_->has_garbage()){
+          while (tds_->has_valid_index(hnd_) && tds_->is_removed(hnd_)) ++hnd_;
         }
+      }
     private:
-        friend class boost::iterator_core_access;
-        void increment()
-        {
-            ++hnd_;
-            CGAL_assertion(tds_ != nullptr);
+      friend class boost::iterator_core_access;
+      void increment()
+      {
+        ++hnd_;
+        CGAL_assertion(tds_ != nullptr);
 
-            if(tds_->has_garbage())
-              while ( tds_->has_valid_index(hnd_) && tds_->is_removed(hnd_)) ++hnd_;
-        }
+        if(tds_->has_garbage())
+          while ( tds_->has_valid_index(hnd_) && tds_->is_removed(hnd_)) ++hnd_;
+      }
 
-        void decrement()
-        {
-            --hnd_;
-            CGAL_assertion(tds_ != nullptr);
-            if(tds_->has_garbage())
-               while ( tds_->has_valid_index(hnd_) && tds_->is_removed(hnd_)) --hnd_;
-        }
+      void decrement()
+      {
+        --hnd_;
+        CGAL_assertion(tds_ != nullptr);
+        if(tds_->has_garbage())
+          while ( tds_->has_valid_index(hnd_) && tds_->is_removed(hnd_)) --hnd_;
+      }
 
-        void advance(std::ptrdiff_t n)
-        {
-            CGAL_assertion(tds_ != nullptr);
+      void advance(std::ptrdiff_t n)
+      {
+        CGAL_assertion(tds_ != nullptr);
 
-            if (tds_->has_garbage())
-            {
-              if (n > 0)
-                for (std::ptrdiff_t i = 0; i < n; ++ i)
-                  increment();
-              else
-                for (std::ptrdiff_t i = 0; i < -n; ++ i)
-                  decrement();
-            }
+        if (tds_->has_garbage())
+          {
+            if (n > 0)
+              for (std::ptrdiff_t i = 0; i < n; ++ i)
+                increment();
             else
-              hnd_ += n;
-        }
+              for (std::ptrdiff_t i = 0; i < -n; ++ i)
+                decrement();
+          }
+        else
+          hnd_ += n;
+      }
 
-        std::ptrdiff_t distance_to(const Index_iterator& other) const
-        {
-            if (tds_->has_garbage())
-            {
-              bool forward = (other.hnd_ > hnd_);
+      std::ptrdiff_t distance_to(const Index_iterator& other) const
+      {
+        if (tds_->has_garbage())
+          {
+            bool forward = (other.hnd_ > hnd_);
 
-              std::ptrdiff_t out = 0;
-              Index_iterator it = *this;
-              while (!it.equal(other))
+            std::ptrdiff_t out = 0;
+            Index_iterator it = *this;
+            while (!it.equal(other))
               {
                 if (forward)
-                {
-                  ++ it;
-                  ++ out;
-                }
+                  {
+                    ++ it;
+                    ++ out;
+                  }
                 else
-                {
-                  -- it;
-                  -- out;
-                }
+                  {
+                    -- it;
+                    -- out;
+                  }
               }
-              return out;
-            }
+            return out;
+          }
 
-            // else
-            return std::ptrdiff_t(other.hnd_) - std::ptrdiff_t(this->hnd_);
-        }
+        // else
+        return std::ptrdiff_t(other.hnd_) - std::ptrdiff_t(this->hnd_);
+      }
 
-        bool equal(const Index_iterator& other) const
-        {
-            return this->hnd_ == other.hnd_;
-        }
+      bool equal(const Index_iterator& other) const
+      {
+        return this->hnd_ == other.hnd_;
+      }
 
-        public:
-        operator Handle_() const
-        {
-            CGAL_assertion(tds_ != nullptr);
-            CGAL_assertion(tds_->has_valid_index(hnd_));
-            return Handle_(const_cast<Self*>(tds_), hnd_);
-        }
+    public:
+      operator Handle_() const
+      {
+        CGAL_assertion(tds_ != nullptr);
+        CGAL_assertion(tds_->has_valid_index(hnd_));
+        return Handle_(const_cast<Self*>(tds_), hnd_);
+      }
 
-        private:
-        Handle_ dereference() const { return Handle_( const_cast<Self*>(tds_), hnd_) ; } // AF: todo make const_cast safe
+    private:
+      Handle_ dereference() const { return Handle_( const_cast<Self*>(tds_), hnd_) ; } // AF: todo make const_cast safe
 
-        Index_ hnd_;
-        const Self* tds_;
+      Index_ hnd_;
+      const Self* tds_;
 
     };
 
@@ -982,13 +982,13 @@ struct TDS {
 
     Vertex_iterator vertices_begin() const
     {
-        return Vertex_iterator(Vertex_index(0), this);
+      return Vertex_iterator(Vertex_index(0), this);
     }
 
     /// End iterator for vertices.
     Vertex_iterator vertices_end() const
     {
-        return Vertex_iterator(Vertex_index(num_vertices()), this);
+      return Vertex_iterator(Vertex_index(num_vertices()), this);
     }
 
     Vertex_range vertices() const {
@@ -1001,13 +1001,13 @@ struct TDS {
 
     Cell_iterator cells_begin() const
     {
-        return Cell_iterator(Cell_index(0), this);
+      return Cell_iterator(Cell_index(0), this);
     }
 
     /// End iterator for cells.
     Cell_iterator cells_end() const
     {
-        return Cell_iterator(Cell_index(num_cells()), this);
+      return Cell_iterator(Cell_index(num_cells()), this);
     }
 
     Cell_range cells() const {
@@ -1015,67 +1015,67 @@ struct TDS {
     }
 
 
-  friend class internal::Triangulation_ds_facet_iterator_3<Self>;
-  friend class internal::Triangulation_ds_edge_iterator_3<Self>;
+    friend class internal::Triangulation_ds_facet_iterator_3<Self>;
+    friend class internal::Triangulation_ds_edge_iterator_3<Self>;
 
-  friend class internal::Triangulation_ds_cell_circulator_3<Self>;
-  friend class internal::Triangulation_ds_facet_circulator_3<Self>;
+    friend class internal::Triangulation_ds_cell_circulator_3<Self>;
+    friend class internal::Triangulation_ds_facet_circulator_3<Self>;
 
 
 
-  using Facet_iterator = internal::Triangulation_ds_facet_iterator_3<Self>;
-  using Edge_iterator = internal::Triangulation_ds_edge_iterator_3<Self>;
-  using Facets = Iterator_range<Facet_iterator>;
-  using Edges = Iterator_range<Edge_iterator>;
+    using Facet_iterator = internal::Triangulation_ds_facet_iterator_3<Self>;
+    using Edge_iterator = internal::Triangulation_ds_edge_iterator_3<Self>;
+    using Facets = Iterator_range<Facet_iterator>;
+    using Edges = Iterator_range<Edge_iterator>;
 
-  using Cell_circulator = internal::Triangulation_ds_cell_circulator_3<Self>;
-  using Facet_circulator = internal::Triangulation_ds_facet_circulator_3<Self>;
+    using Cell_circulator = internal::Triangulation_ds_cell_circulator_3<Self>;
+    using Facet_circulator = internal::Triangulation_ds_facet_circulator_3<Self>;
 
-  Edge_iterator edges_begin() const
-  {
-    if ( dimension() < 1 )
+    Edge_iterator edges_begin() const
+    {
+      if ( dimension() < 1 )
         return edges_end();
-    return Edge_iterator(this);
-  }
+      return Edge_iterator(this);
+    }
 
-  Edge_iterator edges_end() const
-  {
-    return Edge_iterator(this,1);
-  }
+    Edge_iterator edges_end() const
+    {
+      return Edge_iterator(this,1);
+    }
 
-  Edges edges() const
-  {
-    return Edges(edges_begin(), edges_end());
-  }
+    Edges edges() const
+    {
+      return Edges(edges_begin(), edges_end());
+    }
 
-  Facet_iterator facets_begin() const
-  {
-    if ( dimension() < 2 )
+    Facet_iterator facets_begin() const
+    {
+      if ( dimension() < 2 )
         return facets_end();
-    return Facet_iterator(this);
-  }
+      return Facet_iterator(this);
+    }
 
-  Facet_iterator facets_end() const
-  {
-    return Facet_iterator(this, 1);
-  }
+    Facet_iterator facets_end() const
+    {
+      return Facet_iterator(this, 1);
+    }
 
-  Facets facets() const
-  {
-    return Facets(facets_begin(), facets_end());
-  }
+    Facets facets() const
+    {
+      return Facets(facets_begin(), facets_end());
+    }
 
-  Cell_circulator incident_cells(const Edge & e) const
-  {
-    CGAL_precondition( dimension() == 3 );
-    return Cell_circulator(e);
-  }
+    Cell_circulator incident_cells(const Edge & e) const
+    {
+      CGAL_precondition( dimension() == 3 );
+      return Cell_circulator(e);
+    }
 
-  Facet_circulator incident_facets(const Edge & e) const
-  {
-    CGAL_precondition( dimension() == 3 );
-    return Facet_circulator(e);
-  }
+    Facet_circulator incident_facets(const Edge & e) const
+    {
+      CGAL_precondition( dimension() == 3 );
+      return Facet_circulator(e);
+    }
 
     Properties::Property_container<Self, Vertex_index> vprops_;
     Properties::Property_container<Self, Cell_index>   cprops_;
@@ -1103,7 +1103,7 @@ struct TDS {
     // ( the boundary of a simplex in dimension i+1 has i+2 vertices )
     int dimension_;
 
-};
+  };
 
 } /// namespace CGAL
 
