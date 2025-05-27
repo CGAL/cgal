@@ -167,7 +167,7 @@ struct Cell {
 
   // CHECKING
    bool is_valid(bool verbose = false,
-		             int  	level = 0) const
+                             int        level = 0) const
   {
     assert(false);
     return true;
@@ -1132,5 +1132,3 @@ int main() {
   std::cout << std::endl;
   return 0;
 }
-
-
