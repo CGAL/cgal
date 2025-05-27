@@ -681,12 +681,21 @@ struct TDS {
     {
       return ((size_type)v < num_vertices());
     }
+    bool has_valid_index(Cell_index c) const
+    {
+      return ((size_type)c < num_cells());
+    }
 
     /// returns whether vertex `v` is marked removed.
     /// \sa `collect_garbage()`
     bool is_removed(Vertex_index v) const
     {
         return vremoved_[v];
+    }
+
+    bool is_removed(Cell_index c) const
+    {
+        return cremoved_[c];
     }
 //------------------------------------------------------ iterator types
     template<typename Index_, typename Handle_>
@@ -804,6 +813,25 @@ struct TDS {
       return make_range(vertices_begin(), vertices_end());
     }
 
+
+    typedef Index_iterator<Cell_index,Cell_handle> Cell_iterator;
+    typedef Iterator_range<Cell_iterator> Cell_range;
+
+    Cell_iterator cells_begin() const
+    {
+        return Cell_iterator(Cell_index(0), this);
+    }
+
+    /// End iterator for cells.
+    Cell_iterator cells_end() const
+    {
+        return Cell_iterator(Cell_index(num_cells()), this);
+    }
+
+    Cell_range cells() const {
+      return make_range(cells_begin(), cells_end());
+    }
+
     Properties::Property_container<Self, Vertex_index> vprops_;
     Properties::Property_container<Self, Cell_index>   cprops_;
 
@@ -844,7 +872,10 @@ int main() {
   vh->set_cell(ch);
 
   for(auto  v : tds.vertices()) {
-    std::cout << "Vertex index: " << v.index() << std::endl;
+    std::cout << v.index() << std::endl;
+  }
+  for(auto  c : tds.cells()) {
+    std::cout << c.index() << std::endl;
   }
 
   return 0;
