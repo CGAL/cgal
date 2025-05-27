@@ -57,6 +57,7 @@ else()
   message(STATUS "NOTICE: the OM IO plugin needs OpenMesh libraries and will not be compiled.")
 endif()
 
+set(CMAKE_POLICY_DEFAULT_CMP0167 NEW)
 find_package(VTK 9.0 QUIET COMPONENTS CommonCore IOCore IOLegacy IOXML FiltersCore FiltersSources)
 set_package_properties(
   VTK PROPERTIES

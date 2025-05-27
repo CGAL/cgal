@@ -31,6 +31,7 @@ target_link_libraries(
 target_include_directories(mesh_3_plugin PRIVATE include)
 CGAL_Lab_target_use_c3t3_type(mesh_3_plugin)
 
+set(CMAKE_POLICY_DEFAULT_CMP0167 NEW)
 find_package(ITK NAMES ITK InsightToolkit
                  QUIET COMPONENTS ITKCommon ITKThresholding ITKSmoothing ITKImageIntensity)
 if(ITK_FOUND)
