@@ -717,7 +717,7 @@ Hdvf_persistence<CoefficientType, ComplexType, DegType, FiltrationType>::Hdvf_pe
                 // Cells in the _K basis : i(dim q-1) / j(dim q)
                 // Convert to indices in the persistent order
                 const int pi(_K_to_per.at(q-1).at(i)), pj(_K_to_per.at(q).at(j)) ;
-                _DD_per.at(q).set_coef(pi, pj, v) ;
+                set_coef(_DD_per.at(q), pi, pj, v) ;
             }
         }
     }

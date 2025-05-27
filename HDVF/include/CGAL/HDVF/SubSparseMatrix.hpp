@@ -1,15 +1,17 @@
-/**
- * \file SubSparseMatrix.hpp
- * \brief Namespace file for describing library.
- * \author Bac A.
- * \version 0.1.0
- * \date 02/10/2024
- *
- * Define everything for the SubSparseMatrix class
- */
+// Copyright (c) 2025 LIS Marseille (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+// Author(s)     : Alexandra Bac <alexandra.bac@univ-amu.fr>
+//                  Kevin Fedyna <fedyna.kevin@gmail.com>
 
-#ifndef __SUB_SPARSE_MATRIX__
-#define __SUB_SPARSE_MATRIX__
+#ifndef CGAL_OSM_SUB_SPARSE_MATRIX_H
+#define CGAL_OSM_SUB_SPARSE_MATRIX_H
 
 
 #include "CGAL/OSM/Sparse_matrix.h"
@@ -128,4 +130,4 @@ public:
 } /* end namespace OSM */
 } /* end namespace CGAL */
 
-#endif
+#endif // CGAL_OSM_SUB_SPARSE_MATRIX_H

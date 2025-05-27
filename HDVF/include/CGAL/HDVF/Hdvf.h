@@ -392,7 +392,7 @@ std::vector<PairCell> Hdvf<CoefficientType, ComplexType>::find_pairs_M(int q, bo
         {
             for (OSM::Bitboard::iterator it_row = this->_F_row.at(q).begin(); it_row != this->_F_row.at(q).end(); ++it_row)
             {
-                if (abs(this->_F_row.at(q).get_coef(*it_row,tau)) == 1)
+                if (abs(get_coef(this->_F_row.at(q), *it_row,tau)) == 1)
                 {
                     PairCell p ;
                     p.sigma = tau ; // primary cell
@@ -548,7 +548,7 @@ std::vector<PairCell> Hdvf<CoefficientType, ComplexType>::find_pairs_W(int q, bo
         {
             for (OSM::Bitboard::iterator it_col = this->_G_col.at(q).begin(); it_col != this->_G_col.at(q).end(); ++it_col)
             {
-                if (abs(this->_G_col.at(q).get_coef(tau, *it_col)) == 1)
+                if (abs(get_coef(this->_G_col.at(q), tau, *it_col)) == 1)
                 {
                     PairCell p ;
                     p.sigma = tau ; // secondary cell
@@ -881,8 +881,8 @@ void Hdvf<CoefficientType, ComplexType>::R(int pi, int sigma, int q) {
         H21 /= std::vector<int>({sigma}); // Remove row sigma from H21
         
         // Remove the corresponding row and column from this->_H_col
-        this->_H_col[q].del_row(sigma); // Remove row sigma from this->_H_col[q]
-        this->_H_col[q].del_column(pi); // Remove column pi from this->_H_col[q]
+        del_row(this->_H_col[q], sigma); // Remove row sigma from this->_H_col[q]
+        del_column(this->_H_col[q], pi); // Remove column pi from this->_H_col[q]
         
         //---------------------------------------------- Submatrices of F -----------------------------------------------------
         
@@ -890,7 +890,7 @@ void Hdvf<CoefficientType, ComplexType>::R(int pi, int sigma, int q) {
         typename HDVF_coreT::CChain F11 = OSM::get_column(this->_F_row[q], pi); // F11 is the column chain from this->_F_row[q] at index pi
         
         // Remove the column pi from this->_F_row
-        this->_F_row[q].del_column(pi);
+        del_column(this->_F_row[q], pi);
         
         //--------------------------------------------- Submatrices of G ------------------------------------------------------
         
@@ -898,7 +898,7 @@ void Hdvf<CoefficientType, ComplexType>::R(int pi, int sigma, int q) {
         typename HDVF_coreT::RChain G11 = OSM::get_row(this->_G_col[q + 1], sigma); // G11 is the row chain from this->_G_col[q+1] at index sigma
         
         // Remove the row sigma from this->_G_col
-        this->_G_col[q + 1].del_row(sigma);
+        del_row(this->_G_col[q + 1], sigma);
         
         //--------------------------------------------- Update matrices -------------------------------------------------------
         
@@ -1003,15 +1003,15 @@ void Hdvf<CoefficientType, ComplexType>::M(int pi, int gamma, int q) {
         F21 /= std::vector<int>({gamma}); // Remove row gamma from F21
         
         // Remove the corresponding row and column from this->_F_row
-        this->_F_row[q].del_row(gamma); // Remove row gamma from this->_F_row[q]
-        this->_F_row[q].del_column(pi); // Remove column pi from this->_F_row[q]
+        del_row(this->_F_row[q], gamma); // Remove row gamma from this->_F_row[q]
+        del_column(this->_F_row[q], pi); // Remove column pi from this->_F_row[q]
         
         //--------------------------------------------- Submatrices of G ------------------------------------------------------
         
         // Extract the relevant column chain from this->_G_col
         // G11_q is the column chain from this->_G_col[q] at index gamma
         //        HDVF_coreT::CChain G11_q(OSM::get_column(this->_G_col[q], gamma));
-        this->_G_col[q].del_column(gamma); // Remove column gamma from this->_G_col[q]
+        del_column(this->_G_col[q], gamma); // Remove column gamma from this->_G_col[q]
         
         //---------------------------------------------- Submatrices of H -----------------------------------------------------
         
@@ -1019,7 +1019,7 @@ void Hdvf<CoefficientType, ComplexType>::M(int pi, int gamma, int q) {
         typename HDVF_coreT::CChain H11(OSM::get_column(this->_H_col[q], pi)); // H11 is the column chain from this->_H_col[q] at index pi
         
         // Remove the column pi from this->_H_col
-        this->_H_col[q].del_column(pi);
+        del_column(this->_H_col[q], pi);
         
         //--------------------------------------------- Submatrices of DD_q+1 ------------------------------------------------------
         
@@ -1028,7 +1028,7 @@ void Hdvf<CoefficientType, ComplexType>::M(int pi, int gamma, int q) {
         
         // DD_q+1 (corresponds to the row matrix of this->_DD_col)
         typename HDVF_coreT::RChain D11(OSM::get_row(this->_DD_col[q+1], gamma)); // D11 is the row chain from this->_DD_col[q+1] at index gamma
-        this->_DD_col[q + 1].del_row(gamma); // Remove row gamma from this->_DD_col[q + 1]
+        del_row(this->_DD_col[q + 1], gamma); // Remove row gamma from this->_DD_col[q + 1]
         
         //--------------------------------------------- Submatrices of DD ------------------------------------------------------
         
@@ -1036,7 +1036,7 @@ void Hdvf<CoefficientType, ComplexType>::M(int pi, int gamma, int q) {
         // HDVF_coreT::CChain D11_q(OSM::get_column(this->_DD_col[q], gamma));
         // D11_q is the column chain from this->_DD_col[q] at index gamma
         if (q > 0)
-            this->_DD_col[q].del_column(gamma); // Remove column gamma from this->_DD_col[q]
+            del_column(this->_DD_col[q], gamma); // Remove column gamma from this->_DD_col[q]
         
         //--------------------------------------------- Update matrices -------------------------------------------------------
         
@@ -1059,7 +1059,7 @@ void Hdvf<CoefficientType, ComplexType>::M(int pi, int gamma, int q) {
         OSM::set_column(this->_F_row[q], gamma, F21 * (-F11_inv));
         
         // Set the coefficient at (pi, gamma) in this->_F_row[q] to F11_inv
-        this->_F_row[q].set_coef(pi, gamma, F11_inv);
+        set_coef(this->_F_row[q], pi, gamma, F11_inv);
         
         // Update this->_G_col
         // Add the product of (H11 * F11_inv) and D11 to this->_G_col[q+1]
@@ -1127,8 +1127,8 @@ void Hdvf<CoefficientType, ComplexType>::W(int sigma, int gamma, int q) {
         G21 /= std::vector<int>({sigma}); // Remove row sigma from G21
         
         // Remove the corresponding row and column from this->_G_col
-        this->_G_col[q].del_row(sigma); // Remove row sigma from this->_G_col[q]
-        this->_G_col[q].del_column(gamma); // Remove column gamma from this->_G_col[q]
+        del_row(this->_G_col[q], sigma); // Remove row sigma from this->_G_col[q]
+        del_column(this->_G_col[q], gamma); // Remove column gamma from this->_G_col[q]
         
         //---------------------------------------------- Submatrices of F -----------------------------------------------------
         
@@ -1136,7 +1136,7 @@ void Hdvf<CoefficientType, ComplexType>::W(int sigma, int gamma, int q) {
         //        RChain F11(OSM::get_row(this->_F_row[q], gamma)); // F11 is the row chain from this->_F_row[q] at index gamma
         
         // Remove the row gamma from this->_F_row
-        this->_F_row[q].del_row(gamma);
+        del_row(this->_F_row[q], gamma);
         
         //--------------------------------------------- Submatrices of H ------------------------------------------------------
         
@@ -1144,7 +1144,7 @@ void Hdvf<CoefficientType, ComplexType>::W(int sigma, int gamma, int q) {
         typename HDVF_coreT::RChain H11(OSM::get_row(this->_H_col[q-1], sigma)); // H11 is the row chain from this->_H_col[q] at index sigma
         
         // Remove the row sigma from this->_H_col
-        this->_H_col[q-1].del_row(sigma);
+        del_row(this->_H_col[q-1], sigma);
         
         //--------------------------------------------- Submatrices of DD_q+1 ------------------------------------------------------
         
@@ -1153,7 +1153,7 @@ void Hdvf<CoefficientType, ComplexType>::W(int sigma, int gamma, int q) {
         
         // Remove the row gamma from this->_DD_col
         if (q < this->_K.dim())
-            this->_DD_col[q + 1].del_row(gamma);
+            del_row(this->_DD_col[q + 1], gamma);
         
         //--------------------------------------------- Submatrices of DD_q ------------------------------------------------------
         
@@ -1161,7 +1161,7 @@ void Hdvf<CoefficientType, ComplexType>::W(int sigma, int gamma, int q) {
         typename HDVF_coreT::CChain D11_q(OSM::get_column(this->_DD_col[q], gamma)); // D11_q is the column chain from this->_DD_col[q] at index gamma
         
         // Remove the column gamma from this->_DD_col
-        this->_DD_col[q].del_column(gamma);
+        del_column(this->_DD_col[q], gamma);
         
         //--------------------------------------------- Update matrices -------------------------------------------------------
         
@@ -1184,7 +1184,7 @@ void Hdvf<CoefficientType, ComplexType>::W(int sigma, int gamma, int q) {
         OSM::set_column(this->_G_col[q], sigma, G21 * G11_inv);
         
         // Set the coefficient at (gamma, sigma) in this->_G_col[q] to G11_inv
-        this->_G_col[q].set_coef(gamma, sigma, G11_inv);
+        set_coef(this->_G_col[q], gamma, sigma, G11_inv);
         
         // Update this->_F_row (for dimension q-1)
         // Add the product of (D11_q * G11_inv) and H11 to this->_F_row[q - 1]
@@ -1249,7 +1249,7 @@ void Hdvf<CoefficientType, ComplexType>::MW(int pi, int sigma, int q) {
         
         typename HDVF_coreT::RChain H11q1(OSM::get_row(this->_H_col.at(q-1), sigma)) ;
         // H21_q-1 -> delete H11q1
-        this->_H_col.at(q-1).del_row(sigma) ;
+        del_row(this->_H_col.at(q-1), sigma) ;
         
         // d(pi)
         
@@ -1277,13 +1277,13 @@ void Hdvf<CoefficientType, ComplexType>::MW(int pi, int sigma, int q) {
         
         typename HDVF_coreT::CChain F11(OSM::get_column(this->_F_row.at(q), pi)) ;
         // F12 -> delete col F11
-        this->_F_row.at(q).del_column(pi) ;
+        del_column(this->_F_row.at(q), pi) ;
         
         // G_q extractions
         
         typename HDVF_coreT::RChain G11(OSM::get_row(this->_G_col.at(q), sigma)) ;
         // G21 -> dele row G11
-        this->_G_col.at(q).del_row(sigma) ;
+        del_row(this->_G_col.at(q), sigma) ;
         
         // ----------- Update of the reduction
         

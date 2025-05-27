@@ -629,17 +629,8 @@ public:
         return _chains[index];
     }
     
-    /**
-     * \brief Set a given coefficient.
-     *
-     * Assign the scalar `d` to the coefficient on row `i` and column `j`.
-     *
-     * \warning The matrix will perform boundary check.
-     *
-     * \param[in] i The row index.
-     * \param[in] j The column index.
-     * \param[in] d The value.
-     */
+protected:
+    // Protected method for set_coef
     void set_coef(const int i, const int j, const CoefficientType d) {
         if (i >= _size.first) {
             throw std::runtime_error("Provided i index should be less than " + std::to_string(_size.first) + ".");
@@ -662,19 +653,24 @@ public:
             del_coef(i, j);
         }
     }
-    
+public:
     /**
-     * \brief Get a given coefficient.
+     * \brief Set a given coefficient in `matrix`.
      *
-     * Returns the coefficient on row `i` and column `j` of the matrix.
+     * Assign the scalar `d` to the coefficient on row `i` and column `j`.
      *
      * \warning The matrix will perform boundary check.
      *
+     * \param[in] matrix Reference on the matrix to modify.
      * \param[in] i The row index.
      * \param[in] j The column index.
-     *
-     * \return The value of the given coefficient.
+     * \param[in] d The value.
      */
+    template <typename _CT, int _CTF>
+    friend void set_coef(Sparse_matrix<_CT, _CTF>& matrix, int i, int j, const _CT d);
+    
+protected:
+    // Protected method for get_coef
     CoefficientType get_coef(const int i, const int j) const {
         if (i >= _size.first) {
             throw std::runtime_error("Provided _i index should be less than " + std::to_string(_size.first) + ".");
@@ -688,6 +684,22 @@ public:
         else // ROW
             return (this->_chains)[i][j] ;
     }
+public:
+    /**
+     * \brief Get a given coefficient.
+     *
+     * Returns the coefficient on row `i` and column `j` of the matrix.
+     *
+     * \warning The matrix will perform boundary check.
+     *
+     * \param[in] matrix Constant reference on the matrix.
+     * \param[in] i The row index.
+     * \param[in] j The column index.
+     *
+     * \return The value of the given coefficient.
+     */
+    template <typename _CT, int _CTF>
+    friend _CT get_coef(const Sparse_matrix<_CT, _CTF>& matrix, int i, int j);
     
     /**
      * \defgroup GetColumn Get a column.
@@ -884,15 +896,8 @@ public:
     
     /** @} */
     
-    /**
-     * \brief Remove a column from the matrix.
-     *
-     * Removes column of index `index` whatever the `ChainTypeFlag` of the matrix. For column matrices, it just comes to the `\=` operator and for row matrices, it entails a traversal of the matrix.
-     *
-     * \param[in] index The index to remove.
-     *
-     * \return The modified matrix representing the result.
-     */
+protected:
+    // Protected version of del_column
     Sparse_matrix& del_column(int index) {
         std::vector<int> tmp_id{index} ;
         if (ChainTypeFlag == OSM::COLUMN)
@@ -913,16 +918,22 @@ public:
         
         return *this;
     }
-    
+public:
     /**
-     * \brief Remove a row from the matrix.
+     * \brief Remove a column from the matrix.
      *
-     * Removes row of index `index` whatever the `ChainTypeFlag` of the matrix. For row matrices, it just comes to the `\=` operator and for column matrices, it entails a traversal of the matrix.
+     * Removes column of index `index` whatever the `ChainTypeFlag` of the matrix. For column matrices, it just comes to the `\=` operator and for row matrices, it entails a traversal of the matrix.
      *
+     * \param[in] matrix Reference on the matrix to modify.
      * \param[in] index The index to remove.
      *
      * \return The modified matrix representing the result.
      */
+    template <typename _CT, int _CTF>
+    friend Sparse_matrix<_CT, _CTF>& del_column(Sparse_matrix<_CT, _CTF>& matrix, int index);
+    
+protected:
+    // Protected version of del_row
     Sparse_matrix& del_row(int index)
     {
         std::vector<int> tmp_id{index};
@@ -942,16 +953,22 @@ public:
         return *this;
     }
     
+public:
     /**
-     * \brief Remove a coefficient from the matrix.
+     * \brief Remove a row from the matrix.
      *
-     * Removes coefficient at row `i` and column `j`.
+     * Removes row of index `index` whatever the `ChainTypeFlag` of the matrix. For row matrices, it just comes to the `\=` operator and for column matrices, it entails a traversal of the matrix.
      *
-     * \param[in] i Index of the row
-     * \param[in] j Index of the column
+     * \param[in] matrix Reference on the matrix to modify.
+     * \param[in] index The index to remove.
      *
      * \return The modified matrix representing the result.
      */
+    template <typename _CT, int _CTF>
+    friend Sparse_matrix<_CT, _CTF>& del_row(Sparse_matrix<_CT, _CTF>& matrix, int index);
+    
+protected:
+    // Protected version of del_coef
     Sparse_matrix& del_coef(int i, int j)
     {
         
@@ -972,6 +989,21 @@ public:
         
         return *this;
     }
+    
+public:
+    /**
+     * \brief Remove a coefficient from the matrix.
+     *
+     * Removes coefficient at row `i` and column `j`.
+     *
+     * \param[in] matrix Reference on the matrix to modify.
+     * \param[in] i Index of the row
+     * \param[in] j Index of the column
+     *
+     * \return The modified matrix representing the result.
+     */
+    template <typename _CT, int _CTF>
+    friend Sparse_matrix<_CT, _CTF>& del_coef(Sparse_matrix<_CT, _CTF>& matrix, int i, int j);
     
     /**
      * \brief Iterator to the index of the first non null chain.
@@ -1516,6 +1548,36 @@ void set_row(Sparse_matrix<_CT, ROW> &_matrix,  int _index, const Sparse_chain<_
     _matrix[_index] = _chain;
     if (_chain.is_null())
         _matrix._chainsStates.setOff(_index) ;
+}
+
+template <typename _CT, int _CTF>
+void set_coef(Sparse_matrix<_CT, _CTF>& matrix, int i, int j, const _CT d)
+{
+    matrix.set_coef(i, j, d);
+}
+
+template <typename _CT, int _CTF>
+_CT get_coef(const Sparse_matrix<_CT, _CTF>& matrix, int i, int j)
+{
+    matrix.get_coef(i, j);
+}
+
+template <typename _CT, int _CTF>
+Sparse_matrix<_CT, _CTF>& del_column(Sparse_matrix<_CT, _CTF>& matrix, int index)
+{
+    return matrix.del_column(index);
+}
+
+template <typename _CT, int _CTF>
+Sparse_matrix<_CT, _CTF>& del_row(Sparse_matrix<_CT, _CTF>& matrix, int index)
+{
+    return matrix.del_row(index);
+}
+
+template <typename _CT, int _CTF>
+Sparse_matrix<_CT, _CTF>& del_coef(Sparse_matrix<_CT, _CTF>& matrix, int i, int j)
+{
+    return matrix.del_coef(i, j);
 }
 
 } /* end namespace OSM */

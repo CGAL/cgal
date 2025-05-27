@@ -709,8 +709,8 @@ void Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::A(int
     D21 /= std::vector<int>({tau1}); // Remove tau1 row from D21
     
     // Delete rows and columns from _DD_col
-    _DD_col[q + 1].del_row(tau1); // Remove row tau1 from _DD_col[q+1]
-    _DD_col[q + 1].del_column(tau2); // Remove column tau2 from _DD_col[q+1]
+    del_row(_DD_col[q + 1], tau1); // Remove row tau1 from _DD_col[q+1]
+    del_column(_DD_col[q + 1], tau2); // Remove column tau2 from _DD_col[q+1]
     
     //---------------------------------------------- Submatrices of F -----------------------------------------------------
     
@@ -722,7 +722,7 @@ void Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::A(int
         F11 = OSM::get_row(_F_row.at(q),tau1); // F11 is a row chain from _F_row[q] at index tau1
         
         // Delete the row tau1 from _F_row
-        _F_row[q].del_row(tau1);
+        del_row(_F_row[q], tau1);
     }
     
     //--------------------------------------------- Submatrices of G ------------------------------------------------------
@@ -733,7 +733,7 @@ void Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::A(int
         G11 = OSM::get_column(_G_col.at(q + 1),tau2); // G11 is a column chain from _G_col[q+1] at index tau2
         
         // Delete the column tau2 from _G_col
-        _G_col[q + 1].del_column(tau2);
+        del_column(_G_col[q + 1], tau2);
     }
     
     //--------------------------------------------- Update matrices -------------------------------------------------------
@@ -751,7 +751,7 @@ void Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::A(int
         OSM::set_column(_F_row[q], tau1, D21 * (-D11_inv));
         
         // Remove the row tau2 from _F_row[q+1]
-        _F_row[q + 1].del_row(tau2);
+        del_row(_F_row[q + 1], tau2);
     }
     
     // ---- Update _G_col
@@ -766,7 +766,7 @@ void Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::A(int
         OSM::set_row(_G_col[q + 1], tau2, D12 * (-D11_inv));
         
         // Remove the column tau1 from _G_col[q]
-        _G_col[q].del_column(tau1);
+        del_column(_G_col[q], tau1);
     }
     
     // ---- Update _H_col
@@ -787,7 +787,7 @@ void Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::A(int
         OSM::set_column(_H_col[q], tau1, G11 * D11_inv);
         
         // Set the coefficient at (tau2, tau1) in _H_col[q] to D11_inv
-        _H_col[q].set_coef(tau2, tau1, D11_inv);
+        set_coef(_H_col[q], tau2, tau1, D11_inv);
     }
     
     // ---- Update _DD_col
@@ -797,10 +797,10 @@ void Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::A(int
     
     // Remove columns and rows from _DD_col as necessary
     if (q > 0) {
-        _DD_col[q].del_column(tau1); // Remove column tau1 from _DD_col[q]
+        del_column(_DD_col[q], tau1); // Remove column tau1 from _DD_col[q]
     }
     if (q + 2 <= _K.dim()) {
-        _DD_col[q + 2].del_row(tau2); // Remove row tau2 from _DD_col[q+2]
+        del_row(_DD_col[q + 2], tau2); // Remove row tau2 from _DD_col[q+2]
     }
     
     // Update flags

@@ -288,14 +288,14 @@ public:
      *
      * Assign the scalar `d` to the coefficient on row `i` and column `j`.
      */
-    void set_coef(int i, int j, const CoefficientType d);
+    friend void set_coef(Sparse_matrix& matrix, int i, int j, const CoefficientType d);
     
     /**
      * \brief Get a given coefficient.
      *
      * Returns the coefficient on row `i` and column `j` of the matrix.
      */
-    CoefficientType get_coef(int i, int j) const;
+    friend CoefficientType get_coef(const Sparse_matrix& matrix, int i, int j);
     
     /**
      * \brief Get the value of the column at a given `index` from the matrix (whatever the `ChainTypeFlag` of the matrix).
@@ -363,8 +363,21 @@ public:
      *
      * Removes column of index `i` whatever the `ChainTypeFlag` of the matrix. For column matrices, it just comes to the `\=` operator and for row matrices, it entails a traversal of the matrix.
      */
-    SparseMatrix& del_column(int i);
+    friend Sparse_matrix& del_column(Sparse_matrix& matrix, int index);
     
+    /**
+     * \brief Nullifies a row from the matrix.
+     *
+     * Removes row of index `i` whatever the `ChainTypeFlag` of the matrix. For row matrices, it just comes to the `\=` operator and for column matrices, it entails a traversal of the matrix.
+     */
+    friend Sparse_matrix& del_row(Sparse_matrix& matrix, int index);
+    
+    /**
+     * \brief Nullifies a coefficient of the matrix.
+     *
+     * Removes coefficient on row `i` / column `j` of the matrix.
+     */
+    friend Sparse_matrix& del_coef(Sparse_matrix& matrix, int i, int j);
     
     /// @}
     

@@ -18,25 +18,26 @@ public:
 /// @{
 
 /*!
- Type of scalars of the ring.
+ Type of elements of the ring.
  */
-typedef unspecified_type Scalar ;
+typedef unspecified_type Value ;
 /// @}
     
     
 /// \name Operators
 /// @{
 
-/*!
-Returns the vector of vertices coordinates.
- */
-const std::vector<Point >& get_vertices_coords() const;
-
-/*!
- Returns the coordinates of the cell of index `i` and dimension 0.
- */
-Point get_vertex_coords (int i) const;
     
 /// @}
+    
 
+/// \name Invertibility
+/// @{
+
+    /*!
+     \brief Test if `v` is invertible in the ring.
+     */
+    bool is_invertible(Value v);
+    
+/// @}
 };
