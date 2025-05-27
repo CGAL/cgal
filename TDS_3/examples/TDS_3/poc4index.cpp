@@ -39,29 +39,29 @@ struct Cell {
   };
 
   Cell()
-  : tds(nullptr), index_()
+  : tds_(nullptr), index_()
   {}
 
-  Cell(TDS_3* tds, Cell_index index)
-  : tds(tds), index_(index)
+  Cell(TDS_3* tds_, Cell_index index)
+  : tds_(tds_), index_(index)
   {}
 
   Cell& operator=(const Cell& other)
   {
     if (this != &other) {
-      tds = other.tds;
+      tds_ = other.tds_;
       index_ = other.index_;
     }
     return *this;
   }
 
   Cell(const Cell& other)
-  : tds(other.tds), index_(other.index_)
+  : tds_(other.tds_), index_(other.index_)
   {}
 
   bool operator==(const Cell& other) const
   {
-    return tds == other.tds && index_ == other.index_;
+    return tds_ == other.tds_ && index_ == other.index_;
   }
 
   bool operator!=(const Cell& other) const
@@ -71,7 +71,7 @@ struct Cell {
 
   bool operator<(const Cell& other) const
   {
-    return (tds == other.tds) ? (index_ < other.index_) : (tds < other.tds);
+    return (tds_ == other.tds_) ? (index_ < other.index_) : (tds_ < other.tds_);
   }
 
   Cell_index index() const
@@ -81,13 +81,13 @@ struct Cell {
 
   Vertex_handle vertex(int i) const
   {
-    return Vertex_handle(tds, tds->cell_connectivity()[index()].ivertices[i]);
+    return Vertex_handle(tds_, tds_->cell_connectivity()[index()].ivertices[i]);
   }
 
   int index(Vertex_handle v) const
   {
     for (int i = 0; i < 4; ++i) {
-      if (v.index() == tds->cell_connectivity()[index()].ivertices[i]) {
+      if (v.index() == tds_->cell_connectivity()[index()].ivertices[i]) {
         return i;
       }
     }
@@ -97,7 +97,7 @@ struct Cell {
   bool has_vertex(Vertex_handle v) const
   {
     for (int i = 0; i < 4; ++i) {
-      if (v.index() == tds->cell_connectivity()[index()].ivertices[i]) {
+      if (v.index() == tds_->cell_connectivity()[index()].ivertices[i]) {
         return true;
       }
     }
@@ -107,7 +107,7 @@ struct Cell {
   bool has_vertex(Vertex_handle v, int & i) const
   {
     for (i = 0; i < 4; ++i) {
-      if (v.index() == tds->cell_connectivity()[index()].ivertices[i]) {
+      if (v.index() == tds_->cell_connectivity()[index()].ivertices[i]) {
         return true;
       }
     }
@@ -116,13 +116,13 @@ struct Cell {
 
   Cell_handle neighbor(int i) const
   {
-    return Cell_handle(tds, tds->cell_connectivity()[index()].ineighbors[i]);
+    return Cell_handle(tds_, tds_->cell_connectivity()[index()].ineighbors[i]);
   }
 
   bool has_neighbor(Cell_handle n) const
   {
     for (int i = 0; i < 4; ++i) {
-      if (n.index() == tds->cell_connectivity()[index()].ineighbors[i]) {
+      if (n.index() == tds_->cell_connectivity()[index()].ineighbors[i]) {
         return true;
       }
     }
@@ -132,7 +132,7 @@ struct Cell {
   bool has_neighbor(Cell_handle n, int & i) const
   {
     for (i = 0; i < 4; ++i) {
-      if (n.index() == tds->cell_connectivity()[index()].ineighbors[i]) {
+      if (n.index() == tds_->cell_connectivity()[index()].ineighbors[i]) {
         return true;
       }
     }
@@ -141,44 +141,44 @@ struct Cell {
 
   void set_vertex(int i, Vertex_handle v)
   {
-    tds->cell_connectivity()[index()].ivertices[i] = v.index();
+    tds_->cell_connectivity()[index()].ivertices[i] = v.index();
   }
 
   void set_neighbor(int i, Cell_handle n)
   {
-    tds->cell_connectivity()[index()].ineighbors[i] = n.index();
+    tds_->cell_connectivity()[index()].ineighbors[i] = n.index();
   }
 
   void set_vertices(Vertex_handle v0, Vertex_handle v1, Vertex_handle v2, Vertex_handle v3)
   {
-    tds->cell_connectivity()[index()].ivertices[0] = v0.index();
-    tds->cell_connectivity()[index()].ivertices[1] = v1.index();
-    tds->cell_connectivity()[index()].ivertices[2] = v2.index();
-    tds->cell_connectivity()[index()].ivertices[3] = v3.index();
+    tds_->cell_connectivity()[index()].ivertices[0] = v0.index();
+    tds_->cell_connectivity()[index()].ivertices[1] = v1.index();
+    tds_->cell_connectivity()[index()].ivertices[2] = v2.index();
+    tds_->cell_connectivity()[index()].ivertices[3] = v3.index();
   }
 
   void set_neighbors(Cell_handle n0, Cell_handle n1, Cell_handle n2, Cell_handle n3)
   {
-    tds->cell_connectivity()[index()].ineighbors[0] = n0.index();
-    tds->cell_connectivity()[index()].ineighbors[1] = n1.index();
-    tds->cell_connectivity()[index()].ineighbors[2] = n2.index();
-    tds->cell_connectivity()[index()].ineighbors[3] = n3.index();
+    tds_->cell_connectivity()[index()].ineighbors[0] = n0.index();
+    tds_->cell_connectivity()[index()].ineighbors[1] = n1.index();
+    tds_->cell_connectivity()[index()].ineighbors[2] = n2.index();
+    tds_->cell_connectivity()[index()].ineighbors[3] = n3.index();
   }
 
   // CHECKING
    bool is_valid(bool verbose = false,
-                             int        level = 0) const
+                int   level = 0) const
   {
     assert(false);
     return true;
   }
 
   TDS_data& tds_data() {
-    return tds->tds_data()[index()];
+    return tds_->tds_data()[index()];
   }
 
   const TDS_data& tds_data() const {
-    return tds->tds_data()[index()];
+    return tds_->tds_data()[index()];
   }
 
   const Cell_handle* operator->() const {
@@ -193,7 +193,12 @@ struct Cell {
     using Other = Cell<TDS>;
   };
 
-  TDS_3* tds;
+  TDS_3* tds() const
+  {
+    return tds_;
+  }
+
+  TDS_3* tds_;
   Cell_index index_;
 };
 
@@ -233,16 +238,16 @@ struct Vertex{
   };
 
   Vertex()
-  : tds(nullptr), index_()
+  : tds_(nullptr), index_()
   {}
 
   Vertex(TDS_3* tds, Vertex_index index)
-  : tds(tds), index_(index)
+  : tds_(tds), index_(index)
   {}
 
   bool operator==(const Vertex& other) const
   {
-    return tds == other.tds && index_ == other.index_;
+    return tds_ == other.tds_ && index_ == other.index_;
   }
 
   bool operator!=(const Vertex& other) const
@@ -252,7 +257,7 @@ struct Vertex{
 
   bool operator<(const Vertex& other) const
   {
-    return (tds == other.tds) ? (index_ < other.index_) : (tds < other.tds);
+    return (tds_ == other.tds_) ? (index_ < other.index_) : (tds_ < other.tds_);
   }
 
   Vertex_index index() const
@@ -262,22 +267,22 @@ struct Vertex{
 
   Cell_handle cell() const
   {
-    return Cell_handle(tds, tds->vertex_connectivity()[index()].icell);
+    return Cell_handle(tds_, tds_->vertex_connectivity()[index()].icell);
   }
 
   void set_cell(Cell_handle c)
   {
-    tds->vertex_connectivity()[index()].icell = c.index();
+    tds_->vertex_connectivity()[index()].icell = c.index();
   }
 
   const Point& point() const
   {
-    return tds->vertex_connectivity()[index()].point;
+    return tds_->vertex_connectivity()[index()].point;
   }
 
   void set_point(const Point& p)
   {
-    tds->vertex_connectivity()[index()].point = p;
+    tds_->vertex_connectivity()[index()].point = p;
   }
 
   bool is_valid(bool verbose = false) const
@@ -299,7 +304,12 @@ struct Vertex{
     using Other = Vertex<TDS>;
   };
 
-  TDS_3* tds;
+  TDS_3* tds() const
+  {
+    return tds_;
+  }
+
+  TDS_3* tds_;
   Vertex_index index_;
 };
 
@@ -599,6 +609,8 @@ struct TDS {
       }
     }
 
+    // AF:  What about the equivalent to
+    // https://doc.cgal.org/latest/TDS_3/classTriangulationDataStructure__3.html#a1432860206073c24ca43dbbdfb13b26e
 
   Cell_handle create_cell(Vertex_handle v0, Vertex_handle v1,
                           Vertex_handle v2, Vertex_handle v3)
@@ -606,6 +618,17 @@ struct TDS {
       Cell_handle c = create_cell();
       c.set_vertices(v0, v1, v2, v3);
       c.set_neighbors(Cell_handle(), Cell_handle(), Cell_handle(), Cell_handle());
+      return c;
+    }
+
+    Cell_handle create_cell(Vertex_handle v0, Vertex_handle v1,
+                           Vertex_handle v2, Vertex_handle v3,
+                           Cell_handle n0, Cell_handle n1,
+                           Cell_handle n2, Cell_handle n3)
+    {
+      Cell_handle c = create_cell();
+      c.set_vertices(v0, v1, v2, v3);
+      c.set_neighbors(n0, n1, n2, n3);
       return c;
     }
 
@@ -644,6 +667,13 @@ struct TDS {
     return num_cells() - number_of_removed_cells();
   }
 
+
+  bool is_vertex(Vertex_handle v) const
+  {
+    // AF: for Compact_container:   return vertices().owns_dereferenceable(v);
+    return this == v->tds()  && v->idx() < num_vertices() && (! vremoved_[v.index()]);
+  }
+
   //--------------------------------------------------- property handling
 
   // Property_selector maps an index type to a property_container, the
@@ -669,7 +699,7 @@ struct TDS {
     Properties::Property_container<Self,
                                    Cell_index>&
     operator()() { return m_->cprops_; }
-    void resize_property_array() { m_->cprops_.resize_property_array(3); }
+    void resize_property_array() { m_->cprops_.resize_property_array(3); } // AF:  What is the 3 about?
   };
 
       /// adds a property map named `name` with value type `T` and default `t`
@@ -776,7 +806,6 @@ struct TDS {
                                          Vertex_handle &v3,
                                          Vertex_handle v_infinite = Vertex_handle())
 {
-
   CGAL_precondition(
     (v_infinite == Vertex_handle() && dimension() == -2)
     || (v_infinite != Vertex_handle() && dimension() == -1));
