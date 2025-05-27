@@ -3,7 +3,7 @@
 
 if command -v rsync >/dev/null 2>&1; then
   rsync_scp() {
-    rsync -avz --chmod=ugo=rwX "$@"
+    rsync -avz --chmod=ugo=rX "$@"
   }
 else
   rsync_scp() {
