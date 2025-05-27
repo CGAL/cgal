@@ -1024,6 +1024,12 @@ Facet_iterator facets_begin() const
     return Cell_circulator(e);
   }
 
+  Facet_circulator incident_facets(const Edge & e) const
+  {
+    CGAL_precondition( dimension() == 3 );
+    return Facet_circulator(e);
+  }
+
     Properties::Property_container<Self, Vertex_index> vprops_;
     Properties::Property_container<Self, Cell_index>   cprops_;
 
@@ -1061,6 +1067,7 @@ int main() {
   using Vertex_iterator = CGAL::TDS<>::Vertex_iterator;
   using Cell_handle = CGAL::TDS<>::Cell_handle;
   using Cell_circulator = CGAL::TDS<>::Cell_circulator;
+  using Facet_circulator = CGAL::TDS<>::Facet_circulator;
   using Edge = CGAL::TDS<>::Edge;
 
   Vertex_handle inf, v0, v1, v2, v3;
@@ -1086,12 +1093,21 @@ int main() {
   Edge e(c, 0, 1);
 
   std::cout << "Incident cells to edge:\n";
-  Cell_circulator cc = tds.incident_cells(e), done(cc);
+  Cell_circulator cc = tds.incident_cells(e), cdone(cc);
   do {
     Cell_handle ch = cc;
     std::cout << ch << " ";
     ++cc;
-  } while (cc != done);
+  } while (cc != cdone);
+  std::cout << std::endl;
+
+  std::cout << "Incident facets to edge:\n";
+  Facet_circulator fc = tds.incident_facets(e), fdone(fc);
+  do {
+    Cell_handle ch = fc->first;
+    std::cout << ch << " ";
+    ++fc;
+  } while (fc != fdone);
   std::cout << std::endl;
   return 0;
 }
