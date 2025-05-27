@@ -3,6 +3,10 @@
 #include <array>
 
 #include <CGAL/TDS_3/internal/Dummy_tds_3.h>
+#include <CGAL/TDS_3/internal/Triangulation_ds_iterators_3.h>
+#include <CGAL/TDS_3/internal/Triangulation_ds_circulators_3.h>
+
+#include <CGAL/utility.h>
 #include <CGAL/property_map.h>
 #include <CGAL/Iterator_range.h>
 #include <CGAL/Surface_mesh/Surface_mesh.h>
@@ -34,9 +38,41 @@ struct Cell {
     std::array<Cell_index,4>   ineighbors;
   };
 
+  Cell()
+  : tds(nullptr), index_()
+  {}
+
   Cell(TDS_3* tds, Cell_index index)
   : tds(tds), index_(index)
   {}
+
+  Cell& operator=(const Cell& other)
+  {
+    if (this != &other) {
+      tds = other.tds;
+      index_ = other.index_;
+    }
+    return *this;
+  }
+
+  Cell(const Cell& other)
+  : tds(other.tds), index_(other.index_)
+  {}
+
+  bool operator==(const Cell& other) const
+  {
+    return tds == other.tds && index_ == other.index_;
+  }
+
+  bool operator!=(const Cell& other) const
+  {
+    return !(*this == other);
+  }
+
+  bool operator<(const Cell& other) const
+  {
+    return (tds == other.tds) ? (index_ < other.index_) : (tds < other.tds);
+  }
 
   Cell_index index() const
   {
@@ -161,6 +197,12 @@ struct Cell {
   Cell_index index_;
 };
 
+template <typename TDS_3>
+std::ostream& operator<<(std::ostream& os, const Cell<TDS_3>& c)
+{
+  os << "Cell " << c.index();
+  return os;
+}
 
 // Specialization for void.
 template <>
@@ -190,9 +232,28 @@ struct Vertex{
     Cell_index icell;
   };
 
+  Vertex()
+  : tds(nullptr), index_()
+  {}
+
   Vertex(TDS_3* tds, Vertex_index index)
   : tds(tds), index_(index)
   {}
+
+  bool operator==(const Vertex& other) const
+  {
+    return tds == other.tds && index_ == other.index_;
+  }
+
+  bool operator!=(const Vertex& other) const
+  {
+    return !(*this == other);
+  }
+
+  bool operator<(const Vertex& other) const
+  {
+    return (tds == other.tds) ? (index_ < other.index_) : (tds < other.tds);
+  }
 
   Vertex_index index() const
   {
@@ -241,6 +302,13 @@ struct Vertex{
   TDS_3* tds;
   Vertex_index index_;
 };
+
+template <typename TDS_3>
+std::ostream& operator<<(std::ostream& os, const Vertex<TDS_3>& v)
+{
+  os << "Vertex " << v.index();
+  return os;
+}
 
 // Specialization for void.
 template <>
@@ -359,6 +427,8 @@ struct TDS {
   typedef typename Vb::template Rebind_TDS<Self>::Other  Vertex_handle;
   typedef typename Cb::template Rebind_TDS<Self>::Other  Cell_handle;
 
+  typedef std::pair<Cell_handle, int>              Facet;
+  typedef Triple<Cell_handle, int, int>            Edge;
 
     /// The type used to represent an index.
   using size_type = std::uint32_t;
@@ -488,6 +558,8 @@ struct TDS {
   size_type num_cells() const { return (size_type) cprops_.size(); }
 
 
+  int dimension() const { return dimension_; }
+
   void set_dimension(int n) { dimension_ = n; }
 
   Vertex_handle create_vertex()
@@ -520,6 +592,16 @@ struct TDS {
         cprops_.push_back();
         return Cell_handle(this, Cell_index(num_cells()-1));
       }
+    }
+
+
+  Cell_handle create_cell(Vertex_handle v0, Vertex_handle v1,
+                          Vertex_handle v2, Vertex_handle v3)
+    {
+      Cell_handle c = create_cell();
+      c.set_vertices(v0, v1, v2, v3);
+      c.set_neighbors(Cell_handle(), Cell_handle(), Cell_handle(), Cell_handle());
+      return c;
     }
 
   void delete_vertex(Vertex_index v)
@@ -673,6 +755,63 @@ struct TDS {
 
   }
 
+  void set_adjacency(Cell_handle c0, int i0,
+                     Cell_handle c1, int i1) const
+  {
+      CGAL_assertion(i0 >= 0 && i0 <= dimension());
+      CGAL_assertion(i1 >= 0 && i1 <= dimension());
+      CGAL_assertion(c0 != c1);
+      c0->set_neighbor(i0,c1);
+      c1->set_neighbor(i1,c0);
+  }
+
+  Vertex_handle insert_first_finite_cell(Vertex_handle &v0,
+                                         Vertex_handle &v1,
+                                         Vertex_handle &v2,
+                                         Vertex_handle &v3,
+                                         Vertex_handle v_infinite = Vertex_handle())
+{
+
+  CGAL_precondition(
+    (v_infinite == Vertex_handle() && dimension() == -2)
+    || (v_infinite != Vertex_handle() && dimension() == -1));
+
+  if (v_infinite == Vertex_handle())
+    v_infinite = create_vertex();
+
+  set_dimension(3);
+
+  v0 = create_vertex();
+  v1 = create_vertex();
+  v2 = create_vertex();
+  v3 = create_vertex();
+
+  Cell_handle c0123 = create_cell(v0,         v1,   v2,   v3);
+  Cell_handle ci012 = create_cell(v_infinite, v0,   v1,   v2);
+  Cell_handle ci103 = create_cell(v_infinite, v1,   v0,   v3);
+  Cell_handle ci023 = create_cell(v_infinite, v0,   v2,   v3);
+  Cell_handle ci132 = create_cell(v_infinite, v1,   v3,   v2);
+
+  v_infinite->set_cell(ci012);
+  v0->set_cell(c0123);
+  v1->set_cell(c0123);
+  v2->set_cell(c0123);
+  v3->set_cell(c0123);
+
+  set_adjacency(c0123, 0, ci132, 0);
+  set_adjacency(c0123, 1, ci023, 0);
+  set_adjacency(c0123, 2, ci103, 0);
+  set_adjacency(c0123, 3, ci012, 0);
+
+  set_adjacency(ci012, 3, ci103, 3);
+  set_adjacency(ci012, 2, ci023, 3);
+  set_adjacency(ci012, 1, ci132, 2);
+  set_adjacency(ci103, 1, ci023, 2);
+  set_adjacency(ci023, 1, ci132, 1);
+  set_adjacency(ci103, 2, ci132, 3);
+
+  return v_infinite;
+}
 
     bool has_garbage() const { return garbage_; }
 
@@ -787,14 +926,23 @@ struct TDS {
             return this->hnd_ == other.hnd_;
         }
 
-        Handle_ dereference() const { return { const_cast<Self*>(tds_), hnd_} ; } // AF: todo make const_cast safe
+        public:
+        operator Handle_() const
+        {
+            CGAL_assertion(tds_ != nullptr);
+            CGAL_assertion(tds_->has_valid_index(hnd_));
+            return Handle_(const_cast<Self*>(tds_), hnd_);
+        }
+
+        private:
+        Handle_ dereference() const { return Handle_( const_cast<Self*>(tds_), hnd_) ; } // AF: todo make const_cast safe
 
         Index_ hnd_;
         const Self* tds_;
 
     };
 
-
+    // AF:  The value type of the iterators should be the same as the value type of the handle. This is not the case now.
     typedef Index_iterator<Vertex_index,Vertex_handle> Vertex_iterator;
     typedef Iterator_range<Vertex_iterator> Vertex_range;
 
@@ -832,6 +980,41 @@ struct TDS {
       return make_range(cells_begin(), cells_end());
     }
 
+
+  friend class internal::Triangulation_ds_facet_iterator_3<Self>;
+  friend class internal::Triangulation_ds_edge_iterator_3<Self>;
+
+  friend class internal::Triangulation_ds_cell_circulator_3<Self>;
+  friend class internal::Triangulation_ds_facet_circulator_3<Self>;
+
+
+
+  typedef internal::Triangulation_ds_facet_iterator_3<Self>   Facet_iterator;
+  typedef internal::Triangulation_ds_edge_iterator_3<Self>    Edge_iterator;
+  typedef Iterator_range<Facet_iterator> Facets;
+  typedef Iterator_range<Edge_iterator> Edges;
+
+  typedef internal::Triangulation_ds_cell_circulator_3<Self>  Cell_circulator;
+  typedef internal::Triangulation_ds_facet_circulator_3<Self> Facet_circulator;
+
+Facet_iterator facets_begin() const
+  {
+    if ( dimension() < 2 )
+        return facets_end();
+    return Facet_iterator(this);
+  }
+
+  Facet_iterator facets_end() const
+  {
+    return Facet_iterator(this, 1);
+  }
+
+  Facets facets() const
+  {
+    return Facets(facets_begin(), facets_end());
+  }
+
+
     Properties::Property_container<Self, Vertex_index> vprops_;
     Properties::Property_container<Self, Cell_index>   cprops_;
 
@@ -866,18 +1049,20 @@ struct TDS {
 int main() {
   CGAL::TDS<> tds;
   using Vertex_handle = CGAL::TDS<>::Vertex_handle;
-  Vertex_handle vh = tds.create_vertex();
-  auto ch = tds.create_cell();
-  ch->set_vertex(0, vh);
-  vh->set_cell(ch);
+  Vertex_handle inf, v0, v1, v2, v3;
+  inf = tds.insert_first_finite_cell(v0, v1, v2, v3);
 
   for(auto  v : tds.vertices()) {
-    std::cout << v.index() << std::endl;
+    std::cout << v << std::endl;
   }
+
   for(auto  c : tds.cells()) {
     std::cout << c.index() << std::endl;
   }
 
+  for(auto f : tds.facets()) {
+    std::cout << f.first << " " << f.second << std::endl;
+  }
   return 0;
 }
 
