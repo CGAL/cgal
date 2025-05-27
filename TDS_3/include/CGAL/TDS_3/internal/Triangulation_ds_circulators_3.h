@@ -182,6 +182,15 @@ operator!=(typename Tds_::Cell_handle ch, Triangulation_ds_cell_circulator_3<Tds
   return !(cc==ch);
 }
 
+// AF:  Check why I had to add this operator<
+template < class Tds_ >
+inline
+bool
+operator<(typename Tds_::Cell_handle ch, Triangulation_ds_cell_circulator_3<Tds_> cc)
+{
+  return ch < cc.base();
+}
+
 template < class Tds_ >
 class Triangulation_ds_facet_circulator_3
   : public Bidirectional_circulator_base<typename Tds_::Facet,

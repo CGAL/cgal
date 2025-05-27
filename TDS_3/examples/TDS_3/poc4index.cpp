@@ -1001,7 +1001,24 @@ struct TDS {
   typedef internal::Triangulation_ds_cell_circulator_3<Self>  Cell_circulator;
   typedef internal::Triangulation_ds_facet_circulator_3<Self> Facet_circulator;
 
-Facet_iterator facets_begin() const
+  Edge_iterator edges_begin() const
+  {
+    if ( dimension() < 1 )
+        return edges_end();
+    return Edge_iterator(this);
+  }
+
+  Edge_iterator edges_end() const
+  {
+    return Edge_iterator(this,1);
+  }
+
+  Edges edges() const
+  {
+    return Edges(edges_begin(), edges_end());
+  }
+
+  Facet_iterator facets_begin() const
   {
     if ( dimension() < 2 )
         return facets_end();
@@ -1087,6 +1104,10 @@ int main() {
 
   for(auto f : tds.facets()) {
     std::cout << f.first << " " << f.second << std::endl;
+  }
+
+  for(auto e : tds.edges()) {
+    std::cout << e.first << " " << e.second << " " << e.third << std::endl;
   }
 
   Cell_handle c = inf->cell();
