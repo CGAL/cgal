@@ -186,12 +186,12 @@ void main_code (const Options &options)
             // K
             {
                 hdvf.set_mask_K() ;
-                Simp_output_vtk<CoefficientType, OSM::Chain, OSM::SubSparseMatrix>(hdvf, L, options.outfile_root+"_complex_K") ;
+                Simp_output_vtk<CoefficientType, OSM::Sparse_chain, OSM::SubSparseMatrix>(hdvf, L, options.outfile_root+"_complex_K") ;
             }
             // L-K
             {
                 hdvf.set_mask_L_K() ;
-                Simp_output_vtk<CoefficientType, OSM::Chain, OSM::SubSparseMatrix>(hdvf, L, options.outfile_root+"_cocomplex_L_K") ;
+                Simp_output_vtk<CoefficientType, OSM::Sparse_chain, OSM::SubSparseMatrix>(hdvf, L, options.outfile_root+"_cocomplex_L_K") ;
             }
         }
         
@@ -254,12 +254,12 @@ void main_code (const Options &options)
             // K
             {
                 hdvf.set_mask_K() ;
-                Cub_output_vtk<CoefficientType, OSM::Chain, OSM::SubSparseMatrix>(hdvf, L, options.outfile_root+"_complex_K") ;
+                Cub_output_vtk<CoefficientType, OSM::Sparse_chain, OSM::SubSparseMatrix>(hdvf, L, options.outfile_root+"_complex_K") ;
             }
             // L-K
             {
                 hdvf.set_mask_L_K() ;
-                Cub_output_vtk<CoefficientType, OSM::Chain, OSM::SubSparseMatrix>(hdvf, L, options.outfile_root+"_cocomplex_L_K") ;
+                Cub_output_vtk<CoefficientType, OSM::Sparse_chain, OSM::SubSparseMatrix>(hdvf, L, options.outfile_root+"_cocomplex_L_K") ;
             }
         }
         

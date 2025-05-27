@@ -1,0 +1,774 @@
+// Copyright (c) 2025 LIS Marseille (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+// Author(s)     : Alexandra Bac <alexandra.bac@univ-amu.fr>
+//                  Kevin Fedyna <fedyna.kevin@gmail.com>
+
+#ifndef CGAL_OSM_SPARSE_CHAIN_H
+#define CGAL_OSM_SPARSE_CHAIN_H
+
+#include "__base.hpp"
+#include "Sparse_matrix.h"
+#include <unordered_map>
+#include <vector>
+#include <iterator>
+#include <iostream>
+
+namespace CGAL {
+namespace OSM {
+
+/*!
+ \ingroup PkgHDVFAlgorithmClasses
+ 
+ The class `Sparse_chain` implements the concept `SparseChain`, that is, sparse vectors (encoding homological chains) optimized for topological computations.
+ Given a complex (for instance a simplicial, cubical or cellular complex) which cells in a given dimension \f$q\f$ are numbered
+ \f$\{\sigma_i\,;\, i=1\ldots n_q\}\f$, homology with coefficients in a given ring \f$\mathbb K\f$ defines \f$q\f$-chains as formal linear combinations:
+ \f\[\gamma = \sum_{i=1}^{n_q}\lambda_i\cdot \sigma_i\f\]
+ with coefficients \f$\lambda_i\in\mathbb K\f$.
+ In the basis \f$\{\sigma_i\,;\, i=1\ldots n_q\}\f$, the coordinates of \f$\gamma\f$ are given by the vector: \f$[\lambda_1,\ldots \lambda_{n_q}]\f$.
+ 
+ Now, as chains considered in homology are boundaries of cells, most \f$\lambda_i\f$ coefficients are null.
+ Hence `Sparse_chain` encodes such vectors in a "sparse" way, that is, storing only non zero coefficients through a map:
+ \f\[i\mapsto \lambda_i\ \ \ \forall i=1\ldots n_q\text{ such that }\lambda_i\neq 0\f\]
+ Moreover, as per any linear algebra vector, a `Sparse_chain` is either a column or row vector (the `ChainTypeFlag` parameter determines the type).
+ 
+ The class `Sparse_chain` provides standard linear algebra operators and fast iterators and block operations (set, get and nullify) which are required to implement efficiently HDVFs.
+ 
+ \cgalModels{SparseChain}
+ 
+ \tparam CoefficientType a model of the `Ring` concept, providing the ring used to compute homology.
+ \tparam ChainTypeFlag an integer constant encoding the type of matrices (`OSM::COLUMN` or `OSM::ROW`).
+*/
+
+template <typename CoefficientType, int ChainTypeFlag>
+class Sparse_chain {
+    
+public:
+    /*!
+     Type of chains iterators.
+     */
+    typedef typename std::unordered_map<int, CoefficientType>::iterator iterator;
+    
+    /*!
+     Type of chains constant iterators.
+     */
+    typedef typename std::unordered_map<int, CoefficientType>::const_iterator const_iterator;
+    
+    // Allow the Sparse_matrix class to access other templated Sparse_matrix and
+    // Sparse_chain protected members.
+    template <typename _CT, int _CTF>
+    friend class Sparse_chain;
+    
+    template <typename _CT, int _CTF>
+    friend class Sparse_matrix;
+    
+    // Friend methods (friends of Sparse_matrix)
+    template <typename _CT>
+    friend Sparse_chain<_CT, COLUMN> operator*(const Sparse_matrix<_CT, COLUMN> &_first, const Sparse_chain<_CT, COLUMN> &_second);
+    template <typename _CT>
+    friend Sparse_chain<_CT, COLUMN> operator*(const Sparse_matrix<_CT, COLUMN> &_first, const Sparse_chain<_CT, ROW> &_second);
+    template <typename _CT>
+    friend Sparse_chain<_CT, COLUMN> operator*(const Sparse_matrix<_CT, ROW> &_first, const Sparse_chain<_CT, COLUMN> &_second);
+    template <typename _CT>
+    friend Sparse_chain<_CT, COLUMN> operator*(const Sparse_matrix<_CT, ROW> &_first, const Sparse_chain<_CT, ROW> &_second);
+    template <typename _CT>
+    friend Sparse_chain<_CT, ROW> operator*(const Sparse_chain<_CT, ROW> &_first, const Sparse_matrix<_CT, COLUMN> &_second);
+    template <typename _CT>
+    friend Sparse_chain<_CT, COLUMN> get_column(const Sparse_matrix<_CT, COLUMN> &_matrix,  int _index);
+    template <typename _CT>
+    friend Sparse_chain<_CT, COLUMN> get_column(const Sparse_matrix<_CT, ROW> &_matrix,  int _index);
+    template <typename _CT>
+    friend Sparse_chain<_CT, ROW> get_row(const Sparse_matrix<_CT, COLUMN> &_matrix,  int _index);
+    template <typename _CT>
+    friend Sparse_chain<_CT, ROW> get_row(const Sparse_matrix<_CT, ROW> &_matrix,  int _index);
+    template <typename _CT>
+    friend void set_column(Sparse_matrix<_CT, COLUMN> &matrix,  int index, const Sparse_chain<_CT, COLUMN> &chain);
+    template <typename _CT>
+    friend void set_column(Sparse_matrix<_CT, ROW> &matrix,  int index, const Sparse_chain<_CT, COLUMN> &chain);
+    template <typename _CT>
+    friend void set_row(Sparse_matrix<_CT, COLUMN> &_matrix,  int _index, const Sparse_chain<_CT, ROW> &_chain);
+    template <typename _CT>
+    friend void set_row(Sparse_matrix<_CT, ROW> &_matrix,  int _index, const Sparse_chain<_CT, ROW> &_chain);
+    
+protected:
+    /** \brief Type of data stored in the chain: map between indexes and coefficients. */
+    typedef std::pair<int, CoefficientType> pair;
+    
+    /** \brief The chain inner representation and storage of data. */
+    std::unordered_map<int, CoefficientType> _chainData;
+    
+    /** \brief The chain boundary. */
+    int _upperBound;
+    
+public:
+    /**
+     * \brief Create new empty Sparse_chain.
+     *
+     * Default constructor, initialize an empty Sparse_chain.
+     * The default chain size is 0.
+     */
+    Sparse_chain() {
+        _upperBound = 0;
+        _chainData = std::unordered_map<int, CoefficientType>();
+    }
+    
+    /**
+     * \brief Create new empty SparseChain of given size.
+     *
+     * Constructor with size, initialize an empty Sparse_chain.
+     *
+     * \param[in] chainSize The size of the Sparse_chain.
+     */
+    Sparse_chain(const int chainSize) {
+        _upperBound = chainSize;
+        _chainData = std::unordered_map<int, CoefficientType>();
+    }
+    
+
+    
+    /**
+     * \brief Create new SparseChain by copy.
+     *
+     * Copy constructor, initialize a SparseChain from an existing SparseChain.
+     * 
+     * \pre The chains have the same `CoefficientType` and `ChainTypeFlag`.
+
+     * \param[in] otherToCopy The chain to copy.
+     */
+    Sparse_chain(const Sparse_chain &otherToCopy) {
+        _upperBound = otherToCopy._upperBound;
+        _chainData = otherToCopy._chainData;
+    }
+    
+    /**
+     * \brief Assign to other chain.
+     * 
+     * Assign to other chain coefficient-wise, equivalent to copying it.
+     * 
+     * \pre The chains have the same coefficent type.
+     * 
+     * \warning Chains must have the same `CoefficientType`.
+     *
+     * \param[in] otherToCopy The chain we want to copy.
+     */
+    Sparse_chain& operator=(const Sparse_chain &otherToCopy) {
+        _upperBound = otherToCopy._upperBound;
+        _chainData = otherToCopy._chainData;
+        
+        return *this;
+    }
+    
+    /**
+     * \brief Size of the chain
+     *
+     * \return Size allocated for the chain.
+     */
+    size_t dimension() const { return _upperBound ; }
+    
+    /**
+     * \brief Displays a Sparse_chain in the output stream.
+     * 
+     * \param[in] stream The output stream.
+     * \param[in] chain The chain to display.
+     * 
+     * \return A reference to the modified stream.
+     */
+    friend std::ostream& operator<<(std::ostream &stream, const Sparse_chain &chain) {
+        stream << "[";
+        for (const_iterator i = chain._chainData.begin() ; i != chain._chainData.end() ; ++i) {
+            stream << i->first << ": " << i->second << ", ";
+        }
+        
+        if (chain._chainData.size() > 0) {
+            stream << "\b\b";
+        }
+        stream << "]";
+        
+        return stream;
+    }
+    
+    /**
+     * \brief Adds two chains together.
+     * 
+     * Adds two chains together and return the result in a new matrix.
+     *
+     * \pre Chains must have the same `CoefficientType` and the same `ChainTypeFlag`.
+     *
+     * \warning Will raise an error if the two chains are not the same `CoefficientType`.
+     * \warning Will raise an error if the two chains don't have the same `ChainTypeFlag`.
+     *
+     * \param[in] first The first chain.
+     * \param[in] second The second chain.
+     * 
+     * \return A new chain representing the result.
+     */
+    template <int _CTF>
+    friend Sparse_chain operator+(const Sparse_chain &first, const Sparse_chain<CoefficientType, _CTF> &second) {
+        Sparse_chain newChain = first;
+        newChain += second;
+        
+        return newChain;
+    }
+    
+    /**
+     * \brief Subtract two chains together.
+     * 
+     * Subtract two chains together and return the result in a new matrix.
+     *
+     * \pre Chains must have the same `CoefficientType` and the same `ChainTypeFlag`.
+     *
+     * \warning Will raise an error if the two chains are not the same `CoefficientType`.
+     * \warning Will raise an error if the two chains don't have the same `ChainTypeFlag`.
+     *
+     * \param[in] first The first chain.
+     * \param[in] second The second chain.
+     * 
+     * \return A new chain representing the result.
+     */
+    template <int _CTF>
+    friend Sparse_chain operator-(const Sparse_chain &first, const Sparse_chain<CoefficientType, _CTF> &second) {
+        Sparse_chain newChain = first;
+        newChain -= second;
+        
+        return newChain;
+    }
+    
+    /**
+     * \brief Apply factor on each coefficients.
+     * 
+     * \param[in] lambda The factor to apply.
+     * \param[in] chain The second chain.
+     * 
+     * \return A new chain representing the result.
+     */
+    template <int _CTF>
+    friend Sparse_chain operator*(const CoefficientType& lambda, const Sparse_chain<CoefficientType, _CTF> &chain) {
+        Sparse_chain newChain = chain;
+        newChain *= lambda;
+        
+        return newChain;
+    }
+    
+    /**
+     * \brief Apply factor on each coefficients.
+     * 
+     * \param[in] chain The second chain.
+     * \param[in] lambda The factor to apply.
+     * 
+     * \return A new chain representing the result.
+     */
+    template <int _CTF>
+    friend Sparse_chain operator*(const Sparse_chain<CoefficientType, _CTF> &chain, const CoefficientType& lambda) {
+        Sparse_chain newChain = chain;
+        newChain *= lambda;
+        
+        return newChain;
+    }
+    
+    /**
+     * \brief Perform matrix multiplication between two chains (COLUMN x ROW) and return a COLUMN matrix.
+     *
+     * Generate a column-based matrix from the matrix multiplication and return it.
+     * 
+     * \pre Chains must have the same `CoefficientType`.
+     *
+     * \warning Will raise an error if chains do not have the same `CoefficientType`.
+     *
+     * \param[in] column The column chain.
+     * \param[in] row The row chain.
+     * 
+     * \return The result of the matrix multiplication, column-based.
+     */
+    template <typename _CT>
+    friend Sparse_matrix<_CT, COLUMN> operator*(const Sparse_chain<_CT, COLUMN> &column, const Sparse_chain<_CT, ROW> &row);
+    
+    /**
+     * \brief Perform matrix multiplication between two chains (COLUMN x ROW) and return a ROW matrix.
+     *
+     * Generate a row-based matrix from the matrix multiplication and return it.
+     * 
+     * \pre Chains must have the same `CoefficientType`.
+     *
+     * \warning Will raise an error if chains do not have the same `CoefficientType`.
+     *
+     * \param[in] column The column chain.
+     * \param[in] row The row chain.
+     * 
+     * \return The result of the matrix multiplication, row-based.
+     */
+    template <typename _CT>
+    friend Sparse_matrix<_CT, ROW> operator%(const Sparse_chain<_CT, COLUMN> &column, const Sparse_chain<_CT, ROW> &row);
+    
+    /**
+     * \brief Perform dot product between two chains (ROW x COLUMN).
+     *
+     * \pre Chains must have the same `CoefficientType`.
+     *
+     * \warning Will raise an error if the chains do not have the same `CoefficientType`.
+     *
+     * \param[in] row The row chain.
+     * \param[in] column The column chain.
+     * 
+     * \return The result of type CoefficientType.
+     */
+    template <typename _CT>
+    friend _CT operator*(const Sparse_chain<_CT, ROW> &row, const Sparse_chain<_CT, COLUMN> &column);
+    
+    /**
+     * \brief Add a chain to `this`.
+     *
+     * Add a chain to `this`.
+     *
+     * \pre Chains must have the same `CoefficientType` and the same `ChainTypeFlag`.
+     *
+     * \warning Will raise an error if the two chains are not the same `CoefficientType`.
+     * \warning Will raise an error if the two chains don't have the same `ChainTypeFlag`.
+     *
+     * \param[in] other The other chain.
+     * 
+     * \return The modified chain representing the result.
+     */
+    Sparse_chain& operator+=(const Sparse_chain &other) {
+        if (this->_upperBound != other._upperBound) {
+            throw std::runtime_error("Chains must be the same size.");
+        }
+        
+        for (pair pair: other._chainData) {
+            this->_chainData[pair.first] += pair.second;
+            
+            if (this->_chainData[pair.first] == 0) {
+                this->_chainData.erase(pair.first);
+            }
+        }
+        
+        return *this;
+    }
+    
+    /**
+     * \brief Sustract a chain to `this`.
+     *
+     * Subtract a chain to `this`.
+     *
+     * \pre Chains must have the same `CoefficientType` and the same `ChainTypeFlag`.
+     *
+     * \warning Will raise an error if the two chains are not the same `CoefficientType`.
+     * \warning Will raise an error if the two chains don't have the same `ChainTypeFlag`.
+     * 
+     * \param[in] other The other chain.
+     * 
+     * \return The modified chain representing the result.
+     */
+    Sparse_chain& operator-=(const Sparse_chain &other) {
+        if (this->_upperBound != other._upperBound) {
+            throw std::runtime_error("Chains must be the same size.");
+        }
+        
+        for (pair pair: other._chainData) {
+            this->_chainData[pair.first] -= pair.second;
+            
+            if (this->_chainData[pair.first] == 0) {
+                this->_chainData.erase(pair.first);
+            }
+        }
+        
+        return *this;
+    }
+    
+    /**
+     * \brief Apply factor on each coefficients of `this`.
+     *
+     * If `lambda` is null, this function comes to nullify the chain.
+     *
+     * \param[in] lambda The factor to apply.
+     * 
+     * \return The modified chain representing the result.
+     */
+    Sparse_chain& operator*=(const CoefficientType& lambda) {
+        if (lambda == 0) {
+            this->_chainData.clear();
+            return *this;
+        }
+        
+        for (pair pair: this->_chainData) {
+            this->_chainData[pair.first] = pair.second * lambda;
+        }
+        
+        return *this;
+    }
+    
+    /**
+     * \brief Get the value of a coefficient of the chain.
+     *
+     * \warning The chain will perform boundary check.
+     * 
+     * \param[in] index The coefficient index.
+     * 
+     * \return The value of the coefficient.
+     */
+    CoefficientType operator[](int index) const {
+        if (index >= _upperBound) {
+            throw std::runtime_error("Provided index should be less than " + std::to_string(_upperBound) + ".");
+        }
+        
+        return _chainData.at(index);
+    }
+    
+    /**
+     * \brief Get the value of a coefficient of the chain.
+     *
+     * \warning The chain will perform boundary check.
+     *
+     * \param[in] index The coefficient index.
+     *
+     * \return The value of the coefficient.
+     */
+    CoefficientType get_coef(int index) const {
+        if (index >= _upperBound) {
+            throw std::runtime_error("Provided index should be less than " + std::to_string(_upperBound) + ".");
+        }
+        
+        return _chainData.at(index);
+    }
+    
+    /**
+     * \brief Set a given coefficient of the chain.
+     *
+     * Set the value of the coefficient in the chain at `index`.
+     *
+     * \warning The chain will perform boundary check.
+     *
+     * \param[in] index The coefficient index.
+     * \param[in] d Value of the coefficient
+     */
+    void set_coef(int index, CoefficientType d)
+    {
+        if (index >= _upperBound) {
+            throw std::runtime_error("Provided index should be less than " + std::to_string(_upperBound) + ".");
+        }
+        if (d == 0)
+            *this /= index ;
+        else
+            _chainData[index] = d ;
+    }
+    
+    /**
+     * \brief Checks if a coefficient is null.
+     * 
+     * \param[in] index The index to check.
+     * \return True if the data is null at given index.
+     */
+    const bool is_null(int index) const {
+        return _chainData.find(index) == _chainData.end();
+    }
+    
+    /**
+     * \brief Checks if the chain is null.
+     * 
+     * \return True if the chain is null.
+     */
+    const bool is_null() const {
+        return _chainData.size() == 0;
+    }
+    
+    /**
+     * \brief Get a subchain from the chain.
+     * 
+     * Return a new chain where all coefficients of indices provided in the vector are removed.
+     *
+     * \note Will return a copy of the chain if `indices` is empty.
+     *
+     * \param[in] chain The chain to process.
+     * \param[in] indices The indexes to remove.
+     *
+     * \return A new chain representing the result.
+     */
+    template <typename _CT, int _CTF>
+    friend Sparse_chain<_CT, _CTF> operator/(const Sparse_chain<_CT, _CTF> &chain, const std::vector<int> &indices);
+    
+    /**
+     * \brief Get a subchain from the chain.
+     * 
+     * Return a new chain where the coefficients at a given index is removed.
+     * 
+     * \param[in] chain The chain to process.
+     * \param[in] index The index to remove.
+     */
+    template <typename _CT, int _CTF>
+    friend Sparse_chain<_CT, _CTF> operator/(const Sparse_chain<_CT, _CTF> &chain, int index);
+    
+    /**
+     * \brief Restrict the chain to a sub-chain by removing indices.
+     *
+     * Removes all indices provided in the vector from the chain. Return a reference to the modified chain.
+     *
+     * \note Will not alter the chain if `indices` is empty.
+     *
+     * \param[in] indices The indices to remove.
+     *
+     * \return Return a reference to the modified chain.
+     */
+    Sparse_chain& operator/=(const std::vector<int> &indices) {
+        for (int index : indices) {
+            this->_chainData.erase(index);
+        }
+        
+        return *this;
+    }
+    
+    /**
+     * \brief Restrict the chain to a sub-chain by removing a given index.
+     *
+     * Removes the index provided from the chain.
+     *
+     * \note Will not alter the chain if given vector is empty.
+     * 
+     * \param[in] index The index to remove.
+     * 
+     * \return Return a reference to the modified chain.
+     */
+    Sparse_chain& operator/=(const int index) {
+        this->_chainData.erase(index);
+        
+        return *this;
+    }
+    
+    /**
+     * \brief Remove all coefficients from the chain.
+     *
+     * The function comes to set all coefficients to zero.
+     */
+    void nullify() {
+        this->_chainData.clear();
+    }
+    
+    /**
+     * \brief Iterator to the beginning of the chain.
+     * 
+     * \warning The chain is stored unordered for speed reason.
+     * 
+     * \return The function returns an iterator to the first non zero index.
+     */
+    iterator begin() noexcept {
+        return _chainData.begin();
+    }
+    
+    /**
+     * \brief Constant iterator to the beginning of the chain.
+     * 
+     * \warning The chain is stored unordered for speed reason.
+     * 
+     * \return The function returns a constant iterator to the first non zero index.
+     */
+    const_iterator begin() const noexcept {
+        return _chainData.begin();
+    }
+    
+    /**
+     * \brief Constant iterator to the beginning of the chain.
+     * 
+     * \warning The chain is stored unordered for speed reason.
+     * 
+     * \return The function returns a constant iterator to the first non zero index.
+     */
+    const_iterator cbegin() const noexcept {
+        return _chainData.cbegin();
+    }
+    
+    /**
+     * \brief Iterator to the end of the chain.
+     * 
+     * \warning The chain is stored unordered for speed reason.
+     * 
+     * \return The function returns an iterator to the ending of the chain.
+     */
+    iterator end() noexcept {
+        return _chainData.end();
+    }
+    
+    /**
+     * \brief Constant iterator to the end of the chain.
+     * 
+     * \warning The chain is stored unordered for speed reason.
+     * 
+     * \return The function returns a constant iterator to the ending of the chain.
+     */
+    const_iterator end() const noexcept {
+        return _chainData.end();
+    }
+    
+    /**
+     * \brief Constant iterator to the end of the chain.
+     * 
+     * \warning The chain is stored unordered for speed reason.
+     * 
+     * \return The function returns a constant iterator to the ending of the chain.
+     */
+    const_iterator cend() const noexcept {
+        return _chainData.cend();
+    }
+    
+    /**
+     * \brief Transpose a Sparse_chain.
+     *
+     * The result is a chain with `ChainTypeFlag` switched between COLUMN and ROW.
+     *
+     * \return A new chain where the chain type flag is changed.
+     */
+    Sparse_chain<CoefficientType, COLUMN + ROW - ChainTypeFlag> transpose() {
+        Sparse_chain<CoefficientType, COLUMN + ROW - ChainTypeFlag> chain;
+        
+        chain._upperBound = this->_upperBound;
+        for (pair pair: this->_chainData) {
+            chain._chainData[pair.first] = pair.second;
+        }
+        
+        return chain;
+    }
+    
+    /**
+     * \brief Checks if chain is a column.
+     * 
+     * \return true if chain is column-major, false otherwise.
+     */
+    bool is_column() const {
+        return ChainTypeFlag == COLUMN;
+    }
+    
+    /**
+     * \brief Checks if chain is a row.
+     * 
+     * \return true if chain is row-major, false otherwise.
+     */
+    bool is_row() const {
+        return ChainTypeFlag == ROW;
+    }
+    
+private:
+    /**
+     * \brief Get a reference on a coefficient of the chain.
+     *
+     * Used to set a coefficient in the chain.
+     *
+     * \warning The chain will perform boundary check.
+     *
+     * \param[in] index The coefficient index.
+     *
+     * \return The reference to the assigned coefficient.
+     */
+    CoefficientType& operator[](const int index)  {
+        if (index >= _upperBound) {
+            throw std::runtime_error("Provided index should be less than " + std::to_string(_upperBound) + ".");
+        }
+
+        return _chainData[index];
+    }
+};
+
+
+// COLUMN chain x ROW chain -> COLUMN matrix
+template <typename _CT>
+Sparse_matrix<_CT, COLUMN> operator*(const Sparse_chain<_CT, COLUMN> &_column, const Sparse_chain<_CT, ROW> &_row) {
+    Sparse_matrix<_CT, COLUMN> matrix(_column._upperBound, _row._upperBound);
+    
+    for (std::pair<int, _CT> pair : _row._chainData) {
+        OSM::set_column(matrix,pair.first,_column * pair.second) ;
+    }
+    
+    return matrix;
+}
+
+// COLUMN chain x ROW chain -> ROW matrix
+template <typename _CT>
+Sparse_matrix<_CT, ROW> operator%(const Sparse_chain<_CT, COLUMN> &_column, const Sparse_chain<_CT, ROW> &_row) {
+    Sparse_matrix<_CT, ROW> matrix(_column._upperBound, _row._upperBound);
+    
+    for (std::pair<int, _CT> pair : _column._chainData) {
+        OSM::set_row(matrix,pair.first,_row * pair.second);
+    }
+    
+    return matrix;
+}
+
+// Dot product (ROW chain x COLUMN chain)
+template <typename CoefficientType>
+CoefficientType operator*(const Sparse_chain<CoefficientType, ROW> &_row, const Sparse_chain<CoefficientType, COLUMN> &_column) {
+    // Get indexes (avoid adding double indexes).
+    std::unordered_map<int, int> indexes;
+    for (std::pair<int, CoefficientType> pair: _row._chainData) {
+        indexes[pair.first] = 1;
+    }
+    for (std::pair<int, CoefficientType> pair: _column._chainData) {
+        indexes[pair.first] += 1;
+    }
+    
+    // Perform dot product
+    CoefficientType result = CoefficientType();
+    for (std::pair<int, int> index: indexes) {
+        if (index.second == 2) {
+            result += _row._chainData.at(index.first) * _column._chainData.at(index.first);
+        }
+    }
+    
+    return result;
+}
+
+/**
+ * \brief Get a subchain from the chain and assign.
+ * 
+ * Removes all indexes provided in the vector from the chain and returns it.
+ * 
+ * \note Will not alter the chain if given vector is empty.
+ * 
+ * \param[in] _indexes The indexes to remove.
+ * 
+ * \return The modified chain representing the result.
+ * 
+ * \see \link OSM::Sparse_chain \endlink
+ * \see \link std::vector \endlink
+ * 
+ * \author Fedyna K.
+ * \version 0.1.0
+ * \date 08/04/2024
+ */
+template <typename _CT, int _CTF>
+Sparse_chain<_CT, _CTF> operator/(const Sparse_chain<_CT, _CTF> &_chain, const std::vector<int> &_indexes) {
+    Sparse_chain newChain = _chain;
+    newChain /= _indexes;
+    return newChain;
+}
+
+/**
+ * \brief Get a subchain from the chain and assign.
+ * 
+ * Removes the index provided from the chain and returns it.
+ * 
+ * \note Will not alter the chain if given vector is empty.
+ * 
+ * \param[in] _index The index to remove.
+ * 
+ * \return The modified chain representing the result.
+ * 
+ * \see \link OSM::Sparse_chain \endlink
+ * \see \link std::vector \endlink
+ * 
+ * \author Fedyna K.
+ * \version 0.1.0
+ * \date 08/04/2024
+ */
+template <typename _CT, int _CTF>
+Sparse_chain<_CT, _CTF> operator/(const Sparse_chain<_CT, _CTF> &_chain, int _index) {
+    Sparse_chain newChain = _chain;
+    newChain /= _index;
+    return newChain;
+}
+
+} /* end namespace OSM */
+} /* end namespace CGAL */
+
+#endif // CGAL_OSM_SPARSE_CHAIN_H

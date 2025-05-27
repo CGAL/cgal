@@ -76,12 +76,12 @@ typedef Ring CoefficientType;
 /*!
  Type of column-major chains
  */
-typedef OSM::Chain<CoefficientType, OSM::COLUMN> CChain;
+typedef OSM::Sparse_chain<CoefficientType, OSM::COLUMN> CChain;
 
 /*!
  Type of row-major chains
  */
-typedef OSM::Chain<CoefficientType, OSM::ROW> RChain ;
+typedef OSM::Sparse_chain<CoefficientType, OSM::ROW> RChain ;
 
 /*!
  Type of column-major sparse matrices

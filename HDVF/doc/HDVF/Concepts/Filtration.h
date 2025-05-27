@@ -56,12 +56,12 @@ protected:
     /*!
      Type of column-major chains.
      */
-    typedef OSM::Chain<_CoefType,OSM::COLUMN> CChain ;
+    typedef OSM::Sparse_chain<_CoefType,OSM::COLUMN> CChain ;
     
     /*!
      Type of row-major chains.
      */
-    typedef OSM::Chain<_CoefType,OSM::ROW> RChain ;
+    typedef OSM::Sparse_chain<_CoefType,OSM::ROW> RChain ;
     
 public:
     /**

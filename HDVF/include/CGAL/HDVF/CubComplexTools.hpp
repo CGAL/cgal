@@ -38,7 +38,7 @@
 namespace CGAL {
 namespace HDVF {
 
-template <typename CoefType, template <typename, int> typename _ChainType = OSM::Chain, template <typename, int> typename _SparseMatrixType = OSM::Sparse_matrix>
+template <typename CoefType, template <typename, int> typename _ChainType = OSM::Sparse_chain, template <typename, int> typename _SparseMatrixType = OSM::Sparse_matrix>
 void Cub_output_vtk (Hdvf_core<CoefType, Cubical_chain_complex<CoefType>, _ChainType, _SparseMatrixType> &hdvf, Cubical_chain_complex<CoefType> &complex, string filename = "test")
 {
     typedef Hdvf_core<CoefType, Cubical_chain_complex<CoefType>, _ChainType, _SparseMatrixType> HDVF_type;
@@ -61,7 +61,7 @@ void Cub_output_vtk (Hdvf_core<CoefType, Cubical_chain_complex<CoefType>, _Chain
                 {
                     string outfile_g(filename+"_G_"+to_string(c)+"_dim_"+to_string(q)+".vtk") ;
                     //                    vector<vector<int> > labels = hdvf.export_label(G,c,q) ;
-                    OSM::Chain<CoefType,OSM::COLUMN> chain(hdvf.export_homology_chain(c,q)) ;
+                    OSM::Sparse_chain<CoefType,OSM::COLUMN> chain(hdvf.export_homology_chain(c,q)) ;
                     ComplexType::Cubical_chain_complex_chain_to_vtk(complex, outfile_g, chain, q, c) ;
                 }
                 if (q < complex.dim())
@@ -69,7 +69,7 @@ void Cub_output_vtk (Hdvf_core<CoefType, Cubical_chain_complex<CoefType>, _Chain
                     if (hdvf.get_hdvf_opts() & (OPT_FULL | OPT_F))
                     {
                         string outfile_f(filename+"_FSTAR_"+to_string(c)+"_dim_"+to_string(q)+".vtk") ;
-                        OSM::Chain<CoefType,OSM::COLUMN> chain(hdvf.export_cohomology_chain(c,q)) ;
+                        OSM::Sparse_chain<CoefType,OSM::COLUMN> chain(hdvf.export_cohomology_chain(c,q)) ;
                         ComplexType::Cubical_chain_complex_chain_to_vtk(complex, outfile_f, chain, q+1, c) ;
                     }
                 }

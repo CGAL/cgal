@@ -9,16 +9,17 @@ Traditionally, sparse matrices data structures encode non zero coefficients of (
  
  The `SparseMatrix` concept describes requirements for such sparse matrix. It relies on the model of `SparseChain` which encodes sparse row or column vectors. Matrices are either column major or row major (hence they either store column sparse chains or row sparse chains).
  
- The following constants encode the major direction of both sparse chains and sparse matrices.
+ The following constants, called `ChainTypeFlag`, encode the major direction of both sparse chains and sparse matrices.
  - `OSM::COLUMN` for column-major chains and matrices (which is the default),
  - `OSM::ROW` for row-major chains and matrices.
  
- For instance, given the \f$3\times 4\f$ matrix:
+ For instance, given the \f$5\times 4\f$ matrix:
  \f[
  A = \left(\begin{array}{cccc}
  1 & \cdot & \cdot & \cdot \\
  -1 & \cdot & 2 & \cdot\\
  \cdot & \cdot & 1 & \cdot \\
+ \cdot & \cdot & \cdot & \cdot \\
  \cdot & \cdot & \cdot & \cdot \\
  \end{array}\right)
  \f]
@@ -27,7 +28,7 @@ Traditionally, sparse matrices data structures encode non zero coefficients of (
  - A row-major representation of \f$A\f$ is: \f$[0\mapsto c_0, 1\mapsto c_1, 2\mapsto c_2]\f$ with the row-chains: \f$c_0 = [0\mapsto 1]\f$ and \f$c_1 = [0\mapsto -1, 2\mapsto 2]\f$ and \f$c_2 = [2\mapsto 1]\f$.
  
 \cgalHasModelsBegin
-\cgalHasModelsBare{`OSM::Sparse_matrix<Ring, AbstractChainComplex, SparseChain, SparseMatrix>`}
+\cgalHasModelsBare{`OSM::Sparse_matrix<Ring, ChainTypeFlag>`}
 \cgalHasModelsEnd
 
  \sa `Ring`
@@ -94,7 +95,7 @@ public:
      *
      * Assign to other matrix coefficient-wise, equivalent to copying it.
      *
-     * The matrices must have the same type.
+     * Matrices must have the same type.
      */
     SparseMatrix& operator=(const SparseMatrix& _otherToCopy);
     
@@ -251,7 +252,7 @@ public:
      *
      * The matrix and the chain must have the same coefficient type.
      */
-    friend Chain<CoefficientType, COLUMN> operator*(const SparseMatrix& first, const Chain<CoefficientType, COLUMN>& second);
+    friend Sparse_chain<CoefficientType, COLUMN> operator*(const SparseMatrix& first, const Sparse_chain<CoefficientType, COLUMN>& second);
     
     /**
      * \brief Perform multiplication between a row-based chain and a matrix.
@@ -260,7 +261,7 @@ public:
      *
      * The matrix and the chain must have the same coefficient type.
      */
-    friend Chain<CoefficientType, ROW> operator*(const Chain<CoefficientType, ROW>& first, const SparseMatrix& second);
+    friend Sparse_chain<CoefficientType, ROW> operator*(const Sparse_chain<CoefficientType, ROW>& first, const SparseMatrix& second);
     
     /**
      * \brief Transpose a matrix.
@@ -301,24 +302,24 @@ public:
      *
      * For column-matrices, it is equivalent to `operator[]`, for row-matrices a traversal of the matrix is required (in \f$\mathcal O(n)\f$).
      */
-    friend Chain<CoefficientType, COLUMN> get_column(const SparseMatrix &matrix, int index);
+    friend Sparse_chain<CoefficientType, COLUMN> get_column(const SparseMatrix &matrix, int index);
 
     /**
      * \brief Get the value of the row at a given `index` from the matrix (whatever the `ChainTypeFlag` of the matrix).
      *
      * For row-matrices, it is equivalent to `operator[]`, for column-matrices a traversal of the matrix is required (in \f$\mathcal O(n)\f$).
      */
-    friend Chain<CoefficientType, ROW> get_row(const SparseMatrix &matrix, int index);
+    friend Sparse_chain<CoefficientType, ROW> get_row(const SparseMatrix &matrix, int index);
 
     /**
      * \brief Get a constant reference over the column of  index`i` from a column matrix.
      */
-    const Chain<CoefficientType, COLUMN> & cget_column(const SparseMatrix<CoefficientType, COLUMN> &_matrix, int i);
+    const Sparse_chain<CoefficientType, COLUMN> & cget_column(const SparseMatrix<CoefficientType, COLUMN> &_matrix, int i);
     
     /**
      * \brief Get a constant reference over the row of  index`i` from a row matrix.
      */
-    const Chain<CoefficientType, ROW> & cget_row(const SparseMatrix<CoefficientType, ROW> &_matrix, int i);
+    const Sparse_chain<CoefficientType, ROW> & cget_row(const SparseMatrix<CoefficientType, ROW> &_matrix, int i);
     
     /**
      * \brief Set a column in the matrix (whatever the `ChainTypeFlag` of the matrix).
@@ -326,7 +327,7 @@ public:
      * Set the `i`th column of `matrix` to `chain`.
      * For column-matrices, it should be equivalent to an affectation, however, for row-matrices, a traversal of the matrix is required (in \f$\mathcal O(n)\f$).
      */
-    void set_column(SparseMatrix &matrix, int i, const Chain<CoefficientType, COLUMN> &chain);
+    void set_column(SparseMatrix &matrix, int i, const Sparse_chain<CoefficientType, COLUMN> &chain);
     
     /**
      * \brief Set a row in the matrix (whatever the `ChainTypeFlag` of the matrix).
@@ -334,7 +335,7 @@ public:
      * Set the `i`th row of `matrix` to `chain`.
      * For row-matrices, it should be equivalent to an affectation, however, for column-matrices, a traversal of the matrix is required (in \f$\mathcal O(n)\f$).
      */
-    void set_row(SparseMatrix &matrix, int i, const Chain<CoefficientType, ROW> &chain);
+    void set_row(SparseMatrix &matrix, int i, const Sparse_chain<CoefficientType, ROW> &chain);
     
     /**
      * \brief Get a submatrix from the matrix.

@@ -1,981 +1,300 @@
-/**
- * \file Chain.hpp
- * \brief Namespace file for describing library.
- * \author Fedyna K.
- * \version 0.1.0
- * \date 08/04/2024
- * 
- * Define everything for the Chain class
- */
+/*!
+\ingroup PkgHDVFConcepts
+\cgalConcept
 
-#ifndef __OSM_CHAIN__
-#define __OSM_CHAIN__
+The concept `SparseChain` describes the requirements for sparse vectors (called *sparse chains* in homology) optimized for topological computations. More precisely, `SparseChains` provide all the operations on chains required by the `SparseMatrix` concept.
 
+ `SparseChains` encode non zero coefficients of (sparse) chains.
+ 
+ `SparseChain`  can be either row or column vectors. The following constants, called `ChainTypeFlag`, encode the direction of sparse chains (and sparse matrices).
+ - `OSM::COLUMN` for column-major chains and matrices (which is the default),
+ - `OSM::ROW` for row-major chains and matrices.
+ 
+ 
+\cgalHasModelsBegin
+\cgalHasModelsBare{`OSM::Sparse_chain<Ring, ChainTypeFlag>`}
+\cgalHasModelsEnd
 
-#include "__base.hpp"
-#include "Sparse_matrix.h"
-#include <unordered_map>
-#include <vector>
-#include <iterator>
-#include <iostream>
+ \sa `Ring`
+ \sa `SparseMatrix`
+*/
 
-namespace CGAL {
-namespace OSM {
-
-/**
- * \class Chain
- * \brief Allow to create row/column sparse vectors.
- * 
- * The Chain class contains all algebraic functions that are related to vectors.
- * 
- * \tparam _CoefficientType The chain's coefficient types (default is OSM::ZCoefficient)
- * \tparam _ChainTypeFlag The type of vector the chain is representing (default is OSM::COLUMN)
- * 
- * \author Fedyna K.
- * \version 0.1.0
- * \date 08/04/2024
- */
-template <typename _CoefficientType, int _ChainTypeFlag>
-class Chain {
+class SparseChain {
     
 public:
-    typedef std::pair<int, _CoefficientType> pair;
-    typedef typename std::unordered_map<int, _CoefficientType>::iterator iterator;
-    typedef typename std::unordered_map<int, _CoefficientType>::const_iterator const_iterator;
+    /// \name Types
+    /// @{
     
-    // Add these lines to allow the Sparse_matrix class to access other templated
-    // SparsedMatrix private members.
-    template <typename _CT, int _CTF>
-    friend class Chain;
-    template <typename _CT, int _CTF>
-    friend class Sparse_matrix;
-protected:
-    /** \brief The chain inner representation and storage of data. */
-    std::unordered_map<int, _CoefficientType> chainData;
-    
-    /** \brief The chain coefficient type. */
-    typedef _CoefficientType coefficientType;
-    
-    /** \brief The chain type flag. */
-    int chainTypeFlag = _ChainTypeFlag;
-    
-    /** \brief The chain boundary. */
-    int upperBound;
-    
-public:
-    /**
-     * \brief Create new Chain for Sparse_matrix object.
-     *
-     * Default constructor, initialize an empty Chain as a Z integers column chain.
-     * The default chain size is 128.
-     * 
-     * \tparam _CoefficientType The chain's coefficient types (default is OSM::ZCoefficient)
-     * \tparam _ChainTypeFlag The type of vector the chain is representing (default is OSM::COLUMN)
-     * 
-     * \see \link OSM::ZCoefficient \endlink
-     * \see \link OSM::COLUMN \endlink
-     * \see \link OSM::ROW \endlink
-     * 
-     * \author Fedyna K.
-     * \version 0.1.0
-     * \date 08/04/2024
+    /*!
+     * \brief Type of coefficients stored in the matrix (a model of `Ring`).
      */
-    Chain() {
-        upperBound = 0;
-        chainData = std::unordered_map<int, _CoefficientType>();
-    }
+    typedef Ring CoefficientType;
     
-    /**
-     * \brief Create new Chain for Sparse_matrix object.
-     *
-     * Constructor with size, initialize an empty Chain as a Z integers column chain with boundary check.
-     * 
-     * \tparam _CoefficientType The chain's coefficient types (default is OSM::ZCoefficient)
-     * \tparam _ChainTypeFlag The type of vector the chain is representing (default is OSM::COLUMN)
-     * \param[in] _chainSize The upper bound of the Chain.
-     * 
-     * \see \link OSM::ZCoefficient \endlink
-     * \see \link OSM::COLUMN \endlink
-     * \see \link OSM::ROW \endlink
-     * 
-     * \author Fedyna K.
-     * \version 0.1.0
-     * \date 08/04/2024
+    /*!
+     * \brief Matrix and chain type (either OSM::ROW or OSM::COLUMN).
      */
-    Chain(const int _chainSize) {
-        upperBound = _chainSize;
-        chainData = std::unordered_map<int, _CoefficientType>();
-    }
-    
-    /**
-     * \brief Size of the chain
-     *
-     * \return Size of the chain (upperBound)
-     *
-     * \see \link OSM::ZCoefficient \endlink
-     * \see \link OSM::COLUMN \endlink
-     * \see \link OSM::ROW \endlink
-     *
-     * \author Fedyna K.
-     * \version 0.1.0
-     * \date 08/04/2024
+    typedef int ChainTypeFlag;
+
+    /*!
+     * \brief SparseChain iterator type.
      */
-    size_t dimension() const { return upperBound ; }
+    typedef unspecified_type iterator;
     
-    /**
-     * \brief Create new Chain for Sparse_matrix object.
-     *
-     * Copy constructor, initialize a Chain based on the same type of chain.
-     * The resulting chain will be a copy of the passed chain.
-     * 
-     * \pre The chains have the same coefficent type.
-     * 
-     * \warning Will raise an error if the other chain is not the same coefficient type.
-     * 
-     * \tparam _CoefficientType The chain's coefficient types (default is OSM::ZCoefficient)
-     * \tparam _ChainTypeFlag The type of vector the chain is representing (default is OSM::COLUMN)
-     * \param[in] _otherToCopy The chain we want to copy.
-     * 
-     * \see \link OSM::ZCoefficient \endlink
-     * \see \link OSM::COLUMN \endlink
-     * \see \link OSM::ROW \endlink
-     * 
-     * \author Fedyna K.
-     * \version 0.1.0
-     * \date 08/04/2024
+    /*!
+     * \brief SparseChain constant iterator type.
      */
-    Chain(const Chain &_otherToCopy) {
-        upperBound = _otherToCopy.upperBound;
-        chainData = _otherToCopy.chainData;
-        //        *this = _otherToCopy;
-    }
+    typedef unspecified_type const_iterator;
     
-    /**
+    /// @}
+    
+    /// \name Creation, filling
+    /// @{
+
+    /*!
+     * \brief Create new empty SparseChain.
+     */
+    SparseChain();
+    
+    /*!
+     * \brief Create new empty SparseChain of given size.
+     *
+     * Constructor with size, initialize an empty SparseChain.
+     */
+    SparseChain(int chainSize);
+    
+    /*!
+     * \brief Create new SparseChain by copy.
+     *
+     * Copy constructor, initialize a SparseChain from an existing SparseChain of same `ChaintypeFlag`.
+     */
+    SparseChain(const Sparse_chain &otherToCopy);
+    
+    /*!
      * \brief Assign to other chain.
-     * 
+     *
      * Assign to other chain coefficient-wise, equivalent to copying it.
-     * 
-     * \pre The chains have the same coefficent type.
-     * 
-     * \warning Will raise an error if the other chain is not the same coefficient type.
-     * 
-     * \param[in] _otherToCopy The chain we want to copy.
-     * 
-     * \return The reference to the modified chain.
-     * 
-     * \see \link OSM::Chain \endlink
-     * 
-     * \author Fedyna K.
-     * \version 0.1.0
-     * \date 08/04/2024
+     *
+     * SparseChain must have the same `CoefficientType`.
      */
-    Chain& operator=(const Chain &_otherToCopy) {
-        upperBound = _otherToCopy.upperBound;
-        chainData = _otherToCopy.chainData;
-        
-        return *this;
-    }
+    SparseChain& operator=(const SparseChain &otherToCopy);
     
-    /**
-     * \brief Displays a Chain in the output stream.
-     * 
-     * \param[in] _stream The output stream.
-     * \param[in] _chain The chain to display.
-     * 
-     * \return A reference to the modified stream.
-     * 
-     * \see \link OSM::Chain \endlink
-     * 
-     * \author Fedyna K.
-     * \version 0.1.0
-     * \date 08/04/2024
+    /// @}
+    
+    /// \name Matrix informations and iterators
+    /// @{
+    
+    /*!
+     * \brief Dimension of the basis (that is, size of the chain).
      */
-    friend std::ostream& operator<<(std::ostream &_stream, const Chain &_chain) {
-        _stream << "[";
-        for (const_iterator i = _chain.chainData.begin() ; i != _chain.chainData.end() ; ++i) {
-            _stream << i->first << ": " << i->second << ", ";
-        }
-        
-        if (_chain.chainData.size() > 0) {
-            _stream << "\b\b";
-        }
-        _stream << "]";
-        
-        return _stream;
-    }
+    size_t dimension() const;
     
-    /**
+    /*!
+     * \brief Iterator to the beginning of the chain.
+     *
+     * The function returns an iterator to the first non zero index.
+     */
+    iterator begin() noexcept;
+    
+    /*!
+     * \brief Constant iterator to the beginning of the chain.
+     *
+     * The function returns a constant iterator to the first non zero index.
+     */
+    const_iterator begin() const noexcept;
+    
+    /*!
+     * \brief Constant iterator to the beginning of the chain.
+     *
+     * The function returns a constant iterator to the first non zero index.
+     */
+    const_iterator cbegin() const noexcept;
+    
+    /*!
+     * \brief Iterator to the end of the chain.
+     *
+     * The function returns an iterator to the ending of the chain.
+     */
+    iterator end() noexcept;
+    
+    /*!
+     * \brief Constant iterator to the end of the chain.
+     *
+     * The function returns a constant iterator to the ending of the chain.
+     */
+    const_iterator end() const noexcept;
+    
+    /*!
+     * \brief Constant iterator to the end of the chain.
+     *
+     * The function returns a constant iterator to the ending of the chain.
+     */
+    const_iterator cend() const noexcept;
+    
+    /// @}
+    
+    /// \name Output
+    /// @{
+    
+    /*!
+     * \brief Displays a SparseChain in the output stream.
+     */
+    friend std::ostream& operator<<(std::ostream &stream, const Sparse_chain& chain);
+    
+    /// @}
+    
+    /// \name Linear algebra operators
+    /// @{
+    
+    /*!
      * \brief Adds two chains together.
      * 
-     * Adds each coefficient of the chain together.
-     * 
-     * \pre The chains have the same coefficent type and the same type flag.
-     * 
-     * \warning Will raise an error if the two chains are not the same coefficient type.
-     * \warning Will raise an error if the two chains don't have the same type flag.
-     * 
-     * \param[in] _first The first chain.
-     * \param[in] _second The second chain.
-     * 
-     * \return A new chain representing the result.
-     * 
-     * \see \link OSM::Chain \endlink
-     * 
-     * \author Fedyna K.
-     * \version 0.1.0
-     * \date 08/04/2024
+     * Adds two chains together and return the result in a new matrix.
+     * Chains must have the same `CoefficientType` and the same `ChainTypeFlag`.
      */
-    template <int _CTF>
-    friend Chain operator+(const Chain &_first, const Chain<_CoefficientType, _CTF> &_second) {
-        Chain newChain = _first;
-        newChain += _second;
-        
-        return newChain;
-    }
+    friend Sparse_chain operator+(const Sparse_chain &first, const Sparse_chain &second);
     
-    /**
-     * \brief Substract two chains together.
+    /*!
+     * \brief Subtract two chains together.
      * 
-     * Substract each coefficient of the chain together.
-     * 
-     * \pre The chains have the same coefficent type and the same type flag.
-     * 
-     * \warning Will raise an error if the two chains are not the same coefficient type.
-     * \warning Will raise an error if the two chains don't have the same type flag.
-     * 
-     * \param[in] _first The first chain.
-     * \param[in] _second The second chain.
-     * 
-     * \return A new chain representing the result.
-     * 
-     * \see \link OSM::Chain \endlink
-     * 
-     * \author Fedyna K.
-     * \version 0.1.0
-     * \date 08/04/2024
+     * Subtract two chains together and return the result in a new matrix.
+     * Chains must have the same `CoefficientType` and the same `ChainTypeFlag`.
      */
-    template <int _CTF>
-    friend Chain operator-(const Chain &_first, const Chain<_CoefficientType, _CTF> &_second) {
-        Chain newChain = _first;
-        newChain -= _second;
-        
-        return newChain;
-    }
+    friend Sparse_chain operator-(const Sparse_chain &first, const Sparse_chain &second);
     
-    /**
+    /*!
      * \brief Apply factor on each coefficients.
-     * 
-     * \param[in] _lambda The factor to apply.
-     * \param[in] _chain The second chain.
-     * 
-     * \return A new chain representing the result.
-     * 
-     * \see \link OSM::Chain \endlink
-     * 
-     * \author Fedyna K.
-     * \version 0.1.0
-     * \date 08/04/2024
      */
-    template <int _CTF>
-    friend Chain operator*(const _CoefficientType& _lambda, const Chain<_CoefficientType, _CTF> &_chain) {
-        Chain newChain = _chain;
-        newChain *= _lambda;
-        
-        return newChain;
-    }
+    friend Sparse_chain operator*(const CoefficientType& lambda, const Sparse_chain &chain);
     
-    /**
+    /*!
      * \brief Apply factor on each coefficients.
-     * 
-     * \param[in] _chain The second chain.
-     * \param[in] _lambda The factor to apply.
-     * 
-     * \return A new chain representing the result.
-     * 
-     * \see \link OSM::Chain \endlink
-     * 
-     * \author Fedyna K.
-     * \version 0.1.0
-     * \date 08/04/2024
      */
-    template <int _CTF>
-    friend Chain operator*(const Chain<_CoefficientType, _CTF> &_chain, const _CoefficientType& _lambda) {
-        Chain newChain = _chain;
-        newChain *= _lambda;
-        
-        return newChain;
-    }
+    friend Sparse_chain operator*(const Sparse_chain &_chain, const CoefficientType& lambda);
     
-    /**
-     * \brief Perform matrix multiplication between two chains.
-     * 
+    /*!
+     * \brief Perform matrix multiplication between two chains (COLUMN x ROW) and return a COLUMN matrix.
+     *
      * Generate a column-based matrix from the matrix multiplication and return it.
-     * 
-     * \pre The chains have the same coefficent type.
-     * 
-     * \warning Will raise an error if the two chains are not the same coefficient type.
-     * 
-     * \param[in] _column The column chain.
-     * \param[in] _row The row chain.
-     * 
-     * \return The result of the matrix multiplication, column-based.
-     * 
-     * \see \link OSM::Chain \endlink
-     * 
-     * \author Fedyna K.
-     * \version 0.1.0
-     * \date 08/04/2024
+     * Chains must have the same `CoefficientType`.
      */
-    template <typename _CT>
-    friend Sparse_matrix<_CT, COLUMN> operator*(const Chain<_CT, COLUMN> &_column, const Chain<_CT, ROW> &_row);
+    friend Sparse_matrix<CoefficientType, COLUMN> operator*(const Sparse_chain<CoefficientType, COLUMN> &column, const Sparse_chain<CoefficientType, ROW> &row);
     
-    /**
-     * \brief Perform matrix multiplication between two chains.
-     * 
+    /*!
+     * \brief Perform matrix multiplication between two chains (COLUMN x ROW) and return a ROW matrix.
+     *
      * Generate a row-based matrix from the matrix multiplication and return it.
-     * 
-     * \pre The chains have the same coefficent type.
-     * 
-     * \warning Will raise an error if the two chains are not the same coefficient type.
-     * 
-     * \param[in] _column The column chain.
-     * \param[in] _row The row chain.
-     * 
-     * \return The result of the matrix multiplication, row-based.
-     * 
-     * \see \link OSM::Chain \endlink
-     * 
-     * \author Fedyna K.
-     * \version 0.1.0
-     * \date 08/04/2024
+     * Chains must have the same `CoefficientType`.
      */
-    template <typename _CT>
-    friend Sparse_matrix<_CT, ROW> operator%(const Chain<_CT, COLUMN> &_column, const Chain<_CT, ROW> &_row);
+    friend Sparse_matrix<CoefficientType, ROW> operator%(const Sparse_chain<CoefficientType, COLUMN> &column, const Sparse_chain<CoefficientType, ROW> &row);
+    
+    /*!
+     * \brief Perform dot product between two chains (ROW x COLUMN).
+     *
+     * Chains must have the same `CoefficientType`.
+     */
+    friend CoefficientType operator*(const Sparse_chain<CoefficientType, ROW> &row, const Sparse_chain<CoefficientType, COLUMN> &column);
+    
+    /*!
+     * \brief Add a chain to `this`.
+     *
+     * Add a chain to `this`.
+     * Chains must have the same `CoefficientType` and the same `ChainTypeFlag`.
+     */
+    Sparse_chain& operator+=(const Sparse_chain &_other);
+    
+    /*!
+     * \brief Subtract a chain from `this`.
+     *
+     * Subtract a chain from `this`.
+     * Chains must have the same `CoefficientType` and the same `ChainTypeFlag`.
+     */
+    Sparse_chain& operator-=(const Sparse_chain &_other);
+    
+    /*!
+     * \brief Apply factor on each coefficients of `this`.
+     */
+    Sparse_chain& operator*=(const CoefficientType& lambda);
+    
+    /*!
+     * \brief Transpose a SparseChain.
+     *
+     * The result is a chain with `ChainTypeFlag` switched between COLUMN and ROW.
+     */
+    Sparse_chain transpose();
+    
+    /// @}
+    
+    /// \name Access and modifications
+    /// @{
+    
+    /*!
+     * \brief Get the value of a coefficient of the chain.
+     */
+    CoefficientType operator[](int index);
+
+    /*!
+     * \brief Get the value of a coefficient of the chain.
+     */
+    CoefficientType get_coef(int index) const ;
     
     /**
-     * \brief Perform dot product between two chains.
-     * 
-     * \pre The chains have the same coefficent type.
-     * 
-     * \warning Will raise an error if the two chains are not the same coefficient type.
-     * 
-     * \param[in] _row The row chain.
-     * \param[in] _column The column chain.
-     * 
-     * \return The result of type _CoefficientType.
-     * 
-     * \see \link OSM::Chain \endlink
-     * 
-     * \author Fedyna K.
-     * \version 0.1.0
-     * \date 08/04/2024
+     * \brief Set a given coefficient of the chain.
      */
-    template <typename _CT>
-    friend _CT operator*(const Chain<_CT, ROW> &_row, const Chain<_CT, COLUMN> &_column);
+    void set_coef(int index, CoefficientType d);
     
-    /**
-     * \brief Add a chain and assign.
-     * 
-     * Adds each coefficient of the chain together.
-     * 
-     * \pre The chains have the same coefficent type and the same type flag.
-     * 
-     * \warning Will raise an error if the two chains are not the same coefficient type.
-     * \warning Will raise an error if the two chains don't have the same type flag.
-     * 
-     * \param[in] _other The other chain.
-     * 
-     * \return The modified chain representing the result.
-     * 
-     * \see \link OSM::Chain \endlink
-     * 
-     * \author Fedyna K.
-     * \version 0.1.0
-     * \date 08/04/2024
+    /*!
+     * \brief Checks if a coefficient of the chain is null.
      */
-    Chain& operator+=(const Chain &_other) {
-        if (this->upperBound != _other.upperBound) {
-            throw std::runtime_error("Chains must be the same size.");
-        }
-        
-        for (pair pair: _other.chainData) {
-            this->chainData[pair.first] += pair.second;
-            
-            if (this->chainData[pair.first] == 0) {
-                this->chainData.erase(pair.first);
-            }
-        }
-        
-        return *this;
-    }
+    bool is_null(int index) const;
     
-    /**
-     * \brief Substract a chain and assign.
-     * 
-     * Substract each coefficient of the chain together.
-     * 
-     * \pre The chains have the same coefficent type and the same type flag.
-     * 
-     * \warning Will raise an error if the two chains are not the same coefficient type.
-     * \warning Will raise an error if the two chains don't have the same type flag.
-     * 
-     * \param[in] _other The other chain.
-     * 
-     * \return The modified chain representing the result.
-     * 
-     * \see \link OSM::Chain \endlink
-     * 
-     * \author Fedyna K.
-     * \version 0.1.0
-     * \date 08/04/2024
-     */
-    Chain& operator-=(const Chain &_other) {
-        if (this->upperBound != _other.upperBound) {
-            throw std::runtime_error("Chains must be the same size.");
-        }
-        
-        for (pair pair: _other.chainData) {
-            this->chainData[pair.first] -= pair.second;
-            
-            if (this->chainData[pair.first] == 0) {
-                this->chainData.erase(pair.first);
-            }
-        }
-        
-        return *this;
-    }
-    
-    /**
-     * \brief Apply factor on each coefficients and assign.
-     * 
-     * \param[in] _lambda The factor to apply.
-     * 
-     * \return The modified chain representing the result.
-     * 
-     * \see \link OSM::Chain \endlink
-     * 
-     * \author Fedyna K.
-     * \version 0.1.0
-     * \date 08/04/2024
-     */
-    Chain& operator*=(const _CoefficientType& _lambda) {
-        if (_lambda == 0) {
-            this->chainData.clear();
-            return *this;
-        }
-        
-        for (pair pair: this->chainData) {
-            this->chainData[pair.first] = pair.second * _lambda;
-        }
-        
-        return *this;
-    }
-    
-    /**
-     * \brief Get a coefficient from the chain.
-     * 
-     * \warning The chain will perform boundary check.
-     * 
-     * \param[in] _index The coefficient index.
-     * 
-     * \return The coefficient stored in the chain.
-     * 
-     * \see \link OSM::Chain \endlink
-     * 
-     * \author Fedyna K.
-     * \version 0.1.0
-     * \date 08/04/2024
-     */
-    _CoefficientType operator[](const int _index) const {
-        if (_index >= upperBound) {
-            throw std::runtime_error("Provided index should be less than " + std::to_string(upperBound) + ".");
-        }
-        
-        return chainData.at(_index);
-    }
-    
-    /**
-     * \brief Set a coefficient in the chain.
-     * 
-     * \warning The chain will perform boundary check.
-     * 
-     * \param[in] _index The coefficient index.
-     * 
-     * \return The reference to the assigned coefficient.
-     * 
-     * \see \link OSM::Chain \endlink
-     * 
-     * \author Fedyna K.
-     * \version 0.1.0
-     * \date 08/04/2024
-     */
-    _CoefficientType& operator[](const int _index)  {
-        if (_index >= upperBound) {
-            throw std::runtime_error("Provided index should be less than " + std::to_string(upperBound) + ".");
-        }
-        
-        return chainData[_index];
-    }
-    
-    /**
-     * \brief Checks if a coefficient is null. Should be used instead of operator[] for that case.
-     * 
-     * \param[in] _index The index to check.
-     * \return True if the data is null at given index.
-     * 
-     * \author Fedyna K.
-     * \version 0.2.0
-     * \date 29/05/2024
-     */
-    const bool isNull(const int _index) const {
-        return chainData.find(_index) == chainData.end();
-    }
-    
-    /**
+    /*!
      * \brief Checks if the chain is null.
-     * 
-     * \return True if the chain is null.
-     * 
-     * \author Fedyna K.
-     * \version 0.2.0
-     * \date 29/05/2024
      */
-    const bool isNull() const {
-        return chainData.size() == 0;
-    }
+    bool is_null() const;
     
-    /**
+    /*!
      * \brief Get a subchain from the chain.
-     * 
-     * Removes all indexes provided in the vector from the chain and returns it.
-     * 
-     * \note Will return a copy of the chain if given vector is empty.
-     * 
-     * \param[in] _chain The chain to process.
-     * \param[in] _indexes The indexes to remove.
-     * 
-     * \return A new chain representing the result.
-     * 
-     * \see \link OSM::Chain \endlink
-     * \see \link std::vector \endlink
-     * 
-     * \author Fedyna K.
-     * \version 0.1.0
-     * \date 08/04/2024
+     *
+     * Return a new chain where all coefficients of indices provided in the vector are removed.
      */
-    template <typename _CT, int _CTF>
-    friend Chain<_CT, _CTF> operator/(const Chain<_CT, _CTF> &_chain, const std::vector<int> &_indexes);
+    friend Sparse_chain operator/(const Sparse_chain &chain, const std::vector<int> &indices);
     
-    /**
+    /*!
      * \brief Get a subchain from the chain.
-     * 
-     * Removes the index provided from the chain and returns it.
-     * 
-     * \note Will return a copy of the chain if given vector is empty.
-     * 
-     * \param[in] _chain The chain to process.
-     * \param[in] _index The index to remove.
-     * 
-     * \return A new chain representing the result.
-     * 
-     * \see \link OSM::Chain \endlink
-     * \see \link std::vector \endlink
-     * 
-     * \author Fedyna K.
-     * \version 0.1.0
-     * \date 08/04/2024
+     *
+     * Return a new chain where the coefficients at a given index is removed.
      */
-    template <typename _CT, int _CTF>
-    friend Chain<_CT, _CTF> operator/(const Chain<_CT, _CTF> &_chain, const int _indexes);
+    friend Sparse_chain operator/(const Sparse_chain &chain, int indices);
+    
+    /*!
+     * \brief Restrict the chain to a sub-chain by removing indices.
+     *
+     * Removes all indices provided in the vector from the chain. Return a reference to the modified chain.
+     */
+    Sparse_chain& operator/=(const std::vector<int> &indexes);
     
     /**
-     * \brief Get a subchain from the chain and assign.
-     * 
-     * Removes all indexes provided in the vector from the chain and returns it.
-     * 
-     * \note Will not alter the chain if given vector is empty.
-     * 
-     * \param[in] _indexes The indexes to remove.
-     * 
-     * \return The modified chain representing the result.
-     * 
-     * \see \link OSM::Chain \endlink
-     * \see \link std::vector \endlink
-     * 
-     * \author Fedyna K.
-     * \version 0.1.0
-     * \date 08/04/2024
+     * \brief Restrict the chain to a sub-chain by removing a given index.
+     *
+     * Removes the index provided from the chain. Return a reference to the modified chain.
      */
-    Chain& operator/=(const std::vector<int> &_indexes) {
-        for (int index : _indexes) {
-            this->chainData.erase(index);
-        }
-        
-        return *this;
-    }
+    Sparse_chain& operator/=(int index);
     
     /**
-     * \brief Get a subchain from the chain and assign.
-     * 
-     * Removes the index provided from the chain and returns it.
-     * 
-     * \note Will not alter the chain if given vector is empty.
-     * 
-     * \param[in] _index The index to remove.
-     * 
-     * \return The modified chain representing the result.
-     * 
-     * \see \link OSM::Chain \endlink
-     * \see \link std::vector \endlink
-     * 
-     * \author Fedyna K.
-     * \version 0.1.0
-     * \date 08/04/2024
+     * \brief Remove all coefficients from the chain.
+     *
+     * The function comes to set all coefficients to zero.
      */
-    Chain& operator/=(const int _index) {
-        this->chainData.erase(_index);
-        
-        return *this;
-    }
+    void nullify();
     
-    /**
-     * \brief Set all coefficients to zero.
-     * 
-     * \author Fedyna K.
-     * \version 0.3.0
-     * \date 31/04/2024
-     */
-    void nullify() {
-        this->chainData.clear();
-    }
-    
-    /**
-     * \brief Iterator to the beginning of the chain.
-     * 
-     * \warning The chain is stored unordered for speed reason.
-     * 
-     * \return The iterator to the beginning of the chain.
-     * 
-     * \see \link OSM::Chain \endlink
-     * \see \link std::unordered_map \endlink
-     * \see \link std::unordered_map::iterator \endlink
-     * \see \link std::unordered_map::begin \endlink
-     * 
-     * \author Fedyna K.
-     * \version 0.1.0
-     * \date 08/04/2024
-     */
-    iterator begin() noexcept {
-        return chainData.begin();
-    }
-    
-    /**
-     * \brief Constant iterator to the beginning of the chain.
-     * 
-     * \warning The chain is stored unordered for speed reason.
-     * 
-     * \return The constant iterator to the beginning of the chain.
-     * 
-     * \see \link OSM::Chain \endlink
-     * \see \link std::unordered_map \endlink
-     * \see \link std::unordered_map::const_iterator \endlink
-     * \see \link std::unordered_map::begin \endlink
-     * 
-     * \author Fedyna K.
-     * \version 0.1.0
-     * \date 08/04/2024
-     */
-    const_iterator begin() const noexcept {
-        return chainData.begin();
-    }
-    
-    /**
-     * \brief Constant iterator to the beginning of the chain.
-     * 
-     * \warning The chain is stored unordered for speed reason.
-     * 
-     * \return The constant iterator to the beginning of the chain.
-     * 
-     * \see \link OSM::Chain \endlink
-     * \see \link std::unordered_map \endlink
-     * \see \link std::unordered_map::const_iterator \endlink
-     * \see \link std::unordered_map::cbegin \endlink
-     * 
-     * \author Fedyna K.
-     * \version 0.1.0
-     * \date 08/04/2024
-     */
-    const_iterator cbegin() const noexcept {
-        return chainData.cbegin();
-    }
-    
-    /**
-     * \brief Iterator to the end of the chain.
-     * 
-     * \warning The chain is stored unordered for speed reason.
-     * 
-     * \return The iterator to the end of the chain.
-     * 
-     * \see \link OSM::Chain \endlink
-     * \see \link std::unordered_map \endlink
-     * \see \link std::unordered_map::iterator \endlink
-     * \see \link std::unordered_map::end \endlink
-     * 
-     * \author Fedyna K.
-     * \version 0.1.0
-     * \date 08/04/2024
-     */
-    iterator end() noexcept {
-        return chainData.end();
-    }
-    
-    /**
-     * \brief Constant iterator to the end of the chain.
-     * 
-     * \warning The chain is stored unordered for speed reason.
-     * 
-     * \return The constant iterator to the end of the chain.
-     * 
-     * \see \link OSM::Chain \endlink
-     * \see \link std::unordered_map \endlink
-     * \see \link std::unordered_map::const_iterator \endlink
-     * \see \link std::unordered_map::end \endlink
-     * 
-     * \author Fedyna K.
-     * \version 0.1.0
-     * \date 08/04/2024
-     */
-    const_iterator end() const noexcept {
-        return chainData.end();
-    }
-    
-    /**
-     * \brief Constant iterator to the end of the chain.
-     * 
-     * \warning The chain is stored unordered for speed reason.
-     * 
-     * \return The constant iterator to the end of the chain.
-     * 
-     * \see \link OSM::Chain \endlink
-     * \see \link std::unordered_map \endlink
-     * \see \link std::unordered_map::const_iterator \endlink
-     * \see \link std::unordered_map::cend \endlink
-     * 
-     * \author Fedyna K.
-     * \version 0.1.0
-     * \date 08/04/2024
-     */
-    const_iterator cend() const noexcept {
-        return chainData.cend();
-    }
-    
-    /**
-     * \brief Transpose a Chain.
-     * 
-     * \return A new chain where the chain type flag is changed.
-     * 
-     * \see \link OSM::Chain \endlink
-     * 
-     * \author Fedyna K.
-     * \version 0.1.0
-     * \date 08/04/2024
-     */
-    Chain<_CoefficientType, COLUMN + ROW - _ChainTypeFlag> transpose() {
-        Chain<_CoefficientType, COLUMN + ROW - _ChainTypeFlag> chain;
-        
-        chain.upperBound = this->upperBound;
-        for (pair pair: this->chainData) {
-            chain.chainData[pair.first] = pair.second;
-        }
-        
-        return chain;
-    }
-    
-    /**
+    /*!
      * \brief Checks if chain is a column.
-     * 
-     * \return true if chain is represented as a column, false otherwise.
-     * 
-     * \see \link OSM::Chain \endlink
-     * 
-     * \author Fedyna K.
-     * \version 0.1.0
-     * \date 17/04/2024
      */
-    bool isColumn() const {
-        return _ChainTypeFlag == COLUMN;
-    }
+    bool is_column() const;
     
-    /**
+    /*!
      * \brief Checks if chain is a row.
-     * 
-     * \return true if chain is represented as a row, false otherwise.
-     * 
-     * \see \link OSM::Chain \endlink
-     * 
-     * \author Fedyna K.
-     * \version 0.1.0
-     * \date 17/04/2024
      */
-    bool isRow() const {
-        return _ChainTypeFlag == ROW;
-    }
+    bool is_row() const;
+    /// @}
 };
-
-
-/**
- * \brief Perform matrix multiplication between two chains.
- * 
- * Generate a column-based matrix from the matrix multiplication and return it.
- * 
- * \pre The chains have the same coefficent type.
- * 
- * \warning Will raise an error if the two chains are not the same coefficient type.
- * 
- * \param[in] _column The column chain.
- * \param[in] _row The row chain.
- * 
- * \return The result of the matrix multiplication, column-based.
- * 
- * \see \link OSM::Chain \endlink
- * 
- * \author Fedyna K.
- * \version 0.1.0
- * \date 08/04/2024
- */
-template <typename _CT>
-Sparse_matrix<_CT, COLUMN> operator*(const Chain<_CT, COLUMN> &_column, const Chain<_CT, ROW> &_row) {
-    Sparse_matrix<_CT, COLUMN> matrix(_column.upperBound, _row.upperBound);
-    
-    for (std::pair<int, _CT> pair : _row.chainData) {
-        OSM::set_column(matrix,pair.first,_column * pair.second) ;
-    }
-    
-    return matrix;
-}
-
-/**
- * \brief Perform matrix multiplication between two chains.
- * 
- * Generate a row-based matrix from the matrix multiplication and return it.
- * 
- * \pre The chains have the same coefficent type.
- * 
- * \warning Will raise an error if the two chains are not the same coefficient type.
- * 
- * \param[in] _column The column chain.
- * \param[in] _row The row chain.
- * 
- * \return The result of the matrix multiplication, row-based.
- * 
- * \see \link OSM::Chain \endlink
- * 
- * \author Fedyna K.
- * \version 0.1.0
- * \date 08/04/2024
- */
-template <typename _CT>
-Sparse_matrix<_CT, ROW> operator%(const Chain<_CT, COLUMN> &_column, const Chain<_CT, ROW> &_row) {
-    Sparse_matrix<_CT, ROW> matrix(_column.upperBound, _row.upperBound);
-    
-    for (std::pair<int, _CT> pair : _column.chainData) {
-        OSM::set_row(matrix,pair.first,_row * pair.second);
-    }
-    
-    return matrix;
-}
-
-/**
- * \brief Perform dot product between two chains.
- * 
- * \pre The chains have the same coefficent type.
- * 
- * \warning Will raise an error if the two chains are not the same coefficient type.
- * 
- * \param[in] _row The row chain.
- * \param[in] _column The column chain.
- * 
- * \return The result of type _CoefficientType.
- * 
- * \see \link OSM::Chain \endlink
- * 
- * \author Fedyna K.
- * \version 0.1.0
- * \date 08/04/2024
- */
-template <typename _CoefficientType>
-_CoefficientType operator*(const Chain<_CoefficientType, ROW> &_row, const Chain<_CoefficientType, COLUMN> &_column) {
-    // Get indexes (avoid adding double indexes).
-    std::unordered_map<int, int> indexes;
-    for (std::pair<int, _CoefficientType> pair: _row.chainData) {
-        indexes[pair.first] = 1;
-    }
-    for (std::pair<int, _CoefficientType> pair: _column.chainData) {
-        indexes[pair.first] += 1;
-    }
-    
-    // Perform dot product
-    _CoefficientType result = _CoefficientType();
-    for (std::pair<int, int> index: indexes) {
-        if (index.second == 2) {
-            result += _row.chainData.at(index.first) * _column.chainData.at(index.first);
-        }
-    }
-    
-    return result;
-}
-
-/**
- * \brief Get a subchain from the chain and assign.
- * 
- * Removes all indexes provided in the vector from the chain and returns it.
- * 
- * \note Will not alter the chain if given vector is empty.
- * 
- * \param[in] _indexes The indexes to remove.
- * 
- * \return The modified chain representing the result.
- * 
- * \see \link OSM::Chain \endlink
- * \see \link std::vector \endlink
- * 
- * \author Fedyna K.
- * \version 0.1.0
- * \date 08/04/2024
- */
-template <typename _CT, int _CTF>
-Chain<_CT, _CTF> operator/(const Chain<_CT, _CTF> &_chain, const std::vector<int> &_indexes) {
-    Chain newChain = _chain;
-    newChain /= _indexes;
-    return newChain;
-}
-
-/**
- * \brief Get a subchain from the chain and assign.
- * 
- * Removes the index provided from the chain and returns it.
- * 
- * \note Will not alter the chain if given vector is empty.
- * 
- * \param[in] _index The index to remove.
- * 
- * \return The modified chain representing the result.
- * 
- * \see \link OSM::Chain \endlink
- * \see \link std::vector \endlink
- * 
- * \author Fedyna K.
- * \version 0.1.0
- * \date 08/04/2024
- */
-template <typename _CT, int _CTF>
-Chain<_CT, _CTF> operator/(const Chain<_CT, _CTF> &_chain, const int _index) {
-    Chain newChain = _chain;
-    newChain /= _index;
-    return newChain;
-}
-
-} /* end namespace OSM */
-} /* end namespace CGAL */
-
-#endif

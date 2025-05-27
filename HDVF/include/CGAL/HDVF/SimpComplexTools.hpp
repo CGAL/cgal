@@ -31,7 +31,7 @@ namespace HDVF {
 
 /** \brief vtk export for SimpComplex */
 
-template <typename CoefType, template <typename, int> typename _ChainType = OSM::Chain, template <typename, int> typename _SparseMatrixType = OSM::Sparse_matrix, typename VertexIdType = int>
+template <typename CoefType, template <typename, int> typename _ChainType = OSM::Sparse_chain, template <typename, int> typename _SparseMatrixType = OSM::Sparse_matrix, typename VertexIdType = int>
 void Simp_output_vtk (Hdvf_core<CoefType, Simplicial_chain_complex<CoefType>, _ChainType, _SparseMatrixType> &hdvf, Simplicial_chain_complex<CoefType> &complex, string filename = "test")
 {
     typedef Simplicial_chain_complex<CoefType> ComplexType;
@@ -53,7 +53,7 @@ void Simp_output_vtk (Hdvf_core<CoefType, Simplicial_chain_complex<CoefType>, _C
                 {
                     string outfile_g(filename+"_G_"+to_string(c)+"_dim_"+to_string(q)+".vtk") ;
                     //                    vector<vector<int> > labels = hdvf.export_label(G,c,q) ;
-                    OSM::Chain<CoefType,OSM::COLUMN> chain(hdvf.export_homology_chain(c,q)) ;
+                    OSM::Sparse_chain<CoefType,OSM::COLUMN> chain(hdvf.export_homology_chain(c,q)) ;
                     ComplexType::Simplicial_chain_complex_chain_to_vtk(complex, outfile_g, chain, q, c) ;
                 }
                 if (q < complex.dim())
@@ -61,7 +61,7 @@ void Simp_output_vtk (Hdvf_core<CoefType, Simplicial_chain_complex<CoefType>, _C
                     if (hdvf.get_hdvf_opts() & (OPT_FULL | OPT_F))
                     {
                         string outfile_f(filename+"_FSTAR_"+to_string(c)+"_dim_"+to_string(q)+".vtk") ;
-                        OSM::Chain<CoefType,OSM::COLUMN> chain(hdvf.export_cohomology_chain(c,q)) ;
+                        OSM::Sparse_chain<CoefType,OSM::COLUMN> chain(hdvf.export_cohomology_chain(c,q)) ;
                         ComplexType::Simplicial_chain_complex_chain_to_vtk(complex, outfile_f, chain, q+1, c) ;
                     }
                 }

@@ -29,12 +29,12 @@ public:
 /*!
  Type of column-major chains (returned by the boundary operator)
  */
-typedef OSM::Chain<CoefficientType, OSM::COLUMN> CChain;
+typedef OSM::Sparse_chain<CoefficientType, OSM::COLUMN> CChain;
 
 /*!
  Type of row-major chains (returned by the co-boundary operator)
  */
-typedef OSM::Chain<CoefficientType, OSM::ROW> RChain ;
+typedef OSM::Sparse_chain<CoefficientType, OSM::ROW> RChain ;
 
 /*!
  Type of column-major sparse matrices (used to store the boundary operator)

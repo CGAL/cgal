@@ -90,12 +90,12 @@ protected:
     /*!
      Type of column-major chains
      */
-    typedef OSM::Chain<CoefficientType,OSM::COLUMN> CChain ;
+    typedef OSM::Sparse_chain<CoefficientType,OSM::COLUMN> CChain ;
     
     /*!
      Type of row-major chains
      */
-    typedef OSM::Chain<CoefficientType,OSM::ROW> RChain ;
+    typedef OSM::Sparse_chain<CoefficientType,OSM::ROW> RChain ;
 public:
     /*! \brief Filtration_core default constructor
      *

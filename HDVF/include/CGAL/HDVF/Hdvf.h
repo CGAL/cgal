@@ -44,12 +44,12 @@ Using appropriate combinations of such operations, one can change a HDVF until c
  */
 
 template<typename CoefficientType, typename ComplexType>
-class Hdvf : public Hdvf_core<CoefficientType, ComplexType, OSM::Chain, OSM::Sparse_matrix> {
+class Hdvf : public Hdvf_core<CoefficientType, ComplexType, OSM::Sparse_chain, OSM::Sparse_matrix> {
 public:
     /*!
      Type of parent Hdvf_core class.
      */
-    typedef Hdvf_core<CoefficientType, ComplexType, OSM::Chain, OSM::Sparse_matrix> HDVF_coreT ;
+    typedef Hdvf_core<CoefficientType, ComplexType, OSM::Sparse_chain, OSM::Sparse_matrix> HDVF_coreT ;
     
     /**
      * \brief Default constructor.
@@ -68,7 +68,7 @@ public:
      *
      * \param[in] hdvf An initial HDVF.
      */
-    Hdvf(const Hdvf& hdvf) : Hdvf_core<CoefficientType, ComplexType, OSM::Chain, OSM::Sparse_matrix>(hdvf) { }
+    Hdvf(const Hdvf& hdvf) : Hdvf_core<CoefficientType, ComplexType, OSM::Sparse_chain, OSM::Sparse_matrix>(hdvf) { }
     
     /**
      * \brief HDVF destructor. */
@@ -262,7 +262,7 @@ public:
 
 // Constructor for the Hdvf class
 template<typename CoefficientType, typename ComplexType>
-Hdvf<CoefficientType, ComplexType>::Hdvf(const ComplexType& K, int hdvf_opt) : Hdvf_core<CoefficientType, ComplexType, OSM::Chain, OSM::Sparse_matrix>(K, hdvf_opt) { }
+Hdvf<CoefficientType, ComplexType>::Hdvf(const ComplexType& K, int hdvf_opt) : Hdvf_core<CoefficientType, ComplexType, OSM::Sparse_chain, OSM::Sparse_matrix>(K, hdvf_opt) { }
 
 
 
@@ -604,7 +604,7 @@ PairCell Hdvf<CoefficientType, ComplexType>::find_pair_MW(int q, bool &found) co
             for (int sigma = 0; (sigma < this->_H_col.at(q-1).dimensions().first && !found); ++sigma)
             {
                 typename HDVF_coreT::RChain H11q1(OSM::get_row(this->_H_col.at(q-1), sigma)) ;
-                if (!H11q1.isNull())
+                if (!H11q1.is_null())
                 {
                     typename HDVF_coreT::RChain cod_sigma = this->_K.cod(sigma, q) ;
                     typename HDVF_coreT::RChain projS_cod_sigma = this->projection(cod_sigma, SECONDARY, q+1) ;
@@ -648,19 +648,19 @@ PairCell Hdvf<CoefficientType, ComplexType>::find_pair_MW(int q, bool &found, in
             typename HDVF_coreT::CChain d_pi = this->_K.d(pi, q) ;
             typename HDVF_coreT::CChain projP_d_pi = this->projection(d_pi, PRIMARY, q-1) ;
             
-            if (H11.isNull() || projP_d_pi.isNull())
+            if (H11.is_null() || projP_d_pi.is_null())
                 return p ;
             
             // Search for sigma with col_sigma(H_q-1) non empty
             for (int sigma = 0; (sigma < this->_H_col.at(q-1).dimensions().first && !found); ++sigma)
             {
                 typename HDVF_coreT::RChain H11q1(OSM::get_row(this->_H_col.at(q-1), sigma)) ;
-                if (!H11q1.isNull())
+                if (!H11q1.is_null())
                 {
                     // and proj_S(cod(sigma)) non empty
                     typename HDVF_coreT::RChain cod_sigma = this->_K.cod(sigma, q) ;
                     typename HDVF_coreT::RChain projS_cod_sigma = this->projection(cod_sigma, SECONDARY, q+1) ;
-                    if (!projS_cod_sigma.isNull())
+                    if (!projS_cod_sigma.is_null())
                     {
                         // test xi and xip
                         const int xi = projS_cod_sigma * H11 ;
@@ -684,7 +684,7 @@ PairCell Hdvf<CoefficientType, ComplexType>::find_pair_MW(int q, bool &found, in
             typename HDVF_coreT::RChain H11q1(OSM::get_row(this->_H_col.at(q-1), sigma)) ;
             typename HDVF_coreT::RChain cod_sigma = this->_K.cod(sigma, q) ;
             typename HDVF_coreT::RChain projS_cod_sigma = this->projection(cod_sigma, SECONDARY, q+1) ;
-            if (H11q1.isNull() || projS_cod_sigma.isNull())
+            if (H11q1.is_null() || projS_cod_sigma.is_null())
                 return p ;
             
             // Search for pi with col pi of H_q non empty
@@ -696,7 +696,7 @@ PairCell Hdvf<CoefficientType, ComplexType>::find_pair_MW(int q, bool &found, in
                 typename HDVF_coreT::CChain d_pi = this->_K.d(pi, q) ;
                 typename HDVF_coreT::CChain projP_d_pi = this->projection(d_pi, PRIMARY, q-1) ;
                 // proj_P of d(pi) must also be non empty
-                if (!projP_d_pi.isNull())
+                if (!projP_d_pi.is_null())
                 {
                     // test xi and xip
                     const int xi = projS_cod_sigma * H11 ;
@@ -735,7 +735,7 @@ std::vector<PairCell> Hdvf<CoefficientType, ComplexType>::find_pairs_MW(int q, b
             for (int sigma = 0; sigma < this->_H_col.at(q-1).dimensions().first; ++sigma)
             {
                 typename HDVF_coreT::RChain H11q1(OSM::get_row(this->_H_col.at(q-1), sigma)) ;
-                if (!H11q1.isNull())
+                if (!H11q1.is_null())
                 {
                     typename HDVF_coreT::RChain cod_sigma = this->_K.cod(sigma, q) ;
                     typename HDVF_coreT::RChain projS_cod_sigma = this->projection(cod_sigma, SECONDARY, q+1) ;
@@ -781,19 +781,19 @@ std::vector<PairCell> Hdvf<CoefficientType, ComplexType>::find_pairs_MW(int q, b
             typename HDVF_coreT::CChain d_pi = this->_K.d(pi, q) ;
             typename HDVF_coreT::CChain projP_d_pi = this->projection(d_pi, PRIMARY, q-1) ;
             
-            if (H11.isNull() || projP_d_pi.isNull())
+            if (H11.is_null() || projP_d_pi.is_null())
                 return pairs ;
             
             // Search for sigma with col_sigma(H_q-1) non empty
             for (int sigma = 0; sigma < this->_H_col.at(q-1).dimensions().first; ++sigma)
             {
                 typename HDVF_coreT::RChain H11q1(OSM::get_row(this->_H_col.at(q-1), sigma)) ;
-                if (!H11q1.isNull())
+                if (!H11q1.is_null())
                 {
                     // and proj_S(cod(sigma)) non empty
                     typename HDVF_coreT::RChain cod_sigma = this->_K.cod(sigma, q) ;
                     typename HDVF_coreT::RChain projS_cod_sigma = this->projection(cod_sigma, SECONDARY, q+1) ;
-                    if (!projS_cod_sigma.isNull())
+                    if (!projS_cod_sigma.is_null())
                     {
                         // test xi and xip
                         const CoefficientType xi = projS_cod_sigma * H11 ;
@@ -819,7 +819,7 @@ std::vector<PairCell> Hdvf<CoefficientType, ComplexType>::find_pairs_MW(int q, b
             typename HDVF_coreT::RChain H11q1(OSM::get_row(this->_H_col.at(q-1), sigma)) ;
             typename HDVF_coreT::RChain cod_sigma = this->_K.cod(sigma, q) ;
             typename HDVF_coreT::RChain projS_cod_sigma = this->projection(cod_sigma, SECONDARY, q+1) ;
-            if (H11q1.isNull() || projS_cod_sigma.isNull())
+            if (H11q1.is_null() || projS_cod_sigma.is_null())
                 return pairs ;
             
             // Search for pi with col pi of H_q non empty
@@ -831,7 +831,7 @@ std::vector<PairCell> Hdvf<CoefficientType, ComplexType>::find_pairs_MW(int q, b
                 typename HDVF_coreT::CChain d_pi = this->_K.d(pi, q) ;
                 typename HDVF_coreT::CChain projP_d_pi = this->projection(d_pi, PRIMARY, q-1) ;
                 // proj_P of d(pi) must also be non empty
-                if (!projP_d_pi.isNull())
+                if (!projP_d_pi.is_null())
                 {
                     // test xi and xip
                     const CoefficientType xi = projS_cod_sigma * H11 ;
@@ -992,7 +992,7 @@ void Hdvf<CoefficientType, ComplexType>::M(int pi, int gamma, int q) {
         typename HDVF_coreT::CChain F21(OSM::get_column(this->_F_row[q], pi)); // F21 is the column chain from this->_F_row[q] at index pi
         
         // Get the coefficient at the intersection of F12 and F21
-        CoefficientType F11(F12[pi]); // F11 is the coefficient at row gamma and column pi
+        const CoefficientType F11(F12.get_coef(pi)); // F11 is the coefficient at row gamma and column pi
         
         // Assert that F11 is either 1 or -1 (for invertibility)
         assert((F11 == 1) || (F11 == -1)); // !!!!! Test invertibility
@@ -1116,7 +1116,7 @@ void Hdvf<CoefficientType, ComplexType>::W(int sigma, int gamma, int q) {
         typename HDVF_coreT::CChain G21(OSM::get_column(this->_G_col[q], gamma)); // G21 is the column chain from this->_G_col[q] at index gamma
         
         // Get the coefficient at the intersection of G12 and G21
-        CoefficientType G11(G12[gamma]); // G11 is the coefficient at row sigma and column gamma
+        CoefficientType G11(G12.get_coef(gamma)); // G11 is the coefficient at row sigma and column gamma
         
         // Assert that G11 is either 1 or -1 (for invertibility)
         assert((G11 == 1) || (G11 == -1)); // !!!!! Test invertibility

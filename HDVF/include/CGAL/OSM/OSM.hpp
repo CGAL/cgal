@@ -14,7 +14,7 @@
 
 //#define DEBUG 
 #include "__base.hpp"
-#include "Chain.h"
+#include "Sparse_chain.h"
 #include "Sparse_matrix.h"
 
 #endif

@@ -18,7 +18,7 @@
 \cgalPkgPicture{pkg-small.png}
 
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Alexa Bac}
+\cgalPkgAuthors{Alexandra Bac}
 \cgalPkgDesc{
 The package provides ... }
 \cgalPkgManuals{Chapter_HDVF,PkgHDVFRef}

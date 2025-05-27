@@ -69,9 +69,9 @@ public:
     Abstract_simplicial_chain_complex(const Mesh_object& mesh);
     
     /** \brief Type of column-major chains */
-    typedef OSM::Chain<CoefficientType, OSM::COLUMN> CChain;
+    typedef OSM::Sparse_chain<CoefficientType, OSM::COLUMN> CChain;
     /** \brief Type of row-major chains */
-    typedef OSM::Chain<CoefficientType, OSM::ROW> RChain ;
+    typedef OSM::Sparse_chain<CoefficientType, OSM::ROW> RChain ;
     /** \brief Type of column-major sparse matrices */
     typedef OSM::Sparse_matrix<CoefficientType, OSM::COLUMN> CMatrix;
     
@@ -349,7 +349,7 @@ void Abstract_simplicial_chain_complex<CoefficientType>::calculate_d(int dim) co
                 auto it = _simp2ind[dim - 1].find(bord[j]); // Find the index of Simplex j
                 if (it != _simp2ind[dim - 1].end()) { // If Simplex j is found
                     int ind_j = it->second; // Retrieve the index of Simplex j
-                    chain[ind_j] = (j % 2 == 0) ? 1 : -1;
+                    chain.set_coef(ind_j, (j % 2 == 0) ? 1 : -1);
                 }
                 else
                     throw "calculate_d boundary simplex not found!";
@@ -486,11 +486,11 @@ public:
      *
      * \param[in] K Simplicial complex exported.
      * \param[in] filename Output file root (output filenames will be built from this root).
-     * \param[in] chain Chain exported (all the cells with non-zero coefficients in the chain are exported to vtk).
+     * \param[in] chain Sparse_chain exported (all the cells with non-zero coefficients in the chain are exported to vtk).
      * \param[in] q Dimension of the cells of the chain.
      * \param[in] cellId If a positive cellID is provided, labels are exported to distinguish cells of the chain (label 2) from cellId cell (label 0).
      */
-    static void Simplicial_chain_complex_chain_to_vtk(const Simplicial_chain_complex &K, const std::string &filename, const OSM::Chain<CoefficientType, OSM::COLUMN>& chain, int q, int cellId = -1) ;
+    static void Simplicial_chain_complex_chain_to_vtk(const Simplicial_chain_complex &K, const std::string &filename, const OSM::Sparse_chain<CoefficientType, OSM::COLUMN>& chain, int q, int cellId = -1) ;
 };
 
 // Initialization of static VTK_simptypes
@@ -602,7 +602,7 @@ void Simplicial_chain_complex<CoefficientType>::Simplicial_chain_complex_to_vtk(
 
 // Simplicial_chain_complex_chain_to_vtk
 template <typename CoefficientType>
-void Simplicial_chain_complex<CoefficientType>::Simplicial_chain_complex_chain_to_vtk(const Simplicial_chain_complex &K, const std::string &filename, const OSM::Chain<CoefficientType, OSM::COLUMN>& chain, int q, int cellId)
+void Simplicial_chain_complex<CoefficientType>::Simplicial_chain_complex_chain_to_vtk(const Simplicial_chain_complex &K, const std::string &filename, const OSM::Sparse_chain<CoefficientType, OSM::COLUMN>& chain, int q, int cellId)
 {
     typedef Simplicial_chain_complex<CoefficientType> ComplexType ;
     if (K._coords.size() != K.nb_cells(0))
@@ -653,7 +653,7 @@ void Simplicial_chain_complex<CoefficientType>::Simplicial_chain_complex_chain_t
             const int size_cell = q+1 ;
             for (int id =0; id < K.nb_cells(q); ++id)
             {
-                if (!chain.isNull(id))
+                if (!chain.is_null(id))
                 {
                     ++ncells_tot;
                     size_cells_tot += (size_cell+1) ;
@@ -667,7 +667,7 @@ void Simplicial_chain_complex<CoefficientType>::Simplicial_chain_complex_chain_t
             const int size_cell = q+1 ;
             for (int id =0; id < K.nb_cells(q); ++id)
             {
-                if (!chain.isNull(id))
+                if (!chain.is_null(id))
                 {
                     Simplex verts(K._ind2simp.at(q).at(id)) ;
                     out << size_cell << " " ;

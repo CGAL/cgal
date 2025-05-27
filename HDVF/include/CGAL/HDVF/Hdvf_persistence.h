@@ -124,19 +124,19 @@ ostream& operator<< (ostream& out, const PerHoleT<DegType>& hole)
  */
 
 template<typename CoefficientType, typename ComplexType, typename DegType, typename FiltrationType >
-class Hdvf_persistence : public Hdvf_core<CoefficientType,ComplexType, OSM::Chain, OSM::SubSparseMatrix>
+class Hdvf_persistence : public Hdvf_core<CoefficientType,ComplexType, OSM::Sparse_chain, OSM::SubSparseMatrix>
 {
 public:
     // Matrices types
     /*!
      Type of column-major chains
      */
-    typedef OSM::Chain<CoefficientType, OSM::COLUMN> CChain;
+    typedef OSM::Sparse_chain<CoefficientType, OSM::COLUMN> CChain;
     
     /*!
      Type of row-major chains
      */
-    typedef OSM::Chain<CoefficientType, OSM::ROW> RChain;
+    typedef OSM::Sparse_chain<CoefficientType, OSM::ROW> RChain;
     
     /*!
      Type of column-major sparse matrices
@@ -151,7 +151,7 @@ public:
     /*! Type of parent HDVF class (Hdvf_core with appropriate template parameters)
      * The SparseMatrix model is set to Sub_sparse_matrix to activate (co)homology computation over a subcomplex.
      */
-    typedef Hdvf_core<CoefficientType, ComplexType, OSM::Chain, OSM::SubSparseMatrix> HDVFParent ;
+    typedef Hdvf_core<CoefficientType, ComplexType, OSM::Sparse_chain, OSM::SubSparseMatrix> HDVFParent ;
     
     /*! Type of filtrations used to compute persistence.
      */
@@ -412,13 +412,13 @@ public:
             // Get g(cell, dim) with per indices
             CChain g_cell(OSM::get_column(this->_G_col.at(q), cell)) ;
             // Add 1 to the cell
-            g_cell[cell] = 1 ;
+            g_cell.set_coef(cell, 1) ;
             // Compute the chain with _K indices
             CChain g_cell_K(g_cell.dimension()) ;
             for (typename CChain::const_iterator it = g_cell.begin(); it != g_cell.end(); ++it)
             {
                 const int i(_per_to_K.at(q).at(it->first)) ;
-                g_cell_K[i] = it->second ;
+                g_cell_K.set_coef(i, it->second) ;
             }
             return g_cell_K ;
         }
@@ -445,7 +445,7 @@ public:
             // Get fstar(cell, dim) with per indices
             RChain fstar_cell(OSM::get_row(this->_F_row.at(q), cell)) ;
             // Add 1 to the cell
-            fstar_cell[cell] = 1 ;
+            fstar_cell.set_coef(cell, 1) ;
             // Compute the cofaces of the chain with _K indices
             if (q < this->_K.dim())
             {
@@ -460,7 +460,7 @@ public:
                     {
                         const int id(it2->first) ;
                         if (_K_to_per.at(q+1).at(id) <=_t_dim.at(q+1))
-                            fstar_cofaces[id] = 1 ;
+                            fstar_cofaces.set_coef(id, 1) ;
                     }
                 }
                 return fstar_cofaces ;
@@ -662,7 +662,7 @@ private:
 
 
 template<typename CoefficientType, typename ComplexType, typename DegType, typename FiltrationType>
-Hdvf_persistence<CoefficientType, ComplexType, DegType, FiltrationType>::Hdvf_persistence(const ComplexType& K, const FiltrationType& f, int hdvf_opt, bool with_export) : Hdvf_core<CoefficientType,ComplexType, OSM::Chain, OSM::SubSparseMatrix>(K,hdvf_opt), _f(f), _with_export(with_export), _t(-1)
+Hdvf_persistence<CoefficientType, ComplexType, DegType, FiltrationType>::Hdvf_persistence(const ComplexType& K, const FiltrationType& f, int hdvf_opt, bool with_export) : Hdvf_core<CoefficientType,ComplexType, OSM::Sparse_chain, OSM::SubSparseMatrix>(K,hdvf_opt), _f(f), _with_export(with_export), _t(-1)
 {
     // Initialisation of _t_dim, _K_to_per and _per_to_K
     _t_dim.resize(this->_K.dim()+1, 0) ;
@@ -740,7 +740,7 @@ PairCell Hdvf_persistence<CoefficientType, ComplexType, DegType, FiltrationType>
     
     if (q >= 1)
     {
-        // Compute bounded max while iterating over the Chain
+        // Compute bounded max while iterating over the Sparse_chain
         const CChain& tmp2(OSM::cget_column(this->_DD_col.at(q), sigma)) ;
         std::size_t tmax = _t_dim.at(q-1) ;
         std::size_t i ;

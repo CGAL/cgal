@@ -76,12 +76,12 @@ inline std::ostream& operator<<(std::ostream &out, const std::vector<PairCell>& 
  
  \tparam CoefficientType a model of the `Ring` concept (by default, we use the `Z` model) providing the ring used to compute homology.
  \tparam ComplexType a model of the `AbstractChainComplex` concept, providing the type of abstract chain complex used.
- \tparam ChainType a model of the `SparseChain` concept (by default, `OSM::Chain`), providing the type of sparse chains used (should be coherent with `SparseMatrixType`).
+ \tparam ChainType a model of the `SparseChain` concept (by default, `OSM::Sparse_chain`), providing the type of sparse chains used (should be coherent with `SparseMatrixType`).
  \tparam SparseMatrixType a model of the `SparseMatrix` concept (by default, `OSM::Sparse_matrix`), providing the type of sparse matrices used.
  */
 
 
-template<typename CoefficientType, typename ComplexType, template <typename, int> typename ChainType = OSM::Chain, template <typename, int> typename SparseMatrixType = OSM::Sparse_matrix>
+template<typename CoefficientType, typename ComplexType, template <typename, int> typename ChainType = OSM::Sparse_chain, template <typename, int> typename SparseMatrixType = OSM::Sparse_matrix>
 class Hdvf_core {
 public:
     /*!
@@ -356,7 +356,7 @@ public:
         {
             CChain g_cell(OSM::get_column(_G_col.at(q), cell)) ;
             // Add 1 to the cell
-            g_cell[cell] = 1 ;
+            g_cell.set_coef(cell, 1) ;
             return g_cell ;
         }
         else
@@ -378,7 +378,7 @@ public:
         {
             RChain fstar_cell(OSM::get_row(_F_row.at(dim), cell)) ;
             // Add 1 to the cell
-            fstar_cell[cell] = 1 ;
+            fstar_cell.set_coef(cell, 1) ;
             // Compute the cofaces
             if (dim < _K.dim())
             {
@@ -388,7 +388,7 @@ public:
                     // Set the cofaces of it->first in dimension dim+1
                     RChain cofaces(_K.cod(it->first,dim)) ;
                     for (typename RChain::const_iterator it2 =  cofaces.cbegin(); it2 != cofaces.cend(); ++it2)
-                        fstar_cofaces[it2->first] = 1 ;
+                        fstar_cofaces.set_coef(it2->first, 1) ;
                 }
                 return fstar_cofaces ;
             }
@@ -696,7 +696,7 @@ void Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::A(int
     // Extract submatrices from _DD_col
     RChain D12(OSM::get_row(_DD_col.at(q+1),tau1)); // D12 is a row chain from _DD_col[q+1] at index tau1
     CChain D21(OSM::get_column(_DD_col.at(q + 1),tau2)); // D21 is a column chain from _DD_col[q+1] at index tau2
-    CoefficientType D11(D12[tau2]); // D11 is the coefficient at the intersection of tau2 in D12
+    const CoefficientType D11 = D12.get_coef(tau2); // D11 is the coefficient at the intersection of tau2 in D12
     
     // Assert that D11 is either 1 or -1 (check invertibility)
     assert((D11 == 1) || (D11 == -1)); // !!!!! Test invertibility

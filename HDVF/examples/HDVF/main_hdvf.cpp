@@ -19,6 +19,7 @@
 #include "CGAL/Hdvf/CubComplexTools.hpp"
 #include "CGAL/Hdvf/Hdvf.h"
 #include "CGAL/OSM/OSM.hpp"
+#include "CGAL/OSM/Sparse_chain.h"
 #include "CGAL/Hdvf/hdvf_tools.hpp"
 #include "arguments.h"
 
@@ -206,6 +207,16 @@ int main(int argc, char **argv)
         
         Options options(read_arguments_hdvf(argc, argv)) ;
         cout << "options:" << endl << options ;
+        
+        // TEST
+        cout << "TEST" << endl ;
+        OSM::Sparse_chain<int, OSM::COLUMN> gamma(4) ;
+        cout << "before: " << gamma.is_null() << endl ;
+        gamma.set_coef(2, 1) ;
+        cout << "after: " << gamma.is_null() << endl ;
+        gamma.set_coef(2, 0) ;
+        cout << "after2: " << gamma.is_null() << endl ;
+        cout << "END TEST" << endl ;
         
         // ----- Definition of the CoefficientType
 #ifndef SCALAR

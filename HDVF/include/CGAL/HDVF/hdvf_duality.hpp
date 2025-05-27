@@ -35,14 +35,14 @@ namespace HDVF {
  */
 
 template<typename _CoefficientType, typename _ComplexType>
-class Hdvf_duality : public Hdvf_core<_CoefficientType, _ComplexType, OSM::Chain, OSM::SubSparseMatrix> {
+class Hdvf_duality : public Hdvf_core<_CoefficientType, _ComplexType, OSM::Sparse_chain, OSM::SubSparseMatrix> {
 private:
     // Matrices types
-    typedef OSM::Chain<_CoefficientType, OSM::COLUMN> CChain;
-    typedef OSM::Chain<_CoefficientType, OSM::ROW> RChain;
+    typedef OSM::Sparse_chain<_CoefficientType, OSM::COLUMN> CChain;
+    typedef OSM::Sparse_chain<_CoefficientType, OSM::ROW> RChain;
     
     // HDVF Type
-    typedef Hdvf_core<_CoefficientType, _ComplexType, OSM::Chain, OSM::SubSparseMatrix> HDVF_type ;
+    typedef Hdvf_core<_CoefficientType, _ComplexType, OSM::Sparse_chain, OSM::SubSparseMatrix> HDVF_type ;
     
     // Complex L
     const _ComplexType& _L ;
@@ -278,7 +278,7 @@ public:
             // Get g(cell, dim) with per indices
             CChain g_cell(OSM::get_column(this->_G_col.at(dim), cell)) ;
             // Add 1 to the cell
-            g_cell[cell] = 1 ;
+            g_cell.set_coef(cell, 1) ;
             // Keep cells of the chain belonging to _subCC
             CChain g_cell_sub(g_cell.dimension()) ;
             for (typename CChain::const_iterator it = g_cell.begin(); it != g_cell.end(); ++it)
@@ -286,7 +286,7 @@ public:
                 
                 if (_subCC.get_Bit(dim, it->first))
                 {
-                    g_cell_sub[it->first] = it->second ;
+                    g_cell_sub.set_coef(it->first, it->second) ;
                 }
             }
             return g_cell_sub ;
@@ -308,7 +308,7 @@ public:
         {
             RChain fstar_cell(OSM::get_row(this->_F_row.at(dim), cell)) ;
             // Add 1 to the cell
-            fstar_cell[cell] = 1 ;
+            fstar_cell.set_coef(cell, 1) ;
             // Compute the cofaces
             if (dim < this->_K.dim())
             {
@@ -320,7 +320,7 @@ public:
                     for (typename RChain::const_iterator it2 =  cofaces.cbegin(); it2 != cofaces.cend(); ++it2)
                     {
                         if (_subCC.get_Bit(dim+1, it2->first))
-                            fstar_cofaces[it2->first] = 1 ;
+                            fstar_cofaces.set_coef(it2->first,  1) ;
                     }
                 }
                 return fstar_cofaces ;
@@ -329,32 +329,11 @@ public:
                 return CChain(0) ;
         }
     }
-    
-    //            // Get fstar(cell, dim) with per indices
-    //            RChain fstar_cell(OSM::cget_row(this->_F_row.at(dim), cell)) ;
-    //            // Add 1 to the cell
-    //            fstar_cell[cell] = 1 ;
-    //            // Keep cells of the chain belonging to _subCC
-    //            // Compute the chain (transpose of F_STAR column)
-    //            CChain fstar_cell_sub(fstar_cell.dimension()) ;
-    //            for (typename RChain::const_iterator it = fstar_cell.begin(); it != fstar_cell.end(); ++it)
-    //            {
-    //                // Keep cells of the chain belonging to _subCC
-    //                if (_subCC.get_Bit(dim, it->first))
-    //                {
-    //                    fstar_cell_sub[it->first] = it->second ;
-    //                }
-    //            }
-    //            return fstar_cell_sub ;
-    //        }
-    //        else
-    //            throw "Error : trying to export g_chain without proper HDVF option" ;
-    
 } ;
 
 template<typename _CoefficientType, typename _ComplexType>
 Hdvf_duality<_CoefficientType,_ComplexType>::Hdvf_duality(const _ComplexType& L, Sub_chain_complex_mask<_CoefficientType, _ComplexType>& K, int hdvf_opt) :
-Hdvf_core<_CoefficientType, _ComplexType, OSM::Chain, OSM::SubSparseMatrix>(L,hdvf_opt), _L(L), _hdvf_opt(hdvf_opt), _KCC(K), _subCC(K) {}
+Hdvf_core<_CoefficientType, _ComplexType, OSM::Sparse_chain, OSM::SubSparseMatrix>(L,hdvf_opt), _L(L), _hdvf_opt(hdvf_opt), _KCC(K), _subCC(K) {}
 
 /** \brief find a valid PairCell for A in dimension q */
 template<typename _CoefficientType, typename _ComplexType>

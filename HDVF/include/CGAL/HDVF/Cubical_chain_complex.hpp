@@ -126,9 +126,9 @@ public:
     friend Duality_cubical_complex_tools<CoefficientType> ;
     
     /** \brief Type of column-major chains */
-    typedef OSM::Chain<CoefficientType, OSM::COLUMN> CChain;
+    typedef OSM::Sparse_chain<CoefficientType, OSM::COLUMN> CChain;
     /** \brief Type of row-major chains */
-    typedef OSM::Chain<CoefficientType, OSM::ROW> RChain ;
+    typedef OSM::Sparse_chain<CoefficientType, OSM::ROW> RChain ;
     /** \brief Type of column-major sparse matrices */
     typedef OSM::Sparse_matrix<CoefficientType, OSM::COLUMN> CMatrix;
     
@@ -335,11 +335,11 @@ public:
      *
      * \param[in] K Cubical complex exported.
      * \param[in] filename Output file root (output filenames will be built from this root).
-     * \param[in] chain Chain exported (all the cells with non-zero coefficients in the chain are exported to vtk).
+     * \param[in] chain Sparse_chain exported (all the cells with non-zero coefficients in the chain are exported to vtk).
      * \param[in] q Dimension of the cells of the chain.
      * \param[in] cellId If a positive cellID is provided, labels are exported to distinguish cells of the chain (label 2) from cellId cell (label 0).
      */
-    static void Cubical_chain_complex_chain_to_vtk(const Cubical_chain_complex<CoefficientType> &K, const std::string &filename, const OSM::Chain<CoefficientType, OSM::COLUMN>& chain, int q, int cellId = -1) ;
+    static void Cubical_chain_complex_chain_to_vtk(const Cubical_chain_complex<CoefficientType> &K, const std::string &filename, const OSM::Sparse_chain<CoefficientType, OSM::COLUMN>& chain, int q, int cellId = -1) ;
     
 protected:
     // Methods to access data
@@ -398,11 +398,11 @@ protected:
                 // Insert the coefficient in the corresponding row of the boundary matrix
                 if (cell1 >= 0 && cell1 < _cells.size()) {
                     int index = _bool2base[dim - 1].at(cell1);
-                    boundary[index] = sign;
+                    boundary.set_coef(index, sign);
                 }
                 if (cell2 >= 0 && cell2 < _cells.size()) {
                     int index = _bool2base[dim - 1].at(cell2);
-                    boundary[index] = -sign;
+                    boundary.set_coef(index, -sign);
                 }
             }
         }
@@ -924,7 +924,7 @@ void Cubical_chain_complex<CoefficientType>::Cubical_chain_complex_to_vtk(const 
  */
 
 template <typename CoefficientType>
-void Cubical_chain_complex<CoefficientType>::Cubical_chain_complex_chain_to_vtk(const Cubical_chain_complex<CoefficientType> &K, const std::string &filename, const OSM::Chain<CoefficientType, OSM::COLUMN>& chain, int q, int cellId)
+void Cubical_chain_complex<CoefficientType>::Cubical_chain_complex_chain_to_vtk(const Cubical_chain_complex<CoefficientType> &K, const std::string &filename, const OSM::Sparse_chain<CoefficientType, OSM::COLUMN>& chain, int q, int cellId)
 {
     bool with_scalars = (cellId != -1) ;
     
@@ -967,7 +967,7 @@ void Cubical_chain_complex<CoefficientType>::Cubical_chain_complex_chain_to_vtk(
             const int size_cell = 1<<q ;
             for (int id =0; id < K.nb_cells(q); ++id)
             {
-                if (!chain.isNull(id))
+                if (!chain.is_null(id))
                 {
                     ++ncells_tot;
                     size_cells_tot += (size_cell+1) ;
@@ -981,7 +981,7 @@ void Cubical_chain_complex<CoefficientType>::Cubical_chain_complex_chain_to_vtk(
             const int size_cell = q+1 ;
             for (int id =0; id < K.nb_cells(q); ++id)
             {
-                if (!chain.isNull(id))
+                if (!chain.is_null(id))
                 {
                     vector<int> khal(K.ind2khal(K._base2bool.at(q).at(id))) ;
                     vector<int> verts(K.khal_to_verts(K.ind2khal(K._base2bool.at(q).at(id)))) ;

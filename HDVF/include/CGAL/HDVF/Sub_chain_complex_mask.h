@@ -74,8 +74,8 @@ private:
                     if (q>0) // Then faces must be considered
                     {
                         // Add all its faces to faces.at(q-1)
-                        OSM::Chain<CoefficientType, OSM::COLUMN> bnd(_K.d(i,q)) ;
-                        for (typename OSM::Chain<CoefficientType, OSM::COLUMN>::const_iterator it = bnd.cbegin(); it != bnd.cend(); ++it)
+                        OSM::Sparse_chain<CoefficientType, OSM::COLUMN> bnd(_K.d(i,q)) ;
+                        for (typename OSM::Sparse_chain<CoefficientType, OSM::COLUMN>::const_iterator it = bnd.cbegin(); it != bnd.cend(); ++it)
                         {
                             const int c(it->first) ;
                             if (!_sub.at(q-1).isOn(c))
