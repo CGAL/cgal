@@ -34,6 +34,7 @@
 #include <CGAL/iterator.h>
 
 #include <CGAL/boost/graph/Face_filtered_graph.h>
+
 #if defined(CGAL_METIS_ENABLED)
 #include <CGAL/boost/graph/partition.h>
 #endif // CGAL_METIS_ENABLED
@@ -42,14 +43,16 @@
 #include <tbb/parallel_reduce.h>
 #include <tbb/blocked_range.h>
 #endif // CGAL_LINKED_WITH_TBB
+#if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_METIS_ENABLED) && defined(USE_PARALLEL_BEHD)
+#  include <any>
+#endif
 
-#include <any>
-
-#include <unordered_set>
 #include <algorithm>
 #include <array>
 #include <cmath>
 #include <limits>
+#include <type_traits>
+#include <unordered_set>
 
 #ifdef CGAL_HAUSDORFF_DEBUG_PP
  #ifndef CGAL_HAUSDORFF_DEBUG
@@ -1467,7 +1470,11 @@ bounded_error_squared_Hausdorff_distance_impl(const TriangleMesh1& tm1,
 
   using Candidate = Candidate_triangle<Kernel, Face_handle_1, Face_handle_2>;
 
-  CGAL_precondition(sq_initial_bound >= square(FT(error_bound)));
+  if constexpr(std::is_floating_point_v<FT>) {
+    CGAL_precondition(std::nextafter(sq_initial_bound, std::numeric_limits<FT>::max()) >= square(FT(error_bound)));
+  } else {
+    CGAL_precondition(sq_initial_bound >= square(FT(error_bound)));
+  }
   CGAL_precondition(sq_distance_bound != FT(0)); // value is -1 if unused
   CGAL_precondition(tm1_tree.size() > 0);
   CGAL_precondition(tm2_tree.size() > 0);
