@@ -252,9 +252,24 @@ public:
   typedef Triangulation_data_structure::Vertex_handle   Vertex_handle;
 
   template <typename TDS2>
-  struct Rebind_TDS { typedef Vertex<TDS2> Other; };
+  struct Rebind_TDS { using Other = Vertex<TDS2>; };
 };
 
+#if 0
+template <typename TDS_3, typename Vb = Vertex<TDS_3> >
+class Vertex4Regular
+: public Vb
+{
+template < typename TDS2 >
+  struct Rebind_TDS {
+    typedef typename Vb::template Rebind_TDS<TDS2>::Other                 Vb2;
+    typedef Vertex4Regular<TDS2,Vb2>  Other;
+  };
+
+  void hide_point(const Point& p)
+  {}
+};
+#endif
 
 // AF : factorize as also in Surface_mesh and Point_set_3
 template<typename T>
@@ -659,6 +674,136 @@ struct TDS {
   }
 
 
+    bool has_garbage() const { return garbage_; }
+
+/// returns whether the index of vertex `v` is valid, that is within the current array bounds.
+    bool has_valid_index(Vertex_index v) const
+    {
+      return ((size_type)v < num_vertices());
+    }
+
+    /// returns whether vertex `v` is marked removed.
+    /// \sa `collect_garbage()`
+    bool is_removed(Vertex_index v) const
+    {
+        return vremoved_[v];
+    }
+//------------------------------------------------------ iterator types
+    template<typename Index_, typename Handle_>
+    class Index_iterator
+      : public boost::iterator_facade< Index_iterator<Index_, Handle_>,
+                                       Handle_,
+                                       std::random_access_iterator_tag,
+                                       Handle_
+                                       >
+    {
+        typedef boost::iterator_facade< Index_iterator<Index_, Handle_>,
+                                        Handle_,
+                                        std::random_access_iterator_tag,
+                                        Handle_> Facade;
+    public:
+        Index_iterator() : hnd_(), tds_(nullptr) {}
+        Index_iterator(const Index_& h, const Self* m)
+          : hnd_(h), tds_(m) {
+          if (tds_ && tds_->has_garbage()){
+              while (tds_->has_valid_index(hnd_) && tds_->is_removed(hnd_)) ++hnd_;
+          }
+        }
+    private:
+        friend class boost::iterator_core_access;
+        void increment()
+        {
+            ++hnd_;
+            CGAL_assertion(tds_ != nullptr);
+
+            if(tds_->has_garbage())
+              while ( tds_->has_valid_index(hnd_) && tds_->is_removed(hnd_)) ++hnd_;
+        }
+
+        void decrement()
+        {
+            --hnd_;
+            CGAL_assertion(tds_ != nullptr);
+            if(tds_->has_garbage())
+               while ( tds_->has_valid_index(hnd_) && tds_->is_removed(hnd_)) --hnd_;
+        }
+
+        void advance(std::ptrdiff_t n)
+        {
+            CGAL_assertion(tds_ != nullptr);
+
+            if (tds_->has_garbage())
+            {
+              if (n > 0)
+                for (std::ptrdiff_t i = 0; i < n; ++ i)
+                  increment();
+              else
+                for (std::ptrdiff_t i = 0; i < -n; ++ i)
+                  decrement();
+            }
+            else
+              hnd_ += n;
+        }
+
+        std::ptrdiff_t distance_to(const Index_iterator& other) const
+        {
+            if (tds_->has_garbage())
+            {
+              bool forward = (other.hnd_ > hnd_);
+
+              std::ptrdiff_t out = 0;
+              Index_iterator it = *this;
+              while (!it.equal(other))
+              {
+                if (forward)
+                {
+                  ++ it;
+                  ++ out;
+                }
+                else
+                {
+                  -- it;
+                  -- out;
+                }
+              }
+              return out;
+            }
+
+            // else
+            return std::ptrdiff_t(other.hnd_) - std::ptrdiff_t(this->hnd_);
+        }
+
+        bool equal(const Index_iterator& other) const
+        {
+            return this->hnd_ == other.hnd_;
+        }
+
+        Handle_ dereference() const { return { const_cast<Self*>(tds_), hnd_} ; } // AF: todo make const_cast safe
+
+        Index_ hnd_;
+        const Self* tds_;
+
+    };
+
+
+    typedef Index_iterator<Vertex_index,Vertex_handle> Vertex_iterator;
+    typedef Iterator_range<Vertex_iterator> Vertex_range;
+
+    Vertex_iterator vertices_begin() const
+    {
+        return Vertex_iterator(Vertex_index(0), this);
+    }
+
+    /// End iterator for vertices.
+    Vertex_iterator vertices_end() const
+    {
+        return Vertex_iterator(Vertex_index(num_vertices()), this);
+    }
+
+    Vertex_range vertices() const {
+      return make_range(vertices_begin(), vertices_end());
+    }
+
     Properties::Property_container<Self, Vertex_index> vprops_;
     Properties::Property_container<Self, Cell_index>   cprops_;
 
@@ -697,6 +842,10 @@ int main() {
   auto ch = tds.create_cell();
   ch->set_vertex(0, vh);
   vh->set_cell(ch);
+
+  for(auto  v : tds.vertices()) {
+    std::cout << "Vertex index: " << v.index() << std::endl;
+  }
 
   return 0;
 }
