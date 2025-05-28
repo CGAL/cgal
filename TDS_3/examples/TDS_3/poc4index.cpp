@@ -5,7 +5,9 @@
 #include <CGAL/TDS_3/internal/Dummy_tds_3.h>
 #include <CGAL/TDS_3/internal/Triangulation_ds_iterators_3.h>
 #include <CGAL/TDS_3/internal/Triangulation_ds_circulators_3.h>
+#include <CGAL/Triangulation_utils_3.h>
 
+#include <CGAL/assertions.h>
 #include <CGAL/utility.h>
 #include <CGAL/property_map.h>
 #include <CGAL/Iterator_range.h>
@@ -416,7 +418,9 @@ namespace CGAL {
 
 
   template <typename Vb, typename Cb, typename ConcurrencyTag>
-  struct TDS {
+  struct TDS
+  : public Triangulation_utils_3
+  {
 
     using Self = TDS<Vb,Cb, ConcurrencyTag>;
 
