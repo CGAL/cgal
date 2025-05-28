@@ -53,19 +53,19 @@ namespace CGAL {
     Cell& operator=(const Cell& other)
     {
       if (this != &other) {
-        tds_ = other.tds_;
+        tds_ = other.tds();
         index_ = other.index_;
       }
       return *this;
     }
 
     Cell(const Cell& other)
-      : tds_(other.tds_), index_(other.index_)
+      : tds_(other.tds()), index_(other.index_)
     {}
 
     bool operator==(const Cell& other) const
     {
-      return tds_ == other.tds_ && index_ == other.index_;
+      return tds_ == other.tds() && index_ == other.index_;
     }
 
     bool operator!=(const Cell& other) const
@@ -75,7 +75,7 @@ namespace CGAL {
 
     bool operator<(const Cell& other) const
     {
-      return (tds_ == other.tds_) ? (index_ < other.index_) : (tds_ < other.tds_);
+      return (tds_ == other.tds()) ? (index_ < other.index_) : (tds_ < other.tds());
     }
 
     Cell_index index() const
@@ -84,16 +84,16 @@ namespace CGAL {
     }
 
     decltype(auto) storage() {
-      return tds_->cell_storage()[index()];
+      return tds()->cell_storage()[index()];
     }
 
     decltype(auto) storage() const {
-      return tds_->cell_storage()[index()];
+      return tds()->cell_storage()[index()];
     }
 
     Vertex_handle vertex(int i) const
     {
-      return Vertex_handle(tds_, storage().ivertices[i]);
+      return Vertex_handle(tds(), storage().ivertices[i]);
     }
 
     int index(Vertex_handle v) const
@@ -128,7 +128,7 @@ namespace CGAL {
 
     Cell_handle neighbor(int i) const
     {
-      return Cell_handle(tds_, storage().ineighbors[i]);
+      return Cell_handle(tds(), storage().ineighbors[i]);
     }
 
     bool has_neighbor(Cell_handle n) const
@@ -186,11 +186,11 @@ namespace CGAL {
     }
 
     TDS_data& tds_data() {
-      return tds_->tds_data()[index()];
+      return tds()->tds_data()[index()];
     }
 
     const TDS_data& tds_data() const {
-      return tds_->tds_data()[index()];
+      return tds()->tds_data()[index()];
     }
 
     const Cell_handle* operator->() const {
@@ -205,7 +205,7 @@ namespace CGAL {
       using Other = Cell<TDS>;
     };
 
-    TDS_3* tds() const
+    TDS_3* tds() const // AF: constness issue
     {
       return tds_;
     }
@@ -260,7 +260,7 @@ namespace CGAL {
 
     bool operator==(const Vertex& other) const
     {
-      return tds_ == other.tds_ && index_ == other.index_;
+      return tds() == other.tds() && index_ == other.index_;
     }
 
     bool operator!=(const Vertex& other) const
@@ -270,7 +270,7 @@ namespace CGAL {
 
     bool operator<(const Vertex& other) const
     {
-      return (tds_ == other.tds_) ? (index_ < other.index_) : (tds_ < other.tds_);
+      return (tds() == other.tds()) ? (index_ < other.index_) : (tds() < other.tds());
     }
 
     Vertex_index index() const
@@ -279,16 +279,16 @@ namespace CGAL {
     }
 
     decltype(auto) storage() {
-      return tds_->vertex_storage()[index()];
+      return tds()->vertex_storage()[index()];
     }
 
     decltype(auto) storage() const {
-      return tds_->vertex_storage()[index()];
+      return tds()->vertex_storage()[index()];
     }
 
     Cell_handle cell() const
     {
-      return Cell_handle(tds_, storage().icell);
+      return Cell_handle(tds(), storage().icell);
     }
 
     void set_cell(Cell_handle c)
@@ -325,7 +325,7 @@ namespace CGAL {
       using Other = Vertex<TDS>;
     };
 
-    TDS_3* tds() const
+    TDS_3* tds() const // AF: constness issue
     {
       return tds_;
     }
@@ -712,7 +712,6 @@ namespace CGAL {
 
     bool is_vertex(Vertex_handle v) const
     {
-      // AF: for Compact_container:   return vertices().owns_dereferenceable(v);
       return this == v->tds()  && v->idx() < num_vertices() && (! vremoved_[v.index()]);
     }
 
@@ -928,7 +927,7 @@ namespace CGAL {
     public:
       Index_iterator() : hnd_(), tds_(nullptr) {}
       Index_iterator(const Index_& h, const Self* m)
-        : hnd_(h), tds_(m) {
+        : hnd_(h), tds_(const_cast<Self*>(m)) { // AF: todo make const_cast safe
         if (tds_ && tds_->has_garbage()){
           while (tds_->has_valid_index(hnd_) && tds_->is_removed(hnd_)) ++hnd_;
         }
@@ -1011,10 +1010,10 @@ namespace CGAL {
       }
 
     private:
-      Handle_ dereference() const { return Handle_( const_cast<Self*>(tds_), hnd_) ; } // AF: todo make const_cast safe
+      Handle_ dereference() const { return Handle_(tds_, hnd_); }
 
       Index_ hnd_;
-      const Self* tds_;
+      Self* tds_;
 
     };
 
