@@ -64,14 +64,87 @@ namespace CGAL {
 
 // TODO : noms : Vb != Vertex_base : clarifier.
 
+template <typename TDS, typename Vertex_handle, typename Cell_handle>
+class Triangulation_data_structure_API_3 : public Triangulation_utils_3
+{
+  const TDS& tds() const
+  {
+    return static_cast<const TDS&>(*this);
+  }
+
+  TDS& tds()
+  {
+    return static_cast<TDS&>(*this);
+  }
+};
+
 template < class Vb = Triangulation_ds_vertex_base_3<>,
            class Cb = Triangulation_ds_cell_base_3<>,
            class Concurrency_tag_ = Sequential_tag
 >
+class Triangulation_data_structure_3;
+
+template <class Vb, class Cb, class Concurrency_tag>
+struct Triangulation_data_structure_3_types
+{
+  using Tds = Triangulation_data_structure_3<Vb, Cb, Concurrency_tag>;
+  // Put this TDS inside the Vertex and Cell types.
+  using Vertex = typename Vb::template Rebind_TDS<Tds>::Other;
+  using Cell = typename Cb::template Rebind_TDS<Tds>::Other;
+
+  // Cells
+  // N.B.: Concurrent_compact_container requires TBB
+#ifdef CGAL_LINKED_WITH_TBB
+  using Cell_range = typename std::conditional<std::is_convertible<Concurrency_tag, Parallel_tag>::value,
+                                               Concurrent_compact_container<Cell, tbb::scalable_allocator<Cell>>,
+                                               Compact_container<Cell>>::type;
+#else
+  static_assert(!(std::is_convertible<Concurrency_tag, Parallel_tag>::value),
+                "In CGAL triangulations, `Parallel_tag` can only be used with the Intel TBB library. "
+                "Make TBB available in the build system and then define the macro `CGAL_LINKED_WITH_TBB`.");
+  using Cell_range = Compact_container<Cell>;
+#endif
+
+  // Vertices
+  // N.B.: Concurrent_compact_container requires TBB
+#ifdef CGAL_LINKED_WITH_TBB
+  using Vertex_range = typename std::conditional<std::is_convertible<Concurrency_tag, Parallel_tag>::value,
+                                                 Concurrent_compact_container<Vertex, tbb::scalable_allocator<Vertex>>,
+                                                 Compact_container<Vertex>>::type;
+#else
+  using Vertex_range = Compact_container<Vertex>;
+#endif
+
+  using size_type = typename Cell_range::size_type;
+  using difference_type = typename Cell_range::difference_type;
+
+  using Cell_iterator = typename Cell_range::iterator;
+  using Vertex_iterator = typename Vertex_range::iterator;
+
+  using Vertex_handle = Vertex_iterator;
+  using Cell_handle = Cell_iterator;
+};
+
+template <class Vb, class Cb, class Tds>
+using Vertex_handle_type = typename Triangulation_data_structure_3_types<Vb, Cb, Tds>::Vertex_handle;
+
+template <class Vb, class Cb, class Tds>
+using Cell_handle_type = typename Triangulation_data_structure_3_types<Vb, Cb, Tds>::Cell_handle;
+
+template < class Vb, class Cb, class Concurrency_tag_>
 class Triangulation_data_structure_3
-  : public Triangulation_utils_3
+  : public Triangulation_data_structure_API_3<
+               Triangulation_data_structure_3<Vb, Cb, Concurrency_tag_>,
+               Vertex_handle_type<Vb, Cb, Concurrency_tag_>,
+               Cell_handle_type<Vb, Cb, Concurrency_tag_>
+               >,
+    public Triangulation_data_structure_3_types<Vb, Cb, Concurrency_tag_>
 {
   typedef Triangulation_data_structure_3<Vb, Cb, Concurrency_tag_> Tds;
+  typedef Triangulation_data_structure_API_3<Tds,
+              Vertex_handle_type<Vb, Cb, Concurrency_tag_>,
+              Cell_handle_type<Vb, Cb, Concurrency_tag_> > API;
+  typedef Triangulation_data_structure_3_types<Vb, Cb, Concurrency_tag_> Tds_types;
 
 public:
   typedef Concurrency_tag_            Concurrency_tag;
@@ -121,45 +194,18 @@ private:
   friend class internal::Triangulation_ds_facet_circulator_3<Tds>;
 
 public:
+  using size_type = typename Tds_types::size_type;
+  using Cell_handle = typename Tds_types::Cell_handle;
+  using Cell_iterator = typename Tds_types::Cell_iterator;
+  using Cell_range = typename Tds_types::Cell_range;
+  using Vertex_handle = typename Tds_types::Vertex_handle;
+  using Vertex_iterator = typename Tds_types::Vertex_iterator;
+  using Vertex_range = typename Tds_types::Vertex_range;
 
-  // Cells
-  // N.B.: Concurrent_compact_container requires TBB
-#ifdef CGAL_LINKED_WITH_TBB
-  typedef typename std::conditional
-  <
-    std::is_convertible<Concurrency_tag, Parallel_tag>::value,
-    Concurrent_compact_container<Cell, tbb::scalable_allocator<Cell> >,
-    Compact_container<Cell>
-  >::type                                                Cell_range;
-
-# else
-  static_assert
-    (!(std::is_convertible<Concurrency_tag, Parallel_tag>::value),
-     "In CGAL triangulations, `Parallel_tag` can only be used with the Intel TBB library. "
-     "Make TBB available in the build system and then define the macro `CGAL_LINKED_WITH_TBB`.");
-  typedef Compact_container<Cell>                        Cell_range;
-#endif
-
-  // Vertices
-  // N.B.: Concurrent_compact_container requires TBB
-#ifdef CGAL_LINKED_WITH_TBB
-  typedef typename std::conditional
-  <
-    std::is_convertible<Concurrency_tag, Parallel_tag>::value,
-    Concurrent_compact_container<Vertex, tbb::scalable_allocator<Vertex> >,
-    Compact_container<Vertex>
-  >::type                                                Vertex_range;
-
-# else
-  typedef Compact_container<Vertex>                      Vertex_range;
-#endif
-
-
-  typedef typename Cell_range::size_type       size_type;
-  typedef typename Cell_range::difference_type difference_type;
-
-  typedef typename Cell_range::iterator        Cell_iterator;
-  typedef typename Vertex_range::iterator      Vertex_iterator;
+  using API::cw;
+  using API::ccw;
+  using API::next_around_edge;
+  using API::vertex_triple_index;
 
   typedef internal::Triangulation_ds_facet_iterator_3<Tds>   Facet_iterator;
   typedef internal::Triangulation_ds_edge_iterator_3<Tds>    Edge_iterator;
@@ -175,9 +221,6 @@ public:
 
 //private: // In 2D only :
   typedef internal::Triangulation_ds_face_circulator_3<Tds>  Face_circulator;
-
-  typedef Vertex_iterator                          Vertex_handle;
-  typedef Cell_iterator                            Cell_handle;
 
   typedef std::pair<Cell_handle, int>              Facet;
   typedef Triple<Cell_handle, int, int>            Edge;
