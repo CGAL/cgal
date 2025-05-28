@@ -42,7 +42,10 @@ namespace draw_function_for_arrangement_2 {
 // Detection idiom using void_t
 // ============================
 
-// Primary template: detection fails by default
+// ========
+
+// Primary templates: detection fails by default
+// Does the traits have approximate_2_object()?
 template <typename, typename = std::void_t<>>
 struct has_approximate_2_object : std::false_type {};
 
@@ -52,9 +55,55 @@ struct has_approximate_2_object<T, std::void_t<decltype(std::declval<T>().approx
     std::true_type
 {};
 
-// Convenience variable template (C++17)
+// Convenience variable
 template <typename T>
 inline constexpr bool has_approximate_2_object_v = has_approximate_2_object<T>::value;
+
+// ========
+
+// Primary templates: detection fails by default
+// Does a class have operator()(const Point&)?
+template <typename, typename, typename = std::void_t<>>
+struct has_operator_point : std::false_type {};
+
+// Specialization: detection succeeds if decltype works out
+  template <typename T, typename A>
+  struct has_operator_point<T, A, std::void_t<decltype(std::declval<A>()(std::declval<const typename T::Point_2&>()))>> :
+    std::true_type
+{};
+
+// Convenience variable
+  template <typename T, typename A>
+  inline constexpr bool has_operator_point_v = has_operator_point<T, A>::value;
+
+// ========
+
+// Primary templates: detection fails by default
+// Does a class have operator()(const X_monotone_curve&)?
+template <typename, typename, typename = std::void_t<>>
+struct has_operator_xcv : std::false_type {};
+
+// Specialization: detection succeeds if decltype works out
+struct Dummy_output {};
+using Concrete_output_iterator = Dummy_output*;
+
+template <typename T, typename A>
+struct has_operator_xcv<T, A, std::void_t<decltype(
+                                            std::declval<A>()(
+                                              std::declval<const typename T::X_monotone_curve_2&>(),
+                                              std::declval<double>,
+                                              std::declval<Concrete_output_iterator>(),
+                                              std::declval<bool>()
+                                            )
+                                          )
+                      >> : std::true_type
+{};
+
+// Convenience variable
+  template <typename T, typename A>
+  inline constexpr bool has_operator_xcv_v = has_operator_xcv<T, A>::value;
+
+  // ========
 
 ///
 template<typename Arr, typename GSOptions>
@@ -140,17 +189,6 @@ public:
   }
 
   /// Compile time dispatching
-#if 0
-  template <typename T, typename I = void>
-  void draw_region_impl2(Halfedge_const_handle curr, T const&, long)
-  { draw_exact_region(curr); }
-
-  template <typename T, typename I>
-  auto draw_region_impl2(Halfedge_const_handle curr, T const& approx, int) ->
-    decltype(approx.template operator()<I>(X_monotone_curve{}, double{}, I{},
-                                           bool{}), void())
-  { draw_approximate_region(curr, approx); }
-#endif
 
   /*! Draw a region, where the traits does not has approximate_2_object.
    */
@@ -159,11 +197,21 @@ public:
   { draw_exact_region(curr); }
 
   ///
+  template <typename T, typename A, std::enable_if_t<! has_operator_point_v<T, A>, int> = 0>
+  void draw_region_impl2(const T& /* traits */, const A& /* approximate */, Halfedge_const_handle curr)
+  { draw_exact_region(curr); }
+
+  ///
+  template <typename T, typename A, std::enable_if_t<has_operator_point_v<T, A>, int> = 0>
+  auto draw_region_impl2(const T& /* traits */, const A& approx, Halfedge_const_handle curr) {
+    draw_approximate_region(curr, approx);
+  }
+
+  ///
   template <typename T, std::enable_if_t<has_approximate_2_object_v<T>, int> = 0>
   auto draw_region_impl1(T const& traits, Halfedge_const_handle curr) {
     using Approximate = typename Gt::Approximate_2;
-    // draw_region_impl2<Approximate, int>(xcv, traits.approximate_2_object(), 0);
-    draw_approximate_region(curr, traits.approximate_2_object());
+    draw_region_impl2(traits, traits.approximate_2_object(), curr);
   }
 
   /*! Draw a geodesic region
@@ -291,18 +339,29 @@ public:
   /*! Draw a point, where the traits does not has approximate_2_object.
    */
   template <typename T, std::enable_if_t<! has_approximate_2_object_v<T>, int> = 0>
-  void draw_point_impl1(T const& /* traits */, const Point& p,
+  void draw_point_impl1(const T& /* traits */, const Point& p,
                         bool colored, const CGAL::IO::Color& c)
   { draw_exact_point(p, colored, c); }
+
+  ///
+  template <typename T, typename A, std::enable_if_t<! has_operator_point_v<T, A>, int> = 0>
+  void draw_point_impl2(const T& /* traits */, const A& /* approximate */, const Point& p,
+                        bool colored, const CGAL::IO::Color& c)
+  { draw_exact_point(p, colored, c); }
+
+  ///
+  template <typename T, typename A, std::enable_if_t<has_operator_point_v<T, A>, int> = 0>
+  auto draw_point_impl2(const T& /* traits */, const A& approx, const Point& p,
+                        bool colored, const CGAL::IO::Color& c) {
+    draw_approximate_point(p, approx, colored, c);
+  }
 
   /*! Draw a point, where the traits does have approximate_2_object.
    */
   template <typename T, std::enable_if_t<has_approximate_2_object_v<T>, int> = 0>
-  auto draw_point_impl1(T const& traits, const Point& p,
+  auto draw_point_impl1(const T& traits, const Point& p,
                         bool colored, const CGAL::IO::Color& c) {
-    using Approximate = typename Gt::Approximate_2;
-    // draw_curve_impl2<Approximate, int>(p, traits.approximate_2_object(), 0);
-    draw_approximate_point(p, traits.approximate_2_object(), colored, c);
+    draw_point_impl2(traits, traits.approximate_2_object(), p, colored, c);
   }
 
   /*! Draw a geodesic point.
@@ -395,9 +454,8 @@ public:
 
     // Add edges that do not separate faces.
     if (m_gso.are_edges_enabled()) {
-      std::cout << "Edges not enabled\n";
       for (auto it = m_aos.edges_begin(); it != m_aos.edges_end(); ++it) {
-        if (it->face() == it->twin()->face()) {
+        if (it->face() != it->twin()->face()) {
           if (m_gso.draw_edge(m_aos, it)) {
             if (m_gso.colored_edge(m_aos, it))
               draw_curve(it->curve(), true, m_gso.edge_color(m_aos, it));
@@ -442,18 +500,6 @@ public:
     }
   }
 
-  /*! Compile time dispatching
-   */
-  // template <typename T, typename I = void>
-  // void draw_curve_impl2(const X_monotone_curve& xcv, T const&, long)
-  // { draw_exact_curve(xcv); }
-
-  // template <typename T, typename I>
-  // auto draw_curve_impl2(const X_monotone_curve& xcv, T const& approx, int) ->
-  //   decltype(approx.template operator()<I>(X_monotone_curve{}, double{}, I{},
-  //                                            bool{}), void())
-  // { draw_approximate_curve(xcv, approx); }
-
   /*! Draw a curve, where the traits does not has approximate_2_object.
    */
   template <typename T, std::enable_if_t<! has_approximate_2_object_v<T>, int> = 0>
@@ -461,14 +507,26 @@ public:
                         bool colored, const CGAL::IO::Color& c)
   { draw_exact_curve(xcv, colored, c); }
 
+  ///
+  template <typename T, typename A, std::enable_if_t<! has_operator_point_v<T, A>, int> = 0>
+  void draw_curve_impl2(const T& /* traits */, const A& /* approximate */, const X_monotone_curve& xcv,
+                        bool colored, const CGAL::IO::Color& c)
+  { draw_exact_curve(xcv, colored, c); }
+
+  ///
+  template <typename T, typename A, std::enable_if_t<has_operator_point_v<T, A>, int> = 0>
+  auto draw_curve_impl2(const T& /* traits */, const A& approx, const X_monotone_curve& xcv,
+                        bool colored, const CGAL::IO::Color& c) {
+    draw_approximate_curve(xcv, approx, colored, c);
+  }
+
   /*! Draw a curve, where the traits does have approximate_2_object.
    */
   template <typename T, std::enable_if_t<has_approximate_2_object_v<T>, int> = 0>
   auto draw_curve_impl1(T const& traits, const X_monotone_curve& xcv,
                         bool colored, const CGAL::IO::Color& c) {
     using Approximate = typename Gt::Approximate_2;
-    // draw_curve_impl2<Approximate, int>(xcv, traits.approximate_2_object(), 0);
-    draw_approximate_curve(xcv, traits.approximate_2_object(), colored, c);
+    draw_curve_impl2(traits, traits.approximate_2_object(), xcv, colored, c);
   }
 
   /*! Draw a geodesic curve
@@ -568,10 +626,12 @@ void add_to_graphics_scene(const CGAL_ARR_TYPE& aos,
                                typename CGAL_ARR_TYPE::Halfedge_const_handle,
                                typename CGAL_ARR_TYPE::Face_const_handle>
     gso;
+  // colored face?
   gso.colored_face=[](const CGAL_ARR_TYPE&,
                       typename CGAL_ARR_TYPE::Face_const_handle) -> bool
   { return true; };
 
+  // face color
   gso.face_color=[](const CGAL_ARR_TYPE&,
                     typename CGAL_ARR_TYPE::Face_const_handle fh) -> CGAL::IO::Color
   {
