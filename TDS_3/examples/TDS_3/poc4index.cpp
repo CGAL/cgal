@@ -1,6 +1,7 @@
 #include <vector>
 #include <iostream>
 #include <array>
+#include <list>
 
 #include <CGAL/TDS_3/internal/Dummy_tds_3.h>
 #include <CGAL/TDS_3/internal/Triangulation_ds_iterators_3.h>
@@ -29,13 +30,14 @@ namespace CGAL {
   template <typename TDS_3>
   struct Cell {
 
+    using Triangulation_data_structure = TDS_3;
     using Vertex_handle = typename TDS_3::Vertex_handle;
     using Cell_handle   = typename TDS_3::Cell_handle;
     using Vertex_index  = typename TDS_3::Vertex_index;
     using Cell_index    = typename TDS_3::Cell_index;
     using TDS_data      = typename TDS_3::Cell_data;
 
-    struct Connectivity {
+    struct Storage {
       std::array<Vertex_index,4> ivertices;
       std::array<Cell_index,4>   ineighbors;
     };
@@ -81,15 +83,23 @@ namespace CGAL {
       return index_;
     }
 
+    decltype(auto) storage() {
+      return tds_->cell_storage()[index()];
+    }
+
+    decltype(auto) storage() const {
+      return tds_->cell_storage()[index()];
+    }
+
     Vertex_handle vertex(int i) const
     {
-      return Vertex_handle(tds_, tds_->cell_connectivity()[index()].ivertices[i]);
+      return Vertex_handle(tds_, storage().ivertices[i]);
     }
 
     int index(Vertex_handle v) const
     {
       for (int i = 0; i < 4; ++i) {
-        if (v.index() == tds_->cell_connectivity()[index()].ivertices[i]) {
+        if (v.index() == storage().ivertices[i]) {
           return i;
         }
       }
@@ -99,7 +109,7 @@ namespace CGAL {
     bool has_vertex(Vertex_handle v) const
     {
       for (int i = 0; i < 4; ++i) {
-        if (v.index() == tds_->cell_connectivity()[index()].ivertices[i]) {
+        if (v.index() == storage().ivertices[i]) {
           return true;
         }
       }
@@ -109,7 +119,7 @@ namespace CGAL {
     bool has_vertex(Vertex_handle v, int & i) const
     {
       for (i = 0; i < 4; ++i) {
-        if (v.index() == tds_->cell_connectivity()[index()].ivertices[i]) {
+        if (v.index() == storage().ivertices[i]) {
           return true;
         }
       }
@@ -118,13 +128,13 @@ namespace CGAL {
 
     Cell_handle neighbor(int i) const
     {
-      return Cell_handle(tds_, tds_->cell_connectivity()[index()].ineighbors[i]);
+      return Cell_handle(tds_, storage().ineighbors[i]);
     }
 
     bool has_neighbor(Cell_handle n) const
     {
       for (int i = 0; i < 4; ++i) {
-        if (n.index() == tds_->cell_connectivity()[index()].ineighbors[i]) {
+        if (n.index() == storage().ineighbors[i]) {
           return true;
         }
       }
@@ -134,7 +144,7 @@ namespace CGAL {
     bool has_neighbor(Cell_handle n, int & i) const
     {
       for (i = 0; i < 4; ++i) {
-        if (n.index() == tds_->cell_connectivity()[index()].ineighbors[i]) {
+        if (n.index() == storage().ineighbors[i]) {
           return true;
         }
       }
@@ -143,33 +153,33 @@ namespace CGAL {
 
     void set_vertex(int i, Vertex_handle v)
     {
-      tds_->cell_connectivity()[index()].ivertices[i] = v.index();
+      storage().ivertices[i] = v.index();
     }
 
     void set_neighbor(int i, Cell_handle n)
     {
-      tds_->cell_connectivity()[index()].ineighbors[i] = n.index();
+      storage().ineighbors[i] = n.index();
     }
 
     void set_vertices(Vertex_handle v0, Vertex_handle v1, Vertex_handle v2, Vertex_handle v3)
     {
-      tds_->cell_connectivity()[index()].ivertices[0] = v0.index();
-      tds_->cell_connectivity()[index()].ivertices[1] = v1.index();
-      tds_->cell_connectivity()[index()].ivertices[2] = v2.index();
-      tds_->cell_connectivity()[index()].ivertices[3] = v3.index();
+      storage().ivertices[0] = v0.index();
+      storage().ivertices[1] = v1.index();
+      storage().ivertices[2] = v2.index();
+      storage().ivertices[3] = v3.index();
     }
 
     void set_neighbors(Cell_handle n0, Cell_handle n1, Cell_handle n2, Cell_handle n3)
     {
-      tds_->cell_connectivity()[index()].ineighbors[0] = n0.index();
-      tds_->cell_connectivity()[index()].ineighbors[1] = n1.index();
-      tds_->cell_connectivity()[index()].ineighbors[2] = n2.index();
-      tds_->cell_connectivity()[index()].ineighbors[3] = n3.index();
+      storage().ineighbors[0] = n0.index();
+      storage().ineighbors[1] = n1.index();
+      storage().ineighbors[2] = n2.index();
+      storage().ineighbors[3] = n3.index();
     }
 
     // CHECKING
-    bool is_valid(bool verbose = false,
-                  int   level = 0) const
+    bool is_valid(bool  = false,
+                  int   = 0) const
     {
       assert(false);
       return true;
@@ -184,10 +194,10 @@ namespace CGAL {
     }
 
     const Cell_handle* operator->() const {
-      return this;
+      return static_cast<const Cell_handle*>(this);
     }
     Cell_handle* operator->() {
-      return this;
+      return static_cast<Cell_handle*>(this);
     }
 
     template <typename TDS>
@@ -217,8 +227,8 @@ namespace CGAL {
   {
   public:
     using Triangulation_data_structure = internal::Dummy_tds_3;
-    using  Vertex_handle = Triangulation_data_structure::Vertex_handle;
-    using Cell_handle =  Triangulation_data_structure::Cell_handle;
+    using Vertex_handle = Triangulation_data_structure::Vertex_handle;
+    using Cell_handle = Triangulation_data_structure::Cell_handle;
 
     template <typename TDS2>
     struct Rebind_TDS { using Other = Cell<TDS2>; };
@@ -229,12 +239,13 @@ namespace CGAL {
   template <typename TDS_3>
   struct Vertex{
 
+    using Triangulation_data_structure = TDS_3;
     using Cell_handle   = typename TDS_3::Cell_handle;
     using Cell_index    = typename TDS_3::Cell_index;
     using Vertex_index  = typename TDS_3::Vertex_index;
     using Vertex_handle = typename TDS_3::Vertex_handle;
 
-    struct Connectivity {
+    struct Storage {
       Point point;
       Cell_index icell;
     };
@@ -267,38 +278,46 @@ namespace CGAL {
       return index_;
     }
 
+    decltype(auto) storage() {
+      return tds_->vertex_storage()[index()];
+    }
+
+    decltype(auto) storage() const {
+      return tds_->vertex_storage()[index()];
+    }
+
     Cell_handle cell() const
     {
-      return Cell_handle(tds_, tds_->vertex_connectivity()[index()].icell);
+      return Cell_handle(tds_, storage().icell);
     }
 
     void set_cell(Cell_handle c)
     {
-      tds_->vertex_connectivity()[index()].icell = c.index();
+      storage().icell = c.index();
     }
 
     const Point& point() const
     {
-      return tds_->vertex_connectivity()[index()].point;
+      return storage().point;
     }
 
     void set_point(const Point& p)
     {
-      tds_->vertex_connectivity()[index()].point = p;
+      storage().point = p;
     }
 
-    bool is_valid(bool verbose = false) const
+    bool is_valid(bool  = false) const
     {
       assert(false); // This should be implemented
       return true;
     }
 
     const Vertex_handle* operator->() const {
-      return this;
+      return static_cast<const Vertex_handle*>(this);
     }
 
     Vertex_handle* operator->() {
-      return this;
+      return static_cast<Vertex_handle*>(this);
     }
 
     template <typename TDS>
@@ -335,21 +354,40 @@ namespace CGAL {
     struct Rebind_TDS { using Other = Vertex<TDS2>; };
   };
 
-#if 0
-  template <typename TDS_3, typename Vb = Vertex<TDS_3> >
-  class Vertex4Regular
-    : public Vb
+  template <typename Cb = Cell<>>
+  class Cell4Regular
+    : public Cb
   {
-    template < typename TDS2 >
-    struct Rebind_TDS {
-      using Vb2 = typename Vb::template Rebind_TDS<TDS2>::Other;
-      using Other = Vertex4Regular<TDS2,Vb2>;
+  public:
+    using Cb::Cb; // inherit constructors
+
+    using TDS = typename Cb::Triangulation_data_structure;
+    using Vertex_handle = typename TDS::Vertex_handle;
+    using Cell_handle = typename TDS::Cell_handle;
+
+    struct Storage : public Cb::Storage {
+      std::list<Point> hidden_points;
+      Vertex_handle my_other_vertex;
+      Cell_handle my_other_cell;
     };
 
+    template < typename TDS2 >
+    struct Rebind_TDS {
+      using Cb2 = typename Cb::template Rebind_TDS<TDS2>::Other;
+      using Other = Cell4Regular<Cb2>;
+    };
+
+    auto&& storage() {
+      return this->tds()->cell_storage()[this->index()];
+    }
+
+    auto&& storage() const { return this->tds()->cell_storage()[this->index()]; }
+
     void hide_point(const Point& p)
-    {}
+    {
+      storage().hidden_points.push_back(p);
+    }
   };
-#endif
 
   // AF : factorize as also in Surface_mesh and Point_set_3
   template<typename T>
@@ -559,19 +597,19 @@ namespace CGAL {
     using TDS_data = Cell_data;
 
 
-    using Vertex_connectivity = Property_map<Vertex_index, typename Vertex_handle::Connectivity>;
-    using Cell_connectivity = Property_map<Cell_index, typename Cell_handle::Connectivity>;
+    using Vertex_storage = Property_map<Vertex_index, typename Vertex_handle::Storage>;
+    using Cell_storage = Property_map<Cell_index, typename Cell_handle::Storage>;
 
 
 
-    Cell_connectivity& cell_connectivity() { return cell_connectivity_; }
-    const Cell_connectivity& cell_connectivity() const { return cell_connectivity_; }
+    Cell_storage& cell_storage() { return cell_storage_; }
+    const Cell_storage& cell_storage() const { return cell_storage_; }
 
-    Vertex_connectivity& vertex_connectivity() { return vertex_connectivity_; }
-    const Vertex_connectivity& vertex_connectivity() const { return vertex_connectivity_; }
+    Vertex_storage& vertex_storage() { return vertex_storage_; }
+    const Vertex_storage& vertex_storage() const { return vertex_storage_; }
 
-    TDS_data& tds_data() { return tds_data_; }
-    const TDS_data& tds_data() const { return tds_data_; }
+    // TDS_data& tds_data() { return tds_data_; }
+    // const TDS_data& tds_data() const { return tds_data_; }
 
     size_type num_vertices() const { return (size_type) vprops_.size(); }
     size_type num_cells() const { return (size_type) cprops_.size(); }
@@ -586,7 +624,7 @@ namespace CGAL {
       size_type inf = (std::numeric_limits<size_type>::max)();
       if(recycle_ && (vertices_freelist_ != inf)){
         size_type idx = vertices_freelist_;
-        vertices_freelist_ = (size_type)vertex_connectivity_[Vertex_index(vertices_freelist_)].icell;
+        vertices_freelist_ = (size_type)vertex_storage_[Vertex_index(vertices_freelist_)].icell;
         --removed_vertices_;
         vremoved_[Vertex_index(idx)] = false;
         vprops_.reset(Vertex_index(idx));
@@ -602,7 +640,7 @@ namespace CGAL {
       size_type inf = (std::numeric_limits<size_type>::max)();
       if(recycle_ && (cells_freelist_ != inf)){
         size_type idx = cells_freelist_;
-        cells_freelist_ = (size_type)cell_connectivity_[Cell_index(cells_freelist_)].ivertices[0];
+        cells_freelist_ = (size_type)cell_storage_[Cell_index(cells_freelist_)].ivertices[0];
         --removed_cells_;
         cremoved_[Cell_index(idx)] = false;
         cprops_.reset(Cell_index(idx));
@@ -639,14 +677,14 @@ namespace CGAL {
     void delete_vertex(Vertex_index v)
     {
       vremoved_[v] = true; ++removed_vertices_; garbage_ = true;
-      vertex_connectivity_[v].cell = Cell_index(vertices_freelist_);
+      vertex_storage_[v].cell = Cell_index(vertices_freelist_);
       vertices_freelist_ = (size_type)v;
     }
 
     void delete_cell(Cell_index c)
     {
       cremoved_[c] = true; ++removed_cells_; garbage_ = true;
-      cell_connectivity_[c].ivertices[0] = Vertex_index(cells_freelist_);
+      cell_storage_[c].ivertices[0] = Vertex_index(cells_freelist_);
       vertices_freelist_ = (size_type)c;
     }
 
@@ -687,7 +725,7 @@ namespace CGAL {
     struct Property_selector {};
 
     template<bool dummy>
-    struct Property_selector<typename Vertex_index, dummy> {
+    struct Property_selector<Vertex_index, dummy> {
       Self * m_;
       Property_selector(Self* m) : m_(m) {}
       Properties::Property_container<Self,
@@ -697,7 +735,7 @@ namespace CGAL {
     };
 
     template<bool dummy>
-    struct Property_selector<typename Cell_index, dummy> {
+    struct Property_selector<Cell_index, dummy> {
       Self * m_;
       Property_selector(Self* m) : m_(m) {}
       Properties::Property_container<Self,
@@ -717,7 +755,7 @@ namespace CGAL {
     add_property_map(std::string name=std::string(), const T t=T()) {
       if(name.empty()){
         std::ostringstream oss;
-        oss << "anonymous-property-" << anonymous_property_++;
+        oss << "anonymous-property-" << anonymous_property_nb++;
         name = std::string(oss.str());
       }
       return Property_selector<I>(this)().template add<T>(name, t);
@@ -780,17 +818,17 @@ namespace CGAL {
     TDS()
       : dimension_(-2)
     {
-      vertex_connectivity_  = add_property_map<Vertex_index, typename Vertex_handle::Connectivity>("v:connectivity").first;
-      cell_connectivity_    = add_property_map<Cell_index, typename Cell_handle::Connectivity>("c:connectivity").first;
-      cell_data_            = add_property_map<Cell_index, Cell_data>("c:data").first;
-      vremoved_             = add_property_map<Vertex_index, bool>("v:removed", false).first;
-      cremoved_             = add_property_map<Cell_index, bool>("c:removed", false).first;
+      vertex_storage_  = add_property_map<Vertex_index, typename Vertex_handle::Storage>("v:storage").first;
+      cell_storage_    = add_property_map<Cell_index, typename Cell_handle::Storage>("c:storage").first;
+      cell_data_       = add_property_map<Cell_index, Cell_data>("c:data").first;
+      vremoved_        = add_property_map<Vertex_index, bool>("v:removed", false).first;
+      cremoved_        = add_property_map<Cell_index, bool>("c:removed", false).first;
 
       removed_vertices_ = removed_cells_ = 0;
       vertices_freelist_ = cells_freelist_  = (std::numeric_limits<size_type>::max)();
       garbage_ = false;
       recycle_ = true;
-      anonymous_property_ = 0;
+      anonymous_property_nb = 0;
 
     }
 
@@ -1084,8 +1122,8 @@ namespace CGAL {
     Properties::Property_container<Self, Vertex_index> vprops_;
     Properties::Property_container<Self, Cell_index>   cprops_;
 
-    Vertex_connectivity vertex_connectivity_;
-    Cell_connectivity cell_connectivity_;
+    Vertex_storage vertex_storage_;
+    Cell_storage cell_storage_;
 
     Property_map<Cell_index, Cell_data>                cell_data_;
 
@@ -1101,7 +1139,7 @@ namespace CGAL {
     bool garbage_;
     bool recycle_;
 
-    size_type anonymous_property_;
+    size_type anonymous_property_nb;
 
     // in dimension i, number of vertices >= i+2
     // ( the boundary of a simplex in dimension i+1 has i+2 vertices )
@@ -1113,13 +1151,16 @@ namespace CGAL {
 
 
 int main() {
-  CGAL::TDS<> tds;
-  using Vertex_handle = CGAL::TDS<>::Vertex_handle;
-  using Vertex_iterator = CGAL::TDS<>::Vertex_iterator;
-  using Cell_handle = CGAL::TDS<>::Cell_handle;
-  using Cell_circulator = CGAL::TDS<>::Cell_circulator;
-  using Facet_circulator = CGAL::TDS<>::Facet_circulator;
-  using Edge = CGAL::TDS<>::Edge;
+  using Vb = CGAL::Vertex<>;
+  using Cb = CGAL::Cell4Regular<>;
+  using TDS = CGAL::TDS<Vb, Cb>;
+  TDS tds;
+  using Vertex_handle = TDS::Vertex_handle;
+  using Vertex_iterator = TDS::Vertex_iterator;
+  using Cell_handle = TDS::Cell_handle;
+  using Cell_circulator = TDS::Cell_circulator;
+  using Facet_circulator = TDS::Facet_circulator;
+  using Edge = TDS::Edge;
 
   Vertex_handle inf, v0, v1, v2, v3;
   inf = tds.insert_first_finite_cell(v0, v1, v2, v3);
@@ -1134,7 +1175,11 @@ int main() {
 
   for(auto  c : tds.cells()) {
     std::cout << c.index() << std::endl;
+    c->hide_point(Point{});
   }
+
+  inf->cell()->storage().my_other_vertex = v0;
+  inf->cell()->storage().my_other_cell = v1->cell();
 
   for(auto f : tds.facets()) {
     std::cout << f.first << " " << f.second << std::endl;
