@@ -14,6 +14,7 @@
 #include <cassert>
 #include <iostream>
 #include <fstream>
+#include <set>
 
 #include "_test_cls_tds_vertex.h"
 #include "_test_cls_tds_cell.h"
