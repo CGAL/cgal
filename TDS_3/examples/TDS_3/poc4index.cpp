@@ -186,11 +186,11 @@ namespace CGAL {
     }
 
     TDS_data& tds_data() {
-      return tds()->tds_data()[index()];
+      return tds()->cell_tds_data_pmap()[index()];
     }
 
     const TDS_data& tds_data() const {
-      return tds()->tds_data()[index()];
+      return tds()->cell_tds_data_pmap()[index()];
     }
 
     const Cell_handle* operator->() const {
@@ -608,8 +608,8 @@ namespace CGAL {
     Vertex_storage& vertex_storage() { return vertex_storage_; }
     const Vertex_storage& vertex_storage() const { return vertex_storage_; }
 
-    // TDS_data& tds_data() { return tds_data_; }
-    // const TDS_data& tds_data() const { return tds_data_; }
+    auto cell_tds_data_pmap() { return cell_data_; }
+    auto cell_tds_data_pmap() const { return cell_data_; }
 
     size_type num_vertices() const { return (size_type) vprops_.size(); }
     size_type num_cells() const { return (size_type) cprops_.size(); }
@@ -839,6 +839,33 @@ namespace CGAL {
       CGAL_assertion(c0 != c1);
       c0->set_neighbor(i0,c1);
       c1->set_neighbor(i1,c0);
+    }
+
+    void just_incident_cells_3(Vertex_handle v,
+                              std::vector<Cell_handle>& cells) const
+    {
+      CGAL_precondition(dimension() == 3);
+
+      Cell_handle d = v->cell();
+      cells.push_back(d);
+      d->tds_data().mark_in_conflict();
+      int head=0;
+      int tail=1;
+      do {
+        Cell_handle c = cells[head];
+
+        for (int i=0; i<4; ++i) {
+          if (c->vertex(i) == v)
+            continue;
+          Cell_handle next = c->neighbor(i);
+          if (! next->tds_data().is_clear())
+            continue;
+          cells.push_back(next);
+          ++tail;
+          next->tds_data().mark_in_conflict();
+        }
+        ++head;
+      } while(head != tail);
     }
 
     Vertex_handle insert_first_finite_cell(Vertex_handle &v0,
@@ -1179,6 +1206,10 @@ int main() {
 
   inf->cell()->storage().my_other_vertex = v0;
   inf->cell()->storage().my_other_cell = v1->cell();
+
+  std::vector<Cell_handle> incident_cells;
+  tds.just_incident_cells_3(inf, incident_cells);
+  assert(incident_cells.size() == 4);
 
   for(auto f : tds.facets()) {
     std::cout << f.first << " " << f.second << std::endl;
