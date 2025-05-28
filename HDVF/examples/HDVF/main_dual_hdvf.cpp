@@ -14,9 +14,9 @@
 #include "CGAL/HDVF/Cubical_chain_complex.hpp"
 #include "CGAL/HDVF/CubComplexTools.hpp"
 #include "CGAL/HDVF/hdvf_tools.hpp"
-#include "CGAL/HDVF/hdvf_duality.hpp"
+#include "CGAL/HDVF/Hdvf_duality.h"
 #include "CGAL/OSM/OSM.hpp"
-#include "CGAL/HDVF/SubSparseMatrix.hpp"
+#include "CGAL/HDVF/Sub_sparse_matrix.h"
 #include "CGAL/HDVF/hdvf_tools.hpp"
 #include "arguments.h"
 #include "CGAL/HDVF/Zp.hpp"
@@ -186,12 +186,12 @@ void main_code (const Options &options)
             // K
             {
                 hdvf.set_mask_K() ;
-                Simp_output_vtk<CoefficientType, OSM::Sparse_chain, OSM::SubSparseMatrix>(hdvf, L, options.outfile_root+"_complex_K") ;
+                Simp_output_vtk<CoefficientType, OSM::Sparse_chain, OSM::Sub_sparse_matrix>(hdvf, L, options.outfile_root+"_complex_K") ;
             }
             // L-K
             {
                 hdvf.set_mask_L_K() ;
-                Simp_output_vtk<CoefficientType, OSM::Sparse_chain, OSM::SubSparseMatrix>(hdvf, L, options.outfile_root+"_cocomplex_L_K") ;
+                Simp_output_vtk<CoefficientType, OSM::Sparse_chain, OSM::Sub_sparse_matrix>(hdvf, L, options.outfile_root+"_cocomplex_L_K") ;
             }
         }
         
@@ -254,12 +254,12 @@ void main_code (const Options &options)
             // K
             {
                 hdvf.set_mask_K() ;
-                Cub_output_vtk<CoefficientType, OSM::Sparse_chain, OSM::SubSparseMatrix>(hdvf, L, options.outfile_root+"_complex_K") ;
+                Cub_output_vtk<CoefficientType, OSM::Sparse_chain, OSM::Sub_sparse_matrix>(hdvf, L, options.outfile_root+"_complex_K") ;
             }
             // L-K
             {
                 hdvf.set_mask_L_K() ;
-                Cub_output_vtk<CoefficientType, OSM::Sparse_chain, OSM::SubSparseMatrix>(hdvf, L, options.outfile_root+"_cocomplex_L_K") ;
+                Cub_output_vtk<CoefficientType, OSM::Sparse_chain, OSM::Sub_sparse_matrix>(hdvf, L, options.outfile_root+"_cocomplex_L_K") ;
             }
         }
         

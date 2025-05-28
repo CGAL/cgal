@@ -147,7 +147,7 @@ public:
             {
                 const std::vector<int> khal(_CC.ind2khal(_CC._base2bool.at(q).at(i))) ;
                 const int j = L._bool2base.at(q).at(L.khal2ind(khal)) ;
-                K.set_BitOn(q,j) ;
+                K.set_bit_on(q,j) ;
             }
         }
         return std::pair<_ComplexType&, _SubCCType&>(L,K) ;

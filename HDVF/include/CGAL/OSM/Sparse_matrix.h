@@ -105,9 +105,9 @@ protected:
     
 public:
     /**
-     * \brief Create an empty new SparseMatrix object.
+     * \brief Default constructor (empty new `Sparse_matrix` object).
      *
-     * Default constructor, initialize an empty Matrix of type `ChainTypeFlag` with coefficients of type `CoefficientType`.
+     * Create an empty Matrix of type `ChainTypeFlag` with coefficients of type `CoefficientType`.
      * The default matrix size is 0x0.
      */
     Sparse_matrix() {
@@ -117,9 +117,9 @@ public:
     }
     
     /**
-     * \brief Create a new SparseMatrix object with given rows/columns sizes.
+     * \brief Constructor with given rows/columns sizes.
      *
-     * Constructor with sizes, initialize an empty Matrix of type `ChainTypeFlag` with coefficients of type `CoefficientType` and a given size along rows/columns.
+     * Create a new empty Sparse_matrix object of type `ChainTypeFlag` with coefficients of type `CoefficientType` and a given size along rows/columns.
      *
      * \param[in] rowCount The number of rows to preallocate.
      * \param[in] columnCount The number of columns to preallocate.
@@ -138,9 +138,9 @@ public:
     }
     
     /**
-     * \brief Create a new SparseMatrix from another SparseMatrix object (with possibly a different `ChainTypeFlag`).
+     * \brief Copy constructor.
      *
-     * Copy constructor, initialize a SparseMatrix of same sizes, containing the same coefficients (but not necessarly of the same `ChainTypeFlag`).
+     * Create a new SparseMatrix from another SparseMatrix object (with possibly a different `ChainTypeFlag`). Initialize a SparseMatrix of same sizes, containing the same coefficients (but not necessarly of the same `ChainTypeFlag`).
      * If types are different, the constructor performs conversion.
      *
      * \param[in] otherToCopy The matrix copied.
@@ -195,7 +195,7 @@ public:
      *
      * \pre The matrices must have the same type.
      *
-     * \param[in] _otherToCopy The matrix we want to copy.
+     * \param[in] otherToCopy The matrix we want to copy.
      *
      * \return The reference to the modified matrix.
      */

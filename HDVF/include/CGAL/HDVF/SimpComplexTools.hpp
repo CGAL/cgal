@@ -131,7 +131,7 @@ public:
             {
                 const std::set<int>& simplex(_K._ind2simp.at(q).at(i).getVertices()) ;
                 const int id(L._simp2ind.at(q)[simplex]) ;
-                K.set_BitOn(q, id) ;
+                K.set_bit_on(q, id) ;
             }
         }
         TripleRes t = {L,K,tetL.nodes} ;

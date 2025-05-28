@@ -18,7 +18,7 @@
 #include <memory>
 #include "CGAL/OSM/OSM.hpp"
 #include "CGAL/OSM/Bitboard.h"
-#include "CGAL/HDVF/SubSparseMatrix.hpp"
+#include "CGAL/HDVF/Sub_sparse_matrix.h"
 
 namespace CGAL {
 namespace HDVF {
@@ -224,13 +224,13 @@ public:
     }
     
     /** \brief Get a bit of the mask (bit i in dimension q). */
-    inline bool get_Bit(int q, int i) const
+    inline bool get_bit(int q, int i) const
     {
         return _sub.at(q).isOn(i) ;
     }
     
     /** \brief Set a bit to 1 (bit i in dimension q). */
-    inline void set_BitOn(int q, int i)
+    inline void set_bit_on(int q, int i)
     {
         if (!_sub.at(q).isOn(i))
         {
@@ -240,7 +240,7 @@ public:
     }
     
     /** \brief Set a bit to 0 (bit i in dimension q). */
-    inline void set_BitOff(int q, int i)
+    inline void set_bit_off(int q, int i)
     {
         if (_sub.at(q).isOn(i))
         {
@@ -253,13 +253,13 @@ public:
      *
      * Returns a constant reference to the vector of bitboards in each dimension.
      */
-    inline const std::vector<OSM::Bitboard>& get_BitBoard() const
+    inline const std::vector<OSM::Bitboard>& get_bitboard() const
     {
         return _sub ;
     }
     
     /** \brief Getter for the bitboard of the sub chain complex in dimension q. */
-    inline const OSM::Bitboard& get_BitBoard(int q) const
+    inline const OSM::Bitboard& get_bitboard(int q) const
     {
         return _sub.at(q) ;
     }
@@ -273,7 +273,7 @@ public:
      * \param[in] matrices A vector of Sub_sparse_matrix (in each dimension).
      */
     template <typename CT, int CTF>
-    void screen_matrices(std::vector<OSM::SubSparseMatrix<CT, CTF> >& matrices)
+    void screen_matrices(std::vector<OSM::Sub_sparse_matrix<CT, CTF> >& matrices)
     {
         for (int q=0; q<=_K.dim(); ++q)
         {

@@ -18,7 +18,7 @@
 #include <random>
 #include <functional>
 #include "CGAL/OSM/OSM.hpp"
-#include "CGAL/HDVF/SubSparseMatrix.hpp"
+#include "CGAL/HDVF/Sub_sparse_matrix.h"
 #include "CGAL/HDVF/Hdvf_core.h"
 #include "CGAL/HDVF/Filtration_lower_star.h"
 
@@ -124,7 +124,7 @@ ostream& operator<< (ostream& out, const PerHoleT<DegType>& hole)
  */
 
 template<typename CoefficientType, typename ComplexType, typename DegType, typename FiltrationType >
-class Hdvf_persistence : public Hdvf_core<CoefficientType,ComplexType, OSM::Sparse_chain, OSM::SubSparseMatrix>
+class Hdvf_persistence : public Hdvf_core<CoefficientType,ComplexType, OSM::Sparse_chain, OSM::Sub_sparse_matrix>
 {
 public:
     // Matrices types
@@ -141,17 +141,17 @@ public:
     /*!
      Type of column-major sparse matrices
      */
-    typedef OSM::SubSparseMatrix<CoefficientType, OSM::COLUMN> CMatrix;
+    typedef OSM::Sub_sparse_matrix<CoefficientType, OSM::COLUMN> CMatrix;
     
     /*!
      Type of row-major sparse matrices
      */
-    typedef OSM::SubSparseMatrix<CoefficientType, OSM::ROW> RMatrix;
+    typedef OSM::Sub_sparse_matrix<CoefficientType, OSM::ROW> RMatrix;
     
     /*! Type of parent HDVF class (Hdvf_core with appropriate template parameters)
      * The SparseMatrix model is set to Sub_sparse_matrix to activate (co)homology computation over a subcomplex.
      */
-    typedef Hdvf_core<CoefficientType, ComplexType, OSM::Sparse_chain, OSM::SubSparseMatrix> HDVFParent ;
+    typedef Hdvf_core<CoefficientType, ComplexType, OSM::Sparse_chain, OSM::Sub_sparse_matrix> HDVFParent ;
     
     /*! Type of filtrations used to compute persistence.
      */
@@ -662,7 +662,7 @@ private:
 
 
 template<typename CoefficientType, typename ComplexType, typename DegType, typename FiltrationType>
-Hdvf_persistence<CoefficientType, ComplexType, DegType, FiltrationType>::Hdvf_persistence(const ComplexType& K, const FiltrationType& f, int hdvf_opt, bool with_export) : Hdvf_core<CoefficientType,ComplexType, OSM::Sparse_chain, OSM::SubSparseMatrix>(K,hdvf_opt), _f(f), _with_export(with_export), _t(-1)
+Hdvf_persistence<CoefficientType, ComplexType, DegType, FiltrationType>::Hdvf_persistence(const ComplexType& K, const FiltrationType& f, int hdvf_opt, bool with_export) : Hdvf_core<CoefficientType,ComplexType, OSM::Sparse_chain, OSM::Sub_sparse_matrix>(K,hdvf_opt), _f(f), _with_export(with_export), _t(-1)
 {
     // Initialisation of _t_dim, _K_to_per and _per_to_K
     _t_dim.resize(this->_K.dim()+1, 0) ;
@@ -779,7 +779,7 @@ PairCell Hdvf_persistence<CoefficientType, ComplexType, DegType, FiltrationType>
     const int q_current(_f._filtration.at(_t).second) ; // Get the dimension of the new current cell
     ++_t_dim.at(q_current) ; // Update time in the dimension of the current cell
     _masks.at(q_current).setOn(_t_dim.at(q_current)) ; // Update mask accordingly
-    this->_DD_col.at(q_current).set_bitOn(_t_dim.at(q_current)) ; // Update _DD_col mask
+    this->_DD_col.at(q_current).set_bit_on(_t_dim.at(q_current)) ; // Update _DD_col mask
     
     // Search for pairing
 //    bool found ;
