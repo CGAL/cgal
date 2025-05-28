@@ -24,13 +24,12 @@
 #include <unordered_map>
 #include <cstdlib>
 #include <random>
+#include <type_traits>
 
 #include <CGAL/Basic_viewer.h>
 #include <CGAL/Graphics_scene.h>
 #include <CGAL/Graphics_scene_options.h>
 #include <CGAL/Random.h>
-
-#include <type_traits>
 #include <CGAL/Arrangement_on_surface_2.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_geodesic_arc_on_sphere_traits_2.h>
@@ -52,6 +51,8 @@ public:
   using Point = typename Arr::Point_2;
   using X_monotone_curve = typename Arr::X_monotone_curve_2;
 
+  /*! Construct
+   */
   Draw_arr_tool(Arr& a_aos, CGAL::Graphics_scene& a_gs, const GSOptions& a_gso) :
     m_aos(a_aos), m_gs(a_gs),
     m_gso(a_gso)
@@ -216,18 +217,22 @@ public:
     }
   }
 
-  /// Draw an exact curve.
+  /*! Draw an exact curve.
+   */
   template <typename XMonotoneCurve>
-  void draw_exact_curve(const XMonotoneCurve& curve) {
+  void draw_exact_curve(const XMonotoneCurve& curve,
+                        bool colored, const CGAL::IO::Color& c) {
     const auto* traits = this->m_aos.geometry_traits();
     auto ctr_min = traits->construct_min_vertex_2_object();
     auto ctr_max = traits->construct_max_vertex_2_object();
     m_gs.add_segment(ctr_min(curve), ctr_max(curve));
+    if (colored) m_gs.add_segment(ctr_min(curve), ctr_max(curve), c);
+    else m_gs.add_segment(ctr_min(curve), ctr_max(curve));
   }
 
   /// Draw an exact region.
   void draw_exact_region(Halfedge_const_handle curr)
-  { draw_exact_curve(curr->curve()); }
+  { draw_exact_curve(curr->curve(), false, CGAL::IO::Color()); }
 
   /// Add all faces.
   template <typename Traits>
@@ -299,7 +304,8 @@ public:
         draw_point_impl1(vh->point(), *traits, 0, true, m_gso.vertex_color(m_aos, vh));
       }
       else
-        draw_point_impl1(vh->point(), *traits, 0, false, CGAL::IO::Color()); // color unused
+        // color unused
+        draw_point_impl1(vh->point(), *traits, 0, false, CGAL::IO::Color());
     }
   }
 
@@ -361,21 +367,17 @@ public:
 
     if (m_aos.is_empty()) return;
 
-    if(m_gso.are_faces_enabled())
-    { add_faces(*(this->m_aos.geometry_traits())); }
+    if (m_gso.are_faces_enabled()) add_faces(*(this->m_aos.geometry_traits()));
 
     // Add edges that do not separate faces.
-    if(m_gso.are_edges_enabled())
-    {
-      for (auto it = m_aos.edges_begin(); it != m_aos.edges_end(); ++it)
-      { if (it->face()==it->twin()->face())
-        {
-          if(m_gso.draw_edge(m_aos, it))
-          {
-            if(m_gso.colored_edge(m_aos, it))
-            { draw_curve(it->curve(), true, m_gso.edge_color(m_aos, it)); }
+    if (m_gso.are_edges_enabled()) {
+      for (auto it = m_aos.edges_begin(); it != m_aos.edges_end(); ++it) {
+        if (it->face()==it->twin()->face()) {
+          if (m_gso.draw_edge(m_aos, it)) {
+            if (m_gso.colored_edge(m_aos, it))
+              draw_curve(it->curve(), true, m_gso.edge_color(m_aos, it));
             else
-            { draw_curve(it->curve(), false, CGAL::IO::Color()); }
+              draw_curve(it->curve(), false, CGAL::IO::Color());
           }
         }
       }
@@ -399,19 +401,16 @@ public:
   template <typename XMonotoneCurve, typename Approximate>
   void draw_approximate_curve(const XMonotoneCurve& curve,
                               const Approximate& approx,
-                               bool colored, const CGAL::IO::Color& c) {
+                              bool colored, const CGAL::IO::Color& c) {
     std::vector<typename Gt::Approximate_point_2> polyline;
     double error(0.01); // TODO? (this->pixel_ratio());
     approx(curve, error, std::back_inserter(polyline));
     if (polyline.empty()) return;
     auto it = polyline.begin();
     auto prev = it++;
-    for (; it != polyline.end(); prev = it++)
-    {
-      if(colored)
-      { m_gs.add_segment(*prev, *it, c); }
-      else
-      { m_gs.add_segment(*prev, *it); }
+    for (; it != polyline.end(); prev = ++it) {
+      if (colored) m_gs.add_segment(*prev, *it, c);
+      else m_gs.add_segment(*prev, *it);
     }
   }
 
@@ -428,10 +427,13 @@ public:
                                              bool{}), void())
   { draw_approximate_curve(xcv, approx); }
 
+  /*! Draw a curve, where the traits has approximate_2_object.
+   */
   template <typename T>
   void draw_curve_impl1(const X_monotone_curve& xcv, T const&, long)
   { draw_exact_curve(xcv); }
 
+  ///
   template <typename T>
   auto draw_curve_impl1(const X_monotone_curve& xcv, T const& traits, int) ->
     decltype(traits.approximate_2_object(), void()) {
@@ -445,6 +447,8 @@ public:
   { draw_approximate_curve(xcv, traits.approximate_2_object(), colored, c); }
 #endif
 
+  /*! Draw a geodesic curve
+   */
   template <typename Kernel_, int AtanX, int AtanY>
   void draw_curve_impl1
   (const X_monotone_curve& xcv,
