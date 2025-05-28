@@ -54,7 +54,7 @@ int main()
   {
     std::cerr << "Cell ( ";
     for(int i = 0; i < 4; ++i)
-      std::cerr << ct->vertex(i)->point() << "  ";
+      std::cerr << dt.tds().vertex(ct, i)->point() << "  ";
     std::cerr << " )\n";
 
     if( dt.is_infinite(ct) )
@@ -76,7 +76,7 @@ int main()
   {
     std::cerr << "Cell ( ";
     for (int i = 0; i < 4; ++i)
-      std::cerr << ch->vertex(i)->point() << "  ";
+      std::cerr << dt.tds().vertex(ch,i)->point() << "  ";
     std::cerr << " )\n";
 
     if (dt.is_infinite(ch))

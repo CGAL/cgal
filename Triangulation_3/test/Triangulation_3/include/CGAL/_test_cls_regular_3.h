@@ -354,7 +354,7 @@ _test_cls_regular_3(const Triangulation &)
   Vertex_handle v8 = T3.insert(wpp8);
   Point query(0.5,0.5,0.5);
   assert(T3.nearest_power_vertex(query) == v8);
-  assert(T3.nearest_power_vertex_in_cell(query ,v8->cell()) == v8);
+  assert(T3.nearest_power_vertex_in_cell(query ,T3.tds().cell(v8)) == v8);
 
   Vertex_handle v9 = T3.insert(wpp9);
   assert(v9 == Vertex_handle()); // hidden point
@@ -365,7 +365,7 @@ _test_cls_regular_3(const Triangulation &)
   for( ; fcit != T3.finite_cells_end(); ++fcit) {
     Point cc = T3.dual(fcit);
     Vertex_handle ncc = T3.nearest_power_vertex(cc);
-    assert(fcit->has_vertex(ncc));
+    assert(T3.tds().has_vertex(fcit, ncc));
   }
 
   // test Gabriel
