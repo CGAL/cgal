@@ -38,6 +38,25 @@ namespace CGAL {
 
 namespace draw_function_for_arrangement_2 {
 
+// ============================
+// Detection idiom using void_t
+// ============================
+
+// Primary template: detection fails by default
+template <typename, typename = std::void_t<>>
+struct has_approximate_2_object : std::false_type {};
+
+// Specialization: detection succeeds if decltype(T::approximate_2_object()) is valid
+template <typename T>
+struct has_approximate_2_object<T, std::void_t<decltype(std::declval<T>().approximate_2_object())>> :
+    std::true_type
+{};
+
+// Convenience variable template (C++17)
+template <typename T>
+inline constexpr bool has_approximate_2_object_v = has_approximate_2_object<T>::value;
+
+///
 template<typename Arr, typename GSOptions>
 class Draw_arr_tool {
 public:
@@ -102,7 +121,7 @@ public:
      *
      * For now we use C++14 features.
      */
-    if(m_gso.colored_face(m_aos, circ->face()))
+    if (m_gso.colored_face(m_aos, circ->face()))
       m_gs.face_begin(m_gso.face_color(m_aos, circ->face()));
     else m_gs.face_begin();
 
@@ -113,7 +132,7 @@ public:
     do {
       // Skip halfedges that are "antenas":
       while (curr->face() == curr->twin()->face()) curr = curr->twin()->next();
-      draw_region_impl1(curr, *traits, 0);
+      draw_region_impl1(*traits, curr);
       curr = curr->next();
     } while (curr != ext);
 
@@ -131,32 +150,31 @@ public:
     decltype(approx.template operator()<I>(X_monotone_curve{}, double{}, I{},
                                            bool{}), void())
   { draw_approximate_region(curr, approx); }
-
-  template <typename T>
-  void draw_region_impl1(Halfedge_const_handle curr, T const&, long)
-  { draw_exact_region(curr); }
-
-  template <typename T>
-  auto draw_region_impl1(Halfedge_const_handle curr, T const& traits, int) ->
-    decltype(traits.approximate_2_object(), void()) {
-    using Approximate = typename Gt::Approximate_2;
-    draw_region_impl2<Approximate, int>(curr, traits.approximate_2_object(), 0);
-  }
-#else
-  template <typename T>
-  void draw_region_impl1(Halfedge_const_handle curr, T const& traits, int)
-  { draw_approximate_region(curr, traits.approximate_2_object()); }
 #endif
 
+  /*! Draw a region, where the traits does not has approximate_2_object.
+   */
+  template <typename T, std::enable_if_t<! has_approximate_2_object_v<T>, int> = 0>
+  void draw_region_impl1(T const& /* traits */, Halfedge_const_handle curr)
+  { draw_exact_region(curr); }
+
+  ///
+  template <typename T, std::enable_if_t<has_approximate_2_object_v<T>, int> = 0>
+  auto draw_region_impl1(T const& traits, Halfedge_const_handle curr) {
+    using Approximate = typename Gt::Approximate_2;
+    // draw_region_impl2<Approximate, int>(xcv, traits.approximate_2_object(), 0);
+    draw_approximate_region(curr, traits.approximate_2_object());
+  }
+
+  /*! Draw a geodesic region
+   */
   template <typename Kernel_, int AtanX, int AtanY>
   void draw_region_impl1
-  (Halfedge_const_handle curr,
-   Arr_geodesic_arc_on_sphere_traits_2<Kernel_, AtanX, AtanY> const& traits,
-   int)
+  (Arr_geodesic_arc_on_sphere_traits_2<Kernel_, AtanX, AtanY> const& traits,
+   Halfedge_const_handle curr)
   {
     if (! m_gso.draw_edge(m_aos, curr)) return;
 
-    // std::cout << "draw_region_impl1()\n";
     auto approx = traits.approximate_2_object();
     using Kernel = Kernel_;
     using Traits = Arr_geodesic_arc_on_sphere_traits_2<Kernel, AtanX, AtanY>;
@@ -183,7 +201,7 @@ public:
       Approx_point_3 next(x/l, y/l, z/l);
 
       if (m_gso.colored_edge(m_aos, curr))
-       m_gs.add_segment(prev, next, m_gso.edge_color(m_aos, curr));
+        m_gs.add_segment(prev, next, m_gso.edge_color(m_aos, curr));
       else m_gs.add_segment(prev, next);
 
       prev = next;
@@ -207,14 +225,7 @@ public:
     if (polyline.empty()) return;
     auto it = polyline.begin();
     auto prev = it++;
-    for (; it != polyline.end(); prev = it++) {
-      if (m_gso.draw_edge(m_aos, curr)) {
-        if (m_gso.colored_edge(m_aos, curr))
-          m_gs.add_segment(*prev, *it, m_gso.edge_color(m_aos, curr));
-        else m_gs.add_segment(*prev, *it);
-      }
-      m_gs.add_point_in_face(*prev);
-    }
+    for (; it != polyline.end(); prev = it++) m_gs.add_point_in_face(*prev);
   }
 
   /*! Draw an exact curve.
@@ -230,7 +241,9 @@ public:
     else m_gs.add_segment(ctr_min(curve), ctr_max(curve));
   }
 
-  /// Draw an exact region.
+  /*! Draw a region in an exact manner.
+   *  This fallback simply draws the curve in an exact manner (and even this is not guaranteed).
+   */
   void draw_exact_region(Halfedge_const_handle curr)
   { draw_exact_curve(curr->curve(), false, CGAL::IO::Color()); }
 
@@ -257,28 +270,47 @@ public:
   { m_gs.add_point(approx(p)); }
 
   template <typename T>
-  void draw_point_impl1(const Point& p, T const&, long) { m_gs.add_point(p); }
-
-  template <typename T>
-  auto draw_point_impl1(const Point& p, T const& traits, int) ->
-    decltype(traits.approximate_2_object(), void()) {
-    using Approximate = typename Gt::Approximate_2;
-    draw_point_impl2<Approximate>(p, traits.approximate_2_object(), true);
-  }
-#else
-  template <typename T>
-  void draw_point_impl1(const Point& p, T const& traits, int,
-                        bool colored, const CGAL::IO::Color& color) {
-    if (colored) m_gs.add_point(traits.approximate_2_object()(p), color);
-    else m_gs.add_point(traits.approximate_2_object()(p));
-  }
+  void draw_point_impl1(T const&, const Point& p, long) { m_gs.add_point(p); }
 #endif
 
+  /*! Draw a point using approximate coordinates.
+   */
+  template <typename Approximate>
+  void draw_approximate_point(const Point& p, const Approximate& approx,
+                              bool colored, const CGAL::IO::Color& color) {
+    if (colored) m_gs.add_point(approx(p), color);
+    else m_gs.add_point(approx(p));
+  }
+
+  ///
+  void draw_exact_point(const Point& p, bool colored, const CGAL::IO::Color& color) {
+    if (colored) m_gs.add_point(p, color);
+    else m_gs.add_point(p);
+  }
+
+  /*! Draw a point, where the traits does not has approximate_2_object.
+   */
+  template <typename T, std::enable_if_t<! has_approximate_2_object_v<T>, int> = 0>
+  void draw_point_impl1(T const& /* traits */, const Point& p,
+                        bool colored, const CGAL::IO::Color& c)
+  { draw_exact_point(p, colored, c); }
+
+  /*! Draw a point, where the traits does have approximate_2_object.
+   */
+  template <typename T, std::enable_if_t<has_approximate_2_object_v<T>, int> = 0>
+  auto draw_point_impl1(T const& traits, const Point& p,
+                        bool colored, const CGAL::IO::Color& c) {
+    using Approximate = typename Gt::Approximate_2;
+    // draw_curve_impl2<Approximate, int>(p, traits.approximate_2_object(), 0);
+    draw_approximate_point(p, traits.approximate_2_object(), colored, c);
+  }
+
+  /*! Draw a geodesic point.
+   */
   template <typename Kernel_, int AtanX, int AtanY>
   void draw_point_impl1
-  (const Point& p,
-   Arr_geodesic_arc_on_sphere_traits_2<Kernel_, AtanX, AtanY> const& traits,
-   int,
+  (Arr_geodesic_arc_on_sphere_traits_2<Kernel_, AtanX, AtanY> const& traits,
+   const Point& p,
    bool colored,
    const CGAL::IO::Color& color)
   {
@@ -297,16 +329,9 @@ public:
   }
 
   /// Draw a point.
-  void draw_point(Vertex_const_handle vh) {
+  void draw_point(const Point& p, bool colored, const CGAL::IO::Color& c) {
     const auto* traits = m_aos.geometry_traits();
-    if (m_gso.draw_vertex(m_aos, vh)) {
-      if (m_gso.colored_vertex(m_aos, vh)) {
-        draw_point_impl1(vh->point(), *traits, 0, true, m_gso.vertex_color(m_aos, vh));
-      }
-      else
-        // color unused
-        draw_point_impl1(vh->point(), *traits, 0, false, CGAL::IO::Color());
-    }
+    draw_point_impl1(*traits, p, colored, c);
   }
 
   ///
@@ -320,8 +345,7 @@ public:
    * along the CCB, such that there is no other halfedge underneath.
    */
   template <typename Traits>
-  Halfedge_const_handle find_smallest(Ccb_halfedge_const_circulator circ,
-                                      const Traits&) {
+  Halfedge_const_handle find_smallest(Ccb_halfedge_const_circulator circ, const Traits&) {
     // std::cout << "find_smallest()\n";
     const auto* traits = this->m_aos.geometry_traits();
     auto cmp_xy = traits->compare_xy_2_object();
@@ -371,13 +395,13 @@ public:
 
     // Add edges that do not separate faces.
     if (m_gso.are_edges_enabled()) {
+      std::cout << "Edges not enabled\n";
       for (auto it = m_aos.edges_begin(); it != m_aos.edges_end(); ++it) {
-        if (it->face()==it->twin()->face()) {
+        if (it->face() == it->twin()->face()) {
           if (m_gso.draw_edge(m_aos, it)) {
             if (m_gso.colored_edge(m_aos, it))
               draw_curve(it->curve(), true, m_gso.edge_color(m_aos, it));
-            else
-              draw_curve(it->curve(), false, CGAL::IO::Color());
+            else draw_curve(it->curve(), false, CGAL::IO::Color());
           }
         }
       }
@@ -385,8 +409,11 @@ public:
 
     // Add all points
     if (m_gso.are_vertices_enabled()) {
-      for (auto it = m_aos.vertices_begin(); it != m_aos.vertices_end(); ++it)
-        draw_point(it);
+      for (auto it = m_aos.vertices_begin(); it != m_aos.vertices_end(); ++it) {
+        if (m_gso.colored_vertex(m_aos, it))
+          draw_point(it->point(), true, m_gso.vertex_color(m_aos, it));
+        else draw_point(it->point(), false, CGAL::IO::Color());
+      }
     }
 
     m_visited.clear();
@@ -402,13 +429,14 @@ public:
   void draw_approximate_curve(const XMonotoneCurve& curve,
                               const Approximate& approx,
                               bool colored, const CGAL::IO::Color& c) {
+    // std::cout << "draw_approximate_curve\n";
     std::vector<typename Gt::Approximate_point_2> polyline;
     double error(0.01); // TODO? (this->pixel_ratio());
     approx(curve, error, std::back_inserter(polyline));
     if (polyline.empty()) return;
     auto it = polyline.begin();
     auto prev = it++;
-    for (; it != polyline.end(); prev = ++it) {
+    for (; it != polyline.end(); prev = it++) {
       if (colored) m_gs.add_segment(*prev, *it, c);
       else m_gs.add_segment(*prev, *it);
     }
@@ -416,46 +444,42 @@ public:
 
   /*! Compile time dispatching
    */
-#if 0
-  template <typename T, typename I = void>
-  void draw_curve_impl2(const X_monotone_curve& xcv, T const&, long)
-  { draw_exact_curve(xcv); }
+  // template <typename T, typename I = void>
+  // void draw_curve_impl2(const X_monotone_curve& xcv, T const&, long)
+  // { draw_exact_curve(xcv); }
 
-  template <typename T, typename I>
-  auto draw_curve_impl2(const X_monotone_curve& xcv, T const& approx, int) ->
-    decltype(approx.template operator()<I>(X_monotone_curve{}, double{}, I{},
-                                             bool{}), void())
-  { draw_approximate_curve(xcv, approx); }
+  // template <typename T, typename I>
+  // auto draw_curve_impl2(const X_monotone_curve& xcv, T const& approx, int) ->
+  //   decltype(approx.template operator()<I>(X_monotone_curve{}, double{}, I{},
+  //                                            bool{}), void())
+  // { draw_approximate_curve(xcv, approx); }
 
-  /*! Draw a curve, where the traits has approximate_2_object.
+  /*! Draw a curve, where the traits does not has approximate_2_object.
    */
-  template <typename T>
-  void draw_curve_impl1(const X_monotone_curve& xcv, T const&, long)
-  { draw_exact_curve(xcv); }
-
-  ///
-  template <typename T>
-  auto draw_curve_impl1(const X_monotone_curve& xcv, T const& traits, int) ->
-    decltype(traits.approximate_2_object(), void()) {
-    using Approximate = typename Gt::Approximate_2;
-    draw_curve_impl2<Approximate, int>(xcv, traits.approximate_2_object(), 0);
-  }
-#else
-  template <typename T>
-  void draw_curve_impl1(const X_monotone_curve& xcv, T const& traits, int,
+  template <typename T, std::enable_if_t<! has_approximate_2_object_v<T>, int> = 0>
+  void draw_curve_impl1(T const& /* traits */, const X_monotone_curve& xcv,
                         bool colored, const CGAL::IO::Color& c)
-  { draw_approximate_curve(xcv, traits.approximate_2_object(), colored, c); }
-#endif
+  { draw_exact_curve(xcv, colored, c); }
+
+  /*! Draw a curve, where the traits does have approximate_2_object.
+   */
+  template <typename T, std::enable_if_t<has_approximate_2_object_v<T>, int> = 0>
+  auto draw_curve_impl1(T const& traits, const X_monotone_curve& xcv,
+                        bool colored, const CGAL::IO::Color& c) {
+    using Approximate = typename Gt::Approximate_2;
+    // draw_curve_impl2<Approximate, int>(xcv, traits.approximate_2_object(), 0);
+    draw_approximate_curve(xcv, traits.approximate_2_object(), colored, c);
+  }
 
   /*! Draw a geodesic curve
    */
   template <typename Kernel_, int AtanX, int AtanY>
   void draw_curve_impl1
-  (const X_monotone_curve& xcv,
-   Arr_geodesic_arc_on_sphere_traits_2<Kernel_, AtanX, AtanY> const& traits,
-   int,
+  (Arr_geodesic_arc_on_sphere_traits_2<Kernel_, AtanX, AtanY> const& traits,
+   const X_monotone_curve& xcv,
    bool colored, const CGAL::IO::Color& c)
   {
+    // std::cout << "draw_curve (geodesic)\n";
     auto approx = traits.approximate_2_object();
     using Kernel = Kernel_;
     using Traits = Arr_geodesic_arc_on_sphere_traits_2<Kernel, AtanX, AtanY>;
@@ -511,7 +535,7 @@ public:
     draw_exact_curve(curve);
 #else
     const auto* traits = this->m_aos.geometry_traits();
-    draw_curve_impl1(curve, *traits, 0, colored, c);
+    draw_curve_impl1(*traits, curve, colored, c);
 #endif
   }
 
@@ -568,7 +592,7 @@ void draw(const CGAL_ARR_TYPE& aos, const GSOptions& gso,
 
 }
 
-///
+/// Draw an arrangement on surface.
 template <typename GeometryTraits_2, typename TopologyTraits>
 void draw(const CGAL_ARR_TYPE& aos,
           const char* title = "2D Arrangement on Surface Basic Viewer") {
