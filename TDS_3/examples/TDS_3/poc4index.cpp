@@ -1,18 +1,22 @@
-#include <vector>
-#include <iostream>
-#include <array>
-#include <list>
-
 #include <CGAL/TDS_3/internal/Dummy_tds_3.h>
-#include <CGAL/TDS_3/internal/Triangulation_ds_iterators_3.h>
 #include <CGAL/TDS_3/internal/Triangulation_ds_circulators_3.h>
+#include <CGAL/TDS_3/internal/Triangulation_ds_iterators_3.h>
 #include <CGAL/Triangulation_utils_3.h>
 
 #include <CGAL/assertions.h>
-#include <CGAL/utility.h>
-#include <CGAL/property_map.h>
 #include <CGAL/Iterator_range.h>
+#include <CGAL/property_map.h>
 #include <CGAL/Surface_mesh/Surface_mesh.h>
+#include <CGAL/utility.h>
+
+#include <boost/stl_interfaces/iterator_interface.hpp>
+
+#include <array>
+#include <iostream>
+#include <list>
+#include <type_traits>
+#include <vector>
+
 
 using Point =  int;
 
@@ -35,6 +39,7 @@ namespace CGAL {
     using Cell_handle   = typename TDS_3::Cell_handle;
     using Vertex_index  = typename TDS_3::Vertex_index;
     using Cell_index    = typename TDS_3::Cell_index;
+    using Index         = Cell_index;
     using TDS_data      = typename TDS_3::Cell_data;
 
     struct Storage {
@@ -193,13 +198,6 @@ namespace CGAL {
       return tds()->cell_tds_data_pmap()[index()];
     }
 
-    const Cell_handle* operator->() const {
-      return static_cast<const Cell_handle*>(this);
-    }
-    Cell_handle* operator->() {
-      return static_cast<Cell_handle*>(this);
-    }
-
     template <typename TDS>
     struct Rebind_TDS {
       using Other = Cell<TDS>;
@@ -243,6 +241,7 @@ namespace CGAL {
     using Cell_handle   = typename TDS_3::Cell_handle;
     using Cell_index    = typename TDS_3::Cell_index;
     using Vertex_index  = typename TDS_3::Vertex_index;
+    using Index         = Vertex_index;
     using Vertex_handle = typename TDS_3::Vertex_handle;
 
     struct Storage {
@@ -312,14 +311,6 @@ namespace CGAL {
       return true;
     }
 
-    const Vertex_handle* operator->() const {
-      return static_cast<const Vertex_handle*>(this);
-    }
-
-    Vertex_handle* operator->() {
-      return static_cast<Vertex_handle*>(this);
-    }
-
     template <typename TDS>
     struct Rebind_TDS {
       using Other = Vertex<TDS>;
@@ -352,41 +343,6 @@ namespace CGAL {
 
     template <typename TDS2>
     struct Rebind_TDS { using Other = Vertex<TDS2>; };
-  };
-
-  template <typename Cb = Cell<>>
-  class Cell4Regular
-    : public Cb
-  {
-  public:
-    using Cb::Cb; // inherit constructors
-
-    using TDS = typename Cb::Triangulation_data_structure;
-    using Vertex_handle = typename TDS::Vertex_handle;
-    using Cell_handle = typename TDS::Cell_handle;
-
-    struct Storage : public Cb::Storage {
-      std::list<Point> hidden_points;
-      Vertex_handle my_other_vertex;
-      Cell_handle my_other_cell;
-    };
-
-    template < typename TDS2 >
-    struct Rebind_TDS {
-      using Cb2 = typename Cb::template Rebind_TDS<TDS2>::Other;
-      using Other = Cell4Regular<Cb2>;
-    };
-
-    auto&& storage() {
-      return this->tds()->cell_storage()[this->index()];
-    }
-
-    auto&& storage() const { return this->tds()->cell_storage()[this->index()]; }
-
-    void hide_point(const Point& p)
-    {
-      storage().hidden_points.push_back(p);
-    }
   };
 
   // AF : factorize as also in Surface_mesh and Point_set_3
@@ -461,8 +417,10 @@ namespace CGAL {
   {
 
     using Self = TDS<Vb,Cb, ConcurrencyTag>;
-
     using Concurrency_tag  = ConcurrencyTag;
+
+    /// The type used to represent an index.
+    using size_type = std::uint32_t;
 
     // Tools to change the Vertex and Cell types of the TDS.
     template < typename Vb2 >
@@ -476,18 +434,68 @@ namespace CGAL {
     };
 
     // Put this TDS inside the Vertex and Cell types.
-    using Vertex_handle = typename Vb::template Rebind_TDS<Self>::Other;
-    using Cell_handle = typename Cb::template Rebind_TDS<Self>::Other;
+    using Vertex = typename Vb::template Rebind_TDS<Self>::Other;
+    using Cell = typename Cb::template Rebind_TDS<Self>::Other;
 
-    // AF Needed by Cell_circulator ??
-    using Vertex = Vertex_handle;
-    using Cell = Cell_handle;
+    template <typename T>
+    class Handle {
+      using Element = T;
+      using Proxy = boost::stl_interfaces::proxy_arrow_result<Element>;
+    public:
+      using value_type = Element;
+      using reference = Element;
+      using pointer = Proxy;
+
+      Handle() = default;
+
+      Handle(Self* tds, size_type idx)
+        : tds_(tds), idx_(idx) {}
+
+      using Index = typename Element::Index;
+
+      Element operator*() const {
+        return Element(tds_, Index(idx_));
+      }
+
+      Proxy operator->() const {
+        return Proxy{this->operator*()};
+      }
+
+      Index index() const {
+        return Index{idx_};
+      }
+
+      auto tds() const {
+        return tds_;
+      }
+
+      bool operator==(const Handle& other) const {
+        return tds() == other.tds() && index() == other.index();
+      }
+
+      bool operator!=(const Handle& other) const {
+        return !(*this == other);
+      }
+
+      bool operator<(const Handle& other) const {
+        return (tds() == other.tds()) ? (index() < other.index()) : (tds() < other.tds());
+      }
+
+      friend std::ostream& operator<<(std::ostream& os, const Handle& h)
+      {
+        return os << "#" << h.index();
+      }
+
+    private:
+      Self* tds_ = nullptr;
+      size_type idx_ = (std::numeric_limits<size_type>::max)();
+    };
+
+    using Cell_handle = Handle<Cell>;
+    using Vertex_handle = Handle<Vertex>;
 
     using Facet = std::pair<Cell_handle, int>;
     using Edge = Triple<Cell_handle, int, int>;
-
-    /// The type used to represent an index.
-    using size_type = std::uint32_t;
 
     // AF: factorize as also in Surface_mesh and Point_set_3
     template <class I, class T>
@@ -596,17 +604,18 @@ namespace CGAL {
 
     using TDS_data = Cell_data;
 
+    using Vertex_storage = typename Vertex::Storage;
+    using Cell_storage = typename Cell::Storage;
+    using Vertex_storage_property_map = Property_map<Vertex_index, Vertex_storage>;
+    using Cell_storage_property_map = Property_map<Cell_index, Cell_storage>;
 
-    using Vertex_storage = Property_map<Vertex_index, typename Vertex_handle::Storage>;
-    using Cell_storage = Property_map<Cell_index, typename Cell_handle::Storage>;
 
 
+    Cell_storage_property_map& cell_storage() { return cell_storage_; }
+    const Cell_storage_property_map& cell_storage() const { return cell_storage_; }
 
-    Cell_storage& cell_storage() { return cell_storage_; }
-    const Cell_storage& cell_storage() const { return cell_storage_; }
-
-    Vertex_storage& vertex_storage() { return vertex_storage_; }
-    const Vertex_storage& vertex_storage() const { return vertex_storage_; }
+    Vertex_storage_property_map& vertex_storage() { return vertex_storage_; }
+    const Vertex_storage_property_map& vertex_storage() const { return vertex_storage_; }
 
     auto cell_tds_data_pmap() { return cell_data_; }
     auto cell_tds_data_pmap() const { return cell_data_; }
@@ -658,8 +667,8 @@ namespace CGAL {
                             Vertex_handle v2, Vertex_handle v3)
     {
       Cell_handle c = create_cell();
-      c.set_vertices(v0, v1, v2, v3);
-      c.set_neighbors(Cell_handle(), Cell_handle(), Cell_handle(), Cell_handle());
+      c->set_vertices(v0, v1, v2, v3);
+      c->set_neighbors(Cell_handle(), Cell_handle(), Cell_handle(), Cell_handle());
       return c;
     }
 
@@ -669,8 +678,8 @@ namespace CGAL {
                             Cell_handle n2, Cell_handle n3)
     {
       Cell_handle c = create_cell();
-      c.set_vertices(v0, v1, v2, v3);
-      c.set_neighbors(n0, n1, n2, n3);
+      c->set_vertices(v0, v1, v2, v3);
+      c->set_neighbors(n0, n1, n2, n3);
       return c;
     }
 
@@ -817,8 +826,8 @@ namespace CGAL {
     TDS()
       : dimension_(-2)
     {
-      vertex_storage_  = add_property_map<Vertex_index, typename Vertex_handle::Storage>("v:storage").first;
-      cell_storage_    = add_property_map<Cell_index, typename Cell_handle::Storage>("c:storage").first;
+      vertex_storage_  = add_property_map<Vertex_index, Vertex_storage>("v:storage").first;
+      cell_storage_    = add_property_map<Cell_index, Cell_storage>("c:storage").first;
       cell_data_       = add_property_map<Cell_index, Cell_data>("c:data").first;
       vremoved_        = add_property_map<Vertex_index, bool>("v:removed", false).first;
       cremoved_        = add_property_map<Cell_index, bool>("c:removed", false).first;
@@ -939,46 +948,72 @@ namespace CGAL {
       return cremoved_[c];
     }
     //------------------------------------------------------ iterator types
-    template<typename Index_, typename Handle_>
-    class Index_iterator
-      : public boost::iterator_facade< Index_iterator<Index_, Handle_>,
-                                       Handle_,
-                                       std::random_access_iterator_tag,
-                                       Handle_
-                                       >
+    template<typename Handle_>
+    class Index_iterator // make it derive from Handle_
+      : public boost::stl_interfaces::v1::proxy_iterator_interface<
+                   Index_iterator<Handle_>,
+                   std::random_access_iterator_tag,
+                   typename Handle_::value_type
+                   >
     {
-      using Facade = boost::iterator_facade<Index_iterator<Index_, Handle_>,
-                                            Handle_,
-                                            std::random_access_iterator_tag,
-                                            Handle_>;
+      using Index = typename Handle_::Index;
+
+      using Facade = boost::stl_interfaces::v1::proxy_iterator_interface<
+                         Index_iterator<Handle_>,
+                         std::random_access_iterator_tag,
+                         typename Handle_::value_type
+                         >;
+
+      using value_type = typename Handle_::value_type;
     public:
       Index_iterator() : hnd_(), tds_(nullptr) {}
-      Index_iterator(const Index_& h, const Self* m)
+      Index_iterator(const Index& h, const Self* m)
         : hnd_(h), tds_(const_cast<Self*>(m)) { // AF: todo make const_cast safe
         if (tds_ && tds_->has_garbage()){
           while (tds_->has_valid_index(hnd_) && tds_->is_removed(hnd_)) ++hnd_;
         }
       }
-    private:
-      friend class boost::iterator_core_access;
-      void increment()
+
+      auto handle() const
+      {
+        static_assert(std::is_base_of_v<Facade, Index_iterator<Handle_>>);
+
+        CGAL_assertion(tds_ != nullptr);
+        CGAL_assertion(tds_->has_valid_index(hnd_));
+        return Handle_(tds_, hnd_.id());
+      }
+
+      operator Handle_() const { return handle(); }
+
+      value_type operator*() const { return value_type{tds_, hnd_}; }
+
+      typename Handle_::pointer operator->() const
+      {
+        return typename Handle_::pointer{value_type{tds_, hnd_}};
+      }
+
+      using Facade::operator++;
+      Index_iterator& operator++()
       {
         ++hnd_;
         CGAL_assertion(tds_ != nullptr);
 
         if(tds_->has_garbage())
           while ( tds_->has_valid_index(hnd_) && tds_->is_removed(hnd_)) ++hnd_;
+        return *this;
       }
 
-      void decrement()
+      using Facade::operator--;
+      Index_iterator& operator--()
       {
         --hnd_;
         CGAL_assertion(tds_ != nullptr);
         if(tds_->has_garbage())
           while ( tds_->has_valid_index(hnd_) && tds_->is_removed(hnd_)) --hnd_;
+        return *this;
       }
 
-      void advance(std::ptrdiff_t n)
+      Index_iterator& operator+=(std::ptrdiff_t n)
       {
         CGAL_assertion(tds_ != nullptr);
 
@@ -986,16 +1021,17 @@ namespace CGAL {
           {
             if (n > 0)
               for (std::ptrdiff_t i = 0; i < n; ++ i)
-                increment();
+                this->operator++();
             else
               for (std::ptrdiff_t i = 0; i < -n; ++ i)
-                decrement();
+                this->operator--();
           }
         else
           hnd_ += n;
+        return *this;
       }
 
-      std::ptrdiff_t distance_to(const Index_iterator& other) const
+      std::ptrdiff_t operator-(const Index_iterator& other) const
       {
         if (tds_->has_garbage())
           {
@@ -1023,29 +1059,18 @@ namespace CGAL {
         return std::ptrdiff_t(other.hnd_) - std::ptrdiff_t(this->hnd_);
       }
 
-      bool equal(const Index_iterator& other) const
+      bool operator==(const Index_iterator& other) const
       {
         return this->hnd_ == other.hnd_;
       }
 
-    public:
-      operator Handle_() const
-      {
-        CGAL_assertion(tds_ != nullptr);
-        CGAL_assertion(tds_->has_valid_index(hnd_));
-        return Handle_(const_cast<Self*>(tds_), hnd_);
-      }
-
     private:
-      Handle_ dereference() const { return Handle_(tds_, hnd_); }
-
-      Index_ hnd_;
+      Index hnd_;
       Self* tds_;
-
     };
 
     // AF:  The value type of the iterators should be the same as the value type of the handle. This is not the case now.
-    using Vertex_iterator = Index_iterator<Vertex_index,Vertex_handle>;
+    using Vertex_iterator = Index_iterator<Vertex_handle>;
     using Vertex_range = Iterator_range<Vertex_iterator>;
 
     Vertex_iterator vertices_begin() const
@@ -1064,7 +1089,7 @@ namespace CGAL {
     }
 
 
-    using Cell_iterator = Index_iterator<Cell_index,Cell_handle>;
+    using Cell_iterator = Index_iterator<Cell_handle>;
     using Cell_range = Iterator_range<Cell_iterator>;
 
     Cell_iterator cells_begin() const
@@ -1148,8 +1173,8 @@ namespace CGAL {
     Properties::Property_container<Self, Vertex_index> vprops_;
     Properties::Property_container<Self, Cell_index>   cprops_;
 
-    Vertex_storage vertex_storage_;
-    Cell_storage cell_storage_;
+    Vertex_storage_property_map vertex_storage_;
+    Cell_storage_property_map cell_storage_;
 
     Property_map<Cell_index, Cell_data>                cell_data_;
 
@@ -1175,6 +1200,42 @@ namespace CGAL {
 
 } /// namespace CGAL
 
+namespace CGAL {
+  template <typename Cb = Cell<>>
+  class Cell4Regular
+    : public Cb
+  {
+  public:
+    using Cb::Cb; // inherit constructors
+
+    using TDS = typename Cb::Triangulation_data_structure;
+    using Vertex_handle = typename TDS::Vertex_handle;
+    using Cell_handle = typename TDS::Cell_handle;
+
+    struct Storage : public Cb::Storage {
+      std::list<Point> hidden_points;
+      Vertex_handle my_other_vertex;
+      Cell_handle my_other_cell;
+    };
+
+    template < typename TDS2 >
+    struct Rebind_TDS {
+      using Cb2 = typename Cb::template Rebind_TDS<TDS2>::Other;
+      using Other = Cell4Regular<Cb2>;
+    };
+
+    auto&& storage() {
+      return this->tds()->cell_storage()[this->index()];
+    }
+
+    auto&& storage() const { return this->tds()->cell_storage()[this->index()]; }
+
+    void hide_point(const Point& p)
+    {
+      storage().hidden_points.push_back(p);
+    }
+  };
+} // namespace CGAL
 
 int main() {
   using Vb = CGAL::Vertex<>;
@@ -1191,7 +1252,7 @@ int main() {
   Vertex_handle inf, v0, v1, v2, v3;
   inf = tds.insert_first_finite_cell(v0, v1, v2, v3);
 
-  for(auto  v : tds.vertices()) {
+  for(const auto& v : tds.vertices()) {
     std::cout << v << std::endl;
   }
 
@@ -1199,9 +1260,9 @@ int main() {
     std::cout << vit->point() << std::endl;
   }
 
-  for(auto  c : tds.cells()) {
+  for(auto c : tds.cells()) {
     std::cout << c.index() << std::endl;
-    c->hide_point(Point{});
+    c.hide_point(Point{});
   }
 
   inf->cell()->storage().my_other_vertex = v0;
