@@ -52,6 +52,10 @@
 #include <CGAL/TDS_3/internal/Triangulation_ds_circulators_3.h>
 #include <CGAL/tss.h>
 
+#ifdef CGAL_TDS_USE_INDEXED_STORAGE_3
+#include <CGAL/TDS_3/Indexed_storage.h>
+#endif
+
 #ifdef CGAL_LINKED_WITH_TBB
 #  include <tbb/scalable_allocator.h>
 #endif
@@ -279,11 +283,19 @@ template < class Vb,
            class Concurrency_tag_
 >
 class Triangulation_data_structure_3
+#ifdef CGAL_TDS_USE_INDEXED_STORAGE_3
+    : public Indexed_storage<Vb, Cb, Concurrency_tag_>,
+#else
     : public Triangulation_data_structure_3_storage<Vb, Cb, Concurrency_tag_>,
+#endif
       public Triangulation_utils_3
 {
   typedef Triangulation_data_structure_3<Vb, Cb, Concurrency_tag_> Tds;
+#ifdef CGAL_TDS_USE_INDEXED_STORAGE_3
+  typedef Indexed_storage<Vb, Cb, Concurrency_tag_> Tds_storage;
+#else
   typedef Triangulation_data_structure_3_storage<Vb, Cb, Concurrency_tag_> Tds_storage;
+#endif
 public:
   typedef Concurrency_tag_            Concurrency_tag;
 
@@ -319,6 +331,7 @@ public:
   using Vertex_iterator = typename Tds_storage::Vertex_iterator;
   using Vertex_range = typename Tds_storage::Vertex_range;
   using size_type = typename Tds_storage::size_type;
+  using difference_type = typename Tds_storage::difference_type;
 
   typedef internal::Triangulation_ds_facet_iterator_3<Tds>   Facet_iterator;
   typedef internal::Triangulation_ds_edge_iterator_3<Tds>    Edge_iterator;
@@ -335,8 +348,8 @@ public:
 //private: // In 2D only :
   typedef internal::Triangulation_ds_face_circulator_3<Tds>  Face_circulator;
 
-  typedef Vertex_iterator                          Vertex_handle;
-  typedef Cell_iterator                            Cell_handle;
+  typedef typename Tds_storage::Vertex_handle      Vertex_handle;
+  typedef typename Tds_storage::Cell_handle        Cell_handle;
 
   typedef std::pair<Cell_handle, int>              Facet;
   typedef Triple<Cell_handle, int, int>            Edge;

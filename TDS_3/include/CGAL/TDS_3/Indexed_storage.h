@@ -393,6 +393,7 @@ namespace CGAL {
   {
   public:
     using size_type = std::uint32_t;
+
     /// Constructor. %Default construction creates an invalid index.
     /// We write -1, which is <a href="https://en.cppreference.com/w/cpp/types/numeric_limits">
     /// <tt>(std::numeric_limits<size_type>::max)()</tt></a>
@@ -455,7 +456,6 @@ namespace CGAL {
 
   template <typename Vb, typename Cb, typename ConcurrencyTag>
   struct Indexed_storage
-  : public Triangulation_utils_3
   {
 
     using Self = Indexed_storage<Vb,Cb, ConcurrencyTag>;
@@ -463,6 +463,7 @@ namespace CGAL {
 
     /// The type used to represent an index.
     using size_type = std::uint32_t;
+    using difference_type = std::ptrdiff_t;
 
     // Tools to change the Vertex and Cell types of the TDS.
     template < typename Vb2 >
@@ -725,6 +726,19 @@ namespace CGAL {
       return c;
     }
 
+    Cell_handle create_face()
+    {
+      CGAL_precondition(dimension()<3);
+      return create_cell();
+    }
+
+    Cell_handle create_face(Vertex_handle v0, Vertex_handle v1,
+                            Vertex_handle v2)
+    {
+      CGAL_precondition(dimension()<3);
+      return create_cell(v0, v1, v2, Vertex_handle());
+    }
+
     void delete_vertex(Vertex_index v)
     {
       vremoved_[v] = true; ++removed_vertices_; garbage_ = true;
@@ -737,6 +751,11 @@ namespace CGAL {
       cremoved_[c] = true; ++removed_cells_; garbage_ = true;
       cell_storage_[c].ivertices[0] = Vertex_index(cells_freelist_);
       vertices_freelist_ = (size_type)c;
+    }
+
+    void clear()
+    {
+      assert(false); // This should be implemented
     }
 
 
@@ -764,6 +783,15 @@ namespace CGAL {
     bool is_vertex(Vertex_handle v) const
     {
       return this == v->tds()  && v->idx() < num_vertices() && (! vremoved_[v.index()]);
+    }
+
+    bool is_cell( Cell_handle c ) const
+      // returns false when dimension <3
+    {
+      if (dimension() < 3)
+        return false;
+
+      return this == c->tds()  && c->idx() < num_cells() && (! cremoved_[c.index()]);
     }
 
     //--------------------------------------------------- property handling
@@ -1006,8 +1034,10 @@ namespace CGAL {
                          typename Handle_::value_type
                          >;
 
-      using value_type = typename Handle_::value_type;
     public:
+      using value_type = typename Handle_::value_type;
+      using reference = value_type;  // AF reference needed, but is this correct ?????
+
       Index_iterator() : hnd_(), tds_(nullptr) {}
       Index_iterator(const Index& h, const Self* m)
         : hnd_(h), tds_(const_cast<Self*>(m)) { // AF: todo make const_cast safe
