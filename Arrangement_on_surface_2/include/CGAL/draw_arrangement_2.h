@@ -103,7 +103,25 @@ struct has_operator_xcv<T, A, std::void_t<decltype(
   template <typename T, typename A>
   inline constexpr bool has_operator_xcv_v = has_operator_xcv<T, A>::value;
 
-  // ========
+// ========
+
+// Helper: detect whether T is or derives from Arr_geodesic_arc_on_sphere_traits_2<*, *, *>
+template <typename T>
+struct is_or_derived_from_agas {
+private:
+  template <typename Kernel_, int AtanX, int AtanY>
+  static std::true_type test(const Arr_geodesic_arc_on_sphere_traits_2<Kernel_, AtanX, AtanY>*);
+
+  static std::false_type test(...);
+
+public:
+  static constexpr bool value = decltype(test(static_cast<const T*>(nullptr)))::value;
+};
+
+template <typename T>
+inline constexpr bool is_or_derived_from_agas_v = is_or_derived_from_agas<T>::value;
+
+// ========
 
 ///
 template<typename Arr, typename GSOptions>
@@ -190,12 +208,6 @@ public:
 
   /// Compile time dispatching
 
-  /*! Draw a region, where the traits does not has approximate_2_object.
-   */
-  template <typename T, std::enable_if_t<! has_approximate_2_object_v<T>, int> = 0>
-  void draw_region_impl1(T const& /* traits */, Halfedge_const_handle curr)
-  { draw_exact_region(curr); }
-
   ///
   template <typename T, typename A, std::enable_if_t<! has_operator_point_v<T, A>, int> = 0>
   void draw_region_impl2(const T& /* traits */, const A& /* approximate */, Halfedge_const_handle curr)
@@ -207,54 +219,25 @@ public:
     draw_approximate_region(curr, approx);
   }
 
+  /*! Draw a region, where the traits does not has approximate_2_object.
+   */
+  template <typename T, std::enable_if_t<! has_approximate_2_object_v<T> && ! is_or_derived_from_agas_v<T>, int> = 0>
+  void draw_region_impl1(const T& /* traits */, Halfedge_const_handle curr)
+  { draw_exact_region(curr); }
+
   ///
-  template <typename T, std::enable_if_t<has_approximate_2_object_v<T>, int> = 0>
-  auto draw_region_impl1(T const& traits, Halfedge_const_handle curr) {
+  template <typename T, std::enable_if_t<has_approximate_2_object_v<T> && ! is_or_derived_from_agas_v<T>, int> = 0>
+  auto draw_region_impl1(const T& traits, Halfedge_const_handle curr) {
     using Approximate = typename Gt::Approximate_2;
     draw_region_impl2(traits, traits.approximate_2_object(), curr);
   }
 
   /*! Draw a geodesic region
    */
-  template <typename Kernel_, int AtanX, int AtanY>
-  void draw_region_impl1
-  (Arr_geodesic_arc_on_sphere_traits_2<Kernel_, AtanX, AtanY> const& traits,
-   Halfedge_const_handle curr)
-  {
-    if (! m_gso.draw_edge(m_aos, curr)) return;
-
-    auto approx = traits.approximate_2_object();
-    using Kernel = Kernel_;
-    using Traits = Arr_geodesic_arc_on_sphere_traits_2<Kernel, AtanX, AtanY>;
-    using Ak = typename Traits::Approximate_kernel;
-    using Ap = typename Traits::Approximate_point_2;
-    using Approx_point_3 = typename Ak::Point_3;
-
-    std::vector<Ap> polyline;
-    double error(0.01);
-    bool l2r = curr->direction() == ARR_LEFT_TO_RIGHT;
-    approx(curr->curve(), error, std::back_inserter(polyline), l2r);
-    if (polyline.empty()) return;
-    auto it = polyline.begin();
-    auto x = it->dx();
-    auto y = it->dy();
-    auto z = it->dz();
-    auto l = std::sqrt(x*x + y*y + z*z);
-    Approx_point_3 prev(x/l, y/l, z/l);
-    for (++it; it != polyline.end(); ++it) {
-      auto x = it->dx();
-      auto y = it->dy();
-      auto z = it->dz();
-      auto l = std::sqrt(x*x + y*y + z*z);
-      Approx_point_3 next(x/l, y/l, z/l);
-
-      if (m_gso.colored_edge(m_aos, curr))
-        m_gs.add_segment(prev, next, m_gso.edge_color(m_aos, curr));
-      else m_gs.add_segment(prev, next);
-
-      prev = next;
-      // m_gs.add_point_in_face(*prev);
-    }
+  template <typename T, std::enable_if_t<is_or_derived_from_agas_v<T>, int> = 0>
+  void draw_region_impl1(const T& traits, Halfedge_const_handle curr) {
+    //! \todo not implemented yet; for now, we just draw the boundaries using draw_curve_impl1()
+    draw_curve_impl1(traits, curr->curve(), false, CGAL::IO::Color());
   }
 
   /*! Draw a region using approximate coordinates.
@@ -302,24 +285,7 @@ public:
       add_face(it);
   }
 
-  /// Add all faces.
-  template <typename Kernel_, int AtanX, int AtanY>
-  void add_faces(Arr_geodesic_arc_on_sphere_traits_2<Kernel_, AtanX, AtanY> const&)
-  { add_face(m_aos.faces_begin()); }
-
   /// Compile time dispatching
-#if 0
-  template <typename T>
-  void draw_point_impl2(const Point& p, T const&, long) { m_gs.add_point(p); }
-
-  template <typename T>
-  auto draw_point_impl2(const Point& p, T const& approx, int) ->
-    decltype(approx.operator()(p), void())
-  { m_gs.add_point(approx(p)); }
-
-  template <typename T>
-  void draw_point_impl1(T const&, const Point& p, long) { m_gs.add_point(p); }
-#endif
 
   /*! Draw a point using approximate coordinates.
    */
@@ -336,13 +302,6 @@ public:
     else m_gs.add_point(p);
   }
 
-  /*! Draw a point, where the traits does not has approximate_2_object.
-   */
-  template <typename T, std::enable_if_t<! has_approximate_2_object_v<T>, int> = 0>
-  void draw_point_impl1(const T& /* traits */, const Point& p,
-                        bool colored, const CGAL::IO::Color& c)
-  { draw_exact_point(p, colored, c); }
-
   ///
   template <typename T, typename A, std::enable_if_t<! has_operator_point_v<T, A>, int> = 0>
   void draw_point_impl2(const T& /* traits */, const A& /* approximate */, const Point& p,
@@ -356,9 +315,16 @@ public:
     draw_approximate_point(p, approx, colored, c);
   }
 
+  /*! Draw a point, where the traits does not has approximate_2_object.
+   */
+  template <typename T, std::enable_if_t<! has_approximate_2_object_v<T> && ! is_or_derived_from_agas_v<T>, int> = 0>
+  void draw_point_impl1(const T& /* traits */, const Point& p,
+                        bool colored, const CGAL::IO::Color& c)
+  { draw_exact_point(p, colored, c); }
+
   /*! Draw a point, where the traits does have approximate_2_object.
    */
-  template <typename T, std::enable_if_t<has_approximate_2_object_v<T>, int> = 0>
+  template <typename T, std::enable_if_t<has_approximate_2_object_v<T> && ! is_or_derived_from_agas_v<T>, int> = 0>
   auto draw_point_impl1(const T& traits, const Point& p,
                         bool colored, const CGAL::IO::Color& c) {
     draw_point_impl2(traits, traits.approximate_2_object(), p, colored, c);
@@ -366,17 +332,13 @@ public:
 
   /*! Draw a geodesic point.
    */
-  template <typename Kernel_, int AtanX, int AtanY>
-  void draw_point_impl1
-  (Arr_geodesic_arc_on_sphere_traits_2<Kernel_, AtanX, AtanY> const& traits,
-   const Point& p,
-   bool colored,
-   const CGAL::IO::Color& color)
-  {
-    auto approx = traits.approximate_2_object();
-    using Traits = Arr_geodesic_arc_on_sphere_traits_2<Kernel_, AtanX, AtanY>;
+    template <typename T, std::enable_if_t<is_or_derived_from_agas_v<T>, int> = 0>
+  void draw_point_impl1(const T& traits, const Point& p, bool colored, const CGAL::IO::Color& color) {
+    using Traits = T;
     using Ak = typename Traits::Approximate_kernel;
     using Approx_point_3 = typename Ak::Point_3;
+
+    auto approx = traits.approximate_2_object();
     auto ap = approx(p);
     auto x = ap.dx();
     auto y = ap.dy();
@@ -500,13 +462,6 @@ public:
     }
   }
 
-  /*! Draw a curve, where the traits does not has approximate_2_object.
-   */
-  template <typename T, std::enable_if_t<! has_approximate_2_object_v<T>, int> = 0>
-  void draw_curve_impl1(T const& /* traits */, const X_monotone_curve& xcv,
-                        bool colored, const CGAL::IO::Color& c)
-  { draw_exact_curve(xcv, colored, c); }
-
   ///
   template <typename T, typename A, std::enable_if_t<! has_operator_point_v<T, A>, int> = 0>
   void draw_curve_impl2(const T& /* traits */, const A& /* approximate */, const X_monotone_curve& xcv,
@@ -520,10 +475,17 @@ public:
     draw_approximate_curve(xcv, approx, colored, c);
   }
 
+  /*! Draw a curve, where the traits does not has approximate_2_object.
+   */
+  template <typename T, std::enable_if_t<! has_approximate_2_object_v<T> && ! is_or_derived_from_agas_v<T>, int> = 0>
+  void draw_curve_impl1(const T& /* traits */, const X_monotone_curve& xcv,
+                        bool colored, const CGAL::IO::Color& c)
+  { draw_exact_curve(xcv, colored, c); }
+
   /*! Draw a curve, where the traits does have approximate_2_object.
    */
-  template <typename T, std::enable_if_t<has_approximate_2_object_v<T>, int> = 0>
-  auto draw_curve_impl1(T const& traits, const X_monotone_curve& xcv,
+  template <typename T, std::enable_if_t<has_approximate_2_object_v<T> && ! is_or_derived_from_agas_v<T>, int> = 0>
+  auto draw_curve_impl1(const T& traits, const X_monotone_curve& xcv,
                         bool colored, const CGAL::IO::Color& c) {
     using Approximate = typename Gt::Approximate_2;
     draw_curve_impl2(traits, traits.approximate_2_object(), xcv, colored, c);
@@ -531,19 +493,17 @@ public:
 
   /*! Draw a geodesic curve
    */
-  template <typename Kernel_, int AtanX, int AtanY>
-  void draw_curve_impl1
-  (Arr_geodesic_arc_on_sphere_traits_2<Kernel_, AtanX, AtanY> const& traits,
-   const X_monotone_curve& xcv,
-   bool colored, const CGAL::IO::Color& c)
-  {
+  template <typename T, std::enable_if_t<is_or_derived_from_agas_v<T>, int> = 0>
+  void draw_curve_impl1(const T& traits, const X_monotone_curve& xcv,
+                        bool colored, const CGAL::IO::Color& c) {
     // std::cout << "draw_curve (geodesic)\n";
-    auto approx = traits.approximate_2_object();
-    using Kernel = Kernel_;
-    using Traits = Arr_geodesic_arc_on_sphere_traits_2<Kernel, AtanX, AtanY>;
+    using Traits = T;
+    using Kernel = typename Traits::Kernel;
     using Ak = typename Traits::Approximate_kernel;
     using Ap = typename Traits::Approximate_point_2;
     using Approx_point_3 = typename Ak::Point_3;
+
+    auto approx = traits.approximate_2_object();
     std::vector<Ap> apoints;
     double error(0.01);
     approx(xcv, error, std::back_inserter(apoints));
