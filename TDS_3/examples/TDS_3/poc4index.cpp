@@ -17,8 +17,7 @@
 #include <type_traits>
 #include <vector>
 
-
-using Point =  int;
+#include <CGAL/Simple_cartesian.h>
 
 namespace CGAL {
 
@@ -245,7 +244,6 @@ namespace CGAL {
     using Vertex_handle = typename TDS_3::Vertex_handle;
 
     struct Storage {
-      Point point;
       Cell_index icell;
     };
 
@@ -295,16 +293,6 @@ namespace CGAL {
       storage().icell = c.index();
     }
 
-    const Point& point() const
-    {
-      return storage().point;
-    }
-
-    void set_point(const Point& p)
-    {
-      storage().point = p;
-    }
-
     bool is_valid(bool  = false) const
     {
       assert(false); // This should be implemented
@@ -324,6 +312,40 @@ namespace CGAL {
     TDS_3* tds_;
     Vertex_index index_;
   };
+
+  template <typename GT, typename Vb = Vertex<>>
+  struct VertexWithPoint
+  : public Vb
+  {
+  public:
+    using Vb::Vb;
+    
+    struct Storage : public Vb::Storage {
+      typename GT::Point_3 point;
+    };
+
+    template < typename TDS2 >
+    struct Rebind_TDS {
+      using Vb2 = typename Vb::template Rebind_TDS<TDS2>::Other;
+      using Other = VertexWithPoint<GT,Cb2>;
+    };
+
+    auto&& storage() {
+      return this->tds()->cell_storage()[this->index()];
+    }
+    
+    const Point& point() const
+    {
+      return storage().point;
+    }
+
+    void set_point(const Point& p)
+    {
+      storage().point = p;
+    }
+
+  };
+
 
   template <typename TDS_3>
   std::ostream& operator<<(std::ostream& os, const Vertex<TDS_3>& v)
@@ -1201,13 +1223,13 @@ namespace CGAL {
 } /// namespace CGAL
 
 namespace CGAL {
-  template <typename Cb = Cell<>>
+  template <typename GT, typename Cb = Cell<>>
   class Cell4Regular
     : public Cb
   {
   public:
     using Cb::Cb; // inherit constructors
-
+    using Point = typename GT::Point_3;
     using TDS = typename Cb::Triangulation_data_structure;
     using Vertex_handle = typename TDS::Vertex_handle;
     using Cell_handle = typename TDS::Cell_handle;
@@ -1221,7 +1243,7 @@ namespace CGAL {
     template < typename TDS2 >
     struct Rebind_TDS {
       using Cb2 = typename Cb::template Rebind_TDS<TDS2>::Other;
-      using Other = Cell4Regular<Cb2>;
+      using Other = Cell4Regular<GT, Cb2>;
     };
 
     auto&& storage() {
@@ -1237,8 +1259,11 @@ namespace CGAL {
   };
 } // namespace CGAL
 
+
+
 int main() {
-  using Vb = CGAL::Vertex<>;
+  using K = CGAL::Simple_cartesian<double>;
+  using Vb = CGAL::VertexWithPoint<K>;
   using Cb = CGAL::Cell4Regular<>;
   using TDS = CGAL::TDS<Vb, Cb>;
   TDS tds;
