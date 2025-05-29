@@ -1,4 +1,5 @@
 #include <CGAL/Simple_cartesian.h>
+#include <CGAL/iterator.h>
 #include <CGAL/TDS_3/Indexed_storage.h>
 
 int main() {
@@ -66,5 +67,19 @@ int main() {
     ++fc;
   } while (fc != fdone);
   std::cout << std::endl;
+
+
+  struct IgnoreZero {
+    bool operator()(const Vertex_handle& v) const {
+      return v->index().id() == 0; // Example filter: skip vertex with index 0
+    }
+  };
+  using Ignore_zero_iterator = CGAL::Filter_iterator<Vertex_iterator,IgnoreZero>;
+
+  Ignore_zero_iterator vit(tds.vertices_begin(),IgnoreZero());
+  ++vit;
+  vit->index().id();
+
+
   return 0;
 }
