@@ -1,3 +1,21 @@
+// Copyright (c) 2025 GeometryFactory (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+// Author(s)    Andreas Fabri, Laurent Rineau
+
+#ifndef CGAL_TDS_INTERNAL_INDEXED_STORAGE_3_H
+#define CGAL_TDS_INTERNAL_INDEXED_STORAGE_3_H
+
+#include <CGAL/license/TDS_3.h>
+
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/TDS_3/internal/Dummy_tds_3.h>
 #include <CGAL/TDS_3/internal/Triangulation_ds_circulators_3.h>
 #include <CGAL/TDS_3/internal/Triangulation_ds_iterators_3.h>
@@ -17,8 +35,6 @@
 #include <type_traits>
 #include <vector>
 
-#include <CGAL/Simple_cartesian.h>
-
 namespace CGAL {
 
   template <typename TDS_3 = void>
@@ -28,7 +44,7 @@ namespace CGAL {
   struct Cell;
 
   template <typename Vb = Vertex<>, typename Cb = Cell<>, class ConcurrencyTag = Sequential_tag>
-  struct TDS;
+  struct Indexed_storage;
 
   template <typename TDS_3>
   struct Cell {
@@ -319,7 +335,7 @@ namespace CGAL {
   {
   public:
     using Vb::Vb;
-    
+    using Point = typename GT::Point_3;
     struct Storage : public Vb::Storage {
       typename GT::Point_3 point;
     };
@@ -327,13 +343,17 @@ namespace CGAL {
     template < typename TDS2 >
     struct Rebind_TDS {
       using Vb2 = typename Vb::template Rebind_TDS<TDS2>::Other;
-      using Other = VertexWithPoint<GT,Cb2>;
+      using Other = VertexWithPoint<GT,Vb2>;
     };
 
-    auto&& storage() {
-      return this->tds()->cell_storage()[this->index()];
+    decltype(auto) storage() {
+      return this->tds()->vertex_storage()[this->index()];
     }
-    
+
+    decltype(auto) storage() const {
+      return this->tds()->vertex_storage()[this->index()];
+    }
+
     const Point& point() const
     {
       return storage().point;
@@ -434,11 +454,11 @@ namespace CGAL {
 
 
   template <typename Vb, typename Cb, typename ConcurrencyTag>
-  struct TDS
+  struct Indexed_storage
   : public Triangulation_utils_3
   {
 
-    using Self = TDS<Vb,Cb, ConcurrencyTag>;
+    using Self = Indexed_storage<Vb,Cb, ConcurrencyTag>;
     using Concurrency_tag  = ConcurrencyTag;
 
     /// The type used to represent an index.
@@ -447,12 +467,12 @@ namespace CGAL {
     // Tools to change the Vertex and Cell types of the TDS.
     template < typename Vb2 >
     struct Rebind_vertex {
-      using Other = TDS<Vb2, Cb, ConcurrencyTag>;
+      using Other = Indexed_storage<Vb2, Cb, ConcurrencyTag>;
     };
 
     template < typename Cb2 >
     struct Rebind_cell {
-      using Other = TDS<Vb, Cb2, ConcurrencyTag>;
+      using Other = Indexed_storage<Vb, Cb2, ConcurrencyTag>;
     };
 
     // Put this TDS inside the Vertex and Cell types.
@@ -845,7 +865,7 @@ namespace CGAL {
     }
 
 
-    TDS()
+    Indexed_storage()
       : dimension_(-2)
     {
       vertex_storage_  = add_property_map<Vertex_index, Vertex_storage>("v:storage").first;
@@ -1259,71 +1279,6 @@ namespace CGAL {
   };
 } // namespace CGAL
 
+#include <CGAL/disable_warnings.h>
 
-
-int main() {
-  using K = CGAL::Simple_cartesian<double>;
-  using Vb = CGAL::VertexWithPoint<K>;
-  using Cb = CGAL::Cell4Regular<>;
-  using TDS = CGAL::TDS<Vb, Cb>;
-  TDS tds;
-  using Vertex_handle = TDS::Vertex_handle;
-  using Vertex_iterator = TDS::Vertex_iterator;
-  using Cell_handle = TDS::Cell_handle;
-  using Cell_circulator = TDS::Cell_circulator;
-  using Facet_circulator = TDS::Facet_circulator;
-  using Edge = TDS::Edge;
-
-  Vertex_handle inf, v0, v1, v2, v3;
-  inf = tds.insert_first_finite_cell(v0, v1, v2, v3);
-
-  for(const auto& v : tds.vertices()) {
-    std::cout << v << std::endl;
-  }
-
-  for(Vertex_iterator vit = tds.vertices_begin(); vit != tds.vertices_end(); ++vit) {
-    std::cout << vit->point() << std::endl;
-  }
-
-  for(auto c : tds.cells()) {
-    std::cout << c.index() << std::endl;
-    c.hide_point(Point{});
-  }
-
-  inf->cell()->storage().my_other_vertex = v0;
-  inf->cell()->storage().my_other_cell = v1->cell();
-
-  std::vector<Cell_handle> incident_cells;
-  tds.just_incident_cells_3(inf, incident_cells);
-  assert(incident_cells.size() == 4);
-
-  for(auto f : tds.facets()) {
-    std::cout << f.first << " " << f.second << std::endl;
-  }
-
-  for(auto e : tds.edges()) {
-    std::cout << e.first << " " << e.second << " " << e.third << std::endl;
-  }
-
-  Cell_handle c = inf->cell();
-  Edge e(c, 0, 1);
-
-  std::cout << "Incident cells to edge:\n";
-  Cell_circulator cc = tds.incident_cells(e), cdone(cc);
-  do {
-    Cell_handle ch = cc;
-    std::cout << ch << " ";
-    ++cc;
-  } while (cc != cdone);
-  std::cout << std::endl;
-
-  std::cout << "Incident facets to edge:\n";
-  Facet_circulator fc = tds.incident_facets(e), fdone(fc);
-  do {
-    Cell_handle ch = fc->first;
-    std::cout << ch << " ";
-    ++fc;
-  } while (fc != fdone);
-  std::cout << std::endl;
-  return 0;
-}
+#endif // CGAL_INDEXED_STORAGE_H
