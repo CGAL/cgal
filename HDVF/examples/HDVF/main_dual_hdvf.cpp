@@ -49,7 +49,7 @@ void mesh_complex_output(const MeshType& mesh, const ComplexType& L, const Sub_c
 
 inline ostream& dual_pairs_output(const std::vector<PairCell>& pairs, ostream& out=cout)
 {
-    out << "Pairs found by computeDualPerfectHDVF:" << std::endl;
+    out << "Pairs found by compute_perfect_hdvf:" << std::endl;
     for (const auto& pair : pairs) {
         out << "Sigma: " << pair.sigma << ", Tau: " << pair.tau << ", Dim: " << pair.dim << std::endl;
     }
@@ -60,7 +60,7 @@ template <typename CoefficientType, typename ComplexType>
 void dual_HDVF_pair (Hdvf_duality<CoefficientType, ComplexType>& dual_hdvf, const Options &options)
 {
     // Compute pairing
-    std::vector<PairCell> pairs = dual_hdvf.computePairingHDVF() ;
+    std::vector<PairCell> pairs = dual_hdvf.compute_pairing_hdvf() ;
     
     if (options.with_output)
     {
@@ -90,7 +90,7 @@ Hdvf_duality<CoefficientType, ComplexType>& dual_HDVF_comput (const ComplexType&
     HDVFType& hdvf(*(new HDVFType(L, K, options.HDVF_opt)));
     
     cout << "----> START computing dual HDVF" << endl ;
-    hdvf.computeDualPerfectHDVF() ;
+    hdvf.compute_perfect_hdvf() ;
     cout << "------> END computing dual HDVF" << endl ;
     
     if (options.with_output)

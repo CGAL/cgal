@@ -69,8 +69,9 @@ inline std::ostream& operator<<(std::ostream &out, const std::vector<PairCell>& 
  
  The `Hdvf_core` class stores the associated reduction in sparse matrices: row-major for \f$f\f$, and column-major for \f$g\f$, \f$h\f$ and \f$\partial'\f$. Getters are provided to access this information.
  
- The class provides constuction operations: `compute_perfect_hdvf` and `compute_rand_perfect_hdvf`, which build perfect HDVFs by pairing iteratively critical cells through the `A` operation.
- In order to find proper pairs, several `find_pair_A` functions are provided (searching for valid pairs of cells for `A`respecting various constraints). The `A` operation can be applied to any pair returned by these functions.
+ The class provides HDVF constuction operations: `compute_perfect_hdvf` and `compute_rand_perfect_hdvf`, which build perfect HDVFs by pairing iteratively critical cells through the `A` operation.
+ 
+ If the user wishes to build an HDVF using other criteria, several `find_pair_A` functions are provided (searching for valid pairs of cells for `A`respecting various constraints). The `A` operation can be applied to any pair returned by these functions.
  
  \cgalModels{HDVF}
  
@@ -253,7 +254,10 @@ public:
      *
      * \param[in] flag Flag to select.
      */
-    std::vector<std::vector<int> > get_flag (FlagType flag) const ;
+    
+    // !!! Why should it be virtual for duality?????
+    
+    virtual std::vector<std::vector<int> > get_flag (FlagType flag) const ;
     
     /**
      * \brief Get cells with a given `flag` in dimension `q`.
@@ -263,7 +267,7 @@ public:
      * \param[in] flag Flag to select.
      * \param[in] q Dimension visited.
      */
-    std::vector<int> get_flag_dim (FlagType flag, int q) const ;
+    virtual std::vector<int> get_flag_dim (FlagType flag, int q) const ;
     
     /*!
      * \brief Get the flag of the cell `tau` in dimension `q`.
@@ -825,8 +829,6 @@ std::vector<PairCell> Hdvf_core<CoefficientType, ComplexType, ChainType, SparseM
     // Loop through dimensions from q-1 to 0
     for (int q = dim - 1; q >= 0; --q) {
         std::cout << std::endl << "-> pairing cells of dimension " << q << " and " << q+1 << std::endl ;
-        //        cout << _K.nb_cells(q) << " cells of dimension " << q << endl ;
-        // Incorrect: the number of cells is the number of cols in _DD_col ... (duality)
         
         // Find a pair of cells in dimension q
         PairCell pair = find_pair_A(q, trouve);
