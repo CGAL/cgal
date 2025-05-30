@@ -1,13 +1,25 @@
 #!/bin/bash
 #usage : script [-c -l -n -s -k] testsuite_dir
 
+if command -v rsync >/dev/null 2>&1; then
+  rsync_scp() {
+    rsync -avz --chmod=ugo=rX "$@"
+  }
+else
+  rsync_scp() {
+    command scp "$@"
+  }
+fi
+
 ##########################
 ####   LAUNCH CTEST   ####
 ##########################
 
+# shellcheck source=/dev/null
 source "${CGAL_DIR}/${SCRIPTS_DIR}developer_scripts/log.sh"
 # Load settings
 if [ -f "${CGAL_HOME}/.autocgalrc" ]; then
+  # shellcheck source=/dev/null
   . "${CGAL_HOME}/.autocgalrc"
 else
   echo "CONFIGURATION FILE  .autocgalrc NOT FOUND" >&2;
@@ -19,7 +31,7 @@ fi
 # ----------------------------------------------------------------------------------------
 value_of()
 {
-  _value=`eval "printf '$'${1}"`
+  _value=$(eval "printf '$'${1}")
   eval "printf \"${_value}\""
 }
 
@@ -27,7 +39,7 @@ value_of()
 # produce a string containing the actual date/time
 #  (used to identify files)
 # ----------------------------------------------------------------------------------------
-datestr()
+date_str()
 {
   date +%d%m%Y%H%M
 }
@@ -70,7 +82,7 @@ collect_all_reference_platforms()
 {
   log "${ACTUAL_LOGFILE}" "Indicated to build on ALL platform folders"
   if [ -d "${REFERENCE_PLATFORMS_DIR}" ]; then
-    cd "${REFERENCE_PLATFORMS_DIR}"
+    cd "${REFERENCE_PLATFORMS_DIR}" || exit 1
     for PLATFORM in * ; do
       if [ -d "${PLATFORM}" ]; then
         add_to_platforms "${PLATFORM}"
@@ -88,7 +100,7 @@ collect_all_reference_platforms()
 collect_all_current_platforms()
 {
   PLATFORMS=""
-  cd "${1}"
+  cd "${1}" || exit 1
   for PLATFORM in * ; do
     if [ -d "${PLATFORM}" ]; then
       PLATFORMS="${PLATFORMS} ${PLATFORM}"
@@ -121,10 +133,10 @@ build_platforms_list()
 setup_dirs()
 {
   # dir for the actual release
-  if [ ! -d ${CGAL_DIR}/test ]; then
-    mkdir ${CGAL_DIR}/test
+  if [ ! -d "${CGAL_DIR}/test" ]; then
+    mkdir "${CGAL_DIR}/test"
     #give all rights so that, if it is first created by docker, it is still editable without root access by the local user.
-    chmod 777 ${CGAL_DIR}/test
+    chmod 777 "${CGAL_DIR}/test"
   fi
   CGAL_TEST_DIR=${CGAL_DIR}/test
 
@@ -142,7 +154,7 @@ setup_dirs()
 
   CGAL_RELEASE_DIR="${CGAL_DIR}"
   if [ -z "$SCRIPTS_DIR" ]; then
-    CGAL_RELEASE_ID=`basename "${CGAL_RELEASE_DIR}"`
+    CGAL_RELEASE_ID=$(basename "${CGAL_RELEASE_DIR}")
   else
     CGAL_GIT_VERSION=$(sed -n '/CGAL_VERSION /s/#define CGAL_VERSION //p'<"$CGAL_DIR/${INSTALLATION_DIR}include/CGAL/version.h" | sed -n 's/-\w*//p')
     MINIMALIST_DATE=$(date +%y%m%d)
@@ -170,8 +182,8 @@ setup_dirs()
   # directories existing in the reference release are added to $PLATFORMS
   #
   PLATFORMS=""
-  build_platforms_list "`value_of BUILD_ON_${HOST}`"
-  build_platforms_list "`value_of COMPILERS_${HOST}`"
+  build_platforms_list "$(value_of "BUILD_ON_${HOST}")"
+  build_platforms_list "$(value_of "COMPILERS_${HOST}")"
 
   if [ -n "${USE_REFERENCE_PLATFORMS}" ]; then
     collect_all_reference_platforms
@@ -207,14 +219,14 @@ put_on_web()
 {
   log "${ACTUAL_LOGFILE}" "Uploading results ${1} to $UPLOAD_RESULT_DESTINATION/$2"
 
-  "$SCP" "${1}" "$UPLOAD_RESULT_DESTINATION/$2" >> "${ACTUAL_LOGFILE}"
+  rsync_scp "${1}" "$UPLOAD_RESULT_DESTINATION/$2" >> "${ACTUAL_LOGFILE}"
 }
-
+# ----------------------------------------------------------------------------------------
 put_demos_on_web()
 {
   log "${ACTUAL_LOGFILE}" "Uploading demos ${1} to $UPLOAD_DEMOS_DESTINATION/$2"
 
-  "$SCP" "${1}" "$UPLOAD_DEMOS_DESTINATION/$2" >> "${ACTUAL_LOGFILE}"
+  rsync_scp "${1}" "$UPLOAD_DEMOS_DESTINATION/$2" >> "${ACTUAL_LOGFILE}"
 }
 
 
@@ -222,7 +234,7 @@ collect_demos_binaries()
 {
   PLATFORM=${1}
 
-  cd "${CGAL_TEST_DIR}"
+  cd "${CGAL_TEST_DIR}" || exit 1
 
   echo "COLLECT_DEMOS_BINARIES=$COLLECT_DEMOS_BINARIES"
   if [ -n "$COLLECT_DEMOS_BINARIES" ]; then
@@ -232,19 +244,19 @@ collect_demos_binaries()
     DEMOS_TEST_DIR="${CGAL_DIR}/cmake/platforms/${PLATFORM}/test"
     cp "${CGAL_DIR}/${SCRIPTS_DIR}developer_scripts/cgal_demo_copy_all_dlls_cygwin.sh" "${DEMOS_TEST_DIR}"
 
-    cd ${DEMOS_TEST_DIR}
+    cd "${DEMOS_TEST_DIR}" || exit 1
 
     for demo_dir in *_Demo; do
       echo "pushd ${demo_dir}"
-      pushd "${demo_dir}"
-      bash ${DEMOS_TEST_DIR}/cgal_demo_copy_all_dlls_cygwin.sh "${demo_dir}_with_dlls" "${CONFIG_TYPE}"
-      mv "${demo_dir}_with_dlls" ${DEMOS_TEST_DIR}
-      popd
+      pushd "${demo_dir}" || exit 1
+      bash "${DEMOS_TEST_DIR}/cgal_demo_copy_all_dlls_cygwin.sh" "${demo_dir}_with_dlls" "${CONFIG_TYPE}"
+      mv "${demo_dir}_with_dlls" "${DEMOS_TEST_DIR}"
+      popd || exit 1
     done
 
-    ${TAR} cf "demos_${CGAL_TESTER}_${PLATFORM}.tar" *_Demo_with_dlls/*;
+    ${TAR} cf "demos_${CGAL_TESTER}_${PLATFORM}.tar" ./*_Demo_with_dlls/*;
     ${COMPRESSOR} -9f "demos_${CGAL_TESTER}_${PLATFORM}.tar"
-    mv "demos_${CGAL_TESTER}_${PLATFORM}.tar.gz" ${CGAL_TEST_DIR}
+    mv "demos_${CGAL_TESTER}_${PLATFORM}.tar.gz" "${CGAL_TEST_DIR}"
   else
     echo "Don't collect demos binaries for platform $PLATFORM";
   fi
@@ -256,7 +268,7 @@ publish_results()
   #
   # collect results and put them on the web
   #
-  cd "${CGAL_TEST_DIR}"
+  cd "${CGAL_TEST_DIR}" || exit 1
 
   log "${ACTUAL_LOGFILE}.test.${PLATFORM}" "COLLECTING RESULTS ${PLATFORM}-${HOST}"
 
@@ -270,11 +282,11 @@ publish_results()
 
   ${TAR} cf "test_results-${HOST}_${PLATFORM}.tar" "results_${CGAL_TESTER}_${PLATFORM}.tar.gz" "results_${CGAL_TESTER}_${PLATFORM}.txt"
   ${COMPRESSOR} -9f "test_results-${HOST}_${PLATFORM}.tar"
-  COMPILER=`printf "%s" "$1" | tr -c '[A-Za-z0-9]./[=-=]*_\'\''\":?() ' 'x'`
+  COMPILER=$(printf "%s" "$1" | tr -c '[A-Za-z0-9]./[=-=]*_'\''":?() ' 'x')
 
-  FILENAME="${CGAL_RELEASE_ID}_${CGAL_TESTER}-test`datestr`-${COMPILER}-cmake.tar.gz"
+  FILENAME="${CGAL_RELEASE_ID}_${CGAL_TESTER}-test$(date_str)-${COMPILER}-cmake.tar.gz"
 
-  LOGFILENAME="${CGAL_RELEASE_ID}-log`datestr`-${HOST}.gz"
+  LOGFILENAME="${CGAL_RELEASE_ID}-log$(date_str)-${HOST}.gz"
   ${COMPRESSOR} -9f "${ACTUAL_LOGFILE}.test.${PLATFORM}"
   mv "${ACTUAL_LOGFILE}.test.${PLATFORM}.gz" "${LOGS_DIR}/${LOGFILENAME}"
 
@@ -296,36 +308,46 @@ run_test_on_platform()
 {
   PLATFORM=${1}
 
-  NUMBER_OF_PROCESSORS="`value_of PROCESSORS_${HOST}`"
+  NUMBER_OF_PROCESSORS=$(value_of "PROCESSORS_${HOST}")
   if [ -z "${NUMBER_OF_PROCESSORS}" ]; then
     NUMBER_OF_PROCESSORS=1
   fi
   CGAL_BINARY_DIR=${CGAL_BINARY_DIR_BASE}/${PLATFORM}
-  cd "${CGAL_BINARY_DIR}"
+  cd "${CGAL_BINARY_DIR}" || exit 1
   log "${ACTUAL_LOGFILE}.test.${PLATFORM}" "Testing on host ${HOST} and platform ${PLATFORM}"
 
   if [ -f "${CGAL_HOME}/${REFERENCE_PLATFORMS_DIR}/${PLATFORM}/setup" ]; then
+    # shellcheck source=/dev/null
     source "${CGAL_HOME}/${REFERENCE_PLATFORMS_DIR}/${PLATFORM}/setup"
   else
     INIT_FILE="${CGAL_HOME}/${REFERENCE_PLATFORMS_DIR}/${PLATFORM}.cmake"
+    if ! [ -f "${INIT_FILE}" ]; then
+      INIT_FILE=""
+    fi
   fi
   if [ ! -f "${INIT_FILE}" ]; then
     echo "error NEED A INIT FILE !"
   fi
-  cmake ${INIT_FILE:+"-C${INIT_FILE}"} -DCGAL_ENABLE_TESTING=ON -DWITH_tests=ON -DCGAL_TEST_SUITE=ON $CGAL_DIR>installation.log 2>&1
+  # cspell:disable-next-line
+  cmake ${INIT_FILE:+"-C${INIT_FILE}"} -DCGAL_ENABLE_TESTING=ON -DWITH_tests=ON -DCGAL_TEST_SUITE=ON "$CGAL_DIR" > installation.log 2>&1
   rm CMakeCache.txt
-  CMAKE_OPTS="-DCGAL_TEST_SUITE=ON -DCMAKE_VERBOSE_MAKEFILE=ON -DWITH_tests=ON"
+  CMAKE_OPTS=()
+  if [ -n "${INIT_FILE}" ]; then
+    CMAKE_OPTS+=("-C${INIT_FILE}")
+  fi
+  CMAKE_OPTS+=("-DCGAL_ENABLE_TESTING=ON" "-DCGAL_TEST_SUITE=ON" "-DCMAKE_VERBOSE_MAKEFILE=ON" "-DWITH_tests=ON")
   if [ -n "${SCRIPTS_DIR}" ]; then
-    CMAKE_OPTS="${CMAKE_OPTS} -DWITH_examples=ON -DWITH_demos=ON"
+    CMAKE_OPTS+=("-DWITH_examples=ON" "-DWITH_demos=ON")
   fi
   if [ -z "${SHOW_PROGRESS}" ]; then
-    cmake ${INIT_FILE:+"-C${INIT_FILE}"} -DCGAL_ENABLE_TESTING=ON ${CMAKE_OPTS} $CGAL_DIR  >package_installation.log 2>&1
+    cmake "${CMAKE_OPTS[@]}" "$CGAL_DIR" > package_installation.log 2>&1
   else
-    cmake ${INIT_FILE:+"-C${INIT_FILE}"} -DCGAL_ENABLE_TESTING=ON ${CMAKE_OPTS} $CGAL_DIR 2>&1 |tee package_installation.log
+    cmake "${CMAKE_OPTS[@]}" "$CGAL_DIR" 2>&1 | tee package_installation.log
   fi
   LIST_TEST_FILE="${CGAL_HOME}/list_test_packages"
-  if [ -f ${LIST_TEST_FILE} ]; then
-    LIST_TEST_PACKAGES=$(source ${LIST_TEST_FILE})
+  if [ -f "${LIST_TEST_FILE}" ]; then
+    # shellcheck source=/dev/null
+    LIST_TEST_PACKAGES=$(source "${LIST_TEST_FILE}")
   fi
   INIT=""
   for pkg in $LIST_TEST_PACKAGES; do
@@ -336,18 +358,27 @@ run_test_on_platform()
       TO_TEST="${TO_TEST}|$pkg"
     fi
   done
-  #unsets the limit of 1024 bits for the logs through ssh
+  #unset the limit of 1024 bits for the logs through ssh
   echo "SET(CTEST_CUSTOM_MAXIMUM_PASSED_TEST_OUTPUT_SIZE 1000000000)" > CTestCustom.cmake
   echo "SET(CTEST_CUSTOM_MAXIMUM_FAILED_TEST_OUTPUT_SIZE 1000000000)" >> CTestCustom.cmake
 
-  CTEST_OPTS="-T Start -T Test --timeout 1200 ${DO_NOT_TEST:+-E execution___of__}"
+  # add a configuration file for the tests (required since CMake-3.32)
+  cat <<EOF > CTestConfiguration.ini
+SourceDirectory: ${CGAL_RELEASE_DIR}
+BuildDirectory: ${CGAL_BINARY_DIR}
+EOF
+
+  CTEST_OPTS=(-T Start -T Test --timeout 1200)
+  if [ -n "${DO_NOT_TEST}" ]; then
+    CTEST_OPTS+=(-E execution___of__)
+  fi
   if [ -n "$CONFIG_TYPE" ]; then
-    CTEST_OPTS="-C ${CONFIG_TYPE} ${CTEST_OPTS}"
+    CTEST_OPTS=(-C "${CONFIG_TYPE}" "${CTEST_OPTS[@]}")
   fi
   if [ -z "${SHOW_PROGRESS}" ]; then
-    ctest ${TO_TEST:+-L ${TO_TEST} } ${CTEST_OPTS} -j${NUMBER_OF_PROCESSORS} ${KEEP_TESTS:+-FC .}>tmp.txt
+    ctest ${TO_TEST:+-L "${TO_TEST}"} "${CTEST_OPTS[@]}" "-j${NUMBER_OF_PROCESSORS}" ${KEEP_TESTS:+-FC .} > tmp.txt
   else
-    ctest ${TO_TEST:+-L ${TO_TEST} } ${CTEST_OPTS} -j${NUMBER_OF_PROCESSORS} ${KEEP_TESTS:+-FC .}|tee tmp.txt
+    ctest ${TO_TEST:+-L "${TO_TEST}"} "${CTEST_OPTS[@]}" "-j${NUMBER_OF_PROCESSORS}" ${KEEP_TESTS:+-FC .} | tee tmp.txt
   fi
 
   #####################
@@ -355,25 +386,33 @@ run_test_on_platform()
   #####################
   TAG_DIR=$(awk '/^Create new tag: /{print $4F}' tmp.txt)
   rm tmp.txt
-  cd Testing/${TAG_DIR}
+  cd "Testing/${TAG_DIR}" || exit 1
   RESULT_FILE=./"results_${CGAL_TESTER}_${PLATFORM}.txt"
   rm -f "$RESULT_FILE"
   touch "$RESULT_FILE"
-  if [ -z "${SCRIPTS_DIR}" ]; then
-    sed -n '/CGAL_VERSION /s/#define //p' < "$CGAL_DIR/${INSTALLATION_DIR}include/CGAL/version.h" >> "$RESULT_FILE"
-  else
-    echo "CGAL_VERSION ${CGAL_GIT_VERSION}">> "$RESULT_FILE"
-  fi
-  sed -n '/The CXX compiler/s/-- The CXX compiler identification is/COMPILER_VERSION =/p' < "${CGAL_BINARY_DIR}/installation.log" |sed -E "s/ = (.*)/\ = '\1\'/">> "$RESULT_FILE"
-  echo "TESTER ${CGAL_TESTER}" >> "$RESULT_FILE"
-  echo "TESTER_NAME ${CGAL_TESTER}" >> "$RESULT_FILE"
-  echo "TESTER_ADDRESS ${TESTER_ADDRESS}" >> "$RESULT_FILE"
-  echo "CGAL_TEST_PLATFORM ${PLATFORM}" >> "$RESULT_FILE"
-  grep -e "^-- USING " "${CGAL_BINARY_DIR}/installation.log"|sort -u >> $RESULT_FILE
-  #Use sed to get the content of DEBUG or RELEASE CXX FLAGS so that Multiconfiguration platforms do provide their CXXXFLAGS to the testsuite page (that greps USING CXXFLAGS to get info)
-  sed -i -E 's/(^-- USING )(DEBUG|RELEASE) (CXXFLAGS)/\1\3/' $RESULT_FILE
-  sed -n '/^-- Third-party library /p' "${CGAL_BINARY_DIR}/installation.log" >> $RESULT_FILE
-  echo "------------" >> "$RESULT_FILE"
+  {
+    if [ -z "${SCRIPTS_DIR}" ]; then
+      sed -n '/CGAL_VERSION /s/#define //p' < "$CGAL_DIR/${INSTALLATION_DIR}include/CGAL/version.h"
+    else
+      echo "CGAL_VERSION ${CGAL_GIT_VERSION}"
+    fi
+    sed -n '/The CXX compiler/s/-- The CXX compiler identification is/COMPILER_VERSION =/p' < "${CGAL_BINARY_DIR}/installation.log" |sed -E "s/ = (.*)/\ = '\1\'/"
+    if [ -n "${CGAL_SUMMARY_NAME}" ]; then
+      echo "CGAL_SUMMARY_NAME ${CGAL_SUMMARY_NAME}"
+    fi
+    echo "TESTER ${CGAL_TESTER}"
+    echo "TESTER_NAME ${CGAL_TESTER}"
+    echo "TESTER_ADDRESS ${TESTER_ADDRESS}"
+    echo "CGAL_TEST_PLATFORM ${PLATFORM}"
+    grep -e "^-- Operating system: " "${CGAL_BINARY_DIR}/installation.log"
+    grep -e "^-- USING " "${CGAL_BINARY_DIR}/installation.log"|sort -u
+  } >> "$RESULT_FILE"
+  #Use sed to get the content of DEBUG or RELEASE CXX FLAGS so that multi-configuration platforms do provide their CXXFLAGS to the testsuite page (that greps USING CXXFLAGS to get info)
+  sed -i -E 's/(^-- USING )(DEBUG|RELEASE) (CXXFLAGS)/\1\3/' "$RESULT_FILE"
+  {
+    sed -n '/^-- Third-party library /p' "${CGAL_BINARY_DIR}/installation.log"
+    echo "------------"
+  } >> "$RESULT_FILE"
   #if git branch, create empty scm file for python script
   if [ -n "${SCRIPTS_DIR}" ]; then
     touch ../../../../../.scm-branch
@@ -382,10 +421,11 @@ run_test_on_platform()
   # python3: can't open file '/cygdrive/c/CGAL_ROOT/CGAL-5.5-Ic-68/C:/CGAL_ROOT/CGAL-5.5-Ic-68/test/parse-ctest-dashboard-xml.py': [Errno 2] No such file or directory
   # It seems Python 3.9 from Cygwin cannot understand the Windows paths,
   # but its `open` function can.
-  python3 -c "exec(open(\"${CGAL_DIR}/${TESTSUITE_DIR}test/parse-ctest-dashboard-xml.py\").read())" $CGAL_TESTER $PLATFORM
+  python3 -c "exec(open(\"${CGAL_DIR}/${TESTSUITE_DIR}test/parse-ctest-dashboard-xml.py\").read())" "$CGAL_TESTER" "$PLATFORM"
 
-  for file in $(ls|grep _Tests); do
-    mv $file "$(echo "$file" | sed 's/_Tests//g')"
+  for file in *_Tests; do
+    [ -e "$file" ] || continue
+    mv -- "$file" "${file//_Tests/}"
   done
   OUTPUT_FILE=results_${CGAL_TESTER}_${PLATFORM}.tar
   TEST_REPORT="TestReport_${CGAL_TESTER}_${PLATFORM}"
@@ -394,14 +434,14 @@ run_test_on_platform()
   cat "${CGAL_BINARY_DIR}/package_installation.log" >> "Installation/${TEST_REPORT}"
 
   #call the python script to complete the results report.
-  python3 -c "exec(open(\"${CGAL_DIR}/${TESTSUITE_DIR}test/post_process_ctest_results.py\").read())" Installation/${TEST_REPORT} ${TEST_REPORT} results_${CGAL_TESTER}_${PLATFORM}.txt
-  rm -f $OUTPUT_FILE $OUTPUT_FILE.gz
+  python3 -c "exec(open(\"${CGAL_DIR}/${TESTSUITE_DIR}test/post_process_ctest_results.py\").read())" "Installation/${TEST_REPORT}" "${TEST_REPORT}" "results_${CGAL_TESTER}_${PLATFORM}.txt"
+  rm -f "$OUTPUT_FILE" "$OUTPUT_FILE.gz"
   if [ -n "${SCRIPTS_DIR}" ]; then
     rm ../../../../../.scm-branch
   fi
-  tar cf $OUTPUT_FILE results_${CGAL_TESTER}_${PLATFORM}.txt */"$TEST_REPORT"
+  tar cf "$OUTPUT_FILE" "results_${CGAL_TESTER}_${PLATFORM}.txt" ./*/"$TEST_REPORT"
   echo
-  gzip -9f $OUTPUT_FILE
+  gzip -9f "$OUTPUT_FILE"
   cp "${OUTPUT_FILE}.gz" "results_${CGAL_TESTER}_${PLATFORM}.txt" "${CGAL_TEST_DIR}"
 }
 # ----------------------------------------------------------------------------------------
@@ -409,7 +449,7 @@ run_test_on_platform()
 # ----------------------------------------------------------------------------------------
 run_test_on_host()
 {
-  PLATFORMS=`value_of COMPILERS_${HOST}`
+  PLATFORMS=$(value_of "COMPILERS_${HOST}")
   if [ "${PLATFORMS}" = "all" ]; then
     collect_all_current_platforms "${CGAL_BINARY_DIR_BASE}"
   fi
@@ -427,7 +467,7 @@ run_test_on_host()
     publish_results "${PLATFORM}"
 
     if [ -z "${KEEP_TESTS}" ]; then
-      rm -rf $CGAL_DIR/cmake/platforms/${PLATFORM}
+      rm -rf "$CGAL_DIR/cmake/platforms/${PLATFORM}"
     fi
   done
 }
