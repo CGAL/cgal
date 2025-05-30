@@ -1062,7 +1062,24 @@ namespace CGAL {
     return *this;
 }
 
-
+ void swap(Indexed_storage& is)
+    {
+      std::swap(dimension_, is.dimension_);
+      vertex_storage_.swap(is.vertex_storage_);
+      cell_storage_.swap(is.cell_storage_);
+      cell_data_.swap(is.cell_data_);
+      vprops_.swap(is.vprops_);
+      cprops_.swap(is.cprops_);
+      vremoved_.swap(is.vremoved_);
+      cremoved_.swap(is.cremoved_);
+      std::swap(removed_vertices_, is.removed_vertices_);
+      std::swap(removed_cells_, is.removed_cells_);
+      std::swap(vertices_freelist_, is.vertices_freelist_);
+      std::swap(cells_freelist_, is.cells_freelist_);
+      std::swap(garbage_, is.garbage_);
+      std::swap(recycle_, is.recycle_);
+      std::swap(anonymous_property_nb, is.anonymous_property_nb);
+    }
 
 
     /// move assignment
