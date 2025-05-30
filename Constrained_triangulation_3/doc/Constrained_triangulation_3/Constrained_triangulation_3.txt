@@ -43,7 +43,8 @@ that satisfy the following properties:
 
 - The vertices and edges of the PLC form a simplicial complex: two edges may intersect only at a
   shared vertex.
-- The boundary of each polygon in the PLC is a union of edges from the PLC.
+- The boundary of each polygon (face) in the PLC is an ordered list of vertices from the PLC, forming
+  one or more closed loops (for holes).
 - If two polygons in the PLC intersect, their intersection is a union of edges and vertices from the
   PLC. In particular, the interiors of two polygons cannot overlap.
 
@@ -61,7 +62,7 @@ A Piecewise Linear Complex composed of planar faces connected by edges and verti
 \subsection CT_3_CDT Conforming Constrained Delaunay Triangulation
 
 The goal of the algorithms developed in this package is to compute a constrained Delaunay
-mesh that contains a given set of polygonal constraints in 3D as a subcomplex.
+triangulation that contains a given set of polygonal constraints in 3D as a subcomplex.
 
 A triangulation is a _Delaunay triangulation_ if the circumscribing sphere of any simplex
 in the triangulation contains no vertex in its interior (see package \ref PkgTriangulation3
@@ -91,7 +92,7 @@ A Sch&ouml;nhardt polyhedron.
 Shewchuk \cgalCite{cgal:shewchuk1998condition} demonstrated that for any PLC, there exists a refined
 version of the original PLC that admits a constrained Delaunay triangulation. This refinement is
 achieved by adding Steiner vertices to the input edges and polygons. The constrained triangulation
-built on this refined PLC is known as a _conforming constrained Delaunay triangulation_.
+built on this refined PLC is known as a _conforming constrained Delaunay triangulation_ (CCDT for short).
 
 The algorithm implemented in this package is based on the work of Hang Si \cgalCite{si2005meshing},
 \cgalCite{si2015tetgen}. Steiner vertices are inserted on the input edges and polygons of the PLC to
@@ -117,31 +118,35 @@ Right: the same CCDT seen with cutplane.
 
 There is no universal or canonical way to represent all possible PLCs in \cgal.
 
-Since any polyhedron is a PLC, any model of `FaceListGraph`—such as `CGAL::Surface_mesh<P>`—can be
-used to represent a PLC. In this case, the polygons of the PLC correspond to the faces of the
-surface mesh, and the edges of the PLC correspond to the edges of the surface mesh. However, PLCs
-represented in this way are restricted to be manifold, and their polygons cannot have holes.
+Since any polyhedron is a PLC, any model of `FaceListGraph`, such as `CGAL::Surface_mesh`, can be
+used to represent a PLC.
+In this case, the polygons of the PLC correspond to the faces of the
+surface _mesh_, a collection of vertices (points), edges, and faces covering the surface of a
+a geometric object.
+The edges of the PLC correspond to the edges of the surface mesh. However, PLCs
+represented in this way are restricted to be manifold, and their faces cannot have holes.
 
-PLCs can also be represented as polygon soups: a collection of vertices and a set of polygons, where
-each polygon is defined by an ordered list of vertices. For a polygon soup to represent a valid PLC,
+A PLC can also be represented as a polygon soup: a collection of vertices and a set of polygons, where
+each polygon is defined by an ordered list of vertices, and the connectivity information is not
+explictly provided.
+For a polygon soup to represent a valid PLC,
 its polygons must satisfy the properties outlined in the previous section. This approach allows for
 the representation of non-manifold geometries, but note that polygons in a polygon soup cannot have
 holes.
 
-To represent a PLC with polygons that have holes, this package allows the use of a property map that
-associates a _patch_ identifier with each polygon of the face graph or polygon soup. Polygons
-sharing the same patch identifier are considered part of the same _surface patch_, which may include
-holes. If these patches are planar and satisfy the properties of a PLC, they can be used to build a
-conforming constrained Delaunay triangulation. When a face patch property map is provided:
-  - the vertices of the PLC are the vertices of the surface mesh or polygon soup,
-  - the edges of the PLC are the edges of the surface mesh or polygon soup _that are on the border
-    of patches_,
-  - the polygons (facets) of the PLC are the patches defined as above.
+This package provides a way to group polygons into distinct surface patches using a property map.
+Each polygon is assigned a _patch_ identifier, allowing multiple polygons to form a continuous surface patch,
+which may include holes. When these patches are planar and meet the necessary geometric conditions,
+they can be used to construct a conforming constrained Delaunay triangulation.
+When a face patch property map is provided:
+- The vertices of the PLC are the ones from the original surface mesh or polygon soup.
+- The edges of the PLC are those that belong to the surface mesh or polygon soup and have only one adjacent face, specifically those marking the boundary of patches.
+- The surface patches themselves serve as the polygons (faces) in the resulting representation.
 
 \subsection CT_3_api_classes Classes
 
-This package provides a primary class, `CGAL::Conforming_constrained_Delaunay_triangulation_3`,
-which represents a 3D conforming constrained Delaunay triangulation. This class is templated on a
+This package provides a primary class, `CGAL::Conforming_constrained_Delaunay_triangulation_3`.
+This class is templated by a
 geometric traits class and an underlying triangulation class, allowing for flexibility and
 customization.
 
@@ -163,32 +168,32 @@ data.
 
 The following example illustrates how to use the helper function
 `CGAL::make_conforming_constrained_Delaunay_triangulation_3()` to construct a conforming constrained
-Delaunay triangulation from a given piecewise linear complex (PLC).
+Delaunay triangulation from a given PLC.
 
 \cgalExample{Constrained_triangulation_3/conforming_constrained_Delaunay_triangulation_3.cpp }
 
 
 \subsection CT_3_example_ccdt_soup Build a Conforming Constrained Delaunay Triangulation from a Polygon Soup
 
-You can also construct a conforming constrained Delaunay triangulation from a polygon soup—that is,
-a collection of polygons where the connectivity information is not explicitly provided. The
-following example demonstrates how to build such a triangulation from a polygon soup input.
+You can also construct a conforming constrained Delaunay triangulation from a polygon soup. The
+following example demonstrates how to build such a triangulation.
 
 \cgalExample{Constrained_triangulation_3/conforming_constrained_Delaunay_triangulation_3_from_soup.cpp }
 
 
 \subsection CT_3_example_ccdt_fpmap Build a Conforming Constrained Delaunay Triangulation with Known Face Patches
 
-If the user already knows the set of patch IDs to associate with each face, this information can be
+If the user already knows the set of patch identifiers to associate with each face, this information can be
 provided and preserved throughout the construction of the conforming constrained Delaunay
 triangulation.
 
 The following example demonstrates how to detect surface patches separated by sharp edges and use
 this segmentation during the tetrahedralization process.
 
-When this parameter is specified, the face constraint indices in the 3D triangulation (accessible
+When the named parameter `face_patch_map` is specified,
+the face constraint indices in the 3D triangulation (accessible
 via `CGAL::Conforming_constrained_Delaunay_triangulation_cell_data_3::face_constraint_index()`) are
-set to the corresponding patch IDs from the property map. If this parameter is not provided, each
+set to the corresponding patch identifiers from the given property map. If this parameter is not provided, each
 input polygon is assigned a unique face index.
 
 \cgalExample{Constrained_triangulation_3/conforming_constrained_Delaunay_triangulation_3_fpmap.cpp}
@@ -209,11 +214,13 @@ From left to right: Input PLC;
 
 
 
-\subsection CT_3_examples_preprocessing Preprocessing the Input Mesh for Conforming Constrained Delaunay Triangulations
+\subsection CT_3_examples_preprocessing Preprocessing the Input for Conforming Constrained Delaunay Triangulations
 
-The input mesh must be a valid surface mesh, i.e., it must not have self-intersections. Numerous
-preprocessing functions are available in the \ref PkgPolygonMeshProcessing package _to enforce these
-preconditions_.
+Given a PLC, the algorithms in this package can construct a conforming constrained Delaunay, provided
+the input surface can be represented as a valid surface mesh or set of surface meshes,
+and does not contain self-intersections.
+Numerous preprocessing functions are available in the \ref PkgPolygonMeshProcessing package to enforce these
+preconditions.
 
 \subsubsection CT_3_example_ccdt_autorefinement Autorefinement of the Input Mesh
 
