@@ -1200,9 +1200,6 @@ template<class R_> struct Compare_squared_distance : private Store_kernel<R_> {
         typedef typename Get_type<R, RT_tag>::type RT;
         typedef typename Get_type<R, Comparison_result_tag>::type result_type;
         typedef typename Get_functor<R, Construct_ttag<Point_cartesian_const_iterator_tag> >::type CI;
-        // TODO: This is_exact thing should be reengineered.
-        // the goal is to have a way to tell: don't filter this
-        typedef typename CGAL::Uses_no_arithmetic<CI> Uses_no_arithmetic;
 
         template<class V,class W>
         result_type operator()(V const&a, V const&b, W const&c)const{   //  Point, Point. FT

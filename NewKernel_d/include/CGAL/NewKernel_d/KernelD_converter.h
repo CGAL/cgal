@@ -134,7 +134,7 @@ template<class K1, class K2,
         typedef KernelD_converter_<Self,K1,K2,List> Base;
         typedef typename Get_type<K1, FT_tag>::type FT1;
         typedef typename Get_type<K2, FT_tag>::type FT2;
-        NTc c; // TODO: compressed storage as this is likely empty and the converter gets passed around (and stored in iterators)
+        CGAL_NO_UNIQUE_ADDRESS NTc c;
 
         public:
         KernelD_converter(){}
