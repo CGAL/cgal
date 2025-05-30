@@ -78,4 +78,5 @@ int main()
   assert( span.y_span() == 6);
   assert( span.z_span() == 8);
   }
+
 }
