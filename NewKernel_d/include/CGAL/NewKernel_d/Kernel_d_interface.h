@@ -19,9 +19,7 @@
 #include <type_traits>
 
 namespace CGAL {
-//template <class Base_> struct Kernel_d_interface : public Base_ {
-// constexpr Kernel_d_interface(){}
-//  constexpr Kernel_d_interface(int d):Base_(d){}
+
 template <class> struct Kernel_d_interface;
 
 namespace internal::NewKernel_d {
