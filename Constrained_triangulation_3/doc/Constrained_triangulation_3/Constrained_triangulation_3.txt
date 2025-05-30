@@ -181,20 +181,18 @@ following example demonstrates how to build such a triangulation.
 \cgalExample{Constrained_triangulation_3/conforming_constrained_Delaunay_triangulation_3_from_soup.cpp }
 
 
-\subsection CT_3_example_ccdt_fpmap Build a Conforming Constrained Delaunay Triangulation with Known Face Patches
+\subsection CT_3_example_ccdt_fpmap Build a Conforming Constrained Delaunay Triangulation with Known Polygon Identifiers
 
-If the user already knows the set of patch identifiers to associate with each face, this information can be
+If the user already knows the set of polygon identifiers to associate with each face, this information can be
 provided and preserved throughout the construction of the conforming constrained Delaunay
 triangulation.
 
 The following example demonstrates how to detect surface patches separated by sharp edges and use
 this segmentation during the tetrahedralization process.
 
-When the named parameter `face_patch_map` is specified,
-the face constraint indices in the 3D triangulation (accessible
-via `CGAL::Conforming_constrained_Delaunay_triangulation_cell_data_3::face_constraint_index()`) are
-set to the corresponding patch identifiers from the given property map. If this parameter is not provided, each
-input polygon is assigned a unique face index.
+When the named parameter `plc_face_id` is specified, each constrained face in the 3D triangulation
+is assigned to the corresponding input PLC face, identified in the provided property map.
+If this parameter is not specified, each input polygon, or PLC face, is given a unique face index.
 
 \cgalExample{Constrained_triangulation_3/conforming_constrained_Delaunay_triangulation_3_fpmap.cpp}
 

@@ -12,6 +12,10 @@
 #include "CGAL/type_traits.h"
 #include "CGAL/unordered_flat_map.h"
 #include <CGAL/Conforming_constrained_Delaunay_triangulation_3.h>
+
+#include <CGAL/Named_function_parameters.h>
+#include <CGAL/boost/graph/named_params_helper.h>
+
 #include <CGAL/IO/File_medit.h>
 #include <ostream>
 
@@ -27,12 +31,24 @@ namespace IO
  *        file format.
  * @param os the output stream
  * @param ccdt the conforming constrained Delaunay triangulation to be written
+ * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
+ * \cgalNamedParamsBegin
+ *    \cgalParamNBegin{with_plc_face_id}
+ *    \cgalParamDescription{a Boolean activating the numbering of PLC face identifiers in the output}
+ *    \cgalParamType{Boolean}
+ *    \cgalParamDefault{`false`}
+ *   \cgalParamNEnd
+ * \cgalNamedParamsEnd
+
  * \see \ref IOStreamMedit
  */
-template <typename Traits, typename Tr>
+template <typename Traits,
+          typename Tr,
+          typename NamedParameters = parameters::Default_named_parameters>
 void write_MEDIT(std::ostream& os,
-                 const Conforming_constrained_Delaunay_triangulation_3<Traits, Tr>& ccdt)
+                 const Conforming_constrained_Delaunay_triangulation_3<Traits, Tr>& ccdt,
+                 const NamedParameters& np = parameters::default_values())
 {
   const auto& tr = ccdt.triangulation();
 
@@ -62,15 +78,21 @@ void write_MEDIT(std::ostream& os,
     }
   }
 
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+  const bool has_plc_face_id
+    = choose_parameter(get_parameter(np, internal_np::with_plc_face_id), false);
+
+  auto plc_patch_map = boost::make_function_property_map<Facet>([&](const Facet& f)
+    { return has_plc_face_id ? f.first->ccdt_3_data().face_constraint_index(f.second) + 1 : 1; });
+
   return SMDS_3::output_to_medit(os,
                                  tr,
                                  tr.finite_vertex_handles(),
                                  ccdt.constrained_facets(),
                                  tr.finite_cell_handles(),
                                  boost::make_function_property_map<Vertex_handle>([](Vertex_handle) { return 0; }),
-                                 boost::make_function_property_map<Facet>([](const Facet& f) {
-                                   return f.first->ccdt_3_data().face_constraint_index(f.second) + 1;
-                                 }),
+                                 plc_patch_map,
                                  boost::make_function_property_map<Cell_handle>([&](Cell_handle ch) {
                                    return cells_in_domain[ch] ? 1 : 0;
                                  }));
