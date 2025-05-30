@@ -29,7 +29,7 @@ namespace HDVF {
  
  The class `Hdvf_duality` is the implementation of homological discrete vector fields (HDVF for short) for Alexander duality computation.
  
- \warning The ring of coefficients provided should actually be a field.
+ \warning The ring of coefficients provided should be a **field**.
  
  In dimension \f$n\f$, given a complex \f$L\f$ homeomorphic to \f$\mathcal S^n\f$ and a sub-complex \f$K\subseteq L\f$, Alexander duality states that for all \f$q\leqslant n\f$:
  \f\[\tilde H_q(K) \simeq \tilde H^{n-q-1}(L-K)\f\]
