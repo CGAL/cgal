@@ -126,7 +126,7 @@ ostream& operator<< (ostream& out, const PerHoleT<DegType>& hole)
  <img src="persistence_hole4.png" align="center" width=20%/>
  <img src="persistence_hole_inf.png" align="center" width=20%/>
  
- Figures above illustrate next finite persistent intervals and (right) infinite persistent intervals.
+ Figures above illustrate next finite persistent intervals and (right) infinite dimension 1 persistent intervals.
  
  \cgalModels{HDVF}
  
