@@ -1199,25 +1199,13 @@ template<class R_> struct Compare_squared_distance : private Store_kernel<R_> {
         typedef R_ R;
         typedef typename Get_type<R, RT_tag>::type RT;
         typedef typename Get_type<R, Comparison_result_tag>::type result_type;
-        typedef typename Get_functor<R, Construct_ttag<Point_cartesian_const_iterator_tag> >::type CI;
+        typedef typename Get_functor<R, Squared_distance_tag>::type CSD;
 
         template<class V,class W>
         result_type operator()(V const&a, V const&b, W const&c)const{   //  Point, Point. FT
-                CI ci(this->kernel());
-
-                auto a_begin=ci(a,Begin_tag());
-                auto b_begin=ci(b,Begin_tag());
-                auto a_end=ci(a,End_tag());
-                RT sqdist(0);
-                result_type res;
-                // can't we do slightly better for Uncertain<*> ?
-                // after res=...; if(is_uncertain(res))return indeterminate<result_type>();
-                do{
-                  RT d = (*a_begin++ - *b_begin++);
-                  sqdist += d*d;
-                }while(a_begin!=a_end);
-                res=CGAL_NTS compare(sqdist,c);
-                return res;
+                CSD csd(this->kernel());
+                RT sqdist = csd(a,b);
+                return compare(sqdist,c);
         }
 };
 }
