@@ -20,6 +20,9 @@
 #include <CGAL/Triangulation_3.h>
 #include <CGAL/Triangulation_data_structure_3.h>
 
+#include <CGAL/Named_function_parameters.h>
+#include <CGAL/boost/graph/named_params_helper.h>
+
 namespace CGAL {
 
 /*!
@@ -39,14 +42,14 @@ namespace CGAL {
   during the triangulation process.
 
   By default, each face of the input is considered a polygonal constraint for the triangulation. The
-  named parameter `face_patch_map` can be used to describe larger polygonal constraints, possibly with holes. If
+  named parameter `plc_face_id` can be used to describe larger polygonal constraints, possibly with holes. If
   used, this parameter must be a property map that associates each face of the input with a patch
   identifier. Faces with the same patch identifier are considered part of the same surface patch. Each of these
   surface patches (defined as the union of the input faces with a given patch identifier) is expected to be a polygon or
   a polygon with holes, with coplanar vertices (or nearly coplanar up to the precision of the number type used).
 
   The generated triangulation will conform to the faces of the input, or to the surface patches
-  described by the `face_patch_map` property map if provided.
+  described by the `plc_face_id` property map if provided.
 
 
   \pre The input data must not be coplanar.
@@ -108,11 +111,13 @@ namespace CGAL {
  *                     must be available in `PolygonMesh`.}
  *   \cgalParamNEnd
  *
- *   \cgalParamNBegin{face_patch_map}
- *    \cgalParamDescription{a property map associating a patch identifier to each face of `mesh`}
+ *   \cgalParamNBegin{plc_face_id}
+ *    \cgalParamDescription{a property map associating a patch identifier to each face of `mesh`.
+ *                   Each identifier corresponds to a planar surface patch. Each surface
+ *                   patch can be composed of several faces of `mesh`, forming a planar polygon.}
  *    \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%face_descriptor`
  *                   as key type and with any value type that is a *regular* type (model of `Regular`)}
- *   \cgalParamExtra{If this parameter is omitted, each face of the mesh is considered a separate patch.
+ *   \cgalParamExtra{If this parameter is omitted, each face of `mesh` is considered a separate patch.
  *                   Faces with the same patch identifier are considered part of the same surface patch.}
  *   \cgalParamNEnd
  *
@@ -182,8 +187,10 @@ auto make_conforming_constrained_Delaunay_triangulation_3(const PolygonMesh &mes
  *     \cgalParamDefault{`CGAL::Identity_property_map`}
  *   \cgalParamNEnd
  *
- *   \cgalParamNBegin{face_patch_map}
- *    \cgalParamDescription{a property map associating a patch identifier to each face of `soup`}
+ *   \cgalParamNBegin{plc_face_id}
+ *    \cgalParamDescription{a property map associating a patch identifier to each face of `soup`.
+ *                   Each identifier corresponds to a planar surface patch. Each surface
+ *                   patch can be composed of several faces of `soup`, forming a planar polygon.}
  *    \cgalParamType{a class model of `ReadWritePropertyMap` with `std::size_t`
  *                   as key type and with any value type that is a *regular* type (model of `Regular`)}
  *   \cgalParamExtra{If this parameter is omitted, each face of the polygon soup is considered a separate patch.}
