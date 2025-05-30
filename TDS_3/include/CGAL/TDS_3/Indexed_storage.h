@@ -12,6 +12,7 @@
 #ifndef CGAL_TDS_INTERNAL_INDEXED_STORAGE_3_H
 #define CGAL_TDS_INTERNAL_INDEXED_STORAGE_3_H
 
+#include "CGAL/Triangulation_data_structure_3.h"
 #include <CGAL/license/TDS_3.h>
 
 #include <CGAL/disable_warnings.h>
@@ -20,6 +21,7 @@
 #include <CGAL/TDS_3/internal/Triangulation_ds_circulators_3.h>
 #include <CGAL/TDS_3/internal/Triangulation_ds_iterators_3.h>
 #include <CGAL/Triangulation_utils_3.h>
+#include <CGAL/Triangulation_data_structure_3_fwd.h>
 
 #include <CGAL/assertions.h>
 #include <CGAL/Iterator_range.h>
@@ -45,6 +47,34 @@ namespace CGAL {
 
   template <typename Vb = Vertex<>, typename Cb = Cell<>, class ConcurrencyTag = Sequential_tag>
   struct Indexed_storage;
+
+//utilities for copy_tds
+namespace internal { namespace TDS_3{
+  template <class Vertex_src,class Vertex_tgt>
+  struct Default_index_vertex_converter;
+
+  template <class Cell_src,class Cell_tgt>
+  struct Default_index_cell_converter;
+
+  template <class Vertex>
+  struct Default_index_vertex_converter<Vertex,Vertex>
+  {
+    const Vertex& operator()(const Vertex& src) const {
+      return src;
+    }
+
+    void operator()(const Vertex&,Vertex) const {}
+  };
+
+  template <class Cell>
+  struct Default_index_cell_converter<Cell,Cell>{
+    const Cell& operator()(const Cell& src) const {
+      return src;
+    }
+
+    void operator()(const Cell&,Cell) const {}
+  };
+} } //namespace internal::TDS_3
 
   template <typename TDS_3>
   struct Cell {
@@ -309,7 +339,7 @@ namespace CGAL {
       storage().icell = c.index();
     }
 
-    bool is_valid(bool  = false) const
+    bool is_valid(bool = false, int = 0) const
     {
       assert(false); // This should be implemented
       return true;
@@ -448,18 +478,102 @@ namespace CGAL {
   template <class T>
   std::size_t hash_value(const Index<T>&  i)
   {
-    std::size_t ret = i;
-    return ret;
+    return i.id();
   }
 
+  template <typename TDS, typename T>
+  class Handle_for_indexed_TDS {
+    using size_type = typename TDS::size_type;
+    using Element = T;
+    using Proxy = boost::stl_interfaces::proxy_arrow_result<Element>;
+  public:
+    using value_type = Element;
+    using reference = Element;
+    using pointer = Proxy;
 
+    Handle_for_indexed_TDS() = default;
+
+    Handle_for_indexed_TDS(TDS* tds, size_type idx)
+      : tds_(tds), idx_(idx) {}
+
+    using Index = typename Element::Index;
+
+    Element operator*() const {
+      return Element(tds_, Index(idx_));
+    }
+
+    Proxy operator->() const {
+      return Proxy{this->operator*()};
+    }
+
+    Index index() const {
+      return Index{idx_};
+    }
+
+    auto tds() const {
+      return tds_;
+    }
+
+    bool operator==(const Handle_for_indexed_TDS& other) const {
+      return tds() == other.tds() && index() == other.index();
+    }
+
+    bool operator!=(const Handle_for_indexed_TDS& other) const {
+      return !(*this == other);
+    }
+
+    bool operator<(const Handle_for_indexed_TDS& other) const {
+      return (tds() == other.tds()) ? (index() < other.index()) : (tds() < other.tds());
+    }
+
+    friend std::ostream& operator<<(std::ostream& os, const Handle_for_indexed_TDS& h)
+    {
+      return os << "#" << h.index();
+    }
+
+    friend std::size_t hash_value(const Handle_for_indexed_TDS<TDS, T>& h) {
+      return static_cast<std::size_t>(h.index().id());
+    }
+
+  private:
+    TDS* tds_ = nullptr;
+    size_type idx_ = (std::numeric_limits<size_type>::max)();
+  };
+
+} // end namespace CGAL
+
+template <typename TDS, typename T>
+struct ::std::hash<CGAL::Handle_for_indexed_TDS<TDS, T>>
+{
+  using Handle = CGAL::Handle_for_indexed_TDS<TDS, T>;
+  std::size_t operator()(const Handle& h) const {
+    return hash_value(h);
+  }
+};
+
+namespace CGAL {
 
   template <typename Vb, typename Cb, typename ConcurrencyTag>
   struct Indexed_storage
   {
 
     using Self = Indexed_storage<Vb,Cb, ConcurrencyTag>;
+    using TDS = Triangulation_data_structure_3<Vb, Cb, ConcurrencyTag>;
     using Concurrency_tag  = ConcurrencyTag;
+
+    TDS& tds()
+    {
+      static_assert(std::is_base_of_v<Self, TDS>,
+                    "Indexed_storage must be a base class of TDS");
+      return *static_cast<TDS*>(this);
+    }
+
+    const TDS& tds() const
+    {
+      static_assert(std::is_base_of_v<Self, TDS>,
+                    "Indexed_storage must be a base class of TDS");
+      return *static_cast<const TDS*>(this);
+    }
 
     /// The type used to represent an index.
     using size_type = std::uint32_t;
@@ -481,58 +595,7 @@ namespace CGAL {
     using Cell = typename Cb::template Rebind_TDS<Self>::Other;
 
     template <typename T>
-    class Handle {
-      using Element = T;
-      using Proxy = boost::stl_interfaces::proxy_arrow_result<Element>;
-    public:
-      using value_type = Element;
-      using reference = Element;
-      using pointer = Proxy;
-
-      Handle() = default;
-
-      Handle(Self* tds, size_type idx)
-        : tds_(tds), idx_(idx) {}
-
-      using Index = typename Element::Index;
-
-      Element operator*() const {
-        return Element(tds_, Index(idx_));
-      }
-
-      Proxy operator->() const {
-        return Proxy{this->operator*()};
-      }
-
-      Index index() const {
-        return Index{idx_};
-      }
-
-      auto tds() const {
-        return tds_;
-      }
-
-      bool operator==(const Handle& other) const {
-        return tds() == other.tds() && index() == other.index();
-      }
-
-      bool operator!=(const Handle& other) const {
-        return !(*this == other);
-      }
-
-      bool operator<(const Handle& other) const {
-        return (tds() == other.tds()) ? (index() < other.index()) : (tds() < other.tds());
-      }
-
-      friend std::ostream& operator<<(std::ostream& os, const Handle& h)
-      {
-        return os << "#" << h.index();
-      }
-
-    private:
-      Self* tds_ = nullptr;
-      size_type idx_ = (std::numeric_limits<size_type>::max)();
-    };
+    using Handle = Handle_for_indexed_TDS<Self, T>;
 
     using Cell_handle = Handle<Cell>;
     using Vertex_handle = Handle<Vertex>;
@@ -703,6 +766,20 @@ namespace CGAL {
       }
     }
 
+    Vertex_handle create_vertex(const Vertex& v)
+    {
+      Vertex_handle new_v = create_vertex();
+      new_v->storage() = v.storage();
+      return new_v;
+    }
+
+    Cell_handle create_cell(const Cell& c)
+    {
+      Cell_handle new_c = create_cell();
+      new_c->storage() = c.storage();
+      return new_c;
+    }
+
     // AF:  What about the equivalent to
     // https://doc.cgal.org/latest/TDS_3/classTriangulationDataStructure__3.html#a1432860206073c24ca43dbbdfb13b26e
 
@@ -742,7 +819,7 @@ namespace CGAL {
     void delete_vertex(Vertex_index v)
     {
       vremoved_[v] = true; ++removed_vertices_; garbage_ = true;
-      vertex_storage_[v].cell = Cell_index(vertices_freelist_);
+      vertex_storage_[v].icell = Cell_index(vertices_freelist_);
       vertices_freelist_ = (size_type)v;
     }
 
@@ -782,7 +859,7 @@ namespace CGAL {
 
     bool is_vertex(Vertex_handle v) const
     {
-      return this == v->tds()  && v->idx() < num_vertices() && (! vremoved_[v.index()]);
+      return this == v->tds()  && v->index().id() < num_vertices() && (! vremoved_[v.index()]);
     }
 
     bool is_cell( Cell_handle c ) const
@@ -791,7 +868,7 @@ namespace CGAL {
       if (dimension() < 3)
         return false;
 
-      return this == c->tds()  && c->idx() < num_cells() && (! cremoved_[c.index()]);
+      return this == c->tds()  && c->index().id() < num_cells() && (! cremoved_[c.index()]);
     }
 
     //--------------------------------------------------- property handling
@@ -920,80 +997,6 @@ namespace CGAL {
       c1->set_neighbor(i1,c0);
     }
 
-    void just_incident_cells_3(Vertex_handle v,
-                              std::vector<Cell_handle>& cells) const
-    {
-      CGAL_precondition(dimension() == 3);
-
-      Cell_handle d = v->cell();
-      cells.push_back(d);
-      d->tds_data().mark_in_conflict();
-      int head=0;
-      int tail=1;
-      do {
-        Cell_handle c = cells[head];
-
-        for (int i=0; i<4; ++i) {
-          if (c->vertex(i) == v)
-            continue;
-          Cell_handle next = c->neighbor(i);
-          if (! next->tds_data().is_clear())
-            continue;
-          cells.push_back(next);
-          ++tail;
-          next->tds_data().mark_in_conflict();
-        }
-        ++head;
-      } while(head != tail);
-    }
-
-    Vertex_handle insert_first_finite_cell(Vertex_handle &v0,
-                                           Vertex_handle &v1,
-                                           Vertex_handle &v2,
-                                           Vertex_handle &v3,
-                                           Vertex_handle v_infinite = Vertex_handle())
-    {
-      CGAL_precondition(
-                        (v_infinite == Vertex_handle() && dimension() == -2)
-                        || (v_infinite != Vertex_handle() && dimension() == -1));
-
-      if (v_infinite == Vertex_handle())
-        v_infinite = create_vertex();
-
-      set_dimension(3);
-
-      v0 = create_vertex();
-      v1 = create_vertex();
-      v2 = create_vertex();
-      v3 = create_vertex();
-
-      Cell_handle c0123 = create_cell(v0,         v1,   v2,   v3);
-      Cell_handle ci012 = create_cell(v_infinite, v0,   v1,   v2);
-      Cell_handle ci103 = create_cell(v_infinite, v1,   v0,   v3);
-      Cell_handle ci023 = create_cell(v_infinite, v0,   v2,   v3);
-      Cell_handle ci132 = create_cell(v_infinite, v1,   v3,   v2);
-
-      v_infinite->set_cell(ci012);
-      v0->set_cell(c0123);
-      v1->set_cell(c0123);
-      v2->set_cell(c0123);
-      v3->set_cell(c0123);
-
-      set_adjacency(c0123, 0, ci132, 0);
-      set_adjacency(c0123, 1, ci023, 0);
-      set_adjacency(c0123, 2, ci103, 0);
-      set_adjacency(c0123, 3, ci012, 0);
-
-      set_adjacency(ci012, 3, ci103, 3);
-      set_adjacency(ci012, 2, ci023, 3);
-      set_adjacency(ci012, 1, ci132, 2);
-      set_adjacency(ci103, 1, ci023, 2);
-      set_adjacency(ci023, 1, ci132, 1);
-      set_adjacency(ci103, 2, ci132, 3);
-
-      return v_infinite;
-    }
-
     bool has_garbage() const { return garbage_; }
 
     /// returns whether the index of vertex `v` is valid, that is within the current array bounds.
@@ -1038,11 +1041,11 @@ namespace CGAL {
       using value_type = typename Handle_::value_type;
       using reference = value_type;  // AF reference needed, but is this correct ?????
 
-      Index_iterator() : hnd_(), tds_(nullptr) {}
+      Index_iterator() : idx_(), tds_(nullptr) {}
       Index_iterator(const Index& h, const Self* m)
-        : hnd_(h), tds_(const_cast<Self*>(m)) { // AF: todo make const_cast safe
+        : idx_(h), tds_(const_cast<Self*>(m)) { // AF: todo make const_cast safe
         if (tds_ && tds_->has_garbage()){
-          while (tds_->has_valid_index(hnd_) && tds_->is_removed(hnd_)) ++hnd_;
+          while (tds_->has_valid_index(idx_) && tds_->is_removed(idx_)) ++idx_;
         }
       }
 
@@ -1051,37 +1054,37 @@ namespace CGAL {
         static_assert(std::is_base_of_v<Facade, Index_iterator<Handle_>>);
 
         CGAL_assertion(tds_ != nullptr);
-        CGAL_assertion(tds_->has_valid_index(hnd_));
-        return Handle_(tds_, hnd_.id());
+        CGAL_assertion(tds_->has_valid_index(idx_));
+        return Handle_(tds_, idx_.id());
       }
 
       operator Handle_() const { return handle(); }
 
-      value_type operator*() const { return value_type{tds_, hnd_}; }
+      value_type operator*() const { return value_type{tds_, idx_}; }
 
       typename Handle_::pointer operator->() const
       {
-        return typename Handle_::pointer{value_type{tds_, hnd_}};
+        return typename Handle_::pointer{value_type{tds_, idx_}};
       }
 
       using Facade::operator++;
       Index_iterator& operator++()
       {
-        ++hnd_;
+        ++idx_;
         CGAL_assertion(tds_ != nullptr);
 
         if(tds_->has_garbage())
-          while ( tds_->has_valid_index(hnd_) && tds_->is_removed(hnd_)) ++hnd_;
+          while ( tds_->has_valid_index(idx_) && tds_->is_removed(idx_)) ++idx_;
         return *this;
       }
 
       using Facade::operator--;
       Index_iterator& operator--()
       {
-        --hnd_;
+        --idx_;
         CGAL_assertion(tds_ != nullptr);
         if(tds_->has_garbage())
-          while ( tds_->has_valid_index(hnd_) && tds_->is_removed(hnd_)) --hnd_;
+          while ( tds_->has_valid_index(idx_) && tds_->is_removed(idx_)) --idx_;
         return *this;
       }
 
@@ -1099,7 +1102,7 @@ namespace CGAL {
                 this->operator--();
           }
         else
-          hnd_ += n;
+          idx_ += n;
         return *this;
       }
 
@@ -1107,7 +1110,7 @@ namespace CGAL {
       {
         if (tds_->has_garbage())
           {
-            bool forward = (other.hnd_ > hnd_);
+            bool forward = (other.idx_ > idx_);
 
             std::ptrdiff_t out = 0;
             Index_iterator it = *this;
@@ -1128,16 +1131,16 @@ namespace CGAL {
           }
 
         // else
-        return std::ptrdiff_t(other.hnd_) - std::ptrdiff_t(this->hnd_);
+        return std::ptrdiff_t(other.idx_) - std::ptrdiff_t(this->idx_);
       }
 
       bool operator==(const Index_iterator& other) const
       {
-        return this->hnd_ == other.hnd_;
+        return this->idx_ == other.idx_;
       }
 
     private:
-      Index hnd_;
+      Index idx_;
       Self* tds_;
     };
 
@@ -1242,6 +1245,14 @@ namespace CGAL {
       return Facet_circulator(e);
     }
 
+    template <class TDS_src>
+    Vertex_handle copy_tds(const TDS_src & src, typename TDS_src::Vertex_handle vert)
+    {
+      internal::TDS_3::Default_index_vertex_converter<typename TDS_src::Vertex,Vertex> setv;
+      internal::TDS_3::Default_index_cell_converter<typename TDS_src::Cell,Cell>  setc;
+      return tds().copy_tds(src, vert, setv, setc);
+    }
+
     Properties::Property_container<Self, Vertex_index> vprops_;
     Properties::Property_container<Self, Cell_index>   cprops_;
 
@@ -1271,6 +1282,8 @@ namespace CGAL {
   };
 
 } /// namespace CGAL
+
+
 
 namespace CGAL {
   template <typename GT, typename Cb = Cell<>>

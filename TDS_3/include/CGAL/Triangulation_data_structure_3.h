@@ -19,6 +19,8 @@
 
 #include <CGAL/license/TDS_3.h>
 
+#include <CGAL/Triangulation_data_structure_3_fwd.h>
+
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/basic.h>
@@ -44,8 +46,6 @@
 #include <CGAL/Compact_container.h>
 #include <CGAL/Small_unordered_map.h>
 
-#include <CGAL/Triangulation_ds_cell_base_3.h>
-#include <CGAL/Triangulation_ds_vertex_base_3.h>
 #include <CGAL/Triangulation_simplex_3.h>
 
 #include <CGAL/TDS_3/internal/Triangulation_ds_iterators_3.h>
@@ -64,11 +64,52 @@
 
 namespace CGAL {
 
-template < class Vb = Triangulation_ds_vertex_base_3<>,
-           class Cb = Triangulation_ds_cell_base_3<>,
-           class Concurrency_tag_ = Sequential_tag
->
+template < class Vb, class Cb, class Concurrency_tag_>
 class Triangulation_data_structure_3;
+
+//utilities for copy_tds
+namespace internal { namespace TDS_3{
+  template <class Vertex_src,class Vertex_tgt>
+  struct Default_vertex_converter
+  {
+    Vertex_tgt operator()(const Vertex_src& src) const {
+      return Vertex_tgt(src.point());
+    }
+
+    void operator()(const Vertex_src&,Vertex_tgt&) const {}
+  };
+
+  template <class Cell_src,class Cell_tgt>
+  struct Default_cell_converter
+  {
+    Cell_tgt operator()(const Cell_src&) const {
+      return Cell_tgt();
+    }
+
+    void operator()(const Cell_src&,Cell_tgt&) const {}
+  };
+
+  template <class Vertex>
+  struct Default_vertex_converter<Vertex,Vertex>
+  {
+    const Vertex& operator()(const Vertex& src) const {
+      return src;
+    }
+
+    void operator()(const Vertex&,Vertex&) const {}
+  };
+
+  template <class Cell>
+  struct Default_cell_converter<Cell,Cell>{
+    const Cell& operator()(const Cell& src) const {
+      return src;
+    }
+
+    void operator()(const Cell&,Cell&) const {}
+  };
+} } //namespace internal::TDS_3
+
+
 
 template < class Vb = Triangulation_ds_vertex_base_3<>,
            class Cb = Triangulation_ds_cell_base_3<>,
@@ -268,6 +309,14 @@ public:
 
   bool is_vertex(Vertex_handle v) const;
   bool is_cell(Cell_handle c) const;
+
+  template <class TDS_src>
+  Vertex_handle copy_tds(const TDS_src & src, typename TDS_src::Vertex_handle vert)
+  {
+    internal::TDS_3::Default_vertex_converter<typename TDS_src::Vertex,Vertex> setv;
+    internal::TDS_3::Default_cell_converter<typename TDS_src::Cell,Cell>  setc;
+    return copy_tds(src, vert, setv, setc);
+  }
 
 private:
   // in dimension i, number of vertices >= i+2
@@ -1612,9 +1661,7 @@ public:
   bool is_valid(Cell_handle c, bool verbose = false, int level = 0) const;
 
   // Helping functions
-  template <class TDS_src>
-  Vertex_handle copy_tds(const TDS_src & tds,
-                         typename TDS_src::Vertex_handle vert);
+  using Tds_storage::copy_tds;
 
   template <class TDS_src>
   Vertex_handle copy_tds(const TDS_src & tds)
@@ -4192,59 +4239,6 @@ copy_tds(const TDS_src& tds,
   CGAL_postcondition( is_valid() );
 
   return (vert != typename TDS_src::Vertex_handle()) ? V[vert] : Vertex_handle();
-}
-
-//utilities for copy_tds
-namespace internal { namespace TDS_3{
-  template <class Vertex_src,class Vertex_tgt>
-  struct Default_vertex_converter
-  {
-    Vertex_tgt operator()(const Vertex_src& src) const {
-      return Vertex_tgt(src.point());
-    }
-
-    void operator()(const Vertex_src&,Vertex_tgt&) const {}
-  };
-
-  template <class Cell_src,class Cell_tgt>
-  struct Default_cell_converter
-  {
-    Cell_tgt operator()(const Cell_src&) const {
-      return Cell_tgt();
-    }
-
-    void operator()(const Cell_src&,Cell_tgt&) const {}
-  };
-
-  template <class Vertex>
-  struct Default_vertex_converter<Vertex,Vertex>
-  {
-    const Vertex& operator()(const Vertex& src) const {
-      return src;
-    }
-
-    void operator()(const Vertex&,Vertex&) const {}
-  };
-
-  template <class Cell>
-  struct Default_cell_converter<Cell,Cell>{
-    const Cell& operator()(const Cell& src) const {
-      return src;
-    }
-
-    void operator()(const Cell&,Cell&) const {}
-  };
-} } //namespace internal::TDS_3
-
-template <class Vb, class Cb, class Ct>
-template<class TDS_src>
-typename Triangulation_data_structure_3<Vb,Cb,Ct>::Vertex_handle
-Triangulation_data_structure_3<Vb,Cb,Ct>::
-copy_tds(const TDS_src& src,typename TDS_src::Vertex_handle vert)
-{
-  internal::TDS_3::Default_vertex_converter<typename TDS_src::Vertex,Vertex> setv;
-  internal::TDS_3::Default_cell_converter<typename TDS_src::Cell,Cell>  setc;
-  return copy_tds(src,vert,setv,setc);
 }
 
 template <class Vb, class Cb, class Ct>

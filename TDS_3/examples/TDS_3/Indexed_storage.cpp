@@ -1,5 +1,7 @@
+#define CGAL_TDS_USE_INDEXED_STORAGE_3
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/iterator.h>
+#include <CGAL/Triangulation_data_structure_3.h>
 #include <CGAL/TDS_3/Indexed_storage.h>
 
 int main() {
@@ -7,14 +9,15 @@ int main() {
   using Point = K::Point_3;
   using Vb = CGAL::VertexWithPoint<K>;
   using Cb = CGAL::Cell4Regular<K>;
-  using TDS = CGAL::Indexed_storage<Vb, Cb>;
-  TDS tds;
+  using TDS = CGAL::Triangulation_data_structure_3<Vb, Cb>;
   using Vertex_handle = TDS::Vertex_handle;
   using Vertex_iterator = TDS::Vertex_iterator;
   using Cell_handle = TDS::Cell_handle;
   using Cell_circulator = TDS::Cell_circulator;
   using Facet_circulator = TDS::Facet_circulator;
   using Edge = TDS::Edge;
+
+  TDS tds;
 
   Vertex_handle inf, v0, v1, v2, v3;
   inf = tds.insert_first_finite_cell(v0, v1, v2, v3);
@@ -36,7 +39,7 @@ int main() {
   inf->cell()->storage().my_other_cell = v1->cell();
 
   std::vector<Cell_handle> incident_cells;
-  tds.just_incident_cells_3(inf, incident_cells);
+  tds.incident_cells_3(inf, incident_cells);
   assert(incident_cells.size() == 4);
 
   for(auto f : tds.facets()) {

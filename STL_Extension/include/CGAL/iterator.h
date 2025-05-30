@@ -16,6 +16,8 @@
 //                 Lutz Kettner <kettner@mpi-sb.mpg.de>
 //                 Sylvain Pion
 
+#include <iterator>
+#include <type_traits>
 #ifndef CGAL_ITERATOR_H
 #define CGAL_ITERATOR_H 1
 
@@ -565,7 +567,12 @@ struct Filter_iterator {
   typedef typename ITI::pointer            pointer;
   typedef typename ITI::value_type         value_type;
   typedef typename ITI::difference_type    difference_type;
-  typedef typename ITI::iterator_category  iterator_category;
+  typedef typename ITI::iterator_category  I_iterator_category;
+  typedef std::conditional_t<std::is_convertible_v<I_iterator_category,
+                                                   std::random_access_iterator_tag>,
+                             std::bidirectional_iterator_tag,
+                             I_iterator_category>
+                                           iterator_category;
   // Special for circulators.
   typedef I_Circulator_size_traits<iterator_category,I> C_S_Traits;
   typedef typename  C_S_Traits::size_type               size_type;
@@ -613,7 +620,15 @@ public:
   }
 
   reference operator*() const { return *c_;  }
-  pointer operator->() const  { return &*c_; }
+
+  pointer operator->() const  {
+    if constexpr (std::is_pointer_v<pointer>) {
+      return &*c_;
+    } else {
+      return c_.operator->();
+    }
+  }
+
   const Predicate& predicate() const { return p_; }
   const Iterator& base() const { return c_; }
 
