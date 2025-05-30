@@ -755,9 +755,29 @@ namespace CGAL {
 
     void clear()
     {
-      assert(false); // This should be implemented
+      clear_without_removing_property_maps();
+      remove_all_property_maps();
     }
 
+    clear_without_removing_property_maps()
+    {
+      vprops_.resize(0);
+      cprops_.resize(0);
+
+      vprops_.shrink_to_fit();
+      cprops_.shrink_to_fit();
+
+      removed_vertices_ = removed_cells_ = 0;
+      vertices_freelist_ = cells_freelist_ = (std::numeric_limits<size_type>::max)();
+      garbage_ = false;
+      recycle_ = true;
+      anonymous_property_ = 0;
+    }
+
+    void remove_all_property_maps()
+    {
+        remove_property_maps<Vertex_index>();
+        remove_property_maps<Cell_index>();
 
     size_type number_of_removed_vertices() const
     {
