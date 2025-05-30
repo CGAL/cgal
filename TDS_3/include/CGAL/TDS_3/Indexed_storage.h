@@ -832,9 +832,30 @@ namespace CGAL {
 
     void clear()
     {
-      assert(false); // This should be implemented
+      clear_without_removing_property_maps();
+      remove_all_property_maps();
     }
 
+    void clear_without_removing_property_maps()
+    {
+      vprops_.resize(0);
+      cprops_.resize(0);
+
+      vprops_.shrink_to_fit();
+      cprops_.shrink_to_fit();
+
+      removed_vertices_ = removed_cells_ = 0;
+      vertices_freelist_ = cells_freelist_ = (std::numeric_limits<size_type>::max)();
+      garbage_ = false;
+      recycle_ = true;
+      anonymous_property_nb = 0;
+    }
+
+    void remove_all_property_maps()
+    {
+        remove_property_maps<Vertex_index>();
+        remove_property_maps<Cell_index>();
+    }
 
     size_type number_of_removed_vertices() const
     {
@@ -939,13 +960,6 @@ namespace CGAL {
       Property_selector<I>(this).resize_property_array();
     }
 
-    /// removes all property maps for all index types added by a call to `add_property_map()`.
-    /// The memory allocated for those property maps is freed.
-    void remove_all_property_maps()
-    {
-      remove_property_maps<Vertex_index>();
-      remove_property_maps<Cell_index>();
-    }
 
     /// @cond CGAL_DOCUMENT_INTERNALS
     /// returns the std::type_info of the value type of the
@@ -985,6 +999,94 @@ namespace CGAL {
       recycle_ = true;
       anonymous_property_nb = 0;
 
+    }
+
+    Indexed_storage(Indexed_storage&& is)
+      : dimension_(is.dimension_),
+        vertex_storage_(std::move(is.vertex_storage_)),
+        cell_storage_(std::move(is.cell_storage_)),
+        cell_data_(std::move(is.cell_data_)),
+        vprops_(std::move(is.vprops_)),
+        cprops_(std::move(is.cprops_)),
+        vremoved_(std::move(is.vremoved_)),
+        cremoved_(std::move(is.cremoved_)),
+        removed_vertices_(std::exchange(is.removed_vertices_, 0)),
+        removed_cells_(std::exchange(is.removed_cells_, 0)),
+        vertices_freelist_(std::exchange(is.vertices_freelist_, (std::numeric_limits<size_type>::max)())),
+        cells_freelist_(std::exchange(is.cells_freelist_, (std::numeric_limits<size_type>::max)())),
+        garbage_(std::exchange(is.garbage_, false)),
+        recycle_(std::exchange(is.recycle_, true)),
+        anonymous_property_nb(std::exchange(is.anonymous_property_nb, 0))
+    {
+      is.dimension_ = -2;
+    }
+
+    Indexed_storage& operator=(const Indexed_storage& rhs)
+    {
+      if (this != &rhs)
+    {
+        // clear properties
+        vprops_.clear();
+        cprops_.clear();
+
+        // allocate standard properties
+        vertex_storage_ = add_property_map<Vertex_index, Vertex_storage>("v:storage").first;
+        cell_storage_   = add_property_map<Cell_index, Cell_storage>("c:storage").first;
+        cell_data_      = add_property_map<Cell_index, Cell_data>("c:data").first;
+        vremoved_       = add_property_map<Vertex_index, bool>("v:removed", false).first;
+        cremoved_       = add_property_map<Cell_index, bool>("c:removed", false).first;
+
+        // copy properties from other triangulation
+        vertex_storage_.array() = rhs.vertex_storage_.array();
+        cell_storage_.array()   = rhs.cell_storage_.array();
+        cell_data_.array()      = rhs.cell_data_.array();
+
+        vremoved_.array()  = rhs.vremoved_.array();
+        cremoved_.array()  = rhs.cremoved_.array();
+
+        // resize (needed by property containers)
+        vprops_.resize(rhs.num_vertices());
+        cprops_.resize(rhs.num_cells());
+
+
+        // how many elements are removed?
+        removed_vertices_     = rhs.removed_vertices_;
+        removed_cells_        = rhs.removed_cells_;
+        vertices_freelist_    = rhs.vertices_freelist_;
+        cells_freelist_       = rhs.cells_freelist_;
+        garbage_              = rhs.garbage_;
+        recycle_              = rhs.recycle_;
+        anonymous_property_nb = rhs.anonymous_property_nb;
+    }
+
+    return *this;
+}
+
+
+
+
+    /// move assignment
+    Indexed_storage& operator=(Indexed_storage&& is)
+    {
+      if (this != &is) {
+        dimension_ = is.dimension_;
+        vertex_storage_ = std::move(is.vertex_storage_);
+        cell_storage_ = std::move(is.cell_storage_);
+        cell_data_ = std::move(is.cell_data_);
+        vprops_ = std::move(is.vprops_);
+        cprops_ = std::move(is.cprops_);
+        vremoved_ = std::move(is.vremoved_);
+        cremoved_ = std::move(is.cremoved_);
+        removed_vertices_ = std::exchange(is.removed_vertices_, 0);
+        removed_cells_ = std::exchange(is.removed_cells_, 0);
+        vertices_freelist_ = std::exchange(is.vertices_freelist_, (std::numeric_limits<size_type>::max)());
+        cells_freelist_ = std::exchange(is.cells_freelist_, (std::numeric_limits<size_type>::max)());
+        garbage_ = std::exchange(is.garbage_, false);
+        recycle_ = std::exchange(is.recycle_, true);
+        anonymous_property_nb = std::exchange(is.anonymous_property_nb, 0);
+        is.dimension_ = -2;
+      }
+      return *this;
     }
 
     void set_adjacency(Cell_handle c0, int i0,
