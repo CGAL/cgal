@@ -16,11 +16,35 @@
 #include <CGAL/transforming_iterator.h>
 #include <CGAL/NewKernel_d/utils.h>
 #include <CGAL/tuple.h>
+#include <type_traits>
 
 namespace CGAL {
-template <class Base_> struct Kernel_d_interface : public Base_ {
-  constexpr Kernel_d_interface(){}
-  constexpr Kernel_d_interface(int d):Base_(d){}
+//template <class Base_> struct Kernel_d_interface : public Base_ {
+// constexpr Kernel_d_interface(){}
+//  constexpr Kernel_d_interface(int d):Base_(d){}
+template <class> struct Kernel_d_interface;
+
+namespace internal::NewKernel_d {
+  // If the base kernel has approx/exact kernels, also wrap those, for packages like Frechet that want to dig through the internals
+
+  template <class K, class = void> struct Kernel_d_interface_filters_ : K { using K::K; };
+
+  template <class K> struct Kernel_d_interface_filters_<K, std::void_t<typename K::Approximate_kernel, typename K::Exact_kernel>> : K {
+
+  typedef CGAL::Kernel_d_interface<typename K::Approximate_kernel> Approximate_kernel;
+  typedef CGAL::Kernel_d_interface<typename K::Exact_kernel> Exact_kernel;
+
+  using K::K; // inherit constructors
+  };
+}
+
+
+template <class Base_> struct Kernel_d_interface : public internal::NewKernel_d::Kernel_d_interface_filters_<Base_> {
+
+        constexpr Kernel_d_interface(){}
+
+        constexpr Kernel_d_interface(int d)
+        : internal::NewKernel_d::Kernel_d_interface_filters_<Base_>(d) {}
 
         typedef Base_ Base;
         typedef Kernel_d_interface<Base> Kernel;
