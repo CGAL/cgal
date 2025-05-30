@@ -1,6 +1,16 @@
 #!/bin/bash
 #usage : script [-c -l -n -s -k] testsuite_dir
 
+if command -v rsync >/dev/null 2>&1; then
+  rsync_scp() {
+    rsync -avz --chmod=ugo=rX "$@"
+  }
+else
+  rsync_scp() {
+    command scp "$@"
+  }
+fi
+
 ##########################
 ####   LAUNCH CTEST   ####
 ##########################
@@ -200,14 +210,14 @@ put_on_web()
 {
   log "${ACTUAL_LOGFILE}" "Uploading results ${1} to $UPLOAD_RESULT_DESTINATION/$2"
 
-  "$SCP" "${1}" "$UPLOAD_RESULT_DESTINATION/$2" >> "${ACTUAL_LOGFILE}"
+  rsync_scp "${1}" "$UPLOAD_RESULT_DESTINATION/$2" >> "${ACTUAL_LOGFILE}"
 }
-
+# ----------------------------------------------------------------------------------------
 put_demos_on_web()
 {
   log "${ACTUAL_LOGFILE}" "Uploading demos ${1} to $UPLOAD_DEMOS_DESTINATION/$2"
 
-  "$SCP" "${1}" "$UPLOAD_DEMOS_DESTINATION/$2" >> "${ACTUAL_LOGFILE}"
+  rsync_scp "${1}" "$UPLOAD_DEMOS_DESTINATION/$2" >> "${ACTUAL_LOGFILE}"
 }
 
 
