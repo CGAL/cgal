@@ -69,7 +69,7 @@ if(TARGET CGAL::Eigen3_support)
 
     qt6_wrap_ui(remeshPlanarPatchesUI_FILES Remesh_planar_patches_dialog.ui)
     cgal_lab_plugin(remesh_planar_patches_plugin Remesh_planar_patches_plugin
-                           ${remeshPlanarPatchesUI_FILES} KEYWORDS PMP)
+                           ${remeshPlanarPatchesUI_FILES} KEYWORDS PMP CDT_3)
     target_link_libraries(remesh_planar_patches_plugin PRIVATE scene_surface_mesh_item  CGAL::Eigen3_support)
 
     if(CGAL_ENABLE_TESTING AND NOT CMAKE_VS_MSBUILD_COMMAND)
