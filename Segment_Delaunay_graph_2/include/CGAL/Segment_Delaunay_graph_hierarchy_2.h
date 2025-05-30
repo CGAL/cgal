@@ -20,11 +20,9 @@
 #include <CGAL/disable_warnings.h>
 
 #include <map>
+#include <random>
 
 #include <boost/random/random_number_generator.hpp>
-#include <boost/random/linear_congruential.hpp>
-#include <boost/random/geometric_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
 
 #include <CGAL/Segment_Delaunay_graph_2/basic.h>
 
@@ -139,7 +137,7 @@ protected:
 
   // here is the stack of triangulations which form the hierarchy
   Base*   hierarchy[sdg_hierarchy_2__maxlevel];
-  boost::rand48  random; // random generator
+  std::mt19937  random; // random generator
 public:
   // CONSTRUCTORS
   //-------------
@@ -189,7 +187,7 @@ public:
     typedef std::iterator_traits<Input_iterator> Iterator_traits;
     typedef typename Iterator_traits::difference_type Diff_t;
 
-    boost::random_number_generator<boost::rand48, Diff_t> rng(random);
+    boost::random_number_generator<std::mt19937, Diff_t> rng(random);
     CGAL::cpp98::random_shuffle(site_vec.begin(), site_vec.end(),rng);
     return insert(site_vec.begin(), site_vec.end(), Tag_false());
   }
@@ -427,10 +425,8 @@ protected:
   // LOCAL HELPER METHODS
   //---------------------
   int random_level() {
-    boost::geometric_distribution<> proba(1.0/sdg_hierarchy_2__ratio);
-    boost::variate_generator<boost::rand48&, boost::geometric_distribution<> > die(random, proba);
-
-    return (std::min)(die(), (int)sdg_hierarchy_2__maxlevel)-1;
+    std::geometric_distribution<> proba(1.0/sdg_hierarchy_2__ratio);
+    return (std::min)(proba(random), (int)sdg_hierarchy_2__maxlevel)-1;
   }
 
   int find_level(Vertex_handle v) const {
