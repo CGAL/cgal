@@ -3215,16 +3215,53 @@ namespace CommonKernelFunctors {
     }
 
     typename K::Point_3
-    operator()(const typename K::Ray_3& ray,
-               const typename K::Point_3& query,
-               const K& k)
+      operator()(const typename K::Ray_3& ray,
+        const typename K::Point_3& query,
+        const K& k)
     {
-      if ( ray.to_vector() * (query-ray.source()) <= 0)
+      if (ray.to_vector() * (query - ray.source()) <= 0)
         return ray.source();
       else
       {
         return k.construct_projected_point_3_object()(ray.supporting_line(), query);
       }
+    }
+
+    typename K::Point_3
+      operator()(const typename K::Sphere_3& sphere,
+        const typename K::Point_3& query,
+        const K& k)
+    {
+      typename K::Construct_point_3 point = k.construct_point_3_object();
+      typename K::Compute_x_3 x = k.compute_x_3_object();
+      typename K::Compute_y_3 y = k.compute_y_3_object();
+      typename K::Compute_z_3 z = k.compute_z_3_object();
+      typename K::Construct_vector_3 vector = k.construct_vector_3_object();
+      typename K::Construct_center_3 center = k.construct_center_3_object();
+      typename K::Compute_squared_radius_3 squared_radius = k.compute_squared_radius_3_object();
+      typename K::Compute_squared_length_3 squared_length = k.compute_squared_length_3_object();
+
+      const typename K::Point_3 c = center(sphere);
+
+      const typename K::FT sq_rad = squared_radius(sphere);
+      if (sq_rad == 0)
+        return c;
+
+      const typename K::Vector_3 v = vector(c, query);
+      const typename K::FT sq_len = squared_length(v);
+
+      if (sq_len < sq_rad)
+        return query;
+
+      const typename K::FT rad = CGAL::sqrt(sq_rad);
+
+      if (sq_len == 0) {
+        return point(x(c), y(c), z(c) + rad);
+      }
+      const typename K::FT len = CGAL::sqrt(sq_len);
+      const typename K::FT f = rad / len;
+
+      return point(x(c) + f * x(v), y(c) + f * y(v), z(c) + f * z(v));
     }
 
     const typename K::Point_3&
