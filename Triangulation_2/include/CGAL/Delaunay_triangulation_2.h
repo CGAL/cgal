@@ -418,8 +418,7 @@ public:
         pit = propagate_conflicts(p,fh,2,pit);
         return pit;
     }
-    CGAL_assertion(false);
-    return std::make_pair(fit,eit);
+    CGAL_unreachable();
   }
 
   template <class OutputItFaces>
