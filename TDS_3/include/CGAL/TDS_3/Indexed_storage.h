@@ -950,7 +950,81 @@ namespace CGAL {
       is.dimension_ = -2;
     }
 
-  Indexed_storage& operator=(Indexed_storage&& is)
+    Indexed_storage& operator=(const Indexed_storage& rhs)
+    {
+      if (this != &rhs)
+    {
+        // clear properties
+        vprops_.clear();
+        cprops_.clear();
+
+        // allocate standard properties
+        vertex_storage_ = add_property_map<Vertex_index, Vertex_storage>("v:storage").first;
+        cell_storage_   = add_property_map<Cell_index, Cell_storage>("c:storage").first;
+        cell_data_      = add_property_map<Cell_index, Cell_data>("c:data").first;
+        vremoved_       = add_property_map<Vertex_index, bool>("v:removed", false).first;
+        cremoved_       = add_property_map<Cell_index, bool>("c:removed", false).first;
+
+        // copy properties from other triangulation
+        vertex_storage_.array() = rhs.vertex_storage_.array();
+        cell_storage_.array()   = rhs.cell_storage_.array();
+        cell_data_.array()      = rhs.cell_data_.array();
+
+        vremoved_.array()  = rhs.vremoved_.array();
+        cremoved_.array()  = chs.eremoved_.array();
+
+        // resize (needed by property containers)
+        vprops_.resize(rhs.num_vertices());
+        cprops_.resize(rhs.num_cells());
+
+
+        // how many elements are removed?
+        removed_vertices_     = rhs.removed_vertices_;
+        removed_cells_        = rhs.removed_cells_;
+        vertices_freelist_    = rhs.vertices_freelist_;
+        cells_freelist_       = rhs.cells_freelist_;
+        garbage_              = rhs.garbage_;
+        recycle_              = rhs.recycle_;
+        anonymous_property_nb = rhs.anonymous_property_nb;
+    }
+
+    return *this;
+}
+
+//-----------------------------------------------------------------------------
+template <typename P>
+void
+Surface_mesh<P>::
+clear()
+{
+  clear_without_removing_property_maps();
+  remove_all_property_maps();
+}
+
+template <typename P>
+void
+Surface_mesh<P>::
+clear_without_removing_property_maps()
+{
+  vprops_.resize(0);
+  hprops_.resize(0);
+  eprops_.resize(0);
+  fprops_.resize(0);
+
+  vprops_.shrink_to_fit();
+  hprops_.shrink_to_fit();
+  eprops_.shrink_to_fit();
+  fprops_.shrink_to_fit();
+
+  removed_vertices_ = removed_edges_ = removed_faces_ = 0;
+  vertices_freelist_ = edges_freelist_ = faces_freelist_ = (std::numeric_limits<size_type>::max)();
+  garbage_ = false;
+  recycle_ = true;
+  anonymous_property_ = 0;
+    }
+
+    /// move assignment
+    Indexed_storage& operator=(Indexed_storage&& is)
     {
       if (this != &is) {
         dimension_ = is.dimension_;
