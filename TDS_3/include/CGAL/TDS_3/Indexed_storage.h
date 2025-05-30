@@ -759,7 +759,7 @@ namespace CGAL {
       remove_all_property_maps();
     }
 
-    clear_without_removing_property_maps()
+    void clear_without_removing_property_maps()
     {
       vprops_.resize(0);
       cprops_.resize(0);
@@ -771,13 +771,14 @@ namespace CGAL {
       vertices_freelist_ = cells_freelist_ = (std::numeric_limits<size_type>::max)();
       garbage_ = false;
       recycle_ = true;
-      anonymous_property_ = 0;
+      anonymous_property_nb = 0;
     }
 
     void remove_all_property_maps()
     {
         remove_property_maps<Vertex_index>();
         remove_property_maps<Cell_index>();
+    }
 
     size_type number_of_removed_vertices() const
     {
@@ -882,13 +883,6 @@ namespace CGAL {
       Property_selector<I>(this).resize_property_array();
     }
 
-    /// removes all property maps for all index types added by a call to `add_property_map()`.
-    /// The memory allocated for those property maps is freed.
-    void remove_all_property_maps()
-    {
-      remove_property_maps<Vertex_index>();
-      remove_property_maps<Cell_index>();
-    }
 
     /// @cond CGAL_DOCUMENT_INTERNALS
     /// returns the std::type_info of the value type of the
@@ -971,7 +965,7 @@ namespace CGAL {
         cell_data_.array()      = rhs.cell_data_.array();
 
         vremoved_.array()  = rhs.vremoved_.array();
-        cremoved_.array()  = chs.eremoved_.array();
+        cremoved_.array()  = rhs.cremoved_.array();
 
         // resize (needed by property containers)
         vprops_.resize(rhs.num_vertices());
@@ -991,37 +985,8 @@ namespace CGAL {
     return *this;
 }
 
-//-----------------------------------------------------------------------------
-template <typename P>
-void
-Surface_mesh<P>::
-clear()
-{
-  clear_without_removing_property_maps();
-  remove_all_property_maps();
-}
 
-template <typename P>
-void
-Surface_mesh<P>::
-clear_without_removing_property_maps()
-{
-  vprops_.resize(0);
-  hprops_.resize(0);
-  eprops_.resize(0);
-  fprops_.resize(0);
 
-  vprops_.shrink_to_fit();
-  hprops_.shrink_to_fit();
-  eprops_.shrink_to_fit();
-  fprops_.shrink_to_fit();
-
-  removed_vertices_ = removed_edges_ = removed_faces_ = 0;
-  vertices_freelist_ = edges_freelist_ = faces_freelist_ = (std::numeric_limits<size_type>::max)();
-  garbage_ = false;
-  recycle_ = true;
-  anonymous_property_ = 0;
-    }
 
     /// move assignment
     Indexed_storage& operator=(Indexed_storage&& is)
