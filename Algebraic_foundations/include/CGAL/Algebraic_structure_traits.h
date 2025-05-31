@@ -75,6 +75,7 @@ class Algebraic_structure_traits  {
     typedef Null_functor Div;
     typedef Null_functor Mod;
     typedef Null_functor Square;
+    typedef Null_functor Ceil;
     typedef Null_functor Is_zero;
     typedef Null_functor Is_one;
     typedef Null_functor Sqrt;
@@ -116,6 +117,7 @@ class Algebraic_structure_traits_base< Type_, Null_tag > {
     typedef Null_functor Div;
     typedef Null_functor Mod;
     typedef Null_functor Square;
+    typedef Null_functor Ceil;
     typedef Null_functor Is_zero;
     typedef Null_functor Is_one;
     typedef Null_functor Sqrt;
