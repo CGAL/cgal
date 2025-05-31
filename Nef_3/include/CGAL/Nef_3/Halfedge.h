@@ -65,52 +65,55 @@ class Halfedge_base
   SFace_handle       incident_sface_;
   GenPtr             info_;
   Sphere_point       point_;
+  mutable bool       visited_;
 
  public:
 
-  Halfedge_base() : center_vertex_(), mark_(), twin_(),
-    out_sedge_(), incident_sface_(),
-    info_(), point_() {}
+      Halfedge_base() : center_vertex_(), mark_(), twin_(),
+        out_sedge_(), incident_sface_(),
+        info_(), point_(), visited_(false) {}
 
-    Halfedge_base(Mark m) :  center_vertex_(), mark_(m), twin_(),
-      out_sedge_(), incident_sface_(),
-      info_(), point_() {}
+      Halfedge_base(Mark m) :  center_vertex_(), mark_(m), twin_(),
+        out_sedge_(), incident_sface_(),
+        info_(), point_(), visited_(false) {}
 
       ~Halfedge_base() {
         CGAL_NEF_TRACEN("  destroying Halfedge item "<<&*this);
       }
 
-      Halfedge_base(const Halfedge_base<Refs>& e)
-        { center_vertex_ = e.center_vertex_;
-          point_ = e.point_;
-          mark_ = e.mark_;
-          twin_ = e.twin_;
-          out_sedge_ = e.out_sedge_;
-          incident_sface_ = e.incident_sface_;
-          info_ = 0;
-        }
+      Halfedge_base(const Halfedge_base<Refs>& e) :
+        center_vertex_(e.center_vertex_),
+        point_(e.point_),
+        mark_(e.mark_),
+        twin_(e.twin_),
+        out_sedge_(e.out_sedge_),
+        incident_sface_(e.incident_sface_),
+        info_(0),
+        visited_(false) {}
 
       Halfedge_base<Refs>& operator=(const Halfedge_base<Refs>& e)
-        { center_vertex_ = e.center_vertex_;
-          point_ = e.point_;
-          mark_ = e.mark_;
-          twin_ = e.twin_;
-          out_sedge_ = e.out_sedge_;
-          incident_sface_ = e.incident_sface_;
-          info_ = 0;
-          return *this;
-        }
+      { center_vertex_ = e.center_vertex_;
+        point_ = e.point_;
+        mark_ = e.mark_;
+        twin_ = e.twin_;
+        out_sedge_ = e.out_sedge_;
+        incident_sface_ = e.incident_sface_;
+        info_ = 0;
+        visited_ = false;
+        return *this;
+      }
 
       Halfedge_base<Refs>& operator=(Halfedge_base<Refs>&& e) noexcept
-        { center_vertex_ = std::move(e.center_vertex_);
-          point_ = std::move(e.point_);
-          mark_ = std::move(e.mark_);
-          twin_ = std::move(e.twin_);
-          out_sedge_ = std::move(e.out_sedge_);
-          incident_sface_ = std::move(e.incident_sface_);
-          info_ = 0;
-          return *this;
-        }
+      { center_vertex_ = std::move(e.center_vertex_);
+        point_ = std::move(e.point_);
+        mark_ = std::move(e.mark_);
+        twin_ = std::move(e.twin_);
+        out_sedge_ = std::move(e.out_sedge_);
+        incident_sface_ = std::move(e.incident_sface_);
+        info_ = 0;
+        visited_ = false;
+        return *this;
+      }
 
       Vertex_handle& center_vertex() { return center_vertex_; }
       Vertex_const_handle center_vertex() const { return center_vertex_; }
@@ -123,6 +126,8 @@ class Halfedge_base
 
       Mark& mark() { return mark_; }
       const Mark& mark() const { return mark_; }
+
+      bool& visited() const { return visited_; }
 
       Vector_3 vector() const { return (point_ - CGAL::ORIGIN); }
       Sphere_point& point(){ return point_; }
