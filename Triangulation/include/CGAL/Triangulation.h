@@ -22,6 +22,8 @@
 #include <CGAL/Triangulation_vertex.h>
 #include <CGAL/Iterator_project.h>
 #include <CGAL/spatial_sort.h>
+#include <CGAL/Spatial_sort_traits_adapter_d.h>
+#include <CGAL/property_map.h>  // for CGAL::Identity_property_map
 #include <CGAL/Dimension.h>
 #include <CGAL/iterator.h>
 #include <CGAL/Default.h>
@@ -683,6 +685,36 @@ public:
         }
         return number_of_vertices() - n;
     }
+
+
+    template< typename RandomAccessIterator >
+    size_type insert_and_index(RandomAccessIterator start, RandomAccessIterator end)
+    {
+        size_type n = number_of_vertices();
+        std::vector<std::ptrdiff_t> indices(boost::counting_iterator<std::ptrdiff_t>(0),
+                                            boost::counting_iterator<std::ptrdiff_t>(end - start));
+
+        using Point_property_map = boost::iterator_property_map<RandomAccessIterator,
+                                                                CGAL::Identity_property_map<std::ptrdiff_t>>;
+        using Search_traits_d = CGAL::Spatial_sort_traits_adapter_d<Geom_traits, Point_property_map>;
+
+        CGAL::spatial_sort(indices.begin(), indices.end(), Search_traits_d(start));
+        std::vector<Point> points(start, end);
+        spatial_sort(points.begin(), points.end(), geom_traits());
+        Full_cell_handle hint = Full_cell_handle();
+
+      for (auto index : indices) {
+        typename Triangulation::Vertex_handle pos = insert(*(start+index), hint);
+        if (pos != nullptr) {
+          // Save index value as data to retrieve it after insertion
+          pos->data() = n+index;
+          hint = pos->full_cell();
+        }
+      }
+      return number_of_vertices() - n;
+    }
+
+
     Vertex_handle insert(const Point &, Locate_type, const Face &, const Facet &, Full_cell_handle);
     Vertex_handle insert(const Point &, Full_cell_handle start = Full_cell_handle());
     Vertex_handle insert(const Point &, Vertex_handle);
