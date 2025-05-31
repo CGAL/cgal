@@ -32,6 +32,7 @@ create_single_source_cgal_program("test_triangulation_serialization_3.cpp")
 create_single_source_cgal_program("test_dt_deterministic_3.cpp")
 create_single_source_cgal_program("test_Triangulation_with_transform_iterator.cpp")
 create_single_source_cgal_program("test_Triangulation_with_zip_iterator.cpp")
+create_single_source_cgal_program("test_Indexed_storage_3.cpp")
 
 if(TARGET CGAL::TBB_support)
   message(STATUS "Found TBB")
