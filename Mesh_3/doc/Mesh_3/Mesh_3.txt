@@ -456,8 +456,8 @@ behaves with respect to these parameters.
 <TR>
 <TD> </TD>
 <TD><IMG border="0" height="250px" src="./implicit_domain.jpg"> </TD>
-</TR>
 <TD> </TD>
+</TR>
 <TR>
 <TD><IMG border="0" height="250px" src="./implicit_domain_3.jpg"></TD>
 <TD><IMG border="0" height="250px" src="./implicit_domain_4.jpg"></TD>
