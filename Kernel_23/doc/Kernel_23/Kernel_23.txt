@@ -500,6 +500,20 @@ list of all possible resulting geometric objects. The exact result type of an in
 can be specified through the placeholder type specifier `auto`.
 
 
+The `CGAL::intersection()` function supports the following combinations of parameters:
+- Point_2 and Circle_2
+- Point_3 and Sphere_3
+- Line_2 and Circle_2
+- Line_3 and Sphere_3
+- Segment_2 and Circle_2
+- Segment_3 and Sphere_3
+- Ray_2 and Circle_2
+- Ray_3 and Sphere_3
+- Triangle_2 and Circle_2
+- Triangle_3 and Sphere_3
+
+Additional overloads are provided for the type Point_2 combined with any other type in the above list.
+Similarly, additional overloads are provided for the type Point_3 combined with any other type in the above list.
 
 Example
 -------
