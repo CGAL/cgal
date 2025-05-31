@@ -97,6 +97,7 @@
 \package_listing{Isosurfacing_3}
 \package_listing{Tetrahedral_remeshing}
 \package_listing{Periodic_3_mesh_3}
+\package_listing{Alpha_wrap_2}
 \package_listing{Alpha_wrap_3}
 
 \cgalPackageSection{PartReconstruction,Shape Reconstruction}
