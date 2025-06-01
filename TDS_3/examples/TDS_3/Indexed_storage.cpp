@@ -3,6 +3,7 @@
 #include <CGAL/iterator.h>
 #include <CGAL/Triangulation_data_structure_3.h>
 #include <CGAL/TDS_3/Indexed_storage.h>
+#include <sstream>
 
 int main() {
   using K = CGAL::Simple_cartesian<double>;
@@ -56,7 +57,7 @@ int main() {
   std::cout << "Incident cells to edge:\n";
   Cell_circulator cc = tds.incident_cells(e), cdone(cc);
   do {
-    cc->neighbor(0);
+    // cc->neighbor(0);
     Cell_handle ch = cc;
     std::cout << ch << " ";
     ++cc;
@@ -84,6 +85,12 @@ int main() {
   ++vit;
   vit->index().id();
 
+ // What is different from operator>> for Triangulation_3
+  std::stringstream point("0 1 2");
+  std::vector<Vertex_handle> vertices;
+  vertices.push_back(v0);
+  point >> *vertices[0];
+  std::cout << v0->point() << std::endl;
 
   return 0;
 }
