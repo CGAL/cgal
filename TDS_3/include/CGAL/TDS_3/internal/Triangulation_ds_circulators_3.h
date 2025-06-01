@@ -110,7 +110,8 @@ public:
     return tmp;
   }
 
-  Cell& operator*() const
+  // AF:  wAs Cell&   should it be Cell_handle::reference ??
+  decltype(auto)  operator*() const
   {
     return *pos;
   }
