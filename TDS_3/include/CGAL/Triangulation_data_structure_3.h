@@ -2246,7 +2246,7 @@ is_edge(Cell_handle c, int i, int j) const
   if ( (dimension() == 2) && ((i>2) || (j>2)) ) return false;
   if ((i>3) || (j>3)) return false;
 
-  return cells().owns_dereferenceable(c);
+  return is_cell(c);
 }
 
 template <class Vb, class Cb, class Ct>
@@ -2293,7 +2293,7 @@ is_facet(Cell_handle c, int i) const
     if ( (dimension() == 2) && (i!=3) )
         return false;
 
-    return cells().owns_dereferenceable(c);
+    return is_cell(c);
 }
 
 template <class Vb, class Cb, class Ct>
