@@ -56,6 +56,7 @@ int main() {
   std::cout << "Incident cells to edge:\n";
   Cell_circulator cc = tds.incident_cells(e), cdone(cc);
   do {
+    cc->neighbor(0);
     Cell_handle ch = cc;
     std::cout << ch << " ";
     ++cc;
