@@ -557,6 +557,14 @@ namespace internal { namespace TDS_3{
       return (tds() == other.tds()) ? (index() < other.index()) : (tds() < other.tds());
     }
 
+    bool operator==( std::nullptr_t ) const {
+      return tds_ == nullptr && idx_ == (std::numeric_limits<size_type>::max)();
+    }
+
+    bool operator!=( std::nullptr_t ) const {
+      return !(*this == nullptr);
+    }
+
     friend std::ostream& operator<<(std::ostream& os, const Handle_for_indexed_TDS& h)
     {
       return os << "#" << h.index();
