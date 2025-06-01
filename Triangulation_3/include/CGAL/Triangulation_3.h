@@ -495,7 +495,7 @@ public:
     Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
     Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
 
-    operator const Cell_handle&() const { return Base::base(); }
+    operator Cell_handle() const { return Base::base(); }
   };
 
   // We derive in order to add a conversion to handle.
@@ -514,7 +514,7 @@ public:
     Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
     Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
 
-    operator const Vertex_handle&() const { return Base::base(); }
+    operator Vertex_handle() const { return Base::base(); }
   };
 
   typedef Iterator_range<Prevent_deref<Finite_cells_iterator,
