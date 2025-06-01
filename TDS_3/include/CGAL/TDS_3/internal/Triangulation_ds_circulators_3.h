@@ -115,9 +115,9 @@ public:
     return *pos;
   }
 
-  Cell* operator->() const
+  decltype(auto) operator->() const
   {
-    return &*pos;
+    return pos.operator->();
   }
 
   bool operator==(const Cell_circulator & ccir) const
