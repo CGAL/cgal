@@ -181,6 +181,16 @@ namespace internal { namespace TDS_3{
       return Cell_handle(tds(), storage().ineighbors[i]);
     }
 
+    int index(Cell_handle n) const
+    {
+      for (int i = 0; i < 4; ++i) {
+        if (n.index() == storage().ineighbors[i]) {
+          return i;
+        }
+      }
+      return -1; // Not found
+    }
+
     bool has_neighbor(Cell_handle n) const
     {
       for (int i = 0; i < 4; ++i) {
@@ -1087,6 +1097,11 @@ namespace CGAL {
         is.dimension_ = -2;
       }
       return *this;
+    }
+
+    void swap(Indexed_storage& is)
+    {
+      assert(false); // AF:  This should be implemented
     }
 
     void set_adjacency(Cell_handle c0, int i0,
