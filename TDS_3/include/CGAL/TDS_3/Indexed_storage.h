@@ -369,6 +369,18 @@ namespace internal { namespace TDS_3{
     Vertex_index index_;
   };
 
+  template <typename TDS_3>
+  std::ostream& operator<<(std::ostream& os, const Vertex<TDS_3>& )
+  {
+    return os;
+  }
+
+  template <typename TDS_3>
+  std::istream& operator>>(std::istream& is, Vertex<TDS_3>& )
+  {
+    return is;
+  }
+
   template <typename GT, typename Vb = Vertex<>>
   struct VertexWithPoint
   : public Vb
@@ -407,11 +419,20 @@ namespace internal { namespace TDS_3{
   };
 
 
-  template <typename TDS_3>
-  std::ostream& operator<<(std::ostream& os, const Vertex<TDS_3>& v)
+  template <typename GT, typename Vb>
+  std::ostream& operator<<(std::ostream& os, const VertexWithPoint<GT, Vb>& v)
   {
-    os << "Vertex " << v.index();
+    os << v.point();
     return os;
+  }
+
+  template <typename GT, typename Vb>
+  std::istream& operator>>(std::istream& is, VertexWithPoint<GT, Vb>& v)
+  {
+    typename GT::Point_3 p;
+    is >> p;
+    v.set_point(p);
+    return is;
   }
 
   // Specialization for void.
@@ -826,15 +847,17 @@ namespace CGAL {
       return create_cell(v0, v1, v2, Vertex_handle());
     }
 
-    void delete_vertex(Vertex_index v)
+    void delete_vertex(Vertex_handle vh)
     {
+      Vertex v = vh->index();
       vremoved_[v] = true; ++removed_vertices_; garbage_ = true;
       vertex_storage_[v].icell = Cell_index(vertices_freelist_);
       vertices_freelist_ = (size_type)v;
     }
 
-    void delete_cell(Cell_index c)
+    void delete_cell(Cell_handle ch)
     {
+      Cell_index c = ch->index();
       cremoved_[c] = true; ++removed_cells_; garbage_ = true;
       cell_storage_[c].ivertices[0] = Vertex_index(cells_freelist_);
       vertices_freelist_ = (size_type)c;
