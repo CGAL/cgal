@@ -71,7 +71,7 @@
 #include <iterator>
 #include <optional>
 #include <vector>
-#include <iostream> //exceptions
+#include <exception>
 #if CGAL_CXX20 && __has_include(<ranges>)
 #  include <ranges>
 #endif
