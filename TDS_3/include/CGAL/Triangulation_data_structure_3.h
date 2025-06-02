@@ -536,10 +536,10 @@ public:
 
   // not documented
   void read_cells(std::istream& is, const std::vector< Vertex_handle > &V,
-                  std::size_t & m, std::vector< Cell_handle > &C);
+                  size_type & m, std::vector< Cell_handle > &C);
   // not documented
   void print_cells(std::ostream& os,
-                   const Unique_hash_map<Vertex_handle, std::size_t> &V ) const;
+                   const Unique_hash_map<Vertex_handle, size_type> &V ) const;
 
   // ACCESS FUNCTIONS
 
@@ -1735,7 +1735,7 @@ public:
     clear();
     cells().clear();
 
-    std::size_t n;
+    size_type n;
     int d;
     if(IO::is_ascii(is))
       is >> d >> n;
@@ -1746,11 +1746,11 @@ public:
     if(!is) return is;
     set_dimension(d);
 
-    std::size_t V_size = n;
+    size_type V_size = n;
     std::vector< Vertex_handle > V(V_size);
 
     // the infinite vertex is numbered 0
-    for (std::size_t i=0 ; i < V_size; ++i) {
+    for (size_type i=0 ; i < V_size; ++i) {
       Vertex1 v;
       if(!(is >> v)) return is;
       Vertex_handle vh=create_vertex( convert_vertex(v) );
@@ -1760,10 +1760,10 @@ public:
 
     std::vector< Cell_handle > C;
 
-    std::size_t m;
+    size_type m;
     read_cells(is, V, m, C);
 
-    for (std::size_t j=0 ; j < m; j++) {
+    for (size_type j=0 ; j < m; j++) {
       Cell1 c;
       if(!(is >> c)) return is;
       convert_cell(c, *C[j]);
@@ -2053,13 +2053,14 @@ operator>>(std::istream& is, Triangulation_data_structure_3<Vb,Cb,Ct>& tds)
   // the neighbors of each cell by their index in the preceding list of cells
   // when dimension < 3 : the same with faces of maximal dimension
 {
-  typedef Triangulation_data_structure_3<Vb,Cb,Ct> Tds;
-  typedef typename Tds::Vertex_handle  Vertex_handle;
-  typedef typename Tds::Cell_handle    Cell_handle;
+  using Tds = Triangulation_data_structure_3<Vb,Cb,Ct>;
+  using Vertex_handle = typename Tds::Vertex_handle;
+  using Cell_handle = typename Tds::Cell_handle;
+  using size_type = typename Tds::size_type;
 
   tds.clear();
 
-  std::size_t n;
+  size_type n;
   int d;
   if(IO::is_ascii(is))
      is >> d >> n;
@@ -2075,7 +2076,7 @@ operator>>(std::istream& is, Triangulation_data_structure_3<Vb,Cb,Ct>& tds)
   std::vector<Vertex_handle > V(n);
 
   // creation of the vertices
-  for (std::size_t i=0; i < n; i++) {
+  for (size_type i=0; i < n; i++) {
     //    is >> p;
     //    V[i] = tds.create_vertex();
     //    V[i]->set_point(p);
@@ -2083,7 +2084,7 @@ operator>>(std::istream& is, Triangulation_data_structure_3<Vb,Cb,Ct>& tds)
   }
 
   std::vector< Cell_handle > C;
-  std::size_t m;
+  size_type m;
 
   tds.read_cells(is, V, m, C);
   CGAL_assertion( tds.is_valid() );
@@ -2101,11 +2102,11 @@ operator<<(std::ostream& os, const Triangulation_data_structure_3<Vb,Cb,Ct> &tds
   // the neighbors of each cell by their index in the preceding list of cells
   // when dimension < 3 : the same with faces of maximal dimension
 {
-  typedef Triangulation_data_structure_3<Vb,Cb,Ct> Tds;
-  typedef typename Tds::size_type               size_type;
-  typedef typename Tds::Vertex_handle           Vertex_handle;
-  typedef typename Tds::Vertex_iterator         Vertex_iterator;
-
+  using Tds = Triangulation_data_structure_3<Vb,Cb,Ct>;
+  using size_type = typename Tds::size_type;
+  using Vertex_handle = typename Tds::Vertex_handle;
+  using Vertex_iterator = typename Tds::Vertex_iterator;
+  using size_type = typename Tds::size_type;
 
   Unique_hash_map<Vertex_handle, size_type> V(0, tds.number_of_vertices());
 
@@ -2658,7 +2659,7 @@ template <class Vb, class Cb, class Ct>
 void
 Triangulation_data_structure_3<Vb,Cb,Ct>::
 read_cells(std::istream& is, const std::vector< Vertex_handle > &V,
-           std::size_t & m, std::vector< Cell_handle > &C)
+           size_type & m, std::vector< Cell_handle > &C)
 {
   // creation of the cells and neighbors
   switch (dimension()) {
@@ -2673,10 +2674,10 @@ read_cells(std::istream& is, const std::vector< Vertex_handle > &V,
 
       C.resize(m);
 
-      for(std::size_t i = 0; i < m; i++) {
+      for(size_type i = 0; i < m; i++) {
         Cell_handle c = create_cell();
         for (int k=0; k<=dimension(); ++k) {
-          std::size_t ik;
+          size_type ik;
             if(IO::is_ascii(is))
                is >> ik;
             else
@@ -2686,10 +2687,10 @@ read_cells(std::istream& is, const std::vector< Vertex_handle > &V,
         }
         C[i] = c;
       }
-      for(std::size_t j = 0; j < m; j++) {
+      for(size_type j = 0; j < m; j++) {
         Cell_handle c = C[j];
         for (int k=0; k<=dimension(); ++k) {
-          std::size_t ik;
+          size_type ik;
             if(IO::is_ascii(is))
               is >> ik;
             else
@@ -2731,15 +2732,15 @@ read_cells(std::istream& is, const std::vector< Vertex_handle > &V,
 template <class Vb, class Cb, class Ct>
 void
 Triangulation_data_structure_3<Vb,Cb,Ct>::
-print_cells(std::ostream& os, const Unique_hash_map<Vertex_handle, std::size_t> &V ) const
+print_cells(std::ostream& os, const Unique_hash_map<Vertex_handle, size_type> &V ) const
 {
-  Unique_hash_map<Cell_handle, std::size_t > C(0, number_of_cells());
-  std::size_t i = 0;
+  Unique_hash_map<Cell_handle, size_type > C(0, number_of_cells());
+  size_type i = 0;
 
   switch ( dimension() ) {
   case 3:
     {
-      std::size_t m = number_of_cells();
+      size_type m = number_of_cells();
       if(IO::is_ascii(os))
         os << m << std::endl;
       else

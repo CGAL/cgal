@@ -2354,7 +2354,7 @@ public:
     clear();
     tds().cells().clear();
 
-    std::size_t n;
+    size_type n;
     int d;
     if(IO::is_ascii(is))
       is >> d >> n;
@@ -2365,13 +2365,13 @@ public:
     if(!is) return is;
     tds().set_dimension(d);
 
-    std::size_t V_size = n+1;
+    size_type V_size = n+1;
     std::vector< Vertex_handle > V(V_size);
 
     // the infinite vertex is numbered 0
     V[0] = infinite_vertex();
 
-    for (std::size_t i = 1; i < V_size; ++i) {
+    for (size_type i = 1; i < V_size; ++i) {
       Vertex1 v;
       if(!(is >> v)) return is;
       Vertex_handle vh=tds().create_vertex( convert_vertex(v) );
@@ -2381,10 +2381,10 @@ public:
 
     std::vector< Cell_handle > C;
 
-    std::size_t m;
+    size_type m;
     tds().read_cells(is, V, m, C);
 
-    for (std::size_t j=0 ; j < m; j++) {
+    for (size_type j=0 ; j < m; j++) {
       Cell1 c;
       if(!(is >> c)) return is;
       convert_cell(c, *C[j]);
@@ -2409,14 +2409,15 @@ std::istream& operator>> (std::istream& is, Triangulation_3<GT, Tds, Lds>& tr)
   // - the neighbors of each cell by their index in the preceding list of cells
   // - when dimension < 3 : the same with faces of maximal dimension
 
-  typedef Triangulation_3<GT, Tds>               Triangulation;
-  typedef typename Triangulation::Vertex_handle  Vertex_handle;
-  typedef typename Triangulation::Cell_handle    Cell_handle;
+  using Triangulation = Triangulation_3<GT, Tds>;
+  using Vertex_handle = typename Triangulation::Vertex_handle;
+  using Cell_handle = typename Triangulation::Cell_handle;
+  using size_type = typename Triangulation::size_type;
 
   tr._tds.clear(); // infinite vertex deleted
   tr.infinite = tr._tds.create_vertex();
 
-  std::size_t n;
+  size_type n;
   int d;
   if(IO::is_ascii(is))
   {
@@ -2439,7 +2440,7 @@ std::istream& operator>> (std::istream& is, Triangulation_3<GT, Tds, Lds>& tr)
   V.resize(n+1);
   V[0] = tr.infinite_vertex(); // the infinite vertex is numbered 0
 
-  for(std::size_t i=1; i <= n; i++)
+  for(size_type i=1; i <= n; i++)
   {
     V[i] = tr._tds.create_vertex();
     if(!(is >> *V[i]))
@@ -2448,10 +2449,10 @@ std::istream& operator>> (std::istream& is, Triangulation_3<GT, Tds, Lds>& tr)
 
   std::vector< Cell_handle > C;
 
-  std::size_t m;
+  size_type m;
   tr._tds.read_cells(is, V, m, C);
 
-  for(std::size_t j=0 ; j < m; j++)
+  for(size_type j=0 ; j < m; j++)
     if(!(is >> *(C[j])))
       return is;
 
@@ -2472,13 +2473,13 @@ std::ostream& operator<< (std::ostream& os, const Triangulation_3<GT, Tds, Lds>&
   // - the neighbors of each cell by their index in the preceding list of cells
   // - when dimension < 3 : the same with faces of maximal dimension
 
-  typedef Triangulation_3<GT, Tds>                 Triangulation;
-  typedef typename Triangulation::size_type        size_type;
-  typedef typename Triangulation::Vertex_handle    Vertex_handle;
-  typedef typename Triangulation::Vertex_iterator  Vertex_iterator;
-  typedef typename Triangulation::Cell_iterator    Cell_iterator;
-  typedef typename Triangulation::Edge_iterator    Edge_iterator;
-  typedef typename Triangulation::Facet_iterator   Facet_iterator;
+  using Triangulation   = Triangulation_3<GT, Tds>;
+  using size_type       = typename Triangulation::size_type;
+  using Vertex_handle   = typename Triangulation::Vertex_handle;
+  using Vertex_iterator = typename Triangulation::Vertex_iterator;
+  using Cell_iterator   = typename Triangulation::Cell_iterator;
+  using Edge_iterator   = typename Triangulation::Edge_iterator;
+  using Facet_iterator  = typename Triangulation::Facet_iterator;
 
   // outputs dimension and number of vertices
   size_type n = tr.number_of_vertices();
@@ -2505,7 +2506,7 @@ std::ostream& operator<< (std::ostream& os, const Triangulation_3<GT, Tds, Lds>&
   CGAL_assertion(i == n+1);
   CGAL_assertion(tr.is_infinite(TV[0]));
 
-  Unique_hash_map<Vertex_handle, std::size_t > V;
+  Unique_hash_map<Vertex_handle, size_type > V;
   V[tr.infinite_vertex()] = 0;
   for(i=1; i <= n; i++)
   {
