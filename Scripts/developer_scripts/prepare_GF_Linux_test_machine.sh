@@ -235,6 +235,7 @@ fi
 $SUDO_OR_PRINT mkdir -p /home/cgaltest/.ssh
 $SUDO_OR_PRINT chown cgaltest:cgaltest /home/cgaltest/.ssh
 $SUDO_OR_PRINT chmod 700 /home/cgaltest/.ssh
+$SUDO_OR_PRINT usermod -aG docker cgaltest
 
 keyfile="/home/cgaltest/.ssh/id_ed25519"
 if ! $SUDO_OR_PRINT test -f "$keyfile"; then
