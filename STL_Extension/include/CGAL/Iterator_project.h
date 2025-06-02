@@ -16,6 +16,7 @@
 //                 Lutz Kettner <kettner@mpi-sb.mpg.de>
 //                 Sylvain Pion
 
+#include "CGAL/type_traits.h"
 #ifndef CGAL_ITERATOR_PROJECT_H
 #define CGAL_ITERATOR_PROJECT_H 1
 
@@ -38,30 +39,43 @@ struct I_TYPE_MATCH_IF { typedef R2 Result; };  // else clause
 template <class T, class R1, class R2>
 struct I_TYPE_MATCH_IF<T,T,R1,R2> { typedef R1 Result; }; // then clause
 
+template <class I, class Fct>
+using Iterator_project_reference = decltype(std::declval<Fct>()(*std::declval<I>()));
+
+template <class I, class Fct>
+using Iterator_project_value_type = CGAL::cpp20::remove_cvref_t<Iterator_project_reference<I, Fct>>;
+
 // keep 4 dummy template parameters around for backwards compatibility
 template < class I, class Fct,
            class D1 = int, class D2 = int, class D3 = int, class D4 = int >
 class Iterator_project
-  : public boost::stl_interfaces::proxy_iterator_interface<Iterator_project<I, Fct, D1, D2, D3, D4>,
-                                                           typename std::iterator_traits<I>::iterator_category,
-                                                           typename Fct::result_type>
+  : public boost::stl_interfaces::proxy_iterator_interface<
+               Iterator_project<I, Fct, D1, D2, D3, D4>,
+               typename std::iterator_traits<I>::iterator_category,
+               Iterator_project_value_type<I, Fct>,
+               Iterator_project_reference<I, Fct>
+               >
 {
+public:
+  using reference = Iterator_project_reference<I, Fct>;
+  using value_type = Iterator_project_value_type<I, Fct>;
+protected:
   using Base = boost::stl_interfaces::proxy_iterator_interface<
       Iterator_project<I, Fct, D1, D2, D3, D4>,
       typename std::iterator_traits<I>::iterator_category,
-      typename Fct::result_type>;
+      value_type,
+      reference>;
 
-protected:
   I        nt;    // The internal iterator.
 
   friend boost::stl_interfaces::access;
 
   I& base_reference() { return nt; }
   const I& base_reference() const { return nt; }
+
 public:
   using Self = Iterator_project<I,Fct,D1,D2,D3,D4>;
   using Iterator = I; // base iterator
-  using value_type = typename Fct::result_type;
   using pointer = typename Base::pointer;
 
   // CREATION
@@ -86,7 +100,7 @@ public:
 
   Iterator  current_iterator() const { return nt;}
 
-  value_type operator*() const {
+  reference operator*() const {
     Fct fct;
     return fct(*nt);
   }
