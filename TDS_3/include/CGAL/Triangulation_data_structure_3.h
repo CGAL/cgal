@@ -349,25 +349,29 @@ private:
   Vertex_range _vertices;
 };
 
+template < class StorageTag,
+           class Vb,
+           class Cb,
+           class Concurrency_tag_
+>
+using Triangulation_data_structure_3_storage_type =
+  std::conditional_t<
+    std::is_same_v<StorageTag, Handle_tag>,
+    Triangulation_data_structure_3_storage<Vb, Cb, Concurrency_tag_>,
+    Indexed_storage<Vb, Cb, Concurrency_tag_>
+  >;
+
 template < class Vb,
            class Cb,
            class Concurrency_tag_,
            class StorageTag
 >
 class Triangulation_data_structure_3
-: public std::conditional_t<
-    std::is_same<StorageTag, Handle_tag>::value,
-    Triangulation_data_structure_3_storage<Vb, Cb, Concurrency_tag_>,
-    Indexed_storage<Vb, Cb, Concurrency_tag_>
-  >
-   ,   public Triangulation_utils_3
+: public Triangulation_data_structure_3_storage_type<StorageTag, Vb, Cb, Concurrency_tag_>
+, public Triangulation_utils_3
 {
-  typedef std::conditional_t<
-    std::is_same<StorageTag, Handle_tag>::value,
-    Triangulation_data_structure_3_storage<Vb, Cb, Concurrency_tag_>,
-    Indexed_storage<Vb, Cb, Concurrency_tag_>
-  >
-  Tds_storage;
+  typedef Triangulation_data_structure_3_storage_type<StorageTag, Vb, Cb, Concurrency_tag_>
+      Tds_storage;
 
   typedef Triangulation_data_structure_3<Vb, Cb, Concurrency_tag_, StorageTag> Tds;
 public:
