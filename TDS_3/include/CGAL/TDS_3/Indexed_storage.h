@@ -1315,7 +1315,7 @@ namespace CGAL {
 
             std::ptrdiff_t out = 0;
             Index_iterator it = *this;
-            while (!it.equal(other))
+            while (!(it == other))
               {
                 if (forward)
                   {
