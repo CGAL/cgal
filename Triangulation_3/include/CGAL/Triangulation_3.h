@@ -518,9 +518,9 @@ public:
   };
 
   typedef Iterator_range<Prevent_deref<Finite_cells_iterator,
-                                       const Cell_handle&> >         Finite_cell_handles;
+                                       Cell_handle> >         Finite_cell_handles;
   typedef Iterator_range<Prevent_deref<Finite_vertices_iterator,
-                                       const Vertex_handle&> >       Finite_vertex_handles;
+                                       Vertex_handle> >       Finite_vertex_handles;
 
   typedef Filter_iterator<Edge_iterator, Infinite_tester>     Finite_edges_iterator;
   typedef Filter_iterator<Facet_iterator, Infinite_tester>    Finite_facets_iterator;

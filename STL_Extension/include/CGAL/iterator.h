@@ -40,7 +40,7 @@
 
 namespace CGAL {
 
-template<typename I, typename Reference_type = const I&>
+template<typename I, typename Reference_type = I>
 class Prevent_deref
   : public boost::iterator_adaptor<
     Prevent_deref<I, Reference_type>
