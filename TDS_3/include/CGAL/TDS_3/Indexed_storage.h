@@ -918,8 +918,8 @@ namespace CGAL {
     {
       Cell_index c = ch->index();
       cremoved_[c] = true; ++removed_cells_; garbage_ = true;
-      cell_storage_[c].ivertices[0] = Vertex_index(cells_freelist_);
-      vertices_freelist_ = (size_type)c;
+      cell_storage_[c].ivertices[0] = Vertex_index{cells_freelist_};
+      cells_freelist_ = static_cast<size_type>(c);
     }
 
     void clear()
