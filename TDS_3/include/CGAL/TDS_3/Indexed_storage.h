@@ -1130,7 +1130,7 @@ namespace CGAL {
       return *this;
     }
 
-    void swap(Indexed_storage& is)
+    void swap(Indexed_storage&)
     {
       assert(false); // AF:  This should be implemented
     }
