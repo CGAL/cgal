@@ -1,4 +1,3 @@
-#define CGAL_TDS_USE_INDEXED_STORAGE_3
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/iterator.h>
 #include <CGAL/Triangulation_data_structure_3.h>
@@ -7,10 +6,12 @@
 
 int main() {
   using K = CGAL::Simple_cartesian<double>;
-  using Point = K::Point_3;
+  using Weighted_point = K::Weighted_point_3;
   using Vb = CGAL::VertexWithPoint<K>;
   using Cb = CGAL::Cell4Regular<K>;
-  using TDS = CGAL::Triangulation_data_structure_3<Vb, Cb>;
+  using TDS = CGAL::Triangulation_data_structure_3<Vb, Cb,
+                                                   CGAL::Sequential_tag,
+                                                   CGAL::Index_tag>;
   using Vertex_handle = TDS::Vertex_handle;
   using Vertex_iterator = TDS::Vertex_iterator;
   using Cell_handle = TDS::Cell_handle;
@@ -33,11 +34,8 @@ int main() {
 
   for(auto c : tds.cells()) {
     std::cout << c.index() << std::endl;
-    c.hide_point(Point{});
+    c.hide_point(Weighted_point{});
   }
-
-  inf->cell()->storage().my_other_vertex = v0;
-  inf->cell()->storage().my_other_cell = v1->cell();
 
   std::vector<Cell_handle> incident_cells;
   tds.incident_cells_3(inf, incident_cells);
