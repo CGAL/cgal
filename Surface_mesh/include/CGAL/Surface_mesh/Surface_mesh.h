@@ -2750,47 +2750,6 @@ does_recycle_garbage() const
   return recycle_;
 }
 
-
-namespace internal{
-  namespace handle {
-    template <>
-    struct Hash_functor<SM_Vertex_index>{
-      std::size_t
-      operator()(const SM_Vertex_index i)
-      {
-        return i;
-      }
-    };
-
-    template <>
-    struct Hash_functor<SM_Halfedge_index>{
-      std::size_t
-      operator()(const SM_Halfedge_index i)
-      {
-        return i;
-      }
-    };
-
-    template <>
-    struct Hash_functor<SM_Edge_index>{
-      std::size_t
-      operator()(const SM_Edge_index i)
-      {
-        return i;
-      }
-    };
-
-    template <>
-    struct Hash_functor<SM_Face_index>{
-      std::size_t
-      operator()(const SM_Face_index i)
-      {
-        return i;
-      }
-    };
-  }
-}
-
 namespace internal {
 
 template <typename P>
