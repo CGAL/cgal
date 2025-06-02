@@ -977,13 +977,18 @@ namespace CGAL {
       return this == v->tds()  && v->index().id() < num_vertices() && (! vremoved_[v.index()]);
     }
 
+    bool is_valid_cell_handle(Cell_handle c) const
+    {
+      return this == c->tds()  && c->index().id() < num_cells() && (! cremoved_[c.index()]);
+    }
+
     bool is_cell( Cell_handle c ) const
       // returns false when dimension <3
     {
       if (dimension() < 3)
         return false;
 
-      return this == c->tds()  && c->index().id() < num_cells() && (! cremoved_[c.index()]);
+      return is_valid_cell_handle(c);
     }
 
     //--------------------------------------------------- property handling

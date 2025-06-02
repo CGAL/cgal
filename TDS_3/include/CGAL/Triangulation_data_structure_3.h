@@ -323,6 +323,11 @@ public:
   bool is_vertex(Vertex_handle v) const;
   bool is_cell(Cell_handle c) const;
 
+  bool is_valid_cell_handle(Cell_handle c) const
+  {
+    return cells().owns_dereferenceable(c);
+  }
+
   template <class TDS_src>
   Vertex_handle copy_tds(const TDS_src & src, typename TDS_src::Vertex_handle vert)
   {
@@ -2268,7 +2273,7 @@ is_edge(Cell_handle c, int i, int j) const
   if ( (dimension() == 2) && ((i>2) || (j>2)) ) return false;
   if ((i>3) || (j>3)) return false;
 
-  return is_cell(c);
+  return this->is_valid_cell_handle(c);
 }
 
 template <class Vb, class Cb, class Ct, class St>
@@ -2315,7 +2320,7 @@ is_facet(Cell_handle c, int i) const
     if ( (dimension() == 2) && (i!=3) )
         return false;
 
-    return is_cell(c);
+    return this->is_valid_cell_handle(c);
 }
 
 template <class Vb, class Cb, class Ct>
