@@ -634,6 +634,11 @@ public:
       return parray_->transfer(*(other.parray_), from, to);
     }
 
+    void swap(Property_map_base& pm2)
+    {
+      std::swap(parray_, pm2.parray_);
+    }
+
     /// Allows access to the underlying storage of the property. This
     /// is useful when the key associated with the properties is
     /// unimportant and only the properties are of interest

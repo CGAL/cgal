@@ -1128,9 +1128,23 @@ namespace CGAL {
       return *this;
     }
 
-    void swap(Indexed_storage&)
+    void swap(Indexed_storage& other)
     {
-      assert(false); // AF:  This should be implemented
+      std::swap(dimension_, other.dimension_);
+      vprops_.swap(other.vprops_);
+      cprops_.swap(other.cprops_);
+      vertex_storage_.swap(other.vertex_storage_);
+      cell_storage_.swap(other.cell_storage_);
+      cell_data_.swap(other.cell_data_);
+      vremoved_.swap(other.vremoved_);
+      cremoved_.swap(other.cremoved_);
+      std::swap(removed_vertices_, other.removed_vertices_);
+      std::swap(removed_cells_, other.removed_cells_);
+      std::swap(vertices_freelist_, other.vertices_freelist_);
+      std::swap(cells_freelist_, other.cells_freelist_);
+      std::swap(garbage_, other.garbage_);
+      std::swap(recycle_, other.recycle_);
+      std::swap(anonymous_property_nb, other.anonymous_property_nb);
     }
 
     void set_adjacency(Cell_handle c0, int i0,
