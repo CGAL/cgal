@@ -1,9 +1,11 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
+#include <CGAL/Surface_mesh.h>
+#include <CGAL/Polygon_mesh_processing/remesh_planar_patches.h>
+#include <CGAL/make_conforming_constrained_Delaunay_triangulation_3.h>
+
 #include <CGAL/IO/write_MEDIT.h>
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
-#include <CGAL/Polygon_mesh_processing/detect_features.h>
-#include <CGAL/Surface_mesh.h>
-#include <CGAL/make_conforming_constrained_Delaunay_triangulation_3.h>
 
 using K = CGAL::Exact_predicates_inexact_constructions_kernel;
 
@@ -16,28 +18,30 @@ int main(int argc, char* argv[])
 {
   std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/cross_quad.off");
 
-  Mesh mesh;
-  if(!PMP::IO::read_polygon_mesh(filename, mesh)) {
+  Mesh input;
+  if(!PMP::IO::read_polygon_mesh(filename, input)) {
     std::cerr << "Invalid input." << std::endl;
     return 1;
   }
 
-  std::cout << "Read " << mesh.number_of_vertices() << " vertices and "
-                       << mesh.number_of_faces() << " facets\n";
+  std::cout << "Read " << input.number_of_vertices() << " vertices and "
+                       << input.number_of_faces() << " facets\n";
 
-  auto edge_is_feature_map = get(CGAL::edge_is_feature, mesh);
-  auto face_patch_map = get(CGAL::face_patch_id_t<int>(), mesh);
+  auto plc_facet_map = get(CGAL::face_patch_id_t<int>(), input);
 
-  std::size_t number_of_patches = PMP::sharp_edges_segmentation(mesh, 10, edge_is_feature_map, face_patch_map);
-
-  std::cout << "Number of patches: " << number_of_patches << std::endl;
+  Mesh mesh;
+  PMP::remesh_planar_patches(input, mesh,
+                             CGAL::parameters::default_values(),
+                             CGAL::parameters::face_patch_map(plc_facet_map)
+                               .do_not_triangulate_faces(true));
 
   filename = argc > 2 ? argv[2] : "mesh.ply";
-  CGAL::IO::write_polygon_mesh(filename, mesh, CGAL::parameters::stream_precision(17));
+  CGAL::IO::write_polygon_mesh(filename, mesh,
+      CGAL::parameters::stream_precision(17));
   std::cout << "Wrote segmented mesh to " << filename << "\n";
 
   auto ccdt = CGAL::make_conforming_constrained_Delaunay_triangulation_3(mesh,
-                CGAL::parameters::plc_facet_id(face_patch_map));
+                CGAL::parameters::plc_facet_id(plc_facet_map));
 
   std::cout << "Number of vertices in the CDT: "
             << ccdt.triangulation().number_of_vertices() << '\n'
