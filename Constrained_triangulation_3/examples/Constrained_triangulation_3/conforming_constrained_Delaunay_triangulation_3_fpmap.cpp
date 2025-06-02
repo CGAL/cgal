@@ -37,7 +37,7 @@ int main(int argc, char* argv[])
   std::cout << "Wrote segmented mesh to " << filename << "\n";
 
   auto ccdt = CGAL::make_conforming_constrained_Delaunay_triangulation_3(mesh,
-                CGAL::parameters::plc_face_id(face_patch_map));
+                CGAL::parameters::plc_facet_id(face_patch_map));
 
   std::cout << "Number of vertices in the CDT: "
             << ccdt.triangulation().number_of_vertices() << '\n'
@@ -47,7 +47,7 @@ int main(int argc, char* argv[])
   filename = argc > 3 ? argv[3] : "out.mesh";
   std::ofstream out(filename);
   out.precision(17);
-  CGAL::IO::write_MEDIT(out, ccdt, CGAL::parameters::with_plc_face_id(true));
+  CGAL::IO::write_MEDIT(out, ccdt, CGAL::parameters::with_plc_facet_id(true));
   std::cout << "Wrote CDT to " << filename << "\n";
 
   return EXIT_SUCCESS;

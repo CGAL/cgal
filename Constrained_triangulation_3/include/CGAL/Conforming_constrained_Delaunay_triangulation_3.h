@@ -659,14 +659,14 @@ public:
     auto v_selected_map = get(CGAL::dynamic_vertex_property_t<bool>{}, mesh);
 
     int number_of_patches = 0;
-    constexpr bool has_plc_face_id = !parameters::is_default_parameter<CGAL_NP_CLASS,  internal_np::plc_face_id_t>::value;
+    constexpr bool has_plc_facet_id = !parameters::is_default_parameter<CGAL_NP_CLASS,  internal_np::plc_facet_id_t>::value;
 
-    if constexpr (has_plc_face_id) {
-      auto mesh_plc_face_id = parameters::get_parameter(np, internal_np::plc_face_id);
-      using Patch_id_type = CGAL::cpp20::remove_cvref_t<decltype(get(mesh_plc_face_id, *faces(mesh).first))>;
+    if constexpr (has_plc_facet_id) {
+      auto mesh_plc_facet_id = parameters::get_parameter(np, internal_np::plc_facet_id);
+      using Patch_id_type = CGAL::cpp20::remove_cvref_t<decltype(get(mesh_plc_facet_id, *faces(mesh).first))>;
       Patch_id_type max_patch_id{0};
       for(auto f : faces(mesh)) {
-        max_patch_id = (std::max)(max_patch_id, get(mesh_plc_face_id, f));
+        max_patch_id = (std::max)(max_patch_id, get(mesh_plc_facet_id, f));
       }
       number_of_patches = static_cast<int>(max_patch_id + 1);
       patch_edges.resize(number_of_patches);
@@ -674,9 +674,9 @@ public:
         if(is_border(h, mesh))
           continue;
         auto f = face(h, mesh);
-        auto patch_id = get(mesh_plc_face_id, f);
+        auto patch_id = get(mesh_plc_facet_id, f);
         auto opp = opposite(h, mesh);
-        if(is_border(opp, mesh) || patch_id != get(mesh_plc_face_id, face(opp, mesh))) {
+        if(is_border(opp, mesh) || patch_id != get(mesh_plc_facet_id, face(opp, mesh))) {
           auto va = source(h, mesh);
           auto vb = target(h, mesh);
           patch_edges[patch_id].emplace_back(va, vb);
@@ -693,7 +693,7 @@ public:
     auto tr_vertex_map = get(CGAL::dynamic_vertex_property_t<Vertex_handle>(), mesh);
     Cell_handle hint_ch{};
     for(auto v : vertices(mesh)) {
-      if constexpr(has_plc_face_id) {
+      if constexpr(has_plc_facet_id) {
         if(false == get(v_selected_map, v)) continue;
       }
       auto p = get(mesh_vp_map, v);
@@ -710,7 +710,7 @@ public:
       auto operator()(vertex_descriptor v) const { return get(*vertex_map, v); }
     } tr_vertex_fct{&tr_vertex_map};
 
-    if constexpr(has_plc_face_id) {
+    if constexpr(has_plc_facet_id) {
       for(int i = 0; i < number_of_patches; ++i) {
         auto& edges = patch_edges[i];
         if(edges.empty())
@@ -793,12 +793,12 @@ public:
     auto point_map = choose_parameter(get_parameter(np, internal_np::point_map),
                                                     CGAL::Identity_property_map<PointRange_value_type>{});
 
-    constexpr bool has_plc_face_id = !parameters::is_default_parameter<NamedParams, internal_np::plc_face_id_t>::value;
+    constexpr bool has_plc_facet_id = !parameters::is_default_parameter<NamedParams, internal_np::plc_facet_id_t>::value;
 
     using std::cbegin;
     using std::cend;
 
-    if constexpr (false == has_plc_face_id) {
+    if constexpr (false == has_plc_facet_id) {
       using Vertex_handle = typename Triangulation::Vertex_handle;
       using Cell_handle = typename Triangulation::Cell_handle;
       using Vec_vertex_handle = std::vector<Vertex_handle>;
@@ -837,7 +837,7 @@ public:
       using PID = CGAL::cpp20::remove_cvref_t<decltype(get(polygon_patch_map, 0u))>;
       constexpr auto invalid_patch_id = (std::numeric_limits<PID>::max)();
       Surface_mesh surface_mesh;
-      auto plc_face_id_pmap =
+      auto plc_facet_id_pmap =
           surface_mesh.template add_property_map<face_descriptor, PID>("fpm", invalid_patch_id).first;
 
       auto to_point = [point_map](const PointRange_value_type& v) { return get(point_map, v); };
@@ -850,14 +850,14 @@ public:
       PMP::orient_polygon_soup(rw_points, rw_polygons);
 
       auto polygon_to_face_output_iterator = boost::make_function_output_iterator(
-          [plc_face_id_pmap, polygon_patch_map](std::pair<std::size_t, face_descriptor> pid_f) {
-            put(plc_face_id_pmap, pid_f.second, get(polygon_patch_map, pid_f.first));
+          [plc_facet_id_pmap, polygon_patch_map](std::pair<std::size_t, face_descriptor> pid_f) {
+            put(plc_facet_id_pmap, pid_f.second, get(polygon_patch_map, pid_f.first));
           });
       PMP::polygon_soup_to_polygon_mesh(std::move(rw_points), std::move(rw_polygons), surface_mesh,
                                         np.polygon_to_face_output_iterator(polygon_to_face_output_iterator));
 
       Conforming_constrained_Delaunay_triangulation_3 ccdt{std::move(surface_mesh),
-                                                           CGAL::parameters::plc_face_id(plc_face_id_pmap)
+                                                           CGAL::parameters::plc_facet_id(plc_facet_id_pmap)
                                                                .do_self_intersection_tests(false)
                                                                .geom_traits(cdt_impl.geom_traits())};
       *this = std::move(ccdt);
