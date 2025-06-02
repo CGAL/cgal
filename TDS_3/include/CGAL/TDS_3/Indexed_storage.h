@@ -12,7 +12,7 @@
 #ifndef CGAL_TDS_INTERNAL_INDEXED_STORAGE_3_H
 #define CGAL_TDS_INTERNAL_INDEXED_STORAGE_3_H
 
-#include "CGAL/Triangulation_data_structure_3.h"
+#include <CGAL/Triangulation_data_structure_3.h>
 #include <CGAL/license/TDS_3.h>
 
 #include <CGAL/disable_warnings.h>
@@ -651,7 +651,7 @@ namespace CGAL {
   {
 
     using Self = Indexed_storage<Vb,Cb, ConcurrencyTag>;
-    using TDS = Triangulation_data_structure_3<Vb, Cb, ConcurrencyTag>;
+    using TDS = Triangulation_data_structure_3<Vb, Cb, ConcurrencyTag, Index_tag>;
     using Concurrency_tag  = ConcurrencyTag;
 
     TDS& tds()

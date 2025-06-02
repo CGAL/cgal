@@ -22,7 +22,8 @@ namespace CGAL {
 
 template < class Vb = Triangulation_ds_vertex_base_3<>,
            class Cb = Triangulation_ds_cell_base_3<>,
-           class Concurrency_tag_ = Sequential_tag
+           class Concurrency_tag_ = Sequential_tag,
+           class Storage_policy = Handle_tag
 >
 class Triangulation_data_structure_3;
 

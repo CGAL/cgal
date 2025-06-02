@@ -45,6 +45,9 @@ struct Null_functor {
 struct Sequential_tag {};
 struct Parallel_tag : public Sequential_tag {};
 
+struct Index_tag {};
+struct Handle_tag {};
+
 #ifdef CGAL_LINKED_WITH_TBB
 typedef CGAL::Parallel_tag Parallel_if_available_tag;
 #else

@@ -11,7 +11,7 @@ bool del = false;
 
 int main()
 {
-  typedef CGAL::Triangulation_data_structure_3<CGAL::VertexWithPoint<K>, CGAL::Cell<>> Tds;
+  typedef CGAL::Triangulation_data_structure_3<CGAL::VertexWithPoint<K>, CGAL::Cell<>, CGAL::Sequential_tag, CGAL::Index_tag> Tds;
   typedef CGAL::Triangulation_3<K,Tds>                               Cls3;
 
   _test_cls_triangulation_3( Cls3() );
