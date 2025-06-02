@@ -27,9 +27,8 @@ int main(int argc, char* argv[])
   std::cout << "Read " << input.number_of_vertices() << " vertices and "
                        << input.number_of_faces() << " facets\n";
 
-  auto plc_facet_map = get(CGAL::face_patch_id_t<int>(), input);
-
   Mesh mesh;
+  auto plc_facet_map = get(CGAL::face_patch_id_t<int>(), mesh);
   PMP::remesh_planar_patches(input, mesh,
                              CGAL::parameters::default_values(),
                              CGAL::parameters::face_patch_map(plc_facet_map)
