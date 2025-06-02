@@ -23,16 +23,9 @@ It constructs a constrained Delaunay triangulation from a polygon soup.
 How to use `CGAL::tetrahedral_isotropic_remeshing` with a constrained Delaunay triangulation.
 */
 
-/*!
-\example Constrained_triangulation_3/conforming_constrained_Delaunay_triangulation_3_fpmap.cpp
-@brief
-
-How to detect surface patches separated by sharp edges, before the construction of the
-constrained Delaunay conforming_constrained_Delaunay_triangulation_3_from_soup.
-*/
 
 /*!
-\example Constrained_triangulation_3/ccdt_3_from_soup_fimap.cpp
+\example Constrained_triangulation_3/conforming_constrained_Delaunay_triangulation_3_fimap.cpp
 @brief
 
 From a non-manifold OFF file, construct the constrained Delaunay triangulation.
