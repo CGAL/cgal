@@ -120,6 +120,20 @@ public:
   typedef Triangulation_data_structure_3<Vb, Cb, Concurrency_tag_, Handle_tag> Tds;
   typedef Triangulation_data_structure_3_storage<Vb, Cb, Concurrency_tag_> Storage;
 
+  Tds& tds()
+  {
+    static_assert(std::is_base_of_v<Storage, Tds>,
+                  "Triangulation_data_structure_3_storage must be a base class of Tds");
+    return *static_cast<Tds*>(this);
+  }
+
+  const Tds& tds() const
+  {
+    static_assert(std::is_base_of_v<Storage, Tds>,
+                  "Triangulation_data_structure_3_storage must be a base class of Tds");
+    return *static_cast<const Tds*>(this);
+  }
+
   // Put this TDS inside the Vertex and Cell types.
   typedef typename Vb::template Rebind_TDS<Tds>::Other  Vertex;
   typedef typename Cb::template Rebind_TDS<Tds>::Other  Cell;
@@ -314,7 +328,7 @@ public:
   {
     internal::TDS_3::Default_vertex_converter<typename TDS_src::Vertex,Vertex> setv;
     internal::TDS_3::Default_cell_converter<typename TDS_src::Cell,Cell>  setc;
-    return copy_tds(src, vert, setv, setc);
+    return tds().copy_tds(src, vert, setv, setc);
   }
 
   void maybe_fix_vertex_handle(Vertex_handle&)
