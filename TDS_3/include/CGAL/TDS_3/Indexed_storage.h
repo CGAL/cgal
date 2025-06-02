@@ -434,6 +434,57 @@ namespace internal { namespace TDS_3{
   };
 
 
+  template <typename GT, typename Vb = Vertex<>>
+  struct VertexWithWeightedPoint
+  : public Vb
+  {
+  public:
+    using Vb::Vb;
+    using Point = typename GT::Weighted_point_3;
+    struct Storage : public Vb::Storage {
+      typename GT::Weighted_point_3 point;
+    };
+
+    template < typename TDS2 >
+    struct Rebind_TDS {
+      using Vb2 = typename Vb::template Rebind_TDS<TDS2>::Other;
+      using Other = VertexWithWeightedPoint<GT,Vb2>;
+    };
+
+    decltype(auto) storage() {
+      return this->tds()->vertex_storage()[this->index()];
+    }
+
+    decltype(auto) storage() const {
+      return this->tds()->vertex_storage()[this->index()];
+    }
+
+    const Point& point() const
+    {
+      return storage().point;
+    }
+
+    void set_point(const Point& p)
+    {
+      storage().point = p;
+    }
+
+    friend std::ostream& operator<<(std::ostream& os, const VertexWithWeightedPoint& v)
+    {
+      os << v.point();
+      return os;
+    }
+
+    friend std::istream& operator>>(std::istream& is, VertexWithWeightedPoint v)
+    {
+      typename GT::Weighted_point_3 p;
+      if(is >> p) {
+        v.set_point(p);
+      }
+      return is;
+    }
+  };
+
 
   // Specialization for void.
   template <>
@@ -855,7 +906,7 @@ namespace CGAL {
 
     void delete_vertex(Vertex_handle vh)
     {
-      Vertex v = vh->index();
+      Vertex_index v = vh->index();
       vremoved_[v] = true; ++removed_vertices_; garbage_ = true;
       vertex_storage_[v].icell = Cell_index(vertices_freelist_);
       vertices_freelist_ = (size_type)v;
@@ -1446,27 +1497,33 @@ namespace CGAL {
 
 
 namespace CGAL {
-  template <typename GT, typename Cb = Cell<>>
+  template <typename GT,
+            typename Cb = Cell<>,
+            typename Memory_policy = Keep_hidden_points,
+            typename C = std::list<typename GT::Weighted_point_3>>
   class Cell4Regular
     : public Cb
   {
   public:
     using Cb::Cb; // inherit constructors
-    using Point = typename GT::Point_3;
+    using Point_3 = typename GT::Point_3;
+    using Point   = typename GT::Weighted_point_3;
     using TDS = typename Cb::Triangulation_data_structure;
     using Vertex_handle = typename TDS::Vertex_handle;
     using Cell_handle = typename TDS::Cell_handle;
 
+    using Point_container = C;
+    using Point_iterator = typename Point_container::iterator;
+    using  Point_const_iterator = typename Point_container::const_iterator;
+
     struct Storage : public Cb::Storage {
-      std::list<Point> hidden_points;
-      Vertex_handle my_other_vertex;
-      Cell_handle my_other_cell;
+      Point_container hidden;
     };
 
     template < typename TDS2 >
     struct Rebind_TDS {
       using Cb2 = typename Cb::template Rebind_TDS<TDS2>::Other;
-      using Other = Cell4Regular<GT, Cb2>;
+      using Other = Cell4Regular<GT, Cb2, Memory_policy, C>;
     };
 
     auto&& storage() {
@@ -1477,8 +1534,23 @@ namespace CGAL {
 
     void hide_point(const Point& p)
     {
-      storage().hidden_points.push_back(p);
+      storage().hidden.push_back(p);
     }
+
+    void unhide_point(const Point_iterator pit)
+    {
+      storage().hidden.erase(pit);
+    }
+
+    const C& hidden_points() const
+    {
+      return storage().hidden;
+    }
+
+    Point_iterator hidden_points_begin(){ storage().hidden.begin();}
+    Point_const_iterator hidden_points_begin() const { storage().hidden.begin();}
+    Point_iterator hidden_points_end(){ storage().hidden.end();}
+    Point_const_iterator hidden_points_end() const { storage().hidden.end();}
   };
 } // namespace CGAL
 
