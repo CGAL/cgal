@@ -93,7 +93,7 @@ namespace internal { namespace TDS_3{
     };
 
     Cell()
-      : tds_(nullptr), index_()
+      : tds_(nullptr), index_(Cell_handle().index())
     {}
 
     Cell(TDS_3* tds_, Cell_index index)
@@ -547,7 +547,9 @@ namespace internal { namespace TDS_3{
     }
 
     bool operator==(const TDS_handle& other) const {
-      return tds() == other.tds() && index() == other.index();
+      CGAL_assertion(tds() == nullptr || other.tds() == nullptr ||
+                     tds() == other.tds());
+      return index() == other.index();
     }
 
     bool operator!=(const TDS_handle& other) const {
@@ -873,6 +875,7 @@ namespace CGAL {
     {
       clear_without_removing_property_maps();
       remove_all_property_maps();
+      allocate_tds_properties();
     }
 
     void clear_without_removing_property_maps()
@@ -888,12 +891,13 @@ namespace CGAL {
       garbage_ = false;
       recycle_ = true;
       anonymous_property_nb = 0;
+      dimension_ = -2;
     }
 
     void remove_all_property_maps()
     {
-        remove_property_maps<Vertex_index>();
-        remove_property_maps<Cell_index>();
+      remove_property_maps<Vertex_index>();
+      remove_property_maps<Cell_index>();
     }
 
     size_type number_of_removed_vertices() const
@@ -1022,22 +1026,24 @@ namespace CGAL {
       return Property_selector<I>(const_cast<Self*>(this))().properties();
     }
 
+    void allocate_tds_properties() {
+      vertex_storage_ = add_property_map<Vertex_index, Vertex_storage>("v:storage").first;
+      cell_storage_   = add_property_map<Cell_index, Cell_storage>("c:storage").first;
+      cell_data_      = add_property_map<Cell_index, Cell_data>("c:data").first;
+      vremoved_       = add_property_map<Vertex_index, bool>("v:removed", false).first;
+      cremoved_       = add_property_map<Cell_index, bool>("c:removed", false).first;
+    }
+
 
     Indexed_storage()
       : dimension_(-2)
     {
-      vertex_storage_  = add_property_map<Vertex_index, Vertex_storage>("v:storage").first;
-      cell_storage_    = add_property_map<Cell_index, Cell_storage>("c:storage").first;
-      cell_data_       = add_property_map<Cell_index, Cell_data>("c:data").first;
-      vremoved_        = add_property_map<Vertex_index, bool>("v:removed", false).first;
-      cremoved_        = add_property_map<Cell_index, bool>("c:removed", false).first;
-
+      allocate_tds_properties();
       removed_vertices_ = removed_cells_ = 0;
       vertices_freelist_ = cells_freelist_  = (std::numeric_limits<size_type>::max)();
       garbage_ = false;
       recycle_ = true;
       anonymous_property_nb = 0;
-
     }
 
     Indexed_storage(Indexed_storage&& is)
@@ -1063,17 +1069,13 @@ namespace CGAL {
     Indexed_storage& operator=(const Indexed_storage& rhs)
     {
       if (this != &rhs)
-    {
+      {
         // clear properties
         vprops_.clear();
         cprops_.clear();
 
         // allocate standard properties
-        vertex_storage_ = add_property_map<Vertex_index, Vertex_storage>("v:storage").first;
-        cell_storage_   = add_property_map<Cell_index, Cell_storage>("c:storage").first;
-        cell_data_      = add_property_map<Cell_index, Cell_data>("c:data").first;
-        vremoved_       = add_property_map<Vertex_index, bool>("v:removed", false).first;
-        cremoved_       = add_property_map<Cell_index, bool>("c:removed", false).first;
+        allocate_tds_properties();
 
         // copy properties from other triangulation
         vertex_storage_.array() = rhs.vertex_storage_.array();
@@ -1096,12 +1098,9 @@ namespace CGAL {
         garbage_              = rhs.garbage_;
         recycle_              = rhs.recycle_;
         anonymous_property_nb = rhs.anonymous_property_nb;
-    }
-
-    return *this;
-}
-
-
+      }
+      return *this;
+  }
 
 
     /// move assignment
