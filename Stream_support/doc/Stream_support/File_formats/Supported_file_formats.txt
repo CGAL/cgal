@@ -529,7 +529,7 @@ The following \cgal data structures can be exported into the `.mesh` file format
 - `CGAL::Mesh_complex_3_in_triangulation_3`, using the function
   \link CGAL::IO::write_MEDIT(std::ostream &, const CGAL::Mesh_complex_3_in_triangulation_3< T3, CornerIndex, CurveIndex >&, const NamedParameters &) `CGAL::IO::write_MEDIT(` \endlink, and
 - `CGAL::Conforming_constrained_Delaunay_triangulation_3`, using the function
-  \link CGAL::IO::write_MEDIT(std::ostream &os, const CGAL::Conforming_constrained_Delaunay_triangulation_3< Traits, Tr > &ccdt) `CGAL::IO::write_MEDIT(` \endlink.
+  \link CGAL::IO::write_MEDIT(std::ostream &os, const CGAL::Conforming_constrained_Delaunay_triangulation_3< Traits, Tr > &ccdt, const NamedParameters& np) `CGAL::IO::write_MEDIT(` \endlink.
 
 
 \section IOStreamTetgen Tetgen File Format
