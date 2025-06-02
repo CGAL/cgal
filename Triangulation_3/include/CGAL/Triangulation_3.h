@@ -739,10 +739,19 @@ public:
     : Base(tr.get_lock_data_structure()), _gt(tr._gt)
   {
     infinite = _tds.copy_tds(tr._tds, tr.infinite);
+    tds().maybe_fix_vertex_handle(infinite);
     CGAL_expensive_postcondition(*this == tr);
   }
 
-  Triangulation_3(Triangulation_3&& tr) = default;
+  Triangulation_3(Triangulation_3&& tr)
+    : Base(std::move(tr))
+    , _tds(std::move(tr._tds))
+    , _gt(std::move(tr._gt))
+    , infinite(std::exchange(tr.infinite, Vertex_handle{}))
+  {
+    tds().maybe_fix_vertex_handle(infinite);
+  }
+
   ~Triangulation_3() = default;
 
   template < typename InputIterator >
@@ -775,10 +784,18 @@ public:
   {
     Triangulation_3 copy(tr);
     swap(copy);
+    tds().maybe_fix_vertex_handle(infinite);
     return *this;
   }
 
-  Triangulation_3& operator=(Triangulation_3&& tr) = default;
+  Triangulation_3& operator=(Triangulation_3&& tr)
+  {
+    _tds = std::move(tr._tds);
+    _gt = std::move(tr._gt);
+    infinite = std::exchange(tr.infinite, Vertex_handle{});
+    tds().maybe_fix_vertex_handle(infinite);
+    return *this;
+  }
 
   // HELPING FUNCTIONS
   void swap(Triangulation_3& tr) noexcept

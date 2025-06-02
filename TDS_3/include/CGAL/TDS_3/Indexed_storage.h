@@ -1449,6 +1449,11 @@ namespace CGAL {
       return tds().copy_tds(src, vert, setv, setc);
     }
 
+    void maybe_fix_vertex_handle(Vertex_handle& v)
+    {
+      v = Vertex_handle{this, v.index()};
+    }
+
     Properties::Property_container<Self, Vertex_index> vprops_;
     Properties::Property_container<Self, Cell_index>   cprops_;
 

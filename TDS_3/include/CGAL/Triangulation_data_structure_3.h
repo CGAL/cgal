@@ -318,6 +318,10 @@ public:
     return copy_tds(src, vert, setv, setc);
   }
 
+  void maybe_fix_vertex_handle(Vertex_handle&)
+  {
+  }
+
 private:
   // in dimension i, number of vertices >= i+2
   // ( the boundary of a simplex in dimension i+1 has i+2 vertices )
