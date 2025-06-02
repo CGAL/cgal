@@ -23,6 +23,8 @@ typedef CGAL::Exact_predicates_exact_constructions_kernel        EPECK;
 typedef CGAL::Exact_predicates_inexact_constructions_kernel      EPICK;
 typedef CGAL::Simple_cartesian<double>                           DOUBLE;
 
+const double PI=3.14159265358979323846;
+
 template<typename K>
 struct Sphere{
   typedef typename K::FT FT;
@@ -49,6 +51,7 @@ template<typename K, typename Mesh>
 struct Test{
   typedef typename K::Point_3                                      P;
   typedef typename K::Vector_3                                     V;
+  typedef typename K::FT                                           FT;
 
   typedef boost::vector_property_map<P> PMap;
 
@@ -57,23 +60,19 @@ struct Test{
     // std::cout << vec_a.size() << " " << vec_b.size() << std::endl;
     assert(CGAL::Convex_hull_3::do_intersect(vec_a, vec_b)==result);
     assert(CGAL::Convex_hull_3::do_intersect(vec_b, vec_a)==result);
+
     Mesh sm_a, sm_b;
     CGAL::convex_hull_3(vec_a.begin(), vec_a.end(), sm_a);
     CGAL::convex_hull_3(vec_b.begin(), vec_b.end(), sm_b);
     assert(CGAL::Convex_hull_3::do_intersect(sm_a, sm_b)==result);
     assert(CGAL::Convex_hull_3::do_intersect(sm_b, sm_a)==result);
+
     if constexpr(std::is_same_v<Mesh, CGAL::Surface_mesh<P> >){
       CGAL::Convex_hull_hierarchy<Mesh> hsm_a(vec_a.begin(),vec_a.end()), hsm_b(vec_b.begin(),vec_b.end());
-      for(int level=0; level<=hsm_a.maxlevel(); ++level)
-        if(hsm_a.mesh(level).vertices().size())
-          CGAL::IO::write_polygon_mesh("level"+std::to_string(level)+".off", hsm_a.mesh(level), CGAL::parameters::stream_precision(17));
-
-      assert(CGAL::Convex_hull_3::do_intersect(hsm_a.mesh(0), hsm_b.mesh(0))==result);
       assert(CGAL::Convex_hull_3::do_intersect(hsm_a, hsm_b)==result);
       assert(CGAL::Convex_hull_3::do_intersect(hsm_b, hsm_a)==result);
 
       // CGAL::Convex_hull_hierarchy<Mesh> hsm_a_2(sm_a), hsm_b_2(sm_b);
-      // assert(CGAL::Convex_hull_3::do_intersect(hsm_a_2.mesh(0), hsm_b_2.mesh(0))==result);
       // assert(CGAL::Convex_hull_3::do_intersect(hsm_a_2, hsm_b_2)==result);
       // assert(CGAL::Convex_hull_3::do_intersect(hsm_b_2, hsm_a_2)==result);
     }
@@ -264,6 +263,27 @@ struct Test{
     }
   }
 
+  void test_random_sphere(int N, int M, CGAL::Random &r)
+  {
+    auto random_sphere_point=[&](){
+      double a=r.get_double(0,2*PI);
+      double b=r.get_double(-PI/2,PI/2);
+      return P( std::cos(a)*std::cos(b), std::sin(a)*std::cos(b), std::sin(b));
+    };
+    for(int i=0; i<M; ++i)
+    {
+      std::vector<P> sp_a;
+      std::vector<P> sp_b;
+      V vec1( P(0,0,0), random_sphere_point());
+      V vec2( P(0,0,0), random_sphere_point());
+      for(int i=0; i<N; ++i){
+        sp_a.push_back(random_sphere_point()+vec1);
+        sp_b.push_back(random_sphere_point()+vec2);
+      }
+      test(sp_a, sp_b, true);
+    }
+  }
+
   void test_implicit_function(CGAL::Random &r, int N){
     std::vector< Sphere<K> > spheres;
     for(int i=0; i<N; ++i)
@@ -279,6 +299,7 @@ struct Test{
     test_cube();
     test_half_sphere();
     test_random_tetrahedra(1000, r);
+    test_random_sphere(5000,20, r);
   }
 
 };
