@@ -1,4 +1,3 @@
-#define CGAL_TDS_USE_INDEXED_STORAGE_3
 #include <CGAL/Triangulation_3.h>
 #include <cassert>
 

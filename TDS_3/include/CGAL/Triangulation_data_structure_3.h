@@ -44,6 +44,9 @@
 
 #include <CGAL/Concurrent_compact_container.h>
 #include <CGAL/Compact_container.h>
+
+#include <CGAL/TDS_3/Indexed_storage.h>
+
 #include <CGAL/Small_unordered_map.h>
 
 #include <CGAL/Triangulation_simplex_3.h>
@@ -51,10 +54,6 @@
 #include <CGAL/TDS_3/internal/Triangulation_ds_iterators_3.h>
 #include <CGAL/TDS_3/internal/Triangulation_ds_circulators_3.h>
 #include <CGAL/tss.h>
-
-#ifdef CGAL_TDS_USE_INDEXED_STORAGE_3
-#include <CGAL/TDS_3/Indexed_storage.h>
-#endif
 
 #ifdef CGAL_LINKED_WITH_TBB
 #  include <tbb/scalable_allocator.h>
