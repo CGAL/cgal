@@ -71,6 +71,7 @@
 #include <iterator>
 #include <optional>
 #include <vector>
+#include <iostream> //exceptions
 #if CGAL_CXX20 && __has_include(<ranges>)
 #  include <ranges>
 #endif
@@ -1583,6 +1584,15 @@ public:
   }
 
 private:
+
+  class Non_planar_plc_facet_exception : public std::exception
+  {
+    const char* what() const throw()
+    {
+      return "ERROR : PLC facet is not coplanar";
+    }
+  };
+
   void fill_cdt_2(CDT_2& cdt_2, CDT_3_signed_index polygon_contraint_id)
   {
     const auto vec_of_handles = std::invoke([this, polygon_contraint_id]() {
@@ -1695,7 +1705,7 @@ private:
             cdt_2.insert_constraint(previous_2d, vh_2d);
           } catch(typename CDT_2::Intersection_of_constraints_exception&) {
             // intersection of constraints probably due to the projection
-            CGAL_error_msg("Error : Input PLC facet is not coplanar!");
+            throw Non_planar_plc_facet_exception();
           }
           previous_2d = vh_2d;
         }
