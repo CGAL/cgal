@@ -1691,7 +1691,12 @@ private:
                       << tr().point(vh_2d->info().vertex_handle_3d)
                       << ")\n";
           }
-          cdt_2.insert_constraint(previous_2d, vh_2d);
+          try {
+            cdt_2.insert_constraint(previous_2d, vh_2d);
+          } catch(typename CDT_2::Intersection_of_constraints_exception&) {
+            // intersection of constraints probably due to the projection
+            CGAL_error_msg("Error : Input PLC facet is not coplanar!");
+          }
           previous_2d = vh_2d;
         }
       }
