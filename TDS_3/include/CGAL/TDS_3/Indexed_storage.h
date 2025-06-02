@@ -241,7 +241,6 @@ namespace internal { namespace TDS_3{
     bool is_valid(bool  = false,
                   int   = 0) const
     {
-      assert(false);
       return true;
     }
 
@@ -263,16 +262,21 @@ namespace internal { namespace TDS_3{
       return tds_;
     }
 
+    friend std::ostream& operator<<(std::ostream& os, const Cell&)
+    {
+      // Non combinatorial information. Default = nothing.
+      return os;
+    }
+
+    friend std::istream& operator>>(std::istream& is, Cell)
+    {
+      return is;
+    }
+
     TDS_3* tds_;
     Cell_index index_;
   };
 
-  template <typename TDS_3>
-  std::ostream& operator<<(std::ostream& os, const Cell<TDS_3>& c)
-  {
-    os << "Cell " << c.index();
-    return os;
-  }
 
   // Specialization for void.
   template <>
@@ -351,7 +355,6 @@ namespace internal { namespace TDS_3{
 
     bool is_valid(bool = false, int = 0) const
     {
-      assert(false); // This should be implemented
       return true;
     }
 
@@ -367,19 +370,17 @@ namespace internal { namespace TDS_3{
 
     TDS_3* tds_;
     Vertex_index index_;
+
+    friend std::ostream& operator<<(std::ostream& os, const Vertex&)
+    {
+      return os;
+    }
+
+    friend std::istream& operator>>(std::istream& is, Vertex)
+    {
+      return is;
+    }
   };
-
-  template <typename TDS_3>
-  std::ostream& operator<<(std::ostream& os, const Vertex<TDS_3>& )
-  {
-    return os;
-  }
-
-  template <typename TDS_3>
-  std::istream& operator>>(std::istream& is, Vertex<TDS_3>& )
-  {
-    return is;
-  }
 
   template <typename GT, typename Vb = Vertex<>>
   struct VertexWithPoint
@@ -416,24 +417,23 @@ namespace internal { namespace TDS_3{
       storage().point = p;
     }
 
+    friend std::ostream& operator<<(std::ostream& os, const VertexWithPoint& v)
+    {
+      os << v.point();
+      return os;
+    }
+
+    friend std::istream& operator>>(std::istream& is, VertexWithPoint v)
+    {
+      typename GT::Point_3 p;
+      if(is >> p) {
+        v.set_point(p);
+      }
+      return is;
+    }
   };
 
 
-  template <typename GT, typename Vb>
-  std::ostream& operator<<(std::ostream& os, const VertexWithPoint<GT, Vb>& v)
-  {
-    os << v.point();
-    return os;
-  }
-
-  template <typename GT, typename Vb>
-  std::istream& operator>>(std::istream& is, VertexWithPoint<GT, Vb>& v)
-  {
-    typename GT::Point_3 p;
-    is >> p;
-    v.set_point(p);
-    return is;
-  }
 
   // Specialization for void.
   template <>
