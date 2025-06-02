@@ -1479,7 +1479,7 @@ namespace CGAL {
 
 } /// namespace CGAL
 
-
+#include <CGAL/Hidden_point_memory_policy.h>
 
 namespace CGAL {
   template <typename GT,
@@ -1496,6 +1496,7 @@ namespace CGAL {
     using TDS = typename Cb::Triangulation_data_structure;
     using Vertex_handle = typename TDS::Vertex_handle;
     using Cell_handle = typename TDS::Cell_handle;
+    using Geom_traits = GT;
 
     using Point_container = C;
     using Point_iterator = typename Point_container::iterator;
