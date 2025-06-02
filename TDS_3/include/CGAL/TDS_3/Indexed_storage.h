@@ -512,19 +512,20 @@ namespace internal { namespace TDS_3{
     return i.id();
   }
 
-  template <typename TDS, typename T>
-  class Handle_for_indexed_TDS {
-    using size_type = typename TDS::size_type;
+  template <typename T>
+  class TDS_handle {
     using Element = T;
+    using TDS = typename Element::Triangulation_data_structure;
+    using size_type = typename TDS::size_type;
     using Proxy = boost::stl_interfaces::proxy_arrow_result<Element>;
   public:
     using value_type = Element;
     using reference = Element;
     using pointer = Proxy;
 
-    Handle_for_indexed_TDS() = default;
+    TDS_handle() = default;
 
-    Handle_for_indexed_TDS(TDS* tds, size_type idx)
+    TDS_handle(TDS* tds, size_type idx)
       : tds_(tds), idx_(idx) {}
 
     using Index = typename Element::Index;
@@ -545,15 +546,15 @@ namespace internal { namespace TDS_3{
       return tds_;
     }
 
-    bool operator==(const Handle_for_indexed_TDS& other) const {
+    bool operator==(const TDS_handle& other) const {
       return tds() == other.tds() && index() == other.index();
     }
 
-    bool operator!=(const Handle_for_indexed_TDS& other) const {
+    bool operator!=(const TDS_handle& other) const {
       return !(*this == other);
     }
 
-    bool operator<(const Handle_for_indexed_TDS& other) const {
+    bool operator<(const TDS_handle& other) const {
       return (tds() == other.tds()) ? (index() < other.index()) : (tds() < other.tds());
     }
 
@@ -565,12 +566,12 @@ namespace internal { namespace TDS_3{
       return !(*this == nullptr);
     }
 
-    friend std::ostream& operator<<(std::ostream& os, const Handle_for_indexed_TDS& h)
+    friend std::ostream& operator<<(std::ostream& os, const TDS_handle& h)
     {
       return os << "#" << h.index();
     }
 
-    friend std::size_t hash_value(const Handle_for_indexed_TDS<TDS, T>& h) {
+    friend std::size_t hash_value(const TDS_handle& h) {
       return static_cast<std::size_t>(h.index().id());
     }
 
@@ -581,10 +582,10 @@ namespace internal { namespace TDS_3{
 
 } // end namespace CGAL
 
-template <typename TDS, typename T>
-struct ::std::hash<CGAL::Handle_for_indexed_TDS<TDS, T>>
+template <typename T>
+struct ::std::hash<CGAL::TDS_handle<T>>
 {
-  using Handle = CGAL::Handle_for_indexed_TDS<TDS, T>;
+  using Handle = CGAL::TDS_handle<T>;
   std::size_t operator()(const Handle& h) const {
     return hash_value(h);
   }
@@ -633,11 +634,8 @@ namespace CGAL {
     using Vertex = typename Vb::template Rebind_TDS<Self>::Other;
     using Cell = typename Cb::template Rebind_TDS<Self>::Other;
 
-    template <typename T>
-    using Handle = Handle_for_indexed_TDS<Self, T>;
-
-    using Cell_handle = Handle<Cell>;
-    using Vertex_handle = Handle<Vertex>;
+    using Cell_handle = TDS_handle<Cell>;
+    using Vertex_handle = TDS_handle<Vertex>;
 
     using Facet = std::pair<Cell_handle, int>;
     using Edge = Triple<Cell_handle, int, int>;
