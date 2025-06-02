@@ -236,6 +236,7 @@ $SUDO_OR_PRINT mkdir -p /home/cgaltest/.ssh
 $SUDO_OR_PRINT chown cgaltest:cgaltest /home/cgaltest/.ssh
 $SUDO_OR_PRINT chmod 700 /home/cgaltest/.ssh
 $SUDO_OR_PRINT usermod -aG docker cgaltest
+$SUDO_OR_PRINT loginctl enable-linger cgaltest
 
 keyfile="/home/cgaltest/.ssh/id_ed25519"
 if ! $SUDO_OR_PRINT test -f "$keyfile"; then
@@ -283,7 +284,7 @@ done
 
 # Optionally install bat, strace, and podman-docker if not present
 need_install=()
-for cmd in bat strace; do
+for cmd in bat strace python3-docker python3-pyxdg python3-sdnotify; do
   command -v "$cmd" &>/dev/null || need_install+=("$cmd")
 done
 
@@ -308,7 +309,7 @@ color_echo "Update the systemd tmpfiles configuration for podman."
 $SUDO_OR_PRINT touch /etc/containers/nodocker
 
 $SUDO_OR_PRINT mkdir -p /etc/tmpfiles.d
-sed 's|podman 0700 root root|podman 0700 root docker|g' /usr/lib/tmpfiles.d/podman.conf |
+sed 's|podman 0700 root root|podman 0770 root docker|g' /usr/lib/tmpfiles.d/podman.conf |
   $SUDO_OR_PRINT tee /etc/tmpfiles.d/podman.conf >/dev/null
 
 color_echo "Update the systemd socket configuration for podman."
@@ -325,7 +326,7 @@ EOF
 
 color_echo "Reloading systemd and enabling podman.socket."
 $SUDO_OR_PRINT systemctl daemon-reload
-$SUDO_OR_PRINT systemctl enable podman.socket
+$SUDO_OR_PRINT systemctl enable --now podman.socket
 $SUDO_OR_PRINT systemctl restart podman.socket
 
 color_echo "All done!"
