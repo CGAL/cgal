@@ -1041,12 +1041,11 @@ namespace CGAL {
     }
 
     Indexed_storage(Indexed_storage&& is)
-      : dimension_(is.dimension_),
+      : vprops_(std::move(is.vprops_)),
+        cprops_(std::move(is.cprops_)),
         vertex_storage_(std::move(is.vertex_storage_)),
         cell_storage_(std::move(is.cell_storage_)),
         cell_data_(std::move(is.cell_data_)),
-        vprops_(std::move(is.vprops_)),
-        cprops_(std::move(is.cprops_)),
         vremoved_(std::move(is.vremoved_)),
         cremoved_(std::move(is.cremoved_)),
         removed_vertices_(std::exchange(is.removed_vertices_, 0)),
@@ -1055,7 +1054,8 @@ namespace CGAL {
         cells_freelist_(std::exchange(is.cells_freelist_, (std::numeric_limits<size_type>::max)())),
         garbage_(std::exchange(is.garbage_, false)),
         recycle_(std::exchange(is.recycle_, true)),
-        anonymous_property_nb(std::exchange(is.anonymous_property_nb, 0))
+        anonymous_property_nb(std::exchange(is.anonymous_property_nb, 0)),
+        dimension_(is.dimension_)
     {
       is.dimension_ = -2;
     }
