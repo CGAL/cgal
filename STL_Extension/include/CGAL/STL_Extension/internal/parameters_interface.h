@@ -71,6 +71,7 @@ CGAL_add_named_parameter(vertex_feature_degree_t, vertex_feature_degree, vertex_
 
 // List of named parameters used in the package 'Polygon Mesh Processing'
 CGAL_add_named_parameter(geom_traits_t, geom_traits, geom_traits)
+CGAL_add_named_parameter(geom_traits_converter_t, geom_traits_converter, geom_traits_converter)
 CGAL_add_named_parameter(vertex_incident_patches_t, vertex_incident_patches, vertex_incident_patches_map)
 CGAL_add_named_parameter(density_control_factor_t, density_control_factor, density_control_factor)
 CGAL_add_named_parameter(use_delaunay_triangulation_t, use_delaunay_triangulation, use_delaunay_triangulation)

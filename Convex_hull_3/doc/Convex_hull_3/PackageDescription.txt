@@ -81,7 +81,7 @@ defining `CGAL_CHECK_EXPENSIVE`.
 \cgalCRPSection{Convex Hull Functions}
 
 - `CGAL::convex_hull_3()`
-- `CGAL::Convex_hull_3::extreme_point()`
+- `CGAL::Convex_hull_3::extreme_point_3()`
 - `CGAL::extreme_points_3()`
 - `CGAL::make_extreme_points_traits_adapter()`
 

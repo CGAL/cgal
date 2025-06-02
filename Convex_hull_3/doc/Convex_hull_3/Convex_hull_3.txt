@@ -160,11 +160,11 @@ The `do_intersect()` functions provide an implementation of the algorithm comput
 @todo Add \ cgalCite{TODO}.
 Input convex hulls can be provided in three forms: as range of points, as graph of points or as instance of the `Convex_hull_hierarchy` class.
 
-The algorithm accesses the convex hulls using the `extreme_point()` function, which returns the point on the hull that is furthest in a specified direction.
-The `Convex_hull_hierarchy` class is a data structure that represents a convex hull and is optimized for efficient `extreme_point()` queries,
+The algorithm accesses the convex hulls using the `extreme_point_3()` function, which returns the point on the hull that is furthest in a specified direction.
+The `Convex_hull_hierarchy` class is a data structure that represents a convex hull and is optimized for efficient `extreme_point_3()` queries,
 which in turn makes `do_intersect()` particularly fast when using this representation.
 
-The computational complexities of `extreme_point()` and consequently `do_intersect()` depend on the input type:  \f$O(n)\f$ for a range of point,
+The computational complexities of `extreme_point_3()` and consequently `do_intersect()` depend on the input type:  \f$O(n)\f$ for a range of point,
 \f$O(\sqrt{n})\f$ on average for a graph and \f$O(\log{n})\f$ on average for a Convex_hull_hierarchy.
 
 A `Convex_hull_hierarchy` can be constructed from either a range of points or a mesh. During construction, it is assumed that the resulting convex hull is non-degenerate.
