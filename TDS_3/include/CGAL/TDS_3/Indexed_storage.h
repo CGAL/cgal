@@ -1551,6 +1551,21 @@ namespace CGAL {
     Point_const_iterator hidden_points_begin() const { storage().hidden.begin();}
     Point_iterator hidden_points_end(){ storage().hidden.end();}
     Point_const_iterator hidden_points_end() const { storage().hidden.end();}
+
+  template<typename GT_>
+  Point_3 weighted_circumcenter(const GT_& gt) const
+  {
+    return gt.construct_weighted_circumcenter_3_object()(this->vertex(0)->point(),
+                                                         this->vertex(1)->point(),
+                                                         this->vertex(2)->point(),
+                                                         this->vertex(3)->point());
+  }
+
+  Point_3 weighted_circumcenter() const
+  {
+    return weighted_circumcenter(Geom_traits());
+  }
+
   };
 } // namespace CGAL
 
