@@ -49,7 +49,7 @@ using Iterator_project_value_type = CGAL::cpp20::remove_cvref_t<Iterator_project
 template < class I, class Fct,
            class D1 = int, class D2 = int, class D3 = int, class D4 = int >
 class Iterator_project
-  : public boost::stl_interfaces::proxy_iterator_interface<
+  : public boost::stl_interfaces::v1::proxy_iterator_interface<
                Iterator_project<I, Fct, D1, D2, D3, D4>,
                typename std::iterator_traits<I>::iterator_category,
                Iterator_project_value_type<I, Fct>,
@@ -60,7 +60,7 @@ public:
   using reference = Iterator_project_reference<I, Fct>;
   using value_type = Iterator_project_value_type<I, Fct>;
 protected:
-  using Base = boost::stl_interfaces::proxy_iterator_interface<
+  using Base = boost::stl_interfaces::v1::proxy_iterator_interface<
       Iterator_project<I, Fct, D1, D2, D3, D4>,
       typename std::iterator_traits<I>::iterator_category,
       value_type,

@@ -33,6 +33,7 @@
 #include <variant>
 #include <optional>
 #include <boost/config.hpp>
+#include <boost/stl_interfaces/iterator_interface.hpp>
 
 #include <vector>
 #include <map>
@@ -40,34 +41,29 @@
 
 namespace CGAL {
 
-template<typename I, typename Reference_type = I>
+template<typename It, typename Reference_type = It>
 class Prevent_deref
-  : public boost::iterator_adaptor<
-    Prevent_deref<I, Reference_type>
-  , I // base
-  , CGAL::cpp20::remove_cvref_t<Reference_type> // value
-  , boost::use_default // category
-  , Reference_type // ref
+  : public boost::stl_interfaces::v1::iterator_interface<
+        Prevent_deref<It, Reference_type>,
+        typename std::iterator_traits<It>::iterator_category, // category
+        CGAL::cpp20::remove_cvref_t<Reference_type>, // value
+        Reference_type // reference
   >
 {
+  It it;
 public:
-  using Value_type = CGAL::cpp20::remove_cvref_t<Reference_type>;
-  using Base = boost::iterator_adaptor<
-    Prevent_deref<I, Reference_type>
-  , I // base
-  , Value_type // value
-  , boost::use_default // category
-  , Reference_type // ref
-  >;
-  typedef typename std::pair<I, I> range;
+  using range = std::pair<It, It>;
 
   Prevent_deref() = default;
-  Prevent_deref(const I& i) : Base(i) {}
-private:
-  friend class boost::iterator_core_access;
-  Reference_type dereference() const {
-    return this->base_reference();
+  Prevent_deref(const It& i) : it(i) {}
+  Reference_type operator*() const
+  {
+    return it;
   }
+private:
+  friend class boost::stl_interfaces::access;
+  It& base_reference() { return it; }
+  const It& base_reference() const { return it; }
 };
 
 template<typename I>
