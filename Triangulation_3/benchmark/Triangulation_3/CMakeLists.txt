@@ -3,7 +3,7 @@
 
 cmake_minimum_required(VERSION 3.12...3.31)
 
-project(Triangulation_3)
+project(Triangulation_3_Benchmarks)
 
 # CGAL and its components
 find_package(CGAL REQUIRED)
