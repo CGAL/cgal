@@ -183,18 +183,19 @@ following example demonstrates how to build such a triangulation.
 
 \subsection CT_3_example_ccdt_fpmap Build a Conforming Constrained Delaunay Triangulation with Known Polygon Identifiers
 
-If the user already knows the set of polygon identifiers to associate with each facet, this information can be
+If the user already knows the set of polygon identifiers to associate with each PLC facet, this information can be
 provided and preserved throughout the construction of the conforming constrained Delaunay
 triangulation.
 
-The following example demonstrates how to detect surface patches separated by sharp edges and use
+The following example demonstrates how to detect planar surface patches, remesh them as coarsely
+as possible, and use
 this segmentation during the tetrahedralization process.
 
 When the named parameter `plc_facet_id` is specified, each constrained facet in the 3D triangulation
 is assigned to the corresponding input PLC facet, identified in the provided property map.
 If this parameter is not specified, each input polygon, or PLC facet, is given a unique facet index.
 
-\cgalExample{Constrained_triangulation_3/conforming_constrained_Delaunay_triangulation_3_fpmap.cpp}
+\cgalExample{Constrained_triangulation_3/conforming_constrained_Delaunay_triangulation_3_fimap.cpp}
 
 \cgalFigureRef{CT_3_ccdt_fpmap_fig} shows the input and output of this triangulation construction example.
 
