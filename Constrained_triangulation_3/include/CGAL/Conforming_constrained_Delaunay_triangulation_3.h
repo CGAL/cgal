@@ -827,7 +827,7 @@ public:
       cdt_impl.restore_Delaunay();
       cdt_impl.restore_constrained_Delaunay();
     } else {
-      auto polygon_patch_map = get_parameter(np, internal_np::face_patch);
+      auto polygon_patch_map = get_parameter(np, internal_np::plc_facet_id);
       static_assert(!std::is_same_v<decltype(polygon_patch_map), internal_np::Param_not_found>);
 
       using Point_type = CGAL::cpp20::remove_cvref_t<decltype(get(point_map, *cbegin(points)))>;
