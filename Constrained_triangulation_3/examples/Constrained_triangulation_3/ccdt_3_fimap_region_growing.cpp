@@ -63,7 +63,7 @@ int main(int argc, char* argv[])
   filename = argc > 3 ? argv[3] : "out.mesh";
   std::ofstream out(filename);
   out.precision(17);
-  CGAL::IO::write_MEDIT(out, ccdt);
+  CGAL::IO::write_MEDIT(out, ccdt, CGAL::parameters::with_plc_facet_id(true));
   std::cout << "-- Wrote CDT to \"" << filename << "\"\n";
 
   return EXIT_SUCCESS;
