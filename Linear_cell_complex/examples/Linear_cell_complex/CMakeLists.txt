@@ -45,3 +45,14 @@ if(CGAL_Qt6_FOUND)
   target_link_libraries(hexa-subdivision PUBLIC CGAL::CGAL_Basic_viewer)
   target_link_libraries(tetra-to-hexa PUBLIC CGAL::CGAL_Basic_viewer)
 endif()
+
+# For now we use TetGen library, but later we'll remove the dependencies
+find_library(TETGEN_LIBRARY libtet.a PATHS "/usr/local/lib")
+find_path(TETGEN_INCLUDE_DIR tetgen.h PATHS "/usr/local/include")
+
+if(NOT TETGEN_LIBRARY OR NOT TETGEN_INCLUDE_DIR)
+  message(FATAL_ERROR "TetGen library or header not found")
+endif()
+
+target_include_directories(tetra-to-hexa PRIVATE ${TETGEN_INCLUDE_DIR})
+target_link_libraries(tetra-to-hexa PRIVATE ${TETGEN_LIBRARY})

@@ -248,7 +248,7 @@ bool operator==(const DartInfo::FaceAttrValue& first, const DartInfo::FaceAttrVa
   return true;
 }
 
-const size_t SIZE_T_MAX = std::numeric_limits<size_t>::max();
+const size_t CONST_SIZE_T_MAX = std::numeric_limits<size_t>::max();
 
 namespace CGAL::HexRefinement::TwoRefinement {
 
@@ -1900,7 +1900,7 @@ namespace CGAL::HexRefinement::TwoRefinement {
       size_t temp_id = hdata.ext->regular_templates.replace_one_face_from_signature
         (lcc, dart, signature, f_signature_start);
 
-      assert(temp_id < SIZE_T_MAX);
+      assert(temp_id < CONST_SIZE_T_MAX);
       nbsub++;
 
       if (temp_id == 0) {
@@ -1943,7 +1943,7 @@ namespace CGAL::HexRefinement::TwoRefinement {
       Signature signature;
       Dart_handle v_signature_start = vsignature_of_volume(lcc, dart, hdata.template_mark, signature);
       size_type temp_id = substituer.replace_one_volume_from_signature(lcc, dart, signature, v_signature_start);
-      if (temp_id < SIZE_T_MAX)
+      if (temp_id < CONST_SIZE_T_MAX)
         nbsub++;
 
       if (temp_id == 0){
@@ -1954,7 +1954,7 @@ namespace CGAL::HexRefinement::TwoRefinement {
       // if (temp == 2) temp = 3;
       // if (temp < 10) temp++;
       // assert(vol_attr.template_id >= 0 && vol_attr.template_id <= 4 && vol_attr.template_id != 3 || vol_attr.template_id == 8);
-      // assert(vol_attr.template_id == temp || temp == SIZE_T_MAX && (vol_attr.template_id == 0 || vol_attr.template_id == 8));
+      // assert(vol_attr.template_id == temp || temp == CONST_SIZE_T_MAX && (vol_attr.template_id == 0 || vol_attr.template_id == 8));
     }
 
     return nbsub;
