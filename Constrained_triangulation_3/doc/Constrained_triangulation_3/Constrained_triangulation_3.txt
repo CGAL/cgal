@@ -215,7 +215,7 @@ From left to right: Input PLC;
 \subsection CT_3_example_ccdt_region_growing_fimap Build a Conforming Constrained Delaunay Triangulation with Detected Polygon Identifiers
 
 If the user does not know the set of polygon identifiers to associate with each PLC facet, this information can be
-automatically detected using the \link CGAL::Polygon_mesh_processing::region_growing_of_planes_on_faces(const PolygonMesh& mesh,RegionMap region_map,const NamedParameters& np = parameters::default_values()) `CGAL::Polygon_mesh_processing::region_growing_of_planes_on_faces()`\endlink
+automatically detected using the \link CGAL::Polygon_mesh_processing::region_growing_of_planes_on_faces(const PolygonMesh& mesh,RegionMap region_map,const NamedParameters& np) `CGAL::Polygon_mesh_processing::region_growing_of_planes_on_faces()`\endlink
 function from the \ref PkgPolygonMeshProcessing package.
 
 The following example demonstrates how to detect planar surface patches and build a conforming
