@@ -486,6 +486,41 @@ namespace internal { namespace TDS_3{
   };
 
 
+  template <typename Vb>
+  class Vertex4Hierarchy
+    : public Vb
+  {
+  public:
+    using Vb::Vb; // inherit constructors
+    using TDS = typename Vb::Triangulation_data_structure;
+    using Vertex_handle = typename TDS::Vertex_handle;
+
+    struct Storage : public Vb::Storage {
+      Vertex_handle up;
+      Vertex_handle down;
+    };
+
+    template < typename TDS2 >
+    struct Rebind_TDS {
+      using Vb2 = typename Vb::template Rebind_TDS<TDS2>::Other;
+      using Other = Vertex4Hierarchy<Vb2>;
+    };
+
+    decltype(auto) storage() {
+      return this->tds()->vertex_storage()[this->index()];
+    }
+
+    decltype(auto) storage() const {
+      return this->tds()->vertex_storage()[this->index()];
+    }
+
+    Vertex_handle up()   const { return storage().up; }
+    Vertex_handle down() const { return storage().down; }
+    void set_up(Vertex_handle u)   { storage().up=u; }
+    void set_down(Vertex_handle d) { storage().down=d; }
+
+  };
+
   // Specialization for void.
   template <>
   class Vertex<void>
@@ -1492,6 +1527,42 @@ namespace CGAL {
 #include <CGAL/Hidden_point_memory_policy.h>
 
 namespace CGAL {
+
+
+  template <typename GT,
+            typename Cb = Cell<>>
+  class Cell4Delaunay
+  : public Cb
+  {
+    public:
+    using Cb::Cb; // inherit constructors
+    using Point_3 = typename GT::Point_3;
+
+    template < typename TDS2 >
+    struct Rebind_TDS {
+      using Cb2 = typename Cb::template Rebind_TDS<TDS2>::Other;
+      using Other = Cell4Delaunay<GT, Cb2>;
+    };
+
+
+    auto&& storage() const { return this->tds()->cell_storage()[this->index()]; }
+
+    Point_3 circumcenter(const GT& gt) const
+    {
+      return gt.construct_circumcenter_3_object()(this->vertex(0)->point(),
+                                                  this->vertex(1)->point(),
+                                                  this->vertex(2)->point(),
+                                                  this->vertex(3)->point());
+    }
+
+    Point_3 circumcenter() const
+    {
+      return circumcenter(Geom_traits());
+    }
+
+  };
+
+
   template <typename GT,
             typename Cb = Cell<>,
             typename Memory_policy = Keep_hidden_points,
