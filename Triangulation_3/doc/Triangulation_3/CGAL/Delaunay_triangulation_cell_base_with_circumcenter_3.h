@@ -49,7 +49,7 @@ If it has already been computed in the past, the cached value is returned.
 Computes the circumcenter of the tetrahedron, or retrieves it if already
 computed
 */
-const Point& circumcenter(Traits&gt = Traits()) const;
+const Point& circumcenter(const Traits&gt = Traits()) const;
 
 /// @}
 
