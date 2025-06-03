@@ -1471,7 +1471,7 @@ bounded_error_squared_Hausdorff_distance_impl(const TriangleMesh1& tm1,
   using Candidate = Candidate_triangle<Kernel, Face_handle_1, Face_handle_2>;
 
   if constexpr(std::is_floating_point_v<FT>) {
-    CGAL_precondition(std::nextafter(sq_initial_bound, std::numeric_limits<FT>::max()) >= square(FT(error_bound)));
+    CGAL_precondition(std::nextafter(sq_initial_bound, (std::numeric_limits<FT>::max)()) >= square(FT(error_bound)));
   } else {
     CGAL_precondition(sq_initial_bound >= square(FT(error_bound)));
   }
