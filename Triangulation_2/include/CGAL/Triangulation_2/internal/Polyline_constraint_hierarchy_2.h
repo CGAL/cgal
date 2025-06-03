@@ -524,12 +524,28 @@ private:
   struct Priv { // encapsulate the private members in a struct, to detect direct access to them
     Priv(Compare comp)
     : comp(comp)
-    #if CGAL_USE_BARE_STD_MAP
+#if CGAL_USE_BARE_STD_MAP
     , sc_to_c_map(Pair_compare(comp))
 #else
     , sc_to_c_map()
 #endif
     {}
+
+    Priv(const Priv&) = default;
+    Priv(Priv&&) = default;
+    Priv& operator=(const Priv&) = default;
+    Priv& operator=(Priv&&) = default;
+
+    Priv(Priv&& other, const Compare& comp) noexcept
+    : comp(comp)
+    , sc_to_c_map(std::move(other.sc_to_c_map))
+    , free_ids(std::move(other.free_ids))
+    , constraints_set(std::move(other.constraints_set))
+    {
+#if CGAL_USE_BARE_STD_MAP
+      CGAL_error_msg("This constructor cannot be used with CGAL_USE_BARE_STD_MAP");
+#endif
+    }
 
     Compare comp;
     Sc_to_c_map sc_to_c_map;
@@ -538,10 +554,17 @@ private:
   } priv;
 public:
   Polyline_constraint_hierarchy_2(const Compare& comp) : priv(comp) {}
+
   Polyline_constraint_hierarchy_2(const Polyline_constraint_hierarchy_2& ch) : priv(ch.priv.comp) { copy(ch); }
+
   Polyline_constraint_hierarchy_2(Polyline_constraint_hierarchy_2&&) = default;
 
+  Polyline_constraint_hierarchy_2(Polyline_constraint_hierarchy_2&& other, const Compare& comp) noexcept
+    : priv(std::move(other.priv), comp)
+  {}
+
   ~Polyline_constraint_hierarchy_2() { clear(); }
+
   void clear();
 
   Polyline_constraint_hierarchy_2& operator=(const Polyline_constraint_hierarchy_2& ch) { return copy(ch); }
