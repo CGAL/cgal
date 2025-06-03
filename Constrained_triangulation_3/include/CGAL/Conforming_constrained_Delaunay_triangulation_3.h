@@ -1092,7 +1092,7 @@ private:
     using TDS = Triangulation_data_structure_2<Vb, Fb>;
     using Itag = No_constraint_intersection_requiring_constructions_tag;
     using CDT_base = Constrained_Delaunay_triangulation_2<Projection_traits, TDS, Itag>;
-    using CDT = CDT_base;
+    using CDT = Constrained_triangulation_plus_2<CDT_base>;
 
     template <Color_value_type Face_info::* member_ptr> struct CDT_2_dual_color_map
     {
@@ -1710,6 +1710,21 @@ private:
         }
       }
       { // mark all the faces outside/inside, starting from one infinite face
+        const bool simple_case =
+            std::all_of(cdt_2.subconstraints_and_contexts_begin(), cdt_2.subconstraints_and_contexts_end(),
+                        [](const auto& sc_and_context) { return sc_and_context.second->size() == 1; });
+
+        const auto is_constrained_with_odd_nb_of_constraints =
+            simple_case
+                ? +[](const CDT_2&, const CDT_2_face_handle fh, const int index) { return fh->is_constrained(index); }
+                : +[](const CDT_2& cdt_2, const CDT_2_face_handle fh, const int index) {
+                    if(false == fh->is_constrained(index))
+                      return false;
+                    auto va = fh->vertex(cdt_2.cw(index));
+                    auto vb = fh->vertex(cdt_2.ccw(index));
+                    return cdt_2.contexts(va, vb).size() % 2 == 1;
+                  };
+
         for(auto fh: cdt_2.all_face_handles())
         {
           fh->info().is_outside_the_face = -1;
@@ -1726,9 +1741,10 @@ private:
           stack.pop();
           if(fh->info().is_outside_the_face == -1) {
             fh->info().is_outside_the_face = outside;
+            CGAL_assertion(!cdt_2.is_infinite(fh) || outside == true);
             for(int i = 0; i <= d; ++i) {
               const auto neighbor = fh->neighbor(i);
-              const auto new_outside = fh->is_constrained(i) ? !outside : outside;
+              const auto new_outside = is_constrained_with_odd_nb_of_constraints(cdt_2, fh, i) ? !outside : outside;
               if(neighbor->info().is_outside_the_face == -1) {
                 stack.push({neighbor, new_outside});
               }
@@ -3510,6 +3526,8 @@ private:
       if(processed_faces.count(fh)> 0)
         continue;
       auto fh_region = region(cdt_2, fh);
+      CGAL_assertion(std::none_of(fh_region.begin(), fh_region.end(),
+                                  [&](auto fh) { return cdt_2.is_infinite(fh); }));
       processed_faces.insert(fh_region.begin(), fh_region.end());
 
       auto handle_error_with_region = [&](const char* what, CDT_2_face_handle fh_2d) {
