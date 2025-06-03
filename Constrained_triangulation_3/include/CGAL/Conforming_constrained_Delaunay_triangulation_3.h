@@ -39,6 +39,7 @@
 #include <CGAL/boost/graph/generators.h>
 #include <CGAL/boost/graph/graph_traits_Triangulation_data_structure_2.h>
 #include <CGAL/boost/graph/graph_traits_Constrained_Delaunay_triangulation_2.h>
+#include <CGAL/boost/graph/graph_traits_Constrained_triangulation_plus_2.h>
 
 #ifndef CGAL_CDT_3_DISABLE_INPUT_CHECKS
 #  include <CGAL/Polygon_mesh_processing/self_intersections.h>
@@ -67,11 +68,12 @@
 #include <boost/unordered_map.hpp>
 
 #include <algorithm>
+#include <array>
 #include <cstddef>
+#include <exception>
 #include <iterator>
 #include <optional>
 #include <vector>
-#include <exception>
 #if CGAL_CXX20 && __has_include(<ranges>)
 #  include <ranges>
 #endif
@@ -1639,6 +1641,17 @@ private:
     }
     // create and fill the 2D triangulation
     {
+      auto insert_constraint_in_cdt_2 = [&](const auto& va, const auto& vb) {
+        if(this->debug_input_faces()) {
+          std::cerr << "cdt_2.insert_constraint ("
+                    << tr().point(va->info().vertex_handle_3d)
+                    << " , "
+                    << tr().point(vb->info().vertex_handle_3d)
+                    << ")\n";
+        }
+        auto cstr_id = cdt_2.insert_constraint(va, vb);
+        return cstr_id;
+      };
       for(const auto& handles : vec_of_handles)
       {
         const auto first_2d  = cdt_2.insert(tr().point(handles.front()));
@@ -1671,14 +1684,7 @@ private:
                 while(vit != v_end) {
                   auto vh_2d = cdt_2.insert(tr().point(*vit));
                   vh_2d->info().vertex_handle_3d = *vit;
-                  if(this->debug_input_faces()) {
-                    std::cerr << "cdt_2.insert_constraint ("
-                              << tr().point(previous_2d->info().vertex_handle_3d)
-                              << " , "
-                              << tr().point(vh_2d->info().vertex_handle_3d)
-                              << ")\n";
-                  }
-                  cdt_2.insert_constraint(previous_2d, vh_2d);
+                  insert_constraint_in_cdt_2(previous_2d, vh_2d);
                   previous_2d = vh_2d;
                   if(constraint_c_id_is_reversed) {
                     --vit;
@@ -1694,15 +1700,8 @@ private:
           if(it != end) {
             vh_2d->info().vertex_handle_3d = vb;
           }
-          if(this->debug_input_faces()) {
-            std::cerr << "cdt_2.insert_constraint ("
-                      << tr().point(previous_2d->info().vertex_handle_3d)
-                      << " , "
-                      << tr().point(vh_2d->info().vertex_handle_3d)
-                      << ")\n";
-          }
           try {
-            cdt_2.insert_constraint(previous_2d, vh_2d);
+            insert_constraint_in_cdt_2(previous_2d, vh_2d);
           } catch(typename CDT_2::Intersection_of_constraints_exception&) {
             // intersection of constraints probably due to the projection
             throw Non_planar_plc_facet_exception();
