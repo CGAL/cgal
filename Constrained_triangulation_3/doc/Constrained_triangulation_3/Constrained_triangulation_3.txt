@@ -178,10 +178,10 @@ Delaunay triangulation from a given PLC.
 You can also construct a conforming constrained Delaunay triangulation from a polygon soup. The
 following example demonstrates how to build such a triangulation.
 
-\cgalExample{Constrained_triangulation_3/conforming_constrained_Delaunay_triangulation_3_from_soup.cpp }
+\cgalExample{Constrained_triangulation_3/ccdt_3_from_soup.cpp }
 
 
-\subsection CT_3_example_ccdt_fpmap Build a Conforming Constrained Delaunay Triangulation with Known Polygon Identifiers
+\subsection CT_3_example_ccdt_fimap Build a Conforming Constrained Delaunay Triangulation with Known Polygon Identifiers
 
 If the user already knows the set of polygon identifiers to associate with each PLC facet, this information can be
 provided and preserved throughout the construction of the conforming constrained Delaunay
@@ -197,12 +197,12 @@ If this parameter is not specified, each input polygon, or PLC facet, is given a
 
 \cgalExample{Constrained_triangulation_3/conforming_constrained_Delaunay_triangulation_3_fimap.cpp}
 
-\cgalFigureRef{CT_3_ccdt_fpmap_fig} shows the input and output of this triangulation construction example.
+\cgalFigureRef{CT_3_ccdt_fimap_fig} shows the input and output of this triangulation construction example.
 
-\cgalFigureAnchor{CT_3_ccdt_fpmap_fig}
+\cgalFigureAnchor{CT_3_ccdt_fimap_fig}
 <center>
 <img src="ccdt_fpmap.png" style="max-width:75%;"/>
-\cgalFigureCaptionBegin{CT_3_ccdt_fpmap_fig}
+\cgalFigureCaptionBegin{CT_3_ccdt_fimap_fig}
 From left to right: Input PLC;
  The corresponding conforming constrained Delaunay triangulation with one patch per input polygon;
  Input PLC segmented according to sharp edges;

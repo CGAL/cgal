@@ -8,7 +8,7 @@ It constructs a 3D constrained Delaunay triangulation from a polygon mesh.
 */
 
 /*!
-\example Constrained_triangulation_3/conforming_constrained_Delaunay_triangulation_3_from_soup.cpp
+\example Constrained_triangulation_3/ccdt_3_from_soup.cpp
 @brief
 
 Simple example demonstrating the usage of the Constrained_triangulation_3 package.<br>
@@ -45,4 +45,10 @@ after autorefinement.
 
 From a self-intersecting and non-triangulated surface surface in an OFF file,
 construct the constrained Delaunay triangulation after preprocessing.
+*/
+
+/*!
+\example Constrained_triangulation_3/ccdt_3_check_preconditions.cpp
+\example Constrained_triangulation_3/ccdt_3_fimap_region_growing.cpp
+\example Constrained_triangulation_3/ccdt_3_from_soup_fimap.cpp
 */
