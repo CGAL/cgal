@@ -206,7 +206,13 @@ public:
     : Constrained_triangulation_plus_2(ctp.geom_traits())
   { copy_triangulation(ctp);}
 
-  Constrained_triangulation_plus_2(Constrained_triangulation_plus_2&&) = default;
+  Constrained_triangulation_plus_2(Constrained_triangulation_plus_2&& other_ctp) noexcept
+    : Triangulation(std::move(other_ctp))
+    , Constraint_hierarchy(std::move(other_ctp.hierarchy_ref()), Vertex_handle_compare(this))
+  {
+    // The hierarchy is moved, so the vertex handles are still valid.
+    // The triangulation is moved, so the vertex handles are still valid.
+  }
 
   ~Constrained_triangulation_plus_2() override {}
 
@@ -216,7 +222,14 @@ public:
     return *this;
   }
 
-  Constrained_triangulation_plus_2& operator=(Constrained_triangulation_plus_2&&) = default;
+  Constrained_triangulation_plus_2& operator=(Constrained_triangulation_plus_2&& other_ctp) noexcept {
+    if (this != &other_ctp) {
+      static_cast<Triangulation&>(*this) = std::move(other_ctp);
+      static_cast<Constraint_hierarchy&>(*this) =
+            Constraint_hierarchy(std::move(other_ctp.hierarchy_ref()), Vertex_handle_compare(this));
+    }
+    return *this;
+  }
 
   template<class InputIterator>
   Constrained_triangulation_plus_2(InputIterator first,
