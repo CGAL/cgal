@@ -56,8 +56,6 @@ struct Test{
   typedef boost::vector_property_map<P> PMap;
 
   void test(std::vector<P> &vec_a, const std::vector<P> &vec_b, bool result){
-    // std::cout << "\n\n\nTest\n";
-    // std::cout << vec_a.size() << " " << vec_b.size() << std::endl;
     assert(CGAL::Convex_hull_3::do_intersect(vec_a, vec_b)==result);
     assert(CGAL::Convex_hull_3::do_intersect(vec_b, vec_a)==result);
 
@@ -72,9 +70,9 @@ struct Test{
       assert(CGAL::Convex_hull_3::do_intersect(hsm_a, hsm_b)==result);
       assert(CGAL::Convex_hull_3::do_intersect(hsm_b, hsm_a)==result);
 
-      // CGAL::Convex_hull_hierarchy<Mesh> hsm_a_2(sm_a), hsm_b_2(sm_b);
-      // assert(CGAL::Convex_hull_3::do_intersect(hsm_a_2, hsm_b_2)==result);
-      // assert(CGAL::Convex_hull_3::do_intersect(hsm_b_2, hsm_a_2)==result);
+      CGAL::Convex_hull_hierarchy<Mesh> hsm_a_2(sm_a), hsm_b_2(sm_b);
+      assert(CGAL::Convex_hull_3::do_intersect(hsm_a_2, hsm_b_2)==result);
+      assert(CGAL::Convex_hull_3::do_intersect(hsm_b_2, hsm_a_2)==result);
     }
 
     //Test with Point map
@@ -105,16 +103,18 @@ struct Test{
                                                                 CGAL::parameters::vertex_point_map(make_compose_property_map(smb_pm2.points(), sm_b.points())))==result);
       assert(CGAL::Convex_hull_3::do_intersect(smb_pm2, sma_pm2, CGAL::parameters::vertex_point_map(make_compose_property_map(smb_pm2.points(), sm_b.points())),
                                                                 CGAL::parameters::vertex_point_map(make_compose_property_map(sma_pm2.points(), sm_a.points())))==result);
-    }
-    // CGAL::Convex_hull_with_hierarchy<size_t> hsma_pm(sma_pm, CGAL::make_extreme_points_traits_adapter(va));
-    // CGAL::Convex_hull_with_hierarchy<size_t> hsmb_pm(smb_pm, CGAL::make_extreme_points_traits_adapter(vb));
-  //   assert(CGAL::Convex_hull_3::do_intersect(hsma_pm, hsmb_pm, CGAL::Convex_hull_3::make_do_intersect_traits_with_point_maps(va, vb))==result);
-  //   assert(CGAL::Convex_hull_3::do_intersect(hsmb_pm, hsma_pm, CGAL::Convex_hull_3::make_do_intersect_traits_with_point_maps(vb, va))==result);
 
-  //   CGAL::Convex_hull_with_hierarchy<typename CGAL::Surface_mesh<P>::Vertex_index> hsma_pm2(sma, CGAL::make_extreme_points_traits_adapter(sma.points()));
-  //   CGAL::Convex_hull_with_hierarchy<typename CGAL::Surface_mesh<P>::Vertex_index> hsmb_pm2(smb, CGAL::make_extreme_points_traits_adapter(smb.points()));
-  //   assert(CGAL::Convex_hull_3::do_intersect(hsma_pm2, hsmb_pm2, CGAL::Convex_hull_3::make_do_intersect_traits_with_point_maps(sma.points(), smb.points()))==result);
-  //   assert(CGAL::Convex_hull_3::do_intersect(hsmb_pm2, hsma_pm2, CGAL::Convex_hull_3::make_do_intersect_traits_with_point_maps(smb.points(), sma.points()))==result);
+
+      // CGAL::Convex_hull_hierarchy<size_t> hsma_pm(sma_pm, CGAL::make_extreme_points_traits_adapter(va));
+      // CGAL::Convex_hull_with_hierarchy<size_t> hsmb_pm(smb_pm, CGAL::make_extreme_points_traits_adapter(vb));
+      // assert(CGAL::Convex_hull_3::do_intersect(hsma_pm, hsmb_pm, CGAL::Convex_hull_3::make_do_intersect_traits_with_point_maps(va, vb))==result);
+      // assert(CGAL::Convex_hull_3::do_intersect(hsmb_pm, hsma_pm, CGAL::Convex_hull_3::make_do_intersect_traits_with_point_maps(vb, va))==result);
+
+      // CGAL::Convex_hull_hierarchy<CGAL::Surface_mesh< typename Mesh::Vertex_index > > hsma_pm2(sm_a, CGAL::make_extreme_points_traits_adapter(sm_a.points()));
+      // CGAL::Convex_hull_hierarchy<CGAL::Surface_mesh< typename Mesh::Vertex_index > > hsmb_pm2(sm_b, CGAL::make_extreme_points_traits_adapter(sm_b.points()));
+      // assert(CGAL::Convex_hull_3::do_intersect(hsma_pm2, hsmb_pm2, CGAL::parameters::vertex_point_map(sm_a.points()), CGAL::parameters::vertex_point_map(sm_b.points()))==result);
+      // assert(CGAL::Convex_hull_3::do_intersect(hsmb_pm2, hsma_pm2, CGAL::parameters::vertex_point_map(sm_b.points()), CGAL::parameters::vertex_point_map(sm_a.points()))==result);
+    }
   }
 
   void test_cube()
@@ -276,6 +276,8 @@ struct Test{
       std::vector<P> sp_b;
       V vec1( P(0,0,0), random_sphere_point());
       V vec2( P(0,0,0), random_sphere_point());
+      vec1*=0.9;
+      vec2*=0.9;
       for(int i=0; i<N; ++i){
         sp_a.push_back(random_sphere_point()+vec1);
         sp_b.push_back(random_sphere_point()+vec2);

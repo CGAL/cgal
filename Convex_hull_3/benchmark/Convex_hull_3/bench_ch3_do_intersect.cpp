@@ -8,7 +8,7 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Extreme_points_traits_adapter_3.h>
 #include <CGAL/convex_hull_3.h>
-#include <CGAL/convex_hull_with_hierarchy.h>
+#include <CGAL/Convex_hull_hierarchy.h>
 #include <CGAL/Convex_hull_3/predicates.h>
 
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
@@ -259,7 +259,7 @@ private:
     CGAL::Real_timer t;
     std::vector< std::vector<P> > points_ranges;
     std::vector< CGAL::Surface_mesh<P> > hulls;
-    std::vector< CGAL::Convex_hull_with_hierarchy<P> > hulls_wth_hierarchy;
+    std::vector< CGAL::Convex_hull_hierarchy< CGAL::Surface_mesh<P> > > hulls_hierarchy;
 
     double nb_tests=double(N*(N-1)/2);
 
@@ -285,10 +285,10 @@ private:
     std::cout << "  " << t.time() << " sec" << std::endl;
     t.reset();
 
-    std::cout << "Comstruct hierarchy of convex hulls" << std::endl;
+    std::cout << "Construct hierarchy of convex hulls" << std::endl;
     t.start();
     for(int i=0; i<N; ++i)
-      hulls_wth_hierarchy.emplace_back(hulls[i]);
+      hulls_hierarchy.emplace_back(hulls[i]);
     t.stop();
     std::cout << "  " << t.time() << " sec" << std::endl;
     t.reset();
@@ -320,7 +320,7 @@ private:
     t.start();
     for(int i=0; i<N; ++i)
       for(int j=i+1; j<N; ++j)
-        CGAL::Convex_hull_3::do_intersect(hulls_wth_hierarchy[i], hulls_wth_hierarchy[j]);
+        CGAL::Convex_hull_3::do_intersect(hulls_hierarchy[i], hulls_hierarchy[j]);
     t.stop();
 
     std::cout << "  Number points read per test: ";

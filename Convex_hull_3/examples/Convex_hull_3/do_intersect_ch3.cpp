@@ -41,20 +41,19 @@ int main(int argc, char* argv[])
                          CGAL::make_extreme_points_traits_adapter(sm1.points()));
   CGAL::extreme_points_3(vertices(sm2), std::back_inserter(extreme_vertices2),
                          CGAL::make_extreme_points_traits_adapter(sm2.points()));
-  // bool res = CGAL::Convex_hull_3::do_intersect(extreme_vertices1, extreme_vertices2,
-  //                                              CGAL::Convex_hull_3::make_do_intersect_traits_with_point_maps(sm1.points(), sm2.points()));
+  bool res = CGAL::Convex_hull_3::do_intersect(extreme_vertices1, extreme_vertices2,
+                                               CGAL::parameters::point_map(sm1.points()),
+                                               CGAL::parameters::point_map(sm2.points()));
 
   //print the number of extreme vertices
   std::cout << "There are " << extreme_vertices1.size() << " and "
                             << extreme_vertices2.size()
                             << " extreme vertices in the input meshes.\n";
 
-  //Convex_hull_hierarchy is data structure for very fast intersection test of Convex_hull
-  // CGAL::Convex_hull_hierarchy<Mesh> hsm1(sm1, CGAL::make_extreme_points_traits_adapter(sm1.points()));
-  // CGAL::Convex_hull_hierarchy<Mesh> hsm2(sm2, CGAL::make_extreme_points_traits_adapter(sm2.points()));
-  // auto map_hsm1=make_compose_property_map(hsm1.points(), sm1.points());
-  // auto map_hsm2=make_compose_property_map(hsm2.points(), sm2.points());
-  // res = CGAL::Convex_hull_3::do_intersect(hsm1, hsm2, CGAL::parameters::vertex_point_map(sm1.points()), CGAL::parameters::vertex_point_map(sm2.points())) << std::endl;
+  // Convex_hull_hierarchy is data structure for very fast intersection test of Convex_hull
+  CGAL::Convex_hull_hierarchy<Mesh> hsm1(sm1);
+  CGAL::Convex_hull_hierarchy<Mesh> hsm2(sm2);
+  res = CGAL::Convex_hull_3::do_intersect(hsm1, hsm2);
   std::cout << "do convex hulls intersect? " << std::boolalpha << res << "\n";
 
 
