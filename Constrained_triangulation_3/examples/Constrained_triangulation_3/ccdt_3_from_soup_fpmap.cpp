@@ -51,7 +51,7 @@ int main(int argc, char* argv[])
 
   auto soup_fpmap = boost::make_function_property_map<std::size_t>(polygon_to_patch_id);
   auto ccdt = CGAL::make_conforming_constrained_Delaunay_triangulation_3(
-      points, polygons, CGAL::parameters::face_patch_map(soup_fpmap));
+      points, polygons, CGAL::parameters::plc_facet_id(soup_fpmap));
 
   std::cout << "Number of vertices in the CDT: "
             << ccdt.triangulation().number_of_vertices() << '\n'

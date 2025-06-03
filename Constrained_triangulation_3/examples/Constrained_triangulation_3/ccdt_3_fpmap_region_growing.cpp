@@ -53,7 +53,7 @@ int main(int argc, char* argv[])
   std::cout << "-- Wrote segmented mesh to \"" << filename << "\"\n";
 
   auto ccdt = CGAL::make_conforming_constrained_Delaunay_triangulation_3(mesh,
-                CGAL::parameters::face_patch_map(face_patch_map));
+                CGAL::parameters::plc_facet_id(face_patch_map));
 
   std::cout << "Number of vertices in the CDT: "
             << ccdt.triangulation().number_of_vertices() << '\n'
