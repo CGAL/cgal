@@ -8,19 +8,25 @@
 
 #include <CGAL/Delaunay_triangulation_3.h>
 
-
+#include <CGAL/Memory_sizer.h>
 #include <CGAL/Timer.h>
 #include <iostream>
 #include <string>
 #include <fstream>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel  K;
+typedef CGAL::Triangulation_data_structure_3<CGAL::VertexWithPoint<K>, CGAL::Cell4Delaunay<K>, CGAL::Sequential_tag, CGAL::Index_tag> Tds;
 typedef CGAL::Delaunay_triangulation_3<K>                    DT;
 typedef DT::Point                                            Point_3;
 typedef CGAL::Timer                                          Timer;
+typedef CGAL::Memory_sizer                                   Memory_sizer;
 
 int main(int argc, char* argv[])
 {
+  Memory_sizer memory_sizer;
+  std::cout << "Memory usage: " << memory_sizer.virtual_size() << " bytes (virtual), "
+            << memory_sizer.resident_size() << " bytes (resident)" << std::endl;
+  {
   const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("points_3/ocean_r.xyz");
   std::ifstream in(filename.c_str());
   std::vector<Point_3> points;
@@ -43,5 +49,11 @@ int main(int argc, char* argv[])
   timer.stop();
 
   std::cerr << N << std::endl << timer.time() << " sec" << std::endl;
+  std::cout << "Memory usage: " << memory_sizer.virtual_size() << " bytes (virtual), "
+            << memory_sizer.resident_size() << " bytes (resident)" << std::endl;
+}
+std::cout << "Memory usage: " << memory_sizer.virtual_size() << " bytes (virtual), "
+            << memory_sizer.resident_size() << " bytes (resident)" << std::endl;
+
   return 0;
 }
