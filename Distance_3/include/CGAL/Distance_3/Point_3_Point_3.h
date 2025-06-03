@@ -17,6 +17,7 @@
 #ifndef CGAL_DISTANCE_3_POINT_3_POINT_3_H
 #define CGAL_DISTANCE_3_POINT_3_POINT_3_H
 
+#include <CGAL/number_utils.h>
 #include <CGAL/Point_3.h>
 
 namespace CGAL {
