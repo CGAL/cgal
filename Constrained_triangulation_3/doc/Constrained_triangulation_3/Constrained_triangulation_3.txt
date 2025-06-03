@@ -118,29 +118,29 @@ Right: the same CCDT seen with cutplane.
 
 There is no universal or canonical way to represent all possible PLCs in \cgal.
 
-Since any polyhedron is a PLC, any model of `FaceListGraph`, such as `CGAL::Surface_mesh`, can be
+Any polyhedral surface is a PLC, so any model of `FaceListGraph`, such as `CGAL::Surface_mesh`, can be
 used to represent a PLC.
-In this case, the polygons of the PLC correspond to the faces of the
-surface _mesh_, a collection of vertices (points), edges, and facets covering the surface of a
-a geometric object.
-The edges of the PLC correspond to the edges of the surface mesh. However, PLCs
-represented in this way are restricted to be manifold, and their facets cannot have holes.
+In this representation, the faces of the PLC correspond to the faces of the
+surface mesh—a collection of vertices (points), edges, and facets that cover the surface of a
+geometric object.
+The vertices of the PLC are the vertices of the surface mesh, the edges of the PLC are the edges
+of the surface mesh, and the polygons of the PLC are the facets of the surface mesh.
+However, PLCs represented in this way are restricted to be manifold, and their facets cannot have holes.
 
 A PLC can also be represented as a polygon soup: a collection of vertices and a set of polygons, where
-each polygon is defined by an ordered list of vertices, and the connectivity information is not
-explictly provided.
-For a polygon soup to represent a valid PLC,
-its polygons must satisfy the properties outlined in the previous section. This approach allows for
-the representation of non-manifold geometries, but note that polygons in a polygon soup cannot have
-holes.
+each polygon is defined by an ordered list of vertices, without explicit connectivity information between
+polygons. For a polygon soup to represent a valid PLC, its polygons must satisfy the properties described
+in the previous section. This approach allows for the representation of non-manifold geometries; however,
+polygons in a polygon soup cannot have holes.
 
-This package provides a way to group polygons into distinct surface patches using a property map.
-Each polygon is assigned a _patch_ identifier, allowing multiple polygons to form a continuous surface patch,
-which may include holes. When these patches are planar and meet the necessary geometric conditions,
+This package also provides a way to group polygons into distinct surface patches using a property map.
+Each polygon can be assigned a _patch_ identifier, allowing multiple polygons to form a continuous surface patch,
+which may include holes. When these patches are planar and satisfy the necessary geometric conditions,
 they can be used to construct a conforming constrained Delaunay triangulation.
-When a  property map is provided:
-- The vertices of the PLC are the ones from the original surface mesh or polygon soup.
-- The edges of the PLC are those that belong to the surface mesh or polygon soup and have only one adjacent facet, specifically those marking the boundary of patches.
+When a property map is provided:
+- The vertices of the PLC are those from the original surface mesh or polygon soup.
+- The edges of the PLC are those belonging to the surface mesh or polygon soup that have only one
+  adjacent facet, specifically those marking the boundaries of patches.
 - The surface patches themselves serve as the polygons (facets) in the resulting representation.
 
 \subsection CT_3_api_classes Classes
@@ -175,8 +175,9 @@ Delaunay triangulation from a given PLC.
 
 \subsection CT_3_example_ccdt_soup Build a Conforming Constrained Delaunay Triangulation from a Polygon Soup
 
-You can also construct a conforming constrained Delaunay triangulation from a polygon soup. The
-following example demonstrates how to build such a triangulation.
+You can also construct a conforming constrained Delaunay triangulation from a polygon soup.
+The following example demonstrates how to create such a triangulation from a collection of polygons
+without explicit connectivity information.
 
 \cgalExample{Constrained_triangulation_3/ccdt_3_from_soup.cpp }
 
@@ -188,12 +189,11 @@ provided and preserved throughout the construction of the conforming constrained
 triangulation.
 
 The following example demonstrates how to detect planar surface patches, remesh them as coarsely
-as possible, and use
-this segmentation during the tetrahedralization process.
+as possible, and use this segmentation during the tetrahedralization process.
 
 When the named parameter `plc_facet_id` is specified, each constrained facet in the 3D triangulation
-is assigned to the corresponding input PLC facet, identified in the provided property map.
-If this parameter is not specified, each input polygon, or PLC facet, is given a unique facet index.
+is assigned to the corresponding input PLC facet, as identified by the provided property map.
+If this parameter is not specified, each input polygon (or PLC facet) is assigned a unique facet index.
 
 \cgalExample{Constrained_triangulation_3/conforming_constrained_Delaunay_triangulation_3_fimap.cpp}
 
@@ -215,24 +215,23 @@ From left to right: Input PLC;
 \subsection CT_3_example_ccdt_region_growing_fimap Build a Conforming Constrained Delaunay Triangulation with Detected Polygon Identifiers
 
 If the user does not know the set of polygon identifiers to associate with each PLC facet, this information can be
-detected using the \link CGAL::Polygon_mesh_processing::region_growing_of_planes_on_faces(const PolygonMesh& mesh,RegionMap region_map,const NamedParameters& np = parameters::default_values()) CGAL::Polygon_mesh_processing::region_growing_of_planes_on_faces()`\endlink
+automatically detected using the \link CGAL::Polygon_mesh_processing::region_growing_of_planes_on_faces(const PolygonMesh& mesh,RegionMap region_map,const NamedParameters& np = parameters::default_values()) `CGAL::Polygon_mesh_processing::region_growing_of_planes_on_faces()`\endlink
 function from the \ref PkgPolygonMeshProcessing package.
 
-The following example demonstrates how to detect planar surface patches, and build a conforming
-constrained Delaunay triangulation using the detected segmentation, using the
-the named parameter `plc_facet_id` to associate each facet of the triangulation with the
-corresponding input PLC facet.
+The following example demonstrates how to detect planar surface patches and build a conforming
+constrained Delaunay triangulation using the detected segmentation. The named parameter `plc_facet_id`
+is used to associate each facet of the triangulation with the corresponding input PLC facet.
 
 \cgalExample{Constrained_triangulation_3/ccdt_3_fimap_region_growing.cpp}
 
 
 \subsection CT_3_examples_preprocessing Preprocessing the Input for Conforming Constrained Delaunay Triangulations
 
-Given a PLC, the algorithms in this package can construct a conforming constrained Delaunay, provided
-the input surface can be represented as a valid surface mesh or set of surface meshes,
+Given a PLC, the algorithms in this package can construct a conforming constrained Delaunay triangulation, provided
+the input surface can be represented as a valid surface mesh or a collection of surface meshes,
 and does not contain self-intersections.
-Numerous preprocessing functions are available in the \ref PkgPolygonMeshProcessing package to enforce these
-preconditions.
+Several preprocessing functions are available in the \ref PkgPolygonMeshProcessing package to help ensure these
+preconditions are met.
 
 \subsubsection CT_3_example_ccdt_autorefinement Autorefinement of the Input Mesh
 
