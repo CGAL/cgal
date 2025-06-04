@@ -335,6 +335,9 @@ CGAL_add_named_parameter_with_compatibility(vertex_freeze_bound_t, vertex_freeze
 CGAL_add_named_parameter_with_compatibility(i_seed_begin_iterator_t, i_seed_begin_iterator, seeds_begin)
 CGAL_add_named_parameter_with_compatibility(i_seed_end_iterator_t, i_seed_end_iterator, seeds_end)
 
+// List of named parameters used in Triangulation packages
+CGAL_add_named_parameter(ignore_infinite_faces_t, ignore_infinite_faces, ignore_infinite_faces)
+
 //List of named parameters used in exude_mesh_3.h
 CGAL_add_named_parameter_with_compatibility(lower_sliver_bound_t,lower_sliver_bound,sliver_bound)
 CGAL_add_named_parameter_with_compatibility(freeze_t,freeze,do_freeze)
