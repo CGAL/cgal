@@ -582,7 +582,7 @@ public:
 
     const_pointer ptr = &*cit;
 
-    for (const auto [chunk_ptr, size] : all_items) {
+    for (const auto& [chunk_ptr, size] : all_items) {
 
       // Are we in the address range of this block (excluding first and last
       // elements) ?
