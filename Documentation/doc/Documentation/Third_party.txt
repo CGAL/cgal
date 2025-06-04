@@ -160,10 +160,11 @@ executables should be linked with the CMake imported target
 
 The \libpointmatcher web site is <A
 HREF="https://github.com/ethz-asl/libpointmatcher">`https://github.com/ethz-asl/libpointmatcher`</A>.
-\attention On Windows, we only support version 1.3.1 of PointMatcher with version 3.3.7 of Eigen, with some changes to the recipe at
+\attention On Windows, \libpointmatcher needs to be compiled with the flag BOOST_TIMER_ENABLE_DEPRECATED set as it uses a deprecated module from \boost.
+\attention On Windows, we support version 1.4.4 of \libpointmatcher with version 3.4.0 of Eigen.
+Alternatively, version 1.3.1 of \libpointmatcher is supported with version 3.3.7 of Eigen, with some changes to the recipe at
 `https://github.com/ethz-asl/libpointmatcher/blob/master/doc/Compilation.md`:`NABO_INCLUDE_DIR` becomes `libnabo_INCLUDE_DIRS`
 and `NABO_LIBRARY` becomes `libnabo_LIBRARIES` in the "Build libpointmatcher" section.
-
 
 \subsection thirdpartyLeda LEDA
 <b>Version 6.2 or later</b>
