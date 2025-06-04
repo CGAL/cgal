@@ -804,7 +804,7 @@ public:
     swap(tr._gt, _gt);
     swap(tr.infinite, infinite);
     tds().maybe_fix_vertex_handle(infinite);
-    tr.tds().maybe_fix_vertex_handle(infinite);
+    tr.tds().maybe_fix_vertex_handle(tr.infinite);
     _tds.swap(tr._tds);
     Base::swap(tr);
   }
