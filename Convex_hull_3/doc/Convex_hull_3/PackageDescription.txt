@@ -6,7 +6,7 @@
 /// \defgroup PkgConvexHull3Traits Traits Classes
 /// \ingroup PkgConvexHull3Ref
 
-/// \defgroup PkgConvexHull3Predicates Predicates
+/// \defgroup PkgConvexHull3Predicates Intersection Test Functions
 /// \ingroup PkgConvexHull3Ref
 
 /*! \defgroup PkgConvexHull3Functions Convex Hull Functions

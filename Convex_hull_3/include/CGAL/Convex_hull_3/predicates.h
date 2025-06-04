@@ -172,7 +172,7 @@ typename Kernel_traits<Vector_3>::Kernel::Point_3 extreme_point_graph_3(const Gr
   // Since convex, local maximum is a global maximum
   return converter(get(point_map,argmax));
 }
-} //end predicates_impl
+} } //end Convex_hull_3::predicates_impl
 
 #if DOXYGEN_RUNNING
 
@@ -292,13 +292,15 @@ typename Kernel_traits<Direction_3>::Kernel::Point_3 extreme_point_3(const Conve
   if constexpr(is_instance_of_v<Convex, Convex_hull_hierarchy>){
     return c.extreme_point_3(dir, np);
   } else if constexpr(CGAL::IO::internal::is_Range_v<Convex>){
-    return predicates_impl::extreme_point_range_3(c, dir.vector(), np);
+    return Convex_hull_3::predicates_impl::extreme_point_range_3(c, dir.vector(), np);
   } else {
-    return predicates_impl::extreme_point_graph_3(c, dir.vector(), np);
+    return Convex_hull_3::predicates_impl::extreme_point_graph_3(c, dir.vector(), np);
   }
 }
 
 #endif
+
+namespace Convex_hull_3 {
 
 namespace predicates_impl {
 
@@ -704,7 +706,7 @@ bool do_intersect(const Convex1& c1, const Convex2& c2,
 /**
 * \ingroup PkgConvexHull3Predicates
 *
-* provides a lower bound on the distance between the convex hulls of the two point sets.
+* provides a lower bound on the squared distance between the convex hulls of the two point sets.
 *
 * @tparam PointRange: is a model of `ConstRange`. The value type of its iterator is the key type of the named parameter `point_map`.
 * @tparam NamedParameters_1 a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -748,7 +750,7 @@ FT separation_distance(const PointRange& r1, const PointRange& r2,
 /**
 * \ingroup PkgConvexHull3Predicates
 *
-* provides a lower bound on the distance between the two convex graphs.
+* provides a lower bound on the squared distance between the two convex graphs.
 *
 * @tparam AdjacencyGraph: is a model of `AdjacencyGraph`.
 * @tparam NamedParameters_1 a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -795,7 +797,7 @@ FT separation_distance(const AdjacencyGraph& g1, const AdjacencyGraph& g2,
 /**
 * \ingroup PkgConvexHull3Predicates
 *
-* provides a lower bound on the distance between the two convex hulls.
+* provides a lower bound on the squared distance between the two convex hulls.
 *
 * @tparam PolygonMesh: is a model of `MutableFaceGraph`, more details in `CGAL::Convex_hull_hierarchy`
 * @tparam NamedParameters_1 a sequence of \ref bgl_namedparameters "Named Parameters"

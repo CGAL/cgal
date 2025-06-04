@@ -119,8 +119,6 @@ struct Convex_hull_hierarchy{
   Convex_hull_hierarchy(const Graph &g, const Traits &traits): Convex_hull_hierarchy(g, parameters::default_values(), traits){};
 
   /**
-  * \ingroup PkgConvexHull3Functions
-  *
   * constructor taking the points in the range `[first, last)`.
   *
   * @tparam RangeIterator must be an input iterator with a value type equivalent to `Traits::Point_3`
