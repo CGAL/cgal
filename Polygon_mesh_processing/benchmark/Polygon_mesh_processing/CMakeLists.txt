@@ -2,7 +2,7 @@
 # This is the CMake script for compiling a set of CGAL applications.
 
 cmake_minimum_required(VERSION 3.12...3.31)
-project(Polygon_mesh_processing)
+project(Polygon_mesh_processing_Benchmarks)
 
 # CGAL and its components
 find_package(CGAL REQUIRED)

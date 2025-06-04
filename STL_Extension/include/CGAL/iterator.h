@@ -455,8 +455,61 @@ operator+(typename N_step_adaptor<I,N,Ref,Ptr,Val,Dist,Ctg>::difference_type n,
           N_step_adaptor<I,N,Ref,Ptr,Val,Dist,Ctg> i)
 { return i += n; }
 
-template < class I, int N>
-class N_step_adaptor_derived : public I {
+template < class Derived, class I, int N, bool is_random_access>
+class N_step_adaptor_derived_base {};
+
+template < class Derived, class I, int N>
+class N_step_adaptor_derived_base<Derived, I, N, true> {
+  using Self = Derived;
+
+  Self& self() {
+    return static_cast<Self&>(*this);
+  }
+  const Self& self() const {
+    return static_cast<const Self&>(*this);
+  }
+  using difference_type = typename Self::difference_type;
+  using reference = typename Self::reference;
+public:
+// OPERATIONS Random Access Category
+// ---------------------------------
+
+  Self& operator+=( difference_type n) {
+      I::operator+=( difference_type(N * n));
+      return *this;
+  }
+  Self  operator+( difference_type n) const {
+      Self tmp = *this;
+      tmp += n;
+      return tmp;
+  }
+  Self& operator-=( difference_type n) {
+      return operator+=( -n);
+  }
+  Self  operator-( difference_type n) const {
+      Self tmp = *this;
+      return tmp += -n;
+  }
+  difference_type  operator-( const Self& i) const {
+      return (I::operator-(i)) / N;
+  }
+  reference  operator[]( difference_type n) const {
+      Self tmp = *this;
+      tmp += n;
+      return tmp.operator*();
+  }
+
+};
+
+template <class I, int N>
+class N_step_adaptor_derived
+    : public N_step_adaptor_derived_base<N_step_adaptor_derived<I, N>,
+                                         I,
+                                         N,
+                                         std::is_convertible_v<typename std::iterator_traits<I>::iterator_category,
+                                                               std::random_access_iterator_tag>>
+    , public I
+{
 public:
     typedef I                               Iterator;
     typedef I                               Circulator;
@@ -485,9 +538,10 @@ public:
 
     Circulator current_circulator() const { return *this;}
     Iterator   current_iterator()   const { return *this;}
+    Iterator&  current_iterator()         { return *this;}
 
     Self& operator++() {
-        std::advance( (I&)*this, N);
+        std::advance( current_iterator(), N);
         return *this;
     }
     Self  operator++(int) {
@@ -500,7 +554,7 @@ public:
 // ---------------------------------
 
     Self& operator--() {
-        std::advance( (I&)*this, -N);
+        std::advance( current_iterator(), -N);
         return *this;
     }
     Self  operator--(int) {
@@ -509,34 +563,8 @@ public:
         return tmp;
     }
 
-// OPERATIONS Random Access Category
-// ---------------------------------
 
     Self  min_circulator() const { return Self( I::min_circulator()); }
-    Self& operator+=( difference_type n) {
-        I::operator+=( difference_type(N * n));
-        return *this;
-    }
-    Self  operator+( difference_type n) const {
-        Self tmp = *this;
-        tmp += n;
-        return tmp;
-    }
-    Self& operator-=( difference_type n) {
-        return operator+=( -n);
-    }
-    Self  operator-( difference_type n) const {
-        Self tmp = *this;
-        return tmp += -n;
-    }
-    difference_type  operator-( const Self& i) const {
-        return (I::operator-(i)) / N;
-    }
-    reference  operator[]( difference_type n) const {
-        Self tmp = *this;
-        tmp += n;
-        return tmp.operator*();
-    }
 };
 
 template < class I, int N >
