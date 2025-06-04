@@ -7,6 +7,7 @@ project(SMDS_3_Tests)
 find_package(CGAL REQUIRED)
 
 create_single_source_cgal_program( "test_simplicial_cb_vb.cpp")
+create_single_source_cgal_program( "test_tet_soup_to_c3t3.cpp")
 
 find_package(Eigen3 3.1.0 QUIET) #(requires 3.1.0 or greater)
 include(CGAL_Eigen3_support)
