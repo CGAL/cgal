@@ -1558,7 +1558,7 @@ namespace CGAL {
 
     Point_3 circumcenter() const
     {
-      return circumcenter(Geom_traits());
+      return circumcenter(GT());
     }
 
   };
