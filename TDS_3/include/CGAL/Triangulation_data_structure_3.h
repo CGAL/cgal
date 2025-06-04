@@ -224,6 +224,9 @@ public:
 
   void swap(Storage & tds);
 
+  void reserve(size_type n_vertices, size_type n_cells)
+  {}
+
   void clear();
 
   size_type number_of_vertices() const { return vertices().size(); }
@@ -515,6 +518,8 @@ public:
   using Tds_storage::number_of_vertices;
   using Tds_storage::set_dimension;
   using Tds_storage::vertices;
+  using Tds_storage::reserve;
+
 
   size_type number_of_facets() const
   {

@@ -59,6 +59,8 @@ public:
     /// Reset element to default value
     virtual void reset(size_t idx) = 0;
 
+    virtual size_t capacity() const = 0;
+
     virtual bool transfer(const Base_property_array& other) = 0;
     virtual bool transfer(const Base_property_array& other, std::size_t from, std::size_t to) = 0;
 
@@ -109,6 +111,11 @@ public:
     Property_array(const std::string& name, T t=T()) : Base_property_array(name), value_(t) {}
 
 public: // virtual interface of Base_property_array
+
+    virtual size_t capacity() const
+    {
+        return data_.capacity();
+    }
 
     virtual void reserve(size_t n)
     {
@@ -320,7 +327,7 @@ public:
     size_t size() const { return size_; }
 
     // returns the current capacity of the property arrays
-    size_t capacity() const { return capacity_; }
+    //size_t capacity() const { return capacity_; }
 
     // returns the number of property arrays
     size_t n_properties() const { return parrays_.size(); }
@@ -443,6 +450,12 @@ public:
         size_ = 0;
     }
 
+    size_t capacity() const
+    {
+        if(parrays_.empty())
+            return 0;
+        return parrays_[0]->capacity();
+    }
 
     // reserve memory for n entries in all arrays
     void reserve(size_t n)

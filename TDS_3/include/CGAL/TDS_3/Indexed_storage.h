@@ -958,6 +958,12 @@ namespace CGAL {
       cells_freelist_ = static_cast<size_type>(c);
     }
 
+    void reserve(size_type n_vertices, size_type n_cells)
+    {
+      vprops_.reserve(n_vertices);
+      cprops_.reserve(n_cells);
+    }
+
     void clear()
     {
       clear_without_removing_property_maps();
@@ -1192,6 +1198,18 @@ namespace CGAL {
         anonymous_property_nb = rhs.anonymous_property_nb;
       }
       return *this;
+  }
+
+  ~Indexed_storage()
+  {
+#if 0
+    std::cout << "sizeof(Vertex) " << " " << sizeof(Vertex_storage) << std::endl;
+    std::cout << "sizeof(Cell)   " << " " << sizeof(Cell_storage) << std::endl;
+     std::cout << "vertex capacity: "  << vprops_.capacity() << std::endl;
+     std::cout << "cell capacity: "  << cprops_.capacity() << std::endl;
+     std::cout << sizeof(Vertex_storage)  * vprops_.capacity() << " bytes for vertices" << std::endl;
+     std::cout << sizeof(Cell_storage)  * cprops_.capacity() << " bytes for cells" << std::endl;
+ #endif
   }
 
 
@@ -1545,8 +1563,6 @@ namespace CGAL {
       using Other = Cell4Delaunay<GT, Cb2>;
     };
 
-
-    auto&& storage() const { return this->tds()->cell_storage()[this->index()]; }
 
     Point_3 circumcenter(const GT& gt) const
     {
