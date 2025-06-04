@@ -202,7 +202,6 @@ compare_squared_distance(const typename K::Segment_3& s1,
   typename K::Construct_vertex_3 vertex = k.construct_vertex_3_object();
   typename K::Construct_vector_3 cv = k.construct_vector_3_object();
   typename K::Compute_scalar_product_3 sp = k.compute_scalar_product_3_object();
-  typename K::Compute_squared_distance_3 sq_dist = k.compute_squared_distance_3_object();
   typename K::Compare_squared_distance_3 csq_dist = k.compare_squared_distance_3_object();
 
   /* The content of this function is very similar with the one above, the difference is we can exit earlier if
