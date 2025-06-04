@@ -688,6 +688,7 @@ namespace CGAL {
     using Self = Indexed_storage<Vb,Cb, ConcurrencyTag>;
     using TDS = Triangulation_data_structure_3<Vb, Cb, ConcurrencyTag, Index_tag>;
     using Concurrency_tag  = ConcurrencyTag;
+    using Is_CGAL_TDS_3 = CGAL::Tag_false;
 
     TDS& tds()
     {
@@ -1614,10 +1615,10 @@ namespace CGAL {
       return storage().hidden;
     }
 
-    Point_iterator hidden_points_begin(){ storage().hidden.begin();}
-    Point_const_iterator hidden_points_begin() const { storage().hidden.begin();}
-    Point_iterator hidden_points_end(){ storage().hidden.end();}
-    Point_const_iterator hidden_points_end() const { storage().hidden.end();}
+    Point_iterator hidden_points_begin(){ return storage().hidden.begin();}
+    Point_const_iterator hidden_points_begin() const { return storage().hidden.begin();}
+    Point_iterator hidden_points_end(){ return storage().hidden.end();}
+    Point_const_iterator hidden_points_end() const { return storage().hidden.end();}
 
   template<typename GT_>
   Point_3 weighted_circumcenter(const GT_& gt) const

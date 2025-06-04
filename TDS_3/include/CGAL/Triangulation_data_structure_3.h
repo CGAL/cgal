@@ -186,7 +186,7 @@ public:
   typedef Compact_container<Vertex>                      Vertex_range;
 #endif
 
-
+  typedef CGAL::Tag_true                       Is_CGAL_TDS_3;
   typedef typename Cell_range::size_type       size_type;
   typedef typename Cell_range::difference_type difference_type;
 
@@ -381,7 +381,8 @@ public:
   // This tag is used in the parallel operations of RT_3 to access some functions
   // of the TDS (tds.vertices().is_used(Vertex_handle)) that are much more efficient
   // than what is exposed by the TDS concept (tds.is_vertex(Vertex_handle)).
-  typedef CGAL::Tag_true              Is_CGAL_TDS_3;
+  // typedef CGAL::Tag_true              Is_CGAL_TDS_3;
+  typedef typename Tds_storage::Is_CGAL_TDS_3 Is_CGAL_TDS_3;
 
   // Tools to change the Vertex and Cell types of the TDS.
   template < typename Vb2 >
