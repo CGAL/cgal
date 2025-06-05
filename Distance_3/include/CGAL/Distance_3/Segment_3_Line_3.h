@@ -87,7 +87,7 @@ compare_squared_distance(const typename K::Segment_3& seg,
                          const typename K::FT& d2)
 {
   // Perform an early exit was slower
-  return compare(squared_distance(seg, line, k), d2);
+  return ::CGAL::compare(squared_distance(seg, line, k), d2);
 }
 
 template <class K>
