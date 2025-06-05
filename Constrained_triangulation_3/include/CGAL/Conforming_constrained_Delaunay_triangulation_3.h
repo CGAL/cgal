@@ -916,7 +916,7 @@ public:
    * \brief defines a range type for iterating over the constrained facets.
    *
    * This type is used to iterate through all facets that are constrained.
-   * Its iterator type is ::Constrained_facets_iterator.
+   * Its iterator type is `Constrained_facets_iterator`.
    */
   using Constrained_facets_range = CGAL::Iterator_range<Constrained_facets_iterator>;
 
@@ -988,7 +988,7 @@ public:
 /**
   * \brief returns a range of the constrained facets.
   *
-  * Its iterator type is ::Constrained_facets_iterator.
+  * Its iterator type is `Constrained_facets_iterator`
   */
   Constrained_facets_range constrained_facets() const {
     return {constrained_facets_begin(), constrained_facets_end()};
