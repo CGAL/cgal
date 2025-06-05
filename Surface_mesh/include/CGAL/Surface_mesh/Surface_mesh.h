@@ -2750,6 +2750,18 @@ does_recycle_garbage() const
   return recycle_;
 }
 
+
+namespace internal::handle {
+  template <typename T>
+  struct Hash_functor<SM_Index<T>>{
+    std::size_t
+    operator()(const SM_Index<T> i)
+    {
+      return i.idx();
+    }
+  };
+}
+
 namespace internal {
 
 template <typename P>
