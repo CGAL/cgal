@@ -106,8 +106,8 @@ struct Triangle_soup_fixer
     using parameters::get_parameter;
     using parameters::choose_parameter;
 
-    using Traits = typename ::CGAL::Polygon_mesh_processing::internal::GetPolygonGeomTraits<PointRange, PolygonRange, NamedParameters>::type;
-    Traits traits = choose_parameter(get_parameter(np, internal_np::geom_traits), Traits());
+    using Traits = typename GetPolygonGeomTraits<PointRange, PolygonRange, NamedParameters>::type;
+    Traits traits = choose_parameter<Traits>(get_parameter(np, internal_np::geom_traits));
 
     CGAL::Polygon_mesh_processing::merge_duplicate_points_in_polygon_soup(points, polygons, np);
     CGAL::Polygon_mesh_processing::internal::simplify_polygons_in_polygon_soup(points, polygons, traits);
@@ -141,8 +141,8 @@ struct Triangle_soup_fixer<PointRange, PolygonRange, Indexes_range< std::array<P
     using parameters::get_parameter;
     using parameters::choose_parameter;
 
-    using Traits = typename ::CGAL::Polygon_mesh_processing::internal::GetPolygonGeomTraits<PointRange, PolygonRange, NamedParameters>::type;
-    Traits traits = choose_parameter(get_parameter(np, internal_np::geom_traits), Traits());
+    using Traits = typename GetPolygonGeomTraits<PointRange, PolygonRange, NamedParameters>::type;
+    Traits traits = choose_parameter<Traits>(get_parameter(np, internal_np::geom_traits));
 
     CGAL::Polygon_mesh_processing::merge_duplicate_points_in_polygon_soup(points, polygons, np);
     CGAL::Polygon_mesh_processing::internal::remove_invalid_polygons_in_array_polygon_soup(points, polygons, traits);
