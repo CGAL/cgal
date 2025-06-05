@@ -1295,7 +1295,7 @@ namespace CGAL {
 
     public:
       using value_type = typename Handle_::value_type;
-      using reference = value_type;  // AF reference needed, but is this correct ?????
+      using reference = value_type;
 
       Index_iterator() : idx_(), tds_(nullptr) {}
       Index_iterator(const Index& h, const Self* m)
@@ -1316,7 +1316,7 @@ namespace CGAL {
 
       operator Handle_() const { return handle(); }
 
-      value_type operator*() const { return value_type{tds_, idx_}; }
+      reference operator*() const { return value_type{tds_, idx_}; }
 
       typename Handle_::pointer operator->() const
       {
@@ -1400,7 +1400,6 @@ namespace CGAL {
       Self* tds_;
     };
 
-    // AF:  The value type of the iterators should be the same as the value type of the handle. This is not the case now.
     using Vertex_iterator = Index_iterator<Vertex_handle>;
     using Vertex_range = Iterator_range<Vertex_iterator>;
 
