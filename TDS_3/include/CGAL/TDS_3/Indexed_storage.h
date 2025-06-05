@@ -670,14 +670,15 @@ namespace internal { namespace TDS_3{
 
 } // end namespace CGAL
 
-template <typename T>
-struct ::std::hash<CGAL::TDS_handle<T>>
-{
-  using Handle = CGAL::TDS_handle<T>;
-  std::size_t operator()(const Handle& h) const {
-    return hash_value(h);
-  }
-};
+namespace std {
+  template <typename T>
+  struct hash<CGAL::TDS_handle<T>> {
+    using Handle = CGAL::TDS_handle<T>;
+    std::size_t operator()(const Handle& h) const {
+      return hash_value(h);
+    }
+  };
+}
 
 namespace CGAL {
 
