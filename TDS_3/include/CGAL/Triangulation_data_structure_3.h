@@ -224,7 +224,7 @@ public:
 
   void swap(Storage & tds);
 
-  void reserve(size_type n_vertices, size_type n_cells)
+  void reserve(size_type, size_type)
   {}
 
   void clear();
@@ -3429,7 +3429,7 @@ remove_from_maximal_dimension_simplex(Vertex_handle v)
     CGAL_precondition(number_of_vertices() >
                                     (size_type) dimension() + 1);
 
-    if (number_of_vertices() == (size_type) dimension() + 2) {
+    if (number_of_vertices() == static_cast<size_type>(dimension()) + 2) {
         remove_decrease_dimension(v);
         return Cell_handle();
     }

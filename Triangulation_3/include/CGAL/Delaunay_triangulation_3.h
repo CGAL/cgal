@@ -351,9 +351,9 @@ public:
     size_type n = number_of_vertices();
     std::vector<Point> points(first, last);
     spatial_sort<Concurrency_tag>(points.begin(), points.end(), geom_traits());
-    size_type nv = n + static_cast<size_type>(points.size()) + (n==0)?1:0; // +1 for the infinite vertex
-    size_type nc = this->number_of_cells()+ (7*nv)/4;
-    tds().reserve(nv,nc);
+    size_type nv = n + static_cast<size_type>(points.size()) + ((n==0) ? 1: 0); // +1 for the infinite vertex
+    size_type estimated_nc = this->number_of_cells()+ (7*nv)/4;
+    tds().reserve(nv, estimated_nc);
 
     // Parallel
 #ifdef CGAL_LINKED_WITH_TBB
