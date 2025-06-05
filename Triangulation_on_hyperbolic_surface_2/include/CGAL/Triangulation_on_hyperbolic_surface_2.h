@@ -583,7 +583,7 @@ void
 Triangulation_on_hyperbolic_surface_2<Traits, Attributes>::
 to_stream(std::ostream& s) const
 {
-  CGAL_precondition(is_valid() && has_anchor());
+  CGAL_precondition(is_valid());
 
   // Give indices to the darts
   std::map<Dart_const_descriptor, int> darts_indices;
