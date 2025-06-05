@@ -82,10 +82,10 @@ addition of Steiner vertices to become tetrahedralizable (see \cgalFigureRef{CT_
 
 \cgalFigureAnchor{CT_3_schonhardt_fig}
 <center>
-<img src="schonhardt.png" style="max-width:40%;"/>
+<img src="schonhardt.png" style="max-width:25%;"/>
 </center>
 \cgalFigureCaptionBegin{CT_3_schonhardt_fig}
-A Sch&ouml;nhardt polyhedron.
+A Sch&ouml;nhardt polyhedron. The non-convex edges are shown in bold.
 \cgalFigureCaptionEnd
 
 
@@ -203,19 +203,7 @@ If this parameter is not specified, each input polygon (or PLC facet) is assigne
 
 \cgalExample{Constrained_triangulation_3/conforming_constrained_Delaunay_triangulation_3_fimap.cpp}
 
-\cgalFigureRef{CT_3_ccdt_fimap_fig} shows the input and output of this triangulation construction example.
-
-\cgalFigureAnchor{CT_3_ccdt_fimap_fig}
-<center>
-<img src="ccdt_fpmap.png" style="max-width:75%;"/>
-\cgalFigureCaptionBegin{CT_3_ccdt_fimap_fig}
-From left to right: Input PLC;
- The corresponding conforming constrained Delaunay triangulation with one patch per input polygon;
- Input PLC segmented according to sharp edges;
- The corresponding conforming constrained Delaunay triangulation using the segmentation.
-\cgalFigureCaptionEnd
-</center>
-<!-- #camera 5.67784 5.7193 -5.46546 0.830007 -0.459002 0.09482 -0.302349 -->
+\cgalFigureRef{CT_3_ccdt_examples_fig} shows the input and output of this triangulation construction example.
 
 
 \subsection CT_3_example_ccdt_region_growing_fimap Build a Conforming Constrained Delaunay Triangulation with Detected Polygon Identifiers
@@ -277,6 +265,34 @@ PkgTetrahedralRemeshing package.
 The following example demonstrates how to remesh a conforming constrained Delaunay triangulation.
 
 \cgalExample{Constrained_triangulation_3/remesh_constrained_Delaunay_triangulation_3.cpp }
+
+
+\subsection CT_3_examples_figure Figures
+
+The following table of figures (\cgalFigureRef{CT_3_ccdt_examples_fig}) illustrates some results of the examples provided in this package.
+The left column shows the input PLC, while the right column displays the resulting conforming
+constrained Delaunay triangulation.
+
+From top to bottom, the lines show different input data (all from) the same input triangulated surface and,
+for each of them, the resulting conforming constrained Delaunay triangulation.
+The input data are:
+* the input PLC with no preprocessing;
+* the input PLC with a segmentation of the surface patches done with `CGAL::Polygon_mesh_processing::region_growing_of_planes_on_faces()` as done in example \ref CT_3_example_ccdt_region_growing_fimap;
+* the input PLC, remeshed and not triangulated, with a segmentation of the surface patches, done with `CGAL::Polygon_mesh_processing::remesh_planar_patches()` as in example \ref CT_3_example_ccdt_fimap;
+* the input PLC, isotropically remeshed, with a segmentation of the surface patches, done with `CGAL::Polygon_mesh_processing::region_growing_of_planes_on_faces()` as in example \ref CT_3_example_ccdt_region_growing_fimap.
+
+It is interesting to note that the conforming constrained Delaunay triangulations built from the same input PLC, but with different
+preprocessing steps, can yield different results.
+
+
+\cgalFigureAnchor{CT_3_ccdt_examples_fig}
+<center>
+<img src="ccdt_examples.png" style="max-width:50%;"/>
+</center>
+\cgalFigureCaptionBegin{CT_3_ccdt_examples_fig}
+A collection of conforming constrained Delaunay triangulations built from different inputs.
+The left column shows the input PLC, while the right column displays the resulting 3D triangulation.<br>
+\cgalFigureCaptionEnd
 
 
 \section CT_3_design Implementation History

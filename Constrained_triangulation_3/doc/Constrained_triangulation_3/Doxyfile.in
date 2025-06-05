@@ -4,5 +4,6 @@ HTML_EXTRA_FILES = ${CGAL_PACKAGE_DOC_DIR}/fig/plc.png \
                    ${CGAL_PACKAGE_DOC_DIR}/fig/schonhardt.png \
                    ${CGAL_PACKAGE_DOC_DIR}/fig/plc_to_cdt.png \
                    ${CGAL_PACKAGE_DOC_DIR}/fig/ccdt_fpmap.png \
-                   ${CGAL_PACKAGE_DOC_DIR}/fig/cdt_title_pyramid.png
+                   ${CGAL_PACKAGE_DOC_DIR}/fig/cdt_title_pyramid.png \
+                   ${CGAL_PACKAGE_DOC_DIR}/fig/ccdt_examples.png
 QUIET = YES
