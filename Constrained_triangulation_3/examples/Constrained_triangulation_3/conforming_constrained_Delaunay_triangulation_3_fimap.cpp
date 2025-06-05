@@ -12,14 +12,13 @@ using K = CGAL::Exact_predicates_inexact_constructions_kernel;
 using Mesh = CGAL::Surface_mesh<K::Point_3>;
 using face_descriptor = boost::graph_traits<Mesh>::face_descriptor;
 
-namespace PMP = CGAL::Polygon_mesh_processing;
 
 int main(int argc, char* argv[])
 {
   std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/cross.off");
 
   Mesh input;
-  if(!PMP::IO::read_polygon_mesh(filename, input)) {
+  if(!CGAL::Polygon_mesh_processing::IO::read_polygon_mesh(filename, input)) {
     std::cerr << "Invalid input." << std::endl;
     return 1;
   }
@@ -29,16 +28,20 @@ int main(int argc, char* argv[])
 
   Mesh mesh;
   auto plc_facet_map = get(CGAL::face_patch_id_t<int>(), mesh);
-  PMP::remesh_planar_patches(input, mesh,
+
+  // Remesh planar patches and segment the mesh into planar patches
+  CGAL::Polygon_mesh_processing::remesh_planar_patches(input, mesh,
                              CGAL::parameters::default_values(),
                              CGAL::parameters::face_patch_map(plc_facet_map)
-                               .do_not_triangulate_faces(true));
+                                              .do_not_triangulate_faces(true));
+
 
   filename = argc > 2 ? argv[2] : "mesh.ply";
   CGAL::IO::write_polygon_mesh(filename, mesh,
       CGAL::parameters::stream_precision(17));
   std::cout << "Wrote segmented mesh to " << filename << "\n";
 
+  // Create a conforming constrained Delaunay triangulation from the mesh
   auto ccdt = CGAL::make_conforming_constrained_Delaunay_triangulation_3(mesh,
                 CGAL::parameters::plc_facet_id(plc_facet_map));
 

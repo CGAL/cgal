@@ -44,7 +44,8 @@ int main(int argc, char* argv[])
   std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/mpi.off");
 
   CGAL::Surface_mesh<K::Point_3> mesh;
-  if(!CGAL::IO::read_polygon_mesh(filename, mesh)) {
+  if(!CGAL::IO::read_polygon_mesh(filename, mesh))
+  {
     std::cerr << "Error: cannot read file " << filename << std::endl;
     return EXIT_FAILURE;
   }
@@ -61,13 +62,14 @@ int main(int argc, char* argv[])
   namespace np = CGAL::parameters;
   namespace Tet_remesh = CGAL::Tetrahedral_remeshing;
   Tr tr = Tet_remesh::get_remeshing_triangulation(std::move(ccdt),
-                                              np::edge_is_constrained_map(constraints_pmap));
+                                                  np::edge_is_constrained_map(constraints_pmap));
   //! [move ccdt to tr]
   std::cout << "Number of vertices in tr: " << tr.number_of_vertices() << std::endl;
 
-  CGAL::tetrahedral_isotropic_remeshing(tr, 1.,
-        np::number_of_iterations(3)
-        .edge_is_constrained_map(constraints_pmap));
+  CGAL::tetrahedral_isotropic_remeshing(tr,
+                                        1., // target edge length
+                                        np::number_of_iterations(3)
+                                        .edge_is_constrained_map(constraints_pmap));
 
   std::cout << "Number of vertices in tr: "
             << tr.number_of_vertices() << std::endl;

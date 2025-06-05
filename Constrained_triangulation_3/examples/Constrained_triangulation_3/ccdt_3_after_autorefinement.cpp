@@ -36,7 +36,7 @@ int main(int argc, char* argv[])
     std::cout << "Mesh self-intersects, performing autorefine...\n";
 
     // use a polygon soup as container as the output will most likely be non-manifold
-    std::vector<K::Point_3> points;
+    std::vector<Point> points;
     std::vector<std::vector<std::size_t>> polygons;
     PMP::polygon_mesh_to_polygon_soup(mesh, points, polygons);
     PMP::autorefine_triangle_soup(points, polygons);
