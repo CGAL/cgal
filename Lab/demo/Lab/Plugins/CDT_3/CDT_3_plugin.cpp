@@ -126,7 +126,7 @@ class CDT_3_plugin : public QObject, public CGAL_Lab_plugin_interface
 
         if(patch_id_pmap_opt.has_value()) {
           cdt = CGAL::make_conforming_constrained_Delaunay_triangulation_3<CDT>(
-              *mesh, CGAL::parameters::plc_facet_id(*patch_id_pmap_opt));
+              *mesh, CGAL::parameters::plc_face_id(*patch_id_pmap_opt));
         } else {
           cdt = CGAL::make_conforming_constrained_Delaunay_triangulation_3<CDT>(*mesh);
         }

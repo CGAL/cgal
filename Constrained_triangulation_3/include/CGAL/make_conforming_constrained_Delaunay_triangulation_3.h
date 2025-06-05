@@ -29,7 +29,7 @@ namespace CGAL {
   \addtogroup PkgConstrainedTriangulation3FunctionsPolygonSoupOrMesh
   @{
 
-  Free Functions Template for Creating Conforming Constrained Delaunay Triangulations  {#PkgConstrainedTriangulation3Functions}
+  Free Functions Template for Creating Conforming Constrained Delaunay Triangulations {#PkgConstrainedTriangulation3Functions}
   ==========================================================================
 
   The following functions create a 3D conforming constrained Delaunay triangulation
@@ -42,14 +42,14 @@ namespace CGAL {
   during the triangulation process.
 
   By default, each face of the input is considered a polygonal constraint for the triangulation. The
-  named parameter `plc_facet_id` can be used to describe larger polygonal constraints, possibly with holes. If
+  named parameter `plc_face_id` can be used to describe larger polygonal constraints, possibly with holes. If
   used, this parameter must be a property map that associates each face of the input with a patch
   identifier. Faces with the same patch identifier are considered part of the same surface patch. Each of these
   surface patches (defined as the union of the input faces with a given patch identifier) is expected to be a polygon or
   a polygon with holes, with coplanar vertices (or nearly coplanar up to the precision of the number type used).
 
   The generated triangulation will conform to the faces of the input, or to the surface patches
-  described by the `plc_facet_id` property map if provided.
+  described by the `plc_face_id` property map if provided.
 
 
   \pre The input data must not be coplanar.
@@ -111,13 +111,13 @@ namespace CGAL {
  *                     must be available in `PolygonMesh`.}
  *   \cgalParamNEnd
  *
- *   \cgalParamNBegin{plc_facet_id}
- *    \cgalParamDescription{a property map associating a patch identifier to each face of `mesh`.
+ *   \cgalParamNBegin{plc_face_id}
+ *    \cgalParamDescription{a property map associating a patch identifier to each facet of `mesh`.
  *                   Each identifier corresponds to a planar surface patch. Each surface
- *                   patch can be composed of several faces of `mesh`, forming a planar polygon.}
+ *                   patch can be composed of several facets of `mesh`, forming a planar polygon.}
  *    \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%face_descriptor`
  *                   as key type and with any value type that is a *regular* type (model of `Regular`)}
- *   \cgalParamExtra{If this parameter is omitted, each face of `mesh` is considered a separate patch.
+ *   \cgalParamExtra{If this parameter is omitted, each facet of `mesh` is considered a separate patch.
  *                   Faces with the same patch identifier are considered part of the same surface patch.}
  *   \cgalParamNEnd
  *
@@ -187,14 +187,14 @@ auto make_conforming_constrained_Delaunay_triangulation_3(const PolygonMesh &mes
  *     \cgalParamDefault{`CGAL::Identity_property_map`}
  *   \cgalParamNEnd
  *
- *   \cgalParamNBegin{plc_facet_id}
- *    \cgalParamDescription{a property map associating a patch identifier to each face of `soup`.
+ *   \cgalParamNBegin{plc_face_id}
+ *    \cgalParamDescription{a property map associating a patch identifier to each facet of `soup`.
  *                   Each identifier corresponds to a planar surface patch. Each surface
  *                   patch can be composed of several faces of `soup`, forming a planar polygon.}
  *    \cgalParamType{a class model of `ReadWritePropertyMap` with `std::size_t`
  *                   as key type and with any value type that is a *regular* type (model of `Regular`)}
- *   \cgalParamExtra{If this parameter is omitted, each face of the polygon soup is considered a separate patch.}
- *   \cgalParamExtra{Otherwise faces with the same patch identifier are considered part of the same surface patch.}
+ *   \cgalParamExtra{If this parameter is omitted, each facet of the polygon soup is considered a separate patch.}
+ *   \cgalParamExtra{Otherwise facets with the same patch identifier are considered part of the same surface patch.}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{return_empty_on_invalid_input}
