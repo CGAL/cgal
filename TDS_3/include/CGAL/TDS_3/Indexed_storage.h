@@ -1145,7 +1145,7 @@ namespace CGAL {
       anonymous_property_nb = 0;
     }
 
-    Indexed_storage(Indexed_storage&& is)
+    Indexed_storage(Indexed_storage&& is) noexcept
       : vprops_(std::move(is.vprops_)),
         cprops_(std::move(is.cprops_)),
         vertex_storage_(std::move(is.vertex_storage_)),
@@ -1215,7 +1215,7 @@ namespace CGAL {
 
 
     /// move assignment
-    Indexed_storage& operator=(Indexed_storage&& is)
+    Indexed_storage& operator=(Indexed_storage&& is) noexcept
     {
       if (this != &is) {
         dimension_ = is.dimension_;

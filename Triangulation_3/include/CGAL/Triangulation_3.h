@@ -743,7 +743,7 @@ public:
     CGAL_expensive_postcondition(*this == tr);
   }
 
-  Triangulation_3(Triangulation_3&& tr)
+  Triangulation_3(Triangulation_3&& tr) noexcept
     : Base(std::move(tr))
     , _tds(std::move(tr._tds))
     , _gt(std::move(tr._gt))
@@ -788,7 +788,7 @@ public:
     return *this;
   }
 
-  Triangulation_3& operator=(Triangulation_3&& tr)
+  Triangulation_3& operator=(Triangulation_3&& tr) noexcept
   {
     _tds = std::move(tr._tds);
     _gt = std::move(tr._gt);
