@@ -259,8 +259,9 @@ to resolve the self-intersections.
 \subsection CT_3_example_remesh Remeshing a Conforming Constrained Delaunay Triangulation
 
 After constructing the triangulation, you can improve its quality or adapt it to a specific sizing
-field by applying the `CGAL::tetrahedral_isotropic_remeshing()` function from the \ref
-PkgTetrahedralRemeshing package.
+field by applying the
+\link CGAL::tetrahedral_isotropic_remeshing(CGAL::Triangulation_3<Traits, TDS, SLDS>&, const SizingFunction&, const NamedParameters&) `CGAL::tetrahedral_isotropic_remeshing()`\endlink
+ function from the \ref PkgTetrahedralRemeshing package.
 
 The following example demonstrates how to remesh a conforming constrained Delaunay triangulation.
 
@@ -276,11 +277,12 @@ constrained Delaunay triangulation.
 From top to bottom, the lines show different input data (all from) the same input triangulated surface and,
 for each of them, the resulting conforming constrained Delaunay triangulation.
 The input data are:
-* the input PLC with no preprocessing;
-* the input PLC with a segmentation of the surface patches done with `CGAL::Polygon_mesh_processing::region_growing_of_planes_on_faces()` as done in example \ref CT_3_example_ccdt_region_growing_fimap;
-* the input PLC, remeshed and not triangulated, with a segmentation of the surface patches, done with `CGAL::Polygon_mesh_processing::remesh_planar_patches()` as in example \ref CT_3_example_ccdt_fimap;
-* the input PLC, isotropically remeshed, with a segmentation of the surface patches, done with `CGAL::Polygon_mesh_processing::region_growing_of_planes_on_faces()` as in example \ref CT_3_example_ccdt_region_growing_fimap.
-
+<ul>
+<li> the input PLC with no preprocessing;
+<li> the input PLC with a segmentation of the surface patches done with `CGAL::Polygon_mesh_processing::region_growing_of_planes_on_faces()` as done in example \ref CT_3_example_ccdt_region_growing_fimap;</li>
+<li> the input PLC, remeshed and not triangulated, with a segmentation of the surface patches, done with `CGAL::Polygon_mesh_processing::remesh_planar_patches()` as in example \ref CT_3_example_ccdt_fimap;</li>
+<li> the input PLC, isotropically remeshed, with a segmentation of the surface patches, done with `CGAL::Polygon_mesh_processing::region_growing_of_planes_on_faces()` as in example \ref CT_3_example_ccdt_region_growing_fimap.</li>
+</ul>
 It is interesting to note that the conforming constrained Delaunay triangulations built from the same input PLC, but with different
 preprocessing steps, can yield different results.
 
