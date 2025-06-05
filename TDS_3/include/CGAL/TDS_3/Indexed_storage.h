@@ -1049,7 +1049,7 @@ namespace CGAL {
       Properties::Property_container<Self,
                                      Vertex_index>&
       operator()() { return m_->vprops_; }
-      void resize_property_array() { m_->vprops_.resize_property_array(3); }
+      void resize_property_array() { m_->vprops_.resize_property_array(2); }
     };
 
     template<bool dummy>
@@ -1059,7 +1059,7 @@ namespace CGAL {
       Properties::Property_container<Self,
                                      Cell_index>&
       operator()() { return m_->cprops_; }
-      void resize_property_array() { m_->cprops_.resize_property_array(3); } // AF:  What is the 3 about?
+      void resize_property_array() { m_->cprops_.resize_property_array(3); }
     };
 
     /// adds a property map named `name` with value type `T` and default `t`
