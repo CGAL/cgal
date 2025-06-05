@@ -1,0 +1,138 @@
+namespace CGAL {
+/*!
+
+\mainpage User Manual
+\anchor Chapter_dD_Frechet_distance
+
+\cgalAutoToc
+\authors André Nusser, Marvin Künnemann, and Karl Bringmann
+
+<center>
+<img src="FrechetTeaser.png" style="max-width:30%;"/>
+</center>
+
+This package provides the means to compute an approximation of the Fréchet distance between two polylines, as well as a near neighbor data structure for polylines under the Fréchet distance, both in d-dimensional Euclidean space.
+A polyline is defined by a sequence of points where we interpolate linearly between each pair of consecutive points.
+In order to determine the Fréchet distance, an exact decision algorithm and a function that approximates the Fréchet distance arbitrarily well are included in the package.
+The approximation algorithm is simply a binary search that repeatedly calls the decision algorithm, hence, if possible, the latter should preferably be used when optimizing for performance.
+
+\section secFrechetDistanceIntroduction Introduction
+
+The Fréchet distance is a classical dissimilarity measure between polylines.
+Its advantages over other measures are that it both considers the polylines as continuous objects and takes into account the ordering of the points.
+Intuitively, the Fréchet distance is commonly explained as follows: Imagine a human walking on one polyline while a dog walks on the other polyline,
+they are connected by a leash, and they are only allowed to walk forward.
+The Fréchet distance is the shortest leash length that allows the human
+and the dog to jointly walk from start to end on their respective trajectories where they can each vary their speed arbitrarily.
+The Fréchet distance is a metric. This implies that it is symmetric and that two polylines have distance zero if and only if they are equal (after removing redundant vertices).
+
+The applications of this distance measure are plenty, for example:
+- comparing the GPS traces of migrating animals to find the different routes that are being used
+- measuring the similarity between movement patterns recorded via motion capture
+- perform map matching to match a GPS trace to a transportation network
+
+
+
+\section secFrechetDistanceAPI API
+
+The main entry points are the following functions and classes:
+- The function `bounded_error_Frechet_distance()`, which computes an approximation of the Fréchet distance between two polylines, up to a given approximation error.
+  It returns an interval that contains the exact distance.
+- The function `is_Frechet_distance_larger()`, which determines if the Fréchet distance between two polylines is larger than a given bound.
+- The class `Frechet_distance::Neighbor_search`, which stores a set of polylines and offers a query function to find polylines closer to a query curve than a given bound.
+
+\section secFrechetTraits Traits Classes and Choice of Kernel
+
+Both functions and the class have as template parameter a traits class defining the dimension and the point type.
+The traits classes have as template parameter a kernel.
+
+The guarantees offered by the algorithms of this package follow from the kernel choice.
+In case the static constant `Has_filtered_predicates`  of the kernel is `true`, the functions
+combine interval arithmetic with a fallback to exact computing in case comparisons of intervals
+are uncertain.  This means for `Simple_cartesian<double>` that there are no guarantees, for
+`Simple_cartesian<Exact_rational>` that all computations are performed with exact rationals,
+and for kernels such as `Exact_predicates_inexact_constructions_kernel`,  `Exact_predicates_exact_constructions_kernel`,
+as well as `Epick_d` and `Epeck_d`, the computation is filtered and hence both fast and guaranteed to be correct.
+
+
+\section secFrechetDistancePerformance Performance
+
+The performance of the algorithm is quadratic in the number of vertices in the worst case.
+Kernels with filtered predicates have roughly the same performance as others: the overhead of using interval arithmetic is negligible.
+The algorithm is not concerned by the <em>curse of dimensionality</em>.
+The running time increases when the curves are closer or when the bound for the approximation error becomes smaller.
+For a very detailed analysis in practice, we refer to the journal paper entitled <em>Walking the Dog Fast in Practice: Algorithm Engineering of the Fréchet Distance</em>
+\cgalCite{cgal:bkn-wdfp-21}.
+
+\section secFrechetDistanceImplementation Implementation
+
+The algorithms in this package are an adaption of the implementation devised by Bringmann et al. (\cgalCite{cgal:bkn-wdfp-19}
+and \cgalCite{cgal:bkn-wdfp-21}). In particular, the implementation can decide non-difficult cases very
+quickly, while it still has the quadratic running time guarantee of the classical Fréchet distance algorithm
+by Alt and Godau \cgalCite{ag-cfdbt-95} for difficult cases. This is achieved by using fast bounding
+box filtering methods and a divide-and-conquer algorithm with pruning rules on the free-space diagram.
+
+
+\section secFrechetDistanceExamples Examples
+
+In the examples, we use different kernels to illustrate that the functions
+can be used with either inexact or exact kernels.
+
+\subsection subsecFrechetDistanceFirstExample Decision for 2D Polylines
+
+The following example shows how we can use `is_Frechet_distance_larger()`
+to determine if the Frechet distance between two polylines is larger than a given distance bound.
+
+\cgalExample{Frechet_distance/Frechet_distance_2.cpp}
+
+\subsection subsecFrechetDistanceSecondExample Distance Computation for 3D Polylines
+
+The following example shows how we can compute the Fréchet distance up to a given error bound on two
+polylines in 3-dimensional Euclidean space using `bounded_error_Frechet_distance()`.
+As we use `Simple_cartesian<double>`, the algorithm uses plain floating point arithmetic
+without guarantees for correctness.
+
+\cgalExample{Frechet_distance/Frechet_distance_3.cpp}
+
+
+
+\subsection subsecFrechetDistanceThirdExample Distance Computation for dD Polylines
+
+The following example shows how we can compute the Fréchet distance up to a given error bound on two
+polylines in 4-dimensional Euclidean space using `bounded_error_Frechet_distance()`.
+
+\cgalExample{Frechet_distance/Frechet_distance_d.cpp}
+
+
+\subsection subsecFrechetDistanceDSExample Searching Close Curves
+
+The following example shows how to store many curves in a data structure and to find all curves
+closer than a distance bound to a query curve.
+
+\cgalExample{Frechet_distance/Frechet_DS_3.cpp}
+
+In the example below, we can see a query where:
+- the query polyline is in bold green
+- the query distance is 16
+- the colorfull polylines are in distance at most 16 from the query and are therefore returned
+- the light gray polylines are filtered out early on and no significant computation is performed on them
+- the dark gray polyline is not filtered out early on but only later by our exact decision algorithm
+
+<center>
+<img src="example_2d.png" style="max-width:30%;"/>
+</center>
+
+
+\subsection subsecFrechetDistanceImageCredits  Image Credits
+
+The character image is a visualization of two data points from the <a href="https://archive.ics.uci.edu/dataset/175/character+trajectories">Character Trajectories</a> data set.
+
+\subsection subsecFrechetDistanceImplementation  Implementation History
+
+An initial version using floating point arithmetic was developed by the authors
+while working at the Max-Planck Institute for Informatics in Saarbrücken, Germany.
+André Nusser, together with Sebastien Loriot and Andreas Fabri, introduced
+the usage of interval arithmetic and square root extensions to alleviate issues stemming from rounding errors and hence ensure correctness of the computation.
+
+*/
+} /* namespace CGAL */
