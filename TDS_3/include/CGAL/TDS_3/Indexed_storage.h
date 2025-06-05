@@ -36,6 +36,7 @@
 #include <list>
 #include <type_traits>
 #include <vector>
+#include <optional>
 
 namespace CGAL {
 
@@ -1577,6 +1578,106 @@ namespace CGAL {
       return circumcenter(GT());
     }
 
+    void set_circumcenter(const Point_3&)
+    {}
+
+  };
+
+  template <typename GT,
+            typename Cb = Cell4Delaunay<GT>>
+  class CellWithCircumcenter
+  : public Cb
+  {
+    public:
+    using Cb::Cb; // inherit constructors
+    using Point = typename GT::Point_3;
+    using TDS = typename Cb::Triangulation_data_structure;
+    using Vertex_handle = typename TDS::Vertex_handle;
+    using Cell_handle = typename TDS::Cell_handle;
+
+    struct Storage : public Cb::Storage {
+      std::optional<Point> circumcenter_;
+      /*
+      struct C {
+
+        template <class T>
+        bool operator==(const T& )const{
+          return true;
+        }
+        template <class T>
+        void reset(const T&) const
+        {}
+      operator bool() const
+      {return true;}
+
+      Point operator*() const
+      {
+        return Point();
+      }
+
+      };
+      C circumcenter_;
+      */
+    };
+
+    auto&& storage()
+    {
+      return this->tds()->cell_storage()[this->index()];
+    }
+
+    auto&& storage() const
+    { return this->tds()->cell_storage()[this->index()]; }
+
+    template < typename TDS2 >
+    struct Rebind_TDS {
+      using Cb2 = typename Cb::template Rebind_TDS<TDS2>::Other;
+      using Other = CellWithCircumcenter<GT, Cb2>;
+    };
+
+    void invalidate_circumcenter()
+    {
+      if (storage().circumcenter_) {
+          storage().circumcenter_.reset();
+      }
+    }
+
+  void set_vertex(int i, Vertex_handle v)
+  {
+      invalidate_circumcenter();
+      Cb::set_vertex(i, v);
+  }
+
+  void set_vertices()
+  {
+      invalidate_circumcenter();
+      Cb::set_vertices();
+  }
+
+  void set_vertices(Vertex_handle v0, Vertex_handle v1,
+                    Vertex_handle v2, Vertex_handle v3)
+  {
+      invalidate_circumcenter();
+      Cb::set_vertices(v0, v1, v2, v3);
+  }
+
+  void set_circumcenter(const Point& p) const
+  {
+      if (! storage().circumcenter_){
+       storage().circumcenter_ = std::make_optional<Point>(p);
+      }
+  }
+
+  const Point& circumcenter(const GT& gt = GT()) const
+  {
+      if (! storage().circumcenter_) {
+        storage().circumcenter_ = std::make_optional<Point>(Point(this->Cb::circumcenter(gt)));
+      } else {
+        CGAL_expensive_assertion(
+          this->Cb::circumcenter(gt) == storage().circumcenter_.value());
+      }
+
+      return storage().circumcenter_.value();
+  }
   };
 
 
