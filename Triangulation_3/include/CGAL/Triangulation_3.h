@@ -739,7 +739,7 @@ public:
     : Base(tr.get_lock_data_structure()), _gt(tr._gt)
   {
     infinite = _tds.copy_tds(tr._tds, tr.infinite);
-    tds().maybe_fix_vertex_handle(infinite);
+    tds().update_infinite_vertex_handle(infinite);
     CGAL_expensive_postcondition(*this == tr);
   }
 
@@ -749,7 +749,7 @@ public:
     , _gt(std::move(tr._gt))
     , infinite(std::exchange(tr.infinite, Vertex_handle{}))
   {
-    tds().maybe_fix_vertex_handle(infinite);
+    tds().update_infinite_vertex_handle(infinite);
   }
 
   ~Triangulation_3() = default;
@@ -784,7 +784,7 @@ public:
   {
     Triangulation_3 copy(tr);
     swap(copy);
-    tds().maybe_fix_vertex_handle(infinite);
+    tds().update_infinite_vertex_handle(infinite);
     return *this;
   }
 
@@ -793,7 +793,7 @@ public:
     _tds = std::move(tr._tds);
     _gt = std::move(tr._gt);
     infinite = std::exchange(tr.infinite, Vertex_handle{});
-    tds().maybe_fix_vertex_handle(infinite);
+    tds().update_infinite_vertex_handle(infinite);
     return *this;
   }
 
@@ -803,8 +803,8 @@ public:
     using std::swap;
     swap(tr._gt, _gt);
     swap(tr.infinite, infinite);
-    tds().maybe_fix_vertex_handle(infinite);
-    tr.tds().maybe_fix_vertex_handle(tr.infinite);
+    tds().update_infinite_vertex_handle(infinite);
+    tr.tds().update_infinite_vertex_handle(tr.infinite);
     _tds.swap(tr._tds);
     Base::swap(tr);
   }
@@ -4113,7 +4113,6 @@ insert_in_conflict(const Point& p,
       // Ok, we really insert the point now.
       // First, find the conflict region.
       std::vector<Cell_handle> cells;
-      Facet facet;
       Cell_handle bound[2];
       // corresponding index: bound[j]->neighbor(1-j) is in conflict.
 
@@ -4527,7 +4526,7 @@ test_dim_down(Vertex_handle v) const
   }
   else // dimension() == 1 or 0
   {
-    return number_of_vertices() == (size_type) dimension() + 1;
+    return number_of_vertices() == static_cast<size_type>(dimension() + 1);
   }
 
   return true;

@@ -339,7 +339,7 @@ public:
     return tds().copy_tds(src, vert, setv, setc);
   }
 
-  void maybe_fix_vertex_handle(Vertex_handle&)
+  void update_infinite_vertex_handle(Vertex_handle&)
   {
   }
 
