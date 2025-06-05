@@ -481,7 +481,7 @@ namespace cpp11{
 }//namespace cpp11
 } //namespace CGAL
 
-#if __cpp_lib_concepts >= 201806L
+#if __cpp_lib_concepts >= 201806L && __cpp_lib_ranges >= 201911L
 #  define CGAL_CPP20_REQUIRE_CLAUSE(x) requires x
 #  define CGAL_TYPE_CONSTRAINT(x) x
 #else
@@ -506,7 +506,7 @@ namespace cpp11{
 #  define CGAL_FALLTHROUGH while(false){}
 #endif
 
-#if __cpp_lib_format >= 201907L
+#if CGAL_CXX20 && __cpp_lib_format >= 201907L
 #  define CGAL_CAN_USE_CXX20_FORMAT 1
 #endif
 

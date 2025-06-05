@@ -1705,11 +1705,21 @@ public:
     return _tds.cells_end();
   }
 
+  auto finite_cell_handles() const
+  {
+    return _tds.cell_handles();
+  }
+
   Vertex_iterator finite_vertices_begin() const {
     return _tds.vertices_begin();
   }
   Vertex_iterator finite_vertices_end() const {
     return _tds.vertices_end();
+  }
+
+  auto finite_vertex_handles() const
+  {
+    return _tds.vertex_handles();
   }
 
   Edge_iterator finite_edges_begin() const {
@@ -1735,11 +1745,21 @@ public:
     return _tds.cells_end();
   }
 
+  auto all_cell_handles() const
+  {
+    return _tds.cell_handles();
+  }
+
   All_vertices_iterator all_vertices_begin() const {
     return _tds.vertices_begin();
   }
   All_vertices_iterator all_vertices_end() const {
     return _tds.vertices_end();
+  }
+
+  auto all_vertex_handles() const
+  {
+    return _tds.vertex_handles();
   }
 
   All_edges_iterator all_edges_begin() const {
@@ -1907,6 +1927,29 @@ public:
 
   Facet mirror_facet(Facet f) const {
     return _tds.mirror_facet(f);
+  }
+
+  /// Vertex ranges defining a simplex
+  static std::array<Vertex_handle, 2> vertices(const Edge& e)
+  {
+    return std::array<Vertex_handle, 2>{
+             e.first->vertex(e.second),
+             e.first->vertex(e.third)};
+  }
+  static std::array<Vertex_handle, 3> vertices(const Facet& f)
+  {
+    return std::array<Vertex_handle, 3>{
+             f.first->vertex(vertex_triple_index(f.second, 0)),
+             f.first->vertex(vertex_triple_index(f.second, 1)),
+             f.first->vertex(vertex_triple_index(f.second, 2))};
+  }
+  static std::array<Vertex_handle, 4> vertices(const Cell_handle c)
+  {
+    return std::array<Vertex_handle, 4>{
+             c->vertex(0),
+             c->vertex(1),
+             c->vertex(2),
+             c->vertex(3)};
   }
 
 private:

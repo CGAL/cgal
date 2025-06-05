@@ -26,6 +26,7 @@ if(NOT TARGET CGAL::Eigen3_support)
   return()
 endif()
 
+set(CMAKE_POLICY_DEFAULT_CMP0167 NEW)
 find_package(VTK 9.0
              COMPONENTS ImagingGeneral IOImage
              QUIET)
@@ -170,6 +171,7 @@ if(TARGET CGAL::CGAL_ImageIO)
     target_link_libraries(mesh_3D_image_variable_size
                           PRIVATE CGAL::Eigen3_support)
 
+    set(CMAKE_POLICY_DEFAULT_CMP0167 NEW)
     find_package(ITK NAMES ITK InsightToolkit
                      QUIET COMPONENTS ITKCommon ITKThresholding ITKSmoothing ITKImageIntensity)
     if(ITK_FOUND)
