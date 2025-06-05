@@ -302,19 +302,83 @@ void variational_medial_axis_sampling(const TriangleMesh& tmesh,
           break; // convergence
         }
       }
-      sphere->set_center(Point_3(s(0), s(1), s(2)));
-      sphere->set_radius(s(3));
+      //------------------------------------------------------------
+      //- Correct Sphere using Shrinking Ball algorithm            -
+      //------------------------------------------------------------
+    
+      auto& [c, r] = shrinking_ball_algorithm(tmesh, Point_3(s(0), s(1), s(2)), tree);
+      sphere->set_center(c);
+      sphere->set_radius(r);
 
     }
-
-
+    //------------------------------------------------------------
+    //- Compute error of each sphere                             -
+    //------------------------------------------------------------
+    
     //split sphere
     // update neighbors
   }
 
-
+  
 }
 
+template <typename GT> 
+inline typename GT::FT cosine_angle(const typename GT::Vector_3& v1, const typename GT::Vector_3& v2) {
+  return CGAL::scalar_product(v1, v2) / (CGAL::sqrt(v1.squared_length()) * CGAL::sqrt(v2.squared_length()));
+}
+
+template <typename GT>
+inline typename GT::FT
+compute_radius(const typename GT::Vector_3& p, const typename GT::Vector_3& n, const typename GT::Vector_3& q) {
+  using Vector_3 = typename GT::Vector_3;
+  using FT = typename GT::FT;
+  Vector_3 pq = q - p;
+  FT d = CGAL::sqrt(pq.squared_length());
+  FT cos_angle = cosine_angle(pq, n);
+  return d / (2 * cos_angle);
+}
+
+template <typename TriangleMesh, typename GT, typename Tree>
+std::pair<typename GT::Point_3,typename GT::FT> 
+shrinking_ball_algorithm(const TriangleMesh& tmesh,
+                                    const typename GT::Point_3& p, // original center
+                                    const Tree& tree
+                                    ) {
+  using Vector_3 = typename GT::Vector_3;
+  using FT = typename GT::FT;
+
+  const FT denoise_preserve = FT(20.0) * CGAL::to_double(CGAL::PI) / FT(180.0);
+  const FT delta_convergence = FT(1e-5);
+  const int iteration_limit = 30;
+
+  Point_3 closest_point = tree.closest_point(p);
+  Vector_3 n = (p - closest_point)/CGAL::approximate_sqrt((p-closest_point).squared_length());
+  int j = 0;
+  FT r = 0.5; // initial radius
+  Point_3 c = p - (r * n);
+  Point_3 q = p - (2 * r * n);
+
+  while(true) {
+    Point_3 q_next = tree.closest_point(c);
+    FT dist = CGAL::sqrt((c - q_next).squared_length());
+    if(std::abs(d - r) <= delta_convergence || (CGAL::sqrt((q - q_next).squared_length()) < delta_convergence)) {
+      // convergence
+      break;
+    }
+    FT r_next = compute_radius(p, n, q_next);
+    Point3 c_next = p - (r_next * n);
+    FT seperation_angle = CGAL::approximate_angle(q - c_next, q_next - c_next);
+    if(j > 0 && seperation_angle < denoise_preserve)
+      break;
+    c = c_next;
+    r = r_next;
+    q = q_next;
+    j++;
+    if(j > iteration_limit)
+      break;
+
+  }
+  return {c, r};
 
 } 
 // end of CGAL namespace
