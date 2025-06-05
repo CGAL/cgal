@@ -136,6 +136,7 @@ void test2(){
   typedef typename K1::Construct_weighted_point_d CWP;
   typedef typename K1::Power_side_of_bounded_power_sphere_d PSBPS;
   typedef typename K1::Compute_squared_radius_smallest_orthogonal_sphere_d CSRSOS;
+  typedef typename K1::Construct_bbox_d CB;
   //typedef typename K1::Point_drop_weight_d PDW;
   typedef CP PDW;
   typedef typename K1::Compute_weight_d PW;
@@ -151,6 +152,7 @@ void test2(){
     (2)
 #endif
     ;
+  CB cb Kinit(construct_bbox_d_object);
   CP cp Kinit(construct_point_d_object);
   CV cv Kinit(construct_vector_d_object);
   CCI ci Kinit(construct_cartesian_const_iterator_d_object);
@@ -217,6 +219,8 @@ void test2(){
   CGAL_USE(cr);
   using std::abs;
   P a=cp(3,4);
+  CGAL::Bbox<CGAL::Dimension_tag<2>,double> bb2 = cb(a);
+  std::cout << "bb2 = " << bb2 << std::endl;
   assert(pd(a)==2);
   assert(pv(a)[1]==4);
   P b=vp(cv(5,6,7));
@@ -751,10 +755,8 @@ int main(){
   test2<Ker2>(); test2i<Ker2>();
   test3<Ker3>();
   test3<Kerd>();
-#if !defined _MSC_VER || _MSC_VER >= 1910
   test2<CGAL::Epeck_d<CGAL::Dimension_tag<2>>>();
   test3<CGAL::Epeck_d<CGAL::Dimension_tag<3>>>();
   test3<CGAL::Epeck_d<CGAL::Dynamic_dimension_tag>>();
   test4<CGAL::Epeck_d<CGAL::Dynamic_dimension_tag>>();
-#endif
 }
