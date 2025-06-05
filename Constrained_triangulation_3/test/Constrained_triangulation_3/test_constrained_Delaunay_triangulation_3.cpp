@@ -35,11 +35,13 @@ int main(int argc, char* argv[])
   assert(0 == cdt.triangulation().number_of_vertices());
   assert(tr.number_of_vertices() == cdt2.triangulation().number_of_vertices());
 
-  int nb = 0;
+  std::size_t nb = 0;
   for([[maybe_unused]] auto _ : cdt2.constrained_facets()) {
     ++nb;
   }
   assert(nb == nb_cstr_facets);
-  assert(nb == std::distance(cdt2.constrained_facets_begin(), cdt2.constrained_facets_end()));
-
+  int dist = static_cast<int>(std::distance(cdt2.constrained_facets_begin(),
+                                            cdt2.constrained_facets_end()));
+  assert(dist >= 0);
+  assert(dist == static_cast<int>(nb));
 }
