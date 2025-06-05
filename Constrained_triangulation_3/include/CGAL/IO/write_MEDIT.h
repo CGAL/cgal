@@ -34,7 +34,7 @@ namespace IO
  * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
- *    \cgalParamNBegin{with_plc_facet_id}
+ *    \cgalParamNBegin{with_plc_face_id}
  *    \cgalParamDescription{a Boolean activating the numbering of PLC face identifiers in the output}
  *    \cgalParamType{Boolean}
  *    \cgalParamDefault{`false`}
@@ -80,11 +80,11 @@ void write_MEDIT(std::ostream& os,
 
   using parameters::choose_parameter;
   using parameters::get_parameter;
-  const bool has_plc_facet_id
-    = choose_parameter(get_parameter(np, internal_np::with_plc_facet_id), false);
+  const bool has_plc_face_id
+    = choose_parameter(get_parameter(np, internal_np::with_plc_face_id), false);
 
   auto plc_patch_map = boost::make_function_property_map<Facet>([&](const Facet& f)
-    { return has_plc_facet_id ? f.first->ccdt_3_data().face_constraint_index(f.second) + 1 : 1; });
+    { return has_plc_face_id ? f.first->ccdt_3_data().face_constraint_index(f.second) + 1 : 1; });
 
   return SMDS_3::output_to_medit(os,
                                  tr,
