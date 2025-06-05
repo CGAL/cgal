@@ -34,9 +34,13 @@ int main(int argc, char* argv[])
   std::cout << "Merging facets into coplanar patches..." << std::endl;
 
   auto number_of_patches = CGAL::Polygon_mesh_processing::region_growing_of_planes_on_faces(
-      mesh, face_patch_map,
-      CGAL::parameters::maximum_distance(bbox_max_span * 1.e-6).maximum_angle(5.));
-  for(auto f: faces(mesh)) {
+      mesh,
+      face_patch_map,
+      CGAL::parameters::maximum_distance(bbox_max_span * 1.e-6)
+                       .maximum_angle(5.));
+
+  for(auto f: faces(mesh))
+  {
     // if region growing did not assign a patch id, assign one
     if(get(face_patch_map, f) == static_cast<std::size_t>(-1)) {
       put(face_patch_map, f, number_of_patches++);
@@ -47,11 +51,12 @@ int main(int argc, char* argv[])
 
   filename = argc > 2 ? argv[2] : "mesh.ply";
   CGAL::IO::write_polygon_mesh(filename, mesh,
-                            CGAL::parameters::stream_precision(17)
-                                 .use_binary_mode(false)
-                                 .face_patch_map(face_patch_map));
+                               CGAL::parameters::stream_precision(17)
+                                                .use_binary_mode(false)
+                                                .face_patch_map(face_patch_map));
   std::cout << "-- Wrote segmented mesh to \"" << filename << "\"\n";
 
+  std::cout << "Creating a conforming constrained Delaunay triangulation...\n";
   auto ccdt = CGAL::make_conforming_constrained_Delaunay_triangulation_3(mesh,
                 CGAL::parameters::plc_facet_id(face_patch_map));
 
@@ -60,6 +65,7 @@ int main(int argc, char* argv[])
             << "Number of constrained facets in the CDT: "
             << ccdt.number_of_constrained_facets() << '\n';
 
+  // Write the CDT to a file, with the PLC face ids
   filename = argc > 3 ? argv[3] : "out.mesh";
   std::ofstream out(filename);
   out.precision(17);
@@ -68,4 +74,3 @@ int main(int argc, char* argv[])
 
   return EXIT_SUCCESS;
 }
-

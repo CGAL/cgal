@@ -171,7 +171,7 @@ The following example illustrates how to use the helper function
 Delaunay triangulation from a given PLC.
 
 The triangulation is saved in the MEDIT file format, using the
-\link PkgCDT3IOFunctions CGAL::IO::write_MEDIT() \endlink function.
+\link PkgCDT3IOFunctions `CGAL::IO::write_MEDIT()` \endlink function.
 
 \cgalExample{Constrained_triangulation_3/conforming_constrained_Delaunay_triangulation_3.cpp }
 
@@ -191,8 +191,11 @@ If the user already knows the set of polygon identifiers to associate with each 
 provided and preserved throughout the construction of the conforming constrained Delaunay
 triangulation.
 
-The following example demonstrates how to detect planar surface patches, remesh them as coarsely
-as possible, and use this segmentation during the tetrahedralization process.
+The following example demonstrates how to detect planar surface patches and remesh them as coarsely
+as possible using
+\link CGAL::Polygon_mesh_processing::remesh_planar_patches(const TriangleMeshIn&,PolygonMeshOut&,const NamedParametersIn&,const NamedParametersOut&) `CGAL::Polygon_mesh_processing::remesh_planar_patches()` \endlink
+from the \ref PkgPolygonMeshProcessing package.
+The resulting patches and segmentation are then used to build a conforming constrained Delaunay triangulation.
 
 When the named parameter `plc_facet_id` is specified, each constrained facet in the 3D triangulation
 is assigned to the corresponding input PLC facet, as identified by the provided property map.
@@ -218,7 +221,8 @@ From left to right: Input PLC;
 \subsection CT_3_example_ccdt_region_growing_fimap Build a Conforming Constrained Delaunay Triangulation with Detected Polygon Identifiers
 
 If the user does not know the set of polygon identifiers to associate with each PLC facet, this information can be
-automatically detected using the \link CGAL::Polygon_mesh_processing::region_growing_of_planes_on_faces(const PolygonMesh& mesh,RegionMap region_map,const NamedParameters& np) `CGAL::Polygon_mesh_processing::region_growing_of_planes_on_faces()`\endlink
+automatically detected using the
+\link CGAL::Polygon_mesh_processing::region_growing_of_planes_on_faces(const PolygonMesh& mesh,RegionMap region_map,const NamedParameters& np) `CGAL::Polygon_mesh_processing::region_growing_of_planes_on_faces()`\endlink
 function from the \ref PkgPolygonMeshProcessing package.
 
 The following example demonstrates how to detect planar surface patches and build a conforming
@@ -238,7 +242,7 @@ preconditions are met.
 
 \subsubsection CT_3_example_ccdt_autorefinement Autorefinement of the Input Mesh
 
-The following examples shows how autorefinement can be used to preprocess the input mesh,
+The following example shows how autorefinement can be used to preprocess the input mesh,
 when it is self-intersecting.
 
 \cgalExample{Constrained_triangulation_3/ccdt_3_after_autorefinement.cpp }
@@ -249,15 +253,20 @@ when it is self-intersecting.
 The following example demonstrates how to construct a conforming constrained Delaunay triangulation from
 an input mesh that is not triangulated and may contain self-intersections.
 
-The function `CGAL::Polygon_mesh_processing::does_self_intersect()` can be used to detect self-intersections,
+The function
+\link CGAL::Polygon_mesh_processing::does_self_intersect(const FaceRange&, const TriangleMesh&, const NamedParameters&) `CGAL::Polygon_mesh_processing::does_self_intersect()` \endlink
+can be used to detect self-intersections,
 but it requires the input mesh to be triangulated. Therefore, the input mesh must first be triangulated
-using `CGAL::Polygon_mesh_processing::triangulate_faces()` before performing the self-intersection check.
+using
+\link CGAL::Polygon_mesh_processing::triangulate_faces(FaceRange,PolygonMesh&,const NamedParameters&) `CGAL::Polygon_mesh_processing::triangulate_faces()`\endlink
+before performing the self-intersection check.
 
 If self-intersections are found, the triangulated mesh is converted into a triangle soup, which can then be
-processed with `CGAL::Polygon_mesh_processing::autorefine_triangle_soup()` to resolve the self-intersections.
+processed with
+\link CGAL::Polygon_mesh_processing::autorefine_triangle_soup(PointRange&,TriangleRange&,const NamedParameters&) `CGAL::Polygon_mesh_processing::autorefine_triangle_soup()`\endlink
+to resolve the self-intersections.
 
 \cgalExample{Constrained_triangulation_3/ccdt_3_preprocessing.cpp }
-
 
 \subsection CT_3_example_remesh Remeshing a Conforming Constrained Delaunay Triangulation
 
