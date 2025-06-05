@@ -170,6 +170,9 @@ The following example illustrates how to use the helper function
 `CGAL::make_conforming_constrained_Delaunay_triangulation_3()` to construct a conforming constrained
 Delaunay triangulation from a given PLC.
 
+The triangulation is saved in the MEDIT file format, using the
+\link PkgCDT3IOFunctions CGAL::IO::write_MEDIT() \endlink function.
+
 \cgalExample{Constrained_triangulation_3/conforming_constrained_Delaunay_triangulation_3.cpp }
 
 
