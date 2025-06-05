@@ -79,5 +79,12 @@ int main()
 
   _test_cls_delaunay_3( Cls_circumcenter() );
 
+  typedef CGAL::VertexWithPoint<EPIC> Vb4;
+  typedef CGAL::CellWithCircumcenter<EPIC> Cb4;
+  typedef CGAL::Triangulation_data_structure_3<Vb4, Cb4, CGAL::Sequential_tag, CGAL::Index_tag> TDS4;
+  typedef CGAL::Delaunay_triangulation_3<EPIC, TDS4> Cls4;
+
+  _test_cls_delaunay_3(Cls4());
+
   return 0;
 }
