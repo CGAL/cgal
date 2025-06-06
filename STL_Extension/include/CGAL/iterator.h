@@ -455,11 +455,11 @@ operator+(typename N_step_adaptor<I,N,Ref,Ptr,Val,Dist,Ctg>::difference_type n,
           N_step_adaptor<I,N,Ref,Ptr,Val,Dist,Ctg> i)
 { return i += n; }
 
-template < class Derived, class I, int N, bool is_random_access>
+template < class Derived, class I, int N, typename difference_type, typename reference, bool is_random_access>
 class N_step_adaptor_derived_base {};
 
-template < class Derived, class I, int N>
-class N_step_adaptor_derived_base<Derived, I, N, true> {
+template < class Derived, class I, int N, typename difference_type, typename reference>
+class N_step_adaptor_derived_base<Derived, I, N, difference_type, reference, true> {
   using Self = Derived;
 
   Self& self() {
@@ -468,8 +468,6 @@ class N_step_adaptor_derived_base<Derived, I, N, true> {
   const Self& self() const {
     return static_cast<const Self&>(*this);
   }
-  using difference_type = typename Self::difference_type;
-  using reference = typename Self::reference;
 public:
 // OPERATIONS Random Access Category
 // ---------------------------------
@@ -506,6 +504,8 @@ class N_step_adaptor_derived
     : public N_step_adaptor_derived_base<N_step_adaptor_derived<I, N>,
                                          I,
                                          N,
+                                         typename I::difference_type,
+                                         typename I::reference,
                                          std::is_convertible_v<typename std::iterator_traits<I>::iterator_category,
                                                                std::random_access_iterator_tag>>
     , public I
