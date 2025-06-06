@@ -536,28 +536,28 @@ namespace internal { namespace TDS_3{
   };
 
   // AF : factorize as also in Surface_mesh and Point_set_3
-  template<typename T>
+  template<typename Derived_id>
   class Index
   {
   public:
+
     using size_type = std::uint32_t;
+    static constexpr size_type invalid_index = (std::numeric_limits<size_type>::max)();
 
     /// Constructor. %Default construction creates an invalid index.
-    /// We write -1, which is <a href="https://en.cppreference.com/w/cpp/types/numeric_limits">
-    /// <tt>(std::numeric_limits<size_type>::max)()</tt></a>
-    /// as `size_type` is an unsigned type.
-    explicit Index(size_type _idx=(std::numeric_limits<size_type>::max)()) : idx_(_idx) {}
+    /// We write <a href="https://en.cppreference.com/w/cpp/types/numeric_limits">
+    /// <tt>(std::numeric_limits<size_type>::max)()</tt></a>.
+    explicit Index(size_type _idx=invalid_index) : idx_(_idx) {}
 
     /// Get the underlying index of this index
     operator size_type() const { return idx_; }
 
     /// reset index to be invalid (index=(std::numeric_limits<size_type>::max)())
-    void reset() { idx_=(std::numeric_limits<size_type>::max)(); }
+    void reset() { idx_ = invalid_index; }
 
     /// return whether the index is valid, i.e., the index is not equal to `%std::numeric_limits<size_type>::max()`.
     bool is_valid() const {
-      size_type inf = (std::numeric_limits<size_type>::max)();
-      return idx_ != inf;
+      return idx_ != invalid_index;
     }
 
     // Compatibility with OpenMesh handle
@@ -589,9 +589,37 @@ namespace internal { namespace TDS_3{
 
     Index operator+=(std::ptrdiff_t n) { idx_ = size_type(std::ptrdiff_t(idx_) + n); return *this; }
 
+    template<class T> friend bool operator==(const T&, const Derived_id&) = delete;
+    template<class T> friend bool operator!=(const T&, const Derived_id&) = delete;
+    template<class T> friend bool operator< (const T&, const Derived_id&) = delete;
+    template<class T> friend bool operator<=(const T&, const Derived_id&) = delete;
+    template<class T> friend bool operator> (const T&, const Derived_id&) = delete;
+    template<class T> friend bool operator>=(const T&, const Derived_id&) = delete;
+
+    template<class T> friend bool operator==(const Derived_id&, const T&) = delete;
+    template<class T> friend bool operator!=(const Derived_id&, const T&) = delete;
+    template<class T> friend bool operator< (const Derived_id&, const T&) = delete;
+    template<class T> friend bool operator<=(const Derived_id&, const T&) = delete;
+    template<class T> friend bool operator> (const Derived_id&, const T&) = delete;
+    template<class T> friend bool operator>=(const Derived_id&, const T&) = delete;
+
+    friend bool operator==(const Derived_id& _lhs, const Derived_id& _rhs) { return _lhs.id() == _rhs.id(); }
+    friend bool operator!=(const Derived_id& _lhs, const Derived_id& _rhs) { return !(_lhs == _rhs); }
+    friend bool operator< (const Derived_id& _lhs, const Derived_id& _rhs) { return _lhs.id() < _rhs.id(); }
+    friend bool operator<=(const Derived_id& _lhs, const Derived_id& _rhs) { return _lhs.id() <= _rhs.id(); }
+    friend bool operator> (const Derived_id& _lhs, const Derived_id& _rhs) { return _lhs.id() > _rhs.id(); }
+    friend bool operator>=(const Derived_id& _lhs, const Derived_id& _rhs) { return _lhs.id() >= _rhs.id(); }
+    friend bool operator==(const Derived_id& _lhs, const std::nullptr_t&) { return _lhs.id() == invalid_index; }
+    friend bool operator!=(const Derived_id& _lhs, std::nullptr_t&) { return !(_lhs == nullptr); }
+
+    friend std::ostream& operator<<(std::ostream& os, const Derived_id& idx)
+    {
+      return (os << idx.output_prefix() << idx.id() );
+    }
+
   protected:
     size_type idx_;
-  };
+  }; // end class Index
 
   template <class T>
   std::size_t hash_value(const Index<T>&  i)
@@ -606,6 +634,7 @@ namespace internal { namespace TDS_3{
     using size_type = typename TDS::size_type;
     using Proxy = boost::stl_interfaces::proxy_arrow_result<Element>;
   public:
+    using Index_type = typename Element::Index;
     using value_type = Element;
     using reference = Element;
     using pointer = Proxy;
@@ -615,18 +644,16 @@ namespace internal { namespace TDS_3{
     TDS_handle(TDS* tds, size_type idx)
       : tds_(tds), idx_(idx) {}
 
-    using Index = typename Element::Index;
-
     Element operator*() const {
-      return Element(tds_, Index(idx_));
+      return Element(tds_, Index_type(idx_));
     }
 
     Proxy operator->() const {
       return Proxy{this->operator*()};
     }
 
-    Index index() const {
-      return Index{idx_};
+    Index_type index() const {
+      return Index_type{idx_};
     }
 
     auto tds() const {
@@ -648,7 +675,7 @@ namespace internal { namespace TDS_3{
     }
 
     bool operator==( std::nullptr_t ) const {
-      return tds_ == nullptr && idx_ == (std::numeric_limits<size_type>::max)();
+      return tds_ == nullptr && idx_ == Index_type::invalid_index;
     }
 
     bool operator!=( std::nullptr_t ) const {
@@ -666,7 +693,7 @@ namespace internal { namespace TDS_3{
 
   private:
     TDS* tds_ = nullptr;
-    size_type idx_ = (std::numeric_limits<size_type>::max)();
+    size_type idx_ = Index_type::invalid_index;
   };
 
 } // end namespace CGAL
@@ -750,74 +777,16 @@ namespace CGAL {
     };
 
 
-    class Vertex_index
-      : public Index<Vertex_index>
+    struct Vertex_index: public Index<Vertex_index>
     {
-    public:
-
-      Vertex_index() : Index<Vertex_index>((std::numeric_limits<size_type>::max)()) {}
-
-      explicit Vertex_index(size_type _idx) : Index<Vertex_index>(_idx) {}
-
-      template<class T> bool operator==(const T&) const = delete;
-      template<class T> bool operator!=(const T&) const = delete;
-      template<class T> bool operator<(const T&) const = delete;
-
-      /// are two indices equal?
-      bool operator==(const Vertex_index& _rhs) const {
-        return this->idx_ == _rhs.idx_;
-      }
-
-      /// are two indices different?
-      bool operator!=(const Vertex_index& _rhs) const {
-        return this->idx_ != _rhs.idx_;
-      }
-
-      /// Comparison by index.
-      bool operator<(const Vertex_index& _rhs) const {
-        return this->idx_ < _rhs.idx_;
-      }
-
-
-      friend std::ostream& operator<<(std::ostream& os, Vertex_index const& v)
-      {
-        return (os << 'v' << (size_type)v );
-      }
+      using Index<Vertex_index>::Index; // inherit constructors
+      auto output_prefix() const { return 'v'; }
     };
 
-    class Cell_index
-      : public Index<Cell_index>
+    struct Cell_index: public Index<Cell_index>
     {
-    public:
-
-      Cell_index() : Index<Cell_index>((std::numeric_limits<size_type>::max)()) {}
-
-      explicit Cell_index(size_type _idx) : Index<Cell_index>(_idx) {}
-
-      template<class T> bool operator==(const T&) const = delete;
-      template<class T> bool operator!=(const T&) const = delete;
-      template<class T> bool operator<(const T&) const = delete;
-
-      /// are two indices equal?
-      bool operator==(const Cell_index& _rhs) const {
-        return this->idx_ == _rhs.idx_;
-      }
-
-      /// are two indices different?
-      bool operator!=(const Cell_index& _rhs) const {
-        return this->idx_ != _rhs.idx_;
-      }
-
-      /// Comparison by index.
-      bool operator<(const Cell_index& _rhs) const {
-        return this->idx_ < _rhs.idx_;
-      }
-
-
-      friend std::ostream& operator<<(std::ostream& os, Cell_index const& v)
-      {
-        return (os << 'c' << (size_type)v );
-      }
+      using Index<Cell_index>::Index; // inherit constructors
+      auto output_prefix() const { return 'c'; }
     };
 
     class Cell_data {
@@ -1286,7 +1255,7 @@ namespace CGAL {
                    typename Handle_::value_type
                    >
     {
-      using Index = typename Handle_::Index;
+      using Index = typename Handle_::Index_type;
 
       using Facade = boost::stl_interfaces::v1::proxy_iterator_interface<
                          Index_iterator<Handle_>,
