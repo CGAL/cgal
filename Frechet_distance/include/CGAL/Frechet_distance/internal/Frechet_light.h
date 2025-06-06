@@ -1338,7 +1338,7 @@ std::pair<double,double> FrechetLight<C>::calcDistance(Curve const& curve1, Curv
 }
 
 // This doesn't have to be called but is handy to make time measurements more
-// consistent such that the clears in the lessThan call doen't have to do
+// consistent such that the clears in the lessThan call don't have to do
 // anything.
 
 template <typename C>

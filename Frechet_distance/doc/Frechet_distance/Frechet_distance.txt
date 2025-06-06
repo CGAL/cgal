@@ -114,7 +114,7 @@ closer than a distance bound to a query curve.
 In the example below, we can see a query where:
 - the query polyline is in bold green
 - the query distance is 16
-- the colorfull polylines are in distance at most 16 from the query and are therefore returned
+- the colorful polylines are in distance at most 16 from the query and are therefore returned
 - the light gray polylines are filtered out early on and no significant computation is performed on them
 - the dark gray polyline is not filtered out early on but only later by our exact decision algorithm
 
