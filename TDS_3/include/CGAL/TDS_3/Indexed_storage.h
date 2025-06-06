@@ -710,6 +710,113 @@ namespace std {
 
 namespace CGAL {
 
+  template <typename Handle_, typename Element_container>
+  class Index_iterator // make it derive from Handle_
+      : public boost::stl_interfaces::v1::proxy_iterator_interface<Index_iterator<Handle_, Element_container>,
+                                                                  std::random_access_iterator_tag,
+                                                                  typename Handle_::value_type>
+  {
+    using Index = typename Handle_::Index_type;
+
+    using Facade = boost::stl_interfaces::v1::proxy_iterator_interface<Index_iterator<Handle_, Element_container>,
+                                                                      std::random_access_iterator_tag,
+                                                                      typename Handle_::value_type>;
+
+  public:
+    using value_type = typename Handle_::value_type;
+    using reference = value_type;
+
+    Index_iterator()
+        : idx_()
+        , cont_(nullptr) {}
+    Index_iterator(const Index& h, const Element_container* m)
+        : idx_(h)
+        , cont_(const_cast<Element_container*>(m)) { // AF: todo make const_cast safe
+      if(cont_ && cont_->has_garbage()) {
+        while(cont_->has_valid_index(idx_) && cont_->is_removed(idx_))
+          ++idx_;
+      }
+    }
+
+    auto handle() const {
+      static_assert(std::is_base_of_v<Facade, Index_iterator<Handle_, Element_container>>);
+
+      CGAL_assertion(cont_ != nullptr);
+      CGAL_assertion(cont_->has_valid_index(idx_));
+      return Handle_(cont_, idx_.id());
+    }
+
+    operator Handle_() const { return handle(); }
+
+    reference operator*() const { return value_type{cont_, idx_}; }
+
+    typename Handle_::pointer operator->() const { return typename Handle_::pointer{value_type{cont_, idx_}}; }
+
+    using Facade::operator++;
+    Index_iterator& operator++() {
+      ++idx_;
+      CGAL_assertion(cont_ != nullptr);
+
+      if(cont_->has_garbage())
+        while(cont_->has_valid_index(idx_) && cont_->is_removed(idx_))
+          ++idx_;
+      return *this;
+    }
+
+    using Facade::operator--;
+    Index_iterator& operator--() {
+      --idx_;
+      CGAL_assertion(cont_ != nullptr);
+      if(cont_->has_garbage())
+        while(cont_->has_valid_index(idx_) && cont_->is_removed(idx_))
+          --idx_;
+      return *this;
+    }
+
+    Index_iterator& operator+=(std::ptrdiff_t n) {
+      CGAL_assertion(cont_ != nullptr);
+
+      if(cont_->has_garbage()) {
+        if(n > 0)
+          for(std::ptrdiff_t i = 0; i < n; ++i)
+            this->operator++();
+        else
+          for(std::ptrdiff_t i = 0; i < -n; ++i)
+            this->operator--();
+      } else
+        idx_ += n;
+      return *this;
+    }
+
+    std::ptrdiff_t operator-(const Index_iterator& other) const {
+      if(cont_->has_garbage()) {
+        bool forward = (other.idx_ > idx_);
+
+        std::ptrdiff_t out = 0;
+        Index_iterator it = *this;
+        while(!(it == other)) {
+          if(forward) {
+            ++it;
+            ++out;
+          } else {
+            --it;
+            --out;
+          }
+        }
+        return out;
+      }
+
+      // else
+      return std::ptrdiff_t(other.idx_) - std::ptrdiff_t(this->idx_);
+    }
+
+    bool operator==(const Index_iterator& other) const { return this->idx_ == other.idx_; }
+
+  private:
+    Index idx_;
+    Element_container* cont_;
+  };
+
   template <typename Vb, typename Cb, typename ConcurrencyTag>
   struct Indexed_storage
   {
@@ -1247,130 +1354,7 @@ namespace CGAL {
       return cremoved_[c];
     }
     //------------------------------------------------------ iterator types
-    template<typename Handle_>
-    class Index_iterator // make it derive from Handle_
-      : public boost::stl_interfaces::v1::proxy_iterator_interface<
-                   Index_iterator<Handle_>,
-                   std::random_access_iterator_tag,
-                   typename Handle_::value_type
-                   >
-    {
-      using Index = typename Handle_::Index_type;
-
-      using Facade = boost::stl_interfaces::v1::proxy_iterator_interface<
-                         Index_iterator<Handle_>,
-                         std::random_access_iterator_tag,
-                         typename Handle_::value_type
-                         >;
-
-    public:
-      using value_type = typename Handle_::value_type;
-      using reference = value_type;
-
-      Index_iterator() : idx_(), tds_(nullptr) {}
-      Index_iterator(const Index& h, const Self* m)
-        : idx_(h), tds_(const_cast<Self*>(m)) { // AF: todo make const_cast safe
-        if (tds_ && tds_->has_garbage()){
-          while (tds_->has_valid_index(idx_) && tds_->is_removed(idx_)) ++idx_;
-        }
-      }
-
-      auto handle() const
-      {
-        static_assert(std::is_base_of_v<Facade, Index_iterator<Handle_>>);
-
-        CGAL_assertion(tds_ != nullptr);
-        CGAL_assertion(tds_->has_valid_index(idx_));
-        return Handle_(tds_, idx_.id());
-      }
-
-      operator Handle_() const { return handle(); }
-
-      reference operator*() const { return value_type{tds_, idx_}; }
-
-      typename Handle_::pointer operator->() const
-      {
-        return typename Handle_::pointer{value_type{tds_, idx_}};
-      }
-
-      using Facade::operator++;
-      Index_iterator& operator++()
-      {
-        ++idx_;
-        CGAL_assertion(tds_ != nullptr);
-
-        if(tds_->has_garbage())
-          while ( tds_->has_valid_index(idx_) && tds_->is_removed(idx_)) ++idx_;
-        return *this;
-      }
-
-      using Facade::operator--;
-      Index_iterator& operator--()
-      {
-        --idx_;
-        CGAL_assertion(tds_ != nullptr);
-        if(tds_->has_garbage())
-          while ( tds_->has_valid_index(idx_) && tds_->is_removed(idx_)) --idx_;
-        return *this;
-      }
-
-      Index_iterator& operator+=(std::ptrdiff_t n)
-      {
-        CGAL_assertion(tds_ != nullptr);
-
-        if (tds_->has_garbage())
-          {
-            if (n > 0)
-              for (std::ptrdiff_t i = 0; i < n; ++ i)
-                this->operator++();
-            else
-              for (std::ptrdiff_t i = 0; i < -n; ++ i)
-                this->operator--();
-          }
-        else
-          idx_ += n;
-        return *this;
-      }
-
-      std::ptrdiff_t operator-(const Index_iterator& other) const
-      {
-        if (tds_->has_garbage())
-          {
-            bool forward = (other.idx_ > idx_);
-
-            std::ptrdiff_t out = 0;
-            Index_iterator it = *this;
-            while (!(it == other))
-              {
-                if (forward)
-                  {
-                    ++ it;
-                    ++ out;
-                  }
-                else
-                  {
-                    -- it;
-                    -- out;
-                  }
-              }
-            return out;
-          }
-
-        // else
-        return std::ptrdiff_t(other.idx_) - std::ptrdiff_t(this->idx_);
-      }
-
-      bool operator==(const Index_iterator& other) const
-      {
-        return this->idx_ == other.idx_;
-      }
-
-    private:
-      Index idx_;
-      Self* tds_;
-    };
-
-    using Vertex_iterator = Index_iterator<Vertex_handle>;
+    using Vertex_iterator = Index_iterator<Vertex_handle, Self>;
     using Vertex_range = Iterator_range<Vertex_iterator>;
 
     Vertex_iterator vertices_begin() const
@@ -1389,7 +1373,7 @@ namespace CGAL {
     }
 
 
-    using Cell_iterator = Index_iterator<Cell_handle>;
+    using Cell_iterator = Index_iterator<Cell_handle, Self>;
     using Cell_range = Iterator_range<Cell_iterator>;
 
     Cell_iterator cells_begin() const
