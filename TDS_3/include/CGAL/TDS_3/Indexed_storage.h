@@ -40,15 +40,6 @@
 
 namespace CGAL {
 
-  template <typename TDS_3 = void>
-  struct Vertex;
-
-  template <typename TDS_3 = void>
-  struct Cell;
-
-  template <typename Vb = Vertex<>, typename Cb = Cell<>, class ConcurrencyTag = Sequential_tag>
-  struct Indexed_storage;
-
 //utilities for copy_tds
 namespace internal { namespace TDS_3{
   template <class Vertex_src,class Vertex_tgt>
@@ -77,7 +68,7 @@ namespace internal { namespace TDS_3{
   };
 } } //namespace internal::TDS_3
 
-  template <typename TDS_3>
+  template <typename TDS_3 = void>
   struct Cell {
 
     using Triangulation_data_structure = TDS_3;
@@ -294,7 +285,7 @@ namespace internal { namespace TDS_3{
 
 
 
-  template <typename TDS_3>
+  template <typename TDS_3 = void>
   struct Vertex{
 
     using Triangulation_data_structure = TDS_3;
@@ -302,7 +293,7 @@ namespace internal { namespace TDS_3{
     using Cell_index    = typename TDS_3::Cell_index;
     using Vertex_index  = typename TDS_3::Vertex_index;
     using Index         = Vertex_index;
-    using Vertex_handle = typename TDS_3::Vertex_handle;
+    using Vertex_handle [[maybe_unused]] = typename TDS_3::Vertex_handle;
 
     struct Storage {
       Cell_index icell;
@@ -817,7 +808,7 @@ namespace CGAL {
     Element_container* cont_;
   };
 
-  template <typename Vb, typename Cb, typename ConcurrencyTag>
+  template <typename Vb = Vertex<>, typename Cb = Cell<>, class ConcurrencyTag = Sequential_tag>
   struct Indexed_storage
   {
 
