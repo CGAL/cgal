@@ -186,7 +186,7 @@ public:
   typedef Compact_container<Vertex>                      Vertex_range;
 #endif
 
-  typedef CGAL::Tag_true                       Is_CGAL_TDS_3;
+  typedef Handle_tag                           Storage_tag;
   typedef typename Cell_range::size_type       size_type;
   typedef typename Cell_range::difference_type difference_type;
 
@@ -339,10 +339,6 @@ public:
     return tds().copy_tds(src, vert, setv, setc);
   }
 
-  void update_infinite_vertex_handle(Vertex_handle&)
-  {
-  }
-
 private:
   // in dimension i, number of vertices >= i+2
   // ( the boundary of a simplex in dimension i+1 has i+2 vertices )
@@ -384,8 +380,7 @@ public:
   // This tag is used in the parallel operations of RT_3 to access some functions
   // of the TDS (tds.vertices().is_used(Vertex_handle)) that are much more efficient
   // than what is exposed by the TDS concept (tds.is_vertex(Vertex_handle)).
-  // typedef CGAL::Tag_true              Is_CGAL_TDS_3;
-  typedef typename Tds_storage::Is_CGAL_TDS_3 Is_CGAL_TDS_3;
+  typedef CGAL::Boolean_tag<std::is_same_v<StorageTag, Handle_tag>> Is_CGAL_TDS_3;
 
   // Tools to change the Vertex and Cell types of the TDS.
   template < typename Vb2 >
@@ -409,9 +404,11 @@ private:
 public:
   using Cell = typename Tds_storage::Cell;
   using Cell_iterator = typename Tds_storage::Cell_iterator;
+  using Cell_handle = typename Tds_storage::Cell_handle;
   using Cell_range = typename Tds_storage::Cell_range;
   using Vertex = typename Tds_storage::Vertex;
   using Vertex_iterator = typename Tds_storage::Vertex_iterator;
+  using Vertex_handle = typename Tds_storage::Vertex_handle;
   using Vertex_range = typename Tds_storage::Vertex_range;
   using size_type = typename Tds_storage::size_type;
   using difference_type = typename Tds_storage::difference_type;
@@ -430,9 +427,6 @@ public:
 
 //private: // In 2D only :
   typedef internal::Triangulation_ds_face_circulator_3<Tds>  Face_circulator;
-
-  typedef typename Tds_storage::Vertex_handle      Vertex_handle;
-  typedef typename Tds_storage::Cell_handle        Cell_handle;
 
   typedef std::pair<Cell_handle, int>              Facet;
   typedef Triple<Cell_handle, int, int>            Edge;
@@ -488,7 +482,7 @@ public:
 
   Triangulation_data_structure_3() = default; // default constructor
   Triangulation_data_structure_3(Tds&&) = default; // move constructor
-  Triangulation_data_structure_3(const Tds &tds)  // copy constructor
+  Triangulation_data_structure_3(const Tds &tds) : Tds_storage() // copy constructor
   {
     copy_tds(tds);
   }

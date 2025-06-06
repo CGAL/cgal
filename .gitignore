@@ -1000,6 +1000,7 @@ cmake_install.cmake
 CMakeCache.txt
 CMakeFiles
 cmake_install.cmake
+compile_commands.json
 
 # Editors' automatic backups
 *.bak

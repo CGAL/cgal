@@ -690,7 +690,7 @@ namespace CGAL {
     using Self = Indexed_storage<Vb,Cb, ConcurrencyTag>;
     using TDS = Triangulation_data_structure_3<Vb, Cb, ConcurrencyTag, Index_tag>;
     using Concurrency_tag  = ConcurrencyTag;
-    using Is_CGAL_TDS_3 = CGAL::Tag_false;
+    using Storage_tag = Index_tag;
 
     TDS& tds()
     {
@@ -1507,11 +1507,6 @@ namespace CGAL {
       internal::TDS_3::Default_index_vertex_converter<typename TDS_src::Vertex,Vertex> setv;
       internal::TDS_3::Default_index_cell_converter<typename TDS_src::Cell,Cell>  setc;
       return tds().copy_tds(src, vert, setv, setc);
-    }
-
-    void update_infinite_vertex_handle(Vertex_handle& v)
-    {
-      v = Vertex_handle{this, v.index()};
     }
 
     Properties::Property_container<Self, Vertex_index> vprops_;
