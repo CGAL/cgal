@@ -610,7 +610,7 @@ namespace internal { namespace TDS_3{
     friend bool operator> (const Derived_id& _lhs, const Derived_id& _rhs) { return _lhs.id() > _rhs.id(); }
     friend bool operator>=(const Derived_id& _lhs, const Derived_id& _rhs) { return _lhs.id() >= _rhs.id(); }
     friend bool operator==(const Derived_id& _lhs, const std::nullptr_t&) { return _lhs.id() == invalid_index; }
-    friend bool operator!=(const Derived_id& _lhs, std::nullptr_t&) { return !(_lhs == nullptr); }
+    friend bool operator!=(const Derived_id& _lhs, std::nullptr_t&) { return _lhs.id() != invalid_index; }
 
     friend std::ostream& operator<<(std::ostream& os, const Derived_id& idx)
     {
@@ -940,8 +940,7 @@ namespace CGAL {
 
     Vertex_handle create_vertex()
     {
-      size_type inf = (std::numeric_limits<size_type>::max)();
-      if(recycle_ && (vertices_freelist_ != inf)){
+      if(recycle_ && (vertices_freelist_ != Vertex_index::invalid_index)){
         Vertex_index idx{vertices_freelist_};
         vertices_freelist_ = vertex_storage_[idx].icell.id();
         --removed_vertices_;
@@ -956,8 +955,7 @@ namespace CGAL {
 
     Cell_handle create_cell()
     {
-      size_type inf = (std::numeric_limits<size_type>::max)();
-      if(recycle_ && (cells_freelist_ != inf)){
+      if(recycle_ && (cells_freelist_ != Cell_index::invalid_index)){
         Cell_index idx{cells_freelist_};
         cells_freelist_ = cell_storage_[idx].ivertices[0].id();
         --removed_cells_;
@@ -1058,7 +1056,8 @@ namespace CGAL {
       cprops_.shrink_to_fit();
 
       removed_vertices_ = removed_cells_ = 0;
-      vertices_freelist_ = cells_freelist_ = (std::numeric_limits<size_type>::max)();
+      vertices_freelist_ = Vertex_index::invalid_index;
+      cells_freelist_ = Cell_index::invalid_index;
       garbage_ = false;
       recycle_ = true;
       anonymous_property_nb = 0;
@@ -1215,11 +1214,6 @@ namespace CGAL {
       : dimension_(-2)
     {
       allocate_tds_properties();
-      removed_vertices_ = removed_cells_ = 0;
-      vertices_freelist_ = cells_freelist_  = (std::numeric_limits<size_type>::max)();
-      garbage_ = false;
-      recycle_ = true;
-      anonymous_property_nb = 0;
     }
 
     Indexed_storage(Indexed_storage&& is) noexcept
@@ -1232,14 +1226,13 @@ namespace CGAL {
         cremoved_(std::move(is.cremoved_)),
         removed_vertices_(std::exchange(is.removed_vertices_, 0)),
         removed_cells_(std::exchange(is.removed_cells_, 0)),
-        vertices_freelist_(std::exchange(is.vertices_freelist_, (std::numeric_limits<size_type>::max)())),
-        cells_freelist_(std::exchange(is.cells_freelist_, (std::numeric_limits<size_type>::max)())),
+        vertices_freelist_(std::exchange(is.vertices_freelist_, Vertex_index::invalid_index)),
+        cells_freelist_(std::exchange(is.cells_freelist_, Cell_index::invalid_index)),
         garbage_(std::exchange(is.garbage_, false)),
         recycle_(std::exchange(is.recycle_, true)),
         anonymous_property_nb(std::exchange(is.anonymous_property_nb, 0)),
-        dimension_(is.dimension_)
+        dimension_(std::exchange(is.dimension_, -2))
     {
-      is.dimension_ = -2;
     }
 
     Indexed_storage& operator=(const Indexed_storage& rhs)
@@ -1295,7 +1288,7 @@ namespace CGAL {
     Indexed_storage& operator=(Indexed_storage&& is) noexcept
     {
       if (this != &is) {
-        dimension_ = is.dimension_;
+        dimension_ = std::exchange(is.dimension_, -2);
         vertex_storage_ = std::move(is.vertex_storage_);
         cell_storage_ = std::move(is.cell_storage_);
         cell_data_ = std::move(is.cell_data_);
@@ -1305,12 +1298,11 @@ namespace CGAL {
         cremoved_ = std::move(is.cremoved_);
         removed_vertices_ = std::exchange(is.removed_vertices_, 0);
         removed_cells_ = std::exchange(is.removed_cells_, 0);
-        vertices_freelist_ = std::exchange(is.vertices_freelist_, (std::numeric_limits<size_type>::max)());
-        cells_freelist_ = std::exchange(is.cells_freelist_, (std::numeric_limits<size_type>::max)());
+        vertices_freelist_ = std::exchange(is.vertices_freelist_, Vertex_index::invalid_index);
+        cells_freelist_ = std::exchange(is.cells_freelist_, Cell_index::invalid_index);
         garbage_ = std::exchange(is.garbage_, false);
         recycle_ = std::exchange(is.recycle_, true);
         anonymous_property_nb = std::exchange(is.anonymous_property_nb, 0);
-        is.dimension_ = -2;
       }
       return *this;
     }
@@ -1474,15 +1466,15 @@ namespace CGAL {
     Property_map<Cell_index, bool>    cremoved_;
 
 
-    size_type removed_vertices_;
-    size_type removed_cells_;
+    size_type removed_vertices_ = 0;
+    size_type removed_cells_ = 0;
 
-    size_type vertices_freelist_;
-    size_type cells_freelist_;
-    bool garbage_;
-    bool recycle_;
+    size_type vertices_freelist_ = Vertex_index::invalid_index;
+    size_type cells_freelist_ = Cell_index::invalid_index ;
+    bool garbage_ = false;
+    bool recycle_ = true;
 
-    size_type anonymous_property_nb;
+    size_type anonymous_property_nb = 0;
 
     // in dimension i, number of vertices >= i+2
     // ( the boundary of a simplex in dimension i+1 has i+2 vertices )
