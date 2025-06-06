@@ -24,6 +24,7 @@ struct Options
     StarFiltrStd star_filtr = StarFiltrStd::FiltrZ ; // Only for per_hdvf (when filtrataion is a standard lower star filtration)
     bool random = false ; // Activate the computation of random perfect HDVF
     bool verbose = false ; // Activate verbose mode (matrix output after each A operation for HDVF computation)
+    bool co_faces = true ; // Output co-faces of cohomology generators (or not)
 
     std::string comment() const
     {

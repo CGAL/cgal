@@ -51,7 +51,7 @@ void mesh_complex_output(const MeshType& mesh, const ComplexType& complex, const
 template <typename CoefficientType, typename ComplexType>
 Hdvf<CoefficientType, ComplexType>& HDVF_comput (const ComplexType& complex, const Options &options)
 {
-    Hdvf<CoefficientType, ComplexType>& hdvf(*(new Hdvf<CoefficientType, ComplexType>(complex, options.HDVF_opt)));
+    Hdvf<CoefficientType, ComplexType>& hdvf(*(new Hdvf<CoefficientType, ComplexType>(complex, options.HDVF_opt, options.co_faces)));
     std::vector<PairCell> pairs ;
     if (!options.random)
         pairs = hdvf.compute_perfect_hdvf(options.verbose);
@@ -131,7 +131,7 @@ void main_code (const Options &options)
         {
             auto output_vtk_simp = [options](HDVFType &hdvf, ComplexType& complex)
             {
-                Simp_output_vtk<CoefficientType>(hdvf, complex, options.outfile_root) ;
+                Simp_output_vtk<CoefficientType>(hdvf, complex, options.outfile_root, options.co_faces) ;
             } ;
             
             interaction_loop<CoefficientType, ComplexType>(hdvf, complex, output_vtk_simp) ;
@@ -140,7 +140,7 @@ void main_code (const Options &options)
         else if (options.with_vtk_export)
         {
             cout << "----> exporting to vtk" << endl ;
-            Simp_output_vtk<CoefficientType>(hdvf, complex, options.outfile_root) ;
+            Simp_output_vtk<CoefficientType>(hdvf, complex, options.outfile_root, options.co_faces) ;
         }
     }
     // CubComplex
@@ -180,7 +180,7 @@ void main_code (const Options &options)
         {
             auto output_vtk_cub = [options](HDVFType &hdvf, ComplexType& complex)
             {
-                Cub_output_vtk<CoefficientType>(hdvf, complex, options.outfile_root) ;
+                Cub_output_vtk<CoefficientType>(hdvf, complex, options.outfile_root, options.co_faces) ;
             } ;
             
             interaction_loop<CoefficientType, ComplexType>(hdvf, complex, output_vtk_cub) ;
@@ -189,7 +189,7 @@ void main_code (const Options &options)
         else if (options.with_vtk_export)
         {
             cout << "----> exporting to vtk" << endl ;
-            Cub_output_vtk<CoefficientType>(hdvf, complex, options.outfile_root) ;
+            Cub_output_vtk<CoefficientType>(hdvf, complex, options.outfile_root, options.co_faces) ;
         }
     }
 }

@@ -45,9 +45,9 @@ const int OPT_FULL = 0b1000;
  * Cells are always sorted so that the dimension of `sigma` is lesser than the dimension of `tau`.
  */
 struct PairCell {
-    int sigma;  // Index of the first cell
-    int tau;    // Index of the second cell
-    int dim;    // Dimension of cells: q/q+1 for A and R, q for other operations
+    int sigma;  /// Index of the first cell
+    int tau;    /// Index of the second cell
+    int dim;    /// Dimension of cells: q/q+1 for A and R, q/q for other operations
 };
 
 /** \brief Overload of operator<< for PairCell type. */
@@ -64,10 +64,10 @@ inline std::ostream& operator<<(std::ostream &out, const std::vector<PairCell>& 
  
  The class `Hdvf_core` is the core implementation of homological discrete vector fields (HDVF for short).
  
- An enumeration `FlagType` is defined in the `HDVF` namespace and the `Hdvf_core` class maps each cell to one of the flags (namely PRIMARY, SECONDARY, CRITICAL). The NONE is used in `HDVF_duality` to compute relative homology on a sub-complex).
+ An enumeration `FlagType` is defined in the `HDVF` namespace and the `Hdvf_core` class maps each cell to one of the flags (namely PRIMARY, SECONDARY, CRITICAL). The NONE flag is used in child classes (such as `Hdvf_duality` or `Hdvf_reduced`) when computing relative homology on a sub-complex.
  The flag of each cell is stored in an appropriate structure and getters are provided to access to this information.
  
- The `Hdvf_core` class stores the associated reduction in sparse matrices: row-major for \f$f\f$, and column-major for \f$g\f$, \f$h\f$ and \f$\partial'\f$. Getters are provided to access this information.
+ The `Hdvf_core` class stores the associated reduction in sparse matrices: row-major for \f$f\f$, and column-major for \f$g\f$, \f$h\f$ and \f$\partial'\f$. Getters are provided to access this information. However, according to the chosen HDVF computation option (`OPT_BND`, `OPT_F`, `OPT_G`, `OPT_FULL`) the reduction can be computed only partially (and thus faster).
  
  The class provides perfect HDVF constuction operations: `compute_perfect_hdvf` and `compute_rand_perfect_hdvf`, which build perfect HDVFs by pairing iteratively critical cells through the `A` operation.
  
@@ -106,29 +106,29 @@ public:
     typedef SparseMatrixType<CoefficientType, OSM::ROW> RMatrix;
     
 protected:
-    /** \brief Flags of the cells.
+    /* \brief Flags of the cells.
      * _flag.at(q) contains the flags of cells of dimension q
      */
     std::vector<std::vector<FlagType>> _flag;
-    /** \brief Number of PRIMARY cells. */
+    /* \brief Number of PRIMARY cells. */
     std::vector<int> _nb_P;
-    /** \brief Number of SECONDARY cells. */
+    /* \brief Number of SECONDARY cells. */
     std::vector<int> _nb_S;
-    /** \brief Number of CRITICAL cells. */
+    /* \brief Number of CRITICAL cells. */
     std::vector<int> _nb_C;
-    /** \brief Row matrices for f. */
+    /* \brief Row matrices for f. */
     std::vector<RMatrix> _F_row;
-    /** \brief Column matrices for g. */
+    /* \brief Column matrices for g. */
     std::vector<CMatrix> _G_col;
-    /** \brief Column matrices for h. */
+    /* \brief Column matrices for h. */
     std::vector<CMatrix> _H_col;
-    /** \brief Column matrices for reduced boundary. */
+    /* \brief Column matrices for reduced boundary. */
     std::vector<CMatrix> _DD_col;
     
-    /** \brief Reference to the underlying complex. */
+    /* \brief Reference to the underlying complex. */
     const ComplexType& _K;
     
-    /** \brief Hdvf_core options for computation (computation of partial reduction). */
+    /* \brief Hdvf_core options for computation (computation of partial reduction). */
     int _hdvf_opt;
     
 public:
@@ -140,9 +140,9 @@ public:
      * \param[in] K A chain complex (a model of `AbstractChainComplex`)
      * \param[in] hdvf_opt Option for HDVF computation (`OPT_BND`, `OPT_F`, `OPT_G` or `OPT_FULL`)
      */
-    Hdvf_core(const ComplexType& K, int hdvf_opt = OPT_FULL) ;
+    Hdvf_core(const ComplexType& K, int hdvf_opt = OPT_FULL, bool hdvf_cofaces = true) ;
     
-    /**
+    /*
      * \brief Constructor by copy.
      *
      * Builds a HDVF by copy from another, including options.
@@ -151,7 +151,7 @@ public:
      */
     Hdvf_core(const Hdvf_core& hdvf) : _flag(hdvf._flag), _nb_P(hdvf._nb_P), _nb_S(hdvf._nb_S), _nb_C(hdvf._nb_C), _F_row(hdvf._F_row), _G_col(hdvf._G_col), _H_col(hdvf._H_col), _DD_col(hdvf._DD_col), _K(hdvf._K), _hdvf_opt(hdvf._hdvf_opt) { }
     
-    /**
+    /*
      * \brief HDVF_core destructor. */
     ~Hdvf_core() { }
     
@@ -319,7 +319,7 @@ public:
     
 
     /**
-     * \brief Export Primary/Secondary/Critical labels for vtk export.
+     * \brief Export Primary/Secondary/Critical labels (in particular for vtk export)
      *
      * The method exports the labels of every cells in each dimension.
      *
@@ -372,9 +372,13 @@ public:
      *
      * The method exports the chain \f$f^\star(\sigma)\f$ for \f$\sigma\f$ the cell of index `cell` and dimension `q`.
      *
+     * \param[in] cell Index of the (critical) cell.
+     * \param[in] dim Dimension of the (critical) cell.
+     * \param[in] co_faces Export the cohomology generator or its co-faces (sometimes more convenient for visualisation). 
+     *
      * \return A column-major chain.
      */
-    virtual CChain export_cohomology_chain (int cell, int dim) const
+    virtual CChain export_cohomology_chain (int cell, int dim, bool co_faces = false) const
     {
         if ((dim<0) || (dim>_K.dim()))
             throw "Error : export_homology_chain with dim out of range" ;
@@ -383,27 +387,35 @@ public:
             RChain fstar_cell(OSM::get_row(_F_row.at(dim), cell)) ;
             // Add 1 to the cell
             fstar_cell.set_coef(cell, 1) ;
-            // Compute the cofaces
-            if (dim < _K.dim())
+            if (co_faces)
             {
-                CChain fstar_cofaces(_K.nb_cells(dim+1)) ;
-                for (typename RChain::const_iterator it = fstar_cell.cbegin(); it != fstar_cell.cend(); ++it)
+                // Compute the cofaces
+                if (dim < _K.dim())
                 {
-                    // Set the cofaces of it->first in dimension dim+1
-                    RChain cofaces(_K.cod(it->first,dim)) ;
-                    for (typename RChain::const_iterator it2 =  cofaces.cbegin(); it2 != cofaces.cend(); ++it2)
-                        fstar_cofaces.set_coef(it2->first, 1) ;
+                    CChain fstar_cofaces(_K.nb_cells(dim+1)) ;
+                    for (typename RChain::const_iterator it = fstar_cell.cbegin(); it != fstar_cell.cend(); ++it)
+                    {
+                        // Set the cofaces of it->first in dimension dim+1
+                        RChain cofaces(_K.cod(it->first,dim)) ;
+                        for (typename RChain::const_iterator it2 =  cofaces.cbegin(); it2 != cofaces.cend(); ++it2)
+                            fstar_cofaces.set_coef(it2->first, 1) ;
+                    }
+                    return fstar_cofaces ;
                 }
-                return fstar_cofaces ;
+                else
+                    return CChain(0) ;
             }
             else
-                return CChain(0) ;
+            {
+                return fstar_cell.transpose() ;
+            }
+                
         }
         else
-            throw "Error : trying to export g_chain without proper Hdvf_core option" ;
+            throw "Error : trying to export fstar_chain without proper Hdvf_core option" ;
     }
 protected:
-    /** \brief Project a chain onto a given flag
+    /* \brief Project a chain onto a given flag
      * The methods cancels all the coefficients of the chain of dimension `q` that do not correspond to`flag`. This is actually an implementation of the projection operator onto the sub A-module generated by cells of flag `flag`.
      *
      * \param[in] chain The chain projected.
@@ -437,7 +449,7 @@ protected:
         return result;
     }
     
-    /** \brief Display a text progress bar. */
+    /* \brief Display a text progress bar. */
     void progress_bar(int i, int n)
     {
         const int step(n/20) ;
@@ -460,7 +472,7 @@ protected:
 
 // Constructor for the Hdvf_core class
 template<typename CoefficientType, typename ComplexType, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
-Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::Hdvf_core(const ComplexType& K, int hdvf_opt) : _K(K) {
+Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::Hdvf_core(const ComplexType& K, int hdvf_opt, bool hdvf_cofaces) : _K(K) {
     // Get the dimension of the simplicial complex
     int dim = _K.dim();
     std::cout << "----> Starting Hdvf_core creation / dim " << dim << std::endl ;

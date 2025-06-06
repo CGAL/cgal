@@ -59,7 +59,7 @@ public:
      * \param[in] K A chain complex (a model of `AbstractChainComplex`)
      * \param[in] hdvf_opt Option for HDVF computation (`OPT_BND`, `OPT_F`, `OPT_G` or `OPT_FULL`)
      */
-    Hdvf(const ComplexType& K, int hdvf_opt = OPT_FULL) ;
+    Hdvf(const ComplexType& K, int hdvf_opt = OPT_FULL, bool co_faces = true) ;
     
     /**
      * \brief Constructor by copy.
@@ -262,7 +262,7 @@ public:
 
 // Constructor for the Hdvf class
 template<typename CoefficientType, typename ComplexType>
-Hdvf<CoefficientType, ComplexType>::Hdvf(const ComplexType& K, int hdvf_opt) : Hdvf_core<CoefficientType, ComplexType, OSM::Sparse_chain, OSM::Sparse_matrix>(K, hdvf_opt) { }
+Hdvf<CoefficientType, ComplexType>::Hdvf(const ComplexType& K, int hdvf_opt, bool co_faces) : Hdvf_core<CoefficientType, ComplexType, OSM::Sparse_chain, OSM::Sparse_matrix>(K, hdvf_opt, co_faces) { }
 
 
 

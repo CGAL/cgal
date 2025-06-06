@@ -23,6 +23,7 @@ void usage()
     cout << "\t-with_output / -no_output : output / do not output the HDVF and reduction to the console (default: with_output)" << endl ;
     cout << "\t-with_export / -no_export : export / do not export the HDVF and reduction to a file (default: with_export)" << endl ;
     cout << "\t-with_vtk_export / -no_vtk_export : export / do not export the HDVF and reduction to vtk (default: no_export)" << endl ;
+    cout << "\t-cofaces_cohomology / -no_cofaces_cohomology : do not export co-faces of cohomology generators (default: co_faces_cohomology)" << endl ;
     cout << "For CubComplex only:" << endl ;
     cout << "\t-primal / -dual: build the primal / dual complex associated to data (default: primal)" << endl ;
     cout << "For Alexander duality only:" << endl ;
@@ -229,6 +230,14 @@ Options read_arguments_hdvf(int argc, char** argv)
         {
             opt_res.with_vtk_export = false ;
         }
+        else if (tmp.compare("-cofaces_cohomology")==0) // scalar
+        {
+            opt_res.co_faces = true ;
+        }
+        else if (tmp.compare("-no_cofaces_cohomology")==0) // scalar
+        {
+            opt_res.co_faces = false ;
+        }
         else if (tmp.compare("-loop")==0) // scalar
         {
             if (!((opt_res.algorithm == Algorithm::HDVF) && (opt_res.HDVF_opt & OPT_FULL)))
@@ -330,6 +339,7 @@ ostream& operator<< (ostream& out, const Options& opt)
     out << "scalar: " << opt.scalar << endl ;
     out << "with_export: " << opt.with_export << endl ; // Export reduction information to a file
     out << "with_vtk_export: " << opt.with_vtk_export << endl ; // Export generators/cogenerators and PSC labels as vtk
+    out << "co_faces: " << opt.co_faces << endl ; // Export cofaces of cogenerators
     out << "with_output: " << opt.with_output << endl ; // Consol output
     out << "with_frame: " << opt.with_frame << endl ; // Only for persistent homology (cub and pgm in_files)
     out << "BB_ratio: " << opt.BB_ratio << endl ; // Only for persistent homolgy (off in_files: size of the bounding sphere)

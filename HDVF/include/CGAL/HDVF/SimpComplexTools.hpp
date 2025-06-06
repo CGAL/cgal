@@ -32,7 +32,7 @@ namespace HDVF {
 /** \brief vtk export for SimpComplex */
 
 template <typename CoefType, template <typename, int> typename _ChainType = OSM::Sparse_chain, template <typename, int> typename _SparseMatrixType = OSM::Sparse_matrix, typename VertexIdType = int>
-void Simp_output_vtk (Hdvf_core<CoefType, Simplicial_chain_complex<CoefType>, _ChainType, _SparseMatrixType> &hdvf, Simplicial_chain_complex<CoefType> &complex, string filename = "test")
+void Simp_output_vtk (Hdvf_core<CoefType, Simplicial_chain_complex<CoefType>, _ChainType, _SparseMatrixType> &hdvf, Simplicial_chain_complex<CoefType> &complex, string filename = "test", bool co_faces = false)
 {
     typedef Simplicial_chain_complex<CoefType> ComplexType;
     typedef Hdvf_core<CoefType, Simplicial_chain_complex<CoefType>, _ChainType, _SparseMatrixType> HDVF_type;
@@ -56,13 +56,25 @@ void Simp_output_vtk (Hdvf_core<CoefType, Simplicial_chain_complex<CoefType>, _C
                     OSM::Sparse_chain<CoefType,OSM::COLUMN> chain(hdvf.export_homology_chain(c,q)) ;
                     ComplexType::Simplicial_chain_complex_chain_to_vtk(complex, outfile_g, chain, q, c) ;
                 }
-                if (q < complex.dim())
+                if (co_faces)
+                {
+                    if (q < complex.dim())
+                    {
+                        if (hdvf.get_hdvf_opts() & (OPT_FULL | OPT_F))
+                        {
+                            string outfile_f(filename+"_FSTAR_"+to_string(c)+"_dim_"+to_string(q)+".vtk") ;
+                            OSM::Sparse_chain<CoefType,OSM::COLUMN> chain(hdvf.export_cohomology_chain(c,q, co_faces)) ;
+                            ComplexType::Simplicial_chain_complex_chain_to_vtk(complex, outfile_f, chain, q+1, c) ;
+                        }
+                    }
+                }
+                else
                 {
                     if (hdvf.get_hdvf_opts() & (OPT_FULL | OPT_F))
                     {
                         string outfile_f(filename+"_FSTAR_"+to_string(c)+"_dim_"+to_string(q)+".vtk") ;
-                        OSM::Sparse_chain<CoefType,OSM::COLUMN> chain(hdvf.export_cohomology_chain(c,q)) ;
-                        ComplexType::Simplicial_chain_complex_chain_to_vtk(complex, outfile_f, chain, q+1, c) ;
+                        OSM::Sparse_chain<CoefType,OSM::COLUMN> chain(hdvf.export_cohomology_chain(c,q, co_faces)) ;
+                        ComplexType::Simplicial_chain_complex_chain_to_vtk(complex, outfile_f, chain, q, c) ;
                     }
                 }
             }
@@ -159,7 +171,7 @@ public:
 
 /** \brief Export persistent information to vtk files */
 template <typename CoefType, typename DegType, typename FiltrationType>
-void Per_Simp_output_vtk (Hdvf_persistence<CoefType, Simplicial_chain_complex<CoefType>, DegType, FiltrationType> &per_hdvf, Simplicial_chain_complex<CoefType> &complex, string filename = "per")
+void Per_Simp_output_vtk (Hdvf_persistence<CoefType, Simplicial_chain_complex<CoefType>, DegType, FiltrationType> &per_hdvf, Simplicial_chain_complex<CoefType> &complex, string filename = "per", bool co_faces = false)
 {
     if (!per_hdvf.with_export())
         throw("Cannot export persistent generators to vtk: with_export is off!") ;
@@ -210,17 +222,35 @@ void Per_Simp_output_vtk (Hdvf_persistence<CoefType, Simplicial_chain_complex<Co
             // Export cohomology generators (fstar)
             if ((per_hdvf.get_hdvf_opts() == OPT_FULL) || (per_hdvf.get_hdvf_opts() == OPT_F))
             {
-                // First generator : filename_i_fstar_sigma_q.vtk
+                if (co_faces)
                 {
-                    const int id(per_int_cells.first.first), dim(per_int_cells.first.second) ;
-                    string tmp(out_file+"_fstar_"+to_string(id)+"_"+to_string(dim)+".vtk") ;
-                    ComplexType::Simplicial_chain_complex_chain_to_vtk(complex, tmp, hole_data.fstar_chain_sigma, dim+1);
+                    // First generator : filename_i_fstar_sigma_q.vtk
+                    {
+                        const int id(per_int_cells.first.first), dim(per_int_cells.first.second) ;
+                        string tmp(out_file+"_fstar_"+to_string(id)+"_"+to_string(dim)+".vtk") ;
+                        ComplexType::Simplicial_chain_complex_chain_to_vtk(complex, tmp, hole_data.fstar_chain_sigma, dim+1);
+                    }
+                    // Second generator : filename_i_fstar_tau_q+1.vtk
+                    {
+                        const int id(per_int_cells.second.first), dim(per_int_cells.second.second) ;
+                        string tmp(out_file+"_fstar_"+to_string(id)+"_"+to_string(dim)+".vtk") ;
+                        ComplexType::Simplicial_chain_complex_chain_to_vtk(complex, tmp, hole_data.fstar_chain_tau, dim+1);
+                    }
                 }
-                // Second generator : filename_i_fstar_tau_q+1.vtk
+                else
                 {
-                    const int id(per_int_cells.second.first), dim(per_int_cells.second.second) ;
-                    string tmp(out_file+"_fstar_"+to_string(id)+"_"+to_string(dim)+".vtk") ;
-                    ComplexType::Simplicial_chain_complex_chain_to_vtk(complex, tmp, hole_data.fstar_chain_tau, dim+1);
+                    // First generator : filename_i_fstar_sigma_q.vtk
+                    {
+                        const int id(per_int_cells.first.first), dim(per_int_cells.first.second) ;
+                        string tmp(out_file+"_fstar_"+to_string(id)+"_"+to_string(dim)+".vtk") ;
+                        ComplexType::Simplicial_chain_complex_chain_to_vtk(complex, tmp, hole_data.fstar_chain_sigma, dim);
+                    }
+                    // Second generator : filename_i_fstar_tau_q+1.vtk
+                    {
+                        const int id(per_int_cells.second.first), dim(per_int_cells.second.second) ;
+                        string tmp(out_file+"_fstar_"+to_string(id)+"_"+to_string(dim)+".vtk") ;
+                        ComplexType::Simplicial_chain_complex_chain_to_vtk(complex, tmp, hole_data.fstar_chain_tau, dim);
+                    }
                 }
             }
         }

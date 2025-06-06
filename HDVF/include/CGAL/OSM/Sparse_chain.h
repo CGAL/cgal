@@ -624,9 +624,7 @@ public:
         Sparse_chain<CoefficientType, COLUMN + ROW - ChainTypeFlag> chain;
         
         chain._upperBound = this->_upperBound;
-        for (pair pair: this->_chainData) {
-            chain._chainData[pair.first] = pair.second;
-        }
+        chain._chainData = this->_chainData;
         
         return chain;
     }

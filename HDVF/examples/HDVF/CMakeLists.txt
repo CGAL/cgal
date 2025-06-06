@@ -23,3 +23,7 @@ target_link_libraries(per_hdvf CGAL::CGAL CGAL::CGAL_Core)
 
 add_executable(dual_hdvf main_dual_hdvf.cpp arguments.cpp)
 target_link_libraries(dual_hdvf CGAL::CGAL CGAL::CGAL_Core)
+
+add_executable(test_hdvf test_hdvf_example.cpp arguments.cpp)
+target_link_libraries(test_hdvf CGAL::CGAL CGAL::CGAL_Core)
+

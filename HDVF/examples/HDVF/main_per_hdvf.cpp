@@ -81,7 +81,7 @@ template<typename CoefficientType, typename ComplexType, typename DegType, typen
 Hdvf_persistence<CoefficientType, ComplexType, DegType, FiltrationType>& per_HDVF_comput (const ComplexType& complex, const FiltrationType& f, const Options &options)
 {
     typedef Hdvf_persistence<CoefficientType, ComplexType, DegType, FiltrationType> HDVFType ;
-    HDVFType& hdvf(*(new HDVFType(complex, f, options.HDVF_opt, options.with_vtk_export)));
+    HDVFType& hdvf(*(new HDVFType(complex, f, options.HDVF_opt, options.with_vtk_export, options.co_faces)));
     
     cout << "----> START computing persistent homology" << endl ;
     hdvf.compute_perfect_hdvf() ;
@@ -259,7 +259,6 @@ void main_code (const Options &options)
         {
             cout << "----> exporting to vtk" << endl ;
             Per_Cub_output_vtk<CoefficientType, DegType,FiltrationType>(hdvf, complex, options.outfile_root) ;
-//            Cub_output_vtk<CoefficientType>(hdvf, complex, options.outfile_root) ;
         }
     }
 }
