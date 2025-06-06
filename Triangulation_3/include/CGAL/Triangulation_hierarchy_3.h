@@ -504,26 +504,49 @@ is_valid(bool verbose, int level) const
   bool result = true;
 
   // verify correctness of triangulation at all levels
-  for(int i=0; i<maxlevel; ++i)
+  for(int i=0; i<maxlevel; ++i){
         result = result && hierarchy[i]->is_valid(verbose, level);
-
+        if(verbose && (! result)){
+          std::cerr << "triangulation at level " << i << " invalid" << std::endl;
+        }
+}
   // verify that lower level has no down pointers
   for( Finite_vertices_iterator it = hierarchy[0]->finite_vertices_begin(),
-       end = hierarchy[0]->finite_vertices_end(); it != end; ++it)
+       end = hierarchy[0]->finite_vertices_end(); it != end; ++it){
     result = result && (it->down() == Vertex_handle());
+    if(verbose && (! result)){
+          std::cerr << "lower level has a down pointer" << std::endl;
+    }
+  }
 
   // verify that other levels has down pointer and reciprocal link is fine
   for(int j=1; j<maxlevel; ++j)
     for( Finite_vertices_iterator it = hierarchy[j]->finite_vertices_begin(),
-         end = hierarchy[j]->finite_vertices_end(); it != end; ++it)
-      result = result && &*(it) == &*(it->down()->up());
+         end = hierarchy[j]->finite_vertices_end(); it != end; ++it){
+          result = result && (it->down() != Vertex_handle());
+          if(verbose && (! result)){
+          std::cerr << "missing down pointer" << std::endl;
+      }
+      if(it->down() == Vertex_handle()){
+        return false;
+      }
+      result = result && *(it) == *(it->down()->up());    //  AF  was result && &*(it) == &*(it->down()->up());
+      if(verbose && (! result)){
+          std::cerr << "wrong reciprocal link with down()" << std::endl;
+      }
+    }
 
-  // verify that other levels has down pointer and reciprocal link is fine
+
+  // verify that other levels has up pointer and reciprocal link is fine
   for(int k=0; k<maxlevel-1; ++k)
     for( Finite_vertices_iterator it = hierarchy[k]->finite_vertices_begin(),
-         end = hierarchy[k]->finite_vertices_end(); it != end; ++it)
+         end = hierarchy[k]->finite_vertices_end(); it != end; ++it){
       result = result && ( it->up() == Vertex_handle() ||
-                &*it == &*(it->up())->down() );
+                *it == *(it->up())->down() );    // AF was &*it == &*(it->up())->down() );
+                if(verbose && (! result)){
+          std::cerr << "wrong reciprocal link with up()" << std::endl;
+      }
+         }
 
   return result;
 }
