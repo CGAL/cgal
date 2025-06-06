@@ -56,7 +56,7 @@ namespace CGAL {
     /// \attention Note that `Index` is not a model of the concept `Handle`,
     /// because it cannot be dereferenced.
     /// \sa `Vertex_index`, `Halfedge_index`, `Edge_index`, `Face_index`.
-    template<typename T>
+    template<typename Derived_index>
     class SM_Index
     {
     public:
@@ -108,17 +108,19 @@ namespace CGAL {
 
         SM_Index operator+=(std::ptrdiff_t n) { idx_ = size_type(std::ptrdiff_t(idx_) + n); return *this; }
 
+        friend std::size_t hash_value(const Derived_index& i)
+        {
+          return static_cast<std::size_t>(i.idx());
+        }
+
+        friend std::size_t hash_value(const SM_Index& i)
+        {
+          return static_cast<std::size_t>(i.idx());
+        }
+
     protected:
         size_type idx_;
     };
-
-  template <class T>
-  std::size_t hash_value(const SM_Index<T>&  i)
-  {
-    std::size_t ret = i;
-    return ret;
-  }
-
 
     // Implementation for Surface_mesh::Vertex_index
     class SM_Vertex_index
@@ -2750,17 +2752,6 @@ does_recycle_garbage() const
   return recycle_;
 }
 
-
-namespace internal::handle {
-  template <typename T>
-  struct Hash_functor<SM_Index<T>>{
-    std::size_t
-    operator()(const SM_Index<T> i)
-    {
-      return i.idx();
-    }
-  };
-}
 
 namespace internal {
 

@@ -40,24 +40,6 @@ namespace internal{
     return std::size_t(h) / sizeof(H);
   }
 
-  template <class H>
-  struct Hash_functor {
-    std::size_t
-    operator()(const H& h)
-    {
-      return hash_value(h);
-    }
-  };
-
-  template <class H>
-  struct Hash_functor<H*>{
-    std::size_t
-    operator()(const H* h)
-    {
-      return hash_value(h);
-    }
-  };
-
 }
 }
 
@@ -65,7 +47,8 @@ struct Handle_hash_function {
     typedef std::size_t result_type;
     template <class H>
     std::size_t operator() (const H& h) const {
-      return ::CGAL::internal::handle::Hash_functor<H>()(h);
+      using CGAL::internal::handle::hash_value;
+      return hash_value(h);
     }
 };
 
