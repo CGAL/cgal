@@ -930,8 +930,8 @@ namespace CGAL {
     auto cell_tds_data_pmap() { return cell_data_; }
     auto cell_tds_data_pmap() const { return cell_data_; }
 
-    size_type num_vertices() const { return (size_type) vprops_.size(); }
-    size_type num_cells() const { return (size_type) cprops_.size(); }
+    size_type num_vertices() const { return static_cast<size_type>(vprops_.size()); }
+    size_type num_cells() const { return static_cast<size_type>(cprops_.size()); }
 
 
     int dimension() const { return dimension_; }
@@ -942,12 +942,12 @@ namespace CGAL {
     {
       size_type inf = (std::numeric_limits<size_type>::max)();
       if(recycle_ && (vertices_freelist_ != inf)){
-        size_type idx = vertices_freelist_;
-        vertices_freelist_ = (size_type)vertex_storage_[Vertex_index(vertices_freelist_)].icell;
+        Vertex_index idx{vertices_freelist_};
+        vertices_freelist_ = vertex_storage_[idx].icell.id();
         --removed_vertices_;
-        vremoved_[Vertex_index(idx)] = false;
-        vprops_.reset(Vertex_index(idx));
-        return Vertex_handle(this, Vertex_index(idx));
+        vremoved_[idx] = false;
+        vprops_.reset(idx);
+        return Vertex_handle(this, idx);
       } else {
         vprops_.push_back();
         return Vertex_handle(this, Vertex_index(num_vertices()-1));
@@ -958,12 +958,12 @@ namespace CGAL {
     {
       size_type inf = (std::numeric_limits<size_type>::max)();
       if(recycle_ && (cells_freelist_ != inf)){
-        size_type idx = cells_freelist_;
-        cells_freelist_ = (size_type)cell_storage_[Cell_index(cells_freelist_)].ivertices[0];
+        Cell_index idx{cells_freelist_};
+        cells_freelist_ = cell_storage_[idx].ivertices[0].id();
         --removed_cells_;
-        cremoved_[Cell_index(idx)] = false;
-        cprops_.reset(Cell_index(idx));
-        return Cell_handle(this, Cell_index(idx));
+        cremoved_[idx] = false;
+        cprops_.reset(idx);
+        return Cell_handle(this, idx);
       } else {
         cprops_.push_back();
         return Cell_handle(this, Cell_index(num_cells()-1));
@@ -1022,18 +1022,18 @@ namespace CGAL {
 
     void delete_vertex(Vertex_handle vh)
     {
-      Vertex_index v = vh->index();
-      vremoved_[v] = true; ++removed_vertices_; garbage_ = true;
-      vertex_storage_[v].icell = Cell_index{vertices_freelist_};
-      vertices_freelist_ = static_cast<size_type>(v);
+      Vertex_index idx = vh->index();
+      vremoved_[idx] = true; ++removed_vertices_; garbage_ = true;
+      vertex_storage_[idx].icell = Cell_index{vertices_freelist_};
+      vertices_freelist_ = static_cast<size_type>(idx);
     }
 
     void delete_cell(Cell_handle ch)
     {
-      Cell_index c = ch->index();
-      cremoved_[c] = true; ++removed_cells_; garbage_ = true;
-      cell_storage_[c].ivertices[0] = Vertex_index{cells_freelist_};
-      cells_freelist_ = static_cast<size_type>(c);
+      Cell_index idx = ch->index();
+      cremoved_[idx] = true; ++removed_cells_; garbage_ = true;
+      cell_storage_[idx].ivertices[0] = Vertex_index{cells_freelist_};
+      cells_freelist_ = static_cast<size_type>(idx);
     }
 
     void reserve(size_type n_vertices, size_type n_cells)
@@ -1335,11 +1335,11 @@ namespace CGAL {
     /// returns whether the index of vertex `v` is valid, that is within the current array bounds.
     bool has_valid_index(Vertex_index v) const
     {
-      return ((size_type)v < num_vertices());
+      return (v.id() < num_vertices());
     }
     bool has_valid_index(Cell_index c) const
     {
-      return ((size_type)c < num_cells());
+      return (c.id() < num_cells());
     }
 
     /// returns whether vertex `v` is marked removed.
