@@ -110,14 +110,15 @@ public:
     return tmp;
   }
 
-  Cell& operator*() const
+  // AF:  wAs Cell&   should it be Cell_handle::reference ??
+  decltype(auto)  operator*() const
   {
     return *pos;
   }
 
-  Cell* operator->() const
+  decltype(auto) operator->() const
   {
-    return &*pos;
+    return pos.operator->();
   }
 
   bool operator==(const Cell_circulator & ccir) const
@@ -180,6 +181,15 @@ bool
 operator!=(typename Tds_::Cell_handle ch, Triangulation_ds_cell_circulator_3<Tds_> cc)
 {
   return !(cc==ch);
+}
+
+// AF:  Check why I had to add this operator<
+template < class Tds_ >
+inline
+bool
+operator<(typename Tds_::Cell_handle ch, Triangulation_ds_cell_circulator_3<Tds_> cc)
+{
+  return ch < cc.base();
 }
 
 template < class Tds_ >

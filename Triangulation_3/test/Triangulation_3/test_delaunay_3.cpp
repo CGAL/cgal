@@ -37,6 +37,16 @@ int main()
   _test_cls_delaunay_3( Cls() );
   _test_cls_delaunay_3( Cls_with_epec() );
 
+
+  typedef CGAL::Triangulation_data_structure_3<CGAL::VertexWithPoint<EPIC>, CGAL::Cell4Delaunay<EPIC>, CGAL::Sequential_tag, CGAL::Index_tag> Tds_index;
+  typedef CGAL::Triangulation_data_structure_3<CGAL::VertexWithPoint<EPEC>, CGAL::Cell4Delaunay<EPEC>, CGAL::Sequential_tag, CGAL::Index_tag> Tds_with_epec_index;
+
+  typedef CGAL::Delaunay_triangulation_3<EPIC, Tds_index>  Cls_index;
+  typedef CGAL::Delaunay_triangulation_3<EPEC, Tds_with_epec_index>  Cls_with_epec_index;
+
+  _test_cls_delaunay_3( Cls_index() );
+  _test_cls_delaunay_3( Cls_with_epec_index() );
+
   typedef CGAL::Triangulation_data_structure_3<
     CGAL::Triangulation_vertex_base_3<K>,
     CGAL::Delaunay_triangulation_cell_base_3<K> >   Tds_Delaunay_Cb;
@@ -68,6 +78,13 @@ int main()
   typedef CGAL::Delaunay_triangulation_3<K, TDS>                        Cls_circumcenter;
 
   _test_cls_delaunay_3( Cls_circumcenter() );
+
+  typedef CGAL::VertexWithPoint<EPIC> Vb4;
+  typedef CGAL::CellWithCircumcenter<EPIC> Cb4;
+  typedef CGAL::Triangulation_data_structure_3<Vb4, Cb4, CGAL::Sequential_tag, CGAL::Index_tag> TDS4;
+  typedef CGAL::Delaunay_triangulation_3<EPIC, TDS4> Cls4;
+
+  _test_cls_delaunay_3(Cls4());
 
   return 0;
 }

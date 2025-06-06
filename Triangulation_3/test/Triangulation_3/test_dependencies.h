@@ -3,6 +3,7 @@
 
 // This package depends on the following packages
 
-#define CGAL_LICENSE_ERROR
+// AF: @TODO: restore the dependencies
+#define CGAL_LICENSE_WARNING // #define CGAL_LICENSE_ERROR
 #define CGAL_TRIANGULATION_3_COMMERCIAL_LICENSE 22222222
 #define CGAL_TDS_3_COMMERCIAL_LICENSE 22222222

@@ -21,6 +21,8 @@ namespace CGAL {
     namespace Triangulation_23 {
       template <typename Tr>
       void test_move_semantic(Tr source_tr) {
+        constexpr bool is_indexed_based =
+            Tr::Triangulation_data_structure::Is_CGAL_TDS_3::value == false;
         const auto dimension = source_tr.dimension();
         const auto nb_of_vertices = source_tr.number_of_vertices();
         auto check_triangulation_validity = [&](const Tr& tr) {
@@ -29,8 +31,8 @@ namespace CGAL {
           assert(tr.dimension() == dimension);
         };
         auto check_moved_from_triangulation = [](const Tr& tr_copy) {
-          assert(tr_copy.dimension() == -2);
-          assert(tr_copy.number_of_vertices() + 1 == 0);
+          assert(is_indexed_based || tr_copy.dimension() == -2);
+          assert(is_indexed_based || tr_copy.number_of_vertices() + 1 == 0);
         };
         auto check_empty_triangulation = [](const Tr& tr_copy2) {
           assert(tr_copy2.dimension() == -1);

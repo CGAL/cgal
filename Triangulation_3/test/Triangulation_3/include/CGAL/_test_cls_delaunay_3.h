@@ -154,13 +154,15 @@ template <class Triangulation>
 void
 _test_cls_delaunay_3(const Triangulation &)
 {
+  std::cout << "Testing Delaunay triangulation 3D" << std::endl;
+  std::cout << typeid(Triangulation).name() << std::endl;
+
   typedef Triangulation                      Cls;
 
   static_assert(std::is_nothrow_move_constructible<Cls>::value,
                 "move cstr is missing");
   static_assert(std::is_nothrow_move_assignable<Cls>::value,
                 "move assignment is missing");
-
   typedef typename Test_location_policy<Cls>::Location_policy Location_policy;
 
   // We assume the traits class has been tested already
@@ -1100,6 +1102,7 @@ _test_cls_delaunay_3(const Triangulation &)
     points.push_back(Point(0, 0, rand()%30000));
   }
   TM_1.insert(points.begin(), points.end());
+  TM_1.remove(TM_1.finite_vertices_begin());
   Vertex_handle vTM_1;
   for(int i=0; i<2; i++) {
     for(typename Cls::Finite_vertices_iterator
@@ -1120,6 +1123,7 @@ _test_cls_delaunay_3(const Triangulation &)
     points.push_back(Point(0, rand()%30000, rand()%30000));
   }
   TM_2.insert(points.begin(), points.end());
+  TM_2.remove(TM_2.finite_vertices_begin());
         Vertex_handle vTM_2;
   for(int i=0; i<2; i++) {
     for(typename Cls::Finite_vertices_iterator
@@ -1140,6 +1144,7 @@ _test_cls_delaunay_3(const Triangulation &)
     points.push_back(Point(rand()%30000, rand()%30000, rand()%30000));
   }
   TM_3.insert(points.begin(), points.end());
+  TM_3.remove(TM_3.finite_vertices_begin());
 
   assert(TM_3.is_valid());
 

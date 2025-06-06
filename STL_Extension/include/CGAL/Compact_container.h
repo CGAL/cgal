@@ -1202,22 +1202,6 @@ namespace internal {
     return Stamper::hash_value(i.operator->());
   }
 
-namespace handle {
-  // supply a specialization for Hash_functor
-
-  // forward declare base template
-  template <class H> struct Hash_functor;
-
-  template<class DSC, bool Const>
-  struct Hash_functor<CC_iterator<DSC, Const> >{
-    std::size_t
-    operator()(const CC_iterator<DSC, Const>& i)
-    {
-      return hash_value(i);
-    }
-  };
-} // namespace handle
-
 } // namespace internal
 
 template <class DSC, bool Const >
