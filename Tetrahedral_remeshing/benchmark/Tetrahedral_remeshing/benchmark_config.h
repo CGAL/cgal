@@ -11,7 +11,7 @@
 # define TBB_USE_THREADING_TOOL
 #endif
 
-#include <CGAL/Mesh_3/config.h>
+// #include <CGAL/Mesh_3/config.h>
 #include <CGAL/Memory_sizer.h>
 
 // ==========================================================================
@@ -21,7 +21,7 @@
 
 // ==========================================================================
 // TETRAHEDRAL REMESHING GENERAL PARAMETERS
-// ==========================================================================
+// ========================================================================== 
 #define CGAL_TETRAHEDRAL_REMESHING_VERBOSE
 #define CGAL_TETRAHEDRAL_REMESHING_PROFILING
 
