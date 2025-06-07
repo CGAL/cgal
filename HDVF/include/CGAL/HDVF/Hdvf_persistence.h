@@ -67,11 +67,12 @@ using PerHoleT = std::tuple<FiltrIndexPerInterval, CellsPerInterval, DegreePerIn
 /*! \brief Overload of the `<<` operator to display persistent intervals (that is PerHoleT).
  *
  * Format:
+ *      birth time (cell, dim) -> death time (cell, dim) / degree duration
  */
 template <typename DegType>
 ostream& operator<< (ostream& out, const PerHoleT<DegType>& hole)
 {
-    // time (cell, dim) -> time (cell, dim) / time to live
+    // time (cell, dim) -> time (cell, dim) / degree duration
     const FiltrIndexPerInterval per_int(std::get<0>(hole)) ;
     const CellsPerInterval per_int_cells(std::get<1>(hole)) ;
     const DegreePerIntervalT<DegType> per_int_deg(std::get<2>(hole)) ;
@@ -200,35 +201,35 @@ public:
     } PerIntervalInformation ;
     
 protected:
-    /** \brief Reference to the filtration used for persistence */
+    /* \brief Reference to the filtration used for persistence */
     const Filtration &_f ;
     
-    /** \brief Permutation between indices in the chain complex K and indices along the filtration
+    /* \brief Permutation between indices in the chain complex K and indices along the filtration
      * Indices along the filtration provide new indices for cells in each dimension.
      */
     std::vector<std::vector<int> > _K_to_per, _per_to_K ;
     
-    /** \brief Vector of persistent pairs computed */
+    /* \brief Vector of persistent pairs computed */
     std::vector<PerHole> _persist ;
     
-    /** \brief Boolean determining weather or not export homology/cohomology generators associated to persistent pairs
+    /* \brief Boolean determining weather or not export homology/cohomology generators associated to persistent pairs
      * - If _with_export is true, PSC labels and homology/cohomology generators are stored for each persistent pair of duration (that is, such as the difference between degrees of birth/death) strictly positive.
      * - If _with_export is false, only persistent intervals are stored.
      */
     bool _with_export ;
     
-    /** \brief Vector of exported PSC labels */
+    /* \brief Vector of exported PSC labels */
     std::vector<ExpLabels> _export_labels ;
     
-    /** \brief Vector of exported homology/cohomology generators */
+    /* \brief Vector of exported homology/cohomology generators */
     std::vector<std::pair<ExpChain, ExpChain> > _export_g, _export_fstar ;
     
-    /** Current time (that is, current index) in the filtration */
+    /* Current time (that is, current index) in the filtration */
     int _t ;
-    /** Current time (that is, current index) along each dimension */
+    /* Current time (that is, current index) along each dimension */
     std::vector<int> _t_dim ;
     
-    /** Bitboard masks in each dimension
+    /* Bitboard masks in each dimension
      * At a given filtration time, only cells already met have a bit set to 1
      */
     std::vector<OSM::Bitboard> _masks ;
@@ -593,7 +594,7 @@ public:
     iterator end() { return iterator(*this, _persist.size()) ; }
 
 private:
-    /** \brief Export current persistent pair informations.
+    /* \brief Export current persistent pair informations.
      *
      * This method exports and saves PSC labels, homology and cohomology generators of the current persistent pair `p` to corresponding private vectors (_export_label, _export_g, _export_fstar).
      * The method is invoqued on the result of `find_pair_A` before pairing cells with the A operation.
@@ -623,7 +624,7 @@ private:
         }
     }
     
-    /** \brief Export empty persistent pair.
+    /* \brief Export empty persistent pair.
      * Export empty persistence information (for "small" discarded pairs).
      */
     void export_hdvf_persistence_pair()
@@ -645,7 +646,7 @@ private:
         }
     }
     
-    /**
+    /*
      * \brief Find a valid PairCell for A for persistent homology.
      *
      * The function searches, at a given time \f$t\f$ in the filtration, the youngest critical cell \f$\gamma'\f$ forming a valid pair with the cell \f$\gamma\f$. Hence, \f$(\gamma', \gamma)\f$ valid pair is a valid pair
@@ -655,7 +656,7 @@ private:
      */
     PairCell find_pair_A(bool &found) ;
     
-    /**
+    /*
      * \brief Step forward along the filtration.
      *
      * Searches a possible persistent pair for A with `find_pair_A`, apply A and update internal structures.
