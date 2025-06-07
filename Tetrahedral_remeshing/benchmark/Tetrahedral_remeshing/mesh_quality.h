@@ -1,16 +1,18 @@
 #ifndef CGAL_MESH_3_BENCHMARK_MESH_3_MESH_QUALITY_H
 #define CGAL_MESH_3_BENCHMARK_MESH_3_MESH_QUALITY_H
 
-#include "benchmark_xml.h"
-
 #include <CGAL/number_utils.h>
 #include <CGAL/Kernel/global_functions_3.h>
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/Polygon_mesh_processing/shape_predicates.h>
+#include <nlohmann/json.hpp>
+#include "benchmark_tetrahedral_remeshing_common.h"
 
 #include <limits>
 #include <vector>
+
+using benchmarking::append_metric_result;
 
 template <typename TriangleMesh,
           typename NamedParameters = CGAL::parameters::Default_named_parameters>
@@ -105,6 +107,7 @@ void generate_surface_quality_metrics(const Remeshing_triangulation& tr,
     {
       auto c = fit->first;
       int s = fit->second;
+
 
       const auto& pi = c->vertex((s+1)%4)->point();
       const auto& pj = c->vertex((s+2)%4)->point();
@@ -269,9 +272,8 @@ void generate_volume_quality_metrics(const Remeshing_triangulation& tr,
   }
 }
 
-
 template <typename Remeshing_triangulation>
-void generate_quality_metrics(const Remeshing_triangulation& tr)
+void generate_quality_metrics(const Remeshing_triangulation& tr, nlohmann::json& results_json)
 {
   Surface_quality surface_quality;
   Volume_quality volume_quality;
@@ -279,30 +281,36 @@ void generate_quality_metrics(const Remeshing_triangulation& tr)
   generate_surface_quality_metrics(tr, surface_quality);
   generate_volume_quality_metrics(tr, volume_quality);
 
-  CGAL_TETRAHEDRAL_REMESHING_SET_PERFORMANCE_DATA("Minimum_edge_length", surface_quality.minimum_edge_length);
-  CGAL_TETRAHEDRAL_REMESHING_SET_PERFORMANCE_DATA("Mean_edge_length", surface_quality.mean_edge_length);
-  CGAL_TETRAHEDRAL_REMESHING_SET_PERFORMANCE_DATA("Maximum_edge_length", surface_quality.maximum_edge_length);
+  // Edge Length
+  append_metric_result(results_json, "Quality", "Edge_Length", "Minimum", surface_quality.minimum_edge_length);
+  append_metric_result(results_json, "Quality", "Edge_Length", "Mean", surface_quality.mean_edge_length);
+  append_metric_result(results_json, "Quality", "Edge_Length", "Maximum", surface_quality.maximum_edge_length);
 
-  CGAL_TETRAHEDRAL_REMESHING_SET_PERFORMANCE_DATA("Minimum_facet_area", surface_quality.minimum_area);
-  CGAL_TETRAHEDRAL_REMESHING_SET_PERFORMANCE_DATA("Mean_facet_area", surface_quality.mean_area);
-  CGAL_TETRAHEDRAL_REMESHING_SET_PERFORMANCE_DATA("Maximum_facet_area", surface_quality.maximum_area);
-  CGAL_TETRAHEDRAL_REMESHING_SET_PERFORMANCE_DATA("Total_area", surface_quality.total_area);
+  // Facet Area
+  append_metric_result(results_json, "Quality", "Facet_Area", "Minimum", surface_quality.minimum_area);
+  append_metric_result(results_json, "Quality", "Facet_Area", "Mean", surface_quality.mean_area);
+  append_metric_result(results_json, "Quality", "Facet_Area", "Maximum", surface_quality.maximum_area);
+  append_metric_result(results_json, "Quality", "Facet_Area", "Total", surface_quality.total_area);
 
-  CGAL_TETRAHEDRAL_REMESHING_SET_PERFORMANCE_DATA("Minimum_facet_angle", surface_quality.minimum_angle);
-  CGAL_TETRAHEDRAL_REMESHING_SET_PERFORMANCE_DATA("Maximum_facet_angle", surface_quality.maximum_angle);
+  // Facet Angle
+  append_metric_result(results_json, "Quality", "Facet_Angle", "Minimum", surface_quality.minimum_angle);
+  append_metric_result(results_json, "Quality", "Facet_Angle", "Maximum", surface_quality.maximum_angle);
 
-  CGAL_TETRAHEDRAL_REMESHING_SET_PERFORMANCE_DATA("Minimum_cell_volume", volume_quality.minimum_volume);
-  CGAL_TETRAHEDRAL_REMESHING_SET_PERFORMANCE_DATA("Mean_cell_volume", volume_quality.mean_volume);
-  CGAL_TETRAHEDRAL_REMESHING_SET_PERFORMANCE_DATA("Maximum_cell_volume", volume_quality.maximum_volume);
-  CGAL_TETRAHEDRAL_REMESHING_SET_PERFORMANCE_DATA("Total_volume", volume_quality.total_volume);
+  // Cell Volume
+  append_metric_result(results_json, "Quality", "Cell_Volume", "Minimum", volume_quality.minimum_volume);
+  append_metric_result(results_json, "Quality", "Cell_Volume", "Mean", volume_quality.mean_volume);
+  append_metric_result(results_json, "Quality", "Cell_Volume", "Maximum", volume_quality.maximum_volume);
+  append_metric_result(results_json, "Quality", "Cell_Volume", "Total", volume_quality.total_volume);
 
-  CGAL_TETRAHEDRAL_REMESHING_SET_PERFORMANCE_DATA("Minimum_dihedral_angle", volume_quality.minimum_dihedral_angle);
-  CGAL_TETRAHEDRAL_REMESHING_SET_PERFORMANCE_DATA("Mean_dihedral_angle", volume_quality.mean_dihedral_angle);
-  CGAL_TETRAHEDRAL_REMESHING_SET_PERFORMANCE_DATA("Maximum_dihedral_angle", volume_quality.maximum_dihedral_angle);
+  // Dihedral Angle
+  append_metric_result(results_json, "Quality", "Dihedral_Angle", "Minimum", volume_quality.minimum_dihedral_angle);
+  append_metric_result(results_json, "Quality", "Dihedral_Angle", "Mean", volume_quality.mean_dihedral_angle);
+  append_metric_result(results_json, "Quality", "Dihedral_Angle", "Maximum", volume_quality.maximum_dihedral_angle);
 
-  CGAL_TETRAHEDRAL_REMESHING_SET_PERFORMANCE_DATA("Smallest_edge_radius_ratio", volume_quality.smallest_edge_radius_ratio);
-  CGAL_TETRAHEDRAL_REMESHING_SET_PERFORMANCE_DATA("Smallest_radius_radius_ratio", volume_quality.smallest_radius_radius_ratio);
-  CGAL_TETRAHEDRAL_REMESHING_SET_PERFORMANCE_DATA("Biggest_V_SMA", volume_quality.biggest_v_sma);
+  // Other quality metrics
+  append_metric_result(results_json, "Quality", "Edge_Radius_Ratio", "Minimum", volume_quality.smallest_edge_radius_ratio);
+  append_metric_result(results_json, "Quality", "Radius_Radius_Ratio", "Minimum", volume_quality.smallest_radius_radius_ratio);
+  append_metric_result(results_json, "Quality", "V_SMA", "Maximum", volume_quality.biggest_v_sma);
 }
 
 #endif // CGAL_MESH_3_BENCHMARK_MESH_3_MESH_QUALITY_H
