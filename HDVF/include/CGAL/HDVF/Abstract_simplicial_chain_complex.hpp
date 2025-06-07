@@ -210,6 +210,31 @@ public:
         return res ;
     }
     
+    /*!
+     * \brief Returns the cofaces of a given chain in dimension `q`.
+     *
+     * The resulting chain lies in dimension `q`+1 and is null if this dimension exceeds the dimension of the complex.
+    */
+    template <typename CoefficientT, int ChainTypeF>
+    CChain cofaces_chain (OSM::Sparse_chain<CoefficientT, ChainTypeF> chain, int q) const
+    {
+        // Compute the cofaces
+        if (q < dim())
+        {
+            CChain fstar_cofaces(nb_cells(q+1)) ;
+            for (typename RChain::const_iterator it = chain.cbegin(); it != chain.cend(); ++it)
+            {
+                // Set the cofaces of it->first in dimension dim+1
+                RChain cofaces(cod(it->first,q)) ;
+                for (typename RChain::const_iterator it2 =  cofaces.cbegin(); it2 != cofaces.cend(); ++it2)
+                    fstar_cofaces.set_coef(it2->first, 1) ;
+            }
+            return fstar_cofaces ;
+        }
+        else
+            return CChain(0) ;
+    }
+    
     /**
      * \brief Method printing informations of the complex.
      *

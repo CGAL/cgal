@@ -99,7 +99,7 @@ public:
      * \param[in] K A sub complex of `L` encoded through a bitboard.
      * \param[in] hdvf_opt Option for HDVF computation (`OPT_BND`, `OPT_F`, `OPT_G` or `OPT_FULL`).
      */
-    Hdvf_duality(const ComplexType& L, Sub_chain_complex_mask<CoefficientType, ComplexType>& K, int hdvf_opt = OPT_FULL, bool co_faces = true) ;
+    Hdvf_duality(const ComplexType& L, Sub_chain_complex_mask<CoefficientType, ComplexType>& K, int hdvf_opt = OPT_FULL) ;
     
     /**
      * \brief Find a valid PairCell of dimension q / q+1 for A *in the current sub chain complex*.
@@ -455,7 +455,6 @@ public:
      */
     virtual CChain export_cohomology_chain (int cell, int dim) const
     {
-        const bool co_faces(this->_hdvf_co_faces);
         if ((dim<0) || (dim>this->_K.dim()))
             throw "Error : export_cohomology_chain with dim out of range" ;
         if (!_subCC.get_bit(dim, cell))
@@ -467,37 +466,25 @@ public:
             // Add 1 to the cell
             fstar_cell.set_coef(cell, 1) ;
             
-            if (co_faces)
+            // Keep cells of the chain belonging to _subCC
+            CChain fstar_cell_sub(fstar_cell.dimension()) ;
+            for (typename CChain::const_iterator it = fstar_cell.begin(); it != fstar_cell.end(); ++it)
             {
-                // Compute the cofaces
-                if (dim < this->_K.dim())
+                
+                if (_subCC.get_bit(dim, it->first))
                 {
-                    CChain fstar_cofaces(this->_K.nb_cells(dim+1)) ;
-                    for (typename RChain::const_iterator it = fstar_cell.cbegin(); it != fstar_cell.cend(); ++it)
-                    {
-                        // Set the cofaces of it->first belonging to _subCC in dimension dim+1
-                        RChain cofaces(this->_K.cod(it->first,dim)) ;
-                        for (typename RChain::const_iterator it2 =  cofaces.cbegin(); it2 != cofaces.cend(); ++it2)
-                        {
-                            if (_subCC.get_bit(dim+1, it2->first))
-                                fstar_cofaces.set_coef(it2->first,  1) ;
-                        }
-                    }
-                    return fstar_cofaces ;
+                    fstar_cell_sub.set_coef(it->first, it->second) ;
                 }
-                else
-                    return CChain(0) ;
             }
-            else
-                return fstar_cell.transpose();
+            return fstar_cell_sub ;
         }
     }
 } ;
 
 // Constructor
 template<typename CoefficientType, typename ComplexType>
-Hdvf_duality<CoefficientType,ComplexType>::Hdvf_duality(const ComplexType& L, Sub_chain_complex_mask<CoefficientType, ComplexType>& K, int hdvf_opt, bool co_faces) :
-Hdvf_core<CoefficientType, ComplexType, OSM::Sparse_chain, OSM::Sub_sparse_matrix>(L,hdvf_opt, co_faces), _L(L), _hdvf_opt(hdvf_opt), _KCC(K), _subCC(K) {}
+Hdvf_duality<CoefficientType,ComplexType>::Hdvf_duality(const ComplexType& L, Sub_chain_complex_mask<CoefficientType, ComplexType>& K, int hdvf_opt) :
+Hdvf_core<CoefficientType, ComplexType, OSM::Sparse_chain, OSM::Sub_sparse_matrix>(L,hdvf_opt), _L(L), _hdvf_opt(hdvf_opt), _KCC(K), _subCC(K) {}
 
 // find a valid PairCell for A in dimension q
 template<typename CoefficientType, typename ComplexType>

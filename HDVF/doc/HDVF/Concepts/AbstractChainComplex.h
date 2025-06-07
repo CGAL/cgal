@@ -70,7 +70,7 @@ If `q` is negative of larger than the dimension of the complex, returns 0.
 int nb_cells(int q);
 
 /*!
-Returns all boundary matrices.
+\brief Returns all boundary matrices.
  
 The function returns constant reference to a vector of column-major sparse matrices. The `q`-th element of this vector is the matrix of \f$\partial_q\f$, which gives the boundary of cells of dimension `q`(as a linear combination of `q`-1 cells).
 
@@ -78,14 +78,14 @@ The function returns constant reference to a vector of column-major sparse matri
 const vector<CMatrix> & get_bnd_matrices() const;
 
 /*!
-Returns the boundary matrix of dimension `q` (ie. the matrix of \f$\partial_q}\f$).
+ \brief Returns the boundary matrix of dimension `q` (ie. the matrix of \f$\partial_q}\f$).
  
 The function returns a column-major sparse matrices.
  */
 const CMatrix & get_bnd_matrix(int q) const;
 
 /*!
-Returns the boundary of the cell of index `id_cell` in dimension `q`.
+ \brief Returns the boundary of the cell of index `id_cell` in dimension `q`.
 
 This boundary is a finite linear combination of cells of dimension `q`-1. It is encoded as a column-major chain (which maps each cell with a non-zero coefficient to this coefficient). This boundary  is thus the `id_cell`-th column of the boundary matrix in dimension `q`.
  
@@ -94,17 +94,25 @@ CChain d(int id_cell, int q);
 
     
 /*!
-Returns the co-boundary of the cell of index `id_cell` in dimension `q`.
+ \brief Returns the co-boundary of the cell of index `id_cell` in dimension `q`.
 
 This boundary is a finite linear combination of cells of dimension `q`+1. It is encoded as a row-major chain (which maps each cell with a non-zero coefficient to this coefficient). This co-boundary  is thus the `id_cell`-th row of the boundary matrix in dimension `q`+1.
 */
-CChain cod(int id_cell, int q);
+RChain cod(int id_cell, int q);
 
 /*!
-Returns the vertices of a given cell (that is, the indices of its faces of dimension 0).
+ \brief Returns the vertices of a given cell (that is, the indices of its faces of dimension 0).
  
 */
-    std::vector<int> bottom_faces(int id_cell, int q) const;
+std::vector<int> bottom_faces(int id_cell, int q) const;
+    
+/*!
+ * \brief Returns the cofaces of a given chain in dimension `q`.
+ *
+ * The resulting chain lies in dimension `q`+1 and is null if this dimension exceeds the dimension of the complex.
+*/
+template <typename CoefficientT, int ChainTypeF>
+CChain cofaces_chain (SparseChain<CoefficientT, ChainTypeF> chain, int q) const;
 
 /// @}
 

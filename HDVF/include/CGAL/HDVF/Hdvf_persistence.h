@@ -223,9 +223,6 @@ protected:
     /** \brief Vector of exported homology/cohomology generators */
     std::vector<std::pair<ExpChain, ExpChain> > _export_g, _export_fstar ;
     
-    /* \brief Export co_faces of cohomology generators (or not). */
-    bool _hdvf_co_faces;
-    
     /** Current time (that is, current index) in the filtration */
     int _t ;
     /** Current time (that is, current index) along each dimension */
@@ -257,7 +254,7 @@ public:
      * \param[in] with_export Boolean option to activate or not the export of PSC labels and homology/cohomology generators for of persistent intervals of positive duration. This information is used by vtk exporters.
      * \param[in] co_faces For persistent intervals, export co-faces of cohomology generators (or not).
      */
-    Hdvf_persistence(const ComplexType& K, const Filtration& f, int hdvf_opt = OPT_BND, bool with_export = false, bool co_faces = false) ;
+    Hdvf_persistence(const ComplexType& K, const Filtration& f, int hdvf_opt = OPT_BND, bool with_export = false) ;
     
     /**
      * \brief Compute a perfect persistent HDVF.
@@ -318,10 +315,6 @@ public:
     /** \brief Get a constant reference on the filtration
      */
     const Filtration& get_filtration() { return _f; }
-    
-    /** \brief Get the co_faces flag (controlling if persistence exports cohomology generators or their co-faces)
-     */
-    bool get_co_faces() { return _hdvf_co_faces; }
     
     /** \brief Compute the (degree) duration of a persistent interval (ie. persistent hole)
      *
@@ -457,7 +450,6 @@ public:
      */
     virtual CChain export_cohomology_chain (int cell, int q) const
     {
-        const bool co_faces(_hdvf_co_faces);
         if ((q<0) || (q>this->_K.dim()))
             throw "Error : export_homology_chain with dim out of range" ;
         //        if (_K_to_per.at(dim).at(cell) > _t_dim.at(dim))
@@ -470,32 +462,14 @@ public:
             // Add 1 to the cell
             fstar_cell.set_coef(cell, 1) ;
             
-            if (co_faces)
+            // Compute the chain with _K indices
+            CChain fstar_cell_K(fstar_cell.dimension()) ;
+            for (typename CChain::const_iterator it = fstar_cell.begin(); it != fstar_cell.end(); ++it)
             {
-                // Compute the cofaces of the chain with _K indices
-                if (q < this->_K.dim())
-                {
-                    CChain fstar_cofaces(this->_K.nb_cells(q+1)) ;
-                    for (typename RChain::const_iterator it = fstar_cell.begin(); it != fstar_cell.end(); ++it)
-                    {
-                        // Set the cofaces of indices_K(it->first) in dimension dim+1
-                        // belonging to _K(_t)
-                        const int i(_per_to_K.at(q).at(it->first)) ;
-                        RChain cofaces(this->_K.cod(i,q)) ;
-                        for (typename RChain::const_iterator it2 =  cofaces.cbegin(); it2 != cofaces.cend(); ++it2)
-                        {
-                            const int id(it2->first) ;
-                            if (_K_to_per.at(q+1).at(id) <=_t_dim.at(q+1))
-                                fstar_cofaces.set_coef(id, 1) ;
-                        }
-                    }
-                    return fstar_cofaces ;
-                }
-                else
-                    return CChain(0) ;
+                const int i(_per_to_K.at(q).at(it->first)) ;
+                fstar_cell_K.set_coef(i, it->second) ;
             }
-            else
-                return fstar_cell.transpose();
+            return fstar_cell_K ;
         }
         else
             throw "Error : trying to export f_star_chain without proper HDVF option" ;
@@ -691,7 +665,7 @@ private:
 
 
 template<typename CoefficientType, typename ComplexType, typename DegType, typename FiltrationType>
-Hdvf_persistence<CoefficientType, ComplexType, DegType, FiltrationType>::Hdvf_persistence(const ComplexType& K, const FiltrationType& f, int hdvf_opt, bool with_export, bool co_faces) : Hdvf_core<CoefficientType,ComplexType, OSM::Sparse_chain, OSM::Sub_sparse_matrix>(K,hdvf_opt), _f(f), _with_export(with_export), _hdvf_co_faces(co_faces), _t(-1)
+Hdvf_persistence<CoefficientType, ComplexType, DegType, FiltrationType>::Hdvf_persistence(const ComplexType& K, const FiltrationType& f, int hdvf_opt, bool with_export) : Hdvf_core<CoefficientType,ComplexType, OSM::Sparse_chain, OSM::Sub_sparse_matrix>(K,hdvf_opt), _f(f), _with_export(with_export), _t(-1)
 {
     // Initialisation of _t_dim, _K_to_per and _per_to_K
     _t_dim.resize(this->_K.dim()+1, 0) ;

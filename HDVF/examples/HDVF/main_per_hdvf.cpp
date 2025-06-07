@@ -81,7 +81,7 @@ template<typename CoefficientType, typename ComplexType, typename DegType, typen
 Hdvf_persistence<CoefficientType, ComplexType, DegType, FiltrationType>& per_HDVF_comput (const ComplexType& complex, const FiltrationType& f, const Options &options)
 {
     typedef Hdvf_persistence<CoefficientType, ComplexType, DegType, FiltrationType> HDVFType ;
-    HDVFType& hdvf(*(new HDVFType(complex, f, options.HDVF_opt, options.with_vtk_export, options.co_faces)));
+    HDVFType& hdvf(*(new HDVFType(complex, f, options.HDVF_opt, options.with_vtk_export)));
     
     cout << "----> START computing persistent homology" << endl ;
     hdvf.compute_perfect_hdvf() ;
@@ -215,7 +215,7 @@ void main_code (const Options &options)
         if (options.with_vtk_export)
         {
             cout << "----> exporting to vtk" << endl ;
-            Per_Simp_output_vtk<CoefficientType,DegType,FiltrationType>(hdvf, complex, options.outfile_root) ;
+            Per_Simp_output_vtk<CoefficientType,DegType,FiltrationType>(hdvf, complex, options.outfile_root, options.co_faces) ;
         }
     }
     // CubComplex
@@ -258,7 +258,7 @@ void main_code (const Options &options)
         if (options.with_vtk_export)
         {
             cout << "----> exporting to vtk" << endl ;
-            Per_Cub_output_vtk<CoefficientType, DegType,FiltrationType>(hdvf, complex, options.outfile_root) ;
+            Per_Cub_output_vtk<CoefficientType, DegType,FiltrationType>(hdvf, complex, options.outfile_root, options.co_faces) ;
         }
     }
 }

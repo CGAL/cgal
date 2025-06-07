@@ -26,7 +26,7 @@ namespace HDVF {
 /*!
  \ingroup PkgHDVFAlgorithmClasses
  
- The class `Hdvf` implements homology and cohomology computation via  homological discrete vector fields (HDVF for short). It derives from `Hdvf_core` and shares all its data and methods.
+ The class `Hdvf` implements homology and cohomology computation via homological discrete vector fields (HDVF for short). It derives from `Hdvf_core` and shares all its data and methods.
  
  But besides construction operations and methods (using the A operation), the `Hdvf` class implements four other HDVF operations: R, M, W and MW together with appropriate "find_pair" functions. These operations change the HDVF (that is change homology / cohomology generators) and thus provide a convenient tool to move inside the "space of homology/cohomology computations".
 
@@ -36,6 +36,30 @@ namespace HDVF {
 - MW operation exchanges a PRIMARY \f$\pi\f$ and a SECONDARY cell \f$\sigma\f$ (under conditions). See the introduction to HDVF for more details on this operation.
 
 Using appropriate combinations of such operations, one can change a HDVF until corresponding homology or cohomology generators meet a given basis or delineate a hole.
+ 
+ Let us consider the following simple cubical complex and a perfect HDVF (top) together with the three corresponding homology generators (bottom, highlighted in pink):
+ 
+ <img src="HDVF_op1.png" align="center" width=50%/><br>
+ <img src="HDVF_op1_g1.png" align="center" width=30%/>
+ <img src="HDVF_op1_g2.png" align="center" width=30%/>
+ <img src="HDVF_op1_g3.png" align="center" width=30%/>
+ 
+ A W operation between cells of Khalimsky coordinates \f$\sigma = (3,2)\f$ (CRITICAL) and \f$\tau=(5,2)\f$ (SECONDARY) produces the following HDVF (homology generators did not change; note that cohomology generators are modified):
+ 
+ <img src="HDVF_op2_W7_11.png" align="center" width=50%/>
+ 
+ <img src="HDVF_op2_g1.png" align="center" width=30%/>
+ <img src="HDVF_op2_g2.png" align="center" width=30%/>
+ <img src="HDVF_op2_g3.png" align="center" width=30%/>
+ 
+ Then, a MW operation between cells of Khalimsky coordinates \f$\sigma' = (4,1)\f$ (PRIMARY) and \f$\tau=(3,2)\f$ (SECONDARY) produces the following HDVF where homology generators become "minimal":
+ 
+ <img src="HDVF_op3_MW5_7.png" align="center" width=50%/>
+ 
+ <img src="HDVF_op3_g1.png" align="center" width=30%/>
+ <img src="HDVF_op3_g2.png" align="center" width=30%/>
+ <img src="HDVF_op3_g3.png" align="center" width=30%/>
+
  
 \cgalModels{HDVF}
  
@@ -59,9 +83,9 @@ public:
      * \param[in] K A chain complex (a model of `AbstractChainComplex`)
      * \param[in] hdvf_opt Option for HDVF computation (`OPT_BND`, `OPT_F`, `OPT_G` or `OPT_FULL`)
      */
-    Hdvf(const ComplexType& K, int hdvf_opt = OPT_FULL, bool co_faces = true) ;
+    Hdvf(const ComplexType& K, int hdvf_opt = OPT_FULL) ;
     
-    /**
+    /*
      * \brief Constructor by copy.
      *
      * Builds a HDVF by copy from another, including options.
@@ -70,7 +94,7 @@ public:
      */
     Hdvf(const Hdvf& hdvf) : Hdvf_core<CoefficientType, ComplexType, OSM::Sparse_chain, OSM::Sparse_matrix>(hdvf) { }
     
-    /**
+    /*
      * \brief HDVF destructor. */
     ~Hdvf() { }
     
@@ -262,7 +286,7 @@ public:
 
 // Constructor for the Hdvf class
 template<typename CoefficientType, typename ComplexType>
-Hdvf<CoefficientType, ComplexType>::Hdvf(const ComplexType& K, int hdvf_opt, bool co_faces) : Hdvf_core<CoefficientType, ComplexType, OSM::Sparse_chain, OSM::Sparse_matrix>(K, hdvf_opt, co_faces) { }
+Hdvf<CoefficientType, ComplexType>::Hdvf(const ComplexType& K, int hdvf_opt) : Hdvf_core<CoefficientType, ComplexType, OSM::Sparse_chain, OSM::Sparse_matrix>(K, hdvf_opt) { }
 
 
 
@@ -974,7 +998,6 @@ void Hdvf<CoefficientType, ComplexType>::R(int pi, int sigma, int q) {
 
 // Method to perform operation M
 // pi is in dimension q, gamma is in dimension q
-//template<typename CoefficientType, typename ComplexType>
 template<typename CoefficientType, typename ComplexType>
 void Hdvf<CoefficientType, ComplexType>::M(int pi, int gamma, int q) {
     //----------------------------------------------- Submatrices of F ----------------------------------------------------
@@ -1009,8 +1032,6 @@ void Hdvf<CoefficientType, ComplexType>::M(int pi, int gamma, int q) {
         //--------------------------------------------- Submatrices of G ------------------------------------------------------
         
         // Extract the relevant column chain from this->_G_col
-        // G11_q is the column chain from this->_G_col[q] at index gamma
-        //        HDVF_coreT::CChain G11_q(OSM::get_column(this->_G_col[q], gamma));
         del_column(this->_G_col[q], gamma); // Remove column gamma from this->_G_col[q]
         
         //---------------------------------------------- Submatrices of H -----------------------------------------------------
@@ -1025,16 +1046,12 @@ void Hdvf<CoefficientType, ComplexType>::M(int pi, int gamma, int q) {
         
         // For DD_q+1 and DD_q:
         // Extract the relevant row chains from this->_DD_col
-        
-        // DD_q+1 (corresponds to the row matrix of this->_DD_col)
         typename HDVF_coreT::RChain D11(OSM::get_row(this->_DD_col[q+1], gamma)); // D11 is the row chain from this->_DD_col[q+1] at index gamma
         del_row(this->_DD_col[q + 1], gamma); // Remove row gamma from this->_DD_col[q + 1]
         
         //--------------------------------------------- Submatrices of DD ------------------------------------------------------
         
         // DD_q (corresponds to the column matrix of this->_DD_col)
-        // HDVF_coreT::CChain D11_q(OSM::get_column(this->_DD_col[q], gamma));
-        // D11_q is the column chain from this->_DD_col[q] at index gamma
         if (q > 0)
             del_column(this->_DD_col[q], gamma); // Remove column gamma from this->_DD_col[q]
         
@@ -1098,7 +1115,6 @@ void Hdvf<CoefficientType, ComplexType>::M(int pi, int gamma, int q) {
 
 // Method to perform operation W
 // gamma is in dimension q, sigma is in dimension q
-
 template<typename CoefficientType, typename ComplexType>
 void Hdvf<CoefficientType, ComplexType>::W(int sigma, int gamma, int q) {
     //----------------------------------------------- Submatrices of G ----------------------------------------------------
@@ -1133,7 +1149,6 @@ void Hdvf<CoefficientType, ComplexType>::W(int sigma, int gamma, int q) {
         //---------------------------------------------- Submatrices of F -----------------------------------------------------
         
         // Extract the row chain from this->_F_row
-        //        RChain F11(OSM::get_row(this->_F_row[q], gamma)); // F11 is the row chain from this->_F_row[q] at index gamma
         
         // Remove the row gamma from this->_F_row
         del_row(this->_F_row[q], gamma);
@@ -1149,7 +1164,6 @@ void Hdvf<CoefficientType, ComplexType>::W(int sigma, int gamma, int q) {
         //--------------------------------------------- Submatrices of DD_q+1 ------------------------------------------------------
         
         // Extract the row chain from this->_DD_col[q+1]
-        // RChain D11_q_plus1(OSM::get_row(this->_DD_col[q+1], gamma)); // D11_q_plus1 is the row chain from this->_DD_col[q + 1] at index gamma
         
         // Remove the row gamma from this->_DD_col
         if (q < this->_K.dim())
@@ -1222,7 +1236,6 @@ void Hdvf<CoefficientType, ComplexType>::W(int sigma, int gamma, int q) {
 
 // Method to perform operation MW
 // gamma is in dimension q, sigma is in dimension q
-
 template<typename CoefficientType, typename ComplexType>
 void Hdvf<CoefficientType, ComplexType>::MW(int pi, int sigma, int q) {
     //----------------------------------------------- Submatrices of G ----------------------------------------------------

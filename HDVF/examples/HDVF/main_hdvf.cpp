@@ -51,7 +51,7 @@ void mesh_complex_output(const MeshType& mesh, const ComplexType& complex, const
 template <typename CoefficientType, typename ComplexType>
 Hdvf<CoefficientType, ComplexType>& HDVF_comput (const ComplexType& complex, const Options &options)
 {
-    Hdvf<CoefficientType, ComplexType>& hdvf(*(new Hdvf<CoefficientType, ComplexType>(complex, options.HDVF_opt, options.co_faces)));
+    Hdvf<CoefficientType, ComplexType>& hdvf(*(new Hdvf<CoefficientType, ComplexType>(complex, options.HDVF_opt)));
     std::vector<PairCell> pairs ;
     if (!options.random)
         pairs = hdvf.compute_perfect_hdvf(options.verbose);

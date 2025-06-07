@@ -29,7 +29,25 @@ namespace HDVF {
 
 // SimpComplex
 
-/** \brief vtk export for SimpComplex */
+/** \brief Export HDVF for a Simplicial_complex to a vtk file.
+ *
+ * \param[in] co_faces Export the cohomology generator or its co-faces (sometimes more convenient for visualisation).
+ *
+ * Below, a sample mesh with, (left) homology generators, (right) two examples of cohomology generators (corresponding generators/co-generators bear similar colours):
+ *
+ * <img src="HDVF_dtorus_homs.png" align="center" width=25%/>
+ * <img src="HDVF_dtorus_cohom1.png" align="center" width=25%/>
+ * <img src="HDVF_dtorus_cohom2.png" align="center" width=25%/>
+ *
+ * The same generators displayed through their co-faces:
+ *
+ * <img src="HDVF_dtorus_cohom1_co.png" align="center" width=25%/>
+ * <img src="HDVF_dtorus_cohom2_co.png" align="center" width=25%/>
+ *
+ * All homology / cohomology generators:
+ *
+ *<img src="HDVF_dtorus_all.png" align="center" width=30%/>
+ */
 
 template <typename CoefType, template <typename, int> typename _ChainType = OSM::Sparse_chain, template <typename, int> typename _SparseMatrixType = OSM::Sparse_matrix, typename VertexIdType = int>
 void Simp_output_vtk (Hdvf_core<CoefType, Simplicial_chain_complex<CoefType>, _ChainType, _SparseMatrixType> &hdvf, Simplicial_chain_complex<CoefType> &complex, string filename = "test", bool co_faces = false)
@@ -49,6 +67,7 @@ void Simp_output_vtk (Hdvf_core<CoefType, Simplicial_chain_complex<CoefType>, _C
         {
             for (int c : criticals.at(q))
             {
+                // Homology generators
                 if (hdvf.get_hdvf_opts() & (OPT_FULL | OPT_G))
                 {
                     string outfile_g(filename+"_G_"+to_string(c)+"_dim_"+to_string(q)+".vtk") ;
@@ -56,25 +75,22 @@ void Simp_output_vtk (Hdvf_core<CoefType, Simplicial_chain_complex<CoefType>, _C
                     OSM::Sparse_chain<CoefType,OSM::COLUMN> chain(hdvf.export_homology_chain(c,q)) ;
                     ComplexType::Simplicial_chain_complex_chain_to_vtk(complex, outfile_g, chain, q, c) ;
                 }
-                if (co_faces)
+                // Cohomology generators
+                // Cohomology generators
+                if (hdvf.get_hdvf_opts() & (OPT_FULL | OPT_F))
                 {
-                    if (q < complex.dim())
+                    string outfile_f(filename+"_FSTAR_"+to_string(c)+"_dim_"+to_string(q)+".vtk") ;
+                    OSM::Sparse_chain<CoefType,OSM::COLUMN> chain(hdvf.export_cohomology_chain(c, q)) ;
+                    if (!co_faces)
                     {
-                        if (hdvf.get_hdvf_opts() & (OPT_FULL | OPT_F))
-                        {
-                            string outfile_f(filename+"_FSTAR_"+to_string(c)+"_dim_"+to_string(q)+".vtk") ;
-                            OSM::Sparse_chain<CoefType,OSM::COLUMN> chain(hdvf.export_cohomology_chain(c,q, co_faces)) ;
-                            ComplexType::Simplicial_chain_complex_chain_to_vtk(complex, outfile_f, chain, q+1, c) ;
-                        }
-                    }
-                }
-                else
-                {
-                    if (hdvf.get_hdvf_opts() & (OPT_FULL | OPT_F))
-                    {
-                        string outfile_f(filename+"_FSTAR_"+to_string(c)+"_dim_"+to_string(q)+".vtk") ;
-                        OSM::Sparse_chain<CoefType,OSM::COLUMN> chain(hdvf.export_cohomology_chain(c,q, co_faces)) ;
                         ComplexType::Simplicial_chain_complex_chain_to_vtk(complex, outfile_f, chain, q, c) ;
+                    }
+                    else
+                    {
+                        if (q < complex.dim())
+                        {
+                            ComplexType::Simplicial_chain_complex_chain_to_vtk(complex, outfile_f, complex.cofaces_chain(chain, q), q+1, c) ;
+                        }
                     }
                 }
             }
@@ -222,42 +238,34 @@ void Per_Simp_output_vtk (Hdvf_persistence<CoefType, Simplicial_chain_complex<Co
             // Export cohomology generators (fstar)
             if ((per_hdvf.get_hdvf_opts() == OPT_FULL) || (per_hdvf.get_hdvf_opts() == OPT_F))
             {
-                if (co_faces)
+                // First generator : filename_i_fstar_sigma_q.vtk
                 {
-                    // First generator : filename_i_fstar_sigma_q.vtk
+                    const int id(per_int_cells.first.first), dim(per_int_cells.first.second) ;
+                    string tmp(out_file+"_fstar_"+to_string(id)+"_"+to_string(dim)+".vtk") ;
+                    if (co_faces)
                     {
-                        const int id(per_int_cells.first.first), dim(per_int_cells.first.second) ;
-                        string tmp(out_file+"_fstar_"+to_string(id)+"_"+to_string(dim)+".vtk") ;
-                        ComplexType::Simplicial_chain_complex_chain_to_vtk(complex, tmp, hole_data.fstar_chain_sigma, dim+1);
+                        ComplexType::Simplicial_chain_complex_chain_to_vtk(complex, tmp, complex.cofaces_chain(hole_data.fstar_chain_sigma, dim), dim+1);
                     }
-                    // Second generator : filename_i_fstar_tau_q+1.vtk
-                    {
-                        const int id(per_int_cells.second.first), dim(per_int_cells.second.second) ;
-                        string tmp(out_file+"_fstar_"+to_string(id)+"_"+to_string(dim)+".vtk") ;
-                        ComplexType::Simplicial_chain_complex_chain_to_vtk(complex, tmp, hole_data.fstar_chain_tau, dim+1);
-                    }
-                }
-                else
-                {
-                    // First generator : filename_i_fstar_sigma_q.vtk
-                    {
-                        const int id(per_int_cells.first.first), dim(per_int_cells.first.second) ;
-                        string tmp(out_file+"_fstar_"+to_string(id)+"_"+to_string(dim)+".vtk") ;
+                    else
                         ComplexType::Simplicial_chain_complex_chain_to_vtk(complex, tmp, hole_data.fstar_chain_sigma, dim);
-                    }
-                    // Second generator : filename_i_fstar_tau_q+1.vtk
+                }
+                // Second generator : filename_i_fstar_tau_q+1.vtk
+                {
+                    const int id(per_int_cells.second.first), dim(per_int_cells.second.second) ;
+                    string tmp(out_file+"_fstar_"+to_string(id)+"_"+to_string(dim)+".vtk") ;
+                    if (co_faces)
                     {
-                        const int id(per_int_cells.second.first), dim(per_int_cells.second.second) ;
-                        string tmp(out_file+"_fstar_"+to_string(id)+"_"+to_string(dim)+".vtk") ;
-                        ComplexType::Simplicial_chain_complex_chain_to_vtk(complex, tmp, hole_data.fstar_chain_tau, dim);
+                        ComplexType::Simplicial_chain_complex_chain_to_vtk(complex, tmp, complex.cofaces_chain(hole_data.fstar_chain_tau, dim), dim+1);
                     }
+                    else
+                        ComplexType::Simplicial_chain_complex_chain_to_vtk(complex, tmp, hole_data.fstar_chain_tau, dim);
                 }
             }
         }
         ++i ;
     }
     info_file.close() ;
-    Simp_output_vtk<CoefType>(per_hdvf, complex, filename+"_inf") ;
+    Simp_output_vtk<CoefType>(per_hdvf, complex, filename+"_inf", co_faces) ;
 }
 
 } /* end namespace HDVF */

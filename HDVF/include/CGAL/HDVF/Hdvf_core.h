@@ -140,7 +140,7 @@ public:
      * \param[in] K A chain complex (a model of `AbstractChainComplex`)
      * \param[in] hdvf_opt Option for HDVF computation (`OPT_BND`, `OPT_F`, `OPT_G` or `OPT_FULL`)
      */
-    Hdvf_core(const ComplexType& K, int hdvf_opt = OPT_FULL, bool hdvf_cofaces = true) ;
+    Hdvf_core(const ComplexType& K, int hdvf_opt = OPT_FULL) ;
     
     /*
      * \brief Constructor by copy.
@@ -374,11 +374,10 @@ public:
      *
      * \param[in] cell Index of the (critical) cell.
      * \param[in] dim Dimension of the (critical) cell.
-     * \param[in] co_faces Export the cohomology generator or its co-faces (sometimes more convenient for visualisation). 
      *
      * \return A column-major chain.
      */
-    virtual CChain export_cohomology_chain (int cell, int dim, bool co_faces = false) const
+    virtual CChain export_cohomology_chain (int cell, int dim) const
     {
         if ((dim<0) || (dim>_K.dim()))
             throw "Error : export_homology_chain with dim out of range" ;
@@ -387,28 +386,8 @@ public:
             RChain fstar_cell(OSM::get_row(_F_row.at(dim), cell)) ;
             // Add 1 to the cell
             fstar_cell.set_coef(cell, 1) ;
-            if (co_faces)
-            {
-                // Compute the cofaces
-                if (dim < _K.dim())
-                {
-                    CChain fstar_cofaces(_K.nb_cells(dim+1)) ;
-                    for (typename RChain::const_iterator it = fstar_cell.cbegin(); it != fstar_cell.cend(); ++it)
-                    {
-                        // Set the cofaces of it->first in dimension dim+1
-                        RChain cofaces(_K.cod(it->first,dim)) ;
-                        for (typename RChain::const_iterator it2 =  cofaces.cbegin(); it2 != cofaces.cend(); ++it2)
-                            fstar_cofaces.set_coef(it2->first, 1) ;
-                    }
-                    return fstar_cofaces ;
-                }
-                else
-                    return CChain(0) ;
-            }
-            else
-            {
-                return fstar_cell.transpose() ;
-            }
+            
+            return fstar_cell.transpose() ;
                 
         }
         else
@@ -472,7 +451,7 @@ protected:
 
 // Constructor for the Hdvf_core class
 template<typename CoefficientType, typename ComplexType, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
-Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::Hdvf_core(const ComplexType& K, int hdvf_opt, bool hdvf_cofaces) : _K(K) {
+Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::Hdvf_core(const ComplexType& K, int hdvf_opt) : _K(K) {
     // Get the dimension of the simplicial complex
     int dim = _K.dim();
     std::cout << "----> Starting Hdvf_core creation / dim " << dim << std::endl ;
