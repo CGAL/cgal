@@ -1,4 +1,4 @@
-// Copyright (c) 2025 GeometryFactory (France).
+﻿// Copyright (c) 2025 GeometryFactory (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -19,9 +19,9 @@
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Side_of_triangle_mesh.h>
-//#ifdef CGAL_EIGEN3_ENABLED
+#ifdef CGAL_EIGEN3_ENABLED
 #include <Eigen/Dense>
-//#endif
+#endif
 namespace CGAL {
 
 template <typename TriangleMesh, typename GT> 
@@ -33,7 +33,7 @@ public:
   using Sphere_3 = typename GT::Sphere_3;
   using Sphere_ID = std::size_t;
   using vertex_descriptor = typename boost::graph_traits<TriangleMesh>::vertex_descriptor;
-
+  static const Sphere_ID INVALID_SPHERE_ID = std::numeric_limits<Sphere_ID>::max();
   struct MedialSphere
   {
     Sphere_ID id;
@@ -72,6 +72,7 @@ public:
     bool can_split() const { return !do_not_split && split_vertex != boost::graph_traits<TriangleMesh>::null_vertex(); }
     void set_do_not_split(bool value) { do_not_split = value; }
     std::vector<vertex_descriptor>& get_cluster_vertices() { return cluster_vertices; }
+    void add_cluster_vertex(vertex_descriptor v) { cluster_vertices.push_back(v); }
   };
 
 private:
@@ -93,7 +94,15 @@ public:
     auto it = id_to_index_.find(id);
     if(it == id_to_index_.end())
       return;
-    spheres_[it->second].reset();
+    std::size_t index_to_remove = it->second;
+    std::size_t last_index = spheres_.size() - 1;
+
+    if(index_to_remove != last_index) {
+      std::swap(spheres_[index_to_remove], spheres_[last_index]);
+      Sphere_ID swapped_id = spheres_[index_to_remove]->get_id();
+      id_to_index_[swapped_id] = index_to_remove;
+    }
+    spheres_.pop_back();
     id_to_index_.erase(it);
   }
   void reset() {
@@ -187,7 +196,7 @@ public:
       os << e.first << " " << e.second << "\n";
 
     // Write faces
-    for(const auto& f : faces)
+   for(const auto& f : faces)
       os << "3 " << f[0] << " " << f[1] << " " << f[2] << "\n";
 
 
@@ -238,8 +247,6 @@ shrinking_ball_algorithm(const TriangleMesh& tmesh,
   const FT denoise_preserve = FT(20.0) * CGAL_PI / FT(180.0);
   const FT delta_convergence = FT(1e-5);
   const int iteration_limit = 30;
-
-  Point_3 closest_point = tree.closest_point(p);
 
   int j = 0;
   FT r = FT(0.5); // initial radius
@@ -309,6 +316,383 @@ shrinking_ball_algorithm(const TriangleMesh& tmesh,
  * \cgalNamedParamsEnd
  *
  */
+
+template <typename TriangleMesh, typename GT, typename VertexPointMap, typename FaceAreaMap, typename VertexAreaMap>
+void compute_vertex_areas(const TriangleMesh& tmesh,
+                          const VertexPointMap& vpm,
+                          FaceAreaMap& face_area_map,
+                          VertexAreaMap& vertex_area_map) {
+  namespace PMP = CGAL::Polygon_mesh_processing;
+  using face_descriptor = typename boost::graph_traits<TriangleMesh>::face_descriptor;
+  using vertex_descriptor = typename boost::graph_traits<TriangleMesh>::vertex_descriptor;
+
+  for(face_descriptor f : faces(tmesh)) {
+    double area = PMP::face_area(f, tmesh, parameters::vertex_point_map(vpm));
+    put(face_area_map, f, area);
+    for(vertex_descriptor v : vertices_around_face(halfedge(f, tmesh), tmesh)) {
+      put(vertex_area_map, v, get(vertex_area_map, v) + area / 3.0);
+    }
+  }
+}
+
+template <typename TriangleMesh,
+          typename GT,
+          typename Tree,
+          typename VertexPointMap,
+          typename VertexNormalMap,
+          typename VertexMedialSpherePosMap,
+          typename VertexMedialSphereRadiusMap>
+void compute_shrinking_balls(const TriangleMesh& tmesh,
+                             const VertexPointMap& vpm,
+                             const Tree& tree,
+                             const VertexNormalMap& vertex_normal_map,
+                             VertexMedialSpherePosMap& vertex_medial_sphere_pos_map,
+                             VertexMedialSphereRadiusMap& vertex_medial_sphere_radius_map) {
+  using Vector_3 = typename GT::Vector_3;
+  using Point_3 = typename GT::Point_3;
+  using vertex_descriptor = typename boost::graph_traits<TriangleMesh>::vertex_descriptor;
+
+  std::cout << "Compute shrinking ball for each vertex" << std::endl;
+  for(vertex_descriptor v : vertices(tmesh)) {
+    Vector_3 normal = get(vertex_normal_map, v);
+    Point_3 p = get(vpm, v);
+    auto [center, radius] = shrinking_ball_algorithm<TriangleMesh, GT, Tree>(tmesh, p, normal, tree);
+    put(vertex_medial_sphere_pos_map, v, center);
+    put(vertex_medial_sphere_radius_map, v, radius);
+  }
+}
+
+template <typename TriangleMesh,
+          typename GT,
+          typename VertexPointMap,
+          typename VertexAreaMap,
+          typename VertexNormalMap,
+          typename VertexClusterSphereMap>
+void assign_vertices_to_clusters(const TriangleMesh& tmesh,
+                                 const VertexPointMap& vpm,
+                                 MedialSphereMesh<TriangleMesh, GT>& sphere_mesh,
+                                 typename GT::FT lambda,
+                                 const VertexAreaMap& vertex_area_map,
+                                 const VertexNormalMap& vertex_normal_map,
+                                 VertexClusterSphereMap& vertex_cluster_sphere_map) {
+  using FT = typename GT::FT;
+  using Point_3 = typename GT::Point_3;
+  using Vector_3 = typename GT::Vector_3;
+  using vertex_descriptor = typename boost::graph_traits<TriangleMesh>::vertex_descriptor;
+  using MSMesh = MedialSphereMesh<TriangleMesh, GT>;
+  using Sphere_ID = typename MSMesh::Sphere_ID;
+  for(vertex_descriptor v : vertices(tmesh)) {
+    FT area = get(vertex_area_map, v);
+    Point_3 p = get(vpm, v);
+    FT min_distance = std::numeric_limits<FT>::max();
+    Vector_3 normal = get(vertex_normal_map, v);
+    Sphere_ID closest_sphere_id;
+
+    // Find the sphere with smallest distance to the vertex
+    for(auto& sphere : sphere_mesh.spheres()) {
+      Point_3 center = sphere->get_center();
+      FT radius = sphere->get_radius();
+
+      // compute euclidean distance
+      FT dist_eucl = CGAL::approximate_sqrt((p - center).squared_length()) - radius;
+      dist_eucl *= dist_eucl;
+      dist_eucl *= area; // weight by area
+
+      // compute sqem distance
+      FT dist_sqem = CGAL::scalar_product(p - center, normal) - radius;
+      dist_sqem *= dist_sqem;
+      dist_sqem *= area; // weight by area
+
+      FT distance = dist_sqem + lambda * dist_eucl;
+      if(distance < min_distance) {
+        min_distance = distance;
+        closest_sphere_id = sphere->get_id();
+      }
+    }
+    // Update the closest sphere
+    put(vertex_cluster_sphere_map, v, closest_sphere_id);
+    sphere_mesh.get_sphere(closest_sphere_id)->accumulate_cluster_area(area);
+    sphere_mesh.get_sphere(closest_sphere_id)->add_cluster_vertex(v);
+  }
+  std::vector<Sphere_ID> sphere_ids_to_remove;
+    for(auto& sphere : sphere_mesh.spheres()) { 
+      auto& cluster_vertices = sphere->get_cluster_vertices();
+      if(cluster_vertices.size() <= 4) {
+        for(vertex_descriptor v : cluster_vertices) {
+          put(vertex_cluster_sphere_map, v, MSMesh::INVALID_SPHERE_ID);
+        }
+        sphere_ids_to_remove.push_back(sphere->get_id());
+      }
+
+  }
+    for(Sphere_ID id : sphere_ids_to_remove) {
+    std::cout << "Removing sphere with ID: " << id << " due to small cluster size." << std::endl;
+      sphere_mesh.remove(id); // remove spheres with small clusters
+    }
+ 
+}
+
+template <typename TriangleMesh, typename GT, typename Tree, typename VertexPointMap>
+void correct_sphere(
+    const TriangleMesh& tmesh,
+    const Tree& tree,
+    const VertexPointMap& vpm,
+    const GT& traits,
+    std::shared_ptr<typename MedialSphereMesh<TriangleMesh, GT>::MedialSphere> sphere,
+    const Eigen::Matrix<typename GT::FT, 4, 1>& optimized_sphere_params) {
+  using FT = typename GT::FT;
+  using Point_3 = typename GT::Point_3;
+  using Vector_3 = typename GT::Vector_3;
+
+  Side_of_triangle_mesh<TriangleMesh, GT, VertexPointMap, Tree> side_of(tree, traits);
+
+  Point_3 optimal_center(optimized_sphere_params(0), optimized_sphere_params(1), optimized_sphere_params(2));
+  Point_3 closest_point = tree.closest_point(optimal_center);
+  FT len = (optimal_center - closest_point).squared_length();
+
+  if(len < 1e-12) {
+    std::cerr << "Warning: optimal center is too close to the closest point, skipping shrinking ball optimization.\n";
+    return;
+  }
+
+  Vector_3 normal =
+      (closest_point - optimal_center) / CGAL::approximate_sqrt((optimal_center - closest_point).squared_length());
+
+  if((side_of(optimal_center) == CGAL::ON_UNBOUNDED_SIDE))
+    normal = -normal; // if the center is outside, flip the normal
+
+  Point_3 test = closest_point - normal * 1e-3;
+  if(side_of(test) != CGAL::ON_BOUNDED_SIDE) {
+    std::cerr << "Warning: normal may point outward!\n";
+  }
+
+  auto [c, r] = shrinking_ball_algorithm<TriangleMesh, GT, Tree>(tmesh, closest_point, normal, tree);
+  sphere->set_center(c);
+  sphere->set_radius(r);
+
+  /* std::cout << "Optimized center: " << optimized_sphere_params(0) << ", " << optimized_sphere_params(1) << ", "
+            << optimized_sphere_params(2) << ", radius: " << optimized_sphere_params(3)
+            << "\nCorrected center: " << c.x() << ", " << c.y() << ", " << c.z() << ", radius: " << r << std::endl;
+*/
+            }
+
+#ifdef CGAL_EIGEN3_ENABLED
+template <typename TriangleMesh,
+          typename GT,
+          typename VertexPointMap,
+          typename VertexAreaMap,
+          typename FaceNormalMap,
+          typename FaceAreaMap,
+          typename Tree>
+void optimize_sphere_positions(const TriangleMesh& tmesh,
+                               const VertexPointMap& vpm,
+                               MedialSphereMesh<TriangleMesh, GT>& sphere_mesh,
+                               typename GT::FT lambda,
+                               const VertexAreaMap& vertex_area_map,
+                               const FaceNormalMap& face_normal_map,
+                               const FaceAreaMap& face_area_map,
+                               const Tree& tree,
+                               const GT& traits,
+                               bool use_shrinking_ball_correction = false) {
+  using FT = typename GT::FT;
+  using Point_3 = typename GT::Point_3;
+  using vertex_descriptor = typename boost::graph_traits<TriangleMesh>::vertex_descriptor;
+  using face_descriptor = typename boost::graph_traits<TriangleMesh>::face_descriptor;
+  using Sphere_ID = typename MedialSphereMesh<TriangleMesh, GT>::Sphere_ID;
+  using EMat = Eigen::Matrix<FT, Eigen::Dynamic, Eigen::Dynamic>;
+  using EVec = Eigen::Matrix<FT, Eigen::Dynamic, 1>;
+  using EVec3 = Eigen::Matrix<FT, 3, 1>;
+  using EVec4 = Eigen::Matrix<FT, 4, 1>;
+  using LDLTSolver = Eigen::LDLT<EMat>;
+
+  for(auto& sphere : sphere_mesh.spheres()) {
+    Sphere_ID id = sphere->get_id();
+    auto& cluster_vertices = sphere->get_cluster_vertices();
+    Point_3 center = sphere->get_center();
+    FT radius = sphere->get_radius();
+
+    auto nrows = 2 * cluster_vertices.size();
+    EMat J(nrows, 4);
+    J.setZero();
+    EVec b(nrows);
+    b.setZero();
+    int idx = 0;
+    EVec4 s;
+    s << center.x(), center.y(), center.z(), radius;
+
+    for(int i = 0; i < 10; i++) {
+      idx = 0;
+
+      for(vertex_descriptor v : cluster_vertices) {
+        Point_3 p = get(vpm, v);
+        EVec3 pos(p.x(), p.y(), p.z());
+
+        // compute sqem energy
+        EVec4 lhs = EVec4::Zero();
+        FT rhs = 0.0;
+        for(face_descriptor f : faces_around_target(halfedge(v, tmesh), tmesh)) {
+          typename GT::Vector_3 normal = get(face_normal_map, f);
+          EVec3 normal_eigen(normal.x(), normal.y(), normal.z());
+          EVec4 n4(normal_eigen(0), normal_eigen(1), normal_eigen(2), 1.0);
+          FT area = CGAL::approximate_sqrt(get(face_area_map, f) / 3.0);
+          lhs += -n4 * area;
+          rhs += -1.0 * ((pos - EVec3(s(0), s(1), s(2))).dot(normal_eigen) - s(3)) * area;
+        }
+        J.row(idx) = lhs;
+        b(idx) = rhs;
+        ++idx;
+
+        // compute euclidean energy
+        EVec3 d = pos - EVec3(s(0), s(1), s(2));
+        FT l = d.norm();
+        FT area = CGAL::approximate_sqrt(get(vertex_area_map, v));
+        J.row(idx) = EVec4(-(d[0] / l), -(d[1] / l), -(d[2] / l), -1.0) * area * lambda;
+        b(idx) = -(l - s(3)) * area * lambda;
+        ++idx;
+      }
+
+      LDLTSolver solver(J.transpose() * J);
+      EVec4 delta_s = solver.solve(J.transpose() * b);
+      s += delta_s;
+      if(delta_s.norm() < 1e-8) {
+        //std::cout << "Convergence achieved after " << i + 1 << " iterations." << std::endl;
+        break; // convergence
+      }
+      sphere->set_do_not_split(false); // reset the split flag
+    }
+    if(use_shrinking_ball_correction) {
+      correct_sphere<TriangleMesh, GT, Tree, VertexPointMap>(tmesh, tree, vpm, traits, sphere, s);
+    } else {
+      // Update sphere with optimized parameters
+      sphere->set_center(Point_3(s(0), s(1), s(2)));
+      sphere->set_radius(s(3));
+    }
+  }
+  
+}
+#endif
+
+template <typename TriangleMesh,
+          typename GT,
+          typename VertexPointMap,
+          typename VertexAreaMap,
+          typename VertexNormalMap,
+          typename VertexErrorMap>
+typename GT::FT compute_sphere_errors(const TriangleMesh& tmesh,
+                                      const VertexPointMap& vpm,
+                                      MedialSphereMesh<TriangleMesh, GT>& sphere_mesh,
+                                      typename GT::FT lambda,
+                                      const VertexAreaMap& vertex_area_map,
+                                      const VertexNormalMap& vertex_normal_map,
+                                      VertexErrorMap& vertex_error_map) {
+  using FT = typename GT::FT;
+  using Point_3 = typename GT::Point_3;
+  using vertex_descriptor = typename boost::graph_traits<TriangleMesh>::vertex_descriptor;
+
+  FT total_error = FT(0.0);
+
+  for(auto& sphere : sphere_mesh.spheres()) {
+    auto& cluster_vertices = sphere->get_cluster_vertices();
+    Point_3 center = sphere->get_center();
+    FT radius = sphere->get_radius();
+    FT max_dist = std::numeric_limits<FT>::min();
+    FT error = 0.0;
+    FT area = sphere->get_area();
+    if(area <= FT(0.0)) {
+      std::cerr << "Warning: sphere with zero area encountered, skipping error computation." << std::endl;
+      continue; // skip spheres with zero area
+    }
+
+    for(vertex_descriptor v : cluster_vertices) {
+      Point_3 p = get(vpm, v);
+      FT area = get(vertex_area_map, v);
+      FT dist_sqem = CGAL::scalar_product(p - center, get(vertex_normal_map, v)) - radius;
+      dist_sqem *= dist_sqem; // square the distance
+      dist_sqem *= area;      // weight by area
+
+      FT dist_eucl = CGAL::approximate_sqrt((p - center).squared_length()) - radius;
+      dist_eucl *= dist_eucl; // square the distance
+      dist_eucl *= area;      // weight by area
+      FT distance = dist_sqem + lambda * dist_eucl;
+      error += distance;
+
+      put(vertex_error_map, v, distance);
+      if(distance > max_dist) {
+        max_dist = distance;
+        sphere->split_vertex = v; // update the split vertex
+      }
+    }
+    sphere->error = error / sphere->get_area(); // average error
+    total_error += sphere->error;
+  }
+
+  return total_error;
+}
+
+template <typename TriangleMesh, typename GT, typename VertexClusterSphereMap>
+void update_sphere_neighbors(const TriangleMesh& tmesh,
+                             MedialSphereMesh<TriangleMesh, GT>& sphere_mesh,
+                             const VertexClusterSphereMap& vertex_cluster_sphere_map) {
+  using edge_descriptor = typename boost::graph_traits<TriangleMesh>::edge_descriptor;
+  using vertex_descriptor = typename boost::graph_traits<TriangleMesh>::vertex_descriptor;
+  using Sphere_ID = typename MedialSphereMesh<TriangleMesh, GT>::Sphere_ID;
+  using MedialSphereMesh = typename MedialSphereMesh<TriangleMesh, GT>;
+
+  for(edge_descriptor e : edges(tmesh)) {
+    vertex_descriptor v1 = source(e, tmesh);
+    vertex_descriptor v2 = target(e, tmesh);
+    Sphere_ID s1 = get(vertex_cluster_sphere_map, v1);
+    Sphere_ID s2 = get(vertex_cluster_sphere_map, v2);
+    if(s1 != s2 && s1 != MedialSphereMesh::INVALID_SPHERE_ID && s2 != MedialSphereMesh::INVALID_SPHERE_ID) {
+      auto sphere1 = sphere_mesh.get_sphere(s1);
+      auto sphere2 = sphere_mesh.get_sphere(s2);
+
+      if(sphere1->neighbors.find(s2) == sphere1->neighbors.end()) {
+        sphere1->add_neighbor(s2);
+        sphere2->add_neighbor(s1);
+        
+      }
+    }
+  }
+}
+
+template <typename TriangleMesh, typename GT, typename VertexMedialSpherePosMap, typename VertexMedialSphereRadiusMap>
+void split_spheres(MedialSphereMesh<TriangleMesh, GT>& sphere_mesh,
+                   int desired_number_of_spheres,
+                   const VertexMedialSpherePosMap& vertex_medial_sphere_pos_map,
+                   const VertexMedialSphereRadiusMap& vertex_medial_sphere_radius_map) {
+  using MedialSphere = typename MedialSphereMesh<TriangleMesh, GT>::MedialSphere;
+  using Sphere_ID = typename MedialSphereMesh<TriangleMesh, GT>::Sphere_ID;
+  using Sphere_3 = typename GT::Sphere_3;
+  using vertex_descriptor = typename boost::graph_traits<TriangleMesh>::vertex_descriptor;
+
+  if(sphere_mesh.nb_spheres() >= desired_number_of_spheres) {
+    return;
+  }
+
+  std::cout << "Start Split spheres" << std::endl;
+  std::vector<std::shared_ptr<MedialSphere>> sorted_sphere = sphere_mesh.spheres();
+  std::sort(sorted_sphere.begin(), sorted_sphere.end(),
+            [](const std::shared_ptr<MedialSphere>& a, const std::shared_ptr<MedialSphere>& b) {
+              return a->get_radius() > b->get_radius(); // sort by radius
+            });
+
+  int to_split_max = std::min(int(std::ceil(sphere_mesh.nb_spheres() * 0.2)), 10);
+  for(auto& sphere : sorted_sphere) {
+    if(sphere_mesh.nb_spheres() >= desired_number_of_spheres)
+      break;
+    if(to_split_max > 0 && sphere->can_split()) {
+      for(Sphere_ID neighbor_id : sphere->neighbors) {
+          sphere_mesh.get_sphere(neighbor_id)->set_do_not_split(true);
+      }
+      vertex_descriptor split_vertex = sphere->split_vertex;
+      sphere_mesh.add_sphere(Sphere_3(get(vertex_medial_sphere_pos_map, split_vertex),
+                                      get(vertex_medial_sphere_radius_map, split_vertex)));
+      to_split_max--;
+    }
+  }
+}
+
 template <class TriangleMesh, class NamedParameters = parameters::Default_named_parameters>
 void variational_medial_axis_sampling(const TriangleMesh& tmesh,
                                       const NamedParameters& np = parameters::default_values()) {
@@ -317,10 +701,10 @@ void variational_medial_axis_sampling(const TriangleMesh& tmesh,
   using parameters::get_parameter;
 
   using GT = typename GetGeomTraits<TriangleMesh, NamedParameters>::type;
-  using FT = GT::FT;
-  using Point_3 = GT::Point_3;
-  using Vector_3 = GT::Vector_3;
-  using Sphere_3 = GT::Sphere_3;
+  using FT = typename GT::FT;
+  using Point_3 = typename GT::Point_3;
+  using Vector_3 = typename GT::Vector_3;
+  using Sphere_3 = typename GT::Sphere_3;
   using VPM = typename CGAL::GetVertexPointMap<TriangleMesh, NamedParameters>::type;
   using Tree = AABB_tree<AABB_traits_3<GT, AABB_face_graph_triangle_primitive<TriangleMesh, VPM>>>;
 
@@ -328,17 +712,11 @@ void variational_medial_axis_sampling(const TriangleMesh& tmesh,
   using edge_descriptor = typename boost::graph_traits<TriangleMesh>::edge_descriptor;
   using vertex_descriptor = typename boost::graph_traits<TriangleMesh>::vertex_descriptor;
 
-#ifdef CGAL_EIGEN3_ENABLED
-  using EMat = Eigen::Matrix<FT, Eigen::Dynamic, Eigen::Dynamic>;
-  using EVec = Eigen::Matrix<FT, Eigen::Dynamic, 1>;
-  using EVec3 = Eigen::Matrix<FT, 3, 1>;
-  using EVec4 = Eigen::Matrix<FT, 4, 1>;
-  using LDLTSolver = Eigen::LDLT<EMat>;
-#endif
-  GT traits = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
+  using Sphere_ID = typename MedialSphereMesh<TriangleMesh, GT>::Sphere_ID;
+  using MedialSphere = typename MedialSphereMesh<TriangleMesh, GT>::MedialSphere;
+  using MedialSphereMesh = typename MedialSphereMesh<TriangleMesh, GT>;
 
-  using Sphere_ID = MedialSphereMesh<TriangleMesh, GT>::Sphere_ID;
-  using MedialSphere = MedialSphereMesh<TriangleMesh, GT>::MedialSphere;
+  // Property map types
   using Vertex_normal_tag = CGAL::dynamic_vertex_property_t<Vector_3>;
   using Vertex_normal_map = typename boost::property_map<TriangleMesh, Vertex_normal_tag>::const_type;
   using Vertex_area_tag = CGAL::dynamic_vertex_property_t<FT>;
@@ -353,7 +731,6 @@ void variational_medial_axis_sampling(const TriangleMesh& tmesh,
   using Vertex_medial_sphere_radius_tag = CGAL::dynamic_vertex_property_t<FT>;
   using Vertex_medial_sphere_radius_map =
       typename boost::property_map<TriangleMesh, Vertex_medial_sphere_radius_tag>::const_type;
-
   using Face_normal_tag = CGAL::dynamic_face_property_t<Vector_3>;
   using Face_normal_map = typename boost::property_map<TriangleMesh, Face_normal_tag>::const_type;
   using Face_area_tag = CGAL::dynamic_face_property_t<FT>;
@@ -364,267 +741,101 @@ void variational_medial_axis_sampling(const TriangleMesh& tmesh,
 
   constexpr bool parallel_execution = std::is_same_v<Parallel_tag, Concurrency_tag>;
 
+  GT traits = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
   VPM vpm =
       choose_parameter(get_parameter(np, internal_np::vertex_point), get_const_property_map(CGAL::vertex_point, tmesh));
 
-  // build an AABB-tree of faces
+  // Build AABB-tree
   Tree tree(faces(tmesh).begin(), faces(tmesh).end(), tmesh, vpm);
   tree.accelerate_distance_queries();
   CGAL::Bbox_3 bbox = tree.bbox();
   std::cout << "AABB-tree bounding box: " << bbox << std::endl;
-  
-  // create property maps
+
+  // Create property maps
   Vertex_normal_map vertex_normal_map = get(Vertex_normal_tag(), tmesh, Vector_3(0., 0., 0.));
   Vertex_area_map vertex_area_map = get(Vertex_area_tag(), tmesh, 0.);
   Vertex_error_map vertex_error_map = get(Vertex_error_tag(), tmesh, 0.);
-  Vertex_cluster_sphere_map vertex_cluster_sphere_map = get(Vertex_cluster_sphere_tag(), tmesh, Sphere_ID(0));
+  Vertex_cluster_sphere_map vertex_cluster_sphere_map =
+      get(Vertex_cluster_sphere_tag(), tmesh, MedialSphereMesh::INVALID_SPHERE_ID);
   Vertex_medial_sphere_pos_map vertex_medial_sphere_pos_map =
       get(Vertex_medial_sphere_pos_tag(), tmesh, Point_3(0., 0., 0.));
   Vertex_medial_sphere_radius_map vertex_medial_sphere_radius_map =
       get(Vertex_medial_sphere_radius_tag(), tmesh, FT(0.));
-
   Face_normal_map face_normal_map = get(Face_normal_tag(), tmesh, Vector_3(0., 0., 0.));
   Face_area_map face_area_map = get(Face_area_tag(), tmesh, 0.);
-  // compute vertex normal
+
+  // Compute normals
   PMP::compute_vertex_normals(tmesh, vertex_normal_map, parameters::geom_traits(traits).vertex_point_map(vpm));
   PMP::compute_face_normals(tmesh, face_normal_map, parameters::geom_traits(traits).vertex_point_map(vpm));
-  // compute vertex areas
-  for(face_descriptor f : faces(tmesh)) {
-    double area = PMP::face_area(f, tmesh, parameters::vertex_point_map(vpm));
-    put(face_area_map, f, area);
-    for(vertex_descriptor v : vertices_around_face(halfedge(f, tmesh), tmesh)) {
-      put(vertex_area_map, v, get(vertex_area_map, v) + area / 3.0);
-    }
-  }
-  MedialSphereMesh<TriangleMesh, GT> sphere_mesh;
+
+  // Compute vertex areas
+  compute_vertex_areas<TriangleMesh, GT>(tmesh, vpm, face_area_map, vertex_area_map);
+
+  MedialSphereMesh sphere_mesh;
   int desired_number_of_spheres = 100; // TO DO: pass desired number of sphere by parameter
   FT lambda = FT(0.2);                 // TO DO: pass lambda by parameter
-  int iteration_count = 0;
+  int iteration_count = 0; 
+  int max_iteration =1000;
   FT total_error = FT(0.0);
   FT total_error_diff = std::numeric_limits<FT>::max();
   FT last_total_error = total_error;
   Sphere_3 init_sphere(Point_3(0., 0., 0.), FT(1.0)); // initial sphere
+
   sphere_mesh.add_sphere(init_sphere);
 
-  //------------------------------------------------------------
-  //- Compute shrinking ball of each vertex                    -
-  //------------------------------------------------------------
-  std::cout << "Compute shrinking ball for each vertex" << std::endl;
-  for(auto& v : vertices(tmesh)) {
-    Vector_3 normal = get(vertex_normal_map, v);
-    Point_3 p = get(vpm, v);
-    auto [center, radius] = shrinking_ball_algorithm<TriangleMesh, GT, Tree>(tmesh, p, normal, tree);
-    put(vertex_medial_sphere_pos_map, v, center);
-    put(vertex_medial_sphere_radius_map, v, radius);
-  }
+  // Compute shrinking ball of each vertex
+  compute_shrinking_balls<TriangleMesh, GT, Tree>(tmesh, vpm, tree, vertex_normal_map, vertex_medial_sphere_pos_map,
+                                                  vertex_medial_sphere_radius_map);
 
-  while(sphere_mesh.nb_spheres() < desired_number_of_spheres || total_error_diff> 1e-5) {
+  while(iteration_count< max_iteration) {
     // Clean data
     sphere_mesh.reset();
- 
-    //------------------------------------------------------------
-    //- Compute the cluster sphere for each vertex               -
-    //------------------------------------------------------------
 
-    for(vertex_descriptor v : vertices(tmesh)) {
-      FT area = get(vertex_area_map, v);
-      Point_3 p = get(vpm, v);
-      FT min_distance = std::numeric_limits<FT>::max();
-      Vector_3 normal = get(vertex_normal_map, v);
-      Sphere_ID closest_sphere_id;
+    // Compute the cluster sphere for each vertex
+    assign_vertices_to_clusters<TriangleMesh, GT>(tmesh, vpm, sphere_mesh, lambda, vertex_area_map, vertex_normal_map,
+                                                  vertex_cluster_sphere_map);
 
-      // Find the sphere with smallest distance to the vertex
-      for(auto& sphere : sphere_mesh.spheres()) {
-        Point_3 center = sphere->get_center();
-        FT radius = sphere->get_radius();
+#ifdef CGAL_EIGEN3_ENABLED
+    // Update the sphere by optimizing the combined metric
+    optimize_sphere_positions<TriangleMesh, GT>(tmesh, vpm, sphere_mesh, lambda, vertex_area_map, face_normal_map,
+                                                face_area_map, tree, traits, true);
+#endif
 
-        // compute euclidean distance
-        FT dist_eucl = CGAL::approximate_sqrt((p - center).squared_length()) - radius;
-        dist_eucl *= dist_eucl;
-        dist_eucl *= area; // weight by area
+    // Compute error of each sphere
+    total_error = compute_sphere_errors<TriangleMesh, GT>(tmesh, vpm, sphere_mesh, lambda, vertex_area_map,
+                                                          vertex_normal_map, vertex_error_map);
 
-        // compute sqem distance
-        FT dist_sqem = CGAL::scalar_product(p - center, normal) - radius;
-        dist_sqem *= dist_sqem;
-
-        FT distance = dist_sqem + lambda * dist_eucl;
-        if(distance < min_distance) {
-          min_distance = distance;
-          closest_sphere_id = sphere->get_id();
-        }
-      }
-      // Update the closest sphere
-      put(vertex_cluster_sphere_map, v, closest_sphere_id);
-      sphere_mesh.get_sphere(closest_sphere_id)->accumulate_cluster_area(area);
-      sphere_mesh.get_sphere(closest_sphere_id)->get_cluster_vertices().push_back(v);
-    }
-       
-
-    //------------------------------------------------------------
-    //- Update the sphere by optimizing the combined metric      -
-    //------------------------------------------------------------
-    Side_of_triangle_mesh<TriangleMesh, GT, VPM, Tree> side_of(tree, traits);
-    for(auto& sphere : sphere_mesh.spheres()) {
-      Sphere_ID id = sphere->get_id();
-      auto& cluster_vertices = sphere->get_cluster_vertices();
-      Point_3 center = sphere->get_center();
-      FT radius = sphere->get_radius();
-
-      auto nrows = 2 * cluster_vertices.size();
-      EMat J(nrows, 4);
-      J.setZero();
-      EVec b(nrows);
-      b.setZero();
-      int idx = 0;
-      EVec4 s;
-      s << center.x(), center.y(), center.z(), radius;
-      for(int i = 0; i < 10; i++) {
-        idx = 0;
-
-        for(vertex_descriptor v : cluster_vertices) {
-          Point_3 p = get(vpm, v);
-          EVec3 pos(p.x(), p.y(), p.z());
-          // compute sqem energy
-          EVec4 lhs = EVec4::Zero();
-          FT rhs = 0.0;
-          for(face_descriptor f : faces_around_target(halfedge(v, tmesh), tmesh)) {
-            Vector_3 normal = get(face_normal_map, f);
-            EVec3 normal_eigen(normal.x(), normal.y(), normal.z());
-            EVec4 n4(normal_eigen(0), normal_eigen(1), normal_eigen(2), 1.0);
-            FT area = CGAL::approximate_sqrt(get(face_area_map, f) / 3.0);
-            lhs += -n4 * area;
-            rhs += -1.0 * ((pos - EVec3(s(0), s(1), s(2))).dot(normal_eigen) - s(3)) *
-                   area; // using Eigen dot??? or CGAL::scalar_product
-          }
-          J.row(idx) = lhs;
-          b(idx) = rhs;
-          ++idx;
-
-          // compute euclidean energy
-          EVec3 d = pos - EVec3(s(0), s(1), s(2));
-          FT l = d.norm();
-          FT area = CGAL::approximate_sqrt(get(vertex_area_map, v));
-          J.row(idx) = EVec4(-(d[0] / l), -(d[1] / l), -(d[2] / l), -1.0) * area * lambda;
-          b(idx) = -(l - s(3)) * area * lambda;
-          ++idx;
-        }
-        LDLTSolver solver(J.transpose() * J);
-        EVec4 delta_s = solver.solve(J.transpose() * b);
-        s += delta_s;
-        if(delta_s.norm() < 1e-8) {
-          break; // convergence
-        }
-        sphere->set_do_not_split(false); // reset the split flag  
-      }
-      //------------------------------------------------------------
-      //- Correct Sphere using Shrinking Ball algorithm            -
-      //------------------------------------------------------------
-      /* Point_3 opimal_center(s(0), s(1), s(2));
-      Point_3 closest_point = tree.closest_point(opimal_center);
-      FT len = (opimal_center - closest_point).squared_length();
-      if(len < 1e-12) {
-        std::cerr
-            << "Warning: optimal center is too close to the closest point, skipping shrinking ball optimization.\n";
-        continue;
-      }
-      Vector_3 normal =
-          (closest_point - opimal_center ) / CGAL::approximate_sqrt((opimal_center - closest_point).squared_length());
-      if((side_of(opimal_center) == CGAL::ON_UNBOUNDED_SIDE))
-        normal = -normal; // if the center is outside, flip the normal
-      Point_3 test = closest_point - normal * 1e-3;
-      if(side_of(test) != CGAL::ON_BOUNDED_SIDE) {
-        std::cerr << "Warning: normal may point outward!\n";
-      }
-      auto [c, r] = shrinking_ball_algorithm<TriangleMesh, GT, Tree>(tmesh, closest_point, normal, tree);
-      sphere->set_center(c);
-      sphere->set_radius(r);*/
-      /* std::cout << "Opitmized center: " << s(0) << ", " << s(1) << ", " << s(2) << ", radius: " << s(3)    
-                << "\nCorrected cneter: " << c.x() << ", " << c.y() << ", " << c.z() << ", radius: " << r
-          << std::endl;*/
-    }
-    
-    //------------------------------------------------------------
-    //- Compute error of each sphere                             -
-    //------------------------------------------------------------
-    total_error = FT(0.0);
-    for(auto& sphere : sphere_mesh.spheres()) {
-      auto& cluster_vertices = sphere->get_cluster_vertices();
-      Point_3 center = sphere->get_center();
-      FT radius = sphere->get_radius();
-      FT max_dist = std::numeric_limits<FT>::min();
-      FT error = 0.0;
-      for(vertex_descriptor v : cluster_vertices) {
-        Point_3 p = get(vpm, v);
-        FT area = get(vertex_area_map, v);
-        FT dist_sqem = CGAL::scalar_product(p - center, get(vertex_normal_map, v)) - radius;
-        dist_sqem *= dist_sqem; // square the distance
-
-        FT dist_eucl = CGAL::approximate_sqrt((p - center).squared_length()) - radius;
-        dist_eucl *= dist_eucl; // square the distance
-        dist_eucl *= area;      // weight by area
-        FT distance = dist_sqem + lambda * dist_eucl;
-        error += distance;
-
-        put(vertex_error_map, v, distance);
-        if(distance > max_dist) {
-          max_dist = distance;
-          sphere->split_vertex = v; // update the split vertex
-        }
-      }
-      sphere->error = error / sphere->cluster_area; // average error
-      total_error += sphere->error;
-    }
     total_error_diff = std::abs(total_error - last_total_error);
     last_total_error = total_error;
-    std::cout << "Total error: " << total_error << ", Total error diff: " << total_error_diff
-              << ", Iteration count: " << iteration_count << ", Sphere count: " << sphere_mesh.nb_spheres() << std::endl;
-    if(total_error_diff < 1e-6 || iteration_count %10 ==0) {
-
-      // update neighbors
-      for(edge_descriptor& e : edges(tmesh)) {
-        vertex_descriptor v1 = source(e, tmesh);
-        vertex_descriptor v2 = target(e, tmesh);
-        Sphere_ID s1 = get(vertex_cluster_sphere_map, v1);
-        Sphere_ID s2 = get(vertex_cluster_sphere_map, v2);
-        if(s1 != s2) {
-          sphere_mesh.get_sphere(s1)->add_neighbor(s2);
-          sphere_mesh.get_sphere(s2)->add_neighbor(s1);
-        }
-      }
-      // split sphere
-      if(sphere_mesh.nb_spheres() < desired_number_of_spheres) {
-
-        std::cout << "Start Split spheres" << std::endl;
-        std::vector<std::shared_ptr<MedialSphere>> sorted_sphere = sphere_mesh.spheres();
-        std::sort(sorted_sphere.begin(), sorted_sphere.end(),
-                  [](const std::shared_ptr<MedialSphere>& a, const std::shared_ptr<MedialSphere>& b) {
-                    return a->get_radius() > b->get_radius(); // sort by radius
-                  });
-        int to_split_max = std::min(int(std::ceil(sphere_mesh.nb_spheres() * 0.2)), 10);
-        for(auto& sphere : sorted_sphere) {
-          if(sphere_mesh.nb_spheres() >= desired_number_of_spheres) 
-            break;
-          if(to_split_max > 0 && sphere->can_split()) {
-            for(Sphere_ID neighbor_id : sphere->neighbors) 
-                sphere->set_do_not_split(true);
-            vertex_descriptor split_vertex = sphere->split_vertex;
-            sphere_mesh.add_sphere(Sphere_3(get(vertex_medial_sphere_pos_map, split_vertex),
-                                            get(vertex_medial_sphere_radius_map, split_vertex)));
-            to_split_max--;
-          }
-        }
-      }
+    if((sphere_mesh.nb_spheres() >= desired_number_of_spheres && total_error_diff < 1e-5)) {
+      break;
     }
+    std::cout << "Total error: " << total_error << ", Total error diff: " << total_error_diff
+              << ", Iteration count: " << iteration_count << ", Sphere count: " << sphere_mesh.nb_spheres()
+              << std::endl;
+    if(total_error_diff < 1e-5 || iteration_count % 10 == 0) {
+      
+      update_sphere_neighbors<TriangleMesh, GT>(tmesh, sphere_mesh, vertex_cluster_sphere_map);
+      
+      split_spheres<TriangleMesh, GT>(sphere_mesh, desired_number_of_spheres, vertex_medial_sphere_pos_map,
+                                      vertex_medial_sphere_radius_map);
+    }
+   
     iteration_count++;
   }
-  // write the medial sphere mesh to a file
+
+  // Write the medial sphere mesh to a file
+  update_sphere_neighbors<TriangleMesh, GT>(tmesh, sphere_mesh, vertex_cluster_sphere_map);
   std::string filename = "medial_sphere_mesh.ply";
   sphere_mesh.write_to_ply_file(filename);
   std::cout << "Medial sphere mesh written to " << filename << "\n";
 }
 
-
 } // namespace CGAL
+#endif
+
+  
+  
 // end of CGAL namespace
 // get the closest point to the origin
 // Point_3 query(0.,0.,0.);
@@ -652,4 +863,4 @@ void variational_medial_axis_sampling(const TriangleMesh& tmesh,
 
 // sphere = Sphere_3(cp, 0.01);
 // std::cout << "small sphere intersects triangles? " << tree.do_intersect(sphere) << "\n";
-#endif // CGAL_VARIATIONAL_MEDIAL_AXIS_SAMPLING_H
+ // CGAL_VARIATIONAL_MEDIAL_AXIS_SAMPLING_H
