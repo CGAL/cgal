@@ -555,8 +555,14 @@ namespace internal { namespace TDS_3{
     size_type idx() const {
       return idx_;
     }
+    size_type& idx() {
+      return idx_;
+    }
     // For convenience
     size_type id() const {
+      return idx_;
+    }
+    size_type& id() {
       return idx_;
     }
 
@@ -618,11 +624,10 @@ namespace internal { namespace TDS_3{
     return i.id();
   }
 
-  template <typename T>
-  class TDS_handle {
+  template <typename T, typename Element_container>
+  class Index_handle {
     using Element = T;
-    using TDS = typename Element::Triangulation_data_structure;
-    using size_type = typename TDS::size_type;
+    using size_type = typename Element_container::size_type;
     using Proxy = boost::stl_interfaces::proxy_arrow_result<Element>;
   public:
     using Index_type = typename Element::Index;
@@ -630,13 +635,13 @@ namespace internal { namespace TDS_3{
     using reference = Element;
     using pointer = Proxy;
 
-    TDS_handle() = default;
+    Index_handle() = default;
 
-    TDS_handle(TDS* tds, size_type idx)
-      : tds_(tds), idx_(idx) {}
+    Index_handle(Element_container* container, size_type idx)
+      : cont_(container), idx_(idx) {}
 
     Element operator*() const {
-      return Element(tds_, Index_type(idx_));
+      return Element(cont_, Index_type(idx_));
     }
 
     Proxy operator->() const {
@@ -647,52 +652,52 @@ namespace internal { namespace TDS_3{
       return Index_type{idx_};
     }
 
-    auto tds() const {
-      return tds_;
+    auto container() const {
+      return cont_;
     }
 
-    bool operator==(const TDS_handle& other) const {
-      CGAL_assertion(tds() == nullptr || other.tds() == nullptr ||
-                     tds() == other.tds());
+    bool operator==(const Index_handle& other) const {
+      CGAL_assertion(container() == nullptr || other.container() == nullptr ||
+                     container() == other.container());
       return index() == other.index();
     }
 
-    bool operator!=(const TDS_handle& other) const {
+    bool operator!=(const Index_handle& other) const {
       return !(*this == other);
     }
 
-    bool operator<(const TDS_handle& other) const {
-      return (tds() == other.tds()) ? (index() < other.index()) : (tds() < other.tds());
+    bool operator<(const Index_handle& other) const {
+      return (container() == other.container()) ? (index() < other.index()) : (container() < other.container());
     }
 
     bool operator==( std::nullptr_t ) const {
-      return tds_ == nullptr && idx_ == Index_type::invalid_index;
+      return cont_ == nullptr && idx_ == Index_type::invalid_index;
     }
 
     bool operator!=( std::nullptr_t ) const {
       return !(*this == nullptr);
     }
 
-    friend std::ostream& operator<<(std::ostream& os, const TDS_handle& h)
+    friend std::ostream& operator<<(std::ostream& os, const Index_handle& h)
     {
       return os << "#" << h.index();
     }
 
-    friend std::size_t hash_value(const TDS_handle& h) {
+    friend std::size_t hash_value(const Index_handle& h) {
       return static_cast<std::size_t>(h.index().id());
     }
 
   private:
-    TDS* tds_ = nullptr;
+    Element_container* cont_ = nullptr;
     size_type idx_ = Index_type::invalid_index;
-  };
+  }; // end class Index_handle
 
 } // end namespace CGAL
 
 namespace std {
-  template <typename T>
-  struct hash<CGAL::TDS_handle<T>> {
-    using Handle = CGAL::TDS_handle<T>;
+  template <typename T, typename Element_container>
+  struct hash<CGAL::Index_handle<T, Element_container>> {
+    using Handle = CGAL::Index_handle<T, Element_container>;
     std::size_t operator()(const Handle& h) const {
       return hash_value(h);
     }
@@ -720,6 +725,7 @@ namespace CGAL {
     Index_iterator()
         : idx_()
         , cont_(nullptr) {}
+
     Index_iterator(const Index& h, const Element_container* m)
         : idx_(h)
         , cont_(const_cast<Element_container*>(m)) { // AF: todo make const_cast safe
@@ -806,7 +812,110 @@ namespace CGAL {
   private:
     Index idx_;
     Element_container* cont_;
+  }; // end class Index_iterator
+
+  template <class I, class T>
+  struct Property_map : Properties::Property_map_base<I, T, Property_map<I, T> >
+  {
+    using Base = Properties::Property_map_base<I, T, Property_map<I, T> >;
+    using reference = typename Base::reference;
+
+    Property_map() = default;
+    Property_map(const Base& pm): Base(pm) {}
   };
+
+  template <typename Index_type,
+            typename Element_type,
+            typename Storage_type,
+            typename Container,
+            typename Container::size_type& (*free_list_next_function_)(Storage_type&),
+            char prefix>
+  struct Indexed_container
+  {
+    using Self = Indexed_container<Index_type,
+                                   Element_type,
+                                   Storage_type,
+                                   Container,
+                                   free_list_next_function_,
+                                   prefix>;
+    using Handle = Index_handle<Element_type, Container>;
+    using size_type = typename Container::size_type;
+
+    Properties::Property_container<Self, Index_type> properties_;
+    size_type nb_of_removed_elements_ = 0;
+    size_type freelist_ = Index_type::invalid_index;
+    size_type anonymous_property_nb = 0;
+    static constexpr bool recycle_ = true;
+    bool garbage_ = false;
+    Property_map<Index_type, Storage_type> storage_ =
+        add_property_map<Storage_type>(prefix + std::string(":storage"), Storage_type()).first;
+    Property_map<Index_type, bool> removed_ =
+        add_property_map<bool>(prefix + std::string(":removed"), false).first;
+
+    template <typename Key, typename T>
+    struct Get_property_map {
+      using type = Property_map<Key, T>;
+    };
+
+    template<class T>
+    std::pair<Property_map<Index_type, T>, bool>
+    add_property_map(std::string name=std::string(), const T t=T()) {
+      if(name.empty()){
+        std::ostringstream oss;
+        oss << "anonymous-property-" << anonymous_property_nb++;
+        name = std::string(oss.str());
+      }
+      return properties_.template add<T>(name, t);
+    }
+
+    size_type size() const
+    {
+      return static_cast<size_type>(properties_.size());
+    }
+
+    void reserve(size_type n)
+    {
+      properties_.reserve(n);
+    }
+
+    void clear() {
+      properties_.resize(0);
+      properties_.shrink_to_fit();
+
+      freelist_ = Index_type::invalid_index;
+      nb_of_removed_elements_ = 0;
+      garbage_ = false;
+    }
+
+    Index_type create()
+    {
+      if(recycle_ && (freelist_ != Index_type::invalid_index)){
+        Index_type idx{freelist_};
+        freelist_ = free_list_next_function_(storage_[idx]);
+        --nb_of_removed_elements_;
+        removed_[idx] = false;
+        properties_.reset(idx);
+        return idx;
+      } else {
+        properties_.push_back();
+        return Index_type(size()-1);
+      }
+    }
+
+    void remove(Handle ch)
+    {
+      Index_type idx = ch->index();
+      removed_[idx] = true; ++nb_of_removed_elements_; garbage_ = true;
+      free_list_next_function_(storage_[idx]) = Index_type{freelist_};
+      freelist_ = static_cast<size_type>(idx);
+    }
+
+    bool is_valid_index(Index_type idx) const {
+      return idx.id() < size() && !removed_[idx];
+    }
+
+    bool has_garbage() const { return recycle_ && (nb_of_removed_elements_ > 0); }
+  }; // end class Indexed_container
 
   template <typename Vb = Vertex<>, typename Cb = Cell<>, class ConcurrencyTag = Sequential_tag>
   struct Indexed_storage
@@ -850,30 +959,11 @@ namespace CGAL {
     using Vertex = typename Vb::template Rebind_TDS<Self>::Other;
     using Cell = typename Cb::template Rebind_TDS<Self>::Other;
 
-    using Cell_handle = TDS_handle<Cell>;
-    using Vertex_handle = TDS_handle<Vertex>;
+    using Cell_handle = Index_handle<Cell, Self>;
+    using Vertex_handle = Index_handle<Vertex, Self>;
 
     using Facet = std::pair<Cell_handle, int>;
     using Edge = Triple<Cell_handle, int, int>;
-
-    // AF: factorize as also in Surface_mesh and Point_set_3
-    template <class I, class T>
-    struct Property_map : Properties::Property_map_base<I, T, Property_map<I, T> >
-    {
-      using Base = Properties::Property_map_base<I, T, Property_map<I, T> >;
-      using reference = typename Base::reference;
-
-      Property_map() = default;
-      Property_map(const Base& pm): Base(pm) {}
-    };
-
-
-    // AF: factorize as also in Surface_mesh and Point_set_3
-    template <typename Key, typename T>
-    struct Get_property_map {
-      using type = Property_map<Key, T>;
-    };
-
 
     struct Vertex_index: public Index<Vertex_index>
     {
@@ -910,53 +1000,69 @@ namespace CGAL {
     using Vertex_storage_property_map = Property_map<Vertex_index, Vertex_storage>;
     using Cell_storage_property_map = Property_map<Cell_index, Cell_storage>;
 
+    static size_type& vertex_free_list_next_function(Vertex_storage& s)
+    {
+      return s.icell.id();
+    }
+    static size_type& cell_free_list_next_function(Cell_storage& s)
+    {
+      return s.ivertices[0].id();
+    }
+
+    using Vertex_container = Indexed_container<Vertex_index, Vertex, Vertex_storage, Self,
+        &vertex_free_list_next_function, 'v'>;
+    using Cell_container = Indexed_container<Cell_index, Cell, Cell_storage, Self,
+        &cell_free_list_next_function, 'c'>;
 
 
-    Cell_storage_property_map& cell_storage() { return cell_storage_; }
-    const Cell_storage_property_map& cell_storage() const { return cell_storage_; }
+    Cell_storage_property_map& cell_storage() { return cell_container_.storage_; }
+    const Cell_storage_property_map& cell_storage() const { return cell_container_.storage_; }
 
-    Vertex_storage_property_map& vertex_storage() { return vertex_storage_; }
-    const Vertex_storage_property_map& vertex_storage() const { return vertex_storage_; }
+    Vertex_storage_property_map& vertex_storage() { return vertex_container_.storage_; }
+    const Vertex_storage_property_map& vertex_storage() const { return vertex_container_.storage_; }
 
     auto cell_tds_data_pmap() { return cell_data_; }
     auto cell_tds_data_pmap() const { return cell_data_; }
 
-    size_type num_vertices() const { return static_cast<size_type>(vprops_.size()); }
-    size_type num_cells() const { return static_cast<size_type>(cprops_.size()); }
-
+    size_type num_vertices() const { return static_cast<size_type>(vertex_container_.size()); }
+    size_type num_cells() const { return static_cast<size_type>(cell_container_.size()); }
 
     int dimension() const { return dimension_; }
 
     void set_dimension(int n) { dimension_ = n; }
 
+    template <typename Index_type>
+    auto& container()
+    {
+      if constexpr (std::is_same_v<Index_type, Vertex_index>) {
+        return vertex_container_;
+      } else if constexpr (std::is_same_v<Index_type, Cell_index>) {
+        return cell_container_;
+      } else {
+        static_assert(std::is_same_v<Index_type, void>, "Invalid Index type");
+      }
+    }
+
+    template <typename Index_type>
+    const auto& container() const
+    {
+      if constexpr (std::is_same_v<Index_type, Vertex_index>) {
+        return vertex_container_;
+      } else if constexpr (std::is_same_v<Index_type, Cell_index>) {
+        return cell_container_;
+      } else {
+        static_assert(std::is_same_v<Index_type, void>, "Invalid Index type");
+      }
+    }
+
     Vertex_handle create_vertex()
     {
-      if(recycle_ && (vertices_freelist_ != Vertex_index::invalid_index)){
-        Vertex_index idx{vertices_freelist_};
-        vertices_freelist_ = vertex_storage_[idx].icell.id();
-        --removed_vertices_;
-        vremoved_[idx] = false;
-        vprops_.reset(idx);
-        return Vertex_handle(this, idx);
-      } else {
-        vprops_.push_back();
-        return Vertex_handle(this, Vertex_index(num_vertices()-1));
-      }
+      return Vertex_handle{this, vertex_container_.create()};
     }
 
     Cell_handle create_cell()
     {
-      if(recycle_ && (cells_freelist_ != Cell_index::invalid_index)){
-        Cell_index idx{cells_freelist_};
-        cells_freelist_ = cell_storage_[idx].ivertices[0].id();
-        --removed_cells_;
-        cremoved_[idx] = false;
-        cprops_.reset(idx);
-        return Cell_handle(this, idx);
-      } else {
-        cprops_.push_back();
-        return Cell_handle(this, Cell_index(num_cells()-1));
-      }
+      return Cell_handle{this, cell_container_.create()};
     }
 
     Vertex_handle create_vertex(const Vertex& v)
@@ -1011,64 +1117,47 @@ namespace CGAL {
 
     void delete_vertex(Vertex_handle vh)
     {
-      Vertex_index idx = vh->index();
-      vremoved_[idx] = true; ++removed_vertices_; garbage_ = true;
-      vertex_storage_[idx].icell = Cell_index{vertices_freelist_};
-      vertices_freelist_ = static_cast<size_type>(idx);
+      vertex_container_.remove(vh);
     }
 
     void delete_cell(Cell_handle ch)
     {
-      Cell_index idx = ch->index();
-      cremoved_[idx] = true; ++removed_cells_; garbage_ = true;
-      cell_storage_[idx].ivertices[0] = Vertex_index{cells_freelist_};
-      cells_freelist_ = static_cast<size_type>(idx);
+      cell_container_.remove(ch);
     }
 
     void reserve(size_type n_vertices, size_type n_cells)
     {
-      vprops_.reserve(n_vertices);
-      cprops_.reserve(n_cells);
+      vertex_container_.reserve(n_vertices);
+      cell_container_.reserve(n_cells);
     }
 
     void clear()
     {
       clear_without_removing_property_maps();
       remove_all_property_maps();
-      allocate_tds_properties();
     }
 
     void clear_without_removing_property_maps()
     {
-      vprops_.resize(0);
-      cprops_.resize(0);
-
-      vprops_.shrink_to_fit();
-      cprops_.shrink_to_fit();
-
-      removed_vertices_ = removed_cells_ = 0;
-      vertices_freelist_ = Vertex_index::invalid_index;
-      cells_freelist_ = Cell_index::invalid_index;
-      garbage_ = false;
-      recycle_ = true;
-      anonymous_property_nb = 0;
+      vertex_container_.clear();
+      cell_container_.clear();
       dimension_ = -2;
     }
 
     void remove_all_property_maps()
     {
-      remove_property_maps<Vertex_index>();
-      remove_property_maps<Cell_index>();
+      remove_property_maps<Vertex_index>(2);
+      remove_property_maps<Cell_index>(3);
     }
 
     size_type number_of_removed_vertices() const
     {
-      return removed_vertices_;
+      return vertex_container_.nb_of_removed_elements_;
     }
 
     size_type number_of_removed_cells() const
     {
-      return removed_cells_;
+      return cell_container_.nb_of_removed_elements_;
     }
 
     size_type number_of_vertices() const
@@ -1081,15 +1170,22 @@ namespace CGAL {
       return num_cells() - number_of_removed_cells();
     }
 
+    bool is_valid_vertex_index(Vertex_index idx) const {
+      return vertex_container_.is_valid_index(idx);
+    }
+
+    bool is_valid_cell_index(Cell_index idx) const {
+      return cell_container_.is_valid_index(idx);
+    }
 
     bool is_vertex(Vertex_handle v) const
     {
-      return this == v->tds()  && v->index().id() < num_vertices() && (! vremoved_[v.index()]);
+      return this == v->tds() && is_valid_vertex_index(v->index());
     }
 
     bool is_valid_cell_handle(Cell_handle c) const
     {
-      return this == c->tds()  && c->index().id() < num_cells() && (! cremoved_[c.index()]);
+      return this == c->tds()  && is_valid_cell_index(c->index());
     }
 
     bool is_cell( Cell_handle c ) const
@@ -1101,34 +1197,6 @@ namespace CGAL {
       return is_valid_cell_handle(c);
     }
 
-    //--------------------------------------------------- property handling
-
-    // Property_selector maps an index type to a property_container, the
-    // dummy is necessary to make it a partial specialization (full
-    // specializations are only allowed at namespace scope).
-    template<typename, bool = true>
-    struct Property_selector {};
-
-    template<bool dummy>
-    struct Property_selector<Vertex_index, dummy> {
-      Self * m_;
-      Property_selector(Self* m) : m_(m) {}
-      Properties::Property_container<Self,
-                                     Vertex_index>&
-      operator()() { return m_->vprops_; }
-      void resize_property_array() { m_->vprops_.resize_property_array(2); }
-    };
-
-    template<bool dummy>
-    struct Property_selector<Cell_index, dummy> {
-      Self * m_;
-      Property_selector(Self* m) : m_(m) {}
-      Properties::Property_container<Self,
-                                     Cell_index>&
-      operator()() { return m_->cprops_; }
-      void resize_property_array() { m_->cprops_.resize_property_array(3); }
-    };
-
     /// adds a property map named `name` with value type `T` and default `t`
     /// for index type `I`. Returns the property map together with a Boolean
     /// that is `true` if a new map was created. In case it already exists
@@ -1138,19 +1206,14 @@ namespace CGAL {
     template<class I, class T>
     std::pair<Property_map<I, T>, bool>
     add_property_map(std::string name=std::string(), const T t=T()) {
-      if(name.empty()){
-        std::ostringstream oss;
-        oss << "anonymous-property-" << anonymous_property_nb++;
-        name = std::string(oss.str());
-      }
-      return Property_selector<I>(this)().template add<T>(name, t);
+      return container<I>().template add_property_map<T>(name, t);
     }
 
     /// returns an optional property map named `name` with key type `I` and value type `T`.
     template <class I, class T>
     std::optional<Property_map<I, T>> property_map(const std::string& name) const
     {
-      return Property_selector<I>(const_cast<Self*>(this))().template get<T>(name);
+      return container<I>().properties_.template get<T>(name);
     }
 
 
@@ -1158,17 +1221,16 @@ namespace CGAL {
     template<class I, class T>
     void remove_property_map(Property_map<I, T>& p)
     {
-      (Property_selector<I>(this)()).template remove<T>(p);
+      container<I>().properties_.template remove<T>(p);
     }
 
     /// removes all property maps for index type `I` added by a call to `add_property_map<I>()`.
     /// The memory allocated for those property maps is freed.
     template<class I>
-    void remove_property_maps()
+    void remove_property_maps(int nb_of_properties_to_keep)
     {
-      Property_selector<I>(this).resize_property_array();
+      container<I>().properties_.resize_property_array(nb_of_properties_to_keep);
     }
-
 
     /// @cond CGAL_DOCUMENT_INTERNALS
     /// returns the std::type_info of the value type of the
@@ -1180,7 +1242,7 @@ namespace CGAL {
     template<class I>
     const std::type_info& property_type(const std::string& name)
     {
-      return Property_selector<I>(this)().get_type(name);
+      return container<I>().properties_.get_type(name);
     }
     /// @endcond
 
@@ -1189,118 +1251,30 @@ namespace CGAL {
     template<class I>
     std::vector<std::string> properties() const
     {
-      return Property_selector<I>(const_cast<Self*>(this))().properties();
+      return container<I>().properties_.properties();
     }
 
-    void allocate_tds_properties() {
-      vertex_storage_ = add_property_map<Vertex_index, Vertex_storage>("v:storage").first;
-      cell_storage_   = add_property_map<Cell_index, Cell_storage>("c:storage").first;
-      cell_data_      = add_property_map<Cell_index, Cell_data>("c:data").first;
-      vremoved_       = add_property_map<Vertex_index, bool>("v:removed", false).first;
-      cremoved_       = add_property_map<Cell_index, bool>("c:removed", false).first;
-    }
-
-
-    Indexed_storage()
-      : dimension_(-2)
-    {
-      allocate_tds_properties();
-    }
-
-    Indexed_storage(Indexed_storage&& is) noexcept
-      : vprops_(std::move(is.vprops_)),
-        cprops_(std::move(is.cprops_)),
-        vertex_storage_(std::move(is.vertex_storage_)),
-        cell_storage_(std::move(is.cell_storage_)),
-        cell_data_(std::move(is.cell_data_)),
-        vremoved_(std::move(is.vremoved_)),
-        cremoved_(std::move(is.cremoved_)),
-        removed_vertices_(std::exchange(is.removed_vertices_, 0)),
-        removed_cells_(std::exchange(is.removed_cells_, 0)),
-        vertices_freelist_(std::exchange(is.vertices_freelist_, Vertex_index::invalid_index)),
-        cells_freelist_(std::exchange(is.cells_freelist_, Cell_index::invalid_index)),
-        garbage_(std::exchange(is.garbage_, false)),
-        recycle_(std::exchange(is.recycle_, true)),
-        anonymous_property_nb(std::exchange(is.anonymous_property_nb, 0)),
-        dimension_(std::exchange(is.dimension_, -2))
-    {
-    }
-
-    Indexed_storage& operator=(const Indexed_storage& rhs)
-    {
-      if (this != &rhs)
-      {
-        // clear properties
-        vprops_.clear();
-        cprops_.clear();
-
-        // allocate standard properties
-        allocate_tds_properties();
-
-        // copy properties from other triangulation
-        vertex_storage_.array() = rhs.vertex_storage_.array();
-        cell_storage_.array()   = rhs.cell_storage_.array();
-        cell_data_.array()      = rhs.cell_data_.array();
-
-        vremoved_.array()  = rhs.vremoved_.array();
-        cremoved_.array()  = rhs.cremoved_.array();
-
-        // resize (needed by property containers)
-        vprops_.resize(rhs.num_vertices());
-        cprops_.resize(rhs.num_cells());
-
-
-        // how many elements are removed?
-        removed_vertices_     = rhs.removed_vertices_;
-        removed_cells_        = rhs.removed_cells_;
-        vertices_freelist_    = rhs.vertices_freelist_;
-        cells_freelist_       = rhs.cells_freelist_;
-        garbage_              = rhs.garbage_;
-        recycle_              = rhs.recycle_;
-        anonymous_property_nb = rhs.anonymous_property_nb;
-      }
-      return *this;
-  }
-
-  ~Indexed_storage()
-  {
-#if 0
-    std::cout << "sizeof(Vertex) " << " " << sizeof(Vertex_storage) << std::endl;
-    std::cout << "sizeof(Cell)   " << " " << sizeof(Cell_storage) << std::endl;
-     std::cout << "vertex capacity: "  << vprops_.capacity() << std::endl;
-     std::cout << "cell capacity: "  << cprops_.capacity() << std::endl;
-     std::cout << sizeof(Vertex_storage)  * vprops_.capacity() << " bytes for vertices" << std::endl;
-     std::cout << sizeof(Cell_storage)  * cprops_.capacity() << " bytes for cells" << std::endl;
- #endif
-  }
-
-
-    /// move assignment
-    Indexed_storage& operator=(Indexed_storage&& is) noexcept
-    {
-      if (this != &is) {
-        dimension_ = std::exchange(is.dimension_, -2);
-        vertex_storage_ = std::move(is.vertex_storage_);
-        cell_storage_ = std::move(is.cell_storage_);
-        cell_data_ = std::move(is.cell_data_);
-        vprops_ = std::move(is.vprops_);
-        cprops_ = std::move(is.cprops_);
-        vremoved_ = std::move(is.vremoved_);
-        cremoved_ = std::move(is.cremoved_);
-        removed_vertices_ = std::exchange(is.removed_vertices_, 0);
-        removed_cells_ = std::exchange(is.removed_cells_, 0);
-        vertices_freelist_ = std::exchange(is.vertices_freelist_, Vertex_index::invalid_index);
-        cells_freelist_ = std::exchange(is.cells_freelist_, Cell_index::invalid_index);
-        garbage_ = std::exchange(is.garbage_, false);
-        recycle_ = std::exchange(is.recycle_, true);
-        anonymous_property_nb = std::exchange(is.anonymous_property_nb, 0);
-      }
-      return *this;
-    }
+    Indexed_storage() = default;
+    Indexed_storage(const Indexed_storage&) = default;
+    Indexed_storage(Indexed_storage&&) = default;
+    Indexed_storage& operator=(const Indexed_storage&) = default;
+    Indexed_storage& operator=(Indexed_storage&& is) = default;
 
     void swap(Indexed_storage& other)
     {
       std::swap(*this, other);
+    }
+
+    ~Indexed_storage()
+    {
+#if 0
+      std::cout << "sizeof(Vertex) " << " " << sizeof(Vertex_storage) << std::endl;
+      std::cout << "sizeof(Cell)   " << " " << sizeof(Cell_storage) << std::endl;
+      std::cout << "vertex capacity: "  << vprops_.capacity() << std::endl;
+      std::cout << "cell capacity: "  << cprops_.capacity() << std::endl;
+      std::cout << sizeof(Vertex_storage)  * vprops_.capacity() << " bytes for vertices" << std::endl;
+      std::cout << sizeof(Cell_storage)  * cprops_.capacity() << " bytes for cells" << std::endl;
+#endif
     }
 
     void set_adjacency(Cell_handle c0, int i0,
@@ -1313,13 +1287,14 @@ namespace CGAL {
       c1->set_neighbor(i1,c0);
     }
 
-    bool has_garbage() const { return garbage_; }
+    bool has_garbage() const { return vertex_container_.has_garbage() || cell_container_.has_garbage(); }
 
     /// returns whether the index of vertex `v` is valid, that is within the current array bounds.
     bool has_valid_index(Vertex_index v) const
     {
       return (v.id() < num_vertices());
     }
+
     bool has_valid_index(Cell_index c) const
     {
       return (c.id() < num_cells());
@@ -1329,12 +1304,12 @@ namespace CGAL {
     /// \sa `collect_garbage()`
     bool is_removed(Vertex_index v) const
     {
-      return vremoved_[v];
+      return vertex_container_.removed_[v];
     }
 
     bool is_removed(Cell_index c) const
     {
-      return cremoved_[c];
+      return cell_container_.removed_[c];
     }
     //------------------------------------------------------ iterator types
     using Vertex_iterator = Index_iterator<Vertex_handle, Self>;
@@ -1445,31 +1420,14 @@ namespace CGAL {
       return tds().copy_tds(src, vert, setv, setc);
     }
 
-    Properties::Property_container<Self, Vertex_index> vprops_;
-    Properties::Property_container<Self, Cell_index>   cprops_;
-
-    Vertex_storage_property_map vertex_storage_;
-    Cell_storage_property_map cell_storage_;
-
-    Property_map<Cell_index, Cell_data>                cell_data_;
-
-    Property_map<Vertex_index, bool>  vremoved_;
-    Property_map<Cell_index, bool>    cremoved_;
-
-
-    size_type removed_vertices_ = 0;
-    size_type removed_cells_ = 0;
-
-    size_type vertices_freelist_ = Vertex_index::invalid_index;
-    size_type cells_freelist_ = Cell_index::invalid_index ;
-    bool garbage_ = false;
-    bool recycle_ = true;
-
-    size_type anonymous_property_nb = 0;
+    Vertex_container vertex_container_;
+    Cell_container cell_container_;
+    Property_map<Cell_index, Cell_data> cell_data_ =
+        cell_container_.template add_property_map<Cell_data>("c:data").first;
 
     // in dimension i, number of vertices >= i+2
     // ( the boundary of a simplex in dimension i+1 has i+2 vertices )
-    int dimension_;
+    int dimension_ = -2;
 
   };
 
