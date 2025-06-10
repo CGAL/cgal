@@ -123,9 +123,10 @@ used to represent such a PLC.
 In this representation, the faces of the PLC correspond to the faces of the
 surface mesh—a collection of vertices (points), edges, and faces that cover the surface of a
 geometric object.
-The vertices of the PLC are the vertices of the surface mesh, the edges of the PLC are the edges
-of the surface mesh, and the polygons of the PLC are the facets of the surface mesh.
-However, PLCs represented in this way are restricted to be manifold, and their faces cannot have holes.
+In this representation, the vertices of the PLC correspond to the vertices of the surface mesh, the
+edges of the PLC correspond to the edges of the surface mesh, and the polygons of the PLC correspond
+to the facets of the surface mesh. However, PLCs represented in this way are limited to being
+manifold (that is, each edge belongs to exactly two faces), and their faces cannot have holes.
 
 A PLC can also be represented as a polygon soup: a collection of vertices and a set of polygons, where
 each polygon is defined by an ordered list of vertices, without explicit connectivity information between
