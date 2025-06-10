@@ -157,11 +157,10 @@ enable users to extend or adapt the triangulation data structure to their specif
 
 \subsection CT_3_api_functions Functions
 
-Several helper constructor functions are provided, such as \link
+Two overloads of the constructor function \link
 PkgConstrainedTriangulation3FunctionsPolygonSoupOrMesh
-`CGAL::make_conforming_constrained_Delaunay_triangulation_3()`\endlink, to facilitate the creation
-of a `CGAL::Conforming_constrained_Delaunay_triangulation_3` object from various types of input
-data.
+`CGAL::make_conforming_constrained_Delaunay_triangulation_3()`\endlink are provided to facilitate the creation
+of a `CGAL::Conforming_constrained_Delaunay_triangulation_3` object from either a surface mesh or a polygon soup.
 
 \section CT_3_examples Examples
 
@@ -301,7 +300,8 @@ The left column shows the input PLC, while the right column displays the resulti
 \section CT_3_design Implementation History
 
 The initial version of this package was implemented by Laurent Rineau and released in
-\cgal&nbsp;6.1&nbsp;(2025). Its design and algorithms are grounded in the theoretical work of
+\cgal&nbsp;6.1&nbsp;(2025). Jane Tournois contributed to the documentation and helped improve the API.
+The package design and algorithms are grounded in the theoretical work of
 Hang&nbsp;Si on meshing algorithms&nbsp;\cgalCite{si2005meshing},&nbsp;\cgalCite{si2015tetgen}.
 
 */
