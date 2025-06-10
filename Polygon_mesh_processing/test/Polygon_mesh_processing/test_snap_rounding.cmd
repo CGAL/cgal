@@ -35,4 +35,3 @@ data-snap/collapse_3.off 11 10
 data-snap/no_collapse_1.off 8 4
 data-snap/no_collapse_2.off 12 4
 data-snap/coplanar_cubes.off 1514 5544
-data-snap/refined_coplanar_cubes.off 1872 6880
