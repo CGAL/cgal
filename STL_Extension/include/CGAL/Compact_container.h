@@ -218,6 +218,33 @@ namespace internal {
       e.increment_erase_counter();
     }
   };
+
+  template <typename T, typename Time_stamper>
+  struct Time_stamp_and_erase_counter_backup_and_restore_guard
+  {
+    T* const ptr;
+    const unsigned int ec;
+    std::size_t ts;
+
+    using EraseCounterStrategy =
+        internal::Erase_counter_strategy<internal::has_increment_erase_counter<T>::value>;
+
+    Time_stamp_and_erase_counter_backup_and_restore_guard(T* ptr)
+      : ptr(ptr), ec(EraseCounterStrategy::erase_counter(ptr))
+    {
+      if constexpr (Time_stamper::has_timestamp) {
+        ts = Time_stamper::time_stamp(ptr);
+      }
+    }
+
+    ~Time_stamp_and_erase_counter_backup_and_restore_guard() {
+      EraseCounterStrategy::restore_erase_counter(ptr, ec);
+      if constexpr (Time_stamper::has_timestamp) {
+        Time_stamper::restore_timestamp(ptr, ts);
+      }
+    }
+  };
+
 }
 
 template < class T,
@@ -415,20 +442,24 @@ public:
 
     pointer ret = free_list;
     free_list = clean_pointee(ret);
-    const auto ts = Time_stamper::time_stamp(ret);
-    const auto ec = EraseCounterStrategy<T>::erase_counter(ret);
-    new (ret) value_type(std::forward<Args>(args)...);
-    Time_stamper::restore_timestamp(ret, ts);
+
+    {
+      internal::Time_stamp_and_erase_counter_backup_and_restore_guard<T, Time_stamper>
+          guard(ret);
+
+      new (ret) value_type(std::forward<Args>(args)...);
+    } // this scope is important: the destructor of the guard has to be called
+      // before the time_stamp is set, otherwise it will be set to the wrong value.
     Time_stamper::set_time_stamp(ret, time_stamp);
-    EraseCounterStrategy<T>::restore_erase_counter(ret, ec);
     CGAL_assertion(type(ret) == USED);
     ++size_;
     return iterator(ret, 0);
   }
 
-  iterator insert(const T &t)
+  template <typename U>
+  iterator insert(U&&u)
   {
-    return emplace(t);
+    return emplace(std::forward<U>(u));
   }
 
   template < class InputIterator >
@@ -450,11 +481,13 @@ public:
     auto ptr = &*x;
     CGAL_precondition(type(ptr) == USED);
     EraseCounterStrategy<T>::increment_erase_counter(*x);
-    const auto ts = Time_stamper::time_stamp(ptr);
-    const auto ec = EraseCounterStrategy<T>::erase_counter(*x);
-    std::allocator_traits<allocator_type>::destroy(alloc, ptr);
-    Time_stamper::restore_timestamp(ptr, ts);
-    EraseCounterStrategy<T>::restore_erase_counter(ptr, ec);
+
+    {
+      internal::Time_stamp_and_erase_counter_backup_and_restore_guard<T, Time_stamper>
+          guard(ptr);
+
+      std::allocator_traits<allocator_type>::destroy(alloc, ptr);
+    }
 
     put_on_free_list(ptr);
     --size_;
@@ -531,7 +564,7 @@ public:
       res += s-2;
     }
 
-    return (size_type)-1; // cit does not belong to this compact container
+    return static_cast<size_type>(-1); // cit does not belong to this compact container
   }
 
   // Returns whether the iterator "cit" is in the range [begin(), end()].
@@ -547,21 +580,18 @@ public:
     if (cit == end())
       return true;
 
-    const_pointer c = &*cit;
+    const_pointer ptr = &*cit;
 
-    for (typename All_items::const_iterator it = all_items.begin(), itend = all_items.end();
-         it != itend; ++it) {
-      const_pointer p = it->first;
-      size_type s = it->second;
+    for (const auto& [chunk_ptr, size] : all_items) {
 
       // Are we in the address range of this block (excluding first and last
       // elements) ?
-      if (c <= p || (p+s-1) <= c)
+      if (ptr <= chunk_ptr || (chunk_ptr+size-1) <= ptr)
         continue;
 
-      CGAL_assertion_msg( (c-p)+p == c, "wrong alignment of iterator");
+      CGAL_assertion_msg( (ptr-chunk_ptr)+chunk_ptr == ptr, "wrong alignment of iterator");
 
-      return type(c) == USED;
+      return type(ptr) == USED;
     }
     return false;
   }
@@ -571,7 +601,8 @@ public:
     return cit != end() && owns(cit);
   }
 
-
+  // wrong spelling, kept for backward compatibility
+  //   cspell:disable-next-line
   CGAL_DEPRECATED bool owns_dereferencable(const_iterator cit) const
   {
     return owns_dereferenceable(cit);
@@ -639,32 +670,40 @@ void allocate_new_block();
 
   static char * clean_pointer(char * p)
   {
-    return reinterpret_cast<char*>(reinterpret_cast<std::ptrdiff_t>(p) &
-                                   ~ (std::ptrdiff_t) START_END);
+    auto ptr = reinterpret_cast<std::ptrdiff_t>(p);
+    auto mask = static_cast<std::ptrdiff_t>(START_END);
+    return reinterpret_cast<char*>(ptr & ~mask);
   }
 
   // Returns the pointee, cleaned up from the squatted bits.
-  static pointer clean_pointee(const_pointer ptr)
-  {
-    return (pointer) clean_pointer((char *) Traits::pointer(*ptr));
+  static pointer clean_pointee(const_pointer ptr) {
+    void* raw_ptr = Traits::pointer(*ptr);
+    char* cleaned_ptr = clean_pointer(reinterpret_cast<char*>(raw_ptr));
+    return reinterpret_cast<pointer>(cleaned_ptr);
   }
 
   // Get the type of the pointee.
   static Type type(const_pointer ptr)
   {
-    char * p = (char *) Traits::pointer(*ptr);
-    return (Type) (reinterpret_cast<std::ptrdiff_t>(p) -
-                   reinterpret_cast<std::ptrdiff_t>(clean_pointer(p)));
+    char* p = reinterpret_cast<char*>(Traits::pointer(*ptr));
+    // Compute the difference between the pointer and its cleaned version to extract the last 2 bits.
+    std::ptrdiff_t diff = reinterpret_cast<std::ptrdiff_t>(p) -
+                          reinterpret_cast<std::ptrdiff_t>(clean_pointer(p));
+    return static_cast<Type>(diff);
   }
 
   // Sets the pointer part and the type of the pointee.
-  static void set_type(pointer ptr, void * p, Type t)
+  static void set_type(pointer ptr, void * p, Type type)
   {
     // This out of range compare is always true and causes lots of
     // unnecessary warnings.
     // CGAL_precondition(0 <= t && t < 4);
-    Traits::set_pointer(*ptr, reinterpret_cast<void *>
-      (reinterpret_cast<std::ptrdiff_t>(clean_pointer((char *) p)) + (int) t));
+
+    // Clean the pointer to remove any existing type bits, then set the new type bits.
+    char* p_cleaned = clean_pointer(reinterpret_cast<char*>(p));
+    std::ptrdiff_t p_value = reinterpret_cast<std::ptrdiff_t>(p_cleaned);
+    std::ptrdiff_t new_ptr = p_value + static_cast<std::ptrdiff_t>(type);
+    Traits::set_pointer(*ptr, reinterpret_cast<void*>(new_ptr));
   }
 
 public:

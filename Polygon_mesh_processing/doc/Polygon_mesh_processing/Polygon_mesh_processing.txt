@@ -57,7 +57,7 @@ mesh, which includes point location and self intersection tests.
 \subsection PMPIO Reading and Writing Polygon Meshes
 
 In all functions of this package, the polygon meshes are required to be models
-of the graph concepts defined in the package \ref PkgBGLRef. Using common graph concepts
+of the graph concepts defined in the package \ref PkgBGL. Using common graph concepts
 enables having common input/output functions for all the models of these concepts.
 The page \ref PkgBGLIOFct provides an exhaustive description of the available I/O functions.
 In addition, this package offers the function `CGAL::Polygon_mesh_processing::IO::read_polygon_mesh()`,

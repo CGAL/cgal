@@ -1,4 +1,4 @@
-/// \defgroup PkgPointSetProcessing3Ref Point Set Processing Reference
+/// \defgroup PkgPointSetProcessing3Ref Reference Manual
 
 /*!
 \defgroup PkgPointSetProcessing3Algorithms Algorithms

@@ -6,6 +6,8 @@
 ### General Changes
 - The minimal supported version of Boost is now 1.74.0.
 
+### [dD Fréchet Distance](https://doc.cgal.org/6.1/Manual/packages.html#FrechetDistance) (new package)
+- This package provides functions for computing the Fréchet distance of polylines in any dimension under the Euclidean metric.
 
 ### [3D Constrained Triangulations](https://doc.cgal.org/6.1/Manual/packages.html#PkgConstrainedTriangulation3) (new package)
 -   This package adds the function `CGAL::make_conforming_constrained_Delaunay_triangulation_3()`
@@ -64,7 +66,7 @@
   - `initial_points_generator` : enables the user to specify a functor that generates initial points,
   - `initial_points` : enables the user to specify a `Range` of initial points.
 -   Added a new meshing parameter `surface_only`, to improve performances when the user is only interested in surface mesh generation.
-  
+
 ### [Poisson Surface Reconstruction](https://doc.cgal.org/6.1/Manual/packages.html#PkgPoissonSurfaceReconstruction3)
 -   Added a new mesh domain `Poisson_mesh_domain_3` that integrates some optimizations from the deprecated 3D Surface Mesh Generation package.
 
