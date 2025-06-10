@@ -1553,7 +1553,7 @@ bool autorefine_triangle_soup(PointRange& soup_points,
       }
     );
 
-    // The constexpr  was initially inside the lammbda, but that did not compile  with VC 2017
+    // The constexpr  was initially inside the lambda, but that did not compile  with VC 2017
     if constexpr(std::is_same_v<Visitor, Wrap_snap_visitor>){
       tbb::parallel_for(tbb::blocked_range<size_t>(0, new_triangles.size()),
         [&](const tbb::blocked_range<size_t>& r) {
