@@ -78,6 +78,17 @@ Multipolygon_with_holes_2<Kernel, Container> repair(const Polygon_with_holes_2<K
 
 
 template <class Kernel, class Container>
+Multipolygon_with_holes_2<Kernel, Container> repair(const Polygon_2<Kernel, Container>& p, Non_zero_rule)
+{
+  Winding<Kernel> winding;
+  winding.insert(p);
+  winding.label();
+  winding.label_domains();
+  return winding();
+}
+
+
+template <class Kernel, class Container>
 Multipolygon_with_holes_2<Kernel, Container> repair(const Polygon_with_holes_2<Kernel, Container>& p, Non_zero_rule)
 {
   Winding<Kernel> winding;
@@ -104,6 +115,17 @@ Multipolygon_with_holes_2<Kernel, Container> repair(const Multipolygon_with_hole
     pr.label_triangulation_even_odd();
     pr.reconstruct_multipolygon();
   } return pr.multipolygon();
+}
+
+
+template <class Kernel, class Container>
+Multipolygon_with_holes_2<Kernel, Container> repair(const Multipolygon_with_holes_2<Kernel, Container>& p, Non_zero_rule)
+{
+  Winding<Kernel> winding;
+  winding.insert(p);
+  winding.label();
+  winding.label_domains();
+  return winding();
 }
 
 
