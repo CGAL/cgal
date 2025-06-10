@@ -1,4 +1,4 @@
-/// \defgroup PkgCGALIpeletsRef CGAL Ipelets Reference
+/// \defgroup PkgCGALIpeletsRef Reference Manual
 /*!
 \addtogroup PkgCGALIpeletsRef
 \cgalPkgDescriptionBegin{CGAL Ipelets,PkgCGALIpelets}

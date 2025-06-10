@@ -153,6 +153,8 @@ public :
     connect(dock_widget->pyramidCheckBox, &QCheckBox::stateChanged,
             this, &Basic_generator_plugin::on_tab_changed);
 #endif
+    connect(dock_widget->polygon_checkBox, SIGNAL(toggled(bool)),
+            dock_widget->fill_checkBox, SLOT(setEnabled(bool)));
   }
 
   bool applicable(QAction*) const

@@ -812,7 +812,7 @@ public:
                                           CGAL_SS_i::vertices_begin(hole),
                                           CGAL_SS_i::vertices_end(hole),
                                           std::begin(no_holes), std::end(no_holes),
-                                          std::begin(speeds[hole_id]), std::end(speeds[hole_id]),
+                                          std::begin(speeds[1 + hole_id]), std::end(speeds[1 + hole_id]),
                                           std::begin(no_speeds), std::end(no_speeds),
                                           m_gt);
 

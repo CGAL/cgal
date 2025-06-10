@@ -4,7 +4,7 @@ namespace CGAL {
 /*!
 \ingroup PkgTriangulation3VertexCellClasses
 
-The class `Regular_triangulation_cell_base_with_weighted_circumcenter_3` derives from
+The class `Regular_triangulation_cell_base_3` derives from
 `Cb`, a cell base class of a 3D triangulation.
 It is the default cell base class of regular triangulations.
 

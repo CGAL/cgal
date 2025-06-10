@@ -221,7 +221,7 @@ i. e., the faces whose circumcircle contains `p`.
 It outputs in the container pointed to by `eit` the
 the boundary of the zone in conflict with `p`.
 The boundary edges
-of the conflict zone are output in counter-clockwise order
+of the conflict zone are output in counterclockwise order
 and each edge is described through its incident face
 which is not in conflict with `p`.
 The function returns in a `std::pair` the resulting output iterators.

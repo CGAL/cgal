@@ -656,7 +656,7 @@ public:
    *    \cgalParamExtra{The return type of the function depends on whether this parameter
    *                    or `input_features` are provided or not.}
    *    \cgalParamExtra{If `weights` is provided, it must either be adapted to the detected features,
-   *                    or post-processed during feature detection to keep consistency
+   *                    or postprocessed during feature detection to keep consistency
    *                    of the output `MeshDomainWithFeatures_3`.
    *                    Available functors implement the necessary modifications.}
    *   \cgalParamNEnd

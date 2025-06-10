@@ -1,4 +1,4 @@
-/// \defgroup PkgPolygonRepairRef 2D Polygon Repair Reference
+/// \defgroup PkgPolygonRepairRef Reference Manual
 
 /// \defgroup PkgPolygonRepairFunctions Functions
 /// \ingroup PkgPolygonRepairRef

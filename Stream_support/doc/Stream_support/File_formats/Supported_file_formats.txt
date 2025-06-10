@@ -106,7 +106,7 @@ which offers combinatorial repairing while reading bad inputs.
 \section IOStreamOBJ Wavefront Advanced Visualizer Object Format (OBJ)
 
 The `OBJ` file format, using the file extension `.obj`, is a simple \ascii data format that represents 3D geometry.
-Vertices are stored in a counter-clockwise order by default, making explicit declaration of face normals unnecessary.
+Vertices are stored in a counterclockwise order by default, making explicit declaration of face normals unnecessary.
 
 A precise specification of the format is available <a href="https://www.martinreddy.net/gfx/3d/OBJ.spec">here</a>.
 

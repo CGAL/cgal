@@ -1,4 +1,4 @@
-/// \defgroup PkgOrthtreeRef Quadtrees, Octrees and Orthtrees Reference
+/// \defgroup PkgOrthtreeRef Reference Manual
 Quadtree, Octree and Orthtree Reference
 
 /// \defgroup PkgOrthtreeConcepts Concepts

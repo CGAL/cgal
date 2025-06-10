@@ -28,6 +28,8 @@
 
 namespace CGAL {
 
+#ifndef DOXYGEN_RUNNING
+
 namespace poisson_eliminate_impl {
 
 double get_maximum_radius(std::size_t dimension, std::size_t sample_size, double domain_size) {
@@ -211,6 +213,8 @@ struct Search_traits<Point, 3> : public CGAL::Search_traits_3<typename CGAL::Ker
 };
 
 }
+
+#endif
 
 /**
    \ingroup PkgPointSetProcessing3Algorithms
