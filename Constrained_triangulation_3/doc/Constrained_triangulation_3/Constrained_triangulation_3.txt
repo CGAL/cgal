@@ -119,7 +119,7 @@ Right: the same CCDT seen with cutplane.
 There is no universal or canonical way to represent all possible PLCs in \cgal.
 
 Any polyhedral surface is a PLC, so any model of `FaceListGraph`, such as `CGAL::Surface_mesh`, can be
-used to represent a PLC.
+used to represent such a PLC.
 In this representation, the faces of the PLC correspond to the faces of the
 surface mesh—a collection of vertices (points), edges, and faces that cover the surface of a
 geometric object.
