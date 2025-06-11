@@ -6,6 +6,7 @@ AllowShortFunctionsOnASingleLine: true
 BinPackParameters: false
 BreakConstructorInitializers: BeforeComma
 BreakBeforeBraces: Custom
+AlwaysBreakTemplateDeclarations: Yes
 BraceWrapping:
   AfterCaseLabel:  false
   AfterClass:      true
@@ -32,4 +33,6 @@ PointerAlignment: Left
 # Control the spaces around conditionals
 SpacesInConditionalStatement: false
 SpaceBeforeParens: false
+# disable sorting of includes
+SortIncludes: false
 ...
