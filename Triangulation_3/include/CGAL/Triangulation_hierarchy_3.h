@@ -731,16 +731,29 @@ move_if_no_collision(Vertex_handle v, const Point & p)
 {
   CGAL_precondition(!this->is_infinite(v));
   if(v->point() == p) return v;
-  Vertex_handle ans;
+
+# if 1
+  Vertex_handle ans = hierarchy[0]->move_if_no_collision(v, p);
+  if(ans != v) return ans; // ans is an existing vertex at p and v was not changed
+  for (int l = 1; l < maxlevel; ++l) {
+    Vertex_handle u = v->up();
+    if (u == Vertex_handle())
+      break;
+    hierarchy[l]->move_if_no_collision(u, p);
+    v = u;
+  }
+#else
+ Vertex_handle ans;
   for (int l = 0; l < maxlevel; ++l) {
     Vertex_handle u = v->up();
     if(l) hierarchy[l]->move_if_no_collision(v, p);
     else ans = hierarchy[l]->move_if_no_collision(v, p);
-    if(ans != v) return ans;
+    if(ans != v) return ans; // ans is an existing vertex at p and v was not changed
     if (u == Vertex_handle())
       break;
     v = u;
   }
+#endif
   return ans;
 }
 
