@@ -24,9 +24,11 @@
 #include <CGAL/Triangulation_data_structure_3_fwd.h>
 
 #include <CGAL/assertions.h>
+#include <CGAL/Compact_container.h>
 #include <CGAL/Iterator_range.h>
 #include <CGAL/property_map.h>
 #include <CGAL/Surface_mesh/Surface_mesh.h>
+#include <CGAL/Time_stamper.h>
 #include <CGAL/utility.h>
 
 #include <boost/stl_interfaces/iterator_interface.hpp>
@@ -857,6 +859,10 @@ namespace CGAL {
       using type = Property_map<Key, T>;
     };
 
+    using Time_stamper = CGAL::Time_stamper_impl<Element_type>;
+    template <typename U> using EraseCounterStrategy =
+      internal::Erase_counter_strategy<internal::has_increment_erase_counter<U>::value>;
+
     template<class T>
     std::pair<Property_map<Index_type, T>, bool>
     add_property_map(std::string name=std::string(), const T t=T()) {
@@ -887,19 +893,21 @@ namespace CGAL {
       garbage_ = false;
     }
 
-    Index_type create()
+    Index_type create(Container* container)
     {
+      Element_type elt(container, Index_type(size()));
       if(recycle_ && (freelist_ != Index_type::invalid_index)){
         Index_type idx{freelist_};
         freelist_ = free_list_next_function_(storage_[idx]);
         --nb_of_removed_elements_;
         removed_[idx] = false;
         properties_.reset(idx);
-        return idx;
+        elt = Element_type(container, idx);
       } else {
         properties_.push_back();
-        return Index_type(size()-1);
       }
+      Time_stamper::restore_timestamp(&elt, elt.index().id());
+      return elt.index();
     }
 
     void remove(Handle ch)
@@ -908,6 +916,7 @@ namespace CGAL {
       removed_[idx] = true; ++nb_of_removed_elements_; garbage_ = true;
       free_list_next_function_(storage_[idx]) = Index_type{freelist_};
       freelist_ = static_cast<size_type>(idx);
+      EraseCounterStrategy<Element_type>::increment_erase_counter(storage_[idx]);
     }
 
     bool is_valid_index(Index_type idx) const {
@@ -1014,18 +1023,17 @@ namespace CGAL {
     using Cell_container = Indexed_container<Cell_index, Cell, Cell_storage, Self,
         &cell_free_list_next_function, 'c'>;
 
+    Cell_storage_property_map& cell_storage() { return cell_container().storage_; }
+    const Cell_storage_property_map& cell_storage() const { return cell_container().storage_; }
 
-    Cell_storage_property_map& cell_storage() { return cell_container_.storage_; }
-    const Cell_storage_property_map& cell_storage() const { return cell_container_.storage_; }
-
-    Vertex_storage_property_map& vertex_storage() { return vertex_container_.storage_; }
-    const Vertex_storage_property_map& vertex_storage() const { return vertex_container_.storage_; }
+    Vertex_storage_property_map& vertex_storage() { return vertex_container().storage_; }
+    const Vertex_storage_property_map& vertex_storage() const { return vertex_container().storage_; }
 
     auto cell_tds_data_pmap() { return cell_data_; }
     auto cell_tds_data_pmap() const { return cell_data_; }
 
-    size_type num_vertices() const { return static_cast<size_type>(vertex_container_.size()); }
-    size_type num_cells() const { return static_cast<size_type>(cell_container_.size()); }
+    size_type num_vertices() const { return static_cast<size_type>(vertex_container().size()); }
+    size_type num_cells() const { return static_cast<size_type>(cell_container().size()); }
 
     int dimension() const { return dimension_; }
 
@@ -1035,9 +1043,9 @@ namespace CGAL {
     auto& container()
     {
       if constexpr (std::is_same_v<Index_type, Vertex_index>) {
-        return vertex_container_;
+        return vertex_container();
       } else if constexpr (std::is_same_v<Index_type, Cell_index>) {
-        return cell_container_;
+        return cell_container();
       } else {
         static_assert(std::is_same_v<Index_type, void>, "Invalid Index type");
       }
@@ -1047,9 +1055,9 @@ namespace CGAL {
     const auto& container() const
     {
       if constexpr (std::is_same_v<Index_type, Vertex_index>) {
-        return vertex_container_;
+        return vertex_container();
       } else if constexpr (std::is_same_v<Index_type, Cell_index>) {
-        return cell_container_;
+        return cell_container();
       } else {
         static_assert(std::is_same_v<Index_type, void>, "Invalid Index type");
       }
@@ -1057,12 +1065,12 @@ namespace CGAL {
 
     Vertex_handle create_vertex()
     {
-      return Vertex_handle{this, vertex_container_.create()};
+      return Vertex_handle{this, vertex_container().create(this)};
     }
 
     Cell_handle create_cell()
     {
-      return Cell_handle{this, cell_container_.create()};
+      return Cell_handle{this, cell_container().create(this)};
     }
 
     Vertex_handle create_vertex(const Vertex& v)
@@ -1117,18 +1125,18 @@ namespace CGAL {
 
     void delete_vertex(Vertex_handle vh)
     {
-      vertex_container_.remove(vh);
+      vertex_container().remove(vh);
     }
 
     void delete_cell(Cell_handle ch)
     {
-      cell_container_.remove(ch);
+      cell_container().remove(ch);
     }
 
     void reserve(size_type n_vertices, size_type n_cells)
     {
-      vertex_container_.reserve(n_vertices);
-      cell_container_.reserve(n_cells);
+      vertex_container().reserve(n_vertices);
+      cell_container().reserve(n_cells);
     }
 
     void clear()
@@ -1139,8 +1147,8 @@ namespace CGAL {
 
     void clear_without_removing_property_maps()
     {
-      vertex_container_.clear();
-      cell_container_.clear();
+      vertex_container().clear();
+      cell_container().clear();
       dimension_ = -2;
     }
 
@@ -1152,12 +1160,12 @@ namespace CGAL {
 
     size_type number_of_removed_vertices() const
     {
-      return vertex_container_.nb_of_removed_elements_;
+      return vertex_container().nb_of_removed_elements_;
     }
 
     size_type number_of_removed_cells() const
     {
-      return cell_container_.nb_of_removed_elements_;
+      return cell_container().nb_of_removed_elements_;
     }
 
     size_type number_of_vertices() const
@@ -1171,11 +1179,11 @@ namespace CGAL {
     }
 
     bool is_valid_vertex_index(Vertex_index idx) const {
-      return vertex_container_.is_valid_index(idx);
+      return vertex_container().is_valid_index(idx);
     }
 
     bool is_valid_cell_index(Cell_index idx) const {
-      return cell_container_.is_valid_index(idx);
+      return cell_container().is_valid_index(idx);
     }
 
     bool is_vertex(Vertex_handle v) const
@@ -1287,7 +1295,7 @@ namespace CGAL {
       c1->set_neighbor(i1,c0);
     }
 
-    bool has_garbage() const { return vertex_container_.has_garbage() || cell_container_.has_garbage(); }
+    bool has_garbage() const { return vertex_container().has_garbage() || cell_container().has_garbage(); }
 
     /// returns whether the index of vertex `v` is valid, that is within the current array bounds.
     bool has_valid_index(Vertex_index v) const
@@ -1304,12 +1312,12 @@ namespace CGAL {
     /// \sa `collect_garbage()`
     bool is_removed(Vertex_index v) const
     {
-      return vertex_container_.removed_[v];
+      return vertex_container().removed_[v];
     }
 
     bool is_removed(Cell_index c) const
     {
-      return cell_container_.removed_[c];
+      return cell_container().removed_[c];
     }
     //------------------------------------------------------ iterator types
     using Vertex_iterator = Index_iterator<Vertex_handle, Self>;
@@ -1420,10 +1428,29 @@ namespace CGAL {
       return tds().copy_tds(src, vert, setv, setc);
     }
 
+  protected:
+    Vertex_container& vertex_container()
+    {
+      return vertex_container_;
+    }
+    const Vertex_container& vertex_container() const
+    {
+      return vertex_container_;
+    }
+    Cell_container& cell_container()
+    {
+      return cell_container_;
+    }
+    const Cell_container& cell_container() const
+    {
+      return cell_container_;
+    }
+
     Vertex_container vertex_container_;
     Cell_container cell_container_;
+
     Property_map<Cell_index, Cell_data> cell_data_ =
-        cell_container_.template add_property_map<Cell_data>("c:data").first;
+        cell_container().template add_property_map<Cell_data>("c:data").first;
 
     // in dimension i, number of vertices >= i+2
     // ( the boundary of a simplex in dimension i+1 has i+2 vertices )
