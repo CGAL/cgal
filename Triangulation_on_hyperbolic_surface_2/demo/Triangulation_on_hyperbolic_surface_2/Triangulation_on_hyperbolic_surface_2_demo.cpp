@@ -10,12 +10,16 @@
 
 using namespace CGAL;
 
-typedef Simple_cartesian<Exact_rational>                                Kernel;
-typedef Hyperbolic_Delaunay_triangulation_traits_2<Kernel>              ParentTraits;
+typedef CGAL::Exact_rational                                                      NumberType;
+typedef CGAL::Circular_kernel_2<CGAL::Simple_cartesian<NumberType>,CGAL::Algebraic_kernel_for_circles_2_2<NumberType>> Kernel;
+typedef CGAL::Hyperbolic_Delaunay_triangulation_CK_traits_2<Kernel>                  ParentTraits;
+
+// typedef Simple_cartesian<Exact_rational>                                Kernel;
+// typedef Hyperbolic_Delaunay_triangulation_traits_2<Kernel>              ParentTraits;
 typedef Hyperbolic_surface_traits_2<ParentTraits>                       Traits;
 typedef Hyperbolic_fundamental_domain_2<Traits>                         Domain;
 typedef Hyperbolic_fundamental_domain_factory_2<Traits>                 Factory;
-typedef Triangulation_on_hyperbolic_surface_2<Traits>                   Triangulation;
+typedef Triangulation_on_hyperbolic_surface_2<Traits, CGAL::Anchored_Combinatorial_Map_Attributes<Traits>>                   Triangulation;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

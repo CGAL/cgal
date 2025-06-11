@@ -12,9 +12,18 @@ set(CMAKE_AUTOMOC ON)
 # CGAL and its components
 find_package(CGAL REQUIRED COMPONENTS Core Qt6)
 find_package(Qt6 QUIET COMPONENTS Widgets)
+find_package(Qt6 QUIET COMPONENTS Svg)
 
 if (NOT CGAL_Qt6_FOUND  OR NOT Qt6_FOUND)
   message(STATUS "This project requires the Qt6 library, and will not be compiled.")
+  return()
+endif()
+
+# Boost and its components
+find_package( Boost REQUIRED )
+
+if ( NOT Boost_FOUND )
+  message(STATUS "This project requires the Boost library, and will not be compiled.")
   return()
 endif()
 
@@ -22,5 +31,8 @@ endif()
 qt6_wrap_ui(UIS drawing_window_description.ui)
 
 add_executable( Triangulation_on_hyperbolic_surface_2_demo Triangulation_on_hyperbolic_surface_2_demo.cpp window.cpp ${UIS})
-target_link_libraries(Triangulation_on_hyperbolic_surface_2_demo PRIVATE CGAL::CGAL CGAL::CGAL_Qt6 Qt6::Widgets )
+target_link_libraries(Triangulation_on_hyperbolic_surface_2_demo PRIVATE CGAL::CGAL CGAL::CGAL_Qt6 Qt6::Widgets Qt6::Svg)
 cgal_add_compilation_test(Triangulation_on_hyperbolic_surface_2_demo)
+
+add_executable( epsilon_net epsilon_net.cpp window.cpp ${UIS})
+target_link_libraries(epsilon_net PRIVATE CGAL::CGAL CGAL::CGAL_Qt6 Qt6::Widgets Qt6::Svg)

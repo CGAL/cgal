@@ -8,7 +8,7 @@
 namespace CGAL{
 
 template<class Traits>
-struct Anchored_Combinatorial_Map_Attributes{
+struct Anchored_Combinatorial_Map_Attributes {
 	template<class CMap>
 	struct Dart_wrapper{
 		typedef Cell_attribute<CMap, Complex_number<typename Traits::FT>> Edge_attrib;
@@ -17,7 +17,7 @@ struct Anchored_Combinatorial_Map_Attributes{
 	};
 };
 
-enum Locate_type{
+enum Locate_type {
 	VERTEX,
 	EDGE,
 	FACE,
@@ -25,7 +25,7 @@ enum Locate_type{
 };
 
 template<class Traits>
-class Delaunay_triangulation_on_hyperbolic_surface_2: public Triangulation_on_hyperbolic_surface_2<Traits,Anchored_Combinatorial_Map_Attributes<Traits>>{
+class Delaunay_triangulation_on_hyperbolic_surface_2: public Triangulation_on_hyperbolic_surface_2<Traits, Anchored_Combinatorial_Map_Attributes<Traits>> {
 public:
 	typedef Triangulation_on_hyperbolic_surface_2<Traits,Anchored_Combinatorial_Map_Attributes<Traits>>                     Base;
 	typedef Combinatorial_map<2,Anchored_Combinatorial_Map_Attributes<Traits>>                                              Combinatorial_Map;
@@ -818,23 +818,99 @@ flip(Dart_descriptor dart)
 {
 	CGAL_expensive_precondition(is_valid());
 
+	// // first gather all the information needed
+	// Dart_descriptor opposite = Base::opposite(dart);
+	// Anchor & anch = anchor(dart);
+
+	// unsigned index = index_in_anchor(dart);
+	// Point & C = anch.vertices[index];
+	// Point & A = anch.vertices[ccw(index)];
+	// Point & B = anch.vertices[cw(index)];
+	// Complex cross_ratio = Base::get_cross_ratio(dart);
+	// Point D = Base::fourth_point_from_cross_ratio(A, B, C, cross_ratio);
+
+	// // flip the edge in the cmap and update the cross-ratios
+	// Base::flip(dart);  // AC -> BD
+	
+	// // update the two anchors
+	// this->combinatorial_map_.template info<2>(dart) = Anchor(dart, B, D, A);
+	// this->combinatorial_map_.template info<2>(opposite) = Anchor(opposite, D, B, C);
+
 	// first gather all the information needed
-	Dart_descriptor opposite = Base::opposite(dart);
-	Anchor & anch = anchor(dart);
+	Dart_descriptor a = Base::opposite(dart);  // get a fresh handle
+	Dart_descriptor b = Base::ccw(a);
+	Dart_descriptor c = Base::cw(a);
+
+	Dart_descriptor d = Base::opposite(a);  // == dart
+	Dart_descriptor e = Base::ccw(d);
+	Dart_descriptor f = Base::cw(d);
+	Anchor& anch = anchor(d);
+
+	Complex cross_ratio_AB = Base::get_cross_ratio(e);
+	Complex cross_ratio_BC = Base::get_cross_ratio(f);
+	Complex cross_ratio_CD = Base::get_cross_ratio(b);
+	Complex cross_ratio_DA = Base::get_cross_ratio(c);
+	Complex cross_ratio_AC = Base::get_cross_ratio(a);
 
 	unsigned index = index_in_anchor(dart);
 	Point & C = anch.vertices[index];
 	Point & A = anch.vertices[ccw(index)];
 	Point & B = anch.vertices[cw(index)];
-	Complex cross_ratio = Base::get_cross_ratio(dart);
-	Point D = Base::fourth_point_from_cross_ratio(A, B, C, cross_ratio);
+	Point D = Base::fourth_point_from_cross_ratio(A, B, C, cross_ratio_AC);
 
-	// flip the edge in the cmap and update the cross-ratios
-	Base::flip(dart);  // AC -> BD
-	
-	// update the two anchors
-	this->combinatorial_map_.template info<2>(dart) = Anchor(dart, B, D, A);
-	this->combinatorial_map_.template info<2>(opposite) = Anchor(opposite, D, B, C);
+	Complex z_D (D.x(), D.y());
+	CGAL_assertion(norm(z_D) < Number(1));
+
+	// create the new anchors
+	Anchor new_anchor = Anchor(f, B, C, D);
+	Anchor new_neighbor = Anchor(c, D, A, B);
+
+	// compute the new cross ratios
+	Complex one (Number(1), Number(0));
+	Complex cross_ratio_BD = (cross_ratio_AC) / (cross_ratio_AC - one) ;
+	Complex cross_ratio_AB_2 = one - (one - (cross_ratio_AB)) * (cross_ratio_AC) ;
+	Complex cross_ratio_BC_2 = one - (one - (cross_ratio_BC)) / (cross_ratio_BD) ;
+	Complex cross_ratio_CD_2 = one - (one - (cross_ratio_CD)) * (cross_ratio_AC) ;
+	Complex cross_ratio_DA_2 = one - (one - (cross_ratio_DA)) / (cross_ratio_BD) ;
+
+	// make the topological flip
+	this->combinatorial_map_.template unlink_beta<1>(a);
+	this->combinatorial_map_.template unlink_beta<1>(b);
+	this->combinatorial_map_.template unlink_beta<1>(c);
+
+	this->combinatorial_map_.template unlink_beta<1>(d);
+	this->combinatorial_map_.template unlink_beta<1>(e);
+	this->combinatorial_map_.template unlink_beta<1>(f);
+
+	this->combinatorial_map_.template link_beta<1>(b, a);
+	this->combinatorial_map_.template link_beta<1>(a, f);
+	this->combinatorial_map_.template link_beta<1>(f, b);
+
+	this->combinatorial_map_.template link_beta<1>(e, d);
+	this->combinatorial_map_.template link_beta<1>(d, c);
+	this->combinatorial_map_.template link_beta<1>(c, e);
+
+	CGAL_assertion(Base::opposite(a) == d);
+
+	// and give the new cross ratios to the edges
+	this->combinatorial_map_.template info<1>(a) = cross_ratio_BD;
+	this->combinatorial_map_.template info<1>(e) = cross_ratio_AB_2;
+	this->combinatorial_map_.template info<1>(f) = cross_ratio_BC_2;
+	this->combinatorial_map_.template info<1>(b) = cross_ratio_CD_2;
+	this->combinatorial_map_.template info<1>(c) = cross_ratio_DA_2;
+
+	// take care of the particular cases where we need to "flip again"
+	if (Base::opposite(e) == b) {
+		this->combinatorial_map_.template info<1>(e) = one - (one - cross_ratio_AB_2) * (cross_ratio_AC) ;
+	}
+	if (Base::opposite(f) == c) {
+		this->combinatorial_map_.template info<1>(f) = one - (one - cross_ratio_BC_2) / (cross_ratio_BD) ;
+	}
+
+	// give the new anchors to the faces
+	this->combinatorial_map_.template info<2>(f) = new_anchor;
+	this->combinatorial_map_.template info<2>(c) = new_neighbor;
+
 
 	CGAL_expensive_assertion(is_valid());
 }

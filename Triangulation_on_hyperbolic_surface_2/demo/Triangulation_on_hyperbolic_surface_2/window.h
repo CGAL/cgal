@@ -18,6 +18,8 @@
 #include <CGAL/Qt/GraphicsItem.h>
 #include <CGAL/Qt/DemosMainWindow.h>
 
+#include <QSvgGenerator>
+
 // UI generated header
 #include "ui_drawing_window_description.h"
 
@@ -25,14 +27,23 @@
 #include <CGAL/Simple_cartesian.h>
 
 #include <CGAL/Hyperbolic_Delaunay_triangulation_traits_2.h>
+#include <CGAL/Hyperbolic_Delaunay_triangulation_CK_traits_2.h>
 #include <CGAL/Hyperbolic_surface_traits_2.h>
 #include <CGAL/Triangulation_on_hyperbolic_surface_2.h>
+#include <CGAL/Delaunay_triangulation_on_hyperbolic_surface_2.h>
+#include <CGAL/Hyperbolic_Dirichlet_domain_2.h>
 
-typedef CGAL::Simple_cartesian<CGAL::Exact_rational>                             Kernel;
-typedef CGAL::Hyperbolic_Delaunay_triangulation_traits_2<Kernel>                 ParentTraits;
-typedef CGAL::Hyperbolic_surface_traits_2<ParentTraits>                          Traits;
-typedef Traits::Hyperbolic_point_2                                               Point;
-typedef CGAL::Triangulation_on_hyperbolic_surface_2<Traits>                      Triangulation;
+typedef CGAL::Exact_rational                                                      NumberType;
+// typedef CGAL::Simple_cartesian<NumberType>                                        Kernel;
+typedef CGAL::Circular_kernel_2<CGAL::Simple_cartesian<NumberType>,CGAL::Algebraic_kernel_for_circles_2_2<NumberType>> Kernel;
+typedef CGAL::Hyperbolic_Delaunay_triangulation_CK_traits_2<Kernel>                  ParentTraits;
+typedef CGAL::Hyperbolic_surface_traits_2<ParentTraits>                           Traits;
+typedef Traits::Hyperbolic_point_2                                                Point;
+typedef typename Traits::Hyperbolic_Voronoi_point_2                               Voronoi_point;
+typedef CGAL::Hyperbolic_fundamental_domain_2<Traits>                             Domain;
+typedef CGAL::Triangulation_on_hyperbolic_surface_2<Traits, CGAL::Anchored_Combinatorial_Map_Attributes<Traits>>   Triangulation;
+typedef CGAL::Delaunay_triangulation_on_hyperbolic_surface_2<Traits>              Delaunay_Triangulation;
+typedef typename Triangulation::Anchor                                   Anchor;
 
 class DemoWindowItem
   : public CGAL::Qt::GraphicsItem
@@ -45,10 +56,12 @@ private:
 
   // Edges to draw
   std::vector<std::pair<Point,Point> > edges_;
+  std::vector<std::pair<Point,Point> > dirichlet_edges_;
 
   // Pens for drawing
   QPen poincare_disk_pen_;
   QPen edges_pen_;
+  QPen dirichlet_pen_;
 
   // radius of the poincaré disk
   const int poincare_disk_radius_in_pixels_ = 600;
@@ -67,8 +80,11 @@ public:
   QRectF boundingRect() const;
   void modelChanged();
 
-  // Drawing method
+  // Drawing methods
   void draw_triangulation(Triangulation& triangulation);
+  void draw_dirichlet(Domain& domain);
+  void draw_triangles(std::vector<Anchor> anchors);
+  void draw_triangulation(Delaunay_Triangulation& triangulation, Anchor& anchor);
 
 private:
   // Sub-methods for drawing edges and vertices
@@ -95,6 +111,7 @@ class DemoWindow
 private:
   QGraphicsScene scene_;
   DemoWindowItem* item_;
+  QString         path_;
 
 public:
   DemoWindow();
@@ -102,6 +119,10 @@ public:
 
   // Events handling
   void keyPressEvent(QKeyEvent* event);
+
+public Q_SLOTS:
+  void on_actionSave_as_SVG_triggered();
+  void on_actionSave_as_PNG_triggered();
 };
 
 #endif // CGAL_TRIANGULATION_ON_HYPERBOLIC_SURFACE_DEMO_WINDOW
