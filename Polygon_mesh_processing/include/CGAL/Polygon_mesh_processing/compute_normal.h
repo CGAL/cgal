@@ -638,7 +638,7 @@ compute_vertex_normal_most_visible_min_circle(typename boost::graph_traits<Polyg
         circum_points[2]=f_out;
       }
 
-      const Vector_ref ni2 = get(face_normals, circum_points[1]);
+      const Vector_ref ni2 = get(face_normals, circum_points[0]);
       const Vector_ref nj2 = get(face_normals, circum_points[1]);
       const Vector_ref nk2 = get(face_normals, circum_points[2]);
 
