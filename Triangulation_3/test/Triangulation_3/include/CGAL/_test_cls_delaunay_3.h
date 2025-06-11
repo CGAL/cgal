@@ -1102,14 +1102,13 @@ _test_cls_delaunay_3(const Triangulation &)
     points.push_back(Point(0, 0, rand()%30000));
   }
   TM_1.insert(points.begin(), points.end());
-  TM_1.remove(TM_1.finite_vertices_begin());
+  std::vector<Vertex_handle> vhandles_1(TM_1.finite_vertex_handles().begin(),
+                                        TM_1.finite_vertex_handles().end());
   Vertex_handle vTM_1;
   for(int i=0; i<2; i++) {
-    for(typename Cls::Finite_vertices_iterator
-          fvi = TM_1.finite_vertices_begin();
-        fvi != TM_1.finite_vertices_end(); fvi++) {
+    for(Vertex_handle vh : vhandles_1) {
       Point p = Point(0, 0, rand()%30000);
-      vTM_1 = TM_1.move_if_no_collision(fvi, p);
+      vTM_1 = TM_1.move_if_no_collision(vh, p);
       assert(TM_1.is_valid());
     }
   }
@@ -1123,14 +1122,13 @@ _test_cls_delaunay_3(const Triangulation &)
     points.push_back(Point(0, rand()%30000, rand()%30000));
   }
   TM_2.insert(points.begin(), points.end());
-  TM_2.remove(TM_2.finite_vertices_begin());
-        Vertex_handle vTM_2;
+  std::vector<Vertex_handle> vhandles_2(TM_2.finite_vertex_handles().begin(),
+                                        TM_2.finite_vertex_handles().end());
+  Vertex_handle vTM_2;
   for(int i=0; i<2; i++) {
-    for(typename Cls::Finite_vertices_iterator
-         fvi = TM_2.finite_vertices_begin();
-         fvi != TM_2.finite_vertices_end(); fvi++) {
+    for(Vertex_handle vh : vhandles_2) {
       Point p = Point(0, rand()%30000, rand()%30000);
-      vTM_2 = TM_2.move_if_no_collision(fvi, p);
+      vTM_2 = TM_2.move_if_no_collision(vh, p);
       assert(TM_2.is_valid());
     }
   }
@@ -1144,17 +1142,16 @@ _test_cls_delaunay_3(const Triangulation &)
     points.push_back(Point(rand()%30000, rand()%30000, rand()%30000));
   }
   TM_3.insert(points.begin(), points.end());
-  TM_3.remove(TM_3.finite_vertices_begin());
+  std::vector<Vertex_handle> vhandles_3(TM_3.finite_vertex_handles().begin(),
+                                        TM_3.finite_vertex_handles().end());
 
   assert(TM_3.is_valid());
 
   Vertex_handle vTM_3;
   for(int i=0; i<2; i++) {
-    for(typename Cls::Finite_vertices_iterator
-          fvi = TM_3.finite_vertices_begin();
-        fvi != TM_3.finite_vertices_end(); fvi++) {
+    for(Vertex_handle vh : vhandles_3) {
       Point p = Point(rand()%30000, rand()%30000, rand()%30000);
-      vTM_3 = TM_3.move_if_no_collision(fvi, p);
+      vTM_3 = TM_3.move_if_no_collision(vh, p);
       assert(TM_3.is_valid());
     }
   }
