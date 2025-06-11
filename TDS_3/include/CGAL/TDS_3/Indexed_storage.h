@@ -910,13 +910,14 @@ namespace CGAL {
       return elt.index();
     }
 
-    void remove(Handle ch)
+    void remove(Handle ch, Container* container)
     {
       Index_type idx = ch->index();
       removed_[idx] = true; ++nb_of_removed_elements_; garbage_ = true;
       free_list_next_function_(storage_[idx]) = Index_type{freelist_};
       freelist_ = static_cast<size_type>(idx);
-      EraseCounterStrategy<Element_type>::increment_erase_counter(storage_[idx]);
+      Element_type elt(container, idx);
+      EraseCounterStrategy<Element_type>::increment_erase_counter(elt);
     }
 
     bool is_valid_index(Index_type idx) const {
@@ -1125,12 +1126,12 @@ namespace CGAL {
 
     void delete_vertex(Vertex_handle vh)
     {
-      vertex_container().remove(vh);
+      vertex_container().remove(vh, this);
     }
 
     void delete_cell(Cell_handle ch)
     {
-      cell_container().remove(ch);
+      cell_container().remove(ch, this);
     }
 
     void reserve(size_type n_vertices, size_type n_cells)
@@ -1495,7 +1496,9 @@ namespace CGAL {
     }
 
     void set_circumcenter(const Point_3&)
-    {}
+    {
+      std::cout << "ignore set_circumcenter() call"
+    }
 
   };
 
@@ -1578,9 +1581,7 @@ namespace CGAL {
 
   void set_circumcenter(const Point& p) const
   {
-      if (! storage().circumcenter_){
-       storage().circumcenter_ = std::make_optional<Point>(p);
-      }
+    storage().circumcenter_ = std::make_optional<Point>(p);
   }
 
   const Point& circumcenter(const GT& gt = GT()) const
