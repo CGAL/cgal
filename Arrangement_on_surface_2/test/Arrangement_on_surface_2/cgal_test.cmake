@@ -1404,6 +1404,39 @@ function(test_algebraic_traits_core)
     VERTEX)
 endfunction()
 
+#---------------------------------------------------------------------#
+# Draw_aos tests
+#---------------------------------------------------------------------#
+function (test_draw_aos_arr_bounded_approximate_face_2)
+  set(nt ${CGAL_GMPQ_NT})
+  set(kernel ${CARTESIAN_KERNEL})
+  set(geom_traits ${GEODESIC_ARC_ON_SPHERE_GEOM_TRAITS})
+  set(topol_traits ${SPHERICAL_TOPOL_TRAITS})
+  set(flags "-DTEST_NT=${nt} -DTEST_KERNEL=${kernel} -DTEST_GEOM_TRAITS=${geom_traits} -DTEST_TOPOL_TRAITS=${topol_traits}")
+
+  compile_test_with_flags(test_draw_aos_arr_bounded_approximate_face_2 draw_aos "${flags}")
+  # target_link_libraries(test_draw_aos_arr_bounded_approximate_face_2)
+endfunction()
+
+function (test_drawing_planar)
+  set(nt ${CGAL_GMPQ_NT})
+  set(kernel ${CARTESIAN_KERNEL})
+  set(geom_traits ${POLYLINE_GEOM_TRAITS})
+  set(flags "-DCGAL_USE_BASIC_VIEWER")
+  compile_test_with_flags(test_drawing_planar drawing "${flags}")
+  # target_link_libraries(test_drawing_planar PRIVATE Qt6::Core Qt6::Gui Qt6::Widgets)
+  target_link_libraries(test_drawing_planar PRIVATE CGAL::CGAL_Basic_viewer CGAL::CGAL_Qt6)
+endfunction()
+
+function (test_drawing_spherical)
+  set(nt ${CGAL_GMPQ_NT})
+  set(kernel ${CARTESIAN_KERNEL})
+  set(geom_traits ${POLYLINE_GEOM_TRAITS})
+  set(flags "-DTEST_NT=${nt} -DTEST_KERNEL=${kernel} -DTEST_GEOM_TRAITS=${geom_traits}")
+
+  compile_test_with_flags(test_drawing_spherical drawing "${flags}")
+  target_link_libraries(test_drawing_spherical PRIVATE CGAL::CGAL_Basic_viewer CGAL::CGAL_Qt6)
+endfunction()
 
 configure("")
 compile_and_run(construction_test_suite_generator)
@@ -1486,6 +1519,11 @@ compile_and_run(test_io)
 compile_and_run(test_sgm)
 
 compile_and_run(test_polycurve_intersection)
+
+test_draw_aos_arr_bounded_approximate_face_2()
+test_drawing_planar()
+test_drawing_spherical()  
+
 if(CGAL_DISABLE_GMP)
   get_directory_property(LIST_OF_TESTS TESTS)
   foreach(_test ${LIST_OF_TESTS})
