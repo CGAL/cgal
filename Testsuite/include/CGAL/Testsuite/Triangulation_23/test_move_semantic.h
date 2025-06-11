@@ -30,7 +30,7 @@ namespace CGAL {
           assert(tr.number_of_vertices() == nb_of_vertices);
           assert(tr.dimension() == dimension);
         };
-        auto check_moved_from_triangulation = [](const Tr& tr_copy) {
+        auto check_moved_from_triangulation = [&](const Tr& tr_copy) {
           assert(is_indexed_based || tr_copy.dimension() == -2);
           assert(is_indexed_based || tr_copy.number_of_vertices() + 1 == 0);
         };
