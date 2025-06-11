@@ -416,16 +416,16 @@ namespace internal {
     const GeomTraits& traits,
     const PointMap point_map) {
 
-    const Edge_case type = bounded_side_2(
+    const Weights::internal::Edge_case type = bounded_side_2(
       polygon, query, traits, point_map);
 
     // Locate point with respect to different polygon locations.
     switch (type) {
-      case Edge_case::INTERIOR:
+      case Weights::internal::Edge_case::INTERIOR:
         return std::make_pair(Query_point_location::ON_BOUNDED_SIDE, std::size_t(-1));
-      case Edge_case::EXTERIOR:
+      case Weights::internal::Edge_case::EXTERIOR:
         return std::make_pair(Query_point_location::ON_UNBOUNDED_SIDE, std::size_t(-1));
-      case Edge_case::BOUNDARY:
+      case Weights::internal::Edge_case::BOUNDARY:
         return get_edge_index_exact(polygon, query, traits, point_map);
       default:
         return std::make_pair(Query_point_location::UNSPECIFIED, std::size_t(-1));
