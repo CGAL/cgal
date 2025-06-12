@@ -117,8 +117,8 @@ namespace CGAL {
  *                   patch can be composed of several facets of `mesh`, forming a planar polygon.}
  *    \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%face_descriptor`
  *                   as key type and with any value type that is a *regular* type (model of `Regular`)}
- *   \cgalParamExtra{If this parameter is omitted, each facet of `mesh` is considered a separate patch.
- *                   Faces with the same patch identifier are considered part of the same surface patch.}
+ *   \cgalParamExtra{If this parameter is omitted, each facet of `mesh` is considered a separate PLC face.
+ *                   Faces of `mesh` with the same patch identifier are considered part of the same PLC face.}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{return_empty_on_invalid_input}
@@ -195,8 +195,8 @@ auto make_conforming_constrained_Delaunay_triangulation_3(const PolygonMesh &mes
  *                   patch can be composed of several faces of `soup`, forming a planar polygon.}
  *    \cgalParamType{a class model of `ReadablePropertyMap` with `std::size_t`
  *                   as key type and with any value type that is a *regular* type (model of `Regular`)}
- *   \cgalParamExtra{If this parameter is omitted, each facet of the polygon soup is considered a separate patch.}
- *   \cgalParamExtra{Otherwise facets with the same patch identifier are considered part of the same surface patch.}
+ *   \cgalParamExtra{If this parameter is omitted, each facet of the polygon soup is considered a separate PLC face.}
+ *   \cgalParamExtra{Otherwise facets with the same patch identifier are considered part of the same PLC face.}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{return_empty_on_invalid_input}
