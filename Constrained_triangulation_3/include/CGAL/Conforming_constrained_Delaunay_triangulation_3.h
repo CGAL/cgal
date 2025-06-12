@@ -4036,7 +4036,8 @@ namespace Tetrahedral_remeshing {
 *   \cgalParamNBegin{edge_is_constrained_map}
 *     \cgalParamDescription{a property map containing the constrained-or-not status of each edge `e` of
 *                     `ccdt.triangulation()`.
-*                     If the edge `e` is at the boundary of an input polygonal constraint,
+*                     If the edge `e` is at the boundary of an input PLC face (defined by an input face
+*                     or via the named parameter `plc_face_id`)
 *                     then the corresponding value in the property map is `true`.
 *                     Otherwise, the value is `false`.}
 *     \cgalParamType{a class model of `ReadWritePropertyMap`
