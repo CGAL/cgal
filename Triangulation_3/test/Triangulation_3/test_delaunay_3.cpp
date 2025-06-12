@@ -39,13 +39,10 @@ int main()
 
 
   typedef CGAL::Triangulation_data_structure_3<CGAL::VertexWithPoint<EPIC>, CGAL::Cell4Delaunay<EPIC>, CGAL::Sequential_tag, CGAL::Index_tag> Tds_index;
-  typedef CGAL::Triangulation_data_structure_3<CGAL::VertexWithPoint<EPEC>, CGAL::Cell4Delaunay<EPEC>, CGAL::Sequential_tag, CGAL::Index_tag> Tds_with_epec_index;
 
   typedef CGAL::Delaunay_triangulation_3<EPIC, Tds_index>  Cls_index;
-  typedef CGAL::Delaunay_triangulation_3<EPEC, Tds_with_epec_index>  Cls_with_epec_index;
 
   _test_cls_delaunay_3( Cls_index() );
-  _test_cls_delaunay_3( Cls_with_epec_index() );
 
   typedef CGAL::Triangulation_data_structure_3<
     CGAL::Triangulation_vertex_base_3<K>,

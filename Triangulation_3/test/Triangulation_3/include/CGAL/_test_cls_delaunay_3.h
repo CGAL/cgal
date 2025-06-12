@@ -1118,7 +1118,7 @@ _test_cls_delaunay_3(const Triangulation &)
   Cls TM_2;
   // non-degenerate cases
   points.clear(); TM_2.clear();
-  for(int count=0; count<10; count++) {
+  for(int count=0; count<1000; count++) {
     points.push_back(Point(0, rand()%30000, rand()%30000));
   }
   TM_2.insert(points.begin(), points.end());
@@ -1129,7 +1129,7 @@ _test_cls_delaunay_3(const Triangulation &)
     for(Vertex_handle vh : vhandles_2) {
       Point p = Point(0, rand()%30000, rand()%30000);
       vTM_2 = TM_2.move_if_no_collision(vh, p);
-      assert(TM_2.is_valid());
+      assert(TM_2.is_valid(true));
     }
   }
   assert(TM_2.is_valid());
@@ -1138,7 +1138,7 @@ _test_cls_delaunay_3(const Triangulation &)
   Cls TM_3;
   // non-degenerate cases
   points.clear(); TM_3.clear();
-  for(int count=0; count<50; count++) {
+  for(int count=0; count<1000; count++) {
     points.push_back(Point(rand()%30000, rand()%30000, rand()%30000));
   }
   TM_3.insert(points.begin(), points.end());
