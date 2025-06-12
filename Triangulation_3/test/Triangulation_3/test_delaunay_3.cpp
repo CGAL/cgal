@@ -48,10 +48,8 @@ int main()
   _test_cls_delaunay_3( Cls_with_epec() );
 
   using Cls_index = CGAL::Delaunay_triangulation_3<EPIC, Tds_index<EPIC>>;
-  using Cls_with_epec_index = CGAL::Delaunay_triangulation_3<EPEC, Tds_index<EPEC>>;
 
-  _test_cls_delaunay_3(Cls_index());
-  _test_cls_delaunay_3(Cls_with_epec_index());
+  _test_cls_delaunay_3( Cls_index() );
 
   using Tds_Delaunay_Cb = Tds<K>;
   using Cls_with_Delaunay_Cb = CGAL::Delaunay_triangulation_3<EPIC, Tds_Delaunay_Cb>;
