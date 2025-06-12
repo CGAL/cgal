@@ -572,7 +572,7 @@ public:
   using Constrained_polyline_id = typename CDT_3_impl::Constrained_polyline_id;
 #endif // not DOXYGEN_RUNNING
   using size_type = typename Triangulation::size_type;
-s
+
 public:
   /** \name Constructors
   @{
