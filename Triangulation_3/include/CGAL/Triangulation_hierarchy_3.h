@@ -504,26 +504,54 @@ is_valid(bool verbose, int level) const
   bool result = true;
 
   // verify correctness of triangulation at all levels
-  for(int i=0; i<maxlevel; ++i)
+  for(int i=0; i<maxlevel; ++i){
         result = result && hierarchy[i]->is_valid(verbose, level);
-
-  // verify that lower level has no down pointers
+        if(verbose && (! result)){
+          std::cerr << "triangulation at level " << i << " invalid" << std::endl;
+        }
+  }
+  // verify that lowest level has no down pointers
   for( Finite_vertices_iterator it = hierarchy[0]->finite_vertices_begin(),
-       end = hierarchy[0]->finite_vertices_end(); it != end; ++it)
+       end = hierarchy[0]->finite_vertices_end(); it != end; ++it){
     result = result && (it->down() == Vertex_handle());
+    if(verbose && (! result)){
+          std::cerr << "lowest level has a down pointer" << std::endl;
+    }
+  }
 
-  // verify that other levels has down pointer and reciprocal link is fine
+  // verify that other levels have down pointer and reciprocal link is fine
   for(int j=1; j<maxlevel; ++j)
     for( Finite_vertices_iterator it = hierarchy[j]->finite_vertices_begin(),
          end = hierarchy[j]->finite_vertices_end(); it != end; ++it)
-      result = result && &*(it) == &*(it->down()->up());
+    {
+      result = result && (it->down() != Vertex_handle());
+      if(verbose && (! result)){
+        std::cerr << "missing down pointer" << std::endl;
+      }
+      if(it->down() == Vertex_handle()){
+        return false;
+      }
+      result = result && Vertex_handle(it) == Vertex_handle(it->down()->up());
+      if(verbose && (! result)){
+          std::cerr << "wrong reciprocal link with down()" << std::endl;
+      }
+      result = result && Vertex_handle(it)->point() == Vertex_handle(it->down())->point();
+      if(verbose && (! result)){
+          std::cerr << "inconsistent vertex positions" << std::endl;
+      }
+    }
 
-  // verify that other levels has down pointer and reciprocal link is fine
+  // verify that all levels have up pointer and reciprocal link is fine
   for(int k=0; k<maxlevel-1; ++k)
     for( Finite_vertices_iterator it = hierarchy[k]->finite_vertices_begin(),
          end = hierarchy[k]->finite_vertices_end(); it != end; ++it)
+    {
       result = result && ( it->up() == Vertex_handle() ||
-                &*it == &*(it->up())->down() );
+                Vertex_handle(it) == Vertex_handle(it->up())->down() );
+      if(verbose && (! result)){
+          std::cerr << "wrong reciprocal link with up()" << std::endl;
+      }
+    }
 
   return result;
 }
@@ -718,14 +746,13 @@ move_if_no_collision(Vertex_handle v, const Point & p)
 {
   CGAL_precondition(!this->is_infinite(v));
   if(v->point() == p) return v;
-  Vertex_handle ans;
-  for (int l = 0; l < maxlevel; ++l) {
+  Vertex_handle ans = hierarchy[0]->move_if_no_collision(v, p);
+  if(ans != v) return ans; // ans is an existing vertex at p and v was not changed
+  for (int l = 1; l < maxlevel; ++l) {
     Vertex_handle u = v->up();
-    if(l) hierarchy[l]->move_if_no_collision(v, p);
-    else ans = hierarchy[l]->move_if_no_collision(v, p);
-    if(ans != v) return ans;
     if (u == Vertex_handle())
       break;
+    hierarchy[l]->move_if_no_collision(u, p);
     v = u;
   }
   return ans;
