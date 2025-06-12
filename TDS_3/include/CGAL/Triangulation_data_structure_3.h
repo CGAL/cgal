@@ -448,7 +448,7 @@ public:
 
   };
 
-  static const int maximal_nb_of_facets_of_small_hole = 128;
+  static constexpr int maximal_nb_of_facets_of_small_hole = 128;
   typedef Small_unordered_map<Vertex_pair, Local_facet,
                               Small_pair_hash, maximal_nb_of_facets_of_small_hole *8> Vertex_pair_facet_map;
 
@@ -735,12 +735,9 @@ public:
       nc->set_neighbor(3, f.first);
       f.first->set_neighbor(f.second, nc);
 
-      vertex_pair_facet_map.set({u, v}, {local_facet_index,
-                                         static_cast<unsigned char>(nc->index(w))});
-      vertex_pair_facet_map.set({v, w}, {local_facet_index,
-                                         static_cast<unsigned char>(nc->index(u))});
-      vertex_pair_facet_map.set({w, u}, {local_facet_index,
-                                         static_cast<unsigned char>(nc->index(v))});
+      vertex_pair_facet_map.set({u, v}, {local_facet_index, '\2'});
+      vertex_pair_facet_map.set({v, w}, {local_facet_index, '\1'});
+      vertex_pair_facet_map.set({w, u}, {local_facet_index, '\0'});
     }
 
     for(auto it = vertex_pair_facet_map.begin(); it != vertex_pair_facet_map.end(); ++it){

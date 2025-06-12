@@ -40,6 +40,10 @@
 #include <vector>
 #include <optional>
 
+#ifdef CGAL_LINKED_WITH_TBB
+#  include <tbb/enumerable_thread_specific.h>
+#endif
+
 namespace CGAL {
 
 //utilities for copy_tds
@@ -82,8 +86,8 @@ namespace internal { namespace TDS_3{
     using TDS_data      = typename TDS_3::Cell_data;
 
     struct Storage {
-      std::array<Vertex_index,4> ivertices;
-      std::array<Cell_index,4>   ineighbors;
+      std::array<Vertex_index,4> ivertices{ {{}, {}, {}, {}} };
+      std::array<Cell_index,4>   ineighbors{ {{}, {}, {}, {}} };
     };
 
     Cell()
@@ -617,7 +621,7 @@ namespace internal { namespace TDS_3{
     }
 
   protected:
-    size_type idx_;
+    size_type idx_ = invalid_index;
   }; // end class Index
 
   template <class T>
@@ -626,13 +630,13 @@ namespace internal { namespace TDS_3{
     return i.id();
   }
 
-  template <typename T, typename Element_container>
+  template <typename T, typename Index_type_, typename Element_container>
   class Index_handle {
     using Element = T;
     using size_type = typename Element_container::size_type;
     using Proxy = boost::stl_interfaces::proxy_arrow_result<Element>;
   public:
-    using Index_type = typename Element::Index;
+    using Index_type = Index_type_;
     using value_type = Element;
     using reference = Element;
     using pointer = Proxy;
@@ -697,9 +701,9 @@ namespace internal { namespace TDS_3{
 } // end namespace CGAL
 
 namespace std {
-  template <typename T, typename Element_container>
-  struct hash<CGAL::Index_handle<T, Element_container>> {
-    using Handle = CGAL::Index_handle<T, Element_container>;
+  template <typename T, typename Index_type, typename Element_container>
+  struct hash<CGAL::Index_handle<T, Index_type, Element_container>> {
+    using Handle = CGAL::Index_handle<T, Index_type, Element_container>;
     std::size_t operator()(const Handle& h) const {
       return hash_value(h);
     }
@@ -840,12 +844,31 @@ namespace CGAL {
                                    Container,
                                    free_list_next_function_,
                                    prefix>;
-    using Handle = Index_handle<Element_type, Container>;
+    using Handle = Index_handle<Element_type, Index_type, Container>;
     using size_type = typename Container::size_type;
+    using Concurrency_tag = typename Container::Concurrency_tag;
+
+    static constexpr bool is_parallel = std::is_convertible_v<Concurrency_tag, Parallel_tag>;
+#ifdef CGAL_LINKED_WITH_TBB
+    struct Freelist_handler {
+      Freelist_handler(size_type invalid_index = Index_type::invalid_index) : freelist(invalid_index) {}
+
+      size_type freelist;
+      size_type number_of_removed_elements = 0;
+    };
+    using free_list_type = std::conditional_t<is_parallel,
+                                              tbb::enumerable_thread_specific<Freelist_handler>,
+                                              size_type>;
+#else
+    static_assert(!is_parallel,
+                  "In CGAL triangulations, `Parallel_tag` can only be used with the Intel TBB library. "
+                  "Make TBB available in the build system and then define the macro `CGAL_LINKED_WITH_TBB`.");
+    using free_list_type = size_type;
+#endif
 
     Properties::Property_container<Self, Index_type> properties_;
     size_type nb_of_removed_elements_ = 0;
-    size_type freelist_ = Index_type::invalid_index;
+    free_list_type freelist_{Index_type::invalid_index};
     size_type anonymous_property_nb = 0;
     static constexpr bool recycle_ = true;
     bool garbage_ = false;
@@ -888,32 +911,63 @@ namespace CGAL {
       properties_.resize(0);
       properties_.shrink_to_fit();
 
-      freelist_ = Index_type::invalid_index;
+      freelist_ = free_list_type{Index_type::invalid_index};
       nb_of_removed_elements_ = 0;
       garbage_ = false;
     }
 
+    size_type& free_list()
+    {
+      if constexpr(is_parallel) {
+        return freelist_.local().freelist; // TBB
+      } else {
+        return freelist_; // Sequential
+      }
+    }
+
+    size_type& local_number_of_removed_elements()
+    {
+      if constexpr(is_parallel) {
+        return freelist_.local().number_of_removed_elements; // TBB
+      } else {
+        return nb_of_removed_elements_; // Sequential
+      }
+    }
+
+    size_type number_of_removed_elements() const {
+      if constexpr(is_parallel) {
+        size_type result = 0;
+        for(const auto& f : freelist_) {
+          result += f.number_of_removed_elements;
+        }
+        return result;
+      } else {
+        return nb_of_removed_elements_; // Sequential
+      }
+    }
+
     Index_type create(Container* container)
     {
-      Element_type elt(container, Index_type(size()));
+      size_type& freelist_ = free_list();
+      Index_type idx{freelist_};
       if(recycle_ && (freelist_ != Index_type::invalid_index)){
-        Index_type idx{freelist_};
         freelist_ = free_list_next_function_(storage_[idx]);
-        --nb_of_removed_elements_;
+        --local_number_of_removed_elements();
         removed_[idx] = false;
         properties_.reset(idx);
-        elt = Element_type(container, idx);
       } else {
-        properties_.push_back();
+        idx = Index_type{static_cast<size_type>(properties_.push_back())};
       }
+      Element_type elt(container, idx);
       Time_stamper::restore_timestamp(&elt, elt.index().id());
-      return elt.index();
+      return idx;
     }
 
     void remove(Handle ch)
     {
+      size_type& freelist_ = free_list();
       Index_type idx = ch->index();
-      removed_[idx] = true; ++nb_of_removed_elements_; garbage_ = true;
+      removed_[idx] = true; ++local_number_of_removed_elements(); garbage_ = true;
       free_list_next_function_(storage_[idx]) = Index_type{freelist_};
       freelist_ = static_cast<size_type>(idx);
       EraseCounterStrategy<Element_type>::increment_erase_counter(storage_[idx]);
@@ -923,7 +977,7 @@ namespace CGAL {
       return idx.id() < size() && !removed_[idx];
     }
 
-    bool has_garbage() const { return recycle_ && (nb_of_removed_elements_ > 0); }
+    bool has_garbage() const { return garbage_; }
   }; // end class Indexed_container
 
   template <typename Vb = Vertex<>, typename Cb = Cell<>, class ConcurrencyTag = Sequential_tag>
@@ -968,12 +1022,6 @@ namespace CGAL {
     using Vertex = typename Vb::template Rebind_TDS<Self>::Other;
     using Cell = typename Cb::template Rebind_TDS<Self>::Other;
 
-    using Cell_handle = Index_handle<Cell, Self>;
-    using Vertex_handle = Index_handle<Vertex, Self>;
-
-    using Facet = std::pair<Cell_handle, int>;
-    using Edge = Triple<Cell_handle, int, int>;
-
     struct Vertex_index: public Index<Vertex_index>
     {
       using Index<Vertex_index>::Index; // inherit constructors
@@ -985,6 +1033,12 @@ namespace CGAL {
       using Index<Cell_index>::Index; // inherit constructors
       auto output_prefix() const { return 'c'; }
     };
+
+    using Cell_handle = Index_handle<Cell, Cell_index, Self>;
+    using Vertex_handle = Index_handle<Vertex, Vertex_index, Self>;
+
+    using Facet = std::pair<Cell_handle, int>;
+    using Edge = Triple<Cell_handle, int, int>;
 
     class Cell_data {
       unsigned char conflict_state;
@@ -1160,12 +1214,12 @@ namespace CGAL {
 
     size_type number_of_removed_vertices() const
     {
-      return vertex_container().nb_of_removed_elements_;
+      return vertex_container().number_of_removed_elements();
     }
 
     size_type number_of_removed_cells() const
     {
-      return cell_container().nb_of_removed_elements_;
+      return cell_container().number_of_removed_elements();
     }
 
     size_type number_of_vertices() const
