@@ -119,7 +119,7 @@ public:
      * \param[in] found Reference to a boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      * \param[in] tau Cell of dimension `q` to pair.
      */
-    PairCell find_pair_M(int q, bool &found, int tau) const;
+    PairCell find_pair_M(int q, bool &found, size_t tau) const;
     
     /**
      * \brief Find *all* valid PairCell of dimension q for M.
@@ -142,7 +142,7 @@ public:
      * \param[in] found Reference to a boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      * \param[in] tau Cell of dimension `q` to pair.
      */
-    std::vector<PairCell> find_pairs_M(int q, bool &found, int tau) const;
+    std::vector<PairCell> find_pairs_M(int q, bool &found, size_t tau) const;
     
     // findPair functions for W
     
@@ -165,7 +165,7 @@ public:
      * \param[in] found Reference to a boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      * \param[in] tau Cell of dimension `q` to pair.
      */
-    PairCell find_pair_W(int q, bool &found, int tau) const;
+    PairCell find_pair_W(int q, bool &found, size_t tau) const;
     
     /**
      * \brief Find *all* valid PairCell of dimension q for W.
@@ -188,7 +188,7 @@ public:
      * \param[in] found Reference to a boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      * \param[in] tau Cell of dimension `q` to pair.
      */
-    std::vector<PairCell> find_pairs_W(int q, bool &found, int tau) const;
+    std::vector<PairCell> find_pairs_W(int q, bool &found, size_t tau) const;
     
     // findPair functions for MW
     
@@ -211,7 +211,7 @@ public:
      * \param[in] found Reference to a boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      * \param[in] tau Cell of dimension `q` to pair.
      */
-    PairCell find_pair_MW(int q, bool &found, int tau) const;
+    PairCell find_pair_MW(int q, bool &found, size_t tau) const;
     
     /**
      * \brief Find *all* valid PairCell of dimension q for MW.
@@ -234,7 +234,7 @@ public:
      * \param[in] found Reference to a boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      * \param[in] tau Cell of dimension `q` to pair.
      */
-    std::vector<PairCell> find_pairs_MW(int q, bool &found, int tau) const;
+    std::vector<PairCell> find_pairs_MW(int q, bool &found, size_t tau) const;
     
     // Hdvf methods
     
@@ -247,7 +247,7 @@ public:
      * \param[in] sigma Second cell of the pair (dimension `q+1`)
      * \param[in] q Dimension of the pair
      */
-    void R(int pi, int sigma, int q);
+    void R(size_t pi, size_t sigma, int q);
     
     /**
      * \brief M operation.
@@ -258,7 +258,7 @@ public:
      * \param[in] gamma Second cell of the pair (dimension `q`)
      * \param[in] q Dimension of the pair
      */
-    void M(int pi, int gamma, int q);
+    void M(size_t pi, size_t gamma, int q);
     
     /**
      * \brief W operation.
@@ -269,7 +269,7 @@ public:
      * \param[in] gamma Second cell of the pair (dimension `q`)
      * \param[in] q Dimension of the pair
      */
-    void W(int sigma, int gamma, int q);
+    void W(size_t sigma, size_t gamma, int q);
     
     /**
      * \brief MW operation.
@@ -280,7 +280,7 @@ public:
      * \param[in] sigma Second cell of the pair (dimension `q`)
      * \param[in] q Dimension of the pair
      */
-    void MW(int pi, int sigma, int q);
+    void MW(size_t pi, size_t sigma, int q);
     
 };
 
@@ -328,7 +328,7 @@ PairCell Hdvf<CoefficientType, ComplexType>::find_pair_M(int q, bool &found) con
 // find a valid PairCell containing tau for M in dimension q
 
 template<typename CoefficientType, typename ComplexType>
-PairCell Hdvf<CoefficientType, ComplexType>::find_pair_M(int q, bool &found, int tau) const
+PairCell Hdvf<CoefficientType, ComplexType>::find_pair_M(int q, bool &found, size_t tau) const
 {
     found = false;
     PairCell p;
@@ -402,7 +402,7 @@ std::vector<PairCell> Hdvf<CoefficientType, ComplexType>::find_pairs_M(int q, bo
 
 // find all the valid PairCell containing tau for M in dimension q
 template<typename CoefficientType, typename ComplexType>
-std::vector<PairCell> Hdvf<CoefficientType, ComplexType>::find_pairs_M(int q, bool &found, int tau) const
+std::vector<PairCell> Hdvf<CoefficientType, ComplexType>::find_pairs_M(int q, bool &found, size_t tau) const
 {
     found = false;
     std::vector<PairCell> pairs;
@@ -483,7 +483,7 @@ PairCell Hdvf<CoefficientType, ComplexType>::find_pair_W(int q, bool &found) con
 
 // find a valid PairCell containing tau for W in dimension q
 template<typename CoefficientType, typename ComplexType>
-PairCell Hdvf<CoefficientType, ComplexType>::find_pair_W(int q, bool &found, int tau) const
+PairCell Hdvf<CoefficientType, ComplexType>::find_pair_W(int q, bool &found, size_t tau) const
 {
     found = false;
     PairCell p;
@@ -558,7 +558,7 @@ std::vector<PairCell> Hdvf<CoefficientType, ComplexType>::find_pairs_W(int q, bo
 
 // find all the valid PairCell containing tau for W in dimension q
 template<typename CoefficientType, typename ComplexType>
-std::vector<PairCell> Hdvf<CoefficientType, ComplexType>::find_pairs_W(int q, bool &found, int tau) const
+std::vector<PairCell> Hdvf<CoefficientType, ComplexType>::find_pairs_W(int q, bool &found, size_t tau) const
 {
     found = false;
     std::vector<PairCell> pairs;
@@ -621,11 +621,11 @@ PairCell Hdvf<CoefficientType, ComplexType>::find_pair_MW(int q, bool &found) co
         // iterate on H_q and H_q-1 accordingly
         for (OSM::Bitboard::iterator it_pi = this->_H_col[q].begin(); (it_pi != this->_H_col[q].end() && !found); ++it_pi)
         {
-            const int pi = *it_pi ;
+            const size_t pi = *it_pi ;
             typename HDVF_coreT::CChain H11(OSM::get_column(this->_H_col.at(q), pi)) ;
             typename HDVF_coreT::CChain d_pi = this->_K.d(pi, q) ;
             typename HDVF_coreT::CChain projP_d_pi = this->projection(d_pi, PRIMARY, q-1) ;
-            for (int sigma = 0; (sigma < this->_H_col.at(q-1).dimensions().first && !found); ++sigma)
+            for (size_t sigma = 0; (sigma < this->_H_col.at(q-1).dimensions().first && !found); ++sigma)
             {
                 typename HDVF_coreT::RChain H11q1(OSM::get_row(this->_H_col.at(q-1), sigma)) ;
                 if (!H11q1.is_null())
@@ -635,8 +635,8 @@ PairCell Hdvf<CoefficientType, ComplexType>::find_pair_MW(int q, bool &found) co
                     
                     // Compute xi and xi' to test the validity of MW
                     
-                    const int xi = projS_cod_sigma * H11 ;
-                    const int xip = H11q1 * projP_d_pi ;
+                    const CoefficientType xi = projS_cod_sigma * H11 ;
+                    const CoefficientType xip = H11q1 * projP_d_pi ;
                     found = ((abs(xi) == 1) && (abs(xip) == 1)) ;
                     if (found)
                     {
@@ -653,7 +653,7 @@ PairCell Hdvf<CoefficientType, ComplexType>::find_pair_MW(int q, bool &found) co
 
 // find a valid PairCell containing tau for MW in dimension q
 template<typename CoefficientType, typename ComplexType>
-PairCell Hdvf<CoefficientType, ComplexType>::find_pair_MW(int q, bool &found, int tau) const
+PairCell Hdvf<CoefficientType, ComplexType>::find_pair_MW(int q, bool &found, size_t tau) const
 {
     found = false;
     PairCell p;
@@ -666,7 +666,7 @@ PairCell Hdvf<CoefficientType, ComplexType>::find_pair_MW(int q, bool &found, in
         // If tau is primary (rename pi), search for a valid sigma
         if (this->_flag.at(q).at(tau) == PRIMARY)
         {
-            const int pi(tau) ;
+            const size_t pi(tau) ;
             // Col pi of H_q and proj_P(d(pi)) must at least be non empty
             typename HDVF_coreT::CChain H11(OSM::get_column(this->_H_col.at(q), pi)) ;
             typename HDVF_coreT::CChain d_pi = this->_K.d(pi, q) ;
@@ -676,7 +676,7 @@ PairCell Hdvf<CoefficientType, ComplexType>::find_pair_MW(int q, bool &found, in
                 return p ;
             
             // Search for sigma with col_sigma(H_q-1) non empty
-            for (int sigma = 0; (sigma < this->_H_col.at(q-1).dimensions().first && !found); ++sigma)
+            for (size_t sigma = 0; (sigma < this->_H_col.at(q-1).dimensions().first && !found); ++sigma)
             {
                 typename HDVF_coreT::RChain H11q1(OSM::get_row(this->_H_col.at(q-1), sigma)) ;
                 if (!H11q1.is_null())
@@ -687,8 +687,8 @@ PairCell Hdvf<CoefficientType, ComplexType>::find_pair_MW(int q, bool &found, in
                     if (!projS_cod_sigma.is_null())
                     {
                         // test xi and xip
-                        const int xi = projS_cod_sigma * H11 ;
-                        const int xip = H11q1 * projP_d_pi ;
+                        const CoefficientType xi = projS_cod_sigma * H11 ;
+                        const CoefficientType xip = H11q1 * projP_d_pi ;
                         found = ((abs(xi) == 1) && (abs(xip) == 1)) ;
                         if (found)
                         {
@@ -703,7 +703,7 @@ PairCell Hdvf<CoefficientType, ComplexType>::find_pair_MW(int q, bool &found, in
         else // cell is secondary
         {
             // cout << "secondary" << endl ;
-            const int sigma(tau) ;
+            const size_t sigma(tau) ;
             // Row sigma of H_q-1 and proj_S(cod(sigma)) must at least be non empty
             typename HDVF_coreT::RChain H11q1(OSM::get_row(this->_H_col.at(q-1), sigma)) ;
             typename HDVF_coreT::RChain cod_sigma = this->_K.cod(sigma, q) ;
@@ -714,7 +714,7 @@ PairCell Hdvf<CoefficientType, ComplexType>::find_pair_MW(int q, bool &found, in
             // Search for pi with col pi of H_q non empty
             for (OSM::Bitboard::iterator it_pi = this->_H_col[q].begin(); (it_pi != this->_H_col[q].end() && !found); ++it_pi)
             {
-                const int pi(*it_pi) ;
+                const size_t pi(*it_pi) ;
                 
                 typename HDVF_coreT::CChain H11(OSM::get_column(this->_H_col.at(q), pi)) ;
                 typename HDVF_coreT::CChain d_pi = this->_K.d(pi, q) ;
@@ -723,8 +723,8 @@ PairCell Hdvf<CoefficientType, ComplexType>::find_pair_MW(int q, bool &found, in
                 if (!projP_d_pi.is_null())
                 {
                     // test xi and xip
-                    const int xi = projS_cod_sigma * H11 ;
-                    const int xip = H11q1 * projP_d_pi ;
+                    const CoefficientType xi = projS_cod_sigma * H11 ;
+                    const CoefficientType xip = H11q1 * projP_d_pi ;
                     found = ((abs(xi) == 1) && (abs(xip) == 1)) ;
                     if (found)
                     {
@@ -752,11 +752,11 @@ std::vector<PairCell> Hdvf<CoefficientType, ComplexType>::find_pairs_MW(int q, b
         // iterate on H_q and H_q-1 accordingly
         for (OSM::Bitboard::iterator it_pi = this->_H_col[q].begin(); it_pi != this->_H_col[q].end(); ++it_pi)
         {
-            const int pi = *it_pi ;
+            const size_t pi = *it_pi ;
             typename HDVF_coreT::CChain H11(OSM::get_column(this->_H_col.at(q), pi)) ;
             typename HDVF_coreT::CChain d_pi = this->_K.d(pi, q) ;
             typename HDVF_coreT::CChain projP_d_pi = this->projection(d_pi, PRIMARY, q-1) ;
-            for (int sigma = 0; sigma < this->_H_col.at(q-1).dimensions().first; ++sigma)
+            for (size_t sigma = 0; sigma < this->_H_col.at(q-1).dimensions().first; ++sigma)
             {
                 typename HDVF_coreT::RChain H11q1(OSM::get_row(this->_H_col.at(q-1), sigma)) ;
                 if (!H11q1.is_null())
@@ -766,8 +766,8 @@ std::vector<PairCell> Hdvf<CoefficientType, ComplexType>::find_pairs_MW(int q, b
                     
                     // Compute xi and xi' to test the validity of MW
                     
-                    const int xi = projS_cod_sigma * H11 ;
-                    const int xip = H11q1 * projP_d_pi ;
+                    const CoefficientType xi = projS_cod_sigma * H11 ;
+                    const CoefficientType xip = H11q1 * projP_d_pi ;
                     found = ((abs(xi) == 1) && (abs(xip) == 1)) ;
                     if (found)
                     {
@@ -787,7 +787,7 @@ std::vector<PairCell> Hdvf<CoefficientType, ComplexType>::find_pairs_MW(int q, b
 
 // find all the valid PairCell containing tau for MW in dimension q
 template<typename CoefficientType, typename ComplexType>
-std::vector<PairCell> Hdvf<CoefficientType, ComplexType>::find_pairs_MW(int q, bool &found, int tau) const
+std::vector<PairCell> Hdvf<CoefficientType, ComplexType>::find_pairs_MW(int q, bool &found, size_t tau) const
 {
     found = false;
     std::vector<PairCell> pairs;
@@ -799,7 +799,7 @@ std::vector<PairCell> Hdvf<CoefficientType, ComplexType>::find_pairs_MW(int q, b
         // If tau is primary (rename pi), search for a valid sigma
         if (this->_flag.at(q).at(tau) == PRIMARY)
         {
-            const int pi(tau) ;
+            const size_t pi(tau) ;
             // Col pi of H_q and proj_P(d(pi)) must at least be non empty
             typename HDVF_coreT::CChain H11(OSM::get_column(this->_H_col.at(q), pi)) ;
             typename HDVF_coreT::CChain d_pi = this->_K.d(pi, q) ;
@@ -809,7 +809,7 @@ std::vector<PairCell> Hdvf<CoefficientType, ComplexType>::find_pairs_MW(int q, b
                 return pairs ;
             
             // Search for sigma with col_sigma(H_q-1) non empty
-            for (int sigma = 0; sigma < this->_H_col.at(q-1).dimensions().first; ++sigma)
+            for (size_t sigma = 0; sigma < this->_H_col.at(q-1).dimensions().first; ++sigma)
             {
                 typename HDVF_coreT::RChain H11q1(OSM::get_row(this->_H_col.at(q-1), sigma)) ;
                 if (!H11q1.is_null())
@@ -838,7 +838,7 @@ std::vector<PairCell> Hdvf<CoefficientType, ComplexType>::find_pairs_MW(int q, b
         else // cell is secondary
         {
             // cout << "secondary" << endl ;
-            const int sigma(tau) ;
+            const size_t sigma(tau) ;
             // Row sigma of H_q-1 and proj_S(cod(sigma)) must at least be non empty
             typename HDVF_coreT::RChain H11q1(OSM::get_row(this->_H_col.at(q-1), sigma)) ;
             typename HDVF_coreT::RChain cod_sigma = this->_K.cod(sigma, q) ;
@@ -849,7 +849,7 @@ std::vector<PairCell> Hdvf<CoefficientType, ComplexType>::find_pairs_MW(int q, b
             // Search for pi with col pi of H_q non empty
             for (OSM::Bitboard::iterator it_pi = this->_H_col[q].begin(); it_pi != this->_H_col[q].end(); ++it_pi)
             {
-                const int pi(*it_pi) ;
+                const size_t pi(*it_pi) ;
                 
                 typename HDVF_coreT::CChain H11(OSM::get_column(this->_H_col.at(q), pi)) ;
                 typename HDVF_coreT::CChain d_pi = this->_K.d(pi, q) ;
@@ -881,7 +881,7 @@ std::vector<PairCell> Hdvf<CoefficientType, ComplexType>::find_pairs_MW(int q, b
 // Method to perform operation R
 // pi is in dimension q, sigma is in dimension q+1
 template<typename CoefficientType, typename ComplexType>
-void Hdvf<CoefficientType, ComplexType>::R(int pi, int sigma, int q) {
+void Hdvf<CoefficientType, ComplexType>::R(size_t pi, size_t sigma, int q) {
     //----------------------------------------------- Submatrices of H ----------------------------------------------------
     
     if (this->_hdvf_opt & OPT_FULL)
@@ -901,8 +901,8 @@ void Hdvf<CoefficientType, ComplexType>::R(int pi, int sigma, int q) {
         CoefficientType H11_inv = H11; // Inverse of H11 (which is itself for 1 or -1)
         
         // Remove the contributions of pi from H12 and sigma from H21
-        H12 /= std::vector<int>({pi}); // Remove column pi from H12
-        H21 /= std::vector<int>({sigma}); // Remove row sigma from H21
+        H12 /= std::vector<size_t>({pi}); // Remove column pi from H12
+        H21 /= std::vector<size_t>({sigma}); // Remove row sigma from H21
         
         // Remove the corresponding row and column from this->_H_col
         del_row(this->_H_col[q], sigma); // Remove row sigma from this->_H_col[q]
@@ -999,7 +999,7 @@ void Hdvf<CoefficientType, ComplexType>::R(int pi, int sigma, int q) {
 // Method to perform operation M
 // pi is in dimension q, gamma is in dimension q
 template<typename CoefficientType, typename ComplexType>
-void Hdvf<CoefficientType, ComplexType>::M(int pi, int gamma, int q) {
+void Hdvf<CoefficientType, ComplexType>::M(size_t pi, size_t gamma, int q) {
     //----------------------------------------------- Submatrices of F ----------------------------------------------------
     
     if (this->_hdvf_opt & OPT_FULL)
@@ -1022,8 +1022,8 @@ void Hdvf<CoefficientType, ComplexType>::M(int pi, int gamma, int q) {
         CoefficientType F11_inv = F11; // Inverse of F11 (which is itself for 1 or -1)
         
         // Remove the contributions of pi from F12 and gamma from F21
-        F12 /= std::vector<int>({pi}); // Remove column pi from F12
-        F21 /= std::vector<int>({gamma}); // Remove row gamma from F21
+        F12 /= std::vector<size_t>({pi}); // Remove column pi from F12
+        F21 /= std::vector<size_t>({gamma}); // Remove row gamma from F21
         
         // Remove the corresponding row and column from this->_F_row
         del_row(this->_F_row[q], gamma); // Remove row gamma from this->_F_row[q]
@@ -1116,7 +1116,7 @@ void Hdvf<CoefficientType, ComplexType>::M(int pi, int gamma, int q) {
 // Method to perform operation W
 // gamma is in dimension q, sigma is in dimension q
 template<typename CoefficientType, typename ComplexType>
-void Hdvf<CoefficientType, ComplexType>::W(int sigma, int gamma, int q) {
+void Hdvf<CoefficientType, ComplexType>::W(size_t sigma, size_t gamma, int q) {
     //----------------------------------------------- Submatrices of G ----------------------------------------------------
     
     if (this->_hdvf_opt & OPT_FULL)
@@ -1139,8 +1139,8 @@ void Hdvf<CoefficientType, ComplexType>::W(int sigma, int gamma, int q) {
         CoefficientType G11_inv = G11; // Inverse of G11 (which is itself for 1 or -1)
         
         // Remove the contributions of gamma from G12 and sigma from G21
-        G12 /= std::vector<int>({gamma}); // Remove column gamma from G12
-        G21 /= std::vector<int>({sigma}); // Remove row sigma from G21
+        G12 /= std::vector<size_t>({gamma}); // Remove column gamma from G12
+        G21 /= std::vector<size_t>({sigma}); // Remove row sigma from G21
         
         // Remove the corresponding row and column from this->_G_col
         del_row(this->_G_col[q], sigma); // Remove row sigma from this->_G_col[q]
@@ -1237,7 +1237,7 @@ void Hdvf<CoefficientType, ComplexType>::W(int sigma, int gamma, int q) {
 // Method to perform operation MW
 // gamma is in dimension q, sigma is in dimension q
 template<typename CoefficientType, typename ComplexType>
-void Hdvf<CoefficientType, ComplexType>::MW(int pi, int sigma, int q) {
+void Hdvf<CoefficientType, ComplexType>::MW(size_t pi, size_t sigma, int q) {
     //----------------------------------------------- Submatrices of G ----------------------------------------------------
     
     if (this->_hdvf_opt & OPT_FULL)
@@ -1256,7 +1256,7 @@ void Hdvf<CoefficientType, ComplexType>::MW(int pi, int sigma, int q) {
         
         typename HDVF_coreT::CChain H11(OSM::get_column(this->_H_col.at(q), pi)) ;
         // H21 -> delete H11
-        this->_H_col.at(q) /= std::vector<int>({pi}) ;
+        this->_H_col.at(q) /= std::vector<size_t>({pi}) ;
         
         // H_q-1 extractions
         

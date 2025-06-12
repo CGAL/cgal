@@ -53,12 +53,12 @@ public:
     /*!
      Type of chains iterators.
      */
-    typedef typename std::unordered_map<int, CoefficientType>::iterator iterator;
+    typedef typename std::unordered_map<size_t, CoefficientType>::iterator iterator;
     
     /*!
      Type of chains constant iterators.
      */
-    typedef typename std::unordered_map<int, CoefficientType>::const_iterator const_iterator;
+    typedef typename std::unordered_map<size_t, CoefficientType>::const_iterator const_iterator;
     
     // Allow the Sparse_matrix class to access other templated Sparse_matrix and
     // Sparse_chain protected members.
@@ -80,31 +80,31 @@ public:
     template <typename _CT>
     friend Sparse_chain<_CT, ROW> operator*(const Sparse_chain<_CT, ROW> &_first, const Sparse_matrix<_CT, COLUMN> &_second);
     template <typename _CT>
-    friend Sparse_chain<_CT, COLUMN> get_column(const Sparse_matrix<_CT, COLUMN> &_matrix,  int _index);
+    friend Sparse_chain<_CT, COLUMN> get_column(const Sparse_matrix<_CT, COLUMN> &_matrix,  size_t _index);
     template <typename _CT>
-    friend Sparse_chain<_CT, COLUMN> get_column(const Sparse_matrix<_CT, ROW> &_matrix,  int _index);
+    friend Sparse_chain<_CT, COLUMN> get_column(const Sparse_matrix<_CT, ROW> &_matrix,  size_t _index);
     template <typename _CT>
-    friend Sparse_chain<_CT, ROW> get_row(const Sparse_matrix<_CT, COLUMN> &_matrix,  int _index);
+    friend Sparse_chain<_CT, ROW> get_row(const Sparse_matrix<_CT, COLUMN> &_matrix,  size_t _index);
     template <typename _CT>
-    friend Sparse_chain<_CT, ROW> get_row(const Sparse_matrix<_CT, ROW> &_matrix,  int _index);
+    friend Sparse_chain<_CT, ROW> get_row(const Sparse_matrix<_CT, ROW> &_matrix,  size_t _index);
     template <typename _CT>
-    friend void set_column(Sparse_matrix<_CT, COLUMN> &matrix,  int index, const Sparse_chain<_CT, COLUMN> &chain);
+    friend void set_column(Sparse_matrix<_CT, COLUMN> &matrix,  size_t index, const Sparse_chain<_CT, COLUMN> &chain);
     template <typename _CT>
-    friend void set_column(Sparse_matrix<_CT, ROW> &matrix,  int index, const Sparse_chain<_CT, COLUMN> &chain);
+    friend void set_column(Sparse_matrix<_CT, ROW> &matrix,  size_t index, const Sparse_chain<_CT, COLUMN> &chain);
     template <typename _CT>
-    friend void set_row(Sparse_matrix<_CT, COLUMN> &_matrix,  int _index, const Sparse_chain<_CT, ROW> &_chain);
+    friend void set_row(Sparse_matrix<_CT, COLUMN> &_matrix,  size_t _index, const Sparse_chain<_CT, ROW> &_chain);
     template <typename _CT>
-    friend void set_row(Sparse_matrix<_CT, ROW> &_matrix,  int _index, const Sparse_chain<_CT, ROW> &_chain);
+    friend void set_row(Sparse_matrix<_CT, ROW> &_matrix,  size_t _index, const Sparse_chain<_CT, ROW> &_chain);
     
 protected:
     /** \brief Type of data stored in the chain: map between indexes and coefficients. */
-    typedef std::pair<int, CoefficientType> pair;
+    typedef std::pair<size_t, CoefficientType> pair;
     
     /** \brief The chain inner representation and storage of data. */
-    std::unordered_map<int, CoefficientType> _chainData;
+    std::unordered_map<size_t, CoefficientType> _chainData;
     
     /** \brief The chain boundary. */
-    int _upperBound;
+    size_t _upperBound;
     
 public:
     /**
@@ -115,7 +115,7 @@ public:
      */
     Sparse_chain() {
         _upperBound = 0;
-        _chainData = std::unordered_map<int, CoefficientType>();
+        _chainData = std::unordered_map<size_t, CoefficientType>();
     }
     
     /**
@@ -125,9 +125,9 @@ public:
      *
      * \param[in] chainSize The size of the Sparse_chain.
      */
-    Sparse_chain(const int chainSize) {
+    Sparse_chain(const size_t chainSize) {
         _upperBound = chainSize;
-        _chainData = std::unordered_map<int, CoefficientType>();
+        _chainData = std::unordered_map<size_t, CoefficientType>();
     }
     
 
@@ -411,7 +411,7 @@ public:
      * 
      * \return The value of the coefficient.
      */
-    CoefficientType operator[](int index) const {
+    CoefficientType operator[](size_t index) const {
         if (index >= _upperBound) {
             throw std::runtime_error("Provided index should be less than " + std::to_string(_upperBound) + ".");
         }
@@ -428,7 +428,7 @@ public:
      *
      * \return The value of the coefficient.
      */
-    CoefficientType get_coef(int index) const {
+    CoefficientType get_coef(size_t index) const {
         if (index >= _upperBound) {
             throw std::runtime_error("Provided index should be less than " + std::to_string(_upperBound) + ".");
         }
@@ -446,7 +446,7 @@ public:
      * \param[in] index The coefficient index.
      * \param[in] d Value of the coefficient
      */
-    void set_coef(int index, CoefficientType d)
+    void set_coef(size_t index, CoefficientType d)
     {
         if (index >= _upperBound) {
             throw std::runtime_error("Provided index should be less than " + std::to_string(_upperBound) + ".");
@@ -463,7 +463,7 @@ public:
      * \param[in] index The index to check.
      * \return True if the data is null at given index.
      */
-    const bool is_null(int index) const {
+    const bool is_null(size_t index) const {
         return _chainData.find(index) == _chainData.end();
     }
     
@@ -489,7 +489,7 @@ public:
      * \return A new chain representing the result.
      */
     template <typename _CT, int _CTF>
-    friend Sparse_chain<_CT, _CTF> operator/(const Sparse_chain<_CT, _CTF> &chain, const std::vector<int> &indices);
+    friend Sparse_chain<_CT, _CTF> operator/(const Sparse_chain<_CT, _CTF> &chain, const std::vector<size_t> &indices);
     
     /**
      * \brief Get a subchain from the chain.
@@ -500,7 +500,7 @@ public:
      * \param[in] index The index to remove.
      */
     template <typename _CT, int _CTF>
-    friend Sparse_chain<_CT, _CTF> operator/(const Sparse_chain<_CT, _CTF> &chain, int index);
+    friend Sparse_chain<_CT, _CTF> operator/(const Sparse_chain<_CT, _CTF> &chain, size_t index);
     
     /**
      * \brief Restrict the chain to a sub-chain by removing indices.
@@ -513,8 +513,8 @@ public:
      *
      * \return Return a reference to the modified chain.
      */
-    Sparse_chain& operator/=(const std::vector<int> &indices) {
-        for (int index : indices) {
+    Sparse_chain& operator/=(const std::vector<size_t> &indices) {
+        for (size_t index : indices) {
             this->_chainData.erase(index);
         }
         
@@ -532,7 +532,7 @@ public:
      * 
      * \return Return a reference to the modified chain.
      */
-    Sparse_chain& operator/=(const int index) {
+    Sparse_chain& operator/=(const size_t index) {
         this->_chainData.erase(index);
         
         return *this;
@@ -659,7 +659,7 @@ private:
      *
      * \return The reference to the assigned coefficient.
      */
-    CoefficientType& operator[](const int index)  {
+    CoefficientType& operator[](const size_t index)  {
         if (index >= _upperBound) {
             throw std::runtime_error("Provided index should be less than " + std::to_string(_upperBound) + ".");
         }
@@ -674,7 +674,7 @@ template <typename _CT>
 Sparse_matrix<_CT, COLUMN> operator*(const Sparse_chain<_CT, COLUMN> &_column, const Sparse_chain<_CT, ROW> &_row) {
     Sparse_matrix<_CT, COLUMN> matrix(_column._upperBound, _row._upperBound);
     
-    for (std::pair<int, _CT> pair : _row._chainData) {
+    for (std::pair<size_t, _CT> pair : _row._chainData) {
         OSM::set_column(matrix,pair.first,_column * pair.second) ;
     }
     
@@ -686,7 +686,7 @@ template <typename _CT>
 Sparse_matrix<_CT, ROW> operator%(const Sparse_chain<_CT, COLUMN> &_column, const Sparse_chain<_CT, ROW> &_row) {
     Sparse_matrix<_CT, ROW> matrix(_column._upperBound, _row._upperBound);
     
-    for (std::pair<int, _CT> pair : _column._chainData) {
+    for (std::pair<size_t, _CT> pair : _column._chainData) {
         OSM::set_row(matrix,pair.first,_row * pair.second);
     }
     
@@ -697,17 +697,17 @@ Sparse_matrix<_CT, ROW> operator%(const Sparse_chain<_CT, COLUMN> &_column, cons
 template <typename CoefficientType>
 CoefficientType operator*(const Sparse_chain<CoefficientType, ROW> &_row, const Sparse_chain<CoefficientType, COLUMN> &_column) {
     // Get indexes (avoid adding double indexes).
-    std::unordered_map<int, int> indexes;
-    for (std::pair<int, CoefficientType> pair: _row._chainData) {
+    std::unordered_map<size_t, int> indexes;
+    for (std::pair<size_t, CoefficientType> pair: _row._chainData) {
         indexes[pair.first] = 1;
     }
-    for (std::pair<int, CoefficientType> pair: _column._chainData) {
+    for (std::pair<size_t, CoefficientType> pair: _column._chainData) {
         indexes[pair.first] += 1;
     }
     
     // Perform dot product
     CoefficientType result = CoefficientType();
-    for (std::pair<int, int> index: indexes) {
+    for (std::pair<size_t, int> index: indexes) {
         if (index.second == 2) {
             result += _row._chainData.at(index.first) * _column._chainData.at(index.first);
         }
@@ -735,7 +735,7 @@ CoefficientType operator*(const Sparse_chain<CoefficientType, ROW> &_row, const 
  * \date 08/04/2024
  */
 template <typename _CT, int _CTF>
-Sparse_chain<_CT, _CTF> operator/(const Sparse_chain<_CT, _CTF> &_chain, const std::vector<int> &_indexes) {
+Sparse_chain<_CT, _CTF> operator/(const Sparse_chain<_CT, _CTF> &_chain, const std::vector<size_t> &_indexes) {
     Sparse_chain newChain = _chain;
     newChain /= _indexes;
     return newChain;
@@ -760,7 +760,7 @@ Sparse_chain<_CT, _CTF> operator/(const Sparse_chain<_CT, _CTF> &_chain, const s
  * \date 08/04/2024
  */
 template <typename _CT, int _CTF>
-Sparse_chain<_CT, _CTF> operator/(const Sparse_chain<_CT, _CTF> &_chain, int _index) {
+Sparse_chain<_CT, _CTF> operator/(const Sparse_chain<_CT, _CTF> &_chain, size_t _index) {
     Sparse_chain newChain = _chain;
     newChain /= _index;
     return newChain;

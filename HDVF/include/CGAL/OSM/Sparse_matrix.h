@@ -78,7 +78,7 @@ protected:
     Bitboard _chainsStates;
     
     /** \brief The matrix size as a (row, column) pair. */
-    std::pair<int, int> _size;
+    std::pair<size_t, size_t> _size;
     
     /**
      * \brief Get a reference on a chain from a matrix and change its state (for affectation).
@@ -91,7 +91,7 @@ protected:
      *
      * \return The reference to the chain stored at given index.
      */
-    MatrixChain& operator[](const int _index) {
+    MatrixChain& operator[](const size_t _index) {
         if (ChainTypeFlag == COLUMN && _index >= _size.second) {
             throw std::runtime_error("Provided index should be less than " + std::to_string(_size.second) + ".");
         }
@@ -124,12 +124,12 @@ public:
      * \param[in] rowCount The number of rows to preallocate.
      * \param[in] columnCount The number of columns to preallocate.
      */
-    Sparse_matrix(const int rowCount, const int columnCount) {
-        int mainSize = ChainTypeFlag == COLUMN ? columnCount : rowCount;
-        int secondarySize = ChainTypeFlag == COLUMN ? rowCount : columnCount;
+    Sparse_matrix(const size_t rowCount, const size_t columnCount) {
+        size_t mainSize = ChainTypeFlag == COLUMN ? columnCount : rowCount;
+        size_t secondarySize = ChainTypeFlag == COLUMN ? rowCount : columnCount;
         
         _chains = std::vector<Sparse_chain<CoefficientType, ChainTypeFlag>>(mainSize);
-        for (int i = 0 ; i < mainSize ; i++) {
+        for (size_t i = 0 ; i < mainSize ; i++) {
             _chains[i] = Sparse_chain<CoefficientType, ChainTypeFlag>(secondarySize);
         }
         
@@ -153,7 +153,7 @@ public:
             _size = otherToCopy._size;
             // Copy of _chains as such
             _chains.resize(otherToCopy._chains._size()) ;
-            for (int i = 0; i<otherToCopy._chains._size(); ++i)
+            for (size_t i = 0; i<otherToCopy._chains._size(); ++i)
             {
                 const Sparse_chain<CoefficientType, CTF>& tmp(otherToCopy._chains.at(i)) ;
                 Sparse_chain<CoefficientType,ChainTypeFlag> res(tmp.dimension()) ;
@@ -167,16 +167,16 @@ public:
         else // Copy coefficient by coefficient
         {
             _size = otherToCopy._size;
-            int vec_size = (ChainTypeFlag == OSM::COLUMN)?_size.second:_size.first ;
-            int chain_size = (ChainTypeFlag == OSM::COLUMN)?_size.first:_size.second ;
+            size_t vec_size = (ChainTypeFlag == OSM::COLUMN)?_size.second:_size.first ;
+            size_t chain_size = (ChainTypeFlag == OSM::COLUMN)?_size.first:_size.second ;
             _chains.resize(vec_size) ;
             _chainsStates = OSM::Bitboard(vec_size) ;
-            for (int i=0; i<vec_size; ++i)
+            for (size_t i=0; i<vec_size; ++i)
             {
                 _chains.at(i) = Sparse_chain<CoefficientType,ChainTypeFlag>(chain_size) ;
             }
             
-            for (int i = 0; i<otherToCopy._chains._size(); ++i)
+            for (size_t i = 0; i<otherToCopy._chains._size(); ++i)
             {
                 const Sparse_chain<CoefficientType, CTF>& tmp(otherToCopy._chains.at(i)) ;
                 for (typename Sparse_chain<CoefficientType, CTF>::const_iterator it = tmp.cbegin(); it != tmp.cend(); ++it)
@@ -215,7 +215,7 @@ public:
      * Empty all structures of the sparse matrix.
      */
     void nullify() {
-        std::vector<int> coefs ;
+        std::vector<size_t> coefs ;
         for (OSM::Bitboard::iterator it = begin(); it != end(); ++it)
         {
             coefs.push_back(*it) ;
@@ -236,7 +236,7 @@ public:
         bool empty = true;
         
         stream << "[";
-        for (int index : matrix._chainsStates) {
+        for (size_t index : matrix._chainsStates) {
             empty = false;
             stream << index << ": " << matrix._chains[index] << ", ";
         }
@@ -246,9 +246,9 @@ public:
         }
         stream << "]" << std::endl ;
 #else
-        for (int i=0; i<matrix._size.first; ++i)
+        for (size_t i=0; i<matrix._size.first; ++i)
         {
-            for (int j=0; j<matrix._size.second; ++j)
+            for (size_t j=0; j<matrix._size.second; ++j)
             {
                 CoefficientType tmp = matrix.get_coef(i,j) ;
                 
@@ -476,7 +476,7 @@ public:
             throw std::runtime_error("Matrices must be the same _size.");
         }
         
-        for (int index: other._chainsStates) {
+        for (size_t index: other._chainsStates) {
             this->_chainsStates |= index;
             this->_chains[index] += other._chains[index];
             
@@ -517,7 +517,7 @@ public:
             throw std::runtime_error("Matrices must be the same _size.");
         }
         
-        for (int index: other._chainsStates) {
+        for (size_t index: other._chainsStates) {
             this->_chainsStates |= index;
             this->_chains[index] -= other._chains[index];
             
@@ -554,7 +554,7 @@ public:
             return *this;
         }
         
-        for (int index: this->_chainsStates) {
+        for (size_t index: this->_chainsStates) {
             this->_chains[index] *= lambda;
         }
         
@@ -569,7 +569,7 @@ public:
     friend Sparse_matrix operator-(const Sparse_matrix& matrix) {
         Sparse_matrix res(matrix._size.first, matrix._size.second) ;
         
-        for (int index: matrix._chainsStates)
+        for (size_t index: matrix._chainsStates)
         {
             const MatrixChain& tmp_chain(matrix._chains[index]) ;
             for (typename MatrixChain::const_iterator it = tmp_chain.cbegin(); it != tmp_chain.cend(); ++it)
@@ -618,7 +618,7 @@ public:
      *
      * \return The chain stored at given index.
      */
-    MatrixChain operator[](int index) const {
+    MatrixChain operator[](size_t index) const {
         if (ChainTypeFlag == COLUMN && index >= _size.second) {
             throw std::runtime_error("Provided index should be less than " + std::to_string(_size.second) + ".");
         }
@@ -631,7 +631,7 @@ public:
     
 protected:
     // Protected method for set_coef
-    void set_coef(const int i, const int j, const CoefficientType d) {
+    void set_coef(const size_t i, const size_t j, const CoefficientType d) {
         if (i >= _size.first) {
             throw std::runtime_error("Provided i index should be less than " + std::to_string(_size.first) + ".");
         }
@@ -667,11 +667,11 @@ public:
      * \param[in] d The value.
      */
     template <typename _CT, int _CTF>
-    friend void set_coef(Sparse_matrix<_CT, _CTF>& matrix, int i, int j, const _CT d);
+    friend void set_coef(Sparse_matrix<_CT, _CTF>& matrix, size_t i, size_t j, const _CT d);
     
 protected:
     // Protected method for get_coef
-    CoefficientType get_coef(const int i, const int j) const {
+    CoefficientType get_coef(const size_t i, const size_t j) const {
         if (i >= _size.first) {
             throw std::runtime_error("Provided _i index should be less than " + std::to_string(_size.first) + ".");
         }
@@ -699,7 +699,7 @@ public:
      * \return The value of the given coefficient.
      */
     template <typename _CT, int _CTF>
-    friend _CT get_coef(const Sparse_matrix<_CT, _CTF>& matrix, int i, int j);
+    friend _CT get_coef(const Sparse_matrix<_CT, _CTF>& matrix, size_t i, size_t j);
     
     /**
      * \defgroup GetColumn Get a column.
@@ -718,11 +718,11 @@ public:
     
     /** \brief Get a column from a COLUMN matrix. */
     template <typename _CT>
-    friend Sparse_chain<_CT, COLUMN> get_column(const Sparse_matrix<_CT, COLUMN> &matrix,  int index);
+    friend Sparse_chain<_CT, COLUMN> get_column(const Sparse_matrix<_CT, COLUMN> &matrix,  size_t index);
     
     /** \brief Get a column from a ROW matrix. */
     template <typename _CT>
-    friend Sparse_chain<_CT, COLUMN> get_column(const Sparse_matrix<_CT, ROW> &matrix,  int index);
+    friend Sparse_chain<_CT, COLUMN> get_column(const Sparse_matrix<_CT, ROW> &matrix,  size_t index);
     
     /** @} */
     
@@ -743,11 +743,11 @@ public:
     
     /** \brief Get a row from a COLUMN matrix. */
     template <typename _CT>
-    friend Sparse_chain<_CT, ROW> get_row(const Sparse_matrix<_CT, COLUMN> &matrix,  int index);
+    friend Sparse_chain<_CT, ROW> get_row(const Sparse_matrix<_CT, COLUMN> &matrix,  size_t index);
     
     /** \brief Get a row from a ROW matrix. */
     template <typename _CT>
-    friend Sparse_chain<_CT, ROW> get_row(const Sparse_matrix<_CT, ROW> &matrix,  int index);
+    friend Sparse_chain<_CT, ROW> get_row(const Sparse_matrix<_CT, ROW> &matrix,  size_t index);
     
     /** @} */
     
@@ -764,7 +764,7 @@ public:
      * \return A constant reference over the column stored at given index.
      */
     template <typename _CT>
-    friend const Sparse_chain<_CT, COLUMN> & cget_column(const Sparse_matrix<_CT, COLUMN> &matrix,  int index);
+    friend const Sparse_chain<_CT, COLUMN> & cget_column(const Sparse_matrix<_CT, COLUMN> &matrix,  size_t index);
     
     /**
      * \brief Get a constant reference over a row from a row matrix
@@ -779,7 +779,7 @@ public:
      * \return A const reference over the row stored at given index.
      */
     template <typename _CT>
-    friend const Sparse_chain<_CT, ROW> & cget_row(const Sparse_matrix<_CT, ROW> &matrix, const int index);
+    friend const Sparse_chain<_CT, ROW> & cget_row(const Sparse_matrix<_CT, ROW> &matrix, const size_t index);
     
     
     /**
@@ -799,11 +799,11 @@ public:
     
     /** \brief Set a column in a COLUMN matrix. */
     template <typename _CT>
-    friend void set_column(Sparse_matrix<_CT, COLUMN> &matrix,  int index, const Sparse_chain<_CT, COLUMN> &chain);
+    friend void set_column(Sparse_matrix<_CT, COLUMN> &matrix,  size_t index, const Sparse_chain<_CT, COLUMN> &chain);
     
     /** \brief Set a column in a ROW matrix. */
     template <typename _CT>
-    friend void set_column(Sparse_matrix<_CT, ROW> &matrix,  int index, const Sparse_chain<_CT, COLUMN> &chain);
+    friend void set_column(Sparse_matrix<_CT, ROW> &matrix,  size_t index, const Sparse_chain<_CT, COLUMN> &chain);
     
     /** @} */
     
@@ -824,11 +824,11 @@ public:
     
     /** \brief Set a row in a COLUMN matrix. */
     template <typename _CT>
-    friend void set_row(Sparse_matrix<_CT, COLUMN> &matrix,  int index, const Sparse_chain<_CT, ROW> &chain);
+    friend void set_row(Sparse_matrix<_CT, COLUMN> &matrix,  size_t index, const Sparse_chain<_CT, ROW> &chain);
     
     /** \brief Set a row in a ROW matrix. */
     template <typename _CT>
-    friend void set_row(Sparse_matrix<_CT, ROW> &matrix,  int index, const Sparse_chain<_CT, ROW> &chain);
+    friend void set_row(Sparse_matrix<_CT, ROW> &matrix,  size_t index, const Sparse_chain<_CT, ROW> &chain);
     
     /** @} */
     
@@ -849,14 +849,14 @@ public:
      */
 
     /** \brief Remove a set of chains from a copy of a matrix. */
-    friend Sparse_matrix operator/(const Sparse_matrix &matrix, const std::vector<int> &_indices) {
+    friend Sparse_matrix operator/(const Sparse_matrix &matrix, const std::vector<size_t> &_indices) {
         Sparse_matrix res(matrix);
         res /= _indices;
         return res;
     }
     
     /** \brief Remove the chain at a given `index` from a copy of a matrix. */
-    friend Sparse_matrix operator/(const Sparse_matrix &matrix, int index) {
+    friend Sparse_matrix operator/(const Sparse_matrix &matrix, size_t index) {
         Sparse_matrix res(matrix);
         res /= index;
         return res;
@@ -878,8 +878,8 @@ public:
      */
     
     /** \brief Remove a set of chains from a matrix. */
-    Sparse_matrix& operator/=(const std::vector<int> &indexes) {
-        for (int index : indexes) {
+    Sparse_matrix& operator/=(const std::vector<size_t> &indexes) {
+        for (size_t index : indexes) {
             *this /= index;
         }
         
@@ -887,7 +887,7 @@ public:
     }
     
     /** \brief Remove the chain at a given `index` from a matrix. */
-    Sparse_matrix& operator/=(const int index) {
+    Sparse_matrix& operator/=(const size_t index) {
         _chains[index].nullify();
         _chainsStates.setOff(index);
         
@@ -898,21 +898,21 @@ public:
     
 protected:
     // Protected version of del_column
-    Sparse_matrix& del_column(int index) {
-        std::vector<int> tmp_id{index} ;
+    Sparse_matrix& del_column(size_t index) {
+        std::vector<size_t> tmp_id{index} ;
         if (ChainTypeFlag == OSM::COLUMN)
         {
             (*this)/=tmp_id ;
         }
         else // OSM::ROW
         {
-            for (int ind : _chainsStates)
+            for (size_t ind : _chainsStates)
             {
                 MatrixChain &tmp(_chains[ind]) ;
                 tmp/=tmp_id ;
                 // If the row index has become empty: update
                 if (tmp.is_null())
-                    *this /= std::vector<int>({ind}) ;
+                    *this /= std::vector<size_t>({ind}) ;
             }
         }
         
@@ -930,23 +930,23 @@ public:
      * \return The modified matrix representing the result.
      */
     template <typename _CT, int _CTF>
-    friend Sparse_matrix<_CT, _CTF>& del_column(Sparse_matrix<_CT, _CTF>& matrix, int index);
+    friend Sparse_matrix<_CT, _CTF>& del_column(Sparse_matrix<_CT, _CTF>& matrix, size_t index);
     
 protected:
     // Protected version of del_row
-    Sparse_matrix& del_row(int index)
+    Sparse_matrix& del_row(size_t index)
     {
-        std::vector<int> tmp_id{index};
+        std::vector<size_t> tmp_id{index};
         if (ChainTypeFlag == OSM::ROW) {
             (*this) /= tmp_id;
         } else // OSM::COLUMN
         {
-            for (int ind : _chainsStates) {
+            for (size_t ind : _chainsStates) {
                 MatrixChain &tmp(_chains[ind]);
                 tmp /= tmp_id;
                 // If the column index has become empty: update
                 if (tmp.is_null())
-                    *this /= std::vector<int>({ind}) ;
+                    *this /= std::vector<size_t>({ind}) ;
             }
         }
         
@@ -965,22 +965,22 @@ public:
      * \return The modified matrix representing the result.
      */
     template <typename _CT, int _CTF>
-    friend Sparse_matrix<_CT, _CTF>& del_row(Sparse_matrix<_CT, _CTF>& matrix, int index);
+    friend Sparse_matrix<_CT, _CTF>& del_row(Sparse_matrix<_CT, _CTF>& matrix, size_t index);
     
 protected:
     // Protected version of del_coef
-    Sparse_matrix& del_coef(int i, int j)
+    Sparse_matrix& del_coef(size_t i, size_t j)
     {
         
         if (ChainTypeFlag == OSM::COLUMN) {
-            std::vector<int> tmp_id({i}) ;
+            std::vector<size_t> tmp_id({i}) ;
             MatrixChain &tmp(_chains[j]);
             tmp /= tmp_id;
             if (tmp.is_null())
                 _chainsStates.setOff(j) ;
         } else // OSM::ROW
         {
-            std::vector<int> tmp_id({j}) ;
+            std::vector<size_t> tmp_id({j}) ;
             MatrixChain &tmp(_chains[i]);
             tmp /= tmp_id;
             if (tmp.is_null())
@@ -1003,7 +1003,7 @@ public:
      * \return The modified matrix representing the result.
      */
     template <typename _CT, int _CTF>
-    friend Sparse_matrix<_CT, _CTF>& del_coef(Sparse_matrix<_CT, _CTF>& matrix, int i, int j);
+    friend Sparse_matrix<_CT, _CTF>& del_coef(Sparse_matrix<_CT, _CTF>& matrix, size_t i, size_t j);
     
     /**
      * \brief Iterator to the index of the first non null chain.
@@ -1047,7 +1047,7 @@ public:
     Sparse_matrix<CoefficientType, COLUMN + ROW - ChainTypeFlag> transpose() {
         Sparse_matrix<CoefficientType, COLUMN + ROW - ChainTypeFlag> transposed(this->_size.second, this->_size.first);
         
-        for (int index : this->_chainsStates) {
+        for (size_t index : this->_chainsStates) {
             transposed._chains[index] = this->_chains[index].transpose();
         }
         
@@ -1061,7 +1061,7 @@ public:
      *
      * \return The matrix size as a row/column pair.
      */
-    std::pair<int, int> dimensions() const {
+    std::pair<size_t, size_t> dimensions() const {
         return this->_size;
     }
 };
@@ -1074,7 +1074,7 @@ Sparse_matrix<_CT, COLUMN> operator*(const Sparse_matrix<_CT, COLUMN> &first, co
     Sparse_matrix<_CT, COLUMN> res(first._size.first, second._size.second);
     
     // Perform col-col matrix multiplication with linear combination of columns.
-    for (int index: second._chainsStates) {
+    for (size_t index: second._chainsStates) {
         Sparse_chain<_CT, COLUMN> column(first._size.first);
         
         for (std::pair colRight: second._chains[index]) {
@@ -1096,10 +1096,10 @@ Sparse_matrix<_CT, COLUMN> operator*(const Sparse_matrix<_CT, ROW> &first, const
     Sparse_matrix<_CT, COLUMN> res(first._size.first, second._size.second);
     
     // Perform row-col matrix multiplication with dot products.
-    for (int colRight: second._chainsStates) {
+    for (size_t colRight: second._chainsStates) {
         Sparse_chain<_CT, COLUMN> column(first._size.first);
         
-        for (int rowLeft: first._chainsStates) {
+        for (size_t rowLeft: first._chainsStates) {
             _CT coef = first._chains[rowLeft] * second._chains[colRight];
             if (coef != 0) {
                 column[rowLeft] = coef;
@@ -1119,7 +1119,7 @@ Sparse_matrix<_CT, COLUMN> operator*(const Sparse_matrix<_CT, COLUMN> &first, co
     Sparse_matrix<_CT, COLUMN> res(first._size.first, second._size.second);
     
     // Perform row-col matrix multiplication with dot products.
-    for (int colLeft: first._chainsStates) {
+    for (size_t colLeft: first._chainsStates) {
         res += first._chains[colLeft] * second._chains[colLeft];
     }
     
@@ -1133,10 +1133,10 @@ Sparse_matrix<_CT, COLUMN> operator*(const Sparse_matrix<_CT, ROW> &first, const
     Sparse_matrix<_CT, COLUMN> res(first._size.first, second._size.second);
     
     // Perform row-col matrix multiplication with dot products.
-    for (int i = 0 ; i < second._size.second ; i++) {
+    for (size_t i = 0 ; i < second._size.second ; i++) {
         Sparse_chain<_CT, COLUMN> column(first._size.first);
         
-        for (int rowLeft: first._chainsStates) {
+        for (size_t rowLeft: first._chainsStates) {
             _CT coef = first._chains[rowLeft] * get_column(second, i);
             if (coef != 0) {
                 column[rowLeft] = coef;
@@ -1175,7 +1175,7 @@ Sparse_chain<_CT, COLUMN> operator*(const Sparse_matrix<_CT, ROW> &_first, const
     // Perform row-col matrix multiplication with dots
     Sparse_chain<_CT, COLUMN> column(_first._size.first);
     
-    for (int index : _first._chainsStates)
+    for (size_t index : _first._chainsStates)
     {
         _CT tmp(_first[index] * _second) ;
         if (tmp != 0)
@@ -1208,7 +1208,7 @@ Sparse_chain<_CT, ROW> operator*(const Sparse_chain<_CT, ROW> &_first, const Spa
     // Perform row-col matrix multiplication with dots
     Sparse_chain<_CT, ROW> row(_second._size.second);
     
-    for (int index : _second._chainsStates)
+    for (size_t index : _second._chainsStates)
     {
         _CT tmp(_first * _second[index]) ;
         if (tmp != 0)
@@ -1223,10 +1223,10 @@ template <typename _CT>
 Sparse_matrix<_CT, ROW> operator%(const Sparse_matrix<_CT, COLUMN> &_first, const Sparse_matrix<_CT, COLUMN> &_second) {
     Sparse_matrix<_CT, ROW> res(_first._size.first, _second._size.second);
     
-    for (int i = 0 ; i < _first._size.first ; i++) {
+    for (size_t i = 0 ; i < _first._size.first ; i++) {
         Sparse_chain<_CT, ROW> row(_second._size.second);
         
-        for (int colRight: _second._chainsStates) {
+        for (size_t colRight: _second._chainsStates) {
             _CT coef = get_row(_first, i) * _second._chains[colRight];
             if (coef != 0) {
                 row[colRight] = coef;
@@ -1248,10 +1248,10 @@ Sparse_matrix<_CT, ROW> operator%(const Sparse_matrix<_CT, ROW> &_first, const S
     Sparse_matrix<_CT, ROW> res(_first._size.first, _second._size.second);
     
     // Perform row-col matrix multiplication with dot products.
-    for (int rowLeft: _first._chainsStates) {
+    for (size_t rowLeft: _first._chainsStates) {
         Sparse_chain<_CT, ROW> row(_second._size.second);
         
-        for (int colRight: _second._chainsStates) {
+        for (size_t colRight: _second._chainsStates) {
             _CT coef = _first._chains[rowLeft] * _second._chains[colRight];
             if (coef != 0) {
                 row[colRight] = coef;
@@ -1271,7 +1271,7 @@ Sparse_matrix<_CT, ROW> operator%(const Sparse_matrix<_CT, COLUMN> &_first, cons
     Sparse_matrix<_CT, ROW> res(_first._size.first, _second._size.second);
     
     // Perform row-col matrix multiplication with dot products.
-    for (int colLeft: _first._chainsStates) {
+    for (size_t colLeft: _first._chainsStates) {
         res += _first._chains[colLeft] % _second._chains[colLeft];
     }
     
@@ -1285,7 +1285,7 @@ Sparse_matrix<_CT, ROW> operator%(const Sparse_matrix<_CT, ROW> &_first, const S
     Sparse_matrix<_CT, ROW> res(_first._size.first, _second._size.second);
     
     // Perform row-row matrix multiplication with linear combination of rows.
-    for (int index: _first._chainsStates) {
+    for (size_t index: _first._chainsStates) {
         Sparse_chain<_CT, ROW> row(_second._size.second);
         
         for (std::pair colRight: _first._chains[index]) {
@@ -1308,7 +1308,7 @@ Sparse_matrix<_CT, COLUMN>& operator+=(Sparse_matrix<_CT, COLUMN> &_matrix, cons
         throw std::runtime_error("Matrices must be the same size.");
     }
     
-    for (int index = 0 ; index < _other._size.second ; index++) {
+    for (size_t index = 0 ; index < _other._size.second ; index++) {
         Sparse_chain column = get_column(_other, index);
         if (!column.is_null()) {
             _matrix._chainsStates |= index;
@@ -1331,7 +1331,7 @@ Sparse_matrix<_CT, ROW>& operator+=(Sparse_matrix<_CT, ROW> &_matrix, const Spar
         throw std::runtime_error("Matrices must be the same size.");
     }
     
-    for (int index = 0 ; index < _other._size.first ; index++) {
+    for (size_t index = 0 ; index < _other._size.first ; index++) {
         Sparse_chain row = get_row(_other, index);
         if (!row.is_null()) {
             _matrix._chainsStates |= index;
@@ -1354,7 +1354,7 @@ Sparse_matrix<_CT, COLUMN>& operator-=(Sparse_matrix<_CT, COLUMN> &_matrix, cons
         throw std::runtime_error("Matrices must be the same size.");
     }
     
-    for (int index = 0 ; index < _other._size.second ; index++) {
+    for (size_t index = 0 ; index < _other._size.second ; index++) {
         Sparse_chain column = get_column(_other, index);
         if (!column.is_null()) {
             _matrix._chainsStates |= index;
@@ -1377,7 +1377,7 @@ Sparse_matrix<_CT, ROW>& operator-=(Sparse_matrix<_CT, ROW> &_matrix, const Spar
         throw std::runtime_error("Matrices must be the same size.");
     }
     
-    for (int index = 0 ; index < _other._size.second ; index++) {
+    for (size_t index = 0 ; index < _other._size.second ; index++) {
         Sparse_chain row = get_row(_other, index);
         if (!row.is_null()) {
             _matrix._chainsStates |= index;
@@ -1426,17 +1426,17 @@ Sparse_matrix<_CT, ROW>& operator*=(Sparse_matrix<_CT, ROW> &_matrix, const Spar
 
 // Get column (in COLUMN matrix)
 template <typename _CT>
-Sparse_chain<_CT, COLUMN> get_column(const Sparse_matrix<_CT, COLUMN> &_matrix,  int _index) {
+Sparse_chain<_CT, COLUMN> get_column(const Sparse_matrix<_CT, COLUMN> &_matrix,  size_t _index) {
     return _matrix._chains[_index];
 }
 
 // Get column (in ROW matrix)
 template <typename _CT>
-Sparse_chain<_CT, COLUMN> get_column(const Sparse_matrix<_CT, ROW> &_matrix,  int _index) {
+Sparse_chain<_CT, COLUMN> get_column(const Sparse_matrix<_CT, ROW> &_matrix,  size_t _index) {
     Sparse_chain<_CT, COLUMN> column(_matrix._size.first);
     if (_matrix._size.first > 0)
     {
-        for (int i : _matrix._chainsStates) {
+        for (size_t i : _matrix._chainsStates) {
             if (!_matrix._chains[i].is_null(_index)) {
                 column[i] = _matrix._chains[i][_index];
             }
@@ -1448,11 +1448,11 @@ Sparse_chain<_CT, COLUMN> get_column(const Sparse_matrix<_CT, ROW> &_matrix,  in
 
 // Get row (in COLUMN matrix)
 template <typename _CT>
-Sparse_chain<_CT, ROW> get_row(const Sparse_matrix<_CT, COLUMN> &_matrix,  int _index) {
+Sparse_chain<_CT, ROW> get_row(const Sparse_matrix<_CT, COLUMN> &_matrix,  size_t _index) {
     Sparse_chain<_CT, ROW> row(_matrix._size.second);
     if (_matrix._size.second > 0)
     {
-        for (int i : _matrix._chainsStates) {
+        for (size_t i : _matrix._chainsStates) {
             if (!_matrix._chains[i].is_null(_index)) {
                 row[i] = _matrix._chains[i][_index];
             }
@@ -1464,13 +1464,13 @@ Sparse_chain<_CT, ROW> get_row(const Sparse_matrix<_CT, COLUMN> &_matrix,  int _
 
 // Get row (in COLUMN matrix)
 template <typename _CT>
-Sparse_chain<_CT, ROW> get_row(const Sparse_matrix<_CT, ROW> &_matrix,  int _index) {
+Sparse_chain<_CT, ROW> get_row(const Sparse_matrix<_CT, ROW> &_matrix,  size_t _index) {
     return _matrix._chains[_index];
 }
 
 // Get constant reference over a column in a column-matrix
 template <typename _CT>
-const Sparse_chain<_CT, COLUMN> & cget_column(const Sparse_matrix<_CT, COLUMN> &_matrix,  int _index)
+const Sparse_chain<_CT, COLUMN> & cget_column(const Sparse_matrix<_CT, COLUMN> &_matrix,  size_t _index)
 {
     if (_index >= _matrix._size.second) {
         throw std::runtime_error("Provided index should be less than " + std::to_string(_matrix._size.second) + ".");
@@ -1480,7 +1480,7 @@ const Sparse_chain<_CT, COLUMN> & cget_column(const Sparse_matrix<_CT, COLUMN> &
 
 // Get constant reference over a row in a row-matrix
 template <typename _CT>
-const Sparse_chain<_CT, ROW> & cget_row(const Sparse_matrix<_CT, ROW> &_matrix, const int _index)
+const Sparse_chain<_CT, ROW> & cget_row(const Sparse_matrix<_CT, ROW> &_matrix, const size_t _index)
 {
     if (_index >= _matrix._size.first) {
         throw std::runtime_error("Provided index should be less than " + std::to_string(_matrix._size.first) + ".");
@@ -1490,7 +1490,7 @@ const Sparse_chain<_CT, ROW> & cget_row(const Sparse_matrix<_CT, ROW> &_matrix, 
 
 // Set column in a COLUMN matrix
 template <typename _CT>
-void set_column(Sparse_matrix<_CT, COLUMN> &matrix,  int index, const Sparse_chain<_CT, COLUMN> &chain) {
+void set_column(Sparse_matrix<_CT, COLUMN> &matrix,  size_t index, const Sparse_chain<_CT, COLUMN> &chain) {
     if(matrix.dimensions().first != chain.dimension())
         throw std::runtime_error("set_column dimension error") ;
     matrix[index] = chain;
@@ -1500,10 +1500,10 @@ void set_column(Sparse_matrix<_CT, COLUMN> &matrix,  int index, const Sparse_cha
 
 // Set column in a ROW matrix
 template <typename _CT>
-void set_column(Sparse_matrix<_CT, ROW> &matrix,  int index, const Sparse_chain<_CT, COLUMN> &chain) {
+void set_column(Sparse_matrix<_CT, ROW> &matrix,  size_t index, const Sparse_chain<_CT, COLUMN> &chain) {
     if(matrix.dimensions().first != chain.dimension())
         throw std::runtime_error("set_column dimension error") ;
-    for (int i = 0 ; i < matrix._size.first ; i++) {
+    for (size_t i = 0 ; i < matrix._size.first ; i++) {
         if (!matrix._chains[i].is_null(index) && chain.is_null(i)) {
             matrix._chains[i] /= index;
             
@@ -1521,10 +1521,10 @@ void set_column(Sparse_matrix<_CT, ROW> &matrix,  int index, const Sparse_chain<
 
 // Set row in a COLUMN matrix
 template <typename _CT>
-void set_row(Sparse_matrix<_CT, COLUMN> &_matrix,  int _index, const Sparse_chain<_CT, ROW> &_chain) {
+void set_row(Sparse_matrix<_CT, COLUMN> &_matrix,  size_t _index, const Sparse_chain<_CT, ROW> &_chain) {
     if(_matrix.dimensions().second != _chain.dimension())
         throw("set_column dimension error") ;
-    for (int i = 0 ; i < _matrix._size.second ; i++) {
+    for (size_t i = 0 ; i < _matrix._size.second ; i++) {
         if (!_matrix._chains[i].is_null(_index) && _chain.is_null(i)) {
             _matrix._chains[i] /= _index;
             
@@ -1542,7 +1542,7 @@ void set_row(Sparse_matrix<_CT, COLUMN> &_matrix,  int _index, const Sparse_chai
 
 // Set row in a ROW matrix
 template <typename _CT>
-void set_row(Sparse_matrix<_CT, ROW> &_matrix,  int _index, const Sparse_chain<_CT, ROW> &_chain) {
+void set_row(Sparse_matrix<_CT, ROW> &_matrix,  size_t _index, const Sparse_chain<_CT, ROW> &_chain) {
     if(_matrix.dimensions().second != _chain.dimension())
         throw("set_column dimension error") ;
     _matrix[_index] = _chain;
@@ -1551,31 +1551,31 @@ void set_row(Sparse_matrix<_CT, ROW> &_matrix,  int _index, const Sparse_chain<_
 }
 
 template <typename _CT, int _CTF>
-void set_coef(Sparse_matrix<_CT, _CTF>& matrix, int i, int j, const _CT d)
+void set_coef(Sparse_matrix<_CT, _CTF>& matrix, size_t i, size_t j, const _CT d)
 {
     matrix.set_coef(i, j, d);
 }
 
 template <typename _CT, int _CTF>
-_CT get_coef(const Sparse_matrix<_CT, _CTF>& matrix, int i, int j)
+_CT get_coef(const Sparse_matrix<_CT, _CTF>& matrix, size_t i, size_t j)
 {
     matrix.get_coef(i, j);
 }
 
 template <typename _CT, int _CTF>
-Sparse_matrix<_CT, _CTF>& del_column(Sparse_matrix<_CT, _CTF>& matrix, int index)
+Sparse_matrix<_CT, _CTF>& del_column(Sparse_matrix<_CT, _CTF>& matrix, size_t index)
 {
     return matrix.del_column(index);
 }
 
 template <typename _CT, int _CTF>
-Sparse_matrix<_CT, _CTF>& del_row(Sparse_matrix<_CT, _CTF>& matrix, int index)
+Sparse_matrix<_CT, _CTF>& del_row(Sparse_matrix<_CT, _CTF>& matrix, size_t index)
 {
     return matrix.del_row(index);
 }
 
 template <typename _CT, int _CTF>
-Sparse_matrix<_CT, _CTF>& del_coef(Sparse_matrix<_CT, _CTF>& matrix, int i, int j)
+Sparse_matrix<_CT, _CTF>& del_coef(Sparse_matrix<_CT, _CTF>& matrix, size_t i, size_t j)
 {
     return matrix.del_coef(i, j);
 }

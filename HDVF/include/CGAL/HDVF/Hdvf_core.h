@@ -45,8 +45,8 @@ const int OPT_FULL = 0b1000;
  * Cells are always sorted so that the dimension of `sigma` is lesser than the dimension of `tau`.
  */
 struct PairCell {
-    int sigma;  /// Index of the first cell
-    int tau;    /// Index of the second cell
+    size_t sigma;  /// Index of the first cell
+    size_t tau;    /// Index of the second cell
     int dim;    /// Dimension of cells: q/q+1 for A and R, q/q for other operations
 };
 
@@ -111,11 +111,11 @@ protected:
      */
     std::vector<std::vector<FlagType>> _flag;
     /* \brief Number of PRIMARY cells. */
-    std::vector<int> _nb_P;
+    std::vector<size_t> _nb_P;
     /* \brief Number of SECONDARY cells. */
-    std::vector<int> _nb_S;
+    std::vector<size_t> _nb_S;
     /* \brief Number of CRITICAL cells. */
-    std::vector<int> _nb_C;
+    std::vector<size_t> _nb_C;
     /* \brief Row matrices for f. */
     std::vector<RMatrix> _F_row;
     /* \brief Column matrices for g. */
@@ -176,7 +176,7 @@ public:
      * \param[in] found Reference to a boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      * \param[in] gamma Index of a cell to pair.
      */
-    virtual PairCell find_pair_A(int q, bool &found, int gamma) const;
+    virtual PairCell find_pair_A(int q, bool &found, size_t gamma) const;
     
     /**
      * \brief Find *all* valid PairCell of dimension q / q+1 for A.
@@ -201,7 +201,7 @@ public:
      * \param[in] found Reference to a boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      * \param[in] gamma Index of a cell to pair.
      */
-    virtual std::vector<PairCell> find_pairs_A(int q, bool &found, int gamma) const;
+    virtual std::vector<PairCell> find_pairs_A(int q, bool &found, size_t gamma) const;
     
     /**
      * \brief A operation: pairs critical cells.
@@ -212,7 +212,7 @@ public:
      * \param[in] gamma2 Second cell of the pair (dimension `q+1`)
      * \param[in] q Dimension of the pair
      */
-    void A(int gamma1, int gamma2, int q);
+    void A(size_t gamma1, size_t gamma2, int q);
     
     /**
      * \brief Compute a perfect HDVF.
@@ -275,7 +275,7 @@ public:
      * \param[in] tau Index of the cell.
      * \param[in] q Dimension of the cell.
      */
-    FlagType get_cell_flag (int q, int tau) const { return _flag.at(q).at(tau); }
+    FlagType get_cell_flag (int q, size_t tau) const { return _flag.at(q).at(tau); }
     
     /**
      * \brief Get HDVF computation option.
@@ -330,7 +330,7 @@ public:
         std::vector<std::vector<int> > labels(_K.dim()+1) ;
         for (int q=0; q<=_K.dim(); ++q)
         {
-            for (int i = 0; i<_K.nb_cells(q); ++i)
+            for (size_t i = 0; i<_K.nb_cells(q); ++i)
             {
                 if (_flag.at(q).at(i) == PRIMARY)
                     labels.at(q).push_back(-1) ;
@@ -352,7 +352,7 @@ public:
      *
      * \return A column-major chain.
      */
-    virtual CChain export_homology_chain (int cell, int q) const
+    virtual CChain export_homology_chain (size_t cell, int q) const
     {
         if ((q<0) || (q>_K.dim()))
             throw "Error : export_homology_chain with dim out of range" ;
@@ -377,7 +377,7 @@ public:
      *
      * \return A column-major chain.
      */
-    virtual CChain export_cohomology_chain (int cell, int dim) const
+    virtual CChain export_cohomology_chain (size_t cell, int dim) const
     {
         if ((dim<0) || (dim>_K.dim()))
             throw "Error : export_homology_chain with dim out of range" ;
@@ -439,10 +439,10 @@ protected:
         ChainType<CoefficientType, ChainTypeFlag> result(chain);
         
         // Iterate over each element of the chain
-        std::vector<int> tmp ;
+        std::vector<size_t> tmp ;
         for (typename ChainType<CoefficientType, ChainTypeFlag>::const_iterator it = result.cbegin(); it != result.cend(); ++it)
         {
-            int cell_index = it->first;
+            size_t cell_index = it->first;
             CoefficientType value = it->second;
             
             // Check the flag of the corresponding cell
@@ -458,17 +458,17 @@ protected:
     }
     
     /* \brief Display a text progress bar. */
-    void progress_bar(int i, int n)
+    void progress_bar(size_t i, size_t n)
     {
-        const int step(n/20) ;
+        const size_t step(n/20) ;
         if ((i%step)==0)
         {
             const float percentage(float(i)/(n-1)) ;
             const char PBSTR[] = "||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||" ;
-            const int PBWIDTH(60) ;
-            int val = (int) (percentage * 100);
-            int lpad = (int) (percentage * PBWIDTH);
-            int rpad = PBWIDTH - lpad;
+            const size_t PBWIDTH(60) ;
+            size_t val = (size_t) (percentage * 100);
+            size_t lpad = (size_t) (percentage * PBWIDTH);
+            size_t rpad = PBWIDTH - lpad;
             printf("\r%3d%% [%.*s%*s]", val, lpad, PBSTR, rpad, "");
             fflush(stdout);
         }
@@ -606,7 +606,7 @@ PairCell Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::f
 
 // find a valid PairCell containing tau for A in dimension q
 template<typename CoefficientType, typename ComplexType, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
-PairCell Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::find_pair_A(int q, bool &found, int gamma) const
+PairCell Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::find_pair_A(int q, bool &found, size_t gamma) const
 {
     found = false;
     PairCell p ;
@@ -669,7 +669,7 @@ std::vector<PairCell> Hdvf_core<CoefficientType, ComplexType, ChainType, SparseM
 
 // find all the valid PairCell containing gamma for A in dimension q
 template<typename CoefficientType, typename ComplexType, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
-std::vector<PairCell> Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::find_pairs_A(int q, bool &found, int gamma) const
+std::vector<PairCell> Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::find_pairs_A(int q, bool &found, size_t gamma) const
 {
     found = false;
     std::vector<PairCell> pairs;
@@ -711,7 +711,7 @@ std::vector<PairCell> Hdvf_core<CoefficientType, ComplexType, ChainType, SparseM
 // Method to perform operation A
 // tau1 is in dimension q, tau2 is in dimension q+1
 template<typename CoefficientType, typename ComplexType, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
-void Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::A(int tau1, int tau2, int q) {
+void Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::A(size_t tau1, size_t tau2, int q) {
     //----------------------------------------------- Submatrices of D ----------------------------------------------------
     
     // Output operation details to the console
@@ -729,8 +729,8 @@ void Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::A(int
     CoefficientType D11_inv = D11;
     
     // Perform operations to remove the row and column contributions
-    D12 /= std::vector<int>({tau2}); // Remove tau2 column from D12
-    D21 /= std::vector<int>({tau1}); // Remove tau1 row from D21
+    D12 /= std::vector<size_t>({tau2}); // Remove tau2 column from D12
+    D21 /= std::vector<size_t>({tau1}); // Remove tau1 row from D21
     
     // Delete rows and columns from _DD_col
     del_row(_DD_col[q + 1], tau1); // Remove row tau1 from _DD_col[q+1]
@@ -904,7 +904,7 @@ std::vector<PairCell> Hdvf_core<CoefficientType, ComplexType, ChainType, SparseM
             {
                 // Pickup a random cell sigma
                 std::uniform_int_distribution<std::mt19937::result_type> rand_dist(0,pairs.size()-1);
-                int i(rand_dist(rng)) ;
+                size_t i(rand_dist(rng)) ;
                 pair = pairs.at(i) ;
             }
             pair_list.push_back(pair);
@@ -932,7 +932,7 @@ std::vector<std::vector<int> > Hdvf_core<CoefficientType, ComplexType, ChainType
     std::vector<std::vector<int> > res(_K.dim()+1) ;
     for (int q=0; q<=_K.dim(); ++q)
     {
-        for (int i=0; i<_K.nb_cells(q); ++i)
+        for (size_t i=0; i<_K.nb_cells(q); ++i)
         {
             if (_flag.at(q).at(i) == flag)
                 res.at(q).push_back(i) ;
@@ -946,7 +946,7 @@ template<typename CoefficientType, typename ComplexType, template <typename, int
 std::vector<int> Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::get_flag_dim (FlagType flag, int q) const
 {
     std::vector<int> res ;
-    for (int i=0; i<_K.nb_cells(q); ++i)
+    for (size_t i=0; i<_K.nb_cells(q); ++i)
     {
         if (_flag.at(q).at(i) == flag)
             res.push_back(i) ;
@@ -962,7 +962,7 @@ std::ostream& Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixTyp
     out << "----- flags of cells:" << std::endl;
     for (int q = 0; q <= _K.dim(); ++q) {
         out << "--- dim " << q << std::endl;
-        for (int i = 0; i < _K.nb_cells(q); ++i)
+        for (size_t i = 0; i < _K.nb_cells(q); ++i)
         {
             const int flag(_flag.at(q).at(i)) ;
             if (flag == PRIMARY)
@@ -980,7 +980,7 @@ std::ostream& Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixTyp
     std::vector<std::vector<int> > critical(get_flag(CRITICAL)) ;
     for (int q = 0; q <= _K.dim(); ++q) {
         out << "--- dim " << q << std::endl;
-        for (int i = 0; i < critical.at(q).size(); ++i)
+        for (size_t i = 0; i < critical.at(q).size(); ++i)
         {
             out << critical.at(q).at(i) << " ";
         }
@@ -993,9 +993,9 @@ std::ostream& Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixTyp
         out << "----- g:" << std::endl;
         for (int q = 0; q <= _K.dim(); ++q) {
             out << "--- dim " << q << std::endl;
-            for (int i = 0; i < critical.at(q).size(); ++i)
+            for (size_t i = 0; i < critical.at(q).size(); ++i)
             {
-                const int id(critical.at(q).at(i)) ;
+                const size_t id(critical.at(q).at(i)) ;
                 out << "g(" << id << ") = (" << id << ")";
                 // Iterate over the ith column of _G_col
                 CChain col(OSM::get_column(_G_col.at(q), id)) ; // TODO cget
@@ -1013,9 +1013,9 @@ std::ostream& Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixTyp
         out << "----- f*:" << std::endl;
         for (int q = 0; q <= _K.dim(); ++q) {
             out << "--- dim " << q << std::endl;
-            for (int i = 0; i < critical.at(q).size(); ++i)
+            for (size_t i = 0; i < critical.at(q).size(); ++i)
             {
-                const int id(critical.at(q).at(i)) ;
+                const size_t id(critical.at(q).at(i)) ;
                 out << "f*(" << id << ") = (" << id << ")";
                 // Iterate over the ith row of _F_row
                 RChain row(OSM::get_row(_F_row.at(q), id)) ; // TODO cget
