@@ -16,10 +16,12 @@
 //                 Lutz Kettner <kettner@mpi-sb.mpg.de>
 //                 Sylvain Pion
 
+#include "CGAL/type_traits.h"
 #ifndef CGAL_ITERATOR_PROJECT_H
 #define CGAL_ITERATOR_PROJECT_H 1
 
 #include <iterator>
+#include <boost/stl_interfaces/iterator_interface.hpp>
 
 namespace CGAL {
 
@@ -37,34 +39,44 @@ struct I_TYPE_MATCH_IF { typedef R2 Result; };  // else clause
 template <class T, class R1, class R2>
 struct I_TYPE_MATCH_IF<T,T,R1,R2> { typedef R1 Result; }; // then clause
 
+template <class I, class Fct>
+using Iterator_project_reference = decltype(std::declval<Fct>()(*std::declval<I>()));
+
+template <class I, class Fct>
+using Iterator_project_value_type = CGAL::cpp20::remove_cvref_t<Iterator_project_reference<I, Fct>>;
+
 // keep 4 dummy template parameters around for backwards compatibility
 template < class I, class Fct,
            class D1 = int, class D2 = int, class D3 = int, class D4 = int >
-class Iterator_project {
-protected:
-  I        nt;    // The internal iterator.
+class Iterator_project
+  : public boost::stl_interfaces::v1::proxy_iterator_interface<
+               Iterator_project<I, Fct, D1, D2, D3, D4>,
+               typename std::iterator_traits<I>::iterator_category,
+               Iterator_project_value_type<I, Fct>,
+               Iterator_project_reference<I, Fct>
+               >
+{
 public:
-  typedef Iterator_project<I,Fct,D1,D2,D3,D4> Self;
-  typedef I                                   Iterator; // base iterator
-  typedef std::iterator_traits<I>             traits;
-  typedef typename traits::difference_type    difference_type;
-  typedef typename traits::iterator_category  iterator_category;
-  typedef typename traits::value_type         base_value_type;
-  typedef typename traits::pointer            base_pointer;
-  typedef typename traits::reference          base_reference;
+  using reference = Iterator_project_reference<I, Fct>;
+  using value_type = Iterator_project_value_type<I, Fct>;
+protected:
+  using Base = boost::stl_interfaces::v1::proxy_iterator_interface<
+      Iterator_project<I, Fct, D1, D2, D3, D4>,
+      typename std::iterator_traits<I>::iterator_category,
+      value_type,
+      reference>;
 
-  typedef typename Fct::argument_type         argument_type;
-  typedef typename Fct::result_type           value_type;
+  I        nt;    // The internal iterator.
 
-  // Use I_TYPE_MATCH_IF to find correct pointer and reference type.
+  friend boost::stl_interfaces::access;
 
-  typedef I_TYPE_MATCH_IF< base_reference, const base_value_type &,
-    const value_type &, value_type &> Match1;
-  typedef typename Match1::Result             reference;
+  I& base_reference() { return nt; }
+  const I& base_reference() const { return nt; }
 
-  typedef I_TYPE_MATCH_IF< base_pointer, const base_value_type *,
-    const value_type *, value_type *> Match2;
-  typedef typename Match2::Result             pointer;
+public:
+  using Self = Iterator_project<I,Fct,D1,D2,D3,D4>;
+  using Iterator = I; // base iterator
+  using pointer = typename Base::pointer;
 
   // CREATION
   // --------
@@ -87,65 +99,15 @@ public:
   // ---------------------------
 
   Iterator  current_iterator() const { return nt;}
-  pointer   ptr() const {
+
+  reference operator*() const {
     Fct fct;
-    return &(fct(*nt));
-  }
-  bool      operator==( const Self& i) const { return ( nt == i.nt); }
-  bool      operator!=( const Self& i) const { return !(*this == i); }
-  reference operator* ()               const { return *ptr(); }
-  pointer   operator->()               const { return ptr(); }
-  Self&     operator++() {
-    ++nt;
-    return *this;
-  }
-  Self      operator++(int) {
-    Self tmp = *this;
-    ++*this;
-    return tmp;
+    return fct(*nt);
   }
 
-  // OPERATIONS Bidirectional Category
-  // ---------------------------------
-
-  Self& operator--() {
-    --nt;
-    return *this;
+  pointer ptr() const {
+    return this->operator->();
   }
-  Self  operator--(int) {
-    Self tmp = *this;
-    --*this;
-    return tmp;
-  }
-
-  // OPERATIONS Random Access Category
-  // ---------------------------------
-
-  Self& operator+=( difference_type n) {
-    nt += n;
-    return *this;
-  }
-  Self  operator+( difference_type n) const {
-    Self tmp = *this;
-    return tmp += n;
-  }
-  Self& operator-=( difference_type n) {
-    return operator+=( -n);
-  }
-  Self  operator-( difference_type n) const {
-    Self tmp = *this;
-    return tmp += -n;
-  }
-  difference_type  operator-( const Self& i) const { return nt - i.nt; }
-  reference  operator[]( difference_type n) const {
-    Self tmp = *this;
-    tmp += n;
-    return tmp.operator*();
-  }
-  bool operator< ( const Self& i) const { return ( nt < i.nt); }
-  bool operator> ( const Self& i) const { return i < *this; }
-  bool operator<=( const Self& i) const { return !(i < *this); }
-  bool operator>=( const Self& i) const { return !(*this < i); }
 };
 
 template < class Dist, class Fct, class I,

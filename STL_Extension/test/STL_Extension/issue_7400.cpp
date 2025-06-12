@@ -26,16 +26,16 @@ using Vertex_handle =  Triangulation::Vertex_handle;
 Triangulation t;
 
 // Tds::vertex_handles() -> Vertex_handle
-static_assert(is_same_v<range_value_t<decltype(t.tds().vertex_handles())>, const Vertex_handle>);
+static_assert(is_same_v<range_value_t<decltype(t.tds().vertex_handles())>, Vertex_handle>);
 
 // Triangulation::all_vertex_handles() -> Vertex_handle
-static_assert(is_same_v<range_value_t<decltype(t.all_vertex_handles())>, const Vertex_handle>);
+static_assert(is_same_v<range_value_t<decltype(t.all_vertex_handles())>, Vertex_handle>);
 
 // Triangulation::finite_vertex_handles() -> convertible to Vertex_handle
 static_assert(is_convertible_v<decltype(*std::begin(t.finite_vertex_handles())), Vertex_handle>);
 
 // But is it equal to Vertex_handle
-static_assert(is_same_v<range_value_t<decltype(t.finite_vertex_handles())>, const Vertex_handle>);
+static_assert(is_same_v<range_value_t<decltype(t.finite_vertex_handles())>, Vertex_handle>);
 
 int main()
 {

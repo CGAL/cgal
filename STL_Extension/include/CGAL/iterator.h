@@ -16,6 +16,8 @@
 //                 Lutz Kettner <kettner@mpi-sb.mpg.de>
 //                 Sylvain Pion
 
+#include <iterator>
+#include <type_traits>
 #ifndef CGAL_ITERATOR_H
 #define CGAL_ITERATOR_H 1
 
@@ -31,6 +33,7 @@
 #include <variant>
 #include <optional>
 #include <boost/config.hpp>
+#include <boost/stl_interfaces/iterator_interface.hpp>
 
 #include <vector>
 #include <map>
@@ -39,34 +42,29 @@
 
 namespace CGAL {
 
-template<typename I, typename Reference_type = const I&>
+template<typename It, typename Reference_type = It>
 class Prevent_deref
-  : public boost::iterator_adaptor<
-    Prevent_deref<I, Reference_type>
-  , I // base
-  , CGAL::cpp20::remove_cvref_t<Reference_type> // value
-  , boost::use_default // category
-  , Reference_type // ref
+  : public boost::stl_interfaces::v1::iterator_interface<
+        Prevent_deref<It, Reference_type>,
+        typename std::iterator_traits<It>::iterator_category, // category
+        CGAL::cpp20::remove_cvref_t<Reference_type>, // value
+        Reference_type // reference
   >
 {
+  It it;
 public:
-  using Value_type = CGAL::cpp20::remove_cvref_t<Reference_type>;
-  using Base = boost::iterator_adaptor<
-    Prevent_deref<I, Reference_type>
-  , I // base
-  , Value_type // value
-  , boost::use_default // category
-  , Reference_type // ref
-  >;
-  typedef typename std::pair<I, I> range;
+  using range = std::pair<It, It>;
 
   Prevent_deref() = default;
-  Prevent_deref(const I& i) : Base(i) {}
-private:
-  friend class boost::iterator_core_access;
-  Reference_type dereference() const {
-    return this->base_reference();
+  Prevent_deref(const It& i) : it(i) {}
+  Reference_type operator*() const
+  {
+    return it;
   }
+private:
+  friend class boost::stl_interfaces::access;
+  It& base_reference() { return it; }
+  const It& base_reference() const { return it; }
 };
 
 template<typename I>
@@ -458,8 +456,61 @@ operator+(typename N_step_adaptor<I,N,Ref,Ptr,Val,Dist,Ctg>::difference_type n,
           N_step_adaptor<I,N,Ref,Ptr,Val,Dist,Ctg> i)
 { return i += n; }
 
-template < class I, int N>
-class N_step_adaptor_derived : public I {
+template < class Derived, class I, int N, typename difference_type, typename reference, bool is_random_access>
+class N_step_adaptor_derived_base {};
+
+template < class Derived, class I, int N, typename difference_type, typename reference>
+class N_step_adaptor_derived_base<Derived, I, N, difference_type, reference, true> {
+  using Self = Derived;
+
+  Self& self() {
+    return static_cast<Self&>(*this);
+  }
+  const Self& self() const {
+    return static_cast<const Self&>(*this);
+  }
+public:
+// OPERATIONS Random Access Category
+// ---------------------------------
+
+  Self& operator+=( difference_type n) {
+      I::operator+=( difference_type(N * n));
+      return *this;
+  }
+  Self  operator+( difference_type n) const {
+      Self tmp = *this;
+      tmp += n;
+      return tmp;
+  }
+  Self& operator-=( difference_type n) {
+      return operator+=( -n);
+  }
+  Self  operator-( difference_type n) const {
+      Self tmp = *this;
+      return tmp += -n;
+  }
+  difference_type  operator-( const Self& i) const {
+      return (I::operator-(i)) / N;
+  }
+  reference  operator[]( difference_type n) const {
+      Self tmp = *this;
+      tmp += n;
+      return tmp.operator*();
+  }
+
+};
+
+template <class I, int N>
+class N_step_adaptor_derived
+    : public N_step_adaptor_derived_base<N_step_adaptor_derived<I, N>,
+                                         I,
+                                         N,
+                                         typename I::difference_type,
+                                         typename I::reference,
+                                         std::is_convertible_v<typename std::iterator_traits<I>::iterator_category,
+                                                               std::random_access_iterator_tag>>
+    , public I
+{
 public:
     typedef I                               Iterator;
     typedef I                               Circulator;
@@ -488,9 +539,10 @@ public:
 
     Circulator current_circulator() const { return *this;}
     Iterator   current_iterator()   const { return *this;}
+    Iterator&  current_iterator()         { return *this;}
 
     Self& operator++() {
-        std::advance( (I&)*this, N);
+        std::advance( current_iterator(), N);
         return *this;
     }
     Self  operator++(int) {
@@ -503,7 +555,7 @@ public:
 // ---------------------------------
 
     Self& operator--() {
-        std::advance( (I&)*this, -N);
+        std::advance( current_iterator(), -N);
         return *this;
     }
     Self  operator--(int) {
@@ -512,34 +564,8 @@ public:
         return tmp;
     }
 
-// OPERATIONS Random Access Category
-// ---------------------------------
 
     Self  min_circulator() const { return Self( I::min_circulator()); }
-    Self& operator+=( difference_type n) {
-        I::operator+=( difference_type(N * n));
-        return *this;
-    }
-    Self  operator+( difference_type n) const {
-        Self tmp = *this;
-        tmp += n;
-        return tmp;
-    }
-    Self& operator-=( difference_type n) {
-        return operator+=( -n);
-    }
-    Self  operator-( difference_type n) const {
-        Self tmp = *this;
-        return tmp += -n;
-    }
-    difference_type  operator-( const Self& i) const {
-        return (I::operator-(i)) / N;
-    }
-    reference  operator[]( difference_type n) const {
-        Self tmp = *this;
-        tmp += n;
-        return tmp.operator*();
-    }
 };
 
 template < class I, int N >
@@ -566,7 +592,12 @@ struct Filter_iterator {
   typedef typename ITI::pointer            pointer;
   typedef typename ITI::value_type         value_type;
   typedef typename ITI::difference_type    difference_type;
-  typedef typename ITI::iterator_category  iterator_category;
+  typedef typename ITI::iterator_category  I_iterator_category;
+  typedef std::conditional_t<std::is_convertible_v<I_iterator_category,
+                                                   std::random_access_iterator_tag>,
+                             std::bidirectional_iterator_tag,
+                             I_iterator_category>
+                                           iterator_category;
   // Special for circulators.
   typedef I_Circulator_size_traits<iterator_category,I> C_S_Traits;
   typedef typename  C_S_Traits::size_type               size_type;
@@ -621,7 +652,15 @@ public:
   }
 
   reference operator*() const { return *c_;  }
-  pointer operator->() const  { return &*c_; }
+
+  pointer operator->() const  {
+    if constexpr (std::is_pointer_v<pointer>) {
+      return &*c_;
+    } else {
+      return c_.operator->();
+    }
+  }
+
   const Predicate& predicate() const { return p_; }
   const Iterator& base() const { return c_; }
 

@@ -13,6 +13,7 @@
 #define CGAL_SURFACE_MESH_PROPERTY_H
 
 #include <CGAL/license/Surface_mesh.h>
+#include <atomic>
 
 #ifndef DOXYGEN_RUNNING
 
@@ -24,6 +25,10 @@
 #include <string>
 #include <typeinfo>
 #include <vector>
+
+#ifdef CGAL_LINKED_WITH_TBB
+#  include <tbb/concurrent_vector.h>
+#endif
 
 namespace CGAL {
 
@@ -58,6 +63,8 @@ public:
 
     /// Reset element to default value
     virtual void reset(size_t idx) = 0;
+
+    virtual size_t capacity() const = 0;
 
     virtual bool transfer(const Base_property_array& other) = 0;
     virtual bool transfer(const Base_property_array& other, std::size_t from, std::size_t to) = 0;
@@ -100,7 +107,11 @@ class Property_array : public Base_property_array
 public:
 
     typedef T                                       value_type;
+#ifdef CGAL_LINKED_WITH_TBB
+    typedef tbb::concurrent_vector<value_type>      vector_type;
+#else
     typedef std::vector<value_type>                 vector_type;
+#endif
     typedef typename vector_type::reference         reference;
     typedef typename vector_type::const_reference   const_reference;
     typedef typename vector_type::iterator          iterator;
@@ -109,6 +120,11 @@ public:
     Property_array(const std::string& name, T t=T()) : Base_property_array(name), value_(t) {}
 
 public: // virtual interface of Base_property_array
+
+    virtual size_t capacity() const
+    {
+        return data_.capacity();
+    }
 
     virtual void reserve(size_t n)
     {
@@ -317,10 +333,16 @@ public:
     }
 
     // returns the current size of the property arrays
-    size_t size() const { return size_; }
+    size_t size() const {
+#ifdef CGAL_LINKED_WITH_TBB
+      return size_.load(std::memory_order_acquire);
+#else
+      return size_;
+#endif
+    }
 
     // returns the current capacity of the property arrays
-    size_t capacity() const { return capacity_; }
+    //size_t capacity() const { return capacity_; }
 
     // returns the number of property arrays
     size_t n_properties() const { return parrays_.size(); }
@@ -443,6 +465,12 @@ public:
         size_ = 0;
     }
 
+    size_t capacity() const
+    {
+        if(parrays_.empty())
+            return 0;
+        return parrays_[0]->capacity();
+    }
 
     // reserve memory for n entries in all arrays
     void reserve(size_t n)
@@ -478,13 +506,25 @@ public:
         capacity_ = size_;
     }
 
+    // increment the size of the property arrays by one
+    // and return the old size
+    size_t increment_size()
+    {
+#ifdef CGAL_LINKED_WITH_TBB
+        return size_.fetch_add(1, std::memory_order_relaxed);
+#else
+        return size_++;
+#endif
+    }
+
     // add a new element to each vector
-    void push_back()
+    size_t push_back()
     {
         for (std::size_t i=0; i<parrays_.size(); ++i)
             parrays_[i]->push_back();
-        ++size_;
-        capacity_ = ((std::max)(size_, capacity_));
+        auto old_size = increment_size();
+        capacity_ = ((std::max)(old_size, capacity_));
+        return old_size;
     }
 
     // reset element to its default property values
@@ -505,13 +545,19 @@ public:
     void swap (Property_container& other)
     {
       this->parrays_.swap (other.parrays_);
-      std::swap(this->size_, other.size_);
+      size_t old_size = this->size_;
+      this->size_ = other.size_;
+      other.size_ = old_size;
       std::swap(this->capacity_, other.capacity_);
     }
 
 private:
     std::vector<Base_property_array*>  parrays_;
+#ifdef CGAL_LINKED_WITH_TBB
+    std::atomic<size_t>  size_ = 0;
+#else
     size_t  size_ = 0;
+#endif
     size_t  capacity_ = 0;
 };
 
@@ -632,6 +678,11 @@ public:
     bool transfer (const Property_map_base& other, std::size_t from, std::size_t to)
     {
       return parray_->transfer(*(other.parray_), from, to);
+    }
+
+    void swap(Property_map_base& pm2)
+    {
+      std::swap(parray_, pm2.parray_);
     }
 
     /// Allows access to the underlying storage of the property. This

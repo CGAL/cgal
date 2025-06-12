@@ -60,12 +60,6 @@ template < class Tr >
 class Triangulation_hierarchy_3
   : public Tr
 {
-  // parameterization of the hierarchy
-  // maximal number of points is 30^5 = 24 millions !
-  enum { ratio = 30 };
-  enum { minsize = 20};
-  enum { maxlevel = 5};
-
 public:
   typedef Tr                                   Tr_Base;
   typedef Fast_location                        Location_policy;
@@ -91,6 +85,11 @@ public:
   using Tr_Base::geom_traits;
 
 private:
+  // parameterization of the hierarchy
+  // maximal number of points is 30^5 = 24 millions !
+  static constexpr double ratio = 30.0;
+  static constexpr size_type minsize = 20;
+  static constexpr int maxlevel = 5;
 
   void init_hierarchy() {
     hierarchy[0] = this;
@@ -229,16 +228,6 @@ public:
 
 #ifndef CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 private:
-  //top stands for tuple-or-pair
-  template <class Info>
-  const Point& top_get_first(const std::pair<Point,Info>& pair) const { return pair.first; }
-  template <class Info>
-  const Info& top_get_second(const std::pair<Point,Info>& pair) const { return pair.second; }
-  template <class Info>
-  const Point& top_get_first(const boost::tuple<Point,Info>& tuple) const { return boost::get<0>(tuple); }
-  template <class Info>
-  const Info& top_get_second(const boost::tuple<Point,Info>& tuple) const { return boost::get<1>(tuple); }
-
   template<class Construct_bare_point, class Container>
   struct Index_to_Bare_point
   {
@@ -263,9 +252,9 @@ private:
     std::vector<typename Vertex::Info> infos;
     std::size_t index=0;
     for (InputIterator it=first;it!=last;++it){
-      Tuple_or_pair value=*it;
-      points.push_back( top_get_first(value)  );
-      infos.push_back ( top_get_second(value) );
+      auto [p, info] =*it;
+      points.push_back( p );
+      infos.push_back ( info );
       indices.push_back(index++);
     }
 
@@ -504,26 +493,50 @@ is_valid(bool verbose, int level) const
   bool result = true;
 
   // verify correctness of triangulation at all levels
-  for(int i=0; i<maxlevel; ++i)
+  for(int i=0; i<maxlevel; ++i){
         result = result && hierarchy[i]->is_valid(verbose, level);
-
+        if(verbose && (! result)){
+          std::cerr << "triangulation at level " << i << " invalid" << std::endl;
+        }
+  }
   // verify that lower level has no down pointers
   for( Finite_vertices_iterator it = hierarchy[0]->finite_vertices_begin(),
-       end = hierarchy[0]->finite_vertices_end(); it != end; ++it)
+       end = hierarchy[0]->finite_vertices_end(); it != end; ++it){
     result = result && (it->down() == Vertex_handle());
+    if(verbose && (! result)){
+          std::cerr << "lower level has a down pointer" << std::endl;
+    }
+  }
 
   // verify that other levels has down pointer and reciprocal link is fine
   for(int j=1; j<maxlevel; ++j)
     for( Finite_vertices_iterator it = hierarchy[j]->finite_vertices_begin(),
          end = hierarchy[j]->finite_vertices_end(); it != end; ++it)
-      result = result && &*(it) == &*(it->down()->up());
+    {
+      result = result && (it->down() != Vertex_handle());
+      if(verbose && (! result)){
+        std::cerr << "missing down pointer" << std::endl;
+      }
+      if(it->down() == Vertex_handle()){
+        return false;
+      }
+      result = result && Vertex_handle(it) == Vertex_handle(it->down()->up());
+      if(verbose && (! result)){
+          std::cerr << "wrong reciprocal link with down()" << std::endl;
+      }
+    }
 
-  // verify that other levels has down pointer and reciprocal link is fine
+  // verify that other levels has up pointer and reciprocal link is fine
   for(int k=0; k<maxlevel-1; ++k)
     for( Finite_vertices_iterator it = hierarchy[k]->finite_vertices_begin(),
          end = hierarchy[k]->finite_vertices_end(); it != end; ++it)
+    {
       result = result && ( it->up() == Vertex_handle() ||
-                &*it == &*(it->up())->down() );
+                Vertex_handle(it) == Vertex_handle(it->up())->down() );
+      if(verbose && (! result)){
+          std::cerr << "wrong reciprocal link with up()" << std::endl;
+      }
+    }
 
   return result;
 }
@@ -718,16 +731,29 @@ move_if_no_collision(Vertex_handle v, const Point & p)
 {
   CGAL_precondition(!this->is_infinite(v));
   if(v->point() == p) return v;
-  Vertex_handle ans;
+
+# if 1
+  Vertex_handle ans = hierarchy[0]->move_if_no_collision(v, p);
+  if(ans != v) return ans; // ans is an existing vertex at p and v was not changed
+  for (int l = 1; l < maxlevel; ++l) {
+    Vertex_handle u = v->up();
+    if (u == Vertex_handle())
+      break;
+    hierarchy[l]->move_if_no_collision(u, p);
+    v = u;
+  }
+#else
+ Vertex_handle ans;
   for (int l = 0; l < maxlevel; ++l) {
     Vertex_handle u = v->up();
     if(l) hierarchy[l]->move_if_no_collision(v, p);
     else ans = hierarchy[l]->move_if_no_collision(v, p);
-    if(ans != v) return ans;
+    if(ans != v) return ans; // ans is an existing vertex at p and v was not changed
     if (u == Vertex_handle())
       break;
     v = u;
   }
+#endif
   return ans;
 }
 
@@ -804,7 +830,7 @@ locate(const Point& p, Locate_type& lt, int& li, int& lj,
   int level = maxlevel;
 
   // find the highest level with enough vertices
-  while (hierarchy[--level]->number_of_vertices() < (size_type) minsize) {
+  while (hierarchy[--level]->number_of_vertices() < minsize) {
     if ( ! level)
         break;  // do not go below 0
   }
@@ -852,10 +878,10 @@ int
 Triangulation_hierarchy_3<Tr>::
 random_level()
 {
-  boost::geometric_distribution<> proba(1.0/double(ratio));
+  boost::geometric_distribution<> proba(1.0/ratio);
   boost::variate_generator<boost::rand48&, boost::geometric_distribution<> > die(random, proba);
 
-  return (std::min)(die(), (int)maxlevel)-1;
+  return (std::min)(die(), maxlevel)-1;
 }
 
 } //namespace CGAL

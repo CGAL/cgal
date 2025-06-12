@@ -26,7 +26,6 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/boost/graph/iterator.h>
-#include <CGAL/Handle_hash_function.h>
 #include <CGAL/iterator.h>
 
 #ifndef CGAL_NO_DEPRECATED_CODE
@@ -106,9 +105,9 @@ struct HDS_edge {
 
   friend  std::size_t hash_value(const HDS_edge&  i)
   {
-    if (i.halfedge()==Halfedge_handle()) return 0;
-    return hash_value(i.halfedge()<i.halfedge()->opposite()?
-                      i.halfedge():i.halfedge()->opposite());
+    if(i.halfedge() == Halfedge_handle())
+      return 0;
+    return hash_value((std::min)(i.halfedge(), i.halfedge()->opposite()));
   }
 
   friend std::ostream& operator<<(std::ostream& os, const HDS_edge& e)
@@ -119,23 +118,6 @@ struct HDS_edge {
 private:
   Halfedge_handle halfedge_;
 };
-
-// make edge_descriptor hashable by default in Unique_hash_map
-namespace handle{
-  template<typename Halfedge_handle>
-  struct Hash_functor< HDS_edge<Halfedge_handle> >
-  {
-    std::size_t
-    operator()(const HDS_edge<Halfedge_handle>& edge)
-    {
-      Halfedge_handle he = edge.halfedge();
-      if (he==Halfedge_handle()) return 0;
-      if ( he < he->opposite() )
-        return Hash_functor<Halfedge_handle>()(he);
-      return Hash_functor<Halfedge_handle>()(he->opposite());
-    }
-  };
-} //end of namespace handle
 
 template<typename Halfedge_handle>
 struct Construct_edge {
