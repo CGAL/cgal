@@ -22,14 +22,15 @@ namespace CGAL {
 /*!
 \ingroup PkgDrawCDT_3
 
-opens a new window and draws the constrained triangulation.
+opens a new `CGAL::Qt::Basic_viewer` window and draws the constrained triangulation.
 
-A call to this function blocks the execution of the program until the drawing window is closed. This function requires `CGAL_Qt6`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined.
+A call to this function blocks the execution of the program until the drawing window is closed. This function requires `CGAL_Qt6`,
+and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined.
 Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt6` and add the definition `CGAL_USE_BASIC_VIEWER`.
 */
 template <typename Traits, typename Tr>
 void draw(const Conforming_constrained_Delaunay_triangulation_3<Traits, Tr>& ccdt,
-          const char *title="Constrained 3D Triangulation Basic Viewer")
+          const char *title="3D Constrained Triangulation")
 {
   using Tr_ = CGAL::cpp20::remove_cvref_t<decltype(ccdt.triangulation())>;
   using Vertex_handle = typename Tr_::Vertex_handle;
@@ -74,7 +75,7 @@ A shortcut to \link PkgDrawTriangulation3 `CGAL::draw(ccdt.triangulation(), gs_o
 template <typename Traits, typename Tr, typename GSOptions>
 void draw(const Conforming_constrained_Delaunay_triangulation_3<Traits, Tr>& ccdt,
           const GSOptions& gs_options,
-          const char *title="Constrained 3D Triangulation Basic Viewer")
+          const char *title="3D Constrained Triangulation")
 {
   draw(ccdt.triangulation(), gs_options, title);
 }

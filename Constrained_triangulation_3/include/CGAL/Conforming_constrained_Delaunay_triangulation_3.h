@@ -568,13 +568,11 @@ private:
 public:
   using Vertex_handle = typename Triangulation::Vertex_handle;
 
-#ifdef DOXYGEN_RUNNING
-  using Constrained_polyline_id = unspecified_type;
-#else
+#ifndef DOXYGEN_RUNNING
   using Constrained_polyline_id = typename CDT_3_impl::Constrained_polyline_id;
 #endif // not DOXYGEN_RUNNING
   using size_type = typename Triangulation::size_type;
-
+s
 public:
   /** \name Constructors
   @{
@@ -594,7 +592,7 @@ public:
   // -----------------------
 
   /*!
-    * \brief %default constructor.
+    * \brief %Default constructor.
     *
     * This constructor initializes an empty `Conforming_constrained_Delaunay_triangulation_3` object.
     */
@@ -4037,7 +4035,10 @@ namespace Tetrahedral_remeshing {
 * \cgalNamedParamsBegin
 *   \cgalParamNBegin{edge_is_constrained_map}
 *     \cgalParamDescription{a property map containing the constrained-or-not status of each edge `e` of
-     *                     `ccdt.triangulation()`. Sets if the edge `e` is at the border of a polygonal constraint.}
+*                     `ccdt.triangulation()`.
+*                     If the edge `e` is at the boundary of an input polygonal constraint,
+*                     then the corresponding value in the property map is `true`.
+*                     Otherwise, the value is `false`.}
 *     \cgalParamType{a class model of `ReadWritePropertyMap`
 *         with `std::pair<Vertex_handle, Vertex_handle>` (where `Vertex_handle` is the vertex handle type of `ccdt.triangulation()`)
 *         as key type and `bool` as value type.

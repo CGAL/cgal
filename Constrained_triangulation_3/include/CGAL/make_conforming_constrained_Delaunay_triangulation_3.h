@@ -115,7 +115,7 @@ namespace CGAL {
  *    \cgalParamDescription{a property map associating a patch identifier to each facet of `mesh`.
  *                   Each identifier corresponds to a planar surface patch. Each surface
  *                   patch can be composed of several facets of `mesh`, forming a planar polygon.}
- *    \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%face_descriptor`
+ *    \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%face_descriptor`
  *                   as key type and with any value type that is a *regular* type (model of `Regular`)}
  *   \cgalParamExtra{If this parameter is omitted, each facet of `mesh` is considered a separate patch.
  *                   Faces with the same patch identifier are considered part of the same surface patch.}
@@ -183,7 +183,9 @@ auto make_conforming_constrained_Delaunay_triangulation_3(const PolygonMesh &mes
  *
  *   \cgalParamNBegin{point_map}
  *     \cgalParamDescription{a property map associating points to the elements of the range `points`}
- *     \cgalParamType{a model of `ReadablePropertyMap` whose value type is convertible to the point type of the traits class}
+ *     \cgalParamType{a model of `ReadablePropertyMap` whose
+ *                    key type is the value type of `PointRange`, and
+ *                    value type is convertible to the point type of the geometric traits class}
  *     \cgalParamDefault{`CGAL::Identity_property_map`}
  *   \cgalParamNEnd
  *
@@ -191,7 +193,7 @@ auto make_conforming_constrained_Delaunay_triangulation_3(const PolygonMesh &mes
  *    \cgalParamDescription{a property map associating a patch identifier to each facet of `soup`.
  *                   Each identifier corresponds to a planar surface patch. Each surface
  *                   patch can be composed of several faces of `soup`, forming a planar polygon.}
- *    \cgalParamType{a class model of `ReadWritePropertyMap` with `std::size_t`
+ *    \cgalParamType{a class model of `ReadablePropertyMap` with `std::size_t`
  *                   as key type and with any value type that is a *regular* type (model of `Regular`)}
  *   \cgalParamExtra{If this parameter is omitted, each facet of the polygon soup is considered a separate patch.}
  *   \cgalParamExtra{Otherwise facets with the same patch identifier are considered part of the same surface patch.}

@@ -35,7 +35,13 @@ namespace IO
  *
  * \cgalNamedParamsBegin
  *    \cgalParamNBegin{with_plc_face_id}
- *    \cgalParamDescription{a Boolean activating the numbering of PLC face identifiers in the output}
+ *    \cgalParamDescription{a Boolean activating the numbering of PLC face identifiers in the output.
+ *                          If `ccdt` was constructed with the `plc_face_id` property map given as a named parameter,
+ *                          and this parameter is set to `true`,
+ *                          the output will contain the corresponding patch identifier for each facet of the triangulation.
+ *                          If this parameter is set to `false`, the output will not contain any patch identifier.
+ *                          If `ccdt` was not constructed with the `plc_face_id` property map, and this parameter is
+ *                          set to `true`, the output will contain a patch identifier for each facet of the triangulation.}
  *    \cgalParamType{Boolean}
  *    \cgalParamDefault{`false`}
  *   \cgalParamNEnd
