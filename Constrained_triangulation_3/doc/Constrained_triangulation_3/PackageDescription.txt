@@ -25,11 +25,11 @@
 
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Laurent Rineau and Jane Tournois}
-\cgalPkgDesc{This package implements the construction of a 3D Constrained Delaunay triangulation,
-conforming to the set of faces of a 3D Piecewise Linear Complex.
-The algorithm builds such a triangulation. The constrained triangulation does not always exist,
-and it may be necessary
-to add Steiner points to the PLC to make it tetrahedralizable.
+\cgalPkgDesc{This package implements the construction of a 3D Constrained Delaunay triangulation.
+This triangulation is a generalization of a 3D Delaunay Triangulation which conforms to the set of faces
+of a 3D Piecewise Linear Complex (PLC), ensuring that these faces are part of the triangulation.
+As not all PLCs are tetrahedralizable,
+the algorithm may insert Steiner points to construct the constrained triangulation.
 }
 \cgalPkgManuals{Chapter_CT_3,PkgConstrainedTriangulation3Ref}
 \cgalPkgSummaryEnd
@@ -58,6 +58,7 @@ to add Steiner points to the PLC to make it tetrahedralizable.
 - \link PkgConstrainedTriangulation3FunctionsPolygonSoupOrMesh `CGAL::make_conforming_constrained_Delaunay_triangulation_3()` \endlink: the main function to create
 a conforming constrained Delaunay triangulation in 3D, an instance of the class template
 `CGAL::Conforming_constrained_Delaunay_triangulation_3`.
+- `CGAL::Tetrahedral_remeshing::get_remeshing_triangulation()`
 
 \cgalCRPSubsection{Classes}
 
@@ -67,10 +68,10 @@ a conforming constrained Delaunay triangulation in 3D, an instance of the class 
 
 \cgalCRPSection{Draw a 3D Constrained Triangulation}
 
-- \link PkgDrawCDT_3 CGAL::draw() \endlink
+- \link PkgDrawCDT_3 `CGAL::draw()` \endlink
 
 \cgalCRPSection{Output Functions}
 
-- \link PkgCDT3IOFunctions CGAL::IO::write_MEDIT() \endlink
+- \link PkgCDT3IOFunctions `CGAL::IO::write_MEDIT()` \endlink
 
 */
