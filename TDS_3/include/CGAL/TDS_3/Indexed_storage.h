@@ -901,8 +901,10 @@ namespace CGAL {
         freelist_ = free_list_next_function_(storage_[idx]);
         --nb_of_removed_elements_;
         removed_[idx] = false;
-        properties_.reset(idx);
         elt = Element_type(container, idx);
+        const auto ec = EraseCounterStrategy<Element_type>::erase_counter(&elt);
+        properties_.reset(idx);
+        EraseCounterStrategy<Element_type>::restore_erase_counter(&elt, ec);
       } else {
         properties_.push_back();
       }
