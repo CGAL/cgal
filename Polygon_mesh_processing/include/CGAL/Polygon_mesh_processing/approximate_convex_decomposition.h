@@ -505,6 +505,7 @@ struct Convex_hull {
   }
 
   Convex_hull(const Convex_hull& o) {
+    exit(4);
     bbox = o.bbox;
     voxel_volume = o.voxel_volume;
     volume = o.volume;
@@ -514,6 +515,7 @@ struct Convex_hull {
   }
 
   Convex_hull<GeomTraits>& operator= (const Convex_hull<GeomTraits>& o) {
+    exit(3);
     bbox = o.bbox;
     voxel_volume = o.voxel_volume;
     volume = o.volume;
@@ -865,8 +867,6 @@ void merge(std::vector<Convex_hull<GeomTraits>>& candidates, std::vector<int8_t>
     ch.volume_error = m.volume_error = CGAL::abs(ci.volume + cj.volume - ch.volume) / hull_volume;
   };
 
-  //queue.reserve(max_merge_candidates);
-
   for (std::size_t i : keep) {
     const Convex_hull<GeomTraits>& ci = hulls[i];
     for (std::size_t j : keep) {
@@ -875,7 +875,6 @@ void merge(std::vector<Convex_hull<GeomTraits>>& candidates, std::vector<int8_t>
       const Convex_hull<GeomTraits>& cj = hulls[j];
       if (CGAL::do_intersect(ci.bbox, cj.bbox)) {
 #ifdef CGAL_LINKED_WITH_TBB
-        // Move this into a task list for later parallelization?
         todo.emplace_back(Merged_candidate(i, j));
 #else
         Merged_candidate m(i, j);
@@ -943,7 +942,6 @@ void merge(std::vector<Convex_hull<GeomTraits>>& candidates, std::vector<int8_t>
       const Convex_hull<GeomTraits>& ci = hulls[id];
       if (CGAL::do_intersect(ci.bbox, cj.bbox)) {
 #ifdef CGAL_LINKED_WITH_TBB
-        // Move this into a task list for later parallelization?
         todo.emplace_back(Merged_candidate(id, m.ch));
 #else
         Merged_candidate merged(id, m.ch);
@@ -972,8 +970,6 @@ void merge(std::vector<Convex_hull<GeomTraits>>& candidates, std::vector<int8_t>
     }
 
     keep.insert(m.ch);
-
-    std::cout << keep.size() << std::endl;
 
     // parallel for
 #ifdef CGAL_LINKED_WITH_TBB
@@ -1072,11 +1068,14 @@ std::size_t approximate_convex_decomposition(const FaceGraph& mesh, std::size_t 
 
   std::cout << memory.virtual_size() << " virtual " << memory.resident_size() << " resident memory allocated in total" << std::endl;
 
-  for (std::size_t i = 0;i<hulls.size();i++) {
-    CGAL::IO::write_polygon_soup(std::to_string(i) + "-e" + std::to_string(hulls[i].volume_error) + ".off", hulls[i].points, hulls[i].indices);
-  }
+//   for (std::size_t i = 0; i < hulls.size(); i++) {
+//     CGAL::IO::write_polygon_soup(std::to_string(i) + "-e" + std::to_string(hulls[i].volume_error) + ".off", hulls[i].points, hulls[i].indices);
+//   }
 
-  return 0;
+  for (std::size_t i = 0; i < hulls.size(); i++)
+    *out++ = std::make_pair(std::move(hulls[i].points), std::move(hulls[i].indices));
+
+  return hulls.size();
 }
 }
 }
