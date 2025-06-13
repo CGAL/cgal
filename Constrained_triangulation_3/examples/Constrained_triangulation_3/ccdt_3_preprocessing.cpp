@@ -65,6 +65,12 @@ int main(int argc, char* argv[])
     std::cout << "Number of facets after preprocessing: "
               << polygons.size() << "\n";
 
+    if(PMP::does_polygon_soup_self_intersect(points, polygons))
+    {
+      std::cerr << "Error: mesh still self-intersects after autorefine\n";
+      return EXIT_FAILURE;
+    }
+
     ccdt = CGAL::make_conforming_constrained_Delaunay_triangulation_3(points, polygons);
 
   }
