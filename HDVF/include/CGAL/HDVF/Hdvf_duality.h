@@ -46,14 +46,16 @@ namespace HDVF {
  Then, `compute_alexander_pairing` computes Alexander isomorphism (and provides a pairing between homology/cohomology generators in \f$K\f$ and \f$L-K\f$).
  
  
- <img src="duality_example_twirl.png" align="center" width=25%/>
- <img src="duality_example_twirl2.png" align="center" width=20%/>
+ <img src="HDVF_twirl_view1.png" align="center" width=35%/>
+ <img src="HDVF_twirl_view2.png" align="center" width=30%/>
  
  Example of Alexander duality isomorphism. The twirl mesh is a subcomplex `K` of a larger complex `L` depicted in yellow, homeomorphic to the ball of dimension 3.
  
- <img src="duality_example.png" align="center" width=40%/>
+ \cgalFigureBegin{Duality_quartet,HDVF_twirl_quartet.png}
+ Example of "homological quartet for the twirl model". <B>1:</B> Homology generators of the twirl \f$H_1(K)\f$, <B>2:</B> Cohomology generators of the twirl \f$H^1(K)\f$, <B>3:</B> Homology generators of the complementary of the twirl \f$H_1(L-K)\f$, <B>4:</B> Cohomology generators of the complementary of the twirl \f$H^1(L-K)\f$. Alexander isomorphism is represented through colours (paired generators have similar colours).
+ \cgalFigureEnd
  
- Cycles and co-cycles paired are shown with similar colors. Hence, each hole in \f$K\f$ gives rise to four generators (called its "homological quarted": its homology and cohomology generators in \f$K_q\f$ and the homology and cohomology generators paired with them in \f$(L-K)_{q+1}\f$).
+ Hence, each hole in \f$K\f$ gives rise to four generators (called its "homological quarted": its homology and cohomology generators in \f$K_q\f$ and the homology and cohomology generators paired with them in \f$(L-K)_{q+1}\f$).
  
  In order to compute relative homology, a sub chain complex mask is used to partially screen the complex `L` and thus restrict HDVF computation. This mask is called "current mask" (and can be set over `K` or `L-K`).
  
@@ -85,7 +87,7 @@ private:
     Sub_chain_complex_mask<CoefficientType,ComplexType> _KCC, _subCC ;
 
     // Critical cells of perfect HDVFs (over K / L-K respectively)
-    std::vector<std::vector<int> > _critical_K, _critical_L_K ;
+    std::vector<std::vector<size_t> > _critical_K, _critical_L_K ;
 
 public:
     /**
@@ -122,7 +124,7 @@ public:
      * \param[in] found Reference to a boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      * \param[in] gamma Index of a cell to pair.
      */
-    virtual PairCell find_pair_A(int q, bool &found, int tau) const;
+    virtual PairCell find_pair_A(int q, bool &found, size_t tau) const;
     
     /**
      * \brief Find *all* valid PairCell of dimension q / q+1 *in the current sub chain complex* for A.
@@ -147,9 +149,9 @@ public:
      * \param[in] found Reference to a boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      * \param[in] gamma Index of a cell to pair.
      */
-    virtual std::vector<PairCell> find_pairs_A(int q, bool &found, int tau) const;
+    virtual std::vector<PairCell> find_pairs_A(int q, bool &found, size_t tau) const;
     
-    /** \brief Set the current sub chain complex maks over `K`.
+    /** \brief Set the current sub chain complex masks over `K`.
      *
      * Further HDVF computations will be restricted to `K` (ie. computation of reduced homology).
      */
@@ -159,7 +161,7 @@ public:
         _subCC.screen_matrices(this->_DD_col);
     }
     
-    /** \brief Set the current sub chain complex maks over `L-K`.
+    /** \brief Set the current sub chain complex masks over `L-K`.
      *
      * Further HDVF computations will be restricted to `L-K` (ie. computation of reduced homology).
      */
@@ -167,6 +169,13 @@ public:
     {
         _subCC = _KCC.complement() ;
         _subCC.screen_matrices(this->_DD_col);
+    }
+    
+    /** \brief Return the value of the current sub chain complex mask.
+     */
+    Sub_chain_complex_mask<CoefficientType,ComplexType> get_current_mask()
+    {
+        return _subCC;
     }
     
     /**
@@ -230,7 +239,7 @@ public:
      *
      * \param[in] flag Flag to select.
      */
-    vector<vector<int> > get_flag (FlagType flag) const ;
+    vector<vector<size_t> > get_flag (FlagType flag) const ;
     
     /**
      * \brief Get cells with a given `flag` in dimension `q` *in the current sub chain complex*.
@@ -240,7 +249,7 @@ public:
      * \param[in] flag Flag to select.
      * \param[in] q Dimension visited.
      */
-    vector<int> get_flag_dim (FlagType flag, int q) const ;
+    vector<size_t> get_flag_dim (FlagType flag, int q) const ;
     
     // Hdvf_duality I/O
     
@@ -283,7 +292,7 @@ public:
         out << "----- critical cells:" << endl;
         for (int q = 0; q <= _L.dim(); ++q) {
             out << "--- dim " << q << endl;
-            for (int i = 0; i < _L.nb_cells(q); ++i)
+            for (size_t i = 0; i < _L.nb_cells(q); ++i)
             {
                 if ((this->_flag[q][i] == CRITICAL) && (_subCC.get_bit(q, i))) {
                     out << i << " ";
@@ -298,7 +307,7 @@ public:
             out << "----- g:" << endl;
             for (int q = 0; q <= _L.dim(); ++q) {
                 out << "--- dim " << q << endl;
-                for (int i = 0; i < _L.nb_cells(q); ++i) {
+                for (size_t i = 0; i < _L.nb_cells(q); ++i) {
                     if ((this->_flag[q][i] == CRITICAL) && (_subCC.get_bit(q, i))) {
                         out << "g(" << i << ") = (" << i << ")";
                         // Iterate over the ith column of _G_col
@@ -318,7 +327,7 @@ public:
             out << "----- f*:" << endl;
             for (int q = 0; q <= _L.dim(); ++q) {
                 out << "--- dim " << q << endl;
-                for (int i = 0; i < _L.nb_cells(q); ++i) {
+                for (size_t i = 0; i < _L.nb_cells(q); ++i) {
                     if ((this->_flag[q][i] == CRITICAL) && (_subCC.get_bit(q, i))) {
                         out << "f*(" << i << ") = (" << i << ")";
                         // Iterate over the ith row of _F_row
@@ -348,9 +357,9 @@ public:
         Sub_chain_complex_mask<CoefficientType, ComplexType> subPair(_L, false) ;
         for (int q=0; q<=_L.dim(); ++q)
         {
-            for (int i=0; i<_critical_K.at(q).size(); ++i)
+            for (size_t i=0; i<_critical_K.at(q).size(); ++i)
                 subPair.set_bit_on(q, _critical_K.at(q).at(i)) ;
-            for (int i=0; i<_critical_L_K.at(q).size(); ++i)
+            for (size_t i=0; i<_critical_L_K.at(q).size(); ++i)
                 subPair.set_bit_on(q, _critical_L_K.at(q).at(i)) ;
         }
         // Print corresponding submatrices _DD_col
@@ -392,7 +401,7 @@ public:
         vector<vector<int> > labels(this->_K.dim()+1) ;
         for (int q=0; q<=this->_K.dim(); ++q)
         {
-            for (int i = 0; i<this->_K.nb_cells(q); ++i)
+            for (size_t i = 0; i<this->_K.nb_cells(q); ++i)
             {
                 if (_subCC.get_bit(q, i)) // i belongs to _subCC
                 {
@@ -417,7 +426,7 @@ public:
      *
      * \return A column-major chain.
      */
-    virtual CChain export_homology_chain (int cell, int dim) const
+    virtual CChain export_homology_chain (size_t cell, int dim) const
     {
         if ((dim<0) || (dim>this->_K.dim()))
             throw "Error : export_homology_chain with dim out of range" ;
@@ -453,7 +462,7 @@ public:
      *
      * \return A column-major chain.
      */
-    virtual CChain export_cohomology_chain (int cell, int dim) const
+    virtual CChain export_cohomology_chain (size_t cell, int dim) const
     {
         if ((dim<0) || (dim>this->_K.dim()))
             throw "Error : export_cohomology_chain with dim out of range" ;
@@ -515,7 +524,7 @@ PairCell Hdvf_duality<CoefficientType,ComplexType>::find_pair_A(int q, bool &fou
 
 // find a valid PairCell containing tau for A in dimension q
 template<typename CoefficientType, typename ComplexType>
-PairCell Hdvf_duality<CoefficientType,ComplexType>::find_pair_A(int q, bool &found, int tau) const
+PairCell Hdvf_duality<CoefficientType,ComplexType>::find_pair_A(int q, bool &found, size_t tau) const
 {
     found = false;
     PairCell p ;
@@ -584,7 +593,7 @@ std::vector<PairCell> Hdvf_duality<CoefficientType,ComplexType>::find_pairs_A(in
 
 // find all the valid PairCell containing tau for A in dimension q
 template<typename CoefficientType, typename ComplexType>
-std::vector<PairCell> Hdvf_duality<CoefficientType,ComplexType>::find_pairs_A(int q, bool &found, int tau) const
+std::vector<PairCell> Hdvf_duality<CoefficientType,ComplexType>::find_pairs_A(int q, bool &found, size_t tau) const
 {
     found = false;
     std::vector<PairCell> pairs;
@@ -717,12 +726,12 @@ std::vector<PairCell> Hdvf_duality<CoefficientType,ComplexType>::compute_rand_pa
 
 // Method to get cells of _subCC with a given flag for each dimension
 template<typename CoefficientType, typename ComplexType>
-vector<vector<int> > Hdvf_duality<CoefficientType,ComplexType>::get_flag (FlagType flag) const
+vector<vector<size_t> > Hdvf_duality<CoefficientType,ComplexType>::get_flag (FlagType flag) const
 {
-    vector<vector<int> > res(_L.dim()+1) ;
+    vector<vector<size_t> > res(_L.dim()+1) ;
     for (int q=0; q<=_L.dim(); ++q)
     {
-        for (int i=0; i<_L.nb_cells(q); ++i)
+        for (size_t i=0; i<_L.nb_cells(q); ++i)
         {
             if (_subCC.get_bit(q, i) && (this->_flag.at(q).at(i) == flag))
                 res.at(q).push_back(i) ;
@@ -733,10 +742,10 @@ vector<vector<int> > Hdvf_duality<CoefficientType,ComplexType>::get_flag (FlagTy
 
 // Method to get cells of _subCC with a given flag for a given dimension
 template<typename CoefficientType, typename ComplexType>
-vector<int> Hdvf_duality<CoefficientType,ComplexType>::get_flag_dim (FlagType flag, int q) const
+vector<size_t> Hdvf_duality<CoefficientType,ComplexType>::get_flag_dim (FlagType flag, int q) const
 {
-    vector<int> res ;
-    for (int i=0; i<this->_K.nb_cells(q); ++i)
+    vector<size_t> res ;
+    for (size_t i=0; i<this->_K.nb_cells(q); ++i)
     {
         if (_subCC.get_bit(q, i) && (this->_flag.at(q).at(i) == flag))
             res.push_back(i) ;

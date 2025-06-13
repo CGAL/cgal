@@ -23,7 +23,7 @@ using namespace std ;
 
 typedef std::vector<double> IONodeType ;
 // For simplicial complexes
-typedef std::set<int> IOCellType ;
+typedef std::set<size_t> IOCellType ;
 typedef std::vector<IOCellType> IOChainType ;
 // For cubical complexes
 typedef std::vector<int> IOCubCellType ;
@@ -274,10 +274,10 @@ public:
         nvertices += mesh.nvertices ;
         ncells += mesh.ncells ;
         // Append all the vertices
-        for (int i=0; i<mesh.nodes.size(); ++i)
+        for (size_t i=0; i<mesh.nodes.size(); ++i)
             nodes.push_back(mesh.nodes.at(i)) ;
         // Append all the cells (and increment their indices by off)
-        for (int i=0; i<mesh.cells.size(); ++i)
+        for (size_t i=0; i<mesh.cells.size(); ++i)
         {
             IOCellType tmp ;
             for (int c : mesh.cells.at(i))
@@ -381,18 +381,18 @@ public:
         outfile << "OFF" << endl ;
         outfile << nvertices << " " << cells_of_dim(2) << " " << nedges << endl ;
         // 2 - nodes
-        for (int i=0; i<nvertices; ++i)
+        for (size_t i=0; i<nvertices; ++i)
         {
             outfile << nodes.at(i).at(0) << " " << nodes.at(i).at(1) << " " << nodes.at(i).at(2) << endl ;
         }
         // 3 - cells (export only triangles)
-        for (int i=0; i<ncells; ++i)
+        for (size_t i=0; i<ncells; ++i)
         {
-            const int ni = cells.at(i).size() ;
+            const size_t ni = cells.at(i).size() ;
             if (ni == 3)
             {
                 outfile << ni << " " ;
-                for (int k : cells.at(i))
+                for (size_t k : cells.at(i))
                     outfile << k << " " ;
                 outfile << endl ;
             }
@@ -419,10 +419,10 @@ public:
             return false;
         }
         // 1 - write cells
-        for (int i=0; i<ncells; ++i)
+        for (size_t i=0; i<ncells; ++i)
         {
             const IOCellType cell = cells.at(i) ;
-            for (int c : cell)
+            for (size_t c : cell)
                 outfile << c << " " ;
             outfile << endl ;
         }
@@ -447,7 +447,7 @@ public:
             std::string line;
             getline( infile, line );
             // Check that line is sanitized. If not, throw.
-            for ( int i = 0; i < line.size(); ++ i ) {
+            for ( size_t i = 0; i < line.size(); ++ i ) {
                 if ( ! ( std::isspace(line[i]) || std::isdigit(line[i]) ) ) {
                     std::cerr << "Fatal Error:\n  Cannot parse line #" << line_number << " of " << filename << "\n";
                     std::cerr << " --> " << line << "\n";
@@ -509,7 +509,7 @@ public:
     pair<IONodeType, IONodeType> BB(double ratio=1.)
     {
         IONodeType minBB(nodes.at(0)), maxBB(nodes.at(0)) ;
-        for (int i=1; i<nodes.size(); ++i)
+        for (size_t i=1; i<nodes.size(); ++i)
         {
             minBB = min(minBB, nodes.at(i)) ;
             maxBB = max(maxBB, nodes.at(i)) ;

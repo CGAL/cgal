@@ -14,15 +14,15 @@ class Simplex {
     template<typename _CoefficientType>
     friend class Abstract_simplicial_complex ;
     private:
-    std::set<int> _vertices;
+    std::set<size_t> _vertices;
     
     public:
-    typedef std::set<int>::const_iterator const_iterator ;
+    typedef std::set<size_t>::const_iterator const_iterator ;
     const_iterator cbegin () { return _vertices.cbegin() ; }
     const_iterator cend () { return _vertices.cend() ; }
     
     // Constructor
-    Simplex(const std::set<int>& vertices) : _vertices(vertices) {}
+    Simplex(const std::set<size_t>& vertices) : _vertices(vertices) {}
     
     int dimension() const
     {
@@ -37,9 +37,9 @@ class Simplex {
         
         auto it = _vertices.begin();
         for (size_t i = 0; i < _vertices.size(); ++i) {
-            std::set<int> simplex_vertices;
+            std::set<size_t> simplex_vertices;
             std::copy_if(_vertices.begin(), _vertices.end(), std::inserter(simplex_vertices, simplex_vertices.begin()),
-                         [it](const int& vertex) { return vertex != *it; });
+                         [it](const size_t& vertex) { return vertex != *it; });
             result.emplace_back(simplex_vertices);
             ++it;
         }
@@ -48,7 +48,7 @@ class Simplex {
     }
     
     // Method to get the vertices of the simplex (for testing)
-    const std::set<int>& getVertices() const
+    const std::set<size_t>& getVertices() const
     {
         return _vertices ;
     }
@@ -63,7 +63,7 @@ class Simplex {
     {
         out << "<";
         bool first = true;
-        for (int vertex : simplex._vertices) {
+        for (size_t vertex : simplex._vertices) {
             if (!first) {
                 
                 out << " ";

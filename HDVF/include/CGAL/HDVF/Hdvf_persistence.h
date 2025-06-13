@@ -31,7 +31,7 @@ namespace HDVF {
  *
  * For "infinite" intervals borne at index i, the interval is set to (i,i-1)
  */
-typedef std::pair<int, int> FiltrIndexPerInterval ;
+typedef std::pair<size_t, size_t> FiltrIndexPerInterval ;
 
 /*! \brief Type for indexing uniquely a cell.
  * - First element of the pair: index of the cell.
@@ -39,7 +39,7 @@ typedef std::pair<int, int> FiltrIndexPerInterval ;
  *
  * "Infinite cells" are defined as (-1,q+1) where q is the dimension of the chain complex.
  */
-typedef std::pair<int, int> CellDim ;
+typedef std::pair<size_t, int> CellDim ;
 
 /*! \brief Type for describing the pair of cells associated to a persistence interval:
  * - First element of the pair: cell entailing the birth of the hole.
@@ -207,7 +207,7 @@ protected:
     /* \brief Permutation between indices in the chain complex K and indices along the filtration
      * Indices along the filtration provide new indices for cells in each dimension.
      */
-    std::vector<std::vector<int> > _K_to_per, _per_to_K ;
+    std::vector<std::vector<size_t> > _K_to_per, _per_to_K ;
     
     /* \brief Vector of persistent pairs computed */
     std::vector<PerHole> _persist ;
@@ -224,10 +224,15 @@ protected:
     /* \brief Vector of exported homology/cohomology generators */
     std::vector<std::pair<ExpChain, ExpChain> > _export_g, _export_fstar ;
     
-    /* Current time (that is, current index) in the filtration */
-    int _t ;
-    /* Current time (that is, current index) along each dimension */
-    std::vector<int> _t_dim ;
+    /* Warning:
+     * In order to encode "time" as an unsigned int while the initial value is -1,
+     * we store current times + 1
+     */
+    
+    /* Current time + 1 (that is, current index + 1) in the filtration */
+    size_t _t ;
+    /* Current time +1 (that is, current index + 1) along each dimension */
+    std::vector<size_t> _t_dim ;
     
     /* Bitboard masks in each dimension
      * At a given filtration time, only cells already met have a bit set to 1
@@ -272,7 +277,7 @@ public:
         bool found;
         PairCell pair;
         std::vector<PairCell> res ;
-        for (int i=0; i < _f._filtration.size(); ++i)
+        for (size_t i=0; i < _f._filtration.size(); ++i)
         {
             this->progress_bar(i, _f._filtration.size()) ;
             found = false ;
@@ -282,19 +287,23 @@ public:
         }
         
         // Compute "infinite" holes
-        vector<vector<int> > criticals(this->get_flag(CRITICAL)) ;
+        vector<vector<size_t> > criticals(this->get_flag(CRITICAL)) ;
         for (int q=0; q < criticals.size(); ++q)
         {
-            for (int i : criticals.at(q))
+            for (size_t i : criticals.at(q))
             {
                 // i : persistence index
-                const PairCell p = {i, -1, q} ;
-                const int ki(_per_to_K.at(q).at(i)) ; // K index
+                // encoding of the second "infinite" cell:
+                //  -> index : nb_cell(q+1)
+                //  -> time : size of the filtration
+                //  -> degree : di - 1
+                const PairCell p = {i, this->_K.nb_cells(q+1), q} ;
+                const size_t ki(_per_to_K.at(q).at(i)) ; // K index
                 const CellDim c(ki,q) ;
-                const int ti(_f._cell_to_t.at(c)) ;
+                const size_t ti(_f._cell_to_t.at(c)) ;
                 const DegType di(_f._deg.at(i)) ;
-                FiltrIndexPerInterval per_int(ti,ti-1) ;
-                CellDim inf(-1,q+1) ;
+                FiltrIndexPerInterval per_int(ti,_f.get_filtration_size()) ;
+                CellDim inf(this->_K.nb_cells(q+1),q+1) ;
                 CellsPerInterval per_int_cell(c,inf) ;
                 DegreePerInterval per_deg_int(di,di-1) ;
                 PerHole hole(per_int, per_int_cell, per_deg_int) ;
@@ -326,7 +335,11 @@ public:
     DegType hole_duration (const PerHole hole) const
     {
         const DegreePerInterval per_int_deg(std::get<2>(hole)) ;
-        return per_int_deg.second - per_int_deg.first ;
+        // Test if the interval is infinite, ie.
+        if (per_int_deg.second == _f.get_filtration_size())
+            return -1 ;
+        else
+            return per_int_deg.second - per_int_deg.first ;
     }
     
     /** \brief Overload of operator<< for Hdvf_persistence.
@@ -338,7 +351,7 @@ public:
      */
     friend ostream& operator<< (ostream& out, const Hdvf_persistence& per_hdvf)
     {
-        int i = 0 ;
+        size_t i = 0 ;
         for (PerHole hole : per_hdvf._persist)
         {
             if (abs(per_hdvf.hole_duration(hole)) > 0)
@@ -362,9 +375,9 @@ public:
         {
             out << "-> dim " << q << endl ;
             out << "index_per -(_per_to_K)-> index_K -(_K_to_per)-> index_per" << endl ;
-            for (int i=0; i<this->_K.nb_cells(q); ++i)
+            for (size_t i=0; i<this->_K.nb_cells(q); ++i)
             {
-                const int id_K(_per_to_K.at(q).at(i)) ;
+                const size_t id_K(_per_to_K.at(q).at(i)) ;
                 out << i << " -> " << id_K << " -> " << _K_to_per.at(q).at(id_K) << endl ;
             }
         }
@@ -388,10 +401,10 @@ public:
         vector<vector<int> > labels(this->_K.dim()+1) ;
         for (int q=0; q<=this->_K.dim(); ++q)
         {
-            for (int i = 0; i<this->_K.nb_cells(q); ++i)
+            for (size_t i = 0; i<this->_K.nb_cells(q); ++i)
             {
-                const int id_per(_K_to_per.at(q).at(i)) ;
-                if (id_per <=_t_dim.at(q))
+                const size_t id_per(_K_to_per.at(q).at(i)) ;
+                if (id_per < _t_dim.at(q))
                 {
                     if (this->_flag.at(q).at(id_per) == PRIMARY)
                         labels.at(q).push_back(-1) ;
@@ -416,7 +429,7 @@ public:
      *
      * \returns A column-major chain.
      */
-    virtual CChain export_homology_chain (int cell, int q) const
+    virtual CChain export_homology_chain (size_t cell, int q) const
     {
         if ((q<0) || (q>this->_K.dim()))
             throw "Error : export_homology_chain with dim out of range" ;
@@ -433,7 +446,7 @@ public:
             CChain g_cell_K(g_cell.dimension()) ;
             for (typename CChain::const_iterator it = g_cell.begin(); it != g_cell.end(); ++it)
             {
-                const int i(_per_to_K.at(q).at(it->first)) ;
+                const size_t i(_per_to_K.at(q).at(it->first)) ;
                 g_cell_K.set_coef(i, it->second) ;
             }
             return g_cell_K ;
@@ -449,7 +462,7 @@ public:
      *
      * \returns A column-major chain.
      */
-    virtual CChain export_cohomology_chain (int cell, int q) const
+    virtual CChain export_cohomology_chain (size_t cell, int q) const
     {
         if ((q<0) || (q>this->_K.dim()))
             throw "Error : export_homology_chain with dim out of range" ;
@@ -467,7 +480,7 @@ public:
             CChain fstar_cell_K(fstar_cell.dimension()) ;
             for (typename CChain::const_iterator it = fstar_cell.begin(); it != fstar_cell.end(); ++it)
             {
-                const int i(_per_to_K.at(q).at(it->first)) ;
+                const size_t i(_per_to_K.at(q).at(it->first)) ;
                 fstar_cell_K.set_coef(i, it->second) ;
             }
             return fstar_cell_K ;
@@ -494,7 +507,7 @@ public:
          * \param[in] i The initial index.
          * \param[in] discard_small If `true` (default), only persistent intervals of (strictly) positive degree duration are iterated. Otherwise, all persistent intervals are iterated.
          */
-        iterator(const Hdvf_persistence& per_hdvf, int i=0, bool discard_small = true) : _i(i), _per_hdvf(per_hdvf), _discard_small(discard_small)
+        iterator(const Hdvf_persistence& per_hdvf, size_t i=0, bool discard_small = true) : _i(i), _per_hdvf(per_hdvf), _discard_small(discard_small)
         {
             if(_discard_small)
             {
@@ -572,7 +585,7 @@ public:
         friend bool operator!= (const iterator& a, const iterator& b) { return a._i != b._i; };
         
     private:
-        int _i ; // Index along _persist
+        size_t _i ; // Index along _persist
         const Hdvf_persistence& _per_hdvf ; // per_hdvf iterated
         const bool _discard_small ;
     };
@@ -609,7 +622,8 @@ private:
         {
             CChain chain_sigma(export_homology_chain(p.sigma, p.dim)) ;
             CChain chain_tau ;
-            if (p.tau >= 0)
+            cout << "p.tau : " << p.tau << " - this->_K.nb_cells(p.dim+1) : " << this->_K.nb_cells(p.dim+1) << endl ;
+            if (p.tau != this->_K.nb_cells(p.dim+1)) // Check if the second cell is "finite"
                 chain_tau = export_homology_chain(p.tau, p.dim+1) ;
             _export_g.push_back(std::pair<CChain,CChain>(chain_sigma, chain_tau)) ;
         }
@@ -618,7 +632,7 @@ private:
         {
             CChain chain_sigma(export_cohomology_chain(p.sigma, p.dim)) ;
             CChain chain_tau ;
-            if (p.tau >= 0)
+            if (p.tau != this->_K.nb_cells(p.dim+1)) // Check if the second cell is "finite"
                 chain_tau = export_cohomology_chain(p.tau, p.dim+1) ;
             _export_fstar.push_back(std::pair<CChain,CChain>(chain_sigma, chain_tau)) ;
         }
@@ -666,7 +680,7 @@ private:
 
 
 template<typename CoefficientType, typename ComplexType, typename DegType, typename FiltrationType>
-Hdvf_persistence<CoefficientType, ComplexType, DegType, FiltrationType>::Hdvf_persistence(const ComplexType& K, const FiltrationType& f, int hdvf_opt, bool with_export) : Hdvf_core<CoefficientType,ComplexType, OSM::Sparse_chain, OSM::Sub_sparse_matrix>(K,hdvf_opt), _f(f), _with_export(with_export), _t(-1)
+Hdvf_persistence<CoefficientType, ComplexType, DegType, FiltrationType>::Hdvf_persistence(const ComplexType& K, const FiltrationType& f, int hdvf_opt, bool with_export) : Hdvf_core<CoefficientType,ComplexType, OSM::Sparse_chain, OSM::Sub_sparse_matrix>(K,hdvf_opt), _f(f), _with_export(with_export), _t(0)
 {
     // Initialisation of _t_dim, _K_to_per and _per_to_K
     _t_dim.resize(this->_K.dim()+1, 0) ;
@@ -675,15 +689,15 @@ Hdvf_persistence<CoefficientType, ComplexType, DegType, FiltrationType>::Hdvf_pe
     for (int q=0; q<=this->_K.dim(); ++q)
     {
         _K_to_per.at(q).resize(this->_K.nb_cells(q)) ;
-        _t_dim.at(q) = -1 ;
+        _t_dim.at(q) = 0 ;
     }
     
-    for (int i = 0; i<_f._filtration.size(); ++i)
+    for (size_t i = 0; i<_f._filtration.size(); ++i)
     {
         const CellDim c(_f._filtration.at(i));
         const int q(c.second) ;
-        const int ind_K_i(c.first) ;
-        const int ind_per_i(_per_to_K.at(q).size()) ;
+        const size_t ind_K_i(c.first) ;
+        const size_t ind_per_i(_per_to_K.at(q).size()) ;
         _per_to_K.at(q).push_back(ind_K_i) ;
         _K_to_per.at(q).at(ind_K_i) = ind_per_i ;
     }
@@ -712,15 +726,15 @@ Hdvf_persistence<CoefficientType, ComplexType, DegType, FiltrationType>::Hdvf_pe
         // Cross _DD_col.at(q) and set _DD_per.at(q) coefficients on the fly
         for (OSM::Bitboard::iterator it_col = this->_DD_col.at(q).begin(); it_col != this->_DD_col.at(q).end(); ++it_col)
         {
-            const int j(*it_col) ;
+            const size_t j(*it_col) ;
             const CChain& col(OSM::cget_column(this->_DD_col.at(q), j)) ;
             for (typename CChain::const_iterator it = col.begin(); it != col.end(); ++it)
             {
-                const int i(it->first) ;
+                const size_t i(it->first) ;
                 const CoefficientType v(it->second) ;
                 // Cells in the _K basis : i(dim q-1) / j(dim q)
                 // Convert to indices in the persistent order
-                const int pi(_K_to_per.at(q-1).at(i)), pj(_K_to_per.at(q).at(j)) ;
+                const size_t pi(_K_to_per.at(q-1).at(i)), pj(_K_to_per.at(q).at(j)) ;
                 set_coef(_DD_per.at(q), pi, pj, v) ;
             }
         }
@@ -737,7 +751,8 @@ PairCell Hdvf_persistence<CoefficientType, ComplexType, DegType, FiltrationType>
 {
     PairCell p ;
     // Get current cell (in the basis K)
-    CellDim c(_f._filtration.at(_t)) ;
+    const size_t current_time(_t-1);
+    CellDim c(_f._filtration.at(current_time)) ;
     const int q(c.second), sigma(_K_to_per.at(q).at(c.first))  ;
     // Search for pairing
     found = false;
@@ -750,7 +765,7 @@ PairCell Hdvf_persistence<CoefficientType, ComplexType, DegType, FiltrationType>
         std::size_t i ;
         for (typename CChain::const_iterator it = tmp2.cbegin(); it != tmp2.cend(); ++it)
         {
-            if ((it->first <= tmax) && (abs(it->second) == 1)) // possible pairing
+            if ((it->first < tmax) && (abs(it->second) == 1)) // possible pairing
             {
                 if (!found) // for first cell met
                 {
@@ -780,22 +795,23 @@ PairCell Hdvf_persistence<CoefficientType, ComplexType, DegType, FiltrationType>
     // Compute next persistent pair
     
     ++_t ; // Step forward in the filtration
-    const int q_current(_f._filtration.at(_t).second) ; // Get the dimension of the new current cell
+    const size_t t_current(_t-1); // Current time
+    const size_t q_current(_f._filtration.at(t_current).second) ; // Get the dimension of the new current cell
     ++_t_dim.at(q_current) ; // Update time in the dimension of the current cell
-    _masks.at(q_current).setOn(_t_dim.at(q_current)) ; // Update mask accordingly
-    this->_DD_col.at(q_current).set_bit_on(_t_dim.at(q_current)) ; // Update _DD_col mask
+    const size_t t_dim_current(_t_dim.at(q_current)-1); // Time of the current cell in its dimension
+    _masks.at(q_current).setOn(t_dim_current) ; // Update mask accordingly
+    this->_DD_col.at(q_current).set_bit_on(t_dim_current) ; // Update _DD_col mask
     
     // Search for pairing
-//    bool found ;
     PairCell p(find_pair_A(found)) ;
     if (found)
     {
         // Corresponding persistent interval
         const int q(p.dim) ;
         // indices of both cells in the _K basis
-        const int ki(_per_to_K.at(q).at(p.sigma)), kj(_per_to_K.at(q+1).at(p.tau)) ;
+        const size_t ki(_per_to_K.at(q).at(p.sigma)), kj(_per_to_K.at(q+1).at(p.tau)) ;
         CellDim ci(ki, q), cj(kj, q+1) ; // cells of the interval - in the K basis
-        int ti(_f._cell_to_t.at(ci)), tj(_f._cell_to_t.at(cj)) ; // times of the interval
+        size_t ti(_f._cell_to_t.at(ci)), tj(_f._cell_to_t.at(cj)) ; // times of the interval
         FiltrIndexPerInterval interval(ti, tj) ;
         CellsPerInterval interval_cells(ci, cj) ;
         DegreePerInterval interval_deg(_f._deg.at(ti), _f._deg.at(tj)) ;

@@ -257,7 +257,7 @@ public:
     
     // !!! Why should it be virtual for duality?????
     
-    virtual std::vector<std::vector<int> > get_flag (FlagType flag) const ;
+    virtual std::vector<std::vector<size_t> > get_flag (FlagType flag) const ;
     
     /**
      * \brief Get cells with a given `flag` in dimension `q`.
@@ -267,7 +267,7 @@ public:
      * \param[in] flag Flag to select.
      * \param[in] q Dimension visited.
      */
-    virtual std::vector<int> get_flag_dim (FlagType flag, int q) const ;
+    virtual std::vector<size_t> get_flag_dim (FlagType flag, int q) const ;
     
     /*!
      * \brief Get the flag of the cell `tau` in dimension `q`.
@@ -927,9 +927,9 @@ std::vector<PairCell> Hdvf_core<CoefficientType, ComplexType, ChainType, SparseM
 
 // Method to get cells if with a given flag (P,S,C) for each dimension
 template<typename CoefficientType, typename ComplexType, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
-std::vector<std::vector<int> > Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::get_flag (FlagType flag) const
+std::vector<std::vector<size_t> > Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::get_flag (FlagType flag) const
 {
-    std::vector<std::vector<int> > res(_K.dim()+1) ;
+    std::vector<std::vector<size_t> > res(_K.dim()+1) ;
     for (int q=0; q<=_K.dim(); ++q)
     {
         for (size_t i=0; i<_K.nb_cells(q); ++i)
@@ -943,9 +943,9 @@ std::vector<std::vector<int> > Hdvf_core<CoefficientType, ComplexType, ChainType
 
 // Method to get cells with a given flag (P,S,C) for a given dimension
 template<typename CoefficientType, typename ComplexType, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
-std::vector<int> Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::get_flag_dim (FlagType flag, int q) const
+std::vector<size_t> Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::get_flag_dim (FlagType flag, int q) const
 {
-    std::vector<int> res ;
+    std::vector<size_t> res ;
     for (size_t i=0; i<_K.nb_cells(q); ++i)
     {
         if (_flag.at(q).at(i) == flag)
@@ -977,7 +977,7 @@ std::ostream& Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixTyp
     
     // Print critical cells
     out << "----- critical cells:" << std::endl;
-    std::vector<std::vector<int> > critical(get_flag(CRITICAL)) ;
+    std::vector<std::vector<size_t> > critical(get_flag(CRITICAL)) ;
     for (int q = 0; q <= _K.dim(); ++q) {
         out << "--- dim " << q << std::endl;
         for (size_t i = 0; i < critical.at(q).size(); ++i)

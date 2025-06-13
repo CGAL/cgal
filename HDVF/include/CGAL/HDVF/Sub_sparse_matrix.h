@@ -57,7 +57,7 @@ public:
      * \param[in] rowCount The number of rows to preallocate (default 0).
      * \param[in] columnCount The number of columns to preallocate (default 0).
      */
-    Sub_sparse_matrix(int rowCount=0, int columnCount=0) : Sparse_matrix<CoefficientType, ChainTypeFlag>(rowCount, columnCount)
+    Sub_sparse_matrix(size_t rowCount=0, size_t columnCount=0) : Sparse_matrix<CoefficientType, ChainTypeFlag>(rowCount, columnCount)
     {
         if (ChainTypeFlag == OSM::COLUMN)
             _subChains = OSM::Bitboard(columnCount,false) ;
@@ -75,7 +75,7 @@ public:
      * \param[in] columnCount The number of columns to preallocate.
      * \param[in] subChain Bitboard describing the subset of indices considered as a mask.
      */
-    Sub_sparse_matrix(int rowCount, int columnCount, const Bitboard& subChain) : Sparse_matrix<CoefficientType, ChainTypeFlag>(rowCount, columnCount), _subChains(subChain), _subChainsStates(this->_chainsStates & subChain)
+    Sub_sparse_matrix(size_t rowCount, size_t columnCount, const Bitboard& subChain) : Sparse_matrix<CoefficientType, ChainTypeFlag>(rowCount, columnCount), _subChains(subChain), _subChainsStates(this->_chainsStates & subChain)
     {
     }
     
@@ -133,7 +133,7 @@ public:
      *
      * \param[in] index Index to turn on in the mask.
      */
-    inline void set_bit_on (int index)
+    inline void set_bit_on (size_t index)
     {
         _subChains.setOn(index) ;
         if (this->_chainsStates.isOn(index))
@@ -146,7 +146,7 @@ public:
      *
      * \param[in] index Index to turn off in the mask.
      */
-    inline void set_bit_off (int index)
+    inline void set_bit_off (size_t index)
     {
         _subChains.setOff(index) ;
         _subChainsStates.setOff(index) ;

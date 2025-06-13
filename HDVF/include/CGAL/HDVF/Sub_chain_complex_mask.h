@@ -281,6 +281,26 @@ public:
         }
     }
 
+    /**
+     * \brief Restrict a chain in a given dimension to the sub chain complex maks.
+     *
+     * Nullify all coefficients out of the mask.
+     *
+     * \param[in] chain The chain restricted.
+     * \param[in] q Dimension of the chain.
+     */
+    template <typename CT, int CTF>
+    inline void screen_chain(OSM::Sparse_chain<CT, CTF>& chain, int q)
+    {
+        vector<size_t> indices;
+        for (typename OSM::Sparse_chain<CT, CTF>::iterator it = chain.begin(); it != chain.end(); ++it)
+        {
+            if (!get_bit(q, it->first))
+                indices.push_back(it->first);
+        }
+        chain/=indices;
+    }
+    
     /*! \brief Overload of the `<<`operator for `Sub_chain_complex_mask`.
      */
     friend std::ostream & operator << (std::ostream & out, const Sub_chain_complex_mask & sub)

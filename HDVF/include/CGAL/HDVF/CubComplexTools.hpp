@@ -73,7 +73,7 @@ void Cub_output_vtk (Hdvf_core<CoefType, Cubical_chain_complex<CoefType>, _Chain
     if (hdvf.get_hdvf_opts() != OPT_BND)
     {
         // Export generators of all critical cells
-        vector<vector<int> > criticals(hdvf.get_flag(CRITICAL)) ;
+        vector<vector<size_t> > criticals(hdvf.get_flag(CRITICAL)) ;
         for (int q = 0; q <= complex.dim(); ++q)
         {
             for (int c : criticals.at(q))
@@ -158,6 +158,58 @@ public:
         return std::pair<_ComplexType&, _SubCCType&>(L,K) ;
     }
 } ;
+
+template <typename CoefType, typename VertexIdType = int>
+void Dual_cub_output_vtk (Hdvf_duality<CoefType, Cubical_chain_complex<CoefType> > &hdvf, Cubical_chain_complex<CoefType> &complex, string filename = "test", bool co_faces = false)
+{
+    typedef Hdvf_duality<CoefType, Simplicial_chain_complex<CoefType> > HDVF_type;
+    typedef Cubical_chain_complex<CoefType> ComplexType;
+    
+    // Export PSC labelling
+    vector<vector<int> > labels = hdvf.export_psc_labels() ;
+    string outfilePSC(filename+"_PSC.vtk") ;
+    ComplexType::Cubical_chain_complex_to_vtk(complex, outfilePSC, &labels) ;
+    
+    // Export generators of all critical cells if available
+    if (hdvf.get_hdvf_opts() != OPT_BND)
+    {
+        // Export generators of all critical cells
+        vector<vector<size_t> > criticals(hdvf.get_flag(CRITICAL)) ;
+        for (int q = 0; q <= complex.dim(); ++q)
+        {
+            for (int c : criticals.at(q))
+            {
+                // Homology generators
+                if (hdvf.get_hdvf_opts() & (OPT_FULL | OPT_G))
+                {
+                    string outfile_g(filename+"_G_"+to_string(c)+"_dim_"+to_string(q)+".vtk") ;
+                    OSM::Sparse_chain<CoefType,OSM::COLUMN> chain(hdvf.export_homology_chain(c,q)) ;
+                    ComplexType::Cubical_chain_complex_chain_to_vtk(complex, outfile_g, chain, q, c) ;
+                }
+                // Cohomology generators
+                if (hdvf.get_hdvf_opts() & (OPT_FULL | OPT_F))
+                {
+                    string outfile_f(filename+"_FSTAR_"+to_string(c)+"_dim_"+to_string(q)+".vtk") ;
+                    OSM::Sparse_chain<CoefType,OSM::COLUMN> chain(hdvf.export_cohomology_chain(c, q)) ;
+                    if (!co_faces)
+                    {
+                        ComplexType::Cubical_chain_complex_chain_to_vtk(complex, outfile_f, chain, q, c) ;
+                    }
+                    else
+                    {
+                        if (q < complex.dim())
+                        {
+                            OSM::Sparse_chain<CoefType,OSM::COLUMN> cofaces_chain(complex.cofaces_chain(chain, q)) ;
+                            Sub_chain_complex_mask<CoefType,ComplexType> sub(hdvf.get_current_mask());
+                            sub.screen_chain(cofaces_chain, q+1);
+                            ComplexType::Cubical_chain_complex_chain_to_vtk(complex, outfile_f, cofaces_chain, q+1, c) ;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
 
 // Persistent homology
 

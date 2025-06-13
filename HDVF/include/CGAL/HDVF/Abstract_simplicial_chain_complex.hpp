@@ -105,7 +105,7 @@ public:
      *
      * \return The column-major chain containing the boundary of the cell id_cell in dimension q.
      */
-    CChain d(int id_cell, int q) const
+    CChain d(size_t id_cell, int q) const
     {
         if (q > 0)
             return OSM::get_column(_d[q], id_cell);
@@ -125,7 +125,7 @@ public:
      *
      * \return The row-major chain containing the co-boundary of the cell id_cell in dimension q.
      */
-    RChain cod(int id_cell, int q) const
+    RChain cod(size_t id_cell, int q) const
     {
         if (q < _dim)
             return OSM::get_row(_d[q+1], id_cell);
@@ -149,7 +149,7 @@ public:
      *
      * \return Number of cells in dimension q.
      */
-    int nb_cells(int q) const
+    size_t nb_cells(int q) const
     {
         if ((q >=0) && (q<=_dim))
             return _nb_cells[q] ;
@@ -197,14 +197,14 @@ public:
      *
      * \return A vector of 0-simplices indices.
      */
-    std::vector<int> bottom_faces(int id_cell, int q) const
+    std::vector<size_t> bottom_faces(size_t id_cell, int q) const
     {
-        std::set<int> verts(_ind2simp.at(q).at(id_cell).getVertices()) ;
-        std::vector<int> res ;
+        std::set<size_t> verts(_ind2simp.at(q).at(id_cell).getVertices()) ;
+        std::vector<size_t> res ;
         // For each vertex in verts, compute the corresponding dimension 0 cell
-        for (int vert_id : verts)
+        for (size_t vert_id : verts)
         {
-            const int i(_simp2ind.at(0).at(Simplex(std::set<int>({vert_id})))) ;
+            const size_t i(_simp2ind.at(0).at(Simplex(std::set<size_t>({vert_id})))) ;
             res.push_back(i) ;
         }
         return res ;
@@ -245,7 +245,7 @@ public:
     /** \brief Get (unique) object Id.
      * For comparison of constant references to the complex.
      */
-    int get_id () const { return _complex_id; }
+    size_t get_id () const { return _complex_id; }
     
 protected:
     /** \brief Dimension of the complex */
@@ -253,9 +253,9 @@ protected:
     /** \brief Vector of simplices along each dimension: _ind2simp.at(q) contains the vector of all simplices of dimension q */
     std::vector<std::vector<Simplex> > _ind2simp ;
     /** \brief Vector of maps associating indices to simplices in each dimension: _simp2ind.at(q) maps q-simplices to their index in _ind2simp  */
-    std::vector<std::map<Simplex, int> > _simp2ind ;
+    std::vector<std::map<Simplex, size_t> > _simp2ind ;
     /** \brief Vector of number of cells in each dimension */
-    std::vector<int> _nb_cells ;
+    std::vector<size_t> _nb_cells ;
     /** \brief Vector of column-major boundary matrices: _d.at(q) is the matrix of the boundary operator in dimension q. */
     mutable std::vector<CMatrix>  _d;  // Boundary matrices
     
@@ -286,14 +286,14 @@ private:
     /** \brief Static counter for objects ids.
      * Initialized to 0.
      */
-    static int _id_generator ; // Initialisation 0
+    static size_t _id_generator ; // Initialisation 0
     /** \brief Unique object id (for comparison of constant references to the complex). */
-    const int _complex_id ;
+    const size_t _complex_id ;
 };
 
 // Initialization of _id_generator
 template <typename CoefficientType>
-int Abstract_simplicial_chain_complex<CoefficientType>::_id_generator(0);
+size_t Abstract_simplicial_chain_complex<CoefficientType>::_id_generator(0);
 
 //constructors
 template<typename CoefficientType>
@@ -322,7 +322,7 @@ Abstract_simplicial_chain_complex<CoefficientType>::Abstract_simplicial_chain_co
     
     // Iterate through the mesh cells and add them to the complex
     for (const auto& cell : mesh.cells) {
-        //        Simplex simplex(std::set<int>(cell.begin(), cell.end()));
+        //        Simplex simplex(std::set<size_t>(cell.begin(), cell.end()));
         //        insert_simplex(simplex);
         insert_simplex(cell) ;
     }
@@ -340,7 +340,7 @@ void Abstract_simplicial_chain_complex<CoefficientType>::insert_simplex(const Si
     if (q == -1) return;
     
     if (_simp2ind[q].find(tau) == _simp2ind[q].end()) {
-        int i = _ind2simp[q].size();
+        size_t i = _ind2simp[q].size();
         _ind2simp[q].push_back(tau);
         _simp2ind[q][tau] = i;
         _nb_cells[q]++;
@@ -355,13 +355,13 @@ void Abstract_simplicial_chain_complex<CoefficientType>::insert_simplex(const Si
 // calculate _d boundary matrix
 template<typename CoefficientType>
 void Abstract_simplicial_chain_complex<CoefficientType>::calculate_d(int dim) const {
-    int nb_lignes = (dim == 0) ? 0 : _nb_cells[dim - 1];
+    size_t nb_lignes = (dim == 0) ? 0 : _nb_cells[dim - 1];
     _d[dim] = CMatrix(nb_lignes, _nb_cells[dim]);
     
     // Iterate through the cells of dimension dim
     if (dim>0)
     {
-        for (int i = 0; i < _nb_cells[dim]; ++i) {
+        for (size_t i = 0; i < _nb_cells[dim]; ++i) {
             // Boundary of the i-th simplex of dimension dim
             const Simplex& s = _ind2simp[dim][i];
             std::vector<Simplex> bord = s.boundary();
@@ -370,10 +370,10 @@ void Abstract_simplicial_chain_complex<CoefficientType>::calculate_d(int dim) co
             CChain chain(nb_lignes);
             
             // For each element of the boundary
-            for (int j = 0; j < bord.size(); ++j) {
+            for (size_t j = 0; j < bord.size(); ++j) {
                 auto it = _simp2ind[dim - 1].find(bord[j]); // Find the index of Simplex j
                 if (it != _simp2ind[dim - 1].end()) { // If Simplex j is found
-                    int ind_j = it->second; // Retrieve the index of Simplex j
+                    size_t ind_j = it->second; // Retrieve the index of Simplex j
                     chain.set_coef(ind_j, (j % 2 == 0) ? 1 : -1);
                 }
                 else
@@ -392,8 +392,8 @@ std::ostream& Abstract_simplicial_chain_complex<CoefficientType>::print_complex(
     out << "Complex dimension: " << _dim << std::endl;
     
     // Total number of cells
-    int nb_total_cells = 0;
-    for (int i = 0; i <= _dim; ++i) {
+    size_t nb_total_cells = 0;
+    for (size_t i = 0; i <= _dim; ++i) {
         nb_total_cells += _nb_cells[i];
     }
     out << "Total number of cells: " << nb_total_cells << std::endl;
@@ -402,7 +402,7 @@ std::ostream& Abstract_simplicial_chain_complex<CoefficientType>::print_complex(
     for (int q = 0; q <= _dim; ++q) {
         out << "--- dimension " << q << std::endl;
         out << nb_cells(q) << " cells" << endl ;
-        //        for (int j = 0; j < _nb_cells.at(q); ++j) {
+        //        for (size_t j = 0; j < _nb_cells.at(q); ++j) {
         //            Simplex s(_ind2Simp.at(q).at(j));
         //            std::cout << j << " -> " << s << " -> " << _Simp2ind.at(q).at(s) << std::endl;
         //        }
@@ -483,11 +483,11 @@ public:
      *  id0: 3, id1 : 2, id2: 1
      * then the bottom_faces of the 1-simplex {1,2} are two 0-simplices with id 2 and 1.
      */
-    Point get_vertex_coords (int i) const
+    Point get_vertex_coords (size_t i) const
     {
         const Simplex simpl(this->_ind2simp.at(0).at(i)) ;
-        const std::set<int> verts(simpl.getVertices()) ;
-        const int id(*(verts.cbegin())) ;
+        const std::set<size_t> verts(simpl.getVertices()) ;
+        const size_t id(*(verts.cbegin())) ;
         return _coords.at(id);
     }
     
@@ -513,9 +513,9 @@ public:
      * \param[in] filename Output file root (output filenames will be built from this root).
      * \param[in] chain Sparse_chain exported (all the cells with non-zero coefficients in the chain are exported to vtk).
      * \param[in] q Dimension of the cells of the chain.
-     * \param[in] cellId If a positive cellID is provided, labels are exported to distinguish cells of the chain (label 2) from cellId cell (label 0).
+     * \param[in] cellId If cellID is not -1 (that is MAX_SIZE_T), labels are exported to distinguish cells of the chain (label 2) from cellId cell (label 0).
      */
-    static void Simplicial_chain_complex_chain_to_vtk(const Simplicial_chain_complex &K, const std::string &filename, const OSM::Sparse_chain<CoefficientType, OSM::COLUMN>& chain, int q, int cellId = -1) ;
+    static void Simplicial_chain_complex_chain_to_vtk(const Simplicial_chain_complex &K, const std::string &filename, const OSM::Sparse_chain<CoefficientType, OSM::COLUMN>& chain, int q, size_t cellId = -1) ;
 };
 
 // Initialization of static VTK_simptypes
@@ -554,20 +554,20 @@ void Simplicial_chain_complex<CoefficientType>::Simplicial_chain_complex_to_vtk(
     size_t nnodes = K._coords.size() ;
     out << "POINTS " << nnodes << " double" << endl ;
     const std::vector<ComplexType::Point>& coords(K.get_vertices_coords()) ;
-    for (int n = 0; n < nnodes; ++n)
+    for (size_t n = 0; n < nnodes; ++n)
     {
         vector<double> p(coords.at(n)) ;
         for (double x : p)
             out << x << " " ;
-        for (int i = p.size(); i<3; ++i) // points must be 3D -> add zeros
+        for (size_t i = p.size(); i<3; ++i) // points must be 3D -> add zeros
             out << "0 " ;
         out << endl ;
     }
     
-    int ncells_tot = 0, size_cells_tot = 0 ;
+    size_t ncells_tot = 0, size_cells_tot = 0 ;
     std::vector<int> types ;
     std::vector<int> scalars ;
-    std::vector<int> ids ;
+    std::vector<size_t> ids ;
     // all cells must be printed
     {
         // Cells up to dimension 3
@@ -575,15 +575,15 @@ void Simplicial_chain_complex<CoefficientType>::Simplicial_chain_complex_to_vtk(
         for (int q=0; q<=K._dim; ++q)
         {
             ncells_tot += K.nb_cells(q) ;
-            const int size_cell = q+1 ;
+            const size_t size_cell = q+1 ;
             size_cells_tot += (size_cell+1)*K.nb_cells(q) ;
         }
         out << "CELLS " << ncells_tot << " " << size_cells_tot << endl ;
         // Output cells by increasing dimension
         for (int q=0; q<=K._dim; ++q)
         {
-            const int size_cell = q+1 ;
-            for (int id =0; id < K.nb_cells(q); ++id)
+            const size_t size_cell = q+1 ;
+            for (size_t id =0; id < K.nb_cells(q); ++id)
             {
                 Simplex verts(K._ind2simp.at(q).at(id)) ;
                 out << size_cell << " " ;
@@ -618,7 +618,7 @@ void Simplicial_chain_complex<CoefficientType>::Simplicial_chain_complex_to_vtk(
         // CELL_IDs
         out << "SCALARS CellId " << "int" << " 1" << endl ;
         out << "LOOKUP_TABLE default" << endl ;
-        for (int i : ids)
+        for (size_t i : ids)
             out << i << " " ;
         out << endl ;
     }
@@ -627,7 +627,7 @@ void Simplicial_chain_complex<CoefficientType>::Simplicial_chain_complex_to_vtk(
 
 // Simplicial_chain_complex_chain_to_vtk
 template <typename CoefficientType>
-void Simplicial_chain_complex<CoefficientType>::Simplicial_chain_complex_chain_to_vtk(const Simplicial_chain_complex &K, const std::string &filename, const OSM::Sparse_chain<CoefficientType, OSM::COLUMN>& chain, int q, int cellId)
+void Simplicial_chain_complex<CoefficientType>::Simplicial_chain_complex_chain_to_vtk(const Simplicial_chain_complex &K, const std::string &filename, const OSM::Sparse_chain<CoefficientType, OSM::COLUMN>& chain, int q, size_t cellId)
 {
     typedef Simplicial_chain_complex<CoefficientType> ComplexType ;
     if (K._coords.size() != K.nb_cells(0))
@@ -653,30 +653,30 @@ void Simplicial_chain_complex<CoefficientType>::Simplicial_chain_complex_chain_t
     out << "DATASET  UNSTRUCTURED_GRID" << endl ;
     
     // Points
-    int nnodes = K._coords.size() ;
+    size_t nnodes = K._coords.size() ;
     out << "POINTS " << nnodes << " double" << endl ;
     const std::vector<ComplexType::Point>& coords(K.get_vertices_coords()) ;
-    for (int n = 0; n < nnodes; ++n)
+    for (size_t n = 0; n < nnodes; ++n)
     {
         vector<double> p(coords.at(n)) ;
         for (double x : p)
             out << x << " " ;
-        for (int i = p.size(); i<3; ++i) // points must be 3D -> add zeros
+        for (size_t i = p.size(); i<3; ++i) // points must be 3D -> add zeros
             out << "0 " ;
         out << endl ;
     }
     
-    int ncells_tot = 0, size_cells_tot = 0 ;
+    size_t ncells_tot = 0, size_cells_tot = 0 ;
     std::vector<int> types ;
     std::vector<int> scalars ;
-    std::vector<int> ids ;
+    std::vector<size_t> ids ;
     
     // output only cells of the chain (dimension q)
     {
         // 1 - Compute the number of cells / size of encoding
         {
-            const int size_cell = q+1 ;
-            for (int id =0; id < K.nb_cells(q); ++id)
+            const size_t size_cell = q+1 ;
+            for (size_t id =0; id < K.nb_cells(q); ++id)
             {
                 if (!chain.is_null(id))
                 {
@@ -689,8 +689,8 @@ void Simplicial_chain_complex<CoefficientType>::Simplicial_chain_complex_chain_t
         out << "CELLS " << ncells_tot << " " << size_cells_tot << endl ;
         
         {
-            const int size_cell = q+1 ;
-            for (int id =0; id < K.nb_cells(q); ++id)
+            const size_t size_cell = q+1 ;
+            for (size_t id =0; id < K.nb_cells(q); ++id)
             {
                 if (!chain.is_null(id))
                 {
@@ -730,7 +730,7 @@ void Simplicial_chain_complex<CoefficientType>::Simplicial_chain_complex_chain_t
         // CELL_IDs
         out << "SCALARS CellId " << "int" << " 1" << endl ;
         out << "LOOKUP_TABLE default" << endl ;
-        for (int i : ids)
+        for (size_t i : ids)
             out << i << " " ;
         out << endl ;
     }

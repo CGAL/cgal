@@ -10,6 +10,7 @@
 #include "Abstract_simplicial_chain_complex.hpp"
 #include "Hdvf_core.h"
 #include "Hdvf_persistence.h"
+#include "Hdvf_duality.h"
 #include "Sub_chain_complex_mask.h"
 #include "tools_io.hpp"
 #include "CGAL/OSM/OSM.hpp"
@@ -62,7 +63,7 @@ void Simp_output_vtk (Hdvf_core<CoefType, Simplicial_chain_complex<CoefType>, _C
     if (hdvf.get_hdvf_opts() != OPT_BND)
     {
         // Export generators of all critical cells
-        vector<vector<int> > criticals(hdvf.get_flag(CRITICAL)) ;
+        vector<vector<size_t> > criticals(hdvf.get_flag(CRITICAL)) ;
         for (int q = 0; q <= complex.dim(); ++q)
         {
             for (int c : criticals.at(q))
@@ -75,7 +76,6 @@ void Simp_output_vtk (Hdvf_core<CoefType, Simplicial_chain_complex<CoefType>, _C
                     OSM::Sparse_chain<CoefType,OSM::COLUMN> chain(hdvf.export_homology_chain(c,q)) ;
                     ComplexType::Simplicial_chain_complex_chain_to_vtk(complex, outfile_g, chain, q, c) ;
                 }
-                // Cohomology generators
                 // Cohomology generators
                 if (hdvf.get_hdvf_opts() & (OPT_FULL | OPT_F))
                 {
@@ -181,6 +181,59 @@ public:
         return m ;
     }
 } ;
+
+template <typename CoefType, typename VertexIdType = int>
+void Dual_simp_output_vtk (Hdvf_duality<CoefType, Simplicial_chain_complex<CoefType> > &hdvf, Simplicial_chain_complex<CoefType> &complex, string filename = "test", bool co_faces = false)
+{
+    typedef Simplicial_chain_complex<CoefType> ComplexType;
+    typedef Hdvf_duality<CoefType, Simplicial_chain_complex<CoefType> > HDVF_type;
+    // Export PSC labelling
+    string outfile(filename+"_PSC.vtk") ;
+    vector<vector<int> > labels = hdvf.export_psc_labels() ;
+    ComplexType::Simplicial_chain_complex_to_vtk(complex, outfile, &labels) ;
+    
+    if (hdvf.get_hdvf_opts() != OPT_BND)
+    {
+        // Export generators of all critical cells
+        vector<vector<size_t> > criticals(hdvf.get_flag(CRITICAL)) ;
+        for (int q = 0; q <= complex.dim(); ++q)
+        {
+            for (int c : criticals.at(q))
+            {
+                // Homology generators
+                if (hdvf.get_hdvf_opts() & (OPT_FULL | OPT_G))
+                {
+                    string outfile_g(filename+"_G_"+to_string(c)+"_dim_"+to_string(q)+".vtk") ;
+                    //                    vector<vector<int> > labels = hdvf.export_label(G,c,q) ;
+                    OSM::Sparse_chain<CoefType,OSM::COLUMN> chain(hdvf.export_homology_chain(c,q)) ;
+                    ComplexType::Simplicial_chain_complex_chain_to_vtk(complex, outfile_g, chain, q, c) ;
+                }
+                // Cohomology generators
+                if (hdvf.get_hdvf_opts() & (OPT_FULL | OPT_F))
+                {
+                    string outfile_f(filename+"_FSTAR_"+to_string(c)+"_dim_"+to_string(q)+".vtk") ;
+                    OSM::Sparse_chain<CoefType,OSM::COLUMN> chain(hdvf.export_cohomology_chain(c, q)) ;
+                    if (!co_faces)
+                    {
+                        ComplexType::Simplicial_chain_complex_chain_to_vtk(complex, outfile_f, chain, q, c) ;
+                    }
+                    else // Compute co-faces
+                    {
+                        if (q < complex.dim())
+                        {
+                            // Restrict the cofaces of the cohomology generator to the current sub chain complex
+                            OSM::Sparse_chain<CoefType,OSM::COLUMN> cofaces_chain(complex.cofaces_chain(chain, q)) ;
+                            Sub_chain_complex_mask<CoefType,ComplexType> sub(hdvf.get_current_mask());
+                            sub.screen_chain(cofaces_chain, q+1);
+                            // Display
+                            ComplexType::Simplicial_chain_complex_chain_to_vtk(complex, outfile_f, cofaces_chain, q+1, c) ;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
 
 // Persistent homology
 
