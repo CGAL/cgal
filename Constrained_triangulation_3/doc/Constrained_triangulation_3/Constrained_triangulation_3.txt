@@ -95,7 +95,7 @@ version of the original PLC that admits a constrained Delaunay triangulation. Th
 achieved by adding Steiner vertices to the input edges and polygons. The constrained triangulation
 built on this refined PLC is known as a _conforming constrained Delaunay triangulation_ (CCDT for short).
 
-The algorithm implemented in this package is based on the work of Hang Si 
+The algorithm implemented in this package is based on the work of Hang Si
 \cgalCite{si2005meshing}, \cgalCite{cgal:si2008cdt3}, \cgalCite{si2015tetgen}.
 Steiner vertices are inserted on the input edges and polygons of the PLC to
 ensure it can be tetrahedralized.
@@ -257,7 +257,6 @@ processed with
 \link CGAL::Polygon_mesh_processing::autorefine_triangle_soup(PointRange&,TriangleRange&,const NamedParameters&) `CGAL::Polygon_mesh_processing::autorefine_triangle_soup()`\endlink
 to resolve the self-intersections.
 
-In case 
 
 \subsection CT_3_example_remesh Remeshing a Conforming Constrained Delaunay Triangulation
 
