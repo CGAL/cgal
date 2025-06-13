@@ -177,6 +177,11 @@ CGAL_add_named_parameter(weight_limiting_t, weight_limiting, weight_limiting)
 CGAL_add_named_parameter(progressive_t, progressive, progressive)
 CGAL_add_named_parameter(tiling_t, tiling, tiling)
 CGAL_add_named_parameter(dimension_t, dimension, dimension)
+CGAL_add_named_parameter(maximum_voxels_t, maximum_voxels, maximum_voxels)
+CGAL_add_named_parameter(voxel_size_t, voxel_size, voxel_size)
+CGAL_add_named_parameter(maximum_depth_t, maximum_depth, maximum_depth)
+CGAL_add_named_parameter(volume_error_t, volume_error, volume_error)
+CGAL_add_named_parameter(maximum_number_of_convex_hulls_t, maximum_number_of_convex_hulls, maximum_number_of_convex_hulls)
 
 
 // List of named parameters that we use in the package 'Surface Mesh Simplification'
