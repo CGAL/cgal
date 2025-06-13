@@ -43,8 +43,11 @@ int main(int argc, char* argv[])
     std::cout << "Number of input triangles after autorefine: "
               << polygons.size() << "\n";
 
-    if(PMP::does_polygon_soup_self_intersect(points, polygons)) {
+    if(PMP::does_polygon_soup_self_intersect(points, polygons))
+    {
       std::cerr << "Error: mesh still self-intersects after autorefine\n";
+      std::cerr << "Run autorefinement again with an exact kernel ";
+      std::cerr << "such as CGAL::Exact_predicates_exact_constructions_kernel \n";
       return EXIT_FAILURE;
     }
 
