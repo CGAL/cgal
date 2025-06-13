@@ -44,13 +44,16 @@ endif()
 # Compilable benchmark
 create_single_source_cgal_program("benchmark_tetrahedral_remeshing.cpp")
 create_single_source_cgal_program("benchmark_adaptive_tetrahedral_remeshing.cpp")
+create_single_source_cgal_program("benchmark_atomic_tetrahedral_remeshing.cpp")
 
 target_include_directories(benchmark_tetrahedral_remeshing PRIVATE ${CMAKE_SOURCE_DIR}/Benchmark_creation/external/)
 target_include_directories(benchmark_adaptive_tetrahedral_remeshing PRIVATE ${CMAKE_SOURCE_DIR}/Benchmark_creation/external)
+target_include_directories(benchmark_atomic_tetrahedral_remeshing PRIVATE ${CMAKE_SOURCE_DIR}/Benchmark_creation/external)
 
 if(TARGET CGAL::TBB_support)
   target_link_libraries(benchmark_tetrahedral_remeshing PRIVATE CGAL::TBB_support)
   target_link_libraries(benchmark_adaptive_tetrahedral_remeshing PRIVATE CGAL::TBB_support)
+  target_link_libraries(benchmark_atomic_tetrahedral_remeshing PRIVATE CGAL::TBB_support)
 endif()
 
 # Link with Boost.ProgramOptions (optional)
@@ -58,6 +61,7 @@ find_package(Boost QUIET COMPONENTS program_options)
 if(Boost_PROGRAM_OPTIONS_FOUND)
   target_link_libraries(benchmark_tetrahedral_remeshing PRIVATE Boost::program_options)
   target_link_libraries(benchmark_adaptive_tetrahedral_remeshing PRIVATE Boost::program_options)
+  target_link_libraries(benchmark_atomic_tetrahedral_remeshing PRIVATE Boost::program_options)
 endif()
 
 # Add a post-build step to generate the metadata file
@@ -85,6 +89,19 @@ add_custom_command(TARGET benchmark_adaptive_tetrahedral_remeshing POST_BUILD
             "benchmark_adaptive_tetrahedral_remeshing.cpp"
     WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
     COMMENT "Generating metadata file for benchmark_adaptive_tetrahedral_remeshing"
+    VERBATIM
+)
+
+add_custom_command(TARGET benchmark_atomic_tetrahedral_remeshing POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E echo "Generating metadata for $<TARGET_FILE:benchmark_atomic_tetrahedral_remeshing>"
+    COMMAND ${CMAKE_COMMAND} -E env 
+            "PYTHONPATH=${CMAKE_SOURCE_DIR}"
+            "${Python_EXECUTABLE}" 
+            "${METADATA_SCRIPT}"
+            "$<TARGET_FILE:benchmark_atomic_tetrahedral_remeshing>"
+            "benchmark_atomic_tetrahedral_remeshing.cpp"
+    WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+    COMMENT "Generating metadata file for benchmark_atomic_tetrahedral_remeshing"
     VERBATIM
 )
 
