@@ -248,20 +248,20 @@ public:
     size_t get_id () const { return _complex_id; }
     
 protected:
-    /** \brief Dimension of the complex */
+    /* \brief Dimension of the complex */
     int _dim;
-    /** \brief Vector of simplices along each dimension: _ind2simp.at(q) contains the vector of all simplices of dimension q */
+    /* \brief Vector of simplices along each dimension: _ind2simp.at(q) contains the vector of all simplices of dimension q */
     std::vector<std::vector<Simplex> > _ind2simp ;
-    /** \brief Vector of maps associating indices to simplices in each dimension: _simp2ind.at(q) maps q-simplices to their index in _ind2simp  */
+    /* \brief Vector of maps associating indices to simplices in each dimension: _simp2ind.at(q) maps q-simplices to their index in _ind2simp  */
     std::vector<std::map<Simplex, size_t> > _simp2ind ;
-    /** \brief Vector of number of cells in each dimension */
+    /* \brief Vector of number of cells in each dimension */
     std::vector<size_t> _nb_cells ;
-    /** \brief Vector of column-major boundary matrices: _d.at(q) is the matrix of the boundary operator in dimension q. */
+    /* \brief Vector of column-major boundary matrices: _d.at(q) is the matrix of the boundary operator in dimension q. */
     mutable std::vector<CMatrix>  _d;  // Boundary matrices
     
     // Protected methods
     
-    /**
+    /*
      * \brief Method filling the matrix _d.at(q), ie. computing the boundaries of cells of dimension q.
      *
      * Compute the boundary with the standard simplicial complex definition:
@@ -271,7 +271,7 @@ protected:
      */
     void  calculate_d(int q) const;
     
-    /**
+    /*
      * \brief Method inserting a simplex (and its faces if necessary) into the abstract simplicial complex.
      *
      * The method (recursively) inserts the simplex into _ind2simp and _simp2ind and its faces. If the simplex is already presend, the method does nothing.
@@ -283,11 +283,11 @@ protected:
     void insert_simplex(const Simplex& tau);
     
 private:
-    /** \brief Static counter for objects ids.
+    /* \brief Static counter for objects ids.
      * Initialized to 0.
      */
     static size_t _id_generator ; // Initialisation 0
-    /** \brief Unique object id (for comparison of constant references to the complex). */
+    /* \brief Unique object id (for comparison of constant references to the complex). */
     const size_t _complex_id ;
 };
 

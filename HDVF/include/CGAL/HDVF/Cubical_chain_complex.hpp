@@ -93,7 +93,7 @@ public:
     /** \brief Type of vertices coordinates */
     typedef std::vector<double> Point ;
 private:
-    /** \brief Vector of VTK types associated to cells in each dimension
+    /* \brief Vector of VTK types associated to cells in each dimension
      e.g. {1, 3, 8, 11} */
     static const std::vector<int> VTK_cubtypes ;
     
@@ -262,7 +262,7 @@ public:
         return khal_to_verts(coords) ;
     }
     
-    /*!
+    /**
      * \brief Returns the cofaces of a given chain in dimension `q`.
      *
      * The resulting chain lies in dimension `q`+1 and is null if this dimension exceeds the dimension of the complex.
@@ -368,32 +368,32 @@ public:
     
 protected:
     // Methods to access data
-    /** \brief Get the size of the Khalimsky bounding box \f$(N_1,\ldots,N_{\mathrm{\_dim}})\f$ */
+    /* \brief Get the size of the Khalimsky bounding box \f$(N_1,\ldots,N_{\mathrm{\_dim}})\f$ */
     std::vector<size_t> get_size_bb() const {
         return _size_bb;
     }
     
-    /** \brief Get _P (coefficients used for the vectorisation of the Khalimsky boolean matrix) */
+    /* \brief Get _P (coefficients used for the vectorisation of the Khalimsky boolean matrix) */
     std::vector<size_t> get_P() const {
         return _P;
     }
     
-    /** \brief Get the boolean vector of the complex in Khalimsky coordinates */
+    /* \brief Get the boolean vector of the complex in Khalimsky coordinates */
     std::vector<bool> get_cells() const {
         return _cells;
     }
     
-    /** \brief Get the vector of vectors _base2bool */
+    /* \brief Get the vector of vectors _base2bool */
     std::vector<std::vector<size_t> > get_base2bool() const {
         return _base2bool;
     }
     
-    /** \brief Get the vector of maps _bool2base */
+    /* \brief Get the vector of maps _bool2base */
     std::vector<std::map<size_t, size_t> > get_bool2base() const {
         return _bool2base;
     }
     
-    /** \brief Method computing the boundary of a given cell */
+    /* \brief Method computing the boundary of a given cell */
     CChain boundary_cell(size_t index_base, int dim) const {
         // Ensure dim is within valid range
         if (dim < 0 || dim >= _base2bool.size()) {
@@ -435,13 +435,13 @@ protected:
         return boundary;
     }
     
-    /** \brief Check if a cell (given in Khalimsky coordinates) is valid */
+    /* \brief Check if a cell (given in Khalimsky coordinates) is valid */
     bool is_valid_cell(const std::vector<size_t>& cell) const ;
     
-    /** \brief Check if a cell (given by its boolean index) is valid */
+    /* \brief Check if a cell (given by its boolean index) is valid */
     bool is_valid_cell(size_t id_cell) const ;
     
-    /** \brief Compute vertices of a cell given by its Khalimsky coordinates */
+    /* \brief Compute vertices of a cell given by its Khalimsky coordinates */
     vector<size_t> khal_to_verts(vector<size_t> c) const
     {
         vector<vector<size_t> > vertices, vertices_tmp ;
@@ -500,32 +500,32 @@ protected:
     
     /// Member data
 protected:
-    /** \brief Dimension of the complex */
+    /* \brief Dimension of the complex */
     int _dim;
-    /** \brief Size of the Khalimsky bounding box \f$(N_1,\ldots,N_{\mathrm{\_dim}})\f$*/
+    /* \brief Size of the Khalimsky bounding box \f$(N_1,\ldots,N_{\mathrm{\_dim}})\f$*/
     std::vector<size_t> _size_bb;
-    /** \brief Vector of coefficients used for vectorization of the boolean representation */
+    /* \brief Vector of coefficients used for vectorization of the boolean representation */
     std::vector<size_t> _P;
-    /** \brief Vectorized boolean representation of the complex (true if a cell is present, false otherwise) */
+    /* \brief Vectorized boolean representation of the complex (true if a cell is present, false otherwise) */
     std::vector<bool> _cells;
-    /** \brief Maps from base indices to boolean indices (ie. indices in _cell) in each dimension */
+    /* \brief Maps from base indices to boolean indices (ie. indices in _cell) in each dimension */
     std::vector<std::vector<size_t>> _base2bool;
-    /** \brief Maps from boolean indices (ie. indices in _cells) to base indices in each dimension */
+    /* \brief Maps from boolean indices (ie. indices in _cells) to base indices in each dimension */
     std::vector<std::map<size_t, size_t>> _bool2base;
-    /** \brief Vector of boundary matrices in each dimension */
+    /* \brief Vector of boundary matrices in each dimension */
     std::vector<CMatrix>  _d;
 private:
     std::vector<bool> _visited_cells; // Internal flag
-    /** \brief Static counter for objects ids.
+    /* \brief Static counter for objects ids.
      * Initialized to 0.
      */
     static size_t _id_generator ;
-    /** \brief Unique object id (for comparison of constant references to the complex). */
+    /* \brief Unique object id (for comparison of constant references to the complex). */
     const size_t _complex_id ;
     
     /// Protected methods
 protected:
-    /** Initialize _cells, _base2bool and _bool2base */
+    /* Initialize _cells, _base2bool and _bool2base */
     void initialize_cells(const Cub_object& cub,typeComplexCube type);
     
     /** \brief Computes Khalimsky coordinates from boolean index */
@@ -540,7 +540,7 @@ protected:
         return khal;
     }
     
-    /** \brief Computes boolean index from Khalimsky coordinates */
+    /* \brief Computes boolean index from Khalimsky coordinates */
     size_t khal2ind(const std::vector<size_t>& base_indices) const {
         if (base_indices.size() != _dim) {
             throw std::invalid_argument("Dimension of base_indices does not match _dim");
@@ -560,7 +560,7 @@ protected:
         }
     }
     
-    /** \brief Computes voxel coordinates (in a binary object) from an index in a boolean vector
+    /* \brief Computes voxel coordinates (in a binary object) from an index in a boolean vector
      *
      * This function is used ONLY for DUAL construction from a binary object (binary image in 2D, binary volume in 3D...)
      * Hence we consider a set of cells of maximal dimension vectorized to a boolean vector.
@@ -577,7 +577,7 @@ protected:
         return coords;
     }
     
-    /** \brief Computes an index in a boolean vector from voxel coordinates (in a binary object)
+    /* \brief Computes an index in a boolean vector from voxel coordinates (in a binary object)
      *
      * This function is used ONLY for DUAL construction from a binary object (binary image in 2D, binary volume in 3D...)
      * Hence we consider a set of cells of maximal dimension vectorized to a boolean vector.
@@ -602,21 +602,21 @@ protected:
     }
     
     
-    /** \brief Computes the boundary matrix of dimension q */
+    /* \brief Computes the boundary matrix of dimension q */
     void  calculate_d(int q) ;
     
-    /** \brief Insert a cell into the complex (and its faces if necessary) */
+    /* \brief Insert a cell into the complex (and its faces if necessary) */
     void insert_cell(size_t cell);
     
-    /** \brief Calculate the dimension of a cell (given in Khalimsky coordinates) */
+    /* \brief Calculate the dimension of a cell (given in Khalimsky coordinates) */
     int calculate_dimension(const std::vector<size_t>& cell) const;
-    /** \brief Calculate the dimension of a cell (given by its boolean index) */
+    /* \brief Calculate the dimension of a cell (given by its boolean index) */
     int calculate_dimension(size_t cell_index) const
     {
         return calculate_dimension(ind2khal(cell_index)) ;
     }
     
-    /** \brief Compute (the boolean indices of) cells belonging to the boundary of `cell` (given by its boolean index) */
+    /* \brief Compute (the boolean indices of) cells belonging to the boundary of `cell` (given by its boolean index) */
     std::vector<size_t> calculate_boundaries(size_t cell) const;
     
 };

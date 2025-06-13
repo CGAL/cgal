@@ -67,7 +67,7 @@ int dim();
 Returns the number of cells of dimension `q`.
 If `q` is negative of larger than the dimension of the complex, returns 0.
  */
-int nb_cells(int q);
+size_t nb_cells(int q);
 
 /*!
 \brief Returns all boundary matrices.
@@ -90,7 +90,7 @@ const CMatrix & get_bnd_matrix(int q) const;
 This boundary is a finite linear combination of cells of dimension `q`-1. It is encoded as a column-major chain (which maps each cell with a non-zero coefficient to this coefficient). This boundary  is thus the `id_cell`-th column of the boundary matrix in dimension `q`.
  
 */
-CChain d(int id_cell, int q);
+CChain d(size_t id_cell, int q);
 
     
 /*!
@@ -98,13 +98,13 @@ CChain d(int id_cell, int q);
 
 This boundary is a finite linear combination of cells of dimension `q`+1. It is encoded as a row-major chain (which maps each cell with a non-zero coefficient to this coefficient). This co-boundary  is thus the `id_cell`-th row of the boundary matrix in dimension `q`+1.
 */
-RChain cod(int id_cell, int q);
+RChain cod(size_t id_cell, int q);
 
 /*!
  \brief Returns the vertices of a given cell (that is, the indices of its faces of dimension 0).
  
 */
-std::vector<int> bottom_faces(int id_cell, int q) const;
+std::vector<size_t> bottom_faces(size_t id_cell, int q) const;
     
 /*!
  * \brief Returns the cofaces of a given chain in dimension `q`.

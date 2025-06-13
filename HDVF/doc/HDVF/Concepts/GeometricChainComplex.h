@@ -38,7 +38,7 @@ const std::vector<Point >& get_vertices_coords() const;
 /*!
  Returns the coordinates of the cell of index `i` and dimension 0.
  */
-Point get_vertex_coords (int i) const;
+Point get_vertex_coords (size_t i) const;
     
 /// @}
 
