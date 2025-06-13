@@ -33,7 +33,7 @@ From a non-manifold OFF file, construct the constrained Delaunay triangulation.
 
 
 /*!
-\example Constrained_triangulation_3/ccdt_3_preprocessing.cpp
+\example Constrained_triangulation_3/ccdt_3_after_autorefinement.cpp
 @brief
 
 From a self-intersecting and non-triangulated surface in an OFF file,
@@ -44,4 +44,5 @@ construct the constrained Delaunay triangulation after preprocessing by autorefi
 \example Constrained_triangulation_3/ccdt_3_check_preconditions.cpp
 \example Constrained_triangulation_3/ccdt_3_fimap_region_growing.cpp
 \example Constrained_triangulation_3/ccdt_3_from_soup_fimap.cpp
+\example Constrained_triangulation_3/ccdt_3_preprocessing.cpp
 */
