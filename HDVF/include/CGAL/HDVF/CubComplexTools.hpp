@@ -136,7 +136,7 @@ public:
         // Visit all boolean indices in the BB of _CC and insert corresponding Cells
         for (int i=0; i<_CC._P.at(_CC.dim()); ++i)
         {
-            const std::vector<int> tmpkhal(_CC.ind2khal(i)) ;
+            const std::vector<size_t> tmpkhal(_CC.ind2khal(i)) ;
             const int dtmp(_CC.calculate_dimension(tmpkhal)) ;
             (tmp.ncubs)[dtmp] += 1 ;
             tmp.cubs.push_back(tmpkhal) ;

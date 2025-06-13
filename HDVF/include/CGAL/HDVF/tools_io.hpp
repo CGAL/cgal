@@ -26,7 +26,7 @@ typedef std::vector<double> IONodeType ;
 typedef std::set<size_t> IOCellType ;
 typedef std::vector<IOCellType> IOChainType ;
 // For cubical complexes
-typedef std::vector<int> IOCubCellType ;
+typedef std::vector<size_t> IOCubCellType ;
 typedef std::vector<IOCellType> IOCubChainType ;
 
 
@@ -906,23 +906,24 @@ class Cub_object
 {
 public:
     int dim = 0 ; // Dimension of the complex
-    vector<int> ncubs ; // Number of cubs in each dimension
-    vector<int> N ; // Size of BB along each dimension
+    vector<size_t> ncubs ; // Number of cubs in each dimension
+    vector<size_t> N ; // Size of BB along each dimension
     std::vector<IOCubCellType> cubs ;
     bool khalimsky ;
     
-    Cub_object() : dim(0), ncubs(vector<int>(4)), N(vector<int>(3)), khalimsky(false) {}
-    Cub_object(int d, const std::vector<IOCubCellType> &vcubs, bool khal = false) : dim(d), ncubs(vector<int>(4)), N(vector<int>(3)), cubs(vcubs), khalimsky(khal)
+    Cub_object() : dim(0), ncubs(vector<size_t>(4)), N(vector<size_t>(3)), khalimsky(false) {}
+    // TODO: check !!! 4/3 ...
+    Cub_object(int d, const std::vector<IOCubCellType> &vcubs, bool khal = false) : dim(d), ncubs(vector<size_t>(4)), N(vector<size_t>(3)), cubs(vcubs), khalimsky(khal)
     { check_dimension() ;}
     Cub_object(const Cub_object &m) : dim(m.dim), ncubs(m.ncubs), N(m.N), cubs(m.cubs), khalimsky(m.khalimsky) {}
     
     // Mesh operations
-    void clear_cubs() { cubs.clear() ; for (int i=0; i<4; ++i) ncubs[i] = 0 ; }
+    void clear_cubs() { cubs.clear() ; for (size_t i=0; i<4; ++i) ncubs[i] = 0 ; }
     void add_cub(const IOCubCellType &c) {cubs.push_back(c); ++ncubs[cub_dim(c)] ;}
     void frame() // Enlarge the bouding box to add 1 voxel around
     {
         // Enlarge the BB along each dimension
-        for (int i=0; i<N.size(); ++i)
+        for (size_t i=0; i<N.size(); ++i)
         {
             if (khalimsky)
                 N.at(i) += 4 ;
@@ -930,7 +931,7 @@ public:
                 N.at(i) += 2 ;
         }
         // Shift cells coordinates
-        for (int i = 0; i<cubs.size(); ++i)
+        for (size_t i = 0; i<cubs.size(); ++i)
         {
             for (int k = 0; k<dim; ++k)
             {
@@ -946,7 +947,7 @@ public:
     bool read_pgm(const std::string &filename, bool khal = false)
     {
         khalimsky = khal ;
-        int row = 0, col = 0, numrows = 0, numcols = 0;
+        size_t row = 0, col = 0, numrows = 0, numcols = 0;
         ifstream infile(filename);
         if(!infile.is_open()) {
             cerr << "Warning: cannot open file " << filename << endl ;
@@ -965,7 +966,7 @@ public:
         
         // Second line: dimensions
         getline(infile,inputLine);
-        vector<int> sizes ;
+        vector<size_t> sizes ;
         
         int tmp ;
         stringstream sseizes (inputLine);
@@ -973,12 +974,12 @@ public:
             sizes.push_back(tmp) ;
         
         cout << "dimensions : " ;
-        for (int i=0; i<sizes.size(); ++i)
+        for (size_t i=0; i<sizes.size(); ++i)
             cout << sizes.at(i) << " " ;
         cout << endl ;
         dim = sizes.size() ;
-        N = vector<int>(dim) ;
-        for (int i=0; i<dim; ++i)
+        N = vector<size_t>(dim) ;
+        for (size_t i=0; i<dim; ++i)
             N.at(i) = sizes.at(i) ;
         
         // Throw away next data (255)
@@ -1035,7 +1036,7 @@ public:
             std::string line;
             getline( infile, line );
             // Check that line is sanitized. If not, throw.
-            for ( int i = 0; i < line.size(); ++ i ) {
+            for ( size_t i = 0; i < line.size(); ++ i ) {
                 if ( ! ( std::isspace(line[i]) || std::isdigit(line[i]) ) ) {
                     std::cerr << "Fatal Error:\n  Cannot parse line #" << line_number << " of " << filename << "\n";
                     std::cerr << " --> " << line << "\n";
@@ -1055,7 +1056,7 @@ public:
             {
                 IOCubCellType cub ;
                 
-                int v;
+                size_t v;
                 while ( is >> v )
                     cub.push_back(v);
                 if (cub.size() != dim)
@@ -1069,7 +1070,7 @@ public:
                         cubs.push_back(cub) ;
                     else
                     {
-                        int ind(khal_to_index(cub)) ;
+                        size_t ind(khal_to_index(cub)) ;
                         cubs.push_back(index_to_coords(ind, false)) ;
                     }
                 }
@@ -1090,9 +1091,9 @@ public:
             cout << "Cubs of dim " << q << " : " << ncubs[q] << endl ;
         if (level == 1) // Print coordinates of cubes
         {
-            for (int i=0; i<cubs.size(); ++i)
+            for (size_t i=0; i<cubs.size(); ++i)
             {
-                for (int j : cubs.at(i))
+                for (size_t j : cubs.at(i))
                     cout << j << " " ;
                 cout << endl ;
             }
@@ -1146,7 +1147,7 @@ private:
     
     inline int khal_to_index (const IOCubCellType& coords)
     {
-        int cell_index(0);
+        size_t cell_index(0);
         for (int i = 0; i < dim; ++i) {
             cell_index += coords[i] * N[i];
         }

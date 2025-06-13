@@ -27,9 +27,9 @@ template<typename T> class Duality_cubical_complex_tools ;
 
 // TOOLS
 
-ostream & operator<<(ostream & out, std::vector<int> c)
+ostream & operator<<(ostream & out, std::vector<size_t> c)
 {
-    for (int i:c)
+    for (size_t i:c)
         out << i << " " ;
     out << endl ;
     return out ;
@@ -163,7 +163,7 @@ public:
      *
      * \return The column-major chain containing the boundary of the cell id_cell in dimension q.
      */
-    CChain d(int id_cell, int q) const
+    CChain d(size_t id_cell, int q) const
     {
         if (q > 0)
             return OSM::cget_column(_d[q], id_cell);
@@ -183,7 +183,7 @@ public:
      *
      * \return The row-major chain containing the co-boundary of the cell id_cell in dimension q.
      */
-    RChain cod(int id_cell, int q) const
+    RChain cod(size_t id_cell, int q) const
     {
         if (q < _dim)
             return OSM::get_row(_d[q+1], id_cell);
@@ -210,7 +210,7 @@ public:
      *
      * \return Number of cells in dimension q.
      */
-    int nb_cells(int q) const
+    size_t nb_cells(int q) const
     {
         if ((q >=0) && (q <= _dim))
             return _base2bool.at(q).size() ;
@@ -255,10 +255,10 @@ public:
      *
      * \return A vector of 0-cells indices.
      */
-    std::vector<int> bottom_faces(int id_cell, int dim) const
+    std::vector<size_t> bottom_faces(size_t id_cell, int dim) const
     {
         // Khalimsky coordinates of the cell
-        const vector<int> coords(ind2khal(_base2bool.at(dim).at(id_cell))) ;
+        const vector<size_t> coords(ind2khal(_base2bool.at(dim).at(id_cell))) ;
         return khal_to_verts(coords) ;
     }
     
@@ -297,10 +297,10 @@ public:
             std::cout << "-------- dimension " << q << std::endl;
             std::cout << "cellules de dimension " << q << " : " << _base2bool.at(q).size() << std::endl;
             for (size_t id_base = 0; id_base < _base2bool.at(q).size(); ++id_base) {
-                int id_bool = _base2bool.at(q).at(id_base);
-                std::vector<int> khal = ind2khal(id_bool);
+                size_t id_bool = _base2bool.at(q).at(id_base);
+                std::vector<size_t> khal = ind2khal(id_bool);
                 std::cout << id_base << " -> " << id_bool << " -> " << _bool2base.at(q).at(id_bool) << " -> ";
-                for (int k : khal) std::cout << k << " ";
+                for (size_t k : khal) std::cout << k << " ";
                 std::cout << std::endl;
             }
             
@@ -314,17 +314,17 @@ public:
     /** \brief Get (unique) object Id.
      * For comparison of constant references to the complex.
      */
-    int get_id () const { return _complex_id; }
+    size_t get_id () const { return _complex_id; }
     
     /** \brief Get the coordinates of the ith vertex */
     
-    Point get_vertex_coords(int i) const
+    Point get_vertex_coords(size_t i) const
     {
-        const vector<int> coords(ind2khal(_base2bool.at(0).at(i))) ;
+        const vector<size_t> coords(ind2khal(_base2bool.at(0).at(i))) ;
         vector<double> res ;
-        for (int c : coords)
+        for (size_t c : coords)
             res.push_back(c/2.) ;
-        for (int i = coords.size(); i<3; ++i) // points must be 3D
+        for (size_t i = coords.size(); i<3; ++i) // points must be 3D
             res.push_back(0) ;
         return res ;
     }
@@ -333,7 +333,7 @@ public:
     const std::vector<Point>& get_vertices_coords() const
     {
         std::vector<Point> res ;
-        for (int i=0; i<nb_cells(0); ++i)
+        for (size_t i=0; i<nb_cells(0); ++i)
             res.push_back(get_vertex_coords(i)) ;
         return res ;
     }
@@ -362,19 +362,19 @@ public:
      * \param[in] filename Output file root (output filenames will be built from this root).
      * \param[in] chain Sparse_chain exported (all the cells with non-zero coefficients in the chain are exported to vtk).
      * \param[in] q Dimension of the cells of the chain.
-     * \param[in] cellId If a positive cellID is provided, labels are exported to distinguish cells of the chain (label 2) from cellId cell (label 0).
+     * \param[in] cellId If different from MAX_SIZE_T, labels are exported to distinguish cells of the chain (label 2) from cellId cell (label 0).
      */
-    static void Cubical_chain_complex_chain_to_vtk(const Cubical_chain_complex<CoefficientType> &K, const std::string &filename, const OSM::Sparse_chain<CoefficientType, OSM::COLUMN>& chain, int q, int cellId = -1) ;
+    static void Cubical_chain_complex_chain_to_vtk(const Cubical_chain_complex<CoefficientType> &K, const std::string &filename, const OSM::Sparse_chain<CoefficientType, OSM::COLUMN>& chain, int q, size_t cellId = -1) ;
     
 protected:
     // Methods to access data
     /** \brief Get the size of the Khalimsky bounding box \f$(N_1,\ldots,N_{\mathrm{\_dim}})\f$ */
-    std::vector<int> get_size_bb() const {
+    std::vector<size_t> get_size_bb() const {
         return _size_bb;
     }
     
     /** \brief Get _P (coefficients used for the vectorisation of the Khalimsky boolean matrix) */
-    std::vector<int> get_P() const {
+    std::vector<size_t> get_P() const {
         return _P;
     }
     
@@ -384,17 +384,17 @@ protected:
     }
     
     /** \brief Get the vector of vectors _base2bool */
-    std::vector<std::vector<int> > get_base2bool() const {
+    std::vector<std::vector<size_t> > get_base2bool() const {
         return _base2bool;
     }
     
     /** \brief Get the vector of maps _bool2base */
-    std::vector<std::map<int, int> > get_bool2base() const {
+    std::vector<std::map<size_t, size_t> > get_bool2base() const {
         return _bool2base;
     }
     
     /** \brief Method computing the boundary of a given cell */
-    CChain boundary_cell(int index_base, int dim) const {
+    CChain boundary_cell(size_t index_base, int dim) const {
         // Ensure dim is within valid range
         if (dim < 0 || dim >= _base2bool.size()) {
             throw std::out_of_range("Invalid dimension: " + std::to_string(dim));
@@ -405,28 +405,28 @@ protected:
             throw std::out_of_range("index_base " + std::to_string(index_base) + " not found in _base2bool[" + std::to_string(dim) + "]");
         }
         
-        int nb_lignes = (dim == 0) ? 0 : nb_cells(dim - 1);
+        size_t nb_lignes = (dim == 0) ? 0 : nb_cells(dim - 1);
         CChain boundary(nb_lignes);
         
-        int index_bool = _base2bool[dim][index_base];
-        std::vector<int> c = ind2khal(index_bool);
+        size_t index_bool = _base2bool[dim][index_base];
+        std::vector<size_t> c = ind2khal(index_bool);
         
         CoefficientType sign = 1;
-        for (int i = 0; i < _dim; ++i) {
+        for (size_t i = 0; i < _dim; ++i) {
             if (c[i] % 2 == 1) {
                 // Calculate the coefficient based on the number of odd entries in c from 0 to i-1
                 sign *= -1;
                 
-                int cell1 = index_bool + _P[i];
-                int cell2 = index_bool - _P[i];
+                size_t cell1 = index_bool + _P[i];
+                size_t cell2 = index_bool - _P[i];
                 
                 // Insert the coefficient in the corresponding row of the boundary matrix
                 if (cell1 >= 0 && cell1 < _cells.size()) {
-                    int index = _bool2base[dim - 1].at(cell1);
+                    size_t index = _bool2base[dim - 1].at(cell1);
                     boundary.set_coef(index, sign);
                 }
                 if (cell2 >= 0 && cell2 < _cells.size()) {
-                    int index = _bool2base[dim - 1].at(cell2);
+                    size_t index = _bool2base[dim - 1].at(cell2);
                     boundary.set_coef(index, -sign);
                 }
             }
@@ -436,37 +436,37 @@ protected:
     }
     
     /** \brief Check if a cell (given in Khalimsky coordinates) is valid */
-    bool is_valid_cell(const std::vector<int>& cell) const ;
+    bool is_valid_cell(const std::vector<size_t>& cell) const ;
     
     /** \brief Check if a cell (given by its boolean index) is valid */
-    bool is_valid_cell(int id_cell) const ;
+    bool is_valid_cell(size_t id_cell) const ;
     
     /** \brief Compute vertices of a cell given by its Khalimsky coordinates */
-    vector<int> khal_to_verts(vector<int> c) const
+    vector<size_t> khal_to_verts(vector<size_t> c) const
     {
-        vector<vector<int> > vertices, vertices_tmp ;
+        vector<vector<size_t> > vertices, vertices_tmp ;
         // Vertices are obtained by cartesian products
-        for (int i=0; i<_dim; ++i)
+        for (size_t i=0; i<_dim; ++i)
         {
             if ((c[i]%2) == 1)
             {
                 if (vertices.size()==0)
                 {
-                    vertices.push_back(vector<int>(1,c[i]-1)) ;
-                    vertices.push_back(vector<int>(1,c[i]+1)) ;
+                    vertices.push_back(vector<size_t>(1,c[i]-1)) ;
+                    vertices.push_back(vector<size_t>(1,c[i]+1)) ;
                 }
                 else
                 {
                     vertices_tmp.clear() ;
-                    for (vector<int> vert : vertices)
+                    for (vector<size_t> vert : vertices)
                     {
-                        vector<int> tmp(vert) ;
+                        vector<size_t> tmp(vert) ;
                         tmp.push_back(c[i]-1) ;
                         vertices_tmp.push_back(tmp) ;
                     }
-                    for (vector<int> vert : vertices)
+                    for (vector<size_t> vert : vertices)
                     {
-                        vector<int> tmp(vert) ;
+                        vector<size_t> tmp(vert) ;
                         tmp.push_back(c[i]+1) ;
                         vertices_tmp.push_back(tmp) ;
                     }
@@ -476,13 +476,13 @@ protected:
             else
             {
                 if (vertices.size() == 0)
-                    vertices.push_back(vector<int>(1,c[i])) ;
+                    vertices.push_back(vector<size_t>(1,c[i])) ;
                 else
                 {
                     vertices_tmp.clear() ;
-                    for (vector<int> vert : vertices)
+                    for (vector<size_t> vert : vertices)
                     {
-                        vector<int> tmp(vert) ;
+                        vector<size_t> tmp(vert) ;
                         tmp.push_back(c[i]) ;
                         vertices_tmp.push_back(tmp) ;
                     }
@@ -490,8 +490,8 @@ protected:
                 }
             }
         }
-        vector<int> vertices_id ;
-        for (vector<int> vert : vertices)
+        vector<size_t> vertices_id ;
+        for (vector<size_t> vert : vertices)
         {
             vertices_id.push_back(_bool2base[0].at(khal2ind(vert))) ;
         }
@@ -503,15 +503,15 @@ protected:
     /** \brief Dimension of the complex */
     int _dim;
     /** \brief Size of the Khalimsky bounding box \f$(N_1,\ldots,N_{\mathrm{\_dim}})\f$*/
-    std::vector<int> _size_bb;
+    std::vector<size_t> _size_bb;
     /** \brief Vector of coefficients used for vectorization of the boolean representation */
-    std::vector<int> _P;
+    std::vector<size_t> _P;
     /** \brief Vectorized boolean representation of the complex (true if a cell is present, false otherwise) */
     std::vector<bool> _cells;
     /** \brief Maps from base indices to boolean indices (ie. indices in _cell) in each dimension */
-    std::vector<std::vector<int>> _base2bool;
+    std::vector<std::vector<size_t>> _base2bool;
     /** \brief Maps from boolean indices (ie. indices in _cells) to base indices in each dimension */
-    std::vector<std::map<int, int>> _bool2base;
+    std::vector<std::map<size_t, size_t>> _bool2base;
     /** \brief Vector of boundary matrices in each dimension */
     std::vector<CMatrix>  _d;
 private:
@@ -519,9 +519,9 @@ private:
     /** \brief Static counter for objects ids.
      * Initialized to 0.
      */
-    static int _id_generator ;
+    static size_t _id_generator ;
     /** \brief Unique object id (for comparison of constant references to the complex). */
-    const int _complex_id ;
+    const size_t _complex_id ;
     
     /// Protected methods
 protected:
@@ -529,11 +529,11 @@ protected:
     void initialize_cells(const Cub_object& cub,typeComplexCube type);
     
     /** \brief Computes Khalimsky coordinates from boolean index */
-    std::vector<int> ind2khal(int index) const {
+    std::vector<size_t> ind2khal(size_t index) const {
         if (index > _P[_dim])
             throw std::invalid_argument("Index exceeds the size of boolean vector");
-        std::vector<int> khal(_dim);
-        for (int k = 0; k < _dim; ++k) {
+        std::vector<size_t> khal(_dim);
+        for (size_t k = 0; k < _dim; ++k) {
             khal[k] = index % _size_bb[k];
             index /= _size_bb[k];
         }
@@ -541,13 +541,13 @@ protected:
     }
     
     /** \brief Computes boolean index from Khalimsky coordinates */
-    int khal2ind(const std::vector<int>& base_indices) const {
+    size_t khal2ind(const std::vector<size_t>& base_indices) const {
         if (base_indices.size() != _dim) {
             throw std::invalid_argument("Dimension of base_indices does not match _dim");
         }
         
-        int cell_index = 0;
-        for (int i = 0; i < _dim; ++i) {
+        size_t cell_index = 0;
+        for (size_t i = 0; i < _dim; ++i) {
             cell_index += base_indices[i] * _P[i];
         }
         
@@ -565,12 +565,12 @@ protected:
      * This function is used ONLY for DUAL construction from a binary object (binary image in 2D, binary volume in 3D...)
      * Hence we consider a set of cells of maximal dimension vectorized to a boolean vector.
      */
-    std::vector<int> ind2vox(int index, vector<int> B, int max_size) const
+    std::vector<size_t> ind2vox(size_t index, vector<size_t> B, size_t max_size) const
     {
         if (index > max_size)
             throw std::invalid_argument("ind2vox : index exceeding size of boolean vector");
-        std::vector<int> coords(_dim);
-        for (int k = 0; k < _dim; ++k) {
+        std::vector<size_t> coords(_dim);
+        for (size_t k = 0; k < _dim; ++k) {
             coords[k] = index % B[k];
             index /= B[k];
         }
@@ -582,13 +582,13 @@ protected:
      * This function is used ONLY for DUAL construction from a binary object (binary image in 2D, binary volume in 3D...)
      * Hence we consider a set of cells of maximal dimension vectorized to a boolean vector.
      */
-    int vox2ind(const std::vector<int>& base_indices, vector<int> B, int max_size) const {
+    size_t vox2ind(const std::vector<size_t>& base_indices, vector<size_t> B, size_t max_size) const {
         if (base_indices.size() != _dim) {
             throw std::invalid_argument("Dimension of base_indices does not match _dim");
         }
         
-        int cell_index = 0;
-        for (int i = 0; i < _dim; ++i) {
+        size_t cell_index = 0;
+        for (size_t i = 0; i < _dim; ++i) {
             cell_index += base_indices[i] * B[i];
         }
         
@@ -606,18 +606,18 @@ protected:
     void  calculate_d(int q) ;
     
     /** \brief Insert a cell into the complex (and its faces if necessary) */
-    void insert_cell(int cell);
+    void insert_cell(size_t cell);
     
     /** \brief Calculate the dimension of a cell (given in Khalimsky coordinates) */
-    int calculate_dimension(const std::vector<int>& cell) const;
+    int calculate_dimension(const std::vector<size_t>& cell) const;
     /** \brief Calculate the dimension of a cell (given by its boolean index) */
-    int calculate_dimension(int cell_index) const
+    int calculate_dimension(size_t cell_index) const
     {
         return calculate_dimension(ind2khal(cell_index)) ;
     }
     
     /** \brief Compute (the boolean indices of) cells belonging to the boundary of `cell` (given by its boolean index) */
-    std::vector<int> calculate_boundaries(int cell) const;
+    std::vector<size_t> calculate_boundaries(size_t cell) const;
     
 };
 
@@ -627,7 +627,7 @@ std::vector<int> Cubical_chain_complex<CoefficientType>::VTK_cubtypes({1, 3, 8, 
 
 // Initialization of _id_generator
 template <typename CoefficientType> 
-int Cubical_chain_complex<CoefficientType>::_id_generator(0) ;
+size_t Cubical_chain_complex<CoefficientType>::_id_generator(0) ;
 
 // Constructor implementation
 template<typename CoefficientType>
@@ -643,7 +643,7 @@ Cubical_chain_complex<CoefficientType>::Cubical_chain_complex(const Cub_object& 
             _size_bb.at(q) = 2*cub.N.at(q)+1 ;
     }
     
-    for (int i = 1; i <= _dim; ++i) {
+    for (size_t i = 1; i <= _dim; ++i) {
         _P[i] = _P[i - 1] * _size_bb[i - 1];
     }
     
@@ -668,31 +668,31 @@ void Cubical_chain_complex<CoefficientType>::initialize_cells(const Cub_object& 
 {
     if (type == PRIMAL)
     {
-        for (int i=0; i<cub.cubs.size(); ++i)
+        for (size_t i=0; i<cub.cubs.size(); ++i)
         {
-            const int id(khal2ind(cub.cubs.at(i))) ;
+            const size_t id(khal2ind(cub.cubs.at(i))) ;
             insert_cell(id);
         }
     }
     else if (type == DUAL)
     {
-        int max_size(1) ;
+        size_t max_size(1) ;
         for (int q=0; q<_dim; ++q)
             max_size *= cub.N.at(q) ;
         
         //We iterate over all the voxels via indices 
-        for (int i=0; i<cub.cubs.size(); ++i)
+        for (size_t i=0; i<cub.cubs.size(); ++i)
         {
-            vector<int> coords(cub.cubs.at(i)) ;
+            vector<size_t> coords(cub.cubs.at(i)) ;
             // Calculate the coordinates of the voxel in the dual complex
-            for (int i=0; i<_dim; ++i)
+            for (size_t i=0; i<_dim; ++i)
                 coords.at(i)*=2 ;
-            const int cell_index(khal2ind(coords)) ;
+            const size_t cell_index(khal2ind(coords)) ;
             
             _cells.at(cell_index) = true ;
             // Add the cell in _base2bool and _bool2base
             const int dim(calculate_dimension(coords)) ;
-            const int n(_base2bool.at(dim).size()) ;
+            const size_t n(_base2bool.at(dim).size()) ;
             _base2bool.at(dim).push_back(cell_index) ;
             _bool2base.at(dim)[cell_index] = n ;
         }
@@ -700,10 +700,10 @@ void Cubical_chain_complex<CoefficientType>::initialize_cells(const Cub_object& 
         // for the cells with dim>0
         for (int q = 1; q <= _dim; ++q) {
             
-            for (int i = 0; i < _P[_dim]; ++i) {
+            for (size_t i = 0; i < _P[_dim]; ++i) {
                 
                 if (calculate_dimension(ind2khal(i)) == q) {
-                    std::vector<int> boundaries = calculate_boundaries(i);
+                    std::vector<size_t> boundaries = calculate_boundaries(i);
                     bool all_boundaries_present = true;
                     for (const auto& boundary_cell : boundaries) {
                         if (!_cells[boundary_cell]) {
@@ -715,7 +715,7 @@ void Cubical_chain_complex<CoefficientType>::initialize_cells(const Cub_object& 
                         _cells.at(i)=  true ;
                         // Add the cell in _base2bool and _bool2base
                         const int dim(calculate_dimension(i)) ;
-                        const int n(_base2bool.at(dim).size()) ;
+                        const size_t n(_base2bool.at(dim).size()) ;
                         _base2bool.at(dim).push_back(i) ;
                         _bool2base.at(dim)[i] = n ;
                     }
@@ -732,8 +732,8 @@ void Cubical_chain_complex<CoefficientType>::initialize_cells(const Cub_object& 
 
 // is_valid_cell implementation
 template<typename CoefficientType>
-bool Cubical_chain_complex<CoefficientType>::is_valid_cell(const std::vector<int>& cell) const {
-    for (int i=0; i<_dim; ++i) {
+bool Cubical_chain_complex<CoefficientType>::is_valid_cell(const std::vector<size_t>& cell) const {
+    for (size_t i=0; i<_dim; ++i) {
         if (cell[i] < 0 || cell[i] >= _size_bb[i]) {
             return false;
         }
@@ -742,7 +742,7 @@ bool Cubical_chain_complex<CoefficientType>::is_valid_cell(const std::vector<int
 }
 
 template<typename CoefficientType>
-bool Cubical_chain_complex<CoefficientType>::is_valid_cell(int id_cell) const
+bool Cubical_chain_complex<CoefficientType>::is_valid_cell(size_t id_cell) const
 {
     if ((id_cell < 0) || (id_cell > _P[_dim]))
         return false;
@@ -753,7 +753,7 @@ bool Cubical_chain_complex<CoefficientType>::is_valid_cell(int id_cell) const
 
 // insert_cell implementation
 template<typename CoefficientType>
-void Cubical_chain_complex<CoefficientType>::insert_cell(int cell) {
+void Cubical_chain_complex<CoefficientType>::insert_cell(size_t cell) {
     if (!is_valid_cell(cell))
         throw std::out_of_range("insert_cell: trying to insert cell with invalid index");
     
@@ -762,15 +762,15 @@ void Cubical_chain_complex<CoefficientType>::insert_cell(int cell) {
         return; // cell has already been visited
     }
     
-    std::vector<int> cell_coords(ind2khal(cell));
+    std::vector<size_t> cell_coords(ind2khal(cell));
     int dim = calculate_dimension(cell_coords);
     
     _cells[cell] = true;
-    int cell_base_index = _base2bool[dim].size();
+    size_t cell_base_index = _base2bool[dim].size();
     _base2bool[dim].push_back(cell);
     _bool2base[dim][cell] = cell_base_index;
     
-    std::vector<int> boundaries(calculate_boundaries(cell));
+    std::vector<size_t> boundaries(calculate_boundaries(cell));
     for (const auto& boundary : boundaries) {
         if (!_cells[boundary]) {
             insert_cell(boundary);
@@ -785,12 +785,12 @@ void Cubical_chain_complex<CoefficientType>::insert_cell(int cell) {
 // calculate_d implementation
 template<typename CoefficientType>
 void Cubical_chain_complex<CoefficientType>::calculate_d(int dim)  {
-    int nb_lignes = (dim == 0) ? 0 : nb_cells(dim - 1);
+    size_t nb_lignes = (dim == 0) ? 0 : nb_cells(dim - 1);
     
     _d[dim] = CMatrix(nb_lignes, nb_cells(dim));
     
     // Iterate through the cells of dimension dim
-    for (int i = 0; i < nb_cells(dim); ++i) {
+    for (size_t i = 0; i < nb_cells(dim); ++i) {
         // Boundary of the i-th cell of dimension dim
         CChain boundary = boundary_cell(i, dim);
         
@@ -801,9 +801,9 @@ void Cubical_chain_complex<CoefficientType>::calculate_d(int dim)  {
 
 // calculate_dimension implementation
 template<typename CoefficientType>
-int Cubical_chain_complex<CoefficientType>::calculate_dimension(const std::vector<int>& cell) const {
+int Cubical_chain_complex<CoefficientType>::calculate_dimension(const std::vector<size_t>& cell) const {
     int dimension = 0;
-    for (int index : cell) {
+    for (size_t index : cell) {
         if (index % 2 == 1) { // Un index impair indique une dimension plus élevée
             dimension++;
         }
@@ -813,19 +813,19 @@ int Cubical_chain_complex<CoefficientType>::calculate_dimension(const std::vecto
 
 // calculate_boundaries implementation
 template<typename CoefficientType>
-std::vector<int> Cubical_chain_complex<CoefficientType>::calculate_boundaries(int idcell) const {
-    std::vector<int> boundaries;
-    std::vector<int> c = ind2khal(idcell);
+std::vector<size_t> Cubical_chain_complex<CoefficientType>::calculate_boundaries(size_t idcell) const {
+    std::vector<size_t> boundaries;
+    std::vector<size_t> c = ind2khal(idcell);
     
-    for (int i = 0; i < _dim; ++i) {
+    for (size_t i = 0; i < _dim; ++i) {
         if (c[i] % 2 == 1)
         {
             // Calculate the coefficient based on the number of odd entries in c from 0 to i-1
-            int cell1 = idcell + _P[i];
+            size_t cell1 = idcell + _P[i];
             if (is_valid_cell(cell1))
                 boundaries.push_back(cell1) ;
             
-            int cell2 = idcell - _P[i];
+            size_t cell2 = idcell - _P[i];
             if (is_valid_cell(cell2))
                 boundaries.push_back(cell2) ;
         }
@@ -859,20 +859,20 @@ void Cubical_chain_complex<CoefficientType>::Cubical_chain_complex_to_vtk(const 
     // Points
     size_t nnodes = K.nb_cells(0) ;
     out << "POINTS " << nnodes << " double" << endl ;
-    for (int n = 0; n < nnodes; ++n)
+    for (size_t n = 0; n < nnodes; ++n)
     {
         vector<double> p(K.get_vertex_coords(n)) ;
         for (double x : p)
             out << x << " " ;
-        for (int i = p.size(); i<3; ++i) // points must be 3D -> add zeros
+        for (size_t i = p.size(); i<3; ++i) // points must be 3D -> add zeros
             out << "0 " ;
         out << endl ;
     }
     
-    int ncells_tot = 0, size_cells_tot = 0 ;
+    size_t ncells_tot = 0, size_cells_tot = 0 ;
     std::vector<int> types ;
     std::vector<int> scalars ;
-    std::vector<int> ids ;
+    std::vector<size_t> ids ;
     // all cells must be printed
     {
         // Cells up to dimension 3
@@ -880,14 +880,14 @@ void Cubical_chain_complex<CoefficientType>::Cubical_chain_complex_to_vtk(const 
         for (int q=0; q<=K.dim(); ++q)
         {
             ncells_tot += K.nb_cells(q) ;
-            const int size_cell = 1<<q ;
+            const size_t size_cell = 1<<q ;
             size_cells_tot += (size_cell+1)*K.nb_cells(q) ;
         }
         out << "CELLS " << ncells_tot << " " << size_cells_tot << endl ;
         // Output cells by increasing dimension
         
         // Vertices
-        for (int i = 0; i<K.nb_cells(0); ++i)
+        for (size_t i = 0; i<K.nb_cells(0); ++i)
         {
             out << "1 " << i << endl ;
             types.push_back(Cubical_chain_complex<CoefficientType>::VTK_cubtypes.at(0)) ;
@@ -900,12 +900,12 @@ void Cubical_chain_complex<CoefficientType>::Cubical_chain_complex_to_vtk(const 
         // Cells of higher dimension
         for (int q=1; q<=K.dim(); ++q)
         {
-            const int size_cell = 1<<q ; //int_exp(2, q) ;
-            for (int id =0; id < K.nb_cells(q); ++id)
+            const size_t size_cell = 1<<q ; //int_exp(2, q) ;
+            for (size_t id =0; id < K.nb_cells(q); ++id)
             {
-                vector<int> verts(K.khal_to_verts(K.ind2khal(K._base2bool.at(q).at(id)))) ;
+                vector<size_t> verts(K.khal_to_verts(K.ind2khal(K._base2bool.at(q).at(id)))) ;
                 out << size_cell << " " ;
-                for (int i : verts)
+                for (size_t i : verts)
                     out << i << " " ;
                 out << endl ;
                 types.push_back(Cubical_chain_complex<CoefficientType>::VTK_cubtypes.at(q)) ;
@@ -936,7 +936,7 @@ void Cubical_chain_complex<CoefficientType>::Cubical_chain_complex_to_vtk(const 
         // CELL_IDs
         out << "SCALARS CellId " << "int" << " 1" << endl ;
         out << "LOOKUP_TABLE default" << endl ;
-        for (int i : ids)
+        for (size_t i : ids)
             out << i << " " ;
         out << endl ;
     }
@@ -949,7 +949,7 @@ void Cubical_chain_complex<CoefficientType>::Cubical_chain_complex_to_vtk(const 
  */
 
 template <typename CoefficientType>
-void Cubical_chain_complex<CoefficientType>::Cubical_chain_complex_chain_to_vtk(const Cubical_chain_complex<CoefficientType> &K, const std::string &filename, const OSM::Sparse_chain<CoefficientType, OSM::COLUMN>& chain, int q, int cellId)
+void Cubical_chain_complex<CoefficientType>::Cubical_chain_complex_chain_to_vtk(const Cubical_chain_complex<CoefficientType> &K, const std::string &filename, const OSM::Sparse_chain<CoefficientType, OSM::COLUMN>& chain, int q, size_t cellId)
 {
     bool with_scalars = (cellId != -1) ;
     
@@ -968,29 +968,29 @@ void Cubical_chain_complex<CoefficientType>::Cubical_chain_complex_chain_to_vtk(
     out << "DATASET  UNSTRUCTURED_GRID" << endl ;
     
     // Points
-    int nnodes = K.nb_cells(0) ;
+    size_t nnodes = K.nb_cells(0) ;
     out << "POINTS " << nnodes << " double" << endl ;
-    for (int n = 0; n < nnodes; ++n)
+    for (size_t n = 0; n < nnodes; ++n)
     {
         vector<double> p(K.get_vertex_coords(n)) ;
         for (double x : p)
             out << x << " " ;
-        for (int i = p.size(); i<3; ++i) // points must be 3D -> add zeros
+        for (size_t i = p.size(); i<3; ++i) // points must be 3D -> add zeros
             out << "0 " ;
         out << endl ;
     }
     
-    int ncells_tot = 0, size_cells_tot = 0 ;
+    size_t ncells_tot = 0, size_cells_tot = 0 ;
     std::vector<int> types ;
     std::vector<int> scalars ;
-    std::vector<int> ids ;
+    std::vector<size_t> ids ;
     
     // output only cells of the chain (dimension q)
     {
         // 1 - Compute the number of cells / size of encoding
         {
-            const int size_cell = 1<<q ;
-            for (int id =0; id < K.nb_cells(q); ++id)
+            const size_t size_cell = 1<<q ;
+            for (size_t id =0; id < K.nb_cells(q); ++id)
             {
                 if (!chain.is_null(id))
                 {
@@ -1003,15 +1003,15 @@ void Cubical_chain_complex<CoefficientType>::Cubical_chain_complex_chain_to_vtk(
         out << "CELLS " << ncells_tot << " " << size_cells_tot << endl ;
         
         {
-            const int size_cell = q+1 ;
-            for (int id =0; id < K.nb_cells(q); ++id)
+            const size_t size_cell = q+1 ;
+            for (size_t id =0; id < K.nb_cells(q); ++id)
             {
                 if (!chain.is_null(id))
                 {
-                    vector<int> khal(K.ind2khal(K._base2bool.at(q).at(id))) ;
-                    vector<int> verts(K.khal_to_verts(K.ind2khal(K._base2bool.at(q).at(id)))) ;
+                    vector<size_t> khal(K.ind2khal(K._base2bool.at(q).at(id))) ;
+                    vector<size_t> verts(K.khal_to_verts(K.ind2khal(K._base2bool.at(q).at(id)))) ;
                     out << size_cell << " " ;
-                    for (int i : verts)
+                    for (size_t i : verts)
                         out << i << " " ;
                     out << endl ;
                     types.push_back(Cubical_chain_complex<CoefficientType>::VTK_cubtypes.at(q)) ;
@@ -1046,7 +1046,7 @@ void Cubical_chain_complex<CoefficientType>::Cubical_chain_complex_chain_to_vtk(
         // CELL_IDs
         out << "SCALARS CellId " << "int" << " 1" << endl ;
         out << "LOOKUP_TABLE default" << endl ;
-        for (int i : ids)
+        for (size_t i : ids)
             out << i << " " ;
         out << endl ;
     }
