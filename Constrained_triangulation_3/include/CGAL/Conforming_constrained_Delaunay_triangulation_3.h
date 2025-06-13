@@ -638,18 +638,6 @@ public:
     // ----------------------------------
     using parameters::choose_parameter;
     using parameters::get_parameter;
-#ifndef CGAL_CDT_3_DISABLE_INPUT_CHECKS
-    const bool return_empty_on_invalid_input =
-        choose_parameter(get_parameter(np, internal_np::return_empty_on_invalid_input), false);
-
-    if (choose_parameter(get_parameter(np, internal_np::do_self_intersection_tests), true))
-    {
-      CGAL_precondition_msg(return_empty_on_invalid_input || preconditions_verified_mesh(mesh, np),
-                            "Conforming_constrained_Delaunay_triangulation_3: mesh self-intersects");
-    }
-
-    if(return_empty_on_invalid_input && !preconditions_verified_mesh(mesh, np)) return;
-#endif
 
     auto mesh_vp_map = choose_parameter(get_parameter(np, internal_np::vertex_point), get(CGAL::vertex_point, mesh));
 
@@ -777,15 +765,6 @@ public:
     // ----------------------------------
     using parameters::choose_parameter;
     using parameters::get_parameter;
-#ifndef CGAL_CDT_3_DISABLE_INPUT_CHECKS
-    const bool return_empty_on_invalid_input =
-        choose_parameter(get_parameter(np, internal_np::return_empty_on_invalid_input), false);
-
-    CGAL_precondition_msg(return_empty_on_invalid_input || preconditions_verified_soup(points, polygons, np),
-                          "Conforming_constrained_Delaunay_triangulation_3: polygon soup self-intersects");
-
-    if(return_empty_on_invalid_input && !preconditions_verified_soup(points, polygons, np)) return;
-#endif
 
     using PointRange_const_iterator = typename PointRange::const_iterator;
     using PointRange_value_type = typename std::iterator_traits<PointRange_const_iterator>::value_type;

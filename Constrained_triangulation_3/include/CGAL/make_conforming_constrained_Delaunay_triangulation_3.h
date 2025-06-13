@@ -43,16 +43,19 @@ namespace CGAL {
 
   By default, each face of the input is considered a polygonal constraint for the triangulation. The
   named parameter `plc_face_id` can be used to describe larger polygonal constraints, possibly with holes. If
-  used, this parameter must be a property map that associates each face of the input with a patch
-  identifier. Faces with the same patch identifier are considered part of the same surface patch. Each of these
+  used, this parameter must be a property map that associates each face of the input with a PLC face
+  identifier. Faces with the same face identifier are considered part of the same surface patch. Each of these
   surface patches (defined as the union of the input faces with a given patch identifier) is expected to be a polygon or
   a polygon with holes, with coplanar vertices (or nearly coplanar up to the precision of the number type used).
 
   The generated triangulation will conform to the faces of the input, or to the surface patches
   described by the `plc_face_id` property map if provided.
 
+  In the case where the input contains a non-planar PLC face, building the triangulation may fail with an exception
+  of type `CGAL::Non_planar_plc_facet_exception`.
 
   \pre The input data must not be coplanar.
+  \pre The input data must not have self-intersections.
 
   Template Parameters        {#make_conforming_constrained_Delaunay_triangulation_3_template_parameters}
   -------------------
@@ -121,16 +124,6 @@ namespace CGAL {
  *                   Faces of `mesh` with the same patch identifier are considered part of the same PLC face.}
  *   \cgalParamNEnd
  *
- *   \cgalParamNBegin{return_empty_on_invalid_input}
- *     \cgalParamDescription{a Boolean activating the check of preconditions on the input
- *                           before starting to construct the triangulation.
- *                           If the check is activated and the preconditions are not satisfied,
- *                           an empty triangulation is immediately returned.}
- *     \cgalParamType{Boolean}
- *     \cgalParamDefault{`false`}
- *     \cgalParamExtra{If this parameter is set to `false` and the preconditions are not satisfied, the algorithm may throw an exception or crash.}
- *   \cgalParamNEnd
- *
  *   \cgalParamNBegin{geom_traits}
  *     \cgalParamDescription{an instance of a geometric traits class}
  *     \cgalParamType{`Traits` as defined above in the section \ref make_conforming_constrained_Delaunay_triangulation_3_returned_type}
@@ -197,16 +190,6 @@ auto make_conforming_constrained_Delaunay_triangulation_3(const PolygonMesh &mes
  *                   as key type and with any value type that is a *regular* type (model of `Regular`)}
  *   \cgalParamExtra{If this parameter is omitted, each facet of the polygon soup is considered a separate PLC face.}
  *   \cgalParamExtra{Otherwise facets with the same patch identifier are considered part of the same PLC face.}
- *   \cgalParamNEnd
- *
- *   \cgalParamNBegin{return_empty_on_invalid_input}
- *     \cgalParamDescription{a Boolean activating the check of preconditions on the input
- *                           before starting to construct the triangulation.
- *                           If the check is activated and the preconditions are not satisfied,
- *                           an empty triangulation is immediately returned.}
- *     \cgalParamType{Boolean}
- *     \cgalParamDefault{`false`}
- *     \cgalParamExtra{If this parameter is set to `false` and the preconditions are not satisfied, the algorithm may throw an exception or crash.}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{geom_traits}
