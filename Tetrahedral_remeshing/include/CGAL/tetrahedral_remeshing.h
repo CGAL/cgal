@@ -238,7 +238,10 @@ void tetrahedral_isotropic_remeshing(
   std::cout << "Init tetrahedral remeshing...";
   std::cout.flush();
 #endif
-
+//#ifdef CGAL_TETRAHEDRAL_REMESHING_USE_ATOMIC
+//  atomic_remesh(tr, sizing, cell_select, protect, smooth_constrained_edges, max_it,true);
+//#else
+//
   using Remesher = typename Remesher_types::type;
   Remesher remesher(tr, sizing, protect
                   , vcmap, ecmap, fcmap
@@ -260,6 +263,7 @@ void tetrahedral_isotropic_remeshing(
 #endif
 
   remesher.remesh(max_it, nb_extra_iterations);
+//#endif // CGAL_TETRAHEDRAL_REMESHING_USE_ATOMIC
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
   const double angle_bound = 5.0;
