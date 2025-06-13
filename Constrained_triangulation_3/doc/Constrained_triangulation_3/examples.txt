@@ -31,20 +31,13 @@ How to use `CGAL::tetrahedral_isotropic_remeshing` with a constrained Delaunay t
 From a non-manifold OFF file, construct the constrained Delaunay triangulation.
 */
 
-/*!
-\example Constrained_triangulation_3/ccdt_3_after_autorefinement.cpp
-@brief
-
-From a self-intersecting triangulated surface in an OFF file, construct the constrained Delaunay triangulation
-after autorefinement.
-*/
 
 /*!
 \example Constrained_triangulation_3/ccdt_3_preprocessing.cpp
 @brief
 
-From a self-intersecting and non-triangulated surface surface in an OFF file,
-construct the constrained Delaunay triangulation after preprocessing.
+From a self-intersecting and non-triangulated surface in an OFF file,
+construct the constrained Delaunay triangulation after preprocessing by autorefinement.
 */
 
 /*!
