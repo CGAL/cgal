@@ -80,7 +80,7 @@ public:
      *
      * Constructor with sizes, initialize an empty Matrix of type `ChainTypeFlag` with coefficients of type `CoefficientType` and a given size along rows/columns.
      */
-    SparseMatrix(const int rowCount, const int columnCount) ;
+    SparseMatrix(const size_t rowCount, const size_t columnCount) ;
     
     /**
      * \brief Create a new SparseMatrix from another SparseMatrix object (with possibly a different `ChainTypeFlag`).
@@ -117,7 +117,7 @@ public:
      *
      * The matrix size as a row/column pair.
      */
-    std::pair<int, int> dimensions();
+    std::pair<size_t, size_t> dimensions();
     
     /**
      * \brief Iterator to the beginning of the chains indices (visited by increasing indices).
@@ -281,45 +281,45 @@ public:
      *
      * If the matrix is column-major, returns the `i`th column, and if the matrix is row-major, returns the `i`th row.
      */
-    MatrixChain operator[](int index) const;
+    MatrixChain operator[](size_t index) const;
     
     /**
      * \brief Set a given coefficient.
      *
      * Assign the scalar `d` to the coefficient on row `i` and column `j`.
      */
-    friend void set_coef(Sparse_matrix& matrix, int i, int j, const CoefficientType d);
+    friend void set_coef(Sparse_matrix& matrix, size_t i, size_t j, const CoefficientType d);
     
     /**
      * \brief Get a given coefficient.
      *
      * Returns the coefficient on row `i` and column `j` of the matrix.
      */
-    friend CoefficientType get_coef(const Sparse_matrix& matrix, int i, int j);
+    friend CoefficientType get_coef(const Sparse_matrix& matrix, size_t i, size_t j);
     
     /**
      * \brief Get the value of the column at a given `index` from the matrix (whatever the `ChainTypeFlag` of the matrix).
      *
      * For column-matrices, it is equivalent to `operator[]`, for row-matrices a traversal of the matrix is required (in \f$\mathcal O(n)\f$).
      */
-    friend Sparse_chain<CoefficientType, COLUMN> get_column(const SparseMatrix &matrix, int index);
+    friend Sparse_chain<CoefficientType, COLUMN> get_column(const SparseMatrix &matrix, size_t index);
 
     /**
      * \brief Get the value of the row at a given `index` from the matrix (whatever the `ChainTypeFlag` of the matrix).
      *
      * For row-matrices, it is equivalent to `operator[]`, for column-matrices a traversal of the matrix is required (in \f$\mathcal O(n)\f$).
      */
-    friend Sparse_chain<CoefficientType, ROW> get_row(const SparseMatrix &matrix, int index);
+    friend Sparse_chain<CoefficientType, ROW> get_row(const SparseMatrix &matrix, size_t index);
 
     /**
      * \brief Get a constant reference over the column of  index`i` from a column matrix.
      */
-    const Sparse_chain<CoefficientType, COLUMN> & cget_column(const SparseMatrix<CoefficientType, COLUMN> &_matrix, int i);
+    const Sparse_chain<CoefficientType, COLUMN> & cget_column(const SparseMatrix<CoefficientType, COLUMN> &_matrix, size_t i);
     
     /**
      * \brief Get a constant reference over the row of  index`i` from a row matrix.
      */
-    const Sparse_chain<CoefficientType, ROW> & cget_row(const SparseMatrix<CoefficientType, ROW> &_matrix, int i);
+    const Sparse_chain<CoefficientType, ROW> & cget_row(const SparseMatrix<CoefficientType, ROW> &_matrix, size_t i);
     
     /**
      * \brief Set a column in the matrix (whatever the `ChainTypeFlag` of the matrix).
@@ -327,7 +327,7 @@ public:
      * Set the `i`th column of `matrix` to `chain`.
      * For column-matrices, it should be equivalent to an affectation, however, for row-matrices, a traversal of the matrix is required (in \f$\mathcal O(n)\f$).
      */
-    void set_column(SparseMatrix &matrix, int i, const Sparse_chain<CoefficientType, COLUMN> &chain);
+    void set_column(SparseMatrix &matrix, size_t i, const Sparse_chain<CoefficientType, COLUMN> &chain);
     
     /**
      * \brief Set a row in the matrix (whatever the `ChainTypeFlag` of the matrix).
@@ -335,49 +335,49 @@ public:
      * Set the `i`th row of `matrix` to `chain`.
      * For row-matrices, it should be equivalent to an affectation, however, for column-matrices, a traversal of the matrix is required (in \f$\mathcal O(n)\f$).
      */
-    void set_row(SparseMatrix &matrix, int i, const Sparse_chain<CoefficientType, ROW> &chain);
+    void set_row(SparseMatrix &matrix, size_t i, const Sparse_chain<CoefficientType, ROW> &chain);
     
     /**
      * \brief Get a submatrix from the matrix.
      *
      * Nullifies the chain of index `i` along the major direction of a copy of the matrix returns it.
      */
-    friend SparseMatrix operator/(const SparseMatrix &_matrix, int i);
+    friend SparseMatrix operator/(const SparseMatrix &_matrix, size_t i);
     
     /**
      * \brief Get a submatrix from the matrix and assign.
      *
      * Removes (along the major dimension) all indexes provided in the vector `indexes` from the matrix and returns it.
      */
-    SparseMatrix& operator/=(const std::vector<int> &indexes);
+    SparseMatrix& operator/=(const std::vector<size_t> &indexes);
     
     /**
      * \brief Get a submatrix from the matrix and assign.
      *
      * Removes (along the major dimension) the chain of index `i` from the matrix and returns it.
      */
-    SparseMatrix& operator/=(int i);
+    SparseMatrix& operator/=(size_t i);
     
     /**
      * \brief Nullifies a column from the matrix.
      *
      * Removes column of index `i` whatever the `ChainTypeFlag` of the matrix. For column matrices, it just comes to the `\=` operator and for row matrices, it entails a traversal of the matrix.
      */
-    friend Sparse_matrix& del_column(Sparse_matrix& matrix, int index);
+    friend Sparse_matrix& del_column(Sparse_matrix& matrix, size_t index);
     
     /**
      * \brief Nullifies a row from the matrix.
      *
      * Removes row of index `i` whatever the `ChainTypeFlag` of the matrix. For row matrices, it just comes to the `\=` operator and for column matrices, it entails a traversal of the matrix.
      */
-    friend Sparse_matrix& del_row(Sparse_matrix& matrix, int index);
+    friend Sparse_matrix& del_row(Sparse_matrix& matrix, size_t index);
     
     /**
      * \brief Nullifies a coefficient of the matrix.
      *
      * Removes coefficient on row `i` / column `j` of the matrix.
      */
-    friend Sparse_matrix& del_coef(Sparse_matrix& matrix, int i, int j);
+    friend Sparse_matrix& del_coef(Sparse_matrix& matrix, size_t i, size_t j);
     
     /// @}
     

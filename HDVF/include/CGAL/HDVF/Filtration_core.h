@@ -58,7 +58,7 @@ public:
      * - First element of the pair: index of the cell.
      * - Second element of the pair: dimension of the cell.
      */
-    typedef std::pair<int, int> CellDim ;
+    typedef std::pair<size_t, int> CellDim ;
     
     /*! \brief Type of value returned by the iterator.
      */
@@ -76,7 +76,7 @@ protected:
     std::vector<DegreeType> _deg ;
     
     /** \brief Map from cells to their index in the filtration. */
-    std::map<CellDim,int> _cell_to_t ;
+    std::map<CellDim,size_t> _cell_to_t ;
     
     /*!
      Type of column-major sparse matrices
@@ -144,7 +144,7 @@ public:
          * \param[in] f Constant reference on the `Filtration_core` iterated.
          * \param[in] i The initial index.
          */
-        iterator(const Filtration_core& f, int i=0) : _i(i), _f(f) {}
+        iterator(const Filtration_core& f, size_t i=0) : _i(i), _f(f) {}
         
         /*! \brief Iterator dereference
          *
@@ -160,7 +160,7 @@ public:
         
         /*! \brief Get the time (or index in the filtration) associated to current iterator.
          */
-        int time () const { return _i ; }
+        size_t time () const { return _i ; }
         
         /*! \brief Get the cell (identified by its index and dimension) associated to current iterator.
          */
@@ -200,7 +200,7 @@ public:
         friend bool operator!= (const iterator& a, const iterator& b)  { return a._i != b._i; };
         
     private:
-        int _i ; // Index along _persist
+        size_t _i ; // Index along _persist
         const Filtration_core& _f ; // Filtration_core iterated
     };
     
@@ -221,23 +221,23 @@ public:
     // getters
     /*! \brief Get the filtration size.
      */
-    int get_filtration_size () const { return _filtration.size();}
+    size_t get_filtration_size () const { return _filtration.size();}
     
     /*! \brief Get the cell (that is cell index and dimension) at the index `i` of the filtration.
      */
-    CellDim get_cell_dim (int i) const { return _filtration.at(i); }
+    CellDim get_cell_dim (size_t i) const { return _filtration.at(i); }
     
     /*! \brief Get the degree of the `i`th element of the filtration.
      */
-    DegreeType get_degree (int i) const { return _deg.at(i); }
+    DegreeType get_degree (size_t i) const { return _deg.at(i); }
     
     // Output filtration
     /*! \brief Overload of the `<<`operator for filtrations.
      */
     friend ostream & operator<<(ostream & out, const Filtration_core &f)
     {
-        const int N(f._filtration.size()) ;
-        for (int i=0; i<N; ++i)
+        const size_t N(f._filtration.size()) ;
+        for (size_t i=0; i<N; ++i)
             // Filtration_core
         {
             out << i << " -> (" << f._filtration.at(i).first << "- dim " << f._filtration.at(i).second << " , " << f._deg.at(i) << ") " << std::endl ;
@@ -252,15 +252,15 @@ public:
      *
      * \returns A vector containing, for each dimension, the vector of labels by cell index.
      */
-    vector<vector<int> > export_filtration () const
+    vector<vector<size_t> > export_filtration () const
     {
-        vector<vector<int> > labels(_K.dim()+1) ;
+        vector<vector<size_t> > labels(_K.dim()+1) ;
         for (int q=0; q<=this->_K.dim(); ++q)
         {
-            for (int i = 0; i<this->_K.nb_cells(q); ++i)
+            for (size_t i = 0; i<this->_K.nb_cells(q); ++i)
             {
                 const CellDim cell(i,q) ;
-                const int t(_cell_to_t.at(cell));
+                const size_t t(_cell_to_t.at(cell));
                 labels.at(q).push_back(t) ;
             }
         }
@@ -285,7 +285,7 @@ protected:
 template <typename CoefficientType, typename ComplexType, typename DegreeType>
 void Filtration_core<CoefficientType, ComplexType, DegreeType>::build_filtration_structure()
 {
-    for (int i = 0; i<_filtration.size(); ++i)
+    for (size_t i = 0; i<_filtration.size(); ++i)
     {
         const CellDim c(_filtration.at(i)) ;
         // c : filtration index i, index in the basis reordered by filtration : j
@@ -297,7 +297,7 @@ template <typename CoefficientType, typename ComplexType, typename DegreeType>
 bool Filtration_core<CoefficientType, ComplexType, DegreeType>::is_valid_filtration() const
 {
     bool valid = true ;
-    for (int i=0; i<_filtration.size() && valid; ++i)
+    for (size_t i=0; i<_filtration.size() && valid; ++i)
     {
         if (i>0)
             valid = valid & (_deg.at(i) >= _deg.at(i-1)) ;

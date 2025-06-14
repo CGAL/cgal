@@ -33,7 +33,7 @@ template<typename CoefficientType> class Duality_simplicial_complex_tools ;
  
  An abstract simplicial complex is a set of simplices, also called cells (class `Simplex`) such that: all the faces of a given simplex also belong to the complex and any two simplices intersect exactly along a common face.
  
- <img src="simplicial_complex.png" align="center" width=20%/>
+ <img src="simplicial_complex.png" align="center" width=45%/>
  
  A simplex of dimension q contains exactly q+1 vertices (we will thus denote it by \f$\langle v_0, \ldots, v_q \rangle\f$). A 0-cell is thus a vertex, a 1-cell contains two vertices (edge), a 2-cell contains three vertices (triangle) while a 3-cell is a tetrahedron.
  
@@ -218,11 +218,12 @@ public:
     template <typename CoefficientT, int ChainTypeF>
     CChain cofaces_chain (OSM::Sparse_chain<CoefficientT, ChainTypeF> chain, int q) const
     {
+        typedef OSM::Sparse_chain<CoefficientT, ChainTypeF> ChainType;
         // Compute the cofaces
         if (q < dim())
         {
             CChain fstar_cofaces(nb_cells(q+1)) ;
-            for (typename RChain::const_iterator it = chain.cbegin(); it != chain.cend(); ++it)
+            for (typename ChainType::const_iterator it = chain.cbegin(); it != chain.cend(); ++it)
             {
                 // Set the cofaces of it->first in dimension dim+1
                 RChain cofaces(cod(it->first,q)) ;
@@ -498,11 +499,113 @@ public:
      *
      * The method generates legacy text VTK files. Labels are exported as such in a VTK property, together with CellID property, containing the index of each cell.
      *
+     * \tparam LabelType Type of labels provided (default: int).
+     *
      * \param[in] K Simplicial complex exported.
      * \param[in] filename Output file root (output filenames will be built from this root).
      * \param[in] labels Pointer to a vector of labels in each dimension. (*labels).at(q) is the set of integer labels of cells of dimension q. If labels is NULL, only CellID property is exported.
+     * \param[in] label_type_name Typename used in vtk export (e.g. "int" or "unsigned_long", see <a href = "https://docs.vtk.org/en/latest/design_documents/VTKFileFormats.html">VTK manual </a>).
      */
-    static void Simplicial_chain_complex_to_vtk(const Simplicial_chain_complex &K, const std::string &filename, const std::vector<std::vector<int> > *labels=NULL) ;
+    template <typename LabelType = int>
+    static void Simplicial_chain_complex_to_vtk(const Simplicial_chain_complex &K, const std::string &filename, const std::vector<std::vector<LabelType> > *labels=NULL, string label_type_name = "int")
+    {
+        typedef Simplicial_chain_complex<CoefficientType> ComplexType;
+        if (K._coords.size() != K.nb_cells(0))
+        {
+            std::cerr << "SimpComplex_to_vtk. Error, wrong number of points provided.\n";
+            throw std::runtime_error("Geometry of points invalid.");
+        }
+        
+        bool with_scalars = (labels != NULL) ;
+        
+        // Load out file...
+        std::ofstream out ( filename, std::ios::out | std::ios::trunc);
+        
+        if ( not out . good () ) {
+            std::cerr << "SimpComplex_to_vtk. Fatal Error:\n  " << filename << " not found.\n";
+            throw std::runtime_error("File Parsing Error: File not found");
+        }
+        
+        // Header
+        out << "# vtk DataFile Version 2.0" << endl ;
+        out << "generators" << endl ;
+        out << "ASCII" << endl ;
+        out << "DATASET  UNSTRUCTURED_GRID" << endl ;
+        
+        // Points
+        size_t nnodes = K._coords.size() ;
+        out << "POINTS " << nnodes << " double" << endl ;
+        const std::vector<ComplexType::Point>& coords(K.get_vertices_coords()) ;
+        for (size_t n = 0; n < nnodes; ++n)
+        {
+            vector<double> p(coords.at(n)) ;
+            for (double x : p)
+                out << x << " " ;
+            for (size_t i = p.size(); i<3; ++i) // points must be 3D -> add zeros
+                out << "0 " ;
+            out << endl ;
+        }
+        
+        size_t ncells_tot = 0, size_cells_tot = 0 ;
+        std::vector<int> types ;
+        std::vector<LabelType> scalars ;
+        std::vector<size_t> ids ;
+        // all cells must be printed
+        {
+            // Cells up to dimension 3
+            // Size : size of a cell of dimension q : q+1
+            for (int q=0; q<=K._dim; ++q)
+            {
+                ncells_tot += K.nb_cells(q) ;
+                const size_t size_cell = q+1 ;
+                size_cells_tot += (size_cell+1)*K.nb_cells(q) ;
+            }
+            out << "CELLS " << ncells_tot << " " << size_cells_tot << endl ;
+            // Output cells by increasing dimension
+            for (int q=0; q<=K._dim; ++q)
+            {
+                const size_t size_cell = q+1 ;
+                for (size_t id =0; id < K.nb_cells(q); ++id)
+                {
+                    Simplex verts(K._ind2simp.at(q).at(id)) ;
+                    out << size_cell << " " ;
+                    for (typename Simplex::const_iterator it = verts.cbegin(); it != verts.cend(); ++it)
+                        out << *it << " " ;
+                    out << endl ;
+                    types.push_back(ComplexType::VTK_simptypes.at(q)) ;
+                    if (with_scalars)
+                    {
+                        scalars.push_back((*labels).at(q).at(id)) ;
+                        ids.push_back(id) ;
+                    }
+                }
+            }
+            
+            // CELL_TYPES
+            out << "CELL_TYPES " << ncells_tot << endl ;
+            for (int t : types)
+                out << t << " " ;
+            out << endl ;
+        }
+        
+        if (with_scalars)
+        {
+            // CELL_LABEL
+            out << "CELL_DATA " << ncells_tot << endl ;
+            out << "SCALARS Label " << label_type_name << " 1" << endl ;
+            out << "LOOKUP_TABLE default" << endl ;
+            for (LabelType s : scalars)
+                out << s << " " ;
+            out << endl ;
+            // CELL_IDs
+            out << "SCALARS CellId " << "int" << " 1" << endl ;
+            out << "LOOKUP_TABLE default" << endl ;
+            for (size_t i : ids)
+                out << i << " " ;
+            out << endl ;
+        }
+        out.close() ;
+    }
     
     /**
      * \brief Method exporting a chain over a simplicial complex to a VTK file.
@@ -522,108 +625,6 @@ public:
 template <typename CoefficientType> const
 std::vector<int> Simplicial_chain_complex<CoefficientType>::VTK_simptypes({1, 3, 5, 10});
 
-
-// Simplicial_chain_complex_to_vtk
-template <typename CoefficientType>
-void Simplicial_chain_complex<CoefficientType>::Simplicial_chain_complex_to_vtk(const Simplicial_chain_complex &K, const std::string &filename, const std::vector<std::vector<int> > *labels)
-{
-    typedef Simplicial_chain_complex<CoefficientType> ComplexType;
-    if (K._coords.size() != K.nb_cells(0))
-    {
-        std::cerr << "SimpComplex_to_vtk. Error, wrong number of points provided.\n";
-        throw std::runtime_error("Geometry of points invalid.");
-    }
-    
-    bool with_scalars = (labels != NULL) ;
-    
-    // Load out file...
-    std::ofstream out ( filename, std::ios::out | std::ios::trunc);
-    
-    if ( not out . good () ) {
-        std::cerr << "SimpComplex_to_vtk. Fatal Error:\n  " << filename << " not found.\n";
-        throw std::runtime_error("File Parsing Error: File not found");
-    }
-    
-    // Header
-    out << "# vtk DataFile Version 2.0" << endl ;
-    out << "generators" << endl ;
-    out << "ASCII" << endl ;
-    out << "DATASET  UNSTRUCTURED_GRID" << endl ;
-    
-    // Points
-    size_t nnodes = K._coords.size() ;
-    out << "POINTS " << nnodes << " double" << endl ;
-    const std::vector<ComplexType::Point>& coords(K.get_vertices_coords()) ;
-    for (size_t n = 0; n < nnodes; ++n)
-    {
-        vector<double> p(coords.at(n)) ;
-        for (double x : p)
-            out << x << " " ;
-        for (size_t i = p.size(); i<3; ++i) // points must be 3D -> add zeros
-            out << "0 " ;
-        out << endl ;
-    }
-    
-    size_t ncells_tot = 0, size_cells_tot = 0 ;
-    std::vector<int> types ;
-    std::vector<int> scalars ;
-    std::vector<size_t> ids ;
-    // all cells must be printed
-    {
-        // Cells up to dimension 3
-        // Size : size of a cell of dimension q : q+1
-        for (int q=0; q<=K._dim; ++q)
-        {
-            ncells_tot += K.nb_cells(q) ;
-            const size_t size_cell = q+1 ;
-            size_cells_tot += (size_cell+1)*K.nb_cells(q) ;
-        }
-        out << "CELLS " << ncells_tot << " " << size_cells_tot << endl ;
-        // Output cells by increasing dimension
-        for (int q=0; q<=K._dim; ++q)
-        {
-            const size_t size_cell = q+1 ;
-            for (size_t id =0; id < K.nb_cells(q); ++id)
-            {
-                Simplex verts(K._ind2simp.at(q).at(id)) ;
-                out << size_cell << " " ;
-                for (typename Simplex::const_iterator it = verts.cbegin(); it != verts.cend(); ++it)
-                    out << *it << " " ;
-                out << endl ;
-                types.push_back(ComplexType::VTK_simptypes.at(q)) ;
-                if (with_scalars)
-                {
-                    scalars.push_back((*labels).at(q).at(id)) ;
-                    ids.push_back(id) ;
-                }
-            }
-        }
-        
-        // CELL_TYPES
-        out << "CELL_TYPES " << ncells_tot << endl ;
-        for (int t : types)
-            out << t << " " ;
-        out << endl ;
-    }
-    
-    if (with_scalars)
-    {
-        // CELL_LABEL
-        out << "CELL_DATA " << ncells_tot << endl ;
-        out << "SCALARS Label " << "int" << " 1" << endl ;
-        out << "LOOKUP_TABLE default" << endl ;
-        for (int s : scalars)
-            out << s << " " ;
-        out << endl ;
-        // CELL_IDs
-        out << "SCALARS CellId " << "int" << " 1" << endl ;
-        out << "LOOKUP_TABLE default" << endl ;
-        for (size_t i : ids)
-            out << i << " " ;
-        out << endl ;
-    }
-    out.close() ;
-}
 
 // Simplicial_chain_complex_chain_to_vtk
 template <typename CoefficientType>

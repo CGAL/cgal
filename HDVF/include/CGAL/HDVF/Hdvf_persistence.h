@@ -622,7 +622,6 @@ private:
         {
             CChain chain_sigma(export_homology_chain(p.sigma, p.dim)) ;
             CChain chain_tau ;
-            cout << "p.tau : " << p.tau << " - this->_K.nb_cells(p.dim+1) : " << this->_K.nb_cells(p.dim+1) << endl ;
             if (p.tau != this->_K.nb_cells(p.dim+1)) // Check if the second cell is "finite"
                 chain_tau = export_homology_chain(p.tau, p.dim+1) ;
             _export_g.push_back(std::pair<CChain,CChain>(chain_sigma, chain_tau)) ;

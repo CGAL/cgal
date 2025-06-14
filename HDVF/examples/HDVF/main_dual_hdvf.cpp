@@ -90,7 +90,10 @@ Hdvf_duality<CoefficientType, ComplexType>& dual_HDVF_comput (const ComplexType&
     HDVFType& hdvf(*(new HDVFType(L, K, options.HDVF_opt)));
     
     cout << "----> START computing dual HDVF" << endl ;
-    hdvf.compute_perfect_hdvf() ;
+    if (options.random)
+        hdvf.compute_rand_perfect_hdvf() ;
+    else
+        hdvf.compute_perfect_hdvf() ;
     cout << "------> END computing dual HDVF" << endl ;
     
     if (options.with_output)

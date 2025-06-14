@@ -25,31 +25,31 @@ namespace HDVF {
 /* Standard functions for lower star filtration */
 /* DegType = double */
 
-//std::function<double(int)> deg_fun_x = [&complex](int i)
+//std::function<double(size_t)> deg_fun_x = [&complex](size_t i)
 //{
 //    std::vector<double> Xi(complex.get_vertex_coords(i)) ;
 //    return (Xi.at(0)) ;
 //} ;
 //
-//std::function<double(int)> deg_fun_z = [&complex](int i)
+//std::function<double(size_t)> deg_fun_z = [&complex](size_t i)
 //{
 //    std::vector<double> Xi(complex.get_vertex_coords(i)) ;
 //    return (Xi.at(2)) ;
 //} ;
 
-/** \brief Function mapping coordinates to x */
+/** \brief For lower star filtration along x: function mapping coordinates to x */
 std::function<double(const std::vector<double>&)> f_x = [](const std::vector<double>& v)
 {
     return (v.at(0)) ;
 } ;
 
-/** \brief Function mapping coordinates to y */
+/** \brief For lower star filtration along y: function mapping coordinates to y */
 std::function<double(const std::vector<double>&)> f_y = [](const std::vector<double>& v)
 {
     return (v.at(1)) ;
 } ;
 
-/** \brief Function mapping coordinates to z */
+/** \brief For lower star filtration along z: function mapping coordinates to z */
 std::function<double(const std::vector<double>&)> f_z = [](const std::vector<double>& v)
 {
     return (v.at(2)) ;
@@ -57,9 +57,9 @@ std::function<double(const std::vector<double>&)> f_z = [](const std::vector<dou
 
 /** \brief Degree function from a coordinates to scalar map. */
 template<typename ComplexType>
-std::function<double(int)>  deg_fun (const ComplexType& complex, std::function<double(const vector<double>&)>& f)
+std::function<double(size_t)>  deg_fun (const ComplexType& complex, std::function<double(const vector<double>&)>& f)
 {
-    std::function<double(int)> deg_fun_f = [&complex, &f](int i)
+    std::function<double(size_t)> deg_fun_f = [&complex, &f](size_t i)
     {
         const std::vector<double> Xi(complex.get_vertex_coords(i)) ;
         return f(Xi) ;
@@ -123,7 +123,6 @@ public:
      * \param[in] K Constant reference to the underlying complex.
      * \param[in] deg Vector of vertices degrees.
      */
-    // Constructor from the vector of degrees of vertices
     Filtration_lower_star(const ComplexType& K, const std::vector<DegreeType>& deg) : FiltrationCoreT(K)
     {
         star_filtration(deg);
@@ -136,7 +135,7 @@ public:
      * \param[in] K Constant reference to the underlying complex.
      * \param[in] deg_fun Function mapping vertices of `K` to their degree.
      */
-    Filtration_lower_star(const ComplexType& K, std::function<DegreeType(int)>& deg_fun) : FiltrationCoreT(K)
+    Filtration_lower_star(const ComplexType& K, std::function<DegreeType(size_t)>& deg_fun) : FiltrationCoreT(K)
     {
         star_filtration(deg_fun);
     }
@@ -150,7 +149,7 @@ protected:
     
     /*! \brief Function building the filtration from a function mapping vertices to their degree.
      */
-    void star_filtration(std::function<DegreeType(int)>& deg_fun) ;
+    void star_filtration(std::function<DegreeType(size_t)>& deg_fun) ;
 };
 
 
@@ -166,8 +165,8 @@ void Filtration_lower_star<CoefficientType, ComplexType, DegreeType>::star_filtr
     // -> upper star: minimum degree of vertices
     std::vector<CellDim> tmp_filtration ;
     std::vector<DegreeType> tmp_deg ;
-    std::vector<int> tmp_perm ;
-    for (int i=0; i<deg.size(); ++i)
+    std::vector<size_t> tmp_perm ;
+    for (size_t i=0; i<deg.size(); ++i)
     {
         tmp_perm.push_back(i) ;
         tmp_filtration.push_back(CellDim(i,0)) ;
@@ -176,16 +175,16 @@ void Filtration_lower_star<CoefficientType, ComplexType, DegreeType>::star_filtr
     // For all other cells
     for (int q=1; q<=this->_K.dim(); ++q)
     {
-        for (int i=0; i<this->_K.nb_cells(q); ++i)
+        for (size_t i=0; i<this->_K.nb_cells(q); ++i)
         {
             tmp_filtration.push_back(CellDim(i,q)) ;
             
             // Compute corresponding degree
             // Vertices of the cell
-            std::vector<int> verts(this->_K.bottom_faces(i,q)) ;
+            std::vector<size_t> verts(this->_K.bottom_faces(i,q)) ;
             // Compute the degree of the cell
             DegreeType d = deg.at(verts.at(0)) ;
-            for (int j=1; j<verts.size(); ++j)
+            for (size_t j=1; j<verts.size(); ++j)
             {
                 const DegreeType tmp_d(deg.at(verts.at(j))) ;
                 if (tmp_d > d)
@@ -203,7 +202,7 @@ void Filtration_lower_star<CoefficientType, ComplexType, DegreeType>::star_filtr
     
     // Create sorting function : lexicographic order over (deg, dim)
     // Test if cell i < cell j
-    auto f_sort = [&tmp_filtration, &tmp_deg] (int i, int j)
+    auto f_sort = [&tmp_filtration, &tmp_deg] (size_t i, size_t j)
     {
         // degree of i is lower than degree of j or (they are equal and the dimension of i is lower than the dimension of j)
         return ((tmp_deg[i] < tmp_deg[j]) || ((tmp_deg[i] == tmp_deg[j]) && (tmp_filtration[i].second < tmp_filtration[j].second))) ;
@@ -211,7 +210,7 @@ void Filtration_lower_star<CoefficientType, ComplexType, DegreeType>::star_filtr
     // Sort -> create the right permutation
     std::sort(tmp_perm.begin(), tmp_perm.end(), f_sort) ;
     // Insert cells in the filtration and degrees accordingly
-    for (int i=0; i<tmp_perm.size(); ++i)
+    for (size_t i=0; i<tmp_perm.size(); ++i)
     {
         this->_filtration.push_back(tmp_filtration.at(tmp_perm.at(i))) ;
         this->_deg.push_back(tmp_deg.at(tmp_perm.at(i))) ;
@@ -220,10 +219,10 @@ void Filtration_lower_star<CoefficientType, ComplexType, DegreeType>::star_filtr
 }
 
 template <typename CoefficientType, typename ComplexType, typename DegreeType>
-void Filtration_lower_star<CoefficientType, ComplexType, DegreeType>::star_filtration(std::function<DegreeType(int)>& deg_fun)
+void Filtration_lower_star<CoefficientType, ComplexType, DegreeType>::star_filtration(std::function<DegreeType(size_t)>& deg_fun)
 {
     std::vector<DegreeType> deg ;
-    for (int i=0; i<this->_K.nb_cells(0); ++i)
+    for (size_t i=0; i<this->_K.nb_cells(0); ++i)
     {
         deg.push_back(deg_fun(i)) ;
     }

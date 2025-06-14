@@ -132,7 +132,7 @@ template<typename CoefficientType, typename ComplexType, typename DegType, typen
 FiltrationType& build_filtration(const ComplexType& complex, const Options& options)
 {
     typedef FiltrationType Filtration;
-    std::function<DegType(int)>  deg_function ;
+    std::function<DegType(size_t)>  deg_function ;
 #ifndef CUST_FILTRATION
     // Standard lower star filtration along x,y or z
     if (options.star_filtr == StarFiltrStd::FiltrX)
@@ -151,11 +151,6 @@ FiltrationType& build_filtration(const ComplexType& complex, const Options& opti
     deg_function = (deg_fun(complex)) ;
 #endif
     
-//    Filtration& f = *(new Filtration(complex)) ;
-//    cout << "----> START building filtration" << endl ;
-//    f.star_filtration(deg_function) ;
-//    cout << "------> END building filtration" << endl ;
-//    return f ;
     cout << "----> START building filtration" << endl ;
     Filtration& f = *(new Filtration(complex, deg_function)) ;
     cout << "------> END building filtration" << endl ;

@@ -190,7 +190,7 @@ virtual PairCell find_pair_A(int q, bool &found) const;
  * \param[in] found Reference to a boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
  * \param[in] gamma Index of a cell to pair.
  */
-virtual PairCell find_pair_A(int q, bool &found, int gamma) const;
+virtual PairCell find_pair_A(int q, bool &found, size_t gamma) const;
 
 /**
  * \brief Find *all* valid PairCell of dimension q / q+1 for A.
@@ -215,7 +215,7 @@ virtual std::vector<PairCell> find_pairs_A(int q, bool &found) const;
  * \param[in] found Reference to a boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
  * \param[in] gamma Index of a cell to pair.
  */
-virtual std::vector<PairCell> find_pairs_A(int q, bool &found, int tau) const;
+virtual std::vector<PairCell> find_pairs_A(int q, bool &found, size_t tau) const;
 
     
 /// @}
@@ -229,7 +229,7 @@ virtual std::vector<PairCell> find_pairs_A(int q, bool &found, int tau) const;
  *
  * A pair of critical cells \f$(\gamma_1, \gamma_2)\f$ of respective dimension q and q+1 is valid for A if \f$\langle \partial_{q+1}(\gamma_2), \gamma_1 \rangle\f$ is invertible. After the A operation, \f$\gamma_1\f$ becomes PRIMARY, \f$\gamma_2\f$ becomes SECONDARY. The A functions updates the reduction accordingly (in time \f$\mathcal O(n^2)\f$).
  */
-void A(int gamma1, int gamma2, int q);
+void A(size_t gamma1, size_t gamma2, int q);
     
 /*!
  * \brief Compute a perfect HDVF.
@@ -265,19 +265,19 @@ std::vector<PairCell> compute_rand_perfect_hdvf(bool verbose = false);
  *
  * The function returns in each dimension the vector of cells with a given `flag`.
  */
-std::vector<std::vector<int> > get_flag (FlagType flag) const;
+std::vector<std::vector<size_t> > get_flag (FlagType flag) const;
     
 /*!
  * \brief Get cells with a given `flag` in dimension `q`.
  *
  * The function returns the vector of cells of dimension `q` with a given `flag`.
  */
-std::vector<int> get_flag_dim (FlagType flag, int q) const;
+std::vector<size_t> get_flag_dim (FlagType flag, int q) const;
 
 /*!
  * \brief Get the flag of the cell `tau` in dimension `q`.
  */
-FlagType get_cell_flag (int q, int tau) const;
+FlagType get_cell_flag (int q, size_t tau) const;
 
 /*!
  * \brief Get HDVF option.
@@ -339,7 +339,7 @@ virtual std::vector<std::vector<int> > export_psc_labels () const;
  *
  * \return A column-major chain.
  */
-virtual CChain export_homology_chain (int cell, int q) const;
+virtual CChain export_homology_chain (size_t cell, int q) const;
     
 /*!
  * \brief Export cohomology generators associated to `cell` (critical cell) of dimension  `q` (in particular for vtk export).
@@ -365,7 +365,7 @@ virtual CChain export_homology_chain (int cell, int q) const;
  *
  * \return A column-major chain.
  */
-virtual CChain export_cohomology_chain (int cell, int dim, bool co_faces = false) const;
+virtual CChain export_cohomology_chain (size_t cell, int dim, bool co_faces = false) const;
     
 /// @}
 

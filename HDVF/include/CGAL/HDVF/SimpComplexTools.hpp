@@ -50,7 +50,7 @@ namespace HDVF {
  *<img src="HDVF_dtorus_all.png" align="center" width=30%/>
  */
 
-template <typename CoefType, template <typename, int> typename _ChainType = OSM::Sparse_chain, template <typename, int> typename _SparseMatrixType = OSM::Sparse_matrix, typename VertexIdType = int>
+template <typename CoefType, template <typename, int> typename _ChainType = OSM::Sparse_chain, template <typename, int> typename _SparseMatrixType = OSM::Sparse_matrix, typename VertexIdType = size_t>
 void Simp_output_vtk (Hdvf_core<CoefType, Simplicial_chain_complex<CoefType>, _ChainType, _SparseMatrixType> &hdvf, Simplicial_chain_complex<CoefType> &complex, string filename = "test", bool co_faces = false)
 {
     typedef Simplicial_chain_complex<CoefType> ComplexType;
@@ -66,13 +66,13 @@ void Simp_output_vtk (Hdvf_core<CoefType, Simplicial_chain_complex<CoefType>, _C
         vector<vector<size_t> > criticals(hdvf.get_flag(CRITICAL)) ;
         for (int q = 0; q <= complex.dim(); ++q)
         {
-            for (int c : criticals.at(q))
+            for (size_t c : criticals.at(q))
             {
                 // Homology generators
                 if (hdvf.get_hdvf_opts() & (OPT_FULL | OPT_G))
                 {
                     string outfile_g(filename+"_G_"+to_string(c)+"_dim_"+to_string(q)+".vtk") ;
-                    //                    vector<vector<int> > labels = hdvf.export_label(G,c,q) ;
+                    //                    vector<vector<size_t> > labels = hdvf.export_label(G,c,q) ;
                     OSM::Sparse_chain<CoefType,OSM::COLUMN> chain(hdvf.export_homology_chain(c,q)) ;
                     ComplexType::Simplicial_chain_complex_chain_to_vtk(complex, outfile_g, chain, q, c) ;
                 }
@@ -155,10 +155,10 @@ public:
         // Visit all cells of _K and activate the corresponding bit in K
         for (int q=0; q<=_K.dim(); ++q)
         {
-            for (int i=0; i<_K.nb_cells(q); ++i)
+            for (size_t i=0; i<_K.nb_cells(q); ++i)
             {
-                const std::set<int>& simplex(_K._ind2simp.at(q).at(i).getVertices()) ;
-                const int id(L._simp2ind.at(q)[simplex]) ;
+                const std::set<size_t>& simplex(_K._ind2simp.at(q).at(i).getVertices()) ;
+                const size_t id(L._simp2ind.at(q)[simplex]) ;
                 K.set_bit_on(q, id) ;
             }
         }
@@ -171,7 +171,7 @@ public:
     {
         std::vector<IOCellType> vcells ;
         for (int q = 0; q <= _CC.dim(); ++q)
-            for (int i = 0; i<_CC.nb_cells(q); ++i)
+            for (size_t i = 0; i<_CC.nb_cells(q); ++i)
             {
                 const Simplex& s(_CC._ind2simp.at(q).at(i)) ;
                 vcells.push_back(s.getVertices()) ;
@@ -182,7 +182,7 @@ public:
     }
 } ;
 
-template <typename CoefType, typename VertexIdType = int>
+template <typename CoefType, typename VertexIdType = size_t>
 void Dual_simp_output_vtk (Hdvf_duality<CoefType, Simplicial_chain_complex<CoefType> > &hdvf, Simplicial_chain_complex<CoefType> &complex, string filename = "test", bool co_faces = false)
 {
     typedef Simplicial_chain_complex<CoefType> ComplexType;
@@ -198,13 +198,13 @@ void Dual_simp_output_vtk (Hdvf_duality<CoefType, Simplicial_chain_complex<CoefT
         vector<vector<size_t> > criticals(hdvf.get_flag(CRITICAL)) ;
         for (int q = 0; q <= complex.dim(); ++q)
         {
-            for (int c : criticals.at(q))
+            for (size_t c : criticals.at(q))
             {
                 // Homology generators
                 if (hdvf.get_hdvf_opts() & (OPT_FULL | OPT_G))
                 {
                     string outfile_g(filename+"_G_"+to_string(c)+"_dim_"+to_string(q)+".vtk") ;
-                    //                    vector<vector<int> > labels = hdvf.export_label(G,c,q) ;
+                    //                    vector<vector<size_t> > labels = hdvf.export_label(G,c,q) ;
                     OSM::Sparse_chain<CoefType,OSM::COLUMN> chain(hdvf.export_homology_chain(c,q)) ;
                     ComplexType::Simplicial_chain_complex_chain_to_vtk(complex, outfile_g, chain, q, c) ;
                 }
@@ -251,13 +251,13 @@ void Per_Simp_output_vtk (Hdvf_persistence<CoefType, Simplicial_chain_complex<Co
     
     // Export the filtration
     string out_file_filtration = filename+"_filtration.vtk" ;
-    vector<vector<int> > filtr_labels = per_hdvf.get_filtration().export_filtration();
-    ComplexType::Simplicial_chain_complex_to_vtk(complex, out_file_filtration, &filtr_labels) ;
+    vector<vector<size_t> > filtr_labels = per_hdvf.get_filtration().export_filtration();
+    ComplexType::template Simplicial_chain_complex_to_vtk<size_t>(complex, out_file_filtration, &filtr_labels, "unsigned_long") ;
     
     // Iterate over persistence diagram (iterator over non zero intervals)
     // Batch informations are stored in file filename_infos.txt
     std::ofstream info_file(filename+"_infos.txt") ;
-    int i = 0 ;
+    size_t i = 0 ;
     for (typename perHDVFType::iterator it = per_hdvf.begin(); it != per_hdvf.end(); ++it)
     {
         typename perHDVFType::PerIntervalInformation hole_data(*it) ;
@@ -277,13 +277,15 @@ void Per_Simp_output_vtk (Hdvf_persistence<CoefType, Simplicial_chain_complex<Co
             {
                 // First generator : filename_i_g_sigma_q.vtk
                 {
-                    const int id(per_int_cells.first.first), dim(per_int_cells.first.second) ;
+                    const size_t id(per_int_cells.first.first) ;
+                    const int dim(per_int_cells.first.second) ;
                     string tmp(out_file+"_g_"+to_string(id)+"_"+to_string(dim)+".vtk") ;
                     ComplexType::Simplicial_chain_complex_chain_to_vtk(complex, tmp, hole_data.g_chain_sigma, dim);
                 }
                 // Second generator : filename_i_g_tau_q+1.vtk
                 {
-                    const int id(per_int_cells.second.first), dim(per_int_cells.second.second) ;
+                    const size_t id(per_int_cells.second.first) ;
+                    const int dim(per_int_cells.second.second) ;
                     string tmp(out_file+"_g_"+to_string(id)+"_"+to_string(dim)+".vtk") ;
                     ComplexType::Simplicial_chain_complex_chain_to_vtk(complex, tmp, hole_data.g_chain_tau, dim);
                 }
@@ -293,7 +295,8 @@ void Per_Simp_output_vtk (Hdvf_persistence<CoefType, Simplicial_chain_complex<Co
             {
                 // First generator : filename_i_fstar_sigma_q.vtk
                 {
-                    const int id(per_int_cells.first.first), dim(per_int_cells.first.second) ;
+                    const size_t id(per_int_cells.first.first) ;
+                    const int dim(per_int_cells.first.second) ;
                     string tmp(out_file+"_fstar_"+to_string(id)+"_"+to_string(dim)+".vtk") ;
                     if (co_faces)
                     {
@@ -304,7 +307,8 @@ void Per_Simp_output_vtk (Hdvf_persistence<CoefType, Simplicial_chain_complex<Co
                 }
                 // Second generator : filename_i_fstar_tau_q+1.vtk
                 {
-                    const int id(per_int_cells.second.first), dim(per_int_cells.second.second) ;
+                    const size_t id(per_int_cells.second.first) ;
+                    const int dim(per_int_cells.second.second) ;
                     string tmp(out_file+"_fstar_"+to_string(id)+"_"+to_string(dim)+".vtk") ;
                     if (co_faces)
                     {

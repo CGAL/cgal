@@ -60,7 +60,7 @@ public:
      *
      * Constructor with size, initialize an empty SparseChain.
      */
-    SparseChain(int chainSize);
+    SparseChain(size_t chainSize);
     
     /*!
      * \brief Create new SparseChain by copy.
@@ -230,22 +230,22 @@ public:
     /*!
      * \brief Get the value of a coefficient of the chain.
      */
-    CoefficientType operator[](int index);
+    CoefficientType operator[](size_t index);
 
     /*!
      * \brief Get the value of a coefficient of the chain.
      */
-    CoefficientType get_coef(int index) const ;
+    CoefficientType get_coef(size_t index) const ;
     
     /**
      * \brief Set a given coefficient of the chain.
      */
-    void set_coef(int index, CoefficientType d);
+    void set_coef(size_t index, CoefficientType d);
     
     /*!
      * \brief Checks if a coefficient of the chain is null.
      */
-    bool is_null(int index) const;
+    bool is_null(size_t index) const;
     
     /*!
      * \brief Checks if the chain is null.
@@ -257,28 +257,28 @@ public:
      *
      * Return a new chain where all coefficients of indices provided in the vector are removed.
      */
-    friend Sparse_chain operator/(const Sparse_chain &chain, const std::vector<int> &indices);
+    friend Sparse_chain operator/(const Sparse_chain &chain, const std::vector<size_t> &indices);
     
     /*!
      * \brief Get a subchain from the chain.
      *
      * Return a new chain where the coefficients at a given index is removed.
      */
-    friend Sparse_chain operator/(const Sparse_chain &chain, int indices);
+    friend Sparse_chain operator/(const Sparse_chain &chain, size_t indices);
     
     /*!
      * \brief Restrict the chain to a sub-chain by removing indices.
      *
      * Removes all indices provided in the vector from the chain. Return a reference to the modified chain.
      */
-    Sparse_chain& operator/=(const std::vector<int> &indexes);
+    Sparse_chain& operator/=(const std::vector<size_t> &indexes);
     
     /**
      * \brief Restrict the chain to a sub-chain by removing a given index.
      *
      * Removes the index provided from the chain. Return a reference to the modified chain.
      */
-    Sparse_chain& operator/=(int index);
+    Sparse_chain& operator/=(size_t index);
     
     /**
      * \brief Remove all coefficients from the chain.

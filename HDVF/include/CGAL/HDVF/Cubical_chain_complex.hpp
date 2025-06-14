@@ -270,11 +270,12 @@ public:
     template <typename CoefficientT, int ChainTypeF>
     CChain cofaces_chain (OSM::Sparse_chain<CoefficientT, ChainTypeF> chain, int q) const
     {
+        typedef OSM::Sparse_chain<CoefficientT, ChainTypeF> ChainType;
         // Compute the cofaces
         if (q < dim())
         {
             CChain fstar_cofaces(nb_cells(q+1)) ;
-            for (typename RChain::const_iterator it = chain.cbegin(); it != chain.cend(); ++it)
+            for (typename ChainType::const_iterator it = chain.cbegin(); it != chain.cend(); ++it)
             {
                 // Set the cofaces of it->first in dimension dim+1
                 RChain cofaces(cod(it->first,q)) ;
@@ -347,11 +348,118 @@ public:
      *
      * The method generates legacy text VTK files. Labels are exported as such in a VTK property, together with CellID property, containing the index of each cell.
      *
+     * \tparam LabelType Type of labels provided (default: int).
+     *
      * \param[in] K Cubical complex exported.
      * \param[in] filename Output file root (output filenames will be built from this root).
      * \param[in] labels Pointer to a vector of labels in each dimension. (*labels).at(q) is the set of integer labels of cells of dimension q. If labels is NULL, only CellID property is exported.
+     * \param[in] label_type_name Typename used in vtk export (e.g. "int" or "unsigned_long", see <a href = "https://docs.vtk.org/en/latest/design_documents/VTKFileFormats.html">VTK manual </a>).
      */
-    static void Cubical_chain_complex_to_vtk(const Cubical_chain_complex<CoefficientType> &K, const std::string &filename, const std::vector<std::vector<int> > *labels=NULL) ;
+    template <typename LabelType = int>
+    static void Cubical_chain_complex_to_vtk(const Cubical_chain_complex<CoefficientType> &K, const std::string &filename, const std::vector<std::vector<LabelType> > *labels=NULL, string label_type_name = "int")
+    {
+        bool with_scalars = (labels != NULL) ;
+        
+        // Load out file...
+        std::ofstream out ( filename, std::ios::out | std::ios::trunc);
+        
+        if ( not out . good () ) {
+            std::cerr << "CubComplex_to_vtk. Fatal Error:\n  " << filename << " not found.\n";
+            throw std::runtime_error("File Parsing Error: File not found");
+        }
+        
+        // Header
+        out << "# vtk DataFile Version 2.0" << endl ;
+        out << "generators" << endl ;
+        out << "ASCII" << endl ;
+        out << "DATASET  UNSTRUCTURED_GRID" << endl ;
+        
+        // Points
+        size_t nnodes = K.nb_cells(0) ;
+        out << "POINTS " << nnodes << " double" << endl ;
+        for (size_t n = 0; n < nnodes; ++n)
+        {
+            vector<double> p(K.get_vertex_coords(n)) ;
+            for (double x : p)
+                out << x << " " ;
+            for (size_t i = p.size(); i<3; ++i) // points must be 3D -> add zeros
+                out << "0 " ;
+            out << endl ;
+        }
+        
+        size_t ncells_tot = 0, size_cells_tot = 0 ;
+        std::vector<int> types ;
+        std::vector<LabelType> scalars ;
+        std::vector<size_t> ids ;
+        // all cells must be printed
+        {
+            // Cells up to dimension 3
+            // Size : size of a cell of dimension q : 2^q
+            for (int q=0; q<=K.dim(); ++q)
+            {
+                ncells_tot += K.nb_cells(q) ;
+                const size_t size_cell = 1<<q ;
+                size_cells_tot += (size_cell+1)*K.nb_cells(q) ;
+            }
+            out << "CELLS " << ncells_tot << " " << size_cells_tot << endl ;
+            // Output cells by increasing dimension
+            
+            // Vertices
+            for (size_t i = 0; i<K.nb_cells(0); ++i)
+            {
+                out << "1 " << i << endl ;
+                types.push_back(Cubical_chain_complex<CoefficientType>::VTK_cubtypes.at(0)) ;
+                if (with_scalars)
+                {
+                    scalars.push_back((*labels).at(0).at(i)) ;
+                    ids.push_back(i) ;
+                }
+            }
+            // Cells of higher dimension
+            for (int q=1; q<=K.dim(); ++q)
+            {
+                const size_t size_cell = 1<<q ; //int_exp(2, q) ;
+                for (size_t id =0; id < K.nb_cells(q); ++id)
+                {
+                    vector<size_t> verts(K.khal_to_verts(K.ind2khal(K._base2bool.at(q).at(id)))) ;
+                    out << size_cell << " " ;
+                    for (size_t i : verts)
+                        out << i << " " ;
+                    out << endl ;
+                    types.push_back(Cubical_chain_complex<CoefficientType>::VTK_cubtypes.at(q)) ;
+                    if (with_scalars)
+                    {
+                        scalars.push_back((*labels).at(q).at(id)) ;
+                        ids.push_back(id) ;
+                    }
+                }
+            }
+            
+            // CELL_TYPES
+            out << "CELL_TYPES " << ncells_tot << endl ;
+            for (int t : types)
+                out << t << " " ;
+            out << endl ;
+        }
+        
+        if (with_scalars)
+        {
+            // CELL_LABEL
+            out << "CELL_DATA " << ncells_tot << endl ;
+            out << "SCALARS Label " << label_type_name << " 1" << endl ;
+            out << "LOOKUP_TABLE default" << endl ;
+            for (LabelType s : scalars)
+                out << s << " " ;
+            out << endl ;
+            // CELL_IDs
+            out << "SCALARS CellId " << "int" << " 1" << endl ;
+            out << "LOOKUP_TABLE default" << endl ;
+            for (size_t i : ids)
+                out << i << " " ;
+            out << endl ;
+        }
+        out.close() ;
+    }
     
     /**
      * \brief Method exporting a chain over a cubical complex to a VTK file.
@@ -833,117 +941,7 @@ std::vector<size_t> Cubical_chain_complex<CoefficientType>::calculate_boundaries
     return boundaries;
 }
 
-
-/** \brief Export complex to vtk (with int labels if provided).
- *           -> All cells are exported */
-
-template <typename CoefficientType>
-void Cubical_chain_complex<CoefficientType>::Cubical_chain_complex_to_vtk(const Cubical_chain_complex<CoefficientType> &K, const std::string &filename, const std::vector<std::vector<int> > *labels)
-{
-    bool with_scalars = (labels != NULL) ;
-    
-    // Load out file...
-    std::ofstream out ( filename, std::ios::out | std::ios::trunc);
-    
-    if ( not out . good () ) {
-        std::cerr << "CubComplex_to_vtk. Fatal Error:\n  " << filename << " not found.\n";
-        throw std::runtime_error("File Parsing Error: File not found");
-    }
-    
-    // Header
-    out << "# vtk DataFile Version 2.0" << endl ;
-    out << "generators" << endl ;
-    out << "ASCII" << endl ;
-    out << "DATASET  UNSTRUCTURED_GRID" << endl ;
-    
-    // Points
-    size_t nnodes = K.nb_cells(0) ;
-    out << "POINTS " << nnodes << " double" << endl ;
-    for (size_t n = 0; n < nnodes; ++n)
-    {
-        vector<double> p(K.get_vertex_coords(n)) ;
-        for (double x : p)
-            out << x << " " ;
-        for (size_t i = p.size(); i<3; ++i) // points must be 3D -> add zeros
-            out << "0 " ;
-        out << endl ;
-    }
-    
-    size_t ncells_tot = 0, size_cells_tot = 0 ;
-    std::vector<int> types ;
-    std::vector<int> scalars ;
-    std::vector<size_t> ids ;
-    // all cells must be printed
-    {
-        // Cells up to dimension 3
-        // Size : size of a cell of dimension q : 2^q
-        for (int q=0; q<=K.dim(); ++q)
-        {
-            ncells_tot += K.nb_cells(q) ;
-            const size_t size_cell = 1<<q ;
-            size_cells_tot += (size_cell+1)*K.nb_cells(q) ;
-        }
-        out << "CELLS " << ncells_tot << " " << size_cells_tot << endl ;
-        // Output cells by increasing dimension
-        
-        // Vertices
-        for (size_t i = 0; i<K.nb_cells(0); ++i)
-        {
-            out << "1 " << i << endl ;
-            types.push_back(Cubical_chain_complex<CoefficientType>::VTK_cubtypes.at(0)) ;
-            if (with_scalars)
-            {
-                scalars.push_back((*labels).at(0).at(i)) ;
-                ids.push_back(i) ;
-            }
-        }
-        // Cells of higher dimension
-        for (int q=1; q<=K.dim(); ++q)
-        {
-            const size_t size_cell = 1<<q ; //int_exp(2, q) ;
-            for (size_t id =0; id < K.nb_cells(q); ++id)
-            {
-                vector<size_t> verts(K.khal_to_verts(K.ind2khal(K._base2bool.at(q).at(id)))) ;
-                out << size_cell << " " ;
-                for (size_t i : verts)
-                    out << i << " " ;
-                out << endl ;
-                types.push_back(Cubical_chain_complex<CoefficientType>::VTK_cubtypes.at(q)) ;
-                if (with_scalars)
-                {
-                    scalars.push_back((*labels).at(q).at(id)) ;
-                    ids.push_back(id) ;
-                }
-            }
-        }
-        
-        // CELL_TYPES
-        out << "CELL_TYPES " << ncells_tot << endl ;
-        for (int t : types)
-            out << t << " " ;
-        out << endl ;
-    }
-    
-    if (with_scalars)
-    {
-        // CELL_LABEL
-        out << "CELL_DATA " << ncells_tot << endl ;
-        out << "SCALARS Label " << "int" << " 1" << endl ;
-        out << "LOOKUP_TABLE default" << endl ;
-        for (int s : scalars)
-            out << s << " " ;
-        out << endl ;
-        // CELL_IDs
-        out << "SCALARS CellId " << "int" << " 1" << endl ;
-        out << "LOOKUP_TABLE default" << endl ;
-        for (size_t i : ids)
-            out << i << " " ;
-        out << endl ;
-    }
-    out.close() ;
-}
-
-/** \brief Export chain of dimension q to vtk.
+/* \brief Export chain of dimension q to vtk.
  *           -> Only cells of the chain are exported
  *           -> If a cell Id is provided scalars are exported (0 for the given cellId / 2 for other cells)
  */
@@ -1003,7 +1001,7 @@ void Cubical_chain_complex<CoefficientType>::Cubical_chain_complex_chain_to_vtk(
         out << "CELLS " << ncells_tot << " " << size_cells_tot << endl ;
         
         {
-            const size_t size_cell = q+1 ;
+            const size_t size_cell = 1<<q ;
             for (size_t id =0; id < K.nb_cells(q); ++id)
             {
                 if (!chain.is_null(id))

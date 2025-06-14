@@ -32,7 +32,7 @@ public:
      * - First element of the pair: index of the cell.
      * - Second element of the pair: dimension of the cell.
      */
-    typedef std::pair<int, int> CellDim ;
+    typedef std::pair<size_t, int> CellDim ;
     
     /*! \brief Value returned by the filtration iterator.
      * Contains a cell (identified by its index and dimenion in a `CellDim`) and its associated degree.
@@ -78,7 +78,7 @@ public:
         
         /*! Iterator constructor
          */
-        iterator(const Filtration& f, int i=0);
+        iterator(const Filtration& f, size_t i=0);
         
         /*! Dereference operator.
          */
@@ -86,7 +86,7 @@ public:
         
         /*! Get the index (time) associated to the iterator.
          */
-        int time () const ;
+        size_t time () const ;
         
         /*! Get the `CellDim` (cell and its dimension) associated to the iterator.
          */
@@ -132,15 +132,15 @@ public:
     // getters
     /*! \brief Get the filtration size.
      */
-    int get_filtration_size () const;
+    size_t get_filtration_size () const;
     
     /*! \brief Get the cell (that is cell index and dimension) at the index `i` of the filtration.
      */
-    CellDim get_cell_dim (int i) const;
+    CellDim get_cell_dim (size_t i) const;
     
     /*! \brief Get the degree of the `i`th element of the filtration.
      */
-    DegreeType get_degree (int i) const;
+    DegreeType get_degree (size_t i) const;
     
     // Filtration verification
     /*! \brief Check that a filtration is valid
@@ -158,5 +158,5 @@ public:
      *
      * The method exports the time index of every cells in each dimension.
      */
-    vector<vector<int> > export_filtration () const
+    vector<vector<size_t> > export_filtration () const
 };
