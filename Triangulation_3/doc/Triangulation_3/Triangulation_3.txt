@@ -11,6 +11,20 @@ namespace CGAL {
 \image html triangulation3.png
 \image latex triangulation3.png
 
+This chapter describes the three-dimensional triangulations of \cgal. Section \ref
+Triangulation3secdef recalls the main definitions related to 3D triangulations. Section
+\ref Triangulation3secintro discusses how three-dimensional triangulations are represented
+in \cgal. Section \ref Triangulation3secdesign presents the overall software design of the 3D
+triangulations package. The following sections introduce the different three-dimensional
+triangulation classes available in \cgal: basic triangulations (Section \ref Triangulation3secintro),
+Delaunay triangulations (Section \ref Triangulation_3Delaunay),
+and regular triangulations (Section \ref Triangulation3secclassRegulartriangulation).
+
+The chapter \ref PkgConstrainedTriangulation3 adds 3D constrained
+Delaunay triangulations, which are built on top of the basic 3D triangulations described here.
+
+\section Triangulation3secdef Definition
+
 The basic 3D-triangulation class of \cgal is primarily designed to
 represent the triangulations of a set of points \f$ A\f$ in \f$ \mathbb{R}^3\f$. It is
 a partition of the convex hull of \f$ A\f$ into tetrahedra whose vertices
