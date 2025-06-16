@@ -97,8 +97,6 @@ built on this refined PLC is known as a _conforming constrained Delaunay triangu
 
 The algorithm implemented in this package is based on the work of Hang Si
 \cgalCite{si2005meshing}, \cgalCite{cgal:si2008cdt3}, \cgalCite{si2015tetgen}.
-Steiner vertices are inserted on the input edges and polygons of the PLC to
-ensure it can be tetrahedralized.
 
 \cgalFigureRef{CT_3_plc2cdt_fig} illustrates an example of a conforming constrained
 Delaunay triangulation constructed from a PLC.
