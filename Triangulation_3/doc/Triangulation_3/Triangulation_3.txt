@@ -20,8 +20,8 @@ triangulation classes available in \cgal: basic triangulations (Section \ref Tri
 Delaunay triangulations (Section \ref Triangulation_3Delaunay),
 and regular triangulations (Section \ref Triangulation3secclassRegulartriangulation).
 
-The chapter \ref PkgConstrainedTriangulation3 adds 3D constrained
-Delaunay triangulations, which are built on top of the basic 3D triangulations described here.
+For 3D Constrained (Delaunay) Triangulations built on top of the 3D triangulations of
+this package, look at the chapter \ref PkgConstrainedTriangulation3.
 
 \section Triangulation3secdef Definition
 
