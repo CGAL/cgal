@@ -162,6 +162,16 @@ PkgConstrainedTriangulation3FunctionsPolygonSoupOrMesh
 `CGAL::make_conforming_constrained_Delaunay_triangulation_3()`\endlink are provided to facilitate the creation
 of a `CGAL::Conforming_constrained_Delaunay_triangulation_3` object from either a surface mesh or a polygon soup.
 
+\subsection CT_3_geomtraits Traits and Kernel Choice
+
+The requirements on geometric objects and operations are described in the traits class concept
+`ConformingConstrainedDelaunayTriangulationTraits_3`. Any CGAL kernel is a model of this concept, but
+the package is designed to work with kernels that provide exact predicates.
+
+As the Steiner points are inserted on the input edges and polygons of the PLC, the coordinates of
+those points will be constructed. If the input data set has almost-coplanar input polygons, a kernel
+with exact constructions must be used to ensure the correct placement of these points.
+
 \section CT_3_examples Examples
 
 \subsection CT_3_example_ccdt Build a Conforming Constrained Delaunay Triangulation
