@@ -66,7 +66,7 @@ The goal of the algorithms developed in this package is to compute a constrained
 triangulation that contains a given set of polygonal constraints in 3D as a subcomplex.
 
 A triangulation is a _Delaunay triangulation_ if the circumscribing sphere of any simplex
-in the triangulation contains no vertex in its interior (see package \ref PkgTriangulation3
+in the triangulation contains no vertex in its interior (see chapter \ref PkgTriangulation3
 for more details on Delaunay triangulations).
 
 A _constrained Delaunay triangulation_ of a PLC is a constrained triangulation that is as close as
