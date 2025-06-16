@@ -23,7 +23,7 @@ results in a _conforming_ triangulation.
 
 This package implements an algorithm for constructing conforming triangulations of 3D polygonal
 constraints. Specifically, it requires that these piecewise linear constraints are provided as a
-_Piecewise Linear Complex_&nbsp;(PLC). The resulting triangulations are of type `Triangulation_3`,
+_piecewise linear complex_&nbsp;(PLC). The resulting triangulations are of type `Triangulation_3`,
 as described in the chapter \ref PkgTriangulation3.
 
 The article by Cohen-Steiner et al. \cgalCite{cgal:cohen2002conforming} discusses the problem of
@@ -38,7 +38,7 @@ This section introduces the key concepts necessary to understand and use this pa
 
 \subsection CT_3_PLC Piecewise Linear Complex
 
-A _Piecewise Linear Complex_ (PLC) is the three-dimensional generalization of a
+A _piecewise linear complex_&nbsp;(PLC) is the three-dimensional generalization of a
 planar straight-line graph. It consists of a finite set of vertices, edges, and polygons (faces)
 that satisfy the following properties:
 
@@ -56,7 +56,7 @@ Polygons in a PLC may be non-convex, may have holes, and may have arbitrarily ma
 <img src="plc.png" style="max-width:60%;"/>
 </center>
 \cgalFigureCaptionBegin{CT_3_plc_fig}
-A Piecewise Linear Complex, composed of planar faces connected by edges and vertices.
+A piecewise linear complex, composed of planar faces connected by edges and vertices.
 \cgalFigureCaptionEnd
 
 
