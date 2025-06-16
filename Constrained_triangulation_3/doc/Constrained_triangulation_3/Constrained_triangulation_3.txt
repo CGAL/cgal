@@ -95,7 +95,9 @@ version of the original PLC that admits a constrained Delaunay triangulation. Th
 achieved by adding Steiner vertices to the input edges and polygons. The constrained triangulation
 built on this refined PLC is known as a _conforming constrained Delaunay triangulation_ (CCDT for short).
 
-The algorithm implemented in this package is based on the work of Hang Si
+The algorithm implemented in this package is based on the work of Hang Si, who developed particular
+algorithms for constructing conforming constrained Delaunay triangulations from PLCs, with floating
+point numbers as coordinates
 \cgalCite{si2005meshing}, \cgalCite{cgal:si2008cdt3}, \cgalCite{si2015tetgen}.
 
 \cgalFigureRef{CT_3_plc2cdt_fig} illustrates an example of a conforming constrained
