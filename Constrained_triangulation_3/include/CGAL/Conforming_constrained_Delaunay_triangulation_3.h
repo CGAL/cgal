@@ -855,7 +855,11 @@ public:
     * \brief returns a const reference to the underlying triangulation.
     *
     * This allows the use of all non-modifying functions of the base triangulation.
-    * See the other overload for a way to move the triangulation out of this object and then modify it.
+    * See the other overload for a way to move the triangulation out of this object and then modify
+    * it.
+    *
+    * Example usage:
+    * \snippet[trimleft] conforming_constrained_Delaunay_triangulation_3.cpp use of ccdt.triangulation()
     */
   const Triangulation& triangulation() const& {
     return cdt_impl;
@@ -865,8 +869,10 @@ public:
     * \brief moves and returns the underlying triangulation, then clears the object.
     *
     * This function allows the underlying triangulation to be moved out of this object.
+    *
     * Example usage:
-    * \snippet{trimleft} remesh_constrained_Delaunay_triangulation_3.cpp move ccdt to tr
+    * \snippet[trimleft] conforming_constrained_Delaunay_triangulation_3.cpp move ccdt to tr
+    *
     * After calling this function, `ccdt` will be empty and `tr` will be move-constructed from the underlying triangulation, avoiding any copy.
     *
     * \note This function is available only when the object is an rvalue.

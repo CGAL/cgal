@@ -58,12 +58,10 @@ int main(int argc, char* argv[])
   Constraints_set constraints;
   Constraints_pmap constraints_pmap(constraints);
 
-  //! [move ccdt to tr]
   namespace np = CGAL::parameters;
   namespace Tet_remesh = CGAL::Tetrahedral_remeshing;
   Tr tr = Tet_remesh::get_remeshing_triangulation(std::move(ccdt),
                                                   np::edge_is_constrained_map(constraints_pmap));
-  //! [move ccdt to tr]
   std::cout << "Number of vertices in tr: " << tr.number_of_vertices() << std::endl;
 
   CGAL::tetrahedral_isotropic_remeshing(tr,
