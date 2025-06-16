@@ -252,6 +252,13 @@ QMenu* Scene_c3t3_item::contextMenu()
       SIGNAL(triggered()), this,
       SLOT(export_facets_in_complex()));
 
+    QAction* actionResetSurfacePatches = menu->addAction(tr("Reset surface patches"));
+    actionResetSurfacePatches->setObjectName("actionResetSurfacePatches");
+    connect(actionResetSurfacePatches,
+            SIGNAL(triggered()),
+            this,
+            SLOT(reset_surface_patches()));
+
     menu->setProperty(prop_name, true);
   }
   return menu;
@@ -329,6 +336,27 @@ void Scene_c3t3_item::export_facets_in_complex()
   item->setName(QString("%1_%2").arg(this->name()).arg("facets"));
   scene->addItem(item);
   this->setVisible(false);
+}
+
+void Scene_c3t3_item::reset_surface_patches()
+{
+  if(c3t3().number_of_facets() == 0)
+  {
+    CGAL::Three::Three::warning(tr("There are no facets in the complex."));
+    return;
+  }
+
+  const C3t3::Facet first_facet = *c3t3().facets_in_complex_begin();
+  const C3t3::Surface_patch_index first_index = c3t3().surface_patch_index(first_facet);
+
+  for(auto f : c3t3().facets_in_complex())
+  {
+    const auto mf = c3t3().triangulation().mirror_facet(f);
+    f.first->set_surface_patch_index(f.second, first_index);
+    mf.first->set_surface_patch_index(mf.second, first_index);
+  }
+  this->invalidateOpenGLBuffers();
+  Q_EMIT itemChanged();
 }
 
 void Scene_c3t3_item::drawEdges(Viewer_interface *viewer) const
