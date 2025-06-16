@@ -77,6 +77,7 @@ using namespace CGAL::Three;
   public Q_SLOTS:
     void show_cnc(bool);
     void export_facets_in_complex();
+    void reset_surface_patches();
     void initializeBuffers(Viewer_interface *) const override;
     void computeElements() const override;
     void set_sharp_edges_angle(double d);
