@@ -163,12 +163,21 @@ of a `CGAL::Conforming_constrained_Delaunay_triangulation_3` object from either 
 \subsection CT_3_geomtraits Traits and Kernel Choice
 
 The requirements on geometric objects and operations are described in the traits class concept
-`ConformingConstrainedDelaunayTriangulationTraits_3`. Any CGAL kernel is a model of this concept, but
-the package is designed to work with kernels that provide exact predicates.
+`ConformingConstrainedDelaunayTriangulationTraits_3`. Any CGAL kernel is a model of this concept.
+However, since this package is based on the 3D Triangulation package we inherit the requirement that
+a traits class providing exact predicates.
 
-As the Steiner points are inserted on the input edges and polygons of the PLC, the coordinates of
-those points will be constructed. If the input data set has almost-coplanar input polygons, a kernel
-with exact constructions must be used to ensure the correct placement of these points.
+One important new part of this algorithm is the creation of new points that are not part of the input.
+Those points are the Steiner points that are points on segments and polygons of the input PLC.
+If a traits with inexact constructions is used, it is not possible to guarantee that the points are
+exactly on segments/polygons. As a consequence, when using inexact constructions, the output will
+only be an approximation of the input (up to the rounding of the computed Steiner points).
+Also in such a case, it will not always be possible to get a result if the input PLC features
+too close non-adjacent simplices. The algorithm will abort the triangulation if the distance between
+simplices goes below a threshold internally computed. In such a case an error message with
+the involved simplices will be displayed on the standard output. In case the issue is coming from badly
+shaped triangles, methods such as `CGAL::Polygon_mesh_processing::remove_almost_degenerate_faces()`
+might be useful to overcome this limitation.
 
 \section CT_3_examples Examples
 
