@@ -27,7 +27,7 @@
 \cgalPkgAuthors{Laurent Rineau and Jane Tournois}
 \cgalPkgDesc{This package implements the construction of a 3D Constrained Delaunay triangulation.
 This triangulation is a generalization of a 3D Delaunay Triangulation which conforms to the set of faces
-of a 3D Piecewise Linear Complex (PLC), ensuring that these faces are part of the triangulation.
+of a 3D _piecewise linear complex_ (PLC), ensuring that these faces are part of the triangulation.
 As not all PLCs are tetrahedralizable,
 the algorithm may insert Steiner points to construct the constrained triangulation.
 }
