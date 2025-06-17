@@ -971,9 +971,11 @@ namespace CGAL {
     {
       size_type& freelist_ = free_list();
       Index_type idx = ch->index();
-      if(idx.idx() == properties_.size()-1){
-        properties_.pop_back();
-        return;
+      if constexpr(! is_parallel){
+        if(idx.idx() == properties_.size()-1){
+          properties_.pop_back();
+          return;
+        }
       }
       removed_[idx] = true; ++local_number_of_removed_elements(); garbage_ = true;
       free_list_next_function_(storage_[idx]) = Index_type{freelist_};
