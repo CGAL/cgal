@@ -355,6 +355,7 @@ void Scene_c3t3_item::reset_surface_patches()
     f.first->set_surface_patch_index(f.second, first_index);
     mf.first->set_surface_patch_index(mf.second, first_index);
   }
+  triangulation_changed();
   this->invalidateOpenGLBuffers();
   Q_EMIT itemChanged();
 }
