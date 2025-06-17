@@ -13,14 +13,15 @@
 #define CGAL_SURFACE_MESH_PROPERTY_H
 
 #include <CGAL/license/Surface_mesh.h>
-#include <atomic>
 
 #ifndef DOXYGEN_RUNNING
 
 #include <CGAL/assertions.h>
 #include <CGAL/property_map.h>
+#include <CGAL/tags.h>
 
 #include <algorithm>
+#include <atomic>
 #include <optional>
 #include <string>
 #include <typeinfo>
@@ -112,10 +113,15 @@ public:
     typedef T                                       value_type;
     static constexpr bool is_parallel = std::is_convertible_v<ConcurrencyTag, Parallel_tag>;
 
+#ifdef CGAL_LINKED_WITH_TBB
     using vector_type = std::conditional_t<is_parallel,
                                            tbb::concurrent_vector<value_type>,
                                            std::vector<value_type>>;
-
+#else
+    static_assert(false == is_parallel, "CGAL was not compiled with TBB support. "
+                  "Please recompile CGAL with TBB support to use parallel features.");
+    using vector_type = std::vector<value_type>;
+#endif
 
     typedef typename vector_type::reference         reference;
     typedef typename vector_type::const_reference   const_reference;
@@ -161,7 +167,7 @@ public: // virtual interface of Base_property_array
 
     bool transfer(const Base_property_array& other)
     {
-      const Property_array<T,ConcurrencyTag>* pa = dynamic_cast<const Property_array*>(&other);
+      const auto* pa = dynamic_cast<const Property_array*>(&other);
       if(pa != nullptr){
         std::copy((*pa).data_.begin(), (*pa).data_.end(), data_.end()-(*pa).data_.size());
         return true;
@@ -171,7 +177,7 @@ public: // virtual interface of Base_property_array
 
     bool transfer(const Base_property_array& other, std::size_t from, std::size_t to)
     {
-      const Property_array<T,ConcurrencyTag>* pa = dynamic_cast<const Property_array*>(&other);
+      const auto* pa = dynamic_cast<const Property_array*>(&other);
       if (pa != nullptr)
       {
         data_[to] = (*pa)[from];
@@ -195,14 +201,14 @@ public: // virtual interface of Base_property_array
 
     virtual Base_property_array* clone() const
     {
-        Property_array<T,ConcurrencyTag>* p = new Property_array<T,ConcurrencyTag>(this->name_, this->value_);
+        auto* p = new Property_array<T,ConcurrencyTag>(this->name_, this->value_);
         p->data_ = data_;
         return p;
     }
 
     virtual Base_property_array* empty_clone() const
     {
-        Property_array<T,ConcurrencyTag>* p = new Property_array<T,ConcurrencyTag>(this->name_, this->value_);
+        auto* p = new Property_array<T,ConcurrencyTag>(this->name_, this->value_);
         return p;
     }
 
@@ -402,7 +408,7 @@ public:
         }
 
         // otherwise add the property
-        Property_array<T,ConcurrencyTag>* p = new Property_array<T,ConcurrencyTag>(name, t);
+        auto* p = new Property_array<T, ConcurrencyTag>(name, t);
         p->reserve(capacity_);
         p->resize(size_);
         parrays_.push_back(p);
@@ -552,9 +558,9 @@ public:
 
     void pop_back()
     {
-      for (std::size_t i=0; i<parrays_.size(); ++i)
+      for (std::size_t i=0; i<parrays_.size(); ++i) {
         parrays_[i]->pop_back();
-        ++capacity_;
+      }
       decrement_size();
     }
 
@@ -584,10 +590,9 @@ public:
 
 private:
     std::vector<Base_property_array*>  parrays_;
-    using thread_save_size_t = std::conditional_t<is_parallel,
-                                                  std::atomic<size_t>,
-                                                  size_t>;
-    thread_save_size_t size_ = 0;
+    std::conditional_t<is_parallel,
+                      std::atomic<size_t>,
+                      size_t> size_ = 0;
 
     size_t  capacity_ = 0;
 };
@@ -605,7 +610,7 @@ private:
 ///
 /// \cgalModels{LvaluePropertyMap}
 ///
-template <class I, class T, class ConcurrencyTag, class CRTP_derived_class>
+template <class I, class T, class CRTP_derived_class, class ConcurrencyTag = Sequential_tag>
 class Property_map_base
 /// @cond CGAL_DOCUMENT_INTERNALS
   : public boost::put_get_helper<
@@ -614,16 +619,17 @@ class Property_map_base
 /// @endcond
 {
 public:
-    typedef I key_type;
-    typedef T value_type;
-    typedef boost::lvalue_property_map_tag category;
+  using key_type = I;
+  using value_type = T;
+  using category = boost::lvalue_property_map_tag;
+  using Property_array_type = Property_array<T,ConcurrencyTag>;
 
 #ifndef DOXYGEN_RUNNING
 
-    typedef typename Property_array<T,ConcurrencyTag>::reference reference;
-    typedef typename Property_array<T,ConcurrencyTag>::const_reference const_reference;
-    typedef typename Property_array<T,ConcurrencyTag>::iterator iterator;
-    typedef typename Property_array<T,ConcurrencyTag>::const_iterator const_iterator;
+  using reference = typename Property_array_type::reference;
+  using const_reference = typename Property_array_type::const_reference;
+  using iterator = typename Property_array_type::iterator;
+  using const_iterator = typename Property_array_type::const_iterator;
 #else
     /// A reference to the value type of the property.
   typedef unspecified_type reference;
@@ -633,13 +639,13 @@ public:
 #endif
 
 #ifndef DOXYGEN_RUNNING
-    template <typename Ref_class, typename Key, typename ConcurrencyTag>
+    template <typename Ref_class, typename Key, typename Tag>
     friend class Property_container;
 #endif
 
 public:
 /// @cond CGAL_DOCUMENT_INTERNALS
-    Property_map_base(Property_array<T,ConcurrencyTag>* p=nullptr) : parray_(p) {}
+    Property_map_base(Property_array_type* p=nullptr) : parray_(p) {}
 
     Property_map_base(Property_map_base&& pm) noexcept
       : parray_(std::exchange(pm.parray_, nullptr))

@@ -349,9 +349,9 @@ public:
 
 #ifndef DOXYGEN_RUNNING
   template <class I, class T>
-  struct Property_map : Properties::Property_map_base<I, T, Sequential_tag, Property_map<I, T> >
+  struct Property_map : Properties::Property_map_base<I, T, Property_map<I, T> >
   {
-    typedef Properties::Property_map_base<I, T, Sequential_tag, Property_map<I, T> > Base;
+    typedef Properties::Property_map_base<I, T, Property_map<I, T> > Base;
     typedef typename Base::reference reference;
     Property_map() = default;
     Property_map(const Base& pm): Base(pm) {}

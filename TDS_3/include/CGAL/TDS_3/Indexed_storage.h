@@ -822,13 +822,11 @@ namespace CGAL {
   }; // end class Index_iterator
 
   template <class I, class T, class ConcurrencyTag = Sequential_tag>
-  struct Property_map : Properties::Property_map_base<I, T, ConcurrencyTag, Property_map<I, T> >
+  struct Property_map : Properties::Property_map_base<I, T, Property_map<I, T>, ConcurrencyTag>
   {
-    using Base = Properties::Property_map_base<I, T, ConcurrencyTag, Property_map<I, T> >;
-    using reference = typename Base::reference;
+    using Base = Properties::Property_map_base<I, T, Property_map<I, T>, ConcurrencyTag>;
 
-    Property_map() = default;
-    Property_map(const Base& pm): Base(pm) {}
+    using Base::Base;
   };
 
   template <typename Index_type,
@@ -869,16 +867,16 @@ namespace CGAL {
     using free_list_type = size_type;
 #endif
 
-    Properties::Property_container<Self, Index_type> properties_;
+    Properties::Property_container<Self, Index_type, Concurrency_tag> properties_;
     size_type nb_of_removed_elements_ = 0;
     free_list_type freelist_{Index_type::invalid_index};
     size_type anonymous_property_nb = 0;
     static constexpr bool recycle_ = true;
     bool garbage_ = false;
     Property_map<Index_type, Storage_type, Concurrency_tag> storage_ =
-        add_property_map<Storage_type,Concurrency_tag>(prefix + std::string(":storage"), Storage_type()).first;
+        add_property_map<Storage_type>(prefix + std::string(":storage"), Storage_type()).first;
     Property_map<Index_type, bool, Concurrency_tag> removed_ =
-        add_property_map<bool,Concurrency_tag>(prefix + std::string(":removed"), false).first;
+        add_property_map<bool>(prefix + std::string(":removed"), false).first;
 
     template <typename Key, typename T>
     struct Get_property_map {
@@ -889,8 +887,8 @@ namespace CGAL {
     template <typename U> using EraseCounterStrategy =
       internal::Erase_counter_strategy<internal::has_increment_erase_counter<U>::value>;
 
-    template<class T, class ConcurrencyTag>
-    std::pair<Property_map<Index_type, T,ConcurrencyTag>, bool>
+    template<class T>
+    std::pair<Property_map<Index_type, T, ConcurrencyTag>, bool>
     add_property_map(std::string name=std::string(), const T t=T()) {
       if(name.empty()){
         std::ostringstream oss;
@@ -1515,7 +1513,7 @@ namespace CGAL {
     Cell_container cell_container_;
 
     Property_map<Cell_index, Cell_data, Concurrency_tag> cell_data_ =
-        cell_container().template add_property_map<Cell_data,Concurrency_tag>("c:data").first;
+          cell_container().template add_property_map<Cell_data>("c:data").first;
 
     // in dimension i, number of vertices >= i+2
     // ( the boundary of a simplex in dimension i+1 has i+2 vertices )
