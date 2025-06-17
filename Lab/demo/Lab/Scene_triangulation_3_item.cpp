@@ -727,9 +727,11 @@ Scene_triangulation_3_item::triangulation_changed()
   for (Tr::Finite_facets_iterator fit = triangulation().finite_facets_begin(),
        end = triangulation().finite_facets_end(); fit != end; ++fit)
   {
-    max = (std::max)(max, fit->first->surface_patch_index(fit->second));
-    int index = fit->first->surface_patch_index(fit->second);
-    d->surface_patch_indices_.insert(index);
+    const int index = fit->first->surface_patch_index(fit->second);
+    max = (std::max)(max, index);
+    if(index != 0)
+      d->surface_patch_indices_.insert(index);
+
     int dom0 = fit->first->subdomain_index();
     int dom1 = fit->first->neighbor(fit->second)->subdomain_index();
     if (dom0 == 0) // if cell is not in complex
