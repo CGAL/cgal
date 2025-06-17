@@ -554,6 +554,7 @@ public:
     {
       for (std::size_t i=0; i<parrays_.size(); ++i)
         parrays_[i]->pop_back();
+        ++capacity_;
       decrement_size();
     }
 
