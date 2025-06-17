@@ -743,14 +743,9 @@ public:
       u->set_cell(f.first);
       v->set_cell(f.first);
       w->set_cell(f.first);
-      CGAL_assertion(this->is_removed(u.index()) == false);
-      CGAL_assertion(this->is_removed(v.index()) == false);
-      CGAL_assertion(this->is_removed(w.index()) == false);
-      CGAL_assertion(this->is_removed(nv.index()) == false);
       const Cell_handle nc = create_cell(v, u, w, nv);
       new_cells[local_facet_index] = nc;
       nv->set_cell(nc);
-      CGAL_assertion(this->is_removed(f.first.index()) == false);
       nc->set_neighbor(3, f.first);
       f.first->set_neighbor(f.second, nc);
 

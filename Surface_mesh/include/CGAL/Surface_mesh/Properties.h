@@ -149,7 +149,12 @@ public: // virtual interface of Base_property_array
 
     size_t push_back() override
     {
-        return data_.emplace_back(value_) - data_.begin();
+      if constexpr(is_parallel) {
+        return data_.push_back(value_) - data_.begin();
+      } else {
+        data_.push_back(value_);
+        return data_.size() - 1;
+      }
     }
 
     void pop_back() override
