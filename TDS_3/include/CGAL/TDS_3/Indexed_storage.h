@@ -991,7 +991,7 @@ namespace CGAL {
     {
       size_type& freelist_ = free_list();
       Index_type idx = ch->index();
-      if constexpr (false == is_parallel) {
+      if constexpr(! is_parallel){
         if(idx.idx() == properties_.size()-1){
           properties_.pop_back();
           return;
