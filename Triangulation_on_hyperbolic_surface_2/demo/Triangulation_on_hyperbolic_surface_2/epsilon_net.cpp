@@ -49,10 +49,10 @@ int main(int argc, char *argv[])
 	// 2. GET A VERTEX
 	// So that if you run the demo on a same surface but with different values of epsilon,
 	// the drawing will be centered at the same vertex and it will look similar.
-	Delaunay_triangulation my_triangulation = Delaunay_triangulation(domain);
-	my_triangulation.make_Delaunay();
-	Anchor & my_anchor = my_triangulation.anchor();
-	Point v0 = my_anchor.vertices[0];
+	Delaunay_triangulation dt = Delaunay_triangulation(domain);
+	dt.make_Delaunay();
+	Anchor & dt_anchor = dt.anchor();
+	Point v0 = dt_anchor.vertices[0];
 
 	// 3. COMPUTE EPSILON-NET and display useful info
 	double eps = 0.1;
@@ -63,26 +63,26 @@ int main(int argc, char *argv[])
 	std::cout << "Computing a " << eps << "-net..." << std::endl;
 	CGAL::Timer timer;
 	timer.start();
-	std::cout << my_triangulation.epsilon_net(eps) << std::endl;
+	std::cout << dt.epsilon_net(eps) << std::endl;
 	timer.stop();
 	std::cout << "Done in " << timer.time() << " seconds." << std::endl;
-	my_triangulation.combinatorial_map().display_characteristics(std::cout) << std::endl;
+	dt.combinatorial_map().display_characteristics(std::cout) << std::endl;
 
 	// 4. SET THE FIRST ANCHOR OF THE DRAWING
-	Anchor anch = std::get < 0 > (my_triangulation.locate_visibility_walk(v0));
+	Anchor anchor = std::get < 0 > (dt.locate_visibility_walk(v0));
 	int index = 0;
 	for (int i = 0; i < 3; i++) {
-		if (v0 == anch.vertices[i]) {
+		if (v0 == anchor.vertices[i]) {
 			index = i;
 		}
 	}
 
 	Anchor start = Anchor();
-	start.dart = anch.dart;
+	start.dart = anchor.dart;
 	for (int i = 0; i < 3; i++) {
-		start.vertices[i] = anch.vertices[(i + index) % 3];
+		start.vertices[i] = anchor.vertices[(i + index) % 3];
 		if (i < index) {
-			start.dart = my_triangulation.Base::ccw(start.dart);
+			start.dart = dt.Base::ccw(start.dart);
 		}
 	}
 
@@ -90,7 +90,7 @@ int main(int argc, char *argv[])
 	QApplication app(argc, argv);
 	app.setApplicationName("Demo: epsilon-net");
 	DemoWindow window;
-	window.item().draw_triangulation(my_triangulation, start);
+	window.item().draw_triangulation(dt, start);
 	window.show();
 	QStringList args = app.arguments();
 	args.removeAt(0);
