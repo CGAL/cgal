@@ -906,6 +906,14 @@ protected:
           if(m_dt.try_lock_vertex(hint) && m_dt.try_lock_point(m_points[i_point]))
           {
             bool could_lock_zone;
+#if CGAL_DEBUG_INDEXED_CONTAINER
+            if(m_dt.is_parallel()) {
+              std::stringstream ss;
+              ss << "- Thread " << m_dt.this_thread_priority() << " inserting point #"
+                << i_point << "( " << m_points[i_point] << " )\n";
+              std::cerr << ss.str();
+            }
+#endif // CGAL_DEBUG_INDEXED_CONTAINER
             Vertex_handle new_hint = m_dt.insert(m_points[i_point], hint, &could_lock_zone);
 
             m_dt.unlock_all_elements();

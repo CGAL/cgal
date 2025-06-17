@@ -60,7 +60,7 @@ public:
     virtual void shrink_to_fit() = 0;
 
     /// Extend the number of elements by one.
-    virtual void push_back() = 0;
+    virtual size_t push_back() = 0;
 
     /// Remove the last element.
     virtual void pop_back() = 0;
@@ -132,27 +132,27 @@ public:
 
 public: // virtual interface of Base_property_array
 
-    virtual size_t capacity() const
+    size_t capacity() const override
     {
         return data_.capacity();
     }
 
-    virtual void reserve(size_t n)
+    void reserve(size_t n) override
     {
         data_.reserve(n);
     }
 
-    virtual void resize(size_t n)
+    void resize(size_t n) override
     {
         data_.resize(n, value_);
     }
 
-    virtual void push_back()
+    size_t push_back() override
     {
-        data_.push_back(value_);
+        return data_.emplace_back(value_) - data_.begin();
     }
 
-    virtual void pop_back()
+    void pop_back() override
     {
       if constexpr(is_parallel){
       }else{
@@ -160,12 +160,12 @@ public: // virtual interface of Base_property_array
       }
     }
 
-    virtual void reset(size_t idx)
+    void reset(size_t idx) override
     {
         data_[idx] = value_;
     }
 
-    bool transfer(const Base_property_array& other)
+    bool transfer(const Base_property_array& other) override
     {
       const auto* pa = dynamic_cast<const Property_array*>(&other);
       if(pa != nullptr){
@@ -175,7 +175,7 @@ public: // virtual interface of Base_property_array
       return false;
     }
 
-    bool transfer(const Base_property_array& other, std::size_t from, std::size_t to)
+    bool transfer(const Base_property_array& other, std::size_t from, std::size_t to) override
     {
       const auto* pa = dynamic_cast<const Property_array*>(&other);
       if (pa != nullptr)
@@ -187,32 +187,32 @@ public: // virtual interface of Base_property_array
       return false;
     }
 
-    virtual void shrink_to_fit()
+    void shrink_to_fit() override
     {
         vector_type(data_).swap(data_);
     }
 
-    virtual void swap(size_t i0, size_t i1)
+    void swap(size_t i0, size_t i1) override
     {
         T d(data_[i0]);
         data_[i0]=data_[i1];
         data_[i1]=d;
     }
 
-    virtual Base_property_array* clone() const
+    Base_property_array* clone() const override
     {
         auto* p = new Property_array<T,ConcurrencyTag>(this->name_, this->value_);
         p->data_ = data_;
         return p;
     }
 
-    virtual Base_property_array* empty_clone() const
+    Base_property_array* empty_clone() const override
     {
         auto* p = new Property_array<T,ConcurrencyTag>(this->name_, this->value_);
         return p;
     }
 
-    virtual const std::type_info& type() const { return typeid(T); }
+    const std::type_info& type() const override { return typeid(T); }
 
 
 public:
@@ -531,7 +531,8 @@ public:
     size_t increment_size()
     {
       if constexpr(is_parallel) {
-        return size_.fetch_add(1, std::memory_order_relaxed);
+        auto old_size = size_.fetch_add(1, std::memory_order_relaxed);
+        return old_size;
       } else {
         return size_++;
       }
@@ -549,11 +550,13 @@ public:
     // add a new element to each vector
     size_t push_back()
     {
-        for (std::size_t i=0; i<parrays_.size(); ++i)
-            parrays_[i]->push_back();
-        auto old_size = increment_size();
-        capacity_ = ((std::max)(old_size, capacity_));
-        return old_size;
+      size_t pos = parrays_[0]->push_back();
+      for (std::size_t i=1, end = parrays_.size(); i<end; ++i) {
+          parrays_[i]->push_back();
+      }
+      auto old_size = increment_size();
+      capacity_ = ((std::max)(old_size + 1, capacity_));
+      return pos;
     }
 
     void pop_back()

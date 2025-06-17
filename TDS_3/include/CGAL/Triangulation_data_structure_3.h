@@ -718,6 +718,20 @@ public:
     CGAL_assertion(facets.size() < (std::numeric_limits<unsigned char>::max)());
     CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(Vertex_pair_facet_map, vertex_pair_facet_map);
     Vertex_handle nv = create_vertex();
+#if CGAL_DEBUG_INDEXED_CONTAINER
+    std::stringstream ss;
+    ss << "Inserting vertex " << nv << " in small hole with " << facets.size()
+       << " facets and " << cells.size() << " cells.\n  cells inside: ";
+    for (auto c : cells) {
+      ss << c << " ";
+    }
+    ss << "\n  cells outside: ";
+    for(auto [c, _] : facets) {
+      ss << c << " ";
+    }
+    ss << '\n';
+    std::cerr << ss.str();
+#endif
     std::array <Cell_handle, maximal_nb_of_facets_of_small_hole> new_cells;
     for (unsigned char local_facet_index = 0, end = static_cast<unsigned char>(facets.size());
          local_facet_index < end; ++local_facet_index) {
@@ -729,9 +743,14 @@ public:
       u->set_cell(f.first);
       v->set_cell(f.first);
       w->set_cell(f.first);
+      CGAL_assertion(this->is_removed(u.index()) == false);
+      CGAL_assertion(this->is_removed(v.index()) == false);
+      CGAL_assertion(this->is_removed(w.index()) == false);
+      CGAL_assertion(this->is_removed(nv.index()) == false);
       const Cell_handle nc = create_cell(v, u, w, nv);
       new_cells[local_facet_index] = nc;
       nv->set_cell(nc);
+      CGAL_assertion(this->is_removed(f.first.index()) == false);
       nc->set_neighbor(3, f.first);
       f.first->set_neighbor(f.second, nc);
 
@@ -754,6 +773,20 @@ public:
     for(Cell_handle c : cells){
       c->tds_data().clear(); // was in conflict
     }
+#if CGAL_DEBUG_INDEXED_CONTAINER
+    for (unsigned char local_facet_index = 0, end = static_cast<unsigned char>(facets.size());
+         local_facet_index < end; ++local_facet_index)
+    {
+       auto c = new_cells[local_facet_index];
+       std::stringstream ss;
+      ss << "- _insert_in_small_hole new Cell " << c;
+      ss << "   N( " << c->neighbor(0) << " " << c->neighbor(1)
+         << " " << c->neighbor(2) << "  " << c->neighbor(3) << " )";
+      ss << "   V( " << c->vertex(0) << " " << c->vertex(1)
+         << " " << c->vertex(2) << "  " << c->vertex(3) << " )\n";
+      std::cerr << ss.str();
+    }
+#endif
     delete_cells(cells.begin(), cells.end());
     vertex_pair_facet_map.clear();
     return nv;

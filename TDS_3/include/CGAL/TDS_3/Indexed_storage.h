@@ -141,7 +141,8 @@ namespace internal { namespace TDS_3{
 
     Vertex_handle vertex(int i) const
     {
-      return Vertex_handle(tds(), storage().ivertices[i]);
+      auto idx = storage().ivertices[i];
+      return Vertex_handle(tds(), idx);
     }
 
     int index(Vertex_handle v) const
@@ -176,7 +177,8 @@ namespace internal { namespace TDS_3{
 
     Cell_handle neighbor(int i) const
     {
-      return Cell_handle(tds(), storage().ineighbors[i]);
+      auto idx = storage().ineighbors[i];
+      return Cell_handle(tds(), idx);
     }
 
     int index(Cell_handle n) const
@@ -221,6 +223,10 @@ namespace internal { namespace TDS_3{
 
     void set_vertices(Vertex_handle v0, Vertex_handle v1, Vertex_handle v2, Vertex_handle v3)
     {
+      CGAL_assertion(tds()->dimension() < 3 || v0.index() != Vertex_index(Vertex_index::invalid_index));
+      CGAL_assertion(tds()->dimension() < 3 || v1.index() != Vertex_index(Vertex_index::invalid_index));
+      CGAL_assertion(tds()->dimension() < 3 || v2.index() != Vertex_index(Vertex_index::invalid_index));
+      CGAL_assertion(tds()->dimension() < 3 || v3.index() != Vertex_index(Vertex_index::invalid_index));
       storage().ivertices[0] = v0.index();
       storage().ivertices[1] = v1.index();
       storage().ivertices[2] = v2.index();
@@ -353,7 +359,7 @@ namespace internal { namespace TDS_3{
 
     bool is_valid(bool = false, int = 0) const
     {
-      return true;
+      return tds() && tds()->is_removed(index_) == false;
     }
 
     template <typename TDS>
@@ -407,6 +413,7 @@ namespace internal { namespace TDS_3{
 
     const Point& point() const
     {
+      CGAL_assertion(this->tds()->is_removed(this->index()) == false);
       return storage().point;
     }
 
@@ -949,6 +956,10 @@ namespace CGAL {
 
     Index_type create(Container* container)
     {
+#if CGAL_DEBUG_INDEXED_CONTAINER
+      std::stringstream ss;
+      ss << "Creating new #";
+#endif
       size_type& freelist_ = free_list();
       Index_type idx{freelist_};
       Element_type elt(container, idx);
@@ -959,11 +970,20 @@ namespace CGAL {
         const auto ec = EraseCounterStrategy<Element_type>::erase_counter(&elt);
         properties_.reset(idx);
         EraseCounterStrategy<Element_type>::restore_erase_counter(&elt, ec);
+#if CGAL_DEBUG_INDEXED_CONTAINER
+        ss << idx << " (recycled from freelist)\n";
+#endif
       } else {
-        elt = Element_type(container, idx);
         idx = Index_type{static_cast<size_type>(properties_.push_back())};
+        elt = Element_type(container, idx);
+#if CGAL_DEBUG_INDEXED_CONTAINER
+        ss << idx << " (new)\n";
+#endif
       }
       Time_stamper::restore_timestamp(&elt, elt.index().id());
+#if CGAL_DEBUG_INDEXED_CONTAINER
+      std::cerr << ss.str();
+#endif
       return idx;
     }
 
@@ -971,9 +991,11 @@ namespace CGAL {
     {
       size_type& freelist_ = free_list();
       Index_type idx = ch->index();
-      if(idx.idx() == properties_.size()-1){
-        properties_.pop_back();
-        return;
+      if constexpr (false == is_parallel) {
+        if(idx.idx() == properties_.size()-1){
+          properties_.pop_back();
+          return;
+        }
       }
       removed_[idx] = true; ++local_number_of_removed_elements(); garbage_ = true;
       free_list_next_function_(storage_[idx]) = Index_type{freelist_};
@@ -986,7 +1008,13 @@ namespace CGAL {
       return idx.id() < size() && !removed_[idx];
     }
 
-    bool has_garbage() const { return garbage_; }
+    bool has_garbage() const {
+      if constexpr(is_parallel) {
+        return true;
+      } else {
+        return garbage_;
+      }
+    }
   }; // end class Indexed_container
 
   template <typename Vb = Vertex<>, typename Cb = Cell<>, class ConcurrencyTag = Sequential_tag>

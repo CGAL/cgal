@@ -353,6 +353,12 @@ public:
     return &m_lock_ds->get_bbox();
   }
 
+  int this_thread_priority() const
+  {
+    if(false == is_parallel()) return -1;
+    return m_lock_ds->this_thread_priority();
+  }
+
 protected:
   mutable Lock_data_structure *m_lock_ds;
 };
@@ -1375,6 +1381,20 @@ protected:
 
     *it.second++ = d;
 
+#if CGAL_DEBUG_INDEXED_CONTAINER
+    if(this->is_parallel()) {
+      std::stringstream ss;
+      ss << "=== Thread " << this->this_thread_priority() << " find_conflicts search\n";
+      std::cerr << ss.str();
+      ss.str("");
+      ss << "=== Thread " << this->this_thread_priority() << "   " << d;
+      ss << "   N( " << d->neighbor(0) << " " << d->neighbor(1)
+        << " " << d->neighbor(2) << "  " << d->neighbor(3) << " )";
+      ss << "   V( " << d->vertex(0) << " " << d->vertex(1)
+        << " " << d->vertex(2) << "  " << d->vertex(3) << " )\n";
+      std::cerr << ss.str();
+    }
+#endif
     do
     {
       Cell_handle c = cell_stack.top();
@@ -1405,6 +1425,17 @@ protected:
         }
         if(test->tds_data().is_clear())
         {
+#if CGAL_DEBUG_INDEXED_CONTAINER
+          if(this->is_parallel()) {
+            std::stringstream ss;
+            ss << "=== Thread " << this->this_thread_priority() << "   " << test;
+            ss << "   N( " << test->neighbor(0) << " " << test->neighbor(1)
+              << " " << test->neighbor(2) << "  " << test->neighbor(3) << " )";
+            ss << "   V( " << test->vertex(0) << " " << test->vertex(1)
+              << " " << test->vertex(2) << "  " << test->vertex(3) << " )\n";
+            std::cerr << ss.str();
+          }
+#endif
           if(tester(test))
           {
             // "test" is in the conflict zone
@@ -3245,6 +3276,20 @@ inexact_locate(const Point& t, Cell_handle start, int n_of_turns,
   }
 
   // Now treat the cell c.
+#if CGAL_DEBUG_INDEXED_CONTAINER
+  if(this->is_parallel()) {
+    std::stringstream ss;
+    ss << "-- Thread " << this->this_thread_priority() << " inexact_locate walk\n";
+    std::cerr << ss.str();
+    ss.str("");
+    ss << "-- Thread " << this->this_thread_priority() << "   " << c;
+    ss << "   N( " << c->neighbor(0) << " " << c->neighbor(1)
+      << " " << c->neighbor(2) << "  " << c->neighbor(3) << " )";
+    ss << "   V( " << c->vertex(0) << " " << c->vertex(1)
+      << " " << c->vertex(2) << "  " << c->vertex(3) << " )\n";
+    std::cerr << ss.str();
+  }
+#endif
 try_next_cell:
   n_of_turns--;
 
@@ -3282,6 +3327,17 @@ try_next_cell:
     c = next;
     if(could_lock_zone)
     {
+#if CGAL_DEBUG_INDEXED_CONTAINER
+      if(this->is_parallel()) {
+        std::stringstream ss;
+        ss << "-- Thread " << this->this_thread_priority() << "   " << c;
+        ss << "   N( " << c->neighbor(0) << " " << c->neighbor(1)
+          << " " << c->neighbor(2) << "  " << c->neighbor(3) << " )";
+        ss << "   V( " << c->vertex(0) << " " << c->vertex(1)
+          << " " << c->vertex(2) << "  " << c->vertex(3) << " )\n";
+        std::cerr << ss.str();
+      }
+#endif
       //previous->unlock(); // DON'T do that, "c" may be in
       // the same locking cell as "previous"
       if(!this->try_lock_cell(c))
@@ -4039,7 +4095,7 @@ insert_in_conflict(const Point& p,
       hider.process_cells_in_conflict(cells.begin(), cells.end());
 
       Vertex_handle v =
-        tds().is_small_hole(facets.size()) ?
+        false || tds().is_small_hole(facets.size()) ?
         _insert_in_small_hole(p, cells, facets) :
         _insert_in_hole(p,
                         cells.begin(), cells.end(),

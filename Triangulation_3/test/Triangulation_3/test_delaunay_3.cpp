@@ -1,3 +1,5 @@
+#define CGAL_CONCURRENT_TRIANGULATION_3_PROFILING 1
+#define CGAL_DEBUG_INDEXED_CONTAINER 1
 // Copyright (c) 1998  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
@@ -26,8 +28,10 @@ bool del=true;
 #include <CGAL/_test_cls_delaunay_3.h>
 #include <CGAL/_test_cls_parallel_triangulation_3.h>
 
+#include <tbb/global_control.h>
+
 // Explicit instantiation of the whole class :
-template class CGAL::Delaunay_triangulation_3<K>;
+// template class CGAL::Delaunay_triangulation_3<K>;
 
 template <typename K, typename ConcurrencyTag = CGAL::Sequential_tag>
 using Tds = CGAL::Triangulation_data_structure_3<CGAL::Triangulation_vertex_base_3<K>,
@@ -39,56 +43,69 @@ using Tds_index = CGAL::Triangulation_data_structure_3<CGAL::VertexWithPoint<K>,
                                                        CGAL::Cell4Delaunay<K>,
                                                        ConcurrencyTag, CGAL::Index_tag>;
 
-int main()
+int main(int argc, char** argv)
 {
-  using Cls = CGAL::Delaunay_triangulation_3<EPIC>;
-  using Cls_with_epec = CGAL::Delaunay_triangulation_3<EPEC>;
+  std::unique_ptr<oneapi::tbb::global_control> tbb_control;
+  // tbb_control = std::make_unique<oneapi::tbb::global_control>(oneapi::tbb::global_control::max_allowed_parallelism,
+  //                                                             2);
+  if(argc > 1) {
+    auto num_threads = std::atoi(argv[1]);
+    if(num_threads < 1) {
+       std::cerr << "Invalid number of threads: " << argv[1] << std::endl;
+       return 1;
+    }
+    tbb_control = std::make_unique<oneapi::tbb::global_control>(oneapi::tbb::global_control::max_allowed_parallelism,
+                                                                num_threads);
+  }
 
-  _test_cls_delaunay_3( Cls() );
-  _test_cls_delaunay_3( Cls_with_epec() );
+  // using Cls = CGAL::Delaunay_triangulation_3<EPIC>;
+  // using Cls_with_epec = CGAL::Delaunay_triangulation_3<EPEC>;
 
-  using Cls_index = CGAL::Delaunay_triangulation_3<EPIC, Tds_index<EPIC>>;
+  // _test_cls_delaunay_3( Cls() );
+  // _test_cls_delaunay_3( Cls_with_epec() );
 
-  _test_cls_delaunay_3( Cls_index() );
+  // using Cls_index = CGAL::Delaunay_triangulation_3<EPIC, Tds_index<EPIC>>;
 
-  using Tds_Delaunay_Cb = Tds<K>;
-  using Cls_with_Delaunay_Cb = CGAL::Delaunay_triangulation_3<EPIC, Tds_Delaunay_Cb>;
+  // _test_cls_delaunay_3( Cls_index() );
 
-  _test_cls_delaunay_3(Cls_with_Delaunay_Cb());
+  // using Tds_Delaunay_Cb = Tds<K>;
+  // using Cls_with_Delaunay_Cb = CGAL::Delaunay_triangulation_3<EPIC, Tds_Delaunay_Cb>;
+
+  // _test_cls_delaunay_3(Cls_with_Delaunay_Cb());
 
 #ifdef CGAL_LINKED_WITH_TBB
   using Lock_ds = CGAL::Spatial_lock_grid_3<CGAL::Tag_priority_blocking>;
-  using Tds_parallel = Tds<EPIC, CGAL::Parallel_tag>;
-  using Cls_parallel = CGAL::Delaunay_triangulation_3<EPIC, Tds_parallel, CGAL::Default, Lock_ds>;
-  // The following test won't do things in parallel since it doesn't provide
-  // a lock data structure
-  _test_cls_delaunay_3(Cls_parallel());
-  // This test performs parallel operations
-  _test_cls_parallel_triangulation_3(Cls_parallel());
+  // using Tds_parallel = Tds<EPIC, CGAL::Parallel_tag>;
+  // using Cls_parallel = CGAL::Delaunay_triangulation_3<EPIC, Tds_parallel, CGAL::Default, Lock_ds>;
+  // // The following test won't do things in parallel since it doesn't provide
+  // // a lock data structure
+  // _test_cls_delaunay_3(Cls_parallel());
+  // // This test performs parallel operations
+  // _test_cls_parallel_triangulation_3(Cls_parallel());
 
   using Tds_parallel_index = Tds_index<EPIC, CGAL::Parallel_tag>;
   using Cls_parallel_index = CGAL::Delaunay_triangulation_3<EPIC, Tds_parallel_index, CGAL::Default, Lock_ds>;
   // The following test won't do things in parallel since it doesn't provide
   // a lock data structure
-  _test_cls_delaunay_3(Cls_parallel_index());
+  // _test_cls_delaunay_3(Cls_parallel_index());
   // This test performs parallel operations
   _test_cls_parallel_triangulation_3(Cls_parallel_index());
 #endif
 
-  // Second version for the circumcenter storing cell base class.
-  using Vb = CGAL::Triangulation_vertex_base_3<K>;
-  using Cb = CGAL::Delaunay_triangulation_cell_base_with_circumcenter_3<K>;
-  using TDS = CGAL::Triangulation_data_structure_3<Vb, Cb>;
-  using Cls_circumcenter = CGAL::Delaunay_triangulation_3<K, TDS>;
+  // // Second version for the circumcenter storing cell base class.
+  // using Vb = CGAL::Triangulation_vertex_base_3<K>;
+  // using Cb = CGAL::Delaunay_triangulation_cell_base_with_circumcenter_3<K>;
+  // using TDS = CGAL::Triangulation_data_structure_3<Vb, Cb>;
+  // using Cls_circumcenter = CGAL::Delaunay_triangulation_3<K, TDS>;
 
-  _test_cls_delaunay_3(Cls_circumcenter());
+  // _test_cls_delaunay_3(Cls_circumcenter());
 
-  using Vb4 = CGAL::VertexWithPoint<EPIC>;
-  using Cb4 = CGAL::CellWithCircumcenter<EPIC>;
-  using TDS4 = CGAL::Triangulation_data_structure_3<Vb4, Cb4, CGAL::Sequential_tag, CGAL::Index_tag>;
-  using Cls4 = CGAL::Delaunay_triangulation_3<EPIC, TDS4>;
+  // using Vb4 = CGAL::VertexWithPoint<EPIC>;
+  // using Cb4 = CGAL::CellWithCircumcenter<EPIC>;
+  // using TDS4 = CGAL::Triangulation_data_structure_3<Vb4, Cb4, CGAL::Sequential_tag, CGAL::Index_tag>;
+  // using Cls4 = CGAL::Delaunay_triangulation_3<EPIC, TDS4>;
 
-  _test_cls_delaunay_3(Cls4());
+  // _test_cls_delaunay_3(Cls4());
 
   return 0;
 }
