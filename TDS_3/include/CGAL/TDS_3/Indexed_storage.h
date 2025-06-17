@@ -727,6 +727,7 @@ namespace CGAL {
   public:
     using value_type = typename Handle_::value_type;
     using reference = value_type;
+    using Concurrency_tag = typename Element_container::Concurrency_tag;
 
     Index_iterator()
         : idx_()
@@ -820,10 +821,10 @@ namespace CGAL {
     Element_container* cont_;
   }; // end class Index_iterator
 
-  template <class I, class T>
-  struct Property_map : Properties::Property_map_base<I, T, Property_map<I, T> >
+  template <class I, class T, class ConcurrencyTag = Sequential_tag>
+  struct Property_map : Properties::Property_map_base<I, T, ConcurrencyTag, Property_map<I, T> >
   {
-    using Base = Properties::Property_map_base<I, T, Property_map<I, T> >;
+    using Base = Properties::Property_map_base<I, T, ConcurrencyTag, Property_map<I, T> >;
     using reference = typename Base::reference;
 
     Property_map() = default;
@@ -834,6 +835,7 @@ namespace CGAL {
             typename Element_type,
             typename Storage_type,
             typename Container,
+            typename ConcurrencyTag,
             typename Container::size_type& (*free_list_next_function_)(Storage_type&),
             char prefix>
   struct Indexed_container
@@ -842,11 +844,12 @@ namespace CGAL {
                                    Element_type,
                                    Storage_type,
                                    Container,
+                                   ConcurrencyTag,
                                    free_list_next_function_,
                                    prefix>;
     using Handle = Index_handle<Element_type, Index_type, Container>;
     using size_type = typename Container::size_type;
-    using Concurrency_tag = typename Container::Concurrency_tag;
+    using Concurrency_tag = ConcurrencyTag;
 
     static constexpr bool is_parallel = std::is_convertible_v<Concurrency_tag, Parallel_tag>;
 #ifdef CGAL_LINKED_WITH_TBB
@@ -872,22 +875,22 @@ namespace CGAL {
     size_type anonymous_property_nb = 0;
     static constexpr bool recycle_ = true;
     bool garbage_ = false;
-    Property_map<Index_type, Storage_type> storage_ =
-        add_property_map<Storage_type>(prefix + std::string(":storage"), Storage_type()).first;
-    Property_map<Index_type, bool> removed_ =
-        add_property_map<bool>(prefix + std::string(":removed"), false).first;
+    Property_map<Index_type, Storage_type, Concurrency_tag> storage_ =
+        add_property_map<Storage_type,Concurrency_tag>(prefix + std::string(":storage"), Storage_type()).first;
+    Property_map<Index_type, bool, Concurrency_tag> removed_ =
+        add_property_map<bool,Concurrency_tag>(prefix + std::string(":removed"), false).first;
 
     template <typename Key, typename T>
     struct Get_property_map {
-      using type = Property_map<Key, T>;
+      using type = Property_map<Key, T, Concurrency_tag>;
     };
 
     using Time_stamper = CGAL::Time_stamper_impl<Element_type>;
     template <typename U> using EraseCounterStrategy =
       internal::Erase_counter_strategy<internal::has_increment_erase_counter<U>::value>;
 
-    template<class T>
-    std::pair<Property_map<Index_type, T>, bool>
+    template<class T, class ConcurrencyTag>
+    std::pair<Property_map<Index_type, T,ConcurrencyTag>, bool>
     add_property_map(std::string name=std::string(), const T t=T()) {
       if(name.empty()){
         std::ostringstream oss;
@@ -970,6 +973,10 @@ namespace CGAL {
     {
       size_type& freelist_ = free_list();
       Index_type idx = ch->index();
+      if(idx.idx() == properties_.size()-1){
+        properties_.pop_back();
+        return;
+      }
       removed_[idx] = true; ++local_number_of_removed_elements(); garbage_ = true;
       free_list_next_function_(storage_[idx]) = Index_type{freelist_};
       freelist_ = static_cast<size_type>(idx);
@@ -1064,8 +1071,8 @@ namespace CGAL {
 
     using Vertex_storage = typename Vertex::Storage;
     using Cell_storage = typename Cell::Storage;
-    using Vertex_storage_property_map = Property_map<Vertex_index, Vertex_storage>;
-    using Cell_storage_property_map = Property_map<Cell_index, Cell_storage>;
+    using Vertex_storage_property_map = Property_map<Vertex_index, Vertex_storage, ConcurrencyTag>;
+    using Cell_storage_property_map = Property_map<Cell_index, Cell_storage, ConcurrencyTag>;
 
     static size_type& vertex_free_list_next_function(Vertex_storage& s)
     {
@@ -1076,9 +1083,9 @@ namespace CGAL {
       return s.ivertices[0].id();
     }
 
-    using Vertex_container = Indexed_container<Vertex_index, Vertex, Vertex_storage, Self,
+    using Vertex_container = Indexed_container<Vertex_index, Vertex, Vertex_storage, Self, Concurrency_tag,
         &vertex_free_list_next_function, 'v'>;
-    using Cell_container = Indexed_container<Cell_index, Cell, Cell_storage, Self,
+    using Cell_container = Indexed_container<Cell_index, Cell, Cell_storage, Self, Concurrency_tag,
         &cell_free_list_next_function, 'c'>;
 
     Cell_storage_property_map& cell_storage() { return cell_container().storage_; }
@@ -1507,8 +1514,8 @@ namespace CGAL {
     Vertex_container vertex_container_;
     Cell_container cell_container_;
 
-    Property_map<Cell_index, Cell_data> cell_data_ =
-        cell_container().template add_property_map<Cell_data>("c:data").first;
+    Property_map<Cell_index, Cell_data, Concurrency_tag> cell_data_ =
+        cell_container().template add_property_map<Cell_data,Concurrency_tag>("c:data").first;
 
     // in dimension i, number of vertices >= i+2
     // ( the boundary of a simplex in dimension i+1 has i+2 vertices )
