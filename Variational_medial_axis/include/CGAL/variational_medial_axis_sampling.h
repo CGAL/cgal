@@ -22,6 +22,62 @@
 #include <Eigen/Dense>
 
 namespace CGAL {
+template <typename TriangleMesh, typename GT>
+class MedialSphere
+{
+  
+public:
+
+  using FT = typename GT::FT;
+  using Point_3 = typename GT::Point_3;
+  using Sphere_3 = typename GT::Sphere_3;
+  using Sphere_ID = std::size_t;
+  using vertex_descriptor = typename boost::graph_traits<TriangleMesh>::vertex_descriptor;
+
+  MedialSphere(const Sphere_3& s, Sphere_ID i)
+      : id(i)
+      , sphere(s)
+      , split_vertex(boost::graph_traits<TriangleMesh>::null_vertex())
+      , error(FT(0))
+      , cluster_area(FT(0)) {}
+
+  void reset() {
+    error = FT(0);
+    split_vertex = boost::graph_traits<TriangleMesh>::null_vertex();
+    cluster_area = FT(0);
+    neighbors.clear();
+    cluster_vertices.clear();
+  }
+
+  FT get_radius() const { return CGAL::approximate_sqrt(sphere.squared_radius()); }
+  Point_3 get_center() const { return sphere.center(); }
+  FT get_area() const { return cluster_area; }
+  Sphere_ID get_id() const { return id; }
+  const std::unordered_set<Sphere_ID>& get_neighbors() const { return neighbors; }
+  vertex_descriptor get_split_vertex() const { return split_vertex; }
+  FT get_error() const { return error; }
+  void set_center(const Point_3& p) { sphere = Sphere_3(p, get_radius()); }
+  void set_radius(FT r) { sphere = Sphere_3(get_center(), r * r); }
+  void set_cluter_area(FT area) { cluster_area = area; }
+  void set_error(FT e) { error = e; }
+  void set_split_vertex(vertex_descriptor v) { split_vertex = v; }
+  void accumulate_cluster_area(FT area) { cluster_area += area; }
+  void add_neighbor(Sphere_ID id) { neighbors.insert(id); }
+  bool can_split() const { return !do_not_split && split_vertex != boost::graph_traits<TriangleMesh>::null_vertex(); }
+  void set_do_not_split(bool value) { do_not_split = value; }
+  std::vector<vertex_descriptor>& get_cluster_vertices() { return cluster_vertices; }
+  void add_cluster_vertex(vertex_descriptor v) { cluster_vertices.push_back(v); }
+
+private:
+  Sphere_ID id;
+  Sphere_3 sphere;
+  FT error;
+  FT cluster_area;
+  bool do_not_split = false;      // flag to indicate if the sphere should not be split
+  vertex_descriptor split_vertex; // the vertex for split
+  std::unordered_set<Sphere_ID> neighbors;
+  std::vector<vertex_descriptor> cluster_vertices;
+};
 
 template <typename TriangleMesh, typename GT> 
 class MedialSphereMesh
@@ -30,64 +86,24 @@ public:
   using FT = typename GT::FT;
   using Point_3 = typename GT::Point_3;
   using Sphere_3 = typename GT::Sphere_3;
-  using Sphere_ID = std::size_t;
+  using MSphere = typename MedialSphere<TriangleMesh, GT>;
+  using Sphere_ID = typename MSphere::Sphere_ID;
   using vertex_descriptor = typename boost::graph_traits<TriangleMesh>::vertex_descriptor;
   static const Sphere_ID INVALID_SPHERE_ID = std::numeric_limits<Sphere_ID>::max();
-  struct MedialSphere
-  {
-    Sphere_ID id;
-    Sphere_3 sphere;
-    FT error;
-    FT cluster_area;
-    bool do_not_split = false;      // flag to indicate if the sphere should not be split
-    vertex_descriptor split_vertex; // the vertex for split
-    std::unordered_set<Sphere_ID> neighbors;
-    std::vector<vertex_descriptor> cluster_vertices;
-
-    MedialSphere(const Sphere_3& s, Sphere_ID i)
-        : id(i)
-        , sphere(s)
-        , split_vertex(boost::graph_traits<TriangleMesh>::null_vertex())
-        , error(FT(0))
-        , cluster_area(FT(0)) {}
-
-    void reset() {
-      error = FT(0);
-      split_vertex = boost::graph_traits<TriangleMesh>::null_vertex();
-      cluster_area = FT(0);
-      neighbors.clear();
-      cluster_vertices.clear();
-    }
-
-    FT get_radius() const { return CGAL::approximate_sqrt(sphere.squared_radius()); }
-    Point_3 get_center() const { return sphere.center(); }
-    FT get_area() const { return cluster_area; }
-    Sphere_ID get_id() const { return id; }
-    void set_center(const Point_3& p) { sphere = Sphere_3(p, get_radius()); }
-    void set_radius(FT r) { sphere = Sphere_3(get_center(), r * r); }
-    void set_cluter_area(FT area) { cluster_area = area; }
-    void accumulate_cluster_area(FT area) { cluster_area += area; }
-    void add_neighbor(Sphere_ID id) { neighbors.insert(id); }
-    bool can_split() const { return !do_not_split && split_vertex != boost::graph_traits<TriangleMesh>::null_vertex(); }
-    void set_do_not_split(bool value) { do_not_split = value; }
-    std::vector<vertex_descriptor>& get_cluster_vertices() { return cluster_vertices; }
-    void add_cluster_vertex(vertex_descriptor v) { cluster_vertices.push_back(v); }
-  };
 
 private:
-  std::vector<std::shared_ptr<MedialSphere>> spheres_; // TO DO: use Compact container?
+  std::vector<std::shared_ptr<MSphere>> spheres_; // TO DO: use Compact container?
   std::unordered_map<Sphere_ID, std::size_t> id_to_index_;
   Sphere_ID next_id_ = 0;
 
 public:
   Sphere_ID add_sphere(const Sphere_3 s) {
     Sphere_ID id = next_id_++;
-    spheres_.push_back(std::make_shared<MedialSphere>(std::move(s), id));
+    spheres_.push_back(std::make_shared<MSphere>(std::move(s), id));
     id_to_index_[id] = spheres_.size() - 1;
     return id;
   
   }
-
 
   void remove(Sphere_ID id) {
     auto it = id_to_index_.find(id);
@@ -110,9 +126,9 @@ public:
     }
   }
   std::size_t nb_spheres() { return id_to_index_.size(); }
-  std::shared_ptr<MedialSphere> get_sphere(Sphere_ID id) { return spheres_[id_to_index_.at(id)]; }
-  std::shared_ptr<const MedialSphere> get_sphere(Sphere_ID id) const { return spheres_[id_to_index_.at(id)]; }
-  std::vector<std::shared_ptr<MedialSphere>>& spheres() { return spheres_; }
+  std::shared_ptr<MSphere> get_sphere(Sphere_ID id) { return spheres_[id_to_index_.at(id)]; }
+  std::shared_ptr<const MSphere> get_sphere(Sphere_ID id) const { return spheres_[id_to_index_.at(id)]; }
+  std::vector<std::shared_ptr<MSphere>>& spheres() { return spheres_; }
   
   void export_to_ply_with_edges_faces(std::ostream& os) const {
     using Point_3 = typename GT::Point_3;
@@ -138,7 +154,7 @@ public:
       if(!sphere_ptr)
         continue;
       std::size_t a = id_to_vertex_index.at(sphere_ptr->get_id());
-      for(Sphere_ID n_id : sphere_ptr->neighbors) {
+      for(Sphere_ID n_id : sphere_ptr->get_neighbors()) {
         std::size_t b = id_to_vertex_index.at(n_id);
         if(a < b)
           edge_set.emplace(a, b);
@@ -152,12 +168,12 @@ public:
       if(!sphere_ptr)
         continue;
       Sphere_ID a_id = sphere_ptr->get_id();
-      const auto& neighbors_a = sphere_ptr->neighbors;
+      const auto& neighbors_a = sphere_ptr->get_neighbors();
 
       for(Sphere_ID b_id : neighbors_a) {
         if(b_id <= a_id)
           continue;
-        const auto& neighbors_b = get_sphere(b_id)->neighbors;
+        const auto& neighbors_b = get_sphere(b_id)->get_neighbors();
 
         for(Sphere_ID c_id : neighbors_a) {
           if(c_id <= b_id)
@@ -383,6 +399,7 @@ void compute_shrinking_balls_and_save_result(const TriangleMesh& tmesh,
                                              VertexMedialSphereRadiusMap& vertex_medial_sphere_radius_map) {
   using Vector_3 = typename GT::Vector_3;
   using Point_3 = typename GT::Point_3;
+  using Sphere_3 = typename GT::Sphere_3;
   using vertex_descriptor = typename boost::graph_traits<TriangleMesh>::vertex_descriptor;
 
   std::cout << "Compute shrinking ball for each vertex" << std::endl;
@@ -392,7 +409,7 @@ void compute_shrinking_balls_and_save_result(const TriangleMesh& tmesh,
     auto [center, radius] = shrinking_ball_algorithm<TriangleMesh, GT, Tree>(tmesh,face_normal_map, p, normal, tree);
     put(vertex_medial_sphere_pos_map, v, center);
     put(vertex_medial_sphere_radius_map, v, radius);
-    sphere_mesh.add_sphere(typename MedialSphereMesh::Sphere_3(center, radius*radius));
+    sphere_mesh.add_sphere(Sphere_3(center, radius*radius));
   }
   std::string filename = "medial_sphere_mesh.ply";
   sphere_mesh.write_to_ply_file(filename);
@@ -474,7 +491,7 @@ void correct_sphere(
     const FaceNormalMap& face_normal_map,
     const VertexPointMap& vpm,
     const GT& traits,
-    std::shared_ptr<typename MedialSphereMesh<TriangleMesh, GT>::MedialSphere> sphere,
+    std::shared_ptr<typename MedialSphere<TriangleMesh, GT>> sphere,
     const Eigen::Matrix<typename GT::FT, 4, 1>& optimized_sphere_params) {
   using FT = typename GT::FT;
   using Point_3 = typename GT::Point_3;
@@ -648,11 +665,11 @@ typename GT::FT compute_sphere_errors(const TriangleMesh& tmesh,
       put(vertex_error_map, v, distance);
       if(distance > max_dist) {
         max_dist = distance;
-        sphere->split_vertex = v; // update the split vertex
+        sphere->set_split_vertex(v); // update the split vertex
       }
     }
-    sphere->error = error / sphere->get_area(); // average error
-    total_error += sphere->error;
+    sphere->set_error(error / sphere->get_area()); // average error
+    total_error += sphere->get_error();
   }
 
   return total_error;
@@ -676,7 +693,7 @@ void update_sphere_neighbors(const TriangleMesh& tmesh,
       auto sphere1 = sphere_mesh.get_sphere(s1);
       auto sphere2 = sphere_mesh.get_sphere(s2);
 
-      if(sphere1->neighbors.find(s2) == sphere1->neighbors.end()) {
+      if(sphere1->get_neighbors().find(s2) == sphere1->get_neighbors().end()) {
         sphere1->add_neighbor(s2);
         sphere2->add_neighbor(s1);
         
@@ -690,7 +707,7 @@ void split_spheres(MedialSphereMesh<TriangleMesh, GT>& sphere_mesh,
                    int desired_number_of_spheres,
                    const VertexMedialSpherePosMap& vertex_medial_sphere_pos_map,
                    const VertexMedialSphereRadiusMap& vertex_medial_sphere_radius_map) {
-  using MedialSphere = typename MedialSphereMesh<TriangleMesh, GT>::MedialSphere;
+  using MedialSphere = typename MedialSphere<TriangleMesh, GT>;
   using Sphere_ID = typename MedialSphereMesh<TriangleMesh, GT>::Sphere_ID;
   using Sphere_3 = typename GT::Sphere_3;
   using Point_3 = typename GT::Point_3;
@@ -712,10 +729,10 @@ void split_spheres(MedialSphereMesh<TriangleMesh, GT>& sphere_mesh,
     if(sphere_mesh.nb_spheres() >= desired_number_of_spheres)
       break;
     if(to_split_max > 0 && sphere->can_split()) {
-      for(Sphere_ID neighbor_id : sphere->neighbors) {
+      for(Sphere_ID neighbor_id : sphere->get_neighbors()) {
           sphere_mesh.get_sphere(neighbor_id)->set_do_not_split(true);
       }
-      vertex_descriptor split_vertex = sphere->split_vertex;
+      vertex_descriptor split_vertex = sphere->get_split_vertex();
       Point_3 center = get(vertex_medial_sphere_pos_map, split_vertex);
       FT radius = get(vertex_medial_sphere_radius_map, split_vertex);
       sphere_mesh.add_sphere(Sphere_3(center, radius*radius));
@@ -777,15 +794,21 @@ void variational_medial_axis_sampling(const TriangleMesh& tmesh,
   using edge_descriptor = typename boost::graph_traits<TriangleMesh>::edge_descriptor;
   using vertex_descriptor = typename boost::graph_traits<TriangleMesh>::vertex_descriptor;
 
-  using Sphere_ID = typename MedialSphereMesh<TriangleMesh, GT>::Sphere_ID;
-  using MedialSphere = typename MedialSphereMesh<TriangleMesh, GT>::MedialSphere;
-  using MedialSphereMesh = typename MedialSphereMesh<TriangleMesh, GT>;
+  
+  using MSphere = typename MedialSphere<TriangleMesh, GT>;
+  using Sphere_ID = typename MSphere::Sphere_ID;
+  using MSMesh = typename MedialSphereMesh<TriangleMesh, GT>;
 
   // Property map types
   using Vertex_normal_tag = CGAL::dynamic_vertex_property_t<Vector_3>;
   using Vertex_normal_map = typename boost::property_map<TriangleMesh, Vertex_normal_tag>::const_type;
   using Vertex_area_tag = CGAL::dynamic_vertex_property_t<FT>;
   using Vertex_area_map = typename boost::property_map<TriangleMesh, Vertex_area_tag>::const_type;
+  using Face_normal_tag = CGAL::dynamic_face_property_t<Vector_3>;
+  using Face_normal_map = typename boost::property_map<TriangleMesh, Face_normal_tag>::const_type;
+  using Face_area_tag = CGAL::dynamic_face_property_t<FT>;
+  using Face_area_map = typename boost::property_map<TriangleMesh, Face_area_tag>::const_type;
+
   using Vertex_error_tag = CGAL::dynamic_vertex_property_t<FT>;
   using Vertex_error_map = typename boost::property_map<TriangleMesh, Vertex_error_tag>::const_type;
   using Vertex_cluster_sphere_tag = CGAL::dynamic_vertex_property_t<Sphere_ID>;
@@ -796,10 +819,7 @@ void variational_medial_axis_sampling(const TriangleMesh& tmesh,
   using Vertex_medial_sphere_radius_tag = CGAL::dynamic_vertex_property_t<FT>;
   using Vertex_medial_sphere_radius_map =
       typename boost::property_map<TriangleMesh, Vertex_medial_sphere_radius_tag>::const_type;
-  using Face_normal_tag = CGAL::dynamic_face_property_t<Vector_3>;
-  using Face_normal_map = typename boost::property_map<TriangleMesh, Face_normal_tag>::const_type;
-  using Face_area_tag = CGAL::dynamic_face_property_t<FT>;
-  using Face_area_map = typename boost::property_map<TriangleMesh, Face_area_tag>::const_type;
+  
 
   typedef typename internal_np::Lookup_named_param_def<internal_np::concurrency_tag_t, NamedParameters,
                                                        Sequential_tag>::type Concurrency_tag;
@@ -821,7 +841,7 @@ void variational_medial_axis_sampling(const TriangleMesh& tmesh,
   Vertex_area_map vertex_area_map = get(Vertex_area_tag(), tmesh, 0.);
   Vertex_error_map vertex_error_map = get(Vertex_error_tag(), tmesh, 0.);
   Vertex_cluster_sphere_map vertex_cluster_sphere_map =
-      get(Vertex_cluster_sphere_tag(), tmesh, MedialSphereMesh::INVALID_SPHERE_ID);
+      get(Vertex_cluster_sphere_tag(), tmesh, MSMesh::INVALID_SPHERE_ID);
   Vertex_medial_sphere_pos_map vertex_medial_sphere_pos_map =
       get(Vertex_medial_sphere_pos_tag(), tmesh, Point_3(0., 0., 0.));
   Vertex_medial_sphere_radius_map vertex_medial_sphere_radius_map =
@@ -836,7 +856,7 @@ void variational_medial_axis_sampling(const TriangleMesh& tmesh,
   // Compute vertex areas
   compute_vertex_areas<TriangleMesh, GT>(tmesh, vpm, face_area_map, vertex_area_map);
 
-  MedialSphereMesh sphere_mesh;
+  MSMesh sphere_mesh;
   int desired_number_of_spheres = 300; // TO DO: pass desired number of sphere by parameter
   FT lambda = FT(0.2);                 // TO DO: pass lambda by parameter
   int iteration_count = 0;             
@@ -861,11 +881,11 @@ void variational_medial_axis_sampling(const TriangleMesh& tmesh,
     assign_vertices_to_clusters<TriangleMesh, GT>(tmesh, vpm, sphere_mesh, lambda, vertex_area_map, vertex_normal_map,
                                                   vertex_cluster_sphere_map);
 
-#ifdef CGAL_EIGEN3_ENABLED
+
     // Update the sphere by optimizing the combined metric
     optimize_sphere_positions<TriangleMesh, GT>(tmesh, vpm, sphere_mesh, lambda, vertex_area_map, face_normal_map,
                                                 face_area_map, tree, traits, true);
-#endif
+
 
     // Compute error of each sphere
     total_error = compute_sphere_errors<TriangleMesh, GT>(tmesh, vpm, sphere_mesh, lambda, vertex_area_map,
