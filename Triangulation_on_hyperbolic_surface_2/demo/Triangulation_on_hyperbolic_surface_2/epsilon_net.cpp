@@ -28,10 +28,9 @@ typedef CGAL::Hyperbolic_fundamental_domain_2<Traits>                           
 typedef CGAL::Hyperbolic_isometry_2<Traits>                                                                     Isometry;
 typedef CGAL::Hyperbolic_fundamental_domain_factory_2<Traits>                                                   Factory;
 
-typedef CGAL::Triangulation_on_hyperbolic_surface_2<Traits, CGAL::Anchored_Combinatorial_Map_Attributes<Traits>>    Triangulation;
-typedef CGAL::Delaunay_triangulation_on_hyperbolic_surface_2<Traits>                                            Delaunay_Triangulation;
-typedef typename Triangulation::Anchor                                                                 Anchor;
-typedef CGAL::Combinatorial_map<2,CGAL::Anchored_Combinatorial_Map_Attributes<Traits>>                          CMap;
+typedef CGAL::Triangulation_on_hyperbolic_surface_2<Traits, CGAL::Delaunay_triangulation_attributes<Traits>>    Base;
+typedef CGAL::Delaunay_triangulation_on_hyperbolic_surface_2<Traits>                                            Delaunay_triangulation;
+typedef typename Delaunay_triangulation::Anchor                                                                 Anchor;
 
 int main(int argc, char *argv[])
 {
@@ -51,7 +50,7 @@ int main(int argc, char *argv[])
 	// 2. GET A VERTEX
 	// So that if you run the demo on a same surface but with different values of epsilon,
 	// the drawing will be centered at the same vertex and it will look similar.
-	Delaunay_Triangulation my_triangulation = Delaunay_Triangulation(domain);
+	Delaunay_triangulation my_triangulation = Delaunay_triangulation(domain);
 	my_triangulation.make_Delaunay();
 	Anchor & my_anchor = my_triangulation.anchor();
 	Point v0 = my_anchor.vertices[0];
@@ -84,7 +83,7 @@ int main(int argc, char *argv[])
 	for (int i = 0; i < 3; i++) {
 		start.vertices[i] = anch.vertices[(i + index) % 3];
 		if (i < index) {
-			start.dart = my_triangulation.Triangulation::ccw(start.dart);
+			start.dart = my_triangulation.Base::ccw(start.dart);
 		}
 	}
 

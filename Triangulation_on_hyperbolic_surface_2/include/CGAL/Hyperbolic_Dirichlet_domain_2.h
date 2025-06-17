@@ -16,7 +16,7 @@ unfold(Delaunay_triangulation_on_hyperbolic_surface_2<Traits> & triangulation)
 	typedef typename Traits::Point_2                                Point;
 	typedef Delaunay_triangulation_on_hyperbolic_surface_2<Traits>     Delaunay_Triangulation;
 	typedef typename Delaunay_Triangulation::Anchor                	Anchor;
-	typedef typename Delaunay_Triangulation::Combinatorial_Map      CMap;
+	typedef typename Delaunay_Triangulation::CMap      CMap;
 	typedef typename Delaunay_Triangulation::Dart_const_descriptor	Dart_const_descriptor;
 	typedef	CGAL::Hyperbolic_isometry_2<Traits> 					Isometry;
 

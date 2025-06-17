@@ -19,7 +19,7 @@ typedef CGAL::Hyperbolic_Delaunay_triangulation_CK_traits_2<Kernel>             
 typedef Hyperbolic_surface_traits_2<ParentTraits>                       Traits;
 typedef Hyperbolic_fundamental_domain_2<Traits>                         Domain;
 typedef Hyperbolic_fundamental_domain_factory_2<Traits>                 Factory;
-typedef Triangulation_on_hyperbolic_surface_2<Traits, CGAL::Anchored_Combinatorial_Map_Attributes<Traits>>                   Triangulation;
+typedef Triangulation_on_hyperbolic_surface_2<Traits>                   Triangulation;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

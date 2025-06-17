@@ -8,11 +8,11 @@
 namespace CGAL{
 
 template<class Traits>
-struct Anchored_Combinatorial_Map_Attributes {
+struct Delaunay_triangulation_attributes {
 	template<class CMap>
 	struct Dart_wrapper{
 		typedef Cell_attribute<CMap, Complex_number<typename Traits::FT>> Edge_attrib;
-		typedef Cell_attribute<CMap, typename Triangulation_on_hyperbolic_surface_2<Traits,Anchored_Combinatorial_Map_Attributes<Traits>>::Anchor> Face_attrib;
+		typedef Cell_attribute<CMap, typename Triangulation_on_hyperbolic_surface_2<Traits,Delaunay_triangulation_attributes<Traits>>::Anchor> Face_attrib;
 		typedef std::tuple<void,Edge_attrib,Face_attrib> Attributes;
 	};
 };
@@ -25,25 +25,25 @@ enum Locate_type {
 };
 
 template<class Traits>
-class Delaunay_triangulation_on_hyperbolic_surface_2: public Triangulation_on_hyperbolic_surface_2<Traits, Anchored_Combinatorial_Map_Attributes<Traits>> {
+class Delaunay_triangulation_on_hyperbolic_surface_2: public Triangulation_on_hyperbolic_surface_2<Traits, Delaunay_triangulation_attributes<Traits>> {
 public:
-	typedef Triangulation_on_hyperbolic_surface_2<Traits,Anchored_Combinatorial_Map_Attributes<Traits>>                     Base;
-	typedef Combinatorial_map<2,Anchored_Combinatorial_Map_Attributes<Traits>>                                              Combinatorial_Map;
-	typedef typename Triangulation_on_hyperbolic_surface_2<Traits,Anchored_Combinatorial_Map_Attributes<Traits>>::Anchor    Anchor;
+	typedef Triangulation_on_hyperbolic_surface_2<Traits,Delaunay_triangulation_attributes<Traits>>                     Base;
+	typedef Combinatorial_map<2,Delaunay_triangulation_attributes<Traits>>                                              CMap;
+	typedef typename Triangulation_on_hyperbolic_surface_2<Traits,Delaunay_triangulation_attributes<Traits>>::Anchor    Anchor;
 
 	typedef typename Traits::FT                                                                     Number;
 	typedef typename Traits::Complex                                                                Complex;
 	typedef typename Traits::Hyperbolic_point_2                                                     Point;
 	typedef typename Traits::Hyperbolic_Voronoi_point_2                                             Voronoi_point;
-	typedef typename Combinatorial_Map::Dart_descriptor                                             Dart_descriptor;
-	typedef typename Combinatorial_Map::Dart_range                                                  Dart_range;
-	typedef typename Combinatorial_Map::template One_dart_per_cell_range<0>                         Vertex_range;
-	typedef typename Combinatorial_Map::template One_dart_per_cell_range<1>                         Edge_range;
-	typedef typename Combinatorial_Map::template One_dart_per_cell_range<2>                         Face_range;
-	typedef typename Combinatorial_Map::Dart_const_descriptor                                       Dart_const_descriptor;
-	typedef typename Combinatorial_Map::Dart_const_range                                            Dart_const_range;
-	typedef typename Combinatorial_Map::template One_dart_per_cell_const_range<1>                   Edge_const_range;
-	typedef typename Combinatorial_Map::template One_dart_per_cell_const_range<2>                   Face_const_range;
+	typedef typename CMap::Dart_descriptor                                             Dart_descriptor;
+	typedef typename CMap::Dart_range                                                  Dart_range;
+	typedef typename CMap::template One_dart_per_cell_range<0>                         Vertex_range;
+	typedef typename CMap::template One_dart_per_cell_range<1>                         Edge_range;
+	typedef typename CMap::template One_dart_per_cell_range<2>                         Face_range;
+	typedef typename CMap::Dart_const_descriptor                                       Dart_const_descriptor;
+	typedef typename CMap::Dart_const_range                                            Dart_const_range;
+	typedef typename CMap::template One_dart_per_cell_const_range<1>                   Edge_const_range;
+	typedef typename CMap::template One_dart_per_cell_const_range<2>                   Face_const_range;
 	typedef Hyperbolic_isometry_2<Traits>                                                           Isometry;
 	typedef Hyperbolic_fundamental_domain_2<Traits>                                                 Domain;
 	typedef boost::numeric::interval<double>                                                        Interval;
@@ -53,7 +53,7 @@ public:
 
 	//---------- CONSTRUCTORS
 	Delaunay_triangulation_on_hyperbolic_surface_2() {};
-	Delaunay_triangulation_on_hyperbolic_surface_2(Combinatorial_Map & cmap, Anchor & anch);
+	Delaunay_triangulation_on_hyperbolic_surface_2(CMap & cmap, Anchor & anch);
 	Delaunay_triangulation_on_hyperbolic_surface_2(Domain const & domain);
 	Delaunay_triangulation_on_hyperbolic_surface_2(Base & triangulation);
 
@@ -134,7 +134,7 @@ private:
 
 template<class Traits>
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
-Delaunay_triangulation_on_hyperbolic_surface_2(Combinatorial_Map & cmap, Anchor & anch)
+Delaunay_triangulation_on_hyperbolic_surface_2(CMap & cmap, Anchor & anch)
 : Base(cmap, anch)
 {       
 	set_anchors();
@@ -163,7 +163,7 @@ Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
 set_anchors()
 {
 	std::map<Dart_descriptor, Point> positions;
-	Combinatorial_Map & cmap = this->combinatorial_map_;
+	CMap & cmap = this->combinatorial_map_;
 
 	// create a mark for visited darts
 	size_t visited = cmap.get_new_mark();

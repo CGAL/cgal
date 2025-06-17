@@ -41,9 +41,9 @@ typedef CGAL::Hyperbolic_surface_traits_2<ParentTraits>                         
 typedef Traits::Hyperbolic_point_2                                                Point;
 typedef typename Traits::Hyperbolic_Voronoi_point_2                               Voronoi_point;
 typedef CGAL::Hyperbolic_fundamental_domain_2<Traits>                             Domain;
-typedef CGAL::Triangulation_on_hyperbolic_surface_2<Traits, CGAL::Anchored_Combinatorial_Map_Attributes<Traits>>   Triangulation;
-typedef CGAL::Delaunay_triangulation_on_hyperbolic_surface_2<Traits>              Delaunay_Triangulation;
-typedef typename Triangulation::Anchor                                   Anchor;
+typedef CGAL::Triangulation_on_hyperbolic_surface_2<Traits>   Triangulation;
+typedef CGAL::Delaunay_triangulation_on_hyperbolic_surface_2<Traits>              Delaunay_triangulation;
+typedef typename Delaunay_triangulation::Anchor                                   Anchor;
 
 class DemoWindowItem
   : public CGAL::Qt::GraphicsItem
@@ -84,7 +84,7 @@ public:
   void draw_triangulation(Triangulation& triangulation);
   void draw_dirichlet(Domain& domain);
   void draw_triangles(std::vector<Anchor> anchors);
-  void draw_triangulation(Delaunay_Triangulation& triangulation, Anchor& anchor);
+  void draw_triangulation(Delaunay_triangulation& triangulation, Anchor& anchor);
 
 private:
   // Sub-methods for drawing edges and vertices

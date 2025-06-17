@@ -114,9 +114,9 @@ void DemoWindowItem::draw_triangles(std::vector < Anchor > anchors)
   }
 }
 
-void DemoWindowItem::draw_triangulation(Delaunay_Triangulation & triangulation, Anchor & anchor)
+void DemoWindowItem::draw_triangulation(Delaunay_triangulation & triangulation, Anchor & anchor)
 {
-  typedef std::vector < std::tuple < typename Delaunay_Triangulation::Combinatorial_Map::Dart_const_handle, Point,
+  typedef std::vector < std::tuple < typename Delaunay_triangulation::Dart_const_descriptor, Point,
       Point, Point >> RealizationVector;
   RealizationVector realized_triangles;
   realized_triangles = triangulation.lift(anchor);
