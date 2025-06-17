@@ -10,9 +10,10 @@
 #include "CGAL/HDVF/Simplex.hpp"
 #include "CGAL/HDVF/tools_io.hpp"
 #include "CGAL/HDVF/Abstract_Simplicial_chain_complex.hpp"
-#include "CGAL/HDVF/SimpComplexTools.hpp"
+//#include "CGAL/HDVF/SimpComplexTools.hpp"
 #include "CGAL/HDVF/Cubical_chain_complex.hpp"
-#include "CGAL/HDVF/CubComplexTools.hpp"
+//#include "CGAL/HDVF/CubComplexTools.hpp"
+#include "CGAL/HDVF/Geometric_chain_complex_tools.h"
 #include "CGAL/HDVF/hdvf_tools.hpp"
 #include "CGAL/HDVF/Hdvf_duality.h"
 #include "CGAL/OSM/OSM.hpp"
@@ -170,7 +171,7 @@ void main_code (const Options &options)
         
         // Build L (bounding sphere meshed with tetgen), K and L-K
         
-        typename ToolsType::TripleRes t(ToolsType::SimpComplexBB(*complex)) ;
+        typename ToolsType::TripleRes t(ToolsType::simplicial_chain_complex_bb(*complex)) ;
         delete complex ;
         ComplexType& L(t.L) ;
         SubCCType& K(t.K) ;
@@ -189,12 +190,12 @@ void main_code (const Options &options)
             // K
             {
                 hdvf.set_mask_K() ;
-                Dual_simp_output_vtk<CoefficientType>(hdvf, L, options.outfile_root+"_complex_K", options.co_faces) ;
+                hdvf_duality_geometric_chain_complex_output_vtk<CoefficientType, ComplexType>(hdvf, L, options.outfile_root+"_complex_K", options.co_faces) ;
             }
             // L-K
             {
                 hdvf.set_mask_L_K() ;
-                Dual_simp_output_vtk<CoefficientType>(hdvf, L, options.outfile_root+"_cocomplex_L_K", options.co_faces) ;
+                hdvf_duality_geometric_chain_complex_output_vtk<CoefficientType, ComplexType>(hdvf, L, options.outfile_root+"_cocomplex_L_K", options.co_faces) ;
             }
         }
         
@@ -238,7 +239,7 @@ void main_code (const Options &options)
         
         // Build L, K and L-K
         
-        std::pair<ComplexType&, SubCCType&> p(ToolsType::CubComplexBB(*complex)) ;
+        std::pair<ComplexType&, SubCCType&> p(ToolsType::cubical_chain_complex_bb(*complex)) ;
         delete complex ;
         ComplexType &L(p.first) ;
         SubCCType &K(p.second) ;
@@ -257,12 +258,12 @@ void main_code (const Options &options)
             // K
             {
                 hdvf.set_mask_K() ;
-                Dual_cub_output_vtk<CoefficientType>(hdvf, L, options.outfile_root+"_complex_K", options.co_faces) ;
+                hdvf_duality_geometric_chain_complex_output_vtk<CoefficientType, ComplexType>(hdvf, L, options.outfile_root+"_complex_K", options.co_faces) ;
             }
             // L-K
             {
                 hdvf.set_mask_L_K() ;
-                Dual_cub_output_vtk<CoefficientType>(hdvf, L, options.outfile_root+"_cocomplex_L_K", options.co_faces) ;
+                hdvf_duality_geometric_chain_complex_output_vtk<CoefficientType, ComplexType>(hdvf, L, options.outfile_root+"_cocomplex_L_K", options.co_faces) ;
             }
         }
         

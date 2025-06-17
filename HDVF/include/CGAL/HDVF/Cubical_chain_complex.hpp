@@ -356,7 +356,7 @@ public:
      * \param[in] label_type_name Typename used in vtk export (e.g. "int" or "unsigned_long", see <a href = "https://docs.vtk.org/en/latest/design_documents/VTKFileFormats.html">VTK manual </a>).
      */
     template <typename LabelType = int>
-    static void Cubical_chain_complex_to_vtk(const Cubical_chain_complex<CoefficientType> &K, const std::string &filename, const std::vector<std::vector<LabelType> > *labels=NULL, string label_type_name = "int")
+    static void chain_complex_to_vtk(const Cubical_chain_complex<CoefficientType> &K, const std::string &filename, const std::vector<std::vector<LabelType> > *labels=NULL, string label_type_name = "int")
     {
         bool with_scalars = (labels != NULL) ;
         
@@ -472,7 +472,7 @@ public:
      * \param[in] q Dimension of the cells of the chain.
      * \param[in] cellId If different from MAX_SIZE_T, labels are exported to distinguish cells of the chain (label 2) from cellId cell (label 0).
      */
-    static void Cubical_chain_complex_chain_to_vtk(const Cubical_chain_complex<CoefficientType> &K, const std::string &filename, const OSM::Sparse_chain<CoefficientType, OSM::COLUMN>& chain, int q, size_t cellId = -1) ;
+    static void chain_complex_chain_to_vtk(const Cubical_chain_complex<CoefficientType> &K, const std::string &filename, const OSM::Sparse_chain<CoefficientType, OSM::COLUMN>& chain, int q, size_t cellId = -1) ;
     
 protected:
     // Methods to access data
@@ -947,7 +947,7 @@ std::vector<size_t> Cubical_chain_complex<CoefficientType>::calculate_boundaries
  */
 
 template <typename CoefficientType>
-void Cubical_chain_complex<CoefficientType>::Cubical_chain_complex_chain_to_vtk(const Cubical_chain_complex<CoefficientType> &K, const std::string &filename, const OSM::Sparse_chain<CoefficientType, OSM::COLUMN>& chain, int q, size_t cellId)
+void Cubical_chain_complex<CoefficientType>::chain_complex_chain_to_vtk(const Cubical_chain_complex<CoefficientType> &K, const std::string &filename, const OSM::Sparse_chain<CoefficientType, OSM::COLUMN>& chain, int q, size_t cellId)
 {
     bool with_scalars = (cellId != -1) ;
     

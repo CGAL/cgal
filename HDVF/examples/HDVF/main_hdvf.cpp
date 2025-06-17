@@ -10,13 +10,14 @@
 #include <chrono>
 #include <type_traits>
 #include <typeinfo>
-#include "CGAL/Hdvf/Zp.hpp"
-#include "CGAL/Hdvf/Simplex.hpp"
-#include "CGAL/Hdvf/tools_io.hpp"
-#include "CGAL/Hdvf/Abstract_simplicial_chain_complex.hpp"
-#include "CGAL/Hdvf/SimpComplexTools.hpp"
-#include "CGAL/Hdvf/Cubical_chain_complex.hpp"
-#include "CGAL/Hdvf/CubComplexTools.hpp"
+#include "CGAL/HDVF/Zp.hpp"
+#include "CGAL/HDVF/Simplex.hpp"
+#include "CGAL/HDVF/tools_io.hpp"
+#include "CGAL/HDVF/Abstract_simplicial_chain_complex.hpp"
+//#include "CGAL/HDVF/SimpComplexTools.hpp"
+#include "CGAL/HDVF/Cubical_chain_complex.hpp"
+//#include "CGAL/HDVF/CubComplexTools.hpp"
+#include "CGAL/HDVF/Geometric_chain_complex_tools.h"
 #include "CGAL/Hdvf/Hdvf.h"
 #include "CGAL/OSM/OSM.hpp"
 #include "CGAL/OSM/Sparse_chain.h"
@@ -131,7 +132,7 @@ void main_code (const Options &options)
         {
             auto output_vtk_simp = [options](HDVFType &hdvf, ComplexType& complex)
             {
-                Simp_output_vtk<CoefficientType>(hdvf, complex, options.outfile_root, options.co_faces) ;
+                hdvf_geometric_chain_complex_output_vtk<CoefficientType, ComplexType>(hdvf, complex, options.outfile_root, options.co_faces) ;
             } ;
             
             interaction_loop<CoefficientType, ComplexType>(hdvf, complex, output_vtk_simp) ;
@@ -140,7 +141,7 @@ void main_code (const Options &options)
         else if (options.with_vtk_export)
         {
             cout << "----> exporting to vtk" << endl ;
-            Simp_output_vtk<CoefficientType>(hdvf, complex, options.outfile_root, options.co_faces) ;
+            hdvf_geometric_chain_complex_output_vtk<CoefficientType, ComplexType>(hdvf, complex, options.outfile_root, options.co_faces) ;
         }
     }
     // CubComplex
@@ -180,7 +181,7 @@ void main_code (const Options &options)
         {
             auto output_vtk_cub = [options](HDVFType &hdvf, ComplexType& complex)
             {
-                Cub_output_vtk<CoefficientType>(hdvf, complex, options.outfile_root, options.co_faces) ;
+                hdvf_geometric_chain_complex_output_vtk<CoefficientType, ComplexType>(hdvf, complex, options.outfile_root, options.co_faces) ;
             } ;
             
             interaction_loop<CoefficientType, ComplexType>(hdvf, complex, output_vtk_cub) ;
@@ -189,7 +190,7 @@ void main_code (const Options &options)
         else if (options.with_vtk_export)
         {
             cout << "----> exporting to vtk" << endl ;
-            Cub_output_vtk<CoefficientType>(hdvf, complex, options.outfile_root, options.co_faces) ;
+            hdvf_geometric_chain_complex_output_vtk<CoefficientType, ComplexType>(hdvf, complex, options.outfile_root, options.co_faces) ;
         }
     }
 }

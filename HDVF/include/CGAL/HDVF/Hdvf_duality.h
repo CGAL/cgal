@@ -49,7 +49,7 @@ namespace HDVF {
  <img src="HDVF_twirl_view1.png" align="center" width=35%/>
  <img src="HDVF_twirl_view2.png" align="center" width=30%/>
  
- Example of Alexander duality isomorphism. The twirl mesh is a subcomplex `K` of a larger complex `L` depicted in yellow, homeomorphic to the ball of dimension 3.
+ Example of Alexander duality isomorphism. The twirl mesh is a subcomplex `K` of a larger complex `L` depicted in yellow, homeomorphic to the ball of dimension 3 (right - sectional view).
  
  \cgalFigureBegin{Duality_quartet,HDVF_twirl_quartet.png}
  Example of "homological quartet for the twirl model". <B>1:</B> Homology generators of the twirl \f$H_1(K)\f$, <B>2:</B> Cohomology generators of the twirl \f$H^1(K)\f$, <B>3:</B> Homology generators of the complementary of the twirl \f$H_1(L-K)\f$, <B>4:</B> Cohomology generators of the complementary of the twirl \f$H^1(L-K)\f$. Alexander isomorphism is represented through colours (paired generators have similar colours).

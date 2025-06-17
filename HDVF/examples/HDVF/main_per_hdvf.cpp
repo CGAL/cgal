@@ -15,9 +15,10 @@
 #include "CGAL/HDVF/Simplex.hpp"
 #include "CGAL/HDVF/tools_io.hpp"
 #include "CGAL/HDVF/Abstract_simplicial_chain_complex.hpp"
-#include "CGAL/HDVF/SimpComplexTools.hpp"
+//#include "CGAL/HDVF/SimpComplexTools.hpp"
 #include "CGAL/HDVF/Cubical_chain_complex.hpp"
-#include "CGAL/HDVF/CubComplexTools.hpp"
+//#include "CGAL/HDVF/CubComplexTools.hpp"
+#include "CGAL/HDVF/Geometric_chain_complex_tools.h"
 #include "CGAL/HDVF/Hdvf_persistence.h"
 #include "CGAL/OSM/OSM.hpp"
 #include "CGAL/HDVF/hdvf_tools.hpp"
@@ -210,7 +211,7 @@ void main_code (const Options &options)
         if (options.with_vtk_export)
         {
             cout << "----> exporting to vtk" << endl ;
-            Per_Simp_output_vtk<CoefficientType,DegType,FiltrationType>(hdvf, complex, options.outfile_root, options.co_faces) ;
+            hdvf_persistence_geometric_chain_complex_output_vtk<CoefficientType,ComplexType, DegType,FiltrationType>(hdvf, complex, options.outfile_root, options.co_faces) ;
         }
     }
     // CubComplex
@@ -253,7 +254,7 @@ void main_code (const Options &options)
         if (options.with_vtk_export)
         {
             cout << "----> exporting to vtk" << endl ;
-            Per_Cub_output_vtk<CoefficientType, DegType,FiltrationType>(hdvf, complex, options.outfile_root, options.co_faces) ;
+            hdvf_persistence_geometric_chain_complex_output_vtk<CoefficientType, ComplexType, DegType,FiltrationType>(hdvf, complex, options.outfile_root, options.co_faces) ;
         }
     }
 }

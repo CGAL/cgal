@@ -507,7 +507,7 @@ public:
      * \param[in] label_type_name Typename used in vtk export (e.g. "int" or "unsigned_long", see <a href = "https://docs.vtk.org/en/latest/design_documents/VTKFileFormats.html">VTK manual </a>).
      */
     template <typename LabelType = int>
-    static void Simplicial_chain_complex_to_vtk(const Simplicial_chain_complex &K, const std::string &filename, const std::vector<std::vector<LabelType> > *labels=NULL, string label_type_name = "int")
+    static void chain_complex_to_vtk(const Simplicial_chain_complex &K, const std::string &filename, const std::vector<std::vector<LabelType> > *labels=NULL, string label_type_name = "int")
     {
         typedef Simplicial_chain_complex<CoefficientType> ComplexType;
         if (K._coords.size() != K.nb_cells(0))
@@ -618,7 +618,7 @@ public:
      * \param[in] q Dimension of the cells of the chain.
      * \param[in] cellId If cellID is not -1 (that is MAX_SIZE_T), labels are exported to distinguish cells of the chain (label 2) from cellId cell (label 0).
      */
-    static void Simplicial_chain_complex_chain_to_vtk(const Simplicial_chain_complex &K, const std::string &filename, const OSM::Sparse_chain<CoefficientType, OSM::COLUMN>& chain, int q, size_t cellId = -1) ;
+    static void chain_complex_chain_to_vtk(const Simplicial_chain_complex &K, const std::string &filename, const OSM::Sparse_chain<CoefficientType, OSM::COLUMN>& chain, int q, size_t cellId = -1) ;
 };
 
 // Initialization of static VTK_simptypes
@@ -626,9 +626,9 @@ template <typename CoefficientType> const
 std::vector<int> Simplicial_chain_complex<CoefficientType>::VTK_simptypes({1, 3, 5, 10});
 
 
-// Simplicial_chain_complex_chain_to_vtk
+// chain_complex_chain_to_vtk
 template <typename CoefficientType>
-void Simplicial_chain_complex<CoefficientType>::Simplicial_chain_complex_chain_to_vtk(const Simplicial_chain_complex &K, const std::string &filename, const OSM::Sparse_chain<CoefficientType, OSM::COLUMN>& chain, int q, size_t cellId)
+void Simplicial_chain_complex<CoefficientType>::chain_complex_chain_to_vtk(const Simplicial_chain_complex &K, const std::string &filename, const OSM::Sparse_chain<CoefficientType, OSM::COLUMN>& chain, int q, size_t cellId)
 {
     typedef Simplicial_chain_complex<CoefficientType> ComplexType ;
     if (K._coords.size() != K.nb_cells(0))

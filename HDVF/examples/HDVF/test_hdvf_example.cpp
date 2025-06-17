@@ -3,7 +3,7 @@
 #include <chrono>
 #include "CGAL/Hdvf/tools_io.hpp"
 #include "CGAL/Hdvf/Cubical_chain_complex.hpp"
-#include "CGAL/Hdvf/CubComplexTools.hpp"
+#include "CGAL/HDVF/Geometric_chain_complex_tools.h"
 #include "CGAL/Hdvf/Hdvf.h"
 
 #include "CGAL/OSM/OSM.hpp"
@@ -36,7 +36,7 @@ int main(int argc, char **argv)
         complex.print_complex();
         
         // Build empty HDVF
-        HDVFType hdvf(complex, OPT_FULL, true) ;
+        HDVFType hdvf(complex, OPT_FULL) ;
         
         // Build HDVF step by step
         hdvf.A(7,0,1);
@@ -45,7 +45,7 @@ int main(int argc, char **argv)
         hdvf.compute_perfect_hdvf();
         
         // Output HDVF to vtk
-        Cub_output_vtk<CoefficientType>(hdvf, complex, "res") ;
+        hdvf_geometric_chain_complex_output_vtk<CoefficientType, ComplexType>(hdvf, complex, "res") ;
         
     }
     return 0;
