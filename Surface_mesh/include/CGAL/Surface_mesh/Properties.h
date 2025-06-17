@@ -584,11 +584,11 @@ public:
 
 private:
     std::vector<Base_property_array*>  parrays_;
-#ifdef CGAL_LINKED_WITH_TBB
-    std::atomic<size_t>  size_ = 0;
-#else
-    size_t  size_ = 0;
-#endif
+    using thread_save_size_t = std::conditional_t<is_parallel,
+                                                  std::atomic<size_t>,
+                                                  size_t>;
+    thread_save_size_t size_ = 0;
+
     size_t  capacity_ = 0;
 };
 
