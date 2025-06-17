@@ -93,14 +93,8 @@ A Sch&ouml;nhardt polyhedron. The non-convex edges are shown in bold.
 Shewchuk \cgalCite{cgal:shewchuk1998condition} demonstrated that for any PLC, there exists a refined
 version of the original PLC that admits a constrained Delaunay triangulation. This refinement is
 achieved by adding Steiner vertices to the input edges and polygons. The constrained triangulation
-built on this refined PLC is known as a _conforming constrained Delaunay triangulation_ (CCDT for short).
-
-The algorithm implemented in this package is based on the work of Hang Si
-\cgalCite{si2005meshing}, \cgalCite{cgal:si2008cdt3}, \cgalCite{si2015tetgen}.
-Steiner vertices are inserted on the input edges and polygons of the PLC to
-ensure it can be tetrahedralized.
-
-\cgalFigureRef{CT_3_plc2cdt_fig} illustrates an example of a conforming constrained
+built on this refined PLC is known as a _conforming constrained Delaunay triangulation_ (CCDT for
+short). \cgalFigureRef{CT_3_plc2cdt_fig} illustrates an example of a conforming constrained
 Delaunay triangulation constructed from a PLC.
 
 \cgalFigureAnchor{CT_3_plc2cdt_fig}
@@ -111,6 +105,11 @@ Delaunay triangulation constructed from a PLC.
 Left: PLC (360 vertices);
 Right: CCDT (2452 vertices).
 \cgalFigureCaptionEnd
+
+The algorithm implemented in this package is based on the work of Hang Si, who developed particular
+algorithms for constructing conforming constrained Delaunay triangulations from PLCs, with floating
+point numbers as coordinates
+\cgalCite{si2005meshing}, \cgalCite{cgal:si2008cdt3}, \cgalCite{si2015tetgen}.
 
 
 \section CT_3_design Software Design
@@ -160,6 +159,16 @@ Two overloads of the constructor function \link
 PkgConstrainedTriangulation3FunctionsPolygonSoupOrMesh
 `CGAL::make_conforming_constrained_Delaunay_triangulation_3()`\endlink are provided to facilitate the creation
 of a `CGAL::Conforming_constrained_Delaunay_triangulation_3` object from either a surface mesh or a polygon soup.
+
+\subsection CT_3_geomtraits Traits and Kernel Choice
+
+The requirements on geometric objects and operations are described in the traits class concept
+`ConformingConstrainedDelaunayTriangulationTraits_3`. Any CGAL kernel is a model of this concept, but
+the package is designed to work with kernels that provide exact predicates.
+
+As the Steiner points are inserted on the input edges and polygons of the PLC, the coordinates of
+those points will be constructed. If the input data set has almost-coplanar input polygons, a kernel
+with exact constructions must be used to ensure the correct placement of these points.
 
 \section CT_3_examples Examples
 
