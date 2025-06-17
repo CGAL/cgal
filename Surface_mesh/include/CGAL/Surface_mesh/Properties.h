@@ -531,6 +531,15 @@ public:
       }
     }
 
+    void decrement_size()
+    {
+      if constexpr(is_parallel) {
+        size_.fetch_sub(1, std::memory_order_relaxed);
+      } else {
+        --size_;
+      }
+    }
+
     // add a new element to each vector
     size_t push_back()
     {
@@ -545,8 +554,10 @@ public:
     {
       for (std::size_t i=0; i<parrays_.size(); ++i)
         parrays_[i]->pop_back();
-    }    // reset element to its default property values
+      decrement_size();
+    }
 
+    // reset element to its default property values
     void reset(size_t idx)
     {
         for (std::size_t i=0; i<parrays_.size(); ++i)
