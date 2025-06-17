@@ -264,6 +264,17 @@ executables should be linked with the CMake imported target
 
 The \opencv web site is <A HREF="https://opencv.org/">`https://opencv.org/`</A>.
 
+\subsection thirdpartySuiteSparse SuiteSparse
+<b>Version 7.10.1 or later</b>
+
+\suitesparse is a set of sparse-matrix-related packages written or co-authored by Tim Davis, available at <A HREF="https://github.com/DrTimothyAldenDavis/SuiteSparse">https://github.com/DrTimothyAldenDavis/SuiteSparse</A>.
+
+\suitesparse is used by the Orbifold Tutte Embedding and ARAP parametrization, i.e., in the surface parametrization package.
+
+\note SuiteSparse on Windows can easily be installed by \code
+vcpkg install suitesparse
+\endcode and it will be found automatically. When installed manually it is helpful to add the installation folder to the environment variable CMAKE_PREFIX_PATH for CMake to find the SuiteSparse libraries.
+
 \subsection thirdpartyMETIS METIS
 <b>Version 5.1 or later</b>
 
