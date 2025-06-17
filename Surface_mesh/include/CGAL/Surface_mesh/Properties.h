@@ -56,6 +56,9 @@ public:
     /// Resize storage to hold n elements.
     virtual void resize(size_t n) = 0;
 
+    /// Grow the storage by n elements. Returns the index of the first new element.
+    virtual size_t grow_by(size_t n) = 0;
+
     /// Free unused memory.
     virtual void shrink_to_fit() = 0;
 
@@ -145,6 +148,17 @@ public: // virtual interface of Base_property_array
     void resize(size_t n) override
     {
         data_.resize(n, value_);
+    }
+
+    size_t grow_by(size_t n) override
+    {
+      if constexpr(is_parallel) {
+        return data_.grow_by(n, value_) - data_.begin();
+      } else {
+        const size_t old_size = data_.size();
+        data_.resize(old_size + n, value_);
+        return old_size;
+      }
     }
 
     size_t push_back() override
@@ -495,6 +509,21 @@ public:
         if(parrays_.empty())
             return 0;
         return parrays_[0]->capacity();
+    }
+
+    size_t grow_by(size_t s) {
+      if constexpr(is_parallel) {
+        size_t pos = parrays_[0]->grow_by(s);
+        for (std::size_t i=1, end = parrays_.size(); i<end; ++i) {
+            parrays_[i]->grow_by(s);
+        }
+        size_.fetch_add(s, std::memory_order_relaxed);
+        return pos;
+      } else {
+        size_t old_size = size_;
+        size_ += s;
+        return old_size;
+      }
     }
 
     // reserve memory for n entries in all arrays

@@ -873,8 +873,9 @@ namespace CGAL {
                   "Make TBB available in the build system and then define the macro `CGAL_LINKED_WITH_TBB`.");
     using free_list_type = size_type;
 #endif
-
+    std::mutex mutex_;
     Properties::Property_container<Self, Index_type, Concurrency_tag> properties_;
+    size_type size_of_blocks = CGAL_INCREMENT_COMPACT_CONTAINER_BLOCK_SIZE;
     size_type nb_of_removed_elements_ = 0;
     free_list_type freelist_{Index_type::invalid_index};
     size_type anonymous_property_nb = 0;
@@ -974,7 +975,19 @@ namespace CGAL {
         ss << idx << " (recycled from freelist)\n";
 #endif
       } else {
-        idx = Index_type{static_cast<size_type>(properties_.push_back())};
+        std::unique_lock<std::mutex> lock(mutex_);
+        auto increment = size_of_blocks;
+        auto pos = static_cast<size_type>(properties_.grow_by(increment));
+        for(auto i = pos + 1, end = pos + increment; i < end; ++i) {
+          free_list_next_function_(storage_[Index_type{i}]) = i + 1;
+          removed_[Index_type{i}] = true;
+        }
+        free_list_next_function_(storage_[Index_type{pos + increment - 1}]) = Index_type::invalid_index;
+        local_number_of_removed_elements() += (increment - 1);
+        freelist_ = pos + 1;
+        size_of_blocks += CGAL_INCREMENT_COMPACT_CONTAINER_BLOCK_SIZE;
+        idx = Index_type{pos};
+        removed_[idx] = false;
         elt = Element_type(container, idx);
 #if CGAL_DEBUG_INDEXED_CONTAINER
         ss << idx << " (new)\n";
