@@ -31,22 +31,22 @@ public:
 	typedef Combinatorial_map<2,Delaunay_triangulation_attributes<Traits>>                                              CMap;
 	typedef typename Triangulation_on_hyperbolic_surface_2<Traits,Delaunay_triangulation_attributes<Traits>>::Anchor    Anchor;
 
-	typedef typename Traits::FT                                                                     Number;
-	typedef typename Traits::Complex                                                                Complex;
-	typedef typename Traits::Hyperbolic_point_2                                                     Point;
-	typedef typename Traits::Hyperbolic_Voronoi_point_2                                             Voronoi_point;
-	typedef typename CMap::Dart_descriptor                                             Dart_descriptor;
-	typedef typename CMap::Dart_range                                                  Dart_range;
-	typedef typename CMap::template One_dart_per_cell_range<0>                         Vertex_range;
-	typedef typename CMap::template One_dart_per_cell_range<1>                         Edge_range;
-	typedef typename CMap::template One_dart_per_cell_range<2>                         Face_range;
-	typedef typename CMap::Dart_const_descriptor                                       Dart_const_descriptor;
-	typedef typename CMap::Dart_const_range                                            Dart_const_range;
-	typedef typename CMap::template One_dart_per_cell_const_range<1>                   Edge_const_range;
-	typedef typename CMap::template One_dart_per_cell_const_range<2>                   Face_const_range;
-	typedef Hyperbolic_isometry_2<Traits>                                                           Isometry;
-	typedef Hyperbolic_fundamental_domain_2<Traits>                                                 Domain;
-	typedef boost::numeric::interval<double>                                                        Interval;
+	typedef typename Traits::FT 										Number;
+	typedef typename Traits::Complex                                    Complex;
+	typedef typename Traits::Hyperbolic_point_2                         Point;
+	typedef typename Traits::Hyperbolic_Voronoi_point_2                 Voronoi_point;
+	typedef typename CMap::Dart_descriptor                              Dart_descriptor;
+	typedef typename CMap::Dart_range                                   Dart_range;
+	typedef typename CMap::template One_dart_per_cell_range<0>          Vertex_range;
+	typedef typename CMap::template One_dart_per_cell_range<1>          Edge_range;
+	typedef typename CMap::template One_dart_per_cell_range<2>          Face_range;
+	typedef typename CMap::Dart_const_descriptor                        Dart_const_descriptor;
+	typedef typename CMap::Dart_const_range                             Dart_const_range;
+	typedef typename CMap::template One_dart_per_cell_const_range<1>    Edge_const_range;
+	typedef typename CMap::template One_dart_per_cell_const_range<2>    Face_const_range;
+	typedef Hyperbolic_isometry_2<Traits>                               Isometry;
+	typedef Hyperbolic_fundamental_domain_2<Traits>                     Domain;
+	typedef boost::numeric::interval<double>                            Interval;
 
 	unsigned const NB_SIDES = 3;
 	unsigned const NULL_INDEX = 4;
@@ -162,55 +162,39 @@ void
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
 set_anchors()
 {
-	std::map<Dart_descriptor, Point> positions;
 	CMap & cmap = this->combinatorial_map_;
 
-	// create a mark for visited darts
-	size_t visited = cmap.get_new_mark();
-	cmap.unmark_all(visited);
+	std::queue<Anchor> bfs_queue;
+	size_t in_queue = cmap.get_new_mark();
+	cmap.unmark_all(in_queue);
+	bfs_queue.push(this->anchor_);
+	cmap.mark(this->anchor_.dart, in_queue);
+	cmap.mark(Base::ccw(this->anchor_.dart), in_queue);
+	cmap.mark(Base::cw(this->anchor_.dart), in_queue);
 
-	Point a = this->anchor_.vertices[0];
-	Point b = this->anchor_.vertices[1];
-	Point c = this->anchor_.vertices[2];
-
-	positions[this->anchor_.dart] = a;
-	positions[Base::ccw(this->anchor_.dart)] = b;
-	positions[Base::cw(this->anchor_.dart)] = c;
-
-	set_attribute(this->anchor_.dart, this->anchor_);
-	cmap.mark(this->anchor_.dart, visited);
-	cmap.mark(Base::ccw(this->anchor_.dart), visited);
-	cmap.mark(Base::cw(this->anchor_.dart), visited);
-
-	// visit each triangle
-	Dart_descriptor invader = this->anchor_.dart;
-	while (cmap.number_of_unmarked_darts(visited) > 0) {
-		Dart_descriptor invaded = Base::opposite(invader);
-
-		if (!cmap.is_marked(invaded, visited)) {
-			cmap.mark(invaded, visited);
-			cmap.mark(Base::ccw(invaded), visited);
-			cmap.mark(Base::cw(invaded), visited);
-
-			// get the information of the invader's triangle
-			Point a = positions[Base::ccw(invader)];
-			Point b = positions[Base::cw(invader)];
-			Point c = positions[invader];
-			Complex cross_ratio = Base::get_cross_ratio(invader);
-
-			// retieve the positions of the invaded's triangle
-			positions[invaded] = a;
-			positions[Base::ccw(invaded)] = c;
-			Point d = Base::fourth_point_from_cross_ratio(a, b, c, cross_ratio);
-			positions[Base::cw(invaded)] = d;
-
-			// add the anchor in the face attibute of the cmap
-			set_attribute(invaded, Anchor(invaded, a, c, d));
+	while (!bfs_queue.empty()) {
+		Anchor & current = bfs_queue.front();
+		set_attribute(current.dart, current);
+		Dart_descriptor invader = current.dart;
+		for (int i = 0; i < 3; i++) {
+			Dart_descriptor invaded = Base::opposite(invader);
+			if (!cmap.is_marked(invaded, in_queue)) {
+				Complex cross_ratio = Base::get_cross_ratio(invader);
+				Point & c = current.vertices[i % 3];
+				Point & a = current.vertices[(i + 1) % 3];
+				Point & b = current.vertices[(i + 2) % 3];
+				Point d = Base::fourth_point_from_cross_ratio(a, b, c, cross_ratio);
+				bfs_queue.push(Anchor(invaded, a, c, d));
+				cmap.mark(invaded, in_queue);
+				cmap.mark(Base::ccw(invaded), in_queue);
+				cmap.mark(Base::cw(invaded), in_queue);
+			}
+			invader = Base::ccw(invader);
 		}
-		invader = Base::ccw(invaded);
+		bfs_queue.pop();
 	}
+	cmap.free_mark(in_queue);
 
-	cmap.free_mark(visited);
 	this->anchor_ = Anchor();
 	this->has_anchor_ = false;
 }

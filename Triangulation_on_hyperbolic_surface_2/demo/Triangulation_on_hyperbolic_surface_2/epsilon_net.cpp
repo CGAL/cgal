@@ -21,7 +21,6 @@ typedef CGAL::Exact_rational		NumberType;
 typedef CGAL::Circular_kernel_2<CGAL::Simple_cartesian<NumberType>,CGAL::Algebraic_kernel_for_circles_2_2<NumberType>> Kernel;
 typedef CGAL::Hyperbolic_Delaunay_triangulation_CK_traits_2<Kernel>                                             ParentTraits;
 typedef CGAL::Hyperbolic_surface_traits_2<ParentTraits>                                                        	Traits;
-typedef typename Traits::Complex                                                                                ComplexNumber;
 typedef typename Traits::Hyperbolic_point_2                                                                     Point;
 
 typedef CGAL::Hyperbolic_fundamental_domain_2<Traits>                                                           Domain;
