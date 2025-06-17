@@ -381,10 +381,10 @@ public:
     {
       typedef typename Ref_class::template Get_property_map<Key, T>::type Pmap;
       if (parrays_[i]->name() == name)
-        {
-          if (Property_array<T,ConcurrencyTag>* array = dynamic_cast<Property_array<T>*>(parrays_[i]))
-            return std::optional(Pmap(array));
-        }
+      {
+        if (auto* array = dynamic_cast<Property_array<T, ConcurrencyTag>*>(parrays_[i]))
+          return std::optional(Pmap(array));
+      }
       return std::nullopt;
     }
 
