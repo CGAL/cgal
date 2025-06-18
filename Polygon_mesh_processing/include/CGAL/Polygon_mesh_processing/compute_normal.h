@@ -525,7 +525,6 @@ compute_vertex_normal_most_visible_min_circle(typename boost::graph_traits<Polyg
   typedef typename boost::property_traits<FaceNormalVector>::reference     Vector_ref;
 
   typename GT::Compute_scalar_product_3 sp_3 = traits.compute_scalar_product_3_object();
-  typename GT::Construct_vector_3 cv_3 = traits.construct_vector_3_object();
   typename GT::Construct_cross_product_vector_3 cp_3 = traits.construct_cross_product_vector_3_object();
 
   std::vector<face_descriptor> incident_faces;
@@ -631,8 +630,10 @@ compute_vertex_normal_most_visible_min_circle(typename boost::graph_traits<Polyg
       Vector_3 n_middle = cp_3(n0, center);
       FT sp_no_nm = sp_3(no, n_middle);
       FT sp_n1_nm = sp_3(n1, n_middle);
-      FT sp_n2_nm = sp_3(n2, n_middle);
-      CGAL_assertion((CGAL::sign(sp_n1_nm)!=CGAL::sign(sp_n2_nm)) || is_zero(sp_n1_nm));
+
+      // The sign must be opposite but numerical error can make them equal sign if the value is close to zero
+      CGAL_assertion(FT sp_n2_nm = sp_3(n2, n_middle));
+      CGAL_assertion((CGAL::sign(sp_n1_nm)!=CGAL::sign(sp_n2_nm)) || (sp_n1_nm<0.0001) || (sp_n2_nm<0.0001));
       if( CGAL::sign(sp_no_nm) == CGAL::sign(sp_n1_nm)){
         circum_points[1]=f_out;
       } else {
@@ -673,7 +674,7 @@ compute_vertex_normal_most_visible_min_circle_old(typename boost::graph_traits<P
 
   typedef typename GT::Vector_3                                            Vector_3;
 
-  typename GT::FT bound(0.001);
+  // typename GT::FT bound(0.001);
 
   std::vector<face_descriptor> incident_faces;
   incident_faces.reserve(8);
@@ -903,6 +904,7 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
   }
 #endif
   Vector_3 normal = internal::compute_vertex_normal_most_visible_min_circle(v, face_normals, pmesh, traits);
+#ifdef CGAL_PMP_COMPARE_NORMAL_METHOD
   Vector_3 normal_old = internal::compute_vertex_normal_most_visible_min_circle_old(v, face_normals, pmesh, traits);
   if(!traits.equal_3_object()(normal, CGAL::NULL_VECTOR))
     internal::normalize(normal, traits);
@@ -918,6 +920,7 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
     std::cout << std::endl;
   }
   // CGAL_assertion(((normal==normal_old) || ((normal-normal_old).squared_length()<0.0001) || (normal==NULL_VECTOR)));
+#endif
   if(traits.equal_3_object()(normal, CGAL::NULL_VECTOR)) // can't always find a most visible normal
   {
 #ifdef CGAL_PMP_COMPUTE_NORMAL_DEBUG_PP
