@@ -135,7 +135,7 @@ sets the polygon as input of the winding number computation.
   void
   insert(const Polygon_2& p)
   {
-      Constraint_id cidA = cdt.insert_constraint(p.vertices_begin(), p.vertices_end(), true);
+      cdt.insert_constraint(p.vertices_begin(), p.vertices_end(), true);
   }
 
 /*!
@@ -144,9 +144,9 @@ sets the polygon as input of the winding number computation.
   void
   insert(const Polygon_with_holes_2& pwh)
   {
-      Constraint_id cidA = cdt.insert_constraint(pwh.outer_boundary().vertices_begin(), pwh.outer_boundary().vertices_end(), true);
+      cdt.insert_constraint(pwh.outer_boundary().vertices_begin(), pwh.outer_boundary().vertices_end(), true);
       for(auto const& hole : pwh.holes()){
-        cidA = cdt.insert_constraint(hole.vertices_begin(), hole.vertices_end(), true);
+        cdt.insert_constraint(hole.vertices_begin(), hole.vertices_end(), true);
       }
   }
 
@@ -157,9 +157,9 @@ sets the polygon as input of the winding number computation.
   insert(const Multipolygon_with_holes_2& mpwh)
   {
     for(const auto& pwh : mpwh.polygons_with_holes()){
-      Constraint_id cidA = cdt.insert_constraint(pwh.outer_boundary().vertices_begin(), pwh.outer_boundary().vertices_end(), true);
+      cdt.insert_constraint(pwh.outer_boundary().vertices_begin(), pwh.outer_boundary().vertices_end(), true);
       for(auto const& hole : pwh.holes()){
-        cidA = cdt.insert_constraint(hole.vertices_begin(), hole.vertices_end(), true);
+        cdt.insert_constraint(hole.vertices_begin(), hole.vertices_end(), true);
       }
     }
   }
