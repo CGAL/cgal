@@ -50,7 +50,6 @@ int main(int argc, char *argv[])
 	// So that if you run the demo on a same surface but with different values of epsilon,
 	// the drawing will be centered at the same vertex and it will look similar.
 	Delaunay_triangulation dt = Delaunay_triangulation(domain);
-	dt.make_Delaunay();
 	Anchor & dt_anchor = dt.anchor();
 	Point v0 = dt_anchor.vertices[0];
 

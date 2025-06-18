@@ -65,7 +65,6 @@ public:
 	unsigned index_in_anchor(Dart_const_descriptor const dart) const;
 	Dart_descriptor ith_dart(unsigned i, Anchor const & anch);
 	void display_vertices(Anchor const & anch, bool round = true) const;
-	bool are_triangles_equal(Anchor const & anchor1, Anchor const & anchor2);  // supprimer ?
 	bool is_valid() const;
 	void to_stream(std::ostream & s) const;
  	void from_stream(std::istream & s);
@@ -84,9 +83,6 @@ public:
 			int &   li,
 			Face_descriptor     h = Face_descriptor() 
 	) const */
-
-	std::vector<Anchor> insert(Point const & query, Anchor & anch, bool use_visibility = false); // return réf ?
-	std::vector<Anchor> insert(Point const & query, bool use_visibility = false);
 
 	//---------- Delaunay related methods
 	void flip(Dart_descriptor dart);
@@ -118,6 +114,7 @@ private:
 	std::tuple<Anchor, unsigned> locate_straight_walk(Point const & query, Anchor const & anch);
 	std::vector<Anchor> insert_in_face(Point const & query, Anchor& anch);  // return réf ?
 	std::vector<Anchor> insert_in_edge(Point const & query, Anchor& anch, unsigned index);
+	std::vector<Anchor> insert(Point const & query, Anchor & anch, bool use_visibility = false); // return réf ?
 
 	//---------- Delaunay related methods
 	void push_flippable_edge(Dart_descriptor const dart, std::list<Dart_descriptor> & darts_to_flip);
@@ -138,7 +135,8 @@ template<class Traits>
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
 Delaunay_triangulation_on_hyperbolic_surface_2(CMap & cmap, Anchor & anch)
 : Base(cmap, anch)
-{       
+{
+	Base::make_Delaunay();
 	set_anchors();
 }
 
@@ -146,7 +144,8 @@ template<class Traits>
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
 Delaunay_triangulation_on_hyperbolic_surface_2(Domain const & domain)
 : Base(domain)
-{       
+{
+	Base::make_Delaunay();
 	set_anchors();
 }
 
@@ -154,7 +153,8 @@ template<class Traits>
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
 Delaunay_triangulation_on_hyperbolic_surface_2(Base & triangulation)
 : Base(triangulation.combinatorial_map(), triangulation.anchor())
-{       
+{
+	Base::make_Delaunay();
 	set_anchors();
 }
 
@@ -203,7 +203,6 @@ set_anchors()
 
 
 //---------- UTILITIES
-
 
 template<class Traits>
 typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Anchor&
@@ -322,34 +321,6 @@ display_vertices(Anchor const & anch, bool round) const
 	}
 }
 
-// Output: true iff the triangles described by the anchors are equal (same triangle in the cmap and same vertices in H^2)
-template<class Traits>
-bool
-Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
-are_triangles_equal(Anchor const & anchor1, Anchor const & anchor2)
-{
-	Anchor& triangle1 = anchor(anchor1.dart);
-	Anchor& triangle2 = anchor(anchor2.dart);
-	
-	// check if anchors correspond to same face in the cmap
-	if (triangle1.dart != triangle2.dart) {
-		return false;
-	}
-
-	// check vertices
-	bool res = true;
-	for (unsigned i = 0; i < NB_SIDES; ++i) {
-		bool found = false;
-		for (unsigned j = 0; j < NB_SIDES; ++j) {
-			if (anchor1.vertices[i] ==  anchor2.vertices[j]) {
-				found = true;
-			}
-		}
-		res = res && found;
-	}
-	return res;
-}
-
 template<class Traits>
 bool
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
@@ -430,7 +401,6 @@ to_stream(std::ostream & s) const
 		s << Base::get_cross_ratio(it);
 	}
 }
-
 
 template<class Traits>
 void
@@ -794,19 +764,8 @@ insert(Point const & query, Anchor& anch, bool use_visibility)
 	return new_anchors;
 }
 
-// the darts of the new anchors correspond to the edges of the triangle the point was inserted in
-template<class Traits>
-std::vector<typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Anchor>
-Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
-insert(Point const & query, bool use_visibility)
-{
-	return insert(query, anchor(), use_visibility);
-}
-
-
 
 //---------- Delaunay related methods
-
 
 template<class Traits>
 void
@@ -934,9 +893,7 @@ Delaunay_insert(Point const & query)
 }
 
 
-
 //---------- eps-net methods
-
 
 template<class Traits>
 typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Number
