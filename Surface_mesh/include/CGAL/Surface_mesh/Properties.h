@@ -135,22 +135,22 @@ public:
 
 public: // virtual interface of Base_property_array
 
-    size_t capacity() const override
+    size_t capacity() const final
     {
         return data_.capacity();
     }
 
-    void reserve(size_t n) override
+    void reserve(size_t n) final
     {
         data_.reserve(n);
     }
 
-    void resize(size_t n) override
+    void resize(size_t n) final
     {
         data_.resize(n, value_);
     }
 
-    size_t grow_by(size_t n) override
+    size_t grow_by(size_t n) final
     {
       if constexpr(is_parallel) {
         return data_.grow_by(n, value_) - data_.begin();
@@ -161,7 +161,7 @@ public: // virtual interface of Base_property_array
       }
     }
 
-    size_t push_back() override
+    size_t push_back() final
     {
       if constexpr(is_parallel) {
         return data_.push_back(value_) - data_.begin();
@@ -171,7 +171,7 @@ public: // virtual interface of Base_property_array
       }
     }
 
-    void pop_back() override
+    void pop_back() final
     {
       if constexpr(is_parallel){
       }else{
@@ -179,12 +179,12 @@ public: // virtual interface of Base_property_array
       }
     }
 
-    void reset(size_t idx) override
+    void reset(size_t idx) final
     {
         data_[idx] = value_;
     }
 
-    bool transfer(const Base_property_array& other) override
+    bool transfer(const Base_property_array& other) final
     {
       const auto* pa = dynamic_cast<const Property_array*>(&other);
       if(pa != nullptr){
@@ -194,7 +194,7 @@ public: // virtual interface of Base_property_array
       return false;
     }
 
-    bool transfer(const Base_property_array& other, std::size_t from, std::size_t to) override
+    bool transfer(const Base_property_array& other, std::size_t from, std::size_t to) final
     {
       const auto* pa = dynamic_cast<const Property_array*>(&other);
       if (pa != nullptr)
@@ -206,32 +206,32 @@ public: // virtual interface of Base_property_array
       return false;
     }
 
-    void shrink_to_fit() override
+    void shrink_to_fit() final
     {
         vector_type(data_).swap(data_);
     }
 
-    void swap(size_t i0, size_t i1) override
+    void swap(size_t i0, size_t i1) final
     {
         T d(data_[i0]);
         data_[i0]=data_[i1];
         data_[i1]=d;
     }
 
-    Base_property_array* clone() const override
+    Base_property_array* clone() const final
     {
         auto* p = new Property_array<T,ConcurrencyTag>(this->name_, this->value_);
         p->data_ = data_;
         return p;
     }
 
-    Base_property_array* empty_clone() const override
+    Base_property_array* empty_clone() const final
     {
         auto* p = new Property_array<T,ConcurrencyTag>(this->name_, this->value_);
         return p;
     }
 
-    const std::type_info& type() const override { return typeid(T); }
+    const std::type_info& type() const final { return typeid(T); }
 
 
 public:
