@@ -1,5 +1,5 @@
-#ifndef CGAL_TETRAHEDRAL_REMESHING_ATOMIC_OPERATIONS_H
-#define CGAL_TETRAHEDRAL_REMESHING_ATOMIC_OPERATIONS_H
+#ifndef CGAL_TETRAHEDRAL_REMESHING_ELEMENTARY_OPERATIONS_H
+#define CGAL_TETRAHEDRAL_REMESHING_ELEMENTARY_OPERATIONS_H
 
 #include <CGAL/license/Tetrahedral_remeshing.h>
 #include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_remeshing_helpers.h>
@@ -48,9 +48,9 @@ public:
   }
 };
 
-// Base class for atomic operations
+// Base class for elementary operations
 template<typename C3t3_,typename ElementIteratorType_,typename LockElementType_>
-class AtomicOperation {
+class ElementaryOperation {
 public:
   using C3t3 = C3t3_;
   using Triangulation = typename C3t3::Triangulation;
@@ -58,8 +58,8 @@ public:
   using LockElementType = LockElementType_;
   using Lock_zone = std::vector<LockElementType>;
 
-  AtomicOperation() = default;
-  virtual ~AtomicOperation() = default;
+  ElementaryOperation() = default;
+  virtual ~ElementaryOperation() = default;
 
   // Returns true if the element should be processed
   virtual bool should_process_element(const ElementIteratorType& e, const C3t3& c3t3) const = 0;
@@ -89,17 +89,17 @@ public:
 
 // Base class for operation execution strategies
 template<typename Operation>
-class AtomicOperationExecution {
+class ElementaryOperationExecution {
 public:
   using C3t3 = typename Operation::C3t3;
   using Cell_handle = typename C3t3::Triangulation::Cell_handle;
   using ElementIteratorType = typename Operation::ElementIteratorType;
-  AtomicOperationExecution() = default;
-  AtomicOperationExecution(const AtomicOperationExecution&) = default;
-  AtomicOperationExecution(AtomicOperationExecution&&) = default;
-  AtomicOperationExecution& operator=(const AtomicOperationExecution&) = default;
-  AtomicOperationExecution& operator=(AtomicOperationExecution&&) = default;
-  virtual ~AtomicOperationExecution() = default;
+  ElementaryOperationExecution() = default;
+  ElementaryOperationExecution(const ElementaryOperationExecution&) = default;
+  ElementaryOperationExecution(ElementaryOperationExecution&&) = default;
+  ElementaryOperationExecution& operator=(const ElementaryOperationExecution&) = default;
+  ElementaryOperationExecution& operator=(ElementaryOperationExecution&&) = default;
+  virtual ~ElementaryOperationExecution() = default;
 
   virtual std::vector<ElementIteratorType> collect_candidates(
     const Operation& op, const C3t3& c3t3) const = 0;
@@ -119,18 +119,18 @@ public:
 
 // Sequential execution implementation
 template<typename Operation>
-class AtomicOperationExecutionSequential : public AtomicOperationExecution<Operation> {
+class ElementaryOperationExecutionSequential : public ElementaryOperationExecution<Operation> {
 public:
-  using Base = AtomicOperationExecution<Operation>;
+  using Base = ElementaryOperationExecution<Operation>;
   using C3t3 = typename Operation::C3t3;
   using ElementIteratorType = typename Operation::ElementIteratorType;
   using Cell_handle = typename C3t3::Triangulation::Cell_handle;
 
-  AtomicOperationExecutionSequential() = default;
-  AtomicOperationExecutionSequential(const AtomicOperationExecutionSequential&) = default;
-  AtomicOperationExecutionSequential(AtomicOperationExecutionSequential&&) = default;
-  AtomicOperationExecutionSequential& operator=(const AtomicOperationExecutionSequential&) = default;
-  AtomicOperationExecutionSequential& operator=(AtomicOperationExecutionSequential&&) = default;
+  ElementaryOperationExecutionSequential() = default;
+  ElementaryOperationExecutionSequential(const ElementaryOperationExecutionSequential&) = default;
+  ElementaryOperationExecutionSequential(ElementaryOperationExecutionSequential&&) = default;
+  ElementaryOperationExecutionSequential& operator=(const ElementaryOperationExecutionSequential&) = default;
+  ElementaryOperationExecutionSequential& operator=(ElementaryOperationExecutionSequential&&) = default;
 
   std::vector<ElementIteratorType> collect_candidates(
     const Operation& op, const C3t3& c3t3) const override 
@@ -175,18 +175,18 @@ public:
 #ifdef CGAL_LINKED_WITH_TBB
 // Parallel execution implementation
 template<typename Operation>
-class AtomicOperationExecutionParallel : public AtomicOperationExecution<Operation> {
+class ElementaryOperationExecutionParallel : public ElementaryOperationExecution<Operation> {
 public:
-  using Base = AtomicOperationExecution<Operation>;
+  using Base = ElementaryOperationExecution<Operation>;
   using C3t3 = typename Operation::C3t3;
   using ElementIteratorType = typename Operation::ElementIteratorType;
   using Cell_handle = typename C3t3::Triangulation::Cell_handle;
 
-  AtomicOperationExecutionParallel() = default;
-  AtomicOperationExecutionParallel(const AtomicOperationExecutionParallel&) = default;
-  AtomicOperationExecutionParallel(AtomicOperationExecutionParallel&&) = default;
-  AtomicOperationExecutionParallel& operator=(const AtomicOperationExecutionParallel&) = default;
-  AtomicOperationExecutionParallel& operator=(AtomicOperationExecutionParallel&&) = default;
+  ElementaryOperationExecutionParallel() = default;
+  ElementaryOperationExecutionParallel(const ElementaryOperationExecutionParallel&) = default;
+  ElementaryOperationExecutionParallel(ElementaryOperationExecutionParallel&&) = default;
+  ElementaryOperationExecutionParallel& operator=(const ElementaryOperationExecutionParallel&) = default;
+  ElementaryOperationExecutionParallel& operator=(ElementaryOperationExecutionParallel&&) = default;
 
   std::vector<ElementIteratorType> collect_candidates(
     const Operation& op, const C3t3& c3t3) const override 
@@ -248,4 +248,4 @@ public:
 } // namespace Tetrahedral_remeshing
 } // namespace CGAL
 
-#endif // CGAL_TETRAHEDRAL_REMESHING_ATOMIC_OPERATIONS_H 
+#endif // CGAL_TETRAHEDRAL_REMESHING_ELEMENTARY_OPERATIONS_H 

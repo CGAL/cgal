@@ -35,7 +35,7 @@
 #include <optional>
 #include <boost/container/small_vector.hpp>
 
-#include <CGAL/Tetrahedral_remeshing/internal/atomic_remesh_impl.h>
+#include <CGAL/Tetrahedral_remeshing/internal/elementary_remesh_impl.h>
 
 namespace CGAL
 {
@@ -611,10 +611,10 @@ public:
       if (!resolution_reached())
       {
 
-#ifdef CGAL_TETRAHEDRAL_REMESHING_USE_ATOMIC
-	 Atomic_remesher<C3t3,SizingFunction,CellSelector>::split(m_c3t3, m_sizing, m_cell_selector,true);
+#ifdef CGAL_TETRAHEDRAL_REMESHING_USE_ELEMENTARY
+        Elementary_remesher<C3t3,SizingFunction,CellSelector>::split(m_c3t3, m_sizing, m_cell_selector,true);
 #else
-	split();
+        split();
 #endif
         collapse();
       }

@@ -1,7 +1,7 @@
-#define CGAL_TETRAHEDRAL_REMESHING_USE_ATOMIC
+#define CGAL_TETRAHEDRAL_REMESHING_USE_ELEMENTARY
 #include "benchmark_tetrahedral_remeshing_common.h"
 #include "mesh_quality.h"
-#include <CGAL/Tetrahedral_remeshing/internal/atomic_remesh_impl.h>
+#include <CGAL/Tetrahedral_remeshing/internal/elementary_remesh_impl.h>
 #include <CGAL/Real_timer.h>
 #include <filesystem>
 #include <fstream>

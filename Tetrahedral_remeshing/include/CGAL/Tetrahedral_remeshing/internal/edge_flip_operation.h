@@ -2,7 +2,7 @@
 #define CGAL_TETRAHEDRAL_REMESHING_EDGE_FLIP_OPERATION_H
 
 #include <CGAL/license/Tetrahedral_remeshing.h>
-#include <CGAL/Tetrahedral_remeshing/internal/atomic_operations.h>
+#include <CGAL/Tetrahedral_remeshing/internal/elementary_operations.h>
 #include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_remeshing_helpers.h>
 #include <CGAL/Triangulation_3.h>
 
@@ -24,11 +24,11 @@ namespace internal {
 
 template<typename C3t3, typename CellSelector>
 class EdgeFlipOperation 
-  : public AtomicOperation<C3t3, 
+  : public ElementaryOperation<C3t3, 
                           typename C3t3::Triangulation::Finite_edges_iterator,
                           typename C3t3::Triangulation::Cell_handle> {
 public:
-  using Base = AtomicOperation<C3t3, 
+  using Base = ElementaryOperation<C3t3, 
                               typename C3t3::Triangulation::Finite_edges_iterator,
                               typename C3t3::Triangulation::Cell_handle>;
   using Complex = C3t3;
@@ -91,6 +91,10 @@ public:
     return "Edge Flip";
   }
 
+private:
+  C3t3& m_c3t3;
+  const CellSelector& m_cell_selector;
+  bool m_protect_boundaries;
 };
 
 } // namespace internal

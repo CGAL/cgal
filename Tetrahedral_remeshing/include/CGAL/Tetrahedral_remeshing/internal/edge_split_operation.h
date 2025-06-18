@@ -2,7 +2,7 @@
 #define CGAL_TETRAHEDRAL_REMESHING_EDGE_SPLIT_OPERATION_H
 
 #include <CGAL/license/Tetrahedral_remeshing.h>
-#include <CGAL/Tetrahedral_remeshing/internal/atomic_operations.h>
+#include <CGAL/Tetrahedral_remeshing/internal/elementary_operations.h>
 #include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_remeshing_helpers.h>
 #include <CGAL/Tetrahedral_remeshing/internal/split_long_edges.h>
 #include <CGAL/Iterator_range.h>
@@ -25,11 +25,11 @@ namespace internal {
 
 template<typename C3t3, typename SizingFunction, typename CellSelector>
 class EdgeSplitOperation 
-  : public AtomicOperation<C3t3, 
+  : public ElementaryOperation<C3t3, 
                           typename C3t3::Triangulation::Finite_edges_iterator,
                           typename C3t3::Triangulation::Cell_handle> {
 public:
-  using Base = AtomicOperation<C3t3, 
+  using Base = ElementaryOperation<C3t3, 
                               typename C3t3::Triangulation::Finite_edges_iterator,
                               typename C3t3::Triangulation::Cell_handle>;
   using Complex = C3t3;

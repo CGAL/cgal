@@ -2,7 +2,7 @@
 #define CGAL_TETRAHEDRAL_REMESHING_VERTEX_SMOOTH_OPERATION_H
 
 #include <CGAL/license/Tetrahedral_remeshing.h>
-#include <CGAL/Tetrahedral_remeshing/internal/atomic_operations.h>
+#include <CGAL/Tetrahedral_remeshing/internal/elementary_operations.h>
 #include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_remeshing_helpers.h>
 #include <CGAL/Triangulation_3.h>
 #include <CGAL/Tetrahedral_remeshing/internal/FMLS.h>
@@ -33,12 +33,12 @@ enum class SmoothingDomain {
 
 template<typename C3t3, typename SizingFunction, typename CellSelector, SmoothingDomain Domain>
 class VertexSmoothOperation 
-  : public AtomicOperation<C3t3, 
+  : public ElementaryOperation<C3t3, 
                           typename C3t3::Triangulation::Finite_vertex_handles::iterator,
                           typename C3t3::Triangulation::Cell_handle>
 {
 public:
-  using Base = AtomicOperation<C3t3, 
+  using Base = ElementaryOperation<C3t3, 
                               typename C3t3::Triangulation::Finite_vertex_handles::iterator,
                               typename C3t3::Triangulation::Cell_handle>;
   using ElementIteratorType = typename Base::ElementIteratorType;
@@ -209,6 +209,12 @@ private:
   Point_3 project_on_tangent_plane(const Point_3& p, const Point_3& origin, const Vector_3& normal) const {
     // ... implementation ...
   }
+
+  C3t3& m_c3t3;
+  const SizingFunction& m_sizing;
+  const CellSelector& m_cell_selector;
+  bool m_protect_boundaries;
+  bool m_smooth_constrained_edges;
 };
 
 } // namespace internal

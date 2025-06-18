@@ -1,8 +1,8 @@
-#ifndef CGAL_TETRAHEDRAL_REMESHING_ATOMIC_REMESH_IMPL_H
-#define CGAL_TETRAHEDRAL_REMESHING_ATOMIC_REMESH_IMPL_H
+#ifndef CGAL_TETRAHEDRAL_REMESHING_ELEMENTARY_REMESH_IMPL_H
+#define CGAL_TETRAHEDRAL_REMESHING_ELEMENTARY_REMESH_IMPL_H
 
 #include <CGAL/license/Tetrahedral_remeshing.h>
-#include <CGAL/Tetrahedral_remeshing/internal/atomic_operations.h>
+#include <CGAL/Tetrahedral_remeshing/internal/elementary_operations.h>
 #include <CGAL/Tetrahedral_remeshing/internal/edge_split_operation.h>
 #include <CGAL/Tetrahedral_remeshing/internal/edge_collapse_operation.h>
 #include <CGAL/Tetrahedral_remeshing/internal/edge_flip_operation.h>
@@ -16,7 +16,7 @@ namespace CGAL {
 namespace Tetrahedral_remeshing {
 namespace internal {
 
-template <typename C3t3, typename SizingFunction, typename CellSelector> class Atomic_remesher
+template <typename C3t3, typename SizingFunction, typename CellSelector> class Elementary_remesher
 {
   typedef typename C3t3::Triangulation Tr;
   typedef typename Tr::Geom_traits::FT FT;
@@ -34,7 +34,7 @@ template <typename C3t3, typename SizingFunction, typename CellSelector> class A
       SurfaceVertexSmoothOp;
   typedef VertexSmoothOperation<C3t3, SizingFunction, CellSelector, SmoothingDomain::COMPLEX_EDGES> ComplexEdgeSmoothOp;
 
-  template <typename Operation> using ExecutionPolicy = AtomicOperationExecutionSequential<Operation>;
+  template <typename Operation> using ExecutionPolicy = ElementaryOperationExecutionSequential<Operation>;
 
 public:
 
@@ -50,11 +50,11 @@ public:
      executor.execute(collapse_op, c3t3);
   }
 
-	static void flip(C3t3& c3t3, const CellSelector& cell_selector) {
-	   EdgeFlipOp flip_op(c3t3, cell_selector);
-	   ExecutionPolicy<EdgeFlipOp> executor;
-	   executor.execute(flip_op, c3t3);
-	}
+  static void flip(C3t3& c3t3, const CellSelector& cell_selector) {
+     EdgeFlipOp flip_op(c3t3, cell_selector);
+     ExecutionPolicy<EdgeFlipOp> executor;
+     executor.execute(flip_op, c3t3);
+  }
 
   static void smooth(
       C3t3& c3t3,
@@ -90,7 +90,7 @@ public:
 
 
 } // namespace internal
-} // namespace internal
 } // namespace Tetrahedral_remeshing
+} // namespace CGAL
 
-#endif // CGAL_TETRAHEDRAL_REMESHING_ATOMIC_REMESH_IMPL_H
+#endif // CGAL_TETRAHEDRAL_REMESHING_ELEMENTARY_REMESH_IMPL_H 
