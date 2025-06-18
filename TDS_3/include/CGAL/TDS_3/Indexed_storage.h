@@ -861,7 +861,7 @@ namespace CGAL {
 
     static constexpr bool  has_point = internal::Has_nested_type_Point<Element_type>::value;
 
-    using typename internal::Get_nested_type_Point<Element_type,int>::type  Point;
+    using Point = typename internal::Get_nested_type_Point<Element_type,int>::type;
 
 
     static constexpr bool is_parallel = std::is_convertible_v<Concurrency_tag, Parallel_tag>;
