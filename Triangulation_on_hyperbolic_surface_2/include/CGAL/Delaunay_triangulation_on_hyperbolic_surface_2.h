@@ -72,8 +72,11 @@ public:
 	//---------- location and insertion
 	std::tuple<Locate_type, unsigned> relative_position(Point const & query, Anchor const & anch) const;
 	Orientation hyperbolic_orientation_2(Point const & p, Point const & q, Point const & r) const;  // à mettre dans le code de hyperbolic_traits
-	std::tuple<Anchor, unsigned> locate(Point const & query, Anchor const & anch, bool use_visibility = false);
-	std::tuple<Anchor, unsigned> locate(Point const & query, bool use_visibility = false);
+	Anchor locate(Point const & query, bool use_visibility = false); // const ?
+	// note : si return & alors segfault car l'objet retourné est un objet local, donc cause segfault
+	Anchor locate(Point const & query, unsigned & count, bool use_visibility = false); // const ?
+	Anchor locate(Point const & query, Anchor const & hint, bool use_visibility = false); // const ?
+	Anchor locate(Point const & query, Anchor const & hint, unsigned & count, bool use_visibility = false); // const ?
 
 /*       
 	SYNTAXE locate de CGAL (cf doc) :
@@ -110,8 +113,8 @@ private:
 	Anchor & update_infos(Dart_descriptor dart, Point const & r, Point const & s, Point const & t, Point const & query);
 	
 	//---------- location and insertion
-	std::tuple<Anchor, unsigned> locate_visibility_walk(Point const & query, Anchor const & anch);  // const ? + faire 1 locate avec un param bool qui change l'algo utilisé
-	std::tuple<Anchor, unsigned> locate_straight_walk(Point const & query, Anchor const & anch);
+	Anchor locate_visibility_walk(Point const & query, Anchor const & hint, unsigned & count); // const ?
+	Anchor locate_straight_walk(Point const & query, Anchor const & hint, unsigned & count); // const ?
 	std::vector<Anchor> insert_in_face(Point const & query, Anchor& anch);  // return réf ?
 	std::vector<Anchor> insert_in_edge(Point const & query, Anchor& anch, unsigned index);
 	std::vector<Anchor> insert(Point const & query, Anchor & anch, bool use_visibility = false); // return réf ?
@@ -482,10 +485,10 @@ hyperbolic_orientation_2(Point const & p, Point const & q, Point const & r) cons
 	} else if (orientation_to_disk == ON_NEGATIVE_SIDE) {
 		if (orientation_to_origin == LEFT_TURN) {
 			return RIGHT_TURN;
-		} else{
+		} else {
 			return LEFT_TURN;
 		}
-	} else{
+	} else {
 		return COLLINEAR;
 	}
 }
@@ -525,30 +528,30 @@ relative_position(Point const & query, Anchor const & anch) const
 // Output: an anchor of the triangle in which query lies,
 // and an int corresponding to the number of traversed triangles to find it.
 template<class Traits>
-std::tuple<typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Anchor, unsigned>
+typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Anchor
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
-locate_visibility_walk(Point const & query, Anchor const & anch)
+locate_visibility_walk(Point const & query, Anchor const & hint, unsigned & count)
 {
 	Complex z_query (query.x(), query.y());
 	CGAL_precondition(norm(z_query) < Number(1));
 	CGAL_expensive_precondition(Base::is_Delaunay()); 
 
 	// initialisation
-	auto [lt, index] = relative_position(query, anch);
+	auto [lt, index] = relative_position(query, hint);
 	if (lt != OUTSIDE){
-		return std::tuple(anch, 0);
+		return hint;
 	}
 
 	bool found = false;
-	unsigned count = 0;
+	count = 0;
 
-	Dart_descriptor dart = anch.dart;
+	Dart_descriptor dart = hint.dart;
 	for (unsigned i = 0; i < index; ++i) {
 		dart = Base::ccw(dart);
 	}
-	Point c = anch.vertices[index];
-	Point a = anch.vertices[ccw(index)];
-	Point b = anch.vertices[cw(index)];
+	Point c = hint.vertices[index];
+	Point a = hint.vertices[ccw(index)];
+	Point b = hint.vertices[cw(index)];
 	Point d;
 
 	// visibility walk
@@ -569,26 +572,24 @@ locate_visibility_walk(Point const & query, Anchor const & anch)
 		}
 		++count;
 	}
-	Anchor res = Anchor(dart, a, c, d);
-	CGAL_assertion(std::get<0>(relative_position(query, res)) != OUTSIDE);
-	return std::tuple(res, count);
+	return Anchor(dart, a, c, d);
 }
 
 template<class Traits>
-std::tuple<typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Anchor, unsigned>
+typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Anchor
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
-locate_straight_walk(Point const & query, Anchor const & anch)
+locate_straight_walk(Point const & query, Anchor const & hint, unsigned & count)
 {
 	Complex z_query (query.x(), query.y());
 	CGAL_precondition(norm(z_query) < Number(1));
 
-	Dart_descriptor dart = anch.dart;
-	Point p = anch.vertices[0];
-	Point r = anch.vertices[1];
-	Point l = anch.vertices[2];
+	Dart_descriptor dart = hint.dart;
+	Point p = hint.vertices[0];
+	Point r = hint.vertices[1];
+	Point l = hint.vertices[2];
 
 	// initialisation
-	unsigned count = 0;
+	count = 0;
 	if (hyperbolic_orientation_2(r, p, query) < 0) {
 		while (hyperbolic_orientation_2(l, p, query) < 0) {
 			dart = Base::opposite(Base::cw(dart));
@@ -624,33 +625,52 @@ locate_straight_walk(Point const & query, Anchor const & anch)
 		}
 		count++;
 	}
-	Anchor res = Anchor(dart, r, l, p0);
-	CGAL_assertion(std::get<0>(relative_position(query, res)) != OUTSIDE);
-	return std::tuple(res, count);
+	return Anchor(dart, r, l, p0);
 }
 
 template<class Traits>
-std::tuple<typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Anchor, unsigned>
+typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Anchor
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
-locate(Point const & query, Anchor const & anch, bool use_visibility)
+locate(Point const & query, Anchor const & hint, bool use_visibility)
 {
-	if(use_visibility) {
-		return locate_visibility_walk(query, anch);
+	unsigned count = 0;
+	if (use_visibility) {
+		return locate_visibility_walk(query, hint, count);
 	} else {
-		return locate_straight_walk(query, anch);
+		return locate_straight_walk(query, hint, count);
 	}
 }
 
 template<class Traits>
-std::tuple<typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Anchor, unsigned>
+typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Anchor
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
 locate(Point const & query, bool use_visibility)
 {
 	return locate(query, anchor(), use_visibility);
 }
 
+template<class Traits>
+typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Anchor
+Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
+locate(Point const & query, Anchor const & hint, unsigned & count, bool use_visibility)
+{
+	if (use_visibility) {
+		return locate_visibility_walk(query, hint, count);
+	} else {
+		return locate_straight_walk(query, hint, count);
+	}
+}
+
+template<class Traits>
+typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Anchor
+Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
+locate(Point const & query, unsigned & count, bool use_visibility)
+{
+	return locate(query, anchor(), count, use_visibility);
+}
+
 // Input: dart whose cross-ratio is those of the edge [t, r] and is computed with s and a fourth vertex.
-// Output: modified anch such that its vertices are {r, query, t} and its dart represents the edge between r and t.
+// Output: modified anchor such that its vertices are {r, query, t} and its dart represents the edge between r and t.
 // The cross-ratio of the edge [t, r] is updated with its value where query is replaced by s.
 // The cross-ratio of the edge [r, q] is set.
 // Warning: the other cross-ratios are not updated, they will be in insert_in_edge and insert_in_face.
@@ -751,7 +771,7 @@ std::vector<typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Anc
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
 insert(Point const & query, Anchor& anch, bool use_visibility)
 {
-	Anchor locate_anchor = std::get<0>(locate(query, anch, use_visibility));
+	Anchor locate_anchor = locate(query, anch, use_visibility);
 	auto [lt, index] = relative_position(query, locate_anchor);
 	CGAL_precondition(lt != OUTSIDE);
 

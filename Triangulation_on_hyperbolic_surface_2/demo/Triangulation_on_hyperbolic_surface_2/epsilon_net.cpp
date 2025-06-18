@@ -68,7 +68,7 @@ int main(int argc, char *argv[])
 	dt.combinatorial_map().display_characteristics(std::cout) << std::endl;
 
 	// 4. SET THE FIRST ANCHOR OF THE DRAWING
-	Anchor anchor = std::get < 0 > (dt.locate(v0));
+	Anchor anchor = dt.locate(v0);
 	int index = 0;
 	for (int i = 0; i < 3; i++) {
 		if (v0 == anchor.vertices[i]) {
