@@ -975,19 +975,24 @@ namespace CGAL {
         ss << idx << " (recycled from freelist)\n";
 #endif
       } else {
-        std::unique_lock<std::mutex> lock(mutex_);
-        auto increment = size_of_blocks;
-        auto pos = static_cast<size_type>(properties_.grow_by(increment));
-        for(auto i = pos + 1, end = pos + increment; i < end; ++i) {
-          free_list_next_function_(storage_[Index_type{i}]) = i + 1;
-          removed_[Index_type{i}] = true;
+        if constexpr(is_parallel) {
+          std::unique_lock<std::mutex> lock(mutex_);
+          auto increment = size_of_blocks;
+          auto pos = static_cast<size_type>(properties_.grow_by(increment));
+          for(auto i = pos + 1, end = pos + increment; i < end; ++i) {
+            free_list_next_function_(storage_[Index_type{i}]) = i + 1;
+            removed_[Index_type{i}] = true;
+          }
+          free_list_next_function_(storage_[Index_type{pos + increment - 1}]) = Index_type::invalid_index;
+          local_number_of_removed_elements() += (increment - 1);
+          freelist_ = pos + 1;
+          size_of_blocks += CGAL_INCREMENT_COMPACT_CONTAINER_BLOCK_SIZE;
+          idx = Index_type{pos};
+          removed_[idx] = false;
+        } else {
+          // sequential case
+          idx = Index_type{static_cast<size_type>(properties_.push_back())};
         }
-        free_list_next_function_(storage_[Index_type{pos + increment - 1}]) = Index_type::invalid_index;
-        local_number_of_removed_elements() += (increment - 1);
-        freelist_ = pos + 1;
-        size_of_blocks += CGAL_INCREMENT_COMPACT_CONTAINER_BLOCK_SIZE;
-        idx = Index_type{pos};
-        removed_[idx] = false;
         elt = Element_type(container, idx);
 #if CGAL_DEBUG_INDEXED_CONTAINER
         ss << idx << " (new)\n";

@@ -4095,7 +4095,7 @@ insert_in_conflict(const Point& p,
       hider.process_cells_in_conflict(cells.begin(), cells.end());
 
       Vertex_handle v =
-        false || tds().is_small_hole(facets.size()) ?
+        tds().is_small_hole(facets.size()) ?
         _insert_in_small_hole(p, cells, facets) :
         _insert_in_hole(p,
                         cells.begin(), cells.end(),
