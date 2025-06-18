@@ -632,8 +632,7 @@ compute_vertex_normal_most_visible_min_circle(typename boost::graph_traits<Polyg
       FT sp_n1_nm = sp_3(n1, n_middle);
 
       // The sign must be opposite but numerical error can make them equal sign if the value is close to zero
-      CGAL_assertion(FT sp_n2_nm = sp_3(n2, n_middle));
-      CGAL_assertion((CGAL::sign(sp_n1_nm)!=CGAL::sign(sp_n2_nm)) || (sp_n1_nm<0.0001) || (sp_n2_nm<0.0001));
+      CGAL_assertion((CGAL::sign(sp_n1_nm)!=CGAL::sign( sp_3(n2, n_middle) )) || (sp_n1_nm<0.0001) || ( sp_3(n2, n_middle)<0.0001));
       if( CGAL::sign(sp_no_nm) == CGAL::sign(sp_n1_nm)){
         circum_points[1]=f_out;
       } else {
