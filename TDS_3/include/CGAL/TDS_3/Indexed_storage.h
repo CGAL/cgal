@@ -22,6 +22,7 @@
 #include <CGAL/TDS_3/internal/Triangulation_ds_iterators_3.h>
 #include <CGAL/Triangulation_utils_3.h>
 #include <CGAL/Triangulation_data_structure_3_fwd.h>
+#include <CGAL/STL_Extension/internal/Has_nested_type_Point.h>
 
 #include <CGAL/assertions.h>
 #include <CGAL/Compact_container.h>
@@ -837,6 +838,7 @@ namespace CGAL {
     using Base::Base;
   };
 
+
   template <typename Index_type,
             typename Element_type,
             typename Storage_type,
@@ -856,6 +858,11 @@ namespace CGAL {
     using Handle = Index_handle<Element_type, Index_type, Container>;
     using size_type = typename Container::size_type;
     using Concurrency_tag = ConcurrencyTag;
+
+    static constexpr bool  has_point = internal::Has_nested_type_Point<Element_type>::value;
+
+    using Point = typename internal::Get_nested_type_Point<Element_type,int>::type;
+
 
     static constexpr bool is_parallel = std::is_convertible_v<Concurrency_tag, Parallel_tag>;
 #ifdef CGAL_LINKED_WITH_TBB
@@ -887,6 +894,8 @@ namespace CGAL {
     Property_map<Index_type, bool, Concurrency_tag> removed_ =
         add_property_map<bool>(prefix + std::string(":removed"), false).first;
 
+    Property_map<Index_type, Point, Concurrency_tag> points_;
+
     template <typename Key, typename T>
     struct Get_property_map {
       using type = Property_map<Key, T, Concurrency_tag>;
@@ -895,6 +904,14 @@ namespace CGAL {
     using Time_stamper = CGAL::Time_stamper_impl<Element_type>;
     template <typename U> using EraseCounterStrategy =
       internal::Erase_counter_strategy<internal::has_increment_erase_counter<U>::value>;
+
+    // Indexed_container()
+    // {
+    //   if constexpr(has_point) {
+    //   std::cout << "Indexed_container: has_point is true, adding point property map.\n";
+    //    points_ = add_property_map<Point>(prefix + std::string(":point"), Point()).first;
+    //   }
+    // }
 
     template<class T>
     std::pair<Property_map<Index_type, T, ConcurrencyTag>, bool>
