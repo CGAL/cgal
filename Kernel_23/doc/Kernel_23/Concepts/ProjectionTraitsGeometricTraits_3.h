@@ -57,76 +57,68 @@ public:
   /*! `bool` or `Uncertain<bool>` */
   typedef unspecified_type Boolean;
 
-  /*! A function object to construct a `Point_3` */
+  /*! A functor model of `ConstructPoint_3` */
   typedef unspecified_type Construct_point_3;
-  /*! A function object to construct a `Weighted_point_3` */
+  /*! A functor model of `ConstructWeightedPoint_3` */
   typedef unspecified_type Construct_weighted_point_3;
-  /*! A function object to construct a `Segment_3` */
+  /*! A functor model of `ConstructSegment_3` */
   typedef unspecified_type Construct_segment_3;
-  /*! A function object to construct a `Vector_3` */
+  /*! A functor model of `ConstructVector_3` */
   typedef unspecified_type Construct_vector_3;
-  /*! A function object to construct a `Triangle_3` */
+  /*! A functor model of `ConstructTriangle_3` */
   typedef unspecified_type Construct_triangle_3;
-  /*! A function object to construct a `Line_3` */
+  /*! A functor model of `ConstructLine_3` */
   typedef unspecified_type Construct_line_3;
-  /*! A function object to construct a `Triangle_3` */
+  /*! A functor model of `ConstructTriangle_3` */
   typedef unspecified_type Construct_triangle_3;
-  /*! A function object to construct a `Bbox_3` */
+  /*! A functor model of `ConstructBbox_3` */
   typedef unspecified_type Construct_bbox_3;
 
-  /*! A function object to construct a translated `Point_3` */
+  /*! A functor model of `ConstructTranslatedPoint_3` */
   typedef unspecified_type Construct_translated_point_3;
-  /*! A function object to construct the midpoint of two `Point_2` */
+  /*! A functor model of `ConstructMidpoint_3` */
   typedef unspecified_type Construct_midpoint_3;
-  /*! A function object to construct the barycenter of three `Point_3` */
+  /*! A functor model of `ConstructBarycenter_3` */
   typedef unspecified_type Construct_barycenter_3;
-  /*! A function object to construct the barycenter of three `Vector_3` */
+  /*! A functor model of `ConstructVector_3` */
   typedef unspecified_type Construct_vector_3;
-  /*! A function object to construct the scaled version of a `Vector_3` */
+  /*! A functor model of `ConstructScaledVector_3` */
   typedef unspecified_type Construct_scaled_vector_3;
 
-  /*! A function object to construct the `i`-th vertex of a `Triangle_3` */
+  /*! A functor model of `ConstructVertex_3` */
   typedef unspecified_type Construct_vertex_3;
-  /*! A function object to construct the source vertex of a `Segment_3` */
+  /*! A functor model of `ConstructSource_3` */
   typedef unspecified_type Construct_source_3;
-  /*! A function object to construct the target vertex of a `Segment_3` */
+  /*! A functor model of `ConstructTarget_3` */
   typedef unspecified_type Construct_target_3;
 
-  /*! A function object to compare signed distances to a line */
+  /*! A functor model of `CompareSignedDistanceToLine_2` */
   typedef unspecified_type Compare_signed_distance_to_line_2;
-  /*! A function object to compare signed distances to a line */
+  /*! A functor model of `LessSignedDistanceToLine_2` */
   typedef unspecified_type Less_signed_distance_to_line_2;
 
-  /*! A function object to compute orientated side of a segment with respect to a triangle */
+  /*! A functor model of `OrientedSide_2` */
   typedef unspecified_type Oriented_side_2;
-  /*! A function object to compare coordinates of two points in the `xyz` order */
+  /*! A functor model of `CompareXYZ_3` */
   typedef unspecified_type Compare_xyz_3;
-  /*! A function object to compare coordinates of two points from their `x` coordinates */
+  /*! A functor model of `LessX_3` */
   typedef unspecified_type Less_x_3;
-  /*! A function object to compare coordinates of two points from their `y` coordinates */
+  /*! A functor model of `LessY_3` */
   typedef unspecified_type Less_y_3;
-  /*! A function object to compare coordinates of two points from their `z` coordinates */
+  /*! A functor model of `LessZ_3` */
   typedef unspecified_type Less_z_3;
-  /*! A function object to compare coordinates of two points from their `x` coordinates */
+  /*! A functor model of `CompareX_3` */
   typedef unspecified_type Compare_x_3;
-  /*! A function object to compare coordinates of two points from their `y` coordinates */
+  /*! A functor model of `CompareY_3` */
   typedef unspecified_type Compare_y_3;
-  /*! A function object to compare coordinates of two points from their `z` coordinates */
+  /*! A functor model of `CompareZ_3` */
   typedef unspecified_type Compare_z_3;
-  /*! A function object to compare coordinates of two points from their `x` coordinates */
+  /*! A functor model of `EqualX_3` */
   typedef unspecified_type Equal_x_3;
-  /*! A function object to compare coordinates of two points from their `y` coordinates */
+  /*! A functor model of `EqualY_3` */
   typedef unspecified_type Equal_y_3;
-  /*! A function object to compare coordinates of two points from their `y` coordinates */
+  /*! A functor model of `EqualZ_3` */
   typedef unspecified_type Equal_z_3;
-
-  /*! A function object to compute the oriented side of a segment with respect to a triangle */
-  typedef unspecified_type Oriented_side_2;
-  /*! A function object to compare signed distances to a 2D line */
-  typedef unspecified_type Compare_signed_distance_to_line_2;
-  /*! A function object to compare signed distances to a 2D line */
-  typedef unspecified_type Less_signed_distance_to_line_2;
-
 
 /// @}
 
