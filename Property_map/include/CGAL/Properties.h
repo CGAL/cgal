@@ -6,13 +6,11 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 
 #ifndef CGAL_SURFACE_MESH_PROPERTY_H
 #define CGAL_SURFACE_MESH_PROPERTY_H
-
-#include <CGAL/license/Surface_mesh.h>
 
 #ifndef DOXYGEN_RUNNING
 
@@ -34,10 +32,6 @@
 namespace CGAL {
 
 namespace Properties {
-
-/// \addtogroup PkgSurface_mesh
-///
-/// @{
 
 /// @cond CGAL_DOCUMENT_INTERNALS
 class Base_property_array
@@ -792,8 +786,6 @@ private:
 };
 
 #endif // DOXYGEN_RUNNING
-
-///@}
 
 } // Properties
 
