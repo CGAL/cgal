@@ -36,9 +36,10 @@
 #include <array>
 #include <iostream>
 #include <list>
+#include <mutex>
+#include <optional>
 #include <type_traits>
 #include <vector>
-#include <optional>
 
 #ifdef CGAL_LINKED_WITH_TBB
 #  include <tbb/enumerable_thread_specific.h>
@@ -873,7 +874,7 @@ namespace CGAL {
                   "Make TBB available in the build system and then define the macro `CGAL_LINKED_WITH_TBB`.");
     using free_list_type = size_type;
 #endif
-    std::mutex mutex_;
+    CGAL_NO_UNIQUE_ADDRESS std::conditional_t<is_parallel, std::mutex, Null_tag> mutex_;
     Properties::Property_container<Self, Index_type, Concurrency_tag> properties_;
     size_type size_of_blocks = CGAL_INCREMENT_COMPACT_CONTAINER_BLOCK_SIZE;
     size_type nb_of_removed_elements_ = 0;
