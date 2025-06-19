@@ -2,7 +2,8 @@
 //#define CGAL_USE_SSE2_FABS
 //#define CGAL_USE_SSE2_MAX
 //#define CGAL_MSVC_USE_STD_FABS  // use this one with precise
-//#define INDEX_STORAGE 1
+#define CGAL_NDEBUG 1
+#define NDEBUG 1
 
 #include "CGAL/Bbox_3.h"
 #include "CGAL/Triangulation_data_structure_3.h"
@@ -45,12 +46,23 @@ int main(int argc, char* argv[])
   std::locale loc = std::locale()
       .combine<std::numpunct<char>>(std::locale("en_US.UTF8"));
   std::cout.imbue(loc);
+
+  int M = 100; // Number of times to compute the triangulation
+
   Memory_sizer memory_sizer;
   auto res_mem_at_start = memory_sizer.resident_size();
   std::cout << "Memory usage right at start:\n" << memory_sizer.virtual_size() << " bytes (virtual), "
             << res_mem_at_start << " bytes (resident)" << std::endl;
 
   const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("points_3/ocean_r.xyz");
+  if(argc > 2) {
+    auto M_ = std::atoi(argv[2]);
+    if(M_ <= 0) {
+      std::cerr << "Invalid number of iterations: " << M_ << ". Using default value of 100." << std::endl;
+    } else {
+      M = M_;
+    }
+  }
   std::ifstream in(filename.c_str());
   std::vector<Point_3> points;
   Point_3 p, q;
@@ -63,7 +75,6 @@ int main(int argc, char* argv[])
 
   Timer timer;
   timer.start();
-  int M = 100; // Number of times to compute the triangulation
   std::cout << "Compute triangulation "<< M << " times" << std::endl;
   for(int i = 0; i < M; i++){
 #if PARALLEL
