@@ -27,7 +27,7 @@
 #include <CGAL/Compact_container.h>
 #include <CGAL/Iterator_range.h>
 #include <CGAL/property_map.h>
-#include <CGAL/Surface_mesh/Surface_mesh.h>
+#include <CGAL/Properties.h>
 #include <CGAL/Time_stamper.h>
 #include <CGAL/utility.h>
 

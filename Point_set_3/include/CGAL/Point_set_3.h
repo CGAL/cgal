@@ -17,7 +17,7 @@
 
 #include <typeindex>
 
-#include <CGAL/Surface_mesh/Properties.h>
+#include <CGAL/Properties.h>
 
 #include <CGAL/Point_set_3/IO.h>
 

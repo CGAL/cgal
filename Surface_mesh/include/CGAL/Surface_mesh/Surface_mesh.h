@@ -18,7 +18,7 @@
 
 #include <CGAL/Surface_mesh/IO.h>
 #include <CGAL/Surface_mesh/Surface_mesh_fwd.h>
-#include <CGAL/Surface_mesh/Properties.h>
+#include <CGAL/Properties.h>
 
 #include <CGAL/assertions.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
