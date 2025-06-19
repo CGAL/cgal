@@ -624,7 +624,6 @@ compute_vertex_normal_most_visible_min_circle(typename boost::graph_traits<Polyg
       // Get the new vector
       const Vector_ref n0 = get(face_normals, circum_points[0]);
       const Vector_ref n1 = get(face_normals, circum_points[1]);
-      const Vector_ref n2 = get(face_normals, circum_points[2]);
 
       // Search the point that are on the same side of f compare to ni
       Vector_3 n_middle = cp_3(n0, center);
@@ -632,7 +631,9 @@ compute_vertex_normal_most_visible_min_circle(typename boost::graph_traits<Polyg
       FT sp_n1_nm = sp_3(n1, n_middle);
 
       // The sign must be opposite but numerical error can make them equal sign if the value is close to zero
-      CGAL_assertion((CGAL::sign(sp_n1_nm)!=CGAL::sign( sp_3(n2, n_middle) )) || (sp_n1_nm<0.0001) || ( sp_3(n2, n_middle)<0.0001));
+      CGAL_assertion_code(const Vector_ref n2 = get(face_normals, circum_points[2]));
+      CGAL_assertion_code(FT sp_n2_nm = sp_3(n2, n_middle));
+      CGAL_assertion((CGAL::sign(sp_n1_nm)!=CGAL::sign(sp_n2_nm)) || (sp_n1_nm<0.0001) || ( sp_n2_nm<0.0001));
       if( CGAL::sign(sp_no_nm) == CGAL::sign(sp_n1_nm)){
         circum_points[1]=f_out;
       } else {
