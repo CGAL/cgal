@@ -780,7 +780,7 @@ march_locate_2D(Face_handle f,
           }
         }
 
-        CGAL_precondition(false);
+        CGAL_assertion(false);
       }
     }
 
@@ -972,9 +972,7 @@ march_locate_2D(Face_handle f,
       }
       default:
       {
-        // impossible
-        CGAL_assertion(false);
-        return f;
+        CGAL_unreachable();
       }
     }
 
