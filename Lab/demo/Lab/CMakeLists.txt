@@ -89,7 +89,7 @@ if(NOT LIBSSH_FOUND)
 endif()
 
 # Activate concurrency ? (turned OFF by default)
-option(CGAL_ACTIVATE_CONCURRENT_MESH_3 "Activate parallelism in Mesh_3" OFF)
+option(CGAL_ACTIVATE_CONCURRENT_MESH_3 "Activate parallelism in Mesh_3" ON)
 
 # And add -DCGAL_CONCURRENT_MESH_3 if that option is ON
 if(CGAL_ACTIVATE_CONCURRENT_MESH_3 OR "$ENV{CGAL_ACTIVATE_CONCURRENT_MESH_3}")
