@@ -166,6 +166,7 @@ public:
   using Tr_Base::coplanar;
   using Tr_Base::coplanar_orientation;
   using Tr_Base::orientation;
+  using Tr_Base::point;
   using Tr_Base::adjacent_vertices;
   using Tr_Base::construct_segment;
   using Tr_Base::incident_facets;
@@ -348,19 +349,18 @@ public:
     WallClockTimer t;
 #endif
 
-    size_type n = number_of_vertices();
+    const size_type n = number_of_vertices();
     std::vector<Point> points(first, last);
+    const size_type num_points = points.size();
     spatial_sort<Concurrency_tag>(points.begin(), points.end(), geom_traits());
-    size_type nv = n + static_cast<size_type>(points.size()) + ((n==0) ? 1: 0); // +1 for the infinite vertex
-    size_type estimated_nc = this->number_of_cells()+ (7*nv)/4;
+    const size_type nv = n + 1 + static_cast<size_type>(points.size()); // +1 for the infinite vertex
+    const size_type estimated_nc = this->number_of_cells()+ (7*num_points)/4;
     tds().reserve(nv, estimated_nc);
 
     // Parallel
 #ifdef CGAL_LINKED_WITH_TBB
     if(this->is_parallel())
     {
-      size_t num_points = points.size();
-
       Vertex_handle hint;
 
 #ifdef CGAL_CONCURRENT_TRIANGULATION_3_ADD_TEMPORARY_POINTS_ON_FAR_SPHERE
@@ -371,7 +371,7 @@ public:
       size_t i = 0;
       // Insert "num_points_seq" points sequentially
       // (or more if dim < 3 after that)
-      size_t num_points_seq = (std::min)(num_points, (size_t) 100);
+      size_t num_points_seq = (std::min<size_t>)(num_points, 100);
       while (i < num_points_seq || (dimension() < 3 && i < num_points))
       {
         hint = insert(points[i], hint);
@@ -1491,41 +1491,41 @@ side_of_sphere(Vertex_handle v0, Vertex_handle v1,
 
   if(is_infinite(v0))
   {
-    Orientation o = orientation(v2->point(), v1->point(), v3->point(), p);
+    Orientation o = orientation(point(v2), point(v1), point(v3), p);
     if(o != COPLANAR)
       return Bounded_side(o);
 
-    return coplanar_side_of_bounded_circle(v2->point(), v1->point(), v3->point(), p, perturb);
+    return coplanar_side_of_bounded_circle(point(v2), point(v1), point(v3), p, perturb);
   }
 
   if(is_infinite(v1))
   {
-    Orientation o = orientation(v2->point(), v3->point(), v0->point(), p);
+    Orientation o = orientation(point(v2), point(v3), point(v0), p);
     if(o != COPLANAR)
       return Bounded_side(o);
 
-    return coplanar_side_of_bounded_circle(v2->point(), v3->point(), v0->point(), p, perturb);
+    return coplanar_side_of_bounded_circle(point(v2), point(v3), point(v0), p, perturb);
   }
 
   if(is_infinite(v2))
   {
-    Orientation o = orientation(v1->point(), v0->point(), v3->point(), p);
+    Orientation o = orientation(point(v1), point(v0), point(v3), p);
     if(o != COPLANAR)
       return Bounded_side(o);
 
-    return coplanar_side_of_bounded_circle(v1->point(), v0->point(), v3->point(), p, perturb);
+    return coplanar_side_of_bounded_circle(point(v1), point(v0), point(v3), p, perturb);
   }
 
   if(is_infinite(v3))
   {
-    Orientation o = orientation(v0->point(), v1->point(), v2->point(), p);
+    Orientation o = orientation(point(v0), point(v1), point(v2), p);
     if(o != COPLANAR)
       return Bounded_side(o);
 
-    return coplanar_side_of_bounded_circle(v0->point(), v1->point(), v2->point(), p, perturb);
+    return coplanar_side_of_bounded_circle(point(v0), point(v1), point(v2), p, perturb);
   }
 
-  return (Bounded_side) side_of_oriented_sphere(v0->point(), v1->point(), v2->point(), v3->point(), p, perturb);
+  return (Bounded_side) side_of_oriented_sphere(point(v0), point(v1), point(v2), point(v3), p, perturb);
 }
 
 template < class Gt, class Tds, class Lds >

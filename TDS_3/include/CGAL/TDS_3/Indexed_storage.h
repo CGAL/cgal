@@ -88,8 +88,8 @@ namespace internal { namespace TDS_3{
     using TDS_data      = typename TDS_3::Cell_data;
 
     struct Storage {
-      std::array<Vertex_index,4> ivertices{ {{}, {}, {}, {}} };
-      std::array<Cell_index,4>   ineighbors{ {{}, {}, {}, {}} };
+      std::array<Vertex_index,4> ivertices{ {Vertex_index{}, Vertex_index{}, Vertex_index{}, Vertex_index{}} };
+      std::array<Cell_index,4>   ineighbors{ {Cell_index{}, Cell_index{}, Cell_index{}, Cell_index{}} };
     };
 
     Cell()
@@ -151,6 +151,16 @@ namespace internal { namespace TDS_3{
     {
       for (int i = 0; i < 4; ++i) {
         if (v.index() == storage().ivertices[i]) {
+          return i;
+        }
+      }
+      return -1; // Not found
+    }
+
+    int index(Vertex_index vi) const
+    {
+      for (int i = 0; i < 4; ++i) {
+        if (vi == storage().ivertices[i]) {
           return i;
         }
       }
@@ -310,7 +320,7 @@ namespace internal { namespace TDS_3{
     using Vertex_handle [[maybe_unused]] = typename TDS_3::Vertex_handle;
 
     struct Storage {
-      Cell_index icell;
+      Cell_index icell{};
     };
 
     Vertex()
@@ -546,6 +556,7 @@ namespace internal { namespace TDS_3{
   class Index
   {
   public:
+    static constexpr Index<Derived_id> invalid{};
 
     using size_type = std::uint32_t;
     static constexpr size_type invalid_index = (std::numeric_limits<size_type>::max)();
@@ -553,53 +564,70 @@ namespace internal { namespace TDS_3{
     /// Constructor. %Default construction creates an invalid index.
     /// We write <a href="https://en.cppreference.com/w/cpp/types/numeric_limits">
     /// <tt>(std::numeric_limits<size_type>::max)()</tt></a>.
-    explicit Index(size_type _idx=invalid_index) : idx_(_idx) {}
+    constexpr Index() = default;
+    explicit constexpr Index(size_type _idx) : idx_(_idx) {}
+
+    Index(const Index&) = default;
+    Index(Index&&) = default;
+    Index& operator=(const Index&) = default;
+    Index& operator=(Index&&) = default;
+
+    constexpr Index(const Derived_id& id) : idx_(id.id()) {}
+    constexpr Index(Derived_id&& id) : idx_(id.id()) {}
+    constexpr Index& operator=(const Derived_id& id) {
+      idx_ = id.id();
+      return *this;
+    }
+    constexpr Index& operator=(Derived_id&& id) {
+      idx_ = id.id();
+      return *this;
+    }
 
     /// Get the underlying index of this index
-    operator size_type() const { return idx_; }
+    constexpr explicit operator size_type() const { return idx_; }
 
     /// reset index to be invalid (index=(std::numeric_limits<size_type>::max)())
-    void reset() { idx_ = invalid_index; }
+    constexpr void reset() { idx_ = invalid_index; }
 
     /// return whether the index is valid, i.e., the index is not equal to `%std::numeric_limits<size_type>::max()`.
-    bool is_valid() const {
+    constexpr bool is_valid() const {
       return idx_ != invalid_index;
     }
 
     // Compatibility with OpenMesh handle
-    size_type idx() const {
+    constexpr size_type idx() const {
       return idx_;
     }
-    size_type& idx() {
+    constexpr size_type& idx() {
       return idx_;
     }
     // For convenience
-    size_type id() const {
+    constexpr size_type id() const {
       return idx_;
     }
-    size_type& id() {
+    constexpr size_type& id() {
       return idx_;
     }
 
     /// increments the internal index. This operation does not
     /// guarantee that the index is valid or undeleted after the
     /// increment.
-    Index& operator++() { ++idx_; return *this; }
+    constexpr Index& operator++() { ++idx_; return *this; }
     /// decrements the internal index. This operation does not
     /// guarantee that the index is valid or undeleted after the
     /// decrement.
-    Index& operator--() { --idx_; return *this; }
+    constexpr Index& operator--() { --idx_; return *this; }
 
     /// increments the internal index. This operation does not
     /// guarantee that the index is valid or undeleted after the
     /// increment.
-    Index operator++(int) { Index tmp(*this); ++idx_; return tmp; }
+    constexpr Index operator++(int) { Index tmp(*this); ++idx_; return tmp; }
     /// decrements the internal index. This operation does not
     /// guarantee that the index is valid or undeleted after the
     /// decrement.
-    Index operator--(int) { Index tmp(*this); --idx_; return tmp; }
+    constexpr Index operator--(int) { Index tmp(*this); --idx_; return tmp; }
 
-    Index operator+=(std::ptrdiff_t n) { idx_ = size_type(std::ptrdiff_t(idx_) + n); return *this; }
+    constexpr Index operator+=(std::ptrdiff_t n) { idx_ = size_type(std::ptrdiff_t(idx_) + n); return *this; }
 
     template<class T> friend bool operator==(const T&, const Derived_id&) = delete;
     template<class T> friend bool operator!=(const T&, const Derived_id&) = delete;
@@ -615,14 +643,14 @@ namespace internal { namespace TDS_3{
     template<class T> friend bool operator> (const Derived_id&, const T&) = delete;
     template<class T> friend bool operator>=(const Derived_id&, const T&) = delete;
 
-    friend bool operator==(const Derived_id& _lhs, const Derived_id& _rhs) { return _lhs.id() == _rhs.id(); }
-    friend bool operator!=(const Derived_id& _lhs, const Derived_id& _rhs) { return !(_lhs == _rhs); }
-    friend bool operator< (const Derived_id& _lhs, const Derived_id& _rhs) { return _lhs.id() < _rhs.id(); }
-    friend bool operator<=(const Derived_id& _lhs, const Derived_id& _rhs) { return _lhs.id() <= _rhs.id(); }
-    friend bool operator> (const Derived_id& _lhs, const Derived_id& _rhs) { return _lhs.id() > _rhs.id(); }
-    friend bool operator>=(const Derived_id& _lhs, const Derived_id& _rhs) { return _lhs.id() >= _rhs.id(); }
-    friend bool operator==(const Derived_id& _lhs, const std::nullptr_t&) { return _lhs.id() == invalid_index; }
-    friend bool operator!=(const Derived_id& _lhs, std::nullptr_t&) { return _lhs.id() != invalid_index; }
+    friend constexpr bool operator==(const Derived_id& _lhs, const Derived_id& _rhs) { return _lhs.id() == _rhs.id(); }
+    friend constexpr bool operator!=(const Derived_id& _lhs, const Derived_id& _rhs) { return !(_lhs == _rhs); }
+    friend constexpr bool operator< (const Derived_id& _lhs, const Derived_id& _rhs) { return _lhs.id() < _rhs.id(); }
+    friend constexpr bool operator<=(const Derived_id& _lhs, const Derived_id& _rhs) { return _lhs.id() <= _rhs.id(); }
+    friend constexpr bool operator> (const Derived_id& _lhs, const Derived_id& _rhs) { return _lhs.id() > _rhs.id(); }
+    friend constexpr bool operator>=(const Derived_id& _lhs, const Derived_id& _rhs) { return _lhs.id() >= _rhs.id(); }
+    friend constexpr bool operator==(const Derived_id& _lhs, const std::nullptr_t&) { return _lhs.id() == invalid_index; }
+    friend constexpr bool operator!=(const Derived_id& _lhs, std::nullptr_t&) { return _lhs.id() != invalid_index; }
 
     friend std::ostream& operator<<(std::ostream& os, const Derived_id& idx)
     {
@@ -654,6 +682,9 @@ namespace internal { namespace TDS_3{
 
     Index_handle(Element_container* container, size_type idx)
       : cont_(container), idx_(idx) {}
+
+    Index_handle(Element_container* container, Index_type idx)
+      : cont_(container), idx_(idx.id()) {}
 
     Element operator*() const {
       return Element(cont_, Index_type(idx_));
@@ -987,7 +1018,7 @@ namespace CGAL {
         --local_number_of_removed_elements();
         removed_[idx] = false;
         const auto ec = EraseCounterStrategy<Element_type>::erase_counter(&elt);
-        properties_.reset(idx);
+        properties_.reset(idx.id());
         EraseCounterStrategy<Element_type>::restore_erase_counter(&elt, ec);
 #if CGAL_DEBUG_INDEXED_CONTAINER
         ss << idx << " (recycled from freelist)\n";
@@ -1023,10 +1054,9 @@ namespace CGAL {
       return idx;
     }
 
-    void remove(Handle ch, Container* container)
+    void remove(Index_type idx, Container* container)
     {
       size_type& freelist_ = free_list();
-      Index_type idx = ch->index();
       if constexpr(! is_parallel){
         if(idx.idx() == properties_.size()-1){
           properties_.pop_back();
@@ -1034,8 +1064,8 @@ namespace CGAL {
         }
       }
       removed_[idx] = true; ++local_number_of_removed_elements(); garbage_ = true;
-      free_list_next_function_(storage_[idx]) = Index_type{freelist_};
-      freelist_ = static_cast<size_type>(idx);
+      free_list_next_function_(storage_[idx]) = freelist_;
+      freelist_ = idx.id();
       Element_type elt(container, idx);
       EraseCounterStrategy<Element_type>::increment_erase_counter(elt);
     }
@@ -1104,11 +1134,36 @@ namespace CGAL {
     struct Cell_index: public Index<Cell_index>
     {
       using Index<Cell_index>::Index; // inherit constructors
+      using Index<Cell_index>::operator=; // inherit assignment operator
       auto output_prefix() const { return 'c'; }
     };
 
     using Cell_handle = Index_handle<Cell, Cell_index, Self>;
     using Vertex_handle = Index_handle<Vertex, Vertex_index, Self>;
+    using cell_descriptor = Cell_index;
+    using vertex_descriptor = Vertex_index;
+
+    Cell_handle cell_handle(cell_descriptor index) const
+    {
+      return Cell_handle{const_cast<Self*>(this), index};
+    }
+
+    Vertex_handle vertex_handle(vertex_descriptor index) const
+    {
+      return Vertex_handle{const_cast<Self*>(this), index};
+    }
+
+    cell_descriptor to_cell_descriptor(Cell_handle ch) const
+    {
+      CGAL_assertion(ch.tds() == this);
+      return ch.index();
+    }
+
+    vertex_descriptor to_vertex_descriptor(Vertex_handle vh) const
+    {
+      CGAL_assertion(vh.tds() == this);
+      return vh.index();
+    }
 
     using Facet = std::pair<Cell_handle, int>;
     using Edge = Triple<Cell_handle, int, int>;
@@ -1190,14 +1245,90 @@ namespace CGAL {
       }
     }
 
+    Cell_data& tds_data(Cell_index ci) const
+    {
+      return cell_tds_data_pmap()[ci];
+    }
+
+    Cell_data& tds_data(Cell_handle ch) const
+    {
+      return tds_data(ch.index());
+    }
+
+    Vertex_index vertex(Cell_index ci, int i) const
+    {
+      return cell_storage()[ci].ivertices[i];
+    }
+
+    void set_vertex(Cell_index ci, int i, Vertex_index vi)
+    {
+      cell_storage()[ci].ivertices[i] = vi;
+    }
+
+    Cell_index neighbor(Cell_index ci, int i) const
+    {
+      return cell_storage()[ci].ineighbors[i];
+    }
+
+    void set_neighbor(Cell_index ci, int i, Cell_index ni)
+    {
+      cell_storage()[ci].ineighbors[i] = ni;
+    }
+
+    std::pair<Cell_index, int>
+    mirror_facet(Cell_index ci, int i) const
+    {
+      auto nd = cell_storage()[ci].ineighbors[i];
+      int ni = -1;
+      auto& storage = cell_storage()[nd];
+      for (int j = 0; j < 4; ++j) {
+        if (storage.ineighbors[j] == ci) {
+          ni = j;
+          break;
+        }
+      }
+      return {nd, ni};
+    }
+
+    std::pair<Cell_index, int>
+    mirror_facet(std::pair<Cell_index, int> f) const
+    {
+      return mirror_facet(f.first, f.second);
+    }
+
+    Facet facet(Cell_index ci, int i) const
+    {
+      return {cell_handle(ci), i};
+    }
+
     Vertex_handle create_vertex()
     {
       return Vertex_handle{this, vertex_container().create(this)};
     }
 
+    Vertex_index create_vertex_descriptor()
+    {
+      return vertex_container().create(this);
+    }
+
+    Vertex_index create_vertex_index()
+    {
+      return vertex_container().create(this);
+    }
+
     Cell_handle create_cell()
     {
       return Cell_handle{this, cell_container().create(this)};
+    }
+
+    Cell_index create_cell(Cell_index)
+    {
+      return cell_container().create(this);
+    }
+
+    Cell_index create_cell_index()
+    {
+      return cell_container().create(this);
     }
 
     Vertex_handle create_vertex(const Vertex& v)
@@ -1217,12 +1348,35 @@ namespace CGAL {
     // AF:  What about the equivalent to
     // https://doc.cgal.org/latest/TDS_3/classTriangulationDataStructure__3.html#a1432860206073c24ca43dbbdfb13b26e
 
+    Cell_index create_cell(Vertex_index vi0, Vertex_index vi1,
+                           Vertex_index vi2, Vertex_index vi3)
+    {
+      Cell_index ci = create_cell_index();
+      auto& storage = cell_storage()[ci];
+      storage.ivertices[0] = vi0;
+      storage.ivertices[1] = vi1;
+      storage.ivertices[2] = vi2;
+      storage.ivertices[3] = vi3;
+      storage.ineighbors[0] = Cell_index::invalid;
+      storage.ineighbors[1] = Cell_index::invalid;
+      storage.ineighbors[2] = Cell_index::invalid;
+      storage.ineighbors[3] = Cell_index::invalid;
+      return ci;
+    }
+
     Cell_handle create_cell(Vertex_handle v0, Vertex_handle v1,
                             Vertex_handle v2, Vertex_handle v3)
     {
       Cell_handle c = create_cell();
-      c->set_vertices(v0, v1, v2, v3);
-      c->set_neighbors(Cell_handle(), Cell_handle(), Cell_handle(), Cell_handle());
+      auto& storage = cell_storage()[c.index()];
+      storage.ivertices[0] = v0.index();
+      storage.ivertices[1] = v1.index();
+      storage.ivertices[2] = v2.index();
+      storage.ivertices[3] = v3.index();
+      storage.ineighbors[0] = Cell_index::invalid;
+      storage.ineighbors[1] = Cell_index::invalid;
+      storage.ineighbors[2] = Cell_index::invalid;
+      storage.ineighbors[3] = Cell_index::invalid;
       return c;
     }
 
@@ -1232,8 +1386,15 @@ namespace CGAL {
                             Cell_handle n2, Cell_handle n3)
     {
       Cell_handle c = create_cell();
-      c->set_vertices(v0, v1, v2, v3);
-      c->set_neighbors(n0, n1, n2, n3);
+      auto& storage = cell_storage()[c.index()];
+      storage.ivertices[0] = v0.index();
+      storage.ivertices[1] = v1.index();
+      storage.ivertices[2] = v2.index();
+      storage.ivertices[3] = v3.index();
+      storage.ineighbors[0] = n0.index();
+      storage.ineighbors[1] = n1.index();
+      storage.ineighbors[2] = n2.index();
+      storage.ineighbors[3] = n3.index();
       return c;
     }
 
@@ -1252,12 +1413,22 @@ namespace CGAL {
 
     void delete_vertex(Vertex_handle vh)
     {
-      vertex_container().remove(vh, this);
+      vertex_container().remove(vh.index(), this);
     }
 
     void delete_cell(Cell_handle ch)
     {
-      cell_container().remove(ch, this);
+      cell_container().remove(ch.index(), this);
+    }
+
+    void delete_vertex(Vertex_index vi)
+    {
+      vertex_container().remove(vi, this);
+    }
+
+    void delete_cell(Cell_index ci)
+    {
+      cell_container().remove(ci, this);
     }
 
     void reserve(size_type n_vertices, size_type n_cells)
@@ -1418,8 +1589,28 @@ namespace CGAL {
       CGAL_assertion(i0 >= 0 && i0 <= dimension());
       CGAL_assertion(i1 >= 0 && i1 <= dimension());
       CGAL_assertion(c0 != c1);
-      c0->set_neighbor(i0,c1);
-      c1->set_neighbor(i1,c0);
+      cell_container().storage_[c0.index()].ineighbors[i0] = c1.index();
+      cell_container().storage_[c1.index()].ineighbors[i1] = c0.index();
+    }
+
+    void set_adjacency(Cell_index ci0, int i0,
+                       Cell_index ci1, int i1) const
+    {
+      CGAL_assertion(i0 >= 0 && i0 <= dimension());
+      CGAL_assertion(i1 >= 0 && i1 <= dimension());
+      CGAL_assertion(ci0 != ci1);
+      cell_container().storage_[ci0].ineighbors[i0] = ci1;
+      cell_container().storage_[ci1].ineighbors[i1] = ci0;
+    }
+
+    void set_vertex_cell(Vertex_index vi, Cell_index ci) const
+    {
+      vertex_storage()[vi].icell = ci;
+    }
+
+    void set_vertex_cell(Vertex_handle v, Cell_handle c) const
+    {
+      vertex_storage()[v.index()].icell = c.index();
     }
 
     bool has_garbage() const { return vertex_container().has_garbage() || cell_container().has_garbage(); }

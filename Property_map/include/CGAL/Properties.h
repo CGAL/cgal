@@ -1,6 +1,4 @@
-// Copyright (C) 2001-2005 by Computer Graphics Group, RWTH Aachen
-// Copyright (C) 2011 by Graphics & Geometry Group, Bielefeld University
-// Copyright (C) 2014 GeometryFactory
+// Copyright (C) 2014,2025 GeometryFactory
 //
 // This file is part of CGAL (www.cgal.org).
 //
@@ -704,7 +702,7 @@ public:
 #ifdef DOXYGEN_RUNNING
     /// Conversion to a Boolean. It is \c true when the property map
     /// can be used, and \c false otherwise.
-  operator bool () const;
+    operator bool () const;
 #else
     explicit operator bool() const {
         return parray_ != nullptr;
@@ -723,14 +721,14 @@ public:
     reference operator[](const I& i)
     {
       CGAL_assertion(parray_ != nullptr);
-      return (*parray_)[i];
+      return (*parray_)[i.id()];
     }
 
     /// Access the property associated with the key \c i.
     reference operator[](const I& i) const
     {
       CGAL_assertion(parray_ != nullptr);
-      return (*parray_)[i];
+      return (*parray_)[i.id()];
     }
 
     iterator begin() { return parray_->begin(); }

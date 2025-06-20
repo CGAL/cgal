@@ -157,44 +157,71 @@ public:
   // Cells
   // N.B.: Concurrent_compact_container requires TBB
 #ifdef CGAL_LINKED_WITH_TBB
-  typedef typename std::conditional
+  using Cell_range = typename std::conditional
   <
     std::is_convertible<Concurrency_tag, Parallel_tag>::value,
     Concurrent_compact_container<Cell, tbb::scalable_allocator<Cell> >,
     Compact_container<Cell>
-  >::type                                                Cell_range;
+  >::type;
 
-# else
+#else
   static_assert
-    (!(std::is_convertible<Concurrency_tag, Parallel_tag>::value),
-     "In CGAL triangulations, `Parallel_tag` can only be used with the Intel TBB library. "
-     "Make TBB available in the build system and then define the macro `CGAL_LINKED_WITH_TBB`.");
-  typedef Compact_container<Cell>                        Cell_range;
+          (!(std::is_convertible<Concurrency_tag, Parallel_tag>::value),
+            "In CGAL triangulations, `Parallel_tag` can only be used with the Intel TBB library. "
+            "Make TBB available in the build system and then define the macro `CGAL_LINKED_WITH_TBB`.");
+  using Cell_range = Compact_container<Cell>;
 #endif
 
   // Vertices
   // N.B.: Concurrent_compact_container requires TBB
 #ifdef CGAL_LINKED_WITH_TBB
-  typedef typename std::conditional
+  using Vertex_range = typename std::conditional
   <
     std::is_convertible<Concurrency_tag, Parallel_tag>::value,
     Concurrent_compact_container<Vertex, tbb::scalable_allocator<Vertex> >,
     Compact_container<Vertex>
-  >::type                                                Vertex_range;
+  >::type;
 
-# else
-  typedef Compact_container<Vertex>                      Vertex_range;
+#else
+  using Vertex_range = Compact_container<Vertex>;
 #endif
 
-  typedef Handle_tag                           Storage_tag;
-  typedef typename Cell_range::size_type       size_type;
-  typedef typename Cell_range::difference_type difference_type;
+  using Storage_tag = Handle_tag;
+  using size_type = typename Cell_range::size_type;
+  using difference_type = typename Cell_range::difference_type;
 
-  typedef typename Cell_range::iterator        Cell_iterator;
-  typedef typename Vertex_range::iterator      Vertex_iterator;
+  using Cell_iterator = typename Cell_range::iterator;
+  using Vertex_iterator = typename Vertex_range::iterator;
 
-  typedef Vertex_iterator                          Vertex_handle;
-  typedef Cell_iterator                            Cell_handle;
+  using Vertex_handle = Vertex_iterator;
+  using Cell_handle = Cell_iterator;
+  using vertex_descriptor = Vertex_handle;
+  using cell_descriptor = Cell_handle;
+
+  Cell_data& tds_data(Cell_handle ch) const
+  {
+    return ch->tds_data();
+  }
+
+  Cell_handle cell_handle(cell_descriptor cd) const
+  {
+    return cd;
+  }
+
+  Vertex_handle vertex_handle(vertex_descriptor vd) const
+  {
+    return vd;
+  }
+
+  cell_descriptor to_cell_descriptor(Cell_handle ch) const
+  {
+    return ch;
+  }
+
+  vertex_descriptor to_vertex_descriptor(Vertex_handle vh) const
+  {
+    return vh;
+  }
 
   Triangulation_data_structure_3_storage() = default;
 
@@ -251,6 +278,11 @@ public:
   }
 
   Vertex_handle create_vertex()
+  {
+      return vertices().emplace();
+  }
+
+  Vertex_handle create_vertex_descriptor()
   {
       return vertices().emplace();
   }
@@ -314,6 +346,33 @@ public:
       cells().erase(c);
   }
 
+  std::pair<Cell_handle, int> mirror_facet(Cell_handle c, int i) const
+  {
+    Cell_handle neighbor_cell = c->neighbor(i);
+    const int opposite_index = neighbor_cell->index(c);
+    return {neighbor_cell, opposite_index};
+  }
+
+  void set_neighbor(Cell_handle c, int i, Cell_handle neighbor)
+  {
+    c->set_neighbor(i, neighbor);
+  }
+
+  Cell_handle neighbor(Cell_handle c, int i) const
+  {
+    return c->neighbor(i);
+  }
+
+  void set_vertex(Cell_handle c, int i, Vertex_handle vh)
+  {
+    c->set_vertex(i, vh);
+  }
+
+  Vertex_handle vertex(Cell_handle c, int i) const
+  {
+    return c->vertex(i);
+  }
+
   // We need the const_cast<>s because TDS is not const-correct.
   Cell_range & cells() { return _cells; }
   Cell_range & cells() const
@@ -329,6 +388,20 @@ public:
   bool is_valid_cell_handle(Cell_handle c) const
   {
     return cells().owns_dereferenceable(c);
+  }
+
+  void set_adjacency(Cell_handle c0, int i0,
+                     Cell_handle c1, int i1) const
+  {
+      CGAL_assertion(i0 >= 0 && i0 <= dimension());
+      CGAL_assertion(i1 >= 0 && i1 <= dimension());
+      CGAL_assertion(c0 != c1);
+      c0->set_neighbor(i0,c1);
+      c1->set_neighbor(i1,c0);
+  }
+
+  void set_vertex_cell(Vertex_handle v, Cell_handle c) const {
+    v->set_cell(c);
   }
 
   template <class TDS_src>
@@ -381,6 +454,7 @@ public:
   // of the TDS (tds.vertices().is_used(Vertex_handle)) that are much more efficient
   // than what is exposed by the TDS concept (tds.is_vertex(Vertex_handle)).
   typedef CGAL::Boolean_tag<std::is_same_v<StorageTag, Handle_tag>> Is_CGAL_TDS_3;
+  static constexpr bool is_index_based = std::is_same_v<StorageTag, Index_tag>;
 
   // Tools to change the Vertex and Cell types of the TDS.
   template < typename Vb2 >
@@ -405,10 +479,12 @@ public:
   using Cell = typename Tds_storage::Cell;
   using Cell_iterator = typename Tds_storage::Cell_iterator;
   using Cell_handle = typename Tds_storage::Cell_handle;
+  using cell_descriptor = typename Tds_storage::cell_descriptor;
   using Cell_range = typename Tds_storage::Cell_range;
   using Vertex = typename Tds_storage::Vertex;
   using Vertex_iterator = typename Tds_storage::Vertex_iterator;
   using Vertex_handle = typename Tds_storage::Vertex_handle;
+  using vertex_descriptor = typename Tds_storage::vertex_descriptor;
   using Vertex_range = typename Tds_storage::Vertex_range;
   using size_type = typename Tds_storage::size_type;
   using difference_type = typename Tds_storage::difference_type;
@@ -433,15 +509,15 @@ public:
 
   typedef Triangulation_simplex_3<Tds>             Simplex;
 
-  typedef std::pair<Vertex_handle,Vertex_handle> Vertex_pair;
+  typedef std::pair<vertex_descriptor,vertex_descriptor> Vertex_pair;
   typedef std::pair<unsigned char, unsigned char> Local_facet;
 
   struct Small_pair_hash {
 
     std::size_t operator()(const Vertex_pair& k) const
     {
-      std::size_t hf = boost::hash<Vertex_handle>()(k.first);
-      std::size_t hs = boost::hash<Vertex_handle>()(k.second);
+      std::size_t hf = boost::hash<vertex_descriptor>()(k.first);
+      std::size_t hs = boost::hash<vertex_descriptor>()(k.second);
 
       return hf ^ 419 * hs;
     }
@@ -478,8 +554,6 @@ public:
 
 
 public:
-  using Tds_storage::Tds_storage;
-
   Triangulation_data_structure_3() = default; // default constructor
   Triangulation_data_structure_3(Tds&&) = default; // move constructor
   Triangulation_data_structure_3(const Tds &tds) : Tds_storage() // copy constructor
@@ -498,6 +572,7 @@ public:
 
   Tds& operator=(Tds&& tds) = default; // move assignment
 
+  using Tds_storage::cell_handle;
   using Tds_storage::cells;
   using Tds_storage::clear;
   using Tds_storage::create_cell;
@@ -508,11 +583,22 @@ public:
   using Tds_storage::dimension;
   using Tds_storage::is_cell;
   using Tds_storage::is_vertex;
+  using Tds_storage::mirror_facet;
+  using Tds_storage::neighbor;
   using Tds_storage::number_of_cells;
   using Tds_storage::number_of_vertices;
-  using Tds_storage::set_dimension;
-  using Tds_storage::vertices;
   using Tds_storage::reserve;
+  using Tds_storage::set_adjacency;
+  using Tds_storage::set_dimension;
+  using Tds_storage::set_neighbor;
+  using Tds_storage::set_vertex_cell;
+  using Tds_storage::set_vertex;
+  using Tds_storage::tds_data;
+  using Tds_storage::to_cell_descriptor;
+  using Tds_storage::to_vertex_descriptor;
+  using Tds_storage::vertex_handle;
+  using Tds_storage::vertex;
+  using Tds_storage::vertices;
 
 
   size_type number_of_facets() const
@@ -679,7 +765,7 @@ public:
       else
           cnew = create_star_2(newv, begin, i);
 
-      newv->set_cell(cnew);
+      set_vertex_cell(newv, cnew);
       delete_cells(cell_begin, cell_end);
       return newv;
   }
@@ -717,7 +803,7 @@ public:
   {
     CGAL_assertion(facets.size() < (std::numeric_limits<unsigned char>::max)());
     CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(Vertex_pair_facet_map, vertex_pair_facet_map);
-    Vertex_handle nv = create_vertex();
+    auto nv = this->create_vertex_descriptor();
 #if CGAL_DEBUG_INDEXED_CONTAINER
     std::stringstream ss;
     ss << "Inserting vertex " << nv << " in small hole with " << facets.size()
@@ -732,22 +818,23 @@ public:
     ss << '\n';
     std::cerr << ss.str();
 #endif
-    std::array <Cell_handle, maximal_nb_of_facets_of_small_hole> new_cells;
+    std::array <cell_descriptor, maximal_nb_of_facets_of_small_hole> new_cells;
     for (unsigned char local_facet_index = 0, end = static_cast<unsigned char>(facets.size());
          local_facet_index < end; ++local_facet_index) {
-      const Facet f = mirror_facet(facets[local_facet_index]);
-      f.first->tds_data().clear(); // was on boundary
-      const Vertex_handle u = f.first->vertex(vertex_triple_index(f.second, 0));
-      const Vertex_handle v = f.first->vertex(vertex_triple_index(f.second, 1));
-      const Vertex_handle w = f.first->vertex(vertex_triple_index(f.second, 2));
-      u->set_cell(f.first);
-      v->set_cell(f.first);
-      w->set_cell(f.first);
-      const Cell_handle nc = create_cell(v, u, w, nv);
+      auto [c, i] = facets[local_facet_index];
+      auto f = mirror_facet(c, i);
+      tds_data(f.first).clear(); // was on boundary
+      const auto u = vertex(f.first, vertex_triple_index(f.second, 0));
+      const auto v = vertex(f.first, vertex_triple_index(f.second, 1));
+      const auto w = vertex(f.first, vertex_triple_index(f.second, 2));
+      set_vertex_cell(u, f.first);
+      set_vertex_cell(v, f.first);
+      set_vertex_cell(w, f.first);
+      const auto nc = create_cell(v, u, w, nv);
       new_cells[local_facet_index] = nc;
-      nv->set_cell(nc);
-      nc->set_neighbor(3, f.first);
-      f.first->set_neighbor(f.second, nc);
+      set_vertex_cell(nv, nc);
+      set_neighbor(nc, 3, f.first);
+      set_neighbor(f.first, f.second, nc);
 
       vertex_pair_facet_map.set({u, v}, {local_facet_index, '\2'});
       vertex_pair_facet_map.set({v, w}, {local_facet_index, '\1'});
@@ -755,18 +842,19 @@ public:
     }
 
     for(auto it = vertex_pair_facet_map.begin(); it != vertex_pair_facet_map.end(); ++it){
-      const std::pair<Vertex_pair,Local_facet>& ef = *it;
-      if(ef.first.first < ef.first.second){
-        const Facet f = Facet{new_cells[ef.second.first], ef.second.second};
+      const auto& [vertex_pair, local_facet] = *it;
+      if(vertex_pair.first < vertex_pair.second){
+        const auto nc = new_cells[local_facet.first];
+        const auto indexc = local_facet.second;
         vertex_pair_facet_map.clear(it);
-        const auto p = vertex_pair_facet_map.get_and_erase(std::make_pair(ef.first.second, ef.first.first));
-        const Facet n = Facet{new_cells[p.first], p.second};
-        f.first->set_neighbor(f.second, n.first);
-        n.first->set_neighbor(n.second, f.first);
+        const auto p = vertex_pair_facet_map.get_and_erase(std::make_pair(vertex_pair.second, vertex_pair.first));
+        const auto other_c = new_cells[p.first];
+        const auto other_index = p.second;
+        set_adjacency(nc, indexc, other_c, other_index);
       }
     }
-    for(Cell_handle c : cells){
-      c->tds_data().clear(); // was in conflict
+    for(auto cd : cells){
+      tds_data(cd).clear(); // was in conflict
     }
 #if CGAL_DEBUG_INDEXED_CONTAINER
     for (unsigned char local_facet_index = 0, end = static_cast<unsigned char>(facets.size());
@@ -784,7 +872,7 @@ public:
 #endif
     delete_cells(cells.begin(), cells.end());
     vertex_pair_facet_map.clear();
-    return nv;
+    return vertex_handle(nv);
   }
 
 
@@ -1724,19 +1812,8 @@ public:
     return copy_tds(tds, typename TDS_src::Vertex_handle());
   }
     // returns the new vertex corresponding to vert in the new tds
-
   template <class TDS_src,class ConvertVertex,class ConvertCell>
   Vertex_handle copy_tds(const TDS_src&, typename TDS_src::Vertex_handle,const ConvertVertex&,const ConvertCell&);
-
-  void set_adjacency(Cell_handle c0, int i0,
-                     Cell_handle c1, int i1) const
-  {
-      CGAL_assertion(i0 >= 0 && i0 <= dimension());
-      CGAL_assertion(i1 >= 0 && i1 <= dimension());
-      CGAL_assertion(c0 != c1);
-      c0->set_neighbor(i0,c1);
-      c1->set_neighbor(i1,c0);
-  }
 
   int mirror_index(Cell_handle c, int i) const
   {
@@ -1749,11 +1826,14 @@ public:
       return c->neighbor(i)->vertex(mirror_index(c, i));
   }
 
+  Facet facet(Cell_handle c, int i) const
+  {
+    return Facet(c, i);
+  }
+
   Facet mirror_facet(Facet f) const
   {
-    Cell_handle neighbor_cell = f.first->neighbor(f.second);
-    const int opposite_index = neighbor_cell->index(f.first);
-    return Facet(neighbor_cell, opposite_index);
+    return mirror_facet(f.first, f.second);
   }
 
   bool is_small_hole(std::size_t s)
@@ -1875,7 +1955,7 @@ create_star_3(Vertex_handle v, Cell_handle c, int li, int prev_ind2)
     for (int ii=0; ii<4; ++ii) {
       if (ii == prev_ind2 || cnew->neighbor(ii) != Cell_handle())
           continue;
-      cnew->vertex(ii)->set_cell(cnew);
+      set_vertex_cell(cnew->vertex(ii), cnew);
 
       // Indices of the vertices of cnew such that ii,vj1,vj2,li positive.
       Vertex_handle vj1 = c->vertex(next_around_edge(ii, li));
@@ -1933,7 +2013,7 @@ recursive_create_star_3(Vertex_handle v, Cell_handle c, int li,
     for (int ii=0; ii<4; ++ii) {
       if (ii == prev_ind2 || cnew->neighbor(ii) != Cell_handle())
           continue;
-      cnew->vertex(ii)->set_cell(cnew);
+      set_vertex_cell(cnew->vertex(ii), cnew);
 
       // Indices of the vertices of cnew such that ii,vj1,vj2,li positive.
       Vertex_handle vj1 = c->vertex(next_around_edge(ii, li));
@@ -1994,7 +2074,7 @@ non_recursive_create_star_3(Vertex_handle v, Cell_handle c, int li, int prev_ind
     {
       // Look for the other neighbors of cnew.
       if ( ! (ii == prev_ind2 || cnew->neighbor(ii) != Cell_handle()) ){
-        cnew->vertex(ii)->set_cell(cnew);
+        set_vertex_cell(cnew->vertex(ii), cnew);
 
         // Indices of the vertices of cnew such that ii,vj1,vj2,li positive.
         Vertex_handle vj1 = c->vertex(next_around_edge(ii, li));
@@ -2081,7 +2161,7 @@ create_star_2(Vertex_handle v, Cell_handle c, int li )
     cnew->set_neighbor(1, Cell_handle());
     cnew->set_neighbor(2, pnew);
     // pnew is null at the first iteration
-    v1->set_cell(cnew);
+    set_vertex_cell(v1, cnew);
     //pnew->set_neighbor( cw(pnew->index(v1)), cnew );
     if (pnew != nullptr) { pnew->set_neighbor( 1, cnew );}
 
@@ -2570,9 +2650,9 @@ flip_really( Cell_handle c, int i, Cell_handle n, int in )
   if ((i&1) != 0)
       change_orientation(cnew);
 
-  c->vertex(i1)->set_cell(cnew);
-  c->vertex(i2)->set_cell(c);
-  n->vertex(in3)->set_cell(n);
+  set_vertex_cell(c->vertex(i1), cnew);
+  set_vertex_cell(c->vertex(i2), c);
+  set_vertex_cell(n->vertex(in3), n);
   // to be implemented : 2d case
   // CGAL_precondition( (0<=i) && (i<3) );
 }
@@ -2689,13 +2769,13 @@ flip_really( Cell_handle c, int i, int j,
              int i2, int j2, int next2,
              Vertex_handle v3 )
 {
-  c->vertex(i)->set_cell(c1);
-  c->vertex(j)->set_cell(c2);
+  set_vertex_cell(c->vertex(i), c1);
+  set_vertex_cell(c->vertex(j), c2);
 
   c1->set_vertex( j1, v1 );
-  v1->set_cell(c1);
+  set_vertex_cell(v1, c1);
   c2->set_vertex( i2, v2 );
-  v2->set_cell(c2);
+  set_vertex_cell(v2, c2);
 
   set_adjacency(c1, next1,c2->neighbor(j2), c2->neighbor(j2)->index(c2));
   set_adjacency(c2,c2->index(v1),c1->neighbor(i1),c1->neighbor(i1)->index(c1));
@@ -2738,7 +2818,7 @@ read_cells(std::istream& is, const std::vector< Vertex_handle > &V,
             else
               read(is, ik);
             c->set_vertex(k, V[ik]);
-            V[ik]->set_cell(c);
+            set_vertex_cell(V[ik], c);
         }
         C[i] = c;
       }
@@ -2763,7 +2843,7 @@ read_cells(std::istream& is, const std::vector< Vertex_handle > &V,
       for (int i=0; i < 2; i++) {
         Cell_handle c = create_face(V[i], Vertex_handle(), Vertex_handle());
         C[i] = c;
-        V[i]->set_cell(c);
+        set_vertex_cell(V[i], c);
       }
       for (int j=0; j < 2; j++) {
         Cell_handle c = C[j];
@@ -2778,7 +2858,7 @@ read_cells(std::istream& is, const std::vector< Vertex_handle > &V,
       //      CGAL_assertion( n == 1 );
       Cell_handle c = create_face(V[0], Vertex_handle(), Vertex_handle());
       C[0] = c;
-      V[0]->set_cell(c);
+      set_vertex_cell(V[0], c);
       break;
     }
   }
@@ -2952,11 +3032,11 @@ Triangulation_data_structure_3<Vb,Cb,Ct,St>::insert_first_finite_cell(
   Cell_handle ci023 = create_cell(v_infinite, v0,   v2,   v3);
   Cell_handle ci132 = create_cell(v_infinite, v1,   v3,   v2);
 
-  v_infinite->set_cell(ci012);
-  v0->set_cell(c0123);
-  v1->set_cell(c0123);
-  v2->set_cell(c0123);
-  v3->set_cell(c0123);
+  set_vertex_cell(v_infinite, ci012);
+  set_vertex_cell(v0, c0123);
+  set_vertex_cell(v1, c0123);
+  set_vertex_cell(v2, c0123);
+  set_vertex_cell(v3, c0123);
 
   set_adjacency(c0123, 0, ci132, 0);
   set_adjacency(c0123, 1, ci023, 0);
@@ -3012,8 +3092,8 @@ insert_in_cell(Cell_handle c)
 
   c->set_vertex(0,v);
 
-  v0->set_cell(c1);
-  v->set_cell(c);
+  set_vertex_cell(v0, c1);
+  set_vertex_cell(v, c);
 
   return v;
 }
@@ -3060,7 +3140,7 @@ insert_in_facet(Cell_handle c, int i)
       set_adjacency(cnew1, 1, nc, nc->index(c));
       set_adjacency(cnew1, 3, c, i1);
 
-      v3->set_cell(cnew1);
+      set_vertex_cell(v3, cnew1);
 
       // new cell with v in place of i2
       nc = c->neighbor(i2);
@@ -3099,7 +3179,7 @@ insert_in_facet(Cell_handle c, int i)
 
       // v replaces i3 in d
       d->set_vertex(j3,v);
-      v->set_cell(d);
+      set_vertex_cell(v, d);
 
       break;
     }
@@ -3110,7 +3190,7 @@ insert_in_facet(Cell_handle c, int i)
       Cell_handle cnew = create_face(c->vertex(0),c->vertex(1),v);
       set_adjacency(cnew, 2, n, n->index(c));
       set_adjacency(cnew, 0, c, 2);
-      c->vertex(0)->set_cell(cnew);
+      set_vertex_cell(c->vertex(0), cnew);
 
       n = c->neighbor(1);
       Cell_handle dnew = create_face(c->vertex(0),v,c->vertex(2));
@@ -3119,7 +3199,7 @@ insert_in_facet(Cell_handle c, int i)
       set_adjacency(dnew, 2, cnew, 1);
 
       c->set_vertex(0,v);
-      v->set_cell(c);
+      set_vertex_cell(v, c);
       break;
     }
   }
@@ -3168,7 +3248,7 @@ insert_in_edge(Cell_handle c, int i, int j)
 
       Cell_handle cnew = create_cell();
       cnew->set_vertex(i,c->vertex(i));
-      c->vertex(i)->set_cell(cnew);
+      set_vertex_cell(c->vertex(i), cnew);
       cnew->set_vertex(j,v);
       cnew->set_vertex(k,c->vertex(k));
       c->set_vertex(i,v);
@@ -3190,7 +3270,7 @@ insert_in_edge(Cell_handle c, int i, int j)
 
       set_adjacency(cnew, k, dnew, kd);
 
-      v->set_cell(cnew);
+      set_vertex_cell(v, cnew);
       return v;
     }
   default: // case 1:
@@ -3198,12 +3278,12 @@ insert_in_edge(Cell_handle c, int i, int j)
       Vertex_handle v = create_vertex();
       CGAL_expensive_precondition( is_edge(c,i,j) );
       Cell_handle cnew = create_face(v, c->vertex(1), Vertex_handle());
-      c->vertex(1)->set_cell(cnew);
+      set_vertex_cell(c->vertex(1), cnew);
       c->set_vertex(1,v);
       set_adjacency(cnew, 0, c->neighbor(0), 1);
       set_adjacency(cnew, 1, c, 0);
 
-      v->set_cell(cnew);
+      set_vertex_cell(v, cnew);
       return v;
     }
   }
@@ -3241,7 +3321,7 @@ insert_increase_dimension(Vertex_handle star)
       // ( geometrically : infinite vertex )
     {
       Cell_handle c = create_face(v, Vertex_handle(), Vertex_handle());
-      v->set_cell(c);
+      set_vertex_cell(v, c);
       break;
     }
 
@@ -3250,7 +3330,7 @@ insert_increase_dimension(Vertex_handle star)
     // ( geometrically : first finite vertex )
     {
       Cell_handle d = create_face(v, Vertex_handle(), Vertex_handle());
-      v->set_cell(d);
+      set_vertex_cell(v, d);
       set_adjacency(d, 0, star->cell(), 0);
       break;
     }
@@ -3269,7 +3349,7 @@ insert_increase_dimension(Vertex_handle star)
       set_adjacency(e, 0, c, 1);
       set_adjacency(e, 1, d, 0);
 
-      v->set_cell(d);
+      set_vertex_cell(v, d);
       break;
     }
 
@@ -3316,7 +3396,7 @@ insert_increase_dimension(Vertex_handle star)
       c->set_neighbor(2,c->neighbor(i)->neighbor(2));
       c->set_neighbor(j,d);
 
-      v->set_cell(d);
+      set_vertex_cell(v, d);
 
       break;
     }
@@ -3333,7 +3413,7 @@ insert_increase_dimension(Vertex_handle star)
       Cell_iterator it = cells_begin();
       // allowed since the dimension has already been set to 3
 
-      v->set_cell(it); // ok since there is at least one ``cell''
+      set_vertex_cell(v, it); // ok since there is at least one ``cell''
       for(; it != cells_end(); ++it) {
         // Here we must be careful since we create_cells in a loop controlled
         // by an iterator.  So we first take care of the cells newly created
@@ -3428,7 +3508,7 @@ remove_decrease_dimension(Vertex_handle v, Vertex_handle w)
 
             // Update vertex->cell() pointers.
             for (int i = 0; i < dimension(); ++i)
-                f->vertex(i)->set_cell(f);
+                set_vertex_cell(f->vertex(i), f);
         }
 
         delete_cells(to_delete.begin(), to_delete.end());
@@ -3491,8 +3571,8 @@ remove_degree_2(Vertex_handle v)
     set_adjacency(newc,    i0, c0->neighbor(i0), mirror_index(c0, i0));
     set_adjacency(newc,  1-i0, c1->neighbor(i1), mirror_index(c1, i1));
 
-    newc->vertex(0)->set_cell(newc);
-    newc->vertex(1)->set_cell(newc);
+    set_vertex_cell(newc->vertex(0), newc);
+    set_vertex_cell(newc->vertex(1), newc);
 
     delete_cell(c0);
     delete_cell(c1);
@@ -3533,9 +3613,9 @@ remove_degree_3(Vertex_handle v)
     set_adjacency(newc,  cw(i0), c1->neighbor(i1), mirror_index(c1, i1));
     set_adjacency(newc, ccw(i0), c2->neighbor(i2), mirror_index(c2, i2));
 
-    newc->vertex(0)->set_cell(newc);
-    newc->vertex(1)->set_cell(newc);
-    newc->vertex(2)->set_cell(newc);
+    set_vertex_cell(newc->vertex(0), newc);
+    set_vertex_cell(newc->vertex(1), newc);
+    set_vertex_cell(newc->vertex(2), newc);
 
     delete_cell(c0);
     delete_cell(c1);
@@ -3581,10 +3661,10 @@ remove_degree_4(Vertex_handle v)
     set_adjacency(newc, i0^2, c2->neighbor(i2), mirror_index(c2, i2));
     set_adjacency(newc, i0^3, c3->neighbor(i3), mirror_index(c3, i3));
 
-    newc->vertex(0)->set_cell(newc);
-    newc->vertex(1)->set_cell(newc);
-    newc->vertex(2)->set_cell(newc);
-    newc->vertex(3)->set_cell(newc);
+    set_vertex_cell(newc->vertex(0), newc);
+    set_vertex_cell(newc->vertex(1), newc);
+    set_vertex_cell(newc->vertex(2), newc);
+    set_vertex_cell(newc->vertex(3), newc);
 
     delete_cell(c0);
     delete_cell(c1);
@@ -3638,7 +3718,7 @@ decrease_dimension(Cell_handle c, int i)
 
     // Update vertex->cell() pointers.
     for (int i = 0; i < dimension(); ++i)
-      f->vertex(i)->set_cell(f);
+      set_vertex_cell(f->vertex(i), f);
   }
 
   delete_cells(to_delete.begin(), to_delete.end());
@@ -3687,10 +3767,10 @@ decrease_dimension(Cell_handle c, int i)
     c3->set_neighbor(2, c2);
     c3->set_neighbor(3, Cell_handle());
 
-    v->set_cell(c1);
-    v0->set_cell(c1);
-    v1->set_cell(c1);
-    v2->set_cell(c2);
+    set_vertex_cell(v, c1);
+    set_vertex_cell(v0, c1);
+    set_vertex_cell(v1, c1);
+    set_vertex_cell(v2, c2);
   }
 
   if(dimension() == 1)
@@ -3725,9 +3805,9 @@ decrease_dimension(Cell_handle c, int i)
     c2->set_neighbor(2, Cell_handle());
     c2->set_neighbor(3, Cell_handle());
 
-    v->set_cell(c1);
-    v0->set_cell(c1);
-    v1->set_cell(c2);
+    set_vertex_cell(v, c1);
+    set_vertex_cell(v0, c1);
+    set_vertex_cell(v1, c2);
   }
 
   CGAL_postcondition(is_valid());
