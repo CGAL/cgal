@@ -1,6 +1,5 @@
-//#define CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+#define CGAL_TETRAHEDRAL_REMESHING_VERBOSE
 //#define CGAL_TETRAHEDRAL_REMESHING_DEBUG
-//#define CGAL_TETRAHEDRAL_REMESHING_GENERATE_INPUT_FILES
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
@@ -65,7 +64,7 @@ int main(int argc, char* argv[])
   CGAL::IO::write_MEDIT(ofs0, tr);
   ofs0.close();
 
-  Remeshing_triangulation tr_ref = tr; // Keep a reference for comparison
+  const Remeshing_triangulation tr_ref = tr; // Keep a reference for comparison
 
   std::vector<std::string> output_tr;
   output_tr.reserve(nb_runs);
@@ -88,12 +87,15 @@ int main(int argc, char* argv[])
     {
       if(0 != output_tr[i-1].compare(output_tr[i]))
       {
-        std::cerr << "Run " << i << " differs from run " << i-1 << std::endl;
+        std::cerr << "******************************************" << std::endl;
+        std::cerr << "*** Run " << i << " differs from run " << i-1 << std::endl;
         assert(false); // This should not happen
       }
       else
       {
-        std::cout << "Run " << i << " is identical to run " << i-1 << std::endl;
+        std::cout << "******************************************" << std::endl;
+        std::cout << "*** Run " << i << " is identical to run " << i - 1 << std::endl;
+        std::cout << "******************************************" << std::endl;
       }
     }
   }
