@@ -2,8 +2,9 @@
 \ingroup PkgHDVFConcepts
 \cgalConcept
 
-The concept `HDVF` describes the requirements for Homological Discrete Vector Fields (HDVF for short) , a theory of computational homology unifying discrete Morse theory and effective homology.
- A HDVF is a combinatorial tool computing the homology of a chain complex (described by the `AbstractChainComplex` concept) including "geometric" information such as homology and cohomology generators.
+The concept `HDVF` describes the requirements for Homological Discrete Vector Fields (HDVF for short) , a theory of computational homology unifying discrete Morse theory and effective homology. HDVFs were introduced by Aldo Gonzalez-Lorenzo in his PhD (see [AGL,2017], [AGL,2016]).
+ 
+A HDVF is a combinatorial tool computing the homology of a chain complex (described by the `AbstractChainComplex` concept) including "geometric" information such as homology and cohomology generators.
  
  As described in the package description, an HDVF is:
  - a partition of the cells of the underlying complex into three classes: primary (P), secondary (S) and critical (C), together with partial invertibility conditions for the boundary operator,
@@ -115,6 +116,10 @@ That is, for all \f$q\in \mathbb N\f$, if
  \sa `Sparsematrix`
  
  *How to describe constants declared in the namespace HDVF and used everywhere? FlagType, options, exporttype*
+ 
+ [AGL, 2017] Aldo Gonzalez-Lorenzo, Alexandra Bac, Jean-Luc Mari, Pedro Real. Allowing cycles in discrete Morse theory, Topology and its Applications, Volume 228, 2017, Pages 1-35.
+ 
+ [AGL, 2016] Aldo Gonzalez-Lorenzo. Computational Homology Applied to Discrete Objects. Discrete Mathematics [cs.DM]. Aix-Marseille Université; Universidad de Sevilla, 2016.
  
 */
 

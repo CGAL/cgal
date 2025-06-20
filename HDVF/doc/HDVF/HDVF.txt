@@ -7,7 +7,9 @@ namespace CGAL {
 \cgalAutoToc
 \author Alexandra Bac
 
-This chapter describes the Homological Discrete Vector Field (HDVF) package: a framework for "geometric" homology computation. HDVFs provide tools to compute basic homological information (such as Betti numbers, ie. number of holes per dimension), but also higher level information (homology and cohomology generators, homology/cohomology annotation...). Moreover HDVFs provide persistent homology computation tools as well as Alexander duality and relative homology tools.
+This chapter describes the Homological Discrete Vector Field (HDVF) package: a framework for "geometric" homology computation introduced by Aldo Gonzalez-Lorenzo in his PhD (see [AGL,2017], [AGL,2016]).
+
+HDVFs provide tools to compute basic homological information (such as Betti numbers, ie. number of holes per dimension), but also higher level information (homology and cohomology generators, homology/cohomology annotation...). Moreover HDVFs provide persistent homology computation tools as well as Alexander duality and relative homology tools.
 
 A chain complex is an algebraic structure, associated to a given geometric complex (such as a simplicial, a cubical or a cellular complex) encoding cells in each dimension (through groups) and adjacency between such cells (through morphisms called boundary maps). 
 
@@ -34,6 +36,10 @@ The following example shows ...
 \cgalFigureBegin{figPck,bench.png}
 Left: ...
 \cgalFigureEnd
+
+ [AGL, 2017] Aldo Gonzalez-Lorenzo, Alexandra Bac, Jean-Luc Mari, Pedro Real. Allowing cycles in discrete Morse theory, Topology and its Applications, Volume 228, 2017, Pages 1-35.
+ 
+ [AGL, 2016] Aldo Gonzalez-Lorenzo. Computational Homology Applied to Discrete Objects. Discrete Mathematics [cs.DM]. Aix-Marseille Université; Universidad de Sevilla, 2016.
 
 */
 } /* namespace CGAL */
