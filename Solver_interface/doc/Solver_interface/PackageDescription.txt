@@ -1,5 +1,5 @@
 /*!
-\defgroup PkgSolverInterfaceRef CGAL and Solvers Reference
+\defgroup PkgSolverInterfaceRef Reference Manual
 
 \defgroup PkgSolverInterfaceConcepts Concepts
 \ingroup PkgSolverInterfaceRef

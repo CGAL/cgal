@@ -257,7 +257,7 @@ struct Dihedral_angle_cosine
       CGAL_assertion(l.m_sgn != CGAL::POSITIVE);
       CGAL_assertion(r.m_sgn != CGAL::POSITIVE);
 
-      return (l.m_sq_num * r.m_sq_den >= r.m_sq_num* l.m_sq_den);
+      return (l.m_sq_num * r.m_sq_den > r.m_sq_num* l.m_sq_den);
     }
   }
 
@@ -1439,6 +1439,7 @@ auto sizing_at_vertex(const Vertex_handle v,
 
 template<typename Sizing, typename C3t3, typename Cell_selector>
 auto sizing_at_midpoint(const typename C3t3::Edge& e,
+                        const typename C3t3::Triangulation::Geom_traits::Point_3& m, // edge midpoint
                         const int dim,
                         const typename C3t3::Index& index,
                         const Sizing& sizing,
@@ -1446,17 +1447,13 @@ auto sizing_at_midpoint(const typename C3t3::Edge& e,
                         const Cell_selector& cell_selector)
 {
   using FT = typename C3t3::Triangulation::Geom_traits::FT;
-  using Point_3 = typename C3t3::Triangulation::Geom_traits::Point_3;
-
   auto cp = c3t3.triangulation().geom_traits().construct_point_3_object();
-  const Point_3 m = CGAL::midpoint(cp(e.first->vertex(e.second)->point()),
-                                   cp(e.first->vertex(e.third)->point()));
+
   const FT size = sizing(m, dim, index);
 
   if (dim < 3 && size == 0)
   {
-    const auto u = e.first->vertex(e.second);
-    const auto v = e.first->vertex(e.third);
+    const auto [u, v] = make_vertex_pair(e);
 
     const FT size_at_u = sizing(cp(u->point()), u->in_dimension(), u->index());
     const FT size_at_v = sizing(cp(v->point()), v->in_dimension(), v->index());
@@ -1584,9 +1581,7 @@ auto midpoint_with_info(const typename C3t3::Edge& e,
     Index index;
   };
 
-  const auto vs = c3t3.triangulation().vertices(e);
-  const Vertex_handle u = vs[0];
-  const Vertex_handle v = vs[1];
+  const auto [u, v] = make_vertex_pair(e);
 
   const auto& gt = c3t3.triangulation().geom_traits();
   auto cp = gt.construct_point_3_object();

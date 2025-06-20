@@ -838,7 +838,7 @@ bool decimate_impl(const TriangleMeshIn& tm_in,
   }
 
   std::vector< boost::container::small_vector<std::size_t,3> > faces;
-  bool remeshing_failed = decimate_impl<Kernel>(tm_in,
+  bool decimate_success = decimate_impl<Kernel>(tm_in,
                                                 nb_corners_and_nb_cc,
                                                 vertex_corner_id,
                                                 edge_is_constrained,
@@ -864,7 +864,7 @@ bool decimate_impl(const TriangleMeshIn& tm_in,
                                parameters::point_to_vertex_map(f_id_tracker.v2v_map()).
                                            polygon_to_face_map(f_id_tracker.f2f_map()),
                                parameters::vertex_point_map(vpm_out));
-  return remeshing_failed;
+  return decimate_success;
 }
 
 template <typename vertex_descriptor,

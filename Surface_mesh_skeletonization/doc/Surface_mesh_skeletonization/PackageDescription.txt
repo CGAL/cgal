@@ -1,4 +1,4 @@
-/// \defgroup PkgSurfaceMeshSkeletonizationRef Triangulated Surface Mesh Skeletonization Reference
+/// \defgroup PkgSurfaceMeshSkeletonizationRef Reference Manual
 /// \defgroup PkgSurfaceMeshSkeletonizationConcepts Concepts
 /// \ingroup PkgSurfaceMeshSkeletonizationRef
 

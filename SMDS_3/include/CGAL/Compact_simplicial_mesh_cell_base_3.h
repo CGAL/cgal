@@ -19,10 +19,10 @@
 #include <CGAL/assertions.h>
 #include <CGAL/basic.h>
 #include <CGAL/Has_timestamp.h>
+#include <CGAL/SMDS_3/io_signature.h>
 #include <CGAL/tags.h>
 #include <CGAL/TDS_3/internal/Dummy_tds_3.h>
-
-#include <CGAL/SMDS_3/io_signature.h>
+#include <CGAL/Time_stamper.h>
 
 namespace CGAL {
 
@@ -266,7 +266,7 @@ private:
   std::array<Cell_handle, 4> N;
   std::array<Vertex_handle, 4> V;
 
-  std::size_t time_stamp_ =  std::size_t(-2);
+  std::size_t time_stamp_ =  Time_stamper<void>::invalid_time_stamp;
 
   // The index of the cell of the input complex that contains me
   Subdomain_index subdomain_index_ = {};

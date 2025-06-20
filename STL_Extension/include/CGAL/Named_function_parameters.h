@@ -510,13 +510,13 @@ struct Boost_parameter_compatibility_wrapper<Tag, true, false>
   }
 
 #define CGAL_add_named_parameter_with_compatibility(X, Y, Z)        \
-  const Boost_parameter_compatibility_wrapper<internal_np::X> Z;
+  inline const Boost_parameter_compatibility_wrapper<internal_np::X> Z;
 #define CGAL_add_named_parameter_with_compatibility_cref_only(X, Y, Z)        \
-  const Boost_parameter_compatibility_wrapper<internal_np::X, true, true> Z;
+  inline const Boost_parameter_compatibility_wrapper<internal_np::X, true, true> Z;
 #define CGAL_add_named_parameter_with_compatibility_ref_only(X, Y, Z)        \
-  const Boost_parameter_compatibility_wrapper<internal_np::X, true, false> Z;
+  inline const Boost_parameter_compatibility_wrapper<internal_np::X, true, false> Z;
 #define CGAL_add_extra_named_parameter_with_compatibility(X, Y, Z)        \
-  const Boost_parameter_compatibility_wrapper<internal_np::X> Z;
+  inline const Boost_parameter_compatibility_wrapper<internal_np::X> Z;
 #include <CGAL/STL_Extension/internal/parameters_interface.h>
 #undef CGAL_add_named_parameter
 #undef CGAL_add_extra_named_parameter_with_compatibility
