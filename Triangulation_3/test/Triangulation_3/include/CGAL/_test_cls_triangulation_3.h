@@ -79,6 +79,10 @@ template <class Triangulation>
 void
 _test_cls_triangulation_3(const Triangulation &)
 {
+
+  std::cout << "Testing Triangulation 3D" << std::endl;
+  std::cout << typeid(Triangulation).name() << std::endl;
+
   typedef Triangulation                      Cls;
 
   static_assert(std::is_nothrow_move_constructible<Cls>::value,

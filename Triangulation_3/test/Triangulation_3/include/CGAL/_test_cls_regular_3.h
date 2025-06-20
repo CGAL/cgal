@@ -23,6 +23,11 @@ template <class Triangulation>
 void
 _test_cls_regular_3(const Triangulation &)
 {
+
+  std::cout << "Testing Regular triangulation 3D" << std::endl;
+  std::cout << typeid(Triangulation).name() << std::endl;
+
+
   typedef Triangulation                              Cls;
 
   typedef typename Cls::Bare_point                   Point;
@@ -424,7 +429,6 @@ _test_cls_regular_3(const Triangulation &)
 
   static_assert(std::is_nothrow_move_constructible<Cls>::value, "move cstr is missing");
   static_assert(std::is_nothrow_move_assignable<Cls>::value, "move assignment is missing");
-
   namespace test_tr_23 = CGAL::Testsuite::Triangulation_23;
   test_tr_23::test_move_semantic(T);
 }

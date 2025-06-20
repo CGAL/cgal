@@ -19,7 +19,7 @@
 
 #include <CGAL/assertions.h>
 #include <CGAL/Surface_mesh.h>
-#include <CGAL/Surface_mesh/Properties.h>
+#include <CGAL/Properties.h>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/number_utils.h>

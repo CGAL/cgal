@@ -615,14 +615,15 @@ make_property_map(const std::vector<T>& v)
 template<class KeyType, class ValueType>
 struct Constant_property_map
 {
-  ValueType default_value;
+  ValueType default_value{};
 
   typedef KeyType                                       key_type;
   typedef ValueType                                     value_type;
   typedef const value_type&                             reference;
   typedef boost::read_write_property_map_tag            category;
 
-  Constant_property_map(const value_type& default_value = value_type()) : default_value (default_value) { }
+  Constant_property_map() = default;
+  Constant_property_map(const value_type& default_value) : default_value (default_value) { }
 
   /// Free function that returns `pm.default_value`.
   inline friend

@@ -12,8 +12,11 @@ bool del = true;
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel EPIC;
 
+typedef CGAL::Triangulation_data_structure_3<CGAL::VertexWithWeightedPoint<EPIC>, CGAL::Cell4Regular<EPIC>, CGAL::Sequential_tag, CGAL::Index_tag> Tds_index;
+
 // Explicit instantiation of the whole class :
 template class CGAL::Regular_triangulation_3<EPIC>;
+template class CGAL::Regular_triangulation_3<EPIC, Tds_index>;
 
 template<typename K>
 void test_kernel()
@@ -44,6 +47,11 @@ int main()
 {
   test_kernel<EPIC>();
   test_kernel<EPEC>();
+
+
+  using Cls_index = CGAL::Regular_triangulation_3<EPIC, Tds_index>;
+
+  _test_cls_regular_3(Cls_index());
 
   std::cout << "Done!" << std::endl;
   return EXIT_SUCCESS;
