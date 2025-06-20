@@ -19,6 +19,7 @@
 #ifndef CGAL_ITERATOR_PROJECT_H
 #define CGAL_ITERATOR_PROJECT_H 1
 
+#include <CGAL/config.h>
 #include <iterator>
 
 namespace CGAL {
@@ -136,8 +137,23 @@ public:
     Self tmp = *this;
     return tmp += -n;
   }
-  difference_type  operator-( const Self& i) const { return nt - i.nt; }
-  reference  operator[]( difference_type n) const {
+
+#if defined(BOOST_MSVC)
+  difference_type operator- (const Self& i) const {
+    return nt - i.nt;
+  }
+#else
+
+template <typename It>
+  std::enable_if_t<std::is_convertible_v<iterator_category, std::random_access_iterator_tag>
+                   && std::is_convertible_v<const It&, const Self&>,
+                   difference_type>
+  operator- (const It& i) const {
+    return nt - i.nt;
+  }
+#endif
+
+  reference operator[]( difference_type n) const {
     Self tmp = *this;
     tmp += n;
     return tmp.operator*();
