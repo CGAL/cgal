@@ -165,7 +165,7 @@ of a `CGAL::Conforming_constrained_Delaunay_triangulation_3` object from either 
 The requirements on geometric objects and operations are described in the traits class concept
 `ConformingConstrainedDelaunayTriangulationTraits_3`. Any CGAL kernel is a model of this concept.
 However, since this package is based on the 3D Triangulation package we inherit the requirement that
-a traits class providing exact predicates.
+a traits class providing exact predicates is needed.
 
 One important new part of this algorithm is the creation of new points that are not part of the input.
 Those points are the Steiner points that are points on segments and polygons of the input PLC.
