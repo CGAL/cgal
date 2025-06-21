@@ -657,6 +657,42 @@ public:
   };
 
   template <typename K>
+  class Compare_squared_radius_2
+  {
+    typedef typename K::Comparison_result  Comparison_result;
+    typedef typename K::Point_2            Point_2;
+    typedef typename K::FT                 FT;
+
+  public:
+    Comparison_result
+    operator()(const Point_2& p, const Point_2& q, const Point_2& r, const FT& ft) const
+    {
+      FT num, den;
+      squared_radiusC2(p.x(), p.y(),
+                       q.x(), q.y(),
+                       r.x(), r.y(),
+                       num, den);
+      return CGAL::compare(num, den * ft);
+    }
+
+    Comparison_result
+    operator()(const Point_2& p, const Point_2& q, const FT& ft) const
+    {
+      FT num, den;
+      squared_radiusC2(p.x(), p.y(),
+                       q.x(), q.y(),
+                       num, den);
+      return CGAL::compare(num, den * ft);
+    }
+
+    Comparison_result
+    operator()(const Point_2&, const FT& ft) const
+    {
+      return - CGAL_NTS sign(ft);
+    }
+  };
+
+  template <typename K>
   class Compare_squared_radius_3
   {
     typedef typename K::Comparison_result  Comparison_result;
@@ -1178,11 +1214,24 @@ public:
 
     FT
     operator()( const Point_2& p, const Point_2& q) const
-    { return squared_radiusC2(p.x(), p.y(), q.x(), q.y()); }
+    {
+      FT num, den;
+      squared_radiusC2(p.x(), p.y(),
+                       q.x(), q.y(),
+                       num, den);
+      return num / den;
+    }
 
     FT
     operator()( const Point_2& p, const Point_2& q, const Point_2& r) const
-    { return squared_radiusC2(p.x(), p.y(), q.x(), q.y(), r.x(), r.y()); }
+    {
+      FT num, den;
+      squared_radiusC2(p.x(), p.y(),
+                       q.x(), q.y(),
+                       r.x(), r.y(),
+                       num, den);
+      return num / den;
+    }
   };
 
 } //namespace CartesianKernelFunctors
@@ -3128,6 +3177,10 @@ public:
     Point_2
     operator()(const Triangle_2& t, const Point_2& p) const
     { return CommonKernelFunctors::Construct_projected_point_2<K>()(t, p, K()); }
+
+    const Point_2&
+    operator()(const Point_2& p, const Point_2& q) const
+    { return CommonKernelFunctors::Construct_projected_point_2<K>()(p, q, K()); }
   };
 
 
