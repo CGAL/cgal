@@ -66,7 +66,7 @@ A piecewise linear complex, composed of planar faces connected by edges and vert
 
 \subsection CT_3_CDT Conforming Constrained Delaunay Triangulation
 
-The goal of the algorithms developed in this package is to compute a constrained Delaunay
+The algorithms developed in this package are designed to compute a constrained Delaunay
 triangulation that contains a given set of polygonal constraints in 3D as a subcomplex.
 
 A triangulation is a _Delaunay triangulation_ if the circumscribing sphere of any simplex
@@ -110,7 +110,7 @@ Left: PLC (360 vertices);
 Right: CCDT (2452 vertices).
 \cgalFigureCaptionEnd
 
-The algorithm implemented in this package is based on the work of Hang Si, who developed particular
+The algorithm implemented in this package is based on the work of Hang Si et al., who developed particular
 algorithms for constructing conforming constrained Delaunay triangulations from PLCs.
 The corresponding implementation takes with floating point numbers as coordinates
 \cgalCite{si2005meshing}, \cgalCite{cgal:si2008cdt3}, \cgalCite{si2015tetgen}.
@@ -125,7 +125,7 @@ There is no universal or canonical way to represent all possible PLCs in \cgal.
 Any polyhedral surface is a PLC, so any model of `FaceListGraph`, such as `CGAL::Surface_mesh`, can be
 used to represent such a PLC.
 In this representation, the geometric structure of the PLC is directly mapped to the elements
-of the `CGAL::Surface_mesh':
+of the `CGAL::Surface_mesh`:
 - vertices of the PLC geometrically correspond to vertices of the surface mesh,
 - edges of the PLC correspond to edges of the surface mesh,
 - and polygonal faces of the PLC correspond to faces of the surface mesh,
@@ -140,7 +140,7 @@ in the previous section. This approach allows for the representation of non-mani
 polygons in a polygon soup cannot have holes.
 
 This package also provides a way to group polygons into distinct surface patches using a property map,
-named `plc_face_id'.
+named `plc_face_id`.
 Each polygon can be assigned a _patch_ identifier, allowing multiple polygons to form a continuous surface patch,
 which may include holes. Some necessary geometric conditions must be satisfied for these patches to be
 used in the conforming constrained Delaunay triangulation construction:
