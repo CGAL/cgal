@@ -91,12 +91,13 @@ built on this refined PLC is known as a _conforming constrained Delaunay triangu
 short). \cgalFigureRef{CT_3_plc2cdt_fig} illustrates an example of a conforming constrained
 Delaunay triangulation constructed from a PLC.
 
+
 \cgalFigureAnchor{CT_3_schonhardt_fig}
 <center>
 <img src="schonhardt.png" style="max-width:25%;"/>
 </center>
 \cgalFigureCaptionBegin{CT_3_schonhardt_fig}
-A Sch&ouml;nhardt polyhedron. The non-convex edges are shown in bold.
+A Sch&ouml;nhardt polyhedron.
 \cgalFigureCaptionEnd
 
 
