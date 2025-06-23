@@ -556,7 +556,7 @@ namespace internal { namespace TDS_3{
   class Index
   {
   public:
-    static constexpr Index<Derived_id> invalid{};
+    static constexpr Index<Derived_id> invalid() { return {}; }
 
     using size_type = std::uint32_t;
     static constexpr size_type invalid_index = (std::numeric_limits<size_type>::max)();
@@ -1357,10 +1357,10 @@ namespace CGAL {
       storage.ivertices[1] = vi1;
       storage.ivertices[2] = vi2;
       storage.ivertices[3] = vi3;
-      storage.ineighbors[0] = Cell_index::invalid;
-      storage.ineighbors[1] = Cell_index::invalid;
-      storage.ineighbors[2] = Cell_index::invalid;
-      storage.ineighbors[3] = Cell_index::invalid;
+      storage.ineighbors[0] = Cell_index::invalid();
+      storage.ineighbors[1] = Cell_index::invalid();
+      storage.ineighbors[2] = Cell_index::invalid();
+      storage.ineighbors[3] = Cell_index::invalid();
       return ci;
     }
 
@@ -1373,10 +1373,10 @@ namespace CGAL {
       storage.ivertices[1] = v1.index();
       storage.ivertices[2] = v2.index();
       storage.ivertices[3] = v3.index();
-      storage.ineighbors[0] = Cell_index::invalid;
-      storage.ineighbors[1] = Cell_index::invalid;
-      storage.ineighbors[2] = Cell_index::invalid;
-      storage.ineighbors[3] = Cell_index::invalid;
+      storage.ineighbors[0] = Cell_index::invalid();
+      storage.ineighbors[1] = Cell_index::invalid();
+      storage.ineighbors[2] = Cell_index::invalid();
+      storage.ineighbors[3] = Cell_index::invalid();
       return c;
     }
 
