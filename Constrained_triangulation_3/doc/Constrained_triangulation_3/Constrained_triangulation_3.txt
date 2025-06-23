@@ -48,6 +48,7 @@ that satisfy the following properties:
   one closed loop.
 - Each polygonal face must be a simple polygon, i.e., its edges don't intersect,
   except consecutive edges, which intersect at their common vertex.
+- Each polygonal face must be planar, meaning all its vertices lie on the same plane.
 - Each polygonal face may have one or more holes, each of them also represented by an ordered list of vertices
   from the PLC, forming a closed loop.
 - If two polygons in the PLC intersect, their intersection is a union of edges and vertices from the
