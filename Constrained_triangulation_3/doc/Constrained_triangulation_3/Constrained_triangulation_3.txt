@@ -28,7 +28,7 @@ as described in the chapter \ref PkgTriangulation3.
 
 The article by Cohen-Steiner et al. \cgalCite{cgal:cohen2002conforming} discusses the problem of
 constructing conforming Delaunay triangulations and proposes an algorithm to address it.
-Si's work \cgalCite{si2005meshing}, \cgalCite{cgal:si2008cdt3}, \cgalCite{si2015tetgen},
+Si et al.'s work \cgalCite{si2005meshing}, \cgalCite{cgal:si2008cdt3}, \cgalCite{si2015tetgen},
  presents an algorithm for computing conforming constrained
 Delaunay triangulations in 3D.
 
@@ -299,7 +299,7 @@ The following table of figures (\cgalFigureRef{CT_3_ccdt_examples_fig}) illustra
 The left column shows the input PLC, while the right column displays the resulting conforming
 constrained Delaunay triangulation.
 
-From top to bottom, the lines show different input data (all from) the same input triangulated surface and,
+From top to bottom, the lines show different input PLC, from the same input triangulated surface and,
 for each of them, the resulting conforming constrained Delaunay triangulation.
 The input data are:
 <ul>
@@ -309,6 +309,12 @@ The input data are:
 <li> the input PLC, isotropically remeshed, with a segmentation of the surface patches, done with `CGAL::Polygon_mesh_processing::region_growing_of_planes_on_faces()` as in example \ref CT_3_example_ccdt_region_growing_fimap.</li>
 </ul>
 
+On the fourth line, the input PLC is remeshed using `CGAL::Polygon_mesh_processing::isotropic_remeshing()`.
+The resulting conforming constrained Delaunay triangulation contains fewer vertices than the input
+remeshed and segmented input PLC. This reduction occurs because only the boundary edges of the PLC faces
+are marked as constraints in the triangulation;
+interior edges that do not lie on the boundaries of surface patches (as defined by `plc_face_id`) are ignored.
+As a result, these non-boundary edges are omitted from the triangulation, leading to a coarser triangulation.
 
 \cgalFigureAnchor{CT_3_ccdt_examples_fig}
 <center>
@@ -325,7 +331,7 @@ The left column shows the input PLC, while the right column displays the resulti
 The initial version of this package was implemented by Laurent Rineau and released in
 \cgal&nbsp;6.1&nbsp;(2025). Jane Tournois contributed to the documentation and helped improve the API.
 The package design and algorithms are grounded in the theoretical work of
-Hang&nbsp;Si on meshing algorithms&nbsp;\cgalCite{si2005meshing},&nbsp;\cgalCite{si2015tetgen}.
+Hang&nbsp;Si et al. on meshing algorithms&nbsp;\cgalCite{si2005meshing},&nbsp;\cgalCite{si2015tetgen}.
 
 */
 } /* namespace CGAL */
