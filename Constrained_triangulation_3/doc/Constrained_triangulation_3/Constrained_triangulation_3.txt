@@ -15,7 +15,7 @@ namespace CGAL {
 \section CT_3_CCDT_3 Constrained Triangulations in 3D
 
 3D triangulations partition space and are useful in many applications. In some cases, it is
-important to ensure that specific faces, such as those representing sharp features, appear in the output.
+important to ensure that specific faces, such as those representing the sharp features of an object, appear in the output.
 When a triangulation exactly respects these constraints, it is called a _constrained_ triangulation.
 However, it is sometimes only possible to preserve the geometry of the constraints, but not their exact
 combinatorics. In such cases, additional points, called _Steiner_ _points_, must be inserted. This process
@@ -39,17 +39,21 @@ This section introduces the key concepts necessary to understand and use this pa
 \subsection CT_3_PLC Piecewise Linear Complex
 
 A _piecewise linear complex_&nbsp;(PLC) is the three-dimensional generalization of a
-planar straight-line graph. It consists of a finite set of vertices, edges, and polygons (faces)
+planar straight-line graph. It consists of a finite set of vertices, edges, and polygonal faces
 that satisfy the following properties:
 
 - The vertices and edges of the PLC form a simplicial complex: two edges may intersect only at a
   shared vertex.
-- The boundary of each polygon (face) in the PLC is an ordered list of vertices from the PLC, forming
-  one or more closed loops (for holes).
+- The boundary of each polygonal face in the PLC is an ordered list of vertices from the PLC, forming
+  one closed loop.
+- Each polygonal face must be a simple polygon, i.e. its edges don't intersect,
+  except consecutive edges, which intersect at their common vertex.
+- Each polygonal face may have one or more holes, each of them also represented by an ordered list of vertices
+  from the PLC, forming a closed loop.
 - If two polygons in the PLC intersect, their intersection is a union of edges and vertices from the
   PLC. In particular, the interiors of two polygons cannot overlap.
 
-Polygons in a PLC may be non-convex, may have holes, and may have arbitrarily many boundary segments.
+Polygons in a PLC may be non-convex and may have holes.
 
 \cgalFigureAnchor{CT_3_plc_fig}
 <center>
@@ -74,12 +78,18 @@ possible to being Delaunay, given that some faces are marked as _constrained_. M
 triangulation is _constrained Delaunay_ if, for any simplex \f$s\f$ of the triangulation, the
 interior of its circumscribing sphere contains no vertex of the triangulation that is _visible_ from
 any point in the interior of the simplex \f$s\f$. Two points are _visible_ if the open line segment
-joining them does not intersect any polygon of the PLC, except for polygons that are coplanar with
+joining them does not intersect any polygonal face of the PLC, except for polygons that are coplanar with
 the segment.
 
 In 3D, constrained triangulations do not always exist. This can be demonstrated using the example of
-Sch&ouml;nhardt polyhedra \cgalCite{schonhardt1928zerlegung}, \cgalCite{b-ip-48a}, which require the
-addition of Steiner vertices to become tetrahedralizable (see \cgalFigureRef{CT_3_schonhardt_fig}).
+Sch&ouml;nhardt polyhedra \cgalCite{schonhardt1928zerlegung} (see \cgalFigureRef{CT_3_schonhardt_fig}),
+\cgalCite{b-ip-48a}. Shewchuk \cgalCite{cgal:shewchuk1998condition} demonstrated that for any PLC,
+there exists a refined
+version of the original PLC that admits a constrained Delaunay triangulation. This refinement is
+achieved by adding Steiner vertices to the input edges and polygons. The constrained triangulation
+built on this refined PLC is known as a _conforming constrained Delaunay triangulation_ (CCDT for
+short). \cgalFigureRef{CT_3_plc2cdt_fig} illustrates an example of a conforming constrained
+Delaunay triangulation constructed from a PLC.
 
 \cgalFigureAnchor{CT_3_schonhardt_fig}
 <center>
@@ -89,13 +99,6 @@ addition of Steiner vertices to become tetrahedralizable (see \cgalFigureRef{CT_
 A Sch&ouml;nhardt polyhedron. The non-convex edges are shown in bold.
 \cgalFigureCaptionEnd
 
-
-Shewchuk \cgalCite{cgal:shewchuk1998condition} demonstrated that for any PLC, there exists a refined
-version of the original PLC that admits a constrained Delaunay triangulation. This refinement is
-achieved by adding Steiner vertices to the input edges and polygons. The constrained triangulation
-built on this refined PLC is known as a _conforming constrained Delaunay triangulation_ (CCDT for
-short). \cgalFigureRef{CT_3_plc2cdt_fig} illustrates an example of a conforming constrained
-Delaunay triangulation constructed from a PLC.
 
 \cgalFigureAnchor{CT_3_plc2cdt_fig}
 <center>
@@ -107,8 +110,8 @@ Right: CCDT (2452 vertices).
 \cgalFigureCaptionEnd
 
 The algorithm implemented in this package is based on the work of Hang Si, who developed particular
-algorithms for constructing conforming constrained Delaunay triangulations from PLCs, with floating
-point numbers as coordinates
+algorithms for constructing conforming constrained Delaunay triangulations from PLCs.
+The corresponding implementation takes with floating point numbers as coordinates
 \cgalCite{si2005meshing}, \cgalCite{cgal:si2008cdt3}, \cgalCite{si2015tetgen}.
 
 
@@ -120,12 +123,13 @@ There is no universal or canonical way to represent all possible PLCs in \cgal.
 
 Any polyhedral surface is a PLC, so any model of `FaceListGraph`, such as `CGAL::Surface_mesh`, can be
 used to represent such a PLC.
-In this representation, the faces of the PLC correspond to the faces of the
-surface mesh—a collection of vertices (points), edges, and faces that cover the surface of a
-geometric object.
-In this representation, the vertices of the PLC correspond to the vertices of the surface mesh, the
-edges of the PLC correspond to the edges of the surface mesh, and the polygons of the PLC correspond
-to the facets of the surface mesh. However, PLCs represented in this way are limited to being
+In this representation, the geometric structure of the PLC is directly mapped to the elements
+of the `CGAL::Surface_mesh':
+- vertices of the PLC geometrically correspond to vertices of the surface mesh,
+- edges of the PLC correspond to edges of the surface mesh,
+- and polygonal faces of the PLC correspond to faces of the surface mesh,
+covering the surface of a geometric object.
+However, PLCs represented in this way are limited to being
 manifold (that is, each edge belongs to exactly two faces), and their faces cannot have holes.
 
 A PLC can also be represented as a polygon soup: a collection of vertices and a set of polygons, where
@@ -136,8 +140,10 @@ polygons in a polygon soup cannot have holes.
 
 This package also provides a way to group polygons into distinct surface patches using a property map.
 Each polygon can be assigned a _patch_ identifier, allowing multiple polygons to form a continuous surface patch,
-which may include holes. When these patches are planar and satisfy the necessary geometric conditions,
-they can be used to construct a conforming constrained Delaunay triangulation.
+which may include holes. Some necessary geometric conditions must be satisfied for these patches to be
+used in the conforming constrained Delaunay triangulation construction::
+- Each patch must be planar, meaning all polygonal faces in the patch lie on the same plane;
+- The polygonal faces of the patch must not intersect except at their shared edges.
 When a property map is provided, the input PLC is then represented by its faces, edges and vertices as follows:
 - Each face of the PLC is defined as the union of input polygons sharing the same patch identifier;
 - The edges of the PLC are those belonging to the surface mesh or polygon soup that have only one
