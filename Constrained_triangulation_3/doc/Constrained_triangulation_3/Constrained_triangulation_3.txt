@@ -82,7 +82,7 @@ joining them does not intersect any polygonal face of the PLC, except for polygo
 the segment.
 
 In 3D, constrained triangulations do not always exist. This can be demonstrated using the example of
-Sch&ouml;nhardt polyhedra \cgalCite{schonhardt1928zerlegung} (see \cgalFigureRef{CT_3_schonhardt_fig}),
+Sch&ouml;nhardt polyhedra \cgalCite{s-udzvd-28} (see \cgalFigureRef{CT_3_schonhardt_fig}),
 \cgalCite{b-ip-48a}. Shewchuk \cgalCite{cgal:shewchuk1998condition} demonstrated that for any PLC,
 there exists a refined
 version of the original PLC that admits a constrained Delaunay triangulation. This refinement is
