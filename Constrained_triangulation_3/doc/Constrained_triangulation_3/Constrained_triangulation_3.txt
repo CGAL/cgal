@@ -46,7 +46,7 @@ that satisfy the following properties:
   shared vertex.
 - The boundary of each polygonal face in the PLC is an ordered list of vertices from the PLC, forming
   one closed loop.
-- Each polygonal face must be a simple polygon, i.e. its edges don't intersect,
+- Each polygonal face must be a simple polygon, i.e., its edges don't intersect,
   except consecutive edges, which intersect at their common vertex.
 - Each polygonal face may have one or more holes, each of them also represented by an ordered list of vertices
   from the PLC, forming a closed loop.
