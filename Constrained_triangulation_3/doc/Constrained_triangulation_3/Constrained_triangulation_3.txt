@@ -139,17 +139,22 @@ polygons. For a polygon soup to represent a valid PLC, its polygons must satisfy
 in the previous section. This approach allows for the representation of non-manifold geometries; however,
 polygons in a polygon soup cannot have holes.
 
-This package also provides a way to group polygons into distinct surface patches using a property map.
+This package also provides a way to group polygons into distinct surface patches using a property map,
+named `plc_face_id'.
 Each polygon can be assigned a _patch_ identifier, allowing multiple polygons to form a continuous surface patch,
 which may include holes. Some necessary geometric conditions must be satisfied for these patches to be
-used in the conforming constrained Delaunay triangulation construction::
+used in the conforming constrained Delaunay triangulation construction:
 - Each patch must be planar, meaning all polygonal faces in the patch lie on the same plane;
 - The polygonal faces of the patch must not intersect except at their shared edges.
-When a property map is provided, the input PLC is then represented by its faces, edges and vertices as follows:
-- Each face of the PLC is defined as the union of input polygons sharing the same patch identifier;
-- The edges of the PLC are those belonging to the surface mesh or polygon soup that have only one
-  adjacent face, specifically those marking the boundaries of patches;
-- The vertices of the PLC are the ones lying at the boundaries of the surface patches in the original surface mesh or polygon soup.
+
+When this property map is provided, the input PLC is interpreted in terms of its polygonal faces,
+edges and vertices as follows:
+- Each polygonal face of the PLC is defined as the union of input polygons sharing the same patch identifier;
+- The edges of the PLC are those from the surface mesh or polygon soup that satisfy one of the following conditions:
+-- they are adjacent to only one polygonal face;
+-- they are adjacent to two polygonal faces with different patch identifiers;
+-- they are adjacent to more than two polygonal faces with differing patch identifiers, indicating non-manifold features of the PLC.
+- The vertices of the PLC are the ones lying on the boundaries of surface patches in the original surface mesh or polygon soup.
 
 \subsection CT_3_api API
 
@@ -211,7 +216,7 @@ without explicit connectivity information.
 
 \subsection CT_3_example_ccdt_fimap Build a Conforming Constrained Delaunay Triangulation with Known Polygon Identifiers
 
-If the user already knows the set of polygon identifiers to associate with each PLC face, this information can be
+If the user already knows the set of polygonal face identifiers to associate with each PLC face, this information can be
 provided and preserved throughout the construction of the conforming constrained Delaunay
 triangulation.
 
@@ -223,7 +228,7 @@ The resulting patches and segmentation are then used to build a conforming const
 
 When the named parameter `plc_face_id` is specified, each constrained facet in the 3D triangulation
 is assigned to the corresponding input PLC face, as identified by the provided property map.
-If this parameter is not specified, each input polygon (or PLC face) is assigned a unique face index.
+If this parameter is not specified, each input polygonal face is assigned a unique face index.
 
 Figure \cgalFigureRef{CT_3_ccdt_examples_fig} shows the benefit of using the `plc_face_id` property map.
 On the last line of the figure, the input PLC is enriched with a segmentation of the planar faces,
@@ -242,7 +247,7 @@ possibly resulting in a 3D triangulation with surfaces that are more refined tha
 
 \subsection CT_3_example_ccdt_region_growing_fimap Build a Conforming Constrained Delaunay Triangulation with Detected Polygon Identifiers
 
-If the user does not know the set of polygon identifiers to associate with each PLC face, this information can be
+If the user does not know the set of polygonal face identifiers to associate with each PLC face, this information can be
 automatically detected using the
 \link CGAL::Polygon_mesh_processing::region_growing_of_planes_on_faces(const PolygonMesh& mesh,RegionMap region_map,const NamedParameters& np) `CGAL::Polygon_mesh_processing::region_growing_of_planes_on_faces()`\endlink
 function from the \ref PkgPolygonMeshProcessing package.
