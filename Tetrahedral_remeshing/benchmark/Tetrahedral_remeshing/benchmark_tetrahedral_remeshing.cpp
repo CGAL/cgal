@@ -1,3 +1,4 @@
+#define CGAL_TETRAHEDRAL_REMESHING_VERBOSE
 #include "benchmark_tetrahedral_remeshing_common.h"
 #include "mesh_quality.h"
 #include <CGAL/tetrahedral_remeshing.h>
@@ -24,7 +25,8 @@ int main(int argc, char** argv) {
   double remeshing_target_edge_factor = std::stod(argv[3]);
   int num_threads = std::stoi(argv[4]);
   std::string results_json_path = argv[5];
-  std::filesystem::create_directories(std::filesystem::path(results_json_path).parent_path());
+  //std::filesystem::create_directories(std::filesystem::path(results_json_path).parent_path());
+  std::filesystem::create_directories(std::filesystem::path(std::filesystem::absolute(results_json_path)).parent_path());
 #ifdef CGAL_CONCURRENT_TETRAHEDRAL_REMESHING
   Concurrent_tetrahedral_remesher_config::load_config_file(CONCURRENT_TETRAHEDRAL_REMESHING_CONFIG_FILENAME, true);
   if(num_threads <= 0) {
@@ -49,6 +51,7 @@ int main(int argc, char** argv) {
   Remeshing_triangulation tr;
   std::ifstream is(input, std::ios_base::in);
   if(!CGAL::IO::read_MEDIT(is, tr)) {
+    std::cerr << "Error: Could not read input mesh '" << input << "'" << std::endl;
     fatal_error(std::string("Could not read input mesh '") + input + "'");
   }
   // Extract input_name from input path

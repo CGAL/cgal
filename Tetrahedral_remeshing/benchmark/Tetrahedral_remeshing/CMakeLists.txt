@@ -69,12 +69,12 @@ add_custom_command(TARGET benchmark_tetrahedral_remeshing POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E echo "Generating metadata for $<TARGET_FILE:benchmark_tetrahedral_remeshing>"
     # Combine environment setting and Python execution into a single command
     COMMAND ${CMAKE_COMMAND} -E env 
-            "PYTHONPATH=${CMAKE_SOURCE_DIR}"
+            "PYTHONPATH=${CMAKE_CURRENT_SOURCE_DIR}"
             "${Python_EXECUTABLE}" 
             "${METADATA_SCRIPT}"
             "$<TARGET_FILE:benchmark_tetrahedral_remeshing>"
-            "benchmark_tetrahedral_remeshing.cpp"
-    WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+            "${CMAKE_CURRENT_SOURCE_DIR}/benchmark_tetrahedral_remeshing.cpp"
+    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
     COMMENT "Generating metadata file for benchmark_tetrahedral_remeshing"
     VERBATIM
 )
@@ -82,12 +82,12 @@ add_custom_command(TARGET benchmark_tetrahedral_remeshing POST_BUILD
 add_custom_command(TARGET benchmark_adaptive_tetrahedral_remeshing POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E echo "Generating metadata for $<TARGET_FILE:benchmark_adaptive_tetrahedral_remeshing>"
     COMMAND ${CMAKE_COMMAND} -E env 
-            "PYTHONPATH=${CMAKE_SOURCE_DIR}"
+            "PYTHONPATH=${CMAKE_CURRENT_SOURCE_DIR}"
             "${Python_EXECUTABLE}" 
             "${METADATA_SCRIPT}"
             "$<TARGET_FILE:benchmark_adaptive_tetrahedral_remeshing>"
-            "benchmark_adaptive_tetrahedral_remeshing.cpp"
-    WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+            "${CMAKE_CURRENT_SOURCE_DIR}/benchmark_adaptive_tetrahedral_remeshing.cpp"
+    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
     COMMENT "Generating metadata file for benchmark_adaptive_tetrahedral_remeshing"
     VERBATIM
 )
@@ -95,12 +95,12 @@ add_custom_command(TARGET benchmark_adaptive_tetrahedral_remeshing POST_BUILD
 add_custom_command(TARGET benchmark_refactored_tetrahedral_remeshing POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E echo "Generating metadata for $<TARGET_FILE:benchmark_refactored_tetrahedral_remeshing>"
     COMMAND ${CMAKE_COMMAND} -E env 
-            "PYTHONPATH=${CMAKE_SOURCE_DIR}"
+            "PYTHONPATH=${CMAKE_CURRENT_SOURCE_DIR}"
             "${Python_EXECUTABLE}" 
             "${METADATA_SCRIPT}"
             "$<TARGET_FILE:benchmark_refactored_tetrahedral_remeshing>"
-            "benchmark_refactored_tetrahedral_remeshing.cpp"
-    WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+            "${CMAKE_CURRENT_SOURCE_DIR}/benchmark_refactored_tetrahedral_remeshing.cpp"
+    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
     COMMENT "Generating metadata file for benchmark_refactored_tetrahedral_remeshing"
     VERBATIM
 )
