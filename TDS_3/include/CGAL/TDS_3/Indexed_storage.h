@@ -29,6 +29,7 @@
 #include <CGAL/Iterator_range.h>
 #include <CGAL/property_map.h>
 #include <CGAL/Properties.h>
+#include <CGAL/Property_container.h>
 #include <CGAL/Time_stamper.h>
 #include <CGAL/utility.h>
 
@@ -50,6 +51,9 @@ namespace CGAL {
 
 //utilities for copy_tds
 namespace internal { namespace TDS_3{
+
+  static constexpr bool use_experimental_properties = true;
+
   template <class Vertex_src,class Vertex_tgt>
   struct Default_index_vertex_converter;
 
@@ -566,6 +570,7 @@ namespace internal { namespace TDS_3{
     /// <tt>(std::numeric_limits<size_type>::max)()</tt></a>.
     constexpr Index() = default;
     explicit constexpr Index(size_type _idx) : idx_(_idx) {}
+    explicit constexpr Index(std::size_t _idx) : idx_(static_cast<size_type>(_idx)) {}
 
     Index(const Index&) = default;
     Index(Index&&) = default;
@@ -585,6 +590,8 @@ namespace internal { namespace TDS_3{
 
     /// Get the underlying index of this index
     constexpr explicit operator size_type() const { return idx_; }
+
+    constexpr explicit operator std::size_t() const { return static_cast<std::size_t>(idx_); }
 
     /// reset index to be invalid (index=(std::numeric_limits<size_type>::max)())
     constexpr void reset() { idx_ = invalid_index; }
@@ -862,12 +869,18 @@ namespace CGAL {
   }; // end class Index_iterator
 
   template <class I, class T, class ConcurrencyTag = Sequential_tag>
-  struct Property_map : Properties::Property_map_base<I, T, Property_map<I, T>, ConcurrencyTag>
+  struct Index_property_map
+      : Properties::Property_map_base<I, T, Index_property_map<I, T, ConcurrencyTag>, ConcurrencyTag>
   {
-    using Base = Properties::Property_map_base<I, T, Property_map<I, T>, ConcurrencyTag>;
+    using Base = Properties::Property_map_base<I, T, Index_property_map<I, T, ConcurrencyTag>, ConcurrencyTag>;
 
     using Base::Base;
   };
+
+  template <class I, class T, class ConcurrencyTag = Sequential_tag>
+  using Property_map = std::conditional_t<internal::TDS_3::use_experimental_properties,
+                                          Properties::Experimental::Property_array_handle<I, T>,
+                                          Index_property_map<I, T, ConcurrencyTag>>;
 
   struct Vertex_index: public Index<Vertex_index>
   {
@@ -927,7 +940,9 @@ namespace CGAL {
     using free_list_type = size_type;
 #endif
     CGAL_NO_UNIQUE_ADDRESS std::conditional_t<is_parallel, std::mutex, Null_tag> mutex_;
-    Properties::Property_container<Self, Index_type, Concurrency_tag> properties_;
+    std::conditional_t<internal::TDS_3::use_experimental_properties,
+                       Properties::Experimental::Property_container<Index_type>,
+                       Properties::Property_container<Self, Index_type, Concurrency_tag>> properties_;
     size_type size_of_blocks = CGAL_INCREMENT_COMPACT_CONTAINER_BLOCK_SIZE;
     size_type nb_of_removed_elements_ = 0;
     free_list_type freelist_{Index_type::invalid_index};
@@ -966,7 +981,13 @@ namespace CGAL {
         oss << "anonymous-property-" << anonymous_property_nb++;
         name = std::string(oss.str());
       }
-      return properties_.template add<T>(name, t);
+      if constexpr(internal::TDS_3::use_experimental_properties) {
+
+        auto [array_ref_wrapper, created] = properties_.get_or_add_property(name, t);
+        return { array_ref_wrapper.get(), created };
+      } else {
+        return properties_.template add<T>(name, t);
+      }
     }
 
     size_type size() const
@@ -1032,7 +1053,11 @@ namespace CGAL {
         --local_number_of_removed_elements();
         removed_[idx] = false;
         const auto ec = EraseCounterStrategy<Element_type>::erase_counter(&elt);
-        properties_.reset(idx.id());
+        if constexpr(internal::TDS_3::use_experimental_properties) {
+          properties_.reset(idx);
+        } else {
+          properties_.reset(idx.id());
+        }
         EraseCounterStrategy<Element_type>::restore_erase_counter(&elt, ec);
 #if CGAL_DEBUG_INDEXED_CONTAINER
         ss << idx << " (recycled from freelist)\n";
@@ -1054,7 +1079,11 @@ namespace CGAL {
           removed_[idx] = false;
         } else {
           // sequential case
-          idx = Index_type{static_cast<size_type>(properties_.push_back())};
+          if constexpr(internal::TDS_3::use_experimental_properties) {
+            idx = Index_type{static_cast<size_type>(properties_.emplace())};
+          } else {
+            idx = Index_type{properties_.push_back()};
+          }
         }
         elt = Element_type(container, idx);
 #if CGAL_DEBUG_INDEXED_CONTAINER
@@ -1071,7 +1100,7 @@ namespace CGAL {
     void remove(Index_type idx, Container* container)
     {
       size_type& freelist_ = free_list();
-      if constexpr(! is_parallel){
+      if constexpr(! internal::TDS_3::use_experimental_properties && ! is_parallel){
         if(idx.idx() == properties_.size()-1){
           properties_.pop_back();
           return;
@@ -1589,7 +1618,7 @@ namespace CGAL {
     }
 
     void set_adjacency(Cell_handle c0, int i0,
-                       Cell_handle c1, int i1) const
+                       Cell_handle c1, int i1)
     {
       CGAL_assertion(i0 >= 0 && i0 <= dimension());
       CGAL_assertion(i1 >= 0 && i1 <= dimension());
@@ -1599,7 +1628,7 @@ namespace CGAL {
     }
 
     void set_adjacency(Cell_index ci0, int i0,
-                       Cell_index ci1, int i1) const
+                       Cell_index ci1, int i1)
     {
       CGAL_assertion(i0 >= 0 && i0 <= dimension());
       CGAL_assertion(i1 >= 0 && i1 <= dimension());
@@ -1608,12 +1637,12 @@ namespace CGAL {
       cell_container().storage_[ci1].ineighbors[i1] = ci0;
     }
 
-    void set_vertex_cell(Vertex_index vi, Cell_index ci) const
+    void set_vertex_cell(Vertex_index vi, Cell_index ci)
     {
       vertex_storage()[vi].icell = ci;
     }
 
-    void set_vertex_cell(Vertex_handle v, Cell_handle c) const
+    void set_vertex_cell(Vertex_handle v, Cell_handle c)
     {
       vertex_storage()[v.index()].icell = c.index();
     }
@@ -1648,7 +1677,7 @@ namespace CGAL {
 
     Vertex_iterator vertices_begin() const
     {
-      return Vertex_iterator(Vertex_index(0), this);
+      return Vertex_iterator(Vertex_index(0u), this);
     }
 
     /// End iterator for vertices.
@@ -1667,7 +1696,7 @@ namespace CGAL {
 
     Cell_iterator cells_begin() const
     {
-      return Cell_iterator(Cell_index(0), this);
+      return Cell_iterator(Cell_index(0u), this);
     }
 
     /// End iterator for cells.
