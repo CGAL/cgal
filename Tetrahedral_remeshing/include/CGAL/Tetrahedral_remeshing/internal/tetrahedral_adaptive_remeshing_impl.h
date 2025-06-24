@@ -218,8 +218,12 @@ public:
 
   void flip()
   {
+#ifdef CGAL_TETRAHEDRAL_REMESHING_USE_ELEMENTARY
+        Elementary_remesher<C3t3,SizingFunction,CellSelector,Visitor>::flip(m_c3t3, m_cell_selector,m_visitor,m_protect_boundaries);
+#else
     flip_edges(m_c3t3, m_protect_boundaries,
                m_cell_selector, m_visitor);
+#endif
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
     CGAL_assertion(tr().tds().is_valid(true));
@@ -611,11 +615,11 @@ public:
       if (!resolution_reached())
       {
 
-#ifdef CGAL_TETRAHEDRAL_REMESHING_USE_ELEMENTARY
-        Elementary_remesher<C3t3,SizingFunction,CellSelector>::split(m_c3t3, m_sizing, m_cell_selector,true);
-#else
+//#ifdef CGAL_TETRAHEDRAL_REMESHING_USE_ELEMENTARY
+        //Elementary_remesher<C3t3,SizingFunction,CellSelector>::split(m_c3t3, m_sizing, m_cell_selector,true);
+//#else
         split();
-#endif
+//#endif
         collapse();
       }
       flip();
