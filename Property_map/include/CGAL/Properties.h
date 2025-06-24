@@ -514,6 +514,9 @@ public:
       } else {
         size_t old_size = size_;
         size_ += s;
+        for (std::size_t i=0, end = parrays_.size(); i<end; ++i) {
+            parrays_[i]->resize(size_);
+        }
         return old_size;
       }
     }
