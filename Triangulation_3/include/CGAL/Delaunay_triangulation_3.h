@@ -354,7 +354,7 @@ public:
     const size_type num_points = points.size();
     spatial_sort<Concurrency_tag>(points.begin(), points.end(), geom_traits());
     const size_type nv = n + 1 + static_cast<size_type>(points.size()); // +1 for the infinite vertex
-    const size_type estimated_nc = this->number_of_cells()+ (7*num_points)/4;
+    const size_type estimated_nc = this->number_of_cells()+ (7*num_points);
     tds().reserve(nv, estimated_nc);
 
     // Parallel
