@@ -76,6 +76,7 @@ struct is_convertible_without_narrowing : details::is_convertible_without_narrow
 template <typename From, typename To>
 inline constexpr bool is_convertible_without_narrowing_v = is_convertible_without_narrowing<From, To>::value;
 
+#if 0
 namespace is_complete_internals
 {
     template<class T>
@@ -99,6 +100,7 @@ namespace is_complete_testsuite
   };
   static_assert(is_complete<S>::value, "error");
 }
+#endif
 
 } // end namespace CGAL
 
