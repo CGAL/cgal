@@ -66,6 +66,7 @@ namespace internal {
     Point_set_3_index() : value(static_cast<size_type>(-1)) { }
     Point_set_3_index operator= (const Point_set_3_index& index) { value = index.value; return *this; }
 
+    size_type id() const { return value; }
     operator std::size_t() const { return static_cast<std::size_t>(value); }
     bool operator== (const Point_set_3_index& index) const { return value == index.value; }
     bool operator!= (const Point_set_3_index& index) const { return value != index.value; }
