@@ -869,6 +869,20 @@ namespace CGAL {
     using Base::Base;
   };
 
+  struct Vertex_index: public Index<Vertex_index>
+  {
+    using Index<Vertex_index>::Index; // inherit constructors
+    auto output_prefix() const { return 'v'; }
+  };
+
+  struct Cell_index: public Index<Cell_index>
+  {
+    using Index<Cell_index>::Index; // inherit constructors
+    using Index<Cell_index>::operator=; // inherit assignment operator
+    auto output_prefix() const { return 'c'; }
+  };
+
+
 
   template <typename Index_type,
             typename Element_type,
@@ -925,7 +939,7 @@ namespace CGAL {
     Property_map<Index_type, bool, Concurrency_tag> removed_ =
         add_property_map<bool>(prefix + std::string(":removed"), false).first;
 
-    Property_map<Index_type, Point, Concurrency_tag> points_;
+    // Property_map<Index_type, Point, Concurrency_tag> points_;
 
     template <typename Key, typename T>
     struct Get_property_map {
@@ -1125,18 +1139,9 @@ namespace CGAL {
     using Vertex = typename Vb::template Rebind_TDS<Self>::Other;
     using Cell = typename Cb::template Rebind_TDS<Self>::Other;
 
-    struct Vertex_index: public Index<Vertex_index>
-    {
-      using Index<Vertex_index>::Index; // inherit constructors
-      auto output_prefix() const { return 'v'; }
-    };
 
-    struct Cell_index: public Index<Cell_index>
-    {
-      using Index<Cell_index>::Index; // inherit constructors
-      using Index<Cell_index>::operator=; // inherit assignment operator
-      auto output_prefix() const { return 'c'; }
-    };
+    using Vertex_index = CGAL::Vertex_index;
+    using Cell_index = CGAL::Cell_index;
 
     using Cell_handle = Index_handle<Cell, Cell_index, Self>;
     using Vertex_handle = Index_handle<Vertex, Vertex_index, Self>;
