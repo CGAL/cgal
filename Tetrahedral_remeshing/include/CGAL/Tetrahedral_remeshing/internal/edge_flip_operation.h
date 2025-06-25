@@ -68,14 +68,14 @@ protected:
   }
 };
 
-// Internal Edge Flip Operation - processes edges directly using Finite_edges_iterator
+// Internal Edge Flip Operation - processes vertex pairs like original get_internal_edges
 template<typename C3t3, typename CellSelector, typename Visitor>
 class InternalEdgeFlipOperation 
   : public EdgeFlipOperationBase<C3t3, CellSelector, Visitor>,
     public ElementaryOperation<C3t3, 
-                          typename C3t3::Triangulation::Finite_edges_iterator,
+                          typename std::vector<std::pair<typename C3t3::Vertex_handle, typename C3t3::Vertex_handle>>::const_iterator,
                           typename C3t3::Triangulation::Cell_handle,
-                          CGAL::Iterator_range<typename C3t3::Triangulation::Finite_edges_iterator>>
+                          std::vector<std::pair<typename C3t3::Vertex_handle, typename C3t3::Vertex_handle>>>
 {
 public:
   using BaseClass = EdgeFlipOperationBase<C3t3, CellSelector, Visitor>;
@@ -83,9 +83,9 @@ public:
   using VertexPairContainer = std::vector<VertexPair>;
   
   using Base = ElementaryOperation<C3t3, 
-                              typename C3t3::Triangulation::Finite_edges_iterator,
+                              typename VertexPairContainer::const_iterator,
                               typename C3t3::Triangulation::Cell_handle,
-                              CGAL::Iterator_range<typename C3t3::Triangulation::Finite_edges_iterator>>;
+                              VertexPairContainer>;
   using ElementIteratorType = typename Base::ElementIteratorType;
   using ElementSource = typename Base::ElementSource;
   using Lock_zone = typename Base::Lock_zone;
@@ -122,16 +122,20 @@ public:
   }
 
   virtual bool should_process_element(const ElementIteratorType& e, const C3t3& c3t3) const override {
-    Edge edge(*e);
-    return is_internal(edge, c3t3, m_cell_selector);
+    // For internal edges, we already filtered during collection, so always process
+    return true;
   }
 
   ElementSource get_element_source(const C3t3& c3t3) const override {
-    // Perform global preprocessing
+    // Perform global preprocessing (cache validity reset, inc_cells clear)
     perform_global_preprocessing(c3t3);
     
-    // Return the finite edges iterator range directly
-    return c3t3.triangulation().finite_edges();
+    // Collect internal vertex pairs fresh each time (execution framework stores container)
+    VertexPairContainer internal_vertex_pairs;  // Local container
+    get_internal_edges(c3t3, m_cell_selector, std::back_inserter(internal_vertex_pairs));
+    
+    // Return container by value (execution framework will store it)
+    return internal_vertex_pairs;
   }
 
   bool can_apply_operation(const ElementIteratorType& e, const C3t3& c3t3) const override {
@@ -141,7 +145,22 @@ public:
 
   Lock_zone get_lock_zone(const ElementIteratorType& e, const C3t3& c3t3) const override {
     Lock_zone zone;
-    // Will be implemented when I start using ElementaryOperationExecutionParallel
+    
+    // For vertex pairs, we need to find the corresponding edge to get incident cells
+    const auto& vp = *e;
+    Cell_handle cell;
+    int i0, i1;
+    if (is_edge_uv(vp.first, vp.second, get_incident_cells(vp.first, c3t3), cell, i0, i1)) {
+      Edge edge(cell, i0, i1);
+      auto circ = c3t3.triangulation().incident_cells(edge);
+      auto done = circ;
+      do {
+        if (!c3t3.triangulation().is_infinite(circ)) {
+          zone.push_back(circ);
+        }
+      } while (++circ != done);
+    }
+    
     return zone;
   }
 
@@ -165,9 +184,8 @@ public:
 
 private:
   bool execute_internal_edge_flip(const ElementIteratorType& e, C3t3& c3t3) {
-    // For internal edges, e is a Finite_edges_iterator
-    const Edge& edge = *e;
-    const VertexPair vp = make_vertex_pair(edge);
+    // For internal edges, e is a vertex pair iterator
+    const auto& vp = *e;
     
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
     // DEBUG: Log edge processing order with edge info (first 5000 only)
