@@ -12,11 +12,16 @@ include(CGAL_Eigen3_support)
 find_package(TBB QUIET)
 include(CGAL_TBB_support)
 
-find_package(VTK QUIET COMPONENTS vtkImagingGeneral vtkIOImage  vtkIOXML vtkIOMINC vtkIOLegacy NO_MODULE)
+find_package(VTK QUIET COMPONENTS vtkImagingGeneral vtkIOImage vtkIOXML vtkIOXML vtkIOMINC vtkIOLegacy NO_MODULE)
 if(VTK_FOUND)
-  message(STATUS "VTK was found")
-else()
-  message(STATUS "NOTICE: VTK was not found")
+  if("${VTK_VERSION_MAJOR}" GREATER "5" OR VTK_VERSION VERSION_GREATER 5)
+    message(STATUS "VTK was found")
+    if(TARGET VTK::ImagingGeneral AND TARGET VTK::IOImage AND TARGET VTK::IOXML AND VTK::IOMINC AND TARGET VTK::IOLegacy)
+      set(VTK_LIBRARIES VTK::ImagingGeneral VTK::IOImage VTK::IOXML VTK::IOLegacy)
+    endif()
+  else()
+    message(STATUS "NOTICE: VTK version 6.0 or greater is required")
+  endif()
 endif()
 
 create_single_source_cgal_program("marching_cubes.cpp")
@@ -32,12 +37,21 @@ if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program("contouring_mesh_offset.cpp")
   create_single_source_cgal_program("contouring_octree.cpp")
 
+find_package(OpenVDB CONFIG)
+if(TARGET OpenVDB::openvdb)
+  create_single_source_cgal_program("marching_cubes_openvdb.cpp")
+  target_link_libraries(marching_cubes_openvdb
+                        PUBLIC OpenVDB::openvdb
+                        PRIVATE OpenVDB::openvdb)
+endif()
+
   target_link_libraries(dual_contouring PRIVATE CGAL::Eigen3_support)
   target_link_libraries(contouring_discrete_data PRIVATE CGAL::Eigen3_support)
   target_link_libraries(contouring_inrimage PRIVATE CGAL::Eigen3_support)
   target_link_libraries(contouring_implicit_data PRIVATE CGAL::Eigen3_support)
   target_link_libraries(contouring_mesh_offset PRIVATE CGAL::Eigen3_support)
   target_link_libraries(contouring_octree PRIVATE CGAL::Eigen3_support)
+  target_link_libraries(marching_cubes_openvdb PRIVATE CGAL::Eigen3_support)
 
   if(TARGET CGAL::TBB_support)
     target_link_libraries(dual_contouring PRIVATE CGAL::TBB_support)
@@ -58,7 +72,7 @@ endif()
 
 if(TARGET CGAL::CGAL_ImageIO)
   if(TARGET CGAL::Eigen3_support)
-    if(VTK_FOUND)
+    if(VTK_FOUND AND ("${VTK_VERSION_MAJOR}" GREATER "5" OR VTK_VERSION VERSION_GREATER 5))
       create_single_source_cgal_program("contouring_vtk_image.cpp")
       target_link_libraries(contouring_vtk_image PRIVATE CGAL::Eigen3_support
                                                          CGAL::CGAL_ImageIO
