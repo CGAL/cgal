@@ -1,45 +1,43 @@
 pipeline:
-  results_dir: C:/Users/iason.manolas/Documents/learning/gsoc2025-Tetra_remeshing_parallel-imanolas/Tetrahedral_remeshing/build_debug_tetrahedral_remeshing/BenchmarkResults
+  results_dir: C:/Users/iason.manolas/Documents/learning/gsoc2025-Tetra_remeshing_parallel-imanolas/Tetrahedral_remeshing/build_debug_tetrahedral_remeshing/Benchmark_results
   run_benchmarks: true
-  charts: true
-  report: true
+  export_csv: false
+  export_charts: false
+  report: false
   report_chart_grid_cols: 2
+  resource_monitoring: false
 
 benchmarks:
-  - name: uniform
-    exec: C:/Users/iason.manolas/Documents/learning/gsoc2025-Tetra_remeshing_parallel-imanolas/Tetrahedral_remeshing/build_debug_tetrahedral_remeshing/Release/benchmark_tetrahedral_remeshing.exe
-    input_dir: C:/Users/iason.manolas/Documents/learning/gsoc2025-Tetra_remeshing_parallel-imanolas/Tetrahedral_remeshing/build_debug_tetrahedral_remeshing/meshes/TetrahedralMeshes
-    sweep:
-      num_iterations: [1]
-      target_edge_factor: [0.5, 2.0]
-      threads: [1]
-  # - name: adaptive
-  #   exec: C:/Users/iason.manolas/Documents/learning/gsoc2025-Tetra_remeshing_parallel-imanolas/Tetrahedral_remeshing/build_debug_tetrahedral_remeshing/Release/benchmark_adaptive_tetrahedral_remeshing.exe
-  #   input_dir: C:/Users/iason.manolas/Documents/learning/gsoc2025-Tetra_remeshing_parallel-imanolas/Tetrahedral_remeshing/build_debug_tetrahedral_remeshing/meshes/TetrahedralMeshes
+  # - name: original
+  #   exec: C:/Users/iason.manolas/Documents/learning/gsoc2025-Tetra_remeshing_parallel-imanolas/Tetrahedral_remeshing/build_debug_tetrahedral_remeshing/Release/benchmark_tetrahedral_remeshing.exe
   #   sweep:
-  #     num_iterations: [1]
+  #     #input_mesh: [C:/Users/iason.manolas/Documents/learning/gsoc2025-Tetra_remeshing_parallel-imanolas/Tetrahedral_remeshing/build_debug_tetrahedral_remeshing/meshes/TetrahedralMeshes/bear.mesh, C:/Users/iason.manolas/Documents/learning/gsoc2025-Tetra_remeshing_parallel-imanolas/Tetrahedral_remeshing/build_debug_tetrahedral_remeshing/meshes/TetrahedralMeshes/armadillo.mesh]
+  #     # input_mesh: [C:/Users/iason.manolas/Documents/learning/gsoc2025-Tetra_remeshing_parallel-imanolas/Tetrahedral_remeshing/build_debug_tetrahedral_remeshing/meshes/TetrahedralMeshes/elephant.mesh]
+  #     input_mesh: [C:/Users/iason.manolas/Documents/learning/gsoc2025-Tetra_remeshing_parallel-imanolas/Tetrahedral_remeshing/build_debug_tetrahedral_remeshing/meshes/TetrahedralMeshes/sphere.mesh]
+  #     num_iterations: [1,2,10]
+  #     target_edge_factor: [0.25,0.5,2]
   #     threads: [1]
+  - name: refactored  
+    exec: C:/Users/iason.manolas/Documents/learning/gsoc2025-Tetra_remeshing_parallel-imanolas/Tetrahedral_remeshing/build_debug_tetrahedral_remeshing/Release/benchmark_refactored_tetrahedral_remeshing.exe
+    sweep:
+      input_mesh: [C:/Users/iason.manolas/Documents/learning/gsoc2025-Tetra_remeshing_parallel-imanolas/Tetrahedral_remeshing/build_debug_tetrahedral_remeshing/meshes/TetrahedralMeshes/elephant.mesh]
+      input_mesh: [C:/Users/iason.manolas/Documents/learning/gsoc2025-Tetra_remeshing_parallel-imanolas/Tetrahedral_remeshing/build_debug_tetrahedral_remeshing/meshes/TetrahedralMeshes/sphere.mesh]
+      num_iterations: [1,2,10]
+      target_edge_factor: [0.25,0.5,2]
+      threads: [1]
 
-charts:
-  - kind: scatter
-    x: "metrics.Performance.Total_Time.Value"
-    y: "run_metadata.run_info.Mesh.Cells"
-    hue: "run_metadata.run_info.Mesh.Name"
-    title: "Performance vs Quality"
-    save_as: "perf_vs_quality.png"  
-  - kind: scatter
-    x: "run_metadata.run_info.Num_threads"
-    y: "metrics.Performance.Total_Time.Value"
-    hue: "run_metadata.run_info.Mesh.Name"
-    filter:
-      benchmark_name: adaptive
-    title: "Total Time vs Threads by Mesh"
-    save_as: "total_time_vs_threads_by_mesh.png"
-  - kind: scatter
-    x: "run_metadata.run_info.Num_threads"
-    y: "metrics.Performance.Total_Time.Value"
-    filter:
-      run_metadata.input_arguments.target_edge_factor: 0.5
-    hue: "run_metadata.run_info.Mesh.Name"
-    title: "Total Time vs Threads (factor=0.5)"
-    save_as: "total_time_vs_threads_factor_0.5.png"
+# charts:
+#   - kind: scatter
+#     x: "metrics.Performance.Total_Time.Value"
+#     y: "run_metadata.run_info.Mesh.Cells"
+#     hue: "run_metadata.run_info.Mesh.Name"
+#     title: "Performance vs Quality"
+#     save_as: "perf_vs_quality.png"  
+#   - kind: scatter
+#     x: "run_metadata.input_arguments.threads"
+#     y: "metrics.Performance.Total_Time.Value"
+#     hue: "run_metadata.run_info.Mesh.Name"
+#     filter:
+#       benchmark_name: uniform
+#     title: "Total Time vs Threads by Mesh"
+#     save_as: "total_time_vs_threads_by_mesh.png"

@@ -1,0 +1,154 @@
+# =========================================================================
+# Benchmark Comparison Configuration Template
+# =========================================================================
+# Copy this file to 'benchmark_comparison_config.yaml' and customize
+
+# REQUIRED: Path to directory containing benchmark result folders
+# This should point to the directory that contains timestamped benchmark runs
+# Example: C:/path/to/BenchmarkResults or /home/user/results
+results_root: /path/to/Benchmark_results
+
+# OPTIONAL: Specify which subdirectories to include
+# Leave empty [] to include all subdirectories
+# Or specify folder names: ["2024-01-15_10-30-00", "2024-01-15_11-45-00"]
+include_reports: []
+
+# Analysis configuration
+analysis:
+  # OPTIONAL: Threshold for highlighting significant changes (0.0 = show all)
+  significant_change_threshold: 0.0
+
+  # OPTIONAL: Threshold for highlighting outliers (standard deviations)
+  outlier_threshold: 2.0
+
+  # COMPARISON MODE CONFIGURATION:
+  # Set to false to compare across different executables (e.g., current vs refactored implementations)
+  # Set to true to compare only within same executable (for fine-tuning single implementation)
+  group_by_executable: false          # Use false for cross-implementation comparison
+
+# Report configuration
+report:
+  # OPTIONAL: Chart grid layout - number of columns for time-series charts
+  chart_grid_cols: 2
+
+# =========================================================================
+# UNIFIED CHARTS CONFIGURATION
+# =========================================================================
+# These charts support both time-series and parameter-based comparisons
+# Useful for: regression testing, performance monitoring over time, scaling studies, parameter optimization
+# Requirements: Multiple runs with varying input_arguments
+
+charts:
+  # Time-series chart (no x specified, defaults to timestamp)
+  - kind: line
+    y: metrics.Performance.Total_Time.Value
+    title: "Total Time across versions"
+    style: "o-"
+
+  # Parameter-based charts - compare metrics across different parameter values
+  - kind: line
+    y: metrics.Performance.Total_Time.Value
+    x: run_metadata.input_arguments.threads
+    title: "Total Time vs Number of Threads"
+    style: "o-"
+  
+  - kind: line
+    y: metrics.Performance.Memory.Value
+    x: run_metadata.input_arguments.threads
+    title: "Memory Usage vs Number of Threads"
+    style: "o-"
+
+  # Cross-executable comparison example
+  - kind: line
+    y: metrics.Performance.Total_Time.Value
+    x: run_metadata.input_arguments.target_edge_factor
+    title: "Performance Comparison: Current vs Refactored Implementation"
+    style: "o-"
+    # When group_by_executable=false, this will show both implementations on the same chart
+
+# =========================================================================
+# PATH EXAMPLES
+# =========================================================================
+# All parameters and metrics must be specified using full dot notation paths:
+#
+# JSON structure:                     Full path:
+# {                                  
+#   "metrics": {                     metrics.Performance.Total_Time.Value
+#     "Performance": {               metrics.Performance.Total_Time.Unit
+#       "Total_Time": {              metrics.Performance.Memory.Value
+#         "Value": 45.67,            metrics.Quality.Edge_Length.Mean
+#         "Unit": "seconds"          metrics.Quality.Edge_Length.StdDev
+#       },                             
+#       "Memory": {                    
+#         "Value": 1024                
+#       }                              
+#     },                               
+#     "Quality": {                     
+#       "Edge_Length": {               
+#         "Mean": 0.5,                 
+#         "StdDev": 0.1                
+#       }                              
+#     }                                
+#   },
+#   "run_metadata": {                run_metadata.input_arguments.input_mesh
+#     "input_arguments": {           run_metadata.input_arguments.threads
+#       "input_mesh": "mesh1.off",   run_metadata.input_arguments.num_iterations
+#       "threads": 4,                run_metadata.timestamp
+#       "num_iterations": 10         run_metadata.status
+#     },
+#     "timestamp": "2024-01-15T10:30:00",
+#     "status": "success"
+#   }
+# }                                  
+
+# =========================================================================
+# COMMON PARAMETER PATHS
+# =========================================================================
+# Typical parameter paths (adjust based on your benchmark structure):
+# - run_metadata.input_arguments.input_mesh
+# - run_metadata.input_arguments.threads
+# - run_metadata.input_arguments.num_iterations
+# - run_metadata.input_arguments.target_edge_factor
+# - run_metadata.input_arguments.algorithm
+# - run_metadata.input_arguments.quality_threshold
+
+# =========================================================================
+# COMMON METRIC PATHS
+# =========================================================================
+# Typical metric paths (adjust based on your benchmark structure):
+# - metrics.Performance.Total_Time.Value
+# - metrics.Performance.Memory.Value
+# - metrics.Performance.CPU_Usage.Value
+# - metrics.Quality.Edge_Length.Mean
+# - metrics.Quality.Edge_Length.StdDev
+# - metrics.Quality.Dihedral_Angle.Mean
+# - metrics.Output.Vertices_Count.Value
+# - metrics.Output.Tetrahedra_Count.Value
+
+# =========================================================================
+# RESOURCE USAGE PATHS
+# =========================================================================
+# Resource monitoring paths (available when resource monitoring is enabled):
+# - resource_usage.duration_seconds          # Total execution time
+# - resource_usage.cpu.mean_percent          # Average CPU usage
+# - resource_usage.cpu.max_percent           # Peak CPU usage
+# - resource_usage.cpu.total_user_time       # Total user CPU time
+# - resource_usage.cpu.total_system_time     # Total system CPU time
+# - resource_usage.memory.peak_rss_mb        # Peak memory usage (MB)
+# - resource_usage.memory.mean_rss_mb        # Average memory usage (MB)
+# - resource_usage.memory.peak_rss_bytes     # Peak memory usage (bytes)
+# - resource_usage.memory.mean_percent       # Average memory percentage
+# - resource_usage.memory.max_percent        # Peak memory percentage
+# - resource_usage.io.total_read_mb          # Total data read (MB)
+# - resource_usage.io.total_write_mb         # Total data written (MB)
+# - resource_usage.io.total_read_ops         # Total read operations
+# - resource_usage.io.total_write_ops        # Total write operations
+# - resource_usage.threads.max_threads       # Maximum thread count
+
+# =========================================================================
+# MATPLOTLIB STYLE EXAMPLES
+# =========================================================================
+# Line styles: "-", "--", "-.", ":"
+# Markers: "o", "s", "^", "v", "<", ">", "D", "*", "+"
+# Combined: "o-", "s--", "^:", etc.
+# Colors: Add color codes like "ro-" (red circles with lines) 
