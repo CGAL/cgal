@@ -52,7 +52,7 @@ namespace CGAL {
 //utilities for copy_tds
 namespace internal { namespace TDS_3{
 
-  static constexpr bool use_experimental_properties = true;
+  static constexpr bool use_experimental_properties = false;
 
   template <class Vertex_src,class Vertex_tgt>
   struct Default_index_vertex_converter;
