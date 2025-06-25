@@ -74,7 +74,8 @@ class InternalEdgeFlipOperation
   : public EdgeFlipOperationBase<C3t3, CellSelector, Visitor>,
     public ElementaryOperation<C3t3, 
                           typename std::vector<std::pair<typename C3t3::Vertex_handle, typename C3t3::Vertex_handle>>::const_iterator,
-                          typename C3t3::Triangulation::Cell_handle>
+                          typename C3t3::Triangulation::Cell_handle,
+                          std::vector<std::pair<typename C3t3::Vertex_handle, typename C3t3::Vertex_handle>>>
 {
 public:
   using BaseClass = EdgeFlipOperationBase<C3t3, CellSelector, Visitor>;
@@ -83,8 +84,10 @@ public:
   
   using Base = ElementaryOperation<C3t3, 
                               typename VertexPairContainer::const_iterator,
-                              typename C3t3::Triangulation::Cell_handle>;
+                              typename C3t3::Triangulation::Cell_handle,
+                              VertexPairContainer>;
   using ElementIteratorType = typename Base::ElementIteratorType;
+  using ElementSource = typename Base::ElementSource;
   using Lock_zone = typename Base::Lock_zone;
 
   using BaseClass::m_c3t3;
@@ -100,10 +103,6 @@ public:
   using typename BaseClass::Vertex_handle;
   using typename BaseClass::Edge;
 
-private:
-  // Cache for internal vertex pairs - mutable to allow reinitialization every call
-  mutable VertexPairContainer m_internal_vertex_pairs;
-  mutable bool m_cache_initialized = false;
 
 public:
   InternalEdgeFlipOperation(C3t3& c3t3,
@@ -120,12 +119,6 @@ public:
     
     // Clear the shared inc_cells to match original behavior where inc_cells starts empty
     s_inc_cells.clear();
-    
-    // Collect internal vertex pairs exactly like original get_internal_edges
-    if (!m_cache_initialized) {
-      get_internal_edges(c3t3, m_cell_selector, std::back_inserter(m_internal_vertex_pairs));
-      m_cache_initialized = true;
-    }
   }
 
   virtual bool should_process_element(const ElementIteratorType& e, const C3t3& c3t3) const override {
@@ -133,16 +126,16 @@ public:
     return true;
   }
 
-  CGAL::Iterator_range<typename VertexPairContainer::const_iterator> get_element_iterators(const C3t3& c3t3) const override {
-    // Internal edge preprocessing happens every time (like original flip_edges)
-    // Clear previous data and recollect from scratch to match original behavior
-    m_internal_vertex_pairs.clear();
-    m_cache_initialized = false;
-    
+  ElementSource get_element_source(const C3t3& c3t3) const override {
+    // Perform global preprocessing (cache validity reset, inc_cells clear)
     perform_global_preprocessing(c3t3);
     
-    // Return cached vertex pairs (collected during preprocessing)
-    return CGAL::make_range(m_internal_vertex_pairs.begin(), m_internal_vertex_pairs.end());
+    // Collect internal vertex pairs fresh each time (execution framework stores container)
+    VertexPairContainer internal_vertex_pairs;  // Local container
+    get_internal_edges(c3t3, m_cell_selector, std::back_inserter(internal_vertex_pairs));
+    
+    // Return container by value (execution framework will store it)
+    return internal_vertex_pairs;
   }
 
   bool can_apply_operation(const ElementIteratorType& e, const C3t3& c3t3) const override {
@@ -254,7 +247,8 @@ class BoundaryEdgeFlipOperation
   : public EdgeFlipOperationBase<C3t3, CellSelector, Visitor>,
     public ElementaryOperation<C3t3, 
                           typename std::vector<std::pair<typename C3t3::Vertex_handle, typename C3t3::Vertex_handle>>::const_iterator,
-                          typename C3t3::Triangulation::Cell_handle>
+                          typename C3t3::Triangulation::Cell_handle,
+                          std::vector<std::pair<typename C3t3::Vertex_handle, typename C3t3::Vertex_handle>>>
 {
 public:
   using BaseClass = EdgeFlipOperationBase<C3t3, CellSelector, Visitor>;
@@ -263,8 +257,10 @@ public:
   
   using Base = ElementaryOperation<C3t3, 
                               typename VertexPairContainer::const_iterator,
-                              typename C3t3::Triangulation::Cell_handle>;
+                              typename C3t3::Triangulation::Cell_handle,
+                              VertexPairContainer>;
   using ElementIteratorType = typename Base::ElementIteratorType;
+  using ElementSource = typename Base::ElementSource;
   using Lock_zone = typename Base::Lock_zone;
 
   using BaseClass::m_c3t3;
@@ -287,10 +283,6 @@ private:
                                boost::unordered_map<Surface_patch_index, unsigned int>> s_boundary_vertices_valences;
   static thread_local boost::unordered_map<Vertex_handle, std::unordered_set<typename C3t3::Subdomain_index>> s_vertices_subdomain_indices;
   
-  // Cache for boundary vertex pairs - mutable to allow reinitialization every call
-  mutable VertexPairContainer m_boundary_vertex_pairs;
-  mutable bool m_cache_initialized = false;
-
 public:
   BoundaryEdgeFlipOperation(C3t3& c3t3,
                            CellSelector& cell_selector,
@@ -309,18 +301,6 @@ public:
     collectBoundaryEdgesAndComputeVerticesValences(c3t3, m_cell_selector, boundary_edges, 
                                                    s_boundary_vertices_valences, s_vertices_subdomain_indices);
     
-    // Collect boundary vertex pairs like original flipBoundaryEdges
-    if (!m_cache_initialized) {
-      // Collect boundary edges as vertex pairs to match original behavior
-      for (auto eit = c3t3.triangulation().finite_edges_begin();
-           eit != c3t3.triangulation().finite_edges_end(); ++eit) {
-        const auto& e = *eit;
-        if (is_boundary(c3t3, e, m_cell_selector)&& !c3t3.is_in_complex(e)) {
-          m_boundary_vertex_pairs.push_back(make_vertex_pair(e));
-        }
-      }
-      m_cache_initialized = true;
-    }
   }
 
   virtual bool should_process_element(const ElementIteratorType& e, const C3t3& c3t3) const override {
@@ -328,16 +308,24 @@ public:
     return true;
   }
 
-  CGAL::Iterator_range<typename VertexPairContainer::const_iterator> get_element_iterators(const C3t3& c3t3) const override {
-    // Boundary edge preprocessing happens every time (like original flip_edges)
-    // Clear previous data and recollect from scratch to match original behavior
-    m_boundary_vertex_pairs.clear();
-    m_cache_initialized = false;
-    
+  ElementSource get_element_source(const C3t3& c3t3) const override {
+    // Perform global preprocessing (valences computation, subdomain collection)
     perform_global_preprocessing(c3t3);
     
-    // Return cached boundary vertex pairs (collected during preprocessing)
-    return CGAL::make_range(m_boundary_vertex_pairs.begin(), m_boundary_vertex_pairs.end());
+    // Collect boundary vertex pairs fresh each time (execution framework stores container)
+    VertexPairContainer boundary_vertex_pairs;  // Local container
+    
+    // Collect boundary edges as vertex pairs to match original behavior
+    for (auto eit = c3t3.triangulation().finite_edges_begin();
+         eit != c3t3.triangulation().finite_edges_end(); ++eit) {
+      const auto& e = *eit;
+      if (is_boundary(c3t3, e, m_cell_selector) && !c3t3.is_in_complex(e)) {
+        boundary_vertex_pairs.push_back(make_vertex_pair(e));
+      }
+    }
+    
+    // Return container by value (execution framework will store it)
+    return boundary_vertex_pairs;
   }
 
   bool can_apply_operation(const ElementIteratorType& e, const C3t3& c3t3) const override {

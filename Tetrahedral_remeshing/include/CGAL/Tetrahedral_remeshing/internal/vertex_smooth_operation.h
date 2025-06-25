@@ -35,13 +35,16 @@ template<typename C3t3, typename SizingFunction, typename CellSelector, Smoothin
 class VertexSmoothOperation 
   : public ElementaryOperation<C3t3, 
                           typename C3t3::Triangulation::Finite_vertex_handles::iterator,
-                          typename C3t3::Triangulation::Cell_handle>
+                          typename C3t3::Triangulation::Cell_handle,
+                          CGAL::Iterator_range<typename C3t3::Triangulation::Finite_vertices_iterator>>
 {
 public:
   using Base = ElementaryOperation<C3t3, 
                               typename C3t3::Triangulation::Finite_vertex_handles::iterator,
-                              typename C3t3::Triangulation::Cell_handle>;
+                              typename C3t3::Triangulation::Cell_handle,
+                              CGAL::Iterator_range<typename C3t3::Triangulation::Finite_vertices_iterator>>;
   using ElementIteratorType = typename Base::ElementIteratorType;
+  using ElementSource = typename Base::ElementSource;
   using Lock_zone = typename Base::Lock_zone;
 
   typedef typename C3t3::Triangulation       Tr;
@@ -92,17 +95,14 @@ public:
     }
   }
 
-  CGAL::Iterator_range<ElementIteratorType> get_element_iterators(const C3t3& c3t3) const override {
+  ElementSource get_element_source(const C3t3& c3t3) const override {
     if constexpr (Domain == SmoothingDomain::SURFACE_VERTICES) {
-      return std::make_pair(c3t3.triangulation().finite_vertices_begin(),
-                           c3t3.triangulation().finite_vertices_end());
     } else if constexpr (Domain == SmoothingDomain::COMPLEX_EDGES) {
-      return CGAL::Iterator_range<ElementIteratorType>();
     } else if constexpr (Domain == SmoothingDomain::INTERNAL_VERTICES) {
-      return CGAL::Iterator_range<ElementIteratorType>();
     } else {
-      return CGAL::Iterator_range<ElementIteratorType>();
     }
+    std::cerr<<"VertexSmoothOperation::get_element_source not implemented"<<std::endl;
+    return c3t3.triangulation().finite_vertices();
   }
 
   bool can_apply_operation(const ElementIteratorType& v, const C3t3& c3t3) const override {

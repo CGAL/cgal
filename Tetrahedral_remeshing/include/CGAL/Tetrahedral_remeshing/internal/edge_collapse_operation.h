@@ -26,15 +26,18 @@ template<typename C3t3, typename SizingFunction, typename CellSelector>
 class EdgeCollapseOperation 
   : public ElementaryOperation<C3t3, 
                           typename C3t3::Triangulation::Finite_edges_iterator,
-                          typename C3t3::Triangulation::Cell_handle>
+                          typename C3t3::Triangulation::Cell_handle,
+                          CGAL::Iterator_range<typename C3t3::Triangulation::Finite_edges_iterator>>
 {
 public:
   using Base = ElementaryOperation<C3t3, 
                               typename C3t3::Triangulation::Finite_edges_iterator,
-                              typename C3t3::Triangulation::Cell_handle>;
+                              typename C3t3::Triangulation::Cell_handle,
+                              CGAL::Iterator_range<typename C3t3::Triangulation::Finite_edges_iterator>>;
   using Triangulation = typename C3t3::Triangulation;
   using Edge = typename Triangulation::Edge;
   using ElementIteratorType= typename Base::ElementIteratorType;
+  using ElementSource = typename Base::ElementSource;
   using Cell_handle = typename Triangulation::Cell_handle;
   using Vertex_handle = typename Triangulation::Vertex_handle;
   using Point = typename Triangulation::Point;
@@ -60,7 +63,7 @@ public:
     return true;
   }
 
-  typename CGAL::Iterator_range<EdgeIteratorType> get_element_iterators(const C3t3& c3t3) const override {
+  ElementSource get_element_source(const C3t3& c3t3) const override {
     return c3t3.triangulation().finite_edges();
   }
 

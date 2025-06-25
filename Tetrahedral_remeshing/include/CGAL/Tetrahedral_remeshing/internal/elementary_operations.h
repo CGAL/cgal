@@ -48,13 +48,14 @@ public:
   }
 };
 
-template<typename C3t3_, typename ElementIteratorType_, typename LockElementType_>
+template<typename C3t3_, typename ElementIteratorType_, typename LockElementType_, typename ElementSource_>
 class ElementaryOperation {
 public:
   using C3t3 = C3t3_;
   using Triangulation = typename C3t3::Triangulation;
   using ElementIteratorType = ElementIteratorType_;
   using LockElementType = LockElementType_;
+  using ElementSource = ElementSource_;
   using Lock_zone = std::vector<LockElementType>;
 
   ElementaryOperation() = default;
@@ -62,7 +63,7 @@ public:
 
   // Pure element logic methods
   virtual bool should_process_element(const ElementIteratorType& e, const C3t3& c3t3) const = 0;
-  virtual typename CGAL::Iterator_range<ElementIteratorType> get_element_iterators(const C3t3& c3t3) const = 0;
+  virtual ElementSource get_element_source(const C3t3& c3t3) const = 0;
   virtual bool can_apply_operation(const ElementIteratorType& e, const C3t3& c3t3) const = 0;
   virtual Lock_zone get_lock_zone(const ElementIteratorType& e, const C3t3& c3t3) const = 0;
   virtual bool execute_operation(const ElementIteratorType& e, C3t3& c3t3) = 0;
@@ -125,8 +126,14 @@ public:
   using Base = ElementaryOperationExecution<Operation>;
   using C3t3 = typename Operation::C3t3;
   using ElementIteratorType = typename Operation::ElementIteratorType;
+  using ElementSource = typename Operation::ElementSource;
   using Cell_handle = typename C3t3::Triangulation::Cell_handle;
 
+private:
+  // Store the container to keep iterators valid throughout execution
+  mutable ElementSource m_element_source;
+
+public:
   ElementaryOperationExecutionSequential() = default;
   ElementaryOperationExecutionSequential(const ElementaryOperationExecutionSequential&) = default;
   ElementaryOperationExecutionSequential(ElementaryOperationExecutionSequential&&) = default;
@@ -135,9 +142,11 @@ public:
 
   std::vector<ElementIteratorType> collect_candidates(const Operation& op, const C3t3& c3t3) const override {
     std::vector<ElementIteratorType> candidates;
-    auto [begin, end] = op.get_element_iterators(c3t3);
     
-    for (auto it = begin; it != end; ++it) {
+    // Store the container to keep iterators valid throughout execution
+    m_element_source = op.get_element_source(c3t3);
+    
+    for (auto it = m_element_source.begin(); it != m_element_source.end(); ++it) {
       if (op.should_process_element(it, c3t3)) {
         candidates.push_back(it);
       }
@@ -185,8 +194,14 @@ public:
   using Base = ElementaryOperationExecution<Operation>;
   using C3t3 = typename Operation::C3t3;
   using ElementIteratorType = typename Operation::ElementIteratorType;
+  using ElementSource = typename Operation::ElementSource;
   using Cell_handle = typename C3t3::Triangulation::Cell_handle;
 
+private:
+  // Store the container to keep iterators valid throughout execution
+  mutable ElementSource m_element_source;
+
+public:
   ElementaryOperationExecutionParallel() = default;
   ElementaryOperationExecutionParallel(const ElementaryOperationExecutionParallel&) = default;
   ElementaryOperationExecutionParallel(ElementaryOperationExecutionParallel&&) = default;
@@ -195,7 +210,11 @@ public:
 
   std::vector<ElementIteratorType> collect_candidates(const Operation& op, const C3t3& c3t3) const override {
     tbb::combinable<std::vector<ElementIteratorType>> local_candidates;
-    auto [begin, end] = op.get_element_iterators(c3t3);
+    
+    // Store the container to keep iterators valid throughout execution
+    m_element_source = op.get_element_source(c3t3);
+    auto begin = m_element_source.begin();
+    auto end = m_element_source.end();
     
     tbb::parallel_for(tbb::blocked_range<decltype(begin)>(begin, end),
       [&](const auto& r) {

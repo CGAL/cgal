@@ -16,7 +16,7 @@ namespace CGAL {
 namespace Tetrahedral_remeshing {
 namespace internal {
 
-template <typename C3t3, typename SizingFunction, typename CellSelector> class Elementary_remesher
+template <typename C3t3, typename SizingFunction, typename CellSelector, typename Visitor> class Elementary_remesher
 {
   typedef typename C3t3::Triangulation Tr;
   typedef typename Tr::Geom_traits::FT FT;
@@ -27,7 +27,8 @@ template <typename C3t3, typename SizingFunction, typename CellSelector> class E
 
   typedef EdgeSplitOperation<C3t3, SizingFunction, CellSelector> EdgeSplitOp;
   typedef EdgeCollapseOperation<C3t3, SizingFunction, CellSelector> EdgeCollapseOp;
-  typedef EdgeFlipOperation<C3t3, CellSelector> EdgeFlipOp;
+  typedef InternalEdgeFlipOperation<C3t3, CellSelector, Visitor> InternalEdgeFlipOp;
+  typedef BoundaryEdgeFlipOperation<C3t3, CellSelector, Visitor> BoundaryEdgeFlipOp;
   typedef VertexSmoothOperation<C3t3, SizingFunction, CellSelector, SmoothingDomain::INTERNAL_VERTICES>
       InternalVertexSmoothOp;
   typedef VertexSmoothOperation<C3t3, SizingFunction, CellSelector, SmoothingDomain::SURFACE_VERTICES>
@@ -39,7 +40,7 @@ template <typename C3t3, typename SizingFunction, typename CellSelector> class E
 public:
 
   static void split(C3t3& c3t3, const SizingFunction& sizing, const CellSelector& cell_selector, const bool protect_boundaries) {
-    EdgeSplitOp split_op(c3t3, sizing, cell_selector, protect_boundaries);
+    EdgeSplitOp split_op( sizing, cell_selector, protect_boundaries);
     ExecutionPolicy<EdgeSplitOp> executor;
     executor.execute(split_op, c3t3);
   }
@@ -50,10 +51,18 @@ public:
      executor.execute(collapse_op, c3t3);
   }
 
-  static void flip(C3t3& c3t3, const CellSelector& cell_selector) {
-     EdgeFlipOp flip_op(c3t3, cell_selector);
-     ExecutionPolicy<EdgeFlipOp> executor;
-     executor.execute(flip_op, c3t3);
+  static void flip(C3t3& c3t3, CellSelector& cell_selector,  Visitor& visitor, const bool protect_boundaries) {
+     // Flip internal edges
+     InternalEdgeFlipOp internal_flip_op(c3t3, cell_selector, protect_boundaries, visitor);
+     ExecutionPolicy<InternalEdgeFlipOp> internal_executor;
+     internal_executor.execute(internal_flip_op, c3t3);
+     
+     // Flip boundary edges if not protecting boundaries
+     if (!protect_boundaries) {
+       BoundaryEdgeFlipOp boundary_flip_op(c3t3, cell_selector, protect_boundaries, visitor);
+       ExecutionPolicy<BoundaryEdgeFlipOp> boundary_executor;
+       boundary_executor.execute(boundary_flip_op, c3t3);
+     }
   }
 
   static void smooth(
