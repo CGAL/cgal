@@ -17,11 +17,14 @@
 
 #include <unordered_set>
 
+#include <CGAL/Iso_cuboid_3.h>
+
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <CGAL/convex_hull_3.h>
 #include <CGAL/Polygon_mesh_processing/bbox.h>
+#include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/triangle.h>
 #include <CGAL/Polygon_mesh_processing/shape_predicates.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
@@ -30,7 +33,9 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/IO/polygon_soup_io.h>
 
-#undef CGAL_LINKED_WITH_TBB
+#include <CGAL/AABB_tree.h>
+#include <CGAL/AABB_traits_3.h>
+#include <CGAL/AABB_face_graph_triangle_primitive.h>
 
 #ifdef CGAL_LINKED_WITH_TBB
 #include <atomic>
@@ -45,6 +50,8 @@
 #include <CGAL/Memory_sizer.h>
 
 #include <queue>
+
+extern std::size_t cidx;
 
 struct hash {
   std::size_t operator()(const std::array<unsigned int, 3> &a) const {
@@ -97,6 +104,55 @@ void export_grid(const std::string& filename, const Bbox_3& bb, std::vector<int8
         switch (vox(x, y, z)) {
         case INSIDE:
           stream << "175 175 100" << std::endl;
+          break;
+        case OUTSIDE:
+          stream << "125 125 175" << std::endl;
+          break;
+        case SURFACE:
+          stream << "200 100 100" << std::endl;
+          break;
+        default:
+          stream << "0 0 0" << std::endl;
+          break;
+        }
+      }
+
+  stream.close();
+}
+
+template<typename Filter>
+void export_grid(const std::string& filename, const Bbox_3& bb, std::vector<int8_t>& grid, const Vec3_uint& grid_size, double voxel_size, Filter &filter) {
+  const auto vox = [&grid, &grid_size](unsigned int x, unsigned int y, unsigned int z) -> int8_t& {
+    return grid[z + (y * grid_size[2]) + (x * grid_size[1] * grid_size[2])];
+    };
+  std::ofstream stream(filename);
+
+  std::size_t count = 0;
+  for (unsigned int x = 0; x < grid_size[0]; x++)
+    for (unsigned int y = 0; y < grid_size[1]; y++)
+      for (unsigned int z = 0; z < grid_size[2]; z++)
+        if (filter(vox(x, y, z))) count++;
+
+  stream <<
+    "ply" << std::endl <<
+    "format ascii 1.0" << std::endl <<
+    "element vertex " << count << std::endl <<
+    "property double x" << std::endl <<
+    "property double y" << std::endl <<
+    "property double z" << std::endl <<
+    "property uchar red" << std::endl <<
+    "property uchar green" << std::endl <<
+    "property uchar blue" << std::endl <<
+    "end_header" << std::endl;
+
+  for (unsigned int x = 0; x < grid_size[0]; x++)
+    for (unsigned int y = 0; y < grid_size[1]; y++)
+      for (unsigned int z = 0; z < grid_size[2]; z++) {
+        if (!filter(vox(x, y, z))) continue;
+        stream << (bb.xmin() + (x + 0.5) * voxel_size) << " " << (bb.ymin() + (y + 0.5) * voxel_size) << " " << (bb.zmin() + (z + 0.5) * voxel_size) << " ";
+        switch (vox(x, y, z)) {
+        case INSIDE:
+            stream << "175 175 100" << std::endl;
           break;
         case OUTSIDE:
           stream << "125 125 175" << std::endl;
@@ -175,6 +231,17 @@ void export_points(const std::string& filename, Range& points) {
   stream.close();
 }
 
+template<typename Box>
+Box box_union(const Box& a, const Box& b) {
+  using FT = decltype(a.xmin());
+  return Box(
+    (std::min<FT>)(a.xmin(), b.xmin()),
+    (std::min<FT>)(a.ymin(), b.ymin()),
+    (std::min<FT>)(a.zmin(), b.zmin()),
+    (std::max<FT>)(a.xmax(), b.xmax()),
+    (std::max<FT>)(a.ymax(), b.ymax()),
+    (std::max<FT>)(a.zmax(), b.zmax()));
+}
 
 template<typename FT>
 std::tuple<Vec3_uint, FT> calculate_grid_size(Bbox_3& bb, const std::size_t number_of_voxels) {
@@ -198,6 +265,19 @@ std::tuple<Vec3_uint, FT> calculate_grid_size(Bbox_3& bb, const std::size_t numb
   return { Vec3_uint{static_cast<unsigned int>(bb.x_span() / voxel_size + 0.5), static_cast<unsigned int>(bb.y_span() / voxel_size + 0.5), static_cast<unsigned int>(bb.z_span() / voxel_size + 0.5)}, voxel_size};
 }
 
+template<typename GeomTraits, typename PolygonMesh, typename NamedParameters = parameters::Default_named_parameters>
+const typename GeomTraits::Point_3 &point(typename boost::graph_traits<PolygonMesh>::face_descriptor fd,
+  const PolygonMesh& pmesh,
+  const NamedParameters& np = parameters::default_values())
+{
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+  typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type
+    vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+      get_const_property_map(CGAL::vertex_point, pmesh));
+
+  return get(vpm, target(halfedge(fd, pmesh), pmesh));
+}
 
 template<typename FaceGraph, typename FT>
 Bbox_uint grid_bbox_face(const FaceGraph& mesh, const typename boost::graph_traits<FaceGraph>::face_descriptor fd, const Bbox_3& bb, const FT& voxel_size) {
@@ -213,15 +293,15 @@ Bbox_uint grid_bbox_face(const FaceGraph& mesh, const typename boost::graph_trai
     });
 }
 
-template<typename FT>
-Bbox_3 bbox_voxel(const Vec3_uint& voxel, const Bbox_3& bb, const FT& voxel_size) {
+template<typename GeomTraits>
+Iso_cuboid_3<GeomTraits> bbox_voxel(const Vec3_uint& voxel, const Bbox_3& bb, const typename GeomTraits::FT& voxel_size) {
   return Bbox_3(
     bb.xmin() + voxel[0] * voxel_size,
     bb.ymin() + voxel[1] * voxel_size,
     bb.zmin() + voxel[2] * voxel_size,
-    bb.xmax() + (voxel[0] + 1) * voxel_size,
-    bb.ymax() + (voxel[1] + 1) * voxel_size,
-    bb.zmax() + (voxel[2] + 1) * voxel_size
+    bb.xmin() + (voxel[0] + 1) * voxel_size,
+    bb.ymin() + (voxel[1] + 1) * voxel_size,
+    bb.zmin() + (voxel[2] + 1) * voxel_size
     );
 }
 
@@ -483,11 +563,72 @@ void naive_floodfill(std::vector<int8_t>& grid, const Vec3_uint& grid_size) {
   }
 }
 
+
+template<typename FaceGraph, typename GeomTraits>
+void rayshooting_fill(std::vector<int8_t>& grid, const Vec3_uint& grid_size, const Bbox_3& bb, const typename GeomTraits::FT& voxel_size, const FaceGraph &mesh) {
+  const auto vox = [&grid, &grid_size](unsigned int x, unsigned int y, unsigned int z) -> int8_t& {
+    return grid[z + (y * grid_size[2]) + (x * grid_size[1] * grid_size[2])];
+    };
+  using face_descriptor = typename boost::graph_traits<FaceGraph>::face_descriptor;
+  using halfedge_descriptor = typename boost::graph_traits<FaceGraph>::halfedge_descriptor;
+
+  using Point_3 = typename GeomTraits::Point_3;
+  using Vector_3 = typename GeomTraits::Vector_3;
+  using Ray_3 = typename GeomTraits::Ray_3;
+
+  using Primitive = CGAL::AABB_face_graph_triangle_primitive<FaceGraph>;
+  using Traits = CGAL::AABB_traits_3<GeomTraits, Primitive>;
+  using Tree = CGAL::AABB_tree<Traits>;
+  using Primitive_id = typename Tree::Primitive_id;
+  using Ray_intersection = std::optional<typename Tree::template Intersection_and_primitive_id<Ray_3>::Type>;
+
+  Tree tree(faces(mesh).first, faces(mesh).second, mesh);
+
+  std::array<Vector_3, 6> dirs = {Vector_3{1, 0, 0}, Vector_3{-1, 0, 0}, Vector_3{0, 1, 0}, Vector_3{0,-1, 0}, Vector_3{0, 0, 1}, Vector_3{0, 0,-1}};
+
+  for (std::size_t x = 0;x<grid_size[0];x++)
+    for (std::size_t y = 0;y<grid_size[1];y++)
+      for (std::size_t z = 0;z<grid_size[2];z++) {
+        if (vox(x, y, z) == SURFACE)
+          continue;
+
+        Point_3 c(bb.xmin() + (x + 0.5) * voxel_size, bb.ymin() + (y + 0.5) * voxel_size, bb.zmin() + (z + 0.5) * voxel_size);
+
+        unsigned int inside = 0;
+        unsigned int outside = 0;
+
+        for (std::size_t i = 0; i < 6; i++) {
+          Ray_intersection intersection = tree.first_intersection(Ray_3(c, dirs[i]));
+          if (intersection)
+          {
+            // A segment intersection is not helpful as it means the triangle normal is orthogonal to the ray
+            if (std::get_if<Point_3>(&(intersection->first))) {
+              face_descriptor fd = intersection->second;
+              Vector_3 n = compute_face_normal(fd, mesh);
+              if (dirs[i] * n > 0) {
+                inside++;
+              }
+              else {
+                outside++;
+              }
+            }
+          }
+        }
+
+        if (inside >= 3 && outside == 0) {
+          vox(x, y, z) = INSIDE;
+        }
+        else
+          vox(x, y, z) = OUTSIDE;
+      }
+}
+
+
 template<typename GeomTraits>
 struct Convex_hull {
   using FT = typename GeomTraits::FT;
   using Point_3 = typename GeomTraits::Point_3;
-  Bbox_3 bbox;
+  Iso_cuboid_3<GeomTraits> bbox;
   FT voxel_volume;
   FT volume;
   FT volume_error;
@@ -542,6 +683,7 @@ template<typename GeomTraits>
 struct Candidate {
   using FT = typename GeomTraits::FT;
   using Point_3 = typename GeomTraits::Point_3;
+  std::size_t index;
   std::vector<Vec3_uint> surface;
   std::vector<Vec3_uint> new_surface;
   std::vector<Vec3_uint> inside;
@@ -549,8 +691,8 @@ struct Candidate {
   Bbox_uint bbox;
   Convex_hull<GeomTraits> ch;
 
-  Candidate() : depth(0), bbox({ 0, 0, 0 }, { 0, 0, 0 }) {}
-  Candidate(std::size_t depth, Bbox_uint &bbox) : depth(depth), bbox(bbox) {}
+  Candidate() : depth(0), bbox({ 0, 0, 0 }, { 0, 0, 0 }) {index = cidx++;}
+  Candidate(std::size_t depth, Bbox_uint &bbox) : depth(depth), bbox(bbox) { index = cidx++; }
 };
 
 template<typename GeomTraits>
@@ -599,15 +741,46 @@ void convex_hull(const PointRange& pts, std::vector<Point_3> &hull_points, std::
   }
 }
 
+void enlarge(Bbox_uint& bbox, const Vec3_uint& v) {
+  bbox.lower[0] = (std::min<unsigned int>)(bbox.lower[0], v[0]);
+  bbox.lower[1] = (std::min<unsigned int>)(bbox.lower[1], v[1]);
+  bbox.lower[2] = (std::min<unsigned int>)(bbox.lower[2], v[2]);
+  bbox.upper[0] = (std::max<unsigned int>)(bbox.upper[0], v[0]);
+  bbox.upper[1] = (std::max<unsigned int>)(bbox.upper[1], v[1]);
+  bbox.upper[2] = (std::max<unsigned int>)(bbox.upper[2], v[2]);
+}
+
 template<typename GeomTraits>
 void compute_candidate(Candidate<GeomTraits> &c, const Bbox_3& bb, typename GeomTraits::FT voxel_size) {
   using Point_3 = typename GeomTraits::Point_3;
   using FT = typename GeomTraits::FT;
 
+  c.bbox.lower = c.bbox.upper = c.surface[0];
+
+  // update bounding box
   std::unordered_set<Point_3> voxel_points;
 
   // Is it more efficient than using std::vector with plenty of duplicates?
   for (const Vec3_uint& v : c.surface) {
+    enlarge(c.bbox, v);
+    FT xmin = bb.xmin() + v[0] * voxel_size;
+    FT ymin = bb.ymin() + v[1] * voxel_size;
+    FT zmin = bb.zmin() + v[2] * voxel_size;
+    FT xmax = bb.xmin() + (v[0] + 1) * voxel_size;
+    FT ymax = bb.ymin() + (v[1] + 1) * voxel_size;
+    FT zmax = bb.zmin() + (v[2] + 1) * voxel_size;
+    voxel_points.insert(Point_3(xmin, ymin, zmin));
+    voxel_points.insert(Point_3(xmin, ymax, zmin));
+    voxel_points.insert(Point_3(xmin, ymin, zmax));
+    voxel_points.insert(Point_3(xmin, ymax, zmax));
+    voxel_points.insert(Point_3(xmax, ymin, zmin));
+    voxel_points.insert(Point_3(xmax, ymax, zmin));
+    voxel_points.insert(Point_3(xmax, ymin, zmax));
+    voxel_points.insert(Point_3(xmax, ymax, zmax));
+  }
+
+  for (const Vec3_uint& v : c.new_surface) {
+    enlarge(c.bbox, v);
     FT xmin = bb.xmin() + v[0] * voxel_size;
     FT ymin = bb.ymin() + v[1] * voxel_size;
     FT zmin = bb.zmin() + v[2] * voxel_size;
@@ -630,7 +803,7 @@ void compute_candidate(Candidate<GeomTraits> &c, const Bbox_3& bb, typename Geom
 
   c.ch.volume = volume<GeomTraits>(c.ch.points, c.ch.indices);
 
-  assert(c.ch.volume > 0);
+  CGAL_assertion(c.ch.volume > 0);
 
   c.ch.voxel_volume = (voxel_size * voxel_size * voxel_size) * (c.inside.size() + c.surface.size() + c.new_surface.size());
   c.ch.volume_error = CGAL::abs(c.ch.volume - c.ch.voxel_volume) / c.ch.voxel_volume;
@@ -644,26 +817,37 @@ void fill_grid(Candidate<GeomTraits> &c, std::vector<int8_t> &grid, const FaceGr
 
   for (const typename boost::graph_traits<FaceGraph>::face_descriptor fd : faces(mesh)) {
     Bbox_uint face_bb = grid_bbox_face(mesh, fd, bb, voxel_size);
-    assert(face_bb.lower[0] <= face_bb.upper[0]);
-    assert(face_bb.lower[1] <= face_bb.upper[1]);
-    assert(face_bb.lower[2] <= face_bb.upper[2]);
-    assert(face_bb.upper[0] < grid_size[0]);
-    assert(face_bb.upper[1] < grid_size[1]);
-    assert(face_bb.upper[2] < grid_size[2]);
+    CGAL_assertion(face_bb.lower[0] <= face_bb.upper[0]);
+    CGAL_assertion(face_bb.lower[1] <= face_bb.upper[1]);
+    CGAL_assertion(face_bb.lower[2] <= face_bb.upper[2]);
+    CGAL_assertion(face_bb.upper[0] < grid_size[0]);
+    CGAL_assertion(face_bb.upper[1] < grid_size[1]);
+    CGAL_assertion(face_bb.upper[2] < grid_size[2]);
     for (unsigned int x = face_bb.lower[0]; x <= face_bb.upper[0]; x++)
       for (unsigned int y = face_bb.lower[1]; y <= face_bb.upper[1]; y++)
-        for (unsigned int z = face_bb.lower[2]; z <= face_bb.upper[2]; z++)
-          if (do_intersect(triangle(fd, mesh), bbox_voxel({x, y, z}, bb, voxel_size)))
+        for (unsigned int z = face_bb.lower[2]; z <= face_bb.upper[2]; z++) {
+          Iso_cuboid_3 box = bbox_voxel<GeomTraits>({ x, y, z }, bb, voxel_size);
+          const typename GeomTraits::Point_3 &p = point<GeomTraits>(fd, mesh);
+          if (do_intersect(triangle(fd, mesh), box) || box.has_on_bounded_side(p))
             vox(x, y, z) = Grid_cell::SURFACE;
+        }
   }
 
   //export_grid("before.ply", bb, grid, grid_size, voxel_size);
+  auto filterS = [](const int8_t& l) -> bool {return l == SURFACE; };
+  auto filterO = [](const int8_t& l) -> bool {return l == OUTSIDE; };
+  auto filterI = [](const int8_t& l) -> bool {return l == INSIDE; };
+  //export_grid("before_surface_ray.ply", bb, grid, grid_size, voxel_size, filterS);
+  //export_grid("before_outside.ply", bb, grid, grid_size, voxel_size, filterO);
 
   // For now, only do floodfill
   //label_floodfill(grid, grid_size);
-  naive_floodfill(grid, grid_size);
+  //naive_floodfill(grid, grid_size);
+  rayshooting_fill<FaceGraph, GeomTraits>(grid, grid_size, bb, voxel_size, mesh);
+ // export_grid("after_inside_ray.ply", bb, grid, grid_size, voxel_size, filterI);
+  //export_grid("after_outside_ray.ply", bb, grid, grid_size, voxel_size, filterO);
 
-  c.bbox.upper = grid_size;
+  c.bbox.upper = {grid_size[0] - 1, grid_size[1] - 1, grid_size[2] - 1};
 
   for (unsigned int x = 0; x < grid_size[0]; x++)
     for (unsigned int y = 0; y < grid_size[1]; y++)
@@ -673,9 +857,11 @@ void fill_grid(Candidate<GeomTraits> &c, std::vector<int8_t> &grid, const FaceGr
         else if (vox(x, y, z) == SURFACE)
           c.surface.push_back({ x, y, z });
 
-  check_grid(grid, grid_size);
+  //std::cout << "remove check grid and export" << std::endl;
+  //check_grid(grid, grid_size);
 
-  //export_grid("after_fill.ply", bb, grid, grid_size, voxel_size);
+  //export_grid("after_inside.ply", bb, grid, grid_size, voxel_size, filterI);
+  //export_grid("after_outside.ply", bb, grid, grid_size, voxel_size, filterO);
 }
 
 template<typename GeomTraits, typename FaceGraph>
@@ -690,41 +876,44 @@ void split(std::vector<Candidate<GeomTraits> > &candidates, Candidate<GeomTraits
   Candidate<GeomTraits> upper(c.depth + 1, c.bbox);
   Candidate<GeomTraits> lower(c.depth + 1, c.bbox);
 
-  upper.bbox.lower[axis] = location;
-  lower.bbox.upper[axis] = location - 1;
+  CGAL_assertion(c.bbox.lower[axis] < location);
+  CGAL_assertion(c.bbox.upper[axis] > location);
+
+  upper.bbox.lower[axis] = location + 1;
+  lower.bbox.upper[axis] = location;
 
   for (const Vec3_uint& v : c.surface) {
-    assert(c.bbox.lower[0] <= v[0] && v[0] <= c.bbox.upper[0]);
-    assert(c.bbox.lower[1] <= v[1] && v[1] <= c.bbox.upper[1]);
-    assert(c.bbox.lower[2] <= v[2] && v[2] <= c.bbox.upper[2]);
-    if (location <= v[axis])
+    CGAL_assertion(c.bbox.lower[0] <= v[0] && v[0] <= c.bbox.upper[0]);
+    CGAL_assertion(c.bbox.lower[1] <= v[1] && v[1] <= c.bbox.upper[1]);
+    CGAL_assertion(c.bbox.lower[2] <= v[2] && v[2] <= c.bbox.upper[2]);
+    if (location < v[axis])
       upper.surface.push_back(v);
     else
       lower.surface.push_back(v);
   }
 
   for (const Vec3_uint& v : c.new_surface) {
-    assert(c.bbox.lower[0] <= v[0] && v[0] <= c.bbox.upper[0]);
-    assert(c.bbox.lower[1] <= v[1] && v[1] <= c.bbox.upper[1]);
-    assert(c.bbox.lower[2] <= v[2] && v[2] <= c.bbox.upper[2]);
-    if (location <= v[axis])
+    CGAL_assertion(c.bbox.lower[0] <= v[0] && v[0] <= c.bbox.upper[0]);
+    CGAL_assertion(c.bbox.lower[1] <= v[1] && v[1] <= c.bbox.upper[1]);
+    CGAL_assertion(c.bbox.lower[2] <= v[2] && v[2] <= c.bbox.upper[2]);
+    if (location < v[axis])
       upper.new_surface.push_back(v);
     else
       lower.new_surface.push_back(v);
   }
 
   for (const Vec3_uint& v : c.inside) {
-    assert(c.bbox.lower[0] <= v[0] && v[0] <= c.bbox.upper[0]);
-    assert(c.bbox.lower[1] <= v[1] && v[1] <= c.bbox.upper[1]);
-    assert(c.bbox.lower[2] <= v[2] && v[2] <= c.bbox.upper[2]);
-    if (location <= v[axis]) {
-      if (upper.bbox.lower[axis] == v[axis])
+    CGAL_assertion(c.bbox.lower[0] <= v[0] && v[0] <= c.bbox.upper[0]);
+    CGAL_assertion(c.bbox.lower[1] <= v[1] && v[1] <= c.bbox.upper[1]);
+    CGAL_assertion(c.bbox.lower[2] <= v[2] && v[2] <= c.bbox.upper[2]);
+    if (location < v[axis]) {
+      if ((location + 1) == v[axis])
         upper.new_surface.push_back(v);
       else
         upper.inside.push_back(v);
     }
     else {
-      if (lower.bbox.upper[axis] == v[axis])
+      if (location == v[axis])
         lower.new_surface.push_back(v);
       else
         lower.inside.push_back(v);
@@ -743,16 +932,172 @@ void split(std::vector<Candidate<GeomTraits> > &candidates, Candidate<GeomTraits
   }
 }
 
+std::size_t concavity(const Vec3_uint& s, const Vec3_uint& e, int axis, std::vector<int8_t>& grid, const Vec3_uint& grid_size) {
+  const auto vox = [&grid, &grid_size](const Vec3_uint &v) -> int8_t& {
+    return grid[v[2] + (v[1] * grid_size[2]) + (v[0] * grid_size[1] * grid_size[2])];
+    };
+  std::size_t i;
+  for (i = s[axis];i<e[axis];i++) {
+    Vec3_uint v = s;
+    v[axis] = i;
+    if (vox(v) != OUTSIDE)
+      break;
+  }
+
+  if (i == e[axis])
+    return 0;
+
+  std::size_t j;
+  for (j = e[axis]; j > s[axis]; j--) {
+    Vec3_uint v = s;
+    v[axis] = j;
+    if (vox(v) != OUTSIDE)
+      break;
+  }
+
+  std::size_t res = (i - s[axis]) + (e[axis] - j);
+  if(res >= grid_size[axis])
+    std::cout << "violation!" << std::endl;
+  return (i - s[axis]) + (e[axis] - j);
+}
+
+void choose_splitting_location_by_concavity(unsigned int& axis, unsigned int& location, const Bbox_uint &bbox, std::vector<int8_t>& grid, const Vec3_uint& grid_size) {
+  std::size_t length = bbox.upper[axis] - bbox.lower[axis] + 1;
+
+  CGAL_assertion(length >= 8);
+
+  std::size_t idx0, idx1, idx2;
+
+  switch(axis) {
+  case 0:
+    idx0 = 1;
+    idx1 = 2;
+    idx2 = 0;
+    break;
+  case 1:
+    idx0 = 0;
+    idx1 = 2;
+    idx2 = 1;
+    break;
+  case 2:
+    idx0 = 0;
+    idx1 = 1;
+    idx2 = 2;
+    break;
+  default:
+    CGAL_assertion(false);
+  }
+
+  std::vector<int> diam(length, 0), diam2(length, 0);
+
+  for (std::size_t i = bbox.lower[idx2]; i <= bbox.upper[idx2]; i++) {
+    for (std::size_t j = bbox.lower[idx0]; j <= bbox.upper[idx0]; j++) {
+      Vec3_uint s, e;
+      s[idx2] = i;
+      s[idx1] = bbox.lower[idx1];
+      s[idx0] = j;
+      e[idx2] = i;
+      e[idx1] = bbox.upper[idx1];
+      e[idx0] = j;
+      diam[i - bbox.lower[idx2]] += concavity(s, e, idx1, grid, grid_size);
+    }
+  }
+
+  for (std::size_t i = bbox.lower[idx2]; i <= bbox.upper[idx2]; i++) {
+    for (std::size_t j = bbox.lower[idx1]; j <= bbox.upper[idx1]; j++) {
+      Vec3_uint s, e;
+      s[idx0] = bbox.lower[idx0];
+      s[idx2] = i;
+      s[idx1] = j;
+      e[idx0] = bbox.upper[idx0];
+      e[idx2] = i;
+      e[idx1] = j;
+      diam2[i - bbox.lower[idx2]] += concavity(s, e, idx0, grid, grid_size);
+    }
+  }
+
+  // Skip initial border
+  std::size_t border = (length / 10) + 0.5;
+  std::size_t pos1, end1 = length;
+  int grad = diam[0] - diam[1];
+  for (pos1 = 2; pos1 < border; pos1++) {
+    int grad1 = diam[pos1 - 1] - diam[pos1];
+    // Stop if the gradient flips or flattens significantly
+    if (!(grad * grad1 > 0 && grad1 > (grad>>1)))
+      break;
+    if (grad < grad1)
+      grad = grad1;
+  }
+
+  grad = diam[length - 1] - diam[length - 2];
+  for (end1 = length - 3; end1 > (length - border - 1); end1--) {
+    int grad1 = diam[end1 + 1] - diam[end1];
+    // Stop if the gradient flips or flattens significantly
+    if (!(grad * grad1 > 0 && grad1 > (grad >> 1)))
+      break;
+    if (grad < grad1)
+      grad = grad1;
+  }
+
+  std::size_t pos2, end2 = length;
+  grad = diam2[0] - diam2[1];
+  for (pos2 = 2; pos2 < border; pos2++) {
+    int grad2 = diam[pos2 - 1] - diam[pos2];
+    // Stop if the gradient flips or flattens significantly
+    if (!(grad * grad2 > 0 && grad2 > (grad >> 1)))
+      break;
+    if (grad < grad2)
+      grad = grad2;
+  }
+
+  grad = diam2[length - 1] - diam2[length - 2];
+  for (end2 = length - 3; end2 > (length - border - 1); end2--) {
+    int grad2 = diam[end2 + 1] - diam[end2];
+    // Stop if the gradient flips or flattens significantly
+    if (!(grad * grad2 > 0 && grad2 > (grad >> 1)))
+      break;
+    if (grad < grad2)
+      grad = grad2;
+  }
+
+  std::size_t conc1 = abs(diam[pos1 + 1] - diam[pos1]);
+  std::size_t conc2 = abs(diam2[pos2 + 1] - diam2[pos2]);
+
+  for (std::size_t i = pos1;i<end1;i++)
+      if (abs(diam[i] - diam[i - 1]) > conc1) {
+        pos1 = i - 1;
+        conc1 = abs(diam[i] - diam[i - 1]);
+      }
+
+  for (std::size_t i = pos2; i < end2; i++)
+      if (abs(diam2[i] - diam2[i - 1]) > conc2) {
+        pos2 = i - 1;
+        conc2 = abs(diam2[i] - diam2[i - 1]);
+      }
+
+  if (conc2 > conc1)
+    pos1 = pos2;
+
+  if (pos1 < 2 || (length - 3) < pos1)
+    location = (bbox.upper[axis] + bbox.lower[axis]) / 2;
+  else
+    location = ((conc1 > conc2) ? pos1 : pos2) + bbox.lower[axis];
+}
+
 template<typename GeomTraits, typename NamedParameters>
 void choose_splitting_plane(Candidate<GeomTraits>& c, unsigned int &axis, unsigned int &location, std::vector<int8_t>& grid, const Vec3_uint& grid_size, const NamedParameters& np) {
   //Just split the voxel bbox along 'axis' after voxel index 'location'
+  const bool find_best_plane = parameters::choose_parameter(parameters::get_parameter(np, internal_np::find_best_splitter), true);
   const std::array<unsigned int, 3> span = {c.bbox.upper[0] - c.bbox.lower[0], c.bbox.upper[1] - c.bbox.lower[1], c.bbox.upper[2] - c.bbox.lower[2]};
 
   // Split largest axis
   axis = (span[0] >= span[1]) ? 0 : 1;
   axis = (span[axis] >= span[2]) ? axis : 2;
 
-  location = (c.bbox.upper[axis] + c.bbox.lower[axis]) / 2;
+  if (span[axis] >= 8 && find_best_plane)
+    choose_splitting_location_by_concavity(axis, location, c.bbox, grid, grid_size);
+  else
+    location = (c.bbox.upper[axis] + c.bbox.lower[axis]) / 2;
 }
 
 template<typename GeomTraits, typename NamedParameters>
@@ -763,7 +1108,7 @@ bool finished(Candidate<GeomTraits> &c, const NamedParameters& np) {
   if (c.ch.volume_error <= max_error)
     return true;
 
-  if (c.depth >= max_depth)
+  if (c.depth > max_depth)
     return true;
 
   return false;
@@ -775,21 +1120,37 @@ void recurse(std::vector<Candidate<GeomTraits>>& candidates, std::vector<int8_t>
   const FT max_error = parameters::choose_parameter(parameters::get_parameter(np, internal_np::volume_error), 1);
   const std::size_t max_depth = parameters::choose_parameter(parameters::get_parameter(np, internal_np::maximum_depth), 10);
 
+  static std::size_t step = 0;
+
   std::vector<internal::Candidate<GeomTraits>> final_candidates;
 
   while (!candidates.empty()) {
+    std::cout << step++ << ": " << candidates.size() << std::endl;
     std::vector<Candidate<GeomTraits>> former_candidates = std::move(candidates);
     for (Candidate<GeomTraits>& c : former_candidates) {
-      // check loop conditions here?
+
       if (finished(c, np)) {
-        c.ch.bbox = CGAL::bbox_3(c.ch.points.begin(), c.ch.points.end());
-        c.ch.bbox.scale(1.1); // Enlarge bounding boxes by a small factor for the following merge
+        CGAL::Bbox_3 bbox = CGAL::bbox_3(c.ch.points.begin(), c.ch.points.end());
+        bbox.scale(1.1);
+        c.ch.bbox = bbox;
         final_candidates.push_back(std::move(c));
         continue;
       }
       unsigned int axis = 0, location = 0;
       choose_splitting_plane(c, axis, location, grid, grid_size, np);
+      //std::cout << c.index << " " << c.ch.volume_error << " split " << axis << "a " << location << " (" << c.bbox.lower[0] << "," << c.bbox.lower[1] << "," << c.bbox.lower[2] << "," << c.bbox.upper[0] << "," << c.bbox.upper[1] << "," << c.bbox.upper[2] << ")" << std::endl;
       split(candidates, c, axis, location, grid, grid_size, bbox, voxel_size, np);
+
+//       if (!candidates.empty()) {
+//         auto& b = candidates[candidates.size() - 1];
+//         std::cout << b.index << " (" << b.bbox.lower[0] << "," << b.bbox.lower[1] << "," << b.bbox.lower[2] << "," << b.bbox.upper[0] << "," << b.bbox.upper[1] << "," << b.bbox.upper[2] << ")" << b.ch.volume_error << std::endl;
+//         CGAL::IO::write_polygon_soup(std::to_string(b.index) + " " + std::to_string(c.index) + ".off", b.ch.points, b.ch.indices);
+//       }
+//       if (candidates.size() >= 2) {
+//         auto& a = candidates[candidates.size() - 2];
+//         std::cout << a.index << " (" << a.bbox.lower[0] << "," << a.bbox.lower[1] << "," << a.bbox.lower[2] << "," << a.bbox.upper[0] << "," << a.bbox.upper[1] << "," << a.bbox.upper[2] << ")" << a.ch.volume_error << std::endl;
+//         CGAL::IO::write_polygon_soup(std::to_string(a.index) + " " + std::to_string(c.index) + ".off", a.ch.points, a.ch.indices);
+//       }
     }
   }
 
@@ -856,7 +1217,7 @@ void merge(std::vector<Convex_hull<GeomTraits>>& candidates, std::vector<int8_t>
     m.ch = num_hulls++;
     Convex_hull<GeomTraits>& ch = hulls[m.ch];
 #endif
-    ch.bbox = ci.bbox + cj.bbox;
+    ch.bbox = box_union(ci.bbox, cj.bbox);
     std::vector<Point_3> pts(ci.points.begin(), ci.points.end());
     pts.reserve(pts.size() + cj.points.size());
     std::copy(cj.points.begin(), cj.points.end(), std::back_inserter(pts));
@@ -881,7 +1242,7 @@ void merge(std::vector<Convex_hull<GeomTraits>>& candidates, std::vector<int8_t>
 
         m.ch = num_hulls++;
         Convex_hull<GeomTraits>& ch = hulls[m.ch];
-        ch.bbox = ci.bbox + cj.bbox;
+        ch.bbox = box_union(ci.bbox, cj.bbox);
         std::vector<Point_3> pts(ci.points.begin(), ci.points.end());
         pts.reserve(pts.size() + cj.points.size());
         std::copy(cj.points.begin(), cj.points.end(), std::back_inserter(pts));
@@ -895,7 +1256,7 @@ void merge(std::vector<Convex_hull<GeomTraits>>& candidates, std::vector<int8_t>
       }
       else {
         Merged_candidate m(i, j);
-        Bbox_3 bbox = ci.bbox + cj.bbox;
+        Bbox_3 bbox = box_union(ci.bbox, cj.bbox).bbox();
         m.ch = -1;
         m.volume_error = CGAL::abs(ci.volume + cj.volume - bbox.x_span() * bbox.y_span() * bbox.z_span()) / hull_volume;
         queue.push(std::move(m));
@@ -931,10 +1292,16 @@ void merge(std::vector<Convex_hull<GeomTraits>>& candidates, std::vector<int8_t>
     if (m.ch == -1)
       do_merge(m);
 
-    hulls.erase(ch_a);
     keep.erase(m.ch_a);
-    hulls.erase(ch_b);
     keep.erase(m.ch_b);
+
+#ifdef CGAL_LINKED_WITH_TBB
+    hulls.unsafe_erase(ch_a);
+    hulls.unsafe_erase(ch_b);
+#else
+    hulls.erase(ch_a);
+    hulls.erase(ch_b);
+#endif
 
     const Convex_hull<GeomTraits>& cj = hulls[m.ch];
 
@@ -948,7 +1315,7 @@ void merge(std::vector<Convex_hull<GeomTraits>>& candidates, std::vector<int8_t>
 
         merged.ch = num_hulls++;
         Convex_hull<GeomTraits>& ch = hulls[merged.ch];
-        ch.bbox = ci.bbox + cj.bbox;
+        ch.bbox = box_union(ci.bbox, cj.bbox);
         std::vector<Point_3> pts(ci.points.begin(), ci.points.end());
         pts.reserve(pts.size() + cj.points.size());
         std::copy(cj.points.begin(), cj.points.end(), std::back_inserter(pts));
@@ -962,7 +1329,7 @@ void merge(std::vector<Convex_hull<GeomTraits>>& candidates, std::vector<int8_t>
       }
       else {
         Merged_candidate merged(id, m.ch);
-        Bbox_3 bbox = ci.bbox + cj.bbox;
+        Bbox_3 bbox = box_union(ci.bbox, cj.bbox).bbox();
         merged.ch = -1;
         merged.volume_error = CGAL::abs(ci.volume + cj.volume - bbox.x_span() * bbox.y_span() * bbox.z_span()) / hull_volume;
         queue.push(std::move(merged));
@@ -989,7 +1356,7 @@ void merge(std::vector<Convex_hull<GeomTraits>>& candidates, std::vector<int8_t>
 }
 
 template<typename FaceGraph, typename OutputIterator, typename NamedParameters = parameters::Default_named_parameters>
-std::size_t approximate_convex_decomposition(const FaceGraph& mesh, std::size_t number_of_convex_hulls, OutputIterator out, const NamedParameters& np = parameters::default_values()) {
+std::size_t approximate_convex_decomposition(const FaceGraph& mesh, OutputIterator out, const NamedParameters& np = parameters::default_values()) {
   CGAL::Memory_sizer memory;
   std::size_t virt_mem = memory.virtual_size();
   std::size_t res_mem = memory.resident_size();
@@ -1001,31 +1368,16 @@ std::size_t approximate_convex_decomposition(const FaceGraph& mesh, std::size_t 
   Vertex_point_map vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point), get_const_property_map(CGAL::vertex_point, mesh));
 
   using FT = typename Geom_traits::FT;
-
-  // A single voxel grid should be sufficient
-  // Why are they creating a voxel mesh and an AABB tree?
-  // - just tracing the voxel grid should be sufficient? especially as the voxel grid
-  // - tracing a voxel grid is very memory intensive, especially when it is sparse
-  // Do they actually have a grid and fill it or only container of voxels?
-  //const std::size_t voxel_size = parameters::choose_parameter(parameters::get_parameter(np, internal_np::maximum_voxels), 50);
-  const std::size_t num_voxels = parameters::choose_parameter(parameters::get_parameter(np, internal_np::maximum_voxels), 1000000);
+  const std::size_t num_voxels = parameters::choose_parameter(parameters::get_parameter(np, internal_np::maximum_voxels), 1200000);
   const std::size_t max_depth = parameters::choose_parameter(parameters::get_parameter(np, internal_np::maximum_depth), 10);
 
-  //std::vector<typename boost::graph_traits<FaceGraph>::face_descriptor> degenerate_faces;
-  //CGAL::Polygon_mesh_processing::degenerate_faces(mesh, std::back_inserter(degenerate_faces));
-
-  std::cout << (CGAL::is_closed(mesh) ? "input mesh is closed" : "input mesh is not closed") << std::endl;
-  //std::cout << degenerate_faces.size() << " degenerate faces" << std::endl;
 
   Bbox_3 bb = bbox(mesh);
-  //FT voxel_size;
-  const auto [grid_size, voxel_size] = internal::calculate_grid_size<FT>(bb, num_voxels);
 
-  std::cout << "grid_size: " << grid_size[0] << " " << grid_size[1] << " " << grid_size[2] << std::endl;
+  const auto [grid_size, voxel_size] = internal::calculate_grid_size<FT>(bb, num_voxels);
 
   timer.start();
 
-  // if floodfill take INSIDE, otherwise UNKNOWN
   std::vector<int8_t> grid(grid_size[0] * grid_size[1] * grid_size[2], internal::Grid_cell::INSIDE);
 
   std::vector<internal::Candidate<Geom_traits>> candidates(1);
@@ -1046,6 +1398,9 @@ std::size_t approximate_convex_decomposition(const FaceGraph& mesh, std::size_t 
 
   std::size_t virt_mem2 = memory.virtual_size();
   std::size_t res_mem2 = memory.resident_size();
+
+  std::cout << (virt_mem2 - virt_mem) << " additional virtual memory allocated" << std::endl;
+  std::cout << (res_mem2 - res_mem) << " additional resident memory occupied\n" << std::endl;
 
   std::vector<internal::Convex_hull<Geom_traits>> hulls;
   for (internal::Candidate<Geom_traits> &c : candidates)
@@ -1068,9 +1423,9 @@ std::size_t approximate_convex_decomposition(const FaceGraph& mesh, std::size_t 
 
   std::cout << memory.virtual_size() << " virtual " << memory.resident_size() << " resident memory allocated in total" << std::endl;
 
-//   for (std::size_t i = 0; i < hulls.size(); i++) {
-//     CGAL::IO::write_polygon_soup(std::to_string(i) + "-e" + std::to_string(hulls[i].volume_error) + ".off", hulls[i].points, hulls[i].indices);
-//   }
+  for (std::size_t i = 0; i < hulls.size(); i++) {
+    CGAL::IO::write_polygon_soup(std::to_string(i) + "-e" + std::to_string(hulls[i].volume_error) + ".off", hulls[i].points, hulls[i].indices);
+  }
 
   for (std::size_t i = 0; i < hulls.size(); i++)
     *out++ = std::make_pair(std::move(hulls[i].points), std::move(hulls[i].indices));

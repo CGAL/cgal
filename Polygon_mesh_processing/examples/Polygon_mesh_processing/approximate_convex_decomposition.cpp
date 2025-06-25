@@ -17,9 +17,12 @@ using Convex_hull = std::pair<std::vector<Point>, std::vector<std::array<unsigne
 using Mesh = CGAL::Surface_mesh<Point>;
 namespace PMP = CGAL::Polygon_mesh_processing;
 
+std::size_t cidx = 0;
+
 int main(int argc, char* argv[])
 {
   const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/knot2.off");
+  std::cout << filename << std::endl;
 
   Mesh mesh;
   if(!PMP::IO::read_polygon_mesh(filename, mesh))
@@ -30,7 +33,7 @@ int main(int argc, char* argv[])
 
   std::vector<Convex_hull> convex_hulls;
 
-  std::size_t n = PMP::approximate_convex_decomposition(mesh, 5, std::back_inserter(convex_hulls), CGAL::parameters::maximum_depth(10).volume_error(0.5).maximum_number_of_convex_hulls(7));
+  std::size_t n = PMP::approximate_convex_decomposition(mesh, std::back_inserter(convex_hulls), CGAL::parameters::maximum_depth(10).volume_error(0.001).maximum_number_of_convex_hulls(8).find_best_splitter(1));
 
   std::cout << convex_hulls.size() << std::endl;
 

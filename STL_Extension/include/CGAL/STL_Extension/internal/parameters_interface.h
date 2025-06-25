@@ -182,6 +182,7 @@ CGAL_add_named_parameter(voxel_size_t, voxel_size, voxel_size)
 CGAL_add_named_parameter(maximum_depth_t, maximum_depth, maximum_depth)
 CGAL_add_named_parameter(volume_error_t, volume_error, volume_error)
 CGAL_add_named_parameter(maximum_number_of_convex_hulls_t, maximum_number_of_convex_hulls, maximum_number_of_convex_hulls)
+CGAL_add_named_parameter(find_best_splitter_t, find_best_splitter, find_best_splitter)
 
 
 // List of named parameters that we use in the package 'Surface Mesh Simplification'
