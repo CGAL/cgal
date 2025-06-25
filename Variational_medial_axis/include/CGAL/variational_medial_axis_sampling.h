@@ -78,20 +78,20 @@ private:
   std::vector<vertex_descriptor> cluster_vertices;
 };
 
-template <typename TriangleMesh, typename GT> 
+template <typename TriangleMesh, typename GT>
 class MedialSphereMesh
 {
 public:
   using FT = typename GT::FT;
   using Point_3 = typename GT::Point_3;
   using Sphere_3 = typename GT::Sphere_3;
-  using MSphere = typename MedialSphere<TriangleMesh, GT>;
+  using MSphere = MedialSphere<TriangleMesh, GT>;
   using Sphere_ID = typename MSphere::Sphere_ID;
   using vertex_descriptor = typename boost::graph_traits<TriangleMesh>::vertex_descriptor;
-  static const Sphere_ID INVALID_SPHERE_ID = std::numeric_limits<Sphere_ID>::max();
+  static constexpr Sphere_ID INVALID_SPHERE_ID = (std::numeric_limits<Sphere_ID>::max)();
 
 private:
-  std::vector<std::shared_ptr<MSphere>> spheres_; // TO DO: use Compact container?
+  std::vector<std::shared_ptr<MSphere>> spheres_; // TODO: use Compact container?
   std::unordered_map<Sphere_ID, std::size_t> id_to_index_;
   Sphere_ID next_id_ = 0;
 
@@ -227,9 +227,9 @@ public:
 
 template <typename GT>
 inline typename GT::FT cosine_angle(const typename GT::Vector_3& v1, const typename GT::Vector_3& v2) {
-  GT::FT norm_v1v2 = CGAL::approximate_sqrt(v1.squared_length() * v2.squared_length());
-  GT::FT res = norm_v1v2 > 1e-20 ? (v1 * v2) / norm_v1v2 : GT::FT(1);
-  return std::clamp(res, GT::FT(-1), GT::FT(1)); // Ensure the result is within [-1, 1]
+  typename GT::FT norm_v1v2 = CGAL::approximate_sqrt(v1.squared_length() * v2.squared_length());
+  typename GT::FT res = norm_v1v2 > 1e-20 ? (v1 * v2) / norm_v1v2 : typename GT::FT(1);
+  return std::clamp(res, typename GT::FT(-1), typename GT::FT(1)); // Ensure the result is within [-1, 1]
 }
 
 template <typename GT>
@@ -258,8 +258,8 @@ shrinking_ball_algorithm(const TriangleMesh& tmesh,
 
   const FT denoise_preserve = FT(40.0); // in degree
   const FT delta_convergence = FT(1e-5);
-  const zero_n3 = 1e-3;
-  const zero_n4 = 1e-4;
+  const FT zero_n3 = 1e-3;
+  const FT zero_n4 = 1e-4;
   const int iteration_limit = 30;
   int j = 0;
   FT r = FT(1.0); // initial radius
@@ -480,7 +480,7 @@ void correct_sphere(const TriangleMesh& tmesh,
                     const FaceNormalMap& face_normal_map,
                     const VertexPointMap& vpm,
                     const GT& traits,
-                    std::shared_ptr<typename MedialSphere<TriangleMesh, GT>> sphere,
+                    std::shared_ptr<MedialSphere<TriangleMesh, GT>> sphere,
                     const Eigen::Matrix<typename GT::FT, 4, 1>& optimized_sphere_params) {
   using FT = typename GT::FT;
   using Point_3 = typename GT::Point_3;
@@ -668,7 +668,7 @@ void update_sphere_neighbors(const TriangleMesh& tmesh,
   using edge_descriptor = typename boost::graph_traits<TriangleMesh>::edge_descriptor;
   using vertex_descriptor = typename boost::graph_traits<TriangleMesh>::vertex_descriptor;
   using Sphere_ID = typename MedialSphereMesh<TriangleMesh, GT>::Sphere_ID;
-  using MedialSphereMesh = typename MedialSphereMesh<TriangleMesh, GT>;
+  using MedialSphereMesh = MedialSphereMesh<TriangleMesh, GT>;
 
   for(edge_descriptor e : edges(tmesh)) {
     vertex_descriptor v1 = source(e, tmesh);
@@ -692,7 +692,7 @@ void split_spheres(MedialSphereMesh<TriangleMesh, GT>& sphere_mesh,
                    int desired_number_of_spheres,
                    const VertexMedialSpherePosMap& vertex_medial_sphere_pos_map,
                    const VertexMedialSphereRadiusMap& vertex_medial_sphere_radius_map) {
-  using MSphere = typename MedialSphere<TriangleMesh, GT>;
+  using MSphere = MedialSphere<TriangleMesh, GT>;
   using Sphere_ID = typename MedialSphereMesh<TriangleMesh, GT>::Sphere_ID;
   using Sphere_3 = typename GT::Sphere_3;
   using Point_3 = typename GT::Point_3;
@@ -730,7 +730,7 @@ void insert_sphere(MedialSphereMesh<TriangleMesh, GT>& sphere_mesh,
                    const typename MedialSphereMesh<TriangleMesh, GT>::Sphere_ID id,
                    const VertexMedialSpherePosMap& vertex_medial_sphere_pos_map,
                    const VertexMedialSphereRadiusMap& vertex_medial_sphere_radius_map) {
-  using MSphere = typename MedialSphere<TriangleMesh, GT>;
+  using MSphere = MedialSphere<TriangleMesh, GT>;
   using Sphere_ID = typename MedialSphereMesh<TriangleMesh, GT>::Sphere_ID;
   using Sphere_3 = typename GT::Sphere_3;
   using Point_3 = typename GT::Point_3;
@@ -797,7 +797,7 @@ template <class TriangleMesh,
           class VertexMedialSpherePosMap,
           class VertexMedialSphereRadiusMap,
           class NamedParameters = parameters::Default_named_parameters>
-typename MedialSphereMesh<TriangleMesh, GT>
+MedialSphereMesh<TriangleMesh, GT>
 variational_medial_axis_sampling(const TriangleMesh& tmesh,
                                  const GT& traits,
                                  const VPM& vpm,
@@ -829,7 +829,7 @@ variational_medial_axis_sampling(const TriangleMesh& tmesh,
                                                        Sequential_tag>::type Concurrency_tag;
 
   constexpr bool parallel_execution = std::is_same_v<Parallel_tag, Concurrency_tag>;
-   
+
   MSMesh sphere_mesh;
 
   // Algorithm variables
@@ -842,7 +842,7 @@ variational_medial_axis_sampling(const TriangleMesh& tmesh,
   Sphere_3 init_sphere(Point_3(0., 0., 0.), FT(1.0));
   sphere_mesh.add_sphere(init_sphere);
 
-  // Compute shrinking ball of each vertex 
+  // Compute shrinking ball of each vertex
   compute_shrinking_balls<GT>(tmesh, tree, vpm, face_normal_map, vertex_normal_map,
                                                        vertex_medial_sphere_pos_map, vertex_medial_sphere_radius_map);
 
@@ -1054,26 +1054,26 @@ private:
   std::vector<std::array<std::size_t, 3>> faces_;
 };
 
-template <typename TriangleMesh_, 
-          typename GeomTraits_, 
-          typename VertexPointMap_ = Default> 
+template <typename TriangleMesh_,
+          typename GeomTraits_,
+          typename VertexPointMap_ = Default>
 class Variational_medial_axis
 {
 public:
 
-  
+
   using VPM =
       typename Default::Get<VertexPointMap_,
                                     typename boost::property_map<TriangleMesh_, vertex_point_t>::const_type>::type;
-      
-  using GT = typename GeomTraits_;
+
+  using GT = GeomTraits_;
   using FT = typename GT::FT;
   using Point_3 = typename GT::Point_3;
   using Vector_3 = typename GT::Vector_3;
   using Sphere_3 = typename GT::Sphere_3;
   using MSMesh = typename Internal::MedialSphereMesh<TriangleMesh_, GT>;
   using Sphere_ID = typename MSMesh::Sphere_ID;
-  
+
   using Tree = AABB_tree<AABB_traits_3<GT, AABB_face_graph_triangle_primitive<TriangleMesh_, VPM>>>;
 
   using face_descriptor = typename boost::graph_traits<TriangleMesh_>::face_descriptor;
@@ -1101,17 +1101,17 @@ public:
       typename boost::property_map<TriangleMesh_, Vertex_medial_sphere_radius_tag>::const_type;
 
   Variational_medial_axis(
-      const TriangleMesh_& tmesh, 
+      const TriangleMesh_& tmesh,
       VPM vpm, const GT& gt = GT())
       : tmesh_(tmesh)
       , traits_(gt)
       , vpm_(vpm) {
     init();
   }
-       
+
     Variational_medial_axis(const TriangleMesh_& tmesh, const GT& gt = GT())
       : Variational_medial_axis(tmesh,get(vertex_point, tmesh),  gt) {
-    
+
     }
 
   void init() {
@@ -1148,23 +1148,23 @@ public:
       }
     }
     sphere_mesh_ = std::make_unique<MSMesh>();
-  } 
-  
+  }
+
   template <typename NamedParameters>
   void compute(const NamedParameters& np = parameters::default_values()) {
     auto result_sphere_mesh = Internal::variational_medial_axis_sampling(
-        tmesh_, 
-        traits_, 
-        vpm_, 
-        *tree_,  
-        vertex_normal_map_, 
-        vertex_area_map_, 
-        face_normal_map_, 
-        face_area_map_, 
+        tmesh_,
+        traits_,
+        vpm_,
+        *tree_,
+        vertex_normal_map_,
+        vertex_area_map_,
+        face_normal_map_,
+        face_area_map_,
         vertex_error_map_,
-        vertex_cluster_sphere_map_, 
-        vertex_medial_sphere_pos_map_, 
-        vertex_medial_sphere_radius_map_, 
+        vertex_cluster_sphere_map_,
+        vertex_medial_sphere_pos_map_,
+        vertex_medial_sphere_radius_map_,
         np);
 
     *sphere_mesh_ = std::move(result_sphere_mesh);
@@ -1172,14 +1172,14 @@ public:
 
   void add_sphere(Sphere_ID sphere_id) {
     Internal::insert_sphere<TriangleMesh_, GT>(
-        *sphere_mesh_, 
-        sphere_id, 
+        *sphere_mesh_,
+        sphere_id,
         vertex_medial_sphere_pos_map_,
         vertex_medial_sphere_radius_map_);
   }
 
-  void remove_sphere(Sphere_ID sphere_id) { 
-      Internal::remove_sphere<TriangleMesh_, GT>(*sphere_mesh_, sphere_id); 
+  void remove_sphere(Sphere_ID sphere_id) {
+      Internal::remove_sphere<TriangleMesh_, GT>(*sphere_mesh_, sphere_id);
   }
 
   Skeleton<TriangleMesh_, GT> export_skeleton() const {
@@ -1208,7 +1208,7 @@ private:
   Vertex_medial_sphere_radius_map vertex_medial_sphere_radius_map_;
   Face_normal_map face_normal_map_;
   Face_area_map face_area_map_;
-  
+
 };
 
 
@@ -1216,8 +1216,8 @@ private:
 } // namespace CGAL
 #endif
 
-  
-  
+
+
 // end of CGAL namespace
 // get the closest point to the origin
 // Point_3 query(0.,0.,0.);
