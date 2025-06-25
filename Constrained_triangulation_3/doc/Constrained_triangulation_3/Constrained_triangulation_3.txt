@@ -181,13 +181,13 @@ However, since this package is based on the 3D Triangulation package we inherit 
 a traits class providing exact predicates is needed.
 
 One important new part of this algorithm is the creation of new points that are not part of the input.
-Those points are the Steiner points that are points on segments and polygons of the input PLC.
+Those points are the Steiner points that are constructed on segments and polygons of the input PLC.
 If a traits with inexact constructions is used, it is not possible to guarantee that the points are
 exactly on segments/polygons. As a consequence, when using inexact constructions, the output will
 only be an approximation of the input (up to the rounding of the computed Steiner points).
 Also in such a case, it will not always be possible to get a result if the input PLC features
 too close non-adjacent simplices. The algorithm will abort the triangulation if the distance between
-simplices goes below a threshold internally computed. In such a case an error message with
+simplices goes below a threshold internally computed. In such a case, an error message with
 the involved simplices will be displayed on the standard output. In case the issue is coming from badly
 shaped triangles, methods such as `CGAL::Polygon_mesh_processing::remove_almost_degenerate_faces()`
 might be useful to overcome this limitation.
