@@ -471,7 +471,7 @@ public:
   Index emplace() {
 
     // If there are empty slots, return the index of one of them and mark it as full
-    auto first_unused = std::find_if(m_active_indices.begin(), m_active_indices.end(), [](bool used) { return !used; });
+    auto first_unused = std::find(m_active_indices.begin(), m_active_indices.end(), false);
     if (first_unused != m_active_indices.end()) {
       *first_unused = true;
       auto index = Index(static_cast<std::size_t>(std::distance(m_active_indices.begin(), first_unused)));
