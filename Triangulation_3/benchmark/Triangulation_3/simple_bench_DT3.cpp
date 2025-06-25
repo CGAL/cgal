@@ -5,7 +5,9 @@
 #define CGAL_NDEBUG 1
 #define NDEBUG 1
 
-#include "CGAL/Bbox_3.h"
+#if PARALLEL
+#  include "CGAL/Bbox_3.h"
+#endif
 #include "CGAL/Triangulation_data_structure_3.h"
 #include "CGAL/Triangulation_vertex_base_3.h"
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -18,7 +20,7 @@
 #include <iostream>
 #include <string>
 #include <fstream>
-#include <clocale>
+#include <locale>
 
 #if PARALLEL
 using Concurrent_tag = CGAL::Parallel_tag;
