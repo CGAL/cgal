@@ -89,16 +89,20 @@ namespace is_complete_internals
 template<class T, class Base = decltype(is_complete_internals::check(typename std::enable_if<true, T(*)()>::type()))>
 struct is_complete : Base { };
 
+template <class T>
+inline constexpr bool is_complete_v = is_complete<T>::value;
+
 namespace is_complete_testsuite
 {
 
-  struct S;
-  static_assert(!is_complete<S>::value, "error");
-  struct S
+  struct S1;
+  static_assert(!is_complete<S1>::value, "error");
+  struct S2
   {
-    static_assert(!is_complete<S>::value, "error");
+    static_assert(!is_complete<S2>::value, "error");
   };
-  static_assert(is_complete<S>::value, "error");
+  struct S3 {};
+  static_assert(is_complete<S3>::value, "error");
 }
 #endif
 
