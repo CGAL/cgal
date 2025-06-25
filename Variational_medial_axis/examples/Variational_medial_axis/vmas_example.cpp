@@ -5,9 +5,28 @@
 using K = CGAL::Exact_predicates_inexact_constructions_kernel;
 using Mesh = CGAL::Surface_mesh<K::Point_3>;
 
+void normalize_mesh(Mesh& mesh) {
+  CGAL::Bbox_3 bbox;
+  for(auto v : mesh.vertices())
+    bbox = bbox + mesh.point(v).bbox();
+
+  double cx = (bbox.xmin() + bbox.xmax()) / 2.0;
+  double cy = (bbox.ymin() + bbox.ymax()) / 2.0;
+  double cz = (bbox.zmin() + bbox.zmax()) / 2.0;
+  double max_dim = std::max({bbox.xmax() - bbox.xmin(), bbox.ymax() - bbox.ymin(), bbox.zmax() - bbox.zmin()});
+
+  for(auto v : mesh.vertices()) {
+    K::Point_3 p = mesh.point(v);
+    double nx = (p.x() - bbox.xmin()) / max_dim;
+    double ny = (p.y() - bbox.ymin()) / max_dim;
+    double nz = (p.z() - bbox.zmin()) / max_dim;
+    mesh.point(v) = K::Point_3(nx, ny, nz);
+  }
+}
+
 int main(int argc, char** argv)
-{
-  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/chair.off");
+{ 
+  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/elephant_dense.off");
 
   Mesh mesh;
   if(!CGAL::IO::read_polygon_mesh(filename, mesh))
@@ -15,15 +34,12 @@ int main(int argc, char** argv)
     std::cerr << "Invalid input." << std::endl;
     return 1;
   }
-
+  normalize_mesh(mesh);
  
   CGAL::Variational_medial_axis<Mesh, K> vmas(mesh);
 
-  // Initialize with default parameters
-  vmas.init();
-
   // Compute medial axis with custom parameters
-  vmas.compute(CGAL::parameters::number_of_iterations(500).number_of_spheres(100).lambda(0.2));
+  vmas.compute(CGAL::parameters::number_of_iterations(1000).number_of_spheres(300).lambda(0.2));
  
   // Export skeleton
   std::cout << "Exporting skeleton..." << std::endl;
