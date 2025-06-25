@@ -256,6 +256,8 @@ shrinking_ball_algorithm(const TriangleMesh& tmesh,
   using Point_3 = typename GT::Point_3;
   using FT = typename GT::FT;
   const FT denoise_radius = FT(1e-4);   // model has to be normalized in [0, 1]^3
+  const FT denoise_preserve = FT(30.0); // in degree
+  const FT delta_convergence = FT(1e-6);
 
   const FT denoise_preserve = FT(40.0); // in degree
   const FT delta_convergence = FT(1e-5);
@@ -699,7 +701,7 @@ void split_spheres(MedialSphereMesh<TriangleMesh, GT>& sphere_mesh,
   std::vector<std::shared_ptr<MSphere>> sorted_sphere = sphere_mesh.spheres();
   std::sort(sorted_sphere.begin(), sorted_sphere.end(),
             [](const std::shared_ptr<MSphere>& a, const std::shared_ptr<MSphere>& b) {
-              return a->get_radius() > b->get_radius(); // sort by radius
+              return a->get_error() > b->get_error(); // sort by error
             });
 
   int to_split_max = std::min(int(std::ceil(sphere_mesh.nb_spheres() * 0.2)), 10);
