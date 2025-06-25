@@ -255,6 +255,7 @@ shrinking_ball_algorithm(const TriangleMesh& tmesh,
 
   using Point_3 = typename GT::Point_3;
   using FT = typename GT::FT;
+  const FT denoise_radius = FT(1e-4);   // model has to be normalized in [0, 1]^3
 
   const FT denoise_preserve = FT(40.0); // in degree
   const FT delta_convergence = FT(1e-5);
@@ -265,47 +266,38 @@ shrinking_ball_algorithm(const TriangleMesh& tmesh,
   FT r = FT(1.0); // initial radius
   Point_3 c = p - (r * n);
   Point_3 q = p - (2 * r * n);
-
+  face_descriptor last_face;
   while(true) {
     // std::cout << "Iteration: " << j << ", Current center: " << c << ", Radius: " << r << std::endl;
     auto res = tree.closest_point_and_primitive(c);
     Point_3 q_next = res.first;
     face_descriptor closest_face = res.second;
 
-    /* FT dist_cq = (c - q_next).squared_length();
-    FT dist_pq = CGAL::approximate_sqrt((p - q_next).squared_length());
-    FT eps = (r-denoise_preserve)*(r-denoise_preserve);
-    if(eps < zero_n3) {
-      //std::cout << "Epsilon is too small at iteration: " << j << ", Epsilon: " << eps << std::endl;
-      break;
+    FT squared_dist = (q_next - c).squared_length();
+    if(squared_dist >= (r - delta_convergence) * (r - delta_convergence)) {
+      // std::cout << "Convergence achieved at iteration " << j << ": " << CGAL::to_double(squared_dist) << std::endl;
+      break; // convergence
     }
-    if(dist_cq >= eps || dist_pq < zero_n3) {
-      //std::cout << "Distance is too small at iteration: " << j << ", Distance: " << dist_cq << std::endl;
-      break;
-    }*/
-    FT dist = CGAL::approximate_sqrt((q - q_next).squared_length());
-    if(std::abs(dist - r) <= delta_convergence ||
-       (CGAL::approximate_sqrt((q - q_next).squared_length()) < delta_convergence))
-    {
-      // convergence
-      // std::cout << "Delta Convergence achieved at iteration: " << j << ", Center: " << c << ", Radius: " << r <<
-      // std::endl;
-
-      break;
+    if((q_next - p).squared_length() <= delta_convergence) {
+      // std::cout << "Convergence achieved at iteration " << j << ": " << CGAL::to_double((q_next -
+      // p).squared_length())
+      //           << std::endl;
+      break; // convergence
     }
-    Vector_3 closest_face_normal = get(face_normal_map, closest_face);
-    FT dist_to_face = std::abs(CGAL::scalar_product(q_next - c, closest_face_normal));
-    FT ratio = std::abs(r - dist_to_face) / r;
-    if(ratio <= FT(0.01)) {
-      // std::cout << "Distance to face is too small at iteration: " << j << ", Ratio: " << ratio << std::endl;
-      break;
+    if(j>0 && closest_face == last_face) {
+      // std::cout << "No change in closest face at iteration " << j << std::endl;
+      break; // no change in closest face
     }
     FT r_next = compute_radius<GT>(p, n, q_next);
     if(!CGAL::is_finite(r_next) || r_next <= FT(0)) {
       // std::cerr << "Invalid radius at iteration " << j << ": " << r_next << std::endl;
       break;
     }
-
+    if((r_next - delta_convergence)
+      *(r_next - delta_convergence)<1e-4) {
+        // std::cout << "Denoise radius achieved at iteration: " << j << ", Radius: " << CGAL::to_double(r_next)
+        break;
+      }
     Point_3 c_next = p - (r_next * n);
     FT seperation_angle = CGAL::approximate_angle<GT>(p - c_next, q_next - c_next);
     if(j > 0 && seperation_angle < denoise_preserve) {
@@ -317,6 +309,7 @@ shrinking_ball_algorithm(const TriangleMesh& tmesh,
     c = c_next;
     r = r_next;
     q = q_next;
+    last_face = closest_face;
     j++;
     if(j > iteration_limit)
       break;
