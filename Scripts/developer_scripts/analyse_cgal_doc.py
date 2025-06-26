@@ -1,8 +1,10 @@
-import requests
-from bs4 import BeautifulSoup
+import sys
 from urllib.parse import urljoin, urlparse
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import threading
+from bs4 import BeautifulSoup
+import requests
+import os
 
 # Set to keep track of already visited URLs
 visited = set()
@@ -48,7 +50,7 @@ def check_and_crawl(url, referrer, domain):
                 continue
             new_links.append((full_url, url, domain))
         return new_links
-    except Exception as e:
+    except requests.exceptions.RequestException as e:
         print(f"[ERROR] {url} (found on: {referrer}) - {e}")
         broken_links.append((url, str(e), referrer))
         return []
@@ -68,33 +70,68 @@ def threaded_crawl(start_url, max_workers=20):
                 new_links = future.result()
                 to_visit.extend(new_links)
 
-def save_broken_links_report(filename="broken_links_report.txt"):
+def save_broken_links_report(filename="broken_links_report.txt", links=None):
     """
     Save the broken links report to a text file.
     """
-    with open(filename, "w") as f:
+    with open(filename, "w", encoding="utf-8") as f:
         f.write("--- Final Broken Links Report ---\n")
-        for url, error, referrer in broken_links:
+        for url, error, referrer in links:
             f.write(f"{url} (found on: {referrer}) => {error}\n")
 
+def filter_broken_links_by_packages(allowed_packages_file):
+    """
+    Filter broken_links to keep only those in 'Manual' or in allowed packages.
+    """
+    with open(allowed_packages_file, "r", encoding="utf-8") as f:
+        allowed = set(line.strip() for line in f if line.strip())
+
+    filtered = []
+    for url, error, referrer in broken_links:
+        path_parts = urlparse(url).path.strip("/").split("/")
+        if len(path_parts) < 3:
+            continue
+        # path_parts = ['8186', 'v12', 'Manual', ...] or ['8186', 'v12', 'Alpha_shapes_3', ...]
+        section = path_parts[2]
+        if section == "Manual" or section in allowed:
+            filtered.append((url, error, referrer))
+    return filtered
+
 if __name__ == "__main__":
-    # List of documentation versions to check
-    all_versions = [
-        "https://doc.cgal.org/latest/Manual/index.html", # LATEST
-        "https://cgal.geometryfactory.com/CGAL/doc/master/Manual/index.html", # master
-    ]
+    args = sys.argv[1:]
+    versions_to_check = []
+    allowed_packages_file = None
+    if args:
+        if os.path.isfile(args[0]) or args[0].endswith(".txt"):
+            print("ERROR: First argument should be a URL, not a package file.")
+            sys.exit(1)
+        versions_to_check = [args[0]]
+        print(f"Checking custom documentation URL: {args[0]}")
+        if len(args) > 1:
+            allowed_packages_file = args[1]
+            print(f"Using allowed package list from: {allowed_packages_file}")
+    else:
+        # Default list of documentation versions to check
+        versions_to_check = [
+            "https://doc.cgal.org/latest/Manual/index.html", # LATEST
+            "https://cgal.geometryfactory.com/CGAL/doc/master/Manual/index.html", # master
+        ]
+        print(f"Checking {len(versions_to_check)} CGAL documentation versions:")
+        for version in versions_to_check:
+            print(f" - {version}")
 
-    print(f"Checking {len(all_versions)} CGAL documentation versions:")
-    for version in all_versions:
-        print(f" - {version}")
-
-    for version_url in all_versions:
-        print(f"\n Starting crawl for version: {version_url}")
+    for version_url in versions_to_check:
+        print(f"\nStarting crawl for version: {version_url}")
         threaded_crawl(version_url, max_workers=40)
 
     print("\n--- Final Broken Links Report ---")
+
+    if allowed_packages_file:
+        final_broken_links = filter_broken_links_by_packages(allowed_packages_file)
+    else:
+        final_broken_links = broken_links
     for url, error, referrer in broken_links:
         print(f"{url} (found on: {referrer}) => {error}")
 
     # Save the report to a file
-    save_broken_links_report()
+    save_broken_links_report(links=final_broken_links)
