@@ -154,7 +154,7 @@ template< class Point_3,
           class Is_floating_point=typename std::is_floating_point<typename Kernel_traits<Point_3>::Kernel::FT>::type,
           class Has_filtered_predicates_tag=typename Kernel_traits<Point_3>::Kernel::Has_filtered_predicates_tag >
 struct Default_traits_for_Chull_3{
-  typedef typename Kernel_traits<Point_3>::Kernel type;
+  typedef Convex_hull_traits_3< typename Kernel_traits<Point_3>::Kernel > type;
 };
 
 //FT is a floating point type and Kernel is a filtered kernel
