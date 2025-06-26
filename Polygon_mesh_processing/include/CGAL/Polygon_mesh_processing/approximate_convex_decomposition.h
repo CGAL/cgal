@@ -214,15 +214,7 @@ void export_points(const std::string& filename, const Bbox_3& bb, std::vector<Po
 template<typename Range>
 void export_points(const std::string& filename, Range& points) {
   std::ofstream stream(filename);
-
-  stream <<
-    "ply" << std::endl <<
-    "format ascii 1.0" << std::endl <<
-    "element vertex " << points.size() << std::endl <<
-    "property double x" << std::endl <<
-    "property double y" << std::endl <<
-    "property double z" << std::endl <<
-    "end_header" << std::endl;
+  stream << std::setprecision(18);
 
   for (const auto& p : points) {
     stream << p.x() << " " << p.y() << " " << p.z() << std::endl;
@@ -586,7 +578,12 @@ void rayshooting_fill(std::vector<int8_t>& grid, const Vec3_uint& grid_size, con
 
   std::array<Vector_3, 6> dirs = {Vector_3{1, 0, 0}, Vector_3{-1, 0, 0}, Vector_3{0, 1, 0}, Vector_3{0,-1, 0}, Vector_3{0, 0, 1}, Vector_3{0, 0,-1}};
 
+#ifdef CGAL_LINKED_WITH_TBB
+  tbb::parallel_for(std::size_t(0), std::size_t(grid_size[0]), [&](const std::size_t x)
+#else
   for (std::size_t x = 0;x<grid_size[0];x++)
+#endif
+  {
     for (std::size_t y = 0;y<grid_size[1];y++)
       for (std::size_t z = 0;z<grid_size[2];z++) {
         if (vox(x, y, z) == SURFACE)
@@ -621,6 +618,10 @@ void rayshooting_fill(std::vector<int8_t>& grid, const Vec3_uint& grid_size, con
         else
           vox(x, y, z) = OUTSIDE;
       }
+  }
+#ifdef CGAL_LINKED_WITH_TBB
+        );
+#endif
 }
 
 
@@ -719,10 +720,11 @@ void convex_hull(const PointRange& pts, std::vector<Point_3> &hull_points, std::
   Mesh m;
 
   convex_hull_3(pts.begin(), pts.end(), m);
-  //std::vector<Point_3> pts;
-  //std::vector<std::vector<std::size_t> > indices;
-  //convex_hull_3(voxel_points.begin(), voxel_points.end(), pts, indices);// Why does this not work?
-  //convex_hull_3(voxel_points.begin(), voxel_points.end(), c.hull_points, c.hull_indices);// Why does this not work?
+//   if (pts.size() < 20) {
+//     export_points("convex_hull" + std::to_string(cnt) + ".xyz", pts);
+//     std::cout << pts.size() << " " << cnt++ << std::endl;
+//     convex_hull_3(pts.begin(), pts.end(), hull_points, hull_indices);// needs bugfix in convex_hull_3 for indexed triangle list
+//   }
   hull_points.resize(m.number_of_vertices());
   hull_indices.resize(m.number_of_faces());
 
@@ -815,6 +817,9 @@ void fill_grid(Candidate<GeomTraits> &c, std::vector<int8_t> &grid, const FaceGr
     return grid[z + (y * grid_size[2]) + (x * grid_size[1] * grid_size[2])];
     };
 
+  CGAL::Timer timer;
+  timer.start();
+
   for (const typename boost::graph_traits<FaceGraph>::face_descriptor fd : faces(mesh)) {
     Bbox_uint face_bb = grid_bbox_face(mesh, fd, bb, voxel_size);
     CGAL_assertion(face_bb.lower[0] <= face_bb.upper[0]);
@@ -832,6 +837,7 @@ void fill_grid(Candidate<GeomTraits> &c, std::vector<int8_t> &grid, const FaceGr
             vox(x, y, z) = Grid_cell::SURFACE;
         }
   }
+  double fill = timer.time();
 
   //export_grid("before.ply", bb, grid, grid_size, voxel_size);
   auto filterS = [](const int8_t& l) -> bool {return l == SURFACE; };
@@ -842,9 +848,18 @@ void fill_grid(Candidate<GeomTraits> &c, std::vector<int8_t> &grid, const FaceGr
 
   // For now, only do floodfill
   //label_floodfill(grid, grid_size);
-  //naive_floodfill(grid, grid_size);
-  rayshooting_fill<FaceGraph, GeomTraits>(grid, grid_size, bb, voxel_size, mesh);
- // export_grid("after_inside_ray.ply", bb, grid, grid_size, voxel_size, filterI);
+  double before_shooting = timer.time();
+  if (CGAL::is_closed(mesh)) {
+    naive_floodfill(grid, grid_size);
+    //check_grid(grid, grid_size);
+  }
+  else
+    rayshooting_fill<FaceGraph, GeomTraits>(grid, grid_size, bb, voxel_size, mesh);
+  double after_shooting = timer.time();
+
+  std::cout << "filling: " << fill << std::endl;
+  std::cout << "shooting: " << (after_shooting - before_shooting) << std::endl;
+  //export_grid("after_inside_ray.ply", bb, grid, grid_size, voxel_size, filterI);
   //export_grid("after_outside_ray.ply", bb, grid, grid_size, voxel_size, filterO);
 
   c.bbox.upper = {grid_size[0] - 1, grid_size[1] - 1, grid_size[2] - 1};
@@ -855,10 +870,9 @@ void fill_grid(Candidate<GeomTraits> &c, std::vector<int8_t> &grid, const FaceGr
         if (vox(x, y, z) == INSIDE)
           c.inside.push_back({x, y, z});
         else if (vox(x, y, z) == SURFACE)
-          c.surface.push_back({ x, y, z });
+          c.surface.push_back({x, y, z});
 
   //std::cout << "remove check grid and export" << std::endl;
-  //check_grid(grid, grid_size);
 
   //export_grid("after_inside.ply", bb, grid, grid_size, voxel_size, filterI);
   //export_grid("after_outside.ply", bb, grid, grid_size, voxel_size, filterO);
@@ -921,15 +935,11 @@ void split(std::vector<Candidate<GeomTraits> > &candidates, Candidate<GeomTraits
     }
   }
 
-  if (!upper.surface.empty()) {
-    compute_candidate(upper, bbox, voxel_size);
+  if (!upper.surface.empty())
     candidates.emplace_back(std::move(upper));
-  }
 
-  if (!lower.surface.empty()) {
-    compute_candidate(lower, bbox, voxel_size);
+  if (!lower.surface.empty())
     candidates.emplace_back(std::move(lower));
-  }
 }
 
 std::size_t concavity(const Vec3_uint& s, const Vec3_uint& e, int axis, std::vector<int8_t>& grid, const Vec3_uint& grid_size) {
@@ -1105,10 +1115,19 @@ bool finished(Candidate<GeomTraits> &c, const NamedParameters& np) {
   const typename GeomTraits::FT max_error = parameters::choose_parameter(parameters::get_parameter(np, internal_np::volume_error), 1);
   const std::size_t max_depth = parameters::choose_parameter(parameters::get_parameter(np, internal_np::maximum_depth), 10);
 
+  if (c.depth > max_depth)
+    return true;
+
   if (c.ch.volume_error <= max_error)
     return true;
 
-  if (c.depth > max_depth)
+  std::size_t max_span = 0;
+  for (std::size_t i = 0;i<3;i++) {
+    const std::size_t span = c.bbox.upper[i] - c.bbox.lower[i];
+    max_span = (std::max<std::size_t>)(max_span, span);
+  }
+
+  if (max_span <= 1)
     return true;
 
   return false;
@@ -1124,8 +1143,12 @@ void recurse(std::vector<Candidate<GeomTraits>>& candidates, std::vector<int8_t>
 
   std::vector<internal::Candidate<GeomTraits>> final_candidates;
 
+  double choose = 0, spli = 0;
+
   while (!candidates.empty()) {
-    std::cout << step++ << ": " << candidates.size() << std::endl;
+    //std::cout << step++ << ": " << candidates.size() << "\t";
+    CGAL::Timer timer;
+    timer.start();
     std::vector<Candidate<GeomTraits>> former_candidates = std::move(candidates);
     for (Candidate<GeomTraits>& c : former_candidates) {
 
@@ -1137,9 +1160,13 @@ void recurse(std::vector<Candidate<GeomTraits>>& candidates, std::vector<int8_t>
         continue;
       }
       unsigned int axis = 0, location = 0;
+      double b = timer.time();
       choose_splitting_plane(c, axis, location, grid, grid_size, np);
+      double a = timer.time();
+      choose += a - b;
       //std::cout << c.index << " " << c.ch.volume_error << " split " << axis << "a " << location << " (" << c.bbox.lower[0] << "," << c.bbox.lower[1] << "," << c.bbox.lower[2] << "," << c.bbox.upper[0] << "," << c.bbox.upper[1] << "," << c.bbox.upper[2] << ")" << std::endl;
       split(candidates, c, axis, location, grid, grid_size, bbox, voxel_size, np);
+      spli += timer.time() - a;
 
 //       if (!candidates.empty()) {
 //         auto& b = candidates[candidates.size() - 1];
@@ -1152,7 +1179,20 @@ void recurse(std::vector<Candidate<GeomTraits>>& candidates, std::vector<int8_t>
 //         CGAL::IO::write_polygon_soup(std::to_string(a.index) + " " + std::to_string(c.index) + ".off", a.ch.points, a.ch.indices);
 //       }
     }
+#ifdef CGAL_LINKED_WITH_TBB
+    tbb::parallel_for_each(candidates, [&](Candidate<GeomTraits>& c) {
+        compute_candidate(c, bbox, voxel_size);
+      });
+#else
+    for (Candidate<GeomTraits>& c : candidates)
+      compute_candidate(c, bbox, voxel_size);
+#endif
+
+    //std::cout << timer.time() << std::endl;
   }
+
+  std::cout << "find_plane: " << choose << std::endl;
+  std::cout << "split: " << spli << std::endl;
 
   std::swap(candidates, final_candidates);
 }
@@ -1368,39 +1408,30 @@ std::size_t approximate_convex_decomposition(const FaceGraph& mesh, OutputIterat
   Vertex_point_map vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point), get_const_property_map(CGAL::vertex_point, mesh));
 
   using FT = typename Geom_traits::FT;
-  const std::size_t num_voxels = parameters::choose_parameter(parameters::get_parameter(np, internal_np::maximum_voxels), 1200000);
+  const std::size_t num_voxels = parameters::choose_parameter(parameters::get_parameter(np, internal_np::maximum_voxels), 1000000);
   const std::size_t max_depth = parameters::choose_parameter(parameters::get_parameter(np, internal_np::maximum_depth), 10);
 
-
   Bbox_3 bb = bbox(mesh);
-
   const auto [grid_size, voxel_size] = internal::calculate_grid_size<FT>(bb, num_voxels);
 
   timer.start();
 
   std::vector<int8_t> grid(grid_size[0] * grid_size[1] * grid_size[2], internal::Grid_cell::INSIDE);
 
+  std::cout << "#voxels " << grid.size() << std::endl;
+  std::cout << "grid_size: " << grid_size[0] << " " << grid_size[1] << " " << grid_size[2] << std::endl;
   std::vector<internal::Candidate<Geom_traits>> candidates(1);
-
   init(candidates[0], mesh, grid, bb, grid_size, voxel_size);
 
   const FT hull_volume = candidates[0].ch.volume;
 
   double after_init = timer.time();
-
   recurse(candidates, grid, grid_size, bb, voxel_size, np);
-
   double after_recurse = timer.time();
 
 //   for (std::size_t i = 0; i < candidates.size(); i++) {
 //     CGAL::IO::write_polygon_soup(std::to_string(max_depth) + "-" + std::to_string(i) + "-d" + std::to_string(candidates[i].depth) + "-e" + std::to_string(candidates[i].ch.volume_error) + ".off", candidates[i].ch.points, candidates[i].ch.indices);
 //   }
-
-  std::size_t virt_mem2 = memory.virtual_size();
-  std::size_t res_mem2 = memory.resident_size();
-
-  std::cout << (virt_mem2 - virt_mem) << " additional virtual memory allocated" << std::endl;
-  std::cout << (res_mem2 - res_mem) << " additional resident memory occupied\n" << std::endl;
 
   std::vector<internal::Convex_hull<Geom_traits>> hulls;
   for (internal::Candidate<Geom_traits> &c : candidates)
@@ -1413,11 +1444,8 @@ std::size_t approximate_convex_decomposition(const FaceGraph& mesh, OutputIterat
 
   double after_merge = timer.time();
 
-  std::cout << (virt_mem2 - virt_mem) << " additional virtual memory allocated" << std::endl;
-  std::cout << (res_mem2 - res_mem) << " additional resident memory occupied\n" << std::endl;
-
   std::cout << "timing:" << std::endl;
-  std::cout << after_init << " initialization" << std::endl;
+  std::cout << (after_init) << " initialization" << std::endl;
   std::cout << (after_recurse - after_init) << " recurse" << std::endl;
   std::cout << (after_merge - after_recurse) << " merge" << std::endl;
 
