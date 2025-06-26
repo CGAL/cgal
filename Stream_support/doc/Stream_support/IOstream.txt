@@ -436,7 +436,7 @@ The table above only lists the functions that work with any polygon mesh.
     </tr>
     <tr>
       <td>Output</td>
-      <td>``CGAL::IO::write_polygon_mesh()`</td>
+      <td>`CGAL::IO::write_polygon_mesh()`</td>
       <td>`CGAL::IO::write_OFF()`</td>
       <td>`CGAL::IO::write_STL()`</td>
       <td>`CGAL::IO::write_VTP()`</td>
