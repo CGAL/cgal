@@ -18,7 +18,7 @@
 
 #include <CGAL/Surface_mesh/IO.h>
 #include <CGAL/Surface_mesh/Surface_mesh_fwd.h>
-#include <CGAL/Surface_mesh/Properties.h>
+#include <CGAL/Properties.h>
 
 #include <CGAL/assertions.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
@@ -56,7 +56,7 @@ namespace CGAL {
     /// \attention Note that `Index` is not a model of the concept `Handle`,
     /// because it cannot be dereferenced.
     /// \sa `Vertex_index`, `Halfedge_index`, `Edge_index`, `Face_index`.
-    template<typename T>
+    template<typename Derived_index>
     class SM_Index
     {
     public:
@@ -108,21 +108,23 @@ namespace CGAL {
 
         SM_Index operator+=(std::ptrdiff_t n) { idx_ = size_type(std::ptrdiff_t(idx_) + n); return *this; }
 
+        friend std::size_t hash_value(const Derived_index& i)
+        {
+          return static_cast<std::size_t>(i.idx());
+        }
+
+        friend std::size_t hash_value(const SM_Index& i)
+        {
+          return static_cast<std::size_t>(i.idx());
+        }
+
     protected:
         size_type idx_;
     };
 
-  template <class T>
-  std::size_t hash_value(const SM_Index<T>&  i)
-  {
-    std::size_t ret = i;
-    return ret;
-  }
-
-
     // Implementation for Surface_mesh::Vertex_index
     class SM_Vertex_index
- : public SM_Index<SM_Vertex_index>
+      : public SM_Index<SM_Vertex_index>
     {
     public:
 
@@ -152,7 +154,7 @@ namespace CGAL {
 
         friend std::ostream& operator<<(std::ostream& os, SM_Vertex_index const& v)
         {
-          return (os << 'v' << (size_type)v );
+          return (os << 'v' << v.id() );
         }
     };
 
@@ -196,7 +198,7 @@ namespace CGAL {
 
         friend std::ostream& operator<<(std::ostream& os, SM_Halfedge_index const& h)
         {
-          return (os << 'h' << (size_type)h );
+          return (os << 'h' << h.id() );
         }
     };
 
@@ -231,7 +233,7 @@ namespace CGAL {
 
         friend std::ostream& operator<<(std::ostream& os, SM_Face_index const& f)
         {
-          return (os << 'f' << (size_type)f );
+          return (os << 'f' << f.id() );
         }
     };
 
@@ -251,10 +253,15 @@ namespace CGAL {
         SM_Halfedge_index halfedge() const { return halfedge_; }
 
         // returns the underlying index of this index.
-        operator size_type() const { return (size_type)halfedge_ / 2; }
+        operator size_type() const { return halfedge_.id() / 2; }
 
         // compatibility with OpenMesh handles
-        size_type idx() const { return (size_type)halfedge_ / 2; }
+        size_type idx() const { return halfedge_.id() / 2; }
+
+        // For convenience
+        size_type id() const {
+          return idx();
+        }
 
         // resets index to be invalid (index=(std::numeric_limits<size_type>::max)())
         void reset() { halfedge_.reset(); }
@@ -268,40 +275,40 @@ namespace CGAL {
         template<class T> bool operator<(const T&) const = delete;
 
         // Are two indices equal?
-        bool operator==(const SM_Edge_index& other) const { return (size_type)(*this) == (size_type)other; }
+        bool operator==(const SM_Edge_index& other) const { return id() == other.id(); }
 
         // Are two indices different?
-        bool operator!=(const SM_Edge_index& other) const { return (size_type)(*this) != (size_type)other; }
+        bool operator!=(const SM_Edge_index& other) const { return id() != other.id(); }
 
         // compares by index.
-        bool operator<(const SM_Edge_index& other) const { return (size_type)(*this) < (size_type)other;}
+        bool operator<(const SM_Edge_index& other) const { return id() < other.id();}
 
         // decrements the internal index. This operation does not
         // guarantee that the index is valid or undeleted after the
         // decrement.
-        SM_Edge_index& operator--() { halfedge_ = SM_Halfedge_index((size_type)halfedge_ - 2); return *this; }
+        SM_Edge_index& operator--() { halfedge_ = SM_Halfedge_index(halfedge_.id() - 2); return *this; }
 
         // increments the internal index. This operation does not
         // guarantee that the index is valid or undeleted after the
         // increment.
-        SM_Edge_index& operator++() { halfedge_ = SM_Halfedge_index((size_type)halfedge_ + 2); return *this; }
+        SM_Edge_index& operator++() { halfedge_ = SM_Halfedge_index(halfedge_.id() + 2); return *this; }
 
         // decrements internal index. This operation does not
         // guarantee that the index is valid or undeleted after the
         // decrement.
-        SM_Edge_index operator--(int) { SM_Edge_index tmp(*this); halfedge_ = SM_Halfedge_index((size_type)halfedge_ - 2); return tmp; }
+        SM_Edge_index operator--(int) { SM_Edge_index tmp(*this); halfedge_ = SM_Halfedge_index(halfedge_.id() - 2); return tmp; }
 
         // increments internal index. This operation does not
         // guarantee that the index is valid or undeleted after the
         // increment.
-        SM_Edge_index operator++(int) { SM_Edge_index tmp(*this); halfedge_ = SM_Halfedge_index((size_type)halfedge_ + 2); return tmp; }
+        SM_Edge_index operator++(int) { SM_Edge_index tmp(*this); halfedge_ = SM_Halfedge_index(halfedge_.id() + 2); return tmp; }
 
         SM_Edge_index operator+=(std::ptrdiff_t n) { halfedge_ = SM_Halfedge_index(size_type(std::ptrdiff_t(halfedge_) + 2*n)); return *this; }
 
         // prints the index and a short identification string to an ostream.
         friend std::ostream& operator<<(std::ostream& os, SM_Edge_index const& e)
         {
-          return (os << 'e' << (size_type)e << " on " << e.halfedge());
+          return (os << 'e' << e.id() << " on " << e.halfedge());
         }
 
         friend  std::size_t hash_value(const SM_Edge_index&  i)
@@ -981,7 +988,7 @@ public:
       size_type inf = (std::numeric_limits<size_type>::max)();
       if(recycle_ && (vertices_freelist_ != inf)){
         size_type idx = vertices_freelist_;
-        vertices_freelist_ = (size_type)vconn_[Vertex_index(vertices_freelist_)].halfedge_;
+        vertices_freelist_ = vconn_[Vertex_index(vertices_freelist_)].halfedge_.id();
         --removed_vertices_;
         vremoved_[Vertex_index(idx)] = false;
         vprops_.reset(Vertex_index(idx));
@@ -1013,7 +1020,7 @@ public:
       size_type inf = (std::numeric_limits<size_type>::max)();
       if(recycle_ && (edges_freelist_ != inf)){
         size_type idx = edges_freelist_;
-        edges_freelist_ = (size_type)hconn_[Halfedge_index(edges_freelist_)].next_halfedge_;
+        edges_freelist_ = hconn_[Halfedge_index(edges_freelist_)].next_halfedge_.id();
         --removed_edges_;
         eremoved_[Edge_index(Halfedge_index(idx))] = false;
         hprops_.reset(Halfedge_index(idx));
@@ -1052,7 +1059,7 @@ public:
       size_type inf = (std::numeric_limits<size_type>::max)();
       if(recycle_ && (faces_freelist_ != inf)){
         size_type idx = faces_freelist_;
-        faces_freelist_ = (size_type)fconn_[Face_index(faces_freelist_)].halfedge_;
+        faces_freelist_ = fconn_[Face_index(faces_freelist_)].halfedge_.id();
         --removed_faces_;
         fprops_.reset(Face_index(idx));
         fremoved_[Face_index(idx)] = false;
@@ -1112,7 +1119,7 @@ public:
     {
         vremoved_[v] = true; ++removed_vertices_; garbage_ = true;
         vconn_[v].halfedge_ = Halfedge_index(vertices_freelist_);
-        vertices_freelist_ = (size_type)v;
+        vertices_freelist_ = v.id();
     }
 
     /// removes the two halfedges corresponding to `e` from the halfedge data structure without
@@ -1120,8 +1127,8 @@ public:
     void remove_edge(Edge_index e)
     {
         eremoved_[e] = true; ++removed_edges_; garbage_ = true;
-        hconn_[Halfedge_index((size_type)e << 1)].next_halfedge_ = Halfedge_index(edges_freelist_ );
-        edges_freelist_ = ((size_type)e << 1);
+        hconn_[Halfedge_index(e.id() << 1)].next_halfedge_ = Halfedge_index(edges_freelist_ );
+        edges_freelist_ = (e.id() << 1);
     }
 
     /// removes  face `f` from the halfedge data structure without
@@ -1131,7 +1138,7 @@ public:
     {
         fremoved_[f] = true; ++removed_faces_; garbage_ = true;
         fconn_[f].halfedge_ = Halfedge_index(faces_freelist_);
-        faces_freelist_ = (size_type)f;
+        faces_freelist_ = f.id();
     }
 
 
@@ -1331,16 +1338,16 @@ public:
     ///@{
 #ifndef DOXYGEN_RUNNING
    /// returns the number of used and removed vertices in the mesh.
-    size_type num_vertices() const { return (size_type) vprops_.size(); }
+    size_type num_vertices() const { return static_cast<size_type>(vprops_.size()); }
 
     /// returns the number of used and removed halfedges in the mesh.
-    size_type num_halfedges() const { return (size_type) hprops_.size(); }
+    size_type num_halfedges() const { return static_cast<size_type>(hprops_.size()); }
 
     /// returns the number of used and removed edges in the mesh.
-    size_type num_edges() const { return (size_type) eprops_.size(); }
+    size_type num_edges() const { return static_cast<size_type>(eprops_.size()); }
 
     /// returns the number of used and removed faces in the mesh.
-    size_type num_faces() const { return (size_type) fprops_.size(); }
+    size_type num_faces() const { return static_cast<size_type>(fprops_.size()); }
 
 #endif
 
@@ -1436,23 +1443,23 @@ public:
     /// returns whether the index of vertex `v` is valid, that is within the current array bounds.
     bool has_valid_index(Vertex_index v) const
     {
-      return ((size_type)v < num_vertices());
+      return (v.id() < num_vertices());
     }
 
     /// returns whether the index of halfedge `h` is valid, that is within the current array bounds.
     bool has_valid_index(Halfedge_index h) const
     {
-      return ((size_type)h < num_halfedges());
+      return (h.id() < num_halfedges());
     }
     /// returns whether the index of edge `e` is valid, that is within the current array bounds.
     bool has_valid_index(Edge_index e) const
     {
-      return ((size_type)e < num_edges());
+      return (e.id() < num_edges());
     }
     /// returns whether the index of face `f` is valid, that is within the current array bounds.
     bool has_valid_index(Face_index f) const
     {
-        return ((size_type)f < num_faces());
+        return (f.id() < num_faces());
     }
 
     /// @}
@@ -1554,7 +1561,7 @@ public:
         size_type vfl = vertices_freelist_;
         size_type rv = 0;
         while(vfl != inf){
-          vfl = (size_type)vconn_[Vertex_index(vfl)].halfedge_;
+          vfl = vconn_[Vertex_index(vfl)].halfedge_.id();
           rv++;
         }
         valid = valid && ( rv == removed_vertices_ );
@@ -1563,7 +1570,7 @@ public:
         size_type efl = edges_freelist_;
         size_type re = 0;
         while(efl != inf){
-          efl = (size_type)hconn_[Halfedge_index(efl)].next_halfedge_;
+          efl = hconn_[Halfedge_index(efl)].next_halfedge_.id();
           re++;
         }
         valid = valid && ( re == removed_edges_ );
@@ -1571,7 +1578,7 @@ public:
         size_type ffl = faces_freelist_;
         size_type rf = 0;
         while(ffl != inf){
-          ffl = (size_type)fconn_[Face_index(ffl)].halfedge_;
+          ffl = fconn_[Face_index(ffl)].halfedge_.id();
           rf++;
         }
         valid = valid && ( rf == removed_faces_ );
@@ -1587,14 +1594,14 @@ public:
 
         if(!has_valid_index(v))
         {
-          verr << "Vertex has invalid index: " << (size_type)v << std::endl;
+          verr << "Vertex has invalid index: " << v.id() << std::endl;
           return false;
         }
 
         Halfedge_index h = vconn_[v].halfedge_;
         if(h != null_halfedge() && (!has_valid_index(h) || is_removed(h))) {
-          verr << "Vertex connectivity halfedge error: Vertex " << (size_type)v
-               << " with " << (size_type)h << std::endl;
+          verr << "Vertex connectivity halfedge error: Vertex " << v.id()
+               << " with " << h.id() << std::endl;
           return false;
         }
         return true;
@@ -1608,7 +1615,7 @@ public:
 
         if(!has_valid_index(h))
         {
-          verr << "Halfedge has invalid index: " << (size_type)h << std::endl;
+          verr << "Halfedge has invalid index: " << h.id() << std::endl;
           return false;
         }
 
@@ -1623,7 +1630,7 @@ public:
             if(!has_valid_index(f) || is_removed(f)) {
                 verr << "Halfedge connectivity error: Face "
                      << (!has_valid_index(f) ? "invalid" : "removed")
-                     << " in " << (size_type)h << std::endl;
+                     << " in " << h.id() << std::endl;
                 valid = false;
             }
         }
@@ -1631,20 +1638,20 @@ public:
         if(!has_valid_index(v) || is_removed(v)) {
             verr << "Halfedge connectivity error: Vertex "
                  << (!has_valid_index(v) ? "invalid" : "removed")
-                 << " in " << (size_type)h << std::endl;
+                 << " in " << h.id() << std::endl;
             valid = false;
         }
 
         if(!has_valid_index(hn) || is_removed(hn)) {
             verr << "Halfedge connectivity error: hnext "
                  << (!has_valid_index(hn) ? "invalid" : "removed")
-                 << " in " << (size_type)h << std::endl;
+                 << " in " << h.id() << std::endl;
             valid = false;
         }
         if(!has_valid_index(hp) || is_removed(hp)) {
             verr << "Halfedge connectivity error: hprev "
                  << (!has_valid_index(hp) ? "invalid" : "removed")
-                 << " in " << (size_type)h << std::endl;
+                 << " in " << h.id() << std::endl;
             valid = false;
         }
         return valid;
@@ -1659,7 +1666,7 @@ public:
 
       if(!has_valid_index(e))
       {
-        verr << "Edge has invalid index: " << (size_type)e << std::endl;
+        verr << "Edge has invalid index: " << e.id() << std::endl;
         return false;
       }
 
@@ -1676,14 +1683,14 @@ public:
 
         if(!has_valid_index(f))
         {
-          verr << "Face has invalid index: " << (size_type)f << std::endl;
+          verr << "Face has invalid index: " << f.id() << std::endl;
           return false;
         }
 
         Halfedge_index h = fconn_[f].halfedge_;
         if(!has_valid_index(h) || is_removed(h)) {
-          verr << "Face connectivity halfedge error: Face " << (size_type)f
-               << " with " << (size_type)h << std::endl;
+          verr << "Face connectivity halfedge error: Face " << f.id()
+               << " with " << h.id() << std::endl;
           return false;
         }
         return true;
@@ -1786,7 +1793,7 @@ public:
     /// returns the opposite halfedge of `h`. Note that there is no function `set_opposite()`.
     Halfedge_index opposite(Halfedge_index h) const
     {
-        return Halfedge_index(((size_type)h & 1) ? (size_type)h-1 : (size_type)h+1);
+        return Halfedge_index((h.id() & 1) ? h.id()-1 : h.id()+1);
     }
 
     ///@}
@@ -1861,7 +1868,7 @@ public:
     Halfedge_index halfedge(Edge_index e, unsigned int i) const
     {
         CGAL_assertion(i<=1);
-        return Halfedge_index(((size_type)e << 1) + i);
+        return Halfedge_index((e.id() << 1) + i);
     }
 
     ///@}
@@ -2750,46 +2757,6 @@ does_recycle_garbage() const
   return recycle_;
 }
 
-
-namespace internal{
-  namespace handle {
-    template <>
-    struct Hash_functor<SM_Vertex_index>{
-      std::size_t
-      operator()(const SM_Vertex_index i)
-      {
-        return i;
-      }
-    };
-
-    template <>
-    struct Hash_functor<SM_Halfedge_index>{
-      std::size_t
-      operator()(const SM_Halfedge_index i)
-      {
-        return i;
-      }
-    };
-
-    template <>
-    struct Hash_functor<SM_Edge_index>{
-      std::size_t
-      operator()(const SM_Edge_index i)
-      {
-        return i;
-      }
-    };
-
-    template <>
-    struct Hash_functor<SM_Face_index>{
-      std::size_t
-      operator()(const SM_Face_index i)
-      {
-        return i;
-      }
-    };
-  }
-}
 
 namespace internal {
 

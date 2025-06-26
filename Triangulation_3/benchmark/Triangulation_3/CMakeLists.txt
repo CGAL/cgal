@@ -3,7 +3,7 @@
 
 cmake_minimum_required(VERSION 3.12...3.31)
 
-project(Triangulation_3)
+project(Triangulation_3_Benchmarks)
 
 # CGAL and its components
 find_package(CGAL REQUIRED)
@@ -14,9 +14,18 @@ find_package(CGAL REQUIRED)
 create_single_source_cgal_program("ocean.cpp")
 create_single_source_cgal_program("incident_edges.cpp")
 create_single_source_cgal_program("simple_2.cpp")
-create_single_source_cgal_program("simple.cpp")
 create_single_source_cgal_program("Triangulation_benchmark_3.cpp")
 create_single_source_cgal_program("segment_traverser_benchmark.cpp" )
+
+add_executable(simple_bench_DT3 simple_bench_DT3.cpp)
+target_link_libraries(simple_bench_DT3 PRIVATE CGAL::CGAL CGAL::Data)
+target_compile_definitions(simple_bench_DT3 PRIVATE)
+cgal_add_test(simple_bench_DT3)
+
+add_executable(simple_bench_DT3_with_index simple_bench_DT3.cpp)
+target_link_libraries(simple_bench_DT3_with_index PRIVATE CGAL::CGAL CGAL::Data)
+target_compile_definitions(simple_bench_DT3_with_index PRIVATE INDEX_STORAGE=1)
+cgal_add_test(simple_bench_DT3_with_index)
 
 find_package(benchmark QUIET)
 if(NOT TARGET benchmark::benchmark)
@@ -27,6 +36,16 @@ endif()
 find_package(TBB REQUIRED)
 include(CGAL_TBB_support)
 if(TARGET CGAL::TBB_support)
+  add_executable(parallel_simple_bench_DT3 simple_bench_DT3.cpp)
+  target_link_libraries(parallel_simple_bench_DT3 PRIVATE CGAL::CGAL CGAL::Data CGAL::TBB_support)
+  target_compile_definitions(parallel_simple_bench_DT3 PRIVATE PARALLEL=1)
+  cgal_add_test(parallel_simple_bench_DT3)
+
+  add_executable(parallel_simple_bench_DT3_with_index simple_bench_DT3.cpp)
+  target_link_libraries(parallel_simple_bench_DT3_with_index PRIVATE CGAL::CGAL CGAL::Data CGAL::TBB_support)
+  target_compile_definitions(parallel_simple_bench_DT3_with_index PRIVATE PARALLEL=1 INDEX_STORAGE=1)
+  cgal_add_test(parallel_simple_bench_DT3_with_index)
+
   create_single_source_cgal_program("DT3_benchmark_with_TBB.cpp")
   target_link_libraries(DT3_benchmark_with_TBB PRIVATE benchmark::benchmark CGAL::TBB_support)
 

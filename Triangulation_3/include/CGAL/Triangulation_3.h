@@ -119,9 +119,18 @@ struct Structural_filtering_selector_3<true>
 ************************************************/
 
 // Sequential (without locking)
-template <typename Concurrency_tag, typename Lock_data_structure_>
+template <typename Concurrency_tag, typename Lock_data_structure_, typename Derived>
 class Triangulation_3_base
 {
+  Derived& derived()
+  {
+    return static_cast<Derived&>(*this);
+  }
+
+  const Derived& derived() const
+  {
+    return static_cast<const Derived&>(*this);
+  }
 public:
   // If Lock_data_structure_ = Default => void
   typedef typename Default::Get<
@@ -131,7 +140,7 @@ protected:
   Triangulation_3_base() {}
   Triangulation_3_base(Lock_data_structure *) {}
 
-  void swap(Triangulation_3_base<Concurrency_tag, Lock_data_structure_>&) {}
+  void swap(Triangulation_3_base<Concurrency_tag, Lock_data_structure_, Derived>&) {}
 
   template <typename Vertex_triple, typename Facet>
   struct Vertex_triple_Facet_map_generator
@@ -196,8 +205,8 @@ public:
 
 #ifdef CGAL_LINKED_WITH_TBB
 // Parallel (with locking)
-template <typename Lock_data_structure_>
-class Triangulation_3_base<Parallel_tag, Lock_data_structure_>
+template <typename Lock_data_structure_, typename Derived>
+class Triangulation_3_base<Parallel_tag, Lock_data_structure_, Derived>
 {
 public:
   // If Lock_data_structure_ = Default => use Spatial_lock_grid_3
@@ -205,6 +214,15 @@ public:
     Lock_data_structure_,
     Spatial_lock_grid_3<Tag_priority_blocking> >::type Lock_data_structure;
 
+  Derived& derived()
+  {
+    return static_cast<Derived&>(*this);
+  }
+
+  const Derived& derived() const
+  {
+    return static_cast<const Derived&>(*this);
+  }
 protected:
   Triangulation_3_base()
     : m_lock_ds(0)
@@ -216,7 +234,7 @@ protected:
   {
   }
 
-  void swap(Triangulation_3_base<Parallel_tag, Lock_data_structure_>& tr)
+  void swap(Triangulation_3_base<Parallel_tag, Lock_data_structure_, Derived>& tr)
   {
     std::swap(tr.m_lock_ds, m_lock_ds);
   }
@@ -267,7 +285,7 @@ public:
     bool locked = true;
     if(m_lock_ds)
     {
-      locked = m_lock_ds->try_lock(vh->point(), lock_radius);
+      locked = m_lock_ds->try_lock(derived().point(vh), lock_radius);
     }
     return locked;
   }
@@ -279,7 +297,7 @@ public:
     // Lock the element area on the grid
     for(int iVertex = 0 ; success && iVertex < 4 ; ++iVertex)
     {
-      success = try_lock_vertex(cell_handle->vertex(iVertex), lock_radius);
+      success = m_lock_ds->try_lock(derived().point(cell_handle, iVertex), lock_radius);
     }
     return success;
   }
@@ -353,6 +371,12 @@ public:
     return &m_lock_ds->get_bbox();
   }
 
+  int this_thread_priority() const
+  {
+    if(false == is_parallel()) return -1;
+    return m_lock_ds->this_thread_priority();
+  }
+
 protected:
   mutable Lock_data_structure *m_lock_ds;
 };
@@ -373,7 +397,8 @@ class Triangulation_3
                                      Triangulation_vertex_base_3<GT>,
                                      Triangulation_cell_base_3<GT> >
                                   >::type::Concurrency_tag,
-             Lock_data_structure_>,
+             Lock_data_structure_,
+             Triangulation_3<GT, Tds_, Lock_data_structure_>>,
   public Triangulation_utils_3
 {
   friend std::istream& operator>> <>
@@ -386,7 +411,7 @@ class Triangulation_3
 
   typedef Triangulation_3<GT, Tds_, Lock_data_structure_>            Self;
   typedef Triangulation_3_base<typename Tds::Concurrency_tag,
-                               Lock_data_structure_>                 Base;
+                               Lock_data_structure_, Self>           Base;
 
 public:
   typedef typename Base::Lock_data_structure   Lock_data_structure;
@@ -413,6 +438,9 @@ public:
 
   typedef typename Tds::Vertex_handle          Vertex_handle;
   typedef typename Tds::Cell_handle            Cell_handle;
+
+  typedef typename Tds::vertex_descriptor      vertex_descriptor;
+  typedef typename Tds::cell_descriptor        cell_descriptor;
 
   typedef typename Tds::Cell_circulator        Cell_circulator;
   typedef typename Tds::Facet_circulator       Facet_circulator;
@@ -495,7 +523,7 @@ public:
     Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
     Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
 
-    operator const Cell_handle&() const { return Base::base(); }
+    operator Cell_handle() const { return Base::base(); }
   };
 
   // We derive in order to add a conversion to handle.
@@ -514,13 +542,13 @@ public:
     Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
     Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
 
-    operator const Vertex_handle&() const { return Base::base(); }
+    operator Vertex_handle() const { return Base::base(); }
   };
 
   typedef Iterator_range<Prevent_deref<Finite_cells_iterator,
-                                       const Cell_handle&> >         Finite_cell_handles;
+                                       Cell_handle> >         Finite_cell_handles;
   typedef Iterator_range<Prevent_deref<Finite_vertices_iterator,
-                                       const Vertex_handle&> >       Finite_vertex_handles;
+                                       Vertex_handle> >       Finite_vertex_handles;
 
   typedef Filter_iterator<Edge_iterator, Infinite_tester>     Finite_edges_iterator;
   typedef Filter_iterator<Facet_iterator, Infinite_tester>    Finite_facets_iterator;
@@ -572,9 +600,19 @@ public:
   };
 
 protected:
-  Tds _tds;
+  static constexpr bool is_index_based = std::is_same_v<typename Tds::Storage_tag, Index_tag>;
+  using Tds_member_type = std::conditional_t<is_index_based, std::unique_ptr<Tds>, Tds>;
+  auto empty_tds_construction() const
+  {
+    if constexpr (is_index_based) {
+      return std::make_unique<Tds>();
+    } else {
+      return Tds{};
+    }
+  }
+  Tds_member_type _tds;
   GT  _gt;
-  Vertex_handle infinite; // infinite vertex
+  Vertex_handle _infinite_vertex; // infinite vertex
 
 public:
   template<typename P> // Point or Point_3
@@ -695,13 +733,13 @@ public:
 
   void init_tds()
   {
-    infinite = _tds.insert_increase_dimension();
+    _infinite_vertex = tds().insert_increase_dimension();
   }
 
   void init_tds(const Point& p0, const Point& p1, const Point& p2, const Point& p3)
   {
     Vertex_handle v0, v1, v2, v3;
-    infinite = _tds.insert_first_finite_cell(v0, v1, v2, v3, infinite);
+    _infinite_vertex = tds().insert_first_finite_cell(v0, v1, v2, v3, _infinite_vertex);
     v0->set_point(p0);
     v1->set_point(p1);
     v2->set_point(p2);
@@ -713,7 +751,7 @@ public:
                 Vertex_handle& vh0, Vertex_handle& vh1,
                 Vertex_handle& vh2, Vertex_handle& vh3)
   {
-    infinite = _tds.insert_first_finite_cell(vh0, vh1, vh2, vh3, infinite);
+    _infinite_vertex = tds().insert_first_finite_cell(vh0, vh1, vh2, vh3, _infinite_vertex);
     vh0->set_point(p0);
     vh1->set_point(p1);
     vh2->set_point(p2);
@@ -723,32 +761,33 @@ public:
 public:
   // CONSTRUCTORS
   Triangulation_3(const GT& gt = GT(), Lock_data_structure *lock_ds = nullptr)
-    : Base(lock_ds), _tds(), _gt(gt)
+    : Base(lock_ds), _tds(empty_tds_construction()), _gt(gt)
   {
     init_tds();
   }
 
   Triangulation_3(Lock_data_structure *lock_ds, const GT& gt = GT())
-    : Base(lock_ds), _tds(), _gt(gt)
+    : Base(lock_ds), _tds(empty_tds_construction()), _gt(gt)
   {
     init_tds();
   }
 
   // copy constructor duplicates vertices and cells
   Triangulation_3(const Triangulation_3& tr)
-    : Base(tr.get_lock_data_structure()), _gt(tr._gt)
+    : Base(tr.get_lock_data_structure()), _tds(empty_tds_construction()), _gt(tr._gt)
   {
-    infinite = _tds.copy_tds(tr._tds, tr.infinite);
+    _infinite_vertex = tds().copy_tds(tr.tds(), tr._infinite_vertex);
     CGAL_expensive_postcondition(*this == tr);
   }
 
   Triangulation_3(Triangulation_3&& tr) = default;
+
   ~Triangulation_3() = default;
 
   template < typename InputIterator >
   Triangulation_3(InputIterator first, InputIterator last,
                   const GT& gt = GT(), Lock_data_structure *lock_ds = nullptr)
-    : Base(lock_ds), _gt(gt)
+    : Base(lock_ds), _tds(empty_tds_construction()), _gt(gt)
   {
     init_tds();
     insert(first, last);
@@ -759,7 +798,7 @@ public:
   Triangulation_3(const Point& p0, const Point& p1,
                   const Point& p3, const Point& p4,
                   const GT& gt = GT(), Lock_data_structure *lock_ds = nullptr)
-    : Base(lock_ds), _gt(gt)
+    : Base(lock_ds), _tds(empty_tds_construction()), _gt(gt)
   {
     CGAL_precondition(orientation(p0, p1, p3, p4) == POSITIVE);
     init_tds(p0, p1, p3, p4);
@@ -767,7 +806,11 @@ public:
 
   void clear()
   {
-    _tds.clear();
+    if constexpr (is_index_based) {
+      _tds = empty_tds_construction();
+    } else {
+      _tds.clear();
+    }
     init_tds();
   }
 
@@ -785,16 +828,18 @@ public:
   {
     using std::swap;
     swap(tr._gt, _gt);
-    swap(tr.infinite, infinite);
+    swap(tr._infinite_vertex, _infinite_vertex);
     _tds.swap(tr._tds);
     Base::swap(tr);
   }
 
   //ACCESS FUNCTIONS
   const GT& geom_traits() const { return _gt; }
-  const Tds& tds() const { return _tds; }
-  Tds& tds() { return _tds; }
-  int dimension() const { return _tds.dimension(); }
+
+  const auto& tds() const { if constexpr (is_index_based) return *_tds; else return _tds; }
+  Tds& tds() { if constexpr (is_index_based) return *_tds; else return _tds; }
+
+  int dimension() const { return tds().dimension(); }
 
   size_type number_of_finite_cells() const;
   size_type number_of_cells() const;
@@ -803,10 +848,10 @@ public:
   size_type number_of_finite_edges() const;
   size_type number_of_edges() const;
   size_type number_of_vertices() const // number of finite vertices
-  { return _tds.number_of_vertices()-1; }
+  { return tds().number_of_vertices()-1; }
 
-  Vertex_handle infinite_vertex() const { return infinite; }
-  void set_infinite_vertex(Vertex_handle v) { infinite = v; }
+  Vertex_handle infinite_vertex() const { return _infinite_vertex; }
+  void set_infinite_vertex(Vertex_handle v) { _infinite_vertex = v; }
 
   Cell_handle infinite_cell() const
   {
@@ -862,7 +907,24 @@ public:
     CGAL_precondition(dimension() >= 0);
     CGAL_precondition(i >= 0 && i <= dimension());
     CGAL_precondition(! is_infinite(c->vertex(i)));
-    return c->vertex(i)->point();
+
+    if constexpr (Tds::is_index_based) {
+      auto v_idx = tds().cell_storage()[c.index()].ivertices[i];
+      return tds().vertex_storage()[v_idx].point;
+    } else {
+      return c->vertex(i)->point();
+    }
+  }
+
+  template <typename Cell_descriptor,
+            typename = std::enable_if_t<false == std::is_same_v<Cell_handle, cell_descriptor> &&
+                                        std::is_convertible_v<Cell_descriptor, cell_descriptor>
+                                       >
+           >
+  const Point& point(Cell_descriptor cd, int i) const
+  {
+    auto v_idx = tds().cell_storage()[cd].ivertices[i];
+    return tds().vertex_storage()[v_idx].point;
   }
 
   void set_point(Vertex_handle v, const Point& p)
@@ -876,7 +938,12 @@ public:
   {
     CGAL_precondition(number_of_vertices() > 0);
     CGAL_precondition(! is_infinite(v));
-    return v->point();
+
+    if constexpr (Tds::is_index_based) {
+      return tds().vertex_storage()[v.index()].point;
+    } else {
+      return v->point();
+    }
   }
 
   // TEST IF INFINITE FEATURES
@@ -1083,9 +1150,9 @@ public:
   }
 
   // Functions forwarded from TDS.
-  int mirror_index(Cell_handle c, int i) const { return _tds.mirror_index(c, i); }
-  Vertex_handle mirror_vertex(Cell_handle c, int i) const { return _tds.mirror_vertex(c, i); }
-  Facet mirror_facet(Facet f) const { return _tds.mirror_facet(f);}
+  int mirror_index(Cell_handle c, int i) const { return tds().mirror_index(c, i); }
+  Vertex_handle mirror_vertex(Cell_handle c, int i) const { return tds().mirror_vertex(c, i); }
+  Facet mirror_facet(Facet f) const { return tds().mirror_facet(f);}
 
   // MODIFIERS
 
@@ -1257,7 +1324,7 @@ public:
                                Cell_handle begin, int i)
   {
     // Some geometric preconditions should be tested...
-    Vertex_handle v = _tds.insert_in_hole(cell_begin, cell_end, begin, i);
+    Vertex_handle v = tds().insert_in_hole(cell_begin, cell_end, begin, i);
     v->set_point(p);
     return v;
   }
@@ -1269,7 +1336,7 @@ public:
   {
     // Some geometric preconditions should be tested...
     newv->set_point(p);
-    return _tds.insert_in_hole(cell_begin, cell_end, begin, i, newv);
+    return tds().insert_in_hole(cell_begin, cell_end, begin, i, newv);
   }
 
   // Internal function, cells should already be marked.
@@ -1279,7 +1346,7 @@ public:
                                 Cell_handle begin, int i)
   {
     // Some geometric preconditions should be tested...
-    Vertex_handle v = _tds._insert_in_hole(cell_begin, cell_end, begin, i);
+    Vertex_handle v = tds()._insert_in_hole(cell_begin, cell_end, begin, i);
     v->set_point(p);
     return v;
   }
@@ -1290,7 +1357,7 @@ public:
                                       const Cells& cells,
                                       const Facets& facets )
   {
-    Vertex_handle v = _tds._insert_in_small_hole(cells, facets);
+    Vertex_handle v = tds()._insert_in_small_hole(cells, facets);
     v->set_point(p);
     return v;
   }
@@ -1303,7 +1370,7 @@ public:
   {
     // Some geometric preconditions should be tested...
     newv->set_point(p);
-    return _tds._insert_in_hole(cell_begin, cell_end, begin, i, newv);
+    return tds()._insert_in_hole(cell_begin, cell_end, begin, i, newv);
   }
 
 protected:
@@ -1349,46 +1416,88 @@ protected:
     CGAL_precondition(tester(d));
 
     // To store the boundary cells, in case we need to rollback
-    typedef boost::container::small_vector<Cell_handle,64> SV;
+    typedef boost::container::small_vector<cell_descriptor,64> SV;
     SV sv;
-    std::stack<Cell_handle, SV > cell_stack(sv);
+    std::stack<cell_descriptor, SV > cell_stack(sv);
 
-    cell_stack.push(d);
+    cell_stack.push(tds().to_cell_descriptor(d));
     d->tds_data().mark_in_conflict();
 
-    *it.second++ = d;
+    *it.second++ = tds().to_cell_descriptor(d);
 
+    auto check_this_facet_must_be_in_the_cz = [&](cell_descriptor cd, int i, bool on_boundary = false) {
+      if(!this_facet_must_be_in_the_cz || !the_facet_is_in_its_cz) return;
+      if((cd == tds().to_cell_descriptor(this_facet_must_be_in_the_cz->first)) &&
+         (i == this_facet_must_be_in_the_cz->second))
+      {
+        *the_facet_is_in_its_cz = true;
+      }
+      if(on_boundary) {
+        auto [nd, ni] = tds().mirror_facet(cd, i);
+        if((nd == tds().to_cell_descriptor(this_facet_must_be_in_the_cz->first)) &&
+           (ni == this_facet_must_be_in_the_cz->second))
+        {
+          *the_facet_is_in_its_cz = true;
+        }
+      }
+    };
+
+    auto check_this_boundary_facet_must_be_in_the_cz = [&](cell_descriptor cd, int i) {
+      check_this_facet_must_be_in_the_cz(cd, i, true);
+    };
+
+#if CGAL_DEBUG_INDEXED_CONTAINER
+    if(this->is_parallel()) {
+      std::stringstream ss;
+      ss << "=== Thread " << this->this_thread_priority() << " find_conflicts search\n";
+      std::cerr << ss.str();
+      ss.str("");
+      ss << "=== Thread " << this->this_thread_priority() << "   " << d;
+      ss << "   N( " << d->neighbor(0) << " " << d->neighbor(1)
+        << " " << d->neighbor(2) << "  " << d->neighbor(3) << " )";
+      ss << "   V( " << d->vertex(0) << " " << d->vertex(1)
+        << " " << d->vertex(2) << "  " << d->vertex(3) << " )\n";
+      std::cerr << ss.str();
+    }
+#endif
     do
     {
-      Cell_handle c = cell_stack.top();
+      auto cd = cell_stack.top();
       cell_stack.pop();
 
       // For each neighbor cell
       for(int i=0; i<dimension()+1; ++i)
       {
-        Cell_handle test = c->neighbor(i);
+        auto test = tds().neighbor(cd, i);
 
         // "test" is either in the conflict zone,
         // either facet-adjacent to the CZ
 
-        if(test->tds_data().is_in_conflict())
+        if(tds().tds_data(test).is_in_conflict())
         {
-          Facet f(c, i); // Internal facet.
           // Is it the facet where're looking for?
-          if(this_facet_must_be_in_the_cz && the_facet_is_in_its_cz &&
-              f == *this_facet_must_be_in_the_cz)
+          check_this_facet_must_be_in_the_cz(cd, i);
+
+          if(cd < test)
           {
-            *the_facet_is_in_its_cz = true;
-          }
-          if(c < test)
-          {
-            *it.third++ = f;
+            *it.third++ = std::make_pair(cd, i);
           }
           continue; // test was already in conflict.
         }
-        if(test->tds_data().is_clear())
+        if(tds().tds_data(test).is_clear())
         {
-          if(tester(test))
+#if CGAL_DEBUG_INDEXED_CONTAINER
+          if(this->is_parallel()) {
+            std::stringstream ss;
+            ss << "=== Thread " << this->this_thread_priority() << "   " << test;
+            ss << "   N( " << tds().neighbor(test, 0) << " " << tds().neighbor(test, 1)
+              << " " << tds().neighbor(test, 2) << "  " << tds().neighbor(test, 3) << " )";
+            ss << "   V( " << tds().vertex(test, 0) << " " << tds().vertex(test, 1)
+              << " " << tds().vertex(test, 2) << "  " << tds().vertex(test, 3) << " )\n";
+            std::cerr << ss.str();
+          }
+#endif
+          if(tester(tds().cell_handle(test)))
           {
             // "test" is in the conflict zone
             if(could_lock_zone)
@@ -1401,38 +1510,27 @@ protected:
               }
             }
 
-            Facet f(c, i); // Internal facet.
             // Is it the facet where're looking for?
-            if(this_facet_must_be_in_the_cz && the_facet_is_in_its_cz &&
-                f == *this_facet_must_be_in_the_cz)
-            {
-              *the_facet_is_in_its_cz = true;
-            }
+            check_this_boundary_facet_must_be_in_the_cz(cd, i);
 
-            if(c < test)
+            if(cd < test)
             {
-              *it.third++ = f;
+              *it.third++ = std::make_pair(cd, i);
             }
 
             cell_stack.push(test);
-            test->tds_data().mark_in_conflict();
+            tds().tds_data(test).mark_in_conflict();
             *it.second++ = test;
             continue;
           }
 
-          test->tds_data().mark_on_boundary();
+          tds().tds_data(test).mark_on_boundary();
         }
 
-        Facet f(c, i); // Boundary facet.
         // Is it the facet where're looking for?
-        if(this_facet_must_be_in_the_cz && the_facet_is_in_its_cz &&
-            (mirror_facet(f) == *this_facet_must_be_in_the_cz ||
-             f == *this_facet_must_be_in_the_cz))
-        {
-          *the_facet_is_in_its_cz = true;
-        }
+        check_this_boundary_facet_must_be_in_the_cz(cd, i);
 
-        *it.first++ = f;
+        *it.first++ = std::make_pair(cd, i);
       }
     }
     while(!cell_stack.empty());
@@ -1441,7 +1539,7 @@ protected:
   }
 
   // This one takes a function object to recursively determine the cells in
-  // conflict, then calls _tds._insert_in_hole().
+  // conflict, then calls tds()._insert_in_hole().
   template < class Conflict_test >
   Vertex_handle insert_conflict(Cell_handle c, const Conflict_test& tester)
   {
@@ -1449,27 +1547,27 @@ protected:
     CGAL_precondition(c != Cell_handle());
     CGAL_precondition(tester(c));
 
-    std::vector<Cell_handle> cells;
+    std::vector<cell_descriptor> cells;
     cells.reserve(32);
 
-    Facet facet;
+    std::pair<cell_descriptor, int> facet;
+
+    auto triple = make_triple(Oneset_iterator<std::pair<cell_descriptor, int>>(facet),
+                                              std::back_inserter(cells),
+                                              Emptyset_iterator());
 
     // Find the cells in conflict
     switch(dimension())
     {
       case 3:
-        find_conflicts(c, tester, make_triple(Oneset_iterator<Facet>(facet),
-                                              std::back_inserter(cells),
-                                              Emptyset_iterator()));
+        find_conflicts(c, tester, triple);
         break;
       case 2:
-        find_conflicts(c, tester, make_triple(Oneset_iterator<Facet>(facet),
-                                              std::back_inserter(cells),
-                                              Emptyset_iterator()));
+        find_conflicts(c, tester, triple);
     }
     // Create the new cells and delete the old.
-    return _tds._insert_in_hole(cells.begin(), cells.end(),
-                                facet.first, facet.second);
+    return tds()._insert_in_hole(cells.begin(), cells.end(),
+                                 tds().cell_handle(facet.first), facet.second);
   }
 
 private:
@@ -1573,7 +1671,7 @@ protected:
   {
     CGAL_precondition(dimension()==2);
     Cell_handle n  = f->neighbor(i);
-    int ni = this->_tds.mirror_index(f,i); // ni = n->index(f);
+    int ni = this->tds().mirror_index(f,i); // ni = n->index(f);
 
     int cwi = (i+2)%3;
     int ccwi = (i+1)%3;
@@ -1585,17 +1683,17 @@ protected:
 
     // bl == bottom left, tr == top right
     Cell_handle tr = f->neighbor(ccwi);
-    int tri = this->_tds.mirror_index(f,ccwi);
+    int tri = this->tds().mirror_index(f,ccwi);
     Cell_handle bl = n->neighbor(ccwni);
-    int bli = this->_tds.mirror_index(n,ccwni);
+    int bli = this->tds().mirror_index(n,ccwni);
 
     f->set_vertex(cwi, n->vertex(ni));
     n->set_vertex(cwni, f->vertex(i));
 
     // update the neighborhood relations
-    this->_tds.set_adjacency(f, i, bl, bli);
-    this->_tds.set_adjacency(f, ccwi, n, ccwni);
-    this->_tds.set_adjacency(n, ni, tr, tri);
+    this->tds().set_adjacency(f, i, bl, bli);
+    this->tds().set_adjacency(f, ccwi, n, ccwni);
+    this->tds().set_adjacency(n, ni, tr, tri);
 
     if(v_cw->cell() == f)
     {
@@ -1809,15 +1907,15 @@ public:
   }
 
 
-  Cell_iterator cells_begin() const { return _tds.cells_begin(); }
-  Cell_iterator cells_end() const { return _tds.cells_end(); }
+  Cell_iterator cells_begin() const { return tds().cells_begin(); }
+  Cell_iterator cells_end() const { return tds().cells_end(); }
 
-  All_cells_iterator all_cells_begin() const { return _tds.cells_begin(); }
-  All_cells_iterator all_cells_end() const { return _tds.cells_end(); }
+  All_cells_iterator all_cells_begin() const { return tds().cells_begin(); }
+  All_cells_iterator all_cells_end() const { return tds().cells_end(); }
 
   All_cell_handles all_cell_handles() const
   {
-    return _tds.cell_handles();
+    return tds().cell_handles();
   }
 
   Finite_vertices_iterator finite_vertices_begin() const
@@ -1838,15 +1936,15 @@ public:
     return {finite_vertices_begin(), finite_vertices_end()};
   }
 
-  Vertex_iterator vertices_begin() const { return _tds.vertices_begin(); }
-  Vertex_iterator vertices_end() const { return _tds.vertices_end(); }
+  Vertex_iterator vertices_begin() const { return tds().vertices_begin(); }
+  Vertex_iterator vertices_end() const { return tds().vertices_end(); }
 
-  All_vertices_iterator all_vertices_begin() const { return _tds.vertices_begin(); }
-  All_vertices_iterator all_vertices_end() const { return _tds.vertices_end(); }
+  All_vertices_iterator all_vertices_begin() const { return tds().vertices_begin(); }
+  All_vertices_iterator all_vertices_end() const { return tds().vertices_end(); }
 
   All_vertex_handles all_vertex_handles() const
   {
-    return _tds.vertex_handles();
+    return tds().vertex_handles();
   }
 
   Finite_edges_iterator finite_edges_begin() const
@@ -1866,16 +1964,16 @@ public:
     return Finite_edges(finite_edges_begin(),finite_edges_end());
   }
 
-  Edge_iterator edges_begin() const { return _tds.edges_begin(); }
-  Edge_iterator edges_end() const { return _tds.edges_end(); }
+  Edge_iterator edges_begin() const { return tds().edges_begin(); }
+  Edge_iterator edges_end() const { return tds().edges_end(); }
 
 
-  All_edges_iterator all_edges_begin() const { return _tds.edges_begin(); }
-  All_edges_iterator all_edges_end() const { return _tds.edges_end(); }
+  All_edges_iterator all_edges_begin() const { return tds().edges_begin(); }
+  All_edges_iterator all_edges_end() const { return tds().edges_end(); }
 
   All_edges all_edges() const
   {
-    return _tds.edges();
+    return tds().edges();
   }
 
   Finite_facets_iterator finite_facets_begin() const
@@ -1895,16 +1993,16 @@ public:
     return Finite_facets(finite_facets_begin(),finite_facets_end());
   }
 
-  Facet_iterator facets_begin() const { return _tds.facets_begin(); }
-  Facet_iterator facets_end() const { return _tds.facets_end(); }
+  Facet_iterator facets_begin() const { return tds().facets_begin(); }
+  Facet_iterator facets_end() const { return tds().facets_end(); }
 
 
-  All_facets_iterator all_facets_begin() const { return _tds.facets_begin(); }
-  All_facets_iterator all_facets_end() const { return _tds.facets_end(); }
+  All_facets_iterator all_facets_begin() const { return tds().facets_begin(); }
+  All_facets_iterator all_facets_end() const { return tds().facets_end(); }
 
   All_facets all_facets() const
   {
-    return _tds.facets();
+    return tds().facets();
   }
 
   Point_iterator points_begin() const
@@ -1947,45 +2045,45 @@ public:
   // cells around an edge
   Cell_circulator incident_cells(const Edge& e) const
   {
-    return _tds.incident_cells(e);
+    return tds().incident_cells(e);
   }
   Cell_circulator incident_cells(Cell_handle c, int i, int j) const
   {
-    return _tds.incident_cells(c, i, j);
+    return tds().incident_cells(c, i, j);
   }
   Cell_circulator incident_cells(const Edge& e, Cell_handle start) const
   {
-    return _tds.incident_cells(e, start);
+    return tds().incident_cells(e, start);
   }
   Cell_circulator incident_cells(Cell_handle c, int i, int j, Cell_handle start) const
   {
-    return _tds.incident_cells(c, i, j, start);
+    return tds().incident_cells(c, i, j, start);
   }
 
   // facets around an edge
   Facet_circulator incident_facets(const Edge& e) const
   {
-    return _tds.incident_facets(e);
+    return tds().incident_facets(e);
   }
   Facet_circulator incident_facets(Cell_handle c, int i, int j) const
   {
-    return _tds.incident_facets(c, i, j);
+    return tds().incident_facets(c, i, j);
   }
   Facet_circulator incident_facets(const Edge& e, const Facet& start) const
   {
-    return _tds.incident_facets(e, start);
+    return tds().incident_facets(e, start);
   }
   Facet_circulator incident_facets(Cell_handle c, int i, int j, const Facet& start) const
   {
-    return _tds.incident_facets(c, i, j, start);
+    return tds().incident_facets(c, i, j, start);
   }
   Facet_circulator incident_facets(const Edge& e, Cell_handle start, int f) const
   {
-    return _tds.incident_facets(e, start, f);
+    return tds().incident_facets(e, start, f);
   }
   Facet_circulator incident_facets(Cell_handle c, int i, int j, Cell_handle start, int f) const
   {
-    return _tds.incident_facets(c, i, j, start, f);
+    return tds().incident_facets(c, i, j, start, f);
   }
 
   // around a vertex
@@ -2015,13 +2113,13 @@ public:
   template <typename OutputIterator>
   OutputIterator incident_cells(Vertex_handle v, OutputIterator cells) const
   {
-    return _tds.incident_cells(v, cells);
+    return tds().incident_cells(v, cells);
   }
 
   template <typename OutputIterator>
   void incident_cells_threadsafe(Vertex_handle v, OutputIterator cells) const
   {
-    _tds.incident_cells_threadsafe(v, cells);
+    tds().incident_cells_threadsafe(v, cells);
   }
 
   template <typename Filter, typename OutputIterator>
@@ -2029,7 +2127,7 @@ public:
                                  OutputIterator cells,
                                  const Filter& filter) const
   {
-    _tds.incident_cells_threadsafe(v, cells, filter);
+    tds().incident_cells_threadsafe(v, cells, filter);
   }
 
   bool try_lock_and_get_incident_cells(Vertex_handle v, std::vector<Cell_handle>& cells) const
@@ -2152,33 +2250,33 @@ public:
   OutputIterator finite_incident_cells(Vertex_handle v, OutputIterator cells) const
   {
     if(dimension() == 2)
-      return _tds.incident_cells(v, cells, Finite_filter_2D(this));
+      return tds().incident_cells(v, cells, Finite_filter_2D(this));
 
-    return _tds.incident_cells(v, cells, Finite_filter(this));
+    return tds().incident_cells(v, cells, Finite_filter(this));
   }
 
   template <class OutputIterator>
   OutputIterator incident_facets(Vertex_handle v, OutputIterator facets) const
   {
-    return _tds.incident_facets(v, facets);
+    return tds().incident_facets(v, facets);
   }
 
   template <class OutputIterator>
   OutputIterator finite_incident_facets(Vertex_handle v, OutputIterator facets) const
   {
-    return _tds.incident_facets(v, facets, Finite_filter(this));
+    return tds().incident_facets(v, facets, Finite_filter(this));
   }
 
   template <class OutputIterator>
   OutputIterator incident_facets_threadsafe(Vertex_handle v, OutputIterator facets) const
   {
-    return _tds.incident_facets_threadsafe(v, facets);
+    return tds().incident_facets_threadsafe(v, facets);
   }
 
   template <class OutputIterator>
   OutputIterator finite_incident_facets_threadsafe(Vertex_handle v, OutputIterator facets) const
   {
-    return _tds.incident_facets_threadsafe(v, facets, Finite_filter(this));
+    return tds().incident_facets_threadsafe(v, facets, Finite_filter(this));
   }
 
   // old name (up to CGAL 3.4)
@@ -2186,27 +2284,27 @@ public:
   template <class OutputIterator>
   OutputIterator incident_vertices(Vertex_handle v, OutputIterator vertices) const
   {
-    return _tds.adjacent_vertices(v, vertices);
+    return tds().adjacent_vertices(v, vertices);
   }
 
   // correct name
   template <class OutputIterator>
   OutputIterator adjacent_vertices(Vertex_handle v, OutputIterator vertices) const
   {
-    return _tds.adjacent_vertices(v, vertices);
+    return tds().adjacent_vertices(v, vertices);
   }
 
   template <class OutputIterator>
   OutputIterator adjacent_vertices_threadsafe(Vertex_handle v, OutputIterator vertices) const
   {
-    return _tds.adjacent_vertices_threadsafe(v, vertices);
+    return tds().adjacent_vertices_threadsafe(v, vertices);
   }
 
   template <class OutputIterator>
   OutputIterator adjacent_vertices_and_cells_3(Vertex_handle v, OutputIterator vertices,
                                                std::vector<Cell_handle>& cells) const
   {
-    return _tds.adjacent_vertices_and_cells_3(v, vertices, cells);
+    return tds().adjacent_vertices_and_cells_3(v, vertices, cells);
   }
 
   // old name (up to CGAL 3.4)
@@ -2214,38 +2312,38 @@ public:
   template <class OutputIterator>
   OutputIterator finite_incident_vertices(Vertex_handle v, OutputIterator vertices) const
   {
-    return _tds.adjacent_vertices(v, vertices, Finite_filter(this));
+    return tds().adjacent_vertices(v, vertices, Finite_filter(this));
   }
 
   // correct name
   template <class OutputIterator>
   OutputIterator finite_adjacent_vertices(Vertex_handle v, OutputIterator vertices) const
   {
-    return _tds.adjacent_vertices(v, vertices, Finite_filter(this));
+    return tds().adjacent_vertices(v, vertices, Finite_filter(this));
   }
 
   template <class OutputIterator>
   OutputIterator incident_edges(Vertex_handle v, OutputIterator edges) const
   {
-    return _tds.incident_edges(v, edges);
+    return tds().incident_edges(v, edges);
   }
 
   template <class OutputIterator>
   OutputIterator finite_incident_edges(Vertex_handle v, OutputIterator edges) const
   {
-    return _tds.incident_edges(v, edges, Finite_filter(this));
+    return tds().incident_edges(v, edges, Finite_filter(this));
   }
 
   template <class OutputIterator>
   OutputIterator incident_edges_threadsafe(Vertex_handle v, OutputIterator edges) const
   {
-    return _tds.incident_edges_threadsafe(v, edges);
+    return tds().incident_edges_threadsafe(v, edges);
   }
 
   template <class OutputIterator>
   OutputIterator finite_incident_edges_threadsafe(Vertex_handle v, OutputIterator edges) const
   {
-    return _tds.incident_edges_threadsafe(v, edges, Finite_filter(this));
+    return tds().incident_edges_threadsafe(v, edges, Finite_filter(this));
   }
 
   //// Segment Cell Iterator
@@ -2315,7 +2413,7 @@ public:
 
   size_type degree(Vertex_handle v) const
   {
-    return _tds.degree(v);
+    return tds().degree(v);
   }
 
   // CHECKING
@@ -2354,7 +2452,7 @@ public:
     clear();
     tds().cells().clear();
 
-    std::size_t n;
+    size_type n;
     int d;
     if(IO::is_ascii(is))
       is >> d >> n;
@@ -2365,13 +2463,13 @@ public:
     if(!is) return is;
     tds().set_dimension(d);
 
-    std::size_t V_size = n+1;
+    size_type V_size = n+1;
     std::vector< Vertex_handle > V(V_size);
 
     // the infinite vertex is numbered 0
     V[0] = infinite_vertex();
 
-    for (std::size_t i = 1; i < V_size; ++i) {
+    for (size_type i = 1; i < V_size; ++i) {
       Vertex1 v;
       if(!(is >> v)) return is;
       Vertex_handle vh=tds().create_vertex( convert_vertex(v) );
@@ -2381,10 +2479,10 @@ public:
 
     std::vector< Cell_handle > C;
 
-    std::size_t m;
+    size_type m;
     tds().read_cells(is, V, m, C);
 
-    for (std::size_t j=0 ; j < m; j++) {
+    for (size_type j=0 ; j < m; j++) {
       Cell1 c;
       if(!(is >> c)) return is;
       convert_cell(c, *C[j]);
@@ -2409,14 +2507,15 @@ std::istream& operator>> (std::istream& is, Triangulation_3<GT, Tds, Lds>& tr)
   // - the neighbors of each cell by their index in the preceding list of cells
   // - when dimension < 3 : the same with faces of maximal dimension
 
-  typedef Triangulation_3<GT, Tds>               Triangulation;
-  typedef typename Triangulation::Vertex_handle  Vertex_handle;
-  typedef typename Triangulation::Cell_handle    Cell_handle;
+  using Triangulation = Triangulation_3<GT, Tds>;
+  using Vertex_handle = typename Triangulation::Vertex_handle;
+  using Cell_handle = typename Triangulation::Cell_handle;
+  using size_type = typename Triangulation::size_type;
 
-  tr._tds.clear(); // infinite vertex deleted
-  tr.infinite = tr._tds.create_vertex();
+  tr.tds().clear(); // infinite vertex deleted
+  tr._infinite_vertex = tr.tds().create_vertex();
 
-  std::size_t n;
+  size_type n;
   int d;
   if(IO::is_ascii(is))
   {
@@ -2435,23 +2534,23 @@ std::istream& operator>> (std::istream& is, Triangulation_3<GT, Tds, Lds>& tr)
     is.setstate(std::ios_base::failbit);
     return is;
   }
-  tr._tds.set_dimension(d);
+  tr.tds().set_dimension(d);
   V.resize(n+1);
   V[0] = tr.infinite_vertex(); // the infinite vertex is numbered 0
 
-  for(std::size_t i=1; i <= n; i++)
+  for(size_type i=1; i <= n; i++)
   {
-    V[i] = tr._tds.create_vertex();
+    V[i] = tr.tds().create_vertex();
     if(!(is >> *V[i]))
       return is;
   }
 
   std::vector< Cell_handle > C;
 
-  std::size_t m;
-  tr._tds.read_cells(is, V, m, C);
+  size_type m;
+  tr.tds().read_cells(is, V, m, C);
 
-  for(std::size_t j=0 ; j < m; j++)
+  for(size_type j=0 ; j < m; j++)
     if(!(is >> *(C[j])))
       return is;
 
@@ -2472,13 +2571,13 @@ std::ostream& operator<< (std::ostream& os, const Triangulation_3<GT, Tds, Lds>&
   // - the neighbors of each cell by their index in the preceding list of cells
   // - when dimension < 3 : the same with faces of maximal dimension
 
-  typedef Triangulation_3<GT, Tds>                 Triangulation;
-  typedef typename Triangulation::size_type        size_type;
-  typedef typename Triangulation::Vertex_handle    Vertex_handle;
-  typedef typename Triangulation::Vertex_iterator  Vertex_iterator;
-  typedef typename Triangulation::Cell_iterator    Cell_iterator;
-  typedef typename Triangulation::Edge_iterator    Edge_iterator;
-  typedef typename Triangulation::Facet_iterator   Facet_iterator;
+  using Triangulation   = Triangulation_3<GT, Tds>;
+  using size_type       = typename Triangulation::size_type;
+  using Vertex_handle   = typename Triangulation::Vertex_handle;
+  using Vertex_iterator = typename Triangulation::Vertex_iterator;
+  using Cell_iterator   = typename Triangulation::Cell_iterator;
+  using Edge_iterator   = typename Triangulation::Edge_iterator;
+  using Facet_iterator  = typename Triangulation::Facet_iterator;
 
   // outputs dimension and number of vertices
   size_type n = tr.number_of_vertices();
@@ -2505,7 +2604,7 @@ std::ostream& operator<< (std::ostream& os, const Triangulation_3<GT, Tds, Lds>&
   CGAL_assertion(i == n+1);
   CGAL_assertion(tr.is_infinite(TV[0]));
 
-  Unique_hash_map<Vertex_handle, std::size_t > V;
+  Unique_hash_map<Vertex_handle, size_type > V;
   V[tr.infinite_vertex()] = 0;
   for(i=1; i <= n; i++)
   {
@@ -2574,7 +2673,7 @@ typename Triangulation_3<GT,Tds,Lds>::size_type
 Triangulation_3<GT,Tds,Lds>::
 number_of_cells() const
 {
-  return _tds.number_of_cells();
+  return tds().number_of_cells();
 }
 
 template < class GT, class Tds, class Lds >
@@ -2593,7 +2692,7 @@ typename Triangulation_3<GT,Tds,Lds>::size_type
 Triangulation_3<GT,Tds,Lds>::
 number_of_facets() const
 {
-  return _tds.number_of_facets();
+  return tds().number_of_facets();
 }
 
 template < class GT, class Tds, class Lds >
@@ -2612,7 +2711,7 @@ typename Triangulation_3<GT,Tds,Lds>::size_type
 Triangulation_3<GT,Tds,Lds>::
 number_of_edges() const
 {
-  return _tds.number_of_edges();
+  return tds().number_of_edges();
 }
 
 template < class GT, class Tds, class Lds >
@@ -2695,7 +2794,7 @@ bool
 Triangulation_3<GT,Tds,Lds>::
 is_vertex(Vertex_handle v) const
 {
-  return _tds.is_vertex(v);
+  return tds().is_vertex(v);
 }
 
 template < class GT, class Tds, class Lds >
@@ -2704,7 +2803,7 @@ Triangulation_3<GT,Tds,Lds>::
 is_edge(Vertex_handle u, Vertex_handle v,
         Cell_handle& c, int& i, int& j) const
 {
-  return _tds.is_edge(u, v, c, i, j);
+  return tds().is_edge(u, v, c, i, j);
 }
 
 template < class GT, class Tds, class Lds >
@@ -2713,7 +2812,7 @@ Triangulation_3<GT,Tds,Lds>::
 is_facet(Vertex_handle u, Vertex_handle v, Vertex_handle w,
          Cell_handle& c, int& i, int& j, int& k) const
 {
-  return _tds.is_facet(u, v, w, c, i, j, k);
+  return tds().is_facet(u, v, w, c, i, j, k);
 }
 
 template < class GT, class Tds, class Lds >
@@ -2723,7 +2822,7 @@ is_facet(Vertex_handle u, Vertex_handle v, Vertex_handle w) const
 {
   Cell_handle c;
   int i; int j; int k;
-  return _tds.is_facet(u, v, w, c, i, j, k);
+  return tds().is_facet(u, v, w, c, i, j, k);
 }
 
 template < class GT, class Tds, class Lds >
@@ -2732,7 +2831,7 @@ bool
 Triangulation_3<GT,Tds,Lds>::
 is_cell(Cell_handle c) const
 {
-  return _tds.is_cell(c);
+  return tds().is_cell(c);
 }
 
 template < class GT, class Tds, class Lds >
@@ -2742,7 +2841,7 @@ is_cell(Vertex_handle u, Vertex_handle v,
         Vertex_handle w, Vertex_handle t,
         Cell_handle& c, int& i, int& j, int& k, int& l) const
 {
-  return _tds.is_cell(u, v, w, t, c, i, j, k, l);
+  return tds().is_cell(u, v, w, t, c, i, j, k, l);
 }
 
 template < class GT, class Tds, class Lds >
@@ -2753,7 +2852,7 @@ is_cell(Vertex_handle u, Vertex_handle v,
         Cell_handle& c) const
 {
   int i,j,k,l;
-  return _tds.is_cell(u, v, w, t, c, i, j, k, l);
+  return tds().is_cell(u, v, w, t, c, i, j, k, l);
 }
 
 template < class GT, class Tds, class Lds >
@@ -2762,7 +2861,7 @@ bool
 Triangulation_3<GT,Tds,Lds>::
 has_vertex(const Facet& f, Vertex_handle v, int& j) const
 {
-  return _tds.has_vertex(f.first, f.second, v, j);
+  return tds().has_vertex(f.first, f.second, v, j);
 }
 
 template < class GT, class Tds, class Lds >
@@ -2771,7 +2870,7 @@ bool
 Triangulation_3<GT,Tds,Lds>::
 has_vertex(Cell_handle c, int i, Vertex_handle v, int& j) const
 {
-  return _tds.has_vertex(c, i, v, j);
+  return tds().has_vertex(c, i, v, j);
 }
 
 template < class GT, class Tds, class Lds >
@@ -2780,7 +2879,7 @@ bool
 Triangulation_3<GT,Tds,Lds>::
 has_vertex(const Facet& f, Vertex_handle v) const
 {
-  return _tds.has_vertex(f.first, f.second, v);
+  return tds().has_vertex(f.first, f.second, v);
 }
 
 template < class GT, class Tds, class Lds >
@@ -2789,7 +2888,7 @@ bool
 Triangulation_3<GT,Tds,Lds>::
 has_vertex(Cell_handle c, int i, Vertex_handle v) const
 {
-  return _tds.has_vertex(c, i, v);
+  return tds().has_vertex(c, i, v);
 }
 
 template < class GT, class Tds, class Lds >
@@ -2798,7 +2897,7 @@ bool
 Triangulation_3<GT,Tds,Lds>::
 are_equal(Cell_handle c, int i, Cell_handle n, int j) const
 {
-  return _tds.are_equal(c, i, n, j);
+  return tds().are_equal(c, i, n, j);
 }
 
 template < class GT, class Tds, class Lds >
@@ -2807,7 +2906,7 @@ bool
 Triangulation_3<GT,Tds,Lds>::
 are_equal(const Facet& f, const Facet& g) const
 {
-  return _tds.are_equal(f.first, f.second, g.first, g.second);
+  return tds().are_equal(f.first, f.second, g.first, g.second);
 }
 
 template < class GT, class Tds, class Lds >
@@ -2816,7 +2915,7 @@ bool
 Triangulation_3<GT,Tds,Lds>::
 are_equal(const Facet& f, Cell_handle n, int j) const
 {
-  return _tds.are_equal(f.first, f.second, n, j);
+  return tds().are_equal(f.first, f.second, n, j);
 }
 
 template < class GT, class Tds, class Lds >
@@ -2854,7 +2953,7 @@ exact_locate(const Point& p, Locate_type& lt, int& li, int& lj,
       start = infinite_cell();
 
     int ind_inf;
-    if(start->has_vertex(infinite, ind_inf))
+    if(start->has_vertex(_infinite_vertex, ind_inf))
       start = start->neighbor(ind_inf);
   }
 
@@ -2865,7 +2964,7 @@ exact_locate(const Point& p, Locate_type& lt, int& li, int& lj,
     case 3:
     {
       CGAL_precondition(start != Cell_handle());
-      CGAL_precondition(! start->has_vertex(infinite));
+      CGAL_precondition(! start->has_vertex(_infinite_vertex));
 
       // We implement the remembering visibility/stochastic walk.
 
@@ -2932,7 +3031,7 @@ exact_locate(const Point& p, Locate_type& lt, int& li, int& lj,
             }
             else
             {
-              if(next->has_vertex(infinite, li))
+              if(next->has_vertex(_infinite_vertex, li))
               {
                 // We are outside the convex hull.
                 lt = OUTSIDE_CONVEX_HULL;
@@ -3003,7 +3102,7 @@ exact_locate(const Point& p, Locate_type& lt, int& li, int& lj,
     case 2:
     {
       CGAL_precondition(start != Cell_handle());
-      CGAL_precondition(! start->has_vertex(infinite));
+      CGAL_precondition(! start->has_vertex(_infinite_vertex));
       Cell_handle c = start;
 
       boost::uniform_smallint<> three(0, 2);
@@ -3025,7 +3124,7 @@ exact_locate(const Point& p, Locate_type& lt, int& li, int& lj,
       while(1)
       {
         int inf;
-        if(c->has_vertex(infinite, inf))
+        if(c->has_vertex(_infinite_vertex, inf))
         {
           // c must contain p in its interior
           lt = OUTSIDE_CONVEX_HULL;
@@ -3100,7 +3199,7 @@ exact_locate(const Point& p, Locate_type& lt, int& li, int& lj,
     case 1:
     {
       CGAL_precondition(start != Cell_handle());
-      CGAL_precondition(! start->has_vertex(infinite));
+      CGAL_precondition(! start->has_vertex(_infinite_vertex));
       Cell_handle c = start;
 
       //first tests whether p is collinear with the current triangulation
@@ -3112,7 +3211,7 @@ exact_locate(const Point& p, Locate_type& lt, int& li, int& lj,
       // if p is collinear, location :
       while(1)
       {
-        if(c->has_vertex(infinite))
+        if(c->has_vertex(_infinite_vertex))
         {
           // c must contain p in its interior
           lt = OUTSIDE_CONVEX_HULL;
@@ -3204,11 +3303,11 @@ inexact_locate(const Point& t, Cell_handle start, int n_of_turns,
   }
 
   int ind_inf;
-  if(start->has_vertex(infinite, ind_inf))
+  if(start->has_vertex(_infinite_vertex, ind_inf))
     start = start->neighbor(ind_inf);
 
   CGAL_precondition(start != Cell_handle());
-  CGAL_precondition(! start->has_vertex(infinite));
+  CGAL_precondition(! start->has_vertex(_infinite_vertex));
 
   // We implement the remembering visibility walk.
   // In this phase, no need to be stochastic
@@ -3227,6 +3326,20 @@ inexact_locate(const Point& t, Cell_handle start, int n_of_turns,
   }
 
   // Now treat the cell c.
+#if CGAL_DEBUG_INDEXED_CONTAINER
+  if(this->is_parallel()) {
+    std::stringstream ss;
+    ss << "-- Thread " << this->this_thread_priority() << " inexact_locate walk\n";
+    std::cerr << ss.str();
+    ss.str("");
+    ss << "-- Thread " << this->this_thread_priority() << "   " << c;
+    ss << "   N( " << c->neighbor(0) << " " << c->neighbor(1)
+      << " " << c->neighbor(2) << "  " << c->neighbor(3) << " )";
+    ss << "   V( " << c->vertex(0) << " " << c->vertex(1)
+      << " " << c->vertex(2) << "  " << c->vertex(3) << " )\n";
+    std::cerr << ss.str();
+  }
+#endif
 try_next_cell:
   n_of_turns--;
 
@@ -3234,10 +3347,10 @@ try_next_cell:
   // So, in order to test if p is seen outside from one of c's facets,
   // we just replace the corresponding point by p in the orientation
   // test.  We do this using the array below.
-  const Point* pts[4] = { &(c->vertex(0)->point()),
-                          &(c->vertex(1)->point()),
-                          &(c->vertex(2)->point()),
-                          &(c->vertex(3)->point()) };
+  const Point* pts[4] = { &(point(c, 0)),
+                          &(point(c, 1)),
+                          &(point(c, 2)),
+                          &(point(c, 3)) };
 
   // (non-stochastic) visibility walk
   for(int i=0; i != 4; ++i)
@@ -3254,7 +3367,7 @@ try_next_cell:
       continue;
     }
 
-    if(next->has_vertex(infinite))
+    if(next->has_vertex(_infinite_vertex))
     {
       // We are outside the convex hull.
       return next;
@@ -3264,6 +3377,17 @@ try_next_cell:
     c = next;
     if(could_lock_zone)
     {
+#if CGAL_DEBUG_INDEXED_CONTAINER
+      if(this->is_parallel()) {
+        std::stringstream ss;
+        ss << "-- Thread " << this->this_thread_priority() << "   " << c;
+        ss << "   N( " << c->neighbor(0) << " " << c->neighbor(1)
+          << " " << c->neighbor(2) << "  " << c->neighbor(3) << " )";
+        ss << "   V( " << c->vertex(0) << " " << c->vertex(1)
+          << " " << c->vertex(2) << "  " << c->vertex(3) << " )\n";
+        std::cerr << ss.str();
+      }
+#endif
       //previous->unlock(); // DON'T do that, "c" may be in
       // the same locking cell as "previous"
       if(!this->try_lock_cell(c))
@@ -3394,7 +3518,7 @@ side_of_cell(const Point& p,
   }
   else
   {
-    int inf = c->index(infinite);
+    int inf = c->index(_infinite_vertex);
     Orientation o;
     Vertex_handle v1 = c->vertex((inf+1)&3),
                   v2 = c->vertex((inf+2)&3),
@@ -3593,7 +3717,7 @@ side_of_facet(const Point& p,
   }
 
   // else infinite facet
-  int inf = c->index(infinite);
+  int inf = c->index(_infinite_vertex);
   // The following precondition is useless because it is written
   // in side_of_facet
   //         CGAL_precondition(coplanar (p,
@@ -3700,7 +3824,7 @@ side_of_edge(const Point& p,
     return side_of_segment(p, c->vertex(0)->point(), c->vertex(1)->point(),
                            lt, li);
   // else infinite edge
-  int inf = c->index(infinite);
+  int inf = c->index(_infinite_vertex);
   switch(collinear_position(c->vertex(1-inf)->point(), p,
                              mirror_vertex(c, inf)->point()))
   {
@@ -3770,7 +3894,7 @@ flip(Cell_handle c, int i)
       return false;
   }
 
-  _tds.flip_flippable(c, i);
+  tds().flip_flippable(c, i);
   return true;
 }
 
@@ -3816,7 +3940,7 @@ flip_flippable(Cell_handle c, int i)
                                   c->vertex(i)->point()) == POSITIVE);
   }
 
-  _tds.flip_flippable(c, i);
+  tds().flip_flippable(c, i);
 }
 
 template < class GT, class Tds, class Lds >
@@ -3864,7 +3988,7 @@ flip(Cell_handle c, int i, int j)
                  c->vertex(next_around_edge(i,j))->point()) != POSITIVE)
     return false;
 
-  _tds.flip_flippable(c, i, j);
+  tds().flip_flippable(c, i, j);
   return true;
 }
 
@@ -3905,7 +4029,7 @@ flip_flippable(Cell_handle c, int i, int j)
                                 c->vertex(next_around_edge(i,j))->point()) == POSITIVE);
 #endif
 
-  _tds.flip_flippable(c, i, j);
+  tds().flip_flippable(c, i, j);
 }
 
 template < class GT, class Tds, class Lds >
@@ -3973,10 +4097,8 @@ insert_in_conflict(const Point& p,
 
       // Ok, we really insert the point now.
       // First, find the conflict region.
-      boost::container::small_vector<Cell_handle,32> cells;
-      Facet facet;
-
-      boost::container::small_vector<Facet,32> facets;
+      boost::container::small_vector<cell_descriptor,32> cells;
+      boost::container::small_vector<std::pair<cell_descriptor, int>,32> facets;
 
       // Parallel
       if(could_lock_zone)
@@ -3991,14 +4113,14 @@ insert_in_conflict(const Point& p,
 
         if(*could_lock_zone == false)
         {
-          for(Cell_handle ch : cells)
+          for(auto ch : cells)
           {
-            ch->tds_data().clear();
+            tds().tds_data(ch).clear();
           }
 
-          for(Facet& f : facets)
+          for(auto& [cd, i] : facets)
           {
-            f.first->neighbor(f.second)->tds_data().clear();
+            tds().tds_data(tds().neighbor(cd, i)).clear();
           }
           return Vertex_handle();
         }
@@ -4014,7 +4136,7 @@ insert_in_conflict(const Point& p,
                          Emptyset_iterator()));
       }
 
-      facet = facets.back();
+      auto facet = facets.back();
 
       // Remember the points that are hidden by the conflicting cells,
       // as they will be deleted during the insertion.
@@ -4025,7 +4147,7 @@ insert_in_conflict(const Point& p,
         _insert_in_small_hole(p, cells, facets) :
         _insert_in_hole(p,
                         cells.begin(), cells.end(),
-                        facet.first, facet.second);
+                        tds().cell_handle(facet.first), facet.second);
 
       // Store the hidden points in their new cells.
       hider.reinsert_vertices(v);
@@ -4050,11 +4172,11 @@ insert_in_conflict(const Point& p,
 
       // Ok, we really insert the point now.
       // First, find the conflict region.
-      std::vector<Cell_handle> cells;
+      std::vector<cell_descriptor> cells;
       cells.reserve(32);
-      Facet facet;
+      std::pair<cell_descriptor, int> facet;
 
-      find_conflicts(c, tester, make_triple(Oneset_iterator<Facet>(facet),
+      find_conflicts(c, tester, make_triple(Oneset_iterator<std::pair<cell_descriptor, int>>(facet),
                                             std::back_inserter(cells),
                                             Emptyset_iterator()));
 
@@ -4063,7 +4185,7 @@ insert_in_conflict(const Point& p,
       hider.process_cells_in_conflict(cells.begin(), cells.end());
 
       Vertex_handle v = _insert_in_hole(p, cells.begin(), cells.end(),
-                                        facet.first, facet.second);
+                                        tds().cell_handle(facet.first), facet.second);
 
       // Store the hidden points in their new cells.
       hider.reinsert_vertices(v);
@@ -4093,7 +4215,6 @@ insert_in_conflict(const Point& p,
       // Ok, we really insert the point now.
       // First, find the conflict region.
       std::vector<Cell_handle> cells;
-      Facet facet;
       Cell_handle bound[2];
       // corresponding index: bound[j]->neighbor(1-j) is in conflict.
 
@@ -4152,7 +4273,7 @@ insert_in_cell(const Point& p, Cell_handle c)
                                         c->vertex(3)->point(),
                                         lt,i,j) == ON_BOUNDED_SIDE);
 
-  Vertex_handle v = _tds.insert_in_cell(c);
+  Vertex_handle v = tds().insert_in_cell(c);
   v->set_point(p);
   return v;
 }
@@ -4179,7 +4300,7 @@ insert_in_facet(const Point& p, Cell_handle c, int i)
                                                c->vertex((i+3)&3)->point(),
                                                lt, li, lj) == ON_BOUNDED_SIDE);
 
-  Vertex_handle v = _tds.insert_in_facet(c, i);
+  Vertex_handle v = tds().insert_in_facet(c, i);
   v->set_point(p);
   return v;
 }
@@ -4220,7 +4341,7 @@ insert_in_edge(const Point& p, Cell_handle c, int i, int j)
     }
   }
 
-  Vertex_handle v = _tds.insert_in_edge(c, i, j);
+  Vertex_handle v = tds().insert_in_edge(c, i, j);
   v->set_point(p);
   return v;
 }
@@ -4235,7 +4356,7 @@ insert_outside_convex_hull(const Point& p, Cell_handle c)
   // dimension 0 not allowed, use outside-affine-hull
 
   CGAL_precondition(dimension() > 0);
-  CGAL_precondition(c->has_vertex(infinite));
+  CGAL_precondition(c->has_vertex(_infinite_vertex));
   // the precondition that p is in c is tested in each of the
   // insertion methods called from this method
 
@@ -4299,11 +4420,11 @@ insert_outside_affine_hull(const Point& p)
       reorient = false;
   }
 
-  Vertex_handle v = _tds.insert_increase_dimension(infinite_vertex());
+  Vertex_handle v = tds().insert_increase_dimension(infinite_vertex());
   v->set_point(p);
 
   if(reorient)
-    _tds.reorient();
+    tds().reorient();
 
   return v;
 }
@@ -4507,7 +4628,7 @@ test_dim_down(Vertex_handle v) const
   }
   else // dimension() == 1 or 0
   {
-    return number_of_vertices() == (size_type) dimension() + 1;
+    return number_of_vertices() == static_cast<size_type>(dimension() + 1);
   }
 
   return true;
@@ -5610,7 +5731,7 @@ move_if_no_collision(Vertex_handle v, const Point& p,
                        p))
     {
       v->set_point(p);
-      _tds.decrease_dimension(loc, loc->index(v));
+      tds().decrease_dimension(loc, loc->index(v));
       return v;
     }
   }
@@ -5673,7 +5794,7 @@ move_if_no_collision(Vertex_handle v, const Point& p,
                             p))
     {
       v->set_point(p);
-      _tds.decrease_dimension(loc, loc->index(v));
+      tds().decrease_dimension(loc, loc->index(v));
       Facet f = *finite_facets_begin();
       if(coplanar_orientation(f.first->vertex(0)->point(),
                                f.first->vertex(1)->point(),
@@ -5901,7 +6022,7 @@ move_if_no_collision_and_give_new_cells(Vertex_handle v, const Point& p,
                        p))
     {
       v->set_point(p);
-      _tds.decrease_dimension(loc, loc->index(v));
+      tds().decrease_dimension(loc, loc->index(v));
       for(All_cells_iterator afi = tds().raw_cells_begin();
                              afi != tds().raw_cells_end(); afi++)
       {
@@ -5983,7 +6104,7 @@ move_if_no_collision_and_give_new_cells(Vertex_handle v, const Point& p,
                             p))
     {
       v->set_point(p);
-      _tds.decrease_dimension(loc, loc->index(v));
+      tds().decrease_dimension(loc, loc->index(v));
       Facet f = *finite_facets_begin();
       if(coplanar_orientation(f.first->vertex(0)->point(),
                                f.first->vertex(1)->point(),
@@ -6378,7 +6499,7 @@ bool
 Triangulation_3<GT,Tds,Lds>::
 is_valid(bool verbose, int level) const
 {
-  if(! _tds.is_valid(verbose,level))
+  if(! tds().is_valid(verbose,level))
   {
     if(verbose)
       std::cerr << "invalid data structure" << std::endl;
@@ -6431,7 +6552,7 @@ bool
 Triangulation_3<GT,Tds,Lds>::
 is_valid(Cell_handle c, bool verbose, int level) const
 {
-  if(! _tds.is_valid(c,verbose,level))
+  if(! tds().is_valid(c,verbose,level))
   {
     if(verbose)
     {

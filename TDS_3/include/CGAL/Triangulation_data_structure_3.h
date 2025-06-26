@@ -19,13 +19,13 @@
 
 #include <CGAL/license/TDS_3.h>
 
+#include <CGAL/Triangulation_data_structure_3_fwd.h>
+
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/basic.h>
 
 #include <utility>
-#include <map>
-#include <set>
 #include <vector>
 #include <stack>
 #include <limits>
@@ -44,10 +44,11 @@
 
 #include <CGAL/Concurrent_compact_container.h>
 #include <CGAL/Compact_container.h>
+
+#include <CGAL/TDS_3/Indexed_storage.h>
+
 #include <CGAL/Small_unordered_map.h>
 
-#include <CGAL/Triangulation_ds_cell_base_3.h>
-#include <CGAL/Triangulation_ds_vertex_base_3.h>
 #include <CGAL/Triangulation_simplex_3.h>
 
 #include <CGAL/TDS_3/internal/Triangulation_ds_iterators_3.h>
@@ -62,35 +63,76 @@
 
 namespace CGAL {
 
-// TODO : noms : Vb != Vertex_base : clarifier.
+template < class Vb, class Cb, class Concurrency_tag, class StorageTag>
+class Triangulation_data_structure_3;
+
+//utilities for copy_tds
+namespace internal { namespace TDS_3{
+  template <class Vertex_src,class Vertex_tgt>
+  struct Default_vertex_converter
+  {
+    Vertex_tgt operator()(const Vertex_src& src) const {
+      return Vertex_tgt(src.point());
+    }
+
+    void operator()(const Vertex_src&,Vertex_tgt&) const {}
+  };
+
+  template <class Cell_src,class Cell_tgt>
+  struct Default_cell_converter
+  {
+    Cell_tgt operator()(const Cell_src&) const {
+      return Cell_tgt();
+    }
+
+    void operator()(const Cell_src&,Cell_tgt&) const {}
+  };
+
+  template <class Vertex>
+  struct Default_vertex_converter<Vertex,Vertex>
+  {
+    const Vertex& operator()(const Vertex& src) const {
+      return src;
+    }
+
+    void operator()(const Vertex&,Vertex&) const {}
+  };
+
+  template <class Cell>
+  struct Default_cell_converter<Cell,Cell>{
+    const Cell& operator()(const Cell& src) const {
+      return src;
+    }
+
+    void operator()(const Cell&,Cell&) const {}
+  };
+} } //namespace internal::TDS_3
+
+
 
 template < class Vb = Triangulation_ds_vertex_base_3<>,
            class Cb = Triangulation_ds_cell_base_3<>,
            class Concurrency_tag_ = Sequential_tag
 >
-class Triangulation_data_structure_3
-  : public Triangulation_utils_3
-{
-  typedef Triangulation_data_structure_3<Vb, Cb, Concurrency_tag_> Tds;
-
+class Triangulation_data_structure_3_storage {
 public:
   typedef Concurrency_tag_            Concurrency_tag;
+  typedef Triangulation_data_structure_3<Vb, Cb, Concurrency_tag_, Handle_tag> Tds;
+  typedef Triangulation_data_structure_3_storage<Vb, Cb, Concurrency_tag_> Storage;
 
-  // This tag is used in the parallel operations of RT_3 to access some functions
-  // of the TDS (tds.vertices().is_used(Vertex_handle)) that are much more efficient
-  // than what is exposed by the TDS concept (tds.is_vertex(Vertex_handle)).
-  typedef CGAL::Tag_true              Is_CGAL_TDS_3;
+  Tds& tds()
+  {
+    static_assert(std::is_base_of_v<Storage, Tds>,
+                  "Triangulation_data_structure_3_storage must be a base class of Tds");
+    return *static_cast<Tds*>(this);
+  }
 
-  // Tools to change the Vertex and Cell types of the TDS.
-  template < typename Vb2 >
-  struct Rebind_vertex {
-    typedef Triangulation_data_structure_3<Vb2, Cb, Concurrency_tag> Other;
-  };
-
-  template < typename Cb2 >
-  struct Rebind_cell {
-    typedef Triangulation_data_structure_3<Vb, Cb2, Concurrency_tag> Other;
-  };
+  const Tds& tds() const
+  {
+    static_assert(std::is_base_of_v<Storage, Tds>,
+                  "Triangulation_data_structure_3_storage must be a base class of Tds");
+    return *static_cast<const Tds*>(this);
+  }
 
   // Put this TDS inside the Vertex and Cell types.
   typedef typename Vb::template Rebind_TDS<Tds>::Other  Vertex;
@@ -112,6 +154,319 @@ public:
     bool processed() const { return conflict_state == 1; }
   };
 
+  // Cells
+  // N.B.: Concurrent_compact_container requires TBB
+#ifdef CGAL_LINKED_WITH_TBB
+  using Cell_range = typename std::conditional
+  <
+    std::is_convertible<Concurrency_tag, Parallel_tag>::value,
+    Concurrent_compact_container<Cell, tbb::scalable_allocator<Cell> >,
+    Compact_container<Cell>
+  >::type;
+
+#else
+  static_assert
+          (!(std::is_convertible<Concurrency_tag, Parallel_tag>::value),
+            "In CGAL triangulations, `Parallel_tag` can only be used with the Intel TBB library. "
+            "Make TBB available in the build system and then define the macro `CGAL_LINKED_WITH_TBB`.");
+  using Cell_range = Compact_container<Cell>;
+#endif
+
+  // Vertices
+  // N.B.: Concurrent_compact_container requires TBB
+#ifdef CGAL_LINKED_WITH_TBB
+  using Vertex_range = typename std::conditional
+  <
+    std::is_convertible<Concurrency_tag, Parallel_tag>::value,
+    Concurrent_compact_container<Vertex, tbb::scalable_allocator<Vertex> >,
+    Compact_container<Vertex>
+  >::type;
+
+#else
+  using Vertex_range = Compact_container<Vertex>;
+#endif
+
+  using Storage_tag = Handle_tag;
+  using size_type = typename Cell_range::size_type;
+  using difference_type = typename Cell_range::difference_type;
+
+  using Cell_iterator = typename Cell_range::iterator;
+  using Vertex_iterator = typename Vertex_range::iterator;
+
+  using Vertex_handle = Vertex_iterator;
+  using Cell_handle = Cell_iterator;
+  using vertex_descriptor = Vertex_handle;
+  using cell_descriptor = Cell_handle;
+
+  Cell_data& tds_data(Cell_handle ch) const
+  {
+    return ch->tds_data();
+  }
+
+  Cell_handle cell_handle(cell_descriptor cd) const
+  {
+    return cd;
+  }
+
+  Vertex_handle vertex_handle(vertex_descriptor vd) const
+  {
+    return vd;
+  }
+
+  cell_descriptor to_cell_descriptor(Cell_handle ch) const
+  {
+    return ch;
+  }
+
+  vertex_descriptor to_vertex_descriptor(Vertex_handle vh) const
+  {
+    return vh;
+  }
+
+  Triangulation_data_structure_3_storage() = default;
+
+  Triangulation_data_structure_3_storage(const Storage &) = delete;
+
+  Triangulation_data_structure_3_storage(Storage && tds)
+    noexcept(noexcept(Cell_range(std::move(tds._cells))) &&
+             noexcept(Vertex_range(std::move(tds._vertices))))
+    : _dimension(std::exchange(tds._dimension, -2))
+    , _cells(std::move(tds._cells))
+    , _vertices(std::move(tds._vertices))
+  {
+  }
+
+  Storage & operator= (const Storage & tds) = delete;
+
+  Storage & operator= (Storage && tds)
+    noexcept(noexcept(Storage(std::move(tds))))
+  {
+    _cells = std::move(tds._cells);
+    _vertices = std::move(tds._vertices);
+    _dimension = std::exchange(tds._dimension, -2);
+    return *this;
+  }
+
+  ~Triangulation_data_structure_3_storage() = default; // for the rule-of-five
+
+  void swap(Storage & tds);
+
+  void reserve(size_type, size_type)
+  {}
+
+  void clear();
+
+  size_type number_of_vertices() const { return vertices().size(); }
+
+  int dimension() const {return _dimension;}
+
+  size_type number_of_cells() const
+  {
+    if ( dimension() < 3 ) return 0;
+    return cells().size();
+  }
+
+  // USEFUL CONSTANT TIME FUNCTIONS
+
+  // SETTING
+
+  void set_dimension(int n) { _dimension = n; }
+
+  Vertex_handle create_vertex(const Vertex &v)
+  {
+      return vertices().insert(v);
+  }
+
+  Vertex_handle create_vertex()
+  {
+      return vertices().emplace();
+  }
+
+  Vertex_handle create_vertex_descriptor()
+  {
+      return vertices().emplace();
+  }
+
+  Vertex_handle create_vertex(Vertex_handle v)
+  {
+      return create_vertex(*v);
+  }
+
+  Cell_handle create_cell(const Cell &c)
+  {
+    return cells().insert(c);
+  }
+
+  Cell_handle create_cell()
+  {
+    return cells().emplace();
+  }
+
+  Cell_handle create_cell(Cell_handle c)
+  {
+    return create_cell(*c);
+  }
+
+  Cell_handle create_cell(Vertex_handle v0, Vertex_handle v1,
+                          Vertex_handle v2, Vertex_handle v3)
+  {
+    return cells().emplace(v0, v1, v2, v3);
+  }
+
+  Cell_handle create_cell(Vertex_handle v0, Vertex_handle v1,
+                          Vertex_handle v2, Vertex_handle v3,
+                          Cell_handle n0, Cell_handle n1,
+                          Cell_handle n2, Cell_handle n3)
+  {
+    return cells().emplace(v0, v1, v2, v3, n0, n1, n2, n3);
+  }
+
+  Cell_handle create_face()
+  {
+    CGAL_precondition(dimension()<3);
+    return create_cell();
+  }
+
+  Cell_handle create_face(Vertex_handle v0, Vertex_handle v1,
+                          Vertex_handle v2)
+  {
+    CGAL_precondition(dimension()<3);
+    return cells().emplace(v0, v1, v2, Vertex_handle());
+  }
+
+  void delete_vertex( Vertex_handle v )
+  {
+      CGAL_expensive_precondition( is_vertex(v) );
+      vertices().erase(v);
+  }
+
+  void delete_cell( Cell_handle c )
+  {
+      CGAL_expensive_precondition( is_simplex(c) );
+      cells().erase(c);
+  }
+
+  std::pair<Cell_handle, int> mirror_facet(Cell_handle c, int i) const
+  {
+    Cell_handle neighbor_cell = c->neighbor(i);
+    const int opposite_index = neighbor_cell->index(c);
+    return {neighbor_cell, opposite_index};
+  }
+
+  void set_neighbor(Cell_handle c, int i, Cell_handle neighbor)
+  {
+    c->set_neighbor(i, neighbor);
+  }
+
+  Cell_handle neighbor(Cell_handle c, int i) const
+  {
+    return c->neighbor(i);
+  }
+
+  void set_vertex(Cell_handle c, int i, Vertex_handle vh)
+  {
+    c->set_vertex(i, vh);
+  }
+
+  Vertex_handle vertex(Cell_handle c, int i) const
+  {
+    return c->vertex(i);
+  }
+
+  // We need the const_cast<>s because TDS is not const-correct.
+  Cell_range & cells() { return _cells; }
+  Cell_range & cells() const
+  { return const_cast<Storage*>(this)->_cells; }
+
+  Vertex_range & vertices() {return _vertices;}
+  Vertex_range & vertices() const
+  { return const_cast<Storage*>(this)->_vertices; }
+
+  bool is_vertex(Vertex_handle v) const;
+  bool is_cell(Cell_handle c) const;
+
+  bool is_valid_cell_handle(Cell_handle c) const
+  {
+    return cells().owns_dereferenceable(c);
+  }
+
+  void set_adjacency(Cell_handle c0, int i0,
+                     Cell_handle c1, int i1) const
+  {
+      CGAL_assertion(i0 >= 0 && i0 <= dimension());
+      CGAL_assertion(i1 >= 0 && i1 <= dimension());
+      CGAL_assertion(c0 != c1);
+      c0->set_neighbor(i0,c1);
+      c1->set_neighbor(i1,c0);
+  }
+
+  void set_vertex_cell(Vertex_handle v, Cell_handle c) const {
+    v->set_cell(c);
+  }
+
+  template <class TDS_src>
+  Vertex_handle copy_tds(const TDS_src & src, typename TDS_src::Vertex_handle vert)
+  {
+    internal::TDS_3::Default_vertex_converter<typename TDS_src::Vertex,Vertex> setv;
+    internal::TDS_3::Default_cell_converter<typename TDS_src::Cell,Cell>  setc;
+    return tds().copy_tds(src, vert, setv, setc);
+  }
+
+private:
+  // in dimension i, number of vertices >= i+2
+  // ( the boundary of a simplex in dimension i+1 has i+2 vertices )
+  int _dimension = -2;
+
+  Cell_range   _cells;
+  Vertex_range _vertices;
+};
+
+template < class StorageTag,
+           class Vb,
+           class Cb,
+           class Concurrency_tag_
+>
+using Triangulation_data_structure_3_storage_type =
+  std::conditional_t<
+    std::is_same_v<StorageTag, Handle_tag>,
+    Triangulation_data_structure_3_storage<Vb, Cb, Concurrency_tag_>,
+    Indexed_storage<Vb, Cb, Concurrency_tag_>
+  >;
+
+template < class Vb,
+           class Cb,
+           class Concurrency_tag_,
+           class StorageTag
+>
+class Triangulation_data_structure_3
+: public Triangulation_data_structure_3_storage_type<StorageTag, Vb, Cb, Concurrency_tag_>
+, public Triangulation_utils_3
+{
+  typedef Triangulation_data_structure_3_storage_type<StorageTag, Vb, Cb, Concurrency_tag_>
+      Tds_storage;
+
+  typedef Triangulation_data_structure_3<Vb, Cb, Concurrency_tag_, StorageTag> Tds;
+public:
+  typedef Concurrency_tag_            Concurrency_tag;
+  typedef StorageTag                  Storage_tag;
+
+  // This tag is used in the parallel operations of RT_3 to access some functions
+  // of the TDS (tds.vertices().is_used(Vertex_handle)) that are much more efficient
+  // than what is exposed by the TDS concept (tds.is_vertex(Vertex_handle)).
+  typedef CGAL::Boolean_tag<std::is_same_v<StorageTag, Handle_tag>> Is_CGAL_TDS_3;
+  static constexpr bool is_index_based = std::is_same_v<StorageTag, Index_tag>;
+
+  // Tools to change the Vertex and Cell types of the TDS.
+  template < typename Vb2 >
+  struct Rebind_vertex {
+    typedef Triangulation_data_structure_3<Vb2, Cb, Concurrency_tag, Storage_tag> Other;
+  };
+
+  template < typename Cb2 >
+  struct Rebind_cell {
+    typedef Triangulation_data_structure_3<Vb, Cb2, Concurrency_tag, Storage_tag> Other;
+  };
+
 private:
 
   friend class internal::Triangulation_ds_facet_iterator_3<Tds>;
@@ -121,45 +476,18 @@ private:
   friend class internal::Triangulation_ds_facet_circulator_3<Tds>;
 
 public:
-
-  // Cells
-  // N.B.: Concurrent_compact_container requires TBB
-#ifdef CGAL_LINKED_WITH_TBB
-  typedef typename std::conditional
-  <
-    std::is_convertible<Concurrency_tag, Parallel_tag>::value,
-    Concurrent_compact_container<Cell, tbb::scalable_allocator<Cell> >,
-    Compact_container<Cell>
-  >::type                                                Cell_range;
-
-# else
-  static_assert
-    (!(std::is_convertible<Concurrency_tag, Parallel_tag>::value),
-     "In CGAL triangulations, `Parallel_tag` can only be used with the Intel TBB library. "
-     "Make TBB available in the build system and then define the macro `CGAL_LINKED_WITH_TBB`.");
-  typedef Compact_container<Cell>                        Cell_range;
-#endif
-
-  // Vertices
-  // N.B.: Concurrent_compact_container requires TBB
-#ifdef CGAL_LINKED_WITH_TBB
-  typedef typename std::conditional
-  <
-    std::is_convertible<Concurrency_tag, Parallel_tag>::value,
-    Concurrent_compact_container<Vertex, tbb::scalable_allocator<Vertex> >,
-    Compact_container<Vertex>
-  >::type                                                Vertex_range;
-
-# else
-  typedef Compact_container<Vertex>                      Vertex_range;
-#endif
-
-
-  typedef typename Cell_range::size_type       size_type;
-  typedef typename Cell_range::difference_type difference_type;
-
-  typedef typename Cell_range::iterator        Cell_iterator;
-  typedef typename Vertex_range::iterator      Vertex_iterator;
+  using Cell = typename Tds_storage::Cell;
+  using Cell_iterator = typename Tds_storage::Cell_iterator;
+  using Cell_handle = typename Tds_storage::Cell_handle;
+  using cell_descriptor = typename Tds_storage::cell_descriptor;
+  using Cell_range = typename Tds_storage::Cell_range;
+  using Vertex = typename Tds_storage::Vertex;
+  using Vertex_iterator = typename Tds_storage::Vertex_iterator;
+  using Vertex_handle = typename Tds_storage::Vertex_handle;
+  using vertex_descriptor = typename Tds_storage::vertex_descriptor;
+  using Vertex_range = typename Tds_storage::Vertex_range;
+  using size_type = typename Tds_storage::size_type;
+  using difference_type = typename Tds_storage::difference_type;
 
   typedef internal::Triangulation_ds_facet_iterator_3<Tds>   Facet_iterator;
   typedef internal::Triangulation_ds_edge_iterator_3<Tds>    Edge_iterator;
@@ -176,30 +504,27 @@ public:
 //private: // In 2D only :
   typedef internal::Triangulation_ds_face_circulator_3<Tds>  Face_circulator;
 
-  typedef Vertex_iterator                          Vertex_handle;
-  typedef Cell_iterator                            Cell_handle;
-
   typedef std::pair<Cell_handle, int>              Facet;
   typedef Triple<Cell_handle, int, int>            Edge;
 
   typedef Triangulation_simplex_3<Tds>             Simplex;
 
-  typedef std::pair<Vertex_handle,Vertex_handle> Vertex_pair;
+  typedef std::pair<vertex_descriptor,vertex_descriptor> Vertex_pair;
   typedef std::pair<unsigned char, unsigned char> Local_facet;
 
   struct Small_pair_hash {
 
     std::size_t operator()(const Vertex_pair& k) const
     {
-      std::size_t hf = boost::hash<Vertex_handle>()(k.first);
-      std::size_t hs = boost::hash<Vertex_handle>()(k.second);
+      std::size_t hf = boost::hash<vertex_descriptor>()(k.first);
+      std::size_t hs = boost::hash<vertex_descriptor>()(k.second);
 
       return hf ^ 419 * hs;
     }
 
   };
 
-  static const int maximal_nb_of_facets_of_small_hole = 128;
+  static constexpr int maximal_nb_of_facets_of_small_hole = 128;
   typedef Small_unordered_map<Vertex_pair, Local_facet,
                               Small_pair_hash, maximal_nb_of_facets_of_small_hole *8> Vertex_pair_facet_map;
 
@@ -229,186 +554,110 @@ public:
 
 
 public:
-  Triangulation_data_structure_3()
-    : _dimension(-2)
-  {}
-
-  Triangulation_data_structure_3(const Tds & tds)
+  Triangulation_data_structure_3() = default; // default constructor
+  Triangulation_data_structure_3(Tds&&) = default; // move constructor
+  Triangulation_data_structure_3(const Tds &tds) : Tds_storage() // copy constructor
   {
     copy_tds(tds);
   }
 
-  Triangulation_data_structure_3(Tds && tds)
-    noexcept(noexcept(Cell_range(std::move(tds._cells))) &&
-             noexcept(Vertex_range(std::move(tds._vertices))))
-    : _dimension(std::exchange(tds._dimension, -2))
-    , _cells(std::move(tds._cells))
-    , _vertices(std::move(tds._vertices))
-  {
-  }
-
-  Tds & operator= (const Tds & tds)
+  Tds& operator=(const Tds &tds) // copy assignment
   {
     if (&tds != this) {
       Tds tmp(tds);
-      swap(tmp);
+      this->swap(tmp);
     }
     return *this;
   }
 
-  Tds & operator= (Tds && tds)
-    noexcept(noexcept(Tds(std::move(tds))))
-  {
-    _cells = std::move(tds._cells);
-    _vertices = std::move(tds._vertices);
-    _dimension = std::exchange(tds._dimension, -2);
-    return *this;
-  }
+  Tds& operator=(Tds&& tds) = default; // move assignment
 
-  ~Triangulation_data_structure_3() = default; // for the rule-of-five
+  using Tds_storage::cell_handle;
+  using Tds_storage::cells;
+  using Tds_storage::clear;
+  using Tds_storage::create_cell;
+  using Tds_storage::create_face;
+  using Tds_storage::create_vertex;
+  using Tds_storage::delete_cell;
+  using Tds_storage::delete_vertex;
+  using Tds_storage::dimension;
+  using Tds_storage::is_cell;
+  using Tds_storage::is_vertex;
+  using Tds_storage::mirror_facet;
+  using Tds_storage::neighbor;
+  using Tds_storage::number_of_cells;
+  using Tds_storage::number_of_vertices;
+  using Tds_storage::reserve;
+  using Tds_storage::set_adjacency;
+  using Tds_storage::set_dimension;
+  using Tds_storage::set_neighbor;
+  using Tds_storage::set_vertex_cell;
+  using Tds_storage::set_vertex;
+  using Tds_storage::tds_data;
+  using Tds_storage::to_cell_descriptor;
+  using Tds_storage::to_vertex_descriptor;
+  using Tds_storage::vertex_handle;
+  using Tds_storage::vertex;
+  using Tds_storage::vertices;
 
-  size_type number_of_vertices() const { return vertices().size(); }
-
-  int dimension() const {return _dimension;}
-
-  size_type number_of_cells() const
-    {
-      if ( dimension() < 3 ) return 0;
-      return cells().size();
-    }
 
   size_type number_of_facets() const
-    {
-      if ( dimension() < 2 ) return 0;
-      return std::distance(facets_begin(), facets_end());
-    }
+  {
+    if ( dimension() < 2 ) return 0;
+    return std::distance(facets_begin(), facets_end());
+  }
 
   size_type number_of_edges() const
-    {
-      if ( dimension() < 1 ) return 0;
-      return std::distance(edges_begin(), edges_end());
-    }
-
-  // USEFUL CONSTANT TIME FUNCTIONS
-
-  // SETTING
-
-  void set_dimension(int n) { _dimension = n; }
-
-  Vertex_handle create_vertex(const Vertex &v)
   {
-      return vertices().insert(v);
+    if ( dimension() < 1 ) return 0;
+    return std::distance(edges_begin(), edges_end());
   }
-
-  Vertex_handle create_vertex()
-  {
-      return vertices().emplace();
-  }
-
-  Vertex_handle create_vertex(Vertex_handle v)
-  {
-      return create_vertex(*v);
-  }
-
-  Cell_handle create_cell(const Cell &c)
-    {
-      return cells().insert(c);
-    }
-
-  Cell_handle create_cell()
-    {
-      return cells().emplace();
-    }
-
-  Cell_handle create_cell(Cell_handle c)
-    {
-      return create_cell(*c);
-    }
-
-  Cell_handle create_cell(Vertex_handle v0, Vertex_handle v1,
-                          Vertex_handle v2, Vertex_handle v3)
-    {
-      return cells().emplace(v0, v1, v2, v3);
-    }
-
-  Cell_handle create_cell(Vertex_handle v0, Vertex_handle v1,
-                          Vertex_handle v2, Vertex_handle v3,
-                          Cell_handle n0, Cell_handle n1,
-                          Cell_handle n2, Cell_handle n3)
-    {
-      return cells().emplace(v0, v1, v2, v3, n0, n1, n2, n3);
-    }
-
-  Cell_handle create_face()
-    {
-      CGAL_precondition(dimension()<3);
-      return create_cell();
-    }
-
-  Cell_handle create_face(Vertex_handle v0, Vertex_handle v1,
-                          Vertex_handle v2)
-    {
-      CGAL_precondition(dimension()<3);
-      return cells().emplace(v0, v1, v2, Vertex_handle());
-    }
 
   // The following functions come from TDS_2.
   Cell_handle create_face(Cell_handle f0, int i0,
                           Cell_handle f1, int i1,
                           Cell_handle f2, int i2)
-    {
-      CGAL_precondition(dimension() <= 2);
-      Cell_handle newf = create_face(f0->vertex(cw(i0)),
-                                     f1->vertex(cw(i1)),
-                                     f2->vertex(cw(i2)));
-      set_adjacency(newf, 2, f0, i0);
-      set_adjacency(newf, 0, f1, i1);
-      set_adjacency(newf, 1, f2, i2);
-      return newf;
-    }
+  {
+    CGAL_precondition(dimension() <= 2);
+    Cell_handle newf = create_face(f0->vertex(cw(i0)),
+                                    f1->vertex(cw(i1)),
+                                    f2->vertex(cw(i2)));
+    set_adjacency(newf, 2, f0, i0);
+    set_adjacency(newf, 0, f1, i1);
+    set_adjacency(newf, 1, f2, i2);
+    return newf;
+  }
 
   Cell_handle create_face(Cell_handle f0, int i0,
                           Cell_handle f1, int i1)
-    {
-      CGAL_precondition(dimension() <= 2);
-      Cell_handle newf = create_face(f0->vertex(cw(i0)),
-                                     f1->vertex(cw(i1)),
-                                     f1->vertex(ccw(i1)));
-      set_adjacency(newf, 2, f0, i0);
-      set_adjacency(newf, 0, f1, i1);
-      return newf;
-    }
+  {
+    CGAL_precondition(dimension() <= 2);
+    Cell_handle newf = create_face(f0->vertex(cw(i0)),
+                                    f1->vertex(cw(i1)),
+                                    f1->vertex(ccw(i1)));
+    set_adjacency(newf, 2, f0, i0);
+    set_adjacency(newf, 0, f1, i1);
+    return newf;
+  }
 
   Cell_handle create_face(Cell_handle f, int i, Vertex_handle v)
-    {
-      CGAL_precondition(dimension() <= 2);
-      Cell_handle newf = create_face(f->vertex(cw(i)),
-                                     f->vertex(ccw(i)),
-                                     v);
-      set_adjacency(newf, 2, f, i);
-      return newf;
-    }
+  {
+    CGAL_precondition(dimension() <= 2);
+    Cell_handle newf = create_face(f->vertex(cw(i)),
+                                    f->vertex(ccw(i)),
+                                    v);
+    set_adjacency(newf, 2, f, i);
+    return newf;
+  }
 
   // not documented
   void read_cells(std::istream& is, const std::vector< Vertex_handle > &V,
-                  std::size_t & m, std::vector< Cell_handle > &C);
+                  size_type & m, std::vector< Cell_handle > &C);
   // not documented
   void print_cells(std::ostream& os,
-                   const Unique_hash_map<Vertex_handle, std::size_t> &V ) const;
+                   const Unique_hash_map<Vertex_handle, size_type> &V ) const;
 
   // ACCESS FUNCTIONS
-
-  void delete_vertex( Vertex_handle v )
-  {
-      CGAL_expensive_precondition( is_vertex(v) );
-      vertices().erase(v);
-  }
-
-  void delete_cell( Cell_handle c )
-  {
-      CGAL_expensive_precondition( is_simplex(c) );
-      cells().erase(c);
-  }
 
   template <class InputIterator>
   void delete_vertices(InputIterator begin, InputIterator end)
@@ -427,7 +676,6 @@ public:
   // QUERIES
 
   bool is_simplex(Cell_handle c) const; // undocumented for now
-  bool is_vertex(Vertex_handle v) const;
   bool is_edge(Cell_handle c, int i, int j) const;
   bool is_edge(Vertex_handle u, Vertex_handle v, Cell_handle & c,
                int & i, int & j) const;
@@ -436,7 +684,6 @@ public:
   bool is_facet(Vertex_handle u, Vertex_handle v,
                 Vertex_handle w,
                 Cell_handle & c, int & i, int & j, int & k) const;
-  bool is_cell(Cell_handle c) const;
   bool is_cell(Vertex_handle u, Vertex_handle v,
                Vertex_handle w, Vertex_handle t,
                Cell_handle & c, int & i, int & j, int & k, int & l) const;
@@ -518,7 +765,7 @@ public:
       else
           cnew = create_star_2(newv, begin, i);
 
-      newv->set_cell(cnew);
+      set_vertex_cell(newv, cnew);
       delete_cells(cell_begin, cell_end);
       return newv;
   }
@@ -556,49 +803,76 @@ public:
   {
     CGAL_assertion(facets.size() < (std::numeric_limits<unsigned char>::max)());
     CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(Vertex_pair_facet_map, vertex_pair_facet_map);
-    Vertex_handle nv = create_vertex();
-    std::array <Cell_handle, maximal_nb_of_facets_of_small_hole> new_cells;
+    auto nv = this->create_vertex_descriptor();
+#if CGAL_DEBUG_INDEXED_CONTAINER
+    std::stringstream ss;
+    ss << "Inserting vertex " << nv << " in small hole with " << facets.size()
+       << " facets and " << cells.size() << " cells.\n  cells inside: ";
+    for (auto c : cells) {
+      ss << c << " ";
+    }
+    ss << "\n  cells outside: ";
+    for(auto [c, _] : facets) {
+      ss << c << " ";
+    }
+    ss << '\n';
+    std::cerr << ss.str();
+#endif
+    std::array <cell_descriptor, maximal_nb_of_facets_of_small_hole> new_cells;
     for (unsigned char local_facet_index = 0, end = static_cast<unsigned char>(facets.size());
          local_facet_index < end; ++local_facet_index) {
-      const Facet f = mirror_facet(facets[local_facet_index]);
-      f.first->tds_data().clear(); // was on boundary
-      const Vertex_handle u = f.first->vertex(vertex_triple_index(f.second, 0));
-      const Vertex_handle v = f.first->vertex(vertex_triple_index(f.second, 1));
-      const Vertex_handle w = f.first->vertex(vertex_triple_index(f.second, 2));
-      u->set_cell(f.first);
-      v->set_cell(f.first);
-      w->set_cell(f.first);
-      const Cell_handle nc = create_cell(v, u, w, nv);
+      auto [c, i] = facets[local_facet_index];
+      auto f = mirror_facet(c, i);
+      tds_data(f.first).clear(); // was on boundary
+      const auto u = vertex(f.first, vertex_triple_index(f.second, 0));
+      const auto v = vertex(f.first, vertex_triple_index(f.second, 1));
+      const auto w = vertex(f.first, vertex_triple_index(f.second, 2));
+      set_vertex_cell(u, f.first);
+      set_vertex_cell(v, f.first);
+      set_vertex_cell(w, f.first);
+      const auto nc = create_cell(v, u, w, nv);
       new_cells[local_facet_index] = nc;
-      nv->set_cell(nc);
-      nc->set_neighbor(3, f.first);
-      f.first->set_neighbor(f.second, nc);
+      set_vertex_cell(nv, nc);
+      set_neighbor(nc, 3, f.first);
+      set_neighbor(f.first, f.second, nc);
 
-      vertex_pair_facet_map.set({u, v}, {local_facet_index,
-                                         static_cast<unsigned char>(nc->index(w))});
-      vertex_pair_facet_map.set({v, w}, {local_facet_index,
-                                         static_cast<unsigned char>(nc->index(u))});
-      vertex_pair_facet_map.set({w, u}, {local_facet_index,
-                                         static_cast<unsigned char>(nc->index(v))});
+      vertex_pair_facet_map.set({u, v}, {local_facet_index, '\2'});
+      vertex_pair_facet_map.set({v, w}, {local_facet_index, '\1'});
+      vertex_pair_facet_map.set({w, u}, {local_facet_index, '\0'});
     }
 
     for(auto it = vertex_pair_facet_map.begin(); it != vertex_pair_facet_map.end(); ++it){
-      const std::pair<Vertex_pair,Local_facet>& ef = *it;
-      if(ef.first.first < ef.first.second){
-        const Facet f = Facet{new_cells[ef.second.first], ef.second.second};
+      const auto& [vertex_pair, local_facet] = *it;
+      if(vertex_pair.first < vertex_pair.second){
+        const auto nc = new_cells[local_facet.first];
+        const auto indexc = local_facet.second;
         vertex_pair_facet_map.clear(it);
-        const auto p = vertex_pair_facet_map.get_and_erase(std::make_pair(ef.first.second, ef.first.first));
-        const Facet n = Facet{new_cells[p.first], p.second};
-        f.first->set_neighbor(f.second, n.first);
-        n.first->set_neighbor(n.second, f.first);
+        const auto p = vertex_pair_facet_map.get_and_erase(std::make_pair(vertex_pair.second, vertex_pair.first));
+        const auto other_c = new_cells[p.first];
+        const auto other_index = p.second;
+        set_adjacency(nc, indexc, other_c, other_index);
       }
     }
-    for(Cell_handle c : cells){
-      c->tds_data().clear(); // was in conflict
+    for(auto cd : cells){
+      tds_data(cd).clear(); // was in conflict
     }
+#if CGAL_DEBUG_INDEXED_CONTAINER
+    for (unsigned char local_facet_index = 0, end = static_cast<unsigned char>(facets.size());
+         local_facet_index < end; ++local_facet_index)
+    {
+       auto c = new_cells[local_facet_index];
+       std::stringstream ss;
+      ss << "- _insert_in_small_hole new Cell " << c;
+      ss << "   N( " << c->neighbor(0) << " " << c->neighbor(1)
+         << " " << c->neighbor(2) << "  " << c->neighbor(3) << " )";
+      ss << "   V( " << c->vertex(0) << " " << c->vertex(1)
+         << " " << c->vertex(2) << "  " << c->vertex(3) << " )\n";
+      std::cerr << ss.str();
+    }
+#endif
     delete_cells(cells.begin(), cells.end());
     vertex_pair_facet_map.clear();
-    return nv;
+    return vertex_handle(nv);
   }
 
 
@@ -1530,9 +1804,7 @@ public:
   bool is_valid(Cell_handle c, bool verbose = false, int level = 0) const;
 
   // Helping functions
-  template <class TDS_src>
-  Vertex_handle copy_tds(const TDS_src & tds,
-                         typename TDS_src::Vertex_handle vert);
+  using Tds_storage::copy_tds;
 
   template <class TDS_src>
   Vertex_handle copy_tds(const TDS_src & tds)
@@ -1540,24 +1812,8 @@ public:
     return copy_tds(tds, typename TDS_src::Vertex_handle());
   }
     // returns the new vertex corresponding to vert in the new tds
-
   template <class TDS_src,class ConvertVertex,class ConvertCell>
   Vertex_handle copy_tds(const TDS_src&, typename TDS_src::Vertex_handle,const ConvertVertex&,const ConvertCell&);
-
-
-  void swap(Tds & tds);
-
-  void clear();
-
-  void set_adjacency(Cell_handle c0, int i0,
-                     Cell_handle c1, int i1) const
-  {
-      CGAL_assertion(i0 >= 0 && i0 <= dimension());
-      CGAL_assertion(i1 >= 0 && i1 <= dimension());
-      CGAL_assertion(c0 != c1);
-      c0->set_neighbor(i0,c1);
-      c1->set_neighbor(i1,c0);
-  }
 
   int mirror_index(Cell_handle c, int i) const
   {
@@ -1570,21 +1826,15 @@ public:
       return c->neighbor(i)->vertex(mirror_index(c, i));
   }
 
-  Facet mirror_facet(Facet f) const
+  Facet facet(Cell_handle c, int i) const
   {
-    Cell_handle neighbor_cell = f.first->neighbor(f.second);
-    const int opposite_index = neighbor_cell->index(f.first);
-    return Facet(neighbor_cell, opposite_index);
+    return Facet(c, i);
   }
 
-  // We need the const_cast<>s because TDS is not const-correct.
-  Cell_range & cells() { return _cells; }
-  Cell_range & cells() const
-  { return const_cast<Tds*>(this)->_cells; }
-
-  Vertex_range & vertices() {return _vertices;}
-  Vertex_range & vertices() const
-  { return const_cast<Tds*>(this)->_vertices; }
+  Facet mirror_facet(Facet f) const
+  {
+    return mirror_facet(f.first, f.second);
+  }
 
   bool is_small_hole(std::size_t s)
   {
@@ -1620,7 +1870,7 @@ public:
     clear();
     cells().clear();
 
-    std::size_t n;
+    size_type n;
     int d;
     if(IO::is_ascii(is))
       is >> d >> n;
@@ -1631,11 +1881,11 @@ public:
     if(!is) return is;
     set_dimension(d);
 
-    std::size_t V_size = n;
+    size_type V_size = n;
     std::vector< Vertex_handle > V(V_size);
 
     // the infinite vertex is numbered 0
-    for (std::size_t i=0 ; i < V_size; ++i) {
+    for (size_type i=0 ; i < V_size; ++i) {
       Vertex1 v;
       if(!(is >> v)) return is;
       Vertex_handle vh=create_vertex( convert_vertex(v) );
@@ -1645,10 +1895,10 @@ public:
 
     std::vector< Cell_handle > C;
 
-    std::size_t m;
+    size_type m;
     read_cells(is, V, m, C);
 
-    for (std::size_t j=0 ; j < m; j++) {
+    for (size_type j=0 ; j < m; j++) {
       Cell1 c;
       if(!(is >> c)) return is;
       convert_cell(c, *C[j]);
@@ -1671,13 +1921,6 @@ private:
       c->set_neighbor(1, tmp_c);
   }
 
-  // in dimension i, number of vertices >= i+2
-  // ( the boundary of a simplex in dimension i+1 has i+2 vertices )
-  int _dimension;
-
-  Cell_range   _cells;
-  Vertex_range _vertices;
-
   // used by is-valid :
   bool count_vertices(size_type &i, bool verbose = false, int level = 0) const;
   // counts AND checks the validity
@@ -1691,9 +1934,9 @@ private:
 };
 
 #ifdef CGAL_TDS_USE_RECURSIVE_CREATE_STAR_3
-template <class Vb, class Cb, class Ct>
-typename Triangulation_data_structure_3<Vb,Cb,Ct>::Cell_handle
-Triangulation_data_structure_3<Vb,Cb,Ct>::
+template <class Vb, class Cb, class Ct, class St>
+typename Triangulation_data_structure_3<Vb,Cb,Ct,St>::Cell_handle
+Triangulation_data_structure_3<Vb,Cb,Ct,St>::
 create_star_3(Vertex_handle v, Cell_handle c, int li, int prev_ind2)
 {
     CGAL_precondition( dimension() == 3);
@@ -1712,7 +1955,7 @@ create_star_3(Vertex_handle v, Cell_handle c, int li, int prev_ind2)
     for (int ii=0; ii<4; ++ii) {
       if (ii == prev_ind2 || cnew->neighbor(ii) != Cell_handle())
           continue;
-      cnew->vertex(ii)->set_cell(cnew);
+      set_vertex_cell(cnew->vertex(ii), cnew);
 
       // Indices of the vertices of cnew such that ii,vj1,vj2,li positive.
       Vertex_handle vj1 = c->vertex(next_around_edge(ii, li));
@@ -1747,9 +1990,9 @@ create_star_3(Vertex_handle v, Cell_handle c, int li, int prev_ind2)
     return cnew;
 }
 #else
-template <class Vb, class Cb, class Ct>
-typename Triangulation_data_structure_3<Vb,Cb,Ct>::Cell_handle
-Triangulation_data_structure_3<Vb,Cb,Ct>::
+template <class Vb, class Cb, class Ct, class St>
+typename Triangulation_data_structure_3<Vb,Cb,Ct,St>::Cell_handle
+Triangulation_data_structure_3<Vb,Cb,Ct,St>::
 recursive_create_star_3(Vertex_handle v, Cell_handle c, int li,
                         int prev_ind2, int depth)
 {
@@ -1770,7 +2013,7 @@ recursive_create_star_3(Vertex_handle v, Cell_handle c, int li,
     for (int ii=0; ii<4; ++ii) {
       if (ii == prev_ind2 || cnew->neighbor(ii) != Cell_handle())
           continue;
-      cnew->vertex(ii)->set_cell(cnew);
+      set_vertex_cell(cnew->vertex(ii), cnew);
 
       // Indices of the vertices of cnew such that ii,vj1,vj2,li positive.
       Vertex_handle vj1 = c->vertex(next_around_edge(ii, li));
@@ -1807,9 +2050,9 @@ recursive_create_star_3(Vertex_handle v, Cell_handle c, int li,
 
 //We use the class iAdjacency_info instead of a tuple because
 //at the moment we made the change it was faster like this.
-template <class Vb, class Cb, class Ct>
-typename Triangulation_data_structure_3<Vb,Cb,Ct>::Cell_handle
-Triangulation_data_structure_3<Vb,Cb,Ct>::
+template <class Vb, class Cb, class Ct, class St>
+typename Triangulation_data_structure_3<Vb,Cb,Ct,St>::Cell_handle
+Triangulation_data_structure_3<Vb,Cb,Ct,St>::
 non_recursive_create_star_3(Vertex_handle v, Cell_handle c, int li, int prev_ind2)
 {
     CGAL_precondition( dimension() == 3);
@@ -1831,7 +2074,7 @@ non_recursive_create_star_3(Vertex_handle v, Cell_handle c, int li, int prev_ind
     {
       // Look for the other neighbors of cnew.
       if ( ! (ii == prev_ind2 || cnew->neighbor(ii) != Cell_handle()) ){
-        cnew->vertex(ii)->set_cell(cnew);
+        set_vertex_cell(cnew->vertex(ii), cnew);
 
         // Indices of the vertices of cnew such that ii,vj1,vj2,li positive.
         Vertex_handle vj1 = c->vertex(next_around_edge(ii, li));
@@ -1884,9 +2127,9 @@ non_recursive_create_star_3(Vertex_handle v, Cell_handle c, int li, int prev_ind
 }
 #endif
 
-template <class Vb, class Cb, class Ct>
-typename Triangulation_data_structure_3<Vb,Cb,Ct>::Cell_handle
-Triangulation_data_structure_3<Vb,Cb,Ct>::
+template <class Vb, class Cb, class Ct, class St>
+typename Triangulation_data_structure_3<Vb,Cb,Ct,St>::Cell_handle
+Triangulation_data_structure_3<Vb,Cb,Ct,St>::
 create_star_2(Vertex_handle v, Cell_handle c, int li )
 {
   CGAL_assertion( dimension() == 2 );
@@ -1918,7 +2161,7 @@ create_star_2(Vertex_handle v, Cell_handle c, int li )
     cnew->set_neighbor(1, Cell_handle());
     cnew->set_neighbor(2, pnew);
     // pnew is null at the first iteration
-    v1->set_cell(cnew);
+    set_vertex_cell(v1, cnew);
     //pnew->set_neighbor( cw(pnew->index(v1)), cnew );
     if (pnew != nullptr) { pnew->set_neighbor( 1, cnew );}
 
@@ -1934,9 +2177,9 @@ create_star_2(Vertex_handle v, Cell_handle c, int li )
   return cnew;
 }
 
-template <class Vb, class Cb, class Ct>
+template <class Vb, class Cb, class Ct, class St>
 std::istream&
-operator>>(std::istream& is, Triangulation_data_structure_3<Vb,Cb,Ct>& tds)
+operator>>(std::istream& is, Triangulation_data_structure_3<Vb,Cb,Ct,St>& tds)
   // reads :
   // the dimension
   // the number of vertices
@@ -1945,13 +2188,14 @@ operator>>(std::istream& is, Triangulation_data_structure_3<Vb,Cb,Ct>& tds)
   // the neighbors of each cell by their index in the preceding list of cells
   // when dimension < 3 : the same with faces of maximal dimension
 {
-  typedef Triangulation_data_structure_3<Vb,Cb,Ct> Tds;
-  typedef typename Tds::Vertex_handle  Vertex_handle;
-  typedef typename Tds::Cell_handle    Cell_handle;
+  using Tds = Triangulation_data_structure_3<Vb,Cb,Ct,St>;
+  using Vertex_handle = typename Tds::Vertex_handle;
+  using Cell_handle = typename Tds::Cell_handle;
+  using size_type = typename Tds::size_type;
 
   tds.clear();
 
-  std::size_t n;
+  size_type n;
   int d;
   if(IO::is_ascii(is))
      is >> d >> n;
@@ -1967,7 +2211,7 @@ operator>>(std::istream& is, Triangulation_data_structure_3<Vb,Cb,Ct>& tds)
   std::vector<Vertex_handle > V(n);
 
   // creation of the vertices
-  for (std::size_t i=0; i < n; i++) {
+  for (size_type i=0; i < n; i++) {
     //    is >> p;
     //    V[i] = tds.create_vertex();
     //    V[i]->set_point(p);
@@ -1975,16 +2219,16 @@ operator>>(std::istream& is, Triangulation_data_structure_3<Vb,Cb,Ct>& tds)
   }
 
   std::vector< Cell_handle > C;
-  std::size_t m;
+  size_type m;
 
   tds.read_cells(is, V, m, C);
   CGAL_assertion( tds.is_valid() );
   return is;
 }
 
-template <class Vb, class Cb, class Ct>
+template <class Vb, class Cb, class Ct, class St>
 std::ostream&
-operator<<(std::ostream& os, const Triangulation_data_structure_3<Vb,Cb,Ct> &tds)
+operator<<(std::ostream& os, const Triangulation_data_structure_3<Vb,Cb,Ct,St> &tds)
   // writes :
   // the dimension
   // the number of vertices
@@ -1993,11 +2237,11 @@ operator<<(std::ostream& os, const Triangulation_data_structure_3<Vb,Cb,Ct> &tds
   // the neighbors of each cell by their index in the preceding list of cells
   // when dimension < 3 : the same with faces of maximal dimension
 {
-  typedef Triangulation_data_structure_3<Vb,Cb,Ct> Tds;
-  typedef typename Tds::size_type               size_type;
-  typedef typename Tds::Vertex_handle           Vertex_handle;
-  typedef typename Tds::Vertex_iterator         Vertex_iterator;
-
+  using Tds = Triangulation_data_structure_3<Vb,Cb,Ct,St>;
+  using size_type = typename Tds::size_type;
+  using Vertex_handle = typename Tds::Vertex_handle;
+  using Vertex_iterator = typename Tds::Vertex_iterator;
+  using size_type = typename Tds::size_type;
 
   Unique_hash_map<Vertex_handle, size_type> V(0, tds.number_of_vertices());
 
@@ -2027,9 +2271,9 @@ operator<<(std::ostream& os, const Triangulation_data_structure_3<Vb,Cb,Ct> &tds
   return os;
 }
 
-template <class Vb, class Cb, class Ct>
+template <class Vb, class Cb, class Ct, class St>
 bool
-Triangulation_data_structure_3<Vb,Cb,Ct>::
+Triangulation_data_structure_3<Vb,Cb,Ct,St>::
 is_simplex( Cell_handle c ) const
 {
   switch(dimension()) {
@@ -2044,15 +2288,15 @@ is_simplex( Cell_handle c ) const
 
 template <class Vb, class Cb, class Ct>
 bool
-Triangulation_data_structure_3<Vb,Cb,Ct>::
+Triangulation_data_structure_3_storage<Vb,Cb,Ct>::
 is_vertex(Vertex_handle v) const
 {
     return vertices().owns_dereferenceable(v);
 }
 
-template <class Vb, class Cb, class Ct>
+template <class Vb, class Cb, class Ct, class St>
 bool
-Triangulation_data_structure_3<Vb,Cb,Ct>::
+Triangulation_data_structure_3<Vb,Cb,Ct,St>::
 is_edge(Vertex_handle u, Vertex_handle v,
         Cell_handle &c, int &i, int &j) const
   // returns false when dimension <1 or when indices wrong
@@ -2116,17 +2360,17 @@ is_edge(Vertex_handle u, Vertex_handle v,
   return edge_found;
 }
 
-template <class Vb, class Cb, class Ct>
-bool Triangulation_data_structure_3<Vb, Cb, Ct>::is_edge(Vertex_handle u, Vertex_handle v) const
+template <class Vb, class Cb, class Ct, class St>
+bool Triangulation_data_structure_3<Vb, Cb, Ct, St>::is_edge(Vertex_handle u, Vertex_handle v) const
 {
     Cell_handle c;
     int i, j;
     return is_edge(u, v, c, i, j);
 }
 
-template <class Vb, class Cb, class Ct>
+template <class Vb, class Cb, class Ct, class St>
 bool
-Triangulation_data_structure_3<Vb,Cb,Ct>::
+Triangulation_data_structure_3<Vb,Cb,Ct,St>::
 is_edge(Cell_handle c, int i, int j) const
 {
   if (dimension() < 1)
@@ -2138,12 +2382,12 @@ is_edge(Cell_handle c, int i, int j) const
   if ( (dimension() == 2) && ((i>2) || (j>2)) ) return false;
   if ((i>3) || (j>3)) return false;
 
-  return cells().owns_dereferenceable(c);
+  return this->is_valid_cell_handle(c);
 }
 
-template <class Vb, class Cb, class Ct>
+template <class Vb, class Cb, class Ct, class St>
 bool
-Triangulation_data_structure_3<Vb,Cb,Ct>::
+Triangulation_data_structure_3<Vb,Cb,Ct,St>::
 is_facet(Vertex_handle u, Vertex_handle v,
          Vertex_handle w,
          Cell_handle & c, int & i, int & j, int & k) const
@@ -2172,9 +2416,9 @@ is_facet(Vertex_handle u, Vertex_handle v,
     return false;
 }
 
-template <class Vb, class Cb, class Ct>
+template <class Vb, class Cb, class Ct, class St>
 bool
-Triangulation_data_structure_3<Vb,Cb,Ct>::
+Triangulation_data_structure_3<Vb,Cb,Ct,St>::
 is_facet(Cell_handle c, int i) const
 {
     CGAL_precondition(i>=0 && i<4);
@@ -2185,12 +2429,12 @@ is_facet(Cell_handle c, int i) const
     if ( (dimension() == 2) && (i!=3) )
         return false;
 
-    return cells().owns_dereferenceable(c);
+    return this->is_valid_cell_handle(c);
 }
 
 template <class Vb, class Cb, class Ct>
 bool
-Triangulation_data_structure_3<Vb,Cb,Ct>::
+Triangulation_data_structure_3_storage<Vb,Cb,Ct>::
 is_cell( Cell_handle c ) const
   // returns false when dimension <3
 {
@@ -2200,9 +2444,9 @@ is_cell( Cell_handle c ) const
     return cells().owns_dereferenceable(c);
 }
 
-template <class Vb, class Cb, class Ct>
+template <class Vb, class Cb, class Ct, class St>
 bool
-Triangulation_data_structure_3<Vb,Cb,Ct>::
+Triangulation_data_structure_3<Vb,Cb,Ct,St>::
 is_cell(Vertex_handle u, Vertex_handle v,
         Vertex_handle w, Vertex_handle t,
         Cell_handle & c, int & i, int & j, int & k, int & l) const
@@ -2231,9 +2475,9 @@ is_cell(Vertex_handle u, Vertex_handle v,
     return false;
 }
 
-template <class Vb, class Cb, class Ct>
+template <class Vb, class Cb, class Ct, class St>
 bool
-Triangulation_data_structure_3<Vb,Cb,Ct>::
+Triangulation_data_structure_3<Vb,Cb,Ct,St>::
 is_cell(Vertex_handle u, Vertex_handle v,
         Vertex_handle w, Vertex_handle t)
     const
@@ -2244,10 +2488,10 @@ is_cell(Vertex_handle u, Vertex_handle v,
     return is_cell(u, v, w, t, c, i, j, k, l);
 }
 
-template <class Vb, class Cb, class Ct>
+template <class Vb, class Cb, class Ct, class St>
 inline
 bool
-Triangulation_data_structure_3<Vb,Cb,Ct>::
+Triangulation_data_structure_3<Vb,Cb,Ct,St>::
 has_vertex(Cell_handle c, int i, Vertex_handle v, int & j) const
   // computes the index j of the vertex in the cell c giving the query
   // facet (c,i)
@@ -2257,10 +2501,10 @@ has_vertex(Cell_handle c, int i, Vertex_handle v, int & j) const
   return ( c->has_vertex(v,j) && (j != i) );
 }
 
-template <class Vb, class Cb, class Ct>
+template <class Vb, class Cb, class Ct, class St>
 inline
 bool
-Triangulation_data_structure_3<Vb,Cb,Ct>::
+Triangulation_data_structure_3<Vb,Cb,Ct,St>::
 has_vertex(Cell_handle c, int i, Vertex_handle v) const
   // checks whether the query facet (c,i) has vertex v
 {
@@ -2269,27 +2513,27 @@ has_vertex(Cell_handle c, int i, Vertex_handle v) const
   return ( c->has_vertex(v,j) && (j != i) );
 }
 
-template <class Vb, class Cb, class Ct>
+template <class Vb, class Cb, class Ct, class St>
 inline
 bool
-Triangulation_data_structure_3<Vb,Cb,Ct>::
+Triangulation_data_structure_3<Vb,Cb,Ct,St>::
 has_vertex(const Facet & f, Vertex_handle v, int & j) const
 {
   return has_vertex(f.first, f.second, v, j);
 }
 
-template <class Vb, class Cb, class Ct>
+template <class Vb, class Cb, class Ct, class St>
 inline
 bool
-Triangulation_data_structure_3<Vb,Cb,Ct>::
+Triangulation_data_structure_3<Vb,Cb,Ct,St>::
 has_vertex(const Facet & f, Vertex_handle v) const
 {
   return has_vertex(f.first, f.second, v);
 }
 
-template <class Vb, class Cb, class Ct>
+template <class Vb, class Cb, class Ct, class St>
 bool
-Triangulation_data_structure_3<Vb,Cb,Ct>::
+Triangulation_data_structure_3<Vb,Cb,Ct,St>::
 are_equal(Cell_handle c, int i, Cell_handle n, int j) const
   // tests whether facets c,i and n,j, have the same 3 vertices
   // the triangulation is supposed to be valid, the orientation of the
@@ -2311,25 +2555,25 @@ are_equal(Cell_handle c, int i, Cell_handle n, int j) const
           ( j1+j2+j3+j == 6 ) );
 }
 
-template <class Vb, class Cb, class Ct>
+template <class Vb, class Cb, class Ct, class St>
 bool
-Triangulation_data_structure_3<Vb,Cb,Ct>::
+Triangulation_data_structure_3<Vb,Cb,Ct,St>::
 are_equal(const Facet & f, const Facet & g) const
 {
   return are_equal(f.first, f.second, g.first, g.second);
 }
 
-template <class Vb, class Cb, class Ct>
+template <class Vb, class Cb, class Ct, class St>
 bool
-Triangulation_data_structure_3<Vb,Cb,Ct>::
+Triangulation_data_structure_3<Vb,Cb,Ct,St>::
 are_equal(const Facet & f, Cell_handle n, int j) const
 {
   return are_equal(f.first, f.second, n, j);
 }
 
-template <class Vb, class Cb, class Ct>
+template <class Vb, class Cb, class Ct, class St>
 bool
-Triangulation_data_structure_3<Vb,Cb,Ct>::
+Triangulation_data_structure_3<Vb,Cb,Ct,St>::
 flip( Cell_handle c, int i )
   // returns false if the facet is not flippable
   // true other wise and
@@ -2352,9 +2596,9 @@ flip( Cell_handle c, int i )
   return true;
 }
 
-template <class Vb, class Cb, class Ct>
+template <class Vb, class Cb, class Ct, class St>
 void
-Triangulation_data_structure_3<Vb,Cb,Ct>::
+Triangulation_data_structure_3<Vb,Cb,Ct,St>::
 flip_flippable(Cell_handle c, int i )
   // flips facet i of cell c
   // c will be replaced by one of the new cells
@@ -2373,10 +2617,10 @@ flip_flippable(Cell_handle c, int i )
   flip_really(c,i,n,in);
 }
 
-template <class Vb, class Cb, class Ct>
+template <class Vb, class Cb, class Ct, class St>
 inline
 void
-Triangulation_data_structure_3<Vb,Cb,Ct>::
+Triangulation_data_structure_3<Vb,Cb,Ct,St>::
 flip_really( Cell_handle c, int i, Cell_handle n, int in )
   // private - used by flip and flip_flippable
 {
@@ -2406,16 +2650,16 @@ flip_really( Cell_handle c, int i, Cell_handle n, int in )
   if ((i&1) != 0)
       change_orientation(cnew);
 
-  c->vertex(i1)->set_cell(cnew);
-  c->vertex(i2)->set_cell(c);
-  n->vertex(in3)->set_cell(n);
+  set_vertex_cell(c->vertex(i1), cnew);
+  set_vertex_cell(c->vertex(i2), c);
+  set_vertex_cell(n->vertex(in3), n);
   // to be implemented : 2d case
   // CGAL_precondition( (0<=i) && (i<3) );
 }
 
-template <class Vb, class Cb, class Ct>
+template <class Vb, class Cb, class Ct, class St>
 bool
-Triangulation_data_structure_3<Vb,Cb,Ct>::
+Triangulation_data_structure_3<Vb,Cb,Ct,St>::
 flip( Cell_handle c, int i, int j )
   // returns false if the edge is not flippable
   // true otherwise and
@@ -2465,9 +2709,9 @@ flip( Cell_handle c, int i, int j )
   return true;
 }
 
-template <class Vb, class Cb, class Ct>
+template <class Vb, class Cb, class Ct, class St>
 void
-Triangulation_data_structure_3<Vb,Cb,Ct>::
+Triangulation_data_structure_3<Vb,Cb,Ct,St>::
 flip_flippable( Cell_handle c, int i, int j )
   // flips edge i,j of cell c
   // c will be deleted
@@ -2514,10 +2758,10 @@ flip_flippable( Cell_handle c, int i, int j )
   flip_really(c,i,j,c1,v1,i1,j1,next1,c2,v2,i2,j2,next2,v3);
 }
 
-template <class Vb, class Cb, class Ct>
+template <class Vb, class Cb, class Ct, class St>
 inline
 void
-Triangulation_data_structure_3<Vb,Cb,Ct>::
+Triangulation_data_structure_3<Vb,Cb,Ct,St>::
 flip_really( Cell_handle c, int i, int j,
              Cell_handle c1, Vertex_handle v1,
              int i1, int j1, int next1,
@@ -2525,13 +2769,13 @@ flip_really( Cell_handle c, int i, int j,
              int i2, int j2, int next2,
              Vertex_handle v3 )
 {
-  c->vertex(i)->set_cell(c1);
-  c->vertex(j)->set_cell(c2);
+  set_vertex_cell(c->vertex(i), c1);
+  set_vertex_cell(c->vertex(j), c2);
 
   c1->set_vertex( j1, v1 );
-  v1->set_cell(c1);
+  set_vertex_cell(v1, c1);
   c2->set_vertex( i2, v2 );
-  v2->set_cell(c2);
+  set_vertex_cell(v2, c2);
 
   set_adjacency(c1, next1,c2->neighbor(j2), c2->neighbor(j2)->index(c2));
   set_adjacency(c2,c2->index(v1),c1->neighbor(i1),c1->neighbor(i1)->index(c1));
@@ -2546,11 +2790,11 @@ flip_really( Cell_handle c, int i, int j,
   delete_cell( c );
 }
 
-template <class Vb, class Cb, class Ct>
+template <class Vb, class Cb, class Ct, class St>
 void
-Triangulation_data_structure_3<Vb,Cb,Ct>::
+Triangulation_data_structure_3<Vb,Cb,Ct,St>::
 read_cells(std::istream& is, const std::vector< Vertex_handle > &V,
-           std::size_t & m, std::vector< Cell_handle > &C)
+           size_type & m, std::vector< Cell_handle > &C)
 {
   // creation of the cells and neighbors
   switch (dimension()) {
@@ -2565,23 +2809,23 @@ read_cells(std::istream& is, const std::vector< Vertex_handle > &V,
 
       C.resize(m);
 
-      for(std::size_t i = 0; i < m; i++) {
+      for(size_type i = 0; i < m; i++) {
         Cell_handle c = create_cell();
         for (int k=0; k<=dimension(); ++k) {
-          std::size_t ik;
+          size_type ik;
             if(IO::is_ascii(is))
                is >> ik;
             else
               read(is, ik);
             c->set_vertex(k, V[ik]);
-            V[ik]->set_cell(c);
+            set_vertex_cell(V[ik], c);
         }
         C[i] = c;
       }
-      for(std::size_t j = 0; j < m; j++) {
+      for(size_type j = 0; j < m; j++) {
         Cell_handle c = C[j];
         for (int k=0; k<=dimension(); ++k) {
-          std::size_t ik;
+          size_type ik;
             if(IO::is_ascii(is))
               is >> ik;
             else
@@ -2599,7 +2843,7 @@ read_cells(std::istream& is, const std::vector< Vertex_handle > &V,
       for (int i=0; i < 2; i++) {
         Cell_handle c = create_face(V[i], Vertex_handle(), Vertex_handle());
         C[i] = c;
-        V[i]->set_cell(c);
+        set_vertex_cell(V[i], c);
       }
       for (int j=0; j < 2; j++) {
         Cell_handle c = C[j];
@@ -2614,24 +2858,24 @@ read_cells(std::istream& is, const std::vector< Vertex_handle > &V,
       //      CGAL_assertion( n == 1 );
       Cell_handle c = create_face(V[0], Vertex_handle(), Vertex_handle());
       C[0] = c;
-      V[0]->set_cell(c);
+      set_vertex_cell(V[0], c);
       break;
     }
   }
 }
 
-template <class Vb, class Cb, class Ct>
+template <class Vb, class Cb, class Ct, class St>
 void
-Triangulation_data_structure_3<Vb,Cb,Ct>::
-print_cells(std::ostream& os, const Unique_hash_map<Vertex_handle, std::size_t> &V ) const
+Triangulation_data_structure_3<Vb,Cb,Ct,St>::
+print_cells(std::ostream& os, const Unique_hash_map<Vertex_handle, size_type> &V ) const
 {
-  Unique_hash_map<Cell_handle, std::size_t > C(0, number_of_cells());
-  std::size_t i = 0;
+  Unique_hash_map<Cell_handle, size_type > C(0, number_of_cells());
+  size_type i = 0;
 
   switch ( dimension() ) {
   case 3:
     {
-      std::size_t m = number_of_cells();
+      size_type m = number_of_cells();
       if(IO::is_ascii(os))
         os << m << std::endl;
       else
@@ -2762,9 +3006,9 @@ print_cells(std::ostream& os, const Unique_hash_map<Vertex_handle, std::size_t> 
 }
 
 
-template <class Vb, class Cb, class Ct>
-typename Triangulation_data_structure_3<Vb,Cb,Ct>::Vertex_handle
-Triangulation_data_structure_3<Vb,Cb,Ct>::insert_first_finite_cell(
+template <class Vb, class Cb, class Ct, class St>
+typename Triangulation_data_structure_3<Vb,Cb,Ct,St>::Vertex_handle
+Triangulation_data_structure_3<Vb,Cb,Ct,St>::insert_first_finite_cell(
   Vertex_handle &v0, Vertex_handle &v1, Vertex_handle &v2, Vertex_handle &v3,
   Vertex_handle v_infinite)
 {
@@ -2788,11 +3032,11 @@ Triangulation_data_structure_3<Vb,Cb,Ct>::insert_first_finite_cell(
   Cell_handle ci023 = create_cell(v_infinite, v0,   v2,   v3);
   Cell_handle ci132 = create_cell(v_infinite, v1,   v3,   v2);
 
-  v_infinite->set_cell(ci012);
-  v0->set_cell(c0123);
-  v1->set_cell(c0123);
-  v2->set_cell(c0123);
-  v3->set_cell(c0123);
+  set_vertex_cell(v_infinite, ci012);
+  set_vertex_cell(v0, c0123);
+  set_vertex_cell(v1, c0123);
+  set_vertex_cell(v2, c0123);
+  set_vertex_cell(v3, c0123);
 
   set_adjacency(c0123, 0, ci132, 0);
   set_adjacency(c0123, 1, ci023, 0);
@@ -2809,9 +3053,9 @@ Triangulation_data_structure_3<Vb,Cb,Ct>::insert_first_finite_cell(
   return v_infinite;
 }
 
-template <class Vb, class Cb, class Ct>
-typename Triangulation_data_structure_3<Vb,Cb,Ct>::Vertex_handle
-Triangulation_data_structure_3<Vb,Cb,Ct>::
+template <class Vb, class Cb, class Ct, class St>
+typename Triangulation_data_structure_3<Vb,Cb,Ct,St>::Vertex_handle
+Triangulation_data_structure_3<Vb,Cb,Ct,St>::
 insert_in_cell(Cell_handle c)
 {
   CGAL_precondition( dimension() == 3 );
@@ -2848,15 +3092,15 @@ insert_in_cell(Cell_handle c)
 
   c->set_vertex(0,v);
 
-  v0->set_cell(c1);
-  v->set_cell(c);
+  set_vertex_cell(v0, c1);
+  set_vertex_cell(v, c);
 
   return v;
 }
 
-template <class Vb, class Cb, class Ct>
-typename Triangulation_data_structure_3<Vb,Cb,Ct>::Vertex_handle
-Triangulation_data_structure_3<Vb,Cb,Ct>::
+template <class Vb, class Cb, class Ct, class St>
+typename Triangulation_data_structure_3<Vb,Cb,Ct,St>::Vertex_handle
+Triangulation_data_structure_3<Vb,Cb,Ct,St>::
 insert_in_facet(Cell_handle c, int i)
 { // inserts v in the facet opposite to vertex i of cell c
 
@@ -2896,7 +3140,7 @@ insert_in_facet(Cell_handle c, int i)
       set_adjacency(cnew1, 1, nc, nc->index(c));
       set_adjacency(cnew1, 3, c, i1);
 
-      v3->set_cell(cnew1);
+      set_vertex_cell(v3, cnew1);
 
       // new cell with v in place of i2
       nc = c->neighbor(i2);
@@ -2935,7 +3179,7 @@ insert_in_facet(Cell_handle c, int i)
 
       // v replaces i3 in d
       d->set_vertex(j3,v);
-      v->set_cell(d);
+      set_vertex_cell(v, d);
 
       break;
     }
@@ -2946,7 +3190,7 @@ insert_in_facet(Cell_handle c, int i)
       Cell_handle cnew = create_face(c->vertex(0),c->vertex(1),v);
       set_adjacency(cnew, 2, n, n->index(c));
       set_adjacency(cnew, 0, c, 2);
-      c->vertex(0)->set_cell(cnew);
+      set_vertex_cell(c->vertex(0), cnew);
 
       n = c->neighbor(1);
       Cell_handle dnew = create_face(c->vertex(0),v,c->vertex(2));
@@ -2955,7 +3199,7 @@ insert_in_facet(Cell_handle c, int i)
       set_adjacency(dnew, 2, cnew, 1);
 
       c->set_vertex(0,v);
-      v->set_cell(c);
+      set_vertex_cell(v, c);
       break;
     }
   }
@@ -2963,9 +3207,9 @@ insert_in_facet(Cell_handle c, int i)
   return v;
 }
 
-template <class Vb, class Cb, class Ct>
-typename Triangulation_data_structure_3<Vb,Cb,Ct>::Vertex_handle
-Triangulation_data_structure_3<Vb,Cb,Ct>::
+template <class Vb, class Cb, class Ct, class St>
+typename Triangulation_data_structure_3<Vb,Cb,Ct,St>::Vertex_handle
+Triangulation_data_structure_3<Vb,Cb,Ct,St>::
 insert_in_edge(Cell_handle c, int i, int j)
   // inserts a vertex in the edge of cell c with vertices i and j
 {
@@ -3004,7 +3248,7 @@ insert_in_edge(Cell_handle c, int i, int j)
 
       Cell_handle cnew = create_cell();
       cnew->set_vertex(i,c->vertex(i));
-      c->vertex(i)->set_cell(cnew);
+      set_vertex_cell(c->vertex(i), cnew);
       cnew->set_vertex(j,v);
       cnew->set_vertex(k,c->vertex(k));
       c->set_vertex(i,v);
@@ -3026,7 +3270,7 @@ insert_in_edge(Cell_handle c, int i, int j)
 
       set_adjacency(cnew, k, dnew, kd);
 
-      v->set_cell(cnew);
+      set_vertex_cell(v, cnew);
       return v;
     }
   default: // case 1:
@@ -3034,20 +3278,20 @@ insert_in_edge(Cell_handle c, int i, int j)
       Vertex_handle v = create_vertex();
       CGAL_expensive_precondition( is_edge(c,i,j) );
       Cell_handle cnew = create_face(v, c->vertex(1), Vertex_handle());
-      c->vertex(1)->set_cell(cnew);
+      set_vertex_cell(c->vertex(1), cnew);
       c->set_vertex(1,v);
       set_adjacency(cnew, 0, c->neighbor(0), 1);
       set_adjacency(cnew, 1, c, 0);
 
-      v->set_cell(cnew);
+      set_vertex_cell(v, cnew);
       return v;
     }
   }
 }
 
-template <class Vb, class Cb, class Ct>
-typename Triangulation_data_structure_3<Vb,Cb,Ct>::Vertex_handle
-Triangulation_data_structure_3<Vb,Cb,Ct>::
+template <class Vb, class Cb, class Ct, class St>
+typename Triangulation_data_structure_3<Vb,Cb,Ct,St>::Vertex_handle
+Triangulation_data_structure_3<Vb,Cb,Ct,St>::
 insert_increase_dimension(Vertex_handle star)
   // star = vertex from which we triangulate the facet of the
   // incremented dimension
@@ -3077,7 +3321,7 @@ insert_increase_dimension(Vertex_handle star)
       // ( geometrically : infinite vertex )
     {
       Cell_handle c = create_face(v, Vertex_handle(), Vertex_handle());
-      v->set_cell(c);
+      set_vertex_cell(v, c);
       break;
     }
 
@@ -3086,7 +3330,7 @@ insert_increase_dimension(Vertex_handle star)
     // ( geometrically : first finite vertex )
     {
       Cell_handle d = create_face(v, Vertex_handle(), Vertex_handle());
-      v->set_cell(d);
+      set_vertex_cell(v, d);
       set_adjacency(d, 0, star->cell(), 0);
       break;
     }
@@ -3105,7 +3349,7 @@ insert_increase_dimension(Vertex_handle star)
       set_adjacency(e, 0, c, 1);
       set_adjacency(e, 1, d, 0);
 
-      v->set_cell(d);
+      set_vertex_cell(v, d);
       break;
     }
 
@@ -3152,7 +3396,7 @@ insert_increase_dimension(Vertex_handle star)
       c->set_neighbor(2,c->neighbor(i)->neighbor(2));
       c->set_neighbor(j,d);
 
-      v->set_cell(d);
+      set_vertex_cell(v, d);
 
       break;
     }
@@ -3169,7 +3413,7 @@ insert_increase_dimension(Vertex_handle star)
       Cell_iterator it = cells_begin();
       // allowed since the dimension has already been set to 3
 
-      v->set_cell(it); // ok since there is at least one ``cell''
+      set_vertex_cell(v, it); // ok since there is at least one ``cell''
       for(; it != cells_end(); ++it) {
         // Here we must be careful since we create_cells in a loop controlled
         // by an iterator.  So we first take care of the cells newly created
@@ -3219,9 +3463,9 @@ insert_increase_dimension(Vertex_handle star)
   return v;
 }
 
-template <class Vb, class Cb, class Ct>
+template <class Vb, class Cb, class Ct, class St>
 void
-Triangulation_data_structure_3<Vb,Cb,Ct>::
+Triangulation_data_structure_3<Vb,Cb,Ct,St>::
 remove_decrease_dimension(Vertex_handle v, Vertex_handle w)
 {
     CGAL_expensive_precondition( is_valid() );
@@ -3264,7 +3508,7 @@ remove_decrease_dimension(Vertex_handle v, Vertex_handle w)
 
             // Update vertex->cell() pointers.
             for (int i = 0; i < dimension(); ++i)
-                f->vertex(i)->set_cell(f);
+                set_vertex_cell(f->vertex(i), f);
         }
 
         delete_cells(to_delete.begin(), to_delete.end());
@@ -3274,9 +3518,9 @@ remove_decrease_dimension(Vertex_handle v, Vertex_handle w)
     CGAL_postcondition(is_valid());
 }
 
-template <class Vb, class Cb, class Ct>
-typename Triangulation_data_structure_3<Vb,Cb,Ct>::Cell_handle
-Triangulation_data_structure_3<Vb,Cb,Ct>::
+template <class Vb, class Cb, class Ct, class St>
+typename Triangulation_data_structure_3<Vb,Cb,Ct,St>::Cell_handle
+Triangulation_data_structure_3<Vb,Cb,Ct,St>::
 remove_from_maximal_dimension_simplex(Vertex_handle v)
 {
     CGAL_precondition(dimension() >= 1);
@@ -3284,7 +3528,7 @@ remove_from_maximal_dimension_simplex(Vertex_handle v)
     CGAL_precondition(number_of_vertices() >
                                     (size_type) dimension() + 1);
 
-    if (number_of_vertices() == (size_type) dimension() + 2) {
+    if (number_of_vertices() == static_cast<size_type>(dimension()) + 2) {
         remove_decrease_dimension(v);
         return Cell_handle();
     }
@@ -3298,9 +3542,9 @@ remove_from_maximal_dimension_simplex(Vertex_handle v)
     return remove_degree_2(v);
 }
 
-template <class Vb, class Cb, class Ct>
-typename Triangulation_data_structure_3<Vb,Cb,Ct>::Cell_handle
-Triangulation_data_structure_3<Vb,Cb,Ct>::
+template <class Vb, class Cb, class Ct, class St>
+typename Triangulation_data_structure_3<Vb,Cb,Ct,St>::Cell_handle
+Triangulation_data_structure_3<Vb,Cb,Ct,St>::
 remove_degree_2(Vertex_handle v)
 {
     CGAL_precondition(dimension() == 1);
@@ -3327,8 +3571,8 @@ remove_degree_2(Vertex_handle v)
     set_adjacency(newc,    i0, c0->neighbor(i0), mirror_index(c0, i0));
     set_adjacency(newc,  1-i0, c1->neighbor(i1), mirror_index(c1, i1));
 
-    newc->vertex(0)->set_cell(newc);
-    newc->vertex(1)->set_cell(newc);
+    set_vertex_cell(newc->vertex(0), newc);
+    set_vertex_cell(newc->vertex(1), newc);
 
     delete_cell(c0);
     delete_cell(c1);
@@ -3337,9 +3581,9 @@ remove_degree_2(Vertex_handle v)
     return newc;
 }
 
-template <class Vb, class Cb, class Ct>
-typename Triangulation_data_structure_3<Vb,Cb,Ct>::Cell_handle
-Triangulation_data_structure_3<Vb,Cb,Ct>::
+template <class Vb, class Cb, class Ct, class St>
+typename Triangulation_data_structure_3<Vb,Cb,Ct,St>::Cell_handle
+Triangulation_data_structure_3<Vb,Cb,Ct,St>::
 remove_degree_3(Vertex_handle v)
 {
     CGAL_precondition(dimension() == 2);
@@ -3369,9 +3613,9 @@ remove_degree_3(Vertex_handle v)
     set_adjacency(newc,  cw(i0), c1->neighbor(i1), mirror_index(c1, i1));
     set_adjacency(newc, ccw(i0), c2->neighbor(i2), mirror_index(c2, i2));
 
-    newc->vertex(0)->set_cell(newc);
-    newc->vertex(1)->set_cell(newc);
-    newc->vertex(2)->set_cell(newc);
+    set_vertex_cell(newc->vertex(0), newc);
+    set_vertex_cell(newc->vertex(1), newc);
+    set_vertex_cell(newc->vertex(2), newc);
 
     delete_cell(c0);
     delete_cell(c1);
@@ -3381,9 +3625,9 @@ remove_degree_3(Vertex_handle v)
     return newc;
 }
 
-template <class Vb, class Cb, class Ct>
-typename Triangulation_data_structure_3<Vb,Cb,Ct>::Cell_handle
-Triangulation_data_structure_3<Vb,Cb,Ct>::
+template <class Vb, class Cb, class Ct, class St>
+typename Triangulation_data_structure_3<Vb,Cb,Ct,St>::Cell_handle
+Triangulation_data_structure_3<Vb,Cb,Ct,St>::
 remove_degree_4(Vertex_handle v)
 {
     CGAL_precondition(dimension() == 3);
@@ -3417,10 +3661,10 @@ remove_degree_4(Vertex_handle v)
     set_adjacency(newc, i0^2, c2->neighbor(i2), mirror_index(c2, i2));
     set_adjacency(newc, i0^3, c3->neighbor(i3), mirror_index(c3, i3));
 
-    newc->vertex(0)->set_cell(newc);
-    newc->vertex(1)->set_cell(newc);
-    newc->vertex(2)->set_cell(newc);
-    newc->vertex(3)->set_cell(newc);
+    set_vertex_cell(newc->vertex(0), newc);
+    set_vertex_cell(newc->vertex(1), newc);
+    set_vertex_cell(newc->vertex(2), newc);
+    set_vertex_cell(newc->vertex(3), newc);
 
     delete_cell(c0);
     delete_cell(c1);
@@ -3431,9 +3675,9 @@ remove_degree_4(Vertex_handle v)
     return newc;
 }
 
-template <class Vb, class Cb, class Ct>
+template <class Vb, class Cb, class Ct, class St>
 void
-Triangulation_data_structure_3<Vb,Cb,Ct>::
+Triangulation_data_structure_3<Vb,Cb,Ct,St>::
 decrease_dimension(Cell_handle c, int i)
 {
   CGAL_expensive_precondition( is_valid() );;
@@ -3474,7 +3718,7 @@ decrease_dimension(Cell_handle c, int i)
 
     // Update vertex->cell() pointers.
     for (int i = 0; i < dimension(); ++i)
-      f->vertex(i)->set_cell(f);
+      set_vertex_cell(f->vertex(i), f);
   }
 
   delete_cells(to_delete.begin(), to_delete.end());
@@ -3523,10 +3767,10 @@ decrease_dimension(Cell_handle c, int i)
     c3->set_neighbor(2, c2);
     c3->set_neighbor(3, Cell_handle());
 
-    v->set_cell(c1);
-    v0->set_cell(c1);
-    v1->set_cell(c1);
-    v2->set_cell(c2);
+    set_vertex_cell(v, c1);
+    set_vertex_cell(v0, c1);
+    set_vertex_cell(v1, c1);
+    set_vertex_cell(v2, c2);
   }
 
   if(dimension() == 1)
@@ -3561,18 +3805,18 @@ decrease_dimension(Cell_handle c, int i)
     c2->set_neighbor(2, Cell_handle());
     c2->set_neighbor(3, Cell_handle());
 
-    v->set_cell(c1);
-    v0->set_cell(c1);
-    v1->set_cell(c2);
+    set_vertex_cell(v, c1);
+    set_vertex_cell(v0, c1);
+    set_vertex_cell(v1, c2);
   }
 
   CGAL_postcondition(is_valid());
 }
 
 
-template <class Vb, class Cb, class Ct>
-typename Triangulation_data_structure_3<Vb,Cb,Ct>::size_type
-Triangulation_data_structure_3<Vb,Cb,Ct>::
+template <class Vb, class Cb, class Ct, class St>
+typename Triangulation_data_structure_3<Vb,Cb,Ct,St>::size_type
+Triangulation_data_structure_3<Vb,Cb,Ct,St>::
 degree(Vertex_handle v) const
 {
     std::size_t res;
@@ -3580,9 +3824,9 @@ degree(Vertex_handle v) const
     return res;
 }
 
-template <class Vb, class Cb, class Ct>
+template <class Vb, class Cb, class Ct, class St>
 bool
-Triangulation_data_structure_3<Vb,Cb,Ct>::
+Triangulation_data_structure_3<Vb,Cb,Ct,St>::
 is_valid(bool verbose, int level ) const
 {
   switch ( dimension() ) {
@@ -3744,9 +3988,9 @@ is_valid(bool verbose, int level ) const
   return true;
 }
 
-template <class Vb, class Cb, class Ct>
+template <class Vb, class Cb, class Ct, class St>
 bool
-Triangulation_data_structure_3<Vb,Cb,Ct>::
+Triangulation_data_structure_3<Vb,Cb,Ct,St>::
 is_valid(Vertex_handle v, bool verbose, int level) const
 {
   bool result = v->is_valid(verbose,level);
@@ -3759,9 +4003,9 @@ is_valid(Vertex_handle v, bool verbose, int level) const
   return result;
 }
 
-template <class Vb, class Cb, class Ct>
+template <class Vb, class Cb, class Ct, class St>
 bool
-Triangulation_data_structure_3<Vb,Cb,Ct>::
+Triangulation_data_structure_3<Vb,Cb,Ct,St>::
 is_valid(Cell_handle c, bool verbose, int level) const
 {
     if ( ! c->is_valid(verbose, level) )
@@ -4070,10 +4314,10 @@ is_valid(Cell_handle c, bool verbose, int level) const
     return true;
 }
 
-template <class Vb, class Cb, class Ct>
+template <class Vb, class Cb, class Ct, class St>
 template <class TDS_src,class ConvertVertex,class ConvertCell>
-typename Triangulation_data_structure_3<Vb,Cb,Ct>::Vertex_handle
-Triangulation_data_structure_3<Vb,Cb,Ct>::
+typename Triangulation_data_structure_3<Vb,Cb,Ct,St>::Vertex_handle
+Triangulation_data_structure_3<Vb,Cb,Ct,St>::
 copy_tds(const TDS_src& tds,
         typename TDS_src::Vertex_handle vert,
         const ConvertVertex& convert_vertex,
@@ -4133,63 +4377,10 @@ copy_tds(const TDS_src& tds,
   return (vert != typename TDS_src::Vertex_handle()) ? V[vert] : Vertex_handle();
 }
 
-//utilities for copy_tds
-namespace internal { namespace TDS_3{
-  template <class Vertex_src,class Vertex_tgt>
-  struct Default_vertex_converter
-  {
-    Vertex_tgt operator()(const Vertex_src& src) const {
-      return Vertex_tgt(src.point());
-    }
-
-    void operator()(const Vertex_src&,Vertex_tgt&) const {}
-  };
-
-  template <class Cell_src,class Cell_tgt>
-  struct Default_cell_converter
-  {
-    Cell_tgt operator()(const Cell_src&) const {
-      return Cell_tgt();
-    }
-
-    void operator()(const Cell_src&,Cell_tgt&) const {}
-  };
-
-  template <class Vertex>
-  struct Default_vertex_converter<Vertex,Vertex>
-  {
-    const Vertex& operator()(const Vertex& src) const {
-      return src;
-    }
-
-    void operator()(const Vertex&,Vertex&) const {}
-  };
-
-  template <class Cell>
-  struct Default_cell_converter<Cell,Cell>{
-    const Cell& operator()(const Cell& src) const {
-      return src;
-    }
-
-    void operator()(const Cell&,Cell&) const {}
-  };
-} } //namespace internal::TDS_3
-
-template <class Vb, class Cb, class Ct>
-template<class TDS_src>
-typename Triangulation_data_structure_3<Vb,Cb,Ct>::Vertex_handle
-Triangulation_data_structure_3<Vb,Cb,Ct>::
-copy_tds(const TDS_src& src,typename TDS_src::Vertex_handle vert)
-{
-  internal::TDS_3::Default_vertex_converter<typename TDS_src::Vertex,Vertex> setv;
-  internal::TDS_3::Default_cell_converter<typename TDS_src::Cell,Cell>  setc;
-  return copy_tds(src,vert,setv,setc);
-}
-
 template <class Vb, class Cb, class Ct>
 void
-Triangulation_data_structure_3<Vb,Cb,Ct>::
-swap(Tds & tds)
+Triangulation_data_structure_3_storage<Vb,Cb,Ct>::
+swap(Storage & tds)
 {
   CGAL_expensive_precondition(tds.is_valid() && is_valid());
 
@@ -4200,7 +4391,7 @@ swap(Tds & tds)
 
 template <class Vb, class Cb, class Ct>
 void
-Triangulation_data_structure_3<Vb,Cb,Ct>::
+Triangulation_data_structure_3_storage<Vb,Cb,Ct>::
 clear()
 {
   cells().clear();
@@ -4208,9 +4399,9 @@ clear()
   set_dimension(-2);
 }
 
-template <class Vb, class Cb, class Ct>
+template <class Vb, class Cb, class Ct, class St>
 bool
-Triangulation_data_structure_3<Vb,Cb,Ct>::
+Triangulation_data_structure_3<Vb,Cb,Ct,St>::
 count_vertices(size_type & i, bool verbose, int level) const
   // counts AND checks the validity
 {
@@ -4228,9 +4419,9 @@ count_vertices(size_type & i, bool verbose, int level) const
   return true;
 }
 
-template <class Vb, class Cb, class Ct>
+template <class Vb, class Cb, class Ct, class St>
 bool
-Triangulation_data_structure_3<Vb,Cb,Ct>::
+Triangulation_data_structure_3<Vb,Cb,Ct,St>::
 count_facets(size_type & i, bool verbose, int level) const
   // counts but does not check
 {
@@ -4248,9 +4439,9 @@ count_facets(size_type & i, bool verbose, int level) const
   return true;
 }
 
-template <class Vb, class Cb, class Ct>
+template <class Vb, class Cb, class Ct, class St>
 bool
-Triangulation_data_structure_3<Vb,Cb,Ct>::
+Triangulation_data_structure_3<Vb,Cb,Ct,St>::
 count_edges(size_type & i, bool verbose, int level) const
   // counts but does not check
 {
@@ -4268,9 +4459,9 @@ count_edges(size_type & i, bool verbose, int level) const
   return true;
 }
 
-template <class Vb, class Cb, class Ct>
+template <class Vb, class Cb, class Ct, class St>
 bool
-Triangulation_data_structure_3<Vb,Cb,Ct>::
+Triangulation_data_structure_3<Vb,Cb,Ct,St>::
 count_cells(size_type & i, bool verbose, int level) const
   // counts AND checks the validity
 {

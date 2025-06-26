@@ -13,7 +13,11 @@
 #define CGAL_SMALL_UNORDERED_MAP_H
 
 #include <array>
-#include <iostream>
+#ifdef CGAL_SMALL_UNORDERED_MAP_STATS
+#  include <iostream>
+#endif
+
+#include <CGAL/assertions.h>
 
 //#define CGAL_SMALL_UNORDERED_MAP_STATS
 namespace CGAL {

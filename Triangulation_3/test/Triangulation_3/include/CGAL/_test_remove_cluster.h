@@ -39,6 +39,7 @@ void _test_rc_random_1()
 
         std::size_t s1 = dt.number_of_vertices();
         std::size_t s2 = to_remove.size();
+        std::cout << "  remove " << s2 << " of " << s1 << " vertices" << std::endl;
         std::size_t ns = dt.remove_cluster(to_remove.begin(), to_remove.end());
         assert(dt.is_valid());
         assert(ns == s2);
@@ -81,6 +82,7 @@ void _test_rc_random_2()
 
         std::size_t s1 = dt.number_of_vertices();
         std::size_t s2 = to_remove.size();
+        std::cout << "  remove " << s2 << " of " << s1 << " vertices" << std::endl;
         std::size_t ns = dt.remove_cluster(to_remove.begin(), to_remove.end());
         assert(dt.is_valid());
         assert(ns == s2);
@@ -116,6 +118,7 @@ void _test_rc_random_3()
 
         std::size_t s1 = dt.number_of_vertices();
         std::size_t s2 = to_remove.size();
+        std::cout << "  remove " << s2 << " of " << s1 << " vertices" << std::endl;
         std::size_t ns = dt.remove_cluster(to_remove.begin(), to_remove.end());
         assert(dt.is_valid());
         assert(ns == s2);
@@ -148,9 +151,9 @@ void _test_rc_random_4()
         fit != dt.finite_vertices_end(); fit++) {
                 if(random.get_double() < 0.9) to_remove.push_back(fit);
   }
-
         std::size_t s1 = dt.number_of_vertices();
         std::size_t s2 = to_remove.size();
+        std::cout << "  remove " << s2 << " of " << s1 << " vertices" << std::endl;
         std::size_t ns = dt.remove_cluster(to_remove.begin(), to_remove.end());
         assert(dt.is_valid());
         assert(ns == s2);
