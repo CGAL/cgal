@@ -9,6 +9,11 @@
 ### [dD Fréchet Distance](https://doc.cgal.org/6.1/Manual/packages.html#FrechetDistance) (new package)
 - This package provides functions for computing the Fréchet distance of polylines in any dimension under the Euclidean metric.
 
+### [3D Constrained Triangulations](https://doc.cgal.org/6.1/Manual/packages.html#PkgConstrainedTriangulation3) (new package)
+-   This package adds the function `CGAL::make_conforming_constrained_Delaunay_triangulation_3()`
+    to create a conforming constrained Delaunay triangulation in 3D, which can be represented by the new
+    class template `CGAL::Conforming_constrained_Delaunay_triangulation_3`.
+
 ### 2D Triangulations on Hyperbolic Surfaces (new package)
 -   This package enables building and handling triangulations of closed orientable hyperbolic surfaces.
     It offers functions for the generation of the triangulation from a convex fundamental domain,
@@ -18,7 +23,7 @@
 ### 3D Isosurfacing (new package)
 
 -   This package provides algorithms to extract isosurfaces from different inputs. The input is represented
-    as a 3D domain and can be an implicit function or a Cartesian grid. The output is an indexed face
+    as a 3D domain and can be an implicit function or a %Cartesian grid. The output is an indexed face
     set that stores an isosurface in the form of a surface mesh. The provided algorithms include Marching Cubes,
     topologically correct Marching Cubes, and Dual Contouring.
 

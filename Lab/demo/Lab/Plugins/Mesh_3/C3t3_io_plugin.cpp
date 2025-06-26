@@ -277,119 +277,39 @@ typedef CGAL::Mesh_complex_3_in_triangulation_3<
   Fake_mesh_domain::Corner_index,
   Fake_mesh_domain::Curve_index> Fake_c3t3;
 
-template <class Vb = CGAL::Triangulation_vertex_base_3<EPICK> >
-struct Fake_CDT_3_vertex_base : public Vb
-{
-  typedef Vb Base;
-  bool steiner;
-  std::size_t ref_1, ref_2;
-
-  template < typename TDS2 >
-  struct Rebind_TDS {
-    typedef typename Base::template Rebind_TDS<TDS2>::Other   Vb2;
-    typedef Fake_CDT_3_vertex_base<Vb2>  Other;
-  };
-};
-
-template <class Vb>
-std::istream&
-operator>>( std::istream& is, Fake_CDT_3_vertex_base<Vb>& v)
-{
-  is >> static_cast<typename Fake_CDT_3_vertex_base<Vb>::Base&>(v);
-  char s;
-  if( CGAL::IO::is_ascii(is) ) {
-    is >> s;
-    if( s == 'S' ) {
-      v.steiner = true;
-      is >> v.ref_1 >> v.ref_2;
-    }
-    else {
-      CGAL_assertion(s == '.' || s == 'F');
-      v.steiner = false;
-    }
-  } else {
-    CGAL::read( is, s );
-    if(is.bad()) return is;
-    if( s == 'S' ) {
-      v.steiner = true;
-      CGAL::read( is, v.ref_1 );
-      CGAL::read( is, v.ref_2 );
-    }
-    else {
-      // if(s != '.') {
-      //         std::cerr << "v.point()=" << v.point() << std::endl;
-      //         std::cerr << "s=" << s << " (" << (int)s
-      //                   << "), just before position "
-      //                   << is.tellg() << " !\n";
-      // }
-      CGAL_assertion(s == '.' || s== 'F');
-      v.steiner = false;
-    }
-  }
-  return is;
-}
-
 template <class Cb = CGAL::Triangulation_cell_base_3<EPICK> >
 struct Fake_CDT_3_cell_base : public Cb
 {
   typedef Cb Base;
-  int constrained_facet[4];
-  bool _restoring[6];
-  int to_edge_index( int li, int lj ) const {
-    CGAL_precondition( li >= 0 && li < 4 );
-    CGAL_precondition( lj >= 0 && lj < 4 );
-    CGAL_precondition( li != lj );
-    return ( li==0 || lj==0 ) ? li+lj-1 : li+lj;
-  }
+  int face_id[4];
 
   template < typename TDS2 >
   struct Rebind_TDS {
     typedef typename Base::template Rebind_TDS<TDS2>::Other   Cb2;
     typedef Fake_CDT_3_cell_base<Cb2>  Other;
   };
+
+  static std::string io_signature() {
+    return CGAL::Get_io_signature<Base>()() + "+(" +
+           CGAL::Get_io_signature<int>()() + ")[4]";
+  }
+  friend
+  std::istream&
+  operator>>( std::istream& is, Fake_CDT_3_cell_base& c) {
+    is >> static_cast<Cb&>(c);
+    for( int li = 0; li < 4; ++li ) {
+      if( CGAL::IO::is_ascii(is) )
+        is >> c.face_id[li];
+      else
+        CGAL::read( is, c.face_id[li] );
+    }
+    return is;
+  }
 };
 
-template <typename Cb>
-std::istream&
-operator>>( std::istream& is, Fake_CDT_3_cell_base<Cb>& c) {
-  char s;
-  for( int li = 0; li < 4; ++li ) {
-    if( CGAL::IO::is_ascii(is) )
-      is >> c.constrained_facet[li];
-    else
-      CGAL::read( is, c.constrained_facet[li] );
-  }
 
-  if( CGAL::IO::is_ascii(is) ) {
-    is >> s;
-    CGAL_assertion(s == '-');
-  }
-  is >> static_cast<typename Fake_CDT_3_cell_base<Cb>::Base&>(c);
-  for( int li = 0; li < 3; ++li ) {
-    for( int lj = li+1; lj < 4; ++lj ) {
-      char s;
-      is >> s;
-      if(s == 'C') {
-        c._restoring[c.to_edge_index(li, lj)] = true;
-      } else {
-        if(s != '.') {
-          std::cerr << "cDT cell:";
-          for( int li = 0; li < 4; ++li ) {
-            std::cerr << " " << c.constrained_facet[li];
-          }
-          std::cerr << "\n";
-          std::cerr << "s=" << s << " (" << (int)s
-                    << "), just before position "
-                    << is.tellg() << " !\n";        }
-        CGAL_assertion(s == '.');
-        c._restoring[c.to_edge_index(li, lj)] = false;
-      }
-    }
-  }
-  return is;
-}
-
-typedef CGAL::Triangulation_data_structure_3<Fake_CDT_3_vertex_base<>, Fake_CDT_3_cell_base<> > Fake_CDT_3_TDS;
+typedef CGAL::Triangulation_data_structure_3<CGAL::Triangulation_vertex_base_3<EPICK>,
+                                             Fake_CDT_3_cell_base<> > Fake_CDT_3_TDS;
 typedef CGAL::Triangulation_3<EPICK, Fake_CDT_3_TDS> Fake_CDT_3;
 
 typedef Fake_mesh_domain::Surface_patch_index Fake_patch_id;
@@ -474,7 +394,7 @@ struct Update_cell_from_CDT_3 {
   void operator()(const C1& c1, C2& c2) {
     c2.set_subdomain_index(1);
     for(int i = 0; i < 4; ++i) {
-      c2.set_surface_patch_index(i, c1.constrained_facet[i]);
+      c2.set_surface_patch_index(i, c1.face_id[i]+1);
     }
   }
 }; // end struct Update_cell
