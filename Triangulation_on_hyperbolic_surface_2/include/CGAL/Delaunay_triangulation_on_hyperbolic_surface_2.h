@@ -78,8 +78,8 @@ public:
 	//---------- Delaunay related methods
 	void flip(Dart_descriptor dart);
 	unsigned make_Delaunay();
-	std::tuple<unsigned, std::vector<Dart_descriptor>> Delaunay_insert(Point const & query, Anchor & anch); // return réf ?
-	std::tuple<unsigned, std::vector<Dart_descriptor>> Delaunay_insert(Point const & query);
+	std::tuple<unsigned, std::vector<Dart_descriptor>> insert(Point const & query, Anchor & anch); // return réf ?
+	std::tuple<unsigned, std::vector<Dart_descriptor>> insert(Point const & query);
 
 	//---------- eps-net methods
 	bool epsilon_net(double epsilon);
@@ -105,7 +105,7 @@ private:
 	Anchor locate_straight_walk(Point const & query, Locate_type & lt, unsigned & li, unsigned & ld, Anchor const & hint); // const ?
 	std::vector<Anchor> insert_in_face(Point const & query, Anchor& anch);  // return réf ?
 	std::vector<Anchor> insert_in_edge(Point const & query, unsigned & li, Anchor & anch);
-	std::vector<Anchor> insert(Point const & query, Anchor & anch, bool use_visibility = false); // return réf ?
+	std::vector<Anchor> split_insert(Point const & query, Anchor & anch, bool use_visibility = false); // return réf ?
 
 	//---------- Delaunay related methods
 	void push_flippable_edge(Dart_descriptor const dart, std::list<Dart_descriptor> & darts_to_flip);
@@ -540,9 +540,9 @@ locate_visibility_walk(Point const & query, Locate_type & lt, unsigned & li, uns
 
 	// visibility walk
 	while (!found) {
-		dart = Base::opposite(dart);
 		Complex cross_ratio = Base::get_cross_ratio(dart);
 		d = Base::fourth_point_from_cross_ratio(a, b, c, cross_ratio);
+		dart = Base::opposite(dart);
 		if (hyperbolic_orientation_2(c, d, query) == RIGHT_TURN){
 			b = a;
 			a = d;
@@ -737,7 +737,7 @@ insert_in_edge(Point const & query, unsigned & li, Anchor & anch)
 template<class Traits>
 std::vector<typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Anchor>
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
-insert(Point const & query, Anchor& anch, bool use_visibility)
+split_insert(Point const & query, Anchor& anch, bool use_visibility)
 {
 	Locate_type lt = OUTSIDE;
 	unsigned li = 0;
@@ -860,11 +860,11 @@ make_Delaunay()
 template<class Traits>
 std::tuple<unsigned, std::vector<typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Dart_descriptor>>
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
-Delaunay_insert(Point const & query, Anchor& anch)
+insert(Point const & query, Anchor& anch)
 {
 	CGAL_expensive_precondition(Base::is_Delaunay());
 
-	std::vector<Anchor> new_anchors = insert(query, anch);
+	std::vector<Anchor> new_anchors = split_insert(query, anch);
 	std::list<Dart_descriptor> darts_to_flip;
 	for (int i = 0; i < new_anchors.size(); ++i) {
 		push_flippable_edge(new_anchors[i].dart, darts_to_flip);
@@ -877,9 +877,9 @@ Delaunay_insert(Point const & query, Anchor& anch)
 template<class Traits>
 std::tuple<unsigned, std::vector<typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Dart_descriptor>>
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
-Delaunay_insert(Point const & query)
+insert(Point const & query)
 {
-	return Delaunay_insert(query, anchor());
+	return insert(query, anchor());
 }
 
 
@@ -978,7 +978,7 @@ epsilon_net(const double epsilon)
 			this->combinatorial_map_.unmark(current_dart, triangles_list_mark);
 			Point current_center = approx_circumcenter(current_anchor);
 			if (delta_min(current_anchor, current_center) > BOUND) {
-				std::vector<Anchor> new_anchors = insert(current_center, current_anchor, true);
+				std::vector<Anchor> new_anchors = split_insert(current_center, current_anchor, true);
 				std::list<Dart_descriptor> darts_to_flip;
 				for (Anchor const & new_anchor : new_anchors) {
 					push_triangle(new_anchor.dart, triangles, triangles_list_mark);
