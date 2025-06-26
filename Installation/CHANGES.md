@@ -39,6 +39,7 @@
 - New implementation of `CGAL::Polygon_mesh_processing::clip()` with a plane as clipper that is much faster and is now able to handle non-triangulated surface meshes.
 - New implementation of `CGAL::Polygon_mesh_processing::split()` with a plane as clipper that is much faster and is now able to handle non-triangulated surface meshes.
 - Added the function `CGAL::Polygon_mesh_processing::refine_with_plane()`, which enables users to refine a mesh with their intersection with a plane.
+- Added the parameter `apply_iterative_snap_rounding` to the function `CGAL::Polygon_mesh_processing::autorefine_triangle_soup()`. When set to `true`, the coordinates are rounded to fit in double and may perform additional subdivisions to ensure the output is free of self-intersections.
 
 ### [Point Set Processing](https://doc.cgal.org/6.1/Manual/packages.html#PkgPointSetProcessing3)
 - Added `poisson_eliminate()` to downsample a point cloud to a target size while providing Poisson disk property, i.e., a larger minimal distance between points.

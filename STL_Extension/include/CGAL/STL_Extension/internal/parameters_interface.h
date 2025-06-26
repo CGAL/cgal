@@ -177,7 +177,8 @@ CGAL_add_named_parameter(weight_limiting_t, weight_limiting, weight_limiting)
 CGAL_add_named_parameter(progressive_t, progressive, progressive)
 CGAL_add_named_parameter(tiling_t, tiling, tiling)
 CGAL_add_named_parameter(dimension_t, dimension, dimension)
-
+CGAL_add_named_parameter(apply_iterative_snap_rounding_t, apply_iterative_snap_rounding, apply_iterative_snap_rounding)
+CGAL_add_named_parameter(snap_grid_size_t, snap_grid_size, snap_grid_size)
 
 // List of named parameters that we use in the package 'Surface Mesh Simplification'
 CGAL_add_named_parameter(get_cost_policy_t, get_cost_policy, get_cost)
