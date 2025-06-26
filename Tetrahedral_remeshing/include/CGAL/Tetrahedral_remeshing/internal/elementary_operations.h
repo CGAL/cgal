@@ -14,6 +14,8 @@
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/task_group.h>
 #include <tbb/combinable.h>
+#include <tbb/parallel_for.h>
+#include <tbb/blocked_range.h>
 #endif
 
 namespace CGAL {
@@ -48,33 +50,32 @@ public:
   }
 };
 
-template<typename C3t3_, typename ElementIteratorType_, typename LockElementType_, typename ElementSource_>
+template<typename C3t3_, typename ElementType_, typename LockElementType_>
 class ElementaryOperation {
 public:
   using C3t3 = C3t3_;
   using Triangulation = typename C3t3::Triangulation;
-  using ElementIteratorType = ElementIteratorType_;
+  using ElementType = ElementType_;
   using LockElementType = LockElementType_;
-  using ElementSource = ElementSource_;
   using Lock_zone = std::vector<LockElementType>;
 
   ElementaryOperation() = default;
   virtual ~ElementaryOperation() = default;
 
   // Pure element logic methods
-  virtual bool should_process_element(const ElementIteratorType& e, const C3t3& c3t3) const = 0;
-  virtual ElementSource get_element_source(const C3t3& c3t3) const = 0;
-  virtual bool can_apply_operation(const ElementIteratorType& e, const C3t3& c3t3) const = 0;
-  virtual Lock_zone get_lock_zone(const ElementIteratorType& e, const C3t3& c3t3) const = 0;
-  virtual bool execute_operation(const ElementIteratorType& e, C3t3& c3t3) = 0;
+  virtual bool should_process_element(const ElementType& e, const C3t3& c3t3) const = 0;
+  virtual std::vector<ElementType> get_element_source(const C3t3& c3t3) const = 0;
+  virtual bool can_apply_operation(const ElementType& e, const C3t3& c3t3) const = 0;
+  virtual Lock_zone get_lock_zone(const ElementType& e, const C3t3& c3t3) const = 0;
+  virtual bool execute_operation(const ElementType& e, C3t3& c3t3) = 0;
   virtual std::string operation_name() const = 0;
 
   // Pre/post operation hooks
-  virtual bool execute_pre_operation(const ElementIteratorType& e, C3t3& c3t3) {
+  virtual bool execute_pre_operation(const ElementType& e, C3t3& c3t3) {
     return true; // Default implementation does nothing
   }
 
-  virtual bool execute_post_operation(const ElementIteratorType& e, C3t3& c3t3) {
+  virtual bool execute_post_operation(const ElementType& e, C3t3& c3t3) {
     return true; // Default implementation does nothing
   }
 };
@@ -85,7 +86,7 @@ class ElementaryOperationExecution {
 public:
   using C3t3 = typename Operation::C3t3;
   using Cell_handle = typename C3t3::Triangulation::Cell_handle;
-  using ElementIteratorType = typename Operation::ElementIteratorType;
+  using ElementType = typename Operation::ElementType;
   
   ElementaryOperationExecution() = default;
   ElementaryOperationExecution(const ElementaryOperationExecution&) = default;
@@ -94,10 +95,10 @@ public:
   ElementaryOperationExecution& operator=(ElementaryOperationExecution&&) = default;
   virtual ~ElementaryOperationExecution() = default;
 
-  virtual std::vector<ElementIteratorType> collect_candidates(const Operation& op, const C3t3& c3t3) const = 0;
+  virtual std::vector<ElementType> collect_candidates(const Operation& op, const C3t3& c3t3) const = 0;
 
   virtual bool apply_operation_on_elements(
-    std::vector<ElementIteratorType>& elements,
+    std::vector<ElementType>& elements,
     Operation& op,
     C3t3& c3t3,
     LockManager<Cell_handle>& lock_manager) = 0;
@@ -125,13 +126,8 @@ class ElementaryOperationExecutionSequential : public ElementaryOperationExecuti
 public:
   using Base = ElementaryOperationExecution<Operation>;
   using C3t3 = typename Operation::C3t3;
-  using ElementIteratorType = typename Operation::ElementIteratorType;
-  using ElementSource = typename Operation::ElementSource;
+  using ElementType = typename Operation::ElementType;
   using Cell_handle = typename C3t3::Triangulation::Cell_handle;
-
-private:
-  // Store the container to keep iterators valid throughout execution
-  mutable ElementSource m_element_source;
 
 public:
   ElementaryOperationExecutionSequential() = default;
@@ -140,43 +136,43 @@ public:
   ElementaryOperationExecutionSequential& operator=(const ElementaryOperationExecutionSequential&) = default;
   ElementaryOperationExecutionSequential& operator=(ElementaryOperationExecutionSequential&&) = default;
 
-  std::vector<ElementIteratorType> collect_candidates(const Operation& op, const C3t3& c3t3) const override {
-    std::vector<ElementIteratorType> candidates;
+  std::vector<ElementType> collect_candidates(const Operation& op, const C3t3& c3t3) const override {
+    std::vector<ElementType> candidates;
     
-    // Store the container to keep iterators valid throughout execution
-    m_element_source = op.get_element_source(c3t3);
+    // Get all elements from the operation
+    auto elements = op.get_element_source(c3t3);
     
-    for (auto it = m_element_source.begin(); it != m_element_source.end(); ++it) {
-      if (op.should_process_element(it, c3t3)) {
-        candidates.push_back(it);
+    for (const auto& element : elements) {
+      if (op.should_process_element(element, c3t3)) {
+        candidates.push_back(element);
       }
     }
     return candidates;
   }
 
   bool apply_operation_on_elements(
-    std::vector<ElementIteratorType>& elements,
+    std::vector<ElementType>& elements,
     Operation& op,
     C3t3& c3t3,
     LockManager<Cell_handle>& lock_manager) override {
     
     bool success = false;
     
-    for (auto eit : elements) {
-      if (!op.can_apply_operation(eit, c3t3))
+    for (const auto& element : elements) {
+      if (!op.can_apply_operation(element, c3t3))
         continue;
 
-      auto lock_zone = op.get_lock_zone(eit, c3t3);
+      auto lock_zone = op.get_lock_zone(element, c3t3);
       if (lock_manager.try_lock_zone(lock_zone)) {
         // Execute pre-operation phase for this element
-        op.execute_pre_operation(eit, c3t3);
+        op.execute_pre_operation(element, c3t3);
         
-        if (op.execute_operation(eit, c3t3)) {
+        if (op.execute_operation(element, c3t3)) {
           success = true;
         }
         
         // Execute post-operation phase for this element
-        op.execute_post_operation(eit, c3t3);
+        op.execute_post_operation(element, c3t3);
         
         lock_manager.unlock_zone(lock_zone);
       }
@@ -186,20 +182,15 @@ public:
   }
 };
 
-#ifdef CGAL_LINKED_WITH_TBB
+// #ifdef CGAL_CONCURRENT_TETRAHEDRAL_REMESHING
 // Parallel execution implementation
 template<typename Operation>
 class ElementaryOperationExecutionParallel : public ElementaryOperationExecution<Operation> {
 public:
   using Base = ElementaryOperationExecution<Operation>;
   using C3t3 = typename Operation::C3t3;
-  using ElementIteratorType = typename Operation::ElementIteratorType;
-  using ElementSource = typename Operation::ElementSource;
+  using ElementType = typename Operation::ElementType;
   using Cell_handle = typename C3t3::Triangulation::Cell_handle;
-
-private:
-  // Store the container to keep iterators valid throughout execution
-  mutable ElementSource m_element_source;
 
 public:
   ElementaryOperationExecutionParallel() = default;
@@ -208,27 +199,25 @@ public:
   ElementaryOperationExecutionParallel& operator=(const ElementaryOperationExecutionParallel&) = default;
   ElementaryOperationExecutionParallel& operator=(ElementaryOperationExecutionParallel&&) = default;
 
-  std::vector<ElementIteratorType> collect_candidates(const Operation& op, const C3t3& c3t3) const override {
-    tbb::combinable<std::vector<ElementIteratorType>> local_candidates;
+  std::vector<ElementType> collect_candidates(const Operation& op, const C3t3& c3t3) const override {
+    // Get all elements from the operation
+    auto elements = op.get_element_source(c3t3);
     
-    // Store the container to keep iterators valid throughout execution
-    m_element_source = op.get_element_source(c3t3);
-    auto begin = m_element_source.begin();
-    auto end = m_element_source.end();
+    tbb::combinable<std::vector<ElementType>> local_candidates;
     
-    tbb::parallel_for(tbb::blocked_range<decltype(begin)>(begin, end),
-      [&](const auto& r) {
+    tbb::parallel_for(tbb::blocked_range<size_t>(0, elements.size()),
+      [&](const tbb::blocked_range<size_t>& r) {
         auto& my_candidates = local_candidates.local();
-        for (auto it = r.begin(); it != r.end(); ++it) {
-          if (op.should_process_element(it, c3t3)) {
-            my_candidates.push_back(it);  // Simple push_back for std::vector
+        for (size_t i = r.begin(); i != r.end(); ++i) {
+          if (op.should_process_element(elements[i], c3t3)) {
+            my_candidates.push_back(elements[i]);
           }
         }
       });
     
     // Combine all local vectors into final result
-    std::vector<ElementIteratorType> candidates;
-    local_candidates.combine_each([&](const std::vector<ElementIteratorType>& local) {
+    std::vector<ElementType> candidates;
+    local_candidates.combine_each([&](const std::vector<ElementType>& local) {
       candidates.insert(candidates.end(), local.begin(), local.end());
     });
     
@@ -236,7 +225,7 @@ public:
   }
 
   bool apply_operation_on_elements(
-    std::vector<ElementIteratorType>& elements,
+    std::vector<ElementType>& elements,
     Operation& op,
     C3t3& c3t3,
     LockManager<Cell_handle>& lock_manager) override {
@@ -244,24 +233,22 @@ public:
     tbb::task_group group;
     std::atomic<bool> success{false};
 
-    for (auto it = elements.begin(); it != elements.end(); ++it) {
-      group.run([&, it]() {
-        ElementIteratorType e = *it;  // Simple extraction from std::vector
-        
-        if (!op.can_apply_operation(e, c3t3))
+    for (const auto& element : elements) {
+      group.run([&, element]() {
+        if (!op.can_apply_operation(element, c3t3))
           return;
 
-        auto lock_zone = op.get_lock_zone(e, c3t3);
+        auto lock_zone = op.get_lock_zone(element, c3t3);
         if (lock_manager.try_lock_zone(lock_zone)) {
           // Execute pre-operation phase for this element (parallelized!)
-          op.execute_pre_operation(e, c3t3);
+          op.execute_pre_operation(element, c3t3);
           
-          if (op.execute_operation(e, c3t3)) {
-            success = true;
+          if (op.execute_operation(element, c3t3)) {
+            success.store(true);
           }
           
           // Execute post-operation phase for this element (parallelized!)
-          op.execute_post_operation(e, c3t3);
+          op.execute_post_operation(element, c3t3);
           
           lock_manager.unlock_zone(lock_zone);
         }
@@ -270,10 +257,10 @@ public:
 
     group.wait();
     
-    return success;
+    return success.load();
   }
 };
-#endif // CGAL_LINKED_WITH_TBB
+// #endif // CGAL_LINKED_WITH_TBB
 
 } // namespace internal
 } // namespace Tetrahedral_remeshing
