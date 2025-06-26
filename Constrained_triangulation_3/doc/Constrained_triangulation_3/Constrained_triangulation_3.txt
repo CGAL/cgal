@@ -175,22 +175,23 @@ of a `CGAL::Conforming_constrained_Delaunay_triangulation_3` object from either 
 
 \subsection CT_3_geomtraits Traits and Kernel Choice
 
-The requirements on geometric objects and operations are described in the traits class concept
+The requirements for geometric objects and operations are specified by the traits class concept
 `ConformingConstrainedDelaunayTriangulationTraits_3`. Any CGAL kernel is a model of this concept.
-However, since this package is based on the 3D Triangulation package we inherit the requirement that
-a traits class providing exact predicates is needed.
+However, because this package builds upon the 3D Triangulation package, it inherits the requirement
+that the traits class must provide exact predicates.
 
-One important new part of this algorithm is the creation of new points that are not part of the input.
-Those points are the Steiner points that are constructed on segments and polygons of the input PLC.
-If a traits with inexact constructions is used, it is not possible to guarantee that the points are
-exactly on segments/polygons. As a consequence, when using inexact constructions, the output will
-only be an approximation of the input (up to the rounding of the computed Steiner points).
-Also in such a case, it will not always be possible to get a result if the input PLC features
-too close non-adjacent simplices. The algorithm will abort the triangulation if the distance between
-simplices goes below a threshold internally computed. In such a case, an error message with
-the involved simplices will be displayed on the standard output. In case the issue is coming from badly
-shaped triangles, methods such as `CGAL::Polygon_mesh_processing::remove_almost_degenerate_faces()`
-might be useful to overcome this limitation.
+A key aspect of this algorithm is the creation of new points, known as Steiner points, which are
+inserted on the segments and polygons of the input PLC. If a traits class with inexact constructions
+is used, it cannot be guaranteed that these points will lie exactly on the intended segments or polygons.
+As a result, the output will only approximate the input, with the accuracy limited by the rounding
+of the computed Steiner points.
+
+Furthermore, when using inexact constructions, the algorithm may fail if the input PLC contains
+non-adjacent simplices that are too close to each other. In such cases, the triangulation process
+will emit an error if the distance between simplices falls below an internally computed threshold.
+An error message describing the involved simplices will be displayed on the standard output.
+If the issue is caused by poorly shaped triangles, functions such as
+`CGAL::Polygon_mesh_processing::remove_almost_degenerate_faces()` may help resolve the problem.
 
 \section CT_3_examples Examples
 
