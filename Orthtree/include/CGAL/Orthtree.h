@@ -1060,7 +1060,7 @@ public:
 
     // Split the node to create children
     using Local_coordinates = Local_coordinates;
-    m_node_children[n] = m_node_properties.emplace_group(degree);
+    m_node_children[n] = m_node_properties.emplace_group_back(degree);
     for (std::size_t i = 0; i < degree; i++) {
 
       Node_index c = *m_node_children[n] + i;
