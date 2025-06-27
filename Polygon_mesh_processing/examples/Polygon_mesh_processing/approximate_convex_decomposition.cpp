@@ -17,8 +17,6 @@ using Convex_hull = std::pair<std::vector<Point>, std::vector<std::array<unsigne
 using Mesh = CGAL::Surface_mesh<Point>;
 namespace PMP = CGAL::Polygon_mesh_processing;
 
-std::size_t cidx = 0;
-
 int main(int argc, char* argv[])
 {
   const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/knot2.off");

@@ -51,14 +51,6 @@
 
 #include <queue>
 
-extern std::size_t cidx;
-
-struct hash {
-  std::size_t operator()(const std::array<unsigned int, 3> &a) const {
-    return (((a[0] * 1193) ^ a[1]) * 1212) ^ a[2];
-  }
-};
-
 namespace CGAL {
 namespace Polygon_mesh_processing {
 namespace internal {
@@ -73,10 +65,8 @@ struct Bbox_uint {
 
 enum Grid_cell : int8_t {
   OUTSIDE = -1,
-  UNKNOWN = 0,
-  INSIDE = 1,
-  SURFACE = 2,
-  UNSET = 3
+  SURFACE = 0,
+  INSIDE = 1
 };
 
 void export_grid(const std::string& filename, const Bbox_3& bb, std::vector<int8_t>& grid, const Vec3_uint& grid_size, double voxel_size) {
@@ -694,6 +684,8 @@ struct Candidate {
 
   Candidate() : depth(0), bbox({ 0, 0, 0 }, { 0, 0, 0 }) {index = cidx++;}
   Candidate(std::size_t depth, Bbox_uint &bbox) : depth(depth), bbox(bbox) { index = cidx++; }
+private:
+  inline static std::size_t cidx = 0;
 };
 
 template<typename GeomTraits>
