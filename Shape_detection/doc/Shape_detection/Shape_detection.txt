@@ -173,28 +173,28 @@ The algorithm aims at detecting the largest shape via many random samples, and t
 More specifically, the functions to be implemented are defined in the base class `Shape_detection::Shape_base`:
 
 - `Shape_detection::Shape_base::minimum_sample_size()` const: Returns the minimum number of required samples.
-- `Shape_detection::Shape_base::create_shape(const std::vector<size_t>& indices)`: The randomly generated samples are provided via a vector of indices. `Shape_detection::Shape_base::point``(std::size_t index)`
-and `Shape_detection::Shape_base::normal``(std::size_t index)` are used to retrieve the actual points and normals (see the example below).
+- `Shape_detection::Shape_base::create_shape(const std::vector<size_t>& indices)`: The randomly generated samples are provided via a vector of indices. `Shape_detection::Shape_base::point(std::size_t index)`
+and `Shape_detection::Shape_base::normal(std::size_t index)` are used to retrieve the actual points and normals (see the example below).
 The provided number of samples might actually be larger than the above minimum number of required samples, depending on the other shape types.
 If the provided samples are not sufficient to define a unique shape, for example in a degenerated case, the shape is considered invalid.
-- `Shape_detection::Shape_base::squared_distance``(const Point& point)` const: This function computes the squared distance from a query point to the shape.
+- `Shape_detection::Shape_base::squared_distance(const Point& point)` const: This function computes the squared distance from a query point to the shape.
 It is used for traversing the hierarchical spatial data structure.
 - `Shape_detection::Shape_base::squared_distance(std::vector<FT>& distances, const std::vector<size_t>& indices)` and
-- `Shape_detection::Shape_base::cos_to_normal``(const std::vector<size_t>& indices, std::vector<FT>& angles)` const.
+- `Shape_detection::Shape_base::cos_to_normal(const std::vector<size_t>& indices, std::vector<FT>& angles)` const.
 
 The last two functions are used to determine the number of inlier points to the shape. They compute respectively the squared distance from a set of points to the shape,
 and the dot product between the point normals and the normals at the shape for the closest points on the shape.
 
-The access to the actual point and normal data is carried out via `Shape_detection::Shape_base::point``(std::size_t index)` and `Shape_detection::Shape_base::normal``(std::size_t index)` (see the example below).
+The access to the actual point and normal data is carried out via `Shape_detection::Shape_base::point(std::size_t index)` and `Shape_detection::Shape_base::normal(std::size_t index)` (see the example below).
 The resulting squared distance/dot product is stored in the vector provided as the first argument.
 
 By default, the connected component is detected via the neighbor graph as mentioned above. However, for shapes that admit a faster approach to detect a connected component,
 the user can provide his/her own implementation to extract the connected component via:
-- `Shape_detection::Shape_base::connected_component``(std::vector<std::size_t>& indices, FT cluster_epsilon)`: The indices of all supporting points are stored in the vector `indices`.
+- `Shape_detection::Shape_base::connected_component(std::vector<std::size_t>& indices, FT cluster_epsilon)`: The indices of all supporting points are stored in the vector `indices`.
 All points that do not belong to the largest cluster of points are removed from the vector `indices`.
 
 Another optional method can be implemented to provide a helper function providing the shape parameters written to a string:
-- `Shape_detection::Shape_base::info``()`: This function returns a string suitable for printing the shape parameters into a log/console.
+- `Shape_detection::Shape_base::info()`: This function returns a string suitable for printing the shape parameters into a log/console.
 The default solution provides an empty string.
 
 The property maps are used to map the indices to the corresponding points and normals. The following header shows an implementation of a planar shape primitive,
