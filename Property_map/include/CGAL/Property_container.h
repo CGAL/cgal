@@ -15,6 +15,7 @@
 #include <CGAL/assertions.h>
 
 #include <map>
+#include <list>
 #include <optional>
 #include <iterator>
 
