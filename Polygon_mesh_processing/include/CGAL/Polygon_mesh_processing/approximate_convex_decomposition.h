@@ -1451,10 +1451,6 @@ std::size_t approximate_convex_decomposition(const FaceGraph& mesh, OutputIterat
 
   std::cout << memory.virtual_size() << " virtual " << memory.resident_size() << " resident memory allocated in total" << std::endl;
 
-  for (std::size_t i = 0; i < hulls.size(); i++) {
-    CGAL::IO::write_polygon_soup(std::to_string(i) + "-e" + std::to_string(hulls[i].volume_error) + ".off", hulls[i].points, hulls[i].indices);
-  }
-
   for (std::size_t i = 0; i < hulls.size(); i++)
     *out++ = std::make_pair(std::move(hulls[i].points), std::move(hulls[i].indices));
 

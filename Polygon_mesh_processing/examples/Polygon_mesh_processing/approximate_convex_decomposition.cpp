@@ -35,6 +35,11 @@ int main(int argc, char* argv[])
 
   std::size_t n = PMP::approximate_convex_decomposition(mesh, std::back_inserter(convex_hulls), CGAL::parameters::maximum_depth(10).volume_error(0.001).maximum_number_of_convex_hulls(8).find_best_splitter(1));
 
+  for (std::size_t i = 0;i<convex_hulls.size();i++) {
+    const Convex_hull& ch = convex_hulls[i];
+    CGAL::IO::write_polygon_soup(std::to_string(i) + ".off", ch.first, ch.second);
+  }
+
   std::cout << convex_hulls.size() << std::endl;
 
   return 0;
