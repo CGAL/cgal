@@ -256,7 +256,7 @@ It is necessary to place the frame sufficiently far away from the contour. If it
 that the outward offset contour collides and merges with the inward offset frame, resulting in 1
 instead of 2 offset contours. However, the proper separation between the contour and the frame is
 not directly given by the offset distance at which you want the offset contour. That distance
-must be at least the desired offset plus the largest euclidean distance between an offset vertex
+must be at least the desired offset plus the largest Euclidean distance between an offset vertex
 and its original. This \cgal packages provides a helper function to compute the required separation:
 `compute_outer_frame_margin()`.
 \cgalAdvancedEnd
