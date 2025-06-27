@@ -55,7 +55,7 @@ template <class NT>
 double double_ceil(const NT &x){
   using FT = Fraction_traits<NT>;
   if constexpr(FT::Is_fraction::value){
-    // If NT is a fraction, the ceil value is the result of the euclidean division of the numerator and the denominator.
+    // If NT is a fraction, the ceil value is the result of the Euclidean division of the numerator and the denominator.
     typename FT::Numerator_type num, r, e;
     typename FT::Denominator_type denom;
     typename FT::Decompose()(x,num,denom);
