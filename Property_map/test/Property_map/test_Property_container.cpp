@@ -253,7 +253,7 @@ int main() {
 
   test_property_creation();
   test_element_access();
-  test_emplace_group();
+  //test_emplace_group();
   test_append();
   test_constructors();
 

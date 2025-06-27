@@ -248,6 +248,7 @@ class Property_container {
 
   std::multimap<std::string, std::shared_ptr<Property_array_base<Index>>> m_properties;
   std::vector<bool> m_active_indices{};
+  std::list<std::size_t> m_inactive_indices{};
 
 public:
 
@@ -258,6 +259,7 @@ public:
 
   Property_container(const Property_container<Index>& other) {
     m_active_indices = other.m_active_indices;
+    m_inactive_indices = other.m_inactive_indices;
 
     for (auto [name, array] : other.m_properties) {
       // todo: this could probably be made faster using emplace_hint
@@ -273,6 +275,7 @@ public:
   // This is not exactly an assignment as existing unique properties are kept.
   Property_container<Index>& operator=(const Property_container<Index>& other) {
     m_active_indices = other.m_active_indices;
+    m_inactive_indices = other.m_inactive_indices;
 
     for (auto [name, array] : other.m_properties) {
       // search if property already exists
@@ -295,6 +298,7 @@ public:
   // This is not exactly an assignment as existing unique properties are kept.
   Property_container<Index>& operator=(Property_container<Index>&& other) {
     m_active_indices = std::move(other.m_active_indices);
+    m_inactive_indices = std::move(other.m_inactive_indices);
 
     for (auto [name, array] : other.m_properties) {
       // search if property already exists
@@ -469,16 +473,15 @@ public:
 
   Index emplace() {
 
-    // If there are empty slots, return the index of one of them and mark it as full
-    auto first_unused = std::find_if(m_active_indices.begin(), m_active_indices.end(), [](bool used) { return !used; });
-    if (first_unused != m_active_indices.end()) {
-      *first_unused = true;
-      auto index = Index(std::distance(m_active_indices.begin(), first_unused));
-      reset(index);
-      return index;
-    }
+    if (m_inactive_indices.empty())
+      return emplace_back();
 
-    return emplace_back();
+    std::size_t idx = m_inactive_indices.front();
+    CGAL_assertion(!m_active_indices[idx]);
+    m_inactive_indices.pop_front();
+    m_active_indices[idx] = true;
+
+    return idx;
   }
 
   Index emplace_group_back(std::size_t n) {
@@ -492,7 +495,7 @@ public:
 
   Index emplace_group(std::size_t n) {
 
-    auto search_start = m_active_indices.begin();
+    /*auto search_start = m_active_indices.begin();
     while (search_start != m_active_indices.end()) {
 
       // Find the first unused cell
@@ -526,7 +529,7 @@ public:
 
       // If we didn't find a large enough region, continue our search after the end
       search_start = unused_end;
-    }
+    }*/
 
     // If no empty regions were found, expand the storage
     return emplace_group_back(n);
