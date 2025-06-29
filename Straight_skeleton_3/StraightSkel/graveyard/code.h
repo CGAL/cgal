@@ -2596,7 +2596,7 @@ std::vector<std::vector<std::size_t> > allowedInteractions_; // CGAL_SS3_USE_BOX
 
 
 
-#if 0 // individual events of a given type
+// individual events of a given type
 EdgeEventSPtr SimpleStraightSkel::nextEdgeEvent(PolyhedronSPtr polyhedron,
                                                 const CGAL::FT current_offset,
                                                 CGAL::FT& current_offset_to_nearest_event)
@@ -4399,7 +4399,6 @@ PierceEventSPtr SimpleStraightSkel::nextPierceEvent(PolyhedronSPtr polyhedron,
     }
     return result;
 }
-#endif // individual events of a certain type
 
 
 
@@ -4564,7 +4563,7 @@ Point3SPtr KernelWrapper::intersectionOffsetPlanes(Plane3SPtr plane_0,
 
 
 edge merge handling
-#if 0 // using EPECK for now so we are exact
+#if 1 // using EPECK for now so we are exact
     if (crashAt(edge_1, edge_b).first || crashAt(edge_b, edge_1).first) {
         // crashAt(...) should be commutative,
         // but because of rounding errors it's not in certain cases.
@@ -5793,5 +5792,1768 @@ FacetSPtr Polyhedron::ith_facet(const std::size_t i)
 
 
 
+useless because the quintessence of vanish events is that some edge length(s) go to 0
+
+struct Stop_on_long_enough_edge
+    : public Base_mesh_offset_visitor
+{
+    Stop_on_long_enough_edge(CGAL::FT min_edge_length) : sq_min_edge_length_(CGAL::square(min_edge_length)) { }
+
+    bool go_further(int step_id, PolyhedronSPtr polyhedron, CGAL::FT offset) override {
+        for (EdgeSPtr edge : polyhedron->edges()) {
+            CGAL::FT sq_l = CGAL::squared_distance(*(edge->getVertexSrc()->getPoint()),
+                                                   *(edge->getVertexDst()->getPoint()));
+            if (sq_l < sq_min_edge_length_) {
+                std::cout << edge->getID() << " with length " << sq_l << std::endl;
+                return true;
+            }
+        }
+
+        db::_3d::OBJFile::save("results/intermediate-exact.obj", polyhedron,
+                                true /*triangulate*/,
+                                false /*do not convert to double*/);
+        return false;
+    }
+
+    void before_offset_event(PolyhedronSPtr polyhedron, CGAL::FT offset) override { }
+
+    void on_save_offset_event(PolyhedronSPtr polyhedron, CGAL::FT offset) override { }
+
+    void after_offset_event(PolyhedronSPtr polyhedron, CGAL::FT offset) override { }
+
+private:
+    CGAL::FT sq_min_edge_length_;
+};
 
 
+
+
+
+
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+
+
+
+
+
+#if 1
+        DEBUG_PRINT("Running first pass");
+
+        SimpleStraightSkelSPtr algoskel3d_f =
+            SimpleStraightSkel::create(polyhedron, controller, save_offsets, save_path);
+
+        // @fixme this doesn't guarantee that all edges are big enough to have stability through remeshing...
+        Mesh tmp_sm;
+        utils::Stop_on_far_enough_event visitor(1e-1);
+        algoskel3d_f->setVisitor(&visitor);
+
+        // @todo handle the (unlikely) case where run() handled the whole offsetting process
+        try {
+          algoskel3d_f->run();
+        } catch(utils::Far_enough_event) {
+          std::cout << "caught the throw" << std::endl;
+          bool success = db::_3d::Surface_meshIO::save(visitor.polyhedron_, tmp_sm,
+                                                       true /*triangulate*/, false /*no doubles*/);
+          CGAL_assertion(success);
+        }
+#else
+        // This one isn't great because we don't know when the first event is, and it can be very early
+
+        // @todo give that function a nicer name, here we are just interested in the split
+        // @todo use the splitter from the config file
+        SimpleStraightSkel::init(polyhedron, algo::_3d::ConvexVertexSplitter::create());
+
+        // We move forward in time by epsilon
+        // @fixme, technically we should guarantee that we are below the first event
+        //         - we could scan and do a const event with lower time
+        //         - when scanning, can do a linear pass
+        //         - the shift must also be below the earliest save offset value
+        //
+        // @fixme shift the save offsets by the shift value, or initialize the shiftting algorithm at "shift"
+        CGAL::FT shift = -1e-10;
+        PolyhedronTransformation::shiftFacetsInPlace(polyhedron, shift);
+        db::_3d::OBJFile::save("results/intermediate-polyhedron.obj", polyhedron, false /*do not triangulate*/);
+
+        Mesh tmp_sm;
+        bool success = db::_3d::Surface_meshIO::save(polyhedron, tmp_sm,
+                                                     true /*triangulate*/,
+                                                     false /*do not convert to double*/);
+        CGAL_assertion(success);
+#endif
+
+
+
+
+
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+
+
+
+
+
+
+PolyhedronSPtr
+OutwardMeshOffset::
+convert(Mesh& sm,
+        const bool force_simplification)
+{
+    namespace PMP = CGAL::Polygon_mesh_processing;
+
+    DEBUG_PRINT("Converting mesh...");
+
+    bool merge_faces = false;
+
+    util::ConfigurationSPtr config = util::Configuration::getInstance();
+    std::string section("main");
+    if (config->isLoaded() &&
+        config->contains(section, "merge_coplanar_faces") &&
+        config->getBool(section, "merge_coplanar_faces")) {
+        merge_faces = true;
+    }
+
+    if (!merge_faces) {
+        return db::_3d::Surface_meshIO::load(sm);
+    }
+
+    CGAL::Bbox_3 bbox = PMP::bbox(sm);
+    const CGAL::FT diag_length = CGAL::approximate_sqrt(CGAL::square(bbox.xmax() - bbox.xmin()) +
+                                                        CGAL::square(bbox.ymax() - bbox.ymin()) +
+                                                        CGAL::square(bbox.zmax() - bbox.zmin()));
+
+    // Use shape detection to analyze the mesh
+    std::vector<std::size_t> region_ids(num_faces(sm));
+    boost::vector_property_map<Plane3> plane_map; // supporting planes of the regions detected
+
+    const CGAL::FT cos_of_max_angle = 0.98;
+    const CGAL::FT max_distance = 0.0001 * diag_length;
+
+    // detect planar regions in the mesh
+    // @todo growing should:
+    // - use the .ini value of 'epsilon_coplanarity'
+    // - stop if it merges faces with different weights
+    // - give an error for adjacent coplanar faces that have different weights
+    std::size_t nb_regions =
+        PMP::region_growing_of_planes_on_faces(sm,
+                                               CGAL::make_random_access_property_map(region_ids),
+                                               CGAL::parameters::cosine_of_maximum_angle(cos_of_max_angle)
+                                                                .region_primitive_map(plane_map)
+                                                                .maximum_distance(max_distance));
+
+    static int region_dump_id = -1;
+    utils::save_colored_mesh(sm, region_ids, "results/regions_" + std::to_string(++region_dump_id) + ".ply");
+
+    // detect corner vertices on the boundary of planar regions
+    std::vector<std::size_t> corner_id_map(num_vertices(sm), -1); // corner status of vertices
+    std::vector<bool> ecm(num_edges(sm), false); // mark edges at the boundary of regions
+
+    PMP::detect_corners_of_regions(sm,
+                                   CGAL::make_random_access_property_map(region_ids),
+                                   nb_regions,
+                                   CGAL::make_random_access_property_map(corner_id_map),
+                                   CGAL::parameters::cosine_of_maximum_angle(cos_of_max_angle).
+                                                     maximum_distance(max_distance).
+                                                     edge_is_constrained_map(CGAL::make_random_access_property_map(ecm)));
+
+    // @debug
+    {
+        for (face_descriptor f : faces(sm)) {
+            std::cout << "face " << f << " is in region " << region_ids[f] << std::endl;
+        }
+    }
+
+    // the almost-coplanar merge is performed after the conversion to the Polyhedron
+    // data structure because we want to be able to create faces that have holes,
+    // which the CGAL::Surface_mesh class does not support
+    std::map<edge_descriptor, EdgeWPtr> e2e;
+    PolyhedronSPtr polyhedron = db::_3d::Surface_meshIO::load(sm, {}, e2e);
+
+    PolyhedronTransformation::normalizeFacetPlanes(polyhedron);
+
+    // std::cout << "Converted polyhedron (out): " << polyhedron->toString() << std::endl;
+    db::_3d::OBJFile::save("results/convert-base_polyhedron.obj", polyhedron, false /*do not triangulate*/);
+
+    // If everything is degree 3 in the region growing, merge the facets
+    bool all_degree_3 = true;
+    vertex_iterator vit = vertices(sm).begin(), vend = vertices(sm).end();
+    std::size_t cid = 0;
+    for (; vit!=vend; ++vit, ++cid) {
+        std::set<std::size_t> incident_regions;
+        for (face_descriptor f : CGAL::faces_around_target(halfedge(*vit, sm), sm)) {
+            // could break early but it's useful to know how many high-degree corners were detected
+            incident_regions.insert(region_ids[f]);
+        }
+
+        if (incident_regions.size() > 3) {
+            DEBUG_PRINT("Region corner with degree " << incident_regions.size() << " at " << sm.point(*vit));
+            all_degree_3 = false;
+            break;
+        }
+    }
+
+    DEBUG_PRINT("all_degree_3 = " << all_degree_3);
+    if (all_degree_3 || force_simplification) {
+        // merge the facets incident to an unconstrained edge (i.e., the edge is interior to a region)
+        for (edge_descriptor e: edges(sm)) {
+            if (ecm[e]) {
+                continue;
+            }
+
+            EdgeSPtr edge = e2e[e].lock();
+            if (!edge) {
+                continue;
+            }
+
+            DEBUG_PRINT("Merging facets " << edge->getFacetL()->getID() << " and " << edge->getFacetR()->getID());
+            CGAL_assertion(sm.point(source(e, sm)) == *(edge->getVertexSrc()->getPoint()));
+            CGAL_assertion(sm.point(target(e, sm)) == *(edge->getVertexDst()->getPoint()));
+
+            // @todo it seems like intermediate states are somewhat unsound during edge merging
+            db::_3d::AbstractFile::mergeFacets(edge, polyhedron);
+        }
+    }
+
+    db::_3d::OBJFile::save("results/convert-before_sanitize.obj", polyhedron, false /*do not triangulate*/);
+
+    DEBUG_PRINT("Sanitizing..");
+    db::_3d::AbstractFile::sanitize(polyhedron);
+
+    if (all_degree_3 || force_simplification) {
+        bool success = PolyhedronTransformation::resetPoints(polyhedron);
+        if (!success) {
+            std::cerr << "Warning: invalid polyhedron" << std::endl;
+            return {};
+        }
+    }
+
+    std::cout << "Converted, " << polyhedron->facets().size() << " facets" << std::endl;
+    db::_3d::OBJFile::save("results/convert-final.obj", polyhedron, false /*do not triangulate*/);
+
+    return polyhedron;
+}
+
+
+
+
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+
+
+
+
+// dump intermediate offsets every -0.01
+for (double i = -0.01; i > -1.0; i -= 0.01) {
+    PolyhedronSPtr poly_c_offset_i = PolyhedronTransformation::shiftFacets(poly_c, i);
+    if (poly_c_offset_i) {
+        db::_3d::OBJFile::save("results/split_" + std::to_string(test_id) +
+                                "_offset_" + std::to_string(i) + ".obj",
+                                poly_c_offset_i, false);
+    }
+}
+
+
+
+
+
+
+
+
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+
+
+
+
+
+#include <CGAL/QP_models.h>
+#include <CGAL/QP_functions.h>
+
+
+// this is bad because the constraints should be that planes incident to the same vertex
+// intersect in a single point, not that planes go through the perturbed positions
+void PolyhedronTransformation::randTiltPlanesSystem(PolyhedronSPtr polyhedron) {
+
+    std::list<FacetSPtr>::iterator it_f = polyhedron->facets().begin();
+    while (it_f != polyhedron->facets().end()) {
+        FacetSPtr facet = *it_f++;
+        facet->perturbPlaneCoefficients();
+    }
+
+    resetPoints(polyhedron);
+
+    using Program = CGAL::Quadratic_program<CGAL::FT>;
+    using Solution = CGAL::Quadratic_program_solution<CGAL::FT>;
+
+    Program qp(CGAL::EQUAL, true, -1, true, 1); // Minimize, no lower/upper bounds
+
+    // D & c
+    int pl_idx = 0;
+    CGAL::FT c0 = 0;
+    for (FacetSPtr facet : polyhedron->facets()) {
+        // Minimize (x - x0)^2 for a,b,c,d
+        qp.set_d(pl_idx + 0, pl_idx + 0, 2.);
+        qp.set_d(pl_idx + 1, pl_idx + 1, 2.);
+        qp.set_d(pl_idx + 2, pl_idx + 2, 2.);
+        qp.set_d(pl_idx + 3, pl_idx + 3, 2.);
+        qp.set_c(pl_idx + 0, - 2. * facet->getPlane()->a());
+        qp.set_c(pl_idx + 1, - 2. * facet->getPlane()->b());
+        qp.set_c(pl_idx + 2, - 2. * facet->getPlane()->c());
+        qp.set_c(pl_idx + 3, - 2. * facet->getPlane()->d());
+        c0 += CGAL::square(facet->getPlane()->a());
+        c0 += CGAL::square(facet->getPlane()->b());
+        c0 += CGAL::square(facet->getPlane()->c());
+        c0 += CGAL::square(facet->getPlane()->d());
+        pl_idx += 4;
+    }
+    qp.set_c0(c0);
+
+    // A & b (planarity constraints)
+    int cst_idx = 0;
+    pl_idx = 0;
+    for (FacetSPtr facet : polyhedron->facets()) {
+        for (VertexSPtr vertex : facet->vertices()) {
+            CGAL_assertion(facet->getPlane()->has_on(*(vertex->getPoint())));
+            qp.set_a(cst_idx, pl_idx + 0, vertex->getPoint()->x());
+            qp.set_a(cst_idx, pl_idx + 1, vertex->getPoint()->y());
+            qp.set_a(cst_idx, pl_idx + 2, vertex->getPoint()->z());
+            qp.set_a(cst_idx, pl_idx + 3, 1.0);
+            qp.set_b(cst_idx, 0.0); // Planarity constraint
+            ++cst_idx;
+        }
+        pl_idx += 4;
+    }
+
+    // Solve the quadratic program
+    Solution solution = CGAL::solve_quadratic_program(qp, CGAL::FT());
+    if (solution.is_optimal()) {
+        std::cout << "yay, solution is:\n" << solution << std::endl;
+
+        Solution::Variable_value_iterator s_it = solution.variable_values_begin();
+        std::list<FacetSPtr>::iterator it_f = polyhedron->facets().begin();
+        while (it_f != polyhedron->facets().end()) {
+            FacetSPtr facet = *it_f++;
+            std::cout << "  From coefficients ["
+              << facet->getPlane()->a() << " " << facet->getPlane()->b() << " "
+              << facet->getPlane()->c() << " " << facet->getPlane()->d() << "]" << std::endl;
+            CGAL::FT na = CGAL::quotient_truncation(*s_it++);
+            CGAL::FT nb = CGAL::quotient_truncation(*s_it++);
+            CGAL::FT nc = CGAL::quotient_truncation(*s_it++);
+            CGAL::FT nd = CGAL::quotient_truncation(*s_it++);
+            facet->setPlane(KernelFactory::createPlane3(na, nb, nc, nd));
+            std::cout << "  To coefficients ["
+              << facet->getPlane()->a() << " " << facet->getPlane()->b() << " "
+              << facet->getPlane()->c() << " " << facet->getPlane()->d() << "]" << std::endl;
+        }
+    } else {
+        std::cerr << "Optimization failed!" << std::endl;
+    }
+
+    std::exit(1);
+}
+
+
+
+
+
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+
+
+
+
+
+// 0 fixed points: nudge all coefficients independently
+if (fixed_points.size() == 0) {
+    perturbPlaneCoefficientsNudge(range);
+} else if (fixed_points.size() == 1) {
+    // 1 fixed point: nudge (a, b, c), recompute d so the plane passes through the point
+    const Point3& point = *(fixed_points[0]);
+
+    CGAL::FT na = nudge(plane_->a());
+    CGAL::FT nb = nudge(plane_->b());
+    CGAL::FT nc = nudge(plane_->c());
+    const CGAL::FT& x0 = point.x();
+    const CGAL::FT& y0 = point.y();
+    const CGAL::FT& z0 = point.z();
+    CGAL::FT nd = - (na * x0 + nb * y0 + nc * z0);
+    plane_ = KernelFactory::createPlane3(na, nb, nc, nd);
+    CGAL_postcondition(plane_->has_on(point));
+} else if (fixed_points.size() == 2) {
+    // 2 fixed points: nudge (a, b, c) with constraint that plane passes through both points
+    // Nudge a and b, solve for c and d so plane passes through both points
+    const Point3& p0 = *(fixed_points[0]);
+    const Point3& p1 = *(fixed_points[1]);
+
+    // The plane goes through p0 and p1:
+    // na*x0 + nb*y0 + nc*z0 + nd = 0
+    // na*x1 + nb*y1 + nc*z1 + nd = 0
+    // => na*(x1-x0) + nb*(y1-y0) = (z0-z1)*nc
+    // => nc = -(na*(x0-x1) + nb*(y0-y1)) / (z0-z1)
+    const CGAL::FT& a0 = plane_->a();
+    const CGAL::FT& b0 = plane_->b();
+    const CGAL::FT& c0 = plane_->c();
+    const CGAL::FT& d0 = plane_->d();
+    const CGAL::FT& x0 = p0.x();
+    const CGAL::FT& y0 = p0.y();
+    const CGAL::FT& z0 = p0.z();
+    const CGAL::FT& x1 = p1.x();
+    const CGAL::FT& y1 = p1.y();
+    const CGAL::FT& z1 = p1.z();
+
+    CGAL::FT na, nb, nc, nd;
+
+    CGAL::FT dz = z0 - z1;
+    if (!CGAL::is_zero(dz)) {
+        na = nudge(a0);
+        nb = nudge(b0);
+        nc = - (na*(x0-x1) + nb*(y0-y1)) / dz;
+        nd = - (na*x0 + nb*y0 + nc*z0);
+    } else {
+        // If dz == 0, try to use nb & nd as variables
+        CGAL::FT dy = y0 - y1;
+        if (!CGAL::is_zero(dy)) {
+            na = nudge(a0);
+            nc = nudge(c0);
+            nb = -(na*(x0-x1) + nc*(z0-z1)) / dy;
+            nd = - (na*x0 + nb*y0 + nc*z0);
+        } else {
+            // If both dz and dy are zero, try na & nd as variables...
+            CGAL::FT dx = x0 - x1;
+            if (!CGAL::is_zero(dx)) {
+                nb = nudge(b0);
+                nc = nudge(c0);
+                na = -(nb*(y0-y1) + nc*(z0-z1)) / dx;
+                nd = - (na*x0 + nb*y0 + nc*z0);
+            } else {
+                // Points are identical, fallback to 1-point case
+                na = nudge(a0);
+                nb = nudge(b0);
+                nc = nudge(c0);
+                nd = - (na*x0 + nb*y0 + nc*z0);
+            }
+        }
+    }
+    plane_ = KernelFactory::createPlane3(na, nb, nc, nd);
+
+    // If we have 2, at least one of `a`, `b`, or `c` coefficients are affected
+    // and could change significantly
+    // normalizePlaneCoefficients();
+
+    CGAL_postcondition(plane_->has_on(p0));
+    CGAL_postcondition(plane_->has_on(p1));
+} else {
+    DEBUG_PRINT("Error: called fixed point facet perturbation with > 2 fixed points");
+}
+
+
+
+
+
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+
+
+
+
+
+void PolyhedronTransformation::iterativeTiltPlanes(PolyhedronSPtr polyhedron) {
+    // Assume polyhedron is already simplified and faces are polygonal.
+
+    std::cout << "Iterative tilting of planes" << std::endl;
+
+    enum class FacetStatus { FREE = 0, NUDGED, OVER_CONSTRAINED };
+    int max_facet_id = -1;
+    for (auto it = polyhedron->facets().begin(); it != polyhedron->facets().end(); ++it) {
+        if ((*it)->getID() > max_facet_id) {
+            max_facet_id = (*it)->getID();
+        }
+    }
+    std::vector<FacetStatus> facet_status(max_facet_id + 1, FacetStatus::FREE);
+
+    // Helper: for a vertex, count incident nudged faces
+    auto vertex_nudged_face_count = [&](VertexSPtr v) {
+        int n = 0;
+        for (auto it = v->facets().begin(); it != v->facets().end(); ++it) {
+            FacetWPtr fw = *it;
+            if (!fw.expired()) {
+                FacetSPtr f = FacetSPtr(fw);
+                if (facet_status[f->getID()] == FacetStatus::NUDGED)
+                    ++n;
+            }
+        }
+        return n;
+    };
+
+    // Main loop: iteratively nudge faces with the largest polygonal face incident to a high-degree vertex
+    for (;;) {
+        VertexSPtr v_max;
+        FacetSPtr f_max;
+        int max_f_degree = 0;
+        for (auto vit = polyhedron->vertices().begin(); vit != polyhedron->vertices().end(); ++vit) {
+            VertexSPtr v = *vit;
+            if (v->degree() <= 3) {
+                continue;
+            }
+            for (auto fit = v->facets().begin(); fit != v->facets().end(); ++fit) {
+                FacetWPtr fw = *fit;
+                if (!fw.expired()) {
+                    FacetSPtr f = FacetSPtr(fw);
+                    if (facet_status[f->getID()] == FacetStatus::FREE) {
+                        int deg = f->vertices().size();
+                        if (deg > max_f_degree) {
+                            max_f_degree = deg;
+                            f_max = f;
+                            v_max = v;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (!f_max) {
+            break;
+        }
+
+        std::cout << "  Processing face #" << f_max->getID() << " with " << f_max->vertices().size()
+                  << " vertices" << std::endl;
+
+        // Check if face is a triangle (not interesting)
+        if (f_max->vertices().size() == 3) {
+            facet_status[f_max->getID()] = FacetStatus::NUDGED;
+            continue;
+        }
+
+        // Count high-degree vertices with >= 2 incident nudged faces
+        std::vector<Point3SPtr> pivots;
+        for (auto it = f_max->vertices().begin(); it != f_max->vertices().end(); ++it) {
+            VertexSPtr v = *it;
+            if (v->degree() > 3) {
+                int fc = vertex_nudged_face_count(v);
+                if (fc >= 2) {
+                    pivots.push_back(v->getPoint());
+                }
+            }
+        }
+
+        if (pivots.size() > 3) {
+            facet_status[f_max->getID()] = FacetStatus::OVER_CONSTRAINED;
+        } else {
+            facet_status[f_max->getID()] = FacetStatus::NUDGED;
+
+            // dump the face into a single OFF file
+            std::map<Point3, std::size_t> point_ids;
+            std::vector<Point3> points;
+            std::vector<std::vector<std::size_t> > polygons;
+            triangulate_facet_with_CDT2(f_max, CDT2_Filtering::ODD_EVEN, point_ids, points, polygons);
+
+            static int nudged_face_id = -1;
+            CGAL::IO::write_OFF("results/nudged_face_" + std::to_string(++nudged_face_id) + ".OFF", points, polygons);
+
+            f_max->perturbPlaneCoefficientsFixedPoints(1e-10, pivots);
+
+            // reset the point positions of all vertices that are incident to 3 nudged facets
+            // (do it now because some faces will be perturbed with constraints, and we need
+            // the constraints to be correct geometrically)
+            for (auto it_v = f_max->vertices().begin(); it_v != f_max->vertices().end(); ++it_v) {
+                VertexSPtr v = *it_v;
+                std::vector<Plane3SPtr> planes;
+                for (auto it = v->facets().begin(); it != v->facets().end(); ++it) {
+                    FacetWPtr fw = *it;
+                    if (!fw.expired()) {
+                        FacetSPtr f = FacetSPtr(fw);
+                        if (facet_status[f->getID()] == FacetStatus::NUDGED) {
+                           std::cout << "    " << f->getID() << " is nudged for vertex #" << v->getID() << std::endl;
+                           planes.push_back(f->getPlane());
+                        }
+                    }
+                }
+
+                std::cout << planes.size() << " incident nudged facets for vertex #" << v->getID() << " @ " << *(v->getPoint()) << std::endl;
+                CGAL_assertion(planes.size() <= 3);
+                if (planes.size() == 3) {
+                    resetPoint(v, { planes[0], planes[1], planes[2] });
+                }
+            }
+        }
+    }
+
+    std::cout << "Statuses:" << std::endl;
+    unsigned int nudged_faces_n = 0, oc_faces_n = 0, unexplored_n = 0;
+    for (auto it_f = polyhedron->facets().begin(); it_f != polyhedron->facets().end(); ++it_f) {
+        FacetSPtr f = *it_f;
+        if (facet_status[f->getID()] == FacetStatus::NUDGED) {
+            ++nudged_faces_n;
+        } else if(facet_status[f->getID()] == FacetStatus::OVER_CONSTRAINED) {
+            ++oc_faces_n;
+        } else {
+            ++unexplored_n;
+        }
+    }
+
+    std::cout << nudged_faces_n << " nudged faces" << std::endl;
+    std::cout << oc_faces_n << " over constrained faces" << std::endl;
+    std::cout << unexplored_n << " unexplored faces" << std::endl;
+
+    // nudge everything else
+    for (auto it = polyhedron->facets().begin(); it != polyhedron->facets().end(); ++it) {
+        FacetSPtr f = *it;
+        if (facet_status[f->getID()] == FacetStatus::FREE) {
+            f->perturbPlaneCoefficients();
+        }
+    }
+}
+
+
+
+
+
+
+
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+
+
+
+
+
+
+void PolyhedronTransformation::randTiltPlanesv3(PolyhedronSPtr polyhedron) {
+    // Identify high-degree vertices
+    // std::set<VertexSPtr> high_degree_vertices;
+    // for (VertexSPtr v : polyhedron->vertices()) {
+    //     if (v->degree() > 3) {
+    //         high_degree_vertices.insert(v);
+    //     }
+    // }
+
+    // high degree vertex --> incident faces used to compute the vertex position
+    std::map<VertexSPtr, std::vector<FacetSPtr>> canonical_faces;
+
+    // Sort by size as to avoid triangulating the largest faces
+    std::list<FacetSPtr> facets_to_process;
+    for (FacetSPtr facet : polyhedron->facets()) {
+        facets_to_process.push_back(facet);
+    }
+    facets_to_process.sort([](const FacetSPtr& a, const FacetSPtr& b) {
+        // Sort by number of vertices (descending)
+        return a->vertices().size() > b->vertices().size();
+    });
+
+    while (!facets_to_process.empty()) {
+        FacetSPtr facet = facets_to_process.front();
+        facets_to_process.pop_front();
+
+        // Count high-degree vertices in this facet
+        std::vector<VertexSPtr> determined_hd_vertices;
+        for (VertexSPtr v : facet->vertices()) {
+            if (v->degree() > 3 && canonical_faces[v].size() == 3) {
+                determined_hd_vertices.push_back(v);
+            }
+        }
+
+        std::size_t dhd_count = determined_hd_vertices.size();
+
+        if(dhd_count >= 3) {
+            // Red: triangulate and add resulting triangles to the end of the list
+            std::list<FacetSPtr> triangles = PolyhedronTransformation::triangulate(facet, polyhedron);
+            for (FacetSPtr tri : triangles) {
+                facets_to_process.push_back(tri);
+            }
+            continue; // skip the rest for this facet
+        }
+
+        std::vector<Point3SPtr> dhd_points;
+        for (VertexSPtr v : determined_hd_vertices) {
+            dhd_points.push_back(v->getPoint());
+        }
+
+        facet->perturbPlaneCoefficientsFixedPoints(1e-15, dhd_points);
+
+        // Update all high degree vertices of the facet
+        for (VertexSPtr v : facet->vertices()) {
+            if (v->degree() > 3 && canonical_faces[v].size() < 3) {
+                canonical_faces[v].push_back(facet);
+                if (canonical_faces[v].size() == 3) {
+                    // Recompute its position as intersection of its 3 incident planes
+                    std::array<Plane3SPtr, 3> planes;
+                    for (int j = 0; j < 3; ++j) {
+                        planes[j] = canonical_faces[v][j]->plane();
+                    }
+
+                    unstable stuff, not how it should be done
+                    vvvvvvvvvvv
+                    Point3SPtr new_point = KernelWrapper::intersection(planes[0], planes[1], planes[2]);
+                    if (new_point) {
+                        v->setPoint(new_point);
+                    }
+                }
+            }
+        }
+    }
+
+
+}
+
+
+
+
+
+
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+
+
+
+
+
+
+std::vector<VertexSPtr> dhd_vertices;
+bool predetermined = true;
+for (VertexSPtr v : facet->vertices()) {
+    if (v->degree() > 3 && determining_faces[v].size() >= 2) {
+        dhd_vertices.push_back(v);
+        std::cout << "  V" << v->getID() << " determined by";
+        for (FacetSPtr inc_f : determining_faces[v]) {
+            std::cout << " F" << inc_f->getID();
+        }
+        std::cout << std::endl;
+        predetermined = predetermined && (determining_faces[v].size() == 3);
+    }
+}
+predetermined = predetermined && (dhd_vertices.size() >= 2);
+
+std::size_t dhd_count = dhd_vertices.size();
+std::cout << "  predetermined: " << predetermined << std::endl;
+
+
+
+
+
+
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+
+
+
+
+
+
+
+// For triangles, we can have more than 2 determined vertices.
+// The case of 3 predetermined vertices is handled before the main loop
+// The case of 2 predetermined vertices and 1 determined (during visit) is handled in the normal loop
+// We cannot have a triangle with two predetermined vertices and no new determined vertices:
+//
+if (facet->isTriangle() && predetermined_hdv_n == 2 && determined_n == 0) {
+    std::vector<Point3SPtr> fps;
+    for (VertexSPtr fv : fixing_vertices[facet]) {
+        fps.push_back(fv->getPoint());
+    }
+    CGAL_assertion(fps.size() == 2);
+    facet->perturbPlaneCoefficientsFixedPoints(range, fps);
+
+    std::cout << "Nudge and fix F" << facet->getID() << " predetermined (2)" << std::endl;
+    dump_facet("results/nudged_face_" + std::to_string(nudged_face_id++) + "_predetermined.OFF", facet);
+}
+
+
+
+ else {
+    // triangle face
+
+    // A special case: if we have 2 fully predetermined vertices from start,
+    // then no additional vertex can get determined by the addition of 'facet' (otherwise we would
+    // triangulate), except if it's a triangle
+    unsigned int predetermined_hdv_n = 0;
+    for (VertexSPtr fv : fixing_vertices[facet]) {
+        CGAL_assertion(determining_facets[fv].size() == 3);
+        if (std::find(determining_facets[fv].begin(), determining_facets[fv].end(), facet) == determining_facets[fv].end()) {
+            ++predetermined_hdv_n;
+        }
+    }
+
+    CGAL_assertion(predetermined_hdv_n < 3);
+}
+
+
+if (predetermined_hdv_n == 3) {
+    CGAL_assertion(facet->vertices().size() == 3); // otherwise we would have triangulated
+    // vertices are determined, so they were nudged, so the plane is nudged
+    // but can there be instability...?
+    facet->initPlane();
+    facet->normalizePlaneCoefficients();
+
+    std::cout << "Fix F" << facet->getID() << " predetermined (3)" << std::endl;
+    dump_facet("results/nudged_face_" + std::to_string(nudged_face_id++) + "_fixed_triangle.OFF", facet);
+
+    continue;
+}
+
+
+
+
+
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+
+
+
+
+
+
+
+void PolyhedronTransformation::randTiltPlanesv2(PolyhedronSPtr polyhedron) {
+    double range = 1e-15; // Small nudge
+
+    // Step 1: Identify high-degree vertices
+    std::set<VertexSPtr> high_degree_vertices;
+    for (VertexSPtr v : polyhedron->vertices()) {
+        if (v->degree() > 3) {
+            high_degree_vertices.insert(v);
+        }
+    }
+
+    // Step 2: Classify facets as green (no high-degree vertex) or blue (at least one high-degree vertex)
+    std::vector<FacetSPtr> green_facets;
+    std::vector<FacetSPtr> blue_facets;
+    for (FacetSPtr facet : polyhedron->facets()) {
+        bool is_blue = false;
+        for (VertexSPtr v : facet->vertices()) {
+            if (high_degree_vertices.count(v)) {
+                std::cout << "Facet " << facet->getID() << " is blue because of " << *(v->getPoint()) << std::endl;
+                is_blue = true;
+                break;
+            }
+        }
+        if (is_blue) {
+            blue_facets.push_back(facet);
+        } else {
+            green_facets.push_back(facet);
+        }
+
+        std::cout << "Facet " << facet->getID() << " is " << (is_blue ? "blue" : "green") << std::endl;
+    }
+
+    std::cout << green_facets.size() << " green facets" << std::endl;
+    std::cout << blue_facets.size() << " blue facets" << std::endl;
+
+    // Step 3: Nudge all green facets (randomly perturb their plane coefficients)
+    for (FacetSPtr facet : green_facets) {
+        facet->perturbPlaneCoefficientsNudge(range);
+    }
+
+    // Step 4: Triangulate all blue facets, creating red facets
+    std::vector<FacetSPtr> red_facets;
+    for (FacetSPtr facet : blue_facets) {
+        std::list<FacetSPtr> triangles = PolyhedronTransformation::triangulate(facet, polyhedron);
+        red_facets.insert(red_facets.end(), triangles.begin(), triangles.end());
+    }
+
+    polyhedron->initializeAllIDs();
+
+    db::_3d::OBJFile::save("results/triangulated.obj", polyhedron,
+                           false /*do_triangulate*/,
+                           true /*convert_to_double*/);
+
+    // Step 5 & 6: For all vertices, nudge and project according to incident green facets
+    for (VertexSPtr v : polyhedron->vertices()) {
+        // Find all incident green facets
+        std::vector<FacetSPtr> incident_green_facets;
+        for (FacetWPtr fw : v->facets()) {
+            if (!fw.expired()) {
+                FacetSPtr f = FacetSPtr(fw);
+                if (std::find(green_facets.begin(), green_facets.end(), f) != green_facets.end()) {
+                    incident_green_facets.push_back(f);
+                }
+            }
+        }
+        size_t n_green = incident_green_facets.size();
+        CGAL_assertion(n_green <= 3);
+        if (n_green == 3) {
+            // All incident facets are green, just recompute position (green planes have been nudged)
+            resetPoint(v);
+        } else {
+            Point3SPtr p = v->getPoint();
+            std::array<double, 3> v_r = randVec(-range/2.0, range/2.0);
+            Point3SPtr p_nudged = KernelFactory::createPoint3(CGAL::to_double(p->x()) + v_r[0],
+                                                              CGAL::to_double(p->y()) + v_r[1],
+                                                              CGAL::to_double(p->z()) + v_r[2]);
+
+            Point3SPtr p_new;
+            if (n_green == 0) {
+                p_new = p_nudged;
+            } else if (n_green == 1) {
+                Plane3SPtr plane = incident_green_facets[0]->plane();
+                p_new = KernelWrapper::projection(plane, p_nudged);
+            } else if (n_green == 2) {
+                Plane3SPtr plane1 = incident_green_facets[0]->plane();
+                Plane3SPtr plane2 = incident_green_facets[1]->plane();
+                Line3SPtr line = KernelWrapper::intersection(plane1, plane2);
+                p_new = KernelWrapper::projection(line, p_nudged);
+            }
+            v->setPoint(p_new);
+        }
+    }
+
+    // Recompute planes for all red facets
+    for (FacetSPtr facet : polyhedron->facets()) {
+        if (std::find(green_facets.begin(), green_facets.end(), facet) == green_facets.end()) {
+            facet->initPlane();
+        }
+    }
+
+    db::_3d::OBJFile::save("results/tilt_v2.obj", polyhedron,
+                           false /*do_triangulate*/,
+                           true /*convert_to_double*/);
+    db::_3d::OBJFile::save("results/tilt_v2-triangulated.obj", polyhedron,
+                           true /*do_triangulate*/,
+                           true /*convert_to_double*/);
+
+    // @debug
+    for (FacetSPtr facet : polyhedron->facets()) {
+        std::cout << "check facet " << facet->getID() << std::endl;
+        std::cout << "green? " << (std::find(green_facets.begin(), green_facets.end(), facet) != green_facets.end()) << std::endl;
+        for (VertexSPtr v : facet->vertices()) {
+            CGAL_assertion(facet->getPlane()->has_on(*(v->getPoint())));
+        }
+    }
+}
+
+
+
+
+
+
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+
+
+
+
+
+
+} else if (fixed_points.size() == 2) {
+        // 2 fixed points: construct a plane through both points, nudge the normal within the allowed family
+        Point3SPtr p0 = fixed_points[0];
+        Point3SPtr p1 = fixed_points[1];
+        CGAL_assertion(*p0 != *p1);
+
+        const CGAL::FT& p0x = p0->x();
+        const CGAL::FT& p0y = p0->y();
+        const CGAL::FT& p0z = p0->z();
+        const CGAL::FT& p1x = p1->x();
+        const CGAL::FT& p1y = p1->y();
+        const CGAL::FT& p1z = p1->z();
+
+        // Step 1: Direction vector between points
+        CGAL::FT ux = p1x - p0x;
+        CGAL::FT uy = p1y - p0y;
+        CGAL::FT uz = p1z - p0z;
+        CGAL::FT uu = ux*ux + uy*uy + uz*uz;
+
+        // Step 2: Original normal
+        const CGAL::FT& a0 = plane_->a();
+        const CGAL::FT& b0 = plane_->b();
+        const CGAL::FT& c0 = plane_->c();
+
+        // Step 2: Project original normal onto plane orthogonal to u
+        CGAL::FT dot = a0*ux + b0*uy + c0*uz;
+        CGAL::FT ab = a0 - dot * ux / uu;
+        CGAL::FT bb = b0 - dot * uy / uu;
+        CGAL::FT cb = c0 - dot * uz / uu;
+
+        // std::cout << "a0 = " << exact(a0) << std::endl;
+        // std::cout << "ux = " << exact(ux) << std::endl;
+        // std::cout << "dot = " << exact(dot) << std::endl;
+        // std::cout << "uu = " << exact(uu) << std::endl;
+
+#ifdef CGAL_SS3_CHECK_ALMOST_DEGENERATE_VECTORS_IN_FACET_PERTURBATIONS // these shouldn't be needed because in general the original normal is sane and very far from 'u'
+        const double eps = 1e-12;
+
+        // If the projection is (almost) zero, pick any orthogonal normal
+        if (CGAL::abs(ab) < eps && CGAL::abs(bb) < eps && CGAL::abs(cb) < eps) {
+            ab = 0;
+            bb = uz;
+            cb = -uy;
+            if (CGAL::abs(bb) < eps && CGAL::abs(cb) < eps) {
+                ab = -uz;
+                bb = 0;
+                cb = ux;
+            }
+        }
+#endif
+
+#if 0
+        std::cout << "uy = " << exact(uy) << std::endl;
+        std::cout << "cb = " << exact(cb) << std::endl;
+        std::cout << "uz = " << exact(uz) << std::endl;
+        std::cout << "bb = " << exact(bb) << std::endl;
+#endif
+
+        // Step 3: Find a direction to nudge (cross product)
+        CGAL::FT vx = uy * cb - uz * bb;
+        CGAL::FT vy = uz * ab - ux * cb;
+        CGAL::FT vz = ux * bb - uy * ab;
+
+#ifdef CGAL_SS3_CHECK_ALMOST_DEGENERATE_VECTORS_IN_FACET_PERTURBATIONS // these shouldn't be needed because in general the original normal is sane and very far from 'u'
+        // If v is zero, pick another orthogonal direction
+        if (CGAL::abs(vx) < eps && CGAL::abs(vy) < eps && CGAL::abs(vz) < eps) {
+            // Use cross with (1,0,0)
+            vx = 0;
+            vy = uz;
+            vz = -uy;
+            if (CGAL::abs(vy) < eps && CGAL::abs(vz) < eps) {
+                vx = -uz;
+                vy = 0;
+                vz = ux;
+            }
+        }
+#endif
+
+        // Step 4: Nudge the normal
+        CGAL::FT epsilon = nudge_to_simplest_rational_in_interval(rdist(gen));
+
+        // std::cout << "ab = " << exact(ab) << std::endl;
+        // std::cout << "vx = " << exact(vx) << std::endl;
+
+        CGAL::FT a1 = ab + epsilon * vx;
+        CGAL::FT b1 = bb + epsilon * vy;
+        CGAL::FT c1 = cb + epsilon * vz;
+
+        // std::cout << "a1 = " << exact(a1) << std::endl;
+
+        // Step 5: Compute d so plane passes through p0
+        CGAL::FT d1 = - (a1 * p0x + b1 * p0y + c1 * p0z);
+        plane_ = KernelFactory::createPlane3(a1, b1, c1, d1);
+
+        CGAL_postcondition(plane_->has_on(*p0));
+        CGAL_postcondition(plane_->has_on(*p1));
+    } else {
+        DEBUG_PRINT("Error: called fixed point facet perturbation with > 2 fixed points");
+    }
+
+
+
+
+
+
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+
+
+
+
+
+
+        } else if (fixed_points.size() == 2) {
+        // 2 fixed points: construct a plane through both points, nudge the normal within the allowed family
+        Point3SPtr p0 = fixed_points[0];
+        Point3SPtr p1 = fixed_points[1];
+        CGAL_assertion(*p0 != *p1);
+
+        // Step 1: Direction vector between points
+        CGAL::FT ux = p1->x() - p0->x();
+        CGAL::FT uy = p1->y() - p0->y();
+        CGAL::FT uz = p1->z() - p0->z();
+        CGAL::FT uu = ux*ux + uy*uy + uz*uz;
+
+        // Step 2: Project original normal onto plane orthogonal to u
+        const CGAL::FT& a0 = plane_->a();
+        const CGAL::FT& b0 = plane_->b();
+        const CGAL::FT& c0 = plane_->c();
+        CGAL::FT dot = a0*ux + b0*uy + c0*uz;
+        CGAL::FT ab = a0 - dot * ux / uu;
+        CGAL::FT bb = b0 - dot * uy / uu;
+        CGAL::FT cb = c0 - dot * uz / uu;
+
+        // Step 3: Pick a simple seed vector not parallel to u
+        CGAL::FT sx = 1, sy = 0, sz = 0;
+        if (CGAL::abs(ux) > 0.99) { // if u ~= (1,0,0), let's pick something else
+            sx = 0; sy = 1; sz = 0;
+        }
+
+        // Step 4: Compute a vector orthogonal to u (seed^u)
+        // No normalization needed: all vectors are already normalized or nearly so
+        CGAL::FT vx = sy * uz - sz * uy;
+        CGAL::FT vy = sz * ux - sx * uz;
+        CGAL::FT vz = sx * uy - sy * ux;
+
+        // Step 5: Nudge projected normal by a small random multiple of v
+        CGAL::FT lambda = nudge_to_simplest_rational_in_interval(rdist(gen));
+        CGAL::FT a1 = ab + lambda * vx;
+        CGAL::FT b1 = bb + lambda * vy;
+        CGAL::FT c1 = cb + lambda * vz;
+
+        // Step 6: Compute d so plane passes through p0
+        // Since the normal is orthogonal to u, it will pass through both p0 and p1
+        CGAL::FT d1 = - (a1 * p0->x() + b1 * p0->y() + c1 * p0->z());
+        plane_ = KernelFactory::createPlane3(a1, b1, c1, d1);
+        CGAL_postcondition(plane_->has_on(*p0));
+        CGAL_postcondition(plane_->has_on(*p1));
+    } else {
+        DEBUG_PRINT("Error: called fixed point facet perturbation with > 2 fixed points");
+    }
+
+
+
+
+
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+
+
+
+
+
+// Triangular facets always have lowest priority
+bool a_is_triangle = a->isTriangle();
+bool b_is_triangle = b->isTriangle();
+if (a_is_triangle && !b_is_triangle) { return false; }
+if (!a_is_triangle && b_is_triangle) { return true; }
+
+
+
+
+
+
+
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+
+
+void PolyhedronTransformation::randTiltPlanesv3(PolyhedronSPtr polyhedron) {
+    const double range = 1e-10; // Small nudge
+
+    unsigned int had_to_triangulate_n = 0;
+
+    // high degree vertex --> first 3 incident facets determining the vertex
+    std::map<VertexSPtr, std::set<FacetSPtr> > determining_facets;
+
+    // facet --> first 2 determined high degree vertices
+    //
+    // The facet becomes fixed at 2 vertices and not 3 vertices despite the vertices being perturbed
+    // because if we do 3 random perturbations of vertices, the normal can vary wildly.
+    //
+    // Ideally, it could be fixed with 3 high degree vertices and a smarter perturbation (which needs
+    // to take into account all incident facets of these 3 fixing vertices...)
+    std::map<FacetSPtr, std::set<VertexSPtr> > fixing_vertices;
+
+    auto dump_facet = [](std::string filename, FacetSPtr f) {
+        auto pcdt = triangulate_facet_with_CDT2(f);
+
+        using PCDT = decltype(pcdt);
+        using PCDT_VH = typename PCDT::Vertex_handle;
+        using PCDT_FH = typename PCDT::Face_handle;
+
+        std::unordered_map<PCDT_FH, bool> in_domain_map;
+        boost::associative_property_map<std::unordered_map<PCDT_FH, bool>> in_domain(in_domain_map);
+        CGAL::mark_domain_in_triangulation(pcdt, in_domain);
+
+        std::map<PCDT_VH, std::size_t> point_to_id;
+        std::vector<Point3> points;
+        std::vector<std::vector<std::size_t> > triangles;
+        for (PCDT_VH vh : pcdt.finite_vertex_handles()) {
+            point_to_id[vh] = points.size();
+            points.push_back(vh->point());
+        }
+
+        for (PCDT_FH fh : pcdt.finite_face_handles()) {
+            if(!get(in_domain, fh)) {
+                continue;
+            }
+
+            triangles.push_back({point_to_id[fh->vertex(0)],
+                                 point_to_id[fh->vertex(1)],
+                                 point_to_id[fh->vertex(2)]});
+        }
+
+        CGAL::IO::write_OFF(filename, points, triangles, CGAL::parameters::stream_precision(17));
+    };
+
+    auto has_high_degree_vertices = [](FacetSPtr f) -> bool {
+        for (VertexSPtr v : f->vertices()) {
+            if (v->degree() > 3) {
+                return true;
+            }
+        }
+        return false;
+    };
+
+    // @debug
+    unsigned int visited_face_id = 0;
+    unsigned int nudged_face_id = 0;
+
+    std::list<FacetSPtr> facets_to_process;
+
+    // Sort by number of high degree vertices as to avoid triangulating as much as possible
+    auto facet_sorter = [&](FacetSPtr a, FacetSPtr b)
+    {
+        auto hdv_count = [](FacetSPtr f) -> unsigned int {
+            unsigned int hdv_n = 0;
+            for (VertexSPtr v : f->vertices()) {
+                if (v->degree() > 3) {
+                    ++hdv_n;
+                }
+            }
+            return hdv_n;
+        };
+
+#if 0
+        // Triangular facets always have lowest priority
+        bool a_is_triangle = a->isTriangle();
+        bool b_is_triangle = b->isTriangle();
+        if (a_is_triangle && !b_is_triangle) { return false; }
+        if (!a_is_triangle && b_is_triangle) { return true; }
+        return hdv_count(a) > hdv_count(b);
+#elif 0
+        // Give priority to the largest facets in term of vertices
+        return a->vertices().size() > b->vertices().size();
+#else
+        // Give priority to facets with no determined vertices (using determining_facets)
+        // If both or neither have constrained vertices, give priority to the largest hdv count
+        //
+        // The point is to avoid cascading exact number types, even if we have to triangulate a little more
+        auto get_determined_count = [&](FacetSPtr f) -> unsigned int
+        {
+          unsigned int res = 0;
+          for (VertexSPtr v : f->vertices()) {
+              auto it = determining_facets.find(v);
+              if (it != determining_facets.end() && it->second.size() == 3) {
+                  ++res;
+              }
+          }
+          return res;
+        };
+
+        unsigned int a_determined_n = get_determined_count(a);
+        unsigned int b_determined_n = get_determined_count(b);
+        if (a_determined_n != b_determined_n) {
+            // Give priority to the one with the least determined vertices
+            return a_determined_n < b_determined_n;
+        }
+
+        // same number of determined vertices, give priority to the facet with the most high degree vertices
+        unsigned int a_hdv_n = hdv_count(a);
+        unsigned int b_hdv_n = hdv_count(b);
+        if (a_hdv_n != b_hdv_n) {
+            // Give priority to the one with the most high degree vertices
+            return a_hdv_n > b_hdv_n;
+        }
+
+        // same number of determined vertices and high degree vertices, give priority to the largest facet
+        return a->vertices().size() > b->vertices().size();
+#endif
+    };
+
+    for (FacetSPtr facet : polyhedron->facets()) {
+        if (has_high_degree_vertices(facet)) {
+            facets_to_process.push_back(facet);
+        } else {
+            // If the facet has no high degree vertices, we can just tilt it randomly and it will
+            // be fine because by definition all of its vertices are degree 3 and will be stable
+            // because an unstable configuration results from almost coplanar facets, which have been
+            // merged ahead of randomization.
+            // UNLESS we have to triangulate a face incident to one vertex of this face without
+            // high degree vertices and then the face now has a high degree vertex. If that happens,
+            // we want the high degree vertex to constrain to the (up to 2) facets with no high degree
+            // vertices which we are constraining here ahead of the flooding process.
+            // Hence, we mark this as fixed with dummy vertices and add 'v' (a non high degree vertex)
+            // to the 'determining_facets' map.
+            std::cout << "Nudge and fix F" << facet->getID() << std::endl;
+            facet->perturbPlaneCoefficientsNudge(range);
+
+            // @debug dump the face into a single OFF file
+            dump_facet("results/nudged_face_" + std::to_string(nudged_face_id++) + "_low_degree.OFF", facet);
+
+            // the point of this is that the facet with low degree facet is still used as a constraining place
+            // if nudging a vertex incident to it that would become high degree after triangulation
+            fixing_vertices[facet].insert(facet->vertices().front());
+            fixing_vertices[facet].insert(facet->vertices().back());
+
+            // the point of this is that if the vertex becomes high degree after triangulation,
+            // one (or two) facet with low degree vertices will appear in the determining facets
+            for (VertexSPtr v : facet->vertices()) {
+                determining_facets[v].insert(facet);
+            }
+        }
+    }
+
+    // Forward declarations for mutually recursive lambdas
+    std::function<void(FacetSPtr, VertexSPtr)> add_fixing_vertex;
+    std::function<void(VertexSPtr)> determine_vertex;
+
+    auto nudge_determined_vertex = [&](VertexSPtr v) {
+        std::vector<Plane3SPtr> constraining_planes;
+        for (FacetSPtr df : determining_facets[v]) {
+            if (fixing_vertices[df].size() >= 2) {
+                constraining_planes.push_back(df->getPlane());
+                std::cout << "  F" << df->getID() << " constrains the nudge" << std::endl;
+            }
+        }
+
+        CGAL_assertion(constraining_planes.size() <= 3);
+
+        const size_t n_fixed = constraining_planes.size();
+        if (n_fixed == 3) {
+            resetPoint(v, { constraining_planes[0], constraining_planes[1], constraining_planes[2] });
+            std::cout << "V" << v->getID() << " reset to " << *v->getPoint() << std::endl;
+            return;
+        }
+
+        Point3SPtr p = v->getPoint();
+
+        static std::random_device rd;
+        unsigned int s = 0; // rd()
+        // std::cout << "seed = " << s << std::endl;
+        static std::mt19937 gen(s);
+        static std::uniform_real_distribution<> rdist(-range, range);
+
+        auto nudge = [&](const CGAL::FT& v) {
+            // Since we are perturbing, we might as well collapse the DAG of 'v'.
+            // the point is also that once 'nv' is a double, its interval will be a singleton,
+            // and we will have access to static filters
+            double step = rdist(gen);
+            double nv = CGAL::to_double(v) + step;
+            return nv;
+        };
+
+        auto nudge_to_simplest_rational_in_interval = [&](const CGAL::FT& v) {
+            double d1 = nudge(v);
+            double d2 = nudge(v);
+            if (d2 < d1) {
+                std::swap(d1, d2);
+            }
+            CGAL::FT nv = CGAL::simplest_rational_in_interval<CGAL::K::Exact_kernel::FT>(d1, d2);
+            return nv;
+        };
+
+#if 0
+        std::array<double, 3> v_r = randVec(-range/2.0, range/2.0);
+        double x = CGAL::to_double(p->x()) + v_r[0];
+        double y = CGAL::to_double(p->y()) + v_r[1];
+        double z = CGAL::to_double(p->z()) + v_r[2];
+        Point3SPtr p_nudged = KernelFactory::createPoint3(Point3(x, y, z));
+#else
+        CGAL::FT x = nudge_to_simplest_rational_in_interval(p->x());
+        CGAL::FT y = nudge_to_simplest_rational_in_interval(p->y());
+        CGAL::FT z = nudge_to_simplest_rational_in_interval(p->z());
+        Point3SPtr p_nudged = KernelFactory::createPoint3(x, y, z);
+#endif
+
+        Point3SPtr p_new;
+
+        if (n_fixed == 0) {
+            p_new = p_nudged;
+        } else if (n_fixed == 1) {
+            Plane3SPtr plane = constraining_planes[0];
+#if 0
+            p_new = KernelWrapper::projection(plane, p_nudged);
+#else
+            // something similar but a little more subtle:
+            // 1. project the point onto the plane
+            // 2. express the point as a linear combination of the plane's origin and basis: pp = o + l1 * b1 + l2 * b2
+            // 3. nudge l1 and l2 to l1' and l2' with a random interval around l1 and l2, and
+            //    simplest_rational_in_interval
+            // 4. recompute the point as pp = o + l1' * b1 + l2' * b2
+            Point3SPtr pp = KernelWrapper::projection(plane, p_nudged);
+            const Point3& o = plane->point();
+            const Vector3& b1 = plane->base1();
+            const Vector3& b2 = plane->base2();
+            CGAL::FT l1 = CGAL::scalar_product(*pp - o, b1);
+            CGAL::FT l2 = CGAL::scalar_product(*pp - o, b2);
+            CGAL::FT nl1 = nudge_to_simplest_rational_in_interval(l1);
+            CGAL::FT nl2 = nudge_to_simplest_rational_in_interval(l2);
+            p_new = KernelFactory::createPoint3(o.x() + nl1 * b1.x() + nl2 * b2.x(),
+                                                o.y() + nl1 * b1.y() + nl2 * b2.y(),
+                                                o.z() + nl1 * b1.z() + nl2 * b2.z());
+#endif
+        } else if (n_fixed == 2) {
+            Plane3SPtr plane1 = constraining_planes[0];
+            Plane3SPtr plane2 = constraining_planes[1];
+            Line3SPtr line = KernelWrapper::intersection(plane1, plane2);
+#if 0
+            p_new = KernelWrapper::projection(line, p_nudged);
+#else
+            // something similar but a little more subtle:
+            // 1. project the point onto the line
+            // 2. express the point as a linear combination of the line's origin and basis: pp = o + l * v
+            // 3. nudge l to l' with a random interval around l, and simplest_rational_in_interval
+            // 4. recompute the point as pp = o + l' * v
+            Point3SPtr pp = KernelWrapper::projection(line, p_nudged);
+            const Point3& o = line->point();
+            const Vector3& d = line->to_vector();
+            CGAL::FT l = CGAL::scalar_product(*pp - o, d);
+            CGAL::FT nl = nudge_to_simplest_rational_in_interval(l);
+            p_new = KernelFactory::createPoint3(o.x() + nl * d.x(),
+                                                o.y() + nl * d.y(),
+                                                o.z() + nl * d.z());
+#endif
+        }
+
+        std::cout << "V" << v->getID() << " nudged to " << *p_new << std::endl;
+        v->setPoint(p_new);
+    };
+
+    auto is_facet_fixed = [&](FacetSPtr f) -> bool {
+        CGAL_assertion(fixing_vertices[f].size() <= 3);
+        return (f->isTriangle() && fixing_vertices[f].size() == 3) ||
+               (!f->isTriangle() && fixing_vertices[f].size() == 2);
+    };
+
+    // The face has enough determined vertices to be fixed. Compute its random perturbation,
+    // and add the facet ID to its vertices
+    add_fixing_vertex = [&](FacetSPtr f, VertexSPtr v) {
+        CGAL_precondition(fixing_vertices[f].size() <= 3);
+
+        if (is_facet_fixed(f)) {
+            std::cout << "  F" << f->getID() << " is already fully fixed" << std::endl;
+            return;
+        }
+
+        std::cout << "  Fix F" << f->getID() << " with V" << v->getID() << std::endl;
+        fixing_vertices[f].insert(v);
+
+        if (!is_facet_fixed(f)) {
+            // nothing to do yet, there are still degrees of freedom in the facet
+            return;
+        }
+
+        std::cout << "F" << f->getID() << " is now fully fixed by";
+        for (VertexSPtr fv : fixing_vertices[f]) {
+            std::cout << " V" << fv->getID();
+        }
+        std::cout << std::endl;
+
+        if (f->isTriangle()) {
+            CGAL_assertion(fixing_vertices[f].size() == 3); // just to be clear
+
+            // for triangles, all vertices are determined, and there is nothing to nudge
+            // (note that vertices were themselves nudged so the facet is nudged).
+            f->initPlane();
+            f->normalizePlaneCoefficients();
+
+            dump_facet("results/nudged_face_" + std::to_string(nudged_face_id++) + "_fixed_3.OFF", f);
+            return;
+        }
+
+        std::vector<Point3SPtr> fixed_points;
+        for (VertexSPtr fixed_v : fixing_vertices[f]) {
+            fixed_points.push_back(fixed_v->getPoint());
+        }
+
+        std::cout << "Nudge and fix F" << f->getID() << " with " << fixed_points.size() << " fixed point(s)" << std::endl;
+        f->perturbPlaneCoefficientsFixedPoints(range, fixed_points);
+
+        dump_facet("results/nudged_face_" + std::to_string(nudged_face_id++) + "_fixed_" + std::to_string(fixed_points.size()) + ".OFF", f);
+
+        // Need to now tag the vertices of the facet
+        for (VertexSPtr v : f->vertices()) {
+            if (v->degree() <= 3) {
+                continue;
+            }
+
+            if (determining_facets[v].size() < 3) {
+                determining_facets[v].insert(f);
+                if (determining_facets[v].size() == 3) {
+                    // When the vertex becomes fixed (its 3 determining facets become known), we need:
+                    // - to perturb the position of the vertex
+                    // - to update all incident facets to check if they are now fixed and in that case,
+                    //   compute their plane coefficients
+                    determine_vertex(v);
+                }
+            }
+        }
+    };
+
+    determine_vertex = [&](VertexSPtr v) {
+        CGAL_precondition(determining_facets[v].size() == 3);
+
+        std::cout << "V" << v->getID() << " is now fully determined by F";
+        auto it = determining_facets[v].begin();
+        std::cout << (*it++)->getID() << " F";
+        std::cout << (*it++)->getID() << " F";
+        std::cout << (*it)->getID() << std::endl;
+
+        // set the nudged position for the vertex: a nudge constrained by already fixed incident facets
+        nudge_determined_vertex(v);
+
+        // compute the plane coefficients of any incident facet that becomes fixed
+        // by this vertex becoming determined
+        for (FacetWPtr wf : v->facets()) {
+            if (FacetSPtr f = wf.lock()) {
+                add_fixing_vertex(f, v);
+            }
+        }
+    };
+
+    auto is_facet_overconstrained = [&](FacetSPtr f) -> bool {
+        if (f->vertices().size() == 3) {
+            return false;
+        }
+
+        // If the facet has too many fixed vertices after triangulation, it is overconstrained
+        if (fixing_vertices[f].size() > 2) {
+            return true;
+        }
+
+        // we cannot handle that facet without triangulation if adding this facet to high degree
+        // vertices would create too many determined vertices (> 2) in any facet incident to
+        // the determined high degree vertices of this facet
+        std::map<FacetSPtr, unsigned int> facets_to_test; // facets + number of appearances
+        for (VertexSPtr hdv : f->vertices()) {
+            if (hdv->degree() > 3) {
+                for (FacetWPtr inc_f : hdv->facets()) {
+                    FacetSPtr f = inc_f.lock();
+                    if (f) {
+                        ++facets_to_test[f];
+                    }
+                }
+            }
+        }
+
+        for (const auto& [ft, count] : facets_to_test) {
+            // If the two facets appear more than twice in high degree vertices,
+            // then it means we have at least 4 high degree vertices along the common line
+            // between two facets (whichever the perturbation). This can be tricky because
+            // if we - for example - have a third facet that is sharing two of these
+            // high degree vertices and then there's no way to nudge this.
+            //
+            // @todo we can definitely do better than just triangulate everything: for example,
+            // we could just split the facet in two (pick the edge among the Delaunay edges
+            // of the triangulated facet that would split the facet in a nice manner).
+            //
+            // @todo we should split the smaller of the two facets
+            if (ft != f && count > 2) {
+                std::cout << "Sharing too many vertices with F" << ft->getID() << " (" << count << ")" << std::endl;
+                return true;
+            }
+
+            // Count the number of high-degree vertices with either:
+            // - 3 determining facets
+            // - 2 determining facets and incident to 'facet'
+            // These are vertices that are determined, or would be determined once we 'add'
+            // the facet to its high degree vertices.
+            unsigned int constrain_n = 0;
+            for (VertexSPtr v : f->vertices()) {
+                if (v->degree() > 3 ) {
+                    if (determining_facets[v].size() == 3) {
+                        ++constrain_n;
+                    } else if (determining_facets[v].size() == 2 && ft->hasVertex(v)) {
+                        ++constrain_n;
+                    }
+                }
+
+                if(constrain_n > 2) {
+                    std::cout << "F" << ft->getID() << " would be over constrained by fixing of F" << f->getID() << std::endl;
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    };
+
+    while (!facets_to_process.empty()) {
+        facets_to_process.sort(facet_sorter);
+        FacetSPtr facet = facets_to_process.front();
+        facets_to_process.pop_front();
+
+        std::cout << "Pop F" << facet->getID() << std::endl;
+        CGAL_assertion(fixing_vertices[facet].size() <= 2);
+        std::cout << "  Fixing vertices:";
+        for (VertexSPtr fv : fixing_vertices[facet]) {
+            std::cout << " V" << fv->getID();
+        }
+        std::cout << std::endl;
+
+        dump_facet("results/visited_face_" + std::to_string(visited_face_id++) + ".OFF", facet);
+
+        CGAL_assertion(facet->vertices().size() >= 3);
+
+        if (is_facet_overconstrained(facet)) {
+            std::list<FacetSPtr> facets_to_triangulate = { facet };
+            std::list<FacetSPtr> final_facets;
+            while (!facets_to_triangulate.empty())
+            {
+                FacetSPtr facet_tt = facets_to_triangulate.front();
+                facets_to_triangulate.pop_front();
+
+                // @debug
+                // the facet is not yet fixed, so no vertex can have it as determining facet
+                CGAL_assertion(fixing_vertices[facet_tt].size() < 2);
+                for (VertexSPtr v : facet_tt->vertices()) {
+                    CGAL_assertion(determining_facets[v].size() <= 3);
+                    CGAL_assertion(determining_facets[v].count(facet_tt) == 0);
+                }
+
+                std::cout << "Triangulate F" << facet_tt->getID() << std::endl;
+                ++had_to_triangulate_n;
+
+                const Triangulation_strategy strategy = Triangulation_strategy::DEFAULT;
+                std::list<FacetSPtr> new_facets = PolyhedronTransformation::triangulate(facet_tt, polyhedron, strategy);
+
+                db::_3d::OBJFile::save("results/post-triangulate.obj", polyhedron,
+                                       false /*do_triangulate*/,
+                                       true /*convert_to_double*/);
+
+                VertexSPtr va, vb;
+                if (strategy == Triangulation_strategy::MID_CUT) {
+                    FacetSPtr f1 = new_facets.front(), f2 = new_facets.back();
+
+                    // Identify the common edge, i.e. the two vertices that are shared by both facets.
+                    // @todo A little unefficient because we had that information during triangulating.
+                    for (VertexSPtr v : f1->vertices()) {
+                        if (f2->hasVertex(v)) {
+                            if (!va) {
+                                va = v;
+                            } else {
+                                vb = v;
+                                break;
+                            }
+                        }
+                    }
+
+                    // even if we have to further subdivide, those vertices must be determined
+                    for (VertexSPtr sv : {va, vb}) {
+                        if (determining_facets[sv].size() == 3) {
+                            continue;
+                        }
+
+                        determine_vertex(sv);
+                    }
+                }
+
+                // existing already-determined vertices are fixed points for the new facets
+                for (FacetSPtr nf : new_facets) {
+                    std::cout << "spawned F" << nf->getID() << std::endl;
+
+                    for (VertexSPtr v : nf->vertices()) {
+                        if (determining_facets[v].size() == 3) {
+                            fixing_vertices[nf].insert(v);
+                        }
+                    }
+
+                    bool is_overconstrained = is_facet_overconstrained(nf);
+
+                    if (!is_overconstrained && strategy == Triangulation_strategy::MID_CUT) {
+                        // When using the mid cut strategy, we have to fix the cutting edge for both
+                        // (non-triangle) new facets, otherwise any perturbation not involving these
+                        // vertices will be very unstable and send the split vertices far.
+                        if (!nf->isTriangle()) {
+                            for (VertexSPtr v : nf->vertices()) {
+                                if (v != va && v != vb && determining_facets[v].size() == 3) {
+                                    is_overconstrained = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    if (is_overconstrained) {
+                        std::cout << "Newborn face F" << nf << " is over constrained" << std::endl;
+                        facets_to_triangulate.push_back(nf); // further triangulate it
+                        continue;
+                    }
+
+
+                    final_facets.push_back(nf);
+                }
+
+                for (FacetSPtr nf : final_facets) {
+                    for (VertexSPtr v : nf->vertices()) {
+                        if (determining_facets[v].size() == 3) {
+                            std::cout << "newborn F" << nf->getID() << " is constrained by V" << v->getID() << std::endl;
+                            fixing_vertices[nf].insert(v);
+                        }
+                    }
+
+                    facets_to_process.push_back(nf);
+                }
+            }
+
+            continue;
+        }
+
+        // Now, adding the facet to the high degree vertices will not over constrain the facet, so do it:
+        for (VertexSPtr v : facet->vertices()) {
+            if (v->degree() <= 3) {
+                continue;
+            }
+
+            if (determining_facets[v].size() < 3) {
+                determining_facets[v].insert(facet);
+                if (determining_facets[v].size() == 3) {
+                    // When the vertex becomes fixed (its 3 determining facets become known), we need:
+                    // - to perturb the position of the vertex
+                    // - to update all incident facets to check if they are now fixed and in that case,
+                    //   compute their plane coefficients
+                    determine_vertex(v);
+                }
+            }
+        }
+    }
+
+    // Some facets might have high degree, but still some freedom of movement after the flooding, fix them
+    for (FacetSPtr facet : polyhedron->facets()) {
+        // if there were 0, it would be a facet without high degree vertices and those are nudged first
+        // if there were 2, it would have been nudged when the 2nd vertex got determined
+        if (fixing_vertices[facet].size() != 1) {
+            continue;
+        }
+
+        VertexSPtr v = *(fixing_vertices[facet].begin());
+        std::vector<Point3SPtr> fixed_points = { v->getPoint() };
+        std::cout << "Nudge and fix F" << facet->getID() << " fixed by V" << v->getID() << " [remaining]" << std::endl;
+        facet->perturbPlaneCoefficientsFixedPoints(range, fixed_points);
+
+        dump_facet("results/nudged_face_" + std::to_string(nudged_face_id++) + "_remaining.OFF", facet);
+    }
+
+    for (VertexSPtr v : polyhedron->vertices()) {
+        CGAL_assertion(determining_facets[v].size() <= 3);
+        CGAL_assertion(v->degree() == 3 || determining_facets[v].size() == 3);
+    }
+
+    for (FacetSPtr f : polyhedron->facets()) {
+        std::cout << "check fixing_vertices[" << f->getID() << "].size() = " << fixing_vertices[f].size() << std::endl;
+        CGAL_assertion(fixing_vertices[f].size() <= 3);
+    }
+
+    db::_3d::OBJFile::save("results/tilt_v3-pre_reset.obj", polyhedron,
+                           false /*do_triangulate*/,
+                           true /*convert_to_double*/);
+
+    // Recompute all points which were not fixed
+    for (VertexSPtr v : polyhedron->vertices()) {
+       // @fixme high degree vertices that are not entirely determined are not yet recomputed
+        if (v->degree() == 3) {
+            std::cout << "Reset V" << v->getID() << std::endl;
+            resetPoint(v);
+        }
+    }
+
+    std::cout << "All facets processed" << std::endl;
+
+    db::_3d::OBJFile::save("results/tilt_v3.obj", polyhedron,
+                           false /*do_triangulate*/,
+                           true /*convert_to_double*/);
+    // db::_3d::OBJFile::save("results/tilt_v3-triangulated.obj", polyhedron,
+    //                        true /*do_triangulate*/,
+    //                        true /*convert_to_double*/);
+
+    // @debug
+    for (FacetSPtr facet : polyhedron->facets()) {
+        for (VertexSPtr v : facet->vertices()) {
+            std::cout << "Is V" << v->getID() << " on F" << facet->getID() << std::endl;
+            CGAL_assertion(facet->getPlane()->has_on(*(v->getPoint())));
+        }
+    }
+
+    // @debug
+    std::cout << "Had to triangulate " << had_to_triangulate_n << " facets" << std::endl;
+
+    unsigned int tr_n = 0;
+    for (FacetSPtr facet : polyhedron->facets()) {
+        if (facet->vertices().size() == 3) {
+            ++tr_n;
+        }
+    }
+    std::cout << tr_n << " triangle facets" << std::endl;
+
+    // @debug
+    for (VertexSPtr v : polyhedron->vertices()) {
+        std::cout << "V" << v->getID() << " has depth " << CGAL::depth(*(v->getPoint())) << std::endl;
+        // std::cout << "  " << exact(*(v->getPoint())) << std::endl;
+    }
+
+    for (FacetSPtr f : polyhedron->facets()) {
+        std::cout << "F" << f->getID() << " has depth " << CGAL::depth(*(f->getPlane())) << std::endl;
+    }
+}
