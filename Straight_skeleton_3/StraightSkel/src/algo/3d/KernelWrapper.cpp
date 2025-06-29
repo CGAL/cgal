@@ -77,10 +77,12 @@ Point3SPtr KernelWrapper::intersection(Plane3SPtr plane, Line3SPtr line) {
         result = KernelFactory::createPoint3(*ipoint);
     } else {
         // Let's investigate
-        if (const CGAL::Line3 *iline = std::get_if<CGAL::Line3>(&*res))
+        if (const CGAL::Line3 *iline = std::get_if<CGAL::Line3>(&*res)) {
             std::cerr << "Intersection of plane and line is the line itself" << std::endl;
-        else
+        } else {
             std::cerr << "Intersection of plane and line is... not?" << std::endl;
+            CGAL_assertion(false);
+        }
 
         CGAL_warning_msg(false, "intersection of plane and line failed to produce a point");
     }
