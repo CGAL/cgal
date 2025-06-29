@@ -15,31 +15,24 @@
  */
 
  // @fixme yesterday:
-//  TIMEOUT:
-//  ./StraightSkel 3d load ../res/polyhedrons/events-triangulated/DblEdgeMergeEvent.obj --no-window
-//  ./StraightSkel 3d load ../res/polyhedrons/events-triangulated/misc_1.obj --no-window
-//  ./StraightSkel 3d load ../res/polyhedrons/events-triangulated/SplitMergeEvent_reflex.obj --no-window
+// Check queue failure:
+ //  ./StraightSkel 3d load ../res/polyhedrons/events-triangulated/DblEdgeMergeEvent.obj --no-window
 
 // @fixme:
 // - Enable caching + performance model ==> shared pointer is invalid: edge_tosplit
-// - customer data w/ no face merging has bugs
 // - fix OBJ + IDs giving isolated vertices
-// -
+// - customer data w/ no face merging has bugs
 
 // @fixme later:
-// - Fix expired shared ptr errors in prints
-// - Fix Save() face ID order + not using dummies
+// - Enable and debug implementation of selfIntersects
 // - Fix simultaneous events still happening sometimes (likely the same event multiple times
 //   since we don't check the queue before pushing)
-// - determine if outward or inward offset. Reject outward if there is no save-offset +
-//   stop_on_last_save
+// - Fix expired shared ptr errors in prints
 
 // @fixme latest:
-// - zero speed (check divisions)
 // - (a) Random perturbations can still create degenerate configurations if unlucky
 // - (b) Random perturbations must be small enough as to not create self-intersections
 // - EPECK -> EPICK can create self-intersections
-// - factorize the three VV events but be very careful with the tiny differences
 
 // @todo: cleaning
 // - use CGAL kernel everywhere
@@ -49,15 +42,18 @@
 // - fix all weak --> shared pointer conversions
 // - face/facet
 // - nullptr init?
+// - check for overly shared objects, redundant function calls (plane normalization, for example)
 
 // @todo later:
-// - Lighter data structures
+// - determine if outward or inward offset. Reject outward if there is no save-offset provided
+//   or stop_on_last_save is false
 // - Fix straight skeleton construction
-
-// @todo latest
+// - Lighter data structures
 // - implement lazy perturbations where we only perturb if we encounter an issue?
 //   * Would cost more (detection of simultaneous events, etc.)
 //   * How to detect "hidden" simultaneous events?
+// - zero speed (check divisions)
+// - factorize the three VV events but be very careful with the tiny differences
 
 // ----
 
@@ -170,7 +166,7 @@
 #ifdef DEBUG
 // # define CGAL_SS3_DEBUG_QUAD_PLANE_INTERSECTIONS
 // # define CGAL_SS3_DEBUG_PRINT_QUEUE
-// # define CGAL_SS3_DUMP_FILES
+# define CGAL_SS3_DUMP_FILES
 # define CGAL_SS3_PROFILE_FILTERING_MECHANISMS
 #endif // DEBUG
 
@@ -225,16 +221,7 @@
 #include "util/StringFactory.h"
 
 #include <CGAL/assertions.h>
-#include <CGAL/Constrained_Delaunay_triangulation_2.h>
-#include <CGAL/Projection_traits_3.h>
-#include <CGAL/Triangulation_vertex_base_with_info_2.h>
-#include <CGAL/mark_domain_in_triangulation.h>
-#include <CGAL/Polygon_mesh_processing/autorefinement.h>
-#include <CGAL/Polygon_mesh_processing/corefinement.h>
-#include <CGAL/Polygon_mesh_processing/repair_polygon_soup.h>
-#include <CGAL/Surface_mesh.h>
 #include <CGAL/Real_timer.h>
-#include <CGAL/IO/polygon_soup_io.h>
 
 #include <limits>
 #include <list>
@@ -563,6 +550,7 @@ bool SimpleStraightSkel::savePolyhedron(PolyhedronSPtr polyhedron,
 
         CGAL_assertion(polyhedron_cpy && polyhedron_cpy->isConsistent());
 
+        // @fixme use AbstractFile::sanitize()?
         db::_3d::AbstractFile::removeVerticesDegLt3(polyhedron_cpy);
 
 #ifdef CGAL_SS3_DUMP_FILES
@@ -619,13 +607,17 @@ bool SimpleStraightSkel::run() {
 #endif
 
     PolyhedronSPtr polyhedron = polyhedron_->clone();
+    CGAL_assertion(polyhedron && polyhedron->isConsistent());
 
 #ifdef CGAL_SS3_DUMP_FILES
     db::_3d::OBJFile::save("results/input.obj", polyhedron, false /*do not triangulate*/);
-    db::_3d::OBJFile::save("results/input_triangulated.obj", polyhedron, true /*do not triangulate*/);
+    // db::_3d::OBJFile::save("results/input_triangulated.obj", polyhedron, true /*triangulate*/);
 #endif
 
-    // CGAL_assertion(!SelfIntersection::hasSelfIntersectingSurface(polyhedron));
+    DEBUG_PRINT(polyhedron->vertices().size() << " NV " << polyhedron->facets().size() << " NF");
+
+    CGAL_precondition(PolyhedronTransformation::doAll3PlanesIntersect(polyhedron));
+    CGAL_expensive_precondition(!SelfIntersection::hasSelfIntersectingSurface(polyhedron));
 
     // store base plane coefficients
     cacheBasePlanes(polyhedron);
@@ -786,6 +778,10 @@ bool SimpleStraightSkel::run() {
             std::cout << "current elapsed time: " << timer.time() << std::endl;
 #endif
 
+            if (visitor_) {
+                visitor_->before_offset_event(polyhedron, current_offset, event);
+            }
+
             if (controller_) {
                 controller_->wait();
             }
@@ -801,10 +797,6 @@ bool SimpleStraightSkel::run() {
             }
 
             current_offset = upcoming_offset;
-
-            if (visitor_) {
-                visitor_->after_offset_event(polyhedron, current_offset);
-            }
 
 #ifdef CGAL_SS3_DUMP_FILES
             db::_3d::OBJFile::save("results/event_" + std::to_string(event_id) + ".obj", polyhedron, false /*do triangulate*/);
@@ -829,6 +821,10 @@ bool SimpleStraightSkel::run() {
 
             if (controller_) {
               controller_->wait();
+            }
+
+            if (visitor_) {
+                visitor_->after_offset_event(polyhedron, current_offset);
             }
 
             // If we are interested in a specific offset, there is no point going further
@@ -871,7 +867,7 @@ bool SimpleStraightSkel::run() {
         //        util::StringFactory::fromBoolean(controller_) + "; ");
         std::cout << skel_result_->toString() << std::endl;
     } else {
-        DEBUG_PRINT("Error: Failed to initialize polyhedron");
+        DEBUG_PRINT("Error: failed to initialize polyhedron");
         return false;
     }
 
@@ -1209,7 +1205,10 @@ bool SimpleStraightSkel::init(PolyhedronSPtr polyhedron,
             DEBUG_VAR(vertex->toString());
 
             // When the degree is high, take the first valid split
-            if (vertex->degree() > 10) {
+            if (vertex->degree() > 15) {
+                DEBUG_PRINT("Degree is way too high (" << vertex->degree() << "), aborting.");
+                return false;
+            } else if (vertex->degree() > 10) {
                 CGAL::Real_timer timer;
                 timer.start();
 #if 1
@@ -5175,7 +5174,7 @@ bool SimpleStraightSkel::checkQueueCorrectness(const PQ& queue,
         }
 
         if (!found) {
-            std::cerr << "Error: Could not find event in duplicate queue" << std::endl;
+            std::cerr << "Error: could not find event in duplicate queue" << std::endl;
             std::cerr << "Event: " << event_scratch->toString() << std::endl;
             return false;
         }
@@ -5672,6 +5671,10 @@ SimpleStraightSkel::handleSaveOffsetEvent(const CGAL::FT current_offset,
                               true /*triangulate*/,
                               true /*convert to double*/,
                               false /*attempt untilting*/);
+
+#ifdef CGAL_SS3_DUMP_FILES
+    db::_3d::OBJFile::save("results/last_save.obj", polyhedron);
+#endif
 
     return (res ? EventStatus::EVENT_HANDLED : EventStatus::EVENT_NOT_HANDLED);
 }
@@ -6390,11 +6393,11 @@ SimpleStraightSkel::handleEdgeEvent(const CGAL::FT current_offset,
             } else if (facets_c[1]->findEdge(facets_c[3])) {
                 flip_edge = false;
             } else {
-                throw std::runtime_error("Not able to handle EdgeEvent (1).");
+                throw std::runtime_error("Error: Not able to handle EdgeEvent (1).");
             }
         }
     } else {
-        throw std::runtime_error("Not able to handle EdgeEvent (2).");
+        throw std::runtime_error("Error: not able to handle EdgeEvent (2).");
     }
     DEBUG_VAR(flip_edge);
 
@@ -8415,7 +8418,7 @@ SimpleStraightSkel::handleEvent(const CGAL::FT current_offset,
     //                   so we need to consider the possible event until it's popped
     // - Pierce events: the filtering (i.e., is the contact point actually on the face)
     //                  is done at pop time, so the event could in fact not exist
-#if 0 // @tmp VV also?
+#if 0 // @todo VV also
     CGAL_postcondition(event->getType() == AbstractEvent::VANISH_EVENT ||
                        event->getType() == AbstractEvent::SURFACE_EVENT ||
                        event->getType() == AbstractEvent::PIERCE_EVENT ||

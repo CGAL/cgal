@@ -57,18 +57,19 @@ namespace utils {
 
 struct Base_mesh_offset_visitor
 {
-    virtual ~Base_mesh_offset_visitor() = default;
     virtual bool go_further(int, PolyhedronSPtr, CGAL::FT) = 0;
-    virtual void after_offset_event(PolyhedronSPtr, CGAL::FT) = 0;
+    virtual void before_offset_event(PolyhedronSPtr, CGAL::FT, AbstractEventSPtr) = 0;
     virtual void on_save_offset_event(PolyhedronSPtr, CGAL::FT) = 0;
+    virtual void after_offset_event(PolyhedronSPtr, CGAL::FT) = 0;
 };
 
 struct Default_mesh_offset_visitor
-    : Base_mesh_offset_visitor
+    : public Base_mesh_offset_visitor
 {
-  bool go_further(int, PolyhedronSPtr, CGAL::FT) override { return true; };
-  void after_offset_event(PolyhedronSPtr, CGAL::FT) override { };
-  void on_save_offset_event(PolyhedronSPtr, CGAL::FT) override { };
+    bool go_further(int, PolyhedronSPtr, CGAL::FT) override { return true; }
+    void before_offset_event(PolyhedronSPtr, CGAL::FT, AbstractEventSPtr) override { }
+    void on_save_offset_event(PolyhedronSPtr, CGAL::FT) override { }
+    void after_offset_event(PolyhedronSPtr, CGAL::FT) override { }
 };
 
 } // namespace utils

@@ -96,7 +96,7 @@ FacetSPtr Edge::getFacetL() const {
     if (this->facet_l_.expired())
         return FacetSPtr();
     else
-        return FacetSPtr(this->facet_l_);
+        return FacetSPtr(this->facet_l_); // @todo .lock()
 }
 
 void Edge::setFacetL(FacetSPtr facet) {
@@ -684,43 +684,48 @@ double Edge::angleTo(EdgeSPtr edge) const {
 
 std::string Edge::toString() const {
     std::string result("Edge(");
-    if (id_ != -1) {
-        result += "id=" + util::StringFactory::fromInteger(id_);
-    } else {
-        // result += util::StringFactory::fromPointer(this);
-    }
+    result += "id=" + util::StringFactory::fromInteger(id_);
+    result += ", addr=" + util::StringFactory::fromPointer(this);
+    result += ", l=";
     if (!facet_l_.expired()) {
-        result += ", l=";
         if (getFacetL()->getID() != -1) {
             result += util::StringFactory::fromInteger(getFacetL()->getID());
         } else {
             // result += util::StringFactory::fromPointer(getFacetL().get());
         }
+    } else {
+        result += "expired";
     }
+    result += ", r=";
     if (!facet_r_.expired()) {
-        result += ", r=";
         if (getFacetR()->getID() != -1) {
             result += util::StringFactory::fromInteger(getFacetR()->getID());
         } else {
             // result += util::StringFactory::fromPointer(getFacetR().get());
         }
+    } else {
+        result += "expired";
     }
-    // scr and dst faces
+    // src and dst faces
+    result += ", s=";
     if (getFacetSrc()) {
-        result += ", s=";
         if (getFacetSrc()->getID() != -1) {
             result += util::StringFactory::fromInteger(getFacetSrc()->getID());
         } else {
             // result += util::StringFactory::fromPointer(getFacetSrc().get());
         }
+    } else {
+        result += "nullptr";
     }
+    result += ", d=";
     if (getFacetDst()) {
-        result += ", d=";
         if (getFacetDst()->getID() != -1) {
             result += util::StringFactory::fromInteger(getFacetDst()->getID());
         } else {
             // result += util::StringFactory::fromPointer(getFacetDst().get());
         }
+    } else {
+        result += "nullptr";
     }
     if (vertex_src_) {
       result += ",\n     src=" + vertex_src_->toString();

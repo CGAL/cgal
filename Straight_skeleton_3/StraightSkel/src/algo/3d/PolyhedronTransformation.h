@@ -36,6 +36,7 @@ public:
      * updates the position of the vertex of a polyhedron, computed from the planes of
      * its incident faces.
      */
+    static bool resetPoint(VertexSPtr vertex, const std::array<Plane3SPtr, 3>& planes);
     static bool resetPoint(VertexSPtr vertex);
 
     /**
@@ -75,6 +76,21 @@ public:
                                       CGAL::FT offset,
                                       const bool recompute_positions = true);
 
+
+    enum class Triangulation_strategy
+    {
+        DEFAULT = 0,
+        MID_CUT,
+        EQUALIZE_HDV
+    };
+
+    /**
+     * Triangulate the facet 'f' and returns all newly created triangle facets
+     */
+    static std::list<FacetSPtr> triangulate(FacetSPtr f,
+                                            PolyhedronSPtr polyhedron,
+                                            Triangulation_strategy strategy = Triangulation_strategy::DEFAULT);
+
     /**
      * Normalize facet planes
     */
@@ -88,12 +104,20 @@ public:
      * To check for parallel planes is not enough.
      */
     static bool hasParallelPlanes(PolyhedronSPtr polyhedron);
+    static bool doAll2PlanesIntersect(PolyhedronSPtr polyhedron);
     static bool doAll3PlanesIntersect(PolyhedronSPtr polyhedron);
 
     static bool areAllVerticesDegree3(PolyhedronSPtr polyhedron);
 
+    /**
+     * Check that all faces have at most two high degree vertices
+     */
+    static bool isTiltCompatible(PolyhedronSPtr polyhedron);
+
     static void randMovePoints(PolyhedronSPtr polyhedron);
     static void randTiltPlanes(PolyhedronSPtr polyhedron);
+    static void randTiltPlanesv2(PolyhedronSPtr polyhedron);
+    static void randTiltPlanesv3(PolyhedronSPtr polyhedron);
     static PolyhedronSPtr merge_and_perturb(PolyhedronSPtr polyhedron);
 
     static Point3SPtr boundingBoxMin(PolyhedronSPtr polyhedron);
@@ -106,7 +130,7 @@ public:
             Point3SPtr p_box_min, Point3SPtr p_box_max);
 
 protected:
-    static Vector3SPtr randVec(double min, double max);
+    static std::array<double, 3> randVec(double min, double max);
     PolyhedronTransformation();
 };
 

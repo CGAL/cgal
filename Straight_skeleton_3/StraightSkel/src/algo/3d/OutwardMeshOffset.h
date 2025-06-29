@@ -44,7 +44,7 @@ public:
 
     static bool invert_and_add_bbox(Mesh& sm);
     static bool remove_bbox_and_invert(Mesh& sm);
-    static PolyhedronSPtr convert(Mesh& sm);
+    static PolyhedronSPtr convert(Mesh& sm, const bool force_simplification = false);
     static PolyhedronSPtr preprocess(Mesh& sm);
 
 public:

@@ -22,7 +22,7 @@ bool treat_dataset(const std::string& dataset)
 
   Mesh sm;
   auto fcm = sm.add_property_map<face_descriptor, CGAL::IO::Color>("f:color").first;
-  auto fwm = sm.add_property_map<face_descriptor, double>("f:weight").first;
+  auto fwm = sm.add_property_map<face_descriptor, FT>("f:weight").first;
 
   std::size_t current_color_id = 0;
   std::vector<CGAL::IO::Color> palette {{ CGAL::IO::red(),

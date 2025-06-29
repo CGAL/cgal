@@ -49,6 +49,9 @@ public:
 
     void addVertex(VertexSPtr vertex);
     bool removeVertex(VertexSPtr vertex);
+    bool hasVertex(VertexSPtr vertex);
+
+    bool isTriangle() const;
 
     void addEdge(EdgeSPtr edge);
     bool removeEdge(EdgeSPtr edge);
@@ -86,6 +89,9 @@ public:
     FacetSPtr next(VertexSPtr vertex) const;
     FacetSPtr prev(VertexSPtr vertex) const;
 
+    /**
+     * merge 'facet' into this facet.
+     */
     void merge(FacetSPtr facet);
 
     int getID() const;
@@ -112,14 +118,53 @@ public:
     void normalizePlaneCoefficients();
 
     /**
+     * Check if the plane is normalized
+     */
+    bool isNormalizedPlane();
+
+    /**
      * Store the current plane ahead of perturbation
      */
     void storePlaneCoefficients();
 
+    enum class PerturbationType {
+        NUDGE,
+        STEPS,
+        EXACT,
+        HIGH_DEGREES
+    };
+
+    /**
+     * Nudge the plane coefficients by a random value in the range [low, high].
+     */
+    void perturbPlaneCoefficientsNudge(const double range);
+
+    /**
+     * Nudge the plane coefficients by a number of nextafter steps
+     * in a random direction.
+     */
+    void perturbPlaneCoefficientsSteps(int steps);
+
+    /**
+     * Nudge the plane coefficients by a random value in the range [0, 1] / den.
+     */
+    void perturbPlaneCoefficientsExact(const CGAL::FT& den);
+
+    /**
+     * Nudge the plane coefficients but ensure that the perturbed plane goes through 0, 1, or 2 fixed points.
+     * If 0 points: nudge all coefficients independently.
+     * If 1 point: nudge (a, b, c), recompute d so the plane passes through the point.
+     * If 2 points: nudge (a, b, c) with the constraint that the new plane passes through both points.
+     */
+    void perturbPlaneCoefficientsFixedPoints(const double range,
+                                             const std::vector<Point3SPtr>& fixed_points);
+
+    void perturbPlaneCoefficientsHighDegrees(const double range);
+
     /**
      * Nudge the plane coefficients to get rid of simultaneous events
      */
-    void perturbPlaneCoefficients();
+    void perturbPlaneCoefficients(PerturbationType type = PerturbationType::HIGH_DEGREES);
 
     /**
      * Restore the plane coefficients to the previous value, updating 'd' so that the plane
@@ -128,6 +173,11 @@ public:
     void restorePlaneCoefficients(CGAL::FT perturbationOffset, CGAL::FT perturbationEndOffset);
 
     bool makeFirstConvex();
+
+    /**
+     * returns the number of vertices whose degree is higher than 3
+     */
+    int numHighDegreeVertices() const;
 
     data::_2d::PolygonSPtr toPolygon();
 

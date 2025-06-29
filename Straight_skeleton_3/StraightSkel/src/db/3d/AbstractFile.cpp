@@ -70,24 +70,38 @@ bool AbstractFile::hasCoplanarFacets(EdgeSPtr edge, double epsilon) {
     return result;
 }
 
+// @todo this doesn't really make sense if one or both of the facets is null
+// (but we should never need it)
+void AbstractFile::mergeFacets(EdgeSPtr edge,
+                               FacetSPtr facet_into,
+                               FacetSPtr facet_from,
+                               PolyhedronSPtr polyhedron)
+{
+    CGAL_precondition(facet_into && facet_from);
+    CGAL_precondition(facet_into != facet_from);
+    CGAL_precondition(edge->getFacetL() == facet_from || edge->getFacetR() == facet_from);
+    CGAL_precondition(edge->getFacetL() == facet_into || edge->getFacetR() == facet_into);
+
+    DEBUG_PRINT("Merging F" << facet_from->getID() << " into F" << facet_into->getID());
+
+    // remove the facet incidence info from the edge such that the facets are not deleted
+    // when Polyhedron::removeEdge() is called
+    facet_into->removeEdge(edge);
+    facet_from->removeEdge(edge);
+
+    polyhedron->removeEdge(edge);
+    if (facet_into && facet_from && facet_into != facet_from) {
+        facet_into->merge(facet_from);
+        polyhedron->removeFacet(facet_from);
+    }
+
+    CGAL_postcondition(polyhedron->isConsistent());
+}
+
 void AbstractFile::mergeFacets(EdgeSPtr edge,
                                PolyhedronSPtr polyhedron)
 {
-  DEBUG_PRINT(edge->toString());
-  FacetSPtr facet_l = edge->getFacetL();
-  FacetSPtr facet_r = edge->getFacetR();
-  if (facet_l) {
-      facet_l->removeEdge(edge);
-  }
-  if (facet_r) {
-      facet_r->removeEdge(edge);
-  }
-  polyhedron->removeEdge(edge);
-  if (facet_l && facet_r &&
-          facet_l != facet_r) {
-      facet_l->merge(facet_r);
-      polyhedron->removeFacet(facet_r);
-  }
+    return mergeFacets(edge, edge->getFacetL(), edge->getFacetR(), polyhedron);
 }
 
 int AbstractFile::mergeCoplanarFacets(PolyhedronSPtr polyhedron,
@@ -100,7 +114,7 @@ int AbstractFile::mergeCoplanarFacets(PolyhedronSPtr polyhedron,
     //                        false /*do not triangulate*/);
 
     int result = 0;
-    std::list<EdgeSPtr> edges_toremove;
+    std::list<EdgeWPtr> edges_toremove;
     std::list<EdgeSPtr>::iterator it_e = polyhedron->edges().begin();
     while (it_e != polyhedron->edges().end()) {
         EdgeSPtr edge = *it_e++;
@@ -113,11 +127,13 @@ int AbstractFile::mergeCoplanarFacets(PolyhedronSPtr polyhedron,
     if (edges_toremove.size() > 0) {
         DEBUG_PRINT("Adjacent facets of the following edges are detected to be coplanar and will be merged.");
     }
-    it_e = edges_toremove.begin();
-    while (it_e != edges_toremove.end()) {
-        EdgeSPtr edge = *it_e++;
-        mergeFacets(edge, polyhedron);
-        result++;
+    std::list<EdgeWPtr>::iterator it_we = edges_toremove.begin();
+    while (it_we != edges_toremove.end()) {
+        EdgeSPtr edge = (it_we++)->lock();
+        if (edge) {
+            mergeFacets(edge, polyhedron);
+            result++;
+        }
     }
 
     DEBUG_PRINT("  final face count: " << polyhedron->facets().size());
@@ -125,55 +141,6 @@ int AbstractFile::mergeCoplanarFacets(PolyhedronSPtr polyhedron,
     // db::_3d::OBJFile::save("results/coplanar_merge_after.obj", polyhedron,
     //                        false /*do not triangulate*/);
 
-    return result;
-}
-
-int AbstractFile::removeVerticesDegLt3(PolyhedronSPtr polyhedron) {
-    int result = 0;
-    std::list<VertexSPtr> vertices_toremove;
-    std::list<VertexSPtr>::iterator it_v = polyhedron->vertices().begin();
-    while (it_v != polyhedron->vertices().end()) {
-        VertexSPtr vertex = *it_v++;
-        if (vertex->degree() < 3) {
-            vertices_toremove.push_back(vertex);
-        }
-    }
-    it_v = vertices_toremove.begin();
-    while (it_v != vertices_toremove.end()) {
-        VertexSPtr vertex = *it_v++;
-        DEBUG_PRINT("Removing " << vertex->toString());
-        std::list<FacetWPtr>::iterator it_f = vertex->facets().begin();
-        while (it_f != vertex->facets().end()) {
-            FacetWPtr facet_wptr = *it_f++;
-            if (!facet_wptr.expired()) {
-                FacetSPtr facet(facet_wptr);
-                facet->removeVertex(vertex);
-            }
-        }
-
-        if (vertex->degree() == 2) {
-            EdgeSPtr edge_src = vertex->firstEdge();
-            EdgeSPtr edge_dst = edge_src->next(vertex);
-            VertexSPtr vertex_src = edge_src->getVertexSrc();
-            if (vertex_src == vertex) {
-                vertex_src = edge_src->getVertexDst();
-            }
-            VertexSPtr vertex_dst = edge_dst->getVertexSrc();
-            if (vertex_dst == vertex) {
-                vertex_dst = edge_dst->getVertexDst();
-            }
-            edge_dst->getFacetL()->removeEdge(edge_dst);
-            edge_dst->getFacetR()->removeEdge(edge_dst);
-            polyhedron->removeEdge(edge_dst);
-            if (edge_src->getVertexDst() == vertex) {
-                edge_src->replaceVertexDst(vertex_dst);
-            } else if (edge_src->getVertexSrc() == vertex) {
-                edge_src->replaceVertexSrc(vertex_dst);
-            }
-        }
-        polyhedron->removeVertex(vertex);
-        result++;
-    }
     return result;
 }
 
@@ -191,5 +158,190 @@ int AbstractFile::mergeCoplanarFacets(PolyhedronSPtr polyhedron)
 
     return mergeCoplanarFacets(polyhedron, epsilon);
 }
+
+int AbstractFile::removeFacetsDegLt3(PolyhedronSPtr polyhedron) {
+    int result = 0;
+    std::list<FacetSPtr> facets_tomerge;
+    for (FacetSPtr facet : polyhedron->facets()) {
+        if (facet->vertices().size() < 3) {
+            facets_tomerge.push_back(facet);
+        }
+    }
+    for (FacetSPtr facet : facets_tomerge) {
+        // Facet could have grown from another merge, so check again
+        if (facet->vertices().size() >= 3) {
+            continue;
+        }
+
+        // Out of the two edges of the face, find the edge that is incident to the facet
+        // that is the largest, and merge into that one
+        EdgeSPtr best_edge = nullptr;
+        FacetSPtr best_neighbor = nullptr;
+        std::size_t best_size = 0;
+
+        for (EdgeSPtr edge : facet->edges()) {
+            FacetSPtr neighbor = nullptr;
+            if (edge->getFacetL() == facet && edge->getFacetR() && edge->getFacetR() != facet) {
+                neighbor = edge->getFacetR();
+            } else if (edge->getFacetR() == facet && edge->getFacetL() && edge->getFacetL() != facet) {
+                neighbor = edge->getFacetL();
+            }
+            if (neighbor && neighbor->vertices().size() > best_size) {
+                best_edge = edge;
+                best_neighbor = neighbor;
+                best_size = neighbor->vertices().size();
+            }
+        }
+
+        if (best_neighbor) {
+            mergeFacets(best_edge, best_neighbor, facet, polyhedron);
+        } else {
+            // No neighbor, just remove
+            for (EdgeSPtr edge : facet->edges()) {
+                polyhedron->removeEdge(edge);
+            }
+        }
+        ++result;
+    }
+    return result;
+}
+
+int AbstractFile::removeVerticesDegLt3(PolyhedronSPtr polyhedron) {
+    int result = 0;
+    std::list<VertexSPtr> vertices_toremove;
+    std::list<VertexSPtr>::iterator it_v = polyhedron->vertices().begin();
+    while (it_v != polyhedron->vertices().end()) {
+        VertexSPtr vertex = *it_v++;
+        if (vertex->degree() < 3) {
+            vertices_toremove.push_back(vertex);
+            DEBUG_PRINT("Enlist: V" << vertex->getID());
+            for (FacetWPtr wf : vertex->facets()) {
+                FacetSPtr facet = wf.lock();
+                DEBUG_PRINT("  Incident facet with: " << facet->vertices().size() << " vertices");
+            }
+        }
+    }
+    it_v = vertices_toremove.begin();
+    while (it_v != vertices_toremove.end()) {
+        VertexSPtr vertex = *it_v++;
+        DEBUG_PRINT("Removing " << vertex->toString());
+
+        std::list<FacetWPtr>::iterator it_f = vertex->facets().begin();
+        while (it_f != vertex->facets().end()) {
+            FacetWPtr facet_wptr = *it_f++;
+            if (!facet_wptr.expired()) {
+                FacetSPtr facet(facet_wptr);
+                facet->removeVertex(vertex);
+            }
+        }
+
+        if (vertex->degree() == 2) {
+            EdgeSPtr edge_src = vertex->firstEdge();
+            EdgeSPtr edge_dst = edge_src->next(vertex);
+
+            VertexSPtr vertex_src = edge_src->getVertexSrc();
+            if (vertex_src == vertex) {
+                vertex_src = edge_src->getVertexDst();
+            }
+            VertexSPtr vertex_dst = edge_dst->getVertexSrc();
+            if (vertex_dst == vertex) {
+                vertex_dst = edge_dst->getVertexDst();
+            }
+
+            FacetSPtr fL = edge_src->getFacetL();
+            FacetSPtr fR = edge_src->getFacetR();
+            CGAL_assertion(fL != fR);
+
+            // if there is any facet with degree 3, put it in fL (both could be with degree 3,
+            // but then the swap does not change anything)
+            //
+            // It's "== 2" because we have already removed the vertex from its incident facets
+            CGAL_assertion(!fL->hasVertex(vertex));
+            CGAL_assertion(!fR->hasVertex(vertex));
+            if (fR->vertices().size() == 2) {
+                std::swap(fL, fR);
+            }
+            std::cout << "Incident facets:\n" << fL->getID() << "\n" << fR->getID() << std::endl;
+
+            if (fL->vertices().size() == 2) {
+                if (fR->vertices().size() == 2) {
+                    DEBUG_PRINT("Vertex is the apex of two facets of degree 3");
+                    // both facets have degree 3, so remove everything (both facets, both edges,
+                    // and one of the other edges + setting up incident facets properly)
+                    VertexSPtr other_vertex = edge_src->other(vertex);
+                    EdgeSPtr third_edge_1 = edge_src->next(other_vertex);
+                    EdgeSPtr third_edge_2 = edge_src->prev(other_vertex);
+                    CGAL_assertion(third_edge_1 != third_edge_2);
+                    mergeFacets(third_edge_1, polyhedron);
+                    mergeFacets(third_edge_2, polyhedron);
+
+                    edge_dst->getFacetL()->removeEdge(edge_dst);
+                    edge_dst->getFacetR()->removeEdge(edge_dst);
+                    polyhedron->removeEdge(edge_dst);
+
+                    if (edge_src->getVertexDst() == vertex) {
+                        edge_src->replaceVertexDst(vertex_dst);
+                    } else if (edge_src->getVertexSrc() == vertex) {
+                        edge_src->replaceVertexSrc(vertex_dst);
+                    }
+                } else {
+                    DEBUG_PRINT("Vertex is the apex of one facet of degree 3");
+                    // one facet has degree 3, so remove the vertex, the two incident edges, and the facet.
+                    EdgeSPtr third_edge;
+                    for (EdgeSPtr edge : fR->edges()) {
+                        if (edge != edge_src && edge != edge_dst) {
+                            third_edge = edge;
+                            break;
+                        }
+                    }
+                    CGAL_assertion(third_edge != nullptr);
+
+                    fR->removeVertex(vertex);
+                    fR->removeEdge(edge_src);
+                    fR->removeEdge(edge_dst);
+                    fL->removeEdge(third_edge);
+                    if (third_edge->getFacetL() == fL) {
+                        third_edge->setFacetL(fR);
+                    } else {
+                        third_edge->setFacetR(fR);
+                    }
+                }
+            } else {
+                edge_dst->getFacetL()->removeEdge(edge_dst);
+                edge_dst->getFacetR()->removeEdge(edge_dst);
+                polyhedron->removeEdge(edge_dst);
+
+                if (edge_src->getVertexDst() == vertex) {
+                    edge_src->replaceVertexDst(vertex_dst);
+                } else if (edge_src->getVertexSrc() == vertex) {
+                    edge_src->replaceVertexSrc(vertex_dst);
+                }
+            }
+        }
+
+        polyhedron->removeVertex(vertex);
+        CGAL_postcondition(polyhedron->isConsistent());
+        ++result;
+    }
+    return result;
+}
+
+int AbstractFile::sanitize(PolyhedronSPtr polyhedron) {
+    // - removeVerticesDegLt3 can create facets with fewer than 3 vertices
+    // - removeFacetsDegLt3 removes facets with fewer than 3 vertices
+    // so loop till nothing is done anymore
+    int result = 0;
+    for(;;) {
+        std::size_t vlt3 = removeVerticesDegLt3(polyhedron);
+        std::size_t flt3 = removeFacetsDegLt3(polyhedron);
+        int partial = vlt3 + flt3;
+        if (partial == 0) {
+            break;
+        }
+        result += vlt3 + flt3;
+    }
+    return result;
+}
+
 
 } }

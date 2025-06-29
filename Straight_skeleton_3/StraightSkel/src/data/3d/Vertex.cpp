@@ -611,29 +611,22 @@ bool Vertex::isConvex() const {
 
 std::string Vertex::toString() const {
     std::string result("Vertex(");
-    if (id_ != -1) {
-        result += "id=" + util::StringFactory::fromInteger(id_) + ", ";
-    } else {
-        // result += util::StringFactory::fromPointer(this) + ", ";
-    }
+    result += "id=" + util::StringFactory::fromInteger(id_) + ", ";
+    result += "addr=" + util::StringFactory::fromPointer(this) +", ";
     result += "<" + util::StringFactory::fromDouble(CGAL::to_double(getX())) + " ";
     result += util::StringFactory::fromDouble(CGAL::to_double(getY())) + " ";
     result += util::StringFactory::fromDouble(CGAL::to_double(getZ())) + ">";
-    if (edges_.size() > 0) {
-        result += ", Edges:" + util::StringFactory::fromInteger(edges_.size());
-    }
-    if (facets_.size() > 0) {
-        result += ", Facets:" + util::StringFactory::fromInteger(facets_.size()) + " {";
-        std::list<FacetWPtr>::const_iterator it = facets_.begin();
-        while (it != facets_.end()) {
-            FacetWPtr facet_wptr = *it++;
-            if (!facet_wptr.expired()) {
-                result += " " + std::to_string(FacetSPtr(facet_wptr)->getID());
-                result += " (" + std::to_string(FacetSPtr(facet_wptr)->getBasePlaneID()) + ")";
-            }
+    result += ", Edges:" + util::StringFactory::fromInteger(edges_.size());
+    result += ", Facets:" + util::StringFactory::fromInteger(facets_.size()) + " {";
+    std::list<FacetWPtr>::const_iterator it = facets_.begin();
+    while (it != facets_.end()) {
+        FacetWPtr facet_wptr = *it++;
+        if (!facet_wptr.expired()) {
+            result += " " + std::to_string(FacetSPtr(facet_wptr)->getID());
+            result += " (" + std::to_string(FacetSPtr(facet_wptr)->getBasePlaneID()) + ")";
         }
-        result += " }";
     }
+    result += " }";
     result += ")";
     return result;
 }

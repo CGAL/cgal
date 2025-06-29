@@ -68,9 +68,8 @@ decltype(auto) sqrt_with_warning(const FT& v)
 template <typename FT>
 FT disallowed_sqrt(const FT& v)
 {
-  // @tmp
-  // CGAL_assertion(false);
-  // std::exit(1);
+  CGAL_assertion(false);
+  std::exit(1);
   return CGAL::approximate_sqrt(v);
 }
 

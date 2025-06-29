@@ -115,56 +115,15 @@ PolyhedronSPtr Surface_meshIO::load(const CGAL::Surface_mesh<Point3>& sm,
             h = next(h, sm);
         }
 
-        // std::cout << "Final edges:" << std::endl;
-        // for(edge_descriptor e : facet->edges())
-        //     std::cout << e->toString() << std::endl;
-
         if (num_vertices == 3) {
             Plane3SPtr plane = KernelFactory::createPlane3(
                     poly_vertices[0]->getPoint(),
                     poly_vertices[1]->getPoint(),
                     poly_vertices[2]->getPoint());
             facet->setPlane(plane);
-        } else if (normal_sum && num_vertices > 3) {
-            // vertex normals are used as a hint for facet normal
-            // @fixme no reason for these 3 points not to be collinear?
-            Plane3SPtr plane = KernelFactory::createPlane3(
-                    poly_vertices[0]->getPoint(),
-                    poly_vertices[1]->getPoint(),
-                    poly_vertices[2]->getPoint());
-            Vector3SPtr normal_plane = KernelFactory::createVector3(plane);
-            double angle = 0.0;
-            CGAL::FT arg = 0.0;
-#ifdef USE_CGAL
-            // @fixme tolerating this sqrt for now, but this should find an extremum vertex
-            // in the face plane, and then do an orientation test with prev/next
-            arg = ((*normal_plane)*(*normal_sum)) /
-                    CGAL::sqrt_with_warning(normal_plane->squared_length() * normal_sum->squared_length());
-#else
-            arg = ((*normal_plane)*(*normal_sum)) /
-                    sqrt(normal_plane->squared_length() * normal_sum->squared_length());
-#endif
-            // fixes issues with floating point precision
-            // @fixme rewrite this without trigonometry
-            if (arg <= -1.0) {
-                angle = M_PI;
-            } else if (arg >= 1.0) {
-                angle = 0.0;
-            } else {
-                angle = acos(CGAL::to_double(arg));
-            }
-            if (angle > M_PI/2.0) {
-                plane = KernelFactory::createPlane3(
-                        poly_vertices[2]->getPoint(),
-                        poly_vertices[1]->getPoint(),
-                        poly_vertices[0]->getPoint());
-            }
-            facet->setPlane(plane);
-            facet->makeFirstConvex();
-        }
-        else {
-            facet->initPlane(); // num_vertices > 3 but no normals provided
-            facet->makeFirstConvex();
+        } else {
+            // @todo is there a point handling non triangulated inputs here and everywhere...?
+            return { };
         }
         result->addFacet(facet);
 
@@ -172,8 +131,7 @@ PolyhedronSPtr Surface_meshIO::load(const CGAL::Surface_mesh<Point3>& sm,
         if (weight_pmap) {
             weight = get(*weight_pmap, fi);
         } else {
-            std::cerr << "Error: face was not associated a weight?" << std::endl;
-            return {};
+            std::cerr << "Warning: no weights in Surface_mesh being read?" << std::endl;
         }
 
         CGAL_assertion(weight != 0);

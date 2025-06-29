@@ -226,16 +226,16 @@ Vector3SPtr KernelWrapper::normalize(Vector3SPtr v) {
 
 bool KernelWrapper::isNormalizedPlane(Plane3SPtr plane) {
 #ifdef USE_CGAL
-    const CGAL::FT a = plane->a();
-    const CGAL::FT b = plane->b();
-    const CGAL::FT c = plane->c();
+    const CGAL::FT& a = plane->a();
+    const CGAL::FT& b = plane->b();
+    const CGAL::FT& c = plane->c();
 #else
     const double a = plane->getA();
     const double b = plane->getB();
     const double c = plane->getC();
 #endif
 
-// inaccuracies during normalization since the sqrt is (usually) not exact
+    // inaccuracies during normalization since the sqrt is (usually) not exact
     return (a*a + b*b + c*c - 1) <= 1e-5;
 }
 

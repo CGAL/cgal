@@ -43,9 +43,8 @@
 #include <random>
 #include <vector>
 
-namespace algo { namespace _3d {
-
-// @tmp
+namespace algo {
+namespace _3d {
 namespace utils {
 
 template<typename PolygonMesh, typename Values>
@@ -103,15 +102,99 @@ struct Stop_after_n_events
         return !stop;
     }
 
+    void on_save_offset_event(PolyhedronSPtr polyhedron, CGAL::FT offset) override { }
+
     void after_offset_event(PolyhedronSPtr polyhedron, CGAL::FT offset) override {
         ++event_count_;
     }
 
-    void on_save_offset_event(PolyhedronSPtr polyhedron, CGAL::FT offset) override { }
-
 private:
     int n_;
     int event_count_ = 0;
+};
+
+class Far_enough_event
+    : public std::exception
+{
+  const char* what() const throw () {
+      return "Unauthorized intersections of constraints";
+  }
+};
+
+// The point is that once the edges are long enough, we can merge faces and recompute planes
+// and the small error is safe.
+struct Stop_on_far_enough_event
+    : public Base_mesh_offset_visitor
+{
+    Stop_on_far_enough_event(CGAL::FT min_event_distance) : min_event_distance_(min_event_distance) { }
+
+    bool go_further(int step_id, PolyhedronSPtr polyhedron, CGAL::FT offset) override {
+        return true;
+    }
+
+    void before_offset_event(PolyhedronSPtr polyhedron,
+                             CGAL::FT current_offset,
+                             AbstractEventSPtr event) override {
+
+        // @speed this can be put beneath the delta filter, I'm putting it here for debugging purposes
+        {
+            EdgeSPtr min_length_edge;
+            CGAL::FT sq_min_edge_length = (std::numeric_limits<double>::max)();
+            for (EdgeSPtr edge : polyhedron->edges()) {
+                CGAL::FT sq_l = CGAL::squared_distance(*(edge->getVertexSrc()->getPoint()),
+                                                       *(edge->getVertexDst()->getPoint()));
+                if (sq_l < sq_min_edge_length) {
+                    min_length_edge = edge;
+                    sq_min_edge_length = sq_l;
+                }
+            }
+            std::cout << "min edge length @ " << current_offset << " = " << CGAL::approximate_sqrt(sq_min_edge_length) << std::endl;
+            std::cout << min_length_edge->toString() << std::endl;
+        }
+
+        CGAL::FT event_offset = event->getOffset();
+        std::cout << "event delta = " << CGAL::abs(event_offset - current_offset) << std::endl;
+        if (CGAL::abs(event_offset - current_offset) < min_event_distance_) {
+            return;
+        }
+
+        db::_3d::OBJFile::save("results/interrupted.obj", polyhedron, false /*do not triangulate*/);
+
+        std::cout << "Event @ " << event_offset << " is far enough from " << current_offset << std::endl;
+
+        CGAL::FT shift = current_offset + (event_offset - current_offset) / 2;
+        std::cout << "safety shift by: " << shift << std::endl;
+        PolyhedronTransformation::shiftFacetsInPlace(polyhedron, shift);
+
+        // @debug
+        {
+            EdgeSPtr min_length_edge;
+            CGAL::FT sq_min_edge_length = (std::numeric_limits<double>::max)();
+            for (EdgeSPtr edge : polyhedron->edges()) {
+                CGAL::FT sq_l = CGAL::squared_distance(*(edge->getVertexSrc()->getPoint()),
+                                                       *(edge->getVertexDst()->getPoint()));
+                if (sq_l < sq_min_edge_length) {
+                    min_length_edge = edge;
+                    sq_min_edge_length = sq_l;
+                }
+            }
+            std::cout << "min edge length @ " << current_offset + shift << " = " << CGAL::approximate_sqrt(sq_min_edge_length) << std::endl;
+            std::cout << min_length_edge->toString() << std::endl;
+        }
+
+        db::_3d::OBJFile::save("results/interrupted-shifted.obj", polyhedron, false /*do not triangulate*/);
+
+        polyhedron_ = polyhedron;
+        throw Far_enough_event();
+    }
+
+    void on_save_offset_event(PolyhedronSPtr polyhedron, CGAL::FT offset) override { }
+
+    void after_offset_event(PolyhedronSPtr polyhedron, CGAL::FT offset) override { }
+
+public:
+    const CGAL::FT min_event_distance_;
+    PolyhedronSPtr polyhedron_;
 };
 
 } // namespace utils
@@ -411,7 +494,8 @@ remove_bbox_and_invert(Mesh& sm)
 
 PolyhedronSPtr
 OutwardMeshOffset::
-convert(Mesh& sm)
+convert(Mesh& sm,
+        const bool force_merge)
 {
     namespace PMP = CGAL::Polygon_mesh_processing;
 
@@ -431,9 +515,28 @@ convert(Mesh& sm)
         return db::_3d::Surface_meshIO::load(sm);
     }
 
+#if 1
+    PolyhedronSPtr polyhedron = db::_3d::Surface_meshIO::load(sm);
+    PolyhedronSPtr polyhedron_cpy = polyhedron->clone();
+    db::_3d::AbstractFile::mergeCoplanarFacets(polyhedron_cpy);
+    db::_3d::OBJFile::save("results/convert-merged.obj", polyhedron_cpy, false /*do not triangulate*/);
+
+    db::_3d::AbstractFile::sanitize(polyhedron_cpy);
+    if (force_merge || PolyhedronTransformation::isTiltCompatible(polyhedron_cpy)) {
+        polyhedron = polyhedron_cpy;
+    }
+#else
+    CGAL::Bbox_3 bbox = PMP::bbox(sm);
+    const CGAL::FT diag_length = CGAL::approximate_sqrt(CGAL::square(bbox.xmax() - bbox.xmin()) +
+                                                        CGAL::square(bbox.ymax() - bbox.ymin()) +
+                                                        CGAL::square(bbox.zmax() - bbox.zmin()));
+
     // Use shape detection to analyze the mesh
     std::vector<std::size_t> region_ids(num_faces(sm));
     boost::vector_property_map<Plane3> plane_map; // supporting planes of the regions detected
+
+    const CGAL::FT cos_of_max_angle = 0.98;
+    const CGAL::FT max_distance = 0.0001 * diag_length;
 
     // detect planar regions in the mesh
     // @todo growing should:
@@ -442,24 +545,33 @@ convert(Mesh& sm)
     // - give an error for adjacent coplanar faces that have different weights
     std::size_t nb_regions =
         PMP::region_growing_of_planes_on_faces(sm,
-                                              CGAL::make_random_access_property_map(region_ids),
-                                              CGAL::parameters::cosine_of_maximum_angle(0.98)
+                                               CGAL::make_random_access_property_map(region_ids),
+                                               CGAL::parameters::cosine_of_maximum_angle(cos_of_max_angle)
                                                                 .region_primitive_map(plane_map)
-                                                                .maximum_distance(0.001));
+                                                                .maximum_distance(max_distance));
 
-    utils::save_colored_mesh(sm, region_ids, "results/regions_2.ply");
+    static int region_dump_id = -1;
+    utils::save_colored_mesh(sm, region_ids, "results/regions_" + std::to_string(++region_dump_id) + ".ply");
 
     // detect corner vertices on the boundary of planar regions
-    std::vector<std::size_t> corner_id_map(num_vertices(sm), -1); // corner status of vertices
+    std::vector<std::size_t> corner_ids(num_vertices(sm), -1); // corner status of vertices
     std::vector<bool> ecm(num_edges(sm), false); // mark edges at the boundary of regions
 
-    PMP::detect_corners_of_regions(sm,
-                                   CGAL::make_random_access_property_map(region_ids),
-                                   nb_regions,
-                                   CGAL::make_random_access_property_map(corner_id_map),
-                                   CGAL::parameters::cosine_of_maximum_angle(0.98).
-                                                     maximum_distance(0.001).
-                                                     edge_is_constrained_map(CGAL::make_random_access_property_map(ecm)));
+    std::size_t nb_corners =
+        PMP::detect_corners_of_regions(sm,
+                                      CGAL::make_random_access_property_map(region_ids),
+                                      nb_regions,
+                                      CGAL::make_random_access_property_map(corner_ids),
+                                      CGAL::parameters::cosine_of_maximum_angle(cos_of_max_angle).
+                                                        maximum_distance(max_distance).
+                                                        edge_is_constrained_map(CGAL::make_random_access_property_map(ecm)));
+
+    // @debug
+    {
+        for (face_descriptor f : faces(sm)) {
+            std::cout << "face " << f << " is in region " << region_ids[f] << std::endl;
+        }
+    }
 
     // the almost-coplanar merge is performed after the conversion to the Polyhedron
     // data structure because we want to be able to create faces that have holes,
@@ -467,28 +579,40 @@ convert(Mesh& sm)
     std::map<edge_descriptor, EdgeWPtr> e2e;
     PolyhedronSPtr polyhedron = db::_3d::Surface_meshIO::load(sm, {}, e2e);
 
-    std::cout << "On load, " << polyhedron->facets().size() << " facets" << std::endl;
+    db::_3d::OBJFile::save("results/convert-base_polyhedron.obj", polyhedron, false /*do not triangulate*/);
 
-    // If everything is degree 3 in the region growing, merge the facets
-    bool all_degree_3 = true;
+    // If regions are tilt-compatible, i.e. they have at most 2 high degree vertices, merge the facets
+    bool should_merge = true;
+    std::vector<unsigned int> high_degree_corners_n(nb_regions, 0); // region ID -> number of high degree corners
     vertex_iterator vit = vertices(sm).begin(), vend = vertices(sm).end();
-    std::size_t cid = 0;
-    for (; vit!=vend; ++vit, ++cid) {
+    for (; vit!=vend; ++vit) {
+        if (corner_ids[*vit] == static_cast<std::size_t>(-1)) {
+            continue;
+        }
+
         std::set<std::size_t> incident_regions;
         for (face_descriptor f : CGAL::faces_around_target(halfedge(*vit, sm), sm)) {
-            // could break early but it's useful to know how many high-degree corners were detected
             incident_regions.insert(region_ids[f]);
         }
 
+        // more than 3 incident regions ==> high degree vertex
         if (incident_regions.size() > 3) {
-            DEBUG_PRINT("Region corner with degree " << incident_regions.size() << " at " << sm.point(*vit));
-            all_degree_3 = false;
-            break;
+            DEBUG_PRINT("Corner with high degree " << incident_regions.size() << " at " << sm.point(*vit));
+            for (std::size_t ri : incident_regions) {
+                ++(high_degree_corners_n[ri]);
+            }
         }
     }
 
-    DEBUG_PRINT("all_degree_3 = " << all_degree_3);
-    if (all_degree_3) {
+    // more than 2 ==> we cannot constrain
+    for (unsigned int n : high_degree_corners_n) {
+        if (n > 2) {
+            should_merge = false;
+        }
+    }
+
+    DEBUG_PRINT("should_merge = " << should_merge);
+    if (should_merge || force_merge) {
         // merge the facets incident to an unconstrained edge (i.e., the edge is interior to a region)
         for (edge_descriptor e: edges(sm)) {
             if (ecm[e]) {
@@ -499,28 +623,26 @@ convert(Mesh& sm)
             if (!edge) {
                 continue;
             }
-            DEBUG_PRINT("Merging facets " << edge->getFacetL()->getID() << " and " << edge->getFacetR()->getID());
-            DEBUG_PRINT("SM check: " << sm.point(source(e, sm)) << " " << sm.point(target(e, sm)));
-            DEBUG_PRINT("SS check: " << *(edge->getVertexSrc()->getPoint()) << " " << *(edge->getVertexDst()->getPoint()));
 
+            DEBUG_PRINT("Merging facets " << edge->getFacetL()->getID() << " and " << edge->getFacetR()->getID());
+            CGAL_assertion(sm.point(source(e, sm)) == *(edge->getVertexSrc()->getPoint()));
+            CGAL_assertion(sm.point(target(e, sm)) == *(edge->getVertexDst()->getPoint()));
+
+            // @todo it seems like intermediate states are somewhat unsound during edge merging
             db::_3d::AbstractFile::mergeFacets(edge, polyhedron);
         }
+
+        polyhedron->initializeAllIDs();
     }
 
-    db::_3d::AbstractFile::removeVerticesDegLt3(polyhedron);
+    db::_3d::OBJFile::save("results/convert-before_sanitize.obj", polyhedron, false /*do not triangulate*/);
 
-    PolyhedronTransformation::normalizeFacetPlanes(polyhedron);
-
-    // @fixme this can break the polyhedron or create self-intersections
-    bool success = PolyhedronTransformation::resetPoints(polyhedron);
-    if (!success) {
-        std::cerr << "Error: invalid polyhedron (bad perturbation?)" << std::endl;
-        return {};
-    }
+    DEBUG_PRINT("Sanitizing...");
+    db::_3d::AbstractFile::sanitize(polyhedron);
+#endif
 
     std::cout << "Converted, " << polyhedron->facets().size() << " facets" << std::endl;
-    CGAL_postcondition(polyhedron->isConsistent());
-    CGAL_postcondition(!SelfIntersection::hasSelfIntersectingSurface(polyhedron));
+    db::_3d::OBJFile::save("results/convert-final.obj", polyhedron, false /*do not triangulate*/);
 
     return polyhedron;
 }
@@ -565,89 +687,175 @@ run(const char* mesh_filename,
     CGAL_assertion(CGAL::is_triangle_mesh(sm));
     CGAL_assertion(!PMP::does_self_intersect(sm));
 
-    DEBUG_PRINT("Converting mesh...");
+#if 1
+    // @tmp
+    PolyhedronSPtr p = convert(sm, true /*force merge*/);
+    p->initializeAllIDs();
+    std::cout << "IN: " << p->vertices().size() << " NV " << p->facets().size() << " NF" << std::endl;
+    PolyhedronTransformation::normalizeFacetPlanes(p);
+    PolyhedronTransformation::randTiltPlanesv3(p);
+    std::cout << "OUT: " << p->vertices().size() << " NV " << p->facets().size() << " NF" << std::endl;
 
+    CGAL_assertion(PolyhedronTransformation::doAll2PlanesIntersect(p));
+    CGAL_assertion(PolyhedronTransformation::doAll3PlanesIntersect(p));
+    std::cout << "generic position" << std::endl;
+    CGAL_assertion(!SelfIntersection::hasSelfIntersectingSurface(p));
+    std::cout << "no self intersections" << std::endl;
+
+    // run the skeleton code
+    algo::ControllerSPtr controller = { };
+    SimpleStraightSkelSPtr algoskel3d =
+        SimpleStraightSkel::create(p, controller, save_offsets, save_path);
+    bool success = algoskel3d->run();
+    if (!success) {
+        return false;
+    }
+#elif 0
+    // just to verify that we cannot just simply ignore the enforcement of vertices on plane supports
+    // 2 FAILURES on 639 test cases
+    PolyhedronSPtr p = convert(sm, true /*force merge*/);
+    p->initializeAllIDs();
+    std::cout << "IN: " << p->vertices().size() << " NV " << p->facets().size() << " NF" << std::endl;
+    PolyhedronTransformation::normalizeFacetPlanes(p);
+    PolyhedronTransformation::randTiltPlanes(p);
+    std::cout << "OUT: " << p->vertices().size() << " NV " << p->facets().size() << " NF" << std::endl;
+
+    PolyhedronTransformation::resetPoints(p);
+
+    CGAL_assertion(PolyhedronTransformation::doAll3PlanesIntersect(p));
+    std::cout << "generic position" << std::endl;
+
+    // below checks for vertices on plane, which we obviously won't have here
+    // CGAL_assertion(!SelfIntersection::hasSelfIntersectingSurface(p));
+    // std::cout << "no self intersections" << std::endl;
+
+    // run the skeleton code
+    algo::ControllerSPtr controller = { };
+    SimpleStraightSkelSPtr algoskel3d =
+        SimpleStraightSkel::create(p, controller, save_offsets, save_path);
+    bool success = algoskel3d->run();
+    if (!success) {
+        return false;
+    }
+#else
     // From CGAL::Surface_mesh to the custom polyhedron data structure
+    // @tmp force simplification
     PolyhedronSPtr polyhedron = convert(sm);
+    CGAL_assertion(polyhedron && polyhedron->isConsistent());
 
     // Apply perturbations to ensure generic configuration
     DEBUG_PRINT("Perturbing mesh...");
 
     // Check if we can tilt facets' planes (i.e., nudge plane coefficients) directly.
-    // A sufficient condition is that all vertices have degree 3: in that case, a small tilt
-    // of the plane will still yield a single intersection point.
-    // That's not the case (in general) for degree > 3 vertices as there would no longer be
-    // a single intersection point for the tilted planes.
-    //
-    // The advantage is that we then manipulate smaller meshes since the faces are polygonal.
-    bool all_degree_3 = PolyhedronTransformation::areAllVerticesDegree3(polyhedron);
-
-    if (all_degree_3) {
+    // The advantage is that we then manipulate smaller meshes since faces are polygonal.
+    // @todo convert already knows this...
+    bool use_plane_tilts = PolyhedronTransformation::isTiltCompatible(polyhedron);
+    if (use_plane_tilts) {
         DEBUG_PRINT("Tilting the polyhedron's facets...");
+        PolyhedronTransformation::normalizeFacetPlanes(polyhedron);
         PolyhedronTransformation::randTiltPlanes(polyhedron);
+        PolyhedronTransformation::resetPoints(polyhedron);
     } else {
         DEBUG_PRINT("Moving vertices randomly...");
+        PolyhedronTransformation::normalizeFacetPlanes(polyhedron);
         PolyhedronTransformation::randMovePoints(polyhedron);
     }
 
+    CGAL_assertion(polyhedron && polyhedron->isConsistent());
     db::_3d::OBJFile::save("results/first_input.obj", polyhedron, false /*do not triangulate*/);
+
+    CGAL_expensive_assertion(PolyhedronTransformation::doAll3PlanesIntersect(polyhedron));
+    CGAL_expensive_assertion(!SelfIntersection::hasSelfIntersectingSurface(polyhedron));
+    // @todo In safe mode, this should be:
+    // if (bad) -> reduce amplitude of perturbation and try again"
+
+    DEBUG_PRINT("Constructing offset...");
 
     algo::ControllerSPtr controller = { };
 
-    DEBUG_PRINT("Constructing offset (all_degree_3 = " << all_degree_3 << ")...");
-
-    if (all_degree_3) {
-
+    if (use_plane_tilts) {
         // run the skeleton code
         SimpleStraightSkelSPtr algoskel3d =
             SimpleStraightSkel::create(polyhedron, controller, save_offsets, save_path);
-        algoskel3d->run();
+        bool success = algoskel3d->run();
+        if (!success) {
+            return false;
+        }
     } else {
         // this one is a little fancier: we split vertices, move forward a bit in time,
         // then try to remesh it to go back to a simple surface
 
-        // @todo give that function a nicer name, here we are just interested in the split
-        // @todo use the splitter from the config file
-        SimpleStraightSkel::init(polyhedron, algo::_3d::ConvexVertexSplitter::create());
+        // Run the main offset loop with a visitor that breaks once the minimal edge length is above
+        // a certain bound (or we have reached the desired value).
 
-        // We move forward in time by epsilon
-        // @fixme, technically we should guarantee that we are below the first event
-        //         - we could scan and do a const event with lower time
-        //         - when scanning, can do a linear pass
-        //         - the shift must also be below the earliest save offset value
-        //
-        // @fixme shift the save offsets by the shift value, or initialize the shiftting algorithm at "shift"
-        CGAL::FT shift = -1e-10;
-        PolyhedronTransformation::shiftFacetsInPlace(polyhedron, shift);
-        db::_3d::OBJFile::save("results/intermediate-polyhedron.obj", polyhedron, false /*do not triangulate*/);
+        DEBUG_PRINT("Running first pass");
 
+        SimpleStraightSkelSPtr algoskel3d_f =
+            SimpleStraightSkel::create(polyhedron, controller, save_offsets, save_path);
+
+        // @todo this doesn't guarantee that all edges are big enough
         Mesh tmp_sm;
-        bool success = db::_3d::Surface_meshIO::save(polyhedron, tmp_sm,
-                                                     true /*triangulate*/,
-                                                     false/*do not convert to double*/);
+        utils::Stop_on_far_enough_event visitor(1e-1);
+        algoskel3d_f->setVisitor(&visitor);
 
-        CGAL::IO::write_polygon_mesh("results/intermediate-surface_mesh.off", tmp_sm, CGAL::parameters::stream_precision(17));
+        // @todo handle the (unlikely) case where run() handled the whole offsetting process
+        try {
+            bool success = algoskel3d_f->run();
+            if (!success) {
+                return false;
+            }
+        } catch(utils::Far_enough_event) {
+            std::cout << "caught the throw" << std::endl;
+            bool success = db::_3d::Surface_meshIO::save(visitor.polyhedron_, tmp_sm,
+                                                        true /*triangulate*/, false /*no doubles*/);
+            CGAL_assertion(success);
+        }
 
-        CGAL_assertion(success);
-        CGAL_assertion(!CGAL::is_empty(tmp_sm));
-        CGAL_assertion(CGAL::is_closed(tmp_sm));
-        CGAL_assertion(CGAL::is_triangle_mesh(tmp_sm));
-        CGAL_assertion(!PMP::has_degenerate_faces(tmp_sm));
-        CGAL_assertion(!PMP::does_self_intersect(tmp_sm));
+          CGAL::IO::write_polygon_mesh("results/second_input-surface_mesh.off", tmp_sm, CGAL::parameters::stream_precision(17));
 
-        // convert() performs a coplanar retriangulation of the mesh
-        //
+          CGAL_assertion(tmp_sm.is_valid());
+          CGAL_assertion(is_valid_face_graph(tmp_sm));
+          CGAL_assertion(!CGAL::is_empty(tmp_sm));
+          CGAL_assertion(CGAL::is_closed(tmp_sm));
+          CGAL_assertion(CGAL::is_triangle_mesh(tmp_sm));
+          CGAL_assertion(!PMP::has_degenerate_faces(tmp_sm));
+          CGAL_assertion(!PMP::does_self_intersect(tmp_sm));
+
         // @todo instead of region growing, could we re-use the first coplanar partition and
         // edge merge? The split cannot separate two regions?
-        polyhedron = convert(tmp_sm);
-        db::_3d::OBJFile::save("results/second_input.obj", polyhedron, false /*do not triangulate*/);
+        polyhedron = convert(tmp_sm); // performs a coplanar retriangulation of the mesh
 
-        CGAL_assertion(PolyhedronTransformation::areAllVerticesDegree3(polyhedron));
+        CGAL_assertion(polyhedron && polyhedron->isConsistent());
+        db::_3d::OBJFile::save("results/second_input-converted.obj", polyhedron, false /*do not triangulate*/);
+
+        // Perturbing here is just for safety in the unlikely event that fusion of triangular facets
+        // recreated a degenerate configuration
+        use_plane_tilts = PolyhedronTransformation::isTiltCompatible(polyhedron);
+        if (use_plane_tilts) {
+            DEBUG_PRINT("Tilting the polyhedron's facets (2nd pass)...");
+            PolyhedronTransformation::normalizeFacetPlanes(polyhedron);
+            PolyhedronTransformation::randTiltPlanes(polyhedron);
+            PolyhedronTransformation::resetPoints(polyhedron);
+        } else {
+            // We really should not be there
+            DEBUG_PRINT("Warning: moving vertices randomly (again?!)...");
+            PolyhedronTransformation::normalizeFacetPlanes(polyhedron);
+            PolyhedronTransformation::randMovePoints(polyhedron);
+        }
+
+        CGAL_assertion(polyhedron && polyhedron->isConsistent());
+        db::_3d::OBJFile::save("results/second_input.obj", polyhedron, false /*do not triangulate*/);
+        CGAL_expensive_assertion(PolyhedronTransformation::doAll3PlanesIntersect(polyhedron));
+        CGAL_expensive_assertion(!SelfIntersection::hasSelfIntersectingSurface(polyhedron));
 
         SimpleStraightSkelSPtr algoskel3d =
             SimpleStraightSkel::create(polyhedron, controller, save_offsets, save_path);
-        algoskel3d->run();
+        bool success = algoskel3d->run();
+        if (!success) {
+            return false;
+        }
     }
+#endif
 
     for (const CGAL::FT& save_value : save_offsets) {
         DEBUG_PRINT("Post process @ " << save_value)

@@ -217,12 +217,11 @@ bool OBJFile::save(const std::string& filename,
                    const bool do_triangulate,
                    const bool convert_to_double)
 {
-   // @fixme make the use of Ids optional so that it doesn't mess with downstream stuff
-   bool result = true;
-
-    DEBUG_PRINT(" -- Save OBJ " << filename << " --");
-    DEBUG_PRINT("    do_triangulate: " << std::boolalpha << do_triangulate << "\n"
-             << "    convert_to_double: " << convert_to_double);
+    bool result = true;
+    DEBUG_PRINT("-- Save OBJ to " << filename << " --");
+    DEBUG_PRINT("   do_triangulate: " << std::boolalpha << do_triangulate << "\n"
+                 << "   convert_to_double: " << convert_to_double);
+    DEBUG_PRINT(polyhedron->vertices().size() << " NV, " << polyhedron->facets().size() << " NF");
 
     // std::cout << polyhedron->toString() << std::endl;
 
@@ -236,193 +235,189 @@ bool OBJFile::save(const std::string& filename,
     using PCDT_VH = PCDT::Vertex_handle;
     using PCDT_FH = PCDT::Face_handle;
 
-    std::ofstream ofs(filename.c_str());
-    ofs.precision(17);
-    if (ofs.is_open()) {
-        // Find the maximum vertex ID
-        int max_vertex_id = -1;
-        for (const auto& vertex : polyhedron->vertices()) {
-            max_vertex_id = std::max(max_vertex_id, vertex->getID());
+    std::stringstream oss;
+    oss.precision(17);
+
+    // Map for unique vertices and their indices
+    std::map<VertexSPtr, int> vertex_to_index;
+    int next_index = 1; // OBJ indices start at 1
+
+    // Fill vertex_to_index by looping over polyhedron->vertices()
+    for (const auto& vertex : polyhedron->vertices()) {
+        vertex_to_index[vertex] = next_index++;
+    }
+
+    // Write vertices
+    for (const auto& vertex : polyhedron->vertices()) {
+        Point3SPtr pt = vertex->getPoint();
+        if (convert_to_double) {
+            oss << "v " << CGAL::to_double(pt->x()) << " "
+                        << CGAL::to_double(pt->y()) << " "
+                        << CGAL::to_double(pt->z()) << "\n";
+        } else {
+            oss << "v " << pt->x().exact() << " "
+                        << pt->y().exact() << " "
+                        << pt->z().exact() << "\n";
         }
+    }
 
-        // Create a vector of size max_vertex_id + 1
-        std::vector<VertexSPtr> vertex_map(max_vertex_id + 1, nullptr);
-        for (const auto& vertex : polyhedron->vertices()) {
-            vertex_map[vertex->getID()] = vertex;
-        }
+    // Write facets
+    std::list<FacetSPtr>::iterator it_f = polyhedron->facets().begin();
+    while (it_f != polyhedron->facets().end()) {
+        FacetSPtr facet = *it_f++;
+        CGAL_assertion(facet->getID() != -1);
+        // std::cout << "handle facet " << facet->getID() << std::endl;
 
-        // Write vertices
-        for (int id = 0; id <= max_vertex_id; ++id) {
-            if (vertex_map[id]) {
-                VertexSPtr vertex = vertex_map[id];
-                if (convert_to_double) {
-                    ofs << "v " << CGAL::to_double(vertex->getX()) << " "
-                                << CGAL::to_double(vertex->getY()) << " "
-                                << CGAL::to_double(vertex->getZ()) << "\n";
-                } else {
-                    ofs << "v " << vertex->getX().exact() << " "
-                                << vertex->getY().exact() << " "
-                                << vertex->getZ().exact() << "\n";
-                }
-            } else {
-                ofs << "v 0 0 0\n";
-            }
-        }
+        bool do_triangulate_face = do_triangulate;
+        if (facet->edges().size() < 3)
+            do_triangulate_face = false;
 
-        // Write facets
-        std::list<FacetSPtr>::iterator it_f = polyhedron->facets().begin();
-        while (it_f != polyhedron->facets().end()) {
-            FacetSPtr facet = *it_f++;
-            CGAL_assertion(facet->getID() != -1);
-            // std::cout << "handle facet " << facet->getID() << std::endl;
+        if (do_triangulate_face)
+        {
+            Vector3SPtr n = KernelFactory::createVector3(facet->plane());
 
-            bool do_triangulate_face = do_triangulate;
-            if (facet->edges().size() < 3)
-                do_triangulate_face = false;
+            // @todo might have to do something fancier than staring from a single vertex
+            // for degenerate faces with zigzagging edges...
+            CGAL_assertion(*n != CGAL::NULL_VECTOR);
 
-            if (do_triangulate_face)
-            {
-                Vector3SPtr n = KernelFactory::createVector3(facet->plane());
+            PK traits(*n);
+            PCDT pcdt(traits);
 
-                // @todo might have to do something fancier than staring from a single vertex
-                // for degenerate faces with zigzagging edges...
-                CGAL_assertion(*n != CGAL::NULL_VECTOR);
+            std::map<VertexSPtr, PCDT_VH> face_vhs;
 
-                PK traits(*n);
-                PCDT pcdt(traits);
-
-                std::map<VertexSPtr, PCDT_VH> face_vhs;
-
-                std::list<VertexSPtr>::iterator it_v = facet->vertices().begin();
-                while (it_v != facet->vertices().end()) {
-                    VertexSPtr vertex = *it_v++;
-                    auto res = face_vhs.emplace(vertex, PCDT_VH());
-                    if(res.second) // first time seeing this point
-                    {
-                        PCDT_VH vh = pcdt.insert(*(vertex->getPoint()));
-                        vh->info() = vertex;
-                        res.first->second = vh;
-                    }
-                }
-
-                auto ne = 0;
-                std::list<EdgeSPtr>::iterator it_e = facet->edges().begin();
-                while (it_e != facet->edges().end()) {
-                    EdgeSPtr edge = *it_e++;
-                    VertexSPtr v0 = edge->src(facet);
-                    VertexSPtr v1 = edge->dst(facet);
-
-                    if(*(v0->getPoint()) == *(v1->getPoint()))
-                    {
-                        // std::cerr << "W: encountered degenerate edge @ " << *(v0->getPoint()) << std::endl;
-
-                        CGAL_assertion(v0->degree() != 1); // @todo handle that...
-                        VertexSPtr vm1 = edge->prev(facet)->src(facet);
-
-                        // manually create a degenerate face so that the resulting mesh is conforming
-                        ofs << "f " << vm1->getID() + 1 << " "
-                                    << v0->getID() + 1 << " "
-                                    << v1->getID() + 1 << "\n";
-                    }
-                    else
-                    {
-                        PCDT_VH vh0 = face_vhs.at(v0);
-                        PCDT_VH vh1 = face_vhs.at(v1);
-
-                        try
-                        {
-                            pcdt.insert_constraint(vh0, vh1);
-                        }
-                        catch(const typename PCDT::Intersection_of_constraints_exception&)
-                        {
-                            DEBUG_PRINT("Error: Intersection of constraints");
-                            DEBUG_PRINT("While inserting " << *(v0->getPoint()) << " || " << *(v1->getPoint()));
-                            DEBUG_VAR(facet->toString());
-                            CGAL_warning_msg(false, "Intersections in CDT2 not allowed");
-                            do_triangulate_face = false;
-                            break;
-                        }
-                        ++ne;
-                    }
-                }
-
-                if(ne < 3) // degenerate face
+            std::list<VertexSPtr>::iterator it_v = facet->vertices().begin();
+            while (it_v != facet->vertices().end()) {
+                VertexSPtr vertex = *it_v++;
+                auto res = face_vhs.emplace(vertex, PCDT_VH());
+                if(res.second) // first time seeing this point
                 {
-                    std::cerr << "Warning: skipping degenerate face" << std::endl;
-                    continue;
-                }
-
-                if(do_triangulate_face)
-                {
-                    std::unordered_map<PCDT_FH, bool> in_domain_map;
-                    boost::associative_property_map<std::unordered_map<PCDT_FH, bool>> in_domain(in_domain_map);
-
-                    CGAL::mark_domain_in_triangulation(pcdt, in_domain);
-
-                    for(auto fh : pcdt.finite_face_handles())
-                    {
-                        if(!get(in_domain, fh))
-                          continue;
-
-                        ofs << "f " << (fh->vertex(0)->info()->getID() + 1) << " "
-                                    << (fh->vertex(1)->info()->getID() + 1) << " "
-                                    << (fh->vertex(2)->info()->getID() + 1) << "\n";
-                    }
+                    PCDT_VH vh = pcdt.insert(*(vertex->getPoint()));
+                    vh->info() = vertex;
+                    res.first->second = vh;
                 }
             }
 
-            if(!do_triangulate_face)
-            {
-                std::set<EdgeSPtr> visited_edges;
+            auto ne = 0;
+            std::list<EdgeSPtr>::iterator it_e = facet->edges().begin();
+            while (it_e != facet->edges().end()) {
+                EdgeSPtr edge = *it_e++;
+                VertexSPtr v0 = edge->src(facet);
+                VertexSPtr v1 = edge->dst(facet);
 
-                std::list<EdgeSPtr>::iterator it_e = facet->edges().begin();
-                while (it_e != facet->edges().end()) {
-                    EdgeSPtr edge = *it_e++;
-                    if (visited_edges.find(edge) != visited_edges.end()) {
-                        continue; // already visited
+                if(*(v0->getPoint()) == *(v1->getPoint()))
+                {
+                    // std::cerr << "W: encountered degenerate edge @ " << *(v0->getPoint()) << std::endl;
+
+                    CGAL_assertion(v0->degree() != 1); // @todo handle that...
+                    VertexSPtr vm1 = edge->prev(facet)->src(facet);
+
+                    // manually create a degenerate face so that the resulting mesh is conforming
+                    oss << "f " << vertex_to_index[vm1] << " "
+                                << vertex_to_index[v0] << " "
+                                << vertex_to_index[v1] << "\n";
+                }
+                else
+                {
+                    PCDT_VH vh0 = face_vhs.at(v0);
+                    PCDT_VH vh1 = face_vhs.at(v1);
+
+                    try
+                    {
+                        pcdt.insert_constraint(vh0, vh1);
                     }
+                    catch(const typename PCDT::Intersection_of_constraints_exception&)
+                    {
+                        DEBUG_PRINT("Error: Intersection of constraints");
+                        DEBUG_PRINT("While inserting " << *(v0->getPoint()) << " || " << *(v1->getPoint()));
+                        DEBUG_VAR(facet->toString());
+                        CGAL_warning_msg(false, "Intersections in CDT2 not allowed");
+                        do_triangulate_face = false;
+                        break;
+                    }
+                    ++ne;
+                }
+            }
 
-                    std::vector<VertexSPtr> boundary_vertices;
-                    EdgeSPtr start_edge = edge;
-                    // std::cout << "start a walk @ " << start_edge->src(facet)->getID() << " " << start_edge->dst(facet)->getID() << std::endl;
-                    bool is_open = false;
+            if(ne < 3) // degenerate face
+            {
+                std::cerr << "Warning: skipping degenerate face" << std::endl;
+                continue;
+            }
 
-                    // Walk forward to collect boundary vertices
-                    do {
+            if(do_triangulate_face)
+            {
+                std::unordered_map<PCDT_FH, bool> in_domain_map;
+                boost::associative_property_map<std::unordered_map<PCDT_FH, bool>> in_domain(in_domain_map);
+
+                CGAL::mark_domain_in_triangulation(pcdt, in_domain);
+
+                for(auto fh : pcdt.finite_face_handles())
+                {
+                    if(!get(in_domain, fh))
+                      continue;
+                    oss << "f " << vertex_to_index[fh->vertex(0)->info()] << " "
+                                << vertex_to_index[fh->vertex(1)->info()] << " "
+                                << vertex_to_index[fh->vertex(2)->info()] << "\n";
+                }
+            }
+        }
+
+        if(!do_triangulate_face)
+        {
+            std::set<EdgeSPtr> visited_edges;
+
+            std::list<EdgeSPtr>::iterator it_e = facet->edges().begin();
+            while (it_e != facet->edges().end()) {
+                EdgeSPtr edge = *it_e++;
+                if (visited_edges.find(edge) != visited_edges.end()) {
+                    continue; // already visited
+                }
+
+                std::vector<VertexSPtr> boundary_vertices;
+                EdgeSPtr start_edge = edge;
+                // std::cout << "start a walk @ " << start_edge->src(facet)->getID() << " " << start_edge->dst(facet)->getID() << std::endl;
+                bool is_open = false;
+
+                // Walk forward to collect boundary vertices
+                do {
+                    visited_edges.insert(edge);
+                    boundary_vertices.push_back(edge->src(facet));
+                    if (edge->dst(facet)->degree() == 1) {
+                        is_open = true;
+                        break;
+                    }
+                    edge = edge->next(facet);
+                } while (edge != start_edge);
+
+                // If open, also walk backward to collect remaining boundary vertices
+                if (is_open) {
+                    boundary_vertices.push_back(edge->dst(facet));
+                    edge = start_edge;
+                    while (edge->src(facet)->degree() != 1) {
+                        edge = edge->prev(facet);
                         visited_edges.insert(edge);
-                        boundary_vertices.push_back(edge->src(facet));
-                        if (edge->dst(facet)->degree() == 1) {
-                            is_open = true;
-                            break;
-                        }
-                        edge = edge->next(facet);
-                    } while (edge != start_edge);
-
-                    // If open, also walk backward to collect remaining boundary vertices
-                    if (is_open) {
-                        boundary_vertices.push_back(edge->dst(facet));
-                        edge = start_edge;
-                        while (edge->src(facet)->degree() != 1) {
-                            edge = edge->prev(facet);
-                            visited_edges.insert(edge);
-                            boundary_vertices.insert(boundary_vertices.begin(), edge->src(facet));
-                        }
+                        boundary_vertices.insert(boundary_vertices.begin(), edge->src(facet));
                     }
-
-                    // Write the boundary as a face
-                    ofs << "f ";
-                    for (const auto& vertex : boundary_vertices) {
-                        ofs << (vertex->getID() + 1) << " ";
-                    }
-
-                    ofs << "\n";
                 }
+
+                // Write the boundary as a face
+                oss << "f ";
+                for (const auto& vertex : boundary_vertices) {
+                    oss << vertex_to_index[vertex] << " ";
+                }
+
+                oss << "\n";
             }
         }
+    }
 
-        // result = (polyhedron->vertices().size() == vertex_id &&
-        //           polyhedron->facets().size() == facet_id);
-        ofs.close();
+    // result = (polyhedron->vertices().size() == vertex_id &&
+    //           polyhedron->facets().size() == facet_id);
+
+    std::ofstream ofs(filename.c_str());
+    if (ofs.is_open()) {
+        ofs.precision(17);
+        ofs << oss.str();
     } else {
         DEBUG_PRINT("Error: failed to open file");
         CGAL_assertion(false);

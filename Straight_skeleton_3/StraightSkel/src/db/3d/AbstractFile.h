@@ -28,10 +28,14 @@ public:
     virtual ~AbstractFile();
 
     static bool hasCoplanarFacets(EdgeSPtr edge, double epsilon);
+    static void mergeFacets(EdgeSPtr edge, FacetSPtr facet_into, FacetSPtr facet_from, PolyhedronSPtr polyhedron);
     static void mergeFacets(EdgeSPtr edge, PolyhedronSPtr polyhedron);
     static int mergeCoplanarFacets(PolyhedronSPtr polyhedron, double epsilon);
     static int mergeCoplanarFacets(PolyhedronSPtr polyhedron);
     static int removeVerticesDegLt3(PolyhedronSPtr polyhedron);
+    static int removeFacetsDegLt3(PolyhedronSPtr polyhedron);
+    static int sanitize(PolyhedronSPtr polyhedron);
+
 protected:
     AbstractFile();
 };
