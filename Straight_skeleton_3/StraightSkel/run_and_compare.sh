@@ -364,6 +364,9 @@ function process_file_single_function {
                  -e "Error: failed to add property map" \
                  "$LOG_FILE"; then
         echo "PREPROCESS FAILURE" >> $RESULT_FILE
+    elif grep -q -e "Error: failed to initialize polyhedron" \
+                 "$LOG_FILE"; then
+        echo "OFFSET FAILURE" >> $RESULT_FILE
     elif grep -q -e "Error: failed to remove outer bounding box" \
                  -e "Error: empty or open output" \
                  -e "Error: failed to read temporary file" \
