@@ -9,6 +9,11 @@
 ### [dD Fréchet Distance](https://doc.cgal.org/6.1/Manual/packages.html#FrechetDistance) (new package)
 - This package provides functions for computing the Fréchet distance of polylines in any dimension under the Euclidean metric.
 
+### [3D Constrained Triangulations](https://doc.cgal.org/6.1/Manual/packages.html#PkgConstrainedTriangulation3) (new package)
+-   This package adds the function `CGAL::make_conforming_constrained_Delaunay_triangulation_3()`
+    to create a conforming constrained Delaunay triangulation in 3D, which can be represented by the new
+    class template `CGAL::Conforming_constrained_Delaunay_triangulation_3`.
+
 ### 2D Triangulations on Hyperbolic Surfaces (new package)
 -   This package enables building and handling triangulations of closed orientable hyperbolic surfaces.
     It offers functions for the generation of the triangulation from a convex fundamental domain,
@@ -18,7 +23,7 @@
 ### 3D Isosurfacing (new package)
 
 -   This package provides algorithms to extract isosurfaces from different inputs. The input is represented
-    as a 3D domain and can be an implicit function or a Cartesian grid. The output is an indexed face
+    as a 3D domain and can be an implicit function or a %Cartesian grid. The output is an indexed face
     set that stores an isosurface in the form of a surface mesh. The provided algorithms include Marching Cubes,
     topologically correct Marching Cubes, and Dual Contouring.
 
@@ -34,6 +39,7 @@
 - New implementation of `CGAL::Polygon_mesh_processing::clip()` with a plane as clipper that is much faster and is now able to handle non-triangulated surface meshes.
 - New implementation of `CGAL::Polygon_mesh_processing::split()` with a plane as clipper that is much faster and is now able to handle non-triangulated surface meshes.
 - Added the function `CGAL::Polygon_mesh_processing::refine_with_plane()`, which enables users to refine a mesh with their intersection with a plane.
+- Added the parameter `apply_iterative_snap_rounding` to the function `CGAL::Polygon_mesh_processing::autorefine_triangle_soup()`. When set to `true`, the coordinates are rounded to fit in double and may perform additional subdivisions to ensure the output is free of self-intersections.
 
 ### [Point Set Processing](https://doc.cgal.org/6.1/Manual/packages.html#PkgPointSetProcessing3)
 - Added `poisson_eliminate()` to downsample a point cloud to a target size while providing Poisson disk property, i.e., a larger minimal distance between points.

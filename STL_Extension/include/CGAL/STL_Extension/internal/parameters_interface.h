@@ -177,7 +177,8 @@ CGAL_add_named_parameter(weight_limiting_t, weight_limiting, weight_limiting)
 CGAL_add_named_parameter(progressive_t, progressive, progressive)
 CGAL_add_named_parameter(tiling_t, tiling, tiling)
 CGAL_add_named_parameter(dimension_t, dimension, dimension)
-CGAL_add_named_parameter(maximum_number_of_voxels_t, maximum_number_of_voxels, maximum_number_of_voxels)
+CGAL_add_named_parameter(apply_iterative_snap_rounding_t, apply_iterative_snap_rounding, apply_iterative_snap_rounding)
+CGAL_add_named_parameter(snap_grid_size_t, snap_grid_size, snap_grid_size)CGAL_add_named_parameter(maximum_number_of_voxels_t, maximum_number_of_voxels, maximum_number_of_voxels)
 CGAL_add_named_parameter(maximum_depth_t, maximum_depth, maximum_depth)
 CGAL_add_named_parameter(volume_error_t, volume_error, volume_error)
 CGAL_add_named_parameter(maximum_number_of_convex_hulls_t, maximum_number_of_convex_hulls, maximum_number_of_convex_hulls)
@@ -407,3 +408,7 @@ CGAL_add_named_parameter(do_not_modify_geometry_t, do_not_modify_geometry, do_no
 //List of named parameters used in Straight_skeleton_2
 CGAL_add_named_parameter_with_compatibility_ref_only(angles_param_t, angles_param, angles)
 CGAL_add_named_parameter(maximum_height_t, maximum_height, maximum_height)
+
+// List of named parameters used in the package 'Constrained_triangulation_3'
+CGAL_add_named_parameter(plc_face_id_t, plc_face_id, plc_face_id)
+CGAL_add_named_parameter(with_plc_face_id_t, with_plc_face_id, with_plc_face_id)

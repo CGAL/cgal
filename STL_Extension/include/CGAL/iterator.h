@@ -589,7 +589,7 @@ public:
       ++c_;
   }
 
-  // for non-const -> const convertion for example
+  // for non-const -> const conversion for example
   template <class Iterator2>
   Filter_iterator(const Filter_iterator<Iterator2, Predicate>& fi,
                   std::enable_if_t<std::is_convertible_v<Iterator2, Iterator>>* = nullptr)

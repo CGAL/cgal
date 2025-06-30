@@ -1301,7 +1301,7 @@ namespace std {
 
     std::size_t operator()(const CGAL::internal::CC_iterator<DSC, Const>& i) const
     {
-      return reinterpret_cast<std::size_t>(&*i) / sizeof(typename DSC::value_type);
+      return hash_value(i);
     }
   };
 #endif // CGAL_CFG_NO_STD_HASH

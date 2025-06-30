@@ -67,7 +67,7 @@ squared_distance(const typename K::Segment_3& seg,
   if(crossing)
     return squared_distance_to_plane(normal, start_min_lp, k);
   else
-    return min(squared_distance_to_line(linedir, start_min_lp, k), squared_distance_to_line(linedir, end_min_lp, k));
+    return (min)(squared_distance_to_line(linedir, start_min_lp, k), squared_distance_to_line(linedir, end_min_lp, k));
 }
 
 template <class K>
