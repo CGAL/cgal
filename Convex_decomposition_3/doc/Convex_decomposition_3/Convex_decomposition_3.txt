@@ -13,8 +13,8 @@ namespace CGAL {
 For many applications on non-convex polyhedra, there are efficient
 solutions that first decompose the polyhedron into convex pieces. As
 an example, the Minkowski sum of two polyhedra can be computed by
-decomposing both polyhedra into convex pieces, compute pair-wise
-Minkowski sums of the convex pieces, and unite the pair-wise sums.
+decomposing both polyhedra into convex pieces, compute pairwise
+Minkowski sums of the convex pieces, and unite the pairwise sums.
 
 While it is desirable to have a decomposition into a minimum number of
 pieces, this problem is known to be NP-hard \cgalCite{c-cpplb-84}. Our
