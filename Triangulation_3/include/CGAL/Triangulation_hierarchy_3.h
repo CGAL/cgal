@@ -780,17 +780,15 @@ Triangulation_hierarchy_3<Tr>::
 move_if_no_collision_and_give_new_cells(
   Vertex_handle v, const Point & p, OutputItCells fit)
 {
-  CGAL_precondition(!is_infinite(v));
+  CGAL_precondition(!this->is_infinite(v));
   if(v->point() == p) return v;
-  Vertex_handle ans;
-  for (int l = 0; l < maxlevel; ++l) {
+  Vertex_handle ans = hierarchy[0]->move_if_no_collision_and_give_new_cells(v, p, fit);
+  if(ans != v) return ans; // ans is an existing vertex at p and v was not changed
+  for (int l = 1; l < maxlevel; ++l) {
     Vertex_handle u = v->up();
-    if(l) hierarchy[l]->move_if_no_collision(v, p);
-    else ans =
-           hierarchy[l]->move_if_no_collision_and_give_new_cells(v, p, fit);
-    if(ans != v) return ans;
     if (u == Vertex_handle())
       break;
+    hierarchy[l]->move_if_no_collision(u, p);
     v = u;
   }
   return ans;
