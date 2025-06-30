@@ -547,7 +547,7 @@ locate_visibility_walk(Point const & query, Locate_type & lt, unsigned & li, uns
 			b = a;
 			a = d;
 			dart = Base::ccw(dart);
-		} else if (hyperbolic_orientation_2(d, a, query) == RIGHT_TURN) {
+		} else if (hyperbolic_orientation_2(a, d, query) == LEFT_TURN) {
 			b = c;
 			c = d;
 			dart = Base::cw(dart);
