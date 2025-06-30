@@ -23,15 +23,14 @@ int main(int argc, char* argv[])
   std::cout << filename << std::endl;
 
   Mesh mesh;
-  if(!PMP::IO::read_polygon_mesh(filename, mesh))
-  {
+  if(!PMP::IO::read_polygon_mesh(filename, mesh)) {
     std::cerr << "Invalid input." << std::endl;
     return 1;
   }
 
   std::vector<Convex_hull> convex_hulls;
 
-  std::size_t n = PMP::approximate_convex_decomposition(mesh, std::back_inserter(convex_hulls), CGAL::parameters::maximum_depth(10).volume_error(0.001).maximum_number_of_convex_hulls(8).find_best_splitter(1));
+  std::size_t n = PMP::approximate_convex_decomposition(mesh, std::back_inserter(convex_hulls), CGAL::parameters::maximum_depth(10).volume_error(0.001).maximum_number_of_convex_hulls(8).split_at_concavity(1));
 
   for (std::size_t i = 0;i<convex_hulls.size();i++) {
     const Convex_hull& ch = convex_hulls[i];

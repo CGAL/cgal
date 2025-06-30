@@ -586,18 +586,15 @@ void rayshooting_fill(std::vector<int8_t>& grid, const Vec3_uint& grid_size, con
 
         for (std::size_t i = 0; i < 6; i++) {
           Ray_intersection intersection = tree.first_intersection(Ray_3(c, dirs[i]));
-          if (intersection)
-          {
+          if (intersection) {
             // A segment intersection is not helpful as it means the triangle normal is orthogonal to the ray
             if (std::get_if<Point_3>(&(intersection->first))) {
               face_descriptor fd = intersection->second;
               Vector_3 n = compute_face_normal(fd, mesh);
-              if (dirs[i] * n > 0) {
+              if (dirs[i] * n > 0)
                 inside++;
-              }
-              else {
+              else
                 outside++;
-              }
             }
           }
         }
@@ -791,8 +788,6 @@ void compute_candidate(Candidate<GeomTraits> &c, const Bbox_3& bb, typename Geom
     voxel_points.insert(Point_3(xmax, ymax, zmax));
   }
 
-  //export_points("surface_points.ply", voxel_points);
-
   convex_hull(voxel_points, c.ch.points, c.ch.indices);
 
   c.ch.volume = volume<GeomTraits>(c.ch.points, c.ch.indices);
@@ -923,7 +918,6 @@ void split(std::vector<Candidate<GeomTraits> > &candidates, Candidate<GeomTraits
         lower.new_surface.push_back(v);
       else
         lower.inside.push_back(v);
-      //new_surface is used for convex hull calculation
     }
   }
 
@@ -1089,14 +1083,14 @@ void choose_splitting_location_by_concavity(unsigned int& axis, unsigned int& lo
 template<typename GeomTraits, typename NamedParameters>
 void choose_splitting_plane(Candidate<GeomTraits>& c, unsigned int &axis, unsigned int &location, std::vector<int8_t>& grid, const Vec3_uint& grid_size, const NamedParameters& np) {
   //Just split the voxel bbox along 'axis' after voxel index 'location'
-  const bool find_best_plane = parameters::choose_parameter(parameters::get_parameter(np, internal_np::find_best_splitter), true);
+  const bool search_concavity = parameters::choose_parameter(parameters::get_parameter(np, internal_np::split_at_concavity), true);
   const std::array<unsigned int, 3> span = {c.bbox.upper[0] - c.bbox.lower[0], c.bbox.upper[1] - c.bbox.lower[1], c.bbox.upper[2] - c.bbox.lower[2]};
 
   // Split largest axis
   axis = (span[0] >= span[1]) ? 0 : 1;
   axis = (span[axis] >= span[2]) ? axis : 2;
 
-  if (span[axis] >= 8 && find_best_plane)
+  if (span[axis] >= 8 && search_concavity)
     choose_splitting_location_by_concavity(axis, location, c.bbox, grid, grid_size);
   else
     location = (c.bbox.upper[axis] + c.bbox.lower[axis]) / 2;
@@ -1131,16 +1125,9 @@ void recurse(std::vector<Candidate<GeomTraits>>& candidates, std::vector<int8_t>
   const FT max_error = parameters::choose_parameter(parameters::get_parameter(np, internal_np::volume_error), 1);
   const std::size_t max_depth = parameters::choose_parameter(parameters::get_parameter(np, internal_np::maximum_depth), 10);
 
-  static std::size_t step = 0;
-
   std::vector<internal::Candidate<GeomTraits>> final_candidates;
 
-  double choose = 0, spli = 0;
-
   while (!candidates.empty()) {
-    //std::cout << step++ << ": " << candidates.size() << "\t";
-    CGAL::Timer timer;
-    timer.start();
     std::vector<Candidate<GeomTraits>> former_candidates = std::move(candidates);
     for (Candidate<GeomTraits>& c : former_candidates) {
 
@@ -1152,13 +1139,9 @@ void recurse(std::vector<Candidate<GeomTraits>>& candidates, std::vector<int8_t>
         continue;
       }
       unsigned int axis = 0, location = 0;
-      double b = timer.time();
       choose_splitting_plane(c, axis, location, grid, grid_size, np);
-      double a = timer.time();
-      choose += a - b;
       //std::cout << c.index << " " << c.ch.volume_error << " split " << axis << "a " << location << " (" << c.bbox.lower[0] << "," << c.bbox.lower[1] << "," << c.bbox.lower[2] << "," << c.bbox.upper[0] << "," << c.bbox.upper[1] << "," << c.bbox.upper[2] << ")" << std::endl;
       split(candidates, c, axis, location, grid, grid_size, bbox, voxel_size, np);
-      spli += timer.time() - a;
 
 //       if (!candidates.empty()) {
 //         auto& b = candidates[candidates.size() - 1];
@@ -1179,12 +1162,7 @@ void recurse(std::vector<Candidate<GeomTraits>>& candidates, std::vector<int8_t>
     for (Candidate<GeomTraits>& c : candidates)
       compute_candidate(c, bbox, voxel_size);
 #endif
-
-    //std::cout << timer.time() << std::endl;
   }
-
-  std::cout << "find_plane: " << choose << std::endl;
-  std::cout << "split: " << spli << std::endl;
 
   std::swap(candidates, final_candidates);
 }
@@ -1386,9 +1364,82 @@ void merge(std::vector<Convex_hull<GeomTraits>>& candidates, std::vector<int8_t>
 }
 
 }
-
+/**
+ * \ingroup PMP_convex_decomposition_grp
+ *
+ * \brief approximates the input mesh by a number of convex hulls. The input mesh is voxelized and the convex hull of the mesh is hierarchically split until a volume threshold is met.
+ *        Afterwards, a greedy pair-wise merging combines smaller convex hulls until the given number of convex hulls is met.
+ *
+ * \tparam FaceGraph a model of `HalfedgeListGraph`, `FaceListGraph`, and `MutableFaceGraph`
+ *
+ * \tparam OutputIterator must be an output iterator accepting variables of type `std::pair<std::vector<geom_traits::Point_3>, std::vector<std::array<unsigned int, 3> > >`.
+ *
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+ *
+ * \param mesh the input mesh to approximate by convex hulls
+ * \param hulls_out output iterator into which convex hulls are recorded
+ * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+ *
+ * \cgalNamedParamsBegin
+ *
+ *   \cgalParamNBegin{maximum_number_of_voxels}
+ *     \cgalParamDescription{Gives an upper bound of the number of voxels. The largest bounding box side will have a length of the cubic root of `maximum_number_of_voxels`.}
+ *     \cgalParamType{unsigned int}
+ *     \cgalParamDefault{1000000}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{maximum_depth}
+ *     \cgalParamDescription{maximum depth of hierarchical splits}
+ *     \cgalParamType{unsigned int}
+ *     \cgalParamDefault{10}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{maximum_number_of_convex_hulls}
+ *     \cgalParamDescription{maximum number of convex hulls produced by the method}
+ *     \cgalParamType{unsigned int}
+ *     \cgalParamDefault{16}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{volume_error}
+ *     \cgalParamDescription{maximum difference in percent of volume of the local convex hull with the sum of voxel volumes. If surpassed, the convex hull will be split.}
+ *     \cgalParamType{double}
+ *     \cgalParamDefault{0.01}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{split_at_concavity}
+ *     \cgalParamDescription{split the local box of the convex hull in the mid of the longest axis (faster) or search the concavity along the largest axis for splitting.}
+ *     \cgalParamType{Boolean}
+ *     \cgalParamDefault{true}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{vertex_point_map}
+ *     \cgalParamDescription{a property map associating points to the vertices of `tmesh`}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+ *                    as key type and `%Point_3` as value type}
+ *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tmesh)`}
+ *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+ *                     must be available in `TriangleMesh`.}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{concurrency_tag}
+ *     \cgalParamDescription{a tag indicating if the task should be done using one or several threads.}
+ *     \cgalParamType{Either `CGAL::Sequential_tag`, or `CGAL::Parallel_tag`, or `CGAL::Parallel_if_available_tag`}
+ *     \cgalParamDefault{`CGAL::Parallel_if_available_tag`}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{geom_traits}
+ *     \cgalParamDescription{an instance of a geometric traits class}
+ *     \cgalParamType{a class model of `Kernel`}
+ *     \cgalParamDefault{a \cgal Kernel deduced from the point type of `FaceGraph`, using `CGAL::Kernel_traits`}
+ *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+ *   \cgalParamNEnd
+ *
+ * \cgalNamedParamsEnd
+ *
+ * \sa `CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh()`
+ */
 template<typename FaceGraph, typename OutputIterator, typename NamedParameters = parameters::Default_named_parameters>
-std::size_t approximate_convex_decomposition(const FaceGraph& mesh, OutputIterator out, const NamedParameters& np = parameters::default_values()) {
+std::size_t approximate_convex_decomposition(const FaceGraph& mesh, OutputIterator out_hulls, const NamedParameters& np = parameters::default_values()) {
   CGAL::Memory_sizer memory;
   std::size_t virt_mem = memory.virtual_size();
   std::size_t res_mem = memory.resident_size();
@@ -1400,7 +1451,7 @@ std::size_t approximate_convex_decomposition(const FaceGraph& mesh, OutputIterat
   Vertex_point_map vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point), get_const_property_map(CGAL::vertex_point, mesh));
 
   using FT = typename Geom_traits::FT;
-  const std::size_t num_voxels = parameters::choose_parameter(parameters::get_parameter(np, internal_np::maximum_voxels), 1000000);
+  const std::size_t num_voxels = parameters::choose_parameter(parameters::get_parameter(np, internal_np::maximum_number_of_voxels), 1000000);
   const std::size_t max_depth = parameters::choose_parameter(parameters::get_parameter(np, internal_np::maximum_depth), 10);
 
   Bbox_3 bb = bbox(mesh);
@@ -1444,7 +1495,7 @@ std::size_t approximate_convex_decomposition(const FaceGraph& mesh, OutputIterat
   std::cout << memory.virtual_size() << " virtual " << memory.resident_size() << " resident memory allocated in total" << std::endl;
 
   for (std::size_t i = 0; i < hulls.size(); i++)
-    *out++ = std::make_pair(std::move(hulls[i].points), std::move(hulls[i].indices));
+    *out_hulls++ = std::make_pair(std::move(hulls[i].points), std::move(hulls[i].indices));
 
   return hulls.size();
 }
