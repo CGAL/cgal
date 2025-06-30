@@ -25,6 +25,7 @@
 #include <CGAL/STL_Extension/internal/Has_nested_type_Bare_point.h>
 
 #include <boost/mpl/identity.hpp>
+#include <boost/iterator/function_output_iterator.hpp>
 
 #include <cassert>
 #include <iostream>
@@ -117,20 +118,24 @@ void test_conflicts(T& T3_13, const P *q)
         continue;
       }
       // Get the stuff in conflicts.
-      std::vector<Cell_handle>   C;
-      std::vector<Facet>         F;
-      std::vector<Vertex_handle> V;
+      std::vector<typename Cls::vertex_descriptor> V;
 
       T3_13.vertices_on_conflict_zone_boundary(q[i], c, std::back_inserter(V));
 #ifndef CGAL_NO_DEPRECATED_CODE
       // test deprecated vertices_in_conflict
-      std::vector<Vertex_handle> V2;
+      std::vector<typename Cls::vertex_descriptor> V2;
       T3_13.vertices_in_conflict(q[i], c, std::back_inserter(V2));
       assert(V2.size() == V.size());
 #endif
 
-      T3_13.find_conflicts(q[i], c, std::back_inserter(F),
-                           std::back_inserter(C));
+      std::vector<Cell_handle>   C;
+      std::vector<Facet>         F;
+      auto cell_inserter = boost::make_function_output_iterator(
+        [&](auto cd) { C.push_back(T3_13.tds().cell_handle(cd)); });
+      auto facet_inserter = boost::make_function_output_iterator(
+        [&](auto pair) { F.emplace_back(T3_13.tds().cell_handle(pair.first), pair.second); });
+
+      T3_13.find_conflicts(q[i], c, facet_inserter, cell_inserter);
 
       if (T3_13.dimension() == 3)
           assert(F.size() == 2*V.size() - 4); // Euler relation.

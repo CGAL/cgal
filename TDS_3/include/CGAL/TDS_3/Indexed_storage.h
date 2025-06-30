@@ -858,7 +858,7 @@ namespace CGAL {
       }
 
       // else
-      return std::ptrdiff_t(other.idx_) - std::ptrdiff_t(this->idx_);
+      return std::ptrdiff_t(other.idx_.id()) - std::ptrdiff_t(this->idx_.id());
     }
 
     bool operator==(const Index_iterator& other) const { return this->idx_ == other.idx_; }

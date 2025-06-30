@@ -115,6 +115,8 @@ public:
 
   typedef typename Tr_Base::Cell_handle   Cell_handle;
   typedef typename Tr_Base::Vertex_handle Vertex_handle;
+  typedef typename Tr_Base::cell_descriptor cell_descriptor;
+  typedef typename Tr_Base::vertex_descriptor vertex_descriptor;
 
   typedef typename Tr_Base::Cell   Cell;
   typedef typename Tr_Base::Vertex Vertex;
@@ -446,7 +448,7 @@ private:
       size_t i = 0;
       // Insert "num_points_seq" points sequentially
       // (or more if dim < 3 after that)
-      size_t num_points_seq = (std::min)(num_points, (size_t)100);
+      size_t num_points_seq = (std::min<size_t>)(num_points, 100);
       while (i < num_points_seq || (dimension() < 3 && i < num_points))
       {
         hint = insert(points[indices[i]], hint);
@@ -551,9 +553,9 @@ public:
   {
     CGAL_precondition(dimension() >= 2);
 
-    std::vector<Cell_handle> cells;
+    std::vector<cell_descriptor> cells;
     cells.reserve(32);
-    std::vector<Facet> facets;
+    std::vector<std::pair<cell_descriptor, int>> facets;
     facets.reserve(64);
 
     if(dimension() == 2)
@@ -574,19 +576,17 @@ public:
     }
 
     // Reset the conflict flag on the boundary.
-    for(typename std::vector<Facet>::iterator fit=facets.begin();
-                                              fit != facets.end(); ++fit)
+    for(const auto& f: facets)
     {
-      fit->first->neighbor(fit->second)->tds_data().clear();
-      *bfit++ = *fit;
+      tds().tds_data(tds().neighbor(f.first, f.second)).clear();
+      *bfit++ = f;
     }
 
     // Reset the conflict flag in the conflict cells.
-    for(typename std::vector<Cell_handle>::iterator ccit=cells.begin();
-                                                    ccit != cells.end(); ++ccit)
+    for(auto cd : cells)
     {
-      (*ccit)->tds_data().clear();
-      *cit++ = *ccit;
+      tds().tds_data(cd).clear();
+      *cit++ = cd;
     }
     return make_triple(bfit, cit, ifit);
   }
@@ -625,29 +625,27 @@ public:
     CGAL_precondition(dimension() >= 2);
 
     // Get the facets on the boundary of the hole.
-    std::vector<Facet> facets;
+    std::vector<std::pair<cell_descriptor, int>> facets;
     find_conflicts(p, c, std::back_inserter(facets),
                    Emptyset_iterator(), Emptyset_iterator());
 
     // Then extract uniquely the vertices.
-    std::set<Vertex_handle> vertices;
+    std::set<vertex_descriptor> vertices;
     if(dimension() == 3)
     {
-      for(typename std::vector<Facet>::const_iterator i = facets.begin();
-          i != facets.end(); ++i)
+      for(auto f: facets)
       {
-        vertices.insert(i->first->vertex((i->second+1)&3));
-        vertices.insert(i->first->vertex((i->second+2)&3));
-        vertices.insert(i->first->vertex((i->second+3)&3));
+        vertices.insert(tds().vertex(f.first, (f.second+1)&3));
+        vertices.insert(tds().vertex(f.first, (f.second+2)&3));
+        vertices.insert(tds().vertex(f.first, (f.second+3)&3));
       }
     }
     else
     {
-      for(typename std::vector<Facet>::const_iterator i = facets.begin();
-          i != facets.end(); ++i)
+      for(auto f: facets)
       {
-        vertices.insert(i->first->vertex(cw(i->second)));
-        vertices.insert(i->first->vertex(ccw(i->second)));
+        vertices.insert(tds().vertex(f.first, cw(f.second)));
+        vertices.insert(tds().vertex(f.first, ccw(f.second)));
       }
     }
 
