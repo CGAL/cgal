@@ -6,11 +6,23 @@ project( Variational_medial_axis )
 
 find_package(CGAL REQUIRED QUIET OPTIONAL_COMPONENTS Core )
 find_package(Eigen3 REQUIRED 3.2.0 QUIET) #(requires 3.2.0 or greater)
+find_package(TBB QUIET)
 include(CGAL_Eigen3_support)
+include(CGAL_TBB_support)
 if(TARGET CGAL::Eigen3_support)
 	message(STATUS "Found Eigen")
 	create_single_source_cgal_program( "vmas_example.cpp" )
 	target_link_libraries(vmas_example PRIVATE CGAL::Eigen3_support)
+
+	 if(TARGET CGAL::TBB_support)
+        message(STATUS "Found TBB - enabling parallel support")
+        target_link_libraries(vmas_example PRIVATE CGAL::TBB_support)
+        
+        target_compile_definitions(vmas_example PRIVATE CGAL_LINKED_WITH_TBB)
+    else()
+        message(STATUS "TBB not found - parallel support disabled")
+    endif()
+    
 else()
   message(ERROR "This program requires the Eigen library, and will not be compiled.")
 endif()

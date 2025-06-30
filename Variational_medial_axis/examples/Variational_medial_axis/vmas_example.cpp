@@ -39,7 +39,7 @@ int main(int argc, char** argv)
   CGAL::Variational_medial_axis<Mesh, K> vmas(mesh);
 
   // Compute medial axis with custom parameters
-  vmas.compute(CGAL::parameters::number_of_iterations(1000).number_of_spheres(300).lambda(0.2));
+  vmas.compute(CGAL::parameters::number_of_iterations(1000).number_of_spheres(300).lambda(0.2).concurrency_tag(CGAL::Parallel_tag{}));
  
   // Export skeleton
   std::cout << "Exporting skeleton..." << std::endl;
