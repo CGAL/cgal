@@ -53,6 +53,17 @@ int main(int argc, char *argv[])
 	Anchor & dt_anchor = dt.anchor();
 	Point v0 = dt_anchor.vertices[0];
 
+	// Point a = Point(0.1, 0.2);
+	// Point b = Point(0.2, 0.2);
+	// Point c = Point(0.8, 0.3);
+	// std::cout << dt.hyperbolic_orientation_2(a, b, c) << std::endl;
+	// std::cout << dt.hyperbolic_orientation_2(b, a, c) << std::endl;
+
+	// ParentTraits gt;
+	// CGAL::internal::Side_of_oriented_hyperbolic_segment_2 orientation_test = gt.side_of_oriented_hyperbolic_segment_2_object();
+	// std::cout << orientation_test(a, b, c) << std::endl;
+	// std::cout << orientation_test(b, a, c) << std::endl;
+
 	// 3. COMPUTE EPSILON-NET and display useful info
 	double eps = 0.1;
 	if (argc > 1) {
@@ -66,6 +77,8 @@ int main(int argc, char *argv[])
 	timer.stop();
 	std::cout << "Done in " << timer.time() << " seconds." << std::endl;
 	dt.combinatorial_map().display_characteristics(std::cout) << std::endl;
+
+	dt.display_vertices(dt.locate(Point(0.1, 0.2)));
 
 	// 4. SET THE FIRST ANCHOR OF THE DRAWING
 	Anchor anchor = dt.locate(v0);

@@ -577,8 +577,8 @@ locate_straight_walk(Point const & query, Locate_type & lt, unsigned & li, unsig
 	Point l = hint.vertices[2];
 	ld = 0;
 
-	if (hyperbolic_orientation_2(r, p0, query) == RIGHT_TURN) {
-		while (hyperbolic_orientation_2(l, p0, query) == RIGHT_TURN) {
+	if (hyperbolic_orientation_2(p0, query, r) == RIGHT_TURN) {
+		while (hyperbolic_orientation_2(p0, query, l) == RIGHT_TURN) {
 			dart = Base::opposite(Base::cw(dart));
 			Point old_l = l;
 			l = Base::fourth_point_from_cross_ratio(p0, r, l, Base::get_cross_ratio(dart));
@@ -586,7 +586,7 @@ locate_straight_walk(Point const & query, Locate_type & lt, unsigned & li, unsig
 			++ld;
 		}
 	} else {
-		while (hyperbolic_orientation_2(r, p0, query) != RIGHT_TURN) {
+		while (hyperbolic_orientation_2(p0, query, r) != RIGHT_TURN) {
 			Point old_r = r;
 			r = Base::fourth_point_from_cross_ratio(r, l, p0, Base::get_cross_ratio(dart));
 			l = old_r;
@@ -598,10 +598,10 @@ locate_straight_walk(Point const & query, Locate_type & lt, unsigned & li, unsig
 	// straight walk
 	dart = Base::ccw(dart);
 	Point p = p0;
-	while (hyperbolic_orientation_2(query, r, l) == RIGHT_TURN) {
+	while (hyperbolic_orientation_2(r, l, query) == RIGHT_TURN) {
 		Complex cross_ratio = Base::get_cross_ratio(dart);
 		Point s = Base::fourth_point_from_cross_ratio(l, p, r, cross_ratio);
-		if (hyperbolic_orientation_2(s, p0, query) == RIGHT_TURN) {
+		if (hyperbolic_orientation_2(p0, query, s) == RIGHT_TURN) {
 			p = r;
 			r = s;
 			dart = Base::cw(Base::opposite(dart));
