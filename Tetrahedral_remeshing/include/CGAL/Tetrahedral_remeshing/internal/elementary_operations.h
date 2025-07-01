@@ -332,8 +332,8 @@ public:
       });
     group.wait();
     return success.load();
-  }
-};
+    }
+  };
 // #endif // CGAL_LINKED_WITH_TBB
 
 } // namespace internal
