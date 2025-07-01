@@ -35,7 +35,11 @@ template <typename C3t3, typename SizingFunction, typename CellSelector, typenam
       SurfaceVertexSmoothOp;
   typedef VertexSmoothOperation<C3t3, SizingFunction, CellSelector, SmoothingDomain::COMPLEX_EDGES> ComplexEdgeSmoothOp;
 
+#ifdef CGAL_CONCURRENT_TETRAHEDRAL_REMESHING
+  template <typename Operation> using ExecutionPolicy = ElementaryOperationExecutionParallel<Operation>;
+#else
   template <typename Operation> using ExecutionPolicy = ElementaryOperationExecutionSequential<Operation>;
+#endif
 
 public:
 

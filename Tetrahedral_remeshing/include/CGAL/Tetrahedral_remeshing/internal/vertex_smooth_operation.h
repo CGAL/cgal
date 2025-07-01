@@ -34,17 +34,14 @@ enum class SmoothingDomain {
 template<typename C3t3, typename SizingFunction, typename CellSelector, SmoothingDomain Domain>
 class VertexSmoothOperation 
   : public ElementaryOperation<C3t3, 
-                          typename C3t3::Triangulation::Finite_vertex_handles::iterator,
-                          typename C3t3::Triangulation::Cell_handle,
-                          CGAL::Iterator_range<typename C3t3::Triangulation::Finite_vertices_iterator>>
+                          typename C3t3::Triangulation::Vertex_handle,
+                          typename C3t3::Triangulation::Cell_handle>
 {
 public:
   using Base = ElementaryOperation<C3t3, 
-                              typename C3t3::Triangulation::Finite_vertex_handles::iterator,
-                              typename C3t3::Triangulation::Cell_handle,
-                              CGAL::Iterator_range<typename C3t3::Triangulation::Finite_vertices_iterator>>;
-  using ElementIteratorType = typename Base::ElementIteratorType;
-  using ElementSource = typename Base::ElementSource;
+                              typename C3t3::Triangulation::Vertex_handle,
+                              typename C3t3::Triangulation::Cell_handle>;
+  using ElementType = typename Base::ElementType;
   using Lock_zone = typename Base::Lock_zone;
 
   typedef typename C3t3::Triangulation       Tr;
@@ -83,7 +80,7 @@ public:
     , m_smooth_constrained_edges(smooth_constrained_edges)
   {}
 
-  virtual bool should_process_element(const ElementIteratorType& v, const C3t3& c3t3) const override {
+  virtual bool should_process_element(const ElementType& v, const C3t3& c3t3) const override {
     if constexpr (Domain == SmoothingDomain::SURFACE_VERTICES) {
       return false;
     } else if constexpr (Domain == SmoothingDomain::COMPLEX_EDGES) {
@@ -95,7 +92,9 @@ public:
     }
   }
 
-  ElementSource get_element_source(const C3t3& c3t3) const override {
+  std::vector<ElementType> get_element_source(const C3t3& c3t3) const override {
+    std::vector<ElementType> vertices;
+    
     if constexpr (Domain == SmoothingDomain::SURFACE_VERTICES) {
     } else if constexpr (Domain == SmoothingDomain::COMPLEX_EDGES) {
     } else if constexpr (Domain == SmoothingDomain::INTERNAL_VERTICES) {
@@ -105,7 +104,10 @@ public:
     return c3t3.triangulation().finite_vertices();
   }
 
-  bool can_apply_operation(const ElementIteratorType& v, const C3t3& c3t3) const override {
+    return vertices;
+  }
+
+  bool can_apply_operation(const ElementType& v, const C3t3& c3t3) const override {
     if constexpr (Domain == SmoothingDomain::SURFACE_VERTICES) {
       return true;
     } else if constexpr (Domain == SmoothingDomain::COMPLEX_EDGES) {
@@ -117,8 +119,8 @@ public:
     }
   }
 
-  Lock_zone get_lock_zone(const ElementIteratorType& v, const C3t3& c3t3) const override {
-    if constexpr (Domain == SmoothingDomain::SURFACE_VERTICES) {
+  Lock_zone get_lock_zone(const ElementType& v, const C3t3& c3t3) const override {
+    Lock_zone zone;
       return Lock_zone();
     } else if constexpr (Domain == SmoothingDomain::COMPLEX_EDGES) {
       return Lock_zone();
@@ -127,9 +129,11 @@ public:
     } else {
       return Lock_zone();
     }
+    
+    return zone;
   }
 
-  bool execute_pre_operation(const ElementIteratorType& v, C3t3& c3t3) override {
+  bool execute_pre_operation(const ElementType& v, C3t3& c3t3) override {
       std::cout<<"VertexSmoothOperation::execute_pre_operation"<<std::endl;
     if constexpr (Domain == SmoothingDomain::SURFACE_VERTICES) {
       return true;
@@ -142,7 +146,7 @@ public:
     }
   }
 
-  bool execute_operation(const ElementIteratorType& v, C3t3& c3t3) override {
+  bool execute_operation(const ElementType& v, C3t3& c3t3) override {
       std::cout<<"VertexSmoothOperation::execute_operation"<<std::endl;
     if constexpr (Domain == SmoothingDomain::SURFACE_VERTICES) {
       return true;
@@ -155,7 +159,7 @@ public:
     }
   }
 
-  bool execute_post_operation(const ElementIteratorType& v, C3t3& c3t3) override {
+  bool execute_post_operation(const ElementType& v, C3t3& c3t3) override {
       std::cout<<"VertexSmoothOperation::execute_post_operation"<<std::endl;
     if constexpr (Domain == SmoothingDomain::SURFACE_VERTICES) {
       return true;

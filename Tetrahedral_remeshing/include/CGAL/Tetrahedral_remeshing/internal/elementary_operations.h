@@ -10,6 +10,7 @@
 #include <string>
 #include <atomic>
 #include <utility>
+#include <iostream>
 
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/task_group.h>
@@ -54,7 +55,7 @@ public:
   void unlock_zone(const Lock_zone& zone) {
     if (!m_triangulation) {
       return; // No unlocking needed in sequential mode
-  }
+    }
 
     // Use global unlock_all_elements instead of individual unlocking (Mesh_3 pattern)
     m_triangulation->unlock_all_elements();
@@ -289,8 +290,7 @@ public:
     const size_t BATCH_SIZE =elements.size(); // Configurable batch size for this operation type
     
     tbb::task_group group;
-    std::atomic<bool> success{false};
-
+    
     // Create batches of work following Mesh_3 approach
     for (size_t start = 0; start < elements.size(); start += BATCH_SIZE) {
       size_t end = std::min(start + BATCH_SIZE, elements.size());
@@ -305,39 +305,34 @@ public:
         for (size_t i = start; i < end; ++i) {
           const auto& element = elements[i];
           
-        if (!op.can_apply_operation(element, c3t3))
-            continue;
 
-        auto lock_zone = op.get_lock_zone(element, c3t3);
-        if (lock_manager.try_lock_zone(lock_zone)) {
+          auto lock_zone = op.get_lock_zone(element, c3t3);
+          if (lock_manager.try_lock_zone(lock_zone)) {
             if(!op.can_apply_operation(element, c3t3)) {
               lock_manager.try_lock_zone(lock_zone); // Release lock if operation cannot be applied
               continue;
             }
             // Execute pre-operation phase for this element
-          op.execute_pre_operation(element, c3t3);
-          
+            op.execute_pre_operation(element, c3t3);
+            
             // Re-validate element after acquiring lock (zombie check)
             // This prevents operating on elements that were modified by other threads
-            if (op.can_apply_operation(element, c3t3)) {
-          if (op.execute_operation(element, c3t3)) {
+		  if (op.execute_operation(element, c3t3)) {
                 local_success = true;
-          }
+              }
             }
-          
-          // Execute post-operation phase for this element (parallelized!)
-          op.execute_post_operation(element, c3t3);
-          
-          lock_manager.unlock_zone(lock_zone);
-        }
+            
+            op.execute_post_operation(element, c3t3);
+            
+            lock_manager.unlock_zone(lock_zone);
+          }
         }
         
         if (local_success) success.store(true);
       });
     }
-
-    group.wait();
     
+    group.wait();
     return success.load();
   }
 };

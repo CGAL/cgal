@@ -17,19 +17,17 @@ namespace internal {
 template<typename C3t3, typename SizingFunction, typename CellSelector>
 class EdgeSplitOperation 
   : public ElementaryOperation<C3t3, 
-                          typename C3t3::Triangulation::Finite_edges_iterator,
-                          typename C3t3::Triangulation::Cell_handle,
-                          CGAL::Iterator_range<typename C3t3::Triangulation::Finite_edges_iterator>> {
+                          std::pair<typename C3t3::Triangulation::Vertex_handle, typename C3t3::Triangulation::Vertex_handle>,
+                          typename C3t3::Triangulation::Cell_handle> {
 public:
   using Base = ElementaryOperation<C3t3, 
-                              typename C3t3::Triangulation::Finite_edges_iterator,
-                              typename C3t3::Triangulation::Cell_handle,
-                              CGAL::Iterator_range<typename C3t3::Triangulation::Finite_edges_iterator>>;
+                              std::pair<typename C3t3::Triangulation::Vertex_handle, typename C3t3::Triangulation::Vertex_handle>,
+                              typename C3t3::Triangulation::Cell_handle>;
   using Complex = C3t3;
   using Triangulation = typename C3t3::Triangulation;
   using Edge = typename Triangulation::Edge;
-  using EdgeIteratorType = typename C3t3::Triangulation::Finite_edges_iterator;
-  using ElementSource = typename Base::ElementSource;
+  using ElementType = typename Base::ElementType;
+  using VertexPair = std::pair<typename C3t3::Triangulation::Vertex_handle, typename C3t3::Triangulation::Vertex_handle>;
   using Cell_handle = typename Triangulation::Cell_handle;
   using Vertex_handle = typename Triangulation::Vertex_handle;
   using Point = typename Triangulation::Point;
@@ -55,8 +53,15 @@ public:
     , m_protect_boundaries(protect_boundaries)
   {}
 
-  bool should_process_element(const EdgeIteratorType& e, const Complex& c3t3) const override {
-    Edge edge(*e);
+  bool should_process_element(const ElementType& vp, const Complex& c3t3) const override {
+    // Convert vertex pair to edge for existing logic
+    Cell_handle cell;
+    int i, j;
+    if (!is_edge_uv(vp.first, vp.second, get_incident_cells(vp.first, c3t3), cell, i, j)) {
+      return false; // Edge doesn't exist
+    }
+    
+    Edge edge(cell, i, j);
     
     // Direct wrapper around existing logic from split_long_edges.h
     auto [splittable, boundary] = can_be_split(edge, c3t3, m_protect_boundaries, m_cell_selector);
@@ -71,28 +76,30 @@ public:
     return false;
   }
 
-  ElementSource get_element_source(const C3t3& c3t3) const override {
-    return c3t3.triangulation().finite_edges();
+  std::vector<ElementType> get_element_source(const C3t3& c3t3) const override {
+    std::vector<ElementType> vertex_pairs;
+    
+    // Collect all finite edges as vertex pairs
+    for (auto eit = c3t3.triangulation().finite_edges_begin();
+         eit != c3t3.triangulation().finite_edges_end(); ++eit) {
+      const Edge& edge = *eit;
+      vertex_pairs.push_back(make_vertex_pair(edge));
   }
 
-  bool can_apply_operation(const EdgeIteratorType& e, const Complex& c3t3) const override {
-    Edge edge(*e);
+    return vertex_pairs;
+  }
     
+  bool can_apply_operation(const ElementType& vp, const Complex& c3t3) const override {
     // This corresponds to lines 409-416 in split_long_edges.h
     // The algorithm needs to re-validate that the edge can still be split
     // because the triangulation may have been modified by previous operations
     
-    // First, we need to find the actual edge in the triangulation
-    // because the iterator might reference an edge that has been modified
     const Triangulation& tr = c3t3.triangulation();
-    const Vertex_handle v1 = edge.first->vertex(edge.second);
-    const Vertex_handle v2 = edge.first->vertex(edge.third);
-    
     Cell_handle cell;
     int i1, i2;
     
     // Check if the edge still exists in the triangulation
-    if (!tr.tds().is_edge(v1, v2, cell, i1, i2)) {
+    if (!tr.tds().is_edge(vp.first, vp.second, cell, i1, i2)) {
       // Edge no longer exists (was modified by previous operations)
       return false;
     }
@@ -106,30 +113,25 @@ public:
     return splittable;
   }
 
-  Lock_zone get_lock_zone(const EdgeIteratorType& e, const Complex& c3t3) const override {
+  Lock_zone get_lock_zone(const ElementType& vp, const Complex& c3t3) const override {
     Lock_zone zone;
     return zone;
   }
 
-  bool execute_operation(const EdgeIteratorType& e, Complex& c3t3) override {
+  bool execute_operation(const ElementType& vp, Complex& c3t3) override {
     // Combines all three phases: pre-operation + operation + post-operation
     // Corresponds to the complete sequence in split_long_edges.h lines 421-425:
     //   visitor.before_split(tr, edge);
     //   Vertex_handle vh = split_edge(edge, cell_selector, c3t3);
     //   if(vh != Vertex_handle()) visitor.after_split(tr, vh);
     
-    Edge edge(*e);
-    
-    // Find the actual edge in the triangulation (same logic as can_apply_operation)
+    // Find the actual edge in the triangulation
     const Triangulation& tr = c3t3.triangulation();
-    const Vertex_handle v1 = edge.first->vertex(edge.second);
-    const Vertex_handle v2 = edge.first->vertex(edge.third);
-    
     Cell_handle cell;
     int i1, i2;
     
     // Since can_apply_operation already validated the edge exists, we can safely call is_edge
-    if (!tr.tds().is_edge(v1, v2, cell, i1, i2)) {
+    if (!tr.tds().is_edge(vp.first, vp.second, cell, i1, i2)) {
       // Edge was modified between can_apply_operation and execute_operation
       return false;
     }
