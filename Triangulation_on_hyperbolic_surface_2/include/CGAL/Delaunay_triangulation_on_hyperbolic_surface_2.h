@@ -78,8 +78,8 @@ public:
 	//---------- Delaunay related methods
 	void flip(Dart_descriptor dart);
 	unsigned make_Delaunay();
-	std::tuple<unsigned, std::vector<Dart_descriptor>> insert(Point const & query, Anchor & anch); // return réf ?
-	std::tuple<unsigned, std::vector<Dart_descriptor>> insert(Point const & query);
+	void insert(Point const & query, Anchor & anch);
+	void insert(Point const & query);
 
 	//---------- eps-net methods
 	bool epsilon_net(double epsilon);
@@ -109,7 +109,7 @@ private:
 
 	//---------- Delaunay related methods
 	void push_flippable_edge(Dart_descriptor const dart, std::list<Dart_descriptor> & darts_to_flip);
-	std::tuple<unsigned, std::vector<Dart_descriptor>> restore_Delaunay(std::list<Dart_descriptor> & darts_to_flip);  // return réf ?
+	unsigned restore_Delaunay(std::list<Dart_descriptor> & darts_to_flip, std::vector<Dart_descriptor> & flipped_darts);
 
 	//---------- eps-net methods
 	Number delta(Point const & u, Point const & v) const;
@@ -737,7 +737,7 @@ insert_in_edge(Point const & query, unsigned & li, Anchor & anch)
 template<class Traits>
 std::vector<typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Anchor>
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
-split_insert(Point const & query, Anchor& anch, bool use_visibility)
+split_insert(Point const & query, Anchor & anch, bool use_visibility)
 {
 	Locate_type lt = OUTSIDE;
 	unsigned li = 0;
@@ -796,7 +796,7 @@ push_flippable_edge(Dart_descriptor const dart, std::list<Dart_descriptor>& dart
 {       
 	if (Base::is_Delaunay_flippable(dart)) {
 		bool already_there = false;
-		for (Dart_descriptor const& dart_to_flip : darts_to_flip) {
+		for (Dart_descriptor const & dart_to_flip : darts_to_flip) {
 			if (dart_to_flip == dart || dart_to_flip == Base::opposite(dart)) {
 				already_there = true;
 				break;
@@ -810,18 +810,17 @@ push_flippable_edge(Dart_descriptor const dart, std::list<Dart_descriptor>& dart
 
 // Output: number of flips done to make the triangulation Delaunay given a list of darts to flip
 template<class Traits>
-std::tuple<unsigned, std::vector<typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Dart_descriptor>>
+unsigned
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
-restore_Delaunay(std::list<Dart_descriptor>& darts_to_flip)
+restore_Delaunay(std::list<Dart_descriptor> & darts_to_flip, std::vector<Dart_descriptor> & flipped_darts)
 {       
-	unsigned number_of_flips_done = 0;
-	std::vector<Dart_descriptor> flipped_darts;  // not useless: used in epsilon-net algo
+	unsigned nb_of_flips_done = 0;
 	while (!darts_to_flip.empty()) {
 		Dart_descriptor current_dart = darts_to_flip.front();
 		if (Base::is_Delaunay_flippable(current_dart)) {
 			flip(current_dart);
 			flipped_darts.push_back(current_dart);
-			number_of_flips_done++;
+			++nb_of_flips_done;
 			Dart_descriptor maybe_flippable[4] = {Base::ccw(current_dart), Base::cw(current_dart),
 											  Base::ccw(Base::opposite(current_dart)), Base::cw(Base::opposite(current_dart))};
 			for (int i = 0; i < 4; ++i) {
@@ -833,7 +832,7 @@ restore_Delaunay(std::list<Dart_descriptor>& darts_to_flip)
 
 	CGAL_expensive_assertion(is_valid());
 	CGAL_expensive_assertion(Base::is_Delaunay());
-	return std::make_tuple(number_of_flips_done, flipped_darts);
+	return nb_of_flips_done;
 }
 
 template<class Traits>
@@ -855,31 +854,32 @@ make_Delaunay()
 	return number_of_flips_done;
 }
 
-// Inserts query in the triangulation, with a search starting from the given anchor, and makes the triangulation Delaunay again
+// Inserts query in the triangulation, with a search starting from the given anchor, and restores the Delaunay property with flips
 // Output: number of flips done to make the triangulation Delaunay after the insertion
 template<class Traits>
-std::tuple<unsigned, std::vector<typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Dart_descriptor>>
+void
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
 insert(Point const & query, Anchor& anch)
 {
 	CGAL_expensive_precondition(Base::is_Delaunay());
 
-	std::vector<Anchor> new_anchors = split_insert(query, anch);
+	std::vector<Anchor &> new_anchors = split_insert(query, anch);
 	std::list<Dart_descriptor> darts_to_flip;
 	for (int i = 0; i < new_anchors.size(); ++i) {
 		push_flippable_edge(new_anchors[i].dart, darts_to_flip);
+		push_flippable_edge(Base::ccw(new_anchors[i].dart), darts_to_flip);
 	}
-
-	return restore_Delaunay(darts_to_flip);
+	std::vector<Dart_descriptor> flipped_darts;
+	restore_Delaunay(darts_to_flip, flipped_darts);
 }
 
 // Same but the search starts from main anchor
 template<class Traits>
-std::tuple<unsigned, std::vector<typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Dart_descriptor>>
+void
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
 insert(Point const & query)
 {
-	return insert(query, anchor());
+	insert(query, anchor());
 }
 
 
@@ -985,8 +985,9 @@ epsilon_net(const double epsilon)
 					push_flippable_edge(new_anchor.dart, darts_to_flip);  //the darts of the new anchors correspond to the edges of the triangle the point was inserted in 
 				}
 
-				std::vector<Dart_descriptor> flipped_darts = std::get<1>(restore_Delaunay(darts_to_flip));
-				for (Dart_descriptor const& dart : flipped_darts) {
+				std::vector<Dart_descriptor> flipped_darts;
+				restore_Delaunay(darts_to_flip, flipped_darts);
+				for (Dart_descriptor const & dart : flipped_darts) {
 					push_triangle(dart, triangles, triangles_list_mark);
 					push_triangle(Base::opposite(dart), triangles, triangles_list_mark);
 				}
