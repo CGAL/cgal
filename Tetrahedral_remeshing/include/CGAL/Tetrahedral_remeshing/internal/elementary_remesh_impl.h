@@ -54,13 +54,13 @@ public:
   static void flip(C3t3& c3t3, CellSelector& cell_selector,  Visitor& visitor, const bool protect_boundaries) {
      // Flip internal edges
      InternalEdgeFlipOp internal_flip_op(c3t3, cell_selector, protect_boundaries, visitor);
-     ExecutionPolicy<InternalEdgeFlipOp> internal_executor;
+     ElementaryOperationExecutionParallel<InternalEdgeFlipOp> internal_executor;
      internal_executor.execute(internal_flip_op, c3t3);
      
      // Flip boundary edges if not protecting boundaries
      if (!protect_boundaries) {
        BoundaryEdgeFlipOp boundary_flip_op(c3t3, cell_selector, protect_boundaries, visitor);
-       ExecutionPolicy<BoundaryEdgeFlipOp> boundary_executor;
+       ElementaryOperationExecutionSequential<BoundaryEdgeFlipOp> boundary_executor;
        boundary_executor.execute(boundary_flip_op, c3t3);
      }
   }

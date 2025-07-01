@@ -22,31 +22,48 @@ namespace CGAL {
 namespace Tetrahedral_remeshing {
 namespace internal {
 
-// Generic lock manager that works with any lockable element type
-template<typename LockableHandle>
+template<typename TriangulationType, typename LockableHandle>
 class LockManager {
 public:
   using Lock_zone = std::vector<LockableHandle>;
 
-  LockManager() = default;
+private:
+  TriangulationType* m_triangulation;
+  int m_lock_radius;
+
+public:
+  LockManager(TriangulationType* triangulation = nullptr, int lock_radius = 0) 
+    : m_triangulation(triangulation), m_lock_radius(lock_radius) {}
 
   bool try_lock_zone(const Lock_zone& zone) {
-    // First try to acquire all locks
-    //for (const LockableHandle& h : zone) {
-    //  if (!h->try_lock()) {
-    //    // If any lock fails, release all acquired locks and return false
-    //    unlock_zone(zone);
-    //    return false;
-    //  }
-    //}
-    //return true;
+    if (!m_triangulation) {
+      return true; // No locking in sequential mode
+    }
+
+    // Try to acquire all locks in the zone
+    for (const LockableHandle& h : zone) {
+      if (!m_triangulation->try_lock_cell(h)) {
+        // If any lock fails, release all acquired locks and return false
+        unlock_all_elements();
+        return false;
+      }
+    }
     return true;
   }
 
   void unlock_zone(const Lock_zone& zone) {
-    //for (const LockableHandle& h : zone) {
-    //  h->unlock();
-    //}
+    if (!m_triangulation) {
+      return; // No unlocking needed in sequential mode
+  }
+
+    // Use global unlock_all_elements instead of individual unlocking (Mesh_3 pattern)
+    m_triangulation->unlock_all_elements();
+  }
+
+  void unlock_all_elements() {
+    if (m_triangulation) {
+      m_triangulation->unlock_all_elements();
+    }
   }
 };
 
@@ -101,7 +118,7 @@ public:
     std::vector<ElementType>& elements,
     Operation& op,
     C3t3& c3t3,
-    LockManager<Cell_handle>& lock_manager) = 0;
+    LockManager<typename C3t3::Triangulation, Cell_handle>& lock_manager) = 0;
 
   // Main execution method that orchestrates the operation
   virtual bool execute(Operation& op, C3t3& c3t3) {
@@ -112,11 +129,33 @@ public:
       return false;
     }
     
-    // Create lock manager
-    LockManager<Cell_handle> lock_manager;
+    // Ensure lock data structure is initialized for parallel mode
+    ensure_lock_data_structure_initialized(c3t3);
+    
+    // Create lock manager with triangulation reference
+    LockManager<typename C3t3::Triangulation, Cell_handle> lock_manager(&c3t3.triangulation(), 0);
     
     // Apply operations on elements
     return apply_operation_on_elements(candidates, op, c3t3, lock_manager);
+  }
+
+private:
+  // Ensure the lock data structure is initialized when needed
+  void ensure_lock_data_structure_initialized(C3t3& c3t3) {
+#ifdef CGAL_CONCURRENT_TETRAHEDRAL_REMESHING
+    auto& triangulation = c3t3.triangulation();
+    if (!triangulation.get_lock_data_structure()) {
+      // Create a lock data structure using the C3T3's bounding box
+      static typename C3t3::Triangulation::Lock_data_structure lock_ds(
+        c3t3.bbox(),  // Use C3T3's bounding box
+        8  // Default grid size (same as Mesh_3 default)
+      );
+      triangulation.set_lock_data_structure(&lock_ds);
+    }
+#else
+    // In sequential mode, no lock data structure is needed
+    (void)c3t3;  // Suppress unused parameter warning
+#endif
   }
 };
 
@@ -154,7 +193,8 @@ public:
     std::vector<ElementType>& elements,
     Operation& op,
     C3t3& c3t3,
-    LockManager<Cell_handle>& lock_manager) override {
+    LockManager<typename C3t3::Triangulation, Cell_handle>& lock_manager) override {
+    std::cout << "Executing operation sequentially: " << op.operation_name() << std::endl;
     
     bool success = false;
     
@@ -192,8 +232,11 @@ public:
   using ElementType = typename Operation::ElementType;
   using Cell_handle = typename C3t3::Triangulation::Cell_handle;
 
+private:
+  size_t m_batch_size;
+
 public:
-  ElementaryOperationExecutionParallel() = default;
+  ElementaryOperationExecutionParallel(size_t batch_size = 64) : m_batch_size(batch_size) {}
   ElementaryOperationExecutionParallel(const ElementaryOperationExecutionParallel&) = default;
   ElementaryOperationExecutionParallel(ElementaryOperationExecutionParallel&&) = default;
   ElementaryOperationExecutionParallel& operator=(const ElementaryOperationExecutionParallel&) = default;
@@ -228,30 +271,68 @@ public:
     std::vector<ElementType>& elements,
     Operation& op,
     C3t3& c3t3,
-    LockManager<Cell_handle>& lock_manager) override {
+    LockManager<typename C3t3::Triangulation, Cell_handle>& lock_manager) override {
+    std::cout << "Executing operation in parallel: " << op.operation_name() << std::endl;
+    
+    if (elements.empty()) {
+      return false;
+    }
+    
+    std::atomic<bool> success(false);
+    
+    // Batch size following Mesh_3 approach - creates fewer, larger tasks instead of one task per element
+    // Benefits:
+    // - Reduced task creation overhead
+    // - Better load balancing through work stealing
+    // - Lower lock contention 
+    // - Improved cache locality
+    const size_t BATCH_SIZE =elements.size(); // Configurable batch size for this operation type
     
     tbb::task_group group;
     std::atomic<bool> success{false};
 
-    for (const auto& element : elements) {
-      group.run([&, element]() {
+    // Create batches of work following Mesh_3 approach
+    for (size_t start = 0; start < elements.size(); start += BATCH_SIZE) {
+      size_t end = std::min(start + BATCH_SIZE, elements.size());
+      
+      group.run([&, start, end]() {
+#ifdef CGAL_REFACTORED_TETRAHEDRAL_REMESHING_DEBUG
+        std::cout << "REFACTORED: TASK GROUP starting batch [" << start << ", " << end << ")" << std::endl;
+#endif
+        bool local_success = false;
+        
+        // Process entire batch in one task
+        for (size_t i = start; i < end; ++i) {
+          const auto& element = elements[i];
+          
         if (!op.can_apply_operation(element, c3t3))
-          return;
+            continue;
 
         auto lock_zone = op.get_lock_zone(element, c3t3);
         if (lock_manager.try_lock_zone(lock_zone)) {
-          // Execute pre-operation phase for this element (parallelized!)
+            if(!op.can_apply_operation(element, c3t3)) {
+              lock_manager.try_lock_zone(lock_zone); // Release lock if operation cannot be applied
+              continue;
+            }
+            // Execute pre-operation phase for this element
           op.execute_pre_operation(element, c3t3);
           
+            // Re-validate element after acquiring lock (zombie check)
+            // This prevents operating on elements that were modified by other threads
+            if (op.can_apply_operation(element, c3t3)) {
           if (op.execute_operation(element, c3t3)) {
-            success.store(true);
+                local_success = true;
           }
+            }
           
           // Execute post-operation phase for this element (parallelized!)
           op.execute_post_operation(element, c3t3);
           
           lock_manager.unlock_zone(lock_zone);
         }
+        }
+        
+        if (local_success) success.store(true);
       });
     }
 
