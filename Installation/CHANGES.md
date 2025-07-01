@@ -32,7 +32,7 @@ Release date: _______ 2025
     (Cartesian grid, octree, ...). The output is an indexed face set that stores an isosurface in the
     form of a surface mesh.
 
-### [dD Fréchet Distance](https://doc.cgal.org/6.1/Manual/packages.html#FrechetDistance) (new package)
+### [dD Fréchet Distance](https://doc.cgal.org/6.1/Manual/packages.html#PkgFrechetDistance) (new package)
 
 -   This package provides functions for computing the Fréchet distance of polylines
     in any dimension under the Euclidean metric.
@@ -53,7 +53,6 @@ Release date: _______ 2025
     conservative inner and outer hull of similar polygons:
     - [`CGAL::Polygon_repair::join()`](https://doc.cgal.org/6.1/Polygon_repair/group__PkgPolygonRepairFunctions.html#gad5b959666d952392c0e3b8d4b1b1847a)
     - [`CGAL::Polygon_repair::intersect()`](https://doc.cgal.org/6.1/Polygon_repair/group__PkgPolygonRepairFunctions.html#ga780e31115643e3d0b406349b56c9f3d5)
-    https://www.cgal.org/2025/05/22/Polygon_repair/
 
     See also the associated [news entry](https://www.cgal.org/2025/05/22/Polygon_repair/).
 
@@ -69,18 +68,18 @@ Release date: _______ 2025
     approximate a Centroidal Voronoi Diagram construction, and can move vertices as to recover
     sharp features and corners.
     See also the associated [news entry](https://www.cgal.org/2025/05/22/Surface_remeshing/).
--   New implementation of [`CGAL::Polygon_mesh_processing::clip()`](https://doc.cgal.org/6.1/Polygon_mesh_processing/group__PMP__corefinement__grp.html#ga88ea5360f9fe65458f9086b453447662)
-    and [`CGAL::Polygon_mesh_processing::split()`](https://doc.cgal.org/6.1/Polygon_mesh_processing/group__PMP__corefinement__grp.html#gad3aded948e73bd683903b9449601acb0)
+-   New implementation of [`CGAL::Polygon_mesh_processing::clip()`](https://doc.cgal.org/6.1/Polygon_mesh_processing/group__PMP__corefinement__grp.html#ga2c73d3460872e601f84a03f58dd069ae)
+    and [`CGAL::Polygon_mesh_processing::split()`](https://doc.cgal.org/6.1/Polygon_mesh_processing/group__PMP__corefinement__grp.html#ga6738052411a4d548a5b375f11b913924)
     with a plane as clipper that is much faster and is now able to handle non-triangulated surface meshes.
     See also the associated [news entry](https://www.cgal.org/2025/06/06/new_clip/).
 -   Added the function [`CGAL::Polygon_mesh_processing::refine_with_plane()`](https://doc.cgal.org/6.1/Polygon_mesh_processing/group__PMP__corefinement__grp.html#gacb9d68fa4dea8fd03ec53b56a16d6fc6),
     which enables users to refine a mesh with its intersection with a plane.
 -   Added a function in the [visitor of the corefinement based methods](https://doc.cgal.org/6.1/Polygon_mesh_processing/classPMPCorefinementVisitor.html)
     to trace faces in the output meshes which correspond to coplanar faces of the input.
--   Added the function [`CGAL::Polygon_mesh_processing::discrete_mean_curvature`](https://doc.cgal.org/6.1/Polygon_mesh_processing/group__PMP__measure__grp.html#ga1a31fa9412b4643dc7202a54246db78b)
-    and [`CGAL::Polygon_mesh_processing::discrete_Gaussian_curvature`](https://doc.cgal.org/6.1/Polygon_mesh_processing/group__PMP__measure__grp.html#ga11a2d646d4636605d185653bff5bbbbb)
+-   Added the function [`CGAL::Polygon_mesh_processing::discrete_mean_curvature()`](https://doc.cgal.org/6.1/Polygon_mesh_processing/group__PMP__measure__grp.html#ga1a31fa9412b4643dc7202a54246db78b)
+    and [`CGAL::Polygon_mesh_processing::discrete_Gaussian_curvature()`](https://doc.cgal.org/6.1/Polygon_mesh_processing/group__PMP__measure__grp.html#ga11a2d646d4636605d185653bff5bbbbb)
     to evaluate the discrete curvature at a vertex of a mesh.
--   Added the function [`CGAL::Polygon_mesh_processing::angle_sum`](https://doc.cgal.org/6.1/Polygon_mesh_processing/group__PMP__measure__grp.html#ga25d3836c21931610cf76b6716a06254c)
+-   Added the function [`CGAL::Polygon_mesh_processing::angle_sum()`](https://doc.cgal.org/6.1/Polygon_mesh_processing/group__PMP__measure__grp.html#ga25d3836c21931610cf76b6716a06254c)
     to compute the sum of the angles around a vertex.
 
 ### [Point Set Processing](https://doc.cgal.org/6.1/Manual/packages.html#PkgPointSetProcessing3)
@@ -123,12 +122,6 @@ Release date: _______ 2025
 
 ### [Poisson Surface Reconstruction](https://doc.cgal.org/6.1/Manual/packages.html#PkgPoissonSurfaceReconstruction3)
 -   Added a new mesh domain `Poisson_mesh_domain_3` that integrates some optimizations from the deprecated 3D Surface Mesh Generation package.
-
-### [3D Subdivision Methods](https://doc.cgal.org/6.1/Manual/packages.html#PkgSurfaceSubdivisionMethod3)
-
--   Added a new named parameter for `CGAL::Subdivision_method_3::Loop_subdivision()` and
-    `CGAL::Subdivision_method_3::CatmullClark_subdivision()`, which enables users to subdivide
-    a mesh without modifying its geometry.
 
 ### [2D Triangulations](https://doc.cgal.org/6.1/Manual/packages.html#PkgTriangulation2)
 
