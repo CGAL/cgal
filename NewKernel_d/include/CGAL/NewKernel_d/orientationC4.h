@@ -115,94 +115,60 @@ inline int orientationC4( double p0, double p1, double p2, double p3, double q0,
     det = determinant( m01, m02, m03, m04, m11, m12, m13, m14, m21, m22, m23, m24, m31, m32, m33, m34 );
     int int_tmp_result;
     double eps;
-    double max1 = fabs(m01);
-    if( (max1 < fabs(m02)) )
-    {
-        max1 = fabs(m02);
-    }
-    if( (max1 < fabs(m03)) )
-    {
-        max1 = fabs(m03);
-    }
-    if( (max1 < fabs(m11)) )
-    {
-        max1 = fabs(m11);
-    }
-    if( (max1 < fabs(m12)) )
-    {
-        max1 = fabs(m12);
-    }
-    if( (max1 < fabs(m13)) )
-    {
-        max1 = fabs(m13);
-    }
-    if( (max1 < fabs(m23)) )
-    {
-        max1 = fabs(m23);
-    }
-    double max2 = fabs(m01);
-    if( (max2 < fabs(m02)) )
-    {
-        max2 = fabs(m02);
-    }
-    if( (max2 < fabs(m11)) )
-    {
-        max2 = fabs(m11);
-    }
-    if( (max2 < fabs(m12)) )
-    {
-        max2 = fabs(m12);
-    }
-    if( (max2 < fabs(m21)) )
-    {
-        max2 = fabs(m21);
-    }
-    if( (max2 < fabs(m22)) )
-    {
-        max2 = fabs(m22);
-    }
-    if( (max2 < fabs(m23)) )
-    {
-        max2 = fabs(m23);
-    }
-    if( (max2 < fabs(m33)) )
-    {
-        max2 = fabs(m33);
-    }
-    double max3 = fabs(m04);
-    if( (max3 < fabs(m14)) )
-    {
-        max3 = fabs(m14);
-    }
-    if( (max3 < fabs(m24)) )
-    {
-        max3 = fabs(m24);
-    }
-    if( (max3 < fabs(m34)) )
-    {
-        max3 = fabs(m34);
-    }
-    double max4 = fabs(m11);
-    if( (max4 < fabs(m12)) )
-    {
-        max4 = fabs(m12);
-    }
-    if( (max4 < fabs(m21)) )
-    {
-        max4 = fabs(m21);
-    }
-    if( (max4 < fabs(m22)) )
-    {
-        max4 = fabs(m22);
-    }
-    if( (max4 < fabs(m31)) )
-    {
-        max4 = fabs(m31);
-    }
-    if( (max4 < fabs(m32)) )
-    {
-        max4 = fabs(m32);
-    }
+    double max1 = CGAL::abs(m01);
+    double am = CGAL::abs(m02);
+    if( (max1 < am) ) { max1 = am; }
+    am = CGAL::abs(m03);
+    if( (max1 < am) ) { max1 = am; }
+    am = CGAL::abs(m11);
+    if( (max1 < am) ) { max1 = am; }
+    am = CGAL::abs(m12);
+    if( (max1 < am) ) { max1 = am; }
+    am = CGAL::abs(m13);
+    if( (max1 < am) ) { max1 = am; }
+    am = CGAL::abs(m23);
+    if( (max1 < am) ) { max1 = am; }
+
+
+    double max2 = CGAL::abs(m01);
+    am = CGAL::abs(m02);
+    if( (max2 < am) ) { max2 = am; }
+    am = CGAL::abs(m11);
+    if( (max2 < am) ) { max2 = am; }
+    am = CGAL::abs(m12);
+    if( (max2 < am) ) { max2 = am; }
+    am = CGAL::abs(m21);
+    if( (max2 < am) ) { max2 = am; }
+    am = CGAL::abs(m22);
+    if( (max2 < am) ) { max2 = am; }
+    am = CGAL::abs(m23);
+    if( (max2 < am) ) { max2 = am; }
+    am = CGAL::abs(m33);
+    if( (max2 < am) ) { max2 = am; }
+
+
+    double max3 = CGAL::abs(m04);
+    am = CGAL::abs(m14);
+    if( (max3 < am) ) { max3 = am; }
+    am = CGAL::abs(m24);
+    if( (max3 < am) ) { max3 = am; }
+    am = CGAL::abs(m34);
+    if( (max3 < am) ) { max3 = am; }
+
+
+    double max4 = CGAL::abs(m11);
+    am = CGAL::abs(m12);
+    if( (max4 < am) ) { max4 = am; }
+    am = CGAL::abs(m21);
+    if( (max4 < am) ) { max4 = am; }
+    am = CGAL::abs(m22);
+    if( (max4 < am) ) { max4 = am; }
+    am = CGAL::abs(m31);
+    if( (max4 < am) ) { max4 = am; }
+    am = CGAL::abs(m32);
+    if( (max4 < am) ) { max4 = am; }
+
+
     double lower_bound_1;
     double upper_bound_1;
     lower_bound_1 = max1;
