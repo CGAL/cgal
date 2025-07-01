@@ -969,7 +969,7 @@ sample_triangle_mesh(const TriangleMesh& tm,
  *                     of the smallest non-null edge of the soup or the value passed to the named parameter
  *                     `grid_spacing`.}
  *   \cgalParamNEnd
- * *   \cgalParamNBegin{use_monte_carlo_sampling}
+ *     \cgalParamNBegin{use_monte_carlo_sampling}
  *     \cgalParamDescription{if `true` is passed, points are generated randomly in each triangle.}
  *     \cgalParamType{Boolean}
  *     \cgalParamDefault{`false`}

@@ -1,4 +1,4 @@
-/// \defgroup PkgSMDS3Ref 3D Simplicial Mesh Data Structures Reference
+/// \defgroup PkgSMDS3Ref Reference Manual
 
 /// \defgroup PkgSMDS3Concepts Concepts
 /// \ingroup PkgSMDS3Ref

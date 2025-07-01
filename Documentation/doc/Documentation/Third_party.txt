@@ -69,8 +69,9 @@ For Visual C++ you can download precompiled libraries
 from <A HREF="https://sourceforge.net/projects/boost/files/boost-binaries/">`https://sourceforge.net/projects/boost/files/boost-binaries/`</A>.
 
 As there is no canonical directory for where to find \boost on Windows,
-we recommend that you define the environment variable
-`BOOST_ROOT` and set it to where you have installed \boost, e.g., `C:\boost\boost_1_70_0`.
+we recommend to use the config mode of CMake by defining the environment variable
+`Boost_DIR` (case sensitive) to the path of the directory in your boost installation
+containing the file `BoostConfig.cmake`, e.g.`C:/local/boost_1_80_0/lib64-msvc-14.3/cmake/Boost-1.80.0`.
 
 \subsection thirdpartyMP Multi Precision Number Type Library
 
@@ -143,7 +144,7 @@ The \eigen web site is <A HREF="https://eigen.tuxfamily.org/index.php?title=Main
 
 \opengr is a set C++ libraries for 3D Global Registration released under the terms of the APACHE V2 license.
 
-\cgal provides wrappers for the Super4PCS algorithm of \opengr in the \ref PkgPointSetProcessing3Ref
+\cgal provides wrappers for the Super4PCS algorithm of \opengr in the \ref PkgPointSetProcessing3
 packages. In order to use \opengr in \cgal programs, the executables should be linked with the CMake imported target `CGAL::OpenGR_support` provided in `CGAL_OpenGR_support.cmake`.
 
 The \opengr web site is <A HREF="https://github.com/STORM-IRIT/OpenGR">`https://github.com/STORM-IRIT/OpenGR`</A>.
@@ -152,7 +153,7 @@ The \opengr web site is <A HREF="https://github.com/STORM-IRIT/OpenGR">`https://
 
 \libpointmatcher is a modular library implementing the Iterative Closest Point (ICP) algorithm for aligning point clouds, released under a permissive BSD license.
 
-\cgal provides wrappers for the ICP algorithm of \libpointmatcher in the \ref PkgPointSetProcessing3Ref
+\cgal provides wrappers for the ICP algorithm of \libpointmatcher in the \ref PkgPointSetProcessing3
 packages. In order to use \libpointmatcher in \cgal programs, the
 executables should be linked with the CMake imported target
 `CGAL::pointmatcher_support` provided in
@@ -160,10 +161,11 @@ executables should be linked with the CMake imported target
 
 The \libpointmatcher web site is <A
 HREF="https://github.com/ethz-asl/libpointmatcher">`https://github.com/ethz-asl/libpointmatcher`</A>.
-\attention On Windows, we only support version 1.3.1 of PointMatcher with version 3.3.7 of Eigen, with some changes to the recipe at
+\attention On Windows, \libpointmatcher needs to be compiled with the flag BOOST_TIMER_ENABLE_DEPRECATED set as it uses a deprecated module from \boost.
+\attention On Windows, we support version 1.4.4 of \libpointmatcher with version 3.4.0 of Eigen.
+Alternatively, version 1.3.1 of \libpointmatcher is supported with version 3.3.7 of Eigen, with some changes to the recipe at
 `https://github.com/ethz-asl/libpointmatcher/blob/master/doc/Compilation.md`:`NABO_INCLUDE_DIR` becomes `libnabo_INCLUDE_DIRS`
 and `NABO_LIBRARY` becomes `libnabo_LIBRARIES` in the "Build libpointmatcher" section.
-
 
 \subsection thirdpartyLeda LEDA
 <b>Version 6.2 or later</b>
@@ -249,6 +251,17 @@ executables should be linked with the CMake imported target
 
 The \opencv web site is <A HREF="https://opencv.org/">`https://opencv.org/`</A>.
 
+\subsection thirdpartySuiteSparse SuiteSparse
+<b>Version 7.10.1 or later</b>
+
+\suitesparse is a set of sparse-matrix-related packages written or co-authored by Tim Davis, available at <A HREF="https://github.com/DrTimothyAldenDavis/SuiteSparse">https://github.com/DrTimothyAldenDavis/SuiteSparse</A>.
+
+\suitesparse is used by the Orbifold Tutte Embedding and ARAP parametrization, i.e., in the surface parametrization package.
+
+\note SuiteSparse on Windows can easily be installed by \code
+vcpkg install suitesparse
+\endcode and it will be found automatically. When installed manually it is helpful to add the installation folder to the environment variable CMAKE_PREFIX_PATH for CMake to find the SuiteSparse libraries.
+
 \subsection thirdpartyMETIS METIS
 <b>Version 5.1 or later</b>
 
@@ -276,7 +289,7 @@ for instance, on Windows, you can download it from <A HREF="https://www.zlib.net
 
 \ceres is an open source C++ library for modeling and solving large, complicated optimization problems.
 
-In \cgal, \ceres is used by the \ref PkgPolygonMeshProcessingRef package for mesh smoothing, which
+In \cgal, \ceres is used by the \ref PkgPolygonMeshProcessing package for mesh smoothing, which
 requires solving complex non-linear least squares problems.
 
 Visit the official website of the library at <A HREF="http://ceres-solver.org/index.html">`ceres-solver.org`</A>
