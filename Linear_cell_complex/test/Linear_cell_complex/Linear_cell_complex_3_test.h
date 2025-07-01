@@ -997,7 +997,7 @@ bool test_LCC_3()
     }
     in >> P;
 
-    CGAL::import_from_polyhedron_3<LCC>(lcc,P);
+    CGAL::polyhedron_3_flux_to_lcc<LCC>(lcc,P);
     if ( !check_number_of_cells_3(lcc, 1539, 4434, 2894, 2, 2) )
       return false;
 
@@ -1029,7 +1029,7 @@ bool test_LCC_3()
     }
     T.insert ( std::istream_iterator < Point >(in),
                std::istream_iterator < Point >() );
-    CGAL::import_from_triangulation_3<LCC>(lcc,T);
+    CGAL::triangulation_3_to_lcc<LCC>(lcc,T);
     if ( !lcc.is_valid() )
       return false;
 

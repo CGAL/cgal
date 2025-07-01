@@ -24,13 +24,21 @@ Here a small example:
 <B>Middle</B>: the 2D linear cell complex reconstructed if combinatorial maps are the combinatorial data-structure.
 <B>Right</B>: the 2D linear cell complex reconstructed if generalized maps are the combinatorial data-structure.
 
-\sa `CGAL::import_from_triangulation_3<LCC,Triangulation>`
-\sa `CGAL::import_from_polyhedron_3<LCC,Polyhedron>`
+\sa `CGAL::triangulation_3_to_lcc<LCC,Triangulation>` (formerly `import_from_triangulation_3`)
+\sa `CGAL::polyhedron_3_to_lcc<LCC,Polyhedron>` (formerly `import_from_polyhedron_3`)
 
 */
 template<class LCC>
-typename LCC::Dart_descriptor import_from_plane_graph(LCC& lcc,
+typename LCC::Dart_descriptor plane_graph_to_lcc(LCC& lcc,
 std::istream& ais);
+
+/*!
+\ingroup PkgLinearCellComplexConstructions
+\deprecated Use `plane_graph_to_lcc()` instead.
+*/
+template<class LCC>
+[[deprecated("Use plane_graph_to_lcc instead")]]
+typename LCC::Dart_descriptor import_from_plane_graph(LCC& lcc, std::istream& ais);
 
 } /* namespace CGAL */
 

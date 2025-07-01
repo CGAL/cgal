@@ -36,7 +36,7 @@ namespace CGAL {
    * Imports a plane-embedded graph from a list of points and edges represented as pairs of vertex indices
    */
   template< class LCC >
-  typename LCC::Dart_descriptor import_from_plane_graph(LCC& alcc,
+  typename LCC::Dart_descriptor plane_graph_to_lcc(LCC& alcc,
                                                    const std::vector<typename LCC::Point>& vertices,
                                                    const std::vector<size_t>& edge_indices)
   {
@@ -130,6 +130,16 @@ namespace CGAL {
     return first;
   }
 
+template< class LCC >
+[[deprecated("Use plane_graph_to_lcc instead")]]
+typename LCC::Dart_descriptor
+import_from_plane_graph(LCC& alcc,
+                        const std::vector<typename LCC::Point>& vertices,
+                        const std::vector<size_t>& edge_indices)
+{
+  return plane_graph_to_lcc(alcc, vertices, edge_indices);
+}
+
   /**
    * Imports a plane-embedded graph from a file into a LinearCellComplex.
    *
@@ -138,7 +148,7 @@ namespace CGAL {
    * @return A dart created during the conversion.
    */
   template< class LCC >
-  typename LCC::Dart_descriptor import_from_plane_graph(LCC& alcc,
+  typename LCC::Dart_descriptor plane_graph_to_lcc(LCC& alcc,
                                                     std::istream& ais)
   {
     using FT = typename LCC::FT;
@@ -185,17 +195,35 @@ namespace CGAL {
       edge_indices.push_back(v2);
     }
 
-    return import_from_plane_graph(alcc, vertices, edge_indices);
+    return plane_graph_to_lcc(alcc, vertices, edge_indices);
   }
+
+template <class LCC>
+[[deprecated("Use plane_graph_to_lcc instead")]]
+typename LCC::Dart_descriptor
+import_from_plane_graph(LCC& alcc, std::istream& ais)
+{
+  return plane_graph_to_lcc(alcc, ais);
+}
 
   template < class LCC >
   typename LCC::Dart_descriptor
-  import_from_plane_graph(LCC& alcc, const char* filename)
+  iplane_graph_to_lcc(LCC& alcc, const char* filename)
   {
     std::ifstream input(filename);
     if (!input.is_open()) return alcc.null_descriptor;
-    return import_from_plane_graph(alcc, input);
+    return plane_graph_to_lcc(alcc, input);
   }
+
+template <class LCC>
+[[deprecated("Use plane_graph_to_lcc instead")]]
+typename LCC::Dart_descriptor
+import_from_plane_graph(LCC& alcc, const char* filename)
+{
+  std::ifstream input(filename);
+  if (!input.is_open()) return alcc.null_descriptor;
+  return plane_graph_to_lcc(alcc, input); 
+}
 
   template < class LCC >
   bool load_off(LCC& alcc, std::istream& in)

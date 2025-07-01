@@ -15,6 +15,9 @@ create_single_source_cgal_program(Linear_cell_complex_3_test.cpp ${hfiles})
 create_single_source_cgal_program(Linear_cell_complex_4_test.cpp ${hfiles})
 create_single_source_cgal_program(Linear_cell_complex_copy_test.cpp ${hfiles})
 create_single_source_cgal_program(LCC_3_incremental_builder_test.cpp ${hfiles})
+create_single_source_cgal_program(test_triangulation_alias.cpp ${hfiles})
+create_single_source_cgal_program(test_polyhedron_3_alias.cpp ${hfiles})
+create_single_source_cgal_program(test_plane_graph_alias.cpp ${hfiles})
 
 # Same targets, defining USE_COMPACT_CONTAINER_WITH_INDEX to test index version
 add_executable(Linear_cell_complex_2_test_index Linear_cell_complex_2_test.cpp ${hfiles})

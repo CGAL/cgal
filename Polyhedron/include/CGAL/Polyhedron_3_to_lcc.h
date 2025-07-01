@@ -30,7 +30,7 @@ namespace CGAL {
    * @return A dart created during the conversion.
    */
   template< class LCC, class Polyhedron >
-  typename LCC::Dart_descriptor import_from_polyhedron_3(LCC& alcc,
+  typename LCC::Dart_descriptor polyhedron_3_to_lcc(LCC& alcc,
                                                      const Polyhedron &apoly)
   {
     static_assert( LCC::dimension>=2 && LCC::ambient_dimension==3 );
@@ -94,6 +94,14 @@ namespace CGAL {
     return firstAll;
   }
 
+template< class LCC, class Polyhedron >
+[[deprecated("Use polyhedron_3_to_lcc instead")]]
+typename LCC::Dart_descriptor
+import_from_polyhedron_3(LCC& alcc, const Polyhedron &apoly)
+{
+  return polyhedron_3_to_lcc<LCC, Polyhedron>(alcc, apoly);
+}
+
   /** Convert a Polyhedron_3 read into a flux into 3D linear cell complex.
    * @param alcc the linear cell complex where Polyhedron_3 will be converted.
    * @param ais the istream where read the Polyhedron_3.
@@ -101,7 +109,7 @@ namespace CGAL {
    */
   template < class LCC >
   typename LCC::Dart_descriptor
-  import_from_polyhedron_3_flux(LCC& alcc, std::istream& ais)
+  polyhedron_3_flux_to_lcc(LCC& alcc, std::istream& ais)
   {
     if (!ais.good())
     {
@@ -110,9 +118,17 @@ namespace CGAL {
     }
     CGAL::Polyhedron_3<typename LCC::Traits> P;
     ais >> P;
-    return import_from_polyhedron_3<LCC, CGAL::Polyhedron_3
+    return polyhedron_3_to_lcc<LCC, CGAL::Polyhedron_3
                                     <typename LCC::Traits> > (alcc, P);
   }
+
+template < class LCC >
+[[deprecated("Use polyhedron_3_flux_to_lcc instead")]]
+typename LCC::Dart_descriptor
+import_from_polyhedron_3_flux(LCC& alcc, std::istream& ais)
+{
+  return polyhedron_3_flux_to_lcc(alcc, ais);
+}
 
 } // namespace CGAL
 

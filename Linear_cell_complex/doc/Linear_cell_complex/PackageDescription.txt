@@ -62,9 +62,10 @@
 
 \cgalCRPSection{Global Functions}
 \cgalCRPSubsection{Constructions for Linear Cell Complex}
-- `CGAL::import_from_plane_graph<LCC>`
-- `CGAL::import_from_triangulation_3<LCC,Triangulation>`
-- `CGAL::import_from_polyhedron_3<LCC,Polyhedron>`
+- `CGAL::plane_graph_to_lcc<LCC>` (formerly `import_from_plane_graph`)
+- `CGAL::triangulation_3_to_lcc<LCC,Triangulation>` (formerly `import_from_triangulation_3`)
+- `CGAL::polyhedron_3_to_lcc<LCC,Polyhedron>` (formerly `import_from_polyhedron_3`)
+- `CGAL::polyhedron_3_flux_to_lcc<LCC>` (formerly `import_from_polyhedron_3_flux`)
 
 \cgalCRPSubsection{Operations for Linear Cell Complex}
 - `CGAL::compute_normal_of_cell_0<LCC>`
