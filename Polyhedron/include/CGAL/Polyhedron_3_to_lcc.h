@@ -122,14 +122,6 @@ import_from_polyhedron_3(LCC& alcc, const Polyhedron &apoly)
                                     <typename LCC::Traits> > (alcc, P);
   }
 
-template < class LCC >
-[[deprecated("Use polyhedron_3_flux_to_lcc instead")]]
-typename LCC::Dart_descriptor
-import_from_polyhedron_3_flux(LCC& alcc, std::istream& ais)
-{
-  return polyhedron_3_flux_to_lcc(alcc, ais);
-}
-
 } // namespace CGAL
 
 #endif // CGAL_IMPORT_FROM_POLYHEDRON_3_H

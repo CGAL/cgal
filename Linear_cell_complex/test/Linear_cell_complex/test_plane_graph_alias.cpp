@@ -2,6 +2,7 @@
 #include <CGAL/Linear_cell_complex_constructors.h>
 #include <cassert>
 #include <sstream>
+#include <cstdlib>
 
 typedef CGAL::Linear_cell_complex_for_combinatorial_map<2> LCC;
 
@@ -25,5 +26,5 @@ int main()
   auto d2 = CGAL::import_from_plane_graph(lcc2, input);
   assert(d2 != LCC::null_descriptor);
 
-  return 0;
+  return EXIT_SUCCESS;
 }

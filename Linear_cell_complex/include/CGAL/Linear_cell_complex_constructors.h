@@ -208,7 +208,7 @@ import_from_plane_graph(LCC& alcc, std::istream& ais)
 
   template < class LCC >
   typename LCC::Dart_descriptor
-  iplane_graph_to_lcc(LCC& alcc, const char* filename)
+  plane_graph_to_lcc(LCC& alcc, const char* filename)
   {
     std::ifstream input(filename);
     if (!input.is_open()) return alcc.null_descriptor;
@@ -220,9 +220,7 @@ template <class LCC>
 typename LCC::Dart_descriptor
 import_from_plane_graph(LCC& alcc, const char* filename)
 {
-  std::ifstream input(filename);
-  if (!input.is_open()) return alcc.null_descriptor;
-  return plane_graph_to_lcc(alcc, input); 
+  return plane_graph_to_lcc(alcc, filename); 
 }
 
   template < class LCC >

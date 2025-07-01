@@ -3,6 +3,7 @@
 #include <CGAL/Polyhedron_3_to_lcc.h> 
 #include <sstream>
 #include <cassert>
+#include <cstdlib>
 
 typedef CGAL::Linear_cell_complex_for_combinatorial_map<3> LCC;
 typedef CGAL::Polyhedron_3<LCC::Traits> Polyhedron;
@@ -22,5 +23,5 @@ int main()
   auto d2 = CGAL::import_from_polyhedron_3<LCC>(lcc2, P); 
   assert(d2 == LCC::null_descriptor);
 
-  return 0;
+  return EXIT_SUCCESS;
 }

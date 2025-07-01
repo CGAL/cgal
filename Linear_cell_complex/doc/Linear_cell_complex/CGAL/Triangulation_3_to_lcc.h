@@ -8,9 +8,8 @@ Objects are added in `lcc`, existing darts are not modified. Returns a dart crea
 \pre \link GenericMap::dimension `LCC::dimension`\endlink \f$ \geq\f$ 3 and
       \link LinearCellComplex::ambient_dimension `LCC::ambient_dimension`\endlink==3.
 
-\sa `CGAL::triangulation_3_to_lcc<LCC,Triangulation>` (formerly `import_from_triangulation_3`)
-\sa `CGAL::plane_graph_to_lcc<LCC>` (formerly `import_from_plane_graph`)
-/// \sa `CGAL::polyhedron_3_to_lcc<LCC,Polyhedron>` (formerly `import_from_polyhedron_3`)
+\sa `CGAL::plane_graph_to_lcc<LCC>` 
+\sa `CGAL::polyhedron_3_to_lcc<LCC,Polyhedron>` 
 */
 
 template <class LCC,class Triangulation_>
