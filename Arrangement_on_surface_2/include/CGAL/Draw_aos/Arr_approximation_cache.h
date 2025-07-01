@@ -84,16 +84,19 @@ public:
   Vertex_cache_range vertex_cache() const {
     return boost::make_iterator_range(vertex_cache_begin(), vertex_cache_end());
   }
+  std::size_t vertex_cache_size() const { return m_vertex_cache.size(); }
 
   Halfedge_cache_const_iterator halfedge_cache_begin() const { return m_halfedge_cache.begin(); }
   Halfedge_cache_const_iterator halfedge_cache_end() const { return m_halfedge_cache.end(); }
   Halfedge_cache_range halfedge_cache() const {
     return boost::make_iterator_range(halfedge_cache_begin(), halfedge_cache_end());
   }
+  std::size_t halfedge_cache_size() const { return m_halfedge_cache.size(); }
 
   Face_cache_const_iterator face_cache_begin() const { return m_face_cache.begin(); }
   Face_cache_const_iterator face_cache_end() const { return m_face_cache.end(); }
   Face_cache_range face_cache() const { return boost::make_iterator_range(face_cache_begin(), face_cache_end()); }
+  std::size_t face_cache_size() const { return m_face_cache.size(); }
 
 private:
   Vertex_cache m_vertex_cache;

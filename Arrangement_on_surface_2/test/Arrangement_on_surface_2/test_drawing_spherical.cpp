@@ -52,11 +52,30 @@ int main() {
   using Point = K::Point_2;
 
   Cdt cdt;
-  std::vector<Point> outer = {Point(0, 0), Point(5, 0), Point(5, 5), Point(0, 5), Point(0, 0)};
+  std::vector<Point> outer = {{4, 1},       {4, 4},       {2.5, 4},     {2.32026, 3.28104}, {2.32026, 2.64052},
+                              {2.5, 3},     {3, 2},       {2.32026, 2}, {2.32026, 3.28104}, {2.5, 4},
+                              {2.32026, 4}, {2.32026, 1}, {4, 1}};
   std::vector<Point> inner = {Point(0, 0), Point(0.5, 0), Point(0.5, 0.5), Point(0.5, 0),
                               Point(1, 0), Point(1, 1),   Point(0, 1)};
-  std::vector<Point> outer_constraint = {Point(0, 0), Point(-1, -1), Point(5, 0), Point(6, -1),
-                                         Point(5, 5), Point(6, 6),   Point(0, 5), Point(-1, 6)};
+  std::vector<Point> outer_constraint = {{4, 1},
+                                         {4, 4},
+                                         {2.5, 4},
+                                         {2.32026, 3.28104},
+                                         {1.32026, 3.28104},
+                                         {1.32026, 2.64052},
+                                         {2.32026, 2.64052},
+                                         {2.5, 3},
+                                         {3, 2},
+                                         {2.32026, 2},
+                                         {1.32026, 2},
+                                         {1.32026, 3.28104},
+                                         {2.32026, 3.28104},
+                                         {2.5, 4},
+                                         {2.32026, 4},
+                                         {1.32026, 4},
+                                         {1.32026, 1},
+                                         {2.32026, 1},
+                                         {4, 1}};
 
   auto add_info = [](const Point& p) { return std::make_pair(p, 1); };
 

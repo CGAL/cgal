@@ -5,12 +5,14 @@
 #include <array>
 #include <boost/iterator/function_output_iterator.hpp>
 #include "CGAL/Arr_trapezoid_ric_point_location.h"
+#include "CGAL/Arrangement_on_surface_2.h"
 #include "CGAL/Bbox_2.h"
 #include "CGAL/Draw_aos/Arr_bounded_renderer.h"
 #include "CGAL/Draw_aos/Arr_render_context.h"
 #include "CGAL/Graphics_scene.h"
 #include "CGAL/Graphics_scene_options.h"
 #include "CGAL/Qt/camera.h"
+#include "CGAL/unordered_flat_map.h"
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QWidget>
 #include <QtOpenGLWidgets/QtOpenGLWidgets>
@@ -20,6 +22,10 @@
 #include <CGAL/Basic_viewer.h>
 #include <cstddef>
 #include <boost/range/iterator_range.hpp>
+#include <iterator>
+#include <memory>
+#include <utility>
+#include <vector>
 
 namespace CGAL {
 
@@ -31,6 +37,7 @@ class Arr_viewer : public Qt::Basic_viewer
   using Face_const_handle = Arrangement::Face_const_handle;
   using Graphics_scene_options =
       Graphics_scene_options<Arrangement, Vertex_const_handle, Halfedge_const_handle, Face_const_handle>;
+  using Point_location = Arr_trapezoid_ric_point_location<Arrangement>;
 
 private:
   // Function to check if the camera's state has changed
@@ -48,17 +55,17 @@ private:
     return true;
   }
 
-  Bbox_2 initial_bbox() const {
-    Bbox_2 bbox;
-    for(const auto& vh : m_arr.vertex_handles()) {
-      bbox += vh->point().bbox();
-    }
-    if(bbox.x_span() == 0 || bbox.y_span() == 0) {
-      // make a default bbox around the degenrate rect
-      bbox = Bbox_2(bbox.xmin() - 1, bbox.ymin() - 1, bbox.xmax() + 1, bbox.ymax() + 1);
-    }
-    return bbox;
-  }
+  // Bbox_2 initial_bbox() const {
+  //   Bbox_2 bbox;
+  //   for(const auto& vh : m_arr.vertex_handles()) {
+  //     bbox += vh->point().bbox();
+  //   }
+  //   if(bbox.x_span() == 0 || bbox.y_span() == 0) {
+  //     // make a default bbox around the degenrate rect
+  //     bbox = Bbox_2(bbox.xmin() - 1, bbox.ymin() - 1, bbox.xmax() + 1, bbox.ymax() + 1);
+  //   }
+  //   return bbox;
+  // }
 
   /**
    * @brief Computes the bounding box of the view from orthogonal camera.
@@ -101,7 +108,9 @@ private:
     std::array<GLint, 4> viewport;
     camera_->getViewport(viewport.data());
     double width = static_cast<double>(viewport[2]);
-    return 0.5;
+    // return bbox.x_span() / std::min(600.0, width);
+    // We are testing linear traits, lets set it to inf
+    return 10000;
   }
 
 public:
@@ -111,26 +120,22 @@ public:
              const char* title = "Arrangement Viewer")
       : Basic_viewer(parent, m_scene, title)
       , m_scene_options(options)
-      , m_pl(arr)
-      , m_arr(arr) {}
+      , m_arr(arr)
+      , m_pl(arr) {}
 
-  void rerender(Bbox_2 bbox) {
-    Arr_render_context ctx(m_arr, m_pl, get_approx_error(bbox));
+  void render_arr(const Arrangement& arr, const Point_location& pl, const Bbox_2& bbox) {
+    Arr_render_context ctx(arr, pl, get_approx_error(bbox));
     Arr_bounded_renderer renderer(ctx, bbox);
     const auto& cache = renderer.render();
-
-    m_scene.clear();
-
-    int counter = 0;
 
     // add faces
     for(const auto& [fh, face_tris] : cache.face_cache()) {
       const auto& points = face_tris.points;
       const auto& tris = face_tris.triangles;
-      bool draw_face = m_scene_options.colored_face(m_arr, fh);
+      bool draw_face = m_scene_options.colored_face(arr, fh);
       for(const auto& t : tris) {
         if(draw_face) {
-          m_scene.face_begin(m_scene_options.face_color(m_arr, fh));
+          m_scene.face_begin(m_scene_options.face_color(arr, fh));
         } else {
           m_scene.face_begin();
         }
@@ -142,15 +147,13 @@ public:
     }
 
     // add edges
-    counter = 0;
     for(const auto& [he, polyline] : cache.halfedge_cache()) {
       if(polyline.size() < 2) {
         continue; // skip degenerate edges
       }
-      // ofs_index << "polyline_" << counter << ".txt" << std::endl;
-      // std::ofstream ofs("/Users/shep/codes/aos_2_js_helper/polyline_" + std::to_string(counter++) + ".txt");
-      bool draw_colored_edge = m_scene_options.colored_edge(m_arr, he);
-      auto color = draw_colored_edge ? m_scene_options.edge_color(m_arr, he) : CGAL::IO::Color();
+
+      bool draw_colored_edge = m_scene_options.colored_edge(arr, he);
+      auto color = draw_colored_edge ? m_scene_options.edge_color(arr, he) : CGAL::IO::Color();
       for(size_t i = 0; i < polyline.size() - 1; ++i) {
         const auto& cur_pt = polyline[i];
         const auto& next_pt = polyline[i + 1];
@@ -160,25 +163,26 @@ public:
         {
           continue;
         }
-        // ofs << cur_pt << "\n";
         if(draw_colored_edge) {
           m_scene.add_segment(cur_pt, next_pt, color);
         } else {
           m_scene.add_segment(cur_pt, next_pt);
         }
       }
-      // ofs << polyline.back() << "\n";
-      // ofs << std::endl;
     }
     // add vertices
     for(const auto& [vh, pt] : cache.vertex_cache()) {
-      // std::cout << pt << std::endl;
-      if(m_scene_options.colored_vertex(m_arr, vh)) {
-        m_scene.add_point(pt, m_scene_options.vertex_color(m_arr, vh));
+      if(m_scene_options.colored_vertex(arr, vh)) {
+        m_scene.add_point(pt, m_scene_options.vertex_color(arr, vh));
       } else {
         m_scene.add_point(pt);
       }
     }
+  }
+
+  void rerender(Bbox_2 bbox) {
+    m_scene.clear();
+    render_arr(m_arr, m_pl, bbox);
     Basic_viewer::redraw();
   }
 
@@ -200,8 +204,8 @@ public:
 private:
   Graphics_scene m_scene;
   Graphics_scene_options m_scene_options;
-  const Arrangement& m_arr;
-  Arr_trapezoid_ric_point_location<Arrangement> m_pl;
+  Arrangement m_arr;
+  Point_location m_pl;
   QMatrix4x4 m_last_proj_matrix;
   QMatrix4x4 m_last_modelview_matrix;
 };
@@ -225,7 +229,9 @@ void draw_viewer(const Arrangement& arr) {
     CGAL::Random random((size_t(&*vh)));
     return get_random_color(random);
   };
+  // Arr_viewer viewer(app.activeWindow(), move_degenerate_features(arr), gso, "Arrangement Viewer");
   Arr_viewer viewer(app.activeWindow(), arr, gso, "Arrangement Viewer");
+  std::cout << "Preprocess complete" << std::endl;
   viewer.show();
   app.exec();
 }
