@@ -19,7 +19,7 @@
 #include <CGAL/license/Triangulation_3.h>
 
 #include <CGAL/disable_warnings.h>
-#include <CGAL/basic.h>
+#include "CGAL/config.h"
 
 #include <CGAL/Delaunay_triangulation_cell_base_3.h>
 #include <CGAL/Triangulation_3.h>
@@ -45,7 +45,6 @@
 #ifdef CGAL_LINKED_WITH_TBB
 # include <CGAL/point_generators_3.h>
 # include <tbb/parallel_for.h>
-# include <thread>
 # include <tbb/enumerable_thread_specific.h>
 # include <tbb/concurrent_vector.h>
 #endif
@@ -55,11 +54,13 @@
 #endif
 
 #ifdef CGAL_CONCURRENT_TRIANGULATION_3_ADD_TEMPORARY_POINTS_ON_FAR_SPHERE
-#include <CGAL/point_generators_3.h>
+# include <CGAL/point_generators_3.h>
+# include <thread>
+# include <vector>
 #endif
 
+#include <optional>
 #include <utility>
-#include <vector>
 
 namespace CGAL {
 
@@ -191,9 +192,10 @@ protected:
                                                const Point& r, const Point& s, bool perturb = false) const;
 
   // for dual:
-  Point construct_circumcenter(const Point& p, const Point& q, const Point& r) const
+  template <typename ...Points>
+  Point construct_circumcenter(Points&&... points) const
   {
-    return geom_traits().construct_circumcenter_3_object()(p, q, r);
+    return geom_traits().construct_circumcenter_3_object()(std::forward<Points>(points)...);
   }
 
   Line construct_equidistant_line(const Point& p1, const Point& p2, const Point& p3) const
@@ -206,19 +208,10 @@ protected:
     return geom_traits().construct_ray_3_object()(p, l);
   }
 
-  Object construct_object(const Point& p) const
+  template <typename T>
+  Object construct_object(T&& x) const
   {
-    return geom_traits().construct_object_3_object()(p);
-  }
-
-  Object construct_object(const Segment& s) const
-  {
-    return geom_traits().construct_object_3_object()(s);
-  }
-
-  Object construct_object(const Ray& r) const
-  {
-    return geom_traits().construct_object_3_object()(r);
+    return geom_traits().construct_object_3_object()(std::forward<T>(x));
   }
 
   bool less_distance(const Point& p, const Point& q, const Point& r) const
@@ -1074,7 +1067,18 @@ protected:
   friend class Conflict_tester_3;
   friend class Conflict_tester_2;
 
-  Hidden_point_visitor hidden_point_visitor;
+  CGAL_NO_UNIQUE_ADDRESS Hidden_point_visitor hidden_point_visitor;
+
+  static auto get_property_point_map_type() {
+    if constexpr(Tds::has_property_maps) {
+      return Property_map<typename Triangulation_data_structure::Cell_index, std::optional<Point>, Concurrency_tag>{};
+    } else {
+      return Null_tag{};
+    }
+  }
+  using Circumcenter_property_map = decltype(get_property_point_map_type());
+
+  CGAL_NO_UNIQUE_ADDRESS Circumcenter_property_map circumcenter_pmap;
 };
 
 template < class Gt, class Tds, class Lds >
@@ -1839,7 +1843,23 @@ dual(Cell_handle c) const
 {
   CGAL_precondition(dimension()==3);
   CGAL_precondition(! is_infinite(c));
-  return c->circumcenter(geom_traits());
+  if constexpr (Tds::has_property_maps) {
+    if(circumcenter_pmap) {
+      auto& opt_point = circumcenter_pmap[c->index()];
+      if(opt_point.has_value())
+        return *opt_point;
+      else {
+        opt_point = construct_circumcenter(point(c, 0), point(c, 1),
+                                           point(c, 2), point(c, 3));
+        return *opt_point;
+      }
+    }
+    return construct_circumcenter(point(c, 0), point(c, 1),
+                                  point(c, 2), point(c, 3));
+
+  } else {
+    return c->circumcenter(geom_traits());
+  }
 }
 
 template < class Gt, class Tds, class Lds >

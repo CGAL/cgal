@@ -4079,6 +4079,11 @@ insert_in_conflict(const Point& p,
   if(could_lock_zone)
     *could_lock_zone = true;
 
+  auto cell_handle_iterator = [&](auto it) {
+    return boost::make_transform_iterator(it,
+      [this](const cell_descriptor& cd) { return tds().cell_handle(cd); });
+  };
+
   switch(dimension())
   {
     case 3:
@@ -4140,7 +4145,7 @@ insert_in_conflict(const Point& p,
 
       // Remember the points that are hidden by the conflicting cells,
       // as they will be deleted during the insertion.
-      hider.process_cells_in_conflict(cells.begin(), cells.end());
+      hider.process_cells_in_conflict(cell_handle_iterator(cells.begin()), cell_handle_iterator(cells.end()));
 
       Vertex_handle v =
         tds().is_small_hole(facets.size()) ?
@@ -4182,7 +4187,7 @@ insert_in_conflict(const Point& p,
 
       // Remember the points that are hidden by the conflicting cells,
       // as they will be deleted during the insertion.
-      hider.process_cells_in_conflict(cells.begin(), cells.end());
+      hider.process_cells_in_conflict(cell_handle_iterator(cells.begin()), cell_handle_iterator(cells.end()));
 
       Vertex_handle v = _insert_in_hole(p, cells.begin(), cells.end(),
                                         tds().cell_handle(facet.first), facet.second);

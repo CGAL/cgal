@@ -455,6 +455,7 @@ public:
   // than what is exposed by the TDS concept (tds.is_vertex(Vertex_handle)).
   typedef CGAL::Boolean_tag<std::is_same_v<StorageTag, Handle_tag>> Is_CGAL_TDS_3;
   static constexpr bool is_index_based = std::is_same_v<StorageTag, Index_tag>;
+  static constexpr bool has_property_maps = is_index_based;
 
   // Tools to change the Vertex and Cell types of the TDS.
   template < typename Vb2 >

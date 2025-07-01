@@ -1189,13 +1189,13 @@ namespace CGAL {
 
     cell_descriptor to_cell_descriptor(Cell_handle ch) const
     {
-      CGAL_assertion(ch.tds() == this);
+      CGAL_assertion(ch.container() == this);
       return ch.index();
     }
 
     vertex_descriptor to_vertex_descriptor(Vertex_handle vh) const
     {
-      CGAL_assertion(vh.tds() == this);
+      CGAL_assertion(vh.container() == this);
       return vh.index();
     }
 
@@ -1846,10 +1846,7 @@ namespace CGAL {
       return circumcenter(GT());
     }
 
-    void set_circumcenter(const Point_3&)
-    {
-      std::cerr << "ignore set_circumcenter() call";
-    }
+    void set_circumcenter(const Point_3&) = delete;
 
   };
 
