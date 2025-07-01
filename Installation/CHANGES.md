@@ -7,10 +7,10 @@ Release date: _______ 2025
 ### General Changes
 
 - The new list of supported compilers is:
-  - Visual C++ _______ (from Visual Studio _______) or later
-  - Gnu g++ _______ or later (on Linux or macOS)
-  - LLVM Clang version _______ or later (on Linux)
-  - Apple Clang compiler versions _______ (on macOS)
+  - Visual C++ 15.9, 16.10, 17.0 (from Visual Studio 2017, 2019 and 2022) or later
+  - Gnu g++ 12.2.0 or later (on Linux)
+  - LLVM Clang version 20.1.6 or later (on Linux)
+  - Apple Clang compiler versions 12.0.5 and 12.0.5 (on macOS)
 - The minimal supported version of Boost is now 1.74.0.
 
 ### [3D Constrained Triangulations](https://doc.cgal.org/6.1/Manual/packages.html#PkgConstrainedTriangulation3) (new package)
