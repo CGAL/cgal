@@ -223,8 +223,6 @@ public:
   }
 };
 
-// #ifdef CGAL_CONCURRENT_TETRAHEDRAL_REMESHING
-// Parallel execution implementation
 template<typename Operation>
 class ElementaryOperationExecutionParallel : public ElementaryOperationExecution<Operation> {
 public:
@@ -282,12 +280,7 @@ public:
     std::atomic<bool> success(false);
     
     // Batch size following Mesh_3 approach - creates fewer, larger tasks instead of one task per element
-    // Benefits:
-    // - Reduced task creation overhead
-    // - Better load balancing through work stealing
-    // - Lower lock contention 
-    // - Improved cache locality
-    const size_t BATCH_SIZE =elements.size(); // Configurable batch size for this operation type
+    const size_t BATCH_SIZE = elements.size(); // Configurable batch size for this operation type
     
     tbb::task_group group;
     
@@ -309,17 +302,14 @@ public:
           auto lock_zone = op.get_lock_zone(element, c3t3);
           if (lock_manager.try_lock_zone(lock_zone)) {
             if(!op.can_apply_operation(element, c3t3)) {
-              lock_manager.try_lock_zone(lock_zone); // Release lock if operation cannot be applied
+              lock_manager.unlock_zone(lock_zone); // Release lock if operation cannot be applied
               continue;
             }
             // Execute pre-operation phase for this element
             op.execute_pre_operation(element, c3t3);
             
-            // Re-validate element after acquiring lock (zombie check)
-            // This prevents operating on elements that were modified by other threads
-		  if (op.execute_operation(element, c3t3)) {
-                local_success = true;
-              }
+            if (op.execute_operation(element, c3t3)) {
+              local_success = true;
             }
             
             op.execute_post_operation(element, c3t3);
@@ -330,12 +320,12 @@ public:
         
         if (local_success) success.store(true);
       });
+    }
+    
     group.wait();
     return success.load();
-    }
-  };
-// #endif // CGAL_LINKED_WITH_TBB
-
+  }
+};
 } // namespace internal
 } // namespace Tetrahedral_remeshing
 } // namespace CGAL

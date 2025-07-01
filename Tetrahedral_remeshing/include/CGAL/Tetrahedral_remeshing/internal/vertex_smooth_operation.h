@@ -102,7 +102,6 @@ public:
       }
     std::cerr<<"VertexSmoothOperation::get_element_source not implemented"<<std::endl;
     return c3t3.triangulation().finite_vertices();
-  }
     
     return vertices;
   }
@@ -114,13 +113,13 @@ public:
       return true;
     } else if constexpr (Domain == SmoothingDomain::INTERNAL_VERTICES) {
       return true;
-    } else {
+    } 
       return true;
-    }
   }
 
   Lock_zone get_lock_zone(const ElementType& v, const C3t3& c3t3) const override {
     Lock_zone zone;
+    if constexpr (Domain == SmoothingDomain::SURFACE_VERTICES) {
       return Lock_zone();
     } else if constexpr (Domain == SmoothingDomain::COMPLEX_EDGES) {
       return Lock_zone();
