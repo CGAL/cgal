@@ -47,7 +47,7 @@ namespace CGAL {
    * @return A dart incident to the infinite vertex.
    */
   template < class LCC, class Triangulation >
-  typename LCC::Dart_descriptor import_from_triangulation_3
+  typename LCC::Dart_descriptor triangulation_3_to_lcc
   (LCC& alcc, const Triangulation &atr,
    std::map<typename Triangulation::Cell_handle,
             typename LCC::Dart_descriptor >* avol_to_dart=nullptr)
@@ -148,6 +148,16 @@ namespace CGAL {
     CGAL_assertion(dart!=LCC::null_descriptor);
     return dart;
   }
+
+  template < class LCC, class Triangulation >
+[[deprecated("Use triangulation_3_to_lcc instead")]]
+typename LCC::Dart_descriptor import_from_triangulation_3
+(LCC& alcc, const Triangulation &atr,
+ std::map<typename Triangulation::Cell_handle,
+          typename LCC::Dart_descriptor >* avol_to_dart=nullptr)
+{
+  return triangulation_3_to_lcc(alcc, atr, avol_to_dart);
+}
 
 } // namespace CGAL
 
