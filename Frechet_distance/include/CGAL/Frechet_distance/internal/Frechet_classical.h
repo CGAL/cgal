@@ -78,7 +78,7 @@ bool FrechetClassical<C>::lessThan(distance_t const& distance, Curve const& curv
                         reachable1[i][j] = free_int.begin;
                     }
                     else if (reachable1[i][j-1] && reachable1[i][j-1] <= free_int.end) {
-                        reachable1[i][j] = CGAL::max(free_int.begin, reachable1[i][j-1].value());
+                        reachable1[i][j] = (CGAL::max)(free_int.begin, reachable1[i][j-1].value()));
                     }
                 }
             }
@@ -89,7 +89,7 @@ bool FrechetClassical<C>::lessThan(distance_t const& distance, Curve const& curv
                         reachable2[i][j] = free_int.begin;
                     }
                     else if (reachable2[i-1][j] && reachable2[i-1][j] <= free_int.end) {
-                        reachable2[i][j] = CGAL::max(free_int.begin, reachable2[i-1][j].value());
+                        reachable2[i][j] = (CGAL::max)(free_int.begin, reachable2[i-1][j].value());
                     }
                 }
             }
