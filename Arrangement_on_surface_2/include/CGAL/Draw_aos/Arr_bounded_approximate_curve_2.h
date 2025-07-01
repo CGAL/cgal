@@ -3,7 +3,7 @@
 
 #include "CGAL/Arr_enums.h"
 #include "CGAL/Draw_aos/Arr_bounded_approximate_point_2.h"
-#include "CGAL/Draw_aos/Arr_bounded_compute_y_at_x.h"
+#include "CGAL/Draw_aos/Arr_compute_y_at_x.h"
 #include "CGAL/Draw_aos/Arr_construct_curve_end.h"
 #include "CGAL/Draw_aos/Arr_construct_segments.h"
 #include "CGAL/Draw_aos/Arr_render_context.h"
@@ -48,13 +48,13 @@ class Arr_bounded_approximate_curve_2
     Execution_context(const Arr_bounded_render_context& ctx,
                       const X_monotone_curve_2& curve,
                       const Arr_bounded_approximate_point_2& approx_pt,
-                      const Arr_bounded_compute_y_at_x& compute_y_at_x,
+                      const Arr_compute_y_at_x& compute_y_at_x,
                       const Intersections_vector& top_inters,
                       const Intersections_vector& bottom_inters,
                       Polyline_geom& polyline)
         : Arr_context_delegator(ctx)
         , curve(curve)
-        , bounded_compute_y_at_x(compute_y_at_x)
+        , compute_y_at_x(compute_y_at_x)
         , bounded_approx_pt(approx_pt)
         , top_inters(top_inters)
         , bottom_inters(bottom_inters)
@@ -72,7 +72,7 @@ class Arr_bounded_approximate_curve_2
     bool is_bounded_curve() const { return is_min_end_bounded() && is_max_end_bounded(); }
 
     const X_monotone_curve_2& curve;
-    const Arr_bounded_compute_y_at_x& bounded_compute_y_at_x;
+    const Arr_compute_y_at_x& compute_y_at_x;
     const Arr_bounded_approximate_point_2& bounded_approx_pt;
     const Intersections_vector &top_inters, bottom_inters;
     const std::optional<Point_2> min_end, max_end;
@@ -132,7 +132,7 @@ private:
    */
   static void approximate_simple_curve_segment(Execution_context& ctx, const FT& start, const FT& end, double step) {
     for(FT x = start + step; x < end; x += step) {
-      auto y = ctx.bounded_compute_y_at_x(ctx.curve, x);
+      auto y = ctx.compute_y_at_x(ctx.curve, x);
       if(!y.has_value()) {
         // break as soon as there's no more intersections
         break;
@@ -143,14 +143,14 @@ private:
       }
       *ctx.out_it++ = ctx->approx_pt(Point_2(x, y.value()));
       if(y > ctx->ymax() || y < ctx->ymin()) {
-        // We are outside the bbox. The dummy point is inserted to indicate the curve is outside the bbox.
+        // We are outside the bbox. The dummy point was already inserted to indicate that.
         break;
       }
     }
   };
 
   static void approximate_vertical_curve(Execution_context& ctx) {
-    if(ctx.is_bounded_curve() && ctx.min_end->x() < ctx->xmin() && ctx.min_end->x() > ctx->xmax()) {
+    if(ctx.is_bounded_curve() && (ctx.min_end->x() < ctx->xmin() || ctx.min_end->x() > ctx->xmax())) {
       // The curve is outside the bbox in x direction, no need to approximate
       return;
     }
@@ -178,7 +178,7 @@ private:
 public:
   Arr_bounded_approximate_curve_2(const Arr_bounded_render_context& ctx,
                                   const Arr_bounded_approximate_point_2& point_approx)
-      : m_bounded_compute_y_at_x(ctx)
+      : m_compute_y_at_x(ctx)
       , m_approx_pt(point_approx)
       , m_ctx(ctx)
       , m_top(ctx.cst_horizontal_segment(ctx.ymax(), ctx.xmin(), ctx.xmax()))
@@ -210,7 +210,7 @@ public:
 
     auto top_inters = compute_intersections(curve, m_top, m_ctx.intersect_2, m_ctx.cst_curve_end);
     auto bottom_inters = compute_intersections(curve, m_bottom, m_ctx.intersect_2, m_ctx.cst_curve_end);
-    Execution_context ctx(m_ctx, curve, m_approx_pt, m_bounded_compute_y_at_x, top_inters, bottom_inters, polyline);
+    Execution_context ctx(m_ctx, curve, m_approx_pt, m_compute_y_at_x, top_inters, bottom_inters, polyline);
 
     if(ctx->is_vertical_2(curve)) {
       approximate_vertical_curve(ctx);
@@ -224,7 +224,7 @@ public:
     FT last_x;
     std::optional<Point_2> first_inter = first_intersection(ctx);
 
-    if(auto y_at_txmin = ctx.bounded_compute_y_at_x(curve, txmin);
+    if(auto y_at_txmin = ctx.compute_y_at_x(curve, txmin);
        y_at_txmin.has_value() && y_at_txmin != ctx->ymin() && y_at_txmin != ctx->ymax())
     {
       // The tight starting point of the curve is within the bbox and
@@ -237,16 +237,7 @@ public:
     } else if(first_inter.has_value()) {
       last_x = first_inter->x();
     } else {
-      // We assert that the curve is outbound.
-      // If the min end is bounded, it's obvious.
-      //
-      // If the min end is unbounded, we know that the curve has no intersections with top, bottom or left edge(txmin ==
-      // xmin when the min end is unbounded) and the min end of the curve is outbound (it approaches infinity in one or
-      // both dimension).
-      // Assume that the curve does has one point within the bbox. Note that it's a contiguous
-      // x-monotone curve. So it must cross the top, bottom or left edge to reach the min end from right to left,
-      // which is a contradiction.
-      return polyline;
+      return polyline; // The curve is entirely outside the bbox in x direction.
     }
 
     // iterate through the intersections and insert segments in-between.
@@ -258,7 +249,7 @@ public:
                }),
                [&ctx](const Point_2& pt1, const Point_2& pt2) { return ctx->compare_xy_2(pt1, pt2) == CGAL::SMALLER; });
 
-    if(auto y_at_txmax = ctx.bounded_compute_y_at_x(curve, txmax);
+    if(auto y_at_txmax = ctx.compute_y_at_x(curve, txmax);
        y_at_txmax.has_value() && y_at_txmax != ctx->ymin() && y_at_txmax != ctx->ymax())
     {
       approximate_simple_curve_segment(ctx, last_x, txmax, ctx->approx_error);
@@ -272,7 +263,7 @@ public:
 private:
   const Arr_bounded_render_context& m_ctx;
   const Arr_bounded_approximate_point_2& m_approx_pt;
-  const Arr_bounded_compute_y_at_x m_bounded_compute_y_at_x;
+  const Arr_compute_y_at_x m_compute_y_at_x;
   const X_monotone_curve_2 m_top;
   const X_monotone_curve_2 m_bottom;
 };

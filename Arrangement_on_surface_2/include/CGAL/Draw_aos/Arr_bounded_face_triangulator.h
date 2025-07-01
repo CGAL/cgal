@@ -1,13 +1,15 @@
 #ifndef CGAL_DRAW_AOS_ARR_FACE_TRIANGULATOR_H
 #define CGAL_DRAW_AOS_ARR_FACE_TRIANGULATOR_H
 
-#include "CGAL/Constrained_Delaunay_triangulation_2.h"
 #include "CGAL/Constrained_triangulation_2.h"
 #include "CGAL/Constrained_triangulation_face_base_2.h"
 #include "CGAL/Draw_aos/Arr_approximation_geometry_traits.h"
 #include "CGAL/Draw_aos/Arr_render_context.h"
+#include "CGAL/Exact_predicates_inexact_constructions_kernel.h"
 #include "CGAL/Triangulation_vertex_base_with_info_2.h"
+#include "CGAL/basic.h"
 #include "CGAL/mark_domain_in_triangulation.h"
+#include "CGAL/number_utils.h"
 #include "CGAL/unordered_flat_map.h"
 #include <cstddef>
 #include <CGAL/Draw_aos/helpers.h>
@@ -49,8 +51,8 @@ class Arr_bounded_face_triangulator
   using Fb = CGAL::Constrained_triangulation_face_base_2<Epick>;
   using Tds = CGAL::Triangulation_data_structure_2<Vb, Fb>;
   using Ct = Constrained_triangulation_2<Epick, Tds, Exact_predicates_tag>;
-  using Point = Epick::Point_2;
-  using Point_with_info = std::pair<Point, Point_index>;
+  using KPoint = Epick::Point_2;
+  using KPoint_with_info = std::pair<KPoint, Point_index>;
 
   std::size_t counter{0};
 
@@ -63,12 +65,14 @@ class Arr_bounded_face_triangulator
   class Ccb_constraint
   {
     constexpr static bool Is_outer_ccb = std::is_same_v<Ccb_tag, Outer_ccb_tag>;
+
     friend class Arr_bounded_face_triangulator;
+    using Side_of_boundary = Arr_bounded_render_context::Side_of_boundary;
 
     std::ofstream m_ofs;
     Ccb_constraint(Arr_bounded_face_triangulator& triangulator)
-        : m_triangulator(&triangulator) {
-      m_ccb_start = m_triangulator->m_points.size();
+        : m_triangulator(&triangulator)
+        , m_ccb_start(m_triangulator->m_points.size()) {
       triangulator.m_has_active_constraint = true;
 
       if(Is_outer_ccb) {
@@ -80,24 +84,28 @@ class Arr_bounded_face_triangulator
     }
 
   private:
-    Point offset_boundary_point(const Point& pt) const {
-      constexpr double offset = 1; // It doesn't matter how much we offset the point
-      double x = pt.x(), y = pt.y();
-      const auto& ctx = m_triangulator->m_ctx;
+    std::vector<KPoint_with_info>& points() { return m_triangulator->m_points; }
+    const std::vector<KPoint_with_info>& points() const { return m_triangulator->m_points; }
+    auto first_point() const { return points()[m_ccb_start].first; }
+    auto last_point() const { return points().back().first; }
+    const Arr_bounded_render_context& ctx() const { return m_triangulator->m_ctx; }
+    void add_point(const KPoint& pt) { points().emplace_back(pt, points().size()); }
+    std::size_t ccb_size() const { return m_triangulator->m_points.size() - m_ccb_start - m_helper_indices.size(); }
 
-      if(x == ctx.xmin()) {
-        x -= offset;
+    KPoint offset_boundary_point(const KPoint& pt, Side_of_boundary side, double offset) const {
+      CGAL_precondition(side != Side_of_boundary::None);
+      switch(side) {
+      case Side_of_boundary::Left:
+        return KPoint(pt.x() - offset, pt.y());
+      case Side_of_boundary::Right:
+        return KPoint(pt.x() + offset, pt.y());
+      case Side_of_boundary::Top:
+        return KPoint(pt.x(), pt.y() + offset);
+      case Side_of_boundary::Bottom:
+        return KPoint(pt.x(), pt.y() - offset);
+      default:
+        return pt; // Should not reach here
       }
-      if(x == ctx.xmax()) {
-        x += offset;
-      }
-      if(y == ctx.ymin()) {
-        y -= offset;
-      }
-      if(y == ctx.ymax()) {
-        y += offset;
-      }
-      return Point(x, y);
     }
 
     void insert_ccb() {
@@ -123,28 +131,37 @@ class Arr_bounded_face_triangulator
         };
 
         auto index_to_point_with_info = [&points](std::size_t idx) { return points[idx]; };
-
         auto indexes_begin = boost::make_counting_iterator<std::size_t>(m_ccb_start);
         auto indexes_end = boost::make_counting_iterator<std::size_t>(points.size());
         auto filtered_begin = boost::make_filter_iterator(concrete_pt_filter, indexes_begin, indexes_end);
         auto filtered_end = boost::make_filter_iterator(concrete_pt_filter, indexes_end, indexes_end);
         auto transformed_begin = boost::make_transform_iterator(filtered_begin, index_to_point_with_info);
         auto transformed_end = boost::make_transform_iterator(filtered_end, index_to_point_with_info);
-        // {
-        //   std::ofstream ofs_index("/Users/shep/codes/aos_2_js_helper/shapes.txt", std::ios::app);
-        //   auto& ctx = const_cast<Arr_bounded_render_context&>(m_triangulator->m_ctx);
-        //   ofs_index << "ccb_" << ctx.counter << ".txt" << std::endl;
-        //   std::ofstream ofs("/Users/shep/codes/aos_2_js_helper/ccb_" + std::to_string(ctx.counter++) + ".txt",
-        //                     std::ios::out | std::ios::trunc);
-        //   for(auto it = filtered_begin; it != filtered_end; ++it) {
-        //     const auto& pt = it->first;
-        //     ofs << pt.x() << " " << pt.y() << std::endl;
-        //   }
-        // }
-        ct.insert_with_info<Point_with_info>(transformed_begin, transformed_end);
+
+        ct.insert_with_info<KPoint_with_info>(transformed_begin, transformed_end);
       } else {
-        ct.insert_with_info<Point_with_info>(begin, end);
+        ct.insert_with_info<KPoint_with_info>(begin, end);
       }
+    }
+
+    void try_add_offset(const KPoint& from, const KPoint& to) {
+      if(from == to) {
+        return;
+      }
+      auto shared_side = ctx().shared_boundary_side(from, to);
+      if(shared_side == Arr_bounded_render_context::Side_of_boundary::None) {
+        return;
+      }
+      // m_helper_indices.push_back(points().size());
+      // add_point(offset_boundary_point(from, shared_side, m_offset));
+      m_helper_indices.push_back(points().size());
+      add_point(offset_boundary_point(KPoint((from.x() + to.x()) / 2, (from.y() + to.y()) / 2), shared_side, m_offset));
+
+      // TODO: we'll come back to find out if we do need to offset the second point.
+      // m_helper_indices.push_back(points().size());
+      // add_point(offset_boundary_point(to, shared_side, m_offset));
+      // Doesn't matter how much we increase the offset.
+      m_offset += 0.5;
     }
 
   public:
@@ -162,22 +179,18 @@ class Arr_bounded_face_triangulator
       return *this;
     }
 
-    decltype(auto) insert_iterator() {
-      return boost::make_function_output_iterator([&, this](const Approx_point& pt) {
-        auto& points = m_triangulator->m_points;
+    auto insert_iterator() {
+      return boost::make_function_output_iterator([this](const Approx_point& pt) {
         CGAL_assertion_msg(m_triangulator != nullptr, "Use of destructed or moved Ccb_constraint object.");
-        CGAL_assertion_msg(m_triangulator->m_ctx.contains(pt), "Outbound point in Ccb_constraint.");
+        CGAL_assertion_msg(ctx().contains(pt), "Outbound point in Ccb_constraint.");
+        KPoint kp(pt.x(), pt.y());
 
-        if constexpr(Is_outer_ccb) {
-          bool is_on_boundary = m_triangulator->m_ctx.is_on_boundary(pt);
-          if(is_on_boundary && m_is_last_on_boundary) {
-            m_helper_indices.push_back(points.size());
-            points.emplace_back(offset_boundary_point(points.back().first), Point_index());
-          }
-          m_is_last_on_boundary = is_on_boundary;
+        if(Is_outer_ccb && ccb_size() != 0) {
+          try_add_offset(last_point(), kp);
           m_ofs << pt.x() << " " << pt.y() << std::endl;
         }
-        points.emplace_back(Point(pt.x(), pt.y()), points.size());
+
+        add_point(kp);
       });
     }
 
@@ -185,15 +198,9 @@ class Arr_bounded_face_triangulator
       if(m_triangulator == nullptr) {
         return;
       }
-      if(Is_outer_ccb && m_is_last_on_boundary && m_triangulator->m_points.size() != m_ccb_start) {
-        auto& points = m_triangulator->m_points;
-        const auto& first_pt = points[m_ccb_start].first;
-        const auto& last_pt = points.back().first;
-        bool is_first_on_boundary = m_triangulator->m_ctx.is_on_boundary(first_pt);
-        if(m_is_last_on_boundary && is_first_on_boundary) {
-          m_helper_indices.push_back(points.size());
-          points.emplace_back(offset_boundary_point(last_pt), Point_index());
-        }
+
+      if(Is_outer_ccb && ccb_size() != 0) {
+        try_add_offset(last_point(), first_point());
       }
 
       insert_ccb();
@@ -203,8 +210,10 @@ class Arr_bounded_face_triangulator
 
   private:
     Arr_bounded_face_triangulator* m_triangulator;
-    std::size_t m_ccb_start;
-    bool m_is_last_on_boundary = false;
+    const std::size_t m_ccb_start;
+
+    // These are used only for outer CCBs.
+    double m_offset = 0.5;                     // Doesn't matter how much we offset.
     std::vector<std::size_t> m_helper_indices; // The offseted point indices when inserting outer ccb constraint
   };
 
@@ -217,12 +226,15 @@ public:
   operator Triangulated_face() && {
     CGAL_assertion(!m_has_active_constraint && "There is an active constraint in the triangulator.");
     CGAL_assertion(m_outer_ccb_processed && "Outer CCB has not been processed yet.");
+    if(m_points.empty() || m_ct.number_of_faces() == 0) {
+      return Triangulated_face();
+    }
 
     // insert_constraint() should be called after insert_with_info(), or info will not be set correctly.
-    auto first_of_pair = [](const Point_with_info& pt_with_info) { return pt_with_info.first; };
+    auto first_of_pair = [](const KPoint_with_info& pt_with_info) { return pt_with_info.first; };
     for(std::size_t i = 0; i < m_ccb_start_indices.size(); ++i) {
       auto begin = m_points.begin() + m_ccb_start_indices[i];
-      auto end = m_points.begin() + (i + 1 < m_ccb_start_indices.size() ? m_ccb_start_indices[i + 1] : m_points.size());
+      auto end = i + 1 < m_ccb_start_indices.size() ? m_points.begin() + m_ccb_start_indices[i + 1] : m_points.end();
       {
         std::ofstream ofs_index("/Users/shep/codes/aos_2_js_helper/shapes.txt", std::ios::app);
         auto& ctx = const_cast<Arr_bounded_render_context&>(m_ctx);
@@ -258,12 +270,11 @@ public:
       tf.triangles.emplace_back(tri);
     }
 
-    auto transform_first_of_pair = [](const Point_with_info& pt_with_info) {
-      return Approx_point(pt_with_info.first.x(), pt_with_info.first.y());
+    auto transform_first_of_pair = [](const KPoint_with_info& pt_with_info) {
+      return Approx_point(CGAL::to_double(pt_with_info.first.x()), CGAL::to_double(pt_with_info.first.y()));
     };
     tf.points = Point_vec(boost::make_transform_iterator(m_points.begin(), transform_first_of_pair),
                           boost::make_transform_iterator(m_points.end(), transform_first_of_pair));
-    m_ct.clear();
     return tf;
   }
 
@@ -286,7 +297,7 @@ public:
 private:
   const Arr_bounded_render_context& m_ctx;
   Ct m_ct;
-  std::vector<Point_with_info> m_points;
+  std::vector<KPoint_with_info> m_points;
   std::vector<std::size_t> m_ccb_start_indices;
   bool m_has_active_constraint = false;
   bool m_outer_ccb_processed = false;

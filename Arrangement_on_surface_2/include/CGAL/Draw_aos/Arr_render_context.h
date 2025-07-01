@@ -59,6 +59,14 @@ protected:
       : m_bbox(bbox) {}
 
 public:
+  enum class Side_of_boundary {
+    Left,
+    Right,
+    Bottom,
+    Top,
+    None,
+  };
+
   double xmin() const { return m_bbox.xmin(); }
   double xmax() const { return m_bbox.xmax(); }
   double ymin() const { return m_bbox.ymin(); }
@@ -100,6 +108,20 @@ public:
   bool is_on_boundary(const Point& pt) const {
     return (pt.x() == xmin() || pt.x() == xmax()) && contains_y(pt.y()) ||
            (pt.y() == ymin() || pt.y() == ymax()) && contains_x(pt.x());
+  }
+
+  template <typename Point>
+  Side_of_boundary shared_boundary_side(const Point& pt1, const Point& pt2) const {
+    if(pt1.x() == xmin() && pt2.x() == xmin() && contains_y(pt1.y()) && contains_y(pt2.y())) {
+      return Side_of_boundary::Left;
+    } else if(pt1.x() == xmax() && pt2.x() == xmax() && contains_y(pt1.y()) && contains_y(pt2.y())) {
+      return Side_of_boundary::Right;
+    } else if(pt1.y() == ymin() && pt2.y() == ymin() && contains_x(pt1.x()) && contains_x(pt2.x())) {
+      return Side_of_boundary::Bottom;
+    } else if(pt1.y() == ymax() && pt2.y() == ymax() && contains_x(pt1.x()) && contains_x(pt2.x())) {
+      return Side_of_boundary::Top;
+    }
+    return Side_of_boundary::None;
   }
 
 private:

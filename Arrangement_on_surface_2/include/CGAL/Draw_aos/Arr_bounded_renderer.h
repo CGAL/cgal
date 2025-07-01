@@ -129,11 +129,10 @@ private:
       auto he = *inner_ccb;
       auto inner_face = he->twin()->face();
 
-      bool is_degenerate = inner_face == fh;
-      bool within_bounds = ctx->strictly_contains(inner_face->outer_ccb()->source()->point());
-      if(is_degenerate || !within_bounds) {
+      if(inner_face == fh || !ctx->strictly_contains(inner_face->outer_ccb()->source()->point())) {
         continue;
       }
+
       discover_faces(ctx, inner_face);
     }
 
