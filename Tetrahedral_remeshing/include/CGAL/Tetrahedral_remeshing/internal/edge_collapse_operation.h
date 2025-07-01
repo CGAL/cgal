@@ -62,15 +62,14 @@ public:
 
   std::vector<ElementType> get_element_source(const C3t3& c3t3) const override {
     std::vector<ElementType> vertex_pairs;
-            if (op.can_apply_operation(element, c3t3)) {
     
     // Collect all finite edges as vertex pairs
     for (auto eit = c3t3.triangulation().finite_edges_begin();
          eit != c3t3.triangulation().finite_edges_end(); ++eit) {
       const Edge& edge = *eit;
       vertex_pairs.push_back(make_vertex_pair(edge));
-  }
-
+    }
+    
     return vertex_pairs;
   }
 

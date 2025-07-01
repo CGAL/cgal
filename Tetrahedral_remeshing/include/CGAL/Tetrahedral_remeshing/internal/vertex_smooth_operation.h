@@ -99,11 +99,11 @@ public:
     } else if constexpr (Domain == SmoothingDomain::COMPLEX_EDGES) {
     } else if constexpr (Domain == SmoothingDomain::INTERNAL_VERTICES) {
     } else {
-    }
+      }
     std::cerr<<"VertexSmoothOperation::get_element_source not implemented"<<std::endl;
     return c3t3.triangulation().finite_vertices();
   }
-
+    
     return vertices;
   }
 

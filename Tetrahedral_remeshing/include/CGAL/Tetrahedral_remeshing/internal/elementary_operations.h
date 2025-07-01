@@ -330,8 +330,6 @@ public:
         
         if (local_success) success.store(true);
       });
-    }
-    
     group.wait();
     return success.load();
   }

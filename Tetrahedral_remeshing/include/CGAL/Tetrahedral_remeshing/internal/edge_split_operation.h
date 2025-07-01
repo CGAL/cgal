@@ -84,11 +84,11 @@ public:
          eit != c3t3.triangulation().finite_edges_end(); ++eit) {
       const Edge& edge = *eit;
       vertex_pairs.push_back(make_vertex_pair(edge));
-  }
-
+    }
+    
     return vertex_pairs;
   }
-    
+
   bool can_apply_operation(const ElementType& vp, const Complex& c3t3) const override {
     // This corresponds to lines 409-416 in split_long_edges.h
     // The algorithm needs to re-validate that the edge can still be split
@@ -155,7 +155,7 @@ public:
   std::string operation_name() const override {
     return "Edge Split";
   }
-  
+
 };
 
 } // namespace internal
