@@ -36,3 +36,5 @@ cgal_add_compilation_test(Triangulation_on_hyperbolic_surface_2_demo)
 
 add_executable( epsilon_net epsilon_net.cpp window.cpp ${UIS})
 target_link_libraries(epsilon_net PRIVATE CGAL::CGAL CGAL::CGAL_Qt6 Qt6::Widgets Qt6::Svg)
+
+set(CMAKE_BUILD_TYPE "Release")

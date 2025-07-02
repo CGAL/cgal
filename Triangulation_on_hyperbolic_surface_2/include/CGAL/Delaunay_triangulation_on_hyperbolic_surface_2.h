@@ -32,6 +32,7 @@ public:
 	typedef typename Triangulation_on_hyperbolic_surface_2<Traits,Delaunay_triangulation_attributes<Traits>>::Anchor    Anchor;
 
 	typedef typename Traits::FT 										Number;
+	typedef typename Root_of_traits<Number>::Root_of_2					Algebraic_number;
 	typedef typename Traits::Complex                                    Complex;
 	typedef typename Traits::Hyperbolic_point_2                         Point;
 	typedef typename Traits::Hyperbolic_Voronoi_point_2                 Voronoi_point;
@@ -82,7 +83,7 @@ public:
 	void insert(Point const & query);
 
 	//---------- eps-net methods
-	bool epsilon_net(double epsilon);
+	bool epsilon_net(double const epsilon);
 	bool is_epsilon_covering(const double epsilon);
 	bool is_epsilon_packing(const double epsilon);
 	bool is_epsilon_net(const double epsilon);
@@ -113,9 +114,9 @@ private:
 
 	//---------- eps-net methods
 	Number delta(Point const & u, Point const & v) const;
-	Point approx_circumcenter(Anchor const & anch) const;
-	Number delta_min(Anchor const & anch, Point const & approx_center) const;
-	Number delta_max(Anchor const & anch, Point const & approx_center) const;
+	Algebraic_number delta(Voronoi_point const & u, Point const & v) const;
+	Voronoi_point circumcenter(Anchor const & anch) const;
+	Point approx_circumcenter(Voronoi_point c) const;
 	void push_triangle(Dart_descriptor const dart, std::list<Dart_descriptor> & triangles, size_t & triangles_list_mark);
 };
 
@@ -896,44 +897,33 @@ delta(Point const & u, Point const & v) const
 }
 
 template<class Traits>
-typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Point
+typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Algebraic_number
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
-approx_circumcenter(Anchor const & anch) const
+delta(Voronoi_point const & u, Point const & v) const
+{
+	Algebraic_number num = (u.x() - v.x()) * (u.x() - v.x()) + (u.y() - v.y()) * (u.y() - v.y());
+	Algebraic_number den = (1 - (u.x() * u.x() + u.y() * u.y())) * (1 - (v.x() * v.x() + v.y() * v.y()));
+	return 2 * num / den;
+}
+
+template<class Traits>
+typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Voronoi_point
+Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
+circumcenter(Anchor const & anch) const
 {
 	Traits gt;
 	CGAL::internal::Construct_hyperbolic_circumcenter_CK_2<Traits> chc(gt);
-	// CGAL::internal::Construct_hyperbolic_circumcenter_2<Traits> chc(gt);
-	Voronoi_point exact_center = chc(anch.vertices[0], anch.vertices[1], anch.vertices[2]);
-	Number x = to_double(exact_center.x());
-	Number y = to_double(exact_center.y());
-	// Number x = to_double(exact_center.x().exact());
-	// Number y = to_double(exact_center.y().exact());
-	// std::cout << std::setprecision(17) << to_interval(exact_center.x()).first << " ; " << to_interval(exact_center.x()).second << std::endl;
+	return chc(anch.vertices[0], anch.vertices[1], anch.vertices[2]);;
+}
+
+template<class Traits>
+typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Point
+Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
+approx_circumcenter(Voronoi_point c) const
+{
+	Number x = to_double(c.x());
+	Number y = to_double(c.y());
 	return Point(x, y);
-}
-
-template<class Traits>
-typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Number
-Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
-delta_min(Anchor const & anch, Point const & approx_center) const
-{
-	Number res = Number(999);
-	for (unsigned i = 0; i < NB_SIDES; ++i) {
-		res = std::min(delta(anch.vertices[i], approx_center), res);
-	}
-	return res;
-}
-
-template<class Traits>
-typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Number
-Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
-delta_max(Anchor const & anch, Point const & approx_center) const
-{
-	Number res = Number(0);
-	for (unsigned i = 0; i < NB_SIDES; ++i) {
-		res = std::max(delta(anch.vertices[i], approx_center), res);
-	}
-	return res;
 }
 
 template<class Traits>
@@ -954,35 +944,38 @@ push_triangle(Dart_descriptor const dart, std::list<Dart_descriptor> & triangles
 template<class Traits>
 bool
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
-epsilon_net(const double epsilon)
-{       
-	const double BOUND = std::cosh(epsilon)-1;
+epsilon_net(double const epsilon)
+{
+	Interval const delta_epsilon = cosh(epsilon) - 1;
+	Number const BOUND = Number(upper(delta_epsilon));;
 	CGAL_assertion(is_epsilon_packing(epsilon));
 	size_t triangles_list_mark = this->combinatorial_map_.get_new_mark();
 		
 	std::list<Dart_descriptor> triangles;
 	for (typename Face_range::iterator it = this->combinatorial_map_.template one_dart_per_cell<2>().begin();
 		it != this->combinatorial_map_.template one_dart_per_cell<2>().end(); ++it) {
-		Anchor& current_anchor = anchor(it);
-		Point current_center = approx_circumcenter(current_anchor);
-		if (delta_min(current_anchor, current_center) > BOUND) {
+		Anchor & current_anchor = anchor(it);
+		Voronoi_point c = circumcenter(current_anchor);
+		if (delta(c, current_anchor.vertices[0]) > BOUND) {
 			push_triangle(it, triangles, triangles_list_mark);
 		}
 	}
 
 	while (!triangles.empty()) {
 		Dart_descriptor current_dart = triangles.front();
-		Anchor& current_anchor = anchor(current_dart); 
+		Anchor & current_anchor = anchor(current_dart);
 		triangles.pop_front();
 		if(this->combinatorial_map_.is_marked(current_dart, triangles_list_mark)){
 			this->combinatorial_map_.unmark(current_dart, triangles_list_mark);
-			Point current_center = approx_circumcenter(current_anchor);
-			if (delta_min(current_anchor, current_center) > BOUND) {
-				std::vector<Anchor> new_anchors = split_insert(current_center, current_anchor, true);
+			Voronoi_point c = circumcenter(current_anchor);
+			if (delta(c, current_anchor.vertices[0]) > BOUND) {
+				Point approx_c = approx_circumcenter(c);
+				std::vector<Anchor> new_anchors = split_insert(approx_c, current_anchor, true);
 				std::list<Dart_descriptor> darts_to_flip;
 				for (Anchor const & new_anchor : new_anchors) {
 					push_triangle(new_anchor.dart, triangles, triangles_list_mark);
-					push_flippable_edge(new_anchor.dart, darts_to_flip);  //the darts of the new anchors correspond to the edges of the triangle the point was inserted in 
+					push_flippable_edge(new_anchor.dart, darts_to_flip);  //the darts of the new anchors correspond to the edges of the triangle the point was inserted in
+					push_flippable_edge(Base::ccw(new_anchor.dart), darts_to_flip);
 				}
 
 				std::vector<Dart_descriptor> flipped_darts;
@@ -1008,7 +1001,7 @@ bool
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
 is_epsilon_covering(const double epsilon)
 {
-	Interval delta_epsilon = cosh(epsilon)-1;
+	Interval delta_epsilon = cosh(epsilon) - 1;
 	bool is_covering = true;
 	for (typename Face_range::iterator it = this->combinatorial_map_.template one_dart_per_cell<2>().begin();
 		it != this->combinatorial_map_.template one_dart_per_cell<2>().end(); ++it) {
@@ -1023,7 +1016,6 @@ is_epsilon_covering(const double epsilon)
 		auto num = (u.x() - v.x()) * (u.x() - v.x()) + (u.y() - v.y()) * (u.y() - v.y());
 		auto den = (1 - (u.x() * u.x() + u.y() * u.y())) * (1 - (v.x() * v.x() + v.y() * v.y()));
 		auto d = 2 * num / den;
-
 		auto upper_bound = Number(upper(delta_epsilon));
 		if (d > upper_bound) {
 			is_covering = false;
