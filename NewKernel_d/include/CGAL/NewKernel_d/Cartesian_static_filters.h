@@ -18,6 +18,7 @@
 #include <CGAL/Filtered_kernel/internal/Static_filters/Side_of_oriented_circle_2.h>
 #include <CGAL/Filtered_kernel/internal/Static_filters/Orientation_3.h>
 #include <CGAL/Filtered_kernel/internal/Static_filters/Side_of_oriented_sphere_3.h>
+#include <CGAL/Filtered_kernel/internal/Static_filters/Orientation_4.h>
 #include <CGAL/Filtered_kernel/internal/Static_filters/Orientation_5.h>
 #include <CGAL/Filtered_kernel/internal/Static_filters/Orientation_6.h>
 
@@ -155,6 +156,30 @@ template <class Base_,class R_> struct Side_of_oriented_sphere_3 : private Store
 };
 
 
+template <class Base_,class R_> struct Adapter_4 {
+        typedef typename Get_type<R_, Orientation_tag>::type Orientation;
+        typedef typename Get_type<R_, Oriented_side_tag>::type Oriented_side;
+        typedef typename Get_type<R_, Point_tag>::type        Point;
+        typedef typename Get_functor<R_, Compute_point_cartesian_coordinate_tag>::type CC;
+        typedef typename Get_functor<Base_, Orientation_of_points_tag>::type Orientation_base;
+        struct Point_4 {
+                R_ const&r; CC const&c; Point const& p;
+                Point_4(R_ const&r_, CC const&c_, Point const&p_):r(r_),c(c_),p(p_){}
+                decltype(auto) c0()const{return c(p,0);}
+                decltype(auto) c1()const{return c(p,1);}
+                decltype(auto) c2()const{return c(p,2);}
+                decltype(auto) c3()const{return c(p,3);}
+        };
+        struct Orientation_4 {
+                typedef typename Get_type<R_, Orientation_tag>::type result_type;
+                auto operator()(Point_4 const&A, Point_4 const&B, Point_4 const&C,
+                                Point_4 const&D, Point_4 const&E)const{
+                        Point const* t[6]={&A.p,&B.p,&C.p,&D.p,&E.p};
+                        return Orientation_base(A.r)(make_transforming_iterator<Dereference_functor>(t+0),make_transforming_iterator<Dereference_functor>(t+5));
+                }
+        };
+};
+
 template <class Base_,class R_> struct Adapter_5 {
         typedef typename Get_type<R_, Orientation_tag>::type Orientation;
         typedef typename Get_type<R_, Oriented_side_tag>::type Oriented_side;
@@ -179,6 +204,8 @@ template <class Base_,class R_> struct Adapter_5 {
                 }
         };
 };
+
+
 template <class Base_,class R_> struct Orientation_of_points_5 : private Store_kernel<R_> {
         CGAL_FUNCTOR_INIT_STORE(Orientation_of_points_5)
         typedef typename Get_type<R_, Point_tag>::type        Point;

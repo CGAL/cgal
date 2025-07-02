@@ -72,7 +72,7 @@ determinant(
   return m012345;
 }
 
-int orientationC5(double p0, double p1, double p2, double p3, double p4, double p5,
+int orientationC6(double p0, double p1, double p2, double p3, double p4, double p5,
                   double q0, double q1, double q2, double q3, double q4, double q5,
                   double r0, double r1, double r2, double r3, double r4, double r5,
                   double s0, double s1, double s2, double s3, double s4, double s5,
@@ -175,7 +175,7 @@ group p5 q5 r5 t5 q5 u5 v5;
 
 //===========generated ==================
 
-inline int orientationC5( double p0, double p1, double p2, double p3, double p4, double p5, double q0, double q1, double q2, double q3, double q4, double q5, double r0, double r1, double r2, double r3, double r4, double r5, double s0, double s1, double s2, double s3, double s4, double s5, double t0, double t1, double t2, double t3, double t4, double t5, double u0, double u1, double u2, double u3, double u4, double u5, double v0, double v1, double v2, double v3, double v4, double v5) {
+inline int orientationC6( double p0, double p1, double p2, double p3, double p4, double p5, double q0, double q1, double q2, double q3, double q4, double q5, double r0, double r1, double r2, double r3, double r4, double r5, double s0, double s1, double s2, double s3, double s4, double s5, double t0, double t1, double t2, double t3, double t4, double t5, double u0, double u1, double u2, double u3, double u4, double u5, double v0, double v1, double v2, double v3, double v4, double v5) {
     double m01;
     m01 = (q0 - p0);
     double m02;
@@ -317,20 +317,20 @@ inline int orientationC5( double p0, double p1, double p2, double p3, double p4,
     if( (max3 < am) ) { max3 = am; }
     am = CGAL::abs(m54);
     if( (max3 < am) ) { max3 = am; }
-    am = CGAL::abs(m05);
-    if( (max3 < am) ) { max3 = am; }
-    am = CGAL::abs(m15);
-    if( (max3 < am) ) { max3 = am; }
-    am = CGAL::abs(m25);
-    if( (max3 < am) ) { max3 = am; }
-    am = CGAL::abs(m35);
-    if( (max3 < am) ) { max3 = am; }
-    am = CGAL::abs(m45);
-    if( (max3 < am) ) { max3 = am; }
-    am = CGAL::abs(m55);
-    if( (max3 < am) ) { max3 = am; }
 
-    d
+    double max4 = CGAL::abs(m05);
+    am = CGAL::abs(m15);
+    if( (max4 < am) ) { max4 = am; }
+    am = CGAL::abs(m25);
+    if( (max4 < am) ) { max4 = am; }
+    am = CGAL::abs(m35);
+    if( (max4 < am) ) { max4 = am; }
+    am = CGAL::abs(m45);
+    if( (max4 < am) ) { max4 = am; }
+    am = CGAL::abs(m55);
+    if( (max4 < am) ) { max4 = am; }
+
+
     double max5 = CGAL::abs(m06);
     am = CGAL::abs(m16);
     if( (max5 < am) ) { max5 = am; }

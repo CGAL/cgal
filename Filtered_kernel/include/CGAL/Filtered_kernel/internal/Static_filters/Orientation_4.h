@@ -10,8 +10,8 @@
 //
 // Author(s)     : Andreas Fabri
 
-#ifndef CGAL_INTERNAL_STATIC_FILTERS_ORIENTATION_5_H
-#define CGAL_INTERNAL_STATIC_FILTERS_ORIENTATION_5_H
+#ifndef CGAL_INTERNAL_STATIC_FILTERS_ORIENTATION_4_H
+#define CGAL_INTERNAL_STATIC_FILTERS_ORIENTATION_4_H
 
 #include <CGAL/Profile_counter.h>
 #include <CGAL/Filtered_kernel/internal/Static_filters/Static_filter_error.h>
@@ -22,24 +22,24 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
 
 
 template < typename K_base >
-class Orientation_5
-  : public K_base::Orientation_5
+class Orientation_4
+  : public K_base::Orientation_4
 {
   typedef typename K_base::Orientation      Orientation;
-  typedef typename K_base::Point_5          Point_5;
-  typedef typename K_base::Orientation_5    Base;
+  typedef typename K_base::Point_4          Point_4;
+  typedef typename K_base::Orientation_4    Base;
 
 public:
   using Base::operator();
 
   Orientation
-  operator()(const Point_5 &p, const Point_5 &q,
-             const Point_5 &r, const Point_5 &s,
-             const Point_5 &t, const Point_5 &u) const
+  operator()(const Point_4 &p, const Point_4 &q,
+             const Point_4 &r, const Point_4 &s,
+             const Point_4 &t) const
   {
-      CGAL_BRANCH_PROFILER_3("semi-static failures/attempts/calls to   : Orientation_5", tmp);
+      CGAL_BRANCH_PROFILER_3("semi-static failures/attempts/calls to   : Orientation_4", tmp);
 
-      double p0, p1, p2, p3, p4, q0, q1, q2, q3, q4, r0, r1, r2, r3, r4, s0, s1, s2, s3, s4, t0, t1, t2, t3, t4, u0, u1, u2, u3, u4;
+      double p0, p1, p2, p3, p4, q0, q1, q2, q3, q4, r0, r1, r2, r3, r4, s0, s1, s2, s3, s4, t0, t1, t2, t3, t4;
 
       if (fit_in_double(p.c0(), p0) && fit_in_double(p.c1(), p1) &&
           fit_in_double(p.c2(), p2) && fit_in_double(p.c3(), p3) &&
@@ -55,14 +55,10 @@ public:
           fit_in_double(s.c4(), s4) &&
           fit_in_double(t.c0(), t0) && fit_in_double(t.c1(), t1) &&
           fit_in_double(t.c2(), t2) && fit_in_double(t.c3(), t3) &&
-          fit_in_double(t.c4(), t4) &&
-          fit_in_double(u.c0(), u0) && fit_in_double(u.c1(), u1) &&
-          fit_in_double(u.c2(), u2) && fit_in_double(u.c3(), u3) &&
-          fit_in_double(u.c4(), u4))
-
+          fit_in_double(t.c4(), t4) )
       {
-      CGAL_assertion_code(Orientation should_be = Base::operator()(p, q, r, s, t, u));
-      double m01;
+        CGAL_assertion_code(Orientation should_be = Base::operator()(p, q, r, s, t));
+double m01;
     m01 = (q0 - p0);
     double m02;
     m02 = (r0 - p0);
@@ -70,8 +66,6 @@ public:
     m03 = (s0 - p0);
     double m04;
     m04 = (t0 - p0);
-    double m05;
-    m05 = (u0 - p0);
     double m11;
     m11 = (q1 - p1);
     double m12;
@@ -80,8 +74,6 @@ public:
     m13 = (s1 - p1);
     double m14;
     m14 = (t1 - p1);
-    double m15;
-    m15 = (u1 - p1);
     double m21;
     m21 = (q2 - p2);
     double m22;
@@ -90,8 +82,6 @@ public:
     m23 = (s2 - p2);
     double m24;
     m24 = (t2 - p2);
-    double m25;
-    m25 = (u2 - p2);
     double m31;
     m31 = (q3 - p3);
     double m32;
@@ -100,20 +90,8 @@ public:
     m33 = (s3 - p3);
     double m34;
     m34 = (t3 - p3);
-    double m35;
-    m35 = (u3 - p3);
-    double m41;
-    m41 = (q4 - p4);
-    double m42;
-    m42 = (r4 - p4);
-    double m43;
-    m43 = (s4 - p4);
-    double m44;
-    m44 = (t4 - p4);
-    double m45;
-    m45 = (u4 - p4);
     double det;
-    det = determinant( m01, m02, m03, m04, m05, m11, m12, m13, m14, m15, m21, m22, m23, m24, m25, m31, m32, m33, m34, m35, m41, m42, m43, m44, m45 );
+    det = determinant( m01, m02, m03, m04, m11, m12, m13, m14, m21, m22, m23, m24, m31, m32, m33, m34 );
     int int_tmp_result;
     double eps;
     double max1 = CGAL::abs(m01);
@@ -127,13 +105,7 @@ public:
     if( (max1 < am) ) { max1 = am; }
     am = CGAL::abs(m13);
     if( (max1 < am) ) { max1 = am; }
-    am = CGAL::abs(m21);
-    if( (max1 < am) ) { max1 = am; }
-    am = CGAL::abs(m22);
-    if( (max1 < am) ) { max1 = am; }
     am = CGAL::abs(m23);
-    if( (max1 < am) ) { max1 = am; }
-    am = CGAL::abs(m33);
     if( (max1 < am) ) { max1 = am; }
 
 
@@ -150,13 +122,7 @@ public:
     if( (max2 < am) ) { max2 = am; }
     am = CGAL::abs(m23);
     if( (max2 < am) ) { max2 = am; }
-    am = CGAL::abs(m31);
-    if( (max2 < am) ) { max2 = am; }
-    am = CGAL::abs(m32);
-    if( (max2 < am) ) { max2 = am; }
     am = CGAL::abs(m33);
-    if( (max2 < am) ) { max2 = am; }
-    am = CGAL::abs(m43);
     if( (max2 < am) ) { max2 = am; }
 
 
@@ -167,52 +133,25 @@ public:
     if( (max3 < am) ) { max3 = am; }
     am = CGAL::abs(m34);
     if( (max3 < am) ) { max3 = am; }
-    am = CGAL::abs(m44);
-    if( (max3 < am) ) { max3 = am; }
 
 
-    double max4 = CGAL::abs(m05);
-    am = CGAL::abs(m15);
-    if( (max4 < am) ) { max4 = am; }
-    am = CGAL::abs(m25);
-    if( (max4 < am) ) { max4 = am; }
-    am = CGAL::abs(m35);
-    if( (max4 < am) ) { max4 = am; }
-    am = CGAL::abs(m45);
-    if( (max4 < am) ) { max4 = am; }
-
-
-    double max5 = CGAL::abs(m11);
+    double max4 = CGAL::abs(m11);
     am = CGAL::abs(m12);
-    if( (max5 < am) ) { max5 = am; }
+    if( (max4 < am) ) { max4 = am; }
     am = CGAL::abs(m21);
-    if( (max5 < am) ) { max5 = am; }
+    if( (max4 < am) ) { max4 = am; }
     am = CGAL::abs(m22);
-    if( (max5 < am) ) { max5 = am; }
+    if( (max4 < am) ) { max4 = am; }
     am = CGAL::abs(m31);
-    if( (max5 < am) ) { max5 = am; }
+    if( (max4 < am) ) { max4 = am; }
     am = CGAL::abs(m32);
-    if( (max5 < am) ) { max5 = am; }
-    am = CGAL::abs(m41);
-    if( (max5 < am) ) { max5 = am; }
-    am = CGAL::abs(m42);
-    if( (max5 < am) ) { max5 = am; }
+    if( (max4 < am) ) { max4 = am; }
+
 
     double lower_bound_1;
     double upper_bound_1;
-    lower_bound_1 = max5;
-    upper_bound_1 = max5;
-    if( (max1 < lower_bound_1) )
-    {
-        lower_bound_1 = max1;
-    }
-    else
-    {
-        if( (max1 > upper_bound_1) )
-        {
-            upper_bound_1 = max1;
-        }
-    }
+    lower_bound_1 = max1;
+    upper_bound_1 = max1;
     if( (max2 < lower_bound_1) )
     {
         lower_bound_1 = max2;
@@ -246,17 +185,17 @@ public:
             upper_bound_1 = max4;
         }
     }
-    if( (lower_bound_1 < 9.99657131447050328602e-60) )
+    if( (lower_bound_1 < 2.89273249588395272840e-74) )
     {
-        return Base::operator()(p, q, r, s, t, u);
+        return Base::operator()(p, q, r, s, t);
     }
     else
     {
-        if( (upper_bound_1 > 3.21387608851797912384e+60) )
+        if( (upper_bound_1 > 7.23700557733225900010e+75) )
         {
-            return Base::operator()(p, q, r, s, t, u);
+            return Base::operator()(p, q, r, s, t);
         }
-        eps = (2.22889232457534740153e-13 * ((((max5 * max2) * max1) * max3) * max4));
+        eps = (3.17768858673611327578e-14 * (((max4 * max2) * max1) * max3));
         if( (det > eps) )
         {
             CGAL_assertion(should_be == POSITIVE);
@@ -271,19 +210,17 @@ public:
             }
             else
             {
-                return Base::operator()(p, q, r, s, t, u);
+                return Base::operator()(p, q, r, s, t);
             }
         }
     }
+}
+    return Base::operator()(p, q, r, s, t);
 
-    }
-
-      return Base::operator()(p, q, r, s, t, u);
   }
-
 
 };
 
 } } } // namespace CGAL::internal::Static_filters_predicates
 
-#endif // CGAL_INTERNAL_STATIC_FILTERS_ORIENTATION_5_H
+#endif // CGAL_INTERNAL_STATIC_FILTERS_ORIENTATION_4_H
