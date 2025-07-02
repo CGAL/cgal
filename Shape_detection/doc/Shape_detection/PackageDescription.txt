@@ -1,7 +1,5 @@
-
-// RANSAC
 /*!
-\defgroup PkgShapeDetectionRef Shape Detection Reference
+\defgroup PkgShapeDetectionRef Reference Manual
 
 \defgroup PkgShapeDetectionRANSAC Efficient RANSAC
 \ingroup PkgShapeDetectionRef

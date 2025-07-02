@@ -1,4 +1,4 @@
-/// \defgroup PkgPeriodic2Triangulation2Ref 2D Periodic Triangulations Reference
+/// \defgroup PkgPeriodic2Triangulation2Ref Reference Manual
 
 /// \defgroup PkgPeriodic2Triangulation2Concepts Concepts
 /// \ingroup PkgPeriodic2Triangulation2Ref

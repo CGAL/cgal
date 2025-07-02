@@ -206,7 +206,7 @@ returns the sign of the distance of `q` from the Voronoi circle
 of `s1`, `s2`, `s3` (the Voronoi circle of three sites
 `s1`, `s2`, `s3` is a circle co-tangent to all three
 sites, that touches them in that order as we walk on its circumference
-in the counter-clockwise sense).
+in the counterclockwise sense).
 \pre the Voronoi circle of `s1`, `s2`, `s3` must exist.
 
 Must also provide `Sign operator()(Site_2 s1, Site_2 s2, Site_2 q)`, which returns the sign of the distance of
