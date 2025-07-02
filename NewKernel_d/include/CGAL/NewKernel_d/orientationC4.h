@@ -1,3 +1,18 @@
+// Copyright (c) 2025
+// INRIA Saclay-Ile de France (France)
+//
+// This file is part of CGAL (www.cgal.org)
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
+// Author(s) : Andreas Fabri
+
+// Files needed as input for the static filter generator
+
+#if 0
+
 double determinant(
  double a00,  double a01,  double a02,  double a03,
  double a10,  double a11,  double a12,  double a13,
@@ -236,3 +251,4 @@ inline int orientationC4( double p0, double p1, double p2, double p3, double q0,
     return int_tmp_result;
 }
 
+#endif
