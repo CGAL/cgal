@@ -7,7 +7,6 @@
 #include "CGAL/Draw_aos/Arr_render_context.h"
 #include "CGAL/Exact_predicates_inexact_constructions_kernel.h"
 #include "CGAL/Triangulation_vertex_base_with_info_2.h"
-#include "CGAL/basic.h"
 #include "CGAL/mark_domain_in_triangulation.h"
 #include "CGAL/number_utils.h"
 #include "CGAL/unordered_flat_map.h"
@@ -15,8 +14,6 @@
 #include <CGAL/Draw_aos/helpers.h>
 #include <boost/iterator/function_output_iterator.hpp>
 #include <boost/iterator/transform_iterator.hpp>
-#include <fstream>
-#include <iostream>
 #include <utility>
 #include <vector>
 
@@ -54,8 +51,6 @@ class Arr_bounded_face_triangulator
   using KPoint = Epick::Point_2;
   using KPoint_with_info = std::pair<KPoint, Point_index>;
 
-  std::size_t counter{0};
-
   /**
    * @brief RAII-style inserter for one CCB in a triangulation.
    * Collects points and inserts them as a constraint on destruction.
@@ -69,18 +64,10 @@ class Arr_bounded_face_triangulator
     friend class Arr_bounded_face_triangulator;
     using Side_of_boundary = Arr_bounded_render_context::Side_of_boundary;
 
-    std::ofstream m_ofs;
     Ccb_constraint(Arr_bounded_face_triangulator& triangulator)
         : m_triangulator(&triangulator)
         , m_ccb_start(m_triangulator->m_points.size()) {
       triangulator.m_has_active_constraint = true;
-
-      if(Is_outer_ccb) {
-        std::ofstream ofs_index("/Users/shep/codes/aos_2_js_helper/shapes.txt", std::ios::app);
-        auto name = "outer_ccb_" + std::to_string((*m_triangulator->m_ctx.counter)++) + ".txt";
-        ofs_index << name << std::endl;
-        m_ofs = std::ofstream("/Users/shep/codes/aos_2_js_helper/" + name, std::ios::out | std::ios::trunc);
-      }
     }
 
   private:
@@ -187,7 +174,6 @@ class Arr_bounded_face_triangulator
 
         if(Is_outer_ccb && ccb_size() != 0) {
           try_add_offset(last_point(), kp);
-          m_ofs << pt.x() << " " << pt.y() << std::endl;
         }
 
         add_point(kp);
@@ -235,17 +221,7 @@ public:
     for(std::size_t i = 0; i < m_ccb_start_indices.size(); ++i) {
       auto begin = m_points.begin() + m_ccb_start_indices[i];
       auto end = i + 1 < m_ccb_start_indices.size() ? m_points.begin() + m_ccb_start_indices[i + 1] : m_points.end();
-      {
-        std::ofstream ofs_index("/Users/shep/codes/aos_2_js_helper/shapes.txt", std::ios::app);
-        auto& ctx = const_cast<Arr_bounded_render_context&>(m_ctx);
-        auto name = "ccb_constraint" + std::to_string((*ctx.counter)++) + ".txt";
-        ofs_index << name << std::endl;
-        std::ofstream ofs("/Users/shep/codes/aos_2_js_helper/" + name, std::ios::out | std::ios::trunc);
-        for(auto it = begin; it != end; ++it) {
-          const auto& pt = it->first;
-          ofs << pt.x() << " " << pt.y() << std::endl;
-        }
-      }
+
       m_ct.insert_constraint(boost::make_transform_iterator(begin, first_of_pair),
                              boost::make_transform_iterator(end, first_of_pair), true);
     }

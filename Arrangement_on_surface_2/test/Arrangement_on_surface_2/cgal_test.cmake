@@ -1407,16 +1407,6 @@ endfunction()
 #---------------------------------------------------------------------#
 # Draw_aos tests
 #---------------------------------------------------------------------#
-function (test_draw_aos_arr_bounded_approximate_face_2)
-  set(nt ${CGAL_GMPQ_NT})
-  set(kernel ${CARTESIAN_KERNEL})
-  set(geom_traits ${GEODESIC_ARC_ON_SPHERE_GEOM_TRAITS})
-  set(topol_traits ${SPHERICAL_TOPOL_TRAITS})
-  set(flags "-DTEST_NT=${nt} -DTEST_KERNEL=${kernel} -DTEST_GEOM_TRAITS=${geom_traits} -DTEST_TOPOL_TRAITS=${topol_traits}")
-
-  compile_test_with_flags(test_draw_aos_arr_bounded_approximate_face_2 draw_aos "${flags}")
-  # target_link_libraries(test_draw_aos_arr_bounded_approximate_face_2)
-endfunction()
 
 function (test_drawing_planar)
   set(nt ${CGAL_GMPQ_NT})
@@ -1520,7 +1510,6 @@ compile_and_run(test_sgm)
 
 compile_and_run(test_polycurve_intersection)
 
-test_draw_aos_arr_bounded_approximate_face_2()
 test_drawing_planar()
 test_drawing_spherical()  
 
