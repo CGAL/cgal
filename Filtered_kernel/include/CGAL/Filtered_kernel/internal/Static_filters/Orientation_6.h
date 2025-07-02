@@ -150,7 +150,6 @@ public:
     m56 = (v5 - p5);
     double det;
     det = ::CGAL::determinant( m01, m02, m03, m04, m05, m06, m11, m12, m13, m14, m15, m16, m21, m22, m23, m24, m25, m26, m31, m32, m33, m34, m35, m36, m41, m42, m43, m44, m45, m46, m51, m52, m53, m54, m55, m56 );
-    int int_tmp_result;
     double eps;
     double max1 = CGAL::abs(m01);
     double am = CGAL::abs(m02);
