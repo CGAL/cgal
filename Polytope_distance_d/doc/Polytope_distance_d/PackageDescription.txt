@@ -1,4 +1,4 @@
-/// \defgroup PkgPolytopeDistanceDRef Optimal Distances Reference
+/// \defgroup PkgPolytopeDistanceDRef Reference Manual
 /// \defgroup PkgPolytopeDistanceDConcepts Concepts
 /// \ingroup PkgPolytopeDistanceDRef
 

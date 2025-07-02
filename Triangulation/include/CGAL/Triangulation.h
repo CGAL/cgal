@@ -30,6 +30,7 @@
 #include <boost/container/small_vector.hpp>
 #include <boost/iterator/filter_iterator.hpp>
 #include <CGAL/boost/iterator/transform_iterator.hpp>
+#include <CGAL/iterator.h>
 
 namespace CGAL {
 
@@ -165,15 +166,25 @@ public:
     // Finite elements iterators
 
     class Finiteness_predicate;
+    class Infiniteness_predicate;
 
     typedef boost::filter_iterator<Finiteness_predicate, Vertex_iterator>
         Finite_vertex_iterator;
     typedef boost::filter_iterator<Finiteness_predicate, Vertex_const_iterator>
         Finite_vertex_const_iterator;
+#if 0
     typedef boost::filter_iterator<Finiteness_predicate, Full_cell_iterator>
         Finite_full_cell_iterator;
     typedef boost::filter_iterator<Finiteness_predicate, Full_cell_const_iterator>
         Finite_full_cell_const_iterator;
+#else
+
+    typedef CGAL::Filter_iterator<Full_cell_iterator, Infiniteness_predicate>
+        Finite_full_cell_iterator;
+    typedef CGAL::Filter_iterator<Full_cell_const_iterator, Infiniteness_predicate>
+        Finite_full_cell_const_iterator;
+#endif
+
     typedef boost::filter_iterator<Finiteness_predicate, Facet_iterator>
         Finite_facet_iterator;
 
@@ -437,15 +448,28 @@ public:
 
     Full_cell_const_iterator full_cells_begin() const { return tds().full_cells_begin(); }
     Full_cell_const_iterator full_cells_end()   const { return tds().full_cells_end(); }
-
+#if 0
     Finite_full_cell_iterator finite_full_cells_begin()
     { return Finite_full_cell_iterator(Finiteness_predicate(*this), full_cells_begin(), full_cells_end()); }
     Finite_full_cell_iterator finite_full_cells_end()
     { return Finite_full_cell_iterator(Finiteness_predicate(*this), full_cells_end(), full_cells_end()); }
+
     Finite_full_cell_const_iterator finite_full_cells_begin() const
     { return Finite_full_cell_const_iterator(Finiteness_predicate(*this), full_cells_begin(), full_cells_end()); }
     Finite_full_cell_const_iterator finite_full_cells_end() const
     { return Finite_full_cell_const_iterator(Finiteness_predicate(*this), full_cells_end(), full_cells_end()); }
+#else
+
+    Finite_full_cell_iterator finite_full_cells_begin()
+    { return CGAL::filter_iterator(full_cells_end(), Infiniteness_predicate(*this), full_cells_begin()); }
+    Finite_full_cell_iterator finite_full_cells_end()
+    { return CGAL::filter_iterator(full_cells_end(), Infiniteness_predicate(*this) ); }
+
+    Finite_full_cell_const_iterator finite_full_cells_begin() const
+    { return CGAL::filter_iterator(full_cells_end(), Infiniteness_predicate(*this), full_cells_begin()); }
+    Finite_full_cell_const_iterator finite_full_cells_end() const
+    { return CGAL::filter_iterator(full_cells_end(), Infiniteness_predicate(*this)); }
+#endif
 
     Facet_iterator facets_begin() { return tds().facets_begin(); }
     Facet_iterator facets_end() { return tds().facets_end(); }
@@ -467,6 +491,20 @@ public:
             return ! t_.is_infinite(t);
         }
     };
+
+    class Infiniteness_predicate
+    {
+        const Self & t_;
+    public:
+
+    Infiniteness_predicate(const Self & t) : t_(t) {}
+        template < class T >
+        bool operator()(const T & t) const
+        {
+            return t_.is_infinite(t);
+        }
+    };
+
 
     class Point_equality_predicate
     {

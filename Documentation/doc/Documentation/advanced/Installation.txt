@@ -188,8 +188,8 @@ The binary and source directories do not need to be the same. Thus, you can conf
 distinct directory for each configuration and by running CMake from there. This is known in CMake terminology
 as <I>out-of-source configuration</I>, as opposite to an <I>in-source
 configuration</I>, as showed in the previous sections.
-You can, for example, generate subdirectories `CGAL-\cgalReleaseNumber``/build/debug` and
-`CGAL-\cgalReleaseNumber``/build/release` for two configurations, respectively:
+You can, for example, generate subdirectories `CGAL-\cgalReleaseNumber/build/debug` and
+`CGAL-\cgalReleaseNumber/build/release` for two configurations, respectively:
 
     mkdir CGAL-\cgalReleaseNumber/build/debug
     cd CGAL-\cgalReleaseNumber/build/debug

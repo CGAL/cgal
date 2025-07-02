@@ -1,4 +1,4 @@
-/// \defgroup PkgPrincipalComponentAnalysisDRef Principal Component Analysis Reference
+/// \defgroup PkgPrincipalComponentAnalysisDRef Reference Manual
 
 /// \defgroup PkgPrincipalComponentAnalysisDBary CGAL::barycenter()
 /// \ingroup PkgPrincipalComponentAnalysisDRef
