@@ -342,7 +342,7 @@ struct Cartesian_static_filters<Dimension_tag<3>, R_, Derived_> : public R_ {
         };
 };
 
-#ifndef CGAL_NO_STATIC_FILTER_5
+#ifndef CGAL_NO_STATIC_FILTER_456
 
 template <class R_, class Derived_>
 struct Cartesian_static_filters<Dimension_tag<4>, R_, Derived_> : public R_ {

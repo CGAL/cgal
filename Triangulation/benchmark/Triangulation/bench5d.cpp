@@ -1,3 +1,5 @@
+//  Switch off the static filters for 4, 5, and 6 points.
+//  #define CGAL_NO_STATIC_FILTER_456
 
 #include <CGAL/Epick_d.h>
 #include <CGAL/Triangulation.h>
@@ -23,7 +25,7 @@ int main()
     const int D = 5;   // we work in Euclidean 5-space
 
     std::vector<Triangulation::Point> points;
-    std::ifstream in("points.txt");
+    std::ifstream in("points_5.txt");
     Triangulation::Point p;
     int d;
     in >> d;
