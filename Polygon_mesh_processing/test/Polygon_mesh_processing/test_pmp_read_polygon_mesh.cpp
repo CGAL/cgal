@@ -71,7 +71,9 @@ std::cout<<"4"<<std::endl;
   std::cout<<"6"<<std::endl;
   while(it != vertices(g).end() && it2 != vertices(g2).end())
   {
-    assert(get(vpm, *it++) == get(cvpm, *it2++));
+    assert(get(vpm, *it) == get(cvpm, *it2));
+    ++it;
+    ++it2;
   }
   std::cout<<"7"<<std::endl;
 }
