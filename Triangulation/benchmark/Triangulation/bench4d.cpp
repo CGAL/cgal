@@ -1,3 +1,5 @@
+//  Switch off the static filters for 4, 5, and 6 points.
+// #define CGAL_NO_STATIC_FILTER_456
 
 #include <CGAL/Epick_d.h>
 #include <CGAL/Triangulation.h>

@@ -38,8 +38,6 @@ public:
              const Point_4 &r, const Point_4 &s,
              const Point_4 &t) const
   {
-            std::cout << "XX" << std::endl;
-
       CGAL_BRANCH_PROFILER_3("semi-static failures/attempts/calls to   : Orientation_4", tmp);
 
       double p0, p1, p2, p3, q0, q1, q2, q3, r0, r1, r2, r3, s0, s1, s2, s3, t0, t1, t2, t3;
