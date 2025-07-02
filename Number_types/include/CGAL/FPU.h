@@ -486,11 +486,10 @@ FPU_CW_t
 FPU_get_cw (void)
 {
 #ifdef CGAL_ALWAYS_ROUND_TO_NEAREST
-    FPU_CW_t cw;
-    CGAL_IA_GETFPCW(cw);
+    CGAL_assertion_code(FPU_CW_t cw; CGAL_IA_GETFPCW(cw);)
     CGAL_assertion_code(FPU_CW_t mask = CGAL_FE_ROUNDING_MASK;)
     CGAL_assertion((cw & mask) == (CGAL_FE_TONEAREST & mask));
-    return cw;
+    return CGAL_FE_TONEAREST;
 #else
     FPU_CW_t cw;
     CGAL_IA_GETFPCW(cw);
