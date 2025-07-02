@@ -532,8 +532,8 @@ private:
     Ransac::Parameters op;
     op.probability = dialog.search_probability();       // probability to miss the largest primitive on each iteration.
     op.min_points = dialog.min_points();          // Only extract shapes with a minimum number of points.
-    op.epsilon = dialog.epsilon();          // maximum euclidean distance between point and shape.
-    op.cluster_epsilon = dialog.cluster_epsilon();    // maximum euclidean distance between points to be clustered.
+    op.epsilon = dialog.epsilon();          // maximum Euclidean distance between point and shape.
+    op.cluster_epsilon = dialog.cluster_epsilon();    // maximum Euclidean distance between points to be clustered.
     op.normal_threshold = std::cos(CGAL_PI * dialog.normal_tolerance() / 180.);   // normal_threshold < dot(surface_normal, point_normal);
 
     CGAL::Random rand(static_cast<unsigned int>(time(nullptr)));

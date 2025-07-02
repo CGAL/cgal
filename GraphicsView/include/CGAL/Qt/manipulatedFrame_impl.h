@@ -475,7 +475,7 @@ void ManipulatedFrame::wheelEvent(QWheelEvent *const event,
 ////////////////////////////////////////////////////////////////////////////////
 
 /*! Returns "pseudo-distance" from (x,y) to ball of radius size.
-\arg for a point inside the ball, it is proportional to the euclidean distance
+\arg for a point inside the ball, it is proportional to the Euclidean distance
 to the ball \arg for a point outside the ball, it is proportional to the inverse
 of this distance (tends to zero) on the ball, the function is continuous. */
 static qreal projectOnBall(qreal x, qreal y) {
