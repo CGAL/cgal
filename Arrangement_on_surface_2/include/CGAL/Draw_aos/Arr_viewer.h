@@ -1,43 +1,60 @@
+// Copyright (c) 2025
+// Utrecht University (The Netherlands),
+// ETH Zurich (Switzerland),
+// INRIA Sophia-Antipolis (France),
+// Max-Planck-Institute Saarbruecken (Germany),
+// and Tel-Aviv University (Israel).  All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org)
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+// Author(s): Shepard Liu	 <shepard0liu@gmail.com>
 
 #ifndef ARR_VIEWER_H
 #define ARR_VIEWER_H
-#include <CGAL/Draw_aos/helpers.h>
+
 #include <array>
+#include <cstddef>
+#include <iterator>
+#include <memory>
+#include <utility>
+#include <vector>
+
 #include <boost/iterator/function_output_iterator.hpp>
-#include "CGAL/Arr_trapezoid_ric_point_location.h"
-#include "CGAL/Arrangement_on_surface_2.h"
-#include "CGAL/Bbox_2.h"
-#include "CGAL/Draw_aos/Arr_bounded_renderer.h"
-#include "CGAL/Draw_aos/Arr_render_context.h"
-#include "CGAL/Graphics_scene.h"
-#include "CGAL/Graphics_scene_options.h"
-#include "CGAL/Qt/camera.h"
-#include "CGAL/unordered_flat_map.h"
+#include <boost/range/iterator_range.hpp>
+
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QWidget>
 #include <QtOpenGLWidgets/QtOpenGLWidgets>
 #include <QtGui/QOpenGLFunctions>
 #include <QtGui/QMouseEvent>
 #include <QtGui/QKeyEvent>
+
+#include "CGAL/Arr_trapezoid_ric_point_location.h"
+#include "CGAL/Arrangement_on_surface_2.h"
 #include <CGAL/Basic_viewer.h>
-#include <cstddef>
-#include <boost/range/iterator_range.hpp>
-#include <iterator>
-#include <memory>
-#include <utility>
-#include <vector>
+#include "CGAL/Bbox_2.h"
+#include <CGAL/Draw_aos/helpers.h>
+#include "CGAL/Draw_aos/Arr_bounded_renderer.h"
+#include "CGAL/Draw_aos/Arr_render_context.h"
+#include "CGAL/Graphics_scene.h"
+#include "CGAL/Graphics_scene_options.h"
+#include "CGAL/Qt/camera.h"
+#include "CGAL/unordered_flat_map.h"
 
 namespace CGAL {
 
-class Arr_viewer : public Qt::Basic_viewer
-{
+class Arr_viewer : public Qt::Basic_viewer {
   using Basic_viewer = Qt::Basic_viewer;
   using Vertex_const_handle = Arrangement::Vertex_const_handle;
   using Halfedge_const_handle = Arrangement::Halfedge_const_handle;
   using Face_const_handle = Arrangement::Face_const_handle;
   using Graphics_scene_options =
-      Graphics_scene_options<Arrangement, Vertex_const_handle, Halfedge_const_handle, Face_const_handle>;
-  using Point_location = Arr_trapezoid_ric_point_location<Arrangement>;
+    CGAL::Graphics_scene_options<Arrangement, Vertex_const_handle, Halfedge_const_handle, Face_const_handle>;
+  using Point_location = CGAL::Arr_trapezoid_ric_point_location<Arrangement>;
 
 private:
   // Function to check if the camera's state has changed
@@ -47,7 +64,7 @@ private:
     this->camera_->computeModelViewMatrix();
     this->camera_->getProjectionMatrix(proj_mat.data());
     this->camera_->getModelViewMatrix(mv_mat.data());
-    if(proj_mat == m_last_proj_matrix && mv_mat == m_last_modelview_matrix) {
+    if (proj_mat == m_last_proj_matrix && mv_mat == m_last_modelview_matrix) {
       return false;
     }
     m_last_proj_matrix = proj_mat;
@@ -88,10 +105,9 @@ private:
     double ymin = std::numeric_limits<double>::max();
     double ymax = std::numeric_limits<double>::lowest();
 
-    for(const QVector4D& corner : clip_space_corners) {
+    for (const QVector4D& corner : clip_space_corners) {
       QVector4D world = inverse_mvp * corner;
-      if(world.w() != 0.0)
-        world /= world.w();
+      if (world.w() != 0.0) world /= world.w();
       double x = world.x();
       double y = world.y();
 
@@ -117,11 +133,12 @@ public:
   Arr_viewer(QWidget* parent,
              const Arrangement& arr,
              Graphics_scene_options options,
-             const char* title = "Arrangement Viewer")
-      : Basic_viewer(parent, m_scene, title)
-      , m_scene_options(options)
-      , m_arr(arr)
-      , m_pl(arr) {}
+             const char* title = "Arrangement Viewer") :
+    Basic_viewer(parent, m_scene, title),
+    m_scene_options(options),
+    m_arr(arr),
+    m_pl(arr)
+  {}
 
   void render_arr(const Arrangement& arr, const Point_location& pl, const Bbox_2& bbox) {
     Arr_render_context ctx(arr, pl, get_approx_error(bbox));
@@ -129,14 +146,15 @@ public:
     const auto& cache = renderer.render();
 
     // add faces
-    for(const auto& [fh, face_tris] : cache.face_cache()) {
+    for (const auto& [fh, face_tris] : cache.face_cache()) {
       const auto& points = face_tris.points;
       const auto& tris = face_tris.triangles;
       bool draw_face = m_scene_options.colored_face(arr, fh);
-      for(const auto& t : tris) {
-        if(draw_face) {
+      for (const auto& t : tris) {
+        if (draw_face) {
           m_scene.face_begin(m_scene_options.face_color(arr, fh));
-        } else {
+        }
+        else {
           m_scene.face_begin();
         }
         for(const auto idx : t) {
@@ -147,34 +165,36 @@ public:
     }
 
     // add edges
-    for(const auto& [he, polyline] : cache.halfedge_cache()) {
-      if(polyline.size() < 2) {
+    for (const auto& [he, polyline] : cache.halfedge_cache()) {
+      if (polyline.size() < 2) {
         continue; // skip degenerate edges
       }
 
       bool draw_colored_edge = m_scene_options.colored_edge(arr, he);
       auto color = draw_colored_edge ? m_scene_options.edge_color(arr, he) : CGAL::IO::Color();
-      for(size_t i = 0; i < polyline.size() - 1; ++i) {
+      for (size_t i = 0; i < polyline.size() - 1; ++i) {
         const auto& cur_pt = polyline[i];
         const auto& next_pt = polyline[i + 1];
         auto mid_pt = CGAL::midpoint(cur_pt, next_pt);
-        if(mid_pt.x() <= bbox.xmin() || mid_pt.x() > bbox.xmax() || mid_pt.y() <= bbox.ymin() ||
+        if (mid_pt.x() <= bbox.xmin() || mid_pt.x() > bbox.xmax() || mid_pt.y() <= bbox.ymin() ||
            mid_pt.y() > bbox.ymax())
         {
           continue;
         }
-        if(draw_colored_edge) {
+        if (draw_colored_edge) {
           m_scene.add_segment(cur_pt, next_pt, color);
-        } else {
+        }
+        else {
           m_scene.add_segment(cur_pt, next_pt);
         }
       }
     }
     // add vertices
-    for(const auto& [vh, pt] : cache.vertex_cache()) {
-      if(m_scene_options.colored_vertex(arr, vh)) {
+    for (const auto& [vh, pt] : cache.vertex_cache()) {
+      if (m_scene_options.colored_vertex(arr, vh)) {
         m_scene.add_point(pt, m_scene_options.vertex_color(arr, vh));
-      } else {
+      }
+      else {
         m_scene.add_point(pt);
       }
     }
@@ -237,4 +257,5 @@ void draw_viewer(const Arrangement& arr) {
 }
 
 } // namespace CGAL
-#endif // ARR_VIEWER_H
+
+#endif
