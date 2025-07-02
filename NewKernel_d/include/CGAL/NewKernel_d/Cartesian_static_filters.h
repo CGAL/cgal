@@ -180,6 +180,27 @@ template <class Base_,class R_> struct Adapter_4 {
         };
 };
 
+
+template <class Base_,class R_> struct Orientation_of_points_4 : private Store_kernel<R_> {
+        CGAL_FUNCTOR_INIT_STORE(Orientation_of_points_4)
+        typedef typename Get_type<R_, Point_tag>::type        Point;
+        typedef typename Get_type<R_, Orientation_tag>::type result_type;
+        typedef typename Get_functor<R_, Compute_point_cartesian_coordinate_tag>::type CC;
+        typedef Adapter_4<Base_, R_> Adapter;
+        template<class Iter> result_type operator()(Iter f, Iter CGAL_assertion_code(e))const{
+                CC c(this->kernel());
+                Point const& A=*f;
+                Point const& B=*++f;
+                Point const& C=*++f;
+                Point const& D=*++f;
+                Point const& E=*++f;
+                CGAL_assertion(++f==e);
+                typedef typename Adapter::Point_4 P;
+                return typename internal::Static_filters_predicates::Orientation_4<Adapter>()(P(this->kernel(),c,A),P(this->kernel(),c,B),P(this->kernel(),c,C),
+                                                                                              P(this->kernel(),c,D),P(this->kernel(),c,E));
+        }
+};
+
 template <class Base_,class R_> struct Adapter_5 {
         typedef typename Get_type<R_, Orientation_tag>::type Orientation;
         typedef typename Get_type<R_, Oriented_side_tag>::type Oriented_side;
@@ -322,6 +343,19 @@ struct Cartesian_static_filters<Dimension_tag<3>, R_, Derived_> : public R_ {
 };
 
 #ifndef CGAL_NO_STATIC_FILTER_5
+
+template <class R_, class Derived_>
+struct Cartesian_static_filters<Dimension_tag<4>, R_, Derived_> : public R_ {
+  constexpr Cartesian_static_filters(){}
+  constexpr Cartesian_static_filters(int d):R_(d){}
+        typedef Cartesian_static_filters<Dimension_tag<4>, R_, Derived_> Self;
+        typedef typename Default::Get<Derived_,Self>::type Derived;
+        template <class T, class=void> struct Functor : Inherit_functor<R_, T> {};
+        template <class D> struct Functor <Orientation_of_points_tag,D> {
+                typedef SFA::Orientation_of_points_4<R_,Derived> type;
+        };
+};
+
 template <class R_, class Derived_>
 struct Cartesian_static_filters<Dimension_tag<5>, R_, Derived_> : public R_ {
   constexpr Cartesian_static_filters(){}

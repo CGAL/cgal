@@ -23,18 +23,18 @@ int main()
     const int D = 4;   // we work in Euclidean 4-space
 
     std::vector<Triangulation::Point> points;
-    std::ifstream in("points.txt");
+    std::ifstream in("points_4.txt");
     Triangulation::Point p;
     int d;
     in >> d;
     assert(d == D);
     int n;
     in >> n;
+    std::cout << n << " points in dimension " << d << std::endl;
     points.reserve(n);
     while (in >> p) {
         points.push_back(p);
     }
-
     CGAL::Timer timer;
     timer.start();
     Triangulation t(D);                      // create triangulation

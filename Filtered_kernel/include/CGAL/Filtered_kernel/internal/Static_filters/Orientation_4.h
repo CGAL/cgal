@@ -38,25 +38,22 @@ public:
              const Point_4 &r, const Point_4 &s,
              const Point_4 &t) const
   {
+            std::cout << "XX" << std::endl;
+
       CGAL_BRANCH_PROFILER_3("semi-static failures/attempts/calls to   : Orientation_4", tmp);
 
-      double p0, p1, p2, p3, p4, q0, q1, q2, q3, q4, r0, r1, r2, r3, r4, s0, s1, s2, s3, s4, t0, t1, t2, t3, t4;
+      double p0, p1, p2, p3, q0, q1, q2, q3, r0, r1, r2, r3, s0, s1, s2, s3, t0, t1, t2, t3;
 
       if (fit_in_double(p.c0(), p0) && fit_in_double(p.c1(), p1) &&
           fit_in_double(p.c2(), p2) && fit_in_double(p.c3(), p3) &&
-          fit_in_double(p.c4(), p4) &&
           fit_in_double(q.c0(), q0) && fit_in_double(q.c1(), q1) &&
           fit_in_double(q.c2(), q2) && fit_in_double(q.c3(), q3) &&
-          fit_in_double(q.c4(), q4) &&
           fit_in_double(r.c0(), r0) && fit_in_double(r.c1(), r1) &&
           fit_in_double(r.c2(), r2) && fit_in_double(r.c3(), r3) &&
-          fit_in_double(r.c4(), r4) &&
           fit_in_double(s.c0(), s0) && fit_in_double(s.c1(), s1) &&
           fit_in_double(s.c2(), s2) && fit_in_double(s.c3(), s3) &&
-          fit_in_double(s.c4(), s4) &&
           fit_in_double(t.c0(), t0) && fit_in_double(t.c1(), t1) &&
-          fit_in_double(t.c2(), t2) && fit_in_double(t.c3(), t3) &&
-          fit_in_double(t.c4(), t4) )
+          fit_in_double(t.c2(), t2) && fit_in_double(t.c3(), t3)  )
       {
         CGAL_assertion_code(Orientation should_be = Base::operator()(p, q, r, s, t));
 double m01;
