@@ -29,15 +29,18 @@ int main(int argc, char* argv[])
   }
 
   std::vector<Convex_hull> convex_hulls;
-
-  std::size_t n = PMP::approximate_convex_decomposition(mesh, std::back_inserter(convex_hulls), CGAL::parameters::maximum_depth(10).volume_error(0.001).maximum_number_of_convex_hulls(8).split_at_concavity(1));
+  std::size_t n = PMP::approximate_convex_decomposition(mesh, std::back_inserter(convex_hulls),
+    CGAL::parameters::maximum_depth(10)
+    .volume_error(0.1)
+    .maximum_number_of_convex_hulls(9)
+    .split_at_concavity(true)
+    .maximum_number_of_voxels(1000000)
+    .concurrency_tag(CGAL::Parallel_if_available_tag()));
 
   for (std::size_t i = 0;i<convex_hulls.size();i++) {
     const Convex_hull& ch = convex_hulls[i];
     CGAL::IO::write_polygon_soup(std::to_string(i) + ".off", ch.first, ch.second);
   }
-
-  std::cout << convex_hulls.size() << std::endl;
 
   return 0;
 }
