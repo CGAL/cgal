@@ -76,13 +76,6 @@ void Variational_medial_axis_skeleton_plugin::trace_skeleton()
 
   Scene_surface_mesh_item* sm_item = qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex()));
 
-  //~ Scene_polylines_item* polyline_item = new Scene_polylines_item();
-
-  //~ polyline_item->setName(tr("Locally Shortest Path"));
-  //~ polyline_item->setColor(Qt::red);
-  //~ scene->addItem(polyline_item);
-  //~ polyline_item->invalidateOpenGLBuffers();
-
   //todo: add dialog
 
   Variational_medial_axis_skeleton_item* item = new Variational_medial_axis_skeleton_item(scene, sm_item, 200);
@@ -94,6 +87,9 @@ void Variational_medial_axis_skeleton_plugin::trace_skeleton()
     viewer->installEventFilter(item);
 
   scene->addItem(item);
+  item->fill_subitems();
+
+  sm_item->setVisible(false);
 
   QApplication::restoreOverrideCursor();
 }

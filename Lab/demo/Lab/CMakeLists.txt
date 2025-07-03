@@ -240,7 +240,7 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
   endmacro(add_item)
 
   add_item(scene_triangulation_3_item Scene_triangulation_3_item.cpp)
-  target_link_libraries(scene_triangulation_3_item PRIVATE scene_basic_objects scene_edit_box_item)
+  target_link_libraries(scene_triangulation_3_item PRIVATE scene_basic_objects scene_edit_box_item scene_polygon_soup_item)
 
   add_item(scene_c3t3_item Scene_c3t3_item.cpp)
   target_link_libraries(
@@ -295,7 +295,7 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
 
   if (TARGET CGAL::Eigen3_support)
     add_item(variational_medial_axis_skeleton_item Plugins/VMAS/Variational_medial_axis_skeleton_item.cpp)
-    target_link_libraries(variational_medial_axis_skeleton_item PUBLIC CGAL::Eigen3_support scene_surface_mesh_item scene_polylines_item)
+    target_link_libraries(variational_medial_axis_skeleton_item PUBLIC CGAL::Eigen3_support scene_surface_mesh_item scene_polylines_item scene_basic_objects scene_polygon_soup_item)
     if (TARGET CGAL::TBB_support)
       target_link_libraries(variational_medial_axis_skeleton_item PUBLIC CGAL::TBB_support)
     endif()
