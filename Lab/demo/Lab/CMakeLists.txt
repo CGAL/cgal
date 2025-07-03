@@ -293,6 +293,15 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
   add_item(scene_image_item Scene_image_item.cpp)
   add_item(scene_surface_mesh_item Scene_surface_mesh_item.cpp)
 
+  if (TARGET CGAL::Eigen3_support)
+    add_item(variational_medial_axis_skeleton_item Plugins/VMAS/Variational_medial_axis_skeleton_item.cpp)
+    target_link_libraries(variational_medial_axis_skeleton_item PUBLIC CGAL::Eigen3_support scene_surface_mesh_item scene_polylines_item)
+    if (TARGET CGAL::TBB_support)
+      target_link_libraries(variational_medial_axis_skeleton_item PUBLIC CGAL::TBB_support)
+    endif()
+  endif()
+
+
   if(TBB_FOUND)
     target_link_libraries(scene_surface_mesh_item PRIVATE CGAL::TBB_support)
   endif()

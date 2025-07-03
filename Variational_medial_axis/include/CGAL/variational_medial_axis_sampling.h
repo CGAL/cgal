@@ -346,11 +346,11 @@ template <typename GT,
           typename VertexNormalMap,
           typename VertexMedialSpherePosMap,
           typename VertexMedialSphereRadiusMap>
-void compute_one_vertex_shrinking_ball(const TriangleMesh& tmesh,
+void compute_one_vertex_shrinking_ball(const TriangleMesh& /* tmesh */,
                              const Tree& tree,
                              const VertexPointMap& vpm,
                              const Vertex_Descriptor v,
-                             const FaceNormalMap& face_normal_map, // face normal map
+                             const FaceNormalMap& /* face_normal_map */,
                              const VertexNormalMap& vertex_normal_map,
                              VertexMedialSpherePosMap& vertex_medial_sphere_pos_map,
                              VertexMedialSphereRadiusMap& vertex_medial_sphere_radius_map) {
@@ -817,7 +817,7 @@ void assign_vertices_to_clusters_parallel(const TriangleMesh& tmesh,
   for(vertex_descriptor v : vertices(tmesh)) {
     vertices_vector.push_back(v);
   }
-  auto& spheres = sphere_mesh.spheres();
+//  auto& spheres = sphere_mesh.spheres();
   std::vector<std::pair<Sphere_ID, FT>> vertex_assignments(vertices_vector.size());
 
 
@@ -896,8 +896,8 @@ void compute_shrinking_balls_parallel(const TriangleMesh& tmesh,
                                       const VertexNormalMap& vertex_normal_map,
                                       VertexMedialSpherePosMap& vertex_medial_sphere_pos_map,
                                       VertexMedialSphereRadiusMap& vertex_medial_sphere_radius_map) {
-  using Vector_3 = typename GT::Vector_3;
-  using Point_3 = typename GT::Point_3;
+//  using Vector_3 = typename GT::Vector_3;
+//  using Point_3 = typename GT::Point_3;
   using vertex_descriptor = typename boost::graph_traits<TriangleMesh>::vertex_descriptor;
   std::vector<vertex_descriptor> vertices_vector;
   vertices_vector.reserve(num_vertices(tmesh));
@@ -955,8 +955,8 @@ typename GT::FT compute_sphere_errors_parallel(const TriangleMesh& tmesh,
                                       const VertexNormalMap& vertex_normal_map,
                                       VertexErrorMap& vertex_error_map) {
   using FT = typename GT::FT;
-  using Point_3 = typename GT::Point_3;
-  using vertex_descriptor = typename boost::graph_traits<TriangleMesh>::vertex_descriptor;
+//  using Point_3 = typename GT::Point_3;
+//  using vertex_descriptor = typename boost::graph_traits<TriangleMesh>::vertex_descriptor;
 
   auto& spheres = sphere_mesh.spheres();
   FT total_error = tbb::parallel_reduce(
