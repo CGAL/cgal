@@ -19,7 +19,7 @@ namespace CGAL {
 
 // a*b - c*d
   // The next two functions are from https://stackoverflow.com/questions/63665010/accurate-floating-point-computation-of-the-sum-and-difference-of-two-products
-  static double diff_of_products_kahan(const double a, const double b, const double c, const double d)
+  inline double diff_of_products_kahan(const double a, const double b, const double c, const double d)
   {
     double w = d * c;
     double e = std::fma(c, -d, w);
@@ -27,7 +27,7 @@ namespace CGAL {
     return f + e;
   }
 
-  static double diff_of_products_cht(const double a, const double b, const double c, const double d)
+  inline double diff_of_products_cht(const double a, const double b, const double c, const double d)
   {
     double p1 = a * b;
     double p2 = c * d;
@@ -38,7 +38,7 @@ namespace CGAL {
     return r + e;
   }
 
-  static double diff_of_products(const double a, const double b, const double c, const double d)
+  inline double diff_of_products(const double a, const double b, const double c, const double d)
   {
     // return a*b - c*d;
     // the next two are equivalent in results and speed
@@ -47,7 +47,7 @@ namespace CGAL {
   }
 
   template <typename OFT>
-  static OFT diff_of_products(const OFT& a, const OFT& b, const OFT& c, const OFT& d)
+  inline OFT diff_of_products(const OFT& a, const OFT& b, const OFT& c, const OFT& d)
   {
     return a*b - c*d;
   }
