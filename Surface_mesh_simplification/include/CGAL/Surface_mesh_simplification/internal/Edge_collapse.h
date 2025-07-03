@@ -610,7 +610,7 @@ loop()
 
       auto mPQ_clone = *mPQ;
       std::optional<halfedge_descriptor> opt_th;
-      while(opt_th = mPQ_clone.extract_top())
+      while((opt_th = mPQ_clone.extract_top()))
       {
         CGAL_SMS_TRACE_IMPL("\t" + edge_to_string(*opt_th));
         Cost_type tcost = get_data(*opt_th).cost();
