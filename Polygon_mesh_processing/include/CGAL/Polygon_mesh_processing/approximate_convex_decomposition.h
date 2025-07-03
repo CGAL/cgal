@@ -228,6 +228,7 @@ Box box_union(const Box& a, const Box& b) {
 template<typename FT>
 std::tuple<Vec3_uint, FT> calculate_grid_size(Bbox_3& bb, const std::size_t number_of_voxels) {
   std::size_t max_voxels_axis = std::pow(number_of_voxels, 1.0 / 3.0);
+  assert(max_voxels_axis > 3);
   // get longest axis
   FT longest = 0;
 
@@ -238,13 +239,13 @@ std::tuple<Vec3_uint, FT> calculate_grid_size(Bbox_3& bb, const std::size_t numb
   else if (bb.z_span() >= bb.x_span() && bb.z_span() >= bb.y_span())
     longest = bb.z_span();
 
-  const FT voxel_size = longest / (max_voxels_axis - 3);
+  const FT voxel_size = longest * FT(1.0 / (max_voxels_axis - 3));
 
   FT s = 1.5 * voxel_size;
 
-  bb = Bbox_3(bb.xmin() - s, bb.ymin() - s, bb.zmin() - s, bb.xmax() + s, bb.ymax() + s, bb.zmax() + s);
+  bb = Bbox_3(to_double(bb.xmin() - s), to_double(bb.ymin() - s), to_double(bb.zmin() - s), to_double(bb.xmax() + s), to_double(bb.ymax() + s), to_double(bb.zmax() + s));
 
-  return { Vec3_uint{static_cast<unsigned int>(bb.x_span() / voxel_size + 0.5), static_cast<unsigned int>(bb.y_span() / voxel_size + 0.5), static_cast<unsigned int>(bb.z_span() / voxel_size + 0.5)}, voxel_size};
+  return { Vec3_uint{static_cast<unsigned int>(to_double(bb.x_span() / voxel_size + 0.5)), static_cast<unsigned int>(to_double(bb.y_span() / voxel_size + 0.5)), static_cast<unsigned int>(to_double(bb.z_span() / voxel_size + 0.5))}, voxel_size};
 }
 
 template<typename GeomTraits, typename PolygonMesh, typename NamedParameters = parameters::Default_named_parameters>
@@ -265,25 +266,25 @@ template<typename FaceGraph, typename FT>
 Bbox_uint grid_bbox_face(const FaceGraph& mesh, const typename boost::graph_traits<FaceGraph>::face_descriptor fd, const Bbox_3& bb, const FT& voxel_size) {
   Bbox_3 face_bb = face_bbox(fd, mesh);
   return Bbox_uint({
-    static_cast<unsigned int>((face_bb.xmin() - bb.xmin()) / voxel_size - 0.5),
-    static_cast<unsigned int>((face_bb.ymin() - bb.ymin()) / voxel_size - 0.5),
-    static_cast<unsigned int>((face_bb.zmin() - bb.zmin()) / voxel_size - 0.5)
+    static_cast<unsigned int>((face_bb.xmin() - bb.xmin()) / to_double(voxel_size) - 0.5),
+    static_cast<unsigned int>((face_bb.ymin() - bb.ymin()) / to_double(voxel_size) - 0.5),
+    static_cast<unsigned int>((face_bb.zmin() - bb.zmin()) / to_double(voxel_size) - 0.5)
     }, {
-    static_cast<unsigned int>((face_bb.xmax() - bb.xmin()) / voxel_size + 0.5),
-    static_cast<unsigned int>((face_bb.ymax() - bb.ymin()) / voxel_size + 0.5),
-    static_cast<unsigned int>((face_bb.zmax() - bb.zmin()) / voxel_size + 0.5)
+    static_cast<unsigned int>((face_bb.xmax() - bb.xmin()) / to_double(voxel_size) + 0.5),
+    static_cast<unsigned int>((face_bb.ymax() - bb.ymin()) / to_double(voxel_size) + 0.5),
+    static_cast<unsigned int>((face_bb.zmax() - bb.zmin()) / to_double(voxel_size) + 0.5)
     });
 }
 
 template<typename GeomTraits>
 Iso_cuboid_3<GeomTraits> bbox_voxel(const Vec3_uint& voxel, const Bbox_3& bb, const typename GeomTraits::FT& voxel_size) {
   return Bbox_3(
-    bb.xmin() + voxel[0] * voxel_size,
-    bb.ymin() + voxel[1] * voxel_size,
-    bb.zmin() + voxel[2] * voxel_size,
-    bb.xmin() + (voxel[0] + 1) * voxel_size,
-    bb.ymin() + (voxel[1] + 1) * voxel_size,
-    bb.zmin() + (voxel[2] + 1) * voxel_size
+    bb.xmin() + voxel[0] * to_double(voxel_size),
+    bb.ymin() + voxel[1] * to_double(voxel_size),
+    bb.zmin() + voxel[2] * to_double(voxel_size),
+    bb.xmin() + (voxel[0] + 1) * to_double(voxel_size),
+    bb.ymin() + (voxel[1] + 1) * to_double(voxel_size),
+    bb.zmin() + (voxel[2] + 1) * to_double(voxel_size)
     );
 }
 
@@ -793,6 +794,26 @@ void enlarge(Bbox_uint& bbox, const Vec3_uint& v) {
   bbox.upper[2] = (std::max<unsigned int>)(bbox.upper[2], v[2]);
 }
 
+template <typename T, typename = std::void_t<>>
+struct is_std_hashable : std::false_type {};
+
+template <typename T>
+struct is_std_hashable<T, std::void_t<decltype(std::declval<std::hash<T>>()(std::declval<T>()))>> : std::true_type {};
+
+template<typename Point_3, typename H = typename std::conjunction<typename is_std_hashable<typename Kernel_traits<Point_3>::type::FT>, typename std::is_same<typename Kernel_traits<Point_3>::type::Kernel_tag, CGAL::Cartesian_tag>::type>::type>
+struct Set {
+};
+
+template<typename Point_3>
+struct Set<Point_3, std::true_type> {
+  using type = std::unordered_set<Point_3>;
+};
+
+template<typename Point_3>
+struct Set<Point_3, std::false_type> {
+  using type = std::set<Point_3>;
+};
+
 template<typename GeomTraits>
 void compute_candidate(Candidate<GeomTraits> &c, const Bbox_3& bb, typename GeomTraits::FT voxel_size) {
   using Point_3 = typename GeomTraits::Point_3;
@@ -800,18 +821,16 @@ void compute_candidate(Candidate<GeomTraits> &c, const Bbox_3& bb, typename Geom
 
   c.bbox.lower = c.bbox.upper = c.surface[0];
 
-  // update bounding box
-  std::unordered_set<Point_3> voxel_points;
+  typename Set<Point_3>::type voxel_points;
 
-  // Is it more efficient than using std::vector with plenty of duplicates?
   for (const Vec3_uint& v : c.surface) {
     enlarge(c.bbox, v);
-    FT xmin = bb.xmin() + v[0] * voxel_size;
-    FT ymin = bb.ymin() + v[1] * voxel_size;
-    FT zmin = bb.zmin() + v[2] * voxel_size;
-    FT xmax = bb.xmin() + (v[0] + 1) * voxel_size;
-    FT ymax = bb.ymin() + (v[1] + 1) * voxel_size;
-    FT zmax = bb.zmin() + (v[2] + 1) * voxel_size;
+    FT xmin = bb.xmin() + FT(v[0]) * voxel_size;
+    FT ymin = bb.ymin() + FT(v[1]) * voxel_size;
+    FT zmin = bb.zmin() + FT(v[2]) * voxel_size;
+    FT xmax = bb.xmin() + FT(v[0] + 1) * voxel_size;
+    FT ymax = bb.ymin() + FT(v[1] + 1) * voxel_size;
+    FT zmax = bb.zmin() + FT(v[2] + 1) * voxel_size;
     voxel_points.insert(Point_3(xmin, ymin, zmin));
     voxel_points.insert(Point_3(xmin, ymax, zmin));
     voxel_points.insert(Point_3(xmin, ymin, zmax));
@@ -824,12 +843,12 @@ void compute_candidate(Candidate<GeomTraits> &c, const Bbox_3& bb, typename Geom
 
   for (const Vec3_uint& v : c.new_surface) {
     enlarge(c.bbox, v);
-    FT xmin = bb.xmin() + v[0] * voxel_size;
-    FT ymin = bb.ymin() + v[1] * voxel_size;
-    FT zmin = bb.zmin() + v[2] * voxel_size;
-    FT xmax = bb.xmin() + (v[0] + 1) * voxel_size;
-    FT ymax = bb.ymin() + (v[1] + 1) * voxel_size;
-    FT zmax = bb.zmin() + (v[2] + 1) * voxel_size;
+    FT xmin = bb.xmin() + FT(v[0]) * voxel_size;
+    FT ymin = bb.ymin() + FT(v[1]) * voxel_size;
+    FT zmin = bb.zmin() + FT(v[2]) * voxel_size;
+    FT xmax = bb.xmin() + FT(v[0] + 1) * voxel_size;
+    FT ymax = bb.ymin() + FT(v[1] + 1) * voxel_size;
+    FT zmax = bb.zmin() + FT(v[2] + 1) * voxel_size;
     voxel_points.insert(Point_3(xmin, ymin, zmin));
     voxel_points.insert(Point_3(xmin, ymax, zmin));
     voxel_points.insert(Point_3(xmin, ymin, zmax));
@@ -846,7 +865,7 @@ void compute_candidate(Candidate<GeomTraits> &c, const Bbox_3& bb, typename Geom
 
   CGAL_assertion(c.ch.volume > 0);
 
-  c.ch.voxel_volume = (voxel_size * voxel_size * voxel_size) * (c.inside.size() + c.surface.size() + c.new_surface.size());
+  c.ch.voxel_volume = (voxel_size * voxel_size * voxel_size) * FT(double(c.inside.size() + c.surface.size() + c.new_surface.size()));
   c.ch.volume_error = CGAL::abs(c.ch.volume - c.ch.voxel_volume) / c.ch.voxel_volume;
 }
 
@@ -1122,7 +1141,6 @@ void choose_splitting_location_by_concavity(unsigned int& axis, unsigned int& lo
 
 template<typename GeomTraits, typename NamedParameters>
 void choose_splitting_plane(Candidate<GeomTraits>& c, unsigned int &axis, unsigned int &location, std::vector<int8_t>& grid, const Vec3_uint& grid_size, const NamedParameters& np) {
-  //Just split the voxel bbox along 'axis' after voxel index 'location'
   const bool search_concavity = parameters::choose_parameter(parameters::get_parameter(np, internal_np::split_at_concavity), true);
   const std::array<unsigned int, 3> span = {c.bbox.upper[0] - c.bbox.lower[0], c.bbox.upper[1] - c.bbox.lower[1], c.bbox.upper[2] - c.bbox.lower[2]};
 
@@ -1530,7 +1548,7 @@ void merge(std::vector<Convex_hull<GeomTraits>>& candidates, std::vector<int8_t>
  * \cgalNamedParamsBegin
  *
  *   \cgalParamNBegin{maximum_number_of_voxels}
- *     \cgalParamDescription{gives an upper bound of the number of voxels. The longest bounding box side will have a length of the cubic root of `maximum_number_of_voxels`.}
+ *     \cgalParamDescription{gives an upper bound of the number of voxels. The longest bounding box side will have a length of the cubic root of `maximum_number_of_voxels`. Cannot be smaller than 64. }
  *     \cgalParamType{unsigned int}
  *     \cgalParamDefault{1000000}
  *   \cgalParamNEnd
@@ -1595,6 +1613,36 @@ std::size_t approximate_convex_decomposition(const FaceGraph& mesh, OutputIterat
   using FT = typename Geom_traits::FT;
   const std::size_t num_voxels = parameters::choose_parameter(parameters::get_parameter(np, internal_np::maximum_number_of_voxels), 1000000);
   using Concurrency_tag = typename internal_np::Lookup_named_param_def<internal_np::concurrency_tag_t, NamedParameters, Parallel_if_available_tag>::type;
+
+  const std::size_t max_convex_hulls = parameters::choose_parameter(parameters::get_parameter(np, internal_np::maximum_number_of_convex_hulls), 64);
+  assert(max_convex_hulls > 0);
+
+  if (max_convex_hulls == 1) {
+    internal::Convex_hull< Geom_traits> ch;
+    using Mesh = Surface_mesh<typename Geom_traits::Point_3>;
+    Mesh m;
+    convex_hull_3(mesh, m);
+
+    ch.points.resize(m.number_of_vertices());
+    ch.indices.resize(m.number_of_faces());
+
+    std::size_t idx = 0;
+    for (const typename Mesh::vertex_index v : m.vertices())
+      ch.points[idx++] = m.point(v);
+
+    idx = 0;
+    for (const typename Mesh::face_index f : m.faces()) {
+      auto he = m.halfedge(f);
+      ch.indices[idx][0] = m.source(he);
+      he = m.next(he);
+      ch.indices[idx][1] = m.source(he);
+      he = m.next(he);
+      ch.indices[idx++][2] = m.source(he);
+    }
+
+    *out_hulls = std::make_pair(std::move(ch.points), std::move(ch.indices));
+    return 1;
+  }
 
   Bbox_3 bb = bbox(mesh);
   const auto [grid_size, voxel_size] = internal::calculate_grid_size<FT>(bb, num_voxels);
