@@ -66,6 +66,10 @@
 /// Classes and functions that answer queries about a polygon mesh or its elements.
 /// \ingroup PkgPolygonMeshProcessingRef
 
+/// \defgroup PMP_convex_decomposition_grp Approximate Convex Decomposition
+/// Function to approximate a mesh by a number of convex hulls.
+/// \ingroup PkgPolygonMeshProcessingRef
+
 /// \defgroup PMP_IO_grp I/O Functions
 /// \ingroup PkgPolygonMeshProcessingRef
 
