@@ -40,12 +40,6 @@ public:
   {
       CGAL_BRANCH_PROFILER_3("semi-static failures/attempts/calls to   : Orientation_6", tmp);
 
-      double a01, a02, a03, a04, a05, a06, a11, a12, a13, a14, a15, a16,
-             a21, a22, a23, a24, a25, a26, a31, a32, a33, a34, a35,
-             a36, a41, a42, a43, a44, a45, a46,
-             a51, a52, a53, a54, a55, a56,
-             a61, a62, a63, a64, a65, a66;
-
       double p0, p1, p2, p3, p4, p5, q0, q1, q2, q3, q4, q5, r0, r1, r2, r3, r4, r5, s0, s1, s2, s3, s4, s5, t0, t1, t2, t3, t4, t5, u0, u1, u2, u3, u4, u5, v0, v1, v2, v3, v4, v5;
       if (fit_in_double(p.c0(), p0) && fit_in_double(p.c1(), p1) &&
           fit_in_double(p.c2(), p2) && fit_in_double(p.c3(), p3) &&
