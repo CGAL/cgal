@@ -1569,7 +1569,6 @@ auto midpoint_with_info(const typename C3t3::Edge& e,
                         const C3t3& c3t3)
 {
   using Tr = typename C3t3::Triangulation;
-  using Vertex_handle = typename Tr::Vertex_handle;
   using Gt = typename Tr::Geom_traits;
   using Point_3 = typename Gt::Point_3;
   using Index = typename C3t3::Index;
