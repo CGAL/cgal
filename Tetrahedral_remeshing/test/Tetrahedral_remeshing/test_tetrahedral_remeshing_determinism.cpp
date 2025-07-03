@@ -1,4 +1,4 @@
-#define CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+//#define CGAL_TETRAHEDRAL_REMESHING_VERBOSE
 //#define CGAL_TETRAHEDRAL_REMESHING_DEBUG
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
