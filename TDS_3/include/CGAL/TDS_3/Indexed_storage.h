@@ -1810,6 +1810,34 @@ namespace CGAL {
 
   };
 
+  template <typename Derived_triangulation, typename Geom_traits, typename Tds>
+  class Cache_cell_circumcenter_with_property_maps
+  {
+  public:
+    void add_circumcenter_property_map() {
+      if constexpr(Tds::has_property_maps) {
+        using Point = typename Geom_traits::Point_3;
+        this->circumcenter_pmap = static_cast<Derived_triangulation*>(this)
+                                      ->tds()
+                                      .template add_property_map<Cell_index, std::optional<Point>>()
+                                      .first;
+      }
+    }
+  protected:
+    static auto get_property_point_map_type() {
+      if constexpr(Tds::has_property_maps) {
+        using Point = typename Geom_traits::Point_3;
+        using Concurrency_tag = typename Tds::Concurrency_tag;
+        return Property_map<typename Tds::Cell_index, std::optional<Point>, Concurrency_tag>{};
+      } else {
+        return Null_tag{};
+      }
+    }
+    using Circumcenter_property_map = decltype(get_property_point_map_type());
+
+    CGAL_NO_UNIQUE_ADDRESS Circumcenter_property_map circumcenter_pmap;
+  };
+
 } /// namespace CGAL
 
 #include <CGAL/Hidden_point_memory_policy.h>

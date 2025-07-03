@@ -73,24 +73,28 @@ template < class Gt,
            class Lock_data_structure_ = Default >
 class Delaunay_triangulation_3;
 
+template <class Gt, class Tds_>
+using Delaunay_triangulation_3_tds = typename Default::Get<
+    Tds_,
+    Triangulation_data_structure_3<Triangulation_vertex_base_3<Gt>, Delaunay_triangulation_cell_base_3<Gt>>>::type;
+
 // There is a specialization Delaunay_triangulation_3<Gt, Tds, Fast_location>
 // defined in <CGAL/Triangulation_3/internal/Delaunay_triangulation_hierarchy_3.h>.
 
 // Here is the specialization Delaunay_triangulation_3<Gt, Tds>, with three
 // arguments, that is if Location_policy being the default value 'Default'.
-template < class Gt, class Tds_, class Lock_data_structure_ >
+template <class Gt, class Tds_, class Lock_data_structure_>
 class Delaunay_triangulation_3<Gt, Tds_, Default, Lock_data_structure_>
-  : public Triangulation_3<Gt,
-                           typename Default::Get<Tds_,
-                                                 Triangulation_data_structure_3<
-                                                   Triangulation_vertex_base_3<Gt>,
-                                                   Delaunay_triangulation_cell_base_3<Gt> > >::type,
-                           Lock_data_structure_>
+    : public Triangulation_3<
+          Gt,
+          Delaunay_triangulation_3_tds<Gt, Tds_>,
+          Lock_data_structure_>
+    , public Cache_cell_circumcenter_with_property_maps<
+          Delaunay_triangulation_3<Gt, Tds_, Default, Lock_data_structure_>,
+          Gt,
+          Delaunay_triangulation_3_tds<Gt, Tds_>>
 {
-  typedef typename Default::Get<Tds_,
-                     Triangulation_data_structure_3 <
-                       Triangulation_vertex_base_3<Gt>,
-                       Delaunay_triangulation_cell_base_3<Gt> > >::type     Tds;
+  typedef Delaunay_triangulation_3_tds<Gt, Tds_> Tds;
 
   typedef Delaunay_triangulation_3<Gt, Tds_, Default, Lock_data_structure_> Self;
 
@@ -253,12 +257,6 @@ public:
     : Tr_Base(gt, lock_ds)
   {
     insert(first, last);
-  }
-
-  void add_circumcenter_property_map() {
-    if constexpr(Tds::has_property_maps) {
-      this->circumcenter_pmap = this->tds().template add_property_map<Cell_index, std::optional<Point>>().first;
-    }
   }
 
 private:
@@ -1074,17 +1072,6 @@ protected:
   friend class Conflict_tester_2;
 
   CGAL_NO_UNIQUE_ADDRESS Hidden_point_visitor hidden_point_visitor;
-
-  static auto get_property_point_map_type() {
-    if constexpr(Tds::has_property_maps) {
-      return Property_map<typename Triangulation_data_structure::Cell_index, std::optional<Point>, Concurrency_tag>{};
-    } else {
-      return Null_tag{};
-    }
-  }
-  using Circumcenter_property_map = decltype(get_property_point_map_type());
-
-  CGAL_NO_UNIQUE_ADDRESS Circumcenter_property_map circumcenter_pmap;
 };
 
 template < class Gt, class Tds, class Lds >
@@ -1850,8 +1837,8 @@ dual(Cell_handle c) const
   CGAL_precondition(dimension()==3);
   CGAL_precondition(! is_infinite(c));
   if constexpr (Tds::has_property_maps) {
-    if(circumcenter_pmap) {
-      auto& opt_point = circumcenter_pmap[c->index()];
+    if(this->circumcenter_pmap) {
+      auto& opt_point = this->circumcenter_pmap[c->index()];
       if(opt_point.has_value())
         return *opt_point;
       else {

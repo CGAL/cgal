@@ -22,10 +22,6 @@
 #include <CGAL/Polygonal_surface_reconstruction/internal/hypothesis.h>
 #include <CGAL/Polygonal_surface_reconstruction/internal/parameters.h>
 
-
-// Concurrency
-typedef CGAL::Parallel_if_available_tag Concurrency_tag;
-
 namespace CGAL {
 namespace internal {
 
@@ -170,7 +166,7 @@ namespace internal {
                         const unsigned int K = 6;
 
                         const typename Point_set::Point_map& points = point_set.point_map();
-                        FT avg_spacing = compute_average_spacing<Concurrency_tag>(points, K);
+                        FT avg_spacing = compute_average_spacing<CGAL::Parallel_if_available_tag>(points, K);
 
                         // The number of supporting points of each face
                         typename Polygon_mesh::template Property_map<Face_descriptor, std::size_t> face_num_supporting_points =
