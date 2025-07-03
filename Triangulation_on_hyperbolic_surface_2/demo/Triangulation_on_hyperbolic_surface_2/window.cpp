@@ -21,15 +21,15 @@ DemoWindowItem::DemoWindowItem()
 
   // Prepare the pens
   poincare_disk_pen_.setStyle(Qt::SolidLine);
-  poincare_disk_pen_.setWidth(8);
+  poincare_disk_pen_.setWidth(4);
   poincare_disk_pen_.setBrush(Qt::black);
 
   edges_pen_.setStyle(Qt::SolidLine);
-  edges_pen_.setWidth(6);
+  edges_pen_.setWidth(4);
   edges_pen_.setBrush(Qt::blue);
 
   dirichlet_pen_.setStyle(Qt::SolidLine);
-  dirichlet_pen_.setWidth(6);
+  dirichlet_pen_.setWidth(4);
   dirichlet_pen_.setBrush(Qt::red);
 }
 
@@ -55,6 +55,13 @@ void DemoWindowItem::paint(QPainter *painter,
   painter->setPen(edges_pen_);
   for (std::size_t  i=0; i<edges_.size(); i++) {
     draw_edge(painter, edges_[i].first, edges_[i].second);
+  }
+
+  // 3. Draw the Dirichlet domain, if any
+  painter->setBrush(QBrush());
+  painter->setPen(dirichlet_pen_);
+  for (std::size_t i = 0; i < dirichlet_edges_.size(); i++) {
+    draw_edge(painter, dirichlet_edges_[i].first, dirichlet_edges_[i].second);
   }
 }
 
@@ -139,7 +146,7 @@ void DemoWindowItem::draw_point(QPainter* painter, Point position)
 {
   // First convert the point in doubles, well-scaled
   double point_x = poincare_disk_radius_in_pixels_ * CGAL::to_double(position.x());
-  double point_y = -poincare_disk_radius_in_pixels_ * CGAL::to_double(position.y());  // take the opposite so that the drawing is not upside down
+  double point_y = - poincare_disk_radius_in_pixels_ * CGAL::to_double(position.y()); // Take the opposite so that the drawing is not upside down
 
   // Then draw a small circle
   QRectF circle_rect = QRectF(point_x-1, point_y-1, 3, 3);
@@ -151,10 +158,10 @@ void DemoWindowItem::draw_edge(QPainter* painter, Point source, Point target)
   // First convert the points coordinates to doubles
 
   double src_x = CGAL::to_double(source.x());
-  double src_y = CGAL::to_double(source.y());
+  double src_y = - CGAL::to_double(source.y()); // Take the opposite so that the drawing is not upside down
 
   double tar_x = CGAL::to_double(target.x());
-  double tar_y = CGAL::to_double(target.y());
+  double tar_y = - CGAL::to_double(target.y()); // Take the opposite so that the drawing is not upside down
 
   // 0. If src and tar are too colinear or too close from each other then draw a line
 
