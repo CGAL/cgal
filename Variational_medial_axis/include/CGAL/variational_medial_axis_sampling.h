@@ -77,10 +77,10 @@ public:
 private:
   Sphere_ID id;
   Sphere_3 sphere;
+  vertex_descriptor split_vertex; // the vertex for split
   FT error;
   FT cluster_area;
   bool do_not_split = false;      // flag to indicate if the sphere should not be split
-  vertex_descriptor split_vertex; // the vertex for split
   std::unordered_set<Sphere_ID> neighbors;
   std::vector<vertex_descriptor> cluster_vertices;
 };
@@ -250,19 +250,16 @@ compute_radius(const typename GT::Point_3& p, const typename GT::Vector_3& n, co
   return d / (2 * cos_angle);
 }
 
-template <typename TriangleMesh, typename GT, typename Tree, typename FaceNormalMap>
+template <typename GT, typename Tree>
 std::pair<typename GT::Point_3, typename GT::FT>
-shrinking_ball_algorithm(const TriangleMesh& tmesh,
-                         const FaceNormalMap& face_normal_map, // face normal map
-                         const typename GT::Point_3& p,        // point on the surface
+shrinking_ball_algorithm(const typename GT::Point_3& p,        // point on the surface
                          const typename GT::Vector_3& n,       // inverse of reaserch direction
                          const Tree& tree) {
-  using Vector_3 = typename GT::Vector_3;
-  using face_descriptor = typename boost::graph_traits<TriangleMesh>::face_descriptor;
+  using face_descriptor = typename Tree::Primitive_id;
 
   using Point_3 = typename GT::Point_3;
   using FT = typename GT::FT;
-  const FT denoise_radius = FT(1e-4);   // model has to be normalized in [0, 1]^3
+//  const FT denoise_radius = FT(1e-4);   // model has to be normalized in [0, 1]^3
   const FT denoise_preserve = FT(30.0); // in degree
   const FT delta_convergence = FT(1e-6);
 
@@ -291,7 +288,7 @@ shrinking_ball_algorithm(const TriangleMesh& tmesh,
     if(j>0 && closest_face == last_face) {
       // std::cout << "No change in closest face at iteration " << j << std::endl;
       break; // no change in closest face
-    }   
+    }
     FT r_next = compute_radius<GT>(p, n, q_next);
     if(!CGAL::is_finite(r_next) || r_next <= FT(0)) {
       // std::cerr << "Invalid radius at iteration " << j << ": " << r_next << std::endl;
@@ -359,13 +356,13 @@ void compute_one_vertex_shrinking_ball(const TriangleMesh& tmesh,
                              VertexMedialSphereRadiusMap& vertex_medial_sphere_radius_map) {
   using Vector_3 = typename GT::Vector_3;
   using Point_3 = typename GT::Point_3;
-    
+
   Vector_3 normal = get(vertex_normal_map, v);
   Point_3 p = get(vpm, v);
-  auto [center, radius] = shrinking_ball_algorithm<TriangleMesh, GT, Tree>(tmesh, face_normal_map, p, normal, tree);
+  auto [center, radius] = shrinking_ball_algorithm<GT>(p, normal, tree);
   put(vertex_medial_sphere_pos_map, v, center);
   put(vertex_medial_sphere_radius_map, v, radius);
-  
+
 }
 
 template <typename GT,
@@ -383,9 +380,7 @@ void compute_shrinking_ball(const TriangleMesh& tmesh,
                             const VertexNormalMap& vertex_normal_map,
                             VertexMedialSpherePosMap& vertex_medial_sphere_pos_map,
                             VertexMedialSphereRadiusMap& vertex_medial_sphere_radius_map) {
-  using Vector_3 = typename GT::Vector_3;
-  using Point_3 = typename GT::Point_3;
-  for(vertex_descriptor v : vertices(tmesh)) {
+  for(auto v : vertices(tmesh)) {
     compute_one_vertex_shrinking_ball(tmesh, tree, vpm, v, face_normal_map, vertex_normal_map,
                                       vertex_medial_sphere_pos_map, vertex_medial_sphere_radius_map);
   }
@@ -402,7 +397,7 @@ template <typename GT,
 void compute_shrinking_balls(const TriangleMesh& tmesh,
                              const Tree& tree,
                              const VertexPointMap& vpm,
-                             const FaceNormalMap& face_normal_map, // face normal map
+                             const FaceNormalMap& /* face_normal_map */, // face normal map
                              const VertexNormalMap& vertex_normal_map,
                              VertexMedialSpherePosMap& vertex_medial_sphere_pos_map,
                              VertexMedialSphereRadiusMap& vertex_medial_sphere_radius_map) {
@@ -414,7 +409,7 @@ void compute_shrinking_balls(const TriangleMesh& tmesh,
   for(vertex_descriptor v : vertices(tmesh)) {
     Vector_3 normal = get(vertex_normal_map, v);
     Point_3 p = get(vpm, v);
-    auto [center, radius] = shrinking_ball_algorithm<TriangleMesh, GT, Tree>(tmesh, face_normal_map, p, normal, tree);
+    auto [center, radius] = shrinking_ball_algorithm<GT>(p, normal, tree);
     put(vertex_medial_sphere_pos_map, v, center);
     put(vertex_medial_sphere_radius_map, v, radius);
   }
@@ -446,7 +441,7 @@ void compute_shrinking_balls_and_save_result(const TriangleMesh& tmesh,
   for(vertex_descriptor v : vertices(tmesh)) {
     Vector_3 normal = get(vertex_normal_map, v);
     Point_3 p = get(vpm, v);
-    auto [center, radius] = shrinking_ball_algorithm<TriangleMesh, GT, Tree>(tmesh, face_normal_map, p, normal, tree);
+    auto [center, radius] = shrinking_ball_algorithm<GT>(p, normal, tree);
     put(vertex_medial_sphere_pos_map, v, center);
     put(vertex_medial_sphere_radius_map, v, radius);
     sphere_mesh.add_sphere(Sphere_3(center, radius * radius));
@@ -480,7 +475,7 @@ void assign_vertices_to_clusters(const TriangleMesh& tmesh,
     Point_3 p = get(vpm, v);
     FT min_distance = std::numeric_limits<FT>::max();
     Vector_3 normal = get(vertex_normal_map, v);
-    Sphere_ID closest_sphere_id;
+    Sphere_ID closest_sphere_id = 0.;
 
     // Find the sphere with smallest distance to the vertex
     for(auto& sphere : sphere_mesh.spheres()) {
@@ -523,10 +518,10 @@ void assign_vertices_to_clusters(const TriangleMesh& tmesh,
 }
 
 template <typename GT, typename TriangleMesh, typename Tree, typename FaceNormalMap, typename VertexPointMap>
-void correct_sphere(const TriangleMesh& tmesh,
+void correct_sphere(const TriangleMesh& /* tmesh */,
                     const Tree& tree,
-                    const FaceNormalMap& face_normal_map,
-                    const VertexPointMap& vpm,
+                    const FaceNormalMap& /* face_normal_map */,
+                    const VertexPointMap& /* vpm */,
                     const GT& traits,
                     std::shared_ptr<MedialSphere<TriangleMesh, GT>> sphere,
                     const Eigen::Matrix<typename GT::FT, 4, 1>& optimized_sphere_params) {
@@ -550,7 +545,7 @@ void correct_sphere(const TriangleMesh& tmesh,
   if((side_of(optimal_center) == CGAL::ON_UNBOUNDED_SIDE))
     normal = -normal; // if the center is outside, flip the normal
 
-  auto [c, r] = shrinking_ball_algorithm<TriangleMesh, GT, Tree>(tmesh, face_normal_map, cp, normal, tree);
+  auto [c, r] = shrinking_ball_algorithm<GT>(cp, normal, tree);
   sphere->set_center(c);
   sphere->set_radius(r);
 
@@ -653,8 +648,8 @@ void correct_sphere(const TriangleMesh& tmesh,
 //    }
 //  }
 //}
-template <typename GT, 
-          typename TriangleMesh, 
+template <typename GT,
+          typename TriangleMesh,
           typename MedialSphere,
           typename VertexPointMap,
           typename VertexAreaMap,
@@ -675,14 +670,13 @@ void optimize_single_sphere(const TriangleMesh& tmesh,
   using Point_3 = typename GT::Point_3;
   using vertex_descriptor = typename boost::graph_traits<TriangleMesh>::vertex_descriptor;
   using face_descriptor = typename boost::graph_traits<TriangleMesh>::face_descriptor;
-  using Sphere_ID = typename MedialSphere::Sphere_ID;
+  // using Sphere_ID = typename MedialSphere::Sphere_ID;
   using EMat = Eigen::Matrix<FT, Eigen::Dynamic, Eigen::Dynamic>;
   using EVec = Eigen::Matrix<FT, Eigen::Dynamic, 1>;
   using EVec3 = Eigen::Matrix<FT, 3, 1>;
   using EVec4 = Eigen::Matrix<FT, 4, 1>;
   using LDLTSolver = Eigen::LDLT<EMat>;
 
-  Sphere_ID id = sphere->get_id();
   auto& cluster_vertices = sphere->get_cluster_vertices();
   Point_3 center = sphere->get_center();
   FT radius = sphere->get_radius();
@@ -751,7 +745,7 @@ template <typename GT,
           typename VertexAreaMap,
           typename VertexNormalMap,
           typename VertexErrorMap>
-typename GT::FT compute_single_sphere_error(const TriangleMesh& tmesh,
+typename GT::FT compute_single_sphere_error(const TriangleMesh& /* tmesh */,
                                             const VertexPointMap& vpm,
                                             std::shared_ptr<MedialSphere>& sphere,
                                             typename GT::FT lambda,
@@ -762,12 +756,10 @@ typename GT::FT compute_single_sphere_error(const TriangleMesh& tmesh,
   using Point_3 = typename GT::Point_3;
   using vertex_descriptor = typename boost::graph_traits<TriangleMesh>::vertex_descriptor;
 
-  FT total_error = FT(0.0);
-
   auto& cluster_vertices = sphere->get_cluster_vertices();
   Point_3 center = sphere->get_center();
   FT radius = sphere->get_radius();
-  FT max_dist = std::numeric_limits<FT>::min();
+  FT max_dist = (std::numeric_limits<FT>::min)();
   FT error = 0.0;
   FT area = sphere->get_area();
   if(area <= FT(0.0)) {
@@ -900,7 +892,7 @@ template <typename GT,
 void compute_shrinking_balls_parallel(const TriangleMesh& tmesh,
                                       const Tree& tree,
                                       const VertexPointMap& vpm,
-                                      const FaceNormalMap& face_normal_map, 
+                                      const FaceNormalMap& face_normal_map,
                                       const VertexNormalMap& vertex_normal_map,
                                       VertexMedialSpherePosMap& vertex_medial_sphere_pos_map,
                                       VertexMedialSphereRadiusMap& vertex_medial_sphere_radius_map) {
@@ -1020,15 +1012,13 @@ typename GT::FT compute_sphere_errors(const TriangleMesh& tmesh,
                                       const VertexNormalMap& vertex_normal_map,
                                       VertexErrorMap& vertex_error_map) {
   using FT = typename GT::FT;
-  using Point_3 = typename GT::Point_3;
-  using vertex_descriptor = typename boost::graph_traits<TriangleMesh>::vertex_descriptor;
 
   FT total_error = FT(0.0);
 
   for(auto& sphere : sphere_mesh.spheres()) {
     FT error = compute_single_sphere_error<GT>(tmesh, vpm, sphere, lambda, vertex_area_map, vertex_normal_map,
                                                vertex_error_map);
-    total_error += sphere->get_error();
+    total_error += error;
   }
   return total_error;
 }
@@ -1061,7 +1051,7 @@ void update_sphere_neighbors(const TriangleMesh& tmesh,
 
 template <typename GT, typename TriangleMesh, typename VertexMedialSpherePosMap, typename VertexMedialSphereRadiusMap>
 void split_spheres(MedialSphereMesh<TriangleMesh, GT>& sphere_mesh,
-                   int desired_number_of_spheres,
+                   std::size_t desired_number_of_spheres,
                    const VertexMedialSpherePosMap& vertex_medial_sphere_pos_map,
                    const VertexMedialSphereRadiusMap& vertex_medial_sphere_radius_map) {
   using MSphere = MedialSphere<TriangleMesh, GT>;
@@ -1102,8 +1092,8 @@ void insert_sphere(MedialSphereMesh<TriangleMesh, GT>& sphere_mesh,
                    const typename MedialSphereMesh<TriangleMesh, GT>::Sphere_ID id,
                    const VertexMedialSpherePosMap& vertex_medial_sphere_pos_map,
                    const VertexMedialSphereRadiusMap& vertex_medial_sphere_radius_map) {
-  using MSphere = MedialSphere<TriangleMesh, GT>;
-  using Sphere_ID = typename MedialSphereMesh<TriangleMesh, GT>::Sphere_ID;
+//  using MSphere = MedialSphere<TriangleMesh, GT>;
+//  using Sphere_ID = typename MedialSphereMesh<TriangleMesh, GT>::Sphere_ID;
   using Sphere_3 = typename GT::Sphere_3;
   using Point_3 = typename GT::Point_3;
   using vertex_descriptor = typename boost::graph_traits<TriangleMesh>::vertex_descriptor;
@@ -1190,10 +1180,9 @@ variational_medial_axis_sampling(const TriangleMesh& tmesh,
   using Point_3 = typename GT::Point_3;
   using Sphere_3 = typename GT::Sphere_3;
   using MSMesh = typename Internal::MedialSphereMesh<TriangleMesh, GT>;
-  using Sphere_ID = typename MSMesh::Sphere_ID;
 
   // Extract algorithm parameters from named parameters
-  int desired_number_of_spheres = choose_parameter(get_parameter(np, internal_np::number_of_spheres), 300);
+  std::size_t desired_number_of_spheres = choose_parameter(get_parameter(np, internal_np::number_of_spheres), 300);
   FT lambda = choose_parameter(get_parameter(np, internal_np::lambda), FT(0.2));
   int max_iteration = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 1000);
 
@@ -1216,7 +1205,7 @@ variational_medial_axis_sampling(const TriangleMesh& tmesh,
   Sphere_3 init_sphere(Point_3(0., 0., 0.), FT(1.0));
   sphere_mesh.add_sphere(init_sphere);
 #if CGAL_LINKED_WITH_TBB
-  if(parallel_execution) 
+  if(parallel_execution)
   // Compute shrinking ball of each vertex
      compute_shrinking_balls_parallel<GT>(tmesh, tree, vpm, face_normal_map, vertex_normal_map,
                                        vertex_medial_sphere_pos_map,
@@ -1260,7 +1249,7 @@ variational_medial_axis_sampling(const TriangleMesh& tmesh,
       // Compute error of each sphere
       total_error = compute_sphere_errors<GT>(tmesh, vpm, sphere_mesh, lambda, vertex_area_map, vertex_normal_map,
                                               vertex_error_map);
-#if CGAL_LINKED_WITH_TBB    
+#if CGAL_LINKED_WITH_TBB
   }
 #endif
     total_error_diff = std::abs(total_error - last_total_error);
@@ -1297,7 +1286,8 @@ variational_medial_axis_sampling(const TriangleMesh& tmesh,
 }
 } // namespace Internal
 
- template <typename TriangleMesh, typename GT> class Skeleton
+template <typename TriangleMesh, typename GT>
+class Skeleton
 {
 public:
   using Sphere_3 = typename GT::Sphere_3;
@@ -1456,7 +1446,7 @@ class Variational_medial_axis
 {
 public:
 
-  
+
   using VPM =
       typename Default::Get<VertexPointMap_,
                                     typename boost::property_map<TriangleMesh_, vertex_point_t>::const_type>::type;
@@ -1564,7 +1554,7 @@ public:
         np);
 
     *sphere_mesh_ = std::move(result_sphere_mesh);
-   
+
     /*Internal::compute_shrinking_balls_and_save_result<GT>
         (tmesh_,
             vpm_,
