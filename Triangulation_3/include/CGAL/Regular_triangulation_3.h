@@ -408,7 +408,7 @@ public:
       size_t i = 0;
       // Insert "num_points_seq" points sequentially
       // (or more if dim < 3 after that)
-      size_t num_points_seq = (std::min)(num_points, (size_t)100);
+      size_t num_points_seq = (std::min<size_t>)(num_points, 100);
       while (i < num_points_seq || (dimension() < 3 && i < num_points))
       {
         Locate_type lt;
@@ -534,7 +534,7 @@ private:
       size_t i = 0;
       // Insert "num_points_seq" points sequentially
       // (or more if dim < 3 after that)
-      size_t num_points_seq = (std::min)(num_points, (size_t)100);
+      size_t num_points_seq = (std::min<size_t>)(num_points, 100);
       while (i < num_points_seq || (dimension() < 3 && i < num_points))
       {
         Locate_type lt;
