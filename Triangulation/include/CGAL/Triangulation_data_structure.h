@@ -312,7 +312,7 @@ public:
     Vertex_handle mirror_vertex(Full_cell_handle s, int i) const /* Concept */
     {
         CGAL_precondition(Full_cell_handle() != s && check_range(i));
-        return s->mirror_vertex(i, current_dimension);
+        return s->mirror_vertex(i, current_dimension());
     }
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - FACETS OPERATIONS
@@ -790,7 +790,7 @@ Triangulation_data_structure<Dim, Vb, Fcb>
     CGAL_precondition( (1 <= fd ) && (fd < current_dimension()));
     std::vector<Full_cell_handle> simps;
     // save the Face's vertices:
-    Full_cell s(current_dimension);
+    Full_cell s(current_dimension());
     for( int i = 0; i <= fd; ++i )
         s.set_vertex(i, f.vertex(i));
     // compute the star of f
