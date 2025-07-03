@@ -1544,7 +1544,7 @@ namespace CGAL {
 
 
     template<class I, class T>
-    std::pair<Property_map<I, T>, bool>
+    std::pair<Property_map<I, T, Concurrency_tag>, bool>
     add_property_map(std::string name=std::string(), const T t=T()) {
       return container<I>().template add_property_map<T>(name, t);
     }

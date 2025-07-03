@@ -26,6 +26,7 @@
 
 #include <CGAL/iterator.h>
 #include <CGAL/Location_policy.h>
+#include <type_traits>
 
 #ifdef CGAL_CONCURRENT_TRIANGULATION_3_PROFILING
 # define CGAL_PROFILE
@@ -254,6 +255,11 @@ public:
     insert(first, last);
   }
 
+  void add_circumcenter_property_map() {
+    if constexpr(Tds::has_property_maps) {
+      this->circumcenter_pmap = this->tds().template add_property_map<Cell_index, std::optional<Point>>().first;
+    }
+  }
 
 private:
   #ifdef CGAL_CONCURRENT_TRIANGULATION_3_ADD_TEMPORARY_POINTS_ON_FAR_SPHERE
@@ -1527,7 +1533,7 @@ side_of_sphere(Vertex_handle v0, Vertex_handle v1,
     return coplanar_side_of_bounded_circle(point(v0), point(v1), point(v2), p, perturb);
   }
 
-  return (Bounded_side) side_of_oriented_sphere(point(v0), point(v1), point(v2), point(v3), p, perturb);
+  return static_cast<Bounded_side>(side_of_oriented_sphere(point(v0), point(v1), point(v2), point(v3), p, perturb));
 }
 
 template < class Gt, class Tds, class Lds >
@@ -1605,7 +1611,7 @@ side_of_circle(Cell_handle c, int i, const Point& p, bool perturb) const
   // is positively oriented
   Vertex_handle v1 = c->vertex(next_around_edge(i3,i)),
                 v2 = c->vertex(next_around_edge(i,i3));
-  Orientation o = (Orientation)
+  Orientation o = static_cast<Orientation>
                   (coplanar_orientation(v1->point(), v2->point(),
                                          c->vertex(i)->point()) *
                    coplanar_orientation(v1->point(), v2->point(), p));

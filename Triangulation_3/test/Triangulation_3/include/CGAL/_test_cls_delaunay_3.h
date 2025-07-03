@@ -556,7 +556,7 @@ _test_cls_delaunay_3(const Triangulation &)
 
     size_type n = Tdel.number_of_vertices();
     size_type m = Tdel.remove(vertices.begin(), vertices.end());
-    assert(m == n - Tdel.number_of_vertices());
+    assert(m == n - Tdel.number_of_vertices()); CGAL_USE(n); CGAL_USE(m);
     assert(Tdel.is_valid(false));
     std::cout << "    successful" << std::endl;
   }
@@ -852,14 +852,14 @@ _test_cls_delaunay_3(const Triangulation &)
   i = 6 - (j+k+l);
   Facet f = std::make_pair(c,i);
   assert(T4.is_Gabriel(c,i));
-  assert(T4.is_Gabriel(f));
-  assert(T4.is_facet(v1,v2,v3,c,j,k,l));
+  assert(T4.is_Gabriel(f)); CGAL_USE(f);
+  assert(T4.is_facet(v1,v2,v3,c,j,k,l)); CGAL_USE(v3);
   i = 6 - (j+k+l);
   assert(!T4.is_Gabriel(c,i));
   assert(T4.is_edge(v0,v1,c,i,j));
   assert(T4.is_Gabriel(c,i,j));
   Edge e = make_triple(c,i,j);
-  assert(T4.is_Gabriel(e));
+  assert(T4.is_Gabriel(e)); CGAL_USE(e);
   assert(T4.is_edge(v2,v3,c,i,j));
   assert(T4.is_Gabriel(c,i,j));
 
@@ -867,6 +867,7 @@ _test_cls_delaunay_3(const Triangulation &)
 
   // We only test return types and instantiation, basically.
   {
+    T4.add_circumcenter_property_map();
     Cell_handle c = T4.finite_cells_begin();
     Bare_point p = T4.dual(c);
     (void)p;
