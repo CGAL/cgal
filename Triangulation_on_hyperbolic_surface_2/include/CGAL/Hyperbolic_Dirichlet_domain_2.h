@@ -12,13 +12,13 @@ template<class Traits>
 std::vector<std::tuple<typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Dart_const_descriptor, typename Traits::Point_2, typename Traits::Point_2, typename Traits::Point_2>>
 unfold(Delaunay_triangulation_on_hyperbolic_surface_2<Traits> & triangulation)
 {
-	typedef typename Traits::Complex                                Complex;
-	typedef typename Traits::Point_2                                Point;
+	typedef typename Traits::Complex                                   Complex;
+	typedef typename Traits::Point_2                                   Point;
 	typedef Delaunay_triangulation_on_hyperbolic_surface_2<Traits>     Delaunay_Triangulation;
-	typedef typename Delaunay_Triangulation::Anchor                	Anchor;
-	typedef typename Delaunay_Triangulation::CMap      CMap;
-	typedef typename Delaunay_Triangulation::Dart_const_descriptor	Dart_const_descriptor;
-	typedef	CGAL::Hyperbolic_isometry_2<Traits> 					Isometry;
+	typedef typename Delaunay_Triangulation::Anchor                    Anchor;
+	typedef typename Delaunay_Triangulation::CMap                      CMap;
+	typedef typename Delaunay_Triangulation::Dart_const_descriptor     Dart_const_descriptor;
+	typedef	CGAL::Hyperbolic_isometry_2<Traits>                        Isometry;
 
     Anchor & anchor = triangulation.anchor();
     CMap & cmap = triangulation.combinatorial_map();
@@ -81,14 +81,12 @@ std::vector<typename Traits::Hyperbolic_Voronoi_point_2> compute_dirichlet_verti
 	typedef typename Delaunay_Triangulation::Dart_const_descriptor		Dart_const_descriptor;
 
     Delaunay_Triangulation triangulation = Delaunay_Triangulation(domain);
-    triangulation.make_Delaunay();
 
     std::vector<std::tuple<Dart_const_descriptor,Point,Point,Point>> realized_triangles = unfold<Traits>(triangulation);
     std::vector<Voronoi_point> dirichlet_vertices;
 
     Traits gt;
     internal::Construct_hyperbolic_circumcenter_CK_2<Traits> chc(gt);
-    // internal::Construct_hyperbolic_circumcenter_2<Traits> chc(gt);
     for (std::tuple<Dart_const_descriptor, Point, Point, Point>& triangle : realized_triangles){
         Voronoi_point circumcenter = chc(std::get<1>(triangle), std::get<2>(triangle), std::get<3>(triangle));  // segfault ici
         dirichlet_vertices.push_back(circumcenter);
