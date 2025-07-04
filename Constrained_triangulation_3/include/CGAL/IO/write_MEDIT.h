@@ -9,7 +9,6 @@
 //
 // Author(s)     : Jane Tournois
 
-#include "CGAL/type_traits.h"
 #include "CGAL/unordered_flat_map.h"
 #include <CGAL/Conforming_constrained_Delaunay_triangulation_3.h>
 
@@ -17,6 +16,8 @@
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <CGAL/IO/File_medit.h>
+
+#include <stack>
 #include <ostream>
 
 namespace CGAL
