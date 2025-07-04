@@ -434,6 +434,16 @@ is a model of the `FieldWithSqrt` concept.
 */
 template <class NT> NT sqrt(const NT& x);
 
+/*!
+\ingroup PkgAlgebraicFoundationsRef
+
+The function `ceil()` returns the ceiling of a value.
+
+The function is defined if the argument type
+is a model of the `XXXXX` concept.
+*/
+template <class NT> double ceil(const NT& x);
+
 } /* namespace CGAL */
 
 namespace CGAL {
