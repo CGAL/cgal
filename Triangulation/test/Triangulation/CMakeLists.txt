@@ -17,6 +17,7 @@ if(TARGET CGAL::Eigen3_support)
   include_directories(BEFORE "include")
 
   create_single_source_cgal_program("test_triangulation.cpp")
+  create_single_source_cgal_program("test_triangulation_static_filters_4.cpp")
   create_single_source_cgal_program("test_delaunay.cpp")
   create_single_source_cgal_program("test_regular.cpp")
   create_single_source_cgal_program("test_tds.cpp")
@@ -24,7 +25,7 @@ if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program("test_insert_if_in_star.cpp")
   create_single_source_cgal_program("simple_io_test.cpp")
   create_single_source_cgal_program("issue_8347.cpp")
-  foreach(target test_triangulation test_delaunay test_regular test_tds
+  foreach(target test_triangulation test_triangulation_static_filters_4 test_delaunay test_regular test_tds
                  test_torture test_insert_if_in_star simple_io_test issue_8347)
     target_link_libraries(${target} PRIVATE CGAL::Eigen3_support)
   endforeach()
