@@ -4,9 +4,6 @@
 #include <CGAL/Hyperbolic_Dirichlet_domain_2.h>
 #include <CGAL/Hyperbolic_fundamental_domain_factory_2.h>
 
-#include <iostream>
-#include <fstream>
-
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_rational.h>
 
@@ -71,63 +68,6 @@ int main(int argc, char **argv)
 
 	// // 4. SET THE FIRST ANCHOR OF THE DRAWING
 	// // To center the drawing s.t. v0 is translated at 0
-	// Anchor anchor = dt.locate(v0);
-	// int index = 0;
-	// for (int i = 0; i < 3; i++) {
-	// 	if (v0 == anchor.vertices[i]) {
-	// 		index = i;
-	// 	}
-	// }
-
-	// Isometry center_v0 = CGAL::hyperbolic_translation < Traits > (v0);
-	// Anchor start = Anchor();
-	// start.dart = anchor.dart;
-	// for (int i = 0; i < 3; i++) {
-	// 	start.vertices[i] = center_v0.evaluate(anchor.vertices[(i + index) % 3]);
-	// 	if (i < index) {
-	// 		start.dart = dt.Base::ccw(start.dart);
-	// 	}
-	// }
-
-	// // 5. DRAW the triangulation
-	// // using a BFS algo to explore the triangles
-	// std::queue < Anchor > bfs_queue;
-	// std::vector < Anchor > to_draw;
-
-	// size_t in_queue = cmap.get_new_mark();  // mark darts of triangles with an anchor in the queue
-	// cmap.unmark_all(in_queue);
-	// bfs_queue.push(start);
-	// cmap.mark(start.dart, in_queue);
-	// cmap.mark(dt.Base::ccw(start.dart), in_queue);
-	// cmap.mark(dt.Base::cw(start.dart), in_queue);
-
-	// while (!bfs_queue.empty()) {
-	// 	Anchor & current = bfs_queue.front();
-	// 	to_draw.push_back(current);
-	// 	auto invader = current.dart;
-	// 	for (int i = 0; i < 3; i++) {
-	// 		auto invaded = dt.Base::opposite(invader);
-	// 		if (!cmap.is_marked(invaded, in_queue)) {
-	// 			Complex cross_ratio = dt.Base::get_cross_ratio(invader);
-	// 			Point & c = current.vertices[i % 3];
-	// 			Point & a = current.vertices[(i + 1) % 3];
-	// 			Point & b = current.vertices[(i + 2) % 3];
-	// 			Point d =
-	// 			    dt.Base::fourth_point_from_cross_ratio(a, b, c, cross_ratio);
-	// 			bfs_queue.push(Anchor(invaded, a, c, d));
-	// 			cmap.mark(invaded, in_queue);
-	// 			cmap.mark(dt.Base::ccw(invaded), in_queue);
-	// 			cmap.mark(dt.Base::cw(invaded), in_queue);
-	// 		}
-	// 		invader = dt.Base::ccw(invader);
-	// 	}
-	// 	bfs_queue.pop();
-	// }
-	// cmap.free_mark(in_queue);
-
-	// window.item().draw_triangles(to_draw);
-
-		// 4. SET THE FIRST ANCHOR OF THE DRAWING
 	Anchor anchor = dt.locate(v0);
 	int index = 0;
 	for (int i = 0; i < 3; i++) {
@@ -136,16 +76,73 @@ int main(int argc, char **argv)
 		}
 	}
 
+	Isometry center_v0 = CGAL::hyperbolic_translation < Traits > (v0);
 	Anchor start = Anchor();
 	start.dart = anchor.dart;
 	for (int i = 0; i < 3; i++) {
-		start.vertices[i] = anchor.vertices[(i + index) % 3];
+		start.vertices[i] = center_v0.evaluate(anchor.vertices[(i + index) % 3]);
 		if (i < index) {
 			start.dart = dt.Base::ccw(start.dart);
 		}
 	}
 
-	window.item().draw_triangulation(dt, start);
+	// 5. DRAW the triangulation
+	// using a BFS algo to explore the triangles
+	std::queue < Anchor > bfs_queue;
+	std::vector < Anchor > to_draw;
+
+	size_t in_queue = cmap.get_new_mark();  // mark darts of triangles with an anchor in the queue
+	cmap.unmark_all(in_queue);
+	bfs_queue.push(start);
+	cmap.mark(start.dart, in_queue);
+	cmap.mark(dt.Base::ccw(start.dart), in_queue);
+	cmap.mark(dt.Base::cw(start.dart), in_queue);
+
+	while (!bfs_queue.empty()) {
+		Anchor & current = bfs_queue.front();
+		to_draw.push_back(current);
+		auto invader = current.dart;
+		for (int i = 0; i < 3; i++) {
+			auto invaded = dt.Base::opposite(invader);
+			if (!cmap.is_marked(invaded, in_queue)) {
+				Complex cross_ratio = dt.Base::get_cross_ratio(invader);
+				Point & c = current.vertices[i % 3];
+				Point & a = current.vertices[(i + 1) % 3];
+				Point & b = current.vertices[(i + 2) % 3];
+				Point d =
+				    dt.Base::fourth_point_from_cross_ratio(a, b, c, cross_ratio);
+				bfs_queue.push(Anchor(invaded, a, c, d));
+				cmap.mark(invaded, in_queue);
+				cmap.mark(dt.Base::ccw(invaded), in_queue);
+				cmap.mark(dt.Base::cw(invaded), in_queue);
+			}
+			invader = dt.Base::ccw(invader);
+		}
+		bfs_queue.pop();
+	}
+	cmap.free_mark(in_queue);
+
+	window.item().draw_triangles(to_draw);
+
+	// 	// 4. SET THE FIRST ANCHOR OF THE DRAWING
+	// Anchor anchor = dt.locate(v0);
+	// int index = 0;
+	// for (int i = 0; i < 3; i++) {
+	// 	if (v0 == anchor.vertices[i]) {
+	// 		index = i;
+	// 	}
+	// }
+
+	// Anchor start = Anchor();
+	// start.dart = anchor.dart;
+	// for (int i = 0; i < 3; i++) {
+	// 	start.vertices[i] = anchor.vertices[(i + index) % 3];
+	// 	if (i < index) {
+	// 		start.dart = dt.Base::ccw(start.dart);
+	// 	}
+	// }
+
+	// window.item().draw_triangulation(dt, start);
 	window.show();
 	QStringList args = app.arguments();
 	args.removeAt(0);

@@ -79,7 +79,7 @@ public:
 	//---------- Delaunay related methods
 	void flip(Dart_descriptor dart);
 	unsigned make_Delaunay();
-	void insert(Point const & query, Anchor & anch);
+	void insert(Point const & query, Anchor & hint);
 	void insert(Point const & query);
 
 	//---------- eps-net methods
@@ -856,15 +856,14 @@ make_Delaunay()
 }
 
 // Inserts query in the triangulation, with a search starting from the given anchor, and restores the Delaunay property with flips
-// Output: number of flips done to make the triangulation Delaunay after the insertion
 template<class Traits>
 void
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
-insert(Point const & query, Anchor& anch)
+insert(Point const & query, Anchor & hint)
 {
 	CGAL_expensive_precondition(Base::is_Delaunay());
 
-	std::vector<Anchor &> new_anchors = split_insert(query, anch);
+	std::vector<Anchor &> new_anchors = split_insert(query, hint);
 	std::list<Dart_descriptor> darts_to_flip;
 	for (int i = 0; i < new_anchors.size(); ++i) {
 		push_flippable_edge(new_anchors[i].dart, darts_to_flip);
@@ -1002,6 +1001,7 @@ Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
 is_epsilon_covering(const double epsilon)
 {
 	Interval delta_epsilon = cosh(epsilon) - 1;
+	Number lower_bound = Number(lower(delta_epsilon));
 	bool is_covering = true;
 	for (typename Face_range::iterator it = this->combinatorial_map_.template one_dart_per_cell<2>().begin();
 		it != this->combinatorial_map_.template one_dart_per_cell<2>().end(); ++it) {
@@ -1009,15 +1009,10 @@ is_epsilon_covering(const double epsilon)
 
 		Traits gt;
 		CGAL::internal::Construct_hyperbolic_circumcenter_CK_2<Traits> chc(gt);
-		// CGAL::internal::Construct_hyperbolic_circumcenter_2<Traits> chc(gt);
-		Voronoi_point v = chc(current_anchor.vertices[0], current_anchor.vertices[1], current_anchor.vertices[2]);
-
-		Point u = current_anchor.vertices[0];
-		auto num = (u.x() - v.x()) * (u.x() - v.x()) + (u.y() - v.y()) * (u.y() - v.y());
-		auto den = (1 - (u.x() * u.x() + u.y() * u.y())) * (1 - (v.x() * v.x() + v.y() * v.y()));
-		auto d = 2 * num / den;
-		auto upper_bound = Number(upper(delta_epsilon));
-		if (d > upper_bound) {
+		Voronoi_point c = chc(current_anchor.vertices[0], current_anchor.vertices[1], current_anchor.vertices[2]);
+		Point v0 = current_anchor.vertices[0];
+		Algebraic_number d = delta(c, v0);
+		if (!(d <= lower_bound)) {
 			is_covering = false;
 			break;
 		}

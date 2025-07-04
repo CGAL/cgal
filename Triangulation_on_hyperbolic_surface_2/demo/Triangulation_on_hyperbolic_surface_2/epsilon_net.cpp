@@ -6,6 +6,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <CGAL/Triangulation_on_hyperbolic_surface_2_IO.h>
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_rational.h>
@@ -65,11 +66,6 @@ int main(int argc, char *argv[])
 	timer.stop();
 	std::cout << "Done in " << timer.time() << " seconds." << std::endl;
 	dt.combinatorial_map().display_characteristics(std::cout) << std::endl;
-	// std::ofstream  output_file = std::ofstream ("thin_02.txt");
-  	// output_file << dt;
-  	// output_file.close();
-	// std::cout << "covering ? " << dt.is_epsilon_covering(eps) << std::endl;
-	// std::cout << "packing ? " << dt.is_epsilon_packing(0.95*eps) << std::endl;
 
 	// 4. SET THE FIRST ANCHOR OF THE DRAWING
 	Anchor anchor = dt.locate(v0);
