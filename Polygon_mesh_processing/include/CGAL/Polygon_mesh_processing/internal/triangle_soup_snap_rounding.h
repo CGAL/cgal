@@ -55,7 +55,7 @@ template <class NT>
 double double_ceil(const NT &x){
   using FT = Fraction_traits<NT>;
   if constexpr(FT::Is_fraction::value){
-    // If NT is a fraction, the ceil value is the result of the euclidian division of the numerator and the denominator.
+    // If NT is a fraction, the ceil value is the result of the Euclidean division of the numerator and the denominator.
     typename FT::Numerator_type num, r, e;
     typename FT::Denominator_type denom;
     typename FT::Decompose()(x,num,denom);
@@ -160,7 +160,7 @@ void repair_triangle_soup(PointRange& points,
   fixer(points, polygons, np);
 }
 
-// A visitor of Autorefinement to track the correspondance between input and output triangles
+// A visitor of Autorefinement to track the correspondence between input and output triangles
 struct Wrap_snap_visitor : public Autorefinement::Default_visitor
 {
   template< typename Triangle>

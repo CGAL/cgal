@@ -1656,7 +1656,7 @@ bool autorefine_triangle_soup(PointRange& soup_points,
 * will be used in `soup_triangles`. if `apply_iterative_snap_rounding` is set to `true`, all duplicates points are removed.
 * `soup_triangles` will be updated to contain both the input triangles and the new subdivided triangles. Degenerate triangles will be removed.
 * Also if `apply_iterative_snap_rounding` option is set to `false`, triangles in `soup_triangles` will be triangles without intersection first, followed by triangles coming from a subdivision induced
-* by an intersection. The named parameter `visitor()` can be used to track the creation and removal of triangles independantly of
+* by an intersection. The named parameter `visitor()` can be used to track the creation and removal of triangles independently of
 * the `apply_iterative_snap_rounding` option.
 * If the `apply_iterative_snap_rounding` parameter is set to `true`, the coordinates of the vertices are rounded to fit within the precision of a double-precision floating point,
 * while trying to make the triangle soup free of intersections. The `snap_grid_size()` parameter limits the drift of the snapped vertices.
