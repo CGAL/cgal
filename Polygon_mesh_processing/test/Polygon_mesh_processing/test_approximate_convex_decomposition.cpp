@@ -32,8 +32,6 @@ void test(const std::string &filename) {
     assert(false);
   }
 
-  using Traits = typename CGAL::Convex_hull_3::internal::Default_traits_for_Chull_3<Point>::type;
-
   for (std::size_t i = 1; i < 10; i++) {
     std::vector<Convex_hull> convex_hulls;
     std::size_t n = PMP::approximate_convex_decomposition(mesh, std::back_inserter(convex_hulls),
@@ -43,14 +41,14 @@ void test(const std::string &filename) {
       .split_at_concavity(true)
       .maximum_number_of_voxels(1000000)
       .concurrency_tag(CGAL::Parallel_if_available_tag()));
-
+    CGAL_USE(n);
     assert(n == i);
     assert(convex_hulls.size() == i);
     for (std::size_t i = 0; i < convex_hulls.size(); i++) {
       Mesh m;
       PMP::polygon_soup_to_polygon_mesh(convex_hulls[i].first, convex_hulls[i].second, m);
 
-      assert(CGAL::is_strongly_convex_3(m, Traits()));
+      assert(CGAL::is_strongly_convex_3(m, typename CGAL::Convex_hull_3::internal::Default_traits_for_Chull_3<Point>::type()));
     }
     std::cout << convex_hulls.size() << std::endl;
   }

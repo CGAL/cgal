@@ -160,9 +160,6 @@ void export_grid(const std::string& filename, const Bbox_3& bb, std::vector<int8
 }
 
 void export_voxels(const std::string& filename, const Bbox_3& bb, std::vector<Vec3_uint>& voxels, std::vector<int8_t>& grid, const Vec3_uint& grid_size, double voxel_size) {
-  const auto vox = [&grid, &grid_size](unsigned int x, unsigned int y, unsigned int z) -> int8_t& {
-    return grid[z + (y * grid_size[2]) + (x * grid_size[1] * grid_size[2])];
-    };
   std::ofstream stream(filename);
 
   stream <<
@@ -309,7 +306,7 @@ void scanline_floodfill(Grid_cell label, std::vector<int8_t>& grid, const Vec3_u
         break;
 
       vox(x, y, z) = label;
-      if (x > 0)
+      if (x > 0) {
         if (vox(x - 1, y, z) == INSIDE) {
           if (!xneg) {
             xneg = true;
@@ -317,8 +314,9 @@ void scanline_floodfill(Grid_cell label, std::vector<int8_t>& grid, const Vec3_u
           }
         }
         else xneg = false;
+      }
 
-      if (x < grid_size[0] - 1)
+      if (x < grid_size[0] - 1) {
         if (vox(x + 1, y, z) == INSIDE) {
           if (!xpos) {
             xpos = true;
@@ -326,8 +324,9 @@ void scanline_floodfill(Grid_cell label, std::vector<int8_t>& grid, const Vec3_u
           }
         }
         else xpos = false;
+      }
 
-      if (y > 0)
+      if (y > 0) {
         if (vox(x, y - 1, z) == INSIDE) {
           if (!yneg) {
             yneg = true;
@@ -335,8 +334,9 @@ void scanline_floodfill(Grid_cell label, std::vector<int8_t>& grid, const Vec3_u
           }
         }
         else yneg = false;
+      }
 
-      if (y < grid_size[1] - 1)
+      if (y < grid_size[1] - 1) {
         if (vox(x, y + 1, z) == INSIDE) {
           if (!ypos) {
             ypos = true;
@@ -344,6 +344,7 @@ void scanline_floodfill(Grid_cell label, std::vector<int8_t>& grid, const Vec3_u
           }
         }
         else ypos = false;
+      }
     }
 
     xneg = xpos = yneg = ypos = zneg = zpos = false;
@@ -356,7 +357,7 @@ void scanline_floodfill(Grid_cell label, std::vector<int8_t>& grid, const Vec3_u
         break;
 
       vox(x, y, z) = label;
-      if (x > 0)
+      if (x > 0) {
         if (vox(x - 1, y, z) == INSIDE) {
           if (!xneg) {
             xneg = true;
@@ -364,8 +365,9 @@ void scanline_floodfill(Grid_cell label, std::vector<int8_t>& grid, const Vec3_u
           }
         }
         else xneg = false;
+      }
 
-      if (x < grid_size[0] - 1)
+      if (x < grid_size[0] - 1) {
         if (vox(x + 1, y, z) == INSIDE) {
           if (!xpos) {
             xpos = true;
@@ -373,8 +375,9 @@ void scanline_floodfill(Grid_cell label, std::vector<int8_t>& grid, const Vec3_u
           }
         }
         else xpos = false;
+      }
 
-      if (y > 0)
+      if (y > 0) {
         if (vox(x, y - 1, z) == INSIDE) {
           if (!yneg) {
             yneg = true;
@@ -382,8 +385,9 @@ void scanline_floodfill(Grid_cell label, std::vector<int8_t>& grid, const Vec3_u
           }
         }
         else yneg = false;
+      }
 
-      if (y < grid_size[1] - 1)
+      if (y < grid_size[1] - 1) {
         if (vox(x, y + 1, z) == INSIDE) {
           if (!ypos) {
             ypos = true;
@@ -391,6 +395,7 @@ void scanline_floodfill(Grid_cell label, std::vector<int8_t>& grid, const Vec3_u
           }
         }
         else ypos = false;
+      }
     }
   }
 }
@@ -553,7 +558,6 @@ void rayshooting_fill(std::vector<int8_t>& grid, const Vec3_uint& grid_size, con
     return grid[z + (y * grid_size[2]) + (x * grid_size[1] * grid_size[2])];
     };
   using face_descriptor = typename boost::graph_traits<FaceGraph>::face_descriptor;
-  using halfedge_descriptor = typename boost::graph_traits<FaceGraph>::halfedge_descriptor;
 
   using Point_3 = typename GeomTraits::Point_3;
   using Vector_3 = typename GeomTraits::Vector_3;
@@ -562,7 +566,6 @@ void rayshooting_fill(std::vector<int8_t>& grid, const Vec3_uint& grid_size, con
   using Primitive = CGAL::AABB_face_graph_triangle_primitive<FaceGraph>;
   using Traits = CGAL::AABB_traits_3<GeomTraits, Primitive>;
   using Tree = CGAL::AABB_tree<Traits>;
-  using Primitive_id = typename Tree::Primitive_id;
   using Ray_intersection = std::optional<typename Tree::template Intersection_and_primitive_id<Ray_3>::Type>;
 
   Tree tree(faces(mesh).first, faces(mesh).second, mesh);
@@ -800,7 +803,7 @@ struct is_std_hashable : std::false_type {};
 template <typename T>
 struct is_std_hashable<T, std::void_t<decltype(std::declval<std::hash<T>>()(std::declval<T>()))>> : std::true_type {};
 
-template<typename Point_3, typename H = typename std::conjunction<typename is_std_hashable<typename Kernel_traits<Point_3>::type::FT>, typename std::is_same<typename Kernel_traits<Point_3>::type::Kernel_tag, CGAL::Cartesian_tag>::type>::type>
+template<typename Point_3, typename H = typename std::conjunction<is_std_hashable<typename Kernel_traits<Point_3>::type::FT>, typename std::is_same<typename Kernel_traits<Point_3>::type::Kernel_tag, CGAL::Cartesian_tag>::type>::type>
 struct Set {
 };
 
@@ -1020,6 +1023,7 @@ void choose_splitting_location_by_concavity(unsigned int& axis, unsigned int& lo
   std::size_t length = bbox.upper[axis] - bbox.lower[axis] + 1;
 
   CGAL_assertion(length >= 8);
+  CGAL_precondition(0 <= axis && axis <= 2);
 
   std::size_t idx0, idx1, idx2;
 
@@ -1039,8 +1043,6 @@ void choose_splitting_location_by_concavity(unsigned int& axis, unsigned int& lo
     idx1 = 1;
     idx2 = 2;
     break;
-  default:
-    CGAL_assertion(false);
   }
 
   std::vector<int> diam(length, 0), diam2(length, 0);
@@ -1180,10 +1182,6 @@ bool finished(Candidate<GeomTraits> &c, const NamedParameters& np) {
 template<typename GeomTraits, typename NamedParameters>
 void recurse(std::vector<Candidate<GeomTraits>>& candidates, std::vector<int8_t>& grid, const Vec3_uint& grid_size, const Bbox_3& bbox, const typename GeomTraits::FT& voxel_size, const NamedParameters& np, CGAL::Parallel_tag) {
 #ifdef CGAL_LINKED_WITH_TBB
-  using FT = typename GeomTraits::FT;
-  const FT max_error = parameters::choose_parameter(parameters::get_parameter(np, internal_np::volume_error), 1);
-  const std::size_t max_depth = parameters::choose_parameter(parameters::get_parameter(np, internal_np::maximum_depth), 10);
-
   std::vector<internal::Candidate<GeomTraits>> final_candidates;
 
   while (!candidates.empty()) {
@@ -1265,9 +1263,6 @@ void merge(std::vector<Convex_hull<GeomTraits>>& candidates, std::vector<int8_t>
     Merged_candidate(std::size_t ch_a, std::size_t ch_b) : ch_a(ch_a), ch_b(ch_b) {}
   };
 
-  // Consider all non-equal pairs
-  std::size_t max_merge_candidates = (candidates.size() * (candidates.size() - 1)) >> 1;
-
   tbb::concurrent_unordered_map<std::size_t, Convex_hull<GeomTraits>> hulls;
   std::atomic<std::size_t> num_hulls = candidates.size();
 
@@ -1284,7 +1279,7 @@ void merge(std::vector<Convex_hull<GeomTraits>>& candidates, std::vector<int8_t>
   std::vector<Merged_candidate> todo;
   tbb::concurrent_priority_queue<Merged_candidate> queue;
 
-  const auto do_merge = [hull_volume, &hulls, &num_hulls, &queue](Merged_candidate& m) {
+  const auto do_merge = [hull_volume, &hulls, &num_hulls](Merged_candidate& m) {
     Convex_hull<GeomTraits>& ci = hulls[m.ch_a];
     Convex_hull<GeomTraits>& cj = hulls[m.ch_b];
     m.ch = num_hulls.fetch_add(1);
@@ -1400,9 +1395,6 @@ void merge(std::vector<Convex_hull<GeomTraits>>& candidates, std::vector<int8_t>
     Merged_candidate() : ch_a(-1), ch_b(-1) {}
     Merged_candidate(std::size_t ch_a, std::size_t ch_b) : ch_a(ch_a), ch_b(ch_b) {}
   };
-
-  // Consider all non-equal pairs
-  std::size_t max_merge_candidates = (candidates.size() * (candidates.size() - 1)) >> 1;
 
   std::unordered_map<std::size_t, Convex_hull<GeomTraits>> hulls;
   std::size_t num_hulls = candidates.size();
@@ -1606,9 +1598,6 @@ void merge(std::vector<Convex_hull<GeomTraits>>& candidates, std::vector<int8_t>
 template<typename FaceGraph, typename OutputIterator, typename NamedParameters = parameters::Default_named_parameters>
 std::size_t approximate_convex_decomposition(const FaceGraph& mesh, OutputIterator out_hulls, const NamedParameters& np = parameters::default_values()) {
   using Geom_traits = typename GetGeomTraits<FaceGraph, NamedParameters>::type;
-  using Vertex_point_map = typename GetVertexPointMap<FaceGraph, NamedParameters>::type;
-
-  Vertex_point_map vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point), get_const_property_map(CGAL::vertex_point, mesh));
 
   using FT = typename Geom_traits::FT;
   const std::size_t num_voxels = parameters::choose_parameter(parameters::get_parameter(np, internal_np::maximum_number_of_voxels), 1000000);
