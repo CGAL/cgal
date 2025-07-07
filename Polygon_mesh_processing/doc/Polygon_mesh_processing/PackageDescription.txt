@@ -282,6 +282,7 @@ The page \ref bgl_namedparameters "Named Parameters" describes their usage.
 - `CGAL::Polygon_mesh_processing::detect_corners_of_regions()`
 - `CGAL::Polygon_mesh_processing::refine_mesh_at_isolevel()`
 - `CGAL::Polygon_mesh_processing::refine_with_plane()`
+- `CGAL::Polygon_mesh_processing::approximate_convex_decomposition()`
 
 \cgalCRPSection{I/O Functions}
 - \link PMP_IO_grp `CGAL::Polygon_mesh_processing::IO::read_polygon_mesh()`\endlink

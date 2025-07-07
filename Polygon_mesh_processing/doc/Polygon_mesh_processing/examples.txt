@@ -54,4 +54,5 @@
 \example Polygon_mesh_processing/sample_example.cpp
 \example Polygon_mesh_processing/soup_autorefinement.cpp
 \example Polygon_mesh_processing/snap_polygon_soup.cpp
+\example Polygon_mesh_processing/approximate_convex_decomposition.cpp
 */

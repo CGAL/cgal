@@ -1524,7 +1524,10 @@ void merge(std::vector<Convex_hull<GeomTraits>>& candidates, std::vector<int8_t>
 /**
  * \ingroup PMP_convex_decomposition_grp
  *
- * \brief approximates the input mesh by a number of convex hulls. The input mesh is voxelized and the convex hull of the mesh is hierarchically split until a volume threshold is met.
+ * \brief approximates the input mesh by a number of convex hulls. The input mesh is voxelized and the voxel intersecting with the mesh are labeled as surface.
+ *        The remaining voxels are labeled as outside or inside by floodfill, in case the input mesh is closed, or by ray shooting along the axis. A voxel is only
+ *        labeled as inside if at least 3 faces facing away from the voxel have been hit and no face facing towards the voxel. In a next step, the convex hull of the mesh
+ *        is hierarchically split until the `volume_error` threshold is satisfied.
  *        Afterwards, a greedy pair-wise merging combines smaller convex hulls until the given number of convex hulls is met.
  *
  * \tparam FaceGraph a model of `HalfedgeListGraph`, `FaceListGraph`, and `MutableFaceGraph`
@@ -1558,7 +1561,7 @@ void merge(std::vector<Convex_hull<GeomTraits>>& candidates, std::vector<int8_t>
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{volume_error}
- *     \cgalParamDescription{maximum difference in percent of volume of the local convex hull with the sum of voxel volumes. If surpassed, the convex hull will be split.}
+ *     \cgalParamDescription{maximum difference in fraction of volume of the local convex hull with the sum of voxel volumes. If surpassed, the convex hull will be split.}
  *     \cgalParamType{double}
  *     \cgalParamDefault{0.01}
  *   \cgalParamNEnd
@@ -1570,12 +1573,12 @@ void merge(std::vector<Convex_hull<GeomTraits>>& candidates, std::vector<int8_t>
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{vertex_point_map}
- *     \cgalParamDescription{a property map associating points to the vertices of `tmesh`}
- *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+ *     \cgalParamDescription{a property map associating points to the vertices of `mesh`}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
  *                    as key type and `%Point_3` as value type}
- *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tmesh)`}
+ *     \cgalParamDefault{`boost::get(CGAL::vertex_point, mesh)`}
  *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
- *                     must be available in `TriangleMesh`.}
+ *                     must be available in `FaceGraph`.}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{concurrency_tag}
