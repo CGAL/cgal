@@ -1,5 +1,10 @@
 # Release History
 
+## [Release 6.2](https://github.com/CGAL/cgal/releases/tag/v6.2)
+
+### [Polygon Mesh Processing](https://doc.cgal.org/6.1/Manual/packages.html#PkgPolygonMeshProcessing)
+- Added the function `CGAL::Polygon_mesh_processing::approximate_convex_decomposition` that decomposes an input mesh into a specified number of convex hulls. It performs an hierarchical splitting of the convex hull guided by an volumetric error and performs a subsequent merging of convex hulls to obtain the targeted number.
+
 
 ## [Release 6.1](https://github.com/CGAL/cgal/releases/tag/v6.1)
 
