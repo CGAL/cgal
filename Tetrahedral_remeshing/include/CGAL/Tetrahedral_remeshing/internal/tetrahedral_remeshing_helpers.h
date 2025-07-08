@@ -2043,6 +2043,15 @@ void dump_edges(const std::vector<Edge>& edges, const char* filename)
   ofs.close();
 }
 
+template <typename EdgePair> void dump_edge(const EdgePair& vp, const char* filename) {
+  std::ofstream ofs(filename);
+  ofs.precision(17);
+
+  ofs << "2 " << point(vp.first->point()) << " " << point(vp.second->point())
+      << std::endl;
+  ofs.close();
+}
+
 template<typename Facet, typename OutputStream>
 void dump_facet(const Facet& f, OutputStream& os)
 {
