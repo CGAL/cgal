@@ -212,9 +212,6 @@ public:
     return zone;
   }
 
-    return zone;
-  }
-
   bool execute_operation(const ElementType& e, C3t3& c3t3) override {
     return execute_internal_edge_flip(e, c3t3);
   }
