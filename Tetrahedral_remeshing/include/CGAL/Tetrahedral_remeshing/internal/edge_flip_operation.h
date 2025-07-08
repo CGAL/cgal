@@ -6,6 +6,7 @@
 #include <CGAL/Triangulation_3.h>
 #include <CGAL/Iterator_range.h>
 #include <CGAL/Tetrahedral_remeshing/internal/flip_edges.h>
+#include <CGAL/tss.h>
 
 #include <boost/unordered_map.hpp>
 
@@ -321,10 +322,22 @@ public:
 
 private:
   // Boundary-specific preprocessing data - recreated every call like original
-  static thread_local boost::unordered_map<Vertex_handle, 
-                               boost::unordered_map<Surface_patch_index, unsigned int>> s_boundary_vertices_valences;
-  static thread_local boost::unordered_map<Vertex_handle, std::unordered_set<typename C3t3::Subdomain_index>> s_vertices_subdomain_indices;
-  
+  using BVV = boost::unordered_map<Vertex_handle,
+                                   boost::unordered_map<Surface_patch_index, unsigned int>>;
+
+  static BVV& get_static_boundary_vertices_valences() {
+    CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(BVV, s_boundary_vertices_valences);
+    return s_boundary_vertices_valences;
+  }
+
+  using SSI = boost::unordered_map<Vertex_handle,
+                                   std::unordered_set<typename C3t3::Subdomain_index>>;
+
+  static SSI& get_static_vertices_subdomain_indices() {
+    CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(SSI, s_vertices_subdomain_indices);
+    return s_vertices_subdomain_indices;
+  }
+
 public:
   BoundaryEdgeFlipOperation(C3t3& c3t3,
                            CellSelector& cell_selector,
@@ -335,14 +348,14 @@ public:
 
   void perform_global_preprocessing(const C3t3& c3t3) const {
     // Clear boundary data structures every time (like original flip_edges)
-    s_boundary_vertices_valences.clear();
-    s_vertices_subdomain_indices.clear();
-    
+    get_static_boundary_vertices_valences().clear();
+    get_static_vertices_subdomain_indices().clear();
+
     // Collect boundary edges and compute vertices valences (needed for boundary flipping)
     std::vector<typename C3t3::Edge> boundary_edges; // We don't need to store this
-    collectBoundaryEdgesAndComputeVerticesValences(c3t3, m_cell_selector, boundary_edges, 
-                                                   s_boundary_vertices_valences, s_vertices_subdomain_indices);
-    
+    collectBoundaryEdgesAndComputeVerticesValences(c3t3, m_cell_selector, boundary_edges,
+                                                   get_static_boundary_vertices_valences(), get_static_vertices_subdomain_indices());
+
   }
 
   virtual bool should_process_element(const ElementType& e, const C3t3& c3t3) const override {
@@ -448,20 +461,20 @@ private:
       const Surface_patch_index surfi = c3t3.surface_patch_index(boundary_facets[0]);
 
       // Get current valences
-      int v0 = s_boundary_vertices_valences.at(vh0).at(surfi);
-      int v1 = s_boundary_vertices_valences.at(vh1).at(surfi);
-      int v2 = s_boundary_vertices_valences.at(vh2).at(surfi);
-      int v3 = s_boundary_vertices_valences.at(vh3).at(surfi);
-      
+      int v0 = get_static_boundary_vertices_valences().at(vh0).at(surfi);
+      int v1 = get_static_boundary_vertices_valences().at(vh1).at(surfi);
+      int v2 = get_static_boundary_vertices_valences().at(vh2).at(surfi);
+      int v3 = get_static_boundary_vertices_valences().at(vh3).at(surfi);
+
       if(v0 < 2 || v1 < 2 || v2 < 2 || v3 < 2)
         return false;
 
       // Calculate target valences
-      int m0 = (s_boundary_vertices_valences.at(vh0).size() > 1 ? 4 : 6);
-      int m1 = (s_boundary_vertices_valences.at(vh1).size() > 1 ? 4 : 6);
-      int m2 = (s_boundary_vertices_valences.at(vh2).size() > 1 ? 4 : 6);
-      int m3 = (s_boundary_vertices_valences.at(vh3).size() > 1 ? 4 : 6);
-      
+      int m0 = (get_static_boundary_vertices_valences().at(vh0).size() > 1 ? 4 : 6);
+      int m1 = (get_static_boundary_vertices_valences().at(vh1).size() > 1 ? 4 : 6);
+      int m2 = (get_static_boundary_vertices_valences().at(vh2).size() > 1 ? 4 : 6);
+      int m3 = (get_static_boundary_vertices_valences().at(vh3).size() > 1 ? 4 : 6);
+
       // Calculate cost before flip
       int initial_cost = (v0 - m0)*(v0 - m0)
                       + (v1 - m1)*(v1 - m1)
@@ -496,11 +509,11 @@ private:
           }
 
           // Update valences
-          s_boundary_vertices_valences[vh0][surfi]--;
-          s_boundary_vertices_valences[vh1][surfi]--;
-          s_boundary_vertices_valences[vh2][surfi]++;
-          s_boundary_vertices_valences[vh3][surfi]++;
-          
+          get_static_boundary_vertices_valences()[vh0][surfi]--;
+          get_static_boundary_vertices_valences()[vh1][surfi]--;
+          get_static_boundary_vertices_valences()[vh2][surfi]++;
+          get_static_boundary_vertices_valences()[vh3][surfi]++;
+
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
           if (show_boundary_debug && boundary_edge_counter-1 < 5000) {
             std::cout << "REFACTORED: Successfully flipped boundary edge #" << boundary_edge_counter-1 << " from vertex " << vh0->point() << " to vertex " << vh1->point() << std::endl;
@@ -514,17 +527,6 @@ private:
     return false;
   }
 };
-
-// Static member definitions for BoundaryEdgeFlipOperation
-
-template<typename C3t3, typename CellSelector, typename Visitor>
-thread_local boost::unordered_map<typename C3t3::Vertex_handle, 
-                       boost::unordered_map<typename C3t3::Surface_patch_index, unsigned int>> 
-BoundaryEdgeFlipOperation<C3t3, CellSelector, Visitor>::s_boundary_vertices_valences;
-
-template<typename C3t3, typename CellSelector, typename Visitor>
-thread_local boost::unordered_map<typename C3t3::Vertex_handle, std::unordered_set<typename C3t3::Subdomain_index>> 
-BoundaryEdgeFlipOperation<C3t3, CellSelector, Visitor>::s_vertices_subdomain_indices;
 
 } // namespace internal
 } // namespace Tetrahedral_remeshing
