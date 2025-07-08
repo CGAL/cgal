@@ -16,22 +16,6 @@
 #ifndef CGAL_DRAW_ARRANGEMENT_2_H
 #define CGAL_DRAW_ARRANGEMENT_2_H
 
-#include <CGAL/license/Arrangement_on_surface_2.h>
-
-#include <CGAL/Draw_aos/helpers.h>
-#include <CGAL/Draw_aos/Arr_viewer.h>
-#include <CGAL/Draw_aos/Arr_bounded_renderer.h>
-#include <CGAL/Draw_aos/Arr_bounded_approximate_curve_2.h>
-#include <CGAL/Draw_aos/Arr_bounded_approximate_face_2.h>
-#include <CGAL/Draw_aos/Arr_bounded_approximate_point_2.h>
-#include <CGAL/Draw_aos/Arr_approximation_cache.h>
-#include <CGAL/Draw_aos/Arr_bounded_compute_y_at_x.h>
-#include <CGAL/Draw_aos/Arr_render_context.h>
-#include <CGAL/Draw_aos/Arr_bounded_face_triangulator.h>
-#include <CGAL/Draw_aos/Arr_approximation_geometry_traits.h>
-
-#include <CGAL/config.h>
-
 #include <cstdlib>
 #include <type_traits>
 #include <unordered_map>
@@ -43,6 +27,9 @@
 #include <CGAL/Graphics_scene.h>
 #include <CGAL/Graphics_scene_options.h>
 #include <CGAL/Random.h>
+#include <CGAL/license/Arrangement_on_surface_2.h>
+#include <CGAL/config.h>
+#include <CGAL/Draw_aos/Arr_viewer.h>
 
 namespace CGAL {
 
@@ -606,47 +593,46 @@ protected:
 
 #define CGAL_ARR_TYPE CGAL::Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>
 
-///
-template <typename GeometryTraits_2, typename TopologyTraits, class GSOptions>
-void add_to_graphics_scene(const CGAL_ARR_TYPE& aos, CGAL::Graphics_scene& graphics_scene, const GSOptions& gso) {
-  draw_function_for_arrangement_2::Draw_arr_tool dar(aos, graphics_scene, gso);
-  dar.add_elements();
-}
-
-///
-template <typename GeometryTraits_2, typename TopologyTraits>
-void add_to_graphics_scene(const CGAL_ARR_TYPE& aos, CGAL::Graphics_scene& graphics_scene) {
-  CGAL::Graphics_scene_options<CGAL_ARR_TYPE, typename CGAL_ARR_TYPE::Vertex_const_handle,
-                               typename CGAL_ARR_TYPE::Halfedge_const_handle, typename CGAL_ARR_TYPE::Face_const_handle>
-      gso;
-  // colored face?
-  gso.colored_face = [](const CGAL_ARR_TYPE&, typename CGAL_ARR_TYPE::Face_const_handle) -> bool { return true; };
-
-  // face color
-  gso.face_color = [](const CGAL_ARR_TYPE&, typename CGAL_ARR_TYPE::Face_const_handle fh) -> CGAL::IO::Color {
-    CGAL::Random random((unsigned int)(std::size_t)(&*fh));
-    return get_random_color(random);
-  };
-
-  add_to_graphics_scene(aos, graphics_scene, gso);
-}
-
 /// Draw an arrangement on surface.
 template <typename GeometryTraits_2, typename TopologyTraits, class GSOptions>
 void draw(const CGAL_ARR_TYPE& aos,
           const GSOptions& gso,
           const char* title = "2D Arrangement on Surface Basic Viewer") {
-  CGAL::Graphics_scene graphics_scene;
-  add_to_graphics_scene(aos, graphics_scene, gso);
-  draw_graphics_scene(graphics_scene, title);
+  Qt::init_ogl_context(4, 3);
+  int argc;
+  QApplication app(argc, nullptr);
+  auto viewer = draw_aos::Arr_viewer(app.activeWindow(), aos, gso, title);
+  viewer.show();
+  app.exec();
 }
 
 /// Draw an arrangement on surface.
 template <typename GeometryTraits_2, typename TopologyTraits>
 void draw(const CGAL_ARR_TYPE& aos, const char* title = "2D Arrangement on Surface Basic Viewer") {
-  CGAL::Graphics_scene graphics_scene;
-  add_to_graphics_scene(aos, graphics_scene);
-  draw_graphics_scene(graphics_scene, title);
+  using Arrangement = CGAL_ARR_TYPE;
+  using Face_const_handle = typename Arrangement::Face_const_handle;
+  using Vertex_const_handle = typename Arrangement::Vertex_const_handle;
+  using Halfedge_const_handle = typename Arrangement::Halfedge_const_handle;
+
+  Qt::init_ogl_context(4, 3);
+  int argc;
+  QApplication app(argc, nullptr);
+  Graphics_scene_options<Arrangement, Vertex_const_handle, Halfedge_const_handle, Face_const_handle> gso;
+  gso.enable_faces();
+  gso.enable_edges();
+  gso.enable_vertices();
+  gso.face_color = [](const Arrangement&, const Face_const_handle& fh) -> CGAL::IO::Color {
+    CGAL::Random random((size_t(fh.ptr())));
+    return get_random_color(random);
+  };
+  gso.colored_face = [](const Arrangement&, const Face_const_handle&) { return true; };
+  gso.vertex_color = [](const Arrangement&, const Vertex_const_handle& vh) -> CGAL::IO::Color {
+    CGAL::Random random((size_t(vh.ptr())));
+    return get_random_color(random);
+  };
+  auto viewer = draw_aos::Arr_viewer(app.activeWindow(), aos, gso, "Arrangement Viewer");
+  viewer.show();
+  app.exec();
 }
 
 #undef CGAL_ARR_TYPE

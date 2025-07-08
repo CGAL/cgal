@@ -1,9 +1,12 @@
 
 #ifndef CGAL_DRAW_AOS_ARR_GRAPH_CONN_H
 #define CGAL_DRAW_AOS_ARR_GRAPH_CONN_H
-#include "CGAL/Union_find.h"
-#include "CGAL/unordered_flat_map.h"
 #include <boost/range/iterator_range.hpp>
+
+#include <CGAL/Arr_enums.h>
+#include <CGAL/Union_find.h>
+#include <CGAL/unordered_flat_map.h>
+
 namespace CGAL {
 /**
  * @brief Arr_graph_conn provides fast connectivity queries for arrangement vertices
@@ -23,13 +26,14 @@ private:
     const auto& target = he->target();
 
     auto [source_it, source_inserted] = m_lookup.try_emplace(source, Union_find_handle());
-    auto [target_it, target_inserted] = m_lookup.try_emplace(target, Union_find_handle());
     if(source_inserted) {
       source_it->second = m_uf.make_set(source);
     }
+    auto [target_it, target_inserted] = m_lookup.try_emplace(target, Union_find_handle());
     if(target_inserted) {
       target_it->second = m_uf.make_set(target);
     }
+
     m_uf.unify_sets(source_it->second, target_it->second);
   }
 
@@ -37,8 +41,13 @@ private:
 
 public:
   Arr_graph_conn(const Arr& arr) {
-    for(const auto& eh : arr.edge_handles()) {
-      insert_halfedge(eh);
+    m_lookup.reserve(arr.number_of_vertices());
+
+    for(const auto& he : arr.halfedge_handles()) {
+      if(he->direction() != ARR_LEFT_TO_RIGHT) {
+        continue;
+      }
+      insert_halfedge(he);
     }
 
     for(const auto& vh : arr.vertex_handles()) {

@@ -4,6 +4,7 @@
 
 #include <cassert>
 
+#include "CGAL/draw_arrangement_2.h"
 #include "arr_linear.h"
 #include "arr_print.h"
 
@@ -14,8 +15,8 @@ int main() {
   // then, insert a point that lies on the line splitting it into two.
   X_monotone_curve c1 = Line(Point(-1, 0), Point(1, 0));
   arr.insert_in_face_interior(c1, arr.unbounded_face());
-  Vertex_handle v = insert_point(arr, Point(0,0));
-  assert(! v->is_at_open_boundary());
+  Vertex_handle v = insert_point(arr, Point(0, 0));
+  assert(!v->is_at_open_boundary());
 
   // Add two more rays using the specialized insertion functions.
   arr.insert_from_right_vertex(Ray(Point(0, 0), Point(-1, 1)), v); // c2
@@ -30,25 +31,27 @@ int main() {
 
   // Print the outer CCBs of the unbounded faces.
   int k = 1;
-  for (auto it = arr.unbounded_faces_begin(); it != arr.unbounded_faces_end();
-       ++it)
-  {
-    std::cout << "Face no. " << k++ << "(" << it->is_unbounded() << ","
-              << it->number_of_holes() << ")" << ": ";
+  for(auto it = arr.unbounded_faces_begin(); it != arr.unbounded_faces_end(); ++it) {
+    std::cout << "Face no. " << k++ << "(" << it->is_unbounded() << "," << it->number_of_holes() << ")" << ": ";
     Arrangement::Ccb_halfedge_const_circulator first = it->outer_ccb();
     auto curr = first;
-    if (! curr->source()->is_at_open_boundary())
+    if(!curr->source()->is_at_open_boundary())
       std::cout << "(" << curr->source()->point() << ")";
 
     do {
       Arrangement::Halfedge_const_handle e = curr;
-      if (! e->is_fictitious()) std::cout << " [" << e->curve() << "] ";
-      else std::cout << " [ ... ] ";
+      if(!e->is_fictitious())
+        std::cout << " [" << e->curve() << "] ";
+      else
+        std::cout << " [ ... ] ";
 
-      if (! e->target()->is_at_open_boundary())
+      if(!e->target()->is_at_open_boundary())
         std::cout << "(" << e->target()->point() << ")";
-    } while (++curr != first);
+    } while(++curr != first);
     std::cout << std::endl;
   }
+
+  CGAL::draw(arr);
+
   return 0;
 }

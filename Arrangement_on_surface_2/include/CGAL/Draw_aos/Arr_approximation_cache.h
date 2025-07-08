@@ -1,26 +1,32 @@
 #ifndef CGAL_DRAW_AOS_ARR_APPROXIMATION_CACHE_H
 #define CGAL_DRAW_AOS_ARR_APPROXIMATION_CACHE_H
-#include "CGAL/Arr_enums.h"
-#include "CGAL/Draw_aos/Arr_approximation_geometry_traits.h"
-#include "CGAL/Draw_aos/helpers.h"
-#include "CGAL/unordered_flat_map.h"
+#include <cstddef>
+
 #include <boost/range/iterator_range.hpp>
 
+#include "CGAL/Arr_enums.h"
+#include "CGAL/unordered_flat_map.h"
+#include "CGAL/Draw_aos/type_utils.h"
+
 namespace CGAL {
+namespace draw_aos {
+
+template <typename Arrangement>
 class Arr_approximation_cache
 {
-  using Approx_geom_traits = Arr_approximation_geometry_traits;
+  using Geom_traits = typename Arrangement::Geometry_traits_2;
+  using Approx_traits = Arr_approximation_geometry_traits<Geom_traits>;
 
 public:
-  using Vertex_cache_obj = Approx_geom_traits::Point_geom;
-  using Halfedge_cache_obj = Approx_geom_traits::Polyline_geom;
-  using Face_cache_obj = Approx_geom_traits::Triangulated_face;
+  using Vertex_cache_obj = typename Approx_traits::Point_geom;
+  using Halfedge_cache_obj = typename Approx_traits::Polyline_geom;
+  using Face_cache_obj = typename Approx_traits::Triangulated_face;
 
 private:
-  using Vertex_const_handle = Arrangement::Vertex_const_handle;
-  using Edge_const_handle = Arrangement::Edge_const_iterator;
-  using Halfedge_const_handle = Arrangement::Halfedge_const_iterator;
-  using Face_const_handle = Arrangement::Face_const_handle;
+  using Vertex_const_handle = typename Arrangement::Vertex_const_handle;
+  using Edge_const_handle = typename Arrangement::Edge_const_iterator;
+  using Halfedge_const_handle = typename Arrangement::Halfedge_const_iterator;
+  using Face_const_handle = typename Arrangement::Face_const_handle;
   using Vertex_cache = unordered_flat_map<Vertex_const_handle, Vertex_cache_obj>;
   using Halfedge_cache = unordered_flat_map<Halfedge_const_handle, Halfedge_cache_obj>;
   using Face_cache = unordered_flat_map<Face_const_handle, Face_cache_obj>;
@@ -38,6 +44,12 @@ private:
   }
 
 public:
+  Arr_approximation_cache() = default;
+
+  void reserve_vertex_cache(std::size_t size) { m_vertex_cache.reserve(size); }
+  void reserve_halfedge_cache(std::size_t size) { m_halfedge_cache.reserve(size); }
+  void reserve_face_cache(std::size_t size) { m_face_cache.reserve(size); }
+
   std::pair<Vertex_cache_obj&, bool> try_emplace(const Vertex_const_handle& vh) {
     const auto& [it, inserted] = m_vertex_cache.try_emplace(vh, Vertex_cache_obj());
     return {it->second, inserted};
@@ -104,5 +116,6 @@ private:
   Face_cache m_face_cache;
 };
 
+} // namespace draw_aos
 } // namespace CGAL
 #endif // CGAL_DRAW_AOS_ARR_APPROXIMATION_CACHE_H

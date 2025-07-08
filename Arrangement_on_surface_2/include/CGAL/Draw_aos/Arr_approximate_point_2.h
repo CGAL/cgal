@@ -1,32 +1,31 @@
 #ifndef CGAL_DRAW_AOS_ARR_APPROXIMATE_POINT_2_H
 #define CGAL_DRAW_AOS_ARR_APPROXIMATE_POINT_2_H
 
-#include "CGAL/Arr_has.h"
-#include "CGAL/Draw_aos/Arr_approximation_geometry_traits.h"
+#include "CGAL/Arr_rational_function_traits_2.h"
 #include "CGAL/number_utils.h"
+#include "CGAL/Draw_aos/type_utils.h"
 
 namespace CGAL {
-
+namespace draw_aos {
 namespace internal {
 
-template <typename Geom_traits, bool Has_approximate_2>
+template <typename GeomTraits, bool Has_approximate_2>
 class Arr_approximate_point_2_impl;
 
-template <typename Geom_traits>
-class Arr_approximate_point_2_impl<Geom_traits, true>
+template <typename GeomTraits>
+class Arr_approximate_point_2_impl<GeomTraits, true>
 {
-  using Approx_kernel = Arr_approximation_geometry_traits::Approximation_kernel;
-  using Point_2 = typename Geom_traits::Point_2;
-  using Approx_point = Arr_approximation_geometry_traits::Approx_point;
+  using Approx_traits = Arr_approximation_geometry_traits<GeomTraits>;
+  using Point_2 = typename Traits_adaptor<GeomTraits>::Point_2;
+  using Approx_point = typename Approx_traits::Approx_point;
 
 public:
-  Arr_approximate_point_2_impl(const Geom_traits& traits)
+  Arr_approximate_point_2_impl(const GeomTraits& traits)
       : m_approx(traits.approximate_2_object()) {}
 
   /**
    * @brief Approximate a point.
    * TODO: make it work for spherical traits.
-   *
    * @param pt
    * @return Point_geom
    */
@@ -42,20 +41,38 @@ public:
   double operator()(const Point_2& pt, int dim) const { return m_approx(pt, dim); }
 
 private:
-  typename Geom_traits::Approximate_2 m_approx;
+  const typename GeomTraits::Approximate_2 m_approx;
+};
+
+// Specialized for Arr_rational_function_traits_2.
+template <typename Kernel>
+class Arr_approximate_point_2_impl<Arr_rational_function_traits_2<Kernel>, true>
+{
+  using Geom_traits = Arr_rational_function_traits_2<Kernel>;
+  using Approx_traits = Arr_approximation_geometry_traits<Geom_traits>;
+  using Point_2 = typename Traits_adaptor<Geom_traits>::Point_2;
+  using Approx_point = typename Approx_traits::Approx_point;
+  using Approximate_2 = typename Geom_traits::Approximate_2;
+
+public:
+  Arr_approximate_point_2_impl(const Geom_traits& traits) {}
+
+  Approx_point operator()(const Point_2& pt) const { return {pt.x().to_double(), pt.y().to_double()}; }
+
+  double operator()(const Point_2& pt, int dim) const { return (dim == 0) ? pt.x().to_double() : pt.y().to_double(); }
 };
 
 // Fallback to use CGAL::to_double for traits that do not have an approximate_2_object.
-template <typename Geom_traits>
-class Arr_approximate_point_2_impl<Geom_traits, false>
+template <typename GeomTraits>
+class Arr_approximate_point_2_impl<GeomTraits, false>
 {
-  using Approx_kernel = Arr_approximation_geometry_traits::Approximation_kernel;
-  using Point_2 = typename Geom_traits::Point_2;
-  using Approx_point = Arr_approximation_geometry_traits::Approx_point;
+  using Approx_traits = Arr_approximation_geometry_traits<GeomTraits>;
+  using Point_2 = typename Traits_adaptor<GeomTraits>::Point_2;
+  using Approx_point = typename Approx_traits::Approx_point;
 
 public:
-  // traits object  is not used in the fallback implementation, but we keep it for consistency.
-  Arr_approximate_point_2_impl(const Geom_traits& traits) {}
+  // traits object is not used in the fallback implementation, but we keep it for consistency.
+  Arr_approximate_point_2_impl(const GeomTraits& traits) {}
 
   /**
    * @brief Approximate a point.
@@ -88,10 +105,13 @@ public:
 
 } // namespace internal
 
-template <typename Geom_traits>
+template <typename GeomTraits>
 using Arr_approximate_point_2 =
-    internal::Arr_approximate_point_2_impl<Geom_traits, has_approximate_2<Geom_traits>::value>;
+    internal::Arr_approximate_point_2_impl<GeomTraits,
+                                           has_approximate_2_object_v<GeomTraits> &&
+                                               has_operator_point_v<GeomTraits, typename GeomTraits::Approximate_2>>;
 
+} // namespace draw_aos
 } // namespace CGAL
 
 #endif // CGAL_DRAW_AOS_ARR_APPROXIMATE_POINT_2_H

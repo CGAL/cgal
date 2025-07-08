@@ -15,8 +15,10 @@ foreach(cppfile ${cppfiles})
   create_single_source_cgal_program("${cppfile}")
 endforeach()
 
+
 if(CGAL_Qt6_FOUND)
   target_link_libraries(draw_arr PRIVATE CGAL::CGAL_Basic_viewer)
+  target_link_libraries(unbounded_non_intersecting PRIVATE CGAL::CGAL_Basic_viewer)
   target_link_libraries(linear_conics PRIVATE CGAL::CGAL_Basic_viewer)
   target_link_libraries(parabolas PRIVATE CGAL::CGAL_Basic_viewer)
   target_link_libraries(ellipses PRIVATE CGAL::CGAL_Basic_viewer)
@@ -24,6 +26,7 @@ if(CGAL_Qt6_FOUND)
   target_link_libraries(polylines PRIVATE CGAL::CGAL_Basic_viewer)
   target_link_libraries(circles PRIVATE CGAL::CGAL_Basic_viewer)
   target_link_libraries(circular_arcs PRIVATE CGAL::CGAL_Basic_viewer)
+  target_link_libraries(rational_functions PRIVATE CGAL::CGAL_Basic_viewer)
   target_link_libraries(spherical_insert PRIVATE CGAL::CGAL_Basic_viewer)
 else()
   message(
