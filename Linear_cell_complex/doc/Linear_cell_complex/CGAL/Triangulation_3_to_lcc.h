@@ -8,7 +8,7 @@ Objects are added in `lcc`, existing darts are not modified. Returns a dart crea
 \pre \link GenericMap::dimension `LCC::dimension`\endlink \f$ \geq\f$ 3 and
       \link LinearCellComplex::ambient_dimension `LCC::ambient_dimension`\endlink==3.
 
-\sa `CGAL::plane_graph_to_lcc<LCC>` 
+\sa `CGAL::read_plane_graph_in_lcc<LCC>` 
 \sa `CGAL::polyhedron_3_to_lcc<LCC,Polyhedron>` 
 */
 

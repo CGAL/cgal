@@ -42,7 +42,7 @@ int main(int narg, char** argv)
 
   std::ifstream is(filename.c_str());
   std::cout<<"Import plane graph from "<<filename<<std::endl;
-  CGAL::plane_graph_to_lcc(lcc, is);
+  CGAL::read_plane_graph_in_lcc(lcc, is);
 
   // Display the lcc characteristics.
   std::cout<<"LCC characteristics:"<<std::endl<<"  ";

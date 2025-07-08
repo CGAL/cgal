@@ -15,7 +15,7 @@ int main()
   input << "3 3\n0.0 0.0\n1.0 0.0\n0.0 1.0\n0 1\n1 2\n2 0\n";
 
   // Test new function
-  auto d1 = CGAL::plane_graph_to_lcc(lcc1, input);
+  auto d1 = CGAL::read_plane_graph_in_lcc(lcc1, input);
   assert(d1 != LCC::null_descriptor);
 
   // Rewind input stream for second test

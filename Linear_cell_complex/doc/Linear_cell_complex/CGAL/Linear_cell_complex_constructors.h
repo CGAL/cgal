@@ -28,15 +28,15 @@ Here a small example:
 \sa `CGAL::polyhedron_3_to_lcc<LCC,Polyhedron>`
 */
 template<class LCC>
-typename LCC::Dart_descriptor plane_graph_to_lcc(LCC& lcc,
+typename LCC::Dart_descriptor read_plane_graph_in_lcc(LCC& lcc,
 std::istream& ais);
 
 /*!
 \ingroup PkgLinearCellComplexConstructions
-\deprecated Use `plane_graph_to_lcc()` instead.
+\deprecated Use `read_plane_graph_in_lcc()` instead.
 */
 template<class LCC>
-[[deprecated("Use plane_graph_to_lcc instead")]]
+[[deprecated("Use read_plane_graph_in_lcc instead")]]
 typename LCC::Dart_descriptor import_from_plane_graph(LCC& lcc, std::istream& ais);
 
 } /* namespace CGAL */
