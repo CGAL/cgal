@@ -615,15 +615,15 @@ public:
       if (!resolution_reached())
       {
 
-//#ifdef CGAL_TETRAHEDRAL_REMESHING_USE_ELEMENTARY
-        //Elementary_remesher<C3t3,SizingFunction,CellSelector>::split(m_c3t3, m_sizing, m_cell_selector,true);
-//#else
+          #ifndef ENABLE_EDGE_FLIP_DEBUG
         split();
-//#endif
         collapse();
+        #endif
       }
       flip();
+          #ifndef ENABLE_EDGE_FLIP_DEBUG
       smooth();
+        #endif
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
       std::cout << "# Iteration " << it_nb << " done : "
@@ -650,7 +650,9 @@ public:
       ++it_nb;
 
       flip();
+          #ifndef ENABLE_EDGE_FLIP_DEBUG
       smooth();
+        #endif
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
       std::cout << "# Iteration " << it_nb << " (flip and smooth only) done : "

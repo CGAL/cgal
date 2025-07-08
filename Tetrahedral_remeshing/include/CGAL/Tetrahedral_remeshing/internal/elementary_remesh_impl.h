@@ -58,7 +58,7 @@ public:
   static void flip(C3t3& c3t3, CellSelector& cell_selector,  Visitor& visitor, const bool protect_boundaries) {
      // Flip internal edges
      InternalEdgeFlipOp internal_flip_op(c3t3, cell_selector, protect_boundaries, visitor);
-     ElementaryOperationExecutionParallel<InternalEdgeFlipOp> internal_executor;
+     ExecutionPolicy<InternalEdgeFlipOp> internal_executor;
      internal_executor.execute(internal_flip_op, c3t3);
      
      // Flip boundary edges if not protecting boundaries
