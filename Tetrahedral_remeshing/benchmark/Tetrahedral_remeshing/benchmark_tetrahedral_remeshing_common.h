@@ -33,7 +33,11 @@ namespace benchmarking {
 
 /// CGAL kernel and mesh typedefs
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+#ifdef CGAL_CONCURRENT_TETRAHEDRAL_REMESHING
+typedef CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3<K, CGAL::Parallel_tag> Remeshing_triangulation;
+#else
 typedef CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3<K> Remeshing_triangulation;
+#endif
 
 /**
  * @brief Appends a metric result to a JSON object, grouped by category and metric label, under 'metrics'.

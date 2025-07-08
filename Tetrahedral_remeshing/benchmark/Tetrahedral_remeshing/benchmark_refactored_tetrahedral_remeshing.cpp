@@ -1,5 +1,8 @@
+//#define CGAL_REFACTORED_TETRAHEDRAL_REMESHING_DEBUG
 #define CGAL_TETRAHEDRAL_REMESHING_USE_ELEMENTARY
 #define CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+//#define USE_THREADSAFE_INCIDENT_CELLS
+//#define ENABLE_EDGE_FLIP_DEBUG
 #include "benchmark_tetrahedral_remeshing_common.h"
 #include "mesh_quality.h"
 #include <CGAL/Tetrahedral_remeshing/internal/elementary_remesh_impl.h>
@@ -10,6 +13,15 @@
 #include <string>
 #include <iomanip>
 #include <nlohmann/json.hpp>
+
+#ifdef CGAL_CONCURRENT_TETRAHEDRAL_REMESHING
+  #include <tbb/version.h>
+  #if TBB_VERSION_MAJOR >= 2018
+    #include <tbb/global_control.h>
+  #else
+    #include <tbb/task_scheduler_init.h>
+  #endif
+#endif
 
 int main(int argc, char** argv) {
   using namespace benchmarking;
@@ -30,16 +42,24 @@ int main(int argc, char** argv) {
   std::filesystem::create_directories(std::filesystem::path(std::filesystem::absolute(results_json_path)).parent_path());
 
 #ifdef CGAL_CONCURRENT_TETRAHEDRAL_REMESHING
-  Concurrent_tetrahedral_remesher_config::load_config_file(CONCURRENT_TETRAHEDRAL_REMESHING_CONFIG_FILENAME, true);
+  //Concurrent_tetrahedral_remesher_config::load_config_file(CONCURRENT_TETRAHEDRAL_REMESHING_CONFIG_FILENAME, true);
   if(num_threads <= 0) {
     fatal_error("num_threads must be positive.");
   }
-  tbb::global_control control(tbb::global_control::max_allowed_parallelism, num_threads);
+  
+  // Use TBB task scheduler with thread control
+  // Note: tbb::global_control is available in TBB 2018+, fallback for older versions
+  #if TBB_VERSION_MAJOR >= 2018
+    tbb::global_control control(tbb::global_control::max_allowed_parallelism, num_threads);
+  #else
+    tbb::task_scheduler_init scheduler_init(num_threads);
+  #endif
+  
   display_info(num_threads, "Task-scheduler (auto) (atomic)");
   append_run_info(results_json, "Num_threads", num_threads);
-  append_run_info(results_json, "Lockgrid_size", Concurrent_tetrahedral_remesher_config::get().locking_grid_num_cells_per_axis);
-  append_run_info(results_json, "Lock_radius", Concurrent_tetrahedral_remesher_config::get().first_grid_lock_radius);
-  append_run_info(results_json, "Num_work_items_per_batch", Concurrent_tetrahedral_remesher_config::get().num_work_items_per_batch);
+  // append_run_info(results_json, "Lockgrid_size", Concurrent_tetrahedral_remesher_config::get().locking_grid_num_cells_per_axis);
+  // append_run_info(results_json, "Lock_radius", Concurrent_tetrahedral_remesher_config::get().first_grid_lock_radius);
+  // append_run_info(results_json, "Num_work_items_per_batch", Concurrent_tetrahedral_remesher_config::get().num_work_items_per_batch);
 #else
   std::cout << "-- Sequential Atomic Tetrahedral Remeshing --" << std::endl;
   if(num_threads != 1) {
