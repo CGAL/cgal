@@ -434,8 +434,8 @@ private:
     auto& tr = c3t3.triangulation();
 
     // Use shared inc_cells cache (matches original behavior)
-    boost::container::small_vector<Cell_handle, 64>& inc_vh0 = get_incident_cells(vh0, c3t3);
-    
+    boost::container::small_vector<Cell_handle, 64> inc_vh0 = get_incident_cells(vh0, c3t3);
+
     Cell_handle c;
     int i, j;
     if (!is_edge_uv(vh0, vh1, inc_vh0, c, i, j))
