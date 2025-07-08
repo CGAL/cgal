@@ -16,21 +16,16 @@ endif()
 # Path to your Python script - note the path correction
 set(METADATA_SCRIPT "${CMAKE_CURRENT_SOURCE_DIR}/generate_source_exec_metadata.py")
 
-#add_compile_definitions(CGAL_MESH_3_NO_DEPRECATED_SURFACE_INDEX
-#               -DCGAL_MESH_3_NO_DEPRECATED_C3T3_ITERATORS)
+option(CGAL_ACTIVATE_CONCURRENT_REMESHING "Activate parallelism in Tetrahedral_remeshig" ON)
 
-# Activate verbose mode? (turned OFF by default)
-option(CGAL_ACTIVATE_CONCURRENT_MESH_3 "Activate verbose mode in Mesh_3" OFF)
-if(MESH_3_VERBOSE)
-  add_compile_definitions(CGAL_MESH_3_VERBOSE)
+# Enable debug output for edge flip operations only in debug mode
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+  add_compile_definitions(CGAL_REFACTORED_TETRAHEDRAL_REMESHING_DEBUG)
 endif()
 
-# Activate concurrency? (turned OFF by default)
-option(CGAL_ACTIVATE_CONCURRENT_MESH_3 "Activate parallelism in Mesh_3" OFF)
-
-# And add -DCGAL_CONCURRENT_MESH_3 if that option is ON
-if(CGAL_ACTIVATE_CONCURRENT_MESH_3)
-  add_compile_definitions(CGAL_CONCURRENT_MESH_3)
+if(CGAL_ACTIVATE_CONCURRENT_REMESHING)
+  message(STATUS "Activating concurrent remeshing")
+  add_compile_definitions(CGAL_CONCURRENT_TETRAHEDRAL_REMESHING)
   find_package(TBB REQUIRED)
   include(CGAL_TBB_support)
 else()
