@@ -1,6 +1,6 @@
 # Release History
 
-Release date: _______ 2025
+Release date: July 2025
 
 ## [Release 6.1](https://github.com/CGAL/cgal/releases/tag/v6.1)
 
