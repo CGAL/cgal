@@ -35,22 +35,27 @@ typedef typename Delaunay_triangulation::Anchor                                 
 int main(int argc, char *argv[])
 {
 	// 1. GENERATE THE INPUT
-	Domain domain;
-	int seed;
-	if (argc <= 2) {
-		seed = time(NULL);
-		std::cout << "Generating surface with random seed " << seed << "..." << std::endl;
-	} else {
-		seed = atoi(argv[2]);
-		std::cout << "Generating surface with seed " << seed << "..." << std::endl;
-	}
-	Factory factory;
-	domain = factory.make_hyperbolic_fundamental_domain_g2(seed);
+	// Domain domain;
+	// int seed;
+	// if (argc <= 2) {
+	// 	seed = time(NULL);
+	// 	std::cout << "Generating surface with random seed " << seed << "..." << std::endl;
+	// } else {
+	// 	seed = atoi(argv[2]);
+	// 	std::cout << "Generating surface with seed " << seed << "..." << std::endl;
+	// }
+	// Factory factory;
+	// domain = factory.make_hyperbolic_fundamental_domain_g2(seed);
 
 	// 2. GET A VERTEX
 	// So that if you run the demo on a same surface but with different values of epsilon,
 	// the drawing will be centered at the same vertex and it will look similar.
-	Delaunay_triangulation dt = Delaunay_triangulation(domain);
+	// Domain domain;
+	// std::ifstream("/home/clanuel/Documents/camille/cgal_camille/benchmarks/input_domains/FMgenus5.txt") >> domain;
+	// Delaunay_triangulation dt = Delaunay_triangulation(domain);
+	Base t;
+	std::ifstream("/home/clanuel/Documents/camille/cgal_camille/benchmarks/input_triangulations/dt_thin_surface.txt") >> t;
+	Delaunay_triangulation dt = Delaunay_triangulation(t);
 	Point v0 = dt.anchor().vertices[0];
 
 	// 3. COMPUTE EPSILON-NET and display useful info
@@ -66,6 +71,9 @@ int main(int argc, char *argv[])
 	timer.stop();
 	std::cout << "Done in " << timer.time() << " seconds." << std::endl;
 	dt.combinatorial_map().display_characteristics(std::cout) << std::endl;
+	std::cout << dt.is_epsilon_covering(eps) << dt.is_epsilon_packing(eps) << std::endl;
+	std::cout << dt.shortest_edge() << std::endl;
+	std::cout << dt.shortest_loop() << std::endl;
 
 	// 4. SET THE FIRST ANCHOR OF THE DRAWING
 	Anchor anchor = dt.locate(v0);

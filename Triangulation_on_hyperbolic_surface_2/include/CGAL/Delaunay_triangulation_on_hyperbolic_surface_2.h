@@ -84,11 +84,12 @@ public:
 
 	//---------- eps-net methods
 	bool epsilon_net(double const epsilon);
-	bool is_epsilon_covering(const double epsilon);
-	bool is_epsilon_packing(const double epsilon);
-	bool is_epsilon_net(const double epsilon);
+	bool is_epsilon_covering(const double epsilon);  // make const
+	bool is_epsilon_packing(const double epsilon); // make const
+	bool is_epsilon_net(const double epsilon); // make const
 	
 	double shortest_loop() const;
+	double shortest_edge() const;
 
 private:
 	//---------- CONSTRUCTORS
@@ -1058,10 +1059,10 @@ is_epsilon_packing(const double epsilon)
 		
 		if (delta(a, b) < lower(delta_epsilon)) {
 			is_packing = false;  // consider that it's not a packing
+
+			// check if the edge is a loop
 			Dart_descriptor next = Base::ccw(it);
 			auto doc = this->combinatorial_map_.template darts_of_cell<0>(it);
-			// check if the edge is a loop:
-			// if next and it are darts of the same vertex, then a = b
 			for (auto dart = doc.begin(); dart != doc.end(); ++dart) {
 				if (next == dart) {
 					is_packing = true;  // the edge is a loop, so actually it's ok
@@ -1086,22 +1087,51 @@ Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
 shortest_loop() const
 {
 	Number min_delta_length = 999;
-	for (typename Edge_range::iterator it = this->combinatorial_map_.template one_dart_per_cell<1>().begin();
+	for (typename Edge_const_range::const_iterator it = this->combinatorial_map_.template one_dart_per_cell<1>().begin();
 									   it != this->combinatorial_map_.template one_dart_per_cell<1>().end(); ++it) {
-		Anchor& current_anchor = anchor(it);
+		Anchor const & current_anchor = anchor(it);
 		unsigned index = index_in_anchor(it);
-		Point & a = current_anchor.vertices[index];
-		Point & b = current_anchor.vertices[ccw(index)];
-		
-		Dart_descriptor next = Base::ccw(it);
+		Point const & a = current_anchor.vertices[index];
+		Point const & b = current_anchor.vertices[ccw(index)];
+
+		// check if the edge is a loop
+		Dart_const_descriptor next = Base::const_ccw(it);
 		auto doc = this->combinatorial_map_.template darts_of_cell<0>(it);
-		// check if the edge is a loop:
-		// if next and it are darts of the same vertex, then a = b
 		for (auto dart = doc.begin(); dart != doc.end(); ++dart) {
-			if (next == dart) {
-				Number delta_length = delta(a, b);  // the edge is a loop
+			if (next == dart) { // the edge is a loop
+				Number delta_length = delta(a, b);
 				min_delta_length = min(min_delta_length,delta_length);
 			}
+		}
+	}
+	return std::acosh(1 + to_double(min_delta_length));
+}
+
+template<class Traits>
+double
+Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
+shortest_edge() const
+{
+	Number min_delta_length = 999;
+	for (typename Edge_const_range::const_iterator it = this->combinatorial_map_.template one_dart_per_cell<1>().begin();
+									   it != this->combinatorial_map_.template one_dart_per_cell<1>().end(); ++it) {
+		Anchor const & current_anchor = anchor(it);
+		unsigned index = index_in_anchor(it);
+		Point const & a = current_anchor.vertices[index];
+		Point const & b = current_anchor.vertices[ccw(index)];
+
+		// check if the edge is a loop
+		bool is_loop = false;
+		Dart_const_descriptor next = Base::const_ccw(it);
+		auto doc = this->combinatorial_map_.template darts_of_cell<0>(it);
+		for (auto dart = doc.begin(); dart != doc.end(); ++dart) {
+			if (next == dart) {
+				is_loop = true;
+			}
+		}
+		if(!is_loop) {
+			Number delta_length = delta(a, b);
+			min_delta_length = min(min_delta_length,delta_length);
 		}
 	}
 	return std::acosh(1 + to_double(min_delta_length));
