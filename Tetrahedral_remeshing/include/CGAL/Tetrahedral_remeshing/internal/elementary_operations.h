@@ -37,31 +37,17 @@ public:
     : m_triangulation(triangulation), m_lock_radius(lock_radius) {}
 
   bool try_lock_zone(const Lock_zone& zone) {
-    if (!m_triangulation) {
-      return true; // No locking in sequential mode
-    }
-
     // Try to acquire all locks in the zone
     for (const LockableHandle& h : zone) {
       if (!m_triangulation->try_lock_cell(h)) {
         // If any lock fails, release all acquired locks and return false
-        unlock_all_elements();
         return false;
       }
     }
     return true;
   }
 
-  void unlock_zone(const Lock_zone& zone) {
-    if (!m_triangulation) {
-      return; // No unlocking needed in sequential mode
-    }
-
-    // Use global unlock_all_elements instead of individual unlocking (Mesh_3 pattern)
-    m_triangulation->unlock_all_elements();
-  }
-
-  void unlock_all_elements() {
+  void unlock_all_thread_elements() {
     if (m_triangulation) {
       m_triangulation->unlock_all_elements();
     }
@@ -215,8 +201,8 @@ public:
         // Execute post-operation phase for this element
         op.execute_post_operation(element, c3t3);
         
-        lock_manager.unlock_zone(lock_zone);
       }
+	lock_manager.unlock_all_thread_elements();
     }
     
     return success;
@@ -297,25 +283,34 @@ public:
         // Process entire batch in one task
         for (size_t i = start; i < end; ++i) {
           const auto& element = elements[i];
-          
-
           auto lock_zone = op.get_lock_zone(element, c3t3);
           if (lock_manager.try_lock_zone(lock_zone)) {
             if(!op.can_apply_operation(element, c3t3)) {
-              lock_manager.unlock_zone(lock_zone); // Release lock if operation cannot be applied
+			  lock_manager.unlock_all_thread_elements();
               continue;
             }
             // Execute pre-operation phase for this element
             op.execute_pre_operation(element, c3t3);
             
-            if (op.execute_operation(element, c3t3)) {
+#ifdef ENABLE_EDGE_FLIP_DEBUG
+            //debug::dump_c3t3(c3t3, "before_flip");
+            debug::dump_triangulation_cells(c3t3.triangulation(), "before_flip.mesh");
+            debug::dump_edge(element, "edge_to_flip.polylines.txt");
+		    debug::dump_cells_polylines(lock_zone, "lock_zone.polylines.txt");
+#endif
+            if(op.execute_operation(element, c3t3)) {
               local_success = true;
+#ifdef ENABLE_EDGE_FLIP_DEBUG
+              debug::dump_c3t3(c3t3, "after_flip");
             }
+    else {
+             std::cout << "Operation failed for element: " << &element << std::endl;
+#endif
+           }
             
             op.execute_post_operation(element, c3t3);
-            
-            lock_manager.unlock_zone(lock_zone);
           }
+		  lock_manager.unlock_all_thread_elements();
         }
         
         if (local_success) success.store(true);
