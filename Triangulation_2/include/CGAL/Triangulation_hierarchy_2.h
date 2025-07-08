@@ -47,7 +47,7 @@ class Triangulation_hierarchy_2
 {
   // parameterization of the hierarchy
   // maximal number of points is 30^5 = 24 millions !
-  enum { ratio = 30 };
+  enum Ratio : int { ratio = 30 };
   enum { minsize = 20};
   enum { maxlevel = 5};
 
