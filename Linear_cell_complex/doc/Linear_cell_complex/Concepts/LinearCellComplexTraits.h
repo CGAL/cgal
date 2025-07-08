@@ -64,7 +64,8 @@ which constructs a vector as the difference of points `p2-p1`, and
 \link LinearCellComplexTraits::Vector ` Vector `\endlink `operator() (const CGAL::Origin&, const ` \link Point ` Point`\endlink`& p)`
 which constructs a vector as the difference of point `p` and a point at the origin
 (used in \link CGAL::barycenter `barycenter`\endlink
-and `CGAL::read_plane_graph_in_lcc`).
+and `CGAL::read_plane_graph_in_lcc`).*/
+
 typedef unspecified_type Construct_vector;
 
 /*!
