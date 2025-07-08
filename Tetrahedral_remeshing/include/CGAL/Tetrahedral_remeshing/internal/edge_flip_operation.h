@@ -70,17 +70,17 @@ protected:
 
 // Internal Edge Flip Operation - processes vertex pairs like original get_internal_edges
 template<typename C3t3, typename CellSelector, typename Visitor>
-class InternalEdgeFlipOperation 
+class InternalEdgeFlipOperation
   : public EdgeFlipOperationBase<C3t3, CellSelector, Visitor>,
-    public ElementaryOperation<C3t3, 
+    public ElementaryOperation<C3t3,
                           std::pair<typename C3t3::Vertex_handle, typename C3t3::Vertex_handle>,
                           typename C3t3::Triangulation::Cell_handle>
 {
 public:
   using BaseClass = EdgeFlipOperationBase<C3t3, CellSelector, Visitor>;
   using VertexPair = std::pair<typename C3t3::Vertex_handle, typename C3t3::Vertex_handle>;
-  
-  using Base = ElementaryOperation<C3t3, 
+
+  using Base = ElementaryOperation<C3t3,
                               VertexPair,
                               typename C3t3::Triangulation::Cell_handle>;
   using ElementType = typename Base::ElementType;
@@ -120,7 +120,7 @@ public:
   std::vector<ElementType> get_element_source(const C3t3& c3t3) const override {
     // Perform global preprocessing (cache validity reset)
     perform_global_preprocessing(c3t3);
-    
+
     // Collect internal vertex pairs fresh each time
     std::vector<ElementType> internal_vertex_pairs;
     get_internal_edges(c3t3, m_cell_selector, std::back_inserter(internal_vertex_pairs));
@@ -222,7 +222,7 @@ public:
 
   bool execute_pre_operation(const ElementType& e, C3t3& c3t3) override {
     return true;
-  } 
+  }
 
   bool execute_post_operation(const ElementType& e, C3t3& c3t3) override {
     return true;
@@ -231,37 +231,37 @@ public:
 private:
   bool execute_internal_edge_flip(const ElementType& e, C3t3& c3t3) {
     const auto& vp = e;
-    
+
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
     static thread_local std::size_t internal_edge_counter = 0;
     static thread_local bool show_debug = true;
-    
+
     if (show_debug && internal_edge_counter < 5000) {
       std::cout << "REFACTORED: Processing internal edge #" << internal_edge_counter << " from vertex " << vp.first->point() << " to vertex " << vp.second->point() << std::endl;
     }
-    
+
     if (internal_edge_counter == 4999) show_debug = false;
     internal_edge_counter++;
 #endif
-    
+
     auto& tr = c3t3.triangulation();
-    
+
     // Get incident cells for first vertex only
     auto inc_vh = get_incident_cells(vp.first, c3t3);
-    
+
     Cell_handle ch;
     int i0, i1;
     if (is_edge_uv(vp.first, vp.second, inc_vh, ch, i0, i1))
     {
       Edge edge_to_flip(ch, i0, i1);
-      
+
       // Create a map starting with the cells we already computed
       std::unordered_map<Vertex_handle, boost::container::small_vector<Cell_handle, 64>> temp_inc_cells; //TODO: Could this be cached?
       temp_inc_cells[vp.first] = inc_vh;
-      
-      Sliver_removal_result res = find_best_flip(edge_to_flip, c3t3, MIN_ANGLE_BASED, 
+
+      Sliver_removal_result res = find_best_flip(edge_to_flip, c3t3, MIN_ANGLE_BASED,
                                                temp_inc_cells, m_cell_selector, m_visitor);
-      
+
       if (res == INVALID_CELL || res == INVALID_VERTEX || res == INVALID_ORIENTATION)
       {
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
@@ -271,7 +271,7 @@ private:
 #endif
         return false;
       }
-      
+
       if (res == VALID_FLIP) {
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
         if (show_debug && internal_edge_counter-1 < 5000) {
@@ -279,27 +279,27 @@ private:
         }
 #endif
       }
-      
+
       return (res == VALID_FLIP);
     }
-    
+
     return false;
   }
 };
 
 // Boundary Edge Flip Operation - processes vertex pairs like original flipBoundaryEdges
 template<typename C3t3, typename CellSelector, typename Visitor>
-class BoundaryEdgeFlipOperation 
+class BoundaryEdgeFlipOperation
   : public EdgeFlipOperationBase<C3t3, CellSelector, Visitor>,
-    public ElementaryOperation<C3t3, 
+    public ElementaryOperation<C3t3,
                           std::pair<typename C3t3::Vertex_handle, typename C3t3::Vertex_handle>,
                           typename C3t3::Triangulation::Cell_handle>
 {
 public:
   using BaseClass = EdgeFlipOperationBase<C3t3, CellSelector, Visitor>;
   using VertexPair = std::pair<typename C3t3::Vertex_handle, typename C3t3::Vertex_handle>;
-  
-  using Base = ElementaryOperation<C3t3, 
+
+  using Base = ElementaryOperation<C3t3,
                               VertexPair,
                               typename C3t3::Triangulation::Cell_handle>;
   using ElementType = typename Base::ElementType;
@@ -353,10 +353,10 @@ public:
   std::vector<ElementType> get_element_source(const C3t3& c3t3) const override {
     // Perform global preprocessing (valences computation, subdomain collection)
     perform_global_preprocessing(c3t3);
-    
+
     // Collect boundary vertex pairs fresh each time
     std::vector<ElementType> boundary_vertex_pairs;
-    
+
     // Collect boundary edges as vertex pairs to match original behavior
     for (auto eit = c3t3.triangulation().finite_edges_begin();
          eit != c3t3.triangulation().finite_edges_end(); ++eit) {
@@ -365,7 +365,7 @@ public:
         boundary_vertex_pairs.push_back(make_vertex_pair(e));
       }
     }
-    
+
     // Return container by value
     return boundary_vertex_pairs;
   }
@@ -389,7 +389,7 @@ public:
   }
 
   bool execute_pre_operation(const ElementType& e, C3t3& c3t3) override {
-    
+
     return true;
   }
 
@@ -404,22 +404,22 @@ private:
     const auto& vp = e;
     const auto& vh0 = vp.first;
     const auto& vh1 = vp.second;
-    
+
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
     // DEBUG: Log boundary edge processing order with edge info (first 5000 only)
     static thread_local std::size_t boundary_edge_counter = 0;
     static thread_local bool show_boundary_debug = true;
-    
+
     if (show_boundary_debug && boundary_edge_counter < 5000) {
       std::cout << "REFACTORED: Processing boundary edge #" << boundary_edge_counter << " from vertex " << vh0->point() << " to vertex " << vh1->point() << std::endl;
     }
-    
+
     if (boundary_edge_counter == 4999) show_boundary_debug = false; // Stop after first 5000 edges (0-4999)
     boundary_edge_counter++;
 #endif
-    
+
     auto& tr = c3t3.triangulation();
-    
+
     // Use shared inc_cells cache (matches original behavior)
     boost::container::small_vector<Cell_handle, 64>& inc_vh0 = get_incident_cells(vh0, c3t3);
     
@@ -427,26 +427,26 @@ private:
     int i, j;
     if (!is_edge_uv(vh0, vh1, inc_vh0, c, i, j))
       return false;
-    
+
     Edge edge_to_flip(c, i, j);
     std::vector<typename C3t3::Triangulation::Facet> boundary_facets;
     const bool on_boundary = is_boundary_edge(edge_to_flip, c3t3, m_cell_selector, boundary_facets);
-    
+
     if (!on_boundary || boundary_facets.size() != 2)
       return false;
-    
+
     const auto& f0 = boundary_facets[0];
     const auto& f1 = boundary_facets[1];
-    
+
     // Find 3rd and 4th vertices to flip on surface
     const Vertex_handle vh2 = third_vertex(f0, vh0, vh1, tr);
     const Vertex_handle vh3 = third_vertex(f1, vh0, vh1, tr);
-    
+
     if (!tr.tds().is_edge(vh2, vh3)) // Most-likely early exit
-    {      
+    {
       // Implement valence-based cost calculation from lines 1810-1850
       const Surface_patch_index surfi = c3t3.surface_patch_index(boundary_facets[0]);
-      
+
       // Get current valences
       int v0 = s_boundary_vertices_valences.at(vh0).at(surfi);
       int v1 = s_boundary_vertices_valences.at(vh1).at(surfi);
@@ -455,7 +455,7 @@ private:
       
       if(v0 < 2 || v1 < 2 || v2 < 2 || v3 < 2)
         return false;
-      
+
       // Calculate target valences
       int m0 = (s_boundary_vertices_valences.at(vh0).size() > 1 ? 4 : 6);
       int m1 = (s_boundary_vertices_valences.at(vh1).size() > 1 ? 4 : 6);
@@ -467,23 +467,23 @@ private:
                       + (v1 - m1)*(v1 - m1)
                       + (v2 - m2)*(v2 - m2)
                       + (v3 - m3)*(v3 - m3);
-      
+
       // Calculate cost after flip (vh0,vh1 decrease by 1, vh2,vh3 increase by 1)
       v0--; v1--; v2++; v3++;
       int final_cost = (v0 - m0)*(v0 - m0)
                     + (v1 - m1)*(v1 - m1)
                     + (v2 - m2)*(v2 - m2)
                     + (v3 - m3)*(v3 - m3);
-      
+
       if (initial_cost > final_cost) {
         // Create a map starting with the cells we already computed
         std::unordered_map<Vertex_handle, boost::container::small_vector<Cell_handle, 64>> temp_inc_cells;
         temp_inc_cells[vh0] = inc_vh0;
-        
+
         // Perform the flip using temporary inc_cells map
         Sliver_removal_result db = flip_on_surface(c3t3, edge_to_flip, vh2, vh3,
                                                  temp_inc_cells, MIN_ANGLE_BASED, m_visitor);
-        
+
         if (db == VALID_FLIP) {
           // Add new facets to complex
           Cell_handle c_new;
@@ -494,7 +494,7 @@ private:
           if (tr.tds().is_facet(vh2, vh3, vh1, c_new, li, lj, lk)) {
             c3t3.add_to_complex(c_new, (6 - li - lj - lk), surfi);
           }
-          
+
           // Update valences
           s_boundary_vertices_valences[vh0][surfi]--;
           s_boundary_vertices_valences[vh1][surfi]--;
@@ -510,7 +510,7 @@ private:
         }
       }
     }
-    
+
     return false;
   }
 };
@@ -530,4 +530,4 @@ BoundaryEdgeFlipOperation<C3t3, CellSelector, Visitor>::s_vertices_subdomain_ind
 } // namespace Tetrahedral_remeshing
 } // namespace CGAL
 
-#endif // CGAL_TETRAHEDRAL_REMESHING_EDGE_FLIP_OPERATION_H 
+#endif // CGAL_TETRAHEDRAL_REMESHING_EDGE_FLIP_OPERATION_H

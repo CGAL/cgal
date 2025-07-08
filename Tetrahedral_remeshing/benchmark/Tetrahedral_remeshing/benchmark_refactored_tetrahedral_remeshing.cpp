@@ -46,7 +46,7 @@ int main(int argc, char** argv) {
   if(num_threads <= 0) {
     fatal_error("num_threads must be positive.");
   }
-  
+
   // Use TBB task scheduler with thread control
   // Note: tbb::global_control is available in TBB 2018+, fallback for older versions
   #if TBB_VERSION_MAJOR >= 2018
@@ -54,7 +54,7 @@ int main(int argc, char** argv) {
   #else
     tbb::task_scheduler_init scheduler_init(num_threads);
   #endif
-  
+
   display_info(num_threads, "Task-scheduler (auto) (atomic)");
   append_run_info(results_json, "Num_threads", num_threads);
   // append_run_info(results_json, "Lockgrid_size", Concurrent_tetrahedral_remesher_config::get().locking_grid_num_cells_per_axis);
@@ -94,7 +94,7 @@ int main(int argc, char** argv) {
 
   CGAL::Real_timer t_atomic;
   t_atomic.start();
-  
+
   // Create and run atomic remesher
   CGAL::tetrahedral_isotropic_remeshing(tr, target_edge_length, CGAL::parameters::number_of_iterations(num_iterations));
 
@@ -106,9 +106,9 @@ int main(int argc, char** argv) {
 
   // Status
   append_execution_status(results_json, "success");
-  
+
   // Write JSON
   write_results_json(results_json, results_json_path);
 
   return 0;
-} 
+}
