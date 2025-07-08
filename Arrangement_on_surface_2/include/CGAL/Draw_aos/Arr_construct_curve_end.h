@@ -1,23 +1,24 @@
 #ifndef CGAL_ARR_CONSTRUCT_CURVE_END_H
 #define CGAL_ARR_CONSTRUCT_CURVE_END_H
 
-#include "CGAL/Arr_enums.h"
-#include "CGAL/Arr_has.h"
-#include "CGAL/Draw_aos/Arr_approximation_geometry_traits.h"
 #include <optional>
 
-namespace CGAL {
+#include <CGAL/Arr_enums.h>
+#include <CGAL/Arr_has.h>
+#include <CGAL/Draw_aos/type_utils.h>
 
+namespace CGAL {
+namespace draw_aos {
 namespace internal {
 
-template <typename Geom_traits>
+template <typename GeomTraits>
 class Arr_construct_curve_end_base
 {
-  using Construct_min_vertex_2 = typename Geom_traits::Construct_min_vertex_2;
-  using Construct_max_vertex_2 = typename Geom_traits::Construct_max_vertex_2;
+  using Construct_min_vertex_2 = typename GeomTraits::Construct_min_vertex_2;
+  using Construct_max_vertex_2 = typename GeomTraits::Construct_max_vertex_2;
 
 protected:
-  Arr_construct_curve_end_base(const Geom_traits& traits)
+  Arr_construct_curve_end_base(const GeomTraits& traits)
       : m_cst_min_vertex(traits.construct_min_vertex_2_object())
       , m_cst_max_vertex(traits.construct_max_vertex_2_object()) {}
 
@@ -25,21 +26,21 @@ protected:
   Construct_min_vertex_2 m_cst_min_vertex;
 };
 
-template <typename Geom_traits, bool Has_parameter_space_in_x>
+template <typename GeomTraits, bool Has_parameter_space_in_x>
 class Arr_construct_curve_end_impl;
 
-template <typename Geom_traits>
-class Arr_construct_curve_end_impl<Geom_traits, true> : public Arr_construct_curve_end_base<Geom_traits>
+template <typename GeomTraits>
+class Arr_construct_curve_end_impl<GeomTraits, true> : public Arr_construct_curve_end_base<GeomTraits>
 {
-  using Approx_geom_traits = Arr_approximation_geometry_traits;
-  using Point_2 = typename Geom_traits::Point_2;
-  using X_monotone_curve = typename Geom_traits::X_monotone_curve_2;
-  using Parameter_space_in_x_2 = typename Geom_traits::Parameter_space_in_x_2;
-  using Parameter_space_in_y_2 = typename Geom_traits::Parameter_space_in_y_2;
+  using Approx_geom_traits = Arr_approximation_geometry_traits<GeomTraits>;
+  using Point_2 = typename Traits_adaptor<GeomTraits>::Point_2;
+  using X_monotone_curve = typename Traits_adaptor<GeomTraits>::X_monotone_curve_2;
+  using Parameter_space_in_x_2 = typename GeomTraits::Parameter_space_in_x_2;
+  using Parameter_space_in_y_2 = typename GeomTraits::Parameter_space_in_y_2;
 
 public:
-  Arr_construct_curve_end_impl(const Geom_traits& traits)
-      : Arr_construct_curve_end_base<Geom_traits>(traits)
+  Arr_construct_curve_end_impl(const GeomTraits& traits)
+      : Arr_construct_curve_end_base<GeomTraits>(traits)
       , m_param_space_in_x(traits.parameter_space_in_x_2_object())
       , m_param_space_in_y(traits.parameter_space_in_y_2_object()) {}
 
@@ -67,16 +68,16 @@ private:
   Parameter_space_in_y_2 m_param_space_in_y;
 };
 
-template <typename Geom_traits>
-class Arr_construct_curve_end_impl<Geom_traits, false> : public Arr_construct_curve_end_base<Geom_traits>
+template <typename GeomTraits>
+class Arr_construct_curve_end_impl<GeomTraits, false> : public Arr_construct_curve_end_base<GeomTraits>
 {
-  using Approx_geom_traits = Arr_approximation_geometry_traits;
-  using Point_2 = typename Geom_traits::Point_2;
-  using X_monotone_curve = typename Geom_traits::X_monotone_curve_2;
+  using Approx_geom_traits = Arr_approximation_geometry_traits<GeomTraits>;
+  using Point_2 = typename Traits_adaptor<GeomTraits>::Point_2;
+  using X_monotone_curve = typename Traits_adaptor<GeomTraits>::X_monotone_curve_2;
 
 public:
-  Arr_construct_curve_end_impl(const Geom_traits& traits)
-      : Arr_construct_curve_end_base<Geom_traits>(traits) {}
+  Arr_construct_curve_end_impl(const GeomTraits& traits)
+      : Arr_construct_curve_end_base<GeomTraits>(traits) {}
 
   /**
    * @brief Construct the min or max vertex of the x-monotone curve based on the curve end enum.
@@ -92,10 +93,13 @@ public:
 
 } // namespace internal
 
-template <typename Geom_traits>
+template <typename GeomTraits>
 using Arr_construct_curve_end =
-    internal::Arr_construct_curve_end_impl<Geom_traits, has_parameter_space_in_x_2<Geom_traits>::value>;
+    internal::Arr_construct_curve_end_impl<GeomTraits,
+                                           Traits_adaptor<GeomTraits>::Has_unbounded_curves &&
+                                               has_parameter_space_in_x_2<GeomTraits>::value>;
 
+} // namespace draw_aos
 } // namespace CGAL
 
 #endif // CGAL_ARR_CONSTRUCT_CURVE_END_H
