@@ -39,9 +39,6 @@ protected:
   CellSelector& m_cell_selector;
   bool m_protect_boundaries;
   Visitor m_visitor;
-  
-  // Shared inc_cells data structure (used by both internal and boundary operations)
-  static thread_local std::unordered_map<Vertex_handle, boost::container::small_vector<Cell_handle, 64>> s_inc_cells;
 
 public:
   EdgeFlipOperationBase(C3t3& c3t3,
@@ -59,11 +56,14 @@ public:
   bool get_protect_boundaries() const { return m_protect_boundaries; }
 
 protected:
-
   // Helper to get incident cells for a vertex
   boost::container::small_vector<Cell_handle, 64> get_incident_cells(Vertex_handle vh, const C3t3& c3t3) const {
     boost::container::small_vector<Cell_handle, 64> inc_cells;
+#ifdef USE_THREADSAFE_INCIDENT_CELLS
+    c3t3.triangulation().incident_cells_threadsafe(vh, std::back_inserter(inc_cells));
+#else
     c3t3.triangulation().incident_cells(vh, std::back_inserter(inc_cells));
+#endif
     return inc_cells;
   }
 };
@@ -90,7 +90,6 @@ public:
   using BaseClass::m_cell_selector;
   using BaseClass::m_protect_boundaries;
   using BaseClass::m_visitor;
-  using BaseClass::s_inc_cells;
   using BaseClass::get_incident_cells;
 
   // Import types from base class
@@ -98,7 +97,6 @@ public:
   using typename BaseClass::Cell_handle;
   using typename BaseClass::Vertex_handle;
   using typename BaseClass::Edge;
-
 
 public:
   InternalEdgeFlipOperation(C3t3& c3t3,
@@ -112,9 +110,6 @@ public:
     // Reset cache validity for all cells (matches original flip_edges.h line 1925)
     for (auto c : c3t3.cells_in_complex())
       c->reset_cache_validity();
-    
-    // Clear the shared inc_cells to match original behavior where inc_cells starts empty
-    s_inc_cells.clear();
   }
 
   virtual bool should_process_element(const ElementType& e, const C3t3& c3t3) const override {
@@ -123,39 +118,100 @@ public:
   }
 
   std::vector<ElementType> get_element_source(const C3t3& c3t3) const override {
-    // Perform global preprocessing (cache validity reset, inc_cells clear)
+    // Perform global preprocessing (cache validity reset)
     perform_global_preprocessing(c3t3);
     
     // Collect internal vertex pairs fresh each time
     std::vector<ElementType> internal_vertex_pairs;
     get_internal_edges(c3t3, m_cell_selector, std::back_inserter(internal_vertex_pairs));
-    
     // Return container by value
     return internal_vertex_pairs;
   }
 
   bool can_apply_operation(const ElementType& e, const C3t3& c3t3) const override {
-    // Detailed validation will be done in the actual implementation
-    return true;
+    const auto& vp = e;
+    auto& tr = c3t3.triangulation();
+
+    Cell_handle ch;
+    int i0, i1;
+    auto inc_vh1 = get_incident_cells(vp.first, c3t3);
+    if(is_edge_uv(vp.first, vp.second, inc_vh1, ch, i0, i1)) {
+      return true;
+    }
+    return false;
   }
 
   Lock_zone get_lock_zone(const ElementType& e, const C3t3& c3t3) const override {
     Lock_zone zone;
-    
-    // For vertex pairs, we need to find the corresponding edge to get incident cells
-    Cell_handle cell;
+    const auto& vp = e;
+    auto& tr = c3t3.triangulation();
+
+    Cell_handle ch;
     int i0, i1;
-    if (is_edge_uv(e.first, e.second, get_incident_cells(e.first, c3t3), cell, i0, i1)) {
-      Edge edge(cell, i0, i1);
-      auto circ = c3t3.triangulation().incident_cells(edge);
-      auto done = circ;
-      do {
-        if (!c3t3.triangulation().is_infinite(circ)) {
-          zone.push_back(circ);
+    // Get incident cells for first vertex only (for is_edge_uv)
+    auto inc_vh1 = get_incident_cells(vp.first, c3t3);
+    //if (is_edge_uv(vp.first, vp.second, inc_vh1, ch, i0, i1)) {
+//     auto inc_vh2 = get_incident_cells(vp.second, c3t3);
+//       // 1. Get incident facets for both edge vertices (threadsafe)
+//       std::vector<typename Tr::Facet> facets_v0, facets_v1;
+// #ifdef USE_THREADSAFE_INCIDENT_CELLS
+//       tr.incident_facets_threadsafe(vp.first, std::back_inserter(facets_v0));
+//       tr.incident_facets_threadsafe(vp.second, std::back_inserter(facets_v1));
+// #else
+//       tr.incident_facets(vp.first, std::back_inserter(facets_v0));
+//       tr.incident_facets(vp.second, std::back_inserter(facets_v1));
+// #endif
+
+//       // 2. Find the union of the two sets (allow duplicates since a facet hash was not found)
+//       std::vector<typename Tr::Facet> facet_union = facets_v0;
+//       facet_union.insert(facet_union.end(), facets_v1.begin(), facets_v1.end());
+
+//       // 3. For each facet containing the edge, get the third vertex
+//       std::unordered_set<typename Tr::Vertex_handle> third_vertices;
+//       for (const auto& facet : facet_union) {
+//         // A facet is (Cell_handle, int) where int is the index of the vertex opposite the facet
+//         // The facet's three vertices are those of the cell except facet.second
+//         std::array<typename Tr::Vertex_handle, 3> facet_vertices;
+//         int idx = 0;
+//         for (int j = 0; j < 4; ++j) {
+//           if (j != facet.second) {
+//             facet_vertices[idx++] = facet.first->vertex(j);
+//           }
+//         }
+//         // Check if this facet contains both edge vertices
+//         bool has_first = false, has_second = false;
+//         int third_idx = -1;
+//         for (int k = 0; k < 3; ++k) {
+//           if (facet_vertices[k] == vp.first) has_first = true;
+//           else if (facet_vertices[k] == vp.second) has_second = true;
+//           else third_idx = k;
+//         }
+//         if (has_first && has_second && third_idx != -1) {
+//           third_vertices.insert(facet_vertices[third_idx]);
+//         }
+//       }
+
+//       // 4. For each found vertex, add all incident cells to the lock zone
+//       std::unordered_set<typename Tr::Cell_handle> lock_cells;
+//       for (const auto& v : third_vertices) {
+//         auto inc_cells = get_incident_cells(v, c3t3);
+//         lock_cells.insert(inc_cells.begin(), inc_cells.end());
+//       }
+
+    //   for (const auto& c : lock_cells) {
+		// if(c->subdomain_index() != Tr::Cell::Subdomain_index())
+		// 	zone.push_back(c);
+    //   }
+      for (const auto& c :inc_vh1) {
+        if(!tr.is_infinite(c)){
+        //if(c->subdomain_index() != Tr::Cell::Subdomain_index()){
+          zone.push_back(c);
         }
-      } while (++circ != done);
-    }
-    
+      }
+    //}
+    return zone;
+  }
+
     return zone;
   }
 
@@ -168,22 +224,18 @@ public:
   }
 
   bool execute_pre_operation(const ElementType& e, C3t3& c3t3) override {
-    
     return true;
   } 
 
   bool execute_post_operation(const ElementType& e, C3t3& c3t3) override {
-    // Element-specific cleanup if needed
     return true;
   }
 
 private:
   bool execute_internal_edge_flip(const ElementType& e, C3t3& c3t3) {
-    // For internal edges, e is a vertex pair
     const auto& vp = e;
     
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
-    // DEBUG: Log edge processing order with edge info (first 5000 only)
     static thread_local std::size_t internal_edge_counter = 0;
     static thread_local bool show_debug = true;
     
@@ -191,34 +243,36 @@ private:
       std::cout << "REFACTORED: Processing internal edge #" << internal_edge_counter << " from vertex " << vp.first->point() << " to vertex " << vp.second->point() << std::endl;
     }
     
-    if (internal_edge_counter == 4999) show_debug = false; // Stop after first 5000 edges (0-4999)
+    if (internal_edge_counter == 4999) show_debug = false;
     internal_edge_counter++;
 #endif
     
     auto& tr = c3t3.triangulation();
     
-    // Use shared inc_cells cache (matches original flip_all_edges behavior)
-    boost::container::small_vector<Cell_handle, 64>& o_inc_vh = s_inc_cells[vp.first];
-    if (o_inc_vh.empty())
-      tr.incident_cells(vp.first, std::back_inserter(o_inc_vh));
+    // Get incident cells for first vertex only
+    auto inc_vh = get_incident_cells(vp.first, c3t3);
     
     Cell_handle ch;
     int i0, i1;
-    if (is_edge_uv(vp.first, vp.second, o_inc_vh, ch, i0, i1))
+    if (is_edge_uv(vp.first, vp.second, inc_vh, ch, i0, i1))
     {
       Edge edge_to_flip(ch, i0, i1);
       
+      // Create a map starting with the cells we already computed
+      std::unordered_map<Vertex_handle, boost::container::small_vector<Cell_handle, 64>> temp_inc_cells; //TODO: Could this be cached?
+      temp_inc_cells[vp.first] = inc_vh;
+      
       Sliver_removal_result res = find_best_flip(edge_to_flip, c3t3, MIN_ANGLE_BASED, 
-                                                 s_inc_cells, m_cell_selector, m_visitor);
+                                               temp_inc_cells, m_cell_selector, m_visitor);
       
       if (res == INVALID_CELL || res == INVALID_VERTEX || res == INVALID_ORIENTATION)
       {
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
-              if (show_debug && internal_edge_counter-1 < 5000) {
-        std::cout << "REFACTORED: Edge flip problem for edge #" << internal_edge_counter-1 << " from vertex " << vp.first->point() << " to vertex " << vp.second->point() << std::endl;
-      }
+        if (show_debug && internal_edge_counter-1 < 5000) {
+          std::cout << "REFACTORED: Edge flip problem for edge #" << internal_edge_counter-1 << " from vertex " << vp.first->point() << " to vertex " << vp.second->point() << std::endl;
+        }
 #endif
-        return false; // Flip problem
+        return false;
       }
       
       if (res == VALID_FLIP) {
@@ -232,7 +286,7 @@ private:
       return (res == VALID_FLIP);
     }
     
-    return false; // Edge not found
+    return false;
   }
 };
 
@@ -258,7 +312,7 @@ public:
   using BaseClass::m_cell_selector;
   using BaseClass::m_protect_boundaries;
   using BaseClass::m_visitor;
-  using BaseClass::s_inc_cells;
+  using BaseClass::get_incident_cells;
 
   // Import types from base class
   using typename BaseClass::Tr;
@@ -325,21 +379,7 @@ public:
 
   Lock_zone get_lock_zone(const ElementType& e, const C3t3& c3t3) const override {
     Lock_zone zone;
-    
-    // For vertex pairs, we need to find the corresponding edge to get incident cells
-    Cell_handle cell;
-    int i0, i1;
-    if (is_edge_uv(e.first, e.second, get_incident_cells(e.first, c3t3), cell, i0, i1)) {
-      Edge edge(cell, i0, i1);
-      auto circ = c3t3.triangulation().incident_cells(edge);
-      auto done = circ;
-      do {
-        if (!c3t3.triangulation().is_infinite(circ)) {
-          zone.push_back(circ);
-        }
-      } while (++circ != done);
-    }
-    
+    //Leave this function empty for now
     return zone;
   }
 
@@ -384,9 +424,7 @@ private:
     auto& tr = c3t3.triangulation();
     
     // Use shared inc_cells cache (matches original behavior)
-    boost::container::small_vector<Cell_handle, 64>& inc_vh0 = s_inc_cells[vh0];
-    if (inc_vh0.empty())
-      tr.incident_cells(vh0, std::back_inserter(inc_vh0));
+    boost::container::small_vector<Cell_handle, 64>& inc_vh0 = get_incident_cells(vh0, c3t3);
     
     Cell_handle c;
     int i, j;
@@ -429,21 +467,25 @@ private:
       
       // Calculate cost before flip
       int initial_cost = (v0 - m0)*(v0 - m0)
-                       + (v1 - m1)*(v1 - m1)
-                       + (v2 - m2)*(v2 - m2)
-                       + (v3 - m3)*(v3 - m3);
+                      + (v1 - m1)*(v1 - m1)
+                      + (v2 - m2)*(v2 - m2)
+                      + (v3 - m3)*(v3 - m3);
       
       // Calculate cost after flip (vh0,vh1 decrease by 1, vh2,vh3 increase by 1)
       v0--; v1--; v2++; v3++;
       int final_cost = (v0 - m0)*(v0 - m0)
-                     + (v1 - m1)*(v1 - m1)
-                     + (v2 - m2)*(v2 - m2)
-                     + (v3 - m3)*(v3 - m3);
+                    + (v1 - m1)*(v1 - m1)
+                    + (v2 - m2)*(v2 - m2)
+                    + (v3 - m3)*(v3 - m3);
       
       if (initial_cost > final_cost) {
-        // Perform the flip (using shared inc_cells for consistency with original)
+        // Create a map starting with the cells we already computed
+        std::unordered_map<Vertex_handle, boost::container::small_vector<Cell_handle, 64>> temp_inc_cells;
+        temp_inc_cells[vh0] = inc_vh0;
+        
+        // Perform the flip using temporary inc_cells map
         Sliver_removal_result db = flip_on_surface(c3t3, edge_to_flip, vh2, vh3,
-                                                   s_inc_cells, MIN_ANGLE_BASED, m_visitor);
+                                                 temp_inc_cells, MIN_ANGLE_BASED, m_visitor);
         
         if (db == VALID_FLIP) {
           // Add new facets to complex
@@ -476,16 +518,7 @@ private:
   }
 };
 
-// Static member definitions for EdgeFlipOperationBase (shared)
-template<typename C3t3, typename CellSelector, typename Visitor>
-thread_local std::unordered_map<typename C3t3::Vertex_handle, boost::container::small_vector<typename C3t3::Cell_handle, 64>> 
-EdgeFlipOperationBase<C3t3, CellSelector, Visitor>::s_inc_cells;
-
-// Static member definitions for InternalEdgeFlipOperation
-// (No longer needed since we removed std::once_flag)
-
-// Static member definitions for BoundaryEdgeFlipOperation  
-// (No longer needed since we removed std::once_flag)
+// Static member definitions for BoundaryEdgeFlipOperation
 
 template<typename C3t3, typename CellSelector, typename Visitor>
 thread_local boost::unordered_map<typename C3t3::Vertex_handle, 
