@@ -16,6 +16,7 @@
 #include <CGAL/number_type_basic.h>
 #include <CGAL/Gmpz.h>
 #include <CGAL/Gmp_coercion_traits.h>
+#include <CGAL/Fraction_traits.h>
 
 namespace CGAL {
 
@@ -63,6 +64,37 @@ template <> class Algebraic_structure_traits< Gmpq >
 
 };
 
+/*! \ingroup NiX_Fraction_traits_spec
+ *  \brief Specialization of Fraction_traits for Gmpq
+ */
+template <>
+class Fraction_traits< Gmpq > {
+public:
+    typedef Gmpq Type;
+    typedef ::CGAL::Tag_true Is_fraction;
+    typedef Gmpz Numerator_type;
+    typedef Gmpz Denominator_type;
+    typedef Algebraic_structure_traits< Gmpz >::Gcd Common_factor;
+    class Decompose {
+    public:
+        typedef Gmpq first_argument_type;
+        typedef Gmpz& second_argument_type;
+        typedef Gmpz& third_argument_type;
+        void operator () (const Gmpq& rat, Gmpz& num,Gmpz& den) {
+            num = rat.numerator();
+            den = rat.denominator();
+        }
+    };
+    class Compose {
+    public:
+        typedef Gmpz first_argument_type;
+        typedef Gmpz second_argument_type;
+        typedef Gmpq result_type;
+        Gmpq operator () (const Gmpz& num,const Gmpz& den) {
+            return Gmpq(num, den);
+        }
+    };
+};
 // RET for Gmpq-class
 
 template <> class Real_embeddable_traits< Gmpq >
@@ -98,6 +130,23 @@ template <> class Real_embeddable_traits< Gmpq >
       public:
         double operator()( const Type& x ) const {
           return x.to_double();
+        }
+    };
+
+
+    class Ceil
+      : public CGAL::cpp98::unary_function< Type, double > {
+      public:
+        double operator()( const Type& x ) const {
+          // If NT is a fraction, the ceil value is the result of the Euclidian division of the numerator and the denominator.
+          using FT = Fraction_traits<Type>;
+          typename FT::Numerator_type num, r, e;
+          typename FT::Denominator_type denom;
+          typename FT::Decompose()(x,num,denom);
+          div_mod(num, denom, r, e);
+          if((r<0) && e!=0) //If the result is negative, the ceil value is one below
+            return to_double(r-1);
+          return to_double(r);
         }
     };
 
@@ -138,37 +187,7 @@ template <> class Real_embeddable_traits< Gmpq >
     };
 };
 
-/*! \ingroup NiX_Fraction_traits_spec
- *  \brief Specialization of Fraction_traits for Gmpq
- */
-template <>
-class Fraction_traits< Gmpq > {
-public:
-    typedef Gmpq Type;
-    typedef ::CGAL::Tag_true Is_fraction;
-    typedef Gmpz Numerator_type;
-    typedef Gmpz Denominator_type;
-    typedef Algebraic_structure_traits< Gmpz >::Gcd Common_factor;
-    class Decompose {
-    public:
-        typedef Gmpq first_argument_type;
-        typedef Gmpz& second_argument_type;
-        typedef Gmpz& third_argument_type;
-        void operator () (const Gmpq& rat, Gmpz& num,Gmpz& den) {
-            num = rat.numerator();
-            den = rat.denominator();
-        }
-    };
-    class Compose {
-    public:
-        typedef Gmpz first_argument_type;
-        typedef Gmpz second_argument_type;
-        typedef Gmpq result_type;
-        Gmpq operator () (const Gmpz& num,const Gmpz& den) {
-            return Gmpq(num, den);
-        }
-    };
-};
+
 
 } //namespace CGAL
 
