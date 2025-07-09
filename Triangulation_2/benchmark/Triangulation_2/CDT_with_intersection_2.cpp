@@ -12,6 +12,7 @@
 
 #include <cassert>
 #include <iostream>
+#include <random>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
@@ -59,8 +60,8 @@ int main(int argc,char** argv )
     vertex_handles.push_back(vit);
   }
 
-  boost::rand48 random;
-  boost::random_number_generator<boost::rand48> rng(random);
+  std::mt19937 random;
+  boost::random_number_generator<std::mt19937> rng(random);
   std::random_shuffle(vertex_handles.begin(),vertex_handles.end(),rng);
 
   time.start();
