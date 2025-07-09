@@ -1,8 +1,10 @@
 //#define CGAL_REFACTORED_TETRAHEDRAL_REMESHING_DEBUG
 #define CGAL_TETRAHEDRAL_REMESHING_USE_ELEMENTARY
 #define CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-//#define USE_THREADSAFE_INCIDENT_CELLS
-//#define ENABLE_EDGE_FLIP_DEBUG
+#define USE_THREADSAFE_INCIDENT_CELLS
+#define ENABLE_EDGE_FLIP_DEBUG
+#define CGAL_CONCURRENT_TETRAHEDRAL_REMESHING
+
 #include "benchmark_tetrahedral_remeshing_common.h"
 #include "mesh_quality.h"
 #include <CGAL/Tetrahedral_remeshing/internal/elementary_remesh_impl.h>
