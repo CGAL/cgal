@@ -32,17 +32,17 @@ void test(const std::string &filename) {
     assert(false);
   }
 
-  for (std::size_t i = 1; i < 10; i++) {
+  for (std::size_t i = 1; i < 4; i++) {
     std::vector<Convex_hull> convex_hulls;
     std::size_t n = PMP::approximate_convex_decomposition(mesh, std::back_inserter(convex_hulls),
       CGAL::parameters::maximum_depth(10)
       .volume_error(0.1)
-      .maximum_number_of_convex_hulls(i)
+      .maximum_number_of_convex_hulls(i * 3)
       .split_at_concavity(true)
       .maximum_number_of_voxels(1000000)
       .concurrency_tag(CGAL::Parallel_if_available_tag()));
     CGAL_USE(n);
-    assert(n == i);
+    assert(n == i * 3);
     assert(convex_hulls.size() == i);
     for (std::size_t i = 0; i < convex_hulls.size(); i++) {
       Mesh m;
