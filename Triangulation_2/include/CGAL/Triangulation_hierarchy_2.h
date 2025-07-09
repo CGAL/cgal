@@ -769,7 +769,7 @@ int
 Triangulation_hierarchy_2<Tr_>::
 random_level()
 {
-  boost::geometric_distribution<> proba(1.0/ratio);
+  boost::geometric_distribution<> proba(1.0/double(ratio));
   boost::variate_generator<boost::rand48&, boost::geometric_distribution<> > die(random, proba);
 
   return (std::min)(die(), (int)maxlevel)-1;
