@@ -149,6 +149,19 @@ public:
 
     Cell_handle ch;
     int i0, i1;
+
+#if 1
+    auto inc_vh1 = get_incident_cells(vp.first, c3t3);
+    auto inc_vh2 = get_incident_cells(vp.second, c3t3);
+
+    // grab the union of the incident cells of both vertices
+    std::unordered_set<Cell_handle> inc_cells_set(inc_vh1.begin(), inc_vh1.end());
+    inc_cells_set.insert(inc_vh2.begin(), inc_vh2.end());
+    // Add all incident cells to the lock zone
+
+    zone.insert(zone.end(), inc_cells_set.begin(), inc_cells_set.end());
+    return zone;
+#else
     // Get incident cells for first vertex only (for is_edge_uv)
     auto inc_vh1 = get_incident_cells(vp.first, c3t3);
     //if (is_edge_uv(vp.first, vp.second, inc_vh1, ch, i0, i1)) {
@@ -211,6 +224,7 @@ public:
       }
     //}
     return zone;
+#endif
   }
 
   bool execute_operation(const ElementType& e, C3t3& c3t3) override {
