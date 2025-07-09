@@ -42,6 +42,8 @@ using Constraints_pmap = CGAL::Boolean_property_map<Constraints_set>;
 int main(int argc, char* argv[])
 {
   std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/mpi.off");
+  double target_edge_length = (argc > 2) ? std::stod(argv[2]) : 1.0;
+  unsigned int iterations = (argc > 3) ? std::stoi(argv[3]) : 3;
 
   CGAL::Surface_mesh<K::Point_3> mesh;
   if(!CGAL::IO::read_polygon_mesh(filename, mesh))
@@ -62,17 +64,16 @@ int main(int argc, char* argv[])
   namespace Tet_remesh = CGAL::Tetrahedral_remeshing;
   Tr tr = Tet_remesh::get_remeshing_triangulation(std::move(ccdt),
                                                   np::edge_is_constrained_map(constraints_pmap));
-  std::cout << "Number of vertices in tr: " << tr.number_of_vertices() << std::endl;
+  std::cout << "There are " << tr.number_of_vertices() << " vertices in the constrained triangulation" << std::endl;
 
   CGAL::tetrahedral_isotropic_remeshing(tr,
-                                        1., // target edge length
-                                        np::number_of_iterations(3)
-                                        .edge_is_constrained_map(constraints_pmap));
+                                        target_edge_length,
+                                        np::number_of_iterations(iterations)
+                                           .edge_is_constrained_map(constraints_pmap));
 
-  std::cout << "Number of vertices in tr: "
-            << tr.number_of_vertices() << std::endl;
+  std::cout << "There are " << tr.number_of_vertices() << " vertices after remeshing" << std::endl;
 
-  std::ofstream ofs("tr.mesh");
+  std::ofstream ofs("remeshed.mesh");
   CGAL::IO::write_MEDIT(ofs, tr);
 
   return EXIT_SUCCESS;
