@@ -266,8 +266,8 @@ public:
     std::atomic<bool> success(false);
     
     // Batch size following Mesh_3 approach - creates fewer, larger tasks instead of one task per element
-    const size_t BATCH_SIZE = elements.size(); // Configurable batch size for this operation type
-    
+    const size_t BATCH_SIZE = 5; // elements.size(); // Configurable batch size for this operation type
+
     tbb::task_group group;
     
     // Create batches of work following Mesh_3 approach
