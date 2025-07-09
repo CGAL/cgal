@@ -1669,7 +1669,7 @@ OutputIterator
 finite_adjacent_vertices(Vertex_handle v, OutputIterator vertices) const;
 
 /*!
-Returns the degree of a vertex, that is, the number of incident vertices.
+Returns the degree of a `v`, that is, the number of incident vertices.
 The infinite vertex is counted.
 \pre `v != Vertex_handle()`, `t.is_vertex(v)`.
 */
