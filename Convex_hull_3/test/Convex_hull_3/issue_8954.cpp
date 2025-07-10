@@ -10,7 +10,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_3 Point_3;
 
 
-int main(int argc, char* argv[]) {
+int main() {
   std::vector<Point_3> points = {
 {-7.71169150943396353 ,-19.809308490566039, 10.0950745283018861},
 {-7.90879905660377602, -19.809308490566039, 9.8979669811320754},
