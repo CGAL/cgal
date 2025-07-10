@@ -1,5 +1,12 @@
 #include "window.h"
 
+#include <CGAL/Exact_rational.h>
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Circular_kernel_2.h>
+#include <CGAL/Algebraic_kernel_for_circles_2_2.h>
+#include <CGAL/Hyperbolic_Delaunay_triangulation_CK_traits_2.h>
+#include <CGAL/Hyperbolic_surface_traits_2.h>
+
 #include <CGAL/Delaunay_triangulation_on_hyperbolic_surface_2.h>
 #include <CGAL/Hyperbolic_Dirichlet_domain_2.h>
 #include <CGAL/Hyperbolic_fundamental_domain_factory_2.h>
@@ -7,14 +14,6 @@
 #include <iostream>
 #include <fstream>
 #include <CGAL/Triangulation_on_hyperbolic_surface_2_IO.h>
-
-#include <CGAL/Simple_cartesian.h>
-#include <CGAL/Exact_rational.h>
-
-#include <CGAL/Algebraic_kernel_for_circles_2_2.h>
-#include <CGAL/Circular_kernel_2.h>
-#include <CGAL/Circular_kernel_2/Intersection_traits.h>
-#include <CGAL/Hyperbolic_Delaunay_triangulation_CK_traits_2.h>
 
 typedef CGAL::Exact_rational		NumberType;
 typedef CGAL::Circular_kernel_2<CGAL::Simple_cartesian<NumberType>,CGAL::Algebraic_kernel_for_circles_2_2<NumberType>> Kernel;
@@ -51,7 +50,7 @@ int main(int argc, char **argv)
 	// So that if you run the demo on a same surface but with different values of epsilon,
 	// the drawing will be centered at the same vertex and it will look similar.
 	Domain domain;
-	std::ifstream("/home/clanuel/Documents/camille/cgal_camille/benchmarks/input_domains/FM-genus-3.3.txt") >> domain;
+	std::ifstream("/home/clanuel/Documents/camille/cgal_camille/benchmarks/input_domains/FM-genus-7.txt") >> domain;
 	Delaunay_triangulation dt = Delaunay_triangulation(domain);
 	Point v0 = dt.anchor().vertices[0];
 

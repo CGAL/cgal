@@ -1,20 +1,18 @@
 #include "window.h"
 
+#include <CGAL/Exact_rational.h>
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Circular_kernel_2.h>
+#include <CGAL/Algebraic_kernel_for_circles_2_2.h>
+#include <CGAL/Hyperbolic_Delaunay_triangulation_CK_traits_2.h>
+#include <CGAL/Hyperbolic_surface_traits_2.h>
+
 #include <CGAL/Delaunay_triangulation_on_hyperbolic_surface_2.h>
-#include <CGAL/Hyperbolic_Dirichlet_domain_2.h>
 #include <CGAL/Hyperbolic_fundamental_domain_factory_2.h>
 
 #include <iostream>
 #include <fstream>
 #include <CGAL/Triangulation_on_hyperbolic_surface_2_IO.h>
-
-#include <CGAL/Simple_cartesian.h>
-#include <CGAL/Exact_rational.h>
-
-#include <CGAL/Algebraic_kernel_for_circles_2_2.h>
-#include <CGAL/Circular_kernel_2.h>
-#include <CGAL/Circular_kernel_2/Intersection_traits.h>
-#include <CGAL/Hyperbolic_Delaunay_triangulation_CK_traits_2.h>
 
 #include <CGAL/Timer.h>
 
@@ -50,13 +48,17 @@ int main(int argc, char *argv[])
 	// 2. GET A VERTEX
 	// So that if you run the demo on a same surface but with different values of epsilon,
 	// the drawing will be centered at the same vertex and it will look similar.
-	// Domain domain;
-	// std::ifstream("/home/clanuel/Documents/camille/cgal_camille/benchmarks/input_domains/FMgenus5.txt") >> domain;
-	// Delaunay_triangulation dt = Delaunay_triangulation(domain);
-	Base t;
-	std::ifstream("/home/clanuel/Documents/camille/cgal_camille/benchmarks/input_triangulations/dt_thin_surface.txt") >> t;
-	Delaunay_triangulation dt = Delaunay_triangulation(t);
+	Domain domain;
+	std::ifstream("/home/clanuel/Documents/camille/cgal_camille/benchmarks/input_domains/FM-genus-7.txt") >> domain;
+	Delaunay_triangulation dt = Delaunay_triangulation(domain);
+	// Base t;
+	// std::ifstream("/home/clanuel/Documents/camille/cgal_camille/benchmarks/input_triangulations/dt_thin_surface.txt") >> t;
+	// Delaunay_triangulation dt = Delaunay_triangulation(t);
 	Point v0 = dt.anchor().vertices[0];
+
+	for (int i=0; i< domain.size(); ++i) {
+		std::cout << CGAL::to_double(domain.vertex(i).x()) << std::endl;
+	}
 
 	// 3. COMPUTE EPSILON-NET and display useful info
 	double eps = 0.1;

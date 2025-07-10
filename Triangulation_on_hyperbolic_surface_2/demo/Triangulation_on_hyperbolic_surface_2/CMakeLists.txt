@@ -40,4 +40,7 @@ target_link_libraries(epsilon_net PRIVATE CGAL::CGAL CGAL::CGAL_Qt6 Qt6::Widgets
 add_executable( dirichlet dirichlet.cpp window.cpp ${UIS})
 target_link_libraries(dirichlet PRIVATE CGAL::CGAL CGAL::CGAL_Qt6 Qt6::Widgets Qt6::Svg)
 
+add_executable( benchs benchs.cpp window.cpp ${UIS})
+target_link_libraries(benchs PRIVATE CGAL::CGAL CGAL::CGAL_Qt6 Qt6::Widgets Qt6::Svg)
+
 set(CMAKE_BUILD_TYPE "Release")

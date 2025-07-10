@@ -26,7 +26,6 @@
 #include <CGAL/Exact_rational.h>
 #include <CGAL/Simple_cartesian.h>
 
-#include <CGAL/Hyperbolic_Delaunay_triangulation_traits_2.h>
 #include <CGAL/Hyperbolic_Delaunay_triangulation_CK_traits_2.h>
 #include <CGAL/Hyperbolic_surface_traits_2.h>
 #include <CGAL/Triangulation_on_hyperbolic_surface_2.h>
@@ -41,7 +40,7 @@ typedef CGAL::Hyperbolic_surface_traits_2<ParentTraits>                         
 typedef Traits::Hyperbolic_point_2                                                Point;
 typedef typename Traits::Hyperbolic_Voronoi_point_2                               Voronoi_point;
 typedef CGAL::Hyperbolic_fundamental_domain_2<Traits>                             Domain;
-typedef CGAL::Triangulation_on_hyperbolic_surface_2<Traits>   Triangulation;
+typedef CGAL::Triangulation_on_hyperbolic_surface_2<Traits>                       Triangulation;
 typedef CGAL::Delaunay_triangulation_on_hyperbolic_surface_2<Traits>              Delaunay_triangulation;
 typedef typename Delaunay_triangulation::Anchor                                   Anchor;
 
