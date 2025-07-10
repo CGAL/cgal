@@ -70,7 +70,7 @@ public:
   virtual bool should_process_element(const ElementType& e, const C3t3& c3t3) const = 0;
   virtual std::vector<ElementType> get_element_source(const C3t3& c3t3) const = 0;
   virtual bool can_apply_operation(const ElementType& e, const C3t3& c3t3) const = 0;
-  virtual Lock_zone get_lock_zone(const ElementType& e, const C3t3& c3t3) const = 0;
+  virtual bool lock_zone(const ElementType& e, const C3t3& c3t3) const = 0;
   virtual bool execute_operation(const ElementType& e, C3t3& c3t3) = 0;
   virtual std::string operation_name() const = 0;
 
@@ -181,7 +181,9 @@ public:
     Operation& op,
     C3t3& c3t3,
     LockManager<typename C3t3::Triangulation, Cell_handle>& lock_manager) override {
+#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
     std::cout << "Executing operation sequentially: " << op.operation_name() << std::endl;
+    #endif
 
     bool success = false;
 
@@ -189,8 +191,7 @@ public:
       if (!op.can_apply_operation(element, c3t3))
         continue;
 
-      auto lock_zone = op.get_lock_zone(element, c3t3);
-      if (lock_manager.try_lock_zone(lock_zone)) {
+      if (op.lock_zone(element,c3t3)) {
         // Execute pre-operation phase for this element
         op.execute_pre_operation(element, c3t3);
 
@@ -257,7 +258,9 @@ public:
     Operation& op,
     C3t3& c3t3,
     LockManager<typename C3t3::Triangulation, Cell_handle>& lock_manager) override {
+#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
     std::cout << "Executing operation in parallel: " << op.operation_name() << std::endl;
+    #endif
 
     if (elements.empty()) {
       return false;
@@ -266,7 +269,7 @@ public:
     std::atomic<bool> success(false);
 
     // Batch size following Mesh_3 approach - creates fewer, larger tasks instead of one task per element
-    const size_t BATCH_SIZE = 5; // elements.size(); // Configurable batch size for this operation type
+    const size_t BATCH_SIZE =  elements.size()/3; // Configurable batch size for this operation type
 
     tbb::task_group group;
 
@@ -283,29 +286,17 @@ public:
         // Process entire batch in one task
         for (size_t i = start; i < end; ++i) {
           const auto& element = elements[i];
-          auto lock_zone = op.get_lock_zone(element, c3t3);
-          if (lock_manager.try_lock_zone(lock_zone)) {
-            if(!op.can_apply_operation(element, c3t3)) {
+          bool affected_zone_locked = op.lock_zone(element, c3t3);
+          if (affected_zone_locked) {
+              if(!op.can_apply_operation(element, c3t3)) {
 			  lock_manager.unlock_all_thread_elements();
               continue;
             }
             // Execute pre-operation phase for this element
             op.execute_pre_operation(element, c3t3);
 
-#ifdef ENABLE_EDGE_FLIP_DEBUG
-            //debug::dump_c3t3(c3t3, "before_flip");
-            debug::dump_triangulation_cells(c3t3.triangulation(), "before_flip.mesh");
-            debug::dump_edge(element, "edge_to_flip.polylines.txt");
-		    debug::dump_cells_polylines(lock_zone, "lock_zone.polylines.txt");
-#endif
             if(op.execute_operation(element, c3t3)) {
               local_success = true;
-#ifdef ENABLE_EDGE_FLIP_DEBUG
-              debug::dump_c3t3(c3t3, "after_flip");
-            }
-    else {
-             std::cout << "Operation failed for element: " << &element << std::endl;
-#endif
            }
 
             op.execute_post_operation(element, c3t3);

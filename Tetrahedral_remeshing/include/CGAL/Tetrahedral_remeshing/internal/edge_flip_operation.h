@@ -142,89 +142,20 @@ public:
     return false;
   }
 
-  Lock_zone get_lock_zone(const ElementType& e, const C3t3& c3t3) const override {
-    Lock_zone zone;
+  bool lock_zone(const ElementType& e, const C3t3& c3t3) const override {
     const auto& vp = e;
     auto& tr = c3t3.triangulation();
 
-    Cell_handle ch;
-    int i0, i1;
-
-#if 1
-    auto inc_vh1 = get_incident_cells(vp.first, c3t3);
-    auto inc_vh2 = get_incident_cells(vp.second, c3t3);
-
-    // grab the union of the incident cells of both vertices
-    std::unordered_set<Cell_handle> inc_cells_set(inc_vh1.begin(), inc_vh1.end());
-    inc_cells_set.insert(inc_vh2.begin(), inc_vh2.end());
-    // Add all incident cells to the lock zone
-
-    zone.insert(zone.end(), inc_cells_set.begin(), inc_cells_set.end());
-    return zone;
-#else
-    // Get incident cells for first vertex only (for is_edge_uv)
-    auto inc_vh1 = get_incident_cells(vp.first, c3t3);
-    //if (is_edge_uv(vp.first, vp.second, inc_vh1, ch, i0, i1)) {
-//     auto inc_vh2 = get_incident_cells(vp.second, c3t3);
-//       // 1. Get incident facets for both edge vertices (threadsafe)
-//       std::vector<typename Tr::Facet> facets_v0, facets_v1;
-// #ifdef USE_THREADSAFE_INCIDENT_CELLS
-//       tr.incident_facets_threadsafe(vp.first, std::back_inserter(facets_v0));
-//       tr.incident_facets_threadsafe(vp.second, std::back_inserter(facets_v1));
-// #else
-//       tr.incident_facets(vp.first, std::back_inserter(facets_v0));
-//       tr.incident_facets(vp.second, std::back_inserter(facets_v1));
-// #endif
-
-//       // 2. Find the union of the two sets (allow duplicates since a facet hash was not found)
-//       std::vector<typename Tr::Facet> facet_union = facets_v0;
-//       facet_union.insert(facet_union.end(), facets_v1.begin(), facets_v1.end());
-
-//       // 3. For each facet containing the edge, get the third vertex
-//       std::unordered_set<typename Tr::Vertex_handle> third_vertices;
-//       for (const auto& facet : facet_union) {
-//         // A facet is (Cell_handle, int) where int is the index of the vertex opposite the facet
-//         // The facet's three vertices are those of the cell except facet.second
-//         std::array<typename Tr::Vertex_handle, 3> facet_vertices;
-//         int idx = 0;
-//         for (int j = 0; j < 4; ++j) {
-//           if (j != facet.second) {
-//             facet_vertices[idx++] = facet.first->vertex(j);
-//           }
-//         }
-//         // Check if this facet contains both edge vertices
-//         bool has_first = false, has_second = false;
-//         int third_idx = -1;
-//         for (int k = 0; k < 3; ++k) {
-//           if (facet_vertices[k] == vp.first) has_first = true;
-//           else if (facet_vertices[k] == vp.second) has_second = true;
-//           else third_idx = k;
-//         }
-//         if (has_first && has_second && third_idx != -1) {
-//           third_vertices.insert(facet_vertices[third_idx]);
-//         }
-//       }
-
-//       // 4. For each found vertex, add all incident cells to the lock zone
-//       std::unordered_set<typename Tr::Cell_handle> lock_cells;
-//       for (const auto& v : third_vertices) {
-//         auto inc_cells = get_incident_cells(v, c3t3);
-//         lock_cells.insert(inc_cells.begin(), inc_cells.end());
-//       }
-
-    //   for (const auto& c : lock_cells) {
-		// if(c->subdomain_index() != Tr::Cell::Subdomain_index())
-		// 	zone.push_back(c);
-    //   }
-      for (const auto& c :inc_vh1) {
-        if(!tr.is_infinite(c)){
-        //if(c->subdomain_index() != Tr::Cell::Subdomain_index()){
-          zone.push_back(c);
-        }
-      }
-    //}
-    return zone;
-#endif
+    // TODO: We are locking more cells than necessary here. We should only lock the cells that are actually involved in
+    // the flip. Mael: "extract from that circulator the way it's moving through the triangulation, but insert locks within that circulation, the same way locks have been introduced in incident_cells(vertex_handle) to create the version try_lock_and_get_incident_cells.for the circulator, you want to look at the file Triangulation_ds_cell_circulator_3.h"
+    //We should probably only lock the cells incident to the edge.
+    std::vector<Cell_handle> inc_vh1, inc_vh2;
+    // Lock all incident cells to the edge's vertices
+    if(!tr.try_lock_and_get_incident_cells(vp.first, inc_vh1) ||  !tr.try_lock_and_get_incident_cells(vp.second, inc_vh2)) {
+      return false;
+    }
+    
+    return true;
   }
 
   bool execute_operation(const ElementType& e, C3t3& c3t3) override {
@@ -233,14 +164,6 @@ public:
 
   std::string operation_name() const override {
     return "Edge Flip (Internal Edges)";
-  }
-
-  bool execute_pre_operation(const ElementType& e, C3t3& c3t3) override {
-    return true;
-  }
-
-  bool execute_post_operation(const ElementType& e, C3t3& c3t3) override {
-    return true;
   }
 
 private:
@@ -401,10 +324,7 @@ public:
     return true;
   }
 
-  Lock_zone get_lock_zone(const ElementType& e, const C3t3& c3t3) const override {
-    Lock_zone zone;
-    //Leave this function empty for now
-    return zone;
+  bool lock_zone(const ElementType& e, const C3t3& c3t3) const override { return true;
   }
 
   bool execute_operation(const ElementType& e, C3t3& c3t3) override {
