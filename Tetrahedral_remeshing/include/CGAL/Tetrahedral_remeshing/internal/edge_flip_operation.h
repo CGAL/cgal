@@ -145,15 +145,24 @@ public:
   bool lock_zone(const ElementType& e, const C3t3& c3t3) const override {
     const auto& vp = e;
     auto& tr = c3t3.triangulation();
-
-    // TODO: We are locking more cells than necessary here. We should only lock the cells that are actually involved in
-    // the flip. Mael: "extract from that circulator the way it's moving through the triangulation, but insert locks within that circulation, the same way locks have been introduced in incident_cells(vertex_handle) to create the version try_lock_and_get_incident_cells.for the circulator, you want to look at the file Triangulation_ds_cell_circulator_3.h"
-    //We should probably only lock the cells incident to the edge.
-    std::vector<Cell_handle> inc_vh1, inc_vh2;
-    // Lock all incident cells to the edge's vertices
-    if(!tr.try_lock_and_get_incident_cells(vp.first, inc_vh1) ||  !tr.try_lock_and_get_incident_cells(vp.second, inc_vh2)) {
+    // We need to lock v individually first, to be sure v->cell() is valid
+    if(!tr.try_lock_vertex(vp.first) || !tr.try_lock_vertex(vp.second))
       return false;
-    }
+
+    Cell_handle ch;
+    int i0, i1;
+    boost::container::small_vector<Cell_handle, 64> inc_vh = get_incident_cells(vp.first, c3t3);
+    is_edge_uv(vp.first, vp.second, inc_vh, ch, i0, i1);
+      Edge edge_to_flip(ch, i0, i1);
+
+    C3t3::Triangulation::Cell_circulator ccirc(edge_to_flip);
+    C3t3::Triangulation::Cell_circulator cdone = ccirc;
+
+    do {
+      if(!tr.try_lock_cell(ccirc)) // LOCK
+        return false;
+      ++ccirc;
+    } while(ccirc != cdone);
     
     return true;
   }
@@ -258,20 +267,21 @@ public:
   using typename BaseClass::Surface_patch_index;
 
 private:
-  // Boundary-specific preprocessing data - recreated every call like original
+
+  //// Boundary-specific preprocessing data - recreated every call like original
   using BVV = boost::unordered_map<Vertex_handle,
                                    boost::unordered_map<Surface_patch_index, unsigned int>>;
-
+  static BVV s_boundary_vertices_valences;
   static BVV& get_static_boundary_vertices_valences() {
-    CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(BVV, s_boundary_vertices_valences);
+    //CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(BVV, s_boundary_vertices_valences);
     return s_boundary_vertices_valences;
   }
 
   using SSI = boost::unordered_map<Vertex_handle,
                                    std::unordered_set<typename C3t3::Subdomain_index>>;
-
+  static SSI s_vertices_subdomain_indices;
   static SSI& get_static_vertices_subdomain_indices() {
-    CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(SSI, s_vertices_subdomain_indices);
+    //CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(SSI, s_vertices_subdomain_indices);
     return s_vertices_subdomain_indices;
   }
 
@@ -285,13 +295,20 @@ public:
 
   void perform_global_preprocessing(const C3t3& c3t3) const {
     // Clear boundary data structures every time (like original flip_edges)
-    get_static_boundary_vertices_valences().clear();
-    get_static_vertices_subdomain_indices().clear();
+    auto& valences = get_static_boundary_vertices_valences();
+    size_t old_size_valences = valences.size();
+	//valences.clear();
+    //valences.reserve(old_size_valences); // Hint about expected size
+
+    auto& subdomain_indices = get_static_vertices_subdomain_indices();
+    size_t old_size_subdomain_indices =subdomain_indices.size();
+	//subdomain_indices.clear();
+    //subdomain_indices.reserve(old_size_subdomain_indices);
 
     // Collect boundary edges and compute vertices valences (needed for boundary flipping)
     std::vector<typename C3t3::Edge> boundary_edges; // We don't need to store this
     collectBoundaryEdgesAndComputeVerticesValences(c3t3, m_cell_selector, boundary_edges,
-                                                   get_static_boundary_vertices_valences(), get_static_vertices_subdomain_indices());
+                                                   valences, subdomain_indices);
 
   }
 
@@ -324,7 +341,56 @@ public:
     return true;
   }
 
-  bool lock_zone(const ElementType& e, const C3t3& c3t3) const override { return true;
+  bool lock_zone(const ElementType& e, const C3t3& c3t3) const override {
+  #if 1
+          const auto& vp = e;
+    auto& tr = c3t3.triangulation();
+    // We need to lock v individually first, to be sure v->cell() is valid
+    if(!tr.try_lock_vertex(vp.first) || !tr.try_lock_vertex(vp.second))
+      return false;
+
+    Cell_handle ch;
+    int i0, i1;
+    boost::container::small_vector<Cell_handle, 64> inc_vh = get_incident_cells(vp.first, c3t3);
+    is_edge_uv(vp.first, vp.second, inc_vh, ch, i0, i1);
+    Edge edge_to_flip(ch, i0, i1);
+
+    C3t3::Triangulation::Cell_circulator ccirc(edge_to_flip);
+    C3t3::Triangulation::Cell_circulator cdone = ccirc;
+
+    do {
+      if(!tr.try_lock_cell(ccirc)) // LOCK
+        return false;
+      ++ccirc;
+    } while(ccirc != cdone);
+
+    return true;
+    #else
+      // QUESTION: why does locking the incident facets cause a data race?
+      const auto& vp = e;
+    auto& tr = c3t3.triangulation();
+    // We need to lock v individually first, to be sure v->cell() is valid
+    if(!tr.try_lock_vertex(vp.first) || !tr.try_lock_vertex(vp.second))
+      return false;
+
+    Cell_handle ch;
+    int i0, i1;
+    boost::container::small_vector<Cell_handle, 64> inc_vh = get_incident_cells(vp.first, c3t3);
+    is_edge_uv(vp.first, vp.second, inc_vh, ch, i0, i1);
+      Edge edge_to_flip(ch, i0, i1);
+
+    C3t3::Triangulation::Facet_circulator ccirc(edge_to_flip);
+  C3t3::Triangulation::Facet_circulator cdone = ccirc;
+    
+      do {
+		if(!tr.try_lock_facet(*ccirc)) 
+        ++ccirc;
+      } while(ccirc!=cdone);
+
+       return true;
+
+       #endif
+
   }
 
   bool execute_operation(const ElementType& e, C3t3& c3t3) override {
@@ -347,6 +413,11 @@ public:
 
 private:
   bool execute_boundary_edge_flip(const ElementType& e, C3t3& c3t3) {
+    if(get_static_boundary_vertices_valences().empty()) {
+      perform_global_preprocessing(c3t3);
+    }
+    assert(get_static_boundary_vertices_valences().size() > 0 &&
+           "Boundary vertices valences must be initialized before flipping boundary edges.");
     // For boundary edges, e is a vertex pair
     const auto& vp = e;
     const auto& vh0 = vp.first;
@@ -461,8 +532,14 @@ private:
     return false;
   }
 };
+  template<typename C3t3, typename CellSelector, typename Visitor>
+  typename BoundaryEdgeFlipOperation<C3t3, CellSelector, Visitor>::BVV
+  BoundaryEdgeFlipOperation<C3t3, CellSelector, Visitor>::s_boundary_vertices_valences;
+template <typename C3t3, typename CellSelector, typename Visitor>
+  typename BoundaryEdgeFlipOperation<C3t3, CellSelector, Visitor>::SSI
+      BoundaryEdgeFlipOperation<C3t3, CellSelector, Visitor>::s_vertices_subdomain_indices;
 
-} // namespace internal
+  } // namespace internal
 } // namespace Tetrahedral_remeshing
 } // namespace CGAL
 

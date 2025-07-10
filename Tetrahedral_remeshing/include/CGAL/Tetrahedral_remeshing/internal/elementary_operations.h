@@ -268,8 +268,9 @@ public:
 
     std::atomic<bool> success(false);
 
+    //TODO: How big should the batch size be?
     // Batch size following Mesh_3 approach - creates fewer, larger tasks instead of one task per element
-    const size_t BATCH_SIZE =  elements.size()/3; // Configurable batch size for this operation type
+    const size_t BATCH_SIZE =  elements.size()/5; // Configurable batch size for this operation type
 
     tbb::task_group group;
 
@@ -288,6 +289,7 @@ public:
           const auto& element = elements[i];
           bool affected_zone_locked = op.lock_zone(element, c3t3);
           if (affected_zone_locked) {
+            //std::cout << "Flipping element " << i<< " in batch [" << start << ", " << end << ")" << std::endl;
               if(!op.can_apply_operation(element, c3t3)) {
 			  lock_manager.unlock_all_thread_elements();
               continue;

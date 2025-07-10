@@ -64,7 +64,7 @@ public:
      // Flip boundary edges if not protecting boundaries
      if (!protect_boundaries) {
        BoundaryEdgeFlipOp boundary_flip_op(c3t3, cell_selector, protect_boundaries, visitor);
-       ElementaryOperationExecutionSequential<BoundaryEdgeFlipOp> boundary_executor;
+       ExecutionPolicy<BoundaryEdgeFlipOp> boundary_executor;
        boundary_executor.execute(boundary_flip_op, c3t3);
      }
   }
