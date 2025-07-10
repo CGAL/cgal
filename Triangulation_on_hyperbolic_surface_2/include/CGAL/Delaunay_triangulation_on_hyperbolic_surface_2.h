@@ -992,6 +992,7 @@ epsilon_net(double const epsilon)
 			Voronoi_point c = circumcenter(current_anchor);
 			if (delta(c, current_anchor.vertices[0]) > BOUND) {
 				Point approx_c = approx_circumcenter(c);
+				CGAL_assertion(norm(Complex_number(c.x(), c.y())) < Number(1));
 				std::vector<Anchor> new_anchors = split_insert(approx_c, current_anchor, true);
 				std::list<Dart_descriptor> darts_to_flip;
 				for (Anchor const & new_anchor : new_anchors) {
