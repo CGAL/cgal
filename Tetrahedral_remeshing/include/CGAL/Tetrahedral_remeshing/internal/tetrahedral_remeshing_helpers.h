@@ -2410,6 +2410,23 @@ void dump_cells(const CellRange& cells, const char* filename)
   dump_cells<Tr>(cells, indices, filename);
 }
 
+template<typename CellRange>
+void dump_cells_timestamps(const CellRange& cells, const char* filename) {
+  std::ofstream ofs(filename);
+  ofs.precision(17);
+
+  // Write header comment
+  ofs << "# Cell timestamps for triangulation" << std::endl;
+  ofs << "# Format: timestamp_value" << std::endl;
+
+  for(typename CellRange::const_iterator cit = cells.begin(); cit != cells.end(); ++cit) {
+      // Output the timestamp of each cell on its own row
+      ofs << (*cit)->time_stamp() << std::endl;
+    }
+
+    ofs.close();
+}
+
 template<typename Tr>
 void dump_cells_in_complex(const Tr& tr, const char* filename)
 {
@@ -2593,6 +2610,26 @@ void dump_triangulation_cells(const Tr& tr, const char* filename)
   dump_cells<Tr>(cells, indices, filename);
 }
 
+template<typename Tr>
+void dump_triangulation_cells_timestamps(const Tr& tr, const char* filename)
+{
+  std::ofstream ofs(filename);
+  ofs.precision(17);
+  
+  // Write header comment
+  ofs << "# Cell timestamps for triangulation" << std::endl;
+  ofs << "# Format: timestamp_value" << std::endl;
+  
+  for (typename Tr::Finite_cells_iterator cit = tr.finite_cells_begin();
+       cit != tr.finite_cells_end(); ++cit)
+  {
+    // Output the timestamp of each cell on its own row
+    ofs << cit->time_stamp() << std::endl;
+  }
+  
+  ofs.close();
+}
+
 template<typename C3t3>
 void dump_binary(const C3t3& c3t3, const char* filename)
 {
@@ -2620,6 +2657,20 @@ void dump_c3t3(const C3t3& c3t3, const char* filename_no_extension)
   filename_binary.append(".binary.cgal");
   dump_binary(c3t3, filename_binary.c_str());
 }
+
+
+template<typename CellRange>
+std::unordered_set<std::size_t> get_cells_timestamps(const CellRange& cells) {
+  std::unordered_set<std::size_t> timestamps;
+  
+  for(typename CellRange::const_iterator cit = cells.begin(); cit != cells.end(); ++cit) {
+    timestamps.insert((*cit)->time_stamp());
+  }
+  
+  return timestamps;
+}
+
+
 
 
 } //namespace debug
