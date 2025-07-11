@@ -1621,7 +1621,7 @@ std::size_t approximate_convex_decomposition(const FaceGraph& mesh, OutputIterat
   using Concurrency_tag = typename internal_np::Lookup_named_param_def<internal_np::concurrency_tag_t, NamedParameters, Parallel_if_available_tag>::type;
 
 #ifndef CGAL_LINKED_WITH_TBB
-  if constexpr (std::is_same_v<Concurrency_tag, Parallel_tag> || std::is_same_v<Concurrency_tag, Parallel_if_available_tag>) {
+  if constexpr (std::is_same_v<Concurrency_tag, Parallel_tag>) {
     CGAL_error_msg("CGAL was not compiled with TBB support. Use Sequential_tag instead.");
     return 0;
   }
