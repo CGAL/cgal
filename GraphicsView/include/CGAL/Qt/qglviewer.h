@@ -34,6 +34,13 @@
 #include <QMouseEvent>
 #include <QKeyCombination>
 
+#ifndef APIENTRY
+#define APIENTRY QT_APIENTRY
+#endif
+#ifndef APIENTRYP
+#define APIENTRYP APIENTRY *
+#endif
+
 class QTabWidget;
 class QImage;
 class QOpenGLFramebufferObject;
