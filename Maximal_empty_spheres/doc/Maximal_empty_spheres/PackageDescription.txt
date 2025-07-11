@@ -1,39 +1,49 @@
 // PRETTY PACKAGE NAME should equal the project title in Doxyfile.in
 
-/// \defgroup PkgPACKAGERef Reference Manual
-/// \defgroup PkgPACKAGEConcepts Concepts
-/// \ingroup PkgPACKAGERef
+/// \defgroup PkgMaximalEmptySpheresRef Reference Manual
+/// \defgroup PkgMaximalEmptySpheresConcepts Concepts
+/// \ingroup PkgMaximalEmptySpheresRef
 
-/// \defgroup PkgPACKAGEAlgorithmClasses Algorithm Classes
-/// \ingroup PkgPACKAGERef
+/// \defgroup PkgMaximalEmptySpheresFunctions
+/// \ingroup PkgMaximalEmptySpheresRef
 
-/// \defgroup PkgPACKAGETraitsClasses Traits Classes
-/// \ingroup PkgPACKAGERef
+/// \defgroup PkgMaximalEmptySpheresTraitsClasses Traits Classes
+/// \ingroup PkgMaximalEmptySpheresRef
 
-/// \defgroup PkgPACKAGEMiscellaneous Miscellaneous
-/// \ingroup PkgPACKAGERef
+/// \defgroup PkgMaximalEmptySpheresMiscellaneous Miscellaneous
+/// \ingroup PkgMaximalEmptySpheresRef
 
 /*!
-\addtogroup PkgPACKAGERef
-\cgalPkgDescriptionBegin{PACKAGE NAME,PkgPACKAGE}
-\cgalPkgPicture{pkg-small.png}
+\addtogroup PkgMaximalEmptySpheresRef
+\cgalPkgDescriptionBegin{Maximal Empty Spheres,PkgMaximalEmptySpheres}
+\cgalPkgPicture{MES-small.png}
 
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{PACKAGE AUTHOR}
-\cgalPkgDesc{PACKAGE DESCRIPTION.
+\cgalPkgAuthors{Max Kohlbrenner and Marc Alexa}
+\cgalPkgDesc{
 The package provides ... }
-\cgalPkgManuals{Chapter_PACKAGE_NAME,PkgPACKAGERef}
+\cgalPkgManuals{Chapter_MaximalEmptySpheres,PkgMaximalEmptySpheresRef}
 \cgalPkgSummaryEnd
 
 \cgalPkgShortInfoBegin
-\cgalPkgSince{X.X}
-\cgalPkgDependsOn{\ref PkgDEPENDENCY}
-\cgalPkgBib{cgal:x-x}
+\cgalPkgSince{6.2}
+\cgalPkgDependsOn{\ref PkgTriangulation}
+\cgalPkgBib{cgal:ka-mes}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
-\cgalPkgDemo{DEMO 1,demo1.zip}
-\cgalPkgDemo{DEMO 2,demo2.zip}
+
 \cgalPkgShortInfoEnd
 
 \cgalPkgDescriptionEnd
 
+\cgalClassifedRefPages
+
+\cgalCRPSection{Concepts}
+
+- `MaximalEmptySpheresTraits`
+
+
+
+\cgalCRPSection{Functions}
+
+- `CGAL::maximal_empty_spheres`
 */
