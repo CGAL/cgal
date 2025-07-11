@@ -268,8 +268,9 @@ public:
 
 private:
 
+    //NOTE: Is the usage of s_boundary_vertices_valences static variable in a multithreaded enviroment safe?
   //// Boundary-specific preprocessing data - recreated every call like original
-  using BVV = boost::unordered_map<Vertex_handle,
+  using BVV =boost::unordered_map<Vertex_handle,
                                    boost::unordered_map<Surface_patch_index, unsigned int>>;
   static BVV s_boundary_vertices_valences;
   static BVV& get_static_boundary_vertices_valences() {
@@ -277,13 +278,6 @@ private:
     return s_boundary_vertices_valences;
   }
 
-  using SSI = boost::unordered_map<Vertex_handle,
-                                   std::unordered_set<typename C3t3::Subdomain_index>>;
-  static SSI s_vertices_subdomain_indices;
-  static SSI& get_static_vertices_subdomain_indices() {
-    //CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(SSI, s_vertices_subdomain_indices);
-    return s_vertices_subdomain_indices;
-  }
 
 public:
   BoundaryEdgeFlipOperation(C3t3& c3t3,
@@ -293,22 +287,15 @@ public:
     : BaseClass(c3t3, cell_selector, protect_boundaries, visitor)
   {}
 
+  //TODO: collectBoundaryEdgesAndComputeVerticesValences is quite wasteful and should be refactored
   void perform_global_preprocessing(const C3t3& c3t3) const {
-    // Clear boundary data structures every time (like original flip_edges)
-    auto& valences = get_static_boundary_vertices_valences();
-    size_t old_size_valences = valences.size();
-	//valences.clear();
-    //valences.reserve(old_size_valences); // Hint about expected size
-
-    auto& subdomain_indices = get_static_vertices_subdomain_indices();
-    size_t old_size_subdomain_indices =subdomain_indices.size();
-	//subdomain_indices.clear();
-    //subdomain_indices.reserve(old_size_subdomain_indices);
-
     // Collect boundary edges and compute vertices valences (needed for boundary flipping)
     std::vector<typename C3t3::Edge> boundary_edges; // We don't need to store this
+  boost::unordered_map<Vertex_handle,
+                                   std::unordered_set<typename C3t3::Subdomain_index>> vertices_subdomain_indices;
     collectBoundaryEdgesAndComputeVerticesValences(c3t3, m_cell_selector, boundary_edges,
-                                                   valences, subdomain_indices);
+                                                   get_static_boundary_vertices_valences(),
+                                                   vertices_subdomain_indices);
 
   }
 
@@ -413,9 +400,6 @@ public:
 
 private:
   bool execute_boundary_edge_flip(const ElementType& e, C3t3& c3t3) {
-    if(get_static_boundary_vertices_valences().empty()) {
-      perform_global_preprocessing(c3t3);
-    }
     assert(get_static_boundary_vertices_valences().size() > 0 &&
            "Boundary vertices valences must be initialized before flipping boundary edges.");
     // For boundary edges, e is a vertex pair
@@ -535,9 +519,6 @@ private:
   template<typename C3t3, typename CellSelector, typename Visitor>
   typename BoundaryEdgeFlipOperation<C3t3, CellSelector, Visitor>::BVV
   BoundaryEdgeFlipOperation<C3t3, CellSelector, Visitor>::s_boundary_vertices_valences;
-template <typename C3t3, typename CellSelector, typename Visitor>
-  typename BoundaryEdgeFlipOperation<C3t3, CellSelector, Visitor>::SSI
-      BoundaryEdgeFlipOperation<C3t3, CellSelector, Visitor>::s_vertices_subdomain_indices;
 
   } // namespace internal
 } // namespace Tetrahedral_remeshing
