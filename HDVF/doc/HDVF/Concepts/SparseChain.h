@@ -228,6 +228,11 @@ public:
     /// @{
     
     /*!
+     * \brief Compare two chains.
+     */
+    bool operator==(const Sparse_chain& other_chain);
+    
+    /*!
      * \brief Get the value of a coefficient of the chain.
      */
     CoefficientType operator[](size_t index);

@@ -79,14 +79,14 @@ void hdvf_geometric_chain_complex_output_vtk (Hdvf_core<CoefType, ComplexType, _
                 {
                     string outfile_g(filename+"_G_"+to_string(c)+"_dim_"+to_string(q)+".vtk") ;
                     //                    vector<vector<size_t> > labels = hdvf.export_label(G,c,q) ;
-                    OSM::Sparse_chain<CoefType,OSM::COLUMN> chain(hdvf.export_homology_chain(c,q)) ;
+                    OSM::Sparse_chain<CoefType,OSM::COLUMN> chain(hdvf.get_homology_chain(c,q)) ;
                     ComplexType::chain_complex_chain_to_vtk(complex, outfile_g, chain, q, c) ;
                 }
                 // Cohomology generators
                 if (hdvf.get_hdvf_opts() & (OPT_FULL | OPT_F))
                 {
                     string outfile_f(filename+"_FSTAR_"+to_string(c)+"_dim_"+to_string(q)+".vtk") ;
-                    OSM::Sparse_chain<CoefType,OSM::COLUMN> chain(hdvf.export_cohomology_chain(c, q)) ;
+                    OSM::Sparse_chain<CoefType,OSM::COLUMN> chain(hdvf.get_cohomology_chain(c, q)) ;
                     if (!co_faces)
                     {
                         ComplexType::chain_complex_chain_to_vtk(complex, outfile_f, chain, q, c) ;
@@ -235,14 +235,14 @@ void hdvf_duality_geometric_chain_complex_output_vtk (Hdvf_duality<CoefType, Com
                 {
                     string outfile_g(filename+"_G_"+to_string(c)+"_dim_"+to_string(q)+".vtk") ;
                     //                    vector<vector<size_t> > labels = hdvf.export_label(G,c,q) ;
-                    OSM::Sparse_chain<CoefType,OSM::COLUMN> chain(hdvf.export_homology_chain(c,q)) ;
+                    OSM::Sparse_chain<CoefType,OSM::COLUMN> chain(hdvf.get_homology_chain(c,q)) ;
                     ComplexType::chain_complex_chain_to_vtk(complex, outfile_g, chain, q, c) ;
                 }
                 // Cohomology generators
                 if (hdvf.get_hdvf_opts() & (OPT_FULL | OPT_F))
                 {
                     string outfile_f(filename+"_FSTAR_"+to_string(c)+"_dim_"+to_string(q)+".vtk") ;
-                    OSM::Sparse_chain<CoefType,OSM::COLUMN> chain(hdvf.export_cohomology_chain(c, q)) ;
+                    OSM::Sparse_chain<CoefType,OSM::COLUMN> chain(hdvf.get_cohomology_chain(c, q)) ;
                     if (!co_faces)
                     {
                         ComplexType::chain_complex_chain_to_vtk(complex, outfile_f, chain, q, c) ;

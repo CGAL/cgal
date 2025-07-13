@@ -224,6 +224,16 @@ public:
     }
     
     /**
+     * \brief Test is a SparseMatrix is null.
+     *
+     * The function return `true` is the SparseMatrix is null (that is, empty) and `false` otherwise.
+    */
+    bool is_null()
+    {
+        return (_chainsStates.begin() == _chainsStates.end()) ;
+    }
+    
+    /**
      * \brief Displays a matrix in the output stream.
      *
      * \param[in] stream The output stream.

@@ -119,6 +119,7 @@ public:
      *<img src="primal_dual.png" align="center" width=20%/>
      *
      * \param[in] cub A Cub_object containing a set of "cubical" cells.
+     * \param[in] type Type of construction used (PRIMAL or DUAL).
      */
     Cubical_chain_complex(const Cub_object& cub,typeComplexCube type);
     

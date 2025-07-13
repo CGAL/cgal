@@ -60,6 +60,19 @@ Using appropriate combinations of such operations, one can change a HDVF until c
  <img src="HDVF_op3_g2.png" align="center" width=30%/>
  <img src="HDVF_op3_g3.png" align="center" width=30%/>
 
+ Perfect HDVFs provide various topological results:
+ - Betti numbers: are well known topological descriptors (providing the number of holes in each dimension). For a perfect HDVF, Betti numbers equal the number of critical cells (that can be obtained through `get_flag` or `get_flag_dim` with the `CRITICAL` flag as argument).
+ - Homology/cohomology generators are actually algebraic objects, namely chains. Methods `get_homology_chain` and `get_cohomology_chain` return the homology and cohomology generator chain associated to a given critical cell. VTK export functions output all the cells of such chains with non zero coefficients. Figures here above illustrate such homology and co-homology generators.
+ - Homology/cohomology annotation: use `get_annotation` or `get_coannotation` to get the annotation/co-annotation of a cycle/co-cycle in the homology/cohomology basis (as a chain of critical cells).
+ - Homology/cohomology comparison: use `are_same_cycles` or `are_same_cocycles` to check if two cycles (or co-cycles) belong to the same homology / cohomology class.
+ 
+ \cgalFigureBegin{HDVFannotation,HDVF_annotations.png}
+ Illustration of cycles annotation and comparison. <B>Left:</B> Generator \f$g(\sigma)\f$ associated to the critical cell \f$\sigma\f$; <B>Middle:</B> A cycle \f$\alpha\f$ ; <B>Right:</B> A second cycle \f$\beta\f$.
+ 
+ For \f$\mathbb Z_2\f$ homology, the annotation of \f$\alpha\f$ is \f$\sigma\f$ (\f$\alpha\f$ equals \f$g(\sigma)\f$ up to a boundary), while the annotation of \f$\beta\f$ is \f$\sigma+\tau+\gamma\f$ (\f$\beta\f$ equals \f$g(\sigma)+g(\tau)+g(\gamma)\f$ up to a boundary).
+
+ Therefore, `are_same_cycles` will return `true` for \f$\alpha\f$  and \f$g(\sigma)\f$,  but `false` for \f$\beta\f$  and \f$g(\sigma)\f$.
+ \cgalFigureEnd
  
 \cgalModels{HDVF}
  
@@ -282,6 +295,97 @@ public:
      */
     void MW(size_t pi, size_t sigma, int q);
     
+    /**
+     * \brief Get the annotation of a cycle in the homology basis.
+     *
+     * The method returns the image of a cycle by the morphism \f$f\f$, that is, a linear combination of critical cells (corresponding to the decomposition of the cycle in the homology basis).
+     * If the annotation has a single non zero coefficient for a given critical cell \f$\sigma\f$, then the cycle belongs to the class of the homology generator \f$g(\sigma)\f$.
+     *
+     * \warning Will raise an error is the chain provided is not a cycle.
+     * \warning The HDVF must be perfect.
+     *
+     * \param[in] chain The cycle to annotate in the homology basis.
+     * \param[in] dim Dimension of the cycle.
+     */
+    HDVF_coreT::CChain get_annotation(HDVF_coreT::CChain chain, int dim) const
+    {
+        // Check that the chain is a cycle (must belong to the kernel of the boundary operator)
+        typename HDVF_coreT::CChain bnd(this->_DD_col.at(dim) * chain) ;
+        if (!bnd.is_null())
+            throw("get_annotation: the chain provided is not a cycle");
+        
+        // Compute the annotation
+        return (this->_F_row.at(dim) * chain + this->projection(chain, CRITICAL, 1)) ;
+    }
+    
+    /**
+     * \brief Get the co-annotation of a co-cycle in the cohomology basis.
+     *
+     * The method returns the image of a co-cycle by the morphism \f$g^*\f$, that is, a linear combination of critical cells (corresponding to the decomposition of the co-cycle in the cohomology basis).
+     * If the annotation has a single non zero coefficient for a given critical cell \f$\sigma\f$, then the co-cycle belongs to the class of the cohomology generator \f$f^*(\sigma)\f$.
+     *
+     * \warning Will raise an error is the chain provided is not a co-cycle.
+     * \warning The HDVF must be perfect.
+     *
+     * \param[in] chain The co-cycle to annotate in the homology basis.
+     * \param[in] dim Dimension of the co-cycle.
+     */
+    HDVF_coreT::RChain get_coannotation(HDVF_coreT::RChain chain, int dim) const
+    {
+        // Check that the chain is a co-cycle (must belong to the kernel of the boundary operator)
+        typename HDVF_coreT::RChain bnd(chain * this->_DD_col.at(dim+1)) ;
+        if (!bnd.is_null())
+            throw("get_coannotation: the chain provided is not a co-cycle");
+        
+        // Compute the co-annotation
+        return (chain * this->_G_col.at(dim) + this->projection(chain, CRITICAL, 1)) ;
+    }
+    
+    /**
+     * \brief Checks if two cycles belong to the same homology class.
+     *
+     * \warning Will raise an error is chains provided are not cycles.
+     * \warning The HDVF must be perfect.
+     *
+     * \param[in] chain1 First cycle.
+     * \param[in] chain2 Second cycle.
+     * \param[in] dim Dimension of both cycles.
+     */
+    bool are_same_cycles (HDVF_coreT::CChain chain1, HDVF_coreT::CChain chain2, int dim)
+    {
+        // Check if both chains are cycles (must belong to the kernel of the boundary operator)
+        typename HDVF_coreT::CChain bnd1(this->_DD_col.at(dim) * chain1), bnd2(this->_DD_col.at(dim) * chain2) ;
+        if (!bnd1.is_null())
+            throw("get_annotation: chain1 is not a cycle");
+        if (!bnd2.is_null())
+            throw("get_annotation: chain2 is not a cycle");
+        
+        typename HDVF_coreT::CChain annot1(get_annotation(chain1, dim)), annot2(get_annotation(chain2, dim)) ;
+        return annot1 == annot2 ;
+    }
+    
+    /**
+     * \brief Checks if two co-cycles belong to the same cohomology class.
+     *
+     * \warning Will raise an error is chains provided are not co-cycles.
+     * \warning The HDVF must be perfect.
+     *
+     * \param[in] chain1 First co-cycle.
+     * \param[in] chain2 Second co-cycle.
+     * \param[in] dim Dimension of both co-cycles.
+     */
+    bool are_same_cocycles (HDVF_coreT::RChain chain1, HDVF_coreT::RChain chain2, int dim)
+    {
+        // Check if both chains are cocycles (must belong to the kernel of the boundary^* operator)
+        typename HDVF_coreT::RChain cobnd1(chain1 * this->_DD_col.at(dim)), cobnd2(chain2 * this->_DD_col.at(dim)) ;
+        if (!cobnd1.is_null())
+            throw("get_coannotation: chain1 is not a co-cycle");
+        if (!cobnd2.is_null())
+            throw("get_coannotation: chain2 is not a co-cycle");
+        
+        typename HDVF_coreT::RChain coannot1(get_coannotation(chain1, dim)), coannot2(get_coannotation(chain2, dim)) ;
+        return coannot1 == coannot2 ;
+    }
 };
 
 // Constructor for the Hdvf class

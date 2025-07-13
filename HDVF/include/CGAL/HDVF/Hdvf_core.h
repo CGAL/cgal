@@ -73,6 +73,9 @@ inline std::ostream& operator<<(std::ostream &out, const std::vector<PairCell>& 
  
  If the user wishes to build an HDVF using other criteria, several `find_pair_A` functions are provided (searching for valid pairs of cells for `A`respecting various constraints). The `A` operation can be applied to any pair returned by these functions.
  
+ Homology/cohomology generators are actually algebraic objects, namely chains. Methods `get_homology_chain` and `get_cohomology_chain` return the homology and cohomology generator chain associated to a given critical cell. VTK export functions output all the cells of such chains with non zero coefficients.
+
+ 
  \cgalModels{HDVF}
  
  \tparam CoefficientType a model of the `Ring` concept (by default, we use the `Z` model) providing the ring used to compute homology.
@@ -245,6 +248,23 @@ public:
      */
     std::vector<PairCell> compute_rand_perfect_hdvf(bool verbose = false);
     
+    /**
+     * \brief Test is a HDVF is perfect.
+     *
+     * The function returns `true` is the reduced boundary matrix is null and `false` otherwise.
+     */
+    bool is_perfect_hdvf()
+    {
+        bool res = true ;
+        int q = 0 ;
+        while ((q<=_K.dim()) && res)
+        {
+            res = res && _DD_col.at(q).is_null() ;
+            ++q;
+        }
+        return res ;
+    }
+    
     // Hdvf_core getters
     
     /**
@@ -346,16 +366,16 @@ public:
     }
     
     /**
-     * \brief Export homology generators associated to `cell` (critical cell) of dimension  `q` (used by vtk export).
+     * \brief Get homology generators associated to `cell` (critical cell) of dimension  `q` (used by vtk export).
      *
      * The method exports the chain \f$g(\sigma)\f$ for \f$\sigma\f$ the cell of index `cell` and dimension `q`.
      *
      * \return A column-major chain.
      */
-    virtual CChain export_homology_chain (size_t cell, int q) const
+    virtual CChain get_homology_chain (size_t cell, int q) const
     {
         if ((q<0) || (q>_K.dim()))
-            throw "Error : export_homology_chain with dim out of range" ;
+            throw "Error : get_homology_chain with dim out of range" ;
         if (_hdvf_opt & (OPT_FULL | OPT_G))
         {
             CChain g_cell(OSM::get_column(_G_col.at(q), cell)) ;
@@ -368,7 +388,7 @@ public:
     }
     
     /**
-     * \brief Export cohomology generators associated to `cell` (critical cell) of dimension  `q` (used by vtk export).
+     * \brief Get cohomology generators associated to `cell` (critical cell) of dimension  `q` (used by vtk export).
      *
      * The method exports the chain \f$f^\star(\sigma)\f$ for \f$\sigma\f$ the cell of index `cell` and dimension `q`.
      *
@@ -377,10 +397,10 @@ public:
      *
      * \return A column-major chain.
      */
-    virtual CChain export_cohomology_chain (size_t cell, int dim) const
+    virtual CChain get_cohomology_chain (size_t cell, int dim) const
     {
         if ((dim<0) || (dim>_K.dim()))
-            throw "Error : export_homology_chain with dim out of range" ;
+            throw "Error : get_cohomology_chain with dim out of range" ;
         if (_hdvf_opt & (OPT_FULL | OPT_F))
         {
             RChain fstar_cell(OSM::get_row(_F_row.at(dim), cell)) ;

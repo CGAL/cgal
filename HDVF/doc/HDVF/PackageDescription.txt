@@ -20,7 +20,7 @@
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Alexandra Bac}
 \cgalPkgDesc{
-The package provides an implementation of Homological Discrete Vector Fields, a framework computing homology and cohomology generators of discrete objects (including persistent homology, Alexander duality isomorphism and reduced homology).}
+The package provides an implementation of Homological Discrete Vector Fields, a framework computing homology and cohomology information (Betti numbers, generators, annotation functions...) for discrete objects (including persistent homology, Alexander duality isomorphism and reduced homology).}
 \cgalPkgManuals{Chapter_HDVF,PkgHDVFRef}
 \cgalPkgSummaryEnd
 

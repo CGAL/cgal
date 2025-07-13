@@ -426,12 +426,12 @@ public:
      *
      * \return A column-major chain.
      */
-    virtual CChain export_homology_chain (size_t cell, int dim) const
+    virtual CChain get_homology_chain (size_t cell, int dim) const
     {
         if ((dim<0) || (dim>this->_K.dim()))
-            throw "Error : export_homology_chain with dim out of range" ;
+            throw "Error : get_homology_chain with dim out of range" ;
         if (!_subCC.get_bit(dim, cell))
-            throw "Error : export_homology_chain for a cell out of current sub chain complex" ;
+            throw "Error : get_homology_chain for a cell out of current sub chain complex" ;
         
         if (this->_hdvf_opt & (OPT_FULL | OPT_G))
         {
@@ -462,12 +462,12 @@ public:
      *
      * \return A column-major chain.
      */
-    virtual CChain export_cohomology_chain (size_t cell, int dim) const
+    virtual CChain get_cohomology_chain (size_t cell, int dim) const
     {
         if ((dim<0) || (dim>this->_K.dim()))
-            throw "Error : export_cohomology_chain with dim out of range" ;
+            throw "Error : get_cohomology_chain with dim out of range" ;
         if (!_subCC.get_bit(dim, cell))
-            throw "Error : export_homology_chain for a cell out of current sub chain complex" ;
+            throw "Error : get_cohomology_chain for a cell out of current sub chain complex" ;
         
         if (this->_hdvf_opt & (OPT_FULL | OPT_F))
         {

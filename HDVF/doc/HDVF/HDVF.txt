@@ -7,21 +7,109 @@ namespace CGAL {
 \cgalAutoToc
 \author Alexandra Bac
 
-This chapter describes the Homological Discrete Vector Field (HDVF) package: a framework for "geometric" homology computation introduced by Aldo Gonzalez-Lorenzo in his PhD (see [AGL,2017], [AGL,2016]).
-
-HDVFs provide tools to compute basic homological information (such as Betti numbers, ie. number of holes per dimension), but also higher level information (homology and cohomology generators, homology/cohomology annotation...). Moreover HDVFs provide persistent homology computation tools as well as Alexander duality and relative homology tools.
-
-A chain complex is an algebraic structure, associated to a given geometric complex (such as a simplicial, a cubical or a cellular complex) encoding cells in each dimension (through groups) and adjacency between such cells (through morphisms called boundary maps). 
+This chapter describes the Homological Discrete Vector Field (HDVF for short) package: a framework for "geometric" homology and cohomology computation, introduced by Aldo Gonzalez-Lorenzo starting from his PhD (see [AGL,2017], [AGL,2016]).
 
 \section secHDVFdefinitions Overview
 
-Section on definitions here ...
+The HDVF package is dedicated to homology and cohomology computation for discrete objects and provides tools to compute:
+- basic homological information (such as Betti numbers, ie. number of holes per dimension),
+- but also geometric, higher level information (homology and cohomology generators, homology/cohomology annotation, cycles and co-cycles comparison...),
+- moreover HDVF results are available for persistent homology as well as Alexander duality and relative homology.
 
-\section secHDVFdefinitions Computational homology reminders
+\section secHDVFHomology Homology/cohomology and related reminders
 
-Section on definitions here ...
+Homology and cohomology are well know topological invariants which accounts for the holes of an object using commutative groups built from the object. In Mathematics, homology and cohomology can be defined for general Hausdorff topological spaces; we speak then about "singular homology and cohomology". However, such a general definition is not computable and thus, homology/cohomology computation requires a discretization of spaces into cells of various dimensions. Such a discretization is called a <B>complex</B>:
+- <B>simplicial complexes</B> are intuitively meshes built from vertices, edges, triangles, tetrahedra...
+- <B>cubical complexes</B> are built from vertices, edges, squares, cubes...
+- <B>cellular complexes</B> are built from vertices, edges, polygons, polyhedra...
 
-\section secHDVFdefinitions HDVF definitions
+Actually, a set of cells is called a complex \f$K\f$ when:
+- it is closed under the "face" operation (ie. all the faces of a cell of the complex also belong to the complex)
+- intersections of cells are either empty of they are a proper cell of the complex
+The dimension of \f$K\f$ is the largest dimension of its cells.
+
+ \cgalFigureBegin{HDVFcomplexes,HDVF_cub_simpl_complex.png}
+ Illustration of complexes. <B>Left:</B> a simplicial complex of dimension 3; <B>Right:</B> A cubical complex of dimension 3.
+ \cgalFigureEnd
+ 
+ In order to compute homology and cohomology, algebraic objects are built from such "geometric" complexes, namely chain complexes.
+
+\subsection secHDVFChainComplexes Chain complexes
+
+In order to define this algebraic structure, one first need to chose a <B>ring of coefficients</B> \f$A\f$  (\f$A\f$ is often taken to be \f$Z\f$ or a \f$\mathbb Z/p\mathbb Z\f$ field).
+
+Given a complex \f$K\f$ of dimension \f$d\f$, a <B>chain complex</B> \f$C\f$ is:
+
+\f\[C = \cdots C_{q+1} \xrightarrow{\partial_{q+1}} C_q \xrightarrow{\partial_{q}} C_{q-1} \xrightarrow{\partial_{q-1}} \cdots \to C_1 \xrightarrow{\partial_1} C_0 \xrightarrow{\partial_0 = 0} 0\f\]
+
+- a sequence of commutative groups, called <B>chain groups</B> \f$C_q\f$ for any \f$0\leqslant q \leqslant d\f$ defined as the formal linear combinations of cells with coefficients in \f$A\f$ (or \f$A\f$-module).<br>
+Intuitively, elements of \f$C_q\f$, called <B>chains</B> are sums \f$\gamma = \sum_{i=1}^k\lambda_i\cdot \sigma_i\f$ with \f$\lambda_i\in A\f$ and \f$\sigma_i\f$ cells of dimension \f$q\f$, which can be imagined as a set of paths of oriented cells with multiplicity (see \cgalFigureRef{HDVFchain_complexes} where two 1-chains are represented).
+- a sequence of morphisms between chain groups, called <b>boundary morphisms</B> \f$\partial_q\,:\,: C_q\to C_{q-1}\f$ for any \f$0\leqslant q \leqslant d\f$, "mimicking" algebraically the geometric boundary and satisfying
+\f\[\partial_q\partial_{q+1} = 0\f\]
+Coming back to the example of \cgalFigureRef{HDVFchain_complexes}, as we will see in section \ref secHDVFsimplicial_chain_complex, the boundary of the edge \f$e_{45}\f$ is the 0-chain \f$v_5-v_4\f$ (ordering is given by vertices indices). Hence, on easily gets that \f$\partial_1(\gamma_1)=0\f$ and \f$\partial_1(\gamma_2)=v_8-v_4\f$, which is a very intuitive result.
+
+ \cgalFigureBegin{HDVFchain_complexes,simplicial_complex_chains.png}
+ Examples of chains representation in a simplicial complex. <B>Pink:</B> representation the 1-chain (of edges) \f$\gamma_1 = e_{24}+e_{46}-e_{26}\f$; <B>Blue:</B> representation of the 1-chain \f$\gamma_2 = e_{45}+e_{56}+e_{67}+e_{78}\f$.
+ \cgalFigureEnd
+
+The definition of the boundary operator depends on the underlying complex, it is detailed in next sections for simplicial and cubical complexes respectively.
+
+\subsection secHDVFsimplicial_chain_complex Simplicial chain complexes
+
+An <B>abstract simplicial complex</B> of dimension \f$d\f$ is built from:
+- a set of vertices identified by an index of type `size_t` (cells of dimension 0 or <B>0-simplicies</B>)
+- for any \f$q\f$ with \f$0< q\leqslant d\f$, cells of dimension \f$q\f$ (or <B>\f$q\f$-simplices</B>) are defined by \f$q+1\f$ vertices (denoted \f$\langle v_0,\ldots,v_{q}\rangle\f$ with vertices sorted by *increasing indices*).
+
+A <B>geometric simplicial complex</B> equips vertices with coordinates in \f$\mathbb R^3\f$ so that \f$q\f$-simplices are convex hulls of \f$q+1\f$ points.
+
+Given a simplicial complex (abstract or geometric) \f$K\f$, the associated chain complex \f$(C,\partial)\f$, called a <B>simplicial chain complex</B> is defined as follows:
+- The \f$q\f$-th chain group \f$C_q\f$ is the free \f$A\f$-module generated by \f$q\f$-cells described in the section \ref secHDVFChainComplexes.
+- The \f$q\f$-th boundary morphism is defined over the \f$q\f$-simplices (ie. the basis) by:
+\f\[\partial_q : \begin{array}{rcl}
+C_q & \to & C_{q-1} \\
+\langle v_0,\ldots,v_{q}\rangle & \mapsto & \sum_{i=0}^q (-1)^i\cdot \langle v_0,\ldots,\hat{v_i}, \ldots, v_{q}\rangle
+\end{array}\f]
+where \f$\hat{v_i}\f$ means that the \f$i\f$-th vertex has been discarded.
+
+For instance, in \cgalFigureRef{HDVFchain_complexes}:
+- For the edge \f$\langle 4,5\rangle\f$, we get \f$\partial_1(\langle 4,5\rangle) = \langle 5\rangle - \langle 4\rangle\f$
+- For the triangle \f$\langle 2,4,6\rangle\f$, we get \f$\partial_2(\langle 2,4,6\rangle) = \langle 4,6\rangle - \langle 2,6\rangle + \langle 2,4\rangle\f$
+
+\subsection secHDVFcubical_chain_complex Cubical chain complexes
+
+A <B>cubical complex</B> of dimension \f$d\f$ is a set of cells defined as cartesian products:
+\f\[\sigma = [n_1,n_1+\delta_1]\times\cdots \times [n_d,n_d+\delta_d]\f\]
+with \f$n_i\in \mathbb N\f$ and \f$\delta_i\in\{0,1\}\f$ for \f$i=1\ldots d\f$.
+The dimension of such a cell is \f$\sum_{i=1}^d \delta_i\f$.
+As stated in previous section, a complex is closed under the "face" operation (if a cell belongs to the complex, so do its faces).
+
+<B>Khalimsky coordinates</B> associate to each cell, whatever its dimension, a unique coordinate in \f$\mathbb N^d\f$ defined as:
+\f\[\mathrm{khal}(\sigma) = (2 n_1+\delta_1,\ldots, 2 n_d+\delta_d)\f\]
+The dimension of a cell in this coordinate system is thus the number of odd coordinates.
+
+ \cgalFigureBegin{HDVFcubical_complex,cubical_complex.png}
+ A cubical complex of dimension 3.
+ \cgalFigureEnd
+ 
+ For instance, in figure \cgalFigureRef{HDVFcubical_complex}:
+ - \f$v = [2,2] \times [1,1] \times [0,0]\f$ and \f$\mathrm{khal}(\sigma) = (4,2,0)\f$ (cell of dimension 0)
+ - \f$e = [0,1] \times [1,1] \times [0,0]\f$ and \f$\mathrm{khal}(\sigma) = (1,2,0)\f$ (cell of dimension 1)
+ - \f$f = [2,3] \times [0,1] \times [1,1]\f$ and \f$\mathrm{khal}(\sigma) = (5,1,2)\f$ (cell of dimension 2)
+
+Given a cubical complex \f$K\f$, the associated chain complex \f$(C,\partial)\f$, called a <B>cubical chain complex</B> is defined as follows:
+- The \f$q\f$-th chain group \f$C_q\f$ is the free \f$A\f$-module generated by \f$q\f$-cells described in the section \ref secHDVFChainComplexes.
+- The \f$q\f$-th boundary morphism is defined over Khalimsky coordinates of cells (ie. the basis) as follows:
+\f\[\partial_q(x_1,\ldots,x_d) = \sum_{\substack{i=1\\i\text{ odd}}}^d (-1)^{i+1}\Big((x_1,\ldots, x_i+1,\ldots, x_d) - (x_1,\ldots, x_i-1,\ldots, x_d)\Big)\f]
+
+For instance, in \cgalFigureRef{HDVFchain_complexes}:
+- \f$\partial(e) = (2,2,0)-(0,2,0)\f$
+- \f$\partial(f) = \big((6,1,2)-(4,1,2)\big) - \big((5,2,2)-(5,0,2)\big)\f$
+
+\subsection secHDVFhomology Homology / cohomology
+
+
+
+\section secHDVFHDVFdefinitions HDVF definitions
 
 Section on definitions here ...
 

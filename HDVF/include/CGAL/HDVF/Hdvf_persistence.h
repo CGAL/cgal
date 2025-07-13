@@ -429,12 +429,10 @@ public:
      *
      * \returns A column-major chain.
      */
-    virtual CChain export_homology_chain (size_t cell, int q) const
+    virtual CChain get_homology_chain (size_t cell, int q) const
     {
         if ((q<0) || (q>this->_K.dim()))
-            throw "Error : export_homology_chain with dim out of range" ;
-        //        if (_K_to_per.at(dim).at(cell) > _t_dim.at(dim))
-        //            throw "Error : export_homology_chain with 'future' cell wrt persistence" ;
+            throw "Error : get_homology_chain with dim out of range" ;
         
         if (this->_hdvf_opt & (OPT_FULL | OPT_G))
         {
@@ -462,12 +460,10 @@ public:
      *
      * \returns A column-major chain.
      */
-    virtual CChain export_cohomology_chain (size_t cell, int q) const
+    virtual CChain get_cohomology_chain (size_t cell, int q) const
     {
         if ((q<0) || (q>this->_K.dim()))
-            throw "Error : export_homology_chain with dim out of range" ;
-        //        if (_K_to_per.at(dim).at(cell) > _t_dim.at(dim))
-        //            throw "Error : export_homology_chain with 'future' cell wrt persistence" ;
+            throw "Error : get_homology_chain with dim out of range" ;
         
         if (this->_hdvf_opt & (OPT_FULL | OPT_F))
         {
@@ -620,19 +616,19 @@ private:
         // Export g (according to options)
         if (this->_hdvf_opt & (OPT_FULL | OPT_G))
         {
-            CChain chain_sigma(export_homology_chain(p.sigma, p.dim)) ;
+            CChain chain_sigma(get_homology_chain(p.sigma, p.dim)) ;
             CChain chain_tau ;
             if (p.tau != this->_K.nb_cells(p.dim+1)) // Check if the second cell is "finite"
-                chain_tau = export_homology_chain(p.tau, p.dim+1) ;
+                chain_tau = get_homology_chain(p.tau, p.dim+1) ;
             _export_g.push_back(std::pair<CChain,CChain>(chain_sigma, chain_tau)) ;
         }
         // Export fstar (according to options)
         if (this->_hdvf_opt & (OPT_FULL | OPT_F))
         {
-            CChain chain_sigma(export_cohomology_chain(p.sigma, p.dim)) ;
+            CChain chain_sigma(get_cohomology_chain(p.sigma, p.dim)) ;
             CChain chain_tau ;
             if (p.tau != this->_K.nb_cells(p.dim+1)) // Check if the second cell is "finite"
-                chain_tau = export_cohomology_chain(p.tau, p.dim+1) ;
+                chain_tau = get_cohomology_chain(p.tau, p.dim+1) ;
             _export_fstar.push_back(std::pair<CChain,CChain>(chain_sigma, chain_tau)) ;
         }
     }

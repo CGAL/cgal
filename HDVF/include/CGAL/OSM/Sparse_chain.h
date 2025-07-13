@@ -165,6 +165,16 @@ public:
     }
     
     /**
+     * \brief Compare two chains.
+     *
+     * \param[in] other_chain Chain compared to `this`.
+     */
+    bool operator==(const Sparse_chain& other_chain)
+    {
+        return ((_upperBound == other_chain._upperBound) && (_chainData == other_chain._chainData));
+    }
+    
+    /**
      * \brief Size of the chain
      *
      * \return Size allocated for the chain.
