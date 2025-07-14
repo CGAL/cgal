@@ -59,7 +59,14 @@ public:
 template <typename GeomTraits>
 class Arr_construct_segment_impl<GeomTraits, false>
 {
-  static_assert(false, "Not implemented yet!");
+  using Geom_traits = GeomTraits;
+  using X_monotone_curve_2 = typename Traits_adaptor<Geom_traits>::X_monotone_curve_2;
+  using FT = typename Traits_adaptor<Geom_traits>::FT;
+
+public:
+  Arr_construct_segment_impl(const GeomTraits&) { CGAL_assertion_msg(false, "Not implemented yet"); }
+
+  X_monotone_curve_2 operator()(FT, FT, FT, FT) const {}
 };
 
 template <typename GeomTraits>
@@ -109,6 +116,7 @@ class Arr_construct_vertical_segment<Arr_rational_function_traits_2<Kernel>>
   using X_monotone_curve_2 = typename Traits_adaptor<Geom_traits>::X_monotone_curve_2;
   using Construct_x_monotone_curve_2 = typename Geom_traits::Construct_x_monotone_curve_2;
   using FT = typename Traits_adaptor<Geom_traits>::FT;
+  using Bound = typename Geom_traits::Bound;
   using Polynomial_1 = typename Geom_traits::Polynomial_1;
 
 public:
@@ -123,11 +131,12 @@ public:
     Polynomial_1 x0_num(CORE::numerator(x0.lower()));
     Polynomial_1 x0_denum(CORE::denominator(x0.lower()));
     double k = 100;
-    double xmin = ymin.to_double() / k + x0.to_double();
-    double xmax = ymax.to_double() / k + x0.to_double();
+    Bound xmin = ymin.lower() / k + x0.lower();
+    Bound xmax = ymax.lower() / k + x0.lower();
     Polynomial_1 p_num = x0_num * k * x - k * x0_denum;
     Polynomial_1 p_denum = x0_denum;
-    return cst_x_curve(p_num, p_denum, xmin, xmax);
+    auto cv = cst_x_curve(p_num, p_denum, FT(xmin), FT(xmax));
+    return cv;
   }
 };
 

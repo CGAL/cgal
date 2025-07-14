@@ -8,11 +8,10 @@
 #include <optional>
 #include <vector>
 
-#include "CGAL/Arr_enums.h"
-#include "CGAL/Draw_aos/Arr_approximate_point_2_at_x.h"
-#include "CGAL/Draw_aos/Arr_render_context.h"
-#include "CGAL/Draw_aos/type_utils.h"
-#include "CGAL/basic.h"
+#include <CGAL/Arr_enums.h>
+#include <CGAL/Draw_aos/Arr_approximate_point_2_at_x.h>
+#include <CGAL/Draw_aos/Arr_render_context.h>
+#include <CGAL/Draw_aos/type_utils.h>
 
 namespace CGAL {
 namespace draw_aos {
@@ -50,6 +49,7 @@ class Arr_bounded_approximate_curve_2_impl<Arrangement, false>
                       const Intersections_vector& bottom_inters,
                       Polyline_geom& polyline)
         : Arr_context_delegator<Bounded_render_context>(ctx)
+        , to_ft()
         , curve(curve)
         , m_approx_pt_at_x(approx_pt_at_x)
         , top_inters(top_inters)

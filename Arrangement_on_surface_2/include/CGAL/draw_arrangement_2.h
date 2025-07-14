@@ -630,7 +630,7 @@ void draw(const CGAL_ARR_TYPE& aos, const char* title = "2D Arrangement on Surfa
     CGAL::Random random((size_t(vh.ptr())));
     return get_random_color(random);
   };
-  auto viewer = draw_aos::Arr_viewer(app.activeWindow(), aos, gso, "Arrangement Viewer");
+  auto viewer = draw_aos::Arr_viewer(app.activeWindow(), aos, gso, title);
   viewer.show();
   app.exec();
 }

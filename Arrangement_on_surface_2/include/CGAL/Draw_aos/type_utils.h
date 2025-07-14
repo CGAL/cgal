@@ -1,16 +1,14 @@
 #ifndef CGAL_DRAW_AOS_TYPE_UTILS_H
 #define CGAL_DRAW_AOS_TYPE_UTILS_H
-#include "CGAL/Arr_polycurve_traits_2.h"
-#include "CGAL/Arr_polyline_traits_2.h"
-#include "CGAL/Cartesian.h"
 #include <type_traits>
 
+#include <CGAL/Arr_non_caching_segment_traits_2.h>
+#include <CGAL/Arr_polycurve_traits_2.h>
+#include <CGAL/Arr_polyline_traits_2.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arr_linear_traits_2.h>
 #include <CGAL/Arr_circle_segment_traits_2.h>
 #include <CGAL/Arr_conic_traits_2.h>
-#include <CGAL/Arr_circular_arc_traits_2.h>
-#include <CGAL/Arr_Bezier_curve_traits_2.h>
 #include <CGAL/Arr_geodesic_arc_on_sphere_traits_2.h>
 #include <CGAL/Arr_rational_function_traits_2.h>
 #include <CGAL/Arr_algebraic_segment_traits_2.h>
@@ -115,6 +113,23 @@ public:
   using Approximate_point_2 = typename Geom_traits::Approximate_point_2;
 };
 
+template <typename Kernel>
+struct Traits_adaptor<Arr_non_caching_segment_traits_2<Kernel>>
+    : public Traits_adaptor_base<Arr_non_caching_segment_traits_2<Kernel>>
+{
+private:
+  using Geom_traits = Arr_non_caching_segment_traits_2<Kernel>;
+
+public:
+  constexpr static bool Has_unbounded_curves = false;
+  constexpr static double Approximation_sizing_factor = 1.0;
+  using FT = typename Kernel::FT;
+  using Approximate_2 = typename Geom_traits::Approximate_2;
+  using Approximate_number_type = typename Geom_traits::Approximate_number_type;
+  using Approximate_kernel = typename Geom_traits::Approximate_kernel;
+  using Approximate_point_2 = typename Geom_traits::Approximate_point_2;
+};
+
 template <typename SegmentTraits>
 struct Traits_adaptor<Arr_polyline_traits_2<SegmentTraits>>
     : public Traits_adaptor_base<Arr_polyline_traits_2<SegmentTraits>>
@@ -202,20 +217,6 @@ public:
   using Approximate_number_type = typename Geom_traits::Approximate_number_type;
   using Approximate_kernel = typename Geom_traits::Approximate_kernel;
   using Approximate_point_2 = typename Geom_traits::Approximate_point_2;
-};
-
-template <typename RatKernel, typename AlgKernel, typename NtTraits>
-struct Traits_adaptor<Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits>>
-    : public Traits_adaptor_base<Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits>>
-{
-  static_assert(false, "Approximate_2 not yet modeled by this geometry traits class.");
-};
-
-template <typename Kernel>
-struct Traits_adaptor<Arr_circular_line_arc_traits_2<Kernel>>
-    : public Traits_adaptor_base<Arr_circular_line_arc_traits_2<Kernel>>
-{
-  static_assert(false, "Approximate_2 not yet modeled by this geometry traits class.");
 };
 
 template <typename Kernel>

@@ -2,12 +2,12 @@
 #define CGAL_DRAW_AOS_ARR_APPROXIMATE_POINT_2_AT_X_H
 #include <boost/iterator/function_output_iterator.hpp>
 
-#include "CGAL/number_utils.h"
-#include "CGAL/Arr_rational_function_traits_2.h"
-#include "CGAL/Draw_aos/Arr_construct_curve_end.h"
-#include "CGAL/Draw_aos/Arr_construct_segments.h"
-#include "CGAL/Draw_aos/Arr_approximate_point_2.h"
-#include "CGAL/Draw_aos/type_utils.h"
+#include <CGAL/Arr_enums.h>
+#include <CGAL/number_utils.h>
+#include <CGAL/Arr_rational_function_traits_2.h>
+#include <CGAL/Draw_aos/Arr_construct_segments.h>
+#include <CGAL/Draw_aos/Arr_approximate_point_2.h>
+#include <CGAL/Draw_aos/type_utils.h>
 
 namespace CGAL {
 namespace draw_aos {
@@ -89,20 +89,19 @@ class Arr_approximate_point_2_at_x<Arr_rational_function_traits_2<Kernel>>
   using X_monotone_curve_2 = typename Traits_adaptor<Geom_traits>::X_monotone_curve_2;
   using FT = typename Traits_adaptor<Geom_traits>::FT;
   using Approx_point = typename Arr_approximation_geometry_traits<Geom_traits>::Approx_point;
-  using Construct_curve_end = Arr_construct_curve_end<Geom_traits>;
 
 public:
-  Arr_approximate_point_2_at_x(const Geom_traits& traits)
-      : m_cst_curve_end(traits) {}
+  Arr_approximate_point_2_at_x(const Geom_traits&)
+      : to_ft() {}
 
   std::optional<Approx_point> operator()(const X_monotone_curve_2& curve, FT x) const {
-    std::optional<Point_2> min_end = m_cst_curve_end(curve, ARR_MIN_END);
-    if(min_end.has_value() && x < min_end->x()) {
-      return std::nullopt;
-    }
-    std::optional<Point_2> max_end = m_cst_curve_end(curve, ARR_MAX_END);
-    if(max_end.has_value() && x > max_end->x()) {
-      return std::nullopt;
+    FT xmin = curve.left_parameter_space_in_x() == ARR_INTERIOR ? curve.left_x()
+                                                                : to_ft(std::numeric_limits<double>::lowest());
+    FT xmax = curve.right_parameter_space_in_x() == ARR_INTERIOR ? curve.right_x()
+                                                                 : to_ft(std::numeric_limits<double>::max());
+
+    if(x < xmin || x > xmax) {
+      return std::nullopt; // x is out of bounds
     }
 
     using Bound = typename Geom_traits::Bound;
@@ -115,7 +114,7 @@ public:
   }
 
 private:
-  const Construct_curve_end m_cst_curve_end;
+  const Construct_coordinate<Geom_traits> to_ft;
 };
 
 } // namespace draw_aos

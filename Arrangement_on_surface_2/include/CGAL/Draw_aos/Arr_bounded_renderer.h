@@ -209,7 +209,8 @@ public:
       return cache;
     }
 
-    Execution_context ctx(Arr_bounded_render_context(m_ctx, m_bbox, cache));
+    Bounded_render_context bounded_ctx(m_ctx, m_bbox, cache);
+    Execution_context ctx(bounded_ctx);
 
     auto top = ctx->cst_horizontal_segment(to_ft(ctx->ymax()), to_ft(ctx->xmin()), to_ft(ctx->xmax()));
     auto bottom = ctx->cst_horizontal_segment(to_ft(ctx->ymin()), to_ft(ctx->xmin()), to_ft(ctx->xmax()));
