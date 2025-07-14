@@ -44,12 +44,12 @@ Given a complex \f$K\f$ of dimension \f$d\f$, a <B>chain complex</B> \f$C\f$ is:
 
 - a sequence of commutative groups, called <B>chain groups</B> \f$C_q\f$ for any \f$0\leqslant q \leqslant d\f$ defined as the formal linear combinations of cells with coefficients in \f$A\f$ (or \f$A\f$-module).<br>
 Intuitively, elements of \f$C_q\f$, called <B>chains</B> are sums \f$\gamma = \sum_{i=1}^k\lambda_i\cdot \sigma_i\f$ with \f$\lambda_i\in A\f$ and \f$\sigma_i\f$ cells of dimension \f$q\f$, which can be imagined as a set of paths of oriented cells with multiplicity (see \cgalFigureRef{HDVFchain_complexes} where two 1-chains are represented).
-- a sequence of morphisms between chain groups, called <b>boundary morphisms</B> \f$\partial_q\,:\,: C_q\to C_{q-1}\f$ for any \f$0\leqslant q \leqslant d\f$, "mimicking" algebraically the geometric boundary and satisfying
+- a sequence of morphisms between chain groups, called <b>boundary morphisms</B> \f$\partial_q\,:\, C_q\to C_{q-1}\f$ for any \f$0\leqslant q \leqslant d\f$, "mimicking" algebraically the geometric boundary and satisfying
 \f\[\partial_q\partial_{q+1} = 0\f\]
 Coming back to the example of \cgalFigureRef{HDVFchain_complexes}, as we will see in section \ref secHDVFsimplicial_chain_complex, the boundary of the edge \f$e_{45}\f$ is the 0-chain \f$v_5-v_4\f$ (ordering is given by vertices indices). Hence, on easily gets that \f$\partial_1(\gamma_1)=0\f$ and \f$\partial_1(\gamma_2)=v_8-v_4\f$, which is a very intuitive result.
 
  \cgalFigureBegin{HDVFchain_complexes,simplicial_complex_chains.png}
- Examples of chains representation in a simplicial complex. <B>Pink:</B> representation the 1-chain (of edges) \f$\gamma_1 = e_{24}+e_{46}-e_{26}\f$; <B>Blue:</B> representation of the 1-chain \f$\gamma_2 = e_{45}+e_{56}+e_{67}+e_{78}\f$.
+ Examples of chains representation in a simplicial complex (with \f$A = \mathbb Z\f$). <B>Pink:</B> representation the 1-chain (of edges) \f$\gamma_1 = e_{24}+e_{46}-e_{26}\f$; <B>Blue:</B> representation of the 1-chain \f$\gamma_2 = e_{45}+e_{56}+e_{67}+e_{78}\f$.
  \cgalFigureEnd
 
 The definition of the boundary operator depends on the underlying complex, it is detailed in next sections for simplicial and cubical complexes respectively.
@@ -105,9 +105,32 @@ For instance, in \cgalFigureRef{HDVFchain_complexes}:
 - \f$\partial(e) = (2,2,0)-(0,2,0)\f$
 - \f$\partial(f) = \big((6,1,2)-(4,1,2)\big) - \big((5,2,2)-(5,0,2)\big)\f$
 
-\subsection secHDVFhomology Homology / cohomology
+\subsection secHDVFcochain Co-chain complex (for cohomology)
 
+In the "mathematical world", singular cohomology is defined on dual groups \f$C^q = C_q^* = \mathrm{Hom}(C_q,A)\f$ with coboundary morphisms: \f$\partial^q\,:\, C^q \to C^{q+1} = \partial_q^t\f$.
 
+However in our discrete setting of finite complexes, a space and its dual can be identified. Hence cohomology can be defined in a more intuitive way:
+
+\f\[C = \cdots C^{q+1} \xleftarrow{\partial^{q}} C^q \xleftarrow{\partial^{q-1}} C^{q-1}  \leftarrow \cdots \leftarrow C^2 \xleftarrow{\partial^1} C^1 \xleftarrow{\partial^0} C^0\f\]
+
+- <B>cochain groups</B> \f$C^q\f$ for any \f$0\leqslant q \leqslant d\f$ are identified with \f$C_q\f$. Hence chains and cochains are similar.
+- a sequence of morphisms between chain groups, called <b>coboundary morphisms</B> \f$\partial^q\,:\,C^q\to C^{q+1}\f$ for any \f$0\leqslant q \leqslant d\f$ with \f$\partial^q = \partial_q^t\f$ (thus, the matrix of the coboundary operator is the transpose of the boundary operator matrix). The coboundary operator "mimicks" algebraically the geometric coboundary (ie. cofaces) and satisfies:
+\f\[\partial^q\partial^{q-1} = 0\f\]
+
+The following figure illustrates the coboundary morphism
+
+ \cgalFigureBegin{HDVFcoboundary,simplicial_complex_coboundary.png}
+ Illustration of the coboundary morphism (with \f$A = \mathbb Z\f$) <B>Pink:</B> coboundary of vertex \f$v_6\f$ (\f$\partial^0(v_6) = e_{26} + e_{46}+e_{56} - e_{67} - e_{68}\f$); <B>Blue:</B> coboundary of edge \f$e_{24}\f$ (\f$\partial^1(e_{24} ) = f_{246} - f_{234}\f$).
+ \cgalFigureEnd
+
+\subsection secHDVFhomology Homology of discrete chain complexes
+
+Homology is a topological invariant, thus, it addresses holes of an object. What is a hole?
+- Coming back to the boundary morphism defined earlier, and to the pink chain of figure \cgalFigureRef{HDVFchain_complexes}, "closed loops" are chains which boundary is null. <br>
+We call <B>\f$q\f$-cycles</B> chains of \f$\ker(\partial_q)\f$.
+- A hole is
+
+As stated earlier, the boundary morphism satisfies \f$\partial_{q}\partial_{q+1} = 0\f$, hence \f$\mathrm{Im}(\partial_{q+1}\subseteq \ker(\partial_q))\f$. Now, coming back to
 
 \section secHDVFHDVFdefinitions HDVF definitions
 
