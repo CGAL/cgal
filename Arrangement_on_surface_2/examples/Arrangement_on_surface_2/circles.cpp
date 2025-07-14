@@ -21,14 +21,16 @@ int main() {
   // Locate the vertex with maximal degree.
   auto vit = arr.vertices_begin();
   Arrangement::Vertex_const_handle v_max = vit;
-  for (++vit; vit != arr.vertices_end(); ++vit)
-    if (vit->degree() > v_max->degree()) v_max = vit;
+  for(++vit; vit != arr.vertices_end(); ++vit)
+    if(vit->degree() > v_max->degree())
+      v_max = vit;
 
   // Locate the vertex with maximum degree.
 
   std::cout << "The vertex with maximal degree in the arrangement is: "
             << "v_max = (" << v_max->point() << ") "
             << "with degree " << v_max->degree() << "." << std::endl;
-  CGAL::draw(arr);
+
+  CGAL::draw(arr, "circles");
   return 0;
 }

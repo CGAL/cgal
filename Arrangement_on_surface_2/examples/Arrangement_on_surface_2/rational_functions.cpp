@@ -57,7 +57,7 @@ int main() {
   insert(arr, arcs.begin(), arcs.end());
   print_arrangement(arr);
 
-  CGAL::draw(arr);
+  CGAL::draw(arr, "rational_functions");
 
   return 0;
 }

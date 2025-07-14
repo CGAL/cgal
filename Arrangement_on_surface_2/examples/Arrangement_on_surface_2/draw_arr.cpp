@@ -2,11 +2,11 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_segment_traits_2.h>
+#include <CGAL/Arr_non_caching_segment_traits_2.h>
 #include <CGAL/draw_arrangement_2.h>
-#include <iterator>
 
 using Kernel = CGAL::Exact_predicates_exact_constructions_kernel;
-using Traits = CGAL::Arr_segment_traits_2<Kernel>;
+using Traits = CGAL::Arr_non_caching_segment_traits_2<Kernel>;
 using Point = Traits::Point_2;
 using Arrangement_2 = CGAL::Arrangement_2<Traits>;
 

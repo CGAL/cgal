@@ -64,7 +64,8 @@ class Arr_bounds_context_mixin
 
 protected:
   Arr_bounds_context_mixin(const Bbox_2& bbox)
-      : m_bbox(bbox) {}
+      : m_bbox(bbox)
+      , to_ft() {}
 
 public:
   double xmin() const { return m_bbox.xmin(); }

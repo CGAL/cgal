@@ -51,7 +51,7 @@ int main() {
     std::cout << std::endl;
   }
 
-  CGAL::draw(arr);
+  CGAL::draw(arr, "unbounded_non_intersecting");
 
   return 0;
 }

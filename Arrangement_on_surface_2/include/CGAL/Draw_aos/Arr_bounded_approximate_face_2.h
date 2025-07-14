@@ -10,13 +10,13 @@
 
 #include <boost/iterator/function_output_iterator.hpp>
 
-#include "CGAL/Arr_enums.h"
-#include "CGAL/Bbox_2.h"
-#include "CGAL/Draw_aos/Arr_bounded_approximate_curve_2.h"
-#include "CGAL/Draw_aos/Arr_bounded_approximate_point_2.h"
-#include "CGAL/Draw_aos/Arr_bounded_face_triangulator.h"
-#include "CGAL/Draw_aos/Arr_render_context.h"
-#include "CGAL/Draw_aos/type_utils.h"
+#include <CGAL/Arr_enums.h>
+#include <CGAL/Bbox_2.h>
+#include <CGAL/Draw_aos/Arr_bounded_approximate_curve_2.h>
+#include <CGAL/Draw_aos/Arr_bounded_approximate_point_2.h>
+#include <CGAL/Draw_aos/Arr_bounded_face_triangulator.h>
+#include <CGAL/Draw_aos/Arr_render_context.h>
+#include <CGAL/Draw_aos/type_utils.h>
 
 namespace CGAL {
 
@@ -212,7 +212,7 @@ class Arr_bounded_approximate_face_2
   using Bounded_render_context = Arr_bounded_render_context<Arrangement>;
 
   using Triangulator = Arr_bounded_face_triangulator<Arrangement>;
-  using Patch_boundary = Patch_boundary<Geom_traits>;
+  using Patch = Patch_boundary<Geom_traits>;
   using Simplifier = Colinear_simplifier<Geom_traits, typename Triangulator::Insert_iterator>;
 
   struct Left_to_right_tag
@@ -236,13 +236,13 @@ private:
     using Insert_iterator = boost::function_output_iterator<std::function<void(Approx_point pt)>>;
 
     Execution_context(const Bounded_render_context& ctx,
-                      const Patch_boundary& patch_boundary,
+                      const Patch& patch,
                       Output_iterator out_it,
                       const Bounded_approximate_point_2& bounded_approx_pt,
                       const Bounded_approximate_curve_2& bounded_approx_curve)
         : Arr_context_delegator<Bounded_render_context>(ctx)
         , base_out_it(out_it)
-        , patch_boundary(patch_boundary)
+        , patch(patch)
         , bounded_approx_pt(bounded_approx_pt)
         , bounded_approx_curve(bounded_approx_curve) {
       this->out_it = boost::make_function_output_iterator(std::function([this](Approx_point pt) {
@@ -257,7 +257,7 @@ private:
         }
 
         if(passed_fictitious_edge && last_pt.has_value()) {
-          this->patch_boundary(last_pt.value(), pt, base_out_it);
+          this->patch(last_pt.value(), pt, base_out_it);
         }
         passed_fictitious_edge = false;
 
@@ -280,7 +280,7 @@ private:
     std::optional<Approx_point> last_pt, first_pt;
     bool passed_fictitious_edge{false};
     Output_iterator base_out_it;
-    const Patch_boundary& patch_boundary;
+    const Patch& patch;
   };
 
 private:
@@ -419,9 +419,9 @@ private:
 
     if constexpr(Unbounded) {
       if(ctx.first_pt.has_value()) {
-        ctx.patch_boundary(ctx.last_pt.value(), ctx.first_pt.value(), ctx.base_out_it);
+        ctx.patch(ctx.last_pt.value(), ctx.first_pt.value(), ctx.base_out_it);
       } else {
-        ctx.patch_boundary(ctx.base_out_it);
+        ctx.patch(ctx.base_out_it);
       }
     }
   }
@@ -431,7 +431,7 @@ public:
                                  const Bounded_approximate_point_2& bounded_approx_pt,
                                  const Bounded_approximate_curve_2& bounded_approx_curve)
       : m_ctx(ctx)
-      , m_patch_boundary(ctx.bbox())
+      , m_patch(ctx.bbox())
       , m_bounded_approx_pt(bounded_approx_pt)
       , m_bounded_approx_curve(bounded_approx_curve) {}
 
@@ -468,8 +468,8 @@ public:
 
     auto triangulator = Triangulator(m_ctx);
     auto simplifier = Simplifier(triangulator.insert_iterator(), m_ctx.bbox());
-    auto ctx = Execution_context(m_ctx, m_patch_boundary, simplifier.insert_iterator(), m_bounded_approx_pt,
-                                 m_bounded_approx_curve);
+    auto ctx =
+        Execution_context(m_ctx, m_patch, simplifier.insert_iterator(), m_bounded_approx_pt, m_bounded_approx_curve);
 
     if(fh->is_unbounded()) {
       approximate_ccb<Outer_ccb_tag, true>(ctx, fh->outer_ccb());
@@ -486,7 +486,7 @@ private:
   const Bounded_render_context& m_ctx;
   const Bounded_approximate_point_2& m_bounded_approx_pt;
   const Bounded_approximate_curve_2& m_bounded_approx_curve;
-  const Patch_boundary m_patch_boundary;
+  const Patch m_patch;
 };
 
 } // namespace draw_aos
