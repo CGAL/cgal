@@ -473,7 +473,7 @@ void assign_vertices_to_clusters(const TriangleMesh& tmesh,
   for(vertex_descriptor v : vertices(tmesh)) {
     FT area = get(vertex_area_map, v);
     Point_3 p = get(vpm, v);
-    FT min_distance = std::numeric_limits<FT>::max();
+    FT min_distance = (std::numeric_limits<FT>::max)();
     Vector_3 normal = get(vertex_normal_map, v);
     Sphere_ID closest_sphere_id = 0.;
 
@@ -490,12 +490,13 @@ void assign_vertices_to_clusters(const TriangleMesh& tmesh,
       FT dist_sqem = CGAL::scalar_product(p - center, normal) - radius;
       dist_sqem *= dist_sqem;
 
-      FT distance = area * (dist_sqem + lambda * dist_eucl);
+      FT distance = dist_sqem + lambda * dist_eucl;
       if(distance < min_distance) {
         min_distance = distance;
         closest_sphere_id = sphere->get_id();
       }
     }
+    FT area = get(vertex_area_map, v);
     // Update the closest sphere
     put(vertex_cluster_sphere_map, v, closest_sphere_id);
     sphere_mesh.get_sphere(closest_sphere_id)->accumulate_cluster_area(area);
