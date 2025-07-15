@@ -496,7 +496,7 @@ void assign_vertices_to_clusters(const TriangleMesh& tmesh,
         closest_sphere_id = sphere->get_id();
       }
     }
-    FT area = get(vertex_area_map, v);
+
     // Update the closest sphere
     put(vertex_cluster_sphere_map, v, closest_sphere_id);
     sphere_mesh.get_sphere(closest_sphere_id)->accumulate_cluster_area(area);
@@ -832,7 +832,7 @@ void assign_vertices_to_clusters_parallel(const TriangleMesh& tmesh,
                         Point_3 p = get(vpm, v);
                         FT min_distance = std::numeric_limits<FT>::max();
                         Vector_3 normal = get(vertex_normal_map, v);
-                        Sphere_ID closest_sphere_id;
+                        Sphere_ID closest_sphere_id = (*sphere_mesh.spheres().begin())->get_id();
 
                         // Find the sphere with smallest distance to the vertex
                         for(const auto& sphere : sphere_mesh.spheres()) {

@@ -74,7 +74,7 @@ void Variational_medial_axis_skeleton_item::fill_subitems()
   lockChild(edges);
 
   faces = new Scene_polygon_soup_item();
-  edges->setName("Skeleton Faces");
+  faces->setName("Skeleton Faces");
   faces->init_polygon_soup(skeleton.vertices().size(), skeleton.faces().size());
   for (std::size_t i=0; i<skeleton.vertices().size(); ++i)
     faces->new_vertex(skeleton.vertices()[i].center().x(),
