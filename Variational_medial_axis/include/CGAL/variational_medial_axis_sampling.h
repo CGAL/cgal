@@ -512,7 +512,8 @@ void assign_vertices_to_clusters(const TriangleMesh& tmesh,
     }
   }
   for(Sphere_ID id : sphere_ids_to_remove) {
-    std::cout << "Removing sphere with ID: " << id << " due to small cluster size." << std::endl;
+    // TODO: add a paratmeter to control the output verbosity
+    //std::cout << "Removing sphere with ID: " << id << " due to small cluster size." << std::endl;
     sphere_mesh.remove(id); // remove spheres with small clusters
   }
 }
@@ -875,7 +876,8 @@ void assign_vertices_to_clusters_parallel(const TriangleMesh& tmesh,
     }
   }
   for(Sphere_ID id : sphere_ids_to_remove) {
-    std::cout << "Removing sphere with ID: " << id << " due to small cluster size." << std::endl;
+    // TODO: add a paratmeter to control the output verbosity
+    //std::cout << "Removing sphere with ID: " << id << " due to small cluster size." << std::endl;
     sphere_mesh.remove(id); // remove spheres with small clusters
   }
 }
@@ -1063,8 +1065,8 @@ void split_spheres(MedialSphereMesh<TriangleMesh, GT>& sphere_mesh,
   if(sphere_mesh.nb_spheres() >= desired_number_of_spheres) {
     return;
   }
-
-  std::cout << "Start Split spheres" << std::endl;
+  // TODO: add a paratmeter to control the output verbosity
+  //std::cout << "Start Split spheres" << std::endl;
   std::vector<std::shared_ptr<MSphere>> sorted_sphere = sphere_mesh.spheres();
   std::sort(sorted_sphere.begin(), sorted_sphere.end(),
             [](const std::shared_ptr<MSphere>& a, const std::shared_ptr<MSphere>& b) {
@@ -1215,6 +1217,11 @@ variational_medial_axis_sampling(const TriangleMesh& tmesh,
   // Compute shrinking ball of each vertex
   compute_shrinking_balls<GT>(tmesh, tree, vpm, face_normal_map, vertex_normal_map,
                                                        vertex_medial_sphere_pos_map, vertex_medial_sphere_radius_map);
+  // TODO: add a paratmeter to control the output verbosity
+  //std::cout << "Starting variational medial axis computation..." << std::endl;
+  //std::cout << "Target number of spheres: " << desired_number_of_spheres << std::endl;
+  //std::cout << "Lambda: " << lambda << std::endl;
+  //std::cout << "Max iterations: " << max_iteration << std::endl;
 
   std::cout << "Starting variational medial axis computation..." << std::endl;
   std::cout << "Target number of spheres: " << desired_number_of_spheres << std::endl;
@@ -1254,13 +1261,17 @@ variational_medial_axis_sampling(const TriangleMesh& tmesh,
 #endif
     total_error_diff = std::abs(total_error - last_total_error);
     last_total_error = total_error;
+    // TODO: add a paratmeter to control the output verbosity
+    //std::cout << "Iteration " << iteration_count << ": spheres=" << sphere_mesh.nb_spheres()
+    //          << ", error=" << total_error << ", error_diff=" << total_error_diff << std::endl;
 
     std::cout << "Iteration " << iteration_count << ": spheres=" << sphere_mesh.nb_spheres()
               << ", error=" << total_error << ", error_diff=" << total_error_diff << std::endl;
 
     // Check convergence
     if((sphere_mesh.nb_spheres() >= desired_number_of_spheres && total_error_diff < 1e-5)) {
-      std::cout << "Converged: reached target number of spheres with low error change" << std::endl;
+      // TODO: add a paratmeter to control the output verbosity
+      //std::cout << "Converged: reached target number of spheres with low error change" << std::endl;
       break;
     }
 
@@ -1276,6 +1287,10 @@ variational_medial_axis_sampling(const TriangleMesh& tmesh,
 
   // Final neighbor update
   update_sphere_neighbors<GT>(tmesh, sphere_mesh, vertex_cluster_sphere_map);
+  // TODO: add a paratmeter to control the output verbosity
+  //std::cout << "Algorithm completed after " << iteration_count << " iterations" << std::endl;
+  //std::cout << "Final number of spheres: " << sphere_mesh.nb_spheres() << std::endl;
+  //std::cout << "Final total error: " << total_error << std::endl;
 
   std::cout << "Algorithm completed after " << iteration_count << " iterations" << std::endl;
   std::cout << "Final number of spheres: " << sphere_mesh.nb_spheres() << std::endl;
@@ -1432,6 +1447,13 @@ public:
     edges_.clear();
     faces_.clear();
   }
+  void set_data(std::vector<Sphere_3>&& vertices,
+                std::vector<std::pair<std::size_t, std::size_t>>&& edges,
+                std::vector<std::array<std::size_t, 3>>&& faces) {
+    vertices_ = std::move(vertices);
+    edges_ = std::move(edges);
+    faces_ = std::move(faces);
+  }
 
 private:
   std::vector<Sphere_3> vertices_; // Each vertex is a complete medial sphere
@@ -1581,6 +1603,143 @@ public:
   Skeleton<TriangleMesh_, GT> export_skeleton() const {
     Skeleton<TriangleMesh_, GT> skeleton;
     skeleton.build_skeleton_from_medial_sphere_mesh(*sphere_mesh_);
+    return skeleton;
+  }
+
+  Skeleton<TriangleMesh_, GT> read_skeleton_from_ply(std::string& filename) const {
+    std::ifstream ifs(filename);
+    if(!ifs) {
+      std::cerr << "Error opening file: " << filename << std::endl;
+      return Skeleton<TriangleMesh_, GT>{};
+    }
+
+    Skeleton<TriangleMesh_, GT> skeleton;
+    std::vector<Sphere_3> vertices;
+    std::vector<std::pair<std::size_t, std::size_t>> edges;
+    std::vector<std::array<std::size_t, 3>> faces;
+
+    std::string line;
+    std::size_t num_vertices = 0, num_edges = 0, num_faces = 0;
+    bool in_header = true;
+    bool is_ascii = false;
+
+    while(std::getline(ifs, line) && in_header) {
+      std::istringstream iss(line);
+      std::string token;
+      iss >> token;
+
+      if(token == "ply") {
+        continue;
+      }
+      else if(token == "format") {
+        std::string format_type;
+        iss >> format_type;
+        if(format_type == "ascii") {
+          is_ascii = true;
+        } else {
+          std::cerr << "Error: Only ASCII PLY format is supported" << std::endl;
+          return Skeleton<TriangleMesh_, GT>{};
+        }
+      }
+      else if(token == "element") {
+        std::string element_type;
+        std::size_t count;
+        iss >> element_type >> count;
+
+        if(element_type == "vertex") {
+          num_vertices = count;
+        } else if(element_type == "edge") {
+          num_edges = count;
+        } else if(element_type == "face") {
+          num_faces = count;
+        }
+      }
+      else if(token == "end_header") {
+       break;
+      }
+    }
+
+    vertices.reserve(num_vertices);
+    for(std::size_t i = 0; i < num_vertices; ++i) {
+      if(!std::getline(ifs, line)) {
+        std::cerr << "Error: Unexpected end of file while reading vertices" << std::endl;
+        return Skeleton<TriangleMesh_, GT>{};
+      }
+
+      std::istringstream iss(line);
+      double x, y, z, radius;
+      if(!(iss >> x >> y >> z >> radius)) {
+        std::cerr << "Error: Invalid vertex data at line " << i + 1 << std::endl;
+        return Skeleton<TriangleMesh_, GT>{};
+      }
+
+      Point_3 center(x, y, z);
+      FT squared_radius = FT(radius * radius);
+      vertices.emplace_back(center, squared_radius);
+    }
+
+    edges.reserve(num_edges);
+    for(std::size_t i = 0; i < num_edges; ++i) {
+      if(!std::getline(ifs, line)) {
+        std::cerr << "Error: Unexpected end of file while reading edges" << std::endl;
+        return Skeleton<TriangleMesh_, GT>{};
+      }
+
+      std::istringstream iss(line);
+      std::size_t v1, v2;
+      if(!(iss >> v1 >> v2)) {
+        std::cerr << "Error: Invalid edge data at line " << i + 1 << std::endl;
+        return Skeleton<TriangleMesh_, GT>{};
+      }
+
+      if(v1 >= num_vertices || v2 >= num_vertices) {
+        std::cerr << "Error: Edge references invalid vertex indices" << std::endl;
+        return Skeleton<TriangleMesh_, GT>{};
+      }
+
+      edges.emplace_back(v1, v2);
+    }
+
+    faces.reserve(num_faces);
+    for(std::size_t i = 0; i < num_faces; ++i) {
+      if(!std::getline(ifs, line)) {
+        std::cerr << "Error: Unexpected end of file while reading faces" << std::endl;
+        return Skeleton<TriangleMesh_, GT>{};
+      }
+
+      std::istringstream iss(line);
+      std::size_t vertex_count;
+      if(!(iss >> vertex_count)) {
+        std::cerr << "Error: Invalid face data at line " << i + 1 << std::endl;
+        return Skeleton<TriangleMesh_, GT>{};
+      }
+
+      if(vertex_count != 3) {
+        std::cerr << "Error: Only triangular faces are supported" << std::endl;
+        return Skeleton<TriangleMesh_, GT>{};
+      }
+
+      std::size_t v1, v2, v3;
+      if(!(iss >> v1 >> v2 >> v3)) {
+        std::cerr << "Error: Invalid face vertex indices" << std::endl;
+        return Skeleton<TriangleMesh_, GT>{};
+      }
+
+      if(v1 >= num_vertices || v2 >= num_vertices || v3 >= num_vertices) {
+        std::cerr << "Error: Face references invalid vertex indices" << std::endl;
+        return Skeleton<TriangleMesh_, GT>{};
+      }
+
+      faces.push_back({v1, v2, v3});
+    }
+
+    ifs.close();
+
+    skeleton.set_data(std::move(vertices), std::move(edges), std::move(faces));
+
+    std::cout << "Successfully loaded skeleton from " << filename << std::endl;
+    std::cout << "Vertices: " << num_vertices << ", Edges: " << num_edges << ", Faces: " << num_faces << std::endl;
+
     return skeleton;
   }
 
