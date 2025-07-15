@@ -472,7 +472,7 @@ const TriangulationDataStructure_2 & tds() const;
 
 /// @}
 
-/// \name Non Const Access
+/// \name Non-Const Access
 /// \attention The responsibility of keeping a valid triangulation belongs to the
 /// user when using advanced operations allowing a direct manipulation
 /// of the `tds`. This method is mainly a help for users implementing
@@ -531,7 +531,7 @@ is_infinite(All_edges_iterator ei) const;
 /*!
 `true` if `v` is a vertex of the triangulation.
 */
-bool is_vertex(Vertex_handle v);
+bool is_vertex(Vertex_handle v) const;
 
 /*!
 `true` if there is an edge having `va` and `vb` as
