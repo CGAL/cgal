@@ -18,6 +18,7 @@
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_profile.h>
 
 #include <CGAL/Cartesian/MatrixC33.h>
+#include <CGAL/Cartesian/CrossProduct.h>
 
 #include <limits>
 #include <vector>
@@ -101,6 +102,8 @@ private :
   void extract_triangle_data();
   void extract_boundary_data();
 
+  double maxBb;
+
   void add_boundary_preservation_constraints(const Boundary_data_vector& aBdry);
   void add_volume_preservation_constraints(const Triangle_data_vector& triangles);
   void add_boundary_and_volume_optimization_constraints(const Boundary_data_vector& aBdry,
@@ -118,42 +121,6 @@ private :
 
   const Geom_traits& geom_traits() const { return mProfile.geom_traits(); }
   const TM& surface() const { return mProfile.surface(); }
-
-#if 0
-  // a*b - c*d
-  // The next two functions are from https://stackoverflow.com/questions/63665010/accurate-floating-point-computation-of-the-sum-and-difference-of-two-products
-  static double diff_of_products_kahan(const double a, const double b, const double c, const double d)
-  {
-    double w = d * c;
-    double e = std::fma(c, -d, w);
-    double f = std::fma(a, b, -w);
-    return f + e;
-  }
-
-  static double diff_of_products_cht(const double a, const double b, const double c, const double d)
-  {
-    double p1 = a * b;
-    double p2 = c * d;
-    double e1 = std::fma (a, b, -p1);
-    double e2 = std::fma (c, -d, p2);
-    double r = p1 - p2;
-    double e = e1 + e2;
-    return r + e;
-  }
-
-  static double diff_of_products(const double a, const double b, const double c, const double d)
-  {
-    // the next two are equivalent in results and speed
-    return diff_of_products_kahan(a, b, c, d);
-    // return diff_of_products_cht(a, b, c, d);
-  }
-
-  template <typename OFT>
-  static OFT diff_of_products(const OFT& a, const OFT& b, const OFT& c, const OFT& d)
-  {
-    return a*b - c*d;
-  }
-#endif
 
 #ifdef __AVX__
   static Vector SL_cross_product_avx(const Vector& A, const Vector& B)
@@ -185,12 +152,17 @@ private :
   }
 #endif
 
-  static Vector SL_cross_product(const Vector& a, const Vector& b)
+   // balanced solution based on abusing the fact that here we expect u and v to have similar coordinates
+  static Vector robust_cross_product(const Vector& a, const Vector& b)
   {
-    const FT ax=a.x(), ay=a.y(), az=a.z();
-    const FT bx=b.x(), by=b.y(), bz=b.z();
+    const FT& ax=a.x();
+    const FT& ay=a.y();
+    const FT& az=a.z();
+    const FT& bx=b.x();
+    const FT& by=b.y();
+    const FT& bz=b.z();
 
-    auto compute_minor = [](double ai, double bi, double aj, double bj)
+    auto minor = [](const FT& ai, const FT& bi, const FT& aj, const FT& bj)
     {
       // The main idea is that we expect ai and bi (and aj and bj) to have roughly the same magnitude
       // since this function is used to compute the cross product of two vectors that are defined
@@ -201,9 +173,9 @@ private :
     };
 
     // ay*
-    FT x = compute_minor(ay, by, az, bz);
-    FT y = compute_minor(az, bz, ax, bx);
-    FT z = compute_minor(ax, bx, ay, by);
+    FT x = minor(ay, by, az, bz);
+    FT y = minor(az, bz, ax, bx);
+    FT z = minor(ax, bx, ay, by);
 
     return Vector(x, y, z);
   }
@@ -217,9 +189,10 @@ private :
     exv.exact();
     return to_approx(exv);
   }
-#endif
 
-  static Vector X_product(const Vector& u, const Vector& v)
+
+
+  static Vector experimental_cross_product(const Vector& u, const Vector& v)
   {
 #if 0
     // this can create large errors and spiky meshes for kernels with inexact constructions
@@ -234,18 +207,18 @@ private :
     return { diff_of_products(u.y(), v.z(), u.z(), v.y()),
              diff_of_products(u.z(), v.x(), u.x(), v.z()),
              diff_of_products(u.x(), v.y(), u.y(), v.x()) };
-#elif 1
-    // balanced solution based on abusing the fact that here we expect u and v to have similar coordinates
-    return SL_cross_product(u, v);
 #elif 0
     // obviously too slow
     return exact_cross_product(u, v);
 #endif
   }
 
+#endif
+
+
   static Vector point_cross_product(const Point& a, const Point& b)
   {
-    return X_product(a-ORIGIN, b-ORIGIN);
+    return robust_cross_product(a-ORIGIN, b-ORIGIN);
   }
 
   // This is the (uX)(Xu) product described in the Lindstrom-Turk paper
@@ -352,17 +325,22 @@ LindstromTurkCore<TM,K>::
 extract_triangle_data()
 {
   mTriangle_data.reserve(mProfile.triangles().size());
-
+  maxBb = 0.0;
   for(const Triangle& tri : mProfile.triangles())
   {
     const Point_reference p0 = get_point(tri.v0);
     const Point_reference p1 = get_point(tri.v1);
     const Point_reference p2 = get_point(tri.v2);
 
+    //TODO for obscur reason, computing this maxBb increase running time by 10%
+    maxBb=(std::max)({maxBb,CGAL::abs(p0.x()),CGAL::abs(p0.y()),CGAL::abs(p0.z()),
+                            CGAL::abs(p1.x()),CGAL::abs(p1.y()),CGAL::abs(p1.z()),
+                            CGAL::abs(p2.x()),CGAL::abs(p2.y()),CGAL::abs(p2.z())});
+
     Vector v01 = p1 - p0;
     Vector v02 = p2 - p0;
 
-    Vector lNormalV = cross_product(v01,v02);
+    Vector lNormalV = robust_cross_product(v01,v02);
     FT lNormalL = point_cross_product(p0,p1) * (p2 - ORIGIN);
 
     CGAL_SMS_LT_TRACE(1, "  Extracting triangle v" << tri.v0 << "->v" << tri.v1 << "->v" << tri.v2
@@ -370,6 +348,7 @@ extract_triangle_data()
 
     mTriangle_data.push_back(Triangle_data(lNormalV,lNormalL));
   }
+  maxBb *= 2.0; // to avoid numerical problems
 }
 
 template<class TM, class K>
@@ -394,11 +373,12 @@ compute_placement()
   //  A1 * v = b1
   //  A2 * v = b2
   //
-  // Which in matrix form is :  A * v = b
+  // Which in matrix form is:  A * v = b
   //
   // (with 'A' a 3x3 matrix and 'b' a vector)
   //
-  // The member variable mConstrinas contains A and b. Indidivual constraints (Ai,bi) can be added to it.
+  // The member variables mConstraints_A and mConstraints_b contain A and b.
+  // Indidivual constraints (Ai,bi) can be added to it.
   // Once 3 such constraints have been added 'v' is directly solved a:
   //
   //  v = b*inverse(A)
@@ -421,7 +401,7 @@ compute_placement()
   // In that case there is simply no good vertex placement
   if(mConstraints_n == 3)
   {
-    // If the matrix is singular it's inverse cannot be computed so an 'absent' value is returned.
+    // If the matrix is singular its inverse cannot be computed so an 'absent' value is returned.
     std::optional<Matrix> lOptional_Ai = inverse_matrix(mConstraints_A);
     if(lOptional_Ai)
     {
@@ -686,7 +666,10 @@ add_constraint_if_alpha_compatible(const Vector& Ai,
     FT l = CGAL_NTS sqrt(slai);
     CGAL_SMS_LT_TRACE(3, "      l: " << n_to_string(l));
 
-    if(!CGAL_NTS is_zero(l))
+    // Due to double number type, l may have a small value instead of zero (example sum of the face normals of a tetrahedron for volume constraint)
+    // if bi is greater than maxBb, we consider that l is zero
+    CGAL_SMS_LT_TRACE(3, "      error consider: " << (CGAL::abs(bi) / maxBb));
+    if(l > (CGAL::abs(bi) / maxBb))
     {
       Vector Ain = Ai / l;
       FT bin = bi / l;
@@ -861,6 +844,7 @@ add_constraint_from_gradient(const Matrix& H,
     }
       break;
   }
+
 }
 
 } // namespace internal
