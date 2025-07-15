@@ -29,7 +29,7 @@ int main(int argc, char* argv[])
   }
 
   std::vector<Convex_hull> convex_hulls;
-  std::size_t n = PMP::approximate_convex_decomposition(mesh, std::back_inserter(convex_hulls),
+  PMP::approximate_convex_decomposition(mesh, std::back_inserter(convex_hulls),
     CGAL::parameters::maximum_depth(10)
     .volume_error(0.1)
     .maximum_number_of_convex_hulls(9)
