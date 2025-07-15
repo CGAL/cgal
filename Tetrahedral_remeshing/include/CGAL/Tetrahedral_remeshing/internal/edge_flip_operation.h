@@ -498,6 +498,9 @@ private:
           }
 
           // Update valences
+          //TODO: In a parallel context we should be sure that this is (thread) safe.
+          // Whatever tests we have done there were no crashes. 
+          // tbb offers a concurrent hash map
           get_static_boundary_vertices_valences()[vh0][surfi]--;
           get_static_boundary_vertices_valences()[vh1][surfi]--;
           get_static_boundary_vertices_valences()[vh2][surfi]++;
