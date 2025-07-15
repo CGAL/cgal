@@ -20,8 +20,10 @@ int main()
   auto d1 = CGAL::polyhedron_3_to_lcc(lcc1, P); 
   assert(d1 == LCC::null_descriptor);
 
+#if !defined(CGAL_NO_DEPRECATED_CODE) && !defined(CGAL_NO_DEPRECATION_WARNINGS)
   auto d2 = CGAL::import_from_polyhedron_3<LCC>(lcc2, P); 
   assert(d2 == LCC::null_descriptor);
+#endif
 
   return EXIT_SUCCESS;
 }

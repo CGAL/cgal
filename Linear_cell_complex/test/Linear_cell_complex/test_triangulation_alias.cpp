@@ -17,9 +17,10 @@ int main()
   auto d1 = CGAL::triangulation_3_to_lcc(lcc1, T);
   assert(d1 == LCC_3::null_descriptor);
 
+#if !defined(CGAL_NO_DEPRECATED_CODE) && !defined(CGAL_NO_DEPRECATION_WARNINGS)
   auto d2 = CGAL::import_from_triangulation_3(lcc2, T);
   assert(d2 == LCC_3::null_descriptor);
+#endif
 
   return EXIT_SUCCESS;
 }
-

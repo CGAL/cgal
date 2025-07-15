@@ -22,9 +22,11 @@ int main()
   input.clear();
   input.seekg(0, std::ios::beg);
 
+  #if !defined(CGAL_NO_DEPRECATED_CODE) && !defined(CGAL_NO_DEPRECATION_WARNINGS)
   // Test deprecated function
   auto d2 = CGAL::import_from_plane_graph(lcc2, input);
   assert(d2 != LCC::null_descriptor);
+  #endif
 
   return EXIT_SUCCESS;
 }
