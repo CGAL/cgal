@@ -8,6 +8,8 @@
 
 ## [Release 6.1](https://github.com/CGAL/cgal/releases/tag/v6.1)
 
+Release date: July 2025
+
 ### General Changes
 
 - The new list of supported compilers is:

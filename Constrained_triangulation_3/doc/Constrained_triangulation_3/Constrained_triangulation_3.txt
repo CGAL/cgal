@@ -49,12 +49,13 @@ that satisfy the following properties:
 - Each polygonal face must be a simple polygon, i.e., its edges don't intersect,
   except consecutive edges, which intersect at their common vertex.
 - Each polygonal face must be planar, meaning all its vertices lie on the same plane.
+- Each polygonal face may be non-convex.
 - Each polygonal face may have one or more holes, each of them also represented by an ordered list of vertices
   from the PLC, forming a closed loop.
-- If two polygons in the PLC intersect, their intersection is a union of edges and vertices from the
-  PLC. In particular, the interiors of two polygons cannot overlap.
+- Polygonal holes may be non-convex.
+- If two polygonal faces in the PLC intersect, their intersection is a union of edges and vertices from the
+  PLC. In particular, the interiors of two polygonal faces cannot overlap.
 
-Polygons in a PLC may be non-convex and may have holes.
 
 \cgalFigureAnchor{CT_3_plc_fig}
 <center>
@@ -79,7 +80,7 @@ possible to being Delaunay, given that some faces are marked as _constrained_. M
 triangulation is _constrained Delaunay_ if, for any simplex \f$s\f$ of the triangulation, the
 interior of its circumscribing sphere contains no vertex of the triangulation that is _visible_ from
 any point in the interior of the simplex \f$s\f$. Two points are _visible_ if the open line segment
-joining them does not intersect any polygonal face of the PLC, except for polygons that are coplanar with
+joining them does not intersect any polygonal face of the PLC, except for polygonal faces that are coplanar with
 the segment.
 
 In 3D, constrained triangulations do not always exist. This can be demonstrated using the example of
@@ -87,7 +88,7 @@ Sch&ouml;nhardt polyhedra \cgalCite{s-udzvd-28} (see \cgalFigureRef{CT_3_schonha
 \cgalCite{b-ip-48a}. Shewchuk \cgalCite{cgal:shewchuk1998condition} demonstrated that for any PLC,
 there exists a refined
 version of the original PLC that admits a constrained Delaunay triangulation. This refinement is
-achieved by adding Steiner vertices to the input edges and polygons. The constrained triangulation
+achieved by adding Steiner vertices to the input edges and polygonal faces. The constrained triangulation
 built on this refined PLC is known as a _conforming constrained Delaunay triangulation_ (CCDT for
 short). \cgalFigureRef{CT_3_plc2cdt_fig} illustrates an example of a conforming constrained
 Delaunay triangulation constructed from a PLC.
@@ -113,7 +114,8 @@ Right: CCDT (2452 vertices).
 
 The algorithm implemented in this package is based on the work of Hang Si et al., who developed particular
 algorithms for constructing conforming constrained Delaunay triangulations from PLCs.
-The corresponding implementation takes with floating point numbers as coordinates
+The corresponding implementation is designed to handle points whose coordinates
+are floating-point numbers.
 \cgalCite{si2005meshing}, \cgalCite{cgal:si2008cdt3}, \cgalCite{si2015tetgen}.
 
 
@@ -136,14 +138,15 @@ manifold (that is, each edge belongs to exactly two faces), and their faces cann
 
 A PLC can also be represented as a polygon soup: a collection of vertices and a set of polygons, where
 each polygon is defined by an ordered list of vertices, without explicit connectivity information between
-polygons. For a polygon soup to represent a valid PLC, its polygons must satisfy the properties described
+polygons. For a polygon soup to represent a valid PLC, its polygons must satisfy the
+polygonal faces properties described
 in the previous section. This approach allows for the representation of non-manifold geometries; however,
 polygons in a polygon soup cannot have holes.
 
-This package also provides a way to group polygons into distinct surface patches using a property map,
+This package also provides a way to group polygonal faces into distinct surface patches using a property map,
 named `plc_face_id`.
-Each polygon can be assigned a _patch_ identifier, allowing multiple polygons to form a continuous surface patch,
-which may include holes. Some necessary geometric conditions must be satisfied for these patches to be
+Each polygon can be assigned a _patch_ identifier, allowing multiple polygonal faces to form a continuous surface patch,
+which may include holes. Some necessary conditions must be satisfied for these patches to be
 used in the conforming constrained Delaunay triangulation construction:
 - Each patch must be planar, meaning all polygonal faces in the patch lie on the same plane;
 - The polygonal faces of the patch must not intersect except at their shared edges.
@@ -181,7 +184,8 @@ However, because this package builds upon the 3D Triangulation package, it inher
 that the traits class must provide exact predicates.
 
 A key aspect of this algorithm is the creation of new points, known as Steiner points, which are
-inserted on the segments and polygons of the input PLC. If a traits class with inexact constructions
+inserted on the segments and polygons forming the input PLC polygonal faces.
+If a traits class with inexact constructions
 is used, it cannot be guaranteed that these points will lie exactly on the intended segments or polygons.
 As a result, the output will only approximate the input, with the accuracy limited by the rounding
 of the computed Steiner points.
