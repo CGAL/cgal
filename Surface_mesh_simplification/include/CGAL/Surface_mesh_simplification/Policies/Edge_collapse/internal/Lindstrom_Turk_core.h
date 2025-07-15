@@ -18,7 +18,7 @@
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_profile.h>
 
 #include <CGAL/Cartesian/MatrixC33.h>
-#include <CGAL/Cartesian/CrossProduct.h>
+#include <CGAL/internal/robust_cross_product.h>
 
 #include <limits>
 #include <vector>
@@ -152,73 +152,10 @@ private :
   }
 #endif
 
-   // balanced solution based on abusing the fact that here we expect u and v to have similar coordinates
-  static Vector robust_cross_product(const Vector& a, const Vector& b)
-  {
-    const FT& ax=a.x();
-    const FT& ay=a.y();
-    const FT& az=a.z();
-    const FT& bx=b.x();
-    const FT& by=b.y();
-    const FT& bz=b.z();
-
-    auto minor = [](const FT& ai, const FT& bi, const FT& aj, const FT& bj)
-    {
-      // The main idea is that we expect ai and bi (and aj and bj) to have roughly the same magnitude
-      // since this function is used to compute the cross product of two vectors that are defined
-      // as (ORIGIN, pa) and (ORIGIN, pb) and pa and pb are part of the same triangle.
-      //
-      // We can abuse this fact to trade 2 extra subtractions to lower the error.
-      return ai * (bj - aj) + aj * (ai - bi);
-    };
-
-    // ay*
-    FT x = minor(ay, by, az, bz);
-    FT y = minor(az, bz, ax, bx);
-    FT z = minor(ax, bx, ay, by);
-
-    return Vector(x, y, z);
-  }
-
-#if 0
-  static Vector exact_cross_product(const Vector& a, const Vector& b)
-  {
-    CGAL::Cartesian_converter<Geom_traits, CGAL::Exact_predicates_exact_constructions_kernel> to_exact;
-    CGAL::Cartesian_converter<CGAL::Exact_predicates_exact_constructions_kernel, Geom_traits> to_approx;
-    auto exv = cross_product(to_exact(a), to_exact(b));
-    exv.exact();
-    return to_approx(exv);
-  }
-
-
-
-  static Vector experimental_cross_product(const Vector& u, const Vector& v)
-  {
-#if 0
-    // this can create large errors and spiky meshes for kernels with inexact constructions
-    return CGAL::cross_product(u,v);
-#elif 0
-    // improves the problem mentioned above a bit, but not enough
-    return { std::fma(u.y(), v.z(), -u.z()*v.y()),
-             std::fma(u.z(), v.x(), -u.x()*v.z()),
-             std::fma(u.x(), v.y(), -u.y()*v.x()) };
-#elif 0
-    // this is the best without resorting to exact, but it inflicts a 20% slowdown
-    return { diff_of_products(u.y(), v.z(), u.z(), v.y()),
-             diff_of_products(u.z(), v.x(), u.x(), v.z()),
-             diff_of_products(u.x(), v.y(), u.y(), v.x()) };
-#elif 0
-    // obviously too slow
-    return exact_cross_product(u, v);
-#endif
-  }
-
-#endif
-
 
   static Vector point_cross_product(const Point& a, const Point& b)
   {
-    return robust_cross_product(a-ORIGIN, b-ORIGIN);
+    return robust_cross_product<Geom_traits>(a-ORIGIN, b-ORIGIN);
   }
 
   // This is the (uX)(Xu) product described in the Lindstrom-Turk paper
@@ -332,7 +269,6 @@ extract_triangle_data()
     const Point_reference p1 = get_point(tri.v1);
     const Point_reference p2 = get_point(tri.v2);
 
-    //TODO for obscur reason, computing this maxBb increase running time by 10%
     maxBb=(std::max)({maxBb,CGAL::abs(p0.x()),CGAL::abs(p0.y()),CGAL::abs(p0.z()),
                             CGAL::abs(p1.x()),CGAL::abs(p1.y()),CGAL::abs(p1.z()),
                             CGAL::abs(p2.x()),CGAL::abs(p2.y()),CGAL::abs(p2.z())});
@@ -340,7 +276,7 @@ extract_triangle_data()
     Vector v01 = p1 - p0;
     Vector v02 = p2 - p0;
 
-    Vector lNormalV = robust_cross_product(v01,v02);
+    Vector lNormalV = robust_cross_product<Geom_traits>(v01,v02);
     FT lNormalL = point_cross_product(p0,p1) * (p2 - ORIGIN);
 
     CGAL_SMS_LT_TRACE(1, "  Extracting triangle v" << tri.v0 << "->v" << tri.v1 << "->v" << tri.v2

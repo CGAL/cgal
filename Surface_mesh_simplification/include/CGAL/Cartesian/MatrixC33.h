@@ -17,7 +17,7 @@
 #include <CGAL/Null_matrix.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/Vector_3.h>
-#include <CGAL/Cartesian/CrossProduct.h>
+#include <CGAL/internal/robust_cross_product.h>
 
 #include <optional>
 
@@ -221,17 +221,17 @@ std::optional< MatrixC33<R> > inverse_matrix(const MatrixC33<R>& m)
   if(! CGAL_NTS is_zero(det))
   {
 #if 1
-    RT c00 = diff_of_products(m.r1().y(),m.r2().z(),m.r2().y(),m.r1().z()) / det;
-    RT c01 = diff_of_products(m.r2().y(),m.r0().z(),m.r0().y(),m.r2().z()) / det;
-    RT c02 = diff_of_products(m.r0().y(),m.r1().z(),m.r1().y(),m.r0().z()) / det;
+    RT c00 = ::CGAL::Surface_mesh_simplification::internal::diff_of_products(m.r1().y(),m.r2().z(),m.r2().y(),m.r1().z()) / det;
+    RT c01 = ::CGAL::Surface_mesh_simplification::internal::diff_of_products(m.r2().y(),m.r0().z(),m.r0().y(),m.r2().z()) / det;
+    RT c02 = ::CGAL::Surface_mesh_simplification::internal::diff_of_products(m.r0().y(),m.r1().z(),m.r1().y(),m.r0().z()) / det;
 
-    RT c10 = diff_of_products(m.r2().x(),m.r1().z(),m.r1().x(),m.r2().z()) / det;
-    RT c11 = diff_of_products(m.r0().x(),m.r2().z(),m.r2().x(),m.r0().z()) / det;
-    RT c12 = diff_of_products(m.r1().x(),m.r0().z(),m.r0().x(),m.r1().z()) / det;
+    RT c10 = ::CGAL::Surface_mesh_simplification::internal::diff_of_products(m.r2().x(),m.r1().z(),m.r1().x(),m.r2().z()) / det;
+    RT c11 = ::CGAL::Surface_mesh_simplification::internal::diff_of_products(m.r0().x(),m.r2().z(),m.r2().x(),m.r0().z()) / det;
+    RT c12 = ::CGAL::Surface_mesh_simplification::internal::diff_of_products(m.r1().x(),m.r0().z(),m.r0().x(),m.r1().z()) / det;
 
-    RT c20 = diff_of_products(m.r1().x(),m.r2().y(),m.r2().x(),m.r1().y()) / det;
-    RT c21 = diff_of_products(m.r2().x(),m.r0().y(),m.r0().x(),m.r2().y()) / det;
-    RT c22 = diff_of_products(m.r0().x(),m.r1().y(),m.r1().x(),m.r0().y()) / det;
+    RT c20 = ::CGAL::Surface_mesh_simplification::internal::diff_of_products(m.r1().x(),m.r2().y(),m.r2().x(),m.r1().y()) / det;
+    RT c21 = ::CGAL::Surface_mesh_simplification::internal::diff_of_products(m.r2().x(),m.r0().y(),m.r0().x(),m.r2().y()) / det;
+    RT c22 = ::CGAL::Surface_mesh_simplification::internal::diff_of_products(m.r0().x(),m.r1().y(),m.r1().x(),m.r0().y()) / det;
 #else
     RT c00 = (m.r1().y()*m.r2().z() - m.r1().z()*m.r2().y()) / det;
     RT c01 = (m.r2().y()*m.r0().z() - m.r0().y()*m.r2().z()) / det;
