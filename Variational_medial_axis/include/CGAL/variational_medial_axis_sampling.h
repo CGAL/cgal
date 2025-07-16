@@ -1559,6 +1559,37 @@ public:
     sphere_mesh_ = std::make_unique<MSMesh>();
   }
 
+    /**
+   * \ingroup PkgVMASRef
+   * computes a static skeleton based on variational medial axis sampling method.
+   *
+   * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+   *
+   * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+   *
+   * \cgalNamedParamsBegin
+   *   
+   *   \cgalParamNBegin{number_of_spheres}
+   *     \cgalParamDescription{The desired number of spheres in the resulting skeleton}
+   *     \cgalParamType{unsigned int}
+   *     \cgalParamDefault{100}
+   *     \cgalParamExtra{This number could not be too big (in general ＜300)}
+   *   \cgalParamNEnd
+   *   \cgalParamNBegin{lambda}
+   *     \cgalParamDescription{a weight that balance the two energy (SQEM and Euclidean), the smaller the lambda is, the more the skeleton will extend to the local featrue }
+   *     \cgalParamType{FT}
+   *     \cgalParamDefault{FT(0.2)}
+   *     \cgalParamExtra{This parameter couldn't be zero otherwise the connectivity of the skeleton could not build properly}
+   *   \cgalParamNEnd
+   * \cgalParamNBegin{concurrency_tag}
+   *     \cgalParamDescription{a tag indicating if the task should be done using one or several threads.}
+   *     \cgalParamType{Either `CGAL::Sequential_tag`, or `CGAL::Parallel_tag`, or `CGAL::Parallel_if_available_tag`}
+   *     \cgalParamDefault{`CGAL::Sequential_tag`}
+   *   \cgalParamNEnd
+   * \cgalNamedParamsEnd
+   *
+   */
+
   template <typename NamedParameters>
   void compute(const NamedParameters& np = parameters::default_values()) {
     auto result_sphere_mesh = Internal::variational_medial_axis_sampling(

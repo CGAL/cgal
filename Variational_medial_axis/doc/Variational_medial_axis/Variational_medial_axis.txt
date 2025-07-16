@@ -5,13 +5,23 @@ namespace CGAL {
 \anchor Chapter_VMAS
 \cgalAutoToc
 \author Qijia Huang
+\cgalFigureBegin{Main_image, main_image.png}
+Medial skeleton of a bug model. Given a triangulated mesh(left), the medial skeleton is extracted, where each vertex corresponds a sphere(Middle) and the connectivity of these spheres constructs a mesh(Right) known as <I>Medial mesh</I> 
+\cgalFigureEnd
+\section VMASIntroduction Introduction
 
-This chapter describes the ...
+The skeleton is a fundamental structure with numerous applications such as shpae matching, shape segementation, shape deformation, etc. 
+A generalization of the skeleton is the medial axis, defined as the set of points that are equidistant to two or more points on the boundary of a shape.
 
-\section secmydefinitions Definitions
+This package implements a medial axis sampling algorithm \cgalCite{huang2024dynamic} that extracts a coarse, discrete approximation of the medial axis from a triangulated surface mesh. 
+Unlike the Surface_mesh_skeletonization package, which computes a purely curve-based (1D) skeleton, the output of this method may contain both curve (1D) and surface (2D) elements, a structure sometimes referred to as a meso-skeleton.
 
-Section on definitions here ...
 
+\section VMASOverview Overview
+The algorithm starts by initializing a single cluster containing all surface vertices, and optimizes a first medial sphere using a variational error metric. 
+New spheres are progressively inserted in regions of high approximation error, triggering updates to both the clustering and the set of medial spheres in an iterative optimization loop. 
+The process continues until either a target number of spheres or the maximum number of iterations is reached. 
+Finally, the connectivity of the medial skeleton is inferred from the adjacency relations between vertex clusters.
 \section secmyexamples Examples
 
 \subsection myFirstExample First Example
@@ -20,9 +30,7 @@ The following example shows ...
 
 \cgalExample{Variational_medial_axis/vmas_example.cpp}
 
-\cgalFigureBegin{figPck,pkg-vmas.png}
-Left: ...
-\cgalFigureEnd
+
 
 */
 } /* namespace CGAL */
