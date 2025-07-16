@@ -78,7 +78,7 @@ public:
 
   void set_time_stamp(const std::size_t& ts) { time_stamp_ = ts; }
 
-  std::size_t time_stamp_;
+  std::size_t time_stamp_ = std::size_t(-2);
 };
 
 } // namespace CGAL

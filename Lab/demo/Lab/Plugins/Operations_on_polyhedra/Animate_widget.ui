@@ -45,7 +45,7 @@
          <string/>
         </property>
         <property name="icon">
-         <iconset resource="../../cgallab.qrc">
+         <iconset resource="../../CGALlab.qrc">
           <normaloff>:/cgal/icons/resources/help_button.png</normaloff>:/cgal/icons/resources/help_button.png</iconset>
         </property>
        </widget>
@@ -144,7 +144,7 @@
          <string/>
         </property>
         <property name="icon">
-         <iconset resource="../../cgallab.qrc">
+         <iconset resource="../../CGALlab.qrc">
           <normaloff>:/cgal/icons/resources/play.jpeg</normaloff>:/cgal/icons/resources/play.jpeg</iconset>
         </property>
        </widget>
@@ -161,7 +161,7 @@
          <string/>
         </property>
         <property name="icon">
-         <iconset resource="../../cgallab.qrc">
+         <iconset resource="../../CGALlab.qrc">
           <normaloff>:/cgal/icons/resources/pause.jpeg</normaloff>:/cgal/icons/resources/pause.jpeg</iconset>
         </property>
        </widget>
@@ -178,7 +178,7 @@
          <string/>
         </property>
         <property name="icon">
-         <iconset resource="../../cgallab.qrc">
+         <iconset resource="../../CGALlab.qrc">
           <normaloff>:/cgal/icons/resources/left_arrow.png</normaloff>:/cgal/icons/resources/left_arrow.png</iconset>
         </property>
        </widget>
@@ -195,7 +195,7 @@
          <string/>
         </property>
         <property name="icon">
-         <iconset resource="../../cgallab.qrc">
+         <iconset resource="../../CGALlab.qrc">
           <normaloff>:/cgal/icons/resources/right_arrow.png</normaloff>:/cgal/icons/resources/right_arrow.png</iconset>
         </property>
        </widget>
@@ -212,7 +212,7 @@
          <string/>
         </property>
         <property name="icon">
-         <iconset resource="../../cgallab.qrc">
+         <iconset resource="../../CGALlab.qrc">
           <normaloff>:/cgal/icons/resources/reset.jpg</normaloff>:/cgal/icons/resources/reset.jpg</iconset>
         </property>
        </widget>
@@ -223,8 +223,8 @@
   </widget>
  </widget>
  <resources>
-  <include location="../../cgallab.qrc"/>
-  <include location="../../cgallab.qrc"/>
+  <include location="../../CGALlab.qrc"/>
+  <include location="../../CGALlab.qrc"/>
  </resources>
  <connections/>
 </ui>

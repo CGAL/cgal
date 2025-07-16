@@ -1,4 +1,4 @@
-/// \defgroup PkgMesh3Ref 3D Mesh Generation Reference
+/// \defgroup PkgMesh3Ref Reference Manual
 
 /// \defgroup PkgMesh3Concepts Main Concepts
 /// \ingroup PkgMesh3Ref
@@ -29,6 +29,9 @@
 /// The two main functions to generate a mesh are `make_mesh_3()` and `refine_mesh_3()`.
 /// The other functions enable to optimize an existing mesh.
 
+/// \defgroup PkgMesh3Initializers Mesh Initialization Functors
+/// \ingroup PkgMesh3Ref
+/// The functors in this group perform mesh initialization by providing initial points.
 /// \defgroup PkgMesh3Parameters Parameter Functions
 /// \ingroup PkgMesh3Ref
 
@@ -53,7 +56,7 @@
 \cgalPkgDependsOn{\ref PkgTriangulation3 and \ref thirdpartyEigen}
 \cgalPkgBib{cgal:rty-m3}
 \cgalPkgLicense{\ref licensesGPL  "GPL"}
-\cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
+\cgalPkgDemo{CGAL Lab,CGALlab.zip}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
@@ -77,6 +80,7 @@ related to the template parameters of some models of the main concepts:
 
 - `BisectionGeometricTraits_3`
 - `IntersectionGeometricTraits_3`
+- `InitialPointsGenerator_3`
 - `MeshCellBase_3`
 - `MeshVertexBase_3`
 - `MeshDomainField_3`
@@ -110,6 +114,11 @@ The following functors are available for feature detection:
 - `CGAL::Mesh_3::Detect_features_in_image`
 - `CGAL::Mesh_3::Detect_features_on_image_bbox`
 
+The following functors are available for mesh initialization:
+
+- `CGAL::Construct_initial_points_labeled_image`
+- `CGAL::Construct_initial_points_gray_image`
+
 \cgalCRPSection{Function Templates}
 
 - `CGAL::make_mesh_3()`
@@ -120,10 +129,12 @@ The following functors are available for feature detection:
 - `CGAL::odt_optimize_mesh_3()`
 - `CGAL::Mesh_3::generate_label_weights()`
 
-\cgalCRPSection{CGAL::parameters Functions}
+\cgalCRPSection{%CGAL::parameters Functions}
 
 - `CGAL::parameters::features()`
 - `CGAL::parameters::no_features()`
+- `CGAL::parameters::initial_points()`
+- `CGAL::parameters::initial_points_generator()`
 - `CGAL::parameters::exude()`
 - `CGAL::parameters::no_exude()`
 - `CGAL::parameters::perturb()`

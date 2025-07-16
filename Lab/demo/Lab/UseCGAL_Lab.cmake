@@ -4,7 +4,7 @@ list(INSERT CMAKE_MODULE_PATH 0 "${CGAL_LAB_DEMO_CMAKE_MODULE_PATH}")
 
 message(STATUS "Now CMAKE_MODULE_PATH is: ${CMAKE_MODULE_PATH}")
 
-include( cgallab_macros )
+include( CGALlab_macros )
 include( cgal_lab_targets )
 
 

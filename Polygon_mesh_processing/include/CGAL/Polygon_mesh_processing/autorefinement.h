@@ -33,7 +33,6 @@
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/Polygon_mesh_processing/polygon_mesh_to_polygon_soup.h>
 
-
 #ifdef CGAL_PMP_AUTOREFINE_USE_DEFAULT_VERBOSE
 #define CGAL_PMP_AUTOREFINE_VERBOSE(X) std::cout << X << "\n";
 #endif
@@ -79,6 +78,7 @@ namespace Polygon_mesh_processing {
 namespace Autorefinement {
 
 /** \ingroup PMP_corefinement_grp
+ * \cgalModels{PMPAutorefinementVisitor}
  *  %Default visitor model of `PMPAutorefinementVisitor`.
  *  All of its functions have an empty body. This class can be used as a
  *  base class if only some of the functions of the concept require to be
@@ -89,6 +89,7 @@ struct Default_visitor
   inline void number_of_output_triangles(std::size_t /*nbt*/) {}
   inline void verbatim_triangle_copy(std::size_t /*tgt_id*/, std::size_t /*src_id*/) {}
   inline void new_subtriangle(std::size_t /*tgt_id*/, std::size_t /*src_id*/) {}
+  inline void delete_triangle(std::size_t /*src_id*/) {}
 };
 
 } // end of Autorefinement visitor
@@ -974,59 +975,19 @@ void generate_subtriangles(std::size_t ti,
 } // end of autorefine_impl
 #endif
 
-/**
-* \ingroup PMP_corefinement_grp
-*
-* refines a soup of triangles so that no pair of triangles intersects.
-* Output triangles may share a common edge or a common vertex (but with the same indexed position in `points`).
-* Note that points in `soup_points` can only be added (intersection points) at the end of the container, with the initial order preserved.
-* Note that if `soup_points` contains two or more identical points then only the first copy (following the order in the `soup_points`)
-* will be used in `soup_triangles`.
-* `soup_triangles` will be updated to contain both the input triangles and the new subdivided triangles. Degenerate triangles will be removed.
-* Also triangles in `soup_triangles` will be triangles without intersection first, followed by triangles coming from a subdivision induced
-* by an intersection. The named parameter `visitor()` can be used to track
-*
-* @tparam PointRange a model of the concept `RandomAccessContainer`
-* whose value type is the point type
-* @tparam TriangleRange a model of the concepts `RandomAccessContainer`, `BackInsertionSequence` and `Swappable`, whose
-* value type is a model of the concept `RandomAccessContainer` whose value type is convertible to `std::size_t` and that
-* is constructible from an `std::initializer_list<std::size_t>` of size 3.
-* @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
-*
-* @param soup_points points of the soup of polygons
-* @param soup_triangles each element in the range describes a triangle using the indexed position of the points in `soup_points`
-* @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
-*
-* \cgalNamedParamsBegin
-*   \cgalParamNBegin{concurrency_tag}
-*     \cgalParamDescription{a tag indicating if the task should be done using one or several threads.}
-*     \cgalParamType{Either `CGAL::Sequential_tag`, or `CGAL::Parallel_tag`, or `CGAL::Parallel_if_available_tag`}
-*     \cgalParamDefault{`CGAL::Sequential_tag`}
-*   \cgalParamNEnd
-*   \cgalParamNBegin{point_map}
-*     \cgalParamDescription{a property map associating points to the elements of the range `soup_points`}
-*     \cgalParamType{a model of `ReadWritePropertyMap` whose value type is a point type}
-*     \cgalParamDefault{`CGAL::Identity_property_map`}
-*   \cgalParamNEnd
-*   \cgalParamNBegin{geom_traits}
-*     \cgalParamDescription{an instance of a geometric traits class}
-*     \cgalParamType{a class model of `Kernel`}
-*     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
-*     \cgalParamExtra{The geometric traits class must be compatible with the point type.}
-*   \cgalParamNEnd
-*   \cgalParamNBegin{visitor}
-*     \cgalParamDescription{a visitor used to track the creation of new faces}
-*     \cgalParamType{a class model of `PMPAutorefinementVisitor`}
-*     \cgalParamDefault{`Autorefinement::Default_visitor`}
-*     \cgalParamExtra{The visitor will be copied.}
-*   \cgalParamNEnd
-* \cgalNamedParamsEnd
-*
-*/
+namespace autorefine_impl{
+// Forward declaration
+struct Wrap_snap_visitor;
+
+template <typename PointRange, typename PolygonRange, class NamedParameters = parameters::Default_named_parameters>
+bool polygon_soup_snap_rounding(PointRange &points,
+                                PolygonRange &triangles,
+                                const NamedParameters& np = parameters::default_values());
+
 template <class PointRange, class TriangleRange, class NamedParameters = parameters::Default_named_parameters>
-void autorefine_triangle_soup(PointRange& soup_points,
-                              TriangleRange& soup_triangles,
-                              const NamedParameters& np = parameters::default_values())
+bool autorefine_triangle_soup(PointRange& soup_points,
+                               TriangleRange& soup_triangles,
+                               const NamedParameters& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -1048,7 +1009,6 @@ void autorefine_triangle_soup(PointRange& soup_points,
     Autorefinement::Default_visitor//default
   > ::type Visitor;
   Visitor visitor(choose_parameter<Visitor>(get_parameter(np, internal_np::visitor)));
-
 
   constexpr bool parallel_execution = std::is_same_v<Parallel_tag, Concurrency_tag>;
 
@@ -1076,7 +1036,7 @@ void autorefine_triangle_soup(PointRange& soup_points,
       for(std::size_t i=0; i<soup_triangles.size(); ++i)
         visitor.verbatim_triangle_copy(i, i);
     }
-    return;
+    return true;
   }
 
   // mark degenerate faces so that we can ignore them
@@ -1454,15 +1414,17 @@ void autorefine_triangle_soup(PointRange& soup_points,
   std::vector<std::size_t> tri_inter_ids_inverse(triangles.size());
   for (Input_TID f=0; f<soup_triangles.size(); ++f)
   {
-    if (is_degen[f]) continue; //skip degenerate faces
+    if (is_degen[f])
+    {
+      visitor.delete_triangle(f);
+      continue; //skip degenerate faces
+    }
 
     int tiid = tri_inter_ids[f];
     if (tiid == -1)
     {
       visitor.verbatim_triangle_copy(soup_triangles_out.size(), f);
-      soup_triangles_out.push_back(
-        {soup_triangles[f][0], soup_triangles[f][1], soup_triangles[f][2]}
-      );
+      soup_triangles_out.push_back(soup_triangles[f]);
     }
     else
     {
@@ -1495,7 +1457,7 @@ void autorefine_triangle_soup(PointRange& soup_points,
   std::string mode = "parallel";
 #endif
 
-// It might be possible to optimise the hardcoded value below
+// It might be possible to optimize the hardcoded value below
 // but the less triangles the faster will anyway be the operation.
 // So it's probably not critical.
 #ifdef CGAL_LINKED_WITH_TBB
@@ -1528,22 +1490,41 @@ void autorefine_triangle_soup(PointRange& soup_points,
       [&](const tbb::blocked_range<size_t>& r) {
         for (size_t ti = r.begin(); ti != r.end(); ++ti) {
           const std::array<EK::Point_3, 3>& t = new_triangles[ti].first;
-          visitor.new_subtriangle(offset+ti, tri_inter_ids_inverse[new_triangles[ti].second]);
           triangle_buffer[ti] = CGAL::make_array(concurrent_get_point_id(t[0]), concurrent_get_point_id(t[1]), concurrent_get_point_id(t[2]));
         }
       }
     );
-    tbb::parallel_for(tbb::blocked_range<size_t>(0, new_triangles.size()),
-      [&](const tbb::blocked_range<size_t>& r) {
-          for (size_t ti = r.begin(); ti != r.end(); ++ti)
-          {
-            soup_triangles_out[offset + ti] =
-              { triangle_buffer[ti][0]->second,
-                triangle_buffer[ti][1]->second,
-                triangle_buffer[ti][2]->second };
+
+    // The constexpr  was initially inside the lambda, but that did not compile  with VC 2017
+    if constexpr(std::is_same_v<Visitor, Wrap_snap_visitor>){
+      tbb::parallel_for(tbb::blocked_range<size_t>(0, new_triangles.size()),
+        [&](const tbb::blocked_range<size_t>& r) {
+            for (size_t ti = r.begin(); ti != r.end(); ++ti)
+            {
+              soup_triangles_out[offset + ti] =
+                { triangle_buffer[ti][0]->second,
+                  triangle_buffer[ti][1]->second,
+                  triangle_buffer[ti][2]->second };
+              visitor.new_subdivision(soup_triangles_out[offset + ti], soup_triangles[tri_inter_ids_inverse[new_triangles[ti].second]]);
+            }
           }
-        }
-    );
+      );
+    }
+    else
+    {
+      tbb::parallel_for(tbb::blocked_range<size_t>(0, new_triangles.size()),
+        [&](const tbb::blocked_range<size_t>& r) {
+            for (size_t ti = r.begin(); ti != r.end(); ++ti)
+            {
+              soup_triangles_out[offset + ti] =
+                { triangle_buffer[ti][0]->second,
+                  triangle_buffer[ti][1]->second,
+                  triangle_buffer[ti][2]->second };
+              visitor.new_subtriangle(offset+ti, tri_inter_ids_inverse[new_triangles[ti].second]);
+            }
+          }
+      );
+    }
 #else
     //option 2 (without mutex)
     /// Lambda concurrent_get_point_id()
@@ -1590,17 +1571,33 @@ void autorefine_triangle_soup(PointRange& soup_points,
       }
     );
 
-    tbb::parallel_for(tbb::blocked_range<size_t>(0, new_triangles.size()),
-      [&](const tbb::blocked_range<size_t>& r) {
-          for (size_t ti = r.begin(); ti != r.end(); ++ti)
-          {
-            soup_triangles_out[offset + ti] =
-              { triangle_buffer[ti][0]->second,
-                triangle_buffer[ti][1]->second,
-                triangle_buffer[ti][2]->second };
+    // The constexpr  was initially inside the lambda, but that did not compile  with VC 2017
+    if constexpr(std::is_same_v<Visitor, Wrap_snap_visitor>){
+      tbb::parallel_for(tbb::blocked_range<size_t>(0, new_triangles.size()),
+        [&](const tbb::blocked_range<size_t>& r) {
+            for (size_t ti = r.begin(); ti != r.end(); ++ti)
+            {
+              soup_triangles_out[offset + ti] =
+                { triangle_buffer[ti][0]->second,
+                  triangle_buffer[ti][1]->second,
+                  triangle_buffer[ti][2]->second };
+                visitor.new_subdivision(soup_triangles_out[offset + ti], soup_triangles[tri_inter_ids_inverse[new_triangles[ti].second]]);
+            }
           }
-        }
-    );
+      );
+    }else{
+      tbb::parallel_for(tbb::blocked_range<size_t>(0, new_triangles.size()),
+        [&](const tbb::blocked_range<size_t>& r) {
+            for (size_t ti = r.begin(); ti != r.end(); ++ti)
+            {
+              soup_triangles_out[offset + ti] =
+                { triangle_buffer[ti][0]->second,
+                  triangle_buffer[ti][1]->second,
+                  triangle_buffer[ti][2]->second };
+            }
+          }
+      );
+    }
 #endif
   }
   else
@@ -1612,10 +1609,13 @@ void autorefine_triangle_soup(PointRange& soup_points,
     soup_triangles_out.reserve(offset + new_triangles.size());
     for (const std::pair<std::array<EK::Point_3,3>, std::size_t>& t_and_id : new_triangles)
     {
-      visitor.new_subtriangle(soup_triangles_out.size(), tri_inter_ids_inverse[t_and_id.second]);
       soup_triangles_out.push_back({ get_point_id(t_and_id.first[0]),
                                      get_point_id(t_and_id.first[1]),
                                      get_point_id(t_and_id.first[2]) });
+      if constexpr(std::is_same_v<Visitor, Wrap_snap_visitor>)
+        visitor.new_subdivision(soup_triangles_out[soup_triangles_out.size()-1], soup_triangles[tri_inter_ids_inverse[t_and_id.second]]);
+      else
+        visitor.new_subtriangle(soup_triangles_out.size()-1, tri_inter_ids_inverse[t_and_id.second]);
     }
   }
 
@@ -1641,7 +1641,107 @@ void autorefine_triangle_soup(PointRange& soup_points,
   swap(soup_triangles, soup_triangles_out);
 
   CGAL_PMP_AUTOREFINE_VERBOSE("done");
+  return true;
 }
+
+} // end of autorefine_impl
+
+/**
+* \ingroup PMP_corefinement_grp
+*
+* refines a soup of triangles so that no pair of triangles intersects.
+* Output triangles may share a common edge or a common vertex (but with the same indexed position in `points`).
+* Note that if `apply_iterative_snap_rounding` option is set to `false`, points in `soup_points` can only be added (intersection points) at the end of the container, with the initial order preserved.
+* Note that if `soup_points` contains two or more identical points then only the first copy (following the order in the `soup_points`)
+* will be used in `soup_triangles`. if `apply_iterative_snap_rounding` is set to `true`, all duplicates points are removed.
+* `soup_triangles` will be updated to contain both the input triangles and the new subdivided triangles. Degenerate triangles will be removed.
+* Also if `apply_iterative_snap_rounding` option is set to `false`, triangles in `soup_triangles` will be triangles without intersection first, followed by triangles coming from a subdivision induced
+* by an intersection. The named parameter `visitor()` can be used to track the creation and removal of triangles independently of
+* the `apply_iterative_snap_rounding` option.
+* If the `apply_iterative_snap_rounding` parameter is set to `true`, the coordinates of the vertices are rounded to fit within the precision of a double-precision floating point,
+* while trying to make the triangle soup free of intersections. The `snap_grid_size()` parameter limits the drift of the snapped vertices.
+* A smaller value is more likely to output an intersection free output and perform more vertex collapses, but it may increase the Hausdorff distance from the input.
+*
+* @tparam PointRange a model of the concept `RandomAccessContainer`
+* whose value type is the point type
+* @tparam TriangleRange a model of the concepts `RandomAccessContainer`, `BackInsertionSequence` and `Swappable`, whose
+* value type is a model of the concept `RandomAccessContainer` whose value type is convertible to `std::size_t` and that
+* is constructible from an `std::initializer_list<std::size_t>` of size 3.
+* @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+*
+* @param soup_points points of the soup of polygons
+* @param soup_triangles each element in the range describes a triangle using the indexed position of the points in `soup_points`
+* @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+*
+* \cgalNamedParamsBegin
+*   \cgalParamNBegin{concurrency_tag}
+*     \cgalParamDescription{a tag indicating if the task should be done using one or several threads.}
+*     \cgalParamType{Either `CGAL::Sequential_tag`, or `CGAL::Parallel_tag`, or `CGAL::Parallel_if_available_tag`}
+*     \cgalParamDefault{`CGAL::Sequential_tag`}
+*   \cgalParamNEnd
+*   \cgalParamNBegin{point_map}
+*     \cgalParamDescription{a property map associating points to the elements of the range `soup_points`}
+*     \cgalParamType{a model of `ReadWritePropertyMap` whose value type is a point type}
+*     \cgalParamDefault{`CGAL::Identity_property_map`}
+*   \cgalParamNEnd
+*   \cgalParamNBegin{geom_traits}
+*     \cgalParamDescription{an instance of a geometric traits class}
+*     \cgalParamType{a class model of `Kernel`}
+*     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+*     \cgalParamExtra{The geometric traits class must be compatible with the point type.}
+*   \cgalParamNEnd
+*   \cgalParamNBegin{visitor}
+*     \cgalParamDescription{a visitor used to track the creation of new faces}
+*     \cgalParamType{a class model of `PMPAutorefinementVisitor`}
+*     \cgalParamDefault{`Autorefinement::Default_visitor`}
+*     \cgalParamExtra{The visitor will be copied.}
+*   \cgalParamNEnd
+*   \cgalParamNBegin{apply_iterative_snap_rounding}
+*     \cgalParamDescription{Enable the rounding of the coordinates so that they fit in doubles.}
+*     \cgalParamType{Boolean}
+*     \cgalParamDefault{false}
+*   \cgalParamNEnd
+*   \cgalParamNBegin{snap_grid_size}
+*     \cgalParamDescription{A value `gs` used to scale the points to `[-2^gs, 2^gs]` before rounding them on integers. Used only if `apply_iterative_snap_rounding()` is set to `true`}
+*     \cgalParamType{`unsigned int`}
+*     \cgalParamDefault{23}
+*     \cgalParamExtra{Must be lower than 52.}
+*   \cgalParamNEnd
+*   \cgalParamNBegin{number_of_iterations}
+*     \cgalParamDescription{Maximum number of iterations performed by the snap rounding algorithm. Used only if `apply_iterative_snap_rounding` is true.}
+*     \cgalParamType{unsigned int}
+*     \cgalParamDefault{5}
+*   \cgalParamNEnd
+* \cgalNamedParamsEnd
+*
+* \return `true` if `apply_iterative_snap_rounding` is set to `false`.
+* Otherwise, returns `true` if the modified triangle soup is free of self-intersections,
+* or `false` if the algorithm was unable to produce such a result within the allowed number of iterations.
+* In the latter case, the output triangle soup represents a partial result from the final iteration,
+* with no guarantee of its validity.
+*
+*/
+template <class PointRange, class TriangleRange, class NamedParameters = parameters::Default_named_parameters>
+bool autorefine_triangle_soup(PointRange& soup_points,
+                              TriangleRange& soup_triangles,
+                              const NamedParameters& np = parameters::default_values())
+{
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+
+  //Dispatch the execution according the apply_iterative_snap_rounding parameter
+  const bool do_snap = choose_parameter(get_parameter(np, internal_np::apply_iterative_snap_rounding), false);
+  if(do_snap)
+  {
+    CGAL_PMP_AUTOREFINE_VERBOSE("Snap polygon soup");
+    return autorefine_impl::polygon_soup_snap_rounding(soup_points, soup_triangles, np);
+  }
+  else
+  {
+    return autorefine_impl::autorefine_triangle_soup(soup_points, soup_triangles, np);
+  }
+}
+
 
 /**
  * \ingroup PMP_corefinement_grp
@@ -1715,5 +1815,7 @@ autorefine(      TriangleMesh& tm,
 #undef TBB_PREVIEW_CONCURRENT_ORDERED_CONTAINERS
 #endif
 #endif
+
+#include <CGAL/Polygon_mesh_processing/internal/triangle_soup_snap_rounding.h>
 
 #endif // CGAL_POLYGON_MESH_PROCESSING_AUTOREFINEMENT_H

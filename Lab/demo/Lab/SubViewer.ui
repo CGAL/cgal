@@ -60,7 +60,7 @@
           <string/>
          </property>
          <property name="icon">
-          <iconset resource="cgallab.qrc">
+          <iconset resource="CGALlab.qrc">
            <normaloff>:/cgal/icons/resources/exit.png</normaloff>:/cgal/icons/resources/exit.png</iconset>
          </property>
          <property name="iconSize">
@@ -81,8 +81,8 @@
   </layout>
  </widget>
  <resources>
-  <include location="cgallab.qrc"/>
-  <include location="cgallab.qrc"/>
+  <include location="CGALlab.qrc"/>
+  <include location="CGALlab.qrc"/>
  </resources>
  <connections/>
 </ui>

@@ -368,3 +368,16 @@ features(const MeshDomain& /*domain*/)
   typedef Named_function_parameters<::CGAL::parameters::internal::Features_options, ::CGAL::internal_np::features_option_param_t, CGAL_NP_BASE> Param;
   return CGAL_NP_BUILD(Param,Generator()());
 }
+
+// -----------------------------------
+// Surface only (replacing Surface_mesher)
+// -----------------------------------
+inline Named_function_parameters<::CGAL::parameters::internal::Mesh_3_options, ::CGAL::internal_np::mesh_param_t, CGAL_NP_BASE>
+surface_only()
+{
+  typedef Named_function_parameters<::CGAL::parameters::internal::Mesh_3_options, ::CGAL::internal_np::mesh_param_t, CGAL_NP_BASE> Param;
+  ::CGAL::parameters::internal::Mesh_3_options options;
+
+  options.surface_only = true;
+  return CGAL_NP_BUILD(Param, options);
+}

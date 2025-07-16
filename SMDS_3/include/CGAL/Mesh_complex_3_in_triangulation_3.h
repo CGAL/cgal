@@ -328,12 +328,18 @@ public:
   const Triangulation& triangulation() const { return tr_; }
 /// @}
 
+#ifndef DOXYGEN_RUNNING
 /// \name Non const access
 /// @{
     /// returns a reference to the triangulation
+    /// \cgalAdvancedBegin
+    /// This function should only be used by advanced users: it merely swaps the triangulation without
+    /// rebuilding critical C3T3 information such as the number of simplexes in complex.
+    /// On the other hand, this is performed by `set_triangulation()`
+    /// \cgalAdvancedEnd
   Triangulation& triangulation() { return tr_; }
 /// @}
-
+#endif
 
 /// \name Modifiers
 /// @{
@@ -349,6 +355,21 @@ public:
     edges_.clear();
     corners_.clear();
     far_vertices_.clear();
+  }
+
+  /** sets the internal triangulation to \p tr
+  */
+  void set_triangulation(const Triangulation& tr)
+  {
+    tr_ = tr;
+    rescan_after_load_of_triangulation();
+  }
+  /** sets the internal triangulation to \p tr
+  */
+  void set_triangulation(Triangulation&& tr)
+  {
+    tr_ = std::move(tr);
+    rescan_after_load_of_triangulation();
   }
 
   /** adds cell \p cell to the 3D complex, with subdomain index \p index
@@ -444,8 +465,8 @@ public:
    */
   void remove_from_complex(const Vertex_handle& v)
   {
-    corners_.erase(v);
     v->set_dimension(-1);
+    corners_.erase(v);
   }
 
   /** sets the index of vertex \p vertex to \p index
@@ -973,7 +994,7 @@ private:
     typedef typename  Vertex_map_iterator_first::reference  pointer;
     typedef typename iterator_adaptor_::reference           reference;
 
-    Vertex_map_iterator_first_dereference() : Self::iterator_adaptor_() { }
+    Vertex_map_iterator_first_dereference() = default;
 
     template < typename Iterator >
     Vertex_map_iterator_first_dereference(Iterator i)
@@ -983,7 +1004,7 @@ private:
     pointer operator->() const { return *(this->base()); }
     reference operator*() const { return **(this->base()); }
 
-    operator Vertex_handle() { return Vertex_handle(*(this->base())); }
+    operator const Vertex_handle&() const { return *(this->base()); }
   };
 
 public:
@@ -1048,13 +1069,13 @@ public:
     Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
     Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
 
-    operator Cell_handle() const { return Cell_handle(this->base()); }
+    operator const Cell_handle&() const { return this->base(); }
   }; // end class Cells_in_complex_iterator
 
-  typedef Iterator_range<Prevent_deref<Vertices_in_complex_iterator> > Vertices_in_complex;
-  typedef Iterator_range<Edges_in_complex_iterator>                    Edges_in_complex;
-  typedef Iterator_range<Facets_in_complex_iterator>                   Facets_in_complex;
-  typedef Iterator_range<Prevent_deref<Cells_in_complex_iterator> >    Cells_in_complex;
+  typedef Iterator_range<Prevent_deref<Vertices_in_complex_iterator, const Vertex_handle&>> Vertices_in_complex;
+  typedef Iterator_range<Edges_in_complex_iterator> Edges_in_complex;
+  typedef Iterator_range<Facets_in_complex_iterator> Facets_in_complex;
+  typedef Iterator_range<Prevent_deref<Cells_in_complex_iterator, const Cell_handle&>> Cells_in_complex;
 
 #endif
 
@@ -1093,8 +1114,7 @@ public:
   }
 
   /// returns a `Facets_in_complex_iterator` to the first facet of the 2D complex
-  Facets_in_complex_iterator
-    facets_in_complex_begin(const Surface_patch_index& index) const
+  Facets_in_complex_iterator facets_in_complex_begin(const Surface_patch_index& index) const
   {
     return CGAL::filter_iterator(tr_.finite_facets_end(),
       Facet_iterator_not_in_complex(*this, index),
@@ -1162,8 +1182,7 @@ public:
   */
   Vertices_in_complex vertices_in_complex() const
   {
-    return make_prevent_deref_range(vertices_in_complex_begin(),
-                                    vertices_in_complex_end());
+      return { vertices_in_complex_begin(), vertices_in_complex_end() };
   }
   /*!
     returns a range of iterators over the edges of the 1D complex,
@@ -1193,8 +1212,7 @@ public:
   */
   Cells_in_complex cells_in_complex() const
   {
-    return make_prevent_deref_range(cells_in_complex_begin(),
-                                    cells_in_complex_end());
+    return { cells_in_complex_begin(), cells_in_complex_end() };
   }
 ///  @}
 
@@ -2036,6 +2054,7 @@ Mesh_complex_3_in_triangulation_3<Tr,CI_,CSI_>::
 rescan_after_load_of_triangulation()
 {
   corners_.clear();
+  far_vertices_.clear();
   for(typename Tr::Finite_vertices_iterator
         vit = this->triangulation().finite_vertices_begin(),
         end = this->triangulation().finite_vertices_end();
@@ -2043,6 +2062,8 @@ rescan_after_load_of_triangulation()
   {
     if ( vit->in_dimension() == 0 ) {
       add_to_complex(vit, Corner_index(1));
+    } else if(vit->in_dimension() == -1) {
+      far_vertices_.push_back(vit);
     }
   }
 

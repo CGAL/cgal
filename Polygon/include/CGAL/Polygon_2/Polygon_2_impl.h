@@ -88,6 +88,7 @@ operator>>(std::istream &is, Polygon_2<Traits_P,Container_P>& p)
 
   if (is) {
     p.erase(p.vertices_begin(),p.vertices_end());
+    p.reserve(n);
     for (int i=0; i<n; i++) {
       if(is >> point){
         p.push_back(point);
@@ -146,6 +147,7 @@ transform(const Transformation& t, const Polygon_2<Traits_P,Container_P>& p)
 {
   typedef typename Polygon_2<Traits_P,Container_P>::Vertex_const_iterator VI;
   Polygon_2<Traits_P,Container_P> result;
+  result.reserve(p.size());
   for (VI i = p.vertices_begin(); i != p.vertices_end(); ++i)
     result.push_back(t(*i));
   return result;

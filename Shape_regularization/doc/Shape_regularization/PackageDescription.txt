@@ -1,8 +1,5 @@
-namespace CGAL {
-namespace Shape_regularization {
-
 /*!
-\defgroup PkgShapeRegularizationRef Shape Regularization Reference
+\defgroup PkgShapeRegularizationRef Reference Manual
 
 \defgroup PkgShapeRegularizationRefConcepts Concepts
 \ingroup PkgShapeRegularizationRef
@@ -47,7 +44,7 @@ to the user-specified conditions.}
 \cgalPkgDependsOn{\ref PkgSolverInterface}
 \cgalPkgBib{cgal:asgbl-sr}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
-\cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
+\cgalPkgDemo{CGAL Lab,CGALlab.zip}
 \cgalPkgShortInfoEnd
 
 \cgalPkgDescriptionEnd
@@ -100,6 +97,3 @@ to the user-specified conditions.}
 ### QP Regularization ###
 - `QP_regularization<GeomTraits, InputRange, NeighQuery, RegType, QPSolver>`
 */
-
-} /* namespace Shape_regularization */
-} /* namespace CGAL */

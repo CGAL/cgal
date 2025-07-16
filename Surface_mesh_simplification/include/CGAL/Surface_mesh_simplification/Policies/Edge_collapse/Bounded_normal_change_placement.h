@@ -47,7 +47,7 @@ public:
     if(op)
     {
       // triangles returns the triangles of the star of the vertices of the edge to collapse
-      // First the two trianges incident to the edge, then the other triangles
+      // First the two triangles incident to the edge, then the other triangles
       // The second vertex of each triangle is the vertex that gets placed
        const typename Profile::Triangle_vector& triangles = profile.triangles();
        if(triangles.size() > 2)

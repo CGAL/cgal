@@ -45,16 +45,16 @@ therefore do not appear in the constructors.
 \cgalHeading{Example}
 
 \code
-typedef Cartesian<double> K;
-typedef Aff_transformation_2<K> Transformation;
-typedef Point_2<K> Point;
-typedef Vector_2<K> Vector;
-typedef Direction_2<K> Direction;
+typedef CGAL::Simple_cartesian<double> K;
+typedef CGAL::Aff_transformation_2<K> Transformation;
+typedef CGAL::Point_2<K> Point;
+typedef CGAL::Vector_2<K> Vector;
+typedef CGAL::Direction_2<K> Direction;
 
-Transformation rotate(ROTATION, sin(pi), cos(pi));
-Transformation rational_rotate(ROTATION,Direction(1,1), 1, 100);
-Transformation translate(TRANSLATION, Vector(-2, 0));
-Transformation scale(SCALING, 3);
+Transformation rotate(CGAL::ROTATION, sin(pi), cos(pi));
+Transformation rational_rotate(CGAL::ROTATION,Direction(1,1), 1, 100);
+Transformation translate(CGAL::TRANSLATION, Vector(-2, 0));
+Transformation scale(CGAL::SCALING, 3);
 
 Point q(0, 1);
 q = rational_rotate(q);

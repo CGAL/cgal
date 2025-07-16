@@ -27,7 +27,24 @@ struct is_same_or_derived :
   >
 {};
 
+template<typename T>
+struct is_nothrow_movable :
+  public std::bool_constant<
+    std::is_nothrow_move_constructible_v<T> &&
+    std::is_nothrow_move_assignable_v<T>
+  >
+{};
+
+template<typename T>
+inline constexpr bool is_nothrow_movable_v = is_nothrow_movable<T>::value;
+
 namespace cpp20 {
+
+  template<class T>
+  struct type_identity { using type = T; };
+
+  template<class T>
+  using type_identity_t = typename type_identity<T>::type;
 
   template< class T >
   struct remove_cvref {
@@ -38,6 +55,56 @@ namespace cpp20 {
   using remove_cvref_t = typename remove_cvref<T>::type;
 
 } // end namespace cpp20
+
+namespace details {
+  template <typename From, typename To, typename = void>
+  struct is_convertible_without_narrowing : std::false_type
+  {};
+
+  template <typename From, typename To>
+  struct is_convertible_without_narrowing<From,
+                                          To,
+                                          std::void_t<decltype(cpp20::type_identity_t<To[]>{std::declval<From>()})>>
+      : std::is_convertible<From, To>
+  {};
+}
+
+template <typename From, typename To>
+struct is_convertible_without_narrowing : details::is_convertible_without_narrowing<From, To>
+{};
+
+template <typename From, typename To>
+inline constexpr bool is_convertible_without_narrowing_v = is_convertible_without_narrowing<From, To>::value;
+
+#if 0
+namespace is_complete_internals
+{
+    template<class T>
+    std::enable_if_t<sizeof(T) != 0, std::true_type>
+    check(T(*)());
+
+    std::false_type check(...);
+};
+
+template<class T, class Base = decltype(is_complete_internals::check(typename std::enable_if<true, T(*)()>::type()))>
+struct is_complete : Base { };
+
+template <class T>
+inline constexpr bool is_complete_v = is_complete<T>::value;
+
+namespace is_complete_testsuite
+{
+
+  struct S1;
+  static_assert(!is_complete<S1>::value, "error");
+  struct S2
+  {
+    static_assert(!is_complete<S2>::value, "error");
+  };
+  struct S3 {};
+  static_assert(is_complete<S3>::value, "error");
+}
+#endif
 
 } // end namespace CGAL
 

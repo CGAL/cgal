@@ -26,15 +26,14 @@ creationpath = args.creationpath
 
 doxystring = \
 r"""@INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
+
 PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - Put title of project here"
-INPUT        = ${CMAKE_SOURCE_DIR}/PACKAGENAME/doc/PACKAGENAME/ \
-               ${CMAKE_SOURCE_DIR}/PACKAGENAME/include
 """
 
 descrstring = \
 r"""// PRETTY PACKAGE NAME should equal the project title in Doxyfile.in
 
-/// \defgroup PkgPACKAGERef PRETTY PACKAGE NAME Reference
+/// \defgroup PkgPACKAGERef Reference Manual
 /// \defgroup PkgPACKAGEConcepts Concepts
 /// \ingroup PkgPACKAGERef
 
@@ -48,6 +47,7 @@ r"""// PRETTY PACKAGE NAME should equal the project title in Doxyfile.in
 /// \ingroup PkgPACKAGERef
 
 /*!
+\addtogroup PkgPACKAGERef
 \cgalPkgDescriptionBegin{PACKAGE NAME,PkgPACKAGE}
 \cgalPkgPicture{pkg-small.png}
 

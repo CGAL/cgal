@@ -14,7 +14,7 @@
    <string>CGAL Three</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="cgallab.qrc">
+   <iconset resource="CGALlab.qrc">
     <normaloff>:/cgal/icons/resources/cgal_logo.xpm</normaloff>:/cgal/icons/resources/cgal_logo.xpm</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
@@ -132,7 +132,7 @@
             <string>+</string>
            </property>
            <property name="icon">
-            <iconset resource="cgallab.qrc">
+            <iconset resource="CGALlab.qrc">
              <normaloff>:/cgal/icons/plus</normaloff>:/cgal/icons/plus</iconset>
            </property>
           </widget>
@@ -143,7 +143,7 @@
             <string>-</string>
            </property>
            <property name="icon">
-            <iconset resource="cgallab.qrc">
+            <iconset resource="CGALlab.qrc">
              <normaloff>:/cgal/icons/minus</normaloff>:/cgal/icons/minus</iconset>
            </property>
           </widget>
@@ -154,7 +154,7 @@
             <string>...</string>
            </property>
            <property name="icon">
-            <iconset resource="cgallab.qrc">
+            <iconset resource="CGALlab.qrc">
              <normaloff>:/cgal/icons/duplicate</normaloff>:/cgal/icons/duplicate</iconset>
            </property>
           </widget>
@@ -165,7 +165,7 @@
             <string>...</string>
            </property>
            <property name="icon">
-            <iconset resource="cgallab.qrc">
+            <iconset resource="CGALlab.qrc">
              <normaloff>:/cgal/icons/resources/up.png</normaloff>:/cgal/icons/resources/up.png</iconset>
            </property>
           </widget>
@@ -176,7 +176,7 @@
             <string>...</string>
            </property>
            <property name="icon">
-            <iconset resource="cgallab.qrc">
+            <iconset resource="CGALlab.qrc">
              <normaloff>:/cgal/icons/resources/down.png</normaloff>:/cgal/icons/resources/down.png</iconset>
            </property>
           </widget>
@@ -344,7 +344,7 @@
   </action>
   <action name="actionLoad">
    <property name="icon">
-    <iconset resource="cgallab.qrc">
+    <iconset resource="CGALlab.qrc">
      <normaloff>:/cgal/icons/plus</normaloff>:/cgal/icons/plus</iconset>
    </property>
    <property name="text">
@@ -356,7 +356,7 @@
   </action>
   <action name="actionErase">
    <property name="icon">
-    <iconset resource="cgallab.qrc">
+    <iconset resource="CGALlab.qrc">
      <normaloff>:/cgal/icons/minus</normaloff>:/cgal/icons/minus</iconset>
    </property>
    <property name="text">
@@ -368,7 +368,7 @@
   </action>
   <action name="actionDuplicate">
    <property name="icon">
-    <iconset resource="cgallab.qrc">
+    <iconset resource="CGALlab.qrc">
      <normaloff>:/cgal/icons/duplicate</normaloff>:/cgal/icons/duplicate</iconset>
    </property>
    <property name="text">
@@ -471,8 +471,8 @@
   </action>
  </widget>
  <resources>
-  <include location="cgallab.qrc"/>
-  <include location="cgallab.qrc"/>
+  <include location="CGALlab.qrc"/>
+  <include location="CGALlab.qrc"/>
  </resources>
  <connections/>
 </ui>

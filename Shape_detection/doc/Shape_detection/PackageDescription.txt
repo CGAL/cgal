@@ -1,7 +1,5 @@
-
-// RANSAC
 /*!
-\defgroup PkgShapeDetectionRef Shape Detection Reference
+\defgroup PkgShapeDetectionRef Reference Manual
 
 \defgroup PkgShapeDetectionRANSAC Efficient RANSAC
 \ingroup PkgShapeDetectionRef
@@ -143,7 +141,7 @@ and the Region Growing approach for detecting shapes in a set of arbitrary items
 \cgalPkgDependsOn{\ref thirdpartyEigen}
 \cgalPkgBib{cgal:ovja-pssd}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
-\cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
+\cgalPkgDemo{CGAL Lab,CGALlab.zip}
 \cgalPkgShortInfoEnd
 
 \cgalPkgDescriptionEnd

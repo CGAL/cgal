@@ -27,7 +27,8 @@
 #include <CGAL/Mesh_3/Mesher_3.h>
 #include <CGAL/Mesh_criteria_3.h>
 #include <CGAL/Mesh_3/Protect_edges_sizing_field.h>
-#include <CGAL/Mesh_3/initialize_triangulation_from_labeled_image.h>
+#include <CGAL/Mesh_3/Construct_initial_points_labeled_image.h>
+#include <CGAL/Mesh_3/Construct_initial_points_gray_image.h>
 
 #include "C3t3_type.h"
 #include "Meshing_thread.h"
@@ -39,6 +40,19 @@
 namespace CGAL {
   class Image_3;
 }
+
+struct Compare_to_isovalue {
+  double iso_value;
+  bool less;
+  typedef bool result_type;
+
+  Compare_to_isovalue(double iso_value, bool less)
+    : iso_value(iso_value), less(less) {}
+
+  bool operator()(double x) const {
+    return (x < iso_value) == less;
+  }
+};
 
 struct Mesh_parameters
 {
@@ -52,8 +66,11 @@ struct Mesh_parameters
   double tet_min_sizing;
   double edge_sizing;
   double edge_min_sizing;
+  double edge_distance;
   bool protect_features;
   bool detect_connected_components;
+  float iso_value;
+  bool inside_is_less;
   int manifold;
   const CGAL::Image_3* image_3_ptr;
   const CGAL::Image_3* weights_ptr;
@@ -110,9 +127,10 @@ private:
 
   void initialize(const Mesh_criteria& criteria, Mesh_fnt::Domain_tag);
   void initialize(const Mesh_criteria& criteria, Mesh_fnt::Labeled_image_domain_tag);
+  void initialize(const Mesh_criteria& criteria, Mesh_fnt::Gray_image_domain_tag);
 
-  Edge_criteria edge_criteria(double b, double minb, Mesh_fnt::Domain_tag);
-  Edge_criteria edge_criteria(double b, double minb, Mesh_fnt::Polyhedral_domain_tag);
+  Edge_criteria edge_criteria(double b, double minb, double d, Mesh_fnt::Domain_tag);
+  Edge_criteria edge_criteria(double b, double minb, double d, Mesh_fnt::Polyhedral_domain_tag);
 
   void tweak_criteria(Mesh_criteria&, Mesh_fnt::Domain_tag) {}
   void tweak_criteria(Mesh_criteria&, Mesh_fnt::Polyhedral_domain_tag);
@@ -138,26 +156,30 @@ QStringList
 Mesh_parameters::
 log() const
 {
+  auto is_valid = [](const double d)->bool { return d > 0. && d != DBL_MAX; };
+
   QStringList res("Mesh criteria");
 
   // doubles
-  if(edge_sizing > 0)
+  if(is_valid(edge_sizing))
     res << QString("edge max size: %1").arg(edge_sizing);
-  if(edge_min_sizing > 0)
+  if(is_valid(edge_min_sizing))
     res << QString("edge min size: %1").arg(edge_min_sizing);
-  if(facet_angle > 0)
+  if(is_valid(edge_distance))
+    res << QString("edge max distance: %1").arg(edge_distance);
+  if(is_valid(facet_angle))
     res << QString("facet min angle: %1").arg(facet_angle);
-  if(facet_sizing > 0)
+  if(is_valid(facet_sizing))
     res << QString("facet max size: %1").arg(facet_sizing);
-  if(facet_min_sizing > 0)
+  if(is_valid(facet_min_sizing))
     res << QString("facet min size: %1").arg(facet_min_sizing);
-  if(facet_approx > 0)
+  if(is_valid(facet_approx))
     res << QString("facet approx error: %1").arg(facet_approx);
-  if(tet_shape > 0)
+  if(is_valid(tet_shape))
     res << QString("tet shape (radius-edge): %1").arg(tet_shape);
-  if(tet_sizing > 0)
+  if(is_valid(tet_sizing))
     res << QString("tet max size: %1").arg(tet_sizing);
-  if(tet_min_sizing > 0)
+  if(is_valid(tet_min_sizing))
     res << QString("tet min size: %1").arg(tet_min_sizing);
 
   // booleans
@@ -168,8 +190,10 @@ log() const
              .arg(detect_connected_components);
     res << QString("use weights: %1").arg(weights_ptr != nullptr);
   }
-  res << QString("use aabb tree: %1").arg(use_sizing_field_with_aabb_tree);
-  res << QString("manifold: %1").arg(manifold);
+  if(use_sizing_field_with_aabb_tree)
+    res << QString("use sizing field with aabb tree: %1").arg(use_sizing_field_with_aabb_tree);
+  if(manifold)
+    res << QString("manifold: %1").arg(manifold);
 
   return res;
 }
@@ -224,16 +248,61 @@ Mesh_function<D_,Tag>::
 initialize(const Mesh_criteria& criteria, Mesh_fnt::Labeled_image_domain_tag)
 // for a labeled image
 {
-  if(p_.detect_connected_components) {
-    CGAL_IMAGE_IO_CASE(p_.image_3_ptr->image(),
-            initialize_triangulation_from_labeled_image(c3t3_
-                                                        , *domain_
-                                                        , *p_.image_3_ptr
-                                                        , criteria
-                                                        , Word()
-                                                        , p_.protect_features);
-                       );
-  } else {
+  namespace p = CGAL::parameters;
+  // Initialization of the labeled image, either with the protection of sharp
+  // features, or with the initial points (or both).
+  if (p_.detect_connected_components)
+  {
+    CGAL::Mesh_3::internal::C3t3_initializer<
+      C3t3,
+      Domain,
+      Mesh_criteria,
+      CGAL::internal::has_Has_features<Domain>::value >()
+      (c3t3_,
+       *domain_,
+       criteria,
+       p_.protect_features,
+       p::mesh_3_options(p::pointer_to_stop_atomic_boolean = &stop_,
+                         p::nonlinear_growth_of_balls = true).v,
+       CGAL::Construct_initial_points_labeled_image<C3t3, Domain>(*p_.image_3_ptr, *domain_));
+  }
+  else
+  {
+    initialize(criteria, Mesh_fnt::Domain_tag());
+  }
+}
+
+template < typename D_, typename Tag >
+void
+Mesh_function<D_,Tag>::
+initialize(const Mesh_criteria& criteria, Mesh_fnt::Gray_image_domain_tag)
+// for a gray image
+{
+  namespace p = CGAL::parameters;
+  // Initialization of the gray image, either with the protection of sharp
+  // features, or with the initial points (or both).
+  if (p_.detect_connected_components)
+  {
+    CGAL::Construct_initial_points_gray_image<C3t3, Domain, Compare_to_isovalue> generator
+       (*p_.image_3_ptr,
+        *domain_,
+        p_.iso_value,
+        Compare_to_isovalue(p_.iso_value, p_.inside_is_less));
+    CGAL::Mesh_3::internal::C3t3_initializer<
+        C3t3,
+        Domain,
+        Mesh_criteria,
+        CGAL::internal::has_Has_features<Domain>::value >()
+        (c3t3_,
+         *domain_,
+         criteria,
+         p_.protect_features,
+         p::mesh_3_options(p::pointer_to_stop_atomic_boolean = &stop_,
+                           p::nonlinear_growth_of_balls = true).v,
+         generator);
+  }
+  else
+  {
     initialize(criteria, Mesh_fnt::Domain_tag());
   }
 }
@@ -247,8 +316,7 @@ initialize(const Mesh_criteria& criteria, Mesh_fnt::Domain_tag)
   namespace p = CGAL::parameters;
   // Initialization of the mesh, either with the protection of sharp
   // features, or with the initial points (or both).
-  // If `detect_connected_components==true`, the initialization is
-  // already done.
+
   CGAL::Mesh_3::internal::C3t3_initializer<
     C3t3,
     Domain,
@@ -265,9 +333,9 @@ initialize(const Mesh_criteria& criteria, Mesh_fnt::Domain_tag)
 template < typename D_, typename Tag >
 typename Mesh_function<D_,Tag>::Edge_criteria
 Mesh_function<D_,Tag>::
-edge_criteria(double b, double minb, Mesh_fnt::Domain_tag)
+edge_criteria(double edge_size, double minb, double edge_dist, Mesh_fnt::Domain_tag)
 {
-  return Edge_criteria(b, minb);
+  return Edge_criteria(edge_size, minb, edge_dist);
 }
 
 #include <CGAL/Sizing_field_with_aabb_tree.h>
@@ -276,7 +344,7 @@ edge_criteria(double b, double minb, Mesh_fnt::Domain_tag)
 template < typename D_, typename Tag >
 typename Mesh_function<D_,Tag>::Edge_criteria
 Mesh_function<D_,Tag>::
-edge_criteria(double edge_size, double minb, Mesh_fnt::Polyhedral_domain_tag)
+edge_criteria(double edge_size, double minb, double edge_dist, Mesh_fnt::Polyhedral_domain_tag)
 {
   if(p_.use_sizing_field_with_aabb_tree) {
     typedef typename Domain::Surface_patch_index_set Set_of_patch_ids;
@@ -302,9 +370,9 @@ edge_criteria(double edge_size, double minb, Mesh_fnt::Polyhedral_domain_tag)
                      QSharedPointer<Patches_ids_vector>(patches_ids_vector_p));
 
     std::cerr << "Note: Mesh_3 is using a sizing field based on AABB tree.\n";
-    return Edge_criteria(*sizing_field_ptr, minb);
+    return Edge_criteria(*sizing_field_ptr, minb, edge_dist);
   } else {
-    return Edge_criteria(edge_size, minb);
+    return Edge_criteria(edge_size, minb, edge_dist);
   }
 }
 
@@ -320,6 +388,7 @@ launch()
   // Create mesh criteria
   Mesh_criteria criteria(edge_criteria(p_.edge_sizing,
                                        p_.edge_min_sizing,
+                                       p_.edge_distance,
                                        Tag()),
                          Facet_criteria(p_.facet_angle,
                                         p_.facet_sizing,

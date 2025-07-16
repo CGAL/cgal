@@ -90,10 +90,10 @@ struct Types_selectors<TriangleMesh, VertexPointMap, CGAL::SPOKES_AND_RIMS>
 
   struct ARAP_visitor
   {
-    void init(TriangleMesh, VertexPointMap){}
+    void init(const TriangleMesh&, VertexPointMap){}
 
     void rotation_matrix_pre(typename boost::graph_traits<TriangleMesh>::vertex_descriptor,
-                             TriangleMesh&){}
+                             const TriangleMesh&){}
 
     template <class Square_matrix_3>
     void update_covariance_matrix(Square_matrix_3&,
@@ -125,7 +125,7 @@ struct Types_selectors<TriangleMesh, VertexPointMap, CGAL::SRE_ARAP>
   public:
     ARAP_visitor(): m_alpha(0.02) {}
 
-    void init(TriangleMesh triangle_mesh, const VertexPointMap& vpmap)
+    void init(const TriangleMesh &triangle_mesh, const VertexPointMap& vpmap)
     {
       // calculate area
       m_area = 0;
@@ -143,7 +143,7 @@ struct Types_selectors<TriangleMesh, VertexPointMap, CGAL::SRE_ARAP>
 
     void rotation_matrix_pre(
       typename boost::graph_traits<TriangleMesh>::vertex_descriptor vi,
-      TriangleMesh& hg)
+      const TriangleMesh& hg)
     {
       typename boost::graph_traits<TriangleMesh>::in_edge_iterator e, e_end;
       std::tie(e,e_end) = in_edges(vi, hg);

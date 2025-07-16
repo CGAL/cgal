@@ -1,4 +1,4 @@
-/// \defgroup PkgSetMovableSeparability2Ref 2D Movable Separability of Sets Reference
+/// \defgroup PkgSetMovableSeparability2Ref Reference Manual
 
 /// \defgroup top_edges_grp Top Edges
 /// These function determine whether a cavity (of a mold in the plane)

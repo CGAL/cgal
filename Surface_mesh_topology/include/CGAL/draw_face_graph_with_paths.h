@@ -62,12 +62,12 @@ protected:
 
 namespace draw_function_for_lcc
 {
-  // We need to re-use the namespace draw_function_for_lcc because we want to specialize
+  // We need to reuse the namespace draw_function_for_lcc because we want to specialize
   // the previous struct LCC_geom_utils
 //   template <class LCC, class Local_kernel, int dim = LCC::ambient_dimension>
 // struct LCC_geom_utils;
 
-// Specialisation for face graph; otherwise use the LCC_geom_utils of LCC.
+// Specialization for face graph; otherwise use the LCC_geom_utils of LCC.
 template<class Mesh, class Local_kernel>
 struct LCC_geom_utils<CGAL::Face_graph_wrapper<Mesh>, Local_kernel, 3>
 {
@@ -386,8 +386,6 @@ void add_to_graphics_scene(const Mesh& mesh,
   add_to_graphics_scene(mesh, graphics_scene, paths, amark);
 }
 
-#ifdef CGAL_USE_BASIC_VIEWER
-
 template<typename Mesh, typename GSOptions>
 void draw(const Mesh& mesh,
           const std::vector<Surface_mesh_topology::Path_on_surface<Mesh> >& paths,
@@ -435,8 +433,6 @@ void draw(const Mesh& mesh,
   std::vector<Surface_mesh_topology::Path_on_surface<Mesh>> paths=l;
   draw(mesh, paths, title, amark);
 }
-
-#endif // CGAL_USE_BASIC_VIEWER
 
 } // End namespace CGAL
 

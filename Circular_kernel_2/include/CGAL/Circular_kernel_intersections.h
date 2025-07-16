@@ -54,7 +54,7 @@ namespace Intersections { \
   } \
 template <class K> \
 inline \
-bool \
+typename K::Boolean \
 do_intersect(const A <K> &c1, const B <K> &c2) \
 { \
   return typename K::Do_intersect_2()(c1, c2); \

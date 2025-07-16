@@ -21,8 +21,8 @@
 #include <CGAL/Polygon_mesh_processing/bbox.h>
 
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
-#include <CGAL/AABB_triangle_primitive.h>
+#include <CGAL/AABB_traits_3.h>
+#include <CGAL/AABB_triangle_primitive_3.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/utility.h>
 #include <CGAL/Named_function_parameters.h>
@@ -969,7 +969,7 @@ sample_triangle_mesh(const TriangleMesh& tm,
  *                     of the smallest non-null edge of the soup or the value passed to the named parameter
  *                     `grid_spacing`.}
  *   \cgalParamNEnd
- * *   \cgalParamNBegin{use_monte_carlo_sampling}
+ *     \cgalParamNBegin{use_monte_carlo_sampling}
  *     \cgalParamDescription{if `true` is passed, points are generated randomly in each triangle.}
  *     \cgalParamType{Boolean}
  *     \cgalParamDefault{`false`}
@@ -1116,7 +1116,7 @@ double max_distance_to_triangle_mesh(const PointRange& points,
   spatial_sort(points_cpy.begin(), points_cpy.end());
 
   typedef AABB_face_graph_triangle_primitive<TriangleMesh, VPM> Primitive;
-  typedef AABB_traits<GeomTraits, Primitive> Tree_traits;
+  typedef AABB_traits_3<GeomTraits, Primitive> Tree_traits;
   typedef AABB_tree<Tree_traits> Tree;
 
   Tree_traits tgt/*(gt)*/;
@@ -1485,7 +1485,7 @@ bounded_error_squared_Hausdorff_distance_impl(const TriangleMesh1& tm1,
   TM1_hd_traits traversal_traits_tm1(tm2_tree, tm1, tm2, vpm1, vpm2,
                                      infinity_value, sq_initial_bound, sq_distance_bound);
 
-  // Find candidate triangles in TM1, which might realise the Hausdorff bound.
+  // Find candidate triangles in TM1, which might realize the Hausdorff bound.
   // We build a sorted structure while collecting the candidates.
   const Point_3 stub(0, 0, 0); // dummy point given as query since it is not needed
 
@@ -2009,8 +2009,8 @@ bounded_error_squared_one_sided_Hausdorff_distance_impl(const TriangleMesh1& tm1
   using TM1_primitive = AABB_face_graph_triangle_primitive<TM1, VPM1>;
   using TM2_primitive = AABB_face_graph_triangle_primitive<TM2, VPM2>;
 
-  using TM1_traits = AABB_traits<Kernel, TM1_primitive>;
-  using TM2_traits = AABB_traits<Kernel, TM2_primitive>;
+  using TM1_traits = AABB_traits_3<Kernel, TM1_primitive>;
+  using TM2_traits = AABB_traits_3<Kernel, TM2_primitive>;
 
   using TM1_tree = AABB_tree<TM1_traits>;
   using TM2_tree = AABB_tree<TM2_traits>;
@@ -2026,7 +2026,7 @@ bounded_error_squared_one_sided_Hausdorff_distance_impl(const TriangleMesh1& tm1
 #if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_METIS_ENABLED) && defined(USE_PARALLEL_BEHD)
   using TMF           = CGAL::Face_filtered_graph<TM1>;
   using TMF_primitive = AABB_face_graph_triangle_primitive<TMF, VPM1>;
-  using TMF_traits    = AABB_traits<Kernel, TMF_primitive>;
+  using TMF_traits    = AABB_traits_3<Kernel, TMF_primitive>;
   using TMF_tree      = AABB_tree<TMF_traits>;
   using TM1_wrapper   = Triangle_mesh_wrapper<TMF, VPM1, TMF_tree>;
   using TM2_wrapper   = Triangle_mesh_wrapper<TM2, VPM2, TM2_tree>;
@@ -2285,8 +2285,8 @@ bounded_error_squared_symmetric_Hausdorff_distance_impl(const TriangleMesh1& tm1
   using TM1_primitive = AABB_face_graph_triangle_primitive<TriangleMesh1, VPM1>;
   using TM2_primitive = AABB_face_graph_triangle_primitive<TriangleMesh2, VPM2>;
 
-  using TM1_traits = AABB_traits<Kernel, TM1_primitive>;
-  using TM2_traits = AABB_traits<Kernel, TM2_primitive>;
+  using TM1_traits = AABB_traits_3<Kernel, TM1_primitive>;
+  using TM2_traits = AABB_traits_3<Kernel, TM2_primitive>;
 
   using TM1_tree = AABB_tree<TM1_traits>;
   using TM2_tree = AABB_tree<TM2_traits>;
@@ -2419,7 +2419,7 @@ bounded_error_squared_Hausdorff_distance_naive_impl(const TriangleMesh1& tm1,
   using Triangle_3 = typename Kernel::Triangle_3;
 
   using TM2_primitive = AABB_face_graph_triangle_primitive<TriangleMesh2, VPM2>;
-  using TM2_traits = AABB_traits<Kernel, TM2_primitive>;
+  using TM2_traits = AABB_traits_3<Kernel, TM2_primitive>;
   using TM2_tree = AABB_tree<TM2_traits>;
 
   using TM1_face_to_triangle_map = Triangle_from_face_descriptor_map<TriangleMesh1, VPM1>;

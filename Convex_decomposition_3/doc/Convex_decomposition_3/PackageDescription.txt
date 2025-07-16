@@ -1,4 +1,4 @@
-/// \defgroup PkgConvexDecomposition3Ref Convex Decomposition of Polyhedra Reference
+/// \defgroup PkgConvexDecomposition3Ref Reference Manual
 
 /*!
 \addtogroup PkgConvexDecomposition3Ref
@@ -13,7 +13,7 @@
 \cgalPkgSince{3.5}
 \cgalPkgBib{cgal:h-emspe}
 \cgalPkgLicense{\ref licensesGPL  "GPL"}
-\cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
+\cgalPkgDemo{CGAL Lab,CGALlab.zip}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 

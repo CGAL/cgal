@@ -57,7 +57,7 @@ public:
 
   typedef unsigned int                                Size;
 
-  General_polygon_with_holes_2() : m_pgn() {}
+  General_polygon_with_holes_2() = default;
 
 
   explicit General_polygon_with_holes_2(const Polygon_2& pgn_boundary) :
@@ -123,6 +123,19 @@ public:
 
   bool is_plane() const { return (m_pgn.is_empty() && m_holes.empty()); }
 
+  bool is_empty() const
+  {
+    if(! outer_boundary().is_empty()) {
+        return false;
+      }
+    for(const auto& h : holes()){
+      if(! h.is_empty()){
+        return false;
+      }
+    }
+    return true;
+  }
+
 protected:
   Polygon_2 m_pgn;
   Holes_container m_holes;
@@ -135,8 +148,8 @@ protected:
 This operator exports a `General_polygon_with_holes_2` to the output stream `os`.
 
 An \ascii and a binary format exist. The format can be selected with
-the \cgal modifiers for streams, `set_ascii_mode()` and `set_binary_mode()`,
-respectively. The modifier `set_pretty_mode()` can be used to allow for (a
+the \cgal modifiers for streams, `CGAL::IO::set_ascii_mode()` and `CGAL::IO::set_binary_mode()`,
+respectively. The modifier `CGAL::IO::set_pretty_mode()` can be used to allow for (a
 few) structuring comments in the output. Otherwise, the output would
 be free of comments. The default for writing is \ascii without comments.
 

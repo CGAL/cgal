@@ -39,6 +39,7 @@
 \package_listing{Straight_skeleton_2}
 \package_listing{Minkowski_sum_2}
 \package_listing{Polyline_simplification_2}
+\package_listing{Frechet_distance}
 \package_listing{Visibility_2}
 \package_listing{Set_movable_separability_2}
 
@@ -71,9 +72,11 @@
 \package_listing{Triangulation_on_sphere_2}
 \package_listing{Periodic_2_triangulation_2}
 \package_listing{Hyperbolic_triangulation_2}
+\package_listing{Triangulation_on_hyperbolic_surface_2}
 \package_listing{Periodic_4_hyperbolic_triangulation_2}
 \package_listing{Triangulation_3}
 \package_listing{TDS_3}
+\package_listing{Constrained_triangulation_3}
 \package_listing{Periodic_3_triangulation_3}
 \package_listing{Triangulation}
 \package_listing{Alpha_shapes_2}
@@ -93,6 +96,7 @@
 \package_listing{Skin_surface_3}
 \package_listing{SMDS_3}
 \package_listing{Mesh_3}
+\package_listing{Isosurfacing_3}
 \package_listing{Tetrahedral_remeshing}
 \package_listing{Periodic_3_mesh_3}
 \package_listing{Alpha_wrap_3}
@@ -104,6 +108,8 @@
 \package_listing{Advancing_front_surface_reconstruction}
 \package_listing{Ball_merge_surface_reconstruction}
 \package_listing{Polygonal_surface_reconstruction}
+\package_listing{Kinetic_space_partition}
+\package_listing{Kinetic_surface_reconstruction}
 \package_listing{Optimal_transportation_reconstruction_2}
 
 \cgalPackageSection{PartGeometryProcessing,Geometry Processing}

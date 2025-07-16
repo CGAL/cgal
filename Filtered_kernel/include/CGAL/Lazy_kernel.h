@@ -15,7 +15,7 @@
 
 #include <CGAL/basic.h>
 //#include <CGAL/Filtered_predicate.h>
-#include <CGAL/Static_filtered_predicate.h>
+#include <CGAL/EPIC_predicate_if_convertible.h>
 #include <CGAL/Filtered_kernel.h>
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/Simple_cartesian.h>
@@ -37,62 +37,14 @@
 
 namespace CGAL {
 
-namespace internal {
-
-// SFINAE way to detect result_type typedefs.
-template<typename T>
-class Has_result_type_helper
-{
-  typedef char one;
-  typedef struct { char arr[2]; } two;
-
-  template<typename _Up>
-  struct Wrapper {};
-
-  template<typename U>
-  static one test(Wrapper<typename U::result_type>*);
-
-  template<typename U>
-  static two test(...);
-
-public:
-  static const bool value = sizeof(test<T>(0)) == 1;
-};
-
-template<typename T>
-struct Has_result_type
-  : std::integral_constant< bool,
-                              Has_result_type_helper< std::remove_cv_t<T>>::value>
-{};
-
-template <typename T>
-struct Get_result_type {
-  typedef typename T::result_type type;
-};
-
-template <typename T>
-struct Lazy_result_type
-  : boost::mpl::eval_if< Has_result_type<T>,
-                         Get_result_type<T>,
-                         boost::mpl::identity<void> >
-{};
-
-class Enum_holder {
-protected:
-  enum { NONE, NT, VARIANT, OBJECT, BBOX, OPTIONAL_ };
-};
-
-} // internal
-
 // Exact_kernel = exact kernel that will be made lazy
 // Kernel = lazy kernel
 
-// the Generic base simply applies the generic magic functor stupidly.
-// then the real base fixes up a few special cases.
+// `Lazy_kernel_generic_base` applies the generic magic functor stupidly.
+// `Lazy_kernel_base` fixes up a few special cases.
 template < typename EK_, typename AK_, typename E2A_, typename Kernel_ >
-class Lazy_kernel_generic_base : protected internal::Enum_holder
+class Lazy_kernel_generic_base
   // : public Filtered_kernel_base<EK_>
-    // TODO : Static_filters_base too ?  Check performance
 {
 public:
 
@@ -127,8 +79,17 @@ public:
   typedef typename Exact_kernel::Rep_tag                          Rep_tag;
 
   enum { Has_filtered_predicates = true };
-  enum { Has_static_filters = false };
   typedef Boolean_tag<Has_filtered_predicates> Has_filtered_predicates_tag;
+
+#ifdef CGAL_NO_STATIC_FILTERS_FOR_LAZY_KERNEL
+  enum { Has_static_filters = false };
+#else
+  // @fixme, this should be 'true' but it's broken because EPIC_predicate_if_convertible
+  // assumes the static filtered predicate and the (non-static) filtered predicate
+  // have the same signature, which is not always the case, for example in
+  //   Do_intersect_3(Sphere_3, Bbox_3, *bool*)
+  enum { Has_static_filters = false };
+#endif
 
   // Types
   typedef CGAL::Lazy_exact_nt<typename Exact_kernel::FT>  FT;
@@ -168,123 +129,35 @@ public:
   typedef CGAL::Aff_transformationC2<Kernel>              Aff_transformation_2;
   typedef CGAL::Aff_transformationC3<Kernel>              Aff_transformation_3;
 
-private:
-  // We use a combination of partial and logic to extract the right
-  // construction. Constructions without a result_type always have to
-  // be done through specializations.
-  //
-  // The case distinction goes as follows:
-  // result_type == FT                              => NT
-  // result_type == Object                          => Object
-  // result_type == std::optional                 => OPTIONAL_    Only for Intersect_point_3_for_polyhedral_envelope which returns a handle for a singleton
-  // result_type == Bbox_2 || result_type == Bbox_3 => BBOX
-  // default                                        => NONE
-  // no result_type                                 => NONE
-  //
-  //
-  // we require a Dummy because we cannot have complete
-  // specializations inside a non-namespace scope.
-  // The default implementation does some default handling,
-  // the special cases are filtered by partial specializations.
-  template <typename Construction, typename Dummy = std::nullopt_t>
-  struct Lazy_wrapper_traits :
-    boost::mpl::eval_if< internal::Has_result_type<Construction>,
-                         boost::mpl::eval_if< std::is_same< std::remove_cv_t<
-                                                            std::remove_reference_t<
-                                                              typename internal::Lazy_result_type<Construction>::type
-                                                                  > >,
-                                                            typename Approximate_kernel::FT>,
-                                              boost::mpl::int_<NT>,
-                                              boost::mpl::eval_if< std::is_same< typename internal::Lazy_result_type<Construction>::type,
-                                                                                   CGAL::Object >,
-                                                                   boost::mpl::int_<OBJECT>,
-                                                                   boost::mpl::eval_if< std::bool_constant<
-                                                                                          std::is_same_v< typename internal::Lazy_result_type<Construction>::type, CGAL::Bbox_2 > ||
-                                                                                          std::is_same_v< typename internal::Lazy_result_type<Construction>::type, CGAL::Bbox_3 > >,
-                                                                                        boost::mpl::int_<BBOX>,
-                                                                                        boost::mpl::int_<NONE> > > >,
-                         boost::mpl::int_<NONE> >::type {};
-
-#define CGAL_WRAPPER_TRAIT(NAME, WRAPPER)                               \
-  template<typename Dummy>                                              \
-  struct Lazy_wrapper_traits<typename Approximate_kernel::NAME, Dummy>  \
-    : boost::mpl::int_<WRAPPER> {};
-
-  CGAL_WRAPPER_TRAIT(Intersect_2, VARIANT)
-  CGAL_WRAPPER_TRAIT(Intersect_3, VARIANT)
-  CGAL_WRAPPER_TRAIT(Intersect_point_3_for_polyhedral_envelope, OPTIONAL_)
-  CGAL_WRAPPER_TRAIT(Compute_squared_radius_2, NT)
-  CGAL_WRAPPER_TRAIT(Compute_x_3, NT)
-  CGAL_WRAPPER_TRAIT(Compute_y_3, NT)
-  CGAL_WRAPPER_TRAIT(Compute_z_3, NT)
-
-#undef CGAL_WRAPPER_TRAIT
-
-  template <typename Construction, int Type = Lazy_wrapper_traits<Construction>::value>
-  struct Select_wrapper_impl;
-
-  template <typename Construction>
-  struct Select_wrapper_impl<Construction, NONE> {
-    template<typename Kernel, typename AKC, typename EKC>
-    struct apply { typedef Lazy_construction<Kernel, AKC, EKC> type; };
-  };
-
-  template <typename Construction>
-  struct Select_wrapper_impl<Construction, NT> {
-    template<typename Kernel, typename AKC, typename EKC>
-    struct apply { typedef Lazy_construction_nt<Kernel, AKC, EKC> type; };
-  };
-
-  template <typename Construction>
-  struct Select_wrapper_impl<Construction, VARIANT> {
-    template<typename Kernel, typename AKC, typename EKC>
-    struct apply { typedef Lazy_construction_variant<Kernel, AKC, EKC> type; };
-  };
-
-  template <typename Construction>
-  struct Select_wrapper_impl<Construction, OBJECT> {
-    template<typename Kernel, typename AKC, typename EKC>
-    struct apply { typedef Lazy_construction_object<Kernel, AKC, EKC> type; };
-  };
-
-  template <typename Construction>
-  struct Select_wrapper_impl<Construction, BBOX> {
-    template<typename Kernel, typename AKC, typename EKC>
-    struct apply { typedef Lazy_construction_bbox<Kernel, AKC, EKC> type; };
-  };
-
-  template <typename Construction>
-  struct Select_wrapper_impl<Construction, OPTIONAL_> {
-    template<typename Kernel, typename AKC, typename EKC>
-    struct apply { typedef Lazy_construction_optional_for_polygonal_envelope<Kernel, AKC, EKC> type; };
-  };
-
-  template <typename Construction>
-  struct Select_wrapper : Select_wrapper_impl<Construction> {};
-
 public:
-
-
 #ifdef CGAL_NO_STATIC_FILTERS_FOR_LAZY_KERNEL
 #define CGAL_Kernel_pred(P, Pf)                                         \
     typedef Filtered_predicate<typename Exact_kernel::P, typename Approximate_kernel::P, C2E, C2F> P; \
     P Pf() const { return P(); }
 #else
-#define CGAL_Kernel_pred(P, Pf)  \
-  typedef Static_filtered_predicate<Approximate_kernel, Filtered_predicate<typename Exact_kernel::P, typename Approximate_kernel::P, C2E, C2F>, Exact_predicates_inexact_constructions_kernel::P> P; \
+// - the first template parameter is because either it fits in a double, or not, so
+//   we might as well use the approximate kernel directly rather than the complete lazy kernel
+// - the second is the predicate to be called if EPICK is not usable
+// - the third is the equivalent predicate in EPICK
+#define CGAL_Kernel_pred(P, Pf) \
+  typedef EPIC_predicate_if_convertible<Approximate_kernel, \
+                                        Filtered_predicate<typename Exact_kernel::P, \
+                                                           typename Approximate_kernel::P, C2E, C2F>, \
+                                        Exact_predicates_inexact_constructions_kernel::P> P; \
     P Pf() const { return P(); }
 #endif
 
 #define CGAL_Kernel_cons(C, Cf) \
-  typedef typename Select_wrapper<typename Approximate_kernel::C>::template apply<Kernel, typename Approximate_kernel::C, typename Exact_kernel::C>::type C; \
+  typedef Lazy_construction<Kernel, typename Approximate_kernel::C, typename Exact_kernel::C> C; \
   C Cf() const { return C(); }
 
 #include <CGAL/Kernel/interface_macros.h>
+
+  // Useless meta-function, added to workaround a bug with Visual C++ 2022 and before
+  // See issue https://github.com/CGAL/cgal/issues/8140
+  template < typename T >
+  struct Handle { typedef T   type; };
 };
-
-
-
-
 
 template < typename EK_, typename AK_, typename E2A_, typename Kernel_ >
 class Lazy_kernel_base
@@ -302,18 +175,16 @@ public:
 
   typedef CommonKernelFunctors::Assign_2<Kernel>        Assign_2;
   typedef CommonKernelFunctors::Assign_3<Kernel>        Assign_3;
-  typedef Lazy_construction_bbox<Kernel, typename Approximate_kernel::Construct_bbox_2, typename Exact_kernel::Construct_bbox_2>             Construct_bbox_2;
-  typedef Lazy_construction_bbox<Kernel, typename Approximate_kernel::Construct_bbox_3, typename Exact_kernel::Construct_bbox_3>             Construct_bbox_3;
   typedef Lazy_cartesian_const_iterator_2<Kernel, typename Approximate_kernel::Construct_cartesian_const_iterator_2, typename Exact_kernel::Construct_cartesian_const_iterator_2>   Construct_cartesian_const_iterator_2;
   typedef Lazy_cartesian_const_iterator_3<Kernel, typename Approximate_kernel::Construct_cartesian_const_iterator_3, typename Exact_kernel::Construct_cartesian_const_iterator_3>   Construct_cartesian_const_iterator_3;
 
   typedef CGAL::CartesianKernelFunctors::Compute_approximate_squared_length_3<Kernel>  Compute_approximate_squared_length_3;
   typedef CGAL::CartesianKernelFunctors::Compute_approximate_area_3<Kernel>  Compute_approximate_area_3;
 
-  // typedef void Compute_z_3; // to detect where .z() is called
-  // typedef void Construct_point_3; // to detect where the ctor is called
-
-
+  typedef CGAL::Lazy_construction_optional_for_polyhedral_envelope<
+            Kernel,
+            typename Approximate_kernel::Intersect_point_3_for_polyhedral_envelope,
+            typename Exact_kernel::Intersect_point_3_for_polyhedral_envelope> Intersect_point_3_for_polyhedral_envelope;
 
   struct Compute_weight_2 : public BaseClass::Compute_weight_2
   {
@@ -546,7 +417,6 @@ public:
 
   };
 
-
   struct Less_xyz_3 : public BaseClass::Less_xyz_3
   {
     typedef typename Kernel_::Point_3 Point_3;
@@ -587,14 +457,6 @@ public:
   assign_3_object() const
   { return Assign_3(); }
 
-  Construct_bbox_2
-  construct_bbox_2_object() const
-  { return Construct_bbox_2(); }
-
-  Construct_bbox_3
-  construct_bbox_3_object() const
-  { return Construct_bbox_3(); }
-
   Construct_cartesian_const_iterator_2
   construct_cartesian_const_iterator_2_object() const
   { return Construct_cartesian_const_iterator_2(); }
@@ -610,6 +472,10 @@ public:
   Compute_approximate_area_3
   compute_approximate_area_3_object() const
   { return Compute_approximate_area_3(); }
+
+  Intersect_point_3_for_polyhedral_envelope
+  intersect_point_3_for_polyhedral_envelope_object() const
+  { return Intersect_point_3_for_polyhedral_envelope(); }
 
   Less_xyz_3
   less_xyz_3_object() const

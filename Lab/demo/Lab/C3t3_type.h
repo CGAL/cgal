@@ -3,7 +3,7 @@
 
 #include "config.h"
 #include "Plugins/Mesh_3/config_mesh_3.h"
-// as otherwise it gets set via inclusion of cgallab.h
+// as otherwise it gets set via inclusion of CGALlab.h
 #include <CGAL/Default.h>
 
 #include "SMesh_type.h"

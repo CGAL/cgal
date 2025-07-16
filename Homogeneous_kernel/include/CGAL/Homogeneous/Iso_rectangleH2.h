@@ -42,7 +42,7 @@ public:
   Iso_rectangleH2() {}
 
   Iso_rectangleH2(const Point_2& p, const Point_2& q, int)
-    : base(CGAL::make_array(p, q))
+    : base{p, q}
   {
     // I have to remove the assertions, because of Homogeneous_converter.
     // CGAL_kernel_assertion(p.x()<=q.x());
@@ -52,7 +52,7 @@ public:
   const Point_2 & min BOOST_PREVENT_MACRO_SUBSTITUTION () const;
   const Point_2 & max BOOST_PREVENT_MACRO_SUBSTITUTION () const;
 
-  Bounded_side bounded_side(const Point_2& p) const;
+  typename R_::Bounded_side bounded_side(const Point_2& p) const;
 };
 
 
@@ -71,7 +71,7 @@ Iso_rectangleH2<R>::max BOOST_PREVENT_MACRO_SUBSTITUTION () const
 
 template < class R >
 CGAL_KERNEL_INLINE
-Bounded_side
+typename R::Bounded_side
 Iso_rectangleH2<R>::
 bounded_side(const typename Iso_rectangleH2<R>::Point_2& p) const
 {

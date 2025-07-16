@@ -172,7 +172,7 @@ in a consistent, i.e., <I>valid</I>, state.
 
 \subsection HalfedgeDSExampleAddingColortoFaces Example Adding Color to Faces
 
-This example re-uses the base class available for faces and adds a
+This example reuses the base class available for faces and adds a
 member variable `color`.
 
 \cgalExample{HalfedgeDS/hds_prog_color.cpp}

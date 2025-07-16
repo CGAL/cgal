@@ -1,4 +1,4 @@
-// Copyright(c) 2018  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2018  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -14,7 +14,7 @@
 #define CGAL_DRAW_T2_H
 
 #include <CGAL/license/Triangulation_2.h>
-#include <CGAL/Qt/Basic_viewer.h>
+#include <CGAL/Basic_viewer.h>
 #include <CGAL/Graphics_scene.h>
 #include <CGAL/Graphics_scene_options.h>
 #include <CGAL/Triangulation_2.h>
@@ -145,8 +145,6 @@ void add_to_graphics_scene(const CGAL_T2_TYPE& at2,
   add_to_graphics_scene(at2, graphics_scene, drawingFunctor);
 }
 
-#ifdef CGAL_USE_BASIC_VIEWER
-
 // Specialization of draw function.
 template <class Gt, class Tds, class GSOptions>
 void draw(const CGAL_T2_TYPE &at2, const GSOptions &gs_options,
@@ -165,8 +163,6 @@ void draw(const CGAL_T2_TYPE& at2,
   add_to_graphics_scene(at2, buffer);
   draw_graphics_scene(buffer, title);
 }
-
-#endif // CGAL_USE_BASIC_VIEWER
 
 #undef CGAL_T2_TYPE
 

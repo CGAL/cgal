@@ -3,7 +3,6 @@
 
 #include <list>
 
-#include <CGAL/basic.h>
 #include <CGAL/Arr_tracing_traits_2.h>
 #include <CGAL/Arr_counting_traits_2.h>
 
@@ -22,7 +21,7 @@ int main() {
 
   Geom_traits traits;
   traits.disable_all_traces();
-  traits.enable_trace(Tracing_traits::INTERSECT_OP);
+  traits.enable_trace(Tracing_traits::INTERSECT_2_OP);
 
   // Construct an arrangement using aggregated insertion:
   My_arrangement arr1(&traits);

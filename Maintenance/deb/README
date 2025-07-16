@@ -4,54 +4,10 @@ README
 Backports
 ---------
 
-backport for wheezy:
+backport for trixie:
 - debian/changelog:
-  * adjust version suffix from -X to -X~wheezy1
-  * adjust suite from unstable to testing
+  * add new section with version suffix ...-X~deb13u1 and suite testing
 
-backport for squeeze:
+backport for bookworm:
 - debian/changelog:
-  * adjust version suffix from -X to -X~squeeze1
-  * adjust suite from unstable to stable
-- debian/control
-  * adjust Standards-Version from 3.9.3 to 3.9.1
-  * replace libgmp10-dev by libgmp3-dev (twice)
-  * adjust debhelper minimum version from 9 to 8
-- debian/compat
-  * adjust debhelper compatibility version from 9 to 8
-
-
-Tags
-----
-
-svn copy $SVNROOT/branches/next/Maintenance/deb/sid/debian $SVNROOT/tags/debian/4.1-1 -m "Tag for revision 4.1-1"
-svn copy $SVNROOT/branches/next/Maintenance/deb/wheezy/debian $SVNROOT/tags/debian/4.1-1~wheezy1 -m "Tag for revision 4.1-1~wheezy1"
-svn copy $SVNROOT/branches/next/Maintenance/deb/squeeze/debian $SVNROOT/tags/debian/4.1-1~squeeze1 -m "Tag for revision 4.1-1~squeeze1"
-
-
-FTP server
-----------
-
-# on my server
-cd /var/tmp
-tar xjf cgal.org-debian-repository.tar.bz2
-cd cgal.org-debian-repository
-mv pool/main/c/cgal/* archive
-reprepro -b . include wheezy|squeeze /path/to/*.changes
-cd ..
-tar cjf cgal.org-debian-repository.tar.bz2 cgal.org-debian-repository
-cd cgal.org-debian-repository
-rm -fr archive conf db
-tar cjf /srv/www/www.joachim-reichel.de/tmp/cgal.tar.bz2 .
-cd ..
-rm -fr cgal.org-debian-repository
-
-# on MPI machine
-cd /tmp
-wget http://www.joachim-reichel.de/tmp/cgal.tar.bz2
-su cgal
-cd /ftp/pub/outgoing/CGAL/debian
-mv pool/main/c/cgal/* archive
-rm -fr dists pool
-tar xjf /tmp/cgal.tar.bz2
-# There should be 3 subdirectories "archive", "dists", and "pool" now.
+  * add new section with version suffix ...-X~deb12u1 and suite stable

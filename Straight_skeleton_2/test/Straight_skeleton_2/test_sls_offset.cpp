@@ -20,11 +20,15 @@
 #include <CGAL/Straight_skeleton_builder_2.h>
 #include <CGAL/Polygon_offset_builder_2.h>
 #include <CGAL/Straight_skeleton_2/IO/print.h>
+#include <CGAL/Timer.h>
 
-#include <memory>
+#include <CGAL/use.h>
+
+#include <boost/shared_ptr.hpp>
 
 #include <cassert>
 #include <iostream>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -32,90 +36,251 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel          EPICK;
 typedef CGAL::Exact_predicates_exact_constructions_kernel            EPECK;
 typedef CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt  EPECK_w_sqrt;
 
+typedef CGAL::Timer Timer;
+
+namespace CGAL {
+
+template<typename K>
+struct Test_polygon_2 : public CGAL::Polygon_2<K> {
+    typedef CGAL::Polygon_2<K> Base;
+    Test_polygon_2() { }
+    Test_polygon_2(const Base&);
+public:
+    using Base::Base;
+};
+
+template<typename K>
+struct Test_polygon_with_holes_2 : public CGAL::Polygon_with_holes_2<K> {
+    typedef CGAL::Polygon_with_holes_2<K> Base;
+    Test_polygon_with_holes_2() { }
+    Test_polygon_with_holes_2(const Base&);
+public:
+    using Base::Base;
+};
+
+} // namespace CGAL
+
+using namespace CGAL;
+
 template <typename K>
 void test_API()
 {
+  typedef typename K::FT                                             FT;
+  typedef typename K::Point_2                                        Point_2;
+
   typedef CGAL::Polygon_2<K>                                         Polygon_2;
   typedef CGAL::Polygon_with_holes_2<K>                              Polygon_with_holes_2;
 
   typedef CGAL::Polygon_2<EPICK>                                     Polygon_2_EPICK;
   typedef CGAL::Polygon_with_holes_2<EPICK>                          Polygon_with_holes_2_EPICK;
 
+  typedef CGAL::Test_polygon_2<K>                                    Test_Polygon_2;
+  typedef CGAL::Test_polygon_with_holes_2<K>                         Test_Polygon_with_holes_2;
+
+  typedef CGAL::Test_polygon_2<EPICK>                                Test_Polygon_2_EPICK;
+  typedef CGAL::Test_polygon_with_holes_2<EPICK>                     Test_Polygon_with_holes_2_EPICK;
+
+  std::vector<Point_2> v;
   Polygon_2 p;
   Polygon_with_holes_2 pwh;
 
   std::vector< std::shared_ptr<Polygon_2> > res;
   std::vector< std::shared_ptr<Polygon_2_EPICK> > res_EPICK;
-  std::vector< std::shared_ptr<Polygon_with_holes_2> > res_w;
-  std::vector< std::shared_ptr<Polygon_with_holes_2_EPICK> > res_w_EPICK;
+  std::vector< std::shared_ptr<Polygon_with_holes_2> > res_wh;
+  std::vector< std::shared_ptr<Polygon_with_holes_2_EPICK> > res_wh_EPICK;
+
+  std::vector< std::shared_ptr<Test_Polygon_2> > res_test;
+  std::vector< std::shared_ptr<Test_Polygon_2_EPICK> > res_test_EPICK;
+  std::vector< std::shared_ptr<Test_Polygon_with_holes_2> > res_wh_test;
+  std::vector< std::shared_ptr<Test_Polygon_with_holes_2_EPICK> > res_wh_test_EPICK;
 
   // First kernel is the offset construction (and thus output kernel), second kernel is the skeleton construction
 
   // simple interior, no holes
   res_EPICK = create_interior_skeleton_and_offset_polygons_2(0.1, p) ;
   res_EPICK = create_interior_skeleton_and_offset_polygons_2(0.1, p, EPICK()) ;
-  res_EPICK = create_interior_skeleton_and_offset_polygons_2(0, p, EPICK(), K()) ;
+  res_EPICK = create_interior_skeleton_and_offset_polygons_2(0.1, p, EPICK(), EPICK()) ;
+  res_EPICK = create_interior_skeleton_and_offset_polygons_2(0.1, p, EPICK(), K()) ;
+  res_EPICK = create_interior_skeleton_and_offset_polygons_2<Polygon_2_EPICK>(0.1, p, EPICK(), EPICK()) ;
+  res_EPICK = create_interior_skeleton_and_offset_polygons_2<Polygon_2_EPICK>(0.1, p, EPICK(), K()) ;
   res = create_interior_skeleton_and_offset_polygons_2(0.1, p, K()) ;
-  res = create_interior_skeleton_and_offset_polygons_2(0, p, K(), EPICK()) ;
+  res = create_interior_skeleton_and_offset_polygons_2(0.1, p, K(), EPICK()) ;
   res = create_interior_skeleton_and_offset_polygons_2(0.1, p, K(), K()) ;
+  res = create_interior_skeleton_and_offset_polygons_2(FT(0.1), p, K(), K()) ;
+  res = create_interior_skeleton_and_offset_polygons_2<Polygon_2>(0.1, p, K(), EPICK()) ;
+  res = create_interior_skeleton_and_offset_polygons_2<Polygon_2>(FT(0.1), p, K(), EPICK()) ;
+  res = create_interior_skeleton_and_offset_polygons_2<Polygon_2>(0.1, p, K(), K()) ;
+  res = create_interior_skeleton_and_offset_polygons_2<Polygon_2>(FT(0.1), p, K(), K()) ;
+
+  res_test_EPICK = create_interior_skeleton_and_offset_polygons_2<Test_Polygon_2_EPICK>(0.1, p, EPICK(), EPICK()) ;
+  res_test_EPICK = create_interior_skeleton_and_offset_polygons_2<Test_Polygon_2_EPICK>(0.1, p, EPICK(), K()) ;
+  res_test = create_interior_skeleton_and_offset_polygons_2<Test_Polygon_2>(0.1, p, K(), K()) ;
+  res_test = create_interior_skeleton_and_offset_polygons_2<Test_Polygon_2>(FT(0.1), p, K(), K()) ;
+
+  res_test_EPICK = create_interior_skeleton_and_offset_polygons_2<Test_Polygon_2_EPICK>(0.1, v, EPICK(), EPICK()) ;
+  res_test_EPICK = create_interior_skeleton_and_offset_polygons_2<Test_Polygon_2_EPICK>(0.1, v, EPICK(), K()) ;
+  res_test = create_interior_skeleton_and_offset_polygons_2<Test_Polygon_2>(0.1, v, K(), K()) ;
+  res_test = create_interior_skeleton_and_offset_polygons_2<Test_Polygon_2>(FT(0.1), v, K(), K()) ;
 
   // simple interior, holes
   res_EPICK = create_interior_skeleton_and_offset_polygons_2(0.1, pwh) ;
   res_EPICK = create_interior_skeleton_and_offset_polygons_2(0.1, pwh, EPICK()) ;
-  res_EPICK = create_interior_skeleton_and_offset_polygons_2(0, pwh, EPICK(), K()) ;
+  res_EPICK = create_interior_skeleton_and_offset_polygons_2(0.1, pwh, EPICK(), EPICK()) ;
+  res_EPICK = create_interior_skeleton_and_offset_polygons_2(0.1, pwh, EPICK(), K()) ;
+  res_EPICK = create_interior_skeleton_and_offset_polygons_2<Polygon_2_EPICK>(0.1, pwh, EPICK(), EPICK()) ;
+  res_EPICK = create_interior_skeleton_and_offset_polygons_2<Polygon_2_EPICK>(0.1, pwh, EPICK(), K()) ;
   res = create_interior_skeleton_and_offset_polygons_2(0.1, pwh, K()) ;
-  res = create_interior_skeleton_and_offset_polygons_2(0, pwh, K(), EPICK()) ;
+  res = create_interior_skeleton_and_offset_polygons_2(0.1, pwh, K(), EPICK()) ;
   res = create_interior_skeleton_and_offset_polygons_2(0.1, pwh, K(), K()) ;
+  res = create_interior_skeleton_and_offset_polygons_2(FT(0.1), pwh, K(), K()) ;
+  res = create_interior_skeleton_and_offset_polygons_2<Polygon_2>(0.1, pwh, K(), EPICK()) ;
+  res = create_interior_skeleton_and_offset_polygons_2<Polygon_2>(FT(0.1), pwh, K(), EPICK()) ;
+  res = create_interior_skeleton_and_offset_polygons_2<Polygon_2>(0.1, pwh, K(), K()) ;
+  res = create_interior_skeleton_and_offset_polygons_2<Polygon_2>(FT(0.1), pwh, K(), K()) ;
+
+  res_test_EPICK = create_interior_skeleton_and_offset_polygons_2<Test_Polygon_2_EPICK>(0.1, pwh, EPICK(), EPICK()) ;
+  res_test_EPICK = create_interior_skeleton_and_offset_polygons_2<Test_Polygon_2_EPICK>(0.1, pwh, EPICK(), K()) ;
+  res_test = create_interior_skeleton_and_offset_polygons_2<Test_Polygon_2>(0.1, pwh, K(), K()) ;
+  res_test = create_interior_skeleton_and_offset_polygons_2<Test_Polygon_2>(FT(0.1), pwh, K(), K()) ;
 
   // simple exterior, no holes
   res_EPICK = create_exterior_skeleton_and_offset_polygons_2(0.1, p) ;
   res_EPICK = create_exterior_skeleton_and_offset_polygons_2(0.1, p, EPICK()) ;
-  res_EPICK = create_exterior_skeleton_and_offset_polygons_2(0, p, EPICK(), K()) ;
+  res_EPICK = create_exterior_skeleton_and_offset_polygons_2(0.1, p, EPICK(), EPICK()) ;
+  res_EPICK = create_exterior_skeleton_and_offset_polygons_2(0.1, p, EPICK(), K()) ;
+  res_EPICK = create_exterior_skeleton_and_offset_polygons_2<Polygon_2_EPICK>(0.1, p, EPICK(), EPICK()) ;
+  res_EPICK = create_exterior_skeleton_and_offset_polygons_2<Polygon_2_EPICK>(0.1, p, EPICK(), K()) ;
   res = create_exterior_skeleton_and_offset_polygons_2(0.1, p, K()) ;
-  res = create_exterior_skeleton_and_offset_polygons_2(0, p, K(), EPICK()) ;
+  res = create_exterior_skeleton_and_offset_polygons_2(0.1, p, K(), EPICK()) ;
   res = create_exterior_skeleton_and_offset_polygons_2(0.1, p, K(), K()) ;
+  res = create_exterior_skeleton_and_offset_polygons_2(FT(0.1), p, K(), K()) ;
+  res = create_exterior_skeleton_and_offset_polygons_2<Polygon_2>(0.1, p, K(), EPICK()) ;
+  res = create_exterior_skeleton_and_offset_polygons_2<Polygon_2>(FT(0.1), p, K(), EPICK()) ;
+  res = create_exterior_skeleton_and_offset_polygons_2<Polygon_2>(0.1, p, K(), K()) ;
+  res = create_exterior_skeleton_and_offset_polygons_2<Polygon_2>(FT(0.1), p, K(), K()) ;
+
+  res_test_EPICK = create_exterior_skeleton_and_offset_polygons_2<Test_Polygon_2_EPICK>(0.1, p, EPICK(), EPICK()) ;
+  res_test_EPICK = create_exterior_skeleton_and_offset_polygons_2<Test_Polygon_2_EPICK>(0.1, p, EPICK(), K()) ;
+  res_test = create_exterior_skeleton_and_offset_polygons_2<Test_Polygon_2>(0.1, p, K(), K()) ;
+  res_test = create_exterior_skeleton_and_offset_polygons_2<Test_Polygon_2>(FT(0.1), p, K(), K()) ;
+
+  res_test_EPICK = create_exterior_skeleton_and_offset_polygons_2<Test_Polygon_2_EPICK>(0.1, v, EPICK(), EPICK()) ;
+  res_test_EPICK = create_exterior_skeleton_and_offset_polygons_2<Test_Polygon_2_EPICK>(0.1, v, EPICK(), K()) ;
+  res_test = create_exterior_skeleton_and_offset_polygons_2<Test_Polygon_2>(0.1, v, K(), K()) ;
+  res_test = create_exterior_skeleton_and_offset_polygons_2<Test_Polygon_2>(FT(0.1), v, K(), K()) ;
 
   // simple exterior, holes
   res_EPICK = create_exterior_skeleton_and_offset_polygons_2(0.1, pwh) ;
   res_EPICK = create_exterior_skeleton_and_offset_polygons_2(0.1, pwh, EPICK()) ;
-  res_EPICK = create_exterior_skeleton_and_offset_polygons_2(0, pwh, EPICK(), K()) ;
+  res_EPICK = create_exterior_skeleton_and_offset_polygons_2(0.1, pwh, EPICK(), EPICK()) ;
+  res_EPICK = create_exterior_skeleton_and_offset_polygons_2(0.1, pwh, EPICK(), K()) ;
+  res_EPICK = create_exterior_skeleton_and_offset_polygons_2<Polygon_2_EPICK>(0.1, pwh, EPICK(), EPICK()) ;
+  res_EPICK = create_exterior_skeleton_and_offset_polygons_2<Polygon_2_EPICK>(0.1, pwh, EPICK(), K()) ;
   res = create_exterior_skeleton_and_offset_polygons_2(0.1, pwh, K()) ;
-  res = create_exterior_skeleton_and_offset_polygons_2(0, pwh, K(), EPICK()) ;
+  res = create_exterior_skeleton_and_offset_polygons_2(0.1, pwh, K(), EPICK()) ;
   res = create_exterior_skeleton_and_offset_polygons_2(0.1, pwh, K(), K()) ;
+  res = create_exterior_skeleton_and_offset_polygons_2(FT(0.1), pwh, K(), K()) ;
+  res = create_exterior_skeleton_and_offset_polygons_2<Polygon_2>(0.1, pwh, K(), EPICK()) ;
+  res = create_exterior_skeleton_and_offset_polygons_2<Polygon_2>(FT(0.1), pwh, K(), EPICK()) ;
+  res = create_exterior_skeleton_and_offset_polygons_2<Polygon_2>(0.1, pwh, K(), K()) ;
+  res = create_exterior_skeleton_and_offset_polygons_2<Polygon_2>(FT(0.1), pwh, K(), K()) ;
+
+  res_test_EPICK = create_exterior_skeleton_and_offset_polygons_2<Test_Polygon_2_EPICK>(0.1, pwh, EPICK(), EPICK()) ;
+  res_test_EPICK = create_exterior_skeleton_and_offset_polygons_2<Test_Polygon_2_EPICK>(0.1, pwh, EPICK(), K()) ;
+  res_test = create_exterior_skeleton_and_offset_polygons_2<Test_Polygon_2>(0.1, pwh, K(), K()) ;
+  res_test = create_exterior_skeleton_and_offset_polygons_2<Test_Polygon_2>(FT(0.1), pwh, K(), K()) ;
 
   // Same, but the result has holes --------------------
 
   // arranged interior, no holes
-  res_w_EPICK = create_interior_skeleton_and_offset_polygons_with_holes_2(0.1, p) ;
-  res_w_EPICK = create_interior_skeleton_and_offset_polygons_with_holes_2(0.1, p, EPICK()) ;
-  res_w_EPICK = create_interior_skeleton_and_offset_polygons_with_holes_2(0, p, EPICK(), K()) ;
-  res_w = create_interior_skeleton_and_offset_polygons_with_holes_2(0.1, p, K()) ;
-  res_w = create_interior_skeleton_and_offset_polygons_with_holes_2(0, p, K(), EPICK()) ;
-  res_w = create_interior_skeleton_and_offset_polygons_with_holes_2(0.1, p, K(), K()) ;
+  res_wh_EPICK = create_interior_skeleton_and_offset_polygons_with_holes_2(0.1, p) ;
+  res_wh_EPICK = create_interior_skeleton_and_offset_polygons_with_holes_2(0.1, p, EPICK()) ;
+  res_wh_EPICK = create_interior_skeleton_and_offset_polygons_with_holes_2(0.1, p, EPICK(), EPICK()) ;
+  res_wh_EPICK = create_interior_skeleton_and_offset_polygons_with_holes_2(0.1, p, EPICK(), K()) ;
+  res_wh_EPICK = create_interior_skeleton_and_offset_polygons_with_holes_2<Polygon_with_holes_2_EPICK>(0.1, p, EPICK(), EPICK()) ;
+  res_wh_EPICK = create_interior_skeleton_and_offset_polygons_with_holes_2<Polygon_with_holes_2_EPICK>(0.1, p, EPICK(), K()) ;
+  res_wh = create_interior_skeleton_and_offset_polygons_with_holes_2(0.1, p, K()) ;
+  res_wh = create_interior_skeleton_and_offset_polygons_with_holes_2(0.1, p, K(), EPICK()) ;
+  res_wh = create_interior_skeleton_and_offset_polygons_with_holes_2(0.1, p, K(), K()) ;
+  res_wh = create_interior_skeleton_and_offset_polygons_with_holes_2(FT(0.1), p, K(), K()) ;
+  res_wh = create_interior_skeleton_and_offset_polygons_with_holes_2<Polygon_with_holes_2>(0.1, p, K(), EPICK()) ;
+  res_wh = create_interior_skeleton_and_offset_polygons_with_holes_2<Polygon_with_holes_2>(FT(0.1), p, K(), EPICK()) ;
+  res_wh = create_interior_skeleton_and_offset_polygons_with_holes_2<Polygon_with_holes_2>(0.1, p, K(), K()) ;
+  res_wh = create_interior_skeleton_and_offset_polygons_with_holes_2<Polygon_with_holes_2>(FT(0.1), p, K(), K()) ;
+
+  res_wh_test_EPICK = create_interior_skeleton_and_offset_polygons_with_holes_2<Test_Polygon_with_holes_2_EPICK>(0.1, p, EPICK(), EPICK()) ;
+  res_wh_test_EPICK = create_interior_skeleton_and_offset_polygons_with_holes_2<Test_Polygon_with_holes_2_EPICK>(0.1, p, EPICK(), K()) ;
+  res_wh_test = create_interior_skeleton_and_offset_polygons_with_holes_2<Test_Polygon_with_holes_2>(0.1, p, K(), K()) ;
+  res_wh_test = create_interior_skeleton_and_offset_polygons_with_holes_2<Test_Polygon_with_holes_2>(FT(0.1), p, K(), K()) ;
+
+  res_wh_test_EPICK = create_interior_skeleton_and_offset_polygons_with_holes_2<Test_Polygon_with_holes_2_EPICK>(0.1, v, EPICK(), EPICK()) ;
+  res_wh_test_EPICK = create_interior_skeleton_and_offset_polygons_with_holes_2<Test_Polygon_with_holes_2_EPICK>(0.1, v, EPICK(), K()) ;
+  res_wh_test = create_interior_skeleton_and_offset_polygons_with_holes_2<Test_Polygon_with_holes_2>(0.1, v, K(), K()) ;
+  res_wh_test = create_interior_skeleton_and_offset_polygons_with_holes_2<Test_Polygon_with_holes_2>(FT(0.1), v, K(), K()) ;
 
   // arranged interior, holes
-  res_w_EPICK = create_interior_skeleton_and_offset_polygons_with_holes_2(0.1, pwh) ;
-  res_w_EPICK = create_interior_skeleton_and_offset_polygons_with_holes_2(0.1, pwh, EPICK()) ;
-  res_w_EPICK = create_interior_skeleton_and_offset_polygons_with_holes_2(0, pwh, EPICK(), K()) ;
-  res_w = create_interior_skeleton_and_offset_polygons_with_holes_2(0.1, pwh, K()) ;
-  res_w = create_interior_skeleton_and_offset_polygons_with_holes_2(0, pwh, K(), EPICK()) ;
-  res_w = create_interior_skeleton_and_offset_polygons_with_holes_2(0.1, pwh, K(), K()) ;
+  res_wh_EPICK = create_interior_skeleton_and_offset_polygons_with_holes_2(0.1, pwh) ;
+  res_wh_EPICK = create_interior_skeleton_and_offset_polygons_with_holes_2(0.1, pwh, EPICK()) ;
+  res_wh_EPICK = create_interior_skeleton_and_offset_polygons_with_holes_2(0.1, pwh, EPICK(), EPICK()) ;
+  res_wh_EPICK = create_interior_skeleton_and_offset_polygons_with_holes_2(0.1, pwh, EPICK(), K()) ;
+  res_wh_EPICK = create_interior_skeleton_and_offset_polygons_with_holes_2<Polygon_with_holes_2_EPICK>(0.1, pwh, EPICK(), EPICK()) ;
+  res_wh_EPICK = create_interior_skeleton_and_offset_polygons_with_holes_2<Polygon_with_holes_2_EPICK>(0.1, pwh, EPICK(), K()) ;
+  res_wh = create_interior_skeleton_and_offset_polygons_with_holes_2(0.1, pwh, K()) ;
+  res_wh = create_interior_skeleton_and_offset_polygons_with_holes_2(0.1, pwh, K(), EPICK()) ;
+  res_wh = create_interior_skeleton_and_offset_polygons_with_holes_2(FT(0.1), pwh, K(), K()) ;
+  res_wh = create_interior_skeleton_and_offset_polygons_with_holes_2<Polygon_with_holes_2>(0.1, pwh, K(), EPICK()) ;
+  res_wh = create_interior_skeleton_and_offset_polygons_with_holes_2<Polygon_with_holes_2>(FT(0.1), pwh, K(), EPICK()) ;
+  res_wh = create_interior_skeleton_and_offset_polygons_with_holes_2<Polygon_with_holes_2>(0.1, pwh, K(), K()) ;
+  res_wh = create_interior_skeleton_and_offset_polygons_with_holes_2<Polygon_with_holes_2>(FT(0.1), pwh, K(), K()) ;
+
+  res_wh_test_EPICK = create_interior_skeleton_and_offset_polygons_with_holes_2<Test_Polygon_with_holes_2_EPICK>(0.1, pwh, EPICK(), EPICK()) ;
+  res_wh_test_EPICK = create_interior_skeleton_and_offset_polygons_with_holes_2<Test_Polygon_with_holes_2_EPICK>(0.1, pwh, EPICK(), K()) ;
+  res_wh_test = create_interior_skeleton_and_offset_polygons_with_holes_2<Test_Polygon_with_holes_2>(0.1, pwh, K(), K()) ;
+  res_wh_test = create_interior_skeleton_and_offset_polygons_with_holes_2<Test_Polygon_with_holes_2>(FT(0.1), pwh, K(), K()) ;
 
   // arranged exterior, no holes
-  res_w_EPICK = create_exterior_skeleton_and_offset_polygons_with_holes_2(0.1, p) ;
-  res_w_EPICK = create_exterior_skeleton_and_offset_polygons_with_holes_2(0.1, p, EPICK()) ;
-  res_w_EPICK = create_exterior_skeleton_and_offset_polygons_with_holes_2(0, p, EPICK(), K()) ;
-  res_w = create_exterior_skeleton_and_offset_polygons_with_holes_2(0.1, p, K()) ;
-  res_w = create_exterior_skeleton_and_offset_polygons_with_holes_2(0, p, K(), EPICK()) ;
-  res_w = create_exterior_skeleton_and_offset_polygons_with_holes_2(0.1, p, K(), K()) ;
+  res_wh_EPICK = create_exterior_skeleton_and_offset_polygons_with_holes_2(0.1, p) ;
+  res_wh_EPICK = create_exterior_skeleton_and_offset_polygons_with_holes_2(0.1, p, EPICK()) ;
+  res_wh_EPICK = create_exterior_skeleton_and_offset_polygons_with_holes_2(0.1, p, EPICK(), EPICK()) ;
+  res_wh_EPICK = create_exterior_skeleton_and_offset_polygons_with_holes_2(0.1, p, EPICK(), K()) ;
+  res_wh_EPICK = create_exterior_skeleton_and_offset_polygons_with_holes_2<Polygon_with_holes_2_EPICK>(0.1, p, EPICK(), EPICK()) ;
+  res_wh_EPICK = create_exterior_skeleton_and_offset_polygons_with_holes_2<Polygon_with_holes_2_EPICK>(0.1, p, EPICK(), K()) ;
+  res_wh = create_exterior_skeleton_and_offset_polygons_with_holes_2(0.1, p, K()) ;
+  res_wh = create_exterior_skeleton_and_offset_polygons_with_holes_2(0.1, p, K(), EPICK()) ;
+  res_wh = create_exterior_skeleton_and_offset_polygons_with_holes_2(0.1, p, K(), K()) ;
+  res_wh = create_exterior_skeleton_and_offset_polygons_with_holes_2<Polygon_with_holes_2>(0.1, p, K(), EPICK()) ;
+  res_wh = create_exterior_skeleton_and_offset_polygons_with_holes_2<Polygon_with_holes_2>(FT(0.1), p, K(), EPICK()) ;
+  res_wh = create_exterior_skeleton_and_offset_polygons_with_holes_2<Polygon_with_holes_2>(0.1, p, K(), K()) ;
+  res_wh = create_exterior_skeleton_and_offset_polygons_with_holes_2<Polygon_with_holes_2>(FT(0.1), p, K(), K()) ;
+
+  res_wh_test_EPICK = create_exterior_skeleton_and_offset_polygons_with_holes_2<Test_Polygon_with_holes_2_EPICK>(0.1, p, EPICK(), EPICK()) ;
+  res_wh_test_EPICK = create_exterior_skeleton_and_offset_polygons_with_holes_2<Test_Polygon_with_holes_2_EPICK>(0.1, p, EPICK(), K()) ;
+  res_wh_test = create_exterior_skeleton_and_offset_polygons_with_holes_2<Test_Polygon_with_holes_2>(0.1, p, K(), K()) ;
+  res_wh_test = create_exterior_skeleton_and_offset_polygons_with_holes_2<Test_Polygon_with_holes_2>(FT(0.1), p, K(), K()) ;
+
+  res_wh_test_EPICK = create_exterior_skeleton_and_offset_polygons_with_holes_2<Test_Polygon_with_holes_2_EPICK>(0.1, v, EPICK(), EPICK()) ;
+  res_wh_test_EPICK = create_exterior_skeleton_and_offset_polygons_with_holes_2<Test_Polygon_with_holes_2_EPICK>(0.1, v, EPICK(), K()) ;
+  res_wh_test = create_exterior_skeleton_and_offset_polygons_with_holes_2<Test_Polygon_with_holes_2>(0.1, v, K(), K()) ;
+  res_wh_test = create_exterior_skeleton_and_offset_polygons_with_holes_2<Test_Polygon_with_holes_2>(FT(0.1), v, K(), K()) ;
 
   // arranged exterior, holes
-  res_w_EPICK = create_exterior_skeleton_and_offset_polygons_with_holes_2(0.1, pwh) ;
-  res_w_EPICK = create_exterior_skeleton_and_offset_polygons_with_holes_2(0.1, pwh, EPICK()) ;
-  res_w_EPICK = create_exterior_skeleton_and_offset_polygons_with_holes_2(0, pwh, EPICK(), K()) ;
-  res_w = create_exterior_skeleton_and_offset_polygons_with_holes_2(0.1, pwh, K()) ;
-  res_w = create_exterior_skeleton_and_offset_polygons_with_holes_2(0, pwh, K(), EPICK()) ;
-  res_w = create_exterior_skeleton_and_offset_polygons_with_holes_2(0.1, pwh, K(), K()) ;
+  res_wh_EPICK = create_exterior_skeleton_and_offset_polygons_with_holes_2(0.1, pwh) ;
+  res_wh_EPICK = create_exterior_skeleton_and_offset_polygons_with_holes_2(0.1, pwh, EPICK()) ;
+  res_wh_EPICK = create_exterior_skeleton_and_offset_polygons_with_holes_2(0.1, pwh, EPICK(), EPICK()) ;
+  res_wh_EPICK = create_exterior_skeleton_and_offset_polygons_with_holes_2(0.1, pwh, EPICK(), K()) ;
+  res_wh_EPICK = create_exterior_skeleton_and_offset_polygons_with_holes_2<Polygon_with_holes_2_EPICK>(0.1, pwh, EPICK(), EPICK()) ;
+  res_wh_EPICK = create_exterior_skeleton_and_offset_polygons_with_holes_2<Polygon_with_holes_2_EPICK>(0.1, pwh, EPICK(), K()) ;
+  res_wh = create_exterior_skeleton_and_offset_polygons_with_holes_2(0.1, pwh, K()) ;
+  res_wh = create_exterior_skeleton_and_offset_polygons_with_holes_2(0.1, pwh, K(), EPICK()) ;
+  res_wh = create_exterior_skeleton_and_offset_polygons_with_holes_2<Polygon_with_holes_2>(0.1, pwh, K(), K()) ;
+  res_wh = create_exterior_skeleton_and_offset_polygons_with_holes_2<Polygon_with_holes_2>(FT(0.1), pwh, K(), EPICK()) ;
+  res_wh = create_exterior_skeleton_and_offset_polygons_with_holes_2<Polygon_with_holes_2>(0.1, pwh, K(), K()) ;
+  res_wh = create_exterior_skeleton_and_offset_polygons_with_holes_2<Polygon_with_holes_2>(FT(0.1), pwh, K(), K()) ;
+
+  res_wh_test_EPICK = create_exterior_skeleton_and_offset_polygons_with_holes_2<Test_Polygon_with_holes_2_EPICK>(0.1, pwh, EPICK(), EPICK()) ;
+  res_wh_test_EPICK = create_exterior_skeleton_and_offset_polygons_with_holes_2<Test_Polygon_with_holes_2_EPICK>(0.1, pwh, EPICK(), K()) ;
+  res_wh_test = create_exterior_skeleton_and_offset_polygons_with_holes_2<Test_Polygon_with_holes_2>(0.1, pwh, K(), K()) ;
+  res_wh_test = create_exterior_skeleton_and_offset_polygons_with_holes_2<Test_Polygon_with_holes_2>(FT(0.1), pwh, K(), K()) ;
 }
 
 template <typename K, typename StraightSkeleton>
@@ -207,7 +372,7 @@ void test_offset_four_square_holes()
   outer.push_back(Point( 0,  0));
   outer.push_back(Point(10,  0));
   outer.push_back(Point(10, 10));
-  outer.push_back(Point(0,  10));
+  outer.push_back(Point( 0, 10));
 
   hole1.push_back(Point(1, 1));
   hole1.push_back(Point(1, 4.5));
@@ -936,9 +1101,12 @@ void test_offset(const char* filename,
   int i = 0;
   for(const FT& ot : offset_times)
   {
+    Timer t;
+    t.start();
     std::cout << "Offset #" << i++ << " = " << ot << std::endl;
     Polygon_with_holes_2_ptr_container offset_poly_with_holes =
       CGAL::create_interior_skeleton_and_offset_polygons_with_holes_2(ot, p, K());
+    std::cout << t.time() << " sec." << std::endl;
 
     std::cout << offset_poly_with_holes.size() << " polygons with holes" << std::endl;
     for(const auto& offp : offset_poly_with_holes)
@@ -964,9 +1132,8 @@ void test_kernel()
   std::cout.precision(17);
   std::cerr.precision(17);
 
-#ifndef CGAL_SLS_TEST_SPEED_THINGS_UP_FOR_THE_TESTSUITE
-  // test_API<K>();
-#endif
+  void (*dummy_ptr)() = &test_API<K>;
+  CGAL_USE(dummy_ptr);
 
   // Artificial data
   test_offset_square<K>();
@@ -1162,6 +1329,10 @@ int main(int, char**)
   test_kernel<EPICK>();
   test_kernel<EPECK>();
   test_kernel<EPECK_w_sqrt>();
+
+  // those two are really slow
+  // test_offset<EPECK_w_sqrt>("data/near_degenerate_0.poly");
+  // test_offset<EPECK_w_sqrt>("data/degenerate20.poly");
 
   std::cout << "Done!" << std::endl;
 

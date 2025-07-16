@@ -1,4 +1,4 @@
-/// \defgroup PkgConvexHull3Ref 3D Convex Hulls Reference
+/// \defgroup PkgConvexHull3Ref Reference Manual
 
 /// \defgroup PkgConvexHull3Concepts Concepts
 /// \ingroup PkgConvexHull3Ref
@@ -35,7 +35,7 @@ degenerate hull may also be possible.
 \cgalPkgDependsOn{The dynamic algorithms depend on \ref PkgTriangulation3 "3D Triangulations".}
 \cgalPkgBib{cgal:hs-ch3}
 \cgalPkgLicense{\ref licensesGPL  "GPL"}
-\cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
+\cgalPkgDemo{CGAL Lab,CGALlab.zip}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 

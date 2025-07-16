@@ -22,6 +22,7 @@
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
+#include <CGAL/Polygon_mesh_processing/curvature.h>
 #include <CGAL/Polygon_mesh_processing/interpolated_corrected_curvatures.h>
 
 #include <QAbstractItemView>
@@ -350,11 +351,11 @@ private:
   template<typename ValueType>
   void displayMapLegend(const std::vector<ValueType>& values)
   {
-    const std::size_t size = (std::min)(color_map.size(), std::size_t(1024));
+    const std::size_t size = (std::min)(color_map.size(), std::size_t(4096));
 
     const int text_height = 20;
     const int height = text_height * static_cast<int>(size) + text_height;
-    const int width = 140;
+    const int width = 200;
     const int cell_width = width / 3;
     const int top_margin = 15;
     const int left_margin = 5;
@@ -381,13 +382,13 @@ private:
                        tick_height,
                        color);
 
-      QRect text_rect(left_margin + cell_width + 10, drawing_height - top_margin - j, 50, text_height);
-      painter.drawText(text_rect, Qt::AlignCenter, QObject::tr("%1").arg(values[i], 0, 'f', 3, QLatin1Char(' ')));
+      QRect text_rect(left_margin + cell_width + 10, drawing_height - top_margin - j, 100, text_height);
+      painter.drawText(text_rect, Qt::AlignCenter, QObject::tr("%1").arg(static_cast<double>(values[i]), 0, 'f', 6, QLatin1Char(' ')));
     }
 
     if(color_map.size() > size)
     {
-      QRect text_rect(left_margin + cell_width + 10, 0, 50, text_height);
+      QRect text_rect(left_margin + cell_width + 10, 0, 100, text_height);
       painter.drawText(text_rect, Qt::AlignCenter, QObject::tr("[...]"));
     }
 
@@ -463,12 +464,16 @@ private:
                                           "Largest Angle Per Face",
                                           "Scaled Jacobian",
                                           "Face Area",
+                                          "Discrete Mean Curvature",
+                                          "Discrete Gaussian Curvature",
                                           "Interpolated Corrected Mean Curvature",
                                           "Interpolated Corrected Gaussian Curvature"});
       property_simplex_types = { Property_simplex_type::FACE,
                                  Property_simplex_type::FACE,
                                  Property_simplex_type::FACE,
                                  Property_simplex_type::FACE,
+                                 Property_simplex_type::VERTEX,
+                                 Property_simplex_type::VERTEX,
                                  Property_simplex_type::VERTEX,
                                  Property_simplex_type::VERTEX };
       detectSMScalarProperties(*(sm_item->face_graph()));
@@ -516,12 +521,12 @@ private Q_SLOTS:
 
       // Curvature property-specific slider
       const std::string& property_name = dock_widget->propertyBox->currentText().toStdString();
-      const bool is_curvature_property = (property_name == "Interpolated Corrected Mean Curvature" ||
-                                          property_name == "Interpolated Corrected Gaussian Curvature");
-      dock_widget->expandingRadiusLabel->setVisible(is_curvature_property);
-      dock_widget->expandingRadiusSlider->setVisible(is_curvature_property);
-      dock_widget->expandingRadiusLabel->setEnabled(is_curvature_property);
-      dock_widget->expandingRadiusSlider->setEnabled(is_curvature_property);
+      const bool is_interpolated_curvature_property = (property_name == "Interpolated Corrected Mean Curvature" ||
+                                                       property_name == "Interpolated Corrected Gaussian Curvature");
+      dock_widget->expandingRadiusLabel->setVisible(is_interpolated_curvature_property);
+      dock_widget->expandingRadiusSlider->setVisible(is_interpolated_curvature_property);
+      dock_widget->expandingRadiusLabel->setEnabled(is_interpolated_curvature_property);
+      dock_widget->expandingRadiusSlider->setEnabled(is_interpolated_curvature_property);
     }
     else // no or broken property
     {
@@ -569,6 +574,16 @@ private:
     else if(property_name == "Face Area")
     {
       displayArea(sm_item);
+    }
+    else if(property_name == "Discrete Mean Curvature")
+    {
+      displayDiscreteCurvatureMeasure(sm_item, MEAN_CURVATURE);
+      sm_item->setRenderingMode(Gouraud);
+    }
+    else if(property_name == "Discrete Gaussian Curvature")
+    {
+      displayDiscreteCurvatureMeasure(sm_item, GAUSSIAN_CURVATURE);
+      sm_item->setRenderingMode(Gouraud);
     }
     else if(property_name == "Interpolated Corrected Mean Curvature")
     {
@@ -669,11 +684,11 @@ private:
       return;
 
     // Here we only target the property maps added by this plugin, so 'double' is fine
-    SMesh::Property_map<face_descriptor, double> property;
-    bool found;
-    std::tie(property, found) = sm->property_map<face_descriptor, double>(property_name);
-    if(found)
-      sm->remove_property_map(property);
+    std::optional<SMesh::Property_map<face_descriptor, double>> property
+      = sm->property_map<face_descriptor, double>(property_name);
+
+    if(property.has_value())
+      sm->remove_property_map(property.value());
   }
 
   void removeDisplayPluginProperties(Scene_item* item)
@@ -682,6 +697,8 @@ private:
     removeDisplayPluginProperty(item, "f:display_plugin_largest_angle");
     removeDisplayPluginProperty(item, "f:display_plugin_scaled_jacobian");
     removeDisplayPluginProperty(item, "f:display_plugin_area");
+    removeDisplayPluginProperty(item, "v:display_plugin_discrete_mean_curvature");
+    removeDisplayPluginProperty(item, "v:display_plugin_discrete_Gaussian_curvature");
     removeDisplayPluginProperty(item, "v:display_plugin_interpolated_corrected_mean_curvature");
     removeDisplayPluginProperty(item, "v:display_plugin_interpolated_corrected_Gaussian_curvature");
   }
@@ -864,6 +881,35 @@ private:
     displaySMProperty<face_descriptor>("f:display_plugin_area", *sm);
   }
 
+private:
+  void displayDiscreteCurvatureMeasure(Scene_surface_mesh_item* sm_item,
+                                       CurvatureType mu_index)
+  {
+    SMesh* sm = sm_item->face_graph();
+    if(sm == nullptr)
+      return;
+
+    if(mu_index != MEAN_CURVATURE && mu_index != GAUSSIAN_CURVATURE)
+      return;
+
+    std::string vdc_name = (mu_index == MEAN_CURVATURE) ? "v:display_plugin_discrete_mean_curvature"
+                                                        : "v:display_plugin_discrete_Gaussian_curvature";
+
+    bool not_initialized;
+    SMesh::Property_map<vertex_descriptor, double> vdc;
+    std::tie(vdc, not_initialized) = sm->add_property_map<vertex_descriptor, double>(vdc_name, 0);
+
+    if(not_initialized)
+    {
+      if(mu_index == MEAN_CURVATURE)
+        PMP::discrete_mean_curvatures(*sm, vdc);
+      else
+        PMP::discrete_Gaussian_curvatures(*sm, vdc);
+    }
+
+    displaySMProperty<vertex_descriptor>(vdc_name, *sm);
+  }
+
 private Q_SLOTS:
   void setExpandingRadius()
   {
@@ -929,8 +975,7 @@ private:
 
     SMesh& smesh = *item->face_graph();
 
-    const auto vnm = smesh.property_map<vertex_descriptor, EPICK::Vector_3>("v:normal_before_perturbation").first;
-    const bool vnm_exists = smesh.property_map<vertex_descriptor, EPICK::Vector_3>("v:normal_before_perturbation").second;
+    auto vnm = smesh.property_map<vertex_descriptor, EPICK::Vector_3>("v:normal_before_perturbation");
 
     // compute once and store the value per vertex
     bool non_init;
@@ -938,21 +983,21 @@ private:
     std::tie(mu_i_map, non_init) = smesh.add_property_map<vertex_descriptor, double>(tied_string, 0);
     if(non_init || expand_radius_updated)
     {
-      if(vnm_exists)
+      if(vnm.has_value())
       {
         if(mu_index == MEAN_CURVATURE)
         {
           PMP::interpolated_corrected_curvatures(smesh,
                                                  CGAL::parameters::vertex_mean_curvature_map(mu_i_map)
                                                                   .ball_radius(expand_radius)
-                                                                  .vertex_normal_map(vnm));
+                                                                  .vertex_normal_map(vnm.value()));
         }
         else
         {
           PMP::interpolated_corrected_curvatures(smesh,
                                                  CGAL::parameters::vertex_Gaussian_curvature_map(mu_i_map)
                                                                   .ball_radius(expand_radius)
-                                                                  .vertex_normal_map(vnm));
+                                                                  .vertex_normal_map(vnm.value()));
         }
       }
       else
@@ -1132,6 +1177,10 @@ private:
         zoomToSimplexWithPropertyExtremum(faces(mesh), mesh, "f:display_plugin_scaled_jacobian", extremum);
       else if(property_name == "Face Area")
         zoomToSimplexWithPropertyExtremum(faces(mesh), mesh, "f:display_plugin_area", extremum);
+      else if(property_name == "Discrete Mean Curvature")
+        zoomToSimplexWithPropertyExtremum(vertices(mesh), mesh, "v:display_plugin_discrete_mean_curvature", extremum);
+      else if(property_name == "Discrete Gaussian Curvature")
+        zoomToSimplexWithPropertyExtremum(vertices(mesh), mesh, "v:display_plugin_discrete_Gaussian_curvature", extremum);
       else if(property_name == "Interpolated Corrected Mean Curvature")
         zoomToSimplexWithPropertyExtremum(vertices(mesh), mesh, "v:display_plugin_interpolated_corrected_mean_curvature", extremum);
       else if(property_name == "Interpolated Corrected Gaussian Curvature")
@@ -1471,6 +1520,8 @@ isSMPropertyScalar(const std::string& name,
      name == "f:display_plugin_largest_angle" ||
      name == "f:display_plugin_scaled_jacobian" ||
      name == "f:display_plugin_area" ||
+     name == "v:display_plugin_discrete_mean_curvature" ||
+     name == "v:display_plugin_discrete_Gaussian_curvature" ||
      name == "v:display_plugin_interpolated_corrected_mean_curvature" ||
      name == "v:display_plugin_interpolated_corrected_Gaussian_curvature")
     return false;
@@ -1512,26 +1563,26 @@ call_on_PS_property(const std::string& name,
                     const Point_set& ps,
                     const Functor& functor) const
 {
-  if(ps.template property_map<std::int8_t>(name).second)
-    return functor(ps.template property_map<std::int8_t>(name).first);
-  else if(ps.template property_map<std::uint8_t>(name).second)
-    return functor(ps.template property_map<std::uint8_t>(name).first);
-  else if(ps.template property_map<std::int16_t>(name).second)
-    return functor(ps.template property_map<std::int16_t>(name).first);
-  else if(ps.template property_map<std::uint16_t>(name).second)
-    return functor(ps.template property_map<std::uint16_t>(name).first);
-  else if(ps.template property_map<std::int32_t>(name).second)
-    return functor(ps.template property_map<std::int32_t>(name).first);
-  else if(ps.template property_map<std::uint32_t>(name).second)
-    return functor(ps.template property_map<std::uint32_t>(name).first);
-  else if(ps.template property_map<std::int64_t>(name).second)
-    return functor(ps.template property_map<std::int64_t>(name).first);
-  else if(ps.template property_map<std::uint64_t>(name).second)
-    return functor(ps.template property_map<std::uint64_t>(name).first);
-  else if(ps.template property_map<float>(name).second)
-    return functor(ps.template property_map<float>(name).first);
-  else if(ps.template property_map<double>(name).second)
-    return functor(ps.template property_map<double>(name).first);
+  if(ps.template property_map<std::int8_t>(name).has_value())
+    return functor(ps.template property_map<std::int8_t>(name).value());
+  else if(ps.template property_map<std::uint8_t>(name).has_value())
+    return functor(ps.template property_map<std::uint8_t>(name).value());
+  else if(ps.template property_map<std::int16_t>(name).has_value())
+    return functor(ps.template property_map<std::int16_t>(name).value());
+  else if(ps.template property_map<std::uint16_t>(name).has_value())
+    return functor(ps.template property_map<std::uint16_t>(name).value());
+  else if(ps.template property_map<std::int32_t>(name).has_value())
+    return functor(ps.template property_map<std::int32_t>(name).value());
+  else if(ps.template property_map<std::uint32_t>(name).has_value())
+    return functor(ps.template property_map<std::uint32_t>(name).value());
+  else if(ps.template property_map<std::int64_t>(name).has_value())
+    return functor(ps.template property_map<std::int64_t>(name).value());
+  else if(ps.template property_map<std::uint64_t>(name).has_value())
+    return functor(ps.template property_map<std::uint64_t>(name).value());
+  else if(ps.template property_map<float>(name).has_value())
+    return functor(ps.template property_map<float>(name).value());
+  else if(ps.template property_map<double>(name).has_value())
+    return functor(ps.template property_map<double>(name).value());
 
   return false;
 }
@@ -1543,26 +1594,26 @@ call_on_SM_property(const std::string& name,
                     const SMesh& mesh,
                     const Functor& functor) const
 {
-  if(mesh.template property_map<Simplex, std::int8_t>(name).second)
-    return functor(mesh.template property_map<Simplex, std::int8_t>(name).first);
-  else if(mesh.template property_map<Simplex, std::uint8_t>(name).second)
-    return functor(mesh.template property_map<Simplex, std::uint8_t>(name).first);
-  else if(mesh.template property_map<Simplex, std::int16_t>(name).second)
-    return functor(mesh.template property_map<Simplex, std::int16_t>(name).first);
-  else if(mesh.template property_map<Simplex, std::uint16_t>(name).second)
-    return functor(mesh.template property_map<Simplex, std::uint16_t>(name).first);
-  else if(mesh.template property_map<Simplex, std::int32_t>(name).second)
-    return functor(mesh.template property_map<Simplex, std::int32_t>(name).first);
-  else if(mesh.template property_map<Simplex, std::uint32_t>(name).second)
-    return functor(mesh.template property_map<Simplex, std::uint32_t>(name).first);
-  else if(mesh.template property_map<Simplex, std::int64_t>(name).second)
-    return functor(mesh.template property_map<Simplex, std::int64_t>(name).first);
-  else if(mesh.template property_map<Simplex, std::uint64_t>(name).second)
-    return functor(mesh.template property_map<Simplex, std::uint64_t>(name).first);
-  else if(mesh.template property_map<Simplex, float>(name).second)
-    return functor(mesh.template property_map<Simplex, float>(name).first);
-  else if(mesh.template property_map<Simplex, double>(name).second)
-    return functor(mesh.template property_map<Simplex, double>(name).first);
+  if(mesh.template property_map<Simplex, std::int8_t>(name).has_value())
+    return functor(mesh.template property_map<Simplex, std::int8_t>(name).value());
+  else if(mesh.template property_map<Simplex, std::uint8_t>(name).has_value())
+    return functor(mesh.template property_map<Simplex, std::uint8_t>(name).value());
+  else if(mesh.template property_map<Simplex, std::int16_t>(name).has_value())
+    return functor(mesh.template property_map<Simplex, std::int16_t>(name).value());
+  else if(mesh.template property_map<Simplex, std::uint16_t>(name).has_value())
+    return functor(mesh.template property_map<Simplex, std::uint16_t>(name).value());
+  else if(mesh.template property_map<Simplex, std::int32_t>(name).has_value())
+    return functor(mesh.template property_map<Simplex, std::int32_t>(name).value());
+  else if(mesh.template property_map<Simplex, std::uint32_t>(name).has_value())
+    return functor(mesh.template property_map<Simplex, std::uint32_t>(name).value());
+  else if(mesh.template property_map<Simplex, std::int64_t>(name).has_value())
+    return functor(mesh.template property_map<Simplex, std::int64_t>(name).value());
+  else if(mesh.template property_map<Simplex, std::uint64_t>(name).has_value())
+    return functor(mesh.template property_map<Simplex, std::uint64_t>(name).value());
+  else if(mesh.template property_map<Simplex, float>(name).has_value())
+    return functor(mesh.template property_map<Simplex, float>(name).value());
+  else if(mesh.template property_map<Simplex, double>(name).has_value())
+    return functor(mesh.template property_map<Simplex, double>(name).value());
 
   return false;
 }

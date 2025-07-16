@@ -104,7 +104,7 @@ load(QFileInfo fileinfo, bool& ok, bool add_to_scene) {
     Scene_surface_mesh_item* sm_item = new Scene_surface_mesh_item();
     if (CGAL::IO::read_PLY(in, *sm_item->face_graph(), comments))
     {
-      if(sm_item->face_graph()->property_map<face_descriptor, int >("f:patch_id").second)
+      if(sm_item->face_graph()->property_map<face_descriptor, int >("f:patch_id").has_value())
       {
         sm_item->setItemIsMulticolor(true);
         sm_item->computeItemColorVectorAutomatically(true);

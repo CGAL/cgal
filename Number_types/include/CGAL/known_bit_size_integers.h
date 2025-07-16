@@ -24,11 +24,12 @@
 #define CGAL_KNOWN_BIT_SIZE_INTEGERS_H
 
 #define CGAL_DEPRECATED_HEADER "<CGAL/known_bit_size_integers.h>"
-#define CGAL_REPLACEMENT_HEADER "<boost/cstdint.hpp>"
+#define CGAL_REPLACEMENT_HEADER "<cstdint>"
 #include <CGAL/Installation/internal/deprecation_warning.h>
 
 #include <CGAL/number_type_basic.h>
 #include <boost/cstdint.hpp>
+#include <cstdint>
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 

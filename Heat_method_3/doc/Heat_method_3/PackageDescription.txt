@@ -1,6 +1,4 @@
-// The Heat Method
-
-/// \defgroup PkgHeatMethodRef Heat Method Reference
+/// \defgroup PkgHeatMethodRef Reference Manual
 
 /// \defgroup PkgHeatMethodConcepts Concepts
 /// \ingroup PkgHeatMethodRef
@@ -24,7 +22,7 @@ source vertices.}
 \cgalPkgDependsOn{ \ref PkgSolverInterface}
 \cgalPkgBib{cgal:cvf-hm3}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
-\cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
+\cgalPkgDemo{CGAL Lab,CGALlab.zip}
 \cgalPkgShortInfoEnd
 
 \cgalPkgDescriptionEnd

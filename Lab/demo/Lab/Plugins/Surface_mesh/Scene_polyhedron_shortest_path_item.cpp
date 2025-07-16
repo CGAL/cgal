@@ -37,7 +37,7 @@ struct Scene_polyhedron_shortest_path_item_priv
   typedef Surface_mesh_shortest_path::Face_location Face_location;
   typedef CGAL::AABB_face_graph_triangle_primitive<Face_graph, VertexPointMap>
   AABB_face_graph_primitive;
-  typedef CGAL::AABB_traits<Kernel, AABB_face_graph_primitive> AABB_face_graph_traits;
+  typedef CGAL::AABB_traits_3<Kernel, AABB_face_graph_primitive> AABB_face_graph_traits;
   typedef CGAL::AABB_tree<AABB_face_graph_traits> AABB_face_graph_tree;
 
   typedef Surface_mesh_shortest_path_traits::Barycentric_coordinates
@@ -562,7 +562,7 @@ bool Scene_polyhedron_shortest_path_item::deferred_load(
   std::vector<face_descriptor> listOfFaces;
   listOfFaces.reserve(CGAL::num_faces(*polyhedron()));
   face_iterator current, end;
-  for (boost::tie(current, end) = CGAL::faces(*polyhedron()); current != end; ++current)
+  for (std::tie(current, end) = CGAL::faces(*polyhedron()); current != end; ++current)
   {
     listOfFaces.push_back(*current);
   }

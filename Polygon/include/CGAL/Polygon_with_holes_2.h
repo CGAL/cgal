@@ -29,29 +29,28 @@ namespace CGAL {
 
 The class `Polygon_with_holes_2` models the concept `GeneralPolygonWithHoles_2`.
 It represents a linear polygon with holes. It is parameterized with two
-types (`Kernel` and `Container`) that are used to instantiate
-the type `Polygon_2<Kernel,Container>`. This poygon type is used to
+types (`Kernel` and `Container_`) that are used to instantiate
+the type `Polygon_2<Kernel,Container_>`. This polygon type is used to
 represent the outer boundary and the boundary of the holes (if any exist).
 
 \cgalModels{GeneralPolygonWithHoles_2}
 
 */
 template <class Kernel,
-          class Containter = std::vector<typename Kernel::Point_2> >
+          class Container_ = std::vector<typename Kernel::Point_2> >
 class Polygon_with_holes_2 :
-  public General_polygon_with_holes_2<CGAL::Polygon_2<Kernel, Containter> >
+  public General_polygon_with_holes_2<CGAL::Polygon_2<Kernel, Container_> >
 {
 public:
-
-  typedef CGAL::Polygon_2<Kernel, Containter>        Polygon_2;
+  typedef Kernel                                     Traits;
+  typedef Container_                                 Container;
+  typedef CGAL::Polygon_2<Kernel, Container>         Polygon_2;
   typedef General_polygon_with_holes_2<Polygon_2>    Base;
   typedef typename Base::Hole_const_iterator         Hole_const_iterator;
   typedef typename Base::Size                        Size;
 
   /*! %Default constructor. */
-  Polygon_with_holes_2 () :
-    Base()
-  {}
+  Polygon_with_holes_2 () = default;
 
   /*! Constructor from the base class. */
   Polygon_with_holes_2 (const Base& base) :
@@ -63,7 +62,7 @@ public:
     Base (pgn_boundary)
   {}
 
-  /*! Move constructor */
+  /*! Cconstructor moving a polygon */
   explicit Polygon_with_holes_2 (Polygon_2&& pgn_boundary) :
     Base (std::move(pgn_boundary))
   {}
@@ -76,7 +75,7 @@ public:
     Base (pgn_boundary, h_begin, h_end)
   {}
 
-  /*! Move constructor.
+  /*! Cconstructor moving a polygon.
    * \note In order to move the hole polygons a
    * `std::move_iterator` may be used.
    */
@@ -87,9 +86,22 @@ public:
     Base (std::move(pgn_boundary), h_begin, h_end)
   {}
 
-  /*! Obtain the bounding box of the polygon with holes */
+  /*! returns the bounding box of the polygon with holes */
   Bbox_2 bbox() const { return this->outer_boundary().bbox(); }
+
 };
+
+  template <class Transformation, class Kernel, class Container_>
+  Polygon_with_holes_2<Kernel,Container_> transform(const Transformation& t,
+                                                   const Polygon_with_holes_2<Kernel,Container_>& pwh)
+  {
+    Polygon_with_holes_2<Kernel,Container_> result(transform(t, pwh.outer_boundary()));
+    for(const auto& hole : pwh.holes()){
+      result.add_hole(transform(t, hole));
+    }
+    return result;
+  }
+
 
 //-----------------------------------------------------------------------//
 //                          operator<<
@@ -99,8 +111,8 @@ public:
 This operator exports a polygon with holes to the output stream `os`.
 
 An \ascii and a binary format exist. The format can be selected with
-the \cgal modifiers for streams, `set_ascii_mode()` and `set_binary_mode()`,
-respectively. The modifier `set_pretty_mode()` can be used to allow for (a
+the \cgal modifiers for streams, `CGAL::IO::set_ascii_mode()` and `CGAL::IO::set_binary_mode()`,
+respectively. The modifier `CGAL::IO::set_pretty_mode()` can be used to allow for (a
 few) structuring comments in the output. Otherwise, the output would
 be free of comments. The default for writing is \ascii without comments.
 

@@ -24,14 +24,14 @@ namespace CGAL {
 /*! \ingroup PkgPolygon2Ref
  *
  * The class `Multipolygon_with_holes_2` models the concept `MultipolygonWithHoles_2`.
- * It is parameterized with two types (`Kernel` and `Container`) that are used to instantiate
- * the types `Polygon_2<Kernel,Container>` and `Polygon_with_holes_2<Kernel,Container>`.
+ * It is parameterized with two types (`Kernel` and `Container_`) that are used to instantiate
+ * the types `Polygon_2<Kernel,Container_>` and `Polygon_with_holes_2<Kernel,Container_>`.
  * The latter is used to represent each polygon with holes. The former is converted to the latter.
  *
  * \cgalModels{MultipolygonWithHoles_2}
  */
 template <class Kernel,
-          class Container = std::vector<typename Kernel::Point_2>>
+          class Container_ = std::vector<typename Kernel::Point_2>>
 class Multipolygon_with_holes_2 {
 public:
   /// \name Definition
@@ -39,13 +39,16 @@ public:
   /// @{
 
   /// polygon type
-  using Polygon_2 = CGAL::Polygon_2<Kernel, Container>;
+  using Polygon_2 = CGAL::Polygon_2<Kernel, Container_>;
 
   /// polygon with holes type
-  using Polygon_with_holes_2 = CGAL::Polygon_with_holes_2<Kernel, Container>;
+  using Polygon_with_holes_2 = CGAL::Polygon_with_holes_2<Kernel, Container_>;
 
   /// @}
 
+  using Traits = Kernel;
+  using Container = Container_;
+  using value_type = Polygon_with_holes_2;
   using Polygon_with_holes_container = std::deque<Polygon_with_holes_2>;
 
   using Polygon_with_holes_iterator = typename Polygon_with_holes_container::iterator;
@@ -55,7 +58,7 @@ public:
   using Size = unsigned int;
 
   /*! %Default constructor. */
-  Multipolygon_with_holes_2() {}
+  Multipolygon_with_holes_2() = default;
 
   /*! Constructor from polygons. */
   template <typename PolygonsInputIterator>
@@ -72,21 +75,53 @@ public:
 
   Polygon_with_holes_iterator polygons_with_holes_end() { return m_polygons.end(); }
 
+  Polygon_with_holes_iterator begin() { return m_polygons.begin(); }
+
+  Polygon_with_holes_iterator end() { return m_polygons.end(); }
+
   Polygon_with_holes_const_iterator polygons_with_holes_begin() const { return m_polygons.begin(); }
 
   Polygon_with_holes_const_iterator polygons_with_holes_end() const { return m_polygons.end(); }
 
-  void add_polygon(const Polygon_2& pgn) { m_polygons.push_back(Polygon_with_holes_2(pgn)); }
+  Polygon_with_holes_const_iterator begin() const { return m_polygons.begin(); }
+
+  Polygon_with_holes_const_iterator end() const { return m_polygons.end(); }
+
+
+  void add_polygon(const Polygon_2& pgn) { m_polygons.emplace_back(pgn); }
+
+  void add_polygon(Polygon_2&& pgn) { m_polygons.emplace_back(std::move(pgn)); }
 
   void add_polygon_with_holes(const Polygon_with_holes_2& pgn) { m_polygons.push_back(pgn); }
 
   void add_polygon_with_holes(Polygon_with_holes_2&& pgn) { m_polygons.emplace_back(std::move(pgn)); }
+
+  void push_back(const Polygon_with_holes_2& pgn) { m_polygons.push_back(pgn); }
 
   void erase_polygon_with_holes(Polygon_with_holes_iterator pit) { m_polygons.erase(pit); }
 
   void clear() { m_polygons.clear(); }
 
   Size number_of_polygons_with_holes() const { return static_cast<Size>(m_polygons.size()); }
+
+  Bbox_2 bbox() const
+  {
+    Bbox_2 bb;
+    for(const auto& pwh : polygons_with_holes()){
+      bb += pwh.bbox();
+    }
+    return bb;
+  }
+
+  bool is_empty() const
+  {
+    for(const auto& pwh : polygons_with_holes()){
+      if(! pwh.is_empty()){
+        return false;
+      }
+    }
+    return true;
+  }
 
 protected:
   Polygon_with_holes_container m_polygons;
@@ -149,10 +184,10 @@ order.
 
 \relates Multipolygon_with_holes_2
 */
-template <class Kernel, class Container>
+template <class Kernel, class Container_>
 std::ostream& operator<<(std::ostream& os,
-                         const Multipolygon_with_holes_2<Kernel, Container>& mp) {
-  typename Multipolygon_with_holes_2<Kernel, Container>::Polygon_with_holes_const_iterator i;
+                         const Multipolygon_with_holes_2<Kernel, Container_>& mp) {
+  typename Multipolygon_with_holes_2<Kernel, Container_>::Polygon_with_holes_const_iterator i;
 
   switch(IO::get_mode(os)) {
     case IO::ASCII :
@@ -179,6 +214,18 @@ std::ostream& operator<<(std::ostream& os,
       return os;
   }
 }
+
+template <class Transformation, class Kernel, class Container_>
+Multipolygon_with_holes_2<Kernel, Container_> transform(const Transformation& t,
+                                                       const Multipolygon_with_holes_2<Kernel, Container_>& mp)
+  {
+    Multipolygon_with_holes_2<Kernel, Container_> result;
+    for(const auto& pwh : mp.polygons_with_holes()){
+      result.add_polygon_with_holes(transform(t, pwh));
+    }
+    return result;
+
+  }
 
 
 } //namespace CGAL
