@@ -41,10 +41,15 @@ namespace CGAL::Surface_mesh_simplification::internal{
 
   inline double diff_of_products(const double a, const double b, const double c, const double d)
   {
-    // return a*b - c*d;
+  #if 0
+    // this can create large errors with inexact constructions
+    return a*b - c*d;
     // the next two are equivalent in results and speed
+  #elif 1
     return diff_of_products_kahan(a, b, c, d);
-    // return diff_of_products_cht(a, b, c, d);
+  #elif 0
+    return diff_of_products_cht(a, b, c, d);
+  #endif
   }
 
   template <typename OFT>
@@ -86,7 +91,8 @@ namespace CGAL::Surface_mesh_simplification::internal{
   }
 
 #if 0
-  Vector exact_cross_product(const Vector& a, const Vector& b)
+  template<class Geom_traits>
+  typename Geom_traits::Vector_3 exact_cross_product(const typename Geom_traits::Vector_3& a, const typename Geom_traits::Vector_3& b)
   {
     CGAL::Cartesian_converter<Geom_traits, CGAL::Exact_predicates_exact_constructions_kernel> to_exact;
     CGAL::Cartesian_converter<CGAL::Exact_predicates_exact_constructions_kernel, Geom_traits> to_approx;
@@ -97,7 +103,8 @@ namespace CGAL::Surface_mesh_simplification::internal{
 
 
 
-  Vector experimental_cross_product(const Vector& u, const Vector& v)
+  template<class Geom_traits>
+  typename Geom_traits::Vector_3 experimental_cross_product(const typename Geom_traits::Vector_3& a, const typename Geom_traits::Vector_3& b)
   {
 #if 0
     // this can create large errors and spiky meshes for kernels with inexact constructions
