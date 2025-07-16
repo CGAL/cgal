@@ -21,6 +21,7 @@
 #include <iostream>
 #include <map>
 #include <CGAL/Polyhedron_3.h>
+#include <CGAL/config.h>
 
 namespace CGAL {
 
@@ -94,13 +95,20 @@ namespace CGAL {
     return firstAll;
   }
 
+#ifndef CGAL_NO_DEPRECATED_CODE
+
+/*!
+  \deprecated This function is deprecated since CGAL 5.6. Use `polyhedron_3_to_lcc()` instead.
+*/
 template< class LCC, class Polyhedron >
-[[deprecated("Use polyhedron_3_to_lcc instead")]]
+CGAL_DEPRECATED
 typename LCC::Dart_descriptor
 import_from_polyhedron_3(LCC& alcc, const Polyhedron &apoly)
 {
   return polyhedron_3_to_lcc<LCC, Polyhedron>(alcc, apoly);
 }
+
+#endif // CGAL_NO_DEPRECATED_CODE
 
   /** Convert a Polyhedron_3 read into a flux into 3D linear cell complex.
    * @param alcc the linear cell complex where Polyhedron_3 will be converted.

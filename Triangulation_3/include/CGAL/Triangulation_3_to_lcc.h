@@ -19,6 +19,7 @@
 #include <CGAL/assertions.h>
 #include <map>
 #include <CGAL/Weighted_point_3.h>
+#include <CGAL/config.h>
 
 namespace CGAL {
 
@@ -149,15 +150,20 @@ namespace CGAL {
     return dart;
   }
 
-  template < class LCC, class Triangulation >
-[[deprecated("Use triangulation_3_to_lcc instead")]]
-typename LCC::Dart_descriptor import_from_triangulation_3
-(LCC& alcc, const Triangulation &atr,
- std::map<typename Triangulation::Cell_handle,
-          typename LCC::Dart_descriptor >* avol_to_dart=nullptr)
+#ifndef CGAL_NO_DEPRECATED_CODE
+/*!
+  \deprecated This function is deprecated since CGAL 5.6. Use `triangulation_3_to_lcc()` instead.
+*/
+template <class LCC, class Triangulation>
+CGAL_DEPRECATED
+typename LCC::Dart_descriptor
+import_from_triangulation_3(LCC& alcc, const Triangulation& atr,
+                            std::map<typename Triangulation::Cell_handle,
+                                     typename LCC::Dart_descriptor>* avol_to_dart = nullptr)
 {
   return triangulation_3_to_lcc(alcc, atr, avol_to_dart);
 }
+#endif
 
 } // namespace CGAL
 

@@ -1,4 +1,5 @@
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
+#include <CGAL/Installation/internal/disable_deprecation_warnings_and_errors.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Triangulation_3_to_lcc.h>
 #include <cassert>
@@ -17,7 +18,7 @@ int main()
   auto d1 = CGAL::triangulation_3_to_lcc(lcc1, T);
   assert(d1 == LCC_3::null_descriptor);
 
-#if !defined(CGAL_NO_DEPRECATED_CODE) && !defined(CGAL_NO_DEPRECATION_WARNINGS)
+#ifndef CGAL_NO_DEPRECATED_CODE
   auto d2 = CGAL::import_from_triangulation_3(lcc2, T);
   assert(d2 == LCC_3::null_descriptor);
 #endif
