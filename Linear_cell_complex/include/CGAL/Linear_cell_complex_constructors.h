@@ -133,7 +133,7 @@ namespace CGAL {
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 /*!
-  \deprecated This function is deprecated since CGAL 5.6. Use `read_plane_graph_in_lcc()` instead.
+  \deprecated This function is deprecated since CGAL 6.2. Use `read_plane_graph_in_lcc()` instead.
 */
 template< class LCC >
 CGAL_DEPRECATED
@@ -206,7 +206,7 @@ import_from_plane_graph(LCC& alcc,
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 /*!
-  \deprecated This function is deprecated since CGAL 5.6. Use `read_plane_graph_in_lcc()` instead.
+  \deprecated This function is deprecated since CGAL 6.2. Use `read_plane_graph_in_lcc()` instead.
 */
 template< class LCC >
 CGAL_DEPRECATED
@@ -228,7 +228,7 @@ import_from_plane_graph(LCC& alcc, std::istream& ais)
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 /*!
-  \deprecated This function is deprecated since CGAL 5.6. Use `read_plane_graph_in_lcc()` instead.
+  \deprecated This function is deprecated since CGAL 6.2. Use `read_plane_graph_in_lcc()` instead.
 */
 template< class LCC >
 CGAL_DEPRECATED

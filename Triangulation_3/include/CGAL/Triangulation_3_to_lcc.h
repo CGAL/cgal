@@ -152,7 +152,7 @@ namespace CGAL {
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 /*!
-  \deprecated This function is deprecated since CGAL 5.6. Use `triangulation_3_to_lcc()` instead.
+  \deprecated This function is deprecated since CGAL 6.2. Use `triangulation_3_to_lcc()` instead.
 */
 template <class LCC, class Triangulation>
 CGAL_DEPRECATED
