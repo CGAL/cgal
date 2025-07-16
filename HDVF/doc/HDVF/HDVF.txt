@@ -54,6 +54,8 @@ Coming back to the example of \cgalFigureRef{HDVFchain_complexes}, as we will se
 
 The definition of the boundary operator depends on the underlying complex, it is detailed in next sections for simplicial and cubical complexes respectively.
 
+<B>Notation</B> Given a chain \f$\gamma\in C_q\f$ and \f$\sigma\f$ a \f$q\f$-cell, we denote by <B>\f$\langle\gamma,\sigma\rangle\f$</B> the coefficient of \f$\sigma\f$ in \f$\gamma\in C_q\f$.
+
 \subsection secHDVFsimplicial_chain_complex Simplicial chain complexes
 
 An <B>abstract simplicial complex</B> of dimension \f$d\f$ is built from:
@@ -107,11 +109,11 @@ For instance, in \cgalFigureRef{HDVFchain_complexes}:
 
 \subsection secHDVFcochain Co-chain complex (for cohomology)
 
-In the "mathematical world", singular cohomology is defined on dual groups \f$C^q = C_q^* = \mathrm{Hom}(C_q,A)\f$ with coboundary morphisms: \f$\partial^q\,:\, C^q \to C^{q+1} = \partial_q^t\f$.
+In the "mathematical world", singular cohomology is defined on dual groups \f$C^q = C_q^* = \mathrm{Hom}(C_q,A)\f$ with coboundary morphisms: \f$\partial^q\,:\, C^q \to C^{q+1} = \partial_q^*\f$.
 
 However in our discrete setting of finite complexes, a space and its dual can be identified. Hence cohomology can be defined in a more intuitive way:
 
-\f\[C = \cdots C^{q+1} \xleftarrow{\partial^{q}} C^q \xleftarrow{\partial^{q-1}} C^{q-1}  \leftarrow \cdots \leftarrow C^2 \xleftarrow{\partial^1} C^1 \xleftarrow{\partial^0} C^0\f\]
+\f\[C^* = \cdots C^{q+1} \xleftarrow{\partial^{q}} C^q \xleftarrow{\partial^{q-1}} C^{q-1}  \leftarrow \cdots \leftarrow C^2 \xleftarrow{\partial^1} C^1 \xleftarrow{\partial^0} C^0\f\]
 
 - <B>cochain groups</B> \f$C^q\f$ for any \f$0\leqslant q \leqslant d\f$ are identified with \f$C_q\f$. Hence chains and cochains are similar.
 - a sequence of morphisms between chain groups, called <b>coboundary morphisms</B> \f$\partial^q\,:\,C^q\to C^{q+1}\f$ for any \f$0\leqslant q \leqslant d\f$ with \f$\partial^q = \partial_q^t\f$ (thus, the matrix of the coboundary operator is the transpose of the boundary operator matrix). The coboundary operator "mimicks" algebraically the geometric coboundary (ie. cofaces) and satisfies:
@@ -125,14 +127,274 @@ The following figure illustrates the coboundary morphism
 
 \subsection secHDVFhomology Homology of discrete chain complexes
 
-Homology is a topological invariant, thus, it addresses holes of an object. What is a hole?
-- Coming back to the boundary morphism defined earlier, and to the pink chain of figure \cgalFigureRef{HDVFchain_complexes}, "closed loops" are chains which boundary is null. <br>
-We call <B>\f$q\f$-cycles</B> chains of \f$\ker(\partial_q)\f$.
-- A hole is
+Homology is a topological invariant characterizing the holes of an object of various dimension. What is a hole?
+- holes of dimension 0 are connected components
+- holes of dimension 1 are tunnels or handles of the object
+- holes of dimension 2 are cavities
 
-As stated earlier, the boundary morphism satisfies \f$\partial_{q}\partial_{q+1} = 0\f$, hence \f$\mathrm{Im}(\partial_{q+1}\subseteq \ker(\partial_q))\f$. Now, coming back to
+ \cgalFigureBegin{HDVFholes_example,holes_example.png}
+ Illustration of the holes of a double torus. <B>Black:</B> 1 connected component (dimension 0); <B>Red:</B> 4 holes of dimension 1; <B>Blue</B> 1 cavity of dimension 2.
+ \cgalFigureEnd
 
-\section secHDVFHDVFdefinitions HDVF definitions
+Let us now come back to our simplicial complex example:
+ \cgalFigureBegin{HDVFsimplicial_cycles_example,simplicial_complex_homology.png}
+ Cycles on a simplicial complex. <B>Blue:</B> this cycle is the boundary of \f$f_{234}+f_{246}\f$; <B>Pink:</B> this cycle is not a boundary.
+ \cgalFigureEnd
+
+This example suggests that holes are delineated by *cycles which are not a boundaries*:
+- <B>Cycles</B> of dimension \f$q\f$ are chains in the kernel of \f$\partial_q\f$:
+\f\[Z_q(C) = \ker(\partial_q) \f\]
+- <B>Boundaries</B> of dimension \f$q\f$ are chains in the image of \f$\partial_{q+1}\f$
+\f\[B_q(C) = \mathrm{Im}(\partial_{q+1}) \f\]
+- As \f$\partial_{q}\partial_{q+1} = 0\f$, \f$B_q(C)\subseteq Z_q(C)\f$.
+- Hence we can define the quotient \f$Z_q(C)/B_q(C)\f$ which contains exactly "cycles which are not boundaries", ie. the \f$q\f$th homology group:
+\f\[H_q(C) = Z_q(C)/B_q(C) \f\]
+
+For finite complexes, these groups are finitely generated and we have the following decomposition (theorem of decomposition of finitely generated groups):
+\f\[H_q(C) = A^{\beta_q}\oplus A/\lambda_1A\oplus \cdots \oplus A/\lambda_k A \f\]
+where:
+- \f$\beta_q\in\mathbb N\f$ is called the <B>\f$q\f$th Betti number</B> (giving the number of holes of dimension \f$q\f$);
+- coefficients \f$\lambda_i\f$ are called the <B>torsion coefficients in dimension \f$q\f$</B> and satisfy \f$\lambda_i | \lambda_{i+1}\f$.
+
+Let us assume homology groups have no torsion; homology can be computed "at different levels":
+- <B>level 1:</B> Computing Betti numbers.
+- <B>level 2:</B> Computing \f$\beta_q\f$ cycles generating \f$H_q(C)\f$ called <B>generators</B> (hence cycles "delineating" the holes).
+
+Most libraries focus on persistent homology computation for topological data analysis (see section \ref secHDVFpersistent_homology), which is a "level 1" homology computation.
+The <B>HDVF package is dedicated to a "level 2" homology computation</B>, which is computationally more complex but provides "geometric" informations about holes (generators, annotations...).
+
+\subsection secHDVFcohomology Cohomology of discrete chain complexes
+
+Starting from a cochain complex:
+
+\f\[C^* = \cdots C^{q+1} \xleftarrow{\partial^{q}} C^q \xleftarrow{\partial^{q-1}} C^{q-1}  \leftarrow \cdots \leftarrow C^2 \xleftarrow{\partial^1} C^1 \xleftarrow{\partial^0} C^0\f\]
+
+one can define:
+- <B>Cocycles</B> of dimension \f$q\f$ are (co)chains in the kernel of \f$\partial^q\f$:
+\f\[Z^q(C^*) = \ker(\partial^q) \f\]
+- <B>Coboundaries</B> of dimension \f$q\f$ are chains in the image of \f$\partial^{q-1}\f$
+\f\[B^q(C^*) = \mathrm{Im}(\partial^{q-1}) \f\]
+- As \f$\partial^{q}\partial^{q-1} = 0\f$, \f$B^q(C^*)\subseteq Z^q(C^*)\f$.
+- Hence we can define the quotient \f$Z^q(C^*)/B^q(C^*)\f$, ie. the \f$q\f$th cohomology group:
+\f\[H^q(C^*) = Z^q(C^*)/B^q(C^*) \f\]
+
+In finite dimension:
+\f\[H^q(C^*) \sim H_q(C)\f\]
+
+Let us consider the following cubical complex example:
+
+ \cgalFigureBegin{HDVFex_hom_cohom,HDVF_ex_hom_cohom.png}
+ Illustration of homology and cohomology generators for a simple 2D cubical complex \f$C\f$ (computed with HDVFs). <B>Left:</B> both generators of \f$H_1(C)\f$; <B>Middle, right:</B> both cohomology generators \f$H^1(C)\f$ (for convenience, the dual of cohomology generators has been displayed with bulleted pink lines).
+ \cgalFigureEnd
+
+ \cgalFigureBegin{HDVFex_hom_cohom_cofaces,HDVF_ex_hom_cohom_cofaces.png}
+ Cofaces representation of cohomology generators.
+ \cgalFigureEnd
+ 
+ As expected, figure \cgalFigureRef{HDVFex_hom_cohom}:
+ - homology generators, intuitively delineate holes;
+ - cohomology generators provide cocycles to open or break the holes (therefore, it is sometimes more convenient to display the cofaces of cohomology generators as in figure \cgalFigureRef{HDVFex_hom_cohom_cofaces}.
+ 
+\subsection secHDVFreduction Reductions (effective homology)
+
+\subsection secHDVFdiscrete_Morse A few words about discrete Morse theory
+ 
+\section secHDVF The HDVF framework
+ 
+This section presents a brief introduction to HDVFs, see [AGL, 2016] for more details.
+ 
+\subsection secHDVFHDVF_definitions Definition of HDVFs
+
+HDVFs are an "in-between" theory:
+- in-between Discrete Morse theory (combinatorial approach) and effective homology (categorical approach)
+- in-between combinatorics and algebra
+but they cannot be reduced to any of these frameworks. As we will see, they provide a bridge in-between them.
+
+Let \f$K\f$ be a complex (simplicial, cubical...) and let \f$(\mathscr C, \partial)\f$ be its associated chain complex.
+
+<B>Notation</B> Starting from now on, we will use \f$\mathscr C\f$ for chain complexes and \f$C\f$ for critical cells.
+
+Formally a <B>HDVF</B> \f$X=(P,S,C)\f$ is a partition of the cells of \f$K\f$:
+ \f\[K = P\coprod S\coprod C\f\]
+ with \f$P\f$ primary cells, \f$S\f$ secondary cells and \f$C\f$ critical cells, such that the sub-matrix:
+ \f\[\partial (S)|_P\text{ is invertible.}
+ \f\]
+where \f$\partial (S)|_P\f$ means that the matrix of \f$\partial\f$ is restricted to columns of secondary cells and rows of primary cells.
+
+As stated earlier, this definition is both combinatorial (partition of cells) and algebraic (invertibility of a sub-matrix) but it cannot be simplified or reduced to either of these approaches.
+
+Given such an HDVF \f$X=(P,S,C)\f$, we can define the following associated reduction \f$(f,g,h)\f$:
+
+\f\[\begin{array}{cccccc}
+\cdots & \mathscr C_{q+1} & \xrightarrow{\partial_{q+1}} & \mathscr C_{q} & \xrightarrow{\partial_{q}} & \cdots \\
+& f_{q+1}\Big\downarrow \Big\uparrow g_{q+1} & & f_{q}\Big\downarrow \Big\uparrow g_{q} & & \\
+\cdots & C_{q+1} & \xrightarrow{\mathrm d_{q+1}} & C_{q} & \xrightarrow{\mathrm d_{q}} & \cdots \\
+\end{array}
+\f\]
+\f$\mathrm d\f$ is called the <B>reduced boundary</B> (over critical cells) and the reduction is defined as follows:
+
+- the matrix of \f$h_q\f$ is:
+\f\[\begin{array}{c}
+\ \ \ \ \ \ \ \ \ \ P_q \ \ \ \ S_q \ \ \ \  C_q \\
+\begin{array}{c}
+P_{q+1} \\
+S_{q+1} \\
+C_{q+1} \\
+\end{array}
+\begin{array}{|c|c|c|}
+\hline
+0 & 0 & 0 \\
+\hline
+H_q & 0 & 0 \\
+\hline
+0 & 0 & 0 \\
+\hline
+\end{array}
+\end{array}
+\f\]
+with \f\[H_q = (\partial (S_{q+1})|_{P_q})^{-1}\f\].
+
+- the matrix of \f$f_q\f$ is:
+\f\[\begin{array}{c}
+\ \ \ \ \ \ P_q \ \ \ \ S_q \ \ \ \  C_q \\
+\begin{array}{c}
+C_q \\
+\end{array}
+\begin{array}{|c|c|c|}
+\hline
+F_q & 0 & \mathrm{Id} \\
+\hline
+\end{array}
+\end{array}
+\f\]
+with
+\f\[ F_q = - \partial(S_{q+1})|_{C_q}\cdot H_q\f\]
+
+- the matrix of \f$g_q\f$ is:
+\f\[\begin{array}{c}
+\ \ \ \ \ \ C_q \\
+\begin{array}{c}
+P_q \\
+S_q \\
+C_q \\
+\end{array}
+\begin{array}{|c|}
+\hline
+0 \\
+\hline
+G_q \\
+\hline
+\mathrm{Id} \\
+\hline
+\end{array}
+\end{array}
+\f\]
+with
+\f\[ G_q = - H_{q-1} \cdot \partial(C_{q})|_{P_{q-1}}\f\]
+
+- last, the matrix of the reduced boundary \f$\mathrm d_q\f$ is:
+\f\[\begin{array}{c}
+\ \ \ \ \ \ C_q \\
+\begin{array}{c}
+C_{q-1} \\
+\end{array}
+\begin{array}{|c|}
+\hline
+D_q \\
+\hline
+\end{array}
+\end{array}
+\f\]
+with
+\f\[ D_q = \partial(C_{q})|_{C_{q-1}} + F_{q} \cdot \partial(C_{q})|_{P_{q-1}} = \partial(C_{q})|_{C_{q-1}} + \partial(S_{q})|_{C_{q-1}} \cdot G_q \f\]
+
+Therefore the HDVF "reduces" the complex to a smaller complex over critical cells.
+
+A HDVF is called <B>perfect</B> when the reduced boundary is null, then for any \f$q \in \{0\ldots d\}\f$:
+- \f$\beta_q = | C_q |\f$
+- Homology generators of dimension \f$q\f$ are \f$\{g(\sigma) \,;\, \sigma\in C_q \}\f$
+- Cohomology generators of dimension \f$q\f$ are \f$\{f^*(\sigma) \,;\, \sigma\in C_q \}\f$
+
+Hence a perfect HDVF computes homology and provides a rich homological information.
+- when \f$A\f$ is a field, perfect HDVFs always exist and any HDVF can be completed into a perfect HDVF (see \ref secHDVFcomput)
+- when \f$A\f$ is a ring:
+    - if the torsion part is null, we hypothesise that a perfect HDVF always exist
+    - with torsion, we hypothesise that a torsion-perfect HDVF always exist (where the reduced boundary is limited to torsion)
+Both questions are still an open and we have no counter-examples.
+
+Moreover, the reduction provides various informations on cycles and co-cycles:
+- An <B>annotation</B> associates to a cycle its decomposition in the basis of homology generators, up to boundaries: <br>
+Given \f$\gamma\in Z_q(\mathscr C)\f$, \f$f(\gamma)\f$ is an annotation of \f$\gamma\f$:
+\f\[\text{if }f(\gamma) = \sum_i \alpha_i\cdot \sigma_i,\ \ \ \sigma_i\in C_q\f\]
+\f\[\text{then }\ \ \ \gamma = \sum_i \alpha_i\cdot g(\sigma_i) + \beta,\ \ \ \beta \in B_q(\mathscr C)\f\]
+- A <B>co-annotation</B> associates to a cycle its decomposition in the basis of cohomology generators, up to coboundaries: <br>
+Given \f$\gamma\in Z^q(\mathscr C)\f$, \f$g^*(\gamma)\f$ is a co-annotation of \f$\gamma\f$:
+\f\[\text{if }g^*(\gamma) = \sum_i \alpha_i\cdot \sigma_i,\ \ \ \sigma_i\in C^q\f\]
+\f\[\text{then }\ \ \ \gamma = \sum_i \alpha_i\cdot f^*(\sigma_i) + \beta,\ \ \ \beta \in B^q(\mathscr C)\f\]
+
+Annotations and co-annotations provide convenient tests to decide if to cycles (resp. co-cycles) belong to the same homology (resp. cohomology) class:
+- Two cycles \f$\gamma\f$ and \f$\gamma'\f$ belong to the same homology class if they have the same annotation (ie. \f$f(\gamma) = f(\gamma')\f$)
+- Two co-cycles \f$\gamma\f$ and \f$\gamma'\f$ belong to the same cohomology class if they have the same co-annotation (ie. \f$g^*(\gamma) = g^*(\gamma')\f$)
+
+Figure \cgalFigureRef{HDVFex_hom_cohom} shows an example of HDVF together with corresponding homology and cohomology generators. In all the package, we use the following colors convention:
+- PRIMARY cells are depicted in green
+- SECONDARY cells are depicted in red
+- CRITICAL cells are depicted in blue
+
+Let us point out that HDVFs can be represented in a "discrete Morse theory" style, with arrows (ie. a vector field) pairing a primary and a secondary cell among its co-faces (the vector field associated to a HDVF is not unique). But DGVF are a strict subset of HDVFs:
+- each DGVF is a HDVF (labelling sources of arrows as PRIMARY, targets of arrows as SECONDARY, unpaired cells as CRITICAL always produces an HDVF)
+- but HDVF may produce vector fields with cycles
+
+The following figures show an HDVF and an associated vector field:<br>
+ <img src="HDVF_ex1_A3.png" align="center" width=30%/>
+ <img src="HDVF_ex1_A3_DGVF.png" align="center" width=30%/>
+ 
+ And the following figure exhibits the vector field representation of a HDVF with a cycle (on the right, the cycle is highlighted in purple):<br>
+  <img src="HDVF_cycle.png" align="center" width=20%/>
+ <img src="HDVF_cycle_highlighted.png" align="center" width=20%/><br>
+ Hence this vector field is a valid HDVF (\f$\partial(S)|_P\f$ is invertible) but it is not a DGVF.
+
+\subsection secHDVFcomput Computing HDVFs
+
+HDVFs can be computed using previous matrix expression; however, Aldo Gonzalez-Lorenzo has shown that several operations on HDVF can be introduced to built but also transform HDVFs.
+
+- <B>A operation </B> (pairing of two critical cells)<br>
+Given a HDVF \f$X=(P,S,C)\f$, and two CRITICAL cells \f$\gamma_1\in C_q\f$, \f$\gamma_2\in C_{q+1}\f$
+\f\[ A(X) = \Big(P\cup\{\gamma_1\}, S\cup\{\gamma_2\}, C\backslash \{\gamma_1, \gamma_2\}\Big)\f\]
+and the operation is valid (ie. produces an HDVF) if and only if:
+\f\[ \langle \mathrm d(\gamma_2),\gamma_1\rangle \text{ is invertible}\f\]
+
+    - Any perfect HDVF can be built by iterating the A operation
+    - This operation can also complete a HDVF into a perfect HDVF
+
+    Figures below illustrate this operation on a cubical chain complex: (left) an HDVF such that \f$(\gamma_1,\gamma_2)\f$ meet the A condition, (right) the HDVF obtained after \f$A(\gamma_1,\gamma_2)\f$.
+
+<img src="HDVF_ex1_A2_A.png" align="center" width=30%/>
+<img src="HDVF_ex1_A3.png" align="center" width=30%/>
+
+- <B>R operation </B> (unpairing of two critical cells)<br>
+Given a HDVF \f$X=(P,S,C)\f$, a PRIMARY cell \f$\pi\in P_q\f$ and a SECONDARY cells \f$\sigma\in S_{q+1}\f$
+\f\[ R(X) = \Big(P\backslash\{\pi\}, S\backslash\{\sigma\}, C\cup \{\pi, \sigma\}\Big)\f\]
+and the operation is valid (ie. produces an HDVF) if and only if:
+\f\[ \langle h(\pi),\sigma\rangle \text{ is invertible}\f\]
+
+    Operations A and R are inverse one another.
+    
+- <B>M operation </B> (exchange a PRIMARY and a CRITICAL cells)<br>
+Given a HDVF \f$X=(P,S,C)\f$, a CRITICAL cell \f$\gamma\in C_q\f$ and a SECONDARY cell \f$\gamma_2\in C_{q}\f$
+\f\[ M(X) = \Big(P\backslash \{\pi\} \cup\{\gamma\}, S, C\backslash \{\gamma\}\cup \{\pi\}\Big)\f\]
+and the operation is valid (ie. produces an HDVF) if and only if:
+\f\[ \langle \mathrm f(\pi),\gamma\rangle \text{ is invertible}\f\]
+
+    The M operation modifies the homology generator associated to \f$\gamma\f$ (while preserving is associated cohomology generator)
+    
+    
+
+\subsection secHDVFpersistent_homology Persistent homology
+
+\subsection secHDVFreduced_Alexander Relative homology and Alexander duality
+
+\section secHDVFHDVFpackage HDVF package
 
 Section on definitions here ...
 
@@ -150,7 +412,7 @@ Left: ...
 
  [AGL, 2017] Aldo Gonzalez-Lorenzo, Alexandra Bac, Jean-Luc Mari, Pedro Real. Allowing cycles in discrete Morse theory, Topology and its Applications, Volume 228, 2017, Pages 1-35.
  
- [AGL, 2016] Aldo Gonzalez-Lorenzo. Computational Homology Applied to Discrete Objects. Discrete Mathematics [cs.DM]. Aix-Marseille Université; Universidad de Sevilla, 2016.
+ [AGL, 2016] Aldo Gonzalez-Lorenzo. Computational Homology Applied to Discrete Objects. Discrete Mathematics [PhD]. Aix-Marseille Université; Universidad de Sevilla, 2016.
 
 */
 } /* namespace CGAL */

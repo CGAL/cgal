@@ -117,7 +117,7 @@ public:
      *
      * The function return `true` is the SparseMatrix is null (that is, empty) and `false` otherwise.
     */
-    bool is_null();
+    bool is_null()
     
     /**
      * \brief Gets the matrix size.

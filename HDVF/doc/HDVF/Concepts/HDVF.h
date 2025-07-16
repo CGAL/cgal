@@ -50,7 +50,7 @@ That is, for all \f$q\in \mathbb N\f$, if
  - compute \f$\partial'\f$ together with \f$h\f$ and \f$f\f$ (option `OPT_F`): to get co-homology generators
  - compute the full reduction (option `OPT_FULL`): to get the full homological / cohomological information
 
- Let us consider a simple cubical complex example (in what follows, PRIMARY cells are coloured green, SECONDARY are coloured red and CRITICAL blue). The picture below shows an initial empty HDVF where all cells are critical:
+ Let us consider a simple cubical complex example (see \ref secHDVFcubical_chain_complex for an introduction). In what follows, PRIMARY cells are coloured green, SECONDARY are coloured red and CRITICAL blue. The picture below shows an initial empty HDVF where all cells are critical:
  
  <img src="HDVF_ex1.png" align="center" width=40%/>
 
