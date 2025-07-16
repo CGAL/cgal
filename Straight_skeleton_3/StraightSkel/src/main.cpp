@@ -123,13 +123,13 @@ const char* getOption(const char* option, int argc, const char* argv[]) {
     return result;
 }
 
-std::list<CGAL::FT> parseCSV(const char* csv) {
-    std::list<CGAL::FT> values;
+std::vector<CGAL::FT> parseCSV(const char* csv) {
+    std::vector<CGAL::FT> values;
     std::vector<std::string> str_vals = util::StringFuncs::split(csv, ",", false);
     for (unsigned int cnt = 0; cnt < str_vals.size(); cnt++) {
         values.push_back(std::stod(str_vals[cnt]));
     }
-    values.sort(std::greater<CGAL::FT>());
+    std::sort(values.begin(), values.end(), std::greater<CGAL::FT>());
     return values;
 }
 
@@ -245,7 +245,7 @@ int main(int argc, const char* argv[]) {
                     << " not found." << std::endl;
                 return EXIT_FAILURE;
             } else {
-                DEBUG_VAR(skel2d->toString());
+                DEBUG_PRINT(skel2d->toString());
                 id = skel_dao->findPolyID(skelid);
                 polygon = polygon_dao->find(id);
                 if (polygon) {
@@ -291,7 +291,7 @@ int main(int argc, const char* argv[]) {
             std::cout << "Warning: Polygon with PolyID=" << id
                 << " is not consistent." << std::endl;
         }
-        DEBUG_VAR(polygon->toString());
+        DEBUG_PRINT(polygon->toString());
     } else if (num_dims == 3) {
         db::_3d::PolyhedronDAOSPtr polyhedron_dao =
                 db::_3d::DAOFactory::getPolyhedronDAO();
@@ -310,8 +310,6 @@ int main(int argc, const char* argv[]) {
             const char* filename = argv[3];
             if (util::StringFuncs::endsWith(filename, ".obj")) {
                 polyhedron = db::_3d::OBJFile::load(filename);
-            } else if (util::StringFuncs::endsWith(filename, ".ply")) {
-                polyhedron = db::_3d::PLYFile::load(filename);
             } else if (util::StringFuncs::endsWith(filename, ".flma")) {
                 polyhedron = db::_3d::FLMAFile::load(filename);
             }
@@ -329,7 +327,7 @@ int main(int argc, const char* argv[]) {
                     << " not found." << std::endl;
                 return EXIT_FAILURE;
             } else {
-                DEBUG_VAR(skel3d->toString());
+                DEBUG_PRINT(skel3d->toString());
                 id = skel_dao->findPolyhedronID(skelid);
                 polyhedron = polyhedron_dao->find(id);
                 if (polyhedron) {
@@ -375,8 +373,15 @@ int main(int argc, const char* argv[]) {
                     polyhedron, p_box_min, p_box_max);
         }
 
+        if (config->isLoaded() &&
+            config->contains("main", "merge_coplanar_faces") &&
+            config->getBool("main", "merge_coplanar_faces")) {
+            db::_3d::AbstractFile::mergeCoplanarFacets(polyhedron);
+        }
+
         if (rand_move_points) {
-            polyhedron = algo::_3d::PolyhedronTransformation::merge_and_perturb(polyhedron);
+            algo::_3d::PolyhedronTransformation::normalizeFacetPlanes(polyhedron);
+            algo::_3d::PolyhedronTransformation::randTiltPlanesv3(polyhedron);
         }
 
         if (!polyhedron || !polyhedron->isConsistent()) {
@@ -422,7 +427,7 @@ int main(int argc, const char* argv[]) {
         window = ui::gl::MainOpenGLWindow::create(argc, argv, width, height, controller);
     }
 
-    std::list<CGAL::FT> save_offsets;
+    std::vector<CGAL::FT> save_offsets;
     const char* chr_save_offsets = getOption("--save-offsets", argc, argv);
     if (chr_save_offsets) {
         save_offsets = parseCSV(chr_save_offsets);

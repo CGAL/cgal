@@ -76,7 +76,7 @@ void SpeedSimpleSphericalSkel::run() {
         }
         SphericalAbstractEventSPtr event = nextEvent(polygon);
         while (event) {
-            DEBUG_VAL("-- Next Event: " << event->toString() << " --");
+            DEBUG_PRINT("-- Next Event: " << event->toString() << " --");
             if (controller_) {
                 controller_->wait();
             }
@@ -92,14 +92,14 @@ void SpeedSimpleSphericalSkel::run() {
             assert(skel_result_->isConsistent());
             DEBUG_PRINT("-- Finished handling Event --");
             i++;
-            DEBUG_VAR(i);
+            DEBUG_PRINT(i);
             if (controller_) {
                 controller_->wait();
             }
             event = nextEvent(polygon);
         }
         DEBUG_PRINT("== Spherical Skeleton finished ==");
-        DEBUG_VAR(skel_result_->toString());
+        DEBUG_PRINT(skel_result_->toString());
     }
 }
 
@@ -331,7 +331,7 @@ SphericalEdgeEventSPtr SpeedSimpleSphericalSkel::nextEdgeEvent(SphericalPolygonS
         CGAL::FT offset_src = offsetTo(vertex_src, point);
         CGAL::FT offset_dst = offsetTo(vertex_dst, point);
         CGAL::FT accuracy_edge_event = offset_dst - offset_src;
-        DEBUG_VAR(accuracy_edge_event);
+        DEBUG_PRINT(accuracy_edge_event);
         SphericalSkelVertexDataSPtr data_src =
                 std::dynamic_pointer_cast<SphericalSkelVertexData>(
                 vertex_src->getData());
@@ -474,7 +474,7 @@ SphericalAbstractEventSPtr SpeedSimpleSphericalSkel::nextEvent(SphericalPolygonS
     events[2] = nextTriangleEvent(polygon);
     for (unsigned int i = 0; i < 3; i++) {
         if (events[i]) {
-            DEBUG_VAR(events[i]->toString());
+            DEBUG_PRINT(events[i]->toString());
             if (!result) {
                 result = events[i];
             } else if (result->getOffset() <= events[i]->getOffset()) {
@@ -531,7 +531,7 @@ SphericalPolygonSPtr SpeedSimpleSphericalSkel::copyPolygon(SphericalPolygonSPtr 
             data->setOffsetEdge(edge_c);
             result->addEdge(edge_c);
         } else {
-            DEBUG_VAR(edge->toString());
+            DEBUG_PRINT(edge->toString());
         }
     }
 

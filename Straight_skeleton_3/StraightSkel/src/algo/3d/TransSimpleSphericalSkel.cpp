@@ -89,7 +89,7 @@ void TransSimpleSphericalSkel::run() {
         CGAL::FT offset_prev = 0.0;
         SphericalAbstractEventSPtr event = nextEvent(polygon, offset);
         while (event) {
-            DEBUG_VAL("-- Next Event: " << event->toString() << " --");
+            DEBUG_PRINT("-- Next Event: " << event->toString() << " --");
             if (controller_) {
                 controller_->wait();
             }
@@ -125,7 +125,7 @@ void TransSimpleSphericalSkel::run() {
             assert(skel_result_->isConsistent());
             DEBUG_PRINT("-- Finished handling Event --");
             i++;
-            DEBUG_VAR(i);
+            DEBUG_PRINT(i);
             if (controller_) {
                 controller_->wait();
             }
@@ -133,7 +133,7 @@ void TransSimpleSphericalSkel::run() {
             offset_prev = offset;
         }
         DEBUG_PRINT("== Spherical Skeleton finished ==");
-        DEBUG_VAR(skel_result_->toString());
+        DEBUG_PRINT(skel_result_->toString());
     }
 }
 
@@ -272,7 +272,7 @@ bool TransSimpleSphericalSkel::isEdgeEvent(CircularEdgeSPtr edge, CGAL::FT offse
     if (p_src_offset && p_dst_offset) {
         // TODO: epsilon environment is not good
         CGAL::FT dist_edge_event = KernelWrapper::distance(p_src_offset, p_dst_offset);
-        DEBUG_VAR(dist_edge_event);
+        DEBUG_PRINT(dist_edge_event);
         if (dist_edge_event < epsilon_) {
             result = true;
         }
@@ -385,7 +385,7 @@ SphericalSplitEventSPtr TransSimpleSphericalSkel::nextSplitEvent(SphericalPolygo
                 continue;
             }
             CGAL::FT dist_split_event = KernelWrapper::distance(point, p_offset);
-            DEBUG_VAR(dist_split_event);
+            DEBUG_PRINT(dist_split_event);
             if (dist_split_event > epsilon_) {
                 // TODO: epsilon environment is not good
                 continue;
@@ -1000,15 +1000,15 @@ SphericalAbstractEventSPtr TransSimpleSphericalSkel::nextEvent(SphericalPolygonS
     events[11] = nextInversionEvent(polygon, offset);
     for (unsigned int i = 0; i < 12; i++) {
         if (events[i]) {
-            DEBUG_VAR(events[i]->toString());
+            DEBUG_PRINT(events[i]->toString());
             if (!result) {
                 result = events[i];
             } else if (result->getOffset() < events[i]->getOffset()) {
                 result = events[i];
             } else if (result->getOffset() == events[i]->getOffset()) {
-                DEBUG_VAL("WARNING: More than one possible next event.");
-                DEBUG_VAL(result->toString());
-                DEBUG_VAL(events[i]->toString());
+                DEBUG_PRINT("WARNING: More than one possible next event.");
+                DEBUG_PRINT(result->toString());
+                DEBUG_PRINT(events[i]->toString());
                 result = events[i];
             }
         }
@@ -1030,7 +1030,7 @@ SphericalPolygonSPtr TransSimpleSphericalSkel::shiftEdges(SphericalPolygonSPtr p
         if (p_offset) {
             vertex_offset = CircularVertex::create(p_offset);
         } else {
-            DEBUG_VAR(vertex->toString());
+            DEBUG_PRINT(vertex->toString());
             vertex_offset = CircularVertex::create(vertex->getPoint());
             vertex_offset->setPointValid(false);
         }
@@ -1072,7 +1072,7 @@ SphericalPolygonSPtr TransSimpleSphericalSkel::shiftEdges(SphericalPolygonSPtr p
             data->setOffsetEdge(edge_offset);
             result->addEdge(edge_offset);
         } else {
-            DEBUG_VAR(edge->toString());
+            DEBUG_PRINT(edge->toString());
         }
     }
 

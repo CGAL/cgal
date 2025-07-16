@@ -85,7 +85,7 @@ void SimpleStraightSkel::run() {
             std::list<AbstractEventSPtr>::iterator it_e = events.begin();
             while (it_e != events.end()) {
                 AbstractEventSPtr event = *it_e++;
-                DEBUG_VAL("-- Next Event: " << event->toString() << " --");
+                DEBUG_PRINT("-- Next Event: " << event->toString() << " --");
                 event->setHighlight(true);
             }
             if (controller_) {
@@ -117,7 +117,7 @@ void SimpleStraightSkel::run() {
             assert(skel_result_->isConsistent());
             DEBUG_PRINT("-- Finished handling Event --");
             i++;
-            DEBUG_VAR(i);
+            DEBUG_PRINT(i);
             if (controller_) {
                 controller_->wait();
             }
@@ -130,7 +130,7 @@ void SimpleStraightSkel::run() {
                 util::StringFactory::fromDouble(time) + "; ");
         //skel_result_->appendDescription("controller=" +
         //        util::StringFactory::fromBoolean(controller_) + "; ");
-        DEBUG_VAR(skel_result_->toString());
+        DEBUG_PRINT(skel_result_->toString());
     }
 }
 

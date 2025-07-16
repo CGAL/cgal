@@ -678,7 +678,7 @@ void SkelMeshGenerator::run() {
     mergeVertices();
     assert(mesh_result_->isConsistent());
     DEBUG_PRINT("== Skeleton Mesh Generator finished ==");
-    DEBUG_VAR(mesh_result_->toString());
+    DEBUG_PRINT(mesh_result_->toString());
 }
 
 ThreadSPtr SkelMeshGenerator::startThread() {

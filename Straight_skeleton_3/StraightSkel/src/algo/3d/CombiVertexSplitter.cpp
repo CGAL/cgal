@@ -225,11 +225,11 @@ std::list<combi> CombiVertexSplitter::generateAllCombinations(unsigned int degre
     combi history;
     std::vector<int> labels = initLabels(degree);
     std::list<combi> result = generateCombinationsRec(history, labels);
-    // DEBUG_VAR(degree);
+    // DEBUG_PRINT(degree);
     // std::list<combi>::iterator it_combis = result.begin();
     // while (it_combis != result.end()) {
     //     combi combination = *it_combis++;
-    //     DEBUG_VAL(combiToString(combination));
+    //     DEBUG_PRINT(combiToString(combination));
     // }
     return result;
 }
@@ -538,7 +538,7 @@ PolyhedronSPtr CombiVertexSplitter::splitVertex(VertexSPtr vertex) {
         VertexSPtr vertex_c = poly_c->vertices().front();
         splitVertex(vertex_c, combination);
         if (checkSplitted(poly_c)) {
-            DEBUG_VAL("Valid split-combination found: " << combiToString(combination));
+            DEBUG_PRINT("Valid split-combination found: " << combiToString(combination));
             combinations_valid.push_back(combination);
             polys_split.push_back(poly_c);
             std::cout << "Found valid combination" << std::endl;

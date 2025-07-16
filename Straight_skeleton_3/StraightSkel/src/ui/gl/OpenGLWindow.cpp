@@ -460,8 +460,8 @@ void OpenGLWindow::mainLoop() {
 bool OpenGLWindow::writeBMP(const char* filename, unsigned int width, unsigned int height, unsigned char* image) {
     // http://de.wikipedia.org/wiki/Windows_Bitmap
     if (width % 4) {
-        DEBUG_VAL("Warning: width should be a multiple of 4.");
-        DEBUG_VAR(width);
+        DEBUG_PRINT("Warning: width should be a multiple of 4.");
+        DEBUG_PRINT(width);
     }
     bool result = false;
     FILE* fptr = fopen(filename, "w");

@@ -109,7 +109,7 @@ unsigned int GraphChecker::countVisitedChilds(const std::set<NodeSPtr>& visited,
         } else if (arc->getNodeDst() == node) {
             other = arc->getNodeSrc();
         } else {
-            DEBUG_VAR(arc->toString());
+            DEBUG_PRINT(arc->toString());
         }
         if (visited.find(other) != visited.end()) {
             result++;
@@ -154,7 +154,7 @@ bool GraphChecker::check(StraightSkeletonSPtr skel) {
     unsigned int size_hidden_begin = 0;
     while (hidden.size() > 0) {
         size_hidden_begin = hidden.size();
-        DEBUG_VAR(hidden.size());
+        DEBUG_PRINT(hidden.size());
         std::set<NodeSPtr>::iterator it_n = hidden.begin();
         while (it_n != hidden.end()) {
             NodeSPtr node = *it_n++;
@@ -190,15 +190,15 @@ bool GraphChecker::check(StraightSkeletonSPtr skel) {
                 break;
             }
             if (visit_event_types == 1) {
-                DEBUG_VAR(num_nodes_layer);
+                DEBUG_PRINT(num_nodes_layer);
                 DEBUG_PRINT("-- No more vanish events");
                 visit_event_types = 2;
                 DEBUG_PRINT("-- Visiting contact events");
                 num_nodes_layer = 0;
                 num_layers_contact++;
-                DEBUG_VAR(min_offset);
+                DEBUG_PRINT(min_offset);
             } else if (visit_event_types == 2) {
-                DEBUG_VAR(num_nodes_layer);
+                DEBUG_PRINT(num_nodes_layer);
                 DEBUG_PRINT("-- No more contact events");
                 visit_event_types = 1;
                 DEBUG_PRINT("-- Visiting vanish events");
@@ -208,10 +208,10 @@ bool GraphChecker::check(StraightSkeletonSPtr skel) {
         }
     }
 
-    DEBUG_VAR(hidden.size());
-    DEBUG_VAR(num_layers_vanish);
-    DEBUG_VAR(num_layers_contact);
-    DEBUG_VAR(result);
+    DEBUG_PRINT(hidden.size());
+    DEBUG_PRINT(num_layers_vanish);
+    DEBUG_PRINT(num_layers_contact);
+    DEBUG_PRINT(result);
 
     if (result == 0) {
         std::set<NodeSPtr>::iterator it_n = hidden.begin();
@@ -219,8 +219,8 @@ bool GraphChecker::check(StraightSkeletonSPtr skel) {
             NodeSPtr node = *it_n++;
             unsigned int num_visited_childs = countVisitedChilds(visited, node);
             AbstractEventSPtr event = findEvent(skel, node);
-            DEBUG_VAR(event->toString());
-            DEBUG_VAR(num_visited_childs);
+            DEBUG_PRINT(event->toString());
+            DEBUG_PRINT(num_visited_childs);
         }
     }
 

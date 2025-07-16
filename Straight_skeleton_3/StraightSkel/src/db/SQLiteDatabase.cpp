@@ -33,7 +33,7 @@ SQLiteDatabase::~SQLiteDatabase() {
 }
 
 bool SQLiteDatabase::open(const std::string& filename) {
-    DEBUG_VAR(filename);
+    DEBUG_PRINT(filename);
     bool result = false;
     if (SQLITE_OK == sqlite3_open(filename.c_str(), &db_)) {
         result = true;
@@ -69,7 +69,7 @@ SQLiteStmtSPtr SQLiteDatabase::prepare(const std::string& sql_query) {
     SQLiteStmtSPtr result = SQLiteStmtSPtr();
     if (db_) {
         sqlite3_stmt* stmt;
-        DEBUG_VAL(sql_query);
+        DEBUG_PRINT(sql_query);
         if (SQLITE_OK == sqlite3_prepare(db_, sql_query.c_str(), -1, &stmt, NULL)) {
             result = SQLiteStmtSPtr(new SQLiteStmt(db_, stmt));
         } else {
@@ -82,7 +82,7 @@ SQLiteStmtSPtr SQLiteDatabase::prepare(const std::string& sql_query) {
 bool SQLiteDatabase::beginTransaction() {
     bool result = false;
     if (!transaction_) {
-        DEBUG_VAL("BEGIN TRANSACTION;");
+        DEBUG_PRINT("BEGIN TRANSACTION;");
         if (SQLITE_OK == sqlite3_exec(db_, "BEGIN TRANSACTION;",
                 NULL, NULL, NULL)) {
             result = true;
@@ -97,7 +97,7 @@ bool SQLiteDatabase::beginTransaction() {
 bool SQLiteDatabase::endTransaction() {
     bool result = false;
     if (transaction_) {
-        DEBUG_VAL("END TRANSACTION;");
+        DEBUG_PRINT("END TRANSACTION;");
         if (SQLITE_OK == sqlite3_exec(db_, "END TRANSACTION;",
                 NULL, NULL, NULL)) {
             result = true;

@@ -50,6 +50,7 @@ CGAL_add_named_parameter(prevent_unselection_t, prevent_unselection, prevent_uns
 
 CGAL_add_named_parameter(verbose_t, verbose, verbose)
 CGAL_add_named_parameter(concurrency_tag_t, concurrency_tag, concurrency_tag)
+CGAL_add_named_parameter(io_path_t, io_path, io_path)
 
 // List of named parameters used for IO
 CGAL_add_named_parameter(vertex_normal_output_iterator_t, vertex_normal_output_iterator, vertex_normal_output_iterator)
@@ -398,6 +399,10 @@ CGAL_add_named_parameter_with_compatibility(bounding_object_param_t, bounding_ob
 // List of named parameters used in the package ' 3D Surface Subdivision Methods'
 CGAL_add_named_parameter(do_not_modify_geometry_t, do_not_modify_geometry, do_not_modify_geometry)
 
-//List of named parameters used in Straight_skeleton_2
+// List of named parameters used in Straight_skeleton_2
 CGAL_add_named_parameter_with_compatibility_ref_only(angles_param_t, angles_param, angles)
 CGAL_add_named_parameter(maximum_height_t, maximum_height, maximum_height)
+
+// List of named parameters used in Straight_skeleton_3
+CGAL_add_named_parameter(face_weight_t, face_weight, face_weight_map)
+CGAL_add_named_parameter(outward_offsetting_t, outward_offsetting, outward_offsetting)

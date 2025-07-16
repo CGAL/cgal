@@ -167,7 +167,7 @@ bool SphericalSkeleton::isConsistent() const {
     while (it_n != nodes_.end()) {
         CircularNodeSPtr node = *it_n++;
         if (node->getSkel() != shared_from_this()) {
-            DEBUG_VAR(node->toString());
+            DEBUG_PRINT(node->toString());
             result = false;
             break;
         }
@@ -176,22 +176,22 @@ bool SphericalSkeleton::isConsistent() const {
         while (it_a != node->arcs().end()) {
             CircularArcWPtr arc_wptr = *it_a++;
             if (arc_wptr.expired()) {
-                DEBUG_VAR(node->toString());
+                DEBUG_PRINT(node->toString());
             } else {
                 CircularArcSPtr arc = CircularArcSPtr(arc_wptr);
                 num_arcs++;
                 if (node != arc->getNodeSrc() && node != arc->getNodeDst()) {
-                    DEBUG_VAR(node->toString());
-                    DEBUG_VAR(arc->toString());
+                    DEBUG_PRINT(node->toString());
+                    DEBUG_PRINT(arc->toString());
                     result = false;
                     break;
                 }
             }
         }
         if (!(num_arcs == 1 || num_arcs == 3)) {
-            DEBUG_VAL("Warning: CircularNode does not have 1 or 3 CircularArcs.");
-            DEBUG_VAR(node->toString());
-            DEBUG_VAR(num_arcs);
+            DEBUG_PRINT("Warning: CircularNode does not have 1 or 3 CircularArcs.");
+            DEBUG_PRINT(node->toString());
+            DEBUG_PRINT(num_arcs);
         }
     }
     std::list<CircularArcSPtr>::const_iterator it_a = arcs_.begin();
@@ -199,22 +199,22 @@ bool SphericalSkeleton::isConsistent() const {
         CircularArcSPtr arc = *it_a++;
         CircularArcWPtr arc_wptr(arc);
         if (arc->getSkel() != shared_from_this()) {
-            DEBUG_VAR(arc->toString());
+            DEBUG_PRINT(arc->toString());
             result = false;
             break;
         }
         std::list<CircularArcWPtr> warcs = arc->getNodeSrc()->arcs();
         if (warcs.end() == std::find(warcs.begin(), warcs.end(), arc_wptr)) {
-            DEBUG_VAR(arc->toString());
-            DEBUG_VAR(arc->getNodeSrc()->toString());
+            DEBUG_PRINT(arc->toString());
+            DEBUG_PRINT(arc->getNodeSrc()->toString());
             result = false;
             break;
         }
         if (arc->hasNodeDst()) {
             warcs = arc->getNodeDst()->arcs();
             if (warcs.end() == std::find(warcs.begin(), warcs.end(), arc_wptr)) {
-                DEBUG_VAR(arc->toString());
-                DEBUG_VAR(arc->getNodeDst()->toString());
+                DEBUG_PRINT(arc->toString());
+                DEBUG_PRINT(arc->getNodeDst()->toString());
                 result = false;
                 break;
             }

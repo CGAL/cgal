@@ -198,7 +198,7 @@ void KeyboardAdapter::loadConfig(util::ConfigurationSPtr config) {
 }
 
 void KeyboardAdapter::pressed(int key, int x, int y) {
-    // DEBUG_VAR(key);
+    // DEBUG_PRINT(key);
     if (key == k_move_forward_) move_forward_ = true;
     if (key == k_move_backpedal_) move_backpedal_ = true;
     if (key == k_move_left_) move_left_ = true;

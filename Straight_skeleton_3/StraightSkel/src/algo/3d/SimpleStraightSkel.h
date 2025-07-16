@@ -85,7 +85,7 @@ public:
     static SimpleStraightSkelSPtr create(PolyhedronSPtr polyhedron);
     static SimpleStraightSkelSPtr create(PolyhedronSPtr polyhedron, ControllerSPtr controller);
     static SimpleStraightSkelSPtr create(PolyhedronSPtr polyhedron, ControllerSPtr controller,
-                                         const std::list<CGAL::FT>& save_offsets,
+                                         const std::vector<CGAL::FT>& save_offsets,
                                          const std::filesystem::path& save_path);
 
     void setVisitor(utils::Base_mesh_offset_visitor* visitor) {
@@ -105,7 +105,7 @@ public:
      * Save offset, attempt to un-tilt if there is a tilt
      */
     bool savePolyhedron(PolyhedronSPtr polyhedron,
-                        CGAL::FT current_offset,
+                        const CGAL::FT& current_offset,
                         const bool do_triangulate = true,
                         const bool dump_exact = true,
                         const bool attempt_untilting = false);
@@ -196,8 +196,8 @@ public:
      */
     // static Point3SPtr vanishesAt(EdgeSPtr edge);
     std::pair<Point3SPtr, CGAL::FT> vanishesAt(EdgeSPtr edge,
-                                               const CGAL::FT offset_past_bound,
-                                               const CGAL::FT offset_future_bound);
+                                               const CGAL::FT& offset_past_bound,
+                                               const CGAL::FT& offset_future_bound);
 
     /**
      * Returns the point where 2 edges will crash into each other.
@@ -205,23 +205,18 @@ public:
      * If `offset_max` is passed, ignore the crash if it happens in the future.
      */
     std::pair<Point3SPtr, CGAL::FT> crashAt(EdgeSPtr edge_1, EdgeSPtr edge_2,
-                                            const CGAL::FT offset_past_bound,
-                                            const CGAL::FT offset_future_bound);
+                                            const CGAL::FT& offset_past_bound,
+                                            const CGAL::FT& offset_future_bound);
     /**
      * Returns the offset (time) when the facet will reach the given point.
      */
     static CGAL::FT offsetDist(FacetSPtr facet, Point3SPtr point);
 
     /**
-     * Collects the facets that are affected by the event.
+     * Returns `true` if the event is in the past
      */
-    static std::list<FacetSPtr> eventFacets(AbstractEventSPtr event);
-
-    /**
-     * Returns `true` if the event has facets that have a "step_id" that is
-     * greater than the event's "step_id".
-     */
-    static bool isEventPotentiallyObsolete(AbstractEventSPtr event);
+    static bool isEventInThePast(const CGAL::FT& current_offset,
+                                 AbstractEventSPtr event);
 
     /**
      * Returns `true` if the neighborhood of an event has changed.
@@ -229,28 +224,50 @@ public:
     static bool isEventObsolete(AbstractEventSPtr event);
 
     /**
+     * Some combinatorial or geometric checks are very expensive to perform,
+     * so delay them until the event is the best in the queue.
+     * The gain is that the event can be invalidated combinatorially by the time
+     * it gets popped.
+     */
+    static bool isActualEvent(const CGAL::FT& current_offset,
+                              AbstractEventSPtr event,
+                              PolyhedronSPtr polyhedron);
+
+    static bool isActualVertexEvent(VertexEventSPtr event,
+                                    PolyhedronSPtr polyhedron);
+    static bool isActualFlipVertexEvent(FlipVertexEventSPtr event,
+                                        PolyhedronSPtr polyhedron);
+    static bool isActualSurfaceEvent(SurfaceEventSPtr event,
+                                     PolyhedronSPtr polyhedron);
+    static bool isActualSplitMergeEvent(SplitMergeEventSPtr event,
+                                        PolyhedronSPtr polyhedron);
+    static bool isActualPierceEvent(const CGAL::FT& current_offset,
+                                    PierceEventSPtr event,
+                                    PolyhedronSPtr polyhedron);
+
+    /**
      * Vanish events.
      */
     void collectVanishEvents(const std::list<EdgeSPtr>& edges,
                              PolyhedronSPtr polyhedron,
-                             const CGAL::FT current_offset,
+                             const CGAL::FT& current_offset,
                              CGAL::FT& offset_of_nearest_event,
                              PQ& queue);
      void collectVanishEvents(PolyhedronSPtr polyhedron,
-                              const CGAL::FT current_offset,
-                              CGAL::FT& offset_of_nearest_event,
-                              PQ& queue);
+                             const CGAL::FT& current_offset,
+                             CGAL::FT& offset_of_nearest_event,
+                             PQ& queue);
 
     /**
      * Edge flip event.
      */
     void collectEdgeEvents(const std::list<EdgeSPtr>& edges,
                            PolyhedronSPtr polyhedron,
-                           const CGAL::FT current_offset,
+                           const CGAL::FT& current_offset,
                            CGAL::FT& offset_of_nearest_event,
                            PQ& queue);
      void collectEdgeEvents(PolyhedronSPtr polyhedron,
-                           const CGAL::FT current_offset,
+                           const CGAL::FT& current_offset,
                            CGAL::FT& offset_of_nearest_event,
                            PQ& queue);
 
@@ -260,11 +277,11 @@ public:
     void collectEdgeMergeEvents(const std::list<EdgeSPtr>& edges,
                                 PolyhedronSPtr polyhedron,
                                 const bool use_canonical_event_reps,
-                                const CGAL::FT current_offset,
+                                const CGAL::FT& current_offset,
                                 CGAL::FT& offset_of_nearest_event,
                                 PQ& queue);
     void collectEdgeMergeEvents(PolyhedronSPtr polyhedron,
-                                const CGAL::FT current_offset,
+                                const CGAL::FT& current_offset,
                                 CGAL::FT& offset_of_nearest_event,
                                 PQ& queue);
 
@@ -274,11 +291,11 @@ public:
     void collectTriangleEvents(const std::list<EdgeSPtr>& edges,
                                PolyhedronSPtr polyhedron,
                                const bool use_canonical_event_reps,
-                               const CGAL::FT current_offset,
+                               const CGAL::FT& current_offset,
                                CGAL::FT& offset_of_nearest_event,
                                PQ& queue);
      void collectTriangleEvents(PolyhedronSPtr polyhedron,
-                               const CGAL::FT current_offset,
+                               const CGAL::FT& current_offset,
                                CGAL::FT& offset_of_nearest_event,
                                PQ& queue);
 
@@ -288,11 +305,11 @@ public:
      void collectDblEdgeMergeEvents(const std::list<EdgeSPtr>& edges,
                                     PolyhedronSPtr polyhedron,
                                     const bool use_canonical_event_reps,
-                                    const CGAL::FT current_offset,
+                                    const CGAL::FT& current_offset,
                                     CGAL::FT& offset_of_nearest_event,
                                     PQ& queue);
      void collectDblEdgeMergeEvents(PolyhedronSPtr polyhedron,
-                                   const CGAL::FT current_offset,
+                                   const CGAL::FT& current_offset,
                                    CGAL::FT& offset_of_nearest_event,
                                    PQ& queue);
 
@@ -302,11 +319,11 @@ public:
     void collectDblTriangleEvents(const std::list<EdgeSPtr>& edges,
                                   PolyhedronSPtr polyhedron,
                                   const bool use_canonical_event_reps,
-                                  const CGAL::FT current_offset,
+                                  const CGAL::FT& current_offset,
                                   CGAL::FT& offset_of_nearest_event,
                                   PQ& queue);
      void collectDblTriangleEvents(PolyhedronSPtr polyhedron,
-                                  const CGAL::FT current_offset,
+                                  const CGAL::FT& current_offset,
                                   CGAL::FT& offset_of_nearest_event,
                                   PQ& queue);
 
@@ -316,11 +333,11 @@ public:
     void collectTetrahedronEvents(const std::list<EdgeSPtr>& edges,
                                   PolyhedronSPtr polyhedron,
                                   const bool use_canonical_event_reps,
-                                  const CGAL::FT current_offset,
+                                  const CGAL::FT& current_offset,
                                   CGAL::FT& offset_of_nearest_event,
                                   PQ& queue);
      void collectTetrahedronEvents(PolyhedronSPtr polyhedron,
-                                  const CGAL::FT current_offset,
+                                  const CGAL::FT& current_offset,
                                   CGAL::FT& offset_of_nearest_event,
                                   PQ& queue);
 
@@ -330,11 +347,11 @@ public:
     void collectVertexEvents(const std::list<VertexSPtr>& vertices,
                              PolyhedronSPtr polyhedron,
                              const bool use_canonical_event_reps,
-                             const CGAL::FT current_offset,
+                             const CGAL::FT& current_offset,
                              CGAL::FT& offset_of_nearest_event,
                              PQ& queue);
     void collectVertexEvents(PolyhedronSPtr polyhedron,
-                             const CGAL::FT current_offset,
+                             const CGAL::FT& current_offset,
                              CGAL::FT& offset_of_nearest_event,
                              PQ& queue);
 
@@ -344,11 +361,11 @@ public:
     void collectFlipVertexEvents(const std::list<VertexSPtr>& vertices,
                                  PolyhedronSPtr polyhedron,
                                  const bool use_canonical_event_reps,
-                                 const CGAL::FT current_offset,
+                                 const CGAL::FT& current_offset,
                                  CGAL::FT& offset_of_nearest_event,
                                  PQ& queue);
     void collectFlipVertexEvents(PolyhedronSPtr polyhedron,
-                                 const CGAL::FT current_offset,
+                                 const CGAL::FT& current_offset,
                                  CGAL::FT& offset_of_nearest_event,
                                  PQ& queue);
 
@@ -358,11 +375,11 @@ public:
     void collectSplitMergeEvents(const std::list<VertexSPtr>& vertices,
                                  PolyhedronSPtr polyhedron,
                                  const bool use_canonical_event_reps,
-                                 const CGAL::FT current_offset,
+                                 const CGAL::FT& current_offset,
                                  CGAL::FT& offset_of_nearest_event,
                                  PQ& queue);
     void collectSplitMergeEvents(PolyhedronSPtr polyhedron,
-                                 const CGAL::FT current_offset,
+                                 const CGAL::FT& current_offset,
                                  CGAL::FT& offset_of_nearest_event,
                                  PQ& queue);
 
@@ -373,16 +390,16 @@ public:
     void collectSurfaceEvent(EdgeSPtr edge_1,
                              EdgeSPtr edge_2,
                              PolyhedronSPtr polyhedron,
-                             const CGAL::FT current_offset,
+                             const CGAL::FT& current_offset,
                              CGAL::FT& offset_of_nearest_event,
                              PQ& queue);
      void collectSurfaceEvents(const std::list<EdgeSPtr>& edges,
                               PolyhedronSPtr polyhedron,
-                              const CGAL::FT current_offset,
+                              const CGAL::FT& current_offset,
                               CGAL::FT& offset_of_nearest_event,
                               PQ& queue);
      void collectSurfaceEvents(PolyhedronSPtr polyhedron,
-                              const CGAL::FT current_offset,
+                              const CGAL::FT& current_offset,
                               CGAL::FT& offset_of_nearest_event,
                               PQ& queue);
 
@@ -393,16 +410,16 @@ public:
     void collectPolyhedronSplitEvent(EdgeSPtr edge_1,
                                      EdgeSPtr edge_2,
                                      PolyhedronSPtr polyhedron,
-                                     const CGAL::FT current_offset,
+                                     const CGAL::FT& current_offset,
                                      CGAL::FT& offset_of_nearest_event,
                                      PQ& queue);
     void collectPolyhedronSplitEvents(const std::list<EdgeSPtr>& edges,
                                       PolyhedronSPtr polyhedron,
-                                      const CGAL::FT current_offset,
+                                      const CGAL::FT& current_offset,
                                       CGAL::FT& offset_of_nearest_event,
                                       PQ& queue);
      void collectPolyhedronSplitEvents(PolyhedronSPtr polyhedron,
-                                      const CGAL::FT current_offset,
+                                      const CGAL::FT& current_offset,
                                       CGAL::FT& offset_of_nearest_event,
                                       PQ& queue);
 
@@ -414,11 +431,11 @@ public:
                                 const std::list<EdgeSPtr>& edges_2,
                                 PolyhedronSPtr polyhedron,
                                 const bool use_canonical_event_reps,
-                                const CGAL::FT current_offset,
+                                const CGAL::FT& current_offset,
                                 CGAL::FT& offset_of_nearest_event,
                                 PQ& queue);
     void collectEdgeSplitEvents(PolyhedronSPtr polyhedron,
-                                const CGAL::FT current_offset,
+                                const CGAL::FT& current_offset,
                                 CGAL::FT& offset_of_nearest_event,
                                 PQ& queue);
 
@@ -428,13 +445,27 @@ public:
     void collectPierceEvents(const std::list<VertexSPtr>& vertices,
                              const std::list<FacetSPtr>& facets,
                              PolyhedronSPtr polyhedron,
-                             const CGAL::FT current_offset,
+                             const CGAL::FT& current_offset,
                              CGAL::FT& offset_of_nearest_event,
                              PQ& queue);
     void collectPierceEvents(PolyhedronSPtr polyhedron,
-                             const CGAL::FT current_offset,
+                             const CGAL::FT& current_offset,
                              CGAL::FT& offset_of_nearest_event,
                              PQ& queue);
+
+    /**
+     * Collect all events for a subset of the polyhedron
+     */
+    void collectLocalEvents(PolyhedronSPtr polyhedron,
+                            const CGAL::FT& current_offset,
+                            PQ& queue);
+
+    /**
+     * Collect all events for the polyhedron
+     */
+    void collectEvents(PolyhedronSPtr polyhedron,
+                       const CGAL::FT& current_offset,
+                       PQ& queue);
 
     void printQueue(const PQ& queue);
 
@@ -444,26 +475,12 @@ public:
      */
     bool checkQueueCorrectness(const PQ& queue,
                                PolyhedronSPtr polyhedron,
-                               const CGAL::FT current_offset);
-
-    /**
-     * Collect all events for a subset of the polyhedron
-     */
-    void collectLocalEvents(PolyhedronSPtr polyhedron,
-                            const CGAL::FT current_offset,
-                            PQ& queue);
-
-    /**
-     * Collect all events for the polyhedron
-     */
-    void collectEvents(PolyhedronSPtr polyhedron,
-                       const CGAL::FT current_offset,
-                       PQ& queue);
+                               const CGAL::FT& current_offset);
 
     /**
      * Determines the next event.
      */
-    AbstractEventSPtr nextEvent(PQ& queue, CGAL::FT offset_current);
+    AbstractEventSPtr nextEvent(PQ& queue, const CGAL::FT& offset_current);
 
     /**
      * Appends a node of an event to the skeleton.
@@ -472,8 +489,8 @@ public:
     void appendEventNode(NodeSPtr node);
 
     PolyhedronSPtr shiftToEventOffset(PolyhedronSPtr polyhedron,
-                                      const CGAL::FT start_offset,
-                                      const CGAL::FT target_offset);
+                                      const CGAL::FT& start_offset,
+                                      const CGAL::FT& target_offset);
 
     enum class EventStatus {
       NON_EVENT = 0,
@@ -481,55 +498,55 @@ public:
       EVENT_NOT_HANDLED
     };
 
-    EventStatus handleSaveOffsetEvent(const CGAL::FT current_offset,
+    EventStatus handleSaveOffsetEvent(const CGAL::FT& current_offset,
                                       SaveOffsetEventSPtr event,
                                       PolyhedronSPtr polyhedron);
-    EventStatus handleConstOffsetEvent(const CGAL::FT current_offset,
+    EventStatus handleConstOffsetEvent(const CGAL::FT& current_offset,
                                        ConstOffsetEventSPtr event,
                                        PolyhedronSPtr polyhedron);
-    EventStatus handleVanishEvent(const CGAL::FT current_offset,
+    EventStatus handleVanishEvent(const CGAL::FT& current_offset,
                                   VanishEventSPtr event,
                                   PolyhedronSPtr polyhedron);
-    EventStatus handleEdgeEvent(const CGAL::FT current_offset,
+    EventStatus handleEdgeEvent(const CGAL::FT& current_offset,
                                 EdgeEventSPtr event,
                                 PolyhedronSPtr polyhedron);
-    EventStatus handleEdgeMergeEvent(const CGAL::FT current_offset,
+    EventStatus handleEdgeMergeEvent(const CGAL::FT& current_offset,
                                      EdgeMergeEventSPtr event,
                                      PolyhedronSPtr polyhedron);
-    EventStatus handleTriangleEvent(const CGAL::FT current_offset,
+    EventStatus handleTriangleEvent(const CGAL::FT& current_offset,
                                     TriangleEventSPtr event,
                                     PolyhedronSPtr polyhedron);
-    EventStatus handleDblEdgeMergeEvent(const CGAL::FT current_offset,
+    EventStatus handleDblEdgeMergeEvent(const CGAL::FT& current_offset,
                                         DblEdgeMergeEventSPtr event,
                                         PolyhedronSPtr polyhedron);
-    EventStatus handleDblTriangleEvent(const CGAL::FT current_offset,
+    EventStatus handleDblTriangleEvent(const CGAL::FT& current_offset,
                                        DblTriangleEventSPtr event,
                                        PolyhedronSPtr polyhedron);
-    EventStatus handleTetrahedronEvent(const CGAL::FT current_offset,
+    EventStatus handleTetrahedronEvent(const CGAL::FT& current_offset,
                                        TetrahedronEventSPtr event,
                                        PolyhedronSPtr polyhedron);
-    EventStatus handleVertexEvent(const CGAL::FT current_offset,
+    EventStatus handleVertexEvent(const CGAL::FT& current_offset,
                                   VertexEventSPtr event,
                                   PolyhedronSPtr polyhedron);
-    EventStatus handleFlipVertexEvent(const CGAL::FT current_offset,
+    EventStatus handleFlipVertexEvent(const CGAL::FT& current_offset,
                                       FlipVertexEventSPtr event,
                                       PolyhedronSPtr polyhedron);
-    EventStatus handleSurfaceEvent(const CGAL::FT current_offset,
+    EventStatus handleSurfaceEvent(const CGAL::FT& current_offset,
                                    SurfaceEventSPtr event,
                                    PolyhedronSPtr polyhedron);
-    EventStatus handlePolyhedronSplitEvent(const CGAL::FT current_offset,
+    EventStatus handlePolyhedronSplitEvent(const CGAL::FT& current_offset,
                                            PolyhedronSplitEventSPtr event,
                                            PolyhedronSPtr polyhedron);
-    EventStatus handleSplitMergeEvent(const CGAL::FT current_offset,
+    EventStatus handleSplitMergeEvent(const CGAL::FT& current_offset,
                                       SplitMergeEventSPtr event,
                                       PolyhedronSPtr polyhedron);
-    EventStatus handleEdgeSplitEvent(const CGAL::FT current_offset,
+    EventStatus handleEdgeSplitEvent(const CGAL::FT& current_offset,
                                      EdgeSplitEventSPtr event,
                                      PolyhedronSPtr polyhedron);
-    EventStatus handlePierceEvent(const CGAL::FT current_offset,
+    EventStatus handlePierceEvent(const CGAL::FT& current_offset,
                                   PierceEventSPtr event,
                                   PolyhedronSPtr polyhedron);
-    EventStatus handleEvent(const CGAL::FT current_offset,
+    EventStatus handleEvent(const CGAL::FT& current_offset,
                             AbstractEventSPtr event,
                             PolyhedronSPtr polyhedron);
 
@@ -539,7 +556,7 @@ protected:
     SimpleStraightSkel(PolyhedronSPtr polyhedron);
     SimpleStraightSkel(PolyhedronSPtr polyhedron, ControllerSPtr controller);
     SimpleStraightSkel(PolyhedronSPtr polyhedron, ControllerSPtr controller,
-                       const std::list<CGAL::FT>& save_offsets,
+                       const std::vector<CGAL::FT>& save_offsets,
                        const std::filesystem::path& save_path);
 
     PolyhedronSPtr polyhedron_;
@@ -548,7 +565,7 @@ protected:
 
     utils::Base_mesh_offset_visitor* visitor_ = nullptr;
 
-    std::list<CGAL::FT> save_offsets_;
+    std::vector<CGAL::FT> save_offsets_;
     std::filesystem::path save_path_;
     bool use_fast_vertex_splitter_;
     AbstractVertexSplitterSPtr vertex_splitter_;

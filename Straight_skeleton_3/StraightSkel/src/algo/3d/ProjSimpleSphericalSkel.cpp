@@ -79,7 +79,7 @@ void ProjSimpleSphericalSkel::run() {
         CGAL::FT offset_prev = 0.0;
         SphericalAbstractEventSPtr event = nextEvent(polygon, offset);
         while (event) {
-            DEBUG_VAL("-- Next Event: " << event->toString() << " --");
+            DEBUG_PRINT("-- Next Event: " << event->toString() << " --");
             if (controller_) {
                 controller_->wait();
             }
@@ -99,7 +99,7 @@ void ProjSimpleSphericalSkel::run() {
             assert(skel_result_->isConsistent());
             DEBUG_PRINT("-- Finished handling Event --");
             i++;
-            DEBUG_VAR(i);
+            DEBUG_PRINT(i);
             if (controller_) {
                 controller_->wait();
             }
@@ -107,7 +107,7 @@ void ProjSimpleSphericalSkel::run() {
             offset_prev = offset;
         }
         DEBUG_PRINT("== Spherical Skeleton finished ==");
-        DEBUG_VAR(skel_result_->toString());
+        DEBUG_PRINT(skel_result_->toString());
     }
 }
 
@@ -512,7 +512,7 @@ SphericalPolygonSPtr ProjSimpleSphericalSkel::shiftEdges(SphericalPolygonSPtr po
                     *p_center + ((*dir_rotated) * radius));
         }
         if (has_valid_rot_axis_in && has_valid_rot_axis_out) {
-            DEBUG_VAR(KernelWrapper::distance(p_in, p_out));
+            DEBUG_PRINT(KernelWrapper::distance(p_in, p_out));
             vertex_rotated = CircularVertex::create(p_in);
         }
         if (has_valid_rot_axis_in && !has_valid_rot_axis_out) {
@@ -522,8 +522,8 @@ SphericalPolygonSPtr ProjSimpleSphericalSkel::shiftEdges(SphericalPolygonSPtr po
             vertex_rotated = CircularVertex::create(p_out);
         }
         if (!has_valid_rot_axis_in && !has_valid_rot_axis_out) {
-            DEBUG_VAL("Error: CircularVertex does not have an adjacent CircularEdge with a valid rotation axis.");
-            DEBUG_VAR(vertex->toString());
+            DEBUG_PRINT("Error: CircularVertex does not have an adjacent CircularEdge with a valid rotation axis.");
+            DEBUG_PRINT(vertex->toString());
             vertex_rotated = CircularVertex::create(vertex->getPoint());
             vertex_rotated->setPointValid(false);
         }
@@ -557,8 +557,8 @@ SphericalPolygonSPtr ProjSimpleSphericalSkel::shiftEdges(SphericalPolygonSPtr po
             data->setOffsetEdge(edge_rotated);
             result->addEdge(edge_rotated);
         } else {
-            DEBUG_VAL("Error: CircularEdge has an adjacent CircularVertex that was not rotated.");
-            DEBUG_VAR(edge->toString());
+            DEBUG_PRINT("Error: CircularEdge has an adjacent CircularVertex that was not rotated.");
+            DEBUG_PRINT(edge->toString());
         }
     }
 

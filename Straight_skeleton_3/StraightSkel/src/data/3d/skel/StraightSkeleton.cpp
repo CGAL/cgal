@@ -187,7 +187,7 @@ bool StraightSkeleton::isConsistent() const {
     while (it_n != nodes_.end()) {
         NodeSPtr node = *it_n++;
         if (node->getSkel() != shared_from_this()) {
-            DEBUG_VAR(node->toString());
+            DEBUG_PRINT(node->toString());
             result = false;
             break;
         }
@@ -195,12 +195,12 @@ bool StraightSkeleton::isConsistent() const {
         while (it_a != node->arcs().end()) {
             ArcWPtr arc_wptr = *it_a++;
             if (arc_wptr.expired()) {
-                DEBUG_VAR(node->toString());
+                DEBUG_PRINT(node->toString());
             } else {
                 ArcSPtr arc = ArcSPtr(arc_wptr);
                 if (node != arc->getNodeSrc() && node != arc->getNodeDst()) {
-                    DEBUG_VAR(node->toString());
-                    DEBUG_VAR(arc->toString());
+                    DEBUG_PRINT(node->toString());
+                    DEBUG_PRINT(arc->toString());
                     result = false;
                     break;
                 }
@@ -210,14 +210,14 @@ bool StraightSkeleton::isConsistent() const {
         while (it_s != node->sheets().end()) {
             SheetWPtr sheet_wptr = *it_s++;
             if (sheet_wptr.expired()) {
-                DEBUG_VAR(node->toString());
+                DEBUG_PRINT(node->toString());
             } else {
                 SheetSPtr sheet = SheetSPtr(sheet_wptr);
                 std::list<NodeSPtr> nodes = sheet->nodes();
                 if (nodes.end() ==
                         std::find(nodes.begin(), nodes.end(), node)) {
-                    DEBUG_VAR(node->toString());
-                    DEBUG_VAR(sheet->toString());
+                    DEBUG_PRINT(node->toString());
+                    DEBUG_PRINT(sheet->toString());
                     result = false;
                     break;
                 }
@@ -230,22 +230,22 @@ bool StraightSkeleton::isConsistent() const {
         ArcSPtr arc = *it_a++;
         ArcWPtr arc_wptr(arc);
         if (arc->getSkel() != shared_from_this()) {
-            DEBUG_VAR(arc->toString());
+            DEBUG_PRINT(arc->toString());
             result = false;
             break;
         }
         std::list<ArcWPtr> warcs = arc->getNodeSrc()->arcs();
         if (warcs.end() == std::find(warcs.begin(), warcs.end(), arc_wptr)) {
-            DEBUG_VAR(arc->toString());
-            DEBUG_VAR(arc->getNodeSrc()->toString());
+            DEBUG_PRINT(arc->toString());
+            DEBUG_PRINT(arc->getNodeSrc()->toString());
             result = false;
             break;
         }
         if (arc->hasNodeDst()) {
             warcs = arc->getNodeDst()->arcs();
             if (warcs.end() == std::find(warcs.begin(), warcs.end(), arc_wptr)) {
-                DEBUG_VAR(arc->toString());
-                DEBUG_VAR(arc->getNodeDst()->toString());
+                DEBUG_PRINT(arc->toString());
+                DEBUG_PRINT(arc->getNodeDst()->toString());
                 result = false;
                 break;
             }
@@ -255,24 +255,24 @@ bool StraightSkeleton::isConsistent() const {
         while (it_s != arc->sheets().end()) {
             SheetWPtr sheet_wptr = *it_s++;
             if (sheet_wptr.expired()) {
-                DEBUG_VAR(arc->toString());
+                DEBUG_PRINT(arc->toString());
             } else {
                 SheetSPtr sheet = SheetSPtr(sheet_wptr);
                 num_sheets++;
                 std::list<ArcSPtr> arcs = sheet->arcs();
                 if (arcs.end() ==
                         std::find(arcs.begin(), arcs.end(), arc)) {
-                    DEBUG_VAR(arc->toString());
-                    DEBUG_VAR(sheet->toString());
+                    DEBUG_PRINT(arc->toString());
+                    DEBUG_PRINT(sheet->toString());
                     result = false;
                     break;
                 }
             }
         }
         if (num_sheets != 3) {
-            DEBUG_VAL("Warning: Arc does not have 3 sheets.");
-            DEBUG_VAR(arc->toString());
-            DEBUG_VAR(num_sheets);
+            DEBUG_PRINT("Warning: Arc does not have 3 sheets.");
+            DEBUG_PRINT(arc->toString());
+            DEBUG_PRINT(num_sheets);
         }
     }
 
@@ -281,7 +281,7 @@ bool StraightSkeleton::isConsistent() const {
         SheetSPtr sheet = *it_s++;
         SheetWPtr sheet_wptr(sheet);
         if (sheet->getSkel() != shared_from_this()) {
-            DEBUG_VAR(sheet->toString());
+            DEBUG_PRINT(sheet->toString());
             result = false;
             break;
         }
@@ -291,8 +291,8 @@ bool StraightSkeleton::isConsistent() const {
             std::list<SheetWPtr> wsheets = node->sheets();
             if (wsheets.end() == std::find(
                     wsheets.begin(), wsheets.end(), sheet_wptr)) {
-                DEBUG_VAR(sheet->toString());
-                DEBUG_VAR(node->toString());
+                DEBUG_PRINT(sheet->toString());
+                DEBUG_PRINT(node->toString());
                 result = false;
                 break;
             }
@@ -303,8 +303,8 @@ bool StraightSkeleton::isConsistent() const {
             std::list<SheetWPtr> wsheets = arc->sheets();
             if (wsheets.end() == std::find(
                     wsheets.begin(), wsheets.end(), sheet_wptr)) {
-                DEBUG_VAR(sheet->toString());
-                DEBUG_VAR(arc->toString());
+                DEBUG_PRINT(sheet->toString());
+                DEBUG_PRINT(arc->toString());
                 result = false;
                 break;
             }

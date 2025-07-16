@@ -270,7 +270,7 @@ void MainOpenGLWindow::saveLastPoly() {
 void MainOpenGLWindow::dumpWin() {
     std::string now = util::StringFactory::now("%Y-%m-%d_%H%M%S%f");
     std::string filename_bmp = now + ".bmp";
-    DEBUG_VAR(filename_bmp);
+    DEBUG_PRINT(filename_bmp);
     dumpWindow(filename_bmp.c_str());
 }
 
@@ -281,7 +281,7 @@ void MainOpenGLWindow::printScreen() {
         printer2->initBoundingBox(polygon_);
         std::string now = util::StringFactory::now(util::StringFactory::DATE_FORMAT);
         std::string filename_eps = now + ".eps";
-        DEBUG_VAR(filename_eps);
+        DEBUG_PRINT(filename_eps);
         std::ofstream of;
         of.open(filename_eps.c_str());
         if (of.is_open()) {
@@ -340,7 +340,7 @@ void MainOpenGLWindow::printScreen() {
         printer3->setCamCenter(cam_center);
         std::string now = util::StringFactory::now(util::StringFactory::DATE_FORMAT);
         std::string filename_eps = now + ".eps";
-        DEBUG_VAR(filename_eps);
+        DEBUG_PRINT(filename_eps);
         std::ofstream of;
         of.open(filename_eps.c_str());
         if (of.is_open()) {

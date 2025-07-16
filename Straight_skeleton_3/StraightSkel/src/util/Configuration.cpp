@@ -94,7 +94,7 @@ void Configuration::parse(std::istream& input) {
 }
 
 bool Configuration::load(const std::string& filename) {
-    DEBUG_VAR(filename);
+    DEBUG_PRINT(filename);
     bool result = false;
     std::ifstream input(filename.c_str());
     if (input.is_open()) {
@@ -102,7 +102,7 @@ bool Configuration::load(const std::string& filename) {
         result = true;
         input.close();
     } else {
-        DEBUG_VAL("Error: Config file not found.");
+        DEBUG_PRINT("Error: Config file not found.");
     }
     return result;
 }
@@ -123,7 +123,7 @@ std::string Configuration::getString(const std::string& section, const std::stri
     std::string mapkey = section + "." + key;
     if (properties_.find(mapkey) == properties_.end()) {
         // map does not contain this key
-        DEBUG_VAL("key=" << mapkey << " not found.");
+        DEBUG_PRINT("key=" << mapkey << " not found.");
     } else {
         result = properties_[mapkey];
     }

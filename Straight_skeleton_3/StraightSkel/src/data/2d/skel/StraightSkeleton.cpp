@@ -180,7 +180,7 @@ bool StraightSkeleton::isConsistent() const {
     while (it_n != nodes_.end()) {
         NodeSPtr node = *it_n++;
         if (node->getSkel() != shared_from_this()) {
-            DEBUG_VAR(node->toString());
+            DEBUG_PRINT(node->toString());
             result = false;
             break;
         }
@@ -188,12 +188,12 @@ bool StraightSkeleton::isConsistent() const {
         while (it_a != node->arcs().end()) {
             ArcWPtr arc_wptr = *it_a++;
             if (arc_wptr.expired()) {
-                DEBUG_VAR(node->toString());
+                DEBUG_PRINT(node->toString());
             } else {
                 ArcSPtr arc = ArcSPtr(arc_wptr);
                 if (node != arc->getNodeSrc() && node != arc->getNodeDst()) {
-                    DEBUG_VAR(node->toString());
-                    DEBUG_VAR(arc->toString());
+                    DEBUG_PRINT(node->toString());
+                    DEBUG_PRINT(arc->toString());
                     result = false;
                     break;
                 }
@@ -206,22 +206,22 @@ bool StraightSkeleton::isConsistent() const {
         ArcSPtr arc = *it_a++;
         ArcWPtr arc_wptr(arc);
         if (arc->getSkel() != shared_from_this()) {
-            DEBUG_VAR(arc->toString());
+            DEBUG_PRINT(arc->toString());
             result = false;
             break;
         }
         std::list<ArcWPtr> warcs = arc->getNodeSrc()->arcs();
         if (warcs.end() == std::find(warcs.begin(), warcs.end(), arc_wptr)) {
-            DEBUG_VAR(arc->toString());
-            DEBUG_VAR(arc->getNodeSrc()->toString());
+            DEBUG_PRINT(arc->toString());
+            DEBUG_PRINT(arc->getNodeSrc()->toString());
             result = false;
             break;
         }
         if (arc->hasNodeDst()) {
             warcs = arc->getNodeDst()->arcs();
             if (warcs.end() == std::find(warcs.begin(), warcs.end(), arc_wptr)) {
-                DEBUG_VAR(arc->toString());
-                DEBUG_VAR(arc->getNodeDst()->toString());
+                DEBUG_PRINT(arc->toString());
+                DEBUG_PRINT(arc->getNodeDst()->toString());
                 result = false;
                 break;
             }

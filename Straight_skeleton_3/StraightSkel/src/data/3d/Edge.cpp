@@ -409,7 +409,7 @@ EdgeSPtr Edge::next(VertexSPtr vertex) const {
                 EdgeSPtr edge = *it_e++;
                 double angle = angleTo(edge);
                  if (angle == angle_min) {
-                    DEBUG_VAL("Warning: Not able to distinguish possible next edges.");
+                    DEBUG_PRINT("Warning: Not able to distinguish possible next edges.");
                 }
                 if (angle <= angle_min) {
                     result = edge;
@@ -454,7 +454,7 @@ EdgeSPtr Edge::prev(VertexSPtr vertex) const {
                 EdgeSPtr edge = *it_e++;
                 double angle = angleTo(edge);
                 if (angle == angle_max) {
-                    DEBUG_VAL("Warning: Not able to distinguish possible next edges.");
+                    DEBUG_PRINT("Warning: Not able to distinguish possible next edges.");
                 }
                 if (angle >= angle_max) {
                     result = edge;
@@ -570,8 +570,8 @@ double Edge::angle() const {
             result = 2.0*M_PI - result;
         }
     } else {
-        DEBUG_VAL("Warning: Not able to determine angle.");
-        DEBUG_VAL(toString());
+        DEBUG_PRINT("Warning: Not able to determine angle.");
+        DEBUG_PRINT(toString());
     }
     return result;
 }
@@ -601,8 +601,8 @@ bool Edge::isReflex() const {
         }
 #endif
     } else {
-        DEBUG_VAL("Warning: Not able to determine if edge is reflex.");
-        DEBUG_VAL(toString());
+        DEBUG_PRINT("Warning: Not able to determine if edge is reflex.");
+        DEBUG_PRINT(toString());
     }
     return result;
 }

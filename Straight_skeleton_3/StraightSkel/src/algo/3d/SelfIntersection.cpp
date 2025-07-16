@@ -206,10 +206,10 @@ bool SelfIntersection::isSelfIntersectingFacet(FacetSPtr facet) {
                 continue;
             }
             if (intersectEdges(facet, edge1, edge2, true)) {
-                // std::cout << "edges intersect within the face:" << std::endl;
-                // std::cout << facet->toString() << std::endl;
-                // std::cout << edge1->toString() << std::endl;
-                // std::cout << edge2->toString() << std::endl;
+                // DEBUG_PRINT("edges intersect within the face:");
+                // DEBUG_PRINT(facet->toString());
+                // DEBUG_PRINT(edge1->toString());
+                // DEBUG_PRINT(edge2->toString());
 #ifdef CGAL_SS3_EXIT_ASAP
                 return true;
 #else
@@ -345,15 +345,15 @@ CGAL::Sign SelfIntersection::SideOfBisector(FacetSPtr facet, VertexSPtr vertex, 
         CGAL::FT sq_dist_in = KernelWrapper::squared_distance(edge_in->line(), point);
         CGAL::FT sq_dist_out = KernelWrapper::squared_distance(edge_out->line(), point);
 
-        // std::cout << "p_in = " << *p_in << std::endl;
-        // std::cout << "p_mid = " << *p_mid << std::endl;
-        // std::cout << "p_out = " << *p_out << std::endl;
-        // std::cout << "query = " << *point << std::endl;
-        // std::cout << "or_in = " << or_in << std::endl;
-        // std::cout << "or_out = " << or_out << std::endl;
-        // std::cout << "or_edge = " << or_edge << std::endl;
-        // std::cout << "sq_dist_in = " << sq_dist_in << std::endl;
-        // std::cout << "sq_dist_out = " << sq_dist_out << std::endl;
+        // DEBUG_PRINT("p_in = " << *p_in);
+        // DEBUG_PRINT("p_mid = " << *p_mid);
+        // DEBUG_PRINT("p_out = " << *p_out);
+        // DEBUG_PRINT("query = " << *point);
+        // DEBUG_PRINT("or_in = " << or_in);
+        // DEBUG_PRINT("or_out = " << or_out);
+        // DEBUG_PRINT("or_edge = " << or_edge);
+        // DEBUG_PRINT("sq_dist_in = " << sq_dist_in);
+        // DEBUG_PRINT("sq_dist_out = " << sq_dist_out);
 
         // that's for the left turn (convex); for reflex, it's the opposite
         if(or_in == CGAL::POSITIVE) {
@@ -487,7 +487,7 @@ bool SelfIntersection::isInsideWithRayShooting(Point3SPtr point,
     CGAL::Random rng(0);
     CGAL::Random_points_on_sphere_3<Point3> random_point_on_sphere(1, rng);
 
-    // some initial rays that we know are in the plane, and know will hit something
+    // some initial rays that we know are in the plane and will hit something
     std::vector<Point3> candidate_ray_targets;
 
     std::list<EdgeSPtr>::iterator it_e = facet->edges().begin();
@@ -499,7 +499,7 @@ bool SelfIntersection::isInsideWithRayShooting(Point3SPtr point,
         // std::cout << " p_src = " << *p_src << std::endl;
         // std::cout << " p_dst = " << *p_dst << std::endl;
 
-        // @todo this only stands for EPECK and faces merged with zero tolerance
+        // this only stands for EPECK and flat faces
         CGAL_assertion(pl->has_on(*point));
         CGAL_assertion(pl->has_on(*p_src));
         CGAL_assertion(pl->has_on(*p_dst));
@@ -611,10 +611,10 @@ bool SelfIntersection::isInsideWithRayShooting(Point3SPtr point,
         Point3SPtr p_src = closest_edge->src(facet)->getPoint();
         Point3SPtr p_dst = closest_edge->dst(facet)->getPoint();
 
-        // std::cout << "p_src = " << *p_src << std::endl;
-        // std::cout << "p_src + normal = " << *p_src + *normal << std::endl;
-        // std::cout << "p_dst = " << *p_dst << std::endl;
-        // std::cout << "point = " << *point << std::endl;
+        // DEBUG_PRINT("p_src = " << *p_src);
+        // DEBUG_PRINT("p_src + normal = " << *p_src + *normal);
+        // DEBUG_PRINT("p_dst = " << *p_dst);
+        // DEBUG_PRINT("point = " << *point);
         CGAL_assertion(!CGAL::collinear(*p_src, *p_src + *normal, *p_dst));
         CGAL_assertion(CGAL::scalar_product(Vector3(*p_src, *p_src + *normal), Vector3(*p_src, *p_dst)) == 0);
 
@@ -632,9 +632,9 @@ bool SelfIntersection::isEdgeInsideFacet(FacetSPtr facet,
                                          EdgeSPtr edge,
                                          bool handle_degree_1_as_ray)
 {
-    // std::cout << "\n> isEdgeInsideFacet()" << std::endl;
-    // std::cout << "  " << edge->toString() << std::endl;
-    // std::cout << "  " << facet->toString() << std::endl;
+    // DEBUG_PRINT("\n> isEdgeInsideFacet()");
+    // DEBUG_PRINT("  " << edge->toString());
+    // DEBUG_PRINT("  " << facet->toString());
 
     bool result = false;
 
@@ -709,14 +709,11 @@ bool SelfIntersection::isEdgeInsideFacet(FacetSPtr facet,
             }
 #else
             if (isInsideWithRayShooting(point, facet)) {
-//                CGAL_assertion(result); // @tmp
 # ifdef CGAL_SS3_EXIT_ASAP
                 return true;
 # else
                 result = true;
 # endif
-            } else {
-//              CGAL_assertion(!result); // @tmp
             }
 #endif
         }

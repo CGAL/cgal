@@ -82,7 +82,7 @@ void FastStraightSkel::run() {
         int direction = -1;
         EdgeEventSPtr event = nextEvent(polygon, offset, direction);
         while (polygon->vertices().size() > 0) {
-            DEBUG_VAL("-- Next Event: " << event->toString() << " --");
+            DEBUG_PRINT("-- Next Event: " << event->toString() << " --");
             if (controller_) {
                 event->setHighlight(true);
                 controller_->wait();
@@ -110,7 +110,7 @@ void FastStraightSkel::run() {
                 util::StringFactory::fromDouble(time) + "; ");
         //skel_result_->appendDescription("controller=" +
         //        util::StringFactory::fromBoolean(controller_) + "; ");
-        DEBUG_VAR(skel_result_->toString());
+        DEBUG_PRINT(skel_result_->toString());
     }
 }
 

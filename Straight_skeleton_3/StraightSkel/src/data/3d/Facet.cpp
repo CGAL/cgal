@@ -160,7 +160,7 @@ void Facet::addEdge(EdgeSPtr edge) {
         edge->setFacetR(shared_from_this());
         edge->setFacetRListIt(it);
     } else {
-        DEBUG_VAR(edge->toString());
+        DEBUG_PRINT(edge->toString());
         throw std::runtime_error("The given edge already has a left and a right facet.");
     }
     VertexSPtr vertex_src = edge->src(shared_from_this());
@@ -1118,8 +1118,8 @@ bool Facet::makeFirstConvex() {
         sortVertices();
     }
     if (!result) {
-        DEBUG_VAL("Warning: Unable to make first 3 vertices convex.");
-        // DEBUG_VAR(toString());
+        DEBUG_PRINT("Warning: Unable to make first 3 vertices convex.");
+        // DEBUG_PRINT(toString());
     }
 
     return result;

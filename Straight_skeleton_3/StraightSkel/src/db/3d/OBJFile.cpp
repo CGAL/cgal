@@ -184,8 +184,8 @@ PolyhedronSPtr OBJFile::load(const std::string& filename) {
         while (it_e != result->edges().end()) {
             EdgeSPtr edge = *it_e++;
             if (!(edge->getFacetL() && edge->getFacetR())) {
-                DEBUG_VAL("Warning: Polyhedron has no closed boundary.");
-                DEBUG_VAR(edge->toString());
+                DEBUG_PRINT("Warning: Polyhedron has no closed boundary.");
+                DEBUG_PRINT(edge->toString());
             }
         }
 
@@ -219,8 +219,8 @@ bool OBJFile::save(const std::string& filename,
 {
     bool result = true;
     DEBUG_PRINT("-- Save OBJ to " << filename << " --");
-    DEBUG_PRINT("   do_triangulate: " << std::boolalpha << do_triangulate << "\n"
-                 << "   convert_to_double: " << convert_to_double);
+    DEBUG_PRINT("   do_triangulate: " << std::boolalpha << do_triangulate << "\n" <<
+                "   convert_to_double: " << convert_to_double);
     DEBUG_PRINT(polyhedron->vertices().size() << " NV, " << polyhedron->facets().size() << " NF");
 
     // std::cout << polyhedron->toString() << std::endl;
@@ -242,7 +242,6 @@ bool OBJFile::save(const std::string& filename,
     std::map<VertexSPtr, int> vertex_to_index;
     int next_index = 1; // OBJ indices start at 1
 
-    // Fill vertex_to_index by looping over polyhedron->vertices()
     for (const auto& vertex : polyhedron->vertices()) {
         vertex_to_index[vertex] = next_index++;
     }
@@ -265,8 +264,6 @@ bool OBJFile::save(const std::string& filename,
     std::list<FacetSPtr>::iterator it_f = polyhedron->facets().begin();
     while (it_f != polyhedron->facets().end()) {
         FacetSPtr facet = *it_f++;
-        CGAL_assertion(facet->getID() != -1);
-        // std::cout << "handle facet " << facet->getID() << std::endl;
 
         bool do_triangulate_face = do_triangulate;
         if (facet->edges().size() < 3)
@@ -329,7 +326,7 @@ bool OBJFile::save(const std::string& filename,
                     {
                         DEBUG_PRINT("Error: Intersection of constraints");
                         DEBUG_PRINT("While inserting " << *(v0->getPoint()) << " || " << *(v1->getPoint()));
-                        DEBUG_VAR(facet->toString());
+                        DEBUG_PRINT(facet->toString());
                         CGAL_warning_msg(false, "Intersections in CDT2 not allowed");
                         do_triangulate_face = false;
                         break;

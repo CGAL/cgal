@@ -136,6 +136,10 @@ int AbstractFile::mergeCoplanarFacets(PolyhedronSPtr polyhedron,
         }
     }
 
+    db::_3d::AbstractFile::sanitize(polyhedron);
+
+    polyhedron->initializeAllIDs();
+
     DEBUG_PRINT("  final face count: " << polyhedron->facets().size());
 
     // db::_3d::OBJFile::save("results/coplanar_merge_after.obj", polyhedron,
@@ -261,7 +265,6 @@ int AbstractFile::removeVerticesDegLt3(PolyhedronSPtr polyhedron) {
             if (fR->vertices().size() == 2) {
                 std::swap(fL, fR);
             }
-            std::cout << "Incident facets:\n" << fL->getID() << "\n" << fR->getID() << std::endl;
 
             if (fL->vertices().size() == 2) {
                 if (fR->vertices().size() == 2) {

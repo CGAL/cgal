@@ -118,7 +118,7 @@ void VolumeVertexSplitter::closeFacets(PolyhedronSPtr polyhedron) {
             polyhedron->addEdge(edge);
             facet->addEdge(edge);
         } else {
-            DEBUG_VAR(facet->toString());
+            DEBUG_PRINT(facet->toString());
         }
     }
 }
@@ -201,7 +201,7 @@ PolyhedronSPtr VolumeVertexSplitter::splitVertex(VertexSPtr vertex) {
                                             PolyhedronSPtr& poly_c_offset)
         {
             if (!SelfIntersection::hasSelfIntersectingSurface(poly_c_offset)) {
-                DEBUG_VAL("Valid split-combination found: " << combiToString(combination));
+                DEBUG_PRINT("Valid split-combination found: " << combiToString(combination));
                 combi_opt_vol = combination;
                 poly_opt_vol = poly_c_offset;
             }
@@ -217,7 +217,7 @@ PolyhedronSPtr VolumeVertexSplitter::splitVertex(VertexSPtr vertex) {
             updateOptimalCombination(combination, poly_c_offset);
         }
     }
-    DEBUG_VAL("Selected split-combination: " << combiToString(combi_opt_vol));
+    DEBUG_PRINT("Selected split-combination: " << combiToString(combi_opt_vol));
     CombiVertexSplitter::splitVertex(vertex, combi_opt_vol);
     return polyhedron;
 }

@@ -182,20 +182,20 @@ bool Polygon::isConsistent() const {
     while (it_v != vertices_.end()) {
         VertexSPtr vertex = *it_v++;
         if (vertex->getPolygon() != shared_from_this()) {
-            DEBUG_VAR(vertex->toString());
+            DEBUG_PRINT(vertex->toString());
             result = false;
         }
         if (vertex->getEdgeOut()) {
             if (vertex->getEdgeOut()->getVertexSrc() != vertex) {
-                DEBUG_VAR(vertex->toString());
-                DEBUG_VAR(vertex->getEdgeOut()->toString());
+                DEBUG_PRINT(vertex->toString());
+                DEBUG_PRINT(vertex->getEdgeOut()->toString());
                 result = false;
             }
         }
         if (vertex->getEdgeIn()) {
             if (vertex->getEdgeIn()->getVertexDst() != vertex) {
-                DEBUG_VAR(vertex->toString());
-                DEBUG_VAR(vertex->getEdgeOut()->toString());
+                DEBUG_PRINT(vertex->toString());
+                DEBUG_PRINT(vertex->getEdgeOut()->toString());
                 result = false;
             }
         }
@@ -204,27 +204,27 @@ bool Polygon::isConsistent() const {
     while (it_e != edges_.end()) {
         EdgeSPtr edge = *it_e++;
         if (edge->getPolygon() != shared_from_this()) {
-            DEBUG_VAR(edge->toString());
+            DEBUG_PRINT(edge->toString());
             result = false;
         }
         if (edge->getVertexSrc()) {
             if (edge->getVertexSrc()->getEdgeOut() != edge) {
-                DEBUG_VAR(edge->toString());
-                DEBUG_VAR(edge->getVertexSrc()->toString());
+                DEBUG_PRINT(edge->toString());
+                DEBUG_PRINT(edge->getVertexSrc()->toString());
                 result = false;
             }
         } else {
-            DEBUG_VAR(edge->toString());
+            DEBUG_PRINT(edge->toString());
             result = false;
         }
         if (edge->getVertexDst()) {
             if (edge->getVertexDst()->getEdgeIn() != edge) {
-                DEBUG_VAR(edge->toString());
-                DEBUG_VAR(edge->getVertexDst()->toString());
+                DEBUG_PRINT(edge->toString());
+                DEBUG_PRINT(edge->getVertexDst()->toString());
                 result = false;
             }
         } else {
-            DEBUG_VAR(edge->toString());
+            DEBUG_PRINT(edge->toString());
             result = false;
         }
     }

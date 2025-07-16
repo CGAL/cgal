@@ -19,11 +19,15 @@
 #ifndef DEBUG_H
 #define DEBUG_H
 
-#include <cstdio>
-#include <cassert>
-#include <iostream>
 #include "config.h"
 #include "util/StackTrace.h"
+
+#include <cassert>
+#include <cstdio>
+#include <iomanip>
+#include <iostream>
+#include <sstream>
+#include <string>
 
 #ifdef DEBUG
 
@@ -32,29 +36,30 @@
 /* just a helper for code location */
 #define LOC DBGOUT << "[DEBUG] " << __FILE__ << ":" << __LINE__ << ": ";
 
+#ifndef DEBUG_PRINT_VERBOSITY
+#  define DEBUG_PRINT_VERBOSITY 1024
+#endif
+
 /* macro using var args */
-#define DEBUG_PRINT(...) /*LOC*/ DBGOUT << __VA_ARGS__ << std::endl;
+#define DEBUG_CODE(code) code
+#define DEBUG_PRINT(m) /*LOC*/ DBGOUT << m << std::endl;
+#define DEBUG_PRINT_V(l,m) if (l <= DEBUG_PRINT_VERBOSITY) /*LOC*/ DBGOUT << m << std::endl;
+#define DEBUG_PRINT_IF(c,l,m) if ( (c) && l <= DEBUG_PRINT_VERBOSITY) /*LOC*/ DBGOUT << m << std::endl;
 
-/* macro for general debug print statements. */
-#define DEBUG_VAL(var) /*LOC*/ DBGOUT << var << std::endl;
-
-/* macro that dumps a variable name and its actual value */
-#define DEBUG_VAR(var) /*LOC*/ DBGOUT << (#var) << "=" << var << std::endl;
-
-/* macro that warns, if a smart pointer is invalid */
+/* macros that warn if a smart pointer is invalid */
 #define DEBUG_SPTR(sptr) if (!sptr) { LOC DBGOUT << "shared pointer is invalid: " << (#sptr) << std::endl; util::StackTrace::print(DBGOUT); }
 #define DEBUG_WPTR(wptr) if (wptr.expired()) { LOC DBGOUT << "weak pointer is expired: " << (#wptr) << std::endl; util::StackTrace::print(DBGOUT); }
 
 #else
 
 /* when debug isn't defined all the macro calls do absolutely nothing */
-#define DEBUG_PRINT(...)
-#define DEBUG_VAL(var)
-#define DEBUG_VAR(var)
+#define DEBUG_CODE(code)
+#define DEBUG_PRINT(m)
+#define DEBUG_PRINT_V(l,m)
+#define DEBUG_PRINT_IF(c,l,m)
 #define DEBUG_SPTR(sptr)
 #define DEBUG_WPTR(wptr)
 
-#endif
+#endif // DEBUG
 
 #endif /* DEBUG_H */
-

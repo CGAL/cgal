@@ -227,7 +227,6 @@ set(algo_2d_SOURCES
         src/algo/2d/SkelMeshGenerator.cpp)
 set(algo_3d_SOURCES
         src/algo/3d/KernelWrapper.cpp
-        src/algo/3d/OutwardMeshOffset.cpp
         src/algo/3d/SimpleStraightSkel.cpp
         src/algo/3d/PolyhedronBuilder.cpp
         src/algo/3d/LineInFacet.cpp
@@ -285,11 +284,11 @@ target_link_libraries(StraightSkel PUBLIC skeldata2d skelalgo2d skeldata3d skela
 add_executable(offset_mesh_outwards src/offset_mesh_outwards.cpp)
 target_link_libraries(offset_mesh_outwards PUBLIC skeldata2d skelalgo2d skeldata3d skelalgo3d skeldb skelui CGAL::CGAL)
 
-add_executable(convert_to_weighted_PLY misc/convert_to_weighted_PLY.cpp)
-target_link_libraries(convert_to_weighted_PLY PUBLIC skeldata2d skelalgo2d skeldata3d skelalgo3d skeldb skelui CGAL::CGAL)
+# add_executable(convert_to_weighted_PLY misc/convert_to_weighted_PLY.cpp)
+# target_link_libraries(convert_to_weighted_PLY PUBLIC skeldata2d skelalgo2d skeldata3d skelalgo3d skeldb skelui CGAL::CGAL)
 
-add_executable(add_or_remove_bbox misc/add_or_remove_bbox.cpp)
-target_link_libraries(add_or_remove_bbox PUBLIC skeldata2d skelalgo2d skeldata3d skelalgo3d skeldb skelui CGAL::CGAL)
+# add_executable(add_or_remove_bbox misc/add_or_remove_bbox.cpp)
+# target_link_libraries(add_or_remove_bbox PUBLIC skeldata2d skelalgo2d skeldata3d skelalgo3d skeldb skelui CGAL::CGAL)
 
 add_executable(compare_outputs misc/compare_outputs.cpp)
 target_link_libraries(compare_outputs PUBLIC skeldata2d skelalgo2d skeldata3d skelalgo3d skeldb skelui CGAL::CGAL)

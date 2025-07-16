@@ -79,7 +79,7 @@ void RotSimpleSphericalSkel::run() {
         CGAL::FT offset_prev = 0.0;
         SphericalAbstractEventSPtr event = nextEvent(polygon, offset);
         while (event) {
-            DEBUG_VAL("-- Next Event: " << event->toString() << " --");
+            DEBUG_PRINT("-- Next Event: " << event->toString() << " --");
             if (controller_) {
                 controller_->wait();
             }
@@ -99,7 +99,7 @@ void RotSimpleSphericalSkel::run() {
             assert(skel_result_->isConsistent());
             DEBUG_PRINT("-- Finished handling Event --");
             i++;
-            DEBUG_VAR(i);
+            DEBUG_PRINT(i);
             if (controller_) {
                 controller_->wait();
             }
@@ -107,7 +107,7 @@ void RotSimpleSphericalSkel::run() {
             offset_prev = offset;
         }
         DEBUG_PRINT("== Spherical Skeleton finished ==");
-        DEBUG_VAR(skel_result_->toString());
+        DEBUG_PRINT(skel_result_->toString());
     }
 }
 
@@ -530,9 +530,9 @@ SphericalPolygonSPtr RotSimpleSphericalSkel::shiftEdges(SphericalPolygonSPtr pol
         CircularVertexSPtr vertex_dst = edge_begin->getVertexDst();
         SphericalSkelVertexDataSPtr data_dst =
                 std::dynamic_pointer_cast<SphericalSkelVertexData>(vertex_dst->getData());
-        DEBUG_VAR(data_dst->getSpeed());
+        DEBUG_PRINT(data_dst->getSpeed());
         data_dst->setSpeed(speed_dst);
-        DEBUG_VAR(data_dst->getSpeed());
+        DEBUG_PRINT(data_dst->getSpeed());
         CircularEdgeSPtr edge;
         while (edge != edge_begin) {
             if (!edge) {
@@ -602,7 +602,7 @@ SphericalPolygonSPtr RotSimpleSphericalSkel::shiftEdges(SphericalPolygonSPtr pol
 
                 if (edge->next() == edge_begin) {
                     vertex_dst_rot = vertex_begin_rot;
-                    DEBUG_VAR(KernelWrapper::distance(p_dst_rot, vertex_begin_rot->getPoint()));
+                    DEBUG_PRINT(KernelWrapper::distance(p_dst_rot, vertex_begin_rot->getPoint()));
                 } else {
                     vertex_dst_rot = CircularVertex::create(p_dst_rot);
                     SphericalSkelVertexDataSPtr data_dst_rot =
@@ -646,7 +646,7 @@ void RotSimpleSphericalSkel::checkAngles(SphericalPolygonSPtr polygon) {
         Plane3SPtr plane_out = vertex->getEdgeOut()->supportingPlane();
         double angle_in =  M_PI - KernelWrapper::angle(plane_arc, plane_in);
         double angle_out = KernelWrapper::angle(plane_arc, plane_out);
-        DEBUG_VAR(angle_in - angle_out);
+        DEBUG_PRINT(angle_in - angle_out);
     }
 }
 

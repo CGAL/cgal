@@ -76,7 +76,7 @@ int AbstractFile::mergeCollinearEdges(PolygonSPtr polygon, double epsilon) {
     it_v = vertices_toremove.begin();
     while (it_v != vertices_toremove.end()) {
         VertexSPtr vertex = *it_v++;
-        DEBUG_VAR(vertex->toString());
+        DEBUG_PRINT(vertex->toString());
         EdgeSPtr edge_in = vertex->getEdgeIn();
         EdgeSPtr edge_out = vertex->getEdgeOut();
         VertexSPtr vertex_dst = vertex->next();
