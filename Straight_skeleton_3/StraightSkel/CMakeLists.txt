@@ -251,47 +251,22 @@ add_library(skelalgo3d SHARED ${algo_3d_SOURCES})
 target_link_libraries(skelalgo2d PUBLIC skeldata2d CGAL::CGAL)
 target_link_libraries(skelalgo3d PUBLIC skelalgo2d skeldata3d skeldb CGAL::CGAL CGAL::Eigen3_support)
 
-
-# build user interface
-set(ui_SOURCES
-        src/ui/vecmath.cpp)
-set(ui_gl_SOURCES
-        src/ui/gl/Camera.cpp
-        src/ui/gl/OpenGLWindow.cpp
-        src/ui/gl/MainOpenGLWindow.cpp
-        src/ui/gl/KeyboardAdapter.cpp
-        src/ui/gl/MouseAdapter.cpp)
-set(ui_ps_SOURCES
-        src/ui/ps/PSPrinter.cpp
-        src/ui/ps/SpacePSPrinter.cpp
-        src/ui/ps/PlanePSPrinter.cpp
-        src/ui/ps/CutPatternPrinter.cpp)
-add_library(skelui SHARED ${ui_SOURCES} ${ui_gl_SOURCES} ${ui_ps_SOURCES})
-
-if(BUILD_OWN_KERNEL)
-    target_link_libraries(skelui PUBLIC skelutil m GL GLU glut ${Boost_LIBRARIES} skelkernel CGAL::CGAL)
-else()
-    target_link_libraries(skelui PUBLIC skelutil m GL GLU glut ${Boost_LIBRARIES} CGAL::CGAL)
-endif()
-
-
-
 # build executable
 set(StraightSkel_SOURCES src/main.cpp)
 add_executable(StraightSkel ${StraightSkel_SOURCES})
-target_link_libraries(StraightSkel PUBLIC skeldata2d skelalgo2d skeldata3d skelalgo3d skeldb skelui CGAL::CGAL)
+target_link_libraries(StraightSkel PUBLIC skeldata2d skelalgo2d skeldata3d skelalgo3d skeldb CGAL::CGAL)
 
 add_executable(offset_mesh_outwards src/offset_mesh_outwards.cpp)
-target_link_libraries(offset_mesh_outwards PUBLIC skeldata2d skelalgo2d skeldata3d skelalgo3d skeldb skelui CGAL::CGAL)
+target_link_libraries(offset_mesh_outwards PUBLIC skeldata2d skelalgo2d skeldata3d skelalgo3d skeldb CGAL::CGAL)
 
 # add_executable(convert_to_weighted_PLY misc/convert_to_weighted_PLY.cpp)
-# target_link_libraries(convert_to_weighted_PLY PUBLIC skeldata2d skelalgo2d skeldata3d skelalgo3d skeldb skelui CGAL::CGAL)
+# target_link_libraries(convert_to_weighted_PLY PUBLIC skeldata2d skelalgo2d skeldata3d skelalgo3d skeldb CGAL::CGAL)
 
 # add_executable(add_or_remove_bbox misc/add_or_remove_bbox.cpp)
-# target_link_libraries(add_or_remove_bbox PUBLIC skeldata2d skelalgo2d skeldata3d skelalgo3d skeldb skelui CGAL::CGAL)
+# target_link_libraries(add_or_remove_bbox PUBLIC skeldata2d skelalgo2d skeldata3d skelalgo3d skeldb CGAL::CGAL)
 
 add_executable(compare_outputs misc/compare_outputs.cpp)
-target_link_libraries(compare_outputs PUBLIC skeldata2d skelalgo2d skeldata3d skelalgo3d skeldb skelui CGAL::CGAL)
+target_link_libraries(compare_outputs PUBLIC skeldata2d skelalgo2d skeldata3d skelalgo3d skeldb CGAL::CGAL)
 
 # copy config file to build dir
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/StraightSkel.ini
@@ -399,6 +374,5 @@ install(TARGETS skeldata3d DESTINATION lib${LIB_SUFFIX})
 install(TARGETS skeldb DESTINATION lib${LIB_SUFFIX})
 install(TARGETS skelalgo2d DESTINATION lib${LIB_SUFFIX})
 install(TARGETS skelalgo3d DESTINATION lib${LIB_SUFFIX})
-install(TARGETS skelui DESTINATION lib${LIB_SUFFIX})
 install(TARGETS StraightSkel DESTINATION bin)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/StraightSkel.ini DESTINATION etc/StraightSkel)

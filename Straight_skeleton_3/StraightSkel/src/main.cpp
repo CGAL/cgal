@@ -57,9 +57,6 @@
 #include "algo/3d/SimpleStraightSkel.h"
 #include "algo/3d/GraphChecker.h"
 
-#include "ui/gl/ptrs.h"
-#include "ui/gl/MainOpenGLWindow.h"
-
 #include <cstdlib>
 #include <cstring>
 #include <filesystem>
@@ -197,7 +194,6 @@ int main(int argc, const char* argv[]) {
     bool rand_move_points_when_degenerated = false;
     CGAL::FT rand_move_points_range = 0.001;
     bool translate_and_scale_polyhedron = false;
-    bool translate_and_scale_view = false;
     float translate[3];
     for (unsigned int i = 0; i < 3; i++) {
         translate[i] = 0.0f;
@@ -213,8 +209,6 @@ int main(int argc, const char* argv[]) {
         }
         translate_and_scale_polyhedron =
                 config->getBool("main", "translate_and_scale_polyhedron");
-        translate_and_scale_view =
-                config->getBool("main", "translate_and_scale_view");
     }
 
     // load input
@@ -272,21 +266,7 @@ int main(int argc, const char* argv[]) {
             std::exit(1); // fix below to properly carry the "rand_move_points_range" value
             algo::_2d::PolygonTransformation::randMovePoints(polygon, CGAL::to_double(rand_move_points_range));
         }
-        if (translate_and_scale_view) {
-            data::_2d::Point2SPtr p_box_min =
-                    algo::_2d::PolygonTransformation::boundingBoxMin(polygon);
-            data::_2d::Point2SPtr p_box_max =
-                    algo::_2d::PolygonTransformation::boundingBoxMax(polygon);
-            float scale_min = std::numeric_limits<float>::max();
-            for (unsigned int i = 0; i < 2; i++) {
-                translate[i] = CGAL::to_double(-((*p_box_max)[i] + (*p_box_min)[i])/2.0);
-                float scale_cur = CGAL::to_double(20.0/((*p_box_max)[i] - (*p_box_min)[i]));
-                if (scale_cur < scale_min) {
-                    scale_min = scale_cur;
-                }
-                scale = scale_min;
-            }
-        }
+
         if (!polygon->isConsistent()) {
             std::cout << "Warning: Polygon with PolyID=" << id
                 << " is not consistent." << std::endl;
@@ -391,41 +371,9 @@ int main(int argc, const char* argv[]) {
             std::cerr << "Error: invalid polyhedron (bad perturbation?)" << std::endl;
             return EXIT_FAILURE;
         }
-
-        if (translate_and_scale_view) {
-            data::_3d::Point3SPtr p_box_min =
-                    algo::_3d::PolyhedronTransformation::boundingBoxMin(polyhedron);
-            data::_3d::Point3SPtr p_box_max =
-                    algo::_3d::PolyhedronTransformation::boundingBoxMax(polyhedron);
-            float scale_min = std::numeric_limits<float>::max();
-            for (unsigned int i = 0; i < 3; i++) {
-                translate[i] = CGAL::to_double(-((*p_box_max)[i] + (*p_box_min)[i])/2.0);
-                float scale_cur = CGAL::to_double(20.0/((*p_box_max)[i] - (*p_box_min)[i]));
-                if (scale_cur < scale_min) {
-                    scale_min = scale_cur;
-                }
-                scale = scale_min;
-            }
-        }
     }
 
-    // create OpenGL window
-    bool no_window = isSet("--no-window", argc, argv);
     algo::ControllerSPtr controller;
-    ui::gl::MainOpenGLWindowSPtr window;
-    if (!no_window) {
-        controller = algo::Controller::create();
-        controller->togglePause();
-        int width = config->getInt("ui_gl_MainOpenGLWindow", "width");
-        if (width == 0) {
-            width = 800;
-        }
-        int height = config->getInt("ui_gl_MainOpenGLWindow", "height");
-        if (height == 0) {
-            height = 600;
-        }
-        window = ui::gl::MainOpenGLWindow::create(argc, argv, width, height, controller);
-    }
 
     std::vector<CGAL::FT> save_offsets;
     const char* chr_save_offsets = getOption("--save-offsets", argc, argv);
@@ -439,44 +387,17 @@ int main(int argc, const char* argv[]) {
 
     // run algorithm
     // has to be in this scope otherwise the algorithm will be destroyed
-    ThreadSPtr thread_algo;
-    ThreadSPtr thread_window;
     algo::_2d::SimpleStraightSkelSPtr algoskel2d;
     algo::_3d::SimpleStraightSkelSPtr algoskel3d;
     if (num_dims == 2) {
-        algoskel2d = algo::_2d::SimpleStraightSkel::create(
-                polygon, controller);
-        if (window) {
-            window->setPolygon(polygon);
-            if (skel2d) {
-                window->setSkel2d(skel2d);
-            }
-            thread_algo = algoskel2d->startThread();
-        } else {
-            algoskel2d->run();
-        }
+        algoskel2d = algo::_2d::SimpleStraightSkel::create(polygon, controller);
+        algoskel2d->run();
     } else if (num_dims == 3) {
         algoskel3d = algo::_3d::SimpleStraightSkel::create(
                 polyhedron, controller, save_offsets, save_path);
-        if (window) {
-            window->setPolyhedron(polyhedron);
-            if (skel3d) {
-                window->setSkel3d(skel3d);
-            }
-            thread_algo = algoskel3d->startThread();
-        } else {
-            if (!algoskel3d->run()) {
-                return EXIT_FAILURE;
-            }
+        if (!algoskel3d->run()) {
+            return EXIT_FAILURE;
         }
-    }
-    if (window) {
-        if (translate_and_scale_view) {
-            window->setTranslate(translate);
-            window->setScale(scale);
-        }
-        thread_window = window->startThread();
-        thread_algo->join();
     }
 
     bool save = isSet("--save", argc, argv);
@@ -505,12 +426,7 @@ int main(int argc, const char* argv[]) {
         if (num_dims == 2) {
             skel2d = algoskel2d->getResult();
             algomesh2d = algo::_2d::SkelMeshGenerator::create(skel2d, controller);
-            if (window) {
-                window->setMesh2d(algomesh2d->getResult());
-                thread_algo = algomesh2d->startThread();
-            } else {
-                algomesh2d->run();
-            }
+            algomesh2d->run();
         }
     }
 
@@ -518,10 +434,6 @@ int main(int argc, const char* argv[]) {
         algo::_3d::GraphCheckerSPtr graphchecker = algo::_3d::GraphChecker::create();
         skel3d = algoskel3d->getResult();
         graphchecker->check(skel3d);
-    }
-
-    if (window) {
-        thread_window->join();
     }
 
     std::cout << "Done." << std::endl;
