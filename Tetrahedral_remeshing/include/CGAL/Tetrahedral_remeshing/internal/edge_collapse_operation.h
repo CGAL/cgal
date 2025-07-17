@@ -23,23 +23,26 @@ namespace Tetrahedral_remeshing {
 namespace internal {
 
 template<typename C3t3, typename SizingFunction, typename CellSelector>
-class EdgeCollapseOperation 
-  : public ElementaryOperation<C3t3, 
-                          std::pair<typename C3t3::Triangulation::Vertex_handle, typename C3t3::Triangulation::Vertex_handle>,
+class EdgeCollapseOperation :
+    public ElementaryOperation<C3t3,
+                          std::pair<typename C3t3::Vertex_handle, typename C3t3::Vertex_handle>,
+                          std::vector<std::pair<typename C3t3::Vertex_handle, typename C3t3::Vertex_handle>>,
                           typename C3t3::Triangulation::Cell_handle>
 {
 public:
-  using Base = ElementaryOperation<C3t3, 
-                              std::pair<typename C3t3::Triangulation::Vertex_handle, typename C3t3::Triangulation::Vertex_handle>,
+  using Base = ElementaryOperation<C3t3,
+                              std::pair<typename C3t3::Vertex_handle, typename C3t3::Vertex_handle>,
+                              std::vector<std::pair<typename C3t3::Vertex_handle, typename C3t3::Vertex_handle>>,
                               typename C3t3::Triangulation::Cell_handle>;
+  using ElementType = typename Base::ElementType;
+  using ElementSource = typename Base::ElementSource;
+  using Lock_zone = typename Base::Lock_zone;
   using Triangulation = typename C3t3::Triangulation;
   using Edge = typename Triangulation::Edge;
-  using ElementType = typename Base::ElementType;
   using VertexPair = std::pair<typename C3t3::Triangulation::Vertex_handle, typename C3t3::Triangulation::Vertex_handle>;
   using Cell_handle = typename Triangulation::Cell_handle;
   using Vertex_handle = typename Triangulation::Vertex_handle;
   using Point = typename Triangulation::Point;
-  using Lock_zone = typename Base::Lock_zone;
   using Facet = typename Triangulation::Facet;
   using Subdomain_index = typename C3t3::Subdomain_index;
   using Surface_patch_index = typename C3t3::Surface_patch_index;
@@ -60,17 +63,11 @@ public:
     return true;
   }
 
-  std::vector<ElementType> get_element_source(const C3t3& c3t3) const override {
-    std::vector<ElementType> vertex_pairs;
-    
-    // Collect all finite edges as vertex pairs
-    for (auto eit = c3t3.triangulation().finite_edges_begin();
-         eit != c3t3.triangulation().finite_edges_end(); ++eit) {
-      const Edge& edge = *eit;
-      vertex_pairs.push_back(make_vertex_pair(edge));
-    }
-    
-    return vertex_pairs;
+  ElementSource get_element_source(const C3t3& c3t3) const override {
+    // Collect short edges as vertex pairs
+    std::vector<std::pair<typename C3t3::Vertex_handle, typename C3t3::Vertex_handle>> short_edges;
+    get_short_edges(c3t3, m_sizing, m_cell_selector, std::back_inserter(short_edges));
+    return short_edges;
   }
 
   bool can_apply_operation(const ElementType& vp, const C3t3& c3t3) const override {

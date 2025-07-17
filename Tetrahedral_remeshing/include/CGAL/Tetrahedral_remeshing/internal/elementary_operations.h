@@ -54,12 +54,13 @@ public:
   }
 };
 
-template<typename C3t3_, typename ElementType_, typename LockElementType_>
+template<typename C3t3_, typename ElementType_, typename ElementSource_, typename LockElementType_>
 class ElementaryOperation {
 public:
   using C3t3 = C3t3_;
   using Triangulation = typename C3t3::Triangulation;
   using ElementType = ElementType_;
+  using ElementSource = ElementSource_;
   using LockElementType = LockElementType_;
   using Lock_zone = std::vector<LockElementType>;
 
@@ -68,7 +69,7 @@ public:
 
   // Pure element logic methods
   virtual bool should_process_element(const ElementType& e, const C3t3& c3t3) const = 0;
-  virtual std::vector<ElementType> get_element_source(const C3t3& c3t3) const = 0;
+  virtual ElementSource get_element_source(const C3t3& c3t3) const = 0;
   virtual bool can_apply_operation(const ElementType& e, const C3t3& c3t3) const = 0;
   virtual bool lock_zone(const ElementType& e, const C3t3& c3t3) const = 0;
   virtual bool execute_operation(const ElementType& e, C3t3& c3t3) = 0;
@@ -118,7 +119,7 @@ public:
 
     // Ensure lock data structure is initialized for parallel mode
     ensure_lock_data_structure_initialized(c3t3);
-
+ 
     // Create lock manager with triangulation reference
     LockManager<typename C3t3::Triangulation, Cell_handle> lock_manager(&c3t3.triangulation(), 0);
 
@@ -205,6 +206,9 @@ public:
       }
 	lock_manager.unlock_all_thread_elements();
     }
+#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+    std::cout << "Total Move refactored:"<< op.total_move << std::endl;
+    #endif
 
     return success;
   }
@@ -232,20 +236,39 @@ public:
     // Get all elements from the operation
     auto elements = op.get_element_source(c3t3);
 
-    tbb::combinable<std::vector<ElementType>> local_candidates;
-
-    tbb::parallel_for(tbb::blocked_range<size_t>(0, elements.size()),
-      [&](const tbb::blocked_range<size_t>& r) {
-        auto& my_candidates = local_candidates.local();
-        for (size_t i = r.begin(); i != r.end(); ++i) {
-          if (op.should_process_element(elements[i], c3t3)) {
-            my_candidates.push_back(elements[i]);
-          }
+    // Use blocked_range for parallel processing with Iterator_range
+    tbb::blocked_range<std::size_t> range(0, elements.size());
+    
+    // First pass: count elements that pass the filter
+    std::atomic<std::size_t> total_count(0);
+    tbb::parallel_for(range, [&](const tbb::blocked_range<std::size_t>& r) {
+      auto it = elements.begin();
+      std::advance(it, r.begin());
+      for (std::size_t i = 0; i < r.size(); ++i, ++it) {
+        if (op.should_process_element(*it, c3t3)) {
+          total_count.fetch_add(1);
         }
-      });
+      }
+    });
+
+    // Pre-allocate result vector
+    std::vector<ElementType> candidates;
+    candidates.reserve(total_count);
+
+    // Second pass: collect elements using thread-local vectors
+    tbb::combinable<std::vector<ElementType>> local_candidates;
+    
+    tbb::parallel_for(range, [&](const tbb::blocked_range<std::size_t>& r) {
+      auto it = elements.begin();
+      std::advance(it, r.begin());
+      for (std::size_t i = 0; i < r.size(); ++i, ++it) {
+        if (op.should_process_element(*it, c3t3)) {
+          local_candidates.local().push_back(*it);
+        }
+      }
+    });
 
     // Combine all local vectors into final result
-    std::vector<ElementType> candidates;
     local_candidates.combine_each([&](const std::vector<ElementType>& local) {
       candidates.insert(candidates.end(), local.begin(), local.end());
     });

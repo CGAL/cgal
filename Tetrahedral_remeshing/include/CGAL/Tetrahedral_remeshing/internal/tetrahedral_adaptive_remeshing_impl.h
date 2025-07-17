@@ -126,6 +126,7 @@ public:
 
     init_c3t3(vcmap, ecmap, fcmap);
     m_vertex_smoother.init(m_c3t3);
+    m_elementary_remesher.smooth_init(m_c3t3,m_sizing,cell_selector,m_protect_boundaries);
 
 #ifdef CGAL_DUMP_REMESHING_STEPS
     CGAL::Tetrahedral_remeshing::debug::dump_c3t3(m_c3t3, "00-init");
@@ -151,12 +152,15 @@ public:
     , m_visitor(visitor)
     , m_vertex_smoother(sizing, cell_selector, protect_boundaries, smooth_constrained_edges)
     , m_c3t3_pbackup(&c3t3)
-    , m_tr_pbackup(NULL)
+      , m_tr_pbackup(NULL)
+      , m_elementary_remesher(c3t3, sizing, cell_selector, visitor)
   {
     m_c3t3.swap(c3t3);
 
     init_c3t3(vcmap, ecmap, fcmap);
     m_vertex_smoother.init(m_c3t3);
+
+    m_elementary_remesher.smooth_init(c3t3);
 
 #ifdef CGAL_DUMP_REMESHING_STEPS
     CGAL::Tetrahedral_remeshing::debug::dump_c3t3(m_c3t3, "00-init");
@@ -164,6 +168,7 @@ public:
       "00-facets_in_complex_after_init.off");
 #endif
   }
+	Elementary_remesher<C3t3, SizingFunction, CellSelector, Visitor> m_elementary_remesher;
 
   bool input_is_c3t3() const
   {
@@ -173,8 +178,12 @@ public:
   void split()
   {
     CGAL_assertion(check_vertex_dimensions());
+#ifdef CGAL_TETRAHEDRAL_REMESHING_USE_REFACTORED_SPLIT
+        Elementary_remesher<C3t3,SizingFunction,CellSelector,Visitor>::split(m_c3t3, m_sizing, m_cell_selector, m_protect_boundaries);
+#else
     split_long_edges(m_c3t3, m_sizing, m_protect_boundaries,
                      m_cell_selector, m_visitor);
+#endif
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
     CGAL_assertion(tr().tds().is_valid(true));
@@ -197,8 +206,12 @@ public:
   void collapse()
   {
     CGAL_assertion(check_vertex_dimensions());
+#ifdef CGAL_TETRAHEDRAL_REMESHING_USE_REFACTORED_COLLAPSE
+        Elementary_remesher<C3t3,SizingFunction,CellSelector,Visitor>::collapse(m_c3t3, m_sizing, m_cell_selector);
+#else
     collapse_short_edges(m_c3t3, m_sizing, m_protect_boundaries,
                          m_cell_selector, m_visitor);
+#endif
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
     CGAL_assertion(tr().tds().is_valid(true));
@@ -218,7 +231,7 @@ public:
 
   void flip()
   {
-#ifdef CGAL_TETRAHEDRAL_REMESHING_USE_ELEMENTARY
+#ifdef CGAL_TETRAHEDRAL_REMESHING_USE_REFACTORED_FLIP
         Elementary_remesher<C3t3,SizingFunction,CellSelector,Visitor>::flip(m_c3t3, m_cell_selector,m_visitor,m_protect_boundaries);
 #else
     flip_edges(m_c3t3, m_protect_boundaries,
@@ -241,9 +254,14 @@ public:
 #endif
   }
 
-  void smooth()
-  {
+  void smooth(){
+          //#ifdef CGAL_TETRAHEDRAL_REMESHING_USE_REFACTORED_SMOOTH
+#ifdef TEST_COMPLEX_EDGE_SMOOTHING
+        m_elementary_remesher.smooth(m_c3t3, m_sizing, m_cell_selector, m_protect_boundaries,m_vertex_smoother.m_smooth_constrained_edges);
+#endif
+//#else
     m_vertex_smoother.smooth_vertices(m_c3t3);
+//#endif
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
     CGAL_assertion(tr().tds().is_valid(true));
@@ -615,15 +633,11 @@ public:
       if (!resolution_reached())
       {
 
-          #ifndef ENABLE_EDGE_FLIP_DEBUG
         split();
         collapse();
-        #endif
       }
       flip();
-          #ifndef ENABLE_EDGE_FLIP_DEBUG
       smooth();
-        #endif
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
       std::cout << "# Iteration " << it_nb << " done : "
@@ -645,14 +659,15 @@ public:
     }
 
     m_vertex_smoother.start_flip_smooth_steps(m_c3t3);
+    m_elementary_remesher.m_edge_smooth_op->m_flip_smooth_steps = true;
+    assert(m_elementary_remesher.m_edge_smooth_op->m_flip_smooth_steps && "Elementary_remesher<C3t3, SizingFunction, CellSelector, Visitor>::ComplexEdgeSmoothOp::m_flip_smooth_steps == true");
+
     while (it_nb < max_it + nb_extra_iterations)
     {
       ++it_nb;
 
       flip();
-          #ifndef ENABLE_EDGE_FLIP_DEBUG
       smooth();
-        #endif
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
       std::cout << "# Iteration " << it_nb << " (flip and smooth only) done : "

@@ -75,6 +75,7 @@ class InternalEdgeFlipOperation
   : public EdgeFlipOperationBase<C3t3, CellSelector, Visitor>,
     public ElementaryOperation<C3t3,
                           std::pair<typename C3t3::Vertex_handle, typename C3t3::Vertex_handle>,
+                          std::vector<std::pair<typename C3t3::Vertex_handle, typename C3t3::Vertex_handle>>,
                           typename C3t3::Triangulation::Cell_handle>
 {
 public:
@@ -82,9 +83,11 @@ public:
   using VertexPair = std::pair<typename C3t3::Vertex_handle, typename C3t3::Vertex_handle>;
 
   using Base = ElementaryOperation<C3t3,
-                              VertexPair,
+                              std::pair<typename C3t3::Vertex_handle, typename C3t3::Vertex_handle>,
+                              std::vector<std::pair<typename C3t3::Vertex_handle, typename C3t3::Vertex_handle>>,
                               typename C3t3::Triangulation::Cell_handle>;
   using ElementType = typename Base::ElementType;
+  using ElementSource = typename Base::ElementSource;
   using Lock_zone = typename Base::Lock_zone;
 
   using BaseClass::m_c3t3;
@@ -118,7 +121,7 @@ public:
     return true;
   }
 
-  std::vector<ElementType> get_element_source(const C3t3& c3t3) const override {
+  ElementSource get_element_source(const C3t3& c3t3) const override {
     // Perform global preprocessing (cache validity reset)
     perform_global_preprocessing(c3t3);
 
@@ -240,6 +243,7 @@ class BoundaryEdgeFlipOperation
   : public EdgeFlipOperationBase<C3t3, CellSelector, Visitor>,
     public ElementaryOperation<C3t3,
                           std::pair<typename C3t3::Vertex_handle, typename C3t3::Vertex_handle>,
+                          std::vector<std::pair<typename C3t3::Vertex_handle, typename C3t3::Vertex_handle>>,
                           typename C3t3::Triangulation::Cell_handle>
 {
 public:
@@ -247,9 +251,11 @@ public:
   using VertexPair = std::pair<typename C3t3::Vertex_handle, typename C3t3::Vertex_handle>;
 
   using Base = ElementaryOperation<C3t3,
-                              VertexPair,
+                              std::pair<typename C3t3::Vertex_handle, typename C3t3::Vertex_handle>,
+                              std::vector<std::pair<typename C3t3::Vertex_handle, typename C3t3::Vertex_handle>>,
                               typename C3t3::Triangulation::Cell_handle>;
   using ElementType = typename Base::ElementType;
+  using ElementSource = typename Base::ElementSource;
   using Lock_zone = typename Base::Lock_zone;
 
   using BaseClass::m_c3t3;

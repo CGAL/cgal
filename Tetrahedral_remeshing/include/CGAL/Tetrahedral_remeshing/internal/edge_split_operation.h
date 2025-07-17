@@ -16,17 +16,21 @@ namespace internal {
 
 template<typename C3t3, typename SizingFunction, typename CellSelector>
 class EdgeSplitOperation 
-  : public ElementaryOperation<C3t3, 
-                          std::pair<typename C3t3::Triangulation::Vertex_handle, typename C3t3::Triangulation::Vertex_handle>,
-                          typename C3t3::Triangulation::Cell_handle> {
+  : public ElementaryOperation<C3t3,
+                          std::pair<typename C3t3::Vertex_handle, typename C3t3::Vertex_handle>,
+                          std::vector<std::pair<typename C3t3::Vertex_handle, typename C3t3::Vertex_handle>>,
+                          typename C3t3::Triangulation::Cell_handle>
+{
 public:
-  using Base = ElementaryOperation<C3t3, 
-                              std::pair<typename C3t3::Triangulation::Vertex_handle, typename C3t3::Triangulation::Vertex_handle>,
+  using Base = ElementaryOperation<C3t3,
+                              std::pair<typename C3t3::Vertex_handle, typename C3t3::Vertex_handle>,
+                              std::vector<std::pair<typename C3t3::Vertex_handle, typename C3t3::Vertex_handle>>,
                               typename C3t3::Triangulation::Cell_handle>;
   using Complex = C3t3;
   using Triangulation = typename C3t3::Triangulation;
   using Edge = typename Triangulation::Edge;
   using ElementType = typename Base::ElementType;
+  using ElementSource = typename Base::ElementSource;
   using VertexPair = std::pair<typename C3t3::Triangulation::Vertex_handle, typename C3t3::Triangulation::Vertex_handle>;
   using Cell_handle = typename Triangulation::Cell_handle;
   using Vertex_handle = typename Triangulation::Vertex_handle;
@@ -76,17 +80,11 @@ public:
     return false;
   }
 
-  std::vector<ElementType> get_element_source(const C3t3& c3t3) const override {
-    std::vector<ElementType> vertex_pairs;
-    
-    // Collect all finite edges as vertex pairs
-    for (auto eit = c3t3.triangulation().finite_edges_begin();
-         eit != c3t3.triangulation().finite_edges_end(); ++eit) {
-      const Edge& edge = *eit;
-      vertex_pairs.push_back(make_vertex_pair(edge));
-    }
-    
-    return vertex_pairs;
+  ElementSource get_element_source(const C3t3& c3t3) const override {
+    // Collect long edges as vertex pairs
+    std::vector<std::pair<typename C3t3::Vertex_handle, typename C3t3::Vertex_handle>> long_edges;
+    get_long_edges(c3t3, m_sizing, m_cell_selector, std::back_inserter(long_edges));
+    return long_edges;
   }
 
   bool can_apply_operation(const ElementType& vp, const Complex& c3t3) const override {
