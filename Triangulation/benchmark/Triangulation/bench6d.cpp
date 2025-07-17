@@ -48,7 +48,13 @@ int main(int argc, char* argv[])
     assert( t.is_valid() );
 
     std::vector<Triangulation::Full_cell_handle> infinite_cells;
-    t.tds().incident_full_cells(t.infinite_vertex(), std::back_inserter(infinite_cells));
+    // t.tds().incident_full_cells(t.infinite_vertex(), std::back_inserter(infinite_cells));
+    for(auto it = t.full_cells_begin(); it != t.full_cells_end(); ++it) {
+        if(t.is_infinite(it)) {
+            infinite_cells.push_back(it);
+        }
+    }
+    std::cout << "Time to collect infinite cells " << timer.time() << " seconds." << std::endl;
 
     return 0;
     std::set<std::pair<std::ptrdiff_t, std::ptrdiff_t>> edges;
