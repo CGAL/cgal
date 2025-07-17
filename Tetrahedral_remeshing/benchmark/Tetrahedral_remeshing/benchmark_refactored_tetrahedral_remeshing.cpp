@@ -31,15 +31,16 @@ int main(int argc, char** argv) {
   json results_json;
   std::cout << std::setprecision(17);
   std::cerr << std::setprecision(17);
-  if(argc != 6) {
+  if(argc != 7) {
     fatal_error(std::string("Usage: ") + argv[0] +
-                " <input_mesh> <num_iterations> <remeshing_target_edge_factor> <num_threads> <results_json_path>");
+                " <input_mesh> <num_iterations> <remeshing_target_edge_factor> <smooth_constrained_edges> <num_threads> <results_json_path>");
   }
   std::string input = argv[1];
   int num_iterations = std::stoi(argv[2]);
   double remeshing_target_edge_factor = std::stod(argv[3]);
-  int num_threads = std::stoi(argv[4]);
-  std::string results_json_path = argv[5];
+  bool smooth_constrained_edges = std::stoi(argv[4]) != 0;
+  int num_threads = std::stoi(argv[5]);
+  std::string results_json_path = argv[6];
   //std::filesystem::create_directories(std::filesystem::path(results_json_path).parent_path());
   std::filesystem::create_directories(std::filesystem::path(std::filesystem::absolute(results_json_path)).parent_path());
 
@@ -98,7 +99,8 @@ int main(int argc, char** argv) {
   t_atomic.start();
 
   // Create and run atomic remesher
-  CGAL::tetrahedral_isotropic_remeshing(tr, target_edge_length, CGAL::parameters::number_of_iterations(num_iterations));
+  CGAL::tetrahedral_isotropic_remeshing(tr, target_edge_length,
+                                        CGAL::parameters::number_of_iterations(num_iterations).smooth_constrained_edges(smooth_constrained_edges));
 
   t_atomic.stop();
   append_metric_result(results_json, "Performance", "Total_Time", "Value", t_atomic.time());
