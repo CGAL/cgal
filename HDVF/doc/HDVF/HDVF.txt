@@ -387,8 +387,12 @@ and the operation is valid (ie. produces an HDVF) if and only if:
 \f\[ \langle \mathrm f(\pi),\gamma\rangle \text{ is invertible}\f\]
 
     The M operation modifies the homology generator associated to \f$\gamma\f$ (while preserving is associated cohomology generator)
-    
-    
+ 
+    The following figure illustrates the M operation.
+ 
+ \cgalFigureBegin{HDVF_M,HDVF_M.png}
+ M operation on a cubical complex \f$K\f$. <B>Left:</B> perfect HDVF over \f$K\f$ with cells \f$(\pi, \gamma_1)\f$ meeting the M operation (blue: homology generator associated with \f$\gamma_1\f$, pink: cohomology generator associated with \f$\gamma_1\f$); <B>Right:</B> perfect HDVF obtained with \f$M(\pi,\gamma_1)\f$ and updated generators. 
+ \cgalFigureEnd
 
 \subsection secHDVFpersistent_homology Persistent homology
 

@@ -407,7 +407,7 @@ PairCell Hdvf<CoefficientType, ComplexType>::find_pair_M(int q, bool &found) con
     found = false;
     PairCell p;
     
-    if (this->_hdvf_opt & OPT_F)
+    if (this->_hdvf_opt & (OPT_F | OPT_FULL))
     {
         // Search for +-1 in _F - iterate over rows
         for (OSM::Bitboard::iterator it_row = this->_F_row[q].begin(); (it_row != this->_F_row[q].end() && !found); ++it_row)
@@ -439,26 +439,29 @@ PairCell Hdvf<CoefficientType, ComplexType>::find_pair_M(int q, bool &found, siz
     if (this->_flag.at(q).at(tau) == SECONDARY)
         return p ; // Empty / found false
     
-    if (this->_hdvf_opt & OPT_F)
+    if (this->_hdvf_opt & (OPT_F | OPT_FULL))
     {
         // If tau is primary, search for gamma such that <f(tau),gamma>=+-1
         if (this->_flag.at(q).at(tau) == PRIMARY)
         {
-            for (OSM::Bitboard::iterator it_row = this->_F_row.at(q).begin(); (it_row != this->_F_row.at(q).end() && !found); ++it_row)
+            // Get the column of tau
+            const typename HDVF_coreT::CChain& col(OSM::get_column(this->_F_row.at(q), tau)) ;
+            for (typename HDVF_coreT::CChain::const_iterator it = col.cbegin(); (it != col.cend() && !found); ++it)
             {
-                if (abs(this->_F_row.at(q).get_coef(*it_row,tau)) == 1)
+                if (abs(it->second) == 1)
                 {
-                    p.sigma = tau ; // primary cell
-                    p.tau = *it_row ; // critical cell
+                    p.sigma = tau ;
+                    p.tau = it->first ;
                     p.dim = q ;
-                    found = true;
+                    found = true ;
                 }
             }
         }
         // If tau is critical, search for pi such that <f(pi),tau>=+-1
         if (this->_flag.at(q).at(tau) == CRITICAL)
         {
-            const typename HDVF_coreT::RChain& row(OSM::get_row(this->_F_row.at(q), tau)) ;
+            // Search along the row of tau
+            const typename HDVF_coreT::RChain& row(OSM::cget_row(this->_F_row.at(q), tau)) ;
             for (typename HDVF_coreT::RChain::const_iterator it = row.cbegin(); (it != row.cend() && !found); ++it)
             {
                 if (abs(it->second) == 1)
@@ -480,7 +483,7 @@ std::vector<PairCell> Hdvf<CoefficientType, ComplexType>::find_pairs_M(int q, bo
 {
     found = false;
     std::vector<PairCell> pairs;
-    if (this->_hdvf_opt & OPT_F)
+    if (this->_hdvf_opt & (OPT_F | OPT_FULL))
     {
         // Search for +-1 in _F - iterate over rows
         for (OSM::Bitboard::iterator it_row = this->_F_row[q].begin(); it_row != this->_F_row[q].end() ; ++it_row)
@@ -513,26 +516,31 @@ std::vector<PairCell> Hdvf<CoefficientType, ComplexType>::find_pairs_M(int q, bo
     if (this->_flag.at(q).at(tau) == SECONDARY)
         return pairs ; // Empty / found false
     
-    if (this->_hdvf_opt & OPT_F)
+    if (this->_hdvf_opt & (OPT_F | OPT_FULL))
     {
         // If tau is primary, search for gamma such that <f(tau),gamma>=+-1
         if (this->_flag.at(q).at(tau) == PRIMARY)
         {
-            for (OSM::Bitboard::iterator it_row = this->_F_row.at(q).begin(); it_row != this->_F_row.at(q).end(); ++it_row)
+            std::cout << "------PRIMARY" << std::endl ;
+            // Get the column of tau
+            const typename HDVF_coreT::CChain& col(OSM::get_column(this->_F_row.at(q), tau)) ;
+            for (typename HDVF_coreT::CChain::const_iterator it = col.cbegin(); it != col.cend(); ++it)
             {
-                if (abs(get_coef(this->_F_row.at(q), *it_row,tau)) == 1)
+                if (abs(it->second) == 1)
                 {
                     PairCell p ;
-                    p.sigma = tau ; // primary cell
-                    p.tau = *it_row ; // critical cell
+                    p.sigma = tau ;
+                    p.tau = it->first ;
                     p.dim = q ;
-                    pairs.push_back(p) ;
+                    found = true ;
+                    pairs.push_back(p);
                 }
             }
         }
         // If tau is critical, search for pi such that <f(pi),tau>=+-1
         if (this->_flag.at(q).at(tau) == CRITICAL)
         {
+            std::cout << "------CRITICAL" << std::endl ;
             const typename HDVF_coreT::RChain& row(OSM::get_row(this->_F_row.at(q), tau)) ;
             for (typename HDVF_coreT::RChain::const_iterator it = row.cbegin(); it != row.cend(); ++it)
             {
@@ -563,7 +571,7 @@ PairCell Hdvf<CoefficientType, ComplexType>::find_pair_W(int q, bool &found) con
     found = false;
     PairCell p;
     
-    if (this->_hdvf_opt & OPT_G)
+    if (this->_hdvf_opt & (OPT_G | OPT_FULL))
     {
         // Search for +-1 in _G - iterate over cols
         for (OSM::Bitboard::iterator it_col = this->_G_col[q].begin(); (it_col != this->_F_row[q].end() && !found); ++it_col)
@@ -594,7 +602,7 @@ PairCell Hdvf<CoefficientType, ComplexType>::find_pair_W(int q, bool &found, siz
     if (this->_flag.at(q).at(tau) == PRIMARY)
         return p ; // Empty / found false
     
-    if (this->_hdvf_opt & OPT_G)
+    if (this->_hdvf_opt & (OPT_G | OPT_FULL))
     {
         // If tau is primary, search for gamma such that <g(gamma),tau>=+-1
         if (this->_flag.at(q).at(tau) == SECONDARY)
@@ -636,7 +644,7 @@ std::vector<PairCell> Hdvf<CoefficientType, ComplexType>::find_pairs_W(int q, bo
     found = false;
     std::vector<PairCell> pairs;
     
-    if (this->_hdvf_opt & OPT_FULL)
+    if (this->_hdvf_opt & (OPT_G | OPT_FULL))
     {
         // Search for +-1 in _G - iterate over cols
         for (OSM::Bitboard::iterator it_col = this->_G_col[q].begin(); it_col != this->_F_row[q].end(); ++it_col)
@@ -669,7 +677,7 @@ std::vector<PairCell> Hdvf<CoefficientType, ComplexType>::find_pairs_W(int q, bo
     if (this->_flag.at(q).at(tau) == PRIMARY)
         return pairs ; // Empty / found false
     
-    if (this->_hdvf_opt & OPT_FULL)
+    if (this->_hdvf_opt & (OPT_G | OPT_FULL))
     {
         // If tau is primary, search for gamma such that <g(gamma),tau>=+-1
         if (this->_flag.at(q).at(tau) == SECONDARY)
