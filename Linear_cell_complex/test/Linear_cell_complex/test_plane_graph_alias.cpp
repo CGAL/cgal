@@ -7,6 +7,8 @@
 
 typedef CGAL::Linear_cell_complex_for_combinatorial_map<2> LCC;
 
+#ifndef CGAL_NO_DEPRECATED_CODE
+
 int main()
 {
   LCC lcc1, lcc2;
@@ -23,11 +25,11 @@ int main()
   input.clear();
   input.seekg(0, std::ios::beg);
 
-  #ifndef CGAL_NO_DEPRECATED_CODE
   // Test deprecated function
   auto d2 = CGAL::import_from_plane_graph(lcc2, input);
   assert(d2 != LCC::null_descriptor);
-  #endif
 
   return EXIT_SUCCESS;
 }
+
+#endif // CGAL_NO_DEPRECATED_CODE

@@ -37,20 +37,12 @@ target_compile_definitions(Linear_cell_complex_copy_test_index PRIVATE USE_COMPA
 target_link_libraries(Linear_cell_complex_copy_test_index PRIVATE CGAL CGAL::Data)
 cgal_add_compilation_test(Linear_cell_complex_copy_test_index)
 
-# Test sans warning de dépréciation pour test_plane_graph_alias
-add_executable(test_plane_graph_alias_nowarn test_plane_graph_alias.cpp ${hfiles})
-target_compile_definitions(test_plane_graph_alias_nowarn PRIVATE CGAL_NO_DEPRECATION_WARNINGS)
-target_link_libraries(test_plane_graph_alias_nowarn PRIVATE CGAL CGAL::Data)
-cgal_add_compilation_test(test_plane_graph_alias_nowarn)
+# Alias tests (test old function names, with deprecated warnings disabled)
+create_single_source_cgal_program(test_triangulation_alias.cpp ${hfiles})
+target_compile_definitions(test_triangulation_alias PRIVATE CGAL_NO_DEPRECATION_WARNINGS)
 
-# Test sans warning de dépréciation pour test_polyhedron_3_alias
-add_executable(test_polyhedron_3_alias_nowarn test_polyhedron_3_alias.cpp ${hfiles})
-target_compile_definitions(test_polyhedron_3_alias_nowarn PRIVATE CGAL_NO_DEPRECATION_WARNINGS)
-target_link_libraries(test_polyhedron_3_alias_nowarn PRIVATE CGAL CGAL::Data)
-cgal_add_compilation_test(test_polyhedron_3_alias_nowarn)
+create_single_source_cgal_program(test_polyhedron_3_alias.cpp ${hfiles})
+target_compile_definitions(test_polyhedron_3_alias PRIVATE CGAL_NO_DEPRECATION_WARNINGS)
 
-# Test sans warning de dépréciation pour test_triangulation_alias
-add_executable(test_triangulation_alias_nowarn test_triangulation_alias.cpp ${hfiles})
-target_compile_definitions(test_triangulation_alias_nowarn PRIVATE CGAL_NO_DEPRECATION_WARNINGS)
-target_link_libraries(test_triangulation_alias_nowarn PRIVATE CGAL CGAL::Data)
-cgal_add_compilation_test(test_triangulation_alias_nowarn)
+create_single_source_cgal_program(test_plane_graph_alias.cpp ${hfiles})
+target_compile_definitions(test_plane_graph_alias PRIVATE CGAL_NO_DEPRECATION_WARNINGS)
