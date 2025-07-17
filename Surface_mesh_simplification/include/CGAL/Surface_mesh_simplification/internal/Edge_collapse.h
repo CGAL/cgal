@@ -296,6 +296,8 @@ private:
 
   void insert_in_PQ(const halfedge_descriptor h, Edge_data& data)
   {
+    CGAL_SMS_TRACE(5, "Insert " << edge_to_string(h) << " in PQ");
+
     CGAL_assertion(is_primary_edge(h));
     CGAL_expensive_assertion(!data.is_in_PQ());
     CGAL_expensive_assertion(!mPQ->contains(h));
@@ -594,12 +596,33 @@ loop()
 
   std::optional<halfedge_descriptor> opt_h;
 
+// #define CGAL_SURF_SIMPL_INTERMEDIATE_STEPS_PRINTING
 #ifdef CGAL_SURF_SIMPL_INTERMEDIATE_STEPS_PRINTING
   int i_rm = 0;
 #endif
 
-  while((opt_h = pop_from_PQ()))
+  for(;;)
   {
+#ifdef CGAL_SURFACE_SIMPLIFICATION_ENABLE_TRACE
+    if(5 <= CGAL_SURFACE_SIMPLIFICATION_ENABLE_TRACE)
+    {
+      CGAL_SMS_TRACE_IMPL("== Current queue ==");
+
+      auto mPQ_clone = *mPQ;
+      std::optional<halfedge_descriptor> opt_th;
+      while((opt_th = mPQ_clone.extract_top()))
+      {
+        CGAL_SMS_TRACE_IMPL("\t" + edge_to_string(*opt_th));
+        Cost_type tcost = get_data(*opt_th).cost();
+        if(tcost)
+          CGAL_SMS_TRACE_IMPL("\t" + std::to_string(CGAL::to_double(*tcost)));
+      }
+    }
+#endif
+
+    if(!(opt_h = pop_from_PQ()))
+      break;
+
     CGAL_SMS_TRACE(1, "Popped " << edge_to_string(*opt_h));
     CGAL_assertion(!is_constrained(*opt_h));
 
@@ -639,7 +662,7 @@ loop()
 
             m_visitor.OnNonCollapsable(profile);
 
-            CGAL_SMS_TRACE(1, edge_to_string(*opt_h) << " NOT Collapsible" );
+            CGAL_SMS_TRACE(1, edge_to_string(*opt_h) << " NOT Collapsible (filter)" );
           }
 
 #ifdef CGAL_SURF_SIMPL_INTERMEDIATE_STEPS_PRINTING
@@ -660,7 +683,7 @@ loop()
 
         m_visitor.OnNonCollapsable(profile);
 
-        CGAL_SMS_TRACE(1, edge_to_string(*opt_h) << " NOT Collapsible" );
+        CGAL_SMS_TRACE(1, edge_to_string(*opt_h) << " NOT Collapsible (topology)" );
       }
     }
     else
@@ -823,7 +846,10 @@ is_collapse_topologically_valid(const Profile& profile)
   {
     /// ensure two constrained edges cannot get merged
     if(is_edge_adjacent_to_a_constrained_edge(profile, m_ecm))
+    {
+      CGAL_SMS_TRACE(3,"  edge to collapse is adjacent to a constrained edge.");
       return false;
+    }
 
     if(profile.is_v0_v1_a_border())
     {
