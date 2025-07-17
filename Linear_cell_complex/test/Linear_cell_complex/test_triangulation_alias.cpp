@@ -8,10 +8,11 @@
 typedef CGAL::Linear_cell_complex_for_combinatorial_map<3> LCC_3;
 typedef CGAL::Delaunay_triangulation_3<LCC_3::Traits> Triangulation;
 
-#ifndef CGAL_NO_DEPRECATED_CODE
+
 
 int main()
 {
+#ifndef CGAL_NO_DEPRECATED_CODE
   LCC_3 lcc1, lcc2;
   Triangulation T;
 
@@ -22,8 +23,7 @@ int main()
 
   auto d2 = CGAL::import_from_triangulation_3(lcc2, T);
   assert(d2 == LCC_3::null_descriptor);
-
+#endif // CGAL_NO_DEPRECATED_CODE
   return EXIT_SUCCESS;
 }
 
-#endif // CGAL_NO_DEPRECATED_CODE

@@ -7,10 +7,11 @@
 
 typedef CGAL::Linear_cell_complex_for_combinatorial_map<2> LCC;
 
-#ifndef CGAL_NO_DEPRECATED_CODE
+
 
 int main()
 {
+#ifndef CGAL_NO_DEPRECATED_CODE
   LCC lcc1, lcc2;
 
   // Planar graph with 3 vertices and 3 edges (triangle)
@@ -28,8 +29,7 @@ int main()
   // Test deprecated function
   auto d2 = CGAL::import_from_plane_graph(lcc2, input);
   assert(d2 != LCC::null_descriptor);
-
+#endif // CGAL_NO_DEPRECATED_CODE
   return EXIT_SUCCESS;
 }
 
-#endif // CGAL_NO_DEPRECATED_CODE

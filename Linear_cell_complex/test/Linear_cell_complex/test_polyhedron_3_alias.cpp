@@ -9,10 +9,10 @@
 typedef CGAL::Linear_cell_complex_for_combinatorial_map<3> LCC;
 typedef CGAL::Polyhedron_3<LCC::Traits> Polyhedron;
 
-#ifndef CGAL_NO_DEPRECATED_CODE
 
 int main()
 {
+#ifndef CGAL_NO_DEPRECATED_CODE
   std::stringstream ss("OFF\n0 0 0\n");
 
   Polyhedron P;
@@ -25,8 +25,7 @@ int main()
 
   auto d2 = CGAL::import_from_polyhedron_3<LCC>(lcc2, P); 
   assert(d2 == LCC::null_descriptor);
-
+#endif // CGAL_NO_DEPRECATED_CODE
   return EXIT_SUCCESS;
 }
 
-#endif // CGAL_NO_DEPRECATED_CODE
