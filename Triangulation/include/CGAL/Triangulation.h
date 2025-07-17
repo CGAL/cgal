@@ -737,8 +737,6 @@ public:
         using Search_traits_d = CGAL::Spatial_sort_traits_adapter_d<Geom_traits, Point_property_map>;
 
         CGAL::spatial_sort(indices.begin(), indices.end(), Search_traits_d(start));
-        std::vector<Point> points(start, end);
-        spatial_sort(points.begin(), points.end(), geom_traits());
         Full_cell_handle hint = Full_cell_handle();
 
       for (auto index : indices) {
