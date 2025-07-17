@@ -82,7 +82,6 @@ private:
   const SizingFunction& m_sizing;
   const CellSelector& m_cell_selector;
   const bool m_protect_boundaries;
-  const bool m_smooth_constrained_edges;
 
   // the 2 following variables become useful and valid
   // just before flip/smooth steps, when no vertices get inserted
@@ -99,6 +98,7 @@ private:
   };
 
 public:
+  const bool m_smooth_constrained_edges;
   Tetrahedral_remeshing_smoother(const SizingFunction& sizing,
                                  const CellSelector& cell_selector,
                                  const bool protect_boundaries,
@@ -497,7 +497,7 @@ private:
   }
 
   Dihedral_angle_cosine max_cosine(const Tr& tr,
-    const boost::container::small_vector<Cell_handle, 40>& cells)
+    const boost::container::small_vector<Cell_handle, 40>& cells) const
   {
     Dihedral_angle_cosine max_cos_dh = cosine_of_90_degrees();// = 0.
     for (Cell_handle c : cells)
@@ -519,9 +519,9 @@ private:
                                 const CellRange& inc_cells,
                                 const Tr& tr,
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-                                FT& total_move)
+                                FT& total_move) const
 #else
-                                FT&)
+                                FT&)const 
 #endif
   {
     const typename Tr::Point backup = v->point(); //backup v's position
@@ -1093,6 +1093,7 @@ public:
     std::vector<Incident_cells_vector> inc_cells(nbv, Incident_cells_vector{});
     collect_incident_cells(tr, inc_cells);
 
+  #ifndef CGAL_TETRAHEDRAL_REMESHING_USE_COMPLEX_EDGE_SMOOTHING
     if (!m_protect_boundaries && m_smooth_constrained_edges)
     {
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
@@ -1105,6 +1106,7 @@ public:
 #endif
       );
     }
+    #endif
 
     /////////////// EDGES ON SURFACE, BUT NOT IN COMPLEX //////////////////
     if (!m_protect_boundaries)

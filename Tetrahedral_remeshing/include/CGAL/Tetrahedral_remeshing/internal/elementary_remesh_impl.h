@@ -98,16 +98,16 @@ public:
       auto context = std::make_unique<VertexSmoothingContext>(c3t3, sizing, cell_selector, protect_boundaries);
 
       if(!protect_boundaries) {
-		#ifdef TEST_COMPLEX_EDGE_SMOOTHING
+		#ifdef CGAL_TETRAHEDRAL_REMESHING_USE_COMPLEX_EDGE_SMOOTHING
           // Smooth vertices on complex edges
           if(smooth_constrained_edges && m_edge_smooth_op) {
               m_edge_smooth_op->set_context(context.get());
-              ElementaryOperationExecutionSequential<ComplexEdgeSmoothOp> executor;
+              ExecutionPolicy<ComplexEdgeSmoothOp> executor;
               executor.execute(*m_edge_smooth_op, c3t3);
           }
           #endif
 
-		#ifndef TEST_COMPLEX_EDGE_SMOOTHING
+		#ifndef CGAL_TETRAHEDRAL_REMESHING_USE_COMPLEX_EDGE_SMOOTHING
           // Smooth vertices on surface
           {
               SurfaceVertexSmoothOp surface_smooth_op(c3t3, sizing, cell_selector, protect_boundaries, smooth_constrained_edges, context.get());
@@ -117,7 +117,7 @@ public:
           #endif
       }
 
-	#ifndef TEST_COMPLEX_EDGE_SMOOTHING
+	#ifndef CGAL_TETRAHEDRAL_REMESHING_USE_COMPLEX_EDGE_SMOOTHING
       // Smooth internal vertices
       {
           InternalVertexSmoothOp internal_smooth_op(c3t3, sizing, cell_selector, protect_boundaries, smooth_constrained_edges, context.get());

@@ -193,7 +193,6 @@ public:
 
   bool execute_operation(const ElementType& v, C3t3& c3t3) override {
     // TODO: Implement internal vertex smoothing
-    std::cout << "InternalVertexSmoothOperation::execute_operation" << std::endl;
     return true;
   }
 
@@ -323,7 +322,6 @@ public:
 
   bool execute_operation(const ElementType& v, C3t3& c3t3) override {
     // TODO: Implement surface vertex smoothing
-    std::cout << "SurfaceVertexSmoothOperation::execute_operation" << std::endl;
     return true;
   }
 
@@ -377,21 +375,10 @@ private:
   AABB_segment_tree m_segments_aabb_tree;
 
   void build_segment_aabb_tree(const C3t3& c3t3) {
-    std::ofstream debug_log("debug_refactored_aabb_construction.log");
-    debug_log << "=== REFACTORED AABB TREE CONSTRUCTION ===" << std::endl;
-    
-    std::size_t segment_count = 0;
     for (const Edge& e : c3t3.edges_in_complex()) {
       auto segment = c3t3.triangulation().segment(e);
       m_aabb_segments.push_back(segment);
-      
-      debug_log << std::setprecision(25) << "Segment " << segment_count 
-                << ": " << segment.source() << " -> " << segment.target() << std::endl;
-      segment_count++;
     }
-    
-    debug_log << "Total segments: " << segment_count << std::endl;
-    debug_log.close();
     
     m_segments_aabb_tree.rebuild(m_aabb_segments.begin(), m_aabb_segments.end());
     m_segments_aabb_tree.accelerate_distance_queries();
@@ -513,7 +500,6 @@ bool is_selected(const Cell_handle c) const { return get(m_cell_selector, c); }
 
 public:
     FT total_move = 0;
-    static std::ofstream debug_log; // Static member for log file
 
   ComplexEdgeVertexSmoothOperation(const C3t3& c3t3,
                                   const SizingFunction& sizing,
@@ -541,9 +527,11 @@ public:
     return m_context->m_free_vertices[vid] && is_on_feature(v);
   }
 
+  // NOTE: There is an incident cells orientation check during smoothing by check_inversion_and_move
   bool lock_zone(const ElementType& v, const C3t3& c3t3) const override {
-    // TODO: Implement lock zone for complex edge vertex smoothing
-    return true;
+    auto& tr = c3t3.triangulation();
+    std::vector<Cell_handle> inc_cells;
+    return tr.try_lock_and_get_incident_cells(v, inc_cells);
   }
 
   bool execute_operation(const ElementType& v, C3t3& c3t3) override {
@@ -562,18 +550,7 @@ public:
     CGAL_assertion(moves[vid].mass > 0);
     const Vector_3 move = moves[vid].move / moves[vid].mass;
     
-    // Open log file for appending
-    std::ofstream debug_log("debug_refactored_smooth_edges.log", std::ios::app);
-    debug_log << std::setprecision(25);
-    debug_log << "DEBUG REFACTORED: Vertex " << vid << " - original_position: " << current_pos << std::endl;
-    debug_log << "DEBUG REFACTORED: Processing vertex " << vid 
-              << " - neighbors=" << moves[vid].neighbors << ", mass=" << moves[vid].mass 
-              << ", total_move_vector=" << moves[vid].move 
-              << ", computed_move=" << move << std::endl;
-    
     const Point_3 smoothed_position = current_pos + move;
-
-    debug_log << std::setprecision(25) << "DEBUG REFACTORED: Vertex " << vid << " - smoothed_position: " << smoothed_position << std::endl;
 
     //TODO: Test #ifdef CGAL_TET_REMESHING_SMOOTHING_WITH_MLS
 #ifdef CGAL_TET_REMESHING_SMOOTHING_WITH_MLS
@@ -601,22 +578,15 @@ public:
     const Point_3 new_pos = m_segments_aabb_tree.closest_point(smoothed_position);
 #endif
 
-    debug_log << std::setprecision(25) << "DEBUG REFACTORED: Vertex " << vid << " - new_pos: " << new_pos << std::endl;
-
     const auto& inc_cells = m_context->m_inc_cells[vid];
     
     // Debug: Track move before and after
     FT move_before = total_move;
     
     if (check_inversion_and_move(v, new_pos, inc_cells, tr,total_move)) {
-      debug_log << "DEBUG REFACTORED: Vertex " << vid << " moved, total_move: " 
-                << move_before << " -> " << total_move << " (delta: " 
-                << (total_move - move_before) << ")" << std::endl;
-      debug_log.close();
       return true;
     }
 
-    debug_log.close();
     return false;
   }
 
@@ -626,9 +596,7 @@ public:
 
   // Debug method to print final total_move
   void print_final_total_move(const C3t3& c3t3) const {
-    std::ofstream debug_log("debug_refactored_smooth_edges.log", std::ios::app);
-    debug_log << "DEBUG REFACTORED: Final total_move: " << total_move << std::endl;
-    debug_log.close();
+    // Method content removed - no longer needed without debug logging
   }
 
   // This method will be called by the execution framework to collect moves
@@ -638,14 +606,6 @@ public:
     
     // Initialize moves vector
     m_context->m_moves.assign(nbv, typename Context::Move{CGAL::NULL_VECTOR, 0, 0.});
-
-    // Debug: Track edge processing
-    std::size_t edges_processed = 0;
-    std::size_t vertices_with_moves = 0;
-
-    // Open debug log file
-    std::ofstream debug_log("debug_refactored_smooth_edges.log");
-    debug_log << "=== REFACTORED SMOOTH EDGES IN COMPLEX DEBUG LOG ===" << std::endl;
 
     // Collect moves from complex edges
     for (const Edge& e : c3t3.edges_in_complex()) {
@@ -664,42 +624,23 @@ public:
       if (!vh0_moving && !vh1_moving)
         continue;
 
-      edges_processed++;
       const Point_3& p0 = point(vh0->point());
       const Point_3& p1 = point(vh1->point());
       const FT density = density_along_segment(e, c3t3, true);
-
-      debug_log << "DEBUG REFACTORED: Edge " << edges_processed << " - vh0=" << i0 
-                << " (moving=" << vh0_moving << "), vh1=" << i1 
-                << " (moving=" << vh1_moving << "), density=" << density << std::endl;
 
       if (vh0_moving) {
         Vector_3 move_vector = density * Vector_3(p0, p1);
         m_context->m_moves[i0].move += move_vector;
         m_context->m_moves[i0].mass += density;
         ++m_context->m_moves[i0].neighbors;
-        vertices_with_moves++;
-        
-        debug_log << "DEBUG REFACTORED:   vh0[" << i0 << "] - move_vector=" << move_vector 
-                  << ", total_move=" << m_context->m_moves[i0].move << ", mass=" << m_context->m_moves[i0].mass 
-                  << ", neighbors=" << m_context->m_moves[i0].neighbors << std::endl;
       }
       if (vh1_moving) {
         Vector_3 move_vector = density * Vector_3(p1, p0);
         m_context->m_moves[i1].move += move_vector;
         m_context->m_moves[i1].mass += density;
         ++m_context->m_moves[i1].neighbors;
-        vertices_with_moves++;
-        
-        debug_log << "DEBUG REFACTORED:   vh1[" << i1 << "] - move_vector=" << move_vector 
-                  << ", total_move=" << m_context->m_moves[i1].move << ", mass=" << m_context->m_moves[i1].mass 
-                  << ", neighbors=" << m_context->m_moves[i1].neighbors << std::endl;
       }
     }
-    
-    debug_log << "DEBUG REFACTORED: Processed " << edges_processed << " edges, " 
-              << vertices_with_moves << " vertices got moves" << std::endl;
-    debug_log.close();
   }
 };
 

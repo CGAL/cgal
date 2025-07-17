@@ -256,7 +256,7 @@ public:
 
   void smooth(){
           //#ifdef CGAL_TETRAHEDRAL_REMESHING_USE_REFACTORED_SMOOTH
-#ifdef TEST_COMPLEX_EDGE_SMOOTHING
+#ifdef CGAL_TETRAHEDRAL_REMESHING_USE_COMPLEX_EDGE_SMOOTHING
         m_elementary_remesher.smooth(m_c3t3, m_sizing, m_cell_selector, m_protect_boundaries,m_vertex_smoother.m_smooth_constrained_edges);
 #endif
 //#else
