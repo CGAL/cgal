@@ -18,7 +18,7 @@
 
 namespace CGAL::Surface_mesh_simplification::internal{
 
-// a*b - c*d
+  // a*b - c*d
   // The next two functions are from https://stackoverflow.com/questions/63665010/accurate-floating-point-computation-of-the-sum-and-difference-of-two-products
   inline double diff_of_products_kahan(const double a, const double b, const double c, const double d)
   {
