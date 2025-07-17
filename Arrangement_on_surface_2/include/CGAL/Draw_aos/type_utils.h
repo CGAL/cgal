@@ -26,21 +26,17 @@ enum class Side_of_boundary {
 };
 
 template <typename, typename = std::void_t<>>
-struct has_construct_x_monotone_curve_2 : std::false_type
-{};
+struct has_construct_x_monotone_curve_2 : std::false_type {};
 
 template <typename T>
-struct has_construct_x_monotone_curve_2<T, std::void_t<typename T::Construct_x_monotone_curve_2>> : std::true_type
-{};
+struct has_construct_x_monotone_curve_2<T, std::void_t<typename T::Construct_x_monotone_curve_2>> : std::true_type {};
 
 template <typename, typename = std::void_t<>>
-struct has_approximate_2_object : std::false_type
-{};
+struct has_approximate_2_object : std::false_type {};
 
 // Specialization: detection succeeds if decltype(T::approximate_2_object()) is valid
 template <typename T>
-struct has_approximate_2_object<T, std::void_t<decltype(std::declval<T>().approximate_2_object())>> : std::true_type
-{};
+struct has_approximate_2_object<T, std::void_t<decltype(std::declval<T>().approximate_2_object())>> : std::true_type {};
 
 // Convenience variable
 template <typename T>
@@ -49,13 +45,12 @@ inline constexpr bool has_approximate_2_object_v = has_approximate_2_object<T>::
 // Primary templates: detection fails by default
 // Does a class have operator()(const Point&)?
 template <typename, typename, typename = std::void_t<>>
-struct has_operator_point : std::false_type
-{};
+struct has_operator_point : std::false_type {};
 
 // Specialization: detection succeeds if decltype works out
 template <typename T, typename A>
-struct has_operator_point<T, A, std::void_t<decltype(std::declval<A>()(std::declval<const typename T::Point_2&>()))>>
-    : std::true_type
+struct has_operator_point<T, A, std::void_t<decltype(std::declval<A>()(std::declval<const typename T::Point_2&>()))>> :
+    std::true_type
 {};
 
 // Convenience variable
@@ -65,9 +60,10 @@ inline constexpr bool has_operator_point_v = has_operator_point<T, A>::value;
 // Primary templates: detection fails by default
 // Does a class have operator()(const X_monotone_curve&)?
 template <typename, typename, typename, typename = std::void_t<>>
-struct has_operator_xcv : std::false_type
-{};
+struct has_operator_xcv : std::false_type {};
 
+/*!
+ */
 template <typename T, typename A, typename O>
 struct has_operator_xcv<T,
                         A,
@@ -82,9 +78,10 @@ struct has_operator_xcv<T,
 template <typename T, typename A>
 constexpr bool has_operator_xcv_v = has_operator_xcv<T, A, void*>::value;
 
+/*!
+ */
 template <typename GeomTraits>
-struct Traits_adaptor_base
-{
+struct Traits_adaptor_base {
 public:
   using Geom_traits = GeomTraits;
   using Point_2 = typename Geom_traits::Point_2;
@@ -94,12 +91,15 @@ public:
   using Compare_xy_2 = typename Geom_traits::Compare_xy_2;
 };
 
+/*!
+ */
 template <typename GeomTraits>
 struct Traits_adaptor;
 
+/*!
+ */
 template <typename Kernel>
-struct Traits_adaptor<Arr_segment_traits_2<Kernel>> : public Traits_adaptor_base<Arr_segment_traits_2<Kernel>>
-{
+struct Traits_adaptor<Arr_segment_traits_2<Kernel>> : public Traits_adaptor_base<Arr_segment_traits_2<Kernel>> {
 private:
   using Geom_traits = Arr_segment_traits_2<Kernel>;
 
@@ -113,10 +113,11 @@ public:
   using Approximate_point_2 = typename Geom_traits::Approximate_point_2;
 };
 
+/*!
+ */
 template <typename Kernel>
-struct Traits_adaptor<Arr_non_caching_segment_traits_2<Kernel>>
-    : public Traits_adaptor_base<Arr_non_caching_segment_traits_2<Kernel>>
-{
+struct Traits_adaptor<Arr_non_caching_segment_traits_2<Kernel>> :
+    public Traits_adaptor_base<Arr_non_caching_segment_traits_2<Kernel>> {
 private:
   using Geom_traits = Arr_non_caching_segment_traits_2<Kernel>;
 
@@ -130,10 +131,11 @@ public:
   using Approximate_point_2 = typename Geom_traits::Approximate_point_2;
 };
 
+/*!
+ */
 template <typename SegmentTraits>
-struct Traits_adaptor<Arr_polyline_traits_2<SegmentTraits>>
-    : public Traits_adaptor_base<Arr_polyline_traits_2<SegmentTraits>>
-{
+struct Traits_adaptor<Arr_polyline_traits_2<SegmentTraits>> :
+    public Traits_adaptor_base<Arr_polyline_traits_2<SegmentTraits>> {
 private:
   using Geom_traits = Arr_polyline_traits_2<SegmentTraits>;
   using Sub_traits = SegmentTraits;
@@ -149,10 +151,11 @@ public:
   using Approximate_point_2 = typename Adapted_sub_traits::Approximate_point_2;
 };
 
+/*!
+ */
 template <typename SubcurveTraits>
-struct Traits_adaptor<Arr_polycurve_traits_2<SubcurveTraits>>
-    : public Traits_adaptor_base<Arr_polycurve_traits_2<SubcurveTraits>>
-{
+struct Traits_adaptor<Arr_polycurve_traits_2<SubcurveTraits>> :
+    public Traits_adaptor_base<Arr_polycurve_traits_2<SubcurveTraits>> {
 private:
   using Sub_traits = SubcurveTraits;
   using Geom_traits = Arr_polycurve_traits_2<Sub_traits>;
@@ -168,9 +171,10 @@ public:
   using Approximate_point_2 = typename Adapted_sub_traits::Approximate_point_2;
 };
 
+/*!
+ */
 template <typename Kernel>
-struct Traits_adaptor<Arr_linear_traits_2<Kernel>> : public Traits_adaptor_base<Arr_linear_traits_2<Kernel>>
-{
+struct Traits_adaptor<Arr_linear_traits_2<Kernel>> : public Traits_adaptor_base<Arr_linear_traits_2<Kernel>> {
 private:
   using Geom_traits = Arr_segment_traits_2<Kernel>;
 
@@ -184,10 +188,11 @@ public:
   using Approximate_point_2 = typename Geom_traits::Approximate_point_2;
 };
 
+/*!
+ */
 template <typename RatKernel, typename AlgKernel, typename NtTraits>
-struct Traits_adaptor<Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>>
-    : public Traits_adaptor_base<Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>>
-{
+struct Traits_adaptor<Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>> :
+    public Traits_adaptor_base<Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>> {
 private:
   using Geom_traits = Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>;
 
@@ -201,10 +206,11 @@ public:
   using Approximate_point_2 = typename Geom_traits::Approximate_point_2;
 };
 
+/*!
+ */
 template <typename Kernel>
-struct Traits_adaptor<Arr_circle_segment_traits_2<Kernel>>
-    : public Traits_adaptor_base<Arr_circle_segment_traits_2<Kernel>>
-{
+struct Traits_adaptor<Arr_circle_segment_traits_2<Kernel>> :
+    public Traits_adaptor_base<Arr_circle_segment_traits_2<Kernel>> {
 private:
   using Geom_traits = Arr_circle_segment_traits_2<Kernel>;
   using Base = Traits_adaptor_base<Geom_traits>;
@@ -219,10 +225,11 @@ public:
   using Approximate_point_2 = typename Geom_traits::Approximate_point_2;
 };
 
+/*!
+ */
 template <typename Kernel>
-struct Traits_adaptor<Arr_rational_function_traits_2<Kernel>>
-    : public Traits_adaptor_base<Arr_rational_function_traits_2<Kernel>>
-{
+struct Traits_adaptor<Arr_rational_function_traits_2<Kernel>> :
+    public Traits_adaptor_base<Arr_rational_function_traits_2<Kernel>> {
 private:
   using Geom_traits = Arr_rational_function_traits_2<Kernel>;
 
@@ -238,18 +245,20 @@ public:
   using Approximate_point_2 = typename Approximate_kernel::Point_2;
 };
 
+/*!
+ */
 template <typename GeomTraits>
-class Construct_coordinate
-{
+class Construct_coordinate {
   using FT = typename Traits_adaptor<GeomTraits>::FT;
 
 public:
   FT operator()(double val) const { return FT(val); }
 };
 
+/*!
+ */
 template <typename Kernel>
-class Construct_coordinate<Arr_rational_function_traits_2<Kernel>>
-{
+class Construct_coordinate<Arr_rational_function_traits_2<Kernel>> {
   using FT = typename Traits_adaptor<Arr_rational_function_traits_2<Kernel>>::FT;
   using Bound = typename Kernel::Bound;
 
@@ -257,9 +266,10 @@ public:
   FT operator()(double val) const { return FT(Bound(val)); }
 };
 
+/*!
+ */
 template <typename GeomTraits>
-class Arr_approximation_geometry_traits
-{
+class Arr_approximation_geometry_traits {
   using Adapted_traits = Traits_adaptor<GeomTraits>;
 
 public:
@@ -271,8 +281,7 @@ public:
   using Polyline_geom = Apporx_point_vec;
   using Triangle = std::array<std::size_t, 3>;
   using Triangle_vec = std::vector<Triangle>;
-  struct Triangulated_face
-  {
+  struct Triangulated_face {
     Apporx_point_vec points;
     Triangle_vec triangles;
   };
