@@ -30,6 +30,7 @@ namespace PMP = CGAL::Polygon_mesh_processing;
 
 using Kernel = CGAL::Simple_cartesian<double>;
 // using Kernel = CGAL::Exact_predicates_exact_constructions_kernel;
+
 using Surface_mesh = CGAL::Surface_mesh<Kernel::Point_3>;
 
 int main(int argc, char** argv)
@@ -53,10 +54,10 @@ int main(int argc, char** argv)
   std::cout << "Input mesh has " << num_faces(sm) << " faces" << std::endl;
 
   SMS::Face_count_stop_predicate<Surface_mesh> stop(1);
-   SMS::edge_collapse(sm, stop, 
+   SMS::edge_collapse(sm, stop,
                       CGAL::parameters::get_cost(SMS::LindstromTurk_cost<Surface_mesh>())
-                                       .get_placement(SMS::LindstromTurk_placement<Surface_mesh>())
-    );
+                                       .get_placement(SMS::LindstromTurk_placement<Surface_mesh>()));
+
   CGAL::IO::write_OFF(std::cout, sm, CGAL::parameters::stream_precision(17));
 
   for(auto v : vertices(sm))
