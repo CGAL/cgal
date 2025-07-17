@@ -10,36 +10,13 @@ include(CGAL_Eigen3_support)
 if(TARGET CGAL::Eigen3_support)
   # Executables that require Eigen 3.1
 
-  # ------------------------------------------------------------------
-  # Detect SuiteSparse libraries:
-  # If not found automatically, set SuiteSparse_DIR in CMake to the
-  # directory where SuiteSparse was built.
-  # ------------------------------------------------------------------
+  find_package(UMFPACK QUIET NO_MODULE)
 
-  set(SuiteSparse_USE_LAPACK_BLAS ON)
-  find_package(SuiteSparse QUIET NO_MODULE)# 1st: Try to locate the *config.cmake file.
-  if(NOT SuiteSparse_FOUND)
-    set(SuiteSparse_VERBOSE ON)
-    find_package(SuiteSparse QUIET) # 2nd: Use FindSuiteSparse.cmake module
-    if(SuiteSparse_FOUND)
-      include_directories(${SuiteSparse_INCLUDE_DIRS})
-    endif(SuiteSparse_FOUND)
-  endif(NOT SuiteSparse_FOUND)
-
-  if(SuiteSparse_FOUND)
-    if(SuiteSparse_UMFPACK_FOUND OR TARGET SuiteSparse::umfpack)
-      message(STATUS "SuiteSparse_LIBS: ${SuiteSparse_LIBRARIES}")
-      message(STATUS "Orbifold Tutte Embeddings will use UmfPackLU")
-    else()
-      message(STATUS "NOTICE: Examples will be compiled without the SuiteSparse library and UmfPack. Try setting SuiteSparse_UMF_INCLUDE_DIR and at least one of SuiteSparse_UMFPACK_LIBRARY_RELEASE and SuiteSparse_UMFPACK_LIBRARY_DEBUG to you UMFPACK installation.")
-    endif()
-  else(SuiteSparse_FOUND)
-    message(STATUS "NOTICE: Examples will not be compiled without the SuiteSparse library.")
-  endif(SuiteSparse_FOUND)
-
-  # ------------------------------------------------------------------
-  #   End of SuiteSparse detection
-  # ------------------------------------------------------------------
+  if(TARGET SuiteSparse::UMFPACK)
+    message(STATUS "Orbifold Tutte Embeddings will use UmfPackLU")
+  else()
+    message(STATUS "NOTICE: Examples will be compiled without the SuiteSparse library and UmfPack. Try setting CMAKE_PREFIX_PATH to your SuiteSparse installation.")
+  endif()
 
   create_single_source_cgal_program("ARAP_parameterization.cpp")
   target_link_libraries(ARAP_parameterization PRIVATE CGAL::Eigen3_support)

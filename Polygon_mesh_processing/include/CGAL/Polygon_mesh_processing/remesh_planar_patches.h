@@ -284,9 +284,9 @@ bool is_target_vertex_a_corner(halfedge_descriptor h,
   // (for example when there is a tangency between surfaces and is shared)
   if (h2 == graph_traits::null_halfedge()) return true;
 
-  const Point_3& p = get(vpm, source(h, tm));
-  const Point_3& q = get(vpm, target(h, tm));
-  const Point_3& r = get(vpm, source(h2, tm));
+  const Point_3 p = get(vpm, source(h, tm));
+  const Point_3 q = get(vpm, target(h, tm));
+  const Point_3 r = get(vpm, source(h2, tm));
 
   if (coplanar_cos_threshold==-1)
     return !collinear(p, q, r);
@@ -838,7 +838,7 @@ bool decimate_impl(const TriangleMeshIn& tm_in,
   }
 
   std::vector< boost::container::small_vector<std::size_t,3> > faces;
-  bool remeshing_failed = decimate_impl<Kernel>(tm_in,
+  bool decimate_success = decimate_impl<Kernel>(tm_in,
                                                 nb_corners_and_nb_cc,
                                                 vertex_corner_id,
                                                 edge_is_constrained,
@@ -864,7 +864,7 @@ bool decimate_impl(const TriangleMeshIn& tm_in,
                                parameters::point_to_vertex_map(f_id_tracker.v2v_map()).
                                            polygon_to_face_map(f_id_tracker.f2f_map()),
                                parameters::vertex_point_map(vpm_out));
-  return remeshing_failed;
+  return decimate_success;
 }
 
 template <typename vertex_descriptor,

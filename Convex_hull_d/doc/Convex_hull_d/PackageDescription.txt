@@ -1,4 +1,4 @@
-/// \defgroup PkgConvexHullDRef dD Convex Hulls and Delaunay Triangulations Reference
+/// \defgroup PkgConvexHullDRef Reference Manual
 /// \defgroup PkgConvexHullDConcepts Concepts
 /// \ingroup PkgConvexHullDRef
 /*!

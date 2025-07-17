@@ -98,7 +98,7 @@ public:
     // set fh to the face at the right of [va,v]
 
     typename Tr::Face_circulator fc = tr.incident_faces(v, fh), fcbegin(fc);
-    // circulators are counter-clockwise, so we start at the right of
+    // circulators are counterclockwise, so we start at the right of
     // [va,v]
     do {
       if( !tr.is_infinite(fc) )

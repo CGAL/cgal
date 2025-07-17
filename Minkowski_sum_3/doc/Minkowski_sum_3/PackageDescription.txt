@@ -1,4 +1,4 @@
-/// \defgroup PkgMinkowskiSum3Ref 3D Minkowski Sum of Polyhedra Reference
+/// \defgroup PkgMinkowskiSum3Ref Reference Manual
 
 /*!
 \addtogroup PkgMinkowskiSum3Ref

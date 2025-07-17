@@ -255,7 +255,7 @@ through the points.
 
 Each of these methods produce a triangle mesh stored in different
 ways. If this output mesh is hampered by defects such as holes or
-self-intersections, \cgal provide several algorithms to post-process
+self-intersections, \cgal provide several algorithms to postprocess
 it (hole filling, remeshing, etc.) in the package \ref PkgPolygonMeshProcessing "Polygon Mesh Processing".
 
 We do not discuss these functions here as there are many

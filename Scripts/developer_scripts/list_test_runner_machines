@@ -4,10 +4,10 @@
 declare -A MACHINE_CONTAINER_IMAGES
 
 TEST_MACHINES=(
-        "lrineau@bonnard"
+        "cgaltest@bonnard"
         "lrineau@cgal"
         "cgaltest@friedrich"
-        "lrineau@rubens"
+        "cgaltest@rubens"
 )
 
 machine_title() {

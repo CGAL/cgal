@@ -40,11 +40,10 @@ link_to_face_graph(const Triangulation_3& t,
   clear(fg);
   vertex_descriptor inf;
   vertex_descriptor nullvertex = boost::graph_traits<FG>::null_vertex();
-  fg.clear();
   typedef boost::unordered_map<Vertex_handle, vertex_descriptor> Vertex_map;
   Vertex_map vertex_map;
   std::vector<Cell_handle>  cells;
-  t.incident_cells(t.infinite_vertex(),std::back_inserter(cells));
+  t.incident_cells(vh, std::back_inserter(cells));
   std::array<vertex_descriptor,3> face;
 
   typename boost::property_map<FG, CGAL::vertex_point_t>::type vpm

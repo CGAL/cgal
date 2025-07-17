@@ -1,4 +1,4 @@
-/// \defgroup PkgScaleSpaceReconstruction3Ref Scale-Space Surface Reconstruction Reference
+/// \defgroup PkgScaleSpaceReconstruction3Ref Reference Manual
 
 /// \defgroup PkgScaleSpaceReconstruction3Concepts Concepts
 /// \ingroup PkgScaleSpaceReconstruction3Ref

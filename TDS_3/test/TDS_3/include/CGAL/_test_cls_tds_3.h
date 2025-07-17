@@ -14,6 +14,7 @@
 #include <cassert>
 #include <iostream>
 #include <fstream>
+#include <set>
 
 #include "_test_cls_tds_vertex.h"
 #include "_test_cls_tds_cell.h"
@@ -164,8 +165,8 @@ _test_cls_tds_3( const Tds &)
   assert(tds3.number_of_vertices()==2);
 
   // Containers
-  Vertex_range & vertex_c = tds3.vertices();
-  Cell_range & cell_c = tds3.cells();
+  [[maybe_unused]] Vertex_range & vertex_c = tds3.vertices();
+  [[maybe_unused]] Cell_range & cell_c = tds3.cells();
 
   assert(vertex_c.size() == 2);
   assert(cell_c.size() == 2);

@@ -54,8 +54,10 @@ public:
 
 public:
   Concatenate_iterator() : e1_(), i1_(), b2_(), i2_() {}
+
   Concatenate_iterator(It1 e1, It2 b2, It1 i1)
     : e1_(e1), i1_(i1), b2_(b2), i2_(b2) {}
+
   Concatenate_iterator(It1 e1, It2 b2, It2 i2, int)
     : e1_(e1), i1_(e1), b2_(b2), i2_(i2) {}
 
@@ -93,6 +95,32 @@ public:
     return tmp;
   }
 
+  Self operator+(std::size_t offset) const
+  {
+    // todo: make this a O(1) time operation
+    Self res(*this);
+    for(std::size_t i=0;i<offset;++i){
+      ++res;
+    }
+    return res;
+  }
+
+  Self& operator+=(std::size_t offset)
+  {
+    *this=this->operator+(offset);
+    return *this;
+  }
+
+  std::size_t operator-(Self other) const
+  {
+    // todo: make this a O(1) time operation
+    std::size_t res = 0;
+    while(other != *this){
+      ++res;
+      ++other;
+    }
+    return res;
+  }
 
   reference  operator*()  const
   {

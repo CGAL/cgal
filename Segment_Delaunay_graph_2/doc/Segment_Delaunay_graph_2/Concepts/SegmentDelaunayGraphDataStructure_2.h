@@ -21,7 +21,7 @@ reverses the action of the other.
 The join and split operations. Left to right: The vertex `v` is split
 into \f$ v_1\f$ and \f$ v_2\f$. The faces \f$ f\f$ and \f$ g\f$ are
 inserted after \f$ f_1\f$ and \f$ f_2\f$, respectively, in the
-counter-clockwise sense. The vertices \f$ v_1\f$, \f$ v_2\f$ and the
+counterclockwise sense. The vertices \f$ v_1\f$, \f$ v_2\f$ and the
 faces \f$ f\f$ and \f$ g\f$ are returned as a `boost::tuple` in that
 order. Right to left: The edge `(f,i)` is collapsed, and thus the
 vertices \f$ v_1\f$ and \f$ v_2\f$ are joined. The vertex `v` is
@@ -60,7 +60,7 @@ Vertex_handle join_vertices(Face_handle f, int i);
 /*!
 Splits the vertex `v` into two vertices `v1` and
 `v2`. The common faces `f` and `g` of `v1` and
-`v2` are created after (in the counter-clockwise sense) the
+`v2` are created after (in the counterclockwise sense) the
 faces `f1` and `f2`. The 4-tuple `(v1,v2,f,g)` is
 returned (see \cgalFigureRef{figsdgdssplitjoin}).
 */

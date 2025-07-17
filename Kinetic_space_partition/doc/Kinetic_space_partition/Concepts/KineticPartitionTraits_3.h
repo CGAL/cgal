@@ -170,7 +170,7 @@ public:
 
   /*!
    * Function object type that provides
-   * `Vector_3 operator()(Plane_3 h, Point_3 p)
+   * `Vector_3 operator()(Plane_3 h, Point_3 p)`
    * returns the orthogonal projection of `p` onto `h`.
    */
   typedef unspecified_type Construct_projected_point_3;

@@ -1,4 +1,4 @@
-/// \defgroup PkgBooleanSetOperations2Ref 2D Regularized Boolean Set-Operations Reference
+/// \defgroup PkgBooleanSetOperations2Ref Reference Manual
 /// \defgroup PkgBooleanSetOperations2Concepts Concepts
 /// \ingroup PkgBooleanSetOperations2Ref
 

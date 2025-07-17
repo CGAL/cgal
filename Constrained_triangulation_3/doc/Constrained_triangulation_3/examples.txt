@@ -1,0 +1,48 @@
+/*!
+\example Constrained_triangulation_3/conforming_constrained_Delaunay_triangulation_3.cpp
+@brief
+
+Simple example demonstrating the usage of the Constrained_triangulation_3 package.<br>
+
+It constructs a 3D constrained Delaunay triangulation from a polygon mesh.
+*/
+
+/*!
+\example Constrained_triangulation_3/ccdt_3_from_soup.cpp
+@brief
+
+Simple example demonstrating the usage of the Constrained_triangulation_3 package.<br>
+
+It constructs a constrained Delaunay triangulation from a polygon soup.
+*/
+
+/*!
+\example Constrained_triangulation_3/remesh_constrained_Delaunay_triangulation_3.cpp
+@brief
+
+How to use `CGAL::tetrahedral_isotropic_remeshing` with a constrained Delaunay triangulation.
+*/
+
+
+/*!
+\example Constrained_triangulation_3/conforming_constrained_Delaunay_triangulation_3_fimap.cpp
+@brief
+
+From a non-manifold OFF file, construct the constrained Delaunay triangulation.
+*/
+
+
+/*!
+\example Constrained_triangulation_3/ccdt_3_after_autorefinement.cpp
+@brief
+
+From a self-intersecting and non-triangulated surface in an OFF file,
+construct the constrained Delaunay triangulation after preprocessing by autorefinement.
+*/
+
+/*!
+\example Constrained_triangulation_3/ccdt_3_check_preconditions.cpp
+\example Constrained_triangulation_3/ccdt_3_fimap_region_growing.cpp
+\example Constrained_triangulation_3/ccdt_3_from_soup_fimap.cpp
+\example Constrained_triangulation_3/ccdt_3_preprocessing.cpp
+*/

@@ -11,8 +11,8 @@
 int main(int argc, char **argv)
 {
   CGAL_Lab app(argc, argv,
-                      "Classification demo",
-                      "CGAL Classification Demo",
-                      QStringList() << "Classification");
+               "Classification demo",
+               "CGAL Classification Demo",
+               QStringList() << "Classification");
   return app.try_exec();
 }

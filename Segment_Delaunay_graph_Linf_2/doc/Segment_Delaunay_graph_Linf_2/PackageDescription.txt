@@ -1,4 +1,4 @@
-/// \defgroup PkgSegmentDelaunayGraphLinf2Ref L Infinity Segment Delaunay Graphs Reference
+/// \defgroup PkgSegmentDelaunayGraphLinf2Ref Reference Manual
 /// \defgroup PkgSegmentDelaunayGraphLinf2Concepts Concepts
 /// \ingroup PkgSegmentDelaunayGraphLinf2Ref
 

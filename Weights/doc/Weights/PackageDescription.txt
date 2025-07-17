@@ -2,7 +2,7 @@ namespace CGAL {
 namespace Weights {
 
 /*!
-\defgroup PkgWeightsRef Weight Interface Reference
+\defgroup PkgWeightsRef Reference Manual
 
 \defgroup PkgWeightsRefConcepts Concepts
 \ingroup PkgWeightsRef

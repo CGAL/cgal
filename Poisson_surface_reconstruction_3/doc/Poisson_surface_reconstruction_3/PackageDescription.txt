@@ -1,4 +1,4 @@
-/// \defgroup PkgPoissonSurfaceReconstruction3Ref Poisson Surface Reconstruction Reference
+/// \defgroup PkgPoissonSurfaceReconstruction3Ref Reference Manual
 /*!
 \addtogroup PkgPoissonSurfaceReconstruction3Ref
 \cgalPkgDescriptionBegin{Poisson Surface Reconstruction,PkgPoissonSurfaceReconstruction3}

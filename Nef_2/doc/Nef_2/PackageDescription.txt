@@ -1,4 +1,4 @@
-/// \defgroup PkgNef2Ref 2D Boolean Operations on Nef Polygons Reference
+/// \defgroup PkgNef2Ref Reference Manual
 /// \defgroup PkgNef2Concepts Concepts
 /// \ingroup PkgNef2Ref
 /*!

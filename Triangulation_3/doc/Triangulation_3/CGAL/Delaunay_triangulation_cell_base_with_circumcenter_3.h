@@ -16,7 +16,7 @@ circumcenter.
 \tparam Traits is the geometric traits class and must be a model of `DelaunayTriangulationTraits_3`.
 
 \tparam Cb is a cell base class from which
-`Delaunay_triangulation_cell_base_with_circumcenter_3` derives. Cb should
+`Delaunay_triangulation_cell_base_with_circumcenter_3` derives. Cb must
 be a model of `DelaunayTriangulationCellBase_3`.
 It has the default value `Delaunay_triangulation_cell_base_3<Traits>`.
 
@@ -49,7 +49,7 @@ If it has already been computed in the past, the cached value is returned.
 Computes the circumcenter of the tetrahedron, or retrieves it if already
 computed
 */
-const Point& circumcenter(Traits&gt = Traits()) const;
+const Point& circumcenter(const Traits&gt = Traits()) const;
 
 /// @}
 

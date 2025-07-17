@@ -55,7 +55,7 @@ compare_squared_distance(const typename K::Point_3& pt,
                          const K& k,
                          const typename K::FT& d2)
 {
-  return compare(squared_distance(pt, plane, k), d2);
+  return ::CGAL::compare(squared_distance(pt, plane, k), d2);
 }
 
 template <class K>

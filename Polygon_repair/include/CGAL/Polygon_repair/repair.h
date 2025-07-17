@@ -78,6 +78,17 @@ Multipolygon_with_holes_2<Kernel, Container> repair(const Polygon_with_holes_2<K
 
 
 template <class Kernel, class Container>
+Multipolygon_with_holes_2<Kernel, Container> repair(const Polygon_2<Kernel, Container>& p, Non_zero_rule)
+{
+  Winding<Kernel> winding;
+  winding.insert(p);
+  winding.label();
+  winding.label_domains();
+  return winding();
+}
+
+
+template <class Kernel, class Container>
 Multipolygon_with_holes_2<Kernel, Container> repair(const Polygon_with_holes_2<Kernel, Container>& p, Non_zero_rule)
 {
   Winding<Kernel> winding;
@@ -93,7 +104,8 @@ Multipolygon_with_holes_2<Kernel, Container> repair(const Polygon_with_holes_2<K
 /// \tparam Kernel parameter of the input and output polygons. Must be model of `ConstrainedDelaunayTriangulationTraits_2 `
 /// \tparam Container parameter of the input and output polygons
 /// \tparam Rule may be any \ref PkgPolygonRepairRules
-/// \pre If the rule is the `Union_rule` or `Non_zero_rule`, each polygon with hole must be free of self-intersections
+/// \pre If the rule is the `Union_rule` or `Non_zero_rule`, each polygon with hole must be free of self-intersections,
+///      the outer boundary of each polygon with holes must be counterclockwise  and the  holes clockwise oriented.
 template <class Kernel, class Container, class Rule = Even_odd_rule>
 Multipolygon_with_holes_2<Kernel, Container> repair(const Multipolygon_with_holes_2<Kernel, Container>& p, Rule = Rule())
 {
@@ -104,6 +116,17 @@ Multipolygon_with_holes_2<Kernel, Container> repair(const Multipolygon_with_hole
     pr.label_triangulation_even_odd();
     pr.reconstruct_multipolygon();
   } return pr.multipolygon();
+}
+
+
+template <class Kernel, class Container>
+Multipolygon_with_holes_2<Kernel, Container> repair(const Multipolygon_with_holes_2<Kernel, Container>& p, Non_zero_rule)
+{
+  Winding<Kernel> winding;
+  winding.insert(p);
+  winding.label();
+  winding.label_domains();
+  return winding();
 }
 
 
@@ -791,7 +814,8 @@ protected:
 /// computes the union of all polygons with holes in `p`
 /// \tparam Kernel parameter of the input and output polygons. Must be model of `ConstrainedDelaunayTriangulationTraits_2 `
 /// \tparam Container parameter of the input and output polygons
-/// \pre Each polygon with hole must be free of self-intersections
+/// \pre Each polygon with holes must be free of self-intersections,
+///      the outer boundaries must be counterclockwise and the holes clockwise oriented.
 template <typename Kernel, typename Container>
 Multipolygon_with_holes_2<Kernel,Container>
 join(const Multipolygon_with_holes_2<Kernel,Container>& pa)
@@ -816,7 +840,8 @@ join(const Multipolygon_with_holes_2<Kernel,Container>& pa)
 /// \tparam Container parameter of the input and output polygons
 /// \tparam PA must be `Polygon_2<Kernel, Container>`, or `Polygon_with_holes_2<Kernel, Container>`, or `Multipolygon_with_holes_2<Kernel, Container>`
 /// \tparam PB must be `Polygon_2<Kernel, Container>`, or `Polygon_with_holes_2<Kernel, Container>`, or `Multipolygon_with_holes_2<Kernel, Container>`
-/// \pre The polygons `pa` and `pb` must be free of self-intersections
+/// \pre The polygons `pa` and `pb` must be free of self-intersections,
+///      the outer boundaries must be counterclockwise  and the holes clockwise oriented.
 template <typename PA, typename PB, typename Kernel = Default, typename Container = Default>
 #ifdef DOXYGEN_RUNNING
 Multipolygon_with_holes_2<Kernel,Container>
@@ -848,7 +873,8 @@ join(const PA& pa, const PB& pb, const Kernel& = Default(), const Container& = D
 /// computes the intersection of all polygons with holes in `p`
 /// \tparam Kernel parameter of the input and output polygons. Must be model of `ConstrainedDelaunayTriangulationTraits_2 `
 /// \tparam Container parameter of the input and output polygons
-/// \pre Each polygon with hole must be free of self-intersections
+/// \pre Each polygon with holes must be free of self-intersections
+///      the outer boundaries must be counterclockwise and the holes clockwise oriented.
 template <typename Kernel, typename Container>
 Multipolygon_with_holes_2<Kernel,Container>
 intersect(const Multipolygon_with_holes_2<Kernel,Container>& p)
@@ -880,6 +906,7 @@ intersect(const Multipolygon_with_holes_2<Kernel,Container>& p)
 /// \tparam PA must be `Polygon_2<Kernel, Container>`, or `Polygon_with_holes_2<Kernel, Container>`, or `Multipolygon_with_holes_2<Kernel, Container>`
 /// \tparam PB must be `Polygon_2<Kernel, Container>`, or `Polygon_with_holes_2<Kernel, Container>`, or `Multipolygon_with_holes_2<Kernel, Container>`
 /// \pre The polygons `pa` and `pb` must be free of self-intersections
+///      the outer boundaries must be counterclockwise and the holes clockwise oriented.
 template <typename PA, typename PB, typename Kernel = Default, typename Container = Default>
 #ifdef DOXYGEN_RUNNING
 Multipolygon_with_holes_2<Kernel, Container>

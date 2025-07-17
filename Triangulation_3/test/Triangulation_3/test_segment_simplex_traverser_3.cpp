@@ -1,7 +1,7 @@
 //#define CGAL_DEBUG_TRIANGULATION_SEGMENT_TRAVERSER_3 1
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_3.h>
-#include <CGAL/Base_with_time_stamp.h>
+#include <CGAL/Triangulation_simplex_base_with_time_stamp.h>
 #include <CGAL/IO/io.h>
 
 #include <assert.h>
@@ -23,7 +23,7 @@ typedef Kernel::Triangle_3                                      Triangle_3;
 typedef Kernel::Tetrahedron_3                                   Tetrahedron_3;
 
 // Define the structure.
-typedef CGAL::Base_with_time_stamp<CGAL::Triangulation_vertex_base_3<Kernel>> Vb;
+typedef CGAL::Triangulation_simplex_base_with_time_stamp<CGAL::Triangulation_vertex_base_3<Kernel>> Vb;
 typedef CGAL::Delaunay_triangulation_cell_base_3<Kernel> Cb;
 typedef CGAL::Triangulation_data_structure_3<Vb, Cb> Tds;
 typedef CGAL::Delaunay_triangulation_3<Kernel, Tds> DT;

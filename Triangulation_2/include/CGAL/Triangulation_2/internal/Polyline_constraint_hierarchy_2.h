@@ -18,13 +18,14 @@
 
 #include <CGAL/basic.h>
 #include <utility>
+#include <stack>
 #include <map>
-#include <set>
 #include <list>
 #include <array>
 #include <queue>
 #include <iterator>
 
+#include <boost/container/flat_set.hpp>
 #include <boost/stl_interfaces/iterator_interface.hpp>
 
 #include <CGAL/unordered_flat_map.h>
@@ -52,7 +53,7 @@ template <class T, class Compare, class Point>
 class Polyline_constraint_hierarchy_2
 {
   using T_point_ref = decltype(std::declval<T>()->point());
-  static_assert(std::is_same_v<Point&, T_point_ref>,
+  static_assert(std::is_same_v<CGAL::cpp20::remove_cvref_t<Point>, CGAL::cpp20::remove_cvref_t<T_point_ref>>,
                 "The point type of the vertex handle must be the same as the point type of the hierarchy.");
 public:
   using Vertex_handle = T;
@@ -214,6 +215,8 @@ public:
 
     auto index() const { return id; }
 
+    Vertex_list_with_info* vl_with_info_pointer() const { return vl_with_info_ptr; }
+
     Vertex_list_ptr vl_ptr() const {
       return vl_with_info_ptr == nullptr ? nullptr : std::addressof(vl_with_info_ptr->vl);
     }
@@ -272,6 +275,10 @@ public:
 
   }; // end Constraint_id
 
+  friend auto hash_value(const Constraint_id& cid) {
+    return boost::hash_value(std::make_pair(cid.index(), cid.vl_ptr()));
+  }
+
   class Pair_compare {
     Compare comp;
 
@@ -325,13 +332,13 @@ public:
     }
   }
 
-  using Constraints_set = std::set<Constraint_id>;
+  using Constraints_set = boost::container::flat_set<Constraint_id>;
 #if CGAL_USE_BARE_STD_MAP
   using Sc_to_c_map = std::map<Subconstraint, Context_list*, Pair_compare>;
 #else
   using Sc_to_c_map = CGAL::unordered_flat_map<Subconstraint, Context_list*, boost::hash<Subconstraint>>;
 #endif
-  using Constraint_iterator = typename Constraints_set::iterator;
+  using Constraint_iterator = typename Constraints_set::const_iterator;
   using Constraints = const Constraints_set&;
   using Sc_iterator = typename Sc_to_c_map::const_iterator;
   using Sc_it = typename Sc_to_c_map::iterator;
@@ -517,28 +524,57 @@ private:
   struct Priv { // encapsulate the private members in a struct, to detect direct access to them
     Priv(Compare comp)
     : comp(comp)
-    #if CGAL_USE_BARE_STD_MAP
+#if CGAL_USE_BARE_STD_MAP
     , sc_to_c_map(Pair_compare(comp))
 #else
     , sc_to_c_map()
 #endif
     {}
 
-    Compare               comp;
-    Sc_to_c_map           sc_to_c_map;
-    std::queue<size_type> free_ids;
-    Constraints_set       constraints_set;
+    Priv(const Priv&) = default;
+    Priv(Priv&&) = default;
+    Priv& operator=(const Priv&) = default;
+    Priv& operator=(Priv&&) = default;
+
+    Priv(Priv&& other, const Compare& comp) noexcept
+    : comp(comp)
+    , sc_to_c_map(std::move(other.sc_to_c_map))
+    , free_ids(std::move(other.free_ids))
+    , constraints_set(std::move(other.constraints_set))
+    {
+#if CGAL_USE_BARE_STD_MAP
+      CGAL_error_msg("This constructor cannot be used with CGAL_USE_BARE_STD_MAP");
+#endif
+    }
+
+    Compare comp;
+    Sc_to_c_map sc_to_c_map;
+    std::stack<size_type, std::vector<size_type>> free_ids;
+    Constraints_set constraints_set;
   } priv;
 public:
-  Polyline_constraint_hierarchy_2(const Compare& comp) : priv(comp)  {}
-  Polyline_constraint_hierarchy_2(const Polyline_constraint_hierarchy_2& ch) : priv(ch.priv.comp) {}
+  Polyline_constraint_hierarchy_2(const Compare& comp) : priv(comp) {}
+
+  Polyline_constraint_hierarchy_2(const Polyline_constraint_hierarchy_2& ch) : priv(ch.priv.comp) { copy(ch); }
+
   Polyline_constraint_hierarchy_2(Polyline_constraint_hierarchy_2&&) = default;
 
-  ~Polyline_constraint_hierarchy_2(){ clear();}
+  Polyline_constraint_hierarchy_2(Polyline_constraint_hierarchy_2&& other, const Compare& comp) noexcept
+    : priv(std::move(other.priv), comp)
+  {}
+
+  ~Polyline_constraint_hierarchy_2() { clear(); }
+
   void clear();
 
   Polyline_constraint_hierarchy_2& operator=(const Polyline_constraint_hierarchy_2& ch) { return copy(ch); }
-  Polyline_constraint_hierarchy_2& operator=(Polyline_constraint_hierarchy_2&& ch) = default;
+
+  Polyline_constraint_hierarchy_2& operator=(Polyline_constraint_hierarchy_2&& ch) noexcept {
+    if(this == &ch) return *this;
+    clear();
+    priv = std::move(ch.priv);
+    return *this;
+  }
 
   // Query
   bool is_subconstraint(T va, T vb) const;
@@ -602,12 +638,14 @@ public:
   }
 
   Subconstraint_iterator subconstraints_begin() const {
+#if !defined(BOOST_MSVC) || BOOST_MSVC >= 1930 // skip for MSVC < 2022
     BOOST_STL_INTERFACES_STATIC_ASSERT_CONCEPT(Subconstraint_iterator, std::bidirectional_iterator);
-#if BOOST_VERSION >= 108300
+#  if BOOST_VERSION >= 108300
     BOOST_STL_INTERFACES_STATIC_ASSERT_ITERATOR_TRAITS(
       Subconstraint_iterator, std::bidirectional_iterator_tag, std::bidirectional_iterator,
       Subconstraint, Subconstraint, typename Subconstraint_iterator::pointer, std::ptrdiff_t);
-#endif
+#  endif
+#endif // not (MSVC < 2022)
     return Subconstraint_iterator(Subconstraint_iterator::Construction_access::begin_tag(),
                                   this);
   }
@@ -630,7 +668,7 @@ public:
   // Helper functions
   Polyline_constraint_hierarchy_2& copy(const Polyline_constraint_hierarchy_2& ch);
   Polyline_constraint_hierarchy_2& copy(const Polyline_constraint_hierarchy_2& ch,
-                                        std::map<Vertex_handle,Vertex_handle>& vmap);
+                                        CGAL::unordered_flat_map<Vertex_handle,Vertex_handle>& vmap);
   void swap(Polyline_constraint_hierarchy_2& ch);
 
 private:
@@ -648,7 +686,7 @@ private:
     if(priv.free_ids.empty()) {
       id = priv.constraints_set.size();
     } else {
-      id = priv.free_ids.front();
+      id = priv.free_ids.top();
       priv.free_ids.pop();
     }
     Constraint_id cid{new Vertex_list_with_info{this}, id};
@@ -730,7 +768,7 @@ auto Polyline_constraint_hierarchy_2<T,Compare,Point>::
 copy(const Polyline_constraint_hierarchy_2& other) -> Polyline_constraint_hierarchy_2&
 {
   // create a identity transfer vertex map
-  std::map<Vertex_handle, Vertex_handle>  vmap;
+  CGAL::unordered_flat_map<Vertex_handle, Vertex_handle>  vmap;
   for(const auto& cid : other.constraints()) {
     for(const auto& node : cid.elements()) {
       auto v = node.vertex();
@@ -742,11 +780,11 @@ copy(const Polyline_constraint_hierarchy_2& other) -> Polyline_constraint_hierar
 
 template <class T, class Compare, class Point>
 auto Polyline_constraint_hierarchy_2<T, Compare, Point>::
-copy(const Polyline_constraint_hierarchy_2& other, std::map<Vertex_handle, Vertex_handle>& vmap)
+copy(const Polyline_constraint_hierarchy_2& other, CGAL::unordered_flat_map<Vertex_handle, Vertex_handle>& vmap)
     -> Polyline_constraint_hierarchy_2&
 // copy with a transfer vertex map
 {
-  std::map<Constraint_id, Constraint_id> cstr_map;
+  CGAL::unordered_flat_map<Constraint_id, Constraint_id, boost::hash<Constraint_id>> cstr_map;
   clear();
   // copy constraints_set
   for(const auto& cid1: other.constraints()) {
@@ -1344,7 +1382,7 @@ void
 Polyline_constraint_hierarchy_2<T,Compare,Point>::
 print(std::ostream& os) const
 {
-  std::map<Vertex_handle,int>  vertex_num_map;
+  CGAL::unordered_flat_map<Vertex_handle,int>  vertex_num_map;
   int num = 0;
   for(const auto& cid : constraints()) {
     for (const auto& node : cid.elements()){

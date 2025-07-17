@@ -53,7 +53,7 @@ All analytic barycentric coordinates for polygons can be computed either by inst
 or through one of the free functions. Harmonic coordinates can be computed only by
 instantiating a class that must be parameterized by a model of the concept `DiscretizedDomain_2`.
 Segment and triangle coordinates can be computed only through the free functions.
-For more information see the \ref PkgBarycentricCoordinates2Ref "Reference Manual".
+For more information see the \ref PkgBarycentricCoordinates2Ref.
 
 Any point in the plane may be taken as a query point. However, we do not recommend using
 Wachspress and discrete harmonic coordinates with query points outside the closure

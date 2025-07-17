@@ -253,7 +253,7 @@ only return groups of indices of segments with similar orientations and/or posit
 \subsubsection QP_Regularization_Segments_Simplification Simplifying Segments
 
 After regularizing angles and offsets, simplifying segments with similar properties
-is a common post-processing task. This \cgal component provides an utility function
+is a common postprocessing task. This \cgal component provides an utility function
 `Segments::unique_segments()` that takes a set of input segments, groups them with
 respect to the collinearity property, and then returns for each group of collinear segments
 a segment that best fits this group (see the figure below).

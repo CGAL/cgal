@@ -51,6 +51,9 @@
 
 namespace CGAL {
 
+template <typename D>
+class Bbox_d;
+
 template <class E,
           class A,
           class E2A,
@@ -96,6 +99,10 @@ depth(const Lazy<AT,ET,E2A>& l)
 CGAL_LAZY_FORWARD(Bbox_2)
 CGAL_LAZY_FORWARD(Bbox_3)
 #undef CGAL_LAZY_FORWARD
+
+template<class A> Bbox_d<A> const& approx(Bbox_d<A> const& d) { return d; }
+template<class A> Bbox_d<A> const& exact (Bbox_d<A> const& d) { return d; }
+template<class A> int              depth (Bbox_d<A> const&  ) { return 0; }
 
 template<class T>inline std::enable_if_t<std::is_arithmetic<T>::value||std::is_enum<T>::value, T> approx(T d){return d;}
 template<class T>inline std::enable_if_t<std::is_arithmetic<T>::value||std::is_enum<T>::value, T> exact (T d){return d;}

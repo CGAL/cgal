@@ -163,7 +163,7 @@ stored as complex edges in a `Mesh_complex_3_in_triangulation_3`
 
 \subsection ssecEx4 Tetrahedral Remeshing After Mesh Generation
 
-The tetrahedral remeshing algorithm is designed as a post-processing for
+The tetrahedral remeshing algorithm is designed as a postprocessing for
 mesh generation algorithms. The API allows to generate a tetrahedral mesh
 with the \cgal \ref PkgMesh3 package, and
 further improve it with the tetrahedral remeshing algorithm.

@@ -124,7 +124,7 @@ compare_squared_distance(const typename K::Ray_3& ray1,
                          const K& k,
                          const typename K::FT& d2)
 {
-  return compare(squared_distance(ray1, ray2, k), d2);
+  return ::CGAL::compare(squared_distance(ray1, ray2, k), d2);
 }
 
 } // namespace internal

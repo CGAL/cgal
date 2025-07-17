@@ -1,4 +1,4 @@
-/// \defgroup PkgRidges3Ref Approximation of Ridges and Umbilics on Triangulated Surface Meshes Reference
+/// \defgroup PkgRidges3Ref Reference Manual
 
 /// \defgroup PkgRidges3Enums Enums
 /// \ingroup PkgRidges3Ref

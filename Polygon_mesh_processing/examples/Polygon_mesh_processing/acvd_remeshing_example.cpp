@@ -1,5 +1,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polygon_mesh_processing/approximated_centroidal_Voronoi_diagram_remeshing.h>
+#include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
 #include <CGAL/Surface_mesh.h>
 
@@ -31,6 +32,16 @@ int main(int argc, char* argv[])
   if (!CGAL::IO::read_polygon_mesh(filename, smesh))
   {
     std::cerr << "Invalid input file." << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  ///// make sure the input is a single connected component,
+  ///// otherwise the input must be decomposed
+  auto fcm = smesh.add_property_map<Mesh::Face_index, std::size_t>("fcm", 0).first;
+  std::size_t nbcc = PMP::connected_components(smesh, fcm);
+  if (nbcc!=1)
+  {
+    std::cerr << "The input is not a single connected component mesh." << std::endl;
     return EXIT_FAILURE;
   }
 

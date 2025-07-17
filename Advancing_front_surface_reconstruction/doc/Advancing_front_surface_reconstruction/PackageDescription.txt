@@ -1,4 +1,4 @@
-/// \defgroup PkgAdvancingFrontSurfaceReconstructionRef Advancing Front Surface Reconstruction Reference
+/// \defgroup PkgAdvancingFrontSurfaceReconstructionRef Reference Manual
 
 /// \defgroup PkgAdvancingFrontSurfaceReconstructionRefConcepts Concepts
 /// \ingroup PkgAdvancingFrontSurfaceReconstructionRef

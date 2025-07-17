@@ -1,4 +1,4 @@
-/// \defgroup PkgBoundingVolumesRef Bounding Volumes Reference
+/// \defgroup PkgBoundingVolumesRef Reference Manual
 /// \defgroup PkgBoundingVolumesConcepts Concepts
 /// \ingroup PkgBoundingVolumesRef
 /*!

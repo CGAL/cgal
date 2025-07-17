@@ -52,7 +52,7 @@ public:
     return (ic % 2) == 1;
   }
 
-  //! after_scan post-processing after bfs scan.
+  //! after_scan postprocessing after bfs scan.
 /*! The function fixes some of the curves, to be in the same direction as the
     half-edges.
 

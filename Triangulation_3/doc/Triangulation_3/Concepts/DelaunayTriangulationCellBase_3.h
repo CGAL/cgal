@@ -34,9 +34,9 @@ typedef DelaunayTriangulationTraits_3::Point_3 Point;
 Returns the circumcenter of the cell.
 `DelaunayTriangulationTraits_3` is the geometric traits class of the triangulation.
 
-This operator is required only when the dual functions are called.
+This operator is required only when the `dual()` functions are called.
 */
-const Point& circumcenter(DelaunayTriangulationTraits_3&gt = DelaunayTriangulationTraits_3()) const;
+const Point& circumcenter(const DelaunayTriangulationTraits_3&gt = DelaunayTriangulationTraits_3()) const;
 /// @}
 
 

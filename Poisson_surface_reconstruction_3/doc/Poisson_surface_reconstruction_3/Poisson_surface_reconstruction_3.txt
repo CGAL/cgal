@@ -29,7 +29,7 @@ solving for the implicit function before function evaluation.
 
 \note A \ref tuto_reconstruction "detailed tutorial on surface reconstruction"
 is provided with a guide to choose the most appropriate method along
-with pre- and post-processing.
+with pre- and postprocessing.
 
 
 \section Poisson_surface_reconstruction_3Common Common Reconstruction Pipeline
@@ -45,7 +45,7 @@ and 6) Surface reconstruction.
 \cgal provides algorithms for all steps listed above except alignment.
 
 Chapter \ref chappoint_set_processing_3 "Point Set Processing"
-describes algorithms to pre-process the point set before
+describes algorithms to preprocess the point set before
 reconstruction with functions devoted to the simplification, outlier
 removal, smoothing, normal estimation and normal orientation.
 

@@ -227,6 +227,32 @@ struct GetGeomTraits
                                           NamedParametersVPM>::type type;
 };
 
+namespace internal {
+// Similar helper for polygon soups
+template <typename PointRange, typename PolygonRange>
+struct Polygon_types
+{
+  typedef typename boost::range_value<PointRange>::type                             Point_3;
+  typedef typename boost::range_value<PolygonRange>::type                           Polygon_3;
+
+  typedef typename boost::range_iterator<Polygon_3>::type                           V_ID_iterator;
+  typedef typename std::iterator_traits<V_ID_iterator>::value_type                  V_ID;
+  typedef typename std::vector<Polygon_3>::size_type                                P_ID;
+};
+}
+
+template <typename PointRange, typename PolygonRange, typename NamedParameters>
+struct GetPolygonGeomTraits
+{
+  typedef typename internal_np::Lookup_named_param_def <
+                     internal_np::geom_traits_t,
+                     NamedParameters,
+                     typename CGAL::Kernel_traits<
+                       typename internal::Polygon_types<
+                         PointRange, PolygonRange>::Point_3 >::type
+                   > ::type                                                         type;
+};
+
 // Define the following structs:
 //
 // GetInitializedVertexIndexMap

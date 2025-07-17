@@ -1,4 +1,4 @@
-/// \defgroup PkgNumberTypesRef Number Types Reference
+/// \defgroup PkgNumberTypesRef Reference Manual
 
 /// \defgroup PkgNumberTypesConcepts Concepts
 /// \ingroup PkgNumberTypesRef
@@ -7,6 +7,9 @@
 /// \ingroup PkgNumberTypesRef
 
 /// \defgroup nt_core CORE
+/// \ingroup PkgNumberTypesRef
+
+/// \defgroup nt_boost Boost
 /// \ingroup PkgNumberTypesRef
 
 /// \defgroup nt_leda LEDA
@@ -69,6 +72,13 @@
 - `leda_rational`
 - `leda_bigfloat`
 - `leda_real`
+
+\cgalCRPSubsection{Boost}
+
+- `boost::multiprecision::cpp_int`
+- `boost::multiprecision::cpp_rational`
+- `boost::multiprecision::gmp_int`
+- `boost::multiprecision::gmp_rational`
 
 \cgalCRPSubsection{GMP}
 

@@ -1,4 +1,4 @@
-/// \defgroup PkgPartition2Ref 2D Polygon Partitioning Reference
+/// \defgroup PkgPartition2Ref Reference Manual
 /// \defgroup PkgPartition2Concepts Concepts
 /// \ingroup PkgPartition2Ref
 /// \defgroup PkgPartition2FunctionObjectConcepts Function Object Concepts

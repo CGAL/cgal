@@ -1,4 +1,4 @@
-/// \defgroup PkgPolyhedronRef 3D Polyhedral Surface  Reference
+/// \defgroup PkgPolyhedronRef Reference Manual
 /// \defgroup PkgPolyhedronConcepts Concepts
 /// \ingroup PkgPolyhedronRef
 

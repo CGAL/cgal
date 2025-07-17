@@ -33,7 +33,7 @@ PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - Put title of project here"
 descrstring = \
 r"""// PRETTY PACKAGE NAME should equal the project title in Doxyfile.in
 
-/// \defgroup PkgPACKAGERef PRETTY PACKAGE NAME Reference
+/// \defgroup PkgPACKAGERef Reference Manual
 /// \defgroup PkgPACKAGEConcepts Concepts
 /// \ingroup PkgPACKAGERef
 
@@ -47,6 +47,7 @@ r"""// PRETTY PACKAGE NAME should equal the project title in Doxyfile.in
 /// \ingroup PkgPACKAGERef
 
 /*!
+\addtogroup PkgPACKAGERef
 \cgalPkgDescriptionBegin{PACKAGE NAME,PkgPACKAGE}
 \cgalPkgPicture{pkg-small.png}
 

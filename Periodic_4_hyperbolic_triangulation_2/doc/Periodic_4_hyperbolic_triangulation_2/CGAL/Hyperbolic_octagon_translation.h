@@ -124,7 +124,7 @@ public:
                 Comparison operator.
                  Each translation \f$g\f$ of \f$\mathcal G\f$, when applied to the octagon \f$\mathcal D_O\f$,
                  produces a copy of \f$\mathcal D_O\f$ labeled by the translation \f$g\f$. The copies of
-                 \f$\mathcal D_O\f$ incident to \f$\mathcal D_O\f$ are naturally ordered counter-clockwise around
+                 \f$\mathcal D_O\f$ incident to \f$\mathcal D_O\f$ are naturally ordered counterclockwise around
                  \f$\mathcal D_O\f$. The comparison operator compares two translations based on the ordering
                  of the copies of \f$\mathcal D_O\f$ that they produce. For more details, see Section
                  \ref P4HT2_representation of the User manual.

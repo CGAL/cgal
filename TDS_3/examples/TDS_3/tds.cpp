@@ -39,7 +39,7 @@ int main()
   // cell incident to PV[0]
   Cell_handle c = PV[0]->cell();
   int ind;
-  bool check = c->has_vertex( PV[0], ind );
+  [[maybe_unused]] bool check = c->has_vertex( PV[0], ind );
   assert( check );
   // PV[0] is the vertex of index ind in c
 
