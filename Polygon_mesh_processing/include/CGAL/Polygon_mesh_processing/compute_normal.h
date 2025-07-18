@@ -394,122 +394,6 @@ typename GT::Vector_3 compute_normals_bisector(const typename GT::Vector_3& ni,
   return nb;
 }
 
-template <typename PolygonMesh, typename FaceNormalVector, typename GT>
-typename GT::Vector_3
-compute_most_visible_normal_2_points(std::vector<typename boost::graph_traits<PolygonMesh>::face_descriptor>& incident_faces,
-                                     const FaceNormalVector& face_normals,
-                                     const GT& traits)
-{
-  typedef typename GT::FT                                                  FT;
-  typedef typename GT::Vector_3                                            Vector_3;
-  typedef typename boost::property_traits<FaceNormalVector>::reference     Vector_ref;
-  typedef typename boost::graph_traits<PolygonMesh>::face_descriptor       face_descriptor;
-
-  typename GT::Compute_scalar_product_3 sp_3 = traits.compute_scalar_product_3_object();
-  typename GT::Construct_vector_3 cv_3 = traits.construct_vector_3_object();
-
-#ifdef CGAL_PMP_COMPUTE_NORMAL_DEBUG_PP
-  std::cout << "Trying to find enclosing normal with 2 normals" << std::endl;
-#endif
-
-  FT min_sp = -1;
-  Vector_3 n = cv_3(CGAL::NULL_VECTOR);
-
-  const std::size_t nif = incident_faces.size();
-  for(std::size_t i=0; i<nif; ++i)
-  {
-    for(std::size_t j=i+1; j<nif; ++j)
-    {
-      const Vector_ref ni = get(face_normals, incident_faces[i]);
-      const Vector_ref nj = get(face_normals, incident_faces[j]);
-
-      const Vector_3 nb = compute_normals_bisector(ni, nj, traits);
-
-      // Degeneracies like ni == -nj or a numerical error in the construction of 'nb' can happen.
-      if(traits.equal_3_object()(nb, CGAL::NULL_VECTOR))
-        return CGAL::NULL_VECTOR;
-
-      FT sp_bi = sp_3(nb, ni);
-      sp_bi = (std::max)(FT(0), sp_bi);
-      if(sp_bi <= min_sp)
-        continue;
-
-      face_descriptor dummy;
-      if(!does_enclose_other_normals<PolygonMesh>(i, j, -1 /*NA*/, nb, sp_bi, dummy, incident_faces, face_normals, traits))
-        continue;
-
-      min_sp = sp_bi;
-      n = nb;
-    }
-  }
-
-  return n;
-}
-
-template <typename PolygonMesh, typename FaceNormalVector, typename GT>
-typename GT::Vector_3
-compute_most_visible_normal_3_points(const std::vector<typename boost::graph_traits<PolygonMesh>::face_descriptor>& incident_faces,
-                                     const FaceNormalVector& face_normals,
-                                     const GT& traits)
-{
-  typedef typename GT::FT                                                  FT;
-  typedef typename GT::Vector_3                                            Vector_3;
-  typedef typename boost::property_traits<FaceNormalVector>::reference     Vector_ref;
-  typedef typename boost::graph_traits<PolygonMesh>::face_descriptor       face_descriptor;
-
-#ifdef CGAL_PMP_COMPUTE_NORMAL_DEBUG_PP
-  std::cout << "Trying to find enclosing normal with 3 normals" << std::endl;
-#endif
-
-  FT min_sp = -1;
-
-  Vector_3 n = traits.construct_vector_3_object()(CGAL::NULL_VECTOR);
-
-  const std::size_t nif = incident_faces.size();
-  for(std::size_t i=0; i<nif; ++i)
-  {
-    for(std::size_t j=i+1; j<nif; ++j)
-    {
-      for(std::size_t k=j+1; k<nif; ++k)
-      {
-        const Vector_ref ni = get(face_normals, incident_faces[i]);
-        const Vector_ref nj = get(face_normals, incident_faces[j]);
-        const Vector_ref nk = get(face_normals, incident_faces[k]);
-
-        if(ni == CGAL::NULL_VECTOR || nj == CGAL::NULL_VECTOR || nk == CGAL::NULL_VECTOR)
-          continue;
-
-        Vector_3 nb = compute_normals_bisector(ni, nj, nk, traits);
-        if(traits.equal_3_object()(nb, CGAL::NULL_VECTOR))
-          return nb;
-
-        FT sp_bi = traits.compute_scalar_product_3_object()(nb, ni);
-        if(sp_bi < FT(0))
-        {
-          nb = traits.construct_opposite_vector_3_object()(nb);
-          sp_bi = - sp_bi;
-        }
-
-        if(sp_bi <= min_sp)
-          continue;
-
-        face_descriptor dummy;
-        if(!does_enclose_other_normals<PolygonMesh>(i, j, k, nb, sp_bi, dummy, incident_faces, face_normals, traits))
-          continue;
-
-        min_sp = sp_bi;
-        n = nb;
-      }
-    }
-  }
-
-#ifdef CGAL_PMP_COMPUTE_NORMAL_DEBUG_PP
-  std::cout << "Best normal from 3-normals-approach: " << n << std::endl;
-#endif
-
-  return n;
-}
-
 // Inspired by Aubry et al. On the most 'normal' normal
 template <typename PolygonMesh, typename FaceNormalVector, typename GT>
 typename GT::Vector_3
@@ -662,57 +546,6 @@ compute_vertex_normal_most_visible_min_circle(typename boost::graph_traits<Polyg
       circum_points.pop_back();
     }
   }
-}
-
-// Inspired by Aubry et al. On the most 'normal' normal
-template <typename PolygonMesh, typename FaceNormalVector, typename GT>
-typename GT::Vector_3
-compute_vertex_normal_most_visible_min_circle_old(typename boost::graph_traits<PolygonMesh>::vertex_descriptor v,
-                                              const FaceNormalVector& face_normals,
-                                              const PolygonMesh& pmesh,
-                                              const GT& traits)
-{
-  typedef typename boost::graph_traits<PolygonMesh>::face_descriptor       face_descriptor;
-
-  typedef typename GT::Vector_3                                            Vector_3;
-
-  typename GT::FT bound(0.001);
-
-  std::vector<face_descriptor> incident_faces;
-  incident_faces.reserve(8);
-  for(face_descriptor f : CGAL::faces_around_target(halfedge(v, pmesh), pmesh))
-  {
-    if((f == boost::graph_traits<PolygonMesh>::null_face()) || (get(face_normals, f)==NULL_VECTOR) )
-      continue;
-
-    if(! incident_faces.empty()){
-      if(get(face_normals, incident_faces.back()) == get(face_normals, f) )
-        continue;
-
-      // auto aa = approximate_angle(get(face_normals, incident_faces.back()) ,get(face_normals, f));
-      // if(aa < bound)
-      //   continue;
-    }
-    incident_faces.push_back(f);
-  }
-
-  if(incident_faces.size() == 0)
-    return NULL_VECTOR;
-  if(incident_faces.size() == 1)
-    return get(face_normals, incident_faces.front());
-
-  Vector_3 res = compute_most_visible_normal_2_points<PolygonMesh>(incident_faces, face_normals, traits);
-  if(res != CGAL::NULL_VECTOR) // found a valid normal through 2 point min circle
-    return res;
-
-  // The vertex has only two incident faces with opposite normals (fold)...
-  // @todo devise something based on the directions of the 2/3/4 incident edges?
-  if(incident_faces.size() == 2 && res == CGAL::NULL_VECTOR)
-    return res;
-
-  CGAL_assertion(incident_faces.size() >= 2);
-
-  return compute_most_visible_normal_3_points<PolygonMesh>(incident_faces, face_normals, traits);
 }
 
 template <typename PolygonMesh, typename FaceNormalVector, typename VertexPointMap, typename GT>
@@ -906,21 +739,6 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
   }
 #endif
   Vector_3 normal = internal::compute_vertex_normal_most_visible_min_circle(v, face_normals, pmesh, traits);
-  Vector_3 normal_old = internal::compute_vertex_normal_most_visible_min_circle_old(v, face_normals, pmesh, traits);
-  if(!traits.equal_3_object()(normal, CGAL::NULL_VECTOR))
-    internal::normalize(normal, traits);
-  if(!traits.equal_3_object()(normal_old, CGAL::NULL_VECTOR))
-    internal::normalize(normal_old, traits);
-  if( ((normal-normal_old).squared_length()>=0.01) ){
-    std::cout << "Different normals found by the two methods" << std::endl;
-    std::cout << "brute force: " << normal_old << std::endl;
-    std::cout << "n^2 methods: " << normal << std::endl;
-    std::cout << "incident faces:" << std::endl;
-    for(face_descriptor f : CGAL::faces_around_target(halfedge(v, pmesh), pmesh))
-      std::cout << f << ": " << get(face_normals, f) << std::endl;
-    std::cout << std::endl;
-  }
-  // CGAL_assertion(((normal==normal_old) || ((normal-normal_old).squared_length()<0.0001) || (normal==NULL_VECTOR)));
   if(traits.equal_3_object()(normal, CGAL::NULL_VECTOR)) // can't always find a most visible normal
   {
 #ifdef CGAL_PMP_COMPUTE_NORMAL_DEBUG_PP
