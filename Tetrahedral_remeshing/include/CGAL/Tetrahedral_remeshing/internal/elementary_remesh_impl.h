@@ -44,12 +44,13 @@ public:
   typedef ComplexEdgeVertexSmoothOperation<C3t3, SizingFunction, CellSelector> ComplexEdgeSmoothOp;
 
   std::unique_ptr<ComplexEdgeSmoothOp> m_edge_smooth_op;
+  std::unique_ptr<SurfaceVertexSmoothOp> m_surface_vertices_smooth_op;
   Elementary_remesher()
-    : m_edge_smooth_op(nullptr), m_visitor(nullptr)
+    : m_edge_smooth_op(nullptr), m_surface_vertices_smooth_op(nullptr), m_visitor(nullptr)
   {}
 
   Elementary_remesher(C3t3& c3t3, const SizingFunction& sizing, const CellSelector& cell_selector, const Visitor* visitor = nullptr)
-    : m_edge_smooth_op(nullptr), m_visitor(visitor)
+    : m_edge_smooth_op(nullptr), m_surface_vertices_smooth_op(nullptr), m_visitor(visitor)
   {}
 
 private:
@@ -84,6 +85,7 @@ public:
 
   void smooth_init(C3t3& c3t3, const SizingFunction& sizing, const CellSelector& cell_selector, const bool protect_boundaries) {
     m_edge_smooth_op = std::make_unique<ComplexEdgeSmoothOp>(c3t3, sizing, cell_selector, protect_boundaries, nullptr);
+    m_surface_vertices_smooth_op = std::make_unique<SurfaceVertexSmoothOp>(c3t3, sizing, cell_selector, protect_boundaries, false, nullptr);
   }
 
   void smooth(
@@ -105,19 +107,29 @@ public:
               ExecutionPolicy<ComplexEdgeSmoothOp> executor;
               executor.execute(*m_edge_smooth_op, c3t3);
           }
+          #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+          else if(!m_edge_smooth_op) {
+            std::cerr << "Complex edge smoothing operation not initialized." << std::endl;
+          }
+          #endif
           #endif
 
-		#ifndef CGAL_TETRAHEDRAL_REMESHING_USE_COMPLEX_EDGE_SMOOTHING
+          #ifdef CGAL_TETRAHEDRAL_REMESHING_USE_SURFACE_VERTEX_SMOOTHING
           // Smooth vertices on surface
-          {
-              SurfaceVertexSmoothOp surface_smooth_op(c3t3, sizing, cell_selector, protect_boundaries, smooth_constrained_edges, context.get());
+          if(m_surface_vertices_smooth_op) {
+              m_surface_vertices_smooth_op->set_context(context.get());
               ExecutionPolicy<SurfaceVertexSmoothOp> executor;
-              executor.execute(surface_smooth_op, c3t3);
+              executor.execute(*m_surface_vertices_smooth_op, c3t3);
           }
+          #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+          else{
+            std::cerr << "Surface vertex smoothing operation not initialized." << std::endl;
+          }
+          #endif
           #endif
       }
 
-	#ifndef CGAL_TETRAHEDRAL_REMESHING_USE_COMPLEX_EDGE_SMOOTHING
+	#ifdef CGAL_TETRAHEDRAL_REMESHING_USE_INTERNAL_VERTEX_SMOOTHING
       // Smooth internal vertices
       {
           InternalVertexSmoothOp internal_smooth_op(c3t3, sizing, cell_selector, protect_boundaries, smooth_constrained_edges, context.get());

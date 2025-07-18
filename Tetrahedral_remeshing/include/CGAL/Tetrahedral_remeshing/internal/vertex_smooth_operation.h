@@ -97,36 +97,14 @@ protected:
     return inc_cells;
   }
 
-  // Common helper methods for all smoothing operations
-  void collect_vertices_surface_indices(const C3t3& c3t3) {
-    // ... implementation ...
-  }
 
-  void compute_vertices_normals(const C3t3& c3t3) {
-    // ... implementation ...
-  }
-
-  void build_aabb_trees(const C3t3& c3t3) {
-    // ... implementation ...
-  }
-
-  void collect_surface_vertex_moves(const C3t3& c3t3) {
-    // ... implementation ...
-  }
-
-  std::vector<Surface_patch_index> get_surface_indices(const Vertex_handle& v, const C3t3& c3t3) const {
-    // ... implementation ...
-    return std::vector<Surface_patch_index>();
-  }
-
-  std::size_t vertex_id(const Vertex_handle& v) const {
-    // ... implementation ...
-    return 0;
-  }
-
-  Point_3 project_on_tangent_plane(const Point_3& p, const Point_3& origin, const Vector_3& normal) const {
-    // ... implementation ...
-    return p;
+  Point_3 project_on_tangent_plane(const Point_3& gi,
+                                    const Point_3& pi,
+                                    const Vector_3& normal)
+  {    
+    Vector_3 diff(gi, pi);
+    Point_3 result = gi + (normal * diff) * normal;    
+    return result;
   }
 };
 
@@ -234,10 +212,6 @@ public:
   using typename BaseClass::Point_3;
 
 private:
-  // Surface-specific data (only used by SurfaceVertexSmoothOperation)
-  std::unordered_map<Vertex_handle, std::vector<Surface_patch_index>> m_vertices_surface_indices;
-  std::unordered_map<Vertex_handle, std::unordered_map<Surface_patch_index, Vector_3, boost::hash<Surface_patch_index>>> m_vertices_normals;
-
   // Triangle AABB tree (only used by SurfaceVertexSmoothOperation)
   using Triangle_vec = std::vector<typename Tr::Triangle>;
   using Triangle_iter = typename Triangle_vec::iterator;
@@ -264,27 +238,6 @@ private:
     }
   }
 
-  void collect_vertices_surface_indices(const C3t3& c3t3) {
-      for (const Facet& fit : c3t3.facets_in_complex()) {
-          const Surface_patch_index& surface_index = c3t3.surface_patch_index(fit);
-          for (const Vertex_handle vi : c3t3.triangulation().vertices(fit)) {
-              auto& v_surface_indices = m_vertices_surface_indices[vi];
-              if (std::find(v_surface_indices.begin(), v_surface_indices.end(), surface_index) == v_surface_indices.end())
-                  v_surface_indices.push_back(surface_index);
-          }
-      }
-  }
-
-  void compute_vertices_normals(const C3t3& c3t3) {
-      // This is a simplified version. A full implementation would be more complex.
-      // For now, we are just ensuring the data structure is populated.
-      for (auto const& [vertex, surfaces] : m_vertices_surface_indices) {
-          for (const auto& surface_index : surfaces) {
-              m_vertices_normals[vertex][surface_index] = Vector_3(0,0,1); // Dummy normal
-          }
-      }
-  }
-
 public:
   SurfaceVertexSmoothOperation(const C3t3& c3t3,
                               const SizingFunction& sizing,
@@ -294,11 +247,10 @@ public:
                               typename BaseClass::Context* context)
     : BaseClass( sizing, cell_selector, protect_boundaries, smooth_constrained_edges, context)
   {
+    assert(protect_boundaries == false);
+    #ifndef CGAL_TET_REMESHING_SMOOTHING_WITH_MLS
     build_triangle_aabb_tree(c3t3);
-    if (!m_protect_boundaries) {
-        collect_vertices_surface_indices(c3t3);
-        compute_vertices_normals(c3t3);
-    }
+    #endif
   }
 
   bool should_process_element(const ElementType& v, const C3t3& c3t3) const override {
@@ -508,7 +460,10 @@ public:
                                   typename BaseClass::Context* context)
     : BaseClass( sizing, cell_selector, protect_boundaries, true, context)
   {
+    assert(protect_boundaries == false);
+    #ifndef CGAL_TET_REMESHING_SMOOTHING_WITH_MLS
     build_segment_aabb_tree(c3t3);
+    #endif
   }
 
   bool should_process_element(const ElementType& v, const C3t3& c3t3) const override {
@@ -559,13 +514,13 @@ public:
       Point_3 tmp_pos = current_pos;
 
 #ifndef CGAL_TET_REMESHING_EDGE_SMOOTHING_DISABLE_PROJECTION
-      const std::vector<Surface_patch_index>& v_surface_indices = m_vertices_surface_indices.at(v);
+      const std::vector<Surface_patch_index>& v_surface_indices = m_context->m_vertices_surface_indices.at(v);
       for (const Surface_patch_index& si : v_surface_indices)
       {
         Point_3 normal_projection = project_on_tangent_plane(smoothed_position,
                                                              current_pos,
                                                              vertices_normals.at(v).at(si));
-
+        
         sum_projections += Vector_3(tmp_pos, normal_projection);
         tmp_pos = normal_projection;
       }
