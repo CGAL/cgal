@@ -354,9 +354,9 @@ The following figures show an HDVF and an associated vector field:<br>
  <img src="HDVF_cycle_highlighted.png" align="center" width=20%/><br>
  Hence this vector field is a valid HDVF (\f$\partial(S)|_P\f$ is invertible) but it is not a DGVF.
 
-\subsection secHDVFcomput Computing HDVFs
+\subsection secHDVFcomput Computing and deforming a HDVF
 
-HDVFs can be computed using previous matrix expression; however, Aldo Gonzalez-Lorenzo has shown that several operations on HDVF can be introduced to built but also transform HDVFs.
+HDVFs can be computed using previous matrix expression; however, Aldo Gonzalez-Lorenzo has shown that several operations on HDVF can be introduced, not only to built, but also transform HDVFs.
 
 - <B>A operation </B> (pairing of two critical cells)<br>
 Given a HDVF \f$X=(P,S,C)\f$, and two CRITICAL cells \f$\gamma_1\in C_q\f$, \f$\gamma_2\in C_{q+1}\f$
@@ -380,18 +380,43 @@ and the operation is valid (ie. produces an HDVF) if and only if:
 
     Operations A and R are inverse one another.
     
-- <B>M operation </B> (exchange a PRIMARY and a CRITICAL cells)<br>
-Given a HDVF \f$X=(P,S,C)\f$, a CRITICAL cell \f$\gamma\in C_q\f$ and a SECONDARY cell \f$\gamma_2\in C_{q}\f$
+- <B>M operation </B> (exchange a PRIMARY and a CRITICAL cell)<br>
+Given a HDVF \f$X=(P,S,C)\f$, a PRIMARY cell \f$\pi\in P_q\f$ and a CRITICAL cell \f$\gamma_1\in C_{q}\f$
 \f\[ M(X) = \Big(P\backslash \{\pi\} \cup\{\gamma\}, S, C\backslash \{\gamma\}\cup \{\pi\}\Big)\f\]
 and the operation is valid (ie. produces an HDVF) if and only if:
 \f\[ \langle \mathrm f(\pi),\gamma\rangle \text{ is invertible}\f\]
 
-    The M operation modifies the homology generator associated to \f$\gamma\f$ (while preserving is associated cohomology generator)
- 
+    The M operation modifies the homology generator associated to \f$\gamma\f$ (while preserving is associated cohomology generator).
     The following figure illustrates the M operation.
  
  \cgalFigureBegin{HDVF_M,HDVF_M.png}
- M operation on a cubical complex \f$K\f$. <B>Left:</B> perfect HDVF over \f$K\f$ with cells \f$(\pi, \gamma_1)\f$ meeting the M operation (blue: homology generator associated with \f$\gamma_1\f$, pink: cohomology generator associated with \f$\gamma_1\f$); <B>Right:</B> perfect HDVF obtained with \f$M(\pi,\gamma_1)\f$ and updated generators. 
+ M operation on a cubical complex \f$K\f$. <B>Left:</B> perfect HDVF over \f$K\f$ with cells \f$(\pi, \gamma)\f$ meeting the M operation condition (blue: homology generator associated with \f$\gamma\f$, pink: cohomology generator associated with \f$\gamma\f$); <B>Right:</B> perfect HDVF obtained with \f$M(\pi,\gamma)\f$ and updated generators (associated to \f$\pi\f$ which is now critical).
+ \cgalFigureEnd
+ 
+ - <B>W operation </B> (exchange a SECONDARY and a CRITICAL cell)<br>
+Given a HDVF \f$X=(P,S,C)\f$, a SECONDARY cell \f$\sigma\in S_q\f$ and a CRITICAL cell \f$\gamma_1\in C_{q}\f$
+\f\[ W(X) = \Big(P, S\backslash\{\sigma\}\cup \{\gamma\}, C\backslash \{\gamma\}\cup \{\sigma\}\Big)\f\]
+and the operation is valid (ie. produces an HDVF) if and only if:
+\f\[ \langle \mathrm g(\gamma),\sigma\rangle \text{ is invertible}\f\]
+
+    The W operation modifies the cohomology generator associated to \f$\gamma\f$ (while preserving is associated homology generator).
+    The following figure illustrates the W operation.
+ 
+ \cgalFigureBegin{HDVF_W,HDVF_W.png}
+ W operation on a cubical complex \f$K\f$. <B>Left:</B> perfect HDVF over \f$K\f$ with cells \f$(\sigma, \gamma)\f$ meeting the W operation condition (blue: homology generator associated with \f$\gamma\f$, pink: cohomology generator associated with \f$\gamma\f$); <B>Right:</B> perfect HDVF obtained with \f$W(\pi,\gamma)\f$ and updated generators (associated to \f$\sigma\f$ which is now critical).
+ \cgalFigureEnd
+ 
+- <B>MW operation </B> (exchange a PRIMARY and a SECONDARY cell)<br>
+    Given a HDVF \f$X=(P,S,C)\f$, a PRIMARY cell \f$\pi\in P_q\f$ and a SECONDARY cell \f$\sigma\in S_{q}\f$
+    \f\[ MW(X) = \Big(P\backslash\{\pi\}\cup \{\sigma\}, S\backslash\{\sigma\}\cup \{\pi\}, C\Big)\f\]
+    and the operation is valid (ie. produces an HDVF) if and only if:
+    \f\[ \langle \mathrm dh(\pi),\sigma\rangle \text{ and } \langle h\mathrm d(\sigma),\pi\rangle\text{ are invertible}\f\]
+
+    The MW operation modifies both homology and cohomology generators.
+    The following figure illustrates the W operation.
+ 
+ \cgalFigureBegin{HDVF_MW,HDVF_MW.png}
+ MW operation on a cubical complex \f$K\f$. <B>Top:</B> perfect HDVF over \f$K\f$ with cells \f$(\pi_1, \sigma_1)\f$ and \f$(\pi_2, \sigma_2)\f$ meeting the MW operation condition (blue: homology generators, pink: cohomology generators); <B>Down, left:</B> perfect HDVF obtained with \f$MW(\pi_1,\sigma_1)\f$ and updated generators (a cohomology generator is modified); <B>Down, right:</B> perfect HDVF obtained with \f$MW(\pi_2,\sigma_2)\f$ and updated generators (a homology generator is modified).
  \cgalFigureEnd
 
 \subsection secHDVFpersistent_homology Persistent homology
