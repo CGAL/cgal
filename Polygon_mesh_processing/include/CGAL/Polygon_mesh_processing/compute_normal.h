@@ -411,8 +411,6 @@ compute_vertex_normal_most_visible_min_circle(typename boost::graph_traits<Polyg
   typename GT::Construct_vector_3 cv_3 = traits.construct_vector_3_object();
   typename GT::Construct_cross_product_vector_3 cp_3 = traits.construct_cross_product_vector_3_object();
 
-  const FT sp_diff_bound = 0.00017453292431333;
-
   std::vector<face_descriptor> incident_faces;
   incident_faces.reserve(8);
   for(face_descriptor f : CGAL::faces_around_target(halfedge(v, pmesh), pmesh))
@@ -517,6 +515,9 @@ compute_vertex_normal_most_visible_min_circle(typename boost::graph_traits<Polyg
       FT sp_n1_nm = sp_3(n1, n_middle);
       FT sp_n2_nm = sp_3(n2, n_middle);
 
+      //We use the same bound than above in does_enclose_other_normals
+      const FT nmn = CGAL::approximate_sqrt(traits.compute_squared_length_3_object()(n_middle));
+      const FT sp_diff_bound = nmn*0.00017453292431333;
       CGAL_assertion((CGAL::sign(sp_n1_nm)!=CGAL::sign(sp_n2_nm)) || (abs(sp_n1_nm)<=sp_diff_bound) || (abs(sp_n2_nm)<=sp_diff_bound));
       if((abs(sp_n1_nm)<=sp_diff_bound) || (abs(sp_n2_nm)<=sp_diff_bound))
         return NULL_VECTOR; // The case is nearly degenerate and leads to geometric inconsistencies due to numerical errors
