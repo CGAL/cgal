@@ -527,10 +527,13 @@ compute_vertex_normal_most_visible_min_circle(typename boost::graph_traits<Polyg
   typename GT::Construct_vector_3 cv_3 = traits.construct_vector_3_object();
   typename GT::Construct_cross_product_vector_3 cp_3 = traits.construct_cross_product_vector_3_object();
 
+  const FT sp_diff_bound = 0.00017453292431333;
+
   std::vector<face_descriptor> incident_faces;
   incident_faces.reserve(8);
   for(face_descriptor f : CGAL::faces_around_target(halfedge(v, pmesh), pmesh))
   {
+    // Remove degenerate and redundant faces
     if((f == boost::graph_traits<PolygonMesh>::null_face()) || (get(face_normals, f)==NULL_VECTOR) )
       continue;
 
@@ -548,7 +551,8 @@ compute_vertex_normal_most_visible_min_circle(typename boost::graph_traits<Polyg
   boost::container::small_vector<face_descriptor, 3> circum_points;
   circum_points.push_back(incident_faces[0]);
   circum_points.push_back(incident_faces[1]);
-  //Get the farthest point to circum_points[0]
+
+  // Get the farthest point from circum_points[0]
   const Vector_ref n0 = get(face_normals, circum_points[0]);
   const Vector_ref n1 = get(face_normals, circum_points[1]);
   FT sp_min = sp_3(n0, n1);
@@ -561,52 +565,49 @@ compute_vertex_normal_most_visible_min_circle(typename boost::graph_traits<Polyg
     }
   }
 
-  //We get bigger and bigger circum circles
+  // At each step, we get a vertex outside of the current circum circle to define a larger circum circle
   while(true)
   {
     Vector_3 center;
-    FT radius; //The "radius" is the scalar product between one circum_point and the center, smaller it is higher is the circle
+    FT radius; //Here, 'radius' refers to the negative scalar product between one circum_point and the center.
+    const Vector_ref ni = get(face_normals, circum_points[0]);
+    const Vector_ref nj = get(face_normals, circum_points[1]);
+
     if(circum_points.size()==2){
-      const Vector_ref ni = get(face_normals, circum_points[0]);
-      const Vector_ref nj = get(face_normals, circum_points[1]);
       center = compute_normals_bisector(ni, nj, traits);
-      radius = sp_3(ni, center);
-      if(is_negative(radius))
-        return NULL_VECTOR; // Not normal visible by all
-      face_descriptor f_out;
-      if(does_enclose_other_normals<PolygonMesh>(-1,-2,-3,center, radius, f_out, incident_faces, face_normals, traits))
-        return center;
-      circum_points.push_back(f_out);
-
-      //Delete one vertex if include in circum circle of the two others
-      const Vector_ref nk = get(face_normals, circum_points[2]);
-      Vector_3 center_ni_nk = compute_normals_bisector(ni, nk, traits);
-      Vector_3 center_nj_nk = compute_normals_bisector(nj, nk, traits);
-      if(sp_3(center_ni_nk, nj) > sp_3(center_ni_nk, ni) ){
-        std::swap(circum_points[1],circum_points[2]);
-        circum_points.pop_back();
-      } else if(sp_3(center_nj_nk, ni) > sp_3(center_nj_nk, nj) ){
-        std::swap(circum_points[0],circum_points[2]);
-        circum_points.pop_back();
-      }
-
     } else {
-      const Vector_ref ni = get(face_normals, circum_points[0]);
-      const Vector_ref nj = get(face_normals, circum_points[1]);
+      CGAL_assertion(circum_points.size()==3);
       const Vector_ref nk = get(face_normals, circum_points[2]);
       center = compute_normals_bisector(ni, nj, nk, traits);
-      radius = sp_3(ni, center);
-      if(is_negative(radius))
-        return NULL_VECTOR; // Not normal visible by all
-      face_descriptor f_out;
-      if(does_enclose_other_normals<PolygonMesh>(-1,-2,-3,center, radius, f_out, incident_faces, face_normals, traits)){
-        return center;
-      }
+    }
 
-      const Vector_ref no= get(face_normals, f_out);
+    if(center==NULL_VECTOR)
+      return NULL_VECTOR;
+
+    radius = -sp_3(ni, center);
+
+    if(is_positive(radius))
+      return NULL_VECTOR; // The circle is larger than a hemisphere, so no normal is visible to all
+
+    face_descriptor f_out;
+    if(does_enclose_other_normals<PolygonMesh>(-1,-2,-3, center, -radius, f_out, incident_faces, face_normals, traits))
+      return center;
+    const Vector_ref no = get(face_normals, f_out);
+
+    if(circum_points.size()==2){
+      circum_points.push_back(f_out);
+    } else {
       if(is_negative(sp_3(center, no)))
-        return NULL_VECTOR; // Not normal visible by all
-      // move the farthest point to f at the beginning of circum_points
+        return NULL_VECTOR; // The circle will become bigger than an hemisphere, no normal visible by all
+
+      const Vector_ref nk = get(face_normals, circum_points[2]);
+
+      // We need to remove one of the previous points
+      // We keep the farthest point from the new one
+      // Then we divide the sphere in two along the equator that passes through the first point and the center
+      // We remove the previous point that lies in the same hemisphere as the new one
+
+      // move the farthest point to f_out at the beginning of circum_points
       FT sp_ni_no = sp_3(ni, no);
       FT sp_nj_no = sp_3(nj, no);
       FT sp_nk_no = sp_3(nk, no);
@@ -621,41 +622,44 @@ compute_vertex_normal_most_visible_min_circle(typename boost::graph_traits<Polyg
         }
       }
 
-      // Get the new vector
+      // Get the new vectors
       const Vector_ref n0 = get(face_normals, circum_points[0]);
       const Vector_ref n1 = get(face_normals, circum_points[1]);
       const Vector_ref n2 = get(face_normals, circum_points[2]);
 
-      // Search the point that are on the same side of f compare to ni
+      // Search for the points that lie in the same hemisphere as f_out compared to ni
       Vector_3 n_middle = cp_3(n0, center);
       FT sp_no_nm = sp_3(no, n_middle);
       FT sp_n1_nm = sp_3(n1, n_middle);
       FT sp_n2_nm = sp_3(n2, n_middle);
-      CGAL_assertion((CGAL::sign(sp_n1_nm)!=CGAL::sign(sp_n2_nm)) || is_zero(sp_n1_nm));
+
+      CGAL_assertion((CGAL::sign(sp_n1_nm)!=CGAL::sign(sp_n2_nm)) || (abs(sp_n1_nm)<=sp_diff_bound) || (abs(sp_n2_nm)<=sp_diff_bound));
+      if((abs(sp_n1_nm)<=sp_diff_bound) || (abs(sp_n2_nm)<=sp_diff_bound))
+        return NULL_VECTOR; // The case is nearly degenerate and leads to geometric inconsistencies due to numerical errors
+
       if( CGAL::sign(sp_no_nm) == CGAL::sign(sp_n1_nm)){
         circum_points[1]=f_out;
       } else {
         circum_points[2]=f_out;
       }
+    }
 
-      const Vector_ref ni2 = get(face_normals, circum_points[0]);
-      const Vector_ref nj2 = get(face_normals, circum_points[1]);
-      const Vector_ref nk2 = get(face_normals, circum_points[2]);
+    // Delete one vertex if it is included in the circumcircle of the other two
+    const Vector_ref ni2 = get(face_normals, circum_points[0]);
+    const Vector_ref nj2 = get(face_normals, circum_points[1]);
+    const Vector_ref nk2 = get(face_normals, circum_points[2]);
+    Vector_3 center_ni_nj = compute_normals_bisector(ni2, nj2, traits);
+    Vector_3 center_ni_nk = compute_normals_bisector(ni2, nk2, traits);
+    Vector_3 center_nj_nk = compute_normals_bisector(nj2, nk2, traits);
 
-      //Delete one vertex if include in circum circle of the two others
-      Vector_3 center_ni_nj = compute_normals_bisector(ni2, nj2, traits);
-      Vector_3 center_ni_nk = compute_normals_bisector(ni2, nk2, traits);
-      Vector_3 center_nj_nk = compute_normals_bisector(nj2, nk2, traits);
-      if(sp_3(center_ni_nj, nk2) > sp_3(center_ni_nj, ni2) ){
-        circum_points.pop_back();
-      } else if(sp_3(center_ni_nk, nj2) > sp_3(center_ni_nk, ni2) ){
-        std::swap(circum_points[1],circum_points[2]);
-        circum_points.pop_back();
-      } else if(sp_3(center_nj_nk, ni2) > sp_3(center_nj_nk, nj2) ){
-        std::swap(circum_points[0],circum_points[2]);
-        circum_points.pop_back();
-      }
-
+    if(sp_3(center_ni_nj, nk2) > sp_3(center_ni_nj, ni2)){
+      circum_points.pop_back();
+    } else if(sp_3(center_ni_nk, nj2) > sp_3(center_ni_nk, ni2)){
+      std::swap(circum_points[1],circum_points[2]);
+      circum_points.pop_back();
+    } else if(sp_3(center_nj_nk, ni2) > sp_3(center_nj_nk, nj2)){
+      std::swap(circum_points[0],circum_points[2]);
+      circum_points.pop_back();
     }
   }
 }
