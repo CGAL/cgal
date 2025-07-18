@@ -62,6 +62,7 @@ def load_pipeline_results(results_dir, group_by_executable=True):
                 # ==================================================================
                 input_args = data.get("run_metadata", {}).get("input_arguments", {})
                 exec_metadata = data.get("run_metadata", {}).get("exec_metadata", {})
+                preprocessor_macros = data.get("run_metadata", {}).get("preprocessor_macros", [])
                 
                 # Create comparable args from all input arguments
                 if input_args:
@@ -80,17 +81,22 @@ def load_pipeline_results(results_dir, group_by_executable=True):
                 else:
                     comparable_args = {}
                 
+                # Normalize preprocessor macros for comparison (sort to ensure consistent ordering)
+                comparable_macros = sorted(preprocessor_macros) if preprocessor_macros else []
+                
                 # Create run key - conditionally include exec_metadata based on config
                 if group_by_executable:
                     # Include exec_metadata - separate groups for different executables
                     run_key_data = {
                         'input_args': comparable_args,
-                        'exec_metadata': exec_metadata
+                        'exec_metadata': exec_metadata,
+                        'preprocessor_macros': comparable_macros
                     }
                 else:
                     # Exclude exec_metadata - allows comparison across different executables
                     run_key_data = {
-                        'input_args': comparable_args
+                        'input_args': comparable_args,
+                        'preprocessor_macros': comparable_macros
                     }
                 
                 run_key_str = str(run_key_data)
@@ -967,6 +973,23 @@ def main():
                             {% endfor %}
                         {% endif %}
                     </table>
+                    
+                            <!-- Show preprocessor macros -->
+                            {% set first_result = run_results[0] if run_results else {} %}
+                            {% set preprocessor_macros = first_result.get('run_metadata', {}).get('preprocessor_macros', []) %}
+                            {% if preprocessor_macros %}
+                                <h4>Preprocessor Macros</h4>
+                                <table>
+                                    <tr>
+                                        <th>Defined Macros</th>
+                                    </tr>
+                                    {% for macro in preprocessor_macros %}
+                                        <tr>
+                                            <td>{{ macro }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </table>
+                            {% endif %}
                     
                             <!-- Show exec metadata -->
                             {% if not group_by_executable %}

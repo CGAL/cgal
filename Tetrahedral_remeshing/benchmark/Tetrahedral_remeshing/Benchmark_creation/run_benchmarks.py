@@ -150,6 +150,41 @@ def validate_config(config):
         if not os.path.isfile(bench['exec']):
             logging.warning(f"Executable not found: {bench['exec']}")
 
+def parse_macros_config_file(macros_config_path):
+    """Parse a header file containing simple #define statements and return defined macros."""
+    defined_macros = []
+    
+    if not os.path.isfile(macros_config_path):
+        logging.warning(f"Macros config file not found: {macros_config_path}")
+        return None
+    
+    try:
+        with open(macros_config_path, 'r') as f:
+            lines = f.readlines()
+        
+        for line_num, line in enumerate(lines, 1):
+            line = line.strip()
+            
+            # Skip empty lines and comments
+            if not line or line.startswith('//') or line.startswith('/*') or line.startswith('*'):
+                continue
+            
+            # Parse #define statements
+            if line.startswith('#define'):
+                parts = line.split()
+                if len(parts) >= 2:
+                    macro_name = parts[1]
+                    defined_macros.append(macro_name)
+                else:
+                    logging.warning(f"Invalid #define statement at line {line_num}: {line}")
+        
+        return defined_macros
+    
+    except Exception as e:
+        logging.error(f"Error parsing macros config file {macros_config_path}: {e}")
+        return None
+
+
 def main():
     parser = argparse.ArgumentParser(description="Run benchmarks as specified in a YAML config and run matrix.")
     parser.add_argument('--config', type=str, default='config.yaml', help='Path to the YAML config file')
@@ -206,6 +241,20 @@ def main():
         benchmark_name = bench.get('name', f'benchmark_{bench_idx}')
         
         logger.info(f"Processing benchmark '{benchmark_name}' ({bench_idx + 1}/{len(config['benchmarks'])})")
+        
+        # Parse macros configuration if specified
+        macros_config = None
+        if 'macros_config_file' in bench:
+            macros_config_file = bench['macros_config_file']
+            # Handle relative paths relative to the config file directory
+            if not os.path.isabs(macros_config_file):
+                config_dir = os.path.dirname(os.path.abspath(args.config))
+                macros_config_file = os.path.join(config_dir, macros_config_file)
+            
+            logger.info(f"Parsing macros config file: {macros_config_file}")
+            macros_config = parse_macros_config_file(macros_config_file)
+            if macros_config:
+                logger.info(f"Found {len(macros_config)} defined macros")
         
         # Generate run matrix
         try:
@@ -317,6 +366,10 @@ def main():
                             if exec_metadata:
                                 data['run_metadata']['exec_metadata'] = exec_metadata
                             
+                            # Add preprocessor macros configuration if available
+                            if macros_config:
+                                data['run_metadata']['preprocessor_macros'] = macros_config
+                            
                             # Add environment metadata
                             data['env_metadata'] = env_metadata
                             
@@ -349,6 +402,10 @@ def main():
                     }
                     if exec_metadata:
                         fallback['run_metadata']['exec_metadata'] = exec_metadata
+                    
+                    # Add preprocessor macros configuration if available
+                    if macros_config:
+                        fallback['run_metadata']['preprocessor_macros'] = macros_config
                     
                     # Add benchmark name for consistency
                     fallback['benchmark_name'] = benchmark_name

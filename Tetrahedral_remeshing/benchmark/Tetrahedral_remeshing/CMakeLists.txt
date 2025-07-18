@@ -25,7 +25,7 @@ endif()
 
 if(CGAL_ACTIVATE_CONCURRENT_REMESHING)
   message(STATUS "Activating concurrent remeshing")
-  add_compile_definitions(CGAL_CONCURRENT_TETRAHEDRAL_REMESHING)
+  #add_compile_definitions(CGAL_CONCURRENT_TETRAHEDRAL_REMESHING)
   find_package(TBB REQUIRED)
   include(CGAL_TBB_support)
 else()

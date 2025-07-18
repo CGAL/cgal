@@ -1,11 +1,13 @@
 //#define CGAL_TETRAHEDRAL_REMESHING_USE_ELEMENTARY
 #ifndef NDEBUG
 #define CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+//#define CGAL_TETRAHEDRAL_REMESHING_DEBUG_MLS
 #endif
+ #define CGAL_TETRAHEDRAL_REMESHING_USE_COMPLEX_EDGE_SMOOTHING
 //#define USE_THREADSAFE_INCIDENT_CELLS
-//#define CGAL_TETRAHEDRAL_REMESHING_USE_COMPLEX_EDGE_SMOOTHING
+//#define CGAL_TETRAHEDRAL_REMESHING_USE_SURFACE_VERTEX_SMOOTHING
 //#define CGAL_TETRAHEDRAL_REMESHING_USE_REFACTORED_FLIP
-
+#include "benchmark_refactored_tetrahedral_remeshing_macros_config.h"
 #include "benchmark_tetrahedral_remeshing_common.h"
 #include "mesh_quality.h"
 #include <CGAL/Tetrahedral_remeshing/internal/elementary_remesh_impl.h>
