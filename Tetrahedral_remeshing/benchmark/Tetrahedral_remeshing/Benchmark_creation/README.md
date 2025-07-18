@@ -35,6 +35,7 @@ This repository provides a **generic, schema-driven benchmarking pipeline** for 
      - name: my_benchmark
        exec: ./my_benchmark_exec
        input_dir: ./input_data
+       macros_config_file: ./my_benchmark_macros.h  # Optional
        sweep:
          param1: [1, 2]
          param2: [A, B]
@@ -126,6 +127,63 @@ Example:
     - status
     - run_info
     - input_arguments
+```
+
+---
+
+## Preprocessor Macros Configuration
+
+The pipeline supports tracking preprocessor macros that are defined when building your benchmarks. This allows you to:
+
+- **Tag results** with the compile-time configuration used
+- **Compare runs** with different macro configurations
+- **Group results** by macro combinations for analysis
+
+### Configuration
+
+Add a `macros_config_file` field to your benchmark configuration:
+
+```yaml
+benchmarks:
+  - name: my_benchmark
+    exec: ./my_benchmark_exec
+    macros_config_file: ./my_benchmark_macros.h  # Path to header file with macros
+    sweep:
+      param1: [1, 2]
+```
+
+### Macros Config File Format
+
+The macros config file should be a simple C/C++ header file containing `#define` statements:
+
+```c
+#define FEATURE_A_ENABLED
+#define FEATURE_B_ENABLED
+// #define FEATURE_C_ENABLED  // Commented out = not defined
+#define OPTIMIZATION_LEVEL 2
+```
+
+### Important Notes
+
+- **Assumption**: The pipeline assumes that macros defined in the config file are actually used in your executable. **We do not validate that the macros are actually used in the code**.
+- **Purpose**: Macros are parsed and used to **tag results** for comparison and grouping purposes only.
+- **Parsing**: Only active `#define` statements are parsed; commented out defines (e.g., `// #define MACRO`) are ignored.
+- **Comparison**: Runs are only compared if they have the same input arguments, exec metadata, AND the same set of defined macros.
+
+### Results Structure
+
+Parsed macros appear in the results JSON as:
+
+```json
+{
+  "run_metadata": {
+    "preprocessor_macros": [
+      "FEATURE_A_ENABLED",
+      "FEATURE_B_ENABLED",
+      "OPTIMIZATION_LEVEL"
+    ]
+  }
+}
 ```
 
 ---

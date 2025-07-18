@@ -17,14 +17,16 @@ benchmarks:
   #     num_iterations: [1,2,10]
   #     target_edge_factor: [0.25,0.5,2]
   #     threads: [1]
-  - name: refactored  
+  - name: Parallel Refactored Complex Edge Smoothing AABB
     exec: C:/Users/iason.manolas/Documents/learning/gsoc2025-Tetra_remeshing_parallel-imanolas/Tetrahedral_remeshing/build_debug_tetrahedral_remeshing/Release/benchmark_refactored_tetrahedral_remeshing.exe
+    macros_config_file: C:/Users/iason.manolas/Documents/learning/gsoc2025-Tetra_remeshing_parallel-imanolas/Tetrahedral_remeshing/benchmark/Tetrahedral_remeshing/benchmark_refactored_tetrahedral_remeshing_macros_config.h
     sweep:
-      input_mesh: [C:/Users/iason.manolas/Documents/learning/gsoc2025-Tetra_remeshing_parallel-imanolas/Tetrahedral_remeshing/build_debug_tetrahedral_remeshing/meshes/TetrahedralMeshes/elephant.mesh]
+      # input_mesh: [C:/Users/iason.manolas/Documents/learning/gsoc2025-Tetra_remeshing_parallel-imanolas/Tetrahedral_remeshing/build_debug_tetrahedral_remeshing/meshes/TetrahedralMeshes/elephant.mesh]
       input_mesh: [C:/Users/iason.manolas/Documents/learning/gsoc2025-Tetra_remeshing_parallel-imanolas/Tetrahedral_remeshing/build_debug_tetrahedral_remeshing/meshes/TetrahedralMeshes/sphere.mesh]
       num_iterations: [1,2,10]
       target_edge_factor: [0.25,0.5,2]
-      threads: [1]
+      smooth_constrained_edges: [1]
+      threads: [8]
 
 # charts:
 #   - kind: scatter
