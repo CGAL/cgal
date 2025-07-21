@@ -1108,6 +1108,7 @@ public:
     }
     #endif
 
+  #ifndef CGAL_TETRAHEDRAL_REMESHING_USE_SURFACE_VERTEX_SMOOTHING
     /////////////// EDGES ON SURFACE, BUT NOT IN COMPLEX //////////////////
     if (!m_protect_boundaries)
     {
@@ -1124,6 +1125,7 @@ public:
     }
     CGAL_expensive_assertion(CGAL::Tetrahedral_remeshing::debug::are_cell_orientations_valid(tr));
     ////   end if(!protect_boundaries)
+#endif // CGAL_TETRAHEDRAL_REMESHING_USE_SURFACE_VERTEX_SMOOTHING
 
     ////////////// INTERNAL VERTICES ///////////////////////
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
