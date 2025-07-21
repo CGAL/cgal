@@ -27,8 +27,8 @@ using Surface_mesh = CGAL::Surface_mesh<K::Point_3>;
 
 int main(int argc, char* argv[])
 {
-  const double target_edge_length = (argc > 1) ? atof(argv[1]) : 0.02;
-  const int nb_iter = (argc > 2) ? atoi(argv[2]) : 1;
+  const double target_edge_length = (argc > 1) ? atof(argv[1]) : 0.1;
+  const int nb_iter = (argc > 2) ? atoi(argv[2]) : 5;
   const int nbv = (argc > 3) ? atoi(argv[3]) : 500;
 
   Remeshing_triangulation t3;
