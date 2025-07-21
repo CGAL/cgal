@@ -1,8 +1,16 @@
+project(CGAL_Tests)
+
 cmake_minimum_required(VERSION 3.12...3.31)
 
+file(GLOB pkgs RELATIVE ${CMAKE_SOURCE_DIR} "*")
+list(SORT pkgs)
 
-if(NOT CGAL_MODULES_DIR)
-  find_package(CGAL REQUIRED)
-endif()
-include(${CGAL_MODULES_DIR}/CGALHelpers.cmake)
-CGAL_handle_subdirectories(test tests)
+message("== Generating build files for tests ==")
+foreach(pkg ${pkgs})
+  set(pkg_dir ${CMAKE_SOURCE_DIR}/${pkg})
+  if(IS_DIRECTORY "${pkg_dir}" AND EXISTS "${pkg_dir}/CMakeLists.txt")
+    message("\n-- Configuring ${pkg}")
+    add_subdirectory(${pkg_dir} "${CMAKE_BINARY_DIR}/${pkg}")
+  endif()
+endforeach()
+message("== Generating build files for done (DONE) ==")

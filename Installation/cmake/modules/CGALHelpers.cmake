@@ -9,7 +9,7 @@ function(process_CGAL_subdirectory entry subdir type_name)
     make_directory("${CMAKE_BINARY_DIR}/${subdir}/${ENTRY_DIR_NAME}")
   endif()
 
-  message("\n-- Configuring ${subdir} in ${subdir}/${ENTRY_DIR_NAME}")
+  message("-- Configuring ${subdir} in ${subdir}/${ENTRY_DIR_NAME}")
 
   set(source_dir "")
   if(EXISTS ${entry}/CMakeLists.txt)
