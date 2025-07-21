@@ -76,16 +76,16 @@ void export_grid(const std::string& filename, const Bbox_3& bb, std::vector<int8
   std::ofstream stream(filename);
 
   stream <<
-    "ply" << std::endl <<
-    "format ascii 1.0" << std::endl <<
-    "element vertex " << (grid_size[0] * grid_size[1] * grid_size[2]) << std::endl <<
-    "property double x" << std::endl <<
-    "property double y" << std::endl <<
-    "property double z" << std::endl <<
-    "property uchar red" << std::endl <<
-    "property uchar green" << std::endl <<
-    "property uchar blue" << std::endl <<
-    "end_header" << std::endl;
+    "ply\n" <<
+    "format ascii 1.0\n" <<
+    "element vertex " << (grid_size[0] * grid_size[1] * grid_size[2]) << "\n" <<
+    "property double x\n" <<
+    "property double y\n" <<
+    "property double z\n" <<
+    "property uchar red\n" <<
+    "property uchar green\n" <<
+    "property uchar blue\n" <<
+    "end_header\n";
 
   for (unsigned int x = 0; x < grid_size[0]; x++)
     for (unsigned int y = 0; y < grid_size[1]; y++)
@@ -93,16 +93,16 @@ void export_grid(const std::string& filename, const Bbox_3& bb, std::vector<int8
         stream << (bb.xmin() + (x + 0.5) * voxel_size) << " " << (bb.ymin() + (y + 0.5) * voxel_size) << " " << (bb.zmin() + (z + 0.5) * voxel_size) << " ";
         switch (vox(x, y, z)) {
         case INSIDE:
-          stream << "175 175 100" << std::endl;
+          stream << "175 175 100\n";
           break;
         case OUTSIDE:
-          stream << "125 125 175" << std::endl;
+          stream << "125 125 175\n";
           break;
         case SURFACE:
-          stream << "200 100 100" << std::endl;
+          stream << "200 100 100\n";
           break;
         default:
-          stream << "0 0 0" << std::endl;
+          stream << "0 0 0\n";
           break;
         }
       }
@@ -124,16 +124,16 @@ void export_grid(const std::string& filename, const Bbox_3& bb, std::vector<int8
         if (filter(vox(x, y, z))) count++;
 
   stream <<
-    "ply" << std::endl <<
-    "format ascii 1.0" << std::endl <<
-    "element vertex " << count << std::endl <<
-    "property double x" << std::endl <<
-    "property double y" << std::endl <<
-    "property double z" << std::endl <<
-    "property uchar red" << std::endl <<
-    "property uchar green" << std::endl <<
-    "property uchar blue" << std::endl <<
-    "end_header" << std::endl;
+    "ply\n" <<
+    "format ascii 1.0\n" <<
+    "element vertex " << count << "\n" <<
+    "property double x\n" <<
+    "property double y\n" <<
+    "property double z\n" <<
+    "property uchar red\n" <<
+    "property uchar green\n" <<
+    "property uchar blue\n" <<
+    "end_header\n";
 
   for (unsigned int x = 0; x < grid_size[0]; x++)
     for (unsigned int y = 0; y < grid_size[1]; y++)
@@ -142,16 +142,16 @@ void export_grid(const std::string& filename, const Bbox_3& bb, std::vector<int8
         stream << (bb.xmin() + (x + 0.5) * voxel_size) << " " << (bb.ymin() + (y + 0.5) * voxel_size) << " " << (bb.zmin() + (z + 0.5) * voxel_size) << " ";
         switch (vox(x, y, z)) {
         case INSIDE:
-            stream << "175 175 100" << std::endl;
+            stream << "175 175 100\n";
           break;
         case OUTSIDE:
-          stream << "125 125 175" << std::endl;
+          stream << "125 125 175\n";
           break;
         case SURFACE:
-          stream << "200 100 100" << std::endl;
+          stream << "200 100 100\n";
           break;
         default:
-          stream << "0 0 0" << std::endl;
+          stream << "0 0 0\n";
           break;
         }
       }
@@ -163,16 +163,16 @@ void export_voxels(const std::string& filename, const Bbox_3& bb, std::vector<Ve
   std::ofstream stream(filename);
 
   stream <<
-    "ply" << std::endl <<
-    "format ascii 1.0" << std::endl <<
-    "element vertex " << voxels.size() << std::endl <<
-    "property double x" << std::endl <<
-    "property double y" << std::endl <<
-    "property double z" << std::endl <<
-    "end_header" << std::endl;
+    "ply\n" <<
+    "format ascii 1.0\n" <<
+    "element vertex " << voxels.size() << "\n" <<
+    "property double x\n" <<
+    "property double y\n" <<
+    "property double z\n" <<
+    "end_header\n";
 
   for (const Vec3_uint& v : voxels) {
-    stream << (bb.xmin() + (v[0] + 0.5) * voxel_size) << " " << (bb.ymin() + (v[1] + 0.5) * voxel_size) << " " << (bb.zmin() + (v[2] + 0.5) * voxel_size) << " ";
+    stream << (bb.xmin() + (v[0] + 0.5) * voxel_size) << " " << (bb.ymin() + (v[1] + 0.5) * voxel_size) << " " << (bb.zmin() + (v[2] + 0.5) * voxel_size) << "\n";
   }
 
   stream.close();
@@ -183,16 +183,16 @@ void export_points(const std::string& filename, const Bbox_3& bb, std::vector<Po
   std::ofstream stream(filename);
 
   stream <<
-    "ply" << std::endl <<
-    "format ascii 1.0" << std::endl <<
-    "element vertex " << points.size() << std::endl <<
-    "property double x" << std::endl <<
-    "property double y" << std::endl <<
-    "property double z" << std::endl <<
-    "end_header" << std::endl;
+    "ply\n" <<
+    "format ascii 1.0\n" <<
+    "element vertex " << points.size() << "\n" <<
+    "property double x\n" <<
+    "property double y\n" <<
+    "property double z\n" <<
+    "end_header\n";
 
   for (const Point_3& p : points) {
-    stream << (bb.xmin() + p.x()) << " " << (bb.ymin() + p.y()) << " " << (bb.zmin() + p.z()) << " ";
+    stream << (bb.xmin() + p.x()) << " " << (bb.ymin() + p.y()) << " " << (bb.zmin() + p.z()) << "\n";
   }
 
   stream.close();
@@ -204,7 +204,7 @@ void export_points(const std::string& filename, Range& points) {
   stream << std::setprecision(18);
 
   for (const auto& p : points) {
-    stream << p.x() << " " << p.y() << " " << p.z() << std::endl;
+    stream << p.x() << " " << p.y() << " " << p.z() << "\n";
   }
 
   stream.close();
@@ -262,26 +262,28 @@ const typename GeomTraits::Point_3 &point(typename boost::graph_traits<PolygonMe
 template<typename FaceGraph, typename FT>
 Bbox_uint grid_bbox_face(const FaceGraph& mesh, const typename boost::graph_traits<FaceGraph>::face_descriptor fd, const Bbox_3& bb, const FT& voxel_size) {
   Bbox_3 face_bb = face_bbox(fd, mesh);
+  double vs = to_double(voxel_size);
   return Bbox_uint({
-    static_cast<unsigned int>((face_bb.xmin() - bb.xmin()) / to_double(voxel_size) - 0.5),
-    static_cast<unsigned int>((face_bb.ymin() - bb.ymin()) / to_double(voxel_size) - 0.5),
-    static_cast<unsigned int>((face_bb.zmin() - bb.zmin()) / to_double(voxel_size) - 0.5)
+    static_cast<unsigned int>((face_bb.xmin() - bb.xmin()) / vs - 0.5),
+    static_cast<unsigned int>((face_bb.ymin() - bb.ymin()) / vs - 0.5),
+    static_cast<unsigned int>((face_bb.zmin() - bb.zmin()) / vs - 0.5)
     }, {
-    static_cast<unsigned int>((face_bb.xmax() - bb.xmin()) / to_double(voxel_size) + 0.5),
-    static_cast<unsigned int>((face_bb.ymax() - bb.ymin()) / to_double(voxel_size) + 0.5),
-    static_cast<unsigned int>((face_bb.zmax() - bb.zmin()) / to_double(voxel_size) + 0.5)
+    static_cast<unsigned int>((face_bb.xmax() - bb.xmin()) / vs + 0.5),
+    static_cast<unsigned int>((face_bb.ymax() - bb.ymin()) / vs + 0.5),
+    static_cast<unsigned int>((face_bb.zmax() - bb.zmin()) / vs + 0.5)
     });
 }
 
 template<typename GeomTraits>
 Iso_cuboid_3<GeomTraits> bbox_voxel(const Vec3_uint& voxel, const Bbox_3& bb, const typename GeomTraits::FT& voxel_size) {
+  double vs = to_double(voxel_size);
   return Bbox_3(
-    bb.xmin() + voxel[0] * to_double(voxel_size),
-    bb.ymin() + voxel[1] * to_double(voxel_size),
-    bb.zmin() + voxel[2] * to_double(voxel_size),
-    bb.xmin() + (voxel[0] + 1) * to_double(voxel_size),
-    bb.ymin() + (voxel[1] + 1) * to_double(voxel_size),
-    bb.zmin() + (voxel[2] + 1) * to_double(voxel_size)
+    bb.xmin() + voxel[0] * vs,
+    bb.ymin() + voxel[1] * vs,
+    bb.zmin() + voxel[2] * vs,
+    bb.xmin() + (voxel[0] + 1) * vs,
+    bb.ymin() + (voxel[1] + 1) * vs,
+    bb.zmin() + (voxel[2] + 1) * vs
     );
 }
 
@@ -401,7 +403,7 @@ void scanline_floodfill(Grid_cell label, std::vector<int8_t>& grid, const Vec3_u
 }
 
 // Valid voxel grids separate OUTSIDE from INSIDE via SURFACE
-bool check_grid(std::vector<int8_t>& grid, const Vec3_uint& grid_size) {
+bool is_valid(std::vector<int8_t>& grid, const Vec3_uint& grid_size) {
   const auto vox = [&grid, &grid_size](unsigned int x, unsigned int y, unsigned int z) -> int8_t& {
     return grid[z + (y * grid_size[2]) + (x * grid_size[1] * grid_size[2])];
     };
@@ -693,28 +695,6 @@ struct Convex_hull {
     indices = std::move(o.indices);
   }
 
-  Convex_hull(const Convex_hull& o) {
-    exit(4);
-    bbox = o.bbox;
-    voxel_volume = o.voxel_volume;
-    volume = o.volume;
-    volume_error = o.volume_error;
-    points = o.points;
-    indices = o.indices;
-  }
-
-  Convex_hull<GeomTraits>& operator= (const Convex_hull<GeomTraits>& o) {
-    exit(3);
-    bbox = o.bbox;
-    voxel_volume = o.voxel_volume;
-    volume = o.volume;
-    volume_error = o.volume_error;
-    points = o.points;
-    indices = o.indices;
-
-    return *this;
-  }
-
   Convex_hull<GeomTraits>& operator= (Convex_hull<GeomTraits>&& o) noexcept {
     bbox = o.bbox;
     voxel_volume = o.voxel_volume;
@@ -909,7 +889,7 @@ void fill_grid(Candidate<GeomTraits> &c, std::vector<int8_t> &grid, const FaceGr
 
   if (CGAL::is_closed(mesh)) {
     naive_floodfill(grid, grid_size);
-    //check_grid(grid, grid_size);
+    //is_valid(grid, grid_size);
   }
   else
     rayshooting_fill<FaceGraph, GeomTraits>(grid, grid_size, bb, voxel_size, mesh, tag);

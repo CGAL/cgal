@@ -5,7 +5,6 @@
 #include <CGAL/Polygon_mesh_processing/approximate_convex_decomposition.h>
 
 #include <iostream>
-#include <iterator>
 #include <string>
 #include <vector>
 
@@ -29,6 +28,8 @@ int main(int argc, char* argv[])
   }
 
   std::vector<Convex_hull> convex_hulls;
+  convex_hulls.reserve(9);
+
   PMP::approximate_convex_decomposition(mesh, std::back_inserter(convex_hulls),
     CGAL::parameters::maximum_depth(10)
     .volume_error(0.1)
