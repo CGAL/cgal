@@ -50,7 +50,7 @@ public:
 
   virtual void append(const Property_array_base<Index>& other) = 0;
 
-  virtual void reserve(std::size_t n) = 0;
+  virtual void resize(std::size_t n) = 0;
 
   virtual void shrink_to_fit() = 0;
 
@@ -89,7 +89,6 @@ public:
   Property_array(const std::vector<bool>& active_indices, const T& default_value) :
     m_data(), m_active_indices(active_indices), m_default_value(default_value) {
 
-    m_data.reserve(active_indices.capacity());
     m_data.resize(active_indices.size(), m_default_value);
   }
 
@@ -124,7 +123,7 @@ public:
     m_data.insert(m_data.end(), other.m_data.begin(), other.m_data.end());
   }
 
-  virtual void reserve(std::size_t n) override {
+  virtual void resize(std::size_t n) override {
     CGAL_precondition(m_active_indices.size() == n);
     m_data.resize(n, m_default_value);
   };
@@ -449,7 +448,7 @@ public:
 
     m_active_indices.resize(n);
     for (auto [name, array] : m_properties)
-      array->reserve(n);
+      array->resize(n);
 
     std::fill(m_active_indices.begin(), m_active_indices.end(), true);
 
@@ -466,7 +465,7 @@ public:
     m_active_indices.push_back(true);
 
     for (auto [name, array] : m_properties)
-      array->reserve(capacity());
+      array->resize(capacity());
 
     auto first_new_index = Index(capacity() - 1);
     reset(first_new_index);
@@ -498,7 +497,7 @@ public:
     m_active_indices.resize(capacity() + n, true);
 
     for (auto [name, array] : m_properties)
-      array->reserve(capacity());
+      array->resize(capacity());
 
     return Index(capacity() - n);
   }
@@ -623,7 +622,7 @@ public:
       if (it != range.second)
         array->append(*it->second.get());
       else
-        array->reserve(m_active_indices.size());
+        array->resize(m_active_indices.size());
     }
   }
 
