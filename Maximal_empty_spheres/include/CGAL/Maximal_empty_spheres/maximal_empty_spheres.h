@@ -205,12 +205,25 @@ void maximal_empty_spheres(const Eigen::MatrixXd &G, Eigen::MatrixXd &result, do
     void maximal_empty_spheres_3(const SphereRange& input, OutputIterator result) {
         Eigen::MatrixXd G(input.size(),4), res;
         for(auto it = input.begin(); it != input.end(); ++it) {
-            G.row(it - input.begin()) = Eigen::RowVector4d(it->center().x(), it->center().y(), it->center().z(), it->squared_radius());
+            G.row(it - input.begin()) = Eigen::RowVector4d(it->center().x(), it->center().y(), it->center().z(), sqrt(it->squared_radius()));
         }
         maximal_empty_spheres<Dimension_tag<3>>(G, res);
         const static Eigen::IOFormat CSVFormat(Eigen::FullPrecision, Eigen::DontAlignCols, ", ", "\n");
+        // write soution in lie representation:  AF: I think this is not Lie representation, but rather the sphere representation
+        std::ofstream pointfile("solution_lie_3.csv");
+        pointfile << res.format(CSVFormat);
+    }
+
+    template<typename SphereRange, typename OutputIterator>
+    void maximal_empty_spheres_2(const SphereRange& input, OutputIterator result) {
+        Eigen::MatrixXd G(input.size(),3), res;
+        for(auto it = input.begin(); it != input.end(); ++it) {
+            G.row(it - input.begin()) = Eigen::RowVector3d(it->center().x(), it->center().y(), sqrt(it->squared_radius()));
+        }
+        maximal_empty_spheres<Dimension_tag<2>>(G, res);
+        const static Eigen::IOFormat CSVFormat(Eigen::FullPrecision, Eigen::DontAlignCols, ", ", "\n");
         // write soution in lie representation:
-        std::ofstream pointfile("solution_lie.csv");
+        std::ofstream pointfile("solution_lie_2.csv");
         pointfile << res.format(CSVFormat);
     }
 } // namespace CGAL

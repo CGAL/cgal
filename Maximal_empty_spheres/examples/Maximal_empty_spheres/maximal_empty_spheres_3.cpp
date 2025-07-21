@@ -13,7 +13,7 @@ int main(){
     while(in >> x){
 
         in.ignore(10,','); in >> y;  in.ignore(10,','); in >> z; in.ignore(10,','); in >> r;
-        spheres.emplace_back(Point_3(x, y, z), r);
+        spheres.emplace_back(Point_3(x, y, z), r*r);
         std::cout << "Sphere: " << spheres.back() << std::endl;
 
     }
