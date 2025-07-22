@@ -224,7 +224,7 @@ Box box_union(const Box& a, const Box& b) {
 
 template<typename FT>
 std::tuple<Vec3_uint, FT> calculate_grid_size(Bbox_3& bb, const std::size_t number_of_voxels) {
-  std::size_t max_voxels_axis = std::pow(number_of_voxels, 1.0 / 3.0);
+  std::size_t max_voxels_axis = std::cbrt(number_of_voxels);
   assert(max_voxels_axis > 3);
   // get longest axis
   FT longest = 0;
@@ -675,7 +675,7 @@ void rayshooting_fill(std::vector<int8_t>& grid, const Vec3_uint& grid_size, con
 }
 
 template<typename GeomTraits>
-struct Convex_hull {
+struct Convex_hull_candidate {
   using FT = typename GeomTraits::FT;
   using Point_3 = typename GeomTraits::Point_3;
   Iso_cuboid_3<GeomTraits> bbox;
@@ -685,8 +685,8 @@ struct Convex_hull {
   std::vector<Point_3> points;
   std::vector<std::array<unsigned int, 3>> indices;
 
-  Convex_hull() noexcept : voxel_volume(0), volume(0), volume_error(0) {}
-  Convex_hull(Convex_hull&& o) noexcept {
+  Convex_hull_candidate() noexcept : voxel_volume(0), volume(0), volume_error(0) {}
+  Convex_hull_candidate(Convex_hull_candidate&& o) noexcept {
     bbox = o.bbox;
     voxel_volume = o.voxel_volume;
     volume = o.volume;
@@ -695,7 +695,7 @@ struct Convex_hull {
     indices = std::move(o.indices);
   }
 
-  Convex_hull<GeomTraits>& operator= (Convex_hull<GeomTraits>&& o) noexcept {
+  Convex_hull_candidate<GeomTraits>& operator= (Convex_hull_candidate<GeomTraits>&& o) noexcept {
     bbox = o.bbox;
     voxel_volume = o.voxel_volume;
     volume = o.volume;
@@ -717,7 +717,7 @@ struct Candidate {
   std::vector<Vec3_uint> inside;
   std::size_t depth;
   Bbox_uint bbox;
-  Convex_hull<GeomTraits> ch;
+  Convex_hull_candidate<GeomTraits> ch;
 
   Candidate() : depth(0), bbox({ 0, 0, 0 }, { 0, 0, 0 }) {index = cidx++;}
   Candidate(std::size_t depth, Bbox_uint &bbox) : depth(depth), bbox(bbox) { index = cidx++; }
@@ -788,16 +788,16 @@ template <typename T>
 struct is_std_hashable<T, std::void_t<decltype(std::declval<std::hash<T>>()(std::declval<T>()))>> : std::true_type {};
 
 template<typename Point_3, typename H = typename std::conjunction<is_std_hashable<typename Kernel_traits<Point_3>::type::FT>, typename std::is_same<typename Kernel_traits<Point_3>::type::Kernel_tag, CGAL::Cartesian_tag>::type>::type>
-struct Set {
+struct Unordered_set_if_available {
 };
 
 template<typename Point_3>
-struct Set<Point_3, std::true_type> {
+struct Unordered_set_if_available<Point_3, std::true_type> {
   using type = std::unordered_set<Point_3>;
 };
 
 template<typename Point_3>
-struct Set<Point_3, std::false_type> {
+struct Unordered_set_if_available<Point_3, std::false_type> {
   using type = std::set<Point_3>;
 };
 
@@ -808,7 +808,7 @@ void compute_candidate(Candidate<GeomTraits> &c, const Bbox_3& bb, typename Geom
 
   c.bbox.lower = c.bbox.upper = c.surface[0];
 
-  typename Set<Point_3>::type voxel_points;
+  typename Unordered_set_if_available<Point_3>::type voxel_points;
 
   for (const Vec3_uint& v : c.surface) {
     enlarge(c.bbox, v);
@@ -1233,7 +1233,7 @@ void recurse(std::vector<Candidate<GeomTraits>>& candidates, std::vector<int8_t>
 }
 
 template<typename GeomTraits, typename NamedParameters>
-void merge(std::vector<Convex_hull<GeomTraits>>& candidates, const typename GeomTraits::FT& hull_volume, const NamedParameters& np, CGAL::Parallel_tag) {
+void merge(std::vector<Convex_hull_candidate<GeomTraits>>& candidates, const typename GeomTraits::FT& hull_volume, const NamedParameters& np, CGAL::Parallel_tag) {
 #ifdef CGAL_LINKED_WITH_TBB
   const std::size_t max_convex_hulls = parameters::choose_parameter(parameters::get_parameter(np, internal_np::maximum_number_of_convex_hulls), 64);
   if (candidates.size() <= max_convex_hulls)
@@ -1255,7 +1255,7 @@ void merge(std::vector<Convex_hull<GeomTraits>>& candidates, const typename Geom
     Merged_candidate(std::size_t ch_a, std::size_t ch_b) : ch_a(ch_a), ch_b(ch_b) {}
   };
 
-  tbb::concurrent_unordered_map<std::size_t, Convex_hull<GeomTraits>> hulls;
+  tbb::concurrent_unordered_map<std::size_t, Convex_hull_candidate<GeomTraits>> hulls;
   std::atomic<std::size_t> num_hulls = candidates.size();
 
   std::unordered_set<std::size_t> keep;
@@ -1272,10 +1272,10 @@ void merge(std::vector<Convex_hull<GeomTraits>>& candidates, const typename Geom
   tbb::concurrent_priority_queue<Merged_candidate> queue;
 
   const auto do_merge = [hull_volume, &hulls, &num_hulls](Merged_candidate& m) {
-    Convex_hull<GeomTraits>& ci = hulls[m.ch_a];
-    Convex_hull<GeomTraits>& cj = hulls[m.ch_b];
+    Convex_hull_candidate<GeomTraits>& ci = hulls[m.ch_a];
+    Convex_hull_candidate<GeomTraits>& cj = hulls[m.ch_b];
     m.ch = num_hulls.fetch_add(1);
-    Convex_hull<GeomTraits>& ch = hulls[m.ch];
+    Convex_hull_candidate<GeomTraits>& ch = hulls[m.ch];
 
     ch.bbox = box_union(ci.bbox, cj.bbox);
     std::vector<Point_3> pts(ci.points.begin(), ci.points.end());
@@ -1289,11 +1289,11 @@ void merge(std::vector<Convex_hull<GeomTraits>>& candidates, const typename Geom
     };
 
   for (std::size_t i : keep) {
-    const Convex_hull<GeomTraits>& ci = hulls[i];
+    const Convex_hull_candidate<GeomTraits>& ci = hulls[i];
     for (std::size_t j : keep) {
       if (j <= i)
         continue;
-      const Convex_hull<GeomTraits>& cj = hulls[j];
+      const Convex_hull_candidate<GeomTraits>& cj = hulls[j];
       if (CGAL::do_intersect(ci.bbox, cj.bbox))
         todo.emplace_back(Merged_candidate(i, j));
       else {
@@ -1333,10 +1333,10 @@ void merge(std::vector<Convex_hull<GeomTraits>>& candidates, const typename Geom
     hulls.unsafe_erase(ch_a);
     hulls.unsafe_erase(ch_b);
 
-    const Convex_hull<GeomTraits>& cj = hulls[m.ch];
+    const Convex_hull_candidate<GeomTraits>& cj = hulls[m.ch];
 
     for (std::size_t id : keep) {
-      const Convex_hull<GeomTraits>& ci = hulls[id];
+      const Convex_hull_candidate<GeomTraits>& ci = hulls[id];
       if (CGAL::do_intersect(ci.bbox, cj.bbox))
         todo.emplace_back(Merged_candidate(id, m.ch));
       else {
@@ -1369,7 +1369,7 @@ void merge(std::vector<Convex_hull<GeomTraits>>& candidates, const typename Geom
 }
 
 template<typename GeomTraits, typename NamedParameters>
-void merge(std::vector<Convex_hull<GeomTraits>>& candidates, const typename GeomTraits::FT& hull_volume, const NamedParameters& np, CGAL::Sequential_tag) {
+void merge(std::vector<Convex_hull_candidate<GeomTraits>>& candidates, const typename GeomTraits::FT& hull_volume, const NamedParameters& np, CGAL::Sequential_tag) {
   const std::size_t max_convex_hulls = parameters::choose_parameter(parameters::get_parameter(np, internal_np::maximum_number_of_convex_hulls), 64);
   if (candidates.size() <= max_convex_hulls)
     return;
@@ -1390,7 +1390,7 @@ void merge(std::vector<Convex_hull<GeomTraits>>& candidates, const typename Geom
     Merged_candidate(std::size_t ch_a, std::size_t ch_b) : ch_a(ch_a), ch_b(ch_b) {}
   };
 
-  std::unordered_map<std::size_t, Convex_hull<GeomTraits>> hulls;
+  std::unordered_map<std::size_t, Convex_hull_candidate<GeomTraits>> hulls;
   std::size_t num_hulls = candidates.size();
 
   std::unordered_set<std::size_t> keep;
@@ -1406,11 +1406,11 @@ void merge(std::vector<Convex_hull<GeomTraits>>& candidates, const typename Geom
   std::priority_queue<Merged_candidate> queue;
 
   const auto do_merge = [hull_volume, &hulls, &num_hulls](Merged_candidate& m) {
-    Convex_hull<GeomTraits>& ci = hulls[m.ch_a];
-    Convex_hull<GeomTraits>& cj = hulls[m.ch_b];
+    Convex_hull_candidate<GeomTraits>& ci = hulls[m.ch_a];
+    Convex_hull_candidate<GeomTraits>& cj = hulls[m.ch_b];
 
     m.ch = num_hulls++;
-    Convex_hull<GeomTraits>& ch = hulls[m.ch];
+    Convex_hull_candidate<GeomTraits>& ch = hulls[m.ch];
 
     ch.bbox = box_union(ci.bbox, cj.bbox);
     std::vector<Point_3> pts(ci.points.begin(), ci.points.end());
@@ -1424,16 +1424,16 @@ void merge(std::vector<Convex_hull<GeomTraits>>& candidates, const typename Geom
     };
 
   for (std::size_t i : keep) {
-    const Convex_hull<GeomTraits>& ci = hulls[i];
+    const Convex_hull_candidate<GeomTraits>& ci = hulls[i];
     for (std::size_t j : keep) {
       if (j <= i)
         continue;
-      const Convex_hull<GeomTraits>& cj = hulls[j];
+      const Convex_hull_candidate<GeomTraits>& cj = hulls[j];
       if (CGAL::do_intersect(ci.bbox, cj.bbox)) {
         Merged_candidate m(i, j);
 
         m.ch = num_hulls++;
-        Convex_hull<GeomTraits>& ch = hulls[m.ch];
+        Convex_hull_candidate<GeomTraits>& ch = hulls[m.ch];
         ch.bbox = box_union(ci.bbox, cj.bbox);
         std::vector<Point_3> pts(ci.points.begin(), ci.points.end());
         pts.reserve(pts.size() + cj.points.size());
@@ -1476,15 +1476,15 @@ void merge(std::vector<Convex_hull<GeomTraits>>& candidates, const typename Geom
     hulls.erase(ch_a);
     hulls.erase(ch_b);
 
-    const Convex_hull<GeomTraits>& cj = hulls[m.ch];
+    const Convex_hull_candidate<GeomTraits>& cj = hulls[m.ch];
 
     for (std::size_t id : keep) {
-      const Convex_hull<GeomTraits>& ci = hulls[id];
+      const Convex_hull_candidate<GeomTraits>& ci = hulls[id];
       if (CGAL::do_intersect(ci.bbox, cj.bbox)) {
         Merged_candidate merged(id, m.ch);
 
         merged.ch = num_hulls++;
-        Convex_hull<GeomTraits>& ch = hulls[merged.ch];
+        Convex_hull_candidate<GeomTraits>& ch = hulls[merged.ch];
         ch.bbox = box_union(ci.bbox, cj.bbox);
         std::vector<Point_3> pts(ci.points.begin(), ci.points.end());
         pts.reserve(pts.size() + cj.points.size());
@@ -1514,14 +1514,14 @@ void merge(std::vector<Convex_hull<GeomTraits>>& candidates, const typename Geom
     candidates.push_back(std::move(hulls[i]));
 }
 
-}
+} // namespace internal
 /**
  * \ingroup PMP_convex_decomposition_grp
  *
- * \brief approximates the input mesh by a number of convex hulls. The input mesh is voxelized and the voxel intersecting with the mesh are labeled as surface.
- *        The remaining voxels are labeled as outside or inside by floodfill, in case the input mesh is closed, or by ray shooting along the axis. A voxel is only
- *        labeled as inside if at least 3 faces facing away from the voxel have been hit and no face facing towards the voxel. In a next step, the convex hull of the mesh
- *        is hierarchically split until the `volume_error` threshold is satisfied.
+ * \brief approximates the input mesh by a number of convex hulls. The input mesh is voxelized and the voxels intersecting with the mesh are labeled as surface.
+ *        The remaining voxels are labeled as outside or inside by floodfill, in case the input mesh is closed, or by axis-aligned ray shooting, i.e., along x,
+ *        y and z-axis in positive and negative directions. A voxel is only labeled as inside if at least 3 faces facing away from the voxel have been hit and
+ *        no face facing towards the voxel. In a next step, the convex hull of the mesh is hierarchically split until the `volume_error` threshold is satisfied.
  *        Afterwards, a greedy pair-wise merging combines smaller convex hulls until the given number of convex hulls is met.
  *
  * \tparam FaceGraph a model of `HalfedgeListGraph`, `FaceListGraph`, and `MutableFaceGraph`
@@ -1537,9 +1537,9 @@ void merge(std::vector<Convex_hull<GeomTraits>>& candidates, const typename Geom
  * \cgalNamedParamsBegin
  *
  *   \cgalParamNBegin{maximum_number_of_voxels}
- *     \cgalParamDescription{gives an upper bound of the number of voxels. The longest bounding box side will have a length of the cubic root of `maximum_number_of_voxels`. Cannot be smaller than 64. }
+ *     \cgalParamDescription{gives an upper bound of the number of voxels. The longest bounding box side will have a length of the cubic root of `maximum_number_of_voxels` rounded down. Cannot be smaller than 64. }
  *     \cgalParamType{unsigned int}
- *     \cgalParamDefault{1000000}
+ *     \cgalParamDefault{1,000,000}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{maximum_depth}
@@ -1555,13 +1555,13 @@ void merge(std::vector<Convex_hull<GeomTraits>>& candidates, const typename Geom
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{volume_error}
- *     \cgalParamDescription{maximum difference in fraction of volume of the local convex hull with the sum of voxel volumes. If surpassed, the convex hull will be split.}
+ *     \cgalParamDescription{maximum difference in fraction of volume of the local convex hull with the sum of voxel volumes. If surpassed, the convex hull will be split if the `maximum_depth` has not been reached yet.}
  *     \cgalParamType{double}
  *     \cgalParamDefault{0.01}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{split_at_concavity}
- *     \cgalParamDescription{split the local box of the convex hull in the mid of the longest axis (faster) or search the concavity along the longest axis of the bounding box for splitting.}
+ *     \cgalParamDescription{split the local box of the convex hull at the concavity along the longest axis of the bounding box. Otherwise, split in the middle of the longest axis (faster, but less precise).}
  *     \cgalParamType{Boolean}
  *     \cgalParamDefault{true}
  *   \cgalParamNEnd
@@ -1590,6 +1590,8 @@ void merge(std::vector<Convex_hull<GeomTraits>>& candidates, const typename Geom
  *
  * \cgalNamedParamsEnd
  *
+ * \return number of convex hulls. Can be lower than the `maximum_number_of_convex_hulls` if the specified `volume_error` is quickly met.
+ *
  * \sa `CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh()`
  */
 template<typename FaceGraph, typename OutputIterator, typename NamedParameters = parameters::Default_named_parameters>
@@ -1611,7 +1613,7 @@ std::size_t approximate_convex_decomposition(const FaceGraph& mesh, OutputIterat
   assert(max_convex_hulls > 0);
 
   if (max_convex_hulls == 1) {
-    internal::Convex_hull< Geom_traits> ch;
+    internal::Convex_hull_candidate<Geom_traits> ch;
     using Mesh = Surface_mesh<typename Geom_traits::Point_3>;
     Mesh m;
     convex_hull_3(mesh, m);
@@ -1649,7 +1651,7 @@ std::size_t approximate_convex_decomposition(const FaceGraph& mesh, OutputIterat
 
   recurse(candidates, grid, grid_size, bb, voxel_size, np, Concurrency_tag());
 
-  std::vector<internal::Convex_hull<Geom_traits>> hulls;
+  std::vector<internal::Convex_hull_candidate<Geom_traits>> hulls;
   for (internal::Candidate<Geom_traits> &c : candidates)
     hulls.emplace_back(std::move(c.ch));
 
@@ -1663,7 +1665,8 @@ std::size_t approximate_convex_decomposition(const FaceGraph& mesh, OutputIterat
 
   return hulls.size();
 }
-}
-}
 
-#endif
+} // namespace Polygon_mesh_processing
+} // namespace CGAL
+
+#endif // CGAL_POLYGON_MESH_PROCESSING_CONVEX_DECOMPOSITION_H
