@@ -95,13 +95,13 @@ void maximal_empty_spheres(const Eigen::MatrixXd &G, Eigen::MatrixXd &result, do
         for (int d=0; d<D+2; d++){
             p_.push_back(Np(i,d));
         }
-        points.push_back(Triangulation::Point(p_.begin(),p_.end()));
+        points.push_back(typename Triangulation::Point(p_.begin(),p_.end()));
     }
 
     Triangulation t(D+2);
     t.insert_and_index(points.begin(), points.end());
     // --> recover the infinite cells (contain the convex hull)
-    std::vector<Triangulation::Full_cell_handle> infinite_cells;
+    std::vector<typename Triangulation::Full_cell_handle> infinite_cells;
     for(auto it = t.full_cells_begin(); it != t.full_cells_end(); ++it) {
         if(t.is_infinite(it)) {
             infinite_cells.push_back(it);
@@ -196,7 +196,10 @@ void maximal_empty_spheres(const Eigen::MatrixXd &G, Eigen::MatrixXd &result, do
     }
 
     template<typename SphereRange, typename OutputIterator, class DimensionTag>
-    void maximal_empty_spheres(const SphereRange& /* input*/ , OutputIterator /* result*/, DimensionTag /* tag */ );
+    void maximal_empty_spheres(const SphereRange& /* input*/ , OutputIterator /* result*/, DimensionTag /* tag */ )
+    {
+       std::cout << "should not match any specialization" << std::endl;
+    }
 
     /*!
      * \ingroup PkgMaximalEmptySpheresFunctions
