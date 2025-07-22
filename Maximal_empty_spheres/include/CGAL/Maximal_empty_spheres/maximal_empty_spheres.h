@@ -40,9 +40,9 @@ void maximal_empty_spheres(const Eigen::MatrixXd &G, Eigen::MatrixXd &result, do
     typedef CGAL::Triangulation_full_cell<Kernel, int, DS_full_cell>                                Full_cell;
     typedef CGAL::Triangulation_data_structure<CGAL::Dimension_tag<D+2>,
                                                Vertex,
-                                               Full_cell>                                          TDS;
+                                               Full_cell>                                           TDS;
     typedef CGAL::Triangulation<Kernel,TDS>                                                         Triangulation;
-    typedef Triangulation::Vertex_handle                                                            Vertex_handle;
+    typedef typename Triangulation::Vertex_handle                                                   Vertex_handle;
 
     using namespace CGAL::Maximal_empty_spheres::internal;
 
@@ -86,9 +86,9 @@ void maximal_empty_spheres(const Eigen::MatrixXd &G, Eigen::MatrixXd &result, do
     // ------------------------ CONVEX HULL COMPUTATION -------------------------
 
     // --> convert to point list --
-    std::vector<Triangulation::Point> points;
+    std::vector<typename Triangulation::Point> points;
     points.reserve(int(Np.rows()));
-    std::vector<Kernel::FT> p_;
+    std::vector<typename Kernel::FT> p_;
     p_.reserve(D+2);
     for (int i=0; i<Np.rows(); i++){
         p_.clear();
@@ -231,7 +231,7 @@ void maximal_empty_spheres(const Eigen::MatrixXd &G, Eigen::MatrixXd &result, do
     }
 
     template<typename SphereRange, typename OutputIterator>
-    void maximal_empty_spheres_2(const SphereRange& input, OutputIterator result, CGAL::Dimension_tag<2> /* tag */) {
+    void maximal_empty_spheres(const SphereRange& input, OutputIterator result, CGAL::Dimension_tag<2> /* tag */) {
         using Circle_2 = typename SphereRange::value_type;
         using Kernel = typename Kernel_traits<Circle_2>::Kernel;
         using Point_2 = typename Kernel::Point_2;
