@@ -23,6 +23,7 @@
 #include <CGAL/Epick_d.h>
 #include <CGAL/Triangulation.h>
 #include <CGAL/algorithm.h>
+#include <CGAL/Dimension.h>
 
 namespace CGAL {
 
@@ -194,6 +195,9 @@ void maximal_empty_spheres(const Eigen::MatrixXd &G, Eigen::MatrixXd &result, do
     lie_to_spheres(solutions_filtered, result);
     }
 
+    template<typename SphereRange, typename OutputIterator, class DimensionTag>
+    void maximal_empty_spheres(const SphereRange& /* input*/ , OutputIterator /* result*/, DimensionTag /* tag */ );
+
     /*!
      * \ingroup PkgMaximalEmptySpheresFunctions
      * \brief A dummy function to demonstrate the structure of the library.
@@ -202,7 +206,7 @@ void maximal_empty_spheres(const Eigen::MatrixXd &G, Eigen::MatrixXd &result, do
      * It is intended to be replaced with actual functionality in the future.
      */
     template<typename SphereRange, typename OutputIterator>
-    void maximal_empty_spheres_3(const SphereRange& input, OutputIterator result) {
+    void maximal_empty_spheres(const SphereRange& input, OutputIterator result, CGAL::Dimension_tag<3> /* tag */) {
         using Sphere_3 = typename SphereRange::value_type;
         using Kernel = typename Kernel_traits<Sphere_3>::Kernel;
         using Point_3 = typename Kernel::Point_3;
@@ -224,7 +228,7 @@ void maximal_empty_spheres(const Eigen::MatrixXd &G, Eigen::MatrixXd &result, do
     }
 
     template<typename SphereRange, typename OutputIterator>
-    void maximal_empty_spheres_2(const SphereRange& input, OutputIterator result) {
+    void maximal_empty_spheres_2(const SphereRange& input, OutputIterator result, CGAL::Dimension_tag<2> /* tag */) {
         using Circle_2 = typename SphereRange::value_type;
         using Kernel = typename Kernel_traits<Circle_2>::Kernel;
         using Point_2 = typename Kernel::Point_2;
@@ -243,6 +247,13 @@ void maximal_empty_spheres(const Eigen::MatrixXd &G, Eigen::MatrixXd &result, do
         // write soution in lie representation:
         std::ofstream pointfile("solution_lie_2.csv");
         pointfile << res.format(CSVFormat);
+    }
+
+    template<typename SphereRange, typename OutputIterator>
+    void maximal_empty_spheres(const SphereRange& input, OutputIterator result) {
+        using Sphere = typename SphereRange::value_type;
+        constexpr int D = Ambient_dimension<Sphere>::value;
+        maximal_empty_spheres(input, result, CGAL::Dimension_tag<D>());
     }
 } // namespace CGAL
 

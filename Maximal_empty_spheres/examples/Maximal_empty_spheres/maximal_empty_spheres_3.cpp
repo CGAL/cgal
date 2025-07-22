@@ -17,6 +17,6 @@ int main(){
         std::cout << "Sphere: " << spheres.back() << std::endl;
 
     }
-    CGAL::maximal_empty_spheres_3(spheres, std::back_inserter(result));
+    CGAL::maximal_empty_spheres(spheres, std::back_inserter(result));
     return 0;
 }
