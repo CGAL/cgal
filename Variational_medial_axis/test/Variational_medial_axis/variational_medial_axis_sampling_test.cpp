@@ -13,9 +13,9 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel               Kernel
 typedef Kernel::Point_3                                                   Point;
 typedef Kernel::Vector_3                                                  Vector;
 typedef CGAL::Surface_mesh<Point>                                         Mesh;
-typedef CGAL::Variational_medial_axis<Mesh, Kernel>                       VMAS;
-typedef CGAL::Skeleton<Mesh, Kernel>                                      Skeleton;
-
+typedef CGAL::Variational_medial_axis<Mesh>                               VMAS;
+typedef CGAL::MedialSkeleton <Mesh, Kernel>                               Skeleton;
+ 
 // Test parameters structure
 struct TestParams {
     std::string mesh_name;
@@ -159,7 +159,7 @@ bool test_correcteness()
     normalize_mesh(mesh);
     VMAS vmas(mesh);
     vmas.init();
-    vmas.compute(CGAL::parameters::lambda(0.2)
+    vmas.compute_variational_medial_axis_sampling(CGAL::parameters::lambda(0.2)
                                 .number_of_spheres(300)
                                 .concurrency_tag(CGAL::Sequential_tag{}));
    
@@ -179,12 +179,17 @@ bool test_correcteness()
                 << skeleton3.number_of_vertices() << std::endl;
       return false;
     }
+    else {
+      std::cout << "Adding sphere succeeded: new vertex count is " << skeleton3.number_of_vertices() << std::endl;  
+    }
     vmas.remove_sphere(0);
     auto skeleton4 = vmas.export_skeleton();
     if(skeleton4.number_of_vertices() != skeleton.number_of_vertices()) {
       std::cerr << "Removing sphere failed: expected " << skeleton.number_of_vertices() << " vertices, got "
                 << skeleton4.number_of_vertices() << std::endl;
       return false;
+    } else {
+      std::cout << "Removing sphere succeeded: new vertex count is " << skeleton4.number_of_vertices() << std::endl;
     }
     return true;
 }
@@ -206,8 +211,9 @@ bool test_determinism(const TestParams& params, const std::string& mesh_file_pat
     
     // Run algorithm multiple times with same parameters
     for (int i = 0; i < num_runs; ++i) {
-        VMAS vmas(mesh);
-        vmas.compute(CGAL::parameters::lambda(params.lambda)
+      VMAS vmas(mesh);
+      vmas.init();
+      vmas.compute_variational_medial_axis_sampling(CGAL::parameters::lambda(params.lambda)
                                    .number_of_spheres(params.num_spheres)
                                    .concurrency_tag(CGAL::Sequential_tag{}));
         
@@ -236,7 +242,8 @@ int main()
     
     std::cout << "\n--- Test 1: Correcteness ---" << std::endl;
     total_tests++;
-    if(test_correcteness()) {
+    if(test_correcteness())
+    {
       std::cout << "Correcteness test passed for elephant_dense" << std::endl;
     } else {
         std::cout << "Correcteness test failed for elephant_dense" << std::endl;

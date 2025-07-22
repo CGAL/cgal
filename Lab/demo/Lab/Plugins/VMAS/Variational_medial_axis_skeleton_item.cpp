@@ -41,7 +41,9 @@ Variational_medial_axis_skeleton_item::Variational_medial_axis_skeleton_item(CGA
   scene = scene_interface;
 
   d->vmas.init();
-  d->vmas.compute(CGAL::parameters::number_of_spheres(nb_spheres).concurrency_tag(CGAL::Parallel_if_available_tag())/* .lambda(l) */);
+  d->vmas.compute_variational_medial_axis_sampling(
+      CGAL::parameters::number_of_spheres(nb_spheres)
+          .concurrency_tag(CGAL::Parallel_if_available_tag()) /* .lambda(l) */);
 }
 
 void Variational_medial_axis_skeleton_item::fill_subitems()

@@ -35,12 +35,14 @@ int main(int argc, char** argv)
     return 1;
   }
   normalize_mesh(mesh);
- 
-  CGAL::Variational_medial_axis<Mesh, K> vmas(mesh);
-
+  
+  CGAL::Variational_medial_axis<Mesh> vmas(mesh);
+  vmas.init();
   // Compute medial axis with custom parameters
-  vmas.compute(CGAL::parameters::number_of_iterations(1000).number_of_spheres(300).lambda(0.2).concurrency_tag(CGAL::Parallel_tag{}));
- 
+  //vmas.compute_variational_medial_axis_sampling(CGAL::parameters::number_of_iterations(2000).number_of_spheres(1000).lambda(1.0).concurrency_tag(CGAL::Parallel_tag{}));
+  vmas.compute_variational_medial_axis_sampling(
+      CGAL::parameters::number_of_iterations(2000).number_of_spheres(300).lambda(0.2) /*.concurrency_tag(
+      CGAL::Parallel_tag{})*/);
   // Export skeleton
   std::cout << "Exporting skeleton..." << std::endl;
   auto skeleton = vmas.export_skeleton();
