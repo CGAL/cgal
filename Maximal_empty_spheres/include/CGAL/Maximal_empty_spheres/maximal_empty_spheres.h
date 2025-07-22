@@ -203,11 +203,20 @@ void maximal_empty_spheres(const Eigen::MatrixXd &G, Eigen::MatrixXd &result, do
      */
     template<typename SphereRange, typename OutputIterator>
     void maximal_empty_spheres_3(const SphereRange& input, OutputIterator result) {
+        using Sphere_3 = typename SphereRange::value_type;
+        using Kernel = typename Kernel_traits<Sphere_3>::Kernel;
+        using Point_3 = typename Kernel::Point_3;
+
         Eigen::MatrixXd G(input.size(),4), res;
         for(auto it = input.begin(); it != input.end(); ++it) {
             G.row(it - input.begin()) = Eigen::RowVector4d(it->center().x(), it->center().y(), it->center().z(), sqrt(it->squared_radius()));
         }
         maximal_empty_spheres<Dimension_tag<3>>(G, res);
+        for(int i=0; i<res.rows(); i++) {
+          Point_3 p(res(i,0), res(i,1), res(i,2));
+          *result++ = Sphere_3(p, res(i,3)*res(i,3)); // res(i,3) is the radius
+        }
+
         const static Eigen::IOFormat CSVFormat(Eigen::FullPrecision, Eigen::DontAlignCols, ", ", "\n");
         // write soution in lie representation:  AF: I think this is not Lie representation, but rather the sphere representation
         std::ofstream pointfile("solution_lie_3.csv");
@@ -216,11 +225,20 @@ void maximal_empty_spheres(const Eigen::MatrixXd &G, Eigen::MatrixXd &result, do
 
     template<typename SphereRange, typename OutputIterator>
     void maximal_empty_spheres_2(const SphereRange& input, OutputIterator result) {
+        using Circle_2 = typename SphereRange::value_type;
+        using Kernel = typename Kernel_traits<Circle_2>::Kernel;
+        using Point_2 = typename Kernel::Point_2;
+
         Eigen::MatrixXd G(input.size(),3), res;
         for(auto it = input.begin(); it != input.end(); ++it) {
             G.row(it - input.begin()) = Eigen::RowVector3d(it->center().x(), it->center().y(), sqrt(it->squared_radius()));
         }
         maximal_empty_spheres<Dimension_tag<2>>(G, res);
+        for(int i=0; i<res.rows(); i++) {
+          Point_2 p(res(i,0), res(i,1));
+          *result++ = Circle_2(p, res(i,2)*res(i,2)); // res(i,2) is the radius
+        }
+
         const static Eigen::IOFormat CSVFormat(Eigen::FullPrecision, Eigen::DontAlignCols, ", ", "\n");
         // write soution in lie representation:
         std::ofstream pointfile("solution_lie_2.csv");
