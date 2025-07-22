@@ -28,7 +28,7 @@
 namespace CGAL {
 
 template<typename Dimension>
-void maximal_empty_spheres(const Eigen::MatrixXd &G, Eigen::MatrixXd &result, double atol=1e-8, int debug_level=0) {
+void maximal_empty_spheres(const Eigen::MatrixXd &G, Eigen::MatrixXd &result, Eigen::MatrixXi *contact_indices=NULL, double atol=1e-8, int debug_level=0) {
 
     bool full_simplices_only=true;
     const int D = Dimension::value;
@@ -156,6 +156,7 @@ void maximal_empty_spheres(const Eigen::MatrixXd &G, Eigen::MatrixXd &result, do
     }
 
     std::vector<Eigen::RowVectorXd> solutions_;
+    std::vector<Eigen::RowVectorXi> contact_indices_;
     for(auto ch : infinite_cells) {
         int ci = ch->data();
         for (int i=0; i<D+3; i++) {
@@ -168,6 +169,16 @@ void maximal_empty_spheres(const Eigen::MatrixXd &G, Eigen::MatrixXd &result, do
                     line_quadric_intersection(Ks.row(ci), Ks.row(cj), H, l1,l2);
                     if ((0.<=l1) && (l1<=1.))solutions_.push_back((1-l1)*Ks.row(ci)+l1*Ks.row(cj));
                     if ((0.<=l2) && (l2<=1.))solutions_.push_back((1-l2)*Ks.row(ci)+l2*Ks.row(cj));
+
+                    if (contact_indices){
+                        Eigen::RowVectorXi st(D+1);
+                        int ni=0;
+                        for (int j=0; j<D+2; j++){
+                            if (ch->vertex((i+1+j)%(D+3)) != t.infinite_vertex())
+                                st(ni++) = ch->vertex((i+1+j)%(D+3))->data();
+                        }
+                        contact_indices_.emplace_back(st);
+                    }
                 }
              }
         }
@@ -186,11 +197,24 @@ void maximal_empty_spheres(const Eigen::MatrixXd &G, Eigen::MatrixXd &result, do
     Eigen::Vector<bool,Eigen::Dynamic> neg_radius     = (solutions.col(D+1).array().sign() != solutions.col(D+2).array().sign());
 
     std::vector<Eigen::RowVectorXd> solutions_filtered_;
-    for (int i=0; i<solutions.rows(); i++) if (neg_convention(i) && neg_radius(i)) solutions_filtered_.push_back(solutions.row(i));
+    std::vector<Eigen::RowVectorXi> contact_indices_filtered_;
+    for (int i=0; i<solutions.rows(); i++){
+        if (neg_convention(i) && neg_radius(i)){
+            solutions_filtered_.push_back(solutions.row(i));
+            if (contact_indices){
+                contact_indices_filtered_.push_back(contact_indices_[i]);            
+            }
+        }
+    }
 
     Eigen::MatrixXd solutions_filtered(solutions_filtered_.size(),D+3);
     for (int i=0; i<solutions_filtered_.size(); i++) solutions_filtered.row(i) = solutions_filtered_[i];
     std::cout << "solutions_filtered.shape: (" << solutions_filtered.rows() << ", " << solutions_filtered.cols() << ")"  << std::endl;
+
+    if (contact_indices){
+        contact_indices->resize(contact_indices_filtered_.size(),D+1);
+        for (int i=0; i<contact_indices_filtered_.size(); i++) contact_indices->block(i,0,1,D+1) = contact_indices_filtered_[i];
+    }
 
     lie_to_spheres(solutions_filtered, result);
     }
