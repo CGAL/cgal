@@ -287,6 +287,10 @@ namespace Polygon_mesh {
 
       const Vector_3 face_normal = get(m_face_normals, query);
       const FT cos_value = m_scalar_product_3(face_normal, m_normal_of_best_fit);
+
+      if (cos_value < 0)
+        return false;
+
       const FT squared_cos_value = cos_value * cos_value;
 
       FT squared_cos_value_threshold =
