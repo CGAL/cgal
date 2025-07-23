@@ -103,7 +103,8 @@ private:
     this->camera_->computeModelViewMatrix();
     this->camera_->getProjectionMatrix(proj_mat.data());
     this->camera_->getModelViewMatrix(mv_mat.data());
-    if(proj_mat == m_last_proj_matrix && mv_mat == m_last_modelview_matrix) return false;
+    if(proj_mat == m_last_proj_matrix && mv_mat == m_last_modelview_matrix)
+      return false;
     m_last_proj_matrix = proj_mat;
     m_last_modelview_matrix = mv_mat;
     return true;
@@ -119,15 +120,28 @@ private:
   }
 
   Bbox_2 initial_bbox() const {
+    const auto& traits = *m_arr.geometry_traits();
     Bbox_2 bbox;
     // Computes a rough bounding box from the vertices.
     for(const auto& vh : m_arr.vertex_handles()) {
-      Approx_point pt = m_arr.geometry_traits()->approximate_2_object()(vh->point());
-      bbox += pt.bbox();
+      bbox += traits.approximate_2_object()(vh->point()).bbox();
     }
+    double approx_error = get_approx_error(bbox);
+    // Computes a more precise bounding box from the halfedges.
+    for(const auto& he : m_arr.halfedge_handles()) {
+      traits.approximate_2_object()(
+          he->curve(), approx_error,
+          boost::make_function_output_iterator([&bbox](const Approx_point& pt) { bbox += pt.bbox(); }));
+    }
+    // Place margin around the bbox.
+    double dx = bbox.x_span() * 0.1;
+    double dy = bbox.y_span() * 0.1;
+    bbox = Bbox_2(bbox.xmin() - dx, bbox.ymin() - dy, bbox.xmax() + dx, bbox.ymax() + dy);
     // Make sure the bbox is not degenerate.
-    if(bbox.x_span() == 0) bbox += Bbox_2(bbox.xmin() - 1, bbox.ymin(), bbox.xmax() + 1, bbox.ymax());
-    if(bbox.y_span() == 0) bbox += Bbox_2(bbox.xmin(), bbox.ymin() - 1, bbox.xmax(), bbox.ymax() + 1);
+    if(bbox.x_span() == 0)
+      bbox += Bbox_2(bbox.xmin() - 1, bbox.ymin(), bbox.xmax() + 1, bbox.ymax());
+    if(bbox.y_span() == 0)
+      bbox += Bbox_2(bbox.xmin(), bbox.ymin() - 1, bbox.xmax(), bbox.ymax() + 1);
     return bbox;
   }
 
@@ -149,7 +163,8 @@ private:
     double ymax = std::numeric_limits<double>::lowest();
     for(const QVector4D& corner : clip_space_corners) {
       QVector4D world = inverse_mvp * corner;
-      if(world.w() != 0.0) world /= world.w();
+      if(world.w() != 0.0)
+        world /= world.w();
       double x = world.x();
       double y = world.y();
       xmin = std::min(xmin, x);
@@ -193,7 +208,7 @@ private:
 #endif
 
     // add faces
-    for (const auto& [fh, face_tris] : cache.face_cache()) {
+    for(const auto& [fh, face_tris] : cache.face_cache()) {
       const auto& points = face_tris.points;
       const auto& tris = face_tris.triangles;
       bool draw_face = m_gso.colored_face(m_arr, fh);
@@ -202,21 +217,24 @@ private:
           m_gs.face_begin(m_gso.face_color(m_arr, fh));
         else
           m_gs.face_begin();
-        for(const auto idx : t) m_gs.add_point_in_face(points[idx]);
+        for(const auto idx : t)
+          m_gs.add_point_in_face(points[idx]);
         m_gs.face_end();
       }
     }
 
     // add edges
     for(const auto& [he, polyline] : cache.halfedge_cache()) {
-      if(polyline.size() < 2) continue;
+      if(polyline.size() < 2)
+        continue;
       bool draw_colored_edge = m_gso.colored_edge(m_arr, he);
       auto color = draw_colored_edge ? m_gso.edge_color(m_arr, he) : CGAL::IO::Color();
       for(size_t i = 0; i < polyline.size() - 1; ++i) {
         const auto& cur_pt = polyline[i];
         const auto& next_pt = polyline[i + 1];
         auto mid_pt = CGAL::midpoint(cur_pt, next_pt);
-        if(!contains(bbox, mid_pt)) continue;
+        if(!contains(bbox, mid_pt))
+          continue;
         if(draw_colored_edge)
           m_gs.add_segment(cur_pt, next_pt, color);
         else
@@ -226,7 +244,8 @@ private:
 
     // add vertices
     for(const auto& [vh, pt] : cache.vertex_cache()) {
-      if(!contains(bbox, pt)) continue;
+      if(!contains(bbox, pt))
+        continue;
       if(m_gso.colored_vertex(m_arr, vh))
         m_gs.add_point(pt, m_gso.vertex_color(m_arr, vh));
       else
@@ -234,7 +253,8 @@ private:
     }
 
     // keep scene non-empty to make sure that the Basic_viewer works in 2D mode for planar arrangements.
-    if(m_gs.empty()) fill_background(bbox);
+    if(m_gs.empty())
+      fill_background(bbox);
   }
 
   /*!
@@ -254,7 +274,7 @@ public:
       , m_pl(arr) {}
 
   virtual void draw() override {
-    if (is_camera_changed()) {
+    if(is_camera_changed()) {
       Bbox_2 bbox = view_bbox_from_camera();
 
 #if defined(CGAL_DRAW_AOS_DEBUG)
