@@ -24,16 +24,10 @@ private:
   void insert_halfedge(Halfedge_const_handle he) {
     const auto& source = he->source();
     const auto& target = he->target();
-
     auto [source_it, source_inserted] = m_lookup.try_emplace(source, Union_find_handle());
-    if(source_inserted) {
-      source_it->second = m_uf.make_set(source);
-    }
+    if(source_inserted) source_it->second = m_uf.make_set(source);
     auto [target_it, target_inserted] = m_lookup.try_emplace(target, Union_find_handle());
-    if(target_inserted) {
-      target_it->second = m_uf.make_set(target);
-    }
-
+    if(target_inserted) target_it->second = m_uf.make_set(target);
     m_uf.unify_sets(source_it->second, target_it->second);
   }
 
@@ -42,32 +36,21 @@ private:
 public:
   Arr_graph_conn(const Arr& arr) {
     m_lookup.reserve(arr.number_of_vertices());
-
     for(const auto& he : arr.halfedge_handles()) {
-      if(he->direction() != ARR_LEFT_TO_RIGHT) {
-        continue;
-      }
+      if(he->direction() != ARR_LEFT_TO_RIGHT) continue;
       insert_halfedge(he);
     }
-
     for(const auto& vh : arr.vertex_handles()) {
-      if(!vh->is_isolated()) {
-        continue;
-      }
+      if(!vh->is_isolated()) continue;
       insert_isolated_vertex(vh);
     }
-
     // add fictitious edges and open vertices
     for(auto fh = arr.unbounded_faces_begin(); fh != arr.unbounded_faces_end(); ++fh) {
-      if(!fh->has_outer_ccb()) {
-        continue;
-      }
+      if(!fh->has_outer_ccb()) continue;
       auto outer_ccb = fh->outer_ccb();
       auto curr = outer_ccb;
       do {
-        if(!curr->is_fictitious()) {
-          continue;
-        }
+        if(!curr->is_fictitious()) continue;
         insert_halfedge(curr);
       } while(++curr != outer_ccb);
     }

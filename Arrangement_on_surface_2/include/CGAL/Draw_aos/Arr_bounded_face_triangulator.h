@@ -33,19 +33,20 @@ namespace CGAL {
 namespace draw_aos {
 
 /**
- * @brief Triangulate a face of an arrangement within a bounding box.
+ * @brief Triangulator for a face of an arrangement within a bounding box.
  *
- * @note The face must have an outer CCB.
+ * The original topology of a face is preserved, but the geometry will be bounded by the bbox.
  */
 template <typename Arrangement>
 class Arr_bounded_face_triangulator
 {
   using Geom_traits = typename Arrangement::Geometry_traits_2;
-  using Approx_traits = Arr_approximation_geometry_traits<Geom_traits>;
+  using Approx_traits = Arr_approximate_traits<Geom_traits>;
   using Approx_point = typename Approx_traits::Approx_point;
-  using Point_vec = typename Approx_traits::Apporx_point_vec;
+  using Point_vec = typename Approx_traits::Approx_point_vec;
   using Triangle = typename Approx_traits::Triangle;
   using Triangulated_face = typename Approx_traits::Triangulated_face;
+
 #if defined(CGAL_DRAW_AOS_DEBUG)
   template <typename T>
   friend void debug_print(const Arr_bounded_face_triangulator<T>& triangulator);
@@ -96,11 +97,10 @@ private:
   void insert_ccb() {
     auto begin = m_points.begin();
     auto end = m_points.end();
-
     auto helpers_iter = m_helper_indices.begin();
     auto helpers_end = m_helper_indices.end();
-
-    auto concrete_pt_filter = [&helpers_iter, helpers_end](std::size_t idx) {
+    // A two pointers algorithm implemented with boost filters.
+    auto point_filter = [&helpers_iter, helpers_end](std::size_t idx) {
       if(helpers_iter == helpers_end) {
         return true;
       }
@@ -110,51 +110,37 @@ private:
       }
       return true;
     };
-
-    auto indexes_begin = boost::make_counting_iterator<std::size_t>(0);
-    auto indexes_end = boost::make_counting_iterator<std::size_t>(m_points.size());
-    auto filtered_begin = boost::make_filter_iterator(concrete_pt_filter, indexes_begin, indexes_end);
-    auto filtered_end = boost::make_filter_iterator(concrete_pt_filter, indexes_end, indexes_end);
     auto index_to_point_with_info = [this](std::size_t idx) -> KPoint_with_info {
       return std::make_pair(transform_point(m_points[idx]), idx);
     };
+    auto indexes_begin = boost::make_counting_iterator<std::size_t>(0);
+    auto indexes_end = boost::make_counting_iterator<std::size_t>(m_points.size());
+    auto filtered_begin = boost::make_filter_iterator(point_filter, indexes_begin, indexes_end);
+    auto filtered_end = boost::make_filter_iterator(point_filter, indexes_end, indexes_end);
     auto transformed_begin = boost::make_transform_iterator(filtered_begin, index_to_point_with_info);
     auto transformed_end = boost::make_transform_iterator(filtered_end, index_to_point_with_info);
-
     m_ct.template insert_with_info<KPoint_with_info>(transformed_begin, transformed_end);
   }
 
-  Side_of_boundary shared_boundary_side(const Approx_point& pt1, const Approx_point& pt2) const {
-    if(pt1.x() == m_ctx.xmin() && pt2.x() == m_ctx.xmin() && m_ctx.contains_y(pt1.y()) && m_ctx.contains_y(pt2.y())) {
+  Side_of_boundary shared_boundary(const Approx_point& pt1, const Approx_point& pt2) const {
+    if(pt1.x() == m_ctx.xmin() && pt2.x() == m_ctx.xmin() && m_ctx.contains_y(pt1.y()) && m_ctx.contains_y(pt2.y()))
       return Side_of_boundary::Left;
-    } else if(pt1.x() == m_ctx.xmax() && pt2.x() == m_ctx.xmax() && m_ctx.contains_y(pt1.y()) &&
-              m_ctx.contains_y(pt2.y()))
-    {
+    if(pt1.x() == m_ctx.xmax() && pt2.x() == m_ctx.xmax() && m_ctx.contains_y(pt1.y()) && m_ctx.contains_y(pt2.y()))
       return Side_of_boundary::Right;
-    } else if(pt1.y() == m_ctx.ymin() && pt2.y() == m_ctx.ymin() && m_ctx.contains_x(pt1.x()) &&
-              m_ctx.contains_x(pt2.x()))
-    {
+    if(pt1.y() == m_ctx.ymin() && pt2.y() == m_ctx.ymin() && m_ctx.contains_x(pt1.x()) && m_ctx.contains_x(pt2.x()))
       return Side_of_boundary::Bottom;
-    } else if(pt1.y() == m_ctx.ymax() && pt2.y() == m_ctx.ymax() && m_ctx.contains_x(pt1.x()) &&
-              m_ctx.contains_x(pt2.x()))
-    {
+    if(pt1.y() == m_ctx.ymax() && pt2.y() == m_ctx.ymax() && m_ctx.contains_x(pt1.x()) && m_ctx.contains_x(pt2.x()))
       return Side_of_boundary::Top;
-    }
     return Side_of_boundary::None;
   }
 
   void add_boundary_helper_point(Approx_point from, Approx_point to) {
-    if(from == to) {
-      return;
-    }
-    auto shared_side = shared_boundary_side(from, to);
-    if(shared_side == Side_of_boundary::None) {
-      return;
-    }
+    auto shared_side = shared_boundary(from, to);
+    if(shared_side == Side_of_boundary::None) return;
     m_helper_indices.push_back(m_points.size());
     m_points.emplace_back(
         offset_boundary_point(Approx_point((from.x() + to.x()) / 2, (from.y() + to.y()) / 2), shared_side, m_offset));
-    m_offset += 0.5;
+    m_offset += 0.5; // It can be arbitrary increment.
   }
 
 public:
@@ -172,6 +158,11 @@ public:
     }));
   }
 
+  /**
+   * @brief Converts the triangulator to a triangulated face, moving internal data to the result.
+   *
+   * @return Triangulated_face
+   */
   operator Triangulated_face() && {
     if(m_points.empty()) {
       return Triangulated_face();
@@ -192,25 +183,21 @@ public:
     }
 
     unordered_flat_map<typename Ct::Face_handle, bool> in_domain_map;
+    in_domain_map.reserve(m_ct.number_of_faces());
     boost::associative_property_map<decltype(in_domain_map)> in_domain(in_domain_map);
     CGAL::mark_domain_in_triangulation(m_ct, in_domain);
 
     Triangulated_face tf;
     tf.triangles.reserve(m_ct.number_of_faces());
     for(auto fit = m_ct.finite_faces_begin(); fit != m_ct.finite_faces_end(); ++fit) {
-      if(!get(in_domain, fit)) {
-        continue;
-      }
+      if(!get(in_domain, fit)) continue;
       Point_index v1 = fit->vertex(0)->info();
       Point_index v2 = fit->vertex(1)->info();
       Point_index v3 = fit->vertex(2)->info();
-      if(!v1.is_valid() || !v2.is_valid() || !v3.is_valid()) {
-        continue;
-      }
+      if(!v1.is_valid() || !v2.is_valid() || !v3.is_valid()) continue;
       Triangle tri{v1, v2, v3};
       tf.triangles.emplace_back(tri);
     }
-
     tf.points = std::move(m_points);
     return tf;
   }
@@ -259,9 +246,9 @@ void debug_print(const Arr_bounded_face_triangulator<Arrangement>& triangulator)
     ofs_ccb_constraint << pt.x() << " " << pt.y() << "\n";
   }
 }
-#endif // CGAL_DRAW_AOS_DEBUG && CGAL_DRAW_AOS_TRIANGULATOR_DEBUG_FILE_DIR
+#endif
 
 } // namespace draw_aos
 } // namespace CGAL
 
-#endif // CGAL_DRAW_AOS_ARR_FACE_TRIANGULATOR_H
+#endif

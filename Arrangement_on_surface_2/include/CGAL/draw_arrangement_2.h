@@ -142,7 +142,7 @@ public:
   /// Add a face.
   void add_face(Face_const_handle face) {
     // std::cout << "add_face()\n";
-    for (Inner_ccb_const_iterator it = face->inner_ccbs_begin(); it != face->inner_ccbs_end(); ++it) add_ccb(*it);
+    for(Inner_ccb_const_iterator it = face->inner_ccbs_begin(); it != face->inner_ccbs_end(); ++it) add_ccb(*it);
 
     for (Outer_ccb_const_iterator it = face->outer_ccbs_begin(); it != face->outer_ccbs_end(); ++it) {
       add_ccb(*it);
@@ -156,7 +156,7 @@ public:
     auto curr = circ;
     do {
       auto new_face = curr->twin()->face();
-      if (m_visited.find(new_face) != m_visited.end()) continue;
+      if(m_visited.find(new_face) != m_visited.end()) continue;
       m_visited[new_face] = true;
       add_face(new_face);
     } while(++curr != circ);
@@ -189,6 +189,7 @@ public:
 
     do {
       // Skip halfedges that are "antenas":
+      while(curr->face() == curr->twin()->face()) curr = curr->twin()->next();
       while(curr->face() == curr->twin()->face()) curr = curr->twin()->next();
       draw_region_impl1(*traits, curr);
       curr = curr->next();
@@ -243,10 +244,10 @@ public:
     double error(0.01); // TODO? (this->pixel_ratio());
     bool l2r = curr->direction() == ARR_LEFT_TO_RIGHT;
     approx(curr->curve(), error, std::back_inserter(polyline), l2r);
-    if (polyline.empty()) return;
+    if(polyline.empty()) return;
     auto it = polyline.begin();
     auto prev = it++;
-    for (; it != polyline.end(); prev = it++) m_gs.add_point_in_face(*prev);
+    for(; it != polyline.end(); prev = it++) m_gs.add_point_in_face(*prev);
   }
 
   /*! Draw an exact curve.
@@ -268,8 +269,9 @@ public:
 
   /// Add all faces.
   template <typename Traits>
-  void add_faces(const Traits&)
-  { for (auto it = m_aos.unbounded_faces_begin(); it != m_aos.unbounded_faces_end(); ++it) add_face(it); }
+  void add_faces(const Traits&) {
+    for(auto it = m_aos.unbounded_faces_begin(); it != m_aos.unbounded_faces_end(); ++it) add_face(it);
+  }
 
   /// Compile time dispatching
 
@@ -354,7 +356,8 @@ public:
 
     // Find the first halfedge directed from left to right
     auto curr = circ;
-    do if (curr->direction() == CGAL::ARR_LEFT_TO_RIGHT) break;
+    do
+      if(curr->direction() == CGAL::ARR_LEFT_TO_RIGHT) break;
     while(++curr != circ);
     Halfedge_const_handle ext = curr;
 
@@ -362,13 +365,13 @@ public:
     //  such that there is no other halfedge underneath.
     do {
       // Discard edges not directed from left to right:
-      if (curr->direction() != CGAL::ARR_LEFT_TO_RIGHT) continue;
+      if(curr->direction() != CGAL::ARR_LEFT_TO_RIGHT) continue;
 
       auto res = cmp_xy(curr->source()->point(), ext->source()->point());
 
       // Discard the edges inciden to a point strictly larger than the point
       // incident to the stored extreme halfedge:
-      if (res == LARGER) continue;
+      if(res == LARGER) continue;
 
       // Store the edge inciden to a point strictly smaller:
       if (res == SMALLER) {
@@ -377,7 +380,7 @@ public:
       }
 
       // The incident points are equal; compare the halfedges themselves:
-      if (cmp_y(curr->curve(), ext->curve(), curr->source()->point()) == SMALLER) ext = curr;
+      if(cmp_y(curr->curve(), ext->curve(), curr->source()->point()) == SMALLER) ext = curr;
     } while(++curr != circ);
 
     return ext;
@@ -389,10 +392,9 @@ public:
     // std::cout << "ratio: " << this->pixel_ratio() << std::endl;
     m_visited.clear();
 
-    if (m_aos.is_empty()) return;
+    if(m_aos.is_empty()) return;
 
-    if (m_gso.are_faces_enabled())
-      add_faces(*(this->m_aos.geometry_traits()));
+    if(m_gso.are_faces_enabled()) add_faces(*(this->m_aos.geometry_traits()));
 
     // Add edges that do not separate faces.
     if (m_gso.are_edges_enabled()) {
@@ -432,7 +434,7 @@ public:
     std::vector<typename Gt::Approximate_point_2> polyline;
     double error(0.01); // TODO? (this->pixel_ratio());
     approx(curve, error, std::back_inserter(polyline));
-    if (polyline.empty()) return;
+    if(polyline.empty()) return;
     auto it = polyline.begin();
     auto prev = it++;
     for (; it != polyline.end(); prev = it++) {
@@ -553,10 +555,12 @@ template <typename GeometryTraits_2, typename TopologyTraits, class GSOptions>
 void draw(const CGAL_ARR_TYPE& aos,
           const GSOptions& gso,
           const char* title = "2D Arrangement on Surface Basic Viewer") {
+  using Arrangement = CGAL_ARR_TYPE;
+
   Qt::init_ogl_context(4, 3);
   int argc;
   QApplication app(argc, nullptr);
-  auto viewer = draw_aos::Arr_viewer(app.activeWindow(), aos, gso, title);
+  auto viewer = draw_aos::Arr_viewer<Arrangement, GSOptions>(app.activeWindow(), aos, gso, title);
   viewer.show();
   app.exec();
 }
@@ -568,24 +572,31 @@ void draw(const CGAL_ARR_TYPE& aos, const char* title = "2D Arrangement on Surfa
   using Face_const_handle = typename Arrangement::Face_const_handle;
   using Vertex_const_handle = typename Arrangement::Vertex_const_handle;
   using Halfedge_const_handle = typename Arrangement::Halfedge_const_handle;
+  using GSOptions =
+      CGAL::Graphics_scene_options<Arrangement, Vertex_const_handle, Halfedge_const_handle, Face_const_handle>;
 
-  Qt::init_ogl_context(4, 3);
-  int argc;
-  QApplication app(argc, nullptr);
-  Graphics_scene_options<Arrangement, Vertex_const_handle, Halfedge_const_handle, Face_const_handle> gso;
+  GSOptions gso;
   gso.enable_faces();
-  gso.enable_edges();
-  gso.enable_vertices();
+  gso.colored_face = [](const Arrangement&, const Face_const_handle&) { return true; };
   gso.face_color = [](const Arrangement&, const Face_const_handle& fh) -> CGAL::IO::Color {
     CGAL::Random random((size_t(fh.ptr())));
     return get_random_color(random);
   };
-  gso.colored_face = [](const Arrangement&, const Face_const_handle&) { return true; };
-  gso.vertex_color = [](const Arrangement&, const Vertex_const_handle& vh) -> CGAL::IO::Color {
-    CGAL::Random random((size_t(vh.ptr())));
-    return get_random_color(random);
+  gso.enable_edges();
+  gso.colored_edge = [](const Arrangement&, const Halfedge_const_handle&) { return true; };
+  gso.edge_color = [](const Arrangement&, const Halfedge_const_handle& heh) -> CGAL::IO::Color {
+    return CGAL::IO::Color(0, 0, 0);
   };
-  auto viewer = draw_aos::Arr_viewer(app.activeWindow(), aos, gso, title);
+  gso.enable_vertices();
+  gso.colored_vertex = [](const Arrangement&, const Vertex_const_handle&) { return true; };
+  gso.vertex_color = [](const Arrangement&, const Vertex_const_handle& vh) -> CGAL::IO::Color {
+    return CGAL::IO::Color(255, 0, 0);
+  };
+
+  Qt::init_ogl_context(4, 3);
+  int argc;
+  QApplication app(argc, nullptr);
+  auto viewer = draw_aos::Arr_viewer<Arrangement, GSOptions>(app.activeWindow(), aos, gso, title);
   viewer.show();
   app.exec();
 }
