@@ -27,8 +27,8 @@ int main(int argc, char **argv)
     else
     {
         // Load cub object
-        Cub_object mesh ;
-        mesh.read_cub(argv[1], true);
+            Cub_object mesh ;
+            mesh.read_cub(argv[1], true);
             
         mesh.print_infos();
         
@@ -61,6 +61,7 @@ int main(int argc, char **argv)
         // Test get_annotation
         
         // Compute the annotation of cycle1 in the homology basis
+        std::vector<std::vector<size_t> > crit =  hdvf.get_flag(CRITICAL);
         std::vector<size_t> criticals = hdvf.get_flag_dim(CRITICAL, 1) ;
         HDVFType::CChain cycle1(hdvf.get_homology_chain(criticals.at(0), 1)) ;
         HDVFType::CChain annot1(hdvf.get_annotation(cycle1,1));
@@ -87,7 +88,7 @@ int main(int argc, char **argv)
         // Test get_coannotation
         
         // Compute the co-annotation of cycle1 in the cohomology basis
-        HDVFType::RChain cocycle1((hdvf.get_homology_chain(criticals.at(0), 1)).transpose()) ;
+        HDVFType::RChain cocycle1((hdvf.get_cohomology_chain(criticals.at(0), 1)).transpose()) ;
         HDVFType::RChain coannot1(hdvf.get_coannotation(cocycle1,1));
         cout << "Co-cycle1:" << cocycle1 << endl ;
         cout << "Co-annotation of co-cycle 1: " << coannot1 << endl ;
@@ -125,5 +126,32 @@ int main(int argc, char **argv)
         cout << "Cocycle4: " << cocycle4 << endl ;
         cout << "are_same_cocycles cocycle1 and cocycle4: " << hdvf.are_same_cocycles(cocycle1, cocycle4, 1) << endl ;
     }
+    
+    cout << "--------------" << endl ;
+    
+    typedef CGAL::OSM::Sparse_chain<int, OSM::COLUMN> CChain;
+    typedef CGAL::OSM::Sparse_matrix<int, OSM::COLUMN> CMatrix;
+    // Create a column-major sparse matrix
+    CMatrix M(5,4) ;
+
+    // Fill coefficients
+    OSM::set_coef(M, 0, 1, 1) ;
+    OSM::set_coef(M, 0, 2, -1) ;
+    OSM::set_coef(M, 2, 1, 2) ;
+
+    // Iterate over non empty columns
+     for(OSM::Bitboard::iterator it_col = M.begin(); it_col != M.end(); ++it_col)
+        {
+            cout << "col: " << *it_col << endl ;
+            // Get a constant reference over the column (complexity O(1))
+            const CChain& col(OSM::cget_column(M, *it_col));
+            // Iterate over the column
+            for (CChain::const_iterator it = col.begin(); it != col.end(); ++it)
+            {
+                std::cout << "row: " << it->first << " - coef: " << it->second << std::endl ;
+            }
+        }
+    // Direct output of the matrix with << operator
+    std::cout << "M: " << M << std::endl;
     return 0;
 }

@@ -746,7 +746,7 @@ CoefficientType operator*(const Sparse_chain<CoefficientType, ROW> &_row, const 
  */
 template <typename _CT, int _CTF>
 Sparse_chain<_CT, _CTF> operator/(const Sparse_chain<_CT, _CTF> &_chain, const std::vector<size_t> &_indexes) {
-    Sparse_chain newChain = _chain;
+    Sparse_chain<_CT, _CTF> newChain = _chain;
     newChain /= _indexes;
     return newChain;
 }
@@ -771,7 +771,7 @@ Sparse_chain<_CT, _CTF> operator/(const Sparse_chain<_CT, _CTF> &_chain, const s
  */
 template <typename _CT, int _CTF>
 Sparse_chain<_CT, _CTF> operator/(const Sparse_chain<_CT, _CTF> &_chain, size_t _index) {
-    Sparse_chain newChain = _chain;
+    Sparse_chain<_CT, _CTF> newChain = _chain;
     newChain /= _index;
     return newChain;
 }

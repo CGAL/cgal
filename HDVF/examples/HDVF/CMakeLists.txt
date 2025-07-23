@@ -24,6 +24,14 @@ target_link_libraries(per_hdvf CGAL::CGAL CGAL::CGAL_Core)
 add_executable(dual_hdvf main_dual_hdvf.cpp arguments.cpp)
 target_link_libraries(dual_hdvf CGAL::CGAL CGAL::CGAL_Core)
 
-add_executable(test_hdvf test_hdvf_example.cpp arguments.cpp)
+add_executable(test_hdvf test_hdvf_example.cpp)
 target_link_libraries(test_hdvf CGAL::CGAL CGAL::CGAL_Core)
 
+add_executable(example_hdvf_simplicial example_hdvf_simplicial.cpp)
+target_link_libraries(example_hdvf_simplicial CGAL::CGAL CGAL::CGAL_Core)
+
+add_executable(example_hdvf_cubical example_hdvf_cubical.cpp)
+target_link_libraries(example_hdvf_cubical CGAL::CGAL CGAL::CGAL_Core)
+
+add_executable(example_matrix_chain example_matrix_chain.cpp)
+target_link_libraries(example_matrix_chain CGAL::CGAL CGAL::CGAL_Core)

@@ -1,3 +1,5 @@
 /*!
-\example HDVF/main_dual_hdvf.cpp\example HDVF/main_hdvf.cpp\example HDVF/main_per_hdvf.cpp\example HDVF/test_hdvf_example.cpp
+\example HDVF/main_dual_hdvf.cpp\example HDVF/main_hdvf.cpp\example HDVF/main_per_hdvf.cpp\example HDVF/example_hdvf_simplicial.cpp
+\example HDVF/example_hdvf_cubical.cpp
+\example HDVF/example_matrix_chain.cpp
 */

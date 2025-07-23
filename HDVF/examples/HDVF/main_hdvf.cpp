@@ -120,7 +120,7 @@ void main_code (const Options &options)
         mesh.read_off(options.in_file) ;
         
         // Complex
-        ComplexType complex(mesh, mesh.nodes);
+        ComplexType complex(mesh, mesh.get_nodes());
         
         mesh_complex_output<Mesh_object, ComplexType>(mesh, complex, options) ;
         

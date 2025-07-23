@@ -63,7 +63,7 @@ void hdvf_geometric_chain_complex_output_vtk (Hdvf_core<CoefType, ComplexType, _
     typedef Hdvf_core<CoefType, ComplexType, _ChainType, _SparseMatrixType> HDVF_type;
     // Export PSC labelling
     string outfile(filename+"_PSC.vtk") ;
-    vector<vector<int> > labels = hdvf.export_psc_labels() ;
+    vector<vector<int> > labels = hdvf.get_psc_labels() ;
     ComplexType::chain_complex_to_vtk(complex, outfile, &labels) ;
     
     if (hdvf.get_hdvf_opts() != OPT_BND)
@@ -219,7 +219,7 @@ void hdvf_duality_geometric_chain_complex_output_vtk (Hdvf_duality<CoefType, Com
     typedef Hdvf_duality<CoefType, ComplexType> HDVF_type;
     // Export PSC labelling
     string outfile(filename+"_PSC.vtk") ;
-    vector<vector<int> > labels = hdvf.export_psc_labels() ;
+    vector<vector<int> > labels = hdvf.get_psc_labels() ;
     ComplexType::chain_complex_to_vtk(complex, outfile, &labels) ;
     
     if (hdvf.get_hdvf_opts() != OPT_BND)
@@ -345,7 +345,7 @@ public:
         TetObject tetL(out_file_prefix) ;
         
         // Build the associated SimpComplex
-        ComplexType& L = *new ComplexType(tetL, tetL.nodes) ;
+        ComplexType& L = *new ComplexType(tetL, tetL.get_nodes()) ;
         
         // Build the Sub_chain_complex_mask encoding _K inside L
         SubCCType& K(*new SubCCType(L, false)) ;

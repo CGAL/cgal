@@ -108,7 +108,7 @@ public:
     /// operator<<
     friend ostream& operator<<(ostream& out, const Z2& a)
     {
-        return (out << a._i) ;
+        return (out << int(a._i)) ;
     }
 };
 

@@ -325,7 +325,7 @@ public:
         const vector<size_t> coords(ind2khal(_base2bool.at(0).at(i))) ;
         vector<double> res ;
         for (size_t c : coords)
-            res.push_back(c/2.) ;
+            res.push_back(c/2. + .5) ;
         for (size_t i = coords.size(); i<3; ++i) // points must be 3D
             res.push_back(0) ;
         return res ;

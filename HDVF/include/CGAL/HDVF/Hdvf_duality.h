@@ -396,7 +396,7 @@ public:
      *
      * \return A vector containing, for each dimension, the vector of labels by cell index.
      */
-    virtual vector<vector<int> > export_psc_labels () const
+    virtual vector<vector<int> > get_psc_labels () const
     {
         vector<vector<int> > labels(this->_K.dim()+1) ;
         for (int q=0; q<=this->_K.dim(); ++q)

@@ -21,126 +21,137 @@ namespace HDVF {
 
 using namespace std ;
 
-typedef std::vector<double> IONodeType ;
-// For simplicial complexes
+// ------ For simplicial complexes
+// List of vertices of a cell (set of ids)
 typedef std::set<size_t> IOCellType ;
+// List of cells
 typedef std::vector<IOCellType> IOChainType ;
-// For cubical complexes
+
+// ------ For cubical complexes
+// Khalimsky coordinates of a cube
 typedef std::vector<size_t> IOCubCellType ;
+// List of cells
 typedef std::vector<IOCellType> IOCubChainType ;
 
 
-inline IONodeType & operator+(const IONodeType &v1, const IONodeType &v2)
-{
-    assert(v1.size() == v2.size()) ;
-    IONodeType &tmp = *new(IONodeType)(3,0) ;
-    for (int i =0; i<3; ++i)
-        tmp[i] = (v1.at(i) + v2.at(i)) ;
-    return tmp ;
-}
-
-inline IONodeType & operator-(const IONodeType &v1, const IONodeType &v2)
-{
-    assert(v1.size() == v2.size()) ;
-    IONodeType &tmp = *new(IONodeType)(3,0) ;
-    for (int i =0; i<3; ++i)
-        tmp[i] = (v1.at(i) - v2.at(i)) ;
-    return tmp ;
-}
-
-inline IONodeType & operator+= (IONodeType &v1, const IONodeType &v2)
-{
-    assert(v1.size() == v2.size()) ;
-    for (int i =0; i<3; ++i)
-        v1.at(i) += v2.at(i) ;
-    return v1 ;
-}
-
-inline IONodeType operator/(const IONodeType &v1, double d)
-{
-    IONodeType &tmp = *new(IONodeType)(3,0) ;
-    for (int i =0; i<3; ++i)
-        tmp[i] = v1.at(i)/d ;
-    return tmp ;
-}
-
-inline IONodeType & operator/=(IONodeType &v1, double d)
-{
-    for (int i =0; i<3; ++i)
-        v1.at(i) /= d ;
-    return v1 ;
-}
-
-inline IONodeType & operator*=(IONodeType &v, double d)
-{
-    for (int i =0; i<3; ++i)
-        v.at(i) *= d ;
-    return v ;
-}
-
-inline IONodeType & operator*=(IONodeType &v, IONodeType &lambda)
-{
-    for (int i =0; i<3; ++i)
-        v.at(i) *= lambda.at(i) ;
-    return v ;
-}
-
-inline IONodeType & bary(const std::vector<IONodeType> &verts)
-{
-    IONodeType &tmp = *new(IONodeType)(3,0) ;
-    if (verts.size()>0)
-    {
-        for (int i = 0; i<verts.size(); ++i)
-            tmp += verts.at(i) ;
-        tmp /= verts.size() ;
-    }
-    return tmp;
-}
-
-inline double dist(const IONodeType &v1, const IONodeType &v2)
-{
-    assert(v1.size() == v2.size()) ;
-    double x=0., tmp ;
-    for (int i =0; i<3; ++i)
-    {
-        tmp = v2.at(i) - v1.at(i) ;
-        x += tmp*tmp ;
-    }
+// Type of points (for vertices coordinates in R^d)
+class IONodeType {
+    vector<double> _coords;
     
-    return sqrt(x) ;
-}
+public:
+    IONodeType(size_t d = 3, double x = 0.) : _coords(d,x) {}
+    IONodeType(std::vector<double> v) : _coords(v) {}
+    IONodeType(const IONodeType& v) : _coords(v._coords) {}
+    
+    size_t size() const { return _coords.size(); }
+    double at(size_t i) const { return _coords.at(i) ;}
+    double& operator[](size_t i) { return _coords.at(i) ;}
+    IONodeType& operator=(const IONodeType& v) { _coords = v._coords ; return *this ; }
+    void push_back(double x) { _coords.push_back(x) ; }
+    std::vector<double> get_coords() const { return _coords; }
+    
+    friend IONodeType & operator+(const IONodeType &v1, const IONodeType &v2)
+    {
+        assert(v1.size() == v2.size()) ;
+        IONodeType &tmp = *new(IONodeType)(v1.size(),0) ;
+        for (size_t i =0; i<v1.size(); ++i)
+            tmp[i] = (v1.at(i) + v2.at(i)) ;
+        return tmp ;
+    }
 
-inline IONodeType max(const IONodeType &v1, const IONodeType &v2)
-{
-    assert(v1.size() == v2.size()) ;
-    IONodeType tmp(v1) ;
-    for (int i=0; i<3; ++i)
-        tmp[i] = std::max(tmp.at(i), v2.at(i)) ;
-    return tmp ;
-}
+    friend IONodeType & operator-(const IONodeType &v1, const IONodeType &v2)
+    {
+        assert(v1.size() == v2.size()) ;
+        IONodeType &tmp = *new(IONodeType)(v1.size(),0) ;
+        for (size_t i =0; i<v1.size(); ++i)
+            tmp[i] = (v1.at(i) - v2.at(i)) ;
+        return tmp ;
+    }
 
-inline IONodeType min(const IONodeType &v1, const IONodeType &v2)
-{
-    assert(v1.size() == v2.size()) ;
-    IONodeType tmp(v1) ;
-    for (int i=0; i<3; ++i)
-        tmp[i] = std::min(tmp.at(i), v2.at(i)) ;
-    return tmp ;
-}
+    friend IONodeType & operator+= (IONodeType &v1, const IONodeType &v2)
+    {
+        assert(v1.size() == v2.size()) ;
+        for (size_t i =0; i<v1.size(); ++i)
+            v1[i] += v2.at(i) ;
+        return v1 ;
+    }
 
-inline void normalize(IONodeType &v)
-{
-    const IONodeType zero = IONodeType(3,0) ;
-    double n = dist(zero, v) ;
-    for (int i =0; i<3; ++i)
-        v[i] /= n ;
-}
+    friend IONodeType operator/(const IONodeType &v1, double d)
+    {
+        IONodeType &tmp = *new(IONodeType)(v1.size(),0) ;
+        for (size_t i =0; i<v1.size(); ++i)
+            tmp[i] = v1.at(i)/d ;
+        return tmp ;
+    }
+
+    friend IONodeType & operator/=(IONodeType &v1, double d)
+    {
+        for (size_t i =0; i<v1.size(); ++i)
+            v1[i] /= d ;
+        return v1 ;
+    }
+
+    friend IONodeType & operator*=(IONodeType &v, double d)
+    {
+        for (size_t i =0; i<v.size(); ++i)
+            v[i] *= d ;
+        return v ;
+    }
+
+    friend IONodeType & operator*=(IONodeType &v, IONodeType &lambda)
+    {
+        for (size_t i =0; i<v.size(); ++i)
+            v[i] *= lambda.at(i) ;
+        return v ;
+    }
+
+    friend double dist(const IONodeType &v1, const IONodeType &v2)
+    {
+        assert(v1.size() == v2.size()) ;
+        double x=0., tmp ;
+        for (size_t i =0; i<v1.size(); ++i)
+        {
+            tmp = v2.at(i) - v1.at(i) ;
+            x += tmp*tmp ;
+        }
+        
+        return sqrt(x) ;
+    }
+
+    friend IONodeType max(const IONodeType &v1, const IONodeType &v2)
+    {
+        assert(v1.size() == v2.size()) ;
+        IONodeType tmp(v1) ;
+        for (size_t i=0; i<v1.size(); ++i)
+            tmp[i] = std::max(tmp.at(i), v2.at(i)) ;
+        return tmp ;
+    }
+
+    friend IONodeType min(const IONodeType &v1, const IONodeType &v2)
+    {
+        assert(v1.size() == v2.size()) ;
+        IONodeType tmp(v1) ;
+        for (size_t i=0; i<v1.size(); ++i)
+            tmp[i] = std::min(tmp.at(i), v2.at(i)) ;
+        return tmp ;
+    }
+
+    friend void normalize(IONodeType &v)
+    {
+        const IONodeType zero = IONodeType(v.size(),0) ;
+        double n = dist(zero, v) ;
+        for (size_t i =0; i<v.size(); ++i)
+            v[i] /= n ;
+    }
+};
+
+
 
 
 // ----- VTK format -----
 
 //// Associated to any dimension the type number of associated VTK cells
-static std::vector<int> VTK_types_IO = {1, 3, 5, 10} ;
+static std::vector<size_t> VTK_types_IO = {1, 3, 5, 10} ;
 
 // Write vtk file
 template <typename CoefficientType>
@@ -162,7 +173,7 @@ void write_vtk(const std::string &filename, const std::vector<IONodeType> &nodes
     out << "DATASET  UNSTRUCTURED_GRID" << endl ;
     
     // Points
-    int nnodes = nodes.size() ;
+    size_t nnodes = nodes.size() ;
     out << "POINTS " << nnodes << " double" << endl ;
     for (IONodeType n : nodes)
         out << n.at(0) << " " << n.at(1) << " " << n.at(2) << endl ;
@@ -170,8 +181,8 @@ void write_vtk(const std::string &filename, const std::vector<IONodeType> &nodes
     // Cells
     // Number of cells : for each chain, each number of vertices for each cell
     // Size : size of a cell defined by d vertices : d+1
-    int ncells_tot = 0, size_cells_tot = 0 ;
-    for (int i = 0; i<chains.size(); ++i)
+    size_t ncells_tot = 0, size_cells_tot = 0 ;
+    for (size_t i = 0; i<chains.size(); ++i)
     {
         // for each cells in the ith chain
         for (IOCellType c : chains.at(i))
@@ -183,19 +194,19 @@ void write_vtk(const std::string &filename, const std::vector<IONodeType> &nodes
     }
     out << "CELLS " << ncells_tot << " " << size_cells_tot << endl ;
     // Output cells
-    std::vector<int> types ;
+    std::vector<size_t> types ;
     std::vector<CoefficientType> scalars ;
-    for (int i = 0; i<chains.size(); ++i)
+    for (size_t i = 0; i<chains.size(); ++i)
     {
         const IOChainType cc = chains.at(i) ;
         
         for (IOCellType c : cc)
         {
             const int d = c.size() ;
-            const int cell_type = VTK_types_IO.at(d-1) ;
+            const size_t cell_type = VTK_types_IO.at(d-1) ;
             
             out << d << " " ;
-            for (int j : c)
+            for (size_t j : c)
                 out << j << " " ;
             out << endl ;
             types.push_back(cell_type) ;
@@ -206,7 +217,7 @@ void write_vtk(const std::string &filename, const std::vector<IONodeType> &nodes
     
     // CELL_TYPES
     out << "CELL_TYPES " << ncells_tot << endl ;
-    for (int t : types)
+    for (size_t t : types)
         out << t << " " ;
     out << endl ;
     
@@ -216,7 +227,7 @@ void write_vtk(const std::string &filename, const std::vector<IONodeType> &nodes
         out << "CELL_DATA " << ncells_tot << endl ;
         out << "SCALARS CriticalCellsId " << scalar_type << " 1" << endl ;
         out << "LOOKUP_TABLE default" << endl ;
-        for (int s : scalars)
+        for (CoefficientType s : scalars)
             out << s << " " ;
         out << endl ;
     }
@@ -232,7 +243,7 @@ void write_vtk(const std::string &filename, const std::vector<IONodeType> &nodes
 inline bool check_sanity_line(const std::string &line, const std::string &file)
 {
     // Check that line is sanitized. If not, throw.
-    for ( int i = 0; i < line.size(); ++ i ) {
+    for ( size_t i = 0; i < line.size(); ++ i ) {
         if ( ! ( std::isspace(line[i]) || std::isdigit(line[i]) || (line[i] == '-') || (line[i] == '.') || (line[i] == 'e')) ) {
             std::cerr << "Error:\n  Cannot parse file " << file << std::endl ;
             std::cerr << "--- " << line[i] << std::endl ;
@@ -257,20 +268,39 @@ class Mesh_object
 public:
     // Dimension :
     // - if dim > 0 : Mesh_object encodes a mesh and all cells have dimension d
-    // - if dim < 0 : Mesh_object encodes a complex of dimension d
+    // - if dim < 0 : Mesh_object encodes a complex (possibly incomplete) of dimension d
     int dim = 0 ;
-    int nvertices, ncells, nedges ;
+    size_t nvertices, ncells, nedges ;
     std::vector<IONodeType> nodes ; // Coordinates of vertices (optional)
     std::vector<IOCellType> cells ;
     
     Mesh_object() : dim(0), nvertices(0), ncells(0), nedges(0) {}
+    
     Mesh_object(int d, const std::vector<IONodeType> &vnodes, const std::vector<IOCellType> &vcells) : dim(d), nvertices(vnodes.size()), ncells(vcells.size()), nedges(0), nodes(vnodes), cells(vcells) { check_dimension() ;}
+
+    Mesh_object(int d, const std::vector<std::vector<double> > &vnodes, const std::vector<IOCellType> &vcells) : dim(d), nvertices(vnodes.size()), ncells(vcells.size()), nedges(0), cells(vcells)
+    {
+        for (std::vector<double> v : vnodes)
+        {
+            nodes.push_back(IONodeType(v)) ;
+        }
+        check_dimension() ;
+    }
+    
     Mesh_object(const Mesh_object &m) : dim(m.dim), nvertices(m.nvertices), ncells(m.ncells), nedges(m.nedges), nodes(m.nodes), cells(m.cells) {}
+    
+    std::vector<std::vector<double> > get_nodes ()
+    {
+        std::vector<std::vector<double> > res ;
+        for (IONodeType v : nodes)
+            res.push_back(v.get_coords()) ;
+        return res ;
+    }
     
     // Mesh operations
     void push_back(const Mesh_object &mesh)
     {
-        int off = nvertices ; // The index of all the cells of mesh has to be incremented by off
+        size_t off = nvertices ; // The index of all the cells of mesh has to be incremented by off
         nvertices += mesh.nvertices ;
         ncells += mesh.ncells ;
         // Append all the vertices
@@ -280,7 +310,7 @@ public:
         for (size_t i=0; i<mesh.cells.size(); ++i)
         {
             IOCellType tmp ;
-            for (int c : mesh.cells.at(i))
+            for (size_t c : mesh.cells.at(i))
                 tmp.insert(c+off) ;
             cells.push_back(tmp) ;
         }
@@ -296,9 +326,9 @@ public:
     
     void add_cell(const IOCellType &c) {cells.push_back(c); ++ncells ;}
     
-    int cells_of_dim (int q) const
+    size_t cells_of_dim (int q) const
     {
-        int n = 0 ;
+        size_t n = 0 ;
         for (IOCellType c : cells)
         {
             if (c.size() == (q+1))
@@ -456,7 +486,7 @@ public:
             }
             IOCellType cell ;
             std::istringstream is( line );
-            int v;
+            size_t v;
             while ( is >> v )
                 cell.insert(v);
             // Add this simplex to cells
@@ -556,7 +586,7 @@ inline Mesh_object mesh_BB(const IONodeType &BBmin, const IONodeType &BBmax)
     m.nodes[5] = IONodeType({1, 0, 1}) ;
     m.nodes[6] = IONodeType({1, 1, 1}) ;
     m.nodes[7] = IONodeType({0, 1, 1}) ;
-    for (int i=0; i<8; ++i)
+    for (size_t i=0; i<8; ++i)
     {
         m.nodes[i] *= delta ;
         m.nodes[i] += BBmin ;
@@ -584,7 +614,7 @@ inline Mesh_object mesh_BB(const IONodeType &BBmin, const IONodeType &BBmax)
 
 // Tetgen related
 
-inline int read_nodes(const std::string &node_file, bool load_nodes, std::vector<IONodeType> *nodes)
+inline size_t read_nodes(const std::string &node_file, bool load_nodes, std::vector<IONodeType> *nodes)
 {
     std::ifstream in_file (node_file) ;
     if ( not in_file . good () ) {
@@ -593,7 +623,7 @@ inline int read_nodes(const std::string &node_file, bool load_nodes, std::vector
     }
     
     // First line is the number of nodes
-    int nnodes, nnodes_tmp ;
+    size_t nnodes, nnodes_tmp ;
     if (not in_file.eof())
     {
         std::string line;
@@ -606,7 +636,7 @@ inline int read_nodes(const std::string &node_file, bool load_nodes, std::vector
     nnodes_tmp =  nnodes ;
     while ( !(in_file.eof()) && (nnodes_tmp>0))
     {
-        int trash ;
+        size_t trash ;
         double x ;
         IONodeType node ;
         --nnodes_tmp ;
@@ -657,7 +687,7 @@ public:
     
     void create_nodes()
     {
-        for (int i=0; i<nvertices; ++i)
+        for (size_t i=0; i<nvertices; ++i)
         {
             IOCellType cell({i}) ;
             cells.push_back(cell) ;
@@ -669,7 +699,7 @@ public:
     {
         const std::string file_edge = fedges_from_prefix(_prefix) ;
         std::ifstream input_file ( file_edge );
-        int f_nedges ;
+        size_t f_nedges ;
         // Open the input file
         if ( not input_file . good () )
         {
@@ -690,7 +720,7 @@ public:
         }
         while ( !(input_file.eof()) && (f_nedges>0))
         {
-            int trash, i, j ;
+            size_t trash, i, j ;
             ++ line_number;
             --f_nedges ;
             std::string line;
@@ -711,7 +741,7 @@ public:
     {
         const std::string file_face = ffaces_from_prefix(_prefix) ;
         std::ifstream input_file ( file_face );
-        int f_nfaces ;
+        size_t f_nfaces ;
         // Open the input file
         if ( not input_file . good () )
         {
@@ -732,7 +762,7 @@ public:
         }
         while ( !(input_file.eof()) && (f_nfaces>0))
         {
-            int trash, i, j, k ;
+            size_t trash, i, j, k ;
             ++ line_number;
             --f_nfaces ;
             std::string line;
@@ -754,7 +784,7 @@ public:
     {
         const std::string file_ele = ftets_from_prefix(_prefix) ;
         std::ifstream input_file ( file_ele );
-        int f_ntets ;
+        size_t f_ntets ;
         // Open the input file
         if ( not input_file . good () )
         {
@@ -775,7 +805,7 @@ public:
         }
         while ( !(input_file.eof()) && (f_ntets>0))
         {
-            int trash, i, j, k, l ;
+            size_t trash, i, j, k, l ;
             ++ line_number;
             --f_ntets ;
             std::string line;
@@ -810,12 +840,12 @@ private:
 class IcosphereObject : public Mesh_object
 {
 public:
-    using Index=int ;
+    using Index=size_t ;
     using Lookup=std::map<std::pair<Index, Index>, Index>;
     
-    IcosphereObject(int subdivisions, const IONodeType &c = IONodeType({0, 0, 0}), double r=1.) : Mesh_object(2, vertices_ico, triangles_ico)
+    IcosphereObject(size_t subdivisions, const IONodeType &c = IONodeType({0, 0, 0}), double r=1.) : Mesh_object(2, vertices_ico, triangles_ico)
     {
-        for (int i=0; i<subdivisions; ++i)
+        for (size_t i=0; i<subdivisions; ++i)
         {
             subdivide();
         }
@@ -830,9 +860,9 @@ public:
     
     inline static const std::vector<IONodeType> vertices_ico =
     {
-        {-X,N,Z}, {X,N,Z}, {-X,N,-Z}, {X,N,-Z},
-        {N,Z,X}, {N,Z,-X}, {N,-Z,X}, {N,-Z,-X},
-        {Z,X,N}, {-Z,X, N}, {Z,-X,N}, {-Z,-X, N}
+        IONodeType({-X,N,Z}), IONodeType({X,N,Z}), IONodeType({-X,N,-Z}), IONodeType({X,N,-Z}),
+        IONodeType({N,Z,X}), IONodeType({N,Z,-X}), IONodeType({N,-Z,X}), IONodeType({N,-Z,-X}),
+        IONodeType({Z,X,N}), IONodeType({-Z,X, N}), IONodeType({Z,-X,N}), IONodeType({-Z,-X, N})
     };
     
     inline static const std::vector<IOCellType> triangles_ico =
@@ -871,10 +901,10 @@ public:
         for (IOCellType & each:cells)
         {
             std::array<Index, 3> mid;
-            std::vector<int> each_vertex ;
-            for (int c : each)
+            std::vector<size_t> each_vertex ;
+            for (size_t c : each)
                 each_vertex.push_back(c) ;
-            for (int edge=0; edge<3; ++edge)
+            for (size_t edge=0; edge<3; ++edge)
             {
                 mid[edge]=vertex_for_edge(lookup,
                                           each_vertex[edge], each_vertex[(edge+1)%3]);
@@ -891,7 +921,7 @@ public:
     
     void rigid_transformation(const IONodeType &c, double r)
     {
-        for (int i=0; i<nvertices; ++i)
+        for (size_t i=0; i<nvertices; ++i)
         {
             nodes[i] *= r ;
             nodes[i] += c ;
@@ -968,7 +998,7 @@ public:
         getline(infile,inputLine);
         vector<size_t> sizes ;
         
-        int tmp ;
+        size_t tmp ;
         stringstream sseizes (inputLine);
         while (sseizes >> tmp)
             sizes.push_back(tmp) ;
@@ -993,12 +1023,12 @@ public:
         // Continue with a stringstream
         ss << infile.rdbuf();
         
-        int NN = 1 ;
+        size_t NN = 1 ;
         for (int i=0; i<dim; ++i)
             NN = NN * N.at(i) ;
         
         // Following lines : data
-        for(int i = 0; i < NN; ++i)
+        for(size_t i = 0; i < NN; ++i)
         {
             ss >> tmp ;
             if (tmp) // pixel on
@@ -1082,7 +1112,7 @@ public:
     
     bool write_cub(const std::string &filename) ;
     
-    void print_infos (int level = 0) const
+    void print_infos (size_t level = 0) const
     {
         cout << "Cub_object infos - dim : " << dim << ", cubs : " << cubs.size() << endl ;
         for (int q=0; q < dim; ++q)
@@ -1117,7 +1147,7 @@ private:
     inline int cub_dim (IOCubCellType c)
     {
         int q = 0 ;
-        for (int i : c)
+        for (size_t i : c)
         {
             if (i%2 == 1)
                 ++q ;
@@ -1125,10 +1155,10 @@ private:
         return q ;
     }
     
-    inline IOCubCellType index_to_coords(int i, bool khalimsky = false)
+    inline IOCubCellType index_to_coords(size_t i, bool khalimsky = false)
     {
         IOCubCellType coords ;
-        // Convert index in binary object to int coordinates
+        // Convert index in binary object to size_t coordinates
         for (int q = 0; q < dim; ++q)
         {
             coords.push_back(i % N[q]) ;
@@ -1145,7 +1175,7 @@ private:
         return coords ;
     }
     
-    inline int khal_to_index (const IOCubCellType& coords)
+    inline size_t khal_to_index (const IOCubCellType& coords)
     {
         size_t cell_index(0);
         for (int i = 0; i < dim; ++i) {

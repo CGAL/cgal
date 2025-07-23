@@ -396,7 +396,7 @@ public:
      *
      * \returns A vector containing, for each dimension, the vector of labels by cell index.
      */
-    virtual vector<vector<int> > export_psc_labels () const
+    virtual vector<vector<int> > get_psc_labels () const
     {
         vector<vector<int> > labels(this->_K.dim()+1) ;
         for (int q=0; q<=this->_K.dim(); ++q)
@@ -611,7 +611,7 @@ private:
     void export_hdvf_persistence_pair(PairCell p)
     {
         // Export labels
-        ExpLabels labels(this->export_psc_labels()) ;
+        ExpLabels labels(this->get_psc_labels()) ;
         _export_labels.push_back(labels) ;
         // Export g (according to options)
         if (this->_hdvf_opt & (OPT_FULL | OPT_G))

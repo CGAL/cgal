@@ -167,7 +167,7 @@ void main_code (const Options &options)
         mesh.read_off(options.in_file) ;
         
         // Complex
-        ComplexType* complex = new ComplexType(mesh, mesh.nodes);
+        ComplexType* complex = new ComplexType(mesh, mesh.get_nodes());
         
         // Build L (bounding sphere meshed with tetgen), K and L-K
         

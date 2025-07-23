@@ -1087,7 +1087,7 @@ Sparse_matrix<_CT, COLUMN> operator*(const Sparse_matrix<_CT, COLUMN> &first, co
     for (size_t index: second._chainsStates) {
         Sparse_chain<_CT, COLUMN> column(first._size.first);
         
-        for (std::pair colRight: second._chains[index]) {
+        for (auto colRight: second._chains[index]) {
             if (first._chainsStates.isOn(colRight.first)) {
                 column += colRight.second * first._chains[colRight.first];
             }
@@ -1298,7 +1298,7 @@ Sparse_matrix<_CT, ROW> operator%(const Sparse_matrix<_CT, ROW> &_first, const S
     for (size_t index: _first._chainsStates) {
         Sparse_chain<_CT, ROW> row(_second._size.second);
         
-        for (std::pair colRight: _first._chains[index]) {
+        for (auto colRight: _first._chains[index]) {
             if (_first._chainsStates.isOn(colRight.first)) {
                 row += colRight.second * _second._chains[colRight.first];
             }
@@ -1319,7 +1319,7 @@ Sparse_matrix<_CT, COLUMN>& operator+=(Sparse_matrix<_CT, COLUMN> &_matrix, cons
     }
     
     for (size_t index = 0 ; index < _other._size.second ; index++) {
-        Sparse_chain column = get_column(_other, index);
+        Sparse_chain<_CT, COLUMN> column = get_column(_other, index);
         if (!column.is_null()) {
             _matrix._chainsStates |= index;
             _matrix._chains[index] += get_column(_other, index);
@@ -1342,7 +1342,7 @@ Sparse_matrix<_CT, ROW>& operator+=(Sparse_matrix<_CT, ROW> &_matrix, const Spar
     }
     
     for (size_t index = 0 ; index < _other._size.first ; index++) {
-        Sparse_chain row = get_row(_other, index);
+        Sparse_chain<_CT, ROW> row = get_row(_other, index);
         if (!row.is_null()) {
             _matrix._chainsStates |= index;
             _matrix._chains[index] += get_row(_other, index);
@@ -1365,7 +1365,7 @@ Sparse_matrix<_CT, COLUMN>& operator-=(Sparse_matrix<_CT, COLUMN> &_matrix, cons
     }
     
     for (size_t index = 0 ; index < _other._size.second ; index++) {
-        Sparse_chain column = get_column(_other, index);
+        Sparse_chain<_CT, COLUMN> column = get_column(_other, index);
         if (!column.is_null()) {
             _matrix._chainsStates |= index;
             _matrix._chains[index] -= get_column(_other, index);
@@ -1388,7 +1388,7 @@ Sparse_matrix<_CT, ROW>& operator-=(Sparse_matrix<_CT, ROW> &_matrix, const Spar
     }
     
     for (size_t index = 0 ; index < _other._size.second ; index++) {
-        Sparse_chain row = get_row(_other, index);
+        Sparse_chain<_CT, ROW> row = get_row(_other, index);
         if (!row.is_null()) {
             _matrix._chainsStates |= index;
             _matrix._chains[index] -= get_row(_other, index);

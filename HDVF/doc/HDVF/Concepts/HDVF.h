@@ -343,7 +343,7 @@ std::ostream& print_reduction(std::ostream &out = std::cout) const;
  *
  * \return A vector containing, for each dimension, the vector of labels by cell index.
  */
-virtual std::vector<std::vector<int> > export_psc_labels () const;
+virtual std::vector<std::vector<int> > get_psc_labels () const;
 
 /*!
  * \brief Get homology generators associated to `cell` (critical cell) of dimension  `q` (in particular for vtk export).
