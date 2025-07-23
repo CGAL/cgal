@@ -4,18 +4,25 @@
 
 #include <boost/range/iterator_range.hpp>
 
-#include "CGAL/Arr_enums.h"
-#include "CGAL/unordered_flat_map.h"
-#include "CGAL/Draw_aos/type_utils.h"
+#include <CGAL/Arr_enums.h>
+#include <CGAL/unordered_flat_map.h>
+#include <CGAL/Draw_aos/type_utils.h>
 
 namespace CGAL {
 namespace draw_aos {
 
+/**
+ * @brief Cache class for approximating arrangement on surface.
+ *
+ * When iterating over the arrangement dcel, a feature(vertex, halfedge, face) might be visited multiple times.
+ * This cache stores the approximated geometry for each feature to avoid redundant calculations.
+ * @tparam Arrangement
+ */
 template <typename Arrangement>
 class Arr_approximation_cache
 {
   using Geom_traits = typename Arrangement::Geometry_traits_2;
-  using Approx_traits = Arr_approximation_geometry_traits<Geom_traits>;
+  using Approx_traits = Arr_approximate_traits<Geom_traits>;
 
 public:
   using Vertex_cache_obj = typename Approx_traits::Point_geom;
@@ -46,9 +53,9 @@ private:
 public:
   Arr_approximation_cache() = default;
 
-  void reserve_vertex_cache(std::size_t size) { m_vertex_cache.reserve(size); }
-  void reserve_halfedge_cache(std::size_t size) { m_halfedge_cache.reserve(size); }
-  void reserve_face_cache(std::size_t size) { m_face_cache.reserve(size); }
+  void reserve_vertexs(std::size_t size) { m_vertex_cache.reserve(size); }
+  void reserve_halfedges(std::size_t size) { m_halfedge_cache.reserve(size); }
+  void reserve_faces(std::size_t size) { m_face_cache.reserve(size); }
 
   std::pair<Vertex_cache_obj&, bool> try_emplace(const Vertex_const_handle& vh) {
     const auto& [it, inserted] = m_vertex_cache.try_emplace(vh, Vertex_cache_obj());
@@ -118,4 +125,4 @@ private:
 
 } // namespace draw_aos
 } // namespace CGAL
-#endif // CGAL_DRAW_AOS_ARR_APPROXIMATION_CACHE_H
+#endif

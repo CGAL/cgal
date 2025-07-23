@@ -597,6 +597,7 @@ public:
   //
   using Approximate_number_type = typename Base::Approximate_number_type;
   using Approximate_point_2 = typename Base::Approximate_point_2;
+  using Approximate_kernel = typename Base::Approximate_kernel;
 
   class Approximate_2 : public Base::Approximate_2 {
   protected:

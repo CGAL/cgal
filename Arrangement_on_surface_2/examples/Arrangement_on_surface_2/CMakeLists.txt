@@ -18,6 +18,8 @@ endforeach()
 
 if(CGAL_Qt6_FOUND)
   target_link_libraries(draw_arr PRIVATE CGAL::CGAL_Basic_viewer)
+  target_link_libraries(draw_arr_degen_holes PRIVATE CGAL::CGAL_Basic_viewer)
+  target_link_libraries(unbounded_linear PRIVATE CGAL::CGAL_Basic_viewer)
   target_link_libraries(unbounded_non_intersecting PRIVATE CGAL::CGAL_Basic_viewer)
   target_link_libraries(linear_conics PRIVATE CGAL::CGAL_Basic_viewer)
   target_link_libraries(parabolas PRIVATE CGAL::CGAL_Basic_viewer)

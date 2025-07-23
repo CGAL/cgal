@@ -1115,6 +1115,7 @@ public:
     using Approximate_number_type = void;
     using Approximate_point_2 = void;
     using Approximate_2 = void;
+    using Approximate_kernel = void;
   };
 
   template <typename T>
@@ -1123,6 +1124,7 @@ public:
     using Approximate_number_type = typename T::Approximate_number_type;
     using Approximate_2 = typename T::Approximate_2;
     using Approximate_point_2 = typename T::Approximate_point_2;
+    using Approximate_kernel = typename T::Approximate_kernel;
   };
 
   using Approximate_number_type =
@@ -1131,6 +1133,8 @@ public:
     typename has_approximate_2<Subcurve_traits_2>::Approximate_2;
   using Approximate_point_2 =
     typename has_approximate_2<Subcurve_traits_2>::Approximate_point_2;
+  using Approximate_kernel =
+    typename has_approximate_2<Subcurve_traits_2>::Approximate_kernel;
 
   /*! obtains an Approximate_2 functor object. */
   Approximate_2 approximate_2_object_impl(std::false_type) const
