@@ -17,17 +17,21 @@ enum class Side_of_boundary {
 };
 
 template <typename, typename = std::void_t<>>
-struct has_construct_x_monotone_curve_2 : std::false_type {};
+struct has_construct_x_monotone_curve_2 : std::false_type
+{};
 
 template <typename T>
-struct has_construct_x_monotone_curve_2<T, std::void_t<typename T::Construct_x_monotone_curve_2>> : std::true_type {};
+struct has_construct_x_monotone_curve_2<T, std::void_t<typename T::Construct_x_monotone_curve_2>> : std::true_type
+{};
 
 template <typename, typename = std::void_t<>>
-struct has_approximate_2_object : std::false_type {};
+struct has_approximate_2_object : std::false_type
+{};
 
 // Specialization: detection succeeds if decltype(T::approximate_2_object()) is valid
 template <typename T>
-struct has_approximate_2_object<T, std::void_t<decltype(std::declval<T>().approximate_2_object())>> : std::true_type {};
+struct has_approximate_2_object<T, std::void_t<decltype(std::declval<T>().approximate_2_object())>> : std::true_type
+{};
 
 // Convenience variable
 template <typename T>
@@ -36,12 +40,13 @@ inline constexpr bool has_approximate_2_object_v = has_approximate_2_object<T>::
 // Primary templates: detection fails by default
 // Does a class have operator()(const Point&)?
 template <typename, typename, typename = std::void_t<>>
-struct has_operator_point : std::false_type {};
+struct has_operator_point : std::false_type
+{};
 
 // Specialization: detection succeeds if decltype works out
 template <typename T, typename A>
-struct has_operator_point<T, A, std::void_t<decltype(std::declval<A>()(std::declval<const typename T::Point_2&>()))>> :
-    std::true_type
+struct has_operator_point<T, A, std::void_t<decltype(std::declval<A>()(std::declval<const typename T::Point_2&>()))>>
+    : std::true_type
 {};
 
 // Convenience variable
@@ -51,7 +56,8 @@ inline constexpr bool has_operator_point_v = has_operator_point<T, A>::value;
 // Primary templates: detection fails by default
 // Does a class have operator()(const X_monotone_curve&)?
 template <typename, typename, typename, typename = std::void_t<>>
-struct has_operator_xcv : std::false_type {};
+struct has_operator_xcv : std::false_type
+{};
 
 /*!
  */
