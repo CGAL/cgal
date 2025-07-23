@@ -456,6 +456,14 @@ public:
       return build_kd_tree(first,beyond);
     }
 
+    //TODO: add doc
+    template<typename ConstPointIterator, typename PointMap>
+    bool accelerate_distance_queries(ConstPointIterator first, ConstPointIterator beyond, PointMap pmap)
+    {
+      return build_kd_tree(make_transform_iterator_from_property_map (first, pmap),
+                           make_transform_iterator_from_property_map (beyond, pmap));
+    }
+
     /// returns the minimum squared distance between the query point
     /// and all input primitives. The internal KD-tree is not used.
     /// \pre `!empty()`
@@ -618,6 +626,12 @@ public:
     datum(Primitive& p)const
     {
       return Helper::get_datum(p, this->traits());
+    }
+
+    // warning: the tree must have been built
+    const Search_tree& kd_tree() const
+    {
+      return *m_p_search_tree;
     }
 
   private:

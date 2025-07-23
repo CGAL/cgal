@@ -153,7 +153,7 @@ template <typename TriangleMesh, typename GT> class MedialSkeleton
   using Point_3 = typename GT::Point_3;
   using FT = typename GT::FT;
   using Sphere_ID = std::size_t;
-  using MSMesh = typename MedialSphereMesh<TriangleMesh, GT>;
+  using MSMesh = MedialSphereMesh<TriangleMesh, GT>;
 
 public:
   /**
@@ -420,7 +420,7 @@ private:
   using Point_3 = typename GT::Point_3;
   using Vector_3 = typename GT::Vector_3;
   using Sphere_3 = typename GT::Sphere_3;
-  using MSMesh = typename MedialSphereMesh<TriangleMesh_, GT>;
+  using MSMesh = MedialSphereMesh<TriangleMesh_, GT>;
   using MSphere = typename MSMesh::MSphere;
   using Sphere_ID = typename MSMesh::Sphere_ID;
 
@@ -520,7 +520,7 @@ public:
 
     // Build AABB-tree
     tree_ = std::make_unique<Tree>(faces(tmesh_).begin(), faces(tmesh_).end(), tmesh_, vpm_);
-    tree_->accelerate_distance_queries();
+    tree_->accelerate_distance_queries(vertices(tmesh_).begin(), vertices(tmesh_).end(), vpm_);
     // get bounding box of the mesh
     auto bbox = tree_->bbox();
     scale_ = std::max(bbox.xmax() - bbox.xmin(), std::max(bbox.ymax() - bbox.ymin(), bbox.zmax() - bbox.zmin()));
@@ -661,7 +661,7 @@ public:
       std::cout << "Consider decreasing the target number of spheres." << std::endl;
     }
     return success;
-  } 
+  }
   bool update() {
     // Clean data
     sphere_mesh_->reset();
@@ -995,9 +995,9 @@ private:
     Point_3 q = p - (2 * r * n);
     face_descriptor last_face;
     while(true) {
-      auto res = tree_->closest_point_and_primitive(c);
-      Point_3 q_next = res.first;
-      face_descriptor closest_face = res.second;
+      // get the hint directly from the kd-tree only to illustrate the use of the internal kd-tree
+      auto hint = tree_->kd_tree().closest_point(c);
+      auto [q_next, closest_face] = tree_->closest_point_and_primitive(c, hint);
 
       FT squared_dist = (q_next - c).squared_length();
       if(squared_dist >= (r - delta_convergence) * (r - delta_convergence)) {
