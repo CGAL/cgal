@@ -159,13 +159,14 @@ int main(){
     Eigen::VectorXi contact_point_indices = Eigen::VectorXi::Constant(G.rows(),-1);
     Eigen::VectorXd contact_point_radii   = Eigen::VectorXd::Constant(G.rows(),-1.);
     for (int i=0; i<contact_indices.rows(); i++){
-        double r= fabs(res(i,3)); // contact spheres have negative radius, use abs value here
-        for (int j=0; j<contact_indices.cols(); j++){
-            int n = contact_indices(i,j);
-            if ((!filter_contact_spheres_bbx)
-                ||
-                (  (res.block(n,0,1,3).array() >  bbxmin.array()).all()
-                && (res.block(n,0,1,3).array() <= bbxmax.array()).all())){
+        double r = fabs(res(i,3)); // contact spheres have negative radius, use abs value here
+        if ((!filter_contact_spheres_bbx)
+            ||
+            (  (res.block(i,0,1,3).array() >  bbxmin.array()).all()
+            && (res.block(i,0,1,3).array() <= bbxmax.array()).all())){
+
+            for (int j=0; j<contact_indices.cols(); j++){
+                int n = contact_indices(i,j);
                 if ( (contact_point_indices(n) < 0) || ((contact_point_indices(n) >= 0) && (contact_point_radii(n) < r)) ){
                     contact_point_indices(n) = i;
                     contact_point_radii(n)   = r;
@@ -194,7 +195,7 @@ int main(){
                         );
             Vector D = Ccontact-Csdf;
             double vl = sqrt(D.squared_length());
-            std::cout << "vl-(r+rc): " << vl - (fabs(rsdf)+fabs(res(contact_point_indices[i],3))) << std::endl;
+            // std::cout << "vl-(r+rc): " << vl - (fabs(rsdf)+fabs(res(contact_point_indices[i],3))) << std::endl;
             D /= vl;
             // std::cout << "D.squared_lenght(): " << D.squared_length() << std::endl;
             Point  P = Csdf + fabs(rsdf)*D;
