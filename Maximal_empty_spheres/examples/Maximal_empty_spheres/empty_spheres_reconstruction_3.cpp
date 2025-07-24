@@ -3,6 +3,10 @@
 #include <iostream>
 #include <vector>
 
+#include "polyscope/polyscope.h"
+#include "polyscope/point_cloud.h"
+#include "polyscope/surface_mesh.h"
+
 // using Sphere_3 = CGAL::Exact_predicates_inexact_constructions_kernel::Sphere_3;
 // using Point_3 = CGAL::Exact_predicates_inexact_constructions_kernel::Point_3;
 
@@ -159,7 +163,8 @@ int main(){
             int n = contact_indices(i,j);
             if ((!filter_contact_spheres_bbx)
                 ||
-                ((res.block(n,0,1,3).array() > bbxmin.array()).all() && (res.block(n,0,1,3).array() <= bbxmax.array()).all())){
+                (  (res.block(n,0,1,3).array() >  bbxmin.array()).all()
+                && (res.block(n,0,1,3).array() <= bbxmax.array()).all())){
                 if ( (contact_point_indices(n) < 0) || ((contact_point_indices(n) >= 0) && (contact_point_radii(n) < r)) ){
                     contact_point_indices(n) = i;
                     contact_point_radii(n)   = r;
@@ -196,6 +201,35 @@ int main(){
 
     std::cout << "PSR from " << Pwns.size() << " points with normals" << std::endl;
     poisson_reconstruct(Pwns);
+
+    // POLYSCOPE DEBUGGING
+    polyscope::init(); 
+    polyscope::options::groundPlaneMode = polyscope::GroundPlaneMode::None;
+    polyscope::SlicePlane* psPlane = polyscope::addSceneSlicePlane();
+    psPlane->setDrawPlane(false);
+    psPlane->setDrawWidget(true);
+
+    auto pc_centers = polyscope::registerPointCloud("SDF Spheres", G.block(0,0,G.rows(),3));
+    auto q = pc_centers->addScalarQuantity("SDF radius", G.col(3).array().abs()); // add the quantity
+    pc_centers->setPointRadiusQuantity(q,false); // set the quantity as the radius
+
+    auto res_centers = polyscope::registerPointCloud("Solutions", res.block(0,0,res.rows(),3));
+    res_centers->setEnabled(false);
+    auto res_r = res_centers->addScalarQuantity("SDF radius", res.col(3).array().abs()); // add the quantity
+    res_centers->setPointRadiusQuantity(res_r,false); // set the quantity as the radius
+
+    Eigen::MatrixXd P_(Pwns.size(),3), N_(Pwns.size(),3);
+    for (int i=0; i<Pwns.size(); i++){
+        for (int d=0; d<3; d++) {
+            P_(i,d) = Pwns[i].first[d];
+            N_(i,d) = Pwns[i].second[d];
+        }
+    }
+
+    auto pc_contactpoints = polyscope::registerPointCloud("Contact Points", P_);
+    pc_contactpoints->addVectorQuantity("Normals", N_);
+
+    polyscope::show();
 
     return 0;
 }
