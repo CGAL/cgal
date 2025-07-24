@@ -47,13 +47,14 @@ public:
 
   std::unique_ptr<ComplexEdgeSmoothOp> m_edge_smooth_op;
   std::unique_ptr<SurfaceVertexSmoothOp> m_surface_vertices_smooth_op;
+  std::unique_ptr<InternalVertexSmoothOp> m_internal_vertices_smooth_op;
   std::shared_ptr<VertexSmoothingContext> m_context;
   Elementary_remesher()
-    : m_edge_smooth_op(nullptr), m_surface_vertices_smooth_op(nullptr), m_context(nullptr), m_visitor(nullptr)
+    : m_edge_smooth_op(nullptr), m_surface_vertices_smooth_op(nullptr), m_internal_vertices_smooth_op(nullptr), m_context(nullptr), m_visitor(nullptr)
   {}
 
   Elementary_remesher(C3t3& c3t3, const SizingFunction& sizing, const CellSelector& cell_selector, const Visitor* visitor = nullptr)
-    : m_edge_smooth_op(nullptr), m_surface_vertices_smooth_op(nullptr), m_context(nullptr), m_visitor(visitor)
+    : m_edge_smooth_op(nullptr), m_surface_vertices_smooth_op(nullptr), m_internal_vertices_smooth_op(nullptr), m_context(nullptr), m_visitor(visitor)
   {}
 
 private:
@@ -86,11 +87,13 @@ public:
      }
   }
 
-  void smooth_init(C3t3& c3t3, const SizingFunction& sizing, const CellSelector& cell_selector, const bool protect_boundaries) {
+  void smooth_init(C3t3& c3t3, const SizingFunction& sizing, const CellSelector& cell_selector, const bool protect_boundaries, const bool smooth_constrained_edges) {
       // Create shared context for vertex smoothing operations
-      m_context=std::make_shared<VertexSmoothingContext>(c3t3, cell_selector, protect_boundaries);
-      m_edge_smooth_op = std::make_unique<ComplexEdgeSmoothOp>(c3t3, sizing, cell_selector, protect_boundaries,m_context);
-      m_surface_vertices_smooth_op = std::make_unique<SurfaceVertexSmoothOp>(c3t3, sizing, cell_selector, protect_boundaries, false,m_context);
+      m_context=std::make_shared<VertexSmoothingContext>(c3t3, cell_selector, protect_boundaries,smooth_constrained_edges);
+      m_edge_smooth_op = std::make_unique<ComplexEdgeSmoothOp>(c3t3, sizing, cell_selector, protect_boundaries,smooth_constrained_edges,m_context);
+      m_surface_vertices_smooth_op = std::make_unique<SurfaceVertexSmoothOp>(c3t3, sizing, cell_selector, protect_boundaries,smooth_constrained_edges,m_context);
+      m_internal_vertices_smooth_op =
+          std::make_unique<InternalVertexSmoothOp>(c3t3, sizing, cell_selector, protect_boundaries, smooth_constrained_edges, m_context);
   }
 
   void smooth(
@@ -102,7 +105,7 @@ public:
   {
       // Refresh context data right before use to ensure triangulation hasn't changed
       assert(m_context);
-      m_context->refresh(c3t3, protect_boundaries);
+      m_context->refresh(c3t3);
 
       if(!protect_boundaries) {
 		#ifdef CGAL_TETRAHEDRAL_REMESHING_USE_COMPLEX_EDGE_SMOOTHING
@@ -135,9 +138,8 @@ public:
 	#ifdef CGAL_TETRAHEDRAL_REMESHING_USE_INTERNAL_VERTEX_SMOOTHING
       // Smooth internal vertices
       {
-          InternalVertexSmoothOp internal_smooth_op(c3t3, sizing, cell_selector, protect_boundaries, smooth_constrained_edges, m_context.get());
           ExecutionPolicy<InternalVertexSmoothOp> executor;
-          executor.execute(internal_smooth_op, c3t3);
+          executor.execute(*m_internal_vertices_smooth_op, c3t3);
       }
       #endif
   }

@@ -55,6 +55,7 @@ public:
   // Shared pre-computed data (used by at least 2 operations)
   std::unordered_map<Vertex_handle, std::size_t> m_vertex_id;
   std::vector<bool> m_free_vertices;
+  bool m_flip_smooth_steps = false; //TODO: when the smooth-steps start this needs to be true
   std::vector<Move> m_moves;
 
   // Incident cells data (used by all 3 operations)
@@ -67,39 +68,75 @@ public:
   using Segment_primitive = CGAL::AABB_segment_primitive_3<Gt, Segment_iter>;
   using AABB_segment_traits = CGAL::AABB_traits_3<Gt, Segment_primitive>;
   using AABB_segment_tree = CGAL::AABB_tree<AABB_segment_traits>;
+  // Triangle AABB tree (only used by SurfaceVertexSmoothOperation)
+  using Triangle_vec = std::vector<typename Tr::Triangle>;
+  using Triangle_iter = typename Triangle_vec::iterator;
+  using Triangle_primitive = CGAL::AABB_triangle_primitive_3<Gt, Triangle_iter>;
+  using AABB_triangle_traits = CGAL::AABB_traits_3<Gt, Triangle_primitive>;
+  using AABB_triangle_tree = CGAL::AABB_tree<AABB_triangle_traits>;
+  
+  Triangle_vec m_aabb_triangles;
+  AABB_triangle_tree m_triangles_aabb_tree;
+  FT m_aabb_epsilon;
 
   Segment_vec m_aabb_segments;
   AABB_segment_tree m_segments_aabb_tree;
 
-  // Surface-related data (used by ComplexEdge and SurfaceVertex operations)
   std::unordered_map<Vertex_handle, std::vector<Surface_patch_index>> m_vertices_surface_indices;
   std::unordered_map<Vertex_handle, std::unordered_map<Surface_patch_index, Vector_3, boost::hash<Surface_patch_index>>> m_vertices_normals;
 
+  FT m_total_move = 0;
 private:
   const CellSelector& m_cell_selector;
+  const bool m_protect_boundaries;
+  const bool m_smooth_constrained_edges;
 
 public:
+  using FMLS = CGAL::Tetrahedral_remeshing::internal::FMLS<Gt>;
+  std::vector<FMLS> subdomain_FMLS;
+  std::unordered_map<Surface_patch_index, std::size_t, boost::hash<Surface_patch_index>> subdomain_FMLS_indices;
   VertexSmoothingContext(C3t3& c3t3,
                          const CellSelector& cell_selector,
-                         const bool protect_boundaries)
-    : m_cell_selector(cell_selector)
+                         const bool protect_boundaries,
+      const bool smooth_constrained_edges)
+      : m_cell_selector(cell_selector)
+      , m_protect_boundaries(protect_boundaries)
+      , m_smooth_constrained_edges(smooth_constrained_edges)
   {
-    refresh(c3t3, protect_boundaries);
+    refresh(c3t3);
+    assert(protect_boundaries == false);
+    #ifdef CGAL_TET_REMESHING_SMOOTHING_WITH_MLS
+    createMLSSurfaces(subdomain_FMLS,
+                      subdomain_FMLS_indices,
+                      m_vertices_normals,
+                      m_vertices_surface_indices,
+                      c3t3);
+    #else
+    build_triangle_aabb_tree(c3t3);
     build_segment_aabb_tree(c3t3);
+    #endif
   }
   // Refresh context data right before use (called from smooth() method)
-  void refresh(C3t3& c3t3, const bool protect_boundaries) {
-    reset_vertex_id_map(c3t3.triangulation());
-    reset_free_vertices(c3t3, protect_boundaries, m_cell_selector);
-    collect_incident_cells(c3t3.triangulation(), m_cell_selector);
-   
-#ifdef CGAL_TET_REMESHING_SMOOTHING_WITH_MLS
-    // Initialize surface data if boundaries are not protected
-    if(!protect_boundaries) {
+  void refresh(C3t3& c3t3) {
+    if(!m_protect_boundaries) {
       collect_vertices_surface_indices(c3t3);
       compute_vertices_normals(c3t3);
     }
-#endif
+
+    reset_vertex_id_map(c3t3.triangulation());
+    reset_free_vertices(c3t3.triangulation());
+    collect_incident_cells(c3t3.triangulation());
+  } 
+  
+  void start_flip_smooth_steps(const C3t3& c3t3) {
+    CGAL_assertion(!m_flip_smooth_steps);
+    reset_vertex_id_map(c3t3.triangulation());
+    reset_free_vertices(c3t3.triangulation());
+
+    // once this variable is set to true,
+    // m_vertex_id becomes constant and
+    // m_free_vertices can refer to it safely
+    m_flip_smooth_steps = true;
   }
 
 private:
@@ -113,6 +150,20 @@ private:
     m_segments_aabb_tree.accelerate_distance_queries();
   }
 
+  void build_triangle_aabb_tree(const C3t3& c3t3) {
+    for (const Facet& f : c3t3.facets_in_complex()) {
+      m_aabb_triangles.push_back(c3t3.triangulation().triangle(f));
+    }
+    m_triangles_aabb_tree.rebuild(m_aabb_triangles.begin(), m_aabb_triangles.end());
+    m_triangles_aabb_tree.accelerate_distance_queries();
+
+        const CGAL::Bbox_3& bb = m_triangles_aabb_tree.bbox();
+        m_aabb_epsilon = 1e-3 * (std::min)(bb.xmax() - bb.xmin(),
+                                (std::min)(bb.ymax() - bb.ymin(),
+                                           bb.zmax() - bb.zmin()));
+  }
+
+
   void reset_vertex_id_map(const Tr& tr) {
     m_vertex_id.clear();
     std::size_t id = 0;
@@ -121,51 +172,63 @@ private:
     }
   }
 
-  void reset_free_vertices(const C3t3& c3t3, bool protect_boundaries, const CellSelector& cell_selector) {
-      const Tr& tr = c3t3.triangulation();
-      m_free_vertices.clear();
-      m_free_vertices.resize(tr.number_of_vertices(), false);
+  bool is_selected(const Cell_handle c) const { return get(m_cell_selector, c); }
 
-      for (const Cell_handle c : tr.finite_cell_handles()) {
-          if (!get(cell_selector, c))
-              continue;
-
-          for (auto vi : tr.vertices(c)) {
-              const std::size_t idi = m_vertex_id.at(vi);
-              const int dim = vi->in_dimension();
-
-              switch (dim) {
-              case 3:
-                  m_free_vertices[idi] = true;
-                  break;
-              case 2:
-                  m_free_vertices[idi] = !protect_boundaries;
-                  break;
-              case 1:
-                  m_free_vertices[idi] = !protect_boundaries; // and smooth_constrained_edges
-                  break;
-              case 0:
-                  m_free_vertices[idi] = false;
-                  break;
-              default:
-                  CGAL_unreachable();
-              }
-          }
-      }
+  std::size_t vertex_id(const Vertex_handle v) const {
+    CGAL_expensive_assertion(m_vertex_id.find(v) != m_vertex_id.end());
+    return m_vertex_id.at(v);
   }
 
-  void collect_incident_cells(const Tr& tr, const CellSelector& cell_selector) {
+  void reset_free_vertices(const Tr& tr) {
+    // when flip-smooth steps start,
+    // m_free_vertices should already be initialized
+    // by the last smoothing step.
+    // Then, it does not need to be recomputed
+    // because no vertices are inserted nor removed anymore
+    if(m_flip_smooth_steps) {
+      CGAL_assertion(m_free_vertices.size() == tr.number_of_vertices());
+      return;
+    }
+    m_free_vertices.clear();
+    m_free_vertices.resize(tr.number_of_vertices(), false);
+
+    for(const Cell_handle c : tr.finite_cell_handles()) {
+      if(!is_selected(c))
+        continue;
+
+      for(auto vi : tr.vertices(c)) {
+        const std::size_t idi =vertex_id(vi);
+        const int dim = vi->in_dimension();
+
+        switch(dim) {
+        case 3:
+          m_free_vertices[idi] = true;
+          break;
+        case 2:
+          m_free_vertices[idi] = !m_protect_boundaries;
+          break;
+        case 1:
+          m_free_vertices[idi] = !m_protect_boundaries && m_smooth_constrained_edges;
+          break;
+        case 0:
+          m_free_vertices[idi] = false;
+          break;
+        default:
+          CGAL_unreachable();
+        }
+      }
+    }
+  }
+
+  void collect_incident_cells(const Tr& tr) {
     m_inc_cells.clear();
     const std::size_t nbv = tr.number_of_vertices();
     m_inc_cells.resize(nbv, Incident_cells_vector{});
-    
-    for (const Cell_handle c : tr.finite_cell_handles()) {
-      if (!get(cell_selector, c))
-        continue;
 
-      for (auto vi : tr.vertices(c)) {
+    for(const Cell_handle c : tr.finite_cell_handles()) {
+      for(auto vi : tr.vertices(c)) {
         const std::size_t idi = m_vertex_id.at(vi);
-        if (m_free_vertices[idi])
+        if(m_free_vertices[idi])
           m_inc_cells[idi].push_back(c);
       }
     }
@@ -344,17 +407,11 @@ protected:
   typedef typename Gt::FT                    FT;
 
   // AABB tree types (commented out until needed)
-  // using Triangle_vec = std::vector<typename Tr::Triangle>;
-  // using Triangle_iter = typename Triangle_vec::iterator;
-  // using Triangle_primitive = CGAL::AABB_triangle_primitive_3<Gt, Triangle_iter>;
-  // using AABB_triangle_traits = CGAL::AABB_traits_3<Gt, Triangle_primitive>;
-  // using AABB_triangle_tree = CGAL::AABB_tree<AABB_triangle_traits>;
-
-  // using Segment_vec = std::vector<typename Gt::Segment_3>;
-  // using Segment_iter = typename Segment_vec::iterator;
-  // using Segment_primitive = CGAL::AABB_segment_primitive_3<Gt, Segment_iter>;
-  // using AABB_segment_traits = CGAL::AABB_traits_3<Gt, Segment_primitive>;
-  // using AABB_segment_tree = CGAL::AABB_tree<AABB_segment_traits>;
+   using Triangle_vec = std::vector<typename Tr::Triangle>;
+   using Triangle_iter = typename Triangle_vec::iterator;
+   using Triangle_primitive = CGAL::AABB_triangle_primitive_3<Gt, Triangle_iter>;
+   using AABB_triangle_traits = CGAL::AABB_traits_3<Gt, Triangle_primitive>;
+   using AABB_triangle_tree = CGAL::AABB_tree<AABB_triangle_traits>;
 
   using Context = VertexSmoothingContext<C3t3, SizingFunction, CellSelector>;
 
@@ -364,7 +421,6 @@ protected:
   std::shared_ptr<Context> m_context{nullptr}; // Pointer to shared context
 
 public:
-  bool m_flip_smooth_steps = false; //TODO: when the smooth-steps start this needs to be true
   bool m_smooth_constrained_edges;
   VertexSmoothOperationBase(
                        const SizingFunction& sizing,
@@ -446,12 +502,6 @@ protected:
 #endif
   {
     // Debug logging for check_inversion_and_move (ComplexEdgeVertexSmoothOperation)
-    //static std::ofstream debug_log("debug_complex_edge_smooth.log", std::ios::app);
-    //debug_log << std::setprecision(25);
-    //debug_log << "=== check_inversion_and_move (ComplexEdgeVertexSmoothOperation) ===" << std::endl;
-    //debug_log << "Vertex point: " << point(v->point()) << std::endl;
-    //debug_log << "Final position: " << final_pos << std::endl;
-    //debug_log << "Number of incident cells: " << inc_cells.size() << std::endl;
 
     const typename Tr::Point backup = v->point(); // backup v's position
     const typename Tr::Geom_traits::Point_3 pv = point(backup);
@@ -462,7 +512,7 @@ protected:
     typename Tr::Geom_traits::Vector_3 move(pv, final_pos);
 
     // TODO: This variable is only used in the smooth-steps, so it should be removed
-    const Dihedral_angle_cosine curr_max_cos = m_flip_smooth_steps
+    const Dihedral_angle_cosine curr_max_cos = m_context->m_flip_smooth_steps
                                                    ? max_cosine(tr, inc_cells)
                                                    : Dihedral_angle_cosine(CGAL::ZERO, 0., 1.); // Dummy unused value
 
@@ -482,7 +532,7 @@ protected:
           valid_try = false;
           valid_orientation = false;
           break;
-        } else if(m_flip_smooth_steps) // check that dihedral angles get improved
+        } else if(m_context->m_flip_smooth_steps) // check that dihedral angles get improved
         {
           if(is_selected(ci)) {
             Dihedral_angle_cosine max_cos_ci = max_cos_dihedral_angle(tr, ci, false);
@@ -502,19 +552,13 @@ protected:
     // if move failed, cancel move
     bool valid_move = valid_orientation && angles_improved;
 
-    //debug_log << "Valid orientation: " << valid_orientation << std::endl;
-    //debug_log << "Angles improved: " << angles_improved << std::endl;
-
-    if(!valid_move)
-      v->set_point(backup);
+      if(!valid_move)
+        v->set_point(backup);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-    else
-      total_move += CGAL::approximate_sqrt(CGAL::squared_distance(pv, point(v->point())));
-    //debug_log << "Total move: " << total_move << std::endl;
+      else
+        total_move += CGAL::approximate_sqrt(CGAL::squared_distance(pv, point(v->point())));
 #endif
-    //debug_log << "Valid move: " << valid_move << std::endl;
-    //debug_log << "===============================================" << std::endl;
 
     return valid_move;
   }
@@ -527,15 +571,15 @@ class InternalVertexSmoothOperation
   : public VertexSmoothOperationBase<C3t3, SizingFunction, CellSelector>,
     public ElementaryOperation<C3t3,
                           typename C3t3::Triangulation::Vertex_handle,
-                          CGAL::Iterator_range<typename C3t3::Triangulation::Vertex_handle>,
+                          typename C3t3::Triangulation::Finite_vertex_handles,
                           typename C3t3::Triangulation::Vertex_handle>
 {
 public:
   using BaseClass = VertexSmoothOperationBase<C3t3, SizingFunction, CellSelector>;
   using Base = ElementaryOperation<C3t3,
-                              typename C3t3::Triangulation::Vertex_handle,
-                              CGAL::Iterator_range<typename C3t3::Triangulation::Vertex_handle>,
-                              typename C3t3::Triangulation::Vertex_handle>;
+                                   typename C3t3::Triangulation::Vertex_handle,
+                                   typename C3t3::Triangulation::Finite_vertex_handles,
+                                   typename C3t3::Triangulation::Vertex_handle>;
   using ElementType = typename C3t3::Triangulation::Vertex_handle;
   using ElementSource = typename Base::ElementSource;
   using Lock_zone = typename Base::Lock_zone;
@@ -554,37 +598,87 @@ public:
   using typename BaseClass::Point_3;
 
 public:
-  InternalVertexSmoothOperation(
+  InternalVertexSmoothOperation(const C3t3& c3t3,
                                const SizingFunction& sizing,
                                const CellSelector& cell_selector,
                                const bool protect_boundaries,
                                const bool smooth_constrained_edges,
-                               typename BaseClass::Context* context)
-    : BaseClass(sizing, cell_selector, protect_boundaries, smooth_constrained_edges, context)
+                               std::shared_ptr<BaseClass::Context> context)
+    : BaseClass(sizing, cell_selector, protect_boundaries,smooth_constrained_edges, context)
   {}
 
+  void perform_global_preprocessing(const C3t3& c3t3) const {
+  auto& tr = c3t3.triangulation();
+
+  const std::size_t nbv = tr.number_of_vertices();
+    const typename BaseClass::Context::Move default_move{CGAL::NULL_VECTOR, 0 /*neighbors*/, 0. /*mass*/};
+  std::vector<typename BaseClass::Context::Move> moves(nbv, default_move);
+
+
+  for (const Edge& e : tr.finite_edges())
+  {
+    if (is_outside(e, c3t3, m_cell_selector))
+      continue;
+    
+      const auto [vh0, vh1] =  make_vertex_pair(e);
+
+      const std::size_t& i0 = m_context->m_vertex_id.at(vh0);
+      const std::size_t& i1 = m_context->m_vertex_id.at(vh1);
+
+      const bool vh0_moving = (c3t3.in_dimension(vh0) == 3 && m_context->m_free_vertices[i0]);
+      const bool vh1_moving = (c3t3.in_dimension(vh1) == 3 && m_context->m_free_vertices[i1]);
+
+      if (!vh0_moving && !vh1_moving)
+        continue;
+
+      const Point_3& p0 = point(vh0->point());
+      const Point_3& p1 = point(vh1->point());
+      const FT density = density_along_segment(e, c3t3);
+
+      if (vh0_moving)
+      {
+        m_context->m_moves[i0].move += density * Vector_3(p0, p1);
+        m_context->m_moves[i0].mass += density;
+        ++m_context->m_moves[i0].neighbors;
+      }
+      if (vh1_moving)
+      {
+        m_context->m_moves[i1].move += density * Vector_3(p1, p0);
+        m_context->m_moves[i1].mass += density;
+        ++m_context->m_moves[i1].neighbors;
+      }
+  }
+
+
+  }
+
   bool should_process_element(const ElementType& v, const C3t3& c3t3) const override {
-    // TODO: Implement internal vertex filtering logic
-    return false;
+  return can_apply_operation(v, c3t3);
   }
 
   ElementSource get_element_source(const C3t3& c3t3) const override {
+    perform_global_preprocessing(c3t3);
     return c3t3.triangulation().finite_vertex_handles();
   }
 
   bool can_apply_operation(const ElementType& v, const C3t3& c3t3) const override {
-    // TODO: Validate vertex is still internal and movable
-    return true;
+    const std::size_t vid = m_context->m_vertex_id.at(v);
+    return m_context->m_free_vertices[vid] && c3t3.in_dimension(v) == 3 && m_context->m_moves[vid].neighbors > 1;
   }
 
   bool lock_zone(const ElementType& v, const C3t3& c3t3) const override {
-    // TODO: Implement lock zone for internal vertex smoothing
-    return true;
+    auto& tr = c3t3.triangulation();
+    std::vector<Cell_handle> inc_cells;
+    return tr.try_lock_and_get_incident_cells(v, inc_cells);
   }
 
   bool execute_operation(const ElementType& v, C3t3& c3t3) override {
-    // TODO: Implement internal vertex smoothing
-    return true;
+    const std::size_t vid = m_context->m_vertex_id.at(v);
+    const Vector_3 move = m_context->m_moves[vid].move / m_context->m_moves[vid].mass;
+    Point_3 new_pos = point(v->point()) + move;
+    const auto& inc_cells = m_context->m_inc_cells[vid];
+    bool result = check_inversion_and_move(v, new_pos, inc_cells, c3t3.triangulation(), m_context->m_total_move);
+    return result;
   }
 
   std::string operation_name() const override {
@@ -625,34 +719,6 @@ public:
   using typename BaseClass::Point_3;
   using typename BaseClass::Gt;
 private:
-  using FMLS = CGAL::Tetrahedral_remeshing::internal::FMLS<Gt>;
-  std::vector<FMLS> subdomain_FMLS;
-  std::unordered_map<Surface_patch_index, std::size_t, boost::hash<Surface_patch_index>> subdomain_FMLS_indices;
-  // Triangle AABB tree (only used by SurfaceVertexSmoothOperation)
-  using Triangle_vec = std::vector<typename Tr::Triangle>;
-  using Triangle_iter = typename Triangle_vec::iterator;
-  using Triangle_primitive = CGAL::AABB_triangle_primitive_3<Gt, Triangle_iter>;
-  using AABB_triangle_traits = CGAL::AABB_traits_3<Gt, Triangle_primitive>;
-  using AABB_triangle_tree = CGAL::AABB_tree<AABB_triangle_traits>;
-  
-  Triangle_vec m_aabb_triangles;
-  AABB_triangle_tree m_triangles_aabb_tree;
-  FT m_aabb_epsilon;
-
-  void build_triangle_aabb_tree(const C3t3& c3t3) {
-    for (const Facet& f : c3t3.facets_in_complex()) {
-      m_aabb_triangles.push_back(c3t3.triangulation().triangle(f));
-    }
-    m_triangles_aabb_tree.rebuild(m_aabb_triangles.begin(), m_aabb_triangles.end());
-    m_triangles_aabb_tree.accelerate_distance_queries();
-
-    if (!m_triangles_aabb_tree.empty()) {
-        const CGAL::Bbox_3& bb = m_triangles_aabb_tree.bbox();
-        m_aabb_epsilon = 1e-3 * (std::min)(bb.xmax() - bb.xmin(),
-                                (std::min)(bb.ymax() - bb.ymin(),
-                                           bb.zmax() - bb.zmin()));
-    }
-  }
 
   void perform_global_preprocessing(const C3t3& c3t3) const {
     auto& tr = c3t3.triangulation();
@@ -697,14 +763,14 @@ private:
   std::optional<Point_3> project(const Surface_patch_index& si,
                                  const Point_3& gi)
   {
-    CGAL_expensive_assertion(subdomain_FMLS_indices.find(si) != subdomain_FMLS_indices.end());
+    CGAL_expensive_assertion(m_context->subdomain_FMLS_indices.find(si) != m_context->subdomain_FMLS_indices.end());
     CGAL_assertion(!std::isnan(gi.x()) && !std::isnan(gi.y()) && !std::isnan(gi.z()));
 
     Vector_3 point(gi.x(), gi.y(), gi.z());
     Vector_3 res_normal = CGAL::NULL_VECTOR;
     Vector_3 result(CGAL::ORIGIN, gi);
 
-    const FMLS& fmls = subdomain_FMLS[subdomain_FMLS_indices.at(si)];
+    const BaseClass::Context::FMLS& fmls = m_context->subdomain_FMLS[m_context->subdomain_FMLS_indices.at(si)];
 
     int it_nb = 0;
     const int max_it_nb = 5;
@@ -729,7 +795,6 @@ private:
   }
 
 public:
-  FT total_move = 0;
   SurfaceVertexSmoothOperation(const C3t3& c3t3,
                               const SizingFunction& sizing,
                               const CellSelector& cell_selector,
@@ -738,22 +803,9 @@ public:
                                typename std::shared_ptr<BaseClass::Context> context)
     : BaseClass( sizing, cell_selector, protect_boundaries, smooth_constrained_edges, context)
   {
-    assert(protect_boundaries == false);
-    #ifdef CGAL_TET_REMESHING_SMOOTHING_WITH_MLS
-    createMLSSurfaces(subdomain_FMLS,
-                      subdomain_FMLS_indices,
-                      m_context->m_vertices_normals,
-                      m_context->m_vertices_surface_indices,
-                      c3t3);
-    #else
-    build_triangle_aabb_tree(c3t3);
-    #endif
   }
 
-  bool should_process_element(const ElementType& v, const C3t3& c3t3) const override {
-    const std::size_t vid = m_context->m_vertex_id.at(v);
-    // Only process if vertex is free and has dimension 2 (surface vertex)
-    return m_context->m_free_vertices[vid] && v->in_dimension() == 2;
+  bool should_process_element(const ElementType& v, const C3t3& c3t3) const override {return true;
   }
 
   ElementSource get_element_source(const C3t3& c3t3) const override {
@@ -762,7 +814,8 @@ public:
   }
 
   bool can_apply_operation(const ElementType& v, const C3t3& c3t3) const override {
-    return should_process_element(v, c3t3);
+    const std::size_t vid = m_context->m_vertex_id.at(v);
+    return m_context->m_free_vertices[vid] && v->in_dimension() == 2;
   }
 
   bool lock_zone(const ElementType& v, const C3t3& c3t3) const override {
@@ -773,27 +826,32 @@ public:
 
   bool execute_operation(const ElementType& v, C3t3& c3t3) override {
     auto& tr = c3t3.triangulation();
+    
     const std::size_t vid = m_context->m_vertex_id.at(v);
-
+    
     const std::size_t nb_neighbors = m_context->m_moves[vid].neighbors;
+    
     const Point_3 current_pos = point(v->point());
 
-    // Check if vertex is on single surface patch
+    CGAL_assertion(m_context->m_vertices_surface_indices.find(v)!=m_context->m_vertices_surface_indices.end());
     const auto& incident_surface_patches = m_context->m_vertices_surface_indices.at(v);
-    if (incident_surface_patches.size() > 1)
-      return false;
     
-    const Surface_patch_index si = incident_surface_patches[0];
+    if (incident_surface_patches.size() > 1) {
+      return false;
+    }
+    
 
+    const Surface_patch_index si = incident_surface_patches[0];
     CGAL_assertion(si != Surface_patch_index());
     CGAL_expensive_assertion_code(auto siv = surface_patch_index(v, c3t3));
     CGAL_expensive_assertion(si == siv);
 
+    Point_3 new_pos;
+    bool result = false;
+    
     if (nb_neighbors > 1) {
       const Vector_3 move = m_context->m_moves[vid].move / m_context->m_moves[vid].mass;
-      const Point_3 smoothed_position = current_pos + move;
-
-      Point_3 new_pos;
+      const Point_3 smoothed_position = point(v->point()) + move;
 
 #ifdef CGAL_TET_REMESHING_SMOOTHING_WITH_MLS
       Point_3 normal_projection = project_on_tangent_plane(smoothed_position,
@@ -804,8 +862,8 @@ public:
       new_pos = (mls_projection != std::nullopt) ? *mls_projection : smoothed_position;
 
 #else // AABB_tree projection
-      if (m_triangles_aabb_tree.squared_distance(smoothed_position) < m_aabb_epsilon) {
-        new_pos = m_triangles_aabb_tree.closest_point(smoothed_position);
+      if (m_context->m_triangles_aabb_tree.squared_distance(smoothed_position) < m_context->m_aabb_epsilon) {
+        new_pos = m_context->m_triangles_aabb_tree.closest_point(smoothed_position);
       } else {
         using Ray = typename Tr::Geom_traits::Ray_3;
         using Projection = std::optional<
@@ -833,8 +891,8 @@ public:
         const auto n = m_context->m_vertices_normals.at(v).at(si);
         const Ray ray = tr.geom_traits().construct_ray_3_object()(current_pos, n);
 
-        const Projection proj = m_triangles_aabb_tree.first_intersection(ray);
-        const Projection proj_opp = m_triangles_aabb_tree.first_intersection(
+        const Projection proj = m_context->m_triangles_aabb_tree.first_intersection(ray);
+        const Projection proj_opp = m_context->m_triangles_aabb_tree.first_intersection(
           tr.geom_traits().construct_opposite_ray_3_object()(ray));
 
         if (proj != std::nullopt && proj_opp == std::nullopt) {
@@ -870,25 +928,25 @@ public:
 
       const auto& inc_cells = m_context->m_inc_cells[vid];
       
-      return check_inversion_and_move(v, new_pos, inc_cells, tr, total_move);
+      result = check_inversion_and_move(v, new_pos, inc_cells, tr, m_context->m_total_move);
     
     } else if (nb_neighbors > 0) {
 #ifdef CGAL_TET_REMESHING_SMOOTHING_WITH_MLS
       std::optional<Point_3> mls_proj = project(si, current_pos);
-      if (mls_proj == std::nullopt)
+      if (mls_proj == std::nullopt) {
         return false;
+      }
 
-      const Point_3 new_pos = *mls_proj;
+      new_pos = *mls_proj;
 #else
-      const Point_3 new_pos = m_context->m_segments_aabb_tree.closest_point(current_pos);
+      new_pos = m_context->m_segments_aabb_tree.closest_point(current_pos);
 #endif
       const auto& inc_cells = m_context->m_inc_cells[vid];
       
-      return check_inversion_and_move(v, new_pos, inc_cells, tr, total_move);
+      result = check_inversion_and_move(v, new_pos, inc_cells, tr, m_context->m_total_move);
     }
-
-    CGAL_assertion(false);
-    return false;
+    
+    return result;
   }
 
   std::string operation_name() const override {
@@ -930,14 +988,14 @@ public:
 
 
 public:
-    FT total_move = 0;
 
   ComplexEdgeVertexSmoothOperation(const C3t3& c3t3,
                                   const SizingFunction& sizing,
                                   const CellSelector& cell_selector,
                                   const bool protect_boundaries,
+                                  const bool smooth_constrained_edges,
                                   typename std::shared_ptr<BaseClass::Context> context)
-    : BaseClass( sizing, cell_selector, protect_boundaries, true, context)
+    : BaseClass( sizing, cell_selector, protect_boundaries,smooth_constrained_edges, context)
   {
     assert(protect_boundaries == false);
   }
@@ -1011,7 +1069,7 @@ public:
 
     const auto& inc_cells = m_context->m_inc_cells[vid];
     
-    if (check_inversion_and_move(v, new_pos, inc_cells, tr,total_move)) {
+    if (check_inversion_and_move(v, new_pos, inc_cells, tr,m_context->m_total_move)) {
       return true;
     }
     return false;

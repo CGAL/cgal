@@ -126,7 +126,7 @@ public:
 
     init_c3t3(vcmap, ecmap, fcmap);
     m_vertex_smoother.init(m_c3t3);
-    m_elementary_remesher.smooth_init(m_c3t3,m_sizing,cell_selector,m_protect_boundaries);
+    m_elementary_remesher.smooth_init(m_c3t3,m_sizing,cell_selector,m_protect_boundaries,smooth_constrained_edges);
 
 #ifdef CGAL_DUMP_REMESHING_STEPS
     CGAL::Tetrahedral_remeshing::debug::dump_c3t3(m_c3t3, "00-init");
@@ -160,7 +160,7 @@ public:
     init_c3t3(vcmap, ecmap, fcmap);
     m_vertex_smoother.init(m_c3t3);
 
-    m_elementary_remesher.smooth_init(c3t3);
+    m_elementary_remesher.smooth_init(c3t3,sizing,cell_selector,m_protect_boundaries,smooth_constrained_edges);
 
 #ifdef CGAL_DUMP_REMESHING_STEPS
     CGAL::Tetrahedral_remeshing::debug::dump_c3t3(m_c3t3, "00-init");
@@ -255,13 +255,13 @@ public:
   }
 
   void smooth(){
-          //#ifdef CGAL_TETRAHEDRAL_REMESHING_USE_REFACTORED_SMOOTH
-#ifdef CGAL_TETRAHEDRAL_REMESHING_USE_COMPLEX_EDGE_SMOOTHING
-        m_elementary_remesher.smooth(m_c3t3, m_sizing, m_cell_selector, m_protect_boundaries,m_vertex_smoother.m_smooth_constrained_edges);
-#endif
-//#else
+#if defined CGAL_TETRAHEDRAL_REMESHING_USE_COMPLEX_EDGE_SMOOTHING ||                                                   \
+    defined CGAL_TETRAHEDRAL_REMESHING_USE_SURFACE_VERTEX_SMOOTHING ||                                                 \
+    defined CGAL_TETRAHEDRAL_REMESHING_USE_INTERNAL_VERTEX_SMOOTHING
+	m_elementary_remesher.smooth(m_c3t3, m_sizing, m_cell_selector, m_protect_boundaries,m_vertex_smoother.m_smooth_constrained_edges);
+#ifndef CGAL_TETRAHEDRAL_REMESHING_USE_REFACTORED_SMOOTH
     m_vertex_smoother.smooth_vertices(m_c3t3);
-//#endif
+#endif
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
     CGAL_assertion(tr().tds().is_valid(true));
@@ -659,8 +659,7 @@ public:
     }
 
     m_vertex_smoother.start_flip_smooth_steps(m_c3t3);
-    m_elementary_remesher.m_edge_smooth_op->m_flip_smooth_steps = true;
-    assert(m_elementary_remesher.m_edge_smooth_op->m_flip_smooth_steps && "Elementary_remesher<C3t3, SizingFunction, CellSelector, Visitor>::ComplexEdgeSmoothOp::m_flip_smooth_steps == true");
+    m_elementary_remesher.m_context->start_flip_smooth_steps(m_c3t3);
 
     while (it_nb < max_it + nb_extra_iterations)
     {
