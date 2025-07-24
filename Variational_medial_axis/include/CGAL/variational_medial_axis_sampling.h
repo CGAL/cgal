@@ -977,12 +977,10 @@ private:
     FT cos_angle = cosine_angle(qp, n);
     return d / (2 * cos_angle);
   }
-
-  std::pair<Point_3, FT>
-  shrinking_ball_algorithm(const Point_3& p,               // point on the surface
-                           const Vector_3& n,              // inverse of search direction
-                                                  FT denoise_radius = 1e-6, // model has to be normalized in [0, 1]^3
-                                                  FT delta_convergence = FT(1e-7)) {
+  std::pair<Point_3, FT> shrinking_ball_algorithm_bvh(const Point_3& p,         // point on the surface
+                                                  const Vector_3& n,        // inverse of search direction
+                                                  FT delta_convergence = FT(1e-8),
+      FT denoise_radius = 1e-6){ // model has to be normalized in [0, 1]^3
     using face_descriptor = typename Tree::Primitive_id;
 
     denoise_radius *= scale_;
