@@ -119,34 +119,12 @@ int poisson_reconstruct(const std::vector<Point_with_normal> &points){
 
 // ----------------------------------------------------
 
-
-int main(){
-    std::ifstream in("data/3D/spheres.csv");
-    std::vector<Eigen::RowVector4d> input_spheres;
-
-    bool filter_contact_spheres_bbx=true;
-
-    double x, y, z, r;
-    while(in >> x){
-
-        in.ignore(10,','); in >> y;  in.ignore(10,','); in >> z; in.ignore(10,','); in >> r;
-        // I only filter out the positive spheres here as a first demo. The proper version uses positive / negative spheres separately.
-        // TODO: implement the proper version
-        if (r >= 0) input_spheres.emplace_back(Eigen::RowVector4d(x,y,z,fabs(r)));
-        // std::cout << "Sphere: " << x << y << z << r << std::endl;
-    }
-
-    std::cout << "Read " << input_spheres.size() << " spheres" << std::endl;
-
-    Eigen::MatrixXd G(input_spheres.size(), 4);
-    for (int i=0; i<input_spheres.size(); i++) G.row(i) = input_spheres[i];
-
-    Eigen::RowVectorXd bbxmin = G.block(0,0,G.rows(),3).colwise().minCoeff();
-    Eigen::RowVectorXd bbxmax = G.block(0,0,G.rows(),3).colwise().maxCoeff();
-
+void contact_points(const Eigen::MatrixXd &G, std::vector<Point_with_normal> &Pwns, Eigen::MatrixXd *bbxl=NULL){
     Eigen::MatrixXi contact_indices;
     Eigen::MatrixXd res;
-    CGAL::maximal_empty_spheres<CGAL::Dimension_tag<3>>(G, res, &contact_indices);
+    Eigen::MatrixXd G_ = G;
+    G_.col(3) = G.col(3).array().abs();
+    CGAL::maximal_empty_spheres<CGAL::Dimension_tag<3>>(G_, res, &contact_indices);
 
     // std::cout << res << std::endl;
     // std::cout << "contact_indices:" << std::endl;
@@ -159,10 +137,10 @@ int main(){
     Eigen::VectorXd contact_point_radii   = Eigen::VectorXd::Constant(G.rows(),-1.);
     for (int i=0; i<contact_indices.rows(); i++){
         double r = fabs(res(i,3)); // contact spheres have negative radius, use abs value here
-        if ((!filter_contact_spheres_bbx)
+        if ((!bbxl)
             ||
-            (  (res.block(i,0,1,3).array() >  bbxmin.array()).all()
-            && (res.block(i,0,1,3).array() <= bbxmax.array()).all())){
+            (  (res.block(i,0,1,3).array() >  bbxl->row(0).array()).all()
+            && (res.block(i,0,1,3).array() <= bbxl->row(1).array()).all())){
 
             for (int j=0; j<contact_indices.cols(); j++){
                 int n = contact_indices(i,j);
@@ -174,14 +152,13 @@ int main(){
         }
     }
 
-    std::cout << "CP Indices: " << std::endl;
-    std::cout << contact_point_indices.transpose() << std::endl;
+    // std::cout << "CP Indices: " << std::endl;
+    // std::cout << contact_point_indices.transpose() << std::endl;
 
-    std::cout << "CP Radii: " << std::endl;
-    std::cout << contact_point_radii.transpose() << std::endl;
+    // std::cout << "CP Radii: " << std::endl;
+    // std::cout << contact_point_radii.transpose() << std::endl;
 
     // calculate the contact points and normals
-    std::vector<Point_with_normal> Pwns;
     for (int i=0; i<G.rows(); i++){
         if (contact_point_indices[i] >= 0){
             Point Csdf = Point(G(i,0),G(i,1),G(i,2));
@@ -203,6 +180,58 @@ int main(){
         }
     }
 
+}
+
+int main(){
+    // std::ifstream in("data/3D/spheres.csv");
+    std::ifstream in("data/3D/koala.obj_gridvals_30_regular.csv");
+
+    std::vector<Eigen::RowVector4d> input_spheres;
+
+    bool filter_contact_spheres_bbx=true;
+
+    double x, y, z, r;
+    while(in >> x){
+
+        in.ignore(10,','); in >> y;  in.ignore(10,','); in >> z; in.ignore(10,','); in >> r;
+        // I only filter out the positive spheres here as a first demo. The proper version uses positive / negative spheres separately.
+        // TODO: implement the proper version
+        input_spheres.emplace_back(Eigen::RowVector4d(x,y,z,r));
+        // std::cout << "Sphere: " << x << y << z << r << std::endl;
+    }
+
+    std::cout << "Read " << input_spheres.size() << " spheres" << std::endl;
+
+    Eigen::MatrixXd G(input_spheres.size(), 4);
+    for (int i=0; i<input_spheres.size(); i++) G.row(i) = input_spheres[i];
+    
+    Eigen::MatrixXd bbxl(2,3);
+    bbxl.row(0) = G.block(0,0,G.rows(),3).colwise().minCoeff();
+    bbxl.row(1) = G.block(0,0,G.rows(),3).colwise().maxCoeff();
+
+    // std::cout << "... pos/neg subsets: " << std::endl;
+
+    int nnrc = (G.col(3).array() >= 0.).array().count();
+    // std::cout << ( G.col(2).array() >= 0) << std::endl;
+    // std::cout << "nnrc: " << nnrc << ", nrc: " << G.rows()-nnrc << std::endl;
+    Eigen::MatrixXd Gp(nnrc,4);
+    Eigen::MatrixXd Gn(G.rows()-nnrc,4);
+    int np=0;
+    int nn=0;
+    for (int i=0; i<input_spheres.size(); i++){
+        if (input_spheres[i](3) >= 0){
+            Gp.row(np++) = input_spheres[i];
+        } else {
+            Gn.row(nn++) = input_spheres[i];
+        }
+    }
+    
+    std::cout << "... main calculation... " << std::endl;
+
+    std::vector<Point_with_normal> Pwns;
+    contact_points(Gp, Pwns, (filter_contact_spheres_bbx)?&bbxl:NULL);
+    contact_points(Gn, Pwns, (filter_contact_spheres_bbx)?&bbxl:NULL);
+
     std::cout << "PSR from " << Pwns.size() << " points with normals" << std::endl;
     poisson_reconstruct(Pwns);
 
@@ -217,6 +246,7 @@ int main(){
     auto q = pc_centers->addScalarQuantity("SDF radius", G.col(3).array().abs()); // add the quantity
     pc_centers->setPointRadiusQuantity(q,false); // set the quantity as the radius
 
+    /*
     auto res_centers = polyscope::registerPointCloud("Solutions", res.block(0,0,res.rows(),3));
     res_centers->setEnabled(false);
     auto res_r = res_centers->addScalarQuantity("SDF radius", res.col(3).array().abs()); // add the quantity
@@ -234,6 +264,7 @@ int main(){
     pc_contactpoints->addVectorQuantity("Normals", N_);
 
     polyscope::registerTetMesh("contact tets", res,contact_indices)->setEnabled(false);
+    */
 
     polyscope::show();
 
