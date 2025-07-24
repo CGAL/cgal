@@ -86,7 +86,7 @@ private:
   std::vector<vertex_descriptor> cluster_vertices;
 };
 
-template <typename TriangleMesh, typename GT> class MedialSphereMesh
+template <typename TriangleMesh, typename GT> class Medial_Sphere_Mesh
 {
 public:
   using FT = typename GT::FT;
@@ -147,13 +147,13 @@ public:
  * @tparam TriangleMesh The type of the triangle mesh representing the shape.
  * @tparam GT The geometric traits class used for geometric computations.
  */
-template <typename TriangleMesh, typename GT> class MedialSkeleton
+template <typename TriangleMesh, typename GT> class Medial_Skeleton
 {
   using Sphere_3 = typename GT::Sphere_3;
   using Point_3 = typename GT::Point_3;
   using FT = typename GT::FT;
   using Sphere_ID = std::size_t;
-  using MSMesh = MedialSphereMesh<TriangleMesh, GT>;
+  using MSMesh = Medial_Sphere_Mesh<TriangleMesh, GT>;
 
 public:
   /**
@@ -420,7 +420,7 @@ private:
   using Point_3 = typename GT::Point_3;
   using Vector_3 = typename GT::Vector_3;
   using Sphere_3 = typename GT::Sphere_3;
-  using MSMesh = MedialSphereMesh<TriangleMesh_, GT>;
+  using MSMesh = Medial_Sphere_Mesh<TriangleMesh_, GT>;
   using MSphere = typename MSMesh::MSphere;
   using Sphere_ID = typename MSMesh::Sphere_ID;
 
@@ -743,17 +743,17 @@ public:
     }
   }
 
-  /** Export the medial skeleton as a `MedialSkeleton` object.
+  /** Export the medial skeleton as a `Medial_Skeleton` object.
    *
-   * This function builds a `MedialSkeleton` from the current state of the medial sphere mesh.
+   * This function builds a `Medial_Skeleton` from the current state of the medial sphere mesh.
    * It extracts the vertices, edges, and faces from the medial sphere mesh and constructs
    * the medial skeleton accordingly.
    *
    * @return
-   *     A `MedialSkeleton` object containing the medial skeleton data.
+   *     A `Medial_Skeleton` object containing the medial skeleton data.
    */
-  MedialSkeleton<TriangleMesh_, GT> export_skeleton() const {
-    MedialSkeleton<TriangleMesh_, GT> skeleton;
+  Medial_Skeleton<TriangleMesh_, GT> export_skeleton() const {
+    Medial_Skeleton<TriangleMesh_, GT> skeleton;
     skeleton.build_skeleton_from_medial_sphere_mesh(*sphere_mesh_);
     return skeleton;
   }
@@ -762,7 +762,7 @@ public:
    * @param filepath
    *     Filepath to the PLY file containing the medial skeleton data.
    * @return
-   *     A `MedialSkeleton` object containing the loaded skeleton data.
+   *     A `Medial_Skeleton` object containing the loaded skeleton data.
    *
    * Note: The file format is :
    * ```
@@ -790,14 +790,14 @@ public:
    * 3 vx vy vz
    * ```
    */
-  MedialSkeleton<TriangleMesh_, GT> read_skeleton_from_ply(std::string& filepath) const {
+  Medial_Skeleton<TriangleMesh_, GT> read_skeleton_from_ply(std::string& filepath) const {
     std::ifstream ifs(filepath);
     if(!ifs) {
       std::cerr << "Error opening file: " << filepath << std::endl;
-      return MedialSkeleton<TriangleMesh_, GT>{};
+      return Medial_Skeleton<TriangleMesh_, GT>{};
     }
 
-    MedialSkeleton<TriangleMesh_, GT> skeleton;
+    Medial_Skeleton<TriangleMesh_, GT> skeleton;
     std::vector<Sphere_3> vertices;
     std::vector<std::pair<std::size_t, std::size_t>> edges;
     std::vector<std::array<std::size_t, 3>> faces;
@@ -821,7 +821,7 @@ public:
           is_ascii = true;
         } else {
           std::cerr << "Error: Only ASCII PLY format is supported" << std::endl;
-          return MedialSkeleton<TriangleMesh_, GT>{};
+          return Medial_Skeleton<TriangleMesh_, GT>{};
         }
       } else if(token == "element") {
         std::string element_type;
@@ -844,14 +844,14 @@ public:
     for(std::size_t i = 0; i < num_vertices; ++i) {
       if(!std::getline(ifs, line)) {
         std::cerr << "Error: Unexpected end of file while reading vertices" << std::endl;
-        return MedialSkeleton<TriangleMesh_, GT>{};
+        return Medial_Skeleton<TriangleMesh_, GT>{};
       }
 
       std::istringstream iss(line);
       double x, y, z, radius;
       if(!(iss >> x >> y >> z >> radius)) {
         std::cerr << "Error: Invalid vertex data at line " << i + 1 << std::endl;
-        return MedialSkeleton<TriangleMesh_, GT>{};
+        return Medial_Skeleton<TriangleMesh_, GT>{};
       }
 
       Point_3 center(x, y, z);
@@ -863,19 +863,19 @@ public:
     for(std::size_t i = 0; i < num_edges; ++i) {
       if(!std::getline(ifs, line)) {
         std::cerr << "Error: Unexpected end of file while reading edges" << std::endl;
-        return MedialSkeleton<TriangleMesh_, GT>{};
+        return Medial_Skeleton<TriangleMesh_, GT>{};
       }
 
       std::istringstream iss(line);
       std::size_t v1, v2;
       if(!(iss >> v1 >> v2)) {
         std::cerr << "Error: Invalid edge data at line " << i + 1 << std::endl;
-        return MedialSkeleton<TriangleMesh_, GT>{};
+        return Medial_Skeleton<TriangleMesh_, GT>{};
       }
 
       if(v1 >= num_vertices || v2 >= num_vertices) {
         std::cerr << "Error: Edge references invalid vertex indices" << std::endl;
-        return MedialSkeleton<TriangleMesh_, GT>{};
+        return Medial_Skeleton<TriangleMesh_, GT>{};
       }
 
       edges.emplace_back(v1, v2);
@@ -885,30 +885,30 @@ public:
     for(std::size_t i = 0; i < num_faces; ++i) {
       if(!std::getline(ifs, line)) {
         std::cerr << "Error: Unexpected end of file while reading faces" << std::endl;
-        return MedialSkeleton<TriangleMesh_, GT>{};
+        return Medial_Skeleton<TriangleMesh_, GT>{};
       }
 
       std::istringstream iss(line);
       std::size_t vertex_count;
       if(!(iss >> vertex_count)) {
         std::cerr << "Error: Invalid face data at line " << i + 1 << std::endl;
-        return MedialSkeleton<TriangleMesh_, GT>{};
+        return Medial_Skeleton<TriangleMesh_, GT>{};
       }
 
       if(vertex_count != 3) {
         std::cerr << "Error: Only triangular faces are supported" << std::endl;
-        return MedialSkeleton<TriangleMesh_, GT>{};
+        return Medial_Skeleton<TriangleMesh_, GT>{};
       }
 
       std::size_t v1, v2, v3;
       if(!(iss >> v1 >> v2 >> v3)) {
         std::cerr << "Error: Invalid face vertex indices" << std::endl;
-        return MedialSkeleton<TriangleMesh_, GT>{};
+        return Medial_Skeleton<TriangleMesh_, GT>{};
       }
 
       if(v1 >= num_vertices || v2 >= num_vertices || v3 >= num_vertices) {
         std::cerr << "Error: Face references invalid vertex indices" << std::endl;
-        return MedialSkeleton<TriangleMesh_, GT>{};
+        return Medial_Skeleton<TriangleMesh_, GT>{};
       }
 
       faces.push_back({v1, v2, v3});
