@@ -51,7 +51,9 @@ PM_Point convert_to_pm_point(const PS_Point& p)
 template <typename PM_Point, typename PS_FT>
 PM_Point convert_to_pm_point(const std::array<PS_FT, 3>& p)
 {
-  return PM_Point(p[0], p[1], p[2]);
+  PM_Point pmp = { p[0], p[1], p[2] };
+  return pmp;
+  // return PM_Point(p[0], p[1], p[2]);
 }
 
 template <class OutputIterator, typename Value_type = typename value_type_traits<OutputIterator>::type>
