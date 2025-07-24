@@ -6,6 +6,7 @@
 #include "polyscope/polyscope.h"
 #include "polyscope/point_cloud.h"
 #include "polyscope/surface_mesh.h"
+#include "polyscope/volume_mesh.h"
 
 // using Sphere_3 = CGAL::Exact_predicates_inexact_constructions_kernel::Sphere_3;
 // using Point_3 = CGAL::Exact_predicates_inexact_constructions_kernel::Point_3;
@@ -192,7 +193,9 @@ int main(){
                         res(contact_point_indices[i],2)
                         );
             Vector D = Ccontact-Csdf;
-            D /= sqrt(D.squared_length());
+            double vl = sqrt(D.squared_length());
+            std::cout << "vl-(r+rc): " << vl - (fabs(rsdf)+fabs(res(contact_point_indices[i],3))) << std::endl;
+            D /= vl;
             // std::cout << "D.squared_lenght(): " << D.squared_length() << std::endl;
             Point  P = Csdf + fabs(rsdf)*D;
             Vector N = (rsdf >= 0)? -D: D;
@@ -229,6 +232,8 @@ int main(){
 
     auto pc_contactpoints = polyscope::registerPointCloud("Contact Points", P_);
     pc_contactpoints->addVectorQuantity("Normals", N_);
+
+    polyscope::registerTetMesh("contact tets", res,contact_indices)->setEnabled(false);
 
     polyscope::show();
 
