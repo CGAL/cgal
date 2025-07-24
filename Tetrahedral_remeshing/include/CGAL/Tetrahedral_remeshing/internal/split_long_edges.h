@@ -372,7 +372,8 @@ void split_long_edges(C3T3& c3t3,
 
   //collect long edges
   T3& tr = c3t3.triangulation();
-  Boost_bimap long_edges;
+  //Boost_bimap long_edges;
+  std::vector<std::pair<std::pair<Vertex_handle,Vertex_handle>,double>> long_edges;
   for (Edge e : tr.finite_edges())
   {
     auto [splittable, boundary] = can_be_split(e, c3t3, protect_boundaries, cell_selector);
@@ -381,7 +382,8 @@ void split_long_edges(C3T3& c3t3,
 
     const std::optional<FT> sqlen = is_too_long(e, boundary, sizing, c3t3, cell_selector);
     if(sqlen != std::nullopt)
-      long_edges.insert(long_edge(make_vertex_pair(e), sqlen.value()));
+      //long_edges.insert(long_edge(make_vertex_pair(e), sqlen.value()));
+      long_edges.push_back(long_edge(make_vertex_pair(e), sqlen.value()));
   }
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
@@ -394,15 +396,16 @@ void split_long_edges(C3T3& c3t3,
   ofs << "OFF" << std::endl;
   ofs << long_edges.size() << " 0 0" << std::endl;
 #endif
-  while(!long_edges.empty())
+  for(std::pair<std::pair<Vertex_handle, Vertex_handle>, double> eit: long_edges) 
+  //while(!long_edges.empty())
   {
     //the edge with longest length
-    typename Boost_bimap::right_map::iterator eit = long_edges.right.begin();
-    Edge_vv e = eit->second;
+    //typename Boost_bimap::right_map::iterator eit = long_edges.right.begin();
+    Edge_vv e = eit.first;
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE_PROGRESS
-    const double sqlen = eit->first;
+    const double sqlen = eit.second;
 #endif
-    long_edges.right.erase(eit);
+    // long_edges.erase(eit);
 
     Cell_handle cell;
     int i1, i2;
