@@ -1041,13 +1041,59 @@ private:
     }
 
     return {c, r};
+  
+  }
+  std::pair<Point_3, FT> shrinking_ball_algorithm_kdt(const Point_3& p,         // point on the surface
+                                                  const Vector_3& n,        // inverse of search direction
+                                                  FT delta_convergence = FT(1e-5)) {
+    using face_descriptor = typename Tree::Primitive_id;
+
+    delta_convergence *= scale_;
+    const FT denoise_preserve = FT(20.0); // in degree
+    const int iteration_limit = 30;
+    int j = 0;
+    FT r = FT(0.25) * scale_; // initial radius
+    Point_3 c = p - (r * n);
+    Point_3 q = p - (2 * r * n);
+    while(true) {
+      // get the hint directly from the kd-tree only to illustrate the use of the internal kd-tree
+      auto hint = tree_->kd_tree().closest_point(c);
+      
+      Point_3 q_next = hint.first;
+
+      FT squared_dist = (q_next - c).squared_length();
+      if(squared_dist >= (r - delta_convergence) * (r - delta_convergence) || p==q_next) {
+        //std::cout << "Convergence achieved at iteration " << j << ": " << CGAL::to_double(squared_dist) << std::endl;
+        break; // convergence
+      }
+      FT r_next = compute_radius(p, n, q_next);
+      if(!CGAL::is_finite(r_next) || r_next <= FT(0)) {
+        std::cerr << "Invalid radius at iteration " << j << ": " << r_next << std::endl;
+        break;
+      }
+      Point_3 c_next = p - (r_next * n);
+      FT seperation_angle = CGAL::approximate_angle<GT>(p - c_next, q_next - c_next);
+      if(j > 0 && seperation_angle < denoise_preserve) {
+        /* std::cout << "Denoise preserve angle achieved at iteration: " << j
+                  << ", Angle: " << CGAL::to_double(seperation_angle) << " degrees, Center: " << c_next
+                  << ", Radius: " << r_next << std::endl;*/
+        break;
+      }
+      c = c_next;
+      r = r_next;
+      q = q_next;
+      j++;
+      if(j > iteration_limit)
+        break;
   }
 
+    return {c, r};
+  }
   void compute_one_vertex_shrinking_ball(vertex_descriptor v) {
 
     Vector_3 normal = get(vertex_normal_map_, v);
     Point_3 p = get(vpm_, v);
-    auto [center, radius] = shrinking_ball_algorithm(p, normal, FT(1e-4), FT(1e-6));
+    auto [center, radius] = shrinking_ball_algorithm_kdt(p, normal);
     put(vertex_medial_sphere_pos_map_, v, center);
     put(vertex_medial_sphere_radius_map_, v, radius);
   }
@@ -1064,7 +1110,7 @@ private:
     for(vertex_descriptor v : vertices(tmesh_)) {
       Vector_3 normal = get(vertex_normal_map_, v);
       Point_3 p = get(vpm_, v);
-      auto [center, radius] = shrinking_ball_algorithm(p, normal);
+      auto [center, radius] = shrinking_ball_algorithm_kdt(p, normal);
       put(vertex_medial_sphere_pos_map_, v, center);
       put(vertex_medial_sphere_radius_map_, v, radius);
       sphere_mesh_->add_sphere(Sphere_3(center, radius * radius));
@@ -1141,7 +1187,7 @@ private:
     if((side_of(optimal_center) == CGAL::ON_UNBOUNDED_SIDE))
       normal = -normal; // if the center is outside, flip the normal
 
-    auto [c, r] = shrinking_ball_algorithm(cp, normal);
+    auto [c, r] = shrinking_ball_algorithm_kdt(cp, normal);
     sphere->set_center(c);
     sphere->set_radius(r);
 
