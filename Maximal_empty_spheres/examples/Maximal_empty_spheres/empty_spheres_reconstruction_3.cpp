@@ -193,8 +193,9 @@ int main(){
                         );
             Vector D = Ccontact-Csdf;
             D /= sqrt(D.squared_length());
+            // std::cout << "D.squared_lenght(): " << D.squared_length() << std::endl;
             Point  P = Csdf + fabs(rsdf)*D;
-            Vector N = (rsdf >= 0)? D: -D;
+            Vector N = (rsdf >= 0)? -D: D;
             Pwns.emplace_back(P,N);
         }
     }
