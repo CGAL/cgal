@@ -255,9 +255,7 @@ public:
   }
 
   void smooth(){
-#if defined CGAL_TETRAHEDRAL_REMESHING_USE_COMPLEX_EDGE_SMOOTHING ||                                                   \
-    defined CGAL_TETRAHEDRAL_REMESHING_USE_SURFACE_VERTEX_SMOOTHING ||                                                 \
-    defined CGAL_TETRAHEDRAL_REMESHING_USE_INTERNAL_VERTEX_SMOOTHING
+#if defined CGAL_TETRAHEDRAL_REMESHING_USE_REFACTORED_SMOOTH || defined CGAL_TETRAHEDRAL_REMESHING_USE_COMPLEX_EDGE_SMOOTHING || defined CGAL_TETRAHEDRAL_REMESHING_USE_SURFACE_VERTEX_SMOOTHING || defined CGAL_TETRAHEDRAL_REMESHING_USE_INTERNAL_VERTEX_SMOOTHING
 	m_elementary_remesher.smooth(m_c3t3, m_sizing, m_cell_selector, m_protect_boundaries,m_vertex_smoother.m_smooth_constrained_edges);
 #ifndef CGAL_TETRAHEDRAL_REMESHING_USE_REFACTORED_SMOOTH
     m_vertex_smoother.smooth_vertices(m_c3t3);
