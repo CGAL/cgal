@@ -167,17 +167,30 @@ void maximal_empty_spheres(const Eigen::MatrixXd &G, Eigen::MatrixXd &result, Ei
                     ) {
                     double l1,l2;
                     line_quadric_intersection(Ks.row(ci), Ks.row(cj), H, l1,l2);
-                    if ((0.<=l1) && (l1<=1.))solutions_.push_back((1-l1)*Ks.row(ci)+l1*Ks.row(cj));
-                    if ((0.<=l2) && (l2<=1.))solutions_.push_back((1-l2)*Ks.row(ci)+l2*Ks.row(cj));
-
-                    if (contact_indices){
-                        Eigen::RowVectorXi st(D+1);
-                        int ni=0;
-                        for (int j=0; j<D+2; j++){
-                            if (ch->vertex((i+1+j)%(D+3)) != t.infinite_vertex())
-                                st(ni++) = ch->vertex((i+1+j)%(D+3))->data();
+                    if ((0.<=l1) && (l1<=1.)){
+                        solutions_.push_back((1-l1)*Ks.row(ci)+l1*Ks.row(cj));
+                        if (contact_indices){
+                            Eigen::RowVectorXi st(D+1);
+                            int ni=0;
+                            for (int j=0; j<D+2; j++){
+                                if (ch->vertex((i+1+j)%(D+3)) != t.infinite_vertex())
+                                    st(ni++) = ch->vertex((i+1+j)%(D+3))->data();
+                            }
+                            contact_indices_.emplace_back(st);
                         }
-                        contact_indices_.emplace_back(st);
+                    }
+                    if ((0.<=l2) && (l2<=1.)){
+                        solutions_.push_back((1-l2)*Ks.row(ci)+l2*Ks.row(cj));
+
+                        if (contact_indices){
+                            Eigen::RowVectorXi st(D+1);
+                            int ni=0;
+                            for (int j=0; j<D+2; j++){
+                                if (ch->vertex((i+1+j)%(D+3)) != t.infinite_vertex())
+                                    st(ni++) = ch->vertex((i+1+j)%(D+3))->data();
+                            }
+                            contact_indices_.emplace_back(st);
+                        }
                     }
                 }
              }
