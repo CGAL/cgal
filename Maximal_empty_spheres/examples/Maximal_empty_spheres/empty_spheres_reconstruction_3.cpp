@@ -155,7 +155,6 @@ int main(){
     // contact_indices contains the indices G and contains the spheres that each spheres of res is adjacent to.
     // calculate the contact sphere with largest (absolute) radius for each sphere in G:
     // (careful: results spheres all have negative radius)
-    // TODO: filter out the contact spheres outside of a bounding box
     Eigen::VectorXi contact_point_indices = Eigen::VectorXi::Constant(G.rows(),-1);
     Eigen::VectorXd contact_point_radii   = Eigen::VectorXd::Constant(G.rows(),-1.);
     for (int i=0; i<contact_indices.rows(); i++){
