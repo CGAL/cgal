@@ -358,7 +358,7 @@ public:
       Vertex_handle v = ch->vertex(i);
       if(! is_infinite(v)){
         if(CGAL::squared_distance(v->point(), p) < (average_spacing * average_spacing)){
-          std::cout  << "close point found: " << v->point() << " vs " << p << std::endl;
+          // std::cout  << "close point found: " << v->point() << " vs " << p << std::endl;
           return v;
         }
       }
