@@ -426,21 +426,22 @@ public:
      *
      * TODO
      */
-    std::ostream& load_hdvf(std::ostream& out) ;
+    std::istream& load_hdvf(std::istream& in) ;
     
     /**
      * \brief Save a HDVF together with the associated reduction (f, g, h, d matrices)
      *
-     * TODO
+     * Save a HDVF to a `.hdvf` file, a simple text file format (see for a specification).
      */
     std::ostream& save_hdvf_reduction(std::ostream& out) ;
     
     /**
      * \brief Load a HDVF together with the associated reduction (f, g, h, d matrices)
      *
-     * TODO
+     * Load a HDVF and its reduction from a `.hdvf` file, a simple text file format (see for a specification).
+     * \warning The underlying complex is not stored in the file!
      */
-    std::ostream& load_hdvf_reduction(std::ostream& out) ;
+    std::istream& load_hdvf_reduction(std::istream& out) ;
     
 protected:
     /* \brief Project a chain onto a given flag
@@ -1047,6 +1048,132 @@ std::ostream& Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixTyp
         }
     }
     return out ;
+}
+
+// Save HDVF and reduction
+template<typename CoefficientType, typename ComplexType, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
+std::ostream& Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::save_hdvf_reduction(std::ostream& out)
+{
+    // HDVF save type
+    // 0: HDVF and reduction
+    // 1: HDVF only
+    out << 0 << std::endl ;
+    // Dimension
+    out << _K.dim() << std::endl ;
+    // Number of cells in each dimension
+    for (int q=0; q<=_K.dim(); ++q)
+        out << _K.nb_cells(q) << " " ;
+    out << std::endl ;
+    // Flags
+    // P : -1 / S : 1 / C : 0
+    // Each dimension written on a row
+    for (int q=0; q<=_K.dim(); ++q)
+    {
+        for (int i=0; i<_K.nb_cells(q); ++i)
+        {
+            if (_flag.at(q).at(i) == PRIMARY)
+                out << -1 << " " ;
+            else if (_flag.at(q).at(i) == SECONDARY)
+                out << 1 << " " ;
+            else // CRITICAL
+                out << 0 << " " ;
+        }
+        out << std::endl ;
+    }
+    // F
+    for (int q=0; q<=_K.dim(); ++q)
+    {
+        OSM::write_matrix(_F_row.at(q), out) ;
+    }
+    // G
+    for (int q=0; q<=_K.dim(); ++q)
+    {
+        OSM::write_matrix(_G_col.at(q), out) ;
+    }
+    // H
+    for (int q=0; q<=_K.dim(); ++q)
+    {
+        OSM::write_matrix(_H_col.at(q), out) ;
+    }
+    // DD
+    for (int q=0; q<=_K.dim(); ++q)
+    {
+        OSM::write_matrix(_DD_col.at(q), out) ;
+    }
+    return out;
+}
+
+// Save HDVF and reduction
+template<typename CoefficientType, typename ComplexType, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
+std::istream& Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::load_hdvf_reduction(std::istream& in)
+{
+    // Load and check HDVF save type
+    int type ;
+    in >> type ;
+    if (type != 0)
+    {
+        std::cerr << "load_hdvf_reduction error: trying to load a pure HDVF file..." << std::endl ;
+        throw ("load_hdvf_reduction error: trying to load a pure HDVF file...");
+    }
+    
+    // Load and check dimension
+    int d ;
+    in >> d ;
+    if (d != _K.dim())
+    {
+        std::cerr << "load_hdvf_reduction error: dimension loaded incompatible with the dimension of the underlying complex" << std::endl ;
+        throw ("load_hdvf_reduction error: dimension loaded incompatible with the dimension of the underlying complex");
+    }
+    // Load and check number of cells
+    int nb ;
+    for (int q=0; q<=_K.dim(); ++q)
+    {
+        in >> nb ;
+        if (nb != _K.nb_cells(q))
+        {
+            std::string mess("load_hdvf_reduction error: incoherent number of cells in dimension ");
+            mess += std::to_string(q);
+            std::cerr << mess << std::endl ;
+            throw (mess);
+        }
+    }
+    // Load flags
+    int flag ;
+    for (int q=0; q<=_K.dim(); ++q)
+    {
+        for (int i=0; i<_K.nb_cells(q); ++i)
+        {
+            in >> flag ;
+            if (flag == -1)
+                _flag.at(q).at(i) = PRIMARY ;
+            else if (flag == 1)
+                _flag.at(q).at(i) = SECONDARY ;
+            else
+                _flag.at(q).at(i) = CRITICAL ;
+        }
+    }
+    // Load reduction matrices
+    // F
+    for (int q=0; q<=_K.dim(); ++q)
+    {
+        OSM::read_matrix(_F_row.at(q), in) ;
+    }
+    // G
+    for (int q=0; q<=_K.dim(); ++q)
+    {
+        OSM::read_matrix(_G_col.at(q), in) ;
+    }
+    // H
+    for (int q=0; q<=_K.dim(); ++q)
+    {
+        OSM::read_matrix(_H_col.at(q), in) ;
+    }
+    // DD
+    for (int q=0; q<=_K.dim(); ++q)
+    {
+        OSM::read_matrix(_DD_col.at(q), in) ;
+    }
+    return in ;
 }
 
 } /* end namespace HDVF */

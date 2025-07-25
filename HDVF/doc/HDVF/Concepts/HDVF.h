@@ -323,19 +323,37 @@ const CMatrix& get_dd (int q) const;
 /// @{
 
 /*!
+ * \brief Prints the matrices of the reduction.
+ *
  * Prints the matrices of the reduction (that is \f$f\f$, \f$g\f$, \f$h\f$, \f$\partial'\f$ the reduced boundary).
  *
  * By default, outputs the complex to `std::cout`.
 */
 std::ostream& print_matrices(std::ostream &out = std::cout) const;
 
-/*!
+/*! \brief Prints the homology and cohomology reduction information.
+ *
  * Prints the homology and cohomology reduction information (that is \f$f^*\f$, \f$g\f$ \f$\partial'\f$ the reduced boundary over each critical cell).
  *
  * By default, outputs the complex to `std::cout`.
 */
 std::ostream& print_reduction(std::ostream &out = std::cout) const;
 
+/*!
+ *\brief Save a HDVF and its reduction to a %hdvf file.
+ *
+ * Save a HDVF together with the associated reduction (f, g, h, d matrices) to a %hdvf file.
+ */
+    
+std::ostream& save_hdvf_reduction(std::ostream& out) ;
+    
+/*!
+ * \brief Load a HDVF and its reduction from a `.hdvf` file.
+ *
+ * Load a HDVF and its reduction from a `.hdvf` file, a simple text file format (see for a specification).
+ */
+std::istream& load_hdvf_reduction(std::istream& out) ;
+    
 /*!
  * \brief Export Primary/Secondary/Critical labels (in particular for vtk export).
  *

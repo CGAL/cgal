@@ -145,6 +145,15 @@ public:
     {
         return (out << int(a._i)) ;
     }
+    
+    /// operator>>
+    friend std::istream& operator>>(std::istream& in, Zp& a)
+    {
+        int tmp ;
+        in >> tmp ;
+        a = Zp(tmp) ;
+        return (in) ;
+    }
 };
 
 } /* end namespace HDVF */

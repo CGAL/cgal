@@ -27,9 +27,9 @@ int main(int argc, char **argv)
     else
     {
         // Load cub object
-            Cub_object mesh ;
-            mesh.read_cub(argv[1], true);
-            
+        Cub_object mesh ;
+        mesh.read_cub(argv[1], true);
+        
         mesh.print_infos();
         
         // Build complex (PRIMAL construction)
@@ -41,14 +41,14 @@ int main(int argc, char **argv)
         HDVFType hdvf(complex, OPT_FULL) ;
         
         // Build HDVF step by step
-//        hdvf.A(7,0,1);
-//        hdvf.A(2,5,0);
-//        hdvf.A(3,8,0);
+        //        hdvf.A(7,0,1);
+        //        hdvf.A(2,5,0);
+        //        hdvf.A(3,8,0);
         hdvf.A(5,0,1);
         cout << "Step 1: is_perfect_hdvf " << hdvf.is_perfect_hdvf() << endl ;
         
         hdvf.compute_perfect_hdvf();
-//        hdvf.compute_rand_perfect_hdvf();
+        //        hdvf.compute_rand_perfect_hdvf();
         cout << "Step 2: is_perfect_hdvf " << hdvf.is_perfect_hdvf() << endl ;
         
         // Output HDVF to console
@@ -125,33 +125,109 @@ int main(int argc, char **argv)
         cocycle4 += (hdvf.get_cohomology_chain(criticals.at(1), 1).transpose()) ; // Cycle4: cycle3 + second cohomology generator
         cout << "Cocycle4: " << cocycle4 << endl ;
         cout << "are_same_cocycles cocycle1 and cocycle4: " << hdvf.are_same_cocycles(cocycle1, cocycle4, 1) << endl ;
+        
+        cout << "--------------" << endl ;
+        
+        typedef CGAL::OSM::Sparse_chain<int, OSM::COLUMN> CChain;
+        typedef CGAL::OSM::Sparse_matrix<int, OSM::COLUMN> CMatrix;
+        typedef CGAL::OSM::Sparse_matrix<int, OSM::ROW> RMatrix;
+        // Create a column-major sparse matrix
+        CMatrix M(5,4) ;
+
+        // Fill coefficients
+        OSM::set_coef(M, 0, 1, 1) ;
+        OSM::set_coef(M, 0, 2, -1) ;
+        OSM::set_coef(M, 2, 1, 2) ;
+
+        // Iterate over non empty columns
+         for(OSM::Bitboard::iterator it_col = M.begin(); it_col != M.end(); ++it_col)
+            {
+                cout << "col: " << *it_col << endl ;
+                // Get a constant reference over the column (complexity O(1))
+                const CChain& col(OSM::cget_column(M, *it_col));
+                // Iterate over the column
+                for (CChain::const_iterator it = col.begin(); it != col.end(); ++it)
+                {
+                    std::cout << "row: " << it->first << " - coef: " << it->second << std::endl ;
+                }
+            }
+        // Direct output of the matrix with << operator
+        std::cout << "M: " << M << std::endl;
+        
+        // Create a row-major sparse matrix
+        RMatrix MM(5,4) ;
+
+        // Fill coefficients
+        OSM::set_coef(MM, 0, 1, 1) ;
+        OSM::set_coef(MM, 0, 2, -1) ;
+        OSM::set_coef(MM, 2, 1, 2) ;
+        
+        // Test write_matrix
+        const string filename("test.osm") ;
+        
+        std::ofstream out ( filename, std::ios::out | std::ios::trunc);
+        if ( not out . good () ) {
+            std::cerr << "Out fatal Error:\n  " << filename << " not found.\n";
+            throw std::runtime_error("File Parsing Error: File not found");
+        }
+        
+        write_matrix(M, out);
+        write_matrix(MM, out);
+        
+        out.close();
+        
+        std::ifstream in ( filename );
+        if ( not in . good () ) {
+            std::cerr << "In fatal Error:\n  " << filename << " not found.\n";
+            throw std::runtime_error("File Parsing Error: File not found");
+        }
+        CMatrix M2 ;
+        RMatrix MM2 ;
+        
+        read_matrix(M2, in) ;
+        read_matrix(MM2, in) ;
+        
+        in.close();
+        
+        cout << "M:" << M << endl ;
+        cout << "M2:" << M2 << endl ;
+        cout << "MM:" << MM << endl ;
+        cout << "MM2:" << MM2 << endl ;
+        
+        CMatrix M3 ;
+        write_matrix(M3,cout);
+        
+        // Test save_hdvf
+        
+        // Test save_hdvf
+        const string filename2("test.hdvf") ;
+        
+        std::ofstream out2 ( filename2, std::ios::out | std::ios::trunc);
+        if ( not out2 . good () ) {
+            std::cerr << "Out fatal Error:\n  " << filename2 << " not found.\n";
+            throw std::runtime_error("File Parsing Error: File not found");
+        }
+        hdvf.save_hdvf_reduction(out2) ;
+        
+        out2.close() ;
+        
+        std::ifstream in2 ( filename2 );
+        if ( not in2 . good () ) {
+            std::cerr << "In fatal Error:\n  " << filename << " not found.\n";
+            throw std::runtime_error("File Parsing Error: File not found");
+        }
+        
+        HDVFType hdvf2(complex);
+        
+        hdvf2.load_hdvf_reduction(in2) ;
+        
+        in2.close();
+        
+        cout << "=============== HDVF" << endl ;
+        hdvf.print_reduction() ;
+        cout << "=============== HDVF2" << endl ;
+        hdvf2.print_reduction() ;
     }
     
-    cout << "--------------" << endl ;
-    
-    typedef CGAL::OSM::Sparse_chain<int, OSM::COLUMN> CChain;
-    typedef CGAL::OSM::Sparse_matrix<int, OSM::COLUMN> CMatrix;
-    // Create a column-major sparse matrix
-    CMatrix M(5,4) ;
-
-    // Fill coefficients
-    OSM::set_coef(M, 0, 1, 1) ;
-    OSM::set_coef(M, 0, 2, -1) ;
-    OSM::set_coef(M, 2, 1, 2) ;
-
-    // Iterate over non empty columns
-     for(OSM::Bitboard::iterator it_col = M.begin(); it_col != M.end(); ++it_col)
-        {
-            cout << "col: " << *it_col << endl ;
-            // Get a constant reference over the column (complexity O(1))
-            const CChain& col(OSM::cget_column(M, *it_col));
-            // Iterate over the column
-            for (CChain::const_iterator it = col.begin(); it != col.end(); ++it)
-            {
-                std::cout << "row: " << it->first << " - coef: " << it->second << std::endl ;
-            }
-        }
-    // Direct output of the matrix with << operator
-    std::cout << "M: " << M << std::endl;
     return 0;
 }

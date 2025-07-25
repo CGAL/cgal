@@ -164,6 +164,17 @@ public:
      */
     friend std::ostream& operator<<(std::ostream &_stream, const SparseMatrix &_matrix);
     
+    /**
+     * \brief Write a sparse matrix to an output stream.
+     */
+    friend std::ostream& write_matrix (const Sparse_matrix& M, std::ostream& out);
+    
+    /**
+     * \brief Read a sparse matrix from an input stream.
+     */
+    
+    template <typename _CT>
+    friend std::istream& read_matrix (Sparse_matrix& M, std::istream& in);
     /// @}
     
     /// \name Linear algebra operators

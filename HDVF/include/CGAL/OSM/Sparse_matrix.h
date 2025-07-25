@@ -274,6 +274,51 @@ public:
         return stream;
     }
     
+    /**
+     * \defgroup WriteMatrix Write matrix to an output stream.
+     * \ingroup PkgHDVFAlgorithmClasses
+     * @brief  Write a sparse matrix to an output stream.
+     *
+     * Output a sparse matrix to a stream (the matrix can be reloaded using `read_matrix`).
+     *
+     * @param out Output stream.
+     * @return A reference to the modified stream.
+     * @{
+     */
+    
+    /** \brief Write a sparse COLUMN matrix. */
+    
+    template <typename _CT>
+    friend std::ostream& write_matrix (const Sparse_matrix<_CT, OSM::COLUMN>& M, std::ostream& out);
+    
+    /** \brief Write a sparse ROW matrix. */
+    template <typename _CT>
+    friend std::ostream& write_matrix (const Sparse_matrix<_CT, OSM::ROW>& M, std::ostream& out);
+
+    /** @} */
+    
+    /**
+     * \defgroup ReadMatrix Read matrix from an input stream.
+     * \ingroup PkgHDVFAlgorithmClasses
+     * @brief  Read a sparse matrix from an input stream.
+     *
+     * Read a sparse matrix from a stream (the stream must respect the format of  `write_matrix`).
+     *
+     * @param in Input stream.
+     * @return A reference to the modified stream.
+     * @{
+     */
+    
+    /** \brief Read a sparse COLUMN matrix. */
+    
+    template <typename _CT>
+    friend std::istream& read_matrix (Sparse_matrix<_CT, OSM::COLUMN>& M, std::istream& in);
+    
+    /** \brief Read a sparse ROW matrix. */
+    template <typename _CT>
+    friend std::istream& read_matrix (Sparse_matrix<_CT, OSM::ROW>& M, std::istream& in);
+
+    /** @} */
     
     /**
      * \brief Adds two matrices together into a new matrix.
@@ -1588,6 +1633,126 @@ template <typename _CT, int _CTF>
 Sparse_matrix<_CT, _CTF>& del_coef(Sparse_matrix<_CT, _CTF>& matrix, size_t i, size_t j)
 {
     return matrix.del_coef(i, j);
+}
+
+template <typename _CT>
+std::ostream& write_matrix (const Sparse_matrix<_CT, OSM::COLUMN>& M, std::ostream& out)
+{
+    typedef Sparse_chain<_CT, OSM::COLUMN> CChain;
+    std::vector<size_t> vec_i, vec_j;
+    std::vector<_CT> vec_val;
+    // Matrix type : 0 for (COLUMN), 1 for (ROW)
+    out << "0" << std::endl ;
+    // Size : nb rows / nb cols
+    out << M._size.first << " " << M._size.second << std::endl;
+    // Get all coefficients
+    for(OSM::Bitboard::iterator it = M.begin(); it != M.end(); ++it)
+    {
+        const CChain& col(OSM::cget_column(M, *it));
+        // Iterate over the column
+        for (typename CChain::const_iterator it_col = col.begin(); it_col != col.end(); ++it_col)
+        {
+            vec_j.push_back(*it) ;
+            vec_i.push_back(it_col->first) ;
+            vec_val.push_back(it_col->second) ;
+        }
+    }
+    // Output the number of coefficients
+    out << vec_i.size() << std::endl ;
+    // Output all coefficients : i j val
+    for (int n=0; n<vec_i.size(); ++n)
+        out << vec_i.at(n) << " " << vec_j.at(n) << " " << vec_val.at(n) << std::endl ;
+    return out ;
+}
+
+template <typename _CT>
+std::ostream& write_matrix (const Sparse_matrix<_CT, OSM::ROW>& M, std::ostream& out)
+{
+    typedef Sparse_chain<_CT, OSM::ROW> RChain;
+    std::vector<size_t> vec_i, vec_j;
+    std::vector<_CT> vec_val;
+    // Matrix type : 0 for (COLUMN), 1 for (ROW)
+    out << "1" << std::endl ;
+    // Size : nb rows / nb cols
+    out << M._size.first << " " << M._size.second << std::endl;
+    // Get all coefficients
+    for(OSM::Bitboard::iterator it = M.begin(); it != M.end(); ++it)
+    {
+        const RChain& row(OSM::cget_row(M, *it));
+        // Iterate over the column
+        for (typename RChain::const_iterator it_row = row.begin(); it_row != row.end(); ++it_row)
+        {
+            vec_i.push_back(*it) ;
+            vec_j.push_back(it_row->first) ;
+            vec_val.push_back(it_row->second) ;
+        }
+    }
+    // Output the number of coefficients
+    out << vec_i.size() << std::endl ;
+    // Output all coefficients : i j val
+    for (int n=0; n<vec_i.size(); ++n)
+        out << vec_i.at(n) << " " << vec_j.at(n) << " " << vec_val.at(n) << std::endl ;
+    return out ;
+}
+
+template <typename _CT>
+std::istream& read_matrix (Sparse_matrix<_CT, OSM::COLUMN>& M, std::istream& in)
+{
+    // Read and check type
+    // Matrix type : 0 for (COLUMN), 1 for (ROW)
+    int type ;
+    in >> type ;
+    if (type != 0)
+        throw("read_matrix error: trying to load a ROW matrix representation into a COLUMN matrix");
+    // Read and adjust size
+    // Size : nb rows / nb cols
+    size_t nrows, ncols ;
+    in >> nrows >> ncols ;
+    M = Sparse_matrix<_CT, OSM::COLUMN>(nrows, ncols) ;
+    
+    // Read number of coefficients
+    size_t n ;
+    in >> n ;
+    // Read all coefficients and load them into the matrix
+    size_t i, j ;
+    _CT val ;
+    for (size_t k=0; k<n; ++k)
+    {
+        in >> i >> j ;
+        in >> val ;
+        OSM::set_coef(M, i, j, val) ;
+    }
+    return in ;
+}
+
+template <typename _CT>
+std::istream& read_matrix (Sparse_matrix<_CT, OSM::ROW>& M, std::istream& in)
+{
+    // Read and check type
+    // Matrix type : 0 for (COLUMN), 1 for (ROW)
+    int type ;
+    in >> type ;
+    if (type != 1)
+        throw("read_matrix error: trying to load a COLUMN matrix representation into a ROW matrix");
+    // Read and adjust size
+    // Size : nb rows / nb cols
+    size_t nrows, ncols ;
+    in >> nrows >> ncols ;
+    M = Sparse_matrix<_CT, OSM::ROW>(nrows, ncols) ;
+    
+    // Read number of coefficients
+    size_t n ;
+    in >> n ;
+    // Read all coefficients and load them into the matrix
+    size_t i, j ;
+    _CT val ;
+    for (size_t k=0; k<n; ++k)
+    {
+        in >> i >> j ;
+        in >> val ;
+        OSM::set_coef(M, i, j, val) ;
+    }
+    return in ;
 }
 
 } /* end namespace OSM */
