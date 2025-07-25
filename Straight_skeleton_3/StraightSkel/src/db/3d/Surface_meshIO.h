@@ -127,9 +127,7 @@ PolyhedronSPtr Surface_meshIO::load(const CGAL::Surface_mesh<Point3>& sm,
                                         << *(vertices[vertex_id]->getPoint()));
             } else {
                 std::stringstream whatstream;
-                whatstream << "Vertex with id="
-                        << vertex_id
-                        << " does not exist.";
+                whatstream << "Vertex with id=" << vertex_id << " does not exist.";
                 throw std::runtime_error(whatstream.str());
             }
         }

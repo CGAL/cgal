@@ -29,6 +29,7 @@ namespace PMP = CGAL::Polygon_mesh_processing;
 namespace CGAL {
 namespace utils {
 
+// Simple helper function to draw a mesh whose faces are colored according to the weights (speeds).
 template<typename PolygonMesh, typename Values>
 void save_colored_mesh(const PolygonMesh& pmesh,
                        const Values& values,

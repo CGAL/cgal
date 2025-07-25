@@ -26,18 +26,18 @@
 // - Fix expired shared ptr errors in prints
 
 // @fixme latest:
-// - (a) Random perturbations can still create degenerate configurations if unlucky
+// - (a) Random perturbations could still create degenerate configurations if unlucky
 // - (b) Random perturbations must be small enough as to not create self-intersections
-// - EPECK -> EPICK can create self-intersections
+// - EPECK -> EPICK could create self-intersections
 
 // @todo: cleaning
-// - use CGAL kernel everywhere
+// - use CGAL kernel everywhere, get rid of the other kernel
 // - get rid of the KernelWrapper
 // - assert / CGAL assertion
 // - indentation 4 --> 2 spaces
-// - merge .h/.cpp into a single file
+// - merge .h/.cpp into a single file, header only
 // - fix all weak --> shared pointer conversions
-// - face/facet
+// - harmonize face/facet
 // - nullptr init?
 // - check for overly shared objects, redundant function calls (plane normalization, for example)
 
@@ -50,6 +50,8 @@
 //   * Would cost more (detection of simultaneous events, etc.)
 //   * How to detect "hidden" simultaneous events?
 // - zero speed (check divisions)
+
+// @todo latest:
 // - factorize the three VV events but be very careful with the tiny differences
 
 // ----
@@ -69,7 +71,6 @@
   we might have some representatives in the subset, but not the canonical one.
 */
 #define CGAL_SS3_ENFORCE_UNIQUE_EVENT_REPRESENTATIONS
-
 
 /*
   Whether the queue is filled once at the beginning and updated, or entirely recomputed
@@ -145,7 +146,7 @@
 // Sometimes should be disabled not to run out of memory.
 // @todo Does not seem very effective anymore, need to bench again to check
 // where the real cost is in events
-// @todo could store only a Boolean value to improve memory footprint at the expanse
+// @todo could store only a Boolean value to improve memory footprint at the expense
 // of computation.
 #define CGAL_SS3_NO_CACHING
 
