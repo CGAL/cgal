@@ -32,6 +32,7 @@
 #include <optional>
 #include <queue>
 #include <utility>
+#include <vector>
 
 namespace std {
 

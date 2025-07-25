@@ -70,7 +70,7 @@ void SimpleStraightSkel::run() {
         controller_->setDispPolygon(polygon_);
         controller_->setDispSkel2d(skel_result_);
     }
-    DEBUG_PRINT("== Straight Skeleton 2D started ==");
+    CGAL_SS3_CORE_TRACE("== Straight Skeleton 2D started ==");
     double t_start = util::Timer::now();
     PolygonSPtr polygon = polygon_;
     unsigned int i = 0;
@@ -85,7 +85,7 @@ void SimpleStraightSkel::run() {
             std::list<AbstractEventSPtr>::iterator it_e = events.begin();
             while (it_e != events.end()) {
                 AbstractEventSPtr event = *it_e++;
-                DEBUG_PRINT("-- Next Event: " << event->toString() << " --");
+                CGAL_SS3_CORE_TRACE("-- Next Event: " << event->toString() << " --");
                 event->setHighlight(true);
             }
             if (controller_) {
@@ -115,22 +115,22 @@ void SimpleStraightSkel::run() {
             }
             assert(polygon->isConsistent());
             assert(skel_result_->isConsistent());
-            DEBUG_PRINT("-- Finished handling Event --");
+            CGAL_SS3_CORE_TRACE("-- Finished handling Event --");
             i++;
-            DEBUG_PRINT(i);
+            CGAL_SS3_CORE_TRACE(i);
             if (controller_) {
                 controller_->wait();
             }
             events = nextEvent(polygon, offset);
             offset_prev = offset;
         }
-        DEBUG_PRINT("== Straight Skeleton 2D finished ==");
+        CGAL_SS3_CORE_TRACE("== Straight Skeleton 2D finished ==");
         double time = util::Timer::now() - t_start;
         skel_result_->appendDescription("time=" +
                 util::StringFactory::fromDouble(time) + "; ");
         //skel_result_->appendDescription("controller=" +
         //        util::StringFactory::fromBoolean(controller_) + "; ");
-        DEBUG_PRINT(skel_result_->toString());
+        CGAL_SS3_CORE_TRACE(skel_result_->toString());
     }
 }
 
@@ -149,7 +149,7 @@ NodeSPtr SimpleStraightSkel::createNode(VertexSPtr vertex) {
         data = SkelVertexData::create(vertex);
     }
     data->setNode(result);
-    DEBUG_SPTR(result);
+    CGAL_SS3_DEBUG_SPTR(result);
     return result;
 
 }
@@ -192,7 +192,7 @@ ArcSPtr SimpleStraightSkel::createArc(VertexSPtr vertex) {
     result->setEdgeLeft(edge_left);
     result->setEdgeRight(edge_right);
     data->setArc(result);
-    DEBUG_SPTR(result);
+    CGAL_SS3_DEBUG_SPTR(result);
     return result;
 }
 

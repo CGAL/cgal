@@ -44,7 +44,7 @@ TetrahedronEventSPtr TetrahedronEvent::create() {
 }
 
 NodeSPtr TetrahedronEvent::getNode() const {
-    DEBUG_SPTR(node_);
+    CGAL_SS3_DEBUG_SPTR(node_);
     return node_;
 }
 
@@ -61,7 +61,7 @@ CGAL::FT TetrahedronEvent::getOffset() const {
 }
 
 EdgeSPtr TetrahedronEvent::getEdgeBegin() const {
-    DEBUG_WPTR(edge_begin_);
+    CGAL_SS3_DEBUG_WPTR(edge_begin_);
     return edge_begin_.lock();
 }
 

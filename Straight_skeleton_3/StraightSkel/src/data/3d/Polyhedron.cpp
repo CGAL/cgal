@@ -309,7 +309,7 @@ std::list<FacetSPtr>& Polyhedron::facets() {
 }
 
 int Polyhedron::maxVertexDegree() const {
-    int max_degree = 0;
+    unsigned int max_degree = 0;
     std::list<VertexSPtr>::const_iterator it_v = vertices_.begin();
     while (it_v != vertices_.end()) {
         VertexSPtr vertex = *it_v++;
@@ -327,7 +327,7 @@ bool Polyhedron::isConsistent() const {
     while (it_v != vertices_.end()) {
         VertexSPtr vertex = *it_v++;
         if (vertex->getPolyhedron() != shared_from_this()) {
-            DEBUG_PRINT("Inconsistency @ L" << __LINE__ << "\n" << vertex->toString());
+            CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << vertex->toString());
             result = false;
             break;
         }
@@ -336,20 +336,20 @@ bool Polyhedron::isConsistent() const {
         while (it_e != vertex->edges().end()) {
             EdgeWPtr edge_wptr = *it_e++;
             if (edge_wptr.expired()) {
-                DEBUG_PRINT("Inconsistency @ L" << __LINE__ << "\n" << vertex->toString());
+                CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << vertex->toString());
             } else {
                 EdgeSPtr edge = EdgeSPtr(edge_wptr);
                 if (vertex != edge->getVertexSrc() &&
                         vertex != edge->getVertexDst()) {
-                    DEBUG_PRINT("Inconsistency @ L" << __LINE__ << "\n" << vertex->toString());
-                    DEBUG_PRINT("Inconsistency @ L" << __LINE__ << "\n" << edge->toString());
+                    CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << vertex->toString());
+                    CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->toString());
                     result = false;
                     break;
                 }
 
                 if (edge->getVertexSrc() == edge->getVertexDst())
                 {
-                    DEBUG_PRINT("Inconsistency @ L" << __LINE__ << "\n" << edge->getVertexSrc());
+                    CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->getVertexSrc());
                     result = false;
                     break;
                 }
@@ -366,7 +366,7 @@ bool Polyhedron::isConsistent() const {
         }
 
         // if (vne < 2) {
-        //     DEBUG_PRINT("Inconsistency @ L" << __LINE__ << "\n" << vertex->toString());
+        //     CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << vertex->toString());
         //     result = false;
         // }
 
@@ -375,12 +375,12 @@ bool Polyhedron::isConsistent() const {
         while (it_f != vertex->facets().end()) {
             FacetWPtr facet_wptr = *it_f++;
             if (facet_wptr.expired()) {
-                DEBUG_PRINT("Inconsistency @ L" << __LINE__ << "\n" << vertex->toString());
+                CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << vertex->toString());
             } else {
                 FacetSPtr facet = FacetSPtr(facet_wptr);
                 if (!facet->containsVertex(vertex)) {
-                    DEBUG_PRINT("Inconsistency @ L" << __LINE__ << "\n" << vertex->toString());
-                    DEBUG_PRINT("Inconsistency @ L" << __LINE__ << "\n" << facet->toString());
+                    CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << vertex->toString());
+                    CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << facet->toString());
                     result = false;
                     break;
                 }
@@ -389,7 +389,7 @@ bool Polyhedron::isConsistent() const {
         }
 
         // if (vnf < 2) {
-        //     DEBUG_PRINT("Inconsistency @ L" << __LINE__ << "\n" << vertex->toString());
+        //     CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << vertex->toString());
         //     result = false;
         // }
     }
@@ -398,61 +398,61 @@ bool Polyhedron::isConsistent() const {
     while (it_e != edges_.end()) {
         EdgeSPtr edge = *it_e++;
         if (edge->getPolyhedron() != shared_from_this()) {
-            DEBUG_PRINT("Inconsistency @ L" << __LINE__ << "\n" << edge->toString());
+            CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->toString());
             result = false;
             break;
         }
         if (!edge->getVertexSrc()->containsEdge(edge)) {
-            DEBUG_PRINT("Inconsistency @ L" << __LINE__ << "\n" << edge->toString());
-            DEBUG_PRINT("Inconsistency @ L" << __LINE__ << "\n" << edge->getVertexSrc()->toString());
+            CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->toString());
+            CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->getVertexSrc()->toString());
             result = false;
             break;
         }
         if (!edge->getVertexDst()->containsEdge(edge)) {
-            DEBUG_PRINT("Inconsistency @ L" << __LINE__ << "\n" << edge->toString());
-            DEBUG_PRINT("Inconsistency @ L" << __LINE__ << "\n" << edge->getVertexDst()->toString());
+            CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->toString());
+            CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->getVertexDst()->toString());
             result = false;
             break;
         }
         EdgeWPtr edge_wptr;
         edge_wptr = *(edge->getVertexSrcListIt());
         if (EdgeSPtr(edge_wptr) != edge) {
-            DEBUG_PRINT("Inconsistency @ L" << __LINE__ << "\n" << edge->toString());
+            CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->toString());
         }
         edge_wptr = *(edge->getVertexDstListIt());
         if (EdgeSPtr(edge_wptr) != edge) {
-            DEBUG_PRINT("Inconsistency @ L" << __LINE__ << "\n" << edge->toString());
+            CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->toString());
         }
         if (edge->getFacetL()) {
             if (!edge->getFacetL()->containsEdge(edge)) {
-                DEBUG_PRINT("Inconsistency @ L" << __LINE__ << "\n" << edge->toString());
-                DEBUG_PRINT("Inconsistency @ L" << __LINE__ << "\n" << edge->getFacetL()->toString());
+                CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->toString());
+                CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->getFacetL()->toString());
                 result = false;
                 break;
             }
             edge_wptr = *(edge->getFacetLListIt());
             if (EdgeSPtr(edge_wptr) != edge) {
-                DEBUG_PRINT("Inconsistency @ L" << __LINE__ << "\n" << edge->toString());
+                CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->toString());
             }
         } else {
             std::cerr << "no left facet?" << std::endl;
-            DEBUG_PRINT("Inconsistency @ L" << __LINE__ << "\n" << edge->toString());
+            CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->toString());
             result = false;
         }
         if (edge->getFacetR()) {
             if (!edge->getFacetR()->containsEdge(edge)) {
-                DEBUG_PRINT("Inconsistency @ L" << __LINE__ << "\n" << edge->toString());
-                DEBUG_PRINT("Inconsistency @ L" << __LINE__ << "\n" << edge->getFacetR()->toString());
+                CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->toString());
+                CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->getFacetR()->toString());
                 result = false;
                 break;
             }
             edge_wptr = *(edge->getFacetRListIt());
             if (EdgeSPtr(edge_wptr) != edge) {
-                DEBUG_PRINT("Inconsistency @ L" << __LINE__ << "\n" << edge->toString());
+                CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->toString());
             }
         } else {
             std::cerr << "no right facet?" << std::endl;
-            DEBUG_PRINT("Inconsistency @ L" << __LINE__ << "\n" << edge->toString());
+            CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->toString());
             result = false;
         }
     }
@@ -461,7 +461,7 @@ bool Polyhedron::isConsistent() const {
     while (it_f != facets_.end()) {
         FacetSPtr facet = *it_f++;
         if (facet->getPolyhedron() != shared_from_this()) {
-            DEBUG_PRINT("Inconsistency @ L" << __LINE__ << "\n" << facet->toString());
+            CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << facet->toString());
             result = false;
             break;
         }
@@ -469,8 +469,8 @@ bool Polyhedron::isConsistent() const {
         while (it_v != facet->vertices().end()) {
             VertexSPtr vertex = *it_v++;
             if (!vertex->containsFacet(facet)) {
-                DEBUG_PRINT("Inconsistency @ L" << __LINE__ << "\n" << facet->toString());
-                DEBUG_PRINT("Inconsistency @ L" << __LINE__ << "\n" << vertex->toString());
+                CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << facet->toString());
+                CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << vertex->toString());
                 result = false;
                 break;
             }
@@ -479,15 +479,15 @@ bool Polyhedron::isConsistent() const {
         while (it_e != facet->edges().end()) {
             EdgeSPtr edge = *it_e++;
             if (edge->getFacetL() != facet && edge->getFacetR() != facet) {
-                DEBUG_PRINT("Inconsistency @ L" << __LINE__ << "\n" << facet->toString());
-                DEBUG_PRINT("Inconsistency @ L" << __LINE__ << "\n" << edge->toString());
+                CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << facet->toString());
+                CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->toString());
                 result = false;
                 break;
             }
             if (!facet->containsVertex(edge->getVertexSrc()) ||
                     !facet->containsVertex(edge->getVertexDst())) {
-                DEBUG_PRINT("Inconsistency @ L" << __LINE__ << "\n" << facet->toString());
-                DEBUG_PRINT("Inconsistency @ L" << __LINE__ << "\n" << edge->toString());
+                CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << facet->toString());
+                CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->toString());
                 result = false;
                 break;
             }

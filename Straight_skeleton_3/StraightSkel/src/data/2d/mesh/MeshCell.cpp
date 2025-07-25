@@ -42,7 +42,7 @@ MeshCellSPtr MeshCell::create(unsigned int num_vertices, MeshVertexSPtr vertices
 }
 
 MeshSPtr MeshCell::getMesh() const {
-    DEBUG_WPTR(mesh_);
+    CGAL_SS3_DEBUG_WPTR(mesh_);
     if (this->mesh_.expired())
         return MeshSPtr();
     else
@@ -127,7 +127,7 @@ MeshCellSPtr MeshCell::next(MeshVertexSPtr vertex) {
             }
         }
     }
-    DEBUG_SPTR(result);
+    CGAL_SS3_DEBUG_SPTR(result);
     return result;
 }
 
@@ -154,7 +154,7 @@ MeshCellSPtr MeshCell::prev(MeshVertexSPtr vertex) {
             }
         }
     }
-    DEBUG_SPTR(result);
+    CGAL_SS3_DEBUG_SPTR(result);
     return result;
 }
 

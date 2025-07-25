@@ -68,7 +68,7 @@ void ProjSimpleSphericalSkel::run() {
     if (controller_) {
         controller_->wait();
     }
-    DEBUG_PRINT("== Projective Spherical Skeleton started ==");
+    CGAL_SS3_CORE_TRACE("== Projective Spherical Skeleton started ==");
     SphericalPolygonSPtr polygon = polygon_;
     unsigned int i = 0;
     if (init(polygon)) {
@@ -79,7 +79,7 @@ void ProjSimpleSphericalSkel::run() {
         CGAL::FT offset_prev = 0.0;
         SphericalAbstractEventSPtr event = nextEvent(polygon, offset);
         while (event) {
-            DEBUG_PRINT("-- Next Event: " << event->toString() << " --");
+            CGAL_SS3_CORE_TRACE("-- Next Event: " << event->toString() << " --");
             if (controller_) {
                 controller_->wait();
             }
@@ -97,17 +97,17 @@ void ProjSimpleSphericalSkel::run() {
             }
             assert(polygon->isConsistent());
             assert(skel_result_->isConsistent());
-            DEBUG_PRINT("-- Finished handling Event --");
+            CGAL_SS3_CORE_TRACE("-- Finished handling Event --");
             i++;
-            DEBUG_PRINT(i);
+            CGAL_SS3_CORE_TRACE(i);
             if (controller_) {
                 controller_->wait();
             }
             event = nextEvent(polygon, offset);
             offset_prev = offset;
         }
-        DEBUG_PRINT("== Spherical Skeleton finished ==");
-        DEBUG_PRINT(skel_result_->toString());
+        CGAL_SS3_CORE_TRACE("== Spherical Skeleton finished ==");
+        CGAL_SS3_CORE_TRACE(skel_result_->toString());
     }
 }
 
@@ -512,7 +512,7 @@ SphericalPolygonSPtr ProjSimpleSphericalSkel::shiftEdges(SphericalPolygonSPtr po
                     *p_center + ((*dir_rotated) * radius));
         }
         if (has_valid_rot_axis_in && has_valid_rot_axis_out) {
-            DEBUG_PRINT(KernelWrapper::distance(p_in, p_out));
+            CGAL_SS3_CORE_TRACE(KernelWrapper::distance(p_in, p_out));
             vertex_rotated = CircularVertex::create(p_in);
         }
         if (has_valid_rot_axis_in && !has_valid_rot_axis_out) {
@@ -522,8 +522,8 @@ SphericalPolygonSPtr ProjSimpleSphericalSkel::shiftEdges(SphericalPolygonSPtr po
             vertex_rotated = CircularVertex::create(p_out);
         }
         if (!has_valid_rot_axis_in && !has_valid_rot_axis_out) {
-            DEBUG_PRINT("Error: CircularVertex does not have an adjacent CircularEdge with a valid rotation axis.");
-            DEBUG_PRINT(vertex->toString());
+            CGAL_SS3_CORE_TRACE("Error: CircularVertex does not have an adjacent CircularEdge with a valid rotation axis.");
+            CGAL_SS3_CORE_TRACE(vertex->toString());
             vertex_rotated = CircularVertex::create(vertex->getPoint());
             vertex_rotated->setPointValid(false);
         }
@@ -557,8 +557,8 @@ SphericalPolygonSPtr ProjSimpleSphericalSkel::shiftEdges(SphericalPolygonSPtr po
             data->setOffsetEdge(edge_rotated);
             result->addEdge(edge_rotated);
         } else {
-            DEBUG_PRINT("Error: CircularEdge has an adjacent CircularVertex that was not rotated.");
-            DEBUG_PRINT(edge->toString());
+            CGAL_SS3_CORE_TRACE("Error: CircularEdge has an adjacent CircularVertex that was not rotated.");
+            CGAL_SS3_CORE_TRACE(edge->toString());
         }
     }
 

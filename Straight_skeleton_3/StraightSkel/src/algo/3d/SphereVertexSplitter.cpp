@@ -91,7 +91,7 @@ FacetSPtr SphereVertexSplitter::findFacet(EdgeSPtr edge_1, EdgeSPtr edge_2) {
     } else if (facet_1l == facet_2l || facet_1l == facet_2r) {
         result = facet_1l;
     }
-    DEBUG_SPTR(result);
+    CGAL_SS3_DEBUG_SPTR(result);
     return result;
 }
 
@@ -179,7 +179,7 @@ PolyhedronSPtr SphereVertexSplitter::splitVertex(VertexSPtr vertex) {
         controller_->wait();
     }
     SphericalPolygonSPtr polygon = intersectPolyhedron(vertex);
-    DEBUG_PRINT(polygon->toString());
+    CGAL_SS3_SPLITTER_TRACE(polygon->toString());
 
     AbstractSimpleSphericalSkelSPtr algo_sphericalskel;
     util::ConfigurationSPtr config = util::Configuration::getInstance();
@@ -195,8 +195,8 @@ PolyhedronSPtr SphereVertexSplitter::splitVertex(VertexSPtr vertex) {
         } else if (s_algo_sphericalskel.compare("SpeedSimpleSphericalSkel") == 0) {
             algo_sphericalskel = SpeedSimpleSphericalSkel::create(polygon, controller_);
         } else {
-            DEBUG_PRINT("Warning: " << s_algo_sphericalskel << " not found.");
-            DEBUG_PRINT("Using ProjSimpleSphericalSkel.");
+            CGAL_SS3_SPLITTER_TRACE("Warning: " << s_algo_sphericalskel << " not found.");
+            CGAL_SS3_SPLITTER_TRACE("Using ProjSimpleSphericalSkel.");
             algo_sphericalskel = ProjSimpleSphericalSkel::create(polygon, controller_);
         }
     } else {

@@ -38,7 +38,7 @@ SphericalEdgeEventSPtr SphericalEdgeEvent::create() {
 }
 
 CircularNodeSPtr SphericalEdgeEvent::getNode() const {
-    DEBUG_SPTR(node_);
+    CGAL_SS3_DEBUG_SPTR(node_);
     return node_;
 }
 
@@ -55,7 +55,7 @@ CGAL::FT SphericalEdgeEvent::getOffset() const {
 }
 
 CircularEdgeSPtr SphericalEdgeEvent::getEdge() const {
-    DEBUG_SPTR(edge_);
+    CGAL_SS3_DEBUG_SPTR(edge_);
     return edge_;
 }
 

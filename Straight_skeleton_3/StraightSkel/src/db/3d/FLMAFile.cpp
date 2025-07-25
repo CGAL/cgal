@@ -58,7 +58,7 @@ PolyhedronSPtr FLMAFile::load(const std::string& filename) {
                 std::vector<std::string> str_coords =
                         util::StringFuncs::split(line, " \t", false);
                 if (str_coords.size()%3 != 0) {
-                    DEBUG_PRINT("Error: " << filename << ":" << l);
+                    CGAL_SS3_IO_TRACE("Error: " << filename << ":" << l);
                 }
                 for (unsigned int i = 0; i < num_vertices; i++) {
                     double x = atof(str_coords[i*3].c_str());
@@ -87,7 +87,7 @@ PolyhedronSPtr FLMAFile::load(const std::string& filename) {
                     if (vertex_id < num_vertices) {
                         poly_vertices[num_poly_vertices-i-1] = vertices[vertex_id];
                     } else {
-                        DEBUG_PRINT("Error: " << filename << ":" << l);
+                        CGAL_SS3_IO_TRACE("Error: " << filename << ":" << l);
                     }
                 }
                 FacetSPtr facet = Facet::create(num_poly_vertices, poly_vertices);

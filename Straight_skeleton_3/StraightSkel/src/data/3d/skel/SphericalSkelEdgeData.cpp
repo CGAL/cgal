@@ -37,7 +37,7 @@ SphericalSkelEdgeDataSPtr SphericalSkelEdgeData::create(CircularEdgeSPtr edge) {
 }
 
 CircularEdgeSPtr SphericalSkelEdgeData::getOffsetEdge() const {
-    DEBUG_WPTR(offset_edge_);
+    CGAL_SS3_DEBUG_WPTR(offset_edge_);
     if (this->offset_edge_.expired())
         return CircularEdgeSPtr();
     else
@@ -57,7 +57,7 @@ void SphericalSkelEdgeData::setSpeed(CGAL::FT speed) {
 }
 
 FacetSPtr SphericalSkelEdgeData::getFacetOrigin() const {
-    DEBUG_WPTR(facet_origin_);
+    CGAL_SS3_DEBUG_WPTR(facet_origin_);
     if (this->facet_origin_.expired())
         return FacetSPtr();
     else
@@ -69,7 +69,7 @@ void SphericalSkelEdgeData::setFacetOrigin(FacetSPtr facet_origin) {
 }
 
 Line3SPtr SphericalSkelEdgeData::getRotationAxis() const {
-    //DEBUG_SPTR(rotation_axis_);
+    //CGAL_SS3_DEBUG_SPTR(rotation_axis_);
     return this->rotation_axis_;
 }
 

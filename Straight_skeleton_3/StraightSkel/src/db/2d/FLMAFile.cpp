@@ -56,7 +56,7 @@ PolygonSPtr FLMAFile::load(const std::string& filename) {
                 std::vector<std::string> str_coords =
                         util::StringFuncs::split(line, " \t", false);
                 if (str_coords.size()%3 != 0) {
-                    DEBUG_PRINT("Error: " << filename << ":" << l);
+                    CGAL_SS3_IO_TRACE("Error: " << filename << ":" << l);
                 }
                 for (unsigned int i = 0; i < num_vertices; i++) {
                     double x = atof(str_coords[i*3].c_str());
@@ -83,17 +83,17 @@ PolygonSPtr FLMAFile::load(const std::string& filename) {
                         VertexSPtr vertex_src = vertices[vertex_src_id];
                         VertexSPtr vertex_dst = vertices[vertex_dst_id];
                         if (vertex_src->getEdgeOut() || vertex_dst->getEdgeIn()) {
-                            DEBUG_PRINT("Error: " << filename << ":" << l);
+                            CGAL_SS3_IO_TRACE("Error: " << filename << ":" << l);
                         }
                         EdgeSPtr edge = Edge::create(vertex_src, vertex_dst);
                         edge->setID(edge_id);
                         edge_id++;
                         result->addEdge(edge);
                     } else {
-                        DEBUG_PRINT("Error: " << filename << ":" << l);
+                        CGAL_SS3_IO_TRACE("Error: " << filename << ":" << l);
                     }
                 } else {
-                    DEBUG_PRINT("Error: " << filename << ":" << l);
+                    CGAL_SS3_IO_TRACE("Error: " << filename << ":" << l);
                 }
             }
         }

@@ -48,7 +48,7 @@ VertexSPtr Vertex::clone() const {
 }
 
 Point2SPtr Vertex::getPoint() const {
-    DEBUG_SPTR(point_);
+    CGAL_SS3_DEBUG_SPTR(point_);
     return this->point_;
 }
 
@@ -57,7 +57,7 @@ void Vertex::setPoint(Point2SPtr point) {
 }
 
 EdgeSPtr Vertex::getEdgeIn() const {
-    // DEBUG_WPTR(edge_in_);
+    // CGAL_SS3_DEBUG_WPTR(edge_in_);
     if (this->edge_in_.expired())
         return EdgeSPtr();
     else
@@ -69,7 +69,7 @@ void Vertex::setEdgeIn(EdgeSPtr edge) {
 }
 
 EdgeSPtr Vertex::getEdgeOut() const {
-    // DEBUG_WPTR(edge_out_);
+    // CGAL_SS3_DEBUG_WPTR(edge_out_);
     if (this->edge_out_.expired())
         return EdgeSPtr();
     else
@@ -81,7 +81,7 @@ void Vertex::setEdgeOut(EdgeSPtr edge) {
 }
 
 PolygonSPtr Vertex::getPolygon() const {
-    DEBUG_WPTR(polygon_);
+    CGAL_SS3_DEBUG_WPTR(polygon_);
     if (this->polygon_.expired())
         return PolygonSPtr();
     else
@@ -101,7 +101,7 @@ void Vertex::setListIt(std::list<VertexSPtr>::iterator list_it) {
 }
 
 VertexDataSPtr Vertex::getData() const {
-    DEBUG_SPTR(data_);
+    CGAL_SS3_DEBUG_SPTR(data_);
     return this->data_;
 }
 

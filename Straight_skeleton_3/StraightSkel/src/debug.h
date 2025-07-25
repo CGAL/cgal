@@ -29,37 +29,208 @@
 #include <sstream>
 #include <string>
 
-#ifdef DEBUG
+// -------------------------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------------------
 
-#define DBGOUT std::cout
+// # define CGAL_SS3_DUMP_FILES
+# define CGAL_SS3_PROFILE_FILTERING_MECHANISMS
+# define CGAL_SS3_RUN_TIMERS
+# define CGAL_SS3_EXIT_ASAP
+
+// -------------------------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------------------
+
+#define CGAL_SS3_TRACE_STREAM std::cout
 
 /* just a helper for code location */
-#define LOC DBGOUT << "[DEBUG] " << __FILE__ << ":" << __LINE__ << ": ";
+#define CGAL_SS3_TRACE_LOC CGAL_SS3_TRACE_STREAM << "[DEBUG] " << __FILE__ << ":" << __LINE__ << ": ";
 
-#ifndef DEBUG_PRINT_VERBOSITY
-#  define DEBUG_PRINT_VERBOSITY 1024
+#ifndef CGAL_SS3_TRACE_VERBOSITY
+#  define CGAL_SS3_TRACE_VERBOSITY 2
 #endif
 
-/* macro using var args */
-#define DEBUG_CODE(code) code
-#define DEBUG_PRINT(m) /*LOC*/ DBGOUT << m << std::endl;
-#define DEBUG_PRINT_V(l,m) if (l <= DEBUG_PRINT_VERBOSITY) /*LOC*/ DBGOUT << m << std::endl;
-#define DEBUG_PRINT_IF(c,l,m) if ( (c) && l <= DEBUG_PRINT_VERBOSITY) /*LOC*/ DBGOUT << m << std::endl;
+#define CGAL_SS3_ENABLE_TRACE // generic
+// #define CGAL_SS3_TRAITS_ENABLE_TRACE // traits & kernel
+// #define CGAL_SS3_HDS_ENABLE_TRACE // Polyhedron and related classes
+// #define CGAL_SS3_SKEL_DS_ENABLE_TRACE // Skeleton and related classes
+// #define CGAL_SS3_IO_ENABLE_TRACE // DB, IO, ...
+// #define CGAL_SS3_TRANSF_ENABLE_TRACE // Polyhedron transformation (face merging, perturbations, etc.)
+// #define CGAL_SS3_SPLITTER_ENABLE_TRACE // vertex splitters
+// #define CGAL_SS3_ALGO_ENABLE_TRACE // supporting algorithms
+#define CGAL_SS3_CORE_ENABLE_TRACE // main algo
+
+#if defined(CGAL_SS3_ENABLE_TRACE) || \
+    defined(CGAL_SS3_TRAITS_ENABLE_TRACE) || \
+    defined(CGAL_SS3_HDS_ENABLE_TRACE) || \
+    defined(CGAL_SS3_SKEL_DS_ENABLE_TRACE) || \
+    defined(CGAL_SS3_IO_ENABLE_TRACE) || \
+    defined(CGAL_SS3_TRANSF_ENABLE_TRACE) || \
+    defined(CGAL_SS3_SPLITTER_ENABLE_TRACE) || \
+    defined(CGAL_SS3_ALGO_ENABLE_TRACE) || \
+    defined(CGAL_SS3_CORE_ENABLE_TRACE)
+# define CGAL_SS3_TRACE_CODE(code) code
+#endif
+
+// -------------------------------------------------------------------------------------------------
+
+// Generic
+#ifdef CGAL_SS3_ENABLE_TRACE
+#define CGAL_SS3_TRACE(m) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
+#define CGAL_SS3_TRACE_V(l,m) if (l <= CGAL_SS3_TRACE_VERBOSITY) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
+#define CGAL_SS3_TRACE_IF(c,l,m) if ( (c) && l <= CGAL_SS3_TRACE_VERBOSITY) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
+#endif
+
+// -------------------------------------------------------------------------------------------------
+
+#ifdef CGAL_SS3_TRAITS_ENABLE_TRACE
+# define CGAL_SS3_TRAITS_TRACE(m) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
+# define CGAL_SS3_TRAITS_TRACE_V(l,m) if (l <= CGAL_SS3_TRACE_VERBOSITY) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
+# define CGAL_SS3_TRAITS_TRACE_IF(c,l,m) if ( (c) && l <= CGAL_SS3_TRACE_VERBOSITY) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
+#endif
+
+// -------------------------------------------------------------------------------------------------
+
+// Polyhedron and related classes
+#ifdef CGAL_SS3_HDS_ENABLE_TRACE
+# define CGAL_SS3_HDS_TRACE(m) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
+# define CGAL_SS3_HDS_TRACE_V(l,m) if (l <= CGAL_SS3_TRACE_VERBOSITY) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
+# define CGAL_SS3_HDS_TRACE_IF(c,l,m) if ( (c) && l <= CGAL_SS3_TRACE_VERBOSITY) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
+#endif
+
+// -------------------------------------------------------------------------------------------------
+
+// Skeleton and related classes
+#ifdef CGAL_SS3_SKEL_DS_ENABLE_TRACE
+# define CGAL_SS3_SKEL_DS_TRACE(m) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
+# define CGAL_SS3_SKEL_DS_TRACE_V(l,m) if (l <= CGAL_SS3_TRACE_VERBOSITY) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
+# define CGAL_SS3_SKEL_DS_TRACE_IF(c,l,m) if ( (c) && l <= CGAL_SS3_TRACE_VERBOSITY) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
+#endif
+
+// -------------------------------------------------------------------------------------------------
+
+// Reading and writing data
+#ifdef CGAL_SS3_IO_ENABLE_TRACE
+# define CGAL_SS3_IO_TRACE(m) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
+# define CGAL_SS3_IO_TRACE_V(l,m) if (l <= CGAL_SS3_TRACE_VERBOSITY) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
+# define CGAL_SS3_IO_TRACE_IF(c,l,m) if ( (c) && l <= CGAL_SS3_TRACE_VERBOSITY) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
+#endif
+
+// -------------------------------------------------------------------------------------------------
+
+// Transformation of polyhedra
+#ifdef CGAL_SS3_TRANSF_ENABLE_TRACE
+# define CGAL_SS3_TRANSF_TRACE(m) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
+# define CGAL_SS3_TRANSF_TRACE_V(l,m) if (l <= CGAL_SS3_TRACE_VERBOSITY) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
+# define CGAL_SS3_TRANSF_TRACE_IF(c,l,m) if ( (c) && l <= CGAL_SS3_TRACE_VERBOSITY) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
+#endif
+
+// -------------------------------------------------------------------------------------------------
+
+// Vertex splitters
+#ifdef CGAL_SS3_SPLITTER_ENABLE_TRACE
+# define CGAL_SS3_SPLITTER_TRACE(m) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
+# define CGAL_SS3_SPLITTER_TRACE_V(l,m) if (l <= CGAL_SS3_TRACE_VERBOSITY) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
+# define CGAL_SS3_SPLITTER_TRACE_IF(c,l,m) if ( (c) && l <= CGAL_SS3_TRACE_VERBOSITY) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
+#endif
+
+// -------------------------------------------------------------------------------------------------
+
+// Supporting algorithms such as self-intersection detection
+#ifdef CGAL_SS3_ALGO_ENABLE_TRACE
+# define CGAL_SS3_ALGO_TRACE(m) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
+# define CGAL_SS3_ALGO_TRACE_V(l,m) if (l <= CGAL_SS3_TRACE_VERBOSITY) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
+# define CGAL_SS3_ALGO_TRACE_IF(c,l,m) if ( (c) && l <= CGAL_SS3_TRACE_VERBOSITY) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
+#endif
+
+// -------------------------------------------------------------------------------------------------
+
+// Main construction algorithms
+#ifdef CGAL_SS3_CORE_ENABLE_TRACE
+# define CGAL_SS3_CORE_TRACE(m) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
+# define CGAL_SS3_CORE_TRACE_V(l,m) if (l <= CGAL_SS3_TRACE_VERBOSITY) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
+# define CGAL_SS3_CORE_TRACE_IF(c,l,m) if ( (c) && l <= CGAL_SS3_TRACE_VERBOSITY) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
+#endif
+
+// -------------------------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------------------
+
+#ifndef CGAL_SS3_TRACE_CODE
+# define CGAL_SS3_TRACE_CODE(code)
+#endif
+
+#ifndef CGAL_SS3_ENABLE_TRACE
+# define CGAL_SS3_TRACE(m)
+# define CGAL_SS3_TRACE_V(l,m)
+# define CGAL_SS3_TRACE_IF(c,l,m)
+#endif
+
+#ifndef CGAL_SS3_TRAITS_ENABLE_TRACE
+# define CGAL_SS3_TRAITS_TRACE(m)
+# define CGAL_SS3_TRAITS_TRACE_V(l,m)
+# define CGAL_SS3_TRAITS_TRACE_IF(c,l,m)
+#endif
+
+#ifndef CGAL_SS3_HDS_ENABLE_TRACE
+# define CGAL_SS3_HDS_TRACE(m)
+# define CGAL_SS3_HDS_TRACE_V(l,m)
+# define CGAL_SS3_HDS_TRACE_IF(c,l,m)
+#endif
+
+#ifndef CGAL_SS3_SKEL_DS_ENABLE_TRACE
+# define CGAL_SS3_SKEL_DS_TRACE(m)
+# define CGAL_SS3_SKEL_DS_TRACE_V(l,m)
+# define CGAL_SS3_SKEL_DS_TRACE_IF(c,l,m)
+#endif
+
+#ifndef CGAL_SS3_IO_ENABLE_TRACE
+# define CGAL_SS3_IO_TRACE(m)
+# define CGAL_SS3_IO_TRACE_V(l,m)
+# define CGAL_SS3_IO_TRACE_IF(c,l,m)
+#endif
+
+#ifndef CGAL_SS3_TRANSF_ENABLE_TRACE
+# define CGAL_SS3_TRANSF_TRACE(m)
+# define CGAL_SS3_TRANSF_TRACE_V(l,m)
+# define CGAL_SS3_TRANSF_TRACE_IF(c,l,m)
+#endif
+
+#ifndef CGAL_SS3_SPLITTER_ENABLE_TRACE
+# define CGAL_SS3_SPLITTER_TRACE(m)
+# define CGAL_SS3_SPLITTER_TRACE_V(l,m)
+# define CGAL_SS3_SPLITTER_TRACE_IF(c,l,m)
+#endif
+
+#ifndef CGAL_SS3_ALGO_ENABLE_TRACE
+# define CGAL_SS3_ALGO_TRACE(m)
+# define CGAL_SS3_ALGO_TRACE_V(l,m)
+# define CGAL_SS3_ALGO_TRACE_IF(c,l,m)
+#endif
+
+#ifndef CGAL_SS3_CORE_ENABLE_TRACE
+# define CGAL_SS3_CORE_TRACE(m)
+# define CGAL_SS3_CORE_TRACE_V(l,m)
+# define CGAL_SS3_CORE_TRACE_IF(c,l,m)
+#endif
+
+
+// -------------------------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------------------
+
+#ifdef DEBUG
 
 /* macros that warn if a smart pointer is invalid */
-#define DEBUG_SPTR(sptr) if (!sptr) { LOC DBGOUT << "shared pointer is invalid: " << (#sptr) << std::endl; util::StackTrace::print(DBGOUT); }
-#define DEBUG_WPTR(wptr) if (wptr.expired()) { LOC DBGOUT << "weak pointer is expired: " << (#wptr) << std::endl; util::StackTrace::print(DBGOUT); }
+#define CGAL_SS3_DEBUG_SPTR(sptr) if (!sptr) { /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << "shared pointer is invalid: " << (#sptr) << std::endl; util::StackTrace::print(CGAL_SS3_TRACE_STREAM); }
+#define CGAL_SS3_DEBUG_WPTR(wptr) if (wptr.expired()) { /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << "weak pointer is expired: " << (#wptr) << std::endl; util::StackTrace::print(CGAL_SS3_TRACE_STREAM); }
 
 #else
 
-/* when debug isn't defined all the macro calls do absolutely nothing */
-#define DEBUG_CODE(code)
-#define DEBUG_PRINT(m)
-#define DEBUG_PRINT_V(l,m)
-#define DEBUG_PRINT_IF(c,l,m)
-#define DEBUG_SPTR(sptr)
-#define DEBUG_WPTR(wptr)
+#define CGAL_SS3_DEBUG_SPTR(sptr)
+#define CGAL_SS3_DEBUG_WPTR(wptr)
 
-#endif // DEBUG
+#endif
 
 #endif /* DEBUG_H */

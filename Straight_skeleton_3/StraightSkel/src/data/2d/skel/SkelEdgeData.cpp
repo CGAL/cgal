@@ -38,7 +38,7 @@ SkelEdgeDataSPtr SkelEdgeData::create(EdgeSPtr edge) {
 }
 
 EdgeSPtr SkelEdgeData::getOffsetEdge() const {
-    DEBUG_WPTR(offset_edge_);
+    CGAL_SS3_DEBUG_WPTR(offset_edge_);
     if (this->offset_edge_.expired())
         return EdgeSPtr();
     else
@@ -50,7 +50,7 @@ void SkelEdgeData::setOffsetEdge(EdgeSPtr offset_edge) {
 }
 
 EdgeSPtr SkelEdgeData::getEdgeOrigin() const {
-    DEBUG_WPTR(edge_origin_);
+    CGAL_SS3_DEBUG_WPTR(edge_origin_);
     if (this->edge_origin_.expired())
         return EdgeSPtr();
     else

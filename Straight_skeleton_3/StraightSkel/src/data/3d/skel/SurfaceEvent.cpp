@@ -44,7 +44,7 @@ SurfaceEventSPtr SurfaceEvent::create() {
 }
 
 NodeSPtr SurfaceEvent::getNode() const {
-    DEBUG_SPTR(node_);
+    CGAL_SS3_DEBUG_SPTR(node_);
     return node_;
 }
 
@@ -61,7 +61,7 @@ CGAL::FT SurfaceEvent::getOffset() const {
 }
 
 EdgeSPtr SurfaceEvent::getEdge1() const {
-    DEBUG_WPTR(edge1_);
+    CGAL_SS3_DEBUG_WPTR(edge1_);
     return edge1_.lock();
 }
 
@@ -71,7 +71,7 @@ void SurfaceEvent::setEdge1(EdgeSPtr edge1) {
 }
 
 EdgeSPtr SurfaceEvent::getEdge2() const {
-    DEBUG_WPTR(edge2_);
+    CGAL_SS3_DEBUG_WPTR(edge2_);
     return edge2_.lock();
 }
 

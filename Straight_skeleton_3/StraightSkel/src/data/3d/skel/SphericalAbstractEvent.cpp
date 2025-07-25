@@ -32,7 +32,7 @@ SphericalAbstractEvent::~SphericalAbstractEvent() {
 }
 
 SphericalPolygonSPtr SphericalAbstractEvent::getPolygonResult() const {
-    DEBUG_SPTR(polygon_result_);
+    CGAL_SS3_DEBUG_SPTR(polygon_result_);
     return polygon_result_;
 }
 
@@ -41,7 +41,7 @@ void SphericalAbstractEvent::setPolygonResult(SphericalPolygonSPtr polygon) {
 }
 
 SphericalSkeletonSPtr SphericalAbstractEvent::getSkel() const {
-    DEBUG_WPTR(skel_);
+    CGAL_SS3_DEBUG_WPTR(skel_);
     if (this->skel_.expired())
         return SphericalSkeletonSPtr();
     else

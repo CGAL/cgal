@@ -85,7 +85,7 @@ MeshCellSPtr MeshModifier::splitCell(MeshCellSPtr cell,
             mesh->addCell(result);
         }
     }
-    DEBUG_SPTR(result);
+    CGAL_SS3_DEBUG_SPTR(result);
     return result;
 }
 
@@ -136,7 +136,7 @@ void MeshModifier::mergeCells(MeshCellSPtr cell_1, MeshCellSPtr cell_2) {
         cell_2->removeVertex(vertex_common_1);
         cell_2->getMesh()->removeCell(cell_2);
     } else {
-        DEBUG_PRINT("Error: MeshCells are not adjacent.");
+        CGAL_SS3_TRACE("Error: MeshCells are not adjacent.");
     }
 }
 
@@ -198,7 +198,7 @@ void MeshModifier::mergeVertices(MeshVertexSPtr vertex_1,
         cell_common_2->removeVertex(vertex_2);
         mesh->removeVertex(vertex_2);
     } else {
-        DEBUG_PRINT("Error: MeshVertices are not adjacent.");
+        CGAL_SS3_TRACE("Error: MeshVertices are not adjacent.");
     }
 }
 

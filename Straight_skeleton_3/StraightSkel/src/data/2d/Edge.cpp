@@ -41,7 +41,7 @@ EdgeSPtr Edge::create(VertexSPtr src, VertexSPtr dst) {
 }
 
 VertexSPtr Edge::getVertexSrc() const {
-    DEBUG_SPTR(vertex_src_);
+    CGAL_SS3_DEBUG_SPTR(vertex_src_);
     return this->vertex_src_;
 }
 
@@ -50,7 +50,7 @@ void Edge::setVertexSrc(VertexSPtr src) {
 }
 
 VertexSPtr Edge::getVertexDst() const {
-    DEBUG_SPTR(vertex_dst_);
+    CGAL_SS3_DEBUG_SPTR(vertex_dst_);
     return this->vertex_dst_;
 }
 
@@ -59,7 +59,7 @@ void Edge::setVertexDst(VertexSPtr dst) {
 }
 
 PolygonSPtr Edge::getPolygon() const {
-    DEBUG_WPTR(polygon_);
+    CGAL_SS3_DEBUG_WPTR(polygon_);
     if (this->polygon_.expired())
         return PolygonSPtr();
     else
@@ -79,7 +79,7 @@ void Edge::setListIt(std::list<EdgeSPtr>::iterator list_it) {
 }
 
 EdgeDataSPtr Edge::getData() const {
-    DEBUG_SPTR(data_);
+    CGAL_SS3_DEBUG_SPTR(data_);
     return this->data_;
 }
 

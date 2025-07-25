@@ -161,7 +161,7 @@ void SkelMeshGenerator::initCells() {
                         points.push_back(p_src);
                         p_last = p_src;
                     } else {
-                        DEBUG_PRINT("Error: Arcs are not sorted.");
+                        CGAL_SS3_TRACE("Error: Arcs are not sorted.");
                     }
                 }
             }
@@ -315,7 +315,7 @@ void SkelMeshGenerator::findRayDsts() {
                 mesh_result_->addRay(ray_next);
                 rays.push_back(ray_next);
             } else {
-                DEBUG_PRINT("Error: Unable to find intersection");
+                CGAL_SS3_TRACE("Error: Unable to find intersection");
             }
         }
     }
@@ -645,7 +645,7 @@ void SkelMeshGenerator::mergeVertices() {
 
 
 void SkelMeshGenerator::run() {
-    DEBUG_PRINT("== Skeleton Mesh Generator started ==");
+    CGAL_SS3_TRACE("== Skeleton Mesh Generator started ==");
     initEdgeDatas();
     initCells();
     if (controller_) controller_->wait();
@@ -677,8 +677,8 @@ void SkelMeshGenerator::run() {
     if (controller_) controller_->wait();
     mergeVertices();
     assert(mesh_result_->isConsistent());
-    DEBUG_PRINT("== Skeleton Mesh Generator finished ==");
-    DEBUG_PRINT(mesh_result_->toString());
+    CGAL_SS3_TRACE("== Skeleton Mesh Generator finished ==");
+    CGAL_SS3_TRACE(mesh_result_->toString());
 }
 
 ThreadSPtr SkelMeshGenerator::startThread() {

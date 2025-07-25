@@ -68,7 +68,7 @@ void RotSimpleSphericalSkel::run() {
     if (controller_) {
         controller_->wait();
     }
-    DEBUG_PRINT("== Rotational Spherical Skeleton started ==");
+    CGAL_SS3_CORE_TRACE("== Rotational Spherical Skeleton started ==");
     SphericalPolygonSPtr polygon = polygon_;
     unsigned int i = 0;
     if (init(polygon)) {
@@ -79,7 +79,7 @@ void RotSimpleSphericalSkel::run() {
         CGAL::FT offset_prev = 0.0;
         SphericalAbstractEventSPtr event = nextEvent(polygon, offset);
         while (event) {
-            DEBUG_PRINT("-- Next Event: " << event->toString() << " --");
+            CGAL_SS3_CORE_TRACE("-- Next Event: " << event->toString() << " --");
             if (controller_) {
                 controller_->wait();
             }
@@ -97,17 +97,17 @@ void RotSimpleSphericalSkel::run() {
             }
             assert(polygon->isConsistent());
             assert(skel_result_->isConsistent());
-            DEBUG_PRINT("-- Finished handling Event --");
+            CGAL_SS3_CORE_TRACE("-- Finished handling Event --");
             i++;
-            DEBUG_PRINT(i);
+            CGAL_SS3_CORE_TRACE(i);
             if (controller_) {
                 controller_->wait();
             }
             event = nextEvent(polygon, offset);
             offset_prev = offset;
         }
-        DEBUG_PRINT("== Spherical Skeleton finished ==");
-        DEBUG_PRINT(skel_result_->toString());
+        CGAL_SS3_CORE_TRACE("== Spherical Skeleton finished ==");
+        CGAL_SS3_CORE_TRACE(skel_result_->toString());
     }
 }
 
@@ -530,9 +530,9 @@ SphericalPolygonSPtr RotSimpleSphericalSkel::shiftEdges(SphericalPolygonSPtr pol
         CircularVertexSPtr vertex_dst = edge_begin->getVertexDst();
         SphericalSkelVertexDataSPtr data_dst =
                 std::dynamic_pointer_cast<SphericalSkelVertexData>(vertex_dst->getData());
-        DEBUG_PRINT(data_dst->getSpeed());
+        CGAL_SS3_CORE_TRACE(data_dst->getSpeed());
         data_dst->setSpeed(speed_dst);
-        DEBUG_PRINT(data_dst->getSpeed());
+        CGAL_SS3_CORE_TRACE(data_dst->getSpeed());
         CircularEdgeSPtr edge;
         while (edge != edge_begin) {
             if (!edge) {
@@ -602,7 +602,7 @@ SphericalPolygonSPtr RotSimpleSphericalSkel::shiftEdges(SphericalPolygonSPtr pol
 
                 if (edge->next() == edge_begin) {
                     vertex_dst_rot = vertex_begin_rot;
-                    DEBUG_PRINT(KernelWrapper::distance(p_dst_rot, vertex_begin_rot->getPoint()));
+                    CGAL_SS3_CORE_TRACE(KernelWrapper::distance(p_dst_rot, vertex_begin_rot->getPoint()));
                 } else {
                     vertex_dst_rot = CircularVertex::create(p_dst_rot);
                     SphericalSkelVertexDataSPtr data_dst_rot =
@@ -646,7 +646,7 @@ void RotSimpleSphericalSkel::checkAngles(SphericalPolygonSPtr polygon) {
         Plane3SPtr plane_out = vertex->getEdgeOut()->supportingPlane();
         double angle_in =  M_PI - KernelWrapper::angle(plane_arc, plane_in);
         double angle_out = KernelWrapper::angle(plane_arc, plane_out);
-        DEBUG_PRINT(angle_in - angle_out);
+        CGAL_SS3_CORE_TRACE(angle_in - angle_out);
     }
 }
 

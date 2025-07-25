@@ -70,7 +70,7 @@ void FastStraightSkel::run() {
         controller_->setDispPolygon(polygon_);
         controller_->setDispSkel2d(skel_result_);
     }
-    DEBUG_PRINT("== Fast Straight Skeleton 2D started ==");
+    CGAL_SS3_CORE_TRACE("== Fast Straight Skeleton 2D started ==");
     double t_start = util::Timer::now();
     PolygonSPtr polygon = polygon_;
     if (init(polygon)) {
@@ -82,7 +82,7 @@ void FastStraightSkel::run() {
         int direction = -1;
         EdgeEventSPtr event = nextEvent(polygon, offset, direction);
         while (polygon->vertices().size() > 0) {
-            DEBUG_PRINT("-- Next Event: " << event->toString() << " --");
+            CGAL_SS3_CORE_TRACE("-- Next Event: " << event->toString() << " --");
             if (controller_) {
                 event->setHighlight(true);
                 controller_->wait();
@@ -92,25 +92,25 @@ void FastStraightSkel::run() {
             handleEvent(event, polygon);
             assert(polygon->isConsistent());
             assert(skel_result_->isConsistent());
-            DEBUG_PRINT("-- Finished handling Event --");
+            CGAL_SS3_CORE_TRACE("-- Finished handling Event --");
             if (controller_) {
                 controller_->wait();
             }
             event = nextEvent(polygon, offset, direction);
             if (!event) {
                 direction *= -1;
-                DEBUG_PRINT("-- direction changed --");
+                CGAL_SS3_CORE_TRACE("-- direction changed --");
                 event = nextEvent(polygon, offset, direction);
             }
             offset_prev = offset;
         }
-        DEBUG_PRINT("== Fast Straight Skeleton 2D finished ==");
+        CGAL_SS3_CORE_TRACE("== Fast Straight Skeleton 2D finished ==");
         double time = util::Timer::now() - t_start;
         skel_result_->appendDescription("time=" +
                 util::StringFactory::fromDouble(time) + "; ");
         //skel_result_->appendDescription("controller=" +
         //        util::StringFactory::fromBoolean(controller_) + "; ");
-        DEBUG_PRINT(skel_result_->toString());
+        CGAL_SS3_CORE_TRACE(skel_result_->toString());
     }
 }
 
@@ -128,7 +128,7 @@ NodeSPtr FastStraightSkel::createNode(VertexSPtr vertex) {
         data = SkelVertexData::create(vertex);
     }
     data->setNode(result);
-    DEBUG_SPTR(result);
+    CGAL_SS3_DEBUG_SPTR(result);
     return result;
 }
 
@@ -170,7 +170,7 @@ ArcSPtr FastStraightSkel::createArc(VertexSPtr vertex) {
     result->setEdgeLeft(edge_left);
     result->setEdgeRight(edge_right);
     data->setArc(result);
-    DEBUG_SPTR(result);
+    CGAL_SS3_DEBUG_SPTR(result);
     return result;
 }
 

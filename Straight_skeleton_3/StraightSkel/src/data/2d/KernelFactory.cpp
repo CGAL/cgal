@@ -39,7 +39,7 @@ Segment2SPtr KernelFactory::createSegment2(Point2SPtr src, Point2SPtr dst) {
     if (src != dst) {
         result = Segment2SPtr(new Segment2(*src, *dst));
     }
-    DEBUG_SPTR(result);
+    CGAL_SS3_DEBUG_SPTR(result);
     return result;
 }
 
@@ -52,7 +52,7 @@ Line2SPtr KernelFactory::createLine2(Point2SPtr p, Point2SPtr q) {
     if (p != q) {
         result = Line2SPtr(new Line2(*p, *q));
     }
-    DEBUG_SPTR(result);
+    CGAL_SS3_DEBUG_SPTR(result);
     return result;
 }
 

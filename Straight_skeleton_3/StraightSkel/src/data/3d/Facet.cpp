@@ -26,10 +26,10 @@
 #include "data/3d/Polyhedron.h"
 #include "data/3d/KernelFactory.h"
 #include "data/3d/skel/SkelFacetData.h"
+#include "util/StringFactory.h"
+#include "util/Configuration.h"
 
 #include <CGAL/simplest_rational_in_interval.h>
-
-#include "util/StringFactory.h"
 
 #include <cmath>
 #include <random>
@@ -160,7 +160,7 @@ void Facet::addEdge(EdgeSPtr edge) {
         edge->setFacetR(shared_from_this());
         edge->setFacetRListIt(it);
     } else {
-        DEBUG_PRINT(edge->toString());
+        CGAL_SS3_HDS_TRACE(edge->toString());
         throw std::runtime_error("The given edge already has a left and a right facet.");
     }
     VertexSPtr vertex_src = edge->src(shared_from_this());
@@ -298,7 +298,7 @@ void Facet::sortEdges() {
 }
 
 PolyhedronSPtr Facet::getPolyhedron() const {
-    DEBUG_WPTR(this->polyhedron_);
+    CGAL_SS3_DEBUG_WPTR(this->polyhedron_);
     if (this->polyhedron_.expired())
         return PolyhedronSPtr();
     else
@@ -318,7 +318,7 @@ void Facet::setPolyhedronListIt(std::list<FacetSPtr>::iterator list_it) {
 }
 
 FacetDataSPtr Facet::getData() const {
-    DEBUG_SPTR(this->data_);
+    CGAL_SS3_DEBUG_SPTR(this->data_);
     return this->data_;
 }
 
@@ -391,7 +391,7 @@ FacetSPtr Facet::next(VertexSPtr vertex) const {
             }
         }
     }
-    DEBUG_SPTR(result);
+    CGAL_SS3_DEBUG_SPTR(result);
     return result;
 }
 
@@ -444,7 +444,7 @@ FacetSPtr Facet::prev(VertexSPtr vertex) const {
             }
         }
     }
-    DEBUG_SPTR(result);
+    CGAL_SS3_DEBUG_SPTR(result);
     return result;
 }
 
@@ -512,7 +512,7 @@ void Facet::setPlane(Plane3SPtr plane) {
 bool Facet::initPlane() {
     bool result = false;
 
-    std::cout << "initPlane() of " << getID() << std::endl;
+    CGAL_SS3_HDS_TRACE("initPlane() of " << getID());
 
     Point3SPtr point_prev;
     std::vector<Point3SPtr> points;
@@ -526,10 +526,9 @@ bool Facet::initPlane() {
         point_prev = point;
     }
 
-    std::cout << "computing normals from " << points.size() << " points" << std::endl;
-    for (std::size_t i=0; i<points.size(); ++i) {
-        std::cout << "point " << i << ": " << *points[i] << std::endl;
-    }
+    CGAL_SS3_HDS_TRACE("computing normals from " << points.size() << " points");
+    CGAL_SS3_TRACE_CODE(for (std::size_t i=0; i<points.size(); ++i))
+    CGAL_SS3_HDS_TRACE("point " << i << ": " << *points[i]);
 
     if (points.size() >= 3)
     {
@@ -558,7 +557,7 @@ Plane3SPtr Facet::plane() {
     if (!this->plane_) {
         this->initPlane();
     }
-    DEBUG_SPTR(this->plane_);
+    CGAL_SS3_DEBUG_SPTR(this->plane_);
     return this->plane_;
 }
 
@@ -595,10 +594,7 @@ void Facet::storePlaneCoefficients()
     // need a different shared ptr here because plane_ will change with the perturbation
     cachedPlane_ = KernelFactory::createPlane3(*(plane_));
 
-#define CGAL_SS3_DEBUG_PLANE_COEFFICIENTS
-#ifdef CGAL_SS3_DEBUG_PLANE_COEFFICIENTS
-      // std::cout << "caching plane of Facet " << this->id_ << " : [" << *cachedPlane_ << "]" << std::endl;
-#endif
+    CGAL_SS3_TRANSF_TRACE("caching plane of Facet " << this->id_ << " : [" << *cachedPlane_ << "]");
 }
 
 void Facet::perturbPlaneCoefficientsNudge(const double range) {
@@ -607,17 +603,14 @@ void Facet::perturbPlaneCoefficientsNudge(const double range) {
     // @todo storing coefficients is only useful if we plan on untilting at the end.
     storePlaneCoefficients();
 
-#ifdef CGAL_SS3_DEBUG_PLANE_COEFFICIENTS
-    std::cout << "Nudging (Nudge) Face " << this->getID() << std::endl;
-    std::cout << "  From coefficients ["
-              << plane_->a() << " " << plane_->b() << " "
-              << plane_->c() << " " << plane_->d() << "]" << std::endl;
-#endif
+    CGAL_SS3_TRANSF_TRACE("Nudging (Nudge) Face " << this->getID());
+    CGAL_SS3_TRANSF_TRACE("  From coefficients [" << plane_->a() << " " << plane_->b() << " "
+                                                  << plane_->c() << " " << plane_->d() << "]");
 
     auto nudge = [&](const CGAL::FT& v) {
       static std::random_device rd;
       unsigned int s = 0; // rd()
-      // std::cout << "seed = " << s << std::endl;
+      // CGAL_SS3_TRANSF_TRACE("seed = " << s);
       static std::mt19937 gen(s);
       static std::uniform_real_distribution<> rdist(-range, range);
 
@@ -651,11 +644,8 @@ void Facet::perturbPlaneCoefficientsNudge(const double range) {
     plane_ = KernelFactory::createPlane3(a, b, c, d);
 #endif
 
-#ifdef CGAL_SS3_DEBUG_PLANE_COEFFICIENTS
-    std::cout << "  To coefficients ["
-              << plane_->a() << " " << plane_->b() << " "
-              << plane_->c() << " " << plane_->d() << "]" << std::endl;
-#endif
+    CGAL_SS3_TRANSF_TRACE("  To coefficients [" << plane_->a() << " " << plane_->b() << " "
+                                                << plane_->c() << " " << plane_->d() << "]");
 
     CGAL_postcondition(isNormalizedPlane());
 }
@@ -667,17 +657,14 @@ void Facet::perturbPlaneCoefficientsSteps(int steps) {
     // @todo storing coefficients is only useful if we plan on untilting at the end.
     storePlaneCoefficients();
 
-#ifdef CGAL_SS3_DEBUG_PLANE_COEFFICIENTS
-    std::cout << "Nudging (Steps) Face " << this->getID() << std::endl;
-    std::cout << "  From coefficients ["
-              << plane_->a() << " " << plane_->b() << " "
-              << plane_->c() << " " << plane_->d() << "]" << std::endl;
-#endif
+    CGAL_SS3_TRANSF_TRACE("Nudging (Steps) Face " << this->getID());
+    CGAL_SS3_TRANSF_TRACE("  From coefficients [" << plane_->a() << " " << plane_->b() << " "
+                                                  << plane_->c() << " " << plane_->d() << "]");
 
     auto nudge = [&](const CGAL::FT& v) {
         std::random_device rd;
         unsigned int s = 0; // rd()
-        // std::cout << "seed = " << s << std::endl;
+        // CGAL_SS3_TRANSF_TRACE("seed = " << s);
         std::mt19937 gen(s);
         std::uniform_int_distribution<> step_dis(1, steps);
         std::uniform_int_distribution<> dir_dis(0, 1); // 0: negative, 1: positive
@@ -712,11 +699,8 @@ void Facet::perturbPlaneCoefficientsSteps(int steps) {
                                          CGAL::to_double(nd/n));
 #endif
 
-#ifdef CGAL_SS3_DEBUG_PLANE_COEFFICIENTS
-    std::cout << "  To coefficients ["
-              << plane_->a() << " " << plane_->b() << " "
-              << plane_->c() << " " << plane_->d() << "]" << std::endl;
-#endif
+    CGAL_SS3_TRANSF_TRACE("  To coefficients [" << plane_->a() << " " << plane_->b() << " "
+                                                << plane_->c() << " " << plane_->d() << "]");
 
     CGAL_postcondition(isNormalizedPlane());
 }
@@ -728,17 +712,14 @@ void Facet::perturbPlaneCoefficientsExact(const CGAL::FT& den) {
     // @todo storing coefficients is only useful if we plan on untilting at the end.
     storePlaneCoefficients();
 
-#ifdef CGAL_SS3_DEBUG_PLANE_COEFFICIENTS
-    std::cout << "Nudging (Exact) Face " << this->getID() << std::endl;
-    std::cout << "  From coefficients ["
-              << plane_->a() << " " << plane_->b() << " "
-              << plane_->c() << " " << plane_->d() << "]" << std::endl;
-#endif
+    CGAL_SS3_TRANSF_TRACE("Nudging (Exact) Face " << this->getID());
+    CGAL_SS3_TRANSF_TRACE("  From coefficients [" << plane_->a() << " " << plane_->b() << " "
+                                                  << plane_->c() << " " << plane_->d() << "]");
 
     auto nudge = [&](const CGAL::FT& v) {
         static std::random_device rd;
         unsigned int s = 0; // rd()
-        // std::cout << "seed = " << s << std::endl;
+        // CGAL_SS3_TRANSF_TRACE("seed = " << s);
         static std::mt19937 gen(s);
         static std::uniform_real_distribution<> rdist(0, 1);
         CGAL::FT step = rdist(gen);
@@ -753,11 +734,8 @@ void Facet::perturbPlaneCoefficientsExact(const CGAL::FT& den) {
     // so small, needless to normalize (@todo should we even normalize others?)
     plane_ = KernelFactory::createPlane3(na, nb, nc, nd);
 
-#ifdef CGAL_SS3_DEBUG_PLANE_COEFFICIENTS
-    std::cout << "  To coefficients ["
-              << plane_->a() << " " << plane_->b() << " "
-              << plane_->c() << " " << plane_->d() << "]" << std::endl;
-#endif
+    CGAL_SS3_TRANSF_TRACE("  To coefficients [" << plane_->a() << " " << plane_->b() << " "
+                                                << plane_->c() << " " << plane_->d() << "]");
 
     CGAL_postcondition(isNormalizedPlane());
 }
@@ -770,20 +748,16 @@ void Facet::perturbPlaneCoefficientsFixedPoints(const double range,
     // @todo storing coefficients is only useful if we plan on untilting at the end.
     storePlaneCoefficients();
 
-#ifdef CGAL_SS3_DEBUG_PLANE_COEFFICIENTS
-    std::cout << "Nudging Face " << this->getID() << std::endl;
-    std::cout << "  From coefficients ["
-              << plane_->a() << " " << plane_->b() << " "
-              << plane_->c() << " " << plane_->d() << "]" << std::endl;
-    std::cout << "  with " << fixed_points.size() << " fixed points" << std::endl;
-    for (Point3SPtr fp : fixed_points) {
-        std::cout << "    " << *fp << std::endl;
-    }
-#endif
+    CGAL_SS3_TRANSF_TRACE("Nudging Face " << this->getID());
+    CGAL_SS3_TRANSF_TRACE("  From coefficients [" << plane_->a() << " " << plane_->b() << " "
+                                                  << plane_->c() << " " << plane_->d() << "]");
+    CGAL_SS3_TRANSF_TRACE("  with " << fixed_points.size() << " fixed points");
+    CGAL_SS3_TRACE_CODE(for (Point3SPtr fp : fixed_points))
+    CGAL_SS3_TRANSF_TRACE("    " << *fp);
 
     static std::random_device rd;
     unsigned int s = 0; // rd()
-    // std::cout << "seed = " << s << std::endl;
+    // CGAL_SS3_TRANSF_TRACE("seed = " << s);
     static std::mt19937 gen(s);
     static std::uniform_real_distribution<> rdist(-range, range);
 
@@ -796,6 +770,7 @@ void Facet::perturbPlaneCoefficientsFixedPoints(const double range,
         return nv;
     };
 
+#ifdef CGAL_SS3_USE_SIMPLEST_RATIONAL_IN_INTERVAL
     auto nudge_to_simplest_rational_in_interval = [&](const CGAL::FT& v) {
         double d1 = nudge(v);
         double d2 = nudge(v);
@@ -805,6 +780,7 @@ void Facet::perturbPlaneCoefficientsFixedPoints(const double range,
         CGAL::FT nv = CGAL::simplest_rational_in_interval<CGAL::K::Exact_kernel::FT>(d1, d2);
         return nv;
     };
+#endif
 
     // 0 fixed points: nudge all coefficients independently
     if (fixed_points.size() == 0) {
@@ -837,7 +813,6 @@ void Facet::perturbPlaneCoefficientsFixedPoints(const double range,
         const CGAL::FT& y0 = p0->y();
         const CGAL::FT& z0 = p0->z();
         CGAL::FT d = - (na * x0 + nb * y0 + nc * z0);
-        // std::cout << "Perturb 1 d: " << exact(d) << std::endl;
         plane_ = KernelFactory::createPlane3(na, nb, nc, d);
         CGAL_postcondition(plane_->has_on(*p0));
     } else if (fixed_points.size() == 2) {
@@ -870,53 +845,10 @@ void Facet::perturbPlaneCoefficientsFixedPoints(const double range,
         CGAL::FT bb = b0 - dot * uy / uu;
         CGAL::FT cb = c0 - dot * uz / uu;
 
-        // std::cout << "a0 = " << exact(a0) << std::endl;
-        // std::cout << "ux = " << exact(ux) << std::endl;
-        // std::cout << "dot = " << exact(dot) << std::endl;
-        // std::cout << "uu = " << exact(uu) << std::endl;
-
-#ifdef CGAL_SS3_CHECK_ALMOST_DEGENERATE_VECTORS_IN_FACET_PERTURBATIONS // these shouldn't be needed because in general the original normal is sane and very far from 'u'
-        const double eps = 1e-12;
-
-        // If the projection is (almost) zero, pick any orthogonal normal
-        if (CGAL::abs(ab) < eps && CGAL::abs(bb) < eps && CGAL::abs(cb) < eps) {
-            ab = 0;
-            bb = uz;
-            cb = -uy;
-            if (CGAL::abs(bb) < eps && CGAL::abs(cb) < eps) {
-                ab = -uz;
-                bb = 0;
-                cb = ux;
-            }
-        }
-#endif
-
-#if 0
-        std::cout << "uy = " << exact(uy) << std::endl;
-        std::cout << "cb = " << exact(cb) << std::endl;
-        std::cout << "uz = " << exact(uz) << std::endl;
-        std::cout << "bb = " << exact(bb) << std::endl;
-#endif
-
         // Step 4: Find a direction to nudge (cross product)
         CGAL::FT vx = uy * cb - uz * bb;
         CGAL::FT vy = uz * ab - ux * cb;
         CGAL::FT vz = ux * bb - uy * ab;
-
-#ifdef CGAL_SS3_CHECK_ALMOST_DEGENERATE_VECTORS_IN_FACET_PERTURBATIONS // these shouldn't be needed because in general the original normal is sane and very far from 'u'
-        // If v is zero, pick another orthogonal direction
-        if (CGAL::abs(vx) < eps && CGAL::abs(vy) < eps && CGAL::abs(vz) < eps) {
-            // Use cross with (1,0,0)
-            vx = 0;
-            vy = uz;
-            vz = -uy;
-            if (CGAL::abs(vy) < eps && CGAL::abs(vz) < eps) {
-                vx = -uz;
-                vy = 0;
-                vz = ux;
-            }
-        }
-#endif
 
         // Step 5: Nudge the normal
 #ifdef CGAL_SS3_USE_SIMPLEST_RATIONAL_IN_INTERVAL
@@ -925,14 +857,9 @@ void Facet::perturbPlaneCoefficientsFixedPoints(const double range,
         double epsilon = rdist(gen);
 #endif
 
-        // std::cout << "ab = " << exact(ab) << std::endl;
-        // std::cout << "vx = " << exact(vx) << std::endl;
-
         CGAL::FT a1 = ab + epsilon * vx;
         CGAL::FT b1 = bb + epsilon * vy;
         CGAL::FT c1 = cb + epsilon * vz;
-
-        // std::cout << "a1 = " << exact(a1) << std::endl;
 
         // Step 6: Compute d so plane passes through p0
         CGAL::FT d1 = - (a1 * p0x + b1 * p0y + c1 * p0z);
@@ -941,14 +868,11 @@ void Facet::perturbPlaneCoefficientsFixedPoints(const double range,
         CGAL_postcondition(plane_->has_on(*p0));
         CGAL_postcondition(plane_->has_on(*p1));
     } else {
-        DEBUG_PRINT("Error: called fixed point facet perturbation with > 2 fixed points");
+        CGAL_SS3_TRANSF_TRACE("Error: called fixed point facet perturbation with > 2 fixed points");
     }
 
-#ifdef CGAL_SS3_DEBUG_PLANE_COEFFICIENTS
-    std::cout << "  To coefficients [" << std::flush
-              << plane_->a() << " " << plane_->b() << " "
-              << plane_->c() << " " << plane_->d() << "]" << std::endl;
-#endif
+    CGAL_SS3_TRANSF_TRACE("  To coefficients [" << plane_->a() << " " << plane_->b() << " "
+                                                << plane_->c() << " " << plane_->d() << "]");
 
     CGAL_postcondition(isNormalizedPlane());
 }
@@ -965,58 +889,43 @@ void Facet::perturbPlaneCoefficientsHighDegrees(const double range) {
 
 void Facet::perturbPlaneCoefficients(PerturbationType type)
 {
+    double range = 1e-10;
+    util::ConfigurationSPtr config = util::Configuration::getInstance();
+    if (config->isLoaded()) {
+        range = config->getDouble("main", "rand_move_points_range");
+    }
+
     if (type == PerturbationType::NUDGE) {
-        perturbPlaneCoefficientsNudge(1e-10);
+        perturbPlaneCoefficientsNudge(range);
     } else if (type == PerturbationType::STEPS) {
         perturbPlaneCoefficientsSteps(10);
     } else if (type == PerturbationType::EXACT) {
         perturbPlaneCoefficientsExact(CGAL::FT(1e100));
     } else if (type == PerturbationType::HIGH_DEGREES) {
-        perturbPlaneCoefficientsHighDegrees(1e-15);
+        perturbPlaneCoefficientsHighDegrees(range);
     } else {
         CGAL_error_msg("Unknown perturbation type");
     }
 }
 
-void Facet::restorePlaneCoefficients(CGAL::FT perturbationOffset,
-                                     CGAL::FT perturbationEndOffset)
+void Facet::restorePlaneCoefficients(const CGAL::FT& perturbationOffset,
+                                     const CGAL::FT& perturbationEndOffset)
 {
-#ifdef CGAL_SS3_DEBUG_PLANE_COEFFICIENTS
-    std::cout << "plane of Facet " << this->id_ << " is [" << *plane_ << "]" << std::endl;
-#endif
+    CGAL_SS3_TRANSF_TRACE("plane of Facet " << this->id_ << " is [" << *plane_ << "]");
 
     if (!cachedPlane_) {
         std::cerr << "Warning: no plane coefficients to restore" << std::endl;
         return;
     }
 
-#if 0
-    CGAL::FT cx = 0, cy = 0, cz = 0;
-    std::list<VertexSPtr>::const_iterator it_v = vertices_.begin();
-    while (it_v != vertices_.end()) {
-        VertexSPtr vertex = *it_v++;
-        std::cout << "facet v " << *(vertex->getPoint()) << std::endl;
-        cx += vertex->getPoint()->x();
-        cy += vertex->getPoint()->y();
-        cz += vertex->getPoint()->z();
-    }
-    cx /= CGAL::FT(vertices_.size());
-    cy /= CGAL::FT(vertices_.size());
-    cz /= CGAL::FT(vertices_.size());
-
-    // we want the plane such that at time 0 we are going through the centroid
-    CGAL::FT d = 0 /*speed*time */ - (cachedPlane_->a() * cx + cachedPlane_->b() * cy + cachedPlane_->c() * cz);
-#else
     CGAL::FT speed = 1.0;
     if (hasData()) {
         speed = std::dynamic_pointer_cast<data::_3d::skel::SkelFacetData>(getData())->getSpeed();
     }
 
-#ifdef CGAL_SS3_DEBUG_PLANE_COEFFICIENTS
-    std::cout << "OLD d = " << cachedPlane_->d() << std::endl;
-    std::cout << "perturbationOffset = " << perturbationOffset << std::endl;
-    std::cout << "perturbationEndOffset = " << perturbationEndOffset << std::endl;
-#endif
+    CGAL_SS3_TRANSF_TRACE("OLD d = " << cachedPlane_->d());
+    CGAL_SS3_TRANSF_TRACE("perturbationOffset = " << perturbationOffset);
+    CGAL_SS3_TRANSF_TRACE("perturbationEndOffset = " << perturbationEndOffset);
 
     // The minus sign "d - ..." is because we shrink, so the plane needs to be offset
     // by the difference of offsets, but in the direction opposite of its normal.
@@ -1025,14 +934,12 @@ void Facet::restorePlaneCoefficients(CGAL::FT perturbationOffset,
     //   Plane3SPtr offset_plane_l = KernelWrapper::offsetPlane(plane_l, - speed_l);
     //                                                                  ^^^
     CGAL:: FT d = cachedPlane_->d() - speed * (perturbationEndOffset - perturbationOffset);
-#endif
+
     plane_ = KernelFactory::createPlane3(cachedPlane_->a(), cachedPlane_->b(), cachedPlane_->c(), d);
     CGAL_assertion_code(CGAL::FT sq_n = CGAL::square(plane_->a()) + CGAL::square(plane_->b()) + CGAL::square(plane_->c()));
     CGAL_assertion((sq_n - 1) < 1e-5);
 
-#ifdef CGAL_SS3_DEBUG_PLANE_COEFFICIENTS
-    std::cout << "plane of Facet " << this->id_ << " restored to [" << *plane_ << "]" << std::endl;
-#endif
+    CGAL_SS3_TRANSF_TRACE("plane of Facet " << this->id_ << " restored to [" << *plane_ << "]");
 }
 
 bool Facet::makeFirstConvex() {
@@ -1075,13 +982,9 @@ bool Facet::makeFirstConvex() {
           Vector3SPtr normal_current = KernelFactory::createVector3(plane_current);
           double angle = 0.0;
           double arg = 0.0;
-# ifdef USE_CGAL
           arg = CGAL::to_double(((*normal)*(*normal_current)) /
                   CGAL::disallowed_sqrt(normal->squared_length() * normal_current->squared_length()));
-# else
-          arg = ((*normal)*(*normal_current)) /
-                  sqrt(normal->squared_length() * normal_current->squared_length());
-# endif
+
           // fixes issues with floating point precision
           if (arg <= -1.0) {
               angle = M_PI;
@@ -1118,8 +1021,8 @@ bool Facet::makeFirstConvex() {
         sortVertices();
     }
     if (!result) {
-        DEBUG_PRINT("Warning: Unable to make first 3 vertices convex.");
-        // DEBUG_PRINT(toString());
+        CGAL_SS3_HDS_TRACE("Warning: Unable to make first 3 vertices convex.");
+        CGAL_SS3_HDS_TRACE(toString());
     }
 
     return result;
@@ -1219,19 +1122,12 @@ std::string Facet::toString() const {
     std::stringstream sstr;
     sstr << "Facet(";
     sstr << "id=" << util::StringFactory::fromInteger(id_) << ", ";
-    sstr << "addr=" << util::StringFactory::fromPointer(this) << ", ";
+    // sstr << "addr=" << util::StringFactory::fromPointer(this) << ", ";
     if (plane_) {
-#ifdef USE_CGAL
         sstr << "Plane: <" << util::StringFactory::fromDouble(CGAL::to_double(plane_->a())) << ", "
              << util::StringFactory::fromDouble(CGAL::to_double(plane_->b())) << ", "
              << util::StringFactory::fromDouble(CGAL::to_double(plane_->c())) << ", "
              << util::StringFactory::fromDouble(CGAL::to_double(plane_->d())) << ">, ";
-#else
-        sstr << "Plane: <" << util::StringFactory::fromDouble(plane_->getA()) << ", "
-             << util::StringFactory::fromDouble(plane_->getB()) << ", "
-             << util::StringFactory::fromDouble(plane_->getC()) << ", "
-             << util::StringFactory::fromDouble(plane_->getD()) << ">, ";
-#endif
     }
 
     if (hasData()) {

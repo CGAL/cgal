@@ -41,7 +41,7 @@ SplitEventSPtr SplitEvent::create() {
 }
 
 NodeSPtr SplitEvent::getNode() const {
-    DEBUG_SPTR(node_);
+    CGAL_SS3_DEBUG_SPTR(node_);
     return node_;
 }
 
@@ -58,7 +58,7 @@ CGAL::FT SplitEvent::getOffset() const {
 }
 
 VertexSPtr SplitEvent::getVertex() const {
-    DEBUG_SPTR(vertex_);
+    CGAL_SS3_DEBUG_SPTR(vertex_);
     return vertex_;
 }
 
@@ -67,7 +67,7 @@ void SplitEvent::setVertex(VertexSPtr vertex) {
 }
 
 EdgeSPtr SplitEvent::getEdge() const {
-    DEBUG_SPTR(edge_);
+    CGAL_SS3_DEBUG_SPTR(edge_);
     return edge_;
 }
 

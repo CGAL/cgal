@@ -39,7 +39,7 @@ SphericalVertexEventSPtr SphericalVertexEvent::create() {
 }
 
 CircularNodeSPtr SphericalVertexEvent::getNode() const {
-    DEBUG_SPTR(node_);
+    CGAL_SS3_DEBUG_SPTR(node_);
     return node_;
 }
 
@@ -56,7 +56,7 @@ CGAL::FT SphericalVertexEvent::getOffset() const {
 }
 
 CircularVertexSPtr SphericalVertexEvent::getVertex1() const {
-    DEBUG_SPTR(vertex_1_);
+    CGAL_SS3_DEBUG_SPTR(vertex_1_);
     return vertex_1_;
 }
 
@@ -65,7 +65,7 @@ void SphericalVertexEvent::setVertex1(CircularVertexSPtr vertex_1) {
 }
 
 CircularVertexSPtr SphericalVertexEvent::getVertex2() const {
-    DEBUG_SPTR(vertex_2_);
+    CGAL_SS3_DEBUG_SPTR(vertex_2_);
     return vertex_2_;
 }
 

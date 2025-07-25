@@ -35,7 +35,7 @@ AbstractEvent::~AbstractEvent() {
 }
 
 PolyhedronSPtr AbstractEvent::getPolyhedronResult() const {
-    //DEBUG_SPTR(polyhedron_result_);
+    //CGAL_SS3_DEBUG_SPTR(polyhedron_result_);
     return polyhedron_result_;
 }
 
@@ -44,7 +44,7 @@ void AbstractEvent::setPolyhedronResult(PolyhedronSPtr polyhedron) {
 }
 
 StraightSkeletonSPtr AbstractEvent::getSkel() const {
-    DEBUG_WPTR(skel_);
+    CGAL_SS3_DEBUG_WPTR(skel_);
     if (this->skel_.expired())
         return StraightSkeletonSPtr();
     else

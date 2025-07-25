@@ -56,7 +56,7 @@ CircularArcSPtr CircularArc::create(CircularNodeSPtr node_src, CircularNodeSPtr 
 }
 
 CircularNodeSPtr CircularArc::getNodeSrc() const {
-    DEBUG_SPTR(node_src_);
+    CGAL_SS3_DEBUG_SPTR(node_src_);
     return node_src_;
 }
 
@@ -74,7 +74,7 @@ void CircularArc::setNodeSrcListIt(std::list<CircularArcWPtr>::iterator node_src
 }
 
 CircularNodeSPtr CircularArc::getNodeDst() const {
-    DEBUG_SPTR(node_dst_);
+    CGAL_SS3_DEBUG_SPTR(node_dst_);
     return node_dst_;
 }
 
@@ -91,7 +91,7 @@ void CircularArc::setNodeDstListIt(std::list<CircularArcWPtr>::iterator node_dst
 }
 
 Vector3SPtr CircularArc::getDirection() const {
-    DEBUG_SPTR(direction_);
+    CGAL_SS3_DEBUG_SPTR(direction_);
     return this->direction_;
 }
 
@@ -100,7 +100,7 @@ void CircularArc::setDirection(Vector3SPtr direction) {
 }
 
 CircularEdgeSPtr CircularArc::getEdgeLeft() const {
-    DEBUG_SPTR(edge_left_);
+    CGAL_SS3_DEBUG_SPTR(edge_left_);
     return edge_left_;
 }
 
@@ -109,7 +109,7 @@ void CircularArc::setEdgeLeft(CircularEdgeSPtr edge_left) {
 }
 
 CircularEdgeSPtr CircularArc::getEdgeRight() const {
-    DEBUG_SPTR(edge_right_);
+    CGAL_SS3_DEBUG_SPTR(edge_right_);
     return edge_right_;
 }
 
@@ -118,7 +118,7 @@ void CircularArc::setEdgeRight(CircularEdgeSPtr edge_right) {
 }
 
 Plane3SPtr CircularArc::getSupportingPlane() const {
-    DEBUG_SPTR(supporting_plane_);
+    CGAL_SS3_DEBUG_SPTR(supporting_plane_);
     return supporting_plane_;
 }
 
@@ -127,7 +127,7 @@ void CircularArc::setSupportingPlane(Plane3SPtr supporting_plane) {
 }
 
 SphericalSkeletonSPtr CircularArc::getSkel() const {
-    DEBUG_WPTR(skel_);
+    CGAL_SS3_DEBUG_WPTR(skel_);
     if (this->skel_.expired())
         return SphericalSkeletonSPtr();
     else

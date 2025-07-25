@@ -44,7 +44,7 @@ void MeshVertex::setPoint(Point2SPtr point) {
 }
 
 MeshSPtr MeshVertex::getMesh() const {
-    DEBUG_WPTR(mesh_);
+    CGAL_SS3_DEBUG_WPTR(mesh_);
     if (this->mesh_.expired())
         return MeshSPtr();
     else
@@ -102,7 +102,7 @@ MeshCellSPtr MeshVertex::firstCell() const {
             break;
         }
     }
-    DEBUG_SPTR(result);
+    CGAL_SS3_DEBUG_SPTR(result);
     return result;
 }
 
@@ -120,7 +120,7 @@ MeshVertexSPtr MeshVertex::next(MeshCellSPtr cell) const {
             }
         }
     }
-    DEBUG_SPTR(result);
+    CGAL_SS3_DEBUG_SPTR(result);
     return result;
 }
 
@@ -137,7 +137,7 @@ MeshVertexSPtr MeshVertex::prev(MeshCellSPtr cell) const {
             }
         }
     }
-    DEBUG_SPTR(result);
+    CGAL_SS3_DEBUG_SPTR(result);
     return result;
 }
 

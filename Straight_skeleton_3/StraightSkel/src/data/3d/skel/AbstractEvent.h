@@ -147,7 +147,7 @@ struct VertexFacetNeighborhood
 
     static std::array<int, 3> collectIncidentFacets(const VertexSPtr vertex)
     {
-        DEBUG_SPTR(vertex);
+        CGAL_SS3_DEBUG_SPTR(vertex);
         std::array<int, 3> result;
         const std::list<FacetWPtr>& ifs = vertex->facets();
         CGAL_assertion(ifs.size() == 3);
@@ -165,7 +165,7 @@ struct VertexFacetNeighborhood
 
     bool checkNeighborhoodConsistency(const VertexSPtr other) const
     {
-        DEBUG_SPTR(other);
+        CGAL_SS3_DEBUG_SPTR(other);
         const std::array<int, 3>& other_ifs = collectIncidentFacets(other);
         const bool result = (incident_facets_ == other_ifs);
         // std::cout << "  Compare: " << incident_facets_[0] << " (old) " << other_ifs[0] << " (new)" << std::endl;
@@ -189,7 +189,7 @@ struct EdgeFacetNeighborhood
 
     static std::array<int, 4> collectIncidentFacets(const EdgeSPtr& edge)
     {
-        DEBUG_SPTR(edge);
+        CGAL_SS3_DEBUG_SPTR(edge);
         std::array<int, 4> result = {{ edge->getFacetL()->getBasePlaneID(),
                                        edge->getFacetR()->getBasePlaneID(),
                                        edge->getFacetSrc()->getBasePlaneID(),
@@ -199,7 +199,7 @@ struct EdgeFacetNeighborhood
 
     bool checkNeighborhoodConsistency(const EdgeSPtr other) const
     {
-        DEBUG_SPTR(other);
+        CGAL_SS3_DEBUG_SPTR(other);
 
         const std::array<int, 4>& other_ifs = collectIncidentFacets(other);
         const bool result = (incident_facets_ == other_ifs);

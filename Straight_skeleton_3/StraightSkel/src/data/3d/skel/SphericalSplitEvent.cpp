@@ -41,7 +41,7 @@ SphericalSplitEventSPtr SphericalSplitEvent::create() {
 }
 
 CircularNodeSPtr SphericalSplitEvent::getNode() const {
-    DEBUG_SPTR(node_);
+    CGAL_SS3_DEBUG_SPTR(node_);
     return node_;
 }
 
@@ -58,7 +58,7 @@ CGAL::FT SphericalSplitEvent::getOffset() const {
 }
 
 CircularVertexSPtr SphericalSplitEvent::getVertex() const {
-    DEBUG_SPTR(vertex_);
+    CGAL_SS3_DEBUG_SPTR(vertex_);
     return vertex_;
 }
 
@@ -67,7 +67,7 @@ void SphericalSplitEvent::setVertex(CircularVertexSPtr vertex) {
 }
 
 CircularEdgeSPtr SphericalSplitEvent::getEdge() const {
-    DEBUG_SPTR(edge_);
+    CGAL_SS3_DEBUG_SPTR(edge_);
     return edge_;
 }
 

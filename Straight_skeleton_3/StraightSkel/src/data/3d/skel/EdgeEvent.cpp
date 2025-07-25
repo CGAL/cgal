@@ -43,7 +43,7 @@ EdgeEventSPtr EdgeEvent::create() {
 }
 
 NodeSPtr EdgeEvent::getNode() const {
-    DEBUG_SPTR(node_);
+    CGAL_SS3_DEBUG_SPTR(node_);
     return node_;
 }
 
@@ -60,7 +60,7 @@ CGAL::FT EdgeEvent::getOffset() const {
 }
 
 EdgeSPtr EdgeEvent::getEdge() const {
-    DEBUG_WPTR(edge_);
+    CGAL_SS3_DEBUG_WPTR(edge_);
     return edge_.lock();
 }
 

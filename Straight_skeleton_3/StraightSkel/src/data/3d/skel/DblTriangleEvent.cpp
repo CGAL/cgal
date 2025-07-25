@@ -40,7 +40,7 @@ DblTriangleEventSPtr DblTriangleEvent::create() {
 }
 
 NodeSPtr DblTriangleEvent::getNode() const {
-    DEBUG_SPTR(node_);
+    CGAL_SS3_DEBUG_SPTR(node_);
     return node_;
 }
 
@@ -57,7 +57,7 @@ CGAL::FT DblTriangleEvent::getOffset() const {
 }
 
 EdgeSPtr DblTriangleEvent::getEdge() const {
-    DEBUG_WPTR(edge_);
+    CGAL_SS3_DEBUG_WPTR(edge_);
     return edge_.lock();
 }
 

@@ -37,7 +37,7 @@ SkelEdgeDataSPtr SkelEdgeData::create(EdgeSPtr edge) {
 }
 
 SheetSPtr SkelEdgeData::getSheet() const {
-    // DEBUG_WPTR(sheet_);
+    // CGAL_SS3_DEBUG_WPTR(sheet_);
     if (this->sheet_.expired())
         return SheetSPtr();
     else
@@ -49,7 +49,7 @@ void SkelEdgeData::setSheet(SheetSPtr sheet) {
 }
 
 EdgeSPtr SkelEdgeData::getOffsetEdge() const {
-    DEBUG_WPTR(offset_edge_);
+    CGAL_SS3_DEBUG_WPTR(offset_edge_);
     if (this->offset_edge_.expired())
         return EdgeSPtr();
     else
@@ -61,7 +61,7 @@ void SkelEdgeData::setOffsetEdge(EdgeSPtr offset_edge) {
 }
 
 FacetSPtr SkelEdgeData::getFacetOrigin() const {
-    DEBUG_WPTR(facet_origin_);
+    CGAL_SS3_DEBUG_WPTR(facet_origin_);
     if (this->facet_origin_.expired())
         return FacetSPtr();
     else

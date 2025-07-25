@@ -174,7 +174,7 @@ PolyhedronSPtr WeightVertexSplitter::splitVertex(VertexSPtr vertex) {
     Plane3SPtr plane = createIntersectionPlane(vertex);
     FacetSPtr polygon = intersectPolyhedron(vertex, plane);
     data::_2d::PolygonSPtr polygon_2d = toWeighted2d(polygon);
-    DEBUG_PRINT(polygon_2d->toString());
+    CGAL_SS3_SPLITTER_TRACE(polygon_2d->toString());
     algo::_2d::SimpleStraightSkelSPtr algoskel_2d =
             algo::_2d::SimpleStraightSkel::create(polygon_2d, controller_);
     data::_2d::skel::StraightSkeletonSPtr skel_2d = algoskel_2d->getResult();

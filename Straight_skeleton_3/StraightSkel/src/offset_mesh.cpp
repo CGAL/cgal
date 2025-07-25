@@ -40,7 +40,7 @@ void save_colored_mesh(const PolygonMesh& pmesh,
 
   using value_type = typename CGAL::cpp20::remove_cvref<decltype(values[face_descriptor()])>::type;
 
-  DEBUG_PRINT("Save " << fullpath);
+  std::cout << "Saving colored mesh to " << fullpath << std::endl;
 
   // get a unique vector of values
   std::vector<value_type> unique_values;
@@ -58,14 +58,15 @@ void save_colored_mesh(const PolygonMesh& pmesh,
     colors[value] = Color(static_cast<unsigned char>(rand() % 256),
                           static_cast<unsigned char>(rand() % 256),
                           static_cast<unsigned char>(rand() % 256));
-    DEBUG_PRINT(" value " << value << " has color " << colors[value]);
+    std::cout << " value " << value << " has color " << colors[value] << std::endl;
   }
 
   auto& nc_pmesh = const_cast<PolygonMesh&>(pmesh);
   auto face_color = nc_pmesh.template add_property_map<face_descriptor, Color>("f:color").first;
 
   for (auto f : faces(pmesh)) {
-    DEBUG_PRINT("facet " << f << " with value " << values[f] << " gets color " << colors[values[f]]);
+    std::cout << "facet " << f << " with value " << values[f]
+              << " gets color " << colors[values[f]] << std::endl;
     put(face_color, f, colors[values[f]]);
   }
 
@@ -81,7 +82,7 @@ bool assign_weights(const char* weights_filename,
   using face_descriptor = typename boost::graph_traits<PolygonMesh>::face_descriptor;
 
   if(!weights_filename) {
-    DEBUG_PRINT("No input weights provided; all weights are set to '1'.");
+    CGAL_SS3_TRACE("No input weights provided; all weights are set to '1'.");
     for(face_descriptor f : faces(pmesh))
       put(fwm, f, 1.);
 
@@ -105,7 +106,7 @@ bool assign_weights(const char* weights_filename,
 
   if(weights_in >> bot_str >> bot_val
                 >> top_str >> top_val) {
-    DEBUG_PRINT("bottom & top weight info detected");
+    CGAL_SS3_TRACE("bottom & top weight info detected");
     CGAL_assertion(bot_str == "bottom:" && top_str == "top:");
   } else {
     if(x2_val != y2_val) {
@@ -123,12 +124,12 @@ bool assign_weights(const char* weights_filename,
     return false;
   }
 
-  DEBUG_PRINT("x1_val = " << x1_val);
-  DEBUG_PRINT("x2_val = " << x2_val);
-  DEBUG_PRINT("y1_val = " << y1_val);
-  DEBUG_PRINT("y2_val = " << y2_val);
-  DEBUG_PRINT("bot_val = " << bot_val);
-  DEBUG_PRINT("top_val = " << top_val);
+  CGAL_SS3_TRACE("x1_val = " << x1_val);
+  CGAL_SS3_TRACE("x2_val = " << x2_val);
+  CGAL_SS3_TRACE("y1_val = " << y1_val);
+  CGAL_SS3_TRACE("y2_val = " << y2_val);
+  CGAL_SS3_TRACE("bot_val = " << bot_val);
+  CGAL_SS3_TRACE("top_val = " << top_val);
 
   CGAL::FT eps_weight = std::numeric_limits<double>::max(); // 'double' on purpose
   if(x1_val > 0) eps_weight = (std::min)(eps_weight, x1_val);
@@ -138,7 +139,7 @@ bool assign_weights(const char* weights_filename,
   if(bot_val > 0) eps_weight = (std::min)(eps_weight, bot_val);
   if(top_val > 0) eps_weight = (std::min)(eps_weight, top_val);
 
-  DEBUG_PRINT("min_weight = " << eps_weight);
+  CGAL_SS3_TRACE("min_weight = " << eps_weight);
 
   if(eps_weight == std::numeric_limits<double>::max()) {
     std::cerr << "Error: all weights are zero" << std::endl;
@@ -148,12 +149,12 @@ bool assign_weights(const char* weights_filename,
   // @todo handle true zero
   eps_weight = 1e-10 * eps_weight;
 
-  if(x1_val == 0) { DEBUG_PRINT("x1_val to eps weight " << eps_weight); x1_val = eps_weight; }
-  if(x2_val == 0) { DEBUG_PRINT("x2_val to eps weight " << eps_weight); x2_val = eps_weight; }
-  if(y1_val == 0) { DEBUG_PRINT("y1_val to eps weight " << eps_weight); y1_val = eps_weight; }
-  if(y2_val == 0) { DEBUG_PRINT("y2_val to eps weight " << eps_weight); y2_val = eps_weight; }
-  if(bot_val == 0) { DEBUG_PRINT("bot_val to eps weight " << eps_weight); bot_val = eps_weight; }
-  if(top_val == 0) { DEBUG_PRINT("top_val to eps weight " << eps_weight); top_val = eps_weight; }
+  if(x1_val == 0) { CGAL_SS3_TRACE("x1_val to eps weight " << eps_weight); x1_val = eps_weight; }
+  if(x2_val == 0) { CGAL_SS3_TRACE("x2_val to eps weight " << eps_weight); x2_val = eps_weight; }
+  if(y1_val == 0) { CGAL_SS3_TRACE("y1_val to eps weight " << eps_weight); y1_val = eps_weight; }
+  if(y2_val == 0) { CGAL_SS3_TRACE("y2_val to eps weight " << eps_weight); y2_val = eps_weight; }
+  if(bot_val == 0) { CGAL_SS3_TRACE("bot_val to eps weight " << eps_weight); bot_val = eps_weight; }
+  if(top_val == 0) { CGAL_SS3_TRACE("top_val to eps weight " << eps_weight); top_val = eps_weight; }
 
   for(face_descriptor f : faces(pmesh))
   {
@@ -162,7 +163,7 @@ bool assign_weights(const char* weights_filename,
     CGAL::Polygon_mesh_processing::internal::sum_normals<Point3>(pmesh, f, get(CGAL::vertex_point, pmesh), v, CGAL::K());
     CGAL::FT sq_n = v.squared_length();
 
-    DEBUG_PRINT("facet: " << f << " normal: " << v);
+    CGAL_SS3_TRACE("facet: " << f << " normal: " << v);
 
 #if 1
     CGAL::FT sq_cos_x = CGAL::square(v.x()) / sq_n;
@@ -204,7 +205,7 @@ bool assign_weights(const char* weights_filename,
     }
 #endif
 
-    DEBUG_PRINT("facet: " << f << " weight: " << weight);
+    CGAL_SS3_TRACE("facet: " << f << " weight: " << weight);
 
     // @todo currently 'double', but only because the run_and_compare.sh pipeline
     // with multiple .cpp needs to save to a file and the f:weight pmap will not
@@ -214,7 +215,7 @@ bool assign_weights(const char* weights_filename,
     CGAL_postcondition(get(fwm, f) != 0);
   }
 
-  DEBUG_PRINT("E-W-S-N weights: " << x1_val << " " << x2_val << " " << y1_val << " " << y2_val);
+  CGAL_SS3_TRACE("E-W-S-N weights: " << x1_val << " " << x2_val << " " << y1_val << " " << y2_val);
 
   utils::save_colored_mesh(pmesh, fwm, "results/weighted.ply");
 
@@ -246,7 +247,7 @@ bool face_offset(TriangleMesh& tmesh,
   CGAL_precondition(!PMP::does_self_intersect(tmesh));
 
   if (outwards) {
-    DEBUG_PRINT("Orienting inwards...");
+    CGAL_SS3_TRACE("Reversing face orientations (pointing in)...");
     PMP::orient_to_bound_a_volume(tmesh);
     PMP::reverse_face_orientations(tmesh);
   }
@@ -258,14 +259,14 @@ bool face_offset(TriangleMesh& tmesh,
   // borders and disconnected facet connected components
   algo::_3d::PolyhedronSPtr p = algo::_3d::PolyhedronTransformation::convert(tmesh, np_in);
 
-  DEBUG_PRINT("Post merge: " << p->vertices().size() << " NV " << p->facets().size() << " NF");
+  CGAL_SS3_TRACE("Post merge: " << p->vertices().size() << " NV " << p->facets().size() << " NF");
 
   // @todo In safe mode, this should be:
   // if (bad) -> reduce amplitude of perturbation and try again"
   algo::_3d::PolyhedronTransformation::normalizeFacetPlanes(p);
   algo::_3d::PolyhedronTransformation::randTiltPlanesv3(p);
 
-  DEBUG_PRINT("Post randomization: " << p->vertices().size() << " NV " << p->facets().size() << " NF");
+  CGAL_SS3_TRACE("Post randomization: " << p->vertices().size() << " NV " << p->facets().size() << " NF");
 
   // visitor to collect the results
   struct Mesh_collector_visitor
@@ -311,7 +312,7 @@ bool face_offset(TriangleMesh& tmesh,
     const CGAL::FT save_offset = save_offsets[i];
     algo::_3d::PolyhedronSPtr result_p = results_p[i];
 
-    DEBUG_PRINT("Post processing of result @ " << save_offset)
+    CGAL_SS3_TRACE("Post processing of result @ " << save_offset)
 
     if (!result_p) {
       return { };
@@ -335,14 +336,14 @@ bool face_offset(TriangleMesh& tmesh,
     CGAL_postcondition(!PMP::does_self_intersect(result_t));
 
     if (outwards) {
-      DEBUG_PRINT("Orienting outwards...");
+      CGAL_SS3_TRACE("Reversing face orientations (pointing out)...");
       PMP::reverse_face_orientations(result_t);
     }
 
     results.push_back(result_t);
   }
 
-  DEBUG_PRINT("Offset meshes generated");
+  CGAL_SS3_TRACE("Offset meshes generated");
   return true;
 }
 
@@ -384,7 +385,8 @@ int main(int argc, char** argv)
   if (argc > 3) {
     std::string outwards_str(argv[3]);
     std::transform(outwards_str.begin(), outwards_str.end(), outwards_str.begin(), ::tolower);
-    if (outwards_str == "1" || outwards_str == "true" || outwards_str == "outwards") {
+    if (outwards_str == "1" || outwards_str == "true"  ||
+        outwards_str == "outward" || outwards_str == "outwards") {
       outwards = true;
     }
   }
@@ -393,11 +395,29 @@ int main(int argc, char** argv)
   const std::filesystem::path save_path = (argc > 4) ? argv[4] : std::filesystem::current_path();
 
   // offsets at which a result should be produced
-  std::vector<CGAL::FT> save_offsets = { -1 };
+  std::vector<CGAL::FT> save_offsets;
+  for (int i=5; i<argc; ++i) {
+    try {
+      double val = std::stod(argv[i]);
+      if (val >= 0) {
+        std::cerr << "Error: offset must be negative, got " << val << std::endl;
+        return EXIT_FAILURE;
+      }
+      save_offsets.push_back(val);
+    } catch (const std::exception& e) {
+      std::cerr << "Error: invalid offset value '" << argv[i] << "'" << std::endl;
+      return EXIT_FAILURE;
+    }
+  }
+
+  if (save_offsets.empty()) {
+    std::cerr << "Error: no valid negative offsets provided." << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  std::sort(save_offsets.begin(), save_offsets.end(), std::greater<CGAL::FT>());
 
   // ---
-
-  DEBUG_PRINT("Loading mesh and weights...");
 
   Mesh sm;
   if(!CGAL::IO::read_polygon_mesh(mesh_filename, sm) || CGAL::is_empty(sm)) {
@@ -405,7 +425,7 @@ int main(int argc, char** argv)
     return EXIT_FAILURE;
   }
 
-  DEBUG_PRINT("IN: " << vertices(sm).size() << " NV " << faces(sm).size() << " NF");
+  std::cout << "Input mesh: " << vertices(sm).size() << " NV " << faces(sm).size() << " NF" << std::endl;
 
   // let's tolerate untriangulated inputs
   if (!CGAL::is_triangle_mesh(sm)) {

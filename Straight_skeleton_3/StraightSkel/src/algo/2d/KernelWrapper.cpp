@@ -38,7 +38,7 @@ Point2SPtr KernelWrapper::intersection(Line2SPtr line1, Line2SPtr line2) {
 #else
     result = Point2SPtr(kernel::intersection(&(*line1), &(*line2)));
 #endif
-    DEBUG_SPTR(result);
+    CGAL_SS3_DEBUG_SPTR(result);
     return result;
 }
 
@@ -50,7 +50,7 @@ Line2SPtr KernelWrapper::bisector(Line2SPtr line1, Line2SPtr line2) {
 #else
     result = Line2SPtr(kernel::bisector(&(*line1), &(*line2)));
 #endif
-    DEBUG_SPTR(result);
+    CGAL_SS3_DEBUG_SPTR(result);
     return result;
 }
 
@@ -76,7 +76,7 @@ CGAL::FT KernelWrapper::distance(Line2SPtr line, Point2SPtr point) {
 
 Line2SPtr KernelWrapper::opposite(Line2SPtr line) {
     Line2SPtr result = KernelFactory::createLine2(line->opposite());
-    DEBUG_SPTR(result);
+    CGAL_SS3_DEBUG_SPTR(result);
     return result;
 }
 
@@ -112,7 +112,7 @@ Line2SPtr KernelWrapper::offsetLine(Line2SPtr line, CGAL::FT offset) {
     Point2 p_trans = p + (v_normal * offset);
     Line2 line_trans(p_trans, v_dir);
     result = KernelFactory::createLine2(line_trans);
-    DEBUG_SPTR(result);
+    CGAL_SS3_DEBUG_SPTR(result);
     return result;
 }
 
@@ -125,7 +125,7 @@ Point2SPtr KernelWrapper::offsetPoint(Point2SPtr point, Vector2SPtr dir, CGAL::F
     Point2 p_moved = *point + (dir->normalize() * offset);
 #endif
     result = KernelFactory::createPoint2(p_moved);
-    DEBUG_SPTR(result);
+    CGAL_SS3_DEBUG_SPTR(result);
     return result;
 }
 
@@ -168,7 +168,7 @@ Point2SPtr KernelWrapper::projection(Line2SPtr line, Point2SPtr point) {
 #else
     result = Point2SPtr(kernel::projection(&(*line), &(*point)));
 #endif
-    DEBUG_SPTR(result);
+    CGAL_SS3_DEBUG_SPTR(result);
     return result;
 }
 

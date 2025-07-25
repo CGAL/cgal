@@ -109,7 +109,7 @@ unsigned int GraphChecker::countVisitedChilds(const std::set<NodeSPtr>& visited,
         } else if (arc->getNodeDst() == node) {
             other = arc->getNodeSrc();
         } else {
-            DEBUG_PRINT(arc->toString());
+            CGAL_SS3_SKEL_DS_TRACE(arc->toString());
         }
         if (visited.find(other) != visited.end()) {
             result++;
@@ -154,7 +154,7 @@ bool GraphChecker::check(StraightSkeletonSPtr skel) {
     unsigned int size_hidden_begin = 0;
     while (hidden.size() > 0) {
         size_hidden_begin = hidden.size();
-        DEBUG_PRINT(hidden.size());
+        CGAL_SS3_SKEL_DS_TRACE(hidden.size());
         std::set<NodeSPtr>::iterator it_n = hidden.begin();
         while (it_n != hidden.end()) {
             NodeSPtr node = *it_n++;
@@ -190,37 +190,37 @@ bool GraphChecker::check(StraightSkeletonSPtr skel) {
                 break;
             }
             if (visit_event_types == 1) {
-                DEBUG_PRINT(num_nodes_layer);
-                DEBUG_PRINT("-- No more vanish events");
+                CGAL_SS3_SKEL_DS_TRACE(num_nodes_layer);
+                CGAL_SS3_SKEL_DS_TRACE("-- No more vanish events");
                 visit_event_types = 2;
-                DEBUG_PRINT("-- Visiting contact events");
+                CGAL_SS3_SKEL_DS_TRACE("-- Visiting contact events");
                 num_nodes_layer = 0;
                 num_layers_contact++;
-                DEBUG_PRINT(min_offset);
+                CGAL_SS3_SKEL_DS_TRACE(min_offset);
             } else if (visit_event_types == 2) {
-                DEBUG_PRINT(num_nodes_layer);
-                DEBUG_PRINT("-- No more contact events");
+                CGAL_SS3_SKEL_DS_TRACE(num_nodes_layer);
+                CGAL_SS3_SKEL_DS_TRACE("-- No more contact events");
                 visit_event_types = 1;
-                DEBUG_PRINT("-- Visiting vanish events");
+                CGAL_SS3_SKEL_DS_TRACE("-- Visiting vanish events");
                 num_nodes_layer = 0;
                 num_layers_vanish++;
             }
         }
     }
 
-    DEBUG_PRINT(hidden.size());
-    DEBUG_PRINT(num_layers_vanish);
-    DEBUG_PRINT(num_layers_contact);
-    DEBUG_PRINT(result);
+    CGAL_SS3_SKEL_DS_TRACE(hidden.size());
+    CGAL_SS3_SKEL_DS_TRACE(num_layers_vanish);
+    CGAL_SS3_SKEL_DS_TRACE(num_layers_contact);
+    CGAL_SS3_SKEL_DS_TRACE(result);
 
     if (result == 0) {
         std::set<NodeSPtr>::iterator it_n = hidden.begin();
         while (it_n != hidden.end()) {
-            NodeSPtr node = *it_n++;
-            unsigned int num_visited_childs = countVisitedChilds(visited, node);
-            AbstractEventSPtr event = findEvent(skel, node);
-            DEBUG_PRINT(event->toString());
-            DEBUG_PRINT(num_visited_childs);
+            CGAL_SS3_TRACE_CODE(NodeSPtr node = *it_n++;)
+            CGAL_SS3_TRACE_CODE(unsigned int num_visited_childs = countVisitedChilds(visited, node);)
+            CGAL_SS3_TRACE_CODE(AbstractEventSPtr event = findEvent(skel, node);)
+            CGAL_SS3_SKEL_DS_TRACE(event->toString());
+            CGAL_SS3_SKEL_DS_TRACE(num_visited_childs);
         }
     }
 

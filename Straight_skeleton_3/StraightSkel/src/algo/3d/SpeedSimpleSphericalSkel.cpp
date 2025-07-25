@@ -67,7 +67,7 @@ void SpeedSimpleSphericalSkel::run() {
     if (controller_) {
         controller_->wait();
     }
-    DEBUG_PRINT("== Speed Spherical Skeleton started ==");
+    CGAL_SS3_CORE_TRACE("== Speed Spherical Skeleton started ==");
     SphericalPolygonSPtr polygon = polygon_;
     unsigned int i = 0;
     if (init(polygon)) {
@@ -76,7 +76,7 @@ void SpeedSimpleSphericalSkel::run() {
         }
         SphericalAbstractEventSPtr event = nextEvent(polygon);
         while (event) {
-            DEBUG_PRINT("-- Next Event: " << event->toString() << " --");
+            CGAL_SS3_CORE_TRACE("-- Next Event: " << event->toString() << " --");
             if (controller_) {
                 controller_->wait();
             }
@@ -90,16 +90,16 @@ void SpeedSimpleSphericalSkel::run() {
             }
             assert(polygon->isConsistent());
             assert(skel_result_->isConsistent());
-            DEBUG_PRINT("-- Finished handling Event --");
+            CGAL_SS3_CORE_TRACE("-- Finished handling Event --");
             i++;
-            DEBUG_PRINT(i);
+            CGAL_SS3_CORE_TRACE(i);
             if (controller_) {
                 controller_->wait();
             }
             event = nextEvent(polygon);
         }
-        DEBUG_PRINT("== Spherical Skeleton finished ==");
-        DEBUG_PRINT(skel_result_->toString());
+        CGAL_SS3_CORE_TRACE("== Spherical Skeleton finished ==");
+        CGAL_SS3_CORE_TRACE(skel_result_->toString());
     }
 }
 
@@ -331,7 +331,7 @@ SphericalEdgeEventSPtr SpeedSimpleSphericalSkel::nextEdgeEvent(SphericalPolygonS
         CGAL::FT offset_src = offsetTo(vertex_src, point);
         CGAL::FT offset_dst = offsetTo(vertex_dst, point);
         CGAL::FT accuracy_edge_event = offset_dst - offset_src;
-        DEBUG_PRINT(accuracy_edge_event);
+        CGAL_SS3_CORE_TRACE(accuracy_edge_event);
         SphericalSkelVertexDataSPtr data_src =
                 std::dynamic_pointer_cast<SphericalSkelVertexData>(
                 vertex_src->getData());
@@ -474,7 +474,7 @@ SphericalAbstractEventSPtr SpeedSimpleSphericalSkel::nextEvent(SphericalPolygonS
     events[2] = nextTriangleEvent(polygon);
     for (unsigned int i = 0; i < 3; i++) {
         if (events[i]) {
-            DEBUG_PRINT(events[i]->toString());
+            CGAL_SS3_CORE_TRACE(events[i]->toString());
             if (!result) {
                 result = events[i];
             } else if (result->getOffset() <= events[i]->getOffset()) {
@@ -531,7 +531,7 @@ SphericalPolygonSPtr SpeedSimpleSphericalSkel::copyPolygon(SphericalPolygonSPtr 
             data->setOffsetEdge(edge_c);
             result->addEdge(edge_c);
         } else {
-            DEBUG_PRINT(edge->toString());
+            CGAL_SS3_CORE_TRACE(edge->toString());
         }
     }
 

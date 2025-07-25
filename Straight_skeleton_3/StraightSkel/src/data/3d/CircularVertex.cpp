@@ -47,7 +47,7 @@ CircularVertexSPtr CircularVertex::clone() const {
 }
 
 Point3SPtr CircularVertex::getPoint() const {
-    DEBUG_SPTR(point_);
+    CGAL_SS3_DEBUG_SPTR(point_);
     return this->point_;
 }
 
@@ -64,7 +64,7 @@ void CircularVertex::setPointValid(bool point_valid) {
 }
 
 CircularEdgeSPtr CircularVertex::getEdgeIn() const {
-    DEBUG_WPTR(edge_in_);
+    CGAL_SS3_DEBUG_WPTR(edge_in_);
     if (this->edge_in_.expired())
         return CircularEdgeSPtr();
     else
@@ -76,7 +76,7 @@ void CircularVertex::setEdgeIn(CircularEdgeSPtr edge) {
 }
 
 CircularEdgeSPtr CircularVertex::getEdgeOut() const {
-    DEBUG_WPTR(edge_out_);
+    CGAL_SS3_DEBUG_WPTR(edge_out_);
     if (this->edge_out_.expired())
         return CircularEdgeSPtr();
     else
@@ -88,7 +88,7 @@ void CircularVertex::setEdgeOut(CircularEdgeSPtr edge) {
 }
 
 SphericalPolygonSPtr CircularVertex::getPolygon() const {
-    DEBUG_WPTR(polygon_);
+    CGAL_SS3_DEBUG_WPTR(polygon_);
     if (this->polygon_.expired())
         return SphericalPolygonSPtr();
     else
@@ -108,7 +108,7 @@ void CircularVertex::setListIt(std::list<CircularVertexSPtr>::iterator list_it) 
 }
 
 CircularVertexDataSPtr CircularVertex::getData() const {
-    DEBUG_SPTR(data_);
+    CGAL_SS3_DEBUG_SPTR(data_);
     return this->data_;
 }
 

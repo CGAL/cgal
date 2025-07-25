@@ -44,7 +44,7 @@ TriangleEventSPtr TriangleEvent::create() {
 }
 
 NodeSPtr TriangleEvent::getNode() const {
-    DEBUG_SPTR(node_);
+    CGAL_SS3_DEBUG_SPTR(node_);
     return node_;
 }
 
@@ -61,7 +61,7 @@ CGAL::FT TriangleEvent::getOffset() const {
 }
 
 FacetSPtr TriangleEvent::getFacet() const {
-    DEBUG_WPTR(facet_);
+    CGAL_SS3_DEBUG_WPTR(facet_);
     return facet_.lock();
 }
 
@@ -70,7 +70,7 @@ void TriangleEvent::setFacet(FacetSPtr facet) {
 }
 
 EdgeSPtr TriangleEvent::getEdgeBegin() const {
-    DEBUG_WPTR(edge_begin_);
+    CGAL_SS3_DEBUG_WPTR(edge_begin_);
     return edge_begin_.lock();
 }
 

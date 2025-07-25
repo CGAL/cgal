@@ -58,7 +58,7 @@ EdgeSPtr Edge::clone() const {
 }
 
 VertexSPtr Edge::getVertexSrc() const {
-    DEBUG_SPTR(this->vertex_src_);
+    CGAL_SS3_DEBUG_SPTR(this->vertex_src_);
     return this->vertex_src_;
 }
 
@@ -75,7 +75,7 @@ void Edge::setVertexSrcListIt(std::list<EdgeWPtr>::iterator list_it) {
 }
 
 VertexSPtr Edge::getVertexDst() const {
-    DEBUG_SPTR(this->vertex_dst_);
+    CGAL_SS3_DEBUG_SPTR(this->vertex_dst_);
     return this->vertex_dst_;
 }
 
@@ -92,7 +92,7 @@ void Edge::setVertexDstListIt(std::list<EdgeWPtr>::iterator list_it) {
 }
 
 FacetSPtr Edge::getFacetL() const {
-    // DEBUG_WPTR(this->facet_l_);
+    // CGAL_SS3_DEBUG_WPTR(this->facet_l_);
     if (this->facet_l_.expired())
         return FacetSPtr();
     else
@@ -112,7 +112,7 @@ void Edge::setFacetLListIt(std::list<EdgeSPtr>::iterator list_it) {
 }
 
 FacetSPtr Edge::getFacetR() const {
-    // DEBUG_WPTR(this->facet_r_);
+    // CGAL_SS3_DEBUG_WPTR(this->facet_r_);
     if (this->facet_r_.expired())
         return FacetSPtr();
     else
@@ -154,7 +154,7 @@ FacetSPtr Edge::getFacetDst() const {
 }
 
 PolyhedronSPtr Edge::getPolyhedron() const {
-    // DEBUG_WPTR(this->polyhedron_);
+    // CGAL_SS3_DEBUG_WPTR(this->polyhedron_);
     if (this->polyhedron_.expired())
         return PolyhedronSPtr();
     else
@@ -174,7 +174,7 @@ void Edge::setPolyhedronListIt(std::list<EdgeSPtr>::iterator list_it) {
 }
 
 EdgeDataSPtr Edge::getData() const {
-    DEBUG_SPTR(this->data_);
+    CGAL_SS3_DEBUG_SPTR(this->data_);
     return this->data_;
 }
 
@@ -287,7 +287,7 @@ EdgeSPtr Edge::next(FacetSPtr facet) const {
         }
     }
 
-    DEBUG_SPTR(result);
+    CGAL_SS3_DEBUG_SPTR(result);
     return result;
 
 #if 0
@@ -318,7 +318,7 @@ EdgeSPtr Edge::next(FacetSPtr facet) const {
             }
         }
     }
-    DEBUG_SPTR(result);
+    CGAL_SS3_DEBUG_SPTR(result);
     return result;
 #endif
 }
@@ -341,7 +341,7 @@ EdgeSPtr Edge::prev(FacetSPtr facet) const {
         }
     }
 
-    DEBUG_SPTR(result);
+    CGAL_SS3_DEBUG_SPTR(result);
     return result;
 
 #if 0
@@ -372,7 +372,7 @@ EdgeSPtr Edge::prev(FacetSPtr facet) const {
             }
         }
     }
-    DEBUG_SPTR(result);
+    CGAL_SS3_DEBUG_SPTR(result);
     return result;
 #endif
 }
@@ -409,7 +409,7 @@ EdgeSPtr Edge::next(VertexSPtr vertex) const {
                 EdgeSPtr edge = *it_e++;
                 double angle = angleTo(edge);
                  if (angle == angle_min) {
-                    DEBUG_PRINT("Warning: Not able to distinguish possible next edges.");
+                    CGAL_SS3_HDS_TRACE("Warning: Not able to distinguish possible next edges.");
                 }
                 if (angle <= angle_min) {
                     result = edge;
@@ -418,7 +418,7 @@ EdgeSPtr Edge::next(VertexSPtr vertex) const {
             }
         }
     }
-    DEBUG_SPTR(result);
+    CGAL_SS3_DEBUG_SPTR(result);
     return result;
 }
 
@@ -454,7 +454,7 @@ EdgeSPtr Edge::prev(VertexSPtr vertex) const {
                 EdgeSPtr edge = *it_e++;
                 double angle = angleTo(edge);
                 if (angle == angle_max) {
-                    DEBUG_PRINT("Warning: Not able to distinguish possible next edges.");
+                    CGAL_SS3_HDS_TRACE("Warning: Not able to distinguish possible next edges.");
                 }
                 if (angle >= angle_max) {
                     result = edge;
@@ -463,7 +463,7 @@ EdgeSPtr Edge::prev(VertexSPtr vertex) const {
             }
         }
     }
-    DEBUG_SPTR(result);
+    CGAL_SS3_DEBUG_SPTR(result);
     return result;
 }
 
@@ -570,8 +570,8 @@ double Edge::angle() const {
             result = 2.0*M_PI - result;
         }
     } else {
-        DEBUG_PRINT("Warning: Not able to determine angle.");
-        DEBUG_PRINT(toString());
+        CGAL_SS3_HDS_TRACE("Warning: Not able to determine angle.");
+        CGAL_SS3_HDS_TRACE(toString());
     }
     return result;
 }
@@ -601,8 +601,8 @@ bool Edge::isReflex() const {
         }
 #endif
     } else {
-        DEBUG_PRINT("Warning: Not able to determine if edge is reflex.");
-        DEBUG_PRINT(toString());
+        CGAL_SS3_HDS_TRACE("Warning: Not able to determine if edge is reflex.");
+        CGAL_SS3_HDS_TRACE(toString());
     }
     return result;
 }
@@ -677,7 +677,7 @@ double Edge::angleTo(EdgeSPtr edge) const {
             }
         }
     } else {
-        DEBUG_PRINT("Warning: Edges do not have a shared Vertex and a shared Facet.");
+        CGAL_SS3_HDS_TRACE("Warning: Edges do not have a shared Vertex and a shared Facet.");
     }
     return result;
 }
@@ -685,7 +685,7 @@ double Edge::angleTo(EdgeSPtr edge) const {
 std::string Edge::toString() const {
     std::string result("Edge(");
     result += "id=" + util::StringFactory::fromInteger(id_);
-    result += ", addr=" + util::StringFactory::fromPointer(this);
+    // result += ", addr=" + util::StringFactory::fromPointer(this);
     result += ", l=";
     if (!facet_l_.expired()) {
         if (getFacetL()->getID() != -1) {

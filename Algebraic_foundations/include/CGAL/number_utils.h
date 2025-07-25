@@ -320,7 +320,9 @@ approximate_sqrt(const NT& nt, Sqrt sqrt)
 template <typename NT>
 decltype(auto) approximate_sqrt(const NT& nt)
 {
-  CGAL_warning_msg(false, "calling APPRX SQRT");
+#ifndef CGAL_SS3_DO_NOT_WARN_ABOUT_APPROXIMATE_SQRT
+  // CGAL_warning_msg(false, "calling APPRX SQRT");
+#endif
 
   // the initial version of this function was using Algebraic_category
   // for the dispatch but some ring type (like Gmpz) provides a Sqrt

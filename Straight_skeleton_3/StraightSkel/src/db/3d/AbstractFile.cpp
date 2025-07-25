@@ -24,7 +24,10 @@
 #include "data/3d/Edge.h"
 #include "data/3d/Facet.h"
 #include "data/3d/Polyhedron.h"
-#include "db/3d/OBJFile.h"
+
+#ifdef CGAL_SS3_DUMP_FILES
+# include "db/3d/OBJFile.h"
+#endif
 
 #include <cmath>
 #include <list>
@@ -82,7 +85,11 @@ void AbstractFile::mergeFacets(EdgeSPtr edge,
     CGAL_precondition(edge->getFacetL() == facet_from || edge->getFacetR() == facet_from);
     CGAL_precondition(edge->getFacetL() == facet_into || edge->getFacetR() == facet_into);
 
-    DEBUG_PRINT("Merging F" << facet_from->getID() << " into F" << facet_into->getID());
+    CGAL_SS3_TRANSF_TRACE("Merging F" << facet_from->getID() << " into F" << facet_into->getID() <<
+                          " Common edge E" << edge->getID() << " [V" << edge->getVertexSrc()->getID()
+                                                            << " - V" << edge->getVertexDst()->getID() << "]");
+    CGAL_SS3_TRANSF_TRACE("  FROM normal: " << *(KernelFactory::createVector3(facet_from->getPlane())));
+    CGAL_SS3_TRANSF_TRACE("  INTO normal: " << *(KernelFactory::createVector3(facet_into->getPlane())));
 
     // remove the facet incidence info from the edge such that the facets are not deleted
     // when Polyhedron::removeEdge() is called
@@ -107,11 +114,13 @@ void AbstractFile::mergeFacets(EdgeSPtr edge,
 int AbstractFile::mergeCoplanarFacets(PolyhedronSPtr polyhedron,
                                       double epsilon)
 {
-    DEBUG_PRINT("\nMerging coplanar faces with epsilon = " << epsilon);
-    DEBUG_PRINT("  initial face count: " << polyhedron->facets().size());
+    CGAL_SS3_TRANSF_TRACE("\nMerging coplanar faces with epsilon = " << epsilon);
+    CGAL_SS3_TRANSF_TRACE("  initial face count: " << polyhedron->facets().size());
 
-    // db::_3d::OBJFile::save("results/coplanar_merge_before.obj", polyhedron,
-    //                        false /*do not triangulate*/);
+#ifdef CGAL_SS3_DUMP_FILES
+    db::_3d::OBJFile::save("results/coplanar_merge_before.obj", polyhedron,
+                           false /*do not triangulate*/);
+#endif
 
     int result = 0;
     std::list<EdgeWPtr> edges_toremove;
@@ -123,16 +132,16 @@ int AbstractFile::mergeCoplanarFacets(PolyhedronSPtr polyhedron,
         }
     }
 
-    DEBUG_PRINT(edges_toremove.size() << " edges to merge");
-    if (edges_toremove.size() > 0) {
-        DEBUG_PRINT("Adjacent facets of the following edges are detected to be coplanar and will be merged.");
-    }
+    CGAL_SS3_TRANSF_TRACE(edges_toremove.size() << " edges to merge");
+    CGAL_SS3_TRACE_CODE(if (edges_toremove.size() > 0))
+    CGAL_SS3_TRANSF_TRACE("Adjacent facets of the following edges are detected to be coplanar and will be merged.");
+
     std::list<EdgeWPtr>::iterator it_we = edges_toremove.begin();
     while (it_we != edges_toremove.end()) {
         EdgeSPtr edge = (it_we++)->lock();
         if (edge) {
             mergeFacets(edge, polyhedron);
-            result++;
+            ++result;
         }
     }
 
@@ -140,10 +149,12 @@ int AbstractFile::mergeCoplanarFacets(PolyhedronSPtr polyhedron,
 
     polyhedron->initializeAllIDs();
 
-    DEBUG_PRINT("  final face count: " << polyhedron->facets().size());
+    CGAL_SS3_TRANSF_TRACE("  final face count: " << polyhedron->facets().size());
 
-    // db::_3d::OBJFile::save("results/coplanar_merge_after.obj", polyhedron,
-    //                        false /*do not triangulate*/);
+#ifdef CGAL_SS3_DUMP_FILES
+    db::_3d::OBJFile::save("results/coplanar_merge_after.obj", polyhedron,
+                           false /*do not triangulate*/);
+#endif
 
     return result;
 }
@@ -211,6 +222,9 @@ int AbstractFile::removeFacetsDegLt3(PolyhedronSPtr polyhedron) {
 }
 
 int AbstractFile::removeVerticesDegLt3(PolyhedronSPtr polyhedron) {
+    CGAL_SS3_TRANSF_TRACE("Remove Vertices with degree < 3");
+    CGAL_SS3_TRANSF_TRACE("  initial vertex count: " << polyhedron->vertices().size());
+
     int result = 0;
     std::list<VertexSPtr> vertices_toremove;
     std::list<VertexSPtr>::iterator it_v = polyhedron->vertices().begin();
@@ -218,17 +232,17 @@ int AbstractFile::removeVerticesDegLt3(PolyhedronSPtr polyhedron) {
         VertexSPtr vertex = *it_v++;
         if (vertex->degree() < 3) {
             vertices_toremove.push_back(vertex);
-            DEBUG_PRINT("Enlist: V" << vertex->getID());
+            CGAL_SS3_TRANSF_TRACE("Enlist: V" << vertex->getID());
             for (FacetWPtr wf : vertex->facets()) {
                 FacetSPtr facet = wf.lock();
-                DEBUG_PRINT("  Incident facet with: " << facet->vertices().size() << " vertices");
+                CGAL_SS3_TRANSF_TRACE("  Incident facet with: " << facet->vertices().size() << " vertices");
             }
         }
     }
     it_v = vertices_toremove.begin();
     while (it_v != vertices_toremove.end()) {
         VertexSPtr vertex = *it_v++;
-        DEBUG_PRINT("Removing " << vertex->toString());
+        CGAL_SS3_TRANSF_TRACE("Removing " << vertex->toString());
 
         std::list<FacetWPtr>::iterator it_f = vertex->facets().begin();
         while (it_f != vertex->facets().end()) {
@@ -268,7 +282,7 @@ int AbstractFile::removeVerticesDegLt3(PolyhedronSPtr polyhedron) {
 
             if (fL->vertices().size() == 2) {
                 if (fR->vertices().size() == 2) {
-                    DEBUG_PRINT("Vertex is the apex of two facets of degree 3");
+                    CGAL_SS3_TRANSF_TRACE("Vertex is the apex of two facets of degree 3");
                     // both facets have degree 3, so remove everything (both facets, both edges,
                     // and one of the other edges + setting up incident facets properly)
                     VertexSPtr other_vertex = edge_src->other(vertex);
@@ -288,7 +302,7 @@ int AbstractFile::removeVerticesDegLt3(PolyhedronSPtr polyhedron) {
                         edge_src->replaceVertexSrc(vertex_dst);
                     }
                 } else {
-                    DEBUG_PRINT("Vertex is the apex of one facet of degree 3");
+                    CGAL_SS3_TRANSF_TRACE("Vertex is the apex of one facet of degree 3");
                     // one facet has degree 3, so remove the vertex, the two incident edges, and the facet.
                     EdgeSPtr third_edge;
                     for (EdgeSPtr edge : fR->edges()) {
@@ -330,6 +344,8 @@ int AbstractFile::removeVerticesDegLt3(PolyhedronSPtr polyhedron) {
 }
 
 int AbstractFile::sanitize(PolyhedronSPtr polyhedron) {
+    CGAL_SS3_TRANSF_TRACE("Sanitizing...");
+
     // - removeVerticesDegLt3 can create facets with fewer than 3 vertices
     // - removeFacetsDegLt3 removes facets with fewer than 3 vertices
     // so loop till nothing is done anymore

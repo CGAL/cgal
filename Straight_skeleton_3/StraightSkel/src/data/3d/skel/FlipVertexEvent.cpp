@@ -45,7 +45,7 @@ FlipVertexEventSPtr FlipVertexEvent::create() {
 }
 
 NodeSPtr FlipVertexEvent::getNode() const {
-    DEBUG_SPTR(node_);
+    CGAL_SS3_DEBUG_SPTR(node_);
     return node_;
 }
 
@@ -62,7 +62,7 @@ CGAL::FT FlipVertexEvent::getOffset() const {
 }
 
 VertexSPtr FlipVertexEvent::getVertex1() const {
-    DEBUG_WPTR(vertex_1_);
+    CGAL_SS3_DEBUG_WPTR(vertex_1_);
     return vertex_1_.lock();
 }
 
@@ -72,7 +72,7 @@ void FlipVertexEvent::setVertex1(VertexSPtr vertex_1) {
 }
 
 VertexSPtr FlipVertexEvent::getVertex2() const {
-    DEBUG_WPTR(vertex_2_);
+    CGAL_SS3_DEBUG_WPTR(vertex_2_);
     return vertex_2_.lock();
 }
 
@@ -82,7 +82,7 @@ void FlipVertexEvent::setVertex2(VertexSPtr vertex_2) {
 }
 
 FacetSPtr FlipVertexEvent::getFacet1() const {
-    DEBUG_WPTR(facet_1_);
+    CGAL_SS3_DEBUG_WPTR(facet_1_);
     return facet_1_.lock();
 }
 
@@ -91,7 +91,7 @@ void FlipVertexEvent::setFacet1(FacetSPtr facet_1) {
 }
 
 FacetSPtr FlipVertexEvent::getFacet2() const {
-    DEBUG_WPTR(facet_2_);
+    CGAL_SS3_DEBUG_WPTR(facet_2_);
     return facet_2_.lock();
 }
 

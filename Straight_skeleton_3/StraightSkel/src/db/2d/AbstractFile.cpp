@@ -71,12 +71,12 @@ int AbstractFile::mergeCollinearEdges(PolygonSPtr polygon, double epsilon) {
         }
     }
     if (vertices_toremove.size() > 0) {
-        DEBUG_PRINT("Adjacent edges of the following vertices are detected to be collinear and will be merged.");
+        CGAL_SS3_TRANSF_TRACE("Adjacent edges of the following vertices are detected to be collinear and will be merged.");
     }
     it_v = vertices_toremove.begin();
     while (it_v != vertices_toremove.end()) {
         VertexSPtr vertex = *it_v++;
-        DEBUG_PRINT(vertex->toString());
+        CGAL_SS3_TRANSF_TRACE(vertex->toString());
         EdgeSPtr edge_in = vertex->getEdgeIn();
         EdgeSPtr edge_out = vertex->getEdgeOut();
         VertexSPtr vertex_dst = vertex->next();

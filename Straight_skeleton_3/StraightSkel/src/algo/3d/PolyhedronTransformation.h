@@ -50,6 +50,8 @@ public:
     static void translateNscale(PolyhedronSPtr polyhedron,
                                 Point3SPtr p_box_min, Point3SPtr p_box_max);
 
+    static void truncatePrecision(PolyhedronSPtr polyhedron);
+
     /**
      * updates the position of the vertex of a polyhedron, computed from the planes of
      * its incident faces.
@@ -66,24 +68,24 @@ public:
     /**
      * returns the shifted position of the vertex of a polyhedron
      */
-    static Point3SPtr shiftPoint(VertexSPtr vertex, CGAL::FT offset);
+    static Point3SPtr shiftPoint(VertexSPtr vertex, const CGAL::FT& offset);
 
     /**
      * returns the shifted position of the edge of a polyhedron
      */
-    static Segment3SPtr shiftEdge(EdgeSPtr edge, CGAL::FT offset);
+    static Segment3SPtr shiftEdge(EdgeSPtr edge, const CGAL::FT& offset);
 
     /**
      * returns the shifted position of the facet of a polyhedron
      */
-    static Plane3SPtr shiftPlane(FacetSPtr vertex, CGAL::FT offset);
+    static Plane3SPtr shiftPlane(FacetSPtr vertex, const CGAL::FT& offset);
 
     /**
      * Offsets the polyhedron `polyhedron`
      * Negative offset points to the interior of the polyhedron.
      */
     static void shiftFacetsInPlace(PolyhedronSPtr polyhedron,
-                                   CGAL::FT offset,
+                                   const CGAL::FT& offset,
                                    const bool recompute_positions = true);
 
     /**
@@ -91,7 +93,7 @@ public:
      * Negative offset points to the interior of the polyhedron.
      */
     static PolyhedronSPtr shiftFacets(PolyhedronSPtr polyhedron,
-                                      CGAL::FT offset,
+                                      const CGAL::FT& offset,
                                       const bool recompute_positions = true);
 
 
@@ -105,15 +107,10 @@ public:
      * Normalize facet planes
     */
     static void normalizeFacetPlanes(PolyhedronSPtr polyhedron);
-    /**
-     * Normalize facet planes, ensuring parallel facets receive the same plane coefficients.
-    */
-    static void harmonizeFacetPlanes(PolyhedronSPtr polyhedron);
 
     /**
-     * To check for parallel planes is not enough.
+     * Checking for degeneracies
      */
-    static bool hasParallelPlanes(PolyhedronSPtr polyhedron);
     static bool doAll2PlanesIntersect(PolyhedronSPtr polyhedron);
     static bool doAll3PlanesIntersect(PolyhedronSPtr polyhedron);
 
@@ -143,7 +140,7 @@ PolyhedronTransformation::
 convert(const CGAL::Surface_mesh<Point3>& sm,
         const NamedParameters& np)
 {
-    DEBUG_PRINT("Converting mesh...");
+    CGAL_SS3_TRANSF_TRACE("Converting mesh...");
 
     bool merge_faces = false;
 
@@ -205,12 +202,8 @@ convert(const CGAL::Surface_mesh<Point3>& sm,
                                                         maximum_distance(max_distance).
                                                         edge_is_constrained_map(CGAL::make_random_access_property_map(ecm)));
 
-    // @debug
-    {
-        for (face_descriptor f : faces(sm)) {
-            std::cout << "facet " << f << " is in region " << region_ids[f] << std::endl;
-        }
-    }
+    CGAL_SS3_TRACE_CODE(for (face_descriptor f : faces(sm)))
+    CGAL_SS3_TRANSF_TRACE("facet " << f << " is in region " << region_ids[f]);
 
     // the almost-coplanar merge is performed after the conversion to the Polyhedron
     // data structure because we want to be able to create faces that have holes,
@@ -229,21 +222,20 @@ convert(const CGAL::Surface_mesh<Point3>& sm,
             continue;
         }
 
-        DEBUG_PRINT("Merging facets " << edge->getFacetL()->getID() << " and " << edge->getFacetR()->getID());
+        CGAL_SS3_TRANSF_TRACE("Merging facets " << edge->getFacetL()->getID() << " and " << edge->getFacetR()->getID());
         CGAL_assertion(sm.point(source(e, sm)) == *(edge->getVertexSrc()->getPoint()));
         CGAL_assertion(sm.point(target(e, sm)) == *(edge->getVertexDst()->getPoint()));
 
-        // @todo it seems like intermediate states are somewhat unsound during edge merging
+        // @fixme it seems like intermediate states are somewhat unsound during edge merging
         db::_3d::AbstractFile::mergeFacets(edge, polyhedron);
     }
 
     polyhedron->initializeAllIDs();
 
-    DEBUG_PRINT("Sanitizing...");
     db::_3d::AbstractFile::sanitize(polyhedron);
 #endif
 
-    DEBUG_PRINT("Converted, " << polyhedron->facets().size() << " facets");
+    CGAL_SS3_TRANSF_TRACE("Converted, " << polyhedron->facets().size() << " facets");
 
     return polyhedron;
 }

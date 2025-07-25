@@ -39,7 +39,7 @@ AngleVertexSplitterSPtr AngleVertexSplitter::create() {
 }
 
 PolyhedronSPtr AngleVertexSplitter::splitVertex(VertexSPtr vertex) {
-    DEBUG_PRINT("WARNING: AngleVertexSplitter::splitVertex(...) does not work in every case.");
+    CGAL_SS3_SPLITTER_TRACE("Warning: AngleVertexSplitter::splitVertex(...) does not work in every case.");
     PolyhedronSPtr polyhedron = vertex->getPolyhedron();
     if (vertex->degree() <= 3) {
         return polyhedron;

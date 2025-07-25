@@ -78,7 +78,6 @@ int PolygonDAO::createPolyID(PolygonSPtr polygon) {
 
 int PolygonDAO::insert(PolygonSPtr polygon) {
     int result = -1;
-    WriteLock(polygon->mutex());
     polygon->resetAllIDs();
     SQLiteDatabaseSPtr db = DAOFactory::getDB();
     bool trans_started = db->beginTransaction();

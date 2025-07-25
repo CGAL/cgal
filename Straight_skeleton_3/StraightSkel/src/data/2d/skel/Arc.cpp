@@ -57,7 +57,7 @@ ArcSPtr Arc::create(NodeSPtr node_src, NodeSPtr node_dst) {
 }
 
 NodeSPtr Arc::getNodeSrc() const {
-    DEBUG_SPTR(node_src_);
+    CGAL_SS3_DEBUG_SPTR(node_src_);
     return node_src_;
 }
 
@@ -74,7 +74,7 @@ void Arc::setNodeSrcListIt(std::list<ArcWPtr>::iterator node_src_list_it) {
 }
 
 NodeSPtr Arc::getNodeDst() const {
-    DEBUG_SPTR(node_dst_);
+    CGAL_SS3_DEBUG_SPTR(node_dst_);
     return node_dst_;
 }
 
@@ -91,7 +91,7 @@ void Arc::setNodeDstListIt(std::list<ArcWPtr>::iterator node_dst_list_it) {
 }
 
 Vector2SPtr Arc::getDirection() const {
-    DEBUG_SPTR(direction_);
+    CGAL_SS3_DEBUG_SPTR(direction_);
     return this->direction_;
 }
 
@@ -100,7 +100,7 @@ void Arc::setDirection(Vector2SPtr direction) {
 }
 
 EdgeSPtr Arc::getEdgeLeft() const {
-    DEBUG_SPTR(edge_left_);
+    CGAL_SS3_DEBUG_SPTR(edge_left_);
     return edge_left_;
 }
 
@@ -109,7 +109,7 @@ void Arc::setEdgeLeft(EdgeSPtr edge_left) {
 }
 
 EdgeSPtr Arc::getEdgeRight() const {
-    DEBUG_SPTR(edge_right_);
+    CGAL_SS3_DEBUG_SPTR(edge_right_);
     return edge_right_;
 }
 
@@ -118,7 +118,7 @@ void Arc::setEdgeRight(EdgeSPtr edge_right) {
 }
 
 StraightSkeletonSPtr Arc::getSkel() const {
-    DEBUG_WPTR(skel_);
+    CGAL_SS3_DEBUG_WPTR(skel_);
     if (this->skel_.expired())
         return StraightSkeletonSPtr();
     else

@@ -41,7 +41,7 @@ SheetSPtr Sheet::create() {
 }
 
 FacetSPtr Sheet::getFacetB() const {
-    DEBUG_SPTR(facet_b_);
+    CGAL_SS3_DEBUG_SPTR(facet_b_);
     return facet_b_;
 }
 
@@ -50,7 +50,7 @@ void Sheet::setFacetB(FacetSPtr facet_b) {
 }
 
 FacetSPtr Sheet::getFacetF() const {
-    DEBUG_SPTR(facet_f_);
+    CGAL_SS3_DEBUG_SPTR(facet_f_);
     return facet_f_;
 }
 
@@ -59,7 +59,7 @@ void Sheet::setFacetF(FacetSPtr facet_f) {
 }
 
 StraightSkeletonSPtr Sheet::getSkel() const {
-    DEBUG_WPTR(skel_);
+    CGAL_SS3_DEBUG_WPTR(skel_);
     if (this->skel_.expired())
         return StraightSkeletonSPtr();
     else
@@ -87,7 +87,7 @@ void Sheet::setID(int id) {
 }
 
 Plane3SPtr Sheet::getPlane() const {
-    DEBUG_SPTR(this->plane_);
+    CGAL_SS3_DEBUG_SPTR(this->plane_);
     return this->plane_;
 }
 
@@ -96,7 +96,7 @@ void Sheet::setPlane(Plane3SPtr plane) {
 }
 
 void Sheet::addNode(NodeSPtr node) {
-    std::list<NodeSPtr>::iterator it = nodes_.insert(nodes_.end(), node);
+    /*std::list<NodeSPtr>::iterator it =*/ nodes_.insert(nodes_.end(), node);
     if (!node->containsSheet(shared_from_this())) {
         node->addSheet(shared_from_this());
     }

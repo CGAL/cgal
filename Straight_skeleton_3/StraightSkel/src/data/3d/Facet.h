@@ -170,7 +170,8 @@ public:
      * Restore the plane coefficients to the previous value, updating 'd' so that the plane
      * matches the desired offset.
      */
-    void restorePlaneCoefficients(CGAL::FT perturbationOffset, CGAL::FT perturbationEndOffset);
+    void restorePlaneCoefficients(const CGAL::FT& perturbationOffset,
+                                  const CGAL::FT& perturbationEndOffset);
 
     bool makeFirstConvex();
 

@@ -36,7 +36,7 @@ TriangleSPtr Triangle::create(FacetSPtr facet, VertexSPtr vertices[3]) {
 }
 
 FacetSPtr Triangle::getFacet() const {
-    DEBUG_WPTR(this->facet_);
+    CGAL_SS3_DEBUG_WPTR(this->facet_);
     if (this->facet_.expired())
         return FacetSPtr();
     else
@@ -60,7 +60,7 @@ VertexSPtr Triangle::getVertex(unsigned int index) const {
     if (0 <= index && index < 3) {
         result = vertices_[index];
     }
-    DEBUG_SPTR(result);
+    CGAL_SS3_DEBUG_SPTR(result);
     return result;
 }
 

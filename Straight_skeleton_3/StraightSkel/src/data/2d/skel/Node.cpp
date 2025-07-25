@@ -38,7 +38,7 @@ NodeSPtr Node::create(Point2SPtr point) {
 }
 
 Point2SPtr Node::getPoint() const {
-    DEBUG_SPTR(point_);
+    CGAL_SS3_DEBUG_SPTR(point_);
     return point_;
 }
 
@@ -55,7 +55,7 @@ void Node::setHeight(CGAL::FT height) {
 }
 
 StraightSkeletonSPtr Node::getSkel() const {
-    DEBUG_WPTR(skel_);
+    CGAL_SS3_DEBUG_WPTR(skel_);
     if (this->skel_.expired())
         return StraightSkeletonSPtr();
     else

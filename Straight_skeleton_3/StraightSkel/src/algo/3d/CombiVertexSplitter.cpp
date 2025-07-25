@@ -225,12 +225,9 @@ std::list<combi> CombiVertexSplitter::generateAllCombinations(unsigned int degre
     combi history;
     std::vector<int> labels = initLabels(degree);
     std::list<combi> result = generateCombinationsRec(history, labels);
-    // DEBUG_PRINT(degree);
-    // std::list<combi>::iterator it_combis = result.begin();
-    // while (it_combis != result.end()) {
-    //     combi combination = *it_combis++;
-    //     DEBUG_PRINT(combiToString(combination));
-    // }
+    // CGAL_SS3_SPLITTER_TRACE("degree = " << degree);
+    // CGAL_SS3_TRACE_CODE(for (const combi& combination : result))
+    // CGAL_SS3_SPLITTER_TRACE("  " << combiToString(combination));
     return result;
 }
 
@@ -526,7 +523,6 @@ PolyhedronSPtr CombiVertexSplitter::splitVertex(VertexSPtr vertex) {
     if (vertex->degree() <= 3) {
         return polyhedron;
     }
-    WriteLock l(polyhedron->mutex());
     vertex->sort();
     std::list<combi> combinations = generateAllCombinations(vertex->degree());
     std::list<combi> combinations_valid;
@@ -538,7 +534,7 @@ PolyhedronSPtr CombiVertexSplitter::splitVertex(VertexSPtr vertex) {
         VertexSPtr vertex_c = poly_c->vertices().front();
         splitVertex(vertex_c, combination);
         if (checkSplitted(poly_c)) {
-            DEBUG_PRINT("Valid split-combination found: " << combiToString(combination));
+            CGAL_SS3_SPLITTER_TRACE("Valid split-combination found: " << combiToString(combination));
             combinations_valid.push_back(combination);
             polys_split.push_back(poly_c);
             std::cout << "Found valid combination" << std::endl;
@@ -549,7 +545,7 @@ PolyhedronSPtr CombiVertexSplitter::splitVertex(VertexSPtr vertex) {
         }
     }
 
-    DEBUG_PRINT("Valid split-combination #: " << combinations_valid.size());
+    CGAL_SS3_SPLITTER_TRACE("Valid split-combination #: " << combinations_valid.size());
 
     CGAL_warning(!combinations_valid.empty());
     CGAL_warning(!polys_split.empty());
@@ -561,7 +557,7 @@ PolyhedronSPtr CombiVertexSplitter::splitVertex(VertexSPtr vertex) {
         combi combination_valid = *it_combi++;
         PolyhedronSPtr poly_split = *it_p++;
         if (i == selected_combi) {
-            DEBUG_PRINT("Selected split-combination: " << combiToString(combination_valid));
+            CGAL_SS3_SPLITTER_TRACE("Selected split-combination: " << combiToString(combination_valid));
             apply(poly_split, vertex);
             break;
         }

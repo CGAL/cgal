@@ -78,7 +78,7 @@ void TransSimpleSphericalSkel::run() {
     if (controller_) {
         controller_->wait();
     }
-    DEBUG_PRINT("== Translational Spherical Skeleton started ==");
+    CGAL_SS3_CORE_TRACE("== Translational Spherical Skeleton started ==");
     SphericalPolygonSPtr polygon = polygon_;
     unsigned int i = 0;
     if (init(polygon)) {
@@ -89,7 +89,7 @@ void TransSimpleSphericalSkel::run() {
         CGAL::FT offset_prev = 0.0;
         SphericalAbstractEventSPtr event = nextEvent(polygon, offset);
         while (event) {
-            DEBUG_PRINT("-- Next Event: " << event->toString() << " --");
+            CGAL_SS3_CORE_TRACE("-- Next Event: " << event->toString() << " --");
             if (controller_) {
                 controller_->wait();
             }
@@ -123,17 +123,17 @@ void TransSimpleSphericalSkel::run() {
             }
             assert(polygon->isConsistent());
             assert(skel_result_->isConsistent());
-            DEBUG_PRINT("-- Finished handling Event --");
+            CGAL_SS3_CORE_TRACE("-- Finished handling Event --");
             i++;
-            DEBUG_PRINT(i);
+            CGAL_SS3_CORE_TRACE(i);
             if (controller_) {
                 controller_->wait();
             }
             event = nextEvent(polygon, offset);
             offset_prev = offset;
         }
-        DEBUG_PRINT("== Spherical Skeleton finished ==");
-        DEBUG_PRINT(skel_result_->toString());
+        CGAL_SS3_CORE_TRACE("== Spherical Skeleton finished ==");
+        CGAL_SS3_CORE_TRACE(skel_result_->toString());
     }
 }
 
@@ -272,7 +272,7 @@ bool TransSimpleSphericalSkel::isEdgeEvent(CircularEdgeSPtr edge, CGAL::FT offse
     if (p_src_offset && p_dst_offset) {
         // TODO: epsilon environment is not good
         CGAL::FT dist_edge_event = KernelWrapper::distance(p_src_offset, p_dst_offset);
-        DEBUG_PRINT(dist_edge_event);
+        CGAL_SS3_CORE_TRACE(dist_edge_event);
         if (dist_edge_event < epsilon_) {
             result = true;
         }
@@ -385,7 +385,7 @@ SphericalSplitEventSPtr TransSimpleSphericalSkel::nextSplitEvent(SphericalPolygo
                 continue;
             }
             CGAL::FT dist_split_event = KernelWrapper::distance(point, p_offset);
-            DEBUG_PRINT(dist_split_event);
+            CGAL_SS3_CORE_TRACE(dist_split_event);
             if (dist_split_event > epsilon_) {
                 // TODO: epsilon environment is not good
                 continue;
@@ -1000,15 +1000,15 @@ SphericalAbstractEventSPtr TransSimpleSphericalSkel::nextEvent(SphericalPolygonS
     events[11] = nextInversionEvent(polygon, offset);
     for (unsigned int i = 0; i < 12; i++) {
         if (events[i]) {
-            DEBUG_PRINT(events[i]->toString());
+            CGAL_SS3_CORE_TRACE(events[i]->toString());
             if (!result) {
                 result = events[i];
             } else if (result->getOffset() < events[i]->getOffset()) {
                 result = events[i];
             } else if (result->getOffset() == events[i]->getOffset()) {
-                DEBUG_PRINT("WARNING: More than one possible next event.");
-                DEBUG_PRINT(result->toString());
-                DEBUG_PRINT(events[i]->toString());
+                CGAL_SS3_CORE_TRACE("WARNING: More than one possible next event.");
+                CGAL_SS3_CORE_TRACE(result->toString());
+                CGAL_SS3_CORE_TRACE(events[i]->toString());
                 result = events[i];
             }
         }
@@ -1030,7 +1030,7 @@ SphericalPolygonSPtr TransSimpleSphericalSkel::shiftEdges(SphericalPolygonSPtr p
         if (p_offset) {
             vertex_offset = CircularVertex::create(p_offset);
         } else {
-            DEBUG_PRINT(vertex->toString());
+            CGAL_SS3_CORE_TRACE(vertex->toString());
             vertex_offset = CircularVertex::create(vertex->getPoint());
             vertex_offset->setPointValid(false);
         }
@@ -1072,7 +1072,7 @@ SphericalPolygonSPtr TransSimpleSphericalSkel::shiftEdges(SphericalPolygonSPtr p
             data->setOffsetEdge(edge_offset);
             result->addEdge(edge_offset);
         } else {
-            DEBUG_PRINT(edge->toString());
+            CGAL_SS3_CORE_TRACE(edge->toString());
         }
     }
 

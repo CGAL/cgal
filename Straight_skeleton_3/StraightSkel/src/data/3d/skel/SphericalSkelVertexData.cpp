@@ -39,7 +39,7 @@ SphericalSkelVertexDataSPtr SphericalSkelVertexData::create(CircularVertexSPtr v
 }
 
 CircularArcSPtr SphericalSkelVertexData::getArc() const {
-    //DEBUG_WPTR(arc_);
+    //CGAL_SS3_DEBUG_WPTR(arc_);
     if (this->arc_.expired())
         return CircularArcSPtr();
     else
@@ -51,7 +51,7 @@ void SphericalSkelVertexData::setArc(CircularArcSPtr arc) {
 }
 
 CircularNodeSPtr SphericalSkelVertexData::getNode() const {
-    DEBUG_WPTR(node_);
+    CGAL_SS3_DEBUG_WPTR(node_);
     if (this->node_.expired())
         return CircularNodeSPtr();
     else
@@ -63,7 +63,7 @@ void SphericalSkelVertexData::setNode(CircularNodeSPtr node) {
 }
 
 CircularVertexSPtr SphericalSkelVertexData::getOffsetVertex() const {
-    DEBUG_WPTR(offset_vertex_);
+    CGAL_SS3_DEBUG_WPTR(offset_vertex_);
     if (this->offset_vertex_.expired())
         return CircularVertexSPtr();
     else
@@ -83,7 +83,7 @@ void SphericalSkelVertexData::setSpeed(CGAL::FT speed) {
 }
 
 EdgeSPtr SphericalSkelVertexData::getEdgeOrigin() const {
-    DEBUG_WPTR(edge_origin_);
+    CGAL_SS3_DEBUG_WPTR(edge_origin_);
     if (this->edge_origin_.expired())
         return EdgeSPtr();
     else

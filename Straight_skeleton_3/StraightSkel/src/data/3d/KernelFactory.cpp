@@ -57,7 +57,7 @@ Segment3SPtr KernelFactory::createSegment3(Point3SPtr src, Point3SPtr dst) {
     if (src != dst) {
         result = Segment3SPtr(new Segment3(*src, *dst));
     }
-    DEBUG_SPTR(result)
+    CGAL_SS3_DEBUG_SPTR(result)
     return result;
 }
 
@@ -70,7 +70,7 @@ Line3SPtr KernelFactory::createLine3(Point3SPtr p, Point3SPtr q) {
     if (p != q) {
         result = Line3SPtr(new Line3(*p, *q));
     }
-    DEBUG_SPTR(result);
+    CGAL_SS3_DEBUG_SPTR(result);
     return result;
 }
 
@@ -91,7 +91,7 @@ Plane3SPtr KernelFactory::createPlane3(Point3SPtr p, Point3SPtr q, Point3SPtr r)
     if (p != q && q != r && r != p) {
         result = Plane3SPtr(new Plane3(*p, *q, *r));
     }
-    DEBUG_SPTR(result);
+    CGAL_SS3_DEBUG_SPTR(result);
     return result;
 }
 

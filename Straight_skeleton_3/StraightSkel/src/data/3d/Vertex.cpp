@@ -52,7 +52,7 @@ VertexSPtr Vertex::clone() const {
 }
 
 Point3SPtr Vertex::getPoint() const {
-    DEBUG_SPTR(this->point_);
+    CGAL_SS3_DEBUG_SPTR(this->point_);
     return this->point_;
 }
 
@@ -104,7 +104,7 @@ EdgeSPtr Vertex::firstEdge() const {
             break;
         }
     }
-    DEBUG_SPTR(result);
+    CGAL_SS3_DEBUG_SPTR(result);
     return result;
 }
 
@@ -185,7 +185,7 @@ FacetSPtr Vertex::firstFacet() const {
             break;
         }
     }
-    DEBUG_SPTR(result);
+    CGAL_SS3_DEBUG_SPTR(result);
     return result;
 }
 
@@ -342,7 +342,7 @@ void Vertex::sort() {
 }
 
 PolyhedronSPtr Vertex::getPolyhedron() const {
-    // DEBUG_WPTR(this->polyhedron_);
+    // CGAL_SS3_DEBUG_WPTR(this->polyhedron_);
     if (this->polyhedron_.expired())
         return PolyhedronSPtr();
     else
@@ -362,7 +362,7 @@ void Vertex::setPolyhedronListIt(std::list<VertexSPtr>::iterator list_it) {
 }
 
 VertexDataSPtr Vertex::getData() const {
-    DEBUG_SPTR(this->data_);
+    CGAL_SS3_DEBUG_SPTR(this->data_);
     return this->data_;
 }
 
@@ -409,7 +409,7 @@ VertexSPtr Vertex::next(FacetSPtr facet) const {
         }
     }
 
-    DEBUG_SPTR(result);
+    CGAL_SS3_DEBUG_SPTR(result);
     return result;
 
 # if 0
@@ -444,7 +444,7 @@ VertexSPtr Vertex::next(FacetSPtr facet) const {
             }
         }
     }
-    DEBUG_SPTR(result);
+    CGAL_SS3_DEBUG_SPTR(result);
     return result;
 #endif
 }
@@ -481,7 +481,7 @@ VertexSPtr Vertex::prev(FacetSPtr facet) const {
             }
         }
     }
-    DEBUG_SPTR(result);
+    CGAL_SS3_DEBUG_SPTR(result);
     return result;
 }
 
@@ -612,7 +612,7 @@ bool Vertex::isConvex() const {
 std::string Vertex::toString() const {
     std::string result("Vertex(");
     result += "id=" + util::StringFactory::fromInteger(id_) + ", ";
-    result += "addr=" + util::StringFactory::fromPointer(this) +", ";
+    // result += "addr=" + util::StringFactory::fromPointer(this) +", ";
     result += "<" + util::StringFactory::fromDouble(CGAL::to_double(getX())) + " ";
     result += util::StringFactory::fromDouble(CGAL::to_double(getY())) + " ";
     result += util::StringFactory::fromDouble(CGAL::to_double(getZ())) + ">";

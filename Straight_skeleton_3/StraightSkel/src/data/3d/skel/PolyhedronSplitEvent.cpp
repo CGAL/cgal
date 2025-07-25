@@ -44,7 +44,7 @@ PolyhedronSplitEventSPtr PolyhedronSplitEvent::create() {
 }
 
 NodeSPtr PolyhedronSplitEvent::getNode() const {
-    DEBUG_SPTR(node_);
+    CGAL_SS3_DEBUG_SPTR(node_);
     return node_;
 }
 
@@ -61,7 +61,7 @@ CGAL::FT PolyhedronSplitEvent::getOffset() const {
 }
 
 EdgeSPtr PolyhedronSplitEvent::getEdge1() const {
-    DEBUG_WPTR(edge1_);
+    CGAL_SS3_DEBUG_WPTR(edge1_);
     return edge1_.lock();
 }
 
@@ -71,7 +71,7 @@ void PolyhedronSplitEvent::setEdge1(EdgeSPtr edge1) {
 }
 
 EdgeSPtr PolyhedronSplitEvent::getEdge2() const {
-    DEBUG_WPTR(edge2_);
+    CGAL_SS3_DEBUG_WPTR(edge2_);
     return edge2_.lock();
 }
 

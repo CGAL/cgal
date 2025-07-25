@@ -143,15 +143,12 @@ PolyhedronSPtr OBJFile::load(const std::string& filename) {
                         Vector3SPtr normal_plane = KernelFactory::createVector3(plane);
                         double angle = 0.0;
                         CGAL::FT arg = 0.0;
-#ifdef USE_CGAL
+
                         // @fixme tolerating this sqrt for now, but this should find an extremum vertex
                         // in the face plane, and then do an orientation test with prev/next
                         arg = ((*normal_plane)*(*normal_sum)) /
                                 CGAL::sqrt_with_warning(normal_plane->squared_length() * normal_sum->squared_length());
-#else
-                        arg = ((*normal_plane)*(*normal_sum)) /
-                                sqrt(normal_plane->squared_length() * normal_sum->squared_length());
-#endif
+
                         // fixes issues with floating point precision
                         // @fixme rewrite this without trigonometry
                         if (arg <= -1.0) {
@@ -179,17 +176,13 @@ PolyhedronSPtr OBJFile::load(const std::string& filename) {
             }
         }
         ifs.close();
-        result->setDescription("filename='"+filename+"'; ");
-        std::list<EdgeSPtr>::iterator it_e = result->edges().begin();
-        while (it_e != result->edges().end()) {
-            EdgeSPtr edge = *it_e++;
-            if (!(edge->getFacetL() && edge->getFacetR())) {
-                DEBUG_PRINT("Warning: Polyhedron has no closed boundary.");
-                DEBUG_PRINT(edge->toString());
-            }
-        }
 
-        // std::cout << "Loaded OBJ: " << result->toString() << std::endl;
+        result->setDescription("filename='"+filename+"'; ");
+
+        CGAL_assertion_code(for (EdgeSPtr edge : result->edges()))
+        CGAL_assertion(edge->getFacetL() && edge->getFacetR());
+
+        // CGAL_SS3_IO_TRACE("Loaded OBJ:\n" << result->toString());
 
         util::ConfigurationSPtr config = util::Configuration::getInstance();
         std::string section("db_3d_OBJFile");
@@ -218,13 +211,14 @@ bool OBJFile::save(const std::string& filename,
                    const bool convert_to_double)
 {
     bool result = true;
-    DEBUG_PRINT("-- Save OBJ to " << filename << " --");
-    DEBUG_PRINT("   do_triangulate: " << std::boolalpha << do_triangulate << "\n" <<
-                "   convert_to_double: " << convert_to_double);
-    DEBUG_PRINT(polyhedron->vertices().size() << " NV, " << polyhedron->facets().size() << " NF");
+    CGAL_SS3_IO_TRACE("-- Save OBJ to " << filename << " --");
+    CGAL_SS3_IO_TRACE("   do_triangulate: " << std::boolalpha << do_triangulate << "\n" <<
+                      "   convert_to_double: " << convert_to_double);
+    CGAL_SS3_IO_TRACE(polyhedron->vertices().size() << " NV, " << polyhedron->facets().size() << " NF");
 
-    // std::cout << polyhedron->toString() << std::endl;
+    // CGAL_SS3_IO_TRACE("Saving to OBJ:\n" << polyhedron->toString());
 
+    // tolerate intersections for OBJ::save because it used for debug
     using Itag = CGAL::No_constraint_intersection_requiring_constructions_tag;
     using PK = CGAL::Projection_traits_3<CGAL::K>;
     using PVbb = CGAL::Triangulation_vertex_base_with_info_2<VertexSPtr, PK>;
@@ -242,12 +236,12 @@ bool OBJFile::save(const std::string& filename,
     std::map<VertexSPtr, int> vertex_to_index;
     int next_index = 1; // OBJ indices start at 1
 
-    for (const auto& vertex : polyhedron->vertices()) {
+    for (VertexSPtr vertex : polyhedron->vertices()) {
         vertex_to_index[vertex] = next_index++;
     }
 
     // Write vertices
-    for (const auto& vertex : polyhedron->vertices()) {
+    for (VertexSPtr vertex : polyhedron->vertices()) {
         Point3SPtr pt = vertex->getPoint();
         if (convert_to_double) {
             oss << "v " << CGAL::to_double(pt->x()) << " "
@@ -261,10 +255,7 @@ bool OBJFile::save(const std::string& filename,
     }
 
     // Write facets
-    std::list<FacetSPtr>::iterator it_f = polyhedron->facets().begin();
-    while (it_f != polyhedron->facets().end()) {
-        FacetSPtr facet = *it_f++;
-
+    for (FacetSPtr facet : polyhedron->facets()) {
         bool do_triangulate_face = do_triangulate;
         if (facet->edges().size() < 3)
             do_triangulate_face = false;
@@ -272,9 +263,6 @@ bool OBJFile::save(const std::string& filename,
         if (do_triangulate_face)
         {
             Vector3SPtr n = KernelFactory::createVector3(facet->plane());
-
-            // @todo might have to do something fancier than staring from a single vertex
-            // for degenerate faces with zigzagging edges...
             CGAL_assertion(*n != CGAL::NULL_VECTOR);
 
             PK traits(*n);
@@ -282,9 +270,7 @@ bool OBJFile::save(const std::string& filename,
 
             std::map<VertexSPtr, PCDT_VH> face_vhs;
 
-            std::list<VertexSPtr>::iterator it_v = facet->vertices().begin();
-            while (it_v != facet->vertices().end()) {
-                VertexSPtr vertex = *it_v++;
+            for (VertexSPtr vertex : facet->vertices()) {
                 auto res = face_vhs.emplace(vertex, PCDT_VH());
                 if(res.second) // first time seeing this point
                 {
@@ -295,15 +281,13 @@ bool OBJFile::save(const std::string& filename,
             }
 
             auto ne = 0;
-            std::list<EdgeSPtr>::iterator it_e = facet->edges().begin();
-            while (it_e != facet->edges().end()) {
-                EdgeSPtr edge = *it_e++;
+            for (EdgeSPtr edge : facet->edges()) {
                 VertexSPtr v0 = edge->src(facet);
                 VertexSPtr v1 = edge->dst(facet);
 
                 if(*(v0->getPoint()) == *(v1->getPoint()))
                 {
-                    // std::cerr << "W: encountered degenerate edge @ " << *(v0->getPoint()) << std::endl;
+                    // std::cerr << "Warning: encountered degenerate edge @ " << *(v0->getPoint()) << std::endl;
 
                     CGAL_assertion(v0->degree() != 1); // @todo handle that...
                     VertexSPtr vm1 = edge->prev(facet)->src(facet);
@@ -324,15 +308,16 @@ bool OBJFile::save(const std::string& filename,
                     }
                     catch(const typename PCDT::Intersection_of_constraints_exception&)
                     {
-                        DEBUG_PRINT("Error: Intersection of constraints");
-                        DEBUG_PRINT("While inserting " << *(v0->getPoint()) << " || " << *(v1->getPoint()));
-                        DEBUG_PRINT(facet->toString());
-                        CGAL_warning_msg(false, "Intersections in CDT2 not allowed");
-                        do_triangulate_face = false;
-                        break;
+                        // should not happen since we tolerate intersections here
+                        CGAL_assertion(false);
+                        return false;
                     }
                     ++ne;
                 }
+            }
+
+            if (pcdt.finite_vertex_handles().size() != facet->vertices().size()) {
+                CGAL_warning_msg(false, "Warning: CDT has more vertices than the facet. Constraint intersection?");
             }
 
             if(ne < 3) // degenerate face
@@ -363,9 +348,7 @@ bool OBJFile::save(const std::string& filename,
         {
             std::set<EdgeSPtr> visited_edges;
 
-            std::list<EdgeSPtr>::iterator it_e = facet->edges().begin();
-            while (it_e != facet->edges().end()) {
-                EdgeSPtr edge = *it_e++;
+            for (EdgeSPtr edge : facet->edges()) {
                 if (visited_edges.find(edge) != visited_edges.end()) {
                     continue; // already visited
                 }
@@ -416,11 +399,11 @@ bool OBJFile::save(const std::string& filename,
         ofs.precision(17);
         ofs << oss.str();
     } else {
-        DEBUG_PRINT("Error: failed to open file");
+        CGAL_SS3_IO_TRACE("Error: failed to open file");
         CGAL_assertion(false);
     }
 
-    DEBUG_PRINT("-- Write OBJ end --");
+    CGAL_SS3_IO_TRACE("-- Write OBJ end --");
     return result;
 }
 

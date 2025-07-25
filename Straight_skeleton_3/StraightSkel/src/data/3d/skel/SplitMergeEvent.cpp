@@ -43,7 +43,7 @@ SplitMergeEventSPtr SplitMergeEvent::create() {
 }
 
 NodeSPtr SplitMergeEvent::getNode() const {
-    DEBUG_SPTR(node_);
+    CGAL_SS3_DEBUG_SPTR(node_);
     return node_;
 }
 
@@ -60,7 +60,7 @@ CGAL::FT SplitMergeEvent::getOffset() const {
 }
 
 VertexSPtr SplitMergeEvent::getVertex1() const {
-    DEBUG_WPTR(vertex_1_);
+    CGAL_SS3_DEBUG_WPTR(vertex_1_);
     return vertex_1_.lock();
 }
 
@@ -70,7 +70,7 @@ void SplitMergeEvent::setVertex1(VertexSPtr vertex_1) {
 }
 
 VertexSPtr SplitMergeEvent::getVertex2() const {
-    DEBUG_WPTR(vertex_2_);
+    CGAL_SS3_DEBUG_WPTR(vertex_2_);
     return vertex_2_.lock();
 }
 
@@ -80,7 +80,7 @@ void SplitMergeEvent::setVertex2(VertexSPtr vertex_2) {
 }
 
 FacetSPtr SplitMergeEvent::getFacet1() const {
-    DEBUG_WPTR(facet_1_);
+    CGAL_SS3_DEBUG_WPTR(facet_1_);
     return facet_1_.lock();
 }
 
@@ -89,7 +89,7 @@ void SplitMergeEvent::setFacet1(FacetSPtr facet_1) {
 }
 
 FacetSPtr SplitMergeEvent::getFacet2() const {
-    DEBUG_WPTR(facet_2_);
+    CGAL_SS3_DEBUG_WPTR(facet_2_);
     return facet_2_.lock();
 }
 

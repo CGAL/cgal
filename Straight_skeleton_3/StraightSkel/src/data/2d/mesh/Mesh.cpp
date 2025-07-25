@@ -75,7 +75,7 @@ MeshVertexSPtr Mesh::getVertex(Point2SPtr point) const {
     if (it != vertices_.end()) {
         result = it->second;
     }
-    //DEBUG_SPTR(result);
+    //CGAL_SS3_DEBUG_SPTR(result);
     return result;
 }
 

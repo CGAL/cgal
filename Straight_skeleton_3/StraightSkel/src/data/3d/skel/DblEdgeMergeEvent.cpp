@@ -48,7 +48,7 @@ DblEdgeMergeEventSPtr DblEdgeMergeEvent::create() {
 }
 
 NodeSPtr DblEdgeMergeEvent::getNode() const {
-    DEBUG_SPTR(node_);
+    CGAL_SS3_DEBUG_SPTR(node_);
     return node_;
 }
 
@@ -65,7 +65,7 @@ CGAL::FT DblEdgeMergeEvent::getOffset() const {
 }
 
 FacetSPtr DblEdgeMergeEvent::getFacet1() const {
-    DEBUG_WPTR(facet_1_);
+    CGAL_SS3_DEBUG_WPTR(facet_1_);
     return facet_1_.lock();
 }
 
@@ -74,7 +74,7 @@ void DblEdgeMergeEvent::setFacet1(FacetSPtr facet_1) {
 }
 
 EdgeSPtr DblEdgeMergeEvent::getEdge11() const {
-    DEBUG_WPTR(edge_11_);
+    CGAL_SS3_DEBUG_WPTR(edge_11_);
     return edge_11_.lock();
 }
 
@@ -83,7 +83,7 @@ void DblEdgeMergeEvent::setEdge11(EdgeSPtr edge_11) {
 }
 
 EdgeSPtr DblEdgeMergeEvent::getEdge12() const {
-    DEBUG_WPTR(edge_12_);
+    CGAL_SS3_DEBUG_WPTR(edge_12_);
     return edge_12_.lock();
 }
 
@@ -92,7 +92,7 @@ void DblEdgeMergeEvent::setEdge12(EdgeSPtr edge_12) {
 }
 
 FacetSPtr DblEdgeMergeEvent::getFacet2() const {
-    DEBUG_WPTR(facet_2_);
+    CGAL_SS3_DEBUG_WPTR(facet_2_);
     return facet_2_.lock();
 }
 
@@ -101,7 +101,7 @@ void DblEdgeMergeEvent::setFacet2(FacetSPtr facet_2) {
 }
 
 EdgeSPtr DblEdgeMergeEvent::getEdge21() const {
-    DEBUG_WPTR(edge_21_);
+    CGAL_SS3_DEBUG_WPTR(edge_21_);
     return edge_21_.lock();
 }
 
@@ -110,7 +110,7 @@ void DblEdgeMergeEvent::setEdge21(EdgeSPtr edge_21) {
 }
 
 EdgeSPtr DblEdgeMergeEvent::getEdge22() const {
-    DEBUG_WPTR(edge_22_);
+    CGAL_SS3_DEBUG_WPTR(edge_22_);
     return edge_22_.lock();
 }
 

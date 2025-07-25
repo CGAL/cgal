@@ -39,7 +39,7 @@ SphericalTriangleEventSPtr SphericalTriangleEvent::create() {
 }
 
 CircularNodeSPtr SphericalTriangleEvent::getNode() const {
-    DEBUG_SPTR(node_);
+    CGAL_SS3_DEBUG_SPTR(node_);
     return node_;
 }
 
@@ -56,7 +56,7 @@ CGAL::FT SphericalTriangleEvent::getOffset() const {
 }
 
 CircularEdgeSPtr SphericalTriangleEvent::getEdgeBegin() const {
-    DEBUG_SPTR(edge_begin_);
+    CGAL_SS3_DEBUG_SPTR(edge_begin_);
     return edge_begin_;
 }
 

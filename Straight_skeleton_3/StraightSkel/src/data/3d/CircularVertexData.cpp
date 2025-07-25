@@ -30,7 +30,7 @@ CircularVertexData::~CircularVertexData() {
 }
 
 CircularVertexSPtr CircularVertexData::getVertex() const {
-    DEBUG_WPTR(vertex_);
+    CGAL_SS3_DEBUG_WPTR(vertex_);
     if (this->vertex_.expired())
         return CircularVertexSPtr();
     else

@@ -42,7 +42,7 @@ CircularEdgeSPtr CircularEdge::create(CircularVertexSPtr src, CircularVertexSPtr
 }
 
 CircularVertexSPtr CircularEdge::getVertexSrc() const {
-    DEBUG_SPTR(vertex_src_);
+    CGAL_SS3_DEBUG_SPTR(vertex_src_);
     return this->vertex_src_;
 }
 
@@ -51,7 +51,7 @@ void CircularEdge::setVertexSrc(CircularVertexSPtr src) {
 }
 
 CircularVertexSPtr CircularEdge::getVertexDst() const {
-    DEBUG_SPTR(vertex_dst_);
+    CGAL_SS3_DEBUG_SPTR(vertex_dst_);
     return this->vertex_dst_;
 }
 
@@ -60,7 +60,7 @@ void CircularEdge::setVertexDst(CircularVertexSPtr dst) {
 }
 
 SphericalPolygonSPtr CircularEdge::getPolygon() const {
-    DEBUG_WPTR(polygon_);
+    CGAL_SS3_DEBUG_WPTR(polygon_);
     if (this->polygon_.expired())
         return SphericalPolygonSPtr();
     else
@@ -80,7 +80,7 @@ void CircularEdge::setListIt(std::list<CircularEdgeSPtr>::iterator list_it) {
 }
 
 CircularEdgeDataSPtr CircularEdge::getData() const {
-    DEBUG_SPTR(data_);
+    CGAL_SS3_DEBUG_SPTR(data_);
     return this->data_;
 }
 
@@ -97,7 +97,7 @@ bool CircularEdge::hasData() const {
 }
 
 Plane3SPtr CircularEdge::getSupportingPlane() const {
-    DEBUG_SPTR(supporting_plane_);
+    CGAL_SS3_DEBUG_SPTR(supporting_plane_);
     return supporting_plane_;
 }
 
@@ -124,7 +124,7 @@ Plane3SPtr CircularEdge::supportingPlane() {
     if (!supporting_plane_) {
         initSupportingPlane();
     }
-    DEBUG_SPTR(supporting_plane_);
+    CGAL_SS3_DEBUG_SPTR(supporting_plane_);
     return supporting_plane_;
 }
 

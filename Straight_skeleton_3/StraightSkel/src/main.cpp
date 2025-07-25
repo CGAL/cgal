@@ -194,11 +194,7 @@ int main(int argc, const char* argv[]) {
     bool rand_move_points_when_degenerated = false;
     CGAL::FT rand_move_points_range = 0.001;
     bool translate_and_scale_polyhedron = false;
-    float translate[3];
-    for (unsigned int i = 0; i < 3; i++) {
-        translate[i] = 0.0f;
-    }
-    float scale = 1.0f;
+
     if (config->isLoaded()) {
         rand_move_points = config->getBool("main", "rand_move_points");
         rand_move_points_when_degenerated =
@@ -239,7 +235,7 @@ int main(int argc, const char* argv[]) {
                     << " not found." << std::endl;
                 return EXIT_FAILURE;
             } else {
-                DEBUG_PRINT(skel2d->toString());
+                CGAL_SS3_TRACE(skel2d->toString());
                 id = skel_dao->findPolyID(skelid);
                 polygon = polygon_dao->find(id);
                 if (polygon) {
@@ -271,7 +267,7 @@ int main(int argc, const char* argv[]) {
             std::cout << "Warning: Polygon with PolyID=" << id
                 << " is not consistent." << std::endl;
         }
-        DEBUG_PRINT(polygon->toString());
+        CGAL_SS3_TRACE(polygon->toString());
     } else if (num_dims == 3) {
         db::_3d::PolyhedronDAOSPtr polyhedron_dao =
                 db::_3d::DAOFactory::getPolyhedronDAO();
@@ -307,7 +303,7 @@ int main(int argc, const char* argv[]) {
                     << " not found." << std::endl;
                 return EXIT_FAILURE;
             } else {
-                DEBUG_PRINT(skel3d->toString());
+                CGAL_SS3_TRACE(skel3d->toString());
                 id = skel_dao->findPolyhedronID(skelid);
                 polyhedron = polyhedron_dao->find(id);
                 if (polyhedron) {
@@ -352,6 +348,8 @@ int main(int argc, const char* argv[]) {
             algo::_3d::PolyhedronTransformation::translateNscale(
                     polyhedron, p_box_min, p_box_max);
         }
+
+        // algo::_3d::PolyhedronTransformation::truncatePrecision(polyhedron);
 
         if (config->isLoaded() &&
             config->contains("main", "merge_coplanar_faces") &&
@@ -422,7 +420,6 @@ int main(int argc, const char* argv[]) {
     algo::_2d::SkelMeshGeneratorSPtr algomesh2d;
     bool create_mesh = isSet("--mesh", argc, argv);
     if (create_mesh) {
-        controller->wait();
         if (num_dims == 2) {
             skel2d = algoskel2d->getResult();
             algomesh2d = algo::_2d::SkelMeshGenerator::create(skel2d, controller);

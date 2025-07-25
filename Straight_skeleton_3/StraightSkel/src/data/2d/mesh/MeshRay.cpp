@@ -35,7 +35,7 @@ MeshRaySPtr MeshRay::create(EdgeSPtr edge, MeshVertexSPtr src) {
 }
 
 MeshSPtr MeshRay::getMesh() const {
-    DEBUG_WPTR(mesh_);
+    CGAL_SS3_DEBUG_WPTR(mesh_);
     if (this->mesh_.expired())
         return MeshSPtr();
     else
@@ -55,7 +55,7 @@ void MeshRay::setListIt(std::list<MeshRaySPtr>::iterator list_it) {
 }
 
 EdgeSPtr MeshRay::getEdge() const {
-    DEBUG_SPTR(edge_);
+    CGAL_SS3_DEBUG_SPTR(edge_);
     return edge_;
 }
 
@@ -64,7 +64,7 @@ void MeshRay::setEdge(EdgeSPtr edge) {
 }
 
 MeshVertexSPtr MeshRay::getSrc() const {
-    DEBUG_SPTR(src_);
+    CGAL_SS3_DEBUG_SPTR(src_);
     return src_;
 }
 
@@ -73,7 +73,7 @@ void MeshRay::setSrc(MeshVertexSPtr src) {
 }
 
 MeshVertexSPtr MeshRay::getDst() const {
-    //DEBUG_SPTR(dst_);
+    //CGAL_SS3_DEBUG_SPTR(dst_);
     return dst_;
 }
 

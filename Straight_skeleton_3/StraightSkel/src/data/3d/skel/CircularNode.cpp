@@ -39,7 +39,7 @@ CircularNodeSPtr CircularNode::create(Point3SPtr point) {
 }
 
 Point3SPtr CircularNode::getPoint() const {
-    DEBUG_SPTR(point_);
+    CGAL_SS3_DEBUG_SPTR(point_);
     return point_;
 }
 
@@ -56,7 +56,7 @@ void CircularNode::setOffset(CGAL::FT offset) {
 }
 
 SphericalSkeletonSPtr CircularNode::getSkel() const {
-    DEBUG_WPTR(skel_);
+    CGAL_SS3_DEBUG_WPTR(skel_);
     if (this->skel_.expired())
         return SphericalSkeletonSPtr();
     else

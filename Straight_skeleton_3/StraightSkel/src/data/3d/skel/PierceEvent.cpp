@@ -46,7 +46,7 @@ PierceEventSPtr PierceEvent::create() {
 }
 
 NodeSPtr PierceEvent::getNode() const {
-    DEBUG_SPTR(node_);
+    CGAL_SS3_DEBUG_SPTR(node_);
     return node_;
 }
 
@@ -63,7 +63,7 @@ CGAL::FT PierceEvent::getOffset() const {
 }
 
 FacetSPtr PierceEvent::getFacet() const {
-    DEBUG_WPTR(facet_);
+    CGAL_SS3_DEBUG_WPTR(facet_);
     return facet_.lock();
 }
 
@@ -72,7 +72,7 @@ void PierceEvent::setFacet(FacetSPtr facet) {
 }
 
 VertexSPtr PierceEvent::getVertex() const {
-    DEBUG_WPTR(vertex_);
+    CGAL_SS3_DEBUG_WPTR(vertex_);
     return vertex_.lock();
 }
 
