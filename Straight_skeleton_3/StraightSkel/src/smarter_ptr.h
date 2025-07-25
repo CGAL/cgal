@@ -21,7 +21,7 @@
 
 #include <memory>
 
-#if 0//def DEBUG // issues with linking with clang
+#ifdef DEBUG // issues with linking with clang
 # include "util/SharedPtr.h"
 # define SHARED_PTR util::SharedPtr
 #else

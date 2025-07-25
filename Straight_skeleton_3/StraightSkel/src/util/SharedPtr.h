@@ -63,6 +63,15 @@ struct owner_less<util::SharedPtr<T> >
     }
 };
 
+// Hash specialization for util::SharedPtr
+template<typename T>
+struct hash<util::SharedPtr<T>>
+{
+    std::size_t operator()(const util::SharedPtr<T>& ptr) const noexcept {
+        return std::hash<T*>()(ptr.get());
+    }
+};
+
 } // namespace std
 
 #endif /* UTIL_SHAREDPTR_H */
