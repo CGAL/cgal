@@ -1,10 +1,7 @@
  S t r a i g h t S k e l
 =========================
 
-StraightSkel is an implementation of Straight Skeleton in 2- and 3-dimensional space.
-It is used to compute offsets of closed polygons and polyhedrons.
-
-The straight skeleton is always interior to the shape, and the offsetting is always inwards.
+Implementation of Straight Skeleton and Mesh Offsetting in 3-dimensional space.
 
  Requirements
 --------------
@@ -31,45 +28,43 @@ Optional:
 ----------
 
 CMake is used as build system.
-Therefore you may use "ccmake" or "cmake-gui" to configure the build process, as usual:
+Therefore you may use "ccmake" or "cmake-gui" to configure the build process (build type,
+CGAL and third-party libraries directories, etc.), as usual:
 
 ```
 mkdir build
 cd build
-cmake .. # + setup CGAL dir, build type, third party libs, etc.
+cmake-gui ..
 make
 ```
 
  Running
 ---------
 
-For outward offset mesh generation, a  function is provided, which handles creating
-an outside bounding box, inverting the mesh, etc. See sample code: src/offset_mesh.cpp
+The example `src/offset_mesh.cpp` is the main entry point: it is documented pipeline
+that checks the sanity of the input and the constructed output, and calls the main
+function `CGAL::face_offset()`.
 
- Development
--------------
+A typical call would be:
 
-To avoid segmentation fault errors, standard C pointers are used very rarely.
-A slightly modified version of the STL's Smart Pointer may be used instead.
-(Modification: Print the stack trace in case of an error.)
+```sh
+./offset_mesh ~/Data/Customers/XXXX/offset_data_july_2024/input_2105666_0.ply --weight-path ~/Data/Customers/XXXX/offset_data_july_2024/offsets_2105666.txt --save-path last_run/2105666_0 --save-offsets 1
+```
 
-Organization of Source Code:
+See the file for documentation of its parameters, and the documentation of `CGAL::face_offset()`.
 
-src/
-  algo/     Algorithms
-  data/     Data Structures
-  db/       Database
-  kernel/   Geometric Kernel (double precision)
-  ui/       User Interface
-    gl/     OpenGL
-    ps/     PostScript
-  util/     Tools
-  misc/     Miscellaneous (pre- and post-processing helpers for mesh offsetting)
-test/       Unit Test Cases
+Some scripts can be used to automatically run tests:
+- `test.sh`, to run a few dozen unit tests
+- `run_and_compare.sh`, which takes a path to a directory with triplets of file of the format:
+  - "input_XXX.ply" the input
+  - "offsets_XXX.txt" the weights along cardinal direction, see the function `assign_weights()` in `offset_mesh.cpp`
+  - "output_XXX.ply" an output to compare to.
+  and construct the offset mesh and performs some comparisons with the provided result.
 
  History
 ---------
 
 StraightSkel was started by Gernot Walzl in the years 2011, 2012, 2013 (MIT).
 
-StraightSkel was further developed by GeometryFactory since 2024 (GPL-3.0-or-later OR LicenseRef-Commercial).
+3D straight skeletons and mesh offsetting were further developed by GeometryFactory
+since 2024 (GPL-3.0-or-later OR LicenseRef-Commercial).
