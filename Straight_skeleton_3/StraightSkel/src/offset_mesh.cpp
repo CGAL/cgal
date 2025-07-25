@@ -74,6 +74,21 @@ void save_colored_mesh(const PolygonMesh& pmesh,
   CGAL::IO::write_PLY(out, pmesh, CGAL::parameters::face_color_map(face_color));
 }
 
+// This is an helper function that computes the weight associated to a face
+// using its normal and the provided weights in the x, y and z directions.
+// Weights are written in the property map `fwm`.
+//
+// \tparam PolygonMesh must be a model of `FaceListGraph`
+// \tparam FaceWeightMap must be a model of `ReadWritePropertyMap`
+//
+// \param weights_filename the name of the file containing the weights
+//                         in the format:
+//                         x1: <value> x2: <value> y1: <value> y2: <value>
+//                         [bottom: <value> top: <value>]
+// \param pmesh the polygon mesh to assign weights to
+// \param fwm the face weight map to write the weights to
+//
+// \return `true` if all weights could be read, are valid, and were successfully assigned; `false` otherwise.
 template <typename PolygonMesh, typename FaceWeightMap>
 bool assign_weights(const char* weights_filename,
                     const PolygonMesh& pmesh,
@@ -81,15 +96,16 @@ bool assign_weights(const char* weights_filename,
 {
   using face_descriptor = typename boost::graph_traits<PolygonMesh>::face_descriptor;
 
-  if(!weights_filename) {
-    CGAL_SS3_TRACE("No input weights provided; all weights are set to '1'.");
+  std::ifstream weights_in(weights_filename);
+
+  if(!weights_filename || !weights_in) {
+    CGAL_SS3_TRACE("Warning: no input weights provided; all weights are set to '1'.");
     for(face_descriptor f : faces(pmesh))
       put(fwm, f, 1.);
 
     return true;
   }
 
-  std::ifstream weights_in(weights_filename) ;
   std::string x1_str, x2_str, y1_str, y2_str, bot_str, top_str;
   CGAL::FT x1_val, x2_val, y1_val, y2_val, bot_val, top_val;
   x1_val = x2_val = y1_val = y2_val = bot_val = top_val = 0;
@@ -131,6 +147,13 @@ bool assign_weights(const char* weights_filename,
   CGAL_SS3_TRACE("bot_val = " << bot_val);
   CGAL_SS3_TRACE("top_val = " << top_val);
 
+  if(is_zero(x1_val) && is_zero(x2_val) &&
+     is_zero(y1_val) && is_zero(y2_val) &&
+     is_zero(bot_val) && is_zero(top_val)) {
+    std::cerr << "Error: all weights are zero" << std::endl;
+    return false;
+  }
+
   CGAL::FT eps_weight = std::numeric_limits<double>::max(); // 'double' on purpose
   if(x1_val > 0) eps_weight = (std::min)(eps_weight, x1_val);
   if(x2_val > 0) eps_weight = (std::min)(eps_weight, x2_val);
@@ -140,11 +163,6 @@ bool assign_weights(const char* weights_filename,
   if(top_val > 0) eps_weight = (std::min)(eps_weight, top_val);
 
   CGAL_SS3_TRACE("min_weight = " << eps_weight);
-
-  if(eps_weight == std::numeric_limits<double>::max()) {
-    std::cerr << "Error: all weights are zero" << std::endl;
-    return false;
-  }
 
   // @todo handle true zero
   eps_weight = 1e-10 * eps_weight;
@@ -224,19 +242,41 @@ bool assign_weights(const char* weights_filename,
 
 } // namespace utils
 
+// Given a range of values, this function generates face-offsets of an input mesh.
+// The mesh is constructed by translating the faces of the input mesh by a distance
+// that depends on the specified offset and their respective weights (speeds); during
+// offsetting, elements of the mesh interact with each other (merging, splitting, etc.).
+//
+// Positive offset values correspond to outward offsets, while negative values correspond to inward offsets.
+//
+// \warning A tiny perturbation is always applied to the input mesh's geometry as to avoid so-called
+// degenerate positions, meaning a configuration where any three supporting planes of the facets
+// of the input mesh do not intersect in a single point.
+//
+// \tparam TriangleMesh must be a model of `MutableFaceGraph`, `FaceListGraph`, `HalfedgeListGraph`
+// \tparam NamedParametersIn must be a model of `NamedParameters`
+// \tparam NamedParametersOut must be a model of `NamedParameters`
+//
+// \param tmesh the input mesh to offset
+// \param save_offsets the offsets to apply to the mesh
+// \param results the output vector of meshes that will contain the offset meshes
+// \param np_in the input named parameters
+// \param np_out the output named parameters
+//
+// \pre offsets value should be non-zero and all of the same sign.
+//
+// \return `true` if offset meshes were successfully constructed; `false` otherwise.
 template <typename TriangleMesh,
           typename NamedParametersIn = parameters::Default_named_parameters,
           typename NamedParametersOut = parameters::Default_named_parameters>
 bool face_offset(TriangleMesh& tmesh,
-                 const std::vector<CGAL::FT>& save_offsets,
+                 std::vector<CGAL::FT> save_offsets, // intentional copy
                  std::vector<TriangleMesh>& results,
                  const NamedParametersIn& np_in = parameters::default_values(),
                  const NamedParametersOut& np_out = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
-
-  bool outwards = choose_parameter(get_parameter(np_in, internal_np::outward_offsetting), true);
 
   const std::filesystem::path save_path = choose_parameter(get_parameter(np_in, internal_np::io_path),
                                                            std::filesystem::current_path());
@@ -246,14 +286,19 @@ bool face_offset(TriangleMesh& tmesh,
   CGAL_precondition(CGAL::is_triangle_mesh(tmesh));
   CGAL_precondition(!PMP::does_self_intersect(tmesh));
 
+  const bool outwards = (!save_offsets.empty() && CGAL::is_positive(save_offsets.front()));
+
+  // The underlying implementation always shrinks the mesh, so for outwards offsets,
+  // we reverse the face orientations, whether the mesh was outward oriented or not.
   if (outwards) {
     CGAL_SS3_TRACE("Reversing face orientations (pointing in)...");
-    PMP::orient_to_bound_a_volume(tmesh);
     PMP::reverse_face_orientations(tmesh);
-  }
 
-  // the algorithm is a shrink, so the orientation must be flipped
-  CGAL_assertion(outwards != PMP::is_outward_oriented(tmesh));
+    // also switch to negative offsets
+    for (CGAL::FT& offset : save_offsets) {
+      offset = -offset;
+    }
+  }
 
   // Convert the suface mesh into the SLS3-specific data structure that allows faces with multiple
   // borders and disconnected facet connected components
@@ -301,11 +346,17 @@ bool face_offset(TriangleMesh& tmesh,
 
   bool success = algoskel3d->run();
   if (!success) {
-      return { };
+      return false;
   }
 
   if (results_p.size() != save_offsets.size()) {
-    return { };
+    return false;
+  }
+
+  if (outwards) {
+    for (CGAL::FT& offset : save_offsets) {
+      offset = -offset;
+    }
   }
 
   for (std::size_t i=0; i<results_p.size(); ++i) {
@@ -315,21 +366,19 @@ bool face_offset(TriangleMesh& tmesh,
     CGAL_SS3_TRACE("Post processing of result @ " << save_offset)
 
     if (!result_p) {
-      return { };
+      return false;
     }
 
     TriangleMesh result_t;
-
     bool success = db::_3d::Surface_meshIO::save(result_p, result_t,
                                                  CGAL::parameters::do_not_triangulate_faces(false) /*triangulate*/);
     if (!success) {
       std::cerr << "Error: failed to convert back to Surface_mesh" << std::endl;
-      return { };
+      return false;
     }
 
     CGAL_postcondition(result_t.is_valid());
     CGAL_postcondition(is_valid_face_graph(result_t));
-    CGAL_postcondition(!CGAL::is_empty(result_t));
     CGAL_postcondition(CGAL::is_closed(result_t));
     CGAL_postcondition(CGAL::is_triangle_mesh(result_t));
     CGAL_postcondition(!PMP::has_degenerate_faces(result_t));
@@ -340,10 +389,13 @@ bool face_offset(TriangleMesh& tmesh,
       PMP::reverse_face_orientations(result_t);
     }
 
+    std::cout << "At offset: " << save_offset << ", result with "
+              << num_vertices(result_t) << " vertices and " << num_faces(result_t) << " faces" << std::endl;
+
     results.push_back(result_t);
   }
 
-  CGAL_SS3_TRACE("Offset meshes generated");
+  CGAL_SS3_TRACE("Offset mesh(es) constructed");
   return true;
 }
 
@@ -355,9 +407,11 @@ int main(int argc, char** argv)
   std::cerr.precision(17);
 
   if (argc == 1) {
-    std::cout << "Usage: " << argv[0]
-              << " <input filename> [<weights filename>] [<output directory>]"
-              << std::endl;
+    std::cout << "Usage: " << argv[0] << " <input filename> [--weight-path <weights filename>] [--save-path <output directory>] [--save-offsets <offset_0> <offset_1> ...]" << std::endl;
+    std::cout << "  <input filename>                   Path to input mesh file (required)" << std::endl;
+    std::cout << "  --weight-path <weights filename>   Path to weights file (optional)" << std::endl;
+    std::cout << "  --save-path <output directory>     Directory to save results (optional, defaults to current directory)" << std::endl;
+    std::cout << "  --save-offsets <offsets>           List of offsets (required, all must be non-zero and same sign)" << std::endl;
     std::exit(0);
   }
 
@@ -368,59 +422,83 @@ int main(int argc, char** argv)
       std::cerr << "Error: Config file '" << str_conf_file << "' not found." << std::endl;
   }
 
-  // Can be any format read by CGAL::IO::read_polygon_mesh()
+  // Argument parsing
   const char* mesh_filename = argv[1];
+  const char* weights_filename = nullptr;
+  std::filesystem::path save_path = std::filesystem::current_path();
+  std::vector<std::string> offset_strings;
 
-  // Weight File Format:
-  //   x1 vx1
-  //   x2 vx2
-  //   y1 vy1
-  //   y2 vy2
-  // optional:
-  //   z1 vz1
-  //   z2 vz2
-  const char* weights_filename = (argc > 2) ? argv[2] : nullptr;
-
-  bool outwards = false;
-  if (argc > 3) {
-    std::string outwards_str(argv[3]);
-    std::transform(outwards_str.begin(), outwards_str.end(), outwards_str.begin(), ::tolower);
-    if (outwards_str == "1" || outwards_str == "true"  ||
-        outwards_str == "outward" || outwards_str == "outwards") {
-      outwards = true;
+  for (int i = 2; i < argc; ++i) {
+    std::string arg = argv[i];
+    if (arg == "--weight-path" && i + 1 < argc) {
+      std::filesystem::path candidate(argv[i + 1]);
+      if (std::filesystem::exists(candidate) && std::filesystem::is_regular_file(candidate)) {
+        weights_filename = argv[i + 1];
+      } else {
+        weights_filename = nullptr;
+        std::cerr << "Warning: '" << argv[i + 1] << "' is not a valid file. Using default weights." << std::endl;
+      }
+      ++i;
+    } else if (arg == "--save-path" && i + 1 < argc) {
+      std::filesystem::path candidate(argv[i + 1]);
+      if (std::filesystem::is_directory(candidate)) {
+        save_path = candidate;
+      } else {
+        std::cerr << "Warning: '" << argv[i + 1] << "' is not a valid directory. Using current directory instead." << std::endl;
+        save_path = std::filesystem::current_path();
+      }
+      ++i;
+    } else if (arg == "--save-offsets") {
+      // Read all following values until next flag or end
+      int j = i + 1;
+      while (j < argc && std::string(argv[j]).find("--") != 0) {
+        offset_strings.push_back(argv[j]);
+        ++j;
+      }
+      i = j - 1;
     }
   }
 
-  // path of the directory where the output is written
-  const std::filesystem::path save_path = (argc > 4) ? argv[4] : std::filesystem::current_path();
-
   // offsets at which a result should be produced
-  std::vector<CGAL::FT> save_offsets;
-  for (int i=5; i<argc; ++i) {
+  std::set<CGAL::FT> unique_save_offsets;
+  for (const auto& s : offset_strings) {
     try {
-      double val = std::stod(argv[i]);
-      if (val >= 0) {
-        std::cerr << "Error: offset must be negative, got " << val << std::endl;
-        return EXIT_FAILURE;
-      }
-      save_offsets.push_back(val);
+      double val = std::stod(s);
+      unique_save_offsets.insert(val);
     } catch (const std::exception& e) {
-      std::cerr << "Error: invalid offset value '" << argv[i] << "'" << std::endl;
+      std::cerr << "Error: invalid offset value '" << s << "'" << std::endl;
       return EXIT_FAILURE;
     }
   }
 
-  if (save_offsets.empty()) {
-    std::cerr << "Error: no valid negative offsets provided." << std::endl;
+  // Check that all offsets are of the same sign (ignoring zeros)
+  std::vector<CGAL::FT> save_offsets(std::cbegin(unique_save_offsets), std::cend(unique_save_offsets));
+
+  bool has_positive_offsets = false, has_negative_offsets = false;
+  for (auto v : save_offsets) {
+    if (v == 0) {
+      std::cerr << "Error: offset should be non-zero" << std::endl;
+      return EXIT_FAILURE;
+    } else if (v > 0) {
+      has_positive_offsets = true;
+    } else if (v < 0) {
+      has_negative_offsets = true;
+    }
+  }
+
+  if (has_positive_offsets && has_negative_offsets) {
+    std::cerr << "Error: offsets must all be positive or all negative." << std::endl;
     return EXIT_FAILURE;
   }
 
-  std::sort(save_offsets.begin(), save_offsets.end(), std::greater<CGAL::FT>());
+  std::sort(save_offsets.begin(), save_offsets.end(), [](const CGAL::FT& a, const CGAL::FT& b) {
+    return CGAL::abs(a) < CGAL::abs(b);
+  });
 
   // ---
 
   Mesh sm;
-  if(!CGAL::IO::read_polygon_mesh(mesh_filename, sm) || CGAL::is_empty(sm)) {
+  if(!CGAL::IO::read_polygon_mesh(mesh_filename, sm) || CGAL::is_empty(sm) || !is_valid_face_graph(sm)) {
     std::cerr << "Error: failed to read input " << mesh_filename << std::endl;
     return EXIT_FAILURE;
   }
@@ -438,6 +516,7 @@ int main(int argc, char** argv)
     return EXIT_FAILURE;
   }
 
+#if 0 // not an issue, but sometimes useful to debug
   auto vol_id_map = sm.add_property_map<face_descriptor, std::size_t>().first;
   std::size_t vccn = PMP::volume_connected_components(sm, vol_id_map,
                                                       CGAL::parameters::do_orientation_tests(false));
@@ -446,9 +525,9 @@ int main(int argc, char** argv)
     std::cerr << "Error: input has nested connected components" << std::endl;
     return EXIT_FAILURE;
   }
+#endif
 
   // assign weights
-  // do not change the pmap's name without changing it in 'PLYFile.cpp'
   auto res = sm.add_property_map<face_descriptor, double>("f:weight");
   if(!res.second) {
     std::cerr << "Error: failed to add property map?" << std::endl;
@@ -458,18 +537,19 @@ int main(int argc, char** argv)
   auto fwm = res.first;
 
   if (!CGAL::utils::assign_weights(weights_filename, sm, fwm)) {
-    std::cerr << "Error: failed to assign weights " << weights_filename << std::endl;
+    std::cerr << "Error: failed to assign weights " << (weights_filename ? weights_filename : "(default)") << std::endl;
     return EXIT_FAILURE;
   }
 
   std::vector<Mesh> results;
   results.reserve(save_offsets.size());
 
+  // Main call
   bool success = CGAL::face_offset(sm, save_offsets,
                                    results,
-                                   CGAL::parameters::face_weight_map(fwm)
-                                                    .outward_offsetting(outwards));
+                                   CGAL::parameters::face_weight_map(fwm));
 
+  // Check the sanity of the results, and save them
   for (std::size_t i=0; i<results.size(); ++i) {
     const CGAL::FT save_offset = save_offsets[i];
     const Mesh& sm = results[i];
@@ -478,8 +558,8 @@ int main(int argc, char** argv)
       std::cerr << "Error: broken output" << std::endl;
       return EXIT_FAILURE;
     }
-    if (CGAL::is_empty(sm) || !CGAL::is_closed(sm)) {
-      std::cerr << "empty or open output" << std::endl;
+    if (!CGAL::is_closed(sm)) {
+      std::cerr << "open output" << std::endl;
       return EXIT_FAILURE;
     }
     if (!CGAL::is_triangle_mesh(sm)) {
@@ -506,5 +586,6 @@ int main(int argc, char** argv)
     }
   }
 
+  std::cout << "Done" << std::endl;
   return success ? EXIT_SUCCESS : EXIT_FAILURE;
 }
