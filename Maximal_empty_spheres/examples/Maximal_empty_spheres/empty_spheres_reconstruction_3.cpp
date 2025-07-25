@@ -2,15 +2,12 @@
 #include <CGAL/Maximal_empty_spheres/maximal_empty_spheres.h>
 #include <iostream>
 #include <vector>
+#include <chrono>
 
 #include "polyscope/polyscope.h"
 #include "polyscope/point_cloud.h"
 #include "polyscope/surface_mesh.h"
 #include "polyscope/volume_mesh.h"
-
-// using Sphere_3 = CGAL::Exact_predicates_inexact_constructions_kernel::Sphere_3;
-// using Point_3 = CGAL::Exact_predicates_inexact_constructions_kernel::Point_3;
-
 
 // ------------------- PSR Code -----------------
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -231,8 +228,13 @@ int main(int argc, char *argv[]){
     std::cout << "... main calculation... " << std::endl;
 
     std::vector<Point_with_normal> Pwns;
+
+    auto start = std::chrono::high_resolution_clock::now();
     contact_points(Gp, Pwns, (filter_contact_spheres_bbx)?&bbxl:NULL);
     contact_points(Gn, Pwns, (filter_contact_spheres_bbx)?&bbxl:NULL);
+    auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> elapsed = end - start;
+    std::cout << "Elapsed time: " << elapsed.count() << " seconds\n";
 
     if (false){
         std::cout << "PSR from " << Pwns.size() << " points with normals" << std::endl;
