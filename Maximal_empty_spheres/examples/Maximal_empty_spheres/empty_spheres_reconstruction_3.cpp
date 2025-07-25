@@ -182,20 +182,22 @@ void contact_points(const Eigen::MatrixXd &G, std::vector<Point_with_normal> &Pw
 
 }
 
-int main(){
-    // std::ifstream in("data/3D/spheres.csv");
-    std::ifstream in("data/3D/koala.obj_gridvals_30_regular.csv");
-
-    std::vector<Eigen::RowVector4d> input_spheres;
+int main(int argc, char *argv[]){
 
     bool filter_contact_spheres_bbx=true;
 
+    // input .csv file
+    std::string pth = "data/3D/koala.obj_gridvals_30_regular.csv";
+    if (argc >= 2) {
+        pth = argv[1];
+    }
+
+    std::ifstream in(pth);
+    std::vector<Eigen::RowVector4d> input_spheres;
+
     double x, y, z, r;
     while(in >> x){
-
         in.ignore(10,','); in >> y;  in.ignore(10,','); in >> z; in.ignore(10,','); in >> r;
-        // I only filter out the positive spheres here as a first demo. The proper version uses positive / negative spheres separately.
-        // TODO: implement the proper version
         input_spheres.emplace_back(Eigen::RowVector4d(x,y,z,r));
         // std::cout << "Sphere: " << x << y << z << r << std::endl;
     }
@@ -232,8 +234,18 @@ int main(){
     contact_points(Gp, Pwns, (filter_contact_spheres_bbx)?&bbxl:NULL);
     contact_points(Gn, Pwns, (filter_contact_spheres_bbx)?&bbxl:NULL);
 
-    std::cout << "PSR from " << Pwns.size() << " points with normals" << std::endl;
-    poisson_reconstruct(Pwns);
+    if (false){
+        std::cout << "PSR from " << Pwns.size() << " points with normals" << std::endl;
+        // disable actual reconstruction for the moment
+        poisson_reconstruct(Pwns);
+    }
+
+    // converte pwn to matrices again...
+    Eigen::MatrixXd P(Pwns.size(),3),N(Pwns.size(),3);
+    for (int i=0; i<Pwns.size(); i++){
+        P.row(i) = Eigen::RowVector3d(Pwns[i].first[0],  Pwns[i].first[1],  Pwns[i].first[2] );
+        N.row(i) = Eigen::RowVector3d(Pwns[i].second[0], Pwns[i].second[1], Pwns[i].second[2]);
+    }
 
     // POLYSCOPE DEBUGGING
     polyscope::init(); 
@@ -245,6 +257,9 @@ int main(){
     auto pc_centers = polyscope::registerPointCloud("SDF Spheres", G.block(0,0,G.rows(),3));
     auto q = pc_centers->addScalarQuantity("SDF radius", G.col(3).array().abs()); // add the quantity
     pc_centers->setPointRadiusQuantity(q,false); // set the quantity as the radius
+
+    auto p_ = polyscope::registerPointCloud("PSR Points", P);
+    p_->addVectorQuantity("N", N)->setEnabled(true);
 
     /*
     auto res_centers = polyscope::registerPointCloud("Solutions", res.block(0,0,res.rows(),3));
