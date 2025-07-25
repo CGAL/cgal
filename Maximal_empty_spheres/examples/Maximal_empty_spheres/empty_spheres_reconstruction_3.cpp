@@ -42,7 +42,7 @@ int poisson_reconstruct(const std::vector<Point_with_normal> &points){
     FT sm_angle = 20.0; // Min triangle angle in degrees.
     FT sm_radius = 30; // Max triangle size w.r.t. point set average spacing.
     FT sm_distance = 0.375; // Surface Approximation error w.r.t. point set average spacing.
-    
+
     Poisson_reconstruction_function function(points.begin(), points.end(), Point_map(), Normal_map());
     // Computes the Poisson indicator function f()
     // at each vertex of the triangulation.
@@ -75,11 +75,11 @@ int poisson_reconstruct(const std::vector<Point_with_normal> &points){
                             surface,                              // implicit surface
                             criteria,                             // meshing criteria
                             CGAL::Manifold_with_boundary_tag());  // require manifold mesh
-    
+
     if(tr.number_of_vertices() == 0)
       return EXIT_FAILURE;
 
-    
+
 
     // saves reconstructed surface mesh
     std::ofstream out("tmp.off");
@@ -138,7 +138,7 @@ void contact_points(const Eigen::MatrixXd &G, std::vector<Point_with_normal> &Pw
                 if ( (contact_point_indices(n) < 0) || ((contact_point_indices(n) >= 0) && (contact_point_radii(n) < r)) ){
                     contact_point_indices(n) = i;
                     contact_point_radii(n)   = r;
-                } 
+                }
             }
         }
     }
@@ -173,8 +173,9 @@ void contact_points(const Eigen::MatrixXd &G, std::vector<Point_with_normal> &Pw
 
 }
 
-int main(){
-    std::ifstream in("data/3D/spheres.csv");
+int main(int argc, char** argv) {
+    const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("data/3D/spheres.csv");
+    std::ifstream in(filename);
     // std::ifstream in("data/3D/koala.obj_gridvals_30_regular.csv");
 
     std::vector<Eigen::RowVector4d> input_spheres;
@@ -195,7 +196,7 @@ int main(){
 
     Eigen::MatrixXd G(input_spheres.size(), 4);
     for (int i=0; i<input_spheres.size(); i++) G.row(i) = input_spheres[i];
-    
+
     Eigen::MatrixXd bbxl(2,3);
     bbxl.row(0) = G.block(0,0,G.rows(),3).colwise().minCoeff();
     bbxl.row(1) = G.block(0,0,G.rows(),3).colwise().maxCoeff();
@@ -216,7 +217,7 @@ int main(){
             Gn.row(nn++) = input_spheres[i];
         }
     }
-    
+
     std::cout << "... main calculation... " << std::endl;
 
     std::vector<Point_with_normal> Pwns;
