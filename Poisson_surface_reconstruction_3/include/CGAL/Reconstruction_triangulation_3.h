@@ -261,6 +261,7 @@ public:
   std::size_t fraction;
   std::list<double> fractions;
   Vertex_handle constrained_vertex;
+  double average_spacing = 0.0;
 
 
 public:
@@ -286,6 +287,11 @@ public:
 
   using Base::geom_traits;
   /// \endcond
+
+  void set_average_spacing(double spacing)
+  {
+    average_spacing = spacing;
+  }
 
   /// Gets first iterator over input vertices.
   Input_vertices_iterator input_vertices_begin() const
@@ -345,6 +351,18 @@ public:
     typename Base::Locate_type lt;
     int li, lj;
     Cell_handle ch = Base::locate(p, lt, li, lj, start);
+
+    CGAL_assertion(average_spacing > 0.0);
+    for(int i=0; i < 4; ++i)
+    {
+      Vertex_handle v = ch->vertex(i);
+      if(! is_infinite(v)){
+        if(CGAL::squared_distance(v->point(), p) < (average_spacing * average_spacing)){
+          std::cout  << "close point found: " << v->point() << " vs " << p << std::endl;
+          return v;
+        }
+      }
+    }
 
     Vertex_handle v = Base::insert(p, lt, ch, li, lj);
     v->type() = static_cast<unsigned char>(type);

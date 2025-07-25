@@ -174,7 +174,7 @@ void contact_points(const Eigen::MatrixXd &G, std::vector<Point_with_normal> &Pw
 }
 
 int main(int argc, char** argv) {
-    const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("data/3D/spheres.csv");
+    const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("data/3D/spheres.csv");;
     std::ifstream in(filename);
     // std::ifstream in("data/3D/koala.obj_gridvals_30_regular.csv");
 
