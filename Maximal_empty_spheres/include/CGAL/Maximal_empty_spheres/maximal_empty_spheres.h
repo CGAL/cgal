@@ -134,9 +134,11 @@ void maximal_empty_spheres(const Eigen::MatrixXd &G, Eigen::MatrixXd &result, Ei
         full_simplices(ki) = svd.singularValues().array().abs().minCoeff() > atol;
         ki++;
 
+        /*
         if (svd.singularValues().array().abs().minCoeff() <= atol) {
             std::cout << "Not a full simplex" << std::endl;
         }
+        */
     }
 
     // std::cout << "Ks.shape: (" << Ks.rows() << ", " << Ks.cols() << ")" << std::endl;
