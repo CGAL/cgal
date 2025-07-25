@@ -216,9 +216,9 @@ bool GraphChecker::check(StraightSkeletonSPtr skel) {
     if (result == 0) {
         std::set<NodeSPtr>::iterator it_n = hidden.begin();
         while (it_n != hidden.end()) {
-            CGAL_SS3_TRACE_CODE(NodeSPtr node = *it_n++;)
-            CGAL_SS3_TRACE_CODE(unsigned int num_visited_childs = countVisitedChilds(visited, node);)
-            CGAL_SS3_TRACE_CODE(AbstractEventSPtr event = findEvent(skel, node);)
+            CGAL_SS3_SKEL_DS_TRACE_CODE(NodeSPtr node = *it_n++;)
+            CGAL_SS3_SKEL_DS_TRACE_CODE(unsigned int num_visited_childs = countVisitedChilds(visited, node);)
+            CGAL_SS3_SKEL_DS_TRACE_CODE(AbstractEventSPtr event = findEvent(skel, node);)
             CGAL_SS3_SKEL_DS_TRACE(event->toString());
             CGAL_SS3_SKEL_DS_TRACE(num_visited_childs);
         }

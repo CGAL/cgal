@@ -34,6 +34,7 @@
 // -------------------------------------------------------------------------------------------------
 
 // # define CGAL_SS3_DUMP_FILES
+
 # define CGAL_SS3_PROFILE_FILTERING_MECHANISMS
 # define CGAL_SS3_RUN_TIMERS
 # define CGAL_SS3_EXIT_ASAP
@@ -61,30 +62,20 @@
 // #define CGAL_SS3_ALGO_ENABLE_TRACE // supporting algorithms
 #define CGAL_SS3_CORE_ENABLE_TRACE // main algo
 
-#if defined(CGAL_SS3_ENABLE_TRACE) || \
-    defined(CGAL_SS3_TRAITS_ENABLE_TRACE) || \
-    defined(CGAL_SS3_HDS_ENABLE_TRACE) || \
-    defined(CGAL_SS3_SKEL_DS_ENABLE_TRACE) || \
-    defined(CGAL_SS3_IO_ENABLE_TRACE) || \
-    defined(CGAL_SS3_TRANSF_ENABLE_TRACE) || \
-    defined(CGAL_SS3_SPLITTER_ENABLE_TRACE) || \
-    defined(CGAL_SS3_ALGO_ENABLE_TRACE) || \
-    defined(CGAL_SS3_CORE_ENABLE_TRACE)
-# define CGAL_SS3_TRACE_CODE(code) code
-#endif
-
 // -------------------------------------------------------------------------------------------------
 
 // Generic
 #ifdef CGAL_SS3_ENABLE_TRACE
-#define CGAL_SS3_TRACE(m) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
-#define CGAL_SS3_TRACE_V(l,m) if (l <= CGAL_SS3_TRACE_VERBOSITY) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
-#define CGAL_SS3_TRACE_IF(c,l,m) if ( (c) && l <= CGAL_SS3_TRACE_VERBOSITY) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
+# define CGAL_SS3_TRACE_CODE(code) code
+# define CGAL_SS3_TRACE(m) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
+# define CGAL_SS3_TRACE_V(l,m) if (l <= CGAL_SS3_TRACE_VERBOSITY) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
+# define CGAL_SS3_TRACE_IF(c,l,m) if ( (c) && l <= CGAL_SS3_TRACE_VERBOSITY) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
 #endif
 
 // -------------------------------------------------------------------------------------------------
 
 #ifdef CGAL_SS3_TRAITS_ENABLE_TRACE
+# define CGAL_SS3_TRAITS_TRACE_CODE(code) code
 # define CGAL_SS3_TRAITS_TRACE(m) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
 # define CGAL_SS3_TRAITS_TRACE_V(l,m) if (l <= CGAL_SS3_TRACE_VERBOSITY) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
 # define CGAL_SS3_TRAITS_TRACE_IF(c,l,m) if ( (c) && l <= CGAL_SS3_TRACE_VERBOSITY) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
@@ -94,6 +85,7 @@
 
 // Polyhedron and related classes
 #ifdef CGAL_SS3_HDS_ENABLE_TRACE
+# define CGAL_SS3_HDS_TRACE_CODE(code) code
 # define CGAL_SS3_HDS_TRACE(m) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
 # define CGAL_SS3_HDS_TRACE_V(l,m) if (l <= CGAL_SS3_TRACE_VERBOSITY) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
 # define CGAL_SS3_HDS_TRACE_IF(c,l,m) if ( (c) && l <= CGAL_SS3_TRACE_VERBOSITY) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
@@ -103,6 +95,7 @@
 
 // Skeleton and related classes
 #ifdef CGAL_SS3_SKEL_DS_ENABLE_TRACE
+# define CGAL_SS3_SKEL_DS_TRACE_CODE(code) code
 # define CGAL_SS3_SKEL_DS_TRACE(m) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
 # define CGAL_SS3_SKEL_DS_TRACE_V(l,m) if (l <= CGAL_SS3_TRACE_VERBOSITY) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
 # define CGAL_SS3_SKEL_DS_TRACE_IF(c,l,m) if ( (c) && l <= CGAL_SS3_TRACE_VERBOSITY) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
@@ -112,6 +105,7 @@
 
 // Reading and writing data
 #ifdef CGAL_SS3_IO_ENABLE_TRACE
+# define CGAL_SS3_IO_TRACE_CODE(code) code
 # define CGAL_SS3_IO_TRACE(m) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
 # define CGAL_SS3_IO_TRACE_V(l,m) if (l <= CGAL_SS3_TRACE_VERBOSITY) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
 # define CGAL_SS3_IO_TRACE_IF(c,l,m) if ( (c) && l <= CGAL_SS3_TRACE_VERBOSITY) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
@@ -121,6 +115,7 @@
 
 // Transformation of polyhedra
 #ifdef CGAL_SS3_TRANSF_ENABLE_TRACE
+# define CGAL_SS3_TRANSF_TRACE_CODE(code) code
 # define CGAL_SS3_TRANSF_TRACE(m) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
 # define CGAL_SS3_TRANSF_TRACE_V(l,m) if (l <= CGAL_SS3_TRACE_VERBOSITY) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
 # define CGAL_SS3_TRANSF_TRACE_IF(c,l,m) if ( (c) && l <= CGAL_SS3_TRACE_VERBOSITY) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
@@ -130,6 +125,7 @@
 
 // Vertex splitters
 #ifdef CGAL_SS3_SPLITTER_ENABLE_TRACE
+# define CGAL_SS3_SPLITTER_TRACE_CODE(code) code
 # define CGAL_SS3_SPLITTER_TRACE(m) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
 # define CGAL_SS3_SPLITTER_TRACE_V(l,m) if (l <= CGAL_SS3_TRACE_VERBOSITY) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
 # define CGAL_SS3_SPLITTER_TRACE_IF(c,l,m) if ( (c) && l <= CGAL_SS3_TRACE_VERBOSITY) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
@@ -139,6 +135,7 @@
 
 // Supporting algorithms such as self-intersection detection
 #ifdef CGAL_SS3_ALGO_ENABLE_TRACE
+# define CGAL_SS3_ALGO_TRACE_CODE(code) code
 # define CGAL_SS3_ALGO_TRACE(m) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
 # define CGAL_SS3_ALGO_TRACE_V(l,m) if (l <= CGAL_SS3_TRACE_VERBOSITY) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
 # define CGAL_SS3_ALGO_TRACE_IF(c,l,m) if ( (c) && l <= CGAL_SS3_TRACE_VERBOSITY) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
@@ -148,6 +145,7 @@
 
 // Main construction algorithms
 #ifdef CGAL_SS3_CORE_ENABLE_TRACE
+# define CGAL_SS3_CORE_TRACE_CODE(code) code
 # define CGAL_SS3_CORE_TRACE(m) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
 # define CGAL_SS3_CORE_TRACE_V(l,m) if (l <= CGAL_SS3_TRACE_VERBOSITY) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
 # define CGAL_SS3_CORE_TRACE_IF(c,l,m) if ( (c) && l <= CGAL_SS3_TRACE_VERBOSITY) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
@@ -162,54 +160,63 @@
 #endif
 
 #ifndef CGAL_SS3_ENABLE_TRACE
+# define CGAL_SS3_TRACE_CODE(code) code
 # define CGAL_SS3_TRACE(m)
 # define CGAL_SS3_TRACE_V(l,m)
 # define CGAL_SS3_TRACE_IF(c,l,m)
 #endif
 
 #ifndef CGAL_SS3_TRAITS_ENABLE_TRACE
+# define CGAL_SS3_TRAITS_TRACE_CODE(code) code
 # define CGAL_SS3_TRAITS_TRACE(m)
 # define CGAL_SS3_TRAITS_TRACE_V(l,m)
 # define CGAL_SS3_TRAITS_TRACE_IF(c,l,m)
 #endif
 
 #ifndef CGAL_SS3_HDS_ENABLE_TRACE
+# define CGAL_SS3_HDS_TRACE_CODE(code)
 # define CGAL_SS3_HDS_TRACE(m)
 # define CGAL_SS3_HDS_TRACE_V(l,m)
 # define CGAL_SS3_HDS_TRACE_IF(c,l,m)
 #endif
 
 #ifndef CGAL_SS3_SKEL_DS_ENABLE_TRACE
+# define CGAL_SS3_SKEL_DS_TRACE_CODE(code)
 # define CGAL_SS3_SKEL_DS_TRACE(m)
 # define CGAL_SS3_SKEL_DS_TRACE_V(l,m)
 # define CGAL_SS3_SKEL_DS_TRACE_IF(c,l,m)
 #endif
 
 #ifndef CGAL_SS3_IO_ENABLE_TRACE
+# define CGAL_SS3_IO_TRACE_CODE(code)
 # define CGAL_SS3_IO_TRACE(m)
 # define CGAL_SS3_IO_TRACE_V(l,m)
 # define CGAL_SS3_IO_TRACE_IF(c,l,m)
 #endif
 
 #ifndef CGAL_SS3_TRANSF_ENABLE_TRACE
+# define CGAL_SS3_TRANSF_TRACE_CODE(code)
 # define CGAL_SS3_TRANSF_TRACE(m)
 # define CGAL_SS3_TRANSF_TRACE_V(l,m)
 # define CGAL_SS3_TRANSF_TRACE_IF(c,l,m)
 #endif
 
 #ifndef CGAL_SS3_SPLITTER_ENABLE_TRACE
+# define CGAL_SS3_SPLITTER_TRACE_CODE(code)
 # define CGAL_SS3_SPLITTER_TRACE(m)
 # define CGAL_SS3_SPLITTER_TRACE_V(l,m)
 # define CGAL_SS3_SPLITTER_TRACE_IF(c,l,m)
 #endif
 
 #ifndef CGAL_SS3_ALGO_ENABLE_TRACE
+# define CGAL_SS3_ALGO_TRACE_CODE(code)
 # define CGAL_SS3_ALGO_TRACE(m)
 # define CGAL_SS3_ALGO_TRACE_V(l,m)
 # define CGAL_SS3_ALGO_TRACE_IF(c,l,m)
 #endif
 
 #ifndef CGAL_SS3_CORE_ENABLE_TRACE
+# define CGAL_SS3_CORE_TRACE_CODE(code)
 # define CGAL_SS3_CORE_TRACE(m)
 # define CGAL_SS3_CORE_TRACE_V(l,m)
 # define CGAL_SS3_CORE_TRACE_IF(c,l,m)

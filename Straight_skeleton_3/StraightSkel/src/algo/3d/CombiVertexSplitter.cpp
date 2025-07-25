@@ -226,7 +226,7 @@ std::list<combi> CombiVertexSplitter::generateAllCombinations(unsigned int degre
     std::vector<int> labels = initLabels(degree);
     std::list<combi> result = generateCombinationsRec(history, labels);
     // CGAL_SS3_SPLITTER_TRACE("degree = " << degree);
-    // CGAL_SS3_TRACE_CODE(for (const combi& combination : result))
+    // CGAL_SS3_SPLITTER_TRACE_CODE(for (const combi& combination : result))
     // CGAL_SS3_SPLITTER_TRACE("  " << combiToString(combination));
     return result;
 }

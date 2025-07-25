@@ -133,7 +133,7 @@ int AbstractFile::mergeCoplanarFacets(PolyhedronSPtr polyhedron,
     }
 
     CGAL_SS3_TRANSF_TRACE(edges_toremove.size() << " edges to merge");
-    CGAL_SS3_TRACE_CODE(if (edges_toremove.size() > 0))
+    CGAL_SS3_TRANSF_TRACE_CODE(if (edges_toremove.size() > 0))
     CGAL_SS3_TRANSF_TRACE("Adjacent facets of the following edges are detected to be coplanar and will be merged.");
 
     std::list<EdgeWPtr>::iterator it_we = edges_toremove.begin();
@@ -340,6 +340,9 @@ int AbstractFile::removeVerticesDegLt3(PolyhedronSPtr polyhedron) {
         CGAL_postcondition(polyhedron->isConsistent());
         ++result;
     }
+
+    CGAL_SS3_TRANSF_TRACE("  final vertex count: " << polyhedron->vertices().size());
+
     return result;
 }
 

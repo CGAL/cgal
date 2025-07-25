@@ -527,7 +527,7 @@ bool Facet::initPlane() {
     }
 
     CGAL_SS3_HDS_TRACE("computing normals from " << points.size() << " points");
-    CGAL_SS3_TRACE_CODE(for (std::size_t i=0; i<points.size(); ++i))
+    CGAL_SS3_HDS_TRACE_CODE(for (std::size_t i=0; i<points.size(); ++i))
     CGAL_SS3_HDS_TRACE("point " << i << ": " << *points[i]);
 
     if (points.size() >= 3)
@@ -752,7 +752,7 @@ void Facet::perturbPlaneCoefficientsFixedPoints(const double range,
     CGAL_SS3_TRANSF_TRACE("  From coefficients [" << plane_->a() << " " << plane_->b() << " "
                                                   << plane_->c() << " " << plane_->d() << "]");
     CGAL_SS3_TRANSF_TRACE("  with " << fixed_points.size() << " fixed points");
-    CGAL_SS3_TRACE_CODE(for (Point3SPtr fp : fixed_points))
+    CGAL_SS3_TRANSF_TRACE_CODE(for (Point3SPtr fp : fixed_points))
     CGAL_SS3_TRANSF_TRACE("    " << *fp);
 
     static std::random_device rd;

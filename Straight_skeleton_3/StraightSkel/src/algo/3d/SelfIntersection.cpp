@@ -355,7 +355,7 @@ bool SelfIntersection::isInsideWithRayShooting(const Point3& point,
             }
         }
 
-        CGAL_SS3_TRACE_CODE(if (closest_edge))
+        CGAL_SS3_ALGO_TRACE_CODE(if (closest_edge))
         CGAL_SS3_ALGO_TRACE("closest_edge = " << closest_edge->toString());
 
         // Being in the cone where the distance is the same to multiple edges

@@ -1509,13 +1509,13 @@ SimpleStraightSkel::crashAt(EdgeSPtr edge_1, EdgeSPtr edge_2,
     CGAL_SS3_CORE_TRACE_V(16, "Facet 2 SRC = " << facet_2_src->getID());
     CGAL_SS3_CORE_TRACE_V(16, "Facet 2 DST = " << facet_2_dst->getID());
 
-    CGAL_SS3_TRACE_CODE(CGAL::FT current_offset = (basePlanes_.at(facet_l1->getBasePlaneID())->d()
-                                                   - facet_l1->getPlane()->d()) / speed_l1);
-    CGAL_SS3_TRACE_CODE(CGAL::FT shift_offset = offset_event - current_offset);
+    CGAL_SS3_CORE_TRACE_CODE(CGAL::FT current_offset = (basePlanes_.at(facet_l1->getBasePlaneID())->d()
+                                                      - facet_l1->getPlane()->d()) / speed_l1);
+    CGAL_SS3_CORE_TRACE_CODE(CGAL::FT shift_offset = offset_event - current_offset);
     CGAL_SS3_CORE_TRACE_V(16, "current offset " << current_offset);
     CGAL_SS3_CORE_TRACE_V(16, "shift offset " << shift_offset);
-    CGAL_SS3_TRACE_CODE(Segment3SPtr offset_e1 = PolyhedronTransformation::shiftEdge(edge_1, shift_offset);)
-    CGAL_SS3_TRACE_CODE(Segment3SPtr offset_e2 = PolyhedronTransformation::shiftEdge(edge_2, shift_offset);)
+    CGAL_SS3_CORE_TRACE_CODE(Segment3SPtr offset_e1 = PolyhedronTransformation::shiftEdge(edge_1, shift_offset);)
+    CGAL_SS3_CORE_TRACE_CODE(Segment3SPtr offset_e2 = PolyhedronTransformation::shiftEdge(edge_2, shift_offset);)
     CGAL_SS3_CORE_TRACE_V(16, "Offset edge 1: " << *offset_e1);
     CGAL_SS3_CORE_TRACE_V(16, "Offset edge 2: " << *offset_e2);
 
@@ -4476,10 +4476,10 @@ void SimpleStraightSkel::printQueue(const PQ& queue) {
         duplicate_queue.pop();
     }
 
-    CGAL_SS3_TRACE_CODE(std::stringstream ss;)
-    CGAL_SS3_TRACE_CODE(ss << "Saves:";)
-    CGAL_SS3_TRACE_CODE(for (CGAL::FT save_offset : save_offsets_))
-    CGAL_SS3_TRACE_CODE(ss << " " << save_offset;)
+    CGAL_SS3_CORE_TRACE_CODE(std::stringstream ss;)
+    CGAL_SS3_CORE_TRACE_CODE(ss << "Saves:";)
+    CGAL_SS3_CORE_TRACE_CODE(for (CGAL::FT save_offset : save_offsets_))
+    CGAL_SS3_CORE_TRACE_CODE(ss << " " << save_offset;)
     CGAL_SS3_CORE_TRACE(ss.str());
     CGAL_SS3_CORE_TRACE("-------------------------------------------------");
     CGAL_SS3_CORE_TRACE("-------------------------------------------------");
@@ -4711,7 +4711,7 @@ void SimpleStraightSkel::collectLocalEvents(PolyhedronSPtr polyhedron,
         std::list<EdgeSPtr> local_edges(post_op_edges_.begin(), post_op_edges_.end());
 
         CGAL_SS3_CORE_TRACE_V(16, "Local Edges for Vanish Events (" << local_edges.size() << ")");
-        CGAL_SS3_TRACE_CODE(for(EdgeSPtr e : local_edges))
+        CGAL_SS3_CORE_TRACE_CODE(for(EdgeSPtr e : local_edges))
         CGAL_SS3_CORE_TRACE_V(16, "\t" << e->toString());
 
 #ifdef CGAL_SS3_USE_GENERIC_VANISH_EVENT
@@ -4742,9 +4742,9 @@ void SimpleStraightSkel::collectLocalEvents(PolyhedronSPtr polyhedron,
                                                 post_op_vertices_VV_.end());
 
         CGAL_SS3_CORE_TRACE_V(16, "Local Vertices for Vertex-Vertex Events (" << local_vertices_VV.size() << "):")
-        CGAL_SS3_TRACE_CODE(std::stringstream ss;)
-        CGAL_SS3_TRACE_CODE(for(VertexSPtr v : local_vertices_VV))
-        CGAL_SS3_TRACE_CODE(ss << " " << v->getID();)
+        CGAL_SS3_CORE_TRACE_CODE(std::stringstream ss;)
+        CGAL_SS3_CORE_TRACE_CODE(for(VertexSPtr v : local_vertices_VV))
+        CGAL_SS3_CORE_TRACE_CODE(ss << " " << v->getID();)
         CGAL_SS3_CORE_TRACE_V(16, ss.str());
 
         const bool use_canonical_reps = false;
@@ -4771,7 +4771,7 @@ void SimpleStraightSkel::collectLocalEvents(PolyhedronSPtr polyhedron,
         std::list<EdgeSPtr> local_edges_EE(post_op_edges_.begin(), post_op_edges_.end());
 
         CGAL_SS3_CORE_TRACE_V(16, "Local Edges for Polyhedron Events (" << local_edges_EE.size() << ")");
-        CGAL_SS3_TRACE_CODE(for(EdgeSPtr e : local_edges_EE))
+        CGAL_SS3_CORE_TRACE_CODE(for(EdgeSPtr e : local_edges_EE))
         CGAL_SS3_CORE_TRACE_V(16, "\t" << e->toString());
 
         // this is the modified edges as 'edge_1'
@@ -4832,9 +4832,9 @@ void SimpleStraightSkel::collectLocalEvents(PolyhedronSPtr polyhedron,
         std::list<VertexSPtr> local_vertices_VF(post_op_vertices_pierce_.begin(), post_op_vertices_pierce_.end());
 
         CGAL_SS3_CORE_TRACE_V(16, "Local Vertices for Pierce Events (" << local_vertices_VF.size() << "):");
-        CGAL_SS3_TRACE_CODE(std::stringstream ss;)
-        CGAL_SS3_TRACE_CODE(for(VertexSPtr v : local_vertices_VF))
-        CGAL_SS3_TRACE_CODE(ss << " " << v->getID());
+        CGAL_SS3_CORE_TRACE_CODE(std::stringstream ss;)
+        CGAL_SS3_CORE_TRACE_CODE(for(VertexSPtr v : local_vertices_VF))
+        CGAL_SS3_CORE_TRACE_CODE(ss << " " << v->getID());
         CGAL_SS3_CORE_TRACE_V(16, ss.str());
 #else
         std::list<VertexSPtr> local_vertices_VF = polyhedron->vertices();
@@ -4854,7 +4854,7 @@ void SimpleStraightSkel::collectLocalEvents(PolyhedronSPtr polyhedron,
         std::list<EdgeSPtr> local_edges_EE(post_op_edges_.begin(), post_op_edges_.end());
 
         CGAL_SS3_CORE_TRACE_V(16, "Local Edges for Surface Events (" << local_edges_EE.size() << ")");
-        CGAL_SS3_TRACE_CODE(for(EdgeSPtr e : local_edges_EE))
+        CGAL_SS3_CORE_TRACE_CODE(for(EdgeSPtr e : local_edges_EE))
         CGAL_SS3_CORE_TRACE_V(16, "\t" << e->toString());
 
         // this is the modified edges as 'edge_1'
@@ -4908,7 +4908,7 @@ void SimpleStraightSkel::collectLocalEvents(PolyhedronSPtr polyhedron,
 
 
         CGAL_SS3_CORE_TRACE_V(16, "Local Edges for Edge Split Events (" << local_edges_EE.size() << ")");
-        CGAL_SS3_TRACE_CODE(for(EdgeSPtr e : local_edges_EE))
+        CGAL_SS3_CORE_TRACE_CODE(for(EdgeSPtr e : local_edges_EE))
         CGAL_SS3_CORE_TRACE_V(16, "\t" << e->toString());
 
         const bool use_canonical_reps = false;

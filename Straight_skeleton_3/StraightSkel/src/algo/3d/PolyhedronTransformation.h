@@ -202,7 +202,7 @@ convert(const CGAL::Surface_mesh<Point3>& sm,
                                                         maximum_distance(max_distance).
                                                         edge_is_constrained_map(CGAL::make_random_access_property_map(ecm)));
 
-    CGAL_SS3_TRACE_CODE(for (face_descriptor f : faces(sm)))
+    CGAL_SS3_TRANSF_TRACE_CODE(for (face_descriptor f : faces(sm)))
     CGAL_SS3_TRANSF_TRACE("facet " << f << " is in region " << region_ids[f]);
 
     // the almost-coplanar merge is performed after the conversion to the Polyhedron

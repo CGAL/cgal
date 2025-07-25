@@ -35,15 +35,15 @@ Point3SPtr KernelWrapper::intersection(Plane3SPtr plane1, Plane3SPtr plane2, Pla
     if (const CGAL::Point3* ipoint = std::get_if<CGAL::Point3>(&*res)) {
         result = KernelFactory::createPoint3(*ipoint);
     } else {
-        CGAL_SS3_TRACE_CODE(if (const CGAL::Line3* iline = std::get_if<CGAL::Line3>(&*res)) {)
-          CGAL_SS3_TRACE_CODE(CGAL_USE(iline);)
+        CGAL_SS3_TRAITS_TRACE_CODE(if (const CGAL::Line3* iline = std::get_if<CGAL::Line3>(&*res)) {)
+        CGAL_SS3_TRAITS_TRACE_CODE(CGAL_USE(iline);)
         CGAL_SS3_TRAITS_TRACE("Intersection of 3 planes is a line");
-        CGAL_SS3_TRACE_CODE(} else if(const CGAL::Plane3* iplane = std::get_if<CGAL::Plane3>(&*res)) {)
-        CGAL_SS3_TRACE_CODE(CGAL_USE(iplane);)
+        CGAL_SS3_TRAITS_TRACE_CODE(} else if(const CGAL::Plane3* iplane = std::get_if<CGAL::Plane3>(&*res)) {)
+        CGAL_SS3_TRAITS_TRACE_CODE(CGAL_USE(iplane);)
         CGAL_SS3_TRAITS_TRACE("Intersection of 3 planes is a plane");
-        CGAL_SS3_TRACE_CODE(} else {)
+        CGAL_SS3_TRAITS_TRACE_CODE(} else {)
         CGAL_SS3_TRAITS_TRACE("Intersection of 3 planes is... not?");
-        CGAL_SS3_TRACE_CODE(})
+        CGAL_SS3_TRAITS_TRACE_CODE(})
 
         CGAL_warning_msg(false, "intersection of 3 planes failed to produce a point");
     }
@@ -73,11 +73,11 @@ Point3SPtr KernelWrapper::intersection(Plane3SPtr plane, Line3SPtr line) {
     if (const CGAL::Point3 *ipoint = std::get_if<CGAL::Point3>(&*res)) {
         result = KernelFactory::createPoint3(*ipoint);
     } else {
-        CGAL_SS3_TRACE_CODE(if (const CGAL::Line3 *iline = std::get_if<CGAL::Line3>(&*res)) {)
+        CGAL_SS3_TRAITS_TRACE_CODE(if (const CGAL::Line3 *iline = std::get_if<CGAL::Line3>(&*res)) {)
         CGAL_SS3_TRAITS_TRACE("Intersection of plane and line is the line itself");
-        CGAL_SS3_TRACE_CODE(} else {)
+        CGAL_SS3_TRAITS_TRACE_CODE(} else {)
         CGAL_SS3_TRAITS_TRACE("Intersection of plane and line is... not?");
-        CGAL_SS3_TRACE_CODE(})
+        CGAL_SS3_TRAITS_TRACE_CODE(})
 
         CGAL_warning_msg(false, "intersection of plane and line failed to produce a point");
     }
@@ -199,6 +199,7 @@ Plane3SPtr KernelWrapper::offsetPlane(Plane3SPtr plane, const CGAL::FT& offset)
     const CGAL::FT& c = plane->c();
     const CGAL::FT& d = plane->d();
 
+    CGAL_SS3_TRAITS_TRACE("Plane offset from: " << *plane);
     result = KernelFactory::createPlane3(a, b, c, d - offset);
     CGAL_SS3_TRAITS_TRACE("Plane offset to: " << *result);
 

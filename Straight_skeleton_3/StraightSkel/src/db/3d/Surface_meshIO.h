@@ -227,8 +227,8 @@ bool Surface_meshIO::save(const PolyhedronSPtr& polyhedron,
     using PCDT_VH = PCDT::Vertex_handle;
     using PCDT_FH = PCDT::Face_handle;
 
-    std::cout << "--> SM of polyhedron with " << polyhedron->vertices().size() << " vertices and "
-              << polyhedron->facets().size() << " facets" << std::endl;
+    CGAL_SS3_IO_TRACE_V(8, "Save polyhedron with " << polyhedron->vertices().size() << " vertices and "
+                                                   << polyhedron->facets().size() << " facets");
 
     // @todo do not systematically triangulate, but use this NP and if it is false,
     // only triangulate what is not representable otherwise (see code in PMP::remesh_planar_faces)
@@ -248,7 +248,6 @@ bool Surface_meshIO::save(const PolyhedronSPtr& polyhedron,
     for (FacetSPtr facet : polyhedron->facets()) {
         CGAL_assertion(facet->getID() != -1);
         CGAL_assertion(facet->edges().size() >= 3);
-        // std::cout << "handle facet " << facet->getID() << std::endl;
 
         double speed = 1.;
         if (facet->hasData()) {
@@ -323,12 +322,6 @@ bool Surface_meshIO::save(const PolyhedronSPtr& polyhedron,
         {
             if(!get(in_domain, fh))
               continue;
-
-            bool canAddFace = CGAL::Euler::can_add_face(CGAL::make_array(v_map[fh->vertex(0)->info()],
-                                                                         v_map[fh->vertex(1)->info()],
-                                                                         v_map[fh->vertex(2)->info()]),
-                                                                         sm);
-            std::cout << "canAddFace: " << canAddFace << std::endl;
 
             face_descriptor sm_f = CGAL::Euler::add_face(CGAL::make_array(v_map[fh->vertex(0)->info()],
                                                                           v_map[fh->vertex(1)->info()],
