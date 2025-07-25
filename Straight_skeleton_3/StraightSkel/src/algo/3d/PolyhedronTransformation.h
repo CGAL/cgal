@@ -100,7 +100,7 @@ public:
     /**
      * Triangulate the facet 'f' and returns all newly created triangle facets
      */
-    static std::list<FacetSPtr> triangulate(FacetSPtr f,
+    static std::pair<std::list<VertexSPtr>, std::list<FacetSPtr> > triangulate(FacetSPtr f,
                                             PolyhedronSPtr polyhedron);
 
     /**
