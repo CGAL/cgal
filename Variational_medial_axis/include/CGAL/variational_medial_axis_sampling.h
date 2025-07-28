@@ -520,7 +520,8 @@ public:
 
     // Build AABB-tree
     tree_ = std::make_unique<Tree>(faces(tmesh_).begin(), faces(tmesh_).end(), tmesh_, vpm_);
-    tree_->accelerate_distance_queries(vertices(tmesh_).begin(), vertices(tmesh_).end(), vpm_);
+    //tree_->accelerate_distance_queries(vertices(tmesh_).begin(), vertices(tmesh_).end(), vpm_);
+    tree_->accelerate_distance_queries();
     // get bounding box of the mesh
     auto bbox = tree_->bbox();
     scale_ = std::max(bbox.xmax() - bbox.xmin(), std::max(bbox.ymax() - bbox.ymin(), bbox.zmax() - bbox.zmin()));
@@ -631,6 +632,7 @@ public:
     else
 #endif
       // Compute shrinking ball of each vertex
+    //  compute_shrinking_balls_and_save_result();
       compute_shrinking_balls();
     // TODO: add a paratmeter to control the output verbosity
     std::cout << "Starting variational medial axis computation..." << std::endl;
@@ -977,48 +979,45 @@ private:
     FT cos_angle = cosine_angle(qp, n);
     return d / (2 * cos_angle);
   }
-  std::pair<Point_3, FT> shrinking_ball_algorithm_bvh(const Point_3& p,         // point on the surface
+  std::pair<Point_3, FT> shrinking_ball_algorithm_bvh(std::vector<face_descriptor> incident_faces,Point_3& p,         // point on the surface
                                                   const Vector_3& n,        // inverse of search direction
-                                                  FT delta_convergence = FT(1e-8),
-      FT denoise_radius = 1e-6){ // model has to be normalized in [0, 1]^3
+                                                  FT delta_convergence = FT(1e-5)){ // model has to be normalized in [0, 1]^3
     using face_descriptor = typename Tree::Primitive_id;
-
-    denoise_radius *= scale_;
     delta_convergence *= scale_;
-    const FT denoise_preserve = FT(30.0); // in degree
+    const FT denoise_preserve = FT(20.0); // in degree
     const int iteration_limit = 30;
     int j = 0;
     FT r = FT(1.0) * scale_; // initial radius
     Point_3 c = p - (r * n);
-    Point_3 q = p - (2 * r * n);
     face_descriptor last_face;
     while(true) {
       // get the hint directly from the kd-tree only to illustrate the use of the internal kd-tree
-      auto hint = tree_->kd_tree().closest_point(c);
-      auto [q_next, closest_face] = tree_->closest_point_and_primitive(c, hint);
-
+      //auto hint = tree_->kd_tree().closest_point(c);
+      //auto [q_next, closest_face] = tree_->closest_point_and_primitive(c, hint);
+      auto [q_next, closest_face] = tree_->closest_point_and_primitive(c);
       FT squared_dist = (q_next - c).squared_length();
       if(squared_dist >= (r - delta_convergence) * (r - delta_convergence)) {
-        // std::cout << "Convergence achieved at iteration " << j << ": " << CGAL::to_double(squared_dist) << std::endl;
+        //std::cout << "Convergence achieved at iteration " << j << ": " << CGAL::to_double(squared_dist) << std::endl;
         break; // convergence
       }
-      if((q_next - p).squared_length() <= delta_convergence) {
-        // std::cout << "Convergence achieved at iteration " << j << ": " << CGAL::to_double((q_next -
-        // p).squared_length())
-        //           << std::endl;
-        break; // convergence
+      bool should_break = false;
+      for(auto f : incident_faces) {
+        if(f == closest_face) {
+          should_break = true;
+          break; // found the face
+        }
+      }
+      if(should_break) {
+        //std::cout << "Closest face is incident to the vertex: " << closest_face << "at iteration " << j << std::endl;
+        break; // closest face is incident to the vertex
       }
       if(j > 0 && closest_face == last_face) {
         // std::cout << "No change in closest face at iteration " << j << std::endl;
         break; // no change in closest face
       }
       FT r_next = compute_radius(p, n, q_next);
-      if(!CGAL::is_finite(r_next) || r_next <= FT(0)) {
+       if(!CGAL::is_finite(r_next) || r_next <= FT(0)){
         // std::cerr << "Invalid radius at iteration " << j << ": " << r_next << std::endl;
-        break;
-      }
-      if((r_next - delta_convergence) * (r_next - delta_convergence) < denoise_radius) {
-        // std::cout << "Denoise radius achieved at iteration: " << j << ", Radius: " << CGAL::to_double(r_next)
         break;
       }
       Point_3 c_next = p - (r_next * n);
@@ -1031,7 +1030,6 @@ private:
       }
       c = c_next;
       r = r_next;
-      q = q_next;
       last_face = closest_face;
       j++;
       if(j > iteration_limit)
@@ -1052,11 +1050,10 @@ private:
     int j = 0;
     FT r = FT(0.25) * scale_; // initial radius
     Point_3 c = p - (r * n);
-    Point_3 q = p - (2 * r * n);
+   
     while(true) {
-      // get the hint directly from the kd-tree only to illustrate the use of the internal kd-tree
+   
       auto hint = tree_->kd_tree().closest_point(c);
-      
       Point_3 q_next = hint.first;
 
       FT squared_dist = (q_next - c).squared_length();
@@ -1079,7 +1076,6 @@ private:
       }
       c = c_next;
       r = r_next;
-      q = q_next;
       j++;
       if(j > iteration_limit)
         break;
@@ -1091,7 +1087,10 @@ private:
 
     Vector_3 normal = get(vertex_normal_map_, v);
     Point_3 p = get(vpm_, v);
-    auto [center, radius] = shrinking_ball_algorithm_kdt(p, normal);
+    auto face_range = CGAL::faces_around_target(halfedge(v, tmesh_), tmesh_);
+    std::vector<face_descriptor> incident_faces(face_range.begin(), face_range.end());
+    auto [center, radius] = shrinking_ball_algorithm_bvh(incident_faces, p, normal);
+    //auto [center, radius] = shrinking_ball_algorithm_kdt(p, normal);
     put(vertex_medial_sphere_pos_map_, v, center);
     put(vertex_medial_sphere_radius_map_, v, radius);
   }
@@ -1108,7 +1107,10 @@ private:
     for(vertex_descriptor v : vertices(tmesh_)) {
       Vector_3 normal = get(vertex_normal_map_, v);
       Point_3 p = get(vpm_, v);
-      auto [center, radius] = shrinking_ball_algorithm_kdt(p, normal);
+      auto face_range = CGAL::faces_around_target(halfedge(v, tmesh_), tmesh_);
+      std::vector<face_descriptor> incident_faces(face_range.begin(), face_range.end());
+      auto [center, radius] = shrinking_ball_algorithm_bvh(incident_faces, p, normal);
+      //auto [center, radius] = shrinking_ball_algorithm_kdt(p, normal);
       put(vertex_medial_sphere_pos_map_, v, center);
       put(vertex_medial_sphere_radius_map_, v, radius);
       sphere_mesh_->add_sphere(Sphere_3(center, radius * radius));
@@ -1172,7 +1174,7 @@ private:
 
     Side_of_triangle_mesh<TriangleMesh_, GT, VPM, Tree> side_of(*tree_, traits_);
     Point_3 optimal_center(optimized_sphere_params(0), optimized_sphere_params(1), optimized_sphere_params(2));
-    Point_3 cp = tree_->closest_point(optimal_center);
+    auto [cp, closest_face] = tree_->closest_point_and_primitive(optimal_center);
     FT len = (optimal_center - cp).squared_length();
 
     if(len < 1e-12) {
@@ -1184,8 +1186,12 @@ private:
 
     if((side_of(optimal_center) == CGAL::ON_UNBOUNDED_SIDE))
       normal = -normal; // if the center is outside, flip the normal
-
-    auto [c, r] = shrinking_ball_algorithm_kdt(cp, normal);
+    auto face_range = CGAL::faces_around_face(halfedge(closest_face, tmesh_), tmesh_);
+    std::vector<face_descriptor> incident_faces(face_range.begin(), face_range.end());
+    //std::vector<face_descriptor> incident_faces;
+    //incident_faces.push_back(closest_face);
+    auto [c, r] = shrinking_ball_algorithm_bvh(incident_faces, cp, normal);
+    //auto [c, r] = shrinking_ball_algorithm_kdt(cp, normal);
     sphere->set_center(c);
     sphere->set_radius(r);
 

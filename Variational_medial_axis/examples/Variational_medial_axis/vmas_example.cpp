@@ -26,7 +26,7 @@ void normalize_mesh(Mesh& mesh) {
 
 int main(int argc, char** argv)
 { 
-  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/elephant_dense.off");
+  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/elephant.off");
 
   Mesh mesh;
   if(!CGAL::IO::read_polygon_mesh(filename, mesh))
@@ -41,8 +41,8 @@ int main(int argc, char** argv)
   // Compute medial axis with custom parameters
   //vmas.compute_variational_medial_axis_sampling(CGAL::parameters::number_of_iterations(2000).number_of_spheres(1000).lambda(1.0).concurrency_tag(CGAL::Parallel_tag{}));
   vmas.compute_variational_medial_axis_sampling(
-      CGAL::parameters::number_of_iterations(2000).number_of_spheres(300).lambda(0.2) /*.concurrency_tag(
-      CGAL::Parallel_tag{})*/);
+      CGAL::parameters::number_of_iterations(1000).number_of_spheres(200).lambda(0.2).concurrency_tag(
+      CGAL::Parallel_tag{}));
   // Export skeleton
   std::cout << "Exporting skeleton..." << std::endl;
   auto skeleton = vmas.export_skeleton();
