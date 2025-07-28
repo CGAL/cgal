@@ -1,48 +1,45 @@
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/Linear_cell_complex_vtk_io.h>
-
-#include <cstdlib>
-#include <fstream>
 #include <cassert>
-#include <cstdio>
+#include <string>
+#include <unordered_map>
+#include <vector>
 
 typedef CGAL::Linear_cell_complex_for_combinatorial_map<3, 3> LCC;
-typedef LCC::Point Point;
 
-int main()
-{
-  LCC lcc_out;
+int main() {
+  LCC lcc1, lcc2;
+  std::vector<float> v_scalars1, vol_scalars1;
+  std::vector<float> v_scalars2, vol_scalars2;
 
-  // Create a hexahedron
-  auto d = lcc_out.make_hexahedron(
-    lcc_out.create_vertex_attribute(Point(0, 0, 0)),
-    lcc_out.create_vertex_attribute(Point(1, 0, 0)),
-    lcc_out.create_vertex_attribute(Point(1, 1, 0)),
-    lcc_out.create_vertex_attribute(Point(0, 1, 0)),
-    lcc_out.create_vertex_attribute(Point(0, 0, 1)),
-    lcc_out.create_vertex_attribute(Point(1, 0, 1)),
-    lcc_out.create_vertex_attribute(Point(1, 1, 1)),
-    lcc_out.create_vertex_attribute(Point(0, 1, 1))
-  );
+  const std::string input_file = "data/beam-with-mixed-cells.vtk";
+  assert(CGAL::read_lcc_from_vtk(lcc1, input_file.c_str(), &v_scalars1, &vol_scalars1));
 
-  std::vector<float> v_scalars = {1,2,3,4,5,6,7,8};
-  std::vector<float> vol_scalars = {42.0f};
+  // Build index maps
+  std::unordered_map<LCC::Vertex_attribute_const_descriptor, std::size_t> vertex_indices;
+  std::size_t idx = 0;
+  for(auto itv = lcc1.vertex_attributes().begin(), itvend = lcc1.vertex_attributes().end(); itv != itvend; ++itv)
+    vertex_indices[itv] = idx++;
+  std::unordered_map<LCC::Dart_const_descriptor, std::size_t> volume_indices;
+  idx = 0;
+  for(auto itvol = lcc1.one_dart_per_cell<3>().begin(), itvolend = lcc1.one_dart_per_cell<3>().end(); itvol != itvolend;
+      ++itvol)
+    volume_indices[itvol] = idx++;
 
-  const char* fname = "tmp_test_lcc_vtk.vtk";
+  const char* tmp_file = "tmp_test_lcc_vtk.vtk";
+  assert(CGAL::write_lcc_to_vtk(
+    lcc1, tmp_file,
+    [&v_scalars1, &vertex_indices](const LCC& lcc, LCC::Dart_const_descriptor d) {
+      return v_scalars1[vertex_indices.at(lcc.attribute<0>(d))];
+    },
+    [&vol_scalars1, &volume_indices](const LCC& lcc, LCC::Dart_const_descriptor d) {
+      return vol_scalars1[volume_indices.at(d)];
+    }));
+  assert(CGAL::read_lcc_from_vtk(lcc2, tmp_file, &v_scalars2, &vol_scalars2));
 
-  assert(CGAL::write_vtk(lcc_out, fname, &v_scalars, &vol_scalars));
+  assert(lcc1.is_isomorphic_to(lcc2, false, true, true));
 
-  LCC lcc_in;
-  std::vector<float> v_scalars_in, vol_scalars_in;
-
-  assert(CGAL::read_vtk(lcc_in, fname, &v_scalars_in, &vol_scalars_in));
-
-  assert(lcc_in.number_of_vertex_attributes() == lcc_out.number_of_vertex_attributes());
-  assert(lcc_in.template number_of_cells<3>() == lcc_out.template number_of_cells<3>());
-  assert(v_scalars_in.size() == v_scalars.size());
-  assert(vol_scalars_in.size() == vol_scalars.size());
-
-  std::remove(fname);
+  std::remove(tmp_file);
 
   return EXIT_SUCCESS;
 }

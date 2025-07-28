@@ -1,52 +1,29 @@
 /*!
   \ingroup PkgLinearCellComplexExamples
+  \brief Minimal example: read a `.3map` file, compute per-volume vertex count, and write to VTK.
 
-  \brief Example showing how to read and write a 3D linear cell complex from/to a VTK file.
-
-  This example loads a volumetric mesh from a `.vtk` file into a `Linear_cell_complex_for_combinatorial_map<3>`,
-  optionally reads scalar fields (vertex/volume), and writes the modified structure back to a `.vtk` file.
-
-  \cgalFeature{Linear_cell_complex_vtk_io}
-
-  \cgalExampleOutput{
-  Loaded LCC from data/lcc_input.vtk
-   - 80 vertices
-   - 52 volumes
-  Wrote LCC to data/lcc_output.vtk
-  }
+  This example loads a 3D linear cell complex from a `.3map` file using 
+  \cgal function `CGAL::load_combinatorial_map()`. It computes for each 
+  3-cell (volume) the number of incident vertices (0-cells), stores these values 
+  in a `std::vector<std::size_t>`, and writes the result to a `.vtk` file with 
+  `CGAL::write_lcc_to_vtk()`, using the computed values as scalars for each volume.
 */
 
-
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
-#include <CGAL/Linear_cell_complex_traits.h>
 #include <CGAL/Linear_cell_complex_vtk_io.h>
-#include <CGAL/IO/io.h>
-#include <iostream>
+#include <CGAL/Combinatorial_map_save_load.h>
 #include <vector>
+#include <fstream>
+#include <cstdlib>
+
+typedef CGAL::Linear_cell_complex_for_combinatorial_map<3> LCC;
 
 int main()
 {
-  using LCC = CGAL::Linear_cell_complex_for_combinatorial_map<3, 3, CGAL::Linear_cell_complex_traits<3>>;
-  LCC lcc;
-
-  std::vector<float> vertex_scalars, volume_scalars;
-
-   const char* input_filename = "data/lcc_input.vtk";
-  if (!CGAL::read_vtk(lcc, input_filename, &vertex_scalars, &volume_scalars)) {
-    std::cerr << "Failed to read: " << input_filename << std::endl;
-    return EXIT_FAILURE;
-  }
-
-  std::cout << "Loaded LCC from " << input_filename << std::endl;
-  std::cout << " - " << lcc.number_of_vertex_attributes() << " vertices" << std::endl;
-  std::cout << " - " << lcc.template one_dart_per_cell<3>().size() << " volumes" << std::endl;
-
-  const char* output_filename = "data/lcc_output.vtk";
-  if (!CGAL::write_vtk(lcc, output_filename, &vertex_scalars, &volume_scalars)) {
-    std::cerr << "Failed to write: " << output_filename << std::endl;
-    return EXIT_FAILURE;
-  }
-
-  std::cout << "Wrote LCC to " << output_filename << std::endl;
-  return EXIT_SUCCESS;
+    LCC lcc; CGAL::load_combinatorial_map("data/beam-with-mixed-cells.3map", lcc);
+    std::vector<std::size_t> v;
+    for(auto it = lcc.template one_dart_per_cell<3>().begin(), itend = lcc.template one_dart_per_cell<3>().end(); it != itend; ++it)
+        v.push_back(std::distance(lcc.template one_dart_per_incident_cell<0,3>(lcc.dart_descriptor(*it)).begin(), lcc.template one_dart_per_incident_cell<0,3>(lcc.dart_descriptor(*it)).end()));
+    CGAL::write_lcc_to_vtk(lcc, "data/beam-with-mixed-cells.vtk", nullptr, &v);
+    return EXIT_SUCCESS;
 }
