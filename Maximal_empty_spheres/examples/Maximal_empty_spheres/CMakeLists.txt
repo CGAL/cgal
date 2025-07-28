@@ -8,6 +8,9 @@ project(Maximal_empty_spheres_Examples)
 find_package(CGAL REQUIRED)
 message("CGAL DIR:${CGAL_DIR}")
 
+
+create_single_source_cgal_program("sample_distance.cpp")
+
 find_package(Eigen3 3.2.0 QUIET) #(requires 3.2.0 or greater)
 include(CGAL_Eigen3_support)
 if(TARGET CGAL::Eigen3_support)
