@@ -119,6 +119,7 @@ void maximal_empty_spheres(const Eigen::MatrixXd &G, Eigen::MatrixXd &result, Ei
     Eigen::MatrixXd simplex(D+2,D+3);
     Eigen::RowVectorXd simplex_row(D+3);
     int ki=0;
+    int non_full_simplices = 0;
     for(auto ch : infinite_cells) {
 
         int si=0;
@@ -134,10 +135,11 @@ void maximal_empty_spheres(const Eigen::MatrixXd &G, Eigen::MatrixXd &result, Ei
         full_simplices(ki) = svd.singularValues().array().abs().minCoeff() > atol;
 
         if (! full_simplices(ki)) {
-            std::cout << "Not a full simplex" << std::endl;
+            ++non_full_simplices;
         }
         ki++;
     }
+    std::cout << non_full_simplices << " non-full simplices found." << std::endl;
 
     // std::cout << "Ks.shape: (" << Ks.rows() << ", " << Ks.cols() << ")" << std::endl;
     // std::cout << "Ks: " << std::endl << Ks << std::endl;
@@ -261,10 +263,12 @@ void maximal_empty_spheres(const Eigen::MatrixXd &G, Eigen::MatrixXd &result, Ei
           *result++ = Sphere_3(p, res(i,3)*res(i,3)); // res(i,3) is the radius
         }
 
+#ifdef WRITE_SPHERES
         const static Eigen::IOFormat CSVFormat(Eigen::FullPrecision, Eigen::DontAlignCols, ", ", "\n");
         // write soution in lie representation:  AF: I think this is not Lie representation, but rather the sphere representation
         std::ofstream pointfile("solution_lie_3.csv");
         pointfile << res.format(CSVFormat);
+#endif
     }
 
     template<typename SphereRange, typename OutputIterator>
@@ -282,11 +286,12 @@ void maximal_empty_spheres(const Eigen::MatrixXd &G, Eigen::MatrixXd &result, Ei
           Point_2 p(res(i,0), res(i,1));
           *result++ = Circle_2(p, res(i,2)*res(i,2)); // res(i,2) is the radius
         }
-
+#ifdef WRITE_SPHERES
         const static Eigen::IOFormat CSVFormat(Eigen::FullPrecision, Eigen::DontAlignCols, ", ", "\n");
         // write soution in lie representation:
         std::ofstream pointfile("solution_lie_2.csv");
         pointfile << res.format(CSVFormat);
+#endif
     }
 
     template<typename SphereRange, typename OutputIterator>
