@@ -132,11 +132,11 @@ void maximal_empty_spheres(const Eigen::MatrixXd &G, Eigen::MatrixXd &result, Ei
         svd.compute(simplex, Eigen::ComputeFullV);
         Ks.row(ki)         = svd.matrixV().col(D+2).transpose();
         full_simplices(ki) = svd.singularValues().array().abs().minCoeff() > atol;
-        ki++;
 
-        if (svd.singularValues().array().abs().minCoeff() <= atol) {
+        if (! full_simplices(ki)) {
             std::cout << "Not a full simplex" << std::endl;
         }
+        ki++;
     }
 
     // std::cout << "Ks.shape: (" << Ks.rows() << ", " << Ks.cols() << ")" << std::endl;
@@ -215,7 +215,7 @@ void maximal_empty_spheres(const Eigen::MatrixXd &G, Eigen::MatrixXd &result, Ei
         if (neg_convention(i) && neg_radius(i)){
             solutions_filtered_.push_back(solutions.row(i));
             if (contact_indices){
-                contact_indices_filtered_.push_back(contact_indices_[i]);            
+                contact_indices_filtered_.push_back(contact_indices_[i]);
             }
         }
     }
