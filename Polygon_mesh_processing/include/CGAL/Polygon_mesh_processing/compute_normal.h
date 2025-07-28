@@ -25,6 +25,7 @@
 #include <CGAL/Origin.h>
 
 #include <boost/graph/graph_traits.hpp>
+#include <boost/container/small_vector.hpp>
 
 #include <iostream>
 #include <limits>
