@@ -31,6 +31,21 @@ typedef unspecified_type Value ;
 /// @}
     
 
+    /// \name Input/output
+    /// @{
+
+    /*!
+     * \brief Output operator
+     */
+    std::ostream& operator<< (std::ostream& out, const Ring& v);
+    
+    /*!
+     * \brief Input operator
+     */
+    std::istream& operator>> (std::istream& out, const Ring& v);
+    
+    /// @}
+    
 /// \name Invertibility
 /// @{
 

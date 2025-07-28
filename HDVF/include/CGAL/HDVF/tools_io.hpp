@@ -22,15 +22,15 @@ namespace HDVF {
 using namespace std ;
 
 // ------ For simplicial complexes
-// List of vertices of a cell (set of ids)
+/** \brief Type of cells of Mesh_object. */
 typedef std::set<size_t> IOCellType ;
-// List of cells
+/** \brief Type of pre-chains in Mesh_object (list of cells without coefficients). */
 typedef std::vector<IOCellType> IOChainType ;
 
 // ------ For cubical complexes
-// Khalimsky coordinates of a cube
+/** \brief Type of cells coordinates in Cub_object (Khalimsky or voxel coordinates) */
 typedef std::vector<size_t> IOCubCellType ;
-// List of cells
+/** \brief Type of pre-chains in Cub_object (list of cells without coefficients). */
 typedef std::vector<IOCellType> IOCubChainType ;
 
 
@@ -150,7 +150,8 @@ public:
 
 // ----- VTK format -----
 
-//// Associated to any dimension the type number of associated VTK cells
+// For triangular meshes
+// Associated to any dimension the type number of associated VTK cells
 static std::vector<size_t> VTK_types_IO = {1, 3, 5, 10} ;
 
 // Write vtk file
@@ -262,11 +263,18 @@ inline bool get_next_uncommented_line(std::ifstream &infile, std::string &result
     return false;
 }
 
+/*!
+ \ingroup PkgHDVFAlgorithmClasses
+ 
+ The class `Mesh_object` is an intermediate IO class, used to load triangular/tetraedral meshes and produce simplicial complexes.
+ 
+ */
+
 // Generic Mesh_object class - for 3D triangular meshes
 class Mesh_object
 {
 public:
-    // Dimension :
+    // The variable `dim` is used to encode both the dimension of the object loaded and wether it encodes a complex (with cells of various dimensions) or a mesh (a collection of triangles)
     // - if dim > 0 : Mesh_object encodes a mesh and all cells have dimension d
     // - if dim < 0 : Mesh_object encodes a complex (possibly incomplete) of dimension d
     int dim = 0 ;
@@ -274,10 +282,22 @@ public:
     std::vector<IONodeType> nodes ; // Coordinates of vertices (optional)
     std::vector<IOCellType> cells ;
     
+    /* \brief Default constructor.
+     *
+     * Create an empty Mesh_object.
+     */
     Mesh_object() : dim(0), nvertices(0), ncells(0), nedges(0) {}
-    
+
+    /** \brief Constructor from a vector of IONodeType (vertices coordinates) and a vector of simplices.
+     *
+     * Simplices are described by the list of vertices indices.
+     */
     Mesh_object(int d, const std::vector<IONodeType> &vnodes, const std::vector<IOCellType> &vcells) : dim(d), nvertices(vnodes.size()), ncells(vcells.size()), nedges(0), nodes(vnodes), cells(vcells) { check_dimension() ;}
 
+    /** \brief Constructor from a vector of vectors of doubles (vertices coordinates) and a vector of simplices.
+     *
+     * Simplices are described by the list of vertices indices.
+     */
     Mesh_object(int d, const std::vector<std::vector<double> > &vnodes, const std::vector<IOCellType> &vcells) : dim(d), nvertices(vnodes.size()), ncells(vcells.size()), nedges(0), cells(vcells)
     {
         for (std::vector<double> v : vnodes)
@@ -287,6 +307,7 @@ public:
         check_dimension() ;
     }
     
+    /* \brief Copy constructor. */
     Mesh_object(const Mesh_object &m) : dim(m.dim), nvertices(m.nvertices), ncells(m.ncells), nedges(m.nedges), nodes(m.nodes), cells(m.cells) {}
     
     std::vector<std::vector<double> > get_nodes ()
@@ -664,10 +685,11 @@ inline bool Mesh_object::read_nodes_file(const std::string &filename)
 
 // Tetgen
 
-class TetObject : public Mesh_object
+/* Class used to load tetgen outputs (for Alexander duality). */
+class Tet_object : public Mesh_object
 {
 public:
-    TetObject(const std::string & prefix) : Mesh_object(), _prefix(prefix)
+    Tet_object(const std::string & prefix) : Mesh_object(), _prefix(prefix)
     {
         dim = -3 ;
         add_nodes() ;
@@ -835,15 +857,15 @@ private:
 
 // ----- mesh BB
 
-//Mesh_object mesh_BB(const IONodeType &BBmin, const IONodeType &BBmax) ;
+/* Class used to build an icosphere embedding a triangular mesh (for Alexander Duality) */
 
-class IcosphereObject : public Mesh_object
+class Icosphere_object : public Mesh_object
 {
 public:
     using Index=size_t ;
     using Lookup=std::map<std::pair<Index, Index>, Index>;
     
-    IcosphereObject(size_t subdivisions, const IONodeType &c = IONodeType({0, 0, 0}), double r=1.) : Mesh_object(2, vertices_ico, triangles_ico)
+    Icosphere_object(size_t subdivisions, const IONodeType &c = IONodeType({0, 0, 0}), double r=1.) : Mesh_object(2, vertices_ico, triangles_ico)
     {
         for (size_t i=0; i<subdivisions; ++i)
         {
@@ -931,7 +953,13 @@ public:
 
 // ///////////////////
 
-// Generic Cub_object class - for 2D/3D cubical meshes
+/*!
+ \ingroup PkgHDVFAlgorithmClasses
+ 
+ The class `Cub_object` is an intermediate IO class, used to load binary volumes and produce cubical complexes.
+ 
+ */
+
 class Cub_object
 {
 public:
@@ -941,14 +969,26 @@ public:
     std::vector<IOCubCellType> cubs ;
     bool khalimsky ;
     
-    Cub_object() : dim(0), ncubs(vector<size_t>(4)), N(vector<size_t>(3)), khalimsky(false) {}
-    // TODO: check !!! 4/3 ...
-    Cub_object(int d, const std::vector<IOCubCellType> &vcubs, bool khal = false) : dim(d), ncubs(vector<size_t>(4)), N(vector<size_t>(3)), cubs(vcubs), khalimsky(khal)
+    /* \brief Default constructor.
+     *
+     * Create an empty Cub_object of dimension 3.
+     */
+    Cub_object() : dim(3), ncubs(vector<size_t>(3)), N(vector<size_t>(3)), khalimsky(false) {}
+    
+    /**
+     * \brief Constructor from a vector of cells.
+     *
+     * Cells coordinates are given in Khalimsky coordinates if the boolean `khal` is `true`, and as integer indices of voxels otherwise.
+     *
+     */
+    Cub_object(int d, const std::vector<IOCubCellType> &vcubs, bool khal = false) : dim(d), ncubs(vector<size_t>(d)), N(vector<size_t>(d)), cubs(vcubs), khalimsky(khal)
     { check_dimension() ;}
+    
+    /* \brief Copy constructor. */
     Cub_object(const Cub_object &m) : dim(m.dim), ncubs(m.ncubs), N(m.N), cubs(m.cubs), khalimsky(m.khalimsky) {}
     
     // Mesh operations
-    void clear_cubs() { cubs.clear() ; for (size_t i=0; i<4; ++i) ncubs[i] = 0 ; }
+    void clear_cubs() { cubs.clear() ; for (size_t i=0; i<dim; ++i) ncubs[i] = 0 ; }
     void add_cub(const IOCubCellType &c) {cubs.push_back(c); ++ncubs[cub_dim(c)] ;}
     void frame() // Enlarge the bouding box to add 1 voxel around
     {

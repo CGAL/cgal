@@ -245,7 +245,9 @@ Under these assumptions, the homology groups of \f$C\f$ and \f$C'\f$ are isomorp
 
 A reduction is <B>perfect</B> when the reduced boundary is null; then for any \f$q\f$:
 \f\[H_q(C) \sim g(C'_q)\f\]
+in other words, homology groups are isomorphic to the image of the reduced complex by \f$g\f$,
 \f\[H^q(C) \sim f^*(C'_q)\f\]
+and cohomology groups are isomorphic to the image of the reduced complex by \f$f^*\f$.
 
 \subsubsection secHDVFdiscrete_Morse A few words about discrete Morse theory
  
@@ -472,7 +474,7 @@ and the operation is valid (ie. produces an HDVF) if and only if:
 Recent works by Yann-Situ Gazull [YSG1], [YSG2] proved that (when \f$A\f$ is a field):
 - the space of perfect HDVFs is connected under M, W and MW operations (see [YSG2])
 - homology bases computed by HDVFs and other computational approaches (Smith Normal Form, persistent homology, tripartitions...) can be precisely characterised as <B>explicit basis</B> (see [YSG1])
-- any perfect HDVF can be adapted in time \f$\mathscr O(n^2)\f$ to compute a given explicit basis (or asubset of such a basis)
+- any perfect HDVF can be adapted in time \f$\mathscr O(kn^2)\f$ to compute a free set of generators of size \f$k\f$ (e.g. a given basis)
 
 These results will soon be implemented in the HDVF package.
 
@@ -553,7 +555,7 @@ Let us point out that whatever the type of chain complex, cells are indexed alon
             // Build the PRIMAL complex associated
             ComplexType complex(mesh, CGAL::HDVF::ComplexType::PRIMAL);
         \endcode
-        - DUAL, encoding \f$2^d\f$-adjacency (where cubes produce vertices... see figure \cgalFigureRef{HDVF_primal_dual} right)
+        - DUAL, encoding \f$2d\f$-adjacency (where cubes produce vertices... see figure \cgalFigureRef{HDVF_primal_dual} right)
         \code
             using ComplexType = Cubical_chain_complex<CoefficientType> ;
             Cub_object mesh ;
@@ -689,7 +691,22 @@ How to extract (co)homological information then? Various solutions and output ar
         CGAL::HDVF::hdvf_geometric_chain_complex_output_vtk<CoefficientType, ComplexType>(hdvf, complex, outfile_root, co_faces) ;
     \endcode
     where `outfile_root` is the root of the %vtk file names and `co_faces` is a boolean (if `true`, cohomology generators are represented through their cofaces).
-- HDVFs and reductions can also be saved / loaded to %hdvf files (a simple text file format described in section) with `save_hdvf_reduction` and `load_hdvf_reduction`.
+- HDVFs and reductions can also be saved / loaded to %hdvf files (a simple text file format described in section \ref{secHDVFHDVF_format}) with `save_hdvf_reduction` and `load_hdvf_reduction`.
+
+\subsubsection secHDVFHDVF_format The %hdvf file format
+
+The %hdvf file format is a simple text format used to save HDVFs. It relies on the %osm format described in section \ref secHDVFOSM_format.
+
+\warning The file format does not store the underlying complex, therefore the dimension and the number of cells in each dimension are used to check the coherence of the %hdvf file with the underlying complex provided by the user.
+
+- HDVF type (0 for HDVF and reduction, 1 for HDVF only)
+- Dimension of the complex
+- List of the number of cells in each dimension (one dimension by row)
+- List of the flags of cells in each dimension (one dimension by row: -1 for PRIMARY, 1 for SECONDARY, 0 for CRITICAL)
+- Output F matrices in each dimension (%osm format)
+- Output G matrices in each dimension (%osm format)
+- Output H matrices in each dimension (%osm format)
+- Output DD matrices in each dimension (%osm format)
 
 \subsection secHDVFexHDVF HDVF examples
 
@@ -713,6 +730,15 @@ The following example builds a column major matrix, iterate over its non empty c
 \cgalExample{example_matrix_chain.cpp}
 
 All standard linear algebra operators are provided (and optimized according to the matrix/chain types).
+
+\subsubsection secHDVFOSM_format The %osm file format
+
+The %osm file format is a simple text format to store OSM sparse matrices:
+- Matrix type (0 for COLUMN, 1 for ROW)
+- Number of rows and number of columns (separated by a space)
+- Number of coefficients
+- List of coefficients (one by row):<br>
+    `id_row  id_col  value`
 
 \subsection secHDVFoperations HDVF operations
 
@@ -738,7 +764,7 @@ Left: ...
  
  [AGL, 2016] Aldo Gonzalez-Lorenzo. Computational Homology Applied to Discrete Objects. Discrete Mathematics [PhD]. Aix-Marseille Université; Universidad de Sevilla, 2016.
  
- [AGL, 2025] Gonzalez-Lorenzo, A., Bac, A. & Gazull, YS. A constructive approach of Alexander duality. J Appl. and Comput. Topology 9, 2 (2025).
+ [AGL, 2025] Aldo Gonzalez-Lorenzo, Alexandra Bac and Yann-Situ Gazull. A constructive approach of Alexander duality. J Appl. and Comput. Topology 9, 2 (2025).
  
  [YSG1,  2025] Yann-Situ Gazull, Aldo Gonzalez-Lorenzo and Alexandra Bac. Characterization of the computed homology and cohomology bases. DGMM 2025 (to appear).
  

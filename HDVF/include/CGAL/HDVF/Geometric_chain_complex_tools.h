@@ -326,7 +326,7 @@ public:
         //  Compute a bounding icosphere
         IONodeType bary = mesh_L.barycenter() ;
         double r = mesh_L.radius(bary) ;
-        IcosphereObject ico(2,bary, BB_ratio*r) ;
+        Icosphere_object ico(2,bary, BB_ratio*r) ;
         ico.print_infos() ;
         
         // Add it to the mesh
@@ -342,7 +342,7 @@ public:
         system(tetgen_command.c_str()) ;
         
         // Read the mesh built by tetgen for L
-        TetObject tetL(out_file_prefix) ;
+        Tet_object tetL(out_file_prefix) ;
         
         // Build the associated SimpComplex
         ComplexType& L = *new ComplexType(tetL, tetL.get_nodes()) ;
