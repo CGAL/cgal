@@ -1,3 +1,39 @@
+"""
+analyse_cgal_doc.py
+
+---
+Usage:
+
+1. Check all links from a documentation entry point:
+
+    python analyse_cgal_doc.py https://doc.cgal.org/latest/Manual/index.html
+
+2. Check only links related to specific packages + the Manual section:
+
+    python analyse_cgal_doc.py https://cgal.github.io/8186/v12/ allowed_packages.txt
+
+    Where `allowed_packages.txt` is a plain text file listing one package name per line, e.g.:
+
+        AABB_tree
+        BGL
+        Alpha_shapes_3
+
+In this mode, only broken links within the `Manual/` or one of the specified packages
+(e.g., `https://.../BGL/...`) will be reported. This is useful when validating a partial
+documentation build (e.g., during a GitHub Action).
+
+3. If no parameter is given, the script will check all links for the default documentation URLs
+defined in the `versions_to_check` list (see the script for the current values).
+
+---
+Output:
+
+- All broken links are printed to the console.
+- A full report is written to `broken_links_report.txt`.
+
+Dependencies:
+    pip install requests beautifulsoup4
+"""
 import sys
 from urllib.parse import urljoin, urlparse
 from concurrent.futures import ThreadPoolExecutor, as_completed
