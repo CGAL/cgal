@@ -18,7 +18,7 @@ typedef boost::graph_traits<Mesh>::face_descriptor          face_descriptor;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
-int main(int argc, char* argv[])
+int main()
 {
   const std::string filename = "./data/slow_compute_normal.off";
 
