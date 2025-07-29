@@ -100,10 +100,13 @@ int main(int argc, char* argv[])
     max_distance = std::max(max_distance, d);
   }
 
+  const int num_vertices_per_dir = n + 1;
+  const int total_vertices = std::pow(num_vertices_per_dir, 3);
+
   std::ofstream ply_out("distances.ply");
   ply_out << "ply\n"
           << "format ascii 1.0\n"
-          << "element vertex " << n*n*n << "\n"
+          << "element vertex " << total_vertices << "\n"
           << "property double x\n"
           << "property double y\n"
           << "property double z\n"
@@ -121,15 +124,16 @@ int main(int argc, char* argv[])
     return EXIT_FAILURE;
   }
 
-  for(int i = 0; i < n; ++i)
+  // Loop from 0 to n (inclusive) for n+1 vertices per direction
+  for(int i=0; i<=n; ++i)
   {
-    for(int j = 0; j < n; ++j)
+    for(int j=0; j<=n; ++j)
     {
-      for(int k = 0; k < n; ++k)
+      for(int k=0; k<=n; ++k)
       {
-        Point_3 p(bbox.xmin() + (bbox.xmax() - bbox.xmin()) * i / (n - 1),
-                  bbox.ymin() + (bbox.ymax() - bbox.ymin()) * j / (n - 1),
-                  bbox.zmin() + (bbox.zmax() - bbox.zmin()) * k / (n - 1));
+        Point_3 p(bbox.xmin() + (bbox.xmax() - bbox.xmin()) * i / n,
+                  bbox.ymin() + (bbox.ymax() - bbox.ymin()) * j / n,
+                  bbox.zmin() + (bbox.zmax() - bbox.zmin()) * k / n);
 
         FT d = CGAL::approximate_sqrt(tree.squared_distance(p));
         // std::cout << "Point: " << p << " distance to mesh: " << d << std::endl;
