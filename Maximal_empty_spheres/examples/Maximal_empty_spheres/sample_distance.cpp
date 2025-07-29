@@ -15,6 +15,7 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::FT FT;
 typedef K::Point_3 Point_3;
+typedef K::Vector_3 Vector_3;
 typedef CGAL::Bbox_3 Bbox_3;
 typedef CGAL::Surface_mesh<Point_3> Mesh;
 
@@ -25,6 +26,67 @@ typedef CGAL::AABB_tree<Traits> Tree;
 typedef boost::graph_traits<Mesh>::face_descriptor face_descriptor;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
+
+void translate(Mesh& mesh, const Vector_3& translation_vector)
+{
+  for(auto v : vertices(mesh)) {
+    mesh.point(v) = mesh.point(v) + translation_vector;
+  }
+}
+
+void scale(Mesh& mesh, const FT scale_factor)
+{
+  for(auto v : vertices(mesh)) {
+    const Point_3& p = mesh.point(v);
+    mesh.point(v) = Point_3(p.x() * scale_factor,
+                            p.y() * scale_factor,
+                            p.z() * scale_factor);
+  }
+}
+
+void resize_to_bbox(Mesh& mesh,
+                    const Bbox_3& bbox)
+{
+  // Compute current bounding box
+  Bbox_3 curr_bbox = PMP::bbox(mesh);
+  Point_3 curr_min{curr_bbox.xmin(), curr_bbox.ymin(), curr_bbox.zmin()};
+  Point_3 curr_max{curr_bbox.xmax(), curr_bbox.ymax(), curr_bbox.zmax()};
+  Point_3 curr_center{(curr_bbox.xmin() + curr_bbox.xmax()) / 2.0,
+                      (curr_bbox.ymin() + curr_bbox.ymax()) / 2.0,
+                      (curr_bbox.zmin() + curr_bbox.zmax()) / 2.0};
+
+  // Target bbox min, max, center
+  Point_3 target_min{bbox.xmin(), bbox.ymin(), bbox.zmin()};
+  Point_3 target_max{bbox.xmax(), bbox.ymax(), bbox.zmax()};
+  Point_3 target_center{(bbox.xmin() + bbox.xmax()) / 2.0,
+                        (bbox.ymin() + bbox.ymax()) / 2.0,
+                        (bbox.zmin() + bbox.zmax()) / 2.0};
+
+  // Compute sizes
+  FT curr_size_x = curr_bbox.xmax() - curr_bbox.xmin();
+  FT curr_size_y = curr_bbox.ymax() - curr_bbox.ymin();
+  FT curr_size_z = curr_bbox.zmax() - curr_bbox.zmin();
+  FT target_size_x = bbox.xmax() - bbox.xmin();
+  FT target_size_y = bbox.ymax() - bbox.ymin();
+  FT target_size_z = bbox.zmax() - bbox.zmin();
+
+  // Compute scale factor (uniform, fit largest axis)
+  FT scale_factor = std::numeric_limits<double>::max();
+  if (curr_size_x > 0) scale_factor = std::min(scale_factor, target_size_x / curr_size_x);
+  if (curr_size_y > 0) scale_factor = std::min(scale_factor, target_size_y / curr_size_y);
+  if (curr_size_z > 0) scale_factor = std::min(scale_factor, target_size_z / curr_size_z);
+
+  // Translate mesh to origin
+  translate(mesh, Vector_3(-curr_center.x(), -curr_center.y(), -curr_center.z()));
+
+  // Scale mesh
+  if (scale_factor != 1.0) {
+    scale(mesh, scale_factor);
+  }
+
+  // Translate mesh to target center
+  translate(mesh, Vector_3(CGAL::ORIGIN, target_center));
+}
 
 int main(int argc, char* argv[])
 {
@@ -56,15 +118,17 @@ int main(int argc, char* argv[])
     PMP::reverse_face_orientations(mesh);
   }
 
-  // save input to build dir for convenience
-  CGAL::IO::write_polygon_mesh("input_mesh.off", mesh, CGAL::parameters::stream_precision(17));
-
+#if 0
   CGAL::Bbox_3 bbox = PMP::bbox(mesh);
+#else
+  // scale the input such that it fits in a cube [-1,1]^3
+  CGAL::Bbox_3 bbox = Bbox_3(-1, -1, -1, 1, 1, 1);
+  resize_to_bbox(mesh, bbox);
+#endif
   std::cout << "Bounding box: " << bbox << std::endl;
 
-  // Scale the bounding box to have significant outside values
-  const FT scale_factor = 1.5;
-  bbox.scale(scale_factor);
+  // save input to build dir for convenience
+  CGAL::IO::write_polygon_mesh("input_mesh.off", mesh, CGAL::parameters::stream_precision(17));
 
   // Create an AABB tree from the mesh
   Tree tree(faces(mesh).first, faces(mesh).second, mesh);
