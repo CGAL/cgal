@@ -448,7 +448,7 @@ compute_vertex_normal_most_visible_min_circle(typename boost::graph_traits<Polyg
     }
   }
 
-  // At each step, we get a vertex outside of the current circum circle to define a larger circum circle
+  // At each step, we get a vertex outside of the current circumcircle to define a larger circumcircle
   while(true)
   {
     Vector_3 center;
@@ -481,7 +481,7 @@ compute_vertex_normal_most_visible_min_circle(typename boost::graph_traits<Polyg
       circum_points.push_back(f_out);
     } else {
       if(is_negative(sp_3(center, no)))
-        return NULL_VECTOR; // The circle will become bigger than an hemisphere, no normal visible by all
+        return NULL_VECTOR; // The circle will become bigger than a hemisphere, no normal visible by all
 
       const Vector_ref nk = get(face_normals, circum_points[2]);
 
