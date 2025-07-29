@@ -409,7 +409,6 @@ compute_vertex_normal_most_visible_min_circle(typename boost::graph_traits<Polyg
   typedef typename boost::property_traits<FaceNormalVector>::reference     Vector_ref;
 
   typename GT::Compute_scalar_product_3 sp_3 = traits.compute_scalar_product_3_object();
-  typename GT::Construct_vector_3 cv_3 = traits.construct_vector_3_object();
   typename GT::Construct_cross_product_vector_3 cp_3 = traits.construct_cross_product_vector_3_object();
 
   std::vector<face_descriptor> incident_faces;
