@@ -230,13 +230,24 @@ int main(int argc, char *argv[]){
     std::vector<Point_with_normal> Pwns;
 
     auto start = std::chrono::high_resolution_clock::now();
-    contact_points(Gp, Pwns, (filter_contact_spheres_bbx)?&bbxl:NULL);
-    contact_points(Gn, Pwns, (filter_contact_spheres_bbx)?&bbxl:NULL);
+    if (true) {
+        std::cout << "Gp: " << Gp.rows() << std::endl;
+        contact_points(Gp, Pwns, (filter_contact_spheres_bbx)?&bbxl:NULL);
+    } else {
+        std::cout << "WARNING: ignoring positive spheres" << std::endl;
+    }
+
+    if (true) {
+        std::cout << "Gn: " << Gn.rows() << std::endl;
+        contact_points(Gn, Pwns, (filter_contact_spheres_bbx)?&bbxl:NULL);
+    } else {
+        std::cout << "WARNING: ignoring negative spheres" << std::endl;
+    }
     auto end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> elapsed = end - start;
     std::cout << "Elapsed time: " << elapsed.count() << " seconds\n";
 
-    if (false){
+    if (true){
         std::cout << "PSR from " << Pwns.size() << " points with normals" << std::endl;
         // disable actual reconstruction for the moment
         poisson_reconstruct(Pwns);
@@ -259,6 +270,7 @@ int main(int argc, char *argv[]){
     auto pc_centers = polyscope::registerPointCloud("SDF Spheres", G.block(0,0,G.rows(),3));
     auto q = pc_centers->addScalarQuantity("SDF radius", G.col(3).array().abs()); // add the quantity
     pc_centers->setPointRadiusQuantity(q,false); // set the quantity as the radius
+    pc_centers->setEnabled(false);
 
     auto p_ = polyscope::registerPointCloud("PSR Points", P);
     p_->addVectorQuantity("N", N)->setEnabled(true);
