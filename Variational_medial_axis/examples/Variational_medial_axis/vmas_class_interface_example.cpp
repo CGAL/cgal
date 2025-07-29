@@ -27,7 +27,7 @@ int main(int argc, char** argv)
       .concurrency_tag(CGAL::Parallel_tag{})); // use parallel execution if available
 
   // add additional 3 sphere, this function will update the medial skeleton automatically 
-  vmas.add_sphere(30);
+  vmas.add_spheres(30);
   // update the medial skeleton with 20 iterations
   vmas.update(20);
 
