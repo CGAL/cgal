@@ -10,25 +10,73 @@ Medial skeleton of a bug model. Given a triangulated mesh(left), the medial skel
 \cgalFigureEnd
 \section VMASIntroduction Introduction
 
-The skeleton is a fundamental structure with numerous applications such as shpae matching, shape segementation, shape deformation, etc. 
-A generalization of the skeleton is the medial axis, defined as the set of points that are equidistant to two or more points on the boundary of a shape.
+The skeleton is a fundamental structure with numerous applications in shape matching, shape segmentation, shape deformation, etc. 
+A generalization of the skeleton is the medial axis, defined as the set of points that are equidistant to two or more points on the boundary of a shape. 
+In this context, each point of the medial axis can be viewed as the center of a maximal inscribed ball, often referred to as a medial sphere.
 
-This package implements a medial axis sampling algorithm \cgalCite{huang2024dynamic} that extracts a coarse, discrete approximation of the medial axis from a triangulated surface mesh. 
-Unlike the Surface_mesh_skeletonization package, which computes a purely curve-based (1D) skeleton, the output of this method may contain both curve (1D) and surface (2D) elements, a structure sometimes referred to as a meso-skeleton.
+This package implements a skeletonization algorithm \cgalCite{huang2024dynamic} that extracts a coarse, discrete approximation of the medial axis from a triangulated surface mesh without borders. 
+Unlike the \ref PkgSurfaceMeshSkeletonization "Surface_mesh_skeletonization" package, which computes a purely curve-based (1D) skeleton, the output of this method is a non-manifold triangle mesh that may contain both curve (1D) and surface (2D) elements, a structure sometimes referred to as a meso-skeleton. 
+Each vertex of the resulting mesh corresponds to a medial sphere, and the edges and faces encode the adjacency relationships between these spheres.
 
 
 \section VMASOverview Overview
-The algorithm starts by initializing a single cluster containing all surface vertices, and optimizes a first medial sphere using a variational error metric. 
-New spheres are progressively inserted in regions of high approximation error, triggering updates to both the clustering and the set of medial spheres in an iterative optimization loop. 
-The process continues until either a target number of spheres or the maximum number of iterations is reached. 
-Finally, the connectivity of the medial skeleton is inferred from the adjacency relations between vertex clusters.
-\section secmyexamples Examples
+At the core of the method is a variational optimization problem whose objective is to minimize an error metric that measures the distance between each medial sphere and its associated surface points, 
+so that each sphere accurately represents the local geometry of the shape.
 
-\subsection myFirstExample First Example
+The process begins by initializing a single cluster containing all surface vertices and fitting an initial medial sphere using the variational error metric. 
+New spheres are then progressively inserted in regions with the highest approximation error. 
+Each insertion triggers updates to both the clustering and the set of medial spheres in an iterative optimization loop. 
+The algorithm terminates when either the target number of spheres is reached or the maximum number of iterations is exceeded. 
+Finally, the connectivity of the medial skeleton is constructed based on the adjacency relations between vertex clusters.
+\cgalFigureAnchor{vmas_fig_result}
+<center>
+<img src="overview.png" width="1100px"/>
+</center>
+\cgalFigureCaptionBegin{vmas_fig_result}
+Overview of the algorithm, image taken from \cgalCite{huang2024dynamic}
+\cgalFigureCaptionEnd
 
-The following example shows ...
+\section VMASAPI User Interface Description
+\subsection VMASio Input and Output
 
-\cgalExample{Variational_medial_axis/vmas_example.cpp}
+The method takes as input a model of `FaceListGraph`, such as `CGAL::Surface_mesh`. 
+It also requires Eigen (version 3.2 or later) for the use of the `Eigen::LDLT` solver, which is employed to solve the linear systems arising during optimization.
+
+The output is stored in a \ref Medial_Skeleton structure, which contains three containers:
+- **vertices**: each element corresponds to a medial sphere,
+- **edges**: each element is a `std::pair<std::size_t, std::size_t>` encoding the adjacency between two spheres,
+- **faces**: each element is a triplet of `Sphere_ID`(std::array<std::size_t, 3>) values encoding a triangular patch connecting three spheres.
+
+A helper function `write_to_ply_file()` is provided to export the resulting skeleton to a `.ply` file, 
+which can then be visualized in external software such as Blender.
+
+\subsection VMASfree Free function
+The function `CGAL::extract_variational_medial_skeleton()` provides a convenient interface for users who want to quickly extract a medial skeleton with specified pamaters.
+This function accepts the following parameters:
+- `number_of_spheres`: target number of medial spheres (default: 100)
+- `lambda`: weight balancing the energy terms (default: 0.2)  
+- `number_of_iterations`: maximum number of iterations (default: 1000)
+- `concurrency_tag`: execution mode - sequential or parallel (default: Sequential_tag)
+
+The following example show case the usage of this function:
+
+\cgalExample{Variational_medial_axis/vmas_free_function_example.cpp}
+
+\subsection VMASfunctionobject Function object
+The class `CGAL::Variational_medial_axis` provides some advanced usage of the algorithm 
+Several key functions are provided for algorithm control:
+- `CGAL::Variational_medial_axis::compute_variational_medial_axis_sampling()`: Executes the complete algorithm with specified parameters and returns a boolean indicating success.
+The paramters are the same of the free function.
+
+- `CGAL::Variational_medial_axis::update_single_step()`: Performs a single iteration of the optimization process, with optional sphere splitting enabled. This allows for step-by-step execution and monitoring of the algorithm's progress.
+
+- `CGAL::Variational_medial_axis::update()`: Executes a specified number of optimization iterations without sphere splitting.
+
+- `CGAL::Variational_medial_axis::add_spheres(int nb_spheres)`: Adds a specified number of spheres by iteratively splitting existing spheres.
+
+The following example show a different configuration of the parameters and basic usage of above function: 
+
+\cgalExample{Variational_medial_axis/vmas_class_interface_example.cpp}
 
 
 
