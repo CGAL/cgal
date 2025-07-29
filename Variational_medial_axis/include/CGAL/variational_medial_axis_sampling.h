@@ -65,7 +65,7 @@ public:
   FT get_error() const { return error; }
   void set_center(const Point_3& p) { sphere = Sphere_3(p, get_radius()); }
   void set_radius(FT r) { sphere = Sphere_3(get_center(), r * r); }
-  void set_cluter_area(FT area) { cluster_area = area; }
+  void set_cluster_area(FT area) { cluster_area = area; }
   void set_error(FT e) { error = e; }
   void set_split_vertex(vertex_descriptor v) { split_vertex = v; }
   void accumulate_cluster_area(FT area) { cluster_area += area; }
@@ -146,14 +146,26 @@ public:
  *
  * @tparam TriangleMesh The type of the triangle mesh representing the shape.
  * @tparam GT The geometric traits class used for geometric computations.
+ *         <b>%Default:</b> 
+  * \code
+  *     CGAL::Kernel_traits<
+  *       boost::property_traits<
+  *          boost::property_map<TriangleMesh, CGAL::vertex_point_t>::type
+  *        >::value_type
+  *      >::Kernel
+  * \endcode
  */
-template <typename TriangleMesh, typename GT> class Medial_Skeleton
+template <typename TriangleMesh_, typename GeomTraits_ = Default> class Medial_Skeleton
 {
+  using GT = typename Default::Get<
+      GeomTraits_,
+      typename Kernel_traits<typename boost::property_traits<
+          typename boost::property_map<TriangleMesh_, vertex_point_t>::type>::value_type>::Kernel>::type;
   using Sphere_3 = typename GT::Sphere_3;
   using Point_3 = typename GT::Point_3;
   using FT = typename GT::FT;
   using Sphere_ID = std::size_t;
-  using MSMesh = Medial_Sphere_Mesh<TriangleMesh, GT>;
+  using MSMesh = Medial_Sphere_Mesh<TriangleMesh_, GT>;
 
 public:
   /**
@@ -456,7 +468,9 @@ public:
   /* The constructor of a vmas object.
    *
    * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
-   *
+   * \param tmesh is the input triangle mesh with out borders.
+   * \param vpm is the vertex point map of the input triangle mesh.
+   * \param gt is the geometric traits class used for geometric computations.
    * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters", listed below:
    *
    * \cgalNamedParamsBegin
@@ -490,8 +504,10 @@ public:
       : tmesh_(tmesh)
       , traits_(gt)
       , vpm_(vpm) {
+    
     using parameters::choose_parameter;
     using parameters::get_parameter;
+    
     desired_number_of_spheres_ = choose_parameter(get_parameter(np, internal_np::number_of_spheres), 100);
     lambda_ = choose_parameter(get_parameter(np, internal_np::lambda), FT(0.2));
     max_iteration_ = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 1000);
@@ -506,6 +522,7 @@ public:
       parallel_execution_ = false;
     }
 #endif
+    init();
   }
   ///@}
   template <class NamedParameters = parameters::Default_named_parameters>
@@ -614,13 +631,9 @@ public:
       }
 #endif
     }
-    MSMesh sphere_mesh;
+
     bool success = false;
-    // Algorithm variables
-    iteration_count_ = 0;
-    total_error_ = FT(0.0);
-    total_error_diff_ = (std::numeric_limits<FT>::max)();
-    last_total_error_ = total_error_;
+    reset_algorithm_state();
 
     // Initialize with one sphere
     Sphere_3 init_sphere(Point_3(0., 0., 0.), FT(1.0));
@@ -642,7 +655,7 @@ public:
 
     // Main algorithm loop
     while(iteration_count_ < max_iteration_) {
-      bool converged = update();
+      bool converged = update_single_step(true);
       if(converged) {
         success = true;
         break;
@@ -664,7 +677,17 @@ public:
     }
     return success;
   }
-  bool update() {
+  /**
+   * Update the medial spheres by performing a single step of the algorithm.
+   *
+   * This function performs one iteration of the algorithm, updating sphere positions and computing errors.
+   * It can optionally enable sphere splitting based on convergence criteria.
+   *
+   * @param enable_split If true, allows sphere splitting based on convergence criteria.
+   * @return True if the algorithm has converged, false otherwise.
+   */
+
+  bool update_single_step(bool enable_split = false) {
     // Clean data
     sphere_mesh_->reset();
 #if CGAL_LINKED_WITH_TBB
@@ -701,48 +724,86 @@ public:
     }
 
     // Split spheres periodically or when converged
-    if(total_error_diff_ < converged_threshold_ || iteration_count_ % 10 == 0) {
+    if(enable_split&& (total_error_diff_ < converged_threshold_ || iteration_count_ % 10 == 0)) {
       update_sphere_neighbors();
       split_spheres();
     }
     iteration_count_++;
     return false;
   }
+  /**
+ * Perform a specified number of algorithm iterations.
+ * 
+ * This function allows manual control over the algorithm execution,
+ * performing only position optimization without sphere splitting.
+ * 
+ * @param nb_iteration Number of iterations to perform
+ * 
+ * @pre nb_iteration must be positive
+ */
+void update(std::size_t nb_iteration) {
+    for(std::size_t i = 0; i < nb_iteration; i++) {
+      update_single_step();
+    }
+  }
+
+/**
+ * Add spheres by iteratively splitting existing spheres.
+ * 
+ * This function attempts to add the specified number of spheres
+ * by running the algorithm with sphere splitting enabled until
+ * either the target is reached or maximum iterations are exceeded.
+ *
+ * @param nb_sphere Number of spheres to add
+ *
+ * @pre nb_sphere must be positive
+ * @pre At least one sphere must already exist
+ */
+  void add_spheres(int nb_sphere) {
+    if(nb_sphere == 0) {
+      return;
+    }
+    iteration_count_ = 0;
+    int max_iteration = std::min(1000, std::max(100, 10 * nb_sphere));
+    desired_number_of_spheres_ = sphere_mesh_->nb_spheres() + nb_sphere;
+    bool converged = false;
+    while(!converged && iteration_count_ < max_iteration) {
+      converged = update_single_step(true);
+      iteration_count_++;
+    }
+    if(converged) {
+      std::cout << "Added " << nb_sphere << " spheres successfully." << std::endl;
+    } else {
+      std::cout << "Failed to add " << nb_sphere << " spheres within the maximum iterations." << std::endl;
+    }
+  }
+
+
   /** Add a new sphere by splitting sphere with the id sphere_id.
+   * This function is aimed to be called during interactive sessions, where the use
+   * can specify a sphere to split and add a new sphere based on the split vertex.
    * @param sphere_id
    *    The ID of the sphere to split.
    */
-  void add_sphere(Sphere_ID sphere_id) {
+  void add_sphere_by_id(Sphere_ID sphere_id, int nb_iteration = 10) {
     auto& sphere = sphere_mesh_->get_sphere(sphere_id);
     vertex_descriptor split_vertex = sphere->get_split_vertex();
     Point_3 center = get(vertex_medial_sphere_pos_map_, split_vertex);
     FT radius = get(vertex_medial_sphere_radius_map_, split_vertex);
     sphere_mesh_->add_sphere(Sphere_3(center, radius * radius));
-    // update the spheres
-    int max_local_iterations = 10;
-    for(int i = 0; i < max_local_iterations; i++) {
-      bool converged = update();
-      if(converged) {
-        std::cout << "Local convergence achieved after adding sphere" << std::endl;
-        break;
-      }
-    }
+    // update the spheres for nb_iteration times
+    update(nb_iteration);
   }
   /** Remove a sphere by its sphere_id.
+   * This function is aimed to be called during interactive sessions, where the user
+   * can specify a sphere to remove.
    * @param sphere_id
    *    The ID of the sphere to remove.
    */
-  void remove_sphere(Sphere_ID sphere_id) {
+  void remove_sphere_by_id(Sphere_ID sphere_id, int nb_iteration = 10) {
     sphere_mesh_->remove(sphere_id);
     // update the spheres
-    int max_local_iterations = 10;
-    for(int i = 0; i < max_local_iterations; i++) {
-      bool converged = update();
-      if(converged) {
-        std::cout << "Local convergence achieved after removing sphere" << std::endl;
-        break;
-      }
-    }
+    update(nb_iteration);
   }
 
   /** Export the medial skeleton as a `Medial_Skeleton` object.
@@ -754,8 +815,8 @@ public:
    * @return
    *     A `Medial_Skeleton` object containing the medial skeleton data.
    */
-  Medial_Skeleton<TriangleMesh_, GT> export_skeleton() const {
-    Medial_Skeleton<TriangleMesh_, GT> skeleton;
+  Medial_Skeleton<TriangleMesh_> export_skeleton() const {
+    Medial_Skeleton<TriangleMesh_> skeleton;
     skeleton.build_skeleton_from_medial_sphere_mesh(*sphere_mesh_);
     return skeleton;
   }
@@ -792,11 +853,11 @@ public:
    * 3 vx vy vz
    * ```
    */
-  Medial_Skeleton<TriangleMesh_, GT> read_skeleton_from_ply(std::string& filepath) const {
+  bool read_skeleton_from_ply(std::string& filepath, Medial_Skeleton<TriangleMesh_>& skeleton) const {
     std::ifstream ifs(filepath);
     if(!ifs) {
       std::cerr << "Error opening file: " << filepath << std::endl;
-      return Medial_Skeleton<TriangleMesh_, GT>{};
+      return false;
     }
 
     Medial_Skeleton<TriangleMesh_, GT> skeleton;
@@ -823,7 +884,7 @@ public:
           is_ascii = true;
         } else {
           std::cerr << "Error: Only ASCII PLY format is supported" << std::endl;
-          return Medial_Skeleton<TriangleMesh_, GT>{};
+          return false;
         }
       } else if(token == "element") {
         std::string element_type;
@@ -846,14 +907,14 @@ public:
     for(std::size_t i = 0; i < num_vertices; ++i) {
       if(!std::getline(ifs, line)) {
         std::cerr << "Error: Unexpected end of file while reading vertices" << std::endl;
-        return Medial_Skeleton<TriangleMesh_, GT>{};
+        return false;
       }
 
       std::istringstream iss(line);
       double x, y, z, radius;
       if(!(iss >> x >> y >> z >> radius)) {
         std::cerr << "Error: Invalid vertex data at line " << i + 1 << std::endl;
-        return Medial_Skeleton<TriangleMesh_, GT>{};
+        return false;
       }
 
       Point_3 center(x, y, z);
@@ -865,19 +926,19 @@ public:
     for(std::size_t i = 0; i < num_edges; ++i) {
       if(!std::getline(ifs, line)) {
         std::cerr << "Error: Unexpected end of file while reading edges" << std::endl;
-        return Medial_Skeleton<TriangleMesh_, GT>{};
+        return false;
       }
 
       std::istringstream iss(line);
       std::size_t v1, v2;
       if(!(iss >> v1 >> v2)) {
         std::cerr << "Error: Invalid edge data at line " << i + 1 << std::endl;
-        return Medial_Skeleton<TriangleMesh_, GT>{};
+        return false;
       }
 
       if(v1 >= num_vertices || v2 >= num_vertices) {
         std::cerr << "Error: Edge references invalid vertex indices" << std::endl;
-        return Medial_Skeleton<TriangleMesh_, GT>{};
+        return false;
       }
 
       edges.emplace_back(v1, v2);
@@ -887,30 +948,30 @@ public:
     for(std::size_t i = 0; i < num_faces; ++i) {
       if(!std::getline(ifs, line)) {
         std::cerr << "Error: Unexpected end of file while reading faces" << std::endl;
-        return Medial_Skeleton<TriangleMesh_, GT>{};
+        return false;
       }
 
       std::istringstream iss(line);
       std::size_t vertex_count;
       if(!(iss >> vertex_count)) {
         std::cerr << "Error: Invalid face data at line " << i + 1 << std::endl;
-        return Medial_Skeleton<TriangleMesh_, GT>{};
+        return false;
       }
 
       if(vertex_count != 3) {
         std::cerr << "Error: Only triangular faces are supported" << std::endl;
-        return Medial_Skeleton<TriangleMesh_, GT>{};
+        return false;
       }
 
       std::size_t v1, v2, v3;
       if(!(iss >> v1 >> v2 >> v3)) {
         std::cerr << "Error: Invalid face vertex indices" << std::endl;
-        return Medial_Skeleton<TriangleMesh_, GT>{};
+        return false;
       }
 
       if(v1 >= num_vertices || v2 >= num_vertices || v3 >= num_vertices) {
         std::cerr << "Error: Face references invalid vertex indices" << std::endl;
-        return Medial_Skeleton<TriangleMesh_, GT>{};
+        return false;
       }
 
       faces.push_back({v1, v2, v3});
@@ -923,7 +984,7 @@ public:
     std::cout << "Successfully loaded skeleton from " << filepath << std::endl;
     std::cout << "Vertices: " << num_vertices << ", Edges: " << num_edges << ", Faces: " << num_faces << std::endl;
 
-    return skeleton;
+    return true;
   }
 
   /// \name Parameters
@@ -1480,6 +1541,13 @@ private:
         to_split_max--;
       }
     }
+  }
+  void reset_algorithm_state() {
+    iteration_count_ = 0;
+    total_error_ = FT(0.0);
+    total_error_diff_ = (std::numeric_limits<FT>::max)();
+    last_total_error_ = total_error_;
+    sphere_mesh_->reset(); 
   }
 
 private:
