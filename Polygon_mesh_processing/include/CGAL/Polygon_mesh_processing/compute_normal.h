@@ -25,7 +25,6 @@
 #include <CGAL/Origin.h>
 
 #include <boost/graph/graph_traits.hpp>
-#include <boost/container/small_vector.hpp>
 
 #include <iostream>
 #include <limits>
@@ -430,9 +429,10 @@ compute_vertex_normal_most_visible_min_circle(typename boost::graph_traits<Polyg
   if(incident_faces.size() == 1)
     return get(face_normals, incident_faces.front());
 
-  boost::container::small_vector<face_descriptor, 3> circum_points;
-  circum_points.push_back(incident_faces[0]);
-  circum_points.push_back(incident_faces[1]);
+  std::array<face_descriptor, 3> circum_points;
+  short int circum_points_size=2;
+  circum_points[0]=incident_faces[0];
+  circum_points[1]=incident_faces[1];
 
   // Get the farthest point from circum_points[0]
   const Vector_ref n0 = get(face_normals, circum_points[0]);
@@ -455,10 +455,10 @@ compute_vertex_normal_most_visible_min_circle(typename boost::graph_traits<Polyg
     const Vector_ref ni = get(face_normals, circum_points[0]);
     const Vector_ref nj = get(face_normals, circum_points[1]);
 
-    if(circum_points.size()==2){
+    if(circum_points_size==2){
       center = compute_normals_bisector(ni, nj, traits);
     } else {
-      CGAL_assertion(circum_points.size()==3);
+      CGAL_assertion(circum_points_size==3);
       const Vector_ref nk = get(face_normals, circum_points[2]);
       center = compute_normals_bisector(ni, nj, nk, traits);
     }
@@ -476,8 +476,9 @@ compute_vertex_normal_most_visible_min_circle(typename boost::graph_traits<Polyg
       return center;
     const Vector_ref no = get(face_normals, f_out);
 
-    if(circum_points.size()==2){
-      circum_points.push_back(f_out);
+    if(circum_points_size==2){
+      circum_points[2]=f_out;
+      circum_points_size=3;
     } else {
       if(is_negative(sp_3(center, no)))
         return NULL_VECTOR; // The circle will become bigger than a hemisphere, no normal visible by all
@@ -538,13 +539,13 @@ compute_vertex_normal_most_visible_min_circle(typename boost::graph_traits<Polyg
     Vector_3 center_nj_nk = compute_normals_bisector(nj2, nk2, traits);
 
     if(sp_3(center_ni_nj, nk2) > sp_3(center_ni_nj, ni2)){
-      circum_points.pop_back();
+      circum_points_size=2;
     } else if(sp_3(center_ni_nk, nj2) > sp_3(center_ni_nk, ni2)){
       std::swap(circum_points[1],circum_points[2]);
-      circum_points.pop_back();
+      circum_points_size=2;
     } else if(sp_3(center_nj_nk, ni2) > sp_3(center_nj_nk, nj2)){
       std::swap(circum_points[0],circum_points[2]);
-      circum_points.pop_back();
+      circum_points_size=2;
     }
   }
 }
