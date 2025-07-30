@@ -622,7 +622,7 @@ bool are_holes_and_boundary_pairwise_disjoint
                                                         Topology_traits;
   typedef CGAL::Gps_on_surface_base_2<Traits_2, Topology_traits>
                                                         Polygon_set_2;
-  typedef typename Polygon_set_2::Size                  Size;
+  // typedef typename Polygon_set_2::Size                  Size;
   typedef  typename Traits_2::Polygon_2                 Polygon_2;
   typedef typename Traits_2::Polygon_with_holes_2       Polygon_with_holes_2;
   typedef typename Polygon_with_holes_2::Hole_const_iterator
