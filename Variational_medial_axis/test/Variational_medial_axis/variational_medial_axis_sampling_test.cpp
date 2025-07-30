@@ -220,8 +220,6 @@ int main() {
   std::vector<TestParams> test_cases = {{"chair", 0.1, 100}, {"chair", 0.2, 150}, {"bug", 0.1, 100}, {"bug", 0.2, 150}};
 
   int total_tests = 0;
-  int passed_tests = 0;
-
   std::cout << "=== Variational Medial Axis Sampling Tests ===" << std::endl;
 
   std::cout << "\n--- Test 1: Correcteness ---" << std::endl;

@@ -146,7 +146,7 @@ public:
  *
  * @tparam TriangleMesh The type of the triangle mesh representing the shape.
  * @tparam GT The geometric traits class used for geometric computations.
- *         <b>%Default:</b> 
+ *         <b>%Default:</b>
   * \code
   *     CGAL::Kernel_traits<
   *       boost::property_traits<
@@ -504,10 +504,10 @@ public:
       : tmesh_(tmesh)
       , traits_(gt)
       , vpm_(vpm) {
-    
+
     using parameters::choose_parameter;
     using parameters::get_parameter;
-    
+
     desired_number_of_spheres_ = choose_parameter(get_parameter(np, internal_np::number_of_spheres), 100);
     lambda_ = choose_parameter(get_parameter(np, internal_np::lambda), FT(0.2));
     max_iteration_ = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 1000);
@@ -733,12 +733,12 @@ public:
   }
   /**
  * Perform a specified number of algorithm iterations.
- * 
+ *
  * This function allows manual control over the algorithm execution,
  * performing only position optimization without sphere splitting.
- * 
+ *
  * @param nb_iteration Number of iterations to perform
- * 
+ *
  * @pre nb_iteration must be positive
  */
 void update(std::size_t nb_iteration) {
@@ -749,7 +749,7 @@ void update(std::size_t nb_iteration) {
 
 /**
  * Add spheres by iteratively splitting existing spheres.
- * 
+ *
  * This function attempts to add the specified number of spheres
  * by running the algorithm with sphere splitting enabled until
  * either the target is reached or maximum iterations are exceeded.
@@ -786,7 +786,7 @@ void update(std::size_t nb_iteration) {
    *    The ID of the sphere to split.
    */
   void add_sphere_by_id(Sphere_ID sphere_id, int nb_iteration = 10) {
-    auto& sphere = sphere_mesh_->get_sphere(sphere_id);
+    auto sphere = sphere_mesh_->get_sphere(sphere_id);
     vertex_descriptor split_vertex = sphere->get_split_vertex();
     Point_3 center = get(vertex_medial_sphere_pos_map_, split_vertex);
     FT radius = get(vertex_medial_sphere_radius_map_, split_vertex);
@@ -860,7 +860,6 @@ void update(std::size_t nb_iteration) {
       return false;
     }
 
-    Medial_Skeleton<TriangleMesh_, GT> skeleton;
     std::vector<Sphere_3> vertices;
     std::vector<std::pair<std::size_t, std::size_t>> edges;
     std::vector<std::array<std::size_t, 3>> faces;
@@ -868,7 +867,6 @@ void update(std::size_t nb_iteration) {
     std::string line;
     std::size_t num_vertices = 0, num_edges = 0, num_faces = 0;
     bool in_header = true;
-    bool is_ascii = false;
 
     while(std::getline(ifs, line) && in_header) {
       std::istringstream iss(line);
@@ -880,9 +878,7 @@ void update(std::size_t nb_iteration) {
       } else if(token == "format") {
         std::string format_type;
         iss >> format_type;
-        if(format_type == "ascii") {
-          is_ascii = true;
-        } else {
+        if(format_type != "ascii") {
           std::cerr << "Error: Only ASCII PLY format is supported" << std::endl;
           return false;
         }
@@ -1098,12 +1094,11 @@ private:
     }
 
     return {c, r};
-  
+
   }
   std::pair<Point_3, FT> shrinking_ball_algorithm_kdt(const Point_3& p,         // point on the surface
                                                   const Vector_3& n,        // inverse of search direction
                                                   FT delta_convergence = FT(1e-5)) {
-    using face_descriptor = typename Tree::Primitive_id;
 
     delta_convergence *= scale_;
     const FT denoise_preserve = FT(20.0); // in degree
@@ -1111,9 +1106,9 @@ private:
     int j = 0;
     FT r = FT(0.25) * scale_; // initial radius
     Point_3 c = p - (r * n);
-   
+
     while(true) {
-   
+
       auto hint = tree_->kd_tree().closest_point(c);
       Point_3 q_next = hint.first;
 
@@ -1547,7 +1542,7 @@ private:
     total_error_ = FT(0.0);
     total_error_diff_ = (std::numeric_limits<FT>::max)();
     last_total_error_ = total_error_;
-    sphere_mesh_->reset(); 
+    sphere_mesh_->reset();
   }
 
 private:
