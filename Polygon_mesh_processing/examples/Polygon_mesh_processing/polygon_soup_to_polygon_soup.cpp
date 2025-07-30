@@ -26,6 +26,7 @@ struct Soup {
 
 
 
+
 namespace  boost {
   template <>
   struct graph_traits<Soup> {
@@ -50,7 +51,7 @@ namespace CGAL {
 template <>
 bool is_valid_face_descriptor(typename boost::graph_traits<::Soup>::face_descriptor ,
                               const Soup & ,
-                              const bool verb)
+                              const bool /* verb */)
 {
   return true;
 }
@@ -117,53 +118,43 @@ std::size_t add_vertex(Soup& soup)
 namespace boost {
 
 template <>
-struct property_map<Soup, boost::vertex_point_t >
+struct property_map<Soup, CGAL::vertex_point_t >
 {
   typedef Soup_point_pmap<Soup> type;
   typedef Soup_point_pmap<Soup> const_type;
 };
 
-template <>
-struct property_traits<Soup_point_pmap<Soup> >
+} // namespace boost
+
+namespace CGAL
 {
-  typedef std::array<FT, 3> value_type;
-  typedef std::array<FT, 3> reference;
-  typedef std::size_t key_type;
 
-  typedef boost::read_write_property_map_tag category;
+template <>
+struct graph_has_property<Soup, boost::vertex_point_t>
+  : CGAL::Tag_true
+{};
 
-  static value_type get(const Soup_point_pmap<Soup>& pm, key_type v)
-  {
-    return pm[v];
-  }
+} // namespace CGAL
 
-  static void put(Soup_point_pmap<Soup>& pm, key_type v, const value_type& p)
-  {
-    pm[v] = p;
-  }
-};
-
+// same namespace as Soup
 Soup_point_pmap<Soup> get(CGAL::vertex_point_t, const Soup& soup)
 {
   return Soup_point_pmap<Soup>(soup);
 }
 
-} // namespace boost
-
 
 namespace CGAL {
-  namespace Euler {
+namespace Euler {
 
-    template <typename VertexRange>
-    typename boost::graph_traits<Soup>::face_descriptor
-    add_face(const VertexRange& vr, Soup& soup)
-    {
-      Polygon polygon = { vr[0], vr[1], vr[2] }; // assuming triangular faces
-      soup.polygons.push_back(polygon);
-      return soup.polygons.size() - 1; // return the index of the newly added
-    }
-  }
+template <typename VertexRange>
+typename boost::graph_traits<Soup>::face_descriptor
+add_face(const VertexRange& vr, Soup& soup)
+{
+  Polygon polygon = { vr[0], vr[1], vr[2] }; // assuming triangular faces
+  soup.polygons.push_back(polygon);
+  return soup.polygons.size() - 1; // return the index of the newly added
 }
+} } // CGAL::Euler
 
 
 namespace PMP = CGAL::Polygon_mesh_processing;

@@ -105,6 +105,7 @@ namespace CGAL {
         for(auto it = t.full_cells_begin(); it != t.full_cells_end(); ++it) {
             if(t.is_infinite(it)) {
                 infinite_cells.push_back(it);
+
             }
         }
 
@@ -145,7 +146,8 @@ namespace CGAL {
         // std::cout << "Ks: " << std::endl << Ks << std::endl;
         // std::cout << "Ks * NC.T" << std::endl << Ks * NC.transpose() << std::endl;
 
-        int n_check_planes = (NC.rows()<=1000)? NC.rows(): 200;
+        // TODO: reduced to 200 only for memory reasons, loop and increase again? do sth smarter?
+        int n_check_planes = (NC.rows()<=200)? NC.rows(): 200;
         // std::cout << "n_check_planes: " << n_check_planes << std::endl;
         std::cout << "NC.shape(): " << NC.rows() << ", " << NC.cols() << std::endl;
         Eigen::Vector<bool,Eigen::Dynamic> inv = ((Ks * NC.block(0,0,n_check_planes,D+3).transpose()).rowwise().maxCoeff().array() >= atol); // .rowwise().maxCoeff().array() >= 1e-5) << std::endl;
@@ -252,10 +254,12 @@ namespace CGAL {
           *result++ = Sphere_3(p, res(i,3)*res(i,3)); // res(i,3) is the radius
         }
 
+#ifdef WRITE_SPHERES
         const static Eigen::IOFormat CSVFormat(Eigen::FullPrecision, Eigen::DontAlignCols, ", ", "\n");
         // write soution in lie representation:  AF: I think this is not Lie representation, but rather the sphere representation
         std::ofstream pointfile("solution_lie_3.csv");
         pointfile << res.format(CSVFormat);
+#endif
     }
 
     template<typename SphereRange, typename OutputIterator>
@@ -273,11 +277,12 @@ namespace CGAL {
           Point_2 p(res(i,0), res(i,1));
           *result++ = Circle_2(p, res(i,2)*res(i,2)); // res(i,2) is the radius
         }
-
+#ifdef WRITE_SPHERES
         const static Eigen::IOFormat CSVFormat(Eigen::FullPrecision, Eigen::DontAlignCols, ", ", "\n");
         // write soution in lie representation:
         std::ofstream pointfile("solution_lie_2.csv");
         pointfile << res.format(CSVFormat);
+#endif
     }
 
     template<typename SphereRange, typename OutputIterator>
