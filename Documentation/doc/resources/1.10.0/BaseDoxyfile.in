@@ -1,7 +1,7 @@
-# Doxyfile 1.10.0
+# Doxyfile 1.14.0
 
 # This file describes the settings to be used by the documentation system
-# doxygen (www.doxygen.org) for a project.
+# Doxygen (www.doxygen.org) for a project.
 #
 # Only the settings that are not the default ones are kept in this file
 
@@ -219,19 +219,19 @@ ALIASES                = "cgal=%CGAL" \
 # parses. With this tag you can assign which parser to use for a given
 # extension. Doxygen has a built-in mapping, but you can override or extend it
 # using this tag. The format is ext=language, where ext is a file extension, and
-# language is one of the parsers supported by doxygen: IDL, Java, JavaScript,
+# language is one of the parsers supported by Doxygen: IDL, Java, JavaScript,
 # Csharp (C#), C, C++, Lex, D, PHP, md (Markdown), Objective-C, Python, Slice,
 # VHDL, Fortran (fixed format Fortran: FortranFixed, free formatted Fortran:
-# FortranFree, unknown formatted Fortran: Fortran. In the latter case the parser
+# FortranFree, unknown formatted Fortran: Fortran. In the later case the parser
 # tries to guess whether the code is fixed or free formatted code, this is the
-# default for Fortran type files). For instance to make doxygen treat .inc files
+# default for Fortran type files). For instance to make Doxygen treat .inc files
 # as Fortran files (default is PHP), and .f files as C (default is Fortran),
 # use: inc=Fortran f=C.
 #
 # Note: For files without extension you can use no_extension as a placeholder.
 #
 # Note that for custom extensions you also need to set FILE_PATTERNS otherwise
-# the files are not read by doxygen. When specifying no_extension you should add
+# the files are not read by Doxygen. When specifying no_extension you should add
 # * to the FILE_PATTERNS.
 #
 # Note see also the list of default file extension mappings.
@@ -242,24 +242,24 @@ EXTENSION_MAPPING      = txt=C++
 # to that level are automatically included in the table of contents, even if
 # they do not have an id attribute.
 # Note: This feature currently applies only to Markdown headings.
-# Minimum value: 0, maximum value: 99, default value: 5.
+# Minimum value: 0, maximum value: 99, default value: 6.
 # This tag requires that the tag MARKDOWN_SUPPORT is set to YES.
 
 TOC_INCLUDE_HEADINGS   = 0
 
 # If you use STL classes (i.e. std::string, std::vector, etc.) but do not want
 # to include (a tag file for) the STL sources as input, then you should set this
-# tag to YES in order to let doxygen match functions declarations and
+# tag to YES in order to let Doxygen match functions declarations and
 # definitions whose arguments contain STL classes (e.g. func(std::string);
-# versus func(std::string) {}). This also make the inheritance and collaboration
-# diagrams that involve STL classes more complete and accurate.
+# versus func(std::string) {}). This also makes the inheritance and
+# collaboration diagrams that involve STL classes more complete and accurate.
 # The default value is: NO.
 
 BUILTIN_STL_SUPPORT    = YES
 
 # For Microsoft's IDL there are propget and propput attributes to indicate
 # getter and setter methods for a property. Setting this option to YES will make
-# doxygen to replace the get and set methods by a property in the documentation.
+# Doxygen to replace the get and set methods by a property in the documentation.
 # This will only work if the methods are indeed getting or setting a simple
 # type. If this is not the case, or you want to show the methods anyway, you
 # should set this option to NO.
@@ -280,7 +280,7 @@ SUBGROUPING            = NO
 # Build related configuration options
 #---------------------------------------------------------------------------
 
-# If the EXTRACT_ALL tag is set to YES, doxygen will assume all entities in
+# If the EXTRACT_ALL tag is set to YES, Doxygen will assume all entities in
 # documentation are documented, even if no documentation was available. Private
 # class members and static file members will be hidden unless the
 # EXTRACT_PRIVATE respectively EXTRACT_STATIC tags are set to YES.
@@ -334,15 +334,15 @@ SHOW_USED_FILES        = NO
 SHOW_FILES             = NO
 
 # The LAYOUT_FILE tag can be used to specify a layout file which will be parsed
-# by doxygen. The layout file controls the global structure of the generated
+# by Doxygen. The layout file controls the global structure of the generated
 # output files in an output format independent way. To create the layout file
-# that represents doxygen's defaults, run doxygen with the -l option. You can
+# that represents Doxygen's defaults, run Doxygen with the -l option. You can
 # optionally specify a file name after the option, if omitted DoxygenLayout.xml
 # will be used as the name of the layout file. See also section "Changing the
 # layout of pages" for information.
 #
-# Note that if you run doxygen from a directory containing a file called
-# DoxygenLayout.xml, doxygen will parse it automatically even if the LAYOUT_FILE
+# Note that if you run Doxygen from a directory containing a file called
+# DoxygenLayout.xml, Doxygen will parse it automatically even if the LAYOUT_FILE
 # tag is left empty.
 
 LAYOUT_FILE            = ${CGAL_DOC_RESOURCE_DIR}/DoxygenLayoutPackage.xml
@@ -363,7 +363,7 @@ CITE_BIB_FILES         = ${CGAL_DOC_BIBLIO_DIR}/cgal_manual.bib \
 #---------------------------------------------------------------------------
 
 # The QUIET tag can be used to turn on/off the messages that are generated to
-# standard output by doxygen. If QUIET is set to YES this implies that the
+# standard output by Doxygen. If QUIET is set to YES this implies that the
 # messages are off.
 # The default value is: NO.
 
@@ -379,7 +379,7 @@ QUIET                  = YES
 #
 # Note that for custom extensions or not directly supported extensions you also
 # need to set EXTENSION_MAPPING for the extension otherwise the files are not
-# read by doxygen.
+# read by Doxygen.
 #
 # Note the list of default checked file patterns might differ from the list of
 # default file extension mappings.
@@ -436,7 +436,7 @@ EXAMPLE_RECURSIVE      = YES
 # Configuration options related to source browsing
 #---------------------------------------------------------------------------
 
-# If the VERBATIM_HEADERS tag is set the YES then doxygen will generate a
+# If the VERBATIM_HEADERS tag is set the YES then Doxygen will generate a
 # verbatim copy of the header file for each class for which an include is
 # specified. Set to NO to disable this.
 # See also: Section \class.
@@ -461,34 +461,34 @@ ALPHABETICAL_INDEX     = NO
 
 #
 # To get valid HTML the header file that includes any scripts and style sheets
-# that doxygen needs, which is dependent on the configuration options used (e.g.
+# that Doxygen needs, which is dependent on the configuration options used (e.g.
 # the setting GENERATE_TREEVIEW). It is highly recommended to start with a
 # default header using
 # doxygen -w html new_header.html new_footer.html new_stylesheet.css
 # YourConfigFile
 # and then modify the file new_header.html. See also section "Doxygen usage"
-# for information on how to generate the default header that doxygen normally
+# for information on how to generate the default header that Doxygen normally
 # uses.
 # Note: The header is subject to change so you typically have to regenerate the
-# default header when upgrading to a newer version of doxygen. For a description
+# default header when upgrading to a newer version of Doxygen. For a description
 # of the possible markers and block names see the documentation.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
 HTML_HEADER            = ${CGAL_DOC_HEADER_PACKAGE}
 
 # The HTML_FOOTER tag can be used to specify a user-defined HTML footer for each
-# generated HTML page. If the tag is left blank doxygen will generate a standard
+# generated HTML page. If the tag is left blank Doxygen will generate a standard
 # footer. See HTML_HEADER for more information on how to generate a default
 # footer and what special commands can be used inside the footer. See also
 # section "Doxygen usage" for information on how to generate the default footer
-# that doxygen normally uses.
+# that Doxygen normally uses.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
 HTML_FOOTER            = ${CGAL_DOC_RESOURCE_DIR}/footer.html
 
 # Doxygen stores a couple of settings persistently in the browser (via e.g.
 # cookies). By default these settings apply to all HTML pages generated by
-# doxygen across all projects. The HTML_PROJECT_COOKIE tag can be used to store
+# Doxygen across all projects. The HTML_PROJECT_COOKIE tag can be used to store
 # the settings under a project specific key, such that the user preferences will
 # be stored separately.
 # This tag requires that the tag GENERATE_HTML is set to YES.
@@ -506,23 +506,6 @@ HTML_PROJECT_COOKIE    = CGAL
 
 DISABLE_INDEX          = YES
 
-# The GENERATE_TREEVIEW tag is used to specify whether a tree-like index
-# structure should be generated to display hierarchical information. If the tag
-# value is set to YES, a side panel will be generated containing a tree-like
-# index structure (just like the one that is generated for HTML Help). For this
-# to work a browser that supports JavaScript, DHTML, CSS and frames is required
-# (i.e. any modern browser). Windows users are probably better off using the
-# HTML help feature. Via custom style sheets (see HTML_EXTRA_STYLESHEET) one can
-# further fine tune the look of the index (see "Fine-tuning the output"). As an
-# example, the default style sheet generated by doxygen has an example that
-# shows how to put an image at the root of the tree instead of the PROJECT_NAME.
-# Since the tree basically has the same information as the tab index, you could
-# consider setting DISABLE_INDEX to YES when enabling this option.
-# The default value is: NO.
-# This tag requires that the tag GENERATE_HTML is set to YES.
-
-GENERATE_TREEVIEW      = YES
-
 # When GENERATE_TREEVIEW is set to YES, the PAGE_OUTLINE_PANEL option determines
 # if an additional navigation panel is shown at the right hand side of the
 # screen, displaying an outline of the contents of the main page, similar to
@@ -533,19 +516,7 @@ GENERATE_TREEVIEW      = YES
 
 PAGE_OUTLINE_PANEL     = NO
 
-# When both GENERATE_TREEVIEW and DISABLE_INDEX are set to YES, then the
-# FULL_SIDEBAR option determines if the side bar is limited to only the treeview
-# area (value NO) or if it should extend to the full height of the window (value
-# YES). Setting this to YES gives a layout similar to
-# https://docs.readthedocs.io with more room for contents, but less room for the
-# project logo, title, and description. If either GENERATE_TREEVIEW or
-# DISABLE_INDEX is set to NO, this option has no effect.
-# The default value is: NO.
-# This tag requires that the tag GENERATE_HTML is set to YES.
-
-FULL_SIDEBAR           = NO
-
-# If the HTML_FORMULA_FORMAT option is set to svg, doxygen will use the pdf2svg
+# If the HTML_FORMULA_FORMAT option is set to svg, Doxygen will use the pdf2svg
 # tool (see https://github.com/dawbarton/pdf2svg) or inkscape (see
 # https://inkscape.org) to generate formulas as SVG images instead of PNGs for
 # the HTML output. These images will generally look nicer at scaled resolutions.
@@ -594,7 +565,7 @@ ${CGAL_DOC_MATHJAX_LOCATION_FULL_OPTION_LINE}
 MATHJAX_EXTENSIONS     = TeX/AMSmath \
                          TeX/AMSsymbols
 
-# The MATHJAX_CODEFILE tag can be used to specify a file with javascript pieces
+# The MATHJAX_CODEFILE tag can be used to specify a file with JavaScript pieces
 # of code that will be used on startup of the MathJax code. See the MathJax site
 # (see:
 # http://docs.mathjax.org/en/v2.7-latest/output.html) for more details. For an
@@ -603,12 +574,12 @@ MATHJAX_EXTENSIONS     = TeX/AMSmath \
 
 MATHJAX_CODEFILE       = ${CGAL_DOC_RESOURCE_DIR}/CGAL_mathjax.js
 
-# When the SEARCHENGINE tag is enabled doxygen will generate a search box for
-# the HTML output. The underlying search engine uses javascript and DHTML and
+# When the SEARCHENGINE tag is enabled Doxygen will generate a search box for
+# the HTML output. The underlying search engine uses JavaScript and DHTML and
 # should work on any modern browser. Note that when using HTML help
 # (GENERATE_HTMLHELP), Qt help (GENERATE_QHP), or docsets (GENERATE_DOCSET)
 # there is already a search function so this one should typically be disabled.
-# For large projects the javascript based search engine can be slow, then
+# For large projects the JavaScript based search engine can be slow, then
 # enabling SERVER_BASED_SEARCH may provide a better solution. It is possible to
 # search using the keyboard; to jump to the search box use <access key> + S
 # (what the <access key> is depends on the OS and browser, but it is typically
@@ -628,7 +599,7 @@ SEARCHENGINE           = NO
 # Configuration options related to the LaTeX output
 #---------------------------------------------------------------------------
 
-# If the GENERATE_LATEX tag is set to YES, doxygen will generate LaTeX output.
+# If the GENERATE_LATEX tag is set to YES, Doxygen will generate LaTeX output.
 # The default value is: YES.
 
 GENERATE_LATEX         = NO
@@ -645,7 +616,7 @@ GENERATE_LATEX         = NO
 # Configuration options related to the XML output
 #---------------------------------------------------------------------------
 
-# If the XML_PROGRAMLISTING tag is set to YES, doxygen will dump the program
+# If the XML_PROGRAMLISTING tag is set to YES, Doxygen will dump the program
 # listings (including syntax highlighting and cross-referencing information) to
 # the XML output. Note that enabling this will significantly increase the size
 # of the XML output.
@@ -658,7 +629,7 @@ XML_PROGRAMLISTING     = NO
 # Configuration options related to the preprocessor
 #---------------------------------------------------------------------------
 
-# If the MACRO_EXPANSION tag is set to YES, doxygen will expand all macro names
+# If the MACRO_EXPANSION tag is set to YES, Doxygen will expand all macro names
 # in the source code. If set to NO, only conditional compilation will be
 # performed. Macro expansion can be done in a controlled way by setting
 # EXPAND_ONLY_PREDEF to YES.
@@ -699,7 +670,7 @@ PREDEFINED             = DOXYGEN_RUNNING \
 #---------------------------------------------------------------------------
 
 # If the EXTERNAL_GROUPS tag is set to YES, all external groups will be listed
-# in the modules index. If set to NO, only the current project's groups will be
+# in the topic index. If set to NO, only the current project's groups will be
 # listed.
 # The default value is: YES.
 
@@ -716,7 +687,7 @@ EXTERNAL_PAGES         = NO
 # Configuration options related to diagram generator tools
 #---------------------------------------------------------------------------
 
-# If you set the HAVE_DOT tag to YES then doxygen will assume the dot tool is
+# If you set the HAVE_DOT tag to YES then Doxygen will assume the dot tool is
 # available from the path. This tool is part of Graphviz (see:
 # https://www.graphviz.org/), a graph visualization toolkit from AT&T and Lucent
 # Bell Labs. The other options in this section have no effect if this option is
@@ -725,31 +696,41 @@ EXTERNAL_PAGES         = NO
 
 HAVE_DOT               = YES
 
-# If the CLASS_GRAPH tag is set to YES or GRAPH or BUILTIN then doxygen will
+# If the CLASS_GRAPH tag is set to YES or GRAPH or BUILTIN then Doxygen will
 # generate a graph for each documented class showing the direct and indirect
 # inheritance relations. In case the CLASS_GRAPH tag is set to YES or GRAPH and
 # HAVE_DOT is enabled as well, then dot will be used to draw the graph. In case
 # the CLASS_GRAPH tag is set to YES and HAVE_DOT is disabled or if the
 # CLASS_GRAPH tag is set to BUILTIN, then the built-in generator will be used.
 # If the CLASS_GRAPH tag is set to TEXT the direct and indirect inheritance
-# relations will be shown as texts / links.
+# relations will be shown as texts / links. Explicit enabling an inheritance
+# graph or choosing a different representation for an inheritance graph of a
+# specific class, can be accomplished by means of the command \inheritancegraph.
+# Disabling an inheritance graph can be accomplished by means of the command
+# \hideinheritancegraph.
 # Possible values are: NO, YES, TEXT, GRAPH and BUILTIN.
 # The default value is: YES.
 
 CLASS_GRAPH            = TEXT
 
-# If the COLLABORATION_GRAPH tag is set to YES then doxygen will generate a
+# If the COLLABORATION_GRAPH tag is set to YES then Doxygen will generate a
 # graph for each documented class showing the direct and indirect implementation
 # dependencies (inheritance, containment, and class references variables) of the
-# class with other documented classes.
+# class with other documented classes. Explicit enabling a collaboration graph,
+# when COLLABORATION_GRAPH is set to NO, can be accomplished by means of the
+# command \collaborationgraph. Disabling a collaboration graph can be
+# accomplished by means of the command \hidecollaborationgraph.
 # The default value is: YES.
 # This tag requires that the tag HAVE_DOT is set to YES.
 
 COLLABORATION_GRAPH    = NO
 
-# If the GROUP_GRAPHS tag is set to YES then doxygen will generate a graph for
-# groups, showing the direct groups dependencies. See also the chapter Grouping
-# in the manual.
+# If the GROUP_GRAPHS tag is set to YES then Doxygen will generate a graph for
+# groups, showing the direct groups dependencies. Explicit enabling a group
+# dependency graph, when GROUP_GRAPHS is set to NO, can be accomplished by means
+# of the command \groupgraph. Disabling a directory graph can be accomplished by
+# means of the command \hidegroupgraph. See also the chapter Grouping in the
+# manual.
 # The default value is: YES.
 # This tag requires that the tag HAVE_DOT is set to YES.
 
@@ -764,34 +745,42 @@ GROUP_GRAPHS           = NO
 TEMPLATE_RELATIONS     = YES
 
 # If the INCLUDE_GRAPH, ENABLE_PREPROCESSING and SEARCH_INCLUDES tags are set to
-# YES then doxygen will generate a graph for each documented file showing the
+# YES then Doxygen will generate a graph for each documented file showing the
 # direct and indirect include dependencies of the file with other documented
-# files.
+# files. Explicit enabling an include graph, when INCLUDE_GRAPH is is set to NO,
+# can be accomplished by means of the command \includegraph. Disabling an
+# include graph can be accomplished by means of the command \hideincludegraph.
 # The default value is: YES.
 # This tag requires that the tag HAVE_DOT is set to YES.
 
 INCLUDE_GRAPH          = NO
 
 # If the INCLUDED_BY_GRAPH, ENABLE_PREPROCESSING and SEARCH_INCLUDES tags are
-# set to YES then doxygen will generate a graph for each documented file showing
+# set to YES then Doxygen will generate a graph for each documented file showing
 # the direct and indirect include dependencies of the file with other documented
-# files.
+# files. Explicit enabling an included by graph, when INCLUDED_BY_GRAPH is set
+# to NO, can be accomplished by means of the command \includedbygraph. Disabling
+# an included by graph can be accomplished by means of the command
+# \hideincludedbygraph.
 # The default value is: YES.
 # This tag requires that the tag HAVE_DOT is set to YES.
 
 INCLUDED_BY_GRAPH      = NO
 
-# If the GRAPHICAL_HIERARCHY tag is set to YES then doxygen will graphical
+# If the GRAPHICAL_HIERARCHY tag is set to YES then Doxygen will graphical
 # hierarchy of all classes instead of a textual one.
 # The default value is: YES.
 # This tag requires that the tag HAVE_DOT is set to YES.
 
 GRAPHICAL_HIERARCHY    = NO
 
-# If the DIRECTORY_GRAPH tag is set to YES then doxygen will show the
+# If the DIRECTORY_GRAPH tag is set to YES then Doxygen will show the
 # dependencies a directory has on other directories in a graphical way. The
 # dependency relations are determined by the #include relations between the
-# files in the directories.
+# files in the directories. Explicit enabling a directory graph, when
+# DIRECTORY_GRAPH is set to NO, can be accomplished by means of the command
+# \directorygraph. Disabling a directory graph can be accomplished by means of
+# the command \hidedirectorygraph.
 # The default value is: YES.
 # This tag requires that the tag HAVE_DOT is set to YES.
 
@@ -801,12 +790,15 @@ DIRECTORY_GRAPH        = NO
 # generated by dot. For an explanation of the image formats see the section
 # output formats in the documentation of the dot tool (Graphviz (see:
 # https://www.graphviz.org/)).
-# Note: If you choose svg you need to set HTML_FILE_EXTENSION to xhtml in order
-# to make the SVG files visible in IE 9+ (other browsers do not have this
-# requirement).
+#
+# Note the formats svg:cairo and svg:cairo:cairo cannot be used in combination
+# with INTERACTIVE_SVG (the INTERACTIVE_SVG will be set to NO).
 # Possible values are: png, jpg, gif, svg, png:gd, png:gd:gd, png:cairo,
-# png:cairo:gd, png:cairo:cairo, png:cairo:gdiplus, png:gdiplus and
-# png:gdiplus:gdiplus.
+# png:cairo:gd, png:cairo:cairo, png:cairo:gdiplus, png:gdiplus,
+# png:gdiplus:gdiplus, svg:cairo, svg:cairo:cairo, svg:svg, svg:svg:core,
+# gif:cairo, gif:cairo:gd, gif:cairo:gdiplus, gif:gdiplus, gif:gdiplus:gdiplus,
+# gif:gd, gif:gd:gd, jpg:cairo, jpg:cairo:gd, jpg:cairo:gdiplus, jpg:gd,
+# jpg:gd:gd, jpg:gdiplus and jpg:gdiplus:gdiplus.
 # The default value is: png.
 # This tag requires that the tag HAVE_DOT is set to YES.
 
@@ -817,17 +809,18 @@ DOT_IMAGE_FORMAT       = svg
 #
 # Note that this requires a modern browser other than Internet Explorer. Tested
 # and working are Firefox, Chrome, Safari, and Opera.
-# Note: For IE 9+ you need to set HTML_FILE_EXTENSION to xhtml in order to make
-# the SVG files visible. Older versions of IE do not have SVG support.
+#
+# Note This option will be automatically disabled when DOT_IMAGE_FORMAT is set
+# to svg:cairo or svg:cairo:cairo.
 # The default value is: NO.
 # This tag requires that the tag HAVE_DOT is set to YES.
 
 INTERACTIVE_SVG        = YES
 
-# If the GENERATE_LEGEND tag is set to YES doxygen will generate a legend page
+# If the GENERATE_LEGEND tag is set to YES Doxygen will generate a legend page
 # explaining the meaning of the various boxes and arrows in the dot generated
 # graphs.
-# Note: This tag requires that UML_LOOK isn't set, i.e. the doxygen internal
+# Note: This tag requires that UML_LOOK isn't set, i.e. the Doxygen internal
 # graphical representation for inheritance and collaboration diagrams is used.
 # The default value is: YES.
 # This tag requires that the tag HAVE_DOT is set to YES.
