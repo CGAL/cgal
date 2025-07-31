@@ -15,6 +15,7 @@
 
 #include <CGAL/enum.h>
 #include <CGAL/kernel_assertions.h>
+#include <CGAL/assertions.h>
 
 namespace CGAL {
 namespace Intersections {
@@ -139,9 +140,8 @@ do_intersect_coplanar(const typename K::Triangle_3& t,
       // a is isolated on the positive side
       return visitor.result(coplanar_orientation(*a,*c,p) != POSITIVE);
 
-    default: // should not happen.
-      CGAL_kernel_assertion(false);
-      return visitor.result(false);
+    default:
+      CGAL_unreachable();
     }
 
   case NEGATIVE:
@@ -165,9 +165,8 @@ do_intersect_coplanar(const typename K::Triangle_3& t,
       // a is isolated on the negative side
       return visitor.result(coplanar_orientation(*b,*a,p) != POSITIVE);
 
-    default: // should not happen.
-      CGAL_kernel_assertion(false);
-      return visitor.result(false);
+    default:
+      CGAL_unreachable();
     }
 
   case COLLINEAR:
@@ -190,14 +189,12 @@ do_intersect_coplanar(const typename K::Triangle_3& t,
       return visitor.result(coplanar_orientation(*a,*c,p) != POSITIVE);
       // case pqc == COLLINEAR is imposiible
 
-    default: // should not happen.
-      CGAL_kernel_assertion(false);
-      return visitor.result(false);
+    default:
+      CGAL_unreachable();
     }
 
-  default: // should not happen.
-    CGAL_kernel_assertion(false);
-    return visitor.result(false);
+  default:
+    CGAL_unreachable();
   }
 }
 
@@ -262,9 +259,8 @@ do_intersect(const typename K::Triangle_3& t,
       return visitor.result(true);
     }
     // case COPLANAR: should not happen
-    default: // should not happen.
-      CGAL_kernel_assertion(false);
-      return visitor.result(false);
+    default:
+      CGAL_unreachable();
     }
 
   case NEGATIVE:
@@ -292,9 +288,8 @@ do_intersect(const typename K::Triangle_3& t,
 
       // case COPLANAR: should not happen
 
-    default: // should not happen.
-      CGAL_kernel_assertion(false);
-      return visitor.result(false);
+    default:
+      CGAL_unreachable();
     }
 
   case COPLANAR: // p belongs to the triangle's supporting plane
@@ -316,14 +311,12 @@ do_intersect(const typename K::Triangle_3& t,
 
       // case COPLANAR: should not happen
 
-    default: // should not happen.
-      CGAL_kernel_assertion(false);
-      return visitor.result(false);
+    default:
+      CGAL_unreachable();
     }
 
-  default: // should not happen.
-    CGAL_kernel_assertion(false);
-    return visitor.result(false);
+  default:
+    CGAL_unreachable();
   }
 }
 
