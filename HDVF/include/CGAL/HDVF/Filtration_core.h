@@ -9,8 +9,8 @@
 //
 // Author(s)     : Alexandra Bac <alexandra.bac@univ-amu.fr>
 
-#ifndef CGAL_FILTRATION_CORE_H
-#define CGAL_FILTRATION_CORE_H
+#ifndef CGAL_HDVF_FILTRATION_CORE_H
+#define CGAL_HDVF_FILTRATION_CORE_H
 
 #include <vector>
 #include <cassert>
@@ -332,4 +332,4 @@ bool Filtration_core<CoefficientType, ComplexType, DegreeType>::is_valid_filtrat
 } /* end namespace HDVF */
 } /* end namespace CGAL */
 
-#endif // CGAL_FILTRATION_CORE_H
+#endif // CGAL_HDVF_FILTRATION_CORE_H

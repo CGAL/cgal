@@ -9,18 +9,18 @@
 //
 // Author(s)     : Alexandra Bac <alexandra.bac@univ-amu.fr>
 
-#ifndef CGAL_HDVF_PERSISTENCE_H
-#define CGAL_HDVF_PERSISTENCE_H
+#ifndef CGAL_HDVF_HDVF_PERSISTENCE_H
+#define CGAL_HDVF_HDVF_PERSISTENCE_H
 
 #include <vector>
 #include <cassert>
 #include <iostream>
 #include <random>
 #include <functional>
-#include "CGAL/OSM/OSM.hpp"
-#include "CGAL/HDVF/Sub_sparse_matrix.h"
-#include "CGAL/HDVF/Hdvf_core.h"
-#include "CGAL/HDVF/Filtration_lower_star.h"
+#include <CGAL/OSM/OSM.h>
+#include <CGAL/HDVF/Sub_sparse_matrix.h>
+#include <CGAL/HDVF/Hdvf_core.h>
+#include <CGAL/HDVF/Filtration_lower_star.h>
 
 namespace CGAL {
 namespace HDVF {
@@ -258,7 +258,6 @@ public:
      * \param[in] f A filtration (a model of `Filtration`).
      * \param[in] hdvf_opt Option for HDVF computation (`OPT_BND`, `OPT_F`, `OPT_G` or `OPT_FULL`)
      * \param[in] with_export Boolean option to activate or not the export of PSC labels and homology/cohomology generators for of persistent intervals of positive duration. This information is used by vtk exporters.
-     * \param[in] co_faces For persistent intervals, export co-faces of cohomology generators (or not).
      */
     Hdvf_persistence(const ComplexType& K, const Filtration& f, int hdvf_opt = OPT_BND, bool with_export = false) ;
     
@@ -837,4 +836,4 @@ PairCell Hdvf_persistence<CoefficientType, ComplexType, DegType, FiltrationType>
 } /* end namespace HDVF */
 } /* end namespace CGAL */
 
-#endif // CGAL_HDVF_PERSISTENCE_H
+#endif // CGAL_HDVF_HDVF_PERSISTENCE_H

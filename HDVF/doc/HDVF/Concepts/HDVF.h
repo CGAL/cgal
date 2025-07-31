@@ -221,7 +221,7 @@ virtual std::vector<PairCell> find_pairs_A(int q, bool &found) const;
  * \param[in] found Reference to a boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
  * \param[in] gamma Index of a cell to pair.
  */
-virtual std::vector<PairCell> find_pairs_A(int q, bool &found, size_t tau) const;
+virtual std::vector<PairCell> find_pairs_A(int q, bool &found, size_t gamma) const;
 
     
 /// @}

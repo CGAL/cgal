@@ -14,8 +14,8 @@
 #define CGAL_OSM_SUB_SPARSE_MATRIX_H
 
 
-#include "CGAL/OSM/Sparse_matrix.h"
-#include "CGAL/OSM/Bitboard.h"
+#include <CGAL/OSM/Sparse_matrix.h>
+#include <CGAL/OSM/Bitboard.h>
 
 namespace CGAL {
 namespace OSM {
@@ -83,9 +83,7 @@ public:
      *
      * Create a new empty `Sub_sparse_matrix` from another of type `ChainTypeFlag` with coefficients of type `CoefficientType`, a given size along rows/columns and a given mask.
      *
-     * \param[in] rowCount The number of rows to preallocate.
-     * \param[in] columnCount The number of columns to preallocate.
-     * \param[in] subChain Bitboard describing the subset of indices considered as a mask.
+     * \param[in] otherToCopy `Sub_sparse_matrix` copied into `this`.
      */
     Sub_sparse_matrix(const Sub_sparse_matrix& otherToCopy) : Sparse_matrix<CoefficientType, ChainTypeFlag>(otherToCopy), _subChains(otherToCopy._subChains), _subChainsStates(otherToCopy._subChainsStates) {}
     

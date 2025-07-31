@@ -117,14 +117,14 @@ public:
      *
      * The function return `true` is the SparseMatrix is null (that is, empty) and `false` otherwise.
     */
-    bool is_null()
+    bool is_null();
     
     /**
      * \brief Gets the matrix size.
      *
      * The matrix size as a row/column pair.
      */
-    std::pair<size_t, size_t> dimensions();
+    std::pair<size_t, size_t> dimensions() const;
     
     /**
      * \brief Iterator to the beginning of the chains indices (visited by increasing indices).

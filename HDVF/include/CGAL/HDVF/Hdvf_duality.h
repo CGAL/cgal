@@ -9,17 +9,17 @@
 //
 // Author(s)     : Alexandra Bac <alexandra.bac@univ-amu.fr>
 
-#ifndef CGAL_HDVF_DUALITY_H
-#define CGAL_HDVF_DUALITY_H
+#ifndef CGAL_HDVF_HDVF_DUALITY_H
+#define CGAL_HDVF_HDVF_DUALITY_H
 
 #include <vector>
 #include <cassert>
 #include <iostream>
-#include "CGAL/OSM/OSM.hpp"
-#include "CGAL/OSM/Bitboard.h"
-#include "CGAL/HDVF/Hdvf_core.h"
-#include "CGAL/HDVF/Sub_chain_complex_mask.h"
-#include "CGAL/HDVF/Sub_sparse_matrix.h"
+#include <CGAL/OSM/OSM.h>
+#include <CGAL/OSM/Bitboard.h>
+#include <CGAL/HDVF/Hdvf_core.h>
+#include <CGAL/HDVF/Sub_chain_complex_mask.h>
+#include <CGAL/HDVF/Sub_sparse_matrix.h>
 
 namespace CGAL {
 namespace HDVF {
@@ -124,7 +124,7 @@ public:
      * \param[in] found Reference to a boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      * \param[in] gamma Index of a cell to pair.
      */
-    virtual PairCell find_pair_A(int q, bool &found, size_t tau) const;
+    virtual PairCell find_pair_A(int q, bool &found, size_t gamma) const;
     
     /**
      * \brief Find *all* valid PairCell of dimension q / q+1 *in the current sub chain complex* for A.
@@ -149,7 +149,7 @@ public:
      * \param[in] found Reference to a boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      * \param[in] gamma Index of a cell to pair.
      */
-    virtual std::vector<PairCell> find_pairs_A(int q, bool &found, size_t tau) const;
+    virtual std::vector<PairCell> find_pairs_A(int q, bool &found, size_t gamma) const;
     
     /** \brief Set the current sub chain complex masks over `K`.
      *
@@ -756,4 +756,4 @@ vector<size_t> Hdvf_duality<CoefficientType,ComplexType>::get_flag_dim (FlagType
 } /* end namespace HDVF */
 } /* end namespace CGAL */
 
-#endif /* CGAL_HDVF_DUALITY_H */
+#endif // CGAL_HDVF_HDVF_DUALITY_H

@@ -9,16 +9,16 @@
 //
 // Author(s)     : Alexandra Bac <alexandra.bac@univ-amu.fr>
 
-#ifndef CGAL_HDVF_H
-#define CGAL_HDVF_H
+#ifndef CGAL_HDVF_HDVF_H
+#define CGAL_HDVF_HDVF_H
 
 #include <vector>
 #include <cassert>
 #include <iostream>
 #include <random>
-#include "CGAL/Hdvf/Hdvf_core.h"
-#include "CGAL/OSM/OSM.hpp"
-#include "CGAL/OSM/Bitboard.h"
+#include <CGAL/HDVF/Hdvf_core.h>
+#include <CGAL/OSM/OSM.h>
+#include <CGAL/OSM/Bitboard.h>
 
 namespace CGAL {
 namespace HDVF {
@@ -1467,4 +1467,4 @@ void Hdvf<CoefficientType, ComplexType>::MW(size_t pi, size_t sigma, int q) {
 } /* end namespace HDVF */
 } /* end namespace CGAL */
 
-#endif // CGAL_HDVF_H
+#endif // CGAL_HDVF_HDVF_H

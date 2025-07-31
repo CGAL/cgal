@@ -9,16 +9,16 @@
 //
 // Author(s)     : Alexandra Bac <alexandra.bac@univ-amu.fr>
 
-#ifndef CGAL_ABSTRAT_SIMPLICIAL_CHAIN_COMPLEX_HPP
-#define CGAL_ABSTRAT_SIMPLICIAL_CHAIN_COMPLEX_HPP
+#ifndef CGAL_HDVF_ABSTRACT_SIMPLICIAL_CHAIN_COMPLEX_H
+#define CGAL_HDVF_ABSTRACT_SIMPLICIAL_CHAIN_COMPLEX_H
 
 //#include <CGAL/license/HDVF.h>
 
 #include <vector>
 #include <map>
-#include "tools_io.hpp"
-#include "Simplex.hpp"
-#include "CGAL/OSM/OSM.hpp"
+#include <CGAL/HDVF/tools_io.h>
+#include <CGAL/HDVF/Simplex.h>
+#include <CGAL/OSM/OSM.h>
 
 namespace CGAL {
 namespace HDVF {
@@ -199,7 +199,7 @@ public:
      */
     std::vector<size_t> bottom_faces(size_t id_cell, int q) const
     {
-        std::set<size_t> verts(_ind2simp.at(q).at(id_cell).getVertices()) ;
+        std::set<size_t> verts(_ind2simp.at(q).at(id_cell).get_vertices()) ;
         std::vector<size_t> res ;
         // For each vertex in verts, compute the corresponding dimension 0 cell
         for (size_t vert_id : verts)
@@ -487,7 +487,7 @@ public:
     Point get_vertex_coords (size_t i) const
     {
         const Simplex simpl(this->_ind2simp.at(0).at(i)) ;
-        const std::set<size_t> verts(simpl.getVertices()) ;
+        const std::set<size_t> verts(simpl.get_vertices()) ;
         const size_t id(*(verts.cbegin())) ;
         return _coords.at(id);
     }
@@ -741,4 +741,4 @@ void Simplicial_chain_complex<CoefficientType>::chain_complex_chain_to_vtk(const
 } /* end namespace HDVF */
 } /* end namespace CGAL */
 
-#endif // CGAL_ABSTRAT_SIMPLICIAL_CHAIN_COMPLEX_HPP
+#endif // CGAL_HDVF_ABSTRACT_SIMPLICIAL_CHAIN_COMPLEX_H

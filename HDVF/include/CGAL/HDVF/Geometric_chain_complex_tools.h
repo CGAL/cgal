@@ -1,27 +1,34 @@
-#ifndef CGAL_GEOMETRIC_CHAIN_COMPLEX_TOOLS_H
-#define CGAL_GEOMETRIC_CHAIN_COMPLEX_TOOLS_H
+// Copyright (c) 2025 LIS Marseille (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+// Author(s)     : Alexandra Bac <alexandra.bac@univ-amu.fr>
+
+#ifndef CGAL_HDVF_GEOMETRIC_CHAIN_COMPLEX_TOOLS_H
+#define CGAL_HDVF_GEOMETRIC_CHAIN_COMPLEX_TOOLS_H
 
 #include <vector>
 #include <map>
 #include <stdexcept>
 #include <unordered_set>
-#include "CGAL/HDVF/Abstract_simplicial_chain_complex.hpp"
-#include "CGAL/HDVF/Cubical_chain_complex.hpp"
-#include "Hdvf_core.h"
-#include "Hdvf_persistence.h"
-#include "Hdvf_duality.h"
-#include "Sub_chain_complex_mask.h"
-#include "tools_io.hpp"
-#include "CGAL/OSM/OSM.hpp"
+#include <CGAL/HDVF/Abstract_simplicial_chain_complex.h>
+#include <CGAL/HDVF/Cubical_chain_complex.h>
+#include <CGAL/HDVF/Hdvf_core.h>
+#include <CGAL/HDVF/Hdvf_persistence.h>
+#include <CGAL/HDVF/Hdvf_duality.h>
+#include <CGAL/HDVF/Sub_chain_complex_mask.h>
+#include <CGAL/HDVF/tools_io.h>
+#include <CGAL/OSM/OSM.h>
 
 /**
  * \class SimpComplexTools
  * \brief Provides tools for SimpComplexes ((co)homology, duality, persistent homology).
  * \brief Friend class of SimpComplex
- *
- * \author Bac A.
- * \version 0.2.0
- * \date 06/11/2024
  */
 
 namespace CGAL {
@@ -110,7 +117,7 @@ void hdvf_geometric_chain_complex_output_vtk (Hdvf_core<CoefType, ComplexType, _
  *
  * Export PSC labels and homology/cohomology generators (depending on HDVF options) associated to each persistent intervals to vtk files.
  *
- * \param[in] hdvf Reference to the HDVF exported.
+ * \param[in] per_hdvf Reference to the persistent HDVF exported.
  * \param[in] complex Underlying geometric chain complex.
  * \param[in] filename Prefix of all generated files.
  * \param[in] co_faces Export the cohomology generator or its co-faces (sometimes more convenient for visualisation).
@@ -354,7 +361,7 @@ public:
         {
             for (size_t i=0; i<_K.nb_cells(q); ++i)
             {
-                const std::set<size_t>& simplex(_K._ind2simp.at(q).at(i).getVertices()) ;
+                const std::set<size_t>& simplex(_K._ind2simp.at(q).at(i).get_vertices()) ;
                 const size_t id(L._simp2ind.at(q)[simplex]) ;
                 K.set_bit_on(q, id) ;
             }
@@ -371,7 +378,7 @@ public:
             for (size_t i = 0; i<_CC.nb_cells(q); ++i)
             {
                 const Simplex& s(_CC._ind2simp.at(q).at(i)) ;
-                vcells.push_back(s.getVertices()) ;
+                vcells.push_back(s.get_vertices()) ;
             }
         
         Mesh_object &m = *(new Mesh_object(-3, _CC.get_vertices_coords(), vcells)) ;
@@ -453,4 +460,4 @@ public:
 } /* end namespace HDVF */
 } /* end namespace CGAL */
 
-#endif // CGAL_GEOMETRIC_CHAIN_COMPLEX_TOOLS_H
+#endif // CGAL_HDVF_GEOMETRIC_CHAIN_COMPLEX_TOOLS_H

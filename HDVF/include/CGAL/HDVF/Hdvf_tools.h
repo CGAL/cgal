@@ -1,28 +1,35 @@
-#ifndef HDVF_TOOLS_HPP
-#define HDVF_TOOLS_HPP
+// Copyright (c) 2025 LIS Marseille (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+// Author(s)     : Alexandra Bac <alexandra.bac@univ-amu.fr>
+
+#ifndef CGAL_HDVF_HDVF_TOOLS_H
+#define CGAL_HDVF_HDVF_TOOLS_H
 
 #include <iostream>
 
-//#include "hdvf_common.hpp"
-//#include "Simplex.hpp"
-#include "tools_io.hpp"
-//#include "AbstractSimpComplex.hpp"
-//#include "CubComplex.hpp"
-#include "Hdvf.h"
-#include "CGAL/OSM/OSM.hpp"
+#include <CGAL/HDVF/tools_io.h>
+#include <CGAL/HDVF/Hdvf.h>
+#include <CGAL/OSM/OSM.h>
+
+// IO tools
 
 namespace CGAL {
 namespace HDVF {
 
-// IO tools
-
-inline ostream & operator<< (ostream &out, const PairCell &p)
+inline std::ostream & operator<< (std::ostream &out, const PairCell& p)
 {
     out << "(" << p.sigma << "/" << p.tau << " - dim " << p.dim << ")" ;
     return out ;
 }
 
-
+// Runs an interaction loop to run M, W or MW operations and re-export the results to vtk
 template <typename CoefType, typename ComplexType>
 void interaction_loop(Hdvf<CoefType, ComplexType> &hdvf,
                       ComplexType &complex,
@@ -43,9 +50,9 @@ void interaction_loop(Hdvf<CoefType, ComplexType> &hdvf,
             cin >> sigma >> q ;
             bool found = false ;
             vector<PairCell> possM(hdvf.find_pairs_M(q, found, sigma)) ;
-            cout << "-> possible pairings for M:" << endl ;
+            std::cout << "-> possible pairings for M:" << std::endl ;
             for (int i = 0; i<possM.size(); ++i)
-                cout << i << " : " << possM.at(i) << endl ;
+                std::cout << i << " : " << possM.at(i) << std::endl ;
             if (possM.size() > 0)
             {
                 cout << "chose indice of pairing (out the range = quit): " ;
@@ -53,7 +60,7 @@ void interaction_loop(Hdvf<CoefType, ComplexType> &hdvf,
                 if ((ipair >= 0) && (ipair < possM.size()))
                 {
                     PairCell p(possM.at(ipair)) ;
-                    cout << "M(" << p << ")" << endl ;
+                    std::cout << "M(" << p << ")" << std::endl ;
                     hdvf.M(p.sigma, p.tau, p.dim) ;
                     //                    hdvf.print_matrices() ;
                     output_vtk(hdvf, complex) ;
@@ -116,4 +123,4 @@ void interaction_loop(Hdvf<CoefType, ComplexType> &hdvf,
 } /* end namespace HDVF */
 } /* end namespace CGAL */
 
-#endif // HDVF_TOOLS_HPP
+#endif // CGAL_HDVF_HDVF_TOOLS_H

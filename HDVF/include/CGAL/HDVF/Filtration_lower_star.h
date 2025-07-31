@@ -9,15 +9,15 @@
 //
 // Author(s)     : Alexandra Bac <alexandra.bac@univ-amu.fr>
 
-#ifndef CGAL_FILTRATION_LOWER_STAR_H
-#define CGAL_FILTRATION_LOWER_STAR_H
+#ifndef CGAL_HDVF_FILTRATION_LOWER_STAR_H
+#define CGAL_HDVF_FILTRATION_LOWER_STAR_H
 
 #include <vector>
 #include <cassert>
 #include <iostream>
 #include <random>
 #include <functional>
-#include "Filtration_core.h"
+#include <CGAL/HDVF/Filtration_core.h>
 
 namespace CGAL {
 namespace HDVF {
@@ -232,4 +232,4 @@ void Filtration_lower_star<CoefficientType, ComplexType, DegreeType>::star_filtr
 } /* end namespace HDVF */
 } /* end namespace CGAL */
 
-#endif // CGAL_FILTRATION_LOWER_STAR_H
+#endif // CGAL_HDVF_FILTRATION_LOWER_STAR_H

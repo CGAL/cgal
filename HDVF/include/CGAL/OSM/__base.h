@@ -1,15 +1,18 @@
-/**
- * \file __base.hpp
- * \brief Defines all constants used by objects.
- * \author Fedyna K.
- * \version 0.1.0
- * \date 24/04/2024
- * 
- * Should not be included.
- */
+// Copyright (c) 2025 LIS Marseille (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+// Author(s)     : Alexandra Bac <alexandra.bac@univ-amu.fr>
+//                  Kevin Fedyna <fedyna.kevin@gmail.com>
 
-#ifndef __OPTIMISED_SPARSED_MATRIX_BASE__
-#define __OPTIMISED_SPARSED_MATRIX_BASE__
+
+#ifndef CGAL_OSM__BASE_H
+#define CGAL_OSM__BASE_H
 
 #include <ostream>
 
@@ -40,4 +43,4 @@ class Bitboard;
 } /* end namespace OSM */
 } /* end namespace CGAL */
 
-#endif
+#endif // CGAL_OSM__BASE_H

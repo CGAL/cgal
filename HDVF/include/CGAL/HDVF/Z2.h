@@ -1,26 +1,40 @@
-/**
- * \file Z2.hpp
- * \brief Z/2Z class.
- * \author Bac A.
- * \version 0.1.0
- * \date 22/08/2024
- *
- * Z/2Z class
- */
+// Copyright (c) 2025 LIS Marseille (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+// Author(s)     : Alexandra Bac <alexandra.bac@univ-amu.fr>
 
-#ifndef Z2_HPP
-#define Z2_HPP
+#ifndef CGAL_HDVF_Z2_H
+#define CGAL_HDVF_Z2_H
 
 #include <vector>
+
+namespace CGAL {
+namespace HDVF {
+
+/*!
+ \ingroup PkgHDVFAlgorithmClasses
+ 
+ The class `Z2` implements the concept `Ring` with the field \f$\mathbb Z/2\mathbb Z\f$. This implementation is optimized to use bitwise operations and should be prefered to `Zp<2>`.
+ 
+ \warning For \f$\mathbb Z/2\mathbb 2\f$, prefer the class `Z2` which is optimized.
+ 
+ \cgalModels{Ring}
+ */
 
 class Z2 {
     char _i ;
 public:
     
-    /// Constructor (default)
+    /** \brief Constructor from a value (default constsructor). */
     Z2(_TSlot i=0) : _i(i % p) {}
     
-    /// Copy constructor
+    // Copy constructor
     Z2(const Z2& a) : _i(a._i) {}
     
     /// unary operator+
@@ -112,4 +126,7 @@ public:
     }
 };
 
-#endif
+} /* end namespace HDVF */
+} /* end namespace CGAL */
+
+#endif //CGAL_HDVF_Z2_H

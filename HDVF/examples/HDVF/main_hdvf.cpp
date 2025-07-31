@@ -1,4 +1,4 @@
-// Hdvf off files
+// HDVF computation (command line version)
 // --------
 // Computes a "perfect" Hdvf and provides a batch mode to specify arguments
 // For help: hdvf -h
@@ -10,22 +10,18 @@
 #include <chrono>
 #include <type_traits>
 #include <typeinfo>
-#include "CGAL/HDVF/Zp.hpp"
-#include "CGAL/HDVF/Simplex.hpp"
-#include "CGAL/HDVF/tools_io.hpp"
-#include "CGAL/HDVF/Abstract_simplicial_chain_complex.hpp"
-//#include "CGAL/HDVF/SimpComplexTools.hpp"
-#include "CGAL/HDVF/Cubical_chain_complex.hpp"
-//#include "CGAL/HDVF/CubComplexTools.hpp"
+#include "CGAL/HDVF/Zp.h"
+#include "CGAL/HDVF/Simplex.h"
+#include "CGAL/HDVF/Abstract_simplicial_chain_complex.h"
+#include "CGAL/HDVF/Cubical_chain_complex.h"
 #include "CGAL/HDVF/Geometric_chain_complex_tools.h"
-#include "CGAL/Hdvf/Hdvf.h"
-#include "CGAL/OSM/OSM.hpp"
+#include "CGAL/HDVF/Hdvf.h"
+#include "CGAL/OSM/OSM.h"
 #include "CGAL/OSM/Sparse_chain.h"
-#include "CGAL/Hdvf/hdvf_tools.hpp"
+#include "CGAL/HDVF/tools_io.h"
+#include "CGAL/HDVF/Hdvf_tools.h"
 #include "arguments.h"
 
-using namespace CGAL ;
-using namespace HDVF ;
 
 // ------- A ring
 // For Z/nZ other than Z (ie. n=0) and Z/2Z, uncomment and set the following define properly
@@ -40,20 +36,20 @@ void mesh_complex_output(const MeshType& mesh, const ComplexType& complex, const
     if (options.with_output)
     {
         // Mesh
-        cout << "----> mesh informations" << endl ;
+        std::cout << "----> mesh informations" << std::endl ;
         mesh.print_infos() ;
         
         // Complex
-        cout << "----> complex informations" << endl ;
+        std::cout << "----> complex informations" << std::endl ;
         complex.print_complex();
     }
 }
 
 template <typename CoefficientType, typename ComplexType>
-Hdvf<CoefficientType, ComplexType>& HDVF_comput (const ComplexType& complex, const Options &options)
+CGAL::HDVF::Hdvf<CoefficientType, ComplexType>& HDVF_comput (const ComplexType& complex, const Options &options)
 {
-    Hdvf<CoefficientType, ComplexType>& hdvf(*(new Hdvf<CoefficientType, ComplexType>(complex, options.HDVF_opt)));
-    std::vector<PairCell> pairs ;
+    CGAL::HDVF::Hdvf<CoefficientType, ComplexType>& hdvf(*(new CGAL::HDVF::Hdvf<CoefficientType, ComplexType>(complex, options.HDVF_opt)));
+    std::vector<CGAL::HDVF::PairCell> pairs ;
     if (!options.random)
         pairs = hdvf.compute_perfect_hdvf(options.verbose);
     else
@@ -61,23 +57,23 @@ Hdvf<CoefficientType, ComplexType>& HDVF_comput (const ComplexType& complex, con
     
     if (options.with_output)
     {
-        cout << "----> pairs found by computePerfectHDVF" << endl ;
+        std::cout << "----> pairs found by computePerfectHDVF" << std::endl ;
         std::cout << pairs ;
-        cout << "----> reduction" << endl ;
+        std::cout << "----> reduction" << std::endl ;
         hdvf.print_reduction() ;
     }
     if (options.with_export)
     {
-        string file(options.outfile_root+"_reduction.txt") ;
+        std::string file(options.outfile_root+"_reduction.txt") ;
         std::ofstream out ( file, std::ios::out | std::ios::trunc);
 
         if ( not out . good () ) {
             std::cerr << "hdvf: with_export. Fatal Error:\n  " << file << " not found.\n";
             throw std::runtime_error("File Parsing Error: File not found");
         }
-        out << "----> pairs found by computePerfectHDVF" << endl ;
+        out << "----> pairs found by computePerfectHDVF" << std::endl ;
         out << pairs ;
-        out << "----> reduction" << endl ;
+        out << "----> reduction" << std::endl ;
         hdvf.print_reduction(out) ;
         
         out.close() ;
@@ -91,17 +87,17 @@ void main_code (const Options &options)
     /// SIMP format
     if (options.in_format == InputFormat::SIMP)
     {
-        using ComplexType = Abstract_simplicial_chain_complex<CoefficientType>  ;
-        using HDVFType = Hdvf<CoefficientType, ComplexType> ;
+        using ComplexType = CGAL::HDVF::Abstract_simplicial_chain_complex<CoefficientType>  ;
+        using HDVFType = CGAL::HDVF::Hdvf<CoefficientType, ComplexType> ;
         
         // MeshObject
-        Mesh_object mesh ;
+        CGAL::HDVF::Mesh_object mesh ;
         mesh.read_simp(options.in_file) ;
         
         // Complex
         ComplexType complex(mesh);
         
-        mesh_complex_output<Mesh_object, ComplexType>(mesh, complex, options) ;
+        mesh_complex_output<CGAL::HDVF::Mesh_object, ComplexType>(mesh, complex, options) ;
         
         // Hdvf computation, export, output
         HDVFType hdvf(HDVF_comput<CoefficientType,ComplexType>(complex, options)) ;
@@ -112,17 +108,17 @@ void main_code (const Options &options)
     /// OFF format
     else if (options.in_format == InputFormat::OFF)
     {
-        using ComplexType = Simplicial_chain_complex<CoefficientType> ;
-        using HDVFType = Hdvf<CoefficientType, ComplexType> ;
+        using ComplexType = CGAL::HDVF::Simplicial_chain_complex<CoefficientType> ;
+        using HDVFType = CGAL::HDVF::Hdvf<CoefficientType, ComplexType> ;
         
         // MeshObject
-        Mesh_object mesh ;
+        CGAL::HDVF::Mesh_object mesh ;
         mesh.read_off(options.in_file) ;
         
         // Complex
         ComplexType complex(mesh, mesh.get_nodes());
         
-        mesh_complex_output<Mesh_object, ComplexType>(mesh, complex, options) ;
+        mesh_complex_output<CGAL::HDVF::Mesh_object, ComplexType>(mesh, complex, options) ;
         
         // Hdvf computation, export, output
         HDVFType hdvf(HDVF_comput<CoefficientType,ComplexType>(complex, options)) ;
@@ -132,25 +128,25 @@ void main_code (const Options &options)
         {
             auto output_vtk_simp = [options](HDVFType &hdvf, ComplexType& complex)
             {
-                hdvf_geometric_chain_complex_output_vtk<CoefficientType, ComplexType>(hdvf, complex, options.outfile_root, options.co_faces) ;
+                CGAL::HDVF::hdvf_geometric_chain_complex_output_vtk(hdvf, complex, options.outfile_root, options.co_faces) ;
             } ;
             
-            interaction_loop<CoefficientType, ComplexType>(hdvf, complex, output_vtk_simp) ;
+            CGAL::HDVF::interaction_loop<CoefficientType, ComplexType>(hdvf, complex, output_vtk_simp) ;
         }
         // Export to vtk
         else if (options.with_vtk_export)
         {
-            cout << "----> exporting to vtk" << endl ;
-            hdvf_geometric_chain_complex_output_vtk<CoefficientType, ComplexType>(hdvf, complex, options.outfile_root, options.co_faces) ;
+            std::cout << "----> exporting to vtk" << std::endl ;
+            CGAL::HDVF::hdvf_geometric_chain_complex_output_vtk(hdvf, complex, options.outfile_root, options.co_faces) ;
         }
     }
     // CubComplex
     else if ((options.in_format == InputFormat::PGM) || (options.in_format == InputFormat::CUB))
     {
-        using ComplexType = Cubical_chain_complex<CoefficientType> ;
-        using HDVFType = Hdvf<CoefficientType, ComplexType> ;
+        using ComplexType = CGAL::HDVF::Cubical_chain_complex<CoefficientType> ;
+        using HDVFType = CGAL::HDVF::Hdvf<CoefficientType, ComplexType> ;
         
-        Cub_object mesh ;
+        CGAL::HDVF::Cub_object mesh ;
         typename ComplexType::typeComplexCube primal_dual(ComplexType::PRIMAL) ;
         if (options.primal)
         {
@@ -171,7 +167,7 @@ void main_code (const Options &options)
         // Complex
         ComplexType complex(mesh, primal_dual);
         
-        mesh_complex_output<Cub_object, ComplexType>(mesh, complex, options) ;
+        mesh_complex_output<CGAL::HDVF::Cub_object, ComplexType>(mesh, complex, options) ;
         
         // Hdvf computation, export, output
         HDVFType hdvf(HDVF_comput<CoefficientType,ComplexType>(complex, options)) ;
@@ -181,16 +177,16 @@ void main_code (const Options &options)
         {
             auto output_vtk_cub = [options](HDVFType &hdvf, ComplexType& complex)
             {
-                hdvf_geometric_chain_complex_output_vtk<CoefficientType, ComplexType>(hdvf, complex, options.outfile_root, options.co_faces) ;
+                CGAL::HDVF::hdvf_geometric_chain_complex_output_vtk(hdvf, complex, options.outfile_root, options.co_faces) ;
             } ;
             
-            interaction_loop<CoefficientType, ComplexType>(hdvf, complex, output_vtk_cub) ;
+            CGAL::HDVF::interaction_loop<CoefficientType, ComplexType>(hdvf, complex, output_vtk_cub) ;
         }
         // Export to vtk
         else if (options.with_vtk_export)
         {
-            cout << "----> exporting to vtk" << endl ;
-            hdvf_geometric_chain_complex_output_vtk<CoefficientType, ComplexType>(hdvf, complex, options.outfile_root, options.co_faces) ;
+            std::cout << "----> exporting to vtk" << std::endl ;
+            CGAL::HDVF::hdvf_geometric_chain_complex_output_vtk(hdvf, complex, options.outfile_root, options.co_faces) ;
         }
     }
 }
@@ -204,20 +200,20 @@ int main(int argc, char **argv)
     else
     {
         for (int i=0;i<argc; ++i)
-            cout << "arg " << i << " : " << argv[i] << endl ;
+            std::cout << "arg " << i << " : " << argv[i] << std::endl ;
         
         Options options(read_arguments_hdvf(argc, argv)) ;
-        cout << "options:" << endl << options ;
+        std::cout << "options:" << std::endl << options ;
         
         // TEST
-        cout << "TEST" << endl ;
-        OSM::Sparse_chain<int, OSM::COLUMN> gamma(4) ;
-        cout << "before: " << gamma.is_null() << endl ;
+        std::cout << "TEST" << std::endl ;
+        CGAL::OSM::Sparse_chain<int, CGAL::OSM::COLUMN> gamma(4) ;
+        std::cout << "before: " << gamma.is_null() << std::endl ;
         gamma.set_coef(2, 1) ;
-        cout << "after: " << gamma.is_null() << endl ;
+        std::cout << "after: " << gamma.is_null() << std::endl ;
         gamma.set_coef(2, 0) ;
-        cout << "after2: " << gamma.is_null() << endl ;
-        cout << "END TEST" << endl ;
+        std::cout << "after2: " << gamma.is_null() << std::endl ;
+        std::cout << "END TEST" << std::endl ;
         
         // ----- Definition of the CoefficientType
 #ifndef SCALAR
@@ -228,12 +224,12 @@ int main(int argc, char **argv)
         }
         else if (options.scalar == 2)
         {
-            using CoefficientType = Zp<2,int8_t> ;
+            using CoefficientType = CGAL::HDVF::Zp<2,int8_t> ;
             main_code<CoefficientType>(options) ;
         }
         else
         {
-            cout << "Z" << options.scalar << " not instantiated, use the #define at line 27" << endl ;
+            std::cerr << "Z" << options.scalar << " not instantiated, use the #define at line 27" << std::endl ;
         }
 #else
         typedef Zp<SCALAR> CoefficientType;

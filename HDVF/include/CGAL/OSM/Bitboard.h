@@ -1,19 +1,18 @@
-/**
- * \file Bitboard.hpp
- * \brief Arbitrary long bitboard objects.
- * \author Fedyna K.
- * \version 0.2.0
- * \date 23/05/2024
- * 
- * Define everything for the Bitboard class.
- * Bitboards are used with Sparse_matrix to quickly find and set non empty columns.
- */
+// Copyright (c) 2025 LIS Marseille (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+// Author(s)     : Alexandra Bac <alexandra.bac@univ-amu.fr>
+//                  Kevin Fedyna <fedyna.kevin@gmail.com>
 
-#ifndef __OSM_BITBOARD_HPP__
-#define __OSM_BITBOARD_HPP__
+#ifndef CGAL_OSM_BITBOARD_H
+#define CGAL_OSM_BITBOARD_H
 
-
-#include "__base.hpp"
 #include <iterator>
 #include <cstddef>
 #include <cstdint>
@@ -21,16 +20,19 @@
 #include <ostream>
 #include <string>
 #include <limits>
-const size_t size_t_maxvalue = std::numeric_limits<size_t>::max() ;
+#include <CGAL/OSM/__base.h>
 
+namespace CGAL {
+namespace OSM {
+
+/* Constants */
+const size_t size_t_maxvalue = std::numeric_limits<size_t>::max() ;
 
 #define BITBOARD_INT_SIZE 64
 #define VECTOR_SIZE(size) size / BITBOARD_INT_SIZE + (size % BITBOARD_INT_SIZE != 0)
 
 
-
-
-/** \brief Table used for fast 64bit log2. */
+/* \brief Table used for fast 64bit log2. */
 const int tab64[64] = {
     63,  0, 58,  1, 59, 47, 53,  2,
     60, 39, 48, 27, 54, 33, 42,  3,
@@ -42,7 +44,7 @@ const int tab64[64] = {
     44, 24, 15,  8, 23,  7,  6,  5
 };
 
-/** \brief Table used for De Bruijn multiplication. */
+/* \brief Table used for De Bruijn multiplication. */
 const int index64[64] = {
     0, 47,  1, 56, 48, 27,  2, 60,
    57, 49, 41, 37, 28, 16,  3, 61,
@@ -54,25 +56,19 @@ const int index64[64] = {
    13, 18,  8, 12,  7,  6,  5, 63
 };
 
-namespace CGAL {
-namespace OSM {
+/*!
+ \ingroup PkgHDVFAlgorithmClasses
+ 
+ The class `Bitboard` implements an accelerating structure, derived from the chess community. This structure maps stores a sequence of bits. However, unlike vectors or arrays, it provides fast forward and reverse iterators over `1` bits. It is used in `OSM::Sparse_matrix` to build a fast iterator over non-zero chains.
 
-/**
- * \class Bitboard
- * \brief Bitboards are long bitset with specific operations.
- *
- * Bitboards are used with Sparse_matrix to quickly find and set non empty columns.
- *
- * \author Fedyna K.
- * \version 0.2.0
- * \date 23/05/2024
- */
+*/
+
 class Bitboard {
 private:
-    /** \brief The inner data storage (a contiguous array of 64 unsigned bit integers). */
+    /* \brief The inner data storage (a contiguous array of 64 unsigned bit integers). */
     std::vector<std::uint64_t> boards;
     
-    /** \brief The number of bits we want to store. */
+    /* \brief The number of bits we want to store. */
     std::size_t _size;
     
 public:
@@ -95,10 +91,6 @@ public:
      * Return all indexes with a bit set to 1.
      *
      * \note The iterator is constant.
-     *
-     * \author Fedyna K.
-     * \version 0.2.0
-     * \date 23/05/2024
      */
     struct iterator {
         /** C++ mandatory type definitions. */
@@ -130,20 +122,12 @@ public:
         /**
          * \brief Iterator dereference.
          * \returns A no-null index on the billboard or past-the-end index.
-         *
-         * \author Fedyna K.
-         * \version 0.2.0
-         * \date 23/05/2024
          */
         const std::size_t operator*() const { return index; }
         
         /**
          * \brief Prefix incrementation. Finds the next not-null index.
          * \returns The reference to the current iterator.
-         *
-         * \author Fedyna K.
-         * \version 0.2.0
-         * \date 23/05/2024
          */
         iterator& operator++() {
             // The iterator rely on bit manipulation that are quite fast on the CPU.
@@ -174,30 +158,18 @@ public:
         /**
          * \brief Postfix incrementation. Finds the next not-null index.
          * \returns The pre-incremented iterator.
-         *
-         * \author Fedyna K.
-         * \version 0.2.0
-         * \date 23/05/2024
          */
         iterator operator++(int) { iterator tmp = *this; ++(*this); return tmp; }
         
         /**
          * \brief Equality check.
          * \returns True if the indices are equal.
-         *
-         * \author Fedyna K.
-         * \version 0.2.0
-         * \date 23/05/2024
          */
         friend bool operator==(const iterator &a, const iterator &b) { return a.index == b.index; }
         
         /**
          * \brief Inequality check.
          * \returns True if the indices are different.
-         *
-         * \author Fedyna K.
-         * \version 0.2.0
-         * \date 23/05/2024
          */
         friend bool operator!=(const iterator &a, const iterator &b) { return a.index != b.index; }
         
@@ -215,10 +187,6 @@ public:
      * Return all indexes with a bit set to 1 in reverse order.
      *
      * \note The reverse iterator is constant.
-     *
-     * \author Bac A.
-     * \version 0.2.0
-     * \date 19/09/2024
      */
     struct reverse_iterator {
         /** C++ mandatory type definitions. */
@@ -233,10 +201,6 @@ public:
          * \param[in] _index The initial index.
          * \param[in] _size The bitboard size.
          * \param[in] _boards The reference to the bitboards.
-         *
-         * \author Bac A.
-         * \version 0.2.0
-         * \date 23/05/2024
          */
         reverse_iterator(const std::size_t _index, const std::size_t _size, const std::vector<std::uint64_t> &_boards):
         index(_index),
@@ -257,20 +221,12 @@ public:
         /**
          * \brief Iterator dereference.
          * \returns A no-null index on the billboard or past-the-end index.
-         *
-         * \author Bac A.
-         * \version 0.2.0
-         * \date 23/05/2024
          */
         const std::size_t operator*() const { return index; }
         
         /**
          * \brief Prefix incrementation. Finds the next not-null index.
          * \returns The reference to the current iterator.
-         *
-         * \author Bac A.
-         * \version 0.2.0
-         * \date 23/05/2024
          */
         reverse_iterator& operator++() {
             // The reverse iterator rely on bit manipulation that are quite fast on the CPU.
@@ -332,30 +288,18 @@ public:
         /**
          * \brief Postfix incrementation. Finds the next not-null index.
          * \returns The pre-incremented iterator.
-         *
-         * \author Bac A.
-         * \version 0.2.0
-         * \date 23/05/2024
          */
         reverse_iterator operator++(int) { reverse_iterator tmp = *this; ++(*this); return tmp; }
         
         /**
          * \brief Equality check.
          * \returns True if the indices are equal.
-         *
-         * \author Bac A.
-         * \version 0.2.0
-         * \date 23/05/2024
          */
         friend bool operator==(const reverse_iterator &a, const reverse_iterator &b) { return a.index == b.index; }
         
         /**
          * \brief Inequality check.
          * \returns True if the indices are different.
-         *
-         * \author Bac A.
-         * \version 0.2.0
-         * \date 23/05/2024
          */
         friend bool operator!=(const reverse_iterator &a, const reverse_iterator &b) { return a.index != b.index; }
         
@@ -368,21 +312,13 @@ public:
     
     /**
      * \brief Bitboard default constructor. Initialize bitboard with all zeros and size 64.
-     *
-     * \author Fedyna K.
-     * \version 0.2.0
-     * \date 23/05/2024
      */
     Bitboard(): boards({0UL}), _size(64) {}
     
     /**
      * \brief Bitboard value intializer. Initialize bitboard with given vector of bitboards.
      *
-     * \param[in] _bitboards The vector of 64bit ints.
-     *
-     * \author Fedyna K.
-     * \version 0.2.0
-     * \date 23/05/2024
+     * \param[in] _bitboard The vector of 64bit ints.
      */
     Bitboard(const std::vector<std::uint64_t> &_bitboard):
     boards(_bitboard),
@@ -393,10 +329,7 @@ public:
      * \brief Bitboard size initializer. Initialize bitboard with given size.
      *
      * \param[in] _size The size of the bitboard.
-     *
-     * \author Fedyna K.
-     * \version 0.2.0
-     * \date 23/05/2024
+     * \param[in] empty If the boolean is `true`, create an empty bitboard (all bits set to 0), otherwise create a full bitboard (all bits set to 1).
      */
     Bitboard(const std::size_t _size, bool empty = true):
     boards(std::vector<std::uint64_t>(_size / BITBOARD_INT_SIZE + (_size % BITBOARD_INT_SIZE != 0))),
@@ -406,11 +339,7 @@ public:
     /**
      * \brief Bitboard copy constructor. Initialize bitboard with given bitboard.
      *
-     * \param[in] _bitboards The bitboard to copy.
-     *
-     * \author Fedyna K.
-     * \version 0.2.0
-     * \date 23/05/2024
+     * \param[in] _bitboard The bitboard to copy.
      */
     Bitboard(const Bitboard &_bitboard):
     boards(_bitboard.boards),
@@ -422,10 +351,6 @@ public:
      * \brief Bitboard assign operator. Initialize bitboard with given bitboard.
      *
      * \param[in] _bitboard The bitboard to copy.
-     *
-     * \author Fedyna K.
-     * \version 0.2.0
-     * \date 23/05/2024
      */
     Bitboard& operator=(const Bitboard &_bitboard) {
         this->boards = _bitboard.boards;
@@ -438,10 +363,6 @@ public:
      * \brief Bitwise NOT on a bitboard.
      *
      * \returns The reference to the NOTed bitboard.
-     *
-     * \author Fedyna K.
-     * \version 0.2.0
-     * \date 23/05/2024
      */
     Bitboard& bit_not() {
         for (std::size_t i = 0 ; i < boards.size() ; ++i)
@@ -457,10 +378,6 @@ public:
      *
      * \param[in] _bitboard The argument bitboard.
      * \returns A new bitboard which is the result of the NOT.
-     *
-     * \author Fedyna K.
-     * \version 0.2.0
-     * \date 23/05/2024
      */
     friend Bitboard operator~(const Bitboard& _bitboard) {
         Bitboard res(_bitboard);
@@ -472,10 +389,6 @@ public:
      * \returns The begin iterator.
      *
      * \note The iterator is constant.
-     *
-     * \author Fedyna K.
-     * \version 0.2.0
-     * \date 23/05/2024
      */
     iterator begin() const { return iterator(0, _size, boards); }
     
@@ -484,10 +397,6 @@ public:
      * \returns The past-the-end iterator.
      *
      * \note The iterator is constant.
-     *
-     * \author Fedyna K.
-     * \version 0.2.0
-     * \date 23/05/2024
      */
     iterator end() const { return iterator(_size, _size, boards); }
     
@@ -496,10 +405,6 @@ public:
      * \returns The reverse_begin iterator.
      *
      * \note The reverse_iterator is constant.
-     *
-     * \author Bac A.
-     * \version 0.2.0
-     * \date 23/05/2024
      */
     reverse_iterator reverse_begin() const { return reverse_iterator(_size-1, _size, boards); }
     reverse_iterator reverse_begin(size_t index) const { std::cout << "reverse with index " << index << std::endl ; return reverse_iterator(index, _size, boards); }
@@ -509,10 +414,6 @@ public:
      * \returns The past-the-end reverse_iterator.
      *
      * \note The reverse_iterator is constant.
-     *
-     * \author Bac A.
-     * \version 0.2.0
-     * \date 23/05/2024
      */
     reverse_iterator reverse_end() const { return reverse_iterator(size_t_maxvalue, _size, boards); }
     
@@ -522,10 +423,6 @@ public:
      * \param[in,out] _stream The stream to edit.
      * \param[in] _bitboard The bitboard to display.
      * \returns The edited stream.
-     *
-     * \author Fedyna K.
-     * \version 0.2.0
-     * \date 23/05/2024
      */
     friend std::ostream& operator<<(std::ostream &_stream, const Bitboard &_bitboard) {
         // Cheat for speed, iterate through all non-null indices and fill the in-between with zeros.
@@ -546,10 +443,6 @@ public:
      * \param[in] _left The left hand side.
      * \param[in] _right The right hand side.
      * \returns A new bitboard which is the result of the OR.
-     *
-     * \author Fedyna K.
-     * \version 0.2.0
-     * \date 23/05/2024
      */
     friend Bitboard operator|(const Bitboard &_left, const Bitboard &_right) {
         Bitboard res = _left;
@@ -563,10 +456,6 @@ public:
      * \param[in] _left The left hand side.
      * \param[in] _right The right hand side.
      * \returns A new bitboard which is the result of the OR.
-     *
-     * \author Fedyna K.
-     * \version 0.2.0
-     * \date 23/05/2024
      */
     friend Bitboard operator|(const Bitboard &_left, const std::size_t &_right) {
         Bitboard res = _left;
@@ -580,10 +469,6 @@ public:
      * \param[in] _left The left hand side.
      * \param[in] _right The right hand side.
      * \returns A new bitboard which is the result of the OR.
-     *
-     * \author Fedyna K.
-     * \version 0.2.0
-     * \date 23/05/2024
      */
     friend Bitboard operator|(const std::size_t &_left, const Bitboard &_right) {
         Bitboard res = _right;
@@ -597,10 +482,6 @@ public:
      * \param[in] _left The left hand side.
      * \param[in] _right The right hand side.
      * \returns A new bitboard which is the result of the AND.
-     *
-     * \author Fedyna K.
-     * \version 0.2.0
-     * \date 23/05/2024
      */
     friend Bitboard operator&(const Bitboard &_left, const Bitboard &_right) {
         Bitboard res = _left;
@@ -614,10 +495,6 @@ public:
      * \param[in] _left The left hand side.
      * \param[in] _right The right hand side.
      * \returns A new bitboard which is the result of the AND.
-     *
-     * \author Fedyna K.
-     * \version 0.2.0
-     * \date 23/05/2024
      */
     friend Bitboard operator&(const Bitboard &_left, const std::size_t &_right) {
         Bitboard res = _left;
@@ -631,10 +508,6 @@ public:
      * \param[in] _left The left hand side.
      * \param[in] _right The right hand side.
      * \returns A new bitboard which is the result of the AND.
-     *
-     * \author Fedyna K.
-     * \version 0.2.0
-     * \date 23/05/2024
      */
     friend Bitboard operator&(const std::size_t &_left, const Bitboard &_right) {
         Bitboard res = _right;
@@ -648,10 +521,6 @@ public:
      * \param[in] _left The left hand side.
      * \param[in] _right The right hand side.
      * \returns A new bitboard which is the result of the XOR.
-     *
-     * \author Fedyna K.
-     * \version 0.2.0
-     * \date 23/05/2024
      */
     friend Bitboard operator^(const Bitboard &_left, const Bitboard &_right) {
         Bitboard res = _left;
@@ -665,10 +534,6 @@ public:
      * \param[in] _left The left hand side.
      * \param[in] _right The right hand side.
      * \returns A new bitboard which is the result of the XOR.
-     *
-     * \author Fedyna K.
-     * \version 0.2.0
-     * \date 23/05/2024
      */
     friend Bitboard operator^(const Bitboard &_left, const std::size_t &_right) {
         Bitboard res = _left;
@@ -682,10 +547,6 @@ public:
      * \param[in] _left The left hand side.
      * \param[in] _right The right hand side.
      * \returns A new bitboard which is the result of the XOR.
-     *
-     * \author Fedyna K.
-     * \version 0.2.0
-     * \date 23/05/2024
      */
     friend Bitboard operator^(const std::size_t &_left, const Bitboard &_right) {
         Bitboard res = _right;
@@ -698,10 +559,6 @@ public:
      *
      * \param[in] _other The other bitboard.
      * \returns The reference to the ORed bitboard.
-     *
-     * \author Fedyna K.
-     * \version 0.2.0
-     * \date 23/05/2024
      */
     Bitboard& operator|=(const Bitboard &_other) {
         for (std::size_t i = 0 ; i < boards.size() ; i++) {
@@ -716,10 +573,6 @@ public:
      *
      * \param[in] _other The bit position.
      * \returns The reference to the ORed bitboard.
-     *
-     * \author Fedyna K.
-     * \version 0.2.0
-     * \date 23/05/2024
      */
     Bitboard& operator|=(const std::size_t &_other) {
         std::size_t boardIndex = _other / BITBOARD_INT_SIZE;
@@ -734,10 +587,6 @@ public:
      *
      * \param[in] _other The other bitboard.
      * \returns The reference to the ANDed bitboard.
-     *
-     * \author Fedyna K.
-     * \version 0.2.0
-     * \date 23/05/2024
      */
     Bitboard& operator&=(const Bitboard &_other) {
         for (std::size_t i = 0 ; i < boards.size() ; i++) {
@@ -752,10 +601,6 @@ public:
      *
      * \param[in] _other The bit position.
      * \returns The reference to the ANDed bitboard.
-     *
-     * \author Fedyna K.
-     * \version 0.2.0
-     * \date 23/05/2024
      */
     Bitboard& operator&=(const std::size_t &_other) {
         std::size_t boardIndex = _other / BITBOARD_INT_SIZE;
@@ -770,10 +615,6 @@ public:
      *
      * \param[in] _other The other bitboard.
      * \returns The reference to the XORed bitboard.
-     *
-     * \author Fedyna K.
-     * \version 0.2.0
-     * \date 23/05/2024
      */
     Bitboard& operator^=(const Bitboard &_other) {
         for (std::size_t i = 0 ; i < boards.size() ; i++) {
@@ -788,10 +629,6 @@ public:
      *
      * \param[in] _other The bit position.
      * \returns The reference to the XORed bitboard.
-     *
-     * \author Fedyna K.
-     * \version 0.2.0
-     * \date 23/05/2024
      */
     Bitboard& operator^=(const std::size_t &_other) {
         std::size_t boardIndex = _other / BITBOARD_INT_SIZE;
@@ -805,10 +642,6 @@ public:
      * \brief Toggle on and off a given bit.
      *
      * \param[in] _index The bit position.
-     *
-     * \author Fedyna K.
-     * \version 0.2.0
-     * \date 23/05/2024
      */
     void toggle(const std::size_t &_index) {
         *this ^= _index;
@@ -818,10 +651,6 @@ public:
      * \brief Toggle on a given bit.
      *
      * \param[in] _index The bit position.
-     *
-     * \author Fedyna K.
-     * \version 0.2.0
-     * \date 23/05/2024
      */
     void setOn(const std::size_t &_index) {
         *this |= _index;
@@ -831,10 +660,6 @@ public:
      * \brief Toggle off a given bit.
      *
      * \param[in] _index The bit position.
-     *
-     * \author Fedyna K.
-     * \version 0.2.0
-     * \date 23/05/2024
      */
     void setOff(const std::size_t &_index) {
         std::size_t boardIndex = _index / BITBOARD_INT_SIZE;
@@ -856,4 +681,4 @@ public:
 } /* end namespace OSM */
 } /* end namespace CGAL */
 
-#endif
+#endif // CGAL_OSM_BITBOARD_H

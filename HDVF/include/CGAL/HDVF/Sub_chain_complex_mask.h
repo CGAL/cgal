@@ -9,16 +9,16 @@
 //
 // Author(s)     : Alexandra Bac <alexandra.bac@univ-amu.fr>
 
-#ifndef CGAL_SUB_CHAIN_COMPLEX_MASK_H
-#define CGAL_SUB_CHAIN_COMPLEX_MASK_H
+#ifndef CGAL_HDVF_SUB_CHAIN_COMPLEX_MASK_H
+#define CGAL_HDVF_SUB_CHAIN_COMPLEX_MASK_H
 
 #include <vector>
 #include <cassert>
 #include <iostream>
 #include <memory>
-#include "CGAL/OSM/OSM.hpp"
-#include "CGAL/OSM/Bitboard.h"
-#include "CGAL/HDVF/Sub_sparse_matrix.h"
+#include <CGAL/OSM/OSM.h>
+#include <CGAL/OSM/Bitboard.h>
+#include <CGAL/HDVF/Sub_sparse_matrix.h>
 
 namespace CGAL {
 namespace HDVF {
@@ -314,4 +314,4 @@ public:
 } /* end namespace HDVF */
 } /* end namespace CGAL */
 
-#endif /* CGAL_SUB_CHAIN_COMPLEX_MASK_H */
+#endif // CGAL_HDVF_SUB_CHAIN_COMPLEX_MASK_H

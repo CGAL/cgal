@@ -13,8 +13,8 @@
 #ifndef CGAL_OSM_SPARSE_CHAIN_H
 #define CGAL_OSM_SPARSE_CHAIN_H
 
-#include "__base.hpp"
-#include "Sparse_matrix.h"
+#include <CGAL/OSM/__base.h>
+#include <CGAL/OSM/Sparse_matrix.h>
 #include <unordered_map>
 #include <vector>
 #include <iterator>
@@ -296,7 +296,7 @@ public:
      * \return The result of the matrix multiplication, column-based.
      */
     template <typename _CT>
-    friend Sparse_matrix<_CT, COLUMN> operator*(const Sparse_chain<_CT, COLUMN> &column, const Sparse_chain<_CT, ROW> &row);
+    friend Sparse_matrix<_CT, COLUMN> operator*(const Sparse_chain<_CT, COLUMN>& column, const Sparse_chain<_CT, ROW>& row);
     
     /**
      * \brief Perform matrix multiplication between two chains (COLUMN x ROW) and return a ROW matrix.
@@ -681,11 +681,11 @@ private:
 
 // COLUMN chain x ROW chain -> COLUMN matrix
 template <typename _CT>
-Sparse_matrix<_CT, COLUMN> operator*(const Sparse_chain<_CT, COLUMN> &_column, const Sparse_chain<_CT, ROW> &_row) {
-    Sparse_matrix<_CT, COLUMN> matrix(_column._upperBound, _row._upperBound);
+Sparse_matrix<_CT, COLUMN> operator*(const Sparse_chain<_CT, COLUMN> &column, const Sparse_chain<_CT, ROW> &row) {
+    Sparse_matrix<_CT, COLUMN> matrix(column._upperBound, row._upperBound);
     
-    for (std::pair<size_t, _CT> pair : _row._chainData) {
-        OSM::set_column(matrix,pair.first,_column * pair.second) ;
+    for (std::pair<size_t, _CT> pair : row._chainData) {
+        OSM::set_column(matrix,pair.first,column * pair.second) ;
     }
     
     return matrix;
@@ -693,11 +693,11 @@ Sparse_matrix<_CT, COLUMN> operator*(const Sparse_chain<_CT, COLUMN> &_column, c
 
 // COLUMN chain x ROW chain -> ROW matrix
 template <typename _CT>
-Sparse_matrix<_CT, ROW> operator%(const Sparse_chain<_CT, COLUMN> &_column, const Sparse_chain<_CT, ROW> &_row) {
-    Sparse_matrix<_CT, ROW> matrix(_column._upperBound, _row._upperBound);
+Sparse_matrix<_CT, ROW> operator%(const Sparse_chain<_CT, COLUMN> &column, const Sparse_chain<_CT, ROW> &row) {
+    Sparse_matrix<_CT, ROW> matrix(column._upperBound, row._upperBound);
     
-    for (std::pair<size_t, _CT> pair : _column._chainData) {
-        OSM::set_row(matrix,pair.first,_row * pair.second);
+    for (std::pair<size_t, _CT> pair : column._chainData) {
+        OSM::set_row(matrix,pair.first,row * pair.second);
     }
     
     return matrix;
@@ -705,13 +705,13 @@ Sparse_matrix<_CT, ROW> operator%(const Sparse_chain<_CT, COLUMN> &_column, cons
 
 // Dot product (ROW chain x COLUMN chain)
 template <typename CoefficientType>
-CoefficientType operator*(const Sparse_chain<CoefficientType, ROW> &_row, const Sparse_chain<CoefficientType, COLUMN> &_column) {
+CoefficientType operator*(const Sparse_chain<CoefficientType, ROW> &row, const Sparse_chain<CoefficientType, COLUMN> &column) {
     // Get indexes (avoid adding double indexes).
     std::unordered_map<size_t, int> indexes;
-    for (std::pair<size_t, CoefficientType> pair: _row._chainData) {
+    for (std::pair<size_t, CoefficientType> pair: row._chainData) {
         indexes[pair.first] = 1;
     }
-    for (std::pair<size_t, CoefficientType> pair: _column._chainData) {
+    for (std::pair<size_t, CoefficientType> pair: column._chainData) {
         indexes[pair.first] += 1;
     }
     
@@ -719,60 +719,26 @@ CoefficientType operator*(const Sparse_chain<CoefficientType, ROW> &_row, const 
     CoefficientType result = CoefficientType();
     for (std::pair<size_t, int> index: indexes) {
         if (index.second == 2) {
-            result += _row._chainData.at(index.first) * _column._chainData.at(index.first);
+            result += row._chainData.at(index.first) * column._chainData.at(index.first);
         }
     }
     
     return result;
 }
 
-/**
- * \brief Get a subchain from the chain and assign.
- * 
- * Removes all indexes provided in the vector from the chain and returns it.
- * 
- * \note Will not alter the chain if given vector is empty.
- * 
- * \param[in] _indexes The indexes to remove.
- * 
- * \return The modified chain representing the result.
- * 
- * \see \link OSM::Sparse_chain \endlink
- * \see \link std::vector \endlink
- * 
- * \author Fedyna K.
- * \version 0.1.0
- * \date 08/04/2024
- */
+// Get a subchain from the chain and assign.
 template <typename _CT, int _CTF>
-Sparse_chain<_CT, _CTF> operator/(const Sparse_chain<_CT, _CTF> &_chain, const std::vector<size_t> &_indexes) {
-    Sparse_chain<_CT, _CTF> newChain = _chain;
-    newChain /= _indexes;
+Sparse_chain<_CT, _CTF> operator/(const Sparse_chain<_CT, _CTF> &chain, const std::vector<size_t> &indices) {
+    Sparse_chain<_CT, _CTF> newChain = chain;
+    newChain /= indices;
     return newChain;
 }
 
-/**
- * \brief Get a subchain from the chain and assign.
- * 
- * Removes the index provided from the chain and returns it.
- * 
- * \note Will not alter the chain if given vector is empty.
- * 
- * \param[in] _index The index to remove.
- * 
- * \return The modified chain representing the result.
- * 
- * \see \link OSM::Sparse_chain \endlink
- * \see \link std::vector \endlink
- * 
- * \author Fedyna K.
- * \version 0.1.0
- * \date 08/04/2024
- */
+// Get a subchain from the chain and assign.
 template <typename _CT, int _CTF>
-Sparse_chain<_CT, _CTF> operator/(const Sparse_chain<_CT, _CTF> &_chain, size_t _index) {
-    Sparse_chain<_CT, _CTF> newChain = _chain;
-    newChain /= _index;
+Sparse_chain<_CT, _CTF> operator/(const Sparse_chain<_CT, _CTF> &chain, size_t index) {
+    Sparse_chain<_CT, _CTF> newChain = chain;
+    newChain /= index;
     return newChain;
 }
 

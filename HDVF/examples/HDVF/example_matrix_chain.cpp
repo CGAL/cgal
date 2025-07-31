@@ -1,13 +1,10 @@
 #include <iostream>
 #include <fstream>
 
-#include "CGAL/OSM/OSM.hpp"
+#include "CGAL/OSM/OSM.h"
 
-using namespace CGAL;
-using namespace std;
-
-typedef CGAL::OSM::Sparse_chain<int, OSM::COLUMN> CChain;
-typedef CGAL::OSM::Sparse_matrix<int, OSM::COLUMN> CMatrix;
+typedef CGAL::OSM::Sparse_chain<int, CGAL::OSM::COLUMN> CChain;
+typedef CGAL::OSM::Sparse_matrix<int, CGAL::OSM::COLUMN> CMatrix;
 
 int main ()
 {
@@ -15,16 +12,16 @@ int main ()
     CMatrix M(5,4) ;
     
     // Fill coefficients
-    OSM::set_coef(M, 0, 1, 1) ;
-    OSM::set_coef(M, 0, 2, -1) ;
-    OSM::set_coef(M, 2, 1, 2) ;
+    CGAL::OSM::set_coef(M, 0, 1, 1) ;
+    CGAL::OSM::set_coef(M, 0, 2, -1) ;
+    CGAL::OSM::set_coef(M, 2, 1, 2) ;
     
     // Iterate over non empty columns
-    for(OSM::Bitboard::iterator it_col = M.begin(); it_col != M.end(); ++it_col)
+    for(CGAL::OSM::Bitboard::iterator it_col = M.begin(); it_col != M.end(); ++it_col)
     {
-        cout << "col: " << *it_col << endl ;
+        std::cout << "col: " << *it_col << std::endl ;
         // Get a constant reference over the column (complexity O(1))
-        const CChain& col(OSM::cget_column(M, *it_col));
+        const CChain& col(CGAL::OSM::cget_column(M, *it_col));
         // Iterate over the column
         for (CChain::const_iterator it = col.begin(); it != col.end(); ++it)
         {

@@ -5,8 +5,8 @@
 //  Created by umenohana on 09/03/2023.
 //
 
-#ifndef tools_io_hpp
-#define tools_io_hpp
+#ifndef CGAL_HDVF_TOOLS_IO_H
+#define CGAL_HDVF_TOOLS_IO_H
 
 #include <iostream>
 #include <cassert>
@@ -33,6 +33,14 @@ typedef std::vector<size_t> IOCubCellType ;
 /** \brief Type of pre-chains in Cub_object (list of cells without coefficients). */
 typedef std::vector<IOCellType> IOCubChainType ;
 
+/*!
+ \ingroup PkgHDVFAlgorithmClasses
+ 
+ The class `IONodeType` implements a simple data type used to import vertices coordinates (nodes) in various dimensions.
+ Hence, coordinates are loaded as vectors of `double`.
+ 
+ The class provides standard affine geometry functions on such points.
+ */
 
 // Type of points (for vertices coordinates in R^d)
 class IONodeType {
@@ -1228,4 +1236,4 @@ private:
 } /* end namespace CGAL */
 
 
-#endif /* tools_io_hpp */
+#endif // CGAL_HDVF_TOOLS_IO_H

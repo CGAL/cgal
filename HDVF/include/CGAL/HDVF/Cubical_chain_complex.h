@@ -9,15 +9,15 @@
 //
 // Author(s)     : Alexandra Bac <alexandra.bac@univ-amu.fr>
 
-#ifndef CGAL_CUBICAL_CHAIN_COMPLEX_HPP
-#define CGAL_CUBICAL_CHAIN_COMPLEX_HPP
+#ifndef CGAL_HDVF_CUBICAL_CHAIN_COMPLEX_H
+#define CGAL_HDVF_CUBICAL_CHAIN_COMPLEX_H
 
 #include <vector>
 #include <map>
 #include <stdexcept>
 #include <unordered_set>
-#include "tools_io.hpp"
-#include "CGAL/OSM/OSM.hpp"
+#include <CGAL/HDVF/tools_io.h>
+#include <CGAL/OSM/OSM.h>
 
 namespace CGAL {
 namespace HDVF {
@@ -40,7 +40,7 @@ ostream & operator<<(ostream & out, std::vector<size_t> c)
  
  The class `Cubical_chain_complex` represents (topological) chain complexes associated to cubical complexes.
  
- \paragraph Description
+ \section Description Description
  
  An cubical complex is a set of "square" cells such that: all the faces of a given cell also belong to the complex and any two cells intersect exactly along a common face.
  
@@ -71,7 +71,7 @@ ostream & operator<<(ostream & out, std::vector<size_t> c)
  
  Let us also point out that besides Khalimsky coordinates, cells are indexed along each dimension, thus each cell is uniquely determined by its dimension and its index in this dimension (called "base index").
  
- \paragraph Implementation Implementation details
+ \section Implementation Implementation details
  
  As described above, Khalimsky coordinates provide a convenient tool to identify cells of any dimension. Hence a complex of dimension \f$q\f$ can be encoded by a boolean matrix of size \f$N_1\times\cdots\times N_q\f$ (with previous notations). For convenience, this matrix is vectorized and thus the complex is stored in a boolean vector (denoted by  `_cells`) of size \f$N_1\times \cdots \times N_q\f$.
  
@@ -256,10 +256,10 @@ public:
      *
      * \return A vector of 0-cells indices.
      */
-    std::vector<size_t> bottom_faces(size_t id_cell, int dim) const
+    std::vector<size_t> bottom_faces(size_t id_cell, int q) const
     {
         // Khalimsky coordinates of the cell
-        const vector<size_t> coords(ind2khal(_base2bool.at(dim).at(id_cell))) ;
+        const vector<size_t> coords(ind2khal(_base2bool.at(q).at(id_cell))) ;
         return khal_to_verts(coords) ;
     }
     
@@ -1055,4 +1055,4 @@ void Cubical_chain_complex<CoefficientType>::chain_complex_chain_to_vtk(const Cu
 } /* end namespace HDVF */
 } /* end namespace CGAL */
 
-#endif // CGAL_CUBICAL_CHAIN_COMPLEX_HPP
+#endif // CGAL_HDVF_CUBICAL_CHAIN_COMPLEX_H
