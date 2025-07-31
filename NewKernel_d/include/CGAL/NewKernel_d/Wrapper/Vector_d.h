@@ -130,6 +130,19 @@ public:
           return SLBase()(rep());
   }
 
+  friend auto operator==(Vector_d const&p, Vector_d const&q) {
+    typedef typename Get_functor<Kbase, Equal_vectors_tag>::type EPBase;
+    return EPBase()(p.rep(), q.rep());
+  }
+
+  friend auto operator!=(Vector_d const&p, Vector_d const&q) { return !(p==q); }
+
+  // May be accidentally inherited from the base class otherwise
+  friend auto operator< (Vector_d const&p, Vector_d const&q) = delete;
+  friend auto operator> (Vector_d const&p, Vector_d const&q) = delete;
+  friend auto operator<=(Vector_d const&p, Vector_d const&q) = delete;
+  friend auto operator>=(Vector_d const&p, Vector_d const&q) = delete;
+
   friend std::ostream& operator <<(std::ostream& os, const Vector_d& v)
   {
     auto b = v.cartesian_begin();
