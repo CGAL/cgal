@@ -1,5 +1,3 @@
-// For now, there are issues when EPECK is embedded back into doubles,
-// so dump files with EPECK and read them again with EPECK
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
@@ -16,7 +14,7 @@
 
 namespace PMP = ::CGAL::Polygon_mesh_processing;
 
-using EPECK = CGAL::Exact_predicates_exact_constructions_kernel;
+using EPECK = CGAL::Exact_predicates_inexact_constructions_kernel;
 using K = EPECK;
 using FT = K::FT;
 using Point = K::Point_3;
