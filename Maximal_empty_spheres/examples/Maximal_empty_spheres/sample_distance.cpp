@@ -5,6 +5,7 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 
+#include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
 #include <CGAL/Polygon_mesh_processing/bbox.h>
 #include <CGAL/Polygon_mesh_processing/orientation.h>
 #include <CGAL/Side_of_triangle_mesh.h>
@@ -93,7 +94,7 @@ int main(int argc, char* argv[])
   const std::string in_filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/tetrahedron.off");
 
   Mesh mesh;
-  if(!CGAL::IO::read_polygon_mesh(in_filename, mesh))
+  if(!PMP::IO::read_polygon_mesh(in_filename, mesh))
   {
     std::cerr << "Invalid input." << std::endl;
     return EXIT_FAILURE;

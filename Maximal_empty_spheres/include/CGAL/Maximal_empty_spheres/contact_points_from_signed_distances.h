@@ -100,7 +100,6 @@ OutputIterator contact_points(const Eigen::MatrixXd &G, OutputIterator Pwns, Eig
                                                       bool filter_contact_spheres_bbx = true,
                                                       int debug_level=0)
   {
-    // Eigen::MatrixXd G(input_spheres.size(), 4);
     Bbox_3 bb;
     int np = 0, nn = 0;
     for (const auto& pair : input_spheres) {
@@ -124,7 +123,7 @@ OutputIterator contact_points(const Eigen::MatrixXd &G, OutputIterator Pwns, Eig
         if (sphere_and_orientation.second > 0){
             Gp.row(np++) = Eigen::RowVector4d(sphere.center().x(), sphere.center().y(), sphere.center().z(), sqrt(sphere.squared_radius()));
         } else {
-            Gn.row(nn++) = Eigen::RowVector4d(sphere.center().x(), sphere.center().y(), sphere.center().z(), sqrt(sphere.squared_radius()));
+            Gn.row(nn++) = Eigen::RowVector4d(sphere.center().x(), sphere.center().y(), sphere.center().z(), - sqrt(sphere.squared_radius()));
         }
     }
 
