@@ -292,7 +292,7 @@ bool face_offset(TriangleMesh& tmesh,
   // The underlying implementation always shrinks the mesh, so for outwards offsets,
   // we reverse the face orientations, whether the mesh was outward oriented or not.
   if (outwards) {
-    CGAL_SS3_TRACE("Reversing face orientations (pointing in)...");
+    CGAL_SS3_TRACE("Reversing face orientations...");
     PMP::reverse_face_orientations(tmesh);
 
     // also switch to negative offsets
@@ -329,14 +329,6 @@ bool face_offset(TriangleMesh& tmesh,
       std::vector<algo::_3d::PolyhedronSPtr>& results_;
   };
 
-  class Far_enough_event
-      : public std::exception
-  {
-    const char* what() const throw () {
-        return "Unauthorized intersections of constraints";
-    }
-  };
-
   // run the skeleton code
   algo::ControllerSPtr controller = { };
   algo::_3d::SimpleStraightSkelSPtr algoskel3d = algo::_3d::SimpleStraightSkel::create(p, controller, save_offsets, save_path);
@@ -370,6 +362,9 @@ bool face_offset(TriangleMesh& tmesh,
       return false;
     }
 
+    // Convert back to Surface_mesh structure to save the results.
+    // This could be avoided if a polygonal output was prefered, but then we
+    // need some specific conversion code.
     TriangleMesh result_t;
     bool success = db::_3d::Surface_meshIO::save(result_p, result_t,
                                                  CGAL::parameters::do_not_triangulate_faces(false) /*triangulate*/);
@@ -386,7 +381,7 @@ bool face_offset(TriangleMesh& tmesh,
     CGAL_postcondition(!PMP::does_self_intersect(result_t));
 
     if (outwards) {
-      CGAL_SS3_TRACE("Reversing face orientations (pointing out)...");
+      CGAL_SS3_TRACE("Reversing face orientations...");
       PMP::reverse_face_orientations(result_t);
     }
 
