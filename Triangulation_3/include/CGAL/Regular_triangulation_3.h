@@ -667,6 +667,9 @@ public:
   {
     CGAL_precondition(dimension() >= 2);
 
+    if(the_facet_is_in_its_cz)
+      *the_facet_is_in_its_cz = false;
+
     std::vector<Cell_handle> cells;
     cells.reserve(32);
     std::vector<Facet> facets;
