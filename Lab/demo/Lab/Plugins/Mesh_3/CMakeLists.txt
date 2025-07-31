@@ -49,7 +49,7 @@ else()
 endif()
 
 find_package(Boost QUIET OPTIONAL_COMPONENTS filesystem system)
-if(Boost_FILESYSTEM_FOUND)
+if(Boost_FILESYSTEM_FOUND AND Boost_SYSTEM_FOUND)
   qt6_wrap_ui( imgUI_FILES Image_res_dialog.ui raw_image.ui)
   cgal_lab_plugin(io_image_plugin Io_image_plugin
     Volume_plane_intersection.cpp
