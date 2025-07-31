@@ -1,4 +1,4 @@
-/// \defgroup PkgIsosurfacing3Ref 3D Isosurfacing Reference
+/// \defgroup PkgIsosurfacing3Ref Reference Manual
 /// \defgroup PkgIsosurfacing3Concepts Concepts
 /// \ingroup PkgIsosurfacing3Ref
 

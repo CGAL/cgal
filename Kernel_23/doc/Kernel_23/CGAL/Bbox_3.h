@@ -20,7 +20,7 @@ public:
 /// @{
 
 /*!
-introduces an \em empty bounding box with lower left
+constructs an \em empty bounding box with lower left
 corner point at \f$ (\infty, \infty, \infty) \f$
 and with upper right corner point at
 \f$ (-\infty, -\infty, -\infty) \f$, \f$ \infty \f$ being
@@ -29,7 +29,7 @@ and with upper right corner point at
   Bbox_3();
 
 /*!
-introduces a bounding box `b` with lexicographically
+constructs a bounding box `b` with lexicographically
 smallest corner point at `(xmin, ymin, zmin)`
 and lexicographically largest corner point at
 `(xmax, ymax, zmax)`.

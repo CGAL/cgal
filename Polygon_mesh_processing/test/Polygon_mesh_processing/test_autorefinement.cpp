@@ -30,7 +30,7 @@ struct My_exp_visitor :
   std::shared_ptr<int> i;
 };
 
-struct My_visitor
+struct My_visitor : public PMP::Autorefinement::Default_visitor
 {
   My_visitor(std::size_t nb_input, std::size_t expected_nb_output)
     : nb_input(nb_input)
@@ -64,6 +64,11 @@ struct My_visitor
     assert(tgt_id<expected_nb_output);
     assert(tgt_check.size()==expected_nb_output && tgt_check[tgt_id]==0);
     tgt_check[tgt_id]=1;
+  }
+
+  void delete_triangle(std::size_t src_id)
+  {
+    assert(src_id<nb_input);
   }
 
   std::size_t nb_input;

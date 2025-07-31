@@ -79,7 +79,7 @@ compare_squared_distance(const typename K::Ray_3& ray,
                          const K& k,
                          const typename K::FT& d2)
 {
-  return compare(squared_distance(ray, plane, k), d2);
+  return ::CGAL::compare(squared_distance(ray, plane, k), d2);
 }
 
 template <class K>

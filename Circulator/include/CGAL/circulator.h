@@ -22,10 +22,11 @@
 #include <CGAL/assertions.h>
 #include <CGAL/use.h>
 #include <CGAL/tags.h>
+#include <CGAL/type_traits.h>
 
 #include <cstddef>
-#include <functional>
 #include <iterator>
+#include <utility>
 
 // These are name redefinitions for backwards compatibility
 // with the pre iterator-traits style adaptors.
@@ -639,6 +640,34 @@ operator+( Dist n, const Iterator_from_circulator<C,Ref,Ptr>& circ) {
     Iterator_from_circulator<C,Ref,Ptr> tmp = circ;
     return tmp += n;
 }
+
+template <class Circ>
+class Range_from_circulator {
+private:
+  Circ anchor;
+public:
+  using pointer = CGAL::cpp20::remove_cvref_t<decltype(anchor.operator->())>;
+  using const_pointer = CGAL::cpp20::remove_cvref_t<decltype(std::as_const(anchor).operator->())>;
+  using reference = decltype(*anchor);
+  using const_reference = decltype(*std::as_const(anchor));
+  using iterator = Iterator_from_circulator<Circ, reference, pointer>;
+  using const_iterator = Iterator_from_circulator<Circ, const_reference, const_pointer>;
+
+  iterator begin() {
+    return iterator(&anchor, 0);
+  }
+  const_iterator begin() const {
+    return const_iterator(&anchor, 0);
+  }
+  iterator end() {
+    return anchor == nullptr ? iterator(&anchor, 0) : iterator(&anchor, 1);
+  }
+  const_iterator end() const {
+    return anchor == nullptr ? const_iterator(&anchor, 0) : const_iterator(&anchor, 1);
+  }
+  Range_from_circulator() = default;
+  Range_from_circulator(const Circ& c) : anchor(get_min_circulator(c)) {}
+};
 
 template < class  C >
 class Container_from_circulator {

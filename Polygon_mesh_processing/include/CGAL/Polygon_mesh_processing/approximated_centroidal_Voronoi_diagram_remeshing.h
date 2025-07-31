@@ -1390,6 +1390,9 @@ acvd_impl(TriangleMesh& tmesh,
 *
 * \cgalNamedParamsEnd
 *
+*
+* @pre `tmesh` is a triangulated surface mesh and has exactly one connected component.
+*
 * @return `true` if `nb_vertices` was sufficiently large for remeshing the input, and `false` if more points were used
 *
 */
