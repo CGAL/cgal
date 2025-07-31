@@ -174,7 +174,7 @@ function process_file_single_function {
         echo "OFFSET FAILURE" >> $RESULT_FILE
     elif grep -q -e "Error: failed to postprocess" \
                  -e "Error: broken output" \
-                 -e "Error: empty or open output" \
+                 -e "Error: open output" \
                  -e "Error: non-triangulated output" \
                  -e "Error: degenerate faces in output" \
                  -e "Error: output self-intersects" \
