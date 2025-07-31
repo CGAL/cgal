@@ -22,6 +22,9 @@ if(TARGET CGAL::Eigen3_support)
 
   create_single_source_cgal_program("empty_spheres_reconstruction_3.cpp")
   target_link_libraries(empty_spheres_reconstruction_3 PUBLIC CGAL::Eigen3_support)
+
+  create_single_source_cgal_program("backup_empty_spheres_reconstruction_3.cpp")
+  target_link_libraries(backup_empty_spheres_reconstruction_3 PUBLIC CGAL::Eigen3_support)
 else()
   message(STATUS "NOTICE: Examples that use Eigen will not be compiled.")
 endif()

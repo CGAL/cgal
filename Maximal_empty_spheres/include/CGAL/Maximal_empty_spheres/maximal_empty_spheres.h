@@ -12,7 +12,7 @@
 #ifndef CGAL_MAXIMAL_EMPTY_SPHERES_MAXIMAL_EMPTY_SPHERES_H
 #define CGAL_MAXIMAL_EMPTY_SPHERES_MAXIMAL_EMPTY_SPHERES_H
 
-// #include <CGAL/license/Maximal_empty_spheres.h>
+#include <CGAL/license/Maximal_empty_spheres.h>
 
 #include <CGAL/Maximal_empty_spheres/internal/Lie_geometry.h>
 #include <CGAL/Maximal_empty_spheres/internal/rotation_from_to.h>
@@ -29,7 +29,7 @@
 namespace CGAL {
 
     template<typename Dimension>
-    void maximal_empty_spheres(const Eigen::MatrixXd &G, Eigen::MatrixXd &result, Eigen::MatrixXi *contact_indices=NULL, double atol=1e-8, int debug_level=0) {
+    void maximal_empty_spheres(const Eigen::MatrixXd &G, Eigen::MatrixXd &result, Eigen::MatrixXi *contact_indices=NULL, double atol=1e-8, int debug_level=1) {
 
         bool full_simplices_only=true;
         const int D = Dimension::value;
@@ -47,7 +47,7 @@ namespace CGAL {
 
         using namespace CGAL::Maximal_empty_spheres::internal;
 
-        std::cout << "Loaded SDF values of shape (" << G.rows() << ", " << G.cols() << ")"  << std::endl;
+        if (debug_level > 0) { std::cout << "Loaded SDF values of shape (" << G.rows() << ", " << G.cols() << ")"  << std::endl; }
 
         Eigen::MatrixXd SE = G;
         SE.col(D) = G.col(D).array().abs();
@@ -55,7 +55,7 @@ namespace CGAL {
         // std::cout << "SE: " << std::endl;
         // std::cout << SE << std::endl;
 
-        std::cout << "Convert to Lie representation" << std::endl;
+        if (debug_level > 0) { std::cout << "Convert to Lie representation" << std::endl; }
         Eigen::MatrixXd H;
         lie_ip_matrix(D,H);
 
@@ -106,7 +106,7 @@ namespace CGAL {
     timer.start();
     Triangulation t(D+2);
     t.insert_and_index(points.begin(), points.end());
-    std::cout << "Convex hull of " << points.size() << " points computed in " << timer.time() << " seconds." << std::endl;
+    if (debug_level > 0) { std::cout << "Convex hull of " << points.size() << " points computed in " << timer.time() << " seconds." << std::endl; }
     // --> recover the infinite cells (contain the convex hull)
     std::vector<typename Triangulation::Full_cell_handle> infinite_cells;
     for(auto it = t.full_cells_begin(); it != t.full_cells_end(); ++it) {
