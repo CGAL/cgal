@@ -20,6 +20,7 @@
 #include <iostream>
 #include <Eigen/Core>
 
+#include <CGAL/Timer.h>
 #include <CGAL/Epick_d.h>
 #include <CGAL/Triangulation.h>
 #include <CGAL/algorithm.h>
@@ -67,7 +68,6 @@ namespace CGAL {
         // std::cout << "... on quadric? ";
         // std::cout << std::boolalpha << ( ((NC.array() * SL.array()).rowwise().sum()).matrix().norm() < atol) << std::endl;
 
-        std::cout << std::boolalpha;
 
         Eigen::VectorXd s0  = Eigen::VectorXd::Zero(D+3);
         s0(D+2) = -1.;
@@ -76,10 +76,14 @@ namespace CGAL {
         dst[D+2] = 1.;
         Eigen::MatrixXd R = rotation_from_to(s0, dst);
 
-        std::cout << "All normals in the same halfspace? : " <<  (((NC*s0).transpose()).array() >= atol).all() << std::endl;
+        if (debug_level > 0) {
+          std::cout << std::boolalpha << "All normals in the same halfspace? : " <<  (((NC*s0).transpose()).array() >= atol).all() << std::endl;
+        }
 
         Eigen::MatrixXd NCR = NC * R.transpose(); // rotate
-        std::cout << "Last component greater than zero?  : "  << (NCR.col(D+2).array()    >= atol).all() << std::endl;
+        if (debug_level > 0) {
+          std::cout << std::boolalpha << "Last component greater than zero?  : "  << (NCR.col(D+2).array()    >= atol).all() << std::endl;
+        }
         NCR.array().colwise() /= NCR.array().col(D+2);
         Eigen::MatrixXd Np = NCR.block(0,0,NCR.rows(),D+2);
 
@@ -98,16 +102,18 @@ namespace CGAL {
             points.push_back(typename Triangulation::Point(p_.begin(),p_.end()));
         }
 
-        Triangulation t(D+2);
-        t.insert_and_index(points.begin(), points.end());
-        // --> recover the infinite cells (contain the convex hull)
-        std::vector<typename Triangulation::Full_cell_handle> infinite_cells;
-        for(auto it = t.full_cells_begin(); it != t.full_cells_end(); ++it) {
-            if(t.is_infinite(it)) {
-                infinite_cells.push_back(it);
-
-            }
+    Timer timer;
+    timer.start();
+    Triangulation t(D+2);
+    t.insert_and_index(points.begin(), points.end());
+    std::cout << "Convex hull of " << points.size() << " points computed in " << timer.time() << " seconds." << std::endl;
+    // --> recover the infinite cells (contain the convex hull)
+    std::vector<typename Triangulation::Full_cell_handle> infinite_cells;
+    for(auto it = t.full_cells_begin(); it != t.full_cells_end(); ++it) {
+        if(t.is_infinite(it)) {
+            infinite_cells.push_back(it);
         }
+    }
 
         // --> get a unique index per cell
         int ci=0;
@@ -120,6 +126,7 @@ namespace CGAL {
         Eigen::MatrixXd simplex(D+2,D+3);
         Eigen::RowVectorXd simplex_row(D+3);
         int ki=0;
+        int nafs = 0;
         for(auto ch : infinite_cells) {
 
             int si=0;
@@ -135,22 +142,27 @@ namespace CGAL {
             full_simplices(ki) = svd.singularValues().array().abs().minCoeff() > atol;
             ki++;
 
-            /*
-            if (svd.singularValues().array().abs().minCoeff() <= atol) {
-                std::cout << "Not a full simplex" << std::endl;
+            if(debug_level > 0) {
+              if (svd.singularValues().array().abs().minCoeff() <= atol) {
+                ++nafs;
+              }
             }
-            */
+        }
+        if (debug_level > 0 && nafs > 0) {
+            std::cout << "Warning: " << nafs << " simplices were not full simplices, i.e. they are not full-dimensional in the ambient space." << std::endl;
         }
 
         // std::cout << "Ks.shape: (" << Ks.rows() << ", " << Ks.cols() << ")" << std::endl;
         // std::cout << "Ks: " << std::endl << Ks << std::endl;
         // std::cout << "Ks * NC.T" << std::endl << Ks * NC.transpose() << std::endl;
 
-        // TODO: reduced to 200 only for memory reasons, loop and increase again? do sth smarter?
+        // @todo: reduced to 200 only for memory reasons, loop and increase again? do sth smarter?
         int n_check_planes = (NC.rows()<=200)? NC.rows(): 200;
-        // std::cout << "n_check_planes: " << n_check_planes << std::endl;
-        std::cout << "NC.shape(): " << NC.rows() << ", " << NC.cols() << std::endl;
-        Eigen::Vector<bool,Eigen::Dynamic> inv = ((Ks * NC.block(0,0,n_check_planes,D+3).transpose()).rowwise().maxCoeff().array() >= atol); // .rowwise().maxCoeff().array() >= 1e-5) << std::endl;
+        if(debug_level > 0){
+          std::cout << "n_check_planes: " << n_check_planes << std::endl;
+          std::cout << "NC.shape(): " << NC.rows() << ", " << NC.cols() << std::endl;
+        }
+        Eigen::Vector<bool,Eigen::Dynamic> inv = ((Ks * NC.block(0,0,n_check_planes,D+3).transpose()).rowwise().maxCoeff().array() >= atol);
         for (int i=0; i<Ks.rows(); i++) if (inv(i)) Ks.row(i) *= -1;
 
         if (debug_level > 3) {
@@ -178,10 +190,10 @@ namespace CGAL {
                                 Eigen::RowVectorXd s_ = (1-ls[li])*Ks.row(ci)+ls[li]*Ks.row(cj);
 
                                 if ((s_(D+2) < 0.) && (s_(D+1) >= 0) && (fabs(s_(D+2)) >= atol)) {
-                                    
+
                                     bool add=true;
                                     if (cone_filter){
-                                        if (((s_*NC.transpose()).array() > atol).any()){ 
+                                        if (((s_*NC.transpose()).array() > atol).any()){
                                             add=false;
                                             n_cone_filtered++;
                                         }
@@ -198,7 +210,7 @@ namespace CGAL {
                                             }
                                             contact_indices_.emplace_back(st);
                                         }
-                                
+
                                     }
 
                                 }
@@ -208,16 +220,19 @@ namespace CGAL {
                  }
             }
         }
-        std::cout << "Filtered " << n_cone_filtered << " spheres that were not in the cone" << std::endl;
-
+        if(debug_level > 0) {
+          std::cout << "Filtered " << n_cone_filtered << " spheres that were not in the cone" << std::endl;
+        }
         Eigen::MatrixXd solutions(solutions_.size(),D+3);
         for (int i=0; i<solutions_.size(); i++){
-            solutions.row(i)       = solutions_[i];
+            solutions.row(i) = solutions_[i];
         }
 
         lie_to_spheres(solutions, result);
 
-        std::cout << "Solutions.size: " << solutions.rows() << ", " << solutions.cols() << std::endl;
+        if(debug_level > 0) {
+          std::cout << "Solutions.size: " << solutions.rows() << ", " << solutions.cols() << std::endl;
+        }
         if (contact_indices){
             contact_indices->resize(solutions_.size(),D+1);
             for (int i=0; i<solutions_.size(); i++) contact_indices->block(i,0,1,D+1) = contact_indices_[i];
@@ -228,7 +243,7 @@ namespace CGAL {
     template<typename SphereRange, typename OutputIterator, class DimensionTag>
     void maximal_empty_spheres(const SphereRange& /* input*/ , OutputIterator /* result*/, DimensionTag /* tag */ )
     {
-       std::cout << "should not match any specialization" << std::endl;
+       CGAL_assertion_msg(false, "maximal_empty_spheres() called with unsupported dimension tag");
     }
 
     /*!
@@ -254,7 +269,7 @@ namespace CGAL {
           *result++ = Sphere_3(p, res(i,3)*res(i,3)); // res(i,3) is the radius
         }
 
-#ifdef WRITE_SPHERES
+#ifdef CGAL_MES_WRITE_SPHERES
         const static Eigen::IOFormat CSVFormat(Eigen::FullPrecision, Eigen::DontAlignCols, ", ", "\n");
         // write soution in lie representation:  AF: I think this is not Lie representation, but rather the sphere representation
         std::ofstream pointfile("solution_lie_3.csv");
@@ -277,7 +292,7 @@ namespace CGAL {
           Point_2 p(res(i,0), res(i,1));
           *result++ = Circle_2(p, res(i,2)*res(i,2)); // res(i,2) is the radius
         }
-#ifdef WRITE_SPHERES
+#ifdef CGAL_MES_WRITE_SPHERES
         const static Eigen::IOFormat CSVFormat(Eigen::FullPrecision, Eigen::DontAlignCols, ", ", "\n");
         // write soution in lie representation:
         std::ofstream pointfile("solution_lie_2.csv");

@@ -25,7 +25,7 @@ typedef CGAL::First_of_pair_property_map<Point_with_normal> Point_map;
 typedef CGAL::Second_of_pair_property_map<Point_with_normal> Normal_map;
 typedef CGAL::Surface_mesh<Point> Mesh;
 
-void contact_points(const Eigen::MatrixXd &G, std::vector<Point_with_normal> &Pwns, Eigen::MatrixXd *bbxl=NULL){
+void contact_points(const Eigen::MatrixXd &G, std::vector<Point_with_normal> &Pwns, Eigen::MatrixXd *bbxl=nullptr){
     Eigen::MatrixXi contact_indices;
     Eigen::MatrixXd res;
     Eigen::MatrixXd G_ = G;
@@ -129,14 +129,14 @@ int main(int argc, char** argv) {
 
     if (true) {
         std::cout << "Gp: " << Gp.rows() << std::endl;
-        contact_points(Gp, Pwns, (filter_contact_spheres_bbx)?&bbxl:NULL);
+        contact_points(Gp, Pwns, (filter_contact_spheres_bbx)?&bbxl:nullptr);
     } else {
         std::cout << "WARNING: ignoring positive spheres" << std::endl;
     }
 
     if (true) {
         std::cout << "Gn: " << Gn.rows() << std::endl;
-        contact_points(Gn, Pwns, (filter_contact_spheres_bbx)?&bbxl:NULL);
+        contact_points(Gn, Pwns, (filter_contact_spheres_bbx)?&bbxl:nullptr);
     } else {
         std::cout << "WARNING: ignoring negative spheres" << std::endl;
     }
@@ -146,7 +146,7 @@ int main(int argc, char** argv) {
         P.row(i) = Eigen::RowVector3d(Pwns[i].first[0],  Pwns[i].first[1],  Pwns[i].first[2] );
         N.row(i) = Eigen::RowVector3d(Pwns[i].second[0], Pwns[i].second[1], Pwns[i].second[2]);
     }
-    
+
     std::cout << "Computing " << Pwns.size() << " contact points with normals in " << timer.time() << " sec." << std::endl;
     std::cout << "PSR from " << Pwns.size() << " points with normals" << std::endl;
     timer.reset();
@@ -156,12 +156,17 @@ int main(int argc, char** argv) {
       (Pwns, 6, CGAL::parameters::point_map(CGAL::First_of_pair_property_map<Point_with_normal>()));
 
     std::cout << "Average spacing: " << average_spacing << std::endl;
-
     // These are the defaults
     double sm_angle = 20.0;
     double sm_radius = 30.0;
     double sm_distance = 0.375;
 
+#if 1
+std::ofstream out("points.pwn");
+    for(const auto& pwn : Pwns) {
+        out << pwn.first << " " << pwn.second << std::endl;
+    }
+#endif
 
     if (CGAL::poisson_surface_reconstruction_delaunay
       (Pwns.begin(), Pwns.end(),
