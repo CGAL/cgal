@@ -175,6 +175,13 @@ CGAL_add_named_parameter(progressive_t, progressive, progressive)
 CGAL_add_named_parameter(tiling_t, tiling, tiling)
 CGAL_add_named_parameter(dimension_t, dimension, dimension)
 
+// List of named parameters that we use in the package 'Sphere packing'
+CGAL_add_named_parameter(number_of_target_spheres_t, number_of_target_spheres, number_of_target_spheres)
+CGAL_add_named_parameter(iteration_functor_t, iteration_functor, iteration_functor)
+CGAL_add_named_parameter(iterations_between_splits_t, iterations_between_splits, iterations_between_splits)
+CGAL_add_named_parameter(maximum_splits_t, maximum_splits, maximum_splits)
+CGAL_add_named_parameter(number_of_target_spheres_t, number_of_target_spheres, number_of_target_spheres)
+
 
 // List of named parameters that we use in the package 'Surface Mesh Simplification'
 CGAL_add_named_parameter(get_cost_policy_t, get_cost_policy, get_cost)
