@@ -15,8 +15,8 @@ A filtration class provides:
 Cells are indexed along each dimension and thus identified by their index together with their dimension.
 
 \cgalHasModelsBegin
-\cgalHasModelsBare{`CGAL::Filtration_core<DegreeType>`}
-\cgalHasModelsBare{`CGAL::Filtration_lower_star<DegreeType>`}
+\cgalHasModelsBare{`CGAL::HDVF::Filtration_core<DegreeType>`}
+\cgalHasModelsBare{`CGAL::HDVF::Filtration_lower_star<DegreeType>`}
 \cgalHasModelsEnd
 
 */

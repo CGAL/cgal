@@ -24,7 +24,7 @@ namespace HDVF {
 /*!
  \ingroup PkgHDVFAlgorithmClasses
 
- The class `Filtration_core` implements data structures and methods required by the `CGAL::Filtration` concept.
+ The class `Filtration_core` implements data structures and methods required by the `Filtration` concept.
 
  By definition, a filtration over a chain complex `K` is a sequence of sub complexes \f$\{K_t\,;\, t\in[d_1, \ldots, d_N]\}\f$, where \f$d_i\f$ are scalars, such that:
 

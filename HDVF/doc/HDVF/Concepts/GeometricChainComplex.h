@@ -8,8 +8,8 @@ The concept `GeometricChainComplex` refines the concept `AbstractChainComplex` a
  \cgalRefines{`AbstractChainComplex`}
 
 \cgalHasModelsBegin
-\cgalHasModelsBare{`CGAL::Simplicial_chain_complex<CoefficientType>`}
-\cgalHasModelsBare{`CGAL::Cubical_chain_complex<CoefficientType>`}
+\cgalHasModelsBare{`CGAL::HDVF::Simplicial_chain_complex<CoefficientType>`}
+\cgalHasModelsBare{`CGAL::HDVF::Cubical_chain_complex<CoefficientType>`}
 \cgalHasModelsEnd
 
 */

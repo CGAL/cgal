@@ -12,7 +12,7 @@ The concept `SparseChain` describes the requirements for sparse vectors (called 
 
 
 \cgalHasModelsBegin
-\cgalHasModelsBare{`OSM::Sparse_chain<Ring, ChainTypeFlag>`}
+\cgalHasModelsBare{`CGAL::OSM::Sparse_chain<Ring, ChainTypeFlag>`}
 \cgalHasModelsEnd
 
  \sa `Ring`

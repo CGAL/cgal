@@ -419,7 +419,7 @@ std::ostream& Abstract_simplicial_chain_complex<CoefficientType>::print_complex(
 /*!
  \ingroup PkgHDVFAlgorithmClasses
 
- The class `Simplicial_chain_complex` refines the `Abstract_simplicial_chain_complex` class by assigning coordinates to vertices (ie. 0-simplices). Hence, vtk output is available.
+ The class `Simplicial_chain_complex` refines the `Abstract_simplicial_chain_complex` class by assigning coordinates to vertices (i.e.\ 0-simplices). Hence, vtk output is available.
 
  \cgalModels{GeometricChainComplex}
 

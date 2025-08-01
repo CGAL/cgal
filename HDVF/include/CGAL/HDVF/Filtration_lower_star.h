@@ -70,7 +70,7 @@ std::function<double(size_t)>  deg_fun (const ComplexType& complex, std::functio
 /*!
  \ingroup PkgHDVFAlgorithmClasses
 
- The class `Filtration_lower_star` implements the lower star filtration on a given complex implementing the concept `CGAL::AbstractChainComplex`.
+ The class `Filtration_lower_star` implements the lower star filtration on a given complex implementing the concept `AbstractChainComplex`.
 
  A filtration associated to a chain complex `K` associates to each cell of `K` a scalar value (called degree) such that the degree of a cell is larger than the degrees of its faces.
 

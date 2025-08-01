@@ -15,8 +15,8 @@ It provides methods to:
 
 
 \cgalHasModelsBegin
-\cgalHasModelsBare{`CGAL::Abstract_simplicial_chain_complex<Ring>`}
-\cgalHasModelsBare{`CGAL::Sub_chain_complex_mask<Ring, AbstractChainComplex>`}
+\cgalHasModelsBare{`CGAL::HDVF::Abstract_simplicial_chain_complex<Ring>`}
+\cgalHasModelsBare{`CGAL::HDVF::Sub_chain_complex_mask<Ring, AbstractChainComplex>`}
 \cgalHasModelsEnd
 
 */
