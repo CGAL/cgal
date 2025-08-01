@@ -152,13 +152,13 @@ PolyhedronSPtr OBJFile::load(const std::string& filename) {
                         // fixes issues with floating point precision
                         // @fixme rewrite this without trigonometry
                         if (arg <= -1.0) {
-                            angle = M_PI;
+                            angle = CGAL_PI;
                         } else if (arg >= 1.0) {
                             angle = 0.0;
                         } else {
                             angle = acos(CGAL::to_double(arg));
                         }
-                        if (angle > M_PI/2.0) {
+                        if (angle > CGAL_PI/2.0) {
                             plane = KernelFactory::createPlane3(
                                     poly_vertices[2]->getPoint(),
                                     poly_vertices[1]->getPoint(),

@@ -168,7 +168,7 @@ double Vertex::angle() const {
 #endif
             result = arc_in - arc_out;
             if (result < 0.0) {
-                result += 2*M_PI;
+                result += 2*CGAL_PI;
             }
         }
     }
@@ -176,7 +176,7 @@ double Vertex::angle() const {
 }
 
 bool Vertex::isReflex() const {
-    bool result = (this->angle() > M_PI);
+    bool result = (this->angle() > CGAL_PI);
     return result;
 }
 

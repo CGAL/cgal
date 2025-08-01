@@ -76,7 +76,7 @@ EdgeSPtr PolyhedronIntersection::findDst(FacetSPtr facet, EdgeSPtr edge_src,
         Point3SPtr p_dst = intersect(edge, plane);
         if (p_dst) {
             Vector3SPtr dir = KernelFactory::createVector3((*p_dst)-(*p_src));
-            //if (KernelWrapper::angle(dir_req, dir) < M_PI/2.0) {
+            //if (KernelWrapper::angle(dir_req, dir) < CGAL_PI/2.0) {
             if ((*dir_req * *dir) > 0.0) {
                 CGAL::FT dist = KernelWrapper::distance(p_src, p_dst);
                 if (dist < dist_min) {

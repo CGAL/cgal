@@ -51,7 +51,7 @@ PolyhedronSPtr AngleVertexSplitter::splitVertex(VertexSPtr vertex) {
         queue.pop_front();
 
         // 1. search for 2 facets that give a new edge
-        double angle_min = 2*M_PI;
+        double angle_min = 2*CGAL_PI;
         FacetSPtr facet_min1;
         FacetSPtr facet_min2;
         std::list<FacetWPtr>::iterator it_f1 = vertex1->facets().begin();
@@ -66,7 +66,7 @@ PolyhedronSPtr AngleVertexSplitter::splitVertex(VertexSPtr vertex) {
                     continue;
                 }
                 // for reflex and convex vertices
-                double angle = M_PI - KernelWrapper::angle(
+                double angle = CGAL_PI - KernelWrapper::angle(
                         facet1->plane(), facet2->plane());
                 if (angle < angle_min) {
                     facet_min1 = facet1;

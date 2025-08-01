@@ -567,7 +567,7 @@ double KernelWrapper::angle(Vector3SPtr v1, Vector3SPtr v2) {
     arg = ((*v1)*(*v2)) / CGAL::disallowed_sqrt(v1->squared_length() * v2->squared_length());
     // fixes issues with floating point precision
     if (arg <= -1.0) {
-        result = M_PI;
+        result = CGAL_PI;
     } else if (arg >= 1.0) {
         result = 0.0;
     } else {
@@ -589,10 +589,10 @@ double KernelWrapper::angle(Plane3SPtr plane, Line3SPtr line) {
     Vector3SPtr v_plane = KernelFactory::createVector3(plane);
     Vector3SPtr v_line = KernelFactory::createVector3(line);
     result = angle(v_plane, v_line);
-    if (result > M_PI/2.0) {
-        result = result - M_PI/2.0;
+    if (result > CGAL_PI/2.0) {
+        result = result - CGAL_PI/2.0;
     } else {
-        result = M_PI/2.0 - result;
+        result = CGAL_PI/2.0 - result;
     }
     return result;
 }
@@ -645,9 +645,9 @@ Point3SPtr KernelWrapper::projection(Plane3SPtr plane, Point3SPtr point) {
 int KernelWrapper::comparePoints(Vector3SPtr v_dir, Point3SPtr p_1, Point3SPtr p_2) {
     int result = 0;
     CGAL::FT value = *v_dir * (*p_2 - *p_1);
-    if (value > 0.0) {         // angle < M_PI/2.0
+    if (value > 0.0) {         // angle < CGAL_PI/2.0
         result = -1;
-    } else if (value < 0.0) {  // angle > M_PI/2.0
+    } else if (value < 0.0) {  // angle > CGAL_PI/2.0
         result = 1;
     }
     return result;

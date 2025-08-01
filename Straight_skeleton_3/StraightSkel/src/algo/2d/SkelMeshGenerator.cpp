@@ -369,7 +369,7 @@ void SkelMeshGenerator::splitCellR(EdgeSPtr edge) {
             Vector2SPtr dir_ray = KernelFactory::createVector2(
                     *(ray->getDst()->getPoint()) - *(ray->getSrc()->getPoint()));
             MeshCellSPtr cell_left;
-            if ((*dir_ray * *dir_inside) > 0) {  // angle < M_PI/2.0
+            if ((*dir_ray * *dir_inside) > 0) {  // angle < CGAL_PI/2.0
                 cell_left = splitCell(cell, ray->getSrc(), ray->getDst());
             } else {
                 cell_left = splitCell(cell, ray->getDst(), ray->getSrc());

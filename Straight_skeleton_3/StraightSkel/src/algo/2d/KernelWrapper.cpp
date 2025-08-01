@@ -139,7 +139,7 @@ double KernelWrapper::angle(Vector2SPtr v1, Vector2SPtr v2) {
 #endif
     // fixes issues with floating point precision
     if (arg <= -1.0) {
-        result = M_PI;
+        result = CGAL_PI;
     } else if (arg >= 1.0) {
         result = 0.0;
     } else {
@@ -175,9 +175,9 @@ Point2SPtr KernelWrapper::projection(Line2SPtr line, Point2SPtr point) {
 int KernelWrapper::compatePoints(Vector2SPtr v_dir, Point2SPtr p_1, Point2SPtr p_2) {
     int result = 0;
     CGAL::FT value = *v_dir * (*p_2 - *p_1);
-    if (value > 0.0) {         // angle < M_PI/2.0
+    if (value > 0.0) {         // angle < CGAL_PI/2.0
         result = -1;
-    } else if (value < 0.0) {  // angle > M_PI/2.0
+    } else if (value < 0.0) {  // angle > CGAL_PI/2.0
         result = 1;
     }
     return result;

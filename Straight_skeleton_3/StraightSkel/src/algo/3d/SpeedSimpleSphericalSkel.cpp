@@ -187,7 +187,7 @@ CGAL::FT SpeedSimpleSphericalSkel::speed(CircularVertexSPtr vertex) {
     CGAL::FT result = 0.0;
     CircularEdgeSPtr edge_in = getEdgeOrigin(vertex->getEdgeIn());
     CircularEdgeSPtr edge_out = getEdgeOrigin(vertex->getEdgeOut());
-    double angle = M_PI - KernelWrapper::angle(
+    double angle = CGAL_PI - KernelWrapper::angle(
             edge_in->supportingPlane(), edge_out->supportingPlane());
     result = 1.0/sin(angle/2.0);
     return result;

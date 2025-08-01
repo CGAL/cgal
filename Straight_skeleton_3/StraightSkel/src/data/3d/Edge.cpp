@@ -403,7 +403,7 @@ EdgeSPtr Edge::next(VertexSPtr vertex) const {
         if (edges_possible.size() == 1) {
             result = edges_possible.front();
         } else {
-            double angle_min = 2*M_PI;
+            double angle_min = 2*CGAL_PI;
             std::list<EdgeSPtr>::iterator it_e = edges_possible.begin();
             while (it_e != edges_possible.end()) {
                 EdgeSPtr edge = *it_e++;
@@ -565,9 +565,9 @@ double Edge::angle() const {
         result = acos(((*v1) * (*v2)) /
                    sqrt(v1->squared_length() * v2->squared_length()));
 # endif
-        result = M_PI - result;
+        result = CGAL_PI - result;
         if (isReflex()) {
-            result = 2.0*M_PI - result;
+            result = 2.0*CGAL_PI - result;
         }
     } else {
         CGAL_SS3_HDS_TRACE("Warning: Not able to determine angle.");
@@ -655,10 +655,10 @@ double Edge::angleTo(EdgeSPtr edge) const {
 # endif
         if ((facet_l == edge->getFacetR() && facet_r == edge->getFacetL()) ||
                 (facet_l == edge->getFacetL() && facet_r == edge->getFacetR())) {
-            if (angle < M_PI/2.0) {
+            if (angle < CGAL_PI/2.0) {
                 result = 0.0;
             } else {
-                result = M_PI;
+                result = CGAL_PI;
             }
         } else {
             result = angle;
@@ -672,8 +672,8 @@ double Edge::angleTo(EdgeSPtr edge) const {
             angle_normal = acos(((*normal) * crossprod) /
                     sqrt(normal->squared_length() * crossprod.squared_length()));
 # endif
-            if (angle_normal > M_PI/2.0) {
-                result += M_PI;
+            if (angle_normal > CGAL_PI/2.0) {
+                result += CGAL_PI;
             }
         }
     } else {

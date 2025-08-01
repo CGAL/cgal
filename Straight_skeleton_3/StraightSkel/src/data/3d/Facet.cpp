@@ -962,7 +962,7 @@ bool Facet::makeFirstConvex() {
         points[1] = edge->dst(self)->getPoint();
         points[2] = edge_next->dst(self)->getPoint();
 
-#if 1 // @fixme is this correct? the M_PI/4.0 below is confusing... Was it supposed to be M_PI/2.0?
+#if 1 // @fixme is this correct? the CGAL_PI/4.0 below is confusing... Was it supposed to be CGAL_PI/2.0?
         if(!CGAL::collinear(*(points[0]), *(points[1]), *(points[2])))
         {
           if(CGAL::angle(*(points[0]), *(points[1]), *(points[2]), *normal) == CGAL::ACUTE)
@@ -987,13 +987,13 @@ bool Facet::makeFirstConvex() {
 
           // fixes issues with floating point precision
           if (arg <= -1.0) {
-              angle = M_PI;
+              angle = CGAL_PI;
           } else if (arg >= 1.0) {
               angle = 0.0;
           } else {
               angle = acos(arg);
           }
-          if (angle < M_PI/4.0) {
+          if (angle < CGAL_PI/4.0) {
               edge_begin = edge;
               result = true;
               break;

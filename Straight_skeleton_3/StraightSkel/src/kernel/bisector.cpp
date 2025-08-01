@@ -31,7 +31,7 @@ Line2* bisector(const Line2* line1, const Line2* line2) {
     } else {
         Vector2 normal1 = line1->normal();
         Vector2 normal2 = line2->normal();
-        if (normal1.angle(normal2) < M_PI/2.0) {
+        if (normal1.angle(normal2) < CGAL_PI/2.0) {
             unsigned int max_i = 0;
             double max_abs = 0.0;
             for (unsigned int i = 0; i < 2; i++) {
@@ -70,7 +70,7 @@ Plane3* bisector(const Plane3* plane1, const Plane3* plane2) {
     } else {
         Vector3 normal1 = plane1->normal();
         Vector3 normal2 = plane2->normal();
-        if (normal1.angle(normal2) < M_PI/2.0) {
+        if (normal1.angle(normal2) < CGAL_PI/2.0) {
             unsigned int max_i = 0;
             double max_abs = 0.0;
             for (unsigned int i = 0; i < 3; i++) {

@@ -462,15 +462,15 @@ SphericalPolygonSPtr ProjSimpleSphericalSkel::shiftEdges(SphericalPolygonSPtr po
             SphericalSkelEdgeDataSPtr data_edge =
                     std::dynamic_pointer_cast<SphericalSkelEdgeData>(edge_in->getData());
             Line3SPtr rotation_axis = data_edge->getRotationAxis();
-            if (angle > M_PI/2.0) {
-                angle = M_PI - angle;
+            if (angle > CGAL_PI/2.0) {
+                angle = CGAL_PI - angle;
             }
             double diff = (1.0/tan(angle)) + CGAL::to_double(offset * data_edge->getSpeed());
             double delta_angle = 0.0;
             if (diff == 0.0) {
-                delta_angle = -(M_PI/2.0)+angle;
+                delta_angle = -(CGAL_PI/2.0)+angle;
             } else if (diff < 0.0) {
-                delta_angle = atan(diff) - (M_PI/2.0)+angle;
+                delta_angle = atan(diff) - (CGAL_PI/2.0)+angle;
             } else {
                 delta_angle = -atan(1.0/diff) + angle;
             }
@@ -490,15 +490,15 @@ SphericalPolygonSPtr ProjSimpleSphericalSkel::shiftEdges(SphericalPolygonSPtr po
             SphericalSkelEdgeDataSPtr data_edge =
                     std::dynamic_pointer_cast<SphericalSkelEdgeData>(edge_out->getData());
             Line3SPtr rotation_axis = data_edge->getRotationAxis();
-            if (angle > M_PI/2.0) {
-                angle = M_PI - angle;
+            if (angle > CGAL_PI/2.0) {
+                angle = CGAL_PI - angle;
             }
             double diff = (1.0/tan(angle)) + CGAL::to_double(offset * data_edge->getSpeed());
             double delta_angle = 0.0;
             if (diff == 0.0) {
-                delta_angle = -(M_PI/2.0)+angle;
+                delta_angle = -(CGAL_PI/2.0)+angle;
             } else if (diff < 0.0) {
-                delta_angle = atan(diff) - (M_PI/2.0)+angle;
+                delta_angle = atan(diff) - (CGAL_PI/2.0)+angle;
             } else {
                 delta_angle = -atan(1.0/diff) + angle;
             }

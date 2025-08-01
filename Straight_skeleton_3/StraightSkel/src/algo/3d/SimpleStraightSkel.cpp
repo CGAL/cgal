@@ -1222,7 +1222,7 @@ bool SimpleStraightSkel::isTriangle(FacetSPtr facet, EdgeSPtr edge_begin) {
 //            Vector3SPtr v1 = KernelFactory::createVector3(plane);
 //            Vector3SPtr v2 = KernelFactory::createVector3(facet->getPlane());
 //            if (((*v1) * (*v2)) > 0.0) {
-//                // angle between orthogonal vectors of planes < M_PI/2.0
+//                // angle between orthogonal vectors of planes < CGAL_PI/2.0
 //                // not a hole
 //                result = true;
 //            }

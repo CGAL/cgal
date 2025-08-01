@@ -257,9 +257,9 @@ double TransSimpleSphericalSkel::angleOf(CircularVertexSPtr vertex) {
     Plane3SPtr plane_out = edge_out->getSupportingPlane();
     double angle = KernelWrapper::angle(plane_in, plane_out);
     if (isReflex(vertex)) {
-        result = M_PI + angle;
+        result = CGAL_PI + angle;
     } else {
-        result = M_PI - angle;
+        result = CGAL_PI - angle;
     }
     return result;
 }
@@ -573,7 +573,7 @@ SphericalLeaveEventSPtr TransSimpleSphericalSkel::nextLeaveEvent(SphericalPolygo
             Point3SPtr p_offset = KernelWrapper::projection(line_offset, p_center);
             Vector3SPtr v_dir_offset = KernelFactory::createVector3(*p_offset - *p_dist);
             Vector3SPtr v_dir_center = KernelFactory::createVector3(*p_dist - *p_center);
-            //if (KernelWrapper::angle(v_dir_offset, v_dir_center) > M_PI/2.0) {
+            //if (KernelWrapper::angle(v_dir_offset, v_dir_center) > CGAL_PI/2.0) {
             if ((*v_dir_offset * *v_dir_center) < 0.0) {
                 // moves towards center
                 continue;
@@ -652,7 +652,7 @@ SphericalReturnEventSPtr TransSimpleSphericalSkel::nextReturnEvent(SphericalPoly
         Point3SPtr p_offset = KernelWrapper::projection(line_offset, p_center);
         Vector3SPtr v_dir_offset = KernelFactory::createVector3(*p_offset - *p_dist);
         Vector3SPtr v_dir_center = KernelFactory::createVector3(*p_center - *p_dist);
-        //if (KernelWrapper::angle(v_dir_offset, v_dir_center) > M_PI/2.0) {
+        //if (KernelWrapper::angle(v_dir_offset, v_dir_center) > CGAL_PI/2.0) {
         if ((*v_dir_offset * *v_dir_center) < 0.0) {
             // moves away from center
             continue;
@@ -721,7 +721,7 @@ SphericalDblLeaveEventSPtr TransSimpleSphericalSkel::nextDblLeaveEvent(Spherical
                     Point3SPtr p_offset = KernelWrapper::projection(line_offset, p_center);
                     Vector3SPtr v_dir_offset = KernelFactory::createVector3(*p_offset - *p_dist);
                     Vector3SPtr v_dir_center = KernelFactory::createVector3(*p_dist - *p_center);
-                    //if (KernelWrapper::angle(v_dir_offset, v_dir_center) > M_PI/2.0) {
+                    //if (KernelWrapper::angle(v_dir_offset, v_dir_center) > CGAL_PI/2.0) {
                     if ((*v_dir_offset * *v_dir_center) < 0.0) {
                         // moves towards center
                         continue;
@@ -789,7 +789,7 @@ SphericalDblReturnEventSPtr TransSimpleSphericalSkel::nextDblReturnEvent(Spheric
                 Point3SPtr p_offset = KernelWrapper::projection(line_offset, p_center);
                 Vector3SPtr v_dir_offset = KernelFactory::createVector3(*p_offset - *p_dist);
                 Vector3SPtr v_dir_center = KernelFactory::createVector3(*p_center - *p_dist);
-                //if (KernelWrapper::angle(v_dir_offset, v_dir_center) > M_PI/2.0) {
+                //if (KernelWrapper::angle(v_dir_offset, v_dir_center) > CGAL_PI/2.0) {
                     if ((*v_dir_offset * *v_dir_center) < 0.0) {
                     // moves away from center
                     continue;

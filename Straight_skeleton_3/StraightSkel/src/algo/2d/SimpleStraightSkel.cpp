@@ -351,7 +351,7 @@ Point2SPtr SimpleStraightSkel::crashAt(VertexSPtr vertex, EdgeSPtr edge) {
     CGAL::FT speed_edge = KernelWrapper::distance(p_edge_offset, p_edge);
 
     Vector2SPtr dir = KernelFactory::createVector2(*p_edge - *p_vertex);
-    //if (KernelWrapper::angle(dir, arc->getDirection()) < M_PI/2.0) {
+    //if (KernelWrapper::angle(dir, arc->getDirection()) < CGAL_PI/2.0) {
     if ((*dir * *(arc->getDirection())) > 0.0) {
         CGAL::FT distance = KernelWrapper::distance(p_edge, p_vertex);
         CGAL::FT dist_vertex = distance * speed_vertex/(speed_vertex+speed_edge);

@@ -166,9 +166,9 @@ void RotSimpleSphericalSkel::initSpeeds(SphericalPolygonSPtr polygon) {
         CircularEdgeSPtr edge_out = vertex->getEdgeOut();
         Plane3SPtr plane_in = edge_in->supportingPlane();
         Plane3SPtr plane_out = edge_out->supportingPlane();
-        double angle = M_PI - KernelWrapper::angle(plane_in, plane_out);
+        double angle = CGAL_PI - KernelWrapper::angle(plane_in, plane_out);
         if (isReflex(vertex)) {
-            angle = 2.0*M_PI - angle;
+            angle = 2.0*CGAL_PI - angle;
         }
         double speed = 1.0/sin(angle/2.0);
         SphericalSkelVertexDataSPtr data;
@@ -466,7 +466,7 @@ CGAL::FT RotSimpleSphericalSkel::distanceOffset(CircularEdgeSPtr edge_begin, CGA
             SphericalSkelVertexDataSPtr data_src =
                     std::dynamic_pointer_cast<SphericalSkelVertexData>(vertex_src->getData());
             Plane3SPtr plane_src_arc = data_src->getArc()->getSupportingPlane();
-            double angle = M_PI - KernelWrapper::angle(plane_src_arc, plane_edge_rot_prev);
+            double angle = CGAL_PI - KernelWrapper::angle(plane_src_arc, plane_edge_rot_prev);
             Line3SPtr axis = KernelWrapper::intersection(plane_src_arc, plane_edge_rot_prev);
             plane_edge_rot = KernelWrapper::rotatePlane(plane_src_arc, axis, angle);
 
@@ -586,7 +586,7 @@ SphericalPolygonSPtr RotSimpleSphericalSkel::shiftEdges(SphericalPolygonSPtr pol
                 assert(vertex_src_rot == data_src->getOffsetVertex());
                 Plane3SPtr plane_src_arc = data_src->getArc()->getSupportingPlane();
                 Plane3SPtr plane_src_in = vertex_src_rot->getEdgeIn()->supportingPlane();
-                double angle = M_PI - KernelWrapper::angle(plane_src_arc, plane_src_in);
+                double angle = CGAL_PI - KernelWrapper::angle(plane_src_arc, plane_src_in);
                 Line3SPtr axis = KernelWrapper::intersection(plane_src_arc, plane_src_in);
                 Plane3SPtr plane_edge_rot = KernelWrapper::rotatePlane(plane_src_arc, axis, angle);
 
@@ -644,7 +644,7 @@ void RotSimpleSphericalSkel::checkAngles(SphericalPolygonSPtr polygon) {
         Plane3SPtr plane_arc = data->getArc()->getSupportingPlane();
         Plane3SPtr plane_in = vertex->getEdgeIn()->supportingPlane();
         Plane3SPtr plane_out = vertex->getEdgeOut()->supportingPlane();
-        double angle_in =  M_PI - KernelWrapper::angle(plane_arc, plane_in);
+        double angle_in =  CGAL_PI - KernelWrapper::angle(plane_arc, plane_in);
         double angle_out = KernelWrapper::angle(plane_arc, plane_out);
         CGAL_SS3_CORE_TRACE(angle_in - angle_out);
     }
