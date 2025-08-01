@@ -24,6 +24,8 @@
 #include "algo/3d/KernelWrapper.h"
 
 #include <CGAL/point_generators_3.h>
+#include <CGAL/Projection_traits_xy_3.h>
+#include <CGAL/Projection_traits_xz_3.h>
 
 #include <limits>
 #include <list>
@@ -383,6 +385,172 @@ bool SelfIntersection::isInsideWithRayShooting(const Point3& point,
 
     CGAL_unreachable();
     return false;
+}
+
+// returns -1 if point is left of segment <low, high>, 0 if its on the segment
+// and 1 if it is to the right
+// precondition: low.y < point.y < high.y
+template <class Point, class Orientation_2, class CompareX_2>
+int which_side_in_slab(const Point& point,
+                       const Point& low, const Point& high,
+                       Orientation_2& orientation_2, CompareX_2& compare_x_2)
+{
+    // first we try to decide on x coordinate values alone
+    // This is an optimization (whether this is really faster for
+    // a homogeneous kernel is not clear, as comparisons can be expensive.
+    CGAL::Comparison_result low_x_comp_res = compare_x_2(point, low);
+    CGAL::Comparison_result high_x_comp_res = compare_x_2(point, high);
+    if (low_x_comp_res == CGAL::SMALLER) {
+        if (high_x_comp_res == CGAL::SMALLER)
+            return -1;
+    } else {
+        switch (high_x_comp_res) {
+          case CGAL::LARGER: return 1;
+          case CGAL::SMALLER: break;
+          case  CGAL::EQUAL: return (low_x_comp_res ==  CGAL::EQUAL) ? 0 : 1;
+        }
+    }
+    switch (orientation_2(low, point, high)) {
+        case CGAL::LEFT_TURN: return 1;
+        case CGAL::RIGHT_TURN: return -1;
+        default: return 0;
+    }
+}
+
+template <typename ProjectionTraits>
+CGAL::Bounded_side boundedSide(Point3SPtr point, FacetSPtr facet, const ProjectionTraits& traits)
+{
+    bool is_inside = false;
+
+    // Iterate over all edges, treating each as a segment in the projected plane
+    for (EdgeSPtr edge : facet->edges()) {
+        Point3SPtr p_src = edge->src(facet)->getPoint();
+        Point3SPtr p_dst = edge->dst(facet)->getPoint();
+
+        // Ray-shooting logic: check if the edge crosses the horizontal ray from point
+        typename ProjectionTraits::Compare_y_2 compare_y_2 = traits.compare_y_2_object();
+        typename ProjectionTraits::Compare_x_2 compare_x_2 = traits.compare_x_2_object();
+        typename ProjectionTraits::Orientation_2 orientation_2 = traits.orientation_2_object();
+
+        CGAL::Comparison_result src_y = compare_y_2(*p_src, *point);
+        CGAL::Comparison_result dst_y = compare_y_2(*p_dst, *point);
+
+#if 0
+        if ((src_y == CGAL::SMALLER && dst_y == CGAL::LARGER) ||
+            (src_y == CGAL::LARGER && dst_y == CGAL::SMALLER)) {
+            CGAL::Orientation o = orientation_2(*p_src, *p_dst, *point);
+            if (o == CGAL::LEFT_TURN) is_inside = !is_inside;
+            else if (o == CGAL::COLLINEAR) return CGAL::ON_BOUNDARY;
+        } else if (src_y == CGAL::EQUAL) {
+            switch (compare_x_2(*point, *p_src)) {
+                case CGAL::SMALLER:
+                    if (dst_y == CGAL::LARGER) is_inside = !is_inside;
+                    break;
+                case CGAL::EQUAL:
+                    return CGAL::ON_BOUNDARY;
+                case CGAL::LARGER:
+                    break;
+            }
+        } else if (dst_y == CGAL::EQUAL) {
+            switch (compare_x_2(*point, *p_dst)) {
+                case CGAL::SMALLER:
+                    if (src_y == CGAL::LARGER) is_inside = !is_inside;
+                    break;
+                case CGAL::EQUAL:
+                    return CGAL::ON_BOUNDARY;
+                case CGAL::LARGER:
+                    break;
+            }
+        }
+#else
+        switch (src_y) {
+          case CGAL::SMALLER:
+            switch (dst_y) {
+              case CGAL::SMALLER:
+                break;
+              case  CGAL::EQUAL:
+                switch (compare_x_2(*point, *p_dst)) {
+                  case CGAL::SMALLER: is_inside = !is_inside; break;
+                  case  CGAL::EQUAL:   return CGAL::ON_BOUNDARY;
+                  case CGAL::LARGER:  break;
+                }
+                break;
+              case CGAL::LARGER:
+                switch (which_side_in_slab(*point, *p_src, *p_dst, orientation_2, compare_x_2)) {
+                  case -1: is_inside = !is_inside; break;
+                  case  0: return CGAL::ON_BOUNDARY;
+                }
+                break;
+            }
+            break;
+          case  CGAL::EQUAL:
+            switch (dst_y) {
+              case CGAL::SMALLER:
+                switch (compare_x_2(*point, *p_src)) {
+                  case CGAL::SMALLER: is_inside = !is_inside; break;
+                  case  CGAL::EQUAL:   return CGAL::ON_BOUNDARY;
+                  case CGAL::LARGER:  break;
+                }
+                break;
+              case  CGAL::EQUAL:
+                switch (compare_x_2(*point, *p_src)) {
+                  case CGAL::SMALLER:
+                    if (compare_x_2(*point, *p_dst) != CGAL::SMALLER)
+                        return CGAL::ON_BOUNDARY;
+                    break;
+                  case  CGAL::EQUAL: return CGAL::ON_BOUNDARY;
+                  case CGAL::LARGER:
+                    if (compare_x_2(*point, *p_dst) != CGAL::LARGER)
+                        return CGAL::ON_BOUNDARY;
+                    break;
+                }
+                break;
+              case CGAL::LARGER:
+                if (compare_x_2(*point, *p_src) ==  CGAL::EQUAL) {
+                  return CGAL::ON_BOUNDARY;
+                }
+                break;
+            }
+            break;
+          case CGAL::LARGER:
+            switch (dst_y) {
+              case CGAL::SMALLER:
+                switch (which_side_in_slab(*point, *p_dst, *p_src, orientation_2, compare_x_2)) {
+                  case -1: is_inside = !is_inside; break;
+                  case  0: return CGAL::ON_BOUNDARY;
+                }
+                break;
+              case  CGAL::EQUAL:
+                if (compare_x_2(*point, *p_dst) ==  CGAL::EQUAL) {
+                  return CGAL::ON_BOUNDARY;
+                }
+                break;
+              case CGAL::LARGER:
+                break;
+            }
+            break;
+        }
+#endif
+    }
+
+    return is_inside ? CGAL::ON_BOUNDED_SIDE : CGAL::ON_UNBOUNDED_SIDE;
+}
+
+bool SelfIntersection::isInsideWithRayShootingV2(Point3SPtr point,
+                                                 FacetSPtr facet)
+{
+    CGAL_SS3_ALGO_TRACE("isInsideWithRayShootingV2(" << point << ", F" << facet->getID() << ")");
+    Plane3SPtr pl = facet->plane();
+    Vector3SPtr normal = KernelFactory::createVector3(pl);
+    if (is_zero(normal->z())) {
+        typedef CGAL::Projection_traits_xz_3<CGAL::K> Traits_2;
+        Traits_2 traits;
+        return (boundedSide(point, facet, traits) != CGAL::ON_UNBOUNDED_SIDE);
+    } else {
+        typedef CGAL::Projection_traits_xy_3<CGAL::K> Traits_2;
+        Traits_2 traits;
+        return (boundedSide(point, facet, traits) != CGAL::ON_UNBOUNDED_SIDE);
+    }
 }
 
 bool SelfIntersection::isEdgeInsideFacet(FacetSPtr facet,

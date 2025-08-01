@@ -7656,16 +7656,17 @@ SimpleStraightSkel::isActualPierceEvent(const CGAL::FT& current_offset,
         offset_vertex->setPoint(point_offset);
     }
 
-    // Note that this result could be meaningless if the offset facet
-    // is not a simple polygon. However, if it's not simple, then some event
-    // has happened before the pierce, and the pierce event - if whitelisted -
-    // would be checked again later, thus it's safe to call.
-    if (!SelfIntersection::isInsideWithRayShooting(*point, facet_clone, false /*deg 1*/)) {
+#if 1 //def CGAL_SLS3_NEW_IS_INSIDE
+    if (!SelfIntersection::isInsideWithRayShootingV2(point, facet_clone)) {
+        CGAL_SS3_CORE_TRACE_V(8, "Pierce rejected at pop time");
+        return false;
+    }
+#else
+    if (!SelfIntersection::isInsideWithRayShootingV2(point, facet_clone)) {
         CGAL_SS3_CORE_TRACE_V(8, "Pierce rejected at pop time (1)");
         return false;
     }
 
-    // @todo would be good if it could be merged with the function above...
     bool boundary_rejection = false;
     std::list<EdgeSPtr>::iterator it_fe = facet_clone->edges().begin();
     while (it_fe != facet_clone->edges().end()) {
@@ -7686,6 +7687,7 @@ SimpleStraightSkel::isActualPierceEvent(const CGAL::FT& current_offset,
         CGAL_SS3_CORE_TRACE_V(8, "Pierce rejected at pop time (2)");
         return false;
     }
+#endif
 
     CGAL_SS3_CORE_TRACE_V(8, "Pierce event accepted");
     return true;

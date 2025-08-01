@@ -35,6 +35,8 @@ public:
     static bool isInsideWithRayShooting(const Point3& point,
                                         FacetSPtr facet,
                                         const bool handle_deg1_as_ray);
+    static bool isInsideWithRayShootingV2(Point3SPtr point,
+                                          FacetSPtr facet);
     static bool isEdgeInsideFacet(FacetSPtr facet, EdgeSPtr edge, bool handle_deg1_as_ray);
     static bool hasSelfIntersectingSurface(PolyhedronSPtr polyhedron);
 
