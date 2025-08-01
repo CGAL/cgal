@@ -2043,6 +2043,20 @@ void dump_edges(const std::vector<Edge>& edges, const char* filename)
   ofs.close();
 }
 
+template <typename VertexPair>
+void dump_edge_pairs(const std::vector<VertexPair>& edges, const char* filename)
+{
+  std::ofstream ofs(filename);
+  ofs.precision(17);
+
+  for (const VertexPair& e : edges)
+  {
+    ofs << "2 " << point(e.first->point())
+        << " " << point(e.second->point()) << std::endl;
+  }
+  ofs.close();
+}
+
 template <typename EdgePair> void dump_edge(const EdgePair& vp, const char* filename) {
   std::ofstream ofs(filename);
   ofs.precision(17);
@@ -2670,6 +2684,38 @@ std::unordered_set<std::size_t> get_cells_timestamps(const CellRange& cells) {
   return timestamps;
 }
 
+#include <mutex>
+#include <sstream>
+#include <iomanip>
+
+class ThreadSafeLogger {
+private:
+    std::ofstream log_file;
+    std::mutex log_mutex;
+    
+public:
+    ThreadSafeLogger(const std::string& filename) : log_file(filename) {
+        // Set precision to 17 decimal places
+        log_file << std::fixed << std::setprecision(17);
+    }
+    
+    template<typename... Args>
+    void log(Args&&... args) {
+        std::lock_guard<std::mutex> lock(log_mutex);
+        std::ostringstream oss;
+        oss << std::fixed << std::setprecision(17);
+        (oss << ... << args);
+        log_file << oss.str() << std::endl;
+        log_file.flush(); // Ensure immediate write
+    }
+    
+    ~ThreadSafeLogger() {
+        std::lock_guard<std::mutex> lock(log_mutex);
+        if (log_file.is_open()) {
+            log_file.close();
+        }
+    }
+};
 
 
 
