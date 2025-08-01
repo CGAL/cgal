@@ -15,7 +15,7 @@
 
 /*!
 \cgalPkgDescriptionBegin{HDVF,PkgHDVF}
-\cgalPkgPicture{pkg-small.png}
+\cgalPkgPicture{HDVF-small.png}
 
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Alexandra Bac}
@@ -25,8 +25,7 @@ The package provides an implementation of Homological Discrete Vector Fields, a 
 \cgalPkgSummaryEnd
 
 \cgalPkgShortInfoBegin
-\cgalPkgSince{X.X}
-\cgalPkgDependsOn{\ref PkgDEPENDENCY}
+\cgalPkgSince{6.2}
 \cgalPkgBib{cgal:b-hdvf}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 
