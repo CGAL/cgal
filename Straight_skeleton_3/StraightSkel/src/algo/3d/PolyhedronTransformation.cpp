@@ -447,7 +447,28 @@ void PolyhedronTransformation::shiftFacetsInPlace(PolyhedronSPtr polyhedron,
                                                   const bool recompute_positions) {
     CGAL_SS3_TRANSF_TRACE("~~~~ Shift polyhedron by " << offset << " [in place]");
 
-    // @speed shift planes once and recompute point and edge positions from this
+    std::list<FacetSPtr>::iterator it_f = polyhedron->facets().begin();
+    while (it_f != polyhedron->facets().end()) {
+        FacetSPtr facet = *it_f++;
+
+        // ugly hack while events still use getOffsetXXX() to access elements in the shifted polyhedron
+        //
+        // when getOffsetXXX will no longer be needed, it also means that combinatorics stored
+        // in the events can become weak pointers
+
+        SkelFacetDataSPtr data;
+        if (facet->hasData()) {
+            data = std::dynamic_pointer_cast<SkelFacetData>(facet->getData());
+        } else {
+            data = SkelFacetData::create(facet);
+        }
+        data->setOffsetFacet(facet);
+
+        CGAL::FT speed = data->getSpeed();
+        Plane3SPtr offset_plane = KernelWrapper::offsetPlane(facet->plane(), offset*speed);
+        facet->setPlane(offset_plane);
+    }
+
     std::list<VertexSPtr>::iterator it_v = polyhedron->vertices().begin();
     while (it_v != polyhedron->vertices().end()) {
         VertexSPtr vertex = *it_v++;
@@ -457,55 +478,33 @@ void PolyhedronTransformation::shiftFacetsInPlace(PolyhedronSPtr polyhedron,
 
         Point3SPtr old_point = vertex->getPoint(), new_point;
         if (offset != 0 || recompute_positions) {
-            new_point = shiftPoint(vertex, offset);
-            if (!new_point) {
-                CGAL_SS3_TRANSF_TRACE("Warning: Failed to shift polyhedron");
-                return;
-            }
+            CGAL_assertion_code(bool ok =)
+            resetPoint(vertex);
+            CGAL_assertion(ok);
         }
 
-        // the old point position is not used to compute new point position: we need only the planes
-        vertex->setPoint(new_point);
-
-        // ugly hack while events still use getOffsetXYZ() to access elements in the shifted polyhedron
-        // if getOffsetXYZ is no longer needed, it also means that combinatorics stored
-        // in the events can be weak pointers
+        // @todo hack
         SkelVertexDataSPtr data;
         if (vertex->hasData()) {
             data = std::dynamic_pointer_cast<SkelVertexData>(vertex->getData());
         } else {
             data = SkelVertexData::create(vertex);
         }
-        data->setOffsetVertex(vertex); // @todo hack
+        data->setOffsetVertex(vertex);
     }
 
     std::list<EdgeSPtr>::iterator it_e = polyhedron->edges().begin();
     while (it_e != polyhedron->edges().end()) {
         EdgeSPtr edge = *it_e++;
+
+        // @todo hack
         SkelEdgeDataSPtr data;
         if (edge->hasData()) {
             data = std::dynamic_pointer_cast<SkelEdgeData>(edge->getData());
         } else {
             data = SkelEdgeData::create(edge);
         }
-        data->setOffsetEdge(edge); // @todo hack
-    }
-
-    std::list<FacetSPtr>::iterator it_f = polyhedron->facets().begin();
-    while (it_f != polyhedron->facets().end()) {
-        FacetSPtr facet = *it_f++;
-
-        SkelFacetDataSPtr data;
-        if (facet->hasData()) {
-            data = std::dynamic_pointer_cast<SkelFacetData>(facet->getData());
-        } else {
-            data = SkelFacetData::create(facet);
-        }
-        data->setOffsetFacet(facet); // @todo hack
-
-        CGAL::FT speed = data->getSpeed();
-        Plane3SPtr offset_plane = KernelWrapper::offsetPlane(facet->plane(), offset*speed);
-        facet->setPlane(offset_plane);
+        data->setOffsetEdge(edge);
     }
 
     CGAL_postcondition(bool(polyhedron) && polyhedron->isConsistent());
