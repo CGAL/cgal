@@ -30,20 +30,20 @@ namespace CGAL {
  *
  * Note that the precision of the method is limited by the precision of the GPU, i.e., non-exact arithmetic with 32-bit floating point numbers is used.
  *
- * \tparam FaceGraph a model of `HalfedgeListGraph`, `FaceListGraph`, and `MutableFaceGraph`
+ * \tparam TriangleMesh a model of `HalfedgeListGraph`, `FaceListGraph`, and `MutableFaceGraph`
  *
- * \tparam OutputIterator must be an output iterator accepting variables of type `Sphere_3`.
+ * \tparam OutputIterator must be an output iterator accepting variables of type `geom_traits::Sphere_3`.
  *
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
- * \param mesh the input mesh to pack spheres into. It has to be a closed triangle mesh and may not have self-intersections.
+ * \param tm the input tm to pack spheres into. It has to be a closed triangle mesh and may not have self-intersections.
  * \param out output iterator into which the packed spheres are written.
  * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *
  *   \cgalParamNBegin{number_of_target_spheres}
- *     \cgalParamDescription{target number of spheres to be packed into `mesh`.}
+ *     \cgalParamDescription{target number of spheres to be packed into `tm`.}
  *     \cgalParamType{unsigned int}
  *     \cgalParamDefault{10,000}
  *   \cgalParamNEnd
@@ -57,7 +57,7 @@ namespace CGAL {
  *   \cgalParamNBegin{maximum_radius}
  *     \cgalParamDescription{maximum radius of packed spheres}
  *     \cgalParamType{float}
- *     \cgalParamDefault{FLT_MAX}
+ *     \cgalParamDefault{std::numeric_limits<float>::max()}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{iteration_functor}
@@ -86,30 +86,31 @@ namespace CGAL {
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{vertex_point_map}
- *     \cgalParamDescription{a property map associating points to the vertices of `mesh`}
- *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
+ *     \cgalParamDescription{a property map associating points to the vertices of `tm`}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
  *                    as key type and `%Point_3` as value type}
- *     \cgalParamDefault{`boost::get(CGAL::vertex_point, mesh)`}
+ *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
  *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
- *                     must be available in `FaceGraph`.}
+ *                     must be available in `TriangleMesh`.}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{geom_traits}
  *     \cgalParamDescription{an instance of a geometric traits class}
  *     \cgalParamType{a class model of `Kernel`}
- *     \cgalParamDefault{a \cgal Kernel deduced from the point type of `FaceGraph`, using `CGAL::Kernel_traits`}
+ *     \cgalParamDefault{a \cgal Kernel deduced from the point type of `TriangleMesh`, using `CGAL::Kernel_traits`}
  *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
  *   \cgalParamNEnd
  *
  * \cgalNamedParamsEnd
  *
- * \return number of convex hulls. Can be lower than the `maximum_number_of_convex_hulls` if the specified `volume_error` is quickly met.
+ * \return `out`, the output iterator
  */
 
 
-template<typename FaceGraph, typename OutputIterator, typename NamedParameters = parameters::Default_named_parameters>
-std::size_t pack_spheres(const FaceGraph& mesh, OutputIterator &out, const NamedParameters& np = parameters::default_values()) {
+template<typename TriangleMesh, typename OutputIterator, typename NamedParameters = parameters::Default_named_parameters>
+OutputIterator pack_spheres(const TriangleMesh& tm, OutputIterator out, const NamedParameters& np = parameters::default_values()) {
 
+  return out;
 }
 
 }  // end namespace CGAL
