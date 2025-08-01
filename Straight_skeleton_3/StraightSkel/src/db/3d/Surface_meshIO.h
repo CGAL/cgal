@@ -214,7 +214,6 @@ bool Surface_meshIO::save(const PolyhedronSPtr& polyhedron,
     using CGAL::parameters::choose_parameter;
     using CGAL::parameters::get_parameter;
 
-   // @fixme factorize with OBJ/PLY save()
     using Itag = CGAL::Exact_intersections_tag;
     using PK = CGAL::Projection_traits_3<CGAL::K>;
     using PVbb = CGAL::Triangulation_vertex_base_with_info_2<VertexSPtr, PK>;
@@ -268,8 +267,8 @@ bool Surface_meshIO::save(const PolyhedronSPtr& polyhedron,
             if(res.second) // first time seeing this point
             {
                 PCDT_VH vh = pcdt.insert(*(vertex->getPoint()));
-                vh->info() = vertex;
                 res.first->second = vh;
+                vh->info() = vertex;
             }
         }
 
@@ -297,7 +296,7 @@ bool Surface_meshIO::save(const PolyhedronSPtr& polyhedron,
                     CGAL_SS3_IO_TRACE("Error: Intersection of constraints");
                     CGAL_SS3_IO_TRACE("While inserting " << *(v0->getPoint()) << " || " << *(v1->getPoint()));
                     CGAL_SS3_IO_TRACE(facet->toString());
-                    CGAL_assertion_msg(false, "Intersections in CDT2 not allowed");
+                    CGAL_assertion_msg(false, "Intersections in CDT2 are not allowed");
                     return false;
                 }
                 ++ne;

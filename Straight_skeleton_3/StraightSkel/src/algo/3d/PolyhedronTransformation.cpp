@@ -21,17 +21,13 @@
 #include "data/3d/skel/SkelVertexData.h"
 #include "data/3d/skel/SkelEdgeData.h"
 #include "data/3d/skel/SkelFacetData.h"
+#include "db/3d/AbstractFile.h"
 #include "db/3d/OBJFile.h"
 
 #include "util/StringFactory.h"
 #include "util/Configuration.h"
 
-#include <CGAL/Constrained_Delaunay_triangulation_2.h>
-#include <CGAL/Projection_traits_3.h>
 #include <CGAL/IO/polygon_soup_io.h>
-#include <CGAL/Triangulation_vertex_base_with_info_2.h>
-#include <CGAL/Constrained_triangulation_face_base_2.h>
-#include <CGAL/Triangulation_data_structure_2.h>
 #include <CGAL/mark_domain_in_triangulation.h>
 #include <CGAL/simplest_rational_in_interval.h>
 #include <CGAL/Polygon_mesh_processing/region_growing.h>
@@ -84,61 +80,6 @@ std::size_t length(const Plane3& plane)
 } // namespace CGAL
 
 namespace algo { namespace _3d {
-
-// @todo use this in OBJ/SM IO functions
-auto triangulate_facet_with_CDT2(FacetSPtr facet)
-{
-    using Itag = CGAL::No_constraint_intersection_requiring_constructions_tag;
-    using PK = CGAL::Projection_traits_3<CGAL::K>;
-    using PVbb = CGAL::Triangulation_vertex_base_with_info_2<VertexSPtr, PK>;
-    using PVb = CGAL::Triangulation_vertex_base_2<PK, PVbb>;
-    using PFb = CGAL::Constrained_triangulation_face_base_2<PK>;
-    using PTDS = CGAL::Triangulation_data_structure_2<PVb,PFb>;
-    using PCDT = CGAL::Constrained_Delaunay_triangulation_2<PK, PTDS, Itag>;
-    using PCDT_VH = PCDT::Vertex_handle;
-
-    Vector3SPtr n = KernelFactory::createVector3(facet->plane());
-    CGAL_precondition(*n != CGAL::NULL_VECTOR);
-
-    PK projection_traits(*n);
-    PCDT pcdt(projection_traits);
-
-    std::map<VertexSPtr, PCDT_VH> face_vhs; // might have multiple vertices at the same position
-
-    std::list<VertexSPtr>::iterator it_v = facet->vertices().begin();
-    while (it_v != facet->vertices().end()) {
-        VertexSPtr vertex = *it_v++;
-        auto res = face_vhs.emplace(vertex, PCDT_VH());
-        if(res.second) // first time seeing this point
-        {
-            PCDT_VH vh = pcdt.insert(*(vertex->getPoint()));
-            res.first->second = vh;
-            vh->info() = vertex;
-        }
-    }
-
-    std::list<EdgeSPtr>::iterator it_e = facet->edges().begin();
-    while (it_e != facet->edges().end()) {
-        EdgeSPtr edge = *it_e++;
-        VertexSPtr v0 = edge->src(facet);
-        VertexSPtr v1 = edge->dst(facet);
-        CGAL_assertion(*(v0->getPoint()) != *(v1->getPoint()));
-
-        PCDT_VH vh0 = face_vhs.at(v0);
-        PCDT_VH vh1 = face_vhs.at(v1);
-
-        try {
-            pcdt.insert_constraint(vh0, vh1);
-        } catch(const typename PCDT::Intersection_of_constraints_exception&) {
-            CGAL_SS3_TRANSF_TRACE("Error: Intersection of constraint w/ " << vh0->point() << " " << vh1->point());
-            CGAL_SS3_TRANSF_TRACE(facet->toString());
-            CGAL_assertion_msg(false, "Intersections are not allowed");
-            return PCDT(projection_traits);
-        }
-    }
-
-    return pcdt;
-}
 
 PolyhedronTransformation::PolyhedronTransformation() {
     // intentionally does nothing.
@@ -845,8 +786,9 @@ PolyhedronTransformation::triangulate(FacetSPtr facet,
 
     facet->sortVertices();
 
-    // Prepare containers for triangulation
-    auto pcdt = triangulate_facet_with_CDT2(facet);
+    using CDT2_Tag = CGAL::No_constraint_intersection_requiring_constructions_tag;
+
+    auto pcdt = db::_3d::AbstractFile::constructFacetTriangulation<CDT2_Tag>(facet);
 
     using PCDT = decltype(pcdt);
     using PCDT_FH = typename PCDT::Face_handle;

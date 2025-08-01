@@ -19,12 +19,6 @@
 #include "util/Configuration.h"
 #include "debug.h"
 
-#include "data/3d/KernelFactory.h"
-#include "data/3d/Vertex.h"
-#include "data/3d/Edge.h"
-#include "data/3d/Facet.h"
-#include "data/3d/Polyhedron.h"
-
 #ifdef CGAL_SS3_DUMP_FILES
 # include "db/3d/OBJFile.h"
 #endif
@@ -364,6 +358,5 @@ int AbstractFile::sanitize(PolyhedronSPtr polyhedron) {
     }
     return result;
 }
-
 
 } }
