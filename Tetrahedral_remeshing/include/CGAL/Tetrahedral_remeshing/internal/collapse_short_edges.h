@@ -985,7 +985,7 @@ collapse(const typename C3t3::Cell_handle ch,
 
 
 template<typename C3t3, typename CellSelector, typename ShortEdgesBimap>
-typename C3t3::Vertex_handle collapse(typename C3t3::Edge& edge,
+typename C3t3::Vertex_handle collapse(typename const C3t3::Edge& edge,
                                       const Collapse_type& collapse_type,
                                       CellSelector& cell_selector,
                                       C3t3& c3t3,
@@ -1092,7 +1092,7 @@ template<typename C3t3,
          typename CellSelector,
          typename ShortEdgesBimap,
          typename Visitor>
-typename C3t3::Vertex_handle collapse_edge(typename C3t3::Edge& edge,
+typename C3t3::Vertex_handle collapse_edge(const typename C3t3::Edge& edge,
     C3t3& c3t3,
     const Sizing& sizing,
     const bool /* protect_boundaries */,
