@@ -1,9 +1,13 @@
+// Copyright (c) 2025 LIS Marseille (France).
+// All rights reserved.
 //
-//  tools_io.hpp
-//  duality
+// This file is part of CGAL (www.cgal.org).
 //
-//  Created by umenohana on 09/03/2023.
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
+// Author(s)     : Alexandra Bac <alexandra.bac@univ-amu.fr>
 
 #ifndef CGAL_HDVF_TOOLS_IO_H
 #define CGAL_HDVF_TOOLS_IO_H
@@ -35,29 +39,29 @@ typedef std::vector<IOCellType> IOCubChainType ;
 
 /*!
  \ingroup PkgHDVFAlgorithmClasses
- 
+
  The class `IONodeType` implements a simple data type used to import vertices coordinates (nodes) in various dimensions.
  Hence, coordinates are loaded as vectors of `double`.
- 
+
  The class provides standard affine geometry functions on such points.
  */
 
 // Type of points (for vertices coordinates in R^d)
 class IONodeType {
     vector<double> _coords;
-    
+
 public:
     IONodeType(size_t d = 3, double x = 0.) : _coords(d,x) {}
     IONodeType(std::vector<double> v) : _coords(v) {}
     IONodeType(const IONodeType& v) : _coords(v._coords) {}
-    
+
     size_t size() const { return _coords.size(); }
     double at(size_t i) const { return _coords.at(i) ;}
     double& operator[](size_t i) { return _coords.at(i) ;}
     IONodeType& operator=(const IONodeType& v) { _coords = v._coords ; return *this ; }
     void push_back(double x) { _coords.push_back(x) ; }
     std::vector<double> get_coords() const { return _coords; }
-    
+
     friend IONodeType & operator+(const IONodeType &v1, const IONodeType &v2)
     {
         assert(v1.size() == v2.size()) ;
@@ -122,7 +126,7 @@ public:
             tmp = v2.at(i) - v1.at(i) ;
             x += tmp*tmp ;
         }
-        
+
         return sqrt(x) ;
     }
 
@@ -169,24 +173,24 @@ void write_vtk(const std::string &filename, const std::vector<IONodeType> &nodes
     bool with_scalars = (labels != NULL) ;
     // Load ...
     std::ofstream out ( filename, std::ios::out | std::ios::trunc);
-    
+
     if ( not out . good () ) {
         std::cerr << "SimplicialComplex::loadFromFile. Fatal Error:\n  " << filename << " not found.\n";
         throw std::runtime_error("File Parsing Error: File not found");
     }
-    
+
     // Header
     out << "# vtk DataFile Version 2.0" << endl ;
     out << "generators" << endl ;
     out << "ASCII" << endl ;
     out << "DATASET  UNSTRUCTURED_GRID" << endl ;
-    
+
     // Points
     size_t nnodes = nodes.size() ;
     out << "POINTS " << nnodes << " double" << endl ;
     for (IONodeType n : nodes)
         out << n.at(0) << " " << n.at(1) << " " << n.at(2) << endl ;
-    
+
     // Cells
     // Number of cells : for each chain, each number of vertices for each cell
     // Size : size of a cell defined by d vertices : d+1
@@ -199,7 +203,7 @@ void write_vtk(const std::string &filename, const std::vector<IONodeType> &nodes
             ncells_tot += 1 ;
             size_cells_tot += (c.size()+1) ;
         }
-        
+
     }
     out << "CELLS " << ncells_tot << " " << size_cells_tot << endl ;
     // Output cells
@@ -208,12 +212,12 @@ void write_vtk(const std::string &filename, const std::vector<IONodeType> &nodes
     for (size_t i = 0; i<chains.size(); ++i)
     {
         const IOChainType cc = chains.at(i) ;
-        
+
         for (IOCellType c : cc)
         {
             const int d = c.size() ;
             const size_t cell_type = VTK_types_IO.at(d-1) ;
-            
+
             out << d << " " ;
             for (size_t j : c)
                 out << j << " " ;
@@ -223,13 +227,13 @@ void write_vtk(const std::string &filename, const std::vector<IONodeType> &nodes
                 scalars.push_back(labels->at(i)) ;
         }
     }
-    
+
     // CELL_TYPES
     out << "CELL_TYPES " << ncells_tot << endl ;
     for (size_t t : types)
         out << t << " " ;
     out << endl ;
-    
+
     if (with_scalars)
     {
         // CELL_TYPES
@@ -273,9 +277,9 @@ inline bool get_next_uncommented_line(std::ifstream &infile, std::string &result
 
 /*!
  \ingroup PkgHDVFAlgorithmClasses
- 
+
  The class `Mesh_object` is an intermediate IO class, used to load triangular/tetraedral meshes and produce simplicial complexes.
- 
+
  */
 
 // Generic Mesh_object class - for 3D triangular meshes
@@ -289,7 +293,7 @@ public:
     size_t nvertices, ncells, nedges ;
     std::vector<IONodeType> nodes ; // Coordinates of vertices (optional)
     std::vector<IOCellType> cells ;
-    
+
     /* \brief Default constructor.
      *
      * Create an empty Mesh_object.
@@ -314,10 +318,10 @@ public:
         }
         check_dimension() ;
     }
-    
+
     /* \brief Copy constructor. */
     Mesh_object(const Mesh_object &m) : dim(m.dim), nvertices(m.nvertices), ncells(m.ncells), nedges(m.nedges), nodes(m.nodes), cells(m.cells) {}
-    
+
     std::vector<std::vector<double> > get_nodes ()
     {
         std::vector<std::vector<double> > res ;
@@ -325,7 +329,7 @@ public:
             res.push_back(v.get_coords()) ;
         return res ;
     }
-    
+
     // Mesh operations
     void push_back(const Mesh_object &mesh)
     {
@@ -344,17 +348,17 @@ public:
             cells.push_back(tmp) ;
         }
     }
-    
+
     void add_node(const IONodeType &v) {nodes.push_back(v); ++nvertices ;}
-    
+
     void clear_cells() { cells.clear() ; ncells = 0 ; }
-    
+
     void clear_nodes() { nodes.clear() ; nvertices = 0 ; }
-    
+
     void clear() { clear_nodes() ; clear_cells() ;}
-    
+
     void add_cell(const IOCellType &c) {cells.push_back(c); ++ncells ;}
-    
+
     size_t cells_of_dim (int q) const
     {
         size_t n = 0 ;
@@ -382,7 +386,7 @@ public:
             return false;
         }
         // todo : check for header == "off"
-        
+
         // 2 - number of vertices, number of faces, number of edges (can be ignored)
         std::string info;
         if (!get_next_uncommented_line(infile, info)) {
@@ -390,9 +394,9 @@ public:
         }
         std::istringstream info_stream;
         info_stream.str(info);
-        
+
         info_stream >> nvertices >> ncells >> nedges;
-        
+
         nodes.resize(nvertices) ;
         for(auto i=0; i < nvertices; ++i) {
             if (!get_next_uncommented_line(infile,info)) {
@@ -403,7 +407,7 @@ public:
             info_stream >> p[0] >> p[1] >> p[2] ;
             nodes[i] = p ;
         }
-        
+
         // 4 - the actual faces
         cells.resize(ncells);
         for(auto i=0; i < ncells; ++i) {
@@ -422,11 +426,11 @@ public:
             cells[i] = c ;
             dim = (c.size()-1>dim)?c.size()-1:dim ;
         }
-        
+
         infile.close();
         return true;
     }
-    
+
     bool write_off(const std::string &filename)
     {
         // 0 - open input file
@@ -459,14 +463,14 @@ public:
         outfile.close() ;
         return true;
     }
-    
+
     // VTK
     void write_to_vtk(const std::string &filename)
     {
         std::vector<IOChainType> chains{cells} ;
         write_vtk<int>(filename, nodes, chains) ;
     }
-    
+
     // SIMP
     bool write_simp(const std::string &filename)
     {
@@ -488,7 +492,7 @@ public:
         outfile.close() ;
         return true;
     }
-    
+
     bool read_simp(const std::string &filename)
     {
         int d = 0 ;
@@ -532,16 +536,16 @@ public:
         infile.close() ;
         return true ;
     }
-    
+
     bool read_nodes_file(const std::string &filename) ;
-    
+
     void print_infos () const
     {
         cout << "Mesh_object infos - dim : "<< dim << ", nodes : " << nodes.size() << ", cells : " << cells.size() << endl ;
         for (int q = 0; q <= dim; ++q)
             cout << "cells of dim " << q << " : " << cells_of_dim(q) << endl ;
     }
-    
+
     // Mesh computations
     IONodeType barycenter()
     {
@@ -555,7 +559,7 @@ public:
         bary /= nodes.size() ;
         return bary;
     }
-    
+
     double radius(const IONodeType &bary)
     {
         double r = 0 ;
@@ -620,7 +624,7 @@ inline Mesh_object mesh_BB(const IONodeType &BBmin, const IONodeType &BBmax)
         m.nodes[i] *= delta ;
         m.nodes[i] += BBmin ;
     }
-    
+
     m.cells.resize(12) ;
     m.cells[0] = IOCellType({0, 1, 4}) ;
     m.cells[1] = IOCellType({1, 5, 4}) ;
@@ -650,7 +654,7 @@ inline size_t read_nodes(const std::string &node_file, bool load_nodes, std::vec
         std::cerr << "SimplicialComplex::loadFromFile. Fatal Error:\n  " << node_file << " not found.\n";
         throw std::runtime_error("File Parsing Error: File not found");
     }
-    
+
     // First line is the number of nodes
     size_t nnodes, nnodes_tmp ;
     if (not in_file.eof())
@@ -707,14 +711,14 @@ public:
         add_tets() ;
         ncells = cells.size() ;
     }
-    
+
     void add_nodes()
     {
         const std::string file_node = fnodes_from_prefix(_prefix) ;
         cout << "file_node : " << file_node << endl ;
         read_nodes_file(file_node) ;
     }
-    
+
     void create_nodes()
     {
         for (size_t i=0; i<nvertices; ++i)
@@ -724,7 +728,7 @@ public:
         }
         cout << "--- " << nvertices << "vert" << endl ;
     }
-    
+
     void add_edges()
     {
         const std::string file_edge = fedges_from_prefix(_prefix) ;
@@ -766,7 +770,7 @@ public:
         input_file.close() ;
         cout << "--- " << f_nedges << " edges" << endl ;
     }
-    
+
     void add_faces()
     {
         const std::string file_face = ffaces_from_prefix(_prefix) ;
@@ -809,7 +813,7 @@ public:
         input_file.close() ;
         cout << "--- " << f_nfaces << " faces" << endl ;
     }
-    
+
     void add_tets()
     {
         const std::string file_ele = ftets_from_prefix(_prefix) ;
@@ -872,7 +876,7 @@ class Icosphere_object : public Mesh_object
 public:
     using Index=size_t ;
     using Lookup=std::map<std::pair<Index, Index>, Index>;
-    
+
     Icosphere_object(size_t subdivisions, const IONodeType &c = IONodeType({0, 0, 0}), double r=1.) : Mesh_object(2, vertices_ico, triangles_ico)
     {
         for (size_t i=0; i<subdivisions; ++i)
@@ -881,20 +885,20 @@ public:
         }
         rigid_transformation(c, r) ;
     }
-    
-    
+
+
     // Icosahedron
     inline static const float X=.525731112119133606f;
     inline static const float Z=.850650808352039932f;
     inline static const float N=0.f;
-    
+
     inline static const std::vector<IONodeType> vertices_ico =
     {
         IONodeType({-X,N,Z}), IONodeType({X,N,Z}), IONodeType({-X,N,-Z}), IONodeType({X,N,-Z}),
         IONodeType({N,Z,X}), IONodeType({N,Z,-X}), IONodeType({N,-Z,X}), IONodeType({N,-Z,-X}),
         IONodeType({Z,X,N}), IONodeType({-Z,X, N}), IONodeType({Z,-X,N}), IONodeType({-Z,-X, N})
     };
-    
+
     inline static const std::vector<IOCellType> triangles_ico =
     {
         {0,4,1},{0,9,4},{9,5,4},{4,5,8},{4,8,1},
@@ -902,14 +906,14 @@ public:
         {7,10,3},{7,6,10},{7,11,6},{11,0,6},{0,1,6},
         {6,1,10},{9,0,11},{9,11,2},{9,2,5},{7,2,11}
     };
-    
+
     // Methods
     Index vertex_for_edge(Lookup& lookup, Index first, Index second)
     {
         Lookup::key_type key(first, second);
         if (key.first>key.second)
             std::swap(key.first, key.second);
-        
+
         auto inserted=lookup.insert({key, nodes.size()});
         if (inserted.second)
         {
@@ -919,15 +923,15 @@ public:
             normalize(point) ;
             add_node(point);
         }
-        
+
         return inserted.first->second;
     }
-    
+
     void subdivide()
     {
         Lookup lookup;
         std::vector<IOCellType> result ;
-        
+
         for (IOCellType & each:cells)
         {
             std::array<Index, 3> mid;
@@ -948,7 +952,7 @@ public:
         for (IOCellType c : result)
             add_cell(c) ;
     }
-    
+
     void rigid_transformation(const IONodeType &c, double r)
     {
         for (size_t i=0; i<nvertices; ++i)
@@ -963,9 +967,9 @@ public:
 
 /*!
  \ingroup PkgHDVFAlgorithmClasses
- 
+
  The class `Cub_object` is an intermediate IO class, used to load binary volumes and produce cubical complexes.
- 
+
  */
 
 class Cub_object
@@ -976,13 +980,13 @@ public:
     vector<size_t> N ; // Size of BB along each dimension
     std::vector<IOCubCellType> cubs ;
     bool khalimsky ;
-    
+
     /* \brief Default constructor.
      *
      * Create an empty Cub_object of dimension 3.
      */
     Cub_object() : dim(3), ncubs(vector<size_t>(3)), N(vector<size_t>(3)), khalimsky(false) {}
-    
+
     /**
      * \brief Constructor from a vector of cells.
      *
@@ -991,10 +995,10 @@ public:
      */
     Cub_object(int d, const std::vector<IOCubCellType> &vcubs, bool khal = false) : dim(d), ncubs(vector<size_t>(d)), N(vector<size_t>(d)), cubs(vcubs), khalimsky(khal)
     { check_dimension() ;}
-    
+
     /* \brief Copy constructor. */
     Cub_object(const Cub_object &m) : dim(m.dim), ncubs(m.ncubs), N(m.N), cubs(m.cubs), khalimsky(m.khalimsky) {}
-    
+
     // Mesh operations
     void clear_cubs() { cubs.clear() ; for (size_t i=0; i<dim; ++i) ncubs[i] = 0 ; }
     void add_cub(const IOCubCellType &c) {cubs.push_back(c); ++ncubs[cub_dim(c)] ;}
@@ -1020,7 +1024,7 @@ public:
             }
         }
     }
-    
+
     // PGM
     bool read_pgm(const std::string &filename, bool khal = false)
     {
@@ -1032,25 +1036,25 @@ public:
             // failed to open the file
             return false;
         }
-        
+
         stringstream ss;
         string inputLine = "";
-        
+
         // First line : version
         getline(infile,inputLine);
         if(inputLine.compare("P2") != 0) cerr << "Version error" << endl;
         else cout << "Version : " << inputLine << endl;
-        
-        
+
+
         // Second line: dimensions
         getline(infile,inputLine);
         vector<size_t> sizes ;
-        
+
         size_t tmp ;
         stringstream sseizes (inputLine);
         while (sseizes >> tmp)
             sizes.push_back(tmp) ;
-        
+
         cout << "dimensions : " ;
         for (size_t i=0; i<sizes.size(); ++i)
             cout << sizes.at(i) << " " ;
@@ -1059,22 +1063,22 @@ public:
         N = vector<size_t>(dim) ;
         for (size_t i=0; i<dim; ++i)
             N.at(i) = sizes.at(i) ;
-        
+
         // Throw away next data (255)
-        
+
         getline(infile,inputLine);
-        
+
         // Remainder: data
         // Read by decreasing dimension
         // In order to get : read row, then column, then depth...
-        
+
         // Continue with a stringstream
         ss << infile.rdbuf();
-        
+
         size_t NN = 1 ;
         for (int i=0; i<dim; ++i)
             NN = NN * N.at(i) ;
-        
+
         // Following lines : data
         for(size_t i = 0; i < NN; ++i)
         {
@@ -1085,17 +1089,17 @@ public:
                 ++ncubs[dim] ;
             }
         }
-        
+
         if (khal)
         {
             // Change N to Khalimsky maxima
             for(int i=0; i<dim; ++i)
                 N.at(i) = 2*N.at(i)+1 ;
         }
-        
+
         infile.close();
     }
-    
+
     bool write_pgm(const std::string &filename) ;
     // CUB
     bool read_cub(const std::string &filename, bool khalimsky = false)
@@ -1122,7 +1126,7 @@ public:
                 }
             }
             std::istringstream is( line );
-            
+
             if (line_number == 1) // Header 1
                 is >> dim ;
             else if (line_number == 2) // Header 2
@@ -1133,7 +1137,7 @@ public:
             else // Cub line
             {
                 IOCubCellType cub ;
-                
+
                 size_t v;
                 while ( is >> v )
                     cub.push_back(v);
@@ -1143,7 +1147,7 @@ public:
                 {
                     // Add this cub to cubs
                     ++ncubs[cub_dim(cub)] ;
-                    
+
                     if (khalimsky)
                         cubs.push_back(cub) ;
                     else
@@ -1157,9 +1161,9 @@ public:
         infile.close() ;
         return true ;
     }
-    
+
     bool write_cub(const std::string &filename) ;
-    
+
     void print_infos (size_t level = 0) const
     {
         cout << "Cub_object infos - dim : " << dim << ", cubs : " << cubs.size() << endl ;
@@ -1177,7 +1181,7 @@ public:
             }
         }
     }
-    
+
 private:
     void check_dimension()
     {
@@ -1191,7 +1195,7 @@ private:
             ncubs[dim] = cubs.size() ;
         }
     }
-    
+
     inline int cub_dim (IOCubCellType c)
     {
         int q = 0 ;
@@ -1202,7 +1206,7 @@ private:
         }
         return q ;
     }
-    
+
     inline IOCubCellType index_to_coords(size_t i, bool khalimsky = false)
     {
         IOCubCellType coords ;
@@ -1222,7 +1226,7 @@ private:
         }
         return coords ;
     }
-    
+
     inline size_t khal_to_index (const IOCubCellType& coords)
     {
         size_t cell_index(0);
