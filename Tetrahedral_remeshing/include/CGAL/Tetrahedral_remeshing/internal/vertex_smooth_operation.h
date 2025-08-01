@@ -652,19 +652,11 @@ public:
 
   }
 
-  bool should_process_element(const ElementType& v, const C3t3& c3t3) const override {
-  return can_apply_operation(v, c3t3);
-  }
-
   ElementSource get_element_source(const C3t3& c3t3) const override {
     perform_global_preprocessing(c3t3);
     return c3t3.triangulation().finite_vertex_handles();
   }
 
-  bool can_apply_operation(const ElementType& v, const C3t3& c3t3) const override {
-    const std::size_t vid = m_context->m_vertex_id.at(v);
-    return m_context->m_free_vertices[vid] && c3t3.in_dimension(v) == 3 && m_context->m_moves[vid].neighbors > 1;
-  }
 
   bool lock_zone(const ElementType& v, const C3t3& c3t3) const override {
     auto& tr = c3t3.triangulation();
@@ -674,11 +666,19 @@ public:
 
   bool execute_operation(const ElementType& v, C3t3& c3t3) override {
     const std::size_t vid = m_context->m_vertex_id.at(v);
+    if(!(m_context->m_free_vertices[vid] && c3t3.in_dimension(v) == 3 && m_context->m_moves[vid].neighbors > 1)){
+      return false;
+    }
+    
     const Vector_3 move = m_context->m_moves[vid].move / m_context->m_moves[vid].mass;
     Point_3 new_pos = point(v->point()) + move;
     const auto& inc_cells = m_context->m_inc_cells[vid];
     bool result = check_inversion_and_move(v, new_pos, inc_cells, c3t3.triangulation(), m_context->m_total_move);
     return result;
+  }
+
+  bool requires_ordered_processing() const override {
+    return false; // InternalVertexSmooth can use unordered parallel processing
   }
 
   std::string operation_name() const override {
@@ -805,18 +805,12 @@ public:
   {
   }
 
-  bool should_process_element(const ElementType& v, const C3t3& c3t3) const override {return true;
-  }
 
   ElementSource get_element_source(const C3t3& c3t3) const override {
     perform_global_preprocessing(c3t3);
     return c3t3.triangulation().finite_vertex_handles();
   }
 
-  bool can_apply_operation(const ElementType& v, const C3t3& c3t3) const override {
-    const std::size_t vid = m_context->m_vertex_id.at(v);
-    return m_context->m_free_vertices[vid] && v->in_dimension() == 2;
-  }
 
   bool lock_zone(const ElementType& v, const C3t3& c3t3) const override {
     auto& tr = c3t3.triangulation();
@@ -826,8 +820,10 @@ public:
 
   bool execute_operation(const ElementType& v, C3t3& c3t3) override {
     auto& tr = c3t3.triangulation();
-    
     const std::size_t vid = m_context->m_vertex_id.at(v);
+    if(!(m_context->m_free_vertices[vid] && v->in_dimension() == 2)){
+      return false;
+    }
     
     const std::size_t nb_neighbors = m_context->m_moves[vid].neighbors;
     
@@ -949,6 +945,10 @@ public:
     return result;
   }
 
+  bool requires_ordered_processing() const override {
+    return false; // SurfaceVertexSmooth can use unordered parallel processing
+  }
+
   std::string operation_name() const override {
     return "Vertex Smooth (Surface Vertices)";
   }
@@ -1000,20 +1000,9 @@ public:
     assert(protect_boundaries == false);
   }
 
-  bool should_process_element(const ElementType& v, const C3t3& c3t3) const override {
-    // Only process vertices that are on features (complex edges)
-    return can_apply_operation(v, c3t3);
-  }
-
   ElementSource get_element_source(const C3t3& c3t3) const override {
     perform_global_preprocessing(c3t3);
     return c3t3.triangulation().finite_vertex_handles();
-  }
-
-  bool can_apply_operation(const ElementType& v, const C3t3& c3t3) const override {
-    // Check if vertex is still on feature and can move
-    const std::size_t vid = m_context->m_vertex_id.at(v);
-    return m_context->m_free_vertices[vid] && is_on_feature(v);
   }
 
   // NOTE: There is an incident cells orientation check during smoothing by check_inversion_and_move
@@ -1026,8 +1015,7 @@ public:
   bool execute_operation(const ElementType& v, C3t3& c3t3) override {
     auto& tr = c3t3.triangulation();
     const std::size_t vid = m_context->m_vertex_id.at(v);
-    
-    if (!m_context->m_free_vertices[vid] || !is_on_feature(v))
+    if (!(m_context->m_free_vertices[vid] && is_on_feature(v)))
       return false;
 
     const Point_3 current_pos = point(v->point());
@@ -1073,6 +1061,10 @@ public:
       return true;
     }
     return false;
+  }
+
+  bool requires_ordered_processing() const override {
+    return false; // ComplexEdgeVertexSmooth can use unordered parallel processing
   }
 
   std::string operation_name() const override {

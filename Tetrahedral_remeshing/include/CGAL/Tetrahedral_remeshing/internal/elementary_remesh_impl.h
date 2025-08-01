@@ -36,7 +36,7 @@ class Elementary_remesher
 public:
 
   typedef EdgeSplitOperation<C3t3, SizingFunction, CellSelector> EdgeSplitOp;
-  typedef EdgeCollapseOperation<C3t3, SizingFunction, CellSelector> EdgeCollapseOp;
+  typedef EdgeCollapseOperation<C3t3, SizingFunction, CellSelector,Visitor> EdgeCollapseOp;
   typedef InternalEdgeFlipOperation<C3t3, CellSelector, Visitor> InternalEdgeFlipOp;
   typedef BoundaryEdgeFlipOperation<C3t3, CellSelector, Visitor> BoundaryEdgeFlipOp;
   typedef InternalVertexSmoothOperation<C3t3, SizingFunction, CellSelector> InternalVertexSmoothOp;
@@ -67,8 +67,8 @@ public:
     executor.execute(split_op, c3t3);
   }
 
-  static void collapse(C3t3& c3t3, const SizingFunction& sizing, const CellSelector& cell_selector) {
-     EdgeCollapseOp collapse_op(c3t3, sizing, cell_selector);
+  static void collapse(C3t3& c3t3, const SizingFunction& sizing, const CellSelector& cell_selector,const Visitor& visitor, const bool protect_boundaries) {
+     EdgeCollapseOp collapse_op( sizing, cell_selector,protect_boundaries,visitor);
      ExecutionPolicy<EdgeCollapseOp> executor;
      executor.execute(collapse_op, c3t3);
   }

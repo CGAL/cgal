@@ -6,23 +6,27 @@
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/Iterator_range.h>
 
-#include <vector>
-#include <string>
-#include <atomic>
-#include <utility>
-#include <iostream>
-#include <algorithm>
-
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/task_group.h>
 #include <tbb/combinable.h>
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range.h>
+#include <tbb/parallel_for_each.h>
+#include <tbb/concurrent_queue.h>
 #endif
+
+#include <atomic>
+#include <algorithm>
+#include <vector>
+#include <thread>
+#include <string>
+#include <utility>
+#include <iostream>
 
 namespace CGAL {
 namespace Tetrahedral_remeshing {
 namespace internal {
+
 template<typename C3t3_, typename ElementType_, typename ElementSource_, typename LockElementType_>
 class ElementaryOperation {
 public:
@@ -36,22 +40,13 @@ public:
   ElementaryOperation() = default;
   virtual ~ElementaryOperation() = default;
 
+  // Processing strategy trait - determines execution approach
+  virtual bool requires_ordered_processing() const { return false; }
   // Pure element logic methods
-  virtual bool should_process_element(const ElementType& e, const C3t3& c3t3) const = 0;
   virtual ElementSource get_element_source(const C3t3& c3t3) const = 0;
-  virtual bool can_apply_operation(const ElementType& e, const C3t3& c3t3) const = 0;
   virtual bool lock_zone(const ElementType& e, const C3t3& c3t3) const = 0;
   virtual bool execute_operation(const ElementType& e, C3t3& c3t3) = 0;
   virtual std::string operation_name() const = 0;
-
-  // Pre/post operation hooks
-  virtual bool execute_pre_operation(const ElementType& e, C3t3& c3t3) {
-    return true; // Default implementation does nothing
-  }
-
-  virtual bool execute_post_operation(const ElementType& e, C3t3& c3t3) {
-    return true; // Default implementation does nothing
-  }
 };
 
 // Base class for operation execution strategies
@@ -99,10 +94,15 @@ private:
     auto& triangulation = c3t3.triangulation();
     if (!triangulation.get_lock_data_structure()) {
       // Create a lock data structure using the C3T3's bounding box
+
+        #ifndef USE_TAG_NON_BLOCKING
       static typename C3t3::Triangulation::Lock_data_structure lock_ds(
         c3t3.bbox(),  // Use C3T3's bounding box
         8  // Default grid size (same as Mesh_3 default)
       );
+      #else
+      static CGAL::Spatial_lock_grid_3<Tag_non_blocking> lock_ds(c3t3.bbox(), 8);
+          #endif
       triangulation.set_lock_data_structure(&lock_ds);
     }
 #else
@@ -129,15 +129,12 @@ public:
   ElementaryOperationExecutionSequential& operator=(ElementaryOperationExecutionSequential&&) = default;
 
   std::vector<ElementType> collect_candidates(const Operation& op, const C3t3& c3t3) const override {
-    std::vector<ElementType> candidates;
 
     // Get all elements from the operation
     auto elements = op.get_element_source(c3t3);
-
+    std::vector<ElementType> candidates;
     for (const auto& element : elements) {
-      if (op.should_process_element(element, c3t3)) {
-        candidates.push_back(element);
-      }
+      candidates.push_back(element);
     }
     return candidates;
   }
@@ -146,32 +143,25 @@ public:
     std::vector<ElementType>& elements,
     Operation& op,
     C3t3& c3t3) override {
+    size_t num_ops = 0;
+    bool success = true;
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-    std::cout << "Executing operation sequentially: " << op.operation_name() << std::endl;
+    std::cout << "Executing operation sequentially: " << op.operation_name() << "...";
     #endif
 
-    bool success = false;
-
     for (const auto& element : elements) {
-      if (!op.can_apply_operation(element, c3t3))
-        continue;
-
-      if (op.lock_zone(element,c3t3)) {
-        // Execute pre-operation phase for this element
-        op.execute_pre_operation(element, c3t3);
-
-        if (op.execute_operation(element, c3t3)) {
-          success = true;
-        }
-
-        // Execute post-operation phase for this element
-        op.execute_post_operation(element, c3t3);
-
+      if(op.execute_operation(element, c3t3)) {
+      num_ops++;
       }
-      c3t3.triangulation().unlock_all_elements();
+
     }
 
-    return success;
+#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+    std::cout << " done num_elements:" << elements.size()
+              << ", num_ops : " <<num_ops << std::endl;
+    #endif
+
+    return true;
   }
 };
 
@@ -194,49 +184,84 @@ public:
   ElementaryOperationExecutionParallel& operator=(ElementaryOperationExecutionParallel&&) = default;
 
   std::vector<ElementType> collect_candidates(const Operation& op, const C3t3& c3t3) const override {
-    // Get all elements from the operation
     auto elements = op.get_element_source(c3t3);
-
-    // Use blocked_range for parallel processing with Iterator_range
-    tbb::blocked_range<std::size_t> range(0, elements.size());
-    
-    // First pass: count elements that pass the filter
-    std::atomic<std::size_t> total_count(0);
-    tbb::parallel_for(range, [&](const tbb::blocked_range<std::size_t>& r) {
-      auto it = elements.begin();
-      std::advance(it, r.begin());
-      for (std::size_t i = 0; i < r.size(); ++i, ++it) {
-        if (op.should_process_element(*it, c3t3)) {
-          total_count.fetch_add(1);
-        }
-      }
-    });
-
-    // Pre-allocate result vector
-    std::vector<ElementType> candidates;
-    candidates.reserve(total_count);
-
-    // Second pass: collect elements using thread-local vectors
     tbb::combinable<std::vector<ElementType>> local_candidates;
-    
-    tbb::parallel_for(range, [&](const tbb::blocked_range<std::size_t>& r) {
-      auto it = elements.begin();
-      std::advance(it, r.begin());
-      for (std::size_t i = 0; i < r.size(); ++i, ++it) {
-        if (op.should_process_element(*it, c3t3)) {
-          local_candidates.local().push_back(*it);
-        }
+    tbb::parallel_for_each(elements.begin(), elements.end(),
+      [&](const ElementType& element) {
+          local_candidates.local().push_back(element);
       }
-    });
-
-    // Combine all local vectors into final result
+    );
+    std::vector<ElementType> candidates;
     local_candidates.combine_each([&](const std::vector<ElementType>& local) {
       candidates.insert(candidates.end(), local.begin(), local.end());
     });
-
     return candidates;
   }
 
+private:
+  // Ordered processing using concurrent queue (for operations like EdgeSplit)
+  bool apply_ordered_processing(
+    std::vector<ElementType>& elements,
+    Operation& op,
+    C3t3& c3t3) {
+    // Create concurrent priority queue for all elements
+    tbb::concurrent_queue<ElementType> work_queue(elements.begin(), elements.end());
+    
+    size_t num_threads = 8; // Start with single thread for ordered processing
+    
+    // Parallel work stealing from priority queue
+    tbb::parallel_for(tbb::blocked_range<size_t>(0, num_threads),
+      [&](const tbb::blocked_range<size_t>& r) {
+        for (size_t thread_id = r.begin(); thread_id != r.end(); ++thread_id) {
+          while (!work_queue.empty()) {
+            ElementType element;
+            if(!work_queue.try_pop(element)) {
+              continue;
+            }
+            // Process element - priority order maintained by queue
+            // Retry until lock is acquired
+            bool lock_acquired = false;
+            while (!lock_acquired) {
+              lock_acquired = op.lock_zone(element, c3t3);
+              if (!lock_acquired) {
+                // Unlock all elements before retrying
+                c3t3.triangulation().unlock_all_elements();
+                // Optional: small delay to reduce contention
+                std::this_thread::yield();
+              }
+            }
+            // Execute operation once lock is acquired
+            op.execute_operation(element, c3t3);
+            c3t3.triangulation().unlock_all_elements();
+          }
+        }
+      }
+    );
+    return true;
+  }
+
+  // Unordered processing using parallel_for_each (for operations like VertexSmooth, EdgeFlip)
+  bool apply_unordered_processing(
+    std::vector<ElementType>& elements,
+    Operation& op,
+    C3t3& c3t3) {
+    tbb::parallel_for_each(elements, [&](const ElementType& element) {
+      bool lock_acquired = false;
+      while(!lock_acquired) {
+        lock_acquired = op.lock_zone(element, c3t3);
+        if(!lock_acquired) {
+          c3t3.triangulation().unlock_all_elements();
+          std::this_thread::yield(); // backoff to reduce contention
+        }
+      }
+
+      op.execute_operation(element, c3t3);
+      c3t3.triangulation().unlock_all_elements();
+    });
+    return true;
+  }
+
+public:
   bool apply_operation_on_elements(
     std::vector<ElementType>& elements,
     Operation& op,
@@ -249,45 +274,17 @@ public:
       return false;
     }
 
-    std::atomic<bool> success(false);
-
-    // TODO: GRAIN_SIZE should be fine tuned
-    const size_t GRAIN_SIZE = std::max(elements.size() / (std::thread::hardware_concurrency() * 4), size_t(8));
-
-    tbb::parallel_for(
-      tbb::blocked_range<size_t>(0, elements.size(), GRAIN_SIZE),
-      [&](const tbb::blocked_range<size_t>& r) {
-        for (size_t i = r.begin(); i != r.end(); ++i) {
-          const auto& element = elements[i];
-          bool affected_zone_locked = op.lock_zone(element, c3t3);
-          if (affected_zone_locked) {
-            if (!op.can_apply_operation(element, c3t3)) {
-              c3t3.triangulation().unlock_all_elements();
-              continue;
-            }
-            if (!op.execute_pre_operation(element, c3t3)) {
-              c3t3.triangulation().unlock_all_elements();
-              continue;
-            }
-            if (!op.execute_operation(element, c3t3)) {
-              c3t3.triangulation().unlock_all_elements();
-              continue;
-            }
-            if (!op.execute_post_operation(element, c3t3)) {
-              c3t3.triangulation().unlock_all_elements();
-              continue;
-            }
-            success.store(true, std::memory_order_relaxed);
-          }
-          c3t3.triangulation().unlock_all_elements();
-        }
-      }
-    );
-    return success.load();
+    // Choose processing strategy based on operation requirements
+    if (op.requires_ordered_processing()) {
+      return apply_ordered_processing(elements, op, c3t3);
+    } else {
+      return apply_unordered_processing(elements, op, c3t3);
+    }
   }
-};
+}; // class ElementaryOperationExecution
+
 } // namespace internal
-} // namespace Tetrahedral_remeshing
+} // namespace Tetrahedral_remeshing  
 } // namespace CGAL
 
 #endif // CGAL_TETRAHEDRAL_REMESHING_ELEMENTARY_OPERATIONS_H

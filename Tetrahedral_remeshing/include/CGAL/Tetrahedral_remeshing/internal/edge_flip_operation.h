@@ -116,10 +116,6 @@ public:
       c->reset_cache_validity();
   }
 
-  virtual bool should_process_element(const ElementType& e, const C3t3& c3t3) const override {
-    // For internal edges, we already filtered during collection, so always process
-    return true;
-  }
 
   ElementSource get_element_source(const C3t3& c3t3) const override {
     // Perform global preprocessing (cache validity reset)
@@ -132,22 +128,15 @@ public:
     return internal_vertex_pairs;
   }
 
-  bool can_apply_operation(const ElementType& e, const C3t3& c3t3) const override {
-    const auto& vp = e;
-    auto& tr = c3t3.triangulation();
-
-    Cell_handle ch;
-    int i0, i1;
-    auto inc_vh1 = get_incident_cells(vp.first, c3t3);
-    if(is_edge_uv(vp.first, vp.second, inc_vh1, ch, i0, i1)) {
-      return true;
-    }
-    return false;
-  }
-
   bool lock_zone(const ElementType& e, const C3t3& c3t3) const override {
+    
+      auto& tr = c3t3.triangulation();
+      #if 1
+    std::vector<Cell_handle> inc_cells_first,inc_cells_second;
+    return tr.try_lock_and_get_incident_cells(e.first, inc_cells_first) &&tr.try_lock_and_get_incident_cells(e.second, inc_cells_second);
+#else
+    
     const auto& vp = e;
-    auto& tr = c3t3.triangulation();
     // We need to lock v individually first, to be sure v->cell() is valid
     if(!tr.try_lock_vertex(vp.first) || !tr.try_lock_vertex(vp.second))
       return false;
@@ -168,10 +157,15 @@ public:
     } while(ccirc != cdone);
     
     return true;
+    #endif
   }
 
   bool execute_operation(const ElementType& e, C3t3& c3t3) override {
     return execute_internal_edge_flip(e, c3t3);
+  }
+
+  bool requires_ordered_processing() const override {
+    return false; // InternalEdgeFlip can use unordered parallel processing
   }
 
   std::string operation_name() const override {
@@ -305,10 +299,6 @@ public:
 
   }
 
-  virtual bool should_process_element(const ElementType& e, const C3t3& c3t3) const override {
-    // For boundary edges, we already filtered during collection, so always process
-    return true;
-  }
 
   std::vector<ElementType> get_element_source(const C3t3& c3t3) const override {
     // Perform global preprocessing (valences computation, subdomain collection)
@@ -330,34 +320,32 @@ public:
     return boundary_vertex_pairs;
   }
 
-  bool can_apply_operation(const ElementType& e, const C3t3& c3t3) const override {
-    return true;
-  }
-
   bool lock_zone(const ElementType& e, const C3t3& c3t3) const override {
-  #if 1
-          const auto& vp = e;
     auto& tr = c3t3.triangulation();
-    // We need to lock v individually first, to be sure v->cell() is valid
-    if(!tr.try_lock_vertex(vp.first) || !tr.try_lock_vertex(vp.second))
-      return false;
+  #if 1
+    std::vector<Cell_handle> inc_cells_first,inc_cells_second;
+    return tr.try_lock_and_get_incident_cells(e.first, inc_cells_first) &&tr.try_lock_and_get_incident_cells(e.second, inc_cells_second);
+    //      const auto& vp = e;
+    //// We need to lock v individually first, to be sure v->cell() is valid
+    //if(!tr.try_lock_vertex(vp.first) || !tr.try_lock_vertex(vp.second))
+    //  return false;
 
-    Cell_handle ch;
-    int i0, i1;
-    boost::container::small_vector<Cell_handle, 64> inc_vh = get_incident_cells(vp.first, c3t3);
-    is_edge_uv(vp.first, vp.second, inc_vh, ch, i0, i1);
-    Edge edge_to_flip(ch, i0, i1);
+    //Cell_handle ch;
+    //int i0, i1;
+    //boost::container::small_vector<Cell_handle, 64> inc_vh = get_incident_cells(vp.first, c3t3);
+    //is_edge_uv(vp.first, vp.second, inc_vh, ch, i0, i1);
+    //Edge edge_to_flip(ch, i0, i1);
 
-    C3t3::Triangulation::Cell_circulator ccirc(edge_to_flip);
-    C3t3::Triangulation::Cell_circulator cdone = ccirc;
+    //C3t3::Triangulation::Cell_circulator ccirc(edge_to_flip);
+    //C3t3::Triangulation::Cell_circulator cdone = ccirc;
 
-    do {
-      if(!tr.try_lock_cell(ccirc)) // LOCK
-        return false;
-      ++ccirc;
-    } while(ccirc != cdone);
+    //do {
+    //  if(!tr.try_lock_cell(ccirc)) // LOCK
+    //    return false;
+    //  ++ccirc;
+    //} while(ccirc != cdone);
 
-    return true;
+    //return true;
     #else
       // QUESTION: why does locking the incident facets cause a data race?
       const auto& vp = e;
@@ -390,18 +378,12 @@ public:
     return execute_boundary_edge_flip(e, c3t3);
   }
 
+  bool requires_ordered_processing() const override {
+    return false; // BoundaryEdgeFlip can use unordered parallel processing
+  }
+
   std::string operation_name() const override {
     return "Edge Flip (Boundary Edges)";
-  }
-
-  bool execute_pre_operation(const ElementType& e, C3t3& c3t3) override {
-
-    return true;
-  }
-
-  bool execute_post_operation(const ElementType& e, C3t3& c3t3) override {
-    // Element-specific cleanup if needed
-    return true;
   }
 
 private:
