@@ -1,4 +1,4 @@
-/// \defgroup PkgSurfaceMeshDeformationRef Triangulated Surface Mesh Deformation Reference
+/// \defgroup PkgSurfaceMeshDeformationRef Reference Manual
 /// \defgroup PkgSurfaceMeshDeformationConcepts Concepts
 /// \ingroup PkgSurfaceMeshDeformationRef
 

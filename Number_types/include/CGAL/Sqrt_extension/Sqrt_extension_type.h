@@ -135,6 +135,31 @@ public:
     Sqrt_extension(const NT& i)
         : a0_(NT(i)), a1_(NT(0)), root_(ROOT(0)), is_extended_(false) {}
 
+    Sqrt_extension(const Sqrt_extension<NT, ROOT_, ACDE_TAG, std::integral_constant<bool, !FP_TAG::value>>& other)
+        : a0_(other.a0()), a1_(other.a1()), root_(other.root()), is_extended_(other.is_extended())
+    {}
+
+    Sqrt_extension&
+    operator=(const Sqrt_extension<NT, ROOT_, ACDE_TAG, std::integral_constant<bool,!FP_TAG::value>>& other)
+    {
+      *this = Sqrt_extension(other);
+      return *this;
+    }
+
+    Sqrt_extension&
+    operator=(const NT& i)
+    {
+      *this = Sqrt_extension(i);
+      return *this;
+    }
+
+    Sqrt_extension&
+    operator=(CGAL_int(NT) i)
+    {
+      *this = Sqrt_extension(i);
+      return *this;
+    }
+
     //non-documented: used for Make_sqrt
     Sqrt_extension(const ROOT& root,bool)
           :a0_(NT(0)), a1_(NT(1)), root_(root), is_extended_(true) {}

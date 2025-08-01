@@ -175,7 +175,7 @@ for each boundary that does not contain the defining contour edge of its inciden
 </center>
 \cgalFigureCaptionBegin{SLSArtificial}
 A polygon with four holes (black) and its straight skeleton (red).
-Three artificial bisectors (green) are added in a post-processing step to recover the simply-connected
+Three artificial bisectors (green) are added in a postprocessing step to recover the simply-connected
 property for the straight skeleton face (gray) of the rightmost vertical contour edge.
 \cgalFigureCaptionEnd
 
@@ -256,7 +256,7 @@ It is necessary to place the frame sufficiently far away from the contour. If it
 that the outward offset contour collides and merges with the inward offset frame, resulting in 1
 instead of 2 offset contours. However, the proper separation between the contour and the frame is
 not directly given by the offset distance at which you want the offset contour. That distance
-must be at least the desired offset plus the largest euclidean distance between an offset vertex
+must be at least the desired offset plus the largest Euclidean distance between an offset vertex
 and its original. This \cgal packages provides a helper function to compute the required separation:
 `compute_outer_frame_margin()`.
 \cgalAdvancedEnd
@@ -454,7 +454,7 @@ To construct the straight skeleton of a polygon the user must:
   <li>Instantiate the straight skeleton builder.</li>
   <li> Enter one contour at a time, starting from the outer contour, via the method
        `Straight_skeleton_builder_2::enter_contour()`. The input polygon must be
-       weakly simple and counter-clockwise oriented (see the definitions at the beginning
+       weakly simple and counterclockwise oriented (see the definitions at the beginning
        of this chapter). Collinear edges are allowed. The insertion order of each hole is
        unimportant but the outer contour must be entered first.</li>
   <li>Call `Straight_skeleton_builder_2::construct_skeleton()` once <I>all</I> the contours
@@ -480,18 +480,18 @@ The resulting sequence of offset contours can contain both outer and inner conto
 However, this algorithm returns a sequence of contours in arbitrary order and there is no
 indication whatsoever of the parental relationship between inner and outer contours.
 
-On the other hand, each outer contour is counter-clockwise oriented while each hole is clockwise-oriented.
+On the other hand, each outer contour is counterclockwise oriented while each hole is clockwise-oriented.
 And since offset contours do form simple polygons, it is guaranteed that no hole will be
 inside another hole, no outer contour will be inside any other contour, and each hole will be inside
 exactly 1 outer contour.
 
 Parental relationships are <I>not</I> automatically reconstructed by this algorithm because
-this relation is not directly given by the input polygon and must be done as a post-processing
+this relation is not directly given by the input polygon and must be done as a postprocessing
 step. The function `CGAL::arrange_offset_polygons_2()` can be used to do that efficiently.
 
 A user can reconstruct the parental relationships as a post processing operation by testing
 each inner contour (which is identified by being clockwise) against each outer contour (identified
-as being counter-clockwise) for insideness.
+as being counterclockwise) for insideness.
 
 This algorithm requires exact predicates but not exact constructions.
 Therefore, the `Exact_predicates_inexact_constructions_kernel` should be used.

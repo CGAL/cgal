@@ -1,7 +1,7 @@
 #define CGAL_CDT_2_DEBUG_INTERSECTIONS 1
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Constrained_triangulation_plus_2.h>
-#include <CGAL/Base_with_time_stamp.h>
+#include <CGAL/Triangulation_simplex_base_with_time_stamp.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <iostream>
 
@@ -9,7 +9,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel EPIC;
 typedef EPIC::Point_2 Point_2;
 
 #ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
-typedef CGAL::Base_with_time_stamp<CGAL::Triangulation_vertex_base_2<EPIC> > Vb;
+typedef CGAL::Triangulation_simplex_base_with_time_stamp<CGAL::Triangulation_vertex_base_2<EPIC> > Vb;
 #else
 typedef CGAL::Triangulation_vertex_base_2<K> Vb;
 #endif

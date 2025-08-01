@@ -1,4 +1,4 @@
-/// \defgroup PkgAlphaShapes2Ref 2D Alpha Shapes Reference
+/// \defgroup PkgAlphaShapes2Ref Reference Manual
 /// \defgroup PkgAlphaShapes2Concepts Concepts
 /// \ingroup PkgAlphaShapes2Ref
 

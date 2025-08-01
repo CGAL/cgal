@@ -20,6 +20,7 @@ CGAL_add_named_parameter(visitor_t, visitor, visitor)
 CGAL_add_named_parameter(point_t, point_map, point_map)
 
 CGAL_add_named_parameter(edge_is_constrained_t, edge_is_constrained, edge_is_constrained_map)
+CGAL_add_named_parameter(edge_is_marked_map_t, edge_is_marked_map, edge_is_marked_map)
 CGAL_add_named_parameter(first_index_t, first_index, first_index)
 CGAL_add_named_parameter(number_of_iterations_t, number_of_iterations, number_of_iterations)
 CGAL_add_named_parameter(verbosity_level_t, verbosity_level, verbosity_level)
@@ -58,6 +59,8 @@ CGAL_add_named_parameter(face_color_output_iterator_t, face_color_output_iterato
 CGAL_add_named_parameter(vertex_normal_map_t, vertex_normal_map, vertex_normal_map)
 CGAL_add_named_parameter(vertex_color_map_t, vertex_color_map, vertex_color_map)
 CGAL_add_named_parameter(vertex_texture_map_t, vertex_texture_map, vertex_texture_map)
+CGAL_add_named_parameter(vertex_oriented_side_map_t, vertex_oriented_side_map, vertex_oriented_side_map)
+
 CGAL_add_named_parameter(face_color_map_t, face_color_map, face_color_map)
 CGAL_add_named_parameter(repair_polygon_soup_t, repair_polygon_soup, repair_polygon_soup)
 CGAL_add_named_parameter(output_color_t, output_color, output_color)
@@ -174,13 +177,14 @@ CGAL_add_named_parameter(weight_limiting_t, weight_limiting, weight_limiting)
 CGAL_add_named_parameter(progressive_t, progressive, progressive)
 CGAL_add_named_parameter(tiling_t, tiling, tiling)
 CGAL_add_named_parameter(dimension_t, dimension, dimension)
+CGAL_add_named_parameter(apply_iterative_snap_rounding_t, apply_iterative_snap_rounding, apply_iterative_snap_rounding)
+CGAL_add_named_parameter(snap_grid_size_t, snap_grid_size, snap_grid_size)
 
 // List of named parameters that we use in the package 'Sphere packing'
 CGAL_add_named_parameter(number_of_target_spheres_t, number_of_target_spheres, number_of_target_spheres)
 CGAL_add_named_parameter(iteration_functor_t, iteration_functor, iteration_functor)
 CGAL_add_named_parameter(iterations_between_splits_t, iterations_between_splits, iterations_between_splits)
 CGAL_add_named_parameter(maximum_splits_t, maximum_splits, maximum_splits)
-
 
 // List of named parameters that we use in the package 'Surface Mesh Simplification'
 CGAL_add_named_parameter(get_cost_policy_t, get_cost_policy, get_cost)
@@ -195,6 +199,7 @@ CGAL_add_named_parameter(do_lock_mesh_t, do_lock_mesh, do_lock_mesh)
 CGAL_add_named_parameter(do_simplify_border_t, do_simplify_border, do_simplify_border)
 CGAL_add_named_parameter(algorithm_t, algorithm, algorithm)
 CGAL_add_named_parameter(use_smoothing_t, use_smoothing, use_smoothing)
+CGAL_add_named_parameter(force_filtering_t, force_filtering, force_filtering)
 
 //internal
 CGAL_add_named_parameter(weight_calculator_t, weight_calculator, weight_calculator)
@@ -404,3 +409,7 @@ CGAL_add_named_parameter(do_not_modify_geometry_t, do_not_modify_geometry, do_no
 //List of named parameters used in Straight_skeleton_2
 CGAL_add_named_parameter_with_compatibility_ref_only(angles_param_t, angles_param, angles)
 CGAL_add_named_parameter(maximum_height_t, maximum_height, maximum_height)
+
+// List of named parameters used in the package 'Constrained_triangulation_3'
+CGAL_add_named_parameter(plc_face_id_t, plc_face_id, plc_face_id)
+CGAL_add_named_parameter(with_plc_face_id_t, with_plc_face_id, with_plc_face_id)
