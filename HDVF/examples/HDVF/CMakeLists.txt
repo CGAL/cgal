@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.12...3.31)
-project(Kernel_23_Tests)
+project(HDVF_Examples)
 
 # CGAL
 
