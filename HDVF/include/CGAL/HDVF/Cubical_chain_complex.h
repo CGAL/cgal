@@ -46,7 +46,7 @@ ostream & operator<<(ostream & out, std::vector<size_t> c)
 
  <img src="cubical_complex.png" align="center" width=20%/>
 
- A cell in a cubical complex of dimension q is the cartesian product of \f$q\f$ intervals \f$[n_1,n_1+\delta_1]\times [n_q,n_q+\delta_q] \f$ with \f$n_i\in \mathbb N \f$ and \f$\delta_i = 0,1\f$.
+ A cell in a cubical complex of dimension q is the %cartesian product of \f$q\f$ intervals \f$[n_1,n_1+\delta_1]\times [n_q,n_q+\delta_q] \f$ with \f$n_i\in \mathbb N \f$ and \f$\delta_i = 0,1\f$.
  The dimension of such a cell is \f$\sum_{i=1}^q \delta_i\f$.
  A 0-cell is thus a vertex, a 1-cell contains one non zero delta (edge along one of the axes), a 2-cell contains two non zero deltas (square along two of the axes), while a 3-cell is a cube...
 
@@ -83,7 +83,7 @@ ostream & operator<<(ostream & out, std::vector<size_t> c)
 
  \cgalModels{GeometricChainComplex}
 
- \tparam CoefficientType a model of the `Ring` concept (by default, we use the `Z` model).
+ \tparam CoefficientType a model of the `Ring` concept.
  */
 
 

@@ -26,7 +26,7 @@ namespace HDVF {
 
  According to the value of `p`, users can chose the size of the representation used to store values (default size: `int`).
 
- \warning For \f$\mathbb Z/2\mathbb 2\f$, prefer the class `Z2` which is optimized.
+ \warning For \f$\mathbb Z/2\mathbb Z\f$, prefer the class `Z2` which is optimized.
 
  \cgalModels{Ring}
 
@@ -46,43 +46,43 @@ public:
     // Copy constructor
     Zp(const Zp& a) : _i(a._i) {}
 
-    /// unary operator+
+    /** \brief Unary operator+ */
     friend Zp operator+ (const Zp& a)
     {
         return Zp<p, _TSlot>(a) ;
     }
 
-    /// unary operator-
+    /** \brief Unary operator-. */
     friend Zp     operator- (const Zp& a)
     {
         return Zp<p, _TSlot>(- a._i) ;
     }
 
-    /// operator+
+    /** \brief Operator+. */
     friend Zp     operator+ (const Zp& a, const Zp& b)
     {
         return Zp<p, _TSlot>((a._i + b._i)) ;
     }
 
-    /// operator-
+    /** \brief Operator-. */
     friend Zp     operator- (const Zp& a, const Zp& b)
     {
         return Zp<p, _TSlot>((a._i - b._i)) ;
     }
 
-    /// operator*
+    /** \brief Operator*. */
     friend Zp     operator* (const Zp& a, const Zp& b)
     {
         return Zp<p, _TSlot>((a._i * b._i)) ;
     }
 
-    /// operator/
+    /** \brief Operator/. */
     friend Zp     operator/ (const Zp& a, const Zp& b)
     {
         return Zp<p, _TSlot>(a._i / b._i) ;
     }
 
-    /// operator+=
+    /** \brief operator+=. */
     Zp &     operator+= (const Zp& a)
     {
         _i += a._i ;
@@ -96,7 +96,7 @@ public:
         return *this ;
     }
 
-    /// operator-=
+    /** \brief Operator-=. */
     Zp &     operator-= (const Zp& a)
     {
         _i -= a._i ;
@@ -110,7 +110,7 @@ public:
         return *this ;
     }
 
-    /// operator*=
+    /** \brief Operator*=. */
     Zp &     operator*= (const Zp& a)
     {
         _i *= a._i ;
@@ -124,7 +124,7 @@ public:
         return *this ;
     }
 
-    /// operator/=
+    /** \brief operator/=. */
     Zp &     operator/= (const Zp& a)
     {
         _i /= a._i ;
@@ -138,31 +138,31 @@ public:
         return *this ;
     }
 
-    /// operator==
+    /** \brief Operator==. */
     friend bool     operator== (const Zp& a, const Zp& b)
     {
         return (a._i == b._i) ;
     }
 
-    /// operator!=
+    /** \brief operator!=. */
     friend bool     operator!= (const Zp& a, const Zp& b)
     {
         return (a._i != b._i);
     }
 
-    /// abs
+    /** \brief Absolute value. */
     friend Zp  abs(const Zp& a)
     {
         return Zp<p,_TSlot>(abs(a._i)) ;
     }
 
-    /// operator<<
+    /** \brief Operator<<. */
     friend std::ostream& operator<<(std::ostream& out, const Zp& a)
     {
         return (out << int(a._i)) ;
     }
 
-    /// operator>>
+    /** \brief Operator>>. */
     friend std::istream& operator>>(std::istream& in, Zp& a)
     {
         int tmp ;

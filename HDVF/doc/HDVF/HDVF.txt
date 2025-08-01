@@ -14,7 +14,7 @@ In the 90's, persistent homology emerged independently through the work of H. Ed
 This later theory proved to have a wide range of applications in topological data analysis and hence quickly developed and spread in the scientific community.
 In parallel, in the late 80's, R. Forman defined a discrete version of Morse theory for CW-complexes, while F. Sergeraert introduced effective homology theory.
 
-In [AGL, 2017], A. Gonzalez-Lorenzo et al. defined the <B>homological discrete vector field</B> (which we refer to as HDVF in the present package), a combinatorial object that generalizes previous approaches.
+In [AGL, 2017], A. Gonzalez-Lorenzo et al. defined the **homological discrete vector field** (which we refer to as HDVF in the present package), a combinatorial object that generalizes previous approaches.
 Precisely, HDVFs\ combine discrete Morse and effective homology theory and fully encode homology information (homology groups decomposition, Betti numbers, homology generators) for cellular complexes.
 HDVFs encompass discrete Morse theory, effective homology and Smith Normal form, and: persistent homology can be computed with HDVFs (see [AGL, 2016]), relative homology and Alexander duality (see [AGL, 2025]).
 
@@ -35,10 +35,10 @@ The HDVF package is dedicated to homology and cohomology computation for discret
 
 \section secHDVFHomology Homology/cohomology and related reminders
 
-Homology and cohomology are well know topological invariants which accounts for the holes of an object using commutative groups built from the object. In Mathematics, homology and cohomology can be defined for general Hausdorff topological spaces; we speak then about "singular homology and cohomology". However, such a general definition is not computable and thus, homology/cohomology computation requires a discretization of spaces into cells of various dimensions. Such a discretization is called a <B>complex</B>:
-- <B>simplicial complexes</B> are intuitively meshes built from vertices, edges, triangles, tetrahedra...
-- <B>cubical complexes</B> are built from vertices, edges, squares, cubes...
-- <B>cellular complexes</B> are built from vertices, edges, polygons (without holes), polyhedra (without holes)...
+Homology and cohomology are well know topological invariants which accounts for the holes of an object using commutative groups built from the object. In Mathematics, homology and cohomology can be defined for general Hausdorff topological spaces; we speak then about "singular homology and cohomology". However, such a general definition is not computable and thus, homology/cohomology computation requires a discretization of spaces into cells of various dimensions. Such a discretization is called a **complex**:
+- **simplicial complexes** are intuitively meshes built from vertices, edges, triangles, tetrahedra...
+- **cubical complexes** are built from vertices, edges, squares, cubes...
+- **cellular complexes** are built from vertices, edges, polygons (without holes), polyhedra (without holes)...
 
 Actually, a set of cells is called a complex \f$K\f$ when:
 - it is closed under the "face" operation (ie. all the faces of a cell of the complex also belong to the complex)
@@ -53,17 +53,17 @@ The dimension of \f$K\f$ is the largest dimension of its cells.
 
 \subsection secHDVFChainComplexes Chain complexes
 
-In order to define this algebraic structure, one first need to chose a <B>ring of coefficients</B> \f$A\f$  (\f$A\f$ is often taken to be \f$Z\f$ or a \f$\mathbb Z/p\mathbb Z\f$ field).
+In order to define this algebraic structure, one first need to chose a **ring of coefficients** \f$A\f$  (\f$A\f$ is often taken to be \f$Z\f$ or a \f$\mathbb Z/p\mathbb Z\f$ field).
 
-Given a complex \f$K\f$ of dimension \f$d\f$, a <B>chain complex</B> \f$C\f$ is:
+Given a complex \f$K\f$ of dimension \f$d\f$, a **chain complex** \f$C\f$ is:
 
 \f\[C = \cdots C_{q+1} \xrightarrow{\partial_{q+1}} C_q \xrightarrow{\partial_{q}} C_{q-1} \xrightarrow{\partial_{q-1}} \cdots \to C_1 \xrightarrow{\partial_1} C_0 \xrightarrow{\partial_0 = 0} 0\f\]
 
 
 
-- a sequence of commutative groups, called <B>chain groups</B> \f$C_q\f$ for any \f$0\leqslant q \leqslant d\f$ defined as the formal linear combinations of cells with coefficients in \f$A\f$ (or \f$A\f$-module).<br>
-Intuitively, elements of \f$C_q\f$, called <B>chains</B> are sums \f$\gamma = \sum_{i=1}^k\lambda_i\cdot \sigma_i\f$ with \f$\lambda_i\in A\f$ and \f$\sigma_i\f$ cells of dimension \f$q\f$, which can be imagined as a set of paths of oriented cells with multiplicity (see \cgalFigureRef{HDVFchain_complexes} where two 1-chains are represented).
-- a sequence of morphisms between chain groups, called <b>boundary morphisms</B> \f$\partial_q\,:\, C_q\to C_{q-1}\f$ for any \f$0\leqslant q \leqslant d\f$, "mimicking" algebraically the geometric boundary and satisfying
+- a sequence of commutative groups, called **chain groups** \f$C_q\f$ for any \f$0\leqslant q \leqslant d\f$ defined as the formal linear combinations of cells with coefficients in \f$A\f$ (or \f$A\f$-module).<br>
+Intuitively, elements of \f$C_q\f$, called **chains** are sums \f$\gamma = \sum_{i=1}^k\lambda_i\cdot \sigma_i\f$ with \f$\lambda_i\in A\f$ and \f$\sigma_i\f$ cells of dimension \f$q\f$, which can be imagined as a set of paths of oriented cells with multiplicity (see \cgalFigureRef{HDVFchain_complexes} where two 1-chains are represented).
+- a sequence of morphisms between chain groups, called **boundary morphisms** \f$\partial_q\,:\, C_q\to C_{q-1}\f$ for any \f$0\leqslant q \leqslant d\f$, "mimicking" algebraically the geometric boundary and satisfying
 \f\[\partial_q\partial_{q+1} = 0\f\]
 Coming back to the example of \cgalFigureRef{HDVFchain_complexes}, as we will see in section \ref secHDVFsimplicial_chain_complex, the boundary of the edge \f$e_{45}\f$ is the 0-chain \f$v_5-v_4\f$ (ordering is given by vertices indices). Hence, on easily gets that \f$\partial_1(\gamma_1)=0\f$ and \f$\partial_1(\gamma_2)=v_8-v_4\f$, which is a very intuitive result.
 
@@ -73,17 +73,17 @@ Coming back to the example of \cgalFigureRef{HDVFchain_complexes}, as we will se
 
 The definition of the boundary operator depends on the underlying complex, it is detailed in next sections for simplicial and cubical complexes respectively.
 
-<B>Notation</B> Given a chain \f$\gamma\in C_q\f$ and \f$\sigma\f$ a \f$q\f$-cell, we denote by \f$\langle\gamma,\sigma\rangle\f$ the coefficient of \f$\sigma\f$ in \f$\gamma\in C_q\f$.
+**Notation** Given a chain \f$\gamma\in C_q\f$ and \f$\sigma\f$ a \f$q\f$-cell, we denote by \f$\langle\gamma,\sigma\rangle\f$ the coefficient of \f$\sigma\f$ in \f$\gamma\in C_q\f$.
 
 \subsubsection secHDVFsimplicial_chain_complex Simplicial chain complexes
 
-An <B>abstract simplicial complex</B> of dimension \f$d\f$ is built from:
-- a set of vertices identified by an index of type `size_t` (cells of dimension 0 or <B>0-simplicies</B>)
-- for any \f$q\f$ with \f$0< q\leqslant d\f$, cells of dimension \f$q\f$ (or <B>\f$q\f$-simplices</B>) are defined by \f$q+1\f$ vertices (denoted \f$\langle v_0,\ldots,v_{q}\rangle\f$ with vertices sorted by *increasing indices*).
+An **abstract simplicial complex** of dimension \f$d\f$ is built from:
+- a set of vertices identified by an index of type `size_t` (cells of dimension 0 or **0-simplicies**)
+- for any \f$q\f$ with \f$0< q\leqslant d\f$, cells of dimension \f$q\f$ (or **\f$q\f$-simplices**) are defined by \f$q+1\f$ vertices (denoted \f$\langle v_0,\ldots,v_{q}\rangle\f$ with vertices sorted by *increasing indices*).
 
-A <B>geometric simplicial complex</B> equips vertices with coordinates in \f$\mathbb R^q\f$ so that \f$q\f$-simplices are convex hulls of \f$q+1\f$ points.
+A **geometric simplicial complex** equips vertices with coordinates in \f$\mathbb R^q\f$ so that \f$q\f$-simplices are convex hulls of \f$q+1\f$ points.
 
-Given a simplicial complex (abstract or geometric) \f$K\f$, the associated chain complex \f$(C,\partial)\f$, called a <B>simplicial chain complex</B> is defined as follows:
+Given a simplicial complex (abstract or geometric) \f$K\f$, the associated chain complex \f$(C,\partial)\f$, called a **simplicial chain complex** is defined as follows:
 
 - The \f$q\f$-th chain group \f$C_q\f$ is the free \f$A\f$-module generated by \f$q\f$-cells described in the section \ref secHDVFChainComplexes.
 
@@ -102,13 +102,13 @@ For instance, in our previous example:
 
 \subsubsection secHDVFcubical_chain_complex Cubical chain complexes
 
-A <B>cubical complex</B> of dimension \f$d\f$ is a set of cells defined as cartesian products:
+A **cubical complex** of dimension \f$d\f$ is a set of cells defined as cartesian products:
 \f\[\sigma = [n_1,n_1+\delta_1]\times\cdots \times [n_d,n_d+\delta_d]\f\]
 with \f$n_i\in \mathbb N\f$ and \f$\delta_i\in\{0,1\}\f$ for \f$i=1\ldots d\f$.
 The dimension of such a cell is \f$\sum_{i=1}^d \delta_i\f$.
 As stated in previous section, a complex is closed under the "face" operation (if a cell belongs to the complex, so do its faces).
 
-<B>Khalimsky coordinates</B> associate to each cell, whatever its dimension, a unique coordinate in \f$\mathbb N^d\f$ defined as:
+**Khalimsky coordinates** associate to each cell, whatever its dimension, a unique coordinate in \f$\mathbb N^d\f$ defined as:
 \f\[\mathrm{khal}(\sigma) = (2 n_1+\delta_1,\ldots, 2 n_d+\delta_d)\f\]
 The dimension of a cell in this coordinate system is thus the number of odd coordinates.
 
@@ -121,7 +121,7 @@ The dimension of a cell in this coordinate system is thus the number of odd coor
  - \f$e = [0,1] \times [1,1] \times [0,0]\f$ and \f$\mathrm{khal}(\sigma) = (1,2,0)\f$ (cell of dimension 1)
  - \f$f = [2,3] \times [0,1] \times [1,1]\f$ and \f$\mathrm{khal}(\sigma) = (5,1,2)\f$ (cell of dimension 2)
 
-Given a cubical complex \f$K\f$, the associated chain complex \f$(C,\partial)\f$, called a <B>cubical chain complex</B> is defined as follows:
+Given a cubical complex \f$K\f$, the associated chain complex \f$(C,\partial)\f$, called a **cubical chain complex** is defined as follows:
 - The \f$q\f$-th chain group \f$C_q\f$ is the free \f$A\f$-module generated by \f$q\f$-cells described in the section \ref secHDVFChainComplexes.
 - The \f$q\f$-th boundary morphism is defined over Khalimsky coordinates of cells (ie. the basis) as follows:
 \f\[\partial_q(x_1,\ldots,x_d) = \sum_{\substack{i=1\\i\text{ odd}}}^d (-1)^{i+1}\Big((x_1,\ldots, x_i+1,\ldots, x_d) - (x_1,\ldots, x_i-1,\ldots, x_d)\Big)\f]
@@ -138,8 +138,8 @@ However in our discrete setting of finite complexes, a space and its dual can be
 
 \f\[C^* = \cdots C^{q+1} \xleftarrow{\partial^{q}} C^q \xleftarrow{\partial^{q-1}} C^{q-1}  \leftarrow \cdots \leftarrow C^2 \xleftarrow{\partial^1} C^1 \xleftarrow{\partial^0} C^0\f\]
 
-- <B>cochain groups</B> \f$C^q\f$ for any \f$0\leqslant q \leqslant d\f$ are identified with \f$C_q\f$. Hence chains and cochains are similar.
-- a sequence of morphisms between chain groups, called <b>coboundary morphisms</B> \f$\partial^q\,:\,C^q\to C^{q+1}\f$ for any \f$0\leqslant q \leqslant d\f$ with \f$\partial^q = \partial_q^t\f$ (thus, the matrix of the coboundary operator is the transpose of the boundary operator matrix). The coboundary operator "mimicks" algebraically the geometric coboundary (ie. cofaces) and satisfies:
+- **cochain groups** \f$C^q\f$ for any \f$0\leqslant q \leqslant d\f$ are identified with \f$C_q\f$. Hence chains and cochains are similar.
+- a sequence of morphisms between chain groups, called **coboundary morphisms** \f$\partial^q\,:\,C^q\to C^{q+1}\f$ for any \f$0\leqslant q \leqslant d\f$ with \f$\partial^q = \partial_q^t\f$ (thus, the matrix of the coboundary operator is the transpose of the boundary operator matrix). The coboundary operator "mimicks" algebraically the geometric coboundary (ie. cofaces) and satisfies:
 \f\[\partial^q\partial^{q-1} = 0\f\]
 
 The following figure illustrates the coboundary morphism
@@ -165,9 +165,9 @@ Let us now come back to our simplicial complex example:
  \cgalFigureEnd
 
 This example suggests that holes are delineated by *cycles which are not a boundaries*:
-- <B>Cycles</B> of dimension \f$q\f$ are chains in the kernel of \f$\partial_q\f$:
+- **Cycles** of dimension \f$q\f$ are chains in the kernel of \f$\partial_q\f$:
 \f\[Z_q(C) = \ker(\partial_q) \f\]
-- <B>Boundaries</B> of dimension \f$q\f$ are chains in the image of \f$\partial_{q+1}\f$
+- **Boundaries** of dimension \f$q\f$ are chains in the image of \f$\partial_{q+1}\f$
 \f\[B_q(C) = \mathrm{Im}(\partial_{q+1}) \f\]
 - As \f$\partial_{q}\partial_{q+1} = 0\f$, \f$B_q(C)\subseteq Z_q(C)\f$.
 - Hence we can define the quotient \f$Z_q(C)/B_q(C)\f$ which contains exactly "cycles which are not boundaries", ie. the \f$q\f$th homology group:
@@ -176,15 +176,15 @@ This example suggests that holes are delineated by *cycles which are not a bound
 For finite complexes, these groups are finitely generated and we have the following decomposition (theorem of decomposition of finitely generated groups):
 \f\[H_q(C) = A^{\beta_q}\oplus A/\lambda_1A\oplus \cdots \oplus A/\lambda_k A \f\]
 where:
-- \f$\beta_q\in\mathbb N\f$ is called the <B>\f$q\f$th Betti number</B> (giving the number of holes of dimension \f$q\f$);
-- coefficients \f$\lambda_i\f$ are called the <B>torsion coefficients in dimension \f$q\f$</B> and satisfy \f$\lambda_i | \lambda_{i+1}\f$.
+- \f$\beta_q\in\mathbb N\f$ is called the **\f$q\f$th Betti number** (giving the number of holes of dimension \f$q\f$);
+- coefficients \f$\lambda_i\f$ are called the **torsion coefficients in dimension \f$q\f$** and satisfy \f$\lambda_i | \lambda_{i+1}\f$.
 
 Let us assume homology groups have no torsion; homology can be computed "at different levels":
-- <B>level 1:</B> Computing Betti numbers.
-- <B>level 2:</B> Computing \f$\beta_q\f$ cycles generating \f$H_q(C)\f$ called <B>generators</B> (hence cycles "delineating" the holes).
+- **level 1:** Computing Betti numbers.
+- **level 2:** Computing \f$\beta_q\f$ cycles generating \f$H_q(C)\f$ called **generators** (hence cycles "delineating" the holes).
 
 Most libraries focus on persistent homology computation for topological data analysis (see section \ref secHDVFpersistent_homology), which is a "level 1" homology computation.
-The <B>HDVF package is dedicated to a "level 2" homology computation</B>, which is computationally more complex but provides "geometric" informations about holes (generators, annotations...).
+The **HDVF package is dedicated to a "level 2" homology computation**, which is computationally more complex but provides "geometric" informations about holes (generators, annotations...).
 
 \subsection secHDVFcohomology Cohomology of discrete chain complexes
 
@@ -193,9 +193,9 @@ Starting from a cochain complex:
 \f\[C^* = \cdots C^{q+1} \xleftarrow{\partial^{q}} C^q \xleftarrow{\partial^{q-1}} C^{q-1}  \leftarrow \cdots \leftarrow C^2 \xleftarrow{\partial^1} C^1 \xleftarrow{\partial^0} C^0\f\]
 
 one can define:
-- <B>Cocycles</B> of dimension \f$q\f$ are (co)chains in the kernel of \f$\partial^q\f$:
+- **Cocycles** of dimension \f$q\f$ are (co)chains in the kernel of \f$\partial^q\f$:
 \f\[Z^q(C^*) = \ker(\partial^q) \f\]
-- <B>Coboundaries</B> of dimension \f$q\f$ are chains in the image of \f$\partial^{q-1}\f$
+- **Coboundaries** of dimension \f$q\f$ are chains in the image of \f$\partial^{q-1}\f$
 \f\[B^q(C^*) = \mathrm{Im}(\partial^{q-1}) \f\]
 - As \f$\partial^{q}\partial^{q-1} = 0\f$, \f$B^q(C^*)\subseteq Z^q(C^*)\f$.
 - Hence we can define the quotient \f$Z^q(C^*)/B^q(C^*)\f$, ie. the \f$q\f$th cohomology group:
@@ -230,7 +230,7 @@ Nowadays, computational (co)homology approaches can be classified into three bra
 
 Effective homology considers homology computations from a categorical perspective ; its main results are theorems building functors providing a computation of homology for infinite spaces (locally effective spaces) starting from finite ones (effective spaces).
 
-Among the tools of effective homology, <B>reductions</B> characterise how to map a (large) chain complex onto a (small) one with isomorphic homology groups. Formally, a reduction from a chain complex \f$C\f$ to a chain complex \f$C'\f$ is a triple of graded maps \f$(f,g,h)\f$:
+Among the tools of effective homology, **reductions** characterise how to map a (large) chain complex onto a (small) one with isomorphic homology groups. Formally, a reduction from a chain complex \f$C\f$ to a chain complex \f$C'\f$ is a triple of graded maps \f$(f,g,h)\f$:
 \f\[\begin{array}{cccccc}
 \cdots & C_{q+1} & \substack{\xrightarrow{\partial_{q+1}}\\ \xleftarrow[h_{q}]{}} & C_{q} & \substack{\xrightarrow{\partial_{q}}\\ \xleftarrow[h_{q-1}]{}} & \cdots \\
 & f_{q+1}\Big\downarrow \Big\uparrow g_{q+1} & & f_{q}\Big\downarrow \Big\uparrow g_{q} & & \\
@@ -245,11 +245,11 @@ such that:
 - \f$h_{q+1} h_q = 0\f$, \f$f_{q+1} h_{q} = 0\f$ and \f$h_{q} g_q = 0\f$ for any \f$q\f$
 
 
-\f$C'\f$ is called the <B>reduced complex</B> and \f$\partial'\f$ the <B>reduced boundary</B>.
+\f$C'\f$ is called the **reduced complex** and \f$\partial'\f$ the **reduced boundary**.
 
 Under these assumptions, the homology and cohomology groups of \f$C\f$ and \f$C'\f$ are isomorphic.
 
-A reduction is <B>perfect</B> when the reduced boundary is null; then for any \f$q\f$:
+A reduction is **perfect** when the reduced boundary is null; then for any \f$q\f$:
 \f\[H_q(C) \sim g(C'_q)\f\]
 in other words, homology groups are isomorphic to the image of the reduced complex by \f$g\f$,
 \f\[H^q(C) \sim f^*(C'_q)\f\]
@@ -260,7 +260,7 @@ and cohomology groups are isomorphic to the image of the reduced complex by \f$f
 Discrete Morse theory was introduced by Forman in the 90's as a combinatorial approach for homology computation directly inspired by Morse theory (on compact manifolds).
 He showed that in the discrete context, Morse functions are better defined through their gradient: a vector field defined over the complex connecting cells and one of their co-faces. In this context, gradients of Morse functions can be easily characterized by acyclicity conditions.
 
-More precisely, given a complex \f$K\f$, a <B>discrete gradient vector field</B> (called DGVF here after) can be built as follows:
+More precisely, given a complex \f$K\f$, a **discrete gradient vector field** (called DGVF here after) can be built as follows:
 - consider the Hasse diagram of the complex (connecting cells to their boundary - figure (left))
 
 \subsection secHDVFpersist_hom Persistent homology
@@ -282,9 +282,9 @@ but they cannot be reduced to any of these frameworks. As we will see, they prov
 
 Let \f$K\f$ be a complex (simplicial, cubical...) and let \f$(\mathscr C, \partial)\f$ be its associated chain complex.
 
-<B>Notation</B> Starting from now on, we will use \f$\mathscr C\f$ for chain complexes and \f$C\f$ for critical cells.
+**Notation** Starting from now on, we will use \f$\mathscr C\f$ for chain complexes and \f$C\f$ for critical cells.
 
-Formally a <B>HDVF</B> \f$X=(P,S,C)\f$ is a partition of the cells of \f$K\f$:
+Formally a **HDVF** \f$X=(P,S,C)\f$ is a partition of the cells of \f$K\f$:
  \f\[K = P\cup S\cup C\f\]
  with \f$P\f$ primary cells, \f$S\f$ secondary cells and \f$C\f$ critical cells, such that the sub-matrix:
  \f\[\partial (S)|_P\text{ is invertible.}
@@ -301,7 +301,7 @@ Given such an HDVF \f$X=(P,S,C)\f$, we can define the following associated reduc
 \cdots & C_{q+1} & \xrightarrow{\mathrm d_{q+1}} & C_{q} & \xrightarrow{\mathrm d_{q}} & \cdots \\
 \end{array}
 \f\]
-\f$\mathrm d\f$ is the <B>reduced boundary</B> (over critical cells) and the reduction is defined as follows:
+\f$\mathrm d\f$ is the **reduced boundary** (over critical cells) and the reduction is defined as follows:
 
 - the matrix of \f$h_q\f$ is:
 \f\[\begin{array}{c}
@@ -380,7 +380,7 @@ with
 
 Therefore the HDVF "reduces" the complex to a smaller complex over critical cells.
 
-A HDVF is called <B>perfect</B> when the reduced boundary is null, then for any \f$q \in \{0\ldots d\}\f$:
+A HDVF is called **perfect** when the reduced boundary is null, then for any \f$q \in \{0\ldots d\}\f$:
 - \f$\beta_q = | C_q |\f$
 - Homology generators of dimension \f$q\f$ are \f$\{g(\sigma) \,;\, \sigma\in C_q \}\f$
 - Cohomology generators of dimension \f$q\f$ are \f$\{f^*(\sigma) \,;\, \sigma\in C_q \}\f$
@@ -393,11 +393,11 @@ Hence a perfect HDVF computes homology and provides a rich homological informati
 Both questions are still an open and we have no counter-examples.
 
 Moreover, the reduction provides various informations on cycles and co-cycles:
-- An <B>annotation</B> associates to a cycle its decomposition in the basis of homology generators, up to boundaries: <br>
+- An **annotation** associates to a cycle its decomposition in the basis of homology generators, up to boundaries: <br>
 Given \f$\gamma\in Z_q(\mathscr C)\f$, \f$f(\gamma)\f$ is an annotation of \f$\gamma\f$:
 \f\[\text{if }f(\gamma) = \sum_i \alpha_i\cdot \sigma_i,\ \ \ \sigma_i\in C_q\f\]
 \f\[\text{then }\ \ \ \gamma = \sum_i \alpha_i\cdot g(\sigma_i) + \beta,\ \ \ \beta \in B_q(\mathscr C)\f\]
-- A <B>co-annotation</B> associates to a cycle its decomposition in the basis of cohomology generators, up to coboundaries: <br>
+- A **co-annotation** associates to a cycle its decomposition in the basis of cohomology generators, up to coboundaries: <br>
 Given \f$\gamma\in Z^q(\mathscr C)\f$, \f$g^*(\gamma)\f$ is a co-annotation of \f$\gamma\f$:
 \f\[\text{if }g^*(\gamma) = \sum_i \alpha_i\cdot \sigma_i,\ \ \ \sigma_i\in C^q\f\]
 \f\[\text{then }\ \ \ \gamma = \sum_i \alpha_i\cdot f^*(\sigma_i) + \beta,\ \ \ \beta \in B^q(\mathscr C)\f\]
@@ -428,7 +428,7 @@ The following figures show an HDVF and an associated vector field:<br>
 
 HDVFs can be computed using previous matrix expression; however, Aldo Gonzalez-Lorenzo has shown that several operations on HDVF can be introduced, not only to built, but also transform HDVFs.
 
-- <B>A operation </B> (pairing of two critical cells)<br>
+- **A operation** (pairing of two critical cells)<br>
 Given a HDVF \f$X=(P,S,C)\f$, and two CRITICAL cells \f$\gamma_1\in C_q\f$, \f$\gamma_2\in C_{q+1}\f$
 \f\[ A(X) = \Big(P\cup\{\gamma_1\}, S\cup\{\gamma_2\}, C\backslash \{\gamma_1, \gamma_2\}\Big)\f\]
 and the operation is valid (ie. produces an HDVF) if and only if:
@@ -442,7 +442,7 @@ and the operation is valid (ie. produces an HDVF) if and only if:
 <img src="HDVF_ex1_A2_A.png" align="center" width=30%/>
 <img src="HDVF_ex1_A3.png" align="center" width=30%/>
 
-- <B>R operation </B> (unpairing of two critical cells)<br>
+- **R operation** (unpairing of two critical cells)<br>
 Given a HDVF \f$X=(P,S,C)\f$, a PRIMARY cell \f$\pi\in P_q\f$ and a SECONDARY cells \f$\sigma\in S_{q+1}\f$
 \f\[ R(X) = \Big(P\backslash\{\pi\}, S\backslash\{\sigma\}, C\cup \{\pi, \sigma\}\Big)\f\]
 and the operation is valid (ie. produces an HDVF) if and only if:
@@ -450,7 +450,7 @@ and the operation is valid (ie. produces an HDVF) if and only if:
 
     Operations A and R are inverse one another.
 
-- <B>M operation </B> (exchange a PRIMARY and a CRITICAL cell)<br>
+- **M operation** (exchange a PRIMARY and a CRITICAL cell)<br>
 Given a HDVF \f$X=(P,S,C)\f$, a PRIMARY cell \f$\pi\in P_q\f$ and a CRITICAL cell \f$\gamma_1\in C_{q}\f$
 \f\[ M(X) = \Big(P\backslash \{\pi\} \cup\{\gamma\}, S, C\backslash \{\gamma\}\cup \{\pi\}\Big)\f\]
 and the operation is valid (ie. produces an HDVF) if and only if:
@@ -463,7 +463,7 @@ and the operation is valid (ie. produces an HDVF) if and only if:
  M operation on a cubical complex \f$K\f$. <B>Left:</B> perfect HDVF over \f$K\f$ with cells \f$(\pi, \gamma)\f$ meeting the M operation condition (blue: homology generator associated with \f$\gamma\f$, pink: cohomology generator associated with \f$\gamma\f$); <B>Right:</B> perfect HDVF obtained with \f$M(\pi,\gamma)\f$ and updated generators (associated to \f$\pi\f$ which is now critical).
  \cgalFigureEnd
 
- - <B>W operation </B> (exchange a SECONDARY and a CRITICAL cell)<br>
+ - **W operation** (exchange a SECONDARY and a CRITICAL cell)<br>
 Given a HDVF \f$X=(P,S,C)\f$, a SECONDARY cell \f$\sigma\in S_q\f$ and a CRITICAL cell \f$\gamma_1\in C_{q}\f$
 \f\[ W(X) = \Big(P, S\backslash\{\sigma\}\cup \{\gamma\}, C\backslash \{\gamma\}\cup \{\sigma\}\Big)\f\]
 and the operation is valid (ie. produces an HDVF) if and only if:
@@ -476,7 +476,7 @@ and the operation is valid (ie. produces an HDVF) if and only if:
  W operation on a cubical complex \f$K\f$. <B>Left:</B> perfect HDVF over \f$K\f$ with cells \f$(\sigma, \gamma)\f$ meeting the W operation condition (blue: homology generator associated with \f$\gamma\f$, pink: cohomology generator associated with \f$\gamma\f$); <B>Right:</B> perfect HDVF obtained with \f$W(\pi,\gamma)\f$ and updated generators (associated to \f$\sigma\f$ which is now critical).
  \cgalFigureEnd
 
-- <B>MW operation </B> (exchange a PRIMARY and a SECONDARY cell)<br>
+- **MW operation** (exchange a PRIMARY and a SECONDARY cell)<br>
     Given a HDVF \f$X=(P,S,C)\f$, a PRIMARY cell \f$\pi\in P_q\f$ and a SECONDARY cell \f$\sigma\in S_{q}\f$
     \f\[ MW(X) = \Big(P\backslash\{\pi\}\cup \{\sigma\}, S\backslash\{\sigma\}\cup \{\pi\}, C\Big)\f\]
     and the operation is valid (ie. produces an HDVF) if and only if:
@@ -491,7 +491,7 @@ and the operation is valid (ie. produces an HDVF) if and only if:
 
 Recent works by Yann-Situ Gazull [YSG1], [YSG2] proved that (when \f$A\f$ is a field):
 - the space of perfect HDVFs is connected under M, W and MW operations (see [YSG2])
-- homology bases computed by HDVFs and other computational approaches (Smith Normal Form, persistent homology, tripartitions...) can be precisely characterised as <B>explicit basis</B> (see [YSG1])
+- homology bases computed by HDVFs and other computational approaches (Smith Normal Form, persistent homology, tripartitions...) can be precisely characterised as **explicit basis** (see [YSG1])
 - any perfect HDVF can be adapted in time \f$\mathscr O(kn^2)\f$ to compute a free set of generators of size \f$k\f$ (e.g. a given basis)
 
 These results will soon be implemented in the HDVF package.
@@ -669,7 +669,7 @@ The package provide a family of methods to search for valid pairings:
 \warning All `vtk` exports are only available for geometric chain complexes (ie. `Simplicial_chain_complex` and `Cubical_chain_complex`).
 
 How to extract (co)homological information then? Various solutions and output are available:
-- <B>HDVF extraction / visualization</B>:
+- **HDVF extraction / visualization**:
     The method `get_psc_labels` extracts cells flags in any dimensions. The complex annotated with labels can then be exported to `vtk` for visualization. The `vtk` output includes a `Label` property encoding the HDVF flag (-1 for PRIMARY, 1 for SECONDARY and 0 for CRITICAL cells), and a `CellId` property storing cells indices:
     \code
         // Labels extraction
@@ -677,7 +677,7 @@ How to extract (co)homological information then? Various solutions and output ar
         // VTK export
         ComplexType::chain_complex_to_vtk(complex, filename, &labels) ;
     \endcode
-- <B>Betti numbers</B>:
+- **Betti numbers**:
     For a perfect HDVF, the Betti number in dimension \f$q\f$ equals \f$|C_q|\f$, the number of critical cells.
     Critical cells can be obtained:
     - either in all dimensions:
@@ -688,7 +688,7 @@ How to extract (co)homological information then? Various solutions and output ar
     \code
         std::vector<size_t> criticals_q = hdvf.get_flag_dim(CGAL::HDVF::CRITICAL, q) ;
     \endcode
-- <B>Homology/cohomology generators</B>
+- **Homology/cohomology generators**
     Each critical cell \f$\gamma\f$ bears an associated homology generator: \f$g(\gamma)\f$ and cohomology generator: \f$f^*(\gamma)\f$.
     - Generators associated to \f$\gamma\f$ (index `id`, dimension `q`) can be extracted as column chains (ie. column `Sparse_chain`):
     \code
@@ -701,9 +701,9 @@ How to extract (co)homological information then? Various solutions and output ar
         ComplexType::chain_complex_chain_to_vtk(complex, filename, hom_generator, q, id) ;
     \endcode
     If `id` is provided, a `Label` integer property is added to the vtk file (0 for the cell `id`, 2 for other cells).
-- <B>Reduction maps</B>
+- **Reduction maps**
     Matrices of the reduction (\f$F\f$, \f$G\f$, \f$H\f$ and \f$D\f$) can be also obtained using `get_f`, `get_g`, `get_h` and `get_dd`.
-- <B>Automated vtk export</B>
+- **Automated vtk export**
     In order to ease `vtk` export, an "automated" method `hdvf_geometric_chain_complex_output_vtk` is also provided, exporting in distinct files, the HDVF flags and all the generators computed (homology / cohomology depending of the HDVF option):
     \code
         CGAL::HDVF::hdvf_geometric_chain_complex_output_vtk<CoefficientType, ComplexType>(hdvf, complex, outfile_root, co_faces) ;
@@ -739,7 +739,7 @@ The `OSM` library provides an implementation of the `SparseMatrix` and `SparseCh
 
 The structure is based on a mapped matrix implementation, hence, matrices and chains are either column or row major (`CGAL::OSM::COLUMN` or `CGAL::OSM::ROW` type).
 
-In order to speed up both block operations and iterators (over non empty columns or row according to the type), a <B>bitboard</B> structure is used (inherited from chess programming community). Hence, in order to iterate over the major dimension of a matrix, one should actually iterate a bitboard (providing indices of non empty columns / rows). See `Sparse_matrix` documentation for more details.
+In order to speed up both block operations and iterators (over non empty columns or row according to the type), a **bitboard** structure is used (inherited from chess programming community). Hence, in order to iterate over the major dimension of a matrix, one should actually iterate a bitboard (providing indices of non empty columns / rows). See `Sparse_matrix` documentation for more details.
 
 Iterating over sparse chains them comes to iterate over a map.
 

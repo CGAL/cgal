@@ -131,7 +131,7 @@ ostream& operator<< (ostream& out, const PerHoleT<DegType>& hole)
 
  \cgalModels{HDVF}
 
- \tparam CoefficientType a model of the `Ring` concept (by default, we use the `Z` model) providing the ring used to compute homology.
+ \tparam CoefficientType a model of the `Ring` concept  providing the ring used to compute homology.
  \tparam ComplexType a model of the `AbstractChainComplex` concept, providing the type of abstract chain complex used.
  \tparam DegType a scalar data type used for the degrees of the filtration.
  \tparam FiltrationType a model of the `Filtration` concept, providing the filtration used to compute persistence.

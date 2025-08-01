@@ -30,10 +30,10 @@ namespace HDVF {
 
  But besides construction operations and methods (using the A operation), the `Hdvf` class implements four other HDVF operations: R, M, W and MW together with appropriate "find_pair" functions. These operations change the HDVF (that is change homology / cohomology generators) and thus provide a convenient tool to move inside the "space of homology/cohomology computations".
 
-- R operation is the "dual" of the A pairing operation (it cancels the pairing and turns back a PRIMARY/SECONDARY pair into a pair of CRITICAL cells)
-- M operation exchanges a PRIMARY \f$\pi\f$ and a CRITICAL cell \f$\gamma\f$ (under conditions) and modifies the homology generator associated to \f$\gamma\f$ (while preserving is associated cohomology generator)
-- W operation exchanges a SECONDARY \f$\sigma\f$ and a CRITICAL cell \f$\gamma\f$ (under conditions) and modifies the cohomology generator associated to \f$\gamma\f$ (while preserving is associated homology generator)
-- MW operation exchanges a PRIMARY \f$\pi\f$ and a SECONDARY cell \f$\sigma\f$ (under conditions). See the introduction to HDVF for more details on this operation.
+- `R()` operation is the "dual" of the A pairing operation (it cancels the pairing and turns back a PRIMARY/SECONDARY pair into a pair of CRITICAL cells)
+- `M()` operation exchanges a PRIMARY \f$\pi\f$ and a CRITICAL cell \f$\gamma\f$ (under conditions) and modifies the homology generator associated to \f$\gamma\f$ (while preserving is associated cohomology generator)
+- `W()` operation exchanges a SECONDARY \f$\sigma\f$ and a CRITICAL cell \f$\gamma\f$ (under conditions) and modifies the cohomology generator associated to \f$\gamma\f$ (while preserving is associated homology generator)
+- `MW()` operation exchanges a PRIMARY \f$\pi\f$ and a SECONDARY cell \f$\sigma\f$ (under conditions). See the introduction to HDVF for more details on this operation.
 
 Using appropriate combinations of such operations, one can change a HDVF until corresponding homology or cohomology generators meet a given basis or delineate a hole.
 
@@ -61,10 +61,10 @@ Using appropriate combinations of such operations, one can change a HDVF until c
  <img src="HDVF_op3_g3.png" align="center" width=30%/>
 
  Perfect HDVFs provide various topological results:
- - Betti numbers: are well known topological descriptors (providing the number of holes in each dimension). For a perfect HDVF, Betti numbers equal the number of critical cells (that can be obtained through `get_flag` or `get_flag_dim` with the `CRITICAL` flag as argument).
- - Homology/cohomology generators are actually algebraic objects, namely chains. Methods `get_homology_chain` and `get_cohomology_chain` return the homology and cohomology generator chain associated to a given critical cell. VTK export functions output all the cells of such chains with non zero coefficients. Figures here above illustrate such homology and co-homology generators.
- - Homology/cohomology annotation: use `get_annotation` or `get_coannotation` to get the annotation/co-annotation of a cycle/co-cycle in the homology/cohomology basis (as a chain of critical cells).
- - Homology/cohomology comparison: use `are_same_cycles` or `are_same_cocycles` to check if two cycles (or co-cycles) belong to the same homology / cohomology class.
+ - Betti numbers: are well known topological descriptors (providing the number of holes in each dimension). For a perfect HDVF, Betti numbers equal the number of critical cells (that can be obtained through `get_flag()` or `get_flag_dim()` with the `CRITICAL` flag as argument).
+ - Homology/cohomology generators are actually algebraic objects, namely chains. Methods `get_homology_chain()` and `get_cohomology_chain()` return the homology and cohomology generator chain associated to a given critical cell. VTK export functions output all the cells of such chains with non zero coefficients. Figures here above illustrate such homology and co-homology generators.
+ - Homology/cohomology annotation: use `get_annotation()` or `get_coannotation()` to get the annotation/co-annotation of a cycle/co-cycle in the homology/cohomology basis (as a chain of critical cells).
+ - Homology/cohomology comparison: use `are_same_cycles()` or `are_same_cocycles()` to check if two cycles (or co-cycles) belong to the same homology / cohomology class.
 
  \cgalFigureBegin{HDVFannotation,HDVF_annotations.png}
  Illustration of cycles annotation and comparison. <B>Left:</B> Generator \f$g(\sigma)\f$ associated to the critical cell \f$\sigma\f$; <B>Middle:</B> A cycle \f$\alpha\f$ ; <B>Right:</B> A second cycle \f$\beta\f$.
@@ -76,7 +76,7 @@ Using appropriate combinations of such operations, one can change a HDVF until c
 
 \cgalModels{HDVF}
 
-\tparam CoefficientType a model of the `Ring` concept (by default, we use the `Z` model) providing the ring used to compute homology.
+\tparam CoefficientType a model of the `Ring` concept providing the ring used to compute homology.
 \tparam ComplexType a model of the `AbstractChainComplex` concept, providing the type of abstract chain complex used.
  */
 

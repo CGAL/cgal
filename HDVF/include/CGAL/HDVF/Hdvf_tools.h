@@ -29,7 +29,13 @@ inline std::ostream & operator<< (std::ostream &out, const PairCell& p)
     return out ;
 }
 
-// Runs an interaction loop to run M, W or MW operations and re-export the results to vtk
+/**
+ * \brief Runs an interaction loop to iterated M, W or MW operations and export the results to vtk.
+ *
+ * The loop runs until the key `Q` is pressed. Otherwise, the loop asks for an operation (M, W or MW) and a cell (index and dimension).
+ * Then all possible paired cells are listed and the user can chose one of them (or none).
+ */
+ 
 template <typename CoefType, typename ComplexType>
 void interaction_loop(Hdvf<CoefType, ComplexType> &hdvf,
                       ComplexType &complex,

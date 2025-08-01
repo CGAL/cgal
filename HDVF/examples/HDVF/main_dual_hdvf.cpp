@@ -9,18 +9,18 @@
 // --------
 
 #include <iostream>
-#include "CGAL/HDVF/Simplex.h"
-#include "CGAL/HDVF/tools_io.h"
-#include "CGAL/HDVF/Abstract_Simplicial_chain_complex.h"
-#include "CGAL/HDVF/Cubical_chain_complex.h"
-#include "CGAL/HDVF/Geometric_chain_complex_tools.h"
-#include "CGAL/HDVF/hdvf_tools.h"
-#include "CGAL/HDVF/Hdvf_duality.h"
-#include "CGAL/OSM/OSM.h"
-#include "CGAL/HDVF/Sub_sparse_matrix.h"
-#include "CGAL/HDVF/hdvf_tools.h"
+#include <CGAL/HDVF/Simplex.h>
+#include <CGAL/HDVF/tools_io.h>
+#include <CGAL/HDVF/Simplicial_chain_complex.h>
+#include <CGAL/HDVF/Cubical_chain_complex.h>
+#include <CGAL/HDVF/Geometric_chain_complex_tools.h>
+#include <CGAL/HDVF/hdvf_tools.h>
+#include <CGAL/HDVF/Hdvf_duality.h>
+#include <CGAL/OSM/OSM.h>
+#include <CGAL/HDVF/Sub_sparse_matrix.h>
+#include <CGAL/HDVF/hdvf_tools.h>
 #include "arguments.h"
-#include "CGAL/HDVF/Zp.h"
+#include <CGAL/HDVF/Zp.h>
 
 // ------- A ring
 // For Z/nZ other than Z (ie. n=0) and Z/2Z, uncomment and set the following define properly

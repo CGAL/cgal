@@ -26,16 +26,16 @@ namespace HDVF {
 /*!
  \ingroup PkgHDVFAlgorithmClasses
 
- The class `Simplex` is used by the class `Abstract_simplicial_complex` to implement the structure de simplex (i.e.\ cells of a simplicial complex).
+ The class `Simplex` is used by the class `Abstract_simplicial_chain_complex` to implement the structure de simplex (i.e.\ cells of a simplicial complex).
 
- Simplicies are described by the set of the indices of their vertices (see the documentation of `Abstract_simplicial_complex` for examples).
+ Simplicies are described by the set of the indices of their vertices (see the documentation of `Abstract_simplicial_chain_complex` for examples).
 
  */
 
 class Simplex {
-    // Friend class: Abstract_simplicial_complex
+    // Friend class: Abstract_simplicial_chain_complex
     template<typename _CoefficientType>
-    friend class Abstract_simplicial_complex ;
+    friend class Abstract_simplicial_chain_complex ;
 
     private:
     // Indices of the simplex vertices

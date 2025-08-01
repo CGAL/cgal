@@ -22,7 +22,7 @@ namespace HDVF {
 
  The class `Z2` implements the concept `Ring` with the field \f$\mathbb Z/2\mathbb Z\f$. This implementation is optimized to use bitwise operations and should be prefered to `Zp<2>`.
 
- \warning For \f$\mathbb Z/2\mathbb 2\f$, prefer the class `Z2` which is optimized.
+ \warning For \f$\mathbb Z/2\mathbb Z\f$, prefer the class `Z2` which is optimized.
 
  \cgalModels{Ring}
  */
@@ -32,97 +32,106 @@ class Z2 {
 public:
 
     /** \brief Constructor from a value (default constsructor). */
-    Z2(_TSlot i=0) : _i(i % p) {}
+    Z2(char i=0) : _i(i ? 1 : 0 ) {}
 
     // Copy constructor
     Z2(const Z2& a) : _i(a._i) {}
 
-    /// unary operator+
+    /** \brief Unary operator+ */
     friend Z2 operator+ (const Z2& a)
     {
         return a ;
     }
 
-    /// unary operator-
+    /** \brief Unary operator-. */
     friend Z2     operator- (const Z2& a)
     {
         return a ;
     }
 
-    /// operator+
+    /** \brief Operator+. */
     friend Z2     operator+ (const Z2& a, const Z2& b)
     {
-        return Z2<p, _TSlot>(a._i ^ b._i) ; // + is XOR on bits
+        return Z2((a._i^b._i)) ;
     }
 
-    /// operator-
+    /** \brief Operator-. */
     friend Z2     operator- (const Z2& a, const Z2& b)
     {
-        return Z2<p, _TSlot>(a._i ^ b._i) ; // - is similar to +
+        return Z2(a._i^b._i) ;
     }
 
-    /// operator*
+    /** \brief Operator*. */
     friend Z2     operator* (const Z2& a, const Z2& b)
     {
-        return Z2<p, _TSlot>(a._i & b._i) ; // * is AND on bits
+        return Z2(a._i & b._i) ;
     }
 
-    /// operator/
+    /** \brief Operator/. */
     friend Z2     operator/ (const Z2& a, const Z2& b)
     {
-        return Z2<p, _TSlot>(a._i / b._i) ;
+        return Z2(a._i / b._i) ;
     }
 
-    /// operator+=
+    /** \brief operator+=. */
     Z2 &     operator+= (const Z2& a)
     {
         _i ^= a._i ;
         return *this ;
     }
 
-    /// operator-=
+    /** \brief Operator-=. */
     Z2 &     operator-= (const Z2& a)
     {
         _i ^= a._i ;
         return *this ;
     }
 
-    /// operator*=
+    /** \brief Operator*=. */
     Z2 &     operator*= (const Z2& a)
     {
         _i &= a._i ;
         return *this ;
     }
 
-    /// operator/=
+    /** \brief operator/=. */
     Z2 &     operator/= (const Z2& a)
     {
         _i /= a._i ;
         return *this ;
     }
 
-    /// operator==
+    /** \brief Operator==. */
     friend bool     operator== (const Z2& a, const Z2& b)
     {
         return (a._i == b._i) ;
     }
 
-    /// operator!=
+    /** \brief operator!=. */
     friend bool     operator!= (const Z2& a, const Z2& b)
     {
         return (a._i != b._i);
     }
 
-    /// abs
+    /** \brief Absolute value. */
     friend Z2  abs(const Z2& a)
     {
         return a ;
     }
 
-    /// operator<<
-    friend ostream& operator<<(ostream& out, const Z2& a)
+    /** \brief Operator<<. */
+    friend std::ostream& operator<<(std::ostream& out, const Z2& a)
     {
-        return (out << int(a._i)) ;
+        return (out << (a._i ? 1 : 0)) ;
+    }
+
+    /** \brief Operator>>. */
+    friend std::istream& operator>>(std::istream& in, Z2& a)
+    {
+        int tmp ;
+        in >> tmp ;
+        a = Z2(tmp) ;
+        return (in) ;
     }
 };
 

@@ -36,13 +36,13 @@ That is, for all \f$q\in \mathbb N\f$, if
  \f\]
  then \f$D_{PS}\f$, the matrix of \f$j_P\circ \partial\circ i_S\f$, also written \f$\partial (S)|_P\f$ is invertible.
 
- In order to build a perfect HDVF, a pairing operation called `A` associates (under conditions) two critical cells (becoming PRIMARY and SECONDARY) and updates the reduction in time \f$\mathcal O(n^2)\f$. Intuitively, this operation bears some similitudes (see users guide) with discrete Morse theory's DGVF arrows (and an HDVF can always be represented by such a vector field - possibly with cycles).
+ In order to build a perfect HDVF, a pairing operation called `A()` associates (under conditions) two critical cells (becoming PRIMARY and SECONDARY) and updates the reduction in time \f$\mathcal O(n^2)\f$. Intuitively, this operation bears some similitudes (see users guide) with discrete Morse theory's DGVF arrows (and an HDVF can always be represented by such a vector field - possibly with cycles).
  Given a HDVF \f$X = (P,S,C)\f$, A operation between two cells \f$(\gamma_1, \gamma_2)\f$ of respective dimension \f$q/q+1\f$ is valid if \f$(P',S',C') = (P\cup\{\gamma_1\}, P\cup\{\gamma_2\}, C\backslash\{\gamma_1,\gamma_2\})\f$ is a HDVF (ie. if \f$j_{P'}\circ \partial\circ i_{S'}\f$ is still invertible). This is actually the case if and only if \f$\langle d(\gamma_2), \gamma_1 \rangle\f$ (with \f$d\f$ the reduced boundary operator) is invertible. This condition is called the *validity condition for A*; all the `find_pair_A` and `find_pairs_A` methods search for such valid pairs.
 
 
  Starting from this operation, `HDVF` provides two methods to generate perfect HDVFs (and hence compute homology):
- - `compute_perfect_hdvf` which computes a perfect HDVF by chosing at each step the first A-pairings available (depending on cells ordering in the chain complex)
- - `compute_rand_perfect_hdvf` which computes a perfect random HDVF by chosing at each step a rand A-pairing among all possible ones  (this option is thus slower)
+ - `compute_perfect_hdvf()` which computes a perfect HDVF by chosing at each step the first A-pairings available (depending on cells ordering in the chain complex)
+ - `compute_rand_perfect_hdvf()` which computes a perfect random HDVF by chosing at each step a rand A-pairing among all possible ones  (this option is thus slower)
 
  For efficiency, the HDVF reduction can be computed partially:
  - compute only the reduced boundary  (option `OPT_BND`): to get Betti numbers

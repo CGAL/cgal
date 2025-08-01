@@ -69,16 +69,16 @@ inline std::ostream& operator<<(std::ostream &out, const std::vector<PairCell>& 
 
  The `Hdvf_core` class stores the associated reduction in sparse matrices: row-major for \f$f\f$, and column-major for \f$g\f$, \f$h\f$ and \f$\partial'\f$. Getters are provided to access this information. However, according to the chosen HDVF computation option (`OPT_BND`, `OPT_F`, `OPT_G`, `OPT_FULL`) the reduction can be computed only partially (and thus faster).
 
- The class provides perfect HDVF constuction operations: `compute_perfect_hdvf` and `compute_rand_perfect_hdvf`, which build perfect HDVFs by pairing iteratively critical cells through the `A` operation.
+ The class provides perfect HDVF constuction operations: `compute_perfect_hdvf()` and `compute_rand_perfect_hdvf()`, which build perfect HDVFs by pairing iteratively critical cells through the `A()` operation.
 
- If the user wishes to build an HDVF using other criteria, several `find_pair_A` functions are provided (searching for valid pairs of cells for `A`respecting various constraints). The `A` operation can be applied to any pair returned by these functions.
+ If the user wishes to build an HDVF using other criteria, several `find_pair_A()` functions are provided (searching for valid pairs of cells for `A`respecting various constraints). The `A` operation can be applied to any pair returned by these functions.
 
- Homology/cohomology generators are actually algebraic objects, namely chains. Methods `get_homology_chain` and `get_cohomology_chain` return the homology and cohomology generator chain associated to a given critical cell. VTK export functions output all the cells of such chains with non zero coefficients.
+ Homology/cohomology generators are actually algebraic objects, namely chains. Methods `get_homology_chain()` and `get_cohomology_chain()` return the homology and cohomology generator chain associated to a given critical cell. VTK export functions output all the cells of such chains with non zero coefficients.
 
 
  \cgalModels{HDVF}
 
- \tparam CoefficientType a model of the `Ring` concept (by default, we use the `Z` model) providing the ring used to compute homology.
+ \tparam CoefficientType a model of the `Ring` concept  providing the ring used to compute homology.
  \tparam ComplexType a model of the `AbstractChainComplex` concept, providing the type of abstract chain complex used.
  \tparam ChainType a model of the `SparseChain` concept (by default, `OSM::Sparse_chain`), providing the type of sparse chains used (should be coherent with `SparseMatrixType`).
  \tparam SparseMatrixType a model of the `SparseMatrix` concept (by default, `OSM::Sparse_matrix`), providing the type of sparse matrices used.

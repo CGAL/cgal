@@ -42,8 +42,8 @@ namespace HDVF {
 
  Perfect HDVFs are first computed over \f$K\f$ and \f$L-K\f$ (providing corresponding relative homology) respectively and Alexander isomorphism gives rise to a pairing between critical cells in \f$K\f$ and \f$L-K\f$, that is a pairing between homology/cohomology generators in \f$K\f$ and \f$L-K\f$.
 
- The class provides HDVF constuction operations: `compute_perfect_hdvf` and `compute_rand_perfect_hdvf`, which build perfect HDVFs over \f$K\f$ and \f$L-K\f$ respectively.
- Then, `compute_alexander_pairing` computes Alexander isomorphism (and provides a pairing between homology/cohomology generators in \f$K\f$ and \f$L-K\f$).
+ The class provides HDVF constuction operations: `compute_perfect_hdvf()` and `compute_rand_perfect_hdvf()`, which build perfect HDVFs over \f$K\f$ and \f$L-K\f$ respectively.
+ Then, `compute_alexander_pairing()` computes Alexander isomorphism (and provides a pairing between homology/cohomology generators in \f$K\f$ and \f$L-K\f$).
 
 
  <img src="HDVF_twirl_view1.png" align="center" width=35%/>
@@ -61,7 +61,7 @@ namespace HDVF {
 
  \cgalModels{HDVF}
 
- \tparam CoefficientType a model of the `Ring` concept (by default, we use the `Z` model) providing the ring used to compute homology.
+ \tparam CoefficientType a model of the `Ring` concept  providing the ring used to compute homology.
  \tparam ComplexType a model of the `AbstractChainComplex` concept, providing the type of abstract chain complex used.
 
  [Gonzalez and al. 2025] Gonzalez-Lorenzo, A., Bac, A. & Gazull, YS. A constructive approach of Alexander duality. J Appl. and Comput. Topology 9, 2 (2025).
