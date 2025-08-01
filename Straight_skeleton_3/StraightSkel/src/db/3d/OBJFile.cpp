@@ -87,7 +87,7 @@ PolyhedronSPtr OBJFile::load(const std::string& filename) {
                     // std::cout << "new face of size " << num_vertices << std::endl;
                     CGAL_assertion(num_vertices > 2);
 
-                    VertexSPtr poly_vertices[num_vertices];
+                    std::vector<VertexSPtr> poly_vertices(num_vertices);
                     Vector3SPtr normal_sum;
                     for (unsigned int i = 0; i < num_vertices; i++) {
                         poly_vertices[i] = VertexSPtr();
@@ -120,7 +120,7 @@ PolyhedronSPtr OBJFile::load(const std::string& filename) {
                         }
                     }
 
-                    FacetSPtr facet = Facet::create(num_vertices, poly_vertices);
+                    FacetSPtr facet = Facet::create(poly_vertices);
                     facet->setID(facet_id_new++);
 
                     // std::cout << "Final edges:" << std::endl;

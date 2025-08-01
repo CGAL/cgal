@@ -214,6 +214,7 @@
 #include <set>
 #include <sstream>
 #include <stdexcept>
+#include <vector>
 
 namespace algo { namespace _3d {
 
@@ -5722,7 +5723,7 @@ SimpleStraightSkel::handleEdgeEvent(const CGAL::FT& current_offset,
         edges[1] = Edge::create(vertex_src_clone, vertices[1]->clone());
         edges[2] = Edge::create(vertex_dst_clone, vertices[2]->clone());
         edges[3] = Edge::create(vertex_dst_clone, vertices[3]->clone());
-        FacetSPtr facets_clone[4];
+        std::vector<FacetSPtr> facets_clone(4);
         for (unsigned int i = 0; i < 4; i++) {
             facets_clone[i] = Facet::create();
             facets_clone[i]->setPlane(facets[i]->getPlane());
@@ -5748,7 +5749,7 @@ SimpleStraightSkel::handleEdgeEvent(const CGAL::FT& current_offset,
             facets_clone[i]->addEdge(edges[i]);
         }
 
-        PolyhedronSPtr polyhedron_no_flip = Polyhedron::create(4, facets_clone);
+        PolyhedronSPtr polyhedron_no_flip = Polyhedron::create(facets_clone);
         PolyhedronSPtr polyhedron_no_flip_offset = PolyhedronTransformation::shiftFacets(polyhedron_no_flip, -1.0);
 
         if (polyhedron_no_flip_offset && !SelfIntersection::hasSelfIntersectingSurface(polyhedron_no_flip_offset)) {
@@ -5795,7 +5796,7 @@ SimpleStraightSkel::handleEdgeEvent(const CGAL::FT& current_offset,
         edges[1] = Edge::create(vertex_src_clone, vertices[1]->clone());
         edges[2] = Edge::create(vertex_src_clone, vertices[2]->clone());
         edges[3] = Edge::create(vertex_dst_clone, vertices[3]->clone());
-        FacetSPtr facets_clone[4];
+        std::vector<FacetSPtr> facets_clone(4);
         for (unsigned int i = 0; i < 4; i++) {
             facets_clone[i] = Facet::create();
             facets_clone[i]->setPlane(facets[i]->getPlane());
@@ -5820,7 +5821,7 @@ SimpleStraightSkel::handleEdgeEvent(const CGAL::FT& current_offset,
             facets_clone[i]->addEdge(edges[i]);
         }
 
-        PolyhedronSPtr polyhedron_flipped = Polyhedron::create(4, facets_clone);
+        PolyhedronSPtr polyhedron_flipped = Polyhedron::create(facets_clone);
         PolyhedronSPtr polyhedron_flipped_offset = PolyhedronTransformation::shiftFacets(polyhedron_flipped, -1.0);
 
         if (polyhedron_flipped_offset && !SelfIntersection::hasSelfIntersectingSurface(polyhedron_flipped_offset)) {
@@ -5858,7 +5859,7 @@ SimpleStraightSkel::handleEdgeEvent(const CGAL::FT& current_offset,
             for (unsigned int i = 0; i < 4; i++) {
                 edges[i] = Edge::create(vertex_c, vertices[i]->clone());
             }
-            FacetSPtr facets_c[4];
+            std::vector<FacetSPtr> facets_c(4);
             for (unsigned int i = 0; i < 4; i++) {
                 facets_c[i] = Facet::create();
                 facets_c[i]->setPlane(facets[i]->getPlane());
@@ -5872,7 +5873,7 @@ SimpleStraightSkel::handleEdgeEvent(const CGAL::FT& current_offset,
                 facets_c[(i+3)%4]->addEdge(edges[i]);
                 facets_c[i]->addEdge(edges[i]);
             }
-            PolyhedronSPtr polyhedron_sphere = Polyhedron::create(4, facets_c);
+            PolyhedronSPtr polyhedron_sphere = Polyhedron::create(facets_c);
             SphereVertexSplitterSPtr splitter = SphereVertexSplitter::create();
             splitter->splitVertex(vertex_c);
             if (facets_c[0]->findEdge(facets_c[2])) {

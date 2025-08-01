@@ -28,11 +28,11 @@ BOOST_AUTO_TEST_CASE(testIsLineInFacet) {
     points[1] = KernelFactory::createPoint3(3.0, -3.0, 1.0);
     points[2] = KernelFactory::createPoint3(3.0, 3.0, 1.0);
     points[3] = KernelFactory::createPoint3(-3.0, 3.0, 1.0);
-    VertexSPtr vertices[num_vertices];
+    std::vector<VertexSPtr> vertices(num_vertices);
     for (unsigned int i = 0; i < num_vertices; i++) {
         vertices[i] = Vertex::create(points[i]);
     }
-    FacetSPtr facet = Facet::create(num_vertices, vertices);
+    FacetSPtr facet = Facet::create(vertices);
     Point3SPtr p = KernelFactory::createPoint3(0.0, 0.0, 0.0);
     Point3SPtr q = KernelFactory::createPoint3(1.0, 0.5, 2.0);
     Line3SPtr line_inside = KernelFactory::createLine3(p, q);

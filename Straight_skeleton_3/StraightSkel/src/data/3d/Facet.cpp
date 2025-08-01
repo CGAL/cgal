@@ -52,24 +52,26 @@ FacetSPtr Facet::create() {
     return result;
 }
 
-FacetSPtr Facet::create(unsigned int num_vertices, VertexSPtr vertices[]) {
+FacetSPtr Facet::create(const std::vector<VertexSPtr>& vertices) {
     FacetSPtr result = FacetSPtr(new Facet());
-    for (unsigned int i = 0; i < num_vertices; i++) {
+
+    const std::size_t nv = vertices.size();
+    for (std::size_t i=0; i<nv; ++i) {
         result->addVertex(vertices[i]);
     }
-    for (unsigned int i = 0; i < num_vertices; i++) {
-        EdgeSPtr edge = vertices[i]->findEdge(vertices[(i+1)%num_vertices]);
+    for (std::size_t i=0; i<nv; ++i) {
+        EdgeSPtr edge = vertices[i]->findEdge(vertices[(i+1)%nv]);
         if (!edge) {
-            edge = Edge::create(vertices[i], vertices[(i+1)%num_vertices]);
+            edge = Edge::create(vertices[i], vertices[(i+1)%nv]);
         }
         result->addEdge(edge);
     }
     return result;
 }
 
-FacetSPtr Facet::create(unsigned int num_edges, EdgeSPtr edges[]) {
+FacetSPtr Facet::create(const std::vector<EdgeSPtr>& edges) {
     FacetSPtr result = FacetSPtr(new Facet());
-    for (unsigned int i = 0; i < num_edges; i++) {
+    for (std::size_t i=0; i<edges.size(); ++i) {
         result->addEdge(edges[i]);
     }
     return result;

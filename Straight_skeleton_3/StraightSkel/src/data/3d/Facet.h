@@ -19,8 +19,10 @@
 
 #include "data/2d/ptrs.h"
 #include "data/3d/ptrs.h"
+
 #include <list>
 #include <string>
+#include <vector>
 
 namespace data { namespace _3d {
 
@@ -32,7 +34,7 @@ public:
 
     static FacetSPtr create();
 
-    static FacetSPtr create(unsigned int num_vertices, VertexSPtr vertices[]);
+    static FacetSPtr create(const std::vector<VertexSPtr>& vertices);
 
     /**
      * Each edge may have a facet to the left and a facet to the right.
@@ -43,7 +45,7 @@ public:
      * it is assumed that the right side of the edge points to
      * the interior of the facet that is created.
      */
-    static FacetSPtr create(unsigned int num_edges, EdgeSPtr edges[]);
+    static FacetSPtr create(const std::vector<EdgeSPtr>& edges);
 
     FacetSPtr clone() const;
 

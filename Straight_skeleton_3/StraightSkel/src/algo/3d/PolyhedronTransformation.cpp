@@ -816,8 +816,8 @@ PolyhedronTransformation::triangulateFacet(FacetSPtr facet,
         VertexSPtr v0 = fh->vertex(0)->info();
         VertexSPtr v1 = fh->vertex(1)->info();
         VertexSPtr v2 = fh->vertex(2)->info();
-        VertexSPtr verts[3] = {v0, v1, v2};
-        FacetSPtr new_facet = Facet::create(3, verts);
+        std::vector<VertexSPtr> verts = {v0, v1, v2};
+        FacetSPtr new_facet = Facet::create(verts);
         Plane3SPtr plane = KernelFactory::createPlane3(v0->getPoint(),
                                                        v1->getPoint(),
                                                        v2->getPoint());

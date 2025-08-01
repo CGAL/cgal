@@ -37,11 +37,11 @@ BOOST_AUTO_TEST_CASE(testConstructor) {
     for (unsigned int i = 0; i < num_vertices; i++) {
         vertices[i] = Vertex::create(points[i]);
     }
-    EdgeSPtr edges[num_edges];
+    std::vector<EdgeSPtr> edges(num_edges);
     edges[0] = Edge::create(vertices[0], vertices[1]);
     edges[1] = Edge::create(vertices[1], vertices[2]);
     edges[2] = Edge::create(vertices[2], vertices[0]);
-    FacetSPtr result = Facet::create(num_edges, edges);
+    FacetSPtr result = Facet::create(edges);
 
     BOOST_CHECK_EQUAL(num_vertices, result->vertices().size());
     BOOST_CHECK_EQUAL(num_edges, result->edges().size());
@@ -75,11 +75,11 @@ BOOST_AUTO_TEST_CASE(testToPolygon) {
     for (unsigned int i = 0; i < num_vertices; i++) {
         vertices[i] = Vertex::create(points[i]);
     }
-    EdgeSPtr edges[num_edges];
+    std::vector<EdgeSPtr> edges(num_edges);
     edges[0] = Edge::create(vertices[0], vertices[1]);
     edges[1] = Edge::create(vertices[1], vertices[2]);
     edges[2] = Edge::create(vertices[2], vertices[0]);
-    FacetSPtr facet = Facet::create(num_edges, edges);
+    FacetSPtr facet = Facet::create(edges);
     data::_2d::PolygonSPtr result = facet->toPolygon();
     BOOST_CHECK_EQUAL(facet->vertices().size(), result->vertices().size());
     BOOST_CHECK_EQUAL(facet->edges().size(), result->edges().size());

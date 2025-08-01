@@ -48,9 +48,9 @@ PolyhedronSPtr Polyhedron::create() {
     return result;
 }
 
-PolyhedronSPtr Polyhedron::create(unsigned int num_facets, FacetSPtr facets[]) {
+PolyhedronSPtr Polyhedron::create(const std::vector<FacetSPtr>& facets) {
     PolyhedronSPtr result = PolyhedronSPtr(new Polyhedron());
-    for (unsigned int i = 0; i < num_facets; i++) {
+    for (std::size_t i=0; i<facets.size(); ++i) {
         result->addFacet(facets[i]);
     }
     return result;

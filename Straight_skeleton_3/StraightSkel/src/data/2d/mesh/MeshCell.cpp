@@ -33,9 +33,9 @@ MeshCellSPtr MeshCell::create() {
     return MeshCellSPtr(new MeshCell());
 }
 
-MeshCellSPtr MeshCell::create(unsigned int num_vertices, MeshVertexSPtr vertices[]) {
+MeshCellSPtr MeshCell::create(const std::vector<MeshVertexSPtr>& vertices) {
     MeshCellSPtr result = MeshCellSPtr(new MeshCell());;
-    for (unsigned int i = 0; i < num_vertices; i++) {
+    for (std::size_t i=0; i<vertices.size(); ++i) {
         result->addVertex(vertices[i]);
     }
     return result;

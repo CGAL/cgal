@@ -112,7 +112,7 @@ PolyhedronSPtr Surface_meshIO::load(const CGAL::Surface_mesh<Point3>& sm,
         CGAL_SS3_IO_TRACE("new: F" << facet_id_new << " with " << num_vertices << " vertices");
         CGAL_assertion(num_vertices > 2);
 
-        VertexSPtr poly_vertices[num_vertices];
+        std::vector<VertexSPtr> poly_vertices(num_vertices);
         Vector3SPtr normal_sum;
         for (unsigned int i = 0; i < num_vertices; i++) {
             poly_vertices[i] = VertexSPtr();
@@ -132,7 +132,7 @@ PolyhedronSPtr Surface_meshIO::load(const CGAL::Surface_mesh<Point3>& sm,
             }
         }
 
-        FacetSPtr facet = Facet::create(num_vertices, poly_vertices);
+        FacetSPtr facet = Facet::create(poly_vertices);
         facet->setID(facet_id_new);
 
         // Correspondence between the edges of the original mesh and the new edges

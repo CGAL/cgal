@@ -168,7 +168,7 @@ void SkelMeshGenerator::initCells() {
         }
         std::list<Point2SPtr>::iterator it_p = points.begin();
         unsigned int num_vertices = points.size();
-        MeshVertexSPtr vertices[num_vertices];
+        std::vector<MeshVertexSPtr> vertices(num_vertices);
         for (unsigned int i = 0; i < num_vertices; i++) {
             Point2SPtr point = *it_p++;
             MeshVertexSPtr vertex = mesh_result_->getVertex(point);
@@ -178,7 +178,7 @@ void SkelMeshGenerator::initCells() {
             }
             vertices[i] = vertex;
         }
-        MeshCellSPtr cell = MeshCell::create(num_vertices, vertices);
+        MeshCellSPtr cell = MeshCell::create(vertices);
         mesh_result_->addCell(cell);
         data->addCell(cell);
     }

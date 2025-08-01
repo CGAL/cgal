@@ -19,8 +19,10 @@
 
 #include "data/2d/ptrs.h"
 #include "data/2d/mesh/ptrs.h"
+
 #include <list>
 #include <string>
+#include <vector>
 
 namespace data { namespace _2d { namespace mesh {
 
@@ -29,7 +31,7 @@ public:
     virtual ~MeshCell();
     static MeshCellSPtr create();
 
-    static MeshCellSPtr create(unsigned int num_vertices, MeshVertexSPtr vertices[]);
+    static MeshCellSPtr create(const std::vector<MeshVertexSPtr>& vertices);
 
     MeshSPtr getMesh() const;
     void setMesh(MeshSPtr mesh);

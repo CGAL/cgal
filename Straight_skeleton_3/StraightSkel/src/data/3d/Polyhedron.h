@@ -29,7 +29,7 @@ public:
     virtual ~Polyhedron();
 
     static PolyhedronSPtr create();
-    static PolyhedronSPtr create(unsigned int num_facets, FacetSPtr facets[]);
+    static PolyhedronSPtr create(const std::vector<FacetSPtr>& facets);
 
     PolyhedronSPtr clone() const;
 

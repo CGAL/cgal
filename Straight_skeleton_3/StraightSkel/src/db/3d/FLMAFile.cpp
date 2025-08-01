@@ -78,7 +78,7 @@ PolyhedronSPtr FLMAFile::load(const std::string& filename) {
             if (l > 3 && l%2 == 1 && poly_id < num_facets) {
                 std::vector<std::string> str_vs = util::StringFuncs::split(line, " \t", false);
                 unsigned int num_poly_vertices = str_vs.size();
-                VertexSPtr poly_vertices[num_poly_vertices];
+                std::vector<VertexSPtr> poly_vertices(num_poly_vertices);
                 for (unsigned int i = 0; i < num_poly_vertices; i++) {
                     poly_vertices[i] = VertexSPtr();
                 }
@@ -90,11 +90,11 @@ PolyhedronSPtr FLMAFile::load(const std::string& filename) {
                         CGAL_SS3_IO_TRACE("Error: " << filename << ":" << l);
                     }
                 }
-                FacetSPtr facet = Facet::create(num_poly_vertices, poly_vertices);
+                FacetSPtr facet = Facet::create(poly_vertices);
                 facet->setID(poly_id);
                 poly_id++;
                 if (num_poly_vertices == 3) {
-                    Triangle::create(facet, poly_vertices);
+                    Triangle::create(facet, &poly_vertices[0]);
                 }
                 if (num_poly_vertices >= 3) {
                     facet->initPlane();
