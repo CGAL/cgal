@@ -5686,6 +5686,11 @@ SimpleStraightSkel::handleEdgeEvent(const CGAL::FT& current_offset,
     // check if edge should be flipped
     bool flip_edge = true;
 
+    // Try without a flip first. In practice, it is quite rare so try it first:
+    // - checking for self-intersections exits as soon as one is found, so it is faster
+    //   when it fails than when it succeeeds
+    // - as soon as we fail for the unflipped one, we know that we have to flip and don't need
+    //   to check for self-intersections.
     bool not_flipped_valid = false;
     {
         CGAL_SS3_CORE_TRACE_V(16, "== Trying WITHOUT a flip ==");
@@ -5754,9 +5759,9 @@ SimpleStraightSkel::handleEdgeEvent(const CGAL::FT& current_offset,
     CGAL_SS3_CORE_TRACE_V(16, "not_flipped_valid = " << not_flipped_valid);
 
     bool flipped_valid = false;
-#if 0
-    // @todo if one fails, just take the other immediately without SI checks
-    if (!not_flipped_valid) { // redundant but for clarity
+#if 1
+    // if one fails, the other one must be valid and we can avoid self-intersections
+    if (!not_flipped_valid) { // redundant but simply for clarity
         flipped_valid = true;
     } else
 #endif
