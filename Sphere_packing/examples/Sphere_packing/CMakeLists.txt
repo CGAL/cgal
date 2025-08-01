@@ -1,6 +1,5 @@
-
 cmake_minimum_required(VERSION 3.12...3.31)
-project(Sphere_packing_Examples CXX)
+project(Sphere_packing_Examples)
 
 find_package(CGAL REQUIRED)
 find_package(CUDAToolkit)

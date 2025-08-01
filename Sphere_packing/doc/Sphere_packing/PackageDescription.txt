@@ -7,10 +7,10 @@
 
 \addtogroup PkgSpherePackingRef
 \cgalPkgDescriptionBegin{SpherePacking, PkgSpherePacking}
-\cgalPkgPicture{pkg-small.png}
+\cgalPkgPicture{sphere_packing_logo_small.png}
 
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Rene Weller}
+\cgalPkgAuthors{Rene Weller, Sven Oesau}
 \cgalPkgDesc{
 The SpherePacking provides ... }
 \cgalPkgManuals{Chapter_SpherePacking,PkgSpherePackingRef}
