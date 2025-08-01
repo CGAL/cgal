@@ -18,7 +18,7 @@
 #ifndef CGAL_OSM_OSM_H
 #define CGAL_OSM_OSM_H
 
-//#define DEBUG 
+//#define DEBUG
 #include <CGAL/OSM/__base.h>
 #include <CGAL/OSM/Sparse_chain.h>
 #include <CGAL/OSM/Sparse_matrix.h>

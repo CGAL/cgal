@@ -22,17 +22,17 @@ namespace OSM {
 
 /*!
  \ingroup PkgHDVFAlgorithmClasses
- 
+
  The class `Sub_sparse_matrix` is a technical class implementing the concept `SparseMatrix` together with a system of masks to partially screen matrices (and restrict computations to a subset of indices *along their major direction*). This class is used to compute reduced homology (and thus to compute persistent homology and Alexander duality).
- 
+
  `Sub_sparse_matrix` inherits `Sparse_matrix` structure and basically adds two bitboards:
  - one describing indices of cells belonging to the subset of indices considered (let us denote it by \f$A\f$)
  - the second  providing indices of non-empty chains in \f$A\f$
- 
+
  The class does not modify linear algebra operators, but focuses on adapted iterators, output operators and methods to adjust the "mask".
- 
+
  \cgalModels{SparseMatrix}
- 
+
  \tparam CoefficientType a model of the `Ring` concept, providing the ring used to compute homology.
  \tparam ChainTypeFlag an integer constant encoding the type of matrices (`OSM::COLUMN` or `OSM::ROW`).
 */
@@ -40,14 +40,14 @@ namespace OSM {
 
 template <typename CoefficientType, int ChainTypeFlag>
 class Sub_sparse_matrix : public Sparse_matrix<CoefficientType, ChainTypeFlag> {
-    
+
 protected:
     /** \brief A bitboard describing subchains restriction. */
     Bitboard _subChains;
-    
+
     /** \brief A bitboard containing state of each chain (restricted to subchains). */
     Bitboard _subChainsStates;
-    
+
 public:
     /**
      * \brief Default constructor of a new `Sub_sparse_matrix` (with given rows/columns sizes and mask set to `full`).
@@ -65,7 +65,7 @@ public:
             _subChains = OSM::Bitboard(rowCount,false) ;
         _subChainsStates = this->_chainsStates & _subChains ;
     }
-    
+
     /**
      * \brief Constructor with given rows/columns sizes and a mask.
      *
@@ -78,7 +78,7 @@ public:
     Sub_sparse_matrix(size_t rowCount, size_t columnCount, const Bitboard& subChain) : Sparse_matrix<CoefficientType, ChainTypeFlag>(rowCount, columnCount), _subChains(subChain), _subChainsStates(this->_chainsStates & subChain)
     {
     }
-    
+
     /** \brief Copy constructor from another `Sub_sparse_matrix`.
      *
      * Create a new empty `Sub_sparse_matrix` from another of type `ChainTypeFlag` with coefficients of type `CoefficientType`, a given size along rows/columns and a given mask.
@@ -86,7 +86,7 @@ public:
      * \param[in] otherToCopy `Sub_sparse_matrix` copied into `this`.
      */
     Sub_sparse_matrix(const Sub_sparse_matrix& otherToCopy) : Sparse_matrix<CoefficientType, ChainTypeFlag>(otherToCopy), _subChains(otherToCopy._subChains), _subChainsStates(otherToCopy._subChainsStates) {}
-    
+
     /** \brief Copy constructor from `Sparse_matrix`.
      *
      * Create a new `Sub_sparse_matrix` from a `Sparse_matrix` object (with the same `ChainTypeFlag`). Create a "full" mask.
@@ -101,20 +101,20 @@ public:
             _subChains = OSM::Bitboard(otherToCopy.dimensions().first,false) ;
         _subChainsStates = this->_chainsStates & _subChains ;
     }
-    
-    
+
+
     /** \brief Iterator to the beginning of the indices of non empty chains inside the mask. */
     inline Bitboard::iterator begin() const noexcept
     {
         return _subChainsStates.begin() ;
     }
-    
+
     /** \brief Iterator to the end of the of the indices of non empty chains inside the mask. */
     inline Bitboard::iterator end() const noexcept
     {
-        return _subChainsStates.end() ; 
+        return _subChainsStates.end() ;
     }
-    
+
     /** \brief Change the indices subset mask.
      *
      * Set a new mask encoding a new subset of indices along the major dimension.
@@ -124,7 +124,7 @@ public:
         _subChains = new_subChains ;
         _subChainsStates = this->_chainsStates & _subChains ;
     }
-    
+
     /** \brief Add an index to the mask.
      *
      * Set the bit encoding a given index to 1 (ie. add the index in the mask).
@@ -137,7 +137,7 @@ public:
         if (this->_chainsStates.isOn(index))
             _subChainsStates.setOn(index) ;
     }
-    
+
     /** \brief Remove an index from the mask.
      *
      * Set the bit encoding a given index to 0 (ie. remove the index from the mask).
@@ -149,10 +149,10 @@ public:
         _subChains.setOff(index) ;
         _subChainsStates.setOff(index) ;
     }
-    
+
     /** \brief Change the mask to its complement. */
     inline void complement() { _subChains.bit_not() ; }
-    
+
     /**
      * \brief Assign to other `Sub_sparse_matrix`.
      *
@@ -171,7 +171,7 @@ public:
         _subChainsStates = otherToCopy._subChainsStates ;
         return *this ;
     }
-    
+
     /**
      * \brief Displays a `Sub_sparse_matrix` in the output stream.
      *

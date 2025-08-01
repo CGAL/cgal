@@ -58,7 +58,7 @@ const int index64[64] = {
 
 /*!
  \ingroup PkgHDVFAlgorithmClasses
- 
+
  The class `Bitboard` implements an accelerating structure, derived from the chess community. This structure maps stores a sequence of bits. However, unlike vectors or arrays, it provides fast forward and reverse iterators over `1` bits. It is used in `OSM::Sparse_matrix` to build a fast iterator over non-zero chains.
 
 */
@@ -67,10 +67,10 @@ class Bitboard {
 private:
     /* \brief The inner data storage (a contiguous array of 64 unsigned bit integers). */
     std::vector<std::uint64_t> boards;
-    
+
     /* \brief The number of bits we want to store. */
     std::size_t _size;
-    
+
 public:
     /**
      * \brief Compute fast 64bit int log2.
@@ -83,7 +83,7 @@ public:
         if (_value == 1) return 0;
         return tab64[((std::uint64_t)((_value - (_value >> 1)) * 0x07EDD5E59A4E28C2)) >> 58] + 1;
     }
-    
+
     /**
      * \struct Bitboard::iterator
      * \brief The iterator over bitboards.
@@ -99,7 +99,7 @@ public:
         using value_type        = std::uint64_t;
         using pointer           = value_type*;
         using reference         = value_type&;
-        
+
         /**
          * \brief Iterator constructor.
          * \param[in] _index The initial index.
@@ -118,13 +118,13 @@ public:
         {
             if (index == 0) ++(*this);
         }
-        
+
         /**
          * \brief Iterator dereference.
          * \returns A no-null index on the billboard or past-the-end index.
          */
         const std::size_t operator*() const { return index; }
-        
+
         /**
          * \brief Prefix incrementation. Finds the next not-null index.
          * \returns The reference to the current iterator.
@@ -145,41 +145,41 @@ public:
                     innerIndex = bitIndex(iteratedBoards[arrayIndex] & -iteratedBoards[arrayIndex]);
                     index = arrayIndex * BITBOARD_INT_SIZE + innerIndex;
                     iteratedBoards[arrayIndex] &= iteratedBoards[arrayIndex] - 1;
-                    
+
                     arrayIndex += innerIndex / 64;
                 } while (innerIndex == 64 && arrayIndex < iteratedBoards.size());
             }
-            
+
             index = index > size ? size : index;
-            
+
             return *this;
         }
-        
+
         /**
          * \brief Postfix incrementation. Finds the next not-null index.
          * \returns The pre-incremented iterator.
          */
         iterator operator++(int) { iterator tmp = *this; ++(*this); return tmp; }
-        
+
         /**
          * \brief Equality check.
          * \returns True if the indices are equal.
          */
         friend bool operator==(const iterator &a, const iterator &b) { return a.index == b.index; }
-        
+
         /**
          * \brief Inequality check.
          * \returns True if the indices are different.
          */
         friend bool operator!=(const iterator &a, const iterator &b) { return a.index != b.index; }
-        
+
     private:
         std::size_t index;
         std::size_t arrayIndex;
         std::size_t size;
         std::vector<std::uint64_t> iteratedBoards;
     };
-    
+
     /**
      * \struct Bitboard::reverse_iterator
      * \brief The reverse iterator over bitboards.
@@ -195,7 +195,7 @@ public:
         using value_type        = std::uint64_t;
         using pointer           = value_type*;
         using reference         = value_type&;
-        
+
         /**
          * \brief Reverse iterator constructor.
          * \param[in] _index The initial index.
@@ -215,15 +215,15 @@ public:
                     ++(*this);
                 } while (index >_index);
             }
-            
+
         }
-        
+
         /**
          * \brief Iterator dereference.
          * \returns A no-null index on the billboard or past-the-end index.
          */
         const std::size_t operator*() const { return index; }
-        
+
         /**
          * \brief Prefix incrementation. Finds the next not-null index.
          * \returns The reference to the current iterator.
@@ -246,11 +246,11 @@ public:
             // bb |= bb >> 32;
             // return tab64[(bb * debruijn64) >> 58];
             // }
-            
+
             // We can use this to iterate through all ones in reverse order.
             // The following code scales up this principle for multiple contiguous 64bit bitboards.
             // MSB are stored in the rightmost 64bits bitboard.
-            
+
             std::size_t innerIndex ; //= bitIndex(iteratedBoards[arrayIndex] & -iteratedBoards[arrayIndex]);
             if (arrayIndex != size_t_maxvalue)
             {
@@ -276,45 +276,45 @@ public:
                     }
                     if (innerIndex == 0)
                         --arrayIndex ;
-                    
+
                 } while (innerIndex == 64 && arrayIndex != size_t_maxvalue);
             }
             else // set iterator for end()
                 index = arrayIndex ;
-            
+
             return *this;
         }
-        
+
         /**
          * \brief Postfix incrementation. Finds the next not-null index.
          * \returns The pre-incremented iterator.
          */
         reverse_iterator operator++(int) { reverse_iterator tmp = *this; ++(*this); return tmp; }
-        
+
         /**
          * \brief Equality check.
          * \returns True if the indices are equal.
          */
         friend bool operator==(const reverse_iterator &a, const reverse_iterator &b) { return a.index == b.index; }
-        
+
         /**
          * \brief Inequality check.
          * \returns True if the indices are different.
          */
         friend bool operator!=(const reverse_iterator &a, const reverse_iterator &b) { return a.index != b.index; }
-        
+
     private:
         std::size_t index;
         std::size_t arrayIndex;
         std::size_t size;
         std::vector<std::uint64_t> iteratedBoards;
     };
-    
+
     /**
      * \brief Bitboard default constructor. Initialize bitboard with all zeros and size 64.
      */
     Bitboard(): boards({0UL}), _size(64) {}
-    
+
     /**
      * \brief Bitboard value intializer. Initialize bitboard with given vector of bitboards.
      *
@@ -324,7 +324,7 @@ public:
     boards(_bitboard),
     _size(_bitboard.size() * 64)
     {}
-    
+
     /**
      * \brief Bitboard size initializer. Initialize bitboard with given size.
      *
@@ -335,7 +335,7 @@ public:
     boards(std::vector<std::uint64_t>(_size / BITBOARD_INT_SIZE + (_size % BITBOARD_INT_SIZE != 0))),
     _size(_size)
     { if (!empty) bit_not() ; }
-    
+
     /**
      * \brief Bitboard copy constructor. Initialize bitboard with given bitboard.
      *
@@ -345,8 +345,8 @@ public:
     boards(_bitboard.boards),
     _size(_bitboard._size)
     {}
-    
-    
+
+
     /**
      * \brief Bitboard assign operator. Initialize bitboard with given bitboard.
      *
@@ -355,10 +355,10 @@ public:
     Bitboard& operator=(const Bitboard &_bitboard) {
         this->boards = _bitboard.boards;
         this->_size = _bitboard._size;
-        
+
         return *this;
     }
-    
+
     /**
      * \brief Bitwise NOT on a bitboard.
      *
@@ -369,10 +369,10 @@ public:
         {
             boards[i] = ~boards[i];
         }
-        
+
         return *this;
     }
-    
+
     /**
      * \brief Bitwise NOT of a bitboard.
      *
@@ -383,7 +383,7 @@ public:
         Bitboard res(_bitboard);
         return res.bit_not();
     }
-    
+
     /**
      * \brief Bitboard begin iterator that allows to loop through all non-null indices.
      * \returns The begin iterator.
@@ -391,7 +391,7 @@ public:
      * \note The iterator is constant.
      */
     iterator begin() const { return iterator(0, _size, boards); }
-    
+
     /**
      * \brief Bitboard past-the-end iterator.
      * \returns The past-the-end iterator.
@@ -399,7 +399,7 @@ public:
      * \note The iterator is constant.
      */
     iterator end() const { return iterator(_size, _size, boards); }
-    
+
     /**
      * \brief Bitboard reverse_begin reverse_iterator that allows to loop through all non-null indices in decreasing order.
      * \returns The reverse_begin iterator.
@@ -408,7 +408,7 @@ public:
      */
     reverse_iterator reverse_begin() const { return reverse_iterator(_size-1, _size, boards); }
     reverse_iterator reverse_begin(size_t index) const { std::cout << "reverse with index " << index << std::endl ; return reverse_iterator(index, _size, boards); }
-    
+
     /**
      * \brief Bitboard past-the-end reverse_iterator.
      * \returns The past-the-end reverse_iterator.
@@ -416,7 +416,7 @@ public:
      * \note The reverse_iterator is constant.
      */
     reverse_iterator reverse_end() const { return reverse_iterator(size_t_maxvalue, _size, boards); }
-    
+
     /**
      * \brief Stream operator that displays all bits.
      *
@@ -433,10 +433,10 @@ public:
         }
         // Add the leading zeros.
         _stream << std::string(_bitboard._size - last - 1, '0');
-        
+
         return _stream;
     }
-    
+
     /**
      * \brief Bitwise OR between two bitboards.
      *
@@ -449,7 +449,7 @@ public:
         res |= _right;
         return res;
     }
-    
+
     /**
      * \brief Bitwise OR between a bitboard and a single bit at given position.
      *
@@ -462,7 +462,7 @@ public:
         res |= _right;
         return res;
     }
-    
+
     /**
      * \brief Bitwise OR between a bitboard and a single bit at given position.
      *
@@ -475,7 +475,7 @@ public:
         res |= _left;
         return res;
     }
-    
+
     /**
      * \brief Bitwise AND between two bitboards.
      *
@@ -488,7 +488,7 @@ public:
         res &= _right;
         return res;
     }
-    
+
     /**
      * \brief Bitwise AND between a bitboard and a single bit at given position.
      *
@@ -501,7 +501,7 @@ public:
         res &= _right;
         return res;
     }
-    
+
     /**
      * \brief Bitwise AND between a bitboard and a single bit at given position.
      *
@@ -514,7 +514,7 @@ public:
         res &= _left;
         return res;
     }
-    
+
     /**
      * \brief Bitwise XOR between two bitboards.
      *
@@ -527,7 +527,7 @@ public:
         res ^= _right;
         return res;
     }
-    
+
     /**
      * \brief Bitwise XOR between a bitboard and a single bit at given position.
      *
@@ -540,7 +540,7 @@ public:
         res ^= _right;
         return res;
     }
-    
+
     /**
      * \brief Bitwise XOR between a bitboard and a single bit at given position.
      *
@@ -553,7 +553,7 @@ public:
         res ^= _left;
         return res;
     }
-    
+
     /**
      * \brief Bitwise OR between two bitboards.
      *
@@ -564,10 +564,10 @@ public:
         for (std::size_t i = 0 ; i < boards.size() ; i++) {
             boards[i] |= _other.boards[i];
         }
-        
+
         return *this;
     }
-    
+
     /**
      * \brief Bitwise OR between a bitboard and a single bit at given position.
      *
@@ -577,11 +577,11 @@ public:
     Bitboard& operator|=(const std::size_t &_other) {
         std::size_t boardIndex = _other / BITBOARD_INT_SIZE;
         std::uint64_t bit = 1ULL << (_other % BITBOARD_INT_SIZE);
-        
+
         boards[boardIndex] |= bit;
         return *this;
     }
-    
+
     /**
      * \brief Bitwise AND between two bitboards.
      *
@@ -592,10 +592,10 @@ public:
         for (std::size_t i = 0 ; i < boards.size() ; i++) {
             boards[i] &= _other.boards[i];
         }
-        
+
         return *this;
     }
-    
+
     /**
      * \brief Bitwise AND between a bitboard and a single bit at given position.
      *
@@ -605,11 +605,11 @@ public:
     Bitboard& operator&=(const std::size_t &_other) {
         std::size_t boardIndex = _other / BITBOARD_INT_SIZE;
         std::uint64_t bit = 1ULL << (_other % BITBOARD_INT_SIZE);
-        
+
         boards[boardIndex] &= bit;
         return *this;
     }
-    
+
     /**
      * \brief Bitwise XOR between two bitboards.
      *
@@ -620,10 +620,10 @@ public:
         for (std::size_t i = 0 ; i < boards.size() ; i++) {
             boards[i] ^= _other.boards[i];
         }
-        
+
         return *this;
     }
-    
+
     /**
      * \brief Bitwise XOR between a bitboard and a single bit at given position.
      *
@@ -633,11 +633,11 @@ public:
     Bitboard& operator^=(const std::size_t &_other) {
         std::size_t boardIndex = _other / BITBOARD_INT_SIZE;
         std::uint64_t bit = 1ULL << (_other % BITBOARD_INT_SIZE);
-        
+
         boards[boardIndex] ^= bit;
         return *this;
     }
-    
+
     /**
      * \brief Toggle on and off a given bit.
      *
@@ -646,7 +646,7 @@ public:
     void toggle(const std::size_t &_index) {
         *this ^= _index;
     }
-    
+
     /**
      * \brief Toggle on a given bit.
      *
@@ -655,7 +655,7 @@ public:
     void setOn(const std::size_t &_index) {
         *this |= _index;
     }
-    
+
     /**
      * \brief Toggle off a given bit.
      *
@@ -664,17 +664,17 @@ public:
     void setOff(const std::size_t &_index) {
         std::size_t boardIndex = _index / BITBOARD_INT_SIZE;
         std::uint64_t bit = 1ULL << (_index % BITBOARD_INT_SIZE);
-        
+
         boards[boardIndex] &= ~bit;
     }
-    
+
     bool isOn(const std::size_t &_index) const {
         std::size_t boardIndex = _index / BITBOARD_INT_SIZE;
         std::uint64_t bit = 1ULL << (_index % BITBOARD_INT_SIZE);
-        
+
         return (boards[boardIndex] & bit) != 0;
     }
-    
+
     size_t size() const { return _size ; }
 };
 

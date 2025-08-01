@@ -48,7 +48,7 @@ The dimension of \f$K\f$ is the largest dimension of its cells.
  \cgalFigureBegin{HDVFcomplexes,HDVF_cub_simpl_complex.png}
  Illustration of complexes. <B>Left:</B> a simplicial complex of dimension 3; <B>Right:</B> A cubical complex of dimension 3.
  \cgalFigureEnd
- 
+
  In order to compute homology and cohomology, algebraic objects are built from such "geometric" complexes, namely chain complexes.
 
 \subsection secHDVFChainComplexes Chain complexes
@@ -115,7 +115,7 @@ The dimension of a cell in this coordinate system is thus the number of odd coor
  \cgalFigureBegin{HDVFcubical_complex_fig,cubical_complex.png}
  A cubical complex of dimension 3.
  \cgalFigureEnd
- 
+
  For instance, in the example above:
  - \f$v = [2,2] \times [1,1] \times [0,0]\f$ and \f$\mathrm{khal}(\sigma) = (4,2,0)\f$ (cell of dimension 0)
  - \f$e = [0,1] \times [1,1] \times [0,0]\f$ and \f$\mathrm{khal}(\sigma) = (1,2,0)\f$ (cell of dimension 1)
@@ -215,8 +215,8 @@ Figure \cgalFigureRef{HDVFex_hom_cohom} and \cgalFigureRef{HDVFex_hom_cohom_cofa
 
 Therefore homology and cohomology provide isomorphic (and dual) results. Actually, the following proposition holds in finite dimension:
 \f\[H^q(C^*) \sim H_q(C)\f\]
- 
- 
+
+
 \subsection secHDVFcompHomology Computing homology and cohomology
 
 First results on the computation of discrete homology and cohomology date back to the 80's (see for instance [Munkres]). They are based on a diagonalisation of boundary matrices (called Smith Normal form).
@@ -268,11 +268,11 @@ More precisely, given a complex \f$K\f$, a <B>discrete gradient vector field</B>
 \subsection secHDVFrelative_hom Relative homology
 
 \subsection secHDVFAlexander Alexander duality
- 
+
 \section secHDVF The HDVF framework
- 
+
 This section presents a brief introduction to HDVFs, see [AGL, 2016] for more details.
- 
+
 \subsection secHDVFHDVF_definitions Definition of HDVFs
 
 HDVFs are an "in-between" theory:
@@ -418,7 +418,7 @@ Let us point out that HDVFs can be represented in a "discrete Morse theory" styl
 The following figures show an HDVF and an associated vector field:<br>
  <img src="HDVF_ex1_A3.png" align="center" width=30%/>
  <img src="HDVF_ex1_A3_DGVF.png" align="center" width=30%/>
- 
+
  And the following figure exhibits the vector field representation of a HDVF with a cycle (on the right, the cycle is highlighted in purple):<br>
   <img src="HDVF_cycle.png" align="center" width=20%/>
  <img src="HDVF_cycle_highlighted.png" align="center" width=20%/><br>
@@ -449,7 +449,7 @@ and the operation is valid (ie. produces an HDVF) if and only if:
 \f\[ \langle h(\pi),\sigma\rangle \text{ is invertible}\f\]
 
     Operations A and R are inverse one another.
-    
+
 - <B>M operation </B> (exchange a PRIMARY and a CRITICAL cell)<br>
 Given a HDVF \f$X=(P,S,C)\f$, a PRIMARY cell \f$\pi\in P_q\f$ and a CRITICAL cell \f$\gamma_1\in C_{q}\f$
 \f\[ M(X) = \Big(P\backslash \{\pi\} \cup\{\gamma\}, S, C\backslash \{\gamma\}\cup \{\pi\}\Big)\f\]
@@ -458,11 +458,11 @@ and the operation is valid (ie. produces an HDVF) if and only if:
 
     The M operation modifies the homology generator associated to \f$\gamma\f$ (while preserving is associated cohomology generator).
     The following figure illustrates the M operation.
- 
+
  \cgalFigureBegin{HDVF_M,HDVF_M.png}
  M operation on a cubical complex \f$K\f$. <B>Left:</B> perfect HDVF over \f$K\f$ with cells \f$(\pi, \gamma)\f$ meeting the M operation condition (blue: homology generator associated with \f$\gamma\f$, pink: cohomology generator associated with \f$\gamma\f$); <B>Right:</B> perfect HDVF obtained with \f$M(\pi,\gamma)\f$ and updated generators (associated to \f$\pi\f$ which is now critical).
  \cgalFigureEnd
- 
+
  - <B>W operation </B> (exchange a SECONDARY and a CRITICAL cell)<br>
 Given a HDVF \f$X=(P,S,C)\f$, a SECONDARY cell \f$\sigma\in S_q\f$ and a CRITICAL cell \f$\gamma_1\in C_{q}\f$
 \f\[ W(X) = \Big(P, S\backslash\{\sigma\}\cup \{\gamma\}, C\backslash \{\gamma\}\cup \{\sigma\}\Big)\f\]
@@ -471,11 +471,11 @@ and the operation is valid (ie. produces an HDVF) if and only if:
 
     The W operation modifies the cohomology generator associated to \f$\gamma\f$ (while preserving is associated homology generator).
     The following figure illustrates the W operation.
- 
+
  \cgalFigureBegin{HDVF_W,HDVF_W.png}
  W operation on a cubical complex \f$K\f$. <B>Left:</B> perfect HDVF over \f$K\f$ with cells \f$(\sigma, \gamma)\f$ meeting the W operation condition (blue: homology generator associated with \f$\gamma\f$, pink: cohomology generator associated with \f$\gamma\f$); <B>Right:</B> perfect HDVF obtained with \f$W(\pi,\gamma)\f$ and updated generators (associated to \f$\sigma\f$ which is now critical).
  \cgalFigureEnd
- 
+
 - <B>MW operation </B> (exchange a PRIMARY and a SECONDARY cell)<br>
     Given a HDVF \f$X=(P,S,C)\f$, a PRIMARY cell \f$\pi\in P_q\f$ and a SECONDARY cell \f$\sigma\in S_{q}\f$
     \f\[ MW(X) = \Big(P\backslash\{\pi\}\cup \{\sigma\}, S\backslash\{\sigma\}\cup \{\pi\}, C\Big)\f\]
@@ -484,11 +484,11 @@ and the operation is valid (ie. produces an HDVF) if and only if:
 
     The MW operation modifies both homology and cohomology generators.
     The following figure illustrates the W operation.
- 
+
  \cgalFigureBegin{HDVF_MW,HDVF_MW.png}
  MW operation on a cubical complex \f$K\f$. <B>Top:</B> perfect HDVF over \f$K\f$ with cells \f$(\pi_1, \sigma_1)\f$ and \f$(\pi_2, \sigma_2)\f$ meeting the MW operation condition (blue: homology generators, pink: cohomology generators); <B>Down, left:</B> perfect HDVF obtained with \f$MW(\pi_1,\sigma_1)\f$ and updated generators (a cohomology generator is modified); <B>Down, right:</B> perfect HDVF obtained with \f$MW(\pi_2,\sigma_2)\f$ and updated generators (a homology generator is modified).
  \cgalFigureEnd
- 
+
 Recent works by Yann-Situ Gazull [YSG1], [YSG2] proved that (when \f$A\f$ is a field):
 - the space of perfect HDVFs is connected under M, W and MW operations (see [YSG2])
 - homology bases computed by HDVFs and other computational approaches (Smith Normal Form, persistent homology, tripartitions...) can be precisely characterised as <B>explicit basis</B> (see [YSG1])
@@ -653,7 +653,7 @@ The package provide a family of methods to search for valid pairings:
     PairCell pair;
     std::vector<PairCell> pairs;
     bool found;
-    
+
     // Search for the first valid pair in dimension `q`
     pair = find_pair_A(q, found);
     // Search for the first cell (of dimension `q-1` or `q+1`) forming a valid pair with tau (index `id`, dimension `q`)
@@ -769,15 +769,15 @@ The %osm file format is a simple text format to store OSM sparse matrices:
 
 
  [AGL, 2017] Aldo Gonzalez-Lorenzo, Alexandra Bac, Jean-Luc Mari, Pedro Real. Allowing cycles in discrete Morse theory, Topology and its Applications, Volume 228, 2017, Pages 1-35.
- 
+
  [AGL, 2016] Aldo Gonzalez-Lorenzo. Computational Homology Applied to Discrete Objects. Discrete Mathematics [PhD]. Aix-Marseille Université; Universidad de Sevilla, 2016.
- 
+
  [AGL, 2025] Aldo Gonzalez-Lorenzo, Alexandra Bac and Yann-Situ Gazull. A constructive approach of Alexander duality. J Appl. and Comput. Topology 9, 2 (2025).
- 
+
  [YSG1,  2025] Yann-Situ Gazull, Aldo Gonzalez-Lorenzo and Alexandra Bac. Characterization of the computed homology and cohomology bases. DGMM 2025 (to appear).
- 
+
  [YSG2,  2025] Yann-Situ Gazull, Aldo-Gonzalez-Lorenzo and Alexandra Bac. Space of homological computations: connectivity and paths (submitted to Journal of Applied and Computational Topology).
- 
+
  [Munkres] J. Munkres. Elements of Algebraic Topology, Addison Wesley Publishing Company, (1984)
 
 */

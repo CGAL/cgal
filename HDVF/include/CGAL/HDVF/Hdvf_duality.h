@@ -26,44 +26,44 @@ namespace HDVF {
 
 /*!
  \ingroup PkgHDVFAlgorithmClasses
- 
+
  The class `Hdvf_duality` is the implementation of homological discrete vector fields (HDVF for short) for Alexander duality computation.
- 
+
  \warning The ring of coefficients provided should be a **field**.
- 
+
  In dimension \f$n\f$, given a complex \f$L\f$ homeomorphic to \f$\mathcal S^n\f$ and a sub-complex \f$K\subseteq L\f$, Alexander duality states that for all \f$q\leqslant n\f$:
  \f\[\tilde H_q(K) \simeq \tilde H^{n-q-1}(L-K)\f\]
  where \f$\tilde H_q\f$ and \f$\tilde H^q\f$ denote reduced homology and cohomology groups.
- 
+
  In [Gonzalez and al. 2025], the authors prove that, even if \f$L-K\f$ is not a sub-complex, it produces a valid chain complex (we call "co-complex" such a complementary of sub-complex). Hence, its homology/cohomology can be computed and for all \f$q\leqslant n\f$:
  \f\[\tilde H_q(K) \simeq \tilde H^{q+1}(L-K)\f\]
- 
+
  HDVFs provide a fast and convenient mean to compute this isomorphism. In order to work with convenient finite complexes, the complex \f$L\f$ must be homeomorphic to a ball of dimension \f$n\f$ (thus \f$\mathcal S^n\f$ is actually homeomorphic to \f$L\f$ plus an infinite \f$n\f$-cell closing its boundary).
- 
+
  Perfect HDVFs are first computed over \f$K\f$ and \f$L-K\f$ (providing corresponding relative homology) respectively and Alexander isomorphism gives rise to a pairing between critical cells in \f$K\f$ and \f$L-K\f$, that is a pairing between homology/cohomology generators in \f$K\f$ and \f$L-K\f$.
- 
+
  The class provides HDVF constuction operations: `compute_perfect_hdvf` and `compute_rand_perfect_hdvf`, which build perfect HDVFs over \f$K\f$ and \f$L-K\f$ respectively.
  Then, `compute_alexander_pairing` computes Alexander isomorphism (and provides a pairing between homology/cohomology generators in \f$K\f$ and \f$L-K\f$).
- 
- 
+
+
  <img src="HDVF_twirl_view1.png" align="center" width=35%/>
  <img src="HDVF_twirl_view2.png" align="center" width=30%/>
- 
+
  Example of Alexander duality isomorphism. The twirl mesh is a subcomplex `K` of a larger complex `L` depicted in yellow, homeomorphic to the ball of dimension 3 (right - sectional view).
- 
+
  \cgalFigureBegin{Duality_quartet,HDVF_twirl_quartet.png}
  Example of "homological quartet for the twirl model". <B>1:</B> Homology generators of the twirl \f$H_1(K)\f$, <B>2:</B> Cohomology generators of the twirl \f$H^1(K)\f$, <B>3:</B> Homology generators of the complementary of the twirl \f$H_1(L-K)\f$, <B>4:</B> Cohomology generators of the complementary of the twirl \f$H^1(L-K)\f$. Alexander isomorphism is represented through colours (paired generators have similar colours).
  \cgalFigureEnd
- 
+
  Hence, each hole in \f$K\f$ gives rise to four generators (called its "homological quarted": its homology and cohomology generators in \f$K_q\f$ and the homology and cohomology generators paired with them in \f$(L-K)_{q+1}\f$).
- 
+
  In order to compute relative homology, a sub chain complex mask is used to partially screen the complex `L` and thus restrict HDVF computation. This mask is called "current mask" (and can be set over `K` or `L-K`).
- 
+
  \cgalModels{HDVF}
- 
+
  \tparam CoefficientType a model of the `Ring` concept (by default, we use the `Z` model) providing the ring used to compute homology.
  \tparam ComplexType a model of the `AbstractChainComplex` concept, providing the type of abstract chain complex used.
- 
+
  [Gonzalez and al. 2025] Gonzalez-Lorenzo, A., Bac, A. & Gazull, YS. A constructive approach of Alexander duality. J Appl. and Comput. Topology 9, 2 (2025).
  */
 
@@ -74,10 +74,10 @@ private:
     typedef OSM::Sparse_chain<CoefficientType, OSM::COLUMN> CChain;
      // Type of row-major chains
     typedef OSM::Sparse_chain<CoefficientType, OSM::ROW> RChain;
-    
+
     // Type of parent HDVF
     typedef Hdvf_core<CoefficientType, ComplexType, OSM::Sparse_chain, OSM::Sub_sparse_matrix> HDVF_type ;
-    
+
     // Complex L
     const ComplexType& _L ;
     const int _hdvf_opt ;
@@ -102,7 +102,7 @@ public:
      * \param[in] hdvf_opt Option for HDVF computation (`OPT_BND`, `OPT_F`, `OPT_G` or `OPT_FULL`).
      */
     Hdvf_duality(const ComplexType& L, Sub_chain_complex_mask<CoefficientType, ComplexType>& K, int hdvf_opt = OPT_FULL) ;
-    
+
     /**
      * \brief Find a valid PairCell of dimension q / q+1 for A *in the current sub chain complex*.
      *
@@ -112,7 +112,7 @@ public:
      * \param[in] found Reference to a boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      */
     virtual PairCell find_pair_A(int q, bool &found) const;
-    
+
     /**
      * \brief Find a valid PairCell for A containing `gamma` *in the current sub chain complex* (a cell of dimension `q`)
      *
@@ -125,7 +125,7 @@ public:
      * \param[in] gamma Index of a cell to pair.
      */
     virtual PairCell find_pair_A(int q, bool &found, size_t gamma) const;
-    
+
     /**
      * \brief Find *all* valid PairCell of dimension q / q+1 *in the current sub chain complex* for A.
      *
@@ -136,7 +136,7 @@ public:
      * \param[in] found Reference to a boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      */
     virtual std::vector<PairCell> find_pairs_A(int q, bool &found) const;
-    
+
     /**
      * \brief Find *all* valid PairCell for A containing `gamma` *in the current sub chain complex* (a cell of dimension `q`)
      *
@@ -150,7 +150,7 @@ public:
      * \param[in] gamma Index of a cell to pair.
      */
     virtual std::vector<PairCell> find_pairs_A(int q, bool &found, size_t gamma) const;
-    
+
     /** \brief Set the current sub chain complex masks over `K`.
      *
      * Further HDVF computations will be restricted to `K` (ie. computation of reduced homology).
@@ -160,7 +160,7 @@ public:
         _subCC = _KCC ;
         _subCC.screen_matrices(this->_DD_col);
     }
-    
+
     /** \brief Set the current sub chain complex masks over `L-K`.
      *
      * Further HDVF computations will be restricted to `L-K` (ie. computation of reduced homology).
@@ -170,14 +170,14 @@ public:
         _subCC = _KCC.complement() ;
         _subCC.screen_matrices(this->_DD_col);
     }
-    
+
     /** \brief Return the value of the current sub chain complex mask.
      */
     Sub_chain_complex_mask<CoefficientType,ComplexType> get_current_mask()
     {
         return _subCC;
     }
-    
+
     /**
      * \brief Compute a perfect HDVF over the current sub chain complex.
      *
@@ -192,7 +192,7 @@ public:
      * \return The vector of all `PairCell` paired with A.
      */
     std::vector<PairCell> compute_perfect_hdvf(bool verbose = false);
-    
+
     /**
      * \brief Compute a random perfect HDVF over the current sub chain complex.
      *
@@ -208,7 +208,7 @@ public:
      * \return The vector of all pairs of cells used for apply A.
      */
     std::vector<PairCell> compute_rand_perfect_hdvf(bool verbose = false);
-    
+
     /**
      * \brief Compute a "pairing" HDVF between K and L-K
      *
@@ -219,7 +219,7 @@ public:
      * \return The vector of paired critical cells (encoding Alexander isomorphism).
      */
     std::vector<PairCell> compute_pairing_hdvf() ;
-    
+
     /**
      * \brief Compute a random "pairing" HDVF between K and L-K
      *
@@ -230,7 +230,7 @@ public:
      * \return The vector of paired critical cells (encoding Alexander isomorphism).
      */
     std::vector<PairCell> compute_rand_pairing_hdvf() ;
-    
+
     // Hdvf_duality getters
     /**
      * \brief Get cells with a given `flag` in any dimension *in the current sub chain complex*.
@@ -240,7 +240,7 @@ public:
      * \param[in] flag Flag to select.
      */
     vector<vector<size_t> > get_flag (FlagType flag) const ;
-    
+
     /**
      * \brief Get cells with a given `flag` in dimension `q` *in the current sub chain complex*.
      *
@@ -250,9 +250,9 @@ public:
      * \param[in] q Dimension visited.
      */
     vector<size_t> get_flag_dim (FlagType flag, int q) const ;
-    
+
     // Hdvf_duality I/O
-    
+
     /**
      * \brief Prints the homology and cohomology reduction information for `K` and `L-K`.
      *
@@ -267,18 +267,18 @@ public:
         _subCC = _KCC ;
         _subCC.screen_matrices(this->_DD_col);
         print_reduction_sub(out) ;
-        
+
         // Print L-K
         _subCC = _KCC.complement() ;
         _subCC.screen_matrices(this->_DD_col);
         print_reduction_sub(out) ;
-        
+
         // Set back _subCC to K
         _subCC = _KCC ;
-        
+
         return out ;
     }
-    
+
     /**
      * \brief Prints the homology and cohomology reduction information for the current such chain complex.
      *
@@ -300,7 +300,7 @@ public:
             }
             out << endl;
         }
-        
+
         if (_hdvf_opt & (OPT_FULL | OPT_G))
         {
             // Print matrices g
@@ -320,7 +320,7 @@ public:
                 }
             }
         }
-        
+
         if (_hdvf_opt & (OPT_FULL | OPT_F))
         {
             // Print matrices f*
@@ -342,7 +342,7 @@ public:
         }
         return out ;
     }
-    
+
     /**
      * \brief Prints the reduced boundary over critical cells of `K` and `L-K`.
      *
@@ -388,7 +388,7 @@ public:
         }
         return out ;
     }
-    
+
     /**
      * \brief Export Primary/Secondary/Critical labels *of the current sub chain complex* for vtk export.
      *
@@ -418,7 +418,7 @@ public:
         }
         return labels ;
     }
-    
+
     /**
      * \brief Export homology generators *of the current sub chain complex* associated to `cell` (critical cell) of dimension  `q` (used by vtk export).
      *
@@ -432,7 +432,7 @@ public:
             throw "Error : get_homology_chain with dim out of range" ;
         if (!_subCC.get_bit(dim, cell))
             throw "Error : get_homology_chain for a cell out of current sub chain complex" ;
-        
+
         if (this->_hdvf_opt & (OPT_FULL | OPT_G))
         {
             // Get g(cell, dim) with per indices
@@ -443,7 +443,7 @@ public:
             CChain g_cell_sub(g_cell.dimension()) ;
             for (typename CChain::const_iterator it = g_cell.begin(); it != g_cell.end(); ++it)
             {
-                
+
                 if (_subCC.get_bit(dim, it->first))
                 {
                     g_cell_sub.set_coef(it->first, it->second) ;
@@ -454,7 +454,7 @@ public:
         else
             throw "Error : trying to export g_chain without proper HDVF option" ;
     }
-    
+
     /**
      * \brief Export cohomology generators *of the current sub chain complex* associated to `cell` (critical cell) of dimension  `q` (used by vtk export).
      *
@@ -468,18 +468,18 @@ public:
             throw "Error : get_cohomology_chain with dim out of range" ;
         if (!_subCC.get_bit(dim, cell))
             throw "Error : get_cohomology_chain for a cell out of current sub chain complex" ;
-        
+
         if (this->_hdvf_opt & (OPT_FULL | OPT_F))
         {
             RChain fstar_cell(OSM::get_row(this->_F_row.at(dim), cell)) ;
             // Add 1 to the cell
             fstar_cell.set_coef(cell, 1) ;
-            
+
             // Keep cells of the chain belonging to _subCC
             CChain fstar_cell_sub(fstar_cell.dimension()) ;
             for (typename CChain::const_iterator it = fstar_cell.begin(); it != fstar_cell.end(); ++it)
             {
-                
+
                 if (_subCC.get_bit(dim, it->first))
                 {
                     fstar_cell_sub.set_coef(it->first, it->second) ;
@@ -501,12 +501,12 @@ PairCell Hdvf_duality<CoefficientType,ComplexType>::find_pair_A(int q, bool &fou
 {
     found = false;
     PairCell p;
-    
+
     // Iterate through columns of _DD_col[q+1]
     for (OSM::Bitboard::iterator it_col = this->_DD_col[q+1].begin(); (it_col != this->_DD_col[q+1].end() && !found); ++it_col)
     {
         const typename HDVF_type::CChain& col(OSM::cget_column(this->_DD_col[q+1], *it_col)) ;
-        
+
         // Iterate through the entries of the column
         // Check that the row belongs to the subchaincomplex
         for (typename HDVF_type::CChain::const_iterator it = col.begin(); (it != col.end() && !found); ++it) {
@@ -531,7 +531,7 @@ PairCell Hdvf_duality<CoefficientType,ComplexType>::find_pair_A(int q, bool &fou
     // Check tau belongs to _subCC
     if (!_subCC.get_bit(q, tau))
         throw("Hdvf_duality: searching for a cell tau outside _subCC") ;
-    
+
     // Search for a q-1 cell tau' such that <_d(tau),tau'> invertible
     // and tau' belongs to _subCC
     const typename HDVF_type::CChain& tmp2(OSM::cget_column(this->_DD_col.at(q), tau)) ;
@@ -545,7 +545,7 @@ PairCell Hdvf_duality<CoefficientType,ComplexType>::find_pair_A(int q, bool &fou
             p.dim = q-1 ;
         }
     }
-    
+
     // Search for a q+1 cell tau' such that <_d(tau'),tau> invertible, ie <_cod(tau),tau'> invertible
     // and tau' belongs to _subCC
     typename HDVF_type::RChain tmp(OSM::get_row(this->_DD_col.at(q+1), tau)) ;
@@ -569,12 +569,12 @@ std::vector<PairCell> Hdvf_duality<CoefficientType,ComplexType>::find_pairs_A(in
 {
     vector<PairCell> pairs;
     found = false ;
-    
+
     // Iterate through columns of _DD_col[q+1]
     for (OSM::Bitboard::iterator it_col = this->_DD_col[q+1].begin(); it_col != this->_DD_col[q+1].end(); ++it_col)
     {
         const typename HDVF_type::CChain& col(OSM::cget_column(this->_DD_col[q+1], *it_col)) ;
-        
+
         // Iterate through the entries of the column
         for (typename HDVF_type::CChain::const_iterator it = col.begin(); it != col.end(); ++it) {
             if (_subCC.get_bit(q, it->first) && ((it->second == 1) || (it->second == -1))) {
@@ -600,7 +600,7 @@ std::vector<PairCell> Hdvf_duality<CoefficientType,ComplexType>::find_pairs_A(in
     // Check if tau belongs to _subCC
     if (!_subCC.get_bit(q, tau))
         throw("Hdvf_duality: searching for a cell tau outside _subCC") ;
-    
+
     // Search for a q+1 cell tau' such that <_d(tau'),tau> invertible, ie <_cod(tau),tau'> invertible
     // and tau' belongs to _subCC
     typename HDVF_type::RChain tmp(OSM::get_row(this->_DD_col.at(q+1), tau)) ;
@@ -647,7 +647,7 @@ std::vector<PairCell> Hdvf_duality<CoefficientType,ComplexType>::compute_perfect
     std::vector<PairCell> tmp = HDVF_type::compute_perfect_hdvf(verbose) ;
     std::cout << tmp.size() << " cells paired" << endl ;
     _critical_K = get_flag(CRITICAL) ;
-    
+
     std::cout << endl << "==== Compute perfect HDVF over L-K" << endl ;
     // set _subCC to L-K
     _subCC = _KCC.complement() ;
@@ -657,7 +657,7 @@ std::vector<PairCell> Hdvf_duality<CoefficientType,ComplexType>::compute_perfect
     std::vector<PairCell> tmp2 = HDVF_type::compute_perfect_hdvf(verbose) ;
     std::cout << tmp2.size() << " cells paired" << endl ;
     _critical_L_K = get_flag(CRITICAL) ;
-    
+
     // Return the vector of paired cells
     tmp.insert(tmp.end(), tmp2.begin(), tmp2.end());
     return tmp;
@@ -676,7 +676,7 @@ std::vector<PairCell> Hdvf_duality<CoefficientType,ComplexType>::compute_rand_pe
     std::vector<PairCell> tmp = HDVF_type::compute_rand_perfect_hdvf(verbose) ;
     std::cout << tmp.size() << " cells paired" << endl ;
     _critical_K = get_flag(CRITICAL) ;
-    
+
     std::cout << endl << "==== Compute perfect HDVF over L-K" << endl ;
     // set _subCC to L-K
     _subCC = _KCC.complement() ;
@@ -686,7 +686,7 @@ std::vector<PairCell> Hdvf_duality<CoefficientType,ComplexType>::compute_rand_pe
     std::vector<PairCell> tmp2 = HDVF_type::compute_rand_perfect_hdvf(verbose) ;
     std::cout << tmp2.size() << " cells paired" << endl ;
     _critical_L_K = get_flag(CRITICAL) ;
-    
+
     // Return the vector of paired cells
     tmp.insert(tmp.end(), tmp2.begin(), tmp2.end());
     return tmp;
@@ -697,9 +697,9 @@ template<typename CoefficientType, typename ComplexType>
 std::vector<PairCell> Hdvf_duality<CoefficientType,ComplexType>::compute_pairing_hdvf()
 {
     // TODO : check both HDVFs are perfect
-    
+
     std::cout << endl << "==== Compute pairing" << endl ;
-    
+
     // Create a full Sub_chain_complex_mask
     _subCC = Sub_chain_complex_mask<CoefficientType, ComplexType>(_L) ;
     _subCC.screen_matrices(this->_DD_col);
@@ -713,9 +713,9 @@ template<typename CoefficientType, typename ComplexType>
 std::vector<PairCell> Hdvf_duality<CoefficientType,ComplexType>::compute_rand_pairing_hdvf()
 {
     // TODO : check both HDVFs are perfect
-    
+
     std::cout << endl << "==== Compute pairing" << endl ;
-    
+
     // Create a full Sub_chain_complex_mask
     _subCC = Sub_chain_complex_mask<CoefficientType, ComplexType>(_L) ;
     _subCC.screen_matrices(this->_DD_col);

@@ -25,11 +25,11 @@ namespace HDVF {
 
 /*!
  \ingroup PkgHDVFAlgorithmClasses
- 
+
  The class `Sub_chain_complex_mask` is a technical class implementing a sub chain complex. A sub chain complex \f$A\f$ of a chain complex \f$K\f$ is a subset \f$A\subseteq K\f$ such that the restricted boundary operator \f$\partial_A = \partial_K|_A\f$ still satisfies \f$\partial_A^2 = 0\f$.
- 
+
  The `Sub_chain_complex_mask` class is used to compute  reduced homology. This class is based on a set of bitboard masks (one in each dimension) used to define sub chain complexes and their associated reduction encoded in sub-sparse matrices (`Sub_sparse_matrix` class). Technically, `Sub_chain_complex_mask` are used to partially screen chain complexes and chains in associated boundary matrices, and hence compute homology "locally".
- 
+
  \warning For efficiency reasons, when a `Sub_chain_complex_mask` is used to screen sparse matrices  (with the `screen_matrices` method), screening is **only** performed on the major direction of matrices (thus column-major matrices are restricted over columns and row-major matrices are restricted over rows). Iterators are restricted accordingly. But chains themselves are not restricted.<br>
  However, if `A` is a proper sub-complex of `K` (that is, closed with respect to faces), chains automatically comply with the screening. Indeed, for any \f$q\f$-cell \f$\sigma\in A\f$ (thus the corresponding bit is on in the mask), all the faces of \f$\sigma\f$ also belong to \f$A\f$. Thus for any \f$q-1\f$-cell \f$\tau\f$ "in the boundary of \f$\sigma\f$" (that is, such that \f$\langle\partial_k(\sigma),\tau\rangle\neq 0\f$), \f$\tau\f$ belongs to \f$A\f$ (and thus the corresponding bit in the mask is also on).
 
@@ -92,7 +92,7 @@ private:
         if (rec_needed)
             down_closure(faces, _K);
     }
-    
+
     /** Load a set of cells (without closure).
      *
      * The method activates bits corresponding to the set of cells encoded by `cells`.
@@ -110,7 +110,7 @@ private:
             }
         }
     }
-    
+
 public:
     /** \brief Constructor from a complex.
      *
@@ -137,8 +137,8 @@ public:
             _nb_cells.at(q) = K.nb_cells(q) ;
         }
     }
-    
-    
+
+
     /** \brief Constructor from an enumeration of cells.
      *
      * Build masks associated to the underlying complex `K` with all bits corresponding to `cells` (and their faces if `close` is true) set to 1.
@@ -158,19 +158,19 @@ public:
         {
             _sub.at(q) = OSM::Bitboard(K.nb_cells(q)) ;
         }
-        
+
         // Set bits
         if (close)
             down_closure(cells, K) ;
         else
             set_cells(cells, K) ;
-        
+
         for (int q=0; q<=K.dim(); ++q)
         {
             _full = (_full && (_nb_cells.at(q) == _sub.at(q).size())) ;
         }
     }
-    
+
     /**
      * \brief Constructor by copy.
      *
@@ -185,7 +185,7 @@ public:
         _full = otherToCopy._full ;
         _sub = otherToCopy._sub ;
     }
-    
+
     /** \brief Affectation operator
      *
      * \warning The operator argument must provide a sub chain complex mask over the *same underlying chain complex*. It not so, the affectation will throw an exception.
@@ -205,7 +205,7 @@ public:
         _full = otherToCopy._full ;
         return *this;
     }
-    
+
     /** \brief Complement the mask.
      *
      * The method computes the complement of the current mask (0 and 1 bits in the mask are exchanged).
@@ -222,13 +222,13 @@ public:
         }
         return cSub ;
     }
-    
+
     /** \brief Get a bit of the mask (bit i in dimension q). */
     inline bool get_bit(int q, int i) const
     {
         return _sub.at(q).isOn(i) ;
     }
-    
+
     /** \brief Set a bit to 1 (bit i in dimension q). */
     inline void set_bit_on(int q, int i)
     {
@@ -238,7 +238,7 @@ public:
             _sub.at(q).setOn(i) ;
         }
     }
-    
+
     /** \brief Set a bit to 0 (bit i in dimension q). */
     inline void set_bit_off(int q, int i)
     {
@@ -248,7 +248,7 @@ public:
             _sub.at(q).setOff(i) ;
         }
     }
-    
+
     /** \brief Getter for the bitboards of the sub chain complex.
      *
      * Returns a constant reference to the vector of bitboards in each dimension.
@@ -257,13 +257,13 @@ public:
     {
         return _sub ;
     }
-    
+
     /** \brief Getter for the bitboard of the sub chain complex in dimension q. */
     inline const OSM::Bitboard& get_bitboard(int q) const
     {
         return _sub.at(q) ;
     }
-    
+
     /** \brief Screen a sequence of Sub_sparse_matrix (in each dimension).
      *
      * Given a sequence of matrices (vector of `Sub_sparse_matrices`) sets the masks of `Sub_sparse_matrices` in each dimension to the current `Sub_chain_complex_mask`.
@@ -300,7 +300,7 @@ public:
         }
         chain/=indices;
     }
-    
+
     /*! \brief Overload of the `<<`operator for `Sub_chain_complex_mask`.
      */
     friend std::ostream & operator << (std::ostream & out, const Sub_chain_complex_mask & sub)

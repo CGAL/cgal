@@ -69,28 +69,28 @@ std::function<double(size_t)>  deg_fun (const ComplexType& complex, std::functio
 
 /*!
  \ingroup PkgHDVFAlgorithmClasses
- 
+
  The class `Filtration_lower_star` implements the lower star filtration on a given complex implementing the concept `CGAL::AbstractChainComplex`.
- 
+
  A filtration associated to a chain complex `K` associates to each cell of `K` a scalar value (called degree) such that the degree of a cell is larger than the degrees of its faces.
- 
+
  Let `DegreeType` be a scalar type. The lower star filtration is a filtration obtained from a map \f$\mathrm{deg}\,:\, K_0 \to \mathrm{DegreeType}\f$ (where \f$K_0\f$ denotes the set of vertices of \f$K\f$) associating a degree to each vertex of the complex \f$K\f$.
- 
+
  The map is extended to cells of any dimension by setting, for a cell \f$\sigma\f$:
  \f[\mathrm{deg}(\sigma) = \max_{\substack{v\in K_0\\v\text{ face of }\sigma}} \mathrm{deg}(v)
  \f]
- 
+
  For geometric complexes, standard lower star filtrations are obtained by taking as a degree function the \f$x\f$, \f$y\f$ or \f$z\f$ coordinate of vertices. The image below illustrates such a filtration ((left) lower star filtration with a \f$z\f$ degree map on vertices, (right) lower star filtration with a \f$y\f$ degree map on vertices).
- 
+
  <img src="lower_star_filtration_z.png" align="center" width=15%/>
  <img src="lower_star_filtration_y.png" align="center" width=15%/>
- 
+
  The `Filtration_lower_star` class provides constructors taking as input:
  - either the vector of vertices degrees
  - or a function mapping each vertex to its degree.
- 
+
  \cgalModels{Filtration}
- 
+
  \tparam CoefficientType a model of the `Ring` concept (ring used for homology computation).
  \tparam ComplexType a model of the `AbstractChainComplex` concept (type of the underlying chain complex).
  \tparam DegreeType the scalar type of degrees.
@@ -115,7 +115,7 @@ public:
      * \param[in] f An initial lower star filtration.
      */
     Filtration_lower_star(const Filtration_lower_star& f) : FiltrationCoreT(f) {}
-    
+
     /*! \brief Constructor from vertices degrees.
      *
      * The constructor computes all cells degrees as the minimum of the degrees of their vertices and sorts all the cells of the complex to fulfill the filtration ordering constraints.
@@ -127,7 +127,7 @@ public:
     {
         star_filtration(deg);
     }
-    
+
     /*! \brief Constructor from a function mapping vertices to degrees.
      *
      * The constructor computes all cells degrees as the minimum of the degrees of their vertices (obtained through `deg_fun`) and sorts all the cells of the complex to fulfill the filtration ordering constraints.
@@ -140,13 +140,13 @@ public:
         star_filtration(deg_fun);
     }
 
-    
+
 protected:
     // Build lower-star filtration
     /*! \brief Function building the filtration from the vector of vertices degrees.
      */
     void star_filtration(const std::vector<DegreeType>& deg) ;
-    
+
     /*! \brief Function building the filtration from a function mapping vertices to their degree.
      */
     void star_filtration(std::function<DegreeType(size_t)>& deg_fun) ;
@@ -159,7 +159,7 @@ void Filtration_lower_star<CoefficientType, ComplexType, DegreeType>::star_filtr
 {
     if (deg.size() != this->_K.nb_cells(0))
         throw "Star filtration error : deg should provide one value by vertex" ;
-    
+
     // Create filtration and degrees for all cells according to deg
     // -> lower star: maximum degree of vertices
     // -> upper star: minimum degree of vertices
@@ -178,7 +178,7 @@ void Filtration_lower_star<CoefficientType, ComplexType, DegreeType>::star_filtr
         for (size_t i=0; i<this->_K.nb_cells(q); ++i)
         {
             tmp_filtration.push_back(CellDim(i,q)) ;
-            
+
             // Compute corresponding degree
             // Vertices of the cell
             std::vector<size_t> verts(this->_K.bottom_faces(i,q)) ;
@@ -192,14 +192,14 @@ void Filtration_lower_star<CoefficientType, ComplexType, DegreeType>::star_filtr
                 // If upper star filtration (for cohomology)
                 //                    if (tmp_d < d)
                 //                        d = tmp_d ;
-                
+
             }
             tmp_deg.push_back(d) ;
             tmp_perm.push_back(tmp_perm.size()) ;
         }
     }
     // Sort filtration
-    
+
     // Create sorting function : lexicographic order over (deg, dim)
     // Test if cell i < cell j
     auto f_sort = [&tmp_filtration, &tmp_deg] (size_t i, size_t j)

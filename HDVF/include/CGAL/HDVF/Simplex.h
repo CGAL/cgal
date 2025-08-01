@@ -25,26 +25,26 @@ namespace HDVF {
 
 /*!
  \ingroup PkgHDVFAlgorithmClasses
- 
+
  The class `Simplex` is used by the class `Abstract_simplicial_complex` to implement the structure de simplex (ie. cells of a simplicial complex).
- 
+
  Simplicies are described by the set of the indices of their vertices (see the documentation of `Abstract_simplicial_complex` for examples).
- 
+
  */
 
 class Simplex {
     // Friend class: Abstract_simplicial_complex
     template<typename _CoefficientType>
     friend class Abstract_simplicial_complex ;
-    
+
     private:
     // Indices of the simplex vertices
     std::set<size_t> _vertices;
-    
+
     public:
     /** \brief Constant iterator over the vertices of a simplex. */
     typedef std::set<size_t>::const_iterator const_iterator ;
-    
+
     /** \brief Method returning a constant iterator on the first vertex of the simplex. */
     const_iterator cbegin ()
     {
@@ -52,13 +52,13 @@ class Simplex {
     }
     /** \brief Method returning a constant iterator after the last vertex of the simplex. */
     const_iterator cend () { return _vertices.cend() ; }
-    
+
     /** \brief Constructor from a set of vertices indices.
      *
      * \param[in] vertices Set of the simplex vertices indices (a simplex of dimension \f$q\f$ has \f$q+1\f$ vertices.
      */
     Simplex(const std::set<size_t>& vertices) : _vertices(vertices) {}
-    
+
     /** \brief Dimension of a simplex.
      *
      * A simplex of dimension \f$q\f$ has \f$q+1\f$ vertices.
@@ -67,7 +67,7 @@ class Simplex {
     {
         return _vertices.size() - 1;
     }
-    
+
     /** \brief Boundary of a simplex.
      *
      * The method returns the vector of the simplices in the boundary of the object.
@@ -76,7 +76,7 @@ class Simplex {
     {
         std::vector<Simplex> result;
         result.reserve(_vertices.size());
-        
+
         auto it = _vertices.begin();
         for (size_t i = 0; i < _vertices.size(); ++i) {
             std::set<size_t> simplex_vertices;
@@ -85,16 +85,16 @@ class Simplex {
             result.emplace_back(simplex_vertices);
             ++it;
         }
-        
+
         return result;
     }
-    
+
     /** \brief Get the set of vertices indices of the simplex. */
     const std::set<size_t>& get_vertices() const
     {
         return _vertices ;
     }
-    
+
     /** \brief Comparison operator.
      *
      * Compare the object with another simplex according to the lexicographical order on vertices indices sets.
@@ -104,7 +104,7 @@ class Simplex {
     bool operator<(const Simplex& other) const {
         return _vertices < other._vertices;
     }
-    
+
     /** \brief Output a simplex.
      */
     friend std::ostream& operator<<(std::ostream& out, const Simplex& simplex)
@@ -113,7 +113,7 @@ class Simplex {
         bool first = true;
         for (size_t vertex : simplex._vertices) {
             if (!first) {
-                
+
                 out << " ";
             }
             out << vertex;

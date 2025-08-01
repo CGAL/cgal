@@ -28,23 +28,23 @@ template<typename CoefficientType> class Duality_simplicial_complex_tools ;
 
 /*!
  \ingroup PkgHDVFAlgorithmClasses
- 
+
  The class `Abstract_simplicial_chain_complex` represents (topological) chain complexes associated to abstract simplicial complexes.
- 
+
  An abstract simplicial complex is a set of simplices, also called cells (class `Simplex`) such that: all the faces of a given simplex also belong to the complex and any two simplices intersect exactly along a common face.
- 
+
  <img src="simplicial_complex.png" align="center" width=45%/>
- 
+
  A simplex of dimension q contains exactly q+1 vertices (we will thus denote it by \f$\langle v_0, \ldots, v_q \rangle\f$). A 0-cell is thus a vertex, a 1-cell contains two vertices (edge), a 2-cell contains three vertices (triangle) while a 3-cell is a tetrahedron.
- 
+
  The boundary map of the complex is computed by the constructor of the class using the standard formula:
  \f[ \partial_q\left( \langle v_0, \ldots, v_q \rangle\right) = \sum_{i=0}^q (-1)^i\cdot \langle v_0, \ldots, \widehat{v_i}, \cdots, v_q \rangle\f]
  where \f$\langle v_0, \ldots, \widehat{v_i}, \cdots, v_q \rangle\f$ denotes the \f$q-1\f$-simplex with \f$v_i\f$ omitted. Hence, matrices of boundary maps are stored in each dimension using sparse matrices (in column-major mode).
- 
+
  Let us also point out that cells are indexed along each dimension, thus each simplex is uniquely determined by its dimension and its index in this dimension.
- 
+
  \cgalModels{AbstractChainComplex}
- 
+
  \tparam CoefficientType a model of the `Ring` concept.
  */
 
@@ -58,7 +58,7 @@ public:
      * Builds an empty abstract simplicial complex of dimension q.
      */
     Abstract_simplicial_chain_complex(int q = 0) ;
-    
+
     /**
      * \brief Constructor from a Mesh_object.
      *
@@ -67,15 +67,15 @@ public:
      * \param[in] mesh A Mesh_object containing a triangular mesh.
      */
     Abstract_simplicial_chain_complex(const Mesh_object& mesh);
-    
+
     /** \brief Type of column-major chains */
     typedef OSM::Sparse_chain<CoefficientType, OSM::COLUMN> CChain;
     /** \brief Type of row-major chains */
     typedef OSM::Sparse_chain<CoefficientType, OSM::ROW> RChain ;
     /** \brief Type of column-major sparse matrices */
     typedef OSM::Sparse_matrix<CoefficientType, OSM::COLUMN> CMatrix;
-    
-    
+
+
     /**
      * \brief Affectation operator for abstract simplicial chain complexes.
      *
@@ -92,9 +92,9 @@ public:
         _d = complex._d;
         return *this ;
     }
-    
+
     /// Methods of the SimpComplex concept
-    
+
     /**
      * \brief Method returning the boundary of the cell id_cell in dimension q.
      *
@@ -112,7 +112,7 @@ public:
         else
             return CChain(0) ;
     }
-    
+
     /**
      * \brief Method returning the co-boundary of the cell id_cell in dimension q.
      *
@@ -132,7 +132,7 @@ public:
         else
             return RChain(0) ;
     }
-    
+
     /**
      * \brief Method returning the dimension of the complex.
      *
@@ -141,7 +141,7 @@ public:
      * \return The dimension of the complex..
      */
     int dim() const { return _dim ;}
-    
+
     /**
      * \brief Method returning the number of cells in a given dimension.
      *
@@ -156,7 +156,7 @@ public:
         else
             return 0 ;
     }
-    
+
     /**
      * \brief Method returning a constant reference to the vector of boundary matrices (along each dimension).
      *
@@ -168,7 +168,7 @@ public:
     {
         return _d ;
     }
-    
+
     /**
      * \brief Method returning a copy of the dim-th boundary matrix (ie. column-major matrix of \f$\partial_q\f$).
      *
@@ -182,7 +182,7 @@ public:
     {
         return _d.at(q) ;
     }
-    
+
     /**
      * \brief Method returning dimension 0 simplicies indexes included in the cell with index id_cell of dimension q.
      *
@@ -209,7 +209,7 @@ public:
         }
         return res ;
     }
-    
+
     /*!
      * \brief Returns the cofaces of a given chain in dimension `q`.
      *
@@ -235,19 +235,19 @@ public:
         else
             return CChain(0) ;
     }
-    
+
     /**
      * \brief Method printing informations of the complex.
      *
      * Displays the number of cells in each dimension and the boundary matrix in each dimension.
      */
     std::ostream& print_complex(std::ostream& out = std::cout) const;
-    
+
     /** \brief Get (unique) object Id.
      * For comparison of constant references to the complex.
      */
     size_t get_id () const { return _complex_id; }
-    
+
 protected:
     /* \brief Dimension of the complex */
     int _dim;
@@ -259,9 +259,9 @@ protected:
     std::vector<size_t> _nb_cells ;
     /* \brief Vector of column-major boundary matrices: _d.at(q) is the matrix of the boundary operator in dimension q. */
     mutable std::vector<CMatrix>  _d;  // Boundary matrices
-    
+
     // Protected methods
-    
+
     /*
      * \brief Method filling the matrix _d.at(q), ie. computing the boundaries of cells of dimension q.
      *
@@ -271,7 +271,7 @@ protected:
      * \param[in] q Dimension considered for computation.
      */
     void  calculate_d(int q) const;
-    
+
     /*
      * \brief Method inserting a simplex (and its faces if necessary) into the abstract simplicial complex.
      *
@@ -282,7 +282,7 @@ protected:
      * \param[in] tau The simplex inserted.
      */
     void insert_simplex(const Simplex& tau);
-    
+
 private:
     /* \brief Static counter for objects ids.
      * Initialized to 0.
@@ -301,7 +301,7 @@ template<typename CoefficientType>
 Abstract_simplicial_chain_complex<CoefficientType>::Abstract_simplicial_chain_complex(int q) : _complex_id(_id_generator++) {
     // Initialize attributes
     _dim = q;
-    
+
     // Initialize vectors of Simplices and cell counts
     _ind2simp.resize(_dim + 1);
     _simp2ind.resize(_dim + 1);
@@ -313,21 +313,21 @@ Abstract_simplicial_chain_complex<CoefficientType>::Abstract_simplicial_chain_co
 template<typename CoefficientType>
 Abstract_simplicial_chain_complex<CoefficientType>::Abstract_simplicial_chain_complex(const Mesh_object& mesh) : _complex_id(_id_generator++) {
     // Initialize attributes
-    
+
     _dim = abs(mesh.dim);
-    
+
     // Initialize vectors of Simplices and cell counts
     _ind2simp.resize(_dim + 1);
     _simp2ind.resize(_dim + 1);
     _nb_cells.resize(_dim + 1, 0);
-    
+
     // Iterate through the mesh cells and add them to the complex
     for (const auto& cell : mesh.cells) {
         //        Simplex simplex(std::set<size_t>(cell.begin(), cell.end()));
         //        insert_simplex(simplex);
         insert_simplex(cell) ;
     }
-    
+
     _d.resize(_dim+1);
     for (int dim = 0; dim <= _dim; ++dim) {
         calculate_d(dim);
@@ -339,13 +339,13 @@ template<typename CoefficientType>
 void Abstract_simplicial_chain_complex<CoefficientType>::insert_simplex(const Simplex& tau) {
     int q = tau.dimension();
     if (q == -1) return;
-    
+
     if (_simp2ind[q].find(tau) == _simp2ind[q].end()) {
         size_t i = _ind2simp[q].size();
         _ind2simp[q].push_back(tau);
         _simp2ind[q][tau] = i;
         _nb_cells[q]++;
-        
+
         std::vector<Simplex> bord = tau.boundary();
         for (const auto& sigma : bord) {
             insert_simplex(sigma);
@@ -358,7 +358,7 @@ template<typename CoefficientType>
 void Abstract_simplicial_chain_complex<CoefficientType>::calculate_d(int dim) const {
     size_t nb_lignes = (dim == 0) ? 0 : _nb_cells[dim - 1];
     _d[dim] = CMatrix(nb_lignes, _nb_cells[dim]);
-    
+
     // Iterate through the cells of dimension dim
     if (dim>0)
     {
@@ -366,10 +366,10 @@ void Abstract_simplicial_chain_complex<CoefficientType>::calculate_d(int dim) co
             // Boundary of the i-th simplex of dimension dim
             const Simplex& s = _ind2simp[dim][i];
             std::vector<Simplex> bord = s.boundary();
-            
+
             // Create a chain with the correct size
             CChain chain(nb_lignes);
-            
+
             // For each element of the boundary
             for (size_t j = 0; j < bord.size(); ++j) {
                 auto it = _simp2ind[dim - 1].find(bord[j]); // Find the index of Simplex j
@@ -380,7 +380,7 @@ void Abstract_simplicial_chain_complex<CoefficientType>::calculate_d(int dim) co
                 else
                     throw "calculate_d boundary simplex not found!";
             }
-            
+
             // Insert the chain into the corresponding column of the delta matrix
             OSM::set_column(_d[dim], i, chain);
         }
@@ -391,14 +391,14 @@ void Abstract_simplicial_chain_complex<CoefficientType>::calculate_d(int dim) co
 template<typename CoefficientType>
 std::ostream& Abstract_simplicial_chain_complex<CoefficientType>::print_complex(std::ostream& out) const {
     out << "Complex dimension: " << _dim << std::endl;
-    
+
     // Total number of cells
     size_t nb_total_cells = 0;
     for (size_t i = 0; i <= _dim; ++i) {
         nb_total_cells += _nb_cells[i];
     }
     out << "Total number of cells: " << nb_total_cells << std::endl;
-    
+
     // Cells per dimension
     for (int q = 0; q <= _dim; ++q) {
         out << "--- dimension " << q << std::endl;
@@ -408,7 +408,7 @@ std::ostream& Abstract_simplicial_chain_complex<CoefficientType>::print_complex(
         //            std::cout << j << " -> " << s << " -> " << _Simp2ind.at(q).at(s) << std::endl;
         //        }
     }
-    
+
     // Boundary matrices
     out << "---------------------------" << std::endl << "Boundary matrices" << std::endl;
     for (int q = 1; q <= _dim; ++q)
@@ -418,11 +418,11 @@ std::ostream& Abstract_simplicial_chain_complex<CoefficientType>::print_complex(
 
 /*!
  \ingroup PkgHDVFAlgorithmClasses
- 
+
  The class `Simplicial_chain_complex` refines the `Abstract_simplicial_chain_complex` class by assigning coordinates to vertices (ie. 0-simplices). Hence, vtk output is available.
- 
+
  \cgalModels{GeometricChainComplex}
- 
+
  \tparam CoefficientType a model of the `Ring` concept (by default, we use the `Z` model).
  */
 
@@ -431,18 +431,18 @@ class Simplicial_chain_complex : public Abstract_simplicial_chain_complex<Coeffi
 public:
     /** \brief Type of vertices coordinates */
     typedef std::vector<double> Point ;
-    
+
 protected:
     /** \brief Vector of vertices coordinates */
     std::vector<Point> _coords ;
-    
+
 private:
     /** \brief Vector of VTK types associated to cells in each dimension
      e.g. {1, 3, 5, 10} */
     static const std::vector<int> VTK_simptypes ;
-    
+
 public:
-    
+
     /**
      * \brief Default constructor: builds an empty  simplicial complex.
      */
@@ -454,7 +454,7 @@ public:
      * Builds a simplicial complex from a Mesh_object and saves the vector of vertices coordinates.
      */
     Simplicial_chain_complex(const Mesh_object& mesh, std::vector<Point> coords) : Abstract_simplicial_chain_complex<CoefficientType>(mesh), _coords(coords) {} ;
-    
+
     /**
      * \brief Affectation operator for simplicial complexes.
      *
@@ -468,18 +468,18 @@ public:
         _coords = complex._coords ;
         return *this ;
     }
-    
+
     /** \brief Friend class `Duality_simplicial_complex_tools` computes the complementary simplicial complex for Alexander duality */
     friend Duality_simplicial_complex_tools<CoefficientType> ;
-    
+
     /** \brief Get the vector of vertices coordinates  */
     const std::vector<Point>& get_vertices_coords() const
     {
         return _coords ;
     }
-    
+
     /** \brief Get the coordinates of the ith dimension-0 simplex
-     
+
      * \warning This does not come to return vertices indices, as dimension 0 simplices enumerate vertices in any order. For instance, if an abstract simplicial complex is build from 3 vertices {1,2,3} such that the enumeration of dimension 0 simplicies is:
      *  id0: 3, id1 : 2, id2: 1
      * then the bottom_faces of the 1-simplex {1,2} are two 0-simplices with id 2 and 1.
@@ -491,9 +491,9 @@ public:
         const size_t id(*(verts.cbegin())) ;
         return _coords.at(id);
     }
-    
+
     // VTK export
-    
+
     /**
      * \brief Method exporting a simplicial complex (plus, optionally, labels) to a VTK file.
      *
@@ -515,23 +515,23 @@ public:
             std::cerr << "SimpComplex_to_vtk. Error, wrong number of points provided.\n";
             throw std::runtime_error("Geometry of points invalid.");
         }
-        
+
         bool with_scalars = (labels != NULL) ;
-        
+
         // Load out file...
         std::ofstream out ( filename, std::ios::out | std::ios::trunc);
-        
+
         if ( not out . good () ) {
             std::cerr << "SimpComplex_to_vtk. Fatal Error:\n  " << filename << " not found.\n";
             throw std::runtime_error("File Parsing Error: File not found");
         }
-        
+
         // Header
         out << "# vtk DataFile Version 2.0" << endl ;
         out << "generators" << endl ;
         out << "ASCII" << endl ;
         out << "DATASET  UNSTRUCTURED_GRID" << endl ;
-        
+
         // Points
         size_t nnodes = K._coords.size() ;
         out << "POINTS " << nnodes << " double" << endl ;
@@ -545,7 +545,7 @@ public:
                 out << "0 " ;
             out << endl ;
         }
-        
+
         size_t ncells_tot = 0, size_cells_tot = 0 ;
         std::vector<int> types ;
         std::vector<LabelType> scalars ;
@@ -580,14 +580,14 @@ public:
                     }
                 }
             }
-            
+
             // CELL_TYPES
             out << "CELL_TYPES " << ncells_tot << endl ;
             for (int t : types)
                 out << t << " " ;
             out << endl ;
         }
-        
+
         if (with_scalars)
         {
             // CELL_LABEL
@@ -606,7 +606,7 @@ public:
         }
         out.close() ;
     }
-    
+
     /**
      * \brief Method exporting a chain over a simplicial complex to a VTK file.
      *
@@ -636,23 +636,23 @@ void Simplicial_chain_complex<CoefficientType>::chain_complex_chain_to_vtk(const
         std::cerr << "SimpComplex_chain_to_vtk. Error, wrong number of points provided.\n";
         throw std::runtime_error("Geometry of points invalid.");
     }
-    
+
     bool with_scalars = (cellId != -1) ;
-    
+
     // Load out file...
     std::ofstream out ( filename, std::ios::out | std::ios::trunc);
-    
+
     if ( not out . good () ) {
         std::cerr << "SimpComplex_chain_to_vtk. Fatal Error:\n  " << filename << " not found.\n";
         throw std::runtime_error("File Parsing Error: File not found");
     }
-    
+
     // Header
     out << "# vtk DataFile Version 2.0" << endl ;
     out << "generators" << endl ;
     out << "ASCII" << endl ;
     out << "DATASET  UNSTRUCTURED_GRID" << endl ;
-    
+
     // Points
     size_t nnodes = K._coords.size() ;
     out << "POINTS " << nnodes << " double" << endl ;
@@ -666,12 +666,12 @@ void Simplicial_chain_complex<CoefficientType>::chain_complex_chain_to_vtk(const
             out << "0 " ;
         out << endl ;
     }
-    
+
     size_t ncells_tot = 0, size_cells_tot = 0 ;
     std::vector<int> types ;
     std::vector<int> scalars ;
     std::vector<size_t> ids ;
-    
+
     // output only cells of the chain (dimension q)
     {
         // 1 - Compute the number of cells / size of encoding
@@ -688,7 +688,7 @@ void Simplicial_chain_complex<CoefficientType>::chain_complex_chain_to_vtk(const
         }
         // 2 - Output cells
         out << "CELLS " << ncells_tot << " " << size_cells_tot << endl ;
-        
+
         {
             const size_t size_cell = q+1 ;
             for (size_t id =0; id < K.nb_cells(q); ++id)
@@ -718,7 +718,7 @@ void Simplicial_chain_complex<CoefficientType>::chain_complex_chain_to_vtk(const
             out << t << " " ;
         out << endl ;
     }
-    
+
     if (with_scalars)
     {
         // CELL_TYPES
