@@ -4339,6 +4339,28 @@ void SimpleStraightSkel::collectPierceEvents(const std::list<VertexSPtr>& vertic
                         continue;
                     } else {
 #ifdef CGAL_SS3_PROFILE_FILTERING_MECHANISMS
+                        // ++tested_candidates;
+#endif
+                    }
+
+                    // also filter with a bbox around the piercing segment and the shifting face
+                    CGAL::Bbox_3 b1;
+                    b1 += vertex->getPoint()->bbox();
+                    b1 += shifted_pt->bbox();
+
+                    CGAL::Bbox_3 b2;
+                    for(VertexSPtr v : facet->vertices()) {
+                        b2 += v->getPoint()->bbox();
+                        b2 += PolyhedronTransformation::shiftPoint(v, max_relevant_shift)->bbox();
+                    }
+
+                    if (!CGAL::do_overlap(b1, b2)) {
+#ifdef CGAL_SS3_PROFILE_FILTERING_MECHANISMS
+                        ++filtered_candidates;
+#endif
+                        continue;
+                    } else {
+#ifdef CGAL_SS3_PROFILE_FILTERING_MECHANISMS
                         ++tested_candidates;
 #endif
                     }
