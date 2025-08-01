@@ -1,17 +1,8 @@
 
 /// \defgroup PkgSpherePackingRef Sphere Packing Reference
-/// \defgroup PkgSpherePackingConcepts Concepts
-/// \ingroup PkgSpherePackingRef
 
-/// \defgroup PkgSpherePackingAlgorithmClasses Algorithm Classes
+/// \defgroup PkgSpherePackingAlgorithms Algorithms
 /// \ingroup PkgSpherePackingRef
-
-/// \defgroup PkgSpherePackingTraitsClasses Traits Classes
-/// \ingroup PkgSpherePackingRef
-
-/// \defgroup PkgSpherePackingMiscellaneous Miscellaneous
-/// \ingroup PkgSpherePackingRef
-
 /*!
 
 \addtogroup PkgSpherePackingRef
@@ -37,6 +28,6 @@ The SpherePacking provides ... }
 
 \cgalClassifedRefPages
 
-\cgalCRPSection{Classes}
-- `CGAL::Sphere_packing`
+\cgalCRPSection{Algorithms}
+- `CGAL::pack_spheres`
 */
