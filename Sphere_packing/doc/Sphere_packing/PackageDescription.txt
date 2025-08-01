@@ -29,5 +29,5 @@ The SpherePacking provides ... }
 \cgalClassifedRefPages
 
 \cgalCRPSection{Algorithms}
-- `CGAL::pack_spheres`
+- `CGAL::pack_spheres()`
 */
