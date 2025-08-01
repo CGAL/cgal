@@ -336,7 +336,7 @@ Point3SPtr PolyhedronTransformation::shiftPoint(VertexSPtr vertex,
                 if (i == 1) {
                     independent = !(CGAL::parallel(*(planes[0]), *plane));
                 } else if (i == 2) {
-                    // @speed avoid recomputing the intersection from scratch later
+                    // @todo avoid recomputing the intersection from scratch later
                     independent = !is_zero(CGAL::determinant(planes[0]->a(), planes[0]->b(), planes[0]->c(),
                                                              planes[1]->a(), planes[1]->b(), planes[1]->c(),
                                                              plane->a(), plane->b(), plane->c()));
@@ -405,7 +405,7 @@ Segment3SPtr PolyhedronTransformation::shiftEdge(EdgeSPtr edge,
         speed_dst = std::dynamic_pointer_cast<SkelFacetData>(facet_dst->getData())->getSpeed();
     }
 
-        // Offset the two common planes
+    // Offset the two common planes
     Plane3SPtr offset_plane_l = KernelWrapper::offsetPlane(facet_l->plane(), offset*speed_l);
     Plane3SPtr offset_plane_r = KernelWrapper::offsetPlane(facet_r->plane(), offset*speed_r);
     Plane3SPtr offset_plane_src = KernelWrapper::offsetPlane(facet_src->plane(), offset*speed_src);
@@ -514,7 +514,7 @@ void PolyhedronTransformation::shiftFacetsInPlace(PolyhedronSPtr polyhedron,
 // - when we do shiftPoint for adjacent points
 // - when we call shiftPoint, and then call shiftPlane later on
 // - ...
-// @speed get rid of recompute_positions, seems obsolete now
+// @todo get rid of recompute_positions, seems obsolete now
 PolyhedronSPtr PolyhedronTransformation::shiftFacets(PolyhedronSPtr polyhedron,
                                                      const CGAL::FT& offset,
                                                      const bool recompute_positions)
@@ -767,8 +767,8 @@ PolyhedronSPtr PolyhedronTransformation::shiftFacets(PolyhedronSPtr polyhedron,
 }
 
 std::pair<std::list<VertexSPtr>, std::list<FacetSPtr> >
-PolyhedronTransformation::triangulate(FacetSPtr facet,
-                                      PolyhedronSPtr polyhedron) {
+PolyhedronTransformation::triangulateFacet(FacetSPtr facet,
+                                           PolyhedronSPtr polyhedron) {
 
     CGAL_SS3_TRANSF_TRACE("Triangulate facet " << facet->getID() << " of polyhedron "
                           << polyhedron->getID() << " with " << facet->vertices().size()
@@ -1290,7 +1290,7 @@ void PolyhedronTransformation::randTiltPlanesv3(PolyhedronSPtr polyhedron) {
                         CGAL_SS3_TRANSF_TRACE("Triangulate F" << fprime->getID());
                         CGAL_SS3_TRANSF_TRACE_CODE(++had_to_triangulate_n;)
 
-                        PolyhedronTransformation::triangulate(fprime, polyhedron);
+                        PolyhedronTransformation::triangulateFacet(fprime, polyhedron);
 
                         did_something = true;
                         break;
@@ -1638,7 +1638,7 @@ void PolyhedronTransformation::randTiltPlanesv3(PolyhedronSPtr polyhedron) {
                 CGAL_SS3_TRANSF_TRACE("Triangulate F" << facet_tt->getID());
                 CGAL_SS3_TRANSF_TRACE_CODE(++had_to_triangulate_n;)
 
-                auto [local_vertices, new_facets] = PolyhedronTransformation::triangulate(facet_tt, polyhedron);
+                auto [local_vertices, new_facets] = PolyhedronTransformation::triangulateFacet(facet_tt, polyhedron);
 
                 // vertices that have become high degree should have their determination information updated
                 for (VertexSPtr v : local_vertices) {

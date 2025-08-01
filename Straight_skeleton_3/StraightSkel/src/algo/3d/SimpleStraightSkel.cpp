@@ -1280,12 +1280,11 @@ SimpleStraightSkel::intersectionPointAndTimeOffsetPlanes(FacetSPtr facet_0,
         Plane3SPtr plane_2 = basePlanes_.at(facet_2->getBasePlaneID());
         Plane3SPtr plane_3 = basePlanes_.at(facet_3->getBasePlaneID());
 
-        // @fixme in theory, one would need to check if the ->getData() is valid etc. etc.
-        // for now, it's good to check if speeds are set properly
         CGAL::FT speed_0 = std::dynamic_pointer_cast<SkelFacetData>(facet_0->getData())->getSpeed();
         CGAL::FT speed_1 = std::dynamic_pointer_cast<SkelFacetData>(facet_1->getData())->getSpeed();
         CGAL::FT speed_2 = std::dynamic_pointer_cast<SkelFacetData>(facet_2->getData())->getSpeed();
         CGAL::FT speed_3 = std::dynamic_pointer_cast<SkelFacetData>(facet_3->getData())->getSpeed();
+
         return KernelWrapper::intersectionPointAndTimeOffsetPlanes(plane_0, speed_0, plane_1, speed_1,
                                                                    plane_2, speed_2, plane_3, speed_3,
                                                                    offset_past_bound, offset_future_bound);
@@ -5132,7 +5131,6 @@ PolyhedronSPtr SimpleStraightSkel::shiftToEventOffset(PolyhedronSPtr polyhedron,
   const CGAL::FT shift = target_offset - start_offset;
   CGAL_precondition(!is_zero(shift));
 
-  // polyhedron = PolyhedronTransformation::shiftFacets(polyhedron, shift);
   PolyhedronTransformation::shiftFacetsInPlace(polyhedron, shift);
 
 #ifdef CGAL_SS3_DUMP_FILES

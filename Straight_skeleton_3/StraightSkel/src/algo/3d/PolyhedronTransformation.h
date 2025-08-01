@@ -98,10 +98,11 @@ public:
 
 
     /**
-     * Triangulate the facet 'f' and returns all newly created triangle facets
+     * Triangulate the facet 'f' and returns vertices and all newly created triangle facets
      */
-    static std::pair<std::list<VertexSPtr>, std::list<FacetSPtr> > triangulate(FacetSPtr f,
-                                            PolyhedronSPtr polyhedron);
+    static std::pair<std::list<VertexSPtr>,
+                     std::list<FacetSPtr> > triangulateFacet(FacetSPtr f,
+                                                             PolyhedronSPtr polyhedron);
 
     /**
      * Normalize facet planes
