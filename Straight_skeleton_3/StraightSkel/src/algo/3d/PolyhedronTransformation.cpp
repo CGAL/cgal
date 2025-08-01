@@ -1547,7 +1547,7 @@ void PolyhedronTransformation::randTiltPlanesv3(PolyhedronSPtr polyhedron) {
         }
 
         // force triangulation if the exact stack is getting too deep
-#if 0
+#if 1
         for (VertexSPtr v : f->vertices()) {
             if (CGAL::ss_utils::length(*(v->getPoint())) > 0) {
                 std::cout << "too much cascading, triangulate F" << f->getID() << std::endl;
