@@ -17,6 +17,7 @@
 #include <CGAL/license/Sphere_packing.h>
 
 #include <CGAL/disable_warnings.h>
+#include <CGAL/Named_function_parameters.h>
 
 
 namespace CGAL {
