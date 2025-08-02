@@ -54,7 +54,7 @@ else()
 endif()
 
 find_package(Boost QUIET OPTIONAL_COMPONENTS filesystem system)
-if(Boost_FILESYSTEM_FOUND)
+if(Boost_FILESYSTEM_FOUND AND Boost_SYSTEM_FOUND  )
   qt5_wrap_ui( imgUI_FILES Image_res_dialog.ui raw_image.ui)
   polyhedron_demo_plugin(io_image_plugin Io_image_plugin
     Volume_plane_intersection.cpp
@@ -66,7 +66,7 @@ if(Boost_FILESYSTEM_FOUND)
   if(VTK_LIBRARIES)
     target_compile_definitions(io_image_plugin PRIVATE -DCGAL_USE_VTK -DNOMINMAX)
   endif()
-  if(TARGET Boost::filesystem)
+  if(TARGET Boost::filesystem AND TARGET Boost::system)
     target_link_libraries(io_image_plugin PUBLIC Boost::filesystem
                                                  Boost::system)
   else()
