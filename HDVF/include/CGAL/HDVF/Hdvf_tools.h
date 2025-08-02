@@ -14,7 +14,6 @@
 
 #include <iostream>
 
-#include <CGAL/HDVF/tools_io.h>
 #include <CGAL/HDVF/Hdvf.h>
 #include <CGAL/OSM/OSM.h>
 

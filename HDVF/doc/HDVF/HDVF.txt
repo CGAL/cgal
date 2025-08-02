@@ -541,25 +541,25 @@ In order to build such a chain complex, discrete objects are first imported into
 
 Let us point out that whatever the type of chain complex, cells are indexed along each dimension; hence a cell is identified by an index and a dimension.
 
-- `Abstract_simplicial_chain_complex` (see section \ref secHDVFsimplicial_chain_complex) are built using the `Mesh_object` intermediate class from abstract simplices (vertices have no coordinates). Therefore, such complexes are usually computed from `.simp` files (a simple file format enumerating on each line vertices of simplices, see section secHDVFsimpFile):
+- `Abstract_simplicial_chain_complex` (see section \ref secHDVFsimplicial_chain_complex) are built using the `Mesh_object_io` intermediate class from abstract simplices (vertices have no coordinates). Therefore, such complexes are usually computed from `.simp` files (a simple file format enumerating on each line vertices of simplices, see section secHDVFsimpFile):
     \code
         using ComplexType = Abstract_simplicial_chain_complex<CoefficientType> ;
-        Mesh_object mesh ;
+        Mesh_object_io mesh ;
         mesh.read_simp(filename);
         ComplexType complex(mesh);
     \endcode
-- `Simplicial_chain_complex` are also built using the `Mesh_object` intermediate structure to import mesh files (`.off` format):
+- `Simplicial_chain_complex` are also built using the `Mesh_object_io` intermediate structure to import mesh files (`.off` format):
     \code
         using ComplexType = Simplicial_chain_complex<CoefficientType> ;
-        Mesh_object mesh ;
+        Mesh_object_io mesh ;
         mesh.read_off(filename);
         ComplexType complex(mesh);
     \endcode
-- `Cubical_chain_complex` are built using the `Cub_object` intermediate structure by importing either simple `.cub` files (enumerating Khalimsky coordinates of cells, see section \ref secHDVFcubFile) or `.pgm` files.
+- `Cubical_chain_complex` are built using the `Cub_object_io` intermediate structure by importing either simple `.cub` files (enumerating Khalimsky coordinates of cells, see section \ref secHDVFcubFile) or `.pgm` files.
     - For `.cub` files enumerating Khalimsky coordinates, cells are imported and their faces are added to produce a proper complex.
         \code
             using ComplexType = Cubical_chain_complex<CoefficientType> ;
-            Cub_object mesh ;
+            Cub_object_io mesh ;
             mesh.read_cub(filename, true);
             ComplexType complex(mesh);
         \endcode
@@ -567,7 +567,7 @@ Let us point out that whatever the type of chain complex, cells are indexed alon
         - PRIMAL, encoding \f$3^d-1\f$-adjacency  (where cells are imported as such, see figure \cgalFigureRef{HDVF_primal_dual}, middle)
         \code
             using ComplexType = Cubical_chain_complex<CoefficientType> ;
-            Cub_object mesh ;
+            Cub_object_io mesh ;
             // Read pgm file (store Khalimsky coordinates)
             mesh.read_pgm(filename, true);
             // Build the PRIMAL complex associated
@@ -576,7 +576,7 @@ Let us point out that whatever the type of chain complex, cells are indexed alon
         - DUAL, encoding \f$2d\f$-adjacency (where cubes produce vertices... see figure \cgalFigureRef{HDVF_primal_dual} right)
         \code
             using ComplexType = Cubical_chain_complex<CoefficientType> ;
-            Cub_object mesh ;
+            Cub_object_io mesh ;
             // Read pgm file (store voxel coordinates)
             mesh.read_pgm(filename, false);
             // Build the DUAL complex associated
@@ -708,27 +708,27 @@ How to extract (co)homological information then? Various solutions and output ar
     \code
         CGAL::HDVF::hdvf_geometric_chain_complex_output_vtk<CoefficientType, ComplexType>(hdvf, complex, outfile_root, co_faces) ;
     \endcode
-    where `outfile_root` is the root of the %vtk file names and `co_faces` is a boolean (if `true`, cohomology generators are represented through their cofaces).
-- HDVFs and reductions can also be saved / loaded to %hdvf files (a simple text file format described in section \ref secHDVFHDVF_format) with `save_hdvf_reduction` and `load_hdvf_reduction`.
+    where `outfile_root` is the root of the `.vtk` file names and `co_faces` is a boolean (if `true`, cohomology generators are represented through their cofaces).
+- HDVFs and reductions can also be saved / loaded to `.hdvf` files (a simple text file format described in section \ref secHDVFHDVF_format) with `save_hdvf_reduction()` and `load_hdvf_reduction()`.
 
-\subsubsection secHDVFHDVF_format The %hdvf file format
+\subsubsection secHDVFHDVF_format The `.hdvf` file format
 
-The %hdvf file format is a simple text format used to save HDVFs. It relies on the %osm format described in section \ref secHDVFOSM_format.
+The `.hdvf` file format is a simple text format used to save HDVFs. It relies on the `.osm` format described in section \ref secHDVFOSM_format.
 
-\warning The file format does not store the underlying complex, therefore the dimension and the number of cells in each dimension are used to check the coherence of the %hdvf file with the underlying complex provided by the user.
+\warning The file format does not store the underlying complex, therefore the dimension and the number of cells in each dimension are used to check the coherence of the `.hdvf` file with the underlying complex provided by the user.
 
 - HDVF type (0 for HDVF and reduction, 1 for HDVF only)
 - Dimension of the complex
 - List of the number of cells in each dimension (one dimension by row)
 - List of the flags of cells in each dimension (one dimension by row: -1 for PRIMARY, 1 for SECONDARY, 0 for CRITICAL)
-- Output F matrices in each dimension (%osm format)
-- Output G matrices in each dimension (%osm format)
-- Output H matrices in each dimension (%osm format)
-- Output DD matrices in each dimension (%osm format)
+- Output F matrices in each dimension (`.osm` format)
+- Output G matrices in each dimension (`.osm` format)
+- Output H matrices in each dimension (`.osm` format)
+- Output DD matrices in each dimension (`.osm` format)
 
 \subsection secHDVFexHDVF HDVF examples
 
-The following examples exhibit the computation of a perfect HDVF over a simplicial (resp. cubical) chain complex built from an %OFF file (resp. a %PGM file). Generators are then exported to %VTK.
+The following examples exhibit the computation of a perfect HDVF over a simplicial (resp. cubical) chain complex built from a `.off` file (resp. a `.pgm` file). Generators are then exported to `.vtk`.
 \cgalExample{HDVF/example_hdvf_simplicial.cpp}
 \cgalExample{HDVF/example_hdvf_cubical.cpp}
 
@@ -749,9 +749,9 @@ The following example builds a column major matrix, iterate over its non empty c
 
 All standard linear algebra operators are provided (and optimized according to the matrix/chain types).
 
-\subsubsection secHDVFOSM_format The %osm file format
+\subsubsection secHDVFOSM_format The `.osm` file format
 
-The %osm file format is a simple text format to store OSM sparse matrices:
+The `.osm` file format is a simple text format to store OSM sparse matrices:
 - Matrix type (0 for COLUMN, 1 for ROW)
 - Number of rows and number of columns (separated by a space)
 - Number of coefficients

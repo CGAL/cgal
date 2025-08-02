@@ -233,6 +233,35 @@ public:
     }
 
     /**
+     * \defgroup MatrixMatrixComparison Compare two matrices.
+     * \ingroup PkgHDVFAlgorithmClasses
+     * @brief  Compare two matrices and return `true` if both matrices equal (and `false` otherwise).
+     *
+     * @param matrix The first matrix.
+     * @param other The second matrix.
+     * @return A boolean.
+     * @{
+     */
+    
+    /** \brief Comparison of two COLUMN matrices. */
+    template <typename _CT>
+    friend bool operator==(const Sparse_matrix<_CT, OSM::COLUMN>& matrix, const Sparse_matrix<_CT, OSM::COLUMN> &other);
+
+    /** \brief Comparison of a COLUMN  and a ROW matrix. */
+    template <typename _CT>
+    friend bool operator==(const Sparse_matrix<_CT, OSM::COLUMN>& matrix, const Sparse_matrix<_CT, OSM::ROW> &other);
+    
+    /** \brief Comparison of a ROW and a COLUMN matrix. */
+    template <typename _CT>
+    friend bool operator==(const Sparse_matrix<_CT, OSM::ROW>& matrix, const Sparse_matrix<_CT, OSM::COLUMN> &other);
+    
+    /** \brief Comparison of two ROW matrices. */
+    template <typename _CT>
+    friend bool operator==(const Sparse_matrix<_CT, OSM::ROW>& matrix, const Sparse_matrix<_CT, OSM::ROW> &other);
+    
+    /** @} */
+
+    /**
      * \brief Displays a matrix in the output stream.
      *
      * \param[in] stream The output stream.
@@ -1752,6 +1781,66 @@ std::istream& read_matrix (Sparse_matrix<_CT, OSM::ROW>& M, std::istream& in)
         OSM::set_coef(M, i, j, val) ;
     }
     return in ;
+}
+
+template <typename _CT>
+bool operator==(const Sparse_matrix<_CT, OSM::COLUMN>& matrix, const Sparse_matrix<_CT, OSM::COLUMN> &other)
+{
+    typedef Sparse_chain<_CT, OSM::COLUMN> SparseChainType;
+    bool res = true ;
+    // Checks that sizes are similar
+    res = res && (matrix._size == other._size) ;
+    // Checks that all the chains of matrix belong to other
+    for (OSM::Bitboard::iterator it = matrix.begin() ; res && (it != matrix.end()); ++it)
+    {
+        const SparseChainType& chain1(OSM::cget_column(matrix, *it)) ;
+        const SparseChainType& chain2(OSM::cget_column(other, *it)) ;
+        res = res && (chain1 == chain2) ;
+    }
+    // Checks that all the chains of other belong to matrix
+    for (OSM::Bitboard::iterator it = other.begin() ; res && (it != other.end()); ++it)
+    {
+        const SparseChainType& chain1(OSM::cget_column(matrix, *it)) ;
+        const SparseChainType& chain2(OSM::cget_column(other, *it)) ;
+        res = res && (chain1 == chain2) ;
+    }
+    return res ;
+}
+
+template <typename _CT>
+bool operator==(const Sparse_matrix<_CT, OSM::ROW>& matrix, const Sparse_matrix<_CT, OSM::ROW> &other)
+{
+    typedef Sparse_chain<_CT, OSM::ROW> SparseChainType;
+    bool res = true ;
+    // Checks that sizes are similar
+    res = res && (matrix._size == other._size) ;
+    // Checks that all the chains of matrix belong to other
+    for (OSM::Bitboard::iterator it = matrix.begin() ; it != matrix.end(); ++it)
+    {
+        const SparseChainType& chain1(OSM::cget_row(matrix, *it)) ;
+        const SparseChainType& chain2(OSM::cget_row(other, *it)) ;
+        res = res && (chain1 == chain2) ;
+    }
+    // Checks that all the chains of other belong to matrix
+    for (OSM::Bitboard::iterator it = other.begin() ; it != other.end(); ++it)
+    {
+        const SparseChainType& chain1(OSM::cget_row(matrix, *it)) ;
+        const SparseChainType& chain2(OSM::cget_row(other, *it)) ;
+        res = res && (chain1 == chain2) ;
+    }
+    return res ;
+}
+
+template <typename _CT>
+bool operator==(const Sparse_matrix<_CT, OSM::ROW>& matrix, const Sparse_matrix<_CT, OSM::COLUMN> &other)
+{
+    return false;
+}
+
+template <typename _CT>
+bool operator==(const Sparse_matrix<_CT, OSM::COLUMN>& matrix, const Sparse_matrix<_CT, OSM::ROW> &other)
+{
+    return false;
 }
 
 } /* end namespace OSM */

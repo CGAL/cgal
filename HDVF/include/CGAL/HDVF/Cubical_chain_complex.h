@@ -16,7 +16,7 @@
 #include <map>
 #include <stdexcept>
 #include <unordered_set>
-#include <CGAL/HDVF/tools_io.h>
+#include <CGAL/HDVF/Cub_object_io.h>
 #include <CGAL/OSM/OSM.h>
 
 namespace CGAL {
@@ -42,7 +42,7 @@ ostream & operator<<(ostream & out, std::vector<size_t> c)
 
  \section Description Description
 
- An cubical complex is a set of "square" cells such that: all the faces of a given cell also belong to the complex and any two cells intersect exactly along a common face.
+ A cubical complex is a set of "square" cells such that: all the faces of a given cell also belong to the complex and any two cells intersect exactly along a common face.
 
  <img src="cubical_complex.png" align="center" width=20%/>
 
@@ -109,19 +109,19 @@ public:
     Cubical_chain_complex() : _complex_id(_id_generator++) {} ;
 
     /**
-     * \brief Constructor from a Cub_object (builds PRIMAL or DUAL associated complex depending on `type`).
+     * \brief Constructor from a Cub_object_io (builds PRIMAL or DUAL associated complex depending on `type`).
      *
      * Builds the cubical complex associated to a a set of cells (vertices, edges, squares, cubes...), ie. performs the down closure of cells and set the boundary matrices in any dimension. Given a set of cells:
      *
      * - if the `type` is PRIMAL, the constructor builds the associated complex as such (see below middle), which comes to encode \f$3^q-1\f$ connectivity (with \f$q\f$ the dimension of the complex)
-     * - if the `type` is DUAL and the cub_object contains only cells of maximal dimension (ie. binary object), the constructor build the dual associated complex (see below right), which comes to encode \f$2q\f$ connectivity (with \f$q\f$ the dimension of the complex)
+     * - if the `type` is DUAL and the Cub_object_io contains only cells of maximal dimension (ie. binary object), the constructor build the dual associated complex (see below right), which comes to encode \f$2q\f$ connectivity (with \f$q\f$ the dimension of the complex)
      *
      *<img src="primal_dual.png" align="center" width=20%/>
      *
-     * \param[in] cub A Cub_object containing a set of "cubical" cells.
+     * \param[in] cub A Cub_object_io containing a set of "cubical" cells.
      * \param[in] type Type of construction used (PRIMAL or DUAL).
      */
-    Cubical_chain_complex(const Cub_object& cub,typeComplexCube type);
+    Cubical_chain_complex(const Cub_object_io& cub,typeComplexCube type);
 
     /** \brief Friend class `Duality_cubical_complex_tools` provides tools for Alexander duality. */
     friend Duality_cubical_complex_tools<CoefficientType> ;
@@ -635,7 +635,7 @@ private:
     /// Protected methods
 protected:
     /* Initialize _cells, _base2bool and _bool2base */
-    void initialize_cells(const Cub_object& cub,typeComplexCube type);
+    void initialize_cells(const Cub_object_io& cub,typeComplexCube type);
 
     /** \brief Computes Khalimsky coordinates from boolean index */
     std::vector<size_t> ind2khal(size_t index) const {
@@ -740,7 +740,7 @@ size_t Cubical_chain_complex<CoefficientType>::_id_generator(0) ;
 
 // Constructor implementation
 template<typename CoefficientType>
-Cubical_chain_complex<CoefficientType>::Cubical_chain_complex(const Cub_object& cub,typeComplexCube type) : _dim(cub.dim), _size_bb(_dim+1), _P(_dim+1,1), _base2bool(_dim+1), _bool2base(_dim+1), _complex_id(_id_generator++)
+Cubical_chain_complex<CoefficientType>::Cubical_chain_complex(const Cub_object_io& cub,typeComplexCube type) : _dim(cub.dim), _size_bb(_dim+1), _P(_dim+1,1), _base2bool(_dim+1), _bool2base(_dim+1), _complex_id(_id_generator++)
 
 {
     // Initialize _size_bb and _P
@@ -773,7 +773,7 @@ Cubical_chain_complex<CoefficientType>::Cubical_chain_complex(const Cub_object& 
 
 // initialize_cells implementation
 template<typename CoefficientType>
-void Cubical_chain_complex<CoefficientType>::initialize_cells(const Cub_object& cub, typeComplexCube type)
+void Cubical_chain_complex<CoefficientType>::initialize_cells(const Cub_object_io& cub, typeComplexCube type)
 {
     if (type == PRIMAL)
     {

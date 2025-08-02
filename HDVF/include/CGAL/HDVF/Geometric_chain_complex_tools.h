@@ -16,13 +16,16 @@
 #include <map>
 #include <stdexcept>
 #include <unordered_set>
-#include <CGAL/HDVF/Abstract_simplicial_chain_complex.h>
+#include <CGAL/HDVF/Simplicial_chain_complex.h>
 #include <CGAL/HDVF/Cubical_chain_complex.h>
 #include <CGAL/HDVF/Hdvf_core.h>
 #include <CGAL/HDVF/Hdvf_persistence.h>
 #include <CGAL/HDVF/Hdvf_duality.h>
 #include <CGAL/HDVF/Sub_chain_complex_mask.h>
-#include <CGAL/HDVF/tools_io.h>
+#include <CGAL/HDVF/Mesh_object_io.h>
+#include <CGAL/HDVF/Cub_object_io.h>
+#include <CGAL/HDVF/Tet_object_io.h>
+#include <CGAL/HDVF/Icosphere_object_io.h>
 #include <CGAL/OSM/OSM.h>
 
 /**
@@ -327,13 +330,13 @@ public:
     static TripleRes simplicial_chain_complex_bb (const ComplexType& _K, double BB_ratio=1.5, const string& out_file_prefix = "file_K_closed.off")
     {
         // Export _K to a MeshObject to add the icosphere and mesh with tetGen
-        Mesh_object mesh_L = Duality_simplicial_complex_tools::export_meshObject(_K) ;
+        Mesh_object_io mesh_L = Duality_simplicial_complex_tools::export_meshObject(_K) ;
 
         // Closing K by adding the icosphere
         //  Compute a bounding icosphere
         IONodeType bary = mesh_L.barycenter() ;
         double r = mesh_L.radius(bary) ;
-        Icosphere_object ico(2,bary, BB_ratio*r) ;
+        Icosphere_object_io ico(2,bary, BB_ratio*r) ;
         ico.print_infos() ;
 
         // Add it to the mesh
@@ -349,7 +352,7 @@ public:
         system(tetgen_command.c_str()) ;
 
         // Read the mesh built by tetgen for L
-        Tet_object tetL(out_file_prefix) ;
+        Tet_object_io tetL(out_file_prefix) ;
 
         // Build the associated SimpComplex
         ComplexType& L = *new ComplexType(tetL, tetL.get_nodes()) ;
@@ -371,7 +374,7 @@ public:
     }
 
     /** \brief Export a SimpComplex to a MeshObject  */
-    static Mesh_object& export_meshObject(const ComplexType& _CC)
+    static Mesh_object_io& export_meshObject(const ComplexType& _CC)
     {
         std::vector<IOCellType> vcells ;
         for (int q = 0; q <= _CC.dim(); ++q)
@@ -381,7 +384,7 @@ public:
                 vcells.push_back(s.get_vertices()) ;
             }
 
-        Mesh_object &m = *(new Mesh_object(-3, _CC.get_vertices_coords(), vcells)) ;
+        Mesh_object_io &m = *(new Mesh_object_io(-3, _CC.get_vertices_coords(), vcells)) ;
         return m ;
     }
 } ;
@@ -399,7 +402,7 @@ Starting from a Cubical_chain_complex `_K`, the method `cubical_chain_complex_BB
 - L : complex built of the "full" bounding box of _K
 - K (Sub_chain_complex_mask) : Sub_chain_complex_mask identifying _K inside L
 
-Use the `frame` method from the `Cub_object` class to enlarge the bounding box (via a 1 pixel dilatation) if necessary.
+Use the `frame` method from the `Cub_object_io` class to enlarge the bounding box (via a 1 pixel dilatation) if necessary.
 
 \tparam CoefficientType a model of the `Ring` concept providing the ring used to compute homology.
 */
@@ -427,7 +430,7 @@ public:
      */
     static std::pair<ComplexType&, SubCCType&> cubical_chain_complex_bb (const ComplexType& _K)
     {
-        Cub_object tmp ;
+        Cub_object_io tmp ;
         tmp.dim = _K.dim() ;
         tmp.N = _K._size_bb ;
         tmp.ncubs.resize(tmp.dim+1) ;

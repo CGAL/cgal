@@ -10,7 +10,6 @@
 
 #include <iostream>
 #include <CGAL/HDVF/Simplex.h>
-#include <CGAL/HDVF/tools_io.h>
 #include <CGAL/HDVF/Simplicial_chain_complex.h>
 #include <CGAL/HDVF/Cubical_chain_complex.h>
 #include <CGAL/HDVF/Geometric_chain_complex_tools.h>
@@ -19,6 +18,10 @@
 #include <CGAL/OSM/OSM.h>
 #include <CGAL/HDVF/Sub_sparse_matrix.h>
 #include <CGAL/HDVF/hdvf_tools.h>
+#include <CGAL/HDVF/Mesh_object_io.h>
+#include <CGAL/HDVF/Cub_object_io.h>
+#include <CGAL/HDVF/Icosphere_object_io.h>
+#include <CGAL/HDVF/Tet_object_io.h>
 #include "arguments.h"
 #include <CGAL/HDVF/Zp.h>
 
@@ -161,7 +164,7 @@ void main_code (const Options &options)
         using SubCCType = CGAL::HDVF::Sub_chain_complex_mask<CoefficientType, ComplexType> ;
 
         // MeshObject
-        CGAL::HDVF::Mesh_object mesh ;
+        CGAL::HDVF::Mesh_object_io mesh ;
         mesh.read_off(options.in_file) ;
         
         // Complex
@@ -176,7 +179,7 @@ void main_code (const Options &options)
         
         // Output/export mesh and complex
         
-        mesh_complex_output<CoefficientType, CGAL::HDVF::Mesh_object, ComplexType>(mesh, L, K, options) ;
+        mesh_complex_output<CoefficientType, CGAL::HDVF::Mesh_object_io, ComplexType>(mesh, L, K, options) ;
         
         // HDVF computation, export, output
         HDVFType& hdvf(dual_HDVF_comput<CoefficientType,ComplexType>(L, K, options)) ;
@@ -208,7 +211,7 @@ void main_code (const Options &options)
         using SubCCType = CGAL::HDVF::Sub_chain_complex_mask<CoefficientType, ComplexType> ;
         using ToolsType = CGAL::HDVF::Duality_cubical_complex_tools<CoefficientType> ;
         
-        CGAL::HDVF::Cub_object mesh ;
+        CGAL::HDVF::Cub_object_io mesh ;
         typename ComplexType::typeComplexCube primal_dual(ComplexType::PRIMAL) ;
         if (options.primal)
         {
@@ -244,7 +247,7 @@ void main_code (const Options &options)
         
         // Output/export mesh and complex
         
-        mesh_complex_output<CoefficientType, CGAL::HDVF::Cub_object, ComplexType>(mesh, L, K, options) ;
+        mesh_complex_output<CoefficientType, CGAL::HDVF::Cub_object_io, ComplexType>(mesh, L, K, options) ;
         
         // HDVF computation, export, output
         HDVFType& hdvf(dual_HDVF_comput<CoefficientType,ComplexType>(L, K, options)) ;

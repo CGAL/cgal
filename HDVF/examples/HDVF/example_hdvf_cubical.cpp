@@ -1,14 +1,14 @@
 #include <iostream>
 #include <fstream>
-#include "CGAL/HDVF/tools_io.h"
-#include "CGAL/HDVF/Cubical_chain_complex.h"
-#include "CGAL/HDVF/Geometric_chain_complex_tools.h"
-#include "CGAL/HDVF/Zp.h"
-#include "CGAL/HDVF/Hdvf.h"
-#include "CGAL/OSM/OSM.h"
+#include <CGAL/HDVF/Cub_object_io.h>
+#include <CGAL/HDVF/Cubical_chain_complex.h>
+#include <CGAL/HDVF/Geometric_chain_complex_tools.h>
+#include <CGAL/HDVF/Z2.h>
+#include <CGAL/HDVF/Hdvf.h>
+#include <CGAL/OSM/OSM.h>
 
 typedef int CoefficientType;
-//typedef Zp<2> CoefficientType;
+//typedef Z2 CoefficientType;
 
 int main(int argc, char **argv)
 {
@@ -17,7 +17,7 @@ int main(int argc, char **argv)
     
     if (argc != 2)
     {
-        std::cout << "usage: example_hdvf_simplicial off_file" << std::endl;
+        std::cout << "usage: example_hdvf_cubical pgm_file" << std::endl;
     }
     else
     {
@@ -26,7 +26,7 @@ int main(int argc, char **argv)
         // Adapt pgm loading into Cub_complex accordingly
         const bool khalimsky_coords = (primal_dual == ComplexType::PRIMAL) ? true : false ;
 
-        CGAL::HDVF::Cub_object mesh ;
+        CGAL::HDVF::Cub_object_io mesh ;
         
         // Load pgm into cub object
         mesh.read_pgm(argv[1], khalimsky_coords);

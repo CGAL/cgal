@@ -17,6 +17,7 @@
 #include <vector>
 #include <map>
 #include <CGAL/HDVF/Simplex.h>
+#include <CGAL/HDVF/Mesh_object_io.h>
 #include <CGAL/OSM/OSM.h>
 
 namespace CGAL {
@@ -59,13 +60,13 @@ public:
     Abstract_simplicial_chain_complex(int q = 0) ;
 
     /**
-     * \brief Constructor from a Mesh_object.
+     * \brief Constructor from a Mesh_object_io.
      *
      * Builds the abstract simplicial complex associated to a triangular mesh (ie. performs the down closure of cells and set the boundary matrices in any dimension).
      *
-     * \param[in] mesh A Mesh_object containing a triangular mesh.
+     * \param[in] mesh A Mesh_object_io containing a triangular mesh.
      */
-    Abstract_simplicial_chain_complex(const Mesh_object& mesh);
+    Abstract_simplicial_chain_complex(const Mesh_object_io& mesh);
 
     /** \brief Type of column-major chains */
     typedef OSM::Sparse_chain<CoefficientType, OSM::COLUMN> CChain;
@@ -310,7 +311,7 @@ Abstract_simplicial_chain_complex<CoefficientType>::Abstract_simplicial_chain_co
 }
 
 template<typename CoefficientType>
-Abstract_simplicial_chain_complex<CoefficientType>::Abstract_simplicial_chain_complex(const Mesh_object& mesh) : _complex_id(_id_generator++) {
+Abstract_simplicial_chain_complex<CoefficientType>::Abstract_simplicial_chain_complex(const Mesh_object_io& mesh) : _complex_id(_id_generator++) {
     // Initialize attributes
 
     _dim = abs(mesh.dim);

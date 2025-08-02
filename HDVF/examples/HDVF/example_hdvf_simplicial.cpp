@@ -1,15 +1,16 @@
 #include <iostream>
 #include <fstream>
-#include "CGAL/HDVF/tools_io.h"
-#include "CGAL/HDVF/Simplicial_chain_complex.h"
-#include "CGAL/HDVF/Geometric_chain_complex_tools.h"
-#include "CGAL/HDVF/Zp.h"
-#include "CGAL/HDVF/Hdvf.h"
-
-#include "CGAL/OSM/OSM.h"
+#include <CGAL/HDVF/Mesh_object_io.h>
+#include <CGAL/HDVF/Simplicial_chain_complex.h>
+#include <CGAL/HDVF/Geometric_chain_complex_tools.h>
+#include <CGAL/HDVF/Zp.h>
+#include <CGAL/HDVF/Z2.h>
+#include <CGAL/HDVF/Hdvf.h>
+#include <CGAL/OSM/OSM.h>
 
 //typedef int CoefficientType;
-typedef CGAL::HDVF::Zp<2> CoefficientType;
+typedef CGAL::HDVF::Z2 CoefficientType;
+//typedef CGAL::HDVF::Zp<5> CoefficientType;
 
 int main(int argc, char **argv)
 {
@@ -23,7 +24,7 @@ int main(int argc, char **argv)
     else
     {
         // Load cub object
-        CGAL::HDVF::Mesh_object mesh ;
+        CGAL::HDVF::Mesh_object_io mesh ;
         mesh.read_off(argv[1]);
         
         mesh.print_infos();

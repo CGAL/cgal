@@ -165,16 +165,6 @@ public:
     }
 
     /**
-     * \brief Compare two chains.
-     *
-     * \param[in] other_chain Chain compared to `this`.
-     */
-    bool operator==(const Sparse_chain& other_chain)
-    {
-        return ((_upperBound == other_chain._upperBound) && (_chainData == other_chain._chainData));
-    }
-
-    /**
      * \brief Size of the chain
      *
      * \return Size allocated for the chain.
@@ -443,7 +433,10 @@ public:
             throw std::runtime_error("Provided index should be less than " + std::to_string(_upperBound) + ".");
         }
 
-        return _chainData.at(index);
+        if (_chainData.find(index) == _chainData.end())
+            return 0 ;
+        else
+            return _chainData.at(index);
     }
 
     /**
@@ -486,6 +479,35 @@ public:
         return _chainData.size() == 0;
     }
 
+    /**
+     * \defgroup ChainChainComparison Compare two chains.
+     * \ingroup PkgHDVFAlgorithmClasses
+     * @brief  Compare two chains and return `true` if both chains equal (and `false` otherwise).
+     *
+     * @param chain The first chain.
+     * @param other The second chain.
+     * @return A boolean.
+     * @{
+     */
+    
+    /** \brief Comparison of two COLUMN chains. */
+    template <typename _CT>
+    friend bool operator==(const Sparse_chain<_CT, OSM::COLUMN>& chain, const Sparse_chain<_CT, OSM::COLUMN> &other);
+
+    /** \brief Comparison of a COLUMN  and a ROW chain. */
+    template <typename _CT>
+    friend bool operator==(const Sparse_chain<_CT, OSM::COLUMN>& chain, const Sparse_chain<_CT, OSM::ROW> &other);
+    
+    /** \brief Comparison of a ROW and a COLUMN chain. */
+    template <typename _CT>
+    friend bool operator==(const Sparse_chain<_CT, OSM::ROW>& chain, const Sparse_chain<_CT, OSM::COLUMN> &other);
+    
+    /** \brief Comparison of two ROW chains. */
+    template <typename _CT>
+    friend bool operator==(const Sparse_chain<_CT, OSM::ROW>& chain, const Sparse_chain<_CT, OSM::ROW> &other);
+    
+    /** @} */
+    
     /**
      * \brief Get a subchain from the chain.
      *
@@ -740,6 +762,58 @@ Sparse_chain<_CT, _CTF> operator/(const Sparse_chain<_CT, _CTF> &chain, size_t i
     Sparse_chain<_CT, _CTF> newChain = chain;
     newChain /= index;
     return newChain;
+}
+
+template <typename _CT>
+bool operator==(const Sparse_chain<_CT, OSM::COLUMN>& chain, const Sparse_chain<_CT, OSM::COLUMN> &other)
+{
+    typedef Sparse_chain<_CT, OSM::COLUMN> ChainType;
+    bool res = true ;
+    // Check that chains have the same size
+    res = res && (chain._upperBound == other._upperBound) ;
+    // Check that each coefficient of chain also belongs to other
+    for (typename ChainType::const_iterator it = chain.begin(); res && (it != chain.end()); ++it)
+    {
+        res = res && (it->second == other.get_coef(it->first)) ;
+    }
+    // Check that each coefficient of other also belongs to chain
+    for (typename ChainType::const_iterator it = other.begin(); res && (it != other.end()); ++it)
+    {
+        res = res && (it->second == chain.get_coef(it->first)) ;
+    }
+    return res ;
+}
+
+template <typename _CT>
+bool operator==(const Sparse_chain<_CT, OSM::ROW>& chain, const Sparse_chain<_CT, OSM::ROW> &other)
+{
+    typedef Sparse_chain<_CT, OSM::ROW> ChainType;
+    bool res = true ;
+    // Check that chains have the same size
+    res = res && (chain._upperBound == other._upperBound) ;
+    // Check that each coefficient of chain also belongs to other
+    for (typename ChainType::const_iterator it = chain.begin(); (it != chain.end()) && res; ++it)
+    {
+        res = res && (it->second == other.get_coef(it->first)) ;
+    }
+    // Check that each coefficient of other also belongs to chain
+    for (typename ChainType::const_iterator it = other.begin(); res && (it != other.end()); ++it)
+    {
+        res = res && (it->second == chain.get_coef(it->first)) ;
+    }
+    return res ;
+}
+
+template <typename _CT>
+bool operator==(const Sparse_chain<_CT, OSM::COLUMN>& chain, const Sparse_chain<_CT, OSM::ROW> &other)
+{
+    return false;
+}
+
+template <typename _CT>
+bool operator==(const Sparse_chain<_CT, OSM::ROW>& chain, const Sparse_chain<_CT, OSM::COLUMN> &other)
+{
+    return false;
 }
 
 } /* end namespace OSM */

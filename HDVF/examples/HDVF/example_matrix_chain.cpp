@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 
-#include "CGAL/OSM/OSM.h"
+#include <CGAL/OSM/OSM.h>
 
 typedef CGAL::OSM::Sparse_chain<int, CGAL::OSM::COLUMN> CChain;
 typedef CGAL::OSM::Sparse_matrix<int, CGAL::OSM::COLUMN> CMatrix;

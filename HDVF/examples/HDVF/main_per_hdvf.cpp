@@ -13,13 +13,14 @@
 #include <typeinfo>
 #include <CGAL/HDVF/Zp.h>
 #include <CGAL/HDVF/Simplex.h>
-#include <CGAL/HDVF/tools_io.h>
 #include <CGAL/HDVF/Simplicial_chain_complex.h>
 #include <CGAL/HDVF/Cubical_chain_complex.h>
 #include <CGAL/HDVF/Geometric_chain_complex_tools.h>
 #include <CGAL/HDVF/Hdvf_persistence.h>
 #include <CGAL/OSM/OSM.h>
 #include <CGAL/HDVF/hdvf_tools.h>
+#include <CGAL/HDVF/Mesh_object_io.h>
+#include <CGAL/HDVF/Cub_object_io.h>
 #include "arguments.h"
 
 // ------- A ring
@@ -188,7 +189,7 @@ void main_code (const Options &options)
         using HDVFType = CGAL::HDVF::Hdvf_persistence<CoefficientType, ComplexType,DegType, FiltrationType> ;
         
         // MeshObject
-        CGAL::HDVF::Mesh_object mesh ;
+        CGAL::HDVF::Mesh_object_io mesh ;
         mesh.read_off(options.in_file) ;
         
         // Complex
@@ -197,7 +198,7 @@ void main_code (const Options &options)
         // Build filtration
         FiltrationType& f(build_filtration<CoefficientType, ComplexType, DegType, FiltrationType>(complex, options)) ;
         
-        mesh_complex_output<CGAL::HDVF::Mesh_object, ComplexType>(mesh, complex, options) ;
+        mesh_complex_output<CGAL::HDVF::Mesh_object_io, ComplexType>(mesh, complex, options) ;
         
         // HDVF computation, export, output
         HDVFType& hdvf(per_HDVF_comput<CoefficientType,ComplexType,DegType, FiltrationType>(complex,f, options)) ;
@@ -216,7 +217,7 @@ void main_code (const Options &options)
         using FiltrationType = CGAL::HDVF::Filtration_lower_star<CoefficientType, ComplexType, DegType> ;
         using HDVFType = CGAL::HDVF::Hdvf_persistence<CoefficientType, ComplexType, DegType, FiltrationType> ;
         
-        CGAL::HDVF::Cub_object mesh ;
+        CGAL::HDVF::Cub_object_io mesh ;
         typename ComplexType::typeComplexCube primal_dual(ComplexType::PRIMAL) ;
         if (options.primal)
         {
@@ -237,7 +238,7 @@ void main_code (const Options &options)
         // Complex
         ComplexType complex(mesh, primal_dual);
         
-        mesh_complex_output<CGAL::HDVF::Cub_object, ComplexType>(mesh, complex, options) ;
+        mesh_complex_output<CGAL::HDVF::Cub_object_io, ComplexType>(mesh, complex, options) ;
         
         // Build filtration
         FiltrationType& f(build_filtration<CoefficientType, ComplexType, DegType, FiltrationType>(complex, options)) ;

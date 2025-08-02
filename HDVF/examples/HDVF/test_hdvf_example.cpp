@@ -1,16 +1,17 @@
 #include <iostream>
 #include <fstream>
 #include <chrono>
-#include "CGAL/Hdvf/tools_io.h"
-#include "CGAL/Hdvf/Cubical_chain_complex.h"
-#include "CGAL/HDVF/Geometric_chain_complex_tools.h"
-#include "CGAL/HDVF/Zp.h"
-#include "CGAL/Hdvf/Hdvf.h"
+#include <CGAL/Hdvf/Cub_object_io.h>
+#include <CGAL/Hdvf/Cubical_chain_complex.h>
+#include <CGAL/HDVF/Geometric_chain_complex_tools.h>
+#include <CGAL/HDVF/Zp.h>
+#include <CGAL/HDVF/Z2.h>
+#include <CGAL/Hdvf/Hdvf.h>
+#include <CGAL/OSM/OSM.h>
 
-#include "CGAL/OSM/OSM.h"
-
-//typedef int CoefficientType;
-typedef CGAL::HDVF::Zp<2> CoefficientType;
+typedef int CoefficientType;
+//typedef CGAL::HDVF::Zp<5> CoefficientType;
+//typedef CGAL::HDVF::Z2 CoefficientType;
 
 int main(int argc, char **argv)
 {
@@ -24,7 +25,7 @@ int main(int argc, char **argv)
     else
     {
         // Load cub object
-        CGAL::HDVF::Cub_object mesh ;
+        CGAL::HDVF::Cub_object_io mesh ;
         mesh.read_cub(argv[1], true);
         
         mesh.print_infos();
@@ -126,6 +127,7 @@ int main(int argc, char **argv)
         std::cout << "--------------" << std::endl ;
         
         typedef CGAL::OSM::Sparse_chain<int, CGAL::OSM::COLUMN> CChain;
+        typedef CGAL::OSM::Sparse_chain<int, CGAL::OSM::ROW> RChain;
         typedef CGAL::OSM::Sparse_matrix<int, CGAL::OSM::COLUMN> CMatrix;
         typedef CGAL::OSM::Sparse_matrix<int, CGAL::OSM::ROW> RMatrix;
         // Create a column-major sparse matrix
@@ -225,6 +227,78 @@ int main(int argc, char **argv)
         out << "=============== HDVF2" << std::endl ;
         hdvf2.print_reduction() ;
     }
+    
+    // Test == operators
+    
+    // CChains
+    HDVFType::CChain c1(4), c2(4), c3 ;
+    c1.set_coef(1,1) ;
+    c1.set_coef(3,-1) ;
+    
+    c2.set_coef(3,-1) ;
+    c2.set_coef(1,1) ;
+    
+    c3 = c2 ;
+    c3.set_coef(2, 1) ;
+    
+    std::cout << "c1: " << c1 << std::endl ;
+    std::cout << "c2: " << c2 << std::endl ;
+    std::cout << "c3: " << c3 << std::endl ;
+    std::cout << "c1 == c2 : " << (c1 == c2) << std::endl ;
+    std::cout << "c1 == c3 : " << (c1 == c3) << std::endl ;
+    
+    // CMatrices
+    HDVFType::CMatrix M1(3,4), M2(3,4), M3(3,4) ;
+    CGAL::OSM::set_coef(M1, 0, 1, 1) ;
+    CGAL::OSM::set_coef(M1, 0, 2, -1) ;
+    CGAL::OSM::set_coef(M1, 1, 1, 2) ;
+    CGAL::OSM::set_coef(M1, 2, 1, -2) ;
+    
+    CGAL::OSM::set_coef(M2, 0, 1, 1) ;
+    CGAL::OSM::set_coef(M2, 2, 1, -2) ;
+    CGAL::OSM::set_coef(M2, 0, 2, -1) ;
+    CGAL::OSM::set_coef(M2, 1, 1, 2) ;
+    
+    M3 = M2 ;
+    CGAL::OSM::set_coef(M3, 2, 2, 3) ;
+    
+    std::cout << "M1 == M2 : " << (M1 == M2) << std::endl ;
+    std::cout << "M1 == M3 : " << (M1 == M3) << std::endl ;
+    
+    // RChains
+    HDVFType::RChain cc1(4), cc2(4), cc3 ;
+    cc1.set_coef(1,1) ;
+    cc1.set_coef(3,-1) ;
+    
+    cc2.set_coef(3,-1) ;
+    cc2.set_coef(1,1) ;
+    
+    cc3 = cc2 ;
+    cc3.set_coef(2, 1) ;
+    
+    std::cout << "cc1: " << cc1 << std::endl ;
+    std::cout << "cc2: " << cc2 << std::endl ;
+    std::cout << "cc3: " << cc3 << std::endl ;
+    std::cout << "cc1 == cc2 : " << (cc1 == cc2) << std::endl ;
+    std::cout << "cc1 == cc3 : " << (cc1 == cc3) << std::endl ;
+    
+    // CMatrices
+    HDVFType::RMatrix MM1(3,4), MM2(3,4), MM3(3,4) ;
+    CGAL::OSM::set_coef(MM1, 0, 1, 1) ;
+    CGAL::OSM::set_coef(MM1, 0, 2, -1) ;
+    CGAL::OSM::set_coef(MM1, 1, 1, 2) ;
+    CGAL::OSM::set_coef(MM1, 2, 1, -2) ;
+    
+    CGAL::OSM::set_coef(MM2, 0, 1, 1) ;
+    CGAL::OSM::set_coef(MM2, 2, 1, -2) ;
+    CGAL::OSM::set_coef(MM2, 0, 2, -1) ;
+    CGAL::OSM::set_coef(MM2, 1, 1, 2) ;
+    
+    MM3 = MM2 ;
+    CGAL::OSM::set_coef(MM3, 2, 2, 3) ;
+    
+    std::cout << "MM1 == MM2 : " << (MM1 == MM2) << std::endl ;
+    std::cout << "MM1 == MM3 : " << (MM1 == MM3) << std::endl ;
     
     return 0;
 }

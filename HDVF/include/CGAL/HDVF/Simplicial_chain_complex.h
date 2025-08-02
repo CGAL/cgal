@@ -16,12 +16,14 @@
 
 #include <vector>
 #include <map>
-#include <CGAL/HDVF/tools_io.h>
+#include <CGAL/HDVF/Mesh_object_io.h>
 #include <CGAL/HDVF/Abstract_simplicial_chain_complex.h>
 #include <CGAL/OSM/OSM.h>
 
 namespace CGAL {
 namespace HDVF {
+
+using namespace std;
 
 // Forward declaration of SimpComplexTools
 template<typename CoefficientType> class Duality_simplicial_complex_tools ;
@@ -59,11 +61,11 @@ public:
     Simplicial_chain_complex() {} ;
     // Constructor from a simplicial complex stored in a .simp file and read into a MeshObject
     /**
-     * \brief Constructor from a Mesh_object.
+     * \brief Constructor from a Mesh_object_io.
      *
-     * Builds a simplicial complex from a Mesh_object and saves the vector of vertices coordinates.
+     * Builds a simplicial complex from a Mesh_object_io and saves the vector of vertices coordinates.
      */
-    Simplicial_chain_complex(const Mesh_object& mesh, std::vector<Point> coords) : Abstract_simplicial_chain_complex<CoefficientType>(mesh), _coords(coords) {} ;
+    Simplicial_chain_complex(const Mesh_object_io& mesh, std::vector<Point> coords) : Abstract_simplicial_chain_complex<CoefficientType>(mesh), _coords(coords) {} ;
 
     /**
      * \brief Affectation operator for simplicial complexes.
