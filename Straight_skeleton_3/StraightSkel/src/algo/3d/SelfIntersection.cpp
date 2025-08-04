@@ -435,34 +435,7 @@ CGAL::Bounded_side boundedSide(Point3SPtr point, FacetSPtr facet, const Projecti
         CGAL::Comparison_result src_y = compare_y_2(*p_src, *point);
         CGAL::Comparison_result dst_y = compare_y_2(*p_dst, *point);
 
-#if 0
-        if ((src_y == CGAL::SMALLER && dst_y == CGAL::LARGER) ||
-            (src_y == CGAL::LARGER && dst_y == CGAL::SMALLER)) {
-            CGAL::Orientation o = orientation_2(*p_src, *p_dst, *point);
-            if (o == CGAL::LEFT_TURN) is_inside = !is_inside;
-            else if (o == CGAL::COLLINEAR) return CGAL::ON_BOUNDARY;
-        } else if (src_y == CGAL::EQUAL) {
-            switch (compare_x_2(*point, *p_src)) {
-                case CGAL::SMALLER:
-                    if (dst_y == CGAL::LARGER) is_inside = !is_inside;
-                    break;
-                case CGAL::EQUAL:
-                    return CGAL::ON_BOUNDARY;
-                case CGAL::LARGER:
-                    break;
-            }
-        } else if (dst_y == CGAL::EQUAL) {
-            switch (compare_x_2(*point, *p_dst)) {
-                case CGAL::SMALLER:
-                    if (src_y == CGAL::LARGER) is_inside = !is_inside;
-                    break;
-                case CGAL::EQUAL:
-                    return CGAL::ON_BOUNDARY;
-                case CGAL::LARGER:
-                    break;
-            }
-        }
-#else
+
         switch (src_y) {
           case CGAL::SMALLER:
             switch (dst_y) {
@@ -530,7 +503,6 @@ CGAL::Bounded_side boundedSide(Point3SPtr point, FacetSPtr facet, const Projecti
             }
             break;
         }
-#endif
     }
 
     return is_inside ? CGAL::ON_BOUNDED_SIDE : CGAL::ON_UNBOUNDED_SIDE;

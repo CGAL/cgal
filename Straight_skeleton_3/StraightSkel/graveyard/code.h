@@ -9873,6 +9873,109 @@ SimpleStraightSkel::crashAt(EdgeSPtr edge_1, EdgeSPtr edge_2,
 
 
 
+bool SimpleStraightSkel::isReflex(EdgeSPtr edge,
+                                  const bool future_facing) {
+    bool result = false;
+
+    VertexSPtr vertex_src = edge->getVertexSrc();
+    VertexSPtr vertex_dst = edge->getVertexDst();
+
+    if (*(vertex_src->getPoint()) == *(vertex_dst->getPoint())) {
+        FacetSPtr facet_l = edge->getFacetL();
+        FacetSPtr facet_r = edge->getFacetR();
+        FacetSPtr facet_src = edge->getFacetSrc();
+        FacetSPtr facet_dst = edge->getFacetDst();
+
+        CGAL::FT speed_l = 1.0;
+        if (facet_l->hasData()) {
+            speed_l = std::dynamic_pointer_cast<SkelFacetData>(
+                    facet_l->getData())->getSpeed();
+        }
+        CGAL::FT speed_r = 1.0;
+        if (facet_r->hasData()) {
+            speed_r = std::dynamic_pointer_cast<SkelFacetData>(
+                    facet_r->getData())->getSpeed();
+        }
+        CGAL::FT speed_src = 1.0;
+        if (facet_src->hasData()) {
+            speed_src = std::dynamic_pointer_cast<SkelFacetData>(
+                    facet_src->getData())->getSpeed();
+        }
+        CGAL::FT speed_dst = 1.0;
+        if (facet_dst->hasData()) {
+            speed_dst = std::dynamic_pointer_cast<SkelFacetData>(
+                    facet_dst->getData())->getSpeed();
+        }
+
+        CGAL::FT od = future_facing ? -1 : 1;
+        Plane3SPtr offset_plane_l = KernelWrapper::offsetPlane(facet_l->getPlane(), od * speed_l);
+        Plane3SPtr offset_plane_r = KernelWrapper::offsetPlane(facet_r->getPlane(), od * speed_r);
+        Plane3SPtr offset_plane_src = KernelWrapper::offsetPlane(facet_src->getPlane(), od * speed_src);
+        Plane3SPtr offset_plane_dst = KernelWrapper::offsetPlane(facet_dst->getPlane(), od * speed_dst);
+
+        Point3SPtr p_src = KernelWrapper::intersection(offset_plane_src, offset_plane_l, offset_plane_r);
+        Point3SPtr p_dst = KernelWrapper::intersection(offset_plane_dst, offset_plane_l, offset_plane_r);
+        CGAL_assertion(p_src && p_dst);
+
+        Vector3SPtr v_dir = KernelFactory::createVector3((*p_dst) - (*p_src));
+        CGAL_assertion(*v_dir != CGAL::NULL_VECTOR);
+
+        Vector3SPtr normal_l = KernelFactory::createVector3(offset_plane_l);
+        CGAL_assertion(*normal_l != CGAL::NULL_VECTOR);
+
+        Vector3SPtr v_cross = KernelWrapper::cross(normal_l, v_dir);
+        Point3SPtr p = KernelFactory::createPoint3((*p_src) + (*v_cross));
+        if (KernelWrapper::side(offset_plane_r, p) > 0) {
+            result = true;
+        }
+    } else {
+        result = edge->isReflex();
+    }
+    return result;
+}
+
+
+
+
+
+
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+
+
+if ((src_y == CGAL::SMALLER && dst_y == CGAL::LARGER) ||
+    (src_y == CGAL::LARGER && dst_y == CGAL::SMALLER)) {
+    CGAL::Orientation o = orientation_2(*p_src, *p_dst, *point);
+    if (o == CGAL::LEFT_TURN) is_inside = !is_inside;
+    else if (o == CGAL::COLLINEAR) return CGAL::ON_BOUNDARY;
+} else if (src_y == CGAL::EQUAL) {
+    switch (compare_x_2(*point, *p_src)) {
+        case CGAL::SMALLER:
+            if (dst_y == CGAL::LARGER) is_inside = !is_inside;
+            break;
+        case CGAL::EQUAL:
+            return CGAL::ON_BOUNDARY;
+        case CGAL::LARGER:
+            break;
+    }
+} else if (dst_y == CGAL::EQUAL) {
+    switch (compare_x_2(*point, *p_dst)) {
+        case CGAL::SMALLER:
+            if (src_y == CGAL::LARGER) is_inside = !is_inside;
+            break;
+        case CGAL::EQUAL:
+            return CGAL::ON_BOUNDARY;
+        case CGAL::LARGER:
+            break;
+    }
+}
+
+
+
+
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+
+
+
 
 
 
