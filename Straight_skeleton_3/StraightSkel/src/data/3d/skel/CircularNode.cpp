@@ -56,7 +56,7 @@ void CircularNode::setOffset(CGAL::FT offset) {
 }
 
 SphericalSkeletonSPtr CircularNode::getSkel() const {
-    this->skel_.lock();
+    return this->skel_.lock();
 }
 
 void CircularNode::setSkel(SphericalSkeletonSPtr skel) {

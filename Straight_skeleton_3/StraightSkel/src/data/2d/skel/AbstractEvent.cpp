@@ -42,7 +42,7 @@ void AbstractEvent::setPolygonResult(PolygonSPtr polygon) {
 }
 
 StraightSkeletonSPtr AbstractEvent::getSkel() const {
-    this->skel_.lock();
+    return this->skel_.lock();
 }
 
 void AbstractEvent::setSkel(StraightSkeletonSPtr skel) {
