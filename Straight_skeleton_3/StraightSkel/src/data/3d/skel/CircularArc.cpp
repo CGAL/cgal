@@ -127,11 +127,7 @@ void CircularArc::setSupportingPlane(Plane3SPtr supporting_plane) {
 }
 
 SphericalSkeletonSPtr CircularArc::getSkel() const {
-    CGAL_SS3_DEBUG_WPTR(skel_);
-    if (this->skel_.expired())
-        return SphericalSkeletonSPtr();
-    else
-        return SphericalSkeletonSPtr(this->skel_);
+    return this->skel_.lock();
 }
 
 void CircularArc::setSkel(SphericalSkeletonSPtr skel) {

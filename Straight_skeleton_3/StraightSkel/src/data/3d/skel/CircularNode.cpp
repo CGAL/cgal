@@ -56,11 +56,7 @@ void CircularNode::setOffset(CGAL::FT offset) {
 }
 
 SphericalSkeletonSPtr CircularNode::getSkel() const {
-    CGAL_SS3_DEBUG_WPTR(skel_);
-    if (this->skel_.expired())
-        return SphericalSkeletonSPtr();
-    else
-        return SphericalSkeletonSPtr(this->skel_);
+    this->skel_.lock();
 }
 
 void CircularNode::setSkel(SphericalSkeletonSPtr skel) {
@@ -113,8 +109,7 @@ void CircularNode::clear() {
     std::list<CircularArcWPtr>::iterator it_a = arcs_.begin();
     while (it_a != arcs_.end()) {
         CircularArcWPtr arc_wptr = *it_a++;
-        if (!arc_wptr.expired()) {
-            CircularArcSPtr arc = CircularArcSPtr(arc_wptr);
+        if (CircularArcSPtr arc = arc_wptr.lock()) {
             removeArc(arc);
         }
     }

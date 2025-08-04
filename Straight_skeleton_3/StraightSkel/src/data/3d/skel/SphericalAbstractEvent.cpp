@@ -41,11 +41,7 @@ void SphericalAbstractEvent::setPolygonResult(SphericalPolygonSPtr polygon) {
 }
 
 SphericalSkeletonSPtr SphericalAbstractEvent::getSkel() const {
-    CGAL_SS3_DEBUG_WPTR(skel_);
-    if (this->skel_.expired())
-        return SphericalSkeletonSPtr();
-    else
-        return SphericalSkeletonSPtr(this->skel_);
+    return this->skel_.lock();
 }
 
 void SphericalAbstractEvent::setSkel(SphericalSkeletonSPtr skel) {

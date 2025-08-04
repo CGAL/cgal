@@ -36,10 +36,7 @@ EdgeDataSPtr EdgeData::create(EdgeSPtr edge) {
 }
 
 EdgeSPtr EdgeData::getEdge() const {
-    if (this->edge_.expired())
-        return EdgeSPtr();
-    else
-        return EdgeSPtr(this->edge_);
+    return this->edge_.lock();
 }
 
 void EdgeData::setEdge(EdgeSPtr edge) {

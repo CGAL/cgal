@@ -99,11 +99,7 @@ void Arc::setDirection(Vector3SPtr direction) {
 }
 
 StraightSkeletonSPtr Arc::getSkel() const {
-    CGAL_SS3_DEBUG_WPTR(skel_);
-    if (this->skel_.expired())
-        return StraightSkeletonSPtr();
-    else
-        return StraightSkeletonSPtr(this->skel_);
+    return this->skel_.lock();
 }
 
 void Arc::setSkel(StraightSkeletonSPtr skel) {

@@ -241,8 +241,7 @@ int AbstractFile::removeVerticesDegLt3(PolyhedronSPtr polyhedron) {
         std::list<FacetWPtr>::iterator it_f = vertex->facets().begin();
         while (it_f != vertex->facets().end()) {
             FacetWPtr facet_wptr = *it_f++;
-            if (!facet_wptr.expired()) {
-                FacetSPtr facet(facet_wptr);
+            if (FacetSPtr facet = facet_wptr.lock()) {
                 facet->removeVertex(vertex);
             }
         }

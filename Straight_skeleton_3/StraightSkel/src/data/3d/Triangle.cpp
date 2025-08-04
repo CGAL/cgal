@@ -36,11 +36,7 @@ TriangleSPtr Triangle::create(FacetSPtr facet, VertexSPtr vertices[3]) {
 }
 
 FacetSPtr Triangle::getFacet() const {
-    CGAL_SS3_DEBUG_WPTR(this->facet_);
-    if (this->facet_.expired())
-        return FacetSPtr();
-    else
-        return FacetSPtr(this->facet_);
+    return this->facet_.lock();
 }
 
 void Triangle::setFacet(FacetSPtr facet) {

@@ -42,11 +42,7 @@ void AbstractEvent::setPolygonResult(PolygonSPtr polygon) {
 }
 
 StraightSkeletonSPtr AbstractEvent::getSkel() const {
-    CGAL_SS3_DEBUG_WPTR(skel_);
-    if (this->skel_.expired())
-        return StraightSkeletonSPtr();
-    else
-        return StraightSkeletonSPtr(this->skel_);
+    this->skel_.lock();
 }
 
 void AbstractEvent::setSkel(StraightSkeletonSPtr skel) {

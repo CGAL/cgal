@@ -410,8 +410,7 @@ bool SimpleStraightSkel::isReflex(VertexSPtr vertex) {
     std::list<EdgeWPtr>::iterator it_e = vertex->edges().begin();
     while (it_e != vertex->edges().end()) {
         EdgeWPtr edge_wptr = *it_e++;
-        if (!edge_wptr.expired()) {
-            EdgeSPtr edge = EdgeSPtr(edge_wptr);
+        if (EdgeSPtr edge = edge_wptr.lock()) {
             if (!isReflex(edge)) {
                 result = false;
                 break;
@@ -429,8 +428,7 @@ bool SimpleStraightSkel::isConvex(VertexSPtr vertex) {
     std::list<EdgeWPtr>::iterator it_e = vertex->edges().begin();
     while (it_e != vertex->edges().end()) {
         EdgeWPtr edge_wptr = *it_e++;
-        if (!edge_wptr.expired()) {
-            EdgeSPtr edge = EdgeSPtr(edge_wptr);
+        if (EdgeSPtr edge = edge_wptr.lock()) {
             if (isReflex(edge)) {
                 result = false;
                 break;
@@ -849,9 +847,9 @@ ArcSPtr SimpleStraightSkel::createArc(VertexSPtr vertex) {
         std::list<FacetWPtr>::iterator it_f = vertex->facets().begin();
         while (i < 3 && it_f != vertex->facets().end()) {
             FacetWPtr facet_wptr = *it_f++;
-            if (!facet_wptr.expired()) {
-                facets[i] = FacetSPtr(facet_wptr);
-                i++;
+            if (FacetSPtr facet = facet_wptr.lock()) {
+                facets[i] = facet;
+                ++i;
             }
         }
 
@@ -903,8 +901,7 @@ ArcSPtr SimpleStraightSkel::createArc(VertexSPtr vertex) {
                 std::list<EdgeWPtr>::iterator it_e = vertex->edges().begin();
                 while (it_e != vertex->edges().end()) {
                     EdgeWPtr edge_wptr = *it_e++;
-                    if (!edge_wptr.expired()) {
-                        EdgeSPtr edge(edge_wptr);
+                    if (EdgeSPtr edge = edge_wptr.lock()) {
                         if (edge->hasData()) {
                             SkelEdgeDataSPtr edge_data =
                                     std::dynamic_pointer_cast<SkelEdgeData>(edge->getData());
@@ -1081,21 +1078,19 @@ bool SimpleStraightSkel::init(PolyhedronSPtr polyhedron,
             std::list<FacetWPtr>::iterator it_f = vertex->facets().begin();
             while (it_f != vertex->facets().end()) {
                 FacetWPtr facet_wptr = *it_f++;
-                if (facet_wptr.expired()) {
-                    continue;
-                }
-                FacetSPtr facet(facet_wptr);
-                CGAL::FT speed = 1.0;
-                if (facet->hasData()) {
-                    speed = std::dynamic_pointer_cast<SkelFacetData>(facet->getData())->getSpeed();
-                }
+                if (FacetSPtr facet = facet_wptr.lock()) {
+                    CGAL::FT speed = 1.0;
+                    if (facet->hasData()) {
+                        speed = std::dynamic_pointer_cast<SkelFacetData>(facet->getData())->getSpeed();
+                    }
 
-                if (!first_speed_set) {
-                    first_speed = speed;
-                    first_speed_set = true;
-                } else if (speed != first_speed) {
-                    equal_speeds = false;
-                    break;
+                    if (!first_speed_set) {
+                        first_speed = speed;
+                        first_speed_set = true;
+                    } else if (speed != first_speed) {
+                        equal_speeds = false;
+                        break;
+                    }
                 }
             }
         }
@@ -2623,8 +2618,7 @@ void SimpleStraightSkel::collectVertexEvents(const std::list<VertexSPtr>& vertic
         std::list<FacetWPtr>::iterator it_f = vertex_1->facets().begin();
         while (it_f != vertex_1->facets().end()) {
             FacetWPtr facet_wptr = *it_f++;
-            if (!facet_wptr.expired()) {
-                FacetSPtr facet(facet_wptr);
+            if (FacetSPtr facet = facet_wptr.lock()) {
                 CGAL_SS3_CORE_TRACE("walking facet: " << facet->getID());
 
                 EdgeSPtr edge_l = vertex_1->findEdge(facet);
@@ -2717,8 +2711,7 @@ void SimpleStraightSkel::collectVertexEvents(const std::list<VertexSPtr>& vertic
         std::list<FacetWPtr>::iterator it_f = vertex_1->facets().begin();
         while (it_f != vertex_1->facets().end()) {
             FacetWPtr facet_wptr = *it_f++;
-            if (!facet_wptr.expired()) {
-                FacetSPtr facet(facet_wptr);
+            if (FacetSPtr facet = facet_wptr.lock()) {
 # ifndef CGAL_SS3_VV_VERTEX_2_WALK_FACES_FOR_DETECTION
                 vertices_2.insert(facet->vertices().begin(), facet->vertices().end());
 # else
@@ -2840,8 +2833,7 @@ void SimpleStraightSkel::collectVertexEvents(const std::list<VertexSPtr>& vertic
             std::list<EdgeWPtr>::iterator it_e1 = v1->edges().begin();
             while (it_e1 != v1->edges().end()) {
                 EdgeWPtr edge_1_wptr = *it_e1++;
-                if (!edge_1_wptr.expired()) {
-                    EdgeSPtr edge_1 = EdgeSPtr(edge_1_wptr);
+                if (EdgeSPtr edge_1 = edge_1_wptr.lock()) {
                     FacetSPtr facet_1l = edge_1->getFacetL();
                     FacetSPtr facet_1r = edge_1->getFacetR();
                     if ((facet_1l == facet_1 && facet_1r != facet_2) ||
@@ -2858,8 +2850,7 @@ void SimpleStraightSkel::collectVertexEvents(const std::list<VertexSPtr>& vertic
             std::list<EdgeWPtr>::iterator it_e2 = v2->edges().begin();
             while (it_e2 != v2->edges().end()) {
                 EdgeWPtr edge_2_wptr = *it_e2++;
-                if (!edge_2_wptr.expired()) {
-                    EdgeSPtr edge_2 = EdgeSPtr(edge_2_wptr);
+                if (EdgeSPtr edge_2 = edge_2_wptr.lock()) {
                     FacetSPtr facet_2l = edge_2->getFacetL();
                     FacetSPtr facet_2r = edge_2->getFacetR();
                     if ((facet_2l == facet_1 && facet_2r != facet_2) ||
@@ -2978,8 +2969,7 @@ void SimpleStraightSkel::collectFlipVertexEvents(const std::list<VertexSPtr>& ve
         std::list<FacetWPtr>::iterator it_f = vertex_1->facets().begin();
         while (it_f != vertex_1->facets().end()) {
             FacetWPtr facet_wptr = *it_f++;
-            if (!facet_wptr.expired()) {
-                FacetSPtr facet(facet_wptr);
+            if (FacetSPtr facet = facet_wptr.lock()) {
 # ifndef CGAL_SS3_VV_VERTEX_2_WALK_FACES_FOR_DETECTION
                 vertices_2.insert(facet->vertices().begin(), facet->vertices().end());
 # else
@@ -3083,8 +3073,7 @@ void SimpleStraightSkel::collectFlipVertexEvents(const std::list<VertexSPtr>& ve
             std::list<EdgeWPtr>::iterator it_e1 = v1->edges().begin();
             while (it_e1 != v1->edges().end()) {
                 EdgeWPtr edge_1_wptr = *it_e1++;
-                if (!edge_1_wptr.expired()) {
-                    EdgeSPtr edge_1 = EdgeSPtr(edge_1_wptr);
+                if (EdgeSPtr edge_1 = edge_1_wptr.lock()) {
                     FacetSPtr facet_1l = edge_1->getFacetL();
                     FacetSPtr facet_1r = edge_1->getFacetR();
                     if ((facet_1l == facet_1 && facet_1r != facet_2) ||
@@ -3101,8 +3090,7 @@ void SimpleStraightSkel::collectFlipVertexEvents(const std::list<VertexSPtr>& ve
             std::list<EdgeWPtr>::iterator it_e2 = v2->edges().begin();
             while (it_e2 != v2->edges().end()) {
                 EdgeWPtr edge_2_wptr = *it_e2++;
-                if (!edge_2_wptr.expired()) {
-                    EdgeSPtr edge_2 = EdgeSPtr(edge_2_wptr);
+                if (EdgeSPtr edge_2 = edge_2_wptr.lock()) {
                     FacetSPtr facet_2l = edge_2->getFacetL();
                     FacetSPtr facet_2r = edge_2->getFacetR();
                     if ((facet_2l == facet_1 && facet_2r != facet_2) ||
@@ -3779,8 +3767,7 @@ void SimpleStraightSkel::collectSplitMergeEvents(const std::list<VertexSPtr>& ve
         std::list<FacetWPtr>::iterator it_f = vertex_1->facets().begin();
         while (it_f != vertex_1->facets().end()) {
             FacetWPtr facet_wptr = *it_f++;
-            if (!facet_wptr.expired()) {
-                FacetSPtr facet(facet_wptr);
+            if (FacetSPtr facet = facet_wptr.lock()) {
 # ifndef CGAL_SS3_VV_VERTEX_2_WALK_FACES_FOR_DETECTION
                 vertices_2.insert(facet->vertices().begin(), facet->vertices().end());
 # else
@@ -3891,8 +3878,7 @@ void SimpleStraightSkel::collectSplitMergeEvents(const std::list<VertexSPtr>& ve
             std::list<EdgeWPtr>::iterator it_e1 = v1->edges().begin();
             while (it_e1 != v1->edges().end()) {
                 EdgeWPtr edge_1_wptr = *it_e1++;
-                if (!edge_1_wptr.expired()) {
-                    EdgeSPtr edge_1 = EdgeSPtr(edge_1_wptr);
+                if (EdgeSPtr edge_1 = edge_1_wptr.lock()) {
                     FacetSPtr facet_1l = edge_1->getFacetL();
                     FacetSPtr facet_1r = edge_1->getFacetR();
                     if ((facet_1l == facet_1 && facet_1r != facet_2) ||
@@ -3909,8 +3895,7 @@ void SimpleStraightSkel::collectSplitMergeEvents(const std::list<VertexSPtr>& ve
             std::list<EdgeWPtr>::iterator it_e2 = v2->edges().begin();
             while (it_e2 != v2->edges().end()) {
                 EdgeWPtr edge_2_wptr = *it_e2++;
-                if (!edge_2_wptr.expired()) {
-                    EdgeSPtr edge_2 = EdgeSPtr(edge_2_wptr);
+                if (EdgeSPtr edge_2 = edge_2_wptr.lock()) {
                     FacetSPtr facet_2l = edge_2->getFacetL();
                     FacetSPtr facet_2r = edge_2->getFacetR();
                     if ((facet_2l == facet_1 && facet_2r != facet_2) ||
@@ -4302,8 +4287,7 @@ void SimpleStraightSkel::collectPierceEvents(const std::list<VertexSPtr>& vertic
                 std::list<EdgeWPtr>::iterator it_e = vertex->edges().begin();
                 while (it_e != vertex->edges().end()) {
                     EdgeWPtr edge_wptr = *it_e++;
-                    if (!edge_wptr.expired()) {
-                        EdgeSPtr edge(edge_wptr);
+                    if (EdgeSPtr edge = edge_wptr.lock()) {
                         FacetSPtr facet_src = edge->getFacetSrc();
                         FacetSPtr facet_dst = edge->getFacetDst();
                         if (facet == facet_src || facet == facet_dst) {
@@ -4811,8 +4795,7 @@ void SimpleStraightSkel::collectLocalEvents(PolyhedronSPtr polyhedron,
                     // keep the edge incident to 'vertex_1' which is not incident to 'facet_2'
                     EdgeSPtr edge_1;
                     for (EdgeWPtr edge_wptr : vertex_1->edges()) {
-                        if (!edge_wptr.expired()) {
-                            EdgeSPtr edge = edge_wptr.lock();
+                        if (EdgeSPtr edge = edge_wptr.lock()) {
                             if (edge->getFacetL() != facet_2 && edge->getFacetR() != facet_2) {
                                 edge_1 = edge;
                                 break;
@@ -4892,8 +4875,7 @@ void SimpleStraightSkel::collectLocalEvents(PolyhedronSPtr polyhedron,
                     // keep the edge incident to 'vertex_1' which is not incident to 'facet_2'
                     EdgeSPtr edge_1;
                     for (EdgeWPtr edge_wptr : vertex_1->edges()) {
-                        if (!edge_wptr.expired()) {
-                            EdgeSPtr edge = edge_wptr.lock();
+                        if (EdgeSPtr edge = edge_wptr.lock()) {
                             if (edge->getFacetL() != facet_2 && edge->getFacetR() != facet_2) {
                                 edge_1 = edge;
                                 break;
@@ -5129,8 +5111,7 @@ void SimpleStraightSkel::appendEventNode(NodeSPtr node) {
     std::list<ArcWPtr>::iterator it_a = node->arcs().begin();
     while (it_a != node->arcs().end()) {
         ArcWPtr arc_wptr = *it_a++;
-        if (!arc_wptr.expired()) {
-            ArcSPtr arc = ArcSPtr(arc_wptr);
+        if (ArcSPtr arc = arc_wptr.lock()) {
             arc->setNodeDst(node);
             arc->setNodeDstListIt(
                     std::find(node->arcs().begin(), node->arcs().end(), arc_wptr));
@@ -5139,8 +5120,7 @@ void SimpleStraightSkel::appendEventNode(NodeSPtr node) {
     std::list<SheetWPtr>::iterator it_s = node->sheets().begin();
     while (it_s != node->sheets().end()) {
         SheetWPtr sheet_wptr = *it_s++;
-        if (!sheet_wptr.expired()) {
-            SheetSPtr sheet = SheetSPtr(sheet_wptr);
+        if (SheetSPtr sheet = sheet_wptr.lock()) {
             sheet->addNode(node);
         }
     }
@@ -6057,8 +6037,7 @@ SimpleStraightSkel::handleEdgeMergeEvent(const CGAL::FT& current_offset,
     std::list<FacetWPtr>::iterator it_f = vertex_1->facets().begin();
     while (it_f != vertex_1->facets().end()) {
         FacetWPtr facet_wptr = *it_f++;
-        if (!facet_wptr.expired()) {
-            FacetSPtr facet = FacetSPtr(facet_wptr);
+        if (FacetSPtr facet = facet_wptr.lock()) {
             facet->removeVertex(vertex_1);
         }
     }
@@ -6066,8 +6045,7 @@ SimpleStraightSkel::handleEdgeMergeEvent(const CGAL::FT& current_offset,
     it_f = vertex_2->facets().begin();
     while (it_f != vertex_2->facets().end()) {
         FacetWPtr facet_wptr = *it_f++;
-        if (!facet_wptr.expired()) {
-            FacetSPtr facet = FacetSPtr(facet_wptr);
+        if (FacetSPtr facet = facet_wptr.lock()) {
             facet->removeVertex(vertex_2);
         }
     }
@@ -6300,8 +6278,7 @@ SimpleStraightSkel::handleDblEdgeMergeEvent(const CGAL::FT& current_offset,
         std::list<FacetWPtr>::iterator it_f = vertex->facets().begin();
         while (it_f != vertex->facets().end()) {
             FacetWPtr facet_wptr = *it_f++;
-            if (!facet_wptr.expired()) {
-                FacetSPtr facet = FacetSPtr(facet_wptr);
+            if (FacetSPtr facet = facet_wptr.lock()) {
                 facet->removeVertex(vertex);
             }
         }
@@ -6438,8 +6415,7 @@ SimpleStraightSkel::handleDblTriangleEvent(const CGAL::FT& current_offset,
         std::list<FacetWPtr>::iterator it_f = vertex->facets().begin();
         while (it_f != vertex->facets().end()) {
             FacetWPtr facet_wptr = *it_f++;
-            if (!facet_wptr.expired()) {
-                FacetSPtr facet = FacetSPtr(facet_wptr);
+            if (FacetSPtr facet = facet_wptr.lock()) {
                 facet->removeVertex(vertex);
             }
         }
@@ -6529,8 +6505,7 @@ SimpleStraightSkel::handleTetrahedronEvent(const CGAL::FT& current_offset,
         std::list<FacetWPtr>::iterator it_f = vertex->facets().begin();
         while (it_f != vertex->facets().end()) {
             FacetWPtr facet_wptr = *it_f++;
-            if (!facet_wptr.expired()) {
-                FacetSPtr facet = FacetSPtr(facet_wptr);
+            if (FacetSPtr facet = facet_wptr.lock()) {
                 facet->removeVertex(vertex);
             }
         }
@@ -6571,8 +6546,7 @@ SimpleStraightSkel::isActualVertexEvent(VertexEventSPtr event,
     std::list<EdgeWPtr>::iterator it_e1 = vertex_1->edges().begin();
     while (it_e1 != vertex_1->edges().end()) {
         EdgeWPtr edge_1_wptr = *it_e1++;
-        if (!edge_1_wptr.expired()) {
-            EdgeSPtr edge_1 = EdgeSPtr(edge_1_wptr);
+        if (EdgeSPtr edge_1 = edge_1_wptr.lock()) {
             FacetSPtr facet_1l = edge_1->getFacetL();
             FacetSPtr facet_1r = edge_1->getFacetR();
             if ((facet_1l == facet_1 && facet_1r != facet_2) ||
@@ -6656,8 +6630,7 @@ SimpleStraightSkel::handleVertexEvent(const CGAL::FT& current_offset,
     std::list<EdgeWPtr>::iterator it_e1 = vertex_1->edges().begin();
     while (it_e1 != vertex_1->edges().end()) {
         EdgeWPtr edge_wptr = *it_e1++;
-        if (!edge_wptr.expired()) {
-            EdgeSPtr edge(edge_wptr);
+        if (EdgeSPtr edge = edge_wptr.lock()) {
             if ((edge->getFacetL() == facet_1 && edge->getFacetR() == facet_2) ||
                     (edge->getFacetL() == facet_2 && edge->getFacetR() == facet_1)) {
                 edge_tomerge_1 = edge;
@@ -6674,8 +6647,7 @@ SimpleStraightSkel::handleVertexEvent(const CGAL::FT& current_offset,
     std::list<EdgeWPtr>::iterator it_e2 = vertex_2->edges().begin();
     while (it_e2 != vertex_2->edges().end()) {
         EdgeWPtr edge_wptr = *it_e2++;
-        if (!edge_wptr.expired()) {
-            EdgeSPtr edge(edge_wptr);
+        if (EdgeSPtr edge = edge_wptr.lock()) {
             if ((edge->getFacetL() == facet_1 && edge->getFacetR() == facet_2) ||
                     (edge->getFacetL() == facet_2 && edge->getFacetR() == facet_1)) {
                 edge_tomerge_2 = edge;
@@ -6789,8 +6761,7 @@ SimpleStraightSkel::isActualFlipVertexEvent(FlipVertexEventSPtr event,
   std::list<EdgeWPtr>::iterator it_e1 = vertex_1->edges().begin();
   while (it_e1 != vertex_1->edges().end()) {
       EdgeWPtr edge_1_wptr = *it_e1++;
-      if (!edge_1_wptr.expired()) {
-          EdgeSPtr edge_1 = EdgeSPtr(edge_1_wptr);
+      if (EdgeSPtr edge_1 = edge_1_wptr.lock()) {
           FacetSPtr facet_1l = edge_1->getFacetL();
           FacetSPtr facet_1r = edge_1->getFacetR();
           if ((facet_1l == facet_1 && facet_1r != facet_2) ||
@@ -6870,8 +6841,7 @@ SimpleStraightSkel::handleFlipVertexEvent(const CGAL::FT& current_offset,
     std::list<EdgeWPtr>::iterator it_e1 = vertex_1->edges().begin();
     while (it_e1 != vertex_1->edges().end()) {
         EdgeWPtr edge_wptr = *it_e1++;
-        if (!edge_wptr.expired()) {
-            EdgeSPtr edge(edge_wptr);
+        if (EdgeSPtr edge = edge_wptr.lock()) {
             if ((edge->getFacetL() == facet_1 && edge->getFacetR() == facet_2) ||
                     (edge->getFacetL() == facet_2 && edge->getFacetR() == facet_1)) {
                 edge_1 = edge;
@@ -6883,8 +6853,7 @@ SimpleStraightSkel::handleFlipVertexEvent(const CGAL::FT& current_offset,
     std::list<EdgeWPtr>::iterator it_e2 = vertex_2->edges().begin();
     while (it_e2 != vertex_2->edges().end()) {
         EdgeWPtr edge_wptr = *it_e2++;
-        if (!edge_wptr.expired()) {
-            EdgeSPtr edge(edge_wptr);
+        if (EdgeSPtr edge = edge_wptr.lock()) {
             if ((edge->getFacetL() == facet_1 && edge->getFacetR() == facet_2) ||
                     (edge->getFacetL() == facet_2 && edge->getFacetR() == facet_1)) {
                 edge_2 = edge;
@@ -7307,8 +7276,7 @@ SimpleStraightSkel::isActualSplitMergeEvent(SplitMergeEventSPtr event,
     std::list<EdgeWPtr>::iterator it_e1 = vertex_1->edges().begin();
     while (it_e1 != vertex_1->edges().end()) {
         EdgeWPtr edge_1_wptr = *it_e1++;
-        if (!edge_1_wptr.expired()) {
-            EdgeSPtr edge_1 = EdgeSPtr(edge_1_wptr);
+        if (EdgeSPtr edge_1 = edge_1_wptr.lock()) {
             FacetSPtr facet_1l = edge_1->getFacetL();
             FacetSPtr facet_1r = edge_1->getFacetR();
             if ((facet_1l == facet_1 && facet_1r != facet_2) ||
@@ -7392,8 +7360,7 @@ SimpleStraightSkel::handleSplitMergeEvent(const CGAL::FT& current_offset,
     std::list<EdgeWPtr>::iterator it_e1 = vertex_1->edges().begin();
     while (it_e1 != vertex_1->edges().end()) {
         EdgeWPtr edge_wptr = *it_e1++;
-        if (!edge_wptr.expired()) {
-            EdgeSPtr edge(edge_wptr);
+        if (EdgeSPtr edge = edge_wptr.lock()) {
             if ((edge->getFacetL() == facet_1 && edge->getFacetR() == facet_2) ||
                     (edge->getFacetL() == facet_2 && edge->getFacetR() == facet_1)) {
                 edge_tomerge_1 = edge;
@@ -7410,8 +7377,7 @@ SimpleStraightSkel::handleSplitMergeEvent(const CGAL::FT& current_offset,
     std::list<EdgeWPtr>::iterator it_e2 = vertex_2->edges().begin();
     while (it_e2 != vertex_2->edges().end()) {
         EdgeWPtr edge_wptr = *it_e2++;
-        if (!edge_wptr.expired()) {
-            EdgeSPtr edge(edge_wptr);
+        if (EdgeSPtr edge = edge_wptr.lock()) {
             if ((edge->getFacetL() == facet_1 && edge->getFacetR() == facet_2) ||
                     (edge->getFacetL() == facet_2 && edge->getFacetR() == facet_1)) {
                 edge_tomerge_2 = edge;

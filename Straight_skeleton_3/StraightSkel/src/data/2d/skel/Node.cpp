@@ -55,11 +55,7 @@ void Node::setHeight(CGAL::FT height) {
 }
 
 StraightSkeletonSPtr Node::getSkel() const {
-    CGAL_SS3_DEBUG_WPTR(skel_);
-    if (this->skel_.expired())
-        return StraightSkeletonSPtr();
-    else
-        return StraightSkeletonSPtr(this->skel_);
+    return this->skel_.lock();
 }
 
 void Node::setSkel(StraightSkeletonSPtr skel) {

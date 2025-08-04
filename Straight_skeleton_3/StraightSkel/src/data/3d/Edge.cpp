@@ -92,11 +92,7 @@ void Edge::setVertexDstListIt(std::list<EdgeWPtr>::iterator list_it) {
 }
 
 FacetSPtr Edge::getFacetL() const {
-    // CGAL_SS3_DEBUG_WPTR(this->facet_l_);
-    if (this->facet_l_.expired())
-        return FacetSPtr();
-    else
-        return FacetSPtr(this->facet_l_); // @todo .lock()
+    return this->facet_l_.lock();
 }
 
 void Edge::setFacetL(FacetSPtr facet) {
@@ -112,11 +108,7 @@ void Edge::setFacetLListIt(std::list<EdgeSPtr>::iterator list_it) {
 }
 
 FacetSPtr Edge::getFacetR() const {
-    // CGAL_SS3_DEBUG_WPTR(this->facet_r_);
-    if (this->facet_r_.expired())
-        return FacetSPtr();
-    else
-        return FacetSPtr(this->facet_r_);
+    return this->facet_r_.lock();
 }
 
 void Edge::setFacetR(FacetSPtr facet) {
@@ -154,11 +146,7 @@ FacetSPtr Edge::getFacetDst() const {
 }
 
 PolyhedronSPtr Edge::getPolyhedron() const {
-    // CGAL_SS3_DEBUG_WPTR(this->polyhedron_);
-    if (this->polyhedron_.expired())
-        return PolyhedronSPtr();
-    else
-        return PolyhedronSPtr(this->polyhedron_);
+    return this->polyhedron_.lock();
 }
 
 void Edge::setPolyhedron(PolyhedronSPtr polyhedron) {
@@ -243,13 +231,9 @@ VertexSPtr Edge::dst(FacetSPtr facet_l) const {
 FacetSPtr Edge::left(VertexSPtr vertex_src) const {
     FacetSPtr result = FacetSPtr();
     if (vertex_src == vertex_src_) {
-        if (!facet_l_.expired()) {
-            result = FacetSPtr(facet_l_);
-        }
+        result = facet_l_.lock();
     } else if (vertex_src == vertex_dst_) {
-        if (!facet_r_.expired()) {
-            result = FacetSPtr(facet_r_);
-        }
+        result = facet_r_.lock();
     }
     return result;
 }
@@ -257,17 +241,12 @@ FacetSPtr Edge::left(VertexSPtr vertex_src) const {
 FacetSPtr Edge::right(VertexSPtr vertex_src) const {
     FacetSPtr result = FacetSPtr();
     if (vertex_src == vertex_src_) {
-        if (!facet_r_.expired()) {
-            result = FacetSPtr(facet_r_);
-        }
+        result = facet_r_.lock();
     } else if (vertex_src == vertex_dst_) {
-        if (!facet_l_.expired()) {
-            result = FacetSPtr(facet_l_);
-        }
+        result = facet_l_.lock();
     }
     return result;
 }
-
 
 EdgeSPtr Edge::next(FacetSPtr facet) const {
     EdgeSPtr result = EdgeSPtr();
@@ -276,14 +255,11 @@ EdgeSPtr Edge::next(FacetSPtr facet) const {
     std::list<EdgeWPtr>::const_iterator it_e = vertex_dst->edges().begin();
     while (it_e != vertex_dst->edges().end()) {
         EdgeWPtr edge_wptr = *it_e++;
-        if (edge_wptr.expired()) {
-            continue;
-        }
-
-        EdgeSPtr edge = EdgeSPtr(edge_wptr);
-        if (edge->src(facet) == vertex_dst) {
-            result = edge;
-            break;
+        if (EdgeSPtr edge = edge_wptr.lock()) {
+            if (edge->src(facet) == vertex_dst) {
+                result = edge;
+                break;
+            }
         }
     }
 
@@ -330,14 +306,11 @@ EdgeSPtr Edge::prev(FacetSPtr facet) const {
     std::list<EdgeWPtr>::const_iterator it_e = vertex_src->edges().begin();
     while (it_e != vertex_src->edges().end()) {
         EdgeWPtr edge_wptr = *it_e++;
-        if (edge_wptr.expired()) {
-            continue;
-        }
-
-        EdgeSPtr edge = EdgeSPtr(edge_wptr);
-        if (edge->dst(facet) == vertex_src) {
-            result = edge;
-            break;
+        if (EdgeSPtr edge = edge_wptr.lock()) {
+            if (edge->dst(facet) == vertex_src) {
+                result = edge;
+                break;
+            }
         }
     }
 
@@ -390,8 +363,7 @@ EdgeSPtr Edge::next(VertexSPtr vertex) const {
         std::list<EdgeWPtr>::iterator it_e = vertex->edges().begin();
         while (it_e != vertex->edges().end()) {
             EdgeWPtr edge_wptr = *it_e++;
-            if (!edge_wptr.expired()) {
-                EdgeSPtr edge(edge_wptr);
+            if (EdgeSPtr edge = edge_wptr.lock()) {
                 if (edge.get() == this) {
                     continue;
                 }
@@ -435,8 +407,7 @@ EdgeSPtr Edge::prev(VertexSPtr vertex) const {
         std::list<EdgeWPtr>::iterator it_e = vertex->edges().begin();
         while (it_e != vertex->edges().end()) {
             EdgeWPtr edge_wptr = *it_e++;
-            if (!edge_wptr.expired()) {
-                EdgeSPtr edge(edge_wptr);
+            if (EdgeSPtr edge = edge_wptr.lock()) {
                 if (edge.get() == this) {
                     continue;
                 }
@@ -486,21 +457,18 @@ void Edge::invert() {
 
 EdgeSPtr Edge::split(VertexSPtr middle) {
     EdgeSPtr result = Edge::create(middle, vertex_dst_);
-    if (!facet_l_.expired()) {
-        FacetSPtr facet_l = FacetSPtr(facet_l_);
+    if (FacetSPtr facet_l = facet_l_.lock()) {
         result->setFacetL(facet_l);
         facet_l->addEdge(result);
     }
-    if (!facet_r_.expired()) {
-        FacetSPtr facet_r = FacetSPtr(facet_r_);
+    if (FacetSPtr facet_r = facet_r_.lock()) {
         result->setFacetR(facet_r);
         facet_r->addEdge(result);
     }
     vertex_dst_->removeEdge(shared_from_this());
     vertex_dst_ = middle;
     middle->addEdge(shared_from_this());
-    if (!polyhedron_.expired()) {
-        PolyhedronSPtr polyhedron = PolyhedronSPtr(polyhedron_);
+    if (PolyhedronSPtr polyhedron = polyhedron_.lock()) {
         polyhedron->addEdge(result);
     }
     return result;
@@ -519,20 +487,18 @@ void Edge::replaceVertexDst(VertexSPtr vertex_dst) {
 }
 
 void Edge::replaceFacetL(FacetSPtr facet_l) {
-    if (!facet_l_.expired()) {
-        FacetSPtr facet = FacetSPtr(facet_l_);
+    if (FacetSPtr facet = facet_l_.lock()) {
         facet->removeEdge(shared_from_this());
     }
-    facet_l_ = facet_l;
+    setFacetL(facet_l);
     facet_l->addEdge(shared_from_this());
 }
 
 void Edge::replaceFacetR(FacetSPtr facet_r) {
-    if (!facet_r_.expired()) {
-        FacetSPtr facet = FacetSPtr(facet_r_);
+    if (FacetSPtr facet = facet_r_.lock()) {
         facet->removeEdge(shared_from_this());
     }
-    facet_r_ = facet_r;
+    setFacetR(facet_r);
     facet_r->addEdge(shared_from_this());
 }
 

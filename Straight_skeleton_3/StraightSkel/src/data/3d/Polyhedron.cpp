@@ -132,16 +132,14 @@ bool Polyhedron::removeVertex(VertexSPtr vertex) {
         std::list<FacetWPtr>::iterator it_f = vertex->facets().begin();
         while (it_f != vertex->facets().end()) {
             FacetWPtr facet_wptr = *it_f++;
-            if (!facet_wptr.expired()) {
-                FacetSPtr facet = FacetSPtr(facet_wptr);
+            if (FacetSPtr facet = facet_wptr.lock()) {
                 this->removeFacet(facet);
             }
         }
         std::list<EdgeWPtr>::iterator it_e = vertex->edges().begin();
         while (it_e != vertex->edges().end()) {
             EdgeWPtr edge_wptr = *it_e++;
-            if (!edge_wptr.expired()) {
-                EdgeSPtr edge = EdgeSPtr(edge_wptr);
+            if (EdgeSPtr edge = edge_wptr.lock()) {
                 this->removeEdge(edge);
             }
         }
@@ -335,12 +333,8 @@ bool Polyhedron::isConsistent() const {
         unsigned int vne = 0;
         while (it_e != vertex->edges().end()) {
             EdgeWPtr edge_wptr = *it_e++;
-            if (edge_wptr.expired()) {
-                CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << vertex->toString());
-            } else {
-                EdgeSPtr edge = EdgeSPtr(edge_wptr);
-                if (vertex != edge->getVertexSrc() &&
-                        vertex != edge->getVertexDst()) {
+            if (EdgeSPtr edge = EdgeSPtr(edge_wptr)) {
+                if (vertex != edge->getVertexSrc() && vertex != edge->getVertexDst()) {
                     CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << vertex->toString());
                     CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->toString());
                     result = false;
@@ -362,6 +356,8 @@ bool Polyhedron::isConsistent() const {
                 // }
 
                 ++vne;
+            } else {
+                CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << vertex->toString());
             }
         }
 
@@ -374,10 +370,7 @@ bool Polyhedron::isConsistent() const {
         unsigned int vnf = 0;
         while (it_f != vertex->facets().end()) {
             FacetWPtr facet_wptr = *it_f++;
-            if (facet_wptr.expired()) {
-                CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << vertex->toString());
-            } else {
-                FacetSPtr facet = FacetSPtr(facet_wptr);
+            if (FacetSPtr facet = facet_wptr.lock()) {
                 if (!facet->containsVertex(vertex)) {
                     CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << vertex->toString());
                     CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << facet->toString());
@@ -385,6 +378,8 @@ bool Polyhedron::isConsistent() const {
                     break;
                 }
                 ++vnf;
+            } else {
+                CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << vertex->toString());
             }
         }
 

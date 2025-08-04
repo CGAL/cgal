@@ -36,10 +36,7 @@ VertexDataSPtr VertexData::create(VertexSPtr vertex) {
 }
 
 VertexSPtr VertexData::getVertex() const {
-    if (this->vertex_.expired())
-        return VertexSPtr();
-    else
-        return VertexSPtr(this->vertex_);
+    return this->vertex_.lock();
 }
 
 void VertexData::setVertex(VertexSPtr vertex) {
