@@ -529,10 +529,10 @@ struct Visitor_wrapper_for_triangulate_face
   using face_descriptor = typename boost::graph_traits<PolygonMesh>::face_descriptor;
 
   Clip_visitor& clip_visitor;
-  const PolygonMesh& pm;
+  PolygonMesh& pm;
   std::vector<face_descriptor> triangulation_faces;
 
-  Visitor_wrapper_for_triangulate_face(const PolygonMesh& pm, Clip_visitor& clip_visitor)
+  Visitor_wrapper_for_triangulate_face(PolygonMesh& pm, Clip_visitor& clip_visitor)
     : clip_visitor(clip_visitor)
     , pm(pm)
   {}
