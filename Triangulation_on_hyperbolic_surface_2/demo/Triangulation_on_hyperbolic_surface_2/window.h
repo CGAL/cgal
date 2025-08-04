@@ -53,10 +53,10 @@ private:
   // radius of the poincaré disk
   const int poincare_disk_radius_in_pixels_ = 600;
 
-  // Approximation treshold: used to decide when to simplify a computation (ex: draw a line
+  // Approximation threshold: used to decide when to simplify a computation (ex: draw a line
   // instead of an arc if an hyperbolic segment is very small)
-  const double computation_treshold = 0.001;
-  const double computation_treshold_squared = computation_treshold*computation_treshold;
+  const double computation_threshold = 0.001;
+  const double computation_threshold_squared = computation_threshold*computation_threshold;
 
 public:
   // Initializer

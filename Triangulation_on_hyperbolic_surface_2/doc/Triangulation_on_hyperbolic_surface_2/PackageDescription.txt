@@ -1,4 +1,4 @@
-/// \defgroup PkgHyperbolicSurfaceTriangulation2Ref 2D Triangulations on Hyperbolic Surfaces Reference
+/// \defgroup PkgHyperbolicSurfaceTriangulation2Ref Reference Manual
 
 /// \defgroup PkgHyperbolicSurfaceTriangulation2Concepts Concepts
 /// \ingroup PkgHyperbolicSurfaceTriangulation2Ref
@@ -27,7 +27,7 @@
 \cgalPkgShortInfoBegin
 \cgalPkgSince{6.1}
 \cgalPkgDependsOn{\ref PkgCombinatorialMaps}
-\cgalPkgBib{cgal:y-t2}
+\cgalPkgBib{cgal:ddpt-thss}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{2D Triangulations on Hyperbolic Surfaces,nofilefornow.zip}
 \cgalPkgShortInfoEnd

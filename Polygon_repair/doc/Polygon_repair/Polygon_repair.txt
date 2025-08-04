@@ -123,7 +123,7 @@ strict criteria:
 - Adjacent collinear edges touching at vertices of degree two are merged
 - The sequence of vertices representing a boundary starts from its
 lexicographically smallest vertex
-- Outer boundaries are oriented counter-clockwise and inner boundaries are
+- Outer boundaries are oriented counterclockwise and inner boundaries are
 oriented clockwise
 - The inner boundaries of a polygon with holes are stored in lexicographic
 order

@@ -109,7 +109,7 @@ void DemoWindowItem::draw_edge(QPainter* painter, Point source, Point target)
 
   double determinant = src_x*tar_y - src_y*tar_x; // determinant of the matrix whose columns are the vectors src and tar : indicates colinearity
   double distance_squared = (src_x-tar_x)*(src_x-tar_x) + (src_y-tar_y)*(src_y-tar_y);
-  if ((std::abs(determinant) < computation_treshold_squared) || (distance_squared < computation_treshold_squared)) {
+  if ((std::abs(determinant) < computation_threshold_squared) || (distance_squared < computation_threshold_squared)) {
     // src and tar are too colinear or too close from each other
     draw_line(painter, src_x, src_y, tar_x, tar_y);
     return;
@@ -117,7 +117,7 @@ void DemoWindowItem::draw_edge(QPainter* painter, Point source, Point target)
 
   // 1. Compute the center of the circle supporting the geodesic between src and tar
 
-  // 1.a Inverse src and tar with respect to the unit circle and find the euclidean midpoints of the segments between respectively
+  // 1.a Inverse src and tar with respect to the unit circle and find the Euclidean midpoints of the segments between respectively
   //       src and its inversion, and tar and its inversion
 
   double src_norm_2 = src_x*src_x + src_y*src_y; // Can't be too close to zero because determinant was not
@@ -128,7 +128,7 @@ void DemoWindowItem::draw_edge(QPainter* painter, Point source, Point target)
   double tar_inv_x = tar_x / tar_norm_2;
   double tar_inv_y = tar_y / tar_norm_2;
 
-  // coordinates of the euclidean midpoints of the segments [src, src_inv] and [tar, tar_inv]
+  // coordinates of the Euclidean midpoints of the segments [src, src_inv] and [tar, tar_inv]
   double src_mid_x = (src_x + src_inv_x) / 2;
   double src_mid_y = (src_y + src_inv_y) / 2;
   double tar_mid_x = (tar_x + tar_inv_x) / 2;
@@ -232,7 +232,7 @@ void DemoWindowItem::draw_arc(QPainter* painter,
 double DemoWindowItem::deg_angle(double x, double y)
 {
   // To avoid problems when further division by x (ok since x^2 + y^2 not too small) :
-  if (x*x <  computation_treshold_squared) {
+  if (x*x <  computation_threshold_squared) {
     if (y>0) return 90;
     return -90;
   }

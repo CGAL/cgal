@@ -397,7 +397,7 @@ template <class pNT> class Polynomial :
   If |Number_type_traits<NT>::Has_gcd == Tag_true| then the division is
   done by \emph{pseudo division} based on a |gcd| operation of |NT|.  If
   |Number_type_traits<NT>::Has_gcd == Tag_false| then the division is done
-  by \emph{euclidean division} based on the division operation of the
+  by \emph{Euclidean division} based on the division operation of the
   field |NT|.
 
   \textbf{Note} that |NT=int| quickly leads to overflow
@@ -718,7 +718,7 @@ class Polynomial<int> :
   If |Number_type_traits<int>::Has_gcd == Tag_true| then the division is
   done by \emph{pseudo division} based on a |gcd| operation of |int|.  If
   |Number_type_traits<int>::Has_gcd == Tag_false| then the division is done
-  by \emph{euclidean division} based on the division operation of the
+  by \emph{Euclidean division} based on the division operation of the
   field |int|.
 
   \textbf{Note} that |int=int| quickly leads to overflow
@@ -1018,7 +1018,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
   If |Number_type_traits<double>::Has_gcd == Tag_true| then the division is
   done by \emph{pseudo division} based on a |gcd| operation of |double|.  If
   |Number_type_traits<double>::Has_gcd == Tag_false| then the division is done
-  by \emph{euclidean division} based on the division operation of the
+  by \emph{Euclidean division} based on the division operation of the
   field |double|.
 
   \textbf{Note} that |double=int| quickly leads to overflow
