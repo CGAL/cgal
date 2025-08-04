@@ -101,7 +101,7 @@ public:
     void replaceFacetL(FacetSPtr facet_l);
     void replaceFacetR(FacetSPtr facet_r);
 
-    bool hasSameFacets(EdgeSPtr edge);
+    bool hasSameFacets(EdgeSPtr edge) const;
 
     int getID() const;
     void setID(int id);

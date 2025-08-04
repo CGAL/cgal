@@ -502,7 +502,7 @@ void Edge::replaceFacetR(FacetSPtr facet_r) {
     facet_r->addEdge(shared_from_this());
 }
 
-bool Edge::hasSameFacets(EdgeSPtr edge) {
+bool Edge::hasSameFacets(EdgeSPtr edge) const {
     bool result = (
         (facet_r_ == edge->facet_r_ && facet_l_ == edge->facet_l_) ||
         (facet_r_ == edge->facet_l_ && facet_l_ == edge->facet_r_));
