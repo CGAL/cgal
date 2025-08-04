@@ -312,7 +312,9 @@ namespace Polygon_mesh {
 
       do{
         h=next(h, m_face_graph);
-        if (h == guard) return false;
+        // If all vertices are collinear, the face is degenerate and is considered part of the region.
+        // Otherwise, degenerate faces may cut coplanar adjacent regions.
+        if (h == guard) return true;
         r=get(m_vpm,target(h, m_face_graph));
       }
       while(collinear(p,q,r));

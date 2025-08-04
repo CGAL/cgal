@@ -540,6 +540,7 @@ If one wants to detect lines in a segment set, this \cgal component provides the
 
 - `CGAL::Shape_detection::Segment_set::Least_squares_line_fit_region` class that fits a 2D or 3D line
 to the chunks of 2D or 3D segments, respectively, and controls the quality of this fit.
+- `CGAL::Shape_detection::Segment_set::Line_segment_region` a `RegionType` that extends the line of the seed segment without refitting the line.
 
 The quality of region growing in a segment set (2D or 3D) can be improved by slightly increasing the running time.
 To achieve this, one can sort the input segments with respect to some quality criteria. These quality criteria
@@ -548,6 +549,8 @@ We provide such a quality sorting:
 
 - `CGAL::Shape_detection::Segment_set::Least_squares_line_fit_sorting` - the input segments are sorted with respect
 to the quality of the least squares line fit applied to the neighbors of each segment.
+- `CGAL::Shape_detection::Segment_set::Segment_length_sorting` - the input segments are sorted with respect
+to the length of the segment. Starting with the longest segment.
 
 If the user's input is a polygon mesh defined as a `FaceListGraph`, it is also possible to filter out all
 graph edges, which split this polygon mesh into a set of regions. To achieve that, one first needs to apply
