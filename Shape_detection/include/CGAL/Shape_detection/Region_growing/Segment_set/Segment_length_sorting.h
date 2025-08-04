@@ -50,7 +50,11 @@ public:
   /// @{
   using Segment_map = SegmentMap;
   using Segment_type = typename boost::property_traits<Segment_map>::value_type;
+
+  /// Item type.
   using Item = Item_;
+
+  /// Seed range.
   using Seed_range = std::vector<Item>;
   /// @}
 

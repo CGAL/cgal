@@ -29,8 +29,8 @@ namespace Segment_set {
 
   This class uses the supporting line of the first segment picked for the region
   and expands it for all segments with a direction close to that of the first segment
-  (close being defined by the input angle threshold) and such that endpoints are
-  not far from that supporting line (far being defined by the input distance threshold).
+  (close being defined by the `maximum_distance` parameter) and such that endpoints are
+  not far from that supporting line (far being defined by the `maximum_angle` or `cosine_of_maximum_angle` parameter).
 
   \tparam GeomTraits
   a model of `Kernel`
@@ -60,7 +60,11 @@ public:
   /// @{
   using Segment_map = SegmentMap;
   using Segment_type = typename Segment_map::value_type;
+
+  /// Number type.
   typedef typename GeomTraits::FT FT;
+
+  /// Item type.
   using Item = Item_;
   using Region = std::vector<Item>;
 #ifdef DOXYGEN_RUNNING

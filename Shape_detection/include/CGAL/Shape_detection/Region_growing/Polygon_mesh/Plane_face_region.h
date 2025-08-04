@@ -34,8 +34,8 @@ namespace Polygon_mesh {
 
     This class uses the supporting plane of the first face picked for the region
     and expands it for all faces with a normal close to that of the first face
-    (close being defined by the input angle threshold) and such that vertices are
-    not far from that supporting plane (far being defined by the input distance threshold).
+    (close being defined by the `maximum_distance` parameter) and such that vertices are
+    not far from that supporting plane (far being defined by the `maximum_angle` or `cosine_of_maximum_angle` parameter).
 
     \tparam GeomTraits
     a model of `Kernel`

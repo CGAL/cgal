@@ -480,10 +480,9 @@ If one wants to detect planes on a polygon mesh, this \cgal component provides t
 `NeighborQuery` and `RegionType`.
 In particular, it provides
 
-- `CGAL::Shape_detection::Polygon_mesh::One_ring_neighbor_query` class that retrieves all edge-adjacent faces of a face, and
-- `CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_region` class that fits a 3D plane to the vertices of
-all mesh faces, which have been added to the region so far, and controls the quality of this fit.
-- `CGAL::Shape_detection::Polygon_mesh::Plane_face_region` is another `RegionType` that uses the 3D plane of the seed face and does not refit the plane to the region.
+- `CGAL::Shape_detection::Polygon_mesh::One_ring_neighbor_query` - class that retrieves all edge-adjacent faces of a face, and
+- `CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_region` - class that fits a 3D plane to the vertices of all mesh faces, which have been added to the region so far, and controls the quality of this fit.
+- `CGAL::Shape_detection::Polygon_mesh::Plane_face_region` - is another `RegionType` that uses the 3D plane of the seed face and does not refit the plane to the region.
 
 This component accepts any model of the concept `FaceListGraph` as a polygon mesh. \cgalFigureRef{Region_growing_on_surface_mesh}
 gives an \ref Shape_detection_RegionGrowingMesh_examples "example" of the region growing algorithm
@@ -538,9 +537,9 @@ mostly depends on the `RegionType` model's implementation, which is usually fast
 If one wants to detect lines in a segment set, this \cgal component provides the corresponding models of the concept
 `RegionType`. In particular, it provides
 
-- `CGAL::Shape_detection::Segment_set::Least_squares_line_fit_region` class that fits a 2D or 3D line
+- `CGAL::Shape_detection::Segment_set::Least_squares_line_fit_region` - class that fits a 2D or 3D line
 to the chunks of 2D or 3D segments, respectively, and controls the quality of this fit.
-- `CGAL::Shape_detection::Segment_set::Line_segment_region` a `RegionType` that extends the line of the seed segment without refitting the line.
+- `CGAL::Shape_detection::Segment_set::Line_segment_region` - a `RegionType` that extends the line of the seed segment without refitting the line.
 
 The quality of region growing in a segment set (2D or 3D) can be improved by slightly increasing the running time.
 To achieve this, one can sort the input segments with respect to some quality criteria. These quality criteria
