@@ -47,7 +47,7 @@ public:
     typedef Ring CoefficientType;
 
     /*!
-     * \brief Matrix and chain type (either OSM::ROW or OSM::COLUMN).
+     * \brief Matrix and chain type (either `OSM::ROW` or `OSM::COLUMN`).
      */
     typedef int ChainTypeFlag;
 
@@ -68,24 +68,24 @@ public:
     /// @{
 
     /*!
-     * \brief Create an empty new SparseMatrix object.
+     * \brief Create an empty new sparse matrix object.
      *
-     * Default constructor, initialize an empty Matrix of type `ChainTypeFlag` with coefficients of type `CoefficientType`.
+     * Default constructor, initialize an empty matrix of type `ChainTypeFlag` with coefficients of type `CoefficientType`.
      * The default matrix size is 0x0.
      */
     SparseMatrix() ;
 
     /*!
-     * \brief Create a new SparseMatrix object with given rows/columns sizes.
+     * \brief Create a new sparse matrix object with given rows/columns sizes.
      *
-     * Constructor with sizes, initialize an empty Matrix of type `ChainTypeFlag` with coefficients of type `CoefficientType` and a given size along rows/columns.
+     * Constructor with sizes, initialize an empty matrix of type `ChainTypeFlag` with coefficients of type `CoefficientType` and a given size along rows/columns.
      */
     SparseMatrix(const size_t rowCount, const size_t columnCount) ;
 
     /**
-     * \brief Create a new SparseMatrix from another SparseMatrix object (with possibly a different `ChainTypeFlag`).
+     * \brief Create a new sparse matrix from another sparse matrix object (with possibly a different `ChainTypeFlag`).
      *
-     * Copy constructor, initialize a SparseMatrix of same sizes, containing the same coefficients (but not necessarly of the same `ChainTypeFlag`).
+     * Copy constructor, initialize a sparse matrix of same sizes, containing the same coefficients (but not necessarly of the same `ChainTypeFlag`).
      * If types are different, the constructor performs conversion.
      */
     SparseMatrix(const SparseMatrix& otherToCopy);
@@ -100,7 +100,7 @@ public:
     SparseMatrix& operator=(const SparseMatrix& _otherToCopy);
 
     /**
-     * \brief Clean a SparseMatrix (set all coefficients to zero).
+     * \brief Clean a sparse matrix (set all coefficients to zero).
      *
      * Empty all structures of the sparse matrix.
      *
@@ -113,9 +113,9 @@ public:
     /// @{
 
     /**
-     * \brief Test is a SparseMatrix is null.
+     * \brief Test if a sparse matrix is null.
      *
-     * The function return `true` is the SparseMatrix is null (that is, empty) and `false` otherwise.
+     * The function returns `true` if the sparse matrix is null (that is, empty) and `false` otherwise.
     */
     bool is_null();
 
@@ -160,21 +160,21 @@ public:
     /// @{
 
     /**
-     * \brief Inserts a SparseMatrix in the output stream.
+     * \brief Inserts `matrix` in the output stream.
      */
-    friend std::ostream& operator<<(std::ostream &_stream, const SparseMatrix &_matrix);
+    friend std::ostream& operator<<(std::ostream &_stream, const SparseMatrix &matrix);
 
     /**
-     * \brief Inserts a sparse matrix to an output stream.
+     * \brief Inserts `matrix` in an output stream.
      */
-    friend std::ostream& write_matrix (const SparseMatrix& M, std::ostream& out);
+    friend std::ostream& write_matrix (const SparseMatrix& matrix, std::ostream& out);
 
     /**
      * \brief Extracts a sparse matrix from an input stream.
      */
 
     template <typename _CT>
-    friend std::istream& read_matrix (SparseMatrix& M, std::istream& in);
+    friend std::istream& read_matrix (SparseMatrix& matrix, std::istream& in);
     /// @}
 
     /// \name Linear algebra operators
@@ -332,35 +332,35 @@ public:
     /**
      * \brief Get a constant reference over the column of  index`i` from a column matrix.
      */
-    const Sparse_chain<CoefficientType, COLUMN> & cget_column(const SparseMatrix<CoefficientType, COLUMN> &_matrix, size_t i);
+    const Sparse_chain<CoefficientType, COLUMN> & cget_column(const SparseMatrix<CoefficientType, COLUMN> & matrix, size_t i);
 
     /**
      * \brief Get a constant reference over the row of  index`i` from a row matrix.
      */
-    const Sparse_chain<CoefficientType, ROW> & cget_row(const SparseMatrix<CoefficientType, ROW> &_matrix, size_t i);
+    const Sparse_chain<CoefficientType, ROW> & cget_row(const SparseMatrix<CoefficientType, ROW> & matrix, size_t i);
 
     /**
      * \brief Set a column in the matrix (whatever the `ChainTypeFlag` of the matrix).
      *
      * Set the `i`th column of `matrix` to `chain`.
-     * For column-matrices, it should be equivalent to an affectation, however, for row-matrices, a traversal of the matrix is required (in \f$\mathcal O(n)\f$).
+     * For column-matrices, it should be equivalent to an assignment, however, for row-matrices, a traversal of the matrix is required (in \f$\mathcal O(n)\f$).
      */
     void set_column(SparseMatrix &matrix, size_t i, const Sparse_chain<CoefficientType, COLUMN> &chain);
 
     /**
-     * \brief Set a row in the matrix (whatever the `ChainTypeFlag` of the matrix).
+     * \brief Set a row in `matrix` (whatever the `ChainTypeFlag` of the matrix).
      *
      * Set the `i`th row of `matrix` to `chain`.
-     * For row-matrices, it should be equivalent to an affectation, however, for column-matrices, a traversal of the matrix is required (in \f$\mathcal O(n)\f$).
+     * For row-matrices, it should be equivalent to an assignment, however, for column-matrices, a traversal of the matrix is required (in \f$\mathcal O(n)\f$).
      */
     void set_row(SparseMatrix &matrix, size_t i, const Sparse_chain<CoefficientType, ROW> &chain);
 
     /**
      * \brief Get a submatrix from the matrix.
      *
-     * Nullifies the chain of index `i` along the major direction of a copy of the matrix returns it.
+     * Nullifies the chain of index `i` along the major direction of a copy of the matrix amd returns it.
      */
-    friend SparseMatrix operator/(const SparseMatrix &_matrix, size_t i);
+    friend SparseMatrix operator/(const SparseMatrix &matrix, size_t i);
 
     /**
      * \brief Get a submatrix from the matrix and assign.

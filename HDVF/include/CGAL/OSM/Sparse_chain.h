@@ -13,6 +13,8 @@
 #ifndef CGAL_OSM_SPARSE_CHAIN_H
 #define CGAL_OSM_SPARSE_CHAIN_H
 
+#include <CGAL/license/HDVF.h>
+
 #include <CGAL/OSM/__base.h>
 #include <CGAL/OSM/Sparse_matrix.h>
 #include <unordered_map>
@@ -489,7 +491,7 @@ public:
      * @return A boolean.
      * @{
      */
-    
+
     /** \brief Comparison of two COLUMN chains. */
     template <typename _CT>
     friend bool operator==(const Sparse_chain<_CT, OSM::COLUMN>& chain, const Sparse_chain<_CT, OSM::COLUMN> &other);
@@ -497,17 +499,17 @@ public:
     /** \brief Comparison of a COLUMN  and a ROW chain. */
     template <typename _CT>
     friend bool operator==(const Sparse_chain<_CT, OSM::COLUMN>& chain, const Sparse_chain<_CT, OSM::ROW> &other);
-    
+
     /** \brief Comparison of a ROW and a COLUMN chain. */
     template <typename _CT>
     friend bool operator==(const Sparse_chain<_CT, OSM::ROW>& chain, const Sparse_chain<_CT, OSM::COLUMN> &other);
-    
+
     /** \brief Comparison of two ROW chains. */
     template <typename _CT>
     friend bool operator==(const Sparse_chain<_CT, OSM::ROW>& chain, const Sparse_chain<_CT, OSM::ROW> &other);
-    
+
     /** @} */
-    
+
     /**
      * \brief Get a subchain from the chain.
      *

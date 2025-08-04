@@ -13,6 +13,8 @@
 #ifndef CGAL_OSM_BITBOARD_H
 #define CGAL_OSM_BITBOARD_H
 
+#include <CGAL/license/HDVF.h>
+
 #include <iterator>
 #include <cstddef>
 #include <cstdint>

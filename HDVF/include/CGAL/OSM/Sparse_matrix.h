@@ -13,11 +13,14 @@
 #ifndef CGAL_OSM_SPARSE_MATRIX_H
 #define CGAL_OSM_SPARSE_MATRIX_H
 
+#include <CGAL/license/HDVF.h>
+
 #include <CGAL/OSM/Sparse_chain.h>
 #include <CGAL/OSM/Bitboard.h>
 #include <stdint.h>
 #include <cmath>
 #include <unordered_set>
+#include <iostream>
 
 // DEBUG : matrix output for SparseMatrices / no DEBUG : chain output for SparseMatrices
 //#define DEBUG
@@ -106,7 +109,7 @@ public:
     /**
      * \brief Default constructor (empty new `Sparse_matrix` object).
      *
-     * Create an empty Matrix of type `ChainTypeFlag` with coefficients of type `CoefficientType`.
+     * Create an empty matrix of type `ChainTypeFlag` with coefficients of type `CoefficientType`.
      * The default matrix size is 0x0.
      */
     Sparse_matrix() {

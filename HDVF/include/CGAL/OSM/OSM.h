@@ -18,6 +18,8 @@
 #ifndef CGAL_OSM_OSM_H
 #define CGAL_OSM_OSM_H
 
+#include <CGAL/license/HDVF.h>
+
 //#define DEBUG
 #include <CGAL/OSM/__base.h>
 #include <CGAL/OSM/Sparse_chain.h>

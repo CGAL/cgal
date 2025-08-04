@@ -14,6 +14,8 @@
 #ifndef CGAL_OSM__BASE_H
 #define CGAL_OSM__BASE_H
 
+#include <CGAL/license/HDVF.h>
+
 #include <ostream>
 
 namespace CGAL {
