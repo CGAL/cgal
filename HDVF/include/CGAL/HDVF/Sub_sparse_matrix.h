@@ -14,6 +14,8 @@
 #define CGAL_OSM_SUB_SPARSE_MATRIX_H
 
 
+#include <CGAL/license/HDVF.h>
+
 #include <CGAL/OSM/Sparse_matrix.h>
 #include <CGAL/OSM/Bitboard.h>
 
