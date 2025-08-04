@@ -20,13 +20,7 @@
 #include <algorithm>
 #include <string>
 
-#include <boost/filesystem/path.hpp>
-#include <boost/filesystem/operations.hpp>
-
-#ifndef BOOST_FILESYSTEM_VERSION
-// That macro was not defined in previous releases of Boost.
-#  define BOOST_FILESYSTEM_VERSION 2
-#endif
+#include <filesystem>
 
 #include <CGAL/IO/binary_file_io.h>
 
@@ -60,15 +54,11 @@ public:
     }
     display_information(fileName, std::cout);
 
-    boost::filesystem::path headerFile(fileName);
-    boost::filesystem::path dataFile(string_field("in"));
-#if BOOST_FILESYSTEM_VERSION == 2
-    dataFile = boost::filesystem::complete(dataFile,
-                                           boost::filesystem::complete(headerFile.parent_path()));
-#else
-    dataFile = boost::filesystem::absolute(dataFile,
-                                           boost::filesystem::absolute(headerFile.parent_path()));
-#endif
+    std::filesystem::path headerFile(fileName);
+    std::filesystem::path dataFile(string_field("in"));
+
+    dataFile = std::filesystem::absolute(dataFile);
+#
     if(!load_data(dataFile.string())) {
       return;
       err_msg = "Invalid data file \"";
