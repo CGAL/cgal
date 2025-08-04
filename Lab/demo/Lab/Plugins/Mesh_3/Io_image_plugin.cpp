@@ -1532,7 +1532,7 @@ Image* Io_image_plugin::createDirectoryImage(const QString& dirname,
       paths.push_back(x.path());
     }
 
-    // boost::filesystem::directory_iterator does not guarantee a sorted order
+    // std::filesystem::directory_iterator does not guarantee a sorted order
     std::sort(std::begin(paths), std::end(paths));
 
     for(const std::filesystem::path& p : paths)

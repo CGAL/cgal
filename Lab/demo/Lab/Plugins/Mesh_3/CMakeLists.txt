@@ -48,7 +48,6 @@ else()
   message(STATUS "NOTICE: DICOM files (.dcm) require the VTK libraries, and will not be readable.")
 endif()
 
-find_package(Boost)
 
   qt6_wrap_ui( imgUI_FILES Image_res_dialog.ui raw_image.ui)
   cgal_lab_plugin(io_image_plugin Io_image_plugin
