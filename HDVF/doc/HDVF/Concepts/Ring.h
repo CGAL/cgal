@@ -2,7 +2,7 @@
 \ingroup PkgHDVFConcepts
 \cgalConcept
 
-The concept `Ring` describes the requirements for the ring of coefficients used to compute homology in the `CGAL::HomologicalDiscreteVectorField` concept. Besides ring operators, it also specifies the functions needed to test invertibility in the ring.
+The concept `Ring` describes the requirements for the ring of coefficients used to compute homology in the `HomologicalDiscreteVectorField` concept. Besides ring operators, it also specifies the functions needed to test invertibility in the ring.
 
 \cgalHasModelsBegin
 \cgalHasModelsBare{`CGAL::HDVF::Z2`}

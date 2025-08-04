@@ -26,9 +26,9 @@ namespace HDVF {
 /*!
  \ingroup PkgHDVFAlgorithmClasses
 
- The class `Hdvf` implements homology and cohomology computation via homological discrete vector fields (HDVF for short). It derives from `Hdvf_core` and shares all its data and methods.
+ The class `Hdvf` implements homology and cohomology computation via homological discrete vector fields (%HDVF for short). It derives from `Hdvf_core` and shares all its data and methods.
 
- But besides construction operations and methods (using the A operation), the `Hdvf` class implements four other HDVF operations: R, M, W and MW together with appropriate "find_pair" functions. These operations change the HDVF (that is change homology / cohomology generators) and thus provide a convenient tool to move inside the "space of homology/cohomology computations".
+ But besides construction operations and methods (using the A operation), the `Hdvf` class implements four other HDVF operations: R, M, W and MW together with appropriate "find_pair()" functions. These operations change the %HDVF (that is change homology / cohomology generators) and thus provide a convenient tool to move inside the "space of homology/cohomology computations".
 
 - `R()` operation is the "dual" of the A pairing operation (it cancels the pairing and turns back a PRIMARY/SECONDARY pair into a pair of CRITICAL cells)
 - `M()` operation exchanges a PRIMARY \f$\pi\f$ and a CRITICAL cell \f$\gamma\f$ (under conditions) and modifies the homology generator associated to \f$\gamma\f$ (while preserving is associated cohomology generator)

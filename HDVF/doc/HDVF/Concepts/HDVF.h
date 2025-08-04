@@ -2,7 +2,7 @@
 \ingroup PkgHDVFConcepts
 \cgalConcept
 
-The concept `HDVF` describes the requirements for Homological Discrete Vector Fields (HDVF for short) , a theory of computational homology unifying discrete Morse theory and effective homology. HDVFs were introduced by Aldo Gonzalez-Lorenzo in his PhD (see [AGL,2017], [AGL,2016]).
+The concept `HDVF` describes the requirements for Homological Discrete Vector Fields (%HDVF for short) , a theory of computational homology unifying discrete Morse theory and effective homology. HDVFs were introduced by Aldo Gonzalez-Lorenzo in his PhD (see [AGL,2017], [AGL,2016]).
 
 A HDVF is a combinatorial tool computing the homology of a chain complex (described by the `AbstractChainComplex` concept) including "geometric" information such as homology and cohomology generators.
 
@@ -37,7 +37,7 @@ That is, for all \f$q\in \mathbb N\f$, if
  then \f$D_{PS}\f$, the matrix of \f$j_P\circ \partial\circ i_S\f$, also written \f$\partial (S)|_P\f$ is invertible.
 
  In order to build a perfect HDVF, a pairing operation called `A()` associates (under conditions) two critical cells (becoming PRIMARY and SECONDARY) and updates the reduction in time \f$\mathcal O(n^2)\f$. Intuitively, this operation bears some similitudes (see users guide) with discrete Morse theory's DGVF arrows (and an HDVF can always be represented by such a vector field - possibly with cycles).
- Given a HDVF \f$X = (P,S,C)\f$, A operation between two cells \f$(\gamma_1, \gamma_2)\f$ of respective dimension \f$q/q+1\f$ is valid if \f$(P',S',C') = (P\cup\{\gamma_1\}, P\cup\{\gamma_2\}, C\backslash\{\gamma_1,\gamma_2\})\f$ is a HDVF (ie. if \f$j_{P'}\circ \partial\circ i_{S'}\f$ is still invertible). This is actually the case if and only if \f$\langle d(\gamma_2), \gamma_1 \rangle\f$ (with \f$d\f$ the reduced boundary operator) is invertible. This condition is called the *validity condition for A*; all the `find_pair_A` and `find_pairs_A` methods search for such valid pairs.
+ Given a HDVF \f$X = (P,S,C)\f$, A operation between two cells \f$(\gamma_1, \gamma_2)\f$ of respective dimension \f$q/q+1\f$ is valid if \f$(P',S',C') = (P\cup\{\gamma_1\}, P\cup\{\gamma_2\}, C\backslash\{\gamma_1,\gamma_2\})\f$ is a HDVF (ie. if \f$j_{P'}\circ \partial\circ i_{S'}\f$ is still invertible). This is actually the case if and only if \f$\langle d(\gamma_2), \gamma_1 \rangle\f$ (with \f$d\f$ the reduced boundary operator) is invertible. This condition is called the *validity condition for A*; all the `find_pair_A()` and `find_pairs_A()` methods search for such valid pairs.
 
 
  Starting from this operation, `HDVF` provides two methods to generate perfect HDVFs (and hence compute homology):
@@ -240,7 +240,7 @@ void A(size_t gamma1, size_t gamma2, int q);
 /*!
  * \brief Compute a perfect HDVF.
  *
- * As long as valid pairs for A exist, the function selects the first available pair (returned by `find_pair_A`) and applies the corresponding A operation.
+ * As long as valid pairs for A exist, the function selects the first available pair (returned by `find_pair_A()`) and applies the corresponding A operation.
  * If the `Ring` of coefficients is a field, this operation always produces a perfect HDVF (ie. the reduced boundary is null and the reduction provides homology and cohomology information).
  *
  * If the HDVF is initially not trivial (some cells have already been paired), the function completes it into a perfect HDVF.
@@ -253,7 +253,7 @@ std::vector<PairCell> compute_perfect_hdvf(bool verbose = false);
 /*!
  * \brief Compute a random perfect HDVF.
  *
- *As long as valid pairs for A exist, the function selects a random pair (among pairs returned by `find_pairs_A`) and applies the corresponding A operation.
+ *As long as valid pairs for A exist, the function selects a random pair (among pairs returned by `find_pairs_A()`) and applies the corresponding A operation.
  * If the `Ring` of coefficients is a field, this operation always produces a perfect HDVF (ie. the reduced boundary is null and the reduction provides homology and cohomology information).
  *
  * If the HDVF is initially not trivial (some cells have already been paired), the function randomly completes it into a perfect HDVF.
@@ -313,7 +313,7 @@ const CMatrix& get_dd (int q) const;
 /*!
  * \brief Test is a HDVF is perfect.
  *
- * The function returns `true` is the reduced boundary matrix is null and `false` otherwise.
+ * The function returns `true` if the reduced boundary matrix is null and `false` otherwise.
  */
     bool is_perfect_hdvf();
 
@@ -355,9 +355,9 @@ std::ostream& save_hdvf_reduction(std::ostream& out) ;
 std::istream& load_hdvf_reduction(std::istream& out) ;
 
 /*!
- * \brief Export Primary/Secondary/Critical labels (in particular for vtk export).
+ * \brief Export primary/secondary/critical labels (in particular for vtk export).
  *
- * The method exports the labels of every cells in each dimension.
+ * The method exports the labels of every cell in each dimension.
  *
  * \return A vector containing, for each dimension, the vector of labels by cell index.
  */

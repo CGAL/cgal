@@ -68,7 +68,7 @@ public:
     Simplicial_chain_complex(const Mesh_object_io& mesh, std::vector<Point> coords) : Abstract_simplicial_chain_complex<CoefficientType>(mesh), _coords(coords) {} ;
 
     /**
-     * \brief Affectation operator for simplicial complexes.
+     * \brief Assignment operator for simplicial complexes.
      *
      * Stores a copy of a simplicial complex in *this.
      *
@@ -92,7 +92,7 @@ public:
 
     /** \brief Get the coordinates of the ith dimension-0 simplex
 
-     * \warning This does not come to return vertices indices, as dimension 0 simplices enumerate vertices in any order. For instance, if an abstract simplicial complex is build from 3 vertices {1,2,3} such that the enumeration of dimension 0 simplicies is:
+     * \warning This does not come to return vertices indices, as dimension 0 simplices enumerate vertices in any order. For instance, if an abstract simplicial complex is build from 3 vertices {1,2,3} such that the enumeration of dimension 0 simplices is:
      *  id0: 3, id1 : 2, id2: 1
      * then the bottom_faces of the 1-simplex {1,2} are two 0-simplices with id 2 and 1.
      */

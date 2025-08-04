@@ -134,7 +134,7 @@ public:
     typedef OSM::Sparse_matrix<CoefficientType, OSM::COLUMN> CMatrix;
 
     /**
-     * \brief Affectation operator for cubical chain complexes.
+     * \brief Assignment operator for cubical chain complexes.
      *
      * Stores a copy of an cubical chain complex in *this.
      *

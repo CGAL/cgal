@@ -78,7 +78,7 @@ The definition of the boundary operator depends on the underlying complex, it is
 \subsubsection secHDVFsimplicial_chain_complex Simplicial chain complexes
 
 An **abstract simplicial complex** of dimension \f$d\f$ is built from:
-- a set of vertices identified by an index of type `size_t` (cells of dimension 0 or **0-simplicies**)
+- a set of vertices identified by an index of type `size_t` (cells of dimension 0 or **0-simplices**)
 - for any \f$q\f$ with \f$0< q\leqslant d\f$, cells of dimension \f$q\f$ (or **\f$q\f$-simplices**) are defined by \f$q+1\f$ vertices (denoted \f$\langle v_0,\ldots,v_{q}\rangle\f$ with vertices sorted by *increasing indices*).
 
 A **geometric simplicial complex** equips vertices with coordinates in \f$\mathbb R^q\f$ so that \f$q\f$-simplices are convex hulls of \f$q+1\f$ points.

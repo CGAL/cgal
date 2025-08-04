@@ -39,7 +39,7 @@ class Zp {
     _TSlot _i ;
 public:
 
-    /** \brief Constructor from a value (default constsructor). */
+    /** \brief Constructor from a value */
     Zp(_TSlot i=0) : _i( (i>=0)?(i % p):((i % p) + p) ) { }
 
 
@@ -82,7 +82,7 @@ public:
         return Zp<p, _TSlot>(a._i / b._i) ;
     }
 
-    /** \brief operator+=. */
+    /** \brief Operator+=. */
     Zp &     operator+= (const Zp& a)
     {
         _i += a._i ;
@@ -124,7 +124,7 @@ public:
         return *this ;
     }
 
-    /** \brief operator/=. */
+    /** \brief Operator/=. */
     Zp &     operator/= (const Zp& a)
     {
         _i /= a._i ;
@@ -144,7 +144,7 @@ public:
         return (a._i == b._i) ;
     }
 
-    /** \brief operator!=. */
+    /** \brief Operator!=. */
     friend bool     operator!= (const Zp& a, const Zp& b)
     {
         return (a._i != b._i);

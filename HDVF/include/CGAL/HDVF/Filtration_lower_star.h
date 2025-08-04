@@ -86,7 +86,7 @@ std::function<double(size_t)>  deg_fun (const ComplexType& complex, std::functio
  <img src="lower_star_filtration_y.png" align="center" width=15%/>
 
  The `Filtration_lower_star` class provides constructors taking as input:
- - either the vector of vertices degrees
+ - either the vector of vertex degrees
  - or a function mapping each vertex to its degree.
 
  \cgalModels{Filtration}
@@ -108,7 +108,7 @@ private:
     typedef FiltrationCoreT::FiltrationIterValue FiltrationIterValue;
 public:
     /*!
-     * \brief Constructor by copy.
+     * \brief Copy constructor.
      *
      * Builds a filtration by copy from another.
      *
@@ -116,12 +116,12 @@ public:
      */
     Filtration_lower_star(const Filtration_lower_star& f) : FiltrationCoreT(f) {}
 
-    /*! \brief Constructor from vertices degrees.
+    /*! \brief Constructor from vertex degrees.
      *
      * The constructor computes all cells degrees as the minimum of the degrees of their vertices and sorts all the cells of the complex to fulfill the filtration ordering constraints.
      *
      * \param[in] K Constant reference to the underlying complex.
-     * \param[in] deg Vector of vertices degrees.
+     * \param[in] deg Vector of vertex degrees.
      */
     Filtration_lower_star(const ComplexType& K, const std::vector<DegreeType>& deg) : FiltrationCoreT(K)
     {

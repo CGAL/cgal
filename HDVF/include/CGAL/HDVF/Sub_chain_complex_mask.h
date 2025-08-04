@@ -186,9 +186,9 @@ public:
         _sub = otherToCopy._sub ;
     }
 
-    /** \brief Affectation operator
+    /** \brief Assignment operator
      *
-     * \warning The operator argument must provide a sub chain complex mask over the *same underlying chain complex*. It not so, the affectation will throw an exception.
+     * \warning The operator argument must provide a sub chain complex mask over the *same underlying chain complex*. It not so, the assignment will throw an exception.
      *
      * \param[in] otherToCopy A `Sub_chain_complex_mask` copied into `this` (`otherToCopy` and `this` must have the same underlying chain complex).
      */
@@ -198,7 +198,7 @@ public:
         if (_K.get_id() != otherToCopy._K.get_id() )
             throw("Error, operator= can only copy mask over the same chain complex.");
 
-        // Perform affectation
+        // Perform assignment
         _dim = otherToCopy._dim ;
         _sub = otherToCopy._sub ;
         _nb_cells = otherToCopy._nb_cells ;

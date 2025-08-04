@@ -80,7 +80,7 @@ protected:
     std::pair<size_t, size_t> _size;
 
     /**
-     * \brief Get a reference on a chain from a matrix and change its state (for affectation).
+     * \brief Get a reference on a chain from a matrix and change its state (for assignment).
      *
      * Used only internally.
      *
@@ -242,7 +242,7 @@ public:
      * @return A boolean.
      * @{
      */
-    
+
     /** \brief Comparison of two COLUMN matrices. */
     template <typename _CT>
     friend bool operator==(const Sparse_matrix<_CT, OSM::COLUMN>& matrix, const Sparse_matrix<_CT, OSM::COLUMN> &other);
@@ -250,15 +250,15 @@ public:
     /** \brief Comparison of a COLUMN  and a ROW matrix. */
     template <typename _CT>
     friend bool operator==(const Sparse_matrix<_CT, OSM::COLUMN>& matrix, const Sparse_matrix<_CT, OSM::ROW> &other);
-    
+
     /** \brief Comparison of a ROW and a COLUMN matrix. */
     template <typename _CT>
     friend bool operator==(const Sparse_matrix<_CT, OSM::ROW>& matrix, const Sparse_matrix<_CT, OSM::COLUMN> &other);
-    
+
     /** \brief Comparison of two ROW matrices. */
     template <typename _CT>
     friend bool operator==(const Sparse_matrix<_CT, OSM::ROW>& matrix, const Sparse_matrix<_CT, OSM::ROW> &other);
-    
+
     /** @} */
 
     /**

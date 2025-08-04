@@ -53,18 +53,18 @@ template<typename CoefficientType>
 class Abstract_simplicial_chain_complex {
 public:
     /**
-     * \brief Default constructor (empty simplicial complex of dimension q).
+     * \brief %Default constructor (empty simplicial complex of dimension `q`).
      *
-     * Builds an empty abstract simplicial complex of dimension q.
+     * Builds an empty abstract simplicial complex of dimension `q`.
      */
     Abstract_simplicial_chain_complex(int q = 0) ;
 
     /**
-     * \brief Constructor from a Mesh_object_io.
+     * \brief Constructor from a `Mesh_object_io`.
      *
-     * Builds the abstract simplicial complex associated to a triangular mesh (ie. performs the down closure of cells and set the boundary matrices in any dimension).
+     * Builds the abstract simplicial complex associated to a triangular mesh (i.e. performs the down closure of cells and set the boundary matrices in any dimension).
      *
-     * \param[in] mesh A Mesh_object_io containing a triangular mesh.
+     * \param[in] mesh A `Mesh_object_io` containing a triangular mesh.
      */
     Abstract_simplicial_chain_complex(const Mesh_object_io& mesh);
 
@@ -77,9 +77,9 @@ public:
 
 
     /**
-     * \brief Affectation operator for abstract simplicial chain complexes.
+     * \brief Assignment operator for abstract simplicial chain complexes.
      *
-     * Stores a copy of an abstract simplicial chain complex in *this.
+     * Stores a copy of an abstract simplicial chain complex in `*this`.
      *
      * \param[in] complex The abstract simplicial chain complex which will be copied.
      */
@@ -100,7 +100,7 @@ public:
      *
      * Returns a copy of the column-major chain stored in the boundary matrix of dimension dim: boundary of the cell id_cell in dimension q.
      *
-     * \param[in] id_cell Index of the cell.
+     * \param[in] id_cell %Index of the cell.
      * \param[in] q Dimension of the cell.
      *
      * \return The column-major chain containing the boundary of the cell id_cell in dimension q.
@@ -120,7 +120,7 @@ public:
      *
      * \warning As the boundary matrix is stored column-major, this entails crossing the full matrix to extract the row coefficients (O(number of non empty columns))
      *
-     * \param[in] id_cell Index of the cell.
+     * \param[in] id_cell %Index of the cell.
      * \param[in] q Dimension of the cell.
      *
      * \return The row-major chain containing the co-boundary of the cell id_cell in dimension q.
@@ -136,7 +136,7 @@ public:
     /**
      * \brief Method returning the dimension of the complex.
      *
-     * Returns the dimension of the simplicial complex (ie. largest dimension of cells).
+     * Returns the dimension of the simplicial complex (i.e. largest dimension of cells).
      *
      * \return The dimension of the complex..
      */
@@ -160,7 +160,7 @@ public:
     /**
      * \brief Method returning a constant reference to the vector of boundary matrices (along each dimension).
      *
-     * Returns a constant reference to the vector of boundary matrices along each dimension. The q-th element of this vector is a column-major sparse matrix containing the boundaries of q-cells (ie. rows encode q-1 cells and columns q cells).
+     * Returns a constant reference to the vector of boundary matrices along each dimension. The q-th element of this vector is a column-major sparse matrix containing the boundaries of q-cells (i.e. rows encode q-1 cells and columns q cells).
      *
      * \return Returns a constant reference to the vector of column-major boundary matrices along each dimension.
      */
@@ -170,11 +170,11 @@ public:
     }
 
     /**
-     * \brief Method returning a copy of the dim-th boundary matrix (ie. column-major matrix of \f$\partial_q\f$).
+     * \brief Method returning a copy of the dim-th boundary matrix (i.e.\ column-major matrix of \f$\partial_q\f$).
      *
-     * It is a column-major sparse matrix containing the boundaries of q-cells (ie. rows encode q-1 cells and columns q cells).
+     * It is a column-major sparse matrix containing the boundaries of q-cells (i.e. rows encode q-1 cells and columns q cells).
      *
-     * \param[in] q Dimension of the boundary matrix (ie. columns will contain the boundary of dimension q cells).
+     * \param[in] q Dimension of the boundary matrix (i.e. columns will contain the boundary of dimension q cells).
      *
      * \return A column-major sparse matrix containing the matrix of the boundary operator of dimension q.
      */
@@ -184,15 +184,15 @@ public:
     }
 
     /**
-     * \brief Method returning dimension 0 simplicies indexes included in the cell with index id_cell of dimension q.
+     * \brief Method returning dimension 0 simplices indexes included in the cell with index id_cell of dimension q.
      *
-     * Returns the dimension 0 simplicies indexes included in the cell with index id_cell of dimension q.
+     * Returns the dimension 0 simplices indexes included in the cell with index id_cell of dimension q.
      *
-     * \warning This does not come to return vertices indices, as dimension 0 simplices enumerate vertices in any order. For instance, if an abstract simplicial complex is build from 3 vertices {1,2,3} such that the enumeration of dimension 0 simplicies is:
+     * \warning This does not come to return vertices indices, as dimension 0 simplices enumerate vertices in any order. For instance, if an abstract simplicial complex is built from 3 vertices {1,2,3} such that the enumeration of dimension 0 simplices is:
      *  id0: 3, id1 : 2, id2: 1
      * then the bottom_faces of the 1-simplex {1,2} are two 0-simplices with id 2 and 1.
      *
-     * \param[in] id_cell Index of the cell.
+     * \param[in] id_cell %Index of the cell.
      * \param[in] q Dimension of the cell.
      *
      * \return A vector of 0-simplices indices.
@@ -263,7 +263,7 @@ protected:
     // Protected methods
 
     /*
-     * \brief Method filling the matrix _d.at(q), ie. computing the boundaries of cells of dimension q.
+     * \brief Method filling the matrix _d.at(q), i.e. computing the boundaries of cells of dimension q.
      *
      * Compute the boundary with the standard simplicial complex definition:
      * \f[\partial (\{v_0,\ldots,v_q\}) = \sum_{i=0}^q (-1)^q \{v_0,\ldots, \hat{v_i},\ldots,v_q\}\f]

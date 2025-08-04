@@ -2,7 +2,7 @@
 \ingroup PkgHDVFConcepts
 \cgalConcept
 
-The concept `SparseChain` describes the requirements for sparse vectors (called *sparse chains* in homology) optimized for topological computations. More precisely, `SparseChains` provide all the operations on chains required by the `SparseMatrix` concept.
+The concept `SparseChain` describes the requirements for sparse vectors (called *sparse chains* in homology) optimized for topological computations. More precisely, `SparseChain` provides all the operations on chains required by the `SparseMatrix` concept.
 
  `SparseChains` encode non zero coefficients of (sparse) chains.
 
@@ -51,23 +51,23 @@ public:
     /// @{
 
     /*!
-     * \brief Create new empty SparseChain.
+     * \brief Create new empty sparse chain.
      */
     SparseChain();
 
     /*!
-     * \brief Create new empty SparseChain of given size.
+     * \brief Create new empty sparse chain of given size.
      *
-     * Constructor with size, initialize an empty SparseChain.
+     * Constructor with size, initializes an empty sparse chain.
      */
     SparseChain(size_t chainSize);
 
     /*!
-     * \brief Create new SparseChain by copy.
+     * \brief Create new sparse chain by copy.
      *
-     * Copy constructor, initialize a SparseChain from an existing SparseChain of same `ChaintypeFlag`.
+     * Copy constructor, initialize a sparse chain from an existing sparse chain of same `ChaintypeFlag`.
      */
-    SparseChain(const Sparse_chain &otherToCopy);
+    SparseChain(const Sparse_chain &other);
 
     /*!
      * \brief Assign to other chain.
@@ -76,7 +76,7 @@ public:
      *
      * SparseChain must have the same `CoefficientType`.
      */
-    SparseChain& operator=(const SparseChain &otherToCopy);
+    SparseChain& operator=(const SparseChain &other);
 
     /// @}
 
@@ -136,7 +136,7 @@ public:
     /// @{
 
     /*!
-     * \brief Displays a SparseChain in the output stream.
+     * \brief Inserts `chain` in the output stream.
      */
     friend std::ostream& operator<<(std::ostream &stream, const Sparse_chain& chain);
 
@@ -148,7 +148,7 @@ public:
     /*!
      * \brief Adds two chains together.
      *
-     * Adds two chains together and return the result in a new matrix.
+     * Add two chains and return the result in a new matrix.
      * Chains must have the same `CoefficientType` and the same `ChainTypeFlag`.
      */
     friend Sparse_chain operator+(const Sparse_chain &first, const Sparse_chain &second);
@@ -156,7 +156,7 @@ public:
     /*!
      * \brief Subtract two chains together.
      *
-     * Subtract two chains together and return the result in a new matrix.
+     * Subtract two chains and return the result in a new matrix.
      * Chains must have the same `CoefficientType` and the same `ChainTypeFlag`.
      */
     friend Sparse_chain operator-(const Sparse_chain &first, const Sparse_chain &second);

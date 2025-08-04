@@ -31,7 +31,7 @@ class Z2 {
     char _i ;
 public:
 
-    /** \brief Constructor from a value (default constsructor). */
+    /** \brief Constructor from a value */
     Z2(char i=0) : _i(i ? 1 : 0 ) {}
 
     // Copy constructor
@@ -73,7 +73,7 @@ public:
         return Z2(a._i / b._i) ;
     }
 
-    /** \brief operator+=. */
+    /** \brief Operator+=. */
     Z2 &     operator+= (const Z2& a)
     {
         _i ^= a._i ;
@@ -94,7 +94,7 @@ public:
         return *this ;
     }
 
-    /** \brief operator/=. */
+    /** \brief Operator/=. */
     Z2 &     operator/= (const Z2& a)
     {
         _i /= a._i ;
@@ -107,7 +107,7 @@ public:
         return (a._i == b._i) ;
     }
 
-    /** \brief operator!=. */
+    /** \brief Operator!=. */
     friend bool     operator!= (const Z2& a, const Z2& b)
     {
         return (a._i != b._i);

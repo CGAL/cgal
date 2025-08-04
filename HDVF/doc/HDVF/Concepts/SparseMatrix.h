@@ -160,21 +160,21 @@ public:
     /// @{
 
     /**
-     * \brief Displays a SparseMatrix in the output stream.
+     * \brief Inserts a SparseMatrix in the output stream.
      */
     friend std::ostream& operator<<(std::ostream &_stream, const SparseMatrix &_matrix);
 
     /**
-     * \brief Write a sparse matrix to an output stream.
+     * \brief Inserts a sparse matrix to an output stream.
      */
-    friend std::ostream& write_matrix (const Sparse_matrix& M, std::ostream& out);
+    friend std::ostream& write_matrix (const SparseMatrix& M, std::ostream& out);
 
     /**
-     * \brief Read a sparse matrix from an input stream.
+     * \brief Extracts a sparse matrix from an input stream.
      */
 
     template <typename _CT>
-    friend std::istream& read_matrix (Sparse_matrix& M, std::istream& in);
+    friend std::istream& read_matrix (SparseMatrix& M, std::istream& in);
     /// @}
 
     /// \name Linear algebra operators
@@ -225,14 +225,14 @@ public:
      *
      * This method creates a new matrix obtained by multiplying the matrix by a scalar factor `lambda`. If `lambda` is zero, the function comes to nullify the matrix (when possible, prefer `*=` for efficiency).
      */
-    friend Sparse_matrix operator*(const CoefficientType& lambda, const Sparse_matrix &matrix);
+    friend SparseMatrix operator*(const CoefficientType& lambda, const SparseMatrix &matrix);
 
     /**
      * \brief Apply factor on each coefficients into a new matrix.
      *
      * This method creates a new matrix obtained by multiplying the matrix by a scalar factor `lambda`. If `lambda` is zero, the function comes to nullify the matrix (when possible, prefer `*=` for efficiency).
      */
-    friend Sparse_matrix operator*(const Sparse_matrix &matrix, const CoefficientType& lambda);
+    friend SparseMatrix operator*(const SparseMatrix &matrix, const CoefficientType& lambda);
 
     /**
      * \brief Apply factor on each coefficient and assign.
@@ -306,14 +306,14 @@ public:
      *
      * Assign the scalar `d` to the coefficient on row `i` and column `j`.
      */
-    friend void set_coef(Sparse_matrix& matrix, size_t i, size_t j, const CoefficientType d);
+    friend void set_coef(SparseMatrix& matrix, size_t i, size_t j, const CoefficientType d);
 
     /**
      * \brief Get a given coefficient.
      *
      * Returns the coefficient on row `i` and column `j` of the matrix.
      */
-    friend CoefficientType get_coef(const Sparse_matrix& matrix, size_t i, size_t j);
+    friend CoefficientType get_coef(const SparseMatrix& matrix, size_t i, size_t j);
 
     /**
      * \brief Get the value of the column at a given `index` from the matrix (whatever the `ChainTypeFlag` of the matrix).
@@ -381,21 +381,21 @@ public:
      *
      * Removes column of index `i` whatever the `ChainTypeFlag` of the matrix. For column matrices, it just comes to the `\=` operator and for row matrices, it entails a traversal of the matrix.
      */
-    friend Sparse_matrix& del_column(Sparse_matrix& matrix, size_t index);
+    friend SparseMatrix& del_column(SparseMatrix& matrix, size_t index);
 
     /**
      * \brief Nullifies a row from the matrix.
      *
      * Removes row of index `i` whatever the `ChainTypeFlag` of the matrix. For row matrices, it just comes to the `\=` operator and for column matrices, it entails a traversal of the matrix.
      */
-    friend Sparse_matrix& del_row(Sparse_matrix& matrix, size_t index);
+    friend SparseMatrix& del_row(SparseMatrix& matrix, size_t index);
 
     /**
      * \brief Nullifies a coefficient of the matrix.
      *
      * Removes coefficient on row `i` / column `j` of the matrix.
      */
-    friend Sparse_matrix& del_coef(Sparse_matrix& matrix, size_t i, size_t j);
+    friend SparseMatrix& del_coef(SparseMatrix& matrix, size_t i, size_t j);
 
     /// @}
 

@@ -249,7 +249,7 @@ public:
     std::vector<PairCell> compute_rand_perfect_hdvf(bool verbose = false);
 
     /**
-     * \brief Test is a HDVF is perfect.
+     * \brief Test if a HDVF is perfect.
      *
      * The function returns `true` is the reduced boundary matrix is null and `false` otherwise.
      */
