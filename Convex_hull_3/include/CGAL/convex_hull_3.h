@@ -154,7 +154,7 @@ template< class Point_3,
           class Is_floating_point=typename std::is_floating_point<typename Kernel_traits<Point_3>::Kernel::FT>::type,
           class Has_filtered_predicates_tag=typename Kernel_traits<Point_3>::Kernel::Has_filtered_predicates_tag >
 struct Default_traits_for_Chull_3{
-  typedef Convex_hull_traits_3< typename Kernel_traits<Point_3>::Kernel > type;
+  typedef typename Kernel_traits<Point_3>::Kernel type;
 };
 
 //FT is a floating point type and Kernel is a filtered kernel
@@ -1092,7 +1092,7 @@ void convex_hull_3(InputIterator first, InputIterator beyond,
                    std::enable_if_t<boost::has_range_iterator<TriangleRange>::value>* = 0)
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Point_3;
-  typedef Convex_hull_traits_3<typename Kernel_traits<Point_3>::type> Traits;
+  typedef typename Convex_hull_3::internal::Default_traits_for_Chull_3<Point_3>::type Traits;
 
   Convex_hull_3::internal::Indexed_triangle_set<PointRange, TriangleRange> its(vertices,faces);
   convex_hull_3(first, beyond, its, Traits());
