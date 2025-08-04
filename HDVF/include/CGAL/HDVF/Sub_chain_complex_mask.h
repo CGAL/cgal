@@ -12,6 +12,8 @@
 #ifndef CGAL_HDVF_SUB_CHAIN_COMPLEX_MASK_H
 #define CGAL_HDVF_SUB_CHAIN_COMPLEX_MASK_H
 
+#include <CGAL/license/HDVF.h>
+
 #include <vector>
 #include <cassert>
 #include <iostream>

@@ -12,6 +12,8 @@
 #ifndef CGAL_HDVF_MESH_OBJECT_H
 #define CGAL_HDVF_MESH_OBJECT_H
 
+#include <CGAL/license/HDVF.h>
+
 #include <iostream>
 #include <cassert>
 #include <fstream>
@@ -44,7 +46,7 @@ typedef std::vector<IOCellType> IOChainType ;
 struct IONodeType {
 private:
     vector<double> _coords;
-    
+
 public:
     IONodeType(size_t d = 3, double x = 0.) : _coords(d,x) {}
     IONodeType(std::vector<double> v) : _coords(v) {}
@@ -277,7 +279,7 @@ private:
         }
         out.close() ;
     }
-    
+
 public:
     // The variable `dim` is used to encode both the dimension of the object loaded and wether it encodes a complex (with cells of various dimensions) or a mesh (a collection of triangles)
     // - if dim > 0 : Mesh_object_io encodes a mesh and all cells have dimension d
@@ -286,7 +288,7 @@ public:
     size_t nvertices, ncells, nedges ;
     std::vector<IONodeType> nodes ; // Coordinates of vertices (optional)
     std::vector<IOCellType> cells ;
-    
+
     /* \brief Default constructor.
      *
      * Create an empty Mesh_object_io.

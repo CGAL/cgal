@@ -12,7 +12,10 @@
 #ifndef CGAL_HDVF_Z2_H
 #define CGAL_HDVF_Z2_H
 
+#include <CGAL/license/HDVF.h>
+
 #include <vector>
+#include <iostream>
 
 namespace CGAL {
 namespace HDVF {

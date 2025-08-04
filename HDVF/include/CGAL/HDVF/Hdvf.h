@@ -12,6 +12,8 @@
 #ifndef CGAL_HDVF_HDVF_H
 #define CGAL_HDVF_HDVF_H
 
+#include <CGAL/license/HDVF.h>
+
 #include <vector>
 #include <cassert>
 #include <iostream>

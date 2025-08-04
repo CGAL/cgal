@@ -12,6 +12,8 @@
 #ifndef CGAL_HDVF_FILTRATION_LOWER_STAR_H
 #define CGAL_HDVF_FILTRATION_LOWER_STAR_H
 
+#include <CGAL/license/HDVF.h>
+
 #include <vector>
 #include <cassert>
 #include <iostream>

@@ -14,6 +14,8 @@
 #ifndef CGAL_HDVF_SIMPLEX_H
 #define CGAL_HDVF_SIMPLEX_H
 
+#include <CGAL/license/HDVF.h>
+
 #include <set>
 #include <vector>
 #include <utility>

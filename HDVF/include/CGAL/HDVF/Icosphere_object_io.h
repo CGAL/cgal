@@ -12,6 +12,8 @@
 #ifndef CGAL_HDVF_ICOSPHERE_OBJECT_H
 #define CGAL_HDVF_ICOSPHERE_OBJECT_H
 
+#include <CGAL/license/HDVF.h>
+
 #include <iostream>
 #include <cassert>
 #include <fstream>

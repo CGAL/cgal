@@ -12,6 +12,8 @@
 #ifndef CGAL_HDVF_CUBICAL_CHAIN_COMPLEX_H
 #define CGAL_HDVF_CUBICAL_CHAIN_COMPLEX_H
 
+#include <CGAL/license/HDVF.h>
+
 #include <vector>
 #include <map>
 #include <stdexcept>

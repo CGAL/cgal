@@ -12,6 +12,8 @@
 #ifndef CGAL_HDVF_GEOMETRIC_CHAIN_COMPLEX_TOOLS_H
 #define CGAL_HDVF_GEOMETRIC_CHAIN_COMPLEX_TOOLS_H
 
+#include <CGAL/license/HDVF.h>
+
 #include <vector>
 #include <map>
 #include <stdexcept>

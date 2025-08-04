@@ -12,7 +12,7 @@
 #ifndef CGAL_HDVF_SIMPLICIAL_CHAIN_COMPLEX_H
 #define CGAL_HDVF_SIMPLICIAL_CHAIN_COMPLEX_H
 
-//#include <CGAL/license/HDVF.h>
+#include <CGAL/license/HDVF.h>
 
 #include <vector>
 #include <map>
