@@ -55,10 +55,8 @@ public:
     display_information(fileName, std::cout);
 
     std::filesystem::path headerFile(fileName);
-    std::filesystem::path dataFile(string_field("in"));
+    std::filesystem::path dataFile = std::filesystem::absolute(fileName).parent_path()  / std::filesystem::path("in");
 
-    dataFile = std::filesystem::absolute(dataFile);
-#
     if(!load_data(dataFile.string())) {
       return;
       err_msg = "Invalid data file \"";
