@@ -15,10 +15,14 @@
 #include <CGAL/license/HDVF.h>
 
 #include <vector>
+#include <map>
 #include <cassert>
 #include <iostream>
 #include <random>
 #include <functional>
+
+#incude <CGAL/OSM/Sparse_matrix.h>
+#include <CGAL/OSM/Sparse_chain.h>
 
 namespace CGAL {
 namespace HDVF {
@@ -60,7 +64,7 @@ public:
      * - First element of the pair: index of the cell.
      * - Second element of the pair: dimension of the cell.
      */
-    typedef std::pair<size_t, int> CellDim ;
+    typedef std::pair<std::size_t, int> CellDim ;
 
     /*! \brief Type of value returned by the iterator.
      */
@@ -78,7 +82,7 @@ protected:
     std::vector<DegreeType> _deg ;
 
     /** \brief Map from cells to their index in the filtration. */
-    std::map<CellDim,size_t> _cell_to_t ;
+    std::map<CellDim,std::size_t> _cell_to_t ;
 
     /*!
      Type of column-major sparse matrices
@@ -146,7 +150,7 @@ public:
          * \param[in] f Constant reference on the `Filtration_core` iterated.
          * \param[in] i The initial index.
          */
-        iterator(const Filtration_core& f, size_t i=0) : _i(i), _f(f) {}
+        iterator(const Filtration_core& f, std::size_t i=0) : _i(i), _f(f) {}
 
         /*! \brief Iterator dereference
          *
@@ -162,7 +166,7 @@ public:
 
         /*! \brief Get the time (or index in the filtration) associated to current iterator.
          */
-        size_t time () const { return _i ; }
+        std::size_t time () const { return _i ; }
 
         /*! \brief Get the cell (identified by its index and dimension) associated to current iterator.
          */
@@ -202,7 +206,7 @@ public:
         friend bool operator!= (const iterator& a, const iterator& b)  { return a._i != b._i; };
 
     private:
-        size_t _i ; // Index along _persist
+        std::size_t _i ; // Index along _persist
         const Filtration_core& _f ; // Filtration_core iterated
     };
 
@@ -223,23 +227,23 @@ public:
     // getters
     /*! \brief Get the filtration size.
      */
-    size_t get_filtration_size () const { return _filtration.size();}
+    std::size_t get_filtration_size () const { return _filtration.size();}
 
     /*! \brief Get the cell (that is cell index and dimension) at the index `i` of the filtration.
      */
-    CellDim get_cell_dim (size_t i) const { return _filtration.at(i); }
+    CellDim get_cell_dim (std::size_t i) const { return _filtration.at(i); }
 
     /*! \brief Get the degree of the `i`th element of the filtration.
      */
-    DegreeType get_degree (size_t i) const { return _deg.at(i); }
+    DegreeType get_degree (std::size_t i) const { return _deg.at(i); }
 
     // Output filtration
     /*! \brief Overload of the `<<`operator for filtrations.
      */
-    friend ostream & operator<<(ostream & out, const Filtration_core &f)
+    friend std::ostream & operator<<(std::ostream & out, const Filtration_core &f)
     {
-        const size_t N(f._filtration.size()) ;
-        for (size_t i=0; i<N; ++i)
+        const std::size_t N(f._filtration.size()) ;
+        for (std::size_t i=0; i<N; ++i)
             // Filtration_core
         {
             out << i << " -> (" << f._filtration.at(i).first << "- dim " << f._filtration.at(i).second << " , " << f._deg.at(i) << ") " << std::endl ;
@@ -254,15 +258,15 @@ public:
      *
      * \returns A vector containing, for each dimension, the vector of labels by cell index.
      */
-    vector<vector<size_t> > export_filtration () const
+    vector<vector<std::size_t> > export_filtration () const
     {
-        vector<vector<size_t> > labels(_K.dim()+1) ;
+        vector<vector<std::size_t> > labels(_K.dim()+1) ;
         for (int q=0; q<=this->_K.dim(); ++q)
         {
-            for (size_t i = 0; i<this->_K.nb_cells(q); ++i)
+            for (std::size_t i = 0; i<this->_K.nb_cells(q); ++i)
             {
                 const CellDim cell(i,q) ;
-                const size_t t(_cell_to_t.at(cell));
+                const std::size_t t(_cell_to_t.at(cell));
                 labels.at(q).push_back(t) ;
             }
         }
@@ -287,7 +291,7 @@ protected:
 template <typename CoefficientType, typename ComplexType, typename DegreeType>
 void Filtration_core<CoefficientType, ComplexType, DegreeType>::build_filtration_structure()
 {
-    for (size_t i = 0; i<_filtration.size(); ++i)
+    for (std::size_t i = 0; i<_filtration.size(); ++i)
     {
         const CellDim c(_filtration.at(i)) ;
         // c : filtration index i, index in the basis reordered by filtration : j
@@ -299,17 +303,17 @@ template <typename CoefficientType, typename ComplexType, typename DegreeType>
 bool Filtration_core<CoefficientType, ComplexType, DegreeType>::is_valid_filtration() const
 {
     bool valid = true ;
-    for (size_t i=0; i<_filtration.size() && valid; ++i)
+    for (std::size_t i=0; i<_filtration.size() && valid; ++i)
     {
         if (i>0)
             valid = valid & (_deg.at(i) >= _deg.at(i-1)) ;
         CellDim c(_filtration.at(i)) ;
-        cout << i << " -> " << c.first << " dim "<< c.second << endl ;
+        std::cout << i << " -> " << c.first << " dim "<< c.second << std::endl ;
         const int q = c.second ;
         if (q>0)
         {
             CChain dc = _K.d(c.first, q) ;
-            cout << "bnd : " << dc << endl ;
+            std::cout << "bnd : " << dc << std::endl ;
             for (typename CChain::iterator it = dc.begin(); it != dc.end() && valid; ++it)
             {
                 // Faces of c
@@ -318,15 +322,15 @@ bool Filtration_core<CoefficientType, ComplexType, DegreeType>::is_valid_filtrat
                 auto it_face(_cell_to_t.find(face)) ;
                 valid = valid & (it_face != _cell_to_t.end()) ;
                 if (!valid)
-                    cout << "face not found" << endl ;
+                    std::cout << "face not found" << std::endl ;
                 if (it_face != _cell_to_t.end())
                     valid = valid & (_cell_to_t[face] < i) ;
                 if (!valid)
-                    cout << "face " << it->first << " at time : " << _cell_to_t[face] << " with i : " << i << endl ;
+                    std::cout << "face " << it->first << " at time : " << _cell_to_t[face] << " with i : " << i << std::endl ;
             }
         }
         if (!valid)
-            cout << "check failed : " << i << endl ;
+            std::cout << "check failed : " << i << std::endl ;
     }
     return valid ;
 }

@@ -21,6 +21,7 @@
 #include <vector>
 #include <map>
 #include <set>
+#include <cmath>
 
 namespace CGAL {
 namespace HDVF {

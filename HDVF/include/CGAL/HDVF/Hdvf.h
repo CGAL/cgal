@@ -309,7 +309,7 @@ public:
      * \param[in] chain The cycle to annotate in the homology basis.
      * \param[in] dim Dimension of the cycle.
      */
-    HDVF_coreT::CChain get_annotation(HDVF_coreT::CChain chain, int dim) const
+    typename HDVF_coreT::CChain get_annotation(typename HDVF_coreT::CChain chain, int dim) const
     {
         // Check that the chain is a cycle (must belong to the kernel of the boundary operator)
         typename HDVF_coreT::CChain bnd(this->_DD_col.at(dim) * chain) ;
@@ -332,7 +332,7 @@ public:
      * \param[in] chain The co-cycle to annotate in the homology basis.
      * \param[in] dim Dimension of the co-cycle.
      */
-    HDVF_coreT::RChain get_coannotation(HDVF_coreT::RChain chain, int dim) const
+    typename HDVF_coreT::RChain get_coannotation(typename HDVF_coreT::RChain chain, int dim) const
     {
         // Check that the chain is a co-cycle (must belong to the kernel of the boundary operator)
         typename HDVF_coreT::RChain bnd(chain * this->_DD_col.at(dim+1)) ;
