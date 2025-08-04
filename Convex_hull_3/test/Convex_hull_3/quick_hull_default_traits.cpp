@@ -23,11 +23,11 @@ using namespace CGAL::Convex_hull_3::internal;
 
 int main()
 {
-  static_assert(std::is_same<CGAL::Convex_hull_traits_3<EPEC>,Default_traits_for_Chull_3<EPEC::Point_3>::type>::value);
-  static_assert(std::is_same<CGAL::Convex_hull_traits_3<SCD>,Default_traits_for_Chull_3<SCD::Point_3>::type>::value);
-  static_assert(std::is_same<CGAL::Convex_hull_traits_3<SHD>,Default_traits_for_Chull_3<SHD::Point_3>::type>::value);
-  static_assert(std::is_same<CGAL::Convex_hull_traits_3<SCR>,Default_traits_for_Chull_3<SCR::Point_3>::type>::value);
-  static_assert(std::is_same<CGAL::Convex_hull_traits_3<EPEC>,Default_traits_for_Chull_3<EPEC::Point_3>::type>::value);
+  static_assert(std::is_same<EPEC,Default_traits_for_Chull_3<EPEC::Point_3>::type>::value);
+  static_assert(std::is_same<SCD,Default_traits_for_Chull_3<SCD::Point_3>::type>::value);
+  static_assert(std::is_same<SHD,Default_traits_for_Chull_3<SHD::Point_3>::type>::value);
+  static_assert(std::is_same<SCR,Default_traits_for_Chull_3<SCR::Point_3>::type>::value);
+  static_assert(std::is_same<EPEC,Default_traits_for_Chull_3<EPEC::Point_3>::type>::value);
   static_assert(std::is_same<CGAL::Convex_hull_traits_3<EPIC, CGAL::Default, CGAL::Tag_true>,Default_traits_for_Chull_3<EPIC::Point_3>::type>::value);
   static_assert(std::is_same<Is_on_positive_side_of_plane_3<CGAL::Convex_hull_traits_3<EPIC, CGAL::Default, CGAL::Tag_true>, std::true_type >::Protector,CGAL::Protect_FPU_rounding<true> >::value);
   return 0;
