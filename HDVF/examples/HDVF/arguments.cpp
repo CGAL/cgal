@@ -39,10 +39,10 @@ void usage()
 Options read_arguments_hdvf(int argc, char** argv)
 {
     Options opt_res ;
-    
+
     // Minumum number of arguments: 2
     // HDVF_algorithm file
-    
+
     if (argc <= 2)
     {
         cout << "HDVF wrong number of arguments. HDVF -h for help" << endl ;
@@ -54,7 +54,7 @@ Options read_arguments_hdvf(int argc, char** argv)
     {
         std::stringstream string_parse(algo);
         std::string tmp_word;
-        
+
         std::getline(string_parse, tmp_word, '/') ;
         word1 = tmp_word ;
         while(std::getline(string_parse, tmp_word, '/'))
@@ -62,7 +62,7 @@ Options read_arguments_hdvf(int argc, char** argv)
             word1 = tmp_word ;
         }
     }
-    
+
     if (word1.compare("hdvf") == 0)
         opt_res.algorithm = Algorithm::HDVF ;
     else if (word1.compare("dual_hdvf") == 0)
@@ -74,7 +74,7 @@ Options read_arguments_hdvf(int argc, char** argv)
         cerr << "HDVF algorithm unknown. HDVF -h for help" << endl ;
         throw "HDVF algorithm unknown" ;
     }
-    
+
     // Read in_file from argv[argc-1] ;
     opt_res.in_file = argv[argc-1] ;
     // Deduce the file type from the file name
@@ -83,7 +83,7 @@ Options read_arguments_hdvf(int argc, char** argv)
         // Get the file name (last word of the path - separated by /)
         std::stringstream string_parse(opt_res.in_file);
         std::string tmp_word;
-        
+
         std::getline(string_parse, tmp_word, '/') ;
         word = tmp_word ;
         while(std::getline(string_parse, tmp_word, '/'))
@@ -96,7 +96,7 @@ Options read_arguments_hdvf(int argc, char** argv)
         string filename = word ;
         std::stringstream string_parse(filename);
         std::string tmp_word;
-        
+
         std::getline(string_parse, tmp_word, '.') ;
         word = tmp_word ;
         while(std::getline(string_parse, tmp_word, '.'))
@@ -118,8 +118,8 @@ Options read_arguments_hdvf(int argc, char** argv)
         cerr << "HDVF input format unkown. HDVF -h for help" << endl ;
         throw "HDVF input format unknown" ;
     }
-    
-    
+
+
     // Read next options
     for(int i = 1; i<argc-1; ++i)
     {
@@ -309,11 +309,11 @@ Options read_arguments_hdvf(int argc, char** argv)
 ostream& operator<< (ostream& out, const Options& opt)
 {
     out << "outfile_root: " << opt.outfile_root << endl ;
-    
+
     out << "in_file: " << opt.in_file << endl ;
-    
+
     out << "algorithm: " << opt.comment() << endl ;
-    
+
     out << "in_format: " ;
     if (opt.in_format == InputFormat::OFF)
         out << "OFF" ;
@@ -324,7 +324,7 @@ ostream& operator<< (ostream& out, const Options& opt)
     else if (opt.in_format == InputFormat::PGM)
         out << "PGM" ;
     out << endl ;
-    
+
     out << "HDVF_opt: " ;
     if (opt.HDVF_opt == OPT_FULL)
         out << "OPT_FULL" ;
@@ -335,7 +335,7 @@ ostream& operator<< (ostream& out, const Options& opt)
     else if (opt.HDVF_opt == OPT_BND)
         out << "OPT_BND" ;
     out << endl ;
-    
+
     out << "scalar: " << opt.scalar << endl ;
     out << "with_export: " << opt.with_export << endl ; // Export reduction information to a file
     out << "with_vtk_export: " << opt.with_vtk_export << endl ; // Export generators/cogenerators and PSC labels as vtk

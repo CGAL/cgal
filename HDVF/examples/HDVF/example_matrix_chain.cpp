@@ -10,12 +10,12 @@ int main ()
 {
     // Create a column-major sparse matrix
     CMatrix M(5,4) ;
-    
+
     // Fill coefficients
     CGAL::OSM::set_coef(M, 0, 1, 1) ;
     CGAL::OSM::set_coef(M, 0, 2, -1) ;
     CGAL::OSM::set_coef(M, 2, 1, 2) ;
-    
+
     // Iterate over non empty columns
     for(CGAL::OSM::Bitboard::iterator it_col = M.begin(); it_col != M.end(); ++it_col)
     {
@@ -30,6 +30,6 @@ int main ()
     }
     // Direct output of the matrix with << operator
     std::cout << "M: " << M << std::endl;
-    
+
     return 0 ;
 }

@@ -67,7 +67,7 @@ void mesh_complex_output(const MeshType& mesh, const ComplexType& complex, const
         // Mesh
         std::cout << "----> mesh informations" << std::endl ;
         mesh.print_infos() ;
-        
+
         // Complex
         std::cout << "----> complex informations" << std::endl ;
         complex.print_complex();
@@ -79,11 +79,11 @@ CGAL::HDVF::Hdvf_persistence<CoefficientType, ComplexType, DegType, FiltrationTy
 {
     typedef CGAL::HDVF::Hdvf_persistence<CoefficientType, ComplexType, DegType, FiltrationType> HDVFType ;
     HDVFType& hdvf(*(new HDVFType(complex, f, options.HDVF_opt, options.with_vtk_export)));
-    
+
     std::cout << "----> START computing persistent homology" << std::endl ;
     hdvf.compute_perfect_hdvf() ;
     std::cout << "------> END computing persistent homology" << std::endl ;
-    
+
     if (options.with_output)
     {
         std::cout << "----> perHDVF" << std::endl ;
@@ -107,9 +107,9 @@ CGAL::HDVF::Hdvf_persistence<CoefficientType, ComplexType, DegType, FiltrationTy
         hdvf.print_hdvf_persistence_info(out);
         out << "----> reduction" << std::endl ;
         hdvf.print_reduction(out) ;
-        
+
         out.close() ;
-        
+
         std::string file_per(options.outfile_root+"_per.txt") ;
         std::ofstream out_per ( file_per, std::ios::out | std::ios::trunc);
 
@@ -119,7 +119,7 @@ CGAL::HDVF::Hdvf_persistence<CoefficientType, ComplexType, DegType, FiltrationTy
         }
         out_per << "----> persistent diagram" << std::endl ;
         out_per << hdvf ;
-        
+
         out_per.close() ;
     }
     return hdvf ;
@@ -147,7 +147,7 @@ FiltrationType& build_filtration(const ComplexType& complex, const Options& opti
     // Use deg_fun defined above
     deg_function = (deg_fun(complex)) ;
 #endif
-    
+
     std::cout << "----> START building filtration" << std::endl ;
     Filtration& f = *(new Filtration(complex, deg_function)) ;
     std::cout << "------> END building filtration" << std::endl ;
@@ -163,19 +163,19 @@ void main_code (const Options &options)
     {
 //        using ComplexType = AbstractSimpComplex<CoefficientType>  ;
 //        using HDVFType = HDVF<CoefficientType, ComplexType> ;
-//        
+//
 //        // MeshObject
 //        MeshObject mesh ;
 //        mesh.read_simp(options.in_file) ;
-//        
+//
 //        // Complex
 //        ComplexType complex(mesh);
-//        
+//
 //        mesh_complex_output<MeshObject, ComplexType>(mesh, complex, options) ;
-//        
+//
 //        // HDVF computation, export, output
 //        HDVFType hdvf(HDVF_comput<CoefficientType,ComplexType>(complex, options)) ;
-//        
+//
 //        // Export to vtk
 //        // None for SIMP format
         std::cout << "not yet..." << std::endl ;
@@ -187,22 +187,22 @@ void main_code (const Options &options)
         using ComplexType = CGAL::HDVF::Simplicial_chain_complex<CoefficientType> ;
         using FiltrationType = CGAL::HDVF::Filtration_lower_star<CoefficientType, ComplexType, DegType> ;
         using HDVFType = CGAL::HDVF::Hdvf_persistence<CoefficientType, ComplexType,DegType, FiltrationType> ;
-        
+
         // MeshObject
         CGAL::HDVF::Mesh_object_io mesh ;
         mesh.read_off(options.in_file) ;
-        
+
         // Complex
         ComplexType complex(mesh, mesh.get_nodes());
-        
+
         // Build filtration
         FiltrationType& f(build_filtration<CoefficientType, ComplexType, DegType, FiltrationType>(complex, options)) ;
-        
+
         mesh_complex_output<CGAL::HDVF::Mesh_object_io, ComplexType>(mesh, complex, options) ;
-        
+
         // HDVF computation, export, output
         HDVFType& hdvf(per_HDVF_comput<CoefficientType,ComplexType,DegType, FiltrationType>(complex,f, options)) ;
-        
+
         // Export to vtk
         if (options.with_vtk_export)
         {
@@ -216,7 +216,7 @@ void main_code (const Options &options)
         using ComplexType = CGAL::HDVF::Cubical_chain_complex<CoefficientType> ;
         using FiltrationType = CGAL::HDVF::Filtration_lower_star<CoefficientType, ComplexType, DegType> ;
         using HDVFType = CGAL::HDVF::Hdvf_persistence<CoefficientType, ComplexType, DegType, FiltrationType> ;
-        
+
         CGAL::HDVF::Cub_object_io mesh ;
         typename ComplexType::typeComplexCube primal_dual(ComplexType::PRIMAL) ;
         if (options.primal)
@@ -234,18 +234,18 @@ void main_code (const Options &options)
                 mesh.read_cub(options.in_file, false) ; // Read with pixel coordinates (for dual)
             primal_dual = ComplexType::DUAL ;
         }
-        
+
         // Complex
         ComplexType complex(mesh, primal_dual);
-        
+
         mesh_complex_output<CGAL::HDVF::Cub_object_io, ComplexType>(mesh, complex, options) ;
-        
+
         // Build filtration
         FiltrationType& f(build_filtration<CoefficientType, ComplexType, DegType, FiltrationType>(complex, options)) ;
-        
+
         // HDVF computation, export, output
         HDVFType& hdvf(per_HDVF_comput<CoefficientType,ComplexType,DegType,FiltrationType>(complex,f, options)) ;
-        
+
         // Export to vtk
         if (options.with_vtk_export)
         {
@@ -265,10 +265,10 @@ int main(int argc, char **argv)
     {
         for (int i=0;i<argc; ++i)
             std::cout << "arg " << i << " : " << argv[i] << std::endl ;
-        
+
         Options options(read_arguments_hdvf(argc, argv)) ;
         std::cout << "options:" << std::endl << options ;
-        
+
         // ----- Definition of the CoefficientType
 #ifndef SCALAR
         if (options.scalar == 0)
@@ -289,7 +289,7 @@ int main(int argc, char **argv)
         typedef CGAL::HDVF::Zp<SCALAR> CoefficientType;
 #endif
     }
-    
+
     return 0 ;
 }
 
@@ -301,9 +301,9 @@ int main(int argc, char **argv)
 
 
 
-         
-    
 
 
 
-    
+
+
+
