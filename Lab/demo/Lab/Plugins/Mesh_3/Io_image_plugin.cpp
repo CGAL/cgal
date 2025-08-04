@@ -1523,7 +1523,7 @@ Image* Io_image_plugin::createDirectoryImage(const QString& dirname,
     std::vector<std::filesystem::path> paths;
     vtkStringArray* files = vtkStringArray::New();
     std::filesystem::path p(dirname.toUtf8().data());
-    for(std::filesystem::directory_entry& x : std::filesystem::directory_iterator(p))
+    for(const std::filesystem::directory_entry& x : std::filesystem::directory_iterator(p))
     {
       std::string s = x.path().string();
       if(CGAL::IO::internal::get_file_extension(s) != "bmp")
