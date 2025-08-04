@@ -537,7 +537,7 @@ PolyhedronSPtr CombiVertexSplitter::splitVertex(VertexSPtr vertex) {
             CGAL_SS3_SPLITTER_TRACE("Valid split-combination found: " << combiToString(combination));
             combinations_valid.push_back(combination);
             polys_split.push_back(poly_c);
-            std::cout << "Found valid combination" << std::endl;
+            CGAL_SS3_SPLITTER_TRACE("Found valid combination");
             // 'selected_combi_' is usually 0 => stop on the first valid combination
             if(polys_split.size() > selected_combi_) {
                 break;
