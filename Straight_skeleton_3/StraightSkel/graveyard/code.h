@@ -9976,6 +9976,34 @@ if ((src_y == CGAL::SMALLER && dst_y == CGAL::LARGER) ||
 
 
 
+    VertexSPtr third_l = this->next(facet_l)->dst(facet_l);
+    VertexSPtr third_r = this->next(facet_r)->dst(facet_r);
+    Point3SPtr p_s = vertex_src_->getPoint();
+    Point3SPtr p_d = vertex_dst_->getPoint();
+    Point3SPtr p_l = third_l->getPoint();
+    Point3SPtr p_r = third_r->getPoint();
+    std::cout << "L NV " << facet_l->vertices().size() << std::endl;
+    std::cout << "R NV " << facet_r->vertices().size() << std::endl;
+    std::cout << "ps: " << *p_s << std::endl;
+    std::cout << "pd: " << *p_d << std::endl;
+    std::cout << "pl: " << *p_l << std::endl;
+    std::cout << "pr: " << *p_r << std::endl;
+    CGAL_assertion(!CGAL::collinear(*p_s, *p_d, *p_l));
+    CGAL_assertion(!CGAL::collinear(*p_s, *p_d, *p_r));
+    if (CGAL::is_positive(CGAL::scalar_product(*p_r - *p_l, *normal_l))) {
+        result = true;
+    }
+
+
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+
+
+
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+
+
+
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
 
 
 

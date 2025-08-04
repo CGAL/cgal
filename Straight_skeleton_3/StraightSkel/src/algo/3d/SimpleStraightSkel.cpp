@@ -342,12 +342,20 @@ void SimpleStraightSkel::initEdgeEvent() {
 
 bool SimpleStraightSkel::isReflex(EdgeSPtr edge,
                                   const bool future_facing) {
+    if (edge->getReflexStatus()) {
+        // std::cout << "yes cache (high)" << std::endl;
+        return *(edge->getReflexStatus());
+    }
+
     bool result = false;
 
     VertexSPtr vertex_src = edge->getVertexSrc();
     VertexSPtr vertex_dst = edge->getVertexDst();
 
     if (*(vertex_src->getPoint()) == *(vertex_dst->getPoint())) {
+
+        // std::cout << "no cache [degen]" << std::endl;
+
         FacetSPtr facet_l = edge->getFacetL();
         FacetSPtr facet_r = edge->getFacetR();
         FacetSPtr facet_src = edge->getFacetSrc();

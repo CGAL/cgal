@@ -97,6 +97,7 @@ FacetSPtr Edge::getFacetL() const {
 
 void Edge::setFacetL(FacetSPtr facet) {
     this->facet_l_ = facet;
+    this->cachedReflexStatus_ = std::nullopt;
 }
 
 std::list<EdgeSPtr>::iterator Edge::getFacetLListIt() const {
@@ -113,6 +114,7 @@ FacetSPtr Edge::getFacetR() const {
 
 void Edge::setFacetR(FacetSPtr facet) {
     this->facet_r_ = facet;
+    this->cachedReflexStatus_ = std::nullopt;
 }
 
 std::list<EdgeSPtr>::iterator Edge::getFacetRListIt() const {
@@ -542,34 +544,40 @@ double Edge::angle() const {
     return result;
 }
 
+std::optional<bool> Edge::getReflexStatus() const {
+    return cachedReflexStatus_;
+}
+
 bool Edge::isReflex() const {
-    bool result = false;
-    if (*(vertex_src_->getPoint()) != *(vertex_dst_->getPoint()) &&
-            !facet_l_.expired() && !facet_r_.expired()) {
-        FacetSPtr facet_l = FacetSPtr(facet_l_);
-        FacetSPtr facet_r = FacetSPtr(facet_r_);
-        Plane3SPtr plane_l = facet_l->plane();
-        Plane3SPtr plane_r = facet_r->plane();
-        Vector3SPtr dir = KernelFactory::createVector3(line());
-        Vector3SPtr normal_l = KernelFactory::createVector3(plane_l);
-        Point3SPtr p_src = vertex_src_->getPoint();
-#ifdef USE_CGAL
-        CGAL_assertion(*normal_l != CGAL::NULL_VECTOR);
-        CGAL_assertion(*dir != CGAL::NULL_VECTOR);
-        Point3 p = (*p_src) + CGAL::cross_product(*normal_l, *dir);
-        if (plane_r->oriented_side(p) == CGAL::ON_POSITIVE_SIDE) {
-            result = true;
-        }
-#else
-        Point3 p = (*p_src) + normal_l->cross(*dir);
-        if (plane_r->side(p) > 0) {
-            result = true;
-        }
-#endif
-    } else {
-        CGAL_SS3_HDS_TRACE("Warning: Not able to determine if edge is reflex.");
-        CGAL_SS3_HDS_TRACE(toString());
+    CGAL_precondition(*(vertex_src_->getPoint()) != *(vertex_dst_->getPoint()));
+
+    if (cachedReflexStatus_) {
+        // std::cout << "yes cache (low)" << std::endl;
+        return *cachedReflexStatus_;
     }
+
+    // std::cout << "no cache" << std::endl;
+
+    bool result = false;
+
+    FacetSPtr facet_l = this->getFacetL();
+    FacetSPtr facet_r = this->getFacetR();
+    CGAL_precondition(bool(facet_l));
+    CGAL_precondition(bool(facet_r));
+
+    Plane3SPtr plane_l = facet_l->plane();
+    Vector3SPtr normal_l = KernelFactory::createVector3(plane_l);
+    Vector3SPtr dir = KernelFactory::createVector3(line());
+    Point3SPtr p_src = vertex_src_->getPoint();
+    CGAL_assertion(*normal_l != CGAL::NULL_VECTOR);
+    CGAL_assertion(*dir != CGAL::NULL_VECTOR);
+    Point3 p = (*p_src) + CGAL::cross_product(*normal_l, *dir);
+    Plane3SPtr plane_r = facet_r->plane();
+    if (plane_r->oriented_side(p) == CGAL::ON_POSITIVE_SIDE) {
+        result = true;
+    }
+    cachedReflexStatus_ = result;
+
     return result;
 }
 

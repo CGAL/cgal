@@ -18,8 +18,10 @@
 #define DATA_3D_EDGE_H
 
 #include "data/3d/ptrs.h"
+
 #include <list>
 #include <string>
+#include <optional>
 
 namespace data { namespace _3d {
 
@@ -107,6 +109,8 @@ public:
     void setID(int id);
 
     double angle() const;
+
+    std::optional<bool> getReflexStatus() const;
     bool isReflex() const;
 
     double angleTo(EdgeSPtr edge) const;
@@ -116,6 +120,7 @@ public:
 protected:
     Edge(VertexSPtr src, VertexSPtr dst);
     Edge(const Edge& edge);
+
     VertexSPtr vertex_src_;
     std::list<EdgeWPtr>::iterator vertex_src_list_it_;
     VertexSPtr vertex_dst_;
@@ -127,6 +132,8 @@ protected:
     PolyhedronWPtr polyhedron_;
     std::list<EdgeSPtr>::iterator polyhedron_list_it_;
     EdgeDataSPtr data_;
+
+    mutable std::optional<bool> cachedReflexStatus_;
 
     int id_;
 };
