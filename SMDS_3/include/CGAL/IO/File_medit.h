@@ -615,6 +615,117 @@ output_to_medit(std::ostream& os,
 
 } // end output_to_medit(...)
 
+
+template <class Tr,
+          class Vertices_range,
+          class Facets_range,
+          class Cells_range>
+void
+output_T3_to_medit(std::ostream& os,
+                const Tr& tr,
+                const Vertices_range& vertices,
+                const Facets_range& facets,
+                const Cells_range& cells)
+{
+  using std::size;
+  using Vertex_handle = typename Tr::Vertex_handle;
+
+  //-------------------------------------------------------
+  // File output
+  //-------------------------------------------------------
+
+  //-------------------------------------------------------
+  // Header
+  //-------------------------------------------------------
+  os << std::setprecision(17);
+
+  os << "MeshVersionFormatted 1\n"
+     << "Dimension 3\n";
+  os << "# CGAL::Mesh_complex_3_in_triangulation_3\n";
+
+  //-------------------------------------------------------
+  // Vertices
+  //-------------------------------------------------------
+
+  std::unordered_map<Vertex_handle, int> V;
+  int inum = 1;
+
+  std::ostringstream oss;
+  oss.precision(os.precision());
+  for(auto v: vertices) {
+    auto& v_num = V[v];
+    if(v_num != 0) return;
+    v_num = inum++;
+    const auto& p = tr.point(v);
+    oss << CGAL::to_double(p.x()) << ' '
+        << CGAL::to_double(p.y()) << ' '
+        << CGAL::to_double(p.z()) << ' '
+        << 0
+        << '\n';
+  }
+  os << "Vertices\n" << V.size() << "\n";
+  os << oss.str();
+
+
+  #if 1
+  //-------------------------------------------------------
+  // Facets
+  //-------------------------------------------------------
+  auto number_of_triangles = size(facets);
+ bool print_each_facet_twice = false;
+
+  if ( print_each_facet_twice )
+    number_of_triangles += number_of_triangles;
+
+  os << "Triangles\n"
+     << number_of_triangles << '\n';
+
+  for (auto f : facets) {
+    auto [c, index] = f;
+    // Apply priority among subdomains, to get consistent facet orientation per subdomain-pair interface.
+    if (print_each_facet_twice) {
+      auto mirror_facet = tr.mirror_facet(f);
+      [[maybe_unused]] auto [c2, _] = mirror_facet;
+      // NOTE: We mirror a facet when needed to make it consistent with Use_cell_indices_pmap.
+      if (true) /* AF ???? (get(cell_pmap, c) > get(cell_pmap, c2))*/ {
+        f = mirror_facet;
+      }
+    }
+
+    // Get facet vertices in CCW order.
+    auto [vh1, vh2, vh3] = tr.vertices(f);
+
+    os << V[vh1] << ' ' << V[vh2] << ' ' << V[vh3] << ' ';
+    os << 1 << '\n';
+
+    // Print triangle again if needed, with opposite orientation
+    if (print_each_facet_twice) {
+      os << V[vh3] << ' ' << V[vh2] << ' ' << V[vh1] << ' ';
+      os << 1 << '\n';
+    }
+  }
+#endif
+  //-------------------------------------------------------
+  // Tetrahedra
+  //-------------------------------------------------------
+  os << "Tetrahedra\n"
+     << size(cells) << '\n';
+  for (const auto& c : cells) {
+    for (auto v : tr.vertices(c))
+      os << V[v] << ' ';
+    os << 1 << '\n';
+  }
+
+  //-------------------------------------------------------
+  // End
+  //-------------------------------------------------------
+  os << "End\n";
+
+} // end output_T3_to_medit(...)
+
+
+
+
 template <class C3T3, Renumber_subdomain_indices renumber_subdomain_indices, Facet_indices no_patch>
 void
 output_to_medit(std::ostream& os,
