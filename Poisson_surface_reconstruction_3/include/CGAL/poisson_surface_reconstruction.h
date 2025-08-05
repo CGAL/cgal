@@ -62,12 +62,12 @@ namespace CGAL {
     point property map.
 
     \tparam Tag is a tag whose type affects the behavior of the
-    meshing algorithm (see `make_surface_mesh()`).
+    meshing algorithm (see  \ref Poisson_surface_reconstruction_3Contouring).
 
     \param begin iterator on the first point of the sequence.
     \param end past the end iterator of the point sequence.
-    \param point_map property map: value_type of `InputIterator` -> Point_3.
-    \param normal_map property map: value_type of `InputIterator` -> Vector_3.
+    \param point_map property map: value_type of `InputIterator` -> `Point_3`.
+    \param normal_map property map: value_type of `InputIterator` -> `Vector_3`.
     \param output_mesh where the reconstruction is stored.
     \param spacing size parameter.
     \param sm_angle bound for the minimum facet angle in degrees.
