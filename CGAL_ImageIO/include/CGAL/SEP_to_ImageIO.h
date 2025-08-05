@@ -55,7 +55,7 @@ public:
     display_information(fileName, std::cout);
 
     std::filesystem::path headerFile(fileName);
-    std::filesystem::path dataFile = std::filesystem::absolute(fileName).parent_path()  / std::filesystem::path("in");
+    std::filesystem::path dataFile = std::filesystem::absolute(fileName).parent_path()  / std::filesystem::path(string_field("in"));
 
     if(!load_data(dataFile.string())) {
       return;
