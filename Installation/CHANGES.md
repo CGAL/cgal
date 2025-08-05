@@ -1,5 +1,16 @@
 # Release History
 
+
+### [Shape Detection](https://doc.cgal.org/6.2/Manual/packages.html#PkgShapeDetection) 
+
+- Added the region type [`CGAL::Shape_detection::Polygon_mesh::Plane_face_region`](https://doc.cgal.org/6.2/Shape_detection/class_c_g_a_l_1_1_shape__detection_1_1_polygon__mesh_1_1_plane__face__region.html) that extends the support plane of the seed face without refitting the plane to the region
+- Added the region type [`CGAL::Shape_detection::Polygon_mesh::Line_segment_region`](https://doc.cgal.org/6.2/Shape_detection/classCGAL_1_1Shape__detection_1_1Segment__set_1_1Line__segment__region.html) that extends the support line of the seed segment without refitting the line to the region
+- Added the sorting [`CGAL::Shape_detection::Polygon_mesh::Face_area_sorting`](https://doc.cgal.org/6.2/Shape_detection/class_c_g_a_l_1_1_shape__detection_1_1_polygon__mesh_1_1_face__area__sorting.html) that provides a sorting of faces in descending order of area
+- Added the sorting [`CGAL::Shape_detection::Polygon_mesh::Segment_length_sorting`](https://doc.cgal.org/6.2/Shape_detection/classCGAL_1_1Shape__detection_1_1Segment__set_1_1Segment__length__sorting.html) that provides a sorting of segments in descending order of length
+- Added the named parameter `face_normal_map` to [`CGAL::Shape_detection::Polygon_mesh::Linear_least_squares_fit_region`](https://doc.cgal.org/6.2/Shape_detection/class_c_g_a_l_1_1_shape__detection_1_1_polygon__mesh_1_1_least__squares__plane__fit__region.html) ,[`CGAL::Shape_detection::Polygon_mesh::Plane_face_region`](https://doc.cgal.org/6.2/Shape_detection/class_c_g_a_l_1_1_shape__detection_1_1_polygon__mesh_1_1_plane__face__region.html) and [`CGAL::Polygon_mesh_processing::region_growing_of_planes_on_faces`](https://doc.cgal.org/6.2/Polygon_mesh_processing/group___pkg_polygon_mesh_processing_ref.html#ga50dcd2f6295f584d2e378b57290ae2af) to allow the use of face normal property maps instead of calculating the face normals.
+- The [`CGAL::Shape_detection::Polygon_mesh::Plane_face_region`](https://doc.cgal.org/6.2/Shape_detection/class_c_g_a_l_1_1_shape__detection_1_1_polygon__mesh_1_1_plane__face__region.html) and [`CGAL::Shape_detection::Polygon_mesh::Face_area_sorting`](https://doc.cgal.org/6.2/Shape_detection/class_c_g_a_l_1_1_shape__detection_1_1_polygon__mesh_1_1_face__area__sorting.html) are now used as the default in [`CGAL::Polygon_mesh_processing::region_growing_of_planes_on_faces`](https://doc.cgal.org/6.2/Polygon_mesh_processing/group___pkg_polygon_mesh_processing_ref.html#ga50dcd2f6295f584d2e378b57290ae2af)
+
+
 Release date: July 2025
 
 ## [Release 6.1](https://github.com/CGAL/cgal/releases/tag/v6.1)
@@ -144,13 +155,6 @@ Release date: July 2025
     obtained with the package [Poisson Surface Reconstruction](https://doc.cgal.org/6.1/Manual/packages.html#PkgPoissonSurfaceReconstruction3).
     This mesh domain re-integrates some optimizations for Poisson surface mesh generation that were lost
     when the package [3D Mesh Generation](https://doc.cgal.org/6.1/Manual/packages.html#PkgMesh3) had to be replaced instead of the deprecated package [3D Surface Mesh Generation](https://doc.cgal.org/latest/Manual/packages.html#PkgSurfaceMesher3).
-
-### [Shape Detection](https://doc.cgal.org/6.1/Manual/packages.html#PkgShapeDetection) 
-
-- Added the region type [`CGAL::Shape_detection::Polygon_mesh::Plane_face_region`](https://doc.cgal.org/6.1/Shape_detection/class_c_g_a_l_1_1_shape__detection_1_1_polygon__mesh_1_1_plane__face__region.html) that extends the support plane of the seed face without refitting the plane to the region
-- Added the sorting [`CGAL::Shape_detection::Polygon_mesh::Face_area_sorting`](https://doc.cgal.org/6.1/Shape_detection/class_c_g_a_l_1_1_shape__detection_1_1_polygon__mesh_1_1_face__area__sorting.html) that provides a sorting of faces in descending order of area
-- Added the named parameter `face_normal_map` to [`CGAL::Shape_detection::Polygon_mesh::Linear_least_squares_fit_region`](https://doc.cgal.org/6.1/Shape_detection/class_c_g_a_l_1_1_shape__detection_1_1_polygon__mesh_1_1_least__squares__plane__fit__region.html) ,[`CGAL::Shape_detection::Polygon_mesh::Plane_face_region`](https://doc.cgal.org/6.1/Shape_detection/class_c_g_a_l_1_1_shape__detection_1_1_polygon__mesh_1_1_plane__face__region.html) and [`CGAL::Polygon_mesh_processing::region_growing_of_planes_on_faces`](https://doc.cgal.org/6.1/Polygon_mesh_processing/group___pkg_polygon_mesh_processing_ref.html#ga50dcd2f6295f584d2e378b57290ae2af) to allow the use of face normal property maps instead of calculating the face normals.
-- The [`CGAL::Shape_detection::Polygon_mesh::Plane_face_region`](https://doc.cgal.org/6.1/Shape_detection/class_c_g_a_l_1_1_shape__detection_1_1_polygon__mesh_1_1_plane__face__region.html) and [`CGAL::Shape_detection::Polygon_mesh::Face_area_sorting`](https://doc.cgal.org/6.1/Shape_detection/class_c_g_a_l_1_1_shape__detection_1_1_polygon__mesh_1_1_face__area__sorting.html) are now used as the default in [`CGAL::Polygon_mesh_processing::region_growing_of_planes_on_faces`](https://doc.cgal.org/6.1/Polygon_mesh_processing/group___pkg_polygon_mesh_processing_ref.html#ga50dcd2f6295f584d2e378b57290ae2af)
 
 ### Triangulations
 -   All triangulations now offer the functions `point(Vertex_handle)` and `point(Simplex, int)`, which enables users to access the geometric position of a vertex and of the i-th vertex of a simplex of a triangulation.
