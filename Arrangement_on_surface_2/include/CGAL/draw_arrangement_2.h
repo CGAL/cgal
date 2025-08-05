@@ -147,8 +147,7 @@ public:
   /// Add a face.
   void add_face(Face_const_handle face) {
     // std::cout << "add_face()\n";
-    for(Inner_ccb_const_iterator it = face->inner_ccbs_begin(); it != face->inner_ccbs_end(); ++it)
-      add_ccb(*it);
+    for(Inner_ccb_const_iterator it = face->inner_ccbs_begin(); it != face->inner_ccbs_end(); ++it) add_ccb(*it);
 
     for(Outer_ccb_const_iterator it = face->outer_ccbs_begin(); it != face->outer_ccbs_end(); ++it) {
       add_ccb(*it);
@@ -162,8 +161,7 @@ public:
     auto curr = circ;
     do {
       auto new_face = curr->twin()->face();
-      if(m_visited.find(new_face) != m_visited.end())
-        continue;
+      if(m_visited.find(new_face) != m_visited.end()) continue;
       m_visited[new_face] = true;
       add_face(new_face);
     } while(++curr != circ);
@@ -198,10 +196,8 @@ public:
 
     do {
       // Skip halfedges that are "antenas":
-      while(curr->face() == curr->twin()->face())
-        curr = curr->twin()->next();
-      while(curr->face() == curr->twin()->face())
-        curr = curr->twin()->next();
+      while(curr->face() == curr->twin()->face()) curr = curr->twin()->next();
+      while(curr->face() == curr->twin()->face()) curr = curr->twin()->next();
       draw_region_impl1(*traits, curr);
       curr = curr->next();
     } while(curr != ext);
@@ -258,12 +254,10 @@ public:
     double error(0.01); // TODO? (this->pixel_ratio());
     bool l2r = curr->direction() == ARR_LEFT_TO_RIGHT;
     approx(curr->curve(), error, std::back_inserter(polyline), l2r);
-    if(polyline.empty())
-      return;
+    if(polyline.empty()) return;
     auto it = polyline.begin();
     auto prev = it++;
-    for(; it != polyline.end(); prev = it++)
-      m_gs.add_point_in_face(*prev);
+    for(; it != polyline.end(); prev = it++) m_gs.add_point_in_face(*prev);
   }
 
   /*! Draw an exact curve.
@@ -288,8 +282,7 @@ public:
   /// Add all faces.
   template <typename Traits>
   void add_faces(const Traits&) {
-    for(auto it = m_aos.unbounded_faces_begin(); it != m_aos.unbounded_faces_end(); ++it)
-      add_face(it);
+    for(auto it = m_aos.unbounded_faces_begin(); it != m_aos.unbounded_faces_end(); ++it) add_face(it);
   }
 
   /// Compile time dispatching
@@ -387,8 +380,7 @@ public:
     // Find the first halfedge directed from left to right
     auto curr = circ;
     do
-      if(curr->direction() == CGAL::ARR_LEFT_TO_RIGHT)
-        break;
+      if(curr->direction() == CGAL::ARR_LEFT_TO_RIGHT) break;
     while(++curr != circ);
     Halfedge_const_handle ext = curr;
 
@@ -396,15 +388,13 @@ public:
     //  such that there is no other halfedge underneath.
     do {
       // Discard edges not directed from left to right:
-      if(curr->direction() != CGAL::ARR_LEFT_TO_RIGHT)
-        continue;
+      if(curr->direction() != CGAL::ARR_LEFT_TO_RIGHT) continue;
 
       auto res = cmp_xy(curr->source()->point(), ext->source()->point());
 
       // Discard the edges inciden to a point strictly larger than the point
       // incident to the stored extreme halfedge:
-      if(res == LARGER)
-        continue;
+      if(res == LARGER) continue;
 
       // Store the edge inciden to a point strictly smaller:
       if(res == SMALLER) {
@@ -413,8 +403,7 @@ public:
       }
 
       // The incident points are equal; compare the halfedges themselves:
-      if(cmp_y(curr->curve(), ext->curve(), curr->source()->point()) == SMALLER)
-        ext = curr;
+      if(cmp_y(curr->curve(), ext->curve(), curr->source()->point()) == SMALLER) ext = curr;
     } while(++curr != circ);
 
     return ext;
@@ -426,11 +415,9 @@ public:
     // std::cout << "ratio: " << this->pixel_ratio() << std::endl;
     m_visited.clear();
 
-    if(m_aos.is_empty())
-      return;
+    if(m_aos.is_empty()) return;
 
-    if(m_gso.are_faces_enabled())
-      add_faces(*(this->m_aos.geometry_traits()));
+    if(m_gso.are_faces_enabled()) add_faces(*(this->m_aos.geometry_traits()));
 
     // Add edges that do not separate faces.
     if(m_gso.are_edges_enabled()) {
@@ -474,8 +461,7 @@ public:
     std::vector<typename Gt::Approximate_point_2> polyline;
     double error(0.01); // TODO? (this->pixel_ratio());
     approx(curve, error, std::back_inserter(polyline));
-    if(polyline.empty())
-      return;
+    if(polyline.empty()) return;
     auto it = polyline.begin();
     auto prev = it++;
     for(; it != polyline.end(); prev = it++) {

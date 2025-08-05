@@ -64,8 +64,9 @@ template <typename GeomTraits>
 class Arr_bounds_context_mixin
 {
   using Geom_traits = GeomTraits;
-  using Approx_point = typename Geom_traits::Approximate_point_2;
-  using Approx_nt = typename Geom_traits::Approximate_number_type;
+  using Approx_traits = Arr_approximate_traits<Geom_traits>;
+  using Point_geom = typename Approx_traits::Point_geom;
+  using Approx_nt = typename Approx_traits::Approx_nt;
 
 protected:
   Arr_bounds_context_mixin(const Bbox_2& bbox)
@@ -80,9 +81,9 @@ public:
 
   bool contains_x(Approx_nt x) const { return xmin() <= x && x <= xmax(); }
   bool contains_y(Approx_nt y) const { return ymin() <= y && y <= ymax(); }
-  bool contains(Approx_point pt) const { return contains_x(pt.x()) && contains_y(pt.y()); }
+  bool contains(Point_geom pt) const { return contains_x(pt.x()) && contains_y(pt.y()); }
 
-  bool is_on_boundary(Approx_point pt) const {
+  bool is_on_boundary(Point_geom pt) const {
     return (pt.x() == xmin() || pt.x() == xmax()) && contains_y(pt.y()) ||
            (pt.y() == ymin() || pt.y() == ymax()) && contains_x(pt.x());
   }
@@ -94,21 +95,17 @@ private:
 template <typename Arrangement>
 class Arr_render_context : public Arr_cancellable_context_mixin
 {
-  using Point_location = Arr_trapezoid_ric_point_location<Arrangement>;
-  using Feature_portals_map = typename Arr_portals<Arrangement>::Feature_portals_map;
   using Cancellable_context_mixin = Arr_cancellable_context_mixin;
   using Geom_traits = typename Arrangement::Geometry_traits_2;
+  using Portals = Arr_portals<Arrangement>;
+  using Feature_portals_map = typename Portals::Feature_portals_map;
 
 public:
-  Arr_render_context(const Arrangement& arr,
-                     const Point_location& pl,
-                     const Feature_portals_map& feature_portals,
-                     double approx_error)
+  Arr_render_context(const Arrangement& arr, const Feature_portals_map& portals_map, double approx_error)
       : Cancellable_context_mixin()
       , m_arr(arr)
       , m_traits(*arr.geometry_traits())
-      , m_point_location(pl)
-      , m_feature_portals(feature_portals)
+      , m_portals_map(portals_map)
       , m_approx_error(approx_error) {
 #if defined(CGAL_DRAW_AOS_DEBUG) && defined(CGAL_DRAW_AOS_TRIANGULATOR_DEBUG_FILE_DIR)
     std::filesystem::path debug_file_dir(CGAL_DRAW_AOS_TRIANGULATOR_DEBUG_FILE_DIR);
@@ -121,8 +118,7 @@ public:
   const double m_approx_error;
   const Arrangement& m_arr;
   const Geom_traits& m_traits;
-  const Point_location& m_point_location;
-  const Feature_portals_map& m_feature_portals;
+  const Feature_portals_map& m_portals_map;
 
 #if defined(CGAL_DRAW_AOS_DEBUG)
   std::shared_ptr<int> debug_counter = std::make_shared<int>(0);
