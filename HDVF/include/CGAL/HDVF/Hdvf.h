@@ -30,12 +30,12 @@ namespace HDVF {
 
  The class `Hdvf` implements homology and cohomology computation via homological discrete vector fields (%HDVF for short). It derives from `Hdvf_core` and shares all its data and methods.
 
- But besides construction operations and methods (using the A operation), the `Hdvf` class implements four other HDVF operations: R, M, W and MW together with appropriate "find_pair()" functions. These operations change the %HDVF (that is change homology / cohomology generators) and thus provide a convenient tool to move inside the "space of homology/cohomology computations".
+ But besides construction operations and methods (using the `A()` operation), the `Hdvf` class implements four other HDVF operations: R, M, W and MW together with appropriate "find_pair()" functions. These operations change the %HDVF (that is change homology / cohomology generators) and thus provide a convenient tool to move inside the "space of homology/cohomology computations".
 
-- `R()` operation is the "dual" of the A pairing operation (it cancels the pairing and turns back a PRIMARY/SECONDARY pair into a pair of CRITICAL cells)
-- `M()` operation exchanges a PRIMARY \f$\pi\f$ and a CRITICAL cell \f$\gamma\f$ (under conditions) and modifies the homology generator associated to \f$\gamma\f$ (while preserving is associated cohomology generator)
-- `W()` operation exchanges a SECONDARY \f$\sigma\f$ and a CRITICAL cell \f$\gamma\f$ (under conditions) and modifies the cohomology generator associated to \f$\gamma\f$ (while preserving is associated homology generator)
-- `MW()` operation exchanges a PRIMARY \f$\pi\f$ and a SECONDARY cell \f$\sigma\f$ (under conditions). See the introduction to HDVF for more details on this operation.
+- `R()` operation is the "dual" of the A pairing operation (it cancels the pairing and turns back a `PRIMARY`/`SECONDARY` pair into a pair of `CRITICAL` cells)
+- `M()` operation exchanges a `PRIMARY` \f$\pi\f$ and a `CRITICAL` cell \f$\gamma\f$ (under conditions) and modifies the homology generator associated to \f$\gamma\f$ (while preserving is associated cohomology generator)
+- `W()` operation exchanges a `SECONDARY` \f$\sigma\f$ and a `CRITICAL` cell \f$\gamma\f$ (under conditions) and modifies the cohomology generator associated to \f$\gamma\f$ (while preserving is associated homology generator)
+- `MW()` operation exchanges a `PRIMARY` \f$\pi\f$ and a `SECONDARY` cell \f$\sigma\f$ (under conditions). See the introduction to HDVF for more details on this operation.
 
 Using appropriate combinations of such operations, one can change a HDVF until corresponding homology or cohomology generators meet a given basis or delineate a hole.
 
@@ -46,7 +46,7 @@ Using appropriate combinations of such operations, one can change a HDVF until c
  <img src="HDVF_op1_g2.png" align="center" width=30%/>
  <img src="HDVF_op1_g3.png" align="center" width=30%/>
 
- A W operation between cells of Khalimsky coordinates \f$\sigma = (3,2)\f$ (CRITICAL) and \f$\tau=(5,2)\f$ (SECONDARY) produces the following HDVF (homology generators did not change; note that cohomology generators are modified):
+ A W operation between cells of Khalimsky coordinates \f$\sigma = (3,2)\f$ (`CRITICAL`) and \f$\tau=(5,2)\f$ (`SECONDARY`) produces the following HDVF (homology generators did not change; note that cohomology generators are modified):
 
  <img src="HDVF_op2_W7_11.png" align="center" width=50%/>
 
@@ -54,7 +54,7 @@ Using appropriate combinations of such operations, one can change a HDVF until c
  <img src="HDVF_op2_g2.png" align="center" width=30%/>
  <img src="HDVF_op2_g3.png" align="center" width=30%/>
 
- Then, a MW operation between cells of Khalimsky coordinates \f$\sigma' = (4,1)\f$ (PRIMARY) and \f$\tau=(3,2)\f$ (SECONDARY) produces the following HDVF where homology generators become "minimal":
+ Then, a MW operation between cells of Khalimsky coordinates \f$\sigma' = (4,1)\f$ (`PRIMARY`) and \f$\tau=(3,2)\f$ (`SECONDARY`) produces the following HDVF where homology generators become "minimal":
 
  <img src="HDVF_op3_MW5_7.png" align="center" width=50%/>
 
@@ -63,7 +63,7 @@ Using appropriate combinations of such operations, one can change a HDVF until c
  <img src="HDVF_op3_g3.png" align="center" width=30%/>
 
  Perfect HDVFs provide various topological results:
- - Betti numbers: are well known topological descriptors (providing the number of holes in each dimension). For a perfect HDVF, Betti numbers equal the number of critical cells (that can be obtained through `get_flag()` or `get_flag_dim()` with the `CRITICAL` flag as argument).
+ - Betti numbers: are well known topological descriptors (providing the number of holes in each dimension). For a perfect HDVF, Betti numbers equal the number of critical cells (that can be obtained through `get_flag()` or `get_flag_dim()` with the ``CRITICAL`` flag as argument).
  - Homology/cohomology generators are actually algebraic objects, namely chains. Methods `get_homology_chain()` and `get_cohomology_chain()` return the homology and cohomology generator chain associated to a given critical cell. VTK export functions output all the cells of such chains with non zero coefficients. Figures here above illustrate such homology and co-homology generators.
  - Homology/cohomology annotation: use `get_annotation()` or `get_coannotation()` to get the annotation/co-annotation of a cycle/co-cycle in the homology/cohomology basis (as a chain of critical cells).
  - Homology/cohomology comparison: use `are_same_cycles()` or `are_same_cocycles()` to check if two cycles (or co-cycles) belong to the same homology / cohomology class.
@@ -116,45 +116,45 @@ public:
     // findPair functions for M
 
     /**
-     * \brief Find a valid PairCell of dimension q for M.
+     * \brief Finds a valid PairCell of dimension q for M.
      *
-     * The function searches a pair of cells \f$(\pi, \gamma)\f$ with \f$\pi\f$ PRIMARY and \f$\gamma\f$ CRITICAL, valid for M (ie. such that \f$\langle f(\pi), \gamma \rangle\f$ invertible). It returns the first valid pair found by iterators.
+     * The function searches a pair of cells \f$(\pi, \gamma)\f$ with \f$\pi\f$ `PRIMARY` and \f$\gamma\f$ `CRITICAL`, valid for M (ie. such that \f$\langle f(\pi), \gamma \rangle\f$ invertible). It returns the first valid pair found by iterators.
      *
      * \param[in] q Dimension of the pair searched.
-     * \param[in] found Reference to a boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
+     * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      */
     PairCell find_pair_M(int q, bool &found) const;
 
     /**
-     * \brief Find a valid PairCell of dimension q for M cointaining `tau`.
+     * \brief Finds a valid PairCell of dimension q for M cointaining `tau`.
      *
-     * The function searches a pair of cells \f$(\pi, \gamma)\f$ with \f$\pi\f$ PRIMARY and \f$\gamma\f$ CRITICAL (one of them is `tau`), valid for M (ie. such that \f$\langle f(\pi), \gamma \rangle\f$ invertible). It returns the first valid pair found by iterators.
+     * The function searches a pair of cells \f$(\pi, \gamma)\f$ with \f$\pi\f$ `PRIMARY` and \f$\gamma\f$ `CRITICAL` (one of them is `tau`), valid for M (ie. such that \f$\langle f(\pi), \gamma \rangle\f$ invertible). It returns the first valid pair found by iterators.
      *
      * \param[in] q Dimension of the pair searched.
-     * \param[in] found Reference to a boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
+     * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      * \param[in] tau Cell of dimension `q` to pair.
      */
     PairCell find_pair_M(int q, bool &found, size_t tau) const;
 
     /**
-     * \brief Find *all* valid PairCell of dimension q for M.
+     * \brief Finds *all* valid PairCell of dimension q for M.
      *
-     * The function searches all pairs of cells \f$(\pi, \gamma)\f$ with \f$\pi\f$ PRIMARY and \f$\gamma\f$ CRITICAL, valid for M (ie. such that \f$\langle f(\pi), \gamma \rangle\f$ invertible).
+     * The function searches all pairs of cells \f$(\pi, \gamma)\f$ with \f$\pi\f$ `PRIMARY` and \f$\gamma\f$ `CRITICAL`, valid for M (ie. such that \f$\langle f(\pi), \gamma \rangle\f$ invertible).
      * It returns a vector of such pairs.
      *
      * \param[in] q Dimension of the pair searched.
-     * \param[in] found Reference to a boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
+     * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      */
     std::vector<PairCell> find_pairs_M(int q, bool &found) const;
 
     /**
-     * \brief Find *all* valid PairCell of dimension q for M cointaining `tau`.
+     * \brief Finds *all* valid PairCell of dimension q for M cointaining `tau`.
      *
-     * The function searches all pairs of cells \f$(\pi, \gamma)\f$ with \f$\pi\f$ PRIMARY and \f$\gamma\f$ CRITICAL (one of them is `tau`), valid for M (ie. such that \f$\langle f(\pi), \gamma \rangle\f$ invertible).
+     * The function searches all pairs of cells \f$(\pi, \gamma)\f$ with \f$\pi\f$ `PRIMARY` and \f$\gamma\f$ `CRITICAL` (one of them is `tau`), valid for M (ie. such that \f$\langle f(\pi), \gamma \rangle\f$ invertible).
      * It returns a vector of such pairs.
      *
      * \param[in] q Dimension of the pair searched.
-     * \param[in] found Reference to a boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
+     * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      * \param[in] tau Cell of dimension `q` to pair.
      */
     std::vector<PairCell> find_pairs_M(int q, bool &found, size_t tau) const;
@@ -162,45 +162,45 @@ public:
     // findPair functions for W
 
     /**
-     * \brief Find a valid PairCell of dimension q for W.
+     * \brief Finds a valid PairCell of dimension q for W.
      *
-     * The function searches a pair of cells \f$(\sigma, \gamma)\f$ with \f$\sigma\f$ SECONDARY and \f$\gamma\f$ CRITICAL, valid for W (ie. such that \f$\langle g(\gamma), \sigma \rangle\f$ invertible). It returns the first valid pair found by iterators.
+     * The function searches a pair of cells \f$(\sigma, \gamma)\f$ with \f$\sigma\f$ `SECONDARY` and \f$\gamma\f$ `CRITICAL`, valid for W (ie. such that \f$\langle g(\gamma), \sigma \rangle\f$ invertible). It returns the first valid pair found by iterators.
      *
      * \param[in] q Dimension of the pair searched.
-     * \param[in] found Reference to a boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
+     * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      */
     PairCell find_pair_W(int q, bool &found) const;
 
     /**
-     * \brief Find a valid PairCell of dimension q for W cointaining `tau`.
+     * \brief Finds a valid PairCell of dimension q for W cointaining `tau`.
      *
-     * The function searches a pair of cells \f$(\sigma, \gamma)\f$ with \f$\sigma\f$ SECONDARY and \f$\gamma\f$ CRITICAL (one of them is `tau`), valid for W (ie. such that \f$\langle g(\gamma), \sigma \rangle\f$ invertible). It returns the first valid pair found by iterators.
+     * The function searches a pair of cells \f$(\sigma, \gamma)\f$ with \f$\sigma\f$ `SECONDARY` and \f$\gamma\f$ `CRITICAL` (one of them is `tau`), valid for W (ie. such that \f$\langle g(\gamma), \sigma \rangle\f$ invertible). It returns the first valid pair found by iterators.
      *
      * \param[in] q Dimension of the pair searched.
-     * \param[in] found Reference to a boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
+     * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      * \param[in] tau Cell of dimension `q` to pair.
      */
     PairCell find_pair_W(int q, bool &found, size_t tau) const;
 
     /**
-     * \brief Find *all* valid PairCell of dimension q for W.
+     * \brief Finds *all* valid PairCell of dimension q for W.
      *
-     * The function searches all pairs of cells \f$(\sigma, \gamma)\f$ with \f$\sigma\f$ SECONDARY and \f$\gamma\f$ CRITICAL, valid for W (ie. such that \f$\langle g(\gamma), \sigma \rangle\f$ invertible).
+     * The function searches all pairs of cells \f$(\sigma, \gamma)\f$ with \f$\sigma\f$ `SECONDARY` and \f$\gamma\f$ `CRITICAL`, valid for W (ie. such that \f$\langle g(\gamma), \sigma \rangle\f$ invertible).
      * It returns a vector of such pairs.
      *
      * \param[in] q Dimension of the pair searched.
-     * \param[in] found Reference to a boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
+     * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      */
     std::vector<PairCell> find_pairs_W(int q, bool &found) const;
 
     /**
-     * \brief Find *all* valid PairCell of dimension q for W cointaining `tau`.
+     * \brief Finds *all* valid PairCell of dimension q for W cointaining `tau`.
      *
-     * The function searches all pairs of cells \f$(\sigma, \gamma)\f$ with \f$\sigma\f$ SECONDARY and \f$\gamma\f$ CRITICAL (one of them is `tau`), valid for W (ie. such that \f$\langle g(\gamma), \sigma \rangle\f$ invertible). It returns the first valid pair found by iterators.
+     * The function searches all pairs of cells \f$(\sigma, \gamma)\f$ with \f$\sigma\f$ `SECONDARY` and \f$\gamma\f$ `CRITICAL` (one of them is `tau`), valid for W (ie. such that \f$\langle g(\gamma), \sigma \rangle\f$ invertible). It returns the first valid pair found by iterators.
      * It returns a vector of such pairs.
      *
      * \param[in] q Dimension of the pair searched.
-     * \param[in] found Reference to a boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
+     * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      * \param[in] tau Cell of dimension `q` to pair.
      */
     std::vector<PairCell> find_pairs_W(int q, bool &found, size_t tau) const;
@@ -208,45 +208,45 @@ public:
     // findPair functions for MW
 
     /**
-     * \brief Find a valid PairCell of dimension q for MW.
+     * \brief Finds a valid PairCell of dimension q for MW.
      *
-     * The function searches a pair of cells \f$(\pi, \sigma)\f$ with \f$\pi\f$ PRIMARY and \f$\sigma\f$ SECONDARY, valid for MW (ie. such that \f$\langle h_{q-1}\partial_q(\pi), \sigma \rangle\f$ invertible and \f$\langle \partial_{q+1} h_q(\sigma), \pi \rangle\f$ invertible). It returns the first valid pair found by iterators.
+     * The function searches a pair of cells \f$(\pi, \sigma)\f$ with \f$\pi\f$ `PRIMARY` and \f$\sigma\f$ `SECONDARY`, valid for MW (ie. such that \f$\langle h_{q-1}\partial_q(\pi), \sigma \rangle\f$ invertible and \f$\langle \partial_{q+1} h_q(\sigma), \pi \rangle\f$ invertible). It returns the first valid pair found by iterators.
      *
      * \param[in] q Dimension of the pair searched.
-     * \param[in] found Reference to a boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
+     * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      */
     PairCell find_pair_MW(int q, bool &found) const;
 
     /**
-     * \brief Find a valid PairCell of dimension q for MW cointaining `tau`.
+     * \brief Finds a valid PairCell of dimension q for MW cointaining `tau`.
      *
-     * The function searches a pair of cells \f$(\pi, \sigma)\f$ with \f$\pi\f$ PRIMARY and \f$\sigma\f$ SECONDARY (one of them is `tau`), valid for MW (ie. such that \f$\langle h_{q-1}\partial_q(\pi), \sigma \rangle\f$ invertible and \f$\langle \partial_{q+1} h_q(\sigma), \pi \rangle\f$ invertible). It returns the first valid pair found by iterators.
+     * The function searches a pair of cells \f$(\pi, \sigma)\f$ with \f$\pi\f$ `PRIMARY` and \f$\sigma\f$ `SECONDARY` (one of them is `tau`), valid for MW (ie. such that \f$\langle h_{q-1}\partial_q(\pi), \sigma \rangle\f$ invertible and \f$\langle \partial_{q+1} h_q(\sigma), \pi \rangle\f$ invertible). It returns the first valid pair found by iterators.
      *
      * \param[in] q Dimension of the pair searched.
-     * \param[in] found Reference to a boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
+     * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      * \param[in] tau Cell of dimension `q` to pair.
      */
     PairCell find_pair_MW(int q, bool &found, size_t tau) const;
 
     /**
-     * \brief Find *all* valid PairCell of dimension q for MW.
+     * \brief Finds *all* valid PairCell of dimension q for MW.
      *
-     * The function searches all pairs of cells \f$(\pi, \sigma)\f$ with \f$\pi\f$ PRIMARY and \f$\sigma\f$ SECONDARY, valid for MW (ie. such that \f$\langle h_{q-1}\partial_q(\pi), \sigma \rangle\f$ invertible and \f$\langle \partial_{q+1} h_q(\sigma), \pi \rangle\f$ invertible).
+     * The function searches all pairs of cells \f$(\pi, \sigma)\f$ with \f$\pi\f$ `PRIMARY` and \f$\sigma\f$ `SECONDARY`, valid for MW (ie. such that \f$\langle h_{q-1}\partial_q(\pi), \sigma \rangle\f$ invertible and \f$\langle \partial_{q+1} h_q(\sigma), \pi \rangle\f$ invertible).
      * It returns a vector of such pairs.
      *
      * \param[in] q Dimension of the pair searched.
-     * \param[in] found Reference to a boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
+     * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      */
     std::vector<PairCell> find_pairs_MW(int q, bool &found) const;
 
     /**
-     * \brief Find *all* valid PairCell of dimension q for W cointaining `tau`.
+     * \brief Finds *all* valid PairCell of dimension q for W cointaining `tau`.
      *
-     * The function searches all pairs of cells \f$(\pi, \sigma)\f$ with \f$\pi\f$ PRIMARY and \f$\sigma\f$ SECONDARY (one of them is `tau`), valid for MW (ie. such that \f$\langle h_{q-1}\partial_q(\pi), \sigma \rangle\f$ invertible and \f$\langle \partial_{q+1} h_q(\sigma), \pi \rangle\f$ invertible).
+     * The function searches all pairs of cells \f$(\pi, \sigma)\f$ with \f$\pi\f$ `PRIMARY` and \f$\sigma\f$ `SECONDARY` (one of them is `tau`), valid for MW (ie. such that \f$\langle h_{q-1}\partial_q(\pi), \sigma \rangle\f$ invertible and \f$\langle \partial_{q+1} h_q(\sigma), \pi \rangle\f$ invertible).
      * It returns a vector of such pairs.
      *
      * \param[in] q Dimension of the pair searched.
-     * \param[in] found Reference to a boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
+     * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      * \param[in] tau Cell of dimension `q` to pair.
      */
     std::vector<PairCell> find_pairs_MW(int q, bool &found, size_t tau) const;
@@ -256,7 +256,7 @@ public:
     /**
      * \brief R operation (cancels a A operation).
      *
-     * A pair of cells \f$(\pi, \sigma)\f$ of respective dimension q and q+1, with \f$\pi\f$ PRIMARY and \f$\sigma\f$ SECONDARY, is valid for R if \f$\langle h(\pi), \sigma \rangle\f$ is invertible. After the R operation, \f$\pi\f$ and \f$\sigma\f$ become CRITICAL. The R method updates the reduction accordingly (in time \f$\mathcal O(n^2)\f$).
+     * A pair of cells \f$(\pi, \sigma)\f$ of respective dimension q and q+1, with \f$\pi\f$ `PRIMARY` and \f$\sigma\f$ `SECONDARY`, is valid for R if \f$\langle h(\pi), \sigma \rangle\f$ is invertible. After the R operation, \f$\pi\f$ and \f$\sigma\f$ become `CRITICAL`. The R method updates the reduction accordingly (in time \f$\mathcal O(n^2)\f$).
      *
      * \param[in] pi First cell of the pair (dimension `q`)
      * \param[in] sigma Second cell of the pair (dimension `q+1`)
@@ -267,7 +267,7 @@ public:
     /**
      * \brief M operation.
      *
-     * A pair of cells \f$(\pi, \gamma)\f$ of dimension q, with \f$\pi\f$ PRIMARY and \f$\gamma\f$ CRITICAL, is valid for M if \f$\langle f(\pi), \gamma \rangle\f$ is invertible. After the M operation, \f$\pi\f$ becomes CRITICAL and \f$\gamma\f$ become PRIMARY. The M method updates the reduction accordingly (in time \f$\mathcal O(n^2)\f$).
+     * A pair of cells \f$(\pi, \gamma)\f$ of dimension q, with \f$\pi\f$ `PRIMARY` and \f$\gamma\f$ `CRITICAL`, is valid for M if \f$\langle f(\pi), \gamma \rangle\f$ is invertible. After the M operation, \f$\pi\f$ becomes `CRITICAL` and \f$\gamma\f$ become `PRIMARY`. The M method updates the reduction accordingly (in time \f$\mathcal O(n^2)\f$).
      *
      * \param[in] pi First cell of the pair (dimension `q`)
      * \param[in] gamma Second cell of the pair (dimension `q`)
@@ -278,7 +278,7 @@ public:
     /**
      * \brief W operation.
      *
-     * A pair of cells \f$(\sigma, \gamma)\f$ of dimension q, with \f$\sigma\f$ SECONDARY and \f$\gamma\f$ CRITICAL, is valid for W if \f$\langle g(\gamma), \sigma \rangle\f$ is invertible. After the W operation, \f$\sigma\f$ becomes CRITICAL and \f$\gamma\f$ become SECONDARY. The W method updates the reduction accordingly (in time \f$\mathcal O(n^2)\f$).
+     * A pair of cells \f$(\sigma, \gamma)\f$ of dimension q, with \f$\sigma\f$ `SECONDARY` and \f$\gamma\f$ `CRITICAL`, is valid for W if \f$\langle g(\gamma), \sigma \rangle\f$ is invertible. After the W operation, \f$\sigma\f$ becomes `CRITICAL` and \f$\gamma\f$ become `SECONDARY`. The W method updates the reduction accordingly (in time \f$\mathcal O(n^2)\f$).
      *
      * \param[in] sigma First cell of the pair (dimension `q`)
      * \param[in] gamma Second cell of the pair (dimension `q`)
@@ -289,7 +289,7 @@ public:
     /**
      * \brief MW operation.
      *
-     * A pair of cells \f$(\pi, \sigma)\f$ of dimension q, with \f$\pi\f$ PRIMARY and \f$\sigma\f$ SECONDARY, is valid for MW if \f$\langle h_{q-1}\partial_q(\pi), \sigma \rangle\f$ is invertible and \f$\langle \partial_{q+1} h_q(\sigma), \pi \rangle\f$ is invertible. After the MW operation, \f$\pi\f$ becomes SECONDARY and \f$\sigma\f$ become PRIMARY. The MW method updates the reduction accordingly (in time \f$\mathcal O(n^2)\f$).
+     * A pair of cells \f$(\pi, \sigma)\f$ of dimension q, with \f$\pi\f$ `PRIMARY` and \f$\sigma\f$ `SECONDARY`, is valid for MW if \f$\langle h_{q-1}\partial_q(\pi), \sigma \rangle\f$ is invertible and \f$\langle \partial_{q+1} h_q(\sigma), \pi \rangle\f$ is invertible. After the MW operation, \f$\pi\f$ becomes `SECONDARY` and \f$\sigma\f$ become `PRIMARY`. The MW method updates the reduction accordingly (in time \f$\mathcal O(n^2)\f$).
      *
      * \param[in] pi First cell of the pair (dimension `q`)
      * \param[in] sigma Second cell of the pair (dimension `q`)
@@ -298,7 +298,7 @@ public:
     void MW(size_t pi, size_t sigma, int q);
 
     /**
-     * \brief Get the annotation of a cycle in the homology basis.
+     * \brief Gets the annotation of a cycle in the homology basis.
      *
      * The method returns the image of a cycle by the morphism \f$f\f$, that is, a linear combination of critical cells (corresponding to the decomposition of the cycle in the homology basis).
      * If the annotation has a single non zero coefficient for a given critical cell \f$\sigma\f$, then the cycle belongs to the class of the homology generator \f$g(\sigma)\f$.
@@ -321,7 +321,7 @@ public:
     }
 
     /**
-     * \brief Get the co-annotation of a co-cycle in the cohomology basis.
+     * \brief Gets the co-annotation of a co-cycle in the cohomology basis.
      *
      * The method returns the image of a co-cycle by the morphism \f$g^*\f$, that is, a linear combination of critical cells (corresponding to the decomposition of the co-cycle in the cohomology basis).
      * If the annotation has a single non zero coefficient for a given critical cell \f$\sigma\f$, then the co-cycle belongs to the class of the cohomology generator \f$f^*(\sigma)\f$.

@@ -21,7 +21,7 @@
 #include <random>
 #include <functional>
 
-#incude <CGAL/OSM/Sparse_matrix.h>
+#include <CGAL/OSM/Sparse_matrix.h>
 #include <CGAL/OSM/Sparse_chain.h>
 
 namespace CGAL {
@@ -225,15 +225,15 @@ public:
     iterator end() { return iterator(*this, _filtration.size()) ; }
 
     // getters
-    /*! \brief Get the filtration size.
+    /*! \brief Gets the filtration size.
      */
     std::size_t get_filtration_size () const { return _filtration.size();}
 
-    /*! \brief Get the cell (that is cell index and dimension) at the index `i` of the filtration.
+    /*! \brief Gets the cell (that is cell index and dimension) at the index `i` of the filtration.
      */
     CellDim get_cell_dim (std::size_t i) const { return _filtration.at(i); }
 
-    /*! \brief Get the degree of the `i`th element of the filtration.
+    /*! \brief Gets the degree of the `i`th element of the filtration.
      */
     DegreeType get_degree (std::size_t i) const { return _deg.at(i); }
 
@@ -252,7 +252,7 @@ public:
     }
 
     /**
-     * \brief Export the filtration time indices.
+     * \brief Exports the filtration time indices.
      *
      * The method exports the time index of every cells in each dimension.
      *
@@ -273,17 +273,17 @@ public:
         return labels ;
     }
 
-    /*! \brief Check that a filtration is valid.
+    /*! \brief Checks if a filtration is valid.
      * Checks that cells are ordered in increasing degrees and all cells have indices larger than their faces.
      * \returns `true` if the filtration is valid, `false` otherwise
      */
     bool is_valid_filtration() const ;
 
 protected:
-    /** \brief Sets _cell_to_t from the initial vector o cells. */
+    /* \brief Sets _cell_to_t from the initial vector o cells. */
     void build_filtration_structure() ;
 
-    /** Friend class: Hdvf_persistence. */
+    /* Friend class: Hdvf_persistence. */
     template <typename CoefT, typename ComplexT, typename DegT, typename FiltrT>
     friend class Hdvf_persistence ;
 };

@@ -154,10 +154,10 @@ public:
         return *this;
     }
 
-    /// Methods of the CubComplex concept
+    // Methods of the AbstractChainComplex concept
 
     /**
-     * \brief Method returning the boundary of the cell id_cell in dimension q.
+     * \brief Returns the boundary of the cell id_cell in dimension q.
      *
      * Returns a copy of the column-major chain stored in the boundary matrix of dimension q: boundary of the cell id_cell in dimension q.
      *
@@ -175,7 +175,7 @@ public:
     }
 
     /**
-     * \brief Method returning the co-boundary of the cell id_cell in dimension q.
+     * \brief Returns the co-boundary of the cell id_cell in dimension q.
      *
      * Returns a row-major chain containing the co-boundary of the cell id_cell in dimension q (so actually a row of the boundary matrix).
      *
@@ -195,7 +195,7 @@ public:
     }
 
     /**
-     * \brief Method returning the dimension of the complex.
+     * \brief Returns the dimension of the complex.
      *
      * Returns the dimension of the cubical complex.
      *
@@ -207,7 +207,7 @@ public:
     }
 
     /**
-     * \brief Method returning the number of cells in a given dimension.
+     * \brief Returns the number of cells in a given dimension.
      *
      * \param[in] q Dimension along which the number of cells is returned.
      *
@@ -222,7 +222,7 @@ public:
     }
 
     /**
-     * \brief Method returning a constant reference to the vector of boundary matrices (along each dimension).
+     * \brief Returns a constant reference to the vector of boundary matrices (along each dimension).
      *
      * Returns a constant reference to the vector of boundary matrices along each dimension. The q-th element of this vector is a column-major sparse matrix containing the boundaries of q-cells (ie. rows encode q-1 cells and columns q cells).
      *
@@ -234,7 +234,7 @@ public:
     }
 
     /**
-     * \brief Method returning a copy of the dim-th boundary matrix (ie. column-major matrix of \f$\partial_q\f$).
+     * \brief Returns a copy of the dim-th boundary matrix (ie. column-major matrix of \f$\partial_q\f$).
      *
      * It is a column-major sparse matrix containing the boundaries of dim-cells (ie. rows encode q-1 cells and columns q cells).
      *
@@ -249,7 +249,7 @@ public:
 
 
     /**
-     * \brief Method returning dimension 0 cells indexes included in the cell with index id_cell of dimension q.
+     * \brief Returns dimension 0 cells indexes included in the cell with index id_cell of dimension q.
      *
      * Returns the dimension 0 vertices indexes included in the cell with index id_cell of dimension q.
      *
@@ -292,7 +292,7 @@ public:
     }
 
     /**
-     * \brief Method printing informations of the complex.
+     * \brief Prints informations on the complex.
      *
      * Displays the number of cells in each dimension and the boundary matrix in each dimension.
      */
@@ -315,12 +315,12 @@ public:
         }
     }
 
-    /** \brief Get (unique) object Id.
+    /** \brief Gets (unique) object Id.
      * For comparison of constant references to the complex.
      */
     size_t get_id () const { return _complex_id; }
 
-    /** \brief Get the coordinates of the ith vertex */
+    /** \brief Gets the coordinates of the ith vertex */
 
     Point get_vertex_coords(size_t i) const
     {
@@ -333,7 +333,7 @@ public:
         return res ;
     }
 
-    /** \brief Get the vector of vertices coordinates  */
+    /** \brief Gets the vector of vertices coordinates  */
     const std::vector<Point>& get_vertices_coords() const
     {
         std::vector<Point> res ;
@@ -347,7 +347,7 @@ public:
     // VTK export
 
     /**
-     * \brief Method exporting a cubical complex (plus, optionally, labels) to a VTK file.
+     * \brief Exports a cubical complex (plus, optionally, labels) to a VTK file.
      *
      * The method generates legacy text VTK files. Labels are exported as such in a VTK property, together with CellID property, containing the index of each cell.
      *
@@ -465,7 +465,7 @@ public:
     }
 
     /**
-     * \brief Method exporting a chain over a cubical complex to a VTK file.
+     * \brief Exports a chain over a cubical complex to a VTK file.
      *
      * The method generates legacy text VTK files. All the cells of the chain with non zero coefficient are exported. If a cellId is provided, labels are exported in a VTK property (2 for all cells, 0 for cell of index cellId).  The index of each cell is exported in a CellID property.
      *
@@ -609,7 +609,7 @@ protected:
         return vertices_id ;
     }
 
-    /// Member data
+    // Member data
 protected:
     /* \brief Dimension of the complex */
     int _dim;
@@ -634,7 +634,7 @@ private:
     /* \brief Unique object id (for comparison of constant references to the complex). */
     const size_t _complex_id ;
 
-    /// Protected methods
+    // Protected methods
 protected:
     /* Initialize _cells, _base2bool and _bool2base */
     void initialize_cells(const Cub_object_io& cub,typeComplexCube type);

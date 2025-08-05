@@ -99,18 +99,18 @@ public:
     friend void set_row(Sparse_matrix<_CT, ROW> &_matrix,  size_t _index, const Sparse_chain<_CT, ROW> &_chain);
 
 protected:
-    /** \brief Type of data stored in the chain: map between indexes and coefficients. */
+    /* \brief Type of data stored in the chain: map between indexes and coefficients. */
     typedef std::pair<size_t, CoefficientType> pair;
 
-    /** \brief The chain inner representation and storage of data. */
+    /* \brief The chain inner representation and storage of data. */
     std::unordered_map<size_t, CoefficientType> _chainData;
 
-    /** \brief The chain boundary. */
+    /* \brief The chain boundary. */
     size_t _upperBound;
 
 public:
     /**
-     * \brief Create new empty Sparse_chain.
+     * \brief Creates new empty Sparse_chain.
      *
      * Default constructor, initialize an empty Sparse_chain.
      * The default chain size is 0.
@@ -121,7 +121,7 @@ public:
     }
 
     /**
-     * \brief Create new empty SparseChain of given size.
+     * \brief Creates new empty SparseChain of given size.
      *
      * Constructor with size, initialize an empty Sparse_chain.
      *
@@ -135,7 +135,7 @@ public:
 
 
     /**
-     * \brief Create new SparseChain by copy.
+     * \brief Creates new SparseChain by copy.
      *
      * Copy constructor, initialize a SparseChain from an existing SparseChain.
      *
@@ -149,7 +149,7 @@ public:
     }
 
     /**
-     * \brief Assign to other chain.
+     * \brief Assigns to other chain.
      *
      * Assign to other chain coefficient-wise, equivalent to copying it.
      *
@@ -219,7 +219,7 @@ public:
     }
 
     /**
-     * \brief Subtract two chains together.
+     * \brief Subtracts two chains together.
      *
      * Subtract two chains together and return the result in a new matrix.
      *
@@ -242,7 +242,7 @@ public:
     }
 
     /**
-     * \brief Apply factor on each coefficients.
+     * \brief Applies factor on each coefficients.
      *
      * \param[in] lambda The factor to apply.
      * \param[in] chain The second chain.
@@ -258,7 +258,7 @@ public:
     }
 
     /**
-     * \brief Apply factor on each coefficients.
+     * \brief Applies factor on each coefficients.
      *
      * \param[in] chain The second chain.
      * \param[in] lambda The factor to apply.
@@ -274,7 +274,7 @@ public:
     }
 
     /**
-     * \brief Perform matrix multiplication between two chains (COLUMN x ROW) and return a COLUMN matrix.
+     * \brief Performs matrix multiplication between two chains (COLUMN x ROW) and return a COLUMN matrix.
      *
      * Generate a column-based matrix from the matrix multiplication and return it.
      *
@@ -291,7 +291,7 @@ public:
     friend Sparse_matrix<_CT, COLUMN> operator*(const Sparse_chain<_CT, COLUMN>& column, const Sparse_chain<_CT, ROW>& row);
 
     /**
-     * \brief Perform matrix multiplication between two chains (COLUMN x ROW) and return a ROW matrix.
+     * \brief Performs matrix multiplication between two chains (COLUMN x ROW) and return a ROW matrix.
      *
      * Generate a row-based matrix from the matrix multiplication and return it.
      *
@@ -308,7 +308,7 @@ public:
     friend Sparse_matrix<_CT, ROW> operator%(const Sparse_chain<_CT, COLUMN> &column, const Sparse_chain<_CT, ROW> &row);
 
     /**
-     * \brief Perform dot product between two chains (ROW x COLUMN).
+     * \brief Performs dot product between two chains (ROW x COLUMN).
      *
      * \pre Chains must have the same `CoefficientType`.
      *
@@ -323,7 +323,7 @@ public:
     friend _CT operator*(const Sparse_chain<_CT, ROW> &row, const Sparse_chain<_CT, COLUMN> &column);
 
     /**
-     * \brief Add a chain to `this`.
+     * \brief Adds a chain to `this`.
      *
      * Add a chain to `this`.
      *
@@ -353,7 +353,7 @@ public:
     }
 
     /**
-     * \brief Sustract a chain to `this`.
+     * \brief Sustracts a chain to `this`.
      *
      * Subtract a chain to `this`.
      *
@@ -383,7 +383,7 @@ public:
     }
 
     /**
-     * \brief Apply factor on each coefficients of `this`.
+     * \brief Applies factor on each coefficients of `this`.
      *
      * If `lambda` is null, this function comes to nullify the chain.
      *
@@ -405,7 +405,7 @@ public:
     }
 
     /**
-     * \brief Get the value of a coefficient of the chain.
+     * \brief Gets the value of a coefficient of the chain.
      *
      * \warning The chain will perform boundary check.
      *
@@ -422,7 +422,7 @@ public:
     }
 
     /**
-     * \brief Get the value of a coefficient of the chain.
+     * \brief Gets the value of a coefficient of the chain.
      *
      * \warning The chain will perform boundary check.
      *
@@ -442,7 +442,7 @@ public:
     }
 
     /**
-     * \brief Set a given coefficient of the chain.
+     * \brief Sets a given coefficient of the chain.
      *
      * Set the value of the coefficient in the chain at `index`.
      *
@@ -482,7 +482,7 @@ public:
     }
 
     /**
-     * \defgroup ChainChainComparison Compare two chains.
+     * \defgroup ChainChainComparison Compares two chains.
      * \ingroup PkgHDVFAlgorithmClasses
      * @brief  Compare two chains and return `true` if both chains equal (and `false` otherwise).
      *
@@ -511,7 +511,7 @@ public:
     /** @} */
 
     /**
-     * \brief Get a subchain from the chain.
+     * \brief Gets a subchain from the chain.
      *
      * Return a new chain where all coefficients of indices provided in the vector are removed.
      *
@@ -526,7 +526,7 @@ public:
     friend Sparse_chain<_CT, _CTF> operator/(const Sparse_chain<_CT, _CTF> &chain, const std::vector<size_t> &indices);
 
     /**
-     * \brief Get a subchain from the chain.
+     * \brief Gets a subchain from the chain.
      *
      * Return a new chain where the coefficients at a given index is removed.
      *
@@ -537,7 +537,7 @@ public:
     friend Sparse_chain<_CT, _CTF> operator/(const Sparse_chain<_CT, _CTF> &chain, size_t index);
 
     /**
-     * \brief Restrict the chain to a sub-chain by removing indices.
+     * \brief Restricts the chain to a sub-chain by removing indices.
      *
      * Removes all indices provided in the vector from the chain. Return a reference to the modified chain.
      *
@@ -556,7 +556,7 @@ public:
     }
 
     /**
-     * \brief Restrict the chain to a sub-chain by removing a given index.
+     * \brief Restricts the chain to a sub-chain by removing a given index.
      *
      * Removes the index provided from the chain.
      *
@@ -573,7 +573,7 @@ public:
     }
 
     /**
-     * \brief Remove all coefficients from the chain.
+     * \brief Removes all coefficients from the chain.
      *
      * The function comes to set all coefficients to zero.
      */
@@ -648,7 +648,7 @@ public:
     }
 
     /**
-     * \brief Transpose a Sparse_chain.
+     * \brief Transposes a Sparse_chain.
      *
      * The result is a chain with `ChainTypeFlag` switched between COLUMN and ROW.
      *
@@ -682,7 +682,7 @@ public:
     }
 
 private:
-    /**
+    /*
      * \brief Get a reference on a coefficient of the chain.
      *
      * Used to set a coefficient in the chain.

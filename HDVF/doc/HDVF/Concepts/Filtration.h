@@ -84,15 +84,15 @@ public:
          */
         value_type operator*() const;
 
-        /*! Get the index (time) associated to the iterator.
+        /*! Gets the index (time) associated to the iterator.
          */
         size_t time () const ;
 
-        /*! Get the `CellDim` (cell and its dimension) associated to the iterator.
+        /*! Gets the `CellDim` (cell and its dimension) associated to the iterator.
          */
         CellDim cell_dim () const ;
 
-        /*! Get the degree associated to the iterator.
+        /*! Gets the degree associated to the iterator.
          */
         DegreeType degree () const ;
 
@@ -130,20 +130,20 @@ public:
     iterator end();
 
     // getters
-    /*! \brief Get the filtration size.
+    /*! \brief Gets the filtration size.
      */
     size_t get_filtration_size () const;
 
-    /*! \brief Get the cell (that is cell index and dimension) at the index `i` of the filtration.
+    /*! \brief Gets the cell (that is cell index and dimension) at the index `i` of the filtration.
      */
     CellDim get_cell_dim (size_t i) const;
 
-    /*! \brief Get the degree of the `i`th element of the filtration.
+    /*! \brief Gets the degree of the `i`th element of the filtration.
      */
     DegreeType get_degree (size_t i) const;
 
     // Filtration verification
-    /*! \brief Check that a filtration is valid
+    /*! \brief Checks that a filtration is valid
      * Checks that cells are ordered in increasing degrees and all cells have indices larger than their faces.
      */
     bool is_valid_filtration() const;
@@ -154,7 +154,7 @@ public:
     friend ostream & operator<<(ostream & out, const Filtration &f);
 
     /**
-     * \brief Export the filtration time indices.
+     * \brief Exports the filtration time indices.
      *
      * The method exports the time index of every cells in each dimension.
      */

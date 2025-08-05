@@ -106,54 +106,54 @@ public:
     Hdvf_duality(const ComplexType& L, Sub_chain_complex_mask<CoefficientType, ComplexType>& K, int hdvf_opt = OPT_FULL) ;
 
     /**
-     * \brief Find a valid PairCell of dimension q / q+1 for A *in the current sub chain complex*.
+     * \brief Finds a valid PairCell of dimension q / q+1 for A *in the current sub chain complex*.
      *
      * The function searches a pair of critical cells, *in the current sub chain complex*, \f$(\gamma_1, \gamma2)\f$ of dimension q / q+1, valid for A (ie. such that \f$\langle \partial_{q+1}(\gamma_2), \gamma_1 \rangle\f$ invertible). It returns the first valid pair found by iterators.
      *
      * \param[in] q Lower dimension of the pair.
-     * \param[in] found Reference to a boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
+     * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      */
     virtual PairCell find_pair_A(int q, bool &found) const;
 
     /**
-     * \brief Find a valid PairCell for A containing `gamma` *in the current sub chain complex* (a cell of dimension `q`)
+     * \brief Finds a valid PairCell for A containing `gamma` *in the current sub chain complex* (a cell of dimension `q`)
      *
      * The function searches a cell \f$\gamma'\f$ *in the current sub chain complex* such that one of the following conditions holds:
      * - \f$\gamma'\f$ has dimension q+1 and \f$(\gamma, \gamma')\f$ is valid for A (ie. such that \f$\langle \partial_{q+1}(\gamma'), \gamma \rangle\f$ invertible),
      * - \f$\gamma'\f$ has dimension q-1 and \f$(\gamma', \gamma)\f$ is valid for A (ie. such that \f$\langle \partial_{q}(\gamma), \gamma' \rangle\f$ invertible).
      *
      * \param[in] q Dimension of the cell `gamma`.
-     * \param[in] found Reference to a boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
+     * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      * \param[in] gamma Index of a cell to pair.
      */
     virtual PairCell find_pair_A(int q, bool &found, size_t gamma) const;
 
     /**
-     * \brief Find *all* valid PairCell of dimension q / q+1 *in the current sub chain complex* for A.
+     * \brief Finds *all* valid PairCell of dimension q / q+1 *in the current sub chain complex* for A.
      *
      * The function searches all pairs of critical cells \f$(\gamma_1, \gamma2)\f$ *in the current sub chain complex* of dimension q / q+1, valid for A (ie. such that \f$\langle \partial_{q+1}(\gamma_2), \gamma_1 \rangle\f$ invertible).
      * It returns a vector of such pairs.
      *
      * \param[in] q Lower dimension of the pair.
-     * \param[in] found Reference to a boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
+     * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      */
     virtual std::vector<PairCell> find_pairs_A(int q, bool &found) const;
 
     /**
-     * \brief Find *all* valid PairCell for A containing `gamma` *in the current sub chain complex* (a cell of dimension `q`)
+     * \brief Finds *all* valid PairCell for A containing `gamma` *in the current sub chain complex* (a cell of dimension `q`)
      *
-     * The function searches all CRITICAL cells \f$\gamma'\f$ *in the current sub chain complex* such that one of the following conditions holds:
+     * The function searches all `CRITICAL` cells \f$\gamma'\f$ *in the current sub chain complex* such that one of the following conditions holds:
      * - \f$\gamma'\f$ has dimension q+1 and \f$(\gamma, \gamma')\f$ is valid for A (ie. such that \f$\langle \partial_{q+1}(\gamma'), \gamma \rangle\f$ invertible),
      * - \f$\gamma'\f$ has dimension q-1 and \f$(\gamma', \gamma)\f$ is valid for A (ie. such that \f$\langle \partial_{q}(\gamma), \gamma' \rangle\f$ invertible).
      * It returns a vector of such pairs.
      *
      * \param[in] q Dimension of the cell `gamma`.
-     * \param[in] found Reference to a boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
+     * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      * \param[in] gamma Index of a cell to pair.
      */
     virtual std::vector<PairCell> find_pairs_A(int q, bool &found, size_t gamma) const;
 
-    /** \brief Set the current sub chain complex masks over `K`.
+    /** \brief Sets the current sub chain complex masks over `K`.
      *
      * Further HDVF computations will be restricted to `K` (ie. computation of reduced homology).
      */
@@ -163,7 +163,7 @@ public:
         _subCC.screen_matrices(this->_DD_col);
     }
 
-    /** \brief Set the current sub chain complex masks over `L-K`.
+    /** \brief Sets the current sub chain complex masks over `L-K`.
      *
      * Further HDVF computations will be restricted to `L-K` (ie. computation of reduced homology).
      */
@@ -173,7 +173,7 @@ public:
         _subCC.screen_matrices(this->_DD_col);
     }
 
-    /** \brief Return the value of the current sub chain complex mask.
+    /** \brief Returns the value of the current sub chain complex mask.
      */
     Sub_chain_complex_mask<CoefficientType,ComplexType> get_current_mask()
     {
@@ -181,9 +181,9 @@ public:
     }
 
     /**
-     * \brief Compute a perfect HDVF over the current sub chain complex.
+     * \brief Computes a perfect HDVF over the current sub chain complex.
      *
-     * As long as valid pairs for A exist in the current sub chain complex, the function selects the first available pair (returned by `find_pair_A`) and applies the corresponding A operation.
+     * As long as valid pairs for A exist in the current sub chain complex, the function selects the first available pair (returned by `find_pair_A()`) and applies the corresponding `A()` operation.
      * If the `Ring` of coefficients is a field, this operation always produces a perfect HDVF (ie. the reduced boundary is null and the reduction provides homology and cohomology information).
      * Otherwise the operation produces a maximal HDVF with a residual boundary matrix over critical cells.
      *
@@ -196,14 +196,14 @@ public:
     std::vector<PairCell> compute_perfect_hdvf(bool verbose = false);
 
     /**
-     * \brief Compute a random perfect HDVF over the current sub chain complex.
+     * \brief Computes a random perfect HDVF over the current sub chain complex.
      *
-     * As long as valid pairs for A exist in the current sub chain complex, the function selects a random pair (among pairs returned by `find_pairs_A`) and applies the corresponding A operation.
+     * As long as valid pairs for A exist in the current sub chain complex, the function selects a random pair (among pairs returned by `find_pairs_A()`) and applies the corresponding `A()` operation.
      * If the `Ring` of coefficients is a field, this operation always produces a perfect HDVF (that  is the reduced boundary is null and the reduction provides homology and cohomology information).
      *
      * If the HDVF is initially not trivial (some cells have already been paired), the function randomly completes it into a perfect HDVF.
      *
-     * \warning This method is slower that `compute_perfect_hdvf` (finding out all possible valid pairs requires additional time).
+     * \warning This method is slower that `compute_perfect_hdvf()` (finding out all possible valid pairs requires additional time).
      *
      * \param[in] verbose If this  parameter is `true`, all intermediate reductions are printed out.
      *
@@ -212,22 +212,22 @@ public:
     std::vector<PairCell> compute_rand_perfect_hdvf(bool verbose = false);
 
     /**
-     * \brief Compute a "pairing" HDVF between K and L-K
+     * \brief Computes a "pairing" HDVF between K and L-K
      *
-     * \warning Run `compute_perfect_hdvf` first (to build perfect HDVFs over `K` and `L-K` respectively).
+     * \warning Run `compute_perfect_hdvf()` first (to build perfect HDVFs over `K` and `L-K` respectively).
      *
-     * The function computes a perfect HDVF over remaining critical cells. Each pair of cells inserted with the A operation maps corresponding homology/cohomology generators in the Alexander isomorphism.
+     * The function computes a perfect HDVF over remaining critical cells. Each pair of cells inserted with the `A()` operation maps corresponding homology/cohomology generators in the Alexander isomorphism.
      *
      * \return The vector of paired critical cells (encoding Alexander isomorphism).
      */
     std::vector<PairCell> compute_pairing_hdvf() ;
 
     /**
-     * \brief Compute a random "pairing" HDVF between K and L-K
+     * \brief Computes a random "pairing" HDVF between K and L-K
      *
-     * \warning Run `compute_perfect_hdvf` first (to build perfect HDVFs over `K` and `L-K` respectively).
+     * \warning Run `compute_perfect_hdvf()` first (to build perfect HDVFs over `K` and `L-K` respectively).
      *
-     * The function computes a random perfect HDVF over remaining critical cells. Each pair of cells inserted with the A operation maps corresponding homology/cohomology generators in the Alexander isomorphism.
+     * The function computes a random perfect HDVF over remaining critical cells. Each pair of cells inserted with the `A() operation maps corresponding homology/cohomology generators in the Alexander isomorphism.
      *
      * \return The vector of paired critical cells (encoding Alexander isomorphism).
      */
@@ -235,7 +235,7 @@ public:
 
     // Hdvf_duality getters
     /**
-     * \brief Get cells with a given `flag` in any dimension *in the current sub chain complex*.
+     * \brief Gets cells with a given `flag` in any dimension *in the current sub chain complex*.
      *
      * The function returns a vector containing, for each dimension, the vector of cells with a given `flag`.
      *
@@ -244,7 +244,7 @@ public:
     vector<vector<size_t> > get_flag (FlagType flag) const ;
 
     /**
-     * \brief Get cells with a given `flag` in dimension `q` *in the current sub chain complex*.
+     * \brief Gets cells with a given `flag` in dimension `q` *in the current sub chain complex*.
      *
      * The function returns the vector of cells of dimension `q` with a given `flag`.
      *
@@ -350,7 +350,7 @@ public:
      *
      * The method prints out the reduced boundary matrix in each dimension, restricted to critical cells of `K` and `L-K` (ie. the matrix used to compute Alexander pairing).
      *
-     * \warning Call this method after `compute_perfect_hdvf`.
+     * \warning Call this method after `compute_perfect_hdvf()`.
      *
      * By default, outputs the complex to `std::cout`.
     */
@@ -392,7 +392,7 @@ public:
     }
 
     /**
-     * \brief Export Primary/Secondary/Critical labels *of the current sub chain complex* for vtk export.
+     * \brief Exports primary/secondary/critical labels *of the current sub chain complex* for vtk export.
      *
      * The method exports the labels of every cells in each dimension.
      *
@@ -422,7 +422,7 @@ public:
     }
 
     /**
-     * \brief Export homology generators *of the current sub chain complex* associated to `cell` (critical cell) of dimension  `q` (used by vtk export).
+     * \brief Exports homology generators *of the current sub chain complex* associated to `cell` (critical cell) of dimension  `q` (used by vtk export).
      *
      * The method exports the chain \f$g(\sigma)\f$ for \f$\sigma\f$ the cell of index `cell` and dimension `q`.
      *
@@ -458,7 +458,7 @@ public:
     }
 
     /**
-     * \brief Export cohomology generators *of the current sub chain complex* associated to `cell` (critical cell) of dimension  `q` (used by vtk export).
+     * \brief Exports cohomology generators *of the current sub chain complex* associated to `cell` (critical cell) of dimension  `q` (used by vtk export).
      *
      * The method exports the chain \f$f^\star(\sigma)\f$ for \f$\sigma\f$ the cell of index `cell` and dimension `q`.
      *

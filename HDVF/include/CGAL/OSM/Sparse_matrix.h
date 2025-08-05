@@ -73,16 +73,16 @@ public:
     friend class Sparse_matrix;
 
 protected:
-    /** \brief The inner chain storage. */
+    /* \brief The inner chain storage. */
     std::vector<Sparse_chain<CoefficientType, ChainTypeFlag>> _chains;
 
-    /** \brief A bitboard containing state of each columns. */
+    /* \brief A bitboard containing state of each columns. */
     Bitboard _chainsStates;
 
-    /** \brief The matrix size as a (row, column) pair. */
+    /* \brief The matrix size as a (row, column) pair. */
     std::pair<size_t, size_t> _size;
 
-    /**
+    /*
      * \brief Get a reference on a chain from a matrix and change its state (for assignment).
      *
      * Used only internally.
@@ -191,7 +191,7 @@ public:
     }
 
     /**
-     * \brief Assign to other matrix.
+     * \brief Assigns to other matrix.
      *
      * Assign to other matrix coefficient-wise, equivalent to copying it.
      *
@@ -212,7 +212,7 @@ public:
 
 
     /**
-     * \brief Clean a SparseMatrix (set all coefficients to zero).
+     * \brief Cleans a SparseMatrix (set all coefficients to zero).
      *
      * Empty all structures of the sparse matrix.
      */
@@ -226,7 +226,7 @@ public:
     }
 
     /**
-     * \brief Test is a SparseMatrix is null.
+     * \brief Tests if a SparseMatrix is null.
      *
      * The function return `true` is the SparseMatrix is null (that is, empty) and `false` otherwise.
     */
@@ -236,7 +236,7 @@ public:
     }
 
     /**
-     * \defgroup MatrixMatrixComparison Compare two matrices.
+     * \defgroup MatrixMatrixComparison Compares two matrices.
      * \ingroup PkgHDVFAlgorithmClasses
      * @brief  Compare two matrices and return `true` if both matrices equal (and `false` otherwise).
      *
@@ -306,7 +306,7 @@ public:
     }
 
     /**
-     * \defgroup WriteMatrix Write matrix to an output stream.
+     * \defgroup WriteMatrix Writes matrix to an output stream.
      * \ingroup PkgHDVFAlgorithmClasses
      * @brief  Write a sparse matrix to an output stream.
      *
@@ -317,19 +317,19 @@ public:
      * @{
      */
 
-    /** \brief Write a sparse COLUMN matrix. */
+    /** \brief Writes a sparse COLUMN matrix. */
 
     template <typename _CT>
     friend std::ostream& write_matrix (const Sparse_matrix<_CT, OSM::COLUMN>& M, std::ostream& out);
 
-    /** \brief Write a sparse ROW matrix. */
+    /** \brief Writes a sparse ROW matrix. */
     template <typename _CT>
     friend std::ostream& write_matrix (const Sparse_matrix<_CT, OSM::ROW>& M, std::ostream& out);
 
     /** @} */
 
     /**
-     * \defgroup ReadMatrix Read matrix from an input stream.
+     * \defgroup ReadMatrix Reads matrix from an input stream.
      * \ingroup PkgHDVFAlgorithmClasses
      * @brief  Read a sparse matrix from an input stream.
      *
@@ -340,12 +340,12 @@ public:
      * @{
      */
 
-    /** \brief Read a sparse COLUMN matrix. */
+    /** \brief Reads a sparse COLUMN matrix. */
 
     template <typename _CT>
     friend std::istream& read_matrix (Sparse_matrix<_CT, OSM::COLUMN>& M, std::istream& in);
 
-    /** \brief Read a sparse ROW matrix. */
+    /** \brief Reads a sparse ROW matrix. */
     template <typename _CT>
     friend std::istream& read_matrix (Sparse_matrix<_CT, OSM::ROW>& M, std::istream& in);
 
@@ -396,7 +396,7 @@ public:
     }
 
     /**
-     * \brief Apply factor on each coefficients into a new matrix.
+     * \brief Applies factor on each coefficients into a new matrix.
      *
      * This method creates a new matrix obtained by multiplying the matrix by a scalar factor `lambda`.
      *
@@ -416,7 +416,7 @@ public:
     }
 
     /**
-     * \brief Apply factor on each coefficients into a new matrix.
+     * \brief Applies factor on each coefficients into a new matrix.
      *
      * This method creates a new matrix obtained by multiplying the matrix by a scalar factor `lambda`.
      *
@@ -544,7 +544,7 @@ public:
     /** @} */
 
     /**
-     * \defgroup MatrixMatrixAddAssign Sum matrices and assign.
+     * \defgroup MatrixMatrixAddAssign Sums matrices and assign.
      * \ingroup PkgHDVFAlgorithmClasses
      * @brief  Perform addition between matrices and assigns the result to `matrix`.
      *
@@ -585,7 +585,7 @@ public:
     /** @} */
 
     /**
-     * \defgroup MatrixMatrixSubtractAssign Subtract matrices and assign.
+     * \defgroup MatrixMatrixSubtractAssign Subtracts matrices and assign.
      * \ingroup PkgHDVFAlgorithmClasses
      * @brief  Perform subtraction between matrices and assigns the result to `matrix`.
      *
@@ -626,7 +626,7 @@ public:
     /** @} */
 
     /**
-     * \brief Apply factor on each coefficients and assign.
+     * \brief Applies factor on each coefficients and assign.
      *
      * If `lambda` is 0, this comes to nullify the matrix.
      *
@@ -648,7 +648,7 @@ public:
     }
 
     /**
-     * \brief Compute the negative of a matrix (unary operator).
+     * \brief Computes the negative of a matrix (unary operator).
      *
      * \return The resulting matrix.
      */
@@ -696,7 +696,7 @@ public:
     /** @} */
 
     /**
-     * \brief Get the value of a chain from a const matrix.
+     * \brief Gets the value of a chain from a const matrix.
      *
      * \warning The matrix will perform boundary check.
      *
@@ -741,7 +741,7 @@ protected:
     }
 public:
     /**
-     * \brief Set a given coefficient in `matrix`.
+     * \brief Sets a given coefficient in `matrix`.
      *
      * Assign the scalar `d` to the coefficient on row `i` and column `j`.
      *
@@ -772,7 +772,7 @@ protected:
     }
 public:
     /**
-     * \brief Get a given coefficient.
+     * \brief Gets a given coefficient.
      *
      * Returns the coefficient on row `i` and column `j` of the matrix.
      *
@@ -788,7 +788,7 @@ public:
     friend _CT get_coef(const Sparse_matrix<_CT, _CTF>& matrix, size_t i, size_t j);
 
     /**
-     * \defgroup GetColumn Get a column.
+     * \defgroup GetColumn Gets a column.
      * \ingroup PkgHDVFAlgorithmClasses
      * @brief Get the value of the column at a given `index` from the matrix (whatever the `ChainTypeFlag` of the matrix).
      *
@@ -802,18 +802,18 @@ public:
      * @{
      */
 
-    /** \brief Get a column from a COLUMN matrix. */
+    /** \brief Gets a column from a COLUMN matrix. */
     template <typename _CT>
     friend Sparse_chain<_CT, COLUMN> get_column(const Sparse_matrix<_CT, COLUMN> &matrix,  size_t index);
 
-    /** \brief Get a column from a ROW matrix. */
+    /** \brief Gets a column from a ROW matrix. */
     template <typename _CT>
     friend Sparse_chain<_CT, COLUMN> get_column(const Sparse_matrix<_CT, ROW> &matrix,  size_t index);
 
     /** @} */
 
     /**
-     * \defgroup GetRow Get a row.
+     * \defgroup GetRow Gets a row.
      * \ingroup PkgHDVFAlgorithmClasses
      * @brief Get the value of the row at a given `index` from the matrix (whatever the `ChainTypeFlag` of the matrix).
      *
@@ -827,18 +827,18 @@ public:
      * @{
      */
 
-    /** \brief Get a row from a COLUMN matrix. */
+    /** \brief Gets a row from a COLUMN matrix. */
     template <typename _CT>
     friend Sparse_chain<_CT, ROW> get_row(const Sparse_matrix<_CT, COLUMN> &matrix,  size_t index);
 
-    /** \brief Get a row from a ROW matrix. */
+    /** \brief Gets a row from a ROW matrix. */
     template <typename _CT>
     friend Sparse_chain<_CT, ROW> get_row(const Sparse_matrix<_CT, ROW> &matrix,  size_t index);
 
     /** @} */
 
     /**
-     * \brief Get a const reference over a column from a column matrix.
+     * \brief Gets a const reference over a column from a column matrix.
      *
      * Constant time get.
      *
@@ -853,7 +853,7 @@ public:
     friend const Sparse_chain<_CT, COLUMN> & cget_column(const Sparse_matrix<_CT, COLUMN> &matrix,  size_t index);
 
     /**
-     * \brief Get a constant reference over a row from a row matrix
+     * \brief Gets a constant reference over a row from a row matrix
      *
      * Constant time get.
      *
@@ -869,7 +869,7 @@ public:
 
 
     /**
-     * \defgroup SetColumn Set a column.
+     * \defgroup SetColumn Sets a column.
      * \ingroup PkgHDVFAlgorithmClasses
      * @brief Set the value of the column at a given `index` from the matrix to `chain` (whatever the `ChainTypeFlag` of the matrix).
      *
@@ -883,18 +883,18 @@ public:
      * @{
      */
 
-    /** \brief Set a column in a COLUMN matrix. */
+    /** \brief Sets a column in a COLUMN matrix. */
     template <typename _CT>
     friend void set_column(Sparse_matrix<_CT, COLUMN> &matrix,  size_t index, const Sparse_chain<_CT, COLUMN> &chain);
 
-    /** \brief Set a column in a ROW matrix. */
+    /** \brief Sets a column in a ROW matrix. */
     template <typename _CT>
     friend void set_column(Sparse_matrix<_CT, ROW> &matrix,  size_t index, const Sparse_chain<_CT, COLUMN> &chain);
 
     /** @} */
 
     /**
-     * \defgroup SetRow Set a row.
+     * \defgroup SetRow Sets a row.
      * \ingroup PkgHDVFAlgorithmClasses
      * @brief Set the value of the row at a given `index` from the matrix to `chain` (whatever the `ChainTypeFlag` of the matrix).
      *
@@ -908,18 +908,18 @@ public:
      * @{
      */
 
-    /** \brief Set a row in a COLUMN matrix. */
+    /** \brief Sets a row in a COLUMN matrix. */
     template <typename _CT>
     friend void set_row(Sparse_matrix<_CT, COLUMN> &matrix,  size_t index, const Sparse_chain<_CT, ROW> &chain);
 
-    /** \brief Set a row in a ROW matrix. */
+    /** \brief Sets a row in a ROW matrix. */
     template <typename _CT>
     friend void set_row(Sparse_matrix<_CT, ROW> &matrix,  size_t index, const Sparse_chain<_CT, ROW> &chain);
 
     /** @} */
 
     /**
-     * \defgroup GetBlockMatrix Get a sub-matrix by removing chains in a matrix.
+     * \defgroup GetBlockMatrix Gets a sub-matrix by removing chains in a matrix.
      * \ingroup PkgHDVFAlgorithmClasses
      * @brief Build and return a new matrix by copying a `matrix` and removing  all chains with indices in the `indices` vector (or at a given `index`). The result is thus a block of the initial matrix. When possible, for efficiency, prefer `\=`.
      *
@@ -934,14 +934,14 @@ public:
      * @{
      */
 
-    /** \brief Remove a set of chains from a copy of a matrix. */
+    /** \brief Removes a set of chains from a copy of a matrix. */
     friend Sparse_matrix operator/(const Sparse_matrix &matrix, const std::vector<size_t> &_indices) {
         Sparse_matrix res(matrix);
         res /= _indices;
         return res;
     }
 
-    /** \brief Remove the chain at a given `index` from a copy of a matrix. */
+    /** \brief Removes the chain at a given `index` from a copy of a matrix. */
     friend Sparse_matrix operator/(const Sparse_matrix &matrix, size_t index) {
         Sparse_matrix res(matrix);
         res /= index;
@@ -963,7 +963,7 @@ public:
      * @{
      */
 
-    /** \brief Remove a set of chains from a matrix. */
+    /** \brief Removes a set of chains from a matrix. */
     Sparse_matrix& operator/=(const std::vector<size_t> &indexes) {
         for (size_t index : indexes) {
             *this /= index;
@@ -972,7 +972,7 @@ public:
         return *this;
     }
 
-    /** \brief Remove the chain at a given `index` from a matrix. */
+    /** \brief Removes the chain at a given `index` from a matrix. */
     Sparse_matrix& operator/=(const size_t index) {
         _chains[index].nullify();
         _chainsStates.setOff(index);
@@ -1006,7 +1006,7 @@ protected:
     }
 public:
     /**
-     * \brief Remove a column from the matrix.
+     * \brief Removes a column from the matrix.
      *
      * Removes column of index `index` whatever the `ChainTypeFlag` of the matrix. For column matrices, it just comes to the `\=` operator and for row matrices, it entails a traversal of the matrix.
      *
@@ -1041,7 +1041,7 @@ protected:
 
 public:
     /**
-     * \brief Remove a row from the matrix.
+     * \brief Removes a row from the matrix.
      *
      * Removes row of index `index` whatever the `ChainTypeFlag` of the matrix. For row matrices, it just comes to the `\=` operator and for column matrices, it entails a traversal of the matrix.
      *
@@ -1078,7 +1078,7 @@ protected:
 
 public:
     /**
-     * \brief Remove a coefficient from the matrix.
+     * \brief Removes a coefficient from the matrix.
      *
      * Removes coefficient at row `i` and column `j`.
      *
@@ -1126,7 +1126,7 @@ public:
 
 
     /**
-     * \brief Transpose a matrix.
+     * \brief Transposes a matrix.
      *
      * \return A new matrix where the chain type flag has been swapped between COLUMN and ROW and data chains have been transposed.
      */
@@ -1143,7 +1143,7 @@ public:
     }
 
     /**
-     * \brief Get the matrix sizes.
+     * \brief Gets the matrix sizes.
      *
      * \return The matrix size as a row/column pair.
      */

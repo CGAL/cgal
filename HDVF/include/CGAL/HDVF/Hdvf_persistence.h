@@ -182,11 +182,11 @@ public:
      */
     typedef PerHoleT<DegType> PerHole;
 
-    /*! Type for PRIMARY/SECONDARY/CRITICAL labels export
+    /*! Type for `PRIMARY`/`SECONDARY`/`CRITICAL` labels export
      *      Encoding used:
-     *          - PRIMARY: -1
-     *          - SECONDARY: +1
-     *          - CRITICAL: 0
+     *          - `PRIMARY`: -1
+     *          - `SECONDARY`: +1
+     *          - `CRITICAL`: 0
      */
     typedef std::vector<std::vector<int> > ExpLabels ;
 
@@ -264,9 +264,9 @@ public:
     Hdvf_persistence(const ComplexType& K, const Filtration& f, int hdvf_opt = OPT_BND, bool with_export = false) ;
 
     /**
-     * \brief Compute a perfect persistent HDVF.
+     * \brief Computes a perfect persistent HDVF.
      *
-     * This method follows the filtration and considers cells one by one. For each of them, it searches the youngest possible cell valid for A (returned by `find_pair_A`), and applies the corresponding A operation.
+     * This method follows the filtration and considers cells one by one. For each of them, it searches the youngest possible cell valid for A (returned by `find_pair_A()`), and applies the corresponding `A()` operation.
      * By definition of persistent homology, the `Ring` of coefficients *must be* a field.
      *
      * \param[in] verbose If this parameter is `true`, all intermediate reductions are printed out.
@@ -318,7 +318,7 @@ public:
         return res;
     }
 
-    /** \brief Get the "with_export" boolean flag.
+    /** \brief Gets the "with_export" %Boolean flag.
      *  If the flag is `true`, homology/cohomology generators and corresponding PSC labels are exported for each persistent interval of positive duration.
      */
     bool with_export () { return _with_export ; }
@@ -327,7 +327,7 @@ public:
      */
     const Filtration& get_filtration() { return _f; }
 
-    /** \brief Compute the (degree) duration of a persistent interval (ie. persistent hole)
+    /** \brief Computes the (degree) duration of a persistent interval (ie. persistent hole)
      *
      * By definitions of "default" values, infinite intervals have a duration of -1.
      *
@@ -362,7 +362,7 @@ public:
         return out ;
     }
 
-    /** \brief Print informations related to the filtration.
+    /** \brief Prints informations related to the filtration.
      *
      * Prints out the filtration and associated permutations (_K_to_per and _per_to_K) between indices of cells in each dimension in the basis of K and indices along the filtration.
      *
@@ -387,13 +387,13 @@ public:
 
 
     /**
-     * \brief Export Primary/Secondary/Critical labels (e.g. for vtk export).
+     * \brief Exports primary/secondary/critical labels (e.g. for vtk export).
      *
      * The method exports the labels of every cells in each dimension.
      * Encoding used:
-     * - PRIMARY: -1
-     * - SECONDARY: +1
-     * - CRITICAL: 0
+     * - `PRIMARY`: -1
+     * - `SECONDARY`: +1
+     * - `CRITICAL`: 0
      *
      * \returns A vector containing, for each dimension, the vector of labels by cell index.
      */
@@ -424,7 +424,7 @@ public:
     }
 
     /**
-     * \brief Export homology generators associated to `cell` (critical cell) of dimension  `q` (e.g. forx@ vtk export).
+     * \brief Exports homology generators associated to `cell` (critical cell) of dimension  `q` (e.g. forx@ vtk export).
      *
      * The method exports the chain \f$g(\sigma)\f$ for \f$\sigma\f$ the cell of index `cell` and dimension `q`.
      *
@@ -455,7 +455,7 @@ public:
     }
 
     /**
-     * \brief Export cohomology generators associated to `cell` (critical cell) of dimension  `q` (used by vtk export).
+     * \brief Exports cohomology generators associated to `cell` (critical cell) of dimension  `q` (used by vtk export).
      *
      * The method exports the chain \f$f^\star(\sigma)\f$ for \f$\sigma\f$ the cell of index `cell` and dimension `q`.
      *
@@ -662,7 +662,7 @@ private:
      * The function searches, at a given time \f$t\f$ in the filtration, the youngest critical cell \f$\gamma'\f$ forming a valid pair with the cell \f$\gamma\f$. Hence, \f$(\gamma', \gamma)\f$ valid pair is a valid pair
      * (ie. such that \f$\langle \partial(\gamma), \gamma' \rangle\f$ invertible).
      *
-     * \param[in] found Reference to a boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
+     * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      */
     PairCell find_pair_A(bool &found) ;
 

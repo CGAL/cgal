@@ -208,9 +208,9 @@ public:
         return *this;
     }
 
-    /** \brief Complement the mask.
+    /** \brief Returns the complement of the mask.
      *
-     * The method computes the complement of the current mask (0 and 1 bits in the mask are exchanged).
+     * The method return a new `Sub_chain_complex_mask` containing the complement of the current mask (0 and 1 bits in the mask are exchanged).
      */
     Sub_chain_complex_mask complement()
     {
@@ -225,13 +225,13 @@ public:
         return cSub ;
     }
 
-    /** \brief Get a bit of the mask (bit i in dimension q). */
+    /** \brief Gets a bit of the mask (bit i in dimension q). */
     inline bool get_bit(int q, int i) const
     {
         return _sub.at(q).isOn(i) ;
     }
 
-    /** \brief Set a bit to 1 (bit i in dimension q). */
+    /** \brief Sets a bit to 1 (bit i in dimension q). */
     inline void set_bit_on(int q, int i)
     {
         if (!_sub.at(q).isOn(i))
@@ -241,7 +241,7 @@ public:
         }
     }
 
-    /** \brief Set a bit to 0 (bit i in dimension q). */
+    /** \brief Sets a bit to 0 (bit i in dimension q). */
     inline void set_bit_off(int q, int i)
     {
         if (_sub.at(q).isOn(i))
@@ -251,7 +251,7 @@ public:
         }
     }
 
-    /** \brief Getter for the bitboards of the sub chain complex.
+    /** \brief Gets the bitboards of the sub chain complex.
      *
      * Returns a constant reference to the vector of bitboards in each dimension.
      */
@@ -260,13 +260,13 @@ public:
         return _sub ;
     }
 
-    /** \brief Getter for the bitboard of the sub chain complex in dimension q. */
+    /** \brief Gets the bitboard of the sub chain complex in dimension q. */
     inline const OSM::Bitboard& get_bitboard(int q) const
     {
         return _sub.at(q) ;
     }
 
-    /** \brief Screen a sequence of Sub_sparse_matrix (in each dimension).
+    /** \brief Screens a sequence of Sub_sparse_matrix (in each dimension).
      *
      * Given a sequence of matrices (vector of `Sub_sparse_matrices`) sets the masks of `Sub_sparse_matrices` in each dimension to the current `Sub_chain_complex_mask`.
      *
@@ -284,7 +284,7 @@ public:
     }
 
     /**
-     * \brief Restrict a chain in a given dimension to the sub chain complex maks.
+     * \brief Restricts a chain in a given dimension to the sub chain complex maks.
      *
      * Nullify all coefficients out of the mask.
      *

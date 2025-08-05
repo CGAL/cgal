@@ -44,7 +44,7 @@ namespace HDVF {
 // Hdvf vtk export
 
 /*!
- * \brief Export all the `Hdvf` information of a geometric chain complex to vtk files.
+ * \brief Exports all the `Hdvf` information of a geometric chain complex to vtk files.
  *
  * Export PSC labels and homology/cohomology generators (depending on HDVF options) associated to each critical cell to vtk files.
  *
@@ -118,7 +118,7 @@ void hdvf_geometric_chain_complex_output_vtk (Hdvf_core<CoefType, ComplexType, _
 
 // Hdvf_persistence vtk export
 
-/** \brief Export all the `HDVF_persistence` information of a geometric chain complex to vtk files.
+/** \brief Exports all the `HDVF_persistence` information of a geometric chain complex to vtk files.
  *
  * Export PSC labels and homology/cohomology generators (depending on HDVF options) associated to each persistent intervals to vtk files.
  *
@@ -215,7 +215,7 @@ void hdvf_persistence_geometric_chain_complex_output_vtk (Hdvf_persistence<CoefT
 
 // Hdvf_duality vtk export
 
-/** \brief Export all the `HDVF_duality` information of a geometric chain complex to vtk files.
+/** \brief Exports all the `HDVF_duality` information of a geometric chain complex to vtk files.
 
  Export PSC labels and homology/cohomology generators (depending on HDVF options) associated to each persistent intervals to vtk files.
 
@@ -317,7 +317,7 @@ public:
         std::vector<IONodeType> nodes ;
     } TripleRes ;
 
-    /** \brief Generate a subcomplex \f$K\f$K and a complex \f$L\f$ with \f$K\subseteq L\f$ from a simplicial complex `_K`.
+    /** \brief Generates a subcomplex \f$K\f$K and a complex \f$L\f$ with \f$K\subseteq L\f$ from a simplicial complex `_K`.
      *
      * `_K` is embedded into a larger icosphere and a 3D constrained Delaunay triangulation is generated. Then \f$K\f$, \f$L\f$ and vertices coordinates are extracted and stored in a `TripleRes` structure.
      *
@@ -375,7 +375,7 @@ public:
         return t ;
     }
 
-    /** \brief Export a SimpComplex to a MeshObject  */
+    /** \brief Exports a SimpComplex to a MeshObject  */
     static Mesh_object_io& export_meshObject(const ComplexType& _CC)
     {
         std::vector<IOCellType> vcells ;
@@ -420,7 +420,7 @@ public:
     Duality_cubical_complex_tools() {}
 
 
-    /** \brief Generate a subcomplex \f$K\f$K and a complex \f$L\f$ with \f$K\subseteq L\f$ from a cubical complex `_K`.
+    /** \brief Generates a subcomplex \f$K\f$K and a complex \f$L\f$ with \f$K\subseteq L\f$ from a cubical complex `_K`.
      *
      * `L` is the bounding box of `_K` (homeomorphic to a ball) and \f$K\f$ is a sub chain complex mask encoding `_K`.
      *

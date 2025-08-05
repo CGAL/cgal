@@ -117,7 +117,7 @@ public:
         return _subChainsStates.end() ;
     }
 
-    /** \brief Change the indices subset mask.
+    /** \brief Changes the indices subset mask.
      *
      * Set a new mask encoding a new subset of indices along the major dimension.
      */
@@ -127,7 +127,7 @@ public:
         _subChainsStates = this->_chainsStates & _subChains ;
     }
 
-    /** \brief Add an index to the mask.
+    /** \brief Adds an index to the mask.
      *
      * Set the bit encoding a given index to 1 (ie. add the index in the mask).
      *
@@ -140,7 +140,7 @@ public:
             _subChainsStates.setOn(index) ;
     }
 
-    /** \brief Remove an index from the mask.
+    /** \brief Removes an index from the mask.
      *
      * Set the bit encoding a given index to 0 (ie. remove the index from the mask).
      *
@@ -152,11 +152,11 @@ public:
         _subChainsStates.setOff(index) ;
     }
 
-    /** \brief Change the mask to its complement. */
+    /** \brief Changes the mask to its complement. */
     inline void complement() { _subChains.bit_not() ; }
 
     /**
-     * \brief Assign to other `Sub_sparse_matrix`.
+     * \brief Assigns to other `Sub_sparse_matrix`.
      *
      * Assign to other matrix coefficient-wise, and copy the bitboard.
      *

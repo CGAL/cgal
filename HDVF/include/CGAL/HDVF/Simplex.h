@@ -47,12 +47,12 @@ class Simplex {
     /** \brief Constant iterator over the vertices of a simplex. */
     typedef std::set<size_t>::const_iterator const_iterator ;
 
-    /** \brief Method returning a constant iterator on the first vertex of the simplex. */
+    /** \brief Returning a constant iterator on the first vertex of the simplex. */
     const_iterator cbegin ()
     {
         return _vertices.cbegin() ;
     }
-    /** \brief Method returning a constant iterator after the last vertex of the simplex. */
+    /** \brief Returning a constant iterator after the last vertex of the simplex. */
     const_iterator cend () { return _vertices.cend() ; }
 
     /** \brief Constructor from a set of vertices indices.
@@ -61,7 +61,7 @@ class Simplex {
      */
     Simplex(const std::set<size_t>& vertices) : _vertices(vertices) {}
 
-    /** \brief Dimension of a simplex.
+    /** \brief Returns the dimension of a simplex.
      *
      * A simplex of dimension \f$q\f$ has \f$q+1\f$ vertices.
      */
@@ -70,7 +70,7 @@ class Simplex {
         return _vertices.size() - 1;
     }
 
-    /** \brief Boundary of a simplex.
+    /** \brief Returns the boundary of a simplex.
      *
      * The method returns the vector of the simplices in the boundary of the object.
      */
@@ -91,7 +91,7 @@ class Simplex {
         return result;
     }
 
-    /** \brief Get the set of vertices indices of the simplex. */
+    /** \brief Gets the set of vertices indices of the simplex. */
     const std::set<size_t>& get_vertices() const
     {
         return _vertices ;
@@ -107,7 +107,7 @@ class Simplex {
         return _vertices < other._vertices;
     }
 
-    /** \brief Output a simplex.
+    /** \brief Outputs a simplex.
      */
     friend std::ostream& operator<<(std::ostream& out, const Simplex& simplex)
     {

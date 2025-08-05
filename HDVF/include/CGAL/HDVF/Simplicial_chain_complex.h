@@ -84,13 +84,13 @@ public:
     /** \brief Friend class `Duality_simplicial_complex_tools` computes the complementary simplicial complex for Alexander duality */
     friend Duality_simplicial_complex_tools<CoefficientType> ;
 
-    /** \brief Get the vector of vertices coordinates  */
+    /** \brief Gets the vector of vertices coordinates  */
     const std::vector<Point>& get_vertices_coords() const
     {
         return _coords ;
     }
 
-    /** \brief Get the coordinates of the ith dimension-0 simplex
+    /** \brief Gets the coordinates of the ith dimension-0 simplex
 
      * \warning This does not come to return vertices indices, as dimension 0 simplices enumerate vertices in any order. For instance, if an abstract simplicial complex is build from 3 vertices {1,2,3} such that the enumeration of dimension 0 simplices is:
      *  id0: 3, id1 : 2, id2: 1
@@ -107,7 +107,7 @@ public:
     // VTK export
 
     /**
-     * \brief Method exporting a simplicial complex (plus, optionally, labels) to a VTK file.
+     * \brief Exports a simplicial complex (plus, optionally, labels) to a VTK file.
      *
      * The method generates legacy text VTK files. Labels are exported as such in a VTK property, together with CellID property, containing the index of each cell.
      *
@@ -220,7 +220,7 @@ public:
     }
 
     /**
-     * \brief Method exporting a chain over a simplicial complex to a VTK file.
+     * \brief Exports a chain over a simplicial complex to a VTK file.
      *
      * The method generates legacy text VTK files. All the cells of the chain with non zero coefficient are exported. If a cellId is provided, labels are exported in a VTK property (2 for all cells, 0 for cell of index cellId).  The index of each cell is exported in a CellID property.
      *

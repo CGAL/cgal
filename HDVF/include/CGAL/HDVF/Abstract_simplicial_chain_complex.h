@@ -93,10 +93,10 @@ public:
         return *this ;
     }
 
-    /// Methods of the SimpComplex concept
+    // Methods of the AbstractChainComplex concept
 
     /**
-     * \brief Method returning the boundary of the cell id_cell in dimension q.
+     * \brief Returns the boundary of the cell id_cell in dimension q.
      *
      * Returns a copy of the column-major chain stored in the boundary matrix of dimension dim: boundary of the cell id_cell in dimension q.
      *
@@ -114,7 +114,7 @@ public:
     }
 
     /**
-     * \brief Method returning the co-boundary of the cell id_cell in dimension q.
+     * \brief Returns the co-boundary of the cell id_cell in dimension q.
      *
      * Returns a row-major chain containing the co-boundary of the cell id_cell in dimension q (so actually a row of the boundary matrix).
      *
@@ -134,7 +134,7 @@ public:
     }
 
     /**
-     * \brief Method returning the dimension of the complex.
+     * \brief Returns the dimension of the complex.
      *
      * Returns the dimension of the simplicial complex (i.e. largest dimension of cells).
      *
@@ -143,7 +143,7 @@ public:
     int dim() const { return _dim ;}
 
     /**
-     * \brief Method returning the number of cells in a given dimension.
+     * \brief Returns the number of cells in a given dimension.
      *
      * \param[in] q Dimension along which the number of cells is returned.
      *
@@ -158,7 +158,7 @@ public:
     }
 
     /**
-     * \brief Method returning a constant reference to the vector of boundary matrices (along each dimension).
+     * \brief Returns a constant reference to the vector of boundary matrices (along each dimension).
      *
      * Returns a constant reference to the vector of boundary matrices along each dimension. The q-th element of this vector is a column-major sparse matrix containing the boundaries of q-cells (i.e. rows encode q-1 cells and columns q cells).
      *
@@ -170,7 +170,7 @@ public:
     }
 
     /**
-     * \brief Method returning a copy of the dim-th boundary matrix (i.e.\ column-major matrix of \f$\partial_q\f$).
+     * \brief Returns a copy of the dim-th boundary matrix (i.e.\ column-major matrix of \f$\partial_q\f$).
      *
      * It is a column-major sparse matrix containing the boundaries of q-cells (i.e. rows encode q-1 cells and columns q cells).
      *
@@ -184,7 +184,7 @@ public:
     }
 
     /**
-     * \brief Method returning dimension 0 simplices indexes included in the cell with index id_cell of dimension q.
+     * \brief Returns dimension 0 simplices indexes included in the cell with index id_cell of dimension q.
      *
      * Returns the dimension 0 simplices indexes included in the cell with index id_cell of dimension q.
      *
@@ -195,7 +195,7 @@ public:
      * \param[in] id_cell %Index of the cell.
      * \param[in] q Dimension of the cell.
      *
-     * \return A vector of 0-simplices indices.
+     * \return A vector of 0-simplices indexes.
      */
     std::vector<size_t> bottom_faces(size_t id_cell, int q) const
     {
@@ -237,7 +237,7 @@ public:
     }
 
     /**
-     * \brief Method printing informations of the complex.
+     * \brief Prints informations on the complex.
      *
      * Displays the number of cells in each dimension and the boundary matrix in each dimension.
      */
