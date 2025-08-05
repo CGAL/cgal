@@ -151,8 +151,6 @@ Delaunay triangulation instead of an adaptive octree.
 
 \tparam Gt Geometric traits class.
 
-\cgalModels{ImplicitFunction}
-
 */
 template <class Gt>
 class Poisson_reconstruction_function
@@ -629,7 +627,7 @@ public:
   /// \endcond
 
   /*!
-    `ImplicitFunction` interface: evaluates the implicit function at a
+    evaluates the implicit function at a
     given 3D query point. The function `compute_implicit_function()` must be
     called before the first call to `operator()`.
   */
