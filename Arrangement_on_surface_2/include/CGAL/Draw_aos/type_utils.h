@@ -97,6 +97,10 @@ public:
 template <typename T>
 inline constexpr bool is_or_derived_from_agas_v = is_or_derived_from_agas<T>::value;
 
+// Detect whether T is or derives from a geometry traits on curved surfaces
+template <typename T>
+inline constexpr bool is_or_derived_from_curved_surf_traits = is_or_derived_from_agas_v<T>;
+
 /*!
  */
 template <typename GeomTraits>
@@ -108,14 +112,15 @@ public:
   using Approx_point = typename Geom_traits::Approximate_point_2;
   using Approx_nt = typename Geom_traits::Approximate_number_type;
   using Approx_kernel = typename Geom_traits::Approximate_kernel;
-  using Point_geom = Approx_point;
-  using Approx_point_vec = std::vector<Point_geom>;
-  using Polyline_geom = Approx_point_vec;
+  using Approx_proj_point = typename Approx_kernel::Point_2;
+  using Point_geom = Approx_proj_point;
+  using Point_geom_vec = std::vector<Point_geom>;
+  using Polyline_geom = Point_geom_vec;
   using Triangle = std::array<std::size_t, 3>;
   using Triangle_vec = std::vector<Triangle>;
   struct Triangulated_face
   {
-    Approx_point_vec points;
+    Point_geom_vec points;
     Triangle_vec triangles;
   };
 };

@@ -1035,9 +1035,9 @@ public:
      * \pre p2 does not lie on the boundary.
      */
     Comparison_result operator()(const Point_2& p1, const Point_2& p2) const {
-      CGAL_precondition(p1.is_no_boundary());
-      CGAL_precondition(p2.is_no_boundary());
-
+      if(!p1.is_no_boundary() && !p2.is_no_boundary()) return EQUAL;
+      if(!p1.is_no_boundary()) return SMALLER;
+      if(p2.is_no_boundary()) return LARGER;
       return m_traits.compare_x(p1, p2);
     }
   };
