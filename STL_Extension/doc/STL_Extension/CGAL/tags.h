@@ -111,11 +111,10 @@ namespace CGAL {
 The class `Manifold_tag` is a tag class used to monitor the
 surface meshing algorithm. When instantiated with the tag
 `Manifold_tag` the function template
-`make_surface_mesh()`
+`poisson_surface_reconstruction_delaunay()`
 ensures that the output mesh is a manifold surface
 without boundary.
 
-\sa `make_surface_mesh()`
 \sa `Manifold_with_boundary_tag`
 \sa `Non_manifold_tag`
 
@@ -134,11 +133,10 @@ namespace CGAL {
 The class `Manifold_with_boundary_tag` is a tag class used to monitor the
 surface meshing algorithm. When instantiated with the tag
 `Manifold_with_boundary_tag`, the function template
-`make_surface_mesh()`
+`poisson_surface_reconstruction_delaunay()`
 ensures that the output mesh is a manifold surface
 but it may have boundaries.
 
-\sa `make_surface_mesh()`
 \sa `Manifold_tag`
 \sa `Non_manifold_tag`
 
@@ -157,13 +155,12 @@ namespace CGAL {
 The class `Non_manifold_tag` is a tag class used to monitor the
 surface meshing algorithm. When instantiated with the tag
 `Non_manifold_tag` the function template
-`make_surface_mesh()`
+`poisson_surface_reconstruction_delaunay()`
 does not ensure that the output mesh is a manifold surface.
 The manifold property of output mesh
 may nevertheless result from the choice of
 appropriate meshing criteria.
 
-\sa `make_surface_mesh()`
 \sa `Manifold_tag`
 \sa `Manifold_with_boundary_tag`
 

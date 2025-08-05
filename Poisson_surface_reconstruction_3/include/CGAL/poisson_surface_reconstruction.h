@@ -47,7 +47,7 @@ namespace CGAL {
     higher computation time.
 
     Parameters `sm_angle`, `sm_radius` and `sm_distance` work
-    similarly to the parameters of `SurfaceMeshFacetsCriteria_3`. The
+    similarly to the parameters of `Mesh_facet_criteria_3`. The
     latest two are defined with respect to `spacing`.
 
     \tparam PointInputIterator is a model of `InputIterator`.
