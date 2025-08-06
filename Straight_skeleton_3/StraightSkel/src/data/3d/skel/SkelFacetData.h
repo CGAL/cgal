@@ -35,8 +35,8 @@ public:
     FacetSPtr getFacetOrigin() const;
     void setFacetOrigin(FacetSPtr facet_origin);
 
-    CGAL::FT getSpeed() const;
-    void setSpeed(CGAL::FT speed);
+    const CGAL::FT& getSpeed() const;
+    void setSpeed(const CGAL::FT& speed);
 
     int getStepID() const;
     void setStepID(int id);

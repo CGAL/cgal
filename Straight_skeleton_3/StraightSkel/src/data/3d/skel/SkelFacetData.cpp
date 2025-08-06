@@ -62,12 +62,12 @@ void SkelFacetData::setFacetOrigin(FacetSPtr facet_origin) {
 }
 
 
-CGAL::FT SkelFacetData::getSpeed() const {
+const CGAL::FT& SkelFacetData::getSpeed() const {
     CGAL_assertion(speed_ != 0);
     return speed_;
 }
 
-void SkelFacetData::setSpeed(CGAL::FT speed) {
+void SkelFacetData::setSpeed(const CGAL::FT& speed) {
     speed_ = speed;
 }
 

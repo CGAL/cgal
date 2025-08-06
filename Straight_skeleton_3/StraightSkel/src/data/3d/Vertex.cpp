@@ -568,7 +568,7 @@ unsigned int Vertex::degree() const {
     while (it_e != edges_.end()) {
         EdgeWPtr edge_wptr = *it_e++;
         if (!edge_wptr.expired()) {
-            result++;
+            ++result;
         }
     }
     return result;

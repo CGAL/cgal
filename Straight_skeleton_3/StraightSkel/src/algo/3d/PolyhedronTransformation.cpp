@@ -226,6 +226,7 @@ void PolyhedronTransformation::translateNscale(PolyhedronSPtr polyhedron,
 void PolyhedronTransformation::truncatePrecision(PolyhedronSPtr polyhedron)
 {
     CGAL_SS3_TRANSF_TRACE("Lower precision of input polyhedron");
+    CGAL_SS3_DEBUG_SPTR(polyhedron);
 
     util::ConfigurationSPtr config = util::Configuration::getInstance();
     double range = 1e-10;
@@ -257,6 +258,8 @@ void PolyhedronTransformation::truncatePrecision(PolyhedronSPtr polyhedron)
 bool PolyhedronTransformation::resetPoint(VertexSPtr vertex,
                                           const std::array<Plane3SPtr, 3>& planes)
 {
+    CGAL_SS3_DEBUG_SPTR(vertex);
+
     Point3SPtr point = KernelWrapper::intersection(planes[0], planes[1], planes[2]);
     if (!point) {
         CGAL_SS3_TRANSF_TRACE("Warning: triplet of planes does not define a point!");
@@ -282,6 +285,7 @@ bool PolyhedronTransformation::resetPoint(VertexSPtr vertex,
 bool PolyhedronTransformation::resetPoint(VertexSPtr vertex)
 {
     CGAL_SS3_TRANSF_TRACE("resetPoint() of " << vertex->toString());
+    CGAL_SS3_DEBUG_SPTR(vertex);
 
     std::array<Plane3SPtr, 3> planes;
     unsigned int i = 0;
@@ -290,7 +294,7 @@ bool PolyhedronTransformation::resetPoint(VertexSPtr vertex)
         FacetWPtr facet_wptr = *it_f++;
         if (!facet_wptr.expired()) {
             FacetSPtr facet = FacetSPtr(facet_wptr);
-            planes[i++] = facet->plane();
+            planes[i++] = facet->getPlane();
 
             CGAL_SS3_TRANSF_TRACE("  Facet " << facet->getID() << " [" << *(facet->getPlane()) << "]");
         }

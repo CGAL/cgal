@@ -79,7 +79,7 @@ unsigned int SelfIntersection::hasSelfIntersectingFacets(PolyhedronSPtr polyhedr
 #ifdef CGAL_SS3_EXIT_ASAP
             return 1;
 #else
-            result++;
+            ++result;
 #endif
         }
     }
@@ -398,6 +398,7 @@ bool SelfIntersection::isInsideWithRayShootingV2(Point3SPtr point,
                                                  FacetSPtr facet)
 {
     CGAL_SS3_ALGO_TRACE("isInsideWithRayShootingV2(" << point << ", F" << facet->getID() << ")");
+
     Plane3SPtr pl = facet->plane();
     Vector3SPtr normal = KernelFactory::createVector3(pl);
     if (is_zero(normal->z())) {

@@ -320,26 +320,10 @@ bool SimpleStraightSkel::isReflex(EdgeSPtr edge,
         FacetSPtr facet_src = edge->getFacetSrc();
         FacetSPtr facet_dst = edge->getFacetDst();
 
-        CGAL::FT speed_l = 1.0;
-        if (facet_l->hasData()) {
-            speed_l = std::dynamic_pointer_cast<SkelFacetData>(
-                    facet_l->getData())->getSpeed();
-        }
-        CGAL::FT speed_r = 1.0;
-        if (facet_r->hasData()) {
-            speed_r = std::dynamic_pointer_cast<SkelFacetData>(
-                    facet_r->getData())->getSpeed();
-        }
-        CGAL::FT speed_src = 1.0;
-        if (facet_src->hasData()) {
-            speed_src = std::dynamic_pointer_cast<SkelFacetData>(
-                    facet_src->getData())->getSpeed();
-        }
-        CGAL::FT speed_dst = 1.0;
-        if (facet_dst->hasData()) {
-            speed_dst = std::dynamic_pointer_cast<SkelFacetData>(
-                    facet_dst->getData())->getSpeed();
-        }
+        const CGAL::FT& speed_l = std::dynamic_pointer_cast<SkelFacetData>(facet_l->getData())->getSpeed();
+        const CGAL::FT& speed_r = std::dynamic_pointer_cast<SkelFacetData>(facet_r->getData())->getSpeed();
+        const CGAL::FT& speed_src = std::dynamic_pointer_cast<SkelFacetData>(facet_src->getData())->getSpeed();
+        const CGAL::FT& speed_dst = std::dynamic_pointer_cast<SkelFacetData>(facet_dst->getData())->getSpeed();
 
         CGAL::FT od = future_facing ? -1 : 1;
         Plane3SPtr offset_plane_l = KernelWrapper::offsetPlane(facet_l->getPlane(), od * speed_l);
@@ -415,26 +399,12 @@ Line3SPtr SimpleStraightSkel::line(EdgeSPtr edge) {
         FacetSPtr facet_r = edge->getFacetR();
         FacetSPtr facet_src = edge->getFacetSrc();
         FacetSPtr facet_dst = edge->getFacetDst();
-        CGAL::FT speed_l = 1.0;
-        if (facet_l->hasData()) {
-            speed_l = std::dynamic_pointer_cast<SkelFacetData>(
-                    facet_l->getData())->getSpeed();
-        }
-        CGAL::FT speed_r = 1.0;
-        if (facet_r->hasData()) {
-            speed_r = std::dynamic_pointer_cast<SkelFacetData>(
-                    facet_r->getData())->getSpeed();
-        }
-        CGAL::FT speed_src = 1.0;
-        if (facet_src->hasData()) {
-            speed_src = std::dynamic_pointer_cast<SkelFacetData>(
-                    facet_src->getData())->getSpeed();
-        }
-        CGAL::FT speed_dst = 1.0;
-        if (facet_dst->hasData()) {
-            speed_dst = std::dynamic_pointer_cast<SkelFacetData>(
-                    facet_dst->getData())->getSpeed();
-        }
+
+        const CGAL::FT& speed_l = std::dynamic_pointer_cast<SkelFacetData>(facet_l->getData())->getSpeed();
+        const CGAL::FT& speed_r = std::dynamic_pointer_cast<SkelFacetData>(facet_r->getData())->getSpeed();
+        const CGAL::FT& speed_src = std::dynamic_pointer_cast<SkelFacetData>(facet_src->getData())->getSpeed();
+        const CGAL::FT& speed_dst = std::dynamic_pointer_cast<SkelFacetData>(facet_dst->getData())->getSpeed();
+
         Plane3SPtr plane_l = facet_l->getPlane();
         Plane3SPtr plane_r = facet_r->getPlane();
 
@@ -630,7 +600,6 @@ bool SimpleStraightSkel::run() {
     }
 #endif
 
-    CGAL_SS3_CORE_TRACE_V(2, "Using " << vertex_splitter_->toString() << " to initialize polyhedron.");
     if (init(polyhedron, vertex_splitter_, use_fast_vertex_splitter_, controller_)) {
         if (controller_) {
             controller_->wait();
@@ -1026,6 +995,8 @@ bool SimpleStraightSkel::init(PolyhedronSPtr polyhedron,
 #endif
     }
 
+    CGAL_SS3_CORE_TRACE_V(2, "Using " << vertex_splitter->toString() << " to split vertices.");
+
     std::list<VertexSPtr> vertices_tosplit;
     it_v = polyhedron->vertices().begin();
     while (it_v != polyhedron->vertices().end()) {
@@ -1069,10 +1040,7 @@ bool SimpleStraightSkel::init(PolyhedronSPtr polyhedron,
             while (it_f != vertex->facets().end()) {
                 FacetWPtr facet_wptr = *it_f++;
                 if (FacetSPtr facet = facet_wptr.lock()) {
-                    CGAL::FT speed = 1.0;
-                    if (facet->hasData()) {
-                        speed = std::dynamic_pointer_cast<SkelFacetData>(facet->getData())->getSpeed();
-                    }
+                    const CGAL::FT& speed = std::dynamic_pointer_cast<SkelFacetData>(facet->getData())->getSpeed();
 
                     if (!first_speed_set) {
                         first_speed = speed;
@@ -1309,7 +1277,7 @@ std::pair<Point3SPtr, CGAL::FT> SimpleStraightSkel::vanishesAt(EdgeSPtr edge,
 // f_third: edge shared between 'f' and either the dst of the edge seen in f
 bool SimpleStraightSkel::check_bisector(EdgeSPtr edge,
                                         FacetSPtr f,
-                                        CGAL::FT t,
+                                        const CGAL::FT& t,
                                         FacetSPtr f_third, // @todo superfluous parameter
                                         Point3SPtr point)
 {
@@ -1318,7 +1286,7 @@ bool SimpleStraightSkel::check_bisector(EdgeSPtr edge,
     // check like below?
 
     Plane3SPtr plane_third = f_third->getPlane();
-    CGAL::FT speed_third = std::dynamic_pointer_cast<SkelFacetData>(f_third->getData())->getSpeed();
+    const CGAL::FT& speed_third = std::dynamic_pointer_cast<SkelFacetData>(f_third->getData())->getSpeed();
     if (is_zero(speed_third)) {
         return (KernelWrapper::side(plane_third, point) <= 0);
     }
@@ -1428,10 +1396,10 @@ SimpleStraightSkel::crashAt(EdgeSPtr edge_1, EdgeSPtr edge_2,
     FacetSPtr facet_r1 = edge_1->getFacetR();
     FacetSPtr facet_l2 = edge_2->getFacetL();
     FacetSPtr facet_r2 = edge_2->getFacetR();
-    CGAL::FT speed_l1 = std::dynamic_pointer_cast<SkelFacetData>(facet_l1->getData())->getSpeed();
-    CGAL::FT speed_r1 = std::dynamic_pointer_cast<SkelFacetData>(facet_r1->getData())->getSpeed();
-    CGAL::FT speed_l2 = std::dynamic_pointer_cast<SkelFacetData>(facet_l2->getData())->getSpeed();
-    CGAL::FT speed_r2 = std::dynamic_pointer_cast<SkelFacetData>(facet_r2->getData())->getSpeed();
+    const CGAL::FT& speed_l1 = std::dynamic_pointer_cast<SkelFacetData>(facet_l1->getData())->getSpeed();
+    const CGAL::FT& speed_r1 = std::dynamic_pointer_cast<SkelFacetData>(facet_r1->getData())->getSpeed();
+    const CGAL::FT& speed_l2 = std::dynamic_pointer_cast<SkelFacetData>(facet_l2->getData())->getSpeed();
+    const CGAL::FT& speed_r2 = std::dynamic_pointer_cast<SkelFacetData>(facet_r2->getData())->getSpeed();
 
     CGAL_SS3_CORE_TRACE_V(16, "-- Crash At\n    " << edge_1->toString() << "\n    " << edge_2->toString());
 
@@ -1596,8 +1564,7 @@ CGAL::FT SimpleStraightSkel::offsetDist(FacetSPtr facet, Point3SPtr point) {
         result *= -1.0;
     }
     if (facet->hasData()) {
-        CGAL::FT speed = std::dynamic_pointer_cast<SkelFacetData>(
-                facet->getData())->getSpeed();
+        const CGAL::FT& speed = std::dynamic_pointer_cast<SkelFacetData>(facet->getData())->getSpeed();
         result /= speed;
     }
     return result;
@@ -1816,8 +1783,8 @@ void SimpleStraightSkel::collectEdgeEvents(const std::list<EdgeSPtr>& edges,
 
             Plane3SPtr plane_l2 = facet_l2->getPlane();
             Plane3SPtr plane_r2 = facet_r2->getPlane();
-            CGAL::FT speed_l2 = std::dynamic_pointer_cast<SkelFacetData>(facet_l2->getData())->getSpeed();
-            CGAL::FT speed_r2 = std::dynamic_pointer_cast<SkelFacetData>(facet_r2->getData())->getSpeed();
+            const CGAL::FT& speed_l2 = std::dynamic_pointer_cast<SkelFacetData>(facet_l2->getData())->getSpeed();
+            const CGAL::FT& speed_r2 = std::dynamic_pointer_cast<SkelFacetData>(facet_r2->getData())->getSpeed();
 
             const CGAL::FT& l2a = plane_l2->a();
             const CGAL::FT& l2b = plane_l2->b();
@@ -4270,7 +4237,7 @@ void SimpleStraightSkel::collectPierceEvents(const std::list<VertexSPtr>& vertic
                 FacetSPtr facet_offset = facet->clone();
 
                 CGAL::FT shift = offset_event - current_offset;
-                const CGAL::FT speed = std::dynamic_pointer_cast<SkelFacetData>(facet->getData())->getSpeed();
+                const CGAL::FT& speed = std::dynamic_pointer_cast<SkelFacetData>(facet->getData())->getSpeed();
                 Plane3SPtr offset_plane = KernelWrapper::offsetPlane(facet->getPlane(), shift*speed);
                 facet_offset->setPlane(offset_plane);
 
@@ -5124,8 +5091,8 @@ SimpleStraightSkel::handleVanishEvent(VanishEventSPtr event,
 
             Plane3SPtr plane_l2 = facet_l2->getPlane();
             Plane3SPtr plane_r2 = facet_r2->getPlane();
-            CGAL::FT speed_l2 = std::dynamic_pointer_cast<SkelFacetData>(facet_l2->getData())->getSpeed();
-            CGAL::FT speed_r2 = std::dynamic_pointer_cast<SkelFacetData>(facet_r2->getData())->getSpeed();
+            const CGAL::FT& speed_l2 = std::dynamic_pointer_cast<SkelFacetData>(facet_l2->getData())->getSpeed();
+            const CGAL::FT& speed_r2 = std::dynamic_pointer_cast<SkelFacetData>(facet_r2->getData())->getSpeed();
 
             const CGAL::FT& l2a = plane_l2->a();
             const CGAL::FT& l2b = plane_l2->b();
@@ -7514,17 +7481,17 @@ SimpleStraightSkel::isActualPierceEvent(const CGAL::FT& current_offset,
                                         PolyhedronSPtr polyhedron)
 
 {
+    // Filter if the event point is on an edge (and a fortiori on a vertex)
+    // as it will be a different kind of event
+    //
     // @todo avoid duplicating code
 
     Point3SPtr point = event->getNode()->getPoint();
-
-    // Filter if the event point is on an edge (and a fortiori on a vertex)
-    // as it will be a different kind of event
     FacetSPtr facet_base = event->getFacet();
     FacetSPtr facet_clone = facet_base->clone();
 
     CGAL::FT shift = event->getOffset() - current_offset;
-    const CGAL::FT speed = std::dynamic_pointer_cast<SkelFacetData>(facet_base->getData())->getSpeed();
+    const CGAL::FT& speed = std::dynamic_pointer_cast<SkelFacetData>(facet_base->getData())->getSpeed();
     Plane3SPtr offset_plane = KernelWrapper::offsetPlane(facet_base->getPlane(), shift*speed);
     facet_clone->setPlane(offset_plane);
 

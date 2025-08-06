@@ -126,7 +126,7 @@ unsigned int CircularNode::degree() {
     while (it_a != arcs_.end()) {
         CircularArcWPtr arc_wptr = *it_a++;
         if (!arc_wptr.expired()) {
-            result++;
+            ++result;
         }
     }
     return result;

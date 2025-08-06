@@ -179,7 +179,7 @@ public:
      */
     static bool check_bisector(EdgeSPtr edge,
                                FacetSPtr f,
-                               CGAL::FT t,
+                               const CGAL::FT& t,
                                FacetSPtr f_third,
                                Point3SPtr point);
 
