@@ -22,6 +22,7 @@ each specific format.
 - \ref IOStreamMedit
 - \ref IOStreamTetgen
 - \ref IOStreamWKT
+- \ref IOStreamVTKLCC
 
 \section IOStreamOFF Object File Format (OFF)
 
@@ -504,6 +505,30 @@ The following \cgal data structures can be exported into the `.VTU` file format:
 - `CGAL::Mesh_complex_3_in_triangulation_3`, using \link CGAL::IO::output_to_vtu() `CGAL::IO::output_to_vtu()` \endlink
 - `CGAL::Constrained_Delaunay_triangulation_2`, using the function \link CGAL::IO::write_VTU `CGAL::IO::write_VTU()` \endlink
 
+\section IOStreamVTKLCC VTK Legacy File Format for Linear Cell Complex
+
+The VTK legacy format, using file extension `.vtk`, is an \ascii format used to store 3D volumetric meshes.
+This specific implementation supports Linear Cell Complex structures with various 3D cell types including
+tetrahedra, hexahedra, prisms, pyramids, and generic polyhedra. Optional scalar data can be associated
+with both vertices and volumes.
+
+<table class="iotable">
+  <tr>
+    <th colspan="4">VTK Legacy File Format for Linear Cell Complex</th>
+  </tr>
+  <tr>
+    <td rowspan="1" width="75">Input</td>
+    <td rowspan="1" width="175">3D Volumetric Mesh</td>
+    <td width="250">`Linear_cell_complex_for_combinatorial_map<3,3>`</td>
+    <td width="550">CGAL::IO::read_VTK()</td>
+  </tr>
+  <tr>
+    <td rowspan="1">Output</td>
+    <td rowspan="1">3D Volumetric Mesh</td>
+    <td>`Linear_cell_complex_for_combinatorial_map<3,3>`</td>
+    <td>CGAL::IO::write_VTK()</td>
+  </tr>
+</table>
 
 \section IOStreamAvizo Avizo File Format
 

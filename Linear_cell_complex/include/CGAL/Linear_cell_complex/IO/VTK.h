@@ -9,10 +9,9 @@
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 
-#ifndef CGAL_LINEAR_CELL_COMPLEX_VTK_IO_H
-#define CGAL_LINEAR_CELL_COMPLEX_VTK_IO_H 1
-
-#include "Linear_cell_complex_incremental_builder_3.h"
+#ifndef CGAL_LCC_IO_VTK_H
+#define CGAL_LCC_IO_VTK_H 1
+#include <CGAL/Linear_cell_complex_incremental_builder_3.h>
 #include <CGAL/assertions.h>
 #include <fstream>
 #include <iostream>
@@ -22,8 +21,9 @@
 #include <vector>
 
 namespace CGAL {
+namespace IO {
 
-/** \file Linear_cell_complex_vtk_io.h
+/** \file VTK.h
  * Functions to import/export 3D Linear_cell_complex from/to VTK legacy ASCII format.
  *
  * Only supports:
@@ -60,7 +60,7 @@ namespace CGAL {
  * \return `true` if loading was successful, `false` otherwise
  */
 template <typename LCC, typename ScalarType = float>
-bool read_lcc_from_vtk(LCC& alcc,
+bool read_VTK(LCC& alcc,
               const char* filename,
               std::vector<ScalarType>* vertex_scalars = nullptr,
               std::vector<ScalarType>* volume_scalars = nullptr);
@@ -79,17 +79,17 @@ bool read_lcc_from_vtk(LCC& alcc,
  * \return `true` if writing was successful, `false` otherwise
  */
 template <typename LCC, typename ScalarType = float>
-bool write_lcc_to_vtk(const LCC& alcc,
+bool write_VTK(const LCC& alcc,
                const char* filename,
                const std::vector<ScalarType>* vertex_scalars = nullptr,
                const std::vector<ScalarType>* volume_scalars = nullptr);
 
 // Advanced versions with functors
 template <typename LCC, typename VertexScalarReader, typename CellScalarReader>
-bool read_lcc_from_vtk(LCC& alcc, const char* filename, VertexScalarReader vertex_reader, CellScalarReader cell_reader);
+bool read_VTK(LCC& alcc, const char* filename, VertexScalarReader vertex_reader, CellScalarReader cell_reader);
 
 template <typename LCC, typename PointFunctor, typename CellFunctor>
-bool write_lcc_to_vtk(const LCC& alcc, const char* filename, PointFunctor ptval, CellFunctor cellval);
+bool write_VTK(const LCC& alcc, const char* filename, PointFunctor ptval, CellFunctor cellval);
 
 // ============================================================================
 //                          Implementation details
@@ -175,7 +175,7 @@ bool read_scalar_by_vtk_type(std::istream& is, const std::string& vtk_type, std:
       f(i, v);
     }
   } else {
-    std::cerr << "[ERROR] read_lcc_from_vtk: unsupported scalar type: " << vtk_type << std::endl;
+    std::cerr << "[ERROR] read_VTK: unsupported scalar type: " << vtk_type << std::endl;
     return false;
   }
   return true;
@@ -274,7 +274,7 @@ template <typename LCC, typename Dart> inline VTK_Cell_Type get_vtk_cell_type(co
 template <typename LCC, typename VertexScalarReader, typename CellScalarReader>
 bool read_lcc_from_vtk_ascii(std::istream& is, LCC& alcc, VertexScalarReader vertex_reader, CellScalarReader cell_reader) {
   static_assert(LCC::dimension == 3 && LCC::ambient_dimension == 3,
-                "read_lcc_from_vtk() only supports 3D Linear_cell_complexes (3,3)");
+                "read_VTK() only supports 3D Linear_cell_complexes (3,3)");
 
   using Point = typename LCC::Point;
   using FT = typename LCC::FT;
@@ -292,7 +292,7 @@ bool read_lcc_from_vtk_ascii(std::istream& is, LCC& alcc, VertexScalarReader ver
       break;
   }
   if(is.eof()) {
-    std::cerr << "[ERROR] read_lcc_from_vtk: POINTS section not found" << std::endl;
+    std::cerr << "[ERROR] read_VTK: POINTS section not found" << std::endl;
     return false;
   }
 
@@ -305,7 +305,7 @@ bool read_lcc_from_vtk_ascii(std::istream& is, LCC& alcc, VertexScalarReader ver
   for(std::size_t i = 0; i < npoints; ++i) {
     FT x, y, z;
     if(!(is >> x >> y >> z)) {
-      std::cerr << "[ERROR] read_lcc_from_vtk: failed to read point " << i << std::endl;
+      std::cerr << "[ERROR] read_VTK: failed to read point " << i << std::endl;
       return false;
     }
     points[i] = ib.add_vertex(Point(x, y, z));
@@ -317,7 +317,7 @@ bool read_lcc_from_vtk_ascii(std::istream& is, LCC& alcc, VertexScalarReader ver
       break;
   }
   if(is.eof()) {
-    std::cerr << "[ERROR] read_lcc_from_vtk: CELLS section not found" << std::endl;
+    std::cerr << "[ERROR] read_VTK: CELLS section not found" << std::endl;
     return false;
   }
 
@@ -330,13 +330,13 @@ bool read_lcc_from_vtk_ascii(std::istream& is, LCC& alcc, VertexScalarReader ver
   std::size_t points_per_cell;
   for(std::size_t i = 0; i < ncells; ++i) {
     if(!(is >> points_per_cell)) {
-      std::cerr << "[ERROR] read_lcc_from_vtk: failed to read cell " << i << std::endl;
+      std::cerr << "[ERROR] read_VTK: failed to read cell " << i << std::endl;
       return false;
     }
     faces[i].resize(points_per_cell);
     for(std::size_t j = 0; j < points_per_cell; ++j) {
       if(!(is >> faces[i][j])) {
-        std::cerr << "[ERROR] read_lcc_from_vtk: failed to read cell " << i << " vertex " << j << std::endl;
+        std::cerr << "[ERROR] read_VTK: failed to read cell " << i << " vertex " << j << std::endl;
         return false;
       }
     }
@@ -348,7 +348,7 @@ bool read_lcc_from_vtk_ascii(std::istream& is, LCC& alcc, VertexScalarReader ver
       break;
   }
   if(is.eof()) {
-    std::cerr << "[ERROR] read_lcc_from_vtk: CELL_TYPES section not found" << std::endl;
+    std::cerr << "[ERROR] read_VTK: CELL_TYPES section not found" << std::endl;
     return false;
   }
 
@@ -356,7 +356,7 @@ bool read_lcc_from_vtk_ascii(std::istream& is, LCC& alcc, VertexScalarReader ver
   std::size_t cell_type;
   for(std::size_t i = 0; i < ncells; ++i) {
     if(!(is >> cell_type)) {
-      std::cerr << "[ERROR] read_lcc_from_vtk: failed to read cell type " << i << std::endl;
+      std::cerr << "[ERROR] read_VTK: failed to read cell type " << i << std::endl;
       return false;
     }
     const auto& v = faces[i];
@@ -393,7 +393,7 @@ bool read_lcc_from_vtk_ascii(std::istream& is, LCC& alcc, VertexScalarReader ver
       make_generic_cell_with_builder(ib, v);
       break;
     default:
-      std::cerr << "[ERROR] read_lcc_from_vtk: type " << cell_type << " unknown." << std::endl;
+      std::cerr << "[ERROR] read_VTK: type " << cell_type << " unknown." << std::endl;
     }
   }
 
@@ -422,7 +422,7 @@ bool read_lcc_from_vtk_ascii(std::istream& is, LCC& alcc, VertexScalarReader ver
       std::getline(is, line); // LOOKUP_TABLE line
 
       if(!read_scalar_by_vtk_type(is, vtk_type, ndata, vertex_reader)) {
-        std::cerr << "[ERROR] read_lcc_from_vtk: failed to read POINT_DATA" << std::endl;
+        std::cerr << "[ERROR] read_VTK: failed to read POINT_DATA" << std::endl;
       }
       break;
     }
@@ -444,7 +444,7 @@ bool read_lcc_from_vtk_ascii(std::istream& is, LCC& alcc, VertexScalarReader ver
       std::getline(is, line); // LOOKUP_TABLE line
 
       if(!read_scalar_by_vtk_type(is, vtk_type, ndata, cell_reader)) {
-        std::cerr << "[ERROR] read_lcc_from_vtk: failed to read CELL_DATA" << std::endl;
+        std::cerr << "[ERROR] read_VTK: failed to read CELL_DATA" << std::endl;
       }
       break;
     }
@@ -456,7 +456,7 @@ bool read_lcc_from_vtk_ascii(std::istream& is, LCC& alcc, VertexScalarReader ver
 template <typename LCC, typename PointFunctor, typename CellFunctor>
 bool write_lcc_to_vtk_ascii(std::ostream& os, const LCC& alcc, PointFunctor ptval, CellFunctor cellval) {
   static_assert(LCC::dimension == 3 && LCC::ambient_dimension == 3,
-                "write_lcc_to_vtk() only supports 3D Linear_cell_complexes (3,3)");
+                "write_VTK() only supports 3D Linear_cell_complexes (3,3)");
 
   // Write VTK header
   os << "# vtk DataFile Version 2.0\n";
@@ -590,22 +590,22 @@ bool write_lcc_to_vtk_ascii(std::ostream& os, const LCC& alcc, PointFunctor ptva
 
 // Functor-based versions
 template <typename LCC, typename VertexScalarReader, typename CellScalarReader>
-inline bool read_lcc_from_vtk(LCC& alcc, const char* filename, VertexScalarReader vertex_reader, CellScalarReader cell_reader) {
+inline bool read_VTK(LCC& alcc, const char* filename, VertexScalarReader vertex_reader, CellScalarReader cell_reader) {
   CGAL_assertion(filename != nullptr);
   std::ifstream file(filename);
   if(!file.is_open()) {
-    std::cerr << "[ERROR] read_lcc_from_vtk: cannot open file " << filename << std::endl;
+    std::cerr << "[ERROR] read_VTK: cannot open file " << filename << std::endl;
     return false;
   }
   return internal::read_lcc_from_vtk_ascii(file, alcc, vertex_reader, cell_reader);
 }
 
 template <typename LCC, typename PointFunctor, typename CellFunctor>
-inline bool write_lcc_to_vtk(const LCC& alcc, const char* filename, PointFunctor ptval, CellFunctor cellval) {
+inline bool write_VTK(const LCC& alcc, const char* filename, PointFunctor ptval, CellFunctor cellval) {
   CGAL_assertion(filename != nullptr);
   std::ofstream file(filename);
   if(!file.is_open()) {
-    std::cerr << "[ERROR] write_lcc_to_vtk: cannot open file " << filename << std::endl;
+    std::cerr << "[ERROR] write_VTK: cannot open file " << filename << std::endl;
     return false;
   }
   return internal::write_lcc_to_vtk_ascii(file, alcc, ptval, cellval);
@@ -613,7 +613,7 @@ inline bool write_lcc_to_vtk(const LCC& alcc, const char* filename, PointFunctor
 
 // Vector-based versions (convenience wrappers)
 template <typename LCC, typename ScalarType>
-inline bool read_lcc_from_vtk(LCC& alcc,
+inline bool read_VTK(LCC& alcc,
               const char* filename,
               std::vector<ScalarType>* vertex_scalars,
               std::vector<ScalarType>* volume_scalars) {
@@ -631,11 +631,11 @@ inline bool read_lcc_from_vtk(LCC& alcc,
       (*volume_scalars)[i] = val;
     }
   };
-  return read_lcc_from_vtk(alcc, filename, v_writer, c_writer);
+  return read_VTK(alcc, filename, v_writer, c_writer);
 }
 
 template <typename LCC, typename ScalarType>
-inline bool write_lcc_to_vtk(const LCC& alcc,
+inline bool write_VTK(const LCC& alcc,
                const char* filename,
                const std::vector<ScalarType>* vertex_scalars,
                const std::vector<ScalarType>* volume_scalars) {
@@ -651,7 +651,7 @@ inline bool write_lcc_to_vtk(const LCC& alcc,
       itvol != itvolend; ++itvol)
     volume_indices[itvol] = idx++;
 
-  return write_lcc_to_vtk(
+  return write_VTK(
       alcc, filename,
       [vertex_scalars, &vertex_indices](const LCC& lcc, typename LCC::Dart_const_descriptor d) -> ScalarType {
         if(vertex_scalars)
@@ -665,6 +665,7 @@ inline bool write_lcc_to_vtk(const LCC& alcc,
       });
 }
 
+} // namespace IO
 } // namespace CGAL
 
-#endif // CGAL_LINEAR_CELL_COMPLEX_VTK_IO_H
+#endif // CGAL_LCC_IO_VTK_H

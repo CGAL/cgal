@@ -1,5 +1,5 @@
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
-#include <CGAL/Linear_cell_complex_vtk_io.h>
+#include <CGAL/Linear_cell_complex/IO/VTK.h>
 #include <cassert>
 #include <string>
 #include <unordered_map>
@@ -13,7 +13,7 @@ int main() {
   std::vector<float> v_scalars2, vol_scalars2;
 
   const std::string input_file = "data/beam-with-mixed-cells.vtk";
-  assert(CGAL::read_lcc_from_vtk(lcc1, input_file.c_str(), &v_scalars1, &vol_scalars1));
+  assert(CGAL::IO::read_VTK(lcc1, input_file.c_str(), &v_scalars1, &vol_scalars1));
 
   // Build index maps
   std::unordered_map<LCC::Vertex_attribute_const_descriptor, std::size_t> vertex_indices;
@@ -27,7 +27,7 @@ int main() {
     volume_indices[itvol] = idx++;
 
   const char* tmp_file = "tmp_test_lcc_vtk.vtk";
-  assert(CGAL::write_lcc_to_vtk(
+  assert(CGAL::IO::write_VTK(
     lcc1, tmp_file,
     [&v_scalars1, &vertex_indices](const LCC& lcc, LCC::Dart_const_descriptor d) {
       return v_scalars1[vertex_indices.at(lcc.attribute<0>(d))];
@@ -35,7 +35,7 @@ int main() {
     [&vol_scalars1, &volume_indices](const LCC& lcc, LCC::Dart_const_descriptor d) {
       return vol_scalars1[volume_indices.at(d)];
     }));
-  assert(CGAL::read_lcc_from_vtk(lcc2, tmp_file, &v_scalars2, &vol_scalars2));
+  assert(CGAL::IO::read_VTK(lcc2, tmp_file, &v_scalars2, &vol_scalars2));
 
   assert(lcc1.is_isomorphic_to(lcc2, false, true, true));
 
