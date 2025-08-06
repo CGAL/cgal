@@ -498,6 +498,48 @@ public:
   }
 };
 
+template <class R,int dim>
+class Do_intersect_projected_3
+{
+public:
+  typedef typename R::FT          FT;
+  typedef typename R::Point_3     Point_3;
+  typedef typename R::Segment_3   Segment_3;
+  typedef typename R::Ray_3       Ray_3;
+  typedef typename R::Point_2     Point_2;
+  typedef typename R::Segment_2   Segment_2;
+  typedef typename R::Ray_2       Ray_2;
+
+  FT x(const Point_3& p) const { return Projector<R,dim>::x(p); }
+  FT y(const Point_3& p) const { return Projector<R,dim>::y(p); }
+
+  Point_2 project(const Point_3& p) const
+  {
+    return { x(p) , y(p) };
+  }
+
+  typename R::Boolean operator()(const Segment_3& sa, const Segment_3& sb) const
+  {
+    Segment_2 psa(project(sa.source()), project(sa.target()));
+    Segment_2 psb(project(sb.source()), project(sb.target()));
+    return CGAL::do_intersect(psa, psb);
+  }
+
+  typename R::Boolean operator()(const Segment_3& s, const Ray_3& r) const
+  {
+    Segment_2 ps(project(s.source()), project(s.target()));
+    Ray_2 pr(project(r.source()), project(r.point(1)));
+    return CGAL::do_intersect(ps, pr);
+  }
+
+  typename R::Boolean operator()(const Ray_3& ra, const Ray_3& rb) const
+  {
+    Ray_2 pra(project(ra.source()), project(ra.point(1)));
+    Ray_2 prb(project(rb.source()), project(rb.point(1)));
+    return CGAL::do_intersect(pra, prb);
+  }
+};
+
 template <class R, int dim>
 class Circumcenter_center_projected
 {
@@ -996,6 +1038,7 @@ public:
   typedef Compare_distance_projected_3<Rp,dim>                Compare_distance_2;
   typedef Collinear_are_ordered_along_line_projected_3<Rp,dim> Collinear_are_ordered_along_line_2;
   typedef Squared_distance_projected_3<Rp,dim>                Compute_squared_distance_2;
+  typedef Do_intersect_projected_3<Rp,dim>                    Do_intersect_2;
   typedef Intersect_projected_3<Rp,dim>                       Intersect_2;
   typedef Compute_squared_radius_projected<Rp,dim>            Compute_squared_radius_2;
   typedef Compute_scalar_product_projected_3<Rp,dim>          Compute_scalar_product_2;
@@ -1190,6 +1233,12 @@ public:
   compute_squared_radius_2_object () const
   {
     return Compute_squared_radius_2();
+  }
+
+  Do_intersect_2
+  do_intersect_2_object () const
+  {
+    return Do_intersect_2();
   }
 
   Intersect_2
