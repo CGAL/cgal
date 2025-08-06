@@ -424,6 +424,12 @@ private:
 /// @tparam TriangleMesh_
 ///         a model of `FaceListGraph`
 ///
+/// @tparam ConcurrencyTag_
+///         a tag indicating whether the algorithm should run sequentially or in parallel.
+///         This determines the execution mode at compile time.
+///         <b>%Default:</b> `CGAL::Sequential_tag`<br>
+///         <b>%Valid values:</b> `CGAL::Sequential_tag`, `CGAL::Parallel_tag`, `CGAL::Parallel_if_available_tag`
+///
 /// @tparam GomTraits_
 ///         a model of `VMASTraits`<br>
 ///         <b>%Default:</b>
@@ -528,8 +534,8 @@ public:
   template <class NamedParameters = parameters::Default_named_parameters>
   Variational_medial_axis(const TriangleMesh_& tmesh,
                           VPM vpm,
-                          const GT& gt = GT(),
-                          const NamedParameters& np = parameters::default_values())
+                          const NamedParameters& np = parameters::default_values(),
+                          const GT& gt = GT())
       : tmesh_(tmesh)
       , traits_(gt)
       , vpm_(vpm) {
@@ -540,68 +546,23 @@ public:
     desired_number_of_spheres_ = choose_parameter(get_parameter(np, internal_np::number_of_spheres), 100);
     lambda_ = choose_parameter(get_parameter(np, internal_np::lambda), FT(0.2));
     max_iteration_ = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 1000);
-    typedef typename internal_np::Lookup_named_param_def<internal_np::concurrency_tag_t, NamedParameters,
-                                                         Sequential_tag>::type Concurrency_tag;
-    parallel_execution_ = std::is_same_v<Parallel_tag, Concurrency_tag>;
 
 #ifndef CGAL_LINKED_WITH_TBB
-    if(parallel_execution_) {
+    if constexpr(std::is_same_v<ConcurrencyTag_, Parallel_tag>) {
       std::cerr << "Warning: Parallel execution requested but TBB is not available. Using sequential execution."
                 << std::endl;
-      parallel_execution_ = false;
     }
 #endif
     init();
   }
+  ///
   ///@}
   template <class NamedParameters = parameters::Default_named_parameters>
   Variational_medial_axis(const TriangleMesh_& tmesh,
-                          const GT& gt = GT(),
-                          const NamedParameters& np = parameters::default_values())
-      : Variational_medial_axis(tmesh, get(vertex_point, tmesh), gt, np) {}
+                          const NamedParameters& np = parameters::default_values(),
+                          const GT& gt = GT())
+      : Variational_medial_axis(tmesh, get(vertex_point, tmesh), np, gt) {}
 
-  /// Initialization that compute some global variable for the algorithm.
-  void init() {
-    namespace PMP = CGAL::Polygon_mesh_processing;
-
-    // Build AABB-tree
-    tree_ = std::make_unique<Tree>(faces(tmesh_).begin(), faces(tmesh_).end(), tmesh_, vpm_);
-    //tree_->accelerate_distance_queries(vertices(tmesh_).begin(), vertices(tmesh_).end(), vpm_);
-    tree_->accelerate_distance_queries();
-    // get bounding box of the mesh
-    auto bbox = tree_->bbox();
-    scale_ = std::max(bbox.xmax() - bbox.xmin(), std::max(bbox.ymax() - bbox.ymin(), bbox.zmax() - bbox.zmin()));
-    converged_threshold_ = scale_ * scale_ * 1e-5;
-    // Create property maps
-    vertex_normal_map_ = get(Vertex_normal_tag(), tmesh_, Vector_3(0., 0., 0.));
-    vertex_area_map_ = get(Vertex_area_tag(), tmesh_, 0.);
-    vertex_error_map_ = get(Vertex_error_tag(), tmesh_, 0.);
-    vertex_cluster_sphere_map_ = get(Vertex_cluster_sphere_tag(), tmesh_, MSMesh::INVALID_SPHERE_ID);
-    vertex_medial_sphere_pos_map_ = get(Vertex_medial_sphere_pos_tag(), tmesh_, Point_3(0., 0., 0.));
-    vertex_medial_sphere_radius_map_ = get(Vertex_medial_sphere_radius_tag(), tmesh_, FT(0.));
-    face_normal_map_ = get(Face_normal_tag(), tmesh_, Vector_3(0., 0., 0.));
-    face_area_map_ = get(Face_area_tag(), tmesh_, 0.);
-
-    // Compute normals
-    PMP::compute_vertex_normals(tmesh_, vertex_normal_map_);
-    PMP::compute_face_normals(tmesh_, face_normal_map_);
-
-    // Compute vertex areas
-    for(face_descriptor f : faces(tmesh_)) {
-      double area = PMP::face_area(f, tmesh_);
-      put(face_area_map_, f, area);
-      for(vertex_descriptor v : vertices_around_face(halfedge(f, tmesh_), tmesh_)) {
-        put(vertex_area_map_, v, get(vertex_area_map_, v) + area / 3.0);
-      }
-    }
-    sphere_mesh_ = std::make_unique<MSMesh>();
-
-    // Algorithm variables
-    iteration_count_ = 0;
-    total_error_ = FT(0.0);
-    total_error_diff_ = (std::numeric_limits<FT>::max)();
-    last_total_error_ = total_error_;
-  }
 
   /**
    *
@@ -627,11 +588,6 @@ public:
    *     \cgalParamExtra{This parameter must be strictly positive; setting it to zero may prevent correct skeleton
    * connectivity construction.}
    *   \cgalParamNEnd
-   *   \cgalParamNBegin{concurrency_tag}
-   *     \cgalParamDescription{A tag indicating whether the algorithm should run sequentially or in parallel.}
-   *     \cgalParamType{Either `CGAL::Sequential_tag`, `CGAL::Parallel_tag`, or `CGAL::Parallel_if_available_tag`}
-   *     \cgalParamDefault{`CGAL::Sequential_tag`}
-   *   \cgalParamNEnd
    * \cgalNamedParamsEnd
    *
    *
@@ -646,36 +602,24 @@ public:
         choose_parameter(get_parameter(np, internal_np::number_of_spheres), desired_number_of_spheres_);
     lambda_ = choose_parameter(get_parameter(np, internal_np::lambda), lambda_);
     max_iteration_ = choose_parameter(get_parameter(np, internal_np::number_of_iterations), max_iteration_);
-
-    typedef typename internal_np::Lookup_named_param_def<internal_np::concurrency_tag_t, NamedParameters,
-                                                         Sequential_tag>::type Concurrency_tag;
-
-    if constexpr(!std::is_same_v<Concurrency_tag, Sequential_tag>) {
-      parallel_execution_ = std::is_same_v<Parallel_tag, Concurrency_tag>;
-#ifndef CGAL_LINKED_WITH_TBB
-      if(parallel_execution_) {
-        std::cerr << "Warning: Parallel execution requested but TBB is not available. Using sequential execution."
-                  << std::endl;
-        parallel_execution_ = false;
-      }
-#endif
-    }
-
+    sphere_mesh_->spheres().reserve(desired_number_of_spheres_);
     bool success = false;
     reset_algorithm_state();
 
     // Initialize with one sphere
     Sphere_3 init_sphere(Point_3(0., 0., 0.), FT(1.0));
     sphere_mesh_->add_sphere(init_sphere);
+    if constexpr(std::is_same_v<ConcurrencyTag_, Parallel_tag>) {
 #if CGAL_LINKED_WITH_TBB
-    if(parallel_execution_)
-      // Compute shrinking ball of each vertex
       compute_shrinking_balls_parallel();
-    else
-#endif
-      // Compute shrinking ball of each vertex
-    //  compute_shrinking_balls_and_save_result();
+#else
+      std::cerr << "Warning: Parallel execution requested but TBB is not available. Using sequential execution."
+                << std::endl;
       compute_shrinking_balls();
+#endif
+    } else {
+      compute_shrinking_balls();
+    }
     // TODO: add a paratmeter to control the output verbosity
     std::cout << "Starting variational medial axis computation..." << std::endl;
     std::cout << "Target number of spheres: " << desired_number_of_spheres_ << std::endl;
@@ -719,26 +663,28 @@ public:
   bool update_single_step(bool enable_split = false) {
     // Clean data
     sphere_mesh_->reset();
-#if CGAL_LINKED_WITH_TBB
-    if(parallel_execution_) {
+
+    if constexpr(std::is_same_v<ConcurrencyTag_, Parallel_tag>) {
+#ifdef CGAL_LINKED_WITH_TBB
       // Compute the cluster sphere for each vertex
       assign_vertices_to_clusters_parallel();
 
       // Update the sphere by optimizing the combined metric
       optimize_sphere_positions_parallel(true);
       total_error_ = compute_sphere_errors_parallel();
-    } else {
+#else
+      assign_vertices_to_clusters();
+      optimize_sphere_positions(true);
+      total_error_ = compute_sphere_errors();
 #endif
+    } else {
       // Compute the cluster sphere for each vertex
       assign_vertices_to_clusters();
       // Update the sphere by optimizing the combined metric
       optimize_sphere_positions(true);
-
       // Compute error of each sphere
       total_error_ = compute_sphere_errors();
-#if CGAL_LINKED_WITH_TBB
     }
-#endif
     total_error_diff_ = std::abs(total_error_ - last_total_error_);
     last_total_error_ = total_error_;
     // TODO: add a paratmeter to control the output verbosity
@@ -1584,7 +1530,6 @@ private:
   GT traits_;
   VPM vpm_;
   FT lambda_;
-  bool parallel_execution_;
   std::size_t desired_number_of_spheres_;
   int max_iteration_;
   int iteration_count_;
