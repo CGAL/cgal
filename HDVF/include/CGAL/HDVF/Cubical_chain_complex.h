@@ -113,10 +113,10 @@ public:
     /**
      * \brief Constructor from a Cub_object_io (builds PRIMAL or DUAL associated complex depending on `type`).
      *
-     * Builds the cubical complex associated to a a set of cells (vertices, edges, squares, cubes...), ie. performs the down closure of cells and set the boundary matrices in any dimension. Given a set of cells:
+     * Builds the cubical complex associated to a a set of cells (vertices, edges, squares, cubes...), ie.\ performs the down closure of cells and set the boundary matrices in any dimension. Given a set of cells:
      *
      * - if the `type` is PRIMAL, the constructor builds the associated complex as such (see below middle), which comes to encode \f$3^q-1\f$ connectivity (with \f$q\f$ the dimension of the complex)
-     * - if the `type` is DUAL and the Cub_object_io contains only cells of maximal dimension (ie. binary object), the constructor build the dual associated complex (see below right), which comes to encode \f$2q\f$ connectivity (with \f$q\f$ the dimension of the complex)
+     * - if the `type` is DUAL and the Cub_object_io contains only cells of maximal dimension (ie.\ binary object), the constructor build the dual associated complex (see below right), which comes to encode \f$2q\f$ connectivity (with \f$q\f$ the dimension of the complex)
      *
      *<img src="primal_dual.png" align="center" width=20%/>
      *
@@ -129,11 +129,11 @@ public:
     friend Duality_cubical_complex_tools<CoefficientType> ;
 
     /** \brief Type of column-major chains */
-    typedef OSM::Sparse_chain<CoefficientType, OSM::COLUMN> CChain;
+    typedef CGAL::OSM::Sparse_chain<CoefficientType, CGAL::OSM::COLUMN> Col_chain;
     /** \brief Type of row-major chains */
-    typedef OSM::Sparse_chain<CoefficientType, OSM::ROW> RChain ;
+    typedef CGAL::OSM::Sparse_chain<CoefficientType, CGAL::OSM::ROW> Row_chain ;
     /** \brief Type of column-major sparse matrices */
-    typedef OSM::Sparse_matrix<CoefficientType, OSM::COLUMN> CMatrix;
+    typedef CGAL::OSM::Sparse_matrix<CoefficientType, CGAL::OSM::COLUMN> Col_matrix;
 
     /**
      * \brief Assignment operator for cubical chain complexes.
@@ -166,12 +166,12 @@ public:
      *
      * \return The column-major chain containing the boundary of the cell id_cell in dimension q.
      */
-    CChain d(size_t id_cell, int q) const
+    Col_chain d(size_t id_cell, int q) const
     {
         if (q > 0)
             return OSM::cget_column(_d[q], id_cell);
         else
-            return CChain(0) ;
+            return Col_chain(0) ;
     }
 
     /**
@@ -186,12 +186,12 @@ public:
      *
      * \return The row-major chain containing the co-boundary of the cell id_cell in dimension q.
      */
-    RChain cod(size_t id_cell, int q) const
+    Row_chain cod(size_t id_cell, int q) const
     {
         if (q < _dim)
             return OSM::get_row(_d[q+1], id_cell);
         else
-            return RChain(0) ;
+            return Row_chain(0) ;
     }
 
     /**
@@ -224,25 +224,25 @@ public:
     /**
      * \brief Returns a constant reference to the vector of boundary matrices (along each dimension).
      *
-     * Returns a constant reference to the vector of boundary matrices along each dimension. The q-th element of this vector is a column-major sparse matrix containing the boundaries of q-cells (ie. rows encode q-1 cells and columns q cells).
+     * Returns a constant reference to the vector of boundary matrices along each dimension. The q-th element of this vector is a column-major sparse matrix containing the boundaries of q-cells (ie.\ rows encode q-1 cells and columns q cells).
      *
      * \return Returns a constant reference to the vector of column-major boundary matrices along each dimension.
      */
-    const vector<CMatrix> & get_bnd_matrices() const
+    const vector<Col_matrix> & get_boundary_matrices() const
     {
         return _d ;
     }
 
     /**
-     * \brief Returns a copy of the dim-th boundary matrix (ie. column-major matrix of \f$\partial_q\f$).
+     * \brief Returns a copy of the dim-th boundary matrix (ie.\ column-major matrix of \f$\partial_q\f$).
      *
-     * It is a column-major sparse matrix containing the boundaries of dim-cells (ie. rows encode q-1 cells and columns q cells).
+     * It is a column-major sparse matrix containing the boundaries of dim-cells (ie.\ rows encode q-1 cells and columns q cells).
      *
-     * \param[in] q Dimension of the boundary matrix (ie. columns will contain the boundary of dimension q cells).
+     * \param[in] q Dimension of the boundary matrix (ie.\ columns will contain the boundary of dimension q cells).
      *
      * \return A column-major sparse matrix containing the matrix of the boundary operator of dimension q.
      */
-    const CMatrix & get_bnd_matrix(int q) const
+    const Col_matrix & get_boundary_matrix(int q) const
     {
         return _d.at(q) ;
     }
@@ -271,49 +271,60 @@ public:
      * The resulting chain lies in dimension `q`+1 and is null if this dimension exceeds the dimension of the complex.
     */
     template <typename CoefficientT, int ChainTypeF>
-    CChain cofaces_chain (OSM::Sparse_chain<CoefficientT, ChainTypeF> chain, int q) const
+    Col_chain cofaces_chain (OSM::Sparse_chain<CoefficientT, ChainTypeF> chain, int q) const
     {
         typedef OSM::Sparse_chain<CoefficientT, ChainTypeF> ChainType;
         // Compute the cofaces
         if (q < dim())
         {
-            CChain fstar_cofaces(nb_cells(q+1)) ;
+            Col_chain fstar_cofaces(nb_cells(q+1)) ;
             for (typename ChainType::const_iterator it = chain.cbegin(); it != chain.cend(); ++it)
             {
                 // Set the cofaces of it->first in dimension dim+1
-                RChain cofaces(cod(it->first,q)) ;
-                for (typename RChain::const_iterator it2 =  cofaces.cbegin(); it2 != cofaces.cend(); ++it2)
+                Row_chain cofaces(cod(it->first,q)) ;
+                for (typename Row_chain::const_iterator it2 =  cofaces.cbegin(); it2 != cofaces.cend(); ++it2)
                     fstar_cofaces.set_coef(it2->first, 1) ;
             }
             return fstar_cofaces ;
         }
         else
-            return CChain(0) ;
+            return Col_chain(0) ;
     }
 
+protected:
     /**
      * \brief Prints informations on the complex.
      *
      * Displays the number of cells in each dimension and the boundary matrix in each dimension.
      */
-    void print_complex() const {
+    std::ostream&  print_complex(std::ostream& out = std::cout) const {
         for (int q = 0; q <= _dim; ++q) {
-            std::cout << "-------- dimension " << q << std::endl;
-            std::cout << "cellules de dimension " << q << " : " << _base2bool.at(q).size() << std::endl;
+            out << "-------- dimension " << q << std::endl;
+            out << "cellules de dimension " << q << " : " << _base2bool.at(q).size() << std::endl;
             for (size_t id_base = 0; id_base < _base2bool.at(q).size(); ++id_base) {
                 size_t id_bool = _base2bool.at(q).at(id_base);
                 std::vector<size_t> khal = ind2khal(id_bool);
-                std::cout << id_base << " -> " << id_bool << " -> " << _bool2base.at(q).at(id_bool) << " -> ";
-                for (size_t k : khal) std::cout << k << " ";
-                std::cout << std::endl;
+                out << id_base << " -> " << id_bool << " -> " << _bool2base.at(q).at(id_bool) << " -> ";
+                for (size_t k : khal) out << k << " ";
+                out << std::endl;
             }
 
             if (_base2bool[q].size() > 0 && q <= _dim) {
-                std::cout << "matrice de bord de dimension " << q << std::endl;
-                std::cout << _d[q] << std::endl;
+                out << "matrice de bord de dimension " << q << std::endl;
+                out << _d[q] << std::endl;
             }
         }
+        return out;
     }
+    
+public:
+    /**
+     * \brief Prints informations on the complex.
+     *
+     * Displays the number of cells in each dimension and the boundary matrix in each dimension.
+     */
+    template <typename _CT>
+    friend std::ostream& operator<<(std::ostream& out, const Cubical_chain_complex<_CT>& complex) ;
 
     /** \brief Gets (unique) object Id.
      * For comparison of constant references to the complex.
@@ -505,7 +516,7 @@ protected:
     }
 
     /* \brief Method computing the boundary of a given cell */
-    CChain boundary_cell(size_t index_base, int dim) const {
+    Col_chain boundary_cell(size_t index_base, int dim) const {
         // Ensure dim is within valid range
         if (dim < 0 || dim >= _base2bool.size()) {
             throw std::out_of_range("Invalid dimension: " + std::to_string(dim));
@@ -517,7 +528,7 @@ protected:
         }
 
         size_t nb_lignes = (dim == 0) ? 0 : nb_cells(dim - 1);
-        CChain boundary(nb_lignes);
+        Col_chain boundary(nb_lignes);
 
         size_t index_bool = _base2bool[dim][index_base];
         std::vector<size_t> c = ind2khal(index_bool);
@@ -619,12 +630,12 @@ protected:
     std::vector<size_t> _P;
     /* \brief Vectorized boolean representation of the complex (true if a cell is present, false otherwise) */
     std::vector<bool> _cells;
-    /* \brief Maps from base indices to boolean indices (ie. indices in _cell) in each dimension */
+    /* \brief Maps from base indices to boolean indices (ie.\ indices in _cell) in each dimension */
     std::vector<std::vector<size_t>> _base2bool;
-    /* \brief Maps from boolean indices (ie. indices in _cells) to base indices in each dimension */
+    /* \brief Maps from boolean indices (ie.\ indices in _cells) to base indices in each dimension */
     std::vector<std::map<size_t, size_t>> _bool2base;
     /* \brief Vector of boundary matrices in each dimension */
-    std::vector<CMatrix>  _d;
+    std::vector<Col_matrix>  _d;
 private:
     std::vector<bool> _visited_cells; // Internal flag
     /* \brief Static counter for objects ids.
@@ -898,12 +909,12 @@ template<typename CoefficientType>
 void Cubical_chain_complex<CoefficientType>::calculate_d(int dim)  {
     size_t nb_lignes = (dim == 0) ? 0 : nb_cells(dim - 1);
 
-    _d[dim] = CMatrix(nb_lignes, nb_cells(dim));
+    _d[dim] = Col_matrix(nb_lignes, nb_cells(dim));
 
     // Iterate through the cells of dimension dim
     for (size_t i = 0; i < nb_cells(dim); ++i) {
         // Boundary of the i-th cell of dimension dim
-        CChain boundary = boundary_cell(i, dim);
+        Col_chain boundary = boundary_cell(i, dim);
 
         // Insert the chain into the corresponding column of the boundary matrix
         OSM::set_column(_d[dim], i, boundary);
@@ -1052,6 +1063,12 @@ void Cubical_chain_complex<CoefficientType>::chain_complex_chain_to_vtk(const Cu
         out << endl ;
     }
     out.close() ;
+}
+
+template <typename CoefficientType>
+std::ostream& operator<<(std::ostream& out, const Cubical_chain_complex<CoefficientType>& complex)
+{
+    return complex.print_complex(out);
 }
 
 } /* end namespace HDVF */

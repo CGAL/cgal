@@ -73,12 +73,12 @@ template<typename CoefficientType, typename ComplexType>
 class Hdvf_duality : public Hdvf_core<CoefficientType, ComplexType, OSM::Sparse_chain, OSM::Sub_sparse_matrix> {
 private:
      // Type of column-major chains
-    typedef OSM::Sparse_chain<CoefficientType, OSM::COLUMN> CChain;
+    typedef CGAL::OSM::Sparse_chain<CoefficientType, CGAL::OSM::COLUMN> Col_chain;
      // Type of row-major chains
-    typedef OSM::Sparse_chain<CoefficientType, OSM::ROW> RChain;
+    typedef CGAL::OSM::Sparse_chain<CoefficientType, CGAL::OSM::ROW> Row_chain;
 
     // Type of parent HDVF
-    typedef Hdvf_core<CoefficientType, ComplexType, OSM::Sparse_chain, OSM::Sub_sparse_matrix> HDVF_type ;
+    typedef Hdvf_core<CoefficientType, ComplexType, CGAL::OSM::Sparse_chain, CGAL::OSM::Sub_sparse_matrix> HDVF_type ;
 
     // Complex L
     const ComplexType& _L ;
@@ -108,7 +108,7 @@ public:
     /**
      * \brief Finds a valid PairCell of dimension q / q+1 for A *in the current sub chain complex*.
      *
-     * The function searches a pair of critical cells, *in the current sub chain complex*, \f$(\gamma_1, \gamma2)\f$ of dimension q / q+1, valid for A (ie. such that \f$\langle \partial_{q+1}(\gamma_2), \gamma_1 \rangle\f$ invertible). It returns the first valid pair found by iterators.
+     * The function searches a pair of critical cells, *in the current sub chain complex*, \f$(\gamma_1, \gamma2)\f$ of dimension q / q+1, valid for A (ie.\ such that \f$\langle \partial_{q+1}(\gamma_2), \gamma_1 \rangle\f$ invertible). It returns the first valid pair found by iterators.
      *
      * \param[in] q Lower dimension of the pair.
      * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
@@ -119,8 +119,8 @@ public:
      * \brief Finds a valid PairCell for A containing `gamma` *in the current sub chain complex* (a cell of dimension `q`)
      *
      * The function searches a cell \f$\gamma'\f$ *in the current sub chain complex* such that one of the following conditions holds:
-     * - \f$\gamma'\f$ has dimension q+1 and \f$(\gamma, \gamma')\f$ is valid for A (ie. such that \f$\langle \partial_{q+1}(\gamma'), \gamma \rangle\f$ invertible),
-     * - \f$\gamma'\f$ has dimension q-1 and \f$(\gamma', \gamma)\f$ is valid for A (ie. such that \f$\langle \partial_{q}(\gamma), \gamma' \rangle\f$ invertible).
+     * - \f$\gamma'\f$ has dimension q+1 and \f$(\gamma, \gamma')\f$ is valid for A (ie.\ such that \f$\langle \partial_{q+1}(\gamma'), \gamma \rangle\f$ invertible),
+     * - \f$\gamma'\f$ has dimension q-1 and \f$(\gamma', \gamma)\f$ is valid for A (ie.\ such that \f$\langle \partial_{q}(\gamma), \gamma' \rangle\f$ invertible).
      *
      * \param[in] q Dimension of the cell `gamma`.
      * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
@@ -131,7 +131,7 @@ public:
     /**
      * \brief Finds *all* valid PairCell of dimension q / q+1 *in the current sub chain complex* for A.
      *
-     * The function searches all pairs of critical cells \f$(\gamma_1, \gamma2)\f$ *in the current sub chain complex* of dimension q / q+1, valid for A (ie. such that \f$\langle \partial_{q+1}(\gamma_2), \gamma_1 \rangle\f$ invertible).
+     * The function searches all pairs of critical cells \f$(\gamma_1, \gamma2)\f$ *in the current sub chain complex* of dimension q / q+1, valid for A (ie.\ such that \f$\langle \partial_{q+1}(\gamma_2), \gamma_1 \rangle\f$ invertible).
      * It returns a vector of such pairs.
      *
      * \param[in] q Lower dimension of the pair.
@@ -143,8 +143,8 @@ public:
      * \brief Finds *all* valid PairCell for A containing `gamma` *in the current sub chain complex* (a cell of dimension `q`)
      *
      * The function searches all `CRITICAL` cells \f$\gamma'\f$ *in the current sub chain complex* such that one of the following conditions holds:
-     * - \f$\gamma'\f$ has dimension q+1 and \f$(\gamma, \gamma')\f$ is valid for A (ie. such that \f$\langle \partial_{q+1}(\gamma'), \gamma \rangle\f$ invertible),
-     * - \f$\gamma'\f$ has dimension q-1 and \f$(\gamma', \gamma)\f$ is valid for A (ie. such that \f$\langle \partial_{q}(\gamma), \gamma' \rangle\f$ invertible).
+     * - \f$\gamma'\f$ has dimension q+1 and \f$(\gamma, \gamma')\f$ is valid for A (ie.\ such that \f$\langle \partial_{q+1}(\gamma'), \gamma \rangle\f$ invertible),
+     * - \f$\gamma'\f$ has dimension q-1 and \f$(\gamma', \gamma)\f$ is valid for A (ie.\ such that \f$\langle \partial_{q}(\gamma), \gamma' \rangle\f$ invertible).
      * It returns a vector of such pairs.
      *
      * \param[in] q Dimension of the cell `gamma`.
@@ -155,7 +155,7 @@ public:
 
     /** \brief Sets the current sub chain complex masks over `K`.
      *
-     * Further HDVF computations will be restricted to `K` (ie. computation of reduced homology).
+     * Further HDVF computations will be restricted to `K` (ie.\ computation of reduced homology).
      */
     inline void set_mask_K ()
     {
@@ -165,7 +165,7 @@ public:
 
     /** \brief Sets the current sub chain complex masks over `L-K`.
      *
-     * Further HDVF computations will be restricted to `L-K` (ie. computation of reduced homology).
+     * Further HDVF computations will be restricted to `L-K` (ie.\ computation of reduced homology).
      */
     inline void set_mask_L_K ()
     {
@@ -184,7 +184,7 @@ public:
      * \brief Computes a perfect HDVF over the current sub chain complex.
      *
      * As long as valid pairs for A exist in the current sub chain complex, the function selects the first available pair (returned by `find_pair_A()`) and applies the corresponding `A()` operation.
-     * If the `Ring` of coefficients is a field, this operation always produces a perfect HDVF (ie. the reduced boundary is null and the reduction provides homology and cohomology information).
+     * If the `Ring` of coefficients is a field, this operation always produces a perfect HDVF (ie.\ the reduced boundary is null and the reduction provides homology and cohomology information).
      * Otherwise the operation produces a maximal HDVF with a residual boundary matrix over critical cells.
      *
      * If the HDVF is initially not trivial (some cells have already been paired), the function completes it into a perfect HDVF.
@@ -313,8 +313,8 @@ public:
                     if ((this->_flag[q][i] == CRITICAL) && (_subCC.get_bit(q, i))) {
                         out << "g(" << i << ") = (" << i << ")";
                         // Iterate over the ith column of _G_col
-                        typename HDVF_type::CChain col(OSM::get_column(this->_G_col.at(q), i)) ; // TODO cget
-                        for (typename HDVF_type::CChain::const_iterator it_col = col.cbegin(); it_col != col.cend(); ++it_col) {
+                        typename HDVF_type::Col_chain col(OSM::get_column(this->_G_col.at(q), i)) ; // TODO cget
+                        for (typename HDVF_type::Col_chain::const_iterator it_col = col.cbegin(); it_col != col.cend(); ++it_col) {
                             out << " + " << it_col->second << ".(" << it_col->first << ") + ";
                         }
                         out << endl;
@@ -333,8 +333,8 @@ public:
                     if ((this->_flag[q][i] == CRITICAL) && (_subCC.get_bit(q, i))) {
                         out << "f*(" << i << ") = (" << i << ")";
                         // Iterate over the ith row of _F_row
-                        typename HDVF_type::RChain row(OSM::get_row(this->_F_row.at(q), i)) ; // TODO cget
-                        for (typename HDVF_type::RChain::const_iterator it_row = row.cbegin(); it_row != row.cend(); ++it_row) {
+                        typename HDVF_type::Row_chain row(OSM::get_row(this->_F_row.at(q), i)) ; // TODO cget
+                        for (typename HDVF_type::Row_chain::const_iterator it_row = row.cbegin(); it_row != row.cend(); ++it_row) {
                             out << " + " << it_row->second << ".(" << it_row->first << ") + ";
                         }
                         out << endl;
@@ -348,7 +348,7 @@ public:
     /**
      * \brief Prints the reduced boundary over critical cells of `K` and `L-K`.
      *
-     * The method prints out the reduced boundary matrix in each dimension, restricted to critical cells of `K` and `L-K` (ie. the matrix used to compute Alexander pairing).
+     * The method prints out the reduced boundary matrix in each dimension, restricted to critical cells of `K` and `L-K` (ie.\ the matrix used to compute Alexander pairing).
      *
      * \warning Call this method after `compute_perfect_hdvf()`.
      *
@@ -428,7 +428,7 @@ public:
      *
      * \return A column-major chain.
      */
-    virtual CChain get_homology_chain (size_t cell, int dim) const
+    virtual Col_chain get_homology_chain (size_t cell, int dim) const
     {
         if ((dim<0) || (dim>this->_K.dim()))
             throw "Error : get_homology_chain with dim out of range" ;
@@ -438,12 +438,12 @@ public:
         if (this->_hdvf_opt & (OPT_FULL | OPT_G))
         {
             // Get g(cell, dim) with per indices
-            CChain g_cell(OSM::get_column(this->_G_col.at(dim), cell)) ;
+            Col_chain g_cell(OSM::get_column(this->_G_col.at(dim), cell)) ;
             // Add 1 to the cell
             g_cell.set_coef(cell, 1) ;
             // Keep cells of the chain belonging to _subCC
-            CChain g_cell_sub(g_cell.dimension()) ;
-            for (typename CChain::const_iterator it = g_cell.begin(); it != g_cell.end(); ++it)
+            Col_chain g_cell_sub(g_cell.dimension()) ;
+            for (typename Col_chain::const_iterator it = g_cell.begin(); it != g_cell.end(); ++it)
             {
 
                 if (_subCC.get_bit(dim, it->first))
@@ -464,7 +464,7 @@ public:
      *
      * \return A column-major chain.
      */
-    virtual CChain get_cohomology_chain (size_t cell, int dim) const
+    virtual Col_chain get_cohomology_chain (size_t cell, int dim) const
     {
         if ((dim<0) || (dim>this->_K.dim()))
             throw "Error : get_cohomology_chain with dim out of range" ;
@@ -473,13 +473,13 @@ public:
 
         if (this->_hdvf_opt & (OPT_FULL | OPT_F))
         {
-            RChain fstar_cell(OSM::get_row(this->_F_row.at(dim), cell)) ;
+            Row_chain fstar_cell(OSM::get_row(this->_F_row.at(dim), cell)) ;
             // Add 1 to the cell
             fstar_cell.set_coef(cell, 1) ;
 
             // Keep cells of the chain belonging to _subCC
-            CChain fstar_cell_sub(fstar_cell.dimension()) ;
-            for (typename CChain::const_iterator it = fstar_cell.begin(); it != fstar_cell.end(); ++it)
+            Col_chain fstar_cell_sub(fstar_cell.dimension()) ;
+            for (typename Col_chain::const_iterator it = fstar_cell.begin(); it != fstar_cell.end(); ++it)
             {
 
                 if (_subCC.get_bit(dim, it->first))
@@ -507,11 +507,11 @@ PairCell Hdvf_duality<CoefficientType,ComplexType>::find_pair_A(int q, bool &fou
     // Iterate through columns of _DD_col[q+1]
     for (OSM::Bitboard::iterator it_col = this->_DD_col[q+1].begin(); (it_col != this->_DD_col[q+1].end() && !found); ++it_col)
     {
-        const typename HDVF_type::CChain& col(OSM::cget_column(this->_DD_col[q+1], *it_col)) ;
+        const typename HDVF_type::Col_chain& col(OSM::cget_column(this->_DD_col[q+1], *it_col)) ;
 
         // Iterate through the entries of the column
         // Check that the row belongs to the subchaincomplex
-        for (typename HDVF_type::CChain::const_iterator it = col.begin(); (it != col.end() && !found); ++it) {
+        for (typename HDVF_type::Col_chain::const_iterator it = col.begin(); (it != col.end() && !found); ++it) {
             if (_subCC.get_bit(q, it->first) && (abs(it->second) == 1)) {
                 // If an entry with coefficient 1 or -1 is found, set the pair and mark as found
                 p.sigma = it->first;
@@ -536,8 +536,8 @@ PairCell Hdvf_duality<CoefficientType,ComplexType>::find_pair_A(int q, bool &fou
 
     // Search for a q-1 cell tau' such that <_d(tau),tau'> invertible
     // and tau' belongs to _subCC
-    const typename HDVF_type::CChain& tmp2(OSM::cget_column(this->_DD_col.at(q), tau)) ;
-    for (typename HDVF_type::CChain::const_iterator it = tmp2.cbegin(); (it != tmp2.cend() && !found); ++it)
+    const typename HDVF_type::Col_chain& tmp2(OSM::cget_column(this->_DD_col.at(q), tau)) ;
+    for (typename HDVF_type::Col_chain::const_iterator it = tmp2.cbegin(); (it != tmp2.cend() && !found); ++it)
     {
         if (_subCC.get_bit(q-1, it->first) && abs(it->second) == 1)
         {
@@ -550,8 +550,8 @@ PairCell Hdvf_duality<CoefficientType,ComplexType>::find_pair_A(int q, bool &fou
 
     // Search for a q+1 cell tau' such that <_d(tau'),tau> invertible, ie <_cod(tau),tau'> invertible
     // and tau' belongs to _subCC
-    typename HDVF_type::RChain tmp(OSM::get_row(this->_DD_col.at(q+1), tau)) ;
-    for (typename HDVF_type::RChain::const_iterator it = tmp.cbegin(); (it != tmp.cend() && !found); ++it)
+    typename HDVF_type::Row_chain tmp(OSM::get_row(this->_DD_col.at(q+1), tau)) ;
+    for (typename HDVF_type::Row_chain::const_iterator it = tmp.cbegin(); (it != tmp.cend() && !found); ++it)
     {
         if (_subCC.get_bit(q+1, it->first) && (abs(it->second) == 1))
         {
@@ -575,10 +575,10 @@ std::vector<PairCell> Hdvf_duality<CoefficientType,ComplexType>::find_pairs_A(in
     // Iterate through columns of _DD_col[q+1]
     for (OSM::Bitboard::iterator it_col = this->_DD_col[q+1].begin(); it_col != this->_DD_col[q+1].end(); ++it_col)
     {
-        const typename HDVF_type::CChain& col(OSM::cget_column(this->_DD_col[q+1], *it_col)) ;
+        const typename HDVF_type::Col_chain& col(OSM::cget_column(this->_DD_col[q+1], *it_col)) ;
 
         // Iterate through the entries of the column
-        for (typename HDVF_type::CChain::const_iterator it = col.begin(); it != col.end(); ++it) {
+        for (typename HDVF_type::Col_chain::const_iterator it = col.begin(); it != col.end(); ++it) {
             if (_subCC.get_bit(q, it->first) && ((it->second == 1) || (it->second == -1))) {
                 // If an entry of _subCC with coefficient 1 or -1 is found, set the pair and mark as found
                 PairCell p;
@@ -605,8 +605,8 @@ std::vector<PairCell> Hdvf_duality<CoefficientType,ComplexType>::find_pairs_A(in
 
     // Search for a q+1 cell tau' such that <_d(tau'),tau> invertible, ie <_cod(tau),tau'> invertible
     // and tau' belongs to _subCC
-    typename HDVF_type::RChain tmp(OSM::get_row(this->_DD_col.at(q+1), tau)) ;
-    for (typename HDVF_type::RChain::const_iterator it = tmp.cbegin(); it != tmp.cend(); ++it)
+    typename HDVF_type::Row_chain tmp(OSM::get_row(this->_DD_col.at(q+1), tau)) ;
+    for (typename HDVF_type::Row_chain::const_iterator it = tmp.cbegin(); it != tmp.cend(); ++it)
     {
         if (_subCC.get_bit(q+1, it->first) && (abs(it->second) == 1))
         {
@@ -620,8 +620,8 @@ std::vector<PairCell> Hdvf_duality<CoefficientType,ComplexType>::find_pairs_A(in
     }
     // Search for a q-1 cell tau' such that <_d(tau),tau'> invertible
     // and tau' belongs to _subCC
-    const typename HDVF_type::CChain& tmp2(OSM::cget_column(this->_DD_col.at(q), tau)) ;
-    for (typename HDVF_type::CChain::const_iterator it = tmp2.cbegin(); it != tmp2.cend(); ++it)
+    const typename HDVF_type::Col_chain& tmp2(OSM::cget_column(this->_DD_col.at(q), tau)) ;
+    for (typename HDVF_type::Col_chain::const_iterator it = tmp2.cbegin(); it != tmp2.cend(); ++it)
     {
         if (_subCC.get_bit(q-1, it->first) && (abs(it->second) == 1))
         {

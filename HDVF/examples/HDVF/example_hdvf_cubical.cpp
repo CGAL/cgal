@@ -35,7 +35,7 @@ int main(int argc, char **argv)
         // Build simplicial chain complex
         ComplexType complex(mesh, primal_dual);
 
-        complex.print_complex();
+        std::cout << complex;
 
         // Build empty HDVF
         HDVFType hdvf(complex, CGAL::HDVF::OPT_FULL) ;

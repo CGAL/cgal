@@ -69,11 +69,11 @@ public:
     Abstract_simplicial_chain_complex(const Mesh_object_io& mesh);
 
     /** \brief Type of column-major chains */
-    typedef OSM::Sparse_chain<CoefficientType, OSM::COLUMN> CChain;
+    typedef CGAL::OSM::Sparse_chain<CoefficientType, CGAL::OSM::COLUMN> Col_chain;
     /** \brief Type of row-major chains */
-    typedef OSM::Sparse_chain<CoefficientType, OSM::ROW> RChain ;
+    typedef CGAL::OSM::Sparse_chain<CoefficientType, CGAL::OSM::ROW> Row_chain ;
     /** \brief Type of column-major sparse matrices */
-    typedef OSM::Sparse_matrix<CoefficientType, OSM::COLUMN> CMatrix;
+    typedef CGAL::OSM::Sparse_matrix<CoefficientType, CGAL::OSM::COLUMN> Col_matrix;
 
 
     /**
@@ -105,12 +105,12 @@ public:
      *
      * \return The column-major chain containing the boundary of the cell id_cell in dimension q.
      */
-    CChain d(size_t id_cell, int q) const
+    Col_chain d(size_t id_cell, int q) const
     {
         if (q > 0)
             return OSM::get_column(_d[q], id_cell);
         else
-            return CChain(0) ;
+            return Col_chain(0) ;
     }
 
     /**
@@ -125,12 +125,12 @@ public:
      *
      * \return The row-major chain containing the co-boundary of the cell id_cell in dimension q.
      */
-    RChain cod(size_t id_cell, int q) const
+    Row_chain cod(size_t id_cell, int q) const
     {
         if (q < _dim)
             return OSM::get_row(_d[q+1], id_cell);
         else
-            return RChain(0) ;
+            return Row_chain(0) ;
     }
 
     /**
@@ -164,7 +164,7 @@ public:
      *
      * \return Returns a constant reference to the vector of column-major boundary matrices along each dimension.
      */
-    const vector<CMatrix> & get_bnd_matrices() const
+    const vector<Col_matrix> & get_boundary_matrices() const
     {
         return _d ;
     }
@@ -178,7 +178,7 @@ public:
      *
      * \return A column-major sparse matrix containing the matrix of the boundary operator of dimension q.
      */
-    const CMatrix & get_bnd_matrix(int q) const
+    const Col_matrix & get_boundary_matrix(int q) const
     {
         return _d.at(q) ;
     }
@@ -216,32 +216,41 @@ public:
      * The resulting chain lies in dimension `q`+1 and is null if this dimension exceeds the dimension of the complex.
     */
     template <typename CoefficientT, int ChainTypeF>
-    CChain cofaces_chain (OSM::Sparse_chain<CoefficientT, ChainTypeF> chain, int q) const
+    Col_chain cofaces_chain (OSM::Sparse_chain<CoefficientT, ChainTypeF> chain, int q) const
     {
         typedef OSM::Sparse_chain<CoefficientT, ChainTypeF> ChainType;
         // Compute the cofaces
         if (q < dim())
         {
-            CChain fstar_cofaces(nb_cells(q+1)) ;
+            Col_chain fstar_cofaces(nb_cells(q+1)) ;
             for (typename ChainType::const_iterator it = chain.cbegin(); it != chain.cend(); ++it)
             {
                 // Set the cofaces of it->first in dimension dim+1
-                RChain cofaces(cod(it->first,q)) ;
-                for (typename RChain::const_iterator it2 =  cofaces.cbegin(); it2 != cofaces.cend(); ++it2)
+                Row_chain cofaces(cod(it->first,q)) ;
+                for (typename Row_chain::const_iterator it2 =  cofaces.cbegin(); it2 != cofaces.cend(); ++it2)
                     fstar_cofaces.set_coef(it2->first, 1) ;
             }
             return fstar_cofaces ;
         }
         else
-            return CChain(0) ;
+            return Col_chain(0) ;
     }
 
-    /**
+protected:
+    /*
      * \brief Prints informations on the complex.
      *
      * Displays the number of cells in each dimension and the boundary matrix in each dimension.
      */
     std::ostream& print_complex(std::ostream& out = std::cout) const;
+public:
+    /**
+     * \brief Prints informations on the complex.
+     *
+     * Displays the number of cells in each dimension and the boundary matrix in each dimension.
+     */
+    template <typename _CT>
+    friend ostream& operator<< (ostream& out, const Abstract_simplicial_chain_complex<_CT>& complex);
 
     /** \brief Get (unique) object Id.
      * For comparison of constant references to the complex.
@@ -258,7 +267,7 @@ protected:
     /* \brief Vector of number of cells in each dimension */
     std::vector<size_t> _nb_cells ;
     /* \brief Vector of column-major boundary matrices: _d.at(q) is the matrix of the boundary operator in dimension q. */
-    mutable std::vector<CMatrix>  _d;  // Boundary matrices
+    mutable std::vector<Col_matrix>  _d;  // Boundary matrices
 
     // Protected methods
 
@@ -357,7 +366,7 @@ void Abstract_simplicial_chain_complex<CoefficientType>::insert_simplex(const Si
 template<typename CoefficientType>
 void Abstract_simplicial_chain_complex<CoefficientType>::calculate_d(int dim) const {
     size_t nb_lignes = (dim == 0) ? 0 : _nb_cells[dim - 1];
-    _d[dim] = CMatrix(nb_lignes, _nb_cells[dim]);
+    _d[dim] = Col_matrix(nb_lignes, _nb_cells[dim]);
 
     // Iterate through the cells of dimension dim
     if (dim>0)
@@ -368,7 +377,7 @@ void Abstract_simplicial_chain_complex<CoefficientType>::calculate_d(int dim) co
             std::vector<Simplex> bord = s.boundary();
 
             // Create a chain with the correct size
-            CChain chain(nb_lignes);
+            Col_chain chain(nb_lignes);
 
             // For each element of the boundary
             for (size_t j = 0; j < bord.size(); ++j) {
@@ -416,6 +425,11 @@ std::ostream& Abstract_simplicial_chain_complex<CoefficientType>::print_complex(
     return out ;
 }
 
+template <typename CoefficientType>
+std::ostream& operator<< (std::ostream& out, const Abstract_simplicial_chain_complex<CoefficientType>& complex)
+{
+    return complex.print_complex(out);
+}
 
 } /* end namespace HDVF */
 } /* end namespace CGAL */

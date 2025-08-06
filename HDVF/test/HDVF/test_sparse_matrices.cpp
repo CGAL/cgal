@@ -6,10 +6,10 @@
 #include <cassert>
 #include <CGAL/OSM/OSM.h>
 
-typedef CGAL::OSM::Sparse_chain<int, CGAL::OSM::COLUMN> CChain;
-typedef CGAL::OSM::Sparse_chain<int, CGAL::OSM::ROW> RChain ;
-typedef CGAL::OSM::Sparse_matrix<int, CGAL::OSM::COLUMN> CMatrix;
-typedef CGAL::OSM::Sparse_matrix<int, CGAL::OSM::ROW> RMatrix;
+typedef CGAL::OSM::Sparse_chain<int, CGAL::OSM::COLUMN> Col_chain;
+typedef CGAL::OSM::Sparse_chain<int, CGAL::OSM::ROW> Row_chain ;
+typedef CGAL::OSM::Sparse_matrix<int, CGAL::OSM::COLUMN> Col_matrix;
+typedef CGAL::OSM::Sparse_matrix<int, CGAL::OSM::ROW> Row_matrix;
 
 
 int main(int argc, char **argv)
@@ -18,7 +18,7 @@ int main(int argc, char **argv)
 
     std::cerr << "----> Column matrices" << std::endl;
 
-    CMatrix MC_rw(3,4);
+    Col_matrix MC_rw(3,4);
     CGAL::OSM::set_coef(MC_rw, 0, 1, 1) ;
     CGAL::OSM::set_coef(MC_rw, 0, 2, -1) ;
     CGAL::OSM::set_coef(MC_rw, 1, 0, 2) ;
@@ -36,7 +36,7 @@ int main(int argc, char **argv)
 
     out_col_save.close() ;
 
-    CMatrix MC_rw2 ;
+    Col_matrix MC_rw2 ;
 
     std::ifstream in_col_save (filename_col_save);
     if ( not in_col_save . good () ) {
@@ -52,7 +52,7 @@ int main(int argc, char **argv)
 
     std::cerr << "----> Row matrices" << std::endl;
 
-    RMatrix MR_rw(3,4) ;
+    Row_matrix MR_rw(3,4) ;
     CGAL::OSM::set_coef(MR_rw, 0, 1, 1) ;
     CGAL::OSM::set_coef(MR_rw, 0, 2, -1) ;
     CGAL::OSM::set_coef(MR_rw, 1, 0, 2) ;
@@ -70,7 +70,7 @@ int main(int argc, char **argv)
 
     out_row_save.close() ;
 
-    RMatrix MR_rw2 ;
+    Row_matrix MR_rw2 ;
 
     std::ifstream in_row_save (filename_row_save);
     if ( not in_row_save . good () ) {
@@ -86,21 +86,21 @@ int main(int argc, char **argv)
 
     std::cerr << "-- Tests Sparse_matrices operations" << std::endl ;
 
-    CChain a(4);
-    RChain b(4);
+    Col_chain a(4);
+    Row_chain b(4);
     a.set_coef(1,1);
     a.set_coef(3,3);
     b.set_coef(0,2);
     b.set_coef(1,-3);
 
-    CMatrix columnMajor = a * b, tmp = columnMajor;
+    Col_matrix columnMajor = a * b, tmp = columnMajor;
     std::cout << columnMajor << std::endl ;
 
-    CMatrix columnMajorRes(4,4) ;
+    Col_matrix columnMajorRes(4,4) ;
 
     // How to read data in data/ directory ?
 
-//    RMatrix rowMajor = a % b;
+//    Row_matrix rowMajor = a % b;
 //
 //    std::cout << "Création de matrice col-dominant:" << std::endl << columnMajor << std::endl << std::endl;
 //    std::cout << "Suppr col 0:" << std::endl << tmp.delColumn(0) << std::endl << std::endl;

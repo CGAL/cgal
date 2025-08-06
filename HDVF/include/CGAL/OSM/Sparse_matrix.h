@@ -66,7 +66,7 @@ public:
     /*!
      Type of chains associated to the matrix.
      */
-    typedef Sparse_chain<CoefficientType, ChainTypeFlag> MatrixChain;
+    typedef Sparse_chain<CoefficientType, ChainTypeFlag> Matrix_chain;
 
     // Allow the Sparse_matrix class to access other templated Sparse_matrix private members.
     template <typename _CT, int _CTF>
@@ -93,7 +93,7 @@ protected:
      *
      * \return The reference to the chain stored at given index.
      */
-    MatrixChain& operator[](const size_t _index) {
+    Matrix_chain& operator[](const size_t _index) {
         if (ChainTypeFlag == COLUMN && _index >= _size.second) {
             throw std::runtime_error("Provided index should be less than " + std::to_string(_size.second) + ".");
         }
@@ -113,7 +113,7 @@ public:
      * The default matrix size is 0x0.
      */
     Sparse_matrix() {
-        _chains = std::vector<MatrixChain>(0);
+        _chains = std::vector<Matrix_chain>(0);
         _chainsStates = Bitboard(0);
         _size = {0, 0};
     }
@@ -471,7 +471,7 @@ public:
      * \ingroup PkgHDVFAlgorithmClasses
      * @brief  Perform multiplication between a sparse matrix (column or row major) and a column-chain. The function returns a new column-major chain.
      *
-     * Perform standard linear algebra product between a matrix and a column-chain (ie. matrix / column vector product) and returns a new column-major chain. Both arguments must have the same `CoefficientType` but the matrix can have any `ChainTypeFlag` (and the product is optimized for each of them).
+     * Perform standard linear algebra product between a matrix and a column-chain (ie.\ matrix / column vector product) and returns a new column-major chain. Both arguments must have the same `CoefficientType` but the matrix can have any `ChainTypeFlag` (and the product is optimized for each of them).
      *
      * @param first The matrix.
      * @param second The column-major chain.
@@ -494,7 +494,7 @@ public:
      * \ingroup PkgHDVFAlgorithmClasses
      * @brief  Perform multiplication between a row-chain and a sparse matrix (column or row major). The function returns a new row-major chain.
      *
-     * Perform standard linear algebra product between a row-chain and a matrix (ie. row vector / matrix product) and returns a new row-major chain. Both arguments must have the same `CoefficientType` but the matrix can have any `ChainTypeFlag` (and the product is optimized for each of them).
+     * Perform standard linear algebra product between a row-chain and a matrix (ie.\ row vector / matrix product) and returns a new row-major chain. Both arguments must have the same `CoefficientType` but the matrix can have any `ChainTypeFlag` (and the product is optimized for each of them).
      *
      * @param first The row-major chain.
      * @param second The matrix.
@@ -657,8 +657,8 @@ public:
 
         for (size_t index: matrix._chainsStates)
         {
-            const MatrixChain& tmp_chain(matrix._chains[index]) ;
-            for (typename MatrixChain::const_iterator it = tmp_chain.cbegin(); it != tmp_chain.cend(); ++it)
+            const Matrix_chain& tmp_chain(matrix._chains[index]) ;
+            for (typename Matrix_chain::const_iterator it = tmp_chain.cbegin(); it != tmp_chain.cend(); ++it)
                 res[index][it->first] = -it->second ;
         }
         return res ;
@@ -704,7 +704,7 @@ public:
      *
      * \return The chain stored at given index.
      */
-    MatrixChain operator[](size_t index) const {
+    Matrix_chain operator[](size_t index) const {
         if (ChainTypeFlag == COLUMN && index >= _size.second) {
             throw std::runtime_error("Provided index should be less than " + std::to_string(_size.second) + ".");
         }
@@ -994,7 +994,7 @@ protected:
         {
             for (size_t ind : _chainsStates)
             {
-                MatrixChain &tmp(_chains[ind]) ;
+                Matrix_chain &tmp(_chains[ind]) ;
                 tmp/=tmp_id ;
                 // If the row index has become empty: update
                 if (tmp.is_null())
@@ -1028,7 +1028,7 @@ protected:
         } else // OSM::COLUMN
         {
             for (size_t ind : _chainsStates) {
-                MatrixChain &tmp(_chains[ind]);
+                Matrix_chain &tmp(_chains[ind]);
                 tmp /= tmp_id;
                 // If the column index has become empty: update
                 if (tmp.is_null())
@@ -1060,14 +1060,14 @@ protected:
 
         if (ChainTypeFlag == OSM::COLUMN) {
             std::vector<size_t> tmp_id({i}) ;
-            MatrixChain &tmp(_chains[j]);
+            Matrix_chain &tmp(_chains[j]);
             tmp /= tmp_id;
             if (tmp.is_null())
                 _chainsStates.setOff(j) ;
         } else // OSM::ROW
         {
             std::vector<size_t> tmp_id({j}) ;
-            MatrixChain &tmp(_chains[i]);
+            Matrix_chain &tmp(_chains[i]);
             tmp /= tmp_id;
             if (tmp.is_null())
                 _chainsStates.setOff(i) ;
@@ -1669,7 +1669,7 @@ Sparse_matrix<_CT, _CTF>& del_coef(Sparse_matrix<_CT, _CTF>& matrix, size_t i, s
 template <typename _CT>
 std::ostream& write_matrix (const Sparse_matrix<_CT, OSM::COLUMN>& M, std::ostream& out)
 {
-    typedef Sparse_chain<_CT, OSM::COLUMN> CChain;
+    typedef Sparse_chain<_CT, OSM::COLUMN> Col_chain;
     std::vector<size_t> vec_i, vec_j;
     std::vector<_CT> vec_val;
     // Matrix type : 0 for (COLUMN), 1 for (ROW)
@@ -1679,9 +1679,9 @@ std::ostream& write_matrix (const Sparse_matrix<_CT, OSM::COLUMN>& M, std::ostre
     // Get all coefficients
     for(OSM::Bitboard::iterator it = M.begin(); it != M.end(); ++it)
     {
-        const CChain& col(OSM::cget_column(M, *it));
+        const Col_chain& col(OSM::cget_column(M, *it));
         // Iterate over the column
-        for (typename CChain::const_iterator it_col = col.begin(); it_col != col.end(); ++it_col)
+        for (typename Col_chain::const_iterator it_col = col.begin(); it_col != col.end(); ++it_col)
         {
             vec_j.push_back(*it) ;
             vec_i.push_back(it_col->first) ;
@@ -1699,7 +1699,7 @@ std::ostream& write_matrix (const Sparse_matrix<_CT, OSM::COLUMN>& M, std::ostre
 template <typename _CT>
 std::ostream& write_matrix (const Sparse_matrix<_CT, OSM::ROW>& M, std::ostream& out)
 {
-    typedef Sparse_chain<_CT, OSM::ROW> RChain;
+    typedef Sparse_chain<_CT, OSM::ROW> Row_chain;
     std::vector<size_t> vec_i, vec_j;
     std::vector<_CT> vec_val;
     // Matrix type : 0 for (COLUMN), 1 for (ROW)
@@ -1709,9 +1709,9 @@ std::ostream& write_matrix (const Sparse_matrix<_CT, OSM::ROW>& M, std::ostream&
     // Get all coefficients
     for(OSM::Bitboard::iterator it = M.begin(); it != M.end(); ++it)
     {
-        const RChain& row(OSM::cget_row(M, *it));
+        const Row_chain& row(OSM::cget_row(M, *it));
         // Iterate over the column
-        for (typename RChain::const_iterator it_row = row.begin(); it_row != row.end(); ++it_row)
+        for (typename Row_chain::const_iterator it_row = row.begin(); it_row != row.end(); ++it_row)
         {
             vec_i.push_back(*it) ;
             vec_j.push_back(it_row->first) ;

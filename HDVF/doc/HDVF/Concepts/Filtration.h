@@ -15,8 +15,8 @@ A filtration class provides:
 Cells are indexed along each dimension and thus identified by their index together with their dimension.
 
 \cgalHasModelsBegin
-\cgalHasModelsBare{`CGAL::HDVF::Filtration_core<DegreeType>`}
-\cgalHasModelsBare{`CGAL::HDVF::Filtration_lower_star<DegreeType>`}
+\cgalHasModelsBare{`CGAL::HDVF::Filtration_core<Degree_type>`}
+\cgalHasModelsBare{`CGAL::HDVF::Filtration_lower_star<Degree_type>`}
 \cgalHasModelsEnd
 
 */
@@ -26,42 +26,45 @@ class Filtration
 public:
     /*! \brief (Scalar) type of degrees.
      */
-    typedef unspecified_type DegreeType ;
+    typedef unspecified_type Degree_type ;
 
     /*! \brief Type for indexing uniquely a cell.
+     *
+     * As stated in `AbstractChainComplex`, cells are identified by their dimension, together with their index along this dimension. The type `Cell_index_dimension` stores this pair:
+     *
      * - First element of the pair: index of the cell.
      * - Second element of the pair: dimension of the cell.
      */
-    typedef std::pair<size_t, int> CellDim ;
+    typedef std::pair<size_t, int> Cell_index_dimension ;
 
-    /*! \brief Value returned by the filtration iterator.
-     * Contains a cell (identified by its index and dimenion in a `CellDim`) and its associated degree.
+    /*! \brief Value type of the filtration iterator.
+     * Contains a cell (identified by its index and dimenion in a `Cell_index_dimension`) and its associated degree.
      */
     typedef struct {
-        CellDim cell_dim ;
-        _DegType degree ;
-    } FiltrationIterValue ;
+        Cell_index_dimension cell_dim ;
+        Degree_type degree ;
+    } Filtration_iter_value ;
 
 protected:
     /*!
      Type of column-major sparse matrices.
      */
-    typedef OSM::Sparse_matrix<_CoefType,OSM::COLUMN> CMatrix ;
+    typedef CGAL::OSM::Sparse_matrix<_CoefType,CGAL::OSM::COLUMN> Col_matrix ;
 
     /*!
      Type of row-major sparse matrices.
      */
-    typedef OSM::Sparse_matrix<_CoefType,OSM::ROW> RMatrix ;
+    typedef CGAL::OSM::Sparse_matrix<_CoefType,CGAL::OSM::ROW> Row_matrix ;
 
     /*!
      Type of column-major chains.
      */
-    typedef OSM::Sparse_chain<_CoefType,OSM::COLUMN> CChain ;
+    typedef CGAL::OSM::Sparse_chain<_CoefType,CGAL::OSM::COLUMN> Col_chain ;
 
     /*!
      Type of row-major chains.
      */
-    typedef OSM::Sparse_chain<_CoefType,OSM::ROW> RChain ;
+    typedef CGAL::OSM::Sparse_chain<_CoefType,CGAL::OSM::ROW> Row_chain ;
 
 public:
     /**
@@ -74,7 +77,7 @@ public:
         // Iterator tags
         using iterator_category = std::forward_iterator_tag;
         using difference_type   = std::ptrdiff_t;
-        using value_type        = FiltrationIterValue;
+        using value_type        = Filtration_iter_value;
 
         /*! Iterator constructor
          */
@@ -88,13 +91,13 @@ public:
          */
         size_t time () const ;
 
-        /*! Gets the `CellDim` (cell and its dimension) associated to the iterator.
+        /*! Gets the `Cell_index_dimension` (cell and its dimension) associated to the iterator.
          */
-        CellDim cell_dim () const ;
+        Cell_index_dimension cell_dim () const ;
 
         /*! Gets the degree associated to the iterator.
          */
-        DegreeType degree () const ;
+        Degree_type degree () const ;
 
         /*!
          * \brief Prefix incrementation.
@@ -125,28 +128,28 @@ public:
     iterator begin();
 
     /*!
-     * \brief Iterator to the ending of the filtration.
+     * \brief Returns a past-the-end iterator.
      */
     iterator end();
 
     // getters
     /*! \brief Gets the filtration size.
      */
-    size_t get_filtration_size () const;
+    size_t size () const;
 
     /*! \brief Gets the cell (that is cell index and dimension) at the index `i` of the filtration.
      */
-    CellDim get_cell_dim (size_t i) const;
+    Cell_index_dimension cell_index_dimension (size_t i) const;
 
     /*! \brief Gets the degree of the `i`th element of the filtration.
      */
-    DegreeType get_degree (size_t i) const;
+    Degree_type degree (size_t i) const;
 
     // Filtration verification
     /*! \brief Checks that a filtration is valid
      * Checks that cells are ordered in increasing degrees and all cells have indices larger than their faces.
      */
-    bool is_valid_filtration() const;
+    bool is_valid() const;
 
     // Output filtration
     /*! \brief Overload of the `<<`operator for filtrations.

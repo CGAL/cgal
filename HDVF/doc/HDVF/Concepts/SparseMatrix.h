@@ -59,7 +59,7 @@ public:
     /*!
      * \brief Type of the chains stored in the matrix.
      */
-    typedef unspecified_type MatrixChain;
+    typedef unspecified_type Matrix_chain;
 
     /// @}
 
@@ -299,7 +299,7 @@ public:
      *
      * If the matrix is column-major, returns the `i`th column, and if the matrix is row-major, returns the `i`th row.
      */
-    MatrixChain operator[](size_t index) const;
+    Matrix_chain operator[](size_t index) const;
 
     /**
      * \brief Sets a given coefficient.

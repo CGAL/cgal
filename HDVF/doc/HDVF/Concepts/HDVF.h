@@ -37,7 +37,7 @@ That is, for all \f$q\in \mathbb N\f$, if
  then \f$D_{PS}\f$, the matrix of \f$j_P\circ \partial\circ i_S\f$, also written \f$\partial (S)|_P\f$ is invertible.
 
  In order to build a perfect HDVF, a pairing operation called `A()` associates (under conditions) two critical cells (becoming PRIMARY and SECONDARY) and updates the reduction in time \f$\mathscr O(n^2)\f$. Intuitively, this operation bears some similitudes (see users guide) with discrete Morse theory's DGVF arrows (and an HDVF can always be represented by such a vector field - possibly with cycles).
- Given a HDVF \f$X = (P,S,C)\f$, A operation between two cells \f$(\gamma_1, \gamma_2)\f$ of respective dimension \f$q/q+1\f$ is valid if \f$(P',S',C') = (P\cup\{\gamma_1\}, P\cup\{\gamma_2\}, C\backslash\{\gamma_1,\gamma_2\})\f$ is a HDVF (ie. if \f$j_{P'}\circ \partial\circ i_{S'}\f$ is still invertible). This is actually the case if and only if \f$\langle d(\gamma_2), \gamma_1 \rangle\f$ (with \f$d\f$ the reduced boundary operator) is invertible. This condition is called the *validity condition for A*; all the `find_pair_A()` and `find_pairs_A()` methods search for such valid pairs.
+ Given a HDVF \f$X = (P,S,C)\f$, A operation between two cells \f$(\gamma_1, \gamma_2)\f$ of respective dimension \f$q/q+1\f$ is valid if \f$(P',S',C') = (P\cup\{\gamma_1\}, P\cup\{\gamma_2\}, C\backslash\{\gamma_1,\gamma_2\})\f$ is a HDVF (ie.\ if \f$j_{P'}\circ \partial\circ i_{S'}\f$ is still invertible). This is actually the case if and only if \f$\langle d(\gamma_2), \gamma_1 \rangle\f$ (with \f$d\f$ the reduced boundary operator) is invertible. This condition is called the *validity condition for A*; all the `find_pair_A()` and `find_pairs_A()` methods search for such valid pairs.
 
 
  Starting from this operation, `HDVF` provides two methods to generate perfect HDVFs (and hence compute homology):
@@ -158,22 +158,22 @@ typedef unspecified_type ComplexType;
 /*!
  Type of column-major chains
  */
-typedef ChainType<CoefficientType, OSM::COLUMN> CChain;
+typedef ChainType<CoefficientType, CGAL::OSM::COLUMN> Col_chain;
 
 /*!
  Type of row-major chains
  */
-typedef ChainType<CoefficientType, OSM::ROW> RChain ;
+typedef ChainType<CoefficientType, CGAL::OSM::ROW> Row_chain ;
 
 /*!
  Type of column-major sparse matrices
  */
-typedef SparseMatrixType<CoefficientType, OSM::COLUMN> CMatrix;
+typedef SparseMatrixType<CoefficientType, CGAL::OSM::COLUMN> Col_matrix;
 
 /*!
  Type of row-major sparse matrices
  */
-typedef SparseMatrixType<CoefficientType, OSM::ROW> RMatrix;
+typedef SparseMatrixType<CoefficientType, CGAL::OSM::ROW> Row_matrix;
 
 /// @}
 
@@ -183,7 +183,7 @@ typedef SparseMatrixType<CoefficientType, OSM::ROW> RMatrix;
 /*!
  * \brief Finds a valid PairCell of dimension q / q+1 for A.
  *
- * The function searches a pair of critical cells \f$(\gamma_1, \gamma2)\f$ of dimension q / q+1, valid for A (ie. such that \f$\langle \partial_{q+1}(\gamma_2), \gamma_1 \rangle\f$ invertible). It returns the first valid pair found by iterators.
+ * The function searches a pair of critical cells \f$(\gamma_1, \gamma2)\f$ of dimension q / q+1, valid for A (ie.\ such that \f$\langle \partial_{q+1}(\gamma_2), \gamma_1 \rangle\f$ invertible). It returns the first valid pair found by iterators.
  *
  * \param[in] q Lower dimension of the pair.
  * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
@@ -194,8 +194,8 @@ virtual PairCell find_pair_A(int q, bool &found) const;
  * \brief Finds a valid PairCell for A containing `gamma` (a cell of dimension `q`)
  *
  * The function searches a cell \f$\gamma'\f$ such that one of the following conditions holds:
- * - \f$\gamma'\f$ has dimension q+1 and \f$(\gamma, \gamma')\f$ is valid for A (ie. such that \f$\langle \partial_{q+1}(\gamma'), \gamma \rangle\f$ invertible),
- * - \f$\gamma'\f$ has dimension q-1 and \f$(\gamma', \gamma)\f$ is valid for A (ie. such that \f$\langle \partial_{q}(\gamma), \gamma' \rangle\f$ invertible).
+ * - \f$\gamma'\f$ has dimension q+1 and \f$(\gamma, \gamma')\f$ is valid for A (ie.\ such that \f$\langle \partial_{q+1}(\gamma'), \gamma \rangle\f$ invertible),
+ * - \f$\gamma'\f$ has dimension q-1 and \f$(\gamma', \gamma)\f$ is valid for A (ie.\ such that \f$\langle \partial_{q}(\gamma), \gamma' \rangle\f$ invertible).
  *
  * \param[in] q Dimension of the cell `gamma`.
  * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
@@ -206,7 +206,7 @@ virtual PairCell find_pair_A(int q, bool &found, size_t gamma) const;
 /**
  * \brief Finds *all* valid PairCell of dimension q / q+1 for A.
  *
- * The function searches all pairs of critical cells \f$(\gamma_1, \gamma2)\f$ of dimension q / q+1, valid for A (ie. such that \f$\langle \partial_{q+1}(\gamma_2), \gamma_1 \rangle\f$ invertible).
+ * The function searches all pairs of critical cells \f$(\gamma_1, \gamma2)\f$ of dimension q / q+1, valid for A (ie.\ such that \f$\langle \partial_{q+1}(\gamma_2), \gamma_1 \rangle\f$ invertible).
  * It returns a vector of such pairs.
  *
  * \param[in] q Lower dimension of the pair.
@@ -218,8 +218,8 @@ virtual std::vector<PairCell> find_pairs_A(int q, bool &found) const;
  * \brief Finds *all* valid PairCell for A containing `gamma` (a cell of dimension `q`)
  *
  * The function searches all critical cells \f$\gamma'\f$ such that one of the following conditions holds:
- * - \f$\gamma'\f$ has dimension q+1 and \f$(\gamma, \gamma')\f$ is valid for A (ie. such that \f$\langle \partial_{q+1}(\gamma'), \gamma \rangle\f$ invertible),
- * - \f$\gamma'\f$ has dimension q-1 and \f$(\gamma', \gamma)\f$ is valid for A (ie. such that \f$\langle \partial_{q}(\gamma), \gamma' \rangle\f$ invertible).
+ * - \f$\gamma'\f$ has dimension q+1 and \f$(\gamma, \gamma')\f$ is valid for A (ie.\ such that \f$\langle \partial_{q+1}(\gamma'), \gamma \rangle\f$ invertible),
+ * - \f$\gamma'\f$ has dimension q-1 and \f$(\gamma', \gamma)\f$ is valid for A (ie.\ such that \f$\langle \partial_{q}(\gamma), \gamma' \rangle\f$ invertible).
  * It returns a vector of such pairs.
  *
  * \param[in] q Dimension of the cell `gamma`.
@@ -246,7 +246,7 @@ void A(size_t gamma1, size_t gamma2, int q);
  * \brief Computes a perfect HDVF.
  *
  * As long as valid pairs for A exist, the function selects the first available pair (returned by `find_pair_A()`) and applies the corresponding `A()` operation.
- * If the `Ring` of coefficients is a field, this operation always produces a perfect HDVF (ie. the reduced boundary is null and the reduction provides homology and cohomology information).
+ * If the `Ring` of coefficients is a field, this operation always produces a perfect HDVF (ie.\ the reduced boundary is null and the reduction provides homology and cohomology information).
  *
  * If the HDVF is initially not trivial (some cells have already been paired), the function completes it into a perfect HDVF.
  *
@@ -259,7 +259,7 @@ std::vector<PairCell> compute_perfect_hdvf(bool verbose = false);
  * \brief Computes a random perfect HDVF.
  *
  *As long as valid pairs for A exist, the function selects a random pair (among pairs returned by `find_pairs_A()`) and applies the corresponding `A()` operation.
- * If the `Ring` of coefficients is a field, this operation always produces a perfect HDVF (ie. the reduced boundary is null and the reduction provides homology and cohomology information).
+ * If the `Ring` of coefficients is a field, this operation always produces a perfect HDVF (ie.\ the reduced boundary is null and the reduction provides homology and cohomology information).
  *
  * If the HDVF is initially not trivial (some cells have already been paired), the function randomly completes it into a perfect HDVF.
  *
@@ -298,22 +298,22 @@ int get_hdvf_opts ();
 /*!
  * \brief Gets the row-major matrix of \f$f\f$ (from the reduction associated to the HDVF).
  */
-const RMatrix& get_f (int q) const;
+const Row_matrix& get_f (int q) const;
 
 /*!
  * \brief Gets the column-major matrix of \f$g\f$ (from the reduction associated to the HDVF).
  */
-const CMatrix& get_g (int q) const;
+const Col_matrix& get_g (int q) const;
 
 /*!
  * \brief Gets the column-major matrix of \f$h\f$ (from the reduction associated to the HDVF).
  */
-const CMatrix& get_h (int q) const;
+const Col_matrix& get_h (int q) const;
 
 /*!
  * \brief Gets the column-major matrix of \f$\partial'\f$, reduced boundary operator (from the reduction associated to the HDVF).
  */
-const CMatrix& get_dd (int q) const;
+const Col_matrix& get_dd (int q) const;
 
 /*!
  * \brief Tests if a HDVF is perfect.
@@ -375,7 +375,7 @@ virtual std::vector<std::vector<int> > get_psc_labels () const;
  *
  * \return A column-major chain.
  */
-virtual CChain get_homology_chain (size_t cell, int q) const;
+virtual Col_chain get_homology_chain (size_t cell, int q) const;
 
 /*!
  * \brief Gets cohomology generators associated to `cell` (critical cell) of dimension  `q` (in particular for vtk export).
@@ -401,7 +401,7 @@ virtual CChain get_homology_chain (size_t cell, int q) const;
  *
  * \return A column-major chain.
  */
-virtual CChain get_cohomology_chain (size_t cell, int dim, bool co_faces = false) const;
+virtual Col_chain get_cohomology_chain (size_t cell, int dim, bool co_faces = false) const;
 
 /// @}
 

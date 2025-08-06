@@ -93,22 +93,22 @@ public:
     /*!
      Type of column-major chains
      */
-    typedef ChainType<CoefficientType, OSM::COLUMN> CChain;
+    typedef ChainType<CoefficientType, CGAL::OSM::COLUMN> Col_chain;
 
     /*!
      Type of row-major chains
      */
-    typedef ChainType<CoefficientType, OSM::ROW> RChain;
+    typedef ChainType<CoefficientType, CGAL::OSM::ROW> Row_chain;
 
     /*!
      Type of column-major sparse matrices
      */
-    typedef SparseMatrixType<CoefficientType, OSM::COLUMN> CMatrix;
+    typedef SparseMatrixType<CoefficientType, CGAL::OSM::COLUMN> Col_matrix;
 
     /*!
      Type of row-major sparse matrices
      */
-    typedef SparseMatrixType<CoefficientType, OSM::ROW> RMatrix;
+    typedef SparseMatrixType<CoefficientType, CGAL::OSM::ROW> Row_matrix;
 
 protected:
     /* \brief Flags of the cells.
@@ -122,13 +122,13 @@ protected:
     /* \brief Number of `CRITICAL` cells. */
     std::vector<size_t> _nb_C;
     /* \brief Row matrices for f. */
-    std::vector<RMatrix> _F_row;
+    std::vector<Row_matrix> _F_row;
     /* \brief Column matrices for g. */
-    std::vector<CMatrix> _G_col;
+    std::vector<Col_matrix> _G_col;
     /* \brief Column matrices for h. */
-    std::vector<CMatrix> _H_col;
+    std::vector<Col_matrix> _H_col;
     /* \brief Column matrices for reduced boundary. */
-    std::vector<CMatrix> _DD_col;
+    std::vector<Col_matrix> _DD_col;
 
     /* \brief Reference to the underlying complex. */
     const ComplexType& _K;
@@ -163,7 +163,7 @@ public:
     /**
      * \brief Finds a valid PairCell of dimension q / q+1 for A.
      *
-     * The function searches a pair of critical cells \f$(\gamma_1, \gamma2)\f$ of dimension q / q+1, valid for A (ie. such that \f$\langle \partial_{q+1}(\gamma_2), \gamma_1 \rangle\f$ invertible). It returns the first valid pair found by iterators.
+     * The function searches a pair of critical cells \f$(\gamma_1, \gamma2)\f$ of dimension q / q+1, valid for A (ie.\ such that \f$\langle \partial_{q+1}(\gamma_2), \gamma_1 \rangle\f$ invertible). It returns the first valid pair found by iterators.
      *
      * \param[in] q Lower dimension of the pair.
      * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
@@ -174,8 +174,8 @@ public:
      * \brief Finds a valid PairCell for A containing `gamma` (a cell of dimension `q`)
      *
      * The function searches a cell \f$\gamma'\f$ such that one of the following conditions holds:
-     * - \f$\gamma'\f$ has dimension q+1 and \f$(\gamma, \gamma')\f$ is valid for A (ie. such that \f$\langle \partial_{q+1}(\gamma'), \gamma \rangle\f$ invertible),
-     * - \f$\gamma'\f$ has dimension q-1 and \f$(\gamma', \gamma)\f$ is valid for A (ie. such that \f$\langle \partial_{q}(\gamma), \gamma' \rangle\f$ invertible).
+     * - \f$\gamma'\f$ has dimension q+1 and \f$(\gamma, \gamma')\f$ is valid for A (ie.\ such that \f$\langle \partial_{q+1}(\gamma'), \gamma \rangle\f$ invertible),
+     * - \f$\gamma'\f$ has dimension q-1 and \f$(\gamma', \gamma)\f$ is valid for A (ie.\ such that \f$\langle \partial_{q}(\gamma), \gamma' \rangle\f$ invertible).
      *
      * \param[in] q Dimension of the cell `gamma`.
      * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
@@ -186,7 +186,7 @@ public:
     /**
      * \brief Finds *all* valid PairCell of dimension q / q+1 for A.
      *
-     * The function searches all pairs of critical cells \f$(\gamma_1, \gamma2)\f$ of dimension q / q+1, valid for A (ie. such that \f$\langle \partial_{q+1}(\gamma_2), \gamma_1 \rangle\f$ invertible).
+     * The function searches all pairs of critical cells \f$(\gamma_1, \gamma2)\f$ of dimension q / q+1, valid for A (ie.\ such that \f$\langle \partial_{q+1}(\gamma_2), \gamma_1 \rangle\f$ invertible).
      * It returns a vector of such pairs.
      *
      * \param[in] q Lower dimension of the pair.
@@ -198,8 +198,8 @@ public:
      * \brief Finds *all* valid PairCell for A containing `gamma` (a cell of dimension `q`)
      *
      * The function searches all `CRITICAL` cells \f$\gamma'\f$ such that one of the following conditions holds:
-     * - \f$\gamma'\f$ has dimension q+1 and \f$(\gamma, \gamma')\f$ is valid for A (ie. such that \f$\langle \partial_{q+1}(\gamma'), \gamma \rangle\f$ invertible),
-     * - \f$\gamma'\f$ has dimension q-1 and \f$(\gamma', \gamma)\f$ is valid for A (ie. such that \f$\langle \partial_{q}(\gamma), \gamma' \rangle\f$ invertible).
+     * - \f$\gamma'\f$ has dimension q+1 and \f$(\gamma, \gamma')\f$ is valid for A (ie.\ such that \f$\langle \partial_{q+1}(\gamma'), \gamma \rangle\f$ invertible),
+     * - \f$\gamma'\f$ has dimension q-1 and \f$(\gamma', \gamma)\f$ is valid for A (ie.\ such that \f$\langle \partial_{q}(\gamma), \gamma' \rangle\f$ invertible).
      * It returns a vector of such pairs.
      *
      * \param[in] q Dimension of the cell `gamma`.
@@ -223,7 +223,7 @@ public:
      * \brief Computes a perfect HDVF.
      *
      * As long as valid pairs for A exist, the function selects the first available pair (returned by `find_pair_A`()) and applies the corresponding `A()` operation.
-     * If the `Ring` of coefficients is a field, this operation always produces a perfect HDVF (ie. the reduced boundary is null and the reduction provides homology and cohomology information).
+     * If the `Ring` of coefficients is a field, this operation always produces a perfect HDVF (ie.\ the reduced boundary is null and the reduction provides homology and cohomology information).
      * Otherwise the operation produces a maximal HDVF with a residual boundary matrix over critical cells.
      *
      * If the HDVF is initially not trivial (some cells have already been paired), the function completes it into a perfect HDVF.
@@ -307,22 +307,22 @@ public:
     /**
      * \brief Gets the row-major matrix of \f$f\f$ (from the reduction associated to the HDVF).
      */
-    const RMatrix& get_f (int q) const { return _F_row.at(q); }
+    const Row_matrix& get_f (int q) const { return _F_row.at(q); }
 
     /**
      * \brief Gets the column-major matrix of \f$g\f$ (from the reduction associated to the HDVF).
      */
-    const CMatrix& get_g (int q) const { return _G_col.at(q); }
+    const Col_matrix& get_g (int q) const { return _G_col.at(q); }
 
     /**
      * \brief Gets the column-major matrix of \f$h\f$ (from the reduction associated to the HDVF).
      */
-    const CMatrix& get_h (int q) const { return _H_col.at(q); }
+    const Col_matrix& get_h (int q) const { return _H_col.at(q); }
 
     /**
      * \brief Gets the column-major matrix of \f$\partial'\f$, reduced boundary operator (from the reduction associated to the HDVF).
      */
-    const CMatrix& get_dd (int q) const { return _DD_col.at(q); }
+    const Col_matrix& get_dd (int q) const { return _DD_col.at(q); }
 
     /**
      * \brief Prints the matrices of the reduction.
@@ -376,13 +376,13 @@ public:
      *
      * \return A column-major chain.
      */
-    virtual CChain get_homology_chain (size_t cell, int q) const
+    virtual Col_chain get_homology_chain (size_t cell, int q) const
     {
         if ((q<0) || (q>_K.dim()))
             throw "Error : get_homology_chain with dim out of range" ;
         if (_hdvf_opt & (OPT_FULL | OPT_G))
         {
-            CChain g_cell(OSM::get_column(_G_col.at(q), cell)) ;
+            Col_chain g_cell(OSM::get_column(_G_col.at(q), cell)) ;
             // Add 1 to the cell
             g_cell.set_coef(cell, 1) ;
             return g_cell ;
@@ -401,13 +401,13 @@ public:
      *
      * \return A column-major chain.
      */
-    virtual CChain get_cohomology_chain (size_t cell, int dim) const
+    virtual Col_chain get_cohomology_chain (size_t cell, int dim) const
     {
         if ((dim<0) || (dim>_K.dim()))
             throw "Error : get_cohomology_chain with dim out of range" ;
         if (_hdvf_opt & (OPT_FULL | OPT_F))
         {
-            RChain fstar_cell(OSM::get_row(_F_row.at(dim), cell)) ;
+            Row_chain fstar_cell(OSM::get_row(_F_row.at(dim), cell)) ;
             // Add 1 to the cell
             fstar_cell.set_coef(cell, 1) ;
 
@@ -524,15 +524,15 @@ Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::Hdvf_core(
     for (int q = 0; q <= dim; q++) {
         // Initialize _F_row[q] as a row matrix with dimensions (dim(q) x dim(q))
         if (_hdvf_opt & (OPT_FULL | OPT_F))
-            _F_row[q] = RMatrix(_K.nb_cells(q), _K.nb_cells(q));
+            _F_row[q] = Row_matrix(_K.nb_cells(q), _K.nb_cells(q));
 
         // Initialize _G_col[q] as a column matrix with dimensions (dim(q) x dim(q))
         if (_hdvf_opt & (OPT_FULL | OPT_G))
-            _G_col[q] = CMatrix(_K.nb_cells(q), _K.nb_cells(q));
+            _G_col[q] = Col_matrix(_K.nb_cells(q), _K.nb_cells(q));
 
         // Initialize _H_col[q] as a column matrix with dimensions (dim(q+1) x dim(q))
         if (_hdvf_opt & OPT_FULL)
-            _H_col[q] = CMatrix(_K.nb_cells(q + 1), _K.nb_cells(q));
+            _H_col[q] = Col_matrix(_K.nb_cells(q + 1), _K.nb_cells(q));
 
         // Initialize the counters for PRIMARY, SECONDARY, and CRITICAL cells
         _nb_P[q] = 0;
@@ -548,7 +548,7 @@ Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::Hdvf_core(
     // Populate the DD matrices
     _DD_col.resize(_K.dim()+1) ;
     for (int q=0; q<=_K.dim(); ++q)
-        _DD_col.at(q) = _K.get_bnd_matrix(q) ;
+        _DD_col.at(q) = _K.get_boundary_matrix(q) ;
     std::cout << "------> End Hdvf_core creation" << std::endl ;
 }
 
@@ -599,10 +599,10 @@ PairCell Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::f
     // Iterate through columns of _DD_col[q+1]
     for (OSM::Bitboard::iterator it_col = _DD_col[q+1].begin(); (it_col != _DD_col[q+1].end() && !found); ++it_col)
     {
-        const CChain& col(OSM::cget_column(_DD_col[q+1], *it_col)) ;
+        const Col_chain& col(OSM::cget_column(_DD_col[q+1], *it_col)) ;
 
         // Iterate through the entries of the column
-        for (typename CChain::const_iterator it = col.begin(); (it != col.end() && !found); ++it) {
+        for (typename Col_chain::const_iterator it = col.begin(); (it != col.end() && !found); ++it) {
             if ((it->second == 1) || (it->second == -1)) {
                 // If an entry with coefficient 1 or -1 is found, set the pair and mark as found
                 p.sigma = it->first;
@@ -623,8 +623,8 @@ PairCell Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::f
     PairCell p ;
 
     // Search for a q-1 cell tau' such that <_d(tau),tau'> invertible
-    const CChain& tmp2(OSM::cget_column(_DD_col.at(q), gamma)) ;
-    for (typename CChain::const_iterator it = tmp2.cbegin(); (it != tmp2.cend() && !found); ++it)
+    const Col_chain& tmp2(OSM::cget_column(_DD_col.at(q), gamma)) ;
+    for (typename Col_chain::const_iterator it = tmp2.cbegin(); (it != tmp2.cend() && !found); ++it)
     {
         if (abs(it->second) == 1)
         {
@@ -636,8 +636,8 @@ PairCell Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::f
     }
 
     // Search for a q+1 cell tau' such that <_d(tau'),tau> invertible, ie <_cod(tau),tau'> invertible
-    RChain tmp(OSM::get_row(_DD_col.at(q+1), gamma)) ;
-    for (typename RChain::const_iterator it = tmp.cbegin(); (it != tmp.cend() && !found); ++it)
+    Row_chain tmp(OSM::get_row(_DD_col.at(q+1), gamma)) ;
+    for (typename Row_chain::const_iterator it = tmp.cbegin(); (it != tmp.cend() && !found); ++it)
     {
         if (abs(it->second) == 1)
         {
@@ -660,10 +660,10 @@ std::vector<PairCell> Hdvf_core<CoefficientType, ComplexType, ChainType, SparseM
     // Iterate through columns of _DD_col[q+1]
     for (OSM::Bitboard::iterator it_col = this->_DD_col[q+1].begin(); it_col != this->_DD_col[q+1].end(); ++it_col)
     {
-        const CChain& col(OSM::cget_column(this->_DD_col[q+1], *it_col)) ;
+        const Col_chain& col(OSM::cget_column(this->_DD_col[q+1], *it_col)) ;
 
         // Iterate through the entries of the column
-        for (typename CChain::const_iterator it = col.begin(); it != col.end(); ++it) {
+        for (typename Col_chain::const_iterator it = col.begin(); it != col.end(); ++it) {
             if ((it->second == 1) || (it->second == -1)) {
                 // If an entry with coefficient 1 or -1 is found, set the pair and mark as found
                 PairCell p;
@@ -686,8 +686,8 @@ std::vector<PairCell> Hdvf_core<CoefficientType, ComplexType, ChainType, SparseM
     std::vector<PairCell> pairs;
 
     // Search for a q+1 cell tau' such that <_d(tau'),tau> invertible, ie <_cod(tau),tau'> invertible
-    RChain tmp(OSM::get_row(_DD_col.at(q+1), gamma)) ;
-    for (typename RChain::const_iterator it = tmp.cbegin(); it != tmp.cend(); ++it)
+    Row_chain tmp(OSM::get_row(_DD_col.at(q+1), gamma)) ;
+    for (typename Row_chain::const_iterator it = tmp.cbegin(); it != tmp.cend(); ++it)
     {
         if (abs(it->second) == 1)
         {
@@ -700,8 +700,8 @@ std::vector<PairCell> Hdvf_core<CoefficientType, ComplexType, ChainType, SparseM
         }
     }
     // Search for a q-1 cell tau' such that <_d(tau),tau'> invertible
-    const CChain& tmp2(OSM::cget_column(_DD_col.at(q), gamma)) ;
-    for (typename CChain::const_iterator it = tmp2.cbegin(); it != tmp2.cend(); ++it)
+    const Col_chain& tmp2(OSM::cget_column(_DD_col.at(q), gamma)) ;
+    for (typename Col_chain::const_iterator it = tmp2.cbegin(); it != tmp2.cend(); ++it)
     {
         if (abs(it->second) == 1)
         {
@@ -729,8 +729,8 @@ void Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::A(siz
     //    cout << "A of " << tau1 << "(dim " << q << ") / " << tau2 << "(dim " << q + 1 << ")" << endl;
 
     // Extract submatrices from _DD_col
-    RChain D12(OSM::get_row(_DD_col.at(q+1),tau1)); // D12 is a row chain from _DD_col[q+1] at index tau1
-    CChain D21(OSM::get_column(_DD_col.at(q + 1),tau2)); // D21 is a column chain from _DD_col[q+1] at index tau2
+    Row_chain D12(OSM::get_row(_DD_col.at(q+1),tau1)); // D12 is a row chain from _DD_col[q+1] at index tau1
+    Col_chain D21(OSM::get_column(_DD_col.at(q + 1),tau2)); // D21 is a column chain from _DD_col[q+1] at index tau2
     const CoefficientType D11 = D12.get_coef(tau2); // D11 is the coefficient at the intersection of tau2 in D12
 
     // Assert that D11 is either 1 or -1 (check invertibility)
@@ -749,8 +749,8 @@ void Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::A(siz
 
     //---------------------------------------------- Submatrices of F -----------------------------------------------------
 
-    RChain F11 ;
-    CChain G11 ;
+    Row_chain F11 ;
+    Col_chain G11 ;
     if (_hdvf_opt & (OPT_FULL | OPT_F))
     {
         // Extract the relevant submatrix from _F_row
@@ -810,7 +810,7 @@ void Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::A(siz
     {
         // Update _H_col[q]
         // Compute the temporary matrix product G11 * F11
-        CMatrix tmp = G11 * F11;
+        Col_matrix tmp = G11 * F11;
 
         // Add the product of tmp and D11_inv to _H_col[q]
         _H_col[q] += (tmp) * D11_inv;
@@ -1009,8 +1009,8 @@ std::ostream& Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixTyp
                 const size_t id(critical.at(q).at(i)) ;
                 out << "g(" << id << ") = (" << id << ")";
                 // Iterate over the ith column of _G_col
-                CChain col(OSM::get_column(_G_col.at(q), id)) ; // TODO cget
-                for (typename CChain::const_iterator it_col = col.cbegin(); it_col != col.cend(); ++it_col) {
+                Col_chain col(OSM::get_column(_G_col.at(q), id)) ; // TODO cget
+                for (typename Col_chain::const_iterator it_col = col.cbegin(); it_col != col.cend(); ++it_col) {
                     out << " + " << it_col->second << ".(" << it_col->first << ") + ";
                 }
                 out << std::endl;
@@ -1029,8 +1029,8 @@ std::ostream& Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixTyp
                 const size_t id(critical.at(q).at(i)) ;
                 out << "f*(" << id << ") = (" << id << ")";
                 // Iterate over the ith row of _F_row
-                RChain row(OSM::get_row(_F_row.at(q), id)) ; // TODO cget
-                for (typename RChain::const_iterator it_row = row.cbegin(); it_row != row.cend(); ++it_row) {
+                Row_chain row(OSM::get_row(_F_row.at(q), id)) ; // TODO cget
+                for (typename Row_chain::const_iterator it_row = row.cbegin(); it_row != row.cend(); ++it_row) {
                     out << " + " << it_row->second << ".(" << it_row->first << ") + ";
                 }
                 out << std::endl;

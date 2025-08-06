@@ -70,7 +70,7 @@ void mesh_complex_output(const MeshType& mesh, const ComplexType& complex, const
 
         // Complex
         std::cout << "----> complex informations" << std::endl ;
-        complex.print_complex();
+        std::cout << complex;
     }
 }
 

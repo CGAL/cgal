@@ -129,7 +129,7 @@ public:
 
     /** \brief Adds an index to the mask.
      *
-     * Set the bit encoding a given index to 1 (ie. add the index in the mask).
+     * Set the bit encoding a given index to 1 (ie.\ add the index in the mask).
      *
      * \param[in] index Index to turn on in the mask.
      */
@@ -142,7 +142,7 @@ public:
 
     /** \brief Removes an index from the mask.
      *
-     * Set the bit encoding a given index to 0 (ie. remove the index from the mask).
+     * Set the bit encoding a given index to 0 (ie.\ remove the index from the mask).
      *
      * \param[in] index Index to turn off in the mask.
      */

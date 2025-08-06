@@ -30,17 +30,17 @@ public:
 /*!
  Type of column-major chains (returned by the boundary operator)
  */
-typedef OSM::Sparse_chain<CoefficientType, OSM::COLUMN> CChain;
+typedef CGAL::OSM::Sparse_chain<CoefficientType, CGAL::OSM::COLUMN> Col_chain;
 
 /*!
  Type of row-major chains (returned by the co-boundary operator)
  */
-typedef OSM::Sparse_chain<CoefficientType, OSM::ROW> RChain ;
+typedef CGAL::OSM::Sparse_chain<CoefficientType, CGAL::OSM::ROW> Row_chain ;
 
 /*!
  Type of column-major sparse matrices (used to store the boundary operator)
  */
-typedef OSM::Sparse_matrix<CoefficientType, OSM::COLUMN> CMatrix;
+typedef CGAL::OSM::Sparse_matrix<CoefficientType, CGAL::OSM::COLUMN> Col_matrix;
 
 /// @}
 
@@ -48,9 +48,9 @@ typedef OSM::Sparse_matrix<CoefficientType, OSM::COLUMN> CMatrix;
 /// @{
 
 /*!
-Affectation operator.
+Assignment operator.
 
-The operator creates a "fresh" copy of `complex`.
+The operator creates a copy of `complex`.
  */
     AbstractChainComplex& operator= (const AbstractChainComplex& complex);
 
@@ -76,14 +76,14 @@ size_t nb_cells(int q);
 The function returns constant reference to a vector of column-major sparse matrices. The `q`-th element of this vector is the matrix of \f$\partial_q\f$, which gives the boundary of cells of dimension `q`(as a linear combination of `q`-1 cells).
 
  */
-const vector<CMatrix> & get_bnd_matrices() const;
+const vector<Col_matrix> & get_boundary_matrices() const;
 
 /*!
- \brief Returns the boundary matrix of dimension `q` (ie. the matrix of \f$\partial_q}\f$).
+ \brief Returns the boundary matrix of dimension `q` (ie.\ the matrix of \f$\partial_q}\f$).
 
 The function returns a column-major sparse matrices.
  */
-const CMatrix & get_bnd_matrix(int q) const;
+const Col_matrix & get_boundary_matrix(int q) const;
 
 /*!
  \brief Returns the boundary of the cell of index `id_cell` in dimension `q`.
@@ -91,7 +91,7 @@ const CMatrix & get_bnd_matrix(int q) const;
 This boundary is a finite linear combination of cells of dimension `q`-1. It is encoded as a column-major chain (which maps each cell with a non-zero coefficient to this coefficient). This boundary  is thus the `id_cell`-th column of the boundary matrix in dimension `q`.
 
 */
-CChain d(size_t id_cell, int q);
+Col_chain d(size_t id_cell, int q);
 
 
 /*!
@@ -99,7 +99,7 @@ CChain d(size_t id_cell, int q);
 
 This boundary is a finite linear combination of cells of dimension `q`+1. It is encoded as a row-major chain (which maps each cell with a non-zero coefficient to this coefficient). This co-boundary  is thus the `id_cell`-th row of the boundary matrix in dimension `q`+1.
 */
-RChain cod(size_t id_cell, int q);
+Row_chain cod(size_t id_cell, int q);
 
 /*!
  \brief Returns the vertices of a given cell (that is, the indices of its faces of dimension 0).
@@ -113,7 +113,7 @@ std::vector<size_t> bottom_faces(size_t id_cell, int q) const;
  * The resulting chain lies in dimension `q`+1 and is null if this dimension exceeds the dimension of the complex.
 */
 template <typename CoefficientT, int ChainTypeF>
-CChain cofaces_chain (SparseChain<CoefficientT, ChainTypeF> chain, int q) const;
+Col_chain cofaces_chain (SparseChain<CoefficientT, ChainTypeF> chain, int q) const;
 
 /// @}
 
@@ -125,7 +125,7 @@ Outputs the chain complex in text mode.
 
 By default, outputs the complex to `std::cout`.
 */
-std::ostream& print_complex(std::ostream& out = std::cout) const;
+friend std::ostream& operator<<(std::ostream& out = std::cout, const AbstractChainComplex& complex) const;
 
 /// @}
 

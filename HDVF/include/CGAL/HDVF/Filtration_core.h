@@ -53,10 +53,10 @@ namespace HDVF {
 
  \tparam CoefficientType a model of the `Ring` concept (ring used for homology computation).
  \tparam ComplexType a model of the `AbstractChainComplex` concept (type of the underlying chain complex).
- \tparam DegreeType the scalar type of degrees.
+ \tparam Degree_type the scalar type of degrees.
  */
 
-template <typename CoefficientType, typename ComplexType, typename DegreeType>
+template <typename CoefficientType, typename ComplexType, typename Degree_type>
 class Filtration_core
 {
 public:
@@ -64,44 +64,44 @@ public:
      * - First element of the pair: index of the cell.
      * - Second element of the pair: dimension of the cell.
      */
-    typedef std::pair<std::size_t, int> CellDim ;
+    typedef std::pair<std::size_t, int> Cell_index_dimension ;
 
     /*! \brief Type of value returned by the iterator.
      */
     typedef struct {
-        CellDim cell_dim ;
-        DegreeType degree ;
-    } FiltrationIterValue ;
+        Cell_index_dimension cell_dim ;
+        Degree_type degree ;
+    } Filtration_iter_value ;
 
 protected:
     /** \brief Constant reference to the underlying chain complex. */
     const ComplexType& _K ;
     /** \brief Vector of cells of the filtration (full ordering of cells). */
-    std::vector<CellDim> _filtration ;
+    std::vector<Cell_index_dimension> _filtration ;
     /** \brief Vector of degrees of cells along the filtration. */
-    std::vector<DegreeType> _deg ;
+    std::vector<Degree_type> _deg ;
 
     /** \brief Map from cells to their index in the filtration. */
-    std::map<CellDim,std::size_t> _cell_to_t ;
+    std::map<Cell_index_dimension,std::size_t> _cell_to_t ;
 
     /*!
      Type of column-major sparse matrices
      */
-    typedef OSM::Sparse_matrix<CoefficientType,OSM::COLUMN> CMatrix ;
+    typedef CGAL::OSM::Sparse_matrix<CoefficientType,CGAL::OSM::COLUMN> Col_matrix ;
 
     /*!
      Type of row-major sparse matrices
      */
-    typedef OSM::Sparse_matrix<CoefficientType,OSM::ROW> RMatrix ;
+    typedef CGAL::OSM::Sparse_matrix<CoefficientType,CGAL::OSM::ROW> Row_matrix ;
     /*!
      Type of column-major chains
      */
-    typedef OSM::Sparse_chain<CoefficientType,OSM::COLUMN> CChain ;
+    typedef CGAL::OSM::Sparse_chain<CoefficientType,CGAL::OSM::COLUMN> Col_chain ;
 
     /*!
      Type of row-major chains
      */
-    typedef OSM::Sparse_chain<CoefficientType,OSM::ROW> RChain ;
+    typedef CGAL::OSM::Sparse_chain<CoefficientType,CGAL::OSM::ROW> Row_chain ;
 public:
     /*! \brief Filtration_core default constructor
      *
@@ -119,9 +119,9 @@ public:
      * \param[in] filtration An ordering of the cells of `K` encoded as a vector of its cells.
      * \param[in] deg The (increasing) vector of cells degrees.
      */
-    Filtration_core(const ComplexType& K, const std::vector<CellDim>& filtration, const std::vector<DegreeType>& deg) : _K(K), _filtration(filtration), _deg(deg)
+    Filtration_core(const ComplexType& K, const std::vector<Cell_index_dimension>& filtration, const std::vector<Degree_type>& deg) : _K(K), _filtration(filtration), _deg(deg)
     {
-        if (!is_valid_filtration())
+        if (!is_valid())
             throw ("Invalid filtration, Filtration_core constructor failed");
     }
 
@@ -143,7 +143,7 @@ public:
         // Iterator tags
         using iterator_category = std::forward_iterator_tag;
         using difference_type   = std::ptrdiff_t;
-        using value_type        = FiltrationIterValue;
+        using value_type        = Filtration_iter_value;
 
         /** \brief Iterator constructor
          *
@@ -154,11 +154,11 @@ public:
 
         /*! \brief Iterator dereference
          *
-         * \returns A `FiltrationIterValue` structure containing the information of the current cell and its degree.
+         * \returns A `Filtration_iter_value` structure containing the information of the current cell and its degree.
          */
         value_type operator*() const
         {
-            FiltrationIterValue res ;
+            Filtration_iter_value res ;
             res.cell_dim = _f._filtration.at(_i) ;
             res.degree = _f._deg.at(_i) ;
             return res ;
@@ -170,11 +170,11 @@ public:
 
         /*! \brief Get the cell (identified by its index and dimension) associated to current iterator.
          */
-        CellDim cell_dim () const { return _f._filtration.at(_i); }
+        Cell_index_dimension cell_dim () const { return _f._filtration.at(_i); }
 
         /*! \brief Get degree associated to current iterator.
          */
-        DegreeType degree () const { return _f._deg.at(_i); }
+        Degree_type degree () const { return _f._deg.at(_i); }
 
         /*!
          * \brief Prefix incrementation. Moves to next cell in the filtration.
@@ -227,15 +227,15 @@ public:
     // getters
     /*! \brief Gets the filtration size.
      */
-    std::size_t get_filtration_size () const { return _filtration.size();}
+    std::size_t size () const { return _filtration.size();}
 
     /*! \brief Gets the cell (that is cell index and dimension) at the index `i` of the filtration.
      */
-    CellDim get_cell_dim (std::size_t i) const { return _filtration.at(i); }
+    Cell_index_dimension cell_index_dimension (std::size_t i) const { return _filtration.at(i); }
 
     /*! \brief Gets the degree of the `i`th element of the filtration.
      */
-    DegreeType get_degree (std::size_t i) const { return _deg.at(i); }
+    Degree_type degree (std::size_t i) const { return _deg.at(i); }
 
     // Output filtration
     /*! \brief Overload of the `<<`operator for filtrations.
@@ -265,7 +265,7 @@ public:
         {
             for (std::size_t i = 0; i<this->_K.nb_cells(q); ++i)
             {
-                const CellDim cell(i,q) ;
+                const Cell_index_dimension cell(i,q) ;
                 const std::size_t t(_cell_to_t.at(cell));
                 labels.at(q).push_back(t) ;
             }
@@ -277,7 +277,7 @@ public:
      * Checks that cells are ordered in increasing degrees and all cells have indices larger than their faces.
      * \returns `true` if the filtration is valid, `false` otherwise
      */
-    bool is_valid_filtration() const ;
+    bool is_valid() const ;
 
 protected:
     /* \brief Sets _cell_to_t from the initial vector o cells. */
@@ -288,36 +288,36 @@ protected:
     friend class Hdvf_persistence ;
 };
 
-template <typename CoefficientType, typename ComplexType, typename DegreeType>
-void Filtration_core<CoefficientType, ComplexType, DegreeType>::build_filtration_structure()
+template <typename CoefficientType, typename ComplexType, typename Degree_type>
+void Filtration_core<CoefficientType, ComplexType, Degree_type>::build_filtration_structure()
 {
     for (std::size_t i = 0; i<_filtration.size(); ++i)
     {
-        const CellDim c(_filtration.at(i)) ;
+        const Cell_index_dimension c(_filtration.at(i)) ;
         // c : filtration index i, index in the basis reordered by filtration : j
         _cell_to_t[c] = i ;
     }
 }
 
-template <typename CoefficientType, typename ComplexType, typename DegreeType>
-bool Filtration_core<CoefficientType, ComplexType, DegreeType>::is_valid_filtration() const
+template <typename CoefficientType, typename ComplexType, typename Degree_type>
+bool Filtration_core<CoefficientType, ComplexType, Degree_type>::is_valid() const
 {
     bool valid = true ;
     for (std::size_t i=0; i<_filtration.size() && valid; ++i)
     {
         if (i>0)
             valid = valid & (_deg.at(i) >= _deg.at(i-1)) ;
-        CellDim c(_filtration.at(i)) ;
+        Cell_index_dimension c(_filtration.at(i)) ;
         std::cout << i << " -> " << c.first << " dim "<< c.second << std::endl ;
         const int q = c.second ;
         if (q>0)
         {
-            CChain dc = _K.d(c.first, q) ;
+            Col_chain dc = _K.d(c.first, q) ;
             std::cout << "bnd : " << dc << std::endl ;
-            for (typename CChain::iterator it = dc.begin(); it != dc.end() && valid; ++it)
+            for (typename Col_chain::iterator it = dc.begin(); it != dc.end() && valid; ++it)
             {
                 // Faces of c
-                const CellDim face(it->first,q-1) ;
+                const Cell_index_dimension face(it->first,q-1) ;
                 // Check if the face c belongs to the filtration
                 auto it_face(_cell_to_t.find(face)) ;
                 valid = valid & (it_face != _cell_to_t.end()) ;

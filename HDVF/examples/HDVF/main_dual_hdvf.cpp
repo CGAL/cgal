@@ -43,7 +43,7 @@ void mesh_complex_output(const MeshType& mesh, const ComplexType& L, const CGAL:
         // Complex
         std::cout << "----> complex informations" << std::endl ;
         std::cout << "------> complex L" << std::endl ;
-        L.print_complex();
+        std::cout << L;
         std::cout << "------> subcomplex K" << std::endl ;
         std::cout << K << std::endl ;
     }
