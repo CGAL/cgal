@@ -450,9 +450,17 @@ private:
 ///   boost::property_map<TriangleMesh, CGAL::vertex_point_t>::const_type.
 /// \endcode
 ///
+///  @tparam AccelerationType_
+///         a tag indicating whether the algorithm should use Kd-tree or BVH as acceleration structure.
+///         <b>%Default:</b> `CGAL::KD_tree_tag`<br>
+///         <b>%Valid values:</b> `CGAL::KD_tree_tag`, `CGAL::BVH_tag`, 
 ///
 
-template <typename TriangleMesh_, typename GeomTraits_ = Default, typename VertexPointMap_ = Default>
+template <typename TriangleMesh_,
+          typename ConcurrencyTag_ = Sequential_tag,
+          typename GeomTraits_ = Default,
+          typename VertexPointMap_ = Default,
+          typename AccelerationType_ = KD_tree_tag>
 class Variational_medial_axis
 {
 private:
@@ -1011,9 +1019,11 @@ private:
     FT cos_angle = cosine_angle(qp, n);
     return d / (2 * cos_angle);
   }
-  std::pair<Point_3, FT> shrinking_ball_algorithm_bvh(std::vector<face_descriptor> incident_faces,Point_3& p,         // point on the surface
-                                                  const Vector_3& n,        // inverse of search direction
-                                                  FT delta_convergence = FT(1e-5)){ // model has to be normalized in [0, 1]^3
+  std::pair<Point_3, FT>
+  shrinking_ball_algorithm_bvh(std::vector<face_descriptor> incident_faces,
+                               Point_3& p,                        // point on the surface
+                               const Vector_3& n,                 // inverse of search direction
+                               FT delta_convergence = FT(1e-5)) { // model has to be normalized in [0, 1]^3
     using face_descriptor = typename Tree::Primitive_id;
     delta_convergence *= scale_;
     const FT denoise_preserve = FT(20.0); // in degree
@@ -1071,8 +1081,8 @@ private:
     return {c, r};
 
   }
-  std::pair<Point_3, FT> shrinking_ball_algorithm_kdt(const Point_3& p,         // point on the surface
-                                                  const Vector_3& n,        // inverse of search direction
+  std::pair<Point_3, FT> shrinking_ball_algorithm_kdt(const Point_3& p,  // point on the surface
+                                                      const Vector_3& n, // inverse of search direction
                                                   FT delta_convergence = FT(1e-5)) {
 
     delta_convergence *= scale_;
@@ -1088,8 +1098,8 @@ private:
       Point_3 q_next = hint.first;
 
       FT squared_dist = (q_next - c).squared_length();
-      if(squared_dist >= (r - delta_convergence) * (r - delta_convergence) || p==q_next) {
-        //std::cout << "Convergence achieved at iteration " << j << ": " << CGAL::to_double(squared_dist) << std::endl;
+      if(squared_dist >= (r - delta_convergence) * (r - delta_convergence) || p == q_next) {
+        // std::cout << "Convergence achieved at iteration " << j << ": " << CGAL::to_double(squared_dist) << std::endl;
         break; // convergence
       }
       FT r_next = compute_radius(p, n, q_next);
@@ -1114,14 +1124,25 @@ private:
 
     return {c, r};
   }
+
+  std::pair<Point_3, FT>
+  compute_shrinking_ball_impl(const Point_3& p, const Vector_3& normal,CGAL::KD_tree_tag) {
+
+    return shrinking_ball_algorithm_kdt(p, normal);
+  }
+
+  std::pair<Point_3, FT>
+  compute_shrinking_ball_impl(const Point_3& p, const Vector_3& normal, CGAL::BVH_tag) {
+    auto [q, closest_face] = tree_->closest_point_and_primitive(p);
+    auto face_range = CGAL::faces_around_face(halfedge(closest_face, tmesh_), tmesh_);
+    std::vector<face_descriptor> incident_faces(face_range.begin(), face_range.end());
+    return shrinking_ball_algorithm_bvh(incident_faces, p, normal);
+  }
   void compute_one_vertex_shrinking_ball(vertex_descriptor v) {
 
     Vector_3 normal = get(vertex_normal_map_, v);
     Point_3 p = get(vpm_, v);
-    auto face_range = CGAL::faces_around_target(halfedge(v, tmesh_), tmesh_);
-    std::vector<face_descriptor> incident_faces(face_range.begin(), face_range.end());
-    auto [center, radius] = shrinking_ball_algorithm_bvh(incident_faces, p, normal);
-    //auto [center, radius] = shrinking_ball_algorithm_kdt(p, normal);
+    auto [center, radius] = compute_shrinking_ball_impl(p, normal, AccelerationType_{});
     put(vertex_medial_sphere_pos_map_, v, center);
     put(vertex_medial_sphere_radius_map_, v, radius);
   }
@@ -1217,14 +1238,11 @@ private:
 
     if((side_of(optimal_center) == CGAL::ON_UNBOUNDED_SIDE))
       normal = -normal; // if the center is outside, flip the normal
-    auto face_range = CGAL::faces_around_face(halfedge(closest_face, tmesh_), tmesh_);
-    std::vector<face_descriptor> incident_faces(face_range.begin(), face_range.end());
-    //std::vector<face_descriptor> incident_faces;
-    //incident_faces.push_back(closest_face);
-    auto [c, r] = shrinking_ball_algorithm_bvh(incident_faces, cp, normal);
-    //auto [c, r] = shrinking_ball_algorithm_kdt(cp, normal);
-    sphere->set_center(c);
-    sphere->set_radius(r);
+    
+    auto [c, r] = compute_shrinking_ball_impl(cp, normal, AccelerationType_{});
+    
+    sphere.set_center(c);
+    sphere.set_radius(r);
 
     /* std::cout << "Optimized center: " << optimized_sphere_params(0) << ", " << optimized_sphere_params(1) << ", "
               << optimized_sphere_params(2) << ", radius: " << optimized_sphere_params(3)
