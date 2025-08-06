@@ -21,7 +21,7 @@ typedef Scene_surface_mesh_item::Face_graph Mesh;
 
 struct Variational_medial_axis_skeleton_item_priv
 {
-  CGAL::Variational_medial_axis<Mesh, CGAL::Epick> vmas;
+  CGAL::Variational_medial_axis<Mesh, CGAL::Parallel_if_available_tag> vmas;
 
   Variational_medial_axis_skeleton_item_priv(const Mesh& m)
     : vmas(m)
@@ -42,8 +42,7 @@ Variational_medial_axis_skeleton_item::Variational_medial_axis_skeleton_item(CGA
 
   d->vmas.init();
   d->vmas.compute_variational_medial_axis_sampling(
-      CGAL::parameters::number_of_spheres(nb_spheres)
-          .concurrency_tag(CGAL::Parallel_if_available_tag()) /* .lambda(l) */);
+      CGAL::parameters::number_of_spheres(nb_spheres));
 }
 
 void Variational_medial_axis_skeleton_item::fill_subitems()

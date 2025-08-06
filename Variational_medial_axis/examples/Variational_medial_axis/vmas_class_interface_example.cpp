@@ -16,15 +16,13 @@ int main(int argc, char** argv)
     return 1;
   }
   
-  CGAL::Variational_medial_axis<Mesh> vmas(mesh);
-  vmas.init();
-  // Compute medial axis with custom parameters
-  //vmas.compute_variational_medial_axis_sampling(CGAL::parameters::number_of_iterations(2000).number_of_spheres(1000).lambda(1.0).concurrency_tag(CGAL::Parallel_tag{}));
+  CGAL::Variational_medial_axis<Mesh, CGAL::Parallel_tag> vmas(mesh);
+  // Compute medial skeleton with custom parameters
   vmas.compute_variational_medial_axis_sampling(
-      CGAL::parameters::number_of_iterations(1000)// number of max iterations
-      .number_of_spheres(200) // target number of spheres
-      .lambda(0.2) // lambda parameter for the optimization
-      .concurrency_tag(CGAL::Parallel_tag{})); // use parallel execution if available
+      CGAL::parameters::number_of_iterations(1000) // number of max iterations
+      .number_of_spheres(200)// target number of spheres
+      .lambda(0.2)); // lambda parameter for the optimization
+      
 
   // add additional 3 sphere, this function will update the medial skeleton automatically 
   vmas.add_spheres(30);
