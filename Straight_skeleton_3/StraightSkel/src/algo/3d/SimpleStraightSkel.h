@@ -603,11 +603,6 @@ protected:
     std::set<VertexSPtr> post_op_vertices_VV_;
     std::set<VertexSPtr> post_op_vertices_pierce_;
     std::set<EdgeSPtr> post_op_edges_edgesplit_;
-
-#ifndef CGAL_SS3_NO_CACHING
-    std::unordered_map<std::array<int, 4>,
-                       std::pair<Point3SPtr, CGAL::FT> > intersectionCache_;
-#endif
 };
 
 } }

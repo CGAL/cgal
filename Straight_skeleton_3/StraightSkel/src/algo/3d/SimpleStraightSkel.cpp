@@ -640,11 +640,6 @@ bool SimpleStraightSkel::run() {
                 }
             }
 
-
-#ifndef CGAL_SS3_NO_CACHING
-            CGAL_SS3_CORE_TRACE_V(4, intersectionCache_.size() << " elements in crash cache");
-#endif
-
             CGAL_assertion_code(for (FacetSPtr facet : polyhedron->facets()) {)
             CGAL_assertion(facet->getPlane()->a() == facet->getBasePlane()->a());
             CGAL_assertion(facet->getPlane()->b() == facet->getBasePlane()->b());
