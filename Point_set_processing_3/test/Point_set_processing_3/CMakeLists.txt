@@ -22,7 +22,6 @@ endif()
 # Executables that do *not* require Eigen
 create_single_source_cgal_program( "read_test.cpp" )
 create_single_source_cgal_program( "test_read_write_point_set.cpp" )
-create_single_source_cgal_program( "test_deprecated_io_point_set.cpp" )
 create_single_source_cgal_program( "test_poisson_eliminate.cpp" )
 create_single_source_cgal_program( "read_test_with_different_pmaps.cpp" )
 create_single_source_cgal_program( "analysis_test.cpp" )
