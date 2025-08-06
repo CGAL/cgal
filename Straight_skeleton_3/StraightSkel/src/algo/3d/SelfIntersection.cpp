@@ -17,9 +17,6 @@
 #include "algo/3d/SelfIntersection.h"
 
 #include "data/3d/KernelFactory.h"
-#include "data/3d/Vertex.h"
-#include "data/3d/Edge.h"
-#include "data/3d/Facet.h"
 #include "data/3d/Polyhedron.h"
 #include "algo/3d/KernelWrapper.h"
 
@@ -34,8 +31,7 @@
 
 namespace algo { namespace _3d {
 
-// check if edges share a vertex (could be more, but we only use this functor
-// when there is a single point of intersection, so it cannot be more)
+// check if edges share at least one vertex
 bool SelfIntersection::doEdgesShareAVertex(EdgeSPtr edge1,
                                            EdgeSPtr edge2,
                                            bool handle_degree_1_as_ray)
@@ -62,128 +58,18 @@ bool SelfIntersection::doEdgesShareAVertex(EdgeSPtr edge1,
             v1_dst == v2_src || v1_dst == v2_dst);
 };
 
-// whether the edges intersect in their interior, with edges possibly being rays
-bool SelfIntersection::doEdgesIntersect(FacetSPtr facet,
-                                        EdgeSPtr edge1,
-                                        EdgeSPtr edge2,
-                                        bool handle_degree_1_as_ray)
-{
-    CGAL_precondition(edge1 != edge2);
-    CGAL_precondition(edge1->getVertexSrc() != edge1->getVertexDst() &&
-                      edge2->getVertexSrc() != edge2->getVertexDst());
-
-    // edges should never be a full line
-    CGAL_precondition(edge1->getVertexSrc()->degree() != 1 || edge1->getVertexDst()->degree() != 1);
-    CGAL_precondition(edge2->getVertexSrc()->degree() != 1 || edge2->getVertexDst()->degree() != 1);
-
-    // reject any degeneracy as a self-intersection
-    if (*(edge1->getVertexSrc()->getPoint()) == *(edge1->getVertexDst()->getPoint()) ||
-        *(edge2->getVertexSrc()->getPoint()) == *(edge2->getVertexDst()->getPoint())) {
-        return false;
-    }
-
-    auto isRay = [](EdgeSPtr edge) -> bool
-    {
-        return (edge->getVertexSrc()->degree() == 1 || edge->getVertexDst()->degree() == 1);
-    };
-
-    auto treat_o_o = [&](EdgeSPtr a, const auto& oa,
-                         EdgeSPtr b, const auto& ob) -> bool
-    {
-        CGAL::Object obj = CGAL::intersection(oa, ob);
-        if (!obj) {
-            return false;
-        } else if (const CGAL::Point3 *ipoint = CGAL::object_cast<CGAL::Point3>(&obj)) {
-            // intersection is a point; there is an intersection unless that point is a common extremity
-            // (note that it needs to be a shared vertex, and not just the same point
-            return !doEdgesShareAVertex(a, b, handle_degree_1_as_ray);
-        } else {
-            return true; // intersection is a segment
-        }
-    };
-
-    auto treat_seg_seg = [&](EdgeSPtr a, EdgeSPtr b) -> bool
-    {
-        CGAL_precondition(!isRay(a) && !isRay(b));
-        const Segment3 sa = { *(a->getVertexSrc()->getPoint()),
-                              *(a->getVertexDst()->getPoint()) };
-        const Segment3 sb = { *(b->getVertexSrc()->getPoint()),
-                              *(b->getVertexDst()->getPoint()) };
-        return treat_o_o(a, sa, b, sb);
-    };
-
-    auto treat_seg_ray = [&](EdgeSPtr a, EdgeSPtr b) -> bool
-    {
-        CGAL_precondition(!isRay(a) && isRay(b));
-        const Segment3 s = { *(a->getVertexSrc()->getPoint()),
-                             *(a->getVertexDst()->getPoint()) };
-        const Ray3 r = (b->getVertexSrc()->degree() == 1) ? Ray3 { *b->getVertexDst()->getPoint(),
-                                                                   *b->getVertexSrc()->getPoint() }
-                                                          : Ray3 { *b->getVertexSrc()->getPoint(),
-                                                                   *b->getVertexDst()->getPoint() };
-        return treat_o_o(a, s, b, r);
-    };
-
-    auto treat_ray_ray = [&](EdgeSPtr a, EdgeSPtr b) -> bool
-    {
-        CGAL_precondition(isRay(a) && isRay(b));
-        const Ray3 ra = (a->getVertexSrc()->degree() == 1) ? Ray3 { *a->getVertexDst()->getPoint(),
-                                                                    *a->getVertexSrc()->getPoint() }
-                                                           : Ray3 { *a->getVertexSrc()->getPoint(),
-                                                                    *a->getVertexDst()->getPoint() };
-        const Ray3 rb = (b->getVertexSrc()->degree() == 1) ? Ray3 { *b->getVertexDst()->getPoint(),
-                                                                    *b->getVertexSrc()->getPoint() }
-                                                           : Ray3 { *b->getVertexSrc()->getPoint(),
-                                                                    *b->getVertexDst()->getPoint() };
-        return treat_o_o(a, ra, b, rb);
-    };
-
-    if (handle_degree_1_as_ray) {
-        if (isRay(edge1)) {
-            if (isRay(edge2)) {
-                return treat_ray_ray(edge1, edge2);
-            } else {
-                return treat_seg_ray(edge2, edge1);
-            }
-        } else if (isRay(edge2)) {
-            return treat_seg_ray(edge1, edge2);
-        }
-    }
-
-    return treat_seg_seg(edge1, edge2);
-}
-
-// @speed currently has square complexity, it could be a sweep like in "is_simple_polygon_2"
 bool SelfIntersection::isSelfIntersectingFacet(FacetSPtr facet) {
-    bool result = false;
-
-    // We can't use is_simple_polygon_2 + projection traits because:
-    // - some edges are not segments but ray
-    // - some edges can be degenerate
-    std::list<EdgeSPtr>::iterator it_e1 = facet->edges().begin();
-    while (it_e1 != facet->edges().end()) {
-        EdgeSPtr edge1 = *it_e1++;
-        std::list<EdgeSPtr>::iterator it_e2 = it_e1;
-        while (it_e2 != facet->edges().end()) {
-            EdgeSPtr edge2 = *it_e2++;
-            if (doEdgesIntersect(facet, edge1, edge2, true)) {
-                CGAL_SS3_ALGO_TRACE("edges intersect within the face:");
-                CGAL_SS3_ALGO_TRACE(facet->toString());
-                CGAL_SS3_ALGO_TRACE(edge1->toString());
-                CGAL_SS3_ALGO_TRACE(edge2->toString());
-#ifdef CGAL_SS3_EXIT_ASAP
-                return true;
-#else
-                result = true;
-#endif
-                break;
-            }
-        }
-        if (result) {
-            break;
-        }
+    Plane3SPtr pl = facet->plane();
+    Vector3SPtr normal = KernelFactory::createVector3(pl);
+    if (is_zero(normal->z())) {
+        typedef CGAL::Projection_traits_xz_3<CGAL::K> Traits_2;
+        Traits_2 traits;
+        return isSelfIntersectingFacet(facet, traits);
+    } else {
+        typedef CGAL::Projection_traits_xy_3<CGAL::K> Traits_2;
+        Traits_2 traits;
+        return isSelfIntersectingFacet(facet, traits);
     }
-    return result;
 }
 
 unsigned int SelfIntersection::hasSelfIntersectingFacets(PolyhedronSPtr polyhedron) {
@@ -547,30 +433,28 @@ bool SelfIntersection::isEdgeInsideFacet(FacetSPtr facet,
 
     Plane3SPtr facet_pl = facet->plane();
 
-    // Start with the case of the edge living in the same plane as the facet
+    // Start with the case of the edge living in the same plane as the facet (unlikely to happen)
+    // @speed use the projection traits here too
     bool coplanarity = (facet->containsVertex(e_src) || facet_pl->has_on(*e_src->getPoint())) &&
                        (facet->containsVertex(e_dst) || facet_pl->has_on(*e_dst->getPoint()));
-
     if (coplanarity) {
         auto test_fo_o_coplanarity = [&](EdgeSPtr fe, const auto& fo,
                                          EdgeSPtr e, const auto& o) -> bool
         {
-            CGAL::Object obj = CGAL::intersection(fo, o);
-            if (!obj) {
-                return false;
-            } else if (const CGAL::Point3 *ipoint = CGAL::object_cast<CGAL::Point3>(&obj)) {
-                // intersection is a point; there is an intersection unless that point is a common extremity
-                // (note that it needs to be a shared vertex, and not just the same point
-                return !doEdgesShareAVertex(fe, e, handle_degree_1_as_ray);
-            } else {
-                // intersection is 1-dimensional, so it's a real intersection because 'edge'
-                // is not incident to the facet
-                return true;
-            }
+            // - fe and e do not share a vertex
+            // - if the intersection is 1-dimensional, it's a real intersection because 'edge'
+            // is not incident to the facet
+            return CGAL::do_intersect(fo, o);
         };
 
         auto test_fe_o_coplanarity = [&](EdgeSPtr fe, EdgeSPtr e, const auto& o) -> bool
         {
+            // we could have something like an overlapping segment and ray, but in that case,
+            // we will see the intersection from another pair
+            if (doEdgesShareAVertex(fe, e, handle_degree_1_as_ray)) {
+                return false;
+            }
+
             // distinguish if the _facet edge_ is a ray or a segment
             if (handle_degree_1_as_ray) {
                 VertexSPtr r_src = nullptr;
@@ -640,7 +524,7 @@ bool SelfIntersection::isEdgeInsideFacet(FacetSPtr facet,
         return isInsideWithRayShooting(*(e_src->getPoint()), facet, handle_degree_1_as_ray);
     }
 
-    // Now we know that the edge does not live in the plane of the facet
+    // Here we know that the edge does not live in the plane of the facet
 
     auto test_o_facet = [&](EdgeSPtr e, const auto& o) -> bool
     {
@@ -661,6 +545,7 @@ bool SelfIntersection::isEdgeInsideFacet(FacetSPtr facet,
                     facet->containsVertex(e->getVertexDst())) {
                     return false;
                 } else {
+                    // @speed adapt v2 to work with rays?
                     return isInsideWithRayShooting(*ipoint, facet, handle_degree_1_as_ray);
                 }
             } else if constexpr (std::is_same_v<O, Ray3>) {
@@ -705,11 +590,12 @@ bool SelfIntersection::isEdgeInsideFacet(FacetSPtr facet,
 bool SelfIntersection::hasSelfIntersectingSurface(PolyhedronSPtr polyhedron) {
     CGAL_SS3_ALGO_TRACE("\n> hasSelfIntersectingSurface()");
 
+    // @speed O(nf*nfe*nfe) algorithm
     if (SelfIntersection::hasSelfIntersectingFacets(polyhedron)) {
         return true;
     }
 
-    // @speed O(nf*ne) algorithm
+    // @speed O(nf*nfe*ne) algorithm
     for (FacetSPtr facet : polyhedron->facets()) {
         for (EdgeSPtr edge : polyhedron->edges()) {
             if (isEdgeInsideFacet(facet, edge, true /*handle_degree_1_as_ray*/)) {
