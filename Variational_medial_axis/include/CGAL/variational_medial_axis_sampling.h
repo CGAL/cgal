@@ -178,13 +178,13 @@ private:
  * @tparam TriangleMesh The type of the triangle mesh representing the shape.
  * @tparam GT The geometric traits class used for geometric computations.
  *         <b>%Default:</b>
-  * \code
-  *     CGAL::Kernel_traits<
-  *       boost::property_traits<
-  *          boost::property_map<TriangleMesh, CGAL::vertex_point_t>::type
-  *        >::value_type
-  *      >::Kernel
-  * \endcode
+ * \code
+ *     CGAL::Kernel_traits<
+ *       boost::property_traits<
+ *          boost::property_map<TriangleMesh, CGAL::vertex_point_t>::type
+ *        >::value_type
+ *      >::Kernel
+ * \endcode
  */
 template <typename TriangleMesh_, typename GeomTraits_ = Default> class Medial_Skeleton
 {
@@ -449,7 +449,7 @@ private:
 /// \code
 ///   boost::property_map<TriangleMesh, CGAL::vertex_point_t>::const_type.
 /// \endcode
-///
+/// 
 ///  @tparam AccelerationType_
 ///         a tag indicating whether the algorithm should use Kd-tree or BVH as acceleration structure.
 ///         <b>%Default:</b> `CGAL::KD_tree_tag`<br>
@@ -508,37 +508,43 @@ private:
 public:
   /// \name Constructor
   ///@{
-  /* The constructor of a vmas object.
-   *
-   * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
-   * \param tmesh is the input triangle mesh with out borders.
-   * \param vpm is the vertex point map of the input triangle mesh.
-   * \param gt is the geometric traits class used for geometric computations.
-   * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters", listed below:
-   *
-   * \cgalNamedParamsBegin
-   *   \cgalParamNBegin{number_of_spheres}
-   *     \cgalParamDescription{The desired number of medial spheres in the resulting skeleton.}
-   *     \cgalParamType{unsigned int}
-   *     \cgalParamDefault{100}
-   *     \cgalParamExtra{This number should generally not exceed 300, as the method is designed to produce coarse
-   * skeletons.}
-   *   \cgalParamNEnd
-   *   \cgalParamNBegin{lambda}
-   *     \cgalParamDescription{A weight balancing the two energy terms (SQEM and Euclidean). Smaller values tend to
-   * produce skeletons that follow local features more closely.}
-   *     \cgalParamType{FT}
-   *     \cgalParamDefault{FT(0.2)}
-   *     \cgalParamExtra{This parameter must be strictly positive; setting it to zero may prevent correct skeleton
-   * connectivity construction.}
-   *   \cgalParamNEnd
-   *   \cgalParamNBegin{concurrency_tag}
-   *     \cgalParamDescription{A tag indicating whether the algorithm should run sequentially or in parallel.}
-   *     \cgalParamType{Either `CGAL::Sequential_tag`, `CGAL::Parallel_tag`, or `CGAL::Parallel_if_available_tag`}
-   *     \cgalParamDefault{`CGAL::Sequential_tag`}
-   *   \cgalParamNEnd
-   * \cgalNamedParamsEnd
-   **/
+  ///
+  /// The constructor of a vmas object.
+  ///
+  /// @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+  ///
+  /// @param tmesh
+  ///        The input triangle mesh with out borders.
+  /// @param vpm
+  ///        The vertex point map of the input triangle mesh.
+  /// @param gt
+  ///        The geometric traits class used for geometric computations.
+  /// @param np
+  ///        An optional sequence of \ref bgl_namedparameters "Named Parameters", listed below:
+  ///
+  /// \cgalNamedParamsBegin
+  ///   \cgalParamNBegin{number_of_spheres}
+  ///     \cgalParamDescription{The desired number of medial spheres in the resulting skeleton.}
+  ///     \cgalParamType{unsigned int}
+  ///     \cgalParamDefault{100}
+  /// \cgalParamNBegin{max_iteration}
+  ///    \cgalParamDescription{The maximum number of iterations for the optimization process.}
+  ///    \cgalParamType{int}
+  ///    \cgalParamDefault{1000}
+  ///    \cgalParamExtra{This parameter must be strictly positive; setting it to zero may prevent correct skeleton
+  /// connectivity construction.}
+  ///  \cgalParamNEnd
+  ///   \cgalParamNEnd
+  ///   \cgalParamNBegin{lambda}
+  ///     \cgalParamDescription{A weight balancing the two energy terms (SQEM and Euclidean). Smaller values tend to
+  /// produce skeletons that follow local features more closely.}
+  ///     \cgalParamType{FT}
+  ///     \cgalParamDefault{FT(0.2)}
+  ///     \cgalParamExtra{This parameter must be strictly positive; setting it to zero may prevent correct skeleton
+  /// connectivity construction.}
+  ///   \cgalParamNEnd
+  /// \cgalNamedParamsEnd
+  ///
   template <class NamedParameters = parameters::Default_named_parameters>
   Variational_medial_axis(const TriangleMesh_& tmesh,
                           VPM vpm,
@@ -585,8 +591,13 @@ public:
    *     \cgalParamDescription{The desired number of medial spheres in the resulting skeleton.}
    *     \cgalParamType{unsigned int}
    *     \cgalParamDefault{100}
-   *     \cgalParamExtra{This number should generally not exceed 300, as the method is designed to produce coarse
-   * skeletons.}
+   *   \cgalParamNEnd
+   *  \cgalParamNBegin{max_iteration}
+   *     \cgalParamDescription{The maximum number of iterations for the optimization process.}
+   *     \cgalParamType{int}
+   *     \cgalParamDefault{1000}
+   *     \cgalParamExtra{This parameter must be strictly positive; setting it to zero may prevent correct skeleton
+   * connectivity construction.}
    *   \cgalParamNEnd
    *   \cgalParamNBegin{lambda}
    *     \cgalParamDescription{A weight balancing the two energy terms (SQEM and Euclidean). Smaller values tend to
@@ -715,33 +726,33 @@ public:
     return false;
   }
   /**
- * Perform a specified number of algorithm iterations.
- *
- * This function allows manual control over the algorithm execution,
- * performing only position optimization without sphere splitting.
- *
- * @param nb_iteration Number of iterations to perform
- *
- * @pre nb_iteration must be positive
- */
-void update(std::size_t nb_iteration) {
+   * Perform a specified number of algorithm iterations.
+   *
+   * This function allows manual control over the algorithm execution,
+   * performing only position optimization without sphere splitting.
+   *
+   * @param nb_iteration Number of iterations to perform
+   *
+   * @pre nb_iteration must be positive
+   */
+  void update(std::size_t nb_iteration) {
     for(std::size_t i = 0; i < nb_iteration; i++) {
       update_single_step();
     }
   }
 
-/**
- * Add spheres by iteratively splitting existing spheres.
- *
- * This function attempts to add the specified number of spheres
- * by running the algorithm with sphere splitting enabled until
- * either the target is reached or maximum iterations are exceeded.
- *
- * @param nb_sphere Number of spheres to add
- *
- * @pre nb_sphere must be positive
- * @pre At least one sphere must already exist
- */
+  /**
+   * Add spheres by iteratively splitting existing spheres.
+   *
+   * This function attempts to add the specified number of spheres
+   * by running the algorithm with sphere splitting enabled until
+   * either the target number is reached or maximum iterations are exceeded.
+   *
+   * @param nb_sphere Number of spheres to add
+   *
+   * @pre nb_sphere must be positive
+   * @pre At least one sphere must already exist
+   */
   void add_spheres(int nb_sphere) {
     if(nb_sphere == 0) {
       return;
@@ -761,12 +772,15 @@ void update(std::size_t nb_iteration) {
     }
   }
 
-
-  /** Add a new sphere by splitting sphere with the id sphere_id.
+  /**
+   * Add a new sphere by splitting sphere with the id sphere_id.
+   *
    * This function is aimed to be called during interactive sessions, where the use
    * can specify a sphere to split and add a new sphere based on the split vertex.
    * @param sphere_id
    *    The ID of the sphere to split.
+   * @param nb_iteration
+   *    Number of optimization iterations to perform after adding the sphere (default: 10).
    */
   void add_sphere_by_id(Sphere_ID sphere_id, int nb_iteration = 10) {
     auto sphere = sphere_mesh_->get_sphere(sphere_id);
@@ -777,11 +791,14 @@ void update(std::size_t nb_iteration) {
     // update the spheres for nb_iteration times
     update(nb_iteration);
   }
-  /** Remove a sphere by its sphere_id.
+  /**
+   * Remove a sphere by its sphere_id.
    * This function is aimed to be called during interactive sessions, where the user
    * can specify a sphere to remove.
    * @param sphere_id
    *    The ID of the sphere to remove.
+   * @param nb_iteration
+   *    Number of optimization iterations to perform after removing the sphere (default: 10).
    */
   void remove_sphere_by_id(Sphere_ID sphere_id, int nb_iteration = 10) {
     sphere_mesh_->remove(sphere_id);
@@ -789,7 +806,8 @@ void update(std::size_t nb_iteration) {
     update(nb_iteration);
   }
 
-  /** Export the medial skeleton as a `Medial_Skeleton` object.
+  /**
+   * Export the medial skeleton as a `Medial_Skeleton` object.
    *
    * This function builds a `Medial_Skeleton` from the current state of the medial sphere mesh.
    * It extracts the vertices, edges, and faces from the medial sphere mesh and constructs
@@ -803,12 +821,15 @@ void update(std::size_t nb_iteration) {
     skeleton.build_skeleton_from_medial_sphere_mesh(*sphere_mesh_);
     return skeleton;
   }
-  /**Load a medial skeleton from a PLY file.
+  /**
+   * Load a medial skeleton from a PLY file.
    *
    * @param filepath
    *     Filepath to the PLY file containing the medial skeleton data.
+   * @param skeleton
+   *     Reference to a `Medial_Skeleton` object that will be populated with the loaded data.
    * @return
-   *     A `Medial_Skeleton` object containing the loaded skeleton data.
+   *     True if the skeleton was successfully loaded, false otherwise.
    *
    * Note: The file format is :
    * ```
@@ -968,14 +989,16 @@ void update(std::size_t nb_iteration) {
 
   /// \name Parameters
   /// @{
-  /** Lambda parameter for the algorithm.
+  /**
+   * Lambda parameter for the algorithm.
    *
    * This parameter controls the balance between the SQEM and Euclidean energy terms.
    * Smaller values tend to produce skeletons that follow local features more closely.
    */
   FT lambda_param() const { return lambda_; }
 
-  /** set function for `lambda_param()`.
+  /**
+   * set function for `lambda_param()`.
    * Note: The lambda must be strictly positive; if set to zero, it will default to 0.2.
    */
   void set_lambda(FT lambda) {
@@ -1007,6 +1030,50 @@ void update(std::size_t nb_iteration) {
   void set_max_iteration(int max_iter) { max_iteration_ = max_iter; }
   ///@}
 private:
+
+  /// Initialization that compute some global variable for the algorithm.
+  void init() {
+    namespace PMP = CGAL::Polygon_mesh_processing;
+
+    // Build AABB-tree
+    tree_ = std::make_unique<Tree>(faces(tmesh_).begin(), faces(tmesh_).end(), tmesh_, vpm_);
+    // tree_->accelerate_distance_queries(vertices(tmesh_).begin(), vertices(tmesh_).end(), vpm_);
+    tree_->accelerate_distance_queries();
+    // get bounding box of the mesh
+    auto bbox = tree_->bbox();
+    scale_ = std::max(bbox.xmax() - bbox.xmin(), std::max(bbox.ymax() - bbox.ymin(), bbox.zmax() - bbox.zmin()));
+    converged_threshold_ = scale_ * scale_ * 1e-5;
+    // Create property maps
+    vertex_normal_map_ = get(Vertex_normal_tag(), tmesh_, Vector_3(0., 0., 0.));
+    vertex_area_map_ = get(Vertex_area_tag(), tmesh_, 0.);
+    vertex_error_map_ = get(Vertex_error_tag(), tmesh_, 0.);
+    vertex_cluster_sphere_map_ = get(Vertex_cluster_sphere_tag(), tmesh_, MSMesh::INVALID_SPHERE_ID);
+    vertex_medial_sphere_pos_map_ = get(Vertex_medial_sphere_pos_tag(), tmesh_, Point_3(0., 0., 0.));
+    vertex_medial_sphere_radius_map_ = get(Vertex_medial_sphere_radius_tag(), tmesh_, FT(0.));
+    face_normal_map_ = get(Face_normal_tag(), tmesh_, Vector_3(0., 0., 0.));
+    face_area_map_ = get(Face_area_tag(), tmesh_, 0.);
+
+    // Compute normals
+    PMP::compute_vertex_normals(tmesh_, vertex_normal_map_);
+    PMP::compute_face_normals(tmesh_, face_normal_map_);
+
+    // Compute vertex areas
+    for(face_descriptor f : faces(tmesh_)) {
+      double area = PMP::face_area(f, tmesh_);
+      put(face_area_map_, f, area);
+      for(vertex_descriptor v : vertices_around_face(halfedge(f, tmesh_), tmesh_)) {
+        put(vertex_area_map_, v, get(vertex_area_map_, v) + area / 3.0);
+      }
+    }
+    sphere_mesh_ = std::make_unique<MSMesh>();
+
+    // Algorithm variables
+    iteration_count_ = 0;
+    total_error_ = FT(0.0);
+    total_error_diff_ = (std::numeric_limits<FT>::max)();
+    last_total_error_ = total_error_;
+  }
+
   inline FT cosine_angle(const Vector_3& v1, const Vector_3& v2) {
     FT norm_v1v2 = CGAL::approximate_sqrt(v1.squared_length() * v2.squared_length());
     FT res = norm_v1v2 > 1e-20 ? (v1 * v2) / norm_v1v2 : FT(1);

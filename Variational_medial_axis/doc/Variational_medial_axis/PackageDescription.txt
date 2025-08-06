@@ -33,7 +33,6 @@
 
 \cgalCRPSection{Functions}
 
-- `CGAL::variational_medial_axis_sampling()`
-
+- `CGAL::extract_variational_medial_skeleton()`
 
 */

@@ -18,9 +18,10 @@ int main(int argc, char** argv)
   }
 
   Medial_Skeleton skeleton = extract_variational_medial_skeleton(
-      mesh,
-      CGAL::parameters::number_of_iterations(1000).number_of_spheres(200).lambda(0.2).concurrency_tag(
-      CGAL::Parallel_tag{}));
+      mesh, CGAL::parameters::number_of_iterations(1000)// number of max iterations
+      .number_of_spheres(200) // target number of spheres
+      .lambda(0.2) // lambda parameter for the optimization
+      .concurrency_tag(CGAL::Parallel_tag{})); // use parallel execution
  
   // Write skeleton to PLY file
   std::string output_filename = "skeleton.ply";

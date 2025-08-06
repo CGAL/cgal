@@ -25,7 +25,7 @@ int main(int argc, char** argv)
       
 
   // add additional 3 sphere, this function will update the medial skeleton automatically 
-  vmas.add_spheres(30);
+  vmas.add_spheres(3);
   // update the medial skeleton with 20 iterations
   vmas.update(20);
 

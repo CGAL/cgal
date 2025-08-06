@@ -51,7 +51,7 @@ A helper function `write_to_ply_file()` is provided to export the resulting skel
 which can then be visualized in external software such as Blender.
 
 \subsection VMASfree Free function
-The function `CGAL::extract_variational_medial_skeleton()` provides a convenient interface for users who want to quickly extract a medial skeleton with specified pamaters.
+The function `CGAL::extract_variational_medial_skeleton()` provides a convenient interface for users who want to quickly extract a medial skeleton with specified parameters.
 This function accepts the following parameters:
 - `number_of_spheres`: target number of medial spheres (default: 100)
 - `lambda`: weight balancing the energy terms (default: 0.2)  
@@ -78,7 +78,8 @@ The following example show a different configuration of the parameters and basic
 
 \cgalExample{Variational_medial_axis/vmas_class_interface_example.cpp}
 
-
+\section VMASDesign Design and Implementation History
+This package is the result of the work of Qijia HUANG during the 2025 season of the Google Summer of Code, mentored by Sébastian Loriot.
 
 */
 } /* namespace CGAL */
