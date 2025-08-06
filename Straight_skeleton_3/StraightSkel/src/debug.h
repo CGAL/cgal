@@ -49,7 +49,7 @@
 #define CGAL_SS3_TRACE_LOC CGAL_SS3_TRACE_STREAM << "[DEBUG] " << __FILE__ << ":" << __LINE__ << ": ";
 
 #ifndef CGAL_SS3_TRACE_VERBOSITY
-#  define CGAL_SS3_TRACE_VERBOSITY 1
+#  define CGAL_SS3_TRACE_VERBOSITY 2
 #endif
 
 #define CGAL_SS3_ENABLE_TRACE // generic
