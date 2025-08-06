@@ -16,6 +16,8 @@
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/AABB_traits_3.h>
 #include <CGAL/AABB_tree.h>
+#include <CGAL/Compact_container.h>
+#include <CGAL/Compact_container_with_index.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/Side_of_triangle_mesh.h>
@@ -32,58 +34,78 @@
 namespace CGAL {
 
 #ifndef DOXYGEN_RUNNING
-template <typename TriangleMesh, typename GT> class MedialSphere
+
+template <typename TriangleMesh, typename GT> class Medial_Sphere_Mesh;
+
+template <typename TriangleMesh, typename GT> class Medial_Sphere
 {
 public:
   using FT = typename GT::FT;
   using Point_3 = typename GT::Point_3;
   using Sphere_3 = typename GT::Sphere_3;
-  using Sphere_ID = std::size_t;
   using vertex_descriptor = typename boost::graph_traits<TriangleMesh>::vertex_descriptor;
+  using MSMesh = Medial_Sphere_Mesh<TriangleMesh, GT>;
+  using Sphere_ID = typename MSMesh::Sphere_ID;
 
-  MedialSphere(const Sphere_3& s, Sphere_ID i)
-      : id(i)
-      , sphere(s)
-      , split_vertex(boost::graph_traits<TriangleMesh>::null_vertex())
-      , error(FT(0))
-      , cluster_area(FT(0)) {}
+  // Specalization for Compact_container_with_index
+  std::size_t for_compact_container() const { return static_cast<std::size_t>(id_); }
+  void for_compact_container(std::size_t idx) { id_ = Sphere_ID(idx); }
+
+  Medial_Sphere(const Sphere_3& s)
+      : sphere_(s)
+      , split_vertex_(boost::graph_traits<TriangleMesh>::null_vertex())
+      , error_(FT(0))
+      , cluster_area_(FT(0))
+      , do_not_split_(false)
+      , id_(MSMesh::INVALID_SPHERE_ID) {}
+
+  Medial_Sphere(Sphere_3&& s)
+      : sphere_(std::move(s))
+      , split_vertex_(boost::graph_traits<TriangleMesh>::null_vertex())
+      , error_(FT(0))
+      , cluster_area_(FT(0))
+      , do_not_split_(false)
+      , id_(MSMesh::INVALID_SPHERE_ID) {}
 
   void reset() {
-    error = FT(0);
-    split_vertex = boost::graph_traits<TriangleMesh>::null_vertex();
-    cluster_area = FT(0);
-    neighbors.clear();
-    cluster_vertices.clear();
+    error_ = FT(0);
+    split_vertex_ = boost::graph_traits<TriangleMesh>::null_vertex();
+    cluster_area_ = FT(0);
+    neighbors_.clear();
+    cluster_vertices_.clear();
   }
-  Sphere_3 get_sphere() const { return sphere; }
-  FT get_radius() const { return CGAL::approximate_sqrt(sphere.squared_radius()); }
-  Point_3 get_center() const { return sphere.center(); }
-  FT get_area() const { return cluster_area; }
-  Sphere_ID get_id() const { return id; }
-  const std::unordered_set<Sphere_ID>& get_neighbors() const { return neighbors; }
-  vertex_descriptor get_split_vertex() const { return split_vertex; }
-  FT get_error() const { return error; }
-  void set_center(const Point_3& p) { sphere = Sphere_3(p, get_radius()); }
-  void set_radius(FT r) { sphere = Sphere_3(get_center(), r * r); }
-  void set_cluster_area(FT area) { cluster_area = area; }
-  void set_error(FT e) { error = e; }
-  void set_split_vertex(vertex_descriptor v) { split_vertex = v; }
-  void accumulate_cluster_area(FT area) { cluster_area += area; }
-  void add_neighbor(Sphere_ID id) { neighbors.insert(id); }
-  bool can_split() const { return !do_not_split && split_vertex != boost::graph_traits<TriangleMesh>::null_vertex(); }
-  void set_do_not_split(bool value) { do_not_split = value; }
-  std::vector<vertex_descriptor>& get_cluster_vertices() { return cluster_vertices; }
-  void add_cluster_vertex(vertex_descriptor v) { cluster_vertices.push_back(v); }
+
+  Sphere_3 get_sphere() const { return sphere_; }
+  FT get_radius() const { return CGAL::approximate_sqrt(sphere_.squared_radius()); }
+  Point_3 get_center() const { return sphere_.center(); }
+  FT get_area() const { return cluster_area_; }
+  Sphere_ID get_id() const { return id_; }
+  const std::unordered_set<Sphere_ID>& get_neighbors() const { return neighbors_; }
+  vertex_descriptor get_split_vertex() const { return split_vertex_; }
+  FT get_error() const { return error_; }
+
+  void set_center(const Point_3& p) { sphere_ = Sphere_3(p, get_radius()); }
+  void set_radius(FT r) { sphere_ = Sphere_3(get_center(), r * r); }
+  void set_cluster_area(FT area) { cluster_area_ = area; }
+  void set_error(FT e) { error_ = e; }
+  void set_split_vertex(vertex_descriptor v) { split_vertex_ = v; }
+  void set_id(Sphere_ID id) { id_ = id; }
+  void set_do_not_split(bool value) { do_not_split_ = value; }
+  std::vector<vertex_descriptor>& get_cluster_vertices() { return cluster_vertices_; }
+  void add_cluster_vertex(vertex_descriptor v) { cluster_vertices_.push_back(v); }
+  void accumulate_cluster_area(FT area) { cluster_area_ += area; }
+  void add_neighbor(Sphere_ID id) { neighbors_.insert(id); }
+  bool can_split() const { return !do_not_split_ && split_vertex_ != boost::graph_traits<TriangleMesh>::null_vertex(); }
 
 private:
-  Sphere_ID id;
-  Sphere_3 sphere;
-  vertex_descriptor split_vertex; // the vertex for split
-  FT error;
-  FT cluster_area;
-  bool do_not_split = false; // flag to indicate if the sphere should not be split
-  std::unordered_set<Sphere_ID> neighbors;
-  std::vector<vertex_descriptor> cluster_vertices;
+  Sphere_3 sphere_;
+  vertex_descriptor split_vertex_; // the vertex for split
+  FT error_;
+  FT cluster_area_;
+  bool do_not_split_ = false; // flag to indicate if the sphere should not be split
+  std::unordered_set<Sphere_ID> neighbors_;
+  std::vector<vertex_descriptor> cluster_vertices_;
+  Sphere_ID id_;
 };
 
 template <typename TriangleMesh, typename GT> class Medial_Sphere_Mesh
@@ -92,49 +114,58 @@ public:
   using FT = typename GT::FT;
   using Point_3 = typename GT::Point_3;
   using Sphere_3 = typename GT::Sphere_3;
-  using MSphere = MedialSphere<TriangleMesh, GT>;
-  using Sphere_ID = typename MSphere::Sphere_ID;
+  using MSphere = Medial_Sphere<TriangleMesh, GT>;
   using vertex_descriptor = typename boost::graph_traits<TriangleMesh>::vertex_descriptor;
-  static constexpr Sphere_ID INVALID_SPHERE_ID = (std::numeric_limits<Sphere_ID>::max)();
 
-private:
-  std::vector<std::shared_ptr<MSphere>> spheres_; // TODO: use Compact container?
-  std::unordered_map<Sphere_ID, std::size_t> id_to_index_;
-  Sphere_ID next_id_ = 0;
+  using Sphere_container = CGAL::Compact_container_with_index<
+      MSphere,
+      CGAL_ALLOCATOR(MSphere),
+      Multiply_by_two_policy_for_cc_with_size<64>>;
+
+  using Sphere_ID = typename Sphere_container::Index;
+
+  inline static const Sphere_ID INVALID_SPHERE_ID = Sphere_container::null_descriptor;
 
 public:
-  Sphere_ID add_sphere(const Sphere_3 s) {
-    Sphere_ID id = next_id_++;
-    spheres_.push_back(std::make_shared<MSphere>(std::move(s), id));
-    id_to_index_[id] = spheres_.size() - 1;
+   Sphere_ID add_sphere(const Sphere_3& s) {
+    Sphere_ID id = spheres_.emplace(s);
+    spheres_[id].set_id(id);
     return id;
   }
 
-  void remove(Sphere_ID id) {
-    auto it = id_to_index_.find(id);
-    if(it == id_to_index_.end())
-      return;
-    std::size_t index_to_remove = it->second;
-    std::size_t last_index = spheres_.size() - 1;
+  Sphere_ID add_sphere(Sphere_3&& s) {
+    Sphere_ID id = spheres_.emplace(std::move(s));
+    spheres_[id].set_id(id);
+    return id;
+  }
+  MSphere& get_sphere(Sphere_ID idx) {
+    CGAL_precondition(spheres_.owns(idx));
+    return spheres_[idx];
+  }
 
-    if(index_to_remove != last_index) {
-      std::swap(spheres_[index_to_remove], spheres_[last_index]);
-      Sphere_ID swapped_id = spheres_[index_to_remove]->get_id();
-      id_to_index_[swapped_id] = index_to_remove;
+  const MSphere& get_sphere(Sphere_ID idx) const {
+    CGAL_precondition(spheres_.owns(idx));
+    return spheres_[idx];
+  }
+
+  void remove(Sphere_ID idx) {
+    if(spheres_.owns(idx)) {
+      spheres_.erase(idx);
     }
-    spheres_.pop_back();
-    id_to_index_.erase(it);
   }
   void reset() {
     for(auto& sphere : spheres_) {
-      sphere->reset();
+      sphere.reset();
     }
   }
-  std::size_t nb_spheres() { return id_to_index_.size(); }
-  std::shared_ptr<MSphere> get_sphere(Sphere_ID id) { return spheres_[id_to_index_.at(id)]; }
-  std::shared_ptr<const MSphere> get_sphere(Sphere_ID id) const { return spheres_[id_to_index_.at(id)]; }
-  std::vector<std::shared_ptr<MSphere>>& spheres() { return spheres_; }
-  const std::vector<std::shared_ptr<MSphere>>& spheres() const { return spheres_; }
+  std::size_t nb_spheres() const { return spheres_.size(); }
+  bool empty() const { return spheres_.empty(); }
+  void clear() { spheres_.clear(); }
+  Sphere_container& spheres() { return spheres_; }
+  const Sphere_container& spheres() const { return spheres_; }
+
+private:
+  Sphere_container spheres_;
 };
 #endif // DOXYGEN_RUNNING
 
@@ -164,8 +195,8 @@ template <typename TriangleMesh_, typename GeomTraits_ = Default> class Medial_S
   using Sphere_3 = typename GT::Sphere_3;
   using Point_3 = typename GT::Point_3;
   using FT = typename GT::FT;
-  using Sphere_ID = std::size_t;
   using MSMesh = Medial_Sphere_Mesh<TriangleMesh_, GT>;
+  using Sphere_ID = typename MSMesh::Sphere_ID;
 
 public:
   /**
@@ -247,15 +278,15 @@ public:
     // Convert spheres to vertices (as Sphere_3 objects)
     std::size_t vertex_idx = 0;
     for(const auto& sphere : sphere_mesh.spheres()) {
-      vertices_.push_back(sphere->get_sphere()); // Store the complete Sphere_3
-      id_to_index[sphere->get_id()] = vertex_idx++;
+      vertices_.push_back(sphere.get_sphere()); // Store the complete Sphere_3
+      id_to_index[sphere.get_id()] = vertex_idx++;
     }
 
     // Convert sphere adjacencies to edges
     std::set<std::pair<std::size_t, std::size_t>> edge_set;
     for(const auto& sphere : sphere_mesh.spheres()) {
-      std::size_t a = id_to_index[sphere->get_id()];
-      for(Sphere_ID neighbor_id : sphere->get_neighbors()) {
+      std::size_t a = id_to_index[sphere.get_id()];
+      for(Sphere_ID neighbor_id : sphere.get_neighbors()) {
         if(id_to_index.find(neighbor_id) != id_to_index.end()) {
           std::size_t b = id_to_index[neighbor_id];
           if(a < b) {
@@ -269,8 +300,8 @@ public:
     // Convert triangular adjacencies to faces
     std::set<std::array<std::size_t, 3>> face_set;
     for(const auto& sphere : sphere_mesh.spheres()) {
-      Sphere_ID a_id = sphere->get_id();
-      const auto& neighbors_a = sphere->get_neighbors();
+      Sphere_ID a_id = sphere.get_id();
+      const auto& neighbors_a = sphere.get_neighbors();
 
       for(Sphere_ID b_id : neighbors_a) {
         if(b_id <= a_id)
@@ -278,7 +309,7 @@ public:
         if(id_to_index.find(b_id) == id_to_index.end())
           continue;
 
-        const auto& neighbors_b = sphere_mesh.get_sphere(b_id)->get_neighbors();
+        const auto& neighbors_b = sphere_mesh.get_sphere(b_id).get_neighbors();
 
         for(Sphere_ID c_id : neighbors_a) {
           if(c_id <= b_id)
@@ -299,20 +330,18 @@ public:
 
   MSMesh build_medial_sphere_mesh_from_skeleton() const {
     MSMesh sphere_mesh;
+    std::vector<Sphere_ID> index_to_id_map;
+    index_to_id_map.reserve(vertices_.size());
 
-    // Add spheres to the mesh
-    for(std::size_t i = 0; i < vertices_.size(); ++i) {
-      sphere_mesh.add_sphere(vertices_[i]);
+    for(const auto& v_sphere : vertices_) {
+      index_to_id_map.push_back(sphere_mesh.add_sphere(v_sphere));
     }
-
-    // Rebuild adjacencies based on edges
-    const auto& spheres = sphere_mesh.spheres();
     for(const auto& edge : edges_) {
-      if(edge.first < spheres.size() && edge.second < spheres.size()) {
-        auto sphere1 = spheres[edge.first];
-        auto sphere2 = spheres[edge.second];
-        sphere1->add_neighbor(sphere2->get_id());
-        sphere2->add_neighbor(sphere1->get_id());
+      if(edge.first < index_to_id_map.size() && edge.second < index_to_id_map.size()) {
+        Sphere_ID id1 = index_to_id_map[edge.first];
+        Sphere_ID id2 = index_to_id_map[edge.second];
+        sphere_mesh.get_sphere(id1).add_neighbor(id2);
+        sphere_mesh.get_sphere(id2).add_neighbor(id1);
       }
     }
 
@@ -787,7 +816,7 @@ void update(std::size_t nb_iteration) {
    */
   void add_sphere_by_id(Sphere_ID sphere_id, int nb_iteration = 10) {
     auto sphere = sphere_mesh_->get_sphere(sphere_id);
-    vertex_descriptor split_vertex = sphere->get_split_vertex();
+    vertex_descriptor split_vertex = sphere.get_split_vertex();
     Point_3 center = get(vertex_medial_sphere_pos_map_, split_vertex);
     FT radius = get(vertex_medial_sphere_radius_map_, split_vertex);
     sphere_mesh_->add_sphere(Sphere_3(center, radius * radius));
@@ -1186,8 +1215,8 @@ private:
 
       // Find the sphere with smallest distance to the vertex
       for(auto& sphere : sphere_mesh_->spheres()) {
-        Point_3 center = sphere->get_center();
-        FT radius = sphere->get_radius();
+        Point_3 center = sphere.get_center();
+        FT radius = sphere.get_radius();
 
         // compute euclidean distance
         FT dist_eucl = CGAL::approximate_sqrt((p - center).squared_length()) - radius;
@@ -1200,23 +1229,23 @@ private:
         FT distance = dist_sqem + lambda_ * dist_eucl;
         if(distance < min_distance) {
           min_distance = distance;
-          closest_sphere_id = sphere->get_id();
+          closest_sphere_id = sphere.get_id();
         }
       }
       FT area = get(vertex_area_map_, v);
       // Update the closest sphere
       put(vertex_cluster_sphere_map_, v, closest_sphere_id);
-      sphere_mesh_->get_sphere(closest_sphere_id)->accumulate_cluster_area(area);
-      sphere_mesh_->get_sphere(closest_sphere_id)->add_cluster_vertex(v);
+      sphere_mesh_->get_sphere(closest_sphere_id).accumulate_cluster_area(area);
+      sphere_mesh_->get_sphere(closest_sphere_id).add_cluster_vertex(v);
     }
     std::vector<Sphere_ID> sphere_ids_to_remove;
     for(auto& sphere : sphere_mesh_->spheres()) {
-      auto& cluster_vertices = sphere->get_cluster_vertices();
+      auto& cluster_vertices = sphere.get_cluster_vertices();
       if(cluster_vertices.size() <= 4) {
         for(vertex_descriptor v : cluster_vertices) {
           put(vertex_cluster_sphere_map_, v, MSMesh::INVALID_SPHERE_ID);
         }
-        sphere_ids_to_remove.push_back(sphere->get_id());
+        sphere_ids_to_remove.push_back(sphere.get_id());
       }
     }
     for(Sphere_ID id : sphere_ids_to_remove) {
@@ -1226,7 +1255,7 @@ private:
     }
   }
 
-  void correct_sphere(std::shared_ptr<MSphere> sphere, const Eigen::Matrix<FT, 4, 1>& optimized_sphere_params) {
+  void correct_sphere(MSphere& sphere, const Eigen::Matrix<FT, 4, 1>& optimized_sphere_params) {
 
     Side_of_triangle_mesh<TriangleMesh_, GT, VPM, Tree> side_of(*tree_, traits_);
     Point_3 optimal_center(optimized_sphere_params(0), optimized_sphere_params(1), optimized_sphere_params(2));
@@ -1257,18 +1286,16 @@ private:
   */
   }
 
-  void optimize_single_sphere(std::shared_ptr<MSphere>& sphere,
-
-                              bool use_shrinking_ball_correction = false) {
+  void optimize_single_sphere(MSphere& sphere, bool use_shrinking_ball_correction = false) {
     using EMat = Eigen::Matrix<FT, Eigen::Dynamic, Eigen::Dynamic>;
     using EVec = Eigen::Matrix<FT, Eigen::Dynamic, 1>;
     using EVec3 = Eigen::Matrix<FT, 3, 1>;
     using EVec4 = Eigen::Matrix<FT, 4, 1>;
     using LDLTSolver = Eigen::LDLT<EMat>;
 
-    auto& cluster_vertices = sphere->get_cluster_vertices();
-    Point_3 center = sphere->get_center();
-    FT radius = sphere->get_radius();
+    auto& cluster_vertices = sphere.get_cluster_vertices();
+    Point_3 center = sphere.get_center();
+    FT radius = sphere.get_radius();
 
     auto nrows = 2 * cluster_vertices.size();
     EMat J(nrows, 4);
@@ -1317,24 +1344,24 @@ private:
         // std::cout << "Convergence achieved after " << i + 1 << " iterations." << std::endl;
         break; // convergence
       }
-      sphere->set_do_not_split(false); // reset the split flag
+      sphere.set_do_not_split(false); // reset the split flag
     }
     if(use_shrinking_ball_correction) {
       correct_sphere(sphere, s);
     } else {
       // Update sphere with optimized parameters
-      sphere->set_center(Point_3(s(0), s(1), s(2)));
-      sphere->set_radius(s(3));
+      sphere.set_center(Point_3(s(0), s(1), s(2)));
+      sphere.set_radius(s(3));
     }
   }
 
-  FT compute_single_sphere_error(std::shared_ptr<MSphere>& sphere) {
-    auto& cluster_vertices = sphere->get_cluster_vertices();
-    Point_3 center = sphere->get_center();
-    FT radius = sphere->get_radius();
+  FT compute_single_sphere_error(MSphere& sphere) {
+    auto& cluster_vertices = sphere.get_cluster_vertices();
+    Point_3 center = sphere.get_center();
+    FT radius = sphere.get_radius();
     FT max_dist = (std::numeric_limits<FT>::min)();
     FT error = 0.0;
-    FT area = sphere->get_area();
+    FT area = sphere.get_area();
     if(area <= FT(0.0)) {
       std::cerr << "Warning: sphere with zero area encountered, skipping error computation." << std::endl;
       return FT(0.0);
@@ -1355,11 +1382,11 @@ private:
       put(vertex_error_map_, v, distance);
       if(distance > max_dist) {
         max_dist = distance;
-        sphere->set_split_vertex(v); // update the split vertex
+        sphere.set_split_vertex(v); // update the split vertex
       }
     }
-    error = error / sphere->get_area(); // average error
-    sphere->set_error(error);
+    error = error / sphere.get_area(); // average error
+    sphere.set_error(error);
 
     return error;
   }
@@ -1382,14 +1409,14 @@ private:
                           vertex_descriptor v = vertices_vector[i];
                           FT area = get(vertex_area_map_, v);
                           Point_3 p = get(vpm_, v);
-                          FT min_distance = std::numeric_limits<FT>::max();
+                          FT min_distance = (std::numeric_limits<FT>::max)();
                           Vector_3 normal = get(vertex_normal_map_, v);
                           Sphere_ID closest_sphere_id;
 
                           // Find the sphere with smallest distance to the vertex
                           for(const auto& sphere : sphere_mesh_->spheres()) {
-                            Point_3 center = sphere->get_center();
-                            FT radius = sphere->get_radius();
+                            Point_3 center = sphere.get_center();
+                            FT radius = sphere.get_radius();
 
                             // compute euclidean distance
                             FT dist_eucl = CGAL::approximate_sqrt((p - center).squared_length()) - radius;
@@ -1402,7 +1429,7 @@ private:
                             FT distance = area * (dist_sqem + lambda_ * dist_eucl);
                             if(distance < min_distance) {
                               min_distance = distance;
-                              closest_sphere_id = sphere->get_id();
+                              closest_sphere_id = sphere.get_id();
                             }
                           }
                           vertex_assignments[i] = {closest_sphere_id, area};
@@ -1414,18 +1441,18 @@ private:
 
       if(closest_sphere_id != MSMesh::INVALID_SPHERE_ID) {
         put(vertex_cluster_sphere_map_, v, closest_sphere_id);
-        sphere_mesh_->get_sphere(closest_sphere_id)->accumulate_cluster_area(area);
-        sphere_mesh_->get_sphere(closest_sphere_id)->add_cluster_vertex(v);
+        sphere_mesh_->get_sphere(closest_sphere_id).accumulate_cluster_area(area);
+        sphere_mesh_->get_sphere(closest_sphere_id).add_cluster_vertex(v);
       }
     }
     std::vector<Sphere_ID> sphere_ids_to_remove;
     for(auto& sphere : sphere_mesh_->spheres()) {
-      auto& cluster_vertices = sphere->get_cluster_vertices();
+      auto& cluster_vertices = sphere.get_cluster_vertices();
       if(cluster_vertices.size() <= 4) {
         for(vertex_descriptor v : cluster_vertices) {
           put(vertex_cluster_sphere_map_, v, MSMesh::INVALID_SPHERE_ID);
         }
-        sphere_ids_to_remove.push_back(sphere->get_id());
+        sphere_ids_to_remove.push_back(sphere.get_id());
       }
     }
     for(Sphere_ID id : sphere_ids_to_remove) {
@@ -1451,22 +1478,24 @@ private:
   }
   void optimize_sphere_positions_parallel(bool use_shrinking_ball_correction = false) {
     auto& spheres = sphere_mesh_->spheres();
+    std::vector<std::reference_wrapper<MSphere>> sphere_refs(spheres.begin(), spheres.end());
 
-    tbb::parallel_for(tbb::blocked_range<std::size_t>(0, spheres.size()),
+    tbb::parallel_for(tbb::blocked_range<std::size_t>(0, sphere_refs.size()),
                       [&](const tbb::blocked_range<std::size_t>& range) {
                         for(std::size_t i = range.begin(); i != range.end(); i++) {
-                          optimize_single_sphere(spheres[i], use_shrinking_ball_correction);
+                          optimize_single_sphere(sphere_refs[i], use_shrinking_ball_correction);
                         }
                       });
   }
 
   FT compute_sphere_errors_parallel() {
     auto& spheres = sphere_mesh_->spheres();
+    std::vector<std::reference_wrapper<MSphere>> sphere_refs(spheres.begin(), spheres.end());
     FT total_error = tbb::parallel_reduce(
-        tbb::blocked_range<std::size_t>(0, spheres.size()), FT(0.0),
+        tbb::blocked_range<std::size_t>(0, sphere_refs.size()), FT(0.0),
         [&](const tbb::blocked_range<std::size_t>& range, FT local_sum) -> FT {
           for(std::size_t i = range.begin(); i != range.end(); ++i) {
-            FT sphere_error = compute_single_sphere_error(spheres[i]);
+            FT sphere_error = compute_single_sphere_error(sphere_refs[i]);
             local_sum += sphere_error;
           }
           return local_sum;
@@ -1498,12 +1527,12 @@ private:
       Sphere_ID s1 = get(vertex_cluster_sphere_map_, v1);
       Sphere_ID s2 = get(vertex_cluster_sphere_map_, v2);
       if(s1 != s2 && s1 != MSMesh::INVALID_SPHERE_ID && s2 != MSMesh::INVALID_SPHERE_ID) {
-        auto sphere1 = sphere_mesh_->get_sphere(s1);
-        auto sphere2 = sphere_mesh_->get_sphere(s2);
+        auto& sphere1 = sphere_mesh_->get_sphere(s1);
+        auto& sphere2 = sphere_mesh_->get_sphere(s2);
 
-        if(sphere1->get_neighbors().find(s2) == sphere1->get_neighbors().end()) {
-          sphere1->add_neighbor(s2);
-          sphere2->add_neighbor(s1);
+        if(sphere1.get_neighbors().find(s2) == sphere1.get_neighbors().end()) {
+          sphere1.add_neighbor(s2);
+          sphere2.add_neighbor(s1);
         }
       }
     }
@@ -1515,21 +1544,25 @@ private:
     }
     // TODO: add a paratmeter to control the output verbosity
     std::cout << "Start Split spheres" << std::endl;
-    std::vector<std::shared_ptr<MSphere>> sorted_sphere = sphere_mesh_->spheres();
-    std::sort(sorted_sphere.begin(), sorted_sphere.end(),
-              [](const std::shared_ptr<MSphere>& a, const std::shared_ptr<MSphere>& b) {
-                return a->get_error() > b->get_error(); // sort by error
+    std::vector<Sphere_ID> sorted_sphere_ids;
+    sorted_sphere_ids.reserve(sphere_mesh_->nb_spheres());
+    for(const auto& sphere : sphere_mesh_->spheres()) {
+      sorted_sphere_ids.push_back(sphere.get_id());
+    }
+    std::sort(sorted_sphere_ids.begin(), sorted_sphere_ids.end(), [&](Sphere_ID a, Sphere_ID b) {
+      return sphere_mesh_->get_sphere(a).get_error() > sphere_mesh_->get_sphere(b).get_error(); // sort by error
               });
 
     int to_split_max = std::min(int(std::ceil(sphere_mesh_->nb_spheres() * 0.2)), 10);
-    for(auto& sphere : sorted_sphere) {
+    for(auto& sphere_id : sorted_sphere_ids) {
       if(sphere_mesh_->nb_spheres() >= desired_number_of_spheres_)
         break;
-      if(to_split_max > 0 && sphere->can_split()) {
-        for(Sphere_ID neighbor_id : sphere->get_neighbors()) {
-          sphere_mesh_->get_sphere(neighbor_id)->set_do_not_split(true);
+      auto& sphere = sphere_mesh_->get_sphere(sphere_id);
+      if(to_split_max > 0 && sphere.can_split()) {
+        for(Sphere_ID neighbor_id : sphere.get_neighbors()) {
+          sphere_mesh_->get_sphere(neighbor_id).set_do_not_split(true);
         }
-        vertex_descriptor split_vertex = sphere->get_split_vertex();
+        vertex_descriptor split_vertex = sphere.get_split_vertex();
         Point_3 center = get(vertex_medial_sphere_pos_map_, split_vertex);
         FT radius = get(vertex_medial_sphere_radius_map_, split_vertex);
         sphere_mesh_->add_sphere(Sphere_3(center, radius * radius));
