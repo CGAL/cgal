@@ -681,7 +681,7 @@ output_T3_to_medit(std::ostream& os,
      << number_of_triangles << '\n';
 
   for (auto f : facets) {
-    auto [c, index] = f;
+    // auto [c, index] = f;
     // Apply priority among subdomains, to get consistent facet orientation per subdomain-pair interface.
     if (print_each_facet_twice) {
       auto mirror_facet = tr.mirror_facet(f);
