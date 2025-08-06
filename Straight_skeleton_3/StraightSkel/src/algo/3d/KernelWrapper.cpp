@@ -207,86 +207,6 @@ Plane3SPtr KernelWrapper::offsetPlane(Plane3SPtr plane, const CGAL::FT& offset)
     return result;
 }
 
-// @speed return num / den and re-use the denominator for point computation
-CGAL::FT KernelWrapper::intersectionTimeOffsetPlanes(Plane3SPtr plane_0, const CGAL::FT& w0,
-                                                     Plane3SPtr plane_1, const CGAL::FT& w1,
-                                                     Plane3SPtr plane_2, const CGAL::FT& w2,
-                                                     Plane3SPtr plane_3, const CGAL::FT& w3,
-                                                     const CGAL::FT& past_bound, const CGAL::FT& future_bound)
-{
-    CGAL_precondition(!(is_zero(w0) && is_zero(w1) && is_zero(w2) && is_zero(w3)));
-
-    const CGAL::FT& a0 = plane_0->a();
-    const CGAL::FT& b0 = plane_0->b();
-    const CGAL::FT& c0 = plane_0->c();
-    const CGAL::FT& d0 = plane_0->d();
-    const CGAL::FT& a1 = plane_1->a();
-    const CGAL::FT& b1 = plane_1->b();
-    const CGAL::FT& c1 = plane_1->c();
-    const CGAL::FT& d1 = plane_1->d();
-    const CGAL::FT& a2 = plane_2->a();
-    const CGAL::FT& b2 = plane_2->b();
-    const CGAL::FT& c2 = plane_2->c();
-    const CGAL::FT& d2 = plane_2->d();
-    const CGAL::FT& a3 = plane_3->a();
-    const CGAL::FT& b3 = plane_3->b();
-    const CGAL::FT& c3 = plane_3->c();
-    const CGAL::FT& d3 = plane_3->d();
-
-    CGAL_SS3_TRAITS_TRACE("Coefficients\n" << a0 << " " << b0 << " " << c0 << " " << d0 << "\n"
-                                           << a1 << " " << b1 << " " << c1 << " " << d1 << "\n"
-                                           << a2 << " " << b2 << " " << c2 << " " << d2 << "\n"
-                                           << a3 << " " << b3 << " " << c3 << " " << d3);
-    CGAL_SS3_TRAITS_TRACE("Weights\n" << w0 << " " << w1 << " " << w2 << " " << w3);
-    CGAL_SS3_TRAITS_TRACE("CHECK det " << CGAL::determinant(a0, b0, c0, d0,
-                                                            a1, b1, c1, d1,
-                                                            a2, b2, c2, d2,
-                                                            a3, b3, c3, d3));
-
-    CGAL_assertion(isNormalizedPlane(plane_0));
-    CGAL_assertion(isNormalizedPlane(plane_1));
-    CGAL_assertion(isNormalizedPlane(plane_2));
-    CGAL_assertion(isNormalizedPlane(plane_3));
-
-    CGAL::FT den = (-a0*b1*c2*w3 + a0*b1*c3*w2 + a0*b2*c1*w3 - a0*b2*c3*w1 - a0*b3*c1*w2 + a0*b3*c2*w1 + a1*b0*c2*w3 - a1*b0*c3*w2 - a1*b2*c0*w3 + a1*b2*c3*w0 + a1*b3*c0*w2 - a1*b3*c2*w0 - a2*b0*c1*w3 + a2*b0*c3*w1 + a2*b1*c0*w3 - a2*b1*c3*w0 - a2*b3*c0*w1 + a2*b3*c1*w0 + a3*b0*c1*w2 - a3*b0*c2*w1 - a3*b1*c0*w2 + a3*b1*c2*w0 + a3*b2*c0*w1 - a3*b2*c1*w0);
-
-    util::ConfigurationSPtr config = util::Configuration::getInstance();
-    bool usePerturbations = false;
-    if (config->isLoaded()) {
-        if ((config->contains("main", "rand_move_points") &&
-            config->getBool("main", "rand_move_points")) ||
-            (config->contains("main", "rand_move_points_when_degenerated") &&
-            config->getBool("main", "rand_move_points_when_degenerated"))) {
-            usePerturbations = true;
-        }
-    }
-
-    CGAL_assertion(usePerturbations);
-
-    if (!usePerturbations) {
-        if(CGAL::is_zero(den))
-        {
-            CGAL_SS3_TRAITS_TRACE("Warning: no solution in 4 shifted plane system");
-            return { };
-        }
-    }
-
-    CGAL::FT t = (-a0*b1*c2*d3 + a0*b1*c3*d2 + a0*b2*c1*d3 - a0*b2*c3*d1 - a0*b3*c1*d2 + a0*b3*c2*d1 + a1*b0*c2*d3 - a1*b0*c3*d2 - a1*b2*c0*d3 + a1*b2*c3*d0 + a1*b3*c0*d2 - a1*b3*c2*d0 - a2*b0*c1*d3 + a2*b0*c3*d1 + a2*b1*c0*d3 - a2*b1*c3*d0 - a2*b3*c0*d1 + a2*b3*c1*d0 + a3*b0*c1*d2 - a3*b0*c2*d1 - a3*b1*c0*d2 + a3*b1*c2*d0 + a3*b2*c0*d1 - a3*b2*c1*d0) / den;
-
-    // It's about as likely to be greater than 'past' than it is to be lower than 'future'
-    if (t >= past_bound) {
-        CGAL_SS3_TRAITS_TRACE("event is strictly in the past");
-        return { };
-    }
-
-    if (t <= future_bound) {
-        CGAL_SS3_TRAITS_TRACE("event is too far in the future");
-        return { };
-    }
-
-    return t;
-}
-
 Point3SPtr KernelWrapper::intersectionPointOffsetPlanes(Plane3SPtr plane_0,
                                                         const CGAL::FT& w0,
                                                         Plane3SPtr plane_1,
@@ -367,16 +287,98 @@ Point3SPtr KernelWrapper::intersectionPointOffsetPlanes(Plane3SPtr plane_0,
     return point;
 }
 
-std::pair<Point3SPtr, CGAL::FT> KernelWrapper::intersectionPointAndTimeOffsetPlanes(Plane3SPtr plane_0,
-                                                                                    const CGAL::FT& w0,
-                                                                                    Plane3SPtr plane_1,
-                                                                                    const CGAL::FT& w1,
-                                                                                    Plane3SPtr plane_2,
-                                                                                    const CGAL::FT& w2,
-                                                                                    Plane3SPtr plane_3,
-                                                                                    const CGAL::FT& w3,
-                                                                                    const CGAL::FT& past_bound,
-                                                                                    const CGAL::FT& future_bound)
+// @speed could return num / den and re-use the denominator for point computation
+CGAL::FT KernelWrapper::intersectionTimeOffsetPlanes(Plane3SPtr plane_0, const CGAL::FT& w0,
+                                                     Plane3SPtr plane_1, const CGAL::FT& w1,
+                                                     Plane3SPtr plane_2, const CGAL::FT& w2,
+                                                     Plane3SPtr plane_3, const CGAL::FT& w3,
+                                                     const std::optional<CGAL::FT>& past_bound,
+                                                     const std::optional<CGAL::FT>& future_bound)
+{
+    CGAL_precondition(!(is_zero(w0) && is_zero(w1) && is_zero(w2) && is_zero(w3)));
+
+    const CGAL::FT& a0 = plane_0->a();
+    const CGAL::FT& b0 = plane_0->b();
+    const CGAL::FT& c0 = plane_0->c();
+    const CGAL::FT& d0 = plane_0->d();
+    const CGAL::FT& a1 = plane_1->a();
+    const CGAL::FT& b1 = plane_1->b();
+    const CGAL::FT& c1 = plane_1->c();
+    const CGAL::FT& d1 = plane_1->d();
+    const CGAL::FT& a2 = plane_2->a();
+    const CGAL::FT& b2 = plane_2->b();
+    const CGAL::FT& c2 = plane_2->c();
+    const CGAL::FT& d2 = plane_2->d();
+    const CGAL::FT& a3 = plane_3->a();
+    const CGAL::FT& b3 = plane_3->b();
+    const CGAL::FT& c3 = plane_3->c();
+    const CGAL::FT& d3 = plane_3->d();
+
+    CGAL_SS3_TRAITS_TRACE("Coefficients\n" << a0 << " " << b0 << " " << c0 << " " << d0 << "\n"
+                                           << a1 << " " << b1 << " " << c1 << " " << d1 << "\n"
+                                           << a2 << " " << b2 << " " << c2 << " " << d2 << "\n"
+                                           << a3 << " " << b3 << " " << c3 << " " << d3);
+    CGAL_SS3_TRAITS_TRACE("Weights\n" << w0 << " " << w1 << " " << w2 << " " << w3);
+    CGAL_SS3_TRAITS_TRACE("CHECK det " << CGAL::determinant(a0, b0, c0, d0,
+                                                            a1, b1, c1, d1,
+                                                            a2, b2, c2, d2,
+                                                            a3, b3, c3, d3));
+
+    CGAL_assertion(isNormalizedPlane(plane_0));
+    CGAL_assertion(isNormalizedPlane(plane_1));
+    CGAL_assertion(isNormalizedPlane(plane_2));
+    CGAL_assertion(isNormalizedPlane(plane_3));
+
+    CGAL::FT den = (-a0*b1*c2*w3 + a0*b1*c3*w2 + a0*b2*c1*w3 - a0*b2*c3*w1 - a0*b3*c1*w2 + a0*b3*c2*w1 + a1*b0*c2*w3 - a1*b0*c3*w2 - a1*b2*c0*w3 + a1*b2*c3*w0 + a1*b3*c0*w2 - a1*b3*c2*w0 - a2*b0*c1*w3 + a2*b0*c3*w1 + a2*b1*c0*w3 - a2*b1*c3*w0 - a2*b3*c0*w1 + a2*b3*c1*w0 + a3*b0*c1*w2 - a3*b0*c2*w1 - a3*b1*c0*w2 + a3*b1*c2*w0 + a3*b2*c0*w1 - a3*b2*c1*w0);
+
+    util::ConfigurationSPtr config = util::Configuration::getInstance();
+    bool usePerturbations = false;
+    if (config->isLoaded()) {
+        if ((config->contains("main", "rand_move_points") &&
+            config->getBool("main", "rand_move_points")) ||
+            (config->contains("main", "rand_move_points_when_degenerated") &&
+            config->getBool("main", "rand_move_points_when_degenerated"))) {
+            usePerturbations = true;
+        }
+    }
+
+    CGAL_assertion(usePerturbations);
+
+    if (!usePerturbations) {
+        if(CGAL::is_zero(den))
+        {
+            CGAL_SS3_TRAITS_TRACE("Warning: no solution in 4 shifted plane system");
+            return { };
+        }
+    }
+
+    CGAL::FT t = (-a0*b1*c2*d3 + a0*b1*c3*d2 + a0*b2*c1*d3 - a0*b2*c3*d1 - a0*b3*c1*d2 + a0*b3*c2*d1 + a1*b0*c2*d3 - a1*b0*c3*d2 - a1*b2*c0*d3 + a1*b2*c3*d0 + a1*b3*c0*d2 - a1*b3*c2*d0 - a2*b0*c1*d3 + a2*b0*c3*d1 + a2*b1*c0*d3 - a2*b1*c3*d0 - a2*b3*c0*d1 + a2*b3*c1*d0 + a3*b0*c1*d2 - a3*b0*c2*d1 - a3*b1*c0*d2 + a3*b1*c2*d0 + a3*b2*c0*d1 - a3*b2*c1*d0) / den;
+
+    // It's about as likely to be greater than 'past' than it is to be lower than 'future'
+    if (past_bound && t >= *past_bound) {
+        CGAL_SS3_TRAITS_TRACE("Event is strictly in the past");
+        return { };
+    }
+
+    if (future_bound && t <= *future_bound) {
+        CGAL_SS3_TRAITS_TRACE("Event is too far in the future");
+        return { };
+    }
+
+    return t;
+}
+
+std::pair<Point3SPtr, CGAL::FT>
+KernelWrapper::intersectionPointAndTimeOffsetPlanes(Plane3SPtr plane_0,
+                                                    const CGAL::FT& w0,
+                                                    Plane3SPtr plane_1,
+                                                    const CGAL::FT& w1,
+                                                    Plane3SPtr plane_2,
+                                                    const CGAL::FT& w2,
+                                                    Plane3SPtr plane_3,
+                                                    const CGAL::FT& w3,
+                                                    const std::optional<CGAL::FT>& past_bound,
+                                                    const std::optional<CGAL::FT>& future_bound)
 {
     CGAL_precondition(!(is_zero(w0) && is_zero(w1) && is_zero(w2) && is_zero(w3)));
 
@@ -435,13 +437,13 @@ std::pair<Point3SPtr, CGAL::FT> KernelWrapper::intersectionPointAndTimeOffsetPla
 
     CGAL::FT t = (-a0*b1*c2*d3 + a0*b1*c3*d2 + a0*b2*c1*d3 - a0*b2*c3*d1 - a0*b3*c1*d2 + a0*b3*c2*d1 + a1*b0*c2*d3 - a1*b0*c3*d2 - a1*b2*c0*d3 + a1*b2*c3*d0 + a1*b3*c0*d2 - a1*b3*c2*d0 - a2*b0*c1*d3 + a2*b0*c3*d1 + a2*b1*c0*d3 - a2*b1*c3*d0 - a2*b3*c0*d1 + a2*b3*c1*d0 + a3*b0*c1*d2 - a3*b0*c2*d1 - a3*b1*c0*d2 + a3*b1*c2*d0 + a3*b2*c0*d1 - a3*b2*c1*d0) / den;
 
-    if (t >= past_bound) {
-        CGAL_SS3_TRAITS_TRACE("event is strictly in the past");
-      return { };
+    if (past_bound && t >= *past_bound) {
+        CGAL_SS3_TRAITS_TRACE("Event is strictly in the past");
+        return { };
     }
 
-    if (t <= future_bound) {
-        CGAL_SS3_TRAITS_TRACE("event is too far in the future");
+    if (future_bound && t <= *future_bound) {
+        CGAL_SS3_TRAITS_TRACE("Event is too far in the future");
         return { };
     }
 
@@ -467,21 +469,6 @@ std::pair<Point3SPtr, CGAL::FT> KernelWrapper::intersectionPointAndTimeOffsetPla
 
     return { result, t };
 }
-
-std::pair<Point3SPtr, CGAL::FT> KernelWrapper::intersectionPointAndTimeOffsetPlanes(Plane3SPtr plane_0,
-                                                                                    const CGAL::FT& w0,
-                                                                                    Plane3SPtr plane_1,
-                                                                                    const CGAL::FT& w1,
-                                                                                    Plane3SPtr plane_2,
-                                                                                    const CGAL::FT& w2,
-                                                                                    Plane3SPtr plane_3,
-                                                                                    const CGAL::FT& w3)
-{
-    return intersectionPointAndTimeOffsetPlanes(plane_0, w0, plane_1, w1, plane_2, w2, plane_3, w3,
-                                                (std::numeric_limits<CGAL::FT>::max)(), // past
-                                                - (std::numeric_limits<CGAL::FT>::max)()); // future
-}
-
 
 Point3SPtr KernelWrapper::offsetPoint(Point3SPtr point, Vector3SPtr dir, const CGAL::FT& offset) {
     Point3SPtr result;

@@ -60,6 +60,19 @@ void Vertex::setPoint(Point3SPtr point) {
     this->point_ = point;
 }
 
+bool Vertex::hasFinalPoint() const {
+    return bool(this->final_point_);
+}
+
+Point3SPtr Vertex::getFinalPoint() const {
+    CGAL_SS3_DEBUG_SPTR(this->final_point_);
+    return this->final_point_;
+}
+
+void Vertex::setFinalPoint(Point3SPtr point) {
+    this->final_point_ = point;
+}
+
 void Vertex::addEdge(EdgeSPtr edge) {
     EdgeWPtr edge_wptr(edge);
     std::list<EdgeWPtr>::iterator it = edges_.insert(edges_.end(), edge_wptr);
@@ -609,7 +622,6 @@ std::string Vertex::toString() const {
         FacetWPtr facet_wptr = *it++;
         if (FacetSPtr facet = facet_wptr.lock()) {
             result += " " + std::to_string(facet->getID());
-            result += " (" + std::to_string(facet->getBasePlaneID()) + ")";
         }
     }
     result += " }";

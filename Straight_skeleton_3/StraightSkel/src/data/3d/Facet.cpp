@@ -39,7 +39,6 @@ namespace data { namespace _3d {
 
 Facet::Facet() {
     this->id_ = -1;
-    this->basePlaneId_ = -1;
 }
 
 Facet::~Facet() {
@@ -103,8 +102,9 @@ FacetSPtr Facet::clone() const {
         result->addEdge(edge_c);
     }
 
-    result->setPlane(this->getPlane());
-    result->setBasePlaneID(this->getBasePlaneID());
+    result->plane_ = this->plane_;
+    result->base_plane_ = this->base_plane_;
+    result->final_plane_ = this->final_plane_;
 
     result->cachedSpeed_ = this->cachedSpeed_;
     result->cachedPlane_ = this->cachedPlane_;
@@ -484,14 +484,6 @@ void Facet::setID(int id) {
     this->id_ = id;
 }
 
-int Facet::getBasePlaneID() const {
-    return this->basePlaneId_;
-}
-
-void Facet::setBasePlaneID(int planeId) {
-    this->basePlaneId_ = planeId;
-}
-
 Plane3SPtr Facet::getPlane() const {
     CGAL_precondition(bool(this->plane_));
     return this->plane_;
@@ -499,6 +491,28 @@ Plane3SPtr Facet::getPlane() const {
 
 void Facet::setPlane(Plane3SPtr plane) {
     this->plane_ = plane;
+}
+
+Plane3SPtr Facet::getBasePlane() const {
+    CGAL_precondition(bool(this->base_plane_));
+    return this->base_plane_;
+}
+
+void Facet::setBasePlane(Plane3SPtr plane) {
+    this->base_plane_ = plane;
+}
+
+bool Facet::hasFinalPlane() const {
+    return bool(this->final_plane_);
+}
+
+Plane3SPtr Facet::getFinalPlane() const {
+    CGAL_precondition(bool(this->final_plane_));
+    return this->final_plane_;
+}
+
+void Facet::setFinalPlane(Plane3SPtr plane) {
+    this->final_plane_ = plane;
 }
 
 bool Facet::initPlane() {

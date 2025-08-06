@@ -73,27 +73,6 @@
 #define CGAL_SS3_ENFORCE_UNIQUE_EVENT_REPRESENTATIONS
 
 /*
-  Whether the queue is filled once at the beginning and updated, or entirely recomputed
-  at each iteration.
-*/
-// #define CGAL_SS3_REFRESH_QUEUE_AT_EACH_ITERATION
-
-#ifdef CGAL_SS3_REFRESH_QUEUE_AT_EACH_ITERATION
-  /*
-    If enabled, events are added to the queue even if they are farther than the filtering bound.
-  */
-  // #define CGAL_SS3_DO_NOT_FILTER_FUTURE_EVENTS
-
-  #ifndef CGAL_SS3_DO_NOT_FILTER_FUTURE_EVENTS
-      /*
-        If enabled, the filtering bound is tightened with closer new events' offsets. Otherwise,
-        the bound is only from save offsets, if we use them with terminate on last save offset.
-      */
-    // # define CGAL_SS3_UPDATE_EVENT_FILTERING_BOUND
-  #endif
-#endif // CGAL_SS3_REFRESH_QUEUE_AT_EACH_ITERATION
-
-/*
   Collect a single vanish event type per edge, and determine at queue pop time
   which type of vanish event it is.
 
@@ -119,37 +98,17 @@
 #define CGAL_SS3_CHECK_CONV_SPLIT_EVENT_AT_POP_TIME
 
 /*
+  Some events do not need to know the actual intersection point till pop time,
+  so delay the construction and filtering.
+*/
+#define CGAL_SS3_COMPUTE_EVENT_POINT_AT_POP_TIME
+
+/*
   Limit the visilibity of other vertices to connected component of the facet for VV events
 */
 // #define CGAL_SS3_VV_VERTEX_2_WALK_FACES_FOR_DETECTION
 
-// ---- Macro compatibility checks
-
-#ifdef CGAL_SS3_USE_GENERIC_VANISH_EVENT
-# ifdef CGAL_SS3_UPDATE_EVENT_FILTERING_BOUND
-#  error "Don't mix these two: when using vanish events, we 'pollute' the queue with non-events"
-# endif
-#else
-# ifndef CGAL_SS3_REFRESH_QUEUE_AT_EACH_ITERATION
-#  error "Some vanish events do not have obsolescence detection implemented, use generic vanish"
-# endif
-#endif
-
-#ifdef CGAL_SS3_REFRESH_QUEUE_AT_EACH_ITERATION
-# ifndef CGAL_SS3_CHECK_PIERCE_AT_POP_TIME
-#  error "If we are refreshing the queue at each iteration, we need to check pierce events at pop time"
-# endif
-#endif
-
 // ----
-
-// Sometimes should be disabled not to run out of memory.
-// @todo Does not seem very effective anymore, need to bench again to check
-// where the real cost is in events
-// @todo could store only a Boolean value to improve memory footprint at the expense
-// of computation.
-#define CGAL_SS3_NO_CACHING
-
 
 // Debug
 
@@ -496,6 +455,24 @@ Line3SPtr SimpleStraightSkel::line(EdgeSPtr edge) {
     return result;
 }
 
+Point3SPtr SimpleStraightSkel::getFinalPoint(VertexSPtr vertex,
+                                             const CGAL::FT& offset_future_bound) {
+    if (!vertex->hasFinalPoint()) {
+        PolyhedronTransformation::resetFinalPoint(vertex, offset_future_bound);
+    }
+
+    return vertex->getFinalPoint();
+}
+
+Plane3SPtr SimpleStraightSkel::getFinalPlane(FacetSPtr facet,
+                                             const CGAL::FT& offset_future_bound) {
+    if (!facet->hasFinalPlane()) {
+        PolyhedronTransformation::resetFinalPlane(facet, offset_future_bound);
+    }
+
+    return facet->getFinalPlane();
+}
+
 bool SimpleStraightSkel::savePolyhedron(PolyhedronSPtr polyhedron,
                                         const CGAL::FT& current_offset,
                                         const bool do_triangulate,
@@ -605,7 +582,7 @@ bool SimpleStraightSkel::run() {
     CGAL_assertion(algo::_3d::PolyhedronTransformation::doAll3PlanesIntersect(polyhedron_));
     CGAL_assertion(!algo::_3d::SelfIntersection::hasSelfIntersectingSurface(polyhedron_));
 
-    // store base plane coefficients
+    // store base and final plane coefficients
     cacheBasePlanes(polyhedron);
 
 // #define CGAL_SS3_ACUTE_WEIGHTS
@@ -659,6 +636,19 @@ bool SimpleStraightSkel::run() {
             controller_->wait();
         }
 
+        // if we stop immediately after the last save event, there is no point investigating events
+        // that are farther away
+        std::optional<CGAL::FT> offset_future_bound;
+        if (!save_offsets_.empty()) {
+            util::ConfigurationSPtr config = util::Configuration::getInstance();
+            if (config->isLoaded()) {
+                if ((config->contains("main", "stop_after_last_save_event") &&
+                    config->getBool("main", "stop_after_last_save_event"))) {
+                    offset_future_bound = save_offsets_.back();
+                }
+            }
+        }
+
         step_id_ = -1;
         CGAL::FT current_offset = 0;
         CGAL::FT upcoming_offset;
@@ -666,7 +656,7 @@ bool SimpleStraightSkel::run() {
         CGAL_assertion_code(const bool is_emptiness_expected = save_offsets_.empty();)
 
         PQ queue;
-        collectEvents(polyhedron, current_offset, queue);
+        collectEvents(polyhedron, current_offset, offset_future_bound, queue);
 
         for(;;) {
             ++step_id_;
@@ -687,11 +677,11 @@ bool SimpleStraightSkel::run() {
 #endif
 
             CGAL_assertion_code(for (FacetSPtr facet : polyhedron->facets()) {)
-            CGAL_assertion(facet->getPlane()->a() == basePlanes_.at(facet->getBasePlaneID())->a());
-            CGAL_assertion(facet->getPlane()->b() == basePlanes_.at(facet->getBasePlaneID())->b());
-            CGAL_assertion(facet->getPlane()->c() == basePlanes_.at(facet->getBasePlaneID())->c());
+            CGAL_assertion(facet->getPlane()->a() == facet->getBasePlane()->a());
+            CGAL_assertion(facet->getPlane()->b() == facet->getBasePlane()->b());
+            CGAL_assertion(facet->getPlane()->c() == facet->getBasePlane()->c());
             CGAL_assertion_code(CGAL::FT speed = std::dynamic_pointer_cast<SkelFacetData>(facet->getData())->getSpeed();)
-            CGAL_assertion(facet->getPlane()->d() == basePlanes_.at(facet->getBasePlaneID())->d() - speed * current_offset);
+            CGAL_assertion(facet->getPlane()->d() == facet->getBasePlane()->d() - speed * current_offset);
             CGAL_assertion_code(})
 
             AbstractEventSPtr event = nextEvent(queue, current_offset);
@@ -732,7 +722,7 @@ bool SimpleStraightSkel::run() {
 
             // Here is the event treatment: if the event is valid,
             // shift the polyhedron + apply the combinatorial changes
-            EventStatus es = handleEvent(current_offset, event, polyhedron);
+            EventStatus es = handleEvent(event, current_offset, offset_future_bound, polyhedron);
             CGAL_assertion(es != EventStatus::EVENT_NOT_HANDLED);
             if (es == EventStatus::NON_EVENT) {
                 continue;
@@ -779,12 +769,8 @@ bool SimpleStraightSkel::run() {
                 }
             }
 
-            // Update (or recompute) the event priority queue
-#ifdef CGAL_SS3_REFRESH_QUEUE_AT_EACH_ITERATION
-            queue = PQ();
-            collectEvents(polyhedron, current_offset, queue);
-#else
-            collectLocalEvents(polyhedron, current_offset, queue);
+            // Update the event priority queue
+            collectLocalEvents(polyhedron, current_offset, offset_future_bound, queue);
 
             post_op_vertices_.clear();
             post_op_edges_.clear();
@@ -793,7 +779,6 @@ bool SimpleStraightSkel::run() {
             post_op_vertices_VV_.clear();
             post_op_vertices_pierce_.clear();
             post_op_edges_edgesplit_.clear();
-#endif
         }
 
         CGAL_SS3_CORE_TRACE_V(1, "== Straight Skeleton 3D finished ==");
@@ -1003,16 +988,13 @@ SheetSPtr SimpleStraightSkel::createSheet(EdgeSPtr edge) {
 }
 
 void SimpleStraightSkel::cacheBasePlanes(PolyhedronSPtr polyhedron) {
-    basePlanes_.reserve(polyhedron->facets().size());
-
-    std::list<FacetSPtr>::iterator it_f = polyhedron->facets().begin();
-    while (it_f != polyhedron->facets().end()) {
-        FacetSPtr facet = *it_f++;
+    for (FacetSPtr facet : polyhedron->facets()) {
         if (!facet->hasData()) {
             SkelFacetData::create(facet);
         }
-        facet->setBasePlaneID(basePlanes_.size());
-        basePlanes_.push_back(facet->getPlane());
+
+        Plane3SPtr base_plane = KernelFactory::createPlane3(*(facet->getPlane()));
+        facet->setBasePlane(base_plane);
     }
 }
 
@@ -1269,62 +1251,34 @@ SimpleStraightSkel::intersectionPointAndTimeOffsetPlanes(FacetSPtr facet_0,
                                                          FacetSPtr facet_1,
                                                          FacetSPtr facet_2,
                                                          FacetSPtr facet_3,
-                                                         const CGAL::FT& offset_past_bound,
-                                                         const CGAL::FT& offset_future_bound)
+                                                         const std::optional<CGAL::FT>& offset_past_bound,
+                                                         const std::optional<CGAL::FT>& offset_future_bound)
 {
     CGAL_SS3_DEBUG_SPTR(facet_0);
     CGAL_SS3_DEBUG_SPTR(facet_1);
     CGAL_SS3_DEBUG_SPTR(facet_2);
     CGAL_SS3_DEBUG_SPTR(facet_3);
 
-    auto compute_point_and_time = [&]() -> std::pair<Point3SPtr, CGAL::FT>
-    {
-        Plane3SPtr plane_0 = basePlanes_.at(facet_0->getBasePlaneID());
-        Plane3SPtr plane_1 = basePlanes_.at(facet_1->getBasePlaneID());
-        Plane3SPtr plane_2 = basePlanes_.at(facet_2->getBasePlaneID());
-        Plane3SPtr plane_3 = basePlanes_.at(facet_3->getBasePlaneID());
+    Plane3SPtr plane_0 = facet_0->getBasePlane();
+    Plane3SPtr plane_1 = facet_1->getBasePlane();
+    Plane3SPtr plane_2 = facet_2->getBasePlane();
+    Plane3SPtr plane_3 = facet_3->getBasePlane();
 
-        CGAL::FT speed_0 = std::dynamic_pointer_cast<SkelFacetData>(facet_0->getData())->getSpeed();
-        CGAL::FT speed_1 = std::dynamic_pointer_cast<SkelFacetData>(facet_1->getData())->getSpeed();
-        CGAL::FT speed_2 = std::dynamic_pointer_cast<SkelFacetData>(facet_2->getData())->getSpeed();
-        CGAL::FT speed_3 = std::dynamic_pointer_cast<SkelFacetData>(facet_3->getData())->getSpeed();
+    const CGAL::FT& speed_0 = std::dynamic_pointer_cast<SkelFacetData>(facet_0->getData())->getSpeed();
+    const CGAL::FT& speed_1 = std::dynamic_pointer_cast<SkelFacetData>(facet_1->getData())->getSpeed();
+    const CGAL::FT& speed_2 = std::dynamic_pointer_cast<SkelFacetData>(facet_2->getData())->getSpeed();
+    const CGAL::FT& speed_3 = std::dynamic_pointer_cast<SkelFacetData>(facet_3->getData())->getSpeed();
 
-        return KernelWrapper::intersectionPointAndTimeOffsetPlanes(plane_0, speed_0, plane_1, speed_1,
-                                                                   plane_2, speed_2, plane_3, speed_3,
-                                                                   offset_past_bound, offset_future_bound);
-    };
-
-#ifdef CGAL_SS3_NO_CACHING
-    return compute_point_and_time();
-#else
-    int ids[] = { facet_0->getBasePlaneID(),
-                  facet_1->getBasePlaneID(),
-                  facet_2->getBasePlaneID(),
-                  facet_3->getBasePlaneID() };
-    std::sort(std::begin(ids), std::end(ids));
-    std::array<int, 4> canonical_ids = CGAL::make_array(ids[0], ids[1], ids[2], ids[3]);
-
-    std::pair<Point3SPtr, CGAL::FT> dummy;
-    auto res = intersectionCache_.emplace(canonical_ids, dummy);
-    if (res.second) { // successful insertion, first time seeing it so actual computation is required
-        CGAL_SS3_CORE_TRACE_V(32, "compute needed: " << canonical_ids[0] << " " << canonical_ids[1] << " "
-                                                     << canonical_ids[2] << " " << canonical_ids[3]);
-
-        res.first->second = compute_point_and_time();
-    } else {
-        CGAL_SS3_CORE_TRACE_V(32, "used cache value: " << canonical_ids[0] << " " << canonical_ids[1] << " "
-                                                       << canonical_ids[2] << " " << canonical_ids[3]);
-    }
-
-    return res.first->second;
-#endif // CGAL_SS3_NO_CACHING
+    return KernelWrapper::intersectionPointAndTimeOffsetPlanes(plane_0, speed_0, plane_1, speed_1,
+                                                               plane_2, speed_2, plane_3, speed_3,
+                                                               offset_past_bound, offset_future_bound);
 }
 
 // @speed how about a first filter before Point&Time computation: IsEdgeGrowing
 // if not, then there is definitely no intersection
 std::pair<Point3SPtr, CGAL::FT> SimpleStraightSkel::vanishesAt(EdgeSPtr edge,
-                                                               const CGAL::FT& offset_past_bound,
-                                                               const CGAL::FT& offset_future_bound)
+                                                               const std::optional<CGAL::FT>& offset_past_bound,
+                                                               const std::optional<CGAL::FT>& offset_future_bound)
 {
     Point3SPtr point = Point3SPtr();
     CGAL::FT offset_event;
@@ -1467,8 +1421,8 @@ bool SimpleStraightSkel::check_bisector(EdgeSPtr edge,
 // not intersecting (diametral spheres around the edges of size something?)
 std::pair<Point3SPtr, CGAL::FT>
 SimpleStraightSkel::crashAt(EdgeSPtr edge_1, EdgeSPtr edge_2,
-                            const CGAL::FT& offset_past_bound,
-                            const CGAL::FT& offset_future_bound)
+                            const std::optional<CGAL::FT>& offset_past_bound,
+                            const std::optional<CGAL::FT>& offset_future_bound)
 {
     FacetSPtr facet_l1 = edge_1->getFacetL();
     FacetSPtr facet_r1 = edge_1->getFacetR();
@@ -1513,7 +1467,7 @@ SimpleStraightSkel::crashAt(EdgeSPtr edge_1, EdgeSPtr edge_2,
     CGAL_SS3_CORE_TRACE_V(16, "Facet 2 SRC = " << facet_2_src->getID());
     CGAL_SS3_CORE_TRACE_V(16, "Facet 2 DST = " << facet_2_dst->getID());
 
-    CGAL_SS3_CORE_TRACE_CODE(CGAL::FT current_offset = (basePlanes_.at(facet_l1->getBasePlaneID())->d()
+    CGAL_SS3_CORE_TRACE_CODE(CGAL::FT current_offset = (facet_l1->getBasePlane()->d()
                                                       - facet_l1->getPlane()->d()) / speed_l1);
     CGAL_SS3_CORE_TRACE_CODE(CGAL::FT shift_offset = offset_event - current_offset);
     CGAL_SS3_CORE_TRACE_V(16, "current offset " << current_offset);
@@ -1706,10 +1660,10 @@ bool SimpleStraightSkel::isActualEvent(const CGAL::FT& current_offset,
 void SimpleStraightSkel::collectVanishEvents(const std::list<EdgeSPtr>& edges,
                                              PolyhedronSPtr polyhedron,
                                              const CGAL::FT& current_offset,
-                                             CGAL::FT& offset_future_bound,
+                                             const std::optional<CGAL::FT>& offset_future_bound,
                                              PQ& queue)
 {
-    CGAL_SS3_CORE_TRACE_V(4, ">>> Collect Vanish Events [" << current_offset << "; " << offset_future_bound << "]");
+    CGAL_SS3_CORE_TRACE_V(4, ">>> Collect Vanish Events [" << current_offset << "]");
 
 #ifdef CGAL_SS3_RUN_TIMERS
     CGAL::Real_timer timer;
@@ -1752,10 +1706,6 @@ void SimpleStraightSkel::collectVanishEvents(const std::list<EdgeSPtr>& edges,
         // CGAL_SS3_CORE_TRACE("Edge " << edge->getID() << " vanishes at " << *point << " @ " << offset_event);
 
         queue.push(event);
-
-#ifdef CGAL_SS3_UPDATE_EVENT_FILTERING_BOUND
-        offset_future_bound = offset_event;
-#endif
     }
 
 #ifdef CGAL_SS3_RUN_TIMERS
@@ -1767,7 +1717,7 @@ void SimpleStraightSkel::collectVanishEvents(const std::list<EdgeSPtr>& edges,
 
 void SimpleStraightSkel::collectVanishEvents(PolyhedronSPtr polyhedron,
                                              const CGAL::FT& current_offset,
-                                             CGAL::FT& offset_future_bound,
+                                             const std::optional<CGAL::FT>& offset_future_bound,
                                              PQ& queue)
 {
     return collectVanishEvents(polyhedron->edges(), polyhedron, current_offset, offset_future_bound, queue);
@@ -1778,10 +1728,10 @@ void SimpleStraightSkel::collectVanishEvents(PolyhedronSPtr polyhedron,
 void SimpleStraightSkel::collectEdgeEvents(const std::list<EdgeSPtr>& edges,
                                            PolyhedronSPtr polyhedron,
                                            const CGAL::FT& current_offset,
-                                           CGAL::FT& offset_future_bound,
+                                           const std::optional<CGAL::FT>& offset_future_bound,
                                            PQ& queue)
 {
-    CGAL_SS3_CORE_TRACE_V(4, ">>> Collect Edge Events [" << current_offset << "; " << offset_future_bound << "]");
+    CGAL_SS3_CORE_TRACE_V(4, ">>> Collect Edge Events [" << current_offset << "]");
 
     std::list<EdgeSPtr>::const_iterator it_e = edges.begin();
     while (it_e != edges.end()) {
@@ -1977,16 +1927,12 @@ void SimpleStraightSkel::collectEdgeEvents(const std::list<EdgeSPtr>& edges,
 #endif
 
         queue.push(event);
-
-#ifdef CGAL_SS3_UPDATE_EVENT_FILTERING_BOUND
-        offset_future_bound = offset_event;
-#endif
     }
 }
 
 void SimpleStraightSkel::collectEdgeEvents(PolyhedronSPtr polyhedron,
                                            const CGAL::FT& current_offset,
-                                           CGAL::FT& offset_future_bound,
+                                           const std::optional<CGAL::FT>& offset_future_bound,
                                            PQ& queue)
 {
     return collectEdgeEvents(polyhedron->edges(), polyhedron,
@@ -1997,10 +1943,10 @@ void SimpleStraightSkel::collectEdgeMergeEvents(const std::list<EdgeSPtr>& edges
                                                 PolyhedronSPtr polyhedron,
                                                 const bool use_canonical_event_reps,
                                                 const CGAL::FT& current_offset,
-                                                CGAL::FT& offset_future_bound,
+                                                const std::optional<CGAL::FT>& offset_future_bound,
                                                 PQ& queue)
 {
-    CGAL_SS3_CORE_TRACE_V(4, ">>> Collect Edge Merge Events [" << current_offset << "; " << offset_future_bound << "]");
+    CGAL_SS3_CORE_TRACE_V(4, ">>> Collect Edge Merge Events [" << current_offset << "]");
 
     std::list<EdgeSPtr>::const_iterator it_e = edges.begin();
     while (it_e != edges.end()) {
@@ -2141,16 +2087,12 @@ void SimpleStraightSkel::collectEdgeMergeEvents(const std::list<EdgeSPtr>& edges
 #endif
 
         queue.push(event);
-
-#ifdef CGAL_SS3_UPDATE_EVENT_FILTERING_BOUND
-        offset_future_bound = offset_event;
-#endif
     }
 }
 
 void SimpleStraightSkel::collectEdgeMergeEvents(PolyhedronSPtr polyhedron,
                                                 const CGAL::FT& current_offset,
-                                                CGAL::FT& offset_future_bound,
+                                                const std::optional<CGAL::FT>& offset_future_bound,
                                                 PQ& queue)
 {
     return collectEdgeMergeEvents(polyhedron->edges(), polyhedron, true /*canonical reps*/,
@@ -2161,10 +2103,10 @@ void SimpleStraightSkel::collectTriangleEvents(const std::list<EdgeSPtr>& edges,
                                                PolyhedronSPtr polyhedron,
                                                const bool use_canonical_event_reps,
                                                const CGAL::FT& current_offset,
-                                               CGAL::FT& offset_future_bound,
+                                               const std::optional<CGAL::FT>& offset_future_bound,
                                                PQ& queue)
 {
-    CGAL_SS3_CORE_TRACE_V(4, ">>> Collect Triangle Event [" << current_offset << "; " << offset_future_bound << "]");
+    CGAL_SS3_CORE_TRACE_V(4, ">>> Collect Triangle Event [" << current_offset << "]");
 
     std::list<EdgeSPtr>::const_iterator it_e = edges.begin();
     while (it_e != edges.end()) {
@@ -2259,16 +2201,12 @@ void SimpleStraightSkel::collectTriangleEvents(const std::list<EdgeSPtr>& edges,
 #endif
 
         queue.push(event);
-
-#ifdef CGAL_SS3_UPDATE_EVENT_FILTERING_BOUND
-        offset_future_bound = offset_event;
-#endif
     }
 }
 
 void SimpleStraightSkel::collectTriangleEvents(PolyhedronSPtr polyhedron,
                                                const CGAL::FT& current_offset,
-                                               CGAL::FT& offset_future_bound,
+                                               const std::optional<CGAL::FT>& offset_future_bound,
                                                PQ& queue)
 {
     return collectTriangleEvents(polyhedron->edges(), polyhedron, true /*use canonical reps*/,
@@ -2279,10 +2217,10 @@ void SimpleStraightSkel::collectDblEdgeMergeEvents(const std::list<EdgeSPtr>& ed
                                                    PolyhedronSPtr polyhedron,
                                                    const bool use_canonical_event_reps,
                                                    const CGAL::FT& current_offset,
-                                                   CGAL::FT& offset_future_bound,
+                                                   const std::optional<CGAL::FT>& offset_future_bound,
                                                    PQ& queue)
 {
-    CGAL_SS3_CORE_TRACE_V(4, ">>> Collect Dbl Edge Merge Events [" << current_offset << "; " << offset_future_bound << "]");
+    CGAL_SS3_CORE_TRACE_V(4, ">>> Collect Dbl Edge Merge Events [" << current_offset << "]");
 
     std::list<EdgeSPtr>::const_iterator it_e = edges.begin();
     while (it_e != edges.end()) {
@@ -2388,16 +2326,12 @@ void SimpleStraightSkel::collectDblEdgeMergeEvents(const std::list<EdgeSPtr>& ed
 #endif
 
         queue.push(event);
-
-#ifdef CGAL_SS3_UPDATE_EVENT_FILTERING_BOUND
-        offset_future_bound = offset_event;
-#endif
     }
 }
 
 void SimpleStraightSkel::collectDblEdgeMergeEvents(PolyhedronSPtr polyhedron,
                                                    const CGAL::FT& current_offset,
-                                                   CGAL::FT& offset_future_bound,
+                                                   const std::optional<CGAL::FT>& offset_future_bound,
                                                    PQ& queue)
 {
     return collectDblEdgeMergeEvents(polyhedron->edges(), polyhedron, true /*use canonical reps*/,
@@ -2410,10 +2344,10 @@ void SimpleStraightSkel::collectDblTriangleEvents(const std::list<EdgeSPtr>& edg
                                                   PolyhedronSPtr polyhedron,
                                                   const bool /*use_canonical_event_reps*/,
                                                   const CGAL::FT& current_offset,
-                                                  CGAL::FT& offset_future_bound,
+                                                  const std::optional<CGAL::FT>& offset_future_bound,
                                                   PQ& queue)
 {
-    CGAL_SS3_CORE_TRACE_V(4, ">>> Collect Dbl Triangle Events [" << current_offset << "; " << offset_future_bound << "]");
+    CGAL_SS3_CORE_TRACE_V(4, ">>> Collect Dbl Triangle Events [" << current_offset << "]");
 
     std::list<EdgeSPtr>::const_iterator it_e = edges.begin();
     while (it_e != edges.end()) {
@@ -2476,16 +2410,12 @@ void SimpleStraightSkel::collectDblTriangleEvents(const std::list<EdgeSPtr>& edg
 #endif
 
         queue.push(event);
-
-#ifdef CGAL_SS3_UPDATE_EVENT_FILTERING_BOUND
-        offset_future_bound = offset_event;
-#endif
     }
 }
 
 void SimpleStraightSkel::collectDblTriangleEvents(PolyhedronSPtr polyhedron,
                                                   const CGAL::FT& current_offset,
-                                                  CGAL::FT& offset_future_bound,
+                                                  const std::optional<CGAL::FT>& offset_future_bound,
                                                   PQ& queue)
 {
     return collectDblTriangleEvents(polyhedron->edges(), polyhedron, true /*use canonical reps*/,
@@ -2496,10 +2426,10 @@ void SimpleStraightSkel::collectTetrahedronEvents(const std::list<EdgeSPtr>& edg
                                                   PolyhedronSPtr polyhedron,
                                                   const bool use_canonical_event_reps,
                                                   const CGAL::FT& current_offset,
-                                                  CGAL::FT& offset_future_bound,
+                                                  const std::optional<CGAL::FT>& offset_future_bound,
                                                   PQ& queue)
 {
-    CGAL_SS3_CORE_TRACE_V(4, ">>> Collect Tetrahedron Events [" << current_offset << "; " << offset_future_bound << "]");
+    CGAL_SS3_CORE_TRACE_V(4, ">>> Collect Tetrahedron Events [" << current_offset << "]");
 
     std::list<EdgeSPtr>::const_iterator it_e = edges.begin();
     while (it_e != edges.end()) {
@@ -2568,17 +2498,13 @@ void SimpleStraightSkel::collectTetrahedronEvents(const std::list<EdgeSPtr>& edg
 #endif
 
             queue.push(event);
-
-#ifdef CGAL_SS3_UPDATE_EVENT_FILTERING_BOUND
-            offset_future_bound = offset_event;
-#endif
         }
     }
 }
 
 void SimpleStraightSkel::collectTetrahedronEvents(PolyhedronSPtr polyhedron,
                                                   const CGAL::FT& current_offset,
-                                                  CGAL::FT& offset_future_bound,
+                                                  const std::optional<CGAL::FT>& offset_future_bound,
                                                   PQ& queue)
 {
     return collectTetrahedronEvents(polyhedron->edges(), polyhedron, true /*use canonical reps*/,
@@ -2589,10 +2515,10 @@ void SimpleStraightSkel::collectVertexEvents(const std::list<VertexSPtr>& vertic
                                              PolyhedronSPtr polyhedron,
                                              const bool use_canonical_event_reps,
                                              const CGAL::FT& current_offset,
-                                             CGAL::FT& offset_future_bound,
+                                             const std::optional<CGAL::FT>& offset_future_bound,
                                              PQ& queue)
 {
-    CGAL_SS3_CORE_TRACE_V(4, ">>> Collect Vertex Events [" << current_offset << "; " << offset_future_bound << "]");
+    CGAL_SS3_CORE_TRACE_V(4, ">>> Collect Vertex Events [" << current_offset << "]");
 
 #ifdef CGAL_SS3_RUN_TIMERS
     CGAL::Real_timer timer;
@@ -2923,10 +2849,6 @@ void SimpleStraightSkel::collectVertexEvents(const std::list<VertexSPtr>& vertic
             event->setFacet2(facet_2);
 
             queue.push(event);
-
-#ifdef CGAL_SS3_UPDATE_EVENT_FILTERING_BOUND
-            offset_future_bound = offset_event;
-#endif
         }
     }
 
@@ -2938,7 +2860,7 @@ void SimpleStraightSkel::collectVertexEvents(const std::list<VertexSPtr>& vertic
 
 void SimpleStraightSkel::collectVertexEvents(PolyhedronSPtr polyhedron,
                                              const CGAL::FT& current_offset,
-                                             CGAL::FT& offset_future_bound,
+                                             const std::optional<CGAL::FT>& offset_future_bound,
                                              PQ& queue)
 {
     return collectVertexEvents(polyhedron->vertices(), polyhedron, true /*use canonical reps*/,
@@ -2949,10 +2871,10 @@ void SimpleStraightSkel::collectFlipVertexEvents(const std::list<VertexSPtr>& ve
                                                  PolyhedronSPtr polyhedron,
                                                  const bool use_canonical_event_reps,
                                                  const CGAL::FT& current_offset,
-                                                 CGAL::FT& offset_future_bound,
+                                                 const std::optional<CGAL::FT>& offset_future_bound,
                                                  PQ& queue)
 {
-    CGAL_SS3_CORE_TRACE_V(4, ">>> Collect Flip Vertex Events [" << current_offset << "; " << offset_future_bound << "]");
+    CGAL_SS3_CORE_TRACE_V(4, ">>> Collect Flip Vertex Events [" << current_offset << "]");
 
 #ifdef CGAL_SS3_RUN_TIMERS
     CGAL::Real_timer timer;
@@ -3163,10 +3085,6 @@ void SimpleStraightSkel::collectFlipVertexEvents(const std::list<VertexSPtr>& ve
             event->setFacet2(facet_2);
 
             queue.push(event);
-
-#ifdef CGAL_SS3_UPDATE_EVENT_FILTERING_BOUND
-            offset_future_bound = offset_event;
-#endif
         }
     }
 
@@ -3179,7 +3097,7 @@ void SimpleStraightSkel::collectFlipVertexEvents(const std::list<VertexSPtr>& ve
 
 void SimpleStraightSkel::collectFlipVertexEvents(PolyhedronSPtr polyhedron,
                                                  const CGAL::FT& current_offset,
-                                                 CGAL::FT& offset_future_bound,
+                                                 const std::optional<CGAL::FT>& offset_future_bound,
                                                  PQ& queue)
 {
     return collectFlipVertexEvents(polyhedron->vertices(), polyhedron, true /*use canonical reps*/,
@@ -3190,7 +3108,7 @@ void SimpleStraightSkel::collectSurfaceEvent(EdgeSPtr edge_1,
                                              EdgeSPtr edge_2,
                                              PolyhedronSPtr polyhedron,
                                              const CGAL::FT& current_offset,
-                                             CGAL::FT& offset_future_bound,
+                                             const std::optional<CGAL::FT>& offset_future_bound,
                                              PQ& queue)
 {
     CGAL_SS3_CORE_TRACE_V(8, ">>> Collect Surface Event [\n  " << edge_1->toString() << "\n  " << edge_2->toString() << "]");
@@ -3296,23 +3214,21 @@ void SimpleStraightSkel::collectSurfaceEvent(EdgeSPtr edge_1,
 
     // not outside of the loop just because maybe one day this will be called
     // as the first collect function with an initial bound that gets updated...
-    const bool use_bbox_filtering = (offset_future_bound != - std::numeric_limits<CGAL::FT>::max());
 
     // let's just check if bboxes overlap first
-    if (use_bbox_filtering) {
-        CGAL::FT max_relevant_shift = offset_future_bound - current_offset;
-
-        Segment3SPtr offset_e1 = PolyhedronTransformation::shiftEdge(edge_1, max_relevant_shift);
-        CGAL::Bbox_3 b1 = edge_1->getVertexSrc()->getPoint()->bbox();
+    if (offset_future_bound) {
+        CGAL::Bbox_3 b1;
+        b1 += edge_1->getVertexSrc()->getPoint()->bbox();
         b1 += edge_1->getVertexDst()->getPoint()->bbox();
-        b1 += offset_e1->source().bbox();
-        b1 += offset_e1->target().bbox();
+        b1 += getFinalPoint(edge_1->getVertexSrc(), *offset_future_bound)->bbox();
+        b1 += getFinalPoint(edge_1->getVertexDst(), *offset_future_bound)->bbox();
 
-        Segment3SPtr offset_e2 = PolyhedronTransformation::shiftEdge(edge_2, max_relevant_shift);
-        CGAL::Bbox_3 b2 = edge_2->getVertexSrc()->getPoint()->bbox();
+        CGAL::Bbox_3 b2;
+        b2 += edge_2->getVertexSrc()->getPoint()->bbox();
         b2 += edge_2->getVertexDst()->getPoint()->bbox();
-        b2 += offset_e2->source().bbox();
-        b2 += offset_e2->target().bbox();
+        b2 += getFinalPoint(edge_2->getVertexSrc(), *offset_future_bound)->bbox();
+        b2 += getFinalPoint(edge_2->getVertexDst(), *offset_future_bound)->bbox();
+
         if (!CGAL::do_overlap(b1, b2)) {
             CGAL_SS3_CORE_TRACE_V(32, "Filtered possible surface event candidates\n\t" << edge_1->toString() << "\n\t"
                                                                                        << edge_2->toString());
@@ -3366,19 +3282,15 @@ void SimpleStraightSkel::collectSurfaceEvent(EdgeSPtr edge_1,
 #endif
 
     queue.push(event);
-
-#ifdef CGAL_SS3_UPDATE_EVENT_FILTERING_BOUND
-    offset_future_bound = offset_event;
-#endif
 }
 
 void SimpleStraightSkel::collectSurfaceEvents(const std::list<EdgeSPtr>& edges,
                                               PolyhedronSPtr polyhedron,
                                               const CGAL::FT& current_offset,
-                                              CGAL::FT& offset_future_bound,
+                                              const std::optional<CGAL::FT>& offset_future_bound,
                                               PQ& queue)
 {
-    CGAL_SS3_CORE_TRACE_V(4, ">>> Collect Surface Events [" << current_offset << "; " << offset_future_bound << "]");
+    CGAL_SS3_CORE_TRACE_V(4, ">>> Collect Surface Events [" << current_offset << "]");
 
 #ifdef CGAL_SS3_RUN_TIMERS
     CGAL::Real_timer timer;
@@ -3403,16 +3315,12 @@ void SimpleStraightSkel::collectSurfaceEvents(const std::list<EdgeSPtr>& edges,
 
         // not outside of the loop just because maybe one day this will be called
         // as the first collect function with an initial bound that gets updated...
-        const bool use_bbox_filtering = (offset_future_bound != - std::numeric_limits<CGAL::FT>::max());
-        CGAL::FT max_relevant_shift = offset_future_bound - current_offset;
-
         CGAL::Bbox_3 b1;
-        if (use_bbox_filtering) {
-            Segment3SPtr offset_e1 = PolyhedronTransformation::shiftEdge(edge_1, max_relevant_shift);
-            b1 = edge_1->getVertexSrc()->getPoint()->bbox();
+        if (offset_future_bound) {
+            b1 += edge_1->getVertexSrc()->getPoint()->bbox();
             b1 += edge_1->getVertexDst()->getPoint()->bbox();
-            b1 += offset_e1->source().bbox();
-            b1 += offset_e1->target().bbox();
+            b1 += getFinalPoint(edge_1->getVertexSrc(), *offset_future_bound)->bbox();
+            b1 += getFinalPoint(edge_1->getVertexDst(), *offset_future_bound)->bbox();
         }
 
         std::list<EdgeSPtr>::iterator it_e2 = edges_2.begin();
@@ -3517,12 +3425,13 @@ void SimpleStraightSkel::collectSurfaceEvents(const std::list<EdgeSPtr>& edges,
 #endif
 
             // let's just check if bboxes overlap first
-            if (use_bbox_filtering) {
-                Segment3SPtr offset_e2 = PolyhedronTransformation::shiftEdge(edge_2, max_relevant_shift);
-                CGAL::Bbox_3 b2 = edge_2->getVertexSrc()->getPoint()->bbox();
+            if (offset_future_bound) {
+                CGAL::Bbox_3 b2;
+                b2 += edge_2->getVertexSrc()->getPoint()->bbox();
                 b2 += edge_2->getVertexDst()->getPoint()->bbox();
-                b2 += offset_e2->source().bbox();
-                b2 += offset_e2->target().bbox();
+                b2 += getFinalPoint(edge_2->getVertexSrc(), *offset_future_bound)->bbox();
+                b2 += getFinalPoint(edge_2->getVertexDst(), *offset_future_bound)->bbox();
+
                 if (!CGAL::do_overlap(b1, b2)) {
 #ifdef CGAL_SS3_PROFILE_FILTERING_MECHANISMS
                     ++filtered_candidates;
@@ -3580,10 +3489,6 @@ void SimpleStraightSkel::collectSurfaceEvents(const std::list<EdgeSPtr>& edges,
 #endif
 
             queue.push(event);
-
-#ifdef CGAL_SS3_UPDATE_EVENT_FILTERING_BOUND
-            offset_future_bound = offset_event;
-#endif
         }
     }
 
@@ -3599,7 +3504,7 @@ void SimpleStraightSkel::collectSurfaceEvents(const std::list<EdgeSPtr>& edges,
 
 void SimpleStraightSkel::collectSurfaceEvents(PolyhedronSPtr polyhedron,
                                               const CGAL::FT& current_offset,
-                                              CGAL::FT& offset_future_bound,
+                                              const std::optional<CGAL::FT>& offset_future_bound,
                                               PQ& queue)
 {
     return collectSurfaceEvents(polyhedron->edges(), polyhedron,
@@ -3610,7 +3515,7 @@ void SimpleStraightSkel::collectPolyhedronSplitEvent(EdgeSPtr edge_1,
                                                      EdgeSPtr edge_2,
                                                      PolyhedronSPtr polyhedron,
                                                      const CGAL::FT& current_offset,
-                                                     CGAL::FT& offset_future_bound,
+                                                     const std::optional<CGAL::FT>& offset_future_bound,
                                                      PQ& queue)
 {
   CGAL_SS3_DEBUG_SPTR(edge_1);
@@ -3690,19 +3595,15 @@ void SimpleStraightSkel::collectPolyhedronSplitEvent(EdgeSPtr edge_1,
 #endif
 
     queue.push(event);
-
-#ifdef CGAL_SS3_UPDATE_EVENT_FILTERING_BOUND
-    offset_future_bound = offset_event;
-#endif
 }
 
 void SimpleStraightSkel::collectPolyhedronSplitEvents(const std::list<EdgeSPtr>& edges,
                                                       PolyhedronSPtr polyhedron,
                                                       const CGAL::FT& current_offset,
-                                                      CGAL::FT& offset_future_bound,
+                                                      const std::optional<CGAL::FT>& offset_future_bound,
                                                       PQ& queue)
 {
-    CGAL_SS3_CORE_TRACE_V(4, ">>> Collect Polyhedron Split Events [" << current_offset << "; " << offset_future_bound << "]");
+    CGAL_SS3_CORE_TRACE_V(4, ">>> Collect Polyhedron Split Events [" << current_offset << "]");
 
 #ifdef CGAL_SS3_RUN_TIMERS
     CGAL::Real_timer timer;
@@ -3737,7 +3638,7 @@ void SimpleStraightSkel::collectPolyhedronSplitEvents(const std::list<EdgeSPtr>&
 
 void SimpleStraightSkel::collectPolyhedronSplitEvents(PolyhedronSPtr polyhedron,
                                                       const CGAL::FT& current_offset,
-                                                      CGAL::FT& offset_future_bound,
+                                                      const std::optional<CGAL::FT>& offset_future_bound,
                                                       PQ& queue)
 {
     return collectPolyhedronSplitEvents(polyhedron->edges(), polyhedron,
@@ -3749,10 +3650,10 @@ void SimpleStraightSkel::collectSplitMergeEvents(const std::list<VertexSPtr>& ve
                                                  PolyhedronSPtr polyhedron,
                                                  const bool use_canonical_event_reps,
                                                  const CGAL::FT& current_offset,
-                                                 CGAL::FT& offset_future_bound,
+                                                 const std::optional<CGAL::FT>& offset_future_bound,
                                                  PQ& queue)
 {
-    CGAL_SS3_CORE_TRACE_V(4, ">>> Collect Split Merge Events [" << current_offset << "; " << offset_future_bound << "]");
+    CGAL_SS3_CORE_TRACE_V(4, ">>> Collect Split Merge Events [" << current_offset << "]");
 
 #ifdef CGAL_SS3_RUN_TIMERS
     CGAL::Real_timer timer;
@@ -3969,10 +3870,6 @@ void SimpleStraightSkel::collectSplitMergeEvents(const std::list<VertexSPtr>& ve
             event->setFacet2(facet_2);
 
             queue.push(event);
-
-#ifdef CGAL_SS3_UPDATE_EVENT_FILTERING_BOUND
-            offset_future_bound = offset_event;
-#endif
         }
     }
 
@@ -3985,7 +3882,7 @@ void SimpleStraightSkel::collectSplitMergeEvents(const std::list<VertexSPtr>& ve
 
 void SimpleStraightSkel::collectSplitMergeEvents(PolyhedronSPtr polyhedron,
                                                  const CGAL::FT& current_offset,
-                                                 CGAL::FT& offset_future_bound,
+                                                 const std::optional<CGAL::FT>& offset_future_bound,
                                                  PQ& queue)
 {
     return collectSplitMergeEvents(polyhedron->vertices(), polyhedron, true /*use canonical reps*/,
@@ -3997,10 +3894,10 @@ void SimpleStraightSkel::collectEdgeSplitEvents(const std::list<EdgeSPtr>& edges
                                                 PolyhedronSPtr polyhedron,
                                                 const bool use_canonical_event_reps,
                                                 const CGAL::FT& current_offset,
-                                                CGAL::FT& offset_future_bound,
+                                                const std::optional<CGAL::FT>& offset_future_bound,
                                                 PQ& queue)
 {
-    CGAL_SS3_CORE_TRACE_V(4, ">>> Collect Edge Split Events [" << current_offset << "; " << offset_future_bound << "]");
+    CGAL_SS3_CORE_TRACE_V(4, ">>> Collect Edge Split Events [" << current_offset << "]");
 
 #ifdef CGAL_SS3_PROFILE_FILTERING_MECHANISMS
     unsigned int filtered_candidates = 0;
@@ -4058,16 +3955,13 @@ void SimpleStraightSkel::collectEdgeSplitEvents(const std::list<EdgeSPtr>& edges
 
         // not outside of the loop just because maybe one day this will be called
         // as the first collect function with an initial bound that gets updated...
-        const bool use_bbox_filtering = (offset_future_bound != - std::numeric_limits<CGAL::FT>::max());
-        const CGAL::FT max_relevant_shift = offset_future_bound - current_offset;
 
         CGAL::Bbox_3 b1;
-        if (use_bbox_filtering) {
-            Segment3SPtr offset_e1 = PolyhedronTransformation::shiftEdge(edge_1, max_relevant_shift);
-            b1 = edge_1->getVertexSrc()->getPoint()->bbox();
+        if (offset_future_bound) {
+            b1 += edge_1->getVertexSrc()->getPoint()->bbox();
             b1 += edge_1->getVertexDst()->getPoint()->bbox();
-            b1 += offset_e1->source().bbox();
-            b1 += offset_e1->target().bbox();
+            b1 += getFinalPoint(edge_1->getVertexSrc(), *offset_future_bound)->bbox();
+            b1 += getFinalPoint(edge_1->getVertexDst(), *offset_future_bound)->bbox();
         }
 
         std::list<EdgeSPtr>::iterator it_e2 = edges_reflex_2.begin();
@@ -4129,13 +4023,14 @@ void SimpleStraightSkel::collectEdgeSplitEvents(const std::list<EdgeSPtr>& edges
             // - The shifted edge could be different due to other events... but then this other event
             //   will be treated first and the event will be invalid
 
-            if (use_bbox_filtering) {
-                // let's just check if bboxes overlap first
-                Segment3SPtr offset_e2 = PolyhedronTransformation::shiftEdge(edge_2, max_relevant_shift);
-                CGAL::Bbox_3 b2 = edge_2->getVertexSrc()->getPoint()->bbox();
+            // let's just check if bboxes overlap first
+            if (offset_future_bound) {
+                CGAL::Bbox_3 b2;
+                b2 += edge_2->getVertexSrc()->getPoint()->bbox();
                 b2 += edge_2->getVertexDst()->getPoint()->bbox();
-                b2 += offset_e2->source().bbox();
-                b2 += offset_e2->target().bbox();
+                b2 += getFinalPoint(edge_2->getVertexSrc(), *offset_future_bound)->bbox();
+                b2 += getFinalPoint(edge_2->getVertexDst(), *offset_future_bound)->bbox();
+
                 if (!CGAL::do_overlap(b1, b2)) {
 #ifdef CGAL_SS3_PROFILE_FILTERING_MECHANISMS
                     ++filtered_candidates;
@@ -4213,10 +4108,6 @@ void SimpleStraightSkel::collectEdgeSplitEvents(const std::list<EdgeSPtr>& edges
 #endif
 
             queue.push(event);
-
-#ifdef CGAL_SS3_UPDATE_EVENT_FILTERING_BOUND
-            offset_future_bound = offset_event;
-#endif
         }
     }
 
@@ -4232,7 +4123,7 @@ void SimpleStraightSkel::collectEdgeSplitEvents(const std::list<EdgeSPtr>& edges
 
 void SimpleStraightSkel::collectEdgeSplitEvents(PolyhedronSPtr polyhedron,
                                                 const CGAL::FT& current_offset,
-                                                CGAL::FT& offset_future_bound,
+                                                const std::optional<CGAL::FT>& offset_future_bound,
                                                 PQ& queue)
 {
     return collectEdgeSplitEvents(polyhedron->edges(), polyhedron->edges(), polyhedron, true /*use canonical reps*/,
@@ -4246,10 +4137,10 @@ void SimpleStraightSkel::collectPierceEvents(const std::list<VertexSPtr>& vertic
                                              const std::list<FacetSPtr>& facets,
                                              PolyhedronSPtr polyhedron,
                                              const CGAL::FT& current_offset,
-                                             CGAL::FT& offset_future_bound,
+                                             const std::optional<CGAL::FT>& offset_future_bound,
                                              PQ& queue)
 {
-    CGAL_SS3_CORE_TRACE_V(4, ">>> Collect Pierce Events [" << current_offset << "; " << offset_future_bound << "]");
+    CGAL_SS3_CORE_TRACE_V(4, ">>> Collect Pierce Events [" << current_offset << "]");
 
 #ifdef CGAL_SS3_RUN_TIMERS
     CGAL::Real_timer timer;
@@ -4318,13 +4209,10 @@ void SimpleStraightSkel::collectPierceEvents(const std::list<VertexSPtr>& vertic
 
                 // not outside of the loop just because maybe one day this might get called
                 // as the first collect function with an initial bound that gets updated...
-                const bool use_filtering = (offset_future_bound != - std::numeric_limits<CGAL::FT>::max());
+                if (offset_future_bound) {
+                    Point3SPtr shifted_pt = getFinalPoint(vertex, *offset_future_bound);
+                    Plane3SPtr shifted_plane = getFinalPlane(facet, *offset_future_bound);
 
-                if (use_filtering) {
-                    CGAL::FT max_relevant_shift = offset_future_bound - current_offset;
-
-                    Point3SPtr shifted_pt = PolyhedronTransformation::shiftPoint(vertex, max_relevant_shift);
-                    Plane3SPtr shifted_plane = PolyhedronTransformation::shiftPlane(facet, max_relevant_shift);
                     if (KernelWrapper::side(shifted_plane, shifted_pt) < 0) {
 #ifdef CGAL_SS3_PROFILE_FILTERING_MECHANISMS
                         ++filtered_candidates;
@@ -4344,7 +4232,7 @@ void SimpleStraightSkel::collectPierceEvents(const std::list<VertexSPtr>& vertic
                     CGAL::Bbox_3 b2;
                     for(VertexSPtr v : facet->vertices()) {
                         b2 += v->getPoint()->bbox();
-                        b2 += PolyhedronTransformation::shiftPoint(v, max_relevant_shift)->bbox();
+                        b2 += getFinalPoint(v, *offset_future_bound)->bbox();
                     }
 
                     if (!CGAL::do_overlap(b1, b2)) {
@@ -4440,10 +4328,6 @@ void SimpleStraightSkel::collectPierceEvents(const std::list<VertexSPtr>& vertic
                 event->setVertex(vertex);
 
                 queue.push(event);
-
-#ifdef CGAL_SS3_UPDATE_EVENT_FILTERING_BOUND
-                offset_future_bound = offset_event;
-#endif
             }
         }
     }
@@ -4461,7 +4345,7 @@ void SimpleStraightSkel::collectPierceEvents(const std::list<VertexSPtr>& vertic
 
 void SimpleStraightSkel::collectPierceEvents(PolyhedronSPtr polyhedron,
                                              const CGAL::FT& current_offset,
-                                             CGAL::FT& offset_future_bound,
+                                             const std::optional<CGAL::FT>& offset_future_bound,
                                              PQ& queue)
 {
     return collectPierceEvents(polyhedron->vertices(), polyhedron->facets(), polyhedron,
@@ -4504,12 +4388,13 @@ void SimpleStraightSkel::printQueue(const PQ& queue) {
 // and checking that the first valid event is the same for both queues
 bool SimpleStraightSkel::checkQueueCorrectness(const PQ& queue,
                                                PolyhedronSPtr polyhedron,
-                                               const CGAL::FT& current_offset) {
+                                               const CGAL::FT& current_offset,
+                                               const std::optional<CGAL::FT>& offset_future_bound) {
     CGAL_SS3_CORE_TRACE("checkQueueCorrectness()");
 
     // Compute a queue from scratch using collectEvents()
     PQ queue_from_scratch;
-    collectEvents(polyhedron, current_offset, queue_from_scratch);
+    collectEvents(polyhedron, current_offset, offset_future_bound, queue_from_scratch);
 
     // Duplicate the queue since we need to pop events
     PQ duplicate_queue = queue;
@@ -4689,38 +4574,20 @@ bool SimpleStraightSkel::checkQueueCorrectness(const PQ& queue,
 
 void SimpleStraightSkel::collectLocalEvents(PolyhedronSPtr polyhedron,
                                             const CGAL::FT& current_offset,
+                                            const std::optional<CGAL::FT>& offset_future_bound,
                                             PQ& queue)
 {
     CGAL_SS3_CORE_TRACE_V(2, "collectLocalEvents(" << current_offset << ")");
 
-    // return collectEvents(polyhedron, current_offset, queue);
+    // return collectEvents(polyhedron, current_offset, offset_future_bound, queue);
 
 #ifdef CGAL_SS3_RUN_TIMERS
     CGAL::Real_timer timer;
     timer.start();
 #endif
 
-    // two types of useless events:
-    // - events that are in the past:
-    //     offset > current_offset <--- values are negative and decreasing!
-    // - events that are stricly later than the current next tentative offset:
-    //     offset < curr_earliest_next_offset
-    CGAL::FT offset_future_bound = - std::numeric_limits<double>::max();
-
-    // if we stop immediately after the last save event, there is no point investigating events
-    // that are farther away
-    if (!save_offsets_.empty()) {
-        util::ConfigurationSPtr config = util::Configuration::getInstance();
-        if (config->isLoaded()) {
-            if ((config->contains("main", "stop_after_last_save_event") &&
-                 config->getBool("main", "stop_after_last_save_event"))) {
-                offset_future_bound = (std::max)(offset_future_bound, save_offsets_.back());
-            }
-        }
-    }
-
     CGAL_SS3_CORE_TRACE_V(4, "Past bound = " << current_offset);
-    CGAL_SS3_CORE_TRACE_V(4, "Initial future bound = " << offset_future_bound);
+    CGAL_SS3_CORE_TRACE_IF(offset_future_bound, 4, "Initial future bound = " << *offset_future_bound);
 
     {
         std::list<EdgeSPtr> local_edges(post_op_edges_.begin(), post_op_edges_.end());
@@ -4945,10 +4812,14 @@ void SimpleStraightSkel::collectLocalEvents(PolyhedronSPtr polyhedron,
     // CGAL_postcondition(checkQueueCorrectness(queue, polyhedron, current_offset));
 }
 
-// @speed can we associate a Boolean value to elements that say: "there is an event associated"
-// to this element, and not look further for other events for this element?
+// two types of useless events:
+// - events that are in the past:
+//     offset > current_offset <--- values are negative and decreasing!
+// - events that are stricly later than the current next tentative offset:
+//     offset < curr_earliest_next_offset
 void SimpleStraightSkel::collectEvents(PolyhedronSPtr polyhedron,
                                        const CGAL::FT& current_offset,
+                                       const std::optional<CGAL::FT>& offset_future_bound,
                                        PQ& queue)
 {
     CGAL_SS3_CORE_TRACE_V(2, "collectEvents(offset = " << current_offset << ")");
@@ -4963,27 +4834,8 @@ void SimpleStraightSkel::collectEvents(PolyhedronSPtr polyhedron,
     timer.start();
 #endif
 
-    // two types of useless events:
-    // - events that are in the past:
-    //     offset > current_offset <--- values are negative and decreasing!
-    // - events that are stricly later than the current next tentative offset:
-    //     offset < curr_earliest_next_offset
-    CGAL::FT offset_future_bound = - std::numeric_limits<double>::max();
-
-    // if we stop immediately after the last save event, there is no point investigating events
-    // that are farther away
-    if (!save_offsets_.empty()) {
-        util::ConfigurationSPtr config = util::Configuration::getInstance();
-        if (config->isLoaded()) {
-            if ((config->contains("main", "stop_after_last_save_event") &&
-                 config->getBool("main", "stop_after_last_save_event"))) {
-                offset_future_bound = (std::max)(offset_future_bound, save_offsets_.back());
-            }
-        }
-    }
-
     CGAL_SS3_CORE_TRACE_V(8, "Past bound = " << current_offset);
-    CGAL_SS3_CORE_TRACE_V(8, "Initial future bound = " << offset_future_bound);
+    CGAL_SS3_CORE_TRACE_IF(offset_future_bound, 8, "Initial future bound = " << *offset_future_bound);
 
     // --- Vanish Events
 #ifdef CGAL_SS3_USE_GENERIC_VANISH_EVENT
@@ -5008,8 +4860,6 @@ void SimpleStraightSkel::collectEvents(PolyhedronSPtr polyhedron,
     collectPierceEvents(polyhedron, current_offset, offset_future_bound, queue);
     collectSurfaceEvents(polyhedron, current_offset, offset_future_bound, queue);
     collectEdgeSplitEvents(polyhedron, current_offset, offset_future_bound, queue);
-
-    CGAL_SS3_CORE_TRACE_V(8, "Final offset upper bound = " << offset_future_bound);
 
 #ifdef CGAL_SS3_RUN_TIMERS
     timer.stop();
@@ -5080,9 +4930,6 @@ AbstractEventSPtr SimpleStraightSkel::nextEvent(PQ& queue,
         // we know it is valid". Is it just doing _again_ all combinatorial checks to pop time?
         if (isEventObsolete(event)) {
             CGAL_SS3_CORE_TRACE_V(8, "Skipping obsolete event E" << event->getID());
-#ifdef CGAL_SS3_REFRESH_QUEUE_AT_EACH_ITERATION
-            CGAL_assertion(false); // should never happen since we refresh
-#endif
             queue.pop();
             return nextEvent(queue, current_offset);
         }
@@ -5158,8 +5005,8 @@ PolyhedronSPtr SimpleStraightSkel::shiftToEventOffset(PolyhedronSPtr polyhedron,
 // This 'handle' is in fact more akin to a collect, but the interesting point
 // is that it happens after pop time
 SimpleStraightSkel::EventStatus
-SimpleStraightSkel::handleSaveOffsetEvent(const CGAL::FT& current_offset,
-                                          SaveOffsetEventSPtr event,
+SimpleStraightSkel::handleSaveOffsetEvent(SaveOffsetEventSPtr event,
+                                          const CGAL::FT& current_offset,
                                           PolyhedronSPtr polyhedron)
 {
     CGAL_SS3_CORE_TRACE_V(4, "########################################");
@@ -5186,8 +5033,8 @@ SimpleStraightSkel::handleSaveOffsetEvent(const CGAL::FT& current_offset,
 // This 'handle' is in fact more akin to a collect, but the interesting point
 // is that it happens after pop time
 SimpleStraightSkel::EventStatus
-SimpleStraightSkel::handleConstOffsetEvent(const CGAL::FT& current_offset,
-                                           ConstOffsetEventSPtr event,
+SimpleStraightSkel::handleConstOffsetEvent(ConstOffsetEventSPtr event,
+                                           const CGAL::FT& current_offset,
                                            PolyhedronSPtr polyhedron)
 {
   CGAL_SS3_CORE_TRACE_V(4, "########################################");
@@ -5219,8 +5066,9 @@ SimpleStraightSkel::handleConstOffsetEvent(const CGAL::FT& current_offset,
 // This function might not do anything, for example if the vanish event is in fact
 // escalated as a contact event.
 SimpleStraightSkel::EventStatus
-SimpleStraightSkel::handleVanishEvent(const CGAL::FT& current_offset,
-                                      VanishEventSPtr event,
+SimpleStraightSkel::handleVanishEvent(VanishEventSPtr event,
+                                      const CGAL::FT& current_offset,
+                                      const std::optional<CGAL::FT>& offset_future_bound,
                                       PolyhedronSPtr polyhedron)
 {
     CGAL_SS3_CORE_TRACE_V(8, "########################################");
@@ -5353,7 +5201,7 @@ SimpleStraightSkel::handleVanishEvent(const CGAL::FT& current_offset,
         edge_event->setNode(node);
         edge_event->setEdge(edge);
 
-        return handleEdgeEvent(current_offset, edge_event, polyhedron);
+        return handleEdgeEvent(edge_event, current_offset, offset_future_bound, polyhedron);
     }
 
     // EdgeMergeEvent
@@ -5445,7 +5293,7 @@ SimpleStraightSkel::handleVanishEvent(const CGAL::FT& current_offset,
         edge_merge_event->setEdge1(edge_1);
         edge_merge_event->setEdge2(edge_2);
 
-        return handleEdgeMergeEvent(current_offset, edge_merge_event, polyhedron);
+        return handleEdgeMergeEvent(edge_merge_event, current_offset, offset_future_bound, polyhedron);
     }
 
     // TriangleEvent
@@ -5493,7 +5341,7 @@ SimpleStraightSkel::handleVanishEvent(const CGAL::FT& current_offset,
         triangle_event->setFacet(facet);
         triangle_event->setEdgeBegin(edge);
 
-        return handleTriangleEvent(current_offset, triangle_event, polyhedron);
+        return handleTriangleEvent(triangle_event, current_offset, offset_future_bound, polyhedron);
     }
 
     // DblEdgeMergeEvent
@@ -5572,7 +5420,7 @@ SimpleStraightSkel::handleVanishEvent(const CGAL::FT& current_offset,
         dbl_edge_merge_event->setEdge21(edge_21);
         dbl_edge_merge_event->setEdge22(edge_22);
 
-        return handleDblEdgeMergeEvent(current_offset, dbl_edge_merge_event, polyhedron);
+        return handleDblEdgeMergeEvent(dbl_edge_merge_event, current_offset, offset_future_bound, polyhedron);
     }
 
     // DblTriangleEvent
@@ -5600,7 +5448,7 @@ SimpleStraightSkel::handleVanishEvent(const CGAL::FT& current_offset,
         dbl_triangle_event->setNode(node);
         dbl_triangle_event->setEdge(edge);
 
-        return handleDblTriangleEvent(current_offset, dbl_triangle_event, polyhedron);
+        return handleDblTriangleEvent(dbl_triangle_event, current_offset, offset_future_bound, polyhedron);
     }
 
     // TetrahedronEvent
@@ -5617,15 +5465,16 @@ SimpleStraightSkel::handleVanishEvent(const CGAL::FT& current_offset,
         tetrahedron_event->setNode(node);
         tetrahedron_event->setEdgeBegin(edge);
 
-        return handleTetrahedronEvent(current_offset, tetrahedron_event, polyhedron);
+        return handleTetrahedronEvent(tetrahedron_event, current_offset, offset_future_bound, polyhedron);
     }
 
     return EventStatus::NON_EVENT;
 }
 
 SimpleStraightSkel::EventStatus
-SimpleStraightSkel::handleEdgeEvent(const CGAL::FT& current_offset,
-                                    EdgeEventSPtr event,
+SimpleStraightSkel::handleEdgeEvent(EdgeEventSPtr event,
+                                    const CGAL::FT& current_offset,
+                                    const std::optional<CGAL::FT>& offset_future_bound,
                                     PolyhedronSPtr polyhedron)
 {
     CGAL_SS3_CORE_TRACE_V(4, "########################################");
@@ -5715,8 +5564,7 @@ SimpleStraightSkel::handleEdgeEvent(const CGAL::FT& current_offset,
         for (unsigned int i = 0; i < 4; i++) {
             facets_clone[i] = Facet::create();
             facets_clone[i]->setPlane(facets[i]->getPlane());
-            facets_clone[i]->setBasePlaneID(facets[i]->getBasePlaneID()); // @todo useless but just in case for now...
-            facets_clone[i]->cachedPlane_ = facets[i]->cachedPlane_;
+            facets_clone[i]->setBasePlane(facets[i]->getBasePlane()); // @todo useless but just in case for now...
             if (facets[i]->hasData()) {
                 SkelFacetDataSPtr data_clone = SkelFacetData::create(facets_clone[i]);
                 data_clone->setSpeed(std::dynamic_pointer_cast<SkelFacetData>(
@@ -5788,8 +5636,7 @@ SimpleStraightSkel::handleEdgeEvent(const CGAL::FT& current_offset,
         for (unsigned int i = 0; i < 4; i++) {
             facets_clone[i] = Facet::create();
             facets_clone[i]->setPlane(facets[i]->getPlane());
-            facets_clone[i]->setBasePlaneID(facets[i]->getBasePlaneID());
-            facets_clone[i]->cachedPlane_ = facets[i]->cachedPlane_; // @todo there should be a constructor/function "Facet::copyPropertiesAndData(otherFacet)"
+            facets_clone[i]->setBasePlane(facets[i]->getBasePlane());
             if (facets[i]->hasData()) {
                 SkelFacetDataSPtr data_clone = SkelFacetData::create(facets_clone[i]);
                 data_clone->setSpeed(std::dynamic_pointer_cast<SkelFacetData>(
@@ -5851,9 +5698,7 @@ SimpleStraightSkel::handleEdgeEvent(const CGAL::FT& current_offset,
             for (unsigned int i = 0; i < 4; i++) {
                 facets_c[i] = Facet::create();
                 facets_c[i]->setPlane(facets[i]->getPlane());
-                facets_c[i]->setBasePlaneID(facets[i]->getBasePlaneID());
-                facets_c[i]->cachedPlane_ = facets[i]->cachedPlane_;
-
+                facets_c[i]->setBasePlane(facets[i]->getBasePlane());
             }
             for (unsigned int i = 0; i < 4; i++) {
                 edges[i]->setFacetR(facets_c[(i+3)%4]);
@@ -5910,7 +5755,13 @@ SimpleStraightSkel::handleEdgeEvent(const CGAL::FT& current_offset,
         } else if (edges[2]->getVertexDst() == vertex_dst_offset) {
             edges[2]->replaceVertexDst(vertex_src_offset);
         }
-#ifndef CGAL_SS3_REFRESH_QUEUE_AT_EACH_ITERATION
+
+        if (offset_future_bound) {
+            vertex_src_offset->final_point_ = nullptr;
+            vertex_dst_offset->final_point_ = nullptr;
+        }
+
+        // @fixme duplicates with below
         post_op_vertices_VV_ = {{ vertex_src_offset, vertex_dst_offset }};
 
         // now, in the facets that have grown in size, we also need to collect
@@ -5923,7 +5774,6 @@ SimpleStraightSkel::handleEdgeEvent(const CGAL::FT& current_offset,
         CGAL_assertion(post_op_vertices_VV_.size() == 6);
 
         // if there was no flip, then unmodified vertices should not have new events
-#endif
     }
 
     // update arcs and sheets
@@ -5947,7 +5797,6 @@ SimpleStraightSkel::handleEdgeEvent(const CGAL::FT& current_offset,
 #endif
     skel_result_->addEvent(event);
 
-#ifndef CGAL_SS3_REFRESH_QUEUE_AT_EACH_ITERATION
     post_op_vertices_ = {{ vertex_src_offset, vertex_dst_offset }};
     post_op_edges_ = {{ edge_offset,
                         edge_offset->next(vertex_src_offset),
@@ -5959,20 +5808,19 @@ SimpleStraightSkel::handleEdgeEvent(const CGAL::FT& current_offset,
                        post_op_edges_.size() == 5 &&
                        post_op_facets_.size() == 4);
 
-    // --
     for (EdgeSPtr poe : post_op_edges_) {
         post_op_vertices_pierce_.insert(poe->getVertexSrc());
         post_op_vertices_pierce_.insert(poe->getVertexDst());
     }
     CGAL_postcondition(post_op_vertices_pierce_.size() == 6);
-#endif
 
     return EventStatus::EVENT_HANDLED;
 }
 
 SimpleStraightSkel::EventStatus
-SimpleStraightSkel::handleEdgeMergeEvent(const CGAL::FT& current_offset,
-                                         EdgeMergeEventSPtr event,
+SimpleStraightSkel::handleEdgeMergeEvent(EdgeMergeEventSPtr event,
+                                         const CGAL::FT& current_offset,
+                                         const std::optional<CGAL::FT>& offset_future_bound,
                                          PolyhedronSPtr polyhedron)
 {
     CGAL_SS3_CORE_TRACE_V(4, "########################################");
@@ -6059,6 +5907,10 @@ SimpleStraightSkel::handleEdgeMergeEvent(const CGAL::FT& current_offset,
     }
     polyhedron->removeVertex(vertex_2);
 
+    if (offset_future_bound) {
+        vertex->final_point_ = nullptr;
+    }
+
 #ifndef CGAL_SS3_NO_SKELETON_DS
     SkelVertexDataSPtr vertex_data = std::dynamic_pointer_cast<SkelVertexData>(vertex->getData());
     vertex_data->setNode(event->getNode());
@@ -6068,7 +5920,6 @@ SimpleStraightSkel::handleEdgeMergeEvent(const CGAL::FT& current_offset,
 #endif
     skel_result_->addEvent(event);
 
-#ifndef CGAL_SS3_REFRESH_QUEUE_AT_EACH_ITERATION
     post_op_vertices_ = {{ vertex }};
     post_op_edges_ = {{ edge_1, edge_b1, edge_b, edge_b2 }};
     post_op_facets_ = {{ facet_l, facet_r }};
@@ -6084,14 +5935,14 @@ SimpleStraightSkel::handleEdgeMergeEvent(const CGAL::FT& current_offset,
     // since all faces are getting smaller, we don't need to check unmodified edges
     post_op_edges_edgesplit_ = {{ edge_1, edge_b1, edge_b, edge_b2 }};
     CGAL_postcondition(post_op_edges_edgesplit_.size() == 4);
-#endif
 
     return EventStatus::EVENT_HANDLED;
 }
 
 SimpleStraightSkel::EventStatus
-SimpleStraightSkel::handleTriangleEvent(const CGAL::FT& current_offset,
-                                        TriangleEventSPtr event,
+SimpleStraightSkel::handleTriangleEvent(TriangleEventSPtr event,
+                                        const CGAL::FT& current_offset,
+                                        const std::optional<CGAL::FT>& offset_future_bound,
                                         PolyhedronSPtr polyhedron)
 {
     CGAL_SS3_CORE_TRACE_V(4, "########################################");
@@ -6158,6 +6009,10 @@ SimpleStraightSkel::handleTriangleEvent(const CGAL::FT& current_offset,
     }
     polyhedron->addVertex(vertex_offset);
 
+    if (offset_future_bound) {
+        vertex_offset->final_point_ = nullptr;
+    }
+
 #ifndef CGAL_SS3_NO_SKELETON_DS
     SkelVertexDataSPtr data_offset = SkelVertexData::create(vertex_offset);
     data_offset->setNode(event->getNode());
@@ -6167,10 +6022,13 @@ SimpleStraightSkel::handleTriangleEvent(const CGAL::FT& current_offset,
 #endif
     skel_result_->addEvent(event);
 
-#ifndef CGAL_SS3_REFRESH_QUEUE_AT_EACH_ITERATION
     post_op_vertices_ = {{ vertex_offset }};
-    for (EdgeWPtr we : vertex_offset->edges()) { post_op_edges_.insert(EdgeSPtr(we.lock())); }
-    for (FacetWPtr wf : vertex_offset->facets()) { post_op_facets_.insert(wf.lock()); }
+    for (EdgeWPtr we : vertex_offset->edges()) {
+        post_op_edges_.insert(EdgeSPtr(we.lock()));
+    }
+    for (FacetWPtr wf : vertex_offset->facets()) {
+        post_op_facets_.insert(wf.lock());
+    }
     CGAL_postcondition(post_op_vertices_.size() == 1 && post_op_edges_.size() == 3 && post_op_facets_.size() == 3);
 
     // faces are smaller so nothing from unmodified vertices
@@ -6190,14 +6048,14 @@ SimpleStraightSkel::handleTriangleEvent(const CGAL::FT& current_offset,
     // faces are getting smaller so no need to check unmodified edges
     post_op_edges_edgesplit_ = post_op_edges_;
     CGAL_postcondition(post_op_edges_edgesplit_.size() == 3);
-#endif
 
     return EventStatus::EVENT_HANDLED;
 }
 
 SimpleStraightSkel::EventStatus
-SimpleStraightSkel::handleDblEdgeMergeEvent(const CGAL::FT& current_offset,
-                                            DblEdgeMergeEventSPtr event,
+SimpleStraightSkel::handleDblEdgeMergeEvent(DblEdgeMergeEventSPtr event,
+                                            const CGAL::FT& current_offset,
+                                            const std::optional<CGAL::FT>& offset_future_bound,
                                             PolyhedronSPtr polyhedron)
 {
     CGAL_SS3_CORE_TRACE_V(4, "########################################");
@@ -6298,7 +6156,6 @@ SimpleStraightSkel::handleDblEdgeMergeEvent(const CGAL::FT& current_offset,
 #endif
     skel_result_->addEvent(event);
 
-#ifndef CGAL_SS3_REFRESH_QUEUE_AT_EACH_ITERATION
     post_op_vertices_.clear();
     post_op_edges_ = {{ edge_offset_11, edge_offset_21 }};
     post_op_facets_ = {{ edge_offset_11->getFacetL(),
@@ -6316,14 +6173,14 @@ SimpleStraightSkel::handleDblEdgeMergeEvent(const CGAL::FT& current_offset,
     CGAL_assertion(!isReflex(edge_offset_11));
     CGAL_assertion(!isReflex(edge_offset_21));
     post_op_edges_edgesplit_.clear();
-#endif
 
     return EventStatus::EVENT_HANDLED;
 }
 
 SimpleStraightSkel::EventStatus
-SimpleStraightSkel::handleDblTriangleEvent(const CGAL::FT& current_offset,
-                                           DblTriangleEventSPtr event,
+SimpleStraightSkel::handleDblTriangleEvent(DblTriangleEventSPtr event,
+                                           const CGAL::FT& current_offset,
+                                           const std::optional<CGAL::FT>& offset_future_bound,
                                            PolyhedronSPtr polyhedron)
 {
     CGAL_SS3_CORE_TRACE_V(4, "########################################");
@@ -6435,7 +6292,6 @@ SimpleStraightSkel::handleDblTriangleEvent(const CGAL::FT& current_offset,
 #endif
     skel_result_->addEvent(event);
 
-#ifndef CGAL_SS3_REFRESH_QUEUE_AT_EACH_ITERATION
     post_op_vertices_.clear();
     post_op_edges_ = {{ edge_offset_l }};
     post_op_facets_ = {{ facet_ll, facet_rr }};
@@ -6449,14 +6305,14 @@ SimpleStraightSkel::handleDblTriangleEvent(const CGAL::FT& current_offset,
 
     // faces are getting smaller so no need to check unmodified edges
     post_op_edges_edgesplit_ = {{ edge_offset_l }};
-#endif
 
     return EventStatus::EVENT_HANDLED;
 }
 
 SimpleStraightSkel::EventStatus
-SimpleStraightSkel::handleTetrahedronEvent(const CGAL::FT& current_offset,
-                                           TetrahedronEventSPtr event,
+SimpleStraightSkel::handleTetrahedronEvent(TetrahedronEventSPtr event,
+                                           const CGAL::FT& current_offset,
+                                           const std::optional<CGAL::FT>& offset_future_bound,
                                            PolyhedronSPtr polyhedron)
 {
     CGAL_SS3_CORE_TRACE_V(4, "########################################");
@@ -6525,7 +6381,6 @@ SimpleStraightSkel::handleTetrahedronEvent(const CGAL::FT& current_offset,
 #endif
     skel_result_->addEvent(event);
 
-#ifndef CGAL_SS3_REFRESH_QUEUE_AT_EACH_ITERATION
     post_op_vertices_.clear();
     post_op_edges_.clear();
     post_op_facets_.clear();
@@ -6535,7 +6390,6 @@ SimpleStraightSkel::handleTetrahedronEvent(const CGAL::FT& current_offset,
     post_op_vertices_VV_.clear();
     post_op_vertices_pierce_.clear();
     post_op_edges_edgesplit_.clear();
-#endif
 
     return EventStatus::EVENT_HANDLED;
 }
@@ -6548,7 +6402,7 @@ SimpleStraightSkel::isActualVertexEvent(VertexEventSPtr event,
     FacetSPtr facet_1 = event->getFacet1();
     FacetSPtr facet_2 = event->getFacet2();
 
-    // @fixme avoid all this duplication...
+    // @todo avoid all this duplication...
     EdgeSPtr edge_11 = EdgeSPtr();
     EdgeSPtr edge_12 = EdgeSPtr();
     std::list<EdgeWPtr>::iterator it_e1 = vertex_1->edges().begin();
@@ -6589,8 +6443,9 @@ SimpleStraightSkel::isActualVertexEvent(VertexEventSPtr event,
 }
 
 SimpleStraightSkel::EventStatus
-SimpleStraightSkel::handleVertexEvent(const CGAL::FT& current_offset,
-                                      VertexEventSPtr event,
+SimpleStraightSkel::handleVertexEvent(VertexEventSPtr event,
+                                      const CGAL::FT& current_offset,
+                                      const std::optional<CGAL::FT>& offset_future_bound,
                                       PolyhedronSPtr polyhedron)
 {
     CGAL_SS3_CORE_TRACE_V(8, "########################################");
@@ -6710,6 +6565,11 @@ SimpleStraightSkel::handleVertexEvent(const CGAL::FT& current_offset,
         edge_21->replaceVertexDst(vertex_1);
     }
 
+    if (offset_future_bound) {
+        vertex_1->final_point_ = nullptr;
+        vertex_2->final_point_ = nullptr;
+    }
+
 #ifndef CGAL_SS3_NO_SKELETON_DS
     SkelEdgeDataSPtr edge_data = std::dynamic_pointer_cast<SkelEdgeData>(edge_tomerge_2->getData());
     edge_data->setSheet(SheetSPtr());
@@ -6730,7 +6590,6 @@ SimpleStraightSkel::handleVertexEvent(const CGAL::FT& current_offset,
 #endif
     skel_result_->addEvent(event);
 
-#ifndef CGAL_SS3_REFRESH_QUEUE_AT_EACH_ITERATION
     post_op_vertices_ = {{ vertex_1, vertex_2 }};
     post_op_edges_ = {{ edge_tomerge_1, edge_12, edge_21, edge_tomerge_2, edge_11, edge_22 }};
     for (FacetWPtr wf : vertex_1->facets()) { post_op_facets_.insert(wf.lock()); }
@@ -6750,7 +6609,6 @@ SimpleStraightSkel::handleVertexEvent(const CGAL::FT& current_offset,
         post_op_vertices_pierce_.insert(poe->getVertexSrc());
         post_op_vertices_pierce_.insert(poe->getVertexDst());
     }
-#endif
 
     return EventStatus::EVENT_HANDLED;
 }
@@ -6804,8 +6662,9 @@ SimpleStraightSkel::isActualFlipVertexEvent(FlipVertexEventSPtr event,
 }
 
 SimpleStraightSkel::EventStatus
-SimpleStraightSkel::handleFlipVertexEvent(const CGAL::FT& current_offset,
-                                          FlipVertexEventSPtr event,
+SimpleStraightSkel::handleFlipVertexEvent(FlipVertexEventSPtr event,
+                                          const CGAL::FT& current_offset,
+                                          const std::optional<CGAL::FT>& offset_future_bound,
                                           PolyhedronSPtr polyhedron)
 {
     CGAL_SS3_CORE_TRACE_V(8, "########################################");
@@ -6881,6 +6740,11 @@ SimpleStraightSkel::handleFlipVertexEvent(const CGAL::FT& current_offset,
         edge_2->replaceVertexDst(vertex_1);
     }
 
+    if (offset_future_bound) {
+        vertex_1->final_point_ = nullptr;
+        vertex_2->final_point_ = nullptr;
+    }
+
 #ifndef CGAL_SS3_NO_SKELETON_DS
     vertex_data_1 = std::dynamic_pointer_cast<SkelVertexData>(vertex_1->getData());
     vertex_data_1->setNode(event->getNode());
@@ -6895,7 +6759,6 @@ SimpleStraightSkel::handleFlipVertexEvent(const CGAL::FT& current_offset,
 #endif
     skel_result_->addEvent(event);
 
-#ifndef CGAL_SS3_REFRESH_QUEUE_AT_EACH_ITERATION
     post_op_vertices_ = {{ vertex_1, vertex_2 }};
     for (EdgeWPtr we : vertex_1->edges()) { post_op_edges_.insert(EdgeSPtr(we.lock())); }
     for (EdgeWPtr we : vertex_2->edges()) { post_op_edges_.insert(EdgeSPtr(we.lock())); }
@@ -6912,7 +6775,6 @@ SimpleStraightSkel::handleFlipVertexEvent(const CGAL::FT& current_offset,
       post_op_vertices_pierce_.insert(poe->getVertexSrc());
       post_op_vertices_pierce_.insert(poe->getVertexDst());
     }
-#endif
 
     return EventStatus::EVENT_HANDLED;
 }
@@ -6963,8 +6825,9 @@ SimpleStraightSkel::isActualSurfaceEvent(SurfaceEventSPtr event,
 }
 
 SimpleStraightSkel::EventStatus
-SimpleStraightSkel::handleSurfaceEvent(const CGAL::FT& current_offset,
-                                       SurfaceEventSPtr event,
+SimpleStraightSkel::handleSurfaceEvent(SurfaceEventSPtr event,
+                                       const CGAL::FT& current_offset,
+                                       const std::optional<CGAL::FT>& offset_future_bound,
                                        PolyhedronSPtr polyhedron)
 {
     CGAL_SS3_CORE_TRACE_V(8, "########################################");
@@ -7069,6 +6932,12 @@ SimpleStraightSkel::handleSurfaceEvent(const CGAL::FT& current_offset,
         }
     }
 
+    if (offset_future_bound) {
+        vertex->final_point_ = nullptr;
+        vertex_21->final_point_ = nullptr;
+        vertex_22->final_point_ = nullptr;
+    }
+
 #ifndef CGAL_SS3_NO_SKELETON_DS
     SkelEdgeDataSPtr edge_data = std::dynamic_pointer_cast<SkelEdgeData>(edge_2->getData());
     SheetSPtr sheet = edge_data->getSheet();
@@ -7100,7 +6969,6 @@ SimpleStraightSkel::handleSurfaceEvent(const CGAL::FT& current_offset,
 #endif
     skel_result_->addEvent(event);
 
-#ifndef CGAL_SS3_REFRESH_QUEUE_AT_EACH_ITERATION
     post_op_vertices_ = {{ vertex, vertex_21, vertex_22 }};
     for (VertexSPtr v : post_op_vertices_) {
         for (EdgeWPtr we : v->edges()) {
@@ -7129,14 +6997,14 @@ SimpleStraightSkel::handleSurfaceEvent(const CGAL::FT& current_offset,
     // edge_2->other_face)?
     post_op_vertices_pierce_ = {{ edge_1->getVertexSrc(), edge_1->getVertexDst(), vertex_21, vertex_22 }};
     CGAL_postcondition(post_op_vertices_pierce_.size() == 4);
-#endif
 
     return EventStatus::EVENT_HANDLED;
 }
 
 SimpleStraightSkel::EventStatus
-SimpleStraightSkel::handlePolyhedronSplitEvent(const CGAL::FT& current_offset,
-                                               PolyhedronSplitEventSPtr event,
+SimpleStraightSkel::handlePolyhedronSplitEvent(PolyhedronSplitEventSPtr event,
+                                               const CGAL::FT& current_offset,
+                                               const std::optional<CGAL::FT>& offset_future_bound,
                                                PolyhedronSPtr polyhedron)
 {
     CGAL_SS3_CORE_TRACE_V(4, "########################################");
@@ -7233,6 +7101,11 @@ SimpleStraightSkel::handlePolyhedronSplitEvent(const CGAL::FT& current_offset,
         edge_22->replaceFacetR(edge_2->getFacetR());
     }
 
+    if (offset_future_bound) {
+        vertex_l->final_point_ = nullptr;
+        vertex_r->final_point_ = nullptr;
+    }
+
 #ifndef CGAL_SS3_NO_SKELETON_DS
     SkelVertexDataSPtr data_l = std::dynamic_pointer_cast<SkelVertexData>(vertex_l->getData());
     data_l->setNode(node);
@@ -7249,7 +7122,6 @@ SimpleStraightSkel::handlePolyhedronSplitEvent(const CGAL::FT& current_offset,
 #endif
     skel_result_->addEvent(event);
 
-#ifndef CGAL_SS3_REFRESH_QUEUE_AT_EACH_ITERATION
     post_op_vertices_ = {{ vertex_l, vertex_r }};
     for (VertexSPtr v : post_op_vertices_) {
         for (EdgeWPtr we : v->edges()) {
@@ -7265,7 +7137,6 @@ SimpleStraightSkel::handlePolyhedronSplitEvent(const CGAL::FT& current_offset,
     // probably could improve this but flip vertex events are rare_, so we are rarely
     // looking for new pierce events after a vertex event so it doesn't matter much
     post_op_vertices_pierce_ = {{ vertex_l, vertex_r }};
-#endif
 
     return EventStatus::EVENT_HANDLED;
 }
@@ -7319,8 +7190,9 @@ SimpleStraightSkel::isActualSplitMergeEvent(SplitMergeEventSPtr event,
 }
 
 SimpleStraightSkel::EventStatus
-SimpleStraightSkel::handleSplitMergeEvent(const CGAL::FT& current_offset,
-                                          SplitMergeEventSPtr event,
+SimpleStraightSkel::handleSplitMergeEvent(SplitMergeEventSPtr event,
+                                          const CGAL::FT& current_offset,
+                                          const std::optional<CGAL::FT>& offset_future_bound,
                                           PolyhedronSPtr polyhedron)
 {
     CGAL_SS3_CORE_TRACE_V(8, "########################################");
@@ -7461,6 +7333,11 @@ SimpleStraightSkel::handleSplitMergeEvent(const CGAL::FT& current_offset,
     edge_tomerge_2->replaceFacetL(edge_tosplit->getFacetL());
     edge_tomerge_2->replaceFacetR(edge_tosplit->getFacetR());
 
+    if (offset_future_bound) {
+        vertex_1->final_point_ = nullptr;
+        vertex_2->final_point_ = nullptr;
+    }
+
 #ifndef CGAL_SS3_NO_SKELETON_DS
     SkelEdgeDataSPtr edge_data = std::dynamic_pointer_cast<SkelEdgeData>(edge_tosplit->getData());
     SheetSPtr sheet = edge_data->getSheet();
@@ -7480,7 +7357,6 @@ SimpleStraightSkel::handleSplitMergeEvent(const CGAL::FT& current_offset,
 #endif
     skel_result_->addEvent(event);
 
-#ifndef CGAL_SS3_REFRESH_QUEUE_AT_EACH_ITERATION
     post_op_vertices_ = {{ vertex_1, vertex_2 }};
     for (VertexSPtr v : post_op_vertices_) {
         for (EdgeWPtr we : v->edges()) {
@@ -7500,14 +7376,14 @@ SimpleStraightSkel::handleSplitMergeEvent(const CGAL::FT& current_offset,
     CGAL_assertion(!isReflex(vertex_1));
     CGAL_assertion(!isReflex(vertex_2));
     post_op_vertices_pierce_.clear();
-#endif
 
     return EventStatus::EVENT_HANDLED;
 }
 
 SimpleStraightSkel::EventStatus
-SimpleStraightSkel::handleEdgeSplitEvent(const CGAL::FT& current_offset,
-                                         EdgeSplitEventSPtr event,
+SimpleStraightSkel::handleEdgeSplitEvent(EdgeSplitEventSPtr event,
+                                         const CGAL::FT& current_offset,
+                                         const std::optional<CGAL::FT>& offset_future_bound,
                                          PolyhedronSPtr polyhedron)
 {
     CGAL_SS3_CORE_TRACE_V(4, "########################################");
@@ -7574,6 +7450,12 @@ SimpleStraightSkel::handleEdgeSplitEvent(const CGAL::FT& current_offset,
         edges[i]->getFacetR()->addEdge(edges[i]);
     }
 
+    if (offset_future_bound) {
+        for (std::size_t i=0; i<4; ++i) {
+            vertices[i]->final_point_ = nullptr;
+        }
+    }
+
 #ifndef CGAL_SS3_NO_SKELETON_DS
     SkelEdgeDataSPtr edge_data_1 = std::dynamic_pointer_cast<SkelEdgeData>(edge_1->getData());
     SkelEdgeDataSPtr edge_data_12 = SkelEdgeData::create(edge_12);
@@ -7597,7 +7479,6 @@ SimpleStraightSkel::handleEdgeSplitEvent(const CGAL::FT& current_offset,
 #endif
     skel_result_->addEvent(event);
 
-#ifndef CGAL_SS3_REFRESH_QUEUE_AT_EACH_ITERATION
     post_op_vertices_ = {{ vertices[0], vertices[1], vertices[2], vertices[3] }};
     for (VertexSPtr v : post_op_vertices_) {
         for (EdgeWPtr we : v->edges()) {
@@ -7623,7 +7504,6 @@ SimpleStraightSkel::handleEdgeSplitEvent(const CGAL::FT& current_offset,
         post_op_vertices_pierce_.insert(poe->getVertexDst());
     }
     CGAL_postcondition(post_op_vertices_pierce_.size() == 8);
-#endif
 
     return EventStatus::EVENT_HANDLED;
 }
@@ -7696,8 +7576,9 @@ SimpleStraightSkel::isActualPierceEvent(const CGAL::FT& current_offset,
 }
 
 SimpleStraightSkel::EventStatus
-SimpleStraightSkel::handlePierceEvent(const CGAL::FT& current_offset,
-                                      PierceEventSPtr event,
+SimpleStraightSkel::handlePierceEvent(PierceEventSPtr event,
+                                      const CGAL::FT& current_offset,
+                                      const std::optional<CGAL::FT>& offset_future_bound,
                                       PolyhedronSPtr polyhedron)
 {
     CGAL_SS3_CORE_TRACE_V(8, "########################################");
@@ -7732,7 +7613,6 @@ SimpleStraightSkel::handlePierceEvent(const CGAL::FT& current_offset,
             event->getFacet()->getData());
     FacetSPtr facet_offset = facet_data->getOffsetFacet();
 
-#ifndef CGAL_SS3_REFRESH_QUEUE_AT_EACH_ITERATION
     // the 3 new vertices cannot be reflex, but since we grow faces,
     // we need to check the other extremities of the edges
     for (EdgeWPtr ew : vertex_offset->edges()) {
@@ -7745,7 +7625,6 @@ SimpleStraightSkel::handlePierceEvent(const CGAL::FT& current_offset,
     }
 
     CGAL_postcondition(post_op_vertices_pierce_.size() == 3);
-#endif
 
     appendEventNode(node);
 
@@ -7791,6 +7670,12 @@ SimpleStraightSkel::handlePierceEvent(const CGAL::FT& current_offset,
         polyhedron->addEdge(edges[i]);
     }
 
+    if (offset_future_bound) {
+        for (std::size_t i=0; i<3; ++i) {
+            vertices[i]->final_point_ = nullptr;
+        }
+    }
+
 #ifndef CGAL_SS3_NO_SKELETON_DS
     for (unsigned int i = 0; i < 3; i++) {
         SkelVertexDataSPtr vertex_data = SkelVertexData::create(vertices[i]);
@@ -7808,7 +7693,6 @@ SimpleStraightSkel::handlePierceEvent(const CGAL::FT& current_offset,
 #endif
     skel_result_->addEvent(event);
 
-#ifndef CGAL_SS3_REFRESH_QUEUE_AT_EACH_ITERATION
     post_op_vertices_ = {{ vertices[0], vertices[1], vertices[2] }};
     for (VertexSPtr v : post_op_vertices_) {
         for (EdgeWPtr we : v->edges()) {
@@ -7833,83 +7717,69 @@ SimpleStraightSkel::handlePierceEvent(const CGAL::FT& current_offset,
     CGAL_assertion(!isReflex(vertices[0]));
     CGAL_assertion(!isReflex(vertices[1]));
     CGAL_assertion(!isReflex(vertices[2]));
-#endif
 
     return EventStatus::EVENT_HANDLED;
 }
 
 SimpleStraightSkel::EventStatus
-SimpleStraightSkel::handleEvent(const CGAL::FT& current_offset,
-                                AbstractEventSPtr event,
+SimpleStraightSkel::handleEvent(AbstractEventSPtr event,
+                                const CGAL::FT& current_offset,
+                                const std::optional<CGAL::FT>& offset_future_bound,
                                 PolyhedronSPtr polyhedron)
 {
     EventStatus result = EventStatus::NON_EVENT;
 
     if (event->getType() == AbstractEvent::SAVE_OFFSET_EVENT) {
-        result = handleSaveOffsetEvent(current_offset,
-                                       std::dynamic_pointer_cast<SaveOffsetEvent>(event),
-                                       polyhedron);
+        result = handleSaveOffsetEvent(std::dynamic_pointer_cast<SaveOffsetEvent>(event),
+                                       current_offset, polyhedron);
     } else if (event->getType() == AbstractEvent::CONST_OFFSET_EVENT) {
-        result = handleConstOffsetEvent(current_offset,
-                                        std::dynamic_pointer_cast<ConstOffsetEvent>(event),
-                                        polyhedron);
+        result = handleConstOffsetEvent(std::dynamic_pointer_cast<ConstOffsetEvent>(event),
+                                        current_offset, polyhedron);
 #ifdef CGAL_SS3_USE_GENERIC_VANISH_EVENT
     } else if (event->getType() == AbstractEvent::VANISH_EVENT) {
-        result = handleVanishEvent(current_offset,
-                                   std::dynamic_pointer_cast<VanishEvent>(event),
-                                   polyhedron);
+        result = handleVanishEvent(std::dynamic_pointer_cast<VanishEvent>(event),
+                                   current_offset, offset_future_bound, polyhedron);
 #else
     } else if (event->getType() == AbstractEvent::EDGE_EVENT) {
-        result = handleEdgeEvent(current_offset,
-                                 std::dynamic_pointer_cast<EdgeEvent>(event),
-                                 polyhedron);
+        result = handleEdgeEvent(std::dynamic_pointer_cast<EdgeEvent>(event),
+                                 current_offset, offset_future_bound, polyhedron);
     } else if (event->getType() == AbstractEvent::EDGE_MERGE_EVENT) {
-        result = handleEdgeMergeEvent(current_offset,
-                                      std::dynamic_pointer_cast<EdgeMergeEvent>(event),
-                                      polyhedron);
+        result = handleEdgeMergeEvent(std::dynamic_pointer_cast<EdgeMergeEvent>(event),
+                                      current_offset, offset_future_bound, polyhedron);
     } else if (event->getType() == AbstractEvent::TRIANGLE_EVENT) {
-        result = handleTriangleEvent(current_offset, std::dynamic_pointer_cast<TriangleEvent>(event), polyhedron);
+        result = handleTriangleEvent(std::dynamic_pointer_cast<TriangleEvent>(event),
+                                     current_offset, offset_future_bound, polyhedron);
     } else if (event->getType() == AbstractEvent::DBL_EDGE_MERGE_EVENT) {
-        result = handleDblEdgeMergeEvent(current_offset,
-                                         std::dynamic_pointer_cast<DblEdgeMergeEvent>(event),
-                                         polyhedron);
+        result = handleDblEdgeMergeEvent(std::dynamic_pointer_cast<DblEdgeMergeEvent>(event),
+                                         current_offset, offset_future_bound, polyhedron);
     } else if (event->getType() == AbstractEvent::DBL_TRIANGLE_EVENT) {
-        result = handleDblTriangleEvent(current_offset,
-                                        std::dynamic_pointer_cast<DblTriangleEvent>(event),
-                                        polyhedron);
+        result = handleDblTriangleEvent(std::dynamic_pointer_cast<DblTriangleEvent>(event),
+                                        current_offset, offset_future_bound, polyhedron);
     } else if (event->getType() == AbstractEvent::TETRAHEDRON_EVENT) {
-        result = handleTetrahedronEvent(current_offset,
-                                        std::dynamic_pointer_cast<TetrahedronEvent>(event),
-                                        polyhedron);
+        result = handleTetrahedronEvent(std::dynamic_pointer_cast<TetrahedronEvent>(event),
+                                        current_offset, offset_future_bound, polyhedron);
 #endif
     } else if (event->getType() == AbstractEvent::VERTEX_EVENT) {
-        result = handleVertexEvent(current_offset,
-                                   std::dynamic_pointer_cast<VertexEvent>(event),
-                                   polyhedron);
+        result = handleVertexEvent(std::dynamic_pointer_cast<VertexEvent>(event),
+                                   current_offset, offset_future_bound, polyhedron);
     } else if (event->getType() == AbstractEvent::FLIP_VERTEX_EVENT) {
-        result = handleFlipVertexEvent(current_offset,
-                                       std::dynamic_pointer_cast<FlipVertexEvent>(event),
-                                       polyhedron);
+        result = handleFlipVertexEvent(std::dynamic_pointer_cast<FlipVertexEvent>(event),
+                                       current_offset, offset_future_bound, polyhedron);
     } else if (event->getType() == AbstractEvent::SURFACE_EVENT) {
-        result = handleSurfaceEvent(current_offset,
-                                    std::dynamic_pointer_cast<SurfaceEvent>(event),
-                                    polyhedron);
+        result = handleSurfaceEvent(std::dynamic_pointer_cast<SurfaceEvent>(event),
+                                    current_offset, offset_future_bound, polyhedron);
     } else if (event->getType() == AbstractEvent::POLYHEDRON_SPLIT_EVENT) {
-        result = handlePolyhedronSplitEvent(current_offset,
-                                            std::dynamic_pointer_cast<PolyhedronSplitEvent>(event),
-                                            polyhedron);
+        result = handlePolyhedronSplitEvent(std::dynamic_pointer_cast<PolyhedronSplitEvent>(event),
+                                            current_offset, offset_future_bound, polyhedron);
     } else if (event->getType() == AbstractEvent::SPLIT_MERGE_EVENT) {
-        result = handleSplitMergeEvent(current_offset,
-                                       std::dynamic_pointer_cast<SplitMergeEvent>(event),
-                                       polyhedron);
+        result = handleSplitMergeEvent(std::dynamic_pointer_cast<SplitMergeEvent>(event),
+                                       current_offset, offset_future_bound, polyhedron);
     } else if (event->getType() == AbstractEvent::EDGE_SPLIT_EVENT) {
-        result = handleEdgeSplitEvent(current_offset,
-                                      std::dynamic_pointer_cast<EdgeSplitEvent>(event),
-                                      polyhedron);
+        result = handleEdgeSplitEvent(std::dynamic_pointer_cast<EdgeSplitEvent>(event),
+                                      current_offset, offset_future_bound, polyhedron);
     } else if (event->getType() == AbstractEvent::PIERCE_EVENT) {
-        result = handlePierceEvent(current_offset,
-                                   std::dynamic_pointer_cast<PierceEvent>(event),
-                                   polyhedron);
+        result = handlePierceEvent(std::dynamic_pointer_cast<PierceEvent>(event),
+                                   current_offset, offset_future_bound, polyhedron);
     } else {
         CGAL_SS3_CORE_TRACE("Error: Cannot handle event of type " << event->getType());
         CGAL_assertion(false);

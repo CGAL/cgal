@@ -99,14 +99,18 @@ public:
     int getID() const;
     void setID(int id);
 
-    int getBasePlaneID() const;
-    void setBasePlaneID(int planeId);
-
     /**
      * The direction of the normal points to the outside.
      */
     Plane3SPtr getPlane() const;
     void setPlane(Plane3SPtr plane);
+
+    Plane3SPtr getBasePlane() const;
+    void setBasePlane(Plane3SPtr plane);
+
+    bool hasFinalPlane() const;
+    Plane3SPtr getFinalPlane() const;
+    void setFinalPlane(Plane3SPtr plane);
 
     /**
      * First vertices have to form a triangle that is inside.
@@ -192,10 +196,12 @@ public:
     PolyhedronWPtr polyhedron_;
     std::list<FacetSPtr>::iterator polyhedron_list_it_;
     FacetDataSPtr data_;
-    int id_;
 
-    int basePlaneId_;
     Plane3SPtr plane_;
+    Plane3SPtr base_plane_;
+    Plane3SPtr final_plane_;
+
+    int id_;
 
     Plane3SPtr cachedPlane_;
     CGAL::FT cachedSpeed_;

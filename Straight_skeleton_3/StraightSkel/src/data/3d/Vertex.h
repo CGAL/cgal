@@ -34,6 +34,10 @@ public:
     Point3SPtr getPoint() const;
     void setPoint(Point3SPtr point);
 
+    bool hasFinalPoint() const;
+    Point3SPtr getFinalPoint() const;
+    void setFinalPoint(Point3SPtr point);
+
     void addEdge(EdgeSPtr edge);
     bool removeEdge(EdgeSPtr edge);
     EdgeSPtr firstEdge() const;
@@ -114,11 +118,15 @@ public:
 public:
     Vertex(Point3SPtr point);
     Vertex(const Vertex& vertex);
+
     Point3SPtr point_;
+    Point3SPtr final_point_;
+
     std::list<EdgeWPtr> edges_;
     std::list<FacetWPtr> facets_;
     PolyhedronWPtr polyhedron_;
     std::list<VertexSPtr>::iterator polyhedron_list_it_;
+
     VertexDataSPtr data_;
     int id_;
 };

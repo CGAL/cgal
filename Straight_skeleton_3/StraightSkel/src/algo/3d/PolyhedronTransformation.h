@@ -58,12 +58,22 @@ public:
      */
     static bool resetPoint(VertexSPtr vertex, const std::array<Plane3SPtr, 3>& planes);
     static bool resetPoint(VertexSPtr vertex);
-
     /**
      * updates the positions of the vertices of a polyhedron, computed from the planes of
      * their incident faces.
      */
     static bool resetPoints(PolyhedronSPtr polyhedron);
+
+    /**
+     * updates the final position of the vertex of a polyhedron,
+     * computed from the planes of its incident faces.
+     */
+    static bool resetFinalPoint(VertexSPtr vertex, const CGAL::FT& offset_future_bound);
+
+    /**
+     * updates the final coefficients of the facet of a polyhedron
+     */
+    static void resetFinalPlane(FacetSPtr facet, const CGAL::FT& offset_future_bound);
 
     /**
      * returns the shifted position of the vertex of a polyhedron

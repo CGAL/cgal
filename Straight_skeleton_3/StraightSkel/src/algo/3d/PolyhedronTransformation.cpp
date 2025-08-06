@@ -313,6 +313,52 @@ bool PolyhedronTransformation::resetPoints(PolyhedronSPtr polyhedron)
     return true;
 }
 
+void PolyhedronTransformation::resetFinalPlane(FacetSPtr facet,
+                                               const CGAL::FT& offset_future_bound)
+{
+    Plane3SPtr plane = shiftPlane(facet, offset_future_bound);
+    facet->setFinalPlane(plane);
+}
+
+// resets using the first 3 final planes, even if there are more
+bool PolyhedronTransformation::resetFinalPoint(VertexSPtr vertex,
+                                               const CGAL::FT& offset_future_bound)
+{
+    CGAL_SS3_TRANSF_TRACE("resetFinalPoint() of " << vertex->toString());
+    CGAL_SS3_DEBUG_SPTR(vertex);
+
+    std::array<Plane3SPtr, 3> final_planes;
+    unsigned int i = 0;
+    std::list<FacetWPtr>::iterator it_f = vertex->facets().begin();
+    while (i < 3 && it_f != vertex->facets().end()) {
+        FacetWPtr facet_wptr = *it_f++;
+        if (!facet_wptr.expired()) {
+            FacetSPtr facet = FacetSPtr(facet_wptr);
+            if (!facet->hasFinalPlane()) {
+                resetFinalPlane(facet, offset_future_bound);
+            }
+
+            final_planes[i++] = facet->getFinalPlane();
+
+            CGAL_SS3_TRANSF_TRACE("  Facet " << facet->getID() << " [" << *(facet->getFinalPlane()) << "]");
+        }
+    }
+    CGAL_postcondition(i == 3);
+
+    Point3SPtr point = KernelWrapper::intersection(final_planes[0], final_planes[1], final_planes[2]);
+    if (!point) {
+        CGAL_SS3_TRANSF_TRACE("Warning: triplet of planes does not define a point!");
+        Point3SPtr result = Point3SPtr();
+        CGAL_SS3_DEBUG_SPTR(result);
+        return false;
+    }
+
+    vertex->setFinalPoint(point);
+    CGAL_SS3_TRANSF_TRACE("  New final point = " << *point);
+
+    return true;
+}
+
 // @todo this function cannot deal with degree 1 vertices
 Point3SPtr PolyhedronTransformation::shiftPoint(VertexSPtr vertex,
                                                 const CGAL::FT& offset)
@@ -718,8 +764,9 @@ PolyhedronSPtr PolyhedronTransformation::shiftFacets(PolyhedronSPtr polyhedron,
         }
 
         Plane3SPtr offset_plane = KernelWrapper::offsetPlane(facet->plane(), offset*speed);
-        offset_facet->setPlane(offset_plane);
-        offset_facet->setBasePlaneID(facet->getBasePlaneID());
+        offset_facet->plane_ = offset_plane;
+        offset_facet->base_plane_ = facet->base_plane_;
+        offset_facet->final_plane_ = facet->final_plane_;
 
         // perturbation mechanisms
         offset_facet->cachedSpeed_ = facet->cachedSpeed_;

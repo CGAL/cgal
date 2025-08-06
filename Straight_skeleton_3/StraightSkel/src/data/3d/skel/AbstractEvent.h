@@ -154,7 +154,7 @@ struct VertexFacetNeighborhood
         std::list<FacetWPtr>::const_iterator it = ifs.begin();
         for (int i = 0; i < 3; ++i, ++it) {
             if (FacetSPtr f = it->lock()) {
-                result[i] = f->getBasePlaneID();
+                result[i] = f->getID();
             } else {
                 CGAL_assertion(false);
                 result[i] = -1;
@@ -190,10 +190,10 @@ struct EdgeFacetNeighborhood
     static std::array<int, 4> collectIncidentFacets(const EdgeSPtr& edge)
     {
         CGAL_SS3_DEBUG_SPTR(edge);
-        std::array<int, 4> result = {{ edge->getFacetL()->getBasePlaneID(),
-                                       edge->getFacetR()->getBasePlaneID(),
-                                       edge->getFacetSrc()->getBasePlaneID(),
-                                       edge->getFacetDst()->getBasePlaneID() }};
+        std::array<int, 4> result = {{ edge->getFacetL()->getID(),
+                                       edge->getFacetR()->getID(),
+                                       edge->getFacetSrc()->getID(),
+                                       edge->getFacetDst()->getID() }};
         return result;
     }
 
