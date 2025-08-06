@@ -14,6 +14,8 @@
 
 #include <CGAL/license/Surface_mesh_simplification.h>
 
+#include <CGAL/Polygon_mesh_processing/compute_normal.h>
+
 #include <CGAL/Surface_mesh_simplification/internal/Common.h>
 #include <CGAL/boost/graph/helpers.h>
 
@@ -507,6 +509,77 @@ construct_prob_triangle_quadric_from_face(typename boost::graph_traits<TriangleM
 
   return ret;
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+/// LINE QUADRICS (Liu et al. 2025)
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+template <typename GeomTraits>
+typename GarlandHeckbert_matrix_types<GeomTraits>::Mat_4
+construct_line_quadric_from_normal(const typename GeomTraits::Vector_3& normal,
+                                           const typename GeomTraits::Point_3& point,
+                                           const GeomTraits& gt)
+{
+  typedef typename GeomTraits::FT                                              FT;
+  typedef typename GeomTraits::Vector_3                                        Vector_3;
+
+  typedef typename GarlandHeckbert_matrix_types<GeomTraits>::Row_4             Row_4;
+
+  auto cp = gt.construct_cross_product_vector_3_object();
+  auto plane = gt.construct_plane_3_object();
+  auto c_point = gt.construct_point_3_object();
+  auto base= gt.construct_base_vector_3_object();
+
+  Vector_3 x=base(plane(c_point(0,0,0),normal), 1);
+  CGAL::Polygon_mesh_processing::internal::normalize(x, gt);
+  Vector_3 y=cp(x,normal);
+
+  return construct_classic_plane_quadric_from_normal(x, point, gt)+construct_classic_plane_quadric_from_normal(y, point, gt);
+}
+
+template <typename TriangleMesh, typename VertexPointMap, typename GeomTraits>
+typename GarlandHeckbert_matrix_types<GeomTraits>::Mat_4
+construct_line_quadric_from_vertex(const typename boost::graph_traits<TriangleMesh>::vertex_descriptor v,
+                                           const TriangleMesh& mesh,
+                                           const VertexPointMap vpm,
+                                           const GeomTraits& gt)
+{
+  typedef typename GeomTraits::Vector_3                                        Vector_3;
+
+  const Vector_3 normal = Polygon_mesh_processing::compute_vertex_normal(v, mesh, parameters::geom_traits(gt).vertex_point_map(vpm));
+  return construct_line_quadric_from_normal(normal, get(vpm, v), gt);
+}
+
+// template <typename TriangleMesh, typename VertexPointMap, typename GeomTraits>
+// typename GarlandHeckbert_matrix_types<GeomTraits>::Mat_4
+// construct_classic_line_quadric_from_edge(typename boost::graph_traits<TriangleMesh>::halfedge_descriptor he,
+//                                           const TriangleMesh& mesh,
+//                                           const VertexPointMap vpm,
+//                                           const GeomTraits& gt)
+// {
+//   typedef typename GeomTraits::Vector_3                                        Vector_3;
+
+//   const Vector_3 normal = construct_edge_normal(he, mesh, vpm, gt);
+
+//   // use this normal to construct the quadric analogously to constructing quadric
+//   // from the normal of the face
+//   return construct_classic_line_quadric_from_normal(normal, get(vpm, target(he, mesh)), gt);
+// }
+
+// template <typename TriangleMesh, typename VertexPointMap, typename GeomTraits>
+// typename GarlandHeckbert_matrix_types<GeomTraits>::Mat_4
+// construct_classic_line_quadric_from_face(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
+//                                           const TriangleMesh& mesh,
+//                                           const VertexPointMap vpm,
+//                                           const GeomTraits& gt)
+// {
+//   auto normal = construct_unit_normal_from_face(f, mesh, vpm, gt);
+
+//   // get any point of the face
+//   const auto p = get(vpm, target(halfedge(f, mesh), mesh));
+
+//   return construct_classic_line_quadric_from_normal(normal, p, gt);
+// }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// PROB VARIANCE
