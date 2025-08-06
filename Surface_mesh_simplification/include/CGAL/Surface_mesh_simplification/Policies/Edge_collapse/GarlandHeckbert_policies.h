@@ -21,12 +21,15 @@
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/GarlandHeckbert_triangle_policies.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/GarlandHeckbert_probabilistic_plane_policies.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/GarlandHeckbert_probabilistic_triangle_policies.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/GarlandHeckbert_line_policies.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/GarlandHeckbert_composed_policies.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/GarlandHeckbert_plane_plus_line_policies.h>
 
 namespace CGAL {
 namespace Surface_mesh_simplification {
 
 template<typename TriangleMesh, typename GeomTraits>
-using GarlandHeckbert_policies CGAL_DEPRECATED = GarlandHeckbert_plane_policies<TriangleMesh, GeomTraits>;
+using GarlandHeckbert_policies = GarlandHeckbert_plane_plus_line_policies<TriangleMesh, GeomTraits>;
 
 } // namespace Surface_mesh_simplification
 } // namespace CGAL
