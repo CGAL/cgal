@@ -449,11 +449,11 @@ private:
 /// \code
 ///   boost::property_map<TriangleMesh, CGAL::vertex_point_t>::const_type.
 /// \endcode
-/// 
+///
 ///  @tparam AccelerationType_
 ///         a tag indicating whether the algorithm should use Kd-tree or BVH as acceleration structure.
 ///         <b>%Default:</b> `CGAL::KD_tree_tag`<br>
-///         <b>%Valid values:</b> `CGAL::KD_tree_tag`, `CGAL::BVH_tag`, 
+///         <b>%Valid values:</b> `CGAL::KD_tree_tag`, `CGAL::BVH_tag`,
 ///
 
 template <typename TriangleMesh_,
@@ -1305,9 +1305,9 @@ private:
 
     if((side_of(optimal_center) == CGAL::ON_UNBOUNDED_SIDE))
       normal = -normal; // if the center is outside, flip the normal
-    
+
     auto [c, r] = compute_shrinking_ball_impl(cp, normal, AccelerationType_{});
-    
+
     sphere.set_center(c);
     sphere.set_radius(r);
 

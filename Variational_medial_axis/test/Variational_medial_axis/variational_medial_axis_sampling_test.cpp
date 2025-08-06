@@ -198,7 +198,6 @@ bool test_determinism(const TestParams& params, const std::string& mesh_file_pat
   // Run algorithm multiple times with same parameters
   for(int i = 0; i < num_runs; ++i) {
     VMAS vmas(mesh);
-    vmas.init();
     vmas.compute_variational_medial_axis_sampling(CGAL::parameters::lambda(params.lambda)
                                                       .number_of_spheres(params.num_spheres)
                                                       .concurrency_tag(CGAL::Sequential_tag{}));
