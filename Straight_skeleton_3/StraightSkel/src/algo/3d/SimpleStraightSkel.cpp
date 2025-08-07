@@ -15,6 +15,10 @@
  */
 
 // @fixme yesterday:
+// - bench properly the new self intersection detection, both on all data and also time it on 2119908
+// - check_bisector with base time
+// - delay crashAt bisector checks till pop time
+// - make a script to dump the runtimes in the console
 
 // @fixme:
 // - Enable caching + performance model ==> shared pointer is invalid: edge_tosplit
@@ -50,9 +54,11 @@
 //   * Would cost more (detection of simultaneous events, etc.)
 //   * How to detect "hidden" simultaneous events?
 // - zero speed (check divisions)
+// - debug ptr everywhere
 
 // @todo latest:
 // - factorize the three VV events but be very careful with the tiny differences
+// - there should be a function "Facet::copyPropertiesAndData(otherFacet)"
 
 // ----
 
@@ -356,7 +362,6 @@ bool SimpleStraightSkel::isReflex(EdgeSPtr edge,
     return result;
 }
 
-// @speed cache this? it doesn't change when we shift edges (facets)
 bool SimpleStraightSkel::isReflex(VertexSPtr vertex) {
     if (vertex->degree() == 0) {
         return false;
@@ -1274,6 +1279,8 @@ std::pair<Point3SPtr, CGAL::FT> SimpleStraightSkel::vanishesAt(EdgeSPtr edge,
 // f: one of the faces incident to the edge
 // t: the time of vanishing or the time of crash
 // f_third: edge shared between 'f' and either the dst of the edge seen in f
+//
+// @todo this could be a predicate (oriented_side_of_event_point_wrt_bisectorC2)
 bool SimpleStraightSkel::check_bisector(EdgeSPtr edge,
                                         FacetSPtr f,
                                         const CGAL::FT& t,
@@ -4206,10 +4213,6 @@ void SimpleStraightSkel::collectPierceEvents(const std::list<VertexSPtr>& vertic
                         ++filtered_candidates;
 #endif
                         continue;
-                    } else {
-#ifdef CGAL_SS3_PROFILE_FILTERING_MECHANISMS
-                        // ++tested_candidates;
-#endif
                     }
 
                     // also filter with a bbox around the piercing segment and the shifting face
@@ -4977,6 +4980,7 @@ PolyhedronSPtr SimpleStraightSkel::shiftToEventOffset(PolyhedronSPtr polyhedron,
   const CGAL::FT shift = target_offset - start_offset;
   CGAL_precondition(!is_zero(shift));
 
+  // @speed don't actually shift at all intermediate steps because we can do everything with base planes
   PolyhedronTransformation::shiftFacetsInPlace(polyhedron, shift);
 
 #ifdef CGAL_SS3_DUMP_FILES

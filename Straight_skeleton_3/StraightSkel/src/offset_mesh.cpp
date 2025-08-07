@@ -307,6 +307,8 @@ bool face_offset(TriangleMesh& tmesh,
 
   CGAL_SS3_TRACE("Post merge: " << p->vertices().size() << " NV " << p->facets().size() << " NF");
 
+  // algo::_3d::PolyhedronTransformation::truncatePrecision(p);
+
   // @todo In safe mode, this should be:
   // if (bad) -> reduce amplitude of perturbation and try again"
   algo::_3d::PolyhedronTransformation::normalizeFacetPlanes(p);
@@ -354,13 +356,14 @@ bool face_offset(TriangleMesh& tmesh,
 
   for (std::size_t i=0; i<results_p.size(); ++i) {
     const CGAL::FT save_offset = save_offsets[i];
-    algo::_3d::PolyhedronSPtr result_p = results_p[i];
 
     CGAL_SS3_TRACE("Post processing of result @ " << save_offset)
 
-    if (!result_p) {
-      return false;
-    }
+    algo::_3d::PolyhedronSPtr result_p = results_p[i];
+    CGAL_assertion(result_p && result_p->isConsistent());
+
+    CGAL_SS3_TRACE("At offset: " << save_offset << ", result with " << result_p->vertices().size()
+                     << " vertices and " << result_p->facets().size() << " faces");
 
     // Convert back to Surface_mesh structure to save the results.
     // This could be avoided if a polygonal output was prefered, but then we
@@ -380,13 +383,13 @@ bool face_offset(TriangleMesh& tmesh,
     CGAL_postcondition(!PMP::has_degenerate_faces(result_t));
     CGAL_postcondition(!PMP::does_self_intersect(result_t));
 
+    CGAL_SS3_TRACE("At offset: " << save_offset << ", result with " << num_vertices(result_t)
+                     << " vertices and " << num_faces(result_t) << " faces");
+
     if (outwards) {
       CGAL_SS3_TRACE("Reversing face orientations...");
       PMP::reverse_face_orientations(result_t);
     }
-
-    std::cout << "At offset: " << save_offset << ", result with "
-              << num_vertices(result_t) << " vertices and " << num_faces(result_t) << " faces" << std::endl;
 
     results.push_back(result_t);
   }
