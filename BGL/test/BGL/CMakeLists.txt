@@ -38,7 +38,6 @@ create_single_source_cgal_program("test_graph_traits.cpp")
 create_single_source_cgal_program("test_Properties.cpp")
 create_single_source_cgal_program("bench_read_from_stream_vs_add_face_and_add_faces.cpp")
 create_single_source_cgal_program("graph_traits_inheritance.cpp" )
-create_single_source_cgal_program("test_deprecated_io.cpp")
 
 find_package(OpenMesh QUIET)
 if(OpenMesh_FOUND)
