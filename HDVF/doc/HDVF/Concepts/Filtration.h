@@ -151,7 +151,11 @@ public:
      */
     bool is_valid() const;
 
-    // Output filtration
+    // Input/output filtration
+    /*! \brief Overload of the `>>`operator for filtrations.
+     */
+    friend istream & operator>>(istream & in, Filtration &f);
+    
     /*! \brief Overload of the `<<`operator for filtrations.
      */
     friend ostream & operator<<(ostream & out, const Filtration &f);

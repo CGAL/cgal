@@ -283,7 +283,7 @@ public:
                 // Set the cofaces of it->first in dimension dim+1
                 Row_chain cofaces(cod(it->first,q)) ;
                 for (typename Row_chain::const_iterator it2 =  cofaces.cbegin(); it2 != cofaces.cend(); ++it2)
-                    fstar_cofaces.set_coef(it2->first, 1) ;
+                    fstar_cofaces.set_coefficient(it2->first, 1) ;
             }
             return fstar_cofaces ;
         }
@@ -545,11 +545,11 @@ protected:
                 // Insert the coefficient in the corresponding row of the boundary matrix
                 if (cell1 >= 0 && cell1 < _cells.size()) {
                     size_t index = _bool2base[dim - 1].at(cell1);
-                    boundary.set_coef(index, sign);
+                    boundary.set_coefficient(index, sign);
                 }
                 if (cell2 >= 0 && cell2 < _cells.size()) {
                     size_t index = _bool2base[dim - 1].at(cell2);
-                    boundary.set_coef(index, -sign);
+                    boundary.set_coefficient(index, -sign);
                 }
             }
         }

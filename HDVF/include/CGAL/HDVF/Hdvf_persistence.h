@@ -440,13 +440,13 @@ public:
             // Get g(cell, dim) with per indices
             Col_chain g_cell(OSM::get_column(this->_G_col.at(q), cell)) ;
             // Add 1 to the cell
-            g_cell.set_coef(cell, 1) ;
+            g_cell.set_coefficient(cell, 1) ;
             // Compute the chain with _K indices
             Col_chain g_cell_K(g_cell.dimension()) ;
             for (typename Col_chain::const_iterator it = g_cell.begin(); it != g_cell.end(); ++it)
             {
                 const size_t i(_per_to_K.at(q).at(it->first)) ;
-                g_cell_K.set_coef(i, it->second) ;
+                g_cell_K.set_coefficient(i, it->second) ;
             }
             return g_cell_K ;
         }
@@ -471,14 +471,14 @@ public:
             // Get fstar(cell, dim) with per indices
             Row_chain fstar_cell(OSM::get_row(this->_F_row.at(q), cell)) ;
             // Add 1 to the cell
-            fstar_cell.set_coef(cell, 1) ;
+            fstar_cell.set_coefficient(cell, 1) ;
 
             // Compute the chain with _K indices
             Col_chain fstar_cell_K(fstar_cell.dimension()) ;
             for (typename Col_chain::const_iterator it = fstar_cell.begin(); it != fstar_cell.end(); ++it)
             {
                 const size_t i(_per_to_K.at(q).at(it->first)) ;
-                fstar_cell_K.set_coef(i, it->second) ;
+                fstar_cell_K.set_coefficient(i, it->second) ;
             }
             return fstar_cell_K ;
         }
@@ -731,7 +731,7 @@ Hdvf_persistence<CoefficientType, ComplexType, DegType, FiltrationType>::Hdvf_pe
                 // Cells in the _K basis : i(dim q-1) / j(dim q)
                 // Convert to indices in the persistent order
                 const size_t pi(_K_to_per.at(q-1).at(i)), pj(_K_to_per.at(q).at(j)) ;
-                set_coef(_DD_per.at(q), pi, pj, v) ;
+                set_coefficient(_DD_per.at(q), pi, pj, v) ;
             }
         }
     }

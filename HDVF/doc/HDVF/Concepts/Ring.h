@@ -2,7 +2,7 @@
 \ingroup PkgHDVFConcepts
 \cgalConcept
 
-The concept `Ring` describes the requirements for the ring of coefficients used to compute homology in the `HomologicalDiscreteVectorField` concept. Besides ring operators, it also specifies the functions needed to test invertibility in the ring.
+The concept `Ring` describes the requirements for the ring of coefficients used to compute homology in the `HDVF` concept. Besides ring operators, it also specifies the functions needed to test invertibility in the ring.
 
 \cgalHasModelsBegin
 \cgalHasModelsBare{`CGAL::HDVF::Z2`}
@@ -14,19 +14,11 @@ The concept `Ring` describes the requirements for the ring of coefficients used 
 class Ring
 {
 public:
-/// \name Types
-/// @{
-
-/*!
- Type of elements of the ring.
- */
-typedef unspecified_type Value ;
-/// @}
-
 
 /// \name Operators
 /// @{
 
+    /*! TODO */
 
 /// @}
 
@@ -37,12 +29,12 @@ typedef unspecified_type Value ;
     /*!
      * \brief Output operator
      */
-    std::ostream& operator<< (std::ostream& out, const Ring& v);
+    std::ostream& operator<< (std::ostream& out, const Ring& r);
 
     /*!
      * \brief Input operator
      */
-    std::istream& operator>> (std::istream& out, const Ring& v);
+    std::istream& operator>> (std::istream& out, const Ring& r);
 
     /// @}
 
@@ -50,9 +42,9 @@ typedef unspecified_type Value ;
 /// @{
 
     /*!
-     \brief Test if `v` is invertible in the ring.
+     \brief Test if the current element is invertible in the ring.
      */
-    bool is_invertible(Value v);
+    bool is_invertible();
 
 /// @}
 };

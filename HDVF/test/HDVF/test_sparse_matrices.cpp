@@ -19,10 +19,10 @@ int main(int argc, char **argv)
     std::cerr << "----> Column matrices" << std::endl;
 
     Col_matrix MC_rw(3,4);
-    CGAL::OSM::set_coef(MC_rw, 0, 1, 1) ;
-    CGAL::OSM::set_coef(MC_rw, 0, 2, -1) ;
-    CGAL::OSM::set_coef(MC_rw, 1, 0, 2) ;
-    CGAL::OSM::set_coef(MC_rw, 1, 2, -2) ;
+    CGAL::OSM::set_coefficient(MC_rw, 0, 1, 1) ;
+    CGAL::OSM::set_coefficient(MC_rw, 0, 2, -1) ;
+    CGAL::OSM::set_coefficient(MC_rw, 1, 0, 2) ;
+    CGAL::OSM::set_coefficient(MC_rw, 1, 2, -2) ;
 
     const std::string filename_col_save("test_col_mat.osm") ;
 
@@ -53,10 +53,10 @@ int main(int argc, char **argv)
     std::cerr << "----> Row matrices" << std::endl;
 
     Row_matrix MR_rw(3,4) ;
-    CGAL::OSM::set_coef(MR_rw, 0, 1, 1) ;
-    CGAL::OSM::set_coef(MR_rw, 0, 2, -1) ;
-    CGAL::OSM::set_coef(MR_rw, 1, 0, 2) ;
-    CGAL::OSM::set_coef(MR_rw, 1, 2, -2) ;
+    CGAL::OSM::set_coefficient(MR_rw, 0, 1, 1) ;
+    CGAL::OSM::set_coefficient(MR_rw, 0, 2, -1) ;
+    CGAL::OSM::set_coefficient(MR_rw, 1, 0, 2) ;
+    CGAL::OSM::set_coefficient(MR_rw, 1, 2, -2) ;
 
     const std::string filename_row_save("test_row_mat.osm") ;
 
@@ -88,10 +88,10 @@ int main(int argc, char **argv)
 
     Col_chain a(4);
     Row_chain b(4);
-    a.set_coef(1,1);
-    a.set_coef(3,3);
-    b.set_coef(0,2);
-    b.set_coef(1,-3);
+    a.set_coefficient(1,1);
+    a.set_coefficient(3,3);
+    b.set_coefficient(0,2);
+    b.set_coefficient(1,-3);
 
     Col_matrix columnMajor = a * b, tmp = columnMajor;
     std::cout << columnMajor << std::endl ;
@@ -149,12 +149,12 @@ int main(int argc, char **argv)
 //    std::cout << "Multiplication de colonne (col/row dom):" << std::endl << colCol << std::endl << colRow << std::endl << std::endl;
 //    std::cout << "Multiplication de ligne   (col/row dom):" << std::endl << rowCol << std::endl << rowRow << std::endl << std::endl;
 //
-//    cout << "-------- Test parcours (init par set_coef)" << endl ;
+//    cout << "-------- Test parcours (init par set_coefficient)" << endl ;
 //    OSM::SparseMatrix<int, OSM::COLUMN> Mtest(10, 10) ;
-//    Mtest.set_coef(1, 2, 1) ;
-//    Mtest.set_coef(3, 2, 1) ;
-//    Mtest.set_coef(1, 4, 1) ;
-//    Mtest.set_coef(2, 5, 1) ;
+//    Mtest.set_coefficient(1, 2, 1) ;
+//    Mtest.set_coefficient(3, 2, 1) ;
+//    Mtest.set_coefficient(1, 4, 1) ;
+//    Mtest.set_coefficient(2, 5, 1) ;
 //    for (OSM::Bitboard::iterator it  = Mtest.begin(); it != Mtest.end(); ++it)
 //    {
 //        cout << "col : " << *it << endl ;

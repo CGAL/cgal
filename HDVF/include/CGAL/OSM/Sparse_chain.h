@@ -219,7 +219,7 @@ public:
     }
 
     /**
-     * \brief Subtracts two chains together.
+     * \brief Subtracts a chain from another chain.
      *
      * Subtract two chains together and return the result in a new matrix.
      *
@@ -242,10 +242,10 @@ public:
     }
 
     /**
-     * \brief Applies factor on each coefficients.
+     * \brief Applies multiplication on each coefficient.
      *
      * \param[in] lambda The factor to apply.
-     * \param[in] chain The second chain.
+     * \param[in] chain The  chain.
      *
      * \return A new chain representing the result.
      */
@@ -258,9 +258,9 @@ public:
     }
 
     /**
-     * \brief Applies factor on each coefficients.
+     * \brief Applies multiplication on each coefficient.
      *
-     * \param[in] chain The second chain.
+     * \param[in] chain The  chain.
      * \param[in] lambda The factor to apply.
      *
      * \return A new chain representing the result.
@@ -383,7 +383,7 @@ public:
     }
 
     /**
-     * \brief Applies factor on each coefficients of `this`.
+     * \brief Applies multiplication on each coefficient of `this`.
      *
      * If `lambda` is null, this function comes to nullify the chain.
      *
@@ -430,7 +430,7 @@ public:
      *
      * \return The value of the coefficient.
      */
-    CoefficientType get_coef(size_t index) const {
+    CoefficientType get_coefficient(size_t index) const {
         if (index >= _upperBound) {
             throw std::runtime_error("Provided index should be less than " + std::to_string(_upperBound) + ".");
         }
@@ -451,7 +451,7 @@ public:
      * \param[in] index The coefficient index.
      * \param[in] d Value of the coefficient
      */
-    void set_coef(size_t index, CoefficientType d)
+    void set_coefficient(size_t index, CoefficientType d)
     {
         if (index >= _upperBound) {
             throw std::runtime_error("Provided index should be less than " + std::to_string(_upperBound) + ".");
@@ -776,12 +776,12 @@ bool operator==(const Sparse_chain<_CT, OSM::COLUMN>& chain, const Sparse_chain<
     // Check that each coefficient of chain also belongs to other
     for (typename ChainType::const_iterator it = chain.begin(); res && (it != chain.end()); ++it)
     {
-        res = res && (it->second == other.get_coef(it->first)) ;
+        res = res && (it->second == other.get_coefficient(it->first)) ;
     }
     // Check that each coefficient of other also belongs to chain
     for (typename ChainType::const_iterator it = other.begin(); res && (it != other.end()); ++it)
     {
-        res = res && (it->second == chain.get_coef(it->first)) ;
+        res = res && (it->second == chain.get_coefficient(it->first)) ;
     }
     return res ;
 }
@@ -796,12 +796,12 @@ bool operator==(const Sparse_chain<_CT, OSM::ROW>& chain, const Sparse_chain<_CT
     // Check that each coefficient of chain also belongs to other
     for (typename ChainType::const_iterator it = chain.begin(); (it != chain.end()) && res; ++it)
     {
-        res = res && (it->second == other.get_coef(it->first)) ;
+        res = res && (it->second == other.get_coefficient(it->first)) ;
     }
     // Check that each coefficient of other also belongs to chain
     for (typename ChainType::const_iterator it = other.begin(); res && (it != other.end()); ++it)
     {
-        res = res && (it->second == chain.get_coef(it->first)) ;
+        res = res && (it->second == chain.get_coefficient(it->first)) ;
     }
     return res ;
 }

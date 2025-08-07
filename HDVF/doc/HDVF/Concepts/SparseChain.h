@@ -154,7 +154,7 @@ public:
     friend Sparse_chain operator+(const Sparse_chain &first, const Sparse_chain &second);
 
     /*!
-     * \brief Subtracts two chains together.
+     * \brief Subtracts a chain from another chain.
      *
      * Subtract two chains and return the result in a new matrix.
      * Chains must have the same `CoefficientType` and the same `ChainTypeFlag`.
@@ -162,12 +162,12 @@ public:
     friend Sparse_chain operator-(const Sparse_chain &first, const Sparse_chain &second);
 
     /*!
-     * \brief Applies factor on each coefficients.
+     * \brief Applies multiplication on each coefficient.
      */
     friend Sparse_chain operator*(const CoefficientType& lambda, const Sparse_chain &chain);
 
     /*!
-     * \brief Applies factor on each coefficients.
+     * \brief Applies multiplication on each coefficient.
      */
     friend Sparse_chain operator*(const Sparse_chain &_chain, const CoefficientType& lambda);
 
@@ -211,7 +211,7 @@ public:
     Sparse_chain& operator-=(const Sparse_chain &_other);
 
     /*!
-     * \brief Applies factor on each coefficients of `this`.
+     * \brief Applies multiplication on each coefficient of `this`.
      */
     Sparse_chain& operator*=(const CoefficientType& lambda);
 
@@ -240,12 +240,12 @@ public:
     /*!
      * \brief Gets the value of a coefficient of the chain.
      */
-    CoefficientType get_coef(size_t index) const ;
+    CoefficientType get_coefficient(size_t index) const ;
 
     /**
      * \brief Sets a given coefficient of the chain.
      */
-    void set_coef(size_t index, CoefficientType d);
+    void set_coefficient(size_t index, CoefficientType d);
 
     /*!
      * \brief Checks if a coefficient of the chain is null.
@@ -258,14 +258,14 @@ public:
     bool is_null() const;
 
     /*!
-     * \brief Gets a subchain from the chain.
+     * \brief Gets a sub-chain from the chain.
      *
      * Return a new chain where all coefficients of indices provided in the vector are removed.
      */
     friend Sparse_chain operator/(const Sparse_chain &chain, const std::vector<size_t> &indices);
 
     /*!
-     * \brief Gets a subchain from the chain.
+     * \brief Gets a sub-chain from the chain.
      *
      * Return a new chain where the coefficients at a given index is removed.
      */

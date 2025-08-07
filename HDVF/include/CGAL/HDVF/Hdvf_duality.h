@@ -380,10 +380,10 @@ public:
             {
                 for (typename OSM::Bitboard::iterator it2 = subPair.get_bitboard(q-1).begin(); it2 != subPair.get_bitboard(q-1).end(); ++it2)
                 {
-                    if (this->_DD_col.at(q).get_coef(*it2, *it) == 0)
+                    if (this->_DD_col.at(q).get_coefficient(*it2, *it) == 0)
                         out << ".\t" ;
                     else
-                        out << this->_DD_col.at(q).get_coef(*it2, *it) << "\t" ;
+                        out << this->_DD_col.at(q).get_coefficient(*it2, *it) << "\t" ;
                 }
                 out << endl ;
             }
@@ -440,7 +440,7 @@ public:
             // Get g(cell, dim) with per indices
             Col_chain g_cell(OSM::get_column(this->_G_col.at(dim), cell)) ;
             // Add 1 to the cell
-            g_cell.set_coef(cell, 1) ;
+            g_cell.set_coefficient(cell, 1) ;
             // Keep cells of the chain belonging to _subCC
             Col_chain g_cell_sub(g_cell.dimension()) ;
             for (typename Col_chain::const_iterator it = g_cell.begin(); it != g_cell.end(); ++it)
@@ -448,7 +448,7 @@ public:
 
                 if (_subCC.get_bit(dim, it->first))
                 {
-                    g_cell_sub.set_coef(it->first, it->second) ;
+                    g_cell_sub.set_coefficient(it->first, it->second) ;
                 }
             }
             return g_cell_sub ;
@@ -475,7 +475,7 @@ public:
         {
             Row_chain fstar_cell(OSM::get_row(this->_F_row.at(dim), cell)) ;
             // Add 1 to the cell
-            fstar_cell.set_coef(cell, 1) ;
+            fstar_cell.set_coefficient(cell, 1) ;
 
             // Keep cells of the chain belonging to _subCC
             Col_chain fstar_cell_sub(fstar_cell.dimension()) ;
@@ -484,7 +484,7 @@ public:
 
                 if (_subCC.get_bit(dim, it->first))
                 {
-                    fstar_cell_sub.set_coef(it->first, it->second) ;
+                    fstar_cell_sub.set_coefficient(it->first, it->second) ;
                 }
             }
             return fstar_cell_sub ;

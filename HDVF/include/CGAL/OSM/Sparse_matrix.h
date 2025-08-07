@@ -291,7 +291,7 @@ public:
         {
             for (size_t j=0; j<matrix._size.second; ++j)
             {
-                CoefficientType tmp = matrix.get_coef(i,j) ;
+                CoefficientType tmp = matrix.get_coefficient(i,j) ;
 
                 if (tmp == 0)
                     stream << ".\t" ;
@@ -716,8 +716,8 @@ public:
     }
 
 protected:
-    // Protected method for set_coef
-    void set_coef(const size_t i, const size_t j, const CoefficientType d) {
+    // Protected method for set_coefficient
+    void set_coefficient(const size_t i, const size_t j, const CoefficientType d) {
         if (i >= _size.first) {
             throw std::runtime_error("Provided i index should be less than " + std::to_string(_size.first) + ".");
         }
@@ -753,11 +753,11 @@ public:
      * \param[in] d The value.
      */
     template <typename _CT, int _CTF>
-    friend void set_coef(Sparse_matrix<_CT, _CTF>& matrix, size_t i, size_t j, const _CT d);
+    friend void set_coefficient(Sparse_matrix<_CT, _CTF>& matrix, size_t i, size_t j, const _CT d);
 
 protected:
-    // Protected method for get_coef
-    CoefficientType get_coef(const size_t i, const size_t j) const {
+    // Protected method for get_coefficient
+    CoefficientType get_coefficient(const size_t i, const size_t j) const {
         if (i >= _size.first) {
             throw std::runtime_error("Provided _i index should be less than " + std::to_string(_size.first) + ".");
         }
@@ -785,7 +785,7 @@ public:
      * \return The value of the given coefficient.
      */
     template <typename _CT, int _CTF>
-    friend _CT get_coef(const Sparse_matrix<_CT, _CTF>& matrix, size_t i, size_t j);
+    friend _CT get_coefficient(const Sparse_matrix<_CT, _CTF>& matrix, size_t i, size_t j);
 
     /**
      * \defgroup GetColumn Gets a column.
@@ -1637,15 +1637,15 @@ void set_row(Sparse_matrix<_CT, ROW> &matrix,  size_t index, const Sparse_chain<
 }
 
 template <typename _CT, int _CTF>
-void set_coef(Sparse_matrix<_CT, _CTF>& matrix, size_t i, size_t j, const _CT d)
+void set_coefficient(Sparse_matrix<_CT, _CTF>& matrix, size_t i, size_t j, const _CT d)
 {
-    matrix.set_coef(i, j, d);
+    matrix.set_coefficient(i, j, d);
 }
 
 template <typename _CT, int _CTF>
-_CT get_coef(const Sparse_matrix<_CT, _CTF>& matrix, size_t i, size_t j)
+_CT get_coefficient(const Sparse_matrix<_CT, _CTF>& matrix, size_t i, size_t j)
 {
-    matrix.get_coef(i, j);
+    matrix.get_coefficient(i, j);
 }
 
 template <typename _CT, int _CTF>
@@ -1751,7 +1751,7 @@ std::istream& read_matrix (Sparse_matrix<_CT, OSM::COLUMN>& M, std::istream& in)
     {
         in >> i >> j ;
         in >> val ;
-        OSM::set_coef(M, i, j, val) ;
+        OSM::set_coefficient(M, i, j, val) ;
     }
     return in ;
 }
@@ -1781,7 +1781,7 @@ std::istream& read_matrix (Sparse_matrix<_CT, OSM::ROW>& M, std::istream& in)
     {
         in >> i >> j ;
         in >> val ;
-        OSM::set_coef(M, i, j, val) ;
+        OSM::set_coefficient(M, i, j, val) ;
     }
     return in ;
 }

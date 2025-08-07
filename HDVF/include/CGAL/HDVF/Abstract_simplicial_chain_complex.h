@@ -228,7 +228,7 @@ public:
                 // Set the cofaces of it->first in dimension dim+1
                 Row_chain cofaces(cod(it->first,q)) ;
                 for (typename Row_chain::const_iterator it2 =  cofaces.cbegin(); it2 != cofaces.cend(); ++it2)
-                    fstar_cofaces.set_coef(it2->first, 1) ;
+                    fstar_cofaces.set_coefficient(it2->first, 1) ;
             }
             return fstar_cofaces ;
         }
@@ -384,7 +384,7 @@ void Abstract_simplicial_chain_complex<CoefficientType>::calculate_d(int dim) co
                 auto it = _simp2ind[dim - 1].find(bord[j]); // Find the index of Simplex j
                 if (it != _simp2ind[dim - 1].end()) { // If Simplex j is found
                     size_t ind_j = it->second; // Retrieve the index of Simplex j
-                    chain.set_coef(ind_j, (j % 2 == 0) ? 1 : -1);
+                    chain.set_coefficient(ind_j, (j % 2 == 0) ? 1 : -1);
                 }
                 else
                     throw "calculate_d boundary simplex not found!";

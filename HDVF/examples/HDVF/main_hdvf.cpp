@@ -211,9 +211,9 @@ int main(int argc, char **argv)
         std::cout << "TEST" << std::endl ;
         CGAL::OSM::Sparse_chain<int, CGAL::OSM::COLUMN> gamma(4) ;
         std::cout << "before: " << gamma.is_null() << std::endl ;
-        gamma.set_coef(2, 1) ;
+        gamma.set_coefficient(2, 1) ;
         std::cout << "after: " << gamma.is_null() << std::endl ;
-        gamma.set_coef(2, 0) ;
+        gamma.set_coefficient(2, 0) ;
         std::cout << "after2: " << gamma.is_null() << std::endl ;
         std::cout << "END TEST" << std::endl ;
 

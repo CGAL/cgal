@@ -47,7 +47,7 @@ public:
     typedef Ring CoefficientType;
 
     /*!
-     * \brief Matrix and chain type (either `OSM::ROW` or `OSM::COLUMN`).
+     * \brief Matrix and chain type (either ROW or COLUMN).
      */
     typedef int ChainTypeFlag;
 
@@ -306,14 +306,14 @@ public:
      *
      * Assign the scalar `d` to the coefficient on row `i` and column `j`.
      */
-    friend void set_coef(SparseMatrix& matrix, size_t i, size_t j, const CoefficientType d);
+    friend void set_coefficient(SparseMatrix& matrix, size_t i, size_t j, const CoefficientType d);
 
     /**
      * \brief Gets a given coefficient.
      *
      * Returns the coefficient on row `i` and column `j` of the matrix.
      */
-    friend CoefficientType get_coef(const SparseMatrix& matrix, size_t i, size_t j);
+    friend CoefficientType get_coefficient(const SparseMatrix& matrix, size_t i, size_t j);
 
     /**
      * \brief Gets the value of the column at a given `index` from the matrix (whatever the `ChainTypeFlag` of the matrix).

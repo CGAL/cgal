@@ -12,9 +12,9 @@ int main ()
     Col_matrix M(5,4) ;
 
     // Fill coefficients
-    CGAL::OSM::set_coef(M, 0, 1, 1) ;
-    CGAL::OSM::set_coef(M, 0, 2, -1) ;
-    CGAL::OSM::set_coef(M, 2, 1, 2) ;
+    CGAL::OSM::set_coefficient(M, 0, 1, 1) ;
+    CGAL::OSM::set_coefficient(M, 0, 2, -1) ;
+    CGAL::OSM::set_coefficient(M, 2, 1, 2) ;
 
     // Iterate over non empty columns
     for(CGAL::OSM::Bitboard::iterator it_col = M.begin(); it_col != M.end(); ++it_col)

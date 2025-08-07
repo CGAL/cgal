@@ -68,16 +68,16 @@ int main(int argc, char **argv)
 
         // Compute the annotation of cycle2 (outer cycle) in the homology basis
         HDVFType::Col_chain cycle2(complex.nb_cells(1)) ;
-        cycle2.set_coef(0, 1) ;
-        cycle2.set_coef(1, 1) ;
-        cycle2.set_coef(2, 1) ;
-        cycle2.set_coef(3, 1) ;
-        cycle2.set_coef(4, 1) ;
-        cycle2.set_coef(9, 1) ;
-        cycle2.set_coef(7, 1) ;
-        cycle2.set_coef(10, 1) ;
-        cycle2.set_coef(11, 1) ;
-        cycle2.set_coef(12, 1) ;
+        cycle2.set_coefficient(0, 1) ;
+        cycle2.set_coefficient(1, 1) ;
+        cycle2.set_coefficient(2, 1) ;
+        cycle2.set_coefficient(3, 1) ;
+        cycle2.set_coefficient(4, 1) ;
+        cycle2.set_coefficient(9, 1) ;
+        cycle2.set_coefficient(7, 1) ;
+        cycle2.set_coefficient(10, 1) ;
+        cycle2.set_coefficient(11, 1) ;
+        cycle2.set_coefficient(12, 1) ;
         HDVFType::Col_chain annot2(hdvf.get_annotation(cycle2,1));
         std::cout << "Cycle2:" << cycle1 << std::endl ;
         ComplexType::chain_complex_chain_to_vtk(complex, "cycle2.vtk", cycle2, 1) ;
@@ -94,8 +94,8 @@ int main(int argc, char **argv)
 
         // Compute the co-annotation of cycle2 (outer cycle) in the homology basis
         HDVFType::Row_chain cocycle2(complex.nb_cells(1)) ;
-        cocycle2.set_coef(5, 1) ;
-        cocycle2.set_coef(6, 1) ;
+        cocycle2.set_coefficient(5, 1) ;
+        cocycle2.set_coefficient(6, 1) ;
         HDVFType::Row_chain coannot2(hdvf.get_coannotation(cocycle2,1));
         std::cout << "Co-cycle2: " << cocycle2 << std::endl ;
         std::cout << "Co-annotation of co-cycle 2: " << coannot2 << std::endl ;
@@ -134,9 +134,9 @@ int main(int argc, char **argv)
         Col_matrix M(5,4) ;
 
         // Fill coefficients
-        CGAL::OSM::set_coef(M, 0, 1, 1) ;
-        CGAL::OSM::set_coef(M, 0, 2, -1) ;
-        CGAL::OSM::set_coef(M, 2, 1, 2) ;
+        CGAL::OSM::set_coefficient(M, 0, 1, 1) ;
+        CGAL::OSM::set_coefficient(M, 0, 2, -1) ;
+        CGAL::OSM::set_coefficient(M, 2, 1, 2) ;
 
         // Iterate over non empty columns
          for(CGAL::OSM::Bitboard::iterator it_col = M.begin(); it_col != M.end(); ++it_col)
@@ -157,9 +157,9 @@ int main(int argc, char **argv)
         Row_matrix MM(5,4) ;
 
         // Fill coefficients
-        CGAL::OSM::set_coef(MM, 0, 1, 1) ;
-        CGAL::OSM::set_coef(MM, 0, 2, -1) ;
-        CGAL::OSM::set_coef(MM, 2, 1, 2) ;
+        CGAL::OSM::set_coefficient(MM, 0, 1, 1) ;
+        CGAL::OSM::set_coefficient(MM, 0, 2, -1) ;
+        CGAL::OSM::set_coefficient(MM, 2, 1, 2) ;
 
         // Test write_matrix
         const std::string filename("test.osm") ;
@@ -232,14 +232,14 @@ int main(int argc, char **argv)
 
     // CChains
     HDVFType::Col_chain c1(4), c2(4), c3 ;
-    c1.set_coef(1,1) ;
-    c1.set_coef(3,-1) ;
+    c1.set_coefficient(1,1) ;
+    c1.set_coefficient(3,-1) ;
 
-    c2.set_coef(3,-1) ;
-    c2.set_coef(1,1) ;
+    c2.set_coefficient(3,-1) ;
+    c2.set_coefficient(1,1) ;
 
     c3 = c2 ;
-    c3.set_coef(2, 1) ;
+    c3.set_coefficient(2, 1) ;
 
     std::cout << "c1: " << c1 << std::endl ;
     std::cout << "c2: " << c2 << std::endl ;
@@ -249,32 +249,32 @@ int main(int argc, char **argv)
 
     // CMatrices
     HDVFType::Col_matrix M1(3,4), M2(3,4), M3(3,4) ;
-    CGAL::OSM::set_coef(M1, 0, 1, 1) ;
-    CGAL::OSM::set_coef(M1, 0, 2, -1) ;
-    CGAL::OSM::set_coef(M1, 1, 1, 2) ;
-    CGAL::OSM::set_coef(M1, 2, 1, -2) ;
+    CGAL::OSM::set_coefficient(M1, 0, 1, 1) ;
+    CGAL::OSM::set_coefficient(M1, 0, 2, -1) ;
+    CGAL::OSM::set_coefficient(M1, 1, 1, 2) ;
+    CGAL::OSM::set_coefficient(M1, 2, 1, -2) ;
 
-    CGAL::OSM::set_coef(M2, 0, 1, 1) ;
-    CGAL::OSM::set_coef(M2, 2, 1, -2) ;
-    CGAL::OSM::set_coef(M2, 0, 2, -1) ;
-    CGAL::OSM::set_coef(M2, 1, 1, 2) ;
+    CGAL::OSM::set_coefficient(M2, 0, 1, 1) ;
+    CGAL::OSM::set_coefficient(M2, 2, 1, -2) ;
+    CGAL::OSM::set_coefficient(M2, 0, 2, -1) ;
+    CGAL::OSM::set_coefficient(M2, 1, 1, 2) ;
 
     M3 = M2 ;
-    CGAL::OSM::set_coef(M3, 2, 2, 3) ;
+    CGAL::OSM::set_coefficient(M3, 2, 2, 3) ;
 
     std::cout << "M1 == M2 : " << (M1 == M2) << std::endl ;
     std::cout << "M1 == M3 : " << (M1 == M3) << std::endl ;
 
     // RChains
     HDVFType::Row_chain cc1(4), cc2(4), cc3 ;
-    cc1.set_coef(1,1) ;
-    cc1.set_coef(3,-1) ;
+    cc1.set_coefficient(1,1) ;
+    cc1.set_coefficient(3,-1) ;
 
-    cc2.set_coef(3,-1) ;
-    cc2.set_coef(1,1) ;
+    cc2.set_coefficient(3,-1) ;
+    cc2.set_coefficient(1,1) ;
 
     cc3 = cc2 ;
-    cc3.set_coef(2, 1) ;
+    cc3.set_coefficient(2, 1) ;
 
     std::cout << "cc1: " << cc1 << std::endl ;
     std::cout << "cc2: " << cc2 << std::endl ;
@@ -284,18 +284,18 @@ int main(int argc, char **argv)
 
     // CMatrices
     HDVFType::Row_matrix MM1(3,4), MM2(3,4), MM3(3,4) ;
-    CGAL::OSM::set_coef(MM1, 0, 1, 1) ;
-    CGAL::OSM::set_coef(MM1, 0, 2, -1) ;
-    CGAL::OSM::set_coef(MM1, 1, 1, 2) ;
-    CGAL::OSM::set_coef(MM1, 2, 1, -2) ;
+    CGAL::OSM::set_coefficient(MM1, 0, 1, 1) ;
+    CGAL::OSM::set_coefficient(MM1, 0, 2, -1) ;
+    CGAL::OSM::set_coefficient(MM1, 1, 1, 2) ;
+    CGAL::OSM::set_coefficient(MM1, 2, 1, -2) ;
 
-    CGAL::OSM::set_coef(MM2, 0, 1, 1) ;
-    CGAL::OSM::set_coef(MM2, 2, 1, -2) ;
-    CGAL::OSM::set_coef(MM2, 0, 2, -1) ;
-    CGAL::OSM::set_coef(MM2, 1, 1, 2) ;
+    CGAL::OSM::set_coefficient(MM2, 0, 1, 1) ;
+    CGAL::OSM::set_coefficient(MM2, 2, 1, -2) ;
+    CGAL::OSM::set_coefficient(MM2, 0, 2, -1) ;
+    CGAL::OSM::set_coefficient(MM2, 1, 1, 2) ;
 
     MM3 = MM2 ;
-    CGAL::OSM::set_coef(MM3, 2, 2, 3) ;
+    CGAL::OSM::set_coefficient(MM3, 2, 2, 3) ;
 
     std::cout << "MM1 == MM2 : " << (MM1 == MM2) << std::endl ;
     std::cout << "MM1 == MM3 : " << (MM1 == MM3) << std::endl ;

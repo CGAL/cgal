@@ -384,7 +384,7 @@ public:
         {
             Col_chain g_cell(OSM::get_column(_G_col.at(q), cell)) ;
             // Add 1 to the cell
-            g_cell.set_coef(cell, 1) ;
+            g_cell.set_coefficient(cell, 1) ;
             return g_cell ;
         }
         else
@@ -409,7 +409,7 @@ public:
         {
             Row_chain fstar_cell(OSM::get_row(_F_row.at(dim), cell)) ;
             // Add 1 to the cell
-            fstar_cell.set_coef(cell, 1) ;
+            fstar_cell.set_coefficient(cell, 1) ;
 
             return fstar_cell.transpose() ;
 
@@ -731,7 +731,7 @@ void Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::A(siz
     // Extract submatrices from _DD_col
     Row_chain D12(OSM::get_row(_DD_col.at(q+1),tau1)); // D12 is a row chain from _DD_col[q+1] at index tau1
     Col_chain D21(OSM::get_column(_DD_col.at(q + 1),tau2)); // D21 is a column chain from _DD_col[q+1] at index tau2
-    const CoefficientType D11 = D12.get_coef(tau2); // D11 is the coefficient at the intersection of tau2 in D12
+    const CoefficientType D11 = D12.get_coefficient(tau2); // D11 is the coefficient at the intersection of tau2 in D12
 
     // Assert that D11 is either 1 or -1 (check invertibility)
     assert((D11 == 1) || (D11 == -1)); // !!!!! Test invertibility
@@ -822,7 +822,7 @@ void Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::A(siz
         OSM::set_column(_H_col[q], tau1, G11 * D11_inv);
 
         // Set the coefficient at (tau2, tau1) in _H_col[q] to D11_inv
-        set_coef(_H_col[q], tau2, tau1, D11_inv);
+        set_coefficient(_H_col[q], tau2, tau1, D11_inv);
     }
 
     // ---- Update _DD_col

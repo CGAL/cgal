@@ -611,7 +611,7 @@ Pair_cells Hdvf<CoefficientType, ComplexType>::find_pair_W(int q, bool &found, s
         {
             for (OSM::Bitboard::iterator it_col = this->_G_col.at(q).begin(); (it_col != this->_G_col.at(q).end() && !found); ++it_col)
             {
-                if (abs(this->_G_col.at(q).get_coef(tau, *it_col)) == 1)
+                if (abs(this->_G_col.at(q).get_coefficient(tau, *it_col)) == 1)
                 {
                     p.sigma = tau ; // secondary cell
                     p.tau = *it_col ; // critical cell
@@ -686,7 +686,7 @@ std::vector<Pair_cells> Hdvf<CoefficientType, ComplexType>::find_pairs_W(int q, 
         {
             for (OSM::Bitboard::iterator it_col = this->_G_col.at(q).begin(); it_col != this->_G_col.at(q).end(); ++it_col)
             {
-                if (abs(get_coef(this->_G_col.at(q), tau, *it_col)) == 1)
+                if (abs(get_coefficient(this->_G_col.at(q), tau, *it_col)) == 1)
                 {
                     Pair_cells p ;
                     p.sigma = tau ; // secondary cell
@@ -1066,7 +1066,7 @@ void Hdvf<CoefficientType, ComplexType>::R(size_t pi, size_t sigma, int q) {
         OSM::set_column(this->_DD_col[q + 1], sigma, F11 * H11_inv);
 
         // Set the coefficient at (pi, sigma) in this->_DD_col to H11_inv
-        this->_DD_col[q + 1].set_coef(pi, sigma, H11_inv);
+        this->_DD_col[q + 1].set_coefficient(pi, sigma, H11_inv);
 
         // Update this->_H_col[q]
         // Subtract the product of (H21 * H12) and H11_inv from this->_H_col[q]
@@ -1129,7 +1129,7 @@ void Hdvf<CoefficientType, ComplexType>::M(size_t pi, size_t gamma, int q) {
         typename HDVF_coreT::Col_chain F21(OSM::get_column(this->_F_row[q], pi)); // F21 is the column chain from this->_F_row[q] at index pi
 
         // Get the coefficient at the intersection of F12 and F21
-        const CoefficientType F11(F12.get_coef(pi)); // F11 is the coefficient at row gamma and column pi
+        const CoefficientType F11(F12.get_coefficient(pi)); // F11 is the coefficient at row gamma and column pi
 
         // Assert that F11 is either 1 or -1 (for invertibility)
         assert((F11 == 1) || (F11 == -1)); // !!!!! Test invertibility
@@ -1190,7 +1190,7 @@ void Hdvf<CoefficientType, ComplexType>::M(size_t pi, size_t gamma, int q) {
         OSM::set_column(this->_F_row[q], gamma, F21 * (-F11_inv));
 
         // Set the coefficient at (pi, gamma) in this->_F_row[q] to F11_inv
-        set_coef(this->_F_row[q], pi, gamma, F11_inv);
+        set_coefficient(this->_F_row[q], pi, gamma, F11_inv);
 
         // Update this->_G_col
         // Add the product of (H11 * F11_inv) and D11 to this->_G_col[q+1]
@@ -1246,7 +1246,7 @@ void Hdvf<CoefficientType, ComplexType>::W(size_t sigma, size_t gamma, int q) {
         typename HDVF_coreT::Col_chain G21(OSM::get_column(this->_G_col[q], gamma)); // G21 is the column chain from this->_G_col[q] at index gamma
 
         // Get the coefficient at the intersection of G12 and G21
-        CoefficientType G11(G12.get_coef(gamma)); // G11 is the coefficient at row sigma and column gamma
+        CoefficientType G11(G12.get_coefficient(gamma)); // G11 is the coefficient at row sigma and column gamma
 
         // Assert that G11 is either 1 or -1 (for invertibility)
         assert((G11 == 1) || (G11 == -1)); // !!!!! Test invertibility
@@ -1312,7 +1312,7 @@ void Hdvf<CoefficientType, ComplexType>::W(size_t sigma, size_t gamma, int q) {
         OSM::set_column(this->_G_col[q], sigma, G21 * G11_inv);
 
         // Set the coefficient at (gamma, sigma) in this->_G_col[q] to G11_inv
-        set_coef(this->_G_col[q], gamma, sigma, G11_inv);
+        set_coefficient(this->_G_col[q], gamma, sigma, G11_inv);
 
         // Update this->_F_row (for dimension q-1)
         // Add the product of (D11_q * G11_inv) and H11 to this->_F_row[q - 1]
