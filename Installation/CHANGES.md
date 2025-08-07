@@ -4,6 +4,12 @@ Release date: July 2025
 
 ## [Release 6.1](https://github.com/CGAL/cgal/releases/tag/v6.1)
 
+- **API Changes**: The following import functions have been deprecated and renamed for better naming clarity and consistency:
+  - `import_from_plane_graph()` → `read_plane_graph_in_lcc()` 
+  - `import_from_polyhedron_3()` → `polyhedron_3_to_lcc()`
+  - `import_from_triangulation_3()` → `triangulation_3_to_lcc()`
+- The old function names are still available but marked as deprecated for backward compatibility.
+
 ### General Changes
 
 - The new list of supported compilers is:
