@@ -246,13 +246,7 @@ namespace CGAL {
        CGAL_assertion_msg(false, "maximal_empty_spheres() called with unsupported dimension tag");
     }
 
-    /*!
-     * \ingroup PkgMaximalEmptySpheresFunctions
-     * \brief A dummy function to demonstrate the structure of the library.
-     *
-     * This function is a placeholder and does not perform any operations.
-     * It is intended to be replaced with actual functionality in the future.
-     */
+
     template<typename SphereRange, typename OutputIterator>
     void maximal_empty_spheres(const SphereRange& input, OutputIterator result, CGAL::Dimension_tag<3> /* tag */) {
         using Sphere_3 = typename SphereRange::value_type;
@@ -300,6 +294,15 @@ namespace CGAL {
 #endif
     }
 
+    /*!
+     * \ingroup PkgMaximalEmptySpheresFunctions
+     * \brief compute maximal empty spheres from a range of spheres.
+     *
+     * @tparam SphereRange A range of spheres to be processed. The value type may be a 2D circle or a 3D or dD sphere.
+     * @param OutputIterator An output iterator to store the results which are the same type as the input spheres.
+     *
+     * This function computes maximal empty spheres from the input range of spheres and stores the results in the output iterator.
+     */
     template<typename SphereRange, typename OutputIterator>
     void maximal_empty_spheres(const SphereRange& input, OutputIterator result) {
         using Sphere = typename SphereRange::value_type;

@@ -45,5 +45,5 @@ The package provides ... }
 
 \cgalCRPSection{Functions}
 
-- `CGAL::maximal_empty_spheres`
+- `CGAL::maximal_empty_spheres()`
 */
