@@ -28,6 +28,8 @@
 
 namespace CGAL {
 
+#ifndef DOXYGEN_RUNNING
+
     template<typename Dimension>
     void maximal_empty_spheres(const Eigen::MatrixXd &G, Eigen::MatrixXd &result, Eigen::MatrixXi *contact_indices=NULL, double atol=1e-8, int debug_level=1) {
 
@@ -294,21 +296,28 @@ namespace CGAL {
 #endif
     }
 
+#endif // DOXYGEN_RUNNING
+
     /*!
      * \ingroup PkgMaximalEmptySpheresFunctions
+     *
      * \brief compute maximal empty spheres from a range of spheres.
      *
-     * @tparam SphereRange A range of spheres to be processed. The value type may be a 2D circle or a 3D or dD sphere.
-     * @tparam OutputIterator An output iterator to store the results which are the same type as the input spheres.
-     *
      * This function computes maximal empty spheres from the input range of spheres and stores the results in the output iterator.
+     *
+     * \tparam SphereRange A range of spheres to be processed. The value type may be a 2D circle or a 3D or dD sphere.
+     * \tparam OutputIterator An output iterator to store the results which are the same type as the input spheres.
+     *
+     * \param input The input range of spheres.
+     * \param result The output iterator to store the maximal empty spheres.
      */
-    template<typename SphereRange, typename OutputIterator>
+    template <typename SphereRange, typename OutputIterator>
     void maximal_empty_spheres(const SphereRange& input, OutputIterator result) {
         using Sphere = typename SphereRange::value_type;
         constexpr int D = Ambient_dimension<Sphere>::value;
         maximal_empty_spheres(input, result, CGAL::Dimension_tag<D>());
     }
+
 } // namespace CGAL
 
 #endif // CGAL_MAXIMAL_EMPTY_SPHERES_MAXIMAL_EMPTY_SPHERES_H
