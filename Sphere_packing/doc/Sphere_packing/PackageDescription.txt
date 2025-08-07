@@ -1,0 +1,33 @@
+
+/// \defgroup PkgSpherePackingRef Sphere Packing Reference
+
+/// \defgroup PkgSpherePackingAlgorithms Algorithms
+/// \ingroup PkgSpherePackingRef
+/*!
+
+\addtogroup PkgSpherePackingRef
+\cgalPkgDescriptionBegin{SpherePacking, PkgSpherePacking}
+\cgalPkgPicture{sphere_packing_logo_small.png}
+
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Rene Weller, Sven Oesau}
+\cgalPkgDesc{
+The SpherePacking provides ... }
+\cgalPkgManuals{Chapter_SpherePacking,PkgSpherePackingRef}
+\cgalPkgSummaryEnd
+
+\cgalPkgShortInfoBegin
+\cgalPkgSince{6.2}
+\cgalPkgBib{cgal:w-sp}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+
+\cgalPkgShortInfoEnd
+
+\cgalPkgDescriptionEnd
+
+
+\cgalClassifedRefPages
+
+\cgalCRPSection{Algorithms}
+- `CGAL::pack_spheres()`
+*/
