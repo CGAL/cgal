@@ -4,7 +4,7 @@
 /// \defgroup PkgMaximalEmptySpheresConcepts Concepts
 /// \ingroup PkgMaximalEmptySpheresRef
 
-/// \defgroup PkgMaximalEmptySpheresFunctions
+/// \defgroup PkgMaximalEmptySpheresFunctions Functions
 /// \ingroup PkgMaximalEmptySpheresRef
 
 /// \defgroup PkgMaximalEmptySpheresTraitsClasses Traits Classes
@@ -27,7 +27,7 @@ The package provides ... }
 
 \cgalPkgShortInfoBegin
 \cgalPkgSince{6.2}
-\cgalPkgDependsOn{\ref PkgTriangulation}
+\cgalPkgDependsOn{\ref PkgTriangulations}
 \cgalPkgBib{cgal:ka-mes}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 
