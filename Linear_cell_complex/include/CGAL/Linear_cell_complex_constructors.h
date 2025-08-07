@@ -235,7 +235,7 @@ CGAL_DEPRECATED
 typename LCC::Dart_descriptor
 import_from_plane_graph(LCC& alcc, const char* filename)
 {
-  return read_plane_graph_in_lcc(alcc, filename); 
+  return read_plane_graph_in_lcc(alcc, filename);
 }
 #endif
 
