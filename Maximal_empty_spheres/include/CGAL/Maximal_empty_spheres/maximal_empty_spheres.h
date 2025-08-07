@@ -299,7 +299,7 @@ namespace CGAL {
      * \brief compute maximal empty spheres from a range of spheres.
      *
      * @tparam SphereRange A range of spheres to be processed. The value type may be a 2D circle or a 3D or dD sphere.
-     * @param OutputIterator An output iterator to store the results which are the same type as the input spheres.
+     * @tparam OutputIterator An output iterator to store the results which are the same type as the input spheres.
      *
      * This function computes maximal empty spheres from the input range of spheres and stores the results in the output iterator.
      */
