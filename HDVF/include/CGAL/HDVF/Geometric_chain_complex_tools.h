@@ -75,30 +75,30 @@ void hdvf_geometric_chain_complex_output_vtk (Hdvf_core<CoefType, ComplexType, _
     typedef Hdvf_core<CoefType, ComplexType, _ChainType, _SparseMatrixType> HDVF_type;
     // Export PSC labelling
     string outfile(filename+"_PSC.vtk") ;
-    vector<vector<int> > labels = hdvf.get_psc_labels() ;
+    vector<vector<int> > labels = hdvf.psc_labels() ;
     ComplexType::chain_complex_to_vtk(complex, outfile, &labels) ;
 
-    if (hdvf.get_hdvf_opts() != OPT_BND)
+    if (hdvf.hdvf_opts() != OPT_BND)
     {
         // Export generators of all critical cells
-        vector<vector<size_t> > criticals(hdvf.get_flag(CRITICAL)) ;
+        vector<vector<size_t> > criticals(hdvf.flag(CRITICAL)) ;
         for (int q = 0; q <= complex.dim(); ++q)
         {
             for (size_t c : criticals.at(q))
             {
                 // Homology generators
-                if (hdvf.get_hdvf_opts() & (OPT_FULL | OPT_G))
+                if (hdvf.hdvf_opts() & (OPT_FULL | OPT_G))
                 {
                     string outfile_g(filename+"_G_"+to_string(c)+"_dim_"+to_string(q)+".vtk") ;
                     //                    vector<vector<size_t> > labels = hdvf.export_label(G,c,q) ;
-                    OSM::Sparse_chain<CoefType,OSM::COLUMN> chain(hdvf.get_homology_chain(c,q)) ;
+                    OSM::Sparse_chain<CoefType,OSM::COLUMN> chain(hdvf.homology_chain(c,q)) ;
                     ComplexType::chain_complex_chain_to_vtk(complex, outfile_g, chain, q, c) ;
                 }
                 // Cohomology generators
-                if (hdvf.get_hdvf_opts() & (OPT_FULL | OPT_F))
+                if (hdvf.hdvf_opts() & (OPT_FULL | OPT_F))
                 {
                     string outfile_f(filename+"_FSTAR_"+to_string(c)+"_dim_"+to_string(q)+".vtk") ;
-                    OSM::Sparse_chain<CoefType,OSM::COLUMN> chain(hdvf.get_cohomology_chain(c, q)) ;
+                    OSM::Sparse_chain<CoefType,OSM::COLUMN> chain(hdvf.cohomology_chain(c, q)) ;
                     if (!co_faces)
                     {
                         ComplexType::chain_complex_chain_to_vtk(complex, outfile_f, chain, q, c) ;
@@ -161,7 +161,7 @@ void hdvf_persistence_geometric_chain_complex_output_vtk (Hdvf_persistence<CoefT
             ComplexType::chain_complex_to_vtk(complex, out_file+"_PSC.vtk", &hole_data.labelsPSC) ;
             const CellsPerInterval per_int_cells(std::get<1>(hole_data.hole)) ;
             // Export homology generators (g)
-            if (per_hdvf.get_hdvf_opts()  & (OPT_FULL | OPT_G))
+            if (per_hdvf.hdvf_opts()  & (OPT_FULL | OPT_G))
             {
                 // First generator : filename_i_g_sigma_q.vtk
                 {
@@ -179,7 +179,7 @@ void hdvf_persistence_geometric_chain_complex_output_vtk (Hdvf_persistence<CoefT
                 }
             }
             // Export cohomology generators (fstar)
-            if ((per_hdvf.get_hdvf_opts() == OPT_FULL) || (per_hdvf.get_hdvf_opts() == OPT_F))
+            if ((per_hdvf.hdvf_opts() == OPT_FULL) || (per_hdvf.hdvf_opts() == OPT_F))
             {
                 // First generator : filename_i_fstar_sigma_q.vtk
                 {
@@ -231,30 +231,30 @@ void hdvf_duality_geometric_chain_complex_output_vtk (Hdvf_duality<CoefType, Com
     typedef Hdvf_duality<CoefType, ComplexType> HDVF_type;
     // Export PSC labelling
     string outfile(filename+"_PSC.vtk") ;
-    vector<vector<int> > labels = hdvf.get_psc_labels() ;
+    vector<vector<int> > labels = hdvf.psc_labels() ;
     ComplexType::chain_complex_to_vtk(complex, outfile, &labels) ;
 
-    if (hdvf.get_hdvf_opts() != OPT_BND)
+    if (hdvf.hdvf_opts() != OPT_BND)
     {
         // Export generators of all critical cells
-        vector<vector<size_t> > criticals(hdvf.get_flag(CRITICAL)) ;
+        vector<vector<size_t> > criticals(hdvf.flag(CRITICAL)) ;
         for (int q = 0; q <= complex.dim(); ++q)
         {
             for (size_t c : criticals.at(q))
             {
                 // Homology generators
-                if (hdvf.get_hdvf_opts() & (OPT_FULL | OPT_G))
+                if (hdvf.hdvf_opts() & (OPT_FULL | OPT_G))
                 {
                     string outfile_g(filename+"_G_"+to_string(c)+"_dim_"+to_string(q)+".vtk") ;
                     //                    vector<vector<size_t> > labels = hdvf.export_label(G,c,q) ;
-                    OSM::Sparse_chain<CoefType,OSM::COLUMN> chain(hdvf.get_homology_chain(c,q)) ;
+                    OSM::Sparse_chain<CoefType,OSM::COLUMN> chain(hdvf.homology_chain(c,q)) ;
                     ComplexType::chain_complex_chain_to_vtk(complex, outfile_g, chain, q, c) ;
                 }
                 // Cohomology generators
-                if (hdvf.get_hdvf_opts() & (OPT_FULL | OPT_F))
+                if (hdvf.hdvf_opts() & (OPT_FULL | OPT_F))
                 {
                     string outfile_f(filename+"_FSTAR_"+to_string(c)+"_dim_"+to_string(q)+".vtk") ;
-                    OSM::Sparse_chain<CoefType,OSM::COLUMN> chain(hdvf.get_cohomology_chain(c, q)) ;
+                    OSM::Sparse_chain<CoefType,OSM::COLUMN> chain(hdvf.cohomology_chain(c, q)) ;
                     if (!co_faces)
                     {
                         ComplexType::chain_complex_chain_to_vtk(complex, outfile_f, chain, q, c) ;

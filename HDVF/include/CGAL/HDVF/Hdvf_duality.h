@@ -106,17 +106,17 @@ public:
     Hdvf_duality(const ComplexType& L, Sub_chain_complex_mask<CoefficientType, ComplexType>& K, int hdvf_opt = OPT_FULL) ;
 
     /**
-     * \brief Finds a valid PairCell of dimension q / q+1 for A *in the current sub chain complex*.
+     * \brief Finds a valid Pair_cells of dimension q / q+1 for A *in the current sub chain complex*.
      *
      * The function searches a pair of critical cells, *in the current sub chain complex*, \f$(\gamma_1, \gamma2)\f$ of dimension q / q+1, valid for A (ie.\ such that \f$\langle \partial_{q+1}(\gamma_2), \gamma_1 \rangle\f$ invertible). It returns the first valid pair found by iterators.
      *
      * \param[in] q Lower dimension of the pair.
      * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      */
-    virtual PairCell find_pair_A(int q, bool &found) const;
+    virtual Pair_cells find_pair_A(int q, bool &found) const;
 
     /**
-     * \brief Finds a valid PairCell for A containing `gamma` *in the current sub chain complex* (a cell of dimension `q`)
+     * \brief Finds a valid Pair_cells for A containing `gamma` *in the current sub chain complex* (a cell of dimension `q`)
      *
      * The function searches a cell \f$\gamma'\f$ *in the current sub chain complex* such that one of the following conditions holds:
      * - \f$\gamma'\f$ has dimension q+1 and \f$(\gamma, \gamma')\f$ is valid for A (ie.\ such that \f$\langle \partial_{q+1}(\gamma'), \gamma \rangle\f$ invertible),
@@ -126,10 +126,10 @@ public:
      * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      * \param[in] gamma Index of a cell to pair.
      */
-    virtual PairCell find_pair_A(int q, bool &found, size_t gamma) const;
+    virtual Pair_cells find_pair_A(int q, bool &found, size_t gamma) const;
 
     /**
-     * \brief Finds *all* valid PairCell of dimension q / q+1 *in the current sub chain complex* for A.
+     * \brief Finds *all* valid Pair_cells of dimension q / q+1 *in the current sub chain complex* for A.
      *
      * The function searches all pairs of critical cells \f$(\gamma_1, \gamma2)\f$ *in the current sub chain complex* of dimension q / q+1, valid for A (ie.\ such that \f$\langle \partial_{q+1}(\gamma_2), \gamma_1 \rangle\f$ invertible).
      * It returns a vector of such pairs.
@@ -137,10 +137,10 @@ public:
      * \param[in] q Lower dimension of the pair.
      * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      */
-    virtual std::vector<PairCell> find_pairs_A(int q, bool &found) const;
+    virtual std::vector<Pair_cells> find_pairs_A(int q, bool &found) const;
 
     /**
-     * \brief Finds *all* valid PairCell for A containing `gamma` *in the current sub chain complex* (a cell of dimension `q`)
+     * \brief Finds *all* valid Pair_cells for A containing `gamma` *in the current sub chain complex* (a cell of dimension `q`)
      *
      * The function searches all `CRITICAL` cells \f$\gamma'\f$ *in the current sub chain complex* such that one of the following conditions holds:
      * - \f$\gamma'\f$ has dimension q+1 and \f$(\gamma, \gamma')\f$ is valid for A (ie.\ such that \f$\langle \partial_{q+1}(\gamma'), \gamma \rangle\f$ invertible),
@@ -151,7 +151,7 @@ public:
      * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      * \param[in] gamma Index of a cell to pair.
      */
-    virtual std::vector<PairCell> find_pairs_A(int q, bool &found, size_t gamma) const;
+    virtual std::vector<Pair_cells> find_pairs_A(int q, bool &found, size_t gamma) const;
 
     /** \brief Sets the current sub chain complex masks over `K`.
      *
@@ -191,9 +191,9 @@ public:
      *
      * \param[in] verbose If this parameter is `true`, all intermediate reductions are printed out.
      *
-     * \return The vector of all `PairCell` paired with A.
+     * \return The vector of all `Pair_cells` paired with A.
      */
-    std::vector<PairCell> compute_perfect_hdvf(bool verbose = false);
+    std::vector<Pair_cells> compute_perfect_hdvf(bool verbose = false);
 
     /**
      * \brief Computes a random perfect HDVF over the current sub chain complex.
@@ -209,7 +209,7 @@ public:
      *
      * \return The vector of all pairs of cells used for apply A.
      */
-    std::vector<PairCell> compute_rand_perfect_hdvf(bool verbose = false);
+    std::vector<Pair_cells> compute_rand_perfect_hdvf(bool verbose = false);
 
     /**
      * \brief Computes a "pairing" HDVF between K and L-K
@@ -220,7 +220,7 @@ public:
      *
      * \return The vector of paired critical cells (encoding Alexander isomorphism).
      */
-    std::vector<PairCell> compute_pairing_hdvf() ;
+    std::vector<Pair_cells> compute_pairing_hdvf() ;
 
     /**
      * \brief Computes a random "pairing" HDVF between K and L-K
@@ -231,7 +231,7 @@ public:
      *
      * \return The vector of paired critical cells (encoding Alexander isomorphism).
      */
-    std::vector<PairCell> compute_rand_pairing_hdvf() ;
+    std::vector<Pair_cells> compute_rand_pairing_hdvf() ;
 
     // Hdvf_duality getters
     /**
@@ -241,7 +241,7 @@ public:
      *
      * \param[in] flag Flag to select.
      */
-    vector<vector<size_t> > get_flag (FlagType flag) const ;
+    vector<vector<size_t> > flag (FlagType flag) const ;
 
     /**
      * \brief Gets cells with a given `flag` in dimension `q` *in the current sub chain complex*.
@@ -251,7 +251,7 @@ public:
      * \param[in] flag Flag to select.
      * \param[in] q Dimension visited.
      */
-    vector<size_t> get_flag_dim (FlagType flag, int q) const ;
+    vector<size_t> flag_dim (FlagType flag, int q) const ;
 
     // Hdvf_duality I/O
 
@@ -262,7 +262,7 @@ public:
      *
      * By default, outputs the complex to `std::cout`.
     */
-    virtual ostream& print_reduction(ostream& out = cout)
+    virtual ostream& insert_reduction(ostream& out = cout)
     {
         // Print K
         out << "----> K" << endl ;
@@ -398,7 +398,7 @@ public:
      *
      * \return A vector containing, for each dimension, the vector of labels by cell index.
      */
-    virtual vector<vector<int> > get_psc_labels () const
+    virtual vector<vector<int> > psc_labels () const
     {
         vector<vector<int> > labels(this->_K.dim()+1) ;
         for (int q=0; q<=this->_K.dim(); ++q)
@@ -428,12 +428,12 @@ public:
      *
      * \return A column-major chain.
      */
-    virtual Col_chain get_homology_chain (size_t cell, int dim) const
+    virtual Col_chain homology_chain (size_t cell, int dim) const
     {
         if ((dim<0) || (dim>this->_K.dim()))
-            throw "Error : get_homology_chain with dim out of range" ;
+            throw "Error : homology_chain with dim out of range" ;
         if (!_subCC.get_bit(dim, cell))
-            throw "Error : get_homology_chain for a cell out of current sub chain complex" ;
+            throw "Error : homology_chain for a cell out of current sub chain complex" ;
 
         if (this->_hdvf_opt & (OPT_FULL | OPT_G))
         {
@@ -464,12 +464,12 @@ public:
      *
      * \return A column-major chain.
      */
-    virtual Col_chain get_cohomology_chain (size_t cell, int dim) const
+    virtual Col_chain cohomology_chain (size_t cell, int dim) const
     {
         if ((dim<0) || (dim>this->_K.dim()))
-            throw "Error : get_cohomology_chain with dim out of range" ;
+            throw "Error : cohomology_chain with dim out of range" ;
         if (!_subCC.get_bit(dim, cell))
-            throw "Error : get_cohomology_chain for a cell out of current sub chain complex" ;
+            throw "Error : cohomology_chain for a cell out of current sub chain complex" ;
 
         if (this->_hdvf_opt & (OPT_FULL | OPT_F))
         {
@@ -497,12 +497,12 @@ template<typename CoefficientType, typename ComplexType>
 Hdvf_duality<CoefficientType,ComplexType>::Hdvf_duality(const ComplexType& L, Sub_chain_complex_mask<CoefficientType, ComplexType>& K, int hdvf_opt) :
 Hdvf_core<CoefficientType, ComplexType, OSM::Sparse_chain, OSM::Sub_sparse_matrix>(L,hdvf_opt), _L(L), _hdvf_opt(hdvf_opt), _KCC(K), _subCC(K) {}
 
-// find a valid PairCell for A in dimension q
+// find a valid Pair_cells for A in dimension q
 template<typename CoefficientType, typename ComplexType>
-PairCell Hdvf_duality<CoefficientType,ComplexType>::find_pair_A(int q, bool &found) const
+Pair_cells Hdvf_duality<CoefficientType,ComplexType>::find_pair_A(int q, bool &found) const
 {
     found = false;
-    PairCell p;
+    Pair_cells p;
 
     // Iterate through columns of _DD_col[q+1]
     for (OSM::Bitboard::iterator it_col = this->_DD_col[q+1].begin(); (it_col != this->_DD_col[q+1].end() && !found); ++it_col)
@@ -524,12 +524,12 @@ PairCell Hdvf_duality<CoefficientType,ComplexType>::find_pair_A(int q, bool &fou
     return p;
 }
 
-// find a valid PairCell containing tau for A in dimension q
+// find a valid Pair_cells containing tau for A in dimension q
 template<typename CoefficientType, typename ComplexType>
-PairCell Hdvf_duality<CoefficientType,ComplexType>::find_pair_A(int q, bool &found, size_t tau) const
+Pair_cells Hdvf_duality<CoefficientType,ComplexType>::find_pair_A(int q, bool &found, size_t tau) const
 {
     found = false;
-    PairCell p ;
+    Pair_cells p ;
     // Check tau belongs to _subCC
     if (!_subCC.get_bit(q, tau))
         throw("Hdvf_duality: searching for a cell tau outside _subCC") ;
@@ -556,7 +556,7 @@ PairCell Hdvf_duality<CoefficientType,ComplexType>::find_pair_A(int q, bool &fou
         if (_subCC.get_bit(q+1, it->first) && (abs(it->second) == 1))
         {
             found = true ;
-            PairCell p ;
+            Pair_cells p ;
             p.sigma = tau ;
             p.tau = it->first ;
             p.dim = q ;
@@ -565,11 +565,11 @@ PairCell Hdvf_duality<CoefficientType,ComplexType>::find_pair_A(int q, bool &fou
     return p;
 }
 
-// find all the valid PairCell for A in dimension q
+// find all the valid Pair_cells for A in dimension q
 template<typename CoefficientType, typename ComplexType>
-std::vector<PairCell> Hdvf_duality<CoefficientType,ComplexType>::find_pairs_A(int q, bool &found) const
+std::vector<Pair_cells> Hdvf_duality<CoefficientType,ComplexType>::find_pairs_A(int q, bool &found) const
 {
-    vector<PairCell> pairs;
+    vector<Pair_cells> pairs;
     found = false ;
 
     // Iterate through columns of _DD_col[q+1]
@@ -581,7 +581,7 @@ std::vector<PairCell> Hdvf_duality<CoefficientType,ComplexType>::find_pairs_A(in
         for (typename HDVF_type::Col_chain::const_iterator it = col.begin(); it != col.end(); ++it) {
             if (_subCC.get_bit(q, it->first) && ((it->second == 1) || (it->second == -1))) {
                 // If an entry of _subCC with coefficient 1 or -1 is found, set the pair and mark as found
-                PairCell p;
+                Pair_cells p;
                 p.sigma = it->first;
                 p.tau = *it_col;
                 p.dim = q;
@@ -593,12 +593,12 @@ std::vector<PairCell> Hdvf_duality<CoefficientType,ComplexType>::find_pairs_A(in
     return pairs;
 }
 
-// find all the valid PairCell containing tau for A in dimension q
+// find all the valid Pair_cells containing tau for A in dimension q
 template<typename CoefficientType, typename ComplexType>
-std::vector<PairCell> Hdvf_duality<CoefficientType,ComplexType>::find_pairs_A(int q, bool &found, size_t tau) const
+std::vector<Pair_cells> Hdvf_duality<CoefficientType,ComplexType>::find_pairs_A(int q, bool &found, size_t tau) const
 {
     found = false;
-    std::vector<PairCell> pairs;
+    std::vector<Pair_cells> pairs;
     // Check if tau belongs to _subCC
     if (!_subCC.get_bit(q, tau))
         throw("Hdvf_duality: searching for a cell tau outside _subCC") ;
@@ -611,7 +611,7 @@ std::vector<PairCell> Hdvf_duality<CoefficientType,ComplexType>::find_pairs_A(in
         if (_subCC.get_bit(q+1, it->first) && (abs(it->second) == 1))
         {
             found = true ;
-            PairCell p ;
+            Pair_cells p ;
             p.sigma = tau ;
             p.tau = it->first ;
             p.dim = q ;
@@ -626,7 +626,7 @@ std::vector<PairCell> Hdvf_duality<CoefficientType,ComplexType>::find_pairs_A(in
         if (_subCC.get_bit(q-1, it->first) && (abs(it->second) == 1))
         {
             found = true ;
-            PairCell p ;
+            Pair_cells p ;
             p.sigma = it->first ;
             p.tau = tau ;
             p.dim = q-1 ;
@@ -638,7 +638,7 @@ std::vector<PairCell> Hdvf_duality<CoefficientType,ComplexType>::find_pairs_A(in
 
 // Compute dual perfect HDVFs (over K and L-K)
 template<typename CoefficientType, typename ComplexType>
-std::vector<PairCell> Hdvf_duality<CoefficientType,ComplexType>::compute_perfect_hdvf(bool verbose)
+std::vector<Pair_cells> Hdvf_duality<CoefficientType,ComplexType>::compute_perfect_hdvf(bool verbose)
 {
     std::cout << endl << "==== Compute perfect HDVF over K" << endl ;
     // Set _subCC to K
@@ -646,9 +646,9 @@ std::vector<PairCell> Hdvf_duality<CoefficientType,ComplexType>::compute_perfect
     // Restrict _DD_col accordingly
     _subCC.screen_matrices(this->_DD_col);
     // Compute perfect HDVF over K
-    std::vector<PairCell> tmp = HDVF_type::compute_perfect_hdvf(verbose) ;
+    std::vector<Pair_cells> tmp = HDVF_type::compute_perfect_hdvf(verbose) ;
     std::cout << tmp.size() << " cells paired" << endl ;
-    _critical_K = get_flag(CRITICAL) ;
+    _critical_K = flag(CRITICAL) ;
 
     std::cout << endl << "==== Compute perfect HDVF over L-K" << endl ;
     // set _subCC to L-K
@@ -656,9 +656,9 @@ std::vector<PairCell> Hdvf_duality<CoefficientType,ComplexType>::compute_perfect
     // Restrict _DD_col accordingly
     _subCC.screen_matrices(this->_DD_col);
     // Compute perfect HDVF over L-K
-    std::vector<PairCell> tmp2 = HDVF_type::compute_perfect_hdvf(verbose) ;
+    std::vector<Pair_cells> tmp2 = HDVF_type::compute_perfect_hdvf(verbose) ;
     std::cout << tmp2.size() << " cells paired" << endl ;
-    _critical_L_K = get_flag(CRITICAL) ;
+    _critical_L_K = flag(CRITICAL) ;
 
     // Return the vector of paired cells
     tmp.insert(tmp.end(), tmp2.begin(), tmp2.end());
@@ -667,7 +667,7 @@ std::vector<PairCell> Hdvf_duality<CoefficientType,ComplexType>::compute_perfect
 
 // Compute random dual perfect HDVFs (over K and L-K)
 template<typename CoefficientType, typename ComplexType>
-std::vector<PairCell> Hdvf_duality<CoefficientType,ComplexType>::compute_rand_perfect_hdvf(bool verbose)
+std::vector<Pair_cells> Hdvf_duality<CoefficientType,ComplexType>::compute_rand_perfect_hdvf(bool verbose)
 {
     std::cout << endl << "==== Compute perfect HDVF over K" << endl ;
     // Set _subCC to K
@@ -675,9 +675,9 @@ std::vector<PairCell> Hdvf_duality<CoefficientType,ComplexType>::compute_rand_pe
     // Restrict _DD_col accordingly
     _subCC.screen_matrices(this->_DD_col);
     // Compute perfect HDVF over K
-    std::vector<PairCell> tmp = HDVF_type::compute_rand_perfect_hdvf(verbose) ;
+    std::vector<Pair_cells> tmp = HDVF_type::compute_rand_perfect_hdvf(verbose) ;
     std::cout << tmp.size() << " cells paired" << endl ;
-    _critical_K = get_flag(CRITICAL) ;
+    _critical_K = flag(CRITICAL) ;
 
     std::cout << endl << "==== Compute perfect HDVF over L-K" << endl ;
     // set _subCC to L-K
@@ -685,9 +685,9 @@ std::vector<PairCell> Hdvf_duality<CoefficientType,ComplexType>::compute_rand_pe
     // Restrict _DD_col accordingly
     _subCC.screen_matrices(this->_DD_col);
     // Compute perfect HDVF over L-K
-    std::vector<PairCell> tmp2 = HDVF_type::compute_rand_perfect_hdvf(verbose) ;
+    std::vector<Pair_cells> tmp2 = HDVF_type::compute_rand_perfect_hdvf(verbose) ;
     std::cout << tmp2.size() << " cells paired" << endl ;
-    _critical_L_K = get_flag(CRITICAL) ;
+    _critical_L_K = flag(CRITICAL) ;
 
     // Return the vector of paired cells
     tmp.insert(tmp.end(), tmp2.begin(), tmp2.end());
@@ -696,7 +696,7 @@ std::vector<PairCell> Hdvf_duality<CoefficientType,ComplexType>::compute_rand_pe
 
 // Compute Alexander isomorphism (A pairing between critical cells of K / L-K)
 template<typename CoefficientType, typename ComplexType>
-std::vector<PairCell> Hdvf_duality<CoefficientType,ComplexType>::compute_pairing_hdvf()
+std::vector<Pair_cells> Hdvf_duality<CoefficientType,ComplexType>::compute_pairing_hdvf()
 {
     // TODO : check both HDVFs are perfect
 
@@ -706,13 +706,13 @@ std::vector<PairCell> Hdvf_duality<CoefficientType,ComplexType>::compute_pairing
     _subCC = Sub_chain_complex_mask<CoefficientType, ComplexType>(_L) ;
     _subCC.screen_matrices(this->_DD_col);
     // If necessary, copy the HDVF before computing the pairing -> otherwise we loose it...
-    std::vector<PairCell> pairing = HDVF_type::compute_perfect_hdvf() ;
+    std::vector<Pair_cells> pairing = HDVF_type::compute_perfect_hdvf() ;
     return pairing ;
 }
 
 // Compute random Alexander isomorphism (A pairing between critical cells of K / L-K)
 template<typename CoefficientType, typename ComplexType>
-std::vector<PairCell> Hdvf_duality<CoefficientType,ComplexType>::compute_rand_pairing_hdvf()
+std::vector<Pair_cells> Hdvf_duality<CoefficientType,ComplexType>::compute_rand_pairing_hdvf()
 {
     // TODO : check both HDVFs are perfect
 
@@ -722,13 +722,13 @@ std::vector<PairCell> Hdvf_duality<CoefficientType,ComplexType>::compute_rand_pa
     _subCC = Sub_chain_complex_mask<CoefficientType, ComplexType>(_L) ;
     _subCC.screen_matrices(this->_DD_col);
     // If necessary, copy the HDVF before computing the pairing -> otherwise we loose it...
-    std::vector<PairCell> pairing = HDVF_type::compute_rand_perfect_hdvf() ;
+    std::vector<Pair_cells> pairing = HDVF_type::compute_rand_perfect_hdvf() ;
     return pairing ;
 }
 
 // Method to get cells of _subCC with a given flag for each dimension
 template<typename CoefficientType, typename ComplexType>
-vector<vector<size_t> > Hdvf_duality<CoefficientType,ComplexType>::get_flag (FlagType flag) const
+vector<vector<size_t> > Hdvf_duality<CoefficientType,ComplexType>::flag (FlagType flag) const
 {
     vector<vector<size_t> > res(_L.dim()+1) ;
     for (int q=0; q<=_L.dim(); ++q)
@@ -744,7 +744,7 @@ vector<vector<size_t> > Hdvf_duality<CoefficientType,ComplexType>::get_flag (Fla
 
 // Method to get cells of _subCC with a given flag for a given dimension
 template<typename CoefficientType, typename ComplexType>
-vector<size_t> Hdvf_duality<CoefficientType,ComplexType>::get_flag_dim (FlagType flag, int q) const
+vector<size_t> Hdvf_duality<CoefficientType,ComplexType>::flag_dim (FlagType flag, int q) const
 {
     vector<size_t> res ;
     for (size_t i=0; i<this->_K.nb_cells(q); ++i)

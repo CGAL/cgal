@@ -49,7 +49,7 @@ void mesh_complex_output(const MeshType& mesh, const ComplexType& L, const CGAL:
     }
 }
 
-inline std::ostream& dual_pairs_output(const std::vector<CGAL::HDVF::PairCell>& pairs, std::ostream& out=std::cout)
+inline std::ostream& dual_pairs_output(const std::vector<CGAL::HDVF::Pair_cells>& pairs, std::ostream& out=std::cout)
 {
     out << "Pairs found by compute_perfect_hdvf:" << std::endl;
     for (const auto& pair : pairs) {
@@ -62,7 +62,7 @@ template <typename CoefficientType, typename ComplexType>
 void dual_HDVF_pair (CGAL::HDVF::Hdvf_duality<CoefficientType, ComplexType>& dual_hdvf, const Options &options)
 {
     // Compute pairing
-    std::vector<CGAL::HDVF::PairCell> pairs = dual_hdvf.compute_pairing_hdvf() ;
+    std::vector<CGAL::HDVF::Pair_cells> pairs = dual_hdvf.compute_pairing_hdvf() ;
 
     if (options.with_output)
     {
@@ -101,7 +101,7 @@ CGAL::HDVF::Hdvf_duality<CoefficientType, ComplexType>& dual_HDVF_comput (const 
     if (options.with_output)
     {
         std::cout << "----> reduction" << std::endl ;
-        hdvf.print_reduction() ;
+        hdvf.insert_reduction() ;
     }
     if (options.with_export)
     {
@@ -114,7 +114,7 @@ CGAL::HDVF::Hdvf_duality<CoefficientType, ComplexType>& dual_HDVF_comput (const 
             throw std::runtime_error("File Parsing Error: File not found");
         }
         out << "----> reduction" << std::endl ;
-        hdvf.print_reduction(out) ;
+        hdvf.insert_reduction(out) ;
 
         out.close() ;
     }

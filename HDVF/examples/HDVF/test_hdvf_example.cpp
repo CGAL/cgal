@@ -50,8 +50,8 @@ int main(int argc, char **argv)
         std::cout << "Step 2: is_perfect_hdvf " << hdvf.is_perfect_hdvf() << std::endl ;
 
         // Output HDVF to console
-        hdvf.print_matrices();
-        hdvf.print_reduction();
+        hdvf.insert_matrices();
+        hdvf.insert_reduction();
 
         // Output HDVF to vtk
         hdvf_geometric_chain_complex_output_vtk(hdvf, complex, "res") ;
@@ -59,9 +59,9 @@ int main(int argc, char **argv)
         // Test get_annotation
 
         // Compute the annotation of cycle1 in the homology basis
-        std::vector<std::vector<size_t> > crit =  hdvf.get_flag(CGAL::HDVF::CRITICAL);
-        std::vector<size_t> criticals = hdvf.get_flag_dim(CGAL::HDVF::CRITICAL, 1) ;
-        HDVFType::Col_chain cycle1(hdvf.get_homology_chain(criticals.at(0), 1)) ;
+        std::vector<std::vector<size_t> > crit =  hdvf.flag(CGAL::HDVF::CRITICAL);
+        std::vector<size_t> criticals = hdvf.flag_dim(CGAL::HDVF::CRITICAL, 1) ;
+        HDVFType::Col_chain cycle1(hdvf.homology_chain(criticals.at(0), 1)) ;
         HDVFType::Col_chain annot1(hdvf.get_annotation(cycle1,1));
         std::cout << "Cycle1:" << cycle1 << std::endl ;
         std::cout << "Annotation of cycle 1: " << annot1 << std::endl ;
@@ -86,7 +86,7 @@ int main(int argc, char **argv)
         // Test get_coannotation
 
         // Compute the co-annotation of cycle1 in the cohomology basis
-        HDVFType::Row_chain cocycle1((hdvf.get_cohomology_chain(criticals.at(0), 1)).transpose()) ;
+        HDVFType::Row_chain cocycle1((hdvf.cohomology_chain(criticals.at(0), 1)).transpose()) ;
         HDVFType::Row_chain coannot1(hdvf.get_coannotation(cocycle1,1));
         std::cout << "Co-cycle1:" << cocycle1 << std::endl ;
         std::cout << "Co-annotation of co-cycle 1: " << coannot1 << std::endl ;
@@ -102,25 +102,25 @@ int main(int argc, char **argv)
 
         // Test are_same_cycles
         HDVFType::Col_chain cycle3(cycle1) ;
-        cycle3 += CGAL::OSM::cget_column(complex.get_boundary_matrix(2), 0); // Add the boundary of the 2-cell
+        cycle3 += CGAL::OSM::cget_column(complex.boundary_matrix(2), 0); // Add the boundary of the 2-cell
         std::cout << "Cycle3: " << cycle3 << std::endl ;
         ComplexType::chain_complex_chain_to_vtk(complex, "cycle3.vtk", cycle3, 1) ;
         std::cout << "are_same_cycles cycle1 and cycle3: " << hdvf.are_same_cycles(cycle1, cycle3, 1) << std::endl ;
 
         HDVFType::Col_chain cycle4(cycle3) ;
-        cycle4 += hdvf.get_homology_chain(criticals.at(1), 1) ; // Cycle4: cycle3 + second hole
+        cycle4 += hdvf.homology_chain(criticals.at(1), 1) ; // Cycle4: cycle3 + second hole
         std::cout << "Cycle4: " << cycle4 << std::endl ;
         ComplexType::chain_complex_chain_to_vtk(complex, "cycle4.vtk", cycle4, 1) ;
         std::cout << "are_same_cycles cycle1 and cycle4: " << hdvf.are_same_cycles(cycle1, cycle4, 1) << std::endl ;
 
         // Test are_same_cocycles
         HDVFType::Row_chain cocycle3(cocycle1) ;
-        cocycle3 += CGAL::OSM::get_row(complex.get_boundary_matrix(1), 0); // Add the coboundary of 0-cell
+        cocycle3 += CGAL::OSM::get_row(complex.boundary_matrix(1), 0); // Add the coboundary of 0-cell
         std::cout << "Coycle3: " << cocycle3 << std::endl ;
         std::cout << "are_same_cocycles cocycle1 and cocycle3: " << hdvf.are_same_cocycles(cocycle1, cocycle3, 1) << std::endl ;
 
         HDVFType::Row_chain cocycle4(cocycle3) ;
-        cocycle4 += (hdvf.get_cohomology_chain(criticals.at(1), 1).transpose()) ; // Cycle4: cycle3 + second cohomology generator
+        cocycle4 += (hdvf.cohomology_chain(criticals.at(1), 1).transpose()) ; // Cycle4: cycle3 + second cohomology generator
         std::cout << "Cocycle4: " << cocycle4 << std::endl ;
         std::cout << "are_same_cocycles cocycle1 and cocycle4: " << hdvf.are_same_cocycles(cocycle1, cocycle4, 1) << std::endl ;
 
@@ -206,7 +206,7 @@ int main(int argc, char **argv)
             std::cerr << "Out fatal Error:\n  " << filename2 << " not found.\n";
             throw std::runtime_error("File Parsing Error: File not found");
         }
-        hdvf.save_hdvf_reduction(out2) ;
+        hdvf.insert_hdvf_reduction(out2) ;
 
         out2.close() ;
 
@@ -218,14 +218,14 @@ int main(int argc, char **argv)
 
         HDVFType hdvf2(complex);
 
-        hdvf2.load_hdvf_reduction(in2) ;
+        hdvf2.extract_hdvf_reduction(in2) ;
 
         in2.close();
 
         out << "=============== HDVF" << std::endl ;
-        hdvf.print_reduction() ;
+        hdvf.insert_reduction() ;
         out << "=============== HDVF2" << std::endl ;
-        hdvf2.print_reduction() ;
+        hdvf2.insert_reduction() ;
     }
 
     // Test == operators

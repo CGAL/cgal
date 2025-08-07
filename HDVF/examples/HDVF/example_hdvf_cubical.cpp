@@ -45,8 +45,8 @@ int main(int argc, char **argv)
         //        hdvf.compute_rand_perfect_hdvf();
 
         // Output HDVF to console
-        hdvf.print_matrices();
-        hdvf.print_reduction();
+        hdvf.insert_matrices();
+        hdvf.insert_reduction();
 
         // Output HDVF to vtk
         hdvf_geometric_chain_complex_output_vtk(hdvf, complex, "res", true) ;

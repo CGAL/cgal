@@ -131,11 +131,6 @@ public:
 /// @{
 
 /*!
- * Type encoding a pair of cells for HDVF operations.
- */
-typedef unspecified_type PairCell;
-    
-/*!
  * \brief Type of coefficients stored in the matrix (a model of `Ring`).
  */
 typedef unspecified_type CoefficientType;
@@ -155,6 +150,16 @@ typedef unspecified_type ComplexType;
  */
     typedef unspecified_type SparseMatrixType;
 
+/*! \brief Structure to represent data for HDVF operations (pairs of cells).
+ *
+ * Cells are always sorted so that the dimension of `sigma` is lesser than the dimension of `tau`.
+ */
+struct Pair_cells {
+    size_t sigma;  /// Index of the first cell
+    size_t tau;    /// Index of the second cell
+    int dim;    /// Dimension of cells: `dim`/`dim`+1 for A and R, `dim`/`dim` for other operations
+};
+    
 /*!
  Type of column-major chains
  */
@@ -181,17 +186,17 @@ typedef SparseMatrixType<CoefficientType, CGAL::OSM::ROW> Row_matrix;
 /// @{
 
 /*!
- * \brief Finds a valid PairCell of dimension q / q+1 for A.
+ * \brief Finds a valid Pair_cells of dimension q / q+1 for A.
  *
  * The function searches a pair of critical cells \f$(\gamma_1, \gamma2)\f$ of dimension q / q+1, valid for A (ie.\ such that \f$\langle \partial_{q+1}(\gamma_2), \gamma_1 \rangle\f$ invertible). It returns the first valid pair found by iterators.
  *
  * \param[in] q Lower dimension of the pair.
  * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
  */
-virtual PairCell find_pair_A(int q, bool &found) const;
+virtual Pair_cells find_pair_A(int q, bool &found) const;
 
 /*!
- * \brief Finds a valid PairCell for A containing `gamma` (a cell of dimension `q`)
+ * \brief Finds a valid Pair_cells for A containing `gamma` (a cell of dimension `q`)
  *
  * The function searches a cell \f$\gamma'\f$ such that one of the following conditions holds:
  * - \f$\gamma'\f$ has dimension q+1 and \f$(\gamma, \gamma')\f$ is valid for A (ie.\ such that \f$\langle \partial_{q+1}(\gamma'), \gamma \rangle\f$ invertible),
@@ -201,10 +206,10 @@ virtual PairCell find_pair_A(int q, bool &found) const;
  * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
  * \param[in] gamma Index of a cell to pair.
  */
-virtual PairCell find_pair_A(int q, bool &found, size_t gamma) const;
+virtual Pair_cells find_pair_A(int q, bool &found, size_t gamma) const;
 
 /**
- * \brief Finds *all* valid PairCell of dimension q / q+1 for A.
+ * \brief Finds *all* valid Pair_cells of dimension q / q+1 for A.
  *
  * The function searches all pairs of critical cells \f$(\gamma_1, \gamma2)\f$ of dimension q / q+1, valid for A (ie.\ such that \f$\langle \partial_{q+1}(\gamma_2), \gamma_1 \rangle\f$ invertible).
  * It returns a vector of such pairs.
@@ -212,10 +217,10 @@ virtual PairCell find_pair_A(int q, bool &found, size_t gamma) const;
  * \param[in] q Lower dimension of the pair.
  * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
  */
-virtual std::vector<PairCell> find_pairs_A(int q, bool &found) const;
+virtual std::vector<Pair_cells> find_pairs_A(int q, bool &found) const;
 
 /**
- * \brief Finds *all* valid PairCell for A containing `gamma` (a cell of dimension `q`)
+ * \brief Finds *all* valid Pair_cells for A containing `gamma` (a cell of dimension `q`)
  *
  * The function searches all critical cells \f$\gamma'\f$ such that one of the following conditions holds:
  * - \f$\gamma'\f$ has dimension q+1 and \f$(\gamma, \gamma')\f$ is valid for A (ie.\ such that \f$\langle \partial_{q+1}(\gamma'), \gamma \rangle\f$ invertible),
@@ -226,7 +231,7 @@ virtual std::vector<PairCell> find_pairs_A(int q, bool &found) const;
  * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
  * \param[in] gamma Index of a cell to pair.
  */
-virtual std::vector<PairCell> find_pairs_A(int q, bool &found, size_t gamma) const;
+virtual std::vector<Pair_cells> find_pairs_A(int q, bool &found, size_t gamma) const;
 
 
 /// @}
@@ -236,7 +241,7 @@ virtual std::vector<PairCell> find_pairs_A(int q, bool &found, size_t gamma) con
 /// @{
 
 /*!
- * \brief A operation: pairs critical cells.
+ * \brief A operation: pairs two critical cells.
  *
  * A pair of critical cells \f$(\gamma_1, \gamma_2)\f$ of respective dimension q and q+1 is valid for A if \f$\langle \partial_{q+1}(\gamma_2), \gamma_1 \rangle\f$ is invertible. After the `A()` operation, \f$\gamma_1\f$ becomes PRIMARY, \f$\gamma_2\f$ becomes SECONDARY. The A functions updates the reduction accordingly (in time \f$\mathscr O(n^2)\f$).
  */
@@ -253,7 +258,7 @@ void A(size_t gamma1, size_t gamma2, int q);
  * \param verbose If `true`, all intermediate reductions are printed out.
  *
  */
-std::vector<PairCell> compute_perfect_hdvf(bool verbose = false);
+std::vector<Pair_cells> compute_perfect_hdvf(bool verbose = false);
 
 /*!
  * \brief Computes a random perfect HDVF.
@@ -265,7 +270,7 @@ std::vector<PairCell> compute_perfect_hdvf(bool verbose = false);
  *
  * \param verbose If `true`, all intermediate reductions are printed out.
  */
-std::vector<PairCell> compute_rand_perfect_hdvf(bool verbose = false);
+std::vector<Pair_cells> compute_rand_perfect_hdvf(bool verbose = false);
 /// @}
 
 /// \name Getters
@@ -276,44 +281,44 @@ std::vector<PairCell> compute_rand_perfect_hdvf(bool verbose = false);
  *
  * The function returns in each dimension the vector of cells with a given `flag`.
  */
-std::vector<std::vector<size_t> > get_flag (FlagType flag) const;
+std::vector<std::vector<size_t> > flag (FlagType flag) const;
 
 /*!
  * \brief Gets cells with a given `flag` in dimension `q`.
  *
  * The function returns the vector of cells of dimension `q` with a given `flag`.
  */
-std::vector<size_t> get_flag_dim (FlagType flag, int q) const;
+std::vector<size_t> flag_dim (FlagType flag, int q) const;
 
 /*!
  * \brief Gets the flag of the cell `tau` in dimension `q`.
  */
-FlagType get_cell_flag (int q, size_t tau) const;
+FlagType cell_flag (int q, size_t tau) const;
 
 /*!
  * \brief Gets HDVF option.
  */
-int get_hdvf_opts ();
+int hdvf_opts ();
 
 /*!
  * \brief Gets the row-major matrix of \f$f\f$ (from the reduction associated to the HDVF).
  */
-const Row_matrix& get_f (int q) const;
+const Row_matrix& matrix_f (int q) const;
 
 /*!
  * \brief Gets the column-major matrix of \f$g\f$ (from the reduction associated to the HDVF).
  */
-const Col_matrix& get_g (int q) const;
+const Col_matrix& matrix_g (int q) const;
 
 /*!
  * \brief Gets the column-major matrix of \f$h\f$ (from the reduction associated to the HDVF).
  */
-const Col_matrix& get_h (int q) const;
+const Col_matrix& matrix_h (int q) const;
 
 /*!
  * \brief Gets the column-major matrix of \f$\partial'\f$, reduced boundary operator (from the reduction associated to the HDVF).
  */
-const Col_matrix& get_dd (int q) const;
+const Col_matrix& matrix_dd (int q) const;
 
 /*!
  * \brief Tests if a HDVF is perfect.
@@ -334,7 +339,7 @@ const Col_matrix& get_dd (int q) const;
  *
  * By default, outputs the complex to `std::cout`.
 */
-std::ostream& print_matrices(std::ostream &out = std::cout) const;
+std::ostream& insert_matrices(std::ostream &out = std::cout) const;
 
 /*! \brief Prints the homology and cohomology reduction information.
  *
@@ -342,7 +347,7 @@ std::ostream& print_matrices(std::ostream &out = std::cout) const;
  *
  * By default, outputs the complex to `std::cout`.
 */
-std::ostream& print_reduction(std::ostream &out = std::cout) const;
+std::ostream& insert_reduction(std::ostream &out = std::cout) const;
 
 /*!
  *\brief Saves a HDVF and its reduction to a %hdvf file.
@@ -350,14 +355,14 @@ std::ostream& print_reduction(std::ostream &out = std::cout) const;
  * Save a HDVF together with the associated reduction (f, g, h, d matrices) to a %hdvf file.
  */
 
-std::ostream& save_hdvf_reduction(std::ostream& out) ;
+std::ostream& insert_hdvf_reduction(std::ostream& out) ;
 
 /*!
  * \brief Loads a HDVF and its reduction from a `.hdvf` file.
  *
  * Load a HDVF and its reduction from a `.hdvf` file, a simple text file format (see for a specification).
  */
-std::istream& load_hdvf_reduction(std::istream& out) ;
+std::istream& extract_hdvf_reduction(std::istream& out) ;
 
 /*!
  * \brief Exports primary/secondary/critical labels (in particular for vtk export).
@@ -366,19 +371,19 @@ std::istream& load_hdvf_reduction(std::istream& out) ;
  *
  * \return A vector containing, for each dimension, the vector of labels by cell index.
  */
-virtual std::vector<std::vector<int> > get_psc_labels () const;
+virtual std::vector<std::vector<int> > psc_labels () const;
 
 /*!
- * \brief Gets homology generators associated to `cell` (critical cell) of dimension  `q` (in particular for vtk export).
+ * \brief Returns a chain containing the homology generator associated to `cell` (critical cell) of dimension  `q` (in particular for vtk export).
  *
  * The method exports the chain \f$g(\sigma)\f$ for \f$\sigma\f$ the cell of index `cell` and dimension `q`.
  *
  * \return A column-major chain.
  */
-virtual Col_chain get_homology_chain (size_t cell, int q) const;
+virtual Col_chain homology_chain (size_t cell, int q) const;
 
 /*!
- * \brief Gets cohomology generators associated to `cell` (critical cell) of dimension  `q` (in particular for vtk export).
+ * \brief Returns a chain containing the cohomology generators associated to `cell` (critical cell) of dimension  `q` (in particular for vtk export).
  *
  * The method exports:
  * - the chain \f$f^\star(\sigma)\f$ for \f$\sigma\f$ the cell of index `cell` and dimension `q`,
@@ -401,7 +406,7 @@ virtual Col_chain get_homology_chain (size_t cell, int q) const;
  *
  * \return A column-major chain.
  */
-virtual Col_chain get_cohomology_chain (size_t cell, int dim, bool co_faces = false) const;
+virtual Col_chain cohomology_chain (size_t cell, int dim, bool co_faces = false) const;
 
 /// @}
 

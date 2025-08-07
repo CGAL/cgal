@@ -51,7 +51,7 @@ template <typename CoefficientType, typename ComplexType>
 CGAL::HDVF::Hdvf<CoefficientType, ComplexType>& HDVF_comput (const ComplexType& complex, const Options &options)
 {
     CGAL::HDVF::Hdvf<CoefficientType, ComplexType>& hdvf(*(new CGAL::HDVF::Hdvf<CoefficientType, ComplexType>(complex, options.HDVF_opt)));
-    std::vector<CGAL::HDVF::PairCell> pairs ;
+    std::vector<CGAL::HDVF::Pair_cells> pairs ;
     if (!options.random)
         pairs = hdvf.compute_perfect_hdvf(options.verbose);
     else
@@ -62,7 +62,7 @@ CGAL::HDVF::Hdvf<CoefficientType, ComplexType>& HDVF_comput (const ComplexType& 
         std::cout << "----> pairs found by computePerfectHDVF" << std::endl ;
         std::cout << pairs ;
         std::cout << "----> reduction" << std::endl ;
-        hdvf.print_reduction() ;
+        hdvf.insert_reduction() ;
     }
     if (options.with_export)
     {
@@ -76,7 +76,7 @@ CGAL::HDVF::Hdvf<CoefficientType, ComplexType>& HDVF_comput (const ComplexType& 
         out << "----> pairs found by computePerfectHDVF" << std::endl ;
         out << pairs ;
         out << "----> reduction" << std::endl ;
-        hdvf.print_reduction(out) ;
+        hdvf.insert_reduction(out) ;
 
         out.close() ;
     }

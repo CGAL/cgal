@@ -228,7 +228,7 @@ public:
      *
      * \return Returns a constant reference to the vector of column-major boundary matrices along each dimension.
      */
-    const vector<Col_matrix> & get_boundary_matrices() const
+    const vector<Col_matrix> & boundary_matrices() const
     {
         return _d ;
     }
@@ -242,7 +242,7 @@ public:
      *
      * \return A column-major sparse matrix containing the matrix of the boundary operator of dimension q.
      */
-    const Col_matrix & get_boundary_matrix(int q) const
+    const Col_matrix & boundary_matrix(int q) const
     {
         return _d.at(q) ;
     }

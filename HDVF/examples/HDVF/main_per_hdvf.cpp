@@ -89,7 +89,7 @@ CGAL::HDVF::Hdvf_persistence<CoefficientType, ComplexType, DegType, FiltrationTy
         std::cout << "----> perHDVF" << std::endl ;
         hdvf.print_hdvf_persistence_info(std::cout);
         std::cout << "----> reduction" << std::endl ;
-        hdvf.print_reduction() ;
+        hdvf.insert_reduction() ;
         std::cout << "----> persistent diagram" << std::endl ;
         std::cout << hdvf ;
     }
@@ -106,7 +106,7 @@ CGAL::HDVF::Hdvf_persistence<CoefficientType, ComplexType, DegType, FiltrationTy
         out << "----> perHDVF" << std::endl ;
         hdvf.print_hdvf_persistence_info(out);
         out << "----> reduction" << std::endl ;
-        hdvf.print_reduction(out) ;
+        hdvf.insert_reduction(out) ;
 
         out.close() ;
 

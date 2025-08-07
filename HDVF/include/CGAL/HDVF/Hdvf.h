@@ -63,8 +63,8 @@ Using appropriate combinations of such operations, one can change a HDVF until c
  <img src="HDVF_op3_g3.png" align="center" width=30%/>
 
  Perfect HDVFs provide various topological results:
- - Betti numbers: are well known topological descriptors (providing the number of holes in each dimension). For a perfect HDVF, Betti numbers equal the number of critical cells (that can be obtained through `get_flag()` or `get_flag_dim()` with the ``CRITICAL`` flag as argument).
- - Homology/cohomology generators are actually algebraic objects, namely chains. Methods `get_homology_chain()` and `get_cohomology_chain()` return the homology and cohomology generator chain associated to a given critical cell. VTK export functions output all the cells of such chains with non zero coefficients. Figures here above illustrate such homology and co-homology generators.
+ - Betti numbers: are well known topological descriptors (providing the number of holes in each dimension). For a perfect HDVF, Betti numbers equal the number of critical cells (that can be obtained through `flag()` or `flag_dim()` with the ``CRITICAL`` flag as argument).
+ - Homology/cohomology generators are actually algebraic objects, namely chains. Methods `homology_chain()` and `cohomology_chain()` return the homology and cohomology generator chain associated to a given critical cell. VTK export functions output all the cells of such chains with non zero coefficients. Figures here above illustrate such homology and co-homology generators.
  - Homology/cohomology annotation: use `get_annotation()` or `get_coannotation()` to get the annotation/co-annotation of a cycle/co-cycle in the homology/cohomology basis (as a chain of critical cells).
  - Homology/cohomology comparison: use `are_same_cycles()` or `are_same_cocycles()` to check if two cycles (or co-cycles) belong to the same homology / cohomology class.
 
@@ -116,17 +116,17 @@ public:
     // findPair functions for M
 
     /**
-     * \brief Finds a valid PairCell of dimension q for M.
+     * \brief Finds a valid Pair_cells of dimension q for M.
      *
      * The function searches a pair of cells \f$(\pi, \gamma)\f$ with \f$\pi\f$ `PRIMARY` and \f$\gamma\f$ `CRITICAL`, valid for M (ie.\ such that \f$\langle f(\pi), \gamma \rangle\f$ invertible). It returns the first valid pair found by iterators.
      *
      * \param[in] q Dimension of the pair searched.
      * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      */
-    PairCell find_pair_M(int q, bool &found) const;
+    Pair_cells find_pair_M(int q, bool &found) const;
 
     /**
-     * \brief Finds a valid PairCell of dimension q for M cointaining `tau`.
+     * \brief Finds a valid Pair_cells of dimension q for M cointaining `tau`.
      *
      * The function searches a pair of cells \f$(\pi, \gamma)\f$ with \f$\pi\f$ `PRIMARY` and \f$\gamma\f$ `CRITICAL` (one of them is `tau`), valid for M (ie.\ such that \f$\langle f(\pi), \gamma \rangle\f$ invertible). It returns the first valid pair found by iterators.
      *
@@ -134,10 +134,10 @@ public:
      * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      * \param[in] tau Cell of dimension `q` to pair.
      */
-    PairCell find_pair_M(int q, bool &found, size_t tau) const;
+    Pair_cells find_pair_M(int q, bool &found, size_t tau) const;
 
     /**
-     * \brief Finds *all* valid PairCell of dimension q for M.
+     * \brief Finds *all* valid Pair_cells of dimension q for M.
      *
      * The function searches all pairs of cells \f$(\pi, \gamma)\f$ with \f$\pi\f$ `PRIMARY` and \f$\gamma\f$ `CRITICAL`, valid for M (ie.\ such that \f$\langle f(\pi), \gamma \rangle\f$ invertible).
      * It returns a vector of such pairs.
@@ -145,10 +145,10 @@ public:
      * \param[in] q Dimension of the pair searched.
      * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      */
-    std::vector<PairCell> find_pairs_M(int q, bool &found) const;
+    std::vector<Pair_cells> find_pairs_M(int q, bool &found) const;
 
     /**
-     * \brief Finds *all* valid PairCell of dimension q for M cointaining `tau`.
+     * \brief Finds *all* valid Pair_cells of dimension q for M cointaining `tau`.
      *
      * The function searches all pairs of cells \f$(\pi, \gamma)\f$ with \f$\pi\f$ `PRIMARY` and \f$\gamma\f$ `CRITICAL` (one of them is `tau`), valid for M (ie.\ such that \f$\langle f(\pi), \gamma \rangle\f$ invertible).
      * It returns a vector of such pairs.
@@ -157,22 +157,22 @@ public:
      * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      * \param[in] tau Cell of dimension `q` to pair.
      */
-    std::vector<PairCell> find_pairs_M(int q, bool &found, size_t tau) const;
+    std::vector<Pair_cells> find_pairs_M(int q, bool &found, size_t tau) const;
 
     // findPair functions for W
 
     /**
-     * \brief Finds a valid PairCell of dimension q for W.
+     * \brief Finds a valid Pair_cells of dimension q for W.
      *
      * The function searches a pair of cells \f$(\sigma, \gamma)\f$ with \f$\sigma\f$ `SECONDARY` and \f$\gamma\f$ `CRITICAL`, valid for W (ie.\ such that \f$\langle g(\gamma), \sigma \rangle\f$ invertible). It returns the first valid pair found by iterators.
      *
      * \param[in] q Dimension of the pair searched.
      * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      */
-    PairCell find_pair_W(int q, bool &found) const;
+    Pair_cells find_pair_W(int q, bool &found) const;
 
     /**
-     * \brief Finds a valid PairCell of dimension q for W cointaining `tau`.
+     * \brief Finds a valid Pair_cells of dimension q for W cointaining `tau`.
      *
      * The function searches a pair of cells \f$(\sigma, \gamma)\f$ with \f$\sigma\f$ `SECONDARY` and \f$\gamma\f$ `CRITICAL` (one of them is `tau`), valid for W (ie.\ such that \f$\langle g(\gamma), \sigma \rangle\f$ invertible). It returns the first valid pair found by iterators.
      *
@@ -180,10 +180,10 @@ public:
      * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      * \param[in] tau Cell of dimension `q` to pair.
      */
-    PairCell find_pair_W(int q, bool &found, size_t tau) const;
+    Pair_cells find_pair_W(int q, bool &found, size_t tau) const;
 
     /**
-     * \brief Finds *all* valid PairCell of dimension q for W.
+     * \brief Finds *all* valid Pair_cells of dimension q for W.
      *
      * The function searches all pairs of cells \f$(\sigma, \gamma)\f$ with \f$\sigma\f$ `SECONDARY` and \f$\gamma\f$ `CRITICAL`, valid for W (ie.\ such that \f$\langle g(\gamma), \sigma \rangle\f$ invertible).
      * It returns a vector of such pairs.
@@ -191,10 +191,10 @@ public:
      * \param[in] q Dimension of the pair searched.
      * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      */
-    std::vector<PairCell> find_pairs_W(int q, bool &found) const;
+    std::vector<Pair_cells> find_pairs_W(int q, bool &found) const;
 
     /**
-     * \brief Finds *all* valid PairCell of dimension q for W cointaining `tau`.
+     * \brief Finds *all* valid Pair_cells of dimension q for W cointaining `tau`.
      *
      * The function searches all pairs of cells \f$(\sigma, \gamma)\f$ with \f$\sigma\f$ `SECONDARY` and \f$\gamma\f$ `CRITICAL` (one of them is `tau`), valid for W (ie.\ such that \f$\langle g(\gamma), \sigma \rangle\f$ invertible). It returns the first valid pair found by iterators.
      * It returns a vector of such pairs.
@@ -203,22 +203,22 @@ public:
      * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      * \param[in] tau Cell of dimension `q` to pair.
      */
-    std::vector<PairCell> find_pairs_W(int q, bool &found, size_t tau) const;
+    std::vector<Pair_cells> find_pairs_W(int q, bool &found, size_t tau) const;
 
     // findPair functions for MW
 
     /**
-     * \brief Finds a valid PairCell of dimension q for MW.
+     * \brief Finds a valid Pair_cells of dimension q for MW.
      *
      * The function searches a pair of cells \f$(\pi, \sigma)\f$ with \f$\pi\f$ `PRIMARY` and \f$\sigma\f$ `SECONDARY`, valid for MW (ie.\ such that \f$\langle h_{q-1}\partial_q(\pi), \sigma \rangle\f$ invertible and \f$\langle \partial_{q+1} h_q(\sigma), \pi \rangle\f$ invertible). It returns the first valid pair found by iterators.
      *
      * \param[in] q Dimension of the pair searched.
      * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      */
-    PairCell find_pair_MW(int q, bool &found) const;
+    Pair_cells find_pair_MW(int q, bool &found) const;
 
     /**
-     * \brief Finds a valid PairCell of dimension q for MW cointaining `tau`.
+     * \brief Finds a valid Pair_cells of dimension q for MW cointaining `tau`.
      *
      * The function searches a pair of cells \f$(\pi, \sigma)\f$ with \f$\pi\f$ `PRIMARY` and \f$\sigma\f$ `SECONDARY` (one of them is `tau`), valid for MW (ie.\ such that \f$\langle h_{q-1}\partial_q(\pi), \sigma \rangle\f$ invertible and \f$\langle \partial_{q+1} h_q(\sigma), \pi \rangle\f$ invertible). It returns the first valid pair found by iterators.
      *
@@ -226,10 +226,10 @@ public:
      * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      * \param[in] tau Cell of dimension `q` to pair.
      */
-    PairCell find_pair_MW(int q, bool &found, size_t tau) const;
+    Pair_cells find_pair_MW(int q, bool &found, size_t tau) const;
 
     /**
-     * \brief Finds *all* valid PairCell of dimension q for MW.
+     * \brief Finds *all* valid Pair_cells of dimension q for MW.
      *
      * The function searches all pairs of cells \f$(\pi, \sigma)\f$ with \f$\pi\f$ `PRIMARY` and \f$\sigma\f$ `SECONDARY`, valid for MW (ie.\ such that \f$\langle h_{q-1}\partial_q(\pi), \sigma \rangle\f$ invertible and \f$\langle \partial_{q+1} h_q(\sigma), \pi \rangle\f$ invertible).
      * It returns a vector of such pairs.
@@ -237,10 +237,10 @@ public:
      * \param[in] q Dimension of the pair searched.
      * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      */
-    std::vector<PairCell> find_pairs_MW(int q, bool &found) const;
+    std::vector<Pair_cells> find_pairs_MW(int q, bool &found) const;
 
     /**
-     * \brief Finds *all* valid PairCell of dimension q for W cointaining `tau`.
+     * \brief Finds *all* valid Pair_cells of dimension q for W cointaining `tau`.
      *
      * The function searches all pairs of cells \f$(\pi, \sigma)\f$ with \f$\pi\f$ `PRIMARY` and \f$\sigma\f$ `SECONDARY` (one of them is `tau`), valid for MW (ie.\ such that \f$\langle h_{q-1}\partial_q(\pi), \sigma \rangle\f$ invertible and \f$\langle \partial_{q+1} h_q(\sigma), \pi \rangle\f$ invertible).
      * It returns a vector of such pairs.
@@ -249,7 +249,7 @@ public:
      * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      * \param[in] tau Cell of dimension `q` to pair.
      */
-    std::vector<PairCell> find_pairs_MW(int q, bool &found, size_t tau) const;
+    std::vector<Pair_cells> find_pairs_MW(int q, bool &found, size_t tau) const;
 
     // Hdvf methods
 
@@ -401,13 +401,13 @@ Hdvf<CoefficientType, ComplexType>::Hdvf(const ComplexType& K, int hdvf_opt) : H
 // First version: returns a pair of dimensions q
 // Second version: returns all the pairs containing sigma
 
-// \brief find a valid PairCell for M in dimension q
+// \brief find a valid Pair_cells for M in dimension q
 
 template<typename CoefficientType, typename ComplexType>
-PairCell Hdvf<CoefficientType, ComplexType>::find_pair_M(int q, bool &found) const
+Pair_cells Hdvf<CoefficientType, ComplexType>::find_pair_M(int q, bool &found) const
 {
     found = false;
-    PairCell p;
+    Pair_cells p;
 
     if (this->_hdvf_opt & (OPT_F | OPT_FULL))
     {
@@ -431,13 +431,13 @@ PairCell Hdvf<CoefficientType, ComplexType>::find_pair_M(int q, bool &found) con
     return p;
 }
 
-// find a valid PairCell containing tau for M in dimension q
+// find a valid Pair_cells containing tau for M in dimension q
 
 template<typename CoefficientType, typename ComplexType>
-PairCell Hdvf<CoefficientType, ComplexType>::find_pair_M(int q, bool &found, size_t tau) const
+Pair_cells Hdvf<CoefficientType, ComplexType>::find_pair_M(int q, bool &found, size_t tau) const
 {
     found = false;
-    PairCell p;
+    Pair_cells p;
     if (this->_flag.at(q).at(tau) == SECONDARY)
         return p ; // Empty / found false
 
@@ -479,12 +479,12 @@ PairCell Hdvf<CoefficientType, ComplexType>::find_pair_M(int q, bool &found, siz
     return p;
 }
 
-// find all the valid PairCell for M in dimension q
+// find all the valid Pair_cells for M in dimension q
 template<typename CoefficientType, typename ComplexType>
-std::vector<PairCell> Hdvf<CoefficientType, ComplexType>::find_pairs_M(int q, bool &found) const
+std::vector<Pair_cells> Hdvf<CoefficientType, ComplexType>::find_pairs_M(int q, bool &found) const
 {
     found = false;
-    std::vector<PairCell> pairs;
+    std::vector<Pair_cells> pairs;
     if (this->_hdvf_opt & (OPT_F | OPT_FULL))
     {
         // Search for +-1 in _F - iterate over rows
@@ -496,7 +496,7 @@ std::vector<PairCell> Hdvf<CoefficientType, ComplexType>::find_pairs_M(int q, bo
             for (typename HDVF_coreT::Row_chain::const_iterator it = row.begin(); it != row.end(); ++it) {
                 if ((it->second == 1) || (it->second == -1)) {
                     // If an entry with coefficient 1 or -1 is found, set the pair and add it
-                    PairCell p ;
+                    Pair_cells p ;
                     p.sigma = it->first; // primary cell
                     p.tau = *it_row; // critical cell
                     p.dim = q;
@@ -509,12 +509,12 @@ std::vector<PairCell> Hdvf<CoefficientType, ComplexType>::find_pairs_M(int q, bo
     return pairs;
 }
 
-// find all the valid PairCell containing tau for M in dimension q
+// find all the valid Pair_cells containing tau for M in dimension q
 template<typename CoefficientType, typename ComplexType>
-std::vector<PairCell> Hdvf<CoefficientType, ComplexType>::find_pairs_M(int q, bool &found, size_t tau) const
+std::vector<Pair_cells> Hdvf<CoefficientType, ComplexType>::find_pairs_M(int q, bool &found, size_t tau) const
 {
     found = false;
-    std::vector<PairCell> pairs;
+    std::vector<Pair_cells> pairs;
     if (this->_flag.at(q).at(tau) == SECONDARY)
         return pairs ; // Empty / found false
 
@@ -530,7 +530,7 @@ std::vector<PairCell> Hdvf<CoefficientType, ComplexType>::find_pairs_M(int q, bo
             {
                 if (abs(it->second) == 1)
                 {
-                    PairCell p ;
+                    Pair_cells p ;
                     p.sigma = tau ;
                     p.tau = it->first ;
                     p.dim = q ;
@@ -548,7 +548,7 @@ std::vector<PairCell> Hdvf<CoefficientType, ComplexType>::find_pairs_M(int q, bo
             {
                 if (abs(it->second) == 1)
                 {
-                    PairCell p ;
+                    Pair_cells p ;
                     p.sigma = it->first ; // primary cell
                     p.tau = tau ; // critical cell
                     p.dim = q ;
@@ -566,12 +566,12 @@ std::vector<PairCell> Hdvf<CoefficientType, ComplexType>::find_pairs_M(int q, bo
 // First version: returns a pair of dimensions q
 // Second version: returns all the pairs containing sigma
 
-// find a valid PairCell for W in dimension q
+// find a valid Pair_cells for W in dimension q
 template<typename CoefficientType, typename ComplexType>
-PairCell Hdvf<CoefficientType, ComplexType>::find_pair_W(int q, bool &found) const
+Pair_cells Hdvf<CoefficientType, ComplexType>::find_pair_W(int q, bool &found) const
 {
     found = false;
-    PairCell p;
+    Pair_cells p;
 
     if (this->_hdvf_opt & (OPT_G | OPT_FULL))
     {
@@ -595,12 +595,12 @@ PairCell Hdvf<CoefficientType, ComplexType>::find_pair_W(int q, bool &found) con
     return p;
 }
 
-// find a valid PairCell containing tau for W in dimension q
+// find a valid Pair_cells containing tau for W in dimension q
 template<typename CoefficientType, typename ComplexType>
-PairCell Hdvf<CoefficientType, ComplexType>::find_pair_W(int q, bool &found, size_t tau) const
+Pair_cells Hdvf<CoefficientType, ComplexType>::find_pair_W(int q, bool &found, size_t tau) const
 {
     found = false;
-    PairCell p;
+    Pair_cells p;
     if (this->_flag.at(q).at(tau) == PRIMARY)
         return p ; // Empty / found false
 
@@ -639,12 +639,12 @@ PairCell Hdvf<CoefficientType, ComplexType>::find_pair_W(int q, bool &found, siz
     return p;
 }
 
-// find all the valid PairCell for W in dimension q
+// find all the valid Pair_cells for W in dimension q
 template<typename CoefficientType, typename ComplexType>
-std::vector<PairCell> Hdvf<CoefficientType, ComplexType>::find_pairs_W(int q, bool &found) const
+std::vector<Pair_cells> Hdvf<CoefficientType, ComplexType>::find_pairs_W(int q, bool &found) const
 {
     found = false;
-    std::vector<PairCell> pairs;
+    std::vector<Pair_cells> pairs;
 
     if (this->_hdvf_opt & (OPT_G | OPT_FULL))
     {
@@ -657,7 +657,7 @@ std::vector<PairCell> Hdvf<CoefficientType, ComplexType>::find_pairs_W(int q, bo
             for (typename HDVF_coreT::Col_chain::const_iterator it = col.begin(); it != col.end(); ++it) {
                 if ((it->second == 1) || (it->second == -1)) {
                     // If an entry with coefficient 1 or -1 is found, set the pair and mark as found
-                    PairCell p ;
+                    Pair_cells p ;
                     p.sigma = it->first; // secondary cell
                     p.tau = *it_col; // critical cell
                     p.dim = q;
@@ -670,12 +670,12 @@ std::vector<PairCell> Hdvf<CoefficientType, ComplexType>::find_pairs_W(int q, bo
     return pairs;
 }
 
-// find all the valid PairCell containing tau for W in dimension q
+// find all the valid Pair_cells containing tau for W in dimension q
 template<typename CoefficientType, typename ComplexType>
-std::vector<PairCell> Hdvf<CoefficientType, ComplexType>::find_pairs_W(int q, bool &found, size_t tau) const
+std::vector<Pair_cells> Hdvf<CoefficientType, ComplexType>::find_pairs_W(int q, bool &found, size_t tau) const
 {
     found = false;
-    std::vector<PairCell> pairs;
+    std::vector<Pair_cells> pairs;
     if (this->_flag.at(q).at(tau) == PRIMARY)
         return pairs ; // Empty / found false
 
@@ -688,7 +688,7 @@ std::vector<PairCell> Hdvf<CoefficientType, ComplexType>::find_pairs_W(int q, bo
             {
                 if (abs(get_coef(this->_G_col.at(q), tau, *it_col)) == 1)
                 {
-                    PairCell p ;
+                    Pair_cells p ;
                     p.sigma = tau ; // secondary cell
                     p.tau = *it_col ; // critical cell
                     p.dim = q ;
@@ -704,7 +704,7 @@ std::vector<PairCell> Hdvf<CoefficientType, ComplexType>::find_pairs_W(int q, bo
             {
                 if (abs(it->second) == 1)
                 {
-                    PairCell p ;
+                    Pair_cells p ;
                     p.sigma = it->first ; // secondary cell
                     p.tau = tau ; // critical cell
                     p.dim = q ;
@@ -722,12 +722,12 @@ std::vector<PairCell> Hdvf<CoefficientType, ComplexType>::find_pairs_W(int q, bo
 // First version: returns a pair of dimensions q
 // Second version: returns all the pairs containing sigma
 
-// find a valid PairCell for MW in dimension q
+// find a valid Pair_cells for MW in dimension q
 template<typename CoefficientType, typename ComplexType>
-PairCell Hdvf<CoefficientType, ComplexType>::find_pair_MW(int q, bool &found) const
+Pair_cells Hdvf<CoefficientType, ComplexType>::find_pair_MW(int q, bool &found) const
 {
     found = false;
-    PairCell p;
+    Pair_cells p;
 
     if (this->_hdvf_opt & OPT_FULL)
     {
@@ -765,12 +765,12 @@ PairCell Hdvf<CoefficientType, ComplexType>::find_pair_MW(int q, bool &found) co
     return p;
 }
 
-// find a valid PairCell containing tau for MW in dimension q
+// find a valid Pair_cells containing tau for MW in dimension q
 template<typename CoefficientType, typename ComplexType>
-PairCell Hdvf<CoefficientType, ComplexType>::find_pair_MW(int q, bool &found, size_t tau) const
+Pair_cells Hdvf<CoefficientType, ComplexType>::find_pair_MW(int q, bool &found, size_t tau) const
 {
     found = false;
-    PairCell p;
+    Pair_cells p;
 
     if (this->_flag.at(q).at(tau) == CRITICAL)
         return p ; // Empty / found false
@@ -853,12 +853,12 @@ PairCell Hdvf<CoefficientType, ComplexType>::find_pair_MW(int q, bool &found, si
     return p;
 }
 
-// find all the valid PairCell for MW in dimension q
+// find all the valid Pair_cells for MW in dimension q
 template<typename CoefficientType, typename ComplexType>
-std::vector<PairCell> Hdvf<CoefficientType, ComplexType>::find_pairs_MW(int q, bool &found) const
+std::vector<Pair_cells> Hdvf<CoefficientType, ComplexType>::find_pairs_MW(int q, bool &found) const
 {
     found = false;
-    std::vector<PairCell> pairs;
+    std::vector<Pair_cells> pairs;
 
     if (this->_hdvf_opt & OPT_FULL)
     {
@@ -885,7 +885,7 @@ std::vector<PairCell> Hdvf<CoefficientType, ComplexType>::find_pairs_MW(int q, b
                     found = ((abs(xi) == 1) && (abs(xip) == 1)) ;
                     if (found)
                     {
-                        PairCell p;
+                        Pair_cells p;
                         p.sigma = pi ; // primary cell
                         p.tau = sigma ; // secondary cell
                         p.dim = q ;
@@ -899,12 +899,12 @@ std::vector<PairCell> Hdvf<CoefficientType, ComplexType>::find_pairs_MW(int q, b
     return pairs;
 }
 
-// find all the valid PairCell containing tau for MW in dimension q
+// find all the valid Pair_cells containing tau for MW in dimension q
 template<typename CoefficientType, typename ComplexType>
-std::vector<PairCell> Hdvf<CoefficientType, ComplexType>::find_pairs_MW(int q, bool &found, size_t tau) const
+std::vector<Pair_cells> Hdvf<CoefficientType, ComplexType>::find_pairs_MW(int q, bool &found, size_t tau) const
 {
     found = false;
-    std::vector<PairCell> pairs;
+    std::vector<Pair_cells> pairs;
     if (this->_flag.at(q).at(tau) == CRITICAL)
         return pairs ; // Empty / found false
 
@@ -939,7 +939,7 @@ std::vector<PairCell> Hdvf<CoefficientType, ComplexType>::find_pairs_MW(int q, b
                         found = ((abs(xi) == 1) && (abs(xip) == 1)) ;
                         if (found)
                         {
-                            PairCell p ;
+                            Pair_cells p ;
                             p.sigma = pi ; // primary cell
                             p.tau = sigma ; // critical cell
                             p.dim = q ;
@@ -977,7 +977,7 @@ std::vector<PairCell> Hdvf<CoefficientType, ComplexType>::find_pairs_MW(int q, b
                     found = ((abs(xi) == 1) && (abs(xip) == 1)) ;
                     if (found)
                     {
-                        PairCell p ;
+                        Pair_cells p ;
                         p.sigma = pi ; // primary cell
                         p.tau = sigma ; // secondary cell
                         p.dim = q ;

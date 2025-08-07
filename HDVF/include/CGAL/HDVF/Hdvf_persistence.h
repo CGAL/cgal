@@ -271,13 +271,13 @@ public:
      *
      * \param[in] verbose If this parameter is `true`, all intermediate reductions are printed out.
      *
-     * \returns The vector of all `PairCell` paired with A.
+     * \returns The vector of all `Pair_cells` paired with A.
      */
-    std::vector<PairCell> compute_perfect_hdvf(bool verbose = false)
+    std::vector<Pair_cells> compute_perfect_hdvf(bool verbose = false)
     {
         bool found;
-        PairCell pair;
-        std::vector<PairCell> res ;
+        Pair_cells pair;
+        std::vector<Pair_cells> res ;
         for (size_t i=0; i < _f._filtration.size(); ++i)
         {
             this->progress_bar(i, _f._filtration.size()) ;
@@ -288,7 +288,7 @@ public:
         }
 
         // Compute "infinite" holes
-        vector<vector<size_t> > criticals(this->get_flag(CRITICAL)) ;
+        vector<vector<size_t> > criticals(this->flag(CRITICAL)) ;
         for (int q=0; q < criticals.size(); ++q)
         {
             for (size_t i : criticals.at(q))
@@ -298,7 +298,7 @@ public:
                 //  -> index : nb_cell(q+1)
                 //  -> time : size of the filtration
                 //  -> degree : di - 1
-                const PairCell p = {i, this->_K.nb_cells(q+1), q} ;
+                const Pair_cells p = {i, this->_K.nb_cells(q+1), q} ;
                 const size_t ki(_per_to_K.at(q).at(i)) ; // K index
                 const Cell_index_dimension c(ki,q) ;
                 const size_t ti(_f._cell_to_t.at(c)) ;
@@ -397,7 +397,7 @@ public:
      *
      * \returns A vector containing, for each dimension, the vector of labels by cell index.
      */
-    virtual vector<vector<int> > get_psc_labels () const
+    virtual vector<vector<int> > psc_labels () const
     {
         vector<vector<int> > labels(this->_K.dim()+1) ;
         for (int q=0; q<=this->_K.dim(); ++q)
@@ -430,10 +430,10 @@ public:
      *
      * \returns A column-major chain.
      */
-    virtual Col_chain get_homology_chain (size_t cell, int q) const
+    virtual Col_chain homology_chain (size_t cell, int q) const
     {
         if ((q<0) || (q>this->_K.dim()))
-            throw "Error : get_homology_chain with dim out of range" ;
+            throw "Error : homology_chain with dim out of range" ;
 
         if (this->_hdvf_opt & (OPT_FULL | OPT_G))
         {
@@ -461,10 +461,10 @@ public:
      *
      * \returns A column-major chain.
      */
-    virtual Col_chain get_cohomology_chain (size_t cell, int q) const
+    virtual Col_chain cohomology_chain (size_t cell, int q) const
     {
         if ((q<0) || (q>this->_K.dim()))
-            throw "Error : get_homology_chain with dim out of range" ;
+            throw "Error : homology_chain with dim out of range" ;
 
         if (this->_hdvf_opt & (OPT_FULL | OPT_F))
         {
@@ -609,27 +609,27 @@ private:
      * This method exports and saves PSC labels, homology and cohomology generators of the current persistent pair `p` to corresponding private vectors (_export_label, _export_g, _export_fstar).
      * The method is invoqued on the result of `find_pair_A` before pairing cells with the A operation.
      */
-    void export_hdvf_persistence_pair(PairCell p)
+    void export_hdvf_persistence_pair(Pair_cells p)
     {
         // Export labels
-        ExpLabels labels(this->get_psc_labels()) ;
+        ExpLabels labels(this->psc_labels()) ;
         _export_labels.push_back(labels) ;
         // Export g (according to options)
         if (this->_hdvf_opt & (OPT_FULL | OPT_G))
         {
-            Col_chain chain_sigma(get_homology_chain(p.sigma, p.dim)) ;
+            Col_chain chain_sigma(homology_chain(p.sigma, p.dim)) ;
             Col_chain chain_tau ;
             if (p.tau != this->_K.nb_cells(p.dim+1)) // Check if the second cell is "finite"
-                chain_tau = get_homology_chain(p.tau, p.dim+1) ;
+                chain_tau = homology_chain(p.tau, p.dim+1) ;
             _export_g.push_back(std::pair<Col_chain,Col_chain>(chain_sigma, chain_tau)) ;
         }
         // Export fstar (according to options)
         if (this->_hdvf_opt & (OPT_FULL | OPT_F))
         {
-            Col_chain chain_sigma(get_cohomology_chain(p.sigma, p.dim)) ;
+            Col_chain chain_sigma(cohomology_chain(p.sigma, p.dim)) ;
             Col_chain chain_tau ;
             if (p.tau != this->_K.nb_cells(p.dim+1)) // Check if the second cell is "finite"
-                chain_tau = get_cohomology_chain(p.tau, p.dim+1) ;
+                chain_tau = cohomology_chain(p.tau, p.dim+1) ;
             _export_fstar.push_back(std::pair<Col_chain,Col_chain>(chain_sigma, chain_tau)) ;
         }
     }
@@ -657,21 +657,21 @@ private:
     }
 
     /*
-     * \brief Find a valid PairCell for A for persistent homology.
+     * \brief Find a valid Pair_cells for A for persistent homology.
      *
      * The function searches, at a given time \f$t\f$ in the filtration, the youngest critical cell \f$\gamma'\f$ forming a valid pair with the cell \f$\gamma\f$. Hence, \f$(\gamma', \gamma)\f$ valid pair is a valid pair
      * (ie.\ such that \f$\langle \partial(\gamma), \gamma' \rangle\f$ invertible).
      *
      * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      */
-    PairCell find_pair_A(bool &found) ;
+    Pair_cells find_pair_A(bool &found) ;
 
     /*
      * \brief Step forward along the filtration.
      *
      * Searches a possible persistent pair for A with `find_pair_A`, apply A and update internal structures.
      */
-    PairCell step_persist(bool& found, bool verbose = false) ;
+    Pair_cells step_persist(bool& found, bool verbose = false) ;
 } ;
 
 
@@ -743,9 +743,9 @@ Hdvf_persistence<CoefficientType, ComplexType, DegType, FiltrationType>::Hdvf_pe
 }
 
 template<typename CoefficientType, typename ComplexType, typename DegType, typename FiltrationType>
-PairCell Hdvf_persistence<CoefficientType, ComplexType, DegType, FiltrationType>::find_pair_A(bool &found)
+Pair_cells Hdvf_persistence<CoefficientType, ComplexType, DegType, FiltrationType>::find_pair_A(bool &found)
 {
-    PairCell p ;
+    Pair_cells p ;
     // Get current cell (in the basis K)
     const size_t current_time(_t-1);
     Cell_index_dimension c(_f._filtration.at(current_time)) ;
@@ -786,7 +786,7 @@ PairCell Hdvf_persistence<CoefficientType, ComplexType, DegType, FiltrationType>
 }
 
 template<typename CoefficientType, typename ComplexType, typename DegType, typename FiltrationType>
-PairCell Hdvf_persistence<CoefficientType, ComplexType, DegType, FiltrationType>::step_persist(bool& found, bool verbose)
+Pair_cells Hdvf_persistence<CoefficientType, ComplexType, DegType, FiltrationType>::step_persist(bool& found, bool verbose)
 {
     // Compute next persistent pair
 
@@ -799,7 +799,7 @@ PairCell Hdvf_persistence<CoefficientType, ComplexType, DegType, FiltrationType>
     this->_DD_col.at(q_current).set_bit_on(t_dim_current) ; // Update _DD_col mask
 
     // Search for pairing
-    PairCell p(find_pair_A(found)) ;
+    Pair_cells p(find_pair_A(found)) ;
     if (found)
     {
         // Corresponding persistent interval
@@ -830,7 +830,7 @@ PairCell Hdvf_persistence<CoefficientType, ComplexType, DegType, FiltrationType>
         if (verbose)
         {
             std::cout << "A : " << p.sigma << " - " << p.tau << " (dim " << p.dim << ")" << std::endl ;
-            this->print_matrices(std::cout) ;
+            this->insert_matrices(std::cout) ;
         }
     }
 }

@@ -76,14 +76,14 @@ size_t nb_cells(int q);
 The function returns constant reference to a vector of column-major sparse matrices. The `q`-th element of this vector is the matrix of \f$\partial_q\f$, which gives the boundary of cells of dimension `q`(as a linear combination of `q`-1 cells).
 
  */
-const vector<Col_matrix> & get_boundary_matrices() const;
+const vector<Col_matrix> & boundary_matrices() const;
 
 /*!
  \brief Returns the boundary matrix of dimension `q` (ie.\ the matrix of \f$\partial_q}\f$).
 
 The function returns a column-major sparse matrices.
  */
-const Col_matrix & get_boundary_matrix(int q) const;
+const Col_matrix & boundary_matrix(int q) const;
 
 /*!
  \brief Returns the boundary of the cell of index `id_cell` in dimension `q`.
