@@ -8,18 +8,22 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Point_2.h>
 #include <CGAL/Point_container.h>
+#include <CGAL/point_generators_3.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/Side_of_triangle_mesh.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
+#include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Aff_transformation_3.h>
 #include <CGAL/Surface_mesh/Surface_mesh.h>
 #include <CGAL/Union_find.h>
 #include <CGAL/aff_transformation_tags.h>
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Linear_cell_complex_min_items.h>
+#include <CGAL/Segment_3.h>
+#include <CGAL/Eigen_matrix.h>
 #include <functional>
 #include <array>
 #include <cassert>
@@ -96,9 +100,24 @@ using Vector = Kernel::Vector_3;
 using Triangle = Kernel::Triangle_3;
 using Polyhedron = CGAL::Polyhedron_3<Kernel>;
 using Primitive = CGAL::AABB_face_graph_triangle_primitive<Polyhedron>;
-
-using AABB_Traits = CGAL::AABB_traits<Kernel, Primitive>;
+using Segment = CGAL::Segment_3<Kernel>;
+using AABB_Traits = CGAL::AABB_traits_3<Kernel, Primitive>;
 using Tree = CGAL::AABB_tree<AABB_Traits>;
+using Primitive_id = typename Tree::Primitive_id;
+using RandomPointGenerator = CGAL::Random_points_in_cube_3<Point>;
+
+using Side_of_mesh = CGAL::Side_of_triangle_mesh<Polyhedron, Kernel>;
+///////////////////////////////////////////////////////////////////////////////
+/// Test if a particular point is outside of the object (Tree), knowing there is
+/// no intersection between its voxel and the tree.
+inline
+bool is_outside_knowing_no_intersect(const Point& p,
+                                     const Tree& t)
+{
+  Side_of_mesh s(t);
+  CGAL::Bounded_side res=s(p);
+  return res!=CGAL::ON_BOUNDED_SIDE; // && !=CGAL::ON_BOUNDARY ?
+}
 
 /**
  * @brief Enumeration representing the type of volume in the hexahedral mesh
@@ -219,6 +238,8 @@ public:
 
       static constexpr size_t max_id = std::numeric_limits<size_t>::max();
       size_t id = max_id;
+
+      Vector normal;
     };
 
     /**
@@ -236,6 +257,10 @@ public:
       AreaId area_id = {0,0,0}; // Used for ghost cells;
       bool owned = true; // Disable this when creating others constraint area
       size_t cc_id = max_cc_id;
+
+      Point centroid;
+      double fraction;
+      Vector gradient;
     };
 
     /**
@@ -252,6 +277,10 @@ public:
       std::bitset<3> plane;
       size_t plane_id = max_plane_id;
       size_t cc_id = max_cc_id;
+
+      Segment dual_edge;
+      Point intersection;
+      Vector normal;
     };
 
     typedef CGAL::Cell_attribute<Storage, FaceAttrValue> FaceAttr;
@@ -394,9 +423,11 @@ namespace CGAL::HexRefinement::TwoRefinement {
     }
   };
 
-  // Identifies which 3-cell should be refined
   using TrimmingFunction = std::function<bool(LCC&, Dart_handle)>;
+  // Identifies which 3-cell should be refined
   using MarkingFunction = std::function<bool(LCC&, Dart_handle)>;
+  using DetectingFunction = std::function<bool(LCC&, Dart_handle)>;
+  using DecideInsideFunction = std::function<bool(Point)>;
 
   /**
    * @brief Container for external pattern substitution resources used in hexahedral meshing
@@ -1301,7 +1332,7 @@ namespace CGAL::HexRefinement::TwoRefinement {
 
       // If the face didn't have any template before, it will have one, so add it in faces to refine
       if (face_attr.template_id == 0) {
-        rdata.faces_to_refine.push_back(face);
+        rdata.faces_of_plane.push_back(face);
       }
 
       face_attr.template_id++;
@@ -2529,6 +2560,7 @@ namespace CGAL::HexRefinement::TwoRefinement {
         case X: return lcc.beta(lcc.first_dart(), 0, 2);
         case Y: return lcc.beta(lcc.first_dart(), 2, 1);
         case Z: return lcc.first_dart();
+        default:;
       }
 
       CGAL_assertion_msg(false, "Unexpected value for plane");
@@ -3228,9 +3260,6 @@ namespace CGAL::HexRefinement::TwoRefinement {
       if (r == 0) initial_setup(hdata, cellIdentifier);
       else setup_next_level(hdata, cellIdentifier);
 
-      // debug_stream.push(l_thread_id);
-      // std::this_thread::sleep_for(std::chrono::hours(1));
-
       expand_identified_cells(hdata, r, nb_levels);
 
       // For each plane
@@ -3457,9 +3486,671 @@ namespace CGAL::HexRefinement::TwoRefinement {
       lcc.remove_cell<3>(it);
     }
   }
+
+  void __set_centroid(LCC& lcc, Dart_handle dart) {
+    auto attr = get_or_create_attr<3>(lcc, dart);
+    auto &vol_attr = attr->info();
+
+    Vector centroid = CGAL::NULL_VECTOR;
+    int vertex_count = 0;
+    
+    for(auto it = lcc.one_dart_per_incident_cell<0, 3>(dart).begin(),
+              end = lcc.one_dart_per_incident_cell<0, 3>(dart).end(); 
+            it != end; it++) {
+      centroid = centroid + (lcc.point(it) - CGAL::ORIGIN);
+      vertex_count++;
+    }
+
+    assert(vertex_count == 8);
+    
+    vol_attr.centroid = CGAL::ORIGIN + centroid / vertex_count;
+  }
+
+  void set_centroids(LCC& lcc) {
+    auto volumes = lcc.one_dart_per_cell<3>();
+    for(auto it = volumes.begin(); it != volumes.end(); it++) {
+      __set_centroid(lcc, it);
+    }
+  }
+
+  void __set_dual_edge(LCC& lcc, Dart_handle dart) {
+    auto attr = get_or_create_attr<2>(lcc, dart);
+    auto &face_attr = attr->info();
+
+    Point p1 = lcc.attribute<3>(dart)->info().centroid, p2(0, 0, 0);
+    if(lcc.is_free<3>(dart)) {
+      int vertex_count = 0;
+      for(auto it = lcc.one_dart_per_incident_cell<0, 2>(dart).begin(),
+                end = lcc.one_dart_per_incident_cell<0, 2>(dart).end();
+              it != end; it++) {
+        p2 = p2 + (lcc.point(it) - CGAL::ORIGIN);
+        vertex_count++;
+      }
+
+      assert(vertex_count == 4);
+
+      p2 = CGAL::ORIGIN + (p2 - CGAL::ORIGIN) / vertex_count;
+    }
+    else {
+      p2 = lcc.attribute<3>(lcc.beta<3>(dart))->info().centroid;
+    }
+
+    face_attr.dual_edge = {p1, p2};
+  }
+
+  void set_dual_edges(LCC& lcc) {
+    set_centroids(lcc);
+    auto faces = lcc.one_dart_per_cell<2>();
+    for(auto it = faces.begin(); it != faces.end(); it++) {
+      __set_dual_edge(lcc, it);
+    }
+  }
+
+  int set_vertex_ids(LCC& lcc) {
+    auto vertices = lcc.one_dart_per_cell<0>();
+    int count_vertices = 0;
+    for(auto it = vertices.begin(); it != vertices.end(); it++) {
+      get_or_create_attr<0>(lcc, it)->id = count_vertices++;
+    }
+    return count_vertices;
+  }
+
+  void __set_fraction(LCC& lcc, Dart_handle dart, int number_of_random_points, RandomPointGenerator& gen, MarkingFunction cellIdentifier, DecideInsideFunction decideFunc) {
+    auto attr = get_or_create_attr<3>(lcc, dart);
+    auto &vol_attr = attr->info();
+    __set_centroid(lcc, dart);
+
+    if(!cellIdentifier(lcc, dart)) {
+      vol_attr.fraction = decideFunc(vol_attr.centroid) ? 1.0 : 0.0;
+    }
+    else {
+      std::vector<Point> random_points;
+      copy_n(gen, number_of_random_points, std::back_inserter(random_points));
+      int count_inner_points = 0;
+      for(Point& p: random_points) {
+        if(decideFunc(vol_attr.centroid + (p - CGAL::ORIGIN))) count_inner_points++;
+      }
+      vol_attr.fraction = static_cast<double>(count_inner_points) / number_of_random_points;
+    }
+  }
+
+  template<int numberOfRandomPoints=101>
+  void set_fraction(LCC& lcc, double length_of_4_template, MarkingFunction cellIdentifier, DecideInsideFunction decideFunc) {
+    auto volumes = lcc.one_dart_per_cell<3>();
+    RandomPointGenerator gen(length_of_4_template * 0.5);
+    for(auto it = volumes.begin(); it != volumes.end(); it++) {
+      __set_fraction(lcc, it, numberOfRandomPoints, gen, cellIdentifier, decideFunc);
+    }
+  }
+
+  // 2.2 Estimate gradients at cell centers 参照で作成
+  // centroid is assumed to be set
+  void __set_gradient_at_dual_node(LCC& lcc, Dart_handle dart) {
+    auto neighbors = cells_26_connectivity(lcc, dart);
+    CGAL::Eigen_matrix<double, 3, 3> mat;
+    CGAL::Eigen_vector<double, 3> vec;
+    for(int i = 0; i < 3; i++) {
+      for(int j = 0; j < 3; j++) {
+        mat.matrix()(i, j) = 0.0;
+      }
+      vec(i) = 0.0;
+    }
+
+    for(auto neighbor: neighbors) {
+      Vector diff = lcc.attribute<3>(neighbor)->info().centroid - lcc.attribute<3>(dart)->info().centroid;
+      std::array<double, 3> qd = {diff.x(), diff.y(), diff.z()};
+      for(int i = 0; i < 3; i++) {
+        for(int j = 0; j < 3; j++) {
+          mat.matrix()(i, j) += qd[i]*qd[j];
+        }
+        vec(i) += (lcc.attribute<3>(neighbor)->info().fraction - lcc.attribute<3>(dart)->info().fraction) * qd[i];
+      }
+    }
+
+    auto grad_frac = mat.ldlt().solve(vec);
+    lcc.attribute<3>(dart)->info().gradient = Vector(grad_frac[0], grad_frac[1], grad_frac[2]);
+  }
+
+  // laplacian smoothing on points which isn't on the surface of the grid and don't have mark
+  void laplacian_smoothing_for_unmarked_cells(LCC& lcc, size_type surface_mark) {
+    auto vertices = lcc.one_dart_per_cell<0>();
+    auto edges = lcc.one_dart_per_cell<1>();
+    auto faces = lcc.one_dart_per_cell<2>();
+    size_type side_mark = lcc.get_new_mark();
+
+    const int count_vertices = set_vertex_ids(lcc);
+    std::vector<Vector> P_new(count_vertices, CGAL::NULL_VECTOR);
+    std::vector<int> count(count_vertices);
+    for(auto edge = edges.begin(); edge != edges.end(); edge++) {
+      auto redge = lcc.beta<1>(edge);
+      int id1 = lcc.attribute<0>(edge)->id, id2 = lcc.attribute<0>(redge)->id;
+      P_new[id1] += (lcc.point(redge) - CGAL::ORIGIN);
+      P_new[id2] += (lcc.point(edge) - CGAL::ORIGIN);
+      count[id1]++;
+      count[id2]++;
+    }
+    for(auto face = faces.begin(); face != faces.end(); face++) {
+      if(lcc.is_free<3>(face))
+        mark_k_cells_of_i_cell<2, 0>(lcc, face, side_mark);
+    }
+
+    for(auto vertex = vertices.begin(); vertex != vertices.end(); vertex++) {
+      if(lcc.is_marked(vertex, surface_mark) or lcc.is_marked(vertex, side_mark)) continue;
+
+      int id = lcc.attribute<0>(vertex)->id;
+
+      assert(count[id]);
+
+      lcc.point(vertex) = CGAL::ORIGIN + P_new[id]/count[id];
+    }
+
+    lcc.free_mark(side_mark);
+  }
+
+  // TODO
+  // Mesquite ShapeImprovement tool
+  void shape_improvement_for_unmarked_cells(LCC& lcc, size_type surface_mark) {
+  }
+
+  // func sets intersection and normal for dual edge
+  // normal should be normalized
+  void move_points_onto_mesh(LCC& lcc, size_type move_mark, DetectingFunction func) {
+    set_dual_edges(lcc);
+
+    int count_vertices = set_vertex_ids(lcc);
+
+    auto faces = lcc.one_dart_per_cell<2>();
+    std::vector<Vector> P_news(count_vertices, CGAL::NULL_VECTOR), N_news(count_vertices, CGAL::NULL_VECTOR);
+    std::vector<int> count_intersect(count_vertices, 0);
+    for(auto it = faces.begin(); it != faces.end(); it++) {
+      if(func(lcc, it)) {
+        auto &face_attr = lcc.attribute<2>(it)->info();
+        for(auto vertex = lcc.one_dart_per_incident_cell<0, 2>(it).begin(),
+                  end = lcc.one_dart_per_incident_cell<0, 2>(it).end();
+                vertex != end; vertex++) {
+          int id = lcc.attribute<0>(vertex)->id;
+          Vector P_new_add = ((lcc.point(vertex) - CGAL::ORIGIN) - (face_attr.normal * (lcc.point(vertex) - face_attr.intersection))*face_attr.normal);
+          P_news[id] += P_new_add;
+          
+          if(count_intersect[id]) {
+            N_news[id] += face_attr.normal;
+          }
+          else {
+            N_news[id] = face_attr.normal;
+          }
+
+          count_intersect[id]++;
+        }
+        mark_k_cells_of_i_cell<2, 0>(lcc, it, move_mark);
+      }
+    }
+
+    auto vertices = lcc.one_dart_per_cell<0>();
+    for(auto it = vertices.begin(); it != vertices.end(); it++) {
+      if(lcc.is_marked(it, move_mark)) {
+        int id = lcc.attribute<0>(it)->id;
+        P_news[id] /= count_intersect[id];
+        lcc.point(it) = CGAL::ORIGIN + P_news[id];
+
+        N_news[id] /= count_intersect[id];
+        lcc.attribute<0>(it)->normal = N_news[id];
+      }
+    }
+  }
+
+  /**
+   * @brief Returns the 8 hexahedral volumes (3-cells) surrounding a given node (vertex).
+   *
+   * This function returns the 8 volumes (hexahedra) that share the specified node in a regular grid.
+   * The order of the returned volumes is as follows:
+   *   0: left-top-back
+   *   1: right-top-back
+   *   2: right-top-front
+   *   3: left-top-front
+   *   4: left-bottom-back
+   *   5: right-bottom-back
+   *   6: right-bottom-front
+   *   7: left-bottom-front
+   *
+   * The arrangement corresponds to the following dual cube:
+   *
+   *        z
+   *        ^　　　　　y
+   *        |  ┐
+   *        | /     
+   *        |/
+   *        +------> x
+   *
+   *      0-------1
+   *     /|      /|
+   *    3-------2 |
+   *    | 4-----|-5
+   *    |/      |/
+   *    7-------6
+   *
+   * Each number represents the index in the returned array.
+   *
+   * @param lcc The Linear Cell Complex
+   * @param dart A dart handle representing the node (vertex)
+   * @return std::array<Dart_handle, 8> Array of dart handles to the 8 surrounding volumes
+   */
+  std::array<Dart_handle, 8> volumes_around_node(LCC& lcc, Dart_handle dart) {
+    std::array<Dart_handle, 8> volumes = {dart, lcc.beta(dart, 3), lcc.beta(dart, 3, 2, 3), lcc.beta(dart, 2, 3),
+                                    lcc.beta(dart, 0, 2, 3), lcc.beta(dart, 3, 1, 2, 3), lcc.beta(dart, 3, 2, 3, 1, 2, 3), lcc.beta(dart, 2, 3, 0, 2, 3)};
+    return volumes;
+  }
+
+  // all volume cells need to have attribute
+  int __get_signal(LCC& lcc, Dart_handle vertex, size_type inner_mark) {
+    std::array<Dart_handle, 8> volumes = volumes_around_node(lcc, vertex);
+    int inner_signal = 0;
+    for(int i = 0; i < 8; i++) {
+      auto it = volumes[i];
+      if(it == nullptr or lcc.attribute<3>(it) == nullptr) {
+        return -1;
+      }
+      inner_signal <<= 1;
+      inner_signal |= int(lcc.is_marked(it, inner_mark));
+    }
+    return inner_signal;
+  }
+
+  std::array<std::vector<int>, 7> __get_seven_non_manifold_templates() {
+    return {{{0b10000010, 0b01000001, 0b00101000, 0b00010100, 0b01111101, 0b11101011, 0b11010111, 0b10111110},
+            {0b10000100, 0b01000010, 0b00100001, 0b00011000, 0b10000001, 0b01001000, 0b00100100, 0b00010010, 0b10100000, 0b01010000, 0b00001010, 0b00000101, 0b01111011, 0b01111110, 0b01011111, 0b11100111, 0b10101111, 0b10110111, 0b11011110, 0b11011011, 0b11111010, 0b10111101, 0b11110101, 0b11101101},
+            {0b00010110, 0b01000011, 0b00101010, 0b00101100, 0b00010101, 0b01100001, 0b01001001, 0b00111000, 0b01010100, 0b10000011, 0b10100010, 0b10000110, 0b01101000, 0b00011100, 0b01010001, 0b11000001, 0b10101000, 0b10010100, 0b10010010, 0b11000010, 0b10001010, 0b00110100, 0b01000101, 0b00101001, 0b11101001, 0b10111100, 0b11010101, 0b11010011, 0b11101010, 0b10011110, 0b10110110, 0b11000111, 0b10101011, 0b01111100, 0b01011101, 0b01111001, 0b10010111, 0b11100011, 0b10101110, 0b00111110, 0b01010111, 0b01101011, 0b01101101, 0b00111101, 0b01110101, 0b11001011, 0b10111010, 0b11010110},
+            {0b01001010, 0b00100101, 0b00011010, 0b10000101, 0b10100100, 0b01010010, 0b10100001, 0b01011000, 0b10110101, 0b01111010, 0b11100101, 0b11011010, 0b10101101, 0b01011011, 0b10100111, 0b01011110},
+            {0b01010101, 0b10101010, 0b10010110, 0b01101001, 0b11000011, 0b00111100},
+            {0b00011110, 0b01010011, 0b01101010, 0b00101101, 0b00110101, 0b01100101, 0b01001011, 0b00111010, 0b01010110, 0b10000111, 0b10100011, 0b10100110, 0b01111000, 0b01011100, 0b01011001, 0b11100001, 0b10101100, 0b10010101, 0b11010010, 0b11001010, 0b10011010, 0b10110100, 0b11000101, 0b10101001},
+            {0b01011010, 0b10100101}}};
+  }
+
+  std::array<int, 256> __get_non_manifold_template_list() {
+    return {{0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,
+            0,0,1,0,1,1,1,0,1,0,1,0,1,0,1,0,
+            0,1,0,0,1,1,0,0,1,1,1,0,1,1,0,0,
+            0,0,0,0,1,1,0,0,1,0,1,0,1,1,1,0,
+            0,1,1,1,0,1,0,0,1,1,1,1,0,0,0,0,
+            1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+            0,1,0,0,0,1,0,0,1,1,1,1,0,1,0,0,
+            0,0,0,0,0,1,0,0,1,1,1,1,1,1,1,0,
+            0,1,1,1,1,1,1,1,0,0,1,0,0,0,0,0,
+            0,0,1,0,1,1,1,1,0,0,1,0,0,0,1,0,
+            1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+            0,0,0,0,1,1,1,1,0,0,1,0,1,1,1,0,
+            0,1,1,1,0,1,0,1,0,0,1,1,0,0,0,0,
+            0,0,1,1,0,1,1,1,0,0,1,1,0,0,1,0,
+            0,1,0,1,0,1,0,1,0,1,1,1,0,1,0,0,
+            0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0}};
+  }
+
+  std::array<std::vector<int>, 256> __get_solution_to_non_manifold_templates_list() {
+    std::array<std::vector<int>, 7> seven_templates = __get_seven_non_manifold_templates();
+    std::array<int, 256> is_in_templates = __get_non_manifold_template_list();
+
+    std::array<std::vector<int>, 256> resolve_templates = {};
+    for(int i = 0; i < 7; i++) {
+      const std::vector<int> &templates = seven_templates[i];
+      int template_size = templates.size();
+      for(auto temp: templates) {
+        for(int signal_num = 1; signal_num <= 8; signal_num++) {
+          for(int signal = (1<<signal_num)-1; signal < (1<<8);) {
+            int after = temp ^ signal;
+
+            if(is_in_templates[after]^1) resolve_templates[temp].emplace_back(signal);
+
+            int x = signal & -signal, y = signal + x;
+            signal = (((signal & ~y) / x) >> 1) | y;
+          }
+        }
+      }
+    }
+
+    return resolve_templates;
+  }
+
+  // Algorithm 1 in Owen et al. (2014)
+  // prerequisite: If the vertex is non-manifold, the manifold condition must be satisfiable through a modification of the fraction within 0.37.
+  void resolve_non_manifold_case(LCC& lcc, double s, size_type inner_mark) {
+    std::array<int, 256> is_in_templates = __get_non_manifold_template_list();
+
+    std::array<std::vector<int>, 256> resolve_templates = __get_solution_to_non_manifold_templates_list();
+
+    auto vertices = lcc.one_dart_per_cell<0>();
+    std::queue<std::pair<Dart_handle, int>> que;
+    for(auto vertex = vertices.begin(); vertex != vertices.end(); vertex++) {
+      int inner_signal = __get_signal(lcc, vertex, inner_mark);
+      if(inner_signal == -1) continue;
+      if(is_in_templates[inner_signal]) que.emplace(vertex, inner_signal);
+    }
+    
+    const int NUMBER_OF_EPSILONS = 15;
+    std::array<double, NUMBER_OF_EPSILONS> epsilons = {0.05, 0.07, 0.11, 0.13, 0.17, 0.19, 0.23, 0.29, 0.31, 0.37, 0.41, 0.43, 0.47, 0.53, 0.59};
+    std::vector<int> counter(set_vertex_ids(lcc));
+    while(!que.empty()) {
+      auto [vertex, temp] = que.front();
+      que.pop();
+      int inner_signal = __get_signal(lcc, vertex, inner_mark);
+      if(temp != inner_signal) continue;
+
+      int id = lcc.attribute<0>(vertex)->id;
+      assert(counter[id] < NUMBER_OF_EPSILONS);
+      double eps = epsilons[counter[id]++];
+      std::array<Dart_handle, 8> volumes = volumes_around_node(lcc, vertex);
+  
+      int able_to_change = 0;
+      for(auto volume: volumes) {
+        able_to_change <<= 1;
+        able_to_change |= int(abs(lcc.attribute<3>(volume)->info().fraction - s) < eps);
+      }
+
+      auto& solutions = resolve_templates[temp];
+      int solution = -1;
+      for(auto candidate: solutions) {
+        if((candidate|able_to_change) != able_to_change) continue;
+        solution = candidate;
+        break;
+      }
+
+      if(solution == -1) {
+        que.emplace(vertex, temp);
+      }
+      else {
+        int L_sub = solution & inner_signal;
+        int L_add = solution ^ L_sub;
+        for(int i = 0; i < 8; i++) {
+          if(L_sub>>(7-i)&1) {
+            lcc.attribute<3>(volumes[i])->info().fraction -= eps;
+            lcc.unmark_cell<3>(volumes[i], inner_mark);
+          }
+          if(L_add>>(7-i)&1) {
+            lcc.attribute<3>(volumes[i])->info().fraction += eps;
+            lcc.mark_cell<3>(volumes[i], inner_mark);
+          }
+        }
+        for(int i = 0; i < 8; i++) {
+          if(solution>>(7-i)&1) {
+            auto vertices = lcc.one_dart_per_incident_cell<0, 3>(volumes[i]);
+            for(auto it = vertices.begin(); it != vertices.end(); it++) {
+              if(lcc.attribute<0>(vertex)->id == lcc.attribute<0>(it)->id) continue;
+              int now_signal = __get_signal(lcc, it, inner_mark);
+              if(is_in_templates[now_signal]) que.emplace(it, now_signal);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  auto detect_intersection_with_volume_fraction(double s, size_type inner_mark, size_type set_gradient_mark) {
+    return [s, inner_mark, set_gradient_mark](LCC& lcc, Dart_handle dart) -> bool {
+      auto dart3 = lcc.beta<3>(dart);
+      if(lcc.is_free<3>(dart)) {
+        return false;
+        if(!lcc.is_marked(dart, inner_mark)) return false;
+      }
+      else{
+        if(lcc.is_marked(dart, inner_mark) == lcc.is_marked(dart3, inner_mark)) return false;
+      }
+      double frac1 = lcc.attribute<3>(dart)->info().fraction, frac2;
+      if(lcc.is_free<3>(dart)) frac2 = 0;
+      else frac2 = lcc.attribute<3>(dart3)->info().fraction;
+
+      auto &face_attr = lcc.attribute<2>(dart)->info();
+      Point p1, p2;
+      if(lcc.is_free<3>(dart)) {
+        p1 = face_attr.dual_edge.source();
+        p2 = face_attr.dual_edge.target();
+      }
+      else {
+        p1 = lcc.attribute<3>(dart)->info().centroid;
+        p2 = lcc.attribute<3>(dart3)->info().centroid;
+      }
+
+      face_attr.intersection = p1 + ((s - frac1)/(frac2 - frac1))*(p2 - p1);
+      
+      if(!lcc.is_marked(dart, set_gradient_mark)) {
+        __set_gradient_at_dual_node(lcc, dart);
+        lcc.mark_cell<3>(dart, set_gradient_mark);
+      }
+      if(!lcc.is_free<3>(dart) and !lcc.is_marked(dart3, set_gradient_mark)) {
+        __set_gradient_at_dual_node(lcc, dart3);
+        lcc.mark_cell<3>(dart3, set_gradient_mark);
+      }
+      
+      Vector N_1 = lcc.attribute<3>(dart)->info().gradient, N_2;
+      if(lcc.is_free<3>(dart)) {
+        double frac = lcc.attribute<3>(dart)->info().fraction;
+        Vector v = p2 - p1;
+        N_2 = -(frac/(v*v)) * v;
+      }
+      else {
+        N_2 = lcc.attribute<3>(dart3)->info().gradient;
+      }
+      Vector N = N_1 + ((s - frac1)/(frac2 - frac1))*(N_2 - N_1);
+      face_attr.normal = (1. / sqrt(N*N)) * N;
+
+      return true;
+    };
+  }
+
+  // void move_points_onto_mesh_with_volume_fraction(LCC& lcc, size_type move_mark, size_type inner_mark, double length_of_4_template, MarkingFunction cellIdentifier, DecideInsideFunction decideFunc) {
+  //   set_fraction(lcc, length_of_4_template, cellIdentifier, decideFunc);
+  void move_points_onto_mesh_with_volume_fraction(LCC& lcc, size_type move_mark, size_type inner_mark) {
+    const double s = 0.5;
+
+    auto volumes = lcc.one_dart_per_cell<3>();
+    int cnt = 0;
+    for(auto it = volumes.begin(); it != volumes.end(); it++) {
+      if(lcc.attribute<3>(it)->info().fraction > s) lcc.mark_cell<3>(it, inner_mark), cnt++;
+    }
+    // std::cout << "Number of inner volumes is: " << cnt << std::endl;
+    resolve_non_manifold_case(lcc, s, inner_mark);
+
+    // normal を全ての dual node にセットして、それを使って p.7 式 (2, 3) を detectIntersection で実装していく
+
+    size_type set_gradient_mark = lcc.get_new_mark();
+
+    auto detectIntersection = detect_intersection_with_volume_fraction(s, inner_mark, set_gradient_mark);
+    move_points_onto_mesh(lcc, move_mark, detectIntersection);
+
+    lcc.free_mark(set_gradient_mark);
+  }
+
+  std::pair<Vector, Vector> get_orthogonal_vectors(const Vector& v) {
+    Vector base = (std::abs(v.x()) < std::abs(v.y())) ? Vector(1, 0, 0) : Vector(0, 1, 0);
+
+    Vector v1 = CGAL::cross_product(v, base);
+    Vector v2 = CGAL::cross_product(v, v1);
+
+    return {v1/std::sqrt(v1*v1), v2/std::sqrt(v2*v2)};
+  }
+
+  std::vector<std::vector<Dart_handle>> get_neighbors_list_for_smoothing(LCC& lcc, size_type surface_mark, size_type inner_mark) {
+    int count_vertices = set_vertex_ids(lcc);
+    std::vector<std::vector<Dart_handle>> neighbors_list(count_vertices);
+
+    auto edges = lcc.one_dart_per_cell<1>();
+    for(auto edge = edges.begin(); edge != edges.end(); edge++) {
+      bool inside = lcc.is_marked(edge, inner_mark);
+      bool outside = !inside;
+      Dart_handle e = lcc.beta(edge, 3, 2);
+
+      while(e != nullptr and e != edge and lcc.attribute<3>(e) != nullptr) {
+        if(lcc.is_marked(e, inner_mark)) {
+          inside = true;
+        }
+        else {
+          outside = true;
+        }
+        e = lcc.beta(e, 3, 2);
+      }
+      if(e == nullptr or lcc.attribute<3>(e) == nullptr) {
+        outside = true;
+        e = lcc.beta(edge, 2);
+        while(e != nullptr and lcc.attribute<3>(e) != nullptr) {
+          if(lcc.is_marked(e, inner_mark)) {
+            inside = true;
+          }
+          e = lcc.beta(e, 3, 2);
+        }
+      }
+      if(inside and outside and lcc.is_whole_cell_marked<1>(edge, surface_mark)) {
+        int id1 = lcc.attribute<0>(edge)->id;
+        int id2 = lcc.attribute<0>(lcc.beta<1>(edge))->id;
+        neighbors_list[id1].emplace_back(lcc.beta<1>(edge));
+        neighbors_list[id2].emplace_back(edge);
+      }
+    }
+
+    return neighbors_list;
+  }
+
+  // normals for vertices need to be set
+  void surface_smoothing(LCC& lcc, size_type surface_mark, size_type inner_mark, const double ridge_ratio=0.005) {
+    auto vertices = lcc.one_dart_per_cell<0>();
+
+    std::vector<std::vector<Dart_handle>> neighbors_list = get_neighbors_list_for_smoothing(lcc, surface_mark, inner_mark);
+
+    std::vector<std::pair<Dart_handle, Point>> new_points;
+
+    for(auto vertex = vertices.begin(); vertex != vertices.end(); vertex++) {
+      auto attr = lcc.attribute<0>(vertex);
+      int id = attr->id;
+      if(neighbors_list[id].empty()) continue;
+
+      Vector N_k = attr->normal;
+      auto &&[T_1, T_2] = get_orthogonal_vectors(N_k);
+
+      CGAL::Eigen_matrix<double, 5, 5> mat;
+      CGAL::Eigen_vector<double, 5> vec;
+      for(int i = 0; i < 5; i++) {
+        for(int j = 0; j < 5; j++) {
+          mat.matrix()(i, j) = 0.0;
+        }
+        vec(i) = 0.0;
+      }
+      Vector barycenter = CGAL::NULL_VECTOR;
+      
+      for(auto neighbor: neighbors_list[id]) {
+        Vector diff = lcc.point(neighbor) - lcc.point(vertex);
+        double x = diff * T_1, y = diff * T_2, z = diff * N_k;
+        std::array<double, 5> qd = {x, y, x*x, x*y, y*y};
+        double w = 1. / std::sqrt(diff * diff);
+        for(int i = 0; i < 5; i++) {
+          for(int j = 0; j < 5; j++) {
+            mat.matrix()(i, j) += w*qd[i]*qd[j];
+          }
+          vec(i) = vec(i) + w*z*qd[i];
+        }
+        barycenter += Vector(x, y, z);
+      }
+      barycenter /= neighbors_list[id].size();
+      
+      double lam = 0.;
+      for(int i = 0; i < 5; i++) lam += mat(i, i);
+      // the main diagonal values supposed here are mat(2, 2) and mat(4, 4)
+      // I recommend ridge_ratio to be 1/200 so that lambda becomes 1/100 of the main values
+      lam *= ridge_ratio;
+      for(int i = 0; i < 5; i++) mat.matrix()(i, i) += lam;
+      auto a_k = mat.ldlt().solve(vec);
+      auto Q_k = [&](double x, double y) -> double {
+        return a_k[0]*x + a_k[1]*y + a_k[2]*x*x + a_k[3]*x*y + a_k[4]*y*y;
+      };
+      auto new_point = lcc.point(vertex) + barycenter.x()*T_1 + barycenter.y()*T_2 + Q_k(barycenter.x(), barycenter.y())*N_k;
+      new_points.emplace_back(vertex, new_point);
+    }
+
+    for(auto &[dart, new_point]: new_points) {
+      lcc.point(dart) = new_point;
+    }
+  }
+
+  void volume_smoothing(LCC& lcc, size_type surface_mark) {
+    for(int _ = 2; _--;)
+      laplacian_smoothing_for_unmarked_cells(lcc, surface_mark);
+    for(int _ = 2; _--;)
+      shape_improvement_for_unmarked_cells(lcc, surface_mark);
+  }
+
+  auto is_marked_volume(size_type mark) {
+    return [mark](LCC& lcc, Dart_handle dart) -> bool {
+      return lcc.is_marked(dart, mark);
+    };
+  }
+
+  void post_processing(LCC& lcc, double length_of_4_template, bool trim, MarkingFunction cellIdentifier, DecideInsideFunction decideFunc) {
+    size_type move_mark = lcc.get_new_mark();
+    size_type inner_mark = lcc.get_new_mark();
+
+    set_fraction(lcc, length_of_4_template, cellIdentifier, decideFunc);
+
+    move_points_onto_mesh_with_volume_fraction(lcc, move_mark, inner_mark);
+
+    // smoothing
+    surface_smoothing(lcc, move_mark, inner_mark);
+    volume_smoothing(lcc, move_mark);
+
+    // trimming
+    if(trim)
+      trim_excedent_volumes(lcc, is_marked_volume(inner_mark));
+
+    lcc.free_mark(move_mark);
+    lcc.free_mark(inner_mark);
+  }
+
+  auto detect_intersection(Tree& tree, Polyhedron& poly) {
+    return [&](LCC& lcc, Dart_handle dart) -> bool {
+      auto &face_attr = lcc.attribute<2>(dart)->info();
+      if(!tree.do_intersect(face_attr.dual_edge)) return false;
+      auto intersection = tree.any_intersection(face_attr.dual_edge);
+
+      face_attr.intersection = std::get<Point>((*intersection).first);
+
+      const Primitive_id fd = (*intersection).second;
+      face_attr.normal = CGAL::Polygon_mesh_processing::compute_face_normal(fd, poly);
+
+      return true;
+    };
+  }
+
+  auto is_inner_centroid(Tree& tree) {
+    return [&](LCC& lcc, Dart_handle dart) -> bool {
+      // if(is_intersect(lcc, dart, tree)) return false;
+      // return !is_outside_knowing_no_intersect(lcc.point(dart), tree);
+      __set_centroid(lcc, dart);
+      return !is_outside_knowing_no_intersect(lcc.attribute<3>(dart)->info().centroid, tree);
+    };
+  }
+
+  auto is_inner_point(Tree& tree) {
+    return [&](Point p) -> bool {
+      return !is_outside_knowing_no_intersect(p, tree);
+    };
+  }
 }
 
+///////////////////////
+/////     栞     //////
+///////////////////////
+
 namespace CGAL::HexRefinement {
+
+  inline CGAL::IO::Color viridis255(double t) {
+    t = std::clamp(t, 0.0, 1.0);
+    static const double c[5][3] = {
+      {68, 1, 84}, // 0.00
+      {59, 82, 139}, // 0.25
+      {33, 145, 140}, // 0.50
+      {94, 201, 98}, // 0.75
+      {253, 231, 37}  // 1.00
+    };
+    const double pos = t * 4.0;
+    const int i      = int(pos);
+    const double s   = pos - i;
+    const auto lerp  = [&](int k){ return (1-s)*c[i][k] + s*c[i+1][k]; };
+    return { uint8_t(lerp(0)), uint8_t(lerp(1)), uint8_t(lerp(2)) };
+  }
   /**
    * @brief Renders the result of the two-refinement algorithm as a graphics scene
    * 
@@ -3492,11 +4183,31 @@ namespace CGAL::HexRefinement {
     LCCSceneOptions<LCC> gso;
 
     gso.colored_volume = [&](const LCC& lcc, LCC::Dart_const_handle dart){ return true; };
+    // gso.volume_color = [&](const LCC& lcc, LCC::Dart_const_handle dart){
+    //   return rand_color_from_dart(lcc, dart);
+    // };
     gso.volume_color = [&](const LCC& lcc, LCC::Dart_const_handle dart){
-      return rand_color_from_dart(lcc, dart);
+      double f = lcc.attribute<3>(dart)->info().fraction;
+      return viridis255(f);
     };
     gso.draw_volume = [&](const LCC& lcc, LCC::Dart_const_handle dart){
       return !trim or TwoRefinement::is_intersect(lcc, dart, aabb);
+    };
+
+    CGAL::Graphics_scene buffer;
+    add_to_graphics_scene(lcc, buffer, gso);
+    CGAL::draw_graphics_scene(buffer);
+  }
+
+  void render_two_refinement_result_with_mark(const LCC& lcc, size_type mark, const char* title = "TwoRefinement Result"){
+    LCCSceneOptions<LCC> gso;
+
+    gso.colored_volume = [&](const LCC& lcc, LCC::Dart_const_handle dart){ return true; };
+    gso.volume_color = [&](const LCC& lcc, LCC::Dart_const_handle dart){
+      return viridis255(lcc.attribute<3>(dart)->info().fraction);
+    };
+    gso.draw_volume = [&](const LCC& lcc, LCC::Dart_const_handle dart){
+      return lcc.is_marked(dart, mark);
     };
 
     CGAL::Graphics_scene buffer;
@@ -3510,7 +4221,7 @@ namespace CGAL::HexRefinement {
    * This function provides a high-level interface for generating hexahedral meshes
    * using the two-refinement algorithm. It orchestrates the complete process from
    * initialization to final mesh generation, including pattern loading, algorithm
-   * execution, and optional trimming.
+   * execution, optional trimming, and post-processing with volume fraction analysis.
    * 
    * The function performs the following operations:
    * 
@@ -3526,25 +4237,34 @@ namespace CGAL::HexRefinement {
    * 4. **Algorithm Execution**: Calls `two_refinement_algorithm` to perform the
    *    complete refinement process with the specified number of levels
    * 
-   * 5. **Optional Trimming**: Currently commented out, but can be enabled to remove
+   * 5. **Optional Trimming**: If trim is true, calls `trim_excedent_volumes` to remove
    *    excess volumes using the provided trimming function
    * 
-   * The function returns a Linear Cell Complex containing the refined hexahedral mesh.
-   * The mesh quality and refinement patterns are determined by the provided grid
-   * configuration and cell identification function.
+   * 6. **Post-Processing**: Applies volume fraction analysis and mesh smoothing:
+   *    - Sets volume fractions based on the domain geometry
+   *    - Performs volume fraction-based mesh optimization
+   *    - Applies surface and volume smoothing for improved mesh quality
    * 
+   * The function returns a Linear Cell Complex containing the refined hexahedral mesh
+   * with optimized geometry and volume fractions. The mesh quality is enhanced through
+   * both topological refinement and geometric post-processing.
+   * 
+   * @pre grid have cubic cells  (grid.size.x() = grid.size.y() = grid.size.z())
    * @param grid Grid configuration defining the initial mesh structure and dimensions
    * @param cellIdentifier Function that determines which cells should be refined
    *                       based on their position and properties
-   * @param trimmingFunction Function that determines which volumes should be kept
-   *                         in the final mesh (currently not used)
+   * @param decideFunc Function that determines whether a point is inside the domain
+   *                   for volume fraction calculation
    * @param nb_levels Number of refinement levels to perform (default: 1)
-   * @return Linear Cell Complex containing the refined hexahedral mesh
+   * @param trim Whether to apply trimming to remove excess volumes after refinement
+   *             (default: false). When true, trimmingFunction is used to determine
+   *             which volumes to keep in the final mesh.
+   * @return Linear Cell Complex containing the refined hexahedral mesh with optimized geometry
    */
   LCC two_refinement(
       TwoRefinement::Grid grid,
       TwoRefinement::MarkingFunction cellIdentifier,
-      TwoRefinement::TrimmingFunction trimmingFunction,
+      TwoRefinement::DecideInsideFunction decideFunc,
       int nb_levels = 1,
       bool trim = false)
   {
@@ -3557,15 +4277,14 @@ namespace CGAL::HexRefinement {
     hdata.init(&res, grid);
 
     two_refinement_algorithm(hdata, cellIdentifier, nb_levels);
-    if(trim)
-    // trim_excedent_volumes(hdata.lcc, trimmingFunction);
 
     // debug_render(hdata);
+
+    // assumes grid cells to be cubes
+    post_processing(hdata.lcc, grid.size.x()/(1<<nb_levels), trim, cellIdentifier, decideFunc);
 
     return hdata.lcc;
   }
 }
-///////////////////////
-/////     栞     //////
-///////////////////////
+
 

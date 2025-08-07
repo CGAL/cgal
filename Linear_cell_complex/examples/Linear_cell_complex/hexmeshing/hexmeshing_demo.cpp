@@ -1,5 +1,5 @@
 
-#include "hexmeshing.h"
+#include "hexmeshing_sequential.h"
 #include "utils.h"
 
 #include <CGAL/Combinatorial_map_save_load.h>
@@ -34,6 +34,7 @@ Tree get_surface_aabb(Polyhedron& poly) {
 }
 
 TwoRefinement::Grid cubic_grid_from_aabb(Tree& aabb, int cube_cells_per_dim){
+  assert(cube_cells_per_dim > 2);
   auto bbox = aabb.bbox();
 
   Point center = {bbox.xmin() + (bbox.x_span()/2),
@@ -41,29 +42,49 @@ TwoRefinement::Grid cubic_grid_from_aabb(Tree& aabb, int cube_cells_per_dim){
                   bbox.zmin() + (bbox.z_span()/2)};
 
   double max_size = std::max(std::max(bbox.x_span(), bbox.y_span()), bbox.z_span());
-  return TwoRefinement::Grid::make_centered_cube(center, max_size / cube_cells_per_dim, cube_cells_per_dim);
+  return TwoRefinement::Grid::make_centered_cube(center, max_size / (cube_cells_per_dim-2), cube_cells_per_dim);
 }
 
 void render_two_refinement(const std::string& file, int cube_cells_per_dim, int nb_levels = 1){
-  Polyhedron poly = load_surface(CGAL::data_file_path("hexmeshing/mesh/" + file));
+  Polyhedron poly = load_surface(CGAL::data_file_path("meshes/" + file));
   Tree aabb = get_surface_aabb(poly);
   TwoRefinement::Grid grid = cubic_grid_from_aabb(aabb, cube_cells_per_dim);
 
-  LCC lcc = two_refinement(
+  // LCC lcc1 = two_refinement(
+  //   grid,
+  //   TwoRefinement::is_volume_intersecting_poly(aabb),
+  //   TwoRefinement::is_inner_point(aabb),
+  //   nb_levels
+  // );
+
+  TwoRefinement::MarkingFunction cellIdentifier = TwoRefinement::is_volume_intersecting_poly(aabb);
+  TwoRefinement::DecideInsideFunction decideFunc = TwoRefinement::is_inner_point(aabb);
+
+  LCC lcc2 = two_refinement(
     grid,
-    TwoRefinement::is_volume_intersecting_poly(aabb),
-    TwoRefinement::is_volume_intersecting_poly(aabb),
-    // 2,
-    nb_levels
+    cellIdentifier,
+    decideFunc,
+    nb_levels,
+    true
   );
 
-  render_two_refinement_result(lcc, aabb, false);
-  render_two_refinement_result(lcc, aabb);
+  // render_two_refinement_result(lcc1, aabb, false);
+  render_two_refinement_result(lcc2, aabb, false);
 }
 
 
 int main(){
-  render_two_refinement("mesh1.off", 20, 1);
-  render_two_refinement("mesh1.off", 20, 2);
-  render_two_refinement("mesh2.off", 20, 3);
+  // render_two_refinement("anc101.off", 20, 0);
+  // render_two_refinement("bunny.off", 20, 0);
+  // render_two_refinement("dragon_res3_fixed.off", 20, 0);
+
+  // render_two_refinement("anc101.off", 20, 1);
+  // render_two_refinement("bunny00.off", 20, 1);
+  // render_two_refinement("dragon_res3_fixed.off", 20, 1);
+
+  // render_two_refinement("anc101.off", 20, 2);
+  // render_two_refinement("bunny00.off", 20, 2);
+  // render_two_refinement("dragon_res2_fixed.off", 20, 2);
+  
+  render_two_refinement("anc101.off", 16, 3);
 }

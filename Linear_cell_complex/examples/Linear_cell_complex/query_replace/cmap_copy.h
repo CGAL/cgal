@@ -72,8 +72,8 @@ std::size_t copy_cell(CMap1& amap1, typename CMap1::Dart_handle dh,
     }
   }
 
-  // unsigned int min_dim=std::min(amap1.dimension, amap2.dimension);
-  unsigned int min_dim=3;
+  // unsigned int min_dim=std::min(amap1.dimension, amap2.dimension); // works on Linux, but not on MacOS
+  unsigned int min_dim=amap1.dimension<amap2.dimension?amap1.dimension:amap2.dimension;
 
   typename std::unordered_map<typename CMap1::Dart_handle,
       typename CMap2::Dart_handle>::iterator
