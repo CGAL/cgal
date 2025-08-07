@@ -183,6 +183,11 @@ public:
                                FacetSPtr f_third,
                                Point3SPtr point);
 
+    static bool check_bisectors(EdgeSPtr edge1,
+                                EdgeSPtr edge2,
+                                Point3SPtr point,
+                                const CGAL::FT& t);
+
     /**
      * @todo hamornize time and offset nomenclature
      * Return the intersection point and time of the 4 shifting planes.
