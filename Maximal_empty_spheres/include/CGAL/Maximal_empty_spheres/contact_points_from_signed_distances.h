@@ -14,7 +14,7 @@
 
 #include <CGAL/license/Maximal_empty_spheres.h>
 
-
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Maximal_empty_spheres/maximal_empty_spheres.h>
 #include <CGAL/Dimension.h>
 #include <CGAL/Bbox_3.h>
