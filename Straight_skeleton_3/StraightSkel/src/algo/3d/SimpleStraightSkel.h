@@ -248,10 +248,13 @@ public:
                                         PolyhedronSPtr polyhedron);
     static bool isActualSurfaceEvent(SurfaceEventSPtr event,
                                      PolyhedronSPtr polyhedron);
+    static bool isActualPolyhedronSplitEvent(PolyhedronSplitEventSPtr event,
+                                             const CGAL::FT& current_offset,
+                                             PolyhedronSPtr polyhedron);
     static bool isActualSplitMergeEvent(SplitMergeEventSPtr event,
                                         PolyhedronSPtr polyhedron);
-    static bool isActualPierceEvent(const CGAL::FT& current_offset,
-                                    PierceEventSPtr event,
+    static bool isActualPierceEvent(PierceEventSPtr event,
+                                    const CGAL::FT& current_offset,
                                     PolyhedronSPtr polyhedron);
 
     /**

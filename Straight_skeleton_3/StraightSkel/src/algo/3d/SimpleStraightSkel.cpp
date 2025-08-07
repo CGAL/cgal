@@ -1615,21 +1615,17 @@ bool SimpleStraightSkel::isActualEvent(const CGAL::FT& current_offset,
     bool result = true;
 
     if (event->getType() == AbstractEvent::VERTEX_EVENT) {
-        result = isActualVertexEvent(std::dynamic_pointer_cast<VertexEvent>(event),
-                                     polyhedron);
+        result = isActualVertexEvent(std::dynamic_pointer_cast<VertexEvent>(event), polyhedron);
     } else if (event->getType() == AbstractEvent::FLIP_VERTEX_EVENT) {
-        result = isActualFlipVertexEvent(std::dynamic_pointer_cast<FlipVertexEvent>(event),
-                                         polyhedron);
+        result = isActualFlipVertexEvent(std::dynamic_pointer_cast<FlipVertexEvent>(event), polyhedron);
     } else if (event->getType() == AbstractEvent::SURFACE_EVENT) {
-        result = isActualSurfaceEvent(std::dynamic_pointer_cast<SurfaceEvent>(event),
-                                      polyhedron);
+        result = isActualSurfaceEvent(std::dynamic_pointer_cast<SurfaceEvent>(event), polyhedron);
+    } else if (event->getType() == AbstractEvent::POLYHEDRON_SPLIT_EVENT) {
+        result = isActualPolyhedronSplitEvent(std::dynamic_pointer_cast<PolyhedronSplitEvent>(event), current_offset, polyhedron);
     } else if (event->getType() == AbstractEvent::SPLIT_MERGE_EVENT) {
-        result = isActualSplitMergeEvent(std::dynamic_pointer_cast<SplitMergeEvent>(event),
-                                         polyhedron);
+        result = isActualSplitMergeEvent(std::dynamic_pointer_cast<SplitMergeEvent>(event), polyhedron);
     } else if (event->getType() == AbstractEvent::PIERCE_EVENT) {
-        result = isActualPierceEvent(current_offset,
-                                     std::dynamic_pointer_cast<PierceEvent>(event),
-                                     polyhedron);
+        result = isActualPierceEvent(std::dynamic_pointer_cast<PierceEvent>(event), current_offset, polyhedron);
     }
 
     return result;
@@ -3547,12 +3543,14 @@ void SimpleStraightSkel::collectPolyhedronSplitEvent(EdgeSPtr edge_1,
 
     CGAL_assertion(offset_event < current_offset && offset_event > offset_future_bound);
 
+#ifndef CGAL_SS3_CHECK_POLYHEDRON_SPLIT_EVENT_AT_POP_TIME
     CGAL::FT shift = offset_event - current_offset;
     Segment3SPtr e1o = PolyhedronTransformation::shiftEdge(edge_1, shift);
     if (!e1o->is_degenerate()) {
         // not a polyhedron split (edge split?)
         return;
     }
+#endif
 
     NodeSPtr node = Node::create();
     PolyhedronSplitEventSPtr event = PolyhedronSplitEvent::create();
@@ -6991,12 +6989,40 @@ SimpleStraightSkel::handleSurfaceEvent(SurfaceEventSPtr event,
     return EventStatus::EVENT_HANDLED;
 }
 
+bool
+SimpleStraightSkel::isActualPolyhedronSplitEvent(PolyhedronSplitEventSPtr event,
+                                                 const CGAL::FT& current_offset,
+                                                 PolyhedronSPtr polyhedron)
+{
+    // @speed is_degenerate(4 planes)? But it would be a nice filter failure, so costly
+    const CGAL::FT& offset_event = event->getOffset();
+    CGAL::FT shift = offset_event - current_offset;
+    Segment3SPtr e1o = PolyhedronTransformation::shiftEdge(event->getEdge1(), shift);
+    if (!e1o->is_degenerate()) {
+        return false;
+    }
+
+    return true;
+}
+
 SimpleStraightSkel::EventStatus
 SimpleStraightSkel::handlePolyhedronSplitEvent(PolyhedronSplitEventSPtr event,
                                                const CGAL::FT& current_offset,
                                                const std::optional<CGAL::FT>& offset_future_bound,
                                                PolyhedronSPtr polyhedron)
 {
+    CGAL_SS3_CORE_TRACE_V(8, "########################################");
+    CGAL_SS3_CORE_TRACE_V(8, "####  Tentative Split Merge Event  #####");
+    CGAL_SS3_CORE_TRACE_V(8, "########################################");
+
+#ifdef CGAL_SS3_CHECK_POLYHEDRON_SPLIT_EVENT_AT_POP_TIME
+    CGAL_SS3_CORE_TRACE_V(8, "Checking polyhedron split at pop time...");
+
+    if (!isActualPolyhedronSplitEvent(event, current_offset, polyhedron)) {
+        return EventStatus::NON_EVENT;
+    }
+#endif
+
     CGAL_SS3_CORE_TRACE_V(4, "########################################");
     CGAL_SS3_CORE_TRACE_V(4, "####  Handle Polyhedron Split Event  ###");
     CGAL_SS3_CORE_TRACE_V(4, "########################################");
@@ -7499,8 +7525,8 @@ SimpleStraightSkel::handleEdgeSplitEvent(EdgeSplitEventSPtr event,
 }
 
 bool
-SimpleStraightSkel::isActualPierceEvent(const CGAL::FT& current_offset,
-                                        PierceEventSPtr event,
+SimpleStraightSkel::isActualPierceEvent(PierceEventSPtr event,
+                                        const CGAL::FT& current_offset,
                                         PolyhedronSPtr polyhedron)
 
 {
@@ -7508,6 +7534,7 @@ SimpleStraightSkel::isActualPierceEvent(const CGAL::FT& current_offset,
     // as it will be a different kind of event
     //
     // @todo avoid duplicating code
+    CGAL_SS3_CORE_TRACE_V(8, "Is actual Pierce Event?");
 
     Point3SPtr point = event->getNode()->getPoint();
     FacetSPtr facet_base = event->getFacet();
@@ -7578,7 +7605,7 @@ SimpleStraightSkel::handlePierceEvent(PierceEventSPtr event,
 #ifdef CGAL_SS3_CHECK_PIERCE_AT_POP_TIME
     CGAL_SS3_CORE_TRACE_V(8, "Checking pierce event at pop time...");
 
-    if (!isActualPierceEvent(current_offset, event, polyhedron)) {
+    if (!isActualPierceEvent(event, current_offset, polyhedron)) {
         return EventStatus::NON_EVENT;
     }
 #endif
