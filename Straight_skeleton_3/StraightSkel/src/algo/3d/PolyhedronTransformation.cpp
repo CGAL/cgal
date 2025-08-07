@@ -1119,8 +1119,10 @@ void PolyhedronTransformation::randTiltPlanesv3(PolyhedronSPtr polyhedron) {
     std::map<FacetSPtr, std::set<VertexSPtr> > fixing_vertices;
 
 #ifdef CGAL_SS3_DUMP_FILES
-    auto dump_facet = [](std::string filename, FacetSPtr f) {
-        auto pcdt = triangulate_facet_with_CDT2(f);
+    auto dump_facet = [](const std::string& filename, FacetSPtr f) {
+
+        using CDT2_Tag = CGAL::No_constraint_intersection_tag; // CGAL::Exact_intersections_tag;
+        auto pcdt = db::_3d::AbstractFile::constructFacetTriangulation<CDT2_Tag>(f);
 
         using PCDT = decltype(pcdt);
         using PCDT_VH = typename PCDT::Vertex_handle;

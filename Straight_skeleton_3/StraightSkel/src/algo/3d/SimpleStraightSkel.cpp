@@ -4800,7 +4800,7 @@ void SimpleStraightSkel::collectLocalEvents(PolyhedronSPtr polyhedron,
     printQueue(queue);
 #endif
 
-    // CGAL_postcondition(checkQueueCorrectness(queue, polyhedron, current_offset));
+    CGAL_postcondition(checkQueueCorrectness(queue, polyhedron, current_offset, offset_future_bound));
 }
 
 // two types of useless events:
