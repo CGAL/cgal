@@ -1,5 +1,6 @@
 
-#include "hexmeshing.h"
+#include "hexmeshing_sequential.h"
+#include "hexmeshing_parallel.h"
 #include "utils.h"
 
 #include <CGAL/Combinatorial_map_save_load.h>
