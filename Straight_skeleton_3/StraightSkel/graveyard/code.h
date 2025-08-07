@@ -9997,7 +9997,64 @@ if ((src_y == CGAL::SMALLER && dst_y == CGAL::LARGER) ||
 
 // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
 
+#ifndef CGAL_SS3_NO_CACHING
+    std::unordered_map<std::array<int, 4>,
+                       std::pair<Point3SPtr, CGAL::FT> > intersectionCache_;
+#endif
 
+
+// Sometimes should be disabled not to run out of memory.
+// @todo Does not seem very effective anymore, need to bench again to check
+// where the real cost is in events
+// @todo could store only a Boolean value to improve memory footprint at the expense
+// of computation.
+// #define CGAL_SS3_NO_CACHING
+
+#ifndef CGAL_SS3_NO_CACHING
+            CGAL_SS3_CORE_TRACE_V(0, intersectionCache_.size() << " elements in crash cache");
+#endif
+
+    auto compute_point_and_time = [&]() -> std::pair<Point3SPtr, CGAL::FT>
+    {
+        Plane3SPtr plane_0 = facet_0->getBasePlane();
+        Plane3SPtr plane_1 = facet_1->getBasePlane();
+        Plane3SPtr plane_2 = facet_2->getBasePlane();
+        Plane3SPtr plane_3 = facet_3->getBasePlane();
+
+        CGAL::FT speed_0 = std::dynamic_pointer_cast<SkelFacetData>(facet_0->getData())->getSpeed();
+        CGAL::FT speed_1 = std::dynamic_pointer_cast<SkelFacetData>(facet_1->getData())->getSpeed();
+        CGAL::FT speed_2 = std::dynamic_pointer_cast<SkelFacetData>(facet_2->getData())->getSpeed();
+        CGAL::FT speed_3 = std::dynamic_pointer_cast<SkelFacetData>(facet_3->getData())->getSpeed();
+
+        return KernelWrapper::intersectionPointAndTimeOffsetPlanes(plane_0, speed_0, plane_1, speed_1,
+                                                                   plane_2, speed_2, plane_3, speed_3,
+                                                                   offset_past_bound, offset_future_bound);
+    };
+
+#ifdef CGAL_SS3_NO_CACHING
+    return compute_point_and_time();
+#else
+    int ids[] = { facet_0->getID(),
+                  facet_1->getID(),
+                  facet_2->getID(),
+                  facet_3->getID() };
+    std::sort(std::begin(ids), std::end(ids));
+    std::array<int, 4> canonical_ids = CGAL::make_array(ids[0], ids[1], ids[2], ids[3]);
+
+    std::pair<Point3SPtr, CGAL::FT> dummy;
+    auto res = intersectionCache_.emplace(canonical_ids, dummy);
+    if (res.second) { // successful insertion, first time seeing it so actual computation is required
+        CGAL_SS3_CORE_TRACE_V(0, "compute needed: " << canonical_ids[0] << " " << canonical_ids[1] << " "
+                                                     << canonical_ids[2] << " " << canonical_ids[3]);
+
+        res.first->second = compute_point_and_time();
+    } else {
+        CGAL_SS3_CORE_TRACE_V(0, "used cache value: " << canonical_ids[0] << " " << canonical_ids[1] << " "
+                                                       << canonical_ids[2] << " " << canonical_ids[3]);
+    }
+
+    return res.first->second;
+#endif // CGAL_SS3_NO_CACHING
 
 // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
 
