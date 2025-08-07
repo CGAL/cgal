@@ -531,7 +531,7 @@ public:
                       << std::endl;
     task_timer.reset();
 
-    std::ofstream os("poisson_refine_triangulation.medit");
+    std::ofstream os("poisson_refine_triangulation.mesh");
     std::vector<Cell_handle> cells;
     std::vector<Facet> facets;
     m_tr->incident_cells(m_tr->infinite_vertex(), std::back_inserter(cells));
@@ -539,6 +539,8 @@ public:
       facets.push_back(Facet(c, c->index(m_tr->infinite_vertex())));
     }
     CGAL::SMDS_3::output_T3_to_medit(os, *m_tr, m_tr->finite_vertex_handles(), facets, m_tr->finite_cell_handles());
+    os.close();
+
 #ifdef CGAL_DIV_NON_NORMALIZED
     CGAL_TRACE_STREAM << "Solve Poisson equation with non-normalized divergence...\n";
 #else
