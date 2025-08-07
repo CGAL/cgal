@@ -205,8 +205,8 @@ template <typename Tr,
 unsigned int poisson_refine_triangulation(
   Tr& tr,
   double radius_edge_ratio_bound, ///< radius edge ratio bound (>= 1.0)
-  const Sizing_field& sizing_field, ///< sizing field for cell radius bound
-  const Second_sizing_field& second_sizing_field, ///< second sizing field for cell radius bound
+  const Sizing_field& sizing_field, ///< sizing field for cell radius bound, squared
+  const Second_sizing_field& second_sizing_field, ///< second sizing field for cell radius bound, squared
   unsigned int max_vertices, ///< number of vertices bound (ignored if zero)
   Surface& enlarged_bbox) ///< new bounding sphere or box
 {
@@ -227,7 +227,7 @@ unsigned int poisson_refine_triangulation(
   std::size_t nb_vertices = tr.number_of_vertices(); // get former #vertices
 
   // Delaunay refinement
-  Tets_criteria tets_criteria(radius_edge_ratio_bound*radius_edge_ratio_bound,
+  Tets_criteria tets_criteria(CGAL::square(radius_edge_ratio_bound),
                               sizing_field,
                               second_sizing_field);
   Oracle oracle;

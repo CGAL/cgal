@@ -49,23 +49,27 @@ template <
   >
 class Poisson_mesh_cell_criteria_3
 {
-  Sizing_field sizing_field;
-  Second_sizing_field second_sizing_field;
-  double radius_edge_bound_;
+  const Sizing_field& sq_sizing_field;
+  const Second_sizing_field& sq_second_sizing_field;
+  double sq_radius_edge_bound_;
 
   typedef Poisson_mesh_cell_criteria_3<Tr,
                                        Sizing_field,
                                        Second_sizing_field> Self;
 public:
-  struct Cell_quality : public std::pair<double, double>
+  struct Cell_quality
   {
-    typedef std::pair<double, double> Base;
+    double aspect_ratio_; // squared radius edge ratio (square(3))
+    double sq_size_;
 
-    Cell_quality() : Base() {}
-    Cell_quality(double _aspect, double _sq_size) : Base(_aspect, _sq_size) {};
+    Cell_quality() {}
+    Cell_quality(double _aspect, double _sq_size)
+    : aspect_ratio_(_aspect)
+    , sq_size_(_sq_size)
+    {}
 
-    double sq_size() const { return second; }
-    double aspect() const { return first; }
+    double sq_size() const { return sq_size_; }
+    double aspect() const { return aspect_ratio_; }
 
     // q1<q2 means q1 is prioritized over q2
     // ( q1 == *this, q2 == q )
@@ -83,45 +87,33 @@ public:
     }
   };
 
-  // inline
-  // double squared_radius_bound() const
-  // {
-  //   return squared_radius_bound_;
-  // }
-
   typedef typename Tr::Cell_handle Cell_handle;
 
-  Poisson_mesh_cell_criteria_3(const double radius_edge_bound = 2, //< radius edge ratio bound (ignored if zero)
-                  const double radius_bound = 0) //< cell radius bound (ignored if zero)
-    : sizing_field(radius_bound*radius_bound),
-      second_sizing_field(),
-      radius_edge_bound_(radius_edge_bound)
+  Poisson_mesh_cell_criteria_3(const double sq_radius_edge_bound = 2, //< radius edge ratio bound (ignored if zero)
+                  const double sq_radius_bound = 0) //< squared cell radius bound (ignored if zero)
+    : sq_sizing_field(sq_radius_bound),
+      sq_second_sizing_field(),
+      sq_radius_edge_bound_(sq_radius_edge_bound)
   {}
 
-  Poisson_mesh_cell_criteria_3(const double radius_edge_bound, //< radius edge ratio bound (ignored if zero)
-                               const Sizing_field& sizing_field,
-                               const Second_sizing_field second_sizing_field = Second_sizing_field())
-    : sizing_field(sizing_field),
-      second_sizing_field(second_sizing_field),
-      radius_edge_bound_(radius_edge_bound)
+  Poisson_mesh_cell_criteria_3(const double sq_radius_edge_bound,   //< radius edge ratio bound (ignored if zero)
+                               const Sizing_field& _sq_sizing_field, ///< squared sizing field for cell radius bound
+                               const Second_sizing_field& _sq_second_sizing_field)
+    : sq_sizing_field(_sq_sizing_field),
+      sq_second_sizing_field(_sq_second_sizing_field),
+      sq_radius_edge_bound_(sq_radius_edge_bound)
   {}
-
-  // inline
-  // void set_squared_radius_bound(const double squared_radius_bound)
-  // {
-  //   squared_radius_bound_ = squared_radius_bound;
-  // }
 
   inline
-  double radius_edge_bound() const
+  double sq_radius_edge_bound() const
   {
-    return radius_edge_bound_;
+    return sq_radius_edge_bound_;
   }
 
   inline
-  void set_radius_edge_bound(const double radius_edge_bound)
+  void set_sq_radius_edge_bound(const double sq_radius_edge_bound)
   {
-    radius_edge_bound_ = radius_edge_bound;
+    sq_radius_edge_bound_ = sq_radius_edge_bound;
   }
 
   class Is_bad
@@ -143,48 +135,48 @@ public:
       const Point_3& s = c->vertex(3)->point();
 
       typedef typename Tr::Geom_traits Geom_traits;
-      typedef typename Geom_traits::Compute_squared_radius_3 Radius;
-      typedef typename Geom_traits::Compute_squared_distance_3 Distance;
+      typedef typename Geom_traits::Compute_squared_radius_3 Sq_Radius;
+      typedef typename Geom_traits::Compute_squared_distance_3 Sq_Distance;
 
-      Radius sq_radius = Geom_traits().compute_squared_radius_3_object();
-      Distance distance = Geom_traits().compute_squared_distance_3_object();
+      Sq_Radius sq_radius = Geom_traits().compute_squared_radius_3_object();
+      Sq_Distance sqd = Geom_traits().compute_squared_distance_3_object();
 
-      double size = to_double(sq_radius(p, q, r, s));
+      double sq_size = to_double(sq_radius(p, q, r, s));
 
       // If the tetrahedron is small enough according to the second sizing
       // field, then let's say the tetrahedron is OK according to the
       // sizing fields.
-      if( size > cell_criteria->second_sizing_field(p) )
+      if( sq_size > cell_criteria->sq_second_sizing_field(p) )
       {
         // first sizing field
-        const double size_bound = cell_criteria->sizing_field(p);
-        if(size_bound > 0.) {
-          qual.second = size / size_bound;
+        const double sq_size_bound = cell_criteria->sq_sizing_field(p);
+        if(sq_size_bound > 0.) {
+          qual.sq_size_ = sq_size / sq_size_bound;
           // normalized by size bound to deal
           // with size field
           if( qual.sq_size() > 1 )
           {
-            qual.first = 1; // (do not compute aspect)
+            qual.aspect_ratio_ = 1; // (do not compute aspect)
             return true;
           }
         }
       }
-      if( cell_criteria->radius_edge_bound_ == 0 )
-        {
-          qual = Cell_quality(0,1);
-          return false;
-        }
+      if(cell_criteria->sq_radius_edge_bound() == 0)
+      {
+        qual = Cell_quality{0,1};
+        return false;
+      }
 
-      double min_sq_length = CGAL::to_double(distance(p, q));
-      min_sq_length = (CGAL::min)(min_sq_length, to_double(distance(p, r)));
-      min_sq_length = (CGAL::min)(min_sq_length, to_double(distance(p, s)));
-      min_sq_length = (CGAL::min)(min_sq_length, to_double(distance(q, r)));
-      min_sq_length = (CGAL::min)(min_sq_length, to_double(distance(q, s)));
-      min_sq_length = (CGAL::min)(min_sq_length, to_double(distance(r, s)));
+      double min_sq_length = CGAL::to_double(sqd(p, q));
+      min_sq_length = (CGAL::min)(min_sq_length, to_double(sqd(p, r)));
+      min_sq_length = (CGAL::min)(min_sq_length, to_double(sqd(p, s)));
+      min_sq_length = (CGAL::min)(min_sq_length, to_double(sqd(q, r)));
+      min_sq_length = (CGAL::min)(min_sq_length, to_double(sqd(q, s)));
+      min_sq_length = (CGAL::min)(min_sq_length, to_double(sqd(r, s)));
 
-      qual.first = size / min_sq_length;
+      qual.aspect_ratio_ = sq_size / min_sq_length;
 
-      return (qual.first > cell_criteria->radius_edge_bound_);
+      return (qual.aspect_ratio_ > cell_criteria->sq_radius_edge_bound_);
     }
 
   }; // end Is_bad

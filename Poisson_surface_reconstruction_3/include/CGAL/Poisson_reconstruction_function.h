@@ -438,18 +438,18 @@ public:
     const FT radius_edge_ratio_bound = 2.5;
     const unsigned int max_vertices = (unsigned int)1e7; // max 10M vertices
     const FT enlarge_ratio = 1.5;
-    const FT radius = sqrt(bounding_sphere().squared_radius()); // get triangulation's radius
-    const FT cell_radius_bound = radius/5.; // large
+    const FT sqradius = bounding_sphere().squared_radius(); // get triangulation's radius
+    const FT cell_sqradius_bound = sqradius/25.; // large
 
-    internal::Poisson::Constant_sizing_field<Triangulation> sizing_field(CGAL::square(cell_radius_bound));
+    internal::Poisson::Constant_sizing_field<Triangulation> sq_sizing_field(cell_sqradius_bound);
 
     std::vector<int> NB;
 
-    NB.push_back( delaunay_refinement(radius_edge_ratio_bound,sizing_field,max_vertices,enlarge_ratio));
+    NB.push_back( delaunay_refinement(radius_edge_ratio_bound,sq_sizing_field,max_vertices,enlarge_ratio));
 
     while(m_tr->insert_fraction(visitor)){
 
-      NB.push_back( delaunay_refinement(radius_edge_ratio_bound,sizing_field,max_vertices,enlarge_ratio));
+      NB.push_back( delaunay_refinement(radius_edge_ratio_bound,sq_sizing_field,max_vertices,enlarge_ratio));
     }
 
     if(approximation_ratio > 0. &&
@@ -752,7 +752,7 @@ private:
 
   template <typename Sizing_field>
   unsigned int delaunay_refinement(FT radius_edge_ratio_bound, ///< radius edge ratio bound (ignored if zero)
-                                   Sizing_field sizing_field, ///< cell radius bound (ignored if zero)
+                                   Sizing_field sizing_field, ///< cell radius bound (ignored if zero), squared
                                    unsigned int max_vertices, ///< number of vertices bound
                                    FT enlarge_ratio) ///< bounding box enlarge ratio
   {
@@ -766,10 +766,10 @@ private:
   template <typename Sizing_field,
             typename Second_sizing_field>
   unsigned int delaunay_refinement(FT radius_edge_ratio_bound, ///< radius edge ratio bound (ignored if zero)
-                                   Sizing_field sizing_field, ///< cell radius bound (ignored if zero)
+                                   Sizing_field sizing_field, ///< cell radius bound (ignored if zero), squared
                                    unsigned int max_vertices, ///< number of vertices bound
                                    FT enlarge_ratio, ///< bounding box enlarge ratio
-                                   Second_sizing_field second_sizing_field)
+                                   Second_sizing_field second_sizing_field)//squared
   {
     Sphere elarged_bsphere = enlarged_bounding_sphere(enlarge_ratio);
     unsigned int nb_vertices_added = poisson_refine_triangulation(*m_tr,radius_edge_ratio_bound,sizing_field,second_sizing_field,max_vertices,elarged_bsphere);
