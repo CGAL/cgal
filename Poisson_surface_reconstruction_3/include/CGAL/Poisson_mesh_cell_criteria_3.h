@@ -137,6 +137,7 @@ public:
       typedef typename Tr::Geom_traits Geom_traits;
       typedef typename Geom_traits::Compute_squared_radius_3 Sq_Radius;
       typedef typename Geom_traits::Compute_squared_distance_3 Sq_Distance;
+      typedef typename Geom_traits::Compute_scalar_product_3 Scalar_product;
 
       Sq_Radius sq_radius = Geom_traits().compute_squared_radius_3_object();
       Sq_Distance sqd = Geom_traits().compute_squared_distance_3_object();
@@ -167,6 +168,7 @@ public:
         return false;
       }
 
+      // Aspect ratio
       double min_sq_length = CGAL::to_double(sqd(p, q));
       min_sq_length = (CGAL::min)(min_sq_length, to_double(sqd(p, r)));
       min_sq_length = (CGAL::min)(min_sq_length, to_double(sqd(p, s)));
@@ -176,7 +178,25 @@ public:
 
       qual.aspect_ratio_ = sq_size / min_sq_length;
 
-      return (qual.aspect_ratio_ > cell_criteria->sq_radius_edge_bound_);
+      if(qual.aspect_ratio_ > cell_criteria->sq_radius_edge_bound_)
+        return true; // bad aspect ratio
+
+      // Check normals
+      Scalar_product scalar_product = Geom_traits().compute_scalar_product_3_object();
+
+      const std::array<std::pair<int, int>, 6> vs = {{{0, 1}, {0, 2}, {0, 3}, {1, 2}, {1, 3}, {2, 3}}};
+      for(const auto& vv : vs)
+      {
+        auto v0 = c->vertex(vv.first);
+        auto v1 = c->vertex(vv.second);
+        // skip if one of the vertices is not an input point
+        if(v0->type() != 0 || v1->type() != 0)
+          continue;
+        if(scalar_product(v0->normal(), v1->normal()) <= 0.)
+          return true; // normals are not oriented in the same direction
+      }
+
+      return false;
     }
 
   }; // end Is_bad
