@@ -261,8 +261,7 @@ public:
     prev_dart =lcc.null_descriptor;
   }
 
-  void add_vertex_to_facet(size_type i)
-  {
+void add_vertex_to_facet(size_type i, std::vector<DH>* tabdarts = nullptr)  {
     CGAL_assertion(i<vertex_map.size());
     // std::cout<<i<<"  "<<std::flush;
     DH cur_dart=Add_vertex_to_face<LCC>::run(lcc, vertex_map[i], prev_dart);
@@ -289,6 +288,7 @@ public:
     { first_dart=cur_dart; min_vertex=max_vertex=i; min_dart=cur_dart; }
 
     prev_dart=cur_dart;
+    if(tabdarts != nullptr) { tabdarts->push_back(cur_dart); }
   }
 
   // End of the facet. Return the first dart of this facet.
@@ -325,13 +325,14 @@ public:
     return first_dart;
   }
 
-  DH add_facet(std::initializer_list<size_type> l)
-  {
-    begin_facet();
-    for (size_type i:l)
-    { add_vertex_to_facet(i); }
-    return end_facet();
-  }
+  DH add_facet(std::initializer_list<size_type> l, std::vector<DH>* tabdarts = nullptr)
+{
+  if(tabdarts != nullptr) { tabdarts->reserve(tabdarts->size() + l.size()); }
+  begin_facet();
+  for (size_type i:l)
+  { add_vertex_to_facet(i, tabdarts); }
+  return end_facet();
+}
 
   void begin_surface()
   {
@@ -403,6 +404,198 @@ private:
 };
 
 } //namespace CGAL
+
+///////////////////////////////////////////////////////////////////////////////
+/* Create an hexahedron, given the indices of its vertices (in the following
+*  order), the vertex must already have been added in the incremental builder.
+*      3
+*     /|\
+*    0-|-2
+*     \|/
+*      1
+*/
+template<typename IncrementalBuilder>
+typename IncrementalBuilder::LCC::Dart_descriptor
+make_tetrahedron_with_builder(IncrementalBuilder& ib,
+                              std::size_t i0,
+                              std::size_t i1,
+                              std::size_t i2,
+                              std::size_t i3,
+                              std::vector<typename IncrementalBuilder::LCC::Dart_descriptor>*
+                              tabdarts=nullptr)
+{
+  ib.begin_surface();
+  ib.add_facet({i0,i1,i2}, tabdarts);
+  ib.add_facet({i1,i0,i3}, tabdarts);
+  ib.add_facet({i2,i1,i3}, tabdarts);
+  ib.add_facet({i0,i2,i3}, tabdarts);
+  return ib.end_surface();
+}
+///////////////////////////////////////////////////////////////////////////////
+/*      4
+ *     /|\
+ *    0-|-3
+ *    | | |
+ *    1---2
+ */
+template<typename IncrementalBuilder>
+typename IncrementalBuilder::LCC::Dart_descriptor
+ make_pyramid_with_builder(IncrementalBuilder& ib,
+                           std::size_t i0,
+                           std::size_t i1,
+                           std::size_t i2,
+                           std::size_t i3,
+                           std::size_t i4,
+                           std::vector<typename IncrementalBuilder::LCC::Dart_descriptor>*
+                           tabdarts=nullptr)
+{
+  ib.begin_surface();
+  ib.add_facet({i0,i1,i2,i3}, tabdarts);
+  ib.add_facet({i1,i0,i4}, tabdarts);
+  ib.add_facet({i2,i1,i4}, tabdarts);
+  ib.add_facet({i3,i2,i4}, tabdarts);
+  ib.add_facet({i0,i3,i4}, tabdarts);
+  return ib.end_surface();
+}
+///////////////////////////////////////////////////////////////////////////////
+/*      3
+ *     /|\
+ *    4---5
+ *    | | |
+ *    | 0 |
+ *    |/ \|
+ *    1---2
+ */
+template<typename IncrementalBuilder>
+typename IncrementalBuilder::LCC::Dart_descriptor
+ make_prism_with_builder(IncrementalBuilder& ib,
+                         std::size_t i0,
+                         std::size_t i1,
+                         std::size_t i2,
+                         std::size_t i3,
+                         std::size_t i4,
+                         std::size_t i5,
+                         std::vector<typename IncrementalBuilder::LCC::Dart_descriptor>*
+                         tabdarts=nullptr)
+{
+  ib.begin_surface();
+  ib.add_facet({i0,i1,i2}, tabdarts);
+  ib.add_facet({i1,i0,i3,i4}, tabdarts);
+  ib.add_facet({i2,i1,i4,i5}, tabdarts);
+  ib.add_facet({i0,i2,i5,i3}, tabdarts);
+  ib.add_facet({i5,i4,i3}, tabdarts);
+  return ib.end_surface();
+}
+///////////////////////////////////////////////////////////////////////////////
+/*      7----6
+ *     /|   /|
+ *    4----5 |
+ *    | 3--|-2
+ *    |/   |/
+ *    0----1
+ */
+template<typename IncrementalBuilder>
+typename IncrementalBuilder::LCC::Dart_descriptor
+ make_hexahedron_with_builder(IncrementalBuilder& ib,
+                              std::size_t i0,
+                              std::size_t i1,
+                              std::size_t i2,
+                              std::size_t i3,
+                              std::size_t i4,
+                              std::size_t i5,
+                              std::size_t i6,
+                              std::size_t i7,
+                              std::vector<typename IncrementalBuilder::LCC::Dart_descriptor>*
+                              tabdarts=nullptr)
+{
+  ib.begin_surface();
+  ib.add_facet({i0,i1,i2,i3}, tabdarts);
+  ib.add_facet({i1,i0,i4,i5}, tabdarts);
+  ib.add_facet({i2,i1,i5,i6}, tabdarts);
+  ib.add_facet({i3,i2,i6,i7}, tabdarts);
+  ib.add_facet({i0,i3,i7,i4}, tabdarts);
+  ib.add_facet({i7,i6,i5,i4}, tabdarts);
+  return ib.end_surface();
+}
+///////////////////////////////////////////////////////////////////////////////
+template<typename IncrementalBuilder>
+typename IncrementalBuilder::LCC::Dart_descriptor
+ make_pentagonal_prism_with_builder(IncrementalBuilder& ib,
+                                    std::size_t i0,
+                                    std::size_t i1,
+                                    std::size_t i2,
+                                    std::size_t i3,
+                                    std::size_t i4,
+                                    std::size_t i5,
+                                    std::size_t i6,
+                                    std::size_t i7,
+                                    std::size_t i8,
+                                    std::size_t i9,
+                                    std::vector<typename IncrementalBuilder::LCC::Dart_descriptor>*
+                                    tabdarts=nullptr)
+{
+  ib.begin_surface();
+  ib.add_facet({i0,i1,i2,i3,i4}, tabdarts);
+  ib.add_facet({i1,i0,i5,i6}, tabdarts);
+  ib.add_facet({i2,i1,i6,i7}, tabdarts);
+  ib.add_facet({i3,i2,i7,i8}, tabdarts);
+  ib.add_facet({i4,i3,i8,i9}, tabdarts);
+  ib.add_facet({i0,i4,i9,i5}, tabdarts);
+  ib.add_facet({i9,i8,i7,i6,i5}, tabdarts);
+  return ib.end_surface();
+}
+///////////////////////////////////////////////////////////////////////////////
+template<typename IncrementalBuilder>
+typename IncrementalBuilder::LCC::Dart_descriptor
+ make_hexagonal_prism_with_builder(IncrementalBuilder& ib,
+                                   std::size_t i0,
+                                   std::size_t i1,
+                                   std::size_t i2,
+                                   std::size_t i3,
+                                   std::size_t i4,
+                                   std::size_t i5,
+                                   std::size_t i6,
+                                   std::size_t i7,
+                                   std::size_t i8,
+                                   std::size_t i9,
+                                   std::size_t i10,
+                                   std::size_t i11,
+                                   std::vector<typename IncrementalBuilder::LCC::Dart_descriptor>*
+                                   tabdarts=nullptr)
+{
+  ib.begin_surface();
+  ib.add_facet({i0,i1,i2,i3,i4,i5}, tabdarts);
+  ib.add_facet({i1,i0,i6,i7}, tabdarts);
+  ib.add_facet({i2,i1,i7,i8}, tabdarts);
+  ib.add_facet({i3,i2,i8,i9}, tabdarts);
+  ib.add_facet({i4,i3,i9,i10}, tabdarts);
+  ib.add_facet({i5,i4,i10,i11}, tabdarts);
+  ib.add_facet({i0,i5,i11,i6}, tabdarts);
+  ib.add_facet({i11,i10,i9,i8,i7,i6}, tabdarts);
+  return ib.end_surface();
+}
+///////////////////////////////////////////////////////////////////////////////
+template<typename IncrementalBuilder>
+typename IncrementalBuilder::LCC::Dart_descriptor
+ make_generic_cell_with_builder(IncrementalBuilder& ib,
+                                const std::vector<std::size_t>& faces,
+                                std::vector<typename IncrementalBuilder::LCC::Dart_descriptor>*
+                                tabdarts=nullptr)
+{
+  ib.begin_surface();
+  std::size_t i=1, end; // Start to 1 because faces[0] is the number of faces
+  for(; i<faces.size(); )
+  {
+    end=i+1+faces[i]; // faces[i] is the number of vertices of the face; +i is the index of the end
+    ++i; // I prefer to increment i after its use!
+    ib.begin_facet();
+    for(; i<end; ++i)
+    { ib.add_vertex_to_facet(faces[i], tabdarts); }
+    ib.end_facet();
+  }
+  return ib.end_surface();
+}
+///////////////////////////////////////////////////////////////////////////////
 
 #endif // CGAL_LINEAR_CELL_COMPLEX_INCREMENTAL_BUILDER_3_H //
 // EOF //
