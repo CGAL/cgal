@@ -40,6 +40,7 @@ void maximal_empty_spheres(const Eigen::MatrixXd& G,
                            double atol = 1e-8,
                            int debug_level = 1)
 {
+  constexpr int D = Dimension::value;
   using namespace CGAL::Maximal_empty_spheres::internal;
 
   using Kernel = CGAL::Epick_d< CGAL::Dimension_tag<D+2> >;
@@ -50,7 +51,6 @@ void maximal_empty_spheres(const Eigen::MatrixXd& G,
   using Triangulation = CGAL::Triangulation<Kernel,TDS>;
   using Vertex_handle = typename Triangulation::Vertex_handle;
 
-  const int D = Dimension::value;
   CGAL_precondition(D == G.cols()-1 && "Dimension does not match the number of columns in G");
 
   bool full_simplices_only = true;
