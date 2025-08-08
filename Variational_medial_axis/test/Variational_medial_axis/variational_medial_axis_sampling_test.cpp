@@ -3,7 +3,7 @@
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/variational_medial_axis_sampling.h>
-
+#include <CGAL/extract_variational_medial_skeleton.h>
 #include <cmath>
 #include <filesystem>
 #include <fstream>
@@ -135,49 +135,83 @@ bool test_correcteness() {
     return false;
   }
 
-  VMAS vmas(mesh);
-  vmas.compute_variational_medial_axis_sampling(
-      CGAL::parameters::lambda(0.2).number_of_spheres(300).concurrency_tag(CGAL::Sequential_tag{}));
+  auto skeleton_bvh = CGAL::extract_variational_medial_skeleton(
+      mesh, CGAL::parameters::lambda(0.2).number_of_spheres(300).acceleration_structure(CGAL::BVH_tag{}));
+  auto skeleton_kd_tree = CGAL::extract_variational_medial_skeleton(
+      mesh, CGAL::parameters::lambda(0.2).number_of_spheres(300).acceleration_structure(CGAL::KD_tree_tag{}));
+  
+  std::string saved_file_bvh = CGAL::data_file_path("meshes/elephant_dense_0.2_300_BVH.ply");
+  std::string saved_file_kd_tree = CGAL::data_file_path("meshes/elephant_dense_0.2_300_KD_tree.ply");
 
-  auto skeleton = vmas.export_skeleton();
-  std::string result_file = CGAL::data_file_path("meshes/elephant_dense_0.2_300.ply");
-  Skeleton skeleton2;
-  if(vmas.read_skeleton_from_ply(result_file, skeleton2)) {
-    if(compare_skeletons(skeleton, skeleton2)) {
+  Skeleton saved_skeleton_bvh,saved_skeleton_kd_tree;
+  
+  if(saved_skeleton_bvh.load_skeleton_from_ply(saved_file_bvh)) {
+    if(compare_skeletons(skeleton_bvh, saved_skeleton_bvh)) {
       std::cout << "Skeletons match after reading from file." << std::endl;
     } else {
       std::cerr << " Skeletons do not match after reading from file." << std::endl;
       return false;
     }
   }
-  vmas.add_spheres(2);
-  auto skeleton3 = vmas.export_skeleton();
-  if(skeleton3.number_of_vertices() != skeleton.number_of_vertices() + 2) {
+  
+  if(saved_skeleton_kd_tree.load_skeleton_from_ply(saved_file_kd_tree)) {
+    if(compare_skeletons(skeleton_kd_tree, saved_skeleton_kd_tree)) {
+      std::cout << "KD-tree Skeletons match after reading from file." << std::endl;
+    } else {
+      std::cerr << "KD-tree  Skeletons do not match after reading from file." << std::endl;
+      return false;
+    }
+  }
+  return true;
+}
+
+bool test_API() {
+  Mesh mesh;
+  const std::string filename(CGAL::data_file_path("meshes/chair.off"));
+
+  if(!CGAL::IO::read_polygon_mesh(filename, mesh)) {
+    std::cerr << "Cannot open" << filename << std::endl;
+    return false;
+  }
+  VMAS vmas(mesh);
+  bool success = vmas.compute_variational_medial_axis_sampling(
+      CGAL::parameters::lambda(0.2).number_of_spheres(200).concurrency_tag(CGAL::Sequential_tag{}));
+  if(!success)
+  {
+    std::cerr << "compute_variational_medial_axis_sampling failed." << std::endl;
+    return false;
+  } else {
+    std::cout << "compute_variational_medial_axis_sampling pass." << std::endl;
+  }
+  auto skeleton = vmas.export_skeleton();
+  success = vmas.add_spheres(2);
+  auto skeleton2 = vmas.export_skeleton();
+  if(!success || skeleton2.number_of_vertices() != skeleton.number_of_vertices() + 2) {
     std::cerr << "Adding spheres failed: expected " << skeleton.number_of_vertices() + 2 << " vertices, got "
+              << skeleton2.number_of_vertices() << std::endl;
+    return false;
+  } else {
+    std::cout << "Adding spheres succeeded: new vertex count is " << skeleton2.number_of_vertices() << std::endl;
+  }
+  vmas.add_sphere_by_id(5);
+  auto skeleton3 = vmas.export_skeleton();
+  if(skeleton3.number_of_vertices() != skeleton.number_of_vertices() + 3) {
+    std::cerr << "Adding spheres failed: expected " << skeleton.number_of_vertices() + 3 << " vertices, got "
               << skeleton3.number_of_vertices() << std::endl;
     return false;
   } else {
     std::cout << "Adding spheres succeeded: new vertex count is " << skeleton3.number_of_vertices() << std::endl;
   }
-  vmas.add_sphere_by_id(5);
-  auto skeleton4 = vmas.export_skeleton();
-  if(skeleton4.number_of_vertices() != skeleton.number_of_vertices() + 3) {
-    std::cerr << "Adding spheres failed: expected " << skeleton.number_of_vertices() + 3 << " vertices, got "
-              << skeleton4.number_of_vertices() << std::endl;
-    return false;
-  } else {
-    std::cout << "Adding spheres succeeded: new vertex count is " << skeleton4.number_of_vertices() << std::endl;
-  }
   vmas.remove_sphere_by_id(0);
   vmas.remove_sphere_by_id(1);
   vmas.remove_sphere_by_id(2);
-  auto skeleton5 = vmas.export_skeleton();
-  if(skeleton5.number_of_vertices() != skeleton.number_of_vertices()) {
+  auto skeleton4 = vmas.export_skeleton();
+  if(skeleton4.number_of_vertices() != skeleton.number_of_vertices()) {
     std::cerr << "Removing sphere failed: expected " << skeleton.number_of_vertices() << " vertices, got "
-              << skeleton5.number_of_vertices() << std::endl;
+              << skeleton4.number_of_vertices() << std::endl;
     return false;
   } else {
-    std::cout << "Removing sphere succeeded: new vertex count is " << skeleton5.number_of_vertices() << std::endl;
+    std::cout << "Removing sphere succeeded: new vertex count is " << skeleton4.number_of_vertices() << std::endl;
   }
   return true;
 }
@@ -218,17 +252,25 @@ bool test_determinism(const TestParams& params, const std::string& mesh_file_pat
 int main() {
   std::vector<TestParams> test_cases = {{"chair", 0.1, 100}, {"chair", 0.2, 150}, {"bug", 0.1, 100}, {"bug", 0.2, 150}};
 
-  int total_tests = 0;
   std::cout << "=== Variational Medial Axis Sampling Tests ===" << std::endl;
 
   std::cout << "\n--- Test 1: Correcteness ---" << std::endl;
-  total_tests++;
   if(test_correcteness()) {
     std::cout << "Correcteness test passed for elephant_dense" << std::endl;
   } else {
-    std::cout << "Correcteness test failed for elephant_dense" << std::endl;
+    std::cerr << "Correcteness test failed for elephant_dense" << std::endl;
     return EXIT_FAILURE;
   }
+
+  std::cout << "\n--- Test 2: API---" << std::endl;
+  if(test_API()) {
+    std::cout << "API test passed for chair" << std::endl;
+  } else {
+    std::cerr << "API test failed for chair" << std::endl;
+    return EXIT_FAILURE;
+  }
+  
+  std::cout << "\n--- Test 3: Determinism ---" << std::endl;
   for(const auto& params : test_cases) {
     std::string mesh_file = CGAL::data_file_path("meshes/" + params.mesh_name + ".off");
 
