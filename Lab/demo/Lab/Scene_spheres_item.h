@@ -60,7 +60,6 @@ public:
   bool save(const std::string &file_name) const;
 
   QMenu *contextMenu() override;
-  float alpha() const override;
 
   void initializeBuffers(Viewer_interface *) const override;
   void computeElements() const override;

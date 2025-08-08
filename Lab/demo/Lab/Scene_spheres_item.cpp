@@ -327,11 +327,6 @@ QMenu* Scene_spheres_item::contextMenu() {
   return menu;
 }
 
-float Scene_spheres_item::alpha() const
-{
-  return Scene_item_rendering_helper::alpha();
-}
-
 QString
 Scene_spheres_item::toolTip() const {
     return d->tooltip;
