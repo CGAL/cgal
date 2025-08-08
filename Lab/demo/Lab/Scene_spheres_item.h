@@ -2,6 +2,7 @@
 #define SCENE_SPHERES_ITEM_H
 #include "Scene_basic_objects_config.h"
 #include "create_sphere.h"
+#include "Color_map.h"
 
 #include <CGAL/Three/Scene_group_item.h>
 #include <CGAL/Three/Scene_item_rendering_helper.h>
@@ -24,7 +25,7 @@ struct Scene_spheres_item_priv;
  * have a Scene_spheres_item child).
 */
 class SCENE_BASIC_OBJECTS_EXPORT Scene_spheres_item
-    : public CGAL::Three::Scene_item_rendering_helper
+    : public CGAL::Three::Scene_group_item
 {
   Q_OBJECT
 public:
@@ -37,6 +38,7 @@ public:
 
   ~Scene_spheres_item();
 
+  Bbox bbox() const override { return _bbox; }
   bool isFinite() const override{ return true; }
   bool isEmpty() const override{ return false; }
   Scene_item* clone() const override{return nullptr;}
@@ -57,10 +59,13 @@ public:
   void setColor(QColor c) override;
   bool save(const std::string &file_name) const;
 
+  QMenu *contextMenu() override;
+  float alpha() const override;
 
   void initializeBuffers(Viewer_interface *) const override;
   void computeElements() const override;
   bool eventFilter(QObject *watched, QEvent *event)override;
+
 Q_SIGNALS:
   void on_color_changed();
   void picked(std::size_t id) const;
@@ -68,6 +73,7 @@ Q_SIGNALS:
 protected:
   friend struct Scene_spheres_item_priv;
   Scene_spheres_item_priv* d;
+  bool connected_alpha_slider;
 };
 
 #endif // SCENE_SPHERES_ITEM_H
