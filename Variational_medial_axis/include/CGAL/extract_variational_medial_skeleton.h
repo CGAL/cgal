@@ -65,6 +65,12 @@ namespace CGAL {
 ///    \cgalParamDefault{`CGAL::Sequential_tag`}
 ///    \cgalParamExtra{Use `CGAL::Parallel_tag` for parallel execution (requires TBB).}
 ///  \cgalParamNEnd
+///  \cgalParamNBegin{acceleration_structure_tag}
+///    \cgalParamDescription{Tag indicating the type of acceleration structure to use.}
+///    \cgalParamType{Acceleration structure tag type}
+///    \cgalParamDefault{`CGAL::KD_tree_tag`}
+///    \cgalParamExtra{Use `CGAL::BVH_tag` for a bounding volume hierarchy.}
+///  \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
 /// @pre `tmesh` is a triangulated surface mesh without borders
@@ -75,27 +81,13 @@ extract_variational_medial_skeleton(const TriangleMesh& tmesh,
                                     const NamedParameters& np = parameters::default_values()) {
   typedef typename internal_np::Lookup_named_param_def<internal_np::concurrency_tag_t, NamedParameters,
                                                        Sequential_tag>::type Concurrency_tag;
+  typedef typename internal_np::Lookup_named_param_def<internal_np::acceleration_structure_t, NamedParameters,
+                                                        KD_tree_tag>::type Acceleration_type;
+  using VMAS = CGAL::Variational_medial_axis<TriangleMesh, Concurrency_tag, Acceleration_type>;
+  VMAS vmas(tmesh, np);
+  vmas.compute_variational_medial_axis_sampling(np);
+  return vmas.export_skeleton();
 
-  if constexpr(std::is_same_v<Concurrency_tag, Parallel_tag>) {
-#ifdef CGAL_LINKED_WITH_TBB
-    using VMAS = CGAL::Variational_medial_axis<TriangleMesh, Parallel_tag>;
-    VMAS vmas(tmesh, np);
-    vmas.compute_variational_medial_axis_sampling(np);
-    return vmas.export_skeleton();
-#else
-    std::cerr << "Warning: Parallel execution requested but TBB is not available. Using sequential execution."
-              << std::endl;
-    using VMAS = CGAL::Variational_medial_axis<TriangleMesh, Sequential_tag>;
-    VMAS vmas(tmesh, np);
-    vmas.compute_variational_medial_axis_sampling(np);
-    return vmas.export_skeleton();
-#endif
-  } else {
-    using VMAS = CGAL::Variational_medial_axis<TriangleMesh, Sequential_tag>;
-    VMAS vmas(tmesh, np);
-    vmas.compute_variational_medial_axis_sampling(np);
-    return vmas.export_skeleton();
-  }
 }
 } // end of namespace CGAL
 

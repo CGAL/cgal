@@ -99,7 +99,7 @@ public:
 
 private:
   Sphere_3 sphere_;
-  vertex_descriptor split_vertex_; // the vertex for split
+  vertex_descriptor split_vertex_; // vertex chosen for split
   FT error_;
   FT cluster_area_;
   bool do_not_split_ = false; // flag to indicate if the sphere should not be split
@@ -200,7 +200,7 @@ template <typename TriangleMesh_, typename GeomTraits_ = Default> class Medial_S
 
 public:
   /**
-   * Write the medial skeleton to a PLY file.
+   * \brief Write the medial skeleton to a PLY file.
    *
    * @param filepath The name of the file to write to.
    *
@@ -268,6 +268,164 @@ public:
     }
 
     ofs.close();
+  }
+  /**
+   * Load a medial skeleton from a PLY file.
+   *
+   * @param filepath
+   *     Filepath to the PLY file containing the medial skeleton data.
+   * @return
+   *     True if the skeleton was successfully loaded, false otherwise.
+   *
+   * Note: The file format is :
+   * ```
+   * ply
+   * format ascii 1.0
+   * element vertex N
+   * property float x
+   * property float y
+   * property float z
+   * property float radius
+   * element edge M
+   * property int vertex1
+   * property int vertex2
+   * element face K
+   * property list uchar int vertex_indices
+   * end_header
+   * x1 y1 z1 r1
+   * ...          // N vertices
+   * xn yn zn rn
+   * vx vy
+   * ...          // M edges
+   * vz vw
+   * 3 v1 v2 v3
+   * ...          // K faces
+   * 3 vx vy vz
+   * ```
+   */
+  bool load_skeleton_from_ply(std::string& filepath){
+    clear();
+    std::ifstream ifs(filepath);
+    if(!ifs) {
+      std::cerr << "Error opening file: " << filepath << std::endl;
+      return false;
+    }
+
+    std::string line;
+    std::size_t num_vertices = 0, num_edges = 0, num_faces = 0;
+    bool in_header = true;
+
+    while(std::getline(ifs, line) && in_header) {
+      std::istringstream iss(line);
+      std::string token;
+      iss >> token;
+
+      if(token == "ply") {
+        continue;
+      } else if(token == "format") {
+        std::string format_type;
+        iss >> format_type;
+        if(format_type != "ascii") {
+          std::cerr << "Error: Only ASCII PLY format is supported" << std::endl;
+          return false;
+        }
+      } else if(token == "element") {
+        std::string element_type;
+        std::size_t count;
+        iss >> element_type >> count;
+
+        if(element_type == "vertex") {
+          num_vertices = count;
+        } else if(element_type == "edge") {
+          num_edges = count;
+        } else if(element_type == "face") {
+          num_faces = count;
+        }
+      } else if(token == "end_header") {
+        break;
+      }
+    }
+
+    vertices_.reserve(num_vertices);
+    for(std::size_t i = 0; i < num_vertices; ++i) {
+      if(!std::getline(ifs, line)) {
+        std::cerr << "Error: Unexpected end of file while reading vertices" << std::endl;
+        return false;
+      }
+
+      std::istringstream iss(line);
+      double x, y, z, radius;
+      if(!(iss >> x >> y >> z >> radius)) {
+        std::cerr << "Error: Invalid vertex data at line " << i + 1 << std::endl;
+        return false;
+      }
+
+      Point_3 center(x, y, z);
+      FT squared_radius = FT(radius * radius);
+      vertices_.emplace_back(center, squared_radius);
+    }
+
+    edges_.reserve(num_edges);
+    for(std::size_t i = 0; i < num_edges; ++i) {
+      if(!std::getline(ifs, line)) {
+        std::cerr << "Error: Unexpected end of file while reading edges" << std::endl;
+        return false;
+      }
+
+      std::istringstream iss(line);
+      std::size_t v1, v2;
+      if(!(iss >> v1 >> v2)) {
+        std::cerr << "Error: Invalid edge data at line " << i + 1 << std::endl;
+        return false;
+      }
+
+      if(v1 >= num_vertices || v2 >= num_vertices) {
+        std::cerr << "Error: Edge references invalid vertex indices" << std::endl;
+        return false;
+      }
+
+      edges_.emplace_back(v1, v2);
+    }
+
+    faces_.reserve(num_faces);
+    for(std::size_t i = 0; i < num_faces; ++i) {
+      if(!std::getline(ifs, line)) {
+        std::cerr << "Error: Unexpected end of file while reading faces" << std::endl;
+        return false;
+      }
+
+      std::istringstream iss(line);
+      std::size_t vertex_count;
+      if(!(iss >> vertex_count)) {
+        std::cerr << "Error: Invalid face data at line " << i + 1 << std::endl;
+        return false;
+      }
+
+      if(vertex_count != 3) {
+        std::cerr << "Error: Only triangular faces are supported" << std::endl;
+        return false;
+      }
+
+      std::size_t v1, v2, v3;
+      if(!(iss >> v1 >> v2 >> v3)) {
+        std::cerr << "Error: Invalid face vertex indices" << std::endl;
+        return false;
+      }
+
+      if(v1 >= num_vertices || v2 >= num_vertices || v3 >= num_vertices) {
+        std::cerr << "Error: Face references invalid vertex indices" << std::endl;
+        return false;
+      }
+
+      faces_.push_back({v1, v2, v3});
+    }
+
+    ifs.close();
+
+    std::cout << "Successfully loaded skeleton from " << filepath << std::endl;
+    std::cout << "Vertices: " << num_vertices << ", Edges: " << num_edges << ", Faces: " << num_faces << std::endl;
+
+    return true;
   }
 #ifndef DOXYGEN_RUNNING
   void build_skeleton_from_medial_sphere_mesh(const MSMesh& sphere_mesh) {
@@ -429,7 +587,7 @@ private:
 ///         This determines the execution mode at compile time.
 ///         <b>%Default:</b> `CGAL::Sequential_tag`<br>
 ///         <b>%Valid values:</b> `CGAL::Sequential_tag`, `CGAL::Parallel_tag`, `CGAL::Parallel_if_available_tag`
-///
+/// 
 ///  @tparam AccelerationType_
 ///         a tag indicating whether the algorithm should use Kd-tree or BVH as acceleration structure.
 ///         <b>%Default:</b> `CGAL::KD_tree_tag`<br>
@@ -534,7 +692,6 @@ public:
   ///    \cgalParamDefault{1000}
   ///    \cgalParamExtra{This parameter must be strictly positive; setting it to zero may prevent correct skeleton connectivity construction.}
   ///  \cgalParamNEnd
-  ///   \cgalParamNEnd
   ///   \cgalParamNBegin{lambda}
   ///     \cgalParamDescription{A weight balancing the two energy terms (SQEM and Euclidean). Smaller values encourage the skeleton to extend deeper into local geometric features of the shape.}
   ///     \cgalParamType{FT}
@@ -563,12 +720,9 @@ public:
     desired_number_of_spheres_ = choose_parameter(get_parameter(np, internal_np::number_of_spheres), 100);
     lambda_ = choose_parameter(get_parameter(np, internal_np::lambda), FT(0.2));
     max_iteration_ = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 1000);
-
+    verbose_ = choose_parameter(get_parameter(np, internal_np::verbose), false);
 #ifndef CGAL_LINKED_WITH_TBB
-    if constexpr(std::is_same_v<ConcurrencyTag_, Parallel_tag>) {
-      std::cerr << "Warning: Parallel execution requested but TBB is not available. Using sequential execution."
-                << std::endl;
-    }
+      static_assert(!std::is_same_v<ConcurrencyTag_, Parallel_tag>, "Parallel_tag is enabled but TBB is unavailable.");
 #endif
     init();
   }
@@ -581,7 +735,6 @@ public:
                           const GT& gt = GT())
       : Variational_medial_axis(tmesh, get(vertex_point, tmesh), np, gt) {}
 #endif // DOXYGEN_RUNNING
-
 
   /**
    *
@@ -630,30 +783,29 @@ public:
         choose_parameter(get_parameter(np, internal_np::number_of_spheres), desired_number_of_spheres_);
     lambda_ = choose_parameter(get_parameter(np, internal_np::lambda), lambda_);
     max_iteration_ = choose_parameter(get_parameter(np, internal_np::number_of_iterations), max_iteration_);
-    sphere_mesh_->spheres().reserve(desired_number_of_spheres_);
+    verbose_ = choose_parameter(get_parameter(np, internal_np::verbose), verbose_);
     bool success = false;
     reset_algorithm_state();
-
+    sphere_mesh_->spheres().reserve(desired_number_of_spheres_);  
     // Initialize with one sphere
     Sphere_3 init_sphere(Point_3(0., 0., 0.), FT(1.0));
     sphere_mesh_->add_sphere(init_sphere);
-    if constexpr(std::is_same_v<ConcurrencyTag_, Parallel_tag>) {
+    if constexpr(std::is_same_v<ConcurrencyTag_, Parallel_tag>){
 #if CGAL_LINKED_WITH_TBB
+      // Compute the shrinking balls in parallel
       compute_shrinking_balls_parallel();
-#else
-      std::cerr << "Warning: Parallel execution requested but TBB is not available. Using sequential execution."
-                << std::endl;
-      compute_shrinking_balls();
 #endif
-    } else {
-      compute_shrinking_balls();
     }
-    // TODO: add a paratmeter to control the output verbosity
+    else{
+        compute_shrinking_balls();
+    }
+
+    if(verbose_) {
     std::cout << "Starting variational medial axis computation..." << std::endl;
     std::cout << "Target number of spheres: " << desired_number_of_spheres_ << std::endl;
     std::cout << "Lambda: " << lambda_ << std::endl;
     std::cout << "Max iterations: " << max_iteration_ << std::endl;
-
+    }
     // Main algorithm loop
     while(iteration_count_ < max_iteration_) {
       bool converged = update_single_step(true);
@@ -661,20 +813,21 @@ public:
         success = true;
         break;
       }
+      iteration_count_++;
     }
 
     // Final neighbor update
     update_sphere_neighbors();
-    // TODO: add a paratmeter to control the output verbosity
-    if(success) {
-      std::cout << "Algorithm completed after " << iteration_count_ << " iterations" << std::endl;
-      std::cout << "Final number of spheres: " << sphere_mesh_->nb_spheres() << std::endl;
-      std::cout << "Final total error: " << total_error_ << std::endl;
-    } else {
-      std::cout << "Algorithm did not converge after " << max_iteration_ << " iterations" << std::endl;
-      std::cout << "Final number of spheres: " << sphere_mesh_->nb_spheres() << std::endl;
-      std::cout << "Final total error: " << total_error_ << std::endl;
-      std::cout << "Consider decreasing the target number of spheres." << std::endl;
+    if(verbose_) {
+      if(success) {
+        std::cout << "Algorithm completed after " << iteration_count_ << " iterations" << std::endl;
+        std::cout << "Final number of spheres: " << sphere_mesh_->nb_spheres() << std::endl;
+        std::cout << "Final total error: " << total_error_ << std::endl;
+      } else {
+        std::cout << "Final number of spheres: " << sphere_mesh_->nb_spheres() << std::endl;
+        std::cout << "Final total error: " << total_error_ << std::endl;
+        std::cout << "Consider decreasing the target number of spheres." << std::endl;
+      }
     }
     return success;
   }
@@ -696,14 +849,9 @@ public:
 #ifdef CGAL_LINKED_WITH_TBB
       // Compute the cluster sphere for each vertex
       assign_vertices_to_clusters_parallel();
-
       // Update the sphere by optimizing the combined metric
       optimize_sphere_positions_parallel(true);
       total_error_ = compute_sphere_errors_parallel();
-#else
-      assign_vertices_to_clusters();
-      optimize_sphere_positions(true);
-      total_error_ = compute_sphere_errors();
 #endif
     } else {
       // Compute the cluster sphere for each vertex
@@ -715,23 +863,24 @@ public:
     }
     total_error_diff_ = std::abs(total_error_ - last_total_error_);
     last_total_error_ = total_error_;
-    // TODO: add a paratmeter to control the output verbosity
+    if(verbose_) {
     std::cout << "Iteration " << iteration_count_ << ": spheres=" << sphere_mesh_->nb_spheres()
-              << ", error=" << total_error_ << ", error_diff=" << total_error_diff_ << std::endl;
-
+                << ", error=" << total_error_ << ", error_diff=" << total_error_diff_ << std::endl;
+    }
     // Check convergence
     if((sphere_mesh_->nb_spheres() >= desired_number_of_spheres_ && total_error_diff_ < converged_threshold_)) {
-      // TODO: add a paratmeter to control the output verbosity
-      std::cout << "Converged: reached target number of spheres with low error change" << std::endl;
+      if(verbose_) {
+        std::cout << "Converged: reached target number of spheres with low error change" << std::endl;
+      }
       return true;
     }
 
     // Split spheres periodically or when converged
-    if(enable_split&& (total_error_diff_ < converged_threshold_ || iteration_count_ % 10 == 0)) {
+    if(enable_split && (total_error_diff_ < converged_threshold_ || iteration_count_ % 10 == 0)) {
       update_sphere_neighbors();
       split_spheres();
     }
-    iteration_count_++;
+    
     return false;
   }
   /**
@@ -763,9 +912,9 @@ public:
    * \pre At least one sphere must already exist
    * \return True if spheres were added successfully, false otherwise.
    */
-  void add_spheres(int nb_sphere) {
+  bool add_spheres(int nb_sphere) {
     if(nb_sphere == 0) {
-      return;
+      return false;
     }
     iteration_count_ = 0;
     int max_iteration = std::min(1000, std::max(100, 10 * nb_sphere));
@@ -775,11 +924,14 @@ public:
       converged = update_single_step(true);
       iteration_count_++;
     }
-    if(converged) {
-      std::cout << "Added " << nb_sphere << " spheres successfully." << std::endl;
-    } else {
-      std::cout << "Failed to add " << nb_sphere << " spheres within the maximum iterations." << std::endl;
+    if(verbose_) {
+      if(converged) {
+        std::cout << "Added " << nb_sphere << " spheres successfully." << std::endl;
+      } else {
+        std::cout << "Failed to add " << nb_sphere << " spheres within the maximum iterations." << std::endl;
+      }
     }
+    return converged;
   }
 
   /**
@@ -831,171 +983,7 @@ public:
     skeleton.build_skeleton_from_medial_sphere_mesh(*sphere_mesh_);
     return skeleton;
   }
-  /**
-   * Load a medial skeleton from a PLY file.
-   *
-   * @param filepath
-   *     Filepath to the PLY file containing the medial skeleton data.
-   * @param skeleton
-   *     Reference to a `Medial_Skeleton` object that will be populated with the loaded data.
-   * @return
-   *     True if the skeleton was successfully loaded, false otherwise.
-   *
-   * Note: The file format is :
-   * ```
-   * ply
-   * format ascii 1.0
-   * element vertex N
-   * property float x
-   * property float y
-   * property float z
-   * property float radius
-   * element edge M
-   * property int vertex1
-   * property int vertex2
-   * element face K
-   * property list uchar int vertex_indices
-   * end_header
-   * x1 y1 z1 r1
-   * ...          // N vertices
-   * xn yn zn rn
-   * vx vy
-   * ...          // M edges
-   * vz vw
-   * 3 v1 v2 v3
-   * ...          // K faces
-   * 3 vx vy vz
-   * ```
-   */
-  bool read_skeleton_from_ply(std::string& filepath, Medial_Skeleton<TriangleMesh_>& skeleton) const {
-    std::ifstream ifs(filepath);
-    if(!ifs) {
-      std::cerr << "Error opening file: " << filepath << std::endl;
-      return false;
-    }
-
-    std::vector<Sphere_3> vertices;
-    std::vector<std::pair<std::size_t, std::size_t>> edges;
-    std::vector<std::array<std::size_t, 3>> faces;
-
-    std::string line;
-    std::size_t num_vertices = 0, num_edges = 0, num_faces = 0;
-    bool in_header = true;
-
-    while(std::getline(ifs, line) && in_header) {
-      std::istringstream iss(line);
-      std::string token;
-      iss >> token;
-
-      if(token == "ply") {
-        continue;
-      } else if(token == "format") {
-        std::string format_type;
-        iss >> format_type;
-        if(format_type != "ascii") {
-          std::cerr << "Error: Only ASCII PLY format is supported" << std::endl;
-          return false;
-        }
-      } else if(token == "element") {
-        std::string element_type;
-        std::size_t count;
-        iss >> element_type >> count;
-
-        if(element_type == "vertex") {
-          num_vertices = count;
-        } else if(element_type == "edge") {
-          num_edges = count;
-        } else if(element_type == "face") {
-          num_faces = count;
-        }
-      } else if(token == "end_header") {
-        break;
-      }
-    }
-
-    vertices.reserve(num_vertices);
-    for(std::size_t i = 0; i < num_vertices; ++i) {
-      if(!std::getline(ifs, line)) {
-        std::cerr << "Error: Unexpected end of file while reading vertices" << std::endl;
-        return false;
-      }
-
-      std::istringstream iss(line);
-      double x, y, z, radius;
-      if(!(iss >> x >> y >> z >> radius)) {
-        std::cerr << "Error: Invalid vertex data at line " << i + 1 << std::endl;
-        return false;
-      }
-
-      Point_3 center(x, y, z);
-      FT squared_radius = FT(radius * radius);
-      vertices.emplace_back(center, squared_radius);
-    }
-
-    edges.reserve(num_edges);
-    for(std::size_t i = 0; i < num_edges; ++i) {
-      if(!std::getline(ifs, line)) {
-        std::cerr << "Error: Unexpected end of file while reading edges" << std::endl;
-        return false;
-      }
-
-      std::istringstream iss(line);
-      std::size_t v1, v2;
-      if(!(iss >> v1 >> v2)) {
-        std::cerr << "Error: Invalid edge data at line " << i + 1 << std::endl;
-        return false;
-      }
-
-      if(v1 >= num_vertices || v2 >= num_vertices) {
-        std::cerr << "Error: Edge references invalid vertex indices" << std::endl;
-        return false;
-      }
-
-      edges.emplace_back(v1, v2);
-    }
-
-    faces.reserve(num_faces);
-    for(std::size_t i = 0; i < num_faces; ++i) {
-      if(!std::getline(ifs, line)) {
-        std::cerr << "Error: Unexpected end of file while reading faces" << std::endl;
-        return false;
-      }
-
-      std::istringstream iss(line);
-      std::size_t vertex_count;
-      if(!(iss >> vertex_count)) {
-        std::cerr << "Error: Invalid face data at line " << i + 1 << std::endl;
-        return false;
-      }
-
-      if(vertex_count != 3) {
-        std::cerr << "Error: Only triangular faces are supported" << std::endl;
-        return false;
-      }
-
-      std::size_t v1, v2, v3;
-      if(!(iss >> v1 >> v2 >> v3)) {
-        std::cerr << "Error: Invalid face vertex indices" << std::endl;
-        return false;
-      }
-
-      if(v1 >= num_vertices || v2 >= num_vertices || v3 >= num_vertices) {
-        std::cerr << "Error: Face references invalid vertex indices" << std::endl;
-        return false;
-      }
-
-      faces.push_back({v1, v2, v3});
-    }
-
-    ifs.close();
-
-    skeleton.set_data(std::move(vertices), std::move(edges), std::move(faces));
-
-    std::cout << "Successfully loaded skeleton from " << filepath << std::endl;
-    std::cout << "Vertices: " << num_vertices << ", Edges: " << num_edges << ", Faces: " << num_faces << std::endl;
-
-    return true;
-  }
+  
 
   /// \name Parameters
   /// @{
@@ -1048,8 +1036,11 @@ private:
 
     // Build AABB-tree
     tree_ = std::make_unique<Tree>(faces(tmesh_).begin(), faces(tmesh_).end(), tmesh_, vpm_);
-    // tree_->accelerate_distance_queries(vertices(tmesh_).begin(), vertices(tmesh_).end(), vpm_);
-    tree_->accelerate_distance_queries();
+    if constexpr(std::is_same_v<AccelerationType_, KD_tree_tag>) {
+      tree_->accelerate_distance_queries(vertices(tmesh_).begin(), vertices(tmesh_).end(), vpm_);
+    } else {
+      tree_->accelerate_distance_queries();
+    }
     // get bounding box of the mesh
     auto bbox = tree_->bbox();
     scale_ = std::max(bbox.xmax() - bbox.xmin(), std::max(bbox.ymax() - bbox.ymin(), bbox.zmax() - bbox.zmin()));
@@ -1084,7 +1075,7 @@ private:
     total_error_diff_ = (std::numeric_limits<FT>::max)();
     last_total_error_ = total_error_;
   }
-
+  
   inline FT cosine_angle(const Vector_3& v1, const Vector_3& v2) {
     FT norm_v1v2 = CGAL::approximate_sqrt(v1.squared_length() * v2.squared_length());
     FT res = norm_v1v2 > 1e-20 ? (v1 * v2) / norm_v1v2 : FT(1);
@@ -1099,7 +1090,7 @@ private:
   }
   std::pair<Point_3, FT>
   shrinking_ball_algorithm_bvh(std::vector<face_descriptor> incident_faces,
-                               Point_3& p,                        // point on the surface
+                               const Point_3& p,                        // point on the surface
                                const Vector_3& n,                 // inverse of search direction
                                FT delta_convergence = FT(1e-5)) { // model has to be normalized in [0, 1]^3
     using face_descriptor = typename Tree::Primitive_id;
@@ -1117,7 +1108,6 @@ private:
       auto [q_next, closest_face] = tree_->closest_point_and_primitive(c);
       FT squared_dist = (q_next - c).squared_length();
       if(squared_dist >= (r - delta_convergence) * (r - delta_convergence)) {
-        //std::cout << "Convergence achieved at iteration " << j << ": " << CGAL::to_double(squared_dist) << std::endl;
         break; // convergence
       }
       bool should_break = false;
@@ -1128,25 +1118,20 @@ private:
         }
       }
       if(should_break) {
-        //std::cout << "Closest face is incident to the vertex: " << closest_face << "at iteration " << j << std::endl;
         break; // closest face is incident to the vertex
       }
       if(j > 0 && closest_face == last_face) {
-        // std::cout << "No change in closest face at iteration " << j << std::endl;
         break; // no change in closest face
       }
       FT r_next = compute_radius(p, n, q_next);
        if(!CGAL::is_finite(r_next) || r_next <= FT(0)){
-        // std::cerr << "Invalid radius at iteration " << j << ": " << r_next << std::endl;
+        std::cerr << "Invalid radius at iteration " << j << ": " << r_next << std::endl;
         break;
       }
       Point_3 c_next = p - (r_next * n);
-      FT seperation_angle = CGAL::approximate_angle<GT>(p - c_next, q_next - c_next);
-      if(j > 0 && seperation_angle < denoise_preserve) {
-        /* std::cout << "Denoise preserve angle achieved at iteration: " << j
-                  << ", Angle: " << CGAL::to_double(seperation_angle) << " degrees, Center: " << c_next
-                  << ", Radius: " << r_next << std::endl;*/
-        break;
+      FT separation_angle = CGAL::approximate_angle<GT>(p - c_next, q_next - c_next);
+      if(j > 0 && separation_angle < denoise_preserve) {
+        break; // denoise preserve angle achieved
       }
       c = c_next;
       r = r_next;
@@ -1157,11 +1142,10 @@ private:
     }
 
     return {c, r};
-
   }
   std::pair<Point_3, FT> shrinking_ball_algorithm_kdt(const Point_3& p,  // point on the surface
                                                       const Vector_3& n, // inverse of search direction
-                                                  FT delta_convergence = FT(1e-5)) {
+                                                      FT delta_convergence = FT(1e-5)) {
 
     delta_convergence *= scale_;
     const FT denoise_preserve = FT(20.0); // in degree
@@ -1198,7 +1182,7 @@ private:
       j++;
       if(j > iteration_limit)
         break;
-  }
+    }
 
     return {c, r};
   }
@@ -1275,8 +1259,9 @@ private:
       }
     }
     for(Sphere_ID id : sphere_ids_to_remove) {
-      // TODO: add a paratmeter to control the output verbosity
-      std::cout << "Removing sphere with ID: " << id << " due to small cluster size." << std::endl;
+      if(verbose_) {
+        std::cout << "Removing sphere with ID: " << id << " due to small cluster size." << std::endl;
+      }
       sphere_mesh_->remove(id); // remove spheres with small clusters
     }
   }
@@ -1288,11 +1273,6 @@ private:
     auto [cp, closest_face] = tree_->closest_point_and_primitive(optimal_center);
     FT len = (optimal_center - cp).squared_length();
 
-    if(len < 1e-12) {
-      std::cerr << "Warning: optimal center is too close to the closest point, skipping shrinking ball optimization.\n";
-      return;
-    }
-
     Vector_3 normal = (cp - optimal_center) / CGAL::approximate_sqrt(len);
 
     if((side_of(optimal_center) == CGAL::ON_UNBOUNDED_SIDE))
@@ -1302,11 +1282,6 @@ private:
 
     sphere.set_center(c);
     sphere.set_radius(r);
-
-    /* std::cout << "Optimized center: " << optimized_sphere_params(0) << ", " << optimized_sphere_params(1) << ", "
-              << optimized_sphere_params(2) << ", radius: " << optimized_sphere_params(3)
-              << "\nCorrected center: " << c.x() << ", " << c.y() << ", " << c.z() << ", radius: " << r << std::endl;
-  */
   }
 
   void optimize_single_sphere(MSphere& sphere, bool use_shrinking_ball_correction = false) {
@@ -1479,8 +1454,9 @@ private:
       }
     }
     for(Sphere_ID id : sphere_ids_to_remove) {
-      // TODO: add a paratmeter to control the output verbosity
-      std::cout << "Removing sphere with ID: " << id << " due to small cluster size." << std::endl;
+      if(verbose_) {
+        std::cout << "Removing sphere with ID: " << id << " due to small cluster size." << std::endl;
+      }
       sphere_mesh_->remove(id); // remove spheres with small clusters
     }
   }
@@ -1565,8 +1541,9 @@ private:
     if(sphere_mesh_->nb_spheres() >= desired_number_of_spheres_) {
       return;
     }
-    // TODO: add a paratmeter to control the output verbosity
-    std::cout << "Start Split spheres" << std::endl;
+    if(verbose_) {
+      std::cout << "Start splitting spheres" << std::endl;
+    }
     std::vector<Sphere_ID> sorted_sphere_ids;
     sorted_sphere_ids.reserve(sphere_mesh_->nb_spheres());
     for(const auto& sphere : sphere_mesh_->spheres()) {
@@ -1574,7 +1551,7 @@ private:
     }
     std::sort(sorted_sphere_ids.begin(), sorted_sphere_ids.end(), [&](Sphere_ID a, Sphere_ID b) {
       return sphere_mesh_->get_sphere(a).get_error() > sphere_mesh_->get_sphere(b).get_error(); // sort by error
-              });
+    });
 
     int to_split_max = std::min(int(std::ceil(sphere_mesh_->nb_spheres() * 0.2)), 10);
     for(auto& sphere_id : sorted_sphere_ids) {
@@ -1617,6 +1594,7 @@ private:
   std::unique_ptr<Tree> tree_;
   std::unique_ptr<MSMesh> sphere_mesh_;
   FT scale_;
+  bool verbose_;
   // Property maps
   Vertex_normal_map vertex_normal_map_;
   Vertex_area_map vertex_area_map_;

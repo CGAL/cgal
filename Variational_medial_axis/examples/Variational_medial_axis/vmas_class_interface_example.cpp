@@ -15,14 +15,14 @@ int main(int argc, char** argv)
     std::cerr << "Invalid input." << std::endl;
     return 1;
   }
-  
-  CGAL::Variational_medial_axis<Mesh, CGAL::Parallel_tag> vmas(mesh);
+
+  CGAL::Variational_medial_axis<Mesh, CGAL::Parallel_if_available_tag> vmas(mesh);
   // Compute medial skeleton with custom parameters
   vmas.compute_variational_medial_axis_sampling(
       CGAL::parameters::number_of_iterations(1000) // number of max iterations
       .number_of_spheres(200)// target number of spheres
-      .lambda(0.2)); // lambda parameter for the optimization
-      
+      .lambda(0.2) // lambda parameter for the optimization
+      .verbose(true)); // enable verbose output
 
   // add additional 3 sphere, this function will update the medial skeleton automatically 
   vmas.add_spheres(3);
