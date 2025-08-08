@@ -430,37 +430,38 @@ private:
 ///         <b>%Default:</b> `CGAL::Sequential_tag`<br>
 ///         <b>%Valid values:</b> `CGAL::Sequential_tag`, `CGAL::Parallel_tag`, `CGAL::Parallel_if_available_tag`
 ///
-/// @tparam GomTraits_
-///         a model of `VMASTraits`<br>
+///  @tparam AccelerationType_
+///         a tag indicating whether the algorithm should use Kd-tree or BVH as acceleration structure.
+///         <b>%Default:</b> `CGAL::KD_tree_tag`<br>
+///         <b>%Valid values:</b> `CGAL::KD_tree_tag`, `CGAL::BVH_tag`,
+/// 
+/// @tparam GeomTraits_
+///         a model of `Kernel`<br>
 ///         <b>%Default:</b>
 /// \code
 ///     CGAL::Kernel_traits<
 ///       boost::property_traits<
-///          boost::property_map<TriangleMesh, CGAL::vertex_point_t>::type
+///          boost::property_map<TriangleMesh_, CGAL::vertex_point_t>::type
 ///        >::value_type
 ///      >::Kernel
 /// \endcode
 ///
 /// @tparam VertexPointMap_
 ///         a model of `ReadWritePropertyMap`
-///         with `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key and
-///         `Traits::Point_3` as value type.<br>
+///         with `boost::graph_traits<TriangleMesh_>::%vertex_descriptor` as key and
+///         `GeomTraits_::Point_3` as value type.<br>
 ///         <b>%Default:</b>
 /// \code
-///   boost::property_map<TriangleMesh, CGAL::vertex_point_t>::const_type.
+///   boost::property_map<TriangleMesh_, CGAL::vertex_point_t>::const_type.
 /// \endcode
 ///
-///  @tparam AccelerationType_
-///         a tag indicating whether the algorithm should use Kd-tree or BVH as acceleration structure.
-///         <b>%Default:</b> `CGAL::KD_tree_tag`<br>
-///         <b>%Valid values:</b> `CGAL::KD_tree_tag`, `CGAL::BVH_tag`,
 ///
 
 template <typename TriangleMesh_,
           typename ConcurrencyTag_ = Sequential_tag,
+          typename AccelerationType_ = KD_tree_tag,
           typename GeomTraits_ = Default,
-          typename VertexPointMap_ = Default,
-          typename AccelerationType_ = KD_tree_tag>
+          typename VertexPointMap_ = Default>
 class Variational_medial_axis
 {
 private:
@@ -514,7 +515,7 @@ public:
   /// @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   ///
   /// @param tmesh
-  ///        The input triangle mesh with out borders.
+  ///        The input triangle mesh without borders.
   /// @param vpm
   ///        The vertex point map of the input triangle mesh.
   /// @param gt
@@ -531,17 +532,19 @@ public:
   ///    \cgalParamDescription{The maximum number of iterations for the optimization process.}
   ///    \cgalParamType{int}
   ///    \cgalParamDefault{1000}
-  ///    \cgalParamExtra{This parameter must be strictly positive; setting it to zero may prevent correct skeleton
-  /// connectivity construction.}
+  ///    \cgalParamExtra{This parameter must be strictly positive; setting it to zero may prevent correct skeleton connectivity construction.}
   ///  \cgalParamNEnd
   ///   \cgalParamNEnd
   ///   \cgalParamNBegin{lambda}
-  ///     \cgalParamDescription{A weight balancing the two energy terms (SQEM and Euclidean). Smaller values tend to
-  /// produce skeletons that follow local features more closely.}
+  ///     \cgalParamDescription{A weight balancing the two energy terms (SQEM and Euclidean). Smaller values encourage the skeleton to extend deeper into local geometric features of the shape.}
   ///     \cgalParamType{FT}
   ///     \cgalParamDefault{FT(0.2)}
-  ///     \cgalParamExtra{This parameter must be strictly positive; setting it to zero may prevent correct skeleton
-  /// connectivity construction.}
+  ///     \cgalParamExtra{This parameter must be strictly positive; setting it to zero may prevent correct skeleton connectivity construction.}
+  ///   \cgalParamNEnd
+  ///   \cgalParamNBegin{verbose}
+  ///     \cgalParamDescription{If true, the algorithm will print detailed information about its progress.}
+  ///     \cgalParamType{bool}
+  ///     \cgalParamDefault{false}
   ///   \cgalParamNEnd
   /// \cgalNamedParamsEnd
   ///
@@ -571,11 +574,13 @@ public:
   }
   ///
   ///@}
+#ifndef DOXYGEN_RUNNING
   template <class NamedParameters = parameters::Default_named_parameters>
   Variational_medial_axis(const TriangleMesh_& tmesh,
                           const NamedParameters& np = parameters::default_values(),
                           const GT& gt = GT())
       : Variational_medial_axis(tmesh, get(vertex_point, tmesh), np, gt) {}
+#endif // DOXYGEN_RUNNING
 
 
   /**
@@ -600,13 +605,17 @@ public:
    * connectivity construction.}
    *   \cgalParamNEnd
    *   \cgalParamNBegin{lambda}
-   *     \cgalParamDescription{A weight balancing the two energy terms (SQEM and Euclidean). Smaller values tend to
-   * produce skeletons that follow local features more closely.}
+   *     \cgalParamDescription{A weight balancing the two energy terms (SQEM and Euclidean). Smaller values encourage the skeleton to extend deeper into local geometric features of the shape.}
    *     \cgalParamType{FT}
    *     \cgalParamDefault{FT(0.2)}
    *     \cgalParamExtra{This parameter must be strictly positive; setting it to zero may prevent correct skeleton
    * connectivity construction.}
    *   \cgalParamNEnd
+   *   \cgalParamNBegin{verbose}
+  *     \cgalParamDescription{If true, the algorithm will print detailed information about its progress.}
+  *     \cgalParamType{bool}
+  *     \cgalParamDefault{false}
+  *   \cgalParamNEnd
    * \cgalNamedParamsEnd
    *
    *
@@ -670,13 +679,13 @@ public:
     return success;
   }
   /**
-   * Update the medial spheres by performing a single step of the algorithm.
+   * \brief Update the medial spheres by performing a single step of the algorithm.
    *
    * This function performs one iteration of the algorithm, updating sphere positions and computing errors.
    * It can optionally enable sphere splitting based on convergence criteria.
    *
-   * @param enable_split If true, allows sphere splitting based on convergence criteria.
-   * @return True if the algorithm has converged, false otherwise.
+   * \param enable_split If true, allows sphere splitting based on convergence criteria.
+   * \return True if the algorithm has converged, false otherwise.
    */
 
   bool update_single_step(bool enable_split = false) {
@@ -726,14 +735,14 @@ public:
     return false;
   }
   /**
-   * Perform a specified number of algorithm iterations.
+   * \brief Perform a specified number of algorithm iterations.
    *
    * This function allows manual control over the algorithm execution,
    * performing only position optimization without sphere splitting.
    *
-   * @param nb_iteration Number of iterations to perform
+   * \param nb_iteration Number of iterations to perform
    *
-   * @pre nb_iteration must be positive
+   * \pre nb_iteration must be positive
    */
   void update(std::size_t nb_iteration) {
     for(std::size_t i = 0; i < nb_iteration; i++) {
@@ -742,16 +751,17 @@ public:
   }
 
   /**
-   * Add spheres by iteratively splitting existing spheres.
+   * \brief Add spheres by iteratively splitting existing spheres.
    *
    * This function attempts to add the specified number of spheres
    * by running the algorithm with sphere splitting enabled until
    * either the target number is reached or maximum iterations are exceeded.
    *
-   * @param nb_sphere Number of spheres to add
+   * \param nb_sphere Number of spheres to add
    *
-   * @pre nb_sphere must be positive
-   * @pre At least one sphere must already exist
+   * \pre nb_sphere must be positive
+   * \pre At least one sphere must already exist
+   * \return True if spheres were added successfully, false otherwise.
    */
   void add_spheres(int nb_sphere) {
     if(nb_sphere == 0) {
@@ -777,9 +787,9 @@ public:
    *
    * This function is aimed to be called during interactive sessions, where the use
    * can specify a sphere to split and add a new sphere based on the split vertex.
-   * @param sphere_id
+   * \param sphere_id
    *    The ID of the sphere to split.
-   * @param nb_iteration
+   * \param nb_iteration
    *    Number of optimization iterations to perform after adding the sphere (default: 10).
    */
   void add_sphere_by_id(Sphere_ID sphere_id, int nb_iteration = 10) {
@@ -795,9 +805,9 @@ public:
    * Remove a sphere by its sphere_id.
    * This function is aimed to be called during interactive sessions, where the user
    * can specify a sphere to remove.
-   * @param sphere_id
+   * \param sphere_id
    *    The ID of the sphere to remove.
-   * @param nb_iteration
+   * \param nb_iteration
    *    Number of optimization iterations to perform after removing the sphere (default: 10).
    */
   void remove_sphere_by_id(Sphere_ID sphere_id, int nb_iteration = 10) {
@@ -807,13 +817,13 @@ public:
   }
 
   /**
-   * Export the medial skeleton as a `Medial_Skeleton` object.
+   * \brief Export the medial skeleton as a `Medial_Skeleton` object.
    *
    * This function builds a `Medial_Skeleton` from the current state of the medial sphere mesh.
    * It extracts the vertices, edges, and faces from the medial sphere mesh and constructs
    * the medial skeleton accordingly.
    *
-   * @return
+   * \return
    *     A `Medial_Skeleton` object containing the medial skeleton data.
    */
   Medial_Skeleton<TriangleMesh_> export_skeleton() const {
@@ -990,15 +1000,15 @@ public:
   /// \name Parameters
   /// @{
   /**
-   * Lambda parameter for the algorithm.
+   * \brief Lambda parameter for the algorithm.
    *
    * This parameter controls the balance between the SQEM and Euclidean energy terms.
-   * Smaller values tend to produce skeletons that follow local features more closely.
+   * Smaller values encourage the skeleton to extend deeper into local geometric features of the shape.
    */
   FT lambda_param() const { return lambda_; }
 
   /**
-   * set function for `lambda_param()`.
+   * \brief set function for `lambda_param()`.
    * Note: The lambda must be strictly positive; if set to zero, it will default to 0.2.
    */
   void set_lambda(FT lambda) {
@@ -1010,22 +1020,23 @@ public:
     }
   }
   /**
-   * Get the desired number of spheres for the algorithm.
+   * \brief Get the desired number of spheres for the algorithm.
    */
   int number_of_spheres() const { return desired_number_of_spheres_; }
   /**
-   * set function for `number_of_spheres()`.
+   * \brief set function for `number_of_spheres()`.
    */
   void set_number_of_spheres(int num) { desired_number_of_spheres_ = num; }
 
   /**
-   * The maximum number of iterations for the algorithm.
+   * \brief The maximum number of iterations for the algorithm.
+   * 
    * In case the algorithm does not converge, it will stop after this number of iterations.
    */
   int max_iteration() const { return max_iteration_; }
 
   /**
-   * set function for `max_iteration()`.
+   * \brief set function for `max_iteration()`.
    */
   void set_max_iteration(int max_iter) { max_iteration_ = max_iter; }
   ///@}
@@ -1218,25 +1229,6 @@ private:
     for(auto v : vertices(tmesh_)) {
       compute_one_vertex_shrinking_ball(v);
     }
-  }
-
-  // TODO: This function will be deleted. It is only used for debugging purposes.
-  void compute_shrinking_balls_and_save_result() {
-    std::cout << "Compute shrinking ball for each vertex" << std::endl;
-    for(vertex_descriptor v : vertices(tmesh_)) {
-      Vector_3 normal = get(vertex_normal_map_, v);
-      Point_3 p = get(vpm_, v);
-      auto face_range = CGAL::faces_around_target(halfedge(v, tmesh_), tmesh_);
-      std::vector<face_descriptor> incident_faces(face_range.begin(), face_range.end());
-      auto [center, radius] = shrinking_ball_algorithm_bvh(incident_faces, p, normal);
-      //auto [center, radius] = shrinking_ball_algorithm_kdt(p, normal);
-      put(vertex_medial_sphere_pos_map_, v, center);
-      put(vertex_medial_sphere_radius_map_, v, radius);
-      sphere_mesh_->add_sphere(Sphere_3(center, radius * radius));
-    }
-    std::string filename = "medial_sphere_mesh.ply";
-    sphere_mesh_->write_to_ply_file(filename);
-    std::cout << "Medial sphere mesh written to " << filename << "\n";
   }
 
   void assign_vertices_to_clusters() {

@@ -1,12 +1,6 @@
 /// \defgroup PkgVMASRef Reference Manual
 
-/// \defgroup PkgVMASAlgorithmClasses Algorithm Classes
-/// \ingroup PkgVMASRef
-
 /// \defgroup PkgVMASTraitsClasses Traits Classes
-/// \ingroup PkgVMASRef
-
-/// \defgroup PkgVMASMiscellaneous Miscellaneous
 /// \ingroup PkgVMASRef
 
 /*!
@@ -32,7 +26,9 @@
 \cgalClassifedRefPages
 
 \cgalCRPSection{Functions}
-
 - `CGAL::extract_variational_medial_skeleton()`
 
+\cgalCPRSection{Classes}
+- `CGAL::Variational_medial_axis`
+- `CGAL::Medial_Skeleton` 
 */
