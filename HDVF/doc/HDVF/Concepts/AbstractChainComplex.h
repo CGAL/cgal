@@ -79,7 +79,7 @@ The function returns constant reference to a vector of column-major sparse matri
 const vector<Column_matrix> & boundary_matrices() const;
 
 /*!
- \brief Returns the boundary matrix of dimension `q` (ie.\ the matrix of \f$\partial_q}\f$).
+ \brief Returns the boundary matrix of dimension `q` (ie.\ the matrix of \f$\partial_q\f$).
 
 The function returns a column-major sparse matrices.
  */
