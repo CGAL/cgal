@@ -655,9 +655,8 @@ public:
   void initialize_cell_indices()
   {
     int i=0;
-    for(Finite_cells_iterator fcit = m_tr->finite_cells_begin();
-        fcit != m_tr->finite_cells_end();
-        ++fcit){
+    for(Cell_handle fcit : m_tr->finite_cell_handles())
+    {
       fcit->info()= i++;
     }
   }
@@ -673,9 +672,8 @@ public:
     Normal.resize(m_tr->number_of_cells());
     int i = 0;
     int N = 0;
-    for(Finite_cells_iterator fcit = m_tr->finite_cells_begin();
-        fcit != m_tr->finite_cells_end();
-        ++fcit){
+    for(Cell_handle fcit : m_tr->finite_cell_handles())
+    {
       Normal[i] = cell_normal(fcit);
       if(Normal[i] == NULL_VECTOR){
         N++;
@@ -689,9 +687,8 @@ public:
   {
     Dual.resize(m_tr->number_of_cells());
     int i = 0;
-    for(Finite_cells_iterator fcit = m_tr->finite_cells_begin();
-        fcit != m_tr->finite_cells_end();
-        ++fcit){
+    for(Cell_handle fcit : m_tr->finite_cell_handles())
+    {
       Dual[i++] = m_tr->dual(fcit);
     }
   }
@@ -814,11 +811,8 @@ private:
 #ifndef CGAL_DIV_NON_NORMALIZED
     initialize_cell_normals();
 #endif
-    Finite_vertices_iterator v, e;
-    for(v = m_tr->finite_vertices_begin(),
-        e = m_tr->finite_vertices_end();
-        v != e;
-        ++v)
+
+    for(Vertex_handle v : m_tr->finite_vertex_handles())
     {
       if(!m_tr->is_constrained(v)) {
 #ifdef CGAL_DIV_NON_NORMALIZED
@@ -849,7 +843,7 @@ private:
 
     // copy function's values to vertices
     unsigned int index = 0;
-    for (v = m_tr->finite_vertices_begin(), e = m_tr->finite_vertices_end(); v!= e; ++v)
+    for (Vertex_handle v : m_tr->finite_vertex_handles())
       if(!m_tr->is_constrained(v))
         v->f() = X[index++];
 
@@ -894,10 +888,7 @@ private:
   {
     std::deque<FT> values;
     Finite_vertices_iterator v, e;
-    for(v = m_tr->finite_vertices_begin(),
-        e= m_tr->finite_vertices_end();
-        v != e;
-        v++)
+    for(Vertex_handle v : m_tr->finite_vertex_handles())
       if(v->type() == Triangulation::INPUT)
         values.push_back(v->f());
 
@@ -1023,10 +1014,8 @@ private:
     m_tr->incident_cells(v,std::back_inserter(cells));
 
     FT div = 0;
-    typename std::vector<Cell_handle>::iterator it;
-    for(it = cells.begin(); it != cells.end(); it++)
+    for(Cell_handle cell : cells)
     {
-      Cell_handle cell = *it;
       if(m_tr->is_infinite(cell))
         continue;
 
@@ -1069,10 +1058,8 @@ private:
     m_tr->incident_cells(v,std::back_inserter(cells));
 
     FT div = 0.0;
-    typename std::vector<Cell_handle>::iterator it;
-    for(it = cells.begin(); it != cells.end(); it++)
+    for(Cell_handle cell : cells)
     {
-      Cell_handle cell = *it;
       if(m_tr->is_infinite(cell))
         continue;
 
