@@ -148,7 +148,7 @@ public:
     /*!
      Type of column-major chains
      */
-    typedef CGAL::OSM::Sparse_chain<CoefficientType, CGAL::OSM::COLUMN> Col_chain;
+    typedef CGAL::OSM::Sparse_chain<CoefficientType, CGAL::OSM::COLUMN> Column_chain;
 
     /*!
      Type of row-major chains
@@ -158,7 +158,7 @@ public:
     /*!
      Type of column-major sparse matrices
      */
-    typedef CGAL::OSM::Sub_sparse_matrix<CoefficientType, CGAL::OSM::COLUMN> Col_matrix;
+    typedef CGAL::OSM::Sub_sparse_matrix<CoefficientType, CGAL::OSM::COLUMN> Column_matrix;
 
     /*!
      Type of row-major sparse matrices
@@ -192,7 +192,7 @@ public:
 
     /*! Type  chains export (column-major chains)
      */
-    typedef Col_chain ExpChain ;
+    typedef Column_chain ExpChain ;
 
     /*! For persistent diagram iterator (returned by *it)
      */
@@ -298,13 +298,13 @@ public:
                 //  -> index : nb_cell(q+1)
                 //  -> time : size of the filtration
                 //  -> degree : di - 1
-                const Pair_cells p = {i, this->_K.nb_cells(q+1), q} ;
+                const Pair_cells p = {i, this->_K.number_of_cells(q+1), q} ;
                 const size_t ki(_per_to_K.at(q).at(i)) ; // K index
                 const Cell_index_dimension c(ki,q) ;
                 const size_t ti(_f._cell_to_t.at(c)) ;
                 const DegType di(_f._deg.at(i)) ;
                 FiltrIndexPerInterval per_int(ti,_f.size()) ;
-                Cell_index_dimension inf(this->_K.nb_cells(q+1),q+1) ;
+                Cell_index_dimension inf(this->_K.number_of_cells(q+1),q+1) ;
                 CellsPerInterval per_int_cell(c,inf) ;
                 DegreePerInterval per_deg_int(di,di-1) ;
                 PerHole hole(per_int, per_int_cell, per_deg_int) ;
@@ -372,11 +372,11 @@ public:
     {
         out << "Filtration: " << _f << endl ;
         out << "_K_to_per and _per_to_K" << endl ;
-        for (int q=0; q<=this->_K.dim(); ++q)
+        for (int q=0; q<=this->_K.dimension(); ++q)
         {
             out << "-> dim " << q << endl ;
             out << "index_per -(_per_to_K)-> index_K -(_K_to_per)-> index_per" << endl ;
-            for (size_t i=0; i<this->_K.nb_cells(q); ++i)
+            for (size_t i=0; i<this->_K.number_of_cells(q); ++i)
             {
                 const size_t id_K(_per_to_K.at(q).at(i)) ;
                 out << i << " -> " << id_K << " -> " << _K_to_per.at(q).at(id_K) << endl ;
@@ -399,10 +399,10 @@ public:
      */
     virtual vector<vector<int> > psc_labels () const
     {
-        vector<vector<int> > labels(this->_K.dim()+1) ;
-        for (int q=0; q<=this->_K.dim(); ++q)
+        vector<vector<int> > labels(this->_K.dimension()+1) ;
+        for (int q=0; q<=this->_K.dimension(); ++q)
         {
-            for (size_t i = 0; i<this->_K.nb_cells(q); ++i)
+            for (size_t i = 0; i<this->_K.number_of_cells(q); ++i)
             {
                 const size_t id_per(_K_to_per.at(q).at(i)) ;
                 if (id_per < _t_dim.at(q))
@@ -430,20 +430,20 @@ public:
      *
      * \returns A column-major chain.
      */
-    virtual Col_chain homology_chain (size_t cell, int q) const
+    virtual Column_chain homology_chain (size_t cell, int q) const
     {
-        if ((q<0) || (q>this->_K.dim()))
+        if ((q<0) || (q>this->_K.dimension()))
             throw "Error : homology_chain with dim out of range" ;
 
         if (this->_hdvf_opt & (OPT_FULL | OPT_G))
         {
             // Get g(cell, dim) with per indices
-            Col_chain g_cell(OSM::get_column(this->_G_col.at(q), cell)) ;
+            Column_chain g_cell(OSM::get_column(this->_G_col.at(q), cell)) ;
             // Add 1 to the cell
             g_cell.set_coefficient(cell, 1) ;
             // Compute the chain with _K indices
-            Col_chain g_cell_K(g_cell.dimension()) ;
-            for (typename Col_chain::const_iterator it = g_cell.begin(); it != g_cell.end(); ++it)
+            Column_chain g_cell_K(g_cell.dimension()) ;
+            for (typename Column_chain::const_iterator it = g_cell.begin(); it != g_cell.end(); ++it)
             {
                 const size_t i(_per_to_K.at(q).at(it->first)) ;
                 g_cell_K.set_coefficient(i, it->second) ;
@@ -461,9 +461,9 @@ public:
      *
      * \returns A column-major chain.
      */
-    virtual Col_chain cohomology_chain (size_t cell, int q) const
+    virtual Column_chain cohomology_chain (size_t cell, int q) const
     {
-        if ((q<0) || (q>this->_K.dim()))
+        if ((q<0) || (q>this->_K.dimension()))
             throw "Error : homology_chain with dim out of range" ;
 
         if (this->_hdvf_opt & (OPT_FULL | OPT_F))
@@ -474,8 +474,8 @@ public:
             fstar_cell.set_coefficient(cell, 1) ;
 
             // Compute the chain with _K indices
-            Col_chain fstar_cell_K(fstar_cell.dimension()) ;
-            for (typename Col_chain::const_iterator it = fstar_cell.begin(); it != fstar_cell.end(); ++it)
+            Column_chain fstar_cell_K(fstar_cell.dimension()) ;
+            for (typename Column_chain::const_iterator it = fstar_cell.begin(); it != fstar_cell.end(); ++it)
             {
                 const size_t i(_per_to_K.at(q).at(it->first)) ;
                 fstar_cell_K.set_coefficient(i, it->second) ;
@@ -617,20 +617,20 @@ private:
         // Export g (according to options)
         if (this->_hdvf_opt & (OPT_FULL | OPT_G))
         {
-            Col_chain chain_sigma(homology_chain(p.sigma, p.dim)) ;
-            Col_chain chain_tau ;
-            if (p.tau != this->_K.nb_cells(p.dim+1)) // Check if the second cell is "finite"
+            Column_chain chain_sigma(homology_chain(p.sigma, p.dim)) ;
+            Column_chain chain_tau ;
+            if (p.tau != this->_K.number_of_cells(p.dim+1)) // Check if the second cell is "finite"
                 chain_tau = homology_chain(p.tau, p.dim+1) ;
-            _export_g.push_back(std::pair<Col_chain,Col_chain>(chain_sigma, chain_tau)) ;
+            _export_g.push_back(std::pair<Column_chain,Column_chain>(chain_sigma, chain_tau)) ;
         }
         // Export fstar (according to options)
         if (this->_hdvf_opt & (OPT_FULL | OPT_F))
         {
-            Col_chain chain_sigma(cohomology_chain(p.sigma, p.dim)) ;
-            Col_chain chain_tau ;
-            if (p.tau != this->_K.nb_cells(p.dim+1)) // Check if the second cell is "finite"
+            Column_chain chain_sigma(cohomology_chain(p.sigma, p.dim)) ;
+            Column_chain chain_tau ;
+            if (p.tau != this->_K.number_of_cells(p.dim+1)) // Check if the second cell is "finite"
                 chain_tau = cohomology_chain(p.tau, p.dim+1) ;
-            _export_fstar.push_back(std::pair<Col_chain,Col_chain>(chain_sigma, chain_tau)) ;
+            _export_fstar.push_back(std::pair<Column_chain,Column_chain>(chain_sigma, chain_tau)) ;
         }
     }
 
@@ -645,14 +645,14 @@ private:
         // Export g (according to options)
         if (this->_hdvf_opt & (OPT_FULL | OPT_G))
         {
-            Col_chain chain_sigma, chain_tau ;
-            _export_g.push_back(std::pair<Col_chain,Col_chain>(chain_sigma, chain_tau)) ;
+            Column_chain chain_sigma, chain_tau ;
+            _export_g.push_back(std::pair<Column_chain,Column_chain>(chain_sigma, chain_tau)) ;
         }
         // Export fstar (according to options)
         if (this->_hdvf_opt & (OPT_FULL | OPT_F))
         {
-            Col_chain chain_sigma, chain_tau ;
-            _export_fstar.push_back(std::pair<Col_chain,Col_chain>(chain_sigma, chain_tau)) ;
+            Column_chain chain_sigma, chain_tau ;
+            _export_fstar.push_back(std::pair<Column_chain,Column_chain>(chain_sigma, chain_tau)) ;
         }
     }
 
@@ -679,12 +679,12 @@ template<typename CoefficientType, typename ComplexType, typename DegType, typen
 Hdvf_persistence<CoefficientType, ComplexType, DegType, FiltrationType>::Hdvf_persistence(const ComplexType& K, const FiltrationType& f, int hdvf_opt, bool with_export) : Hdvf_core<CoefficientType,ComplexType, OSM::Sparse_chain, OSM::Sub_sparse_matrix>(K,hdvf_opt), _f(f), _with_export(with_export), _t(0)
 {
     // Initialisation of _t_dim, _K_to_per and _per_to_K
-    _t_dim.resize(this->_K.dim()+1, 0) ;
-    _K_to_per.resize(this->_K.dim()+1) ;
-    _per_to_K.resize(this->_K.dim()+1) ;
-    for (int q=0; q<=this->_K.dim(); ++q)
+    _t_dim.resize(this->_K.dimension()+1, 0) ;
+    _K_to_per.resize(this->_K.dimension()+1) ;
+    _per_to_K.resize(this->_K.dimension()+1) ;
+    for (int q=0; q<=this->_K.dimension(); ++q)
     {
-        _K_to_per.at(q).resize(this->_K.nb_cells(q)) ;
+        _K_to_per.at(q).resize(this->_K.number_of_cells(q)) ;
         _t_dim.at(q) = 0 ;
     }
 
@@ -699,32 +699,32 @@ Hdvf_persistence<CoefficientType, ComplexType, DegType, FiltrationType>::Hdvf_pe
     }
 
     // Init _masks
-    _masks.resize(this->_K.dim()+1) ;
-    for (int q=0; q<this->_K.dim()+1; ++q)
+    _masks.resize(this->_K.dimension()+1) ;
+    for (int q=0; q<this->_K.dimension()+1; ++q)
     {
-        _masks.at(q) = OSM::Bitboard(this->_K.nb_cells(q)) ;
+        _masks.at(q) = OSM::Bitboard(this->_K.number_of_cells(q)) ;
     }
 
     // Init boundary matrices
-    vector<Col_matrix> _DD_per(this->_K.dim()+1) ;
+    vector<Column_matrix> _DD_per(this->_K.dimension()+1) ;
 
     // Copy _DD_col with filtration order (for dimensions q>0)
-    for (int q = 0 ; q <= this->_K.dim(); ++q)
+    for (int q = 0 ; q <= this->_K.dimension(); ++q)
     {
         const std::pair<int, int> s(this->_DD_col.at(q).dimensions()) ;
-        _DD_per.at(q) = Col_matrix(s.first, s.second) ;
+        _DD_per.at(q) = Column_matrix(s.first, s.second) ;
     }
     // Set empty mask for _DD_per[0]
     _DD_per.at(0).complement();
 
-    for (int q = 1 ; q <= this->_K.dim(); ++q)
+    for (int q = 1 ; q <= this->_K.dimension(); ++q)
     {
         // Cross _DD_col.at(q) and set _DD_per.at(q) coefficients on the fly
         for (OSM::Bitboard::iterator it_col = this->_DD_col.at(q).begin(); it_col != this->_DD_col.at(q).end(); ++it_col)
         {
             const size_t j(*it_col) ;
-            const Col_chain& col(OSM::cget_column(this->_DD_col.at(q), j)) ;
-            for (typename Col_chain::const_iterator it = col.begin(); it != col.end(); ++it)
+            const Column_chain& col(OSM::cget_column(this->_DD_col.at(q), j)) ;
+            for (typename Column_chain::const_iterator it = col.begin(); it != col.end(); ++it)
             {
                 const size_t i(it->first) ;
                 const CoefficientType v(it->second) ;
@@ -738,7 +738,7 @@ Hdvf_persistence<CoefficientType, ComplexType, DegType, FiltrationType>::Hdvf_pe
     this->_DD_col = _DD_per ;
 
     // Init _DD_col mask (empty for all cells)
-    for (int q = 1 ; q <= this->_K.dim(); ++q)
+    for (int q = 1 ; q <= this->_K.dimension(); ++q)
         this->_DD_col.at(q).set_sub(_masks.at(q)) ;
 }
 
@@ -756,10 +756,10 @@ Pair_cells Hdvf_persistence<CoefficientType, ComplexType, DegType, FiltrationTyp
     if (q >= 1)
     {
         // Compute bounded max while iterating over the Sparse_chain
-        const Col_chain& tmp2(OSM::cget_column(this->_DD_col.at(q), sigma)) ;
+        const Column_chain& tmp2(OSM::cget_column(this->_DD_col.at(q), sigma)) ;
         std::size_t tmax = _t_dim.at(q-1) ;
         std::size_t i ;
-        for (typename Col_chain::const_iterator it = tmp2.cbegin(); it != tmp2.cend(); ++it)
+        for (typename Column_chain::const_iterator it = tmp2.cbegin(); it != tmp2.cend(); ++it)
         {
             if ((it->first < tmax) && (abs(it->second) == 1)) // possible pairing
             {

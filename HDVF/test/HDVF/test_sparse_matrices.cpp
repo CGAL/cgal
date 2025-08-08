@@ -6,9 +6,9 @@
 #include <cassert>
 #include <CGAL/OSM/OSM.h>
 
-typedef CGAL::OSM::Sparse_chain<int, CGAL::OSM::COLUMN> Col_chain;
+typedef CGAL::OSM::Sparse_chain<int, CGAL::OSM::COLUMN> Column_chain;
 typedef CGAL::OSM::Sparse_chain<int, CGAL::OSM::ROW> Row_chain ;
-typedef CGAL::OSM::Sparse_matrix<int, CGAL::OSM::COLUMN> Col_matrix;
+typedef CGAL::OSM::Sparse_matrix<int, CGAL::OSM::COLUMN> Column_matrix;
 typedef CGAL::OSM::Sparse_matrix<int, CGAL::OSM::ROW> Row_matrix;
 
 
@@ -18,7 +18,7 @@ int main(int argc, char **argv)
 
     std::cerr << "----> Column matrices" << std::endl;
 
-    Col_matrix MC_rw(3,4);
+    Column_matrix MC_rw(3,4);
     CGAL::OSM::set_coefficient(MC_rw, 0, 1, 1) ;
     CGAL::OSM::set_coefficient(MC_rw, 0, 2, -1) ;
     CGAL::OSM::set_coefficient(MC_rw, 1, 0, 2) ;
@@ -36,7 +36,7 @@ int main(int argc, char **argv)
 
     out_col_save.close() ;
 
-    Col_matrix MC_rw2 ;
+    Column_matrix MC_rw2 ;
 
     std::ifstream in_col_save (filename_col_save);
     if ( not in_col_save . good () ) {
@@ -86,17 +86,17 @@ int main(int argc, char **argv)
 
     std::cerr << "-- Tests Sparse_matrices operations" << std::endl ;
 
-    Col_chain a(4);
+    Column_chain a(4);
     Row_chain b(4);
     a.set_coefficient(1,1);
     a.set_coefficient(3,3);
     b.set_coefficient(0,2);
     b.set_coefficient(1,-3);
 
-    Col_matrix columnMajor = a * b, tmp = columnMajor;
+    Column_matrix columnMajor = a * b, tmp = columnMajor;
     std::cout << columnMajor << std::endl ;
 
-    Col_matrix columnMajorRes(4,4) ;
+    Column_matrix columnMajorRes(4,4) ;
 
     // How to read data in data/ directory ?
 

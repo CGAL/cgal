@@ -123,20 +123,20 @@ public:
      */
     Sub_chain_complex_mask(const ComplexType& K, bool full=true) : _K(K)
     {
-        _dim = K.dim() ;
+        _dim = K.dimension() ;
         _sub.resize(_dim+1) ;
         _nb_cells.resize(_dim+1) ;
         // Create Bitboards
-        for (int q=0; q<=K.dim(); ++q)
+        for (int q=0; q<=K.dimension(); ++q)
         {
             if (full)
             {
-                _sub.at(q) = OSM::Bitboard(K.nb_cells(q),false) ; // all cells to 1
+                _sub.at(q) = OSM::Bitboard(K.number_of_cells(q),false) ; // all cells to 1
                 _full = true ;
             }
             else
-                _sub.at(q) = OSM::Bitboard(K.nb_cells(q),true) ; // all cells to 0
-            _nb_cells.at(q) = K.nb_cells(q) ;
+                _sub.at(q) = OSM::Bitboard(K.number_of_cells(q),true) ; // all cells to 0
+            _nb_cells.at(q) = K.number_of_cells(q) ;
         }
     }
 
@@ -151,14 +151,14 @@ public:
      */
     Sub_chain_complex_mask(const ComplexType& K, const std::vector<std::vector<int> > &cells, bool close = true) : _K(K)
     {
-        _dim = K.dim() ;
+        _dim = K.dimension() ;
         _sub.resize(_dim+1) ;
         _nb_cells.resize(_dim+1) ;
         _full = true ;
         // Create Bitboards
-        for (int q=0; q<=K.dim(); ++q)
+        for (int q=0; q<=K.dimension(); ++q)
         {
-            _sub.at(q) = OSM::Bitboard(K.nb_cells(q)) ;
+            _sub.at(q) = OSM::Bitboard(K.number_of_cells(q)) ;
         }
 
         // Set bits
@@ -167,7 +167,7 @@ public:
         else
             set_cells(cells, K) ;
 
-        for (int q=0; q<=K.dim(); ++q)
+        for (int q=0; q<=K.dimension(); ++q)
         {
             _full = (_full && (_nb_cells.at(q) == _sub.at(q).size())) ;
         }
@@ -277,7 +277,7 @@ public:
     template <typename CT, int CTF>
     void screen_matrices(std::vector<OSM::Sub_sparse_matrix<CT, CTF> >& matrices)
     {
-        for (int q=0; q<=_K.dim(); ++q)
+        for (int q=0; q<=_K.dimension(); ++q)
         {
             matrices.at(q).set_sub(_sub.at(q)) ;
         }

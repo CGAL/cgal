@@ -159,7 +159,7 @@ protected:
 template <typename CoefficientType, typename ComplexType, typename Degree_type>
 void Filtration_lower_star<CoefficientType, ComplexType, Degree_type>::star_filtration(const std::vector<Degree_type> &deg)
 {
-    if (deg.size() != this->_K.nb_cells(0))
+    if (deg.size() != this->_K.number_of_cells(0))
         throw "Star filtration error : deg should provide one value by vertex" ;
 
     // Create filtration and degrees for all cells according to deg
@@ -175,9 +175,9 @@ void Filtration_lower_star<CoefficientType, ComplexType, Degree_type>::star_filt
         tmp_deg.push_back(deg.at(i)) ;
     }
     // For all other cells
-    for (int q=1; q<=this->_K.dim(); ++q)
+    for (int q=1; q<=this->_K.dimension(); ++q)
     {
-        for (size_t i=0; i<this->_K.nb_cells(q); ++i)
+        for (size_t i=0; i<this->_K.number_of_cells(q); ++i)
         {
             tmp_filtration.push_back(Cell_index_dimension(i,q)) ;
 
@@ -224,7 +224,7 @@ template <typename CoefficientType, typename ComplexType, typename Degree_type>
 void Filtration_lower_star<CoefficientType, ComplexType, Degree_type>::star_filtration(std::function<Degree_type(size_t)>& deg_fun)
 {
     std::vector<Degree_type> deg ;
-    for (size_t i=0; i<this->_K.nb_cells(0); ++i)
+    for (size_t i=0; i<this->_K.number_of_cells(0); ++i)
     {
         deg.push_back(deg_fun(i)) ;
     }

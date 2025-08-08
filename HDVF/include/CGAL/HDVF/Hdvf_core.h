@@ -93,7 +93,7 @@ public:
     /*!
      Type of column-major chains
      */
-    typedef ChainType<CoefficientType, CGAL::OSM::COLUMN> Col_chain;
+    typedef ChainType<CoefficientType, CGAL::OSM::COLUMN> Column_chain;
 
     /*!
      Type of row-major chains
@@ -103,7 +103,7 @@ public:
     /*!
      Type of column-major sparse matrices
      */
-    typedef SparseMatrixType<CoefficientType, CGAL::OSM::COLUMN> Col_matrix;
+    typedef SparseMatrixType<CoefficientType, CGAL::OSM::COLUMN> Column_matrix;
 
     /*!
      Type of row-major sparse matrices
@@ -124,11 +124,11 @@ protected:
     /* \brief Row matrices for f. */
     std::vector<Row_matrix> _F_row;
     /* \brief Column matrices for g. */
-    std::vector<Col_matrix> _G_col;
+    std::vector<Column_matrix> _G_col;
     /* \brief Column matrices for h. */
-    std::vector<Col_matrix> _H_col;
+    std::vector<Column_matrix> _H_col;
     /* \brief Column matrices for reduced boundary. */
-    std::vector<Col_matrix> _DD_col;
+    std::vector<Column_matrix> _DD_col;
 
     /* \brief Reference to the underlying complex. */
     const ComplexType& _K;
@@ -259,7 +259,7 @@ public:
     {
         bool res = true ;
         int q = 0 ;
-        while ((q<=_K.dim()) && res)
+        while ((q<=_K.dimension()) && res)
         {
             res = res && _DD_col.at(q).is_null() ;
             ++q;
@@ -312,17 +312,17 @@ public:
     /**
      * \brief Gets the column-major matrix of \f$g\f$ (from the reduction associated to the HDVF).
      */
-    const Col_matrix& matrix_g (int q) const { return _G_col.at(q); }
+    const Column_matrix& matrix_g (int q) const { return _G_col.at(q); }
 
     /**
      * \brief Gets the column-major matrix of \f$h\f$ (from the reduction associated to the HDVF).
      */
-    const Col_matrix& matrix_h (int q) const { return _H_col.at(q); }
+    const Column_matrix& matrix_h (int q) const { return _H_col.at(q); }
 
     /**
      * \brief Gets the column-major matrix of \f$\partial'\f$, reduced boundary operator (from the reduction associated to the HDVF).
      */
-    const Col_matrix& matrix_dd (int q) const { return _DD_col.at(q); }
+    const Column_matrix& matrix_dd (int q) const { return _DD_col.at(q); }
 
     /**
      * \brief Prints the matrices of the reduction.
@@ -351,10 +351,10 @@ public:
      */
     virtual std::vector<std::vector<int> > psc_labels () const
     {
-        std::vector<std::vector<int> > labels(_K.dim()+1) ;
-        for (int q=0; q<=_K.dim(); ++q)
+        std::vector<std::vector<int> > labels(_K.dimension()+1) ;
+        for (int q=0; q<=_K.dimension(); ++q)
         {
-            for (size_t i = 0; i<_K.nb_cells(q); ++i)
+            for (size_t i = 0; i<_K.number_of_cells(q); ++i)
             {
                 if (_flag.at(q).at(i) == PRIMARY)
                     labels.at(q).push_back(-1) ;
@@ -376,13 +376,13 @@ public:
      *
      * \return A column-major chain.
      */
-    virtual Col_chain homology_chain (size_t cell, int q) const
+    virtual Column_chain homology_chain (size_t cell, int q) const
     {
-        if ((q<0) || (q>_K.dim()))
+        if ((q<0) || (q>_K.dimension()))
             throw "Error : homology_chain with dim out of range" ;
         if (_hdvf_opt & (OPT_FULL | OPT_G))
         {
-            Col_chain g_cell(OSM::get_column(_G_col.at(q), cell)) ;
+            Column_chain g_cell(OSM::get_column(_G_col.at(q), cell)) ;
             // Add 1 to the cell
             g_cell.set_coefficient(cell, 1) ;
             return g_cell ;
@@ -401,9 +401,9 @@ public:
      *
      * \return A column-major chain.
      */
-    virtual Col_chain cohomology_chain (size_t cell, int dim) const
+    virtual Column_chain cohomology_chain (size_t cell, int dim) const
     {
-        if ((dim<0) || (dim>_K.dim()))
+        if ((dim<0) || (dim>_K.dimension()))
             throw "Error : cohomology_chain with dim out of range" ;
         if (_hdvf_opt & (OPT_FULL | OPT_F))
         {
@@ -493,7 +493,7 @@ protected:
 template<typename CoefficientType, typename ComplexType, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
 Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::Hdvf_core(const ComplexType& K, int hdvf_opt) : _K(K) {
     // Get the dimension of the simplicial complex
-    int dim = _K.dim();
+    int dim = _K.dimension();
     std::cout << "----> Starting Hdvf_core creation / dim " << dim << std::endl ;
     // Hdvf_core options
     _hdvf_opt = hdvf_opt ;
@@ -524,30 +524,30 @@ Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::Hdvf_core(
     for (int q = 0; q <= dim; q++) {
         // Initialize _F_row[q] as a row matrix with dimensions (dim(q) x dim(q))
         if (_hdvf_opt & (OPT_FULL | OPT_F))
-            _F_row[q] = Row_matrix(_K.nb_cells(q), _K.nb_cells(q));
+            _F_row[q] = Row_matrix(_K.number_of_cells(q), _K.number_of_cells(q));
 
         // Initialize _G_col[q] as a column matrix with dimensions (dim(q) x dim(q))
         if (_hdvf_opt & (OPT_FULL | OPT_G))
-            _G_col[q] = Col_matrix(_K.nb_cells(q), _K.nb_cells(q));
+            _G_col[q] = Column_matrix(_K.number_of_cells(q), _K.number_of_cells(q));
 
         // Initialize _H_col[q] as a column matrix with dimensions (dim(q+1) x dim(q))
         if (_hdvf_opt & OPT_FULL)
-            _H_col[q] = Col_matrix(_K.nb_cells(q + 1), _K.nb_cells(q));
+            _H_col[q] = Column_matrix(_K.number_of_cells(q + 1), _K.number_of_cells(q));
 
         // Initialize the counters for PRIMARY, SECONDARY, and CRITICAL cells
         _nb_P[q] = 0;
         _nb_S[q] = 0;
-        _nb_C[q] = _K.nb_cells(q);
+        _nb_C[q] = _K.number_of_cells(q);
     }
 
     // Initialize the flags for each dimension to CRITICAL
     for (int q = 0; q <= dim; q++) {
-        _flag[q] = std::vector<FlagType>(_K.nb_cells(q), CRITICAL);
+        _flag[q] = std::vector<FlagType>(_K.number_of_cells(q), CRITICAL);
     }
 
     // Populate the DD matrices
-    _DD_col.resize(_K.dim()+1) ;
-    for (int q=0; q<=_K.dim(); ++q)
+    _DD_col.resize(_K.dimension()+1) ;
+    for (int q=0; q<=_K.dimension(); ++q)
         _DD_col.at(q) = _K.boundary_matrix(q) ;
     std::cout << "------> End Hdvf_core creation" << std::endl ;
 }
@@ -556,7 +556,7 @@ Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::Hdvf_core(
 template<typename CoefficientType, typename ComplexType, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
 std::ostream& Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::insert_matrices(std::ostream& out) const {
     // Iterate through each dimension and print the corresponding matrices
-    for (int q = 0; q <= _K.dim(); ++q) {
+    for (int q = 0; q <= _K.dimension(); ++q) {
         out << "------- Dimension " << q << std::endl;
 
         out << "Matrices _DD_col:" << std::endl;
@@ -599,10 +599,10 @@ Pair_cells Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>:
     // Iterate through columns of _DD_col[q+1]
     for (OSM::Bitboard::iterator it_col = _DD_col[q+1].begin(); (it_col != _DD_col[q+1].end() && !found); ++it_col)
     {
-        const Col_chain& col(OSM::cget_column(_DD_col[q+1], *it_col)) ;
+        const Column_chain& col(OSM::cget_column(_DD_col[q+1], *it_col)) ;
 
         // Iterate through the entries of the column
-        for (typename Col_chain::const_iterator it = col.begin(); (it != col.end() && !found); ++it) {
+        for (typename Column_chain::const_iterator it = col.begin(); (it != col.end() && !found); ++it) {
             if ((it->second == 1) || (it->second == -1)) {
                 // If an entry with coefficient 1 or -1 is found, set the pair and mark as found
                 p.sigma = it->first;
@@ -623,8 +623,8 @@ Pair_cells Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>:
     Pair_cells p ;
 
     // Search for a q-1 cell tau' such that <_d(tau),tau'> invertible
-    const Col_chain& tmp2(OSM::cget_column(_DD_col.at(q), gamma)) ;
-    for (typename Col_chain::const_iterator it = tmp2.cbegin(); (it != tmp2.cend() && !found); ++it)
+    const Column_chain& tmp2(OSM::cget_column(_DD_col.at(q), gamma)) ;
+    for (typename Column_chain::const_iterator it = tmp2.cbegin(); (it != tmp2.cend() && !found); ++it)
     {
         if (abs(it->second) == 1)
         {
@@ -660,10 +660,10 @@ std::vector<Pair_cells> Hdvf_core<CoefficientType, ComplexType, ChainType, Spars
     // Iterate through columns of _DD_col[q+1]
     for (OSM::Bitboard::iterator it_col = this->_DD_col[q+1].begin(); it_col != this->_DD_col[q+1].end(); ++it_col)
     {
-        const Col_chain& col(OSM::cget_column(this->_DD_col[q+1], *it_col)) ;
+        const Column_chain& col(OSM::cget_column(this->_DD_col[q+1], *it_col)) ;
 
         // Iterate through the entries of the column
-        for (typename Col_chain::const_iterator it = col.begin(); it != col.end(); ++it) {
+        for (typename Column_chain::const_iterator it = col.begin(); it != col.end(); ++it) {
             if ((it->second == 1) || (it->second == -1)) {
                 // If an entry with coefficient 1 or -1 is found, set the pair and mark as found
                 Pair_cells p;
@@ -700,8 +700,8 @@ std::vector<Pair_cells> Hdvf_core<CoefficientType, ComplexType, ChainType, Spars
         }
     }
     // Search for a q-1 cell tau' such that <_d(tau),tau'> invertible
-    const Col_chain& tmp2(OSM::cget_column(_DD_col.at(q), gamma)) ;
-    for (typename Col_chain::const_iterator it = tmp2.cbegin(); it != tmp2.cend(); ++it)
+    const Column_chain& tmp2(OSM::cget_column(_DD_col.at(q), gamma)) ;
+    for (typename Column_chain::const_iterator it = tmp2.cbegin(); it != tmp2.cend(); ++it)
     {
         if (abs(it->second) == 1)
         {
@@ -730,7 +730,7 @@ void Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::A(siz
 
     // Extract submatrices from _DD_col
     Row_chain D12(OSM::get_row(_DD_col.at(q+1),tau1)); // D12 is a row chain from _DD_col[q+1] at index tau1
-    Col_chain D21(OSM::get_column(_DD_col.at(q + 1),tau2)); // D21 is a column chain from _DD_col[q+1] at index tau2
+    Column_chain D21(OSM::get_column(_DD_col.at(q + 1),tau2)); // D21 is a column chain from _DD_col[q+1] at index tau2
     const CoefficientType D11 = D12.get_coefficient(tau2); // D11 is the coefficient at the intersection of tau2 in D12
 
     // Assert that D11 is either 1 or -1 (check invertibility)
@@ -750,7 +750,7 @@ void Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::A(siz
     //---------------------------------------------- Submatrices of F -----------------------------------------------------
 
     Row_chain F11 ;
-    Col_chain G11 ;
+    Column_chain G11 ;
     if (_hdvf_opt & (OPT_FULL | OPT_F))
     {
         // Extract the relevant submatrix from _F_row
@@ -810,7 +810,7 @@ void Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::A(siz
     {
         // Update _H_col[q]
         // Compute the temporary matrix product G11 * F11
-        Col_matrix tmp = G11 * F11;
+        Column_matrix tmp = G11 * F11;
 
         // Add the product of tmp and D11_inv to _H_col[q]
         _H_col[q] += (tmp) * D11_inv;
@@ -834,7 +834,7 @@ void Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::A(siz
     if (q > 0) {
         del_column(_DD_col[q], tau1); // Remove column tau1 from _DD_col[q]
     }
-    if (q + 2 <= _K.dim()) {
+    if (q + 2 <= _K.dimension()) {
         del_row(_DD_col[q + 2], tau2); // Remove row tau2 from _DD_col[q+2]
     }
 
@@ -855,7 +855,7 @@ template<typename CoefficientType, typename ComplexType, template <typename, int
 std::vector<Pair_cells> Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::compute_perfect_hdvf(bool verbose) {
     std::vector<Pair_cells> pair_list; // Vector to store the list of pairs
     bool trouve = false; // Flag to indicate whether a pair was found
-    int dim = _K.dim(); // Get the dimension of the complex K
+    int dim = _K.dimension(); // Get the dimension of the complex K
 
     // Loop through dimensions from q-1 to 0
     for (int q = dim - 1; q >= 0; --q) {
@@ -866,7 +866,7 @@ std::vector<Pair_cells> Hdvf_core<CoefficientType, ComplexType, ChainType, Spars
 
         // While a pair is found
         while (trouve) {
-            progress_bar(_K.nb_cells(q)-_nb_C.at(q), _K.nb_cells(q)) ;
+            progress_bar(_K.number_of_cells(q)-_nb_C.at(q), _K.number_of_cells(q)) ;
             // Add the found pair to the list
             pair_list.push_back(pair);
 
@@ -893,7 +893,7 @@ template<typename CoefficientType, typename ComplexType, template <typename, int
 std::vector<Pair_cells> Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::compute_rand_perfect_hdvf(bool verbose) {
     std::vector<Pair_cells> pair_list; // Vector to store the list of pairs
     bool trouve = false; // Flag to indicate whether a pair was found
-    int dim = _K.dim(); // Get the dimension of the complex K
+    int dim = _K.dimension(); // Get the dimension of the complex K
 
     // Init random generator
     std::random_device dev;
@@ -940,10 +940,10 @@ std::vector<Pair_cells> Hdvf_core<CoefficientType, ComplexType, ChainType, Spars
 template<typename CoefficientType, typename ComplexType, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
 std::vector<std::vector<size_t> > Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::flag (FlagType flag) const
 {
-    std::vector<std::vector<size_t> > res(_K.dim()+1) ;
-    for (int q=0; q<=_K.dim(); ++q)
+    std::vector<std::vector<size_t> > res(_K.dimension()+1) ;
+    for (int q=0; q<=_K.dimension(); ++q)
     {
-        for (size_t i=0; i<_K.nb_cells(q); ++i)
+        for (size_t i=0; i<_K.number_of_cells(q); ++i)
         {
             if (_flag.at(q).at(i) == flag)
                 res.at(q).push_back(i) ;
@@ -957,7 +957,7 @@ template<typename CoefficientType, typename ComplexType, template <typename, int
 std::vector<size_t> Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::flag_dim (FlagType flag, int q) const
 {
     std::vector<size_t> res ;
-    for (size_t i=0; i<_K.nb_cells(q); ++i)
+    for (size_t i=0; i<_K.number_of_cells(q); ++i)
     {
         if (_flag.at(q).at(i) == flag)
             res.push_back(i) ;
@@ -971,9 +971,9 @@ std::ostream& Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixTyp
 {
     // Print PSC
     out << "----- flags of cells:" << std::endl;
-    for (int q = 0; q <= _K.dim(); ++q) {
+    for (int q = 0; q <= _K.dimension(); ++q) {
         out << "--- dim " << q << std::endl;
-        for (size_t i = 0; i < _K.nb_cells(q); ++i)
+        for (size_t i = 0; i < _K.number_of_cells(q); ++i)
         {
             const int flag(_flag.at(q).at(i)) ;
             if (flag == PRIMARY)
@@ -989,7 +989,7 @@ std::ostream& Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixTyp
     // Print critical cells
     out << "----- critical cells:" << std::endl;
     std::vector<std::vector<size_t> > critical(flag(CRITICAL)) ;
-    for (int q = 0; q <= _K.dim(); ++q) {
+    for (int q = 0; q <= _K.dimension(); ++q) {
         out << "--- dim " << q << std::endl;
         for (size_t i = 0; i < critical.at(q).size(); ++i)
         {
@@ -1002,15 +1002,15 @@ std::ostream& Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixTyp
     {
         // Print matrices g
         out << "----- g:" << std::endl;
-        for (int q = 0; q <= _K.dim(); ++q) {
+        for (int q = 0; q <= _K.dimension(); ++q) {
             out << "--- dim " << q << std::endl;
             for (size_t i = 0; i < critical.at(q).size(); ++i)
             {
                 const size_t id(critical.at(q).at(i)) ;
                 out << "g(" << id << ") = (" << id << ")";
                 // Iterate over the ith column of _G_col
-                Col_chain col(OSM::get_column(_G_col.at(q), id)) ; // TODO cget
-                for (typename Col_chain::const_iterator it_col = col.cbegin(); it_col != col.cend(); ++it_col) {
+                Column_chain col(OSM::get_column(_G_col.at(q), id)) ; // TODO cget
+                for (typename Column_chain::const_iterator it_col = col.cbegin(); it_col != col.cend(); ++it_col) {
                     out << " + " << it_col->second << ".(" << it_col->first << ") + ";
                 }
                 out << std::endl;
@@ -1022,7 +1022,7 @@ std::ostream& Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixTyp
     {
         // Print matrices f*
         out << "----- f*:" << std::endl;
-        for (int q = 0; q <= _K.dim(); ++q) {
+        for (int q = 0; q <= _K.dimension(); ++q) {
             out << "--- dim " << q << std::endl;
             for (size_t i = 0; i < critical.at(q).size(); ++i)
             {
@@ -1049,17 +1049,17 @@ std::ostream& Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixTyp
     // 1: HDVF only
     out << 0 << std::endl ;
     // Dimension
-    out << _K.dim() << std::endl ;
+    out << _K.dimension() << std::endl ;
     // Number of cells in each dimension
-    for (int q=0; q<=_K.dim(); ++q)
-        out << _K.nb_cells(q) << " " ;
+    for (int q=0; q<=_K.dimension(); ++q)
+        out << _K.number_of_cells(q) << " " ;
     out << std::endl ;
     // Flags
     // P : -1 / S : 1 / C : 0
     // Each dimension written on a row
-    for (int q=0; q<=_K.dim(); ++q)
+    for (int q=0; q<=_K.dimension(); ++q)
     {
-        for (int i=0; i<_K.nb_cells(q); ++i)
+        for (int i=0; i<_K.number_of_cells(q); ++i)
         {
             if (_flag.at(q).at(i) == PRIMARY)
                 out << -1 << " " ;
@@ -1071,22 +1071,22 @@ std::ostream& Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixTyp
         out << std::endl ;
     }
     // F
-    for (int q=0; q<=_K.dim(); ++q)
+    for (int q=0; q<=_K.dimension(); ++q)
     {
         OSM::write_matrix(_F_row.at(q), out) ;
     }
     // G
-    for (int q=0; q<=_K.dim(); ++q)
+    for (int q=0; q<=_K.dimension(); ++q)
     {
         OSM::write_matrix(_G_col.at(q), out) ;
     }
     // H
-    for (int q=0; q<=_K.dim(); ++q)
+    for (int q=0; q<=_K.dimension(); ++q)
     {
         OSM::write_matrix(_H_col.at(q), out) ;
     }
     // DD
-    for (int q=0; q<=_K.dim(); ++q)
+    for (int q=0; q<=_K.dimension(); ++q)
     {
         OSM::write_matrix(_DD_col.at(q), out) ;
     }
@@ -1109,17 +1109,17 @@ std::istream& Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixTyp
     // Load and check dimension
     int d ;
     in >> d ;
-    if (d != _K.dim())
+    if (d != _K.dimension())
     {
         std::cerr << "extract_hdvf_reduction error: dimension loaded incompatible with the dimension of the underlying complex" << std::endl ;
         throw ("extract_hdvf_reduction error: dimension loaded incompatible with the dimension of the underlying complex");
     }
     // Load and check number of cells
     int nb ;
-    for (int q=0; q<=_K.dim(); ++q)
+    for (int q=0; q<=_K.dimension(); ++q)
     {
         in >> nb ;
-        if (nb != _K.nb_cells(q))
+        if (nb != _K.number_of_cells(q))
         {
             std::string mess("extract_hdvf_reduction error: incoherent number of cells in dimension ");
             mess += std::to_string(q);
@@ -1129,9 +1129,9 @@ std::istream& Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixTyp
     }
     // Load flags
     int flag ;
-    for (int q=0; q<=_K.dim(); ++q)
+    for (int q=0; q<=_K.dimension(); ++q)
     {
-        for (int i=0; i<_K.nb_cells(q); ++i)
+        for (int i=0; i<_K.number_of_cells(q); ++i)
         {
             in >> flag ;
             if (flag == -1)
@@ -1144,22 +1144,22 @@ std::istream& Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixTyp
     }
     // Load reduction matrices
     // F
-    for (int q=0; q<=_K.dim(); ++q)
+    for (int q=0; q<=_K.dimension(); ++q)
     {
         OSM::read_matrix(_F_row.at(q), in) ;
     }
     // G
-    for (int q=0; q<=_K.dim(); ++q)
+    for (int q=0; q<=_K.dimension(); ++q)
     {
         OSM::read_matrix(_G_col.at(q), in) ;
     }
     // H
-    for (int q=0; q<=_K.dim(); ++q)
+    for (int q=0; q<=_K.dimension(); ++q)
     {
         OSM::read_matrix(_H_col.at(q), in) ;
     }
     // DD
-    for (int q=0; q<=_K.dim(); ++q)
+    for (int q=0; q<=_K.dimension(); ++q)
     {
         OSM::read_matrix(_DD_col.at(q), in) ;
     }

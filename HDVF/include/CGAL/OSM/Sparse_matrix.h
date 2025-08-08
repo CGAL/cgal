@@ -1669,7 +1669,7 @@ Sparse_matrix<_CT, _CTF>& del_coef(Sparse_matrix<_CT, _CTF>& matrix, size_t i, s
 template <typename _CT>
 std::ostream& write_matrix (const Sparse_matrix<_CT, OSM::COLUMN>& M, std::ostream& out)
 {
-    typedef Sparse_chain<_CT, OSM::COLUMN> Col_chain;
+    typedef Sparse_chain<_CT, OSM::COLUMN> Column_chain;
     std::vector<size_t> vec_i, vec_j;
     std::vector<_CT> vec_val;
     // Matrix type : 0 for (COLUMN), 1 for (ROW)
@@ -1679,9 +1679,9 @@ std::ostream& write_matrix (const Sparse_matrix<_CT, OSM::COLUMN>& M, std::ostre
     // Get all coefficients
     for(OSM::Bitboard::iterator it = M.begin(); it != M.end(); ++it)
     {
-        const Col_chain& col(OSM::cget_column(M, *it));
+        const Column_chain& col(OSM::cget_column(M, *it));
         // Iterate over the column
-        for (typename Col_chain::const_iterator it_col = col.begin(); it_col != col.end(); ++it_col)
+        for (typename Column_chain::const_iterator it_col = col.begin(); it_col != col.end(); ++it_col)
         {
             vec_j.push_back(*it) ;
             vec_i.push_back(it_col->first) ;

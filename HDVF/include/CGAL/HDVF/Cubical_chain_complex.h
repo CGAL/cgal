@@ -129,11 +129,11 @@ public:
     friend Duality_cubical_complex_tools<CoefficientType> ;
 
     /** \brief Type of column-major chains */
-    typedef CGAL::OSM::Sparse_chain<CoefficientType, CGAL::OSM::COLUMN> Col_chain;
+    typedef CGAL::OSM::Sparse_chain<CoefficientType, CGAL::OSM::COLUMN> Column_chain;
     /** \brief Type of row-major chains */
     typedef CGAL::OSM::Sparse_chain<CoefficientType, CGAL::OSM::ROW> Row_chain ;
     /** \brief Type of column-major sparse matrices */
-    typedef CGAL::OSM::Sparse_matrix<CoefficientType, CGAL::OSM::COLUMN> Col_matrix;
+    typedef CGAL::OSM::Sparse_matrix<CoefficientType, CGAL::OSM::COLUMN> Column_matrix;
 
     /**
      * \brief Assignment operator for cubical chain complexes.
@@ -166,12 +166,12 @@ public:
      *
      * \return The column-major chain containing the boundary of the cell id_cell in dimension q.
      */
-    Col_chain d(size_t id_cell, int q) const
+    Column_chain d(size_t id_cell, int q) const
     {
         if (q > 0)
             return OSM::cget_column(_d[q], id_cell);
         else
-            return Col_chain(0) ;
+            return Column_chain(0) ;
     }
 
     /**
@@ -201,7 +201,7 @@ public:
      *
      * \return The dimension of the complex..
      */
-    int dim() const
+    int dimension() const
     {
         return _dim ;
     }
@@ -213,7 +213,7 @@ public:
      *
      * \return Number of cells in dimension q.
      */
-    size_t nb_cells(int q) const
+    size_t number_of_cells(int q) const
     {
         if ((q >=0) && (q <= _dim))
             return _base2bool.at(q).size() ;
@@ -228,7 +228,7 @@ public:
      *
      * \return Returns a constant reference to the vector of column-major boundary matrices along each dimension.
      */
-    const vector<Col_matrix> & boundary_matrices() const
+    const vector<Column_matrix> & boundary_matrices() const
     {
         return _d ;
     }
@@ -242,7 +242,7 @@ public:
      *
      * \return A column-major sparse matrix containing the matrix of the boundary operator of dimension q.
      */
-    const Col_matrix & boundary_matrix(int q) const
+    const Column_matrix & boundary_matrix(int q) const
     {
         return _d.at(q) ;
     }
@@ -271,13 +271,13 @@ public:
      * The resulting chain lies in dimension `q`+1 and is null if this dimension exceeds the dimension of the complex.
     */
     template <typename CoefficientT, int ChainTypeF>
-    Col_chain cofaces_chain (OSM::Sparse_chain<CoefficientT, ChainTypeF> chain, int q) const
+    Column_chain cofaces_chain (OSM::Sparse_chain<CoefficientT, ChainTypeF> chain, int q) const
     {
         typedef OSM::Sparse_chain<CoefficientT, ChainTypeF> ChainType;
         // Compute the cofaces
-        if (q < dim())
+        if (q < dimension())
         {
-            Col_chain fstar_cofaces(nb_cells(q+1)) ;
+            Column_chain fstar_cofaces(number_of_cells(q+1)) ;
             for (typename ChainType::const_iterator it = chain.cbegin(); it != chain.cend(); ++it)
             {
                 // Set the cofaces of it->first in dimension dim+1
@@ -288,7 +288,7 @@ public:
             return fstar_cofaces ;
         }
         else
-            return Col_chain(0) ;
+            return Column_chain(0) ;
     }
 
 protected:
@@ -348,7 +348,7 @@ public:
     const std::vector<Point>& get_vertices_coords() const
     {
         std::vector<Point> res ;
-        for (size_t i=0; i<nb_cells(0); ++i)
+        for (size_t i=0; i<number_of_cells(0); ++i)
             res.push_back(get_vertex_coords(i)) ;
         return res ;
     }
@@ -389,7 +389,7 @@ public:
         out << "DATASET  UNSTRUCTURED_GRID" << endl ;
 
         // Points
-        size_t nnodes = K.nb_cells(0) ;
+        size_t nnodes = K.number_of_cells(0) ;
         out << "POINTS " << nnodes << " double" << endl ;
         for (size_t n = 0; n < nnodes; ++n)
         {
@@ -409,17 +409,17 @@ public:
         {
             // Cells up to dimension 3
             // Size : size of a cell of dimension q : 2^q
-            for (int q=0; q<=K.dim(); ++q)
+            for (int q=0; q<=K.dimension(); ++q)
             {
-                ncells_tot += K.nb_cells(q) ;
+                ncells_tot += K.number_of_cells(q) ;
                 const size_t size_cell = 1<<q ;
-                size_cells_tot += (size_cell+1)*K.nb_cells(q) ;
+                size_cells_tot += (size_cell+1)*K.number_of_cells(q) ;
             }
             out << "CELLS " << ncells_tot << " " << size_cells_tot << endl ;
             // Output cells by increasing dimension
 
             // Vertices
-            for (size_t i = 0; i<K.nb_cells(0); ++i)
+            for (size_t i = 0; i<K.number_of_cells(0); ++i)
             {
                 out << "1 " << i << endl ;
                 types.push_back(Cubical_chain_complex<CoefficientType>::VTK_cubtypes.at(0)) ;
@@ -430,10 +430,10 @@ public:
                 }
             }
             // Cells of higher dimension
-            for (int q=1; q<=K.dim(); ++q)
+            for (int q=1; q<=K.dimension(); ++q)
             {
                 const size_t size_cell = 1<<q ; //int_exp(2, q) ;
-                for (size_t id =0; id < K.nb_cells(q); ++id)
+                for (size_t id =0; id < K.number_of_cells(q); ++id)
                 {
                     vector<size_t> verts(K.khal_to_verts(K.ind2khal(K._base2bool.at(q).at(id)))) ;
                     out << size_cell << " " ;
@@ -516,7 +516,7 @@ protected:
     }
 
     /* \brief Method computing the boundary of a given cell */
-    Col_chain boundary_cell(size_t index_base, int dim) const {
+    Column_chain boundary_cell(size_t index_base, int dim) const {
         // Ensure dim is within valid range
         if (dim < 0 || dim >= _base2bool.size()) {
             throw std::out_of_range("Invalid dimension: " + std::to_string(dim));
@@ -527,8 +527,8 @@ protected:
             throw std::out_of_range("index_base " + std::to_string(index_base) + " not found in _base2bool[" + std::to_string(dim) + "]");
         }
 
-        size_t nb_lignes = (dim == 0) ? 0 : nb_cells(dim - 1);
-        Col_chain boundary(nb_lignes);
+        size_t nb_lignes = (dim == 0) ? 0 : number_of_cells(dim - 1);
+        Column_chain boundary(nb_lignes);
 
         size_t index_bool = _base2bool[dim][index_base];
         std::vector<size_t> c = ind2khal(index_bool);
@@ -635,7 +635,7 @@ protected:
     /* \brief Maps from boolean indices (ie.\ indices in _cells) to base indices in each dimension */
     std::vector<std::map<size_t, size_t>> _bool2base;
     /* \brief Vector of boundary matrices in each dimension */
-    std::vector<Col_matrix>  _d;
+    std::vector<Column_matrix>  _d;
 private:
     std::vector<bool> _visited_cells; // Internal flag
     /* \brief Static counter for objects ids.
@@ -907,14 +907,14 @@ void Cubical_chain_complex<CoefficientType>::insert_cell(size_t cell) {
 // calculate_d implementation
 template<typename CoefficientType>
 void Cubical_chain_complex<CoefficientType>::calculate_d(int dim)  {
-    size_t nb_lignes = (dim == 0) ? 0 : nb_cells(dim - 1);
+    size_t nb_lignes = (dim == 0) ? 0 : number_of_cells(dim - 1);
 
-    _d[dim] = Col_matrix(nb_lignes, nb_cells(dim));
+    _d[dim] = Column_matrix(nb_lignes, number_of_cells(dim));
 
     // Iterate through the cells of dimension dim
-    for (size_t i = 0; i < nb_cells(dim); ++i) {
+    for (size_t i = 0; i < number_of_cells(dim); ++i) {
         // Boundary of the i-th cell of dimension dim
-        Col_chain boundary = boundary_cell(i, dim);
+        Column_chain boundary = boundary_cell(i, dim);
 
         // Insert the chain into the corresponding column of the boundary matrix
         OSM::set_column(_d[dim], i, boundary);
@@ -980,7 +980,7 @@ void Cubical_chain_complex<CoefficientType>::chain_complex_chain_to_vtk(const Cu
     out << "DATASET  UNSTRUCTURED_GRID" << endl ;
 
     // Points
-    size_t nnodes = K.nb_cells(0) ;
+    size_t nnodes = K.number_of_cells(0) ;
     out << "POINTS " << nnodes << " double" << endl ;
     for (size_t n = 0; n < nnodes; ++n)
     {
@@ -1002,7 +1002,7 @@ void Cubical_chain_complex<CoefficientType>::chain_complex_chain_to_vtk(const Cu
         // 1 - Compute the number of cells / size of encoding
         {
             const size_t size_cell = 1<<q ;
-            for (size_t id =0; id < K.nb_cells(q); ++id)
+            for (size_t id =0; id < K.number_of_cells(q); ++id)
             {
                 if (!chain.is_null(id))
                 {
@@ -1016,7 +1016,7 @@ void Cubical_chain_complex<CoefficientType>::chain_complex_chain_to_vtk(const Cu
 
         {
             const size_t size_cell = 1<<q ;
-            for (size_t id =0; id < K.nb_cells(q); ++id)
+            for (size_t id =0; id < K.number_of_cells(q); ++id)
             {
                 if (!chain.is_null(id))
                 {

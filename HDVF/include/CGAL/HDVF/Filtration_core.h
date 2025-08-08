@@ -87,7 +87,7 @@ protected:
     /*!
      Type of column-major sparse matrices
      */
-    typedef CGAL::OSM::Sparse_matrix<CoefficientType,CGAL::OSM::COLUMN> Col_matrix ;
+    typedef CGAL::OSM::Sparse_matrix<CoefficientType,CGAL::OSM::COLUMN> Column_matrix ;
 
     /*!
      Type of row-major sparse matrices
@@ -96,7 +96,7 @@ protected:
     /*!
      Type of column-major chains
      */
-    typedef CGAL::OSM::Sparse_chain<CoefficientType,CGAL::OSM::COLUMN> Col_chain ;
+    typedef CGAL::OSM::Sparse_chain<CoefficientType,CGAL::OSM::COLUMN> Column_chain ;
 
     /*!
      Type of row-major chains
@@ -260,10 +260,10 @@ public:
      */
     vector<vector<std::size_t> > export_filtration () const
     {
-        vector<vector<std::size_t> > labels(_K.dim()+1) ;
-        for (int q=0; q<=this->_K.dim(); ++q)
+        vector<vector<std::size_t> > labels(_K.dimension()+1) ;
+        for (int q=0; q<=this->_K.dimension(); ++q)
         {
-            for (std::size_t i = 0; i<this->_K.nb_cells(q); ++i)
+            for (std::size_t i = 0; i<this->_K.number_of_cells(q); ++i)
             {
                 const Cell_index_dimension cell(i,q) ;
                 const std::size_t t(_cell_to_t.at(cell));
@@ -312,9 +312,9 @@ bool Filtration_core<CoefficientType, ComplexType, Degree_type>::is_valid() cons
         const int q = c.second ;
         if (q>0)
         {
-            Col_chain dc = _K.d(c.first, q) ;
+            Column_chain dc = _K.d(c.first, q) ;
             std::cout << "bnd : " << dc << std::endl ;
-            for (typename Col_chain::iterator it = dc.begin(); it != dc.end() && valid; ++it)
+            for (typename Column_chain::iterator it = dc.begin(); it != dc.end() && valid; ++it)
             {
                 // Faces of c
                 const Cell_index_dimension face(it->first,q-1) ;

@@ -69,11 +69,11 @@ public:
     Abstract_simplicial_chain_complex(const Mesh_object_io& mesh);
 
     /** \brief Type of column-major chains */
-    typedef CGAL::OSM::Sparse_chain<CoefficientType, CGAL::OSM::COLUMN> Col_chain;
+    typedef CGAL::OSM::Sparse_chain<CoefficientType, CGAL::OSM::COLUMN> Column_chain;
     /** \brief Type of row-major chains */
     typedef CGAL::OSM::Sparse_chain<CoefficientType, CGAL::OSM::ROW> Row_chain ;
     /** \brief Type of column-major sparse matrices */
-    typedef CGAL::OSM::Sparse_matrix<CoefficientType, CGAL::OSM::COLUMN> Col_matrix;
+    typedef CGAL::OSM::Sparse_matrix<CoefficientType, CGAL::OSM::COLUMN> Column_matrix;
 
 
     /**
@@ -105,12 +105,12 @@ public:
      *
      * \return The column-major chain containing the boundary of the cell id_cell in dimension q.
      */
-    Col_chain d(size_t id_cell, int q) const
+    Column_chain d(size_t id_cell, int q) const
     {
         if (q > 0)
             return OSM::get_column(_d[q], id_cell);
         else
-            return Col_chain(0) ;
+            return Column_chain(0) ;
     }
 
     /**
@@ -140,7 +140,7 @@ public:
      *
      * \return The dimension of the complex..
      */
-    int dim() const { return _dim ;}
+    int dimension() const { return _dim ;}
 
     /**
      * \brief Returns the number of cells in a given dimension.
@@ -149,7 +149,7 @@ public:
      *
      * \return Number of cells in dimension q.
      */
-    size_t nb_cells(int q) const
+    size_t number_of_cells(int q) const
     {
         if ((q >=0) && (q<=_dim))
             return _nb_cells[q] ;
@@ -164,7 +164,7 @@ public:
      *
      * \return Returns a constant reference to the vector of column-major boundary matrices along each dimension.
      */
-    const vector<Col_matrix> & boundary_matrices() const
+    const vector<Column_matrix> & boundary_matrices() const
     {
         return _d ;
     }
@@ -178,7 +178,7 @@ public:
      *
      * \return A column-major sparse matrix containing the matrix of the boundary operator of dimension q.
      */
-    const Col_matrix & boundary_matrix(int q) const
+    const Column_matrix & boundary_matrix(int q) const
     {
         return _d.at(q) ;
     }
@@ -216,13 +216,13 @@ public:
      * The resulting chain lies in dimension `q`+1 and is null if this dimension exceeds the dimension of the complex.
     */
     template <typename CoefficientT, int ChainTypeF>
-    Col_chain cofaces_chain (OSM::Sparse_chain<CoefficientT, ChainTypeF> chain, int q) const
+    Column_chain cofaces_chain (OSM::Sparse_chain<CoefficientT, ChainTypeF> chain, int q) const
     {
         typedef OSM::Sparse_chain<CoefficientT, ChainTypeF> ChainType;
         // Compute the cofaces
-        if (q < dim())
+        if (q < dimension())
         {
-            Col_chain fstar_cofaces(nb_cells(q+1)) ;
+            Column_chain fstar_cofaces(number_of_cells(q+1)) ;
             for (typename ChainType::const_iterator it = chain.cbegin(); it != chain.cend(); ++it)
             {
                 // Set the cofaces of it->first in dimension dim+1
@@ -233,7 +233,7 @@ public:
             return fstar_cofaces ;
         }
         else
-            return Col_chain(0) ;
+            return Column_chain(0) ;
     }
 
 protected:
@@ -267,7 +267,7 @@ protected:
     /* \brief Vector of number of cells in each dimension */
     std::vector<size_t> _nb_cells ;
     /* \brief Vector of column-major boundary matrices: _d.at(q) is the matrix of the boundary operator in dimension q. */
-    mutable std::vector<Col_matrix>  _d;  // Boundary matrices
+    mutable std::vector<Column_matrix>  _d;  // Boundary matrices
 
     // Protected methods
 
@@ -366,7 +366,7 @@ void Abstract_simplicial_chain_complex<CoefficientType>::insert_simplex(const Si
 template<typename CoefficientType>
 void Abstract_simplicial_chain_complex<CoefficientType>::calculate_d(int dim) const {
     size_t nb_lignes = (dim == 0) ? 0 : _nb_cells[dim - 1];
-    _d[dim] = Col_matrix(nb_lignes, _nb_cells[dim]);
+    _d[dim] = Column_matrix(nb_lignes, _nb_cells[dim]);
 
     // Iterate through the cells of dimension dim
     if (dim>0)
@@ -377,7 +377,7 @@ void Abstract_simplicial_chain_complex<CoefficientType>::calculate_d(int dim) co
             std::vector<Simplex> bord = s.boundary();
 
             // Create a chain with the correct size
-            Col_chain chain(nb_lignes);
+            Column_chain chain(nb_lignes);
 
             // For each element of the boundary
             for (size_t j = 0; j < bord.size(); ++j) {
@@ -411,7 +411,7 @@ std::ostream& Abstract_simplicial_chain_complex<CoefficientType>::print_complex(
     // Cells per dimension
     for (int q = 0; q <= _dim; ++q) {
         out << "--- dimension " << q << std::endl;
-        out << nb_cells(q) << " cells" << std::endl ;
+        out << number_of_cells(q) << " cells" << std::endl ;
         //        for (size_t j = 0; j < _nb_cells.at(q); ++j) {
         //            Simplex s(_ind2Simp.at(q).at(j));
         //            std::cout << j << " -> " << s << " -> " << _Simp2ind.at(q).at(s) << std::std::endl;

@@ -692,8 +692,8 @@ How to extract (co)homological information then? Various solutions and output ar
     Each critical cell \f$\gamma\f$ bears an associated homology generator: \f$g(\gamma)\f$ and cohomology generator: \f$f^*(\gamma)\f$.
     - Generators associated to \f$\gamma\f$ (index `id`, dimension `q`) can be extracted as column chains (ie.\ column `Sparse_chain`):
     \code
-        HDVFType::Col_chain hom_generator(hdvf.homology_chain(id, q)) ;
-        HDVFType::Col_chain cohom_generator(hdvf.cohomology_chain(id, q)) ;
+        HDVFType::Column_chain hom_generator(hdvf.homology_chain(id, q)) ;
+        HDVFType::Column_chain cohom_generator(hdvf.cohomology_chain(id, q)) ;
     \endcode
     These chains can be visited as described in section \ref secHDVFmatrixChain.
     - The HDVF package also provides a vtk exporter for such chains (cells with a non zero coefficient are exported). For instance:

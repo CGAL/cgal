@@ -73,7 +73,7 @@ template<typename CoefficientType, typename ComplexType>
 class Hdvf_duality : public Hdvf_core<CoefficientType, ComplexType, OSM::Sparse_chain, OSM::Sub_sparse_matrix> {
 private:
      // Type of column-major chains
-    typedef CGAL::OSM::Sparse_chain<CoefficientType, CGAL::OSM::COLUMN> Col_chain;
+    typedef CGAL::OSM::Sparse_chain<CoefficientType, CGAL::OSM::COLUMN> Column_chain;
      // Type of row-major chains
     typedef CGAL::OSM::Sparse_chain<CoefficientType, CGAL::OSM::ROW> Row_chain;
 
@@ -292,9 +292,9 @@ public:
     {
         // Print critical cells
         out << "----- critical cells:" << endl;
-        for (int q = 0; q <= _L.dim(); ++q) {
+        for (int q = 0; q <= _L.dimension(); ++q) {
             out << "--- dim " << q << endl;
-            for (size_t i = 0; i < _L.nb_cells(q); ++i)
+            for (size_t i = 0; i < _L.number_of_cells(q); ++i)
             {
                 if ((this->_flag[q][i] == CRITICAL) && (_subCC.get_bit(q, i))) {
                     out << i << " ";
@@ -307,14 +307,14 @@ public:
         {
             // Print matrices g
             out << "----- g:" << endl;
-            for (int q = 0; q <= _L.dim(); ++q) {
+            for (int q = 0; q <= _L.dimension(); ++q) {
                 out << "--- dim " << q << endl;
-                for (size_t i = 0; i < _L.nb_cells(q); ++i) {
+                for (size_t i = 0; i < _L.number_of_cells(q); ++i) {
                     if ((this->_flag[q][i] == CRITICAL) && (_subCC.get_bit(q, i))) {
                         out << "g(" << i << ") = (" << i << ")";
                         // Iterate over the ith column of _G_col
-                        typename HDVF_type::Col_chain col(OSM::get_column(this->_G_col.at(q), i)) ; // TODO cget
-                        for (typename HDVF_type::Col_chain::const_iterator it_col = col.cbegin(); it_col != col.cend(); ++it_col) {
+                        typename HDVF_type::Column_chain col(OSM::get_column(this->_G_col.at(q), i)) ; // TODO cget
+                        for (typename HDVF_type::Column_chain::const_iterator it_col = col.cbegin(); it_col != col.cend(); ++it_col) {
                             out << " + " << it_col->second << ".(" << it_col->first << ") + ";
                         }
                         out << endl;
@@ -327,9 +327,9 @@ public:
         {
             // Print matrices f*
             out << "----- f*:" << endl;
-            for (int q = 0; q <= _L.dim(); ++q) {
+            for (int q = 0; q <= _L.dimension(); ++q) {
                 out << "--- dim " << q << endl;
-                for (size_t i = 0; i < _L.nb_cells(q); ++i) {
+                for (size_t i = 0; i < _L.number_of_cells(q); ++i) {
                     if ((this->_flag[q][i] == CRITICAL) && (_subCC.get_bit(q, i))) {
                         out << "f*(" << i << ") = (" << i << ")";
                         // Iterate over the ith row of _F_row
@@ -357,7 +357,7 @@ public:
     ostream& print_bnd_pairing(ostream& out = cout)
     {
         Sub_chain_complex_mask<CoefficientType, ComplexType> subPair(_L, false) ;
-        for (int q=0; q<=_L.dim(); ++q)
+        for (int q=0; q<=_L.dimension(); ++q)
         {
             for (size_t i=0; i<_critical_K.at(q).size(); ++i)
                 subPair.set_bit_on(q, _critical_K.at(q).at(i)) ;
@@ -365,7 +365,7 @@ public:
                 subPair.set_bit_on(q, _critical_L_K.at(q).at(i)) ;
         }
         // Print corresponding submatrices _DD_col
-        for (int q=1; q<=_L.dim(); ++q)
+        for (int q=1; q<=_L.dimension(); ++q)
         {
             out << "--> dim " << q << " : q / q-1 cells" << endl ;
             out << "id " << q << " : " ;
@@ -400,10 +400,10 @@ public:
      */
     virtual vector<vector<int> > psc_labels () const
     {
-        vector<vector<int> > labels(this->_K.dim()+1) ;
-        for (int q=0; q<=this->_K.dim(); ++q)
+        vector<vector<int> > labels(this->_K.dimension()+1) ;
+        for (int q=0; q<=this->_K.dimension(); ++q)
         {
-            for (size_t i = 0; i<this->_K.nb_cells(q); ++i)
+            for (size_t i = 0; i<this->_K.number_of_cells(q); ++i)
             {
                 if (_subCC.get_bit(q, i)) // i belongs to _subCC
                 {
@@ -428,9 +428,9 @@ public:
      *
      * \return A column-major chain.
      */
-    virtual Col_chain homology_chain (size_t cell, int dim) const
+    virtual Column_chain homology_chain (size_t cell, int dim) const
     {
-        if ((dim<0) || (dim>this->_K.dim()))
+        if ((dim<0) || (dim>this->_K.dimension()))
             throw "Error : homology_chain with dim out of range" ;
         if (!_subCC.get_bit(dim, cell))
             throw "Error : homology_chain for a cell out of current sub chain complex" ;
@@ -438,12 +438,12 @@ public:
         if (this->_hdvf_opt & (OPT_FULL | OPT_G))
         {
             // Get g(cell, dim) with per indices
-            Col_chain g_cell(OSM::get_column(this->_G_col.at(dim), cell)) ;
+            Column_chain g_cell(OSM::get_column(this->_G_col.at(dim), cell)) ;
             // Add 1 to the cell
             g_cell.set_coefficient(cell, 1) ;
             // Keep cells of the chain belonging to _subCC
-            Col_chain g_cell_sub(g_cell.dimension()) ;
-            for (typename Col_chain::const_iterator it = g_cell.begin(); it != g_cell.end(); ++it)
+            Column_chain g_cell_sub(g_cell.dimension()) ;
+            for (typename Column_chain::const_iterator it = g_cell.begin(); it != g_cell.end(); ++it)
             {
 
                 if (_subCC.get_bit(dim, it->first))
@@ -464,9 +464,9 @@ public:
      *
      * \return A column-major chain.
      */
-    virtual Col_chain cohomology_chain (size_t cell, int dim) const
+    virtual Column_chain cohomology_chain (size_t cell, int dim) const
     {
-        if ((dim<0) || (dim>this->_K.dim()))
+        if ((dim<0) || (dim>this->_K.dimension()))
             throw "Error : cohomology_chain with dim out of range" ;
         if (!_subCC.get_bit(dim, cell))
             throw "Error : cohomology_chain for a cell out of current sub chain complex" ;
@@ -478,8 +478,8 @@ public:
             fstar_cell.set_coefficient(cell, 1) ;
 
             // Keep cells of the chain belonging to _subCC
-            Col_chain fstar_cell_sub(fstar_cell.dimension()) ;
-            for (typename Col_chain::const_iterator it = fstar_cell.begin(); it != fstar_cell.end(); ++it)
+            Column_chain fstar_cell_sub(fstar_cell.dimension()) ;
+            for (typename Column_chain::const_iterator it = fstar_cell.begin(); it != fstar_cell.end(); ++it)
             {
 
                 if (_subCC.get_bit(dim, it->first))
@@ -507,11 +507,11 @@ Pair_cells Hdvf_duality<CoefficientType,ComplexType>::find_pair_A(int q, bool &f
     // Iterate through columns of _DD_col[q+1]
     for (OSM::Bitboard::iterator it_col = this->_DD_col[q+1].begin(); (it_col != this->_DD_col[q+1].end() && !found); ++it_col)
     {
-        const typename HDVF_type::Col_chain& col(OSM::cget_column(this->_DD_col[q+1], *it_col)) ;
+        const typename HDVF_type::Column_chain& col(OSM::cget_column(this->_DD_col[q+1], *it_col)) ;
 
         // Iterate through the entries of the column
         // Check that the row belongs to the subchaincomplex
-        for (typename HDVF_type::Col_chain::const_iterator it = col.begin(); (it != col.end() && !found); ++it) {
+        for (typename HDVF_type::Column_chain::const_iterator it = col.begin(); (it != col.end() && !found); ++it) {
             if (_subCC.get_bit(q, it->first) && (abs(it->second) == 1)) {
                 // If an entry with coefficient 1 or -1 is found, set the pair and mark as found
                 p.sigma = it->first;
@@ -536,8 +536,8 @@ Pair_cells Hdvf_duality<CoefficientType,ComplexType>::find_pair_A(int q, bool &f
 
     // Search for a q-1 cell tau' such that <_d(tau),tau'> invertible
     // and tau' belongs to _subCC
-    const typename HDVF_type::Col_chain& tmp2(OSM::cget_column(this->_DD_col.at(q), tau)) ;
-    for (typename HDVF_type::Col_chain::const_iterator it = tmp2.cbegin(); (it != tmp2.cend() && !found); ++it)
+    const typename HDVF_type::Column_chain& tmp2(OSM::cget_column(this->_DD_col.at(q), tau)) ;
+    for (typename HDVF_type::Column_chain::const_iterator it = tmp2.cbegin(); (it != tmp2.cend() && !found); ++it)
     {
         if (_subCC.get_bit(q-1, it->first) && abs(it->second) == 1)
         {
@@ -575,10 +575,10 @@ std::vector<Pair_cells> Hdvf_duality<CoefficientType,ComplexType>::find_pairs_A(
     // Iterate through columns of _DD_col[q+1]
     for (OSM::Bitboard::iterator it_col = this->_DD_col[q+1].begin(); it_col != this->_DD_col[q+1].end(); ++it_col)
     {
-        const typename HDVF_type::Col_chain& col(OSM::cget_column(this->_DD_col[q+1], *it_col)) ;
+        const typename HDVF_type::Column_chain& col(OSM::cget_column(this->_DD_col[q+1], *it_col)) ;
 
         // Iterate through the entries of the column
-        for (typename HDVF_type::Col_chain::const_iterator it = col.begin(); it != col.end(); ++it) {
+        for (typename HDVF_type::Column_chain::const_iterator it = col.begin(); it != col.end(); ++it) {
             if (_subCC.get_bit(q, it->first) && ((it->second == 1) || (it->second == -1))) {
                 // If an entry of _subCC with coefficient 1 or -1 is found, set the pair and mark as found
                 Pair_cells p;
@@ -620,8 +620,8 @@ std::vector<Pair_cells> Hdvf_duality<CoefficientType,ComplexType>::find_pairs_A(
     }
     // Search for a q-1 cell tau' such that <_d(tau),tau'> invertible
     // and tau' belongs to _subCC
-    const typename HDVF_type::Col_chain& tmp2(OSM::cget_column(this->_DD_col.at(q), tau)) ;
-    for (typename HDVF_type::Col_chain::const_iterator it = tmp2.cbegin(); it != tmp2.cend(); ++it)
+    const typename HDVF_type::Column_chain& tmp2(OSM::cget_column(this->_DD_col.at(q), tau)) ;
+    for (typename HDVF_type::Column_chain::const_iterator it = tmp2.cbegin(); it != tmp2.cend(); ++it)
     {
         if (_subCC.get_bit(q-1, it->first) && (abs(it->second) == 1))
         {
@@ -730,10 +730,10 @@ std::vector<Pair_cells> Hdvf_duality<CoefficientType,ComplexType>::compute_rand_
 template<typename CoefficientType, typename ComplexType>
 vector<vector<size_t> > Hdvf_duality<CoefficientType,ComplexType>::flag (FlagType flag) const
 {
-    vector<vector<size_t> > res(_L.dim()+1) ;
-    for (int q=0; q<=_L.dim(); ++q)
+    vector<vector<size_t> > res(_L.dimension()+1) ;
+    for (int q=0; q<=_L.dimension(); ++q)
     {
-        for (size_t i=0; i<_L.nb_cells(q); ++i)
+        for (size_t i=0; i<_L.number_of_cells(q); ++i)
         {
             if (_subCC.get_bit(q, i) && (this->_flag.at(q).at(i) == flag))
                 res.at(q).push_back(i) ;
@@ -747,7 +747,7 @@ template<typename CoefficientType, typename ComplexType>
 vector<size_t> Hdvf_duality<CoefficientType,ComplexType>::flag_dim (FlagType flag, int q) const
 {
     vector<size_t> res ;
-    for (size_t i=0; i<this->_K.nb_cells(q); ++i)
+    for (size_t i=0; i<this->_K.number_of_cells(q); ++i)
     {
         if (_subCC.get_bit(q, i) && (this->_flag.at(q).at(i) == flag))
             res.push_back(i) ;

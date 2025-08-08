@@ -82,7 +82,7 @@ void hdvf_geometric_chain_complex_output_vtk (Hdvf_core<CoefType, ComplexType, _
     {
         // Export generators of all critical cells
         vector<vector<size_t> > criticals(hdvf.flag(CRITICAL)) ;
-        for (int q = 0; q <= complex.dim(); ++q)
+        for (int q = 0; q <= complex.dimension(); ++q)
         {
             for (size_t c : criticals.at(q))
             {
@@ -105,7 +105,7 @@ void hdvf_geometric_chain_complex_output_vtk (Hdvf_core<CoefType, ComplexType, _
                     }
                     else
                     {
-                        if (q < complex.dim())
+                        if (q < complex.dimension())
                         {
                             ComplexType::chain_complex_chain_to_vtk(complex, outfile_f, complex.cofaces_chain(chain, q), q+1, c) ;
                         }
@@ -238,7 +238,7 @@ void hdvf_duality_geometric_chain_complex_output_vtk (Hdvf_duality<CoefType, Com
     {
         // Export generators of all critical cells
         vector<vector<size_t> > criticals(hdvf.flag(CRITICAL)) ;
-        for (int q = 0; q <= complex.dim(); ++q)
+        for (int q = 0; q <= complex.dimension(); ++q)
         {
             for (size_t c : criticals.at(q))
             {
@@ -261,7 +261,7 @@ void hdvf_duality_geometric_chain_complex_output_vtk (Hdvf_duality<CoefType, Com
                     }
                     else // Compute co-faces
                     {
-                        if (q < complex.dim())
+                        if (q < complex.dimension())
                         {
                             // Restrict the cofaces of the cohomology generator to the current sub chain complex
                             OSM::Sparse_chain<CoefType,OSM::COLUMN> cofaces_chain(complex.cofaces_chain(chain, q)) ;
@@ -362,9 +362,9 @@ public:
         // Build the Sub_chain_complex_mask encoding _K inside L
         SubCCType& K(*new SubCCType(L, false)) ;
         // Visit all cells of _K and activate the corresponding bit in K
-        for (int q=0; q<=_K.dim(); ++q)
+        for (int q=0; q<=_K.dimension(); ++q)
         {
-            for (size_t i=0; i<_K.nb_cells(q); ++i)
+            for (size_t i=0; i<_K.number_of_cells(q); ++i)
             {
                 const std::set<size_t>& simplex(_K._ind2simp.at(q).at(i).get_vertices()) ;
                 const size_t id(L._simp2ind.at(q)[simplex]) ;
@@ -379,8 +379,8 @@ public:
     static Mesh_object_io& export_meshObject(const ComplexType& _CC)
     {
         std::vector<IOCellType> vcells ;
-        for (int q = 0; q <= _CC.dim(); ++q)
-            for (size_t i = 0; i<_CC.nb_cells(q); ++i)
+        for (int q = 0; q <= _CC.dimension(); ++q)
+            for (size_t i = 0; i<_CC.number_of_cells(q); ++i)
             {
                 const Simplex& s(_CC._ind2simp.at(q).at(i)) ;
                 vcells.push_back(s.get_vertices()) ;
@@ -433,11 +433,11 @@ public:
     static std::pair<ComplexType&, SubCCType&> cubical_chain_complex_bb (const ComplexType& _K)
     {
         Cub_object_io tmp ;
-        tmp.dim = _K.dim() ;
+        tmp.dim = _K.dimension() ;
         tmp.N = _K._size_bb ;
         tmp.ncubs.resize(tmp.dim+1) ;
         // Visit all boolean indices in the BB of _CC and insert corresponding Cells
-        for (size_t i=0; i<_K._P.at(_K.dim()); ++i)
+        for (size_t i=0; i<_K._P.at(_K.dimension()); ++i)
         {
             const std::vector<size_t> tmpkhal(_K.ind2khal(i)) ;
             const int dtmp(_K.calculate_dimension(tmpkhal)) ;
@@ -449,9 +449,9 @@ public:
         // Build the Sub_chain_complex_mask corresponding to _CC
         SubCCType& K(*new SubCCType(L, false)) ;
         // Visit all cells of _CC and activate the corresponding bit in K
-        for (int q=0; q<=_K.dim(); ++q)
+        for (int q=0; q<=_K.dimension(); ++q)
         {
-            for (size_t i=0; i<_K.nb_cells(q); ++i)
+            for (size_t i=0; i<_K.number_of_cells(q); ++i)
             {
                 const std::vector<size_t> khal(_K.ind2khal(_K._base2bool.at(q).at(i))) ;
                 const size_t j = L._bool2base.at(q).at(L.khal2ind(khal)) ;

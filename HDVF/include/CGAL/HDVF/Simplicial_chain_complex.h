@@ -122,7 +122,7 @@ public:
     static void chain_complex_to_vtk(const Simplicial_chain_complex &K, const std::string &filename, const std::vector<std::vector<LabelType> > *labels=NULL, string label_type_name = "int")
     {
         typedef Simplicial_chain_complex<CoefficientType> ComplexType;
-        if (K._coords.size() != K.nb_cells(0))
+        if (K._coords.size() != K.number_of_cells(0))
         {
             std::cerr << "SimpComplex_to_vtk. Error, wrong number of points provided.\n";
             throw std::runtime_error("Geometry of points invalid.");
@@ -168,16 +168,16 @@ public:
             // Size : size of a cell of dimension q : q+1
             for (int q=0; q<=K._dim; ++q)
             {
-                ncells_tot += K.nb_cells(q) ;
+                ncells_tot += K.number_of_cells(q) ;
                 const size_t size_cell = q+1 ;
-                size_cells_tot += (size_cell+1)*K.nb_cells(q) ;
+                size_cells_tot += (size_cell+1)*K.number_of_cells(q) ;
             }
             out << "CELLS " << ncells_tot << " " << size_cells_tot << endl ;
             // Output cells by increasing dimension
             for (int q=0; q<=K._dim; ++q)
             {
                 const size_t size_cell = q+1 ;
-                for (size_t id =0; id < K.nb_cells(q); ++id)
+                for (size_t id =0; id < K.number_of_cells(q); ++id)
                 {
                     Simplex verts(K._ind2simp.at(q).at(id)) ;
                     out << size_cell << " " ;
@@ -243,7 +243,7 @@ template <typename CoefficientType>
 void Simplicial_chain_complex<CoefficientType>::chain_complex_chain_to_vtk(const Simplicial_chain_complex &K, const std::string &filename, const OSM::Sparse_chain<CoefficientType, OSM::COLUMN>& chain, int q, size_t cellId)
 {
     typedef Simplicial_chain_complex<CoefficientType> ComplexType ;
-    if (K._coords.size() != K.nb_cells(0))
+    if (K._coords.size() != K.number_of_cells(0))
     {
         std::cerr << "SimpComplex_chain_to_vtk. Error, wrong number of points provided.\n";
         throw std::runtime_error("Geometry of points invalid.");
@@ -289,7 +289,7 @@ void Simplicial_chain_complex<CoefficientType>::chain_complex_chain_to_vtk(const
         // 1 - Compute the number of cells / size of encoding
         {
             const size_t size_cell = q+1 ;
-            for (size_t id =0; id < K.nb_cells(q); ++id)
+            for (size_t id =0; id < K.number_of_cells(q); ++id)
             {
                 if (!chain.is_null(id))
                 {
@@ -303,7 +303,7 @@ void Simplicial_chain_complex<CoefficientType>::chain_complex_chain_to_vtk(const
 
         {
             const size_t size_cell = q+1 ;
-            for (size_t id =0; id < K.nb_cells(q); ++id)
+            for (size_t id =0; id < K.number_of_cells(q); ++id)
             {
                 if (!chain.is_null(id))
                 {

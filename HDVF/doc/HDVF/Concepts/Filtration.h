@@ -49,7 +49,7 @@ protected:
     /*!
      Type of column-major sparse matrices.
      */
-    typedef CGAL::OSM::Sparse_matrix<_CoefType,CGAL::OSM::COLUMN> Col_matrix ;
+    typedef CGAL::OSM::Sparse_matrix<_CoefType,CGAL::OSM::COLUMN> Column_matrix ;
 
     /*!
      Type of row-major sparse matrices.
@@ -59,7 +59,7 @@ protected:
     /*!
      Type of column-major chains.
      */
-    typedef CGAL::OSM::Sparse_chain<_CoefType,CGAL::OSM::COLUMN> Col_chain ;
+    typedef CGAL::OSM::Sparse_chain<_CoefType,CGAL::OSM::COLUMN> Column_chain ;
 
     /*!
      Type of row-major chains.

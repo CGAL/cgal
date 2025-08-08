@@ -163,7 +163,7 @@ struct Pair_cells {
 /*!
  Type of column-major chains
  */
-typedef ChainType<CoefficientType, CGAL::OSM::COLUMN> Col_chain;
+typedef ChainType<CoefficientType, CGAL::OSM::COLUMN> Column_chain;
 
 /*!
  Type of row-major chains
@@ -173,7 +173,7 @@ typedef ChainType<CoefficientType, CGAL::OSM::ROW> Row_chain ;
 /*!
  Type of column-major sparse matrices
  */
-typedef SparseMatrixType<CoefficientType, CGAL::OSM::COLUMN> Col_matrix;
+typedef SparseMatrixType<CoefficientType, CGAL::OSM::COLUMN> Column_matrix;
 
 /*!
  Type of row-major sparse matrices
@@ -308,17 +308,17 @@ const Row_matrix& matrix_f (int q) const;
 /*!
  * \brief Gets the column-major matrix of \f$g\f$ (from the reduction associated to the HDVF).
  */
-const Col_matrix& matrix_g (int q) const;
+const Column_matrix& matrix_g (int q) const;
 
 /*!
  * \brief Gets the column-major matrix of \f$h\f$ (from the reduction associated to the HDVF).
  */
-const Col_matrix& matrix_h (int q) const;
+const Column_matrix& matrix_h (int q) const;
 
 /*!
  * \brief Gets the column-major matrix of \f$\partial'\f$, reduced boundary operator (from the reduction associated to the HDVF).
  */
-const Col_matrix& matrix_dd (int q) const;
+const Column_matrix& matrix_dd (int q) const;
 
 /*!
  * \brief Tests if a HDVF is perfect.
@@ -380,7 +380,7 @@ virtual std::vector<std::vector<int> > psc_labels () const;
  *
  * \return A column-major chain.
  */
-virtual Col_chain homology_chain (size_t cell, int q) const;
+virtual Column_chain homology_chain (size_t cell, int q) const;
 
 /*!
  * \brief Returns a chain containing the cohomology generators associated to `cell` (critical cell) of dimension  `q` (in particular for vtk export).
@@ -406,7 +406,7 @@ virtual Col_chain homology_chain (size_t cell, int q) const;
  *
  * \return A column-major chain.
  */
-virtual Col_chain cohomology_chain (size_t cell, int dim, bool co_faces = false) const;
+virtual Column_chain cohomology_chain (size_t cell, int dim, bool co_faces = false) const;
 
 /// @}
 
