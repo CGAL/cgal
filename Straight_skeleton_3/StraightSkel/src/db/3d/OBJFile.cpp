@@ -219,7 +219,8 @@ bool OBJFile::save(const std::string& filename,
     // CGAL_SS3_IO_TRACE("Saving to OBJ:\n" << polyhedron->toString());
 
     // tolerate intersections for OBJ::save because it used for debug
-    using Itag = CGAL::No_constraint_intersection_requiring_constructions_tag;
+    // using Itag = CGAL::No_constraint_intersection_requiring_constructions_tag;
+    using Itag = CGAL::Exact_intersections_tag;
     using PK = CGAL::Projection_traits_3<CGAL::K>;
     using PVbb = CGAL::Triangulation_vertex_base_with_info_2<VertexSPtr, PK>;
     using PVb = CGAL::Triangulation_vertex_base_2<PK, PVbb>;
