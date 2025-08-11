@@ -15,12 +15,14 @@
 
 #include <CGAL/license/HDVF.h>
 
-#include <CGAL/OSM/Sparse_chain.h>
-#include <CGAL/OSM/Bitboard.h>
 #include <stdint.h>
 #include <cmath>
 #include <unordered_set>
 #include <iostream>
+#include <fstream>
+
+#include <CGAL/OSM/Sparse_chain.h>
+#include <CGAL/OSM/Bitboard.h>
 
 // DEBUG : matrix output for SparseMatrices / no DEBUG : chain output for SparseMatrices
 //#define DEBUG
@@ -154,8 +156,8 @@ public:
             _chainsStates = otherToCopy._chainsStates;
             _size = otherToCopy._size;
             // Copy of _chains as such
-            _chains.resize(otherToCopy._chains._size()) ;
-            for (size_t i = 0; i<otherToCopy._chains._size(); ++i)
+            _chains.resize(otherToCopy._chains.size()) ;
+            for (size_t i = 0; i<otherToCopy._chains.size(); ++i)
             {
                 const Sparse_chain<CoefficientType, CTF>& tmp(otherToCopy._chains.at(i)) ;
                 Sparse_chain<CoefficientType,ChainTypeFlag> res(tmp.dimension()) ;
@@ -178,7 +180,7 @@ public:
                 _chains.at(i) = Sparse_chain<CoefficientType,ChainTypeFlag>(chain_size) ;
             }
 
-            for (size_t i = 0; i<otherToCopy._chains._size(); ++i)
+            for (size_t i = 0; i<otherToCopy._chains.size(); ++i)
             {
                 const Sparse_chain<CoefficientType, CTF>& tmp(otherToCopy._chains.at(i)) ;
                 for (typename Sparse_chain<CoefficientType, CTF>::const_iterator it = tmp.cbegin(); it != tmp.cend(); ++it)
@@ -306,48 +308,58 @@ public:
     }
 
     /**
-     * \defgroup WriteMatrix Writes matrix to an output stream.
+     * \defgroup WriteMatrix Writes matrix to an output stream or a file.
      * \ingroup PkgHDVFAlgorithmClasses
-     * @brief  Write a sparse matrix to an output stream.
+     * @brief  Write a sparse matrix to an output stream or a file using the `.osm` file format.
      *
-     * Output a sparse matrix to a stream (the matrix can be reloaded using `read_matrix`).
+     * Output a sparse matrix  (the matrix can be reloaded using `read_matrix`).
      *
-     * @param out Output stream.
-     * @return A reference to the modified stream.
      * @{
      */
 
-    /** \brief Writes a sparse COLUMN matrix. */
-
+    /** \brief Writes a sparse COLUMN matrix to a stream. */
     template <typename _CT>
     friend std::ostream& write_matrix (const Sparse_matrix<_CT, OSM::COLUMN>& M, std::ostream& out);
 
-    /** \brief Writes a sparse ROW matrix. */
+    /** \brief Writes a sparse ROW matrix to a stream. */
     template <typename _CT>
     friend std::ostream& write_matrix (const Sparse_matrix<_CT, OSM::ROW>& M, std::ostream& out);
+    
+    /** \brief Writes a sparse COLUMN matrix to a file. */
+    template <typename _CT>
+    friend void write_matrix (const Sparse_matrix<_CT, OSM::COLUMN>& M, std::string filename);
+
+    /** \brief Writes a sparse ROW matrix to a file. */
+    template <typename _CT>
+    friend void write_matrix (const Sparse_matrix<_CT, OSM::ROW>& M, std::string filename);
 
     /** @} */
 
     /**
      * \defgroup ReadMatrix Reads matrix from an input stream.
      * \ingroup PkgHDVFAlgorithmClasses
-     * @brief  Read a sparse matrix from an input stream.
+     * @brief  Read a sparse matrix from an input stream or a file using the `.osm` file format.
      *
-     * Read a sparse matrix from a stream (the stream must respect the format of  `write_matrix`).
+     * Read a sparse matrix (the input must respect the `.osm` file format).
      *
-     * @param in Input stream.
-     * @return A reference to the modified stream.
      * @{
      */
 
-    /** \brief Reads a sparse COLUMN matrix. */
-
+    /** \brief Reads a sparse COLUMN matrix from a stream. */
     template <typename _CT>
     friend std::istream& read_matrix (Sparse_matrix<_CT, OSM::COLUMN>& M, std::istream& in);
 
-    /** \brief Reads a sparse ROW matrix. */
+    /** \brief Reads a sparse ROW matrix from a stream. */
     template <typename _CT>
     friend std::istream& read_matrix (Sparse_matrix<_CT, OSM::ROW>& M, std::istream& in);
+    
+    /** \brief Reads a sparse COLUMN matrix from a file. */
+    template <typename _CT>
+    friend void read_matrix (Sparse_matrix<_CT, OSM::COLUMN>& M, std::string filename);
+
+    /** \brief Reads a sparse ROW matrix from a file. */
+    template <typename _CT>
+    friend void read_matrix (Sparse_matrix<_CT, OSM::ROW>& M, std::string filename);
 
     /** @} */
 
@@ -736,7 +748,7 @@ protected:
         }
         else
         {
-            del_coef(i, j);
+            del_coefficient(i, j);
         }
     }
 public:
@@ -1054,10 +1066,9 @@ public:
     friend Sparse_matrix<_CT, _CTF>& del_row(Sparse_matrix<_CT, _CTF>& matrix, size_t index);
 
 protected:
-    // Protected version of del_coef
-    Sparse_matrix& del_coef(size_t i, size_t j)
-    {
-
+    // Protected version of del_coefficient
+    Sparse_matrix& del_coefficient(size_t i, size_t j) {
+        // OSM::COLUMN
         if (ChainTypeFlag == OSM::COLUMN) {
             std::vector<size_t> tmp_id({i}) ;
             Matrix_chain &tmp(_chains[j]);
@@ -1072,7 +1083,6 @@ protected:
             if (tmp.is_null())
                 _chainsStates.setOff(i) ;
         }
-
         return *this;
     }
 
@@ -1089,7 +1099,7 @@ public:
      * \return The modified matrix representing the result.
      */
     template <typename _CT, int _CTF>
-    friend Sparse_matrix<_CT, _CTF>& del_coef(Sparse_matrix<_CT, _CTF>& matrix, size_t i, size_t j);
+    friend Sparse_matrix<_CT, _CTF>& del_coefficient(Sparse_matrix<_CT, _CTF>& matrix, size_t i, size_t j);
 
     /**
      * \brief Iterator to the index of the first non null chain.
@@ -1661,9 +1671,9 @@ Sparse_matrix<_CT, _CTF>& del_row(Sparse_matrix<_CT, _CTF>& matrix, size_t index
 }
 
 template <typename _CT, int _CTF>
-Sparse_matrix<_CT, _CTF>& del_coef(Sparse_matrix<_CT, _CTF>& matrix, size_t i, size_t j)
+Sparse_matrix<_CT, _CTF>& del_coefficient(Sparse_matrix<_CT, _CTF>& matrix, size_t i, size_t j)
 {
-    return matrix.del_coef(i, j);
+    return matrix.del_coefficient(i, j);
 }
 
 template <typename _CT>
@@ -1727,6 +1737,34 @@ std::ostream& write_matrix (const Sparse_matrix<_CT, OSM::ROW>& M, std::ostream&
 }
 
 template <typename _CT>
+void write_matrix (const Sparse_matrix<_CT, OSM::COLUMN>& M, std::string filename)
+{
+    std::ofstream out ( filename, std::ios::out | std::ios::trunc);
+    if ( not out . good () ) {
+        std::cerr << "Out fatal Error:\n  " << filename << " not found.\n";
+        throw std::runtime_error("File Parsing Error: File not found");
+    }
+    
+    CGAL::OSM::write_matrix(M, out) ;
+    
+    out.close();
+}
+
+template <typename _CT>
+void write_matrix (const Sparse_matrix<_CT, OSM::ROW>& M, std::string filename)
+{
+    std::ofstream out ( filename, std::ios::out | std::ios::trunc);
+    if ( not out . good () ) {
+        std::cerr << "Out fatal Error:\n  " << filename << " not found.\n";
+        throw std::runtime_error("File Parsing Error: File not found");
+    }
+    
+    CGAL::OSM::write_matrix(M, out) ;
+    
+    out.close();
+}
+
+template <typename _CT>
 std::istream& read_matrix (Sparse_matrix<_CT, OSM::COLUMN>& M, std::istream& in)
 {
     // Read and check type
@@ -1784,6 +1822,34 @@ std::istream& read_matrix (Sparse_matrix<_CT, OSM::ROW>& M, std::istream& in)
         OSM::set_coefficient(M, i, j, val) ;
     }
     return in ;
+}
+
+template <typename _CT>
+void read_matrix (Sparse_matrix<_CT, OSM::COLUMN>& M, std::string filename)
+{
+    std::ifstream in (filename);
+    if ( not in . good () ) {
+        std::cerr << "Out fatal Error:\n  " << filename << " not found.\n";
+        throw std::runtime_error("File Parsing Error: File not found");
+    }
+    
+    CGAL::OSM::read_matrix(M, in) ;
+    
+    in.close();
+}
+
+template <typename _CT>
+void read_matrix (Sparse_matrix<_CT, OSM::ROW>& M, std::string filename)
+{
+    std::ifstream in (filename);
+    if ( not in . good () ) {
+        std::cerr << "Out fatal Error:\n  " << filename << " not found.\n";
+        throw std::runtime_error("File Parsing Error: File not found");
+    }
+    
+    CGAL::OSM::read_matrix(M, in) ;
+    
+    in.close();
 }
 
 template <typename _CT>

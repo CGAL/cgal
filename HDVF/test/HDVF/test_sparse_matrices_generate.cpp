@@ -14,78 +14,11 @@ typedef CGAL::OSM::Sparse_matrix<int, CGAL::OSM::ROW> Row_matrix;
 
 int main(int argc, char **argv)
 {
-    std::cerr << "-- Test Sparse_matrices read/write" << std::endl;
-
-    std::cerr << "----> Column matrices" << std::endl;
-
-    Column_matrix MC_rw(3,4);
-    CGAL::OSM::set_coefficient(MC_rw, 0, 1, 1) ;
-    CGAL::OSM::set_coefficient(MC_rw, 0, 2, -1) ;
-    CGAL::OSM::set_coefficient(MC_rw, 1, 0, 2) ;
-    CGAL::OSM::set_coefficient(MC_rw, 1, 2, -2) ;
-
-    const std::string filename_col_save("test_col_mat.osm") ;
-
-    std::ofstream out_col_save ( filename_col_save, std::ios::out | std::ios::trunc);
-    if ( not out_col_save . good () ) {
-        std::cerr << "Out fatal Error:\n  " << filename_col_save << " not found.\n";
-        throw std::runtime_error("File Parsing Error: File not found");
-    }
-
-    write_matrix(MC_rw, out_col_save);
-
-    out_col_save.close() ;
-
-    Column_matrix MC_rw2 ;
-
-    std::ifstream in_col_save (filename_col_save);
-    if ( not in_col_save . good () ) {
-        std::cerr << "Out fatal Error:\n  " << filename_col_save << " not found.\n";
-        throw std::runtime_error("File Parsing Error: File not found");
-    }
-    CGAL::OSM::read_matrix(MC_rw2, in_col_save);
-    in_col_save.close() ;
-
-    bool comp_col(MC_rw == MC_rw2) ;
-    std::cerr << "saved and loaded matrices comparison: " << comp_col << std::endl ;
-    assert(comp_col) ;
-
-    std::cerr << "----> Row matrices" << std::endl;
-
-    Row_matrix MR_rw(3,4) ;
-    CGAL::OSM::set_coefficient(MR_rw, 0, 1, 1) ;
-    CGAL::OSM::set_coefficient(MR_rw, 0, 2, -1) ;
-    CGAL::OSM::set_coefficient(MR_rw, 1, 0, 2) ;
-    CGAL::OSM::set_coefficient(MR_rw, 1, 2, -2) ;
-
-    const std::string filename_row_save("test_row_mat.osm") ;
-
-    std::ofstream out_row_save ( filename_row_save, std::ios::out | std::ios::trunc);
-    if ( not out_row_save . good () ) {
-        std::cerr << "Out fatal Error:\n  " << filename_row_save << " not found.\n";
-        throw std::runtime_error("File Parsing Error: File not found");
-    }
-
-    write_matrix(MR_rw, out_row_save);
-
-    out_row_save.close() ;
-
-    Row_matrix MR_rw2 ;
-
-    std::ifstream in_row_save (filename_row_save);
-    if ( not in_row_save . good () ) {
-        std::cerr << "Out fatal Error:\n  " << filename_row_save << " not found.\n";
-        throw std::runtime_error("File Parsing Error: File not found");
-    }
-    CGAL::OSM::read_matrix(MR_rw2, in_row_save);
-    in_row_save.close() ;
-
-    bool comp_row(MR_rw == MR_rw2) ;
-    std::cerr << "saved and loaded matrices comparison: " << comp_row << std::endl ;
-    assert(comp_row) ;
 
     std::cerr << "-- Tests Sparse_matrices operations" << std::endl ;
 
+    std::cerr << "---- Test column chain * row chain -> columnMajor matrix" << std::endl ;
+    
     Column_chain a(4);
     Row_chain b(4);
     a.set_coefficient(1,1);
@@ -93,20 +26,70 @@ int main(int argc, char **argv)
     b.set_coefficient(0,2);
     b.set_coefficient(1,-3);
 
-    Column_matrix columnMajor = a * b, tmp = columnMajor;
-    std::cout << columnMajor << std::endl ;
+    Column_matrix columnMajor = a * b;
 
-    Column_matrix columnMajorRes(4,4) ;
-
+    CGAL::OSM::write_matrix(columnMajor, "data/test_sparse_matrices/columnMajor.osm");
     
-    // How to read data in data/ directory ?
+    std::cout << "a * b: " << columnMajor << std::endl ;
+    
+    std::cerr << "---- Test column chain % row chain -> rowMajor matrix" << std::endl ;
+    
+    Row_matrix rowMajor = a * b;
 
-//    Row_matrix rowMajor = a % b;
-//
-//    std::cout << "Création de matrice col-dominant:" << std::endl << columnMajor << std::endl << std::endl;
-//    std::cout << "Suppr col 0:" << std::endl << tmp.delColumn(0) << std::endl << std::endl;
-//    std::cout << "Suppr row 0:" << std::endl << tmp.delRow(1) << std::endl << std::endl;
-//    std::cout << "Création de matrice row-dominant:" << std::endl << rowMajor << std::endl << std::endl;
+    std::cout << "a % b: " << rowMajor << std::endl ;
+    
+    CGAL::OSM::write_matrix(rowMajor, "data/test_sparse_matrices/rowMajor.osm");
+
+    std::cerr << "---- Test column/row deletion" << std::endl ;
+    
+    std::cerr << "------ In Column_matrix" << std::endl ;
+    
+    {
+        Column_matrix tmp(columnMajor);
+        CGAL::OSM::del_column(tmp, 0) ;
+        std::cout << "deletion column 0 in columnMajor: " << tmp << std::endl ;
+        
+        CGAL::OSM::write_matrix(tmp, "data/test_sparse_matrices/columnMajor_del_col.osm");
+    }
+    
+    {
+        Column_matrix tmp(columnMajor);
+        CGAL::OSM::del_row(tmp, 1) ;
+        std::cout << "deletion row 1 in columnMajor: " << tmp << std::endl ;
+        
+        CGAL::OSM::write_matrix(tmp, "data/test_sparse_matrices/columnMajor_del_row.osm");
+    }
+    
+    std::cerr << "------ In Row_matrix" << std::endl ;
+    
+    {
+        Row_matrix tmp(rowMajor);
+        CGAL::OSM::del_row(tmp, 1) ;
+        std::cout << "deletion row 1 in rowMajor: " << tmp << std::endl ;
+        
+        CGAL::OSM::write_matrix(tmp, "data/test_sparse_matrices/rowMajor_del_row.osm");
+    }
+    
+    {
+        Row_matrix tmp(rowMajor);
+        CGAL::OSM::del_column(tmp, 0) ;
+        std::cout << "deletion column 0 in rowMajor: " << tmp << std::endl ;
+        
+        CGAL::OSM::write_matrix(tmp, "data/test_sparse_matrices/rowMajor_del_column.osm");
+    }
+    
+    std::cerr << "---- Test matrices sum" << std::endl ;
+    
+    std::cerr << "------ Test Column_matrix + Column_matrix" << std::endl ;
+    
+    {
+        Column_matrix tmp(columnMajor), res ;
+        CGAL::OSM::set_column(tmp, 0, a);
+        
+//        CGAL::OSM::del_coefficient(tmp, 0, 1);
+//        CGAL::OSM::set_coefficient(tmp, 2, 2, -2) ;
+    }
+    
 //
 //    std::cout << "Ajout de deux matrices CC: " << columnMajor + columnMajor << std::endl;
 //    std::cout << "Soustraction de deux matrices CC: " << columnMajor - columnMajor << std::endl << std::endl;

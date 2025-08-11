@@ -395,7 +395,7 @@ public:
      *
      * Removes coefficient on row `i` / column `j` of the matrix.
      */
-    friend SparseMatrix& del_coef(SparseMatrix& matrix, size_t i, size_t j);
+    friend SparseMatrix& del_coefficient(SparseMatrix& matrix, size_t i, size_t j);
 
     /// @}
 
