@@ -10,7 +10,7 @@ A filtration class provides:
 
  - an iterator to visit all cells by increasing degrees.
  - getters to get the degree of a cell, and the cell of a given index along the filtration.
- - an overload of `<<` to output filtrations.
+ - an overload of `operator<<()` to output filtrations.
 
 Cells are indexed along each dimension and thus identified by their index together with their dimension.
 
@@ -146,7 +146,7 @@ public:
     Degree_type degree (size_t i) const;
 
     // Filtration verification
-    /*! \brief Checks that a filtration is valid
+    /*! \brief Checks that a filtration is valid.
      * Checks that cells are ordered in increasing degrees and all cells have indices larger than their faces.
      */
     bool is_valid() const;

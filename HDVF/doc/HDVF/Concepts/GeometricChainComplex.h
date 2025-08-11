@@ -3,7 +3,7 @@
 \cgalConcept
 
 The concept `GeometricChainComplex` refines the concept `AbstractChainComplex` and describes the requirements for (topological) chain complexes associated to geometric complexes used in the concept `HDVF`.
- It adds to `AbstractChainComplex` methods to get vertices coordinates.
+ It adds to `AbstractChainComplex` methods to get vertex coordinates.
 
  \cgalRefines{AbstractChainComplex}
 
@@ -31,7 +31,7 @@ typedef std::vector<double> Point ;
 /// @{
 
 /*!
-Returns the vector of vertices coordinates.
+Returns the vector of vertex coordinates.
  */
 const std::vector<Point >& get_vertices_coords() const;
 
