@@ -4134,9 +4134,7 @@ void SimpleStraightSkel::collectPierceEvents(const std::list<VertexSPtr>& vertic
     unsigned int tested_candidates = 0;
 #endif
 
-    std::list<VertexSPtr>::const_iterator it_v = vertices.begin();
-    while (it_v != vertices.end()) {
-        VertexSPtr vertex = *it_v++;
+    for (VertexSPtr vertex : vertices) {
         CGAL_assertion(vertex->getID() != -1);
 
         // actual check
@@ -4145,15 +4143,10 @@ void SimpleStraightSkel::collectPierceEvents(const std::list<VertexSPtr>& vertic
             ++pierce_vertex_counter;
 #endif
 
-            std::list<FacetSPtr>::const_iterator it_f = facets.begin();
-            while (it_f != facets.end()) {
-                FacetSPtr facet = *it_f++;
-
+            for (FacetSPtr facet : facets) {
                 // @todo contains_vertex is redundant with has_edge_to_facet?
                 bool contains_vertex = false;
-                std::list<VertexSPtr>::iterator it_v2 = facet->vertices().begin();
-                while (it_v2 != facet->vertices().end()) {
-                    VertexSPtr vertex_2 = *it_v2++;
+                for (VertexSPtr vertex_2 : facet->vertices()) {
                     if (vertex_2->getPoint() == vertex->getPoint()) {
                         contains_vertex = true;
                         break;
@@ -4163,6 +4156,7 @@ void SimpleStraightSkel::collectPierceEvents(const std::list<VertexSPtr>& vertic
                     continue;
                 }
 
+#ifndef CGAL_SS3_CHECK_PIERCE_AT_POP_TIME
                 bool has_edge_to_facet = false;
                 std::list<EdgeWPtr>::iterator it_e = vertex->edges().begin();
                 while (it_e != vertex->edges().end()) {
@@ -4179,6 +4173,7 @@ void SimpleStraightSkel::collectPierceEvents(const std::list<VertexSPtr>& vertic
                 if (has_edge_to_facet) {
                     continue;
                 }
+#endif
 
                 // shrinking, so the vertex must be on the backside of the plane
                 if (KernelWrapper::side(facet->getPlane(), vertex->getPoint()) > 0) {
@@ -4198,7 +4193,6 @@ void SimpleStraightSkel::collectPierceEvents(const std::list<VertexSPtr>& vertic
 #ifdef CGAL_SS3_PROFILE_FILTERING_MECHANISMS
                         ++filtered_candidates;
 #endif
-                        // std::cout << "  filter (a)" << std::endl;
                         continue;
                     } else {
 #ifdef CGAL_SS3_PROFILE_FILTERING_MECHANISMS
@@ -7513,39 +7507,64 @@ SimpleStraightSkel::isActualPierceEvent(PierceEventSPtr event,
                                         PolyhedronSPtr polyhedron)
 
 {
-    // Filter if the event point is on an edge (and a fortiori on a vertex)
-    // as it will be a different kind of event
-    //
-    // @todo avoid duplicating code
     CGAL_SS3_CORE_TRACE_V(8, "Is actual Pierce Event?");
 
+    VertexSPtr pv = event->getVertex();
+    FacetSPtr pf = event->getFacet();
+
+    // This combinatorics filter is here because some events such as surface events
+    // can increase the (combinatorial) separation between a vertex and a facet, so a pierce
+    // event can be revealed without anything changing around the vertex.
+    //
+    // This is problematic if we are using local updates because we (currently) only check
+    // modified vertices. We could increase the range of vertices being considered in local
+    // updates, but it's simpler to delay the check until the event has become the next event
+    // to treat.
+    bool has_edge_to_facet = false;
+    for (EdgeWPtr edge_wptr : pv->edges()) {
+        if (EdgeSPtr edge = edge_wptr.lock()) {
+            FacetSPtr facet_src = edge->getFacetSrc();
+            FacetSPtr facet_dst = edge->getFacetDst();
+            if (pf == facet_src || pf == facet_dst) {
+                has_edge_to_facet = true;
+                break;
+            }
+        }
+    }
+    if (has_edge_to_facet) {
+        CGAL_SS3_CORE_TRACE_V(8, "Pierce rejected at pop time (a)");
+        return false;
+    }
+
+    // Filter if the event point is on an edge (and a fortiori on a vertex)
+    // as it will be a different kind of event
     Point3SPtr point = event->getNode()->getPoint();
-    FacetSPtr facet_base = event->getFacet();
-    FacetSPtr facet_clone = facet_base->clone();
+    FacetSPtr facet_clone = pf->clone();
 
     CGAL::FT shift = event->getOffset() - current_offset;
-    const CGAL::FT& speed = std::dynamic_pointer_cast<SkelFacetData>(facet_base->getData())->getSpeed();
-    Plane3SPtr offset_plane = KernelWrapper::offsetPlane(facet_base->getPlane(), shift*speed);
+    const CGAL::FT& speed = std::dynamic_pointer_cast<SkelFacetData>(pf->getData())->getSpeed();
+    Plane3SPtr offset_plane = KernelWrapper::offsetPlane(pf->getPlane(), shift*speed);
     facet_clone->setPlane(offset_plane);
 
     // abusing the fact that vertices will have the same order in both facets
-    std::list<VertexSPtr>::iterator it_v = facet_base->vertices().begin();
+    std::list<VertexSPtr>::iterator it_v = pf->vertices().begin();
     std::list<VertexSPtr>::iterator it_v_offset = facet_clone->vertices().begin();
-    while (it_v != facet_base->vertices().end()) {
+    while (it_v != pf->vertices().end()) {
         VertexSPtr vertex = *it_v++;
         VertexSPtr offset_vertex = *it_v_offset++;
         Point3SPtr point_offset = PolyhedronTransformation::shiftPoint(vertex, shift);
         offset_vertex->setPoint(point_offset);
     }
 
-#if 1 //def CGAL_SLS3_NEW_IS_INSIDE
+#define CGAL_SLS3_NEW_IS_INSIDE
+#ifdef CGAL_SLS3_NEW_IS_INSIDE
     if (!SelfIntersection::isInsideWithRayShootingV2(point, facet_clone)) {
-        CGAL_SS3_CORE_TRACE_V(8, "Pierce rejected at pop time");
+        CGAL_SS3_CORE_TRACE_V(8, "Pierce rejected at pop time (b)");
         return false;
     }
 #else
     if (!SelfIntersection::isInsideWithRayShootingV2(point, facet_clone)) {
-        CGAL_SS3_CORE_TRACE_V(8, "Pierce rejected at pop time (1)");
+        CGAL_SS3_CORE_TRACE_V(8, "Pierce rejected at pop time (b)");
         return false;
     }
 
@@ -7566,7 +7585,7 @@ SimpleStraightSkel::isActualPierceEvent(PierceEventSPtr event,
     }
 
     if (boundary_rejection) {
-        CGAL_SS3_CORE_TRACE_V(8, "Pierce rejected at pop time (2)");
+        CGAL_SS3_CORE_TRACE_V(8, "Pierce rejected at pop time (c)");
         return false;
     }
 #endif
