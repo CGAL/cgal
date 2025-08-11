@@ -1373,7 +1373,7 @@ void PolyhedronTransformation::randTiltPlanesv3(PolyhedronSPtr polyhedron) {
 #endif
 
     // Forward declarations for mutually recursive lambdas
-    std::function<void(FacetSPtr, VertexSPtr)> add_fixing_vertex;
+    std::function<bool(FacetSPtr, VertexSPtr)> add_fixing_vertex;
     std::function<void(VertexSPtr)> determine_vertex;
 
     auto nudge_constrained_vertex = [&](VertexSPtr v)
@@ -1384,7 +1384,7 @@ void PolyhedronTransformation::randTiltPlanesv3(PolyhedronSPtr polyhedron) {
         for (FacetSPtr df : determining_facets[v]) {
             if (is_facet_fixed(df)) {
                 constraining_planes.push_back(df->getPlane());
-                CGAL_SS3_TRANSF_TRACE("  F" << df->getID() << " constrains the nudge");
+                CGAL_SS3_TRANSF_TRACE("    F" << df->getID() << " constrains the nudge");
             }
         }
 
@@ -1442,7 +1442,7 @@ void PolyhedronTransformation::randTiltPlanesv3(PolyhedronSPtr polyhedron) {
         double z = CGAL::to_double(p->z()) + v_r[2];
 #endif
         Point3SPtr p_nudged = KernelFactory::createPoint3(x, y, z);
-        CGAL_SS3_TRANSF_TRACE("base nudge: " << x << " " << y << " " << z);
+        // CGAL_SS3_TRANSF_TRACE("base nudge: " << x << " " << y << " " << z);
 
         Point3SPtr p_new;
 
@@ -1499,97 +1499,49 @@ void PolyhedronTransformation::randTiltPlanesv3(PolyhedronSPtr polyhedron) {
         v->setPoint(p_new);
     };
 
-    // The face has enough determined vertices to be fixed. Compute its random perturbation,
-    // and add the facet ID to its vertices
-    add_fixing_vertex = [&](FacetSPtr f, VertexSPtr v)
+    // sometimes we could fix as a polygon, but we need triangualte for other reasons
+    auto should_triangulate_facet = [&](FacetSPtr f) -> bool
     {
-        CGAL_precondition(fixing_vertices[f].size() <= 3);
-
-        if (is_facet_fixed(f)) {
-            CGAL_SS3_TRANSF_TRACE("  F" << f->getID() << " is already fully fixed");
-            return;
+        if (f->isTriangle() || is_facet_fixed(f)) {
+            return false;
         }
 
-        CGAL_SS3_TRANSF_TRACE("  Fix F" << f->getID() << " with V" << v->getID());
-        fixing_vertices[f].insert(v);
-
-        if (!is_facet_fixed(f)) {
-            // nothing to do yet, there are still degrees of freedom in the facet
-            return;
-        }
-
-
-        CGAL_SS3_TRANSF_TRACE_CODE(std::stringstream ss;)
-        CGAL_SS3_TRANSF_TRACE_CODE(ss << "F" << f->getID() << " is now fully fixed by");
-        CGAL_SS3_TRANSF_TRACE_CODE(for (VertexSPtr fv : fixing_vertices[f]))
-        CGAL_SS3_TRANSF_TRACE_CODE(ss << " V" << fv->getID() << " [measure=" << CGAL::ss_utils::length(*(fv->getPoint())) << "]");
-        CGAL_SS3_TRANSF_TRACE(ss.str());
-
-        if (f->isTriangle()) {
-            CGAL_assertion(fixing_vertices[f].size() == 3); // just to be clear
-
-            // for triangles, all vertices are determined, and there is nothing to nudge
-            // (note that vertices were themselves nudged so the facet is nudged).
-            f->initPlane();
-            f->normalizePlaneCoefficients();
-
-#ifdef CGAL_SS3_DUMP_FILES
-            dump_facet("results/nudged_face_" + std::to_string(nudged_face_id++) + "_fixed_3.OFF", f);
-#endif
-
-            // Here we do not need to add the fixed face to incident determined vertices
-            // because all vertices are fully determined
-            return;
-        }
-
-        std::vector<Point3SPtr> fixed_points;
-        for (VertexSPtr fixed_v : fixing_vertices[f]) {
-            fixed_points.push_back(fixed_v->getPoint());
-        }
-
-        f->perturbPlaneCoefficientsFixedPoints(range, fixed_points);
-
-        CGAL_SS3_TRANSF_TRACE("F" << f->getID() << " is now fixed at " << *(f->getPlane()) << " [measure=" << CGAL::ss_utils::length(*(f->getPlane())) << "]");
-
-#ifdef CGAL_SS3_DUMP_FILES
-        dump_facet("results/nudged_face_" + std::to_string(nudged_face_id++) + "_fixed_" + std::to_string(fixed_points.size()) + ".OFF", f);
-#endif
-
-        CGAL_SS3_TRANSF_TRACE("Newly fixed face determines its high-degree incident vertices...");
-
-        // Need to now tag the vertices of the facet
+        // force triangulation if the exact stack is getting too deep
         for (VertexSPtr v : f->vertices()) {
-            std::cout << "incident: " << v->getID() << " (deg=" << v->degree() << "; " << determining_facets[v].size() << " determining facets)" << std::endl;
-            if (!is_vertex_determined(v)) {
-                determining_facets[v].insert(f);
-                CGAL_SS3_TRANSF_TRACE("  V" << v->getID() << " is determined by F" << f->getID() << " (b)");
+            // consider only determined or almost-determined vertices
+            auto it = determining_facets.find(v);
+            if (it == determining_facets.end()) {
+                continue;
+            }
+
+            std::size_t max_length = 100;
+
+            // if the vertex is determined, it has been recomputed so we can check its length
+            if (it->second.size() == 3) {
+                std::size_t l = CGAL::ss_utils::length(*(v->getPoint()));
+                if (l > max_length) {
+                    std::cout << "Vertex V" << v->getID() << " is too long" << std::endl;
+                    std::cout << CGAL::exact(*(v->getPoint())) << " (l=" << l << ")" << std::endl;
+                    std::cout << "F" << f->getID() << " should be triangulated" << std::endl;
+                    return true;
+                }
+            }
+
+            // if the vertex will be determined by the fixation of this facet, check the facets length
+            if (it->second.size() == 2) {
+                for (FacetSPtr of : determining_facets[v]) {
+                    std::size_t l = CGAL::ss_utils::length(*(of->getPlane()));
+                    if (l > max_length) {
+                        std::cout << "Facet F" << of->getID() << " is too long" << std::endl;
+                        std::cout << CGAL::exact(*(of->getPlane())) << " (l=" << l << ")" << std::endl;
+                        std::cout << "F" << f->getID() << " should be triangulated" << std::endl;
+                        return true;
+                    }
+                }
             }
         }
-    };
 
-    determine_vertex = [&](VertexSPtr v)
-    {
-        CGAL_precondition(is_high_degree(v));
-        CGAL_precondition(is_vertex_determined(v));
-
-        CGAL_SS3_TRANSF_TRACE_CODE(auto it = determining_facets[v].begin();)
-        CGAL_SS3_TRANSF_TRACE("V" << v->getID() << " is now fully determined by"
-                              << " F" << (*it)->getID() << " [measure=" << CGAL::ss_utils::length(*((*it)->getPlane()))
-                              << "] F" << (*std::next(it))->getID() << " [measure=" << CGAL::ss_utils::length(*((*std::next(it))->getPlane()))
-                              << "] F" << (*std::next(it, 2))->getID() << " [measure=" << CGAL::ss_utils::length(*((*std::next(it, 2))->getPlane())) << "]");
-
-        // set the nudged position for the vertex: a nudge constrained by already fixed incident facets
-        nudge_constrained_vertex(v);
-
-        CGAL_SS3_TRANSF_TRACE("V" << v->getID() << " is now determined at " << *(v->getPoint()) << " [measure=" << CGAL::ss_utils::length(*(v->getPoint())) << "]");
-
-        // compute the plane coefficients of any incident facet that becomes fixed
-        // by this vertex becoming determined
-        for (FacetWPtr wf : v->facets()) {
-            if (FacetSPtr f = wf.lock()) {
-                add_fixing_vertex(f, v);
-            }
-        }
+        return false;
     };
 
     auto is_facet_overconstrained = [&](FacetSPtr f) -> bool
@@ -1598,26 +1550,17 @@ void PolyhedronTransformation::randTiltPlanesv3(PolyhedronSPtr polyhedron) {
             return false;
         }
 
-        // force triangulation if the exact stack is getting too deep
-#if 1
-        for (VertexSPtr v : f->vertices()) {
-            if (CGAL::ss_utils::length(*(v->getPoint())) > 0) {
-                std::cout << "too much cascading, triangulate F" << f->getID() << std::endl;
-                return true;
-            }
-        }
-#endif
-
-        // we cannot handle that facet without triangulation if adding the facet to high-degree
-        // vertices would create too many determined vertices (> 2) in any facet incident to
+        // we cannot fix that facet if adding the facet to high-degree vertices
+        // would create too many determined vertices (> 2) in any unfixed facet incident to
         // the determined high-degree vertices of this facet
-        std::map<FacetSPtr, unsigned int> facets_to_test; // facets + number of appearances
+        std::map<FacetSPtr, unsigned int> facets_to_test; // facets --> number of appearances
         for (VertexSPtr hdv : f->vertices()) {
             if (is_high_degree(hdv)) {
                 for (FacetWPtr inc_f : hdv->facets()) {
-                    FacetSPtr f = inc_f.lock();
-                    if (f) {
-                        ++facets_to_test[f];
+                    if (FacetSPtr f = inc_f.lock()) {
+                        if (!is_facet_fixed(f)) {
+                            ++facets_to_test[f];
+                        }
                     }
                 }
             }
@@ -1649,10 +1592,158 @@ void PolyhedronTransformation::randTiltPlanesv3(PolyhedronSPtr polyhedron) {
         return false;
     };
 
+    auto triangulate_facet = [&](FacetSPtr facet_tt)
+    {
+        CGAL_SS3_TRANSF_TRACE("Triangulate F" << facet_tt->getID());
+
+        CGAL_assertion(!is_facet_fixed(facet_tt));
+
+        // the facet is not yet fixed, so no vertex can have it as determining facet
+        CGAL_assertion_code(for (VertexSPtr v : facet_tt->vertices()) {)
+        CGAL_assertion(determining_facets[v].size() <= 3);
+        CGAL_assertion(determining_facets[v].count(facet_tt) == 0);
+        CGAL_assertion_code(})
+
+        CGAL_SS3_TRANSF_TRACE_CODE(++had_to_triangulate_n;)
+
+        auto [local_vertices, new_facets] = PolyhedronTransformation::triangulateFacet(facet_tt, polyhedron);
+
+        for (VertexSPtr v : local_vertices) {
+            std::cout << "local vertex " << v->getID() << " (deg=" << v->degree() << "; " << determining_facets[v].size() << " determining facets)" << std::endl;
+
+            if (is_vertex_determined(v)) {
+                CGAL_SS3_TRANSF_TRACE("V" << v->getID() << " is already determined, skipping");
+                continue;
+            }
+
+            for (FacetWPtr wf : v->facets()) {
+                if (FacetSPtr fptr = wf.lock()) {
+                    if (is_facet_fixed(fptr)) {
+                        CGAL_SS3_TRANSF_TRACE("  V" << v->getID() << " is determined by F" << fptr->getID() << " (c)");
+                        determining_facets[v].insert(fptr);
+
+                        if (is_vertex_determined(v)) {
+                            determine_vertex(v);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        // already-determined vertices are fixed points for the new facets
+        for (FacetSPtr nf : new_facets) {
+            CGAL_SS3_TRANSF_TRACE("spawned F" << nf->getID());
+
+            for (VertexSPtr iv : nf->vertices()) {
+                if (is_vertex_determined(iv)) {
+                    CGAL_SS3_TRANSF_TRACE("newborn F" << nf->getID() << " is constrained by V" << iv->getID());
+                    fixing_vertices[nf].insert(iv);
+                }
+            }
+        }
+    };
+
+    add_fixing_vertex = [&](FacetSPtr f, VertexSPtr v) -> bool
+    {
+        CGAL_precondition(fixing_vertices[f].size() <= 3);
+
+        CGAL_SS3_TRANSF_TRACE("  Fix F" << f->getID() << " with V" << v->getID());
+
+        if (is_facet_fixed(f)) {
+            CGAL_SS3_TRANSF_TRACE("  F" << f->getID() << " is already fixed");
+            return true;
+        }
+
+        fixing_vertices[f].insert(v);
+
+        if (!is_facet_fixed(f)) {
+            // nothing to do yet, there are still degrees of freedom in the facet
+            return true;
+        }
+
+        // Here, the facet has just had enough determined vertices to now be fixed.
+        // So, fix it: compute its random perturbation, and add the facet ID to its vertices.
+
+        CGAL_SS3_TRANSF_TRACE_CODE(std::stringstream ss;)
+        CGAL_SS3_TRANSF_TRACE_CODE(ss << "F" << f->getID() << " is now fixed by");
+        CGAL_SS3_TRANSF_TRACE_CODE(for (VertexSPtr fv : fixing_vertices[f]))
+        CGAL_SS3_TRANSF_TRACE_CODE(ss << " V" << fv->getID() << " [measure=" << CGAL::ss_utils::length(*(fv->getPoint())) << "]");
+        CGAL_SS3_TRANSF_TRACE(ss.str());
+
+        if (f->isTriangle()) {
+            CGAL_assertion(fixing_vertices[f].size() == 3); // just to be clear
+
+            // for triangles, all vertices are determined, and there is nothing to nudge
+            // (note that vertices were themselves nudged so the facet is nudged).
+            f->initPlane();
+            f->normalizePlaneCoefficients();
+
+#ifdef CGAL_SS3_DUMP_FILES
+            dump_facet("results/nudged_face_" + std::to_string(nudged_face_id++) + "_fixed_3.OFF", f);
+#endif
+
+            // Here we do not need to add the fixed face to incident determined vertices
+            // because all vertices are already fully determined
+            return true;
+        }
+
+        std::vector<Point3SPtr> fixed_points;
+        for (VertexSPtr fixed_v : fixing_vertices[f]) {
+            fixed_points.push_back(fixed_v->getPoint());
+        }
+
+        f->perturbPlaneCoefficientsFixedPoints(range, fixed_points);
+
+        CGAL_SS3_TRANSF_TRACE("F" << f->getID() << " is now fixed at " << *(f->getPlane()) << " [measure=" << CGAL::ss_utils::length(*(f->getPlane())) << "]");
+
+#ifdef CGAL_SS3_DUMP_FILES
+        dump_facet("results/nudged_face_" + std::to_string(nudged_face_id++) + "_fixed_" + std::to_string(fixed_points.size()) + ".OFF", f);
+#endif
+
+        CGAL_SS3_TRANSF_TRACE("Newly fixed face F" << f->getID() << " determines its high-degree incident vertices...");
+
+        // Need to now tag the vertices of the facet
+        for (VertexSPtr v : f->vertices()) {
+            std::cout << "incident: " << v->getID() << " (deg=" << v->degree() << "; " << determining_facets[v].size() << " determining facets)" << std::endl;
+            if (!is_vertex_determined(v)) {
+                determining_facets[v].insert(f);
+                CGAL_SS3_TRANSF_TRACE("  V" << v->getID() << " is determined by F" << f->getID() << " (b)");
+            }
+        }
+
+        return true;
+    };
+
+    determine_vertex = [&](VertexSPtr v)
+    {
+        CGAL_precondition(is_high_degree(v));
+        CGAL_precondition(is_vertex_determined(v));
+
+        CGAL_SS3_TRANSF_TRACE_CODE(auto it = determining_facets[v].begin();)
+        CGAL_SS3_TRANSF_TRACE("V" << v->getID() << " is now fully determined by"
+                              << " F" << (*it)->getID() << " [measure=" << CGAL::ss_utils::length(*((*it)->getPlane()))
+                              << "] F" << (*std::next(it))->getID() << " [measure=" << CGAL::ss_utils::length(*((*std::next(it))->getPlane()))
+                              << "] F" << (*std::next(it, 2))->getID() << " [measure=" << CGAL::ss_utils::length(*((*std::next(it, 2))->getPlane())) << "]");
+
+        // set the nudged position for the vertex: a nudge constrained by already fixed incident facets
+        nudge_constrained_vertex(v);
+
+        CGAL_SS3_TRANSF_TRACE("V" << v->getID() << " is now determined at " << *(v->getPoint()) << " [measure=" << CGAL::ss_utils::length(*(v->getPoint())) << "]");
+
+        // compute the plane coefficients of any incident facet that becomes fixed
+        // by this vertex becoming determined
+        for (FacetWPtr wf : v->facets()) {
+            if (FacetSPtr f = wf.lock()) {
+                add_fixing_vertex(f, v);
+            }
+        }
+    };
+
     CGAL_SS3_TRANSF_TRACE("== Main facet flood... ==");
 
     while (!facets_to_process.empty()) {
-        facets_to_process.sort(facet_sorter);
+        facets_to_process.sort(facet_sorter); // @todo priority queue...
         FacetSPtr facet = facets_to_process.front();
         facets_to_process.pop_front();
 
@@ -1673,58 +1764,8 @@ void PolyhedronTransformation::randTiltPlanesv3(PolyhedronSPtr polyhedron) {
 
         CGAL_assertion(facet->vertices().size() >= 3);
 
-        if (is_facet_overconstrained(facet)) {
-            std::list<FacetSPtr> facets_to_triangulate = { facet };
-            std::list<FacetSPtr> final_facets;
-            while (!facets_to_triangulate.empty()) {
-                FacetSPtr facet_tt = facets_to_triangulate.front();
-                facets_to_triangulate.pop_front();
-
-                // the facet is not yet fixed, so no vertex can have it as determining facet
-                CGAL_assertion(fixing_vertices[facet_tt].size() < 2);
-                CGAL_assertion_code(for (VertexSPtr v : facet_tt->vertices()) {)
-                CGAL_assertion(determining_facets[v].size() <= 3);
-                CGAL_assertion(determining_facets[v].count(facet_tt) == 0);
-                CGAL_assertion_code(})
-
-                CGAL_SS3_TRANSF_TRACE("Triangulate F" << facet_tt->getID());
-                CGAL_SS3_TRANSF_TRACE_CODE(++had_to_triangulate_n;)
-
-                auto [local_vertices, new_facets] = PolyhedronTransformation::triangulateFacet(facet_tt, polyhedron);
-
-                // vertices that have become high degree should have their determination information updated
-                for (VertexSPtr v : local_vertices) {
-                    std::cout << "local vertex " << v->getID() << " (deg=" << v->degree() << "; " << determining_facets[v].size() << " determining facets)" << std::endl;
-
-                    for (FacetWPtr wf : v->facets()) {
-                        if (FacetSPtr fptr = wf.lock()) {
-                            if (is_facet_fixed(fptr)) {
-                                CGAL_SS3_TRANSF_TRACE("  V" << v->getID() << " is determined by F" << fptr->getID() << " (c)");
-                                determining_facets[v].insert(fptr);
-
-                                if (is_vertex_determined(v)) {
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
-
-                // existing already-determined vertices are fixed points for the new facets
-                for (FacetSPtr nf : new_facets) {
-                    CGAL_SS3_TRANSF_TRACE("spawned F" << nf->getID());
-
-                    for (VertexSPtr v : nf->vertices()) {
-                        if (is_vertex_determined(v)) {
-                            CGAL_SS3_TRANSF_TRACE("newborn F" << nf->getID() << " is constrained by V" << v->getID());
-                            fixing_vertices[nf].insert(v);
-                        }
-                    }
-
-                    CGAL_postcondition(!is_facet_overconstrained(nf));
-                }
-            }
-
+        if (is_facet_overconstrained(facet) || should_triangulate_facet(facet)) {
+            triangulate_facet(facet);
             continue;
         }
 
@@ -1744,10 +1785,14 @@ void PolyhedronTransformation::randTiltPlanesv3(PolyhedronSPtr polyhedron) {
         }
     }
 
-    // Some facets might have high-degree vertices, but still some freedom of movement after the flooding, fix them
+    // Some facets might have high-degree vertices, but still some freedom of movement
+    // after the flooding, fix them
+    //
+    // @todo could we not simply nudge high-degree vertices and fix everything left (triangle or not)?
+    CGAL_SS3_TRANSF_TRACE("== Deal with remaining facets with high degree vertices... ==");
+
     for (FacetSPtr f : polyhedron->facets()) {
-        // if there were 2, it would have been nudged when the 2nd vertex got determined
-        if (f->isTriangle() || fixing_vertices[f].size() == 2) {
+        if (f->isTriangle() || is_facet_fixed(f)) {
             continue;
         }
 
@@ -1761,34 +1806,36 @@ void PolyhedronTransformation::randTiltPlanesv3(PolyhedronSPtr polyhedron) {
 
         f->perturbPlaneCoefficientsFixedPoints(range, fixed_points);
 
-        for (VertexSPtr v : f->vertices()) {
-            // @todo could avoid these checks with a boost::multi_index_container
-            // to have a set that is sorted by insertion order
-            if (!is_vertex_determined(v)) {
-                determining_facets[v].insert(f);
-                CGAL_SS3_TRANSF_TRACE("  V" << v->getID() << " is determined by F" << f->getID() << " (e)");
-            }
-        }
+        // fixing the facet cannot determine a vertex because the facet has already been visited
 
-        for (VertexSPtr v : f->vertices()) {
-            fixing_vertices[f].insert(v);
-            if (is_facet_fixed(f)) {
-                break;
-            }
+        // add random vertices to mark the facet as fixed
+        int dummy_id = -1;
+        while (!is_facet_fixed(f)) {
+            VertexSPtr dummy_v = Vertex::create(KernelFactory::createPoint3(0,0,0));
+            dummy_v->setID(dummy_id--);
+            fixing_vertices[f].insert(dummy_v);
         }
 
 #ifdef CGAL_SS3_DUMP_FILES
         dump_facet("results/nudged_face_" + std::to_string(nudged_face_id++) + "_remaining.OFF", f);
 #endif
+
+        CGAL_postcondition(is_facet_fixed(f));
     }
 
-    // Nudge what can still be nudged, for randomness only
-    CGAL_SS3_TRANSF_TRACE("== Nudge unconstrained high-degree vertices... ==");
+    // At this point, everything that is not a high-degree triangular facet should be fixed
+    for (FacetSPtr f : polyhedron->facets()) {
+        if (f->isTriangle() || !has_high_degree_vertices(f)) {
+            continue;
+        }
+        CGAL_assertion(is_facet_fixed(f));
+    }
 
-    // Simply move high-degree vertices that are not yet constrained by 3 facets,
-    // and recomputing triangle facets afterwards.
+    // Nudge vertices that can still be nudged, for randomness
+    CGAL_SS3_TRANSF_TRACE("== Nudge undetermined high-degree vertices... ==");
+
     for (VertexSPtr v : polyhedron->vertices()) {
-        if (is_high_degree(v) && determining_facets[v].size() < 3) {
+        if (is_high_degree(v) && !is_vertex_determined(v)) {
             CGAL_SS3_TRANSF_TRACE("  V" << v->getID() << " is high degree and not fully determined, nudge it");
             nudge_constrained_vertex(v);
 
@@ -1796,14 +1843,24 @@ void PolyhedronTransformation::randTiltPlanesv3(PolyhedronSPtr polyhedron) {
             // since we know only triangle facets are left, we don't need to cascade and check
             // if incident facets become fixed
             for (FacetWPtr wf : v->facets()) {
-                if (is_vertex_determined(v)) {
-                    CGAL_SS3_TRANSF_TRACE("  V" << v->getID() << " is now determined");
-                    break;
-                }
                 if (FacetSPtr f = wf.lock()) {
-                    determining_facets[v].insert(f);
+                    if (!is_facet_fixed(f)) {
+                        // the facet cannot be without high-degree vertices since v is high degree
+                        CGAL_assertion(f->isTriangle());
+                        fixing_vertices[f].insert(v);
+                    }
                 }
             }
+
+            // add dummy facets to mark the vertex as determined
+            int dummy_id = -1;
+            while (!is_vertex_determined(v)) {
+                FacetSPtr dummy_f = Facet::create();
+                dummy_f->setID(dummy_id--);
+                determining_facets[v].insert(dummy_f);
+            }
+
+            CGAL_postcondition(is_vertex_determined(v));
         }
     }
 
@@ -1817,22 +1874,34 @@ void PolyhedronTransformation::randTiltPlanesv3(PolyhedronSPtr polyhedron) {
 
         CGAL_SS3_TRANSF_TRACE_CODE(std::stringstream ss;)
         CGAL_SS3_TRANSF_TRACE_CODE(ss << "Fix triangle F" << f->getID() << " [");
-        CGAL_SS3_TRANSF_TRACE_CODE(auto it = f->vertices().begin();)
-        CGAL_SS3_TRANSF_TRACE_CODE(ss << "V" << (*it++)->getID() << " ");
-        CGAL_SS3_TRANSF_TRACE_CODE(ss << "V" << (*it++)->getID() << " ");
-        CGAL_SS3_TRANSF_TRACE_CODE(ss << "V" << (*it)->getID() << "]");
+        CGAL_SS3_TRANSF_TRACE_CODE(for (VertexSPtr v : f->vertices()) {)
+        CGAL_SS3_TRANSF_TRACE_CODE(ss << "V" << v->getID());
+        CGAL_SS3_TRANSF_TRACE_CODE(ss << " (" << v->degree() << ")");
+        CGAL_SS3_TRANSF_TRACE_CODE(if (is_vertex_determined(v)) { ss << "*"; })
+        CGAL_SS3_TRANSF_TRACE_CODE(ss << " "; } ss << "]";)
         CGAL_SS3_TRANSF_TRACE(ss.str());
 
-        // Triangle facets are great because we have freedom to move points and compute planes afterwards
-        f->initPlane();
-        f->normalizePlaneCoefficients();
+        CGAL_SS3_TRANSF_TRACE("Nudge and fix F" << f->getID() << " [triangle]");
+
+        std::vector<Point3SPtr> fixed_points;
+        for (VertexSPtr v : fixing_vertices[f]) {
+            CGAL_SS3_TRANSF_TRACE("  V" << v->getID() << " is a fixing vertex");
+            fixed_points.push_back(v->getPoint());
+        }
+
+        if (fixed_points.size() == 3) {
+            f->initPlane();
+            f->normalizePlaneCoefficients();
+        } else {
+            f->perturbPlaneCoefficientsFixedPoints(range, fixed_points);
+        }
 
 #ifdef CGAL_SS3_DUMP_FILES
         dump_facet("results/nudged_face_" + std::to_string(nudged_face_id++) + "_triangle.OFF", f);
 #endif
 
-        // Here we need to also need to update the determining facets because some neighboring
-        // facets could be unfixed high-degree triangles
+        // We still need to update the determining facets because some neighboring
+        // facets could be an unfixed high-degree triangle
         for (VertexSPtr v : f->vertices()) {
             if (!is_vertex_determined(v)) {
                 determining_facets[v].insert(f);
@@ -1840,6 +1909,12 @@ void PolyhedronTransformation::randTiltPlanesv3(PolyhedronSPtr polyhedron) {
                 // no need to cascade here, we know only triangles are left
             }
         }
+
+        for (VertexSPtr v : f->vertices()) {
+            fixing_vertices[f].insert(v);
+        }
+
+        CGAL_postcondition(is_facet_fixed(f));
     }
 
 #ifdef CGAL_SS3_DUMP_FILES
