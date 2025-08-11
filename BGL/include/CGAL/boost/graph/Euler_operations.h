@@ -613,8 +613,11 @@ add_edge(typename boost::graph_traits<Graph>::vertex_descriptor s,
 * checks whether a new face defined by a range of vertices (identified by their descriptors,
 * `boost::graph_traits<Graph>::%vertex_descriptor`) can be added.
 */
-template <typename VertexRange,typename PMesh>
-bool can_add_face(const VertexRange& vrange, const PMesh& sm)
+template <typename VertexRange,
+          typename PMesh>
+bool can_add_face(const VertexRange& vrange,
+                  const PMesh& sm,
+                  const bool verbose = false)
 {
   typedef typename boost::graph_traits<PMesh>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<PMesh>::halfedge_descriptor halfedge_descriptor;
@@ -631,10 +634,16 @@ bool can_add_face(const VertexRange& vrange, const PMesh& sm)
   typename std::vector<vertex_descriptor>::iterator it = std::unique(f2.begin(),f2.end());
 
   if((N > 0) && (it != f2.end())){
+    if (verbose) {
+      std::cerr << "Error: can_add_face: face contains duplicate vertices." << std::endl;
+    }
     return false;
   }
 
   if(N < 3){
+    if (verbose) {
+      std::cerr << "Error: can_add_face: face must contain at least 3 vertices." << std::endl;
+    }
     return false;
   }
 
@@ -645,6 +654,9 @@ bool can_add_face(const VertexRange& vrange, const PMesh& sm)
     bool found;
     std::tie(hd,found) = halfedge(face[i],face[i+1],sm);
     if(found && (! is_border(hd,sm))){
+      if (verbose) {
+        std::cerr << "Error: can_add_face: face contains an edge that is not a border halfedge." << std::endl;
+      }
       return false;
     }
   }
@@ -655,6 +667,9 @@ bool can_add_face(const VertexRange& vrange, const PMesh& sm)
     }
 
     if(! is_border(face[i],sm)){
+      if (verbose) {
+        std::cerr << "Error: can_add_face: face contains a vertex that is not a border vertex." << std::endl;
+      }
       return false;
     }
   }
@@ -676,8 +691,9 @@ bool can_add_face(const VertexRange& vrange, const PMesh& sm)
 
     if ( halfedge_around_vertex == boost::graph_traits<PMesh>::null_halfedge() ||
          halfedge(previous_vertex,sm) == boost::graph_traits<PMesh>::null_halfedge()||
-         halfedge(next_vertex,sm) == boost::graph_traits<PMesh>::null_halfedge()
-         ) continue;
+         halfedge(next_vertex,sm) == boost::graph_traits<PMesh>::null_halfedge() ) {
+      continue;
+    }
 
     halfedge_descriptor start=halfedge_around_vertex;
     //halfedges pointing to/running out from vertex indices[i]
@@ -722,7 +738,12 @@ bool can_add_face(const VertexRange& vrange, const PMesh& sm)
         if ( is_border(opposite(halfedge_around_vertex,sm),sm) ) break;
       }
       while (halfedge_around_vertex != prev_hd);
-      if (halfedge_around_vertex == prev_hd) return false;
+      if (halfedge_around_vertex == prev_hd) {
+        if (verbose) {
+          std::cerr << "Error: can_add_face: halfedge_around_vertex == prev_hd" << std::endl;
+        }
+        return false;
+      }
       start = halfedge_around_vertex;
     }
   }
