@@ -20,10 +20,30 @@ typedef CGAL::Linear_cell_complex_for_combinatorial_map<3> LCC;
 
 int main()
 {
-    LCC lcc; CGAL::load_combinatorial_map("data/beam-with-mixed-cells.3map", lcc);
-    std::vector<std::size_t> v;
-    for(auto it = lcc.template one_dart_per_cell<3>().begin(), itend = lcc.template one_dart_per_cell<3>().end(); it != itend; ++it)
-        v.push_back(std::distance(lcc.template one_dart_per_incident_cell<0,3>(lcc.dart_descriptor(*it)).begin(), lcc.template one_dart_per_incident_cell<0,3>(lcc.dart_descriptor(*it)).end()));
-    CGAL::IO::write_VTK(lcc, "data/beam-with-mixed-cells.vtk", nullptr, &v);
+    LCC lcc; 
+    CGAL::load_combinatorial_map("data/beam-with-mixed-cells.3map", lcc);
+    
+    // Compute per-volume vertex count
+    std::vector<std::size_t> volume_scalars;
+    for(auto it = lcc.template one_dart_per_cell<3>().begin(), 
+             itend = lcc.template one_dart_per_cell<3>().end(); 
+        it != itend; ++it)
+    {
+        volume_scalars.push_back(
+            std::distance(
+                lcc.template one_dart_per_incident_cell<0,3>(lcc.dart_descriptor(*it)).begin(), 
+                lcc.template one_dart_per_incident_cell<0,3>(lcc.dart_descriptor(*it)).end()
+            )
+        );
+    }
+    
+    // Write to VTK with explicit template parameters
+    CGAL::IO::write_VTK<LCC, float, std::size_t>(
+        lcc, 
+        "data/beam-with-mixed-cells.vtk", 
+        nullptr,  
+        &volume_scalars 
+    );
+    
     return EXIT_SUCCESS;
 }

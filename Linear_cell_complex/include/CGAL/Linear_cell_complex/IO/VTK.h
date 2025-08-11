@@ -51,6 +51,8 @@ namespace IO {
  * \ingroup PkgLinearCellComplexExamples
  *
  * \tparam LCC must be a Linear_cell_complex_for_combinatorial_map<3,3>
+ * \tparam VertexScalarType Type for vertex scalar data (default: float)
+ * \tparam VolumeScalarType Type for volume scalar data (default: float)
  * \param alcc The Linear_cell_complex to populate (will be cleared first)
  * \param filename Path to the VTK file
  * \param vertex_scalars Optional output vector to store per-vertex scalar values.
@@ -59,17 +61,19 @@ namespace IO {
  *                      If provided, will be resized to match number of volumes.
  * \return `true` if loading was successful, `false` otherwise
  */
-template <typename LCC, typename ScalarType = float>
+template <typename LCC, typename VertexScalarType = float, typename VolumeScalarType = float>
 bool read_VTK(LCC& alcc,
               const char* filename,
-              std::vector<ScalarType>* vertex_scalars = nullptr,
-              std::vector<ScalarType>* volume_scalars = nullptr);
+              std::vector<VertexScalarType>* vertex_scalars = nullptr,
+              std::vector<VolumeScalarType>* volume_scalars = nullptr);
 
 /**
  * \brief Write a 3D Linear_cell_complex to a VTK legacy ASCII file.
  * \ingroup PkgLinearCellComplexExamples
  *
  * \tparam LCC must be a Linear_cell_complex_for_combinatorial_map<3,3>
+ * \tparam VertexScalarType Type for vertex scalar data (default: float)
+ * \tparam VolumeScalarType Type for volume scalar data (default: float)
  * \param alcc The Linear_cell_complex to export
  * \param filename Path to the output VTK file
  * \param vertex_scalars Optional per-vertex scalar data. If provided, must have
@@ -78,11 +82,11 @@ bool read_VTK(LCC& alcc,
  *                      same size as number of 3-cells in the LCC.
  * \return `true` if writing was successful, `false` otherwise
  */
-template <typename LCC, typename ScalarType = float>
+template <typename LCC, typename VertexScalarType = float, typename VolumeScalarType = float>
 bool write_VTK(const LCC& alcc,
                const char* filename,
-               const std::vector<ScalarType>* vertex_scalars = nullptr,
-               const std::vector<ScalarType>* volume_scalars = nullptr);
+               const std::vector<VertexScalarType>* vertex_scalars = nullptr,
+               const std::vector<VolumeScalarType>* volume_scalars = nullptr);
 
 // Advanced versions with functors
 template <typename LCC, typename VertexScalarReader, typename CellScalarReader>
@@ -612,33 +616,33 @@ inline bool write_VTK(const LCC& alcc, const char* filename, PointFunctor ptval,
 }
 
 // Vector-based versions (convenience wrappers)
-template <typename LCC, typename ScalarType>
+template <typename LCC, typename VertexScalarType, typename VolumeScalarType>
 inline bool read_VTK(LCC& alcc,
               const char* filename,
-              std::vector<ScalarType>* vertex_scalars,
-              std::vector<ScalarType>* volume_scalars) {
-  auto v_writer = [&](std::size_t i, ScalarType val) {
+              std::vector<VertexScalarType>* vertex_scalars,
+              std::vector<VolumeScalarType>* volume_scalars) {
+  auto v_writer = [&](std::size_t i, auto val) {
     if(vertex_scalars) {
       if(vertex_scalars->size() <= i)
         vertex_scalars->resize(i + 1);
-      (*vertex_scalars)[i] = val;
+      (*vertex_scalars)[i] = static_cast<VertexScalarType>(val);
     }
   };
-  auto c_writer = [&](std::size_t i, ScalarType val) {
+  auto c_writer = [&](std::size_t i, auto val) {
     if(volume_scalars) {
       if(volume_scalars->size() <= i)
         volume_scalars->resize(i + 1);
-      (*volume_scalars)[i] = val;
+      (*volume_scalars)[i] = static_cast<VolumeScalarType>(val);
     }
   };
   return read_VTK(alcc, filename, v_writer, c_writer);
 }
 
-template <typename LCC, typename ScalarType>
+template <typename LCC, typename VertexScalarType, typename VolumeScalarType>
 inline bool write_VTK(const LCC& alcc,
                const char* filename,
-               const std::vector<ScalarType>* vertex_scalars,
-               const std::vector<ScalarType>* volume_scalars) {
+               const std::vector<VertexScalarType>* vertex_scalars,
+               const std::vector<VolumeScalarType>* volume_scalars) {
   // Build index maps
   std::unordered_map<typename LCC::Vertex_attribute_const_descriptor, std::size_t> vertex_indices;
   std::size_t idx = 0;
@@ -653,15 +657,15 @@ inline bool write_VTK(const LCC& alcc,
 
   return write_VTK(
       alcc, filename,
-      [vertex_scalars, &vertex_indices](const LCC& lcc, typename LCC::Dart_const_descriptor d) -> ScalarType {
+      [vertex_scalars, &vertex_indices](const LCC& lcc, typename LCC::Dart_const_descriptor d) -> VertexScalarType {
         if(vertex_scalars)
-          return (*vertex_scalars)[vertex_indices.at(lcc.attribute<0>(d))];
-        return ScalarType();
+          return (*vertex_scalars)[vertex_indices.at(lcc.template attribute<0>(d))];
+        return VertexScalarType();
       },
-      [volume_scalars, &volume_indices](const LCC& lcc, typename LCC::Dart_const_descriptor d) -> ScalarType {
+      [volume_scalars, &volume_indices](const LCC& lcc, typename LCC::Dart_const_descriptor d) -> VolumeScalarType {
         if(volume_scalars)
           return (*volume_scalars)[volume_indices.at(d)];
-        return ScalarType();
+        return VolumeScalarType();
       });
 }
 
