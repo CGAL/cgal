@@ -4,7 +4,7 @@
 
 The concept `Filtration` describes the requirements for persistent filtrations associated to persistent homology computation.
 
-A filtration is associated to an `AbstractSimplicialComplex`. Each cells is equiped with a scalar value (called its degree) and the filtration is an enumeration of cells in any dimension by increasing degrees.
+A filtration is associated to an `AbstractChainComplex`. Each cells is equiped with a scalar value (called its degree) and the filtration is an enumeration of cells in any dimension by increasing degrees.
 
 A filtration class provides:
 
@@ -38,7 +38,7 @@ public:
     typedef std::pair<size_t, int> Cell_index_dimension ;
 
     /*! \brief Value type of the filtration iterator.
-     * Contains a cell (identified by its index and dimenion in a `Cell_index_dimension`) and its associated degree.
+     * Contains a cell (identified by its index and dimension in a `Cell_index_dimension`) and its associated degree.
      */
     typedef struct {
         Cell_index_dimension cell_dim ;
@@ -156,7 +156,7 @@ public:
      */
     friend istream & operator>>(istream & in, Filtration &f);
     
-    /*! \brief Overload of the `<<`operator for filtrations.
+    /*! \brief Overload of the `operator<<()`operator for filtrations.
      */
     friend ostream & operator<<(ostream & out, const Filtration &f);
 
