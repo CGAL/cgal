@@ -4198,30 +4198,17 @@ void SimpleStraightSkel::collectPierceEvents(const std::list<VertexSPtr>& vertic
 #ifdef CGAL_SS3_PROFILE_FILTERING_MECHANISMS
                         ++filtered_candidates;
 #endif
-                        continue;
-                    }
-
-                    // also filter with a bbox around the piercing segment and the shifting face
-                    CGAL::Bbox_3 b1;
-                    b1 += vertex->getPoint()->bbox();
-                    b1 += shifted_pt->bbox();
-
-                    CGAL::Bbox_3 b2;
-                    for(VertexSPtr v : facet->vertices()) {
-                        b2 += v->getPoint()->bbox();
-                        b2 += getFinalPoint(v, *offset_future_bound)->bbox();
-                    }
-
-                    if (!CGAL::do_overlap(b1, b2)) {
-#ifdef CGAL_SS3_PROFILE_FILTERING_MECHANISMS
-                        ++filtered_candidates;
-#endif
+                        // std::cout << "  filter (a)" << std::endl;
                         continue;
                     } else {
 #ifdef CGAL_SS3_PROFILE_FILTERING_MECHANISMS
                         ++tested_candidates;
 #endif
                     }
+
+                    // It would be tempting to use a bbox around the vertex and facet's trajectories,
+                    // but if we did, then we would have to detect potential piercing events involving
+                    // that facet after each modification of the facet, and this we obviously do not want.
                 }
 
                 CGAL_assertion(vertex->facets().size() >= 3);

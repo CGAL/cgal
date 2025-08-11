@@ -10060,6 +10060,50 @@ if ((src_y == CGAL::SMALLER && dst_y == CGAL::LARGER) ||
 
 
 
+
+                // If the facet is so far that even when shifting point and plane by the current
+                // best lower bound on offset delta, the vertex has not crossed it yet, then we are done
+
+                // not outside of the loop just because maybe one day this might get called
+                // as the first collect function with an initial bound that gets updated...
+                if (offset_future_bound) {
+                    Point3SPtr shifted_pt = getFinalPoint(vertex, *offset_future_bound);
+                    Plane3SPtr shifted_plane = getFinalPlane(facet, *offset_future_bound);
+
+                    if (KernelWrapper::side(shifted_plane, shifted_pt) < 0) {
+#ifdef CGAL_SS3_PROFILE_FILTERING_MECHANISMS
+                        ++filtered_candidates;
+#endif
+                        std::cout << "  bbox filter (a)" << std::endl;
+                        continue;
+                    }
+
+                    // also filter with a bbox around the piercing segment and the shifting face
+                    CGAL::Bbox_3 b1;
+                    b1 += vertex->getPoint()->bbox();
+                    b1 += shifted_pt->bbox();
+
+                    CGAL::Bbox_3 b2;
+                    for(VertexSPtr v : facet->vertices()) {
+                        b2 += v->getPoint()->bbox();
+                        b2 += getFinalPoint(v, *offset_future_bound)->bbox();
+                    }
+
+                    if (!CGAL::do_overlap(b1, b2)) {
+#ifdef CGAL_SS3_PROFILE_FILTERING_MECHANISMS
+                        ++filtered_candidates;
+#endif
+                        std::cout << "  bbox filter (b)" << std::endl;
+                        continue;
+                    } else {
+#ifdef CGAL_SS3_PROFILE_FILTERING_MECHANISMS
+                        ++tested_candidates;
+#endif
+                    }
+                }
+
+
+
 // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
 
 
