@@ -836,8 +836,7 @@ PolyhedronTransformation::triangulateFacet(FacetSPtr facet,
 
     facet->sortVertices();
 
-    using CDT2_Tag = CGAL::No_constraint_intersection_requiring_constructions_tag;
-
+    using CDT2_Tag = CGAL::No_constraint_intersection_tag;
     auto pcdt = db::_3d::AbstractFile::constructFacetTriangulation<CDT2_Tag>(facet);
 
     using PCDT = decltype(pcdt);
