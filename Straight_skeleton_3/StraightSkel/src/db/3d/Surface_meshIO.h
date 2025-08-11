@@ -320,16 +320,20 @@ bool Surface_meshIO::save(const PolyhedronSPtr& polyhedron,
             if(!get(in_domain, fh))
               continue;
 
-            face_descriptor sm_f = CGAL::Euler::add_face(CGAL::make_array(v_map[fh->vertex(0)->info()],
-                                                                          v_map[fh->vertex(1)->info()],
-                                                                          v_map[fh->vertex(2)->info()]),
-                                                                          sm);
+            auto vr = CGAL::make_array(v_map[fh->vertex(0)->info()],
+                                       v_map[fh->vertex(1)->info()],
+                                       v_map[fh->vertex(2)->info()]);
+            face_descriptor sm_f = CGAL::Euler::add_face(vr, sm);
             if (sm_f == boost::graph_traits<CGAL::Surface_mesh<Point3>>::null_face()) {
                 std::cerr << "Error: failed to add face to surface mesh (2)" << std::endl;
                 std::cerr << "Face:\n" << fh->vertex(0)->point() << " "
-                          << fh->vertex(1)->point() << " "
-                          << fh->vertex(2)->point() << std::endl;
+                                       << fh->vertex(1)->point() << " "
+                                       << fh->vertex(2)->point() << std::endl;
                 CGAL::IO::write_polygon_mesh("results/failed.off", sm, CGAL::parameters::stream_precision(17));
+
+                bool cannot_add = CGAL::Euler::can_add_face(vr, sm, true /*verbose*/);
+                CGAL_assertion(!cannot_add);
+
                 return false;
             }
 
