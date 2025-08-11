@@ -29,11 +29,11 @@ template<typename T> class Duality_cubical_complex_tools ;
 
 // TOOLS
 
-ostream & operator<<(ostream & out, std::vector<size_t> c)
+std::ostream & operator<<(std::ostream & out, std::vector<size_t> c)
 {
     for (size_t i:c)
         out << i << " " ;
-    out << endl ;
+    out << std::endl ;
     return out ;
 }
 
@@ -228,7 +228,7 @@ public:
      *
      * \return Returns a constant reference to the vector of column-major boundary matrices along each dimension.
      */
-    const vector<Column_matrix> & boundary_matrices() const
+    const std::vector<Column_matrix> & boundary_matrices() const
     {
         return _d ;
     }
@@ -261,7 +261,7 @@ public:
     std::vector<size_t> bottom_faces(size_t id_cell, int q) const
     {
         // Khalimsky coordinates of the cell
-        const vector<size_t> coords(ind2khal(_base2bool.at(q).at(id_cell))) ;
+        const std::vector<size_t> coords(ind2khal(_base2bool.at(q).at(id_cell))) ;
         return khal_to_verts(coords) ;
     }
 
@@ -335,8 +335,8 @@ public:
 
     Point get_vertex_coords(size_t i) const
     {
-        const vector<size_t> coords(ind2khal(_base2bool.at(0).at(i))) ;
-        vector<double> res ;
+        const std::vector<size_t> coords(ind2khal(_base2bool.at(0).at(i))) ;
+        std::vector<double> res ;
         for (size_t c : coords)
             res.push_back(c/2. + .5) ;
         for (size_t i = coords.size(); i<3; ++i) // points must be 3D
@@ -370,7 +370,7 @@ public:
      * \param[in] label_type_name Typename used in vtk export (e.g. "int" or "unsigned_long", see <a href = "https://docs.vtk.org/en/latest/design_documents/VTKFileFormats.html">VTK manual </a>).
      */
     template <typename LabelType = int>
-    static void chain_complex_to_vtk(const Cubical_chain_complex<CoefficientType> &K, const std::string &filename, const std::vector<std::vector<LabelType> > *labels=NULL, string label_type_name = "int")
+    static void chain_complex_to_vtk(const Cubical_chain_complex<CoefficientType> &K, const std::string &filename, const std::vector<std::vector<LabelType> > *labels=NULL, std::string label_type_name = "int")
     {
         bool with_scalars = (labels != NULL) ;
 
@@ -383,22 +383,22 @@ public:
         }
 
         // Header
-        out << "# vtk DataFile Version 2.0" << endl ;
-        out << "generators" << endl ;
-        out << "ASCII" << endl ;
-        out << "DATASET  UNSTRUCTURED_GRID" << endl ;
+        out << "# vtk DataFile Version 2.0" << std::endl ;
+        out << "generators" << std::endl ;
+        out << "ASCII" << std::endl ;
+        out << "DATASET  UNSTRUCTURED_GRID" << std::endl ;
 
         // Points
         size_t nnodes = K.number_of_cells(0) ;
-        out << "POINTS " << nnodes << " double" << endl ;
+        out << "POINTS " << nnodes << " double" << std::endl ;
         for (size_t n = 0; n < nnodes; ++n)
         {
-            vector<double> p(K.get_vertex_coords(n)) ;
+            std::vector<double> p(K.get_vertex_coords(n)) ;
             for (double x : p)
                 out << x << " " ;
             for (size_t i = p.size(); i<3; ++i) // points must be 3D -> add zeros
                 out << "0 " ;
-            out << endl ;
+            out << std::endl ;
         }
 
         size_t ncells_tot = 0, size_cells_tot = 0 ;
@@ -415,13 +415,13 @@ public:
                 const size_t size_cell = 1<<q ;
                 size_cells_tot += (size_cell+1)*K.number_of_cells(q) ;
             }
-            out << "CELLS " << ncells_tot << " " << size_cells_tot << endl ;
+            out << "CELLS " << ncells_tot << " " << size_cells_tot << std::endl ;
             // Output cells by increasing dimension
 
             // Vertices
             for (size_t i = 0; i<K.number_of_cells(0); ++i)
             {
-                out << "1 " << i << endl ;
+                out << "1 " << i << std::endl ;
                 types.push_back(Cubical_chain_complex<CoefficientType>::VTK_cubtypes.at(0)) ;
                 if (with_scalars)
                 {
@@ -435,11 +435,11 @@ public:
                 const size_t size_cell = 1<<q ; //int_exp(2, q) ;
                 for (size_t id =0; id < K.number_of_cells(q); ++id)
                 {
-                    vector<size_t> verts(K.khal_to_verts(K.ind2khal(K._base2bool.at(q).at(id)))) ;
+                    std::vector<size_t> verts(K.khal_to_verts(K.ind2khal(K._base2bool.at(q).at(id)))) ;
                     out << size_cell << " " ;
                     for (size_t i : verts)
                         out << i << " " ;
-                    out << endl ;
+                    out << std::endl ;
                     types.push_back(Cubical_chain_complex<CoefficientType>::VTK_cubtypes.at(q)) ;
                     if (with_scalars)
                     {
@@ -450,27 +450,27 @@ public:
             }
 
             // CELL_TYPES
-            out << "CELL_TYPES " << ncells_tot << endl ;
+            out << "CELL_TYPES " << ncells_tot << std::endl ;
             for (int t : types)
                 out << t << " " ;
-            out << endl ;
+            out << std::endl ;
         }
 
         if (with_scalars)
         {
             // CELL_LABEL
-            out << "CELL_DATA " << ncells_tot << endl ;
-            out << "SCALARS Label " << label_type_name << " 1" << endl ;
-            out << "LOOKUP_TABLE default" << endl ;
+            out << "CELL_DATA " << ncells_tot << std::endl ;
+            out << "SCALARS Label " << label_type_name << " 1" << std::endl ;
+            out << "LOOKUP_TABLE default" << std::endl ;
             for (LabelType s : scalars)
                 out << s << " " ;
-            out << endl ;
+            out << std::endl ;
             // CELL_IDs
-            out << "SCALARS CellId " << "int" << " 1" << endl ;
-            out << "LOOKUP_TABLE default" << endl ;
+            out << "SCALARS CellId " << "int" << " 1" << std::endl ;
+            out << "LOOKUP_TABLE default" << std::endl ;
             for (size_t i : ids)
                 out << i << " " ;
-            out << endl ;
+            out << std::endl ;
         }
         out.close() ;
     }
@@ -564,9 +564,9 @@ protected:
     bool is_valid_cell(size_t id_cell) const ;
 
     /* \brief Compute vertices of a cell given by its Khalimsky coordinates */
-    vector<size_t> khal_to_verts(vector<size_t> c) const
+    std::vector<size_t> khal_to_verts(std::vector<size_t> c) const
     {
-        vector<vector<size_t> > vertices, vertices_tmp ;
+        std::vector<std::vector<size_t> > vertices, vertices_tmp ;
         // Vertices are obtained by cartesian products
         for (size_t i=0; i<_dim; ++i)
         {
@@ -574,21 +574,21 @@ protected:
             {
                 if (vertices.size()==0)
                 {
-                    vertices.push_back(vector<size_t>(1,c[i]-1)) ;
-                    vertices.push_back(vector<size_t>(1,c[i]+1)) ;
+                    vertices.push_back(std::vector<size_t>(1,c[i]-1)) ;
+                    vertices.push_back(std::vector<size_t>(1,c[i]+1)) ;
                 }
                 else
                 {
                     vertices_tmp.clear() ;
-                    for (vector<size_t> vert : vertices)
+                    for (std::vector<size_t> vert : vertices)
                     {
-                        vector<size_t> tmp(vert) ;
+                        std::vector<size_t> tmp(vert) ;
                         tmp.push_back(c[i]-1) ;
                         vertices_tmp.push_back(tmp) ;
                     }
-                    for (vector<size_t> vert : vertices)
+                    for (std::vector<size_t> vert : vertices)
                     {
-                        vector<size_t> tmp(vert) ;
+                        std::vector<size_t> tmp(vert) ;
                         tmp.push_back(c[i]+1) ;
                         vertices_tmp.push_back(tmp) ;
                     }
@@ -598,13 +598,13 @@ protected:
             else
             {
                 if (vertices.size() == 0)
-                    vertices.push_back(vector<size_t>(1,c[i])) ;
+                    vertices.push_back(std::vector<size_t>(1,c[i])) ;
                 else
                 {
                     vertices_tmp.clear() ;
-                    for (vector<size_t> vert : vertices)
+                    for (std::vector<size_t> vert : vertices)
                     {
-                        vector<size_t> tmp(vert) ;
+                        std::vector<size_t> tmp(vert) ;
                         tmp.push_back(c[i]) ;
                         vertices_tmp.push_back(tmp) ;
                     }
@@ -612,8 +612,8 @@ protected:
                 }
             }
         }
-        vector<size_t> vertices_id ;
-        for (vector<size_t> vert : vertices)
+        std::vector<size_t> vertices_id ;
+        for (std::vector<size_t> vert : vertices)
         {
             vertices_id.push_back(_bool2base[0].at(khal2ind(vert))) ;
         }
@@ -687,7 +687,7 @@ protected:
      * This function is used ONLY for DUAL construction from a binary object (binary image in 2D, binary volume in 3D...)
      * Hence we consider a set of cells of maximal dimension vectorized to a boolean vector.
      */
-    std::vector<size_t> ind2vox(size_t index, vector<size_t> B, size_t max_size) const
+    std::vector<size_t> ind2vox(size_t index, std::vector<size_t> B, size_t max_size) const
     {
         if (index > max_size)
             throw std::invalid_argument("ind2vox : index exceeding size of boolean vector");
@@ -704,7 +704,7 @@ protected:
      * This function is used ONLY for DUAL construction from a binary object (binary image in 2D, binary volume in 3D...)
      * Hence we consider a set of cells of maximal dimension vectorized to a boolean vector.
      */
-    size_t vox2ind(const std::vector<size_t>& base_indices, vector<size_t> B, size_t max_size) const {
+    size_t vox2ind(const std::vector<size_t>& base_indices, std::vector<size_t> B, size_t max_size) const {
         if (base_indices.size() != _dim) {
             throw std::invalid_argument("Dimension of base_indices does not match _dim");
         }
@@ -805,7 +805,7 @@ void Cubical_chain_complex<CoefficientType>::initialize_cells(const Cub_object_i
         //We iterate over all the voxels via indices
         for (size_t i=0; i<cub.cubs.size(); ++i)
         {
-            vector<size_t> coords(cub.cubs.at(i)) ;
+            std::vector<size_t> coords(cub.cubs.at(i)) ;
             // Calculate the coordinates of the voxel in the dual complex
             for (size_t i=0; i<_dim; ++i)
                 coords.at(i)*=2 ;
@@ -974,22 +974,22 @@ void Cubical_chain_complex<CoefficientType>::chain_complex_chain_to_vtk(const Cu
     }
 
     // Header
-    out << "# vtk DataFile Version 2.0" << endl ;
-    out << "generators" << endl ;
-    out << "ASCII" << endl ;
-    out << "DATASET  UNSTRUCTURED_GRID" << endl ;
+    out << "# vtk DataFile Version 2.0" << std::endl ;
+    out << "generators" << std::endl ;
+    out << "ASCII" << std::endl ;
+    out << "DATASET  UNSTRUCTURED_GRID" << std::endl ;
 
     // Points
     size_t nnodes = K.number_of_cells(0) ;
-    out << "POINTS " << nnodes << " double" << endl ;
+    out << "POINTS " << nnodes << " double" << std::endl ;
     for (size_t n = 0; n < nnodes; ++n)
     {
-        vector<double> p(K.get_vertex_coords(n)) ;
+        std::vector<double> p(K.get_vertex_coords(n)) ;
         for (double x : p)
             out << x << " " ;
         for (size_t i = p.size(); i<3; ++i) // points must be 3D -> add zeros
             out << "0 " ;
-        out << endl ;
+        out << std::endl ;
     }
 
     size_t ncells_tot = 0, size_cells_tot = 0 ;
@@ -1012,7 +1012,7 @@ void Cubical_chain_complex<CoefficientType>::chain_complex_chain_to_vtk(const Cu
             }
         }
         // 2 - Output cells
-        out << "CELLS " << ncells_tot << " " << size_cells_tot << endl ;
+        out << "CELLS " << ncells_tot << " " << size_cells_tot << std::endl ;
 
         {
             const size_t size_cell = 1<<q ;
@@ -1020,12 +1020,12 @@ void Cubical_chain_complex<CoefficientType>::chain_complex_chain_to_vtk(const Cu
             {
                 if (!chain.is_null(id))
                 {
-                    vector<size_t> khal(K.ind2khal(K._base2bool.at(q).at(id))) ;
-                    vector<size_t> verts(K.khal_to_verts(K.ind2khal(K._base2bool.at(q).at(id)))) ;
+                    std::vector<size_t> khal(K.ind2khal(K._base2bool.at(q).at(id))) ;
+                    std::vector<size_t> verts(K.khal_to_verts(K.ind2khal(K._base2bool.at(q).at(id)))) ;
                     out << size_cell << " " ;
                     for (size_t i : verts)
                         out << i << " " ;
-                    out << endl ;
+                    out << std::endl ;
                     types.push_back(Cubical_chain_complex<CoefficientType>::VTK_cubtypes.at(q)) ;
 
                     if (with_scalars)
@@ -1040,27 +1040,27 @@ void Cubical_chain_complex<CoefficientType>::chain_complex_chain_to_vtk(const Cu
             }
         }
         // CELL_TYPES
-        out << "CELL_TYPES " << ncells_tot << endl ;
+        out << "CELL_TYPES " << ncells_tot << std::endl ;
         for (int t : types)
             out << t << " " ;
-        out << endl ;
+        out << std::endl ;
     }
 
     if (with_scalars)
     {
         // CELL_TYPES
-        out << "CELL_DATA " << ncells_tot << endl ;
-        out << "SCALARS Label " << "int" << " 1" << endl ;
-        out << "LOOKUP_TABLE default" << endl ;
+        out << "CELL_DATA " << ncells_tot << std::endl ;
+        out << "SCALARS Label " << "int" << " 1" << std::endl ;
+        out << "LOOKUP_TABLE default" << std::endl ;
         for (int s : scalars)
             out << s << " " ;
-        out << endl ;
+        out << std::endl ;
         // CELL_IDs
-        out << "SCALARS CellId " << "int" << " 1" << endl ;
-        out << "LOOKUP_TABLE default" << endl ;
+        out << "SCALARS CellId " << "int" << " 1" << std::endl ;
+        out << "LOOKUP_TABLE default" << std::endl ;
         for (size_t i : ids)
             out << i << " " ;
-        out << endl ;
+        out << std::endl ;
     }
     out.close() ;
 }

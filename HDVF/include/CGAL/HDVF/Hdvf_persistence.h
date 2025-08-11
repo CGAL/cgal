@@ -72,7 +72,7 @@ using PerHoleT = std::tuple<FiltrIndexPerInterval, CellsPerInterval, DegreePerIn
  *      birth time (cell, dim) -> death time (cell, dim) / degree duration
  */
 template <typename DegType>
-ostream& operator<< (ostream& out, const PerHoleT<DegType>& hole)
+std::ostream& operator<< (std::ostream& out, const PerHoleT<DegType>& hole)
 {
     // time (cell, dim) -> time (cell, dim) / degree duration
     const FiltrIndexPerInterval per_int(std::get<0>(hole)) ;
@@ -83,12 +83,12 @@ ostream& operator<< (ostream& out, const PerHoleT<DegType>& hole)
     if (deg_duration >= 0) // finite interval
     {
         out << "[" << per_int.first << " (" << per_int_cells.first.first << ", " << per_int_cells.first.second << ") -> " ;
-        out << per_int.second << " (" << per_int_cells.second.first << ", " << per_int_cells.second.second << ") / duration: " << deg_duration << "]" << endl ;
+        out << per_int.second << " (" << per_int_cells.second.first << ", " << per_int_cells.second.second << ") / duration: " << deg_duration << "]" << std::endl ;
     }
     else
     {
         out << "[" << per_int.first << " (" << per_int_cells.first.first << ", " << per_int_cells.first.second << ") -> " ;
-        out << "inf]" << endl ;
+        out << "inf]" << std::endl ;
     }
     return out ;
 }
@@ -288,7 +288,7 @@ public:
         }
 
         // Compute "infinite" holes
-        vector<vector<size_t> > criticals(this->flag(CRITICAL)) ;
+        std::vector<std::vector<size_t> > criticals(this->flag(CRITICAL)) ;
         for (int q=0; q < criticals.size(); ++q)
         {
             for (size_t i : criticals.at(q))
@@ -350,13 +350,13 @@ public:
      * \param[in] out Reference to an out stream.
      * \param[in] per_hdvf Constant reference on the Hdvf_persistence to print.
      */
-    friend ostream& operator<< (ostream& out, const Hdvf_persistence& per_hdvf)
+    friend std::ostream& operator<< (std::ostream& out, const Hdvf_persistence& per_hdvf)
     {
         size_t i = 0 ;
         for (PerHole hole : per_hdvf._persist)
         {
             if (abs(per_hdvf.hole_duration(hole)) > 0)
-                out << i << " --- duration : " << per_hdvf.hole_duration(hole) << " -- " << hole << endl ;
+                out << i << " --- duration : " << per_hdvf.hole_duration(hole) << " -- " << hole << std::endl ;
             ++i ;
         }
         return out ;
@@ -368,18 +368,18 @@ public:
      *
      * \param[in] out Reference to an out stream.
      */
-    ostream& print_hdvf_persistence_info (ostream& out)
+    std::ostream& print_hdvf_persistence_info (std::ostream& out)
     {
-        out << "Filtration: " << _f << endl ;
-        out << "_K_to_per and _per_to_K" << endl ;
+        out << "Filtration: " << _f << std::endl ;
+        out << "_K_to_per and _per_to_K" << std::endl ;
         for (int q=0; q<=this->_K.dimension(); ++q)
         {
-            out << "-> dim " << q << endl ;
-            out << "index_per -(_per_to_K)-> index_K -(_K_to_per)-> index_per" << endl ;
+            out << "-> dim " << q << std::endl ;
+            out << "index_per -(_per_to_K)-> index_K -(_K_to_per)-> index_per" << std::endl ;
             for (size_t i=0; i<this->_K.number_of_cells(q); ++i)
             {
                 const size_t id_K(_per_to_K.at(q).at(i)) ;
-                out << i << " -> " << id_K << " -> " << _K_to_per.at(q).at(id_K) << endl ;
+                out << i << " -> " << id_K << " -> " << _K_to_per.at(q).at(id_K) << std::endl ;
             }
         }
         return out ;
@@ -397,9 +397,9 @@ public:
      *
      * \returns A vector containing, for each dimension, the vector of labels by cell index.
      */
-    virtual vector<vector<int> > psc_labels () const
+    virtual std::vector<std::vector<int> > psc_labels () const
     {
-        vector<vector<int> > labels(this->_K.dimension()+1) ;
+        std::vector<std::vector<int> > labels(this->_K.dimension()+1) ;
         for (int q=0; q<=this->_K.dimension(); ++q)
         {
             for (size_t i = 0; i<this->_K.number_of_cells(q); ++i)
@@ -706,7 +706,7 @@ Hdvf_persistence<CoefficientType, ComplexType, DegType, FiltrationType>::Hdvf_pe
     }
 
     // Init boundary matrices
-    vector<Column_matrix> _DD_per(this->_K.dimension()+1) ;
+    std::vector<Column_matrix> _DD_per(this->_K.dimension()+1) ;
 
     // Copy _DD_col with filtration order (for dimensions q>0)
     for (int q = 0 ; q <= this->_K.dimension(); ++q)

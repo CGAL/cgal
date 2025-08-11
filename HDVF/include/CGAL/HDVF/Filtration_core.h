@@ -258,9 +258,9 @@ public:
      *
      * \returns A vector containing, for each dimension, the vector of labels by cell index.
      */
-    vector<vector<std::size_t> > export_filtration () const
+    std::vector<std::vector<std::size_t> > export_filtration () const
     {
-        vector<vector<std::size_t> > labels(_K.dimension()+1) ;
+        std::vector<std::vector<std::size_t> > labels(_K.dimension()+1) ;
         for (int q=0; q<=this->_K.dimension(); ++q)
         {
             for (std::size_t i = 0; i<this->_K.number_of_cells(q); ++i)

@@ -46,24 +46,24 @@ void interaction_loop(Hdvf<CoefType, ComplexType> &hdvf,
     output_vtk(hdvf, complex) ;
     while (!over)
     {
-        string instr ;
+        std::string instr ;
         int ipair ;
-        cout << "Next instruction : M, W, MW or Q (to quit)" << endl ;
-        cin >> instr ;
-        if (instr == string("M"))
+        std::cout << "Next instruction : M, W, MW or Q (to quit)" << std::endl ;
+        std::cin >> instr ;
+        if (instr == std::string("M"))
         {
             int sigma, q ;
-            cout << "Provide sigma / q (separate with space):" << endl ;
-            cin >> sigma >> q ;
+            std::cout << "Provide sigma / q (separate with space):" << std::endl ;
+            std::cin >> sigma >> q ;
             bool found = false ;
-            vector<Pair_cells> possM(hdvf.find_pairs_M(q, found, sigma)) ;
+            std::vector<Pair_cells> possM(hdvf.find_pairs_M(q, found, sigma)) ;
             std::cout << "-> possible pairings for M:" << std::endl ;
             for (int i = 0; i<possM.size(); ++i)
                 std::cout << i << " : " << possM.at(i) << std::endl ;
             if (possM.size() > 0)
             {
-                cout << "chose indice of pairing (out the range = quit): " ;
-                cin >> ipair ;
+                std::cout << "chose indice of pairing (out the range = quit): " ;
+                std::cin >> ipair ;
                 if ((ipair >= 0) && (ipair < possM.size()))
                 {
                     Pair_cells p(possM.at(ipair)) ;
@@ -74,55 +74,55 @@ void interaction_loop(Hdvf<CoefType, ComplexType> &hdvf,
                 }
             }
         }
-        else if (instr == string("W"))
+        else if (instr == std::string("W"))
         {
             int sigma, q ;
-            cout << "Provide sigma / q (separate with space):" << endl ;
-            cin >> sigma >> q ;
+            std::cout << "Provide sigma / q (separate with space):" << std::endl ;
+            std::cin >> sigma >> q ;
             bool found = false ;
-            vector<Pair_cells> possW(hdvf.find_pairs_W(q, found, sigma)) ;
-            cout << "-> possible pairings for W:" << endl ;
+            std::vector<Pair_cells> possW(hdvf.find_pairs_W(q, found, sigma)) ;
+            std::cout << "-> possible pairings for W:" << std::endl ;
             for (int i = 0; i<possW.size(); ++i)
-                cout << i << " : " << possW.at(i) << endl ;
+                std::cout << i << " : " << possW.at(i) << std::endl ;
             if (possW.size() > 0)
             {
-                cout << "chose indice of pairing (out the range = quit): " ;
-                cin >> ipair ;
+                std::cout << "chose indice of pairing (out the range = quit): " ;
+                std::cin >> ipair ;
                 if ((ipair >= 0) && (ipair < possW.size()))
                 {
                     Pair_cells p(possW.at(ipair)) ;
-                    cout << "W(" << p << ")" << endl ;
+                    std::cout << "W(" << p << ")" << std::endl ;
                     hdvf.W(p.sigma, p.tau, p.dim) ;
                     //                    hdvf.insert_matrices() ;
                     output_vtk(hdvf, complex) ;
                 }
             }
         }
-        else if (instr == string("MW"))
+        else if (instr == std::string("MW"))
         {
             int sigma, q ;
-            cout << "Provide sigma / q (separate with space):" << endl ;
-            cin >> sigma >> q ;
+            std::cout << "Provide sigma / q (separate with space):" << std::endl ;
+            std::cin >> sigma >> q ;
             bool found = false ;
-            vector<Pair_cells> possMW(hdvf.find_pairs_MW(q, found, sigma)) ;
-            cout << "-> possible pairings for MW:" << endl ;
+            std::vector<Pair_cells> possMW(hdvf.find_pairs_MW(q, found, sigma)) ;
+            std::cout << "-> possible pairings for MW:" << std::endl ;
             for (int i = 0; i<possMW.size(); ++i)
-                cout << i << " : " << possMW.at(i) << endl ;
+                std::cout << i << " : " << possMW.at(i) << std::endl ;
             if (possMW.size() > 0)
             {
-                cout << "chose indice of pairing (out the range = quit): " ;
-                cin >> ipair ;
+                std::cout << "chose indice of pairing (out the range = quit): " ;
+                std::cin >> ipair ;
                 if ((ipair >= 0) && (ipair < possMW.size()))
                 {
                     Pair_cells p(possMW.at(ipair)) ;
-                    cout << "MW(" << p << ")" << endl ;
+                    std::cout << "MW(" << p << ")" << std::endl ;
                     hdvf.MW(p.sigma, p.tau, p.dim) ;
                     //                    hdvf.insert_matrices() ;
                     output_vtk(hdvf, complex) ;
                 }
             }
         }
-        else if (instr == string("Q"))
+        else if (instr == std::string("Q"))
             over = true ;
     }
 }

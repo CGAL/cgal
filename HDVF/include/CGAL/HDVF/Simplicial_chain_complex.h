@@ -23,8 +23,6 @@
 namespace CGAL {
 namespace HDVF {
 
-using namespace std;
-
 // Forward declaration of SimpComplexTools
 template<typename CoefficientType> class Duality_simplicial_complex_tools ;
 
@@ -119,7 +117,7 @@ public:
      * \param[in] label_type_name Typename used in vtk export (e.g. "int" or "unsigned_long", see <a href = "https://docs.vtk.org/en/latest/design_documents/VTKFileFormats.html">VTK manual </a>).
      */
     template <typename LabelType = int>
-    static void chain_complex_to_vtk(const Simplicial_chain_complex &K, const std::string &filename, const std::vector<std::vector<LabelType> > *labels=NULL, string label_type_name = "int")
+    static void chain_complex_to_vtk(const Simplicial_chain_complex &K, const std::string &filename, const std::vector<std::vector<LabelType> > *labels=NULL, std::string label_type_name = "int")
     {
         typedef Simplicial_chain_complex<CoefficientType> ComplexType;
         if (K._coords.size() != K.number_of_cells(0))
@@ -139,23 +137,23 @@ public:
         }
 
         // Header
-        out << "# vtk DataFile Version 2.0" << endl ;
-        out << "generators" << endl ;
-        out << "ASCII" << endl ;
-        out << "DATASET  UNSTRUCTURED_GRID" << endl ;
+        out << "# vtk DataFile Version 2.0" << std::endl ;
+        out << "generators" << std::endl ;
+        out << "ASCII" << std::endl ;
+        out << "DATASET  UNSTRUCTURED_GRID" << std::endl ;
 
         // Points
         size_t nnodes = K._coords.size() ;
-        out << "POINTS " << nnodes << " double" << endl ;
+        out << "POINTS " << nnodes << " double" << std::endl ;
         const std::vector<ComplexType::Point>& coords(K.get_vertices_coords()) ;
         for (size_t n = 0; n < nnodes; ++n)
         {
-            vector<double> p(coords.at(n)) ;
+            std::vector<double> p(coords.at(n)) ;
             for (double x : p)
                 out << x << " " ;
             for (size_t i = p.size(); i<3; ++i) // points must be 3D -> add zeros
                 out << "0 " ;
-            out << endl ;
+            out << std::endl ;
         }
 
         size_t ncells_tot = 0, size_cells_tot = 0 ;
@@ -172,7 +170,7 @@ public:
                 const size_t size_cell = q+1 ;
                 size_cells_tot += (size_cell+1)*K.number_of_cells(q) ;
             }
-            out << "CELLS " << ncells_tot << " " << size_cells_tot << endl ;
+            out << "CELLS " << ncells_tot << " " << size_cells_tot << std::endl ;
             // Output cells by increasing dimension
             for (int q=0; q<=K._dim; ++q)
             {
@@ -183,7 +181,7 @@ public:
                     out << size_cell << " " ;
                     for (typename Simplex::const_iterator it = verts.cbegin(); it != verts.cend(); ++it)
                         out << *it << " " ;
-                    out << endl ;
+                    out << std::endl ;
                     types.push_back(ComplexType::VTK_simptypes.at(q)) ;
                     if (with_scalars)
                     {
@@ -194,27 +192,27 @@ public:
             }
 
             // CELL_TYPES
-            out << "CELL_TYPES " << ncells_tot << endl ;
+            out << "CELL_TYPES " << ncells_tot << std::endl ;
             for (int t : types)
                 out << t << " " ;
-            out << endl ;
+            out << std::endl ;
         }
 
         if (with_scalars)
         {
             // CELL_LABEL
-            out << "CELL_DATA " << ncells_tot << endl ;
-            out << "SCALARS Label " << label_type_name << " 1" << endl ;
-            out << "LOOKUP_TABLE default" << endl ;
+            out << "CELL_DATA " << ncells_tot << std::endl ;
+            out << "SCALARS Label " << label_type_name << " 1" << std::endl ;
+            out << "LOOKUP_TABLE default" << std::endl ;
             for (LabelType s : scalars)
                 out << s << " " ;
-            out << endl ;
+            out << std::endl ;
             // CELL_IDs
-            out << "SCALARS CellId " << "int" << " 1" << endl ;
-            out << "LOOKUP_TABLE default" << endl ;
+            out << "SCALARS CellId " << "int" << " 1" << std::endl ;
+            out << "LOOKUP_TABLE default" << std::endl ;
             for (size_t i : ids)
                 out << i << " " ;
-            out << endl ;
+            out << std::endl ;
         }
         out.close() ;
     }
@@ -260,23 +258,23 @@ void Simplicial_chain_complex<CoefficientType>::chain_complex_chain_to_vtk(const
     }
 
     // Header
-    out << "# vtk DataFile Version 2.0" << endl ;
-    out << "generators" << endl ;
-    out << "ASCII" << endl ;
-    out << "DATASET  UNSTRUCTURED_GRID" << endl ;
+    out << "# vtk DataFile Version 2.0" << std::endl ;
+    out << "generators" << std::endl ;
+    out << "ASCII" << std::endl ;
+    out << "DATASET  UNSTRUCTURED_GRID" << std::endl ;
 
     // Points
     size_t nnodes = K._coords.size() ;
-    out << "POINTS " << nnodes << " double" << endl ;
+    out << "POINTS " << nnodes << " double" << std::endl ;
     const std::vector<ComplexType::Point>& coords(K.get_vertices_coords()) ;
     for (size_t n = 0; n < nnodes; ++n)
     {
-        vector<double> p(coords.at(n)) ;
+        std::vector<double> p(coords.at(n)) ;
         for (double x : p)
             out << x << " " ;
         for (size_t i = p.size(); i<3; ++i) // points must be 3D -> add zeros
             out << "0 " ;
-        out << endl ;
+        out << std::endl ;
     }
 
     size_t ncells_tot = 0, size_cells_tot = 0 ;
@@ -299,7 +297,7 @@ void Simplicial_chain_complex<CoefficientType>::chain_complex_chain_to_vtk(const
             }
         }
         // 2 - Output cells
-        out << "CELLS " << ncells_tot << " " << size_cells_tot << endl ;
+        out << "CELLS " << ncells_tot << " " << size_cells_tot << std::endl ;
 
         {
             const size_t size_cell = q+1 ;
@@ -311,7 +309,7 @@ void Simplicial_chain_complex<CoefficientType>::chain_complex_chain_to_vtk(const
                     out << size_cell << " " ;
                     for (typename Simplex::const_iterator it = verts.cbegin(); it != verts.cend(); ++it)
                         out << *it << " " ;
-                    out << endl ;
+                    out << std::endl ;
                     types.push_back(ComplexType::VTK_simptypes.at(q)) ;
                     if (with_scalars)
                     {
@@ -325,27 +323,27 @@ void Simplicial_chain_complex<CoefficientType>::chain_complex_chain_to_vtk(const
             }
         }
         // CELL_TYPES
-        out << "CELL_TYPES " << ncells_tot << endl ;
+        out << "CELL_TYPES " << ncells_tot << std::endl ;
         for (int t : types)
             out << t << " " ;
-        out << endl ;
+        out << std::endl ;
     }
 
     if (with_scalars)
     {
         // CELL_TYPES
-        out << "CELL_DATA " << ncells_tot << endl ;
-        out << "SCALARS Label " << "int" << " 1" << endl ;
-        out << "LOOKUP_TABLE default" << endl ;
+        out << "CELL_DATA " << ncells_tot << std::endl ;
+        out << "SCALARS Label " << "int" << " 1" << std::endl ;
+        out << "LOOKUP_TABLE default" << std::endl ;
         for (int s : scalars)
             out << s << " " ;
-        out << endl ;
+        out << std::endl ;
         // CELL_IDs
-        out << "SCALARS CellId " << "int" << " 1" << endl ;
-        out << "LOOKUP_TABLE default" << endl ;
+        out << "SCALARS CellId " << "int" << " 1" << std::endl ;
+        out << "LOOKUP_TABLE default" << std::endl ;
         for (size_t i : ids)
             out << i << " " ;
-        out << endl ;
+        out << std::endl ;
     }
     out.close() ;
 }

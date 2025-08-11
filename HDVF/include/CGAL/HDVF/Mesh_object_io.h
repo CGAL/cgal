@@ -26,8 +26,6 @@
 namespace CGAL {
 namespace HDVF {
 
-using namespace std ;
-
 // ------ For simplicial complexes
 /** \brief Type of cells of Mesh_object_io. */
 typedef std::set<size_t> IOCellType ;
@@ -46,7 +44,7 @@ typedef std::vector<IOCellType> IOChainType ;
 // Type of points (for vertices coordinates in R^d)
 struct IONodeType {
 private:
-    vector<double> _coords;
+    std::vector<double> _coords;
 
 public:
     IONodeType(size_t d = 3, double x = 0.) : _coords(d,x) {}
@@ -214,16 +212,16 @@ private:
         }
 
         // Header
-        out << "# vtk DataFile Version 2.0" << endl ;
-        out << "generators" << endl ;
-        out << "ASCII" << endl ;
-        out << "DATASET  UNSTRUCTURED_GRID" << endl ;
+        out << "# vtk DataFile Version 2.0" << std::endl ;
+        out << "generators" << std::endl ;
+        out << "ASCII" << std::endl ;
+        out << "DATASET  UNSTRUCTURED_GRID" << std::endl ;
 
         // Points
         size_t nnodes = nodes.size() ;
-        out << "POINTS " << nnodes << " double" << endl ;
+        out << "POINTS " << nnodes << " double" << std::endl ;
         for (IONodeType n : nodes)
-            out << n.at(0) << " " << n.at(1) << " " << n.at(2) << endl ;
+            out << n.at(0) << " " << n.at(1) << " " << n.at(2) << std::endl ;
 
         // Cells
         // Number of cells : for each chain, each number of vertices for each cell
@@ -239,7 +237,7 @@ private:
             }
 
         }
-        out << "CELLS " << ncells_tot << " " << size_cells_tot << endl ;
+        out << "CELLS " << ncells_tot << " " << size_cells_tot << std::endl ;
         // Output cells
         std::vector<size_t> types ;
         std::vector<CoefficientType> scalars ;
@@ -255,7 +253,7 @@ private:
                 out << d << " " ;
                 for (size_t j : c)
                     out << j << " " ;
-                out << endl ;
+                out << std::endl ;
                 types.push_back(cell_type) ;
                 if (with_scalars)
                     scalars.push_back(labels->at(i)) ;
@@ -263,20 +261,20 @@ private:
         }
 
         // CELL_TYPES
-        out << "CELL_TYPES " << ncells_tot << endl ;
+        out << "CELL_TYPES " << ncells_tot << std::endl ;
         for (size_t t : types)
             out << t << " " ;
-        out << endl ;
+        out << std::endl ;
 
         if (with_scalars)
         {
             // CELL_TYPES
-            out << "CELL_DATA " << ncells_tot << endl ;
-            out << "SCALARS CriticalCellsId " << scalar_type << " 1" << endl ;
-            out << "LOOKUP_TABLE default" << endl ;
+            out << "CELL_DATA " << ncells_tot << std::endl ;
+            out << "SCALARS CriticalCellsId " << scalar_type << " 1" << std::endl ;
+            out << "LOOKUP_TABLE default" << std::endl ;
             for (CoefficientType s : scalars)
                 out << s << " " ;
-            out << endl ;
+            out << std::endl ;
         }
         out.close() ;
     }
@@ -373,7 +371,7 @@ public:
         std::ifstream infile(filename);
         if(!infile.is_open()) {
             // failed to open the file
-            cerr << "Warning: file " << filename << " does not exist" << endl ;
+            std::cerr << "Warning: file " << filename << " does not exist" << std::endl ;
             return false;
         }
         // 1 - header
@@ -432,17 +430,17 @@ public:
         // 0 - open input file
         std::ofstream outfile(filename);
         if(!outfile.is_open()) {
-            cerr << "Warning: cannot open file " << filename << endl ;
+            std::cerr << "Warning: cannot open file " << filename << std::endl ;
             // failed to open the file
             return false;
         }
         // 1 - header
-        outfile << "OFF" << endl ;
-        outfile << nvertices << " " << cells_of_dim(2) << " " << nedges << endl ;
+        outfile << "OFF" << std::endl ;
+        outfile << nvertices << " " << cells_of_dim(2) << " " << nedges << std::endl ;
         // 2 - nodes
         for (size_t i=0; i<nvertices; ++i)
         {
-            outfile << nodes.at(i).at(0) << " " << nodes.at(i).at(1) << " " << nodes.at(i).at(2) << endl ;
+            outfile << nodes.at(i).at(0) << " " << nodes.at(i).at(1) << " " << nodes.at(i).at(2) << std::endl ;
         }
         // 3 - cells (export only triangles)
         for (size_t i=0; i<ncells; ++i)
@@ -453,7 +451,7 @@ public:
                 outfile << ni << " " ;
                 for (size_t k : cells.at(i))
                     outfile << k << " " ;
-                outfile << endl ;
+                outfile << std::endl ;
             }
         }
         outfile.close() ;
@@ -473,7 +471,7 @@ public:
         // 0 - open input file
         std::ofstream outfile(filename);
         if(!outfile.is_open()) {
-            cerr << "Warning: cannot open file " << filename << endl ;
+            std::cerr << "Warning: cannot open file " << filename << std::endl ;
             // failed to open the file
             return false;
         }
@@ -483,7 +481,7 @@ public:
             const IOCellType cell = cells.at(i) ;
             for (size_t c : cell)
                 outfile << c << " " ;
-            outfile << endl ;
+            outfile << std::endl ;
         }
         outfile.close() ;
         return true;
@@ -496,7 +494,7 @@ public:
         std::ifstream infile(filename);
         if(!infile.is_open()) {
             // failed to open the file
-            cerr << "Warning: file " << filename << " does not exist" << endl ;
+            std::cerr << "Warning: file " << filename << " does not exist" << std::endl ;
             return false;
         }
         std::size_t line_number = 0;
@@ -537,9 +535,9 @@ public:
 
     void print_infos () const
     {
-        cout << "Mesh_object_io infos - dim : "<< dim << ", nodes : " << nodes.size() << ", cells : " << cells.size() << endl ;
+        std::cout << "Mesh_object_io infos - dim : "<< dim << ", nodes : " << nodes.size() << ", cells : " << cells.size() << std::endl ;
         for (int q = 0; q <= dim; ++q)
-            cout << "cells of dim " << q << " : " << cells_of_dim(q) << endl ;
+            std::cout << "cells of dim " << q << " : " << cells_of_dim(q) << std::endl ;
     }
 
     // Mesh computations
@@ -565,7 +563,7 @@ public:
         }
         return r ;
     }
-    pair<IONodeType, IONodeType> BB(double ratio=1.)
+    std::pair<IONodeType, IONodeType> BB(double ratio=1.)
     {
         IONodeType minBB(nodes.at(0)), maxBB(nodes.at(0)) ;
         for (size_t i=1; i<nodes.size(); ++i)

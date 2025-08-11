@@ -70,18 +70,18 @@ namespace HDVF {
  */
 
 template <typename CoefType, typename ComplexType, template <typename, int> typename _ChainType = OSM::Sparse_chain, template <typename, int> typename _SparseMatrixType = OSM::Sparse_matrix, typename VertexIdType = size_t>
-void hdvf_geometric_chain_complex_output_vtk (Hdvf_core<CoefType, ComplexType, _ChainType, _SparseMatrixType> &hdvf, ComplexType &complex, string filename = "test", bool co_faces = false)
+void hdvf_geometric_chain_complex_output_vtk (Hdvf_core<CoefType, ComplexType, _ChainType, _SparseMatrixType> &hdvf, ComplexType &complex, std::string filename = "test", bool co_faces = false)
 {
     typedef Hdvf_core<CoefType, ComplexType, _ChainType, _SparseMatrixType> HDVF_type;
     // Export PSC labelling
-    string outfile(filename+"_PSC.vtk") ;
-    vector<vector<int> > labels = hdvf.psc_labels() ;
+    std::string outfile(filename+"_PSC.vtk") ;
+    std::vector<std::vector<int> > labels = hdvf.psc_labels() ;
     ComplexType::chain_complex_to_vtk(complex, outfile, &labels) ;
 
     if (hdvf.hdvf_opts() != OPT_BND)
     {
         // Export generators of all critical cells
-        vector<vector<size_t> > criticals(hdvf.flag(CRITICAL)) ;
+        std::vector<std::vector<size_t> > criticals(hdvf.flag(CRITICAL)) ;
         for (int q = 0; q <= complex.dimension(); ++q)
         {
             for (size_t c : criticals.at(q))
@@ -89,15 +89,15 @@ void hdvf_geometric_chain_complex_output_vtk (Hdvf_core<CoefType, ComplexType, _
                 // Homology generators
                 if (hdvf.hdvf_opts() & (OPT_FULL | OPT_G))
                 {
-                    string outfile_g(filename+"_G_"+to_string(c)+"_dim_"+to_string(q)+".vtk") ;
-                    //                    vector<vector<size_t> > labels = hdvf.export_label(G,c,q) ;
+                    std::string outfile_g(filename+"_G_"+std::to_string(c)+"_dim_"+std::to_string(q)+".vtk") ;
+                    //                    std::vector<std::vector<size_t> > labels = hdvf.export_label(G,c,q) ;
                     OSM::Sparse_chain<CoefType,OSM::COLUMN> chain(hdvf.homology_chain(c,q)) ;
                     ComplexType::chain_complex_chain_to_vtk(complex, outfile_g, chain, q, c) ;
                 }
                 // Cohomology generators
                 if (hdvf.hdvf_opts() & (OPT_FULL | OPT_F))
                 {
-                    string outfile_f(filename+"_FSTAR_"+to_string(c)+"_dim_"+to_string(q)+".vtk") ;
+                    std::string outfile_f(filename+"_FSTAR_"+std::to_string(c)+"_dim_"+std::to_string(q)+".vtk") ;
                     OSM::Sparse_chain<CoefType,OSM::COLUMN> chain(hdvf.cohomology_chain(c, q)) ;
                     if (!co_faces)
                     {
@@ -129,7 +129,7 @@ void hdvf_geometric_chain_complex_output_vtk (Hdvf_core<CoefType, ComplexType, _
  */
 
 template <typename CoefType, typename ComplexType, typename DegType, typename FiltrationType>
-void hdvf_persistence_geometric_chain_complex_output_vtk (Hdvf_persistence<CoefType, ComplexType, DegType, FiltrationType> &per_hdvf, ComplexType &complex, string filename = "per", bool co_faces = false)
+void hdvf_persistence_geometric_chain_complex_output_vtk (Hdvf_persistence<CoefType, ComplexType, DegType, FiltrationType> &per_hdvf, ComplexType &complex, std::string filename = "per", bool co_faces = false)
 {
     if (!per_hdvf.with_export())
         throw("Cannot export persistent generators to vtk: with_export is off!") ;
@@ -138,8 +138,8 @@ void hdvf_persistence_geometric_chain_complex_output_vtk (Hdvf_persistence<CoefT
     using PerHole = PerHoleT<DegType> ;
 
     // Export the filtration
-    string out_file_filtration = filename+"_filtration.vtk" ;
-    vector<vector<size_t> > filtr_labels = per_hdvf.get_filtration().export_filtration();
+    std::string out_file_filtration = filename+"_filtration.vtk" ;
+    std::vector<std::vector<size_t> > filtr_labels = per_hdvf.get_filtration().export_filtration();
     ComplexType::template chain_complex_to_vtk<size_t>(complex, out_file_filtration, &filtr_labels, "unsigned_long") ;
 
     // Iterate over persistence diagram (iterator over non zero intervals)
@@ -156,7 +156,7 @@ void hdvf_persistence_geometric_chain_complex_output_vtk (Hdvf_persistence<CoefT
         if (per_hdvf.hole_duration(hole)>0) // Export vtk of "finite" holes
         {
             // Build name associated to the ith hole : filename_i
-            string out_file = filename+"_"+to_string(i) ;
+            std::string out_file = filename+"_"+std::to_string(i) ;
             // Export PSC labels to vtk
             ComplexType::chain_complex_to_vtk(complex, out_file+"_PSC.vtk", &hole_data.labelsPSC) ;
             const CellsPerInterval per_int_cells(std::get<1>(hole_data.hole)) ;
@@ -167,14 +167,14 @@ void hdvf_persistence_geometric_chain_complex_output_vtk (Hdvf_persistence<CoefT
                 {
                     const size_t id(per_int_cells.first.first) ;
                     const int dim(per_int_cells.first.second) ;
-                    string tmp(out_file+"_g_"+to_string(id)+"_"+to_string(dim)+".vtk") ;
+                    std::string tmp(out_file+"_g_"+std::to_string(id)+"_"+std::to_string(dim)+".vtk") ;
                     ComplexType::chain_complex_chain_to_vtk(complex, tmp, hole_data.g_chain_sigma, dim);
                 }
                 // Second generator : filename_i_g_tau_q+1.vtk
                 {
                     const size_t id(per_int_cells.second.first) ;
                     const int dim(per_int_cells.second.second) ;
-                    string tmp(out_file+"_g_"+to_string(id)+"_"+to_string(dim)+".vtk") ;
+                    std::string tmp(out_file+"_g_"+std::to_string(id)+"_"+std::to_string(dim)+".vtk") ;
                     ComplexType::chain_complex_chain_to_vtk(complex, tmp, hole_data.g_chain_tau, dim);
                 }
             }
@@ -185,7 +185,7 @@ void hdvf_persistence_geometric_chain_complex_output_vtk (Hdvf_persistence<CoefT
                 {
                     const size_t id(per_int_cells.first.first) ;
                     const int dim(per_int_cells.first.second) ;
-                    string tmp(out_file+"_fstar_"+to_string(id)+"_"+to_string(dim)+".vtk") ;
+                    std::string tmp(out_file+"_fstar_"+std::to_string(id)+"_"+std::to_string(dim)+".vtk") ;
                     if (co_faces)
                     {
                         ComplexType::chain_complex_chain_to_vtk(complex, tmp, complex.cofaces_chain(hole_data.fstar_chain_sigma, dim), dim+1);
@@ -197,7 +197,7 @@ void hdvf_persistence_geometric_chain_complex_output_vtk (Hdvf_persistence<CoefT
                 {
                     const size_t id(per_int_cells.second.first) ;
                     const int dim(per_int_cells.second.second) ;
-                    string tmp(out_file+"_fstar_"+to_string(id)+"_"+to_string(dim)+".vtk") ;
+                    std::string tmp(out_file+"_fstar_"+std::to_string(id)+"_"+std::to_string(dim)+".vtk") ;
                     if (co_faces)
                     {
                         ComplexType::chain_complex_chain_to_vtk(complex, tmp, complex.cofaces_chain(hole_data.fstar_chain_tau, dim), dim+1);
@@ -226,18 +226,18 @@ void hdvf_persistence_geometric_chain_complex_output_vtk (Hdvf_persistence<CoefT
  */
 
 template <typename CoefType, typename ComplexType, typename VertexIdType = size_t>
-void hdvf_duality_geometric_chain_complex_output_vtk (Hdvf_duality<CoefType, ComplexType> &hdvf, ComplexType &complex, string filename = "test", bool co_faces = false)
+void hdvf_duality_geometric_chain_complex_output_vtk (Hdvf_duality<CoefType, ComplexType> &hdvf, ComplexType &complex, std::string filename = "test", bool co_faces = false)
 {
     typedef Hdvf_duality<CoefType, ComplexType> HDVF_type;
     // Export PSC labelling
-    string outfile(filename+"_PSC.vtk") ;
-    vector<vector<int> > labels = hdvf.psc_labels() ;
+    std::string outfile(filename+"_PSC.vtk") ;
+    std::vector<std::vector<int> > labels = hdvf.psc_labels() ;
     ComplexType::chain_complex_to_vtk(complex, outfile, &labels) ;
 
     if (hdvf.hdvf_opts() != OPT_BND)
     {
         // Export generators of all critical cells
-        vector<vector<size_t> > criticals(hdvf.flag(CRITICAL)) ;
+        std::vector<std::vector<size_t> > criticals(hdvf.flag(CRITICAL)) ;
         for (int q = 0; q <= complex.dimension(); ++q)
         {
             for (size_t c : criticals.at(q))
@@ -245,15 +245,15 @@ void hdvf_duality_geometric_chain_complex_output_vtk (Hdvf_duality<CoefType, Com
                 // Homology generators
                 if (hdvf.hdvf_opts() & (OPT_FULL | OPT_G))
                 {
-                    string outfile_g(filename+"_G_"+to_string(c)+"_dim_"+to_string(q)+".vtk") ;
-                    //                    vector<vector<size_t> > labels = hdvf.export_label(G,c,q) ;
+                    std::string outfile_g(filename+"_G_"+std::to_string(c)+"_dim_"+std::to_string(q)+".vtk") ;
+                    //                    std::vector<std::vector<size_t> > labels = hdvf.export_label(G,c,q) ;
                     OSM::Sparse_chain<CoefType,OSM::COLUMN> chain(hdvf.homology_chain(c,q)) ;
                     ComplexType::chain_complex_chain_to_vtk(complex, outfile_g, chain, q, c) ;
                 }
                 // Cohomology generators
                 if (hdvf.hdvf_opts() & (OPT_FULL | OPT_F))
                 {
-                    string outfile_f(filename+"_FSTAR_"+to_string(c)+"_dim_"+to_string(q)+".vtk") ;
+                    std::string outfile_f(filename+"_FSTAR_"+std::to_string(c)+"_dim_"+std::to_string(q)+".vtk") ;
                     OSM::Sparse_chain<CoefType,OSM::COLUMN> chain(hdvf.cohomology_chain(c, q)) ;
                     if (!co_faces)
                     {
@@ -329,7 +329,7 @@ public:
      * \param[in] BB_ratio Ratio of the "closing" icosphere diameter with respect to the diameter of the object's bounding box.
      * \param[in] out_file_prefix Prefix of tetgen intermediate files (default: "file_K_closed.off").
      */
-    static TripleRes simplicial_chain_complex_bb (const ComplexType& _K, double BB_ratio=1.5, const string& out_file_prefix = "file_K_closed.off")
+    static TripleRes simplicial_chain_complex_bb (const ComplexType& _K, double BB_ratio=1.5, const std::string& out_file_prefix = "file_K_closed.off")
     {
         // Export _K to a MeshObject to add the icosphere and mesh with tetGen
         Mesh_object_io mesh_L = Duality_simplicial_complex_tools::export_meshObject(_K) ;

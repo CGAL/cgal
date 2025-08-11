@@ -241,7 +241,7 @@ public:
      *
      * \param[in] flag Flag to select.
      */
-    vector<vector<size_t> > flag (FlagType flag) const ;
+    std::vector<std::vector<size_t> > flag (FlagType flag) const ;
 
     /**
      * \brief Gets cells with a given `flag` in dimension `q` *in the current sub chain complex*.
@@ -251,7 +251,7 @@ public:
      * \param[in] flag Flag to select.
      * \param[in] q Dimension visited.
      */
-    vector<size_t> flag_dim (FlagType flag, int q) const ;
+    std::vector<size_t> flag_dim (FlagType flag, int q) const ;
 
     // Hdvf_duality I/O
 
@@ -262,10 +262,10 @@ public:
      *
      * By default, outputs the complex to `std::cout`.
     */
-    virtual ostream& insert_reduction(ostream& out = cout)
+    virtual std::ostream& insert_reduction(std::ostream& out = std::cout)
     {
         // Print K
-        out << "----> K" << endl ;
+        out << "----> K" << std::endl ;
         _subCC = _KCC ;
         _subCC.screen_matrices(this->_DD_col);
         print_reduction_sub(out) ;
@@ -288,27 +288,27 @@ public:
      *
      * By default, outputs the complex to `std::cout`.
     */
-    virtual ostream& print_reduction_sub(ostream& out = cout) // const;
+    virtual std::ostream& print_reduction_sub(std::ostream& out = std::cout) // const;
     {
         // Print critical cells
-        out << "----- critical cells:" << endl;
+        out << "----- critical cells:" << std::endl;
         for (int q = 0; q <= _L.dimension(); ++q) {
-            out << "--- dim " << q << endl;
+            out << "--- dim " << q << std::endl;
             for (size_t i = 0; i < _L.number_of_cells(q); ++i)
             {
                 if ((this->_flag[q][i] == CRITICAL) && (_subCC.get_bit(q, i))) {
                     out << i << " ";
                 }
             }
-            out << endl;
+            out << std::endl;
         }
 
         if (_hdvf_opt & (OPT_FULL | OPT_G))
         {
             // Print matrices g
-            out << "----- g:" << endl;
+            out << "----- g:" << std::endl;
             for (int q = 0; q <= _L.dimension(); ++q) {
-                out << "--- dim " << q << endl;
+                out << "--- dim " << q << std::endl;
                 for (size_t i = 0; i < _L.number_of_cells(q); ++i) {
                     if ((this->_flag[q][i] == CRITICAL) && (_subCC.get_bit(q, i))) {
                         out << "g(" << i << ") = (" << i << ")";
@@ -317,7 +317,7 @@ public:
                         for (typename HDVF_type::Column_chain::const_iterator it_col = col.cbegin(); it_col != col.cend(); ++it_col) {
                             out << " + " << it_col->second << ".(" << it_col->first << ") + ";
                         }
-                        out << endl;
+                        out << std::endl;
                     }
                 }
             }
@@ -326,9 +326,9 @@ public:
         if (_hdvf_opt & (OPT_FULL | OPT_F))
         {
             // Print matrices f*
-            out << "----- f*:" << endl;
+            out << "----- f*:" << std::endl;
             for (int q = 0; q <= _L.dimension(); ++q) {
-                out << "--- dim " << q << endl;
+                out << "--- dim " << q << std::endl;
                 for (size_t i = 0; i < _L.number_of_cells(q); ++i) {
                     if ((this->_flag[q][i] == CRITICAL) && (_subCC.get_bit(q, i))) {
                         out << "f*(" << i << ") = (" << i << ")";
@@ -337,7 +337,7 @@ public:
                         for (typename HDVF_type::Row_chain::const_iterator it_row = row.cbegin(); it_row != row.cend(); ++it_row) {
                             out << " + " << it_row->second << ".(" << it_row->first << ") + ";
                         }
-                        out << endl;
+                        out << std::endl;
                     }
                 }
             }
@@ -354,7 +354,7 @@ public:
      *
      * By default, outputs the complex to `std::cout`.
     */
-    ostream& print_bnd_pairing(ostream& out = cout)
+    std::ostream& print_bnd_pairing(std::ostream& out = std::cout)
     {
         Sub_chain_complex_mask<CoefficientType, ComplexType> subPair(_L, false) ;
         for (int q=0; q<=_L.dimension(); ++q)
@@ -367,15 +367,15 @@ public:
         // Print corresponding submatrices _DD_col
         for (int q=1; q<=_L.dimension(); ++q)
         {
-            out << "--> dim " << q << " : q / q-1 cells" << endl ;
+            out << "--> dim " << q << " : q / q-1 cells" << std::endl ;
             out << "id " << q << " : " ;
             for (typename OSM::Bitboard::iterator it = subPair.get_bitboard(q).begin(); it != subPair.get_bitboard(q).end(); ++it)
                 out << *it << " " ;
-            out << endl ;
+            out << std::endl ;
             out << "id " << q-1 << " : " ;
             for (typename OSM::Bitboard::iterator it = subPair.get_bitboard(q-1).begin(); it != subPair.get_bitboard(q-1).end(); ++it)
                 out << *it << " " ;
-            out << endl ;
+            out << std::endl ;
             for (typename OSM::Bitboard::iterator it = subPair.get_bitboard(q).begin(); it != subPair.get_bitboard(q).end(); ++it)
             {
                 for (typename OSM::Bitboard::iterator it2 = subPair.get_bitboard(q-1).begin(); it2 != subPair.get_bitboard(q-1).end(); ++it2)
@@ -385,7 +385,7 @@ public:
                     else
                         out << this->_DD_col.at(q).get_coefficient(*it2, *it) << "\t" ;
                 }
-                out << endl ;
+                out << std::endl ;
             }
         }
         return out ;
@@ -398,9 +398,9 @@ public:
      *
      * \return A vector containing, for each dimension, the vector of labels by cell index.
      */
-    virtual vector<vector<int> > psc_labels () const
+    virtual std::vector<std::vector<int> > psc_labels () const
     {
-        vector<vector<int> > labels(this->_K.dimension()+1) ;
+        std::vector<std::vector<int> > labels(this->_K.dimension()+1) ;
         for (int q=0; q<=this->_K.dimension(); ++q)
         {
             for (size_t i = 0; i<this->_K.number_of_cells(q); ++i)
@@ -569,7 +569,7 @@ Pair_cells Hdvf_duality<CoefficientType,ComplexType>::find_pair_A(int q, bool &f
 template<typename CoefficientType, typename ComplexType>
 std::vector<Pair_cells> Hdvf_duality<CoefficientType,ComplexType>::find_pairs_A(int q, bool &found) const
 {
-    vector<Pair_cells> pairs;
+    std::vector<Pair_cells> pairs;
     found = false ;
 
     // Iterate through columns of _DD_col[q+1]
@@ -640,24 +640,24 @@ std::vector<Pair_cells> Hdvf_duality<CoefficientType,ComplexType>::find_pairs_A(
 template<typename CoefficientType, typename ComplexType>
 std::vector<Pair_cells> Hdvf_duality<CoefficientType,ComplexType>::compute_perfect_hdvf(bool verbose)
 {
-    std::cout << endl << "==== Compute perfect HDVF over K" << endl ;
+    std::cout << std::endl << "==== Compute perfect HDVF over K" << std::endl ;
     // Set _subCC to K
     _subCC = _KCC ;
     // Restrict _DD_col accordingly
     _subCC.screen_matrices(this->_DD_col);
     // Compute perfect HDVF over K
     std::vector<Pair_cells> tmp = HDVF_type::compute_perfect_hdvf(verbose) ;
-    std::cout << tmp.size() << " cells paired" << endl ;
+    std::cout << tmp.size() << " cells paired" << std::endl ;
     _critical_K = flag(CRITICAL) ;
 
-    std::cout << endl << "==== Compute perfect HDVF over L-K" << endl ;
+    std::cout << std::endl << "==== Compute perfect HDVF over L-K" << std::endl ;
     // set _subCC to L-K
     _subCC = _KCC.complement() ;
     // Restrict _DD_col accordingly
     _subCC.screen_matrices(this->_DD_col);
     // Compute perfect HDVF over L-K
     std::vector<Pair_cells> tmp2 = HDVF_type::compute_perfect_hdvf(verbose) ;
-    std::cout << tmp2.size() << " cells paired" << endl ;
+    std::cout << tmp2.size() << " cells paired" << std::endl ;
     _critical_L_K = flag(CRITICAL) ;
 
     // Return the vector of paired cells
@@ -669,24 +669,24 @@ std::vector<Pair_cells> Hdvf_duality<CoefficientType,ComplexType>::compute_perfe
 template<typename CoefficientType, typename ComplexType>
 std::vector<Pair_cells> Hdvf_duality<CoefficientType,ComplexType>::compute_rand_perfect_hdvf(bool verbose)
 {
-    std::cout << endl << "==== Compute perfect HDVF over K" << endl ;
+    std::cout << std::endl << "==== Compute perfect HDVF over K" << std::endl ;
     // Set _subCC to K
     _subCC = _KCC ;
     // Restrict _DD_col accordingly
     _subCC.screen_matrices(this->_DD_col);
     // Compute perfect HDVF over K
     std::vector<Pair_cells> tmp = HDVF_type::compute_rand_perfect_hdvf(verbose) ;
-    std::cout << tmp.size() << " cells paired" << endl ;
+    std::cout << tmp.size() << " cells paired" << std::endl ;
     _critical_K = flag(CRITICAL) ;
 
-    std::cout << endl << "==== Compute perfect HDVF over L-K" << endl ;
+    std::cout << std::endl << "==== Compute perfect HDVF over L-K" << std::endl ;
     // set _subCC to L-K
     _subCC = _KCC.complement() ;
     // Restrict _DD_col accordingly
     _subCC.screen_matrices(this->_DD_col);
     // Compute perfect HDVF over L-K
     std::vector<Pair_cells> tmp2 = HDVF_type::compute_rand_perfect_hdvf(verbose) ;
-    std::cout << tmp2.size() << " cells paired" << endl ;
+    std::cout << tmp2.size() << " cells paired" << std::endl ;
     _critical_L_K = flag(CRITICAL) ;
 
     // Return the vector of paired cells
@@ -700,7 +700,7 @@ std::vector<Pair_cells> Hdvf_duality<CoefficientType,ComplexType>::compute_pairi
 {
     // TODO : check both HDVFs are perfect
 
-    std::cout << endl << "==== Compute pairing" << endl ;
+    std::cout << std::endl << "==== Compute pairing" << std::endl ;
 
     // Create a full Sub_chain_complex_mask
     _subCC = Sub_chain_complex_mask<CoefficientType, ComplexType>(_L) ;
@@ -716,7 +716,7 @@ std::vector<Pair_cells> Hdvf_duality<CoefficientType,ComplexType>::compute_rand_
 {
     // TODO : check both HDVFs are perfect
 
-    std::cout << endl << "==== Compute pairing" << endl ;
+    std::cout << std::endl << "==== Compute pairing" << std::endl ;
 
     // Create a full Sub_chain_complex_mask
     _subCC = Sub_chain_complex_mask<CoefficientType, ComplexType>(_L) ;
@@ -728,9 +728,9 @@ std::vector<Pair_cells> Hdvf_duality<CoefficientType,ComplexType>::compute_rand_
 
 // Method to get cells of _subCC with a given flag for each dimension
 template<typename CoefficientType, typename ComplexType>
-vector<vector<size_t> > Hdvf_duality<CoefficientType,ComplexType>::flag (FlagType flag) const
+std::vector<std::vector<size_t> > Hdvf_duality<CoefficientType,ComplexType>::flag (FlagType flag) const
 {
-    vector<vector<size_t> > res(_L.dimension()+1) ;
+    std::vector<std::vector<size_t> > res(_L.dimension()+1) ;
     for (int q=0; q<=_L.dimension(); ++q)
     {
         for (size_t i=0; i<_L.number_of_cells(q); ++i)
@@ -744,9 +744,9 @@ vector<vector<size_t> > Hdvf_duality<CoefficientType,ComplexType>::flag (FlagTyp
 
 // Method to get cells of _subCC with a given flag for a given dimension
 template<typename CoefficientType, typename ComplexType>
-vector<size_t> Hdvf_duality<CoefficientType,ComplexType>::flag_dim (FlagType flag, int q) const
+std::vector<size_t> Hdvf_duality<CoefficientType,ComplexType>::flag_dim (FlagType flag, int q) const
 {
-    vector<size_t> res ;
+    std::vector<size_t> res ;
     for (size_t i=0; i<this->_K.number_of_cells(q); ++i)
     {
         if (_subCC.get_bit(q, i) && (this->_flag.at(q).at(i) == flag))

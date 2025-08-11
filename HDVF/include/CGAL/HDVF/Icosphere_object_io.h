@@ -26,8 +26,6 @@
 namespace CGAL {
 namespace HDVF {
 
-using namespace std ;
-
 /* Class used to build an icosphere embedding a triangular mesh (for Alexander Duality) */
 
 class Icosphere_object_io : public Mesh_object_io

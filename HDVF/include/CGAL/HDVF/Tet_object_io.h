@@ -26,7 +26,6 @@
 namespace CGAL {
 namespace HDVF {
 
-using namespace std ;
 
 // Tetgen related
 
@@ -98,7 +97,7 @@ public:
     void add_nodes()
     {
         const std::string file_node = fnodes_from_prefix(_prefix) ;
-        cout << "file_node : " << file_node << endl ;
+        std::cout << "file_node : " << file_node << std::endl ;
         read_nodes_file(file_node) ;
     }
 
@@ -109,7 +108,7 @@ public:
             IOCellType cell({i}) ;
             cells.push_back(cell) ;
         }
-        cout << "--- " << nvertices << "vert" << endl ;
+        std::cout << "--- " << nvertices << "vert" << std::endl ;
     }
 
     void add_edges()
@@ -151,7 +150,7 @@ public:
             add_cell(cell) ;
         }
         input_file.close() ;
-        cout << "--- " << f_nedges << " edges" << endl ;
+        std::cout << "--- " << f_nedges << " edges" << std::endl ;
     }
 
     void add_faces()
@@ -194,7 +193,7 @@ public:
             add_cell(cell) ;
         }
         input_file.close() ;
-        cout << "--- " << f_nfaces << " faces" << endl ;
+        std::cout << "--- " << f_nfaces << " faces" << std::endl ;
     }
 
     void add_tets()
@@ -238,7 +237,7 @@ public:
             add_cell(cell) ;
         }
         input_file.close() ;
-        cout << "--- " << f_ntets << " tets" << endl ;
+        std::cout << "--- " << f_ntets << " tets" << std::endl ;
     }
 private:
     std::string _prefix ;

@@ -294,7 +294,7 @@ public:
     template <typename CT, int CTF>
     inline void screen_chain(OSM::Sparse_chain<CT, CTF>& chain, int q)
     {
-        vector<size_t> indices;
+        std::vector<size_t> indices;
         for (typename OSM::Sparse_chain<CT, CTF>::iterator it = chain.begin(); it != chain.end(); ++it)
         {
             if (!get_bit(q, it->first))

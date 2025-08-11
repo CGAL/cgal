@@ -25,8 +25,6 @@
 namespace CGAL {
 namespace HDVF {
 
-using namespace std ;
-
 // ------ For cubical complexes
 /** \brief Type of cells coordinates in Cub_object_io (Khalimsky or voxel coordinates) */
 typedef std::vector<size_t> IOCubCellType ;
@@ -44,8 +42,8 @@ class Cub_object_io
 {
 public:
     int dim = 0 ; // Dimension of the complex
-    vector<size_t> ncubs ; // Number of cubs in each dimension
-    vector<size_t> N ; // Size of BB along each dimension
+    std::vector<size_t> ncubs ; // Number of cubs in each dimension
+    std::vector<size_t> N ; // Size of BB along each dimension
     std::vector<IOCubCellType> cubs ;
     bool khalimsky ;
 
@@ -53,7 +51,7 @@ public:
      *
      * Create an empty Cub_object_io of dimension 3.
      */
-    Cub_object_io() : dim(3), ncubs(vector<size_t>(3)), N(vector<size_t>(3)), khalimsky(false) {}
+    Cub_object_io() : dim(3), ncubs(std::vector<size_t>(3)), N(std::vector<size_t>(3)), khalimsky(false) {}
 
     /**
      * \brief Constructor from a vector of cells.
@@ -61,7 +59,7 @@ public:
      * Cells coordinates are given in Khalimsky coordinates if the boolean `khal` is `true`, and as integer indices of voxels otherwise.
      *
      */
-    Cub_object_io(int d, const std::vector<IOCubCellType> &vcubs, bool khal = false) : dim(d), ncubs(vector<size_t>(d)), N(vector<size_t>(d)), cubs(vcubs), khalimsky(khal)
+    Cub_object_io(int d, const std::vector<IOCubCellType> &vcubs, bool khal = false) : dim(d), ncubs(std::vector<size_t>(d)), N(std::vector<size_t>(d)), cubs(vcubs), khalimsky(khal)
     { check_dimension() ;}
 
     /* \brief Copy constructor. */
@@ -98,37 +96,37 @@ public:
     {
         khalimsky = khal ;
         size_t row = 0, col = 0, numrows = 0, numcols = 0;
-        ifstream infile(filename);
+        std::ifstream infile(filename);
         if(!infile.is_open()) {
-            cerr << "Warning: cannot open file " << filename << endl ;
+            std::cerr << "Warning: cannot open file " << filename << std::endl ;
             // failed to open the file
             return false;
         }
 
-        stringstream ss;
-        string inputLine = "";
+        std::stringstream ss;
+        std::string inputLine = "";
 
         // First line : version
         getline(infile,inputLine);
-        if(inputLine.compare("P2") != 0) cerr << "Version error" << endl;
-        else cout << "Version : " << inputLine << endl;
+        if(inputLine.compare("P2") != 0) std::cerr << "Version error" << std::endl;
+        else std::cout << "Version : " << inputLine << std::endl;
 
 
         // Second line: dimensions
         getline(infile,inputLine);
-        vector<size_t> sizes ;
+        std::vector<size_t> sizes ;
 
         size_t tmp ;
-        stringstream sseizes (inputLine);
+        std::stringstream sseizes (inputLine);
         while (sseizes >> tmp)
             sizes.push_back(tmp) ;
 
-        cout << "dimensions : " ;
+        std::cout << "dimensions : " ;
         for (size_t i=0; i<sizes.size(); ++i)
-            cout << sizes.at(i) << " " ;
-        cout << endl ;
+            std::cout << sizes.at(i) << " " ;
+        std::cout << std::endl ;
         dim = sizes.size() ;
-        N = vector<size_t>(dim) ;
+        N = std::vector<size_t>(dim) ;
         for (size_t i=0; i<dim; ++i)
             N.at(i) = sizes.at(i) ;
 
@@ -176,7 +174,7 @@ public:
         std::ifstream infile(filename);
         if(!infile.is_open()) {
             // failed to open the file
-            cerr << "Warning: file " << filename << " does not exist" << endl ;
+            std::cerr << "Warning: file " << filename << " does not exist" << std::endl ;
             return false;
         }
         std::size_t line_number = 0;
@@ -210,7 +208,7 @@ public:
                 while ( is >> v )
                     cub.push_back(v);
                 if (cub.size() != dim)
-                    cout << "Discard line " << line_number << " cub of invalid dimension" << endl ;
+                    std::cout << "Discard line " << line_number << " cub of invalid dimension" << std::endl ;
                 else
                 {
                     // Add this cub to cubs
@@ -234,18 +232,18 @@ public:
 
     void print_infos (size_t level = 0) const
     {
-        cout << "Cub_object_io infos - dim : " << dim << ", cubs : " << cubs.size() << endl ;
+        std::cout << "Cub_object_io infos - dim : " << dim << ", cubs : " << cubs.size() << std::endl ;
         for (int q=0; q < dim; ++q)
-            cout << "\tSize along dim " << q << " : " << N[q] << endl ;
+            std::cout << "\tSize along dim " << q << " : " << N[q] << std::endl ;
         for (int q = 0; q <= dim; ++q)
-            cout << "Cubs of dim " << q << " : " << ncubs[q] << endl ;
+            std::cout << "Cubs of dim " << q << " : " << ncubs[q] << std::endl ;
         if (level == 1) // Print coordinates of cubes
         {
             for (size_t i=0; i<cubs.size(); ++i)
             {
                 for (size_t j : cubs.at(i))
-                    cout << j << " " ;
-                cout << endl ;
+                    std::cout << j << " " ;
+                std::cout << std::endl ;
             }
         }
     }

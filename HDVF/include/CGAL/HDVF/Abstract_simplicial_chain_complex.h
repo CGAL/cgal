@@ -164,7 +164,7 @@ public:
      *
      * \return Returns a constant reference to the vector of column-major boundary matrices along each dimension.
      */
-    const vector<Column_matrix> & boundary_matrices() const
+    const std::vector<Column_matrix> & boundary_matrices() const
     {
         return _d ;
     }
@@ -250,7 +250,7 @@ public:
      * Displays the number of cells in each dimension and the boundary matrix in each dimension.
      */
     template <typename _CT>
-    friend ostream& operator<< (ostream& out, const Abstract_simplicial_chain_complex<_CT>& complex);
+    friend std::ostream& operator<< (std::ostream& out, const Abstract_simplicial_chain_complex<_CT>& complex);
 
     /** \brief Get (unique) object Id.
      * For comparison of constant references to the complex.

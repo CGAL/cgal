@@ -59,7 +59,7 @@ std::function<double(const std::vector<double>&)> f_z = [](const std::vector<dou
 
 /** \brief Degree function from a coordinates to scalar map. */
 template<typename ComplexType>
-std::function<double(size_t)>  deg_fun (const ComplexType& complex, std::function<double(const vector<double>&)>& f)
+std::function<double(size_t)>  deg_fun (const ComplexType& complex, std::function<double(const std::vector<double>&)>& f)
 {
     std::function<double(size_t)> deg_fun_f = [&complex, &f](size_t i)
     {
