@@ -15,10 +15,12 @@
  */
 
 // @fixme yesterday:
-// - bench properly the new self intersection detection, both on all data and also time it on 2119908
+
+// @speed
+// - avoid duplicate computations in check_bisectors
 // - check_bisector with base time
 // - delay crashAt bisector checks till pop time
-// - make a script to dump the runtimes in the console
+// - re-enable fast vertex splitter for uniform weights around a vertex
 
 // @fixme:
 // - Enable caching + performance model ==> shared pointer is invalid: edge_tosplit
@@ -33,6 +35,9 @@
 // - (a) Random perturbations could still create degenerate configurations if unlucky
 // - (b) Random perturbations must be small enough as to not create self-intersections
 // - EPECK -> EPICK could create self-intersections
+
+// @todo:
+// - must delay more combinatorial checks to pop time?
 
 // @todo: cleaning
 // - use CGAL kernel everywhere, get rid of the other kernel
@@ -4246,7 +4251,7 @@ void SimpleStraightSkel::collectPierceEvents(const std::list<VertexSPtr>& vertic
                 // is not a simple polygon. However, if it's not simple, then some event
                 // has happened before the pierce, and the pierce event - if whitelisted -
                 // would be checked again later, thus it's safe to call.
-                if (!SelfIntersection::isInsideWithRayShooting(point, facet_offset)) {
+                if (!SelfIntersection::isInsideWithRayShootingV2(point, facet_offset)) {
                     continue;
                 }
 

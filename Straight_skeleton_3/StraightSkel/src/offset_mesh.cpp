@@ -362,7 +362,7 @@ bool face_offset(TriangleMesh& tmesh,
     algo::_3d::PolyhedronSPtr result_p = results_p[i];
     CGAL_assertion(result_p && result_p->isConsistent());
 
-    CGAL_SS3_TRACE("At offset: " << save_offset << ", result with " << result_p->vertices().size()
+    CGAL_SS3_TRACE("At offset: " << save_offset << ", Polyhedron with " << result_p->vertices().size()
                      << " vertices and " << result_p->facets().size() << " faces");
 
     // Convert back to Surface_mesh structure to save the results.
@@ -383,7 +383,7 @@ bool face_offset(TriangleMesh& tmesh,
     CGAL_postcondition(!PMP::has_degenerate_faces(result_t));
     CGAL_postcondition(!PMP::does_self_intersect(result_t));
 
-    CGAL_SS3_TRACE("At offset: " << save_offset << ", result with " << num_vertices(result_t)
+    CGAL_SS3_TRACE("At offset: " << save_offset << ", Surface_mesh with " << num_vertices(result_t)
                      << " vertices and " << num_faces(result_t) << " faces");
 
     if (outwards) {

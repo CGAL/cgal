@@ -576,6 +576,7 @@ bool Edge::isReflex() const {
     if (plane_r->oriented_side(p) == CGAL::ON_POSITIVE_SIDE) {
         result = true;
     }
+
     cachedReflexStatus_ = result;
 
     return result;
