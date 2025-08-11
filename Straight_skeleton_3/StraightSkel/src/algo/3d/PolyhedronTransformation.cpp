@@ -880,8 +880,6 @@ PolyhedronTransformation::triangulateFacet(FacetSPtr facet,
         created_facets.push_back(new_facet);
     }
 
-    polyhedron->initializeAllIDs();
-
     return { facet_vertices , created_facets };
 }
 
