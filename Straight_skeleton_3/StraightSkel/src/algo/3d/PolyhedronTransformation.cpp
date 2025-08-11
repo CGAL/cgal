@@ -225,7 +225,7 @@ void PolyhedronTransformation::translateNscale(PolyhedronSPtr polyhedron,
 
 void PolyhedronTransformation::truncatePrecision(PolyhedronSPtr polyhedron)
 {
-    CGAL_SS3_TRANSF_TRACE("Lower precision of input polyhedron");
+    CGAL_SS3_TRANSF_TRACE_V(4, "Lower precision of input polyhedron");
     CGAL_SS3_DEBUG_SPTR(polyhedron);
 
     util::ConfigurationSPtr config = util::Configuration::getInstance();
@@ -234,24 +234,24 @@ void PolyhedronTransformation::truncatePrecision(PolyhedronSPtr polyhedron)
         range = config->getDouble("main", "truncate_precision");
     }
 
-    CGAL_SS3_TRANSF_TRACE(" truncate precision: " << range);
+    CGAL_SS3_TRANSF_TRACE_V(8, " truncate precision: " << range);
 
     double exp = std::ceil(std::log2(1.0 / range));
     double scale = std::pow(2.0, exp);
-    CGAL_SS3_TRANSF_TRACE("  scale = " << scale);
+    CGAL_SS3_TRANSF_TRACE_V(8,"  scale = " << scale);
 
     std::list<VertexSPtr>::iterator it_v = polyhedron->vertices().begin();
     while (it_v != polyhedron->vertices().end()) {
         VertexSPtr vertex = *it_v++;
         Point3SPtr p = vertex->getPoint();
-        CGAL_SS3_TRANSF_TRACE("    Truncated from: " << *(vertex->getPoint()));
+        CGAL_SS3_TRANSF_TRACE_V(16,"    Truncated from: " << *(vertex->getPoint()));
 
         double rx = CGAL::Polygon_mesh_processing::autorefine_impl::double_ceil(p->x() * scale) / scale;
         double ry = CGAL::Polygon_mesh_processing::autorefine_impl::double_ceil(p->y() * scale) / scale;
         double rz = CGAL::Polygon_mesh_processing::autorefine_impl::double_ceil(p->z() * scale) / scale;
 
         vertex->setPoint(KernelFactory::createPoint3(rx, ry, rz));
-        CGAL_SS3_TRANSF_TRACE("    Truncated to: " << *(vertex->getPoint()));
+        CGAL_SS3_TRANSF_TRACE_V(16,"    Truncated to: " << *(vertex->getPoint()));
     }
 }
 
@@ -262,14 +262,14 @@ bool PolyhedronTransformation::resetPoint(VertexSPtr vertex,
 
     Point3SPtr point = KernelWrapper::intersection(planes[0], planes[1], planes[2]);
     if (!point) {
-        CGAL_SS3_TRANSF_TRACE("Warning: triplet of planes does not define a point!");
+        CGAL_SS3_TRANSF_TRACE_V(1, "Warning: triplet of planes does not define a point!");
         Point3SPtr result = Point3SPtr();
         CGAL_SS3_DEBUG_SPTR(result);
         return false;
     }
 
     vertex->setPoint(point);
-    CGAL_SS3_TRANSF_TRACE("  New point = " << *point);
+    CGAL_SS3_TRANSF_TRACE_V(16, "  New point = " << *point);
 
     CGAL_postcondition_code(std::list<FacetWPtr>::iterator it_f = vertex->facets().begin();)
     CGAL_postcondition_code(for (; it_f!=vertex->facets().end(); ++it_f) {)
@@ -284,7 +284,7 @@ bool PolyhedronTransformation::resetPoint(VertexSPtr vertex,
 // resets using the first 3 planes, even if there are more
 bool PolyhedronTransformation::resetPoint(VertexSPtr vertex)
 {
-    CGAL_SS3_TRANSF_TRACE("resetPoint() of " << vertex->toString());
+    CGAL_SS3_TRANSF_TRACE_V(16, "resetPoint() of " << vertex->toString());
     CGAL_SS3_DEBUG_SPTR(vertex);
 
     std::array<Plane3SPtr, 3> planes;
@@ -296,7 +296,7 @@ bool PolyhedronTransformation::resetPoint(VertexSPtr vertex)
             FacetSPtr facet = FacetSPtr(facet_wptr);
             planes[i++] = facet->getPlane();
 
-            CGAL_SS3_TRANSF_TRACE("  Facet " << facet->getID() << " [" << *(facet->getPlane()) << "]");
+            CGAL_SS3_TRANSF_TRACE_V(16, "  Facet " << facet->getID() << " [" << *(facet->getPlane()) << "]");
         }
     }
     CGAL_postcondition(i == 3);
@@ -310,7 +310,7 @@ bool PolyhedronTransformation::resetPoints(PolyhedronSPtr polyhedron)
     while (it_v != polyhedron->vertices().end()) {
         VertexSPtr vertex = *it_v++;
         if (!resetPoint(vertex)) {
-            CGAL_SS3_TRANSF_TRACE("Warning: failed to reset vertex " << vertex->toString());
+            CGAL_SS3_TRANSF_TRACE_V(1, "Warning: failed to reset vertex " << vertex->toString());
             return false;
         }
     }
@@ -328,7 +328,7 @@ void PolyhedronTransformation::resetFinalPlane(FacetSPtr facet,
 bool PolyhedronTransformation::resetFinalPoint(VertexSPtr vertex,
                                                const CGAL::FT& offset_future_bound)
 {
-    CGAL_SS3_TRANSF_TRACE("resetFinalPoint() of " << vertex->toString());
+    CGAL_SS3_TRANSF_TRACE_V(16, "resetFinalPoint() of " << vertex->toString());
     CGAL_SS3_DEBUG_SPTR(vertex);
 
     std::array<Plane3SPtr, 3> final_planes;
@@ -344,21 +344,21 @@ bool PolyhedronTransformation::resetFinalPoint(VertexSPtr vertex,
 
             final_planes[i++] = facet->getFinalPlane();
 
-            CGAL_SS3_TRANSF_TRACE("  Facet " << facet->getID() << " [" << *(facet->getFinalPlane()) << "]");
+            CGAL_SS3_TRANSF_TRACE_V(32,"  Facet " << facet->getID() << " [" << *(facet->getFinalPlane()) << "]");
         }
     }
     CGAL_postcondition(i == 3);
 
     Point3SPtr point = KernelWrapper::intersection(final_planes[0], final_planes[1], final_planes[2]);
     if (!point) {
-        CGAL_SS3_TRANSF_TRACE("Warning: triplet of planes does not define a point!");
+        CGAL_SS3_TRANSF_TRACE_V(1,"Warning: triplet of planes does not define a point!");
         Point3SPtr result = Point3SPtr();
         CGAL_SS3_DEBUG_SPTR(result);
         return false;
     }
 
     vertex->setFinalPoint(point);
-    CGAL_SS3_TRANSF_TRACE("  New final point = " << *point);
+    CGAL_SS3_TRANSF_TRACE_V(32,"  New final point = " << *point);
 
     return true;
 }
@@ -367,7 +367,7 @@ bool PolyhedronTransformation::resetFinalPoint(VertexSPtr vertex,
 Point3SPtr PolyhedronTransformation::shiftPoint(VertexSPtr vertex,
                                                 const CGAL::FT& offset)
 {
-    CGAL_SS3_TRANSF_TRACE("shift " << vertex->toString() << "\noffset = " << offset);
+    CGAL_SS3_TRANSF_TRACE_V(32, "shift " << vertex->toString() << "\noffset = " << offset);
 
     CGAL_precondition(vertex->degree() >= 3);
 
@@ -399,27 +399,27 @@ Point3SPtr PolyhedronTransformation::shiftPoint(VertexSPtr vertex,
 
             planes[i] = shiftPlane(facet, offset);
 
-            CGAL_SS3_TRANSF_TRACE("facet[" << i << "] = " << facet->getID());
-            CGAL_SS3_TRANSF_TRACE("Offset Plane[" << i << "] = " << *(planes[i]));
+            CGAL_SS3_TRANSF_TRACE_V(64, "facet[" << i << "] = " << facet->getID());
+            CGAL_SS3_TRANSF_TRACE_V(64, "Offset Plane[" << i << "] = " << *(planes[i]));
 
             ++i;
         }
     }
 
     if (i < 3) {
-        CGAL_SS3_TRANSF_TRACE("Warning: Could not find three independent planes for high-degree vertex" << vertex->toString());
+        CGAL_SS3_TRANSF_TRACE_V(1, "Warning: Could not find three independent planes for high-degree vertex" << vertex->toString());
         return { };
     }
 
     Point3SPtr point = KernelWrapper::intersection(planes[0], planes[1], planes[2]);
     if (!point) {
-        CGAL_SS3_TRANSF_TRACE("Error: triplet of planes doesn't define a point!");
+        CGAL_SS3_TRANSF_TRACE_V(1, "Error: triplet of planes doesn't define a point!");
         Point3SPtr result = Point3SPtr();
         CGAL_SS3_DEBUG_SPTR(result);
         return result;
     }
 
-    CGAL_SS3_TRANSF_TRACE("  New point = " << *point);
+    CGAL_SS3_TRANSF_TRACE_V(32, "  New point = " << *point);
 
     CGAL_assertion_code(for(Plane3SPtr pi : planes))
     CGAL_assertion(pi->has_on(*point));
