@@ -892,8 +892,7 @@ void PolyhedronTransformation::normalizeFacetPlanes(PolyhedronSPtr polyhedron)
     }
 }
 
-bool PolyhedronTransformation::doAll2PlanesIntersect(PolyhedronSPtr polyhedron)
-{
+bool PolyhedronTransformation::doAll2PlanesIntersect(PolyhedronSPtr polyhedron) {
     bool result = true;
     std::list<FacetSPtr>::iterator it_f1 = polyhedron->facets().begin();
     while (it_f1 != polyhedron->facets().end()) {
@@ -901,6 +900,8 @@ bool PolyhedronTransformation::doAll2PlanesIntersect(PolyhedronSPtr polyhedron)
         std::list<FacetSPtr>::iterator it_f2 = it_f1;
         while (it_f2 != polyhedron->facets().end()) {
             FacetSPtr facet2 = *it_f2++;
+
+            // Do not use CGAL::do_intersect: here we want to check that the result is a point
             if (!KernelWrapper::intersection(facet1->plane(), facet2->plane())) {
                 CGAL_SS3_TRANSF_TRACE("Degenerate facet pair:");
                 CGAL_SS3_TRANSF_TRACE("  " << facet1->toString());
@@ -913,7 +914,6 @@ bool PolyhedronTransformation::doAll2PlanesIntersect(PolyhedronSPtr polyhedron)
             break;
         }
     }
-
     return result;
 }
 
@@ -928,6 +928,8 @@ bool PolyhedronTransformation::doAll3PlanesIntersect(PolyhedronSPtr polyhedron) 
             std::list<FacetSPtr>::iterator it_f3 = it_f2;
             while (it_f3 != polyhedron->facets().end()) {
                 FacetSPtr facet3 = *it_f3++;
+
+                // Do not use CGAL::do_intersect: here we want to check that the result is a point
                 if (!KernelWrapper::intersection(facet1->plane(), facet2->plane(), facet3->plane())) {
                     CGAL_SS3_TRANSF_TRACE("Degenerate facet triplet:");
                     CGAL_SS3_TRANSF_TRACE("  " << facet1->toString());
@@ -1851,7 +1853,6 @@ void PolyhedronTransformation::randTiltPlanesv3(PolyhedronSPtr polyhedron) {
     // Recompute all points which were not fixed (degree 3 vertices)
     for (VertexSPtr v : polyhedron->vertices()) {
         if (!is_high_degree(v)) {
-            CGAL_SS3_TRANSF_TRACE("Reset V" << v->getID());
             resetPoint(v);
 
             // determine (without cascading)

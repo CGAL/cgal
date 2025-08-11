@@ -321,6 +321,7 @@ bool SimpleStraightSkel::isReflex(EdgeSPtr edge,
     VertexSPtr vertex_src = edge->getVertexSrc();
     VertexSPtr vertex_dst = edge->getVertexDst();
 
+    // @todo is degenerate edge? pointer comparison or actual position comparison?
     if (*(vertex_src->getPoint()) == *(vertex_dst->getPoint())) {
 
         // std::cout << "no cache [degen]" << std::endl;
@@ -561,9 +562,10 @@ bool SimpleStraightSkel::run() {
     CGAL_assertion(algo::_3d::PolyhedronTransformation::doAll3PlanesIntersect(polyhedron_));
     CGAL_assertion(!algo::_3d::SelfIntersection::hasSelfIntersectingSurface(polyhedron_));
 
-    // store base and final plane coefficients
+    // store base plane coefficients
     cacheBasePlanes(polyhedron);
 
+// @tmp some hardcoded weights for specific inputs
 // #define CGAL_SS3_ACUTE_WEIGHTS
 // #define CGAL_SS3_MERGING_WEIGHTS
 // #define CGAL_SS3_PERFORMANCE_WEIGHTS
@@ -1421,8 +1423,6 @@ SimpleStraightSkel::check_bisectors(EdgeSPtr edge_1,
     //   we need to know which side of the bisector is the correct one and since
     //   faces can be non-convex polygons, we need to check if we are in a concave
     //   (within the facet) vertex to know if the clipping bisector is inverted
-    //
-    // @speed lots of duplicate computations
 
 #ifndef CGAL_SS3_EXIT_ASAP
     bool reject_2b = false;
@@ -1638,17 +1638,6 @@ bool SimpleStraightSkel::isActualEvent(const CGAL::FT& current_offset,
     return result;
 }
 
-// @speed is there really any point to vanish events?
-// - it's annoying to fill the queue with meaningless events + they all require vanishAt computations
-//   and the comparisons are probably costly because a lot will be at the same time --> filter failures
-// - if a vanish event were to change nature, then it would be re-inserted anyway during queue updates
-//   because if it changed nature, then it was in a neighborhood of something that changed its neighborhood...
-//   But that might be expensive to check (e.g. the facet has changed incident #vertices or whatnot...)
-//   how to detect that the previous one is obsolete then...?
-// - what about using collectEdge/collectDblEdge/... but inserting them as vanish events?
-//   -> won't work for DblTriangleEvents currently because only a single edge
-//      sees DblTriangleEvents (the ridge's)
-
 // @speed we could mark edges to say "vanish event already in the queue" (or for other events)
 void SimpleStraightSkel::collectVanishEvents(const std::list<EdgeSPtr>& edges,
                                              PolyhedronSPtr polyhedron,
@@ -1716,8 +1705,6 @@ void SimpleStraightSkel::collectVanishEvents(PolyhedronSPtr polyhedron,
     return collectVanishEvents(polyhedron->edges(), polyhedron, current_offset, offset_future_bound, queue);
 }
 
-// @speed can we associate shiftPoint(v, max_offset) to all points as to create bounding boxes
-// and filter events?
 void SimpleStraightSkel::collectEdgeEvents(const std::list<EdgeSPtr>& edges,
                                            PolyhedronSPtr polyhedron,
                                            const CGAL::FT& current_offset,
@@ -3910,7 +3897,6 @@ void SimpleStraightSkel::collectEdgeSplitEvents(const std::list<EdgeSPtr>& edges
       std::list<EdgeSPtr>::const_iterator it_e = edges.begin();
       while (it_e != edges.end()) {
             EdgeSPtr edge = *it_e++;
-            // @speed cache reflexness (constant as long as the combinatorics do not change)
             if (isReflex(edge)) {
               edges_reflex.push_back(edge);
             }
@@ -4358,7 +4344,7 @@ void SimpleStraightSkel::printQueue(const PQ& queue) {
             if (isEventObsolete(event)) {
                 CGAL_SS3_CORE_TRACE("  Event is obsolete");
             } else {
-                CGAL_SS3_CORE_TRACE("\n" << event->toString());
+                CGAL_SS3_CORE_TRACE(event->toString());
             }
         } else {
             CGAL_SS3_CORE_TRACE(" Event is invalid");
@@ -4526,6 +4512,12 @@ bool SimpleStraightSkel::checkQueueCorrectness(const PQ& queue,
 
         CGAL_SS3_CORE_TRACE("Seek event @ " << event_scratch->getOffset() << " Type " << event_scratch->getType());
 
+        CGAL_SS3_CORE_TRACE("Event E" << event_scratch->getID()
+                            << " T" << event_scratch->getType()
+                            << " @ " << event_scratch->getOffset());
+        CGAL_assertion(event_scratch->isValid() && !isEventObsolete(event_scratch));
+        CGAL_SS3_CORE_TRACE(event_scratch->toString());
+
         // Find the event in the duplicate queue
         bool found = false;
         duplicate_queue = queue;
@@ -4577,15 +4569,15 @@ void SimpleStraightSkel::collectLocalEvents(PolyhedronSPtr polyhedron,
     timer.start();
 #endif
 
-    CGAL_SS3_CORE_TRACE_V(4, "Past bound = " << current_offset);
+    CGAL_SS3_CORE_TRACE_V(16, "Past bound = " << current_offset);
     CGAL_SS3_CORE_TRACE_IF(offset_future_bound, 4, "Initial future bound = " << *offset_future_bound);
 
     {
         std::list<EdgeSPtr> local_edges(post_op_edges_.begin(), post_op_edges_.end());
 
-        CGAL_SS3_CORE_TRACE_V(16, "Local Edges for Vanish Events (" << local_edges.size() << ")");
+        CGAL_SS3_CORE_TRACE_V(8, "Local Edges for Vanish Events (" << local_edges.size() << ")");
         CGAL_SS3_CORE_TRACE_CODE(for(EdgeSPtr e : local_edges))
-        CGAL_SS3_CORE_TRACE_V(16, "\t" << e->toString());
+        CGAL_SS3_CORE_TRACE_V(8, "\t" << e->toString());
 
 #ifdef CGAL_SS3_USE_GENERIC_VANISH_EVENT
         collectVanishEvents(local_edges, polyhedron, current_offset, offset_future_bound, queue);
@@ -4614,11 +4606,11 @@ void SimpleStraightSkel::collectLocalEvents(PolyhedronSPtr polyhedron,
         std::list<VertexSPtr> local_vertices_VV(post_op_vertices_VV_.begin(),
                                                 post_op_vertices_VV_.end());
 
-        CGAL_SS3_CORE_TRACE_V(16, "Local Vertices for Vertex-Vertex Events (" << local_vertices_VV.size() << "):")
+        CGAL_SS3_CORE_TRACE_V(8, "Local Vertices for Vertex-Vertex Events (" << local_vertices_VV.size() << "):")
         CGAL_SS3_CORE_TRACE_CODE(std::stringstream ss;)
         CGAL_SS3_CORE_TRACE_CODE(for(VertexSPtr v : local_vertices_VV))
         CGAL_SS3_CORE_TRACE_CODE(ss << " " << v->getID();)
-        CGAL_SS3_CORE_TRACE_V(16, ss.str());
+        CGAL_SS3_CORE_TRACE_V(8, ss.str());
 
         const bool use_canonical_reps = false;
 #else
@@ -4643,9 +4635,9 @@ void SimpleStraightSkel::collectLocalEvents(PolyhedronSPtr polyhedron,
 
         std::list<EdgeSPtr> local_edges_EE(post_op_edges_.begin(), post_op_edges_.end());
 
-        CGAL_SS3_CORE_TRACE_V(16, "Local Edges for Polyhedron Events (" << local_edges_EE.size() << ")");
+        CGAL_SS3_CORE_TRACE_V(8, "Local Edges for Polyhedron Events (" << local_edges_EE.size() << ")");
         CGAL_SS3_CORE_TRACE_CODE(for(EdgeSPtr e : local_edges_EE))
-        CGAL_SS3_CORE_TRACE_V(16, "\t" << e->toString());
+        CGAL_SS3_CORE_TRACE_V(8, "\t" << e->toString());
 
         // this is the modified edges as 'edge_1'
         collectPolyhedronSplitEvents(local_edges_EE, polyhedron,
@@ -4703,11 +4695,11 @@ void SimpleStraightSkel::collectLocalEvents(PolyhedronSPtr polyhedron,
         // something like extra_combinations_for_pierce_events...
         std::list<VertexSPtr> local_vertices_VF(post_op_vertices_pierce_.begin(), post_op_vertices_pierce_.end());
 
-        CGAL_SS3_CORE_TRACE_V(16, "Local Vertices for Pierce Events (" << local_vertices_VF.size() << "):");
+        CGAL_SS3_CORE_TRACE_V(8, "Local Vertices for Pierce Events (" << local_vertices_VF.size() << "):");
         CGAL_SS3_CORE_TRACE_CODE(std::stringstream ss;)
         CGAL_SS3_CORE_TRACE_CODE(for(VertexSPtr v : local_vertices_VF))
         CGAL_SS3_CORE_TRACE_CODE(ss << " " << v->getID());
-        CGAL_SS3_CORE_TRACE_V(16, ss.str());
+        CGAL_SS3_CORE_TRACE_V(8, ss.str());
 #else
         std::list<VertexSPtr> local_vertices_VF = polyhedron->vertices();
 #endif
@@ -4725,9 +4717,9 @@ void SimpleStraightSkel::collectLocalEvents(PolyhedronSPtr polyhedron,
 #if 1
         std::list<EdgeSPtr> local_edges_EE(post_op_edges_.begin(), post_op_edges_.end());
 
-        CGAL_SS3_CORE_TRACE_V(16, "Local Edges for Surface Events (" << local_edges_EE.size() << ")");
+        CGAL_SS3_CORE_TRACE_V(8, "Local Edges for Surface Events (" << local_edges_EE.size() << ")");
         CGAL_SS3_CORE_TRACE_CODE(for(EdgeSPtr e : local_edges_EE))
-        CGAL_SS3_CORE_TRACE_V(16, "\t" << e->toString());
+        CGAL_SS3_CORE_TRACE_V(8, "\t" << e->toString());
 
         // this is the modified edges as 'edge_1'
         collectSurfaceEvents(local_edges_EE, polyhedron,
@@ -4778,9 +4770,9 @@ void SimpleStraightSkel::collectLocalEvents(PolyhedronSPtr polyhedron,
         std::list<EdgeSPtr> local_edges_EE(post_op_edges_.begin(), post_op_edges_.end());
 
 
-        CGAL_SS3_CORE_TRACE_V(16, "Local Edges for Edge Split Events (" << local_edges_EE.size() << ")");
+        CGAL_SS3_CORE_TRACE_V(8, "Local Edges for Edge Split Events (" << local_edges_EE.size() << ")");
         CGAL_SS3_CORE_TRACE_CODE(for(EdgeSPtr e : local_edges_EE))
-        CGAL_SS3_CORE_TRACE_V(16, "\t" << e->toString());
+        CGAL_SS3_CORE_TRACE_V(8, "\t" << e->toString());
 
         const bool use_canonical_reps = false;
 #else

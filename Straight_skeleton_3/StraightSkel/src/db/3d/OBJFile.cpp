@@ -308,8 +308,10 @@ bool OBJFile::save(const std::string& filename,
                     }
                     catch(const typename PCDT::Intersection_of_constraints_exception&)
                     {
-                        // should not happen since we tolerate intersections here
-                        CGAL_assertion(false);
+                        CGAL_SS3_IO_TRACE("Warning: Intersection of constraints");
+                        CGAL_SS3_IO_TRACE("While inserting " << *(v0->getPoint()) << " || " << *(v1->getPoint()));
+                        CGAL_SS3_IO_TRACE(facet->toString());
+                        CGAL_assertion_msg(false, "Intersections in CDT2 are not allowed");
                         return false;
                     }
                     ++ne;
@@ -317,7 +319,14 @@ bool OBJFile::save(const std::string& filename,
             }
 
             if (pcdt.finite_vertex_handles().size() != facet->vertices().size()) {
-                CGAL_warning_msg(false, "Warning: CDT has more vertices than the facet. Constraint intersection?");
+                CGAL_SS3_IO_TRACE("Warning: CDT #nv != facet #nv. Constraint intersection?");
+                CGAL_SS3_IO_TRACE("Facet: " << facet->toString());
+                CGAL_SS3_IO_TRACE("CDT: " << pcdt.number_of_vertices() << " vertices, "
+                                  << pcdt.number_of_faces() << " faces");
+                CGAL_SS3_IO_TRACE("Vertices: ");
+                for (PCDT_VH vh : pcdt.finite_vertex_handles()) {
+                    CGAL_SS3_IO_TRACE("  " << vh->point() << " -> " << vh->info()->getID());
+                }
             }
 
             if(ne < 3) // degenerate face
