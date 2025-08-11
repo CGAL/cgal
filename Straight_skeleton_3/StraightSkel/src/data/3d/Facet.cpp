@@ -661,7 +661,7 @@ void Facet::perturbPlaneCoefficientsSteps(int steps) {
     CGAL_precondition(isNormalizedPlane());
 
     // @todo storing coefficients is only useful if we plan on untilting at the end.
-    storePlaneCoefficients();
+    // storePlaneCoefficients();
 
     CGAL_SS3_TRANSF_TRACE("Nudging (Steps) Face " << this->getID());
     CGAL_SS3_TRANSF_TRACE("  From coefficients [" << plane_->a() << " " << plane_->b() << " "
@@ -716,7 +716,7 @@ void Facet::perturbPlaneCoefficientsExact(const CGAL::FT& den) {
     CGAL_precondition(isNormalizedPlane());
 
     // @todo storing coefficients is only useful if we plan on untilting at the end.
-    storePlaneCoefficients();
+    // storePlaneCoefficients();
 
     CGAL_SS3_TRANSF_TRACE("Nudging (Exact) Face " << this->getID());
     CGAL_SS3_TRANSF_TRACE("  From coefficients [" << plane_->a() << " " << plane_->b() << " "
@@ -752,7 +752,7 @@ void Facet::perturbPlaneCoefficientsFixedPoints(const double range,
     CGAL_precondition(fixed_points.size() <= 2);
 
     // @todo storing coefficients is only useful if we plan on untilting at the end.
-    storePlaneCoefficients();
+    // storePlaneCoefficients();
 
     CGAL_SS3_TRANSF_TRACE("Nudging Face " << this->getID());
     CGAL_SS3_TRANSF_TRACE("  From coefficients [" << plane_->a() << " " << plane_->b() << " "
