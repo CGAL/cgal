@@ -45,7 +45,7 @@ namespace CGAL {
 ///    \cgalParamExtra{This number should generally not exceed 300, as the method is designed to produce coarse
 /// skeletons.}
 ///  \cgalParamNEnd
-///  \cgalParamNBegin{max_iteration}
+///  \cgalParamNBegin{max_iteration_number}
 ///     \cgalParamDescription{The maximum number of iterations for the optimization process.}
 ///     \cgalParamType{int}
 ///     \cgalParamDefault{1000}
@@ -66,7 +66,7 @@ namespace CGAL {
 ///    \cgalParamDefault{`CGAL::Sequential_tag`}
 ///    \cgalParamExtra{Use `CGAL::Parallel_tag` for parallel execution (requires TBB).}
 ///  \cgalParamNEnd
-///  \cgalParamNBegin{acceleration_structure_tag}
+///  \cgalParamNBegin{acceleration_structure}
 ///    \cgalParamDescription{Tag indicating the type of acceleration structure to use.}
 ///    \cgalParamType{Acceleration structure tag type}
 ///    \cgalParamDefault{`CGAL::KD_tree_tag`}

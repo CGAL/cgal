@@ -688,7 +688,7 @@ public:
   ///     \cgalParamDescription{The desired number of medial spheres in the resulting skeleton.}
   ///     \cgalParamType{unsigned int}
   ///     \cgalParamDefault{100}
-  /// \cgalParamNBegin{max_iteration}
+  /// \cgalParamNBegin{max_iteration_number}
   ///    \cgalParamDescription{The maximum number of iterations for the optimization process.}
   ///    \cgalParamType{int}
   ///    \cgalParamDefault{1000}
@@ -752,7 +752,7 @@ public:
    *     \cgalParamType{unsigned int}
    *     \cgalParamDefault{100}
    *   \cgalParamNEnd
-   *  \cgalParamNBegin{max_iteration}
+   *  \cgalParamNBegin{max_iteration_number}
    *     \cgalParamDescription{The maximum number of iterations for the optimization process.}
    *     \cgalParamType{int}
    *     \cgalParamDefault{1000}
