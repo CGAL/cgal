@@ -36,7 +36,7 @@ public:
 
     // whether the edges intersect in their interior, with edges possibly being rays
     template <typename ProjectionTraits>
-    static bool doEdgesIntersect(FacetSPtr facet,
+    static bool doEdgesIntersect(FacetSPtr,
                                  EdgeSPtr edge1,
                                  EdgeSPtr edge2,
                                  bool handle_degree_1_as_ray, // @todo always true?...
@@ -67,8 +67,8 @@ public:
             return (edge->getVertexSrc()->degree() == 1 || edge->getVertexDst()->degree() == 1);
         };
 
-        auto treat_o_o = [&](EdgeSPtr a, const auto& oa,
-                             EdgeSPtr b, const auto& ob) -> bool
+        auto treat_o_o = [&](EdgeSPtr, const auto& oa,
+                             EdgeSPtr, const auto& ob) -> bool
         {
             return traits.do_intersect_2_object()(oa, ob);
         };

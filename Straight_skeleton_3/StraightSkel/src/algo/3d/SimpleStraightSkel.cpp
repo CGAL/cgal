@@ -457,7 +457,6 @@ Plane3SPtr SimpleStraightSkel::getFinalPlane(FacetSPtr facet,
 bool SimpleStraightSkel::savePolyhedron(PolyhedronSPtr polyhedron,
                                         const CGAL::FT& current_offset,
                                         const bool do_triangulate,
-                                        const bool dump_exact,
                                         const bool attempt_untilting)
 {
     bool result = true;
@@ -4887,7 +4886,6 @@ SimpleStraightSkel::handleSaveOffsetEvent(SaveOffsetEventSPtr event,
 
     bool res = savePolyhedron(polyhedron, event_offset,
                               true /*triangulate*/,
-                              true /*convert to double*/,
                               false /*attempt untilting*/);
 
 #ifdef CGAL_SS3_DUMP_FILES

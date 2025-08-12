@@ -369,8 +369,7 @@ bool face_offset(TriangleMesh& tmesh,
     // This could be avoided if a polygonal output was prefered, but then we
     // need some specific conversion code.
     TriangleMesh result_t;
-    bool success = db::_3d::Surface_meshIO::save(result_p, result_t,
-                                                 CGAL::parameters::do_not_triangulate_faces(false) /*triangulate*/);
+    bool success = db::_3d::Surface_meshIO::save(result_p, result_t, np_out);
     if (!success) {
       std::cerr << "Error: failed to convert back to Surface_mesh" << std::endl;
       return false;
