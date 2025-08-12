@@ -155,9 +155,12 @@ typedef unspecified_type ComplexType;
  * Cells are always sorted so that the dimension of `sigma` is lesser than the dimension of `tau`.
  */
 struct Pair_cells {
-    size_t sigma;  /// Index of the first cell
-    size_t tau;    /// Index of the second cell
-    int dim;    /// Dimension of cells: `dim`/`dim`+1 for A and R, `dim`/`dim` for other operations
+    /// Index of the first cell
+    size_t sigma; 
+    /// Index of the second cell
+    size_t tau;   
+    /// Dimension of cells: `dim`/`dim`+1 for `A()` and `R()`, `dim`/`dim` for other operations
+    int dim;    
 };
     
 /*!
