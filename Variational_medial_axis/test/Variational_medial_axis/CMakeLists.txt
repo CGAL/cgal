@@ -3,8 +3,8 @@ cmake_minimum_required(VERSION 3.12...3.31)
 project( Variational_medial_axis_Tests )
 
 find_package(CGAL REQUIRED)
+find_package(Eigen3 REQUIRED 3.2.0)
 
-find_package(Eigen3 3.2.0 QUIET) #(requires 3.2.0 or greater)
 include(CGAL_Eigen3_support)
 if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program("variational_medial_axis_sampling_test.cpp")
