@@ -101,7 +101,7 @@ bool CircularNode::removeArc(CircularArcSPtr arc) {
 bool CircularNode::containsArc(CircularArcSPtr arc) const {
     CircularArcWPtr arc_wptr = CircularArcWPtr(arc);
     bool result = (arcs_.end() !=
-            std::find(arcs_.begin(), arcs_.end(), arc_wptr));
+        util::weak_find(arcs_.begin(), arcs_.end(), arc_wptr));
     return result;
 }
 

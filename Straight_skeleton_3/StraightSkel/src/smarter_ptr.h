@@ -19,16 +19,25 @@
 
 #include "config.h"
 
+#include <algorithm>
+#include <iterator>
 #include <memory>
 
-#ifdef DEBUG // issues with linking with clang
-# include "util/SharedPtr.h"
-# define SHARED_PTR util::SharedPtr
-#else
 # define SHARED_PTR std::shared_ptr
-#endif
+# define WEAK_PTR std::weak_ptr
 
-#include "util/WeakPtr.h"
-#define WEAK_PTR util::WeakPtr
+namespace util {
+
+template<class Iter, class V>
+auto weak_find(Iter begin, Iter end, const std::weak_ptr<V>& target)
+{
+    return std::find_if(begin, end, [&](const std::weak_ptr<V>& w) {
+                                        auto sp = w.lock();
+                                        auto tp = target.lock();
+                                        return sp && tp && (sp == tp);
+                                      });
+}
+
+} // namespace util
 
 #endif /* SMARTER_PTR_H */

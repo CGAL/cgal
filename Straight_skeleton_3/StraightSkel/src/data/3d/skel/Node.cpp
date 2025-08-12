@@ -141,14 +141,14 @@ bool Node::removeSheet(SheetSPtr sheet) {
 bool Node::containsArc(ArcSPtr arc) const {
     ArcWPtr arc_wptr = ArcWPtr(arc);
     bool result = (arcs_.end() !=
-            std::find(arcs_.begin(), arcs_.end(), arc_wptr));
+        util::weak_find(arcs_.begin(), arcs_.end(), arc_wptr));
     return result;
 }
 
 bool Node::containsSheet(SheetSPtr sheet) const {
     SheetWPtr sheet_wptr = SheetWPtr(sheet);
     bool result = (sheets_.end() !=
-            std::find(sheets_.begin(), sheets_.end(), sheet_wptr));
+        util::weak_find(sheets_.begin(), sheets_.end(), sheet_wptr));
     return result;
 }
 

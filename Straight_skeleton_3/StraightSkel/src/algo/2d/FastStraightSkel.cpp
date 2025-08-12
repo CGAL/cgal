@@ -349,11 +349,9 @@ void FastStraightSkel::appendEventNode(NodeSPtr node) {
     std::list<ArcWPtr>::iterator it_a = node->arcs().begin();
     while (it_a != node->arcs().end()) {
         ArcWPtr arc_wptr = *it_a++;
-        if (!arc_wptr.expired()) {
-            ArcSPtr arc = ArcSPtr(arc_wptr);
+        if (ArcSPtr arc = arc_wptr.lock()) {
             arc->setNodeDst(node);
-            arc->setNodeDstListIt(
-                    std::find(node->arcs().begin(), node->arcs().end(), arc_wptr));
+            arc->setNodeDstListIt(util::weak_find(node->arcs().begin(), node->arcs().end(), arc_wptr));
         }
     }
     skel_result_->addNode(node);

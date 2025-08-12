@@ -549,8 +549,7 @@ void SimpleStraightSkel::appendEventNode(NodeSPtr node) {
         if (!arc_wptr.expired()) {
             ArcSPtr arc = ArcSPtr(arc_wptr);
             arc->setNodeDst(node);
-            arc->setNodeDstListIt(
-                    std::find(node->arcs().begin(), node->arcs().end(), arc_wptr));
+            arc->setNodeDstListIt(util::weak_find(node->arcs().begin(), node->arcs().end(), arc_wptr));
         }
     }
     skel_result_->addNode(node);

@@ -204,7 +204,7 @@ bool SphericalSkeleton::isConsistent() const {
             break;
         }
         std::list<CircularArcWPtr> warcs = arc->getNodeSrc()->arcs();
-        if (warcs.end() == std::find(warcs.begin(), warcs.end(), arc_wptr)) {
+        if (warcs.end() == util::weak_find(warcs.begin(), warcs.end(), arc_wptr)) {
             CGAL_SS3_SKEL_DS_TRACE(arc->toString());
             CGAL_SS3_SKEL_DS_TRACE(arc->getNodeSrc()->toString());
             result = false;
@@ -212,7 +212,7 @@ bool SphericalSkeleton::isConsistent() const {
         }
         if (arc->hasNodeDst()) {
             warcs = arc->getNodeDst()->arcs();
-            if (warcs.end() == std::find(warcs.begin(), warcs.end(), arc_wptr)) {
+            if (warcs.end() == util::weak_find(warcs.begin(), warcs.end(), arc_wptr)) {
                 CGAL_SS3_SKEL_DS_TRACE(arc->toString());
                 CGAL_SS3_SKEL_DS_TRACE(arc->getNodeDst()->toString());
                 result = false;

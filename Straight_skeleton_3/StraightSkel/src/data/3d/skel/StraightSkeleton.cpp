@@ -214,8 +214,7 @@ bool StraightSkeleton::isConsistent() const {
             } else {
                 SheetSPtr sheet = SheetSPtr(sheet_wptr);
                 std::list<NodeSPtr> nodes = sheet->nodes();
-                if (nodes.end() ==
-                        std::find(nodes.begin(), nodes.end(), node)) {
+                if (nodes.end() == std::find(nodes.begin(), nodes.end(), node)) {
                     CGAL_SS3_SKEL_DS_TRACE(node->toString());
                     CGAL_SS3_SKEL_DS_TRACE(sheet->toString());
                     result = false;
@@ -235,7 +234,7 @@ bool StraightSkeleton::isConsistent() const {
             break;
         }
         std::list<ArcWPtr> warcs = arc->getNodeSrc()->arcs();
-        if (warcs.end() == std::find(warcs.begin(), warcs.end(), arc_wptr)) {
+        if (warcs.end() == util::weak_find(warcs.begin(), warcs.end(), arc_wptr)) {
             CGAL_SS3_SKEL_DS_TRACE(arc->toString());
             CGAL_SS3_SKEL_DS_TRACE(arc->getNodeSrc()->toString());
             result = false;
@@ -243,7 +242,7 @@ bool StraightSkeleton::isConsistent() const {
         }
         if (arc->hasNodeDst()) {
             warcs = arc->getNodeDst()->arcs();
-            if (warcs.end() == std::find(warcs.begin(), warcs.end(), arc_wptr)) {
+            if (warcs.end() == util::weak_find(warcs.begin(), warcs.end(), arc_wptr)) {
                 CGAL_SS3_SKEL_DS_TRACE(arc->toString());
                 CGAL_SS3_SKEL_DS_TRACE(arc->getNodeDst()->toString());
                 result = false;
@@ -260,8 +259,7 @@ bool StraightSkeleton::isConsistent() const {
                 SheetSPtr sheet = SheetSPtr(sheet_wptr);
                 num_sheets++;
                 std::list<ArcSPtr> arcs = sheet->arcs();
-                if (arcs.end() ==
-                        std::find(arcs.begin(), arcs.end(), arc)) {
+                if (arcs.end() == std::find(arcs.begin(), arcs.end(), arc)) {
                     CGAL_SS3_SKEL_DS_TRACE(arc->toString());
                     CGAL_SS3_SKEL_DS_TRACE(sheet->toString());
                     result = false;
@@ -289,8 +287,7 @@ bool StraightSkeleton::isConsistent() const {
         while (it_n != sheet->nodes().end()) {
             NodeSPtr node = *it_n++;
             std::list<SheetWPtr> wsheets = node->sheets();
-            if (wsheets.end() == std::find(
-                    wsheets.begin(), wsheets.end(), sheet_wptr)) {
+            if (wsheets.end() == util::weak_find(wsheets.begin(), wsheets.end(), sheet_wptr)) {
                 CGAL_SS3_SKEL_DS_TRACE(sheet->toString());
                 CGAL_SS3_SKEL_DS_TRACE(node->toString());
                 result = false;
@@ -301,8 +298,7 @@ bool StraightSkeleton::isConsistent() const {
         while (it_a != sheet->arcs().end()) {
             ArcSPtr arc = *it_a++;
             std::list<SheetWPtr> wsheets = arc->sheets();
-            if (wsheets.end() == std::find(
-                    wsheets.begin(), wsheets.end(), sheet_wptr)) {
+            if (wsheets.end() == util::weak_find(wsheets.begin(), wsheets.end(), sheet_wptr)) {
                 CGAL_SS3_SKEL_DS_TRACE(sheet->toString());
                 CGAL_SS3_SKEL_DS_TRACE(arc->toString());
                 result = false;

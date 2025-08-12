@@ -120,7 +120,7 @@ void Facet::addVertex(VertexSPtr vertex) {
 bool Facet::removeVertex(VertexSPtr vertex) {
     bool result = false;
     std::list<VertexSPtr>::iterator it_v =
-            std::find(vertices_.begin(), vertices_.end(), vertex);
+        std::find(vertices_.begin(), vertices_.end(), vertex);
     if (it_v != vertices_.end()) {
         vertices_.erase(it_v);
         vertex->removeFacet(shared_from_this());
@@ -145,7 +145,7 @@ void Facet::addEdge(EdgeSPtr edge) {
     FacetSPtr facet_r = edge->getFacetR();
     if (facet_l == shared_from_this() && facet_r == shared_from_this()) {
         std::list<EdgeSPtr>::iterator it_e =
-                std::find(edges_.begin(), edges_.end(), edge);
+            std::find(edges_.begin(), edges_.end(), edge);
         if (it_e == edge->getFacetLListIt()) {
             edge->setFacetRListIt(it);
         } else {
@@ -218,13 +218,13 @@ std::list<EdgeSPtr> Facet::findEdges(FacetSPtr facet) const {
 
 bool Facet::containsVertex(VertexSPtr vertex) const {
     bool result = (vertices_.end() !=
-            std::find(vertices_.begin(), vertices_.end(), vertex));
+        std::find(vertices_.begin(), vertices_.end(), vertex));
     return result;
 }
 
 bool Facet::containsEdge(EdgeSPtr edge) const {
     bool result = (edges_.end() !=
-            std::find(edges_.begin(), edges_.end(), edge));
+        std::find(edges_.begin(), edges_.end(), edge));
     return result;
 }
 
@@ -257,7 +257,7 @@ void Facet::sortVertices() {
         while (it_v_tmp != tmp.end()) {
             VertexSPtr vertex = *it_v_tmp++;
             std::list<VertexSPtr>::iterator it_v =
-                    std::find(vertices_.begin(), vertices_.end(), vertex);
+                std::find(vertices_.begin(), vertices_.end(), vertex);
             if (it_v != vertices_.end()) {
                 vertices_.erase(it_v);
             }
@@ -1021,7 +1021,7 @@ bool Facet::makeFirstConvex() {
         sortEdges();
         VertexSPtr vertex_begin = edge_begin->src(shared_from_this());
         std::list<VertexSPtr>::iterator it_v =
-                std::find(vertices_.begin(), vertices_.end(), vertex_begin);
+            std::find(vertices_.begin(), vertices_.end(), vertex_begin);
         vertices_.erase(it_v);
         vertices_.insert(vertices_.begin(), vertex_begin);
         sortVertices();

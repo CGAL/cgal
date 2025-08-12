@@ -4837,8 +4837,7 @@ void SimpleStraightSkel::appendEventNode(NodeSPtr node) {
         ArcWPtr arc_wptr = *it_a++;
         if (ArcSPtr arc = arc_wptr.lock()) {
             arc->setNodeDst(node);
-            arc->setNodeDstListIt(
-                    std::find(node->arcs().begin(), node->arcs().end(), arc_wptr));
+            arc->setNodeDstListIt(util::weak_find(node->arcs().begin(), node->arcs().end(), arc_wptr));
         }
     }
     for (SheetWPtr sheet_wptr : node->sheets()) {

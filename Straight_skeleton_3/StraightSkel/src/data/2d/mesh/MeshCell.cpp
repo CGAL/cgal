@@ -69,7 +69,7 @@ void MeshCell::addVertex(MeshVertexSPtr vertex) {
 bool MeshCell::removeVertex(MeshVertexSPtr vertex) {
     bool result = false;
     std::list<MeshVertexSPtr>::iterator it_v =
-            std::find(vertices_.begin(), vertices_.end(), vertex);
+        std::find(vertices_.begin(), vertices_.end(), vertex);
     if (it_v != vertices_.end()) {
         vertices_.erase(it_v);
         vertex->removeCell(shared_from_this());
@@ -97,7 +97,7 @@ bool MeshCell::addVertexBefore(MeshVertexSPtr position, MeshVertexSPtr vertex) {
 bool MeshCell::containsVertex(MeshVertexSPtr vertex) const {
     bool result = false;
     std::list<MeshVertexSPtr>::const_iterator it_v =
-            std::find(vertices_.begin(), vertices_.end(), vertex);
+        std::find(vertices_.begin(), vertices_.end(), vertex);
     if (it_v != vertices_.end()) {
         result = true;
     }

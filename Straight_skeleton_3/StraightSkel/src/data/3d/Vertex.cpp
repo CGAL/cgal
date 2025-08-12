@@ -80,7 +80,7 @@ void Vertex::addEdge(EdgeSPtr edge) {
     VertexSPtr vertex_dst = edge->getVertexDst();
     if (vertex_src == shared_from_this() && vertex_dst == shared_from_this()) {
         std::list<EdgeWPtr>::iterator it_e =
-                std::find(edges_.begin(), edges_.end(), edge_wptr);
+            util::weak_find(edges_.begin(), edges_.end(), edge_wptr);
         if (it_e == edge->getVertexSrcListIt()) {
             edge->setVertexDstListIt(it);
         } else {
@@ -201,14 +201,14 @@ FacetSPtr Vertex::getFacet(unsigned int i) {
 bool Vertex::containsEdge(EdgeSPtr edge) const {
     EdgeWPtr edge_wptr = EdgeWPtr(edge);
     bool result = (edges_.end() !=
-            std::find(edges_.begin(), edges_.end(), edge_wptr));
+        util::weak_find(edges_.begin(), edges_.end(), edge_wptr));
     return result;
 }
 
 bool Vertex::containsFacet(FacetSPtr facet) const {
     FacetWPtr facet_wptr = FacetWPtr(facet);
     bool result = (facets_.end() !=
-            std::find(facets_.begin(), facets_.end(), facet_wptr));
+        util::weak_find(facets_.begin(), facets_.end(), facet_wptr));
     return result;
 }
 
