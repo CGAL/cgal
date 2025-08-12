@@ -7,7 +7,7 @@ using Mesh = CGAL::Surface_mesh<K::Point_3>;
 using Medial_Skeleton = CGAL::Medial_Skeleton<Mesh>;
 
 int main(int argc, char** argv)
-{ 
+{
   const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/elephant_dense.off");
 
   Mesh mesh;

@@ -30,5 +30,5 @@
 
 \cgalCPRSection{Classes}
 - `CGAL::Variational_medial_axis`
-- `CGAL::Medial_Skeleton` 
+- `CGAL::Medial_Skeleton`
 */

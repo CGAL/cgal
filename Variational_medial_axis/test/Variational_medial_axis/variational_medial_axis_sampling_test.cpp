@@ -139,12 +139,12 @@ bool test_correcteness() {
       mesh, CGAL::parameters::lambda(0.2).number_of_spheres(300).acceleration_structure(CGAL::BVH_tag{}));
   auto skeleton_kd_tree = CGAL::extract_variational_medial_skeleton(
       mesh, CGAL::parameters::lambda(0.2).number_of_spheres(300).acceleration_structure(CGAL::KD_tree_tag{}));
-  
+
   std::string saved_file_bvh = CGAL::data_file_path("meshes/elephant_dense_0.2_300_BVH.ply");
   std::string saved_file_kd_tree = CGAL::data_file_path("meshes/elephant_dense_0.2_300_KD_tree.ply");
 
   Skeleton saved_skeleton_bvh,saved_skeleton_kd_tree;
-  
+
   if(saved_skeleton_bvh.load_skeleton_from_ply(saved_file_bvh)) {
     if(compare_skeletons(skeleton_bvh, saved_skeleton_bvh)) {
       std::cout << "Skeletons match after reading from file." << std::endl;
@@ -153,7 +153,7 @@ bool test_correcteness() {
       return false;
     }
   }
-  
+
   if(saved_skeleton_kd_tree.load_skeleton_from_ply(saved_file_kd_tree)) {
     if(compare_skeletons(skeleton_kd_tree, saved_skeleton_kd_tree)) {
       std::cout << "KD-tree Skeletons match after reading from file." << std::endl;
@@ -269,7 +269,7 @@ int main() {
     std::cerr << "API test failed for chair" << std::endl;
     return EXIT_FAILURE;
   }
-  
+
   std::cout << "\n--- Test 3: Determinism ---" << std::endl;
   for(const auto& params : test_cases) {
     std::string mesh_file = CGAL::data_file_path("meshes/" + params.mesh_name + ".off");

@@ -6,7 +6,7 @@ using K = CGAL::Exact_predicates_inexact_constructions_kernel;
 using Mesh = CGAL::Surface_mesh<K::Point_3>;
 
 int main(int argc, char** argv)
-{ 
+{
   const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/chair.off");
 
   Mesh mesh;
@@ -24,7 +24,7 @@ int main(int argc, char** argv)
       .lambda(0.2) // lambda parameter for the optimization
       .verbose(true)); // enable verbose output
 
-  // add additional 3 sphere, this function will update the medial skeleton automatically 
+  // add additional 3 sphere, this function will update the medial skeleton automatically
   vmas.add_spheres(3);
   // update the medial skeleton with 20 iterations
   vmas.update(20);

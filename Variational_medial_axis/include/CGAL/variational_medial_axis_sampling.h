@@ -589,12 +589,12 @@ private:
 ///         This determines the execution mode at compile time.
 ///         <b>%Default:</b> `CGAL::Sequential_tag`<br>
 ///         <b>%Valid values:</b> `CGAL::Sequential_tag`, `CGAL::Parallel_tag`, `CGAL::Parallel_if_available_tag`
-/// 
+///
 ///  @tparam AccelerationType_
 ///         a tag indicating whether the algorithm should use Kd-tree or BVH as acceleration structure.
 ///         <b>%Default:</b> `CGAL::KD_tree_tag`<br>
 ///         <b>%Valid values:</b> `CGAL::KD_tree_tag`, `CGAL::BVH_tag`,
-/// 
+///
 /// @tparam GeomTraits_
 ///         a model of `Kernel`<br>
 ///         <b>%Default:</b>
@@ -788,7 +788,7 @@ public:
     verbose_ = choose_parameter(get_parameter(np, internal_np::verbose), verbose_);
     bool success = false;
     reset_algorithm_state();
-    sphere_mesh_->spheres().reserve(desired_number_of_spheres_);  
+    sphere_mesh_->spheres().reserve(desired_number_of_spheres_);
     // Initialize with one sphere
     Sphere_3 init_sphere(Point_3(0., 0., 0.), FT(1.0));
     sphere_mesh_->add_sphere(init_sphere);
@@ -882,7 +882,7 @@ public:
       update_sphere_neighbors();
       split_spheres();
     }
-    
+
     return false;
   }
   /**
@@ -985,7 +985,7 @@ public:
     skeleton.build_skeleton_from_medial_sphere_mesh(*sphere_mesh_);
     return skeleton;
   }
-  
+
 
   /// \name Parameters
   /// @{
@@ -1020,7 +1020,7 @@ public:
 
   /**
    * \brief The maximum number of iterations for the algorithm.
-   * 
+   *
    * In case the algorithm does not converge, it will stop after this number of iterations.
    */
   int max_iteration() const { return max_iteration_; }
@@ -1077,7 +1077,7 @@ private:
     total_error_diff_ = (std::numeric_limits<FT>::max)();
     last_total_error_ = total_error_;
   }
-  
+
   inline FT cosine_angle(const Vector_3& v1, const Vector_3& v2) {
     FT norm_v1v2 = CGAL::approximate_sqrt(v1.squared_length() * v2.squared_length());
     FT res = norm_v1v2 > 1e-20 ? (v1 * v2) / norm_v1v2 : FT(1);
