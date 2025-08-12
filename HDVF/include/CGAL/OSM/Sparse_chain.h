@@ -82,6 +82,22 @@ public:
     template <typename _CT>
     friend Sparse_chain<_CT, ROW> operator*(const Sparse_chain<_CT, ROW> &_first, const Sparse_matrix<_CT, COLUMN> &_second);
     template <typename _CT>
+    friend Sparse_matrix<_CT, COLUMN> operator*(const Sparse_matrix<_CT, COLUMN> &_first, const Sparse_matrix<_CT, COLUMN> &_second);
+    template <typename _CT>
+    friend Sparse_matrix<_CT, COLUMN> operator*(const Sparse_matrix<_CT, COLUMN> &_first, const Sparse_matrix<_CT, ROW> &_second);
+    template <typename _CT>
+    friend Sparse_matrix<_CT, COLUMN> operator*(const Sparse_matrix<_CT, ROW> &_first, const Sparse_matrix<_CT, COLUMN> &_second);
+    template <typename _CT>
+    friend Sparse_matrix<_CT, COLUMN> operator*(const Sparse_matrix<_CT, ROW> &_first, const Sparse_matrix<_CT, ROW> &_second);
+    template <typename _CT>
+    friend Sparse_matrix<_CT, ROW> operator%(const Sparse_matrix<_CT, COLUMN> &_first, const Sparse_matrix<_CT, COLUMN> &_second);
+    template <typename _CT>
+    friend Sparse_matrix<_CT, ROW> operator%(const Sparse_matrix<_CT, COLUMN> &_first, const Sparse_matrix<_CT, ROW> &_second);
+    template <typename _CT>
+    friend Sparse_matrix<_CT, ROW> operator%(const Sparse_matrix<_CT, ROW> &_first, const Sparse_matrix<_CT, COLUMN> &_second);
+    template <typename _CT>
+    friend Sparse_matrix<_CT, ROW> operator%(const Sparse_matrix<_CT, ROW> &_first, const Sparse_matrix<_CT, ROW> &_second);
+    template <typename _CT>
     friend Sparse_chain<_CT, COLUMN> get_column(const Sparse_matrix<_CT, COLUMN> &_matrix,  size_t _index);
     template <typename _CT>
     friend Sparse_chain<_CT, COLUMN> get_column(const Sparse_matrix<_CT, ROW> &_matrix,  size_t _index);
@@ -418,7 +434,10 @@ public:
             throw std::runtime_error("Provided index should be less than " + std::to_string(_upperBound) + ".");
         }
 
-        return _chainData.at(index);
+        if (_chainData.find(index) == _chainData.end())
+            return 0 ;
+        else
+            return _chainData.at(index);
     }
 
     /**

@@ -16,73 +16,43 @@ int main(int argc, char **argv)
 {
     std::cerr << "-- Test Sparse_matrices read/write" << std::endl;
 
-    std::cerr << "----> Column matrices" << std::endl;
-
-    Column_matrix MC_rw(3,4);
-    CGAL::OSM::set_coefficient(MC_rw, 0, 1, 1) ;
-    CGAL::OSM::set_coefficient(MC_rw, 0, 2, -1) ;
-    CGAL::OSM::set_coefficient(MC_rw, 1, 0, 2) ;
-    CGAL::OSM::set_coefficient(MC_rw, 1, 2, -2) ;
-
-    const std::string filename_col_save("test_col_mat.osm") ;
-
-    std::ofstream out_col_save ( filename_col_save, std::ios::out | std::ios::trunc);
-    if ( not out_col_save . good () ) {
-        std::cerr << "Out fatal Error:\n  " << filename_col_save << " not found.\n";
-        throw std::runtime_error("File Parsing Error: File not found");
+    {
+        std::cerr << "----> Column matrices" << std::endl;
+        
+        Column_matrix MC_rw(3,4);
+        CGAL::OSM::set_coefficient(MC_rw, 0, 1, 1) ;
+        CGAL::OSM::set_coefficient(MC_rw, 0, 2, -1) ;
+        CGAL::OSM::set_coefficient(MC_rw, 1, 0, 2) ;
+        CGAL::OSM::set_coefficient(MC_rw, 1, 2, -2) ;
+        
+        write_matrix(MC_rw, "test_col_mat.osm");
+        
+        Column_matrix MC_rw2 ;
+        
+        CGAL::OSM::read_matrix(MC_rw2, "test_col_mat.osm");
+        
+        bool comp_col(MC_rw == MC_rw2) ;
+        std::cerr << "saved and loaded matrices comparison: " << comp_col << std::endl ;
+        assert(comp_col) ;
+        
+        std::cerr << "----> Row matrices" << std::endl;
+        
+        Row_matrix MR_rw(3,4);
+        CGAL::OSM::set_coefficient(MR_rw, 0, 1, 1) ;
+        CGAL::OSM::set_coefficient(MR_rw, 0, 2, -1) ;
+        CGAL::OSM::set_coefficient(MR_rw, 1, 0, 2) ;
+        CGAL::OSM::set_coefficient(MR_rw, 1, 2, -2) ;
+        
+        write_matrix(MR_rw, "test_row_mat.osm");
+        
+        Row_matrix MR_rw2 ;
+        
+        CGAL::OSM::read_matrix(MR_rw2, "test_row_mat.osm");
+        
+        bool comp_row(MR_rw == MR_rw2) ;
+        std::cerr << "saved and loaded matrices comparison: " << comp_row << std::endl ;
+        assert(comp_row) ;
     }
-
-    write_matrix(MC_rw, out_col_save);
-
-    out_col_save.close() ;
-
-    Column_matrix MC_rw2 ;
-
-    std::ifstream in_col_save (filename_col_save);
-    if ( not in_col_save . good () ) {
-        std::cerr << "Out fatal Error:\n  " << filename_col_save << " not found.\n";
-        throw std::runtime_error("File Parsing Error: File not found");
-    }
-    CGAL::OSM::read_matrix(MC_rw2, in_col_save);
-    in_col_save.close() ;
-
-    bool comp_col(MC_rw == MC_rw2) ;
-    std::cerr << "saved and loaded matrices comparison: " << comp_col << std::endl ;
-    assert(comp_col) ;
-
-    std::cerr << "----> Row matrices" << std::endl;
-
-    Row_matrix MR_rw(3,4) ;
-    CGAL::OSM::set_coefficient(MR_rw, 0, 1, 1) ;
-    CGAL::OSM::set_coefficient(MR_rw, 0, 2, -1) ;
-    CGAL::OSM::set_coefficient(MR_rw, 1, 0, 2) ;
-    CGAL::OSM::set_coefficient(MR_rw, 1, 2, -2) ;
-
-    const std::string filename_row_save("test_row_mat.osm") ;
-
-    std::ofstream out_row_save ( filename_row_save, std::ios::out | std::ios::trunc);
-    if ( not out_row_save . good () ) {
-        std::cerr << "Out fatal Error:\n  " << filename_row_save << " not found.\n";
-        throw std::runtime_error("File Parsing Error: File not found");
-    }
-
-    write_matrix(MR_rw, out_row_save);
-
-    out_row_save.close() ;
-
-    Row_matrix MR_rw2 ;
-
-    std::ifstream in_row_save (filename_row_save);
-    if ( not in_row_save . good () ) {
-        std::cerr << "Out fatal Error:\n  " << filename_row_save << " not found.\n";
-        throw std::runtime_error("File Parsing Error: File not found");
-    }
-    CGAL::OSM::read_matrix(MR_rw2, in_row_save);
-    in_row_save.close() ;
-
-    bool comp_row(MR_rw == MR_rw2) ;
-    std::cerr << "saved and loaded matrices comparison: " << comp_row << std::endl ;
-    assert(comp_row) ;
 
     std::cerr << "-- Tests Sparse_matrices operations" << std::endl ;
 
@@ -93,60 +63,552 @@ int main(int argc, char **argv)
     b.set_coefficient(0,2);
     b.set_coefficient(1,-3);
 
-    Column_matrix columnMajor = a * b, tmp = columnMajor;
-    std::cout << columnMajor << std::endl ;
-
-    Column_matrix columnMajorRes(4,4) ;
-
+    std::cerr << "---- Test column chain * row chain -> columnMajor matrix" << std::endl ;
     
-    // How to read data in data/ directory ?
+    Column_matrix columnMajor = a * b, tmp = columnMajor;
+    
+    {
+        Column_matrix tmp ;
+        CGAL::OSM::read_matrix(tmp, "data/test_sparse_matrices/columnMajor.osm") ;
+        bool bres(tmp == columnMajor);
+        std::cerr << "column chain * row chain: " << bres << std::endl;
+        assert(bres) ;
+    }
+    
+    std::cerr << "---- Test column chain % row chain -> rowMajor matrix" << std::endl ;
+    
+    Row_matrix rowMajor = a % b;
 
-//    Row_matrix rowMajor = a % b;
-//
-//    std::cout << "Création de matrice col-dominant:" << std::endl << columnMajor << std::endl << std::endl;
-//    std::cout << "Suppr col 0:" << std::endl << tmp.delColumn(0) << std::endl << std::endl;
-//    std::cout << "Suppr row 0:" << std::endl << tmp.delRow(1) << std::endl << std::endl;
-//    std::cout << "Création de matrice row-dominant:" << std::endl << rowMajor << std::endl << std::endl;
-//
-//    std::cout << "Ajout de deux matrices CC: " << columnMajor + columnMajor << std::endl;
-//    std::cout << "Soustraction de deux matrices CC: " << columnMajor - columnMajor << std::endl << std::endl;
-//
-//    std::cout << "Ajout de deux matrices RR: " << rowMajor + rowMajor << std::endl;
-//    std::cout << "Soustraction de deux matrices RR: " << rowMajor - rowMajor << std::endl << std::endl;
-//
-//    std::cout << "Ajout de deux matrices CR: " << columnMajor + rowMajor << std::endl;
-//    std::cout << "Soustraction de deux matrices CR: " << columnMajor - rowMajor << std::endl << std::endl;
-//
-//    std::cout << "Ajout de deux matrices RC: " << rowMajor + columnMajor << std::endl;
-//    std::cout << "Soustraction de deux matrices RC: " << rowMajor - columnMajor << std::endl << std::endl;
-//
-//    std::cout << "Transposée de matrice:" << std::endl << "Col-dominant (devient row): " << columnMajor.transpose() << std::endl << "Row-dominant (devient col): " << rowMajor.transpose() << std::endl << std::endl;
-//
-//    std::cout << "Produits matriciels" << std::endl;
-//
-//    std::cout << "C*R = " << columnMajor * rowMajor << std::endl;
-//    std::cout << "R*C = " << rowMajor * columnMajor << std::endl;
-//    std::cout << "C*C = " << columnMajor * columnMajor << std::endl;
-//    std::cout << "R*R = " << rowMajor * rowMajor << std::endl << std::endl;
-//
-//    std::cout << "C%R = " << columnMajor % rowMajor << std::endl;
-//    std::cout << "R%C = " << rowMajor % columnMajor << std::endl;
-//    std::cout << "C%C = " << columnMajor % columnMajor << std::endl;
-//    std::cout << "R%R = " << rowMajor % rowMajor << std::endl << std::endl;
-//
-//    std::cout << "Récupération de colonne (col/row dom):" << OSM::getColumn(columnMajor, 0) << " " << OSM::getColumn(rowMajor, 0) << std::endl;
-//    std::cout << "Récupération de ligne   (col/row dom):" << OSM::getRow(columnMajor, 1) << " " << OSM::getRow(rowMajor, 1) << std::endl << std::endl;
-//
-//    OSM::SparseMatrix colCol = columnMajor;
-//    OSM::SparseMatrix colRow = rowMajor;
-//    OSM::SparseMatrix rowCol = columnMajor;
-//    OSM::SparseMatrix rowRow = rowMajor;
-//
-//    colCol *= columnMajor;
-//    colRow *= rowMajor;
-//    rowCol *= columnMajor;
-//    rowRow *= rowMajor;
-//
+    {
+        Row_matrix tmp ;
+        CGAL::OSM::read_matrix(tmp, "data/test_sparse_matrices/rowMajor.osm") ;
+        bool bres(tmp == rowMajor);
+        std::cerr << "column chain % row chain: " << bres << std::endl;
+        assert(bres) ;
+    }
+    
+    std::cerr << "---- Test column/row get" << std::endl ;
+    
+    std::cerr << "------ In Column_matrix" << std::endl ;
+    
+    {
+        Column_chain res(CGAL::OSM::get_column(columnMajor, 0)), tmp(4) ;
+        tmp.set_coefficient(1, 2) ;
+        tmp.set_coefficient(3, 6) ;
+        
+        bool bres (tmp == res) ;
+        std::cerr << "get_column 0 in columnMajor: " << bres << std::endl;
+        assert(bres) ;
+    }
+    
+    {
+        Row_chain res2(CGAL::OSM::get_row(columnMajor, 1)), tmp2(4) ;
+        tmp2.set_coefficient(0, 2) ;
+        tmp2.set_coefficient(1, -3) ;
+        
+        bool bres (tmp2 == res2) ;
+        std::cerr << "get_row 1 in columnMajor: " << bres << std::endl;
+        assert(bres);
+    }
+    
+    std::cerr << "------ In Row_matrix" << std::endl ;
+    
+    {
+        Column_chain res(CGAL::OSM::get_column(rowMajor, 0)), tmp(4) ;
+        tmp.set_coefficient(1, 2) ;
+        tmp.set_coefficient(3, 6) ;
+        
+        bool bres(tmp == res) ;
+        std::cerr << "get_column 0 in rowMajor: " << bres << std::endl;
+        assert(bres);
+    }
+    
+    {
+        Row_chain res2(CGAL::OSM::get_row(rowMajor, 1)), tmp2(4) ;
+        tmp2.set_coefficient(0, 2) ;
+        tmp2.set_coefficient(1, -3) ;
+        
+        bool bres(tmp2==res2);
+        std::cerr << "get_row 1 in columnMajor: " << bres << std::endl;
+        assert(bres);
+    }
+    
+    std::cerr << "---- Test column/row deletion" << std::endl;
+    
+    std::cerr << "------ In Column_matrix" << std::endl ;
+    
+    {
+        Column_matrix tmp(columnMajor), tmp2;
+        CGAL::OSM::del_column(tmp, 0) ;
+        CGAL::OSM::read_matrix(tmp2, "data/test_sparse_matrices/columnMajor_del_col.osm");
+        
+        bool bres(tmp == tmp2);
+        std::cerr << "deletion column 0 in columnMajor: " << bres << std::endl ;
+        assert(bres);
+    }
+    
+    {
+        Column_matrix tmp(columnMajor), tmp2;
+        CGAL::OSM::del_row(tmp, 1) ;
+        CGAL::OSM::read_matrix(tmp2, "data/test_sparse_matrices/columnMajor_del_row.osm");
+        bool bres(tmp == tmp2);
+        std::cerr << "deletion row 1 in columnMajor: " << bres << std::endl ;
+        assert(bres);
+    }
+    
+    std::cerr << "------ In Row_matrix" << std::endl ;
+    
+    {
+        Row_matrix tmp(rowMajor), tmp2;
+        CGAL::OSM::del_row(tmp, 1) ;
+        CGAL::OSM::read_matrix(tmp2, "data/test_sparse_matrices/rowMajor_del_row.osm");
+        bool bres(tmp==tmp2);
+        std::cerr << "deletion row 1 in rowMajor: " << bres << std::endl ;
+        assert(bres);
+    }
+    
+    {
+        Row_matrix tmp(rowMajor), tmp2;
+        CGAL::OSM::del_column(tmp, 0) ;
+        CGAL::OSM::read_matrix(tmp2, "data/test_sparse_matrices/rowMajor_del_column.osm");
+        bool bres(tmp == tmp2);
+        std::cerr << "deletion column 0 in rowMajor: " << bres << std::endl ;
+        assert(bres);
+    }
+    
+    // //////// Sum
+    std::cerr << "---- Test matrices sum" << std::endl ;
+    
+    // COL + COL
+    std::cerr << "------ Test Column_matrix + Column_matrix" << std::endl ;
+    
+    {
+        Column_matrix tmp(columnMajor), res, tmp2 ;
+        
+        CGAL::OSM::del_coefficient(tmp, 1, 0);
+        CGAL::OSM::set_coefficient(tmp, 2, 2, -2) ;
+        
+        res = tmp + columnMajor ;
+        Column_matrix res2(tmp);
+        res2 += columnMajor ;
+        
+        CGAL::OSM::read_matrix(tmp2, "data/test_sparse_matrices/ColCol_sum.osm");
+        bool bres(res == tmp2) ;
+        std::cerr << "sum columnMajor + otherColumnMajor: " << bres << std::endl ;
+        assert(bres);
+        bool bres2(res2 == tmp2) ;
+        std::cerr << "sum columnMajor += otherColumnMajor: " << bres2 << std::endl ;
+        assert(bres2);
+    }
+    
+    // COL + ROW
+    std::cerr << "------ Test Column_matrix + Row_matrix" << std::endl ;
+    
+    {
+        Column_matrix tmp(columnMajor), res, tmp2 ;
+        
+        CGAL::OSM::del_coefficient(tmp, 1, 0);
+        CGAL::OSM::set_coefficient(tmp, 2, 2, -2) ;
+        
+        res = tmp + rowMajor ;
+        Column_matrix res2(tmp);
+        res2 += rowMajor ;
+        CGAL::OSM::read_matrix(tmp2, "data/test_sparse_matrices/ColRow_sum.osm");
+        bool bres(tmp2 == res);
+        std::cerr << "sum otherColumnMajor + rowMajor: " << bres << std::endl ;
+        assert(bres);
+        bool bres2(tmp2 == res2);
+        std::cerr << "sum otherColumnMajor += rowMajor: " << bres2 << std::endl ;
+        assert(bres2);
+    }
+    
+    // ROW + COL
+    std::cerr << "------ Test Row_matrix + Column_matrix" << std::endl ;
+    
+    {
+        Row_matrix tmp(rowMajor), res, tmp2 ;
+        
+        CGAL::OSM::del_coefficient(tmp, 1, 0);
+        CGAL::OSM::set_coefficient(tmp, 2, 2, -2) ;
+        
+        res = tmp + columnMajor ;
+        Row_matrix res2(tmp);
+        res2 += columnMajor ;
+        CGAL::OSM::read_matrix(tmp2, "data/test_sparse_matrices/RowCol_sum.osm");
+        bool bres(tmp2 == res);
+        std::cerr << "sum otherRowMajor + columnMajor: " << bres << std::endl ;
+        assert(bres);
+        bool bres2(tmp2 == res2);
+        std::cerr << "sum otherRowMajor += columnMajor: " << bres2 << std::endl ;
+        assert(bres2);
+    }
+    
+    
+    // ROW + ROW
+    std::cerr << "------ Test Row_matrix + Row_matrix" << std::endl ;
+    
+    {
+        Row_matrix tmp(rowMajor), res, tmp2 ;
+        
+        CGAL::OSM::del_coefficient(tmp, 1, 0);
+        CGAL::OSM::set_coefficient(tmp, 2, 2, -2) ;
+        
+        res = tmp + rowMajor ;
+        Row_matrix res2(tmp);
+        res2 += rowMajor;
+        CGAL::OSM::read_matrix(tmp2, "data/test_sparse_matrices/RowRow_sum.osm");
+        bool bres(tmp2 == res);
+        std::cerr << "sum otherRowMajor + rowMajor: " << bres << std::endl ;
+        assert(bres);
+        bool bres2(tmp2 == res2);
+        std::cerr << "sum otherRowMajor += rowMajor: " << bres2 << std::endl ;
+        assert(bres2);
+    }
+    
+    // //////// Subtract
+    std::cerr << "---- Test matrices subtract" << std::endl ;
+    
+    // COL - COL
+    std::cerr << "------ Test Column_matrix - Column_matrix" << std::endl ;
+    
+    {
+        Column_matrix tmp(columnMajor), res, tmp2 ;
+        
+        CGAL::OSM::del_coefficient(tmp, 1, 0);
+        CGAL::OSM::set_coefficient(tmp, 2, 2, -2) ;
+        
+        res = tmp - columnMajor ;
+        Column_matrix res2(tmp);
+        res2 -= columnMajor;
+        CGAL::OSM::read_matrix(tmp2, "data/test_sparse_matrices/ColCol_sub.osm");
+        bool bres(res == tmp2) ;
+        std::cerr << "sub columnMajor - otherColumnMajor: " << bres << std::endl ;
+        assert(bres);
+        bool bres2(res2 == tmp2) ;
+        std::cerr << "sub columnMajor -= otherColumnMajor: " << bres2 << std::endl ;
+        assert(bres2);
+    }
+    
+    
+    // COL - ROW
+    std::cerr << "------ Test Column_matrix - Row_matrix" << std::endl ;
+    
+    {
+        Column_matrix tmp(columnMajor), res, tmp2 ;
+        
+        CGAL::OSM::del_coefficient(tmp, 1, 0);
+        CGAL::OSM::set_coefficient(tmp, 2, 2, -2) ;
+        
+        res = tmp - rowMajor ;
+        Column_matrix res2(tmp);
+        res2 -= rowMajor;
+        CGAL::OSM::read_matrix(tmp2, "data/test_sparse_matrices/ColRow_sub.osm");
+        bool bres(res == tmp2) ;
+        std::cerr << "sub otherColumnMajor - rowMajor: " << bres << std::endl ;
+        assert(bres);
+        bool bres2(res2 == tmp2) ;
+        std::cerr << "sub otherColumnMajor -= rowMajor: " << bres2 << std::endl ;
+        assert(bres2);
+    }
+    
+    // ROW - COL
+    std::cerr << "------ Test Row_matrix - Column_matrix" << std::endl ;
+    
+    {
+        Row_matrix tmp(rowMajor), res, tmp2 ;
+        
+        CGAL::OSM::del_coefficient(tmp, 1, 0);
+        CGAL::OSM::set_coefficient(tmp, 2, 2, -2) ;
+        
+        res = tmp - columnMajor ;
+        Row_matrix res2(tmp);
+        res2 -= columnMajor;
+        CGAL::OSM::read_matrix(tmp2, "data/test_sparse_matrices/RowCol_sub.osm");
+        bool bres(res == tmp2);
+        std::cerr << "sub otherRowMajor - columnMajor: " << bres << std::endl ;
+        assert(bres);
+        bool bres2(res2 == tmp2);
+        std::cerr << "sub otherRowMajor -= columnMajor: " << bres2 << std::endl ;
+        assert(bres2);
+    }
+    
+    // ROW - ROW
+    std::cerr << "------ Test Row_matrix - Row_matrix" << std::endl ;
+    
+    {
+        Row_matrix tmp(rowMajor), res, tmp2 ;
+        
+        CGAL::OSM::del_coefficient(tmp, 1, 0);
+        CGAL::OSM::set_coefficient(tmp, 2, 2, -2) ;
+        
+        res = tmp - rowMajor ;
+        Row_matrix res2(tmp);
+        res2 -= rowMajor;
+        CGAL::OSM::read_matrix(tmp2, "data/test_sparse_matrices/RowRow_sub.osm");
+        bool bres(res == tmp2);
+        std::cerr << "sub otherRowMajor - rowMajor: " << bres << std::endl ;
+        assert(bres);
+        bool bres2(res2 == tmp2);
+        std::cerr << "sub otherRowMajor -= rowMajor: " << bres2 << std::endl ;
+        assert(bres2);
+    }
+    
+    // //////// Product * (column result)
+    std::cerr << "---- Test matrices product *" << std::endl ;
+    
+    // COL * COL
+    std::cerr << "------ Test Column_matrix * Column_matrix" << std::endl ;
+    
+    {
+        Column_matrix res, tmp2 ;
+        Column_matrix tmp(columnMajor) ;
+        
+        CGAL::OSM::del_coefficient(tmp, 1, 0);
+        CGAL::OSM::set_coefficient(tmp, 2, 2, -2) ;
+        
+        res = tmp * columnMajor ;
+        Column_matrix res2(tmp) ;
+        res2 *= columnMajor;
+        CGAL::OSM::read_matrix(tmp2, "data/test_sparse_matrices/ColCol_prod_col.osm");
+        bool bres(res == tmp2);
+        std::cerr << "prod columnMajor * otherColumnMajor: " << bres << std::endl ;
+        assert(bres);
+        bool bres2(res2 == tmp2);
+        std::cerr << "prod columnMajor *= otherColumnMajor: " << bres2 << std::endl ;
+        assert(bres2);
+    }
+    
+    // COL * ROW
+    std::cerr << "------ Test Column_matrix * Row_matrix" << std::endl ;
+    
+    {
+        Column_matrix res, tmp2 ;
+        Column_matrix tmp(columnMajor) ;
+        
+        CGAL::OSM::del_coefficient(tmp, 1, 0);
+        CGAL::OSM::set_coefficient(tmp, 2, 2, -2) ;
+        
+        res = tmp * rowMajor ;
+        Column_matrix res2(tmp);
+        res2 *= rowMajor;
+        CGAL::OSM::read_matrix(tmp2, "data/test_sparse_matrices/ColRow_prod_col.osm");
+        bool bres(res == tmp2);
+        std::cerr << "prod otherColumnMajor * rowMajor: " << bres << std::endl ;
+        assert(bres);
+        bool bres2(res2 == tmp2);
+        std::cerr << "prod otherColumnMajor *= rowMajor: " << bres2 << std::endl ;
+        assert(bres2);
+    }
+    
+    // ROW * COL
+    std::cerr << "------ Test Row_matrix * Column_matrix" << std::endl ;
+    
+    {
+        Column_matrix res, tmp2 ;
+        Row_matrix tmp(rowMajor) ;
+        
+        CGAL::OSM::del_coefficient(tmp, 1, 0);
+        CGAL::OSM::set_coefficient(tmp, 2, 2, -2) ;
+        
+        res = tmp * columnMajor ;
+        Column_matrix res2(tmp);
+        res2 *= columnMajor;
+        CGAL::OSM::read_matrix(tmp2, "data/test_sparse_matrices/RowCol_prod_col.osm");
+        bool bres(res == tmp2);
+        std::cerr << "prod otherRowMajor * columnMajor: " << bres << std::endl ;
+        assert(bres);
+        bool bres2(res2 == tmp2);
+        std::cerr << "prod otherRowMajor *= columnMajor: " << bres2 << std::endl ;
+        assert(bres2);
+    }
+    
+    
+    // ROW * ROW
+    std::cerr << "------ Test Row_matrix * Row_matrix" << std::endl ;
+    
+    {
+        Column_matrix res, tmp2 ;
+        Row_matrix tmp(rowMajor) ;
+        
+        CGAL::OSM::del_coefficient(tmp, 1, 0);
+        CGAL::OSM::set_coefficient(tmp, 2, 2, -2) ;
+        
+        res = tmp * rowMajor ;
+        Column_matrix res2(tmp) ;
+        res2 *= rowMajor;
+        CGAL::OSM::read_matrix(tmp2, "data/test_sparse_matrices/RowRow_prod_col.osm");
+        bool bres(res == tmp2);
+        std::cerr << "prod otherRowMajor * rowMajor: " << bres << std::endl;
+        assert(bres);
+        bool bres2(res2 == tmp2);
+        std::cerr << "prod otherRowMajor *= rowMajor: " << bres2 << std::endl;
+        assert(bres2);
+    }
+    
+    // //////// Product % (row result)
+    std::cerr << "---- Test matrices product %" << std::endl ;
+    
+    // COL % COL
+    std::cerr << "------ Test Column_matrix % Column_matrix" << std::endl ;
+    
+    {
+        Row_matrix res, tmp2 ;
+        Column_matrix tmp(columnMajor) ;
+        
+        CGAL::OSM::del_coefficient(tmp, 1, 0);
+        CGAL::OSM::set_coefficient(tmp, 2, 2, -2) ;
+        
+        res = tmp % columnMajor ;
+        CGAL::OSM::read_matrix(tmp2, "data/test_sparse_matrices/ColCol_prod_row.osm");
+        bool bres(res == tmp2);
+        std::cerr << "prod columnMajor % otherColumnMajor: " << bres << std::endl ;
+        assert(bres);
+    }
+    
+    
+    // COL % ROW
+    std::cerr << "------ Test Column_matrix % Row_matrix" << std::endl ;
+    
+    {
+        Row_matrix res, tmp2 ;
+        Column_matrix tmp(columnMajor) ;
+        
+        CGAL::OSM::del_coefficient(tmp, 1, 0);
+        CGAL::OSM::set_coefficient(tmp, 2, 2, -2) ;
+        
+        res = tmp % rowMajor ;
+        CGAL::OSM::read_matrix(tmp2, "data/test_sparse_matrices/ColRow_prod_row.osm");
+        bool bres(res == tmp2);
+        std::cerr << "prod otherColumnMajor % rowMajor: " << bres << std::endl ;
+        assert(bres);
+    }
+    
+    // ROW % COL
+    std::cerr << "------ Test Row_matrix % Column_matrix" << std::endl ;
+    
+    {
+        Row_matrix res, tmp2;
+        Row_matrix tmp(rowMajor);
+        
+        CGAL::OSM::del_coefficient(tmp, 1, 0);
+        CGAL::OSM::set_coefficient(tmp, 2, 2, -2) ;
+        
+        res = tmp % columnMajor ;
+        CGAL::OSM::read_matrix(tmp2, "data/test_sparse_matrices/RowCol_prod_row.osm");
+        bool bres(res == tmp2);
+        std::cerr << "prod otherRowMajor % columnMajor: " << bres << std::endl ;
+        assert(bres);
+    }
+    
+    
+    // ROW % ROW
+    std::cerr << "------ Test Row_matrix % Row_matrix" << std::endl ;
+    
+    {
+        Row_matrix res, tmp2;
+        Row_matrix tmp(rowMajor);
+        
+        CGAL::OSM::del_coefficient(tmp, 1, 0);
+        CGAL::OSM::set_coefficient(tmp, 2, 2, -2) ;
+        
+        res = tmp % rowMajor ;
+        CGAL::OSM::read_matrix(tmp2, "data/test_sparse_matrices/RowRow_prod_row.osm");
+        bool bres(res == tmp2);
+        std::cerr << "prod otherRowMajor % rowMajor: " << bres << std::endl ;
+        assert(bres);
+        
+    }
+    
+    // //////// Transpose
+    std::cerr << "---- Test matrices transpose" << std::endl ;
+    
+    // COL^t
+    std::cerr << "------ Test Column_matrix transpose" << std::endl ;
+    
+    {
+        Row_matrix res = columnMajor.transpose(), tmp2 ;
+        CGAL::OSM::read_matrix(tmp2, "data/test_sparse_matrices/Col_transpose.osm");
+        bool bres(res == tmp2);
+        std::cerr << "transpose columnMajor: " << bres << std::endl ;
+        assert(bres);
+    }
+    
+    // ROW^t
+    std::cerr << "------ Test Row_matrix transpose" << std::endl ;
+    
+    {
+        Column_matrix res = rowMajor.transpose(), tmp2 ;
+        CGAL::OSM::read_matrix(tmp2, "data/test_sparse_matrices/Row_transpose.osm");
+        bool bres(res == tmp2);
+        std::cerr << "transpose rowMajor: " << bres << std::endl ;
+        assert(bres);
+    }
+    
+    // //////// Product scalar * matrix
+    std::cerr << "---- Test scalar - matrix and matrix - scalar product" << std::endl ;
+    
+    // COL
+    std::cerr << "------ Test 3 * Column_matrix and Column_matrix * 3" << std::endl ;
+    
+    {
+        Row_matrix tmp(rowMajor), tmp2(rowMajor), res1, res2, res3 ;
+        
+        // Build expected result
+        for (CGAL::OSM::Bitboard::iterator it = tmp2.begin(); it != tmp2.end(); ++it)
+        {
+            const Row_chain& tmp_row(CGAL::OSM::cget_row(tmp2, *it));
+            for (Row_chain::const_iterator it2=tmp_row.cbegin(); it2 != tmp_row.cend(); ++it2)
+            {
+                CGAL::OSM::set_coefficient(tmp2, *it, it2->first, 3*it2->second);
+            }
+        }
+        
+        res1 = 3*tmp ;
+        res2 = tmp*3 ;
+        res3 = tmp ;
+        res3 *= 3 ;
+        bool bres1(res1 == tmp2);
+        std::cerr << "prod 3*rowMajor: " << bres1 << std::endl ;
+        assert(bres1);
+        bool bres2(res2 == tmp2);
+        std::cerr << "prod rowMajor*3: " << bres2 << std::endl ;
+        assert(bres2);
+        bool bres3(res3 == tmp2);
+        std::cerr << "prod rowMajor *= 3: " << bres3 << std::endl ;
+        assert(bres3);
+    }
+    
+    // ROW
+    std::cerr << "------ Test 3 * Row_matrix and Row_matrix * 3" << std::endl ;
+    
+    {
+        Column_matrix tmp(columnMajor), tmp2(columnMajor), res1, res2, res3 ;
+        
+        // Build expected result
+        for (CGAL::OSM::Bitboard::iterator it = tmp2.begin(); it != tmp2.end(); ++it)
+        {
+            const Column_chain& tmp_col(CGAL::OSM::cget_column(tmp2, *it));
+            for (Column_chain::const_iterator it2=tmp_col.cbegin(); it2 != tmp_col.cend(); ++it2)
+            {
+                CGAL::OSM::set_coefficient(tmp2, it2->first, *it, 3*it2->second);
+            }
+        }
+        
+        res1 = 3*tmp ;
+        res2 = tmp*3 ;
+        res3 = tmp ;
+        res3 *= 3 ;
+        bool bres1(res1 == tmp2);
+        std::cerr << "prod 3*columnMajor: " << bres1 << std::endl ;
+        assert(bres1);
+        bool bres2(res2 == tmp2);
+        std::cerr << "prod columnMajor*3: " << bres2 << std::endl ;
+        assert(bres2);
+        bool bres3(res3 == tmp2);
+        std::cerr << "prod columnMajor *= 3: " << bres3 << std::endl ;
+        assert(bres3);
+    }
+
 //    std::cout << "Multiplication de colonne (col/row dom):" << std::endl << colCol << std::endl << colRow << std::endl << std::endl;
 //    std::cout << "Multiplication de ligne   (col/row dom):" << std::endl << rowCol << std::endl << rowRow << std::endl << std::endl;
 //

@@ -1827,29 +1827,29 @@ std::istream& read_matrix (Sparse_matrix<_CT, OSM::ROW>& M, std::istream& in)
 template <typename _CT>
 void read_matrix (Sparse_matrix<_CT, OSM::COLUMN>& M, std::string filename)
 {
-    std::ifstream in (filename);
-    if ( not in . good () ) {
+    std::ifstream in_file (filename);
+    if ( not in_file . good () ) {
         std::cerr << "Out fatal Error:\n  " << filename << " not found.\n";
         throw std::runtime_error("File Parsing Error: File not found");
     }
     
-    CGAL::OSM::read_matrix(M, in) ;
+    CGAL::OSM::read_matrix(M, in_file) ;
     
-    in.close();
+    in_file.close();
 }
 
 template <typename _CT>
 void read_matrix (Sparse_matrix<_CT, OSM::ROW>& M, std::string filename)
 {
-    std::ifstream in (filename);
-    if ( not in . good () ) {
+    std::ifstream in_file (filename);
+    if ( not in_file . good () ) {
         std::cerr << "Out fatal Error:\n  " << filename << " not found.\n";
         throw std::runtime_error("File Parsing Error: File not found");
     }
     
-    CGAL::OSM::read_matrix(M, in) ;
+    CGAL::OSM::read_matrix(M, in_file) ;
     
-    in.close();
+    in_file.close();
 }
 
 template <typename _CT>
