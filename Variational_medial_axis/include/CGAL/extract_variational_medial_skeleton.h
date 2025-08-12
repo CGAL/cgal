@@ -1,4 +1,3 @@
-
 // Copyright (c) 2025 GeometryFactory (France).
 // All rights reserved.
 //
@@ -12,6 +11,8 @@
 
 #ifndef CGAL_EXTRACT_VARIATIONAL_MEDIAL_SKELETON_H
 #define CGAL_EXTRACT_VARIATIONAL_MEDIAL_SKELETON_H
+
+#include <CGAL/license/Variational_medial_axis.h>
 
 #include <CGAL/variational_medial_axis_sampling.h>
 

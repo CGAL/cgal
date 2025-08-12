@@ -13,6 +13,8 @@
 #ifndef CGAL_VARIATIONAL_MEDIAL_AXIS_SAMPLING_H
 #define CGAL_VARIATIONAL_MEDIAL_AXIS_SAMPLING_H
 
+#include <CGAL/license/Variational_medial_axis.h>
+
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/AABB_traits_3.h>
 #include <CGAL/AABB_tree.h>
