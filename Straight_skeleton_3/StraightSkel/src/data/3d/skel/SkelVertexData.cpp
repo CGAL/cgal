@@ -38,10 +38,7 @@ SkelVertexDataSPtr SkelVertexData::create(VertexSPtr vertex) {
 
 ArcSPtr SkelVertexData::getArc() const {
     CGAL_SS3_DEBUG_WPTR(arc_);
-    if (this->arc_.expired())
-        return ArcSPtr();
-    else
-        return ArcSPtr(this->arc_);
+    return this->arc_.lock();
 }
 
 void SkelVertexData::setArc(ArcSPtr arc) {
@@ -49,10 +46,7 @@ void SkelVertexData::setArc(ArcSPtr arc) {
 }
 
 NodeSPtr SkelVertexData::getNode() const {
-    if (this->node_.expired())
-        return NodeSPtr();
-    else
-        return NodeSPtr(this->node_);
+    return this->node_.lock();
 }
 
 void SkelVertexData::setNode(NodeSPtr node) {
@@ -61,10 +55,7 @@ void SkelVertexData::setNode(NodeSPtr node) {
 
 VertexSPtr SkelVertexData::getOffsetVertex() const {
     CGAL_SS3_DEBUG_WPTR(offset_vertex_);
-    if (this->offset_vertex_.expired())
-        return VertexSPtr();
-    else
-        return VertexSPtr(this->offset_vertex_);
+    return this->offset_vertex_.lock();
 }
 
 void SkelVertexData::setOffsetVertex(VertexSPtr offset_vertex) {

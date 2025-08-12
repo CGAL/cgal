@@ -36,10 +36,7 @@ MeshRaySPtr MeshRay::create(EdgeSPtr edge, MeshVertexSPtr src) {
 
 MeshSPtr MeshRay::getMesh() const {
     CGAL_SS3_DEBUG_WPTR(mesh_);
-    if (this->mesh_.expired())
-        return MeshSPtr();
-    else
-        return MeshSPtr(this->mesh_);
+    return this->mesh_.lock();
 }
 
 void MeshRay::setMesh(MeshSPtr mesh) {

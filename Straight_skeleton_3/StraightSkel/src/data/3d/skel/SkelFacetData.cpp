@@ -39,10 +39,7 @@ SkelFacetDataSPtr SkelFacetData::create(FacetSPtr facet) {
 
 FacetSPtr SkelFacetData::getOffsetFacet() const {
     CGAL_SS3_DEBUG_WPTR(offset_facet_);
-    if (this->offset_facet_.expired())
-        return FacetSPtr();
-    else
-        return FacetSPtr(this->offset_facet_);
+    return this->offset_facet_.lock();
 }
 
 void SkelFacetData::setOffsetFacet(FacetSPtr offset_facet) {
@@ -51,10 +48,7 @@ void SkelFacetData::setOffsetFacet(FacetSPtr offset_facet) {
 
 FacetSPtr SkelFacetData::getFacetOrigin() const {
     CGAL_SS3_DEBUG_WPTR(facet_origin_);
-    if (this->facet_origin_.expired())
-        return FacetSPtr();
-    else
-        return FacetSPtr(this->facet_origin_);
+    return this->facet_origin_.lock();
 }
 
 void SkelFacetData::setFacetOrigin(FacetSPtr facet_origin) {

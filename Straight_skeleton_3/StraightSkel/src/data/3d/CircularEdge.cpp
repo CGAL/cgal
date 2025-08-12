@@ -61,10 +61,7 @@ void CircularEdge::setVertexDst(CircularVertexSPtr dst) {
 
 SphericalPolygonSPtr CircularEdge::getPolygon() const {
     CGAL_SS3_DEBUG_WPTR(polygon_);
-    if (this->polygon_.expired())
-        return SphericalPolygonSPtr();
-    else
-        return SphericalPolygonSPtr(this->polygon_);
+    return this->polygon_.lock();
 }
 
 void CircularEdge::setPolygon(SphericalPolygonSPtr polygon) {
@@ -107,8 +104,8 @@ void CircularEdge::setSupportingPlane(Plane3SPtr supporting_plane) {
 
 bool CircularEdge::initSupportingPlane() {
     bool result = false;
-    if (!polygon_.expired()) {
-        Sphere3SPtr sphere = getPolygon()->getSphere();
+    if (SphericalPolygonSPtr polygon = getPolygon()) {
+        Sphere3SPtr sphere = polygon->getSphere();
         Point3SPtr p_center = KernelFactory::createPoint3(sphere);
         Point3SPtr p_src = vertex_src_->getPoint();
         Point3SPtr p_dst = vertex_dst_->getPoint();

@@ -38,10 +38,7 @@ SphericalSkelEdgeDataSPtr SphericalSkelEdgeData::create(CircularEdgeSPtr edge) {
 
 CircularEdgeSPtr SphericalSkelEdgeData::getOffsetEdge() const {
     CGAL_SS3_DEBUG_WPTR(offset_edge_);
-    if (this->offset_edge_.expired())
-        return CircularEdgeSPtr();
-    else
-        return CircularEdgeSPtr(this->offset_edge_);
+    return this->offset_edge_.lock();
 }
 
 void SphericalSkelEdgeData::setOffsetEdge(CircularEdgeSPtr offset_edge) {
@@ -58,10 +55,7 @@ void SphericalSkelEdgeData::setSpeed(CGAL::FT speed) {
 
 FacetSPtr SphericalSkelEdgeData::getFacetOrigin() const {
     CGAL_SS3_DEBUG_WPTR(facet_origin_);
-    if (this->facet_origin_.expired())
-        return FacetSPtr();
-    else
-        return FacetSPtr(this->facet_origin_);
+    return this->facet_origin_.lock();
 }
 
 void SphericalSkelEdgeData::setFacetOrigin(FacetSPtr facet_origin) {

@@ -59,8 +59,7 @@ bool Mesh::removeVertex(MeshVertexSPtr vertex) {
         std::list<MeshCellWPtr>::iterator it_c = vertex->cells().begin();
         while (it_c != vertex->cells().end()) {
             MeshCellWPtr cell_wptr = *it_c++;
-            if (!cell_wptr.expired()) {
-                MeshCellSPtr cell(cell_wptr);
+            if (MeshCellSPtr cell = cell_wptr.lock()) {
                 this->removeCell(cell);
             }
         }
@@ -165,8 +164,7 @@ bool Mesh::isConsistent() const {
         std::list<MeshCellWPtr>::const_iterator it_c = vertex->cells().begin();
         while (it_c != vertex->cells().end()) {
             MeshCellWPtr cell_wptr = *it_c++;
-            if (!cell_wptr.expired()) {
-                MeshCellSPtr cell(cell_wptr);
+            if (MeshCellSPtr cell = cell_wptr.lock()) {
                 if (!cell->containsVertex(vertex)) {
                     result = false;
                     break;

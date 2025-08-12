@@ -48,12 +48,10 @@ bool MeshEdgeData::removeArc(ArcSPtr arc) {
     while (it != arcs_.end()) {
         std::list<ArcWPtr>::iterator it_current = it;
         ArcWPtr arc_wptr = *it++;
-        if (!arc_wptr.expired()) {
-            if (arc_wptr.lock() == arc) {
-                arcs_.erase(it_current);
-                result = true;
-                break;
-            }
+        if (arc_wptr.lock() == arc) {
+            arcs_.erase(it_current);
+            result = true;
+            break;
         }
     }
     return result;
@@ -69,12 +67,10 @@ bool MeshEdgeData::removeRay(MeshRaySPtr ray) {
     while (it != rays_.end()) {
         std::list<MeshRayWPtr>::iterator it_current = it;
         MeshRayWPtr ray_wptr = *it++;
-        if (!ray_wptr.expired()) {
-            if (ray_wptr.lock() == ray) {
-                rays_.erase(it_current);
-                result = true;
-                break;
-            }
+        if (ray_wptr.lock() == ray) {
+            rays_.erase(it_current);
+            result = true;
+            break;
         }
     }
     return result;
@@ -90,12 +86,10 @@ bool MeshEdgeData::removeCell(MeshCellSPtr cell) {
     while (it != cells_.end()) {
         std::list<MeshCellWPtr>::iterator it_current = it;
         MeshCellWPtr cell_wptr = *it++;
-        if (!cell_wptr.expired()) {
-            if (cell_wptr.lock() == cell) {
-                cells_.erase(it_current);
-                result = true;
-                break;
-            }
+        if (cell_wptr.lock() == cell) {
+            cells_.erase(it_current);
+            result = true;
+            break;
         }
     }
     return result;
@@ -111,12 +105,10 @@ bool MeshEdgeData::removeEdge(EdgeSPtr edge) {
     while (it != edges_.end()) {
         std::list<EdgeWPtr>::iterator it_current = it;
         EdgeWPtr edge_wptr = *it++;
-        if (!edge_wptr.expired()) {
-            if (edge_wptr.lock() == edge) {
-                edges_.erase(it_current);
-                result = true;
-                break;
-            }
+        if (edge_wptr.lock() == edge) {
+            edges_.erase(it_current);
+            result = true;
+            break;
         }
     }
     return result;

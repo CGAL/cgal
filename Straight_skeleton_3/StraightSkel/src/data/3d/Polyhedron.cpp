@@ -335,7 +335,7 @@ bool Polyhedron::isConsistent() const {
         unsigned int vne = 0;
         while (it_e != vertex->edges().end()) {
             EdgeWPtr edge_wptr = *it_e++;
-            if (EdgeSPtr edge = EdgeSPtr(edge_wptr)) {
+            if (EdgeSPtr edge = edge_wptr.lock()) {
                 if (vertex != edge->getVertexSrc() && vertex != edge->getVertexDst()) {
                     CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << vertex->toString());
                     CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->toString());
@@ -413,11 +413,11 @@ bool Polyhedron::isConsistent() const {
         }
         EdgeWPtr edge_wptr;
         edge_wptr = *(edge->getVertexSrcListIt());
-        if (EdgeSPtr(edge_wptr) != edge) {
+        if (edge_wptr.lock() != edge) {
             CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->toString());
         }
         edge_wptr = *(edge->getVertexDstListIt());
-        if (EdgeSPtr(edge_wptr) != edge) {
+        if (edge_wptr.lock() != edge) {
             CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->toString());
         }
         if (edge->getFacetL()) {
@@ -428,7 +428,7 @@ bool Polyhedron::isConsistent() const {
                 break;
             }
             edge_wptr = *(edge->getFacetLListIt());
-            if (EdgeSPtr(edge_wptr) != edge) {
+            if (edge_wptr.lock() != edge) {
                 CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->toString());
             }
         } else {
@@ -444,7 +444,7 @@ bool Polyhedron::isConsistent() const {
                 break;
             }
             edge_wptr = *(edge->getFacetRListIt());
-            if (EdgeSPtr(edge_wptr) != edge) {
+            if (edge_wptr.lock() != edge) {
                 CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->toString());
             }
         } else {

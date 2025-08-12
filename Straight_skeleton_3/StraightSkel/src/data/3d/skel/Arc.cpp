@@ -132,12 +132,10 @@ bool Arc::removeSheet(SheetSPtr sheet) {
     std::list<SheetWPtr>::iterator it = sheets_.begin();
     while (it != sheets_.end()) {
         sheet_wptr = *it;
-        if (!sheet_wptr.expired()) {
-            if (sheet_wptr.lock() == sheet) {
-                sheets_.erase(it);
-                result = true;
-                break;
-            }
+        if (sheet_wptr.lock() == sheet) {
+            sheets_.erase(it);
+            result = true;
+            break;
         }
         it++;
     }

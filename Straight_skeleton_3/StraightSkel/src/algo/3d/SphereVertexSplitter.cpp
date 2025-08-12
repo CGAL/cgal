@@ -106,8 +106,7 @@ SphericalPolygonSPtr SphereVertexSplitter::intersectPolyhedron(VertexSPtr vertex
     std::list<EdgeWPtr>::iterator it_ew = vertex->edges().begin();
     while (it_ew != vertex->edges().end()) {
         EdgeWPtr edge_wptr = *it_ew++;
-        if (!edge_wptr.expired()) {
-            EdgeSPtr edge(edge_wptr);
+        if (EdgeSPtr edge = edge_wptr.lock()) {
             edges.push_back(edge);
         }
     }
@@ -323,8 +322,7 @@ PolyhedronSPtr SphereVertexSplitter::splitVertex(VertexSPtr vertex) {
     std::list<FacetWPtr>::iterator it_f = vertex->facets().begin();
     while (it_f != vertex->facets().end()) {
         FacetWPtr facet_wptr = *it_f++;
-        if (!facet_wptr.expired()) {
-            FacetSPtr facet(facet_wptr);
+        if (FacetSPtr facet = facet_wptr.lock()) {
             facet->removeVertex(vertex);
         }
     }

@@ -381,8 +381,7 @@ PolyhedronSPtr CombiVertexSplitter::splitVertex(VertexSPtr vertex, const combi& 
             std::list<EdgeWPtr>::iterator it_ew = vertex->edges().begin();
             while (it_ew != vertex->edges().end()) {
                 EdgeWPtr edge_wptr = *it_ew++;
-                if (!edge_wptr.expired()) {
-                    EdgeSPtr edge_toremove(edge_wptr);
+                if (EdgeSPtr edge_toremove = edge_wptr.lock()) {
                     facet_l->removeEdge(edge_toremove);
                     facet_r->removeEdge(edge_toremove);
                     polyhedron->removeEdge(edge_toremove);
@@ -391,8 +390,7 @@ PolyhedronSPtr CombiVertexSplitter::splitVertex(VertexSPtr vertex, const combi& 
             std::list<FacetWPtr>::iterator it_fw = vertex->facets().begin();
             while (it_fw != vertex->facets().end()) {
                 FacetWPtr facet_wptr = *it_fw++;
-                if (!facet_wptr.expired()) {
-                    FacetSPtr facet(facet_wptr);
+                if (FacetSPtr facet = facet_wptr.lock()) {
                     facet->removeVertex(vertex);
                 }
             }
@@ -441,8 +439,7 @@ PolyhedronSPtr CombiVertexSplitter::apply(PolyhedronSPtr poly_split, VertexSPtr 
             std::list<EdgeWPtr>::iterator it_ve = vertex->edges().begin();
             while (it_ve != vertex->edges().end()) {
                 EdgeWPtr edge_wptr = *it_ve++;
-                if (!edge_wptr.expired()) {
-                    EdgeSPtr edge(edge_wptr);
+                if (EdgeSPtr edge = edge_wptr.lock()) {
                     if (edge->getVertexSrc()->getPoint() == vertex_ps_dst->getPoint() ||
                             edge->getVertexDst()->getPoint() == vertex_ps_dst->getPoint()) {
                         edge_vs = edge;
@@ -467,8 +464,7 @@ PolyhedronSPtr CombiVertexSplitter::apply(PolyhedronSPtr poly_split, VertexSPtr 
             std::list<EdgeWPtr>::iterator it_ve = vertex->edges().begin();
             while (it_ve != vertex->edges().end()) {
                 EdgeWPtr edge_wptr = *it_ve++;
-                if (!edge_wptr.expired()) {
-                    EdgeSPtr edge(edge_wptr);
+                if (EdgeSPtr edge = edge_wptr.lock()) {
                     if (edge->getVertexSrc()->getPoint() == vertex_ps_src->getPoint() ||
                             edge->getVertexDst()->getPoint() == vertex_ps_src->getPoint()) {
                         edge_vs = edge;
@@ -509,8 +505,7 @@ PolyhedronSPtr CombiVertexSplitter::apply(PolyhedronSPtr poly_split, VertexSPtr 
     std::list<FacetWPtr>::iterator it_f = vertex->facets().begin();
     while (it_f != vertex->facets().end()) {
         FacetWPtr facet_wptr = *it_f++;
-        if (!facet_wptr.expired()) {
-            FacetSPtr facet(facet_wptr);
+        if (FacetSPtr facet = facet_wptr.lock()) {
             facet->removeVertex(vertex);
         }
     }

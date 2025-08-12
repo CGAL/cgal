@@ -43,10 +43,7 @@ MeshCellSPtr MeshCell::create(const std::vector<MeshVertexSPtr>& vertices) {
 
 MeshSPtr MeshCell::getMesh() const {
     CGAL_SS3_DEBUG_WPTR(mesh_);
-    if (this->mesh_.expired())
-        return MeshSPtr();
-    else
-        return MeshSPtr(this->mesh_);
+    return this->mesh_.lock();
 }
 
 void MeshCell::setMesh(MeshSPtr mesh) {
@@ -110,16 +107,14 @@ MeshCellSPtr MeshCell::next(MeshVertexSPtr vertex) {
     std::list<MeshCellWPtr>::const_iterator it_c1 = vertex->cells().begin();
     while (it_c1 != vertex->cells().end()) {
         MeshCellWPtr cell_1_wptr = *it_c1++;
-        if (!cell_1_wptr.expired()) {
-            MeshCellSPtr cell_1(cell_1_wptr);
+        if (MeshCellSPtr cell_1 = cell_1_wptr.lock()) {
             if (cell_1.get() == this) {
                 continue;
             }
             std::list<MeshCellWPtr>::const_iterator it_c2 = v_prev->cells().begin();
             while (it_c2 != v_prev->cells().end()) {
                 MeshCellWPtr cell_2_wptr = *it_c2++;
-                if (!cell_2_wptr.expired()) {
-                    MeshCellSPtr cell_2(cell_2_wptr);
+                if (MeshCellSPtr cell_2 = cell_2_wptr.lock()) {
                     if (cell_1 == cell_2) {
                         result = cell_1;
                     }
@@ -137,16 +132,14 @@ MeshCellSPtr MeshCell::prev(MeshVertexSPtr vertex) {
     std::list<MeshCellWPtr>::const_iterator it_c1 = vertex->cells().begin();
     while (it_c1 != vertex->cells().end()) {
         MeshCellWPtr cell_1_wptr = *it_c1++;
-        if (!cell_1_wptr.expired()) {
-            MeshCellSPtr cell_1(cell_1_wptr);
+        if (MeshCellSPtr cell_1 = cell_1_wptr.lock()) {
             if (cell_1.get() == this) {
                 continue;
             }
             std::list<MeshCellWPtr>::const_iterator it_c2 = v_next->cells().begin();
             while (it_c2 != v_next->cells().end()) {
                 MeshCellWPtr cell_2_wptr = *it_c2++;
-                if (!cell_2_wptr.expired()) {
-                    MeshCellSPtr cell_2(cell_2_wptr);
+                if (MeshCellSPtr cell_2 = cell_2_wptr.lock()) {
                     if (cell_1 == cell_2) {
                         result = cell_1;
                     }

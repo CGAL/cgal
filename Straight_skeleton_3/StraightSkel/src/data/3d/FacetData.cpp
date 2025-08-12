@@ -36,10 +36,7 @@ FacetDataSPtr FacetData::create(FacetSPtr facet) {
 }
 
 FacetSPtr FacetData::getFacet() const {
-    if (this->facet_.expired())
-        return FacetSPtr();
-    else
-        return FacetSPtr(this->facet_);
+    return this->facet_.lock();
 }
 
 void FacetData::setFacet(FacetSPtr facet) {

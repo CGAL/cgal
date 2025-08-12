@@ -497,9 +497,10 @@ void Edge::replaceFacetR(FacetSPtr facet_r) {
 }
 
 bool Edge::hasSameFacets(EdgeSPtr edge) const {
-    bool result = (
-        (facet_r_ == edge->facet_r_ && facet_l_ == edge->facet_l_) ||
-        (facet_r_ == edge->facet_l_ && facet_l_ == edge->facet_r_));
+    bool result = (facet_l_.lock() == edge->getFacetL() &&
+                   facet_r_.lock() == edge->getFacetR()) ||
+                  (facet_r_.lock() == edge->getFacetL() &&
+                   facet_l_.lock() == edge->getFacetR());
     return result;
 }
 
@@ -513,9 +514,8 @@ void Edge::setID(int id) {
 
 double Edge::angle() const {
     double result = 0.0;
-    if (!facet_l_.expired() && !facet_r_.expired()) {
-        FacetSPtr facet_l = facet_l_.lock();
-        FacetSPtr facet_r = facet_r_.lock();
+    FacetSPtr facet_l, facet_r;
+    if ((facet_l = getFacetL()) && (facet_r = getFacetR())) {
         Vector3SPtr v1 = KernelFactory::createVector3(facet_l->plane());
         Vector3SPtr v2 = KernelFactory::createVector3(facet_r->plane());
 # ifdef USE_CGAL
@@ -654,8 +654,8 @@ std::string Edge::toString() const {
     result += "id=" + util::StringFactory::fromInteger(id_);
     // result += ", addr=" + util::StringFactory::fromPointer(this);
     result += ", l=";
-    if (!facet_l_.expired()) {
-        if (getFacetL()->getID() != -1) {
+    if (FacetSPtr facet_l = getFacetL()) {
+        if (facet_l->getID() != -1) {
             result += util::StringFactory::fromInteger(getFacetL()->getID());
         } else {
             // result += util::StringFactory::fromPointer(getFacetL().get());
@@ -664,8 +664,8 @@ std::string Edge::toString() const {
         result += "expired";
     }
     result += ", r=";
-    if (!facet_r_.expired()) {
-        if (getFacetR()->getID() != -1) {
+    if (FacetSPtr facet_r = getFacetR()) {
+        if (facet_r->getID() != -1) {
             result += util::StringFactory::fromInteger(getFacetR()->getID());
         } else {
             // result += util::StringFactory::fromPointer(getFacetR().get());

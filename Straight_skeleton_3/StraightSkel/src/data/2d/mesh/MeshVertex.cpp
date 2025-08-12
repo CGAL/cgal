@@ -45,10 +45,7 @@ void MeshVertex::setPoint(Point2SPtr point) {
 
 MeshSPtr MeshVertex::getMesh() const {
     CGAL_SS3_DEBUG_WPTR(mesh_);
-    if (this->mesh_.expired())
-        return MeshSPtr();
-    else
-        return MeshSPtr(this->mesh_);
+    return this->mesh_.lock();
 }
 
 void MeshVertex::setMesh(MeshSPtr mesh) {
@@ -65,12 +62,10 @@ bool MeshVertex::removeCell(MeshCellSPtr cell) {
     while (it != cells_.end()) {
         std::list<MeshCellWPtr>::iterator it_current = it;
         MeshCellWPtr cell_wptr = *it++;
-        if (!cell_wptr.expired()) {
-            if (cell_wptr.lock() == cell) {
-                cells_.erase(it_current);
-                result = true;
-                break;
-            }
+        if (cell_wptr.lock() == cell) {
+            cells_.erase(it_current);
+            result = true;
+            break;
         }
     }
     return result;
@@ -81,11 +76,9 @@ bool MeshVertex::containsCell(MeshCellSPtr cell) const {
     std::list<MeshCellWPtr>::const_iterator it = cells_.begin();
     while (it != cells_.end()) {
         MeshCellWPtr cell_wptr = *it++;
-        if (!cell_wptr.expired()) {
-            if (cell_wptr.lock() == cell) {
-                result = true;
-                break;
-            }
+        if (cell_wptr.lock() == cell) {
+            result = true;
+            break;
         }
     }
     return result;
@@ -97,8 +90,7 @@ MeshCellSPtr MeshVertex::firstCell() const {
     std::list<MeshCellWPtr>::const_iterator it_c = cells_.begin();
     while (it_c != cells_.end()) {
         MeshCellWPtr cell_wptr = *it_c++;
-        if (!cell_wptr.expired()) {
-            result = MeshCellSPtr(cell_wptr);
+        if ((result = cell_wptr.lock())) {
             break;
         }
     }

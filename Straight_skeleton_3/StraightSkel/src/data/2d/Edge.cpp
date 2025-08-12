@@ -60,10 +60,7 @@ void Edge::setVertexDst(VertexSPtr dst) {
 
 PolygonSPtr Edge::getPolygon() const {
     CGAL_SS3_DEBUG_WPTR(polygon_);
-    if (this->polygon_.expired())
-        return PolygonSPtr();
-    else
-        return PolygonSPtr(this->polygon_);
+    return this->polygon_.lock();
 }
 
 void Edge::setPolygon(PolygonSPtr polygon) {

@@ -31,10 +31,7 @@ EdgeData::~EdgeData() {
 
 EdgeSPtr EdgeData::getEdge() const {
     CGAL_SS3_DEBUG_WPTR(edge_);
-    if (this->edge_.expired())
-        return EdgeSPtr();
-    else
-        return EdgeSPtr(this->edge_);
+    return this->edge_.lock();
 }
 
 void EdgeData::setEdge(EdgeSPtr edge) {

@@ -65,10 +65,7 @@ void CircularVertex::setPointValid(bool point_valid) {
 
 CircularEdgeSPtr CircularVertex::getEdgeIn() const {
     CGAL_SS3_DEBUG_WPTR(edge_in_);
-    if (this->edge_in_.expired())
-        return CircularEdgeSPtr();
-    else
-        return CircularEdgeSPtr(this->edge_in_);
+    return this->edge_in_.lock();
 }
 
 void CircularVertex::setEdgeIn(CircularEdgeSPtr edge) {
@@ -77,10 +74,7 @@ void CircularVertex::setEdgeIn(CircularEdgeSPtr edge) {
 
 CircularEdgeSPtr CircularVertex::getEdgeOut() const {
     CGAL_SS3_DEBUG_WPTR(edge_out_);
-    if (this->edge_out_.expired())
-        return CircularEdgeSPtr();
-    else
-        return CircularEdgeSPtr(this->edge_out_);
+    return this->edge_out_.lock();
 }
 
 void CircularVertex::setEdgeOut(CircularEdgeSPtr edge) {
@@ -89,10 +83,7 @@ void CircularVertex::setEdgeOut(CircularEdgeSPtr edge) {
 
 SphericalPolygonSPtr CircularVertex::getPolygon() const {
     CGAL_SS3_DEBUG_WPTR(polygon_);
-    if (this->polygon_.expired())
-        return SphericalPolygonSPtr();
-    else
-        return SphericalPolygonSPtr(this->polygon_);
+    return this->polygon_.lock();
 }
 
 void CircularVertex::setPolygon(SphericalPolygonSPtr polygon) {
@@ -126,8 +117,7 @@ bool CircularVertex::hasData() const {
 
 CircularVertexSPtr CircularVertex::next() const {
     CircularVertexSPtr result;
-    if (!edge_out_.expired()) {
-        CircularEdgeSPtr edge_out(edge_out_);
+    if (CircularEdgeSPtr edge_out = edge_out_.lock()) {
         result = edge_out->getVertexDst();
     }
     return result;
@@ -135,8 +125,7 @@ CircularVertexSPtr CircularVertex::next() const {
 
 CircularVertexSPtr CircularVertex::prev() const {
     CircularVertexSPtr result;
-    if (!edge_in_.expired()) {
-        CircularEdgeSPtr edge_in(edge_in_);
+    if (CircularEdgeSPtr edge_in = edge_in_.lock()) {
         result = edge_in->getVertexSrc();
     }
     return result;

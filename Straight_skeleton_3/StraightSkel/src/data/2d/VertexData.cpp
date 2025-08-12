@@ -30,10 +30,7 @@ VertexData::~VertexData() {
 
 VertexSPtr VertexData::getVertex() const {
     CGAL_SS3_DEBUG_WPTR(vertex_);
-    if (this->vertex_.expired())
-        return VertexSPtr();
-    else
-        return VertexSPtr(this->vertex_);
+    return this->vertex_.lock();
 }
 
 void VertexData::setVertex(VertexSPtr vertex) {

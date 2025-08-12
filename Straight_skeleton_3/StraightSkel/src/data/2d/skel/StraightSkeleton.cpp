@@ -187,16 +187,15 @@ bool StraightSkeleton::isConsistent() const {
         std::list<ArcWPtr>::const_iterator it_a = node->arcs().begin();
         while (it_a != node->arcs().end()) {
             ArcWPtr arc_wptr = *it_a++;
-            if (arc_wptr.expired()) {
-                CGAL_SS3_SKEL_DS_TRACE(node->toString());
-            } else {
-                ArcSPtr arc = ArcSPtr(arc_wptr);
+            if (ArcSPtr arc = arc_wptr.lock()) {
                 if (node != arc->getNodeSrc() && node != arc->getNodeDst()) {
                     CGAL_SS3_SKEL_DS_TRACE(node->toString());
                     CGAL_SS3_SKEL_DS_TRACE(arc->toString());
                     result = false;
                     break;
                 }
+            } else {
+                CGAL_SS3_SKEL_DS_TRACE(node->toString());
             }
         }
     }

@@ -101,18 +101,18 @@ unsigned int GraphChecker::countVisitedChilds(const std::set<NodeSPtr>& visited,
     std::list<ArcWPtr>::iterator it_a_wptr = node->arcs().begin();
     while (it_a_wptr != node->arcs().end()) {
         ArcWPtr arc_wptr = *it_a_wptr++;
-        if (arc_wptr.expired()) continue;
-        ArcSPtr arc(arc_wptr);
-        NodeSPtr other;
-        if (arc->getNodeSrc() == node) {
-            other = arc->getNodeDst();
-        } else if (arc->getNodeDst() == node) {
-            other = arc->getNodeSrc();
-        } else {
-            CGAL_SS3_SKEL_DS_TRACE(arc->toString());
-        }
-        if (visited.find(other) != visited.end()) {
-            result++;
+        if (ArcSPtr arc = arc_wptr.lock()) {
+            NodeSPtr other;
+            if (arc->getNodeSrc() == node) {
+                other = arc->getNodeDst();
+            } else if (arc->getNodeDst() == node) {
+                other = arc->getNodeSrc();
+            } else {
+                CGAL_SS3_SKEL_DS_TRACE(arc->toString());
+            }
+            if (visited.find(other) != visited.end()) {
+                result++;
+            }
         }
     }
     return result;

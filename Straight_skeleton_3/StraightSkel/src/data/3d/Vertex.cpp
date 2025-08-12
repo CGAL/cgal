@@ -225,7 +225,8 @@ void Vertex::sortEdges() {
     std::list<EdgeSPtr>::iterator it_e_tmp = tmp.begin();
     if (edges_.size() > 0) {
         EdgeSPtr first = EdgeSPtr();
-        EdgeSPtr edge = EdgeSPtr(edges_.front());
+        EdgeSPtr edge = edges_.front().lock();
+        CGAL_assertion(bool(edge));
         while (edge != first) {
             if (!first) {
                 first = edge;
@@ -304,7 +305,8 @@ void Vertex::sort() {
     std::list<FacetSPtr> facets_tmp;
     std::list<FacetSPtr>::iterator it_f_tmp = facets_tmp.begin();
     if (edges_.size() > 0) {
-        EdgeSPtr edge_first = EdgeSPtr(edges_.front());
+        EdgeSPtr edge_first = edges_.front().lock();
+        CGAL_assertion(bool(edge_first));
         EdgeSPtr edge;
         FacetSPtr facet = edge_first->getFacetL();
         if (edge_first->getVertexDst() == shared_from_this()) {

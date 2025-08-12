@@ -39,15 +39,15 @@ void MeshModifier::splitEdge(MeshVertexSPtr v_src, MeshVertexSPtr v_dst,
     std::list<MeshCellWPtr>::iterator it_c1 = v_src->cells().begin();
     while (it_c1 != v_src->cells().end()) {
         MeshCellWPtr cell_src_wptr = *it_c1++;
-        if (cell_src_wptr.expired()) continue;
-        MeshCellSPtr cell_src(cell_src_wptr);
-        std::list<MeshCellWPtr>::iterator it_c2 = v_dst->cells().begin();
-        while (it_c2 != v_dst->cells().end()) {
-            MeshCellWPtr cell_dst_wptr = *it_c2++;
-            if (cell_dst_wptr.expired()) continue;
-            MeshCellSPtr cell_dst(cell_dst_wptr);
-            if (cell_src == cell_dst) {
-                cells_common.push_back(cell_src);
+        if (MeshCellSPtr cell_src = cell_src_wptr.lock()) {
+            std::list<MeshCellWPtr>::iterator it_c2 = v_dst->cells().begin();
+            while (it_c2 != v_dst->cells().end()) {
+                MeshCellWPtr cell_dst_wptr = *it_c2++;
+                if (MeshCellSPtr cell_dst = cell_dst_wptr.lock()) {
+                    if (cell_src == cell_dst) {
+                        cells_common.push_back(cell_src);
+                    }
+                }
             }
         }
     }
@@ -156,24 +156,24 @@ void MeshModifier::mergeVertices(MeshVertexSPtr vertex_1,
     std::list<MeshCellWPtr>::iterator it_c1 = vertex_1->cells().begin();
     while (it_c1 != vertex_1->cells().end()) {
         MeshCellWPtr cell_1_wptr = *it_c1++;
-        if (cell_1_wptr.expired()) continue;
-        MeshCellSPtr cell_1(cell_1_wptr);
-        std::list<MeshCellWPtr>::iterator it_c2 = vertex_2->cells().begin();
-        while (it_c2 != vertex_2->cells().end()) {
-            MeshCellWPtr cell_2_wptr = *it_c2++;
-            if (cell_2_wptr.expired()) continue;
-            MeshCellSPtr cell_2(cell_2_wptr);
-            if (cell_1 == cell_2) {
-                if (cell_common_1) {
-                    cell_common_2 = cell_1;
-                } else {
-                    cell_common_1 = cell_1;
+        if (MeshCellSPtr cell_1 = cell_1_wptr.lock()) {
+            std::list<MeshCellWPtr>::iterator it_c2 = vertex_2->cells().begin();
+            while (it_c2 != vertex_2->cells().end()) {
+                MeshCellWPtr cell_2_wptr = *it_c2++;
+                if (MeshCellSPtr cell_2 = cell_2_wptr.lock()) {
+                    if (cell_1 == cell_2) {
+                        if (cell_common_1) {
+                            cell_common_2 = cell_1;
+                        } else {
+                            cell_common_1 = cell_1;
+                        }
+                        break;
+                    }
                 }
+            }
+            if (cell_common_1 && cell_common_2) {
                 break;
             }
-        }
-        if (cell_common_1 && cell_common_2) {
-            break;
         }
     }
     if (cell_common_1 && cell_common_2) {

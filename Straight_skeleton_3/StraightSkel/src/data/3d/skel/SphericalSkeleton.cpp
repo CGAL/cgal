@@ -175,10 +175,7 @@ bool SphericalSkeleton::isConsistent() const {
         std::list<CircularArcWPtr>::const_iterator it_a = node->arcs().begin();
         while (it_a != node->arcs().end()) {
             CircularArcWPtr arc_wptr = *it_a++;
-            if (arc_wptr.expired()) {
-                CGAL_SS3_SKEL_DS_TRACE(node->toString());
-            } else {
-                CircularArcSPtr arc = CircularArcSPtr(arc_wptr);
+            if (CircularArcSPtr arc = arc_wptr.lock()) {
                 num_arcs++;
                 if (node != arc->getNodeSrc() && node != arc->getNodeDst()) {
                     CGAL_SS3_SKEL_DS_TRACE(node->toString());
@@ -186,6 +183,8 @@ bool SphericalSkeleton::isConsistent() const {
                     result = false;
                     break;
                 }
+            } else {
+                CGAL_SS3_SKEL_DS_TRACE(node->toString());
             }
         }
         if (!(num_arcs == 1 || num_arcs == 3)) {

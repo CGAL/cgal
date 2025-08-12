@@ -127,12 +127,10 @@ bool Node::removeSheet(SheetSPtr sheet) {
     while (it != sheets_.end()) {
         std::list<SheetWPtr>::iterator it_current = it;
         SheetWPtr sheet_wptr = *it++;
-        if (!sheet_wptr.expired()) {
-            if (sheet_wptr.lock() == sheet) {
-                sheets_.erase(it_current);
-                result = true;
-                break;
-            }
+        if (sheet_wptr.lock() == sheet) {
+            sheets_.erase(it_current);
+            result = true;
+            break;
         }
     }
     return result;
@@ -156,8 +154,7 @@ void Node::clear() {
     std::list<SheetWPtr>::iterator it_s = sheets_.begin();
     while (it_s != sheets_.end()) {
         SheetWPtr sheet_wptr = *it_s++;
-        if (!sheet_wptr.expired()) {
-            SheetSPtr sheet = SheetSPtr(sheet_wptr);
+        if (SheetSPtr sheet = sheet_wptr.lock()) {
             removeSheet(sheet);
         }
     }
@@ -165,8 +162,7 @@ void Node::clear() {
     std::list<ArcWPtr>::iterator it_a = arcs_.begin();
     while (it_a != arcs_.end()) {
         ArcWPtr arc_wptr = *it_a++;
-        if (!arc_wptr.expired()) {
-            ArcSPtr arc = ArcSPtr(arc_wptr);
+        if (ArcSPtr arc = arc_wptr.lock()) {
             removeArc(arc);
         }
     }

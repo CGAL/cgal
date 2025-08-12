@@ -291,8 +291,7 @@ bool PolyhedronTransformation::resetPoint(VertexSPtr vertex)
     std::list<FacetWPtr>::iterator it_f = vertex->facets().begin();
     while (i < 3 && it_f != vertex->facets().end()) {
         FacetWPtr facet_wptr = *it_f++;
-        if (!facet_wptr.expired()) {
-            FacetSPtr facet = FacetSPtr(facet_wptr);
+        if (FacetSPtr facet = facet_wptr.lock()) {
             planes[i++] = facet->getPlane();
 
             CGAL_SS3_TRANSF_TRACE_V(16, "  Facet " << facet->getID() << " [" << *(facet->getPlane()) << "]");
@@ -335,8 +334,7 @@ bool PolyhedronTransformation::resetFinalPoint(VertexSPtr vertex,
     std::list<FacetWPtr>::iterator it_f = vertex->facets().begin();
     while (i < 3 && it_f != vertex->facets().end()) {
         FacetWPtr facet_wptr = *it_f++;
-        if (!facet_wptr.expired()) {
-            FacetSPtr facet = FacetSPtr(facet_wptr);
+        if (FacetSPtr facet = facet_wptr.lock()) {
             if (!facet->hasFinalPlane()) {
                 resetFinalPlane(facet, offset_future_bound);
             }
@@ -375,8 +373,7 @@ Point3SPtr PolyhedronTransformation::shiftPoint(VertexSPtr vertex,
     std::list<FacetWPtr>::iterator it_f = vertex->facets().begin();
     while (i < 3 && it_f != vertex->facets().end()) {
         FacetWPtr facet_wptr = *it_f++;
-        if (!facet_wptr.expired()) {
-            FacetSPtr facet = FacetSPtr(facet_wptr);
+        if (FacetSPtr facet = facet_wptr.lock()) {
             Plane3SPtr plane = facet->plane();
 
             if (vertex->degree() > 3) {

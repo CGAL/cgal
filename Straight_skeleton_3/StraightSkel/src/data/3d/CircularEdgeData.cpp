@@ -30,10 +30,7 @@ CircularEdgeData::~CircularEdgeData() {
 }
 
 CircularEdgeSPtr CircularEdgeData::getEdge() const {
-    if (this->edge_.expired())
-        return CircularEdgeSPtr();
-    else
-        return CircularEdgeSPtr(this->edge_);
+    return this->edge_.lock();
 }
 
 void CircularEdgeData::setEdge(CircularEdgeSPtr edge) {

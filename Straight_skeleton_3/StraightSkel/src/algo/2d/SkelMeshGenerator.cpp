@@ -94,8 +94,7 @@ void SkelMeshGenerator::sortArcs(EdgeSPtr edge) {
     std::list<ArcWPtr>::iterator it_a_w = data->arcs().begin();
     while (it_a_w != data->arcs().end()) {
         ArcWPtr arc_wptr = *it_a_w++;
-        if (!arc_wptr.expired()) {
-            ArcSPtr arc(arc_wptr);
+        if (ArcSPtr arc = arc_wptr.lock()) {
             arcs.push_back(arc);
         }
     }
@@ -145,8 +144,7 @@ void SkelMeshGenerator::initCells() {
         std::list<ArcWPtr>::iterator it_a = data->arcs().begin();
         while (it_a != data->arcs().end()) {
             ArcWPtr arc_wptr = *it_a++;
-            if (!arc_wptr.expired()) {
-                ArcSPtr arc(arc_wptr);
+            if (ArcSPtr arc = arc_wptr.lock()) {
                 Point2SPtr p_src = arc->getNodeSrc()->getPoint();
                 Point2SPtr p_dst = arc->getNodeDst()->getPoint();
                 if (!p_last) {
@@ -194,8 +192,7 @@ void SkelMeshGenerator::createRays(EdgeSPtr edge) {
     std::list<ArcWPtr>::iterator it_a = data->arcs().begin();
     while (it_a != data->arcs().end()) {
         ArcWPtr arc_wptr = *it_a++;
-        if (!arc_wptr.expired()) {
-            ArcSPtr arc(arc_wptr);
+        if (ArcSPtr arc = arc_wptr.lock()) {
             if (nodes.empty()) {
                 nodes.push_back(arc->getNodeSrc());
                 nodes.push_back(arc->getNodeDst());
@@ -283,8 +280,7 @@ void SkelMeshGenerator::findRayDsts() {
             std::list<ArcWPtr>::iterator it_a = data->arcs().begin();
             while (it_a != data->arcs().end()) {
                 ArcWPtr arc_wptr = *it_a++;
-                if (!arc_wptr.expired()) {
-                    ArcSPtr arc(arc_wptr);
+                if (ArcSPtr arc = arc_wptr.lock()) {
                     Line2SPtr l_arc = arc->line();
                     Point2SPtr p_arc_inter = KernelWrapper::intersection(l_ray, l_arc);
                     p_src = arc->getNodeSrc()->getPoint();
@@ -330,8 +326,7 @@ void SkelMeshGenerator::sortRays(EdgeSPtr edge) {
     std::list<MeshRayWPtr>::iterator it_r_wptr = data->rays().begin();
     while (it_r_wptr != data->rays().end()) {
         MeshRayWPtr ray_wptr = *it_r_wptr++;
-        if (!ray_wptr.expired()) {
-            MeshRaySPtr ray(ray_wptr);
+        if (MeshRaySPtr ray = ray_wptr.lock()) {
             rays.push_back(ray);
         }
     }
@@ -364,8 +359,7 @@ void SkelMeshGenerator::splitCellR(EdgeSPtr edge) {
     std::list<MeshRayWPtr>::iterator it_r = data->rays().begin();
     while (it_r != data->rays().end()) {
         MeshRayWPtr ray_wptr = *it_r++;
-        if (!ray_wptr.expired()) {
-            MeshRaySPtr ray(ray_wptr);
+        if (MeshRaySPtr ray = ray_wptr.lock()) {
             Vector2SPtr dir_ray = KernelFactory::createVector2(
                     *(ray->getDst()->getPoint()) - *(ray->getSrc()->getPoint()));
             MeshCellSPtr cell_left;
@@ -460,8 +454,7 @@ void SkelMeshGenerator::splitCellsE(EdgeSPtr edge, double radius_snap) {
     std::list<MeshCellWPtr>::iterator it_c = data->cells().begin();
     while (it_c != data->cells().end()) {
         MeshCellWPtr cell_wptr = *it_c++;
-        if (!cell_wptr.expired()) {
-            MeshCellSPtr cell(cell_wptr);
+        if (MeshCellSPtr cell = cell_wptr.lock()) {
             cells.push_back(cell);
         }
     }
@@ -472,11 +465,11 @@ void SkelMeshGenerator::splitCellsE(EdgeSPtr edge, double radius_snap) {
         std::list<EdgeWPtr>::iterator it_e = data->edges().begin();
         while (it_e != data->edges().end()) {
             EdgeWPtr edge_wptr = *it_e++;
-            if (edge_wptr.expired()) continue;
-            EdgeSPtr edge(edge_wptr);
-            cell = splitCell(cell, edge->line(), radius_snap);
-            if (!cell) break;
-            if (cell->vertices().size() == 0) break;
+            if (EdgeSPtr edge = edge_wptr.lock()) {
+                cell = splitCell(cell, edge->line(), radius_snap);
+                if (!cell) break;
+                if (cell->vertices().size() == 0) break;
+            }
         }
     }
 }
@@ -630,13 +623,13 @@ void SkelMeshGenerator::mergeVertices() {
         std::list<MeshCellWPtr>::iterator it_c = vertex->cells().begin();
         while (it_c != vertex->cells().end()) {
             MeshCellWPtr cell_wptr = *it_c++;
-            if (cell_wptr.expired()) continue;
-            MeshCellSPtr cell(cell_wptr);
-            MeshVertexSPtr vertex_next = vertex->next(cell);
-            if (vertex_next->countCells() == 3) {
-                MeshModifier::mergeVertices(vertex, vertex_next);
-                vertices.remove(vertex_next);
-                break;
+            if (MeshCellSPtr cell = cell_wptr.lock()) {
+                MeshVertexSPtr vertex_next = vertex->next(cell);
+                if (vertex_next->countCells() == 3) {
+                    MeshModifier::mergeVertices(vertex, vertex_next);
+                    vertices.remove(vertex_next);
+                    break;
+                }
             }
         }
         it_v++;

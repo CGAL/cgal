@@ -66,8 +66,7 @@ Plane3SPtr WeightVertexSplitter::createIntersectionPlane(VertexSPtr vertex) {
     Plane3SPtr result;
     Vector3SPtr normal = KernelFactory::createVector3(0.0, 0.0, 0.0);
     for (EdgeWPtr edge_wptr : vertex->edges()) {
-        if (!edge_wptr.expired()) {
-            EdgeSPtr edge(edge_wptr);
+        if (EdgeSPtr edge = edge_wptr.lock()) {
             Vector3SPtr dir = KernelFactory::createVector3(edge->line());;
             if (edge->getVertexSrc() != vertex) {
                 dir = KernelFactory::createVector3((*dir) * (-1));

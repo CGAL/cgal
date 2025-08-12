@@ -194,25 +194,21 @@ bool StraightSkeleton::isConsistent() const {
         std::list<ArcWPtr>::const_iterator it_a = node->arcs().begin();
         while (it_a != node->arcs().end()) {
             ArcWPtr arc_wptr = *it_a++;
-            if (arc_wptr.expired()) {
-                CGAL_SS3_SKEL_DS_TRACE(node->toString());
-            } else {
-                ArcSPtr arc = ArcSPtr(arc_wptr);
+            if (ArcSPtr arc = arc_wptr.lock()) {
                 if (node != arc->getNodeSrc() && node != arc->getNodeDst()) {
                     CGAL_SS3_SKEL_DS_TRACE(node->toString());
                     CGAL_SS3_SKEL_DS_TRACE(arc->toString());
                     result = false;
                     break;
                 }
+            } else {
+                CGAL_SS3_SKEL_DS_TRACE(node->toString());
             }
         }
         std::list<SheetWPtr>::const_iterator it_s = node->sheets().begin();
         while (it_s != node->sheets().end()) {
             SheetWPtr sheet_wptr = *it_s++;
-            if (sheet_wptr.expired()) {
-                CGAL_SS3_SKEL_DS_TRACE(node->toString());
-            } else {
-                SheetSPtr sheet = SheetSPtr(sheet_wptr);
+            if (SheetSPtr sheet = sheet_wptr.lock()) {
                 std::list<NodeSPtr> nodes = sheet->nodes();
                 if (nodes.end() == std::find(nodes.begin(), nodes.end(), node)) {
                     CGAL_SS3_SKEL_DS_TRACE(node->toString());
@@ -220,6 +216,8 @@ bool StraightSkeleton::isConsistent() const {
                     result = false;
                     break;
                 }
+            } else {
+                CGAL_SS3_SKEL_DS_TRACE(node->toString());
             }
         }
     }
@@ -253,10 +251,7 @@ bool StraightSkeleton::isConsistent() const {
         std::list<SheetWPtr>::const_iterator it_s = arc->sheets().begin();
         while (it_s != arc->sheets().end()) {
             SheetWPtr sheet_wptr = *it_s++;
-            if (sheet_wptr.expired()) {
-                CGAL_SS3_SKEL_DS_TRACE(arc->toString());
-            } else {
-                SheetSPtr sheet = SheetSPtr(sheet_wptr);
+            if (SheetSPtr sheet = sheet_wptr.lock()) {
                 num_sheets++;
                 std::list<ArcSPtr> arcs = sheet->arcs();
                 if (arcs.end() == std::find(arcs.begin(), arcs.end(), arc)) {
@@ -265,6 +260,8 @@ bool StraightSkeleton::isConsistent() const {
                     result = false;
                     break;
                 }
+            } else {
+                CGAL_SS3_SKEL_DS_TRACE(arc->toString());
             }
         }
         if (num_sheets != 3) {

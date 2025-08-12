@@ -58,10 +58,7 @@ void Vertex::setPoint(Point2SPtr point) {
 
 EdgeSPtr Vertex::getEdgeIn() const {
     // CGAL_SS3_DEBUG_WPTR(edge_in_);
-    if (this->edge_in_.expired())
-        return EdgeSPtr();
-    else
-        return EdgeSPtr(this->edge_in_);
+    return this->edge_in_.lock();
 }
 
 void Vertex::setEdgeIn(EdgeSPtr edge) {
@@ -70,10 +67,7 @@ void Vertex::setEdgeIn(EdgeSPtr edge) {
 
 EdgeSPtr Vertex::getEdgeOut() const {
     // CGAL_SS3_DEBUG_WPTR(edge_out_);
-    if (this->edge_out_.expired())
-        return EdgeSPtr();
-    else
-        return EdgeSPtr(this->edge_out_);
+    return this->edge_out_.lock();
 }
 
 void Vertex::setEdgeOut(EdgeSPtr edge) {
@@ -82,10 +76,7 @@ void Vertex::setEdgeOut(EdgeSPtr edge) {
 
 PolygonSPtr Vertex::getPolygon() const {
     CGAL_SS3_DEBUG_WPTR(polygon_);
-    if (this->polygon_.expired())
-        return PolygonSPtr();
-    else
-        return PolygonSPtr(this->polygon_);
+    return this->polygon_.lock();
 }
 
 void Vertex::setPolygon(PolygonSPtr polygon) {
@@ -127,8 +118,7 @@ void Vertex::setID(int id) {
 
 VertexSPtr Vertex::next() const {
     VertexSPtr result;
-    if (!edge_out_.expired()) {
-        EdgeSPtr edge_out(edge_out_);
+    if (EdgeSPtr edge_out = edge_out_.lock()) {
         result = edge_out->getVertexDst();
     }
     return result;
@@ -136,8 +126,7 @@ VertexSPtr Vertex::next() const {
 
 VertexSPtr Vertex::prev() const {
     VertexSPtr result;
-    if (!edge_in_.expired()) {
-        EdgeSPtr edge_in(edge_in_);
+    if (EdgeSPtr edge_in = edge_in_.lock()) {
         result = edge_in->getVertexSrc();
     }
     return result;

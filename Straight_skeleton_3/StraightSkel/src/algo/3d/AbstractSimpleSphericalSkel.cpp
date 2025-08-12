@@ -249,8 +249,7 @@ void AbstractSimpleSphericalSkel::appendEventNode(CircularNodeSPtr node) {
     std::list<CircularArcWPtr>::iterator it_a = node->arcs().begin();
     while (it_a != node->arcs().end()) {
         CircularArcWPtr arc_wptr = *it_a++;
-        if (!arc_wptr.expired()) {
-            CircularArcSPtr arc = CircularArcSPtr(arc_wptr);
+        if (CircularArcSPtr arc = arc_wptr.lock()) {
             arc->setNodeDst(node);
             arc->setNodeDstListIt(util::weak_find(node->arcs().begin(), node->arcs().end(), arc_wptr));
         }

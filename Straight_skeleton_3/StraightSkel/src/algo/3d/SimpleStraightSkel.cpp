@@ -5850,7 +5850,7 @@ SimpleStraightSkel::handleTriangleEvent(TriangleEventSPtr event,
     }
     VertexSPtr vertex_offset = Vertex::create(event->getNode()->getPoint());
     for (unsigned int i = 0; i < 3; i++) {
-        EdgeSPtr edge_offset = EdgeSPtr(vertices_offset[i]->edges().front());
+        EdgeSPtr edge_offset = vertices_offset[i]->edges().front().lock();
         if (edge_offset->getVertexSrc() == vertices_offset[i]) {
             edge_offset->replaceVertexSrc(vertex_offset);
         } else if (edge_offset->getVertexDst() == vertices_offset[i]) {
