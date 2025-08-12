@@ -271,9 +271,8 @@ bool PolyhedronTransformation::resetPoint(VertexSPtr vertex,
     vertex->setPoint(point);
     CGAL_SS3_TRANSF_TRACE_V(16, "  New point = " << *point);
 
-    CGAL_postcondition_code(std::list<FacetWPtr>::iterator it_f = vertex->facets().begin();)
-    CGAL_postcondition_code(for (; it_f!=vertex->facets().end(); ++it_f) {)
-    CGAL_postcondition_code(    if (FacetSPtr facet = it_f->lock()) {)
+    CGAL_postcondition_code(for (FacetWPtr facet_wptr : vertex->facets()) {)
+    CGAL_postcondition_code(    if (FacetSPtr facet = facet_wptr.lock()) {)
     CGAL_postcondition(             facet->getPlane()->has_on(*point));
     CGAL_postcondition_code(    })
     CGAL_postcondition_code(})
@@ -627,13 +626,10 @@ PolyhedronSPtr PolyhedronTransformation::shiftFacets(PolyhedronSPtr polyhedron,
         }
 
         EdgeSPtr edge;
-        unsigned int i = 0;
-        std::list<EdgeWPtr>::iterator it_e = vertex->edges().begin();
-        while (it_e != vertex->edges().end()) {
-            EdgeWPtr edge_wptr = *it_e++;
-            if (!edge_wptr.expired()) {
-                edge = EdgeSPtr(edge_wptr);
-                i++;
+        CGAL_assertion_code(unsigned int i = 0;)
+        for (EdgeWPtr edge_wptr : vertex->edges()) {
+            if ((edge = edge_wptr.lock())) {
+                CGAL_assertion_code(++i;)
             }
         }
 
@@ -683,11 +679,8 @@ PolyhedronSPtr PolyhedronTransformation::shiftFacets(PolyhedronSPtr polyhedron,
 
         EdgeSPtr edge;
         unsigned int i = 0;
-        std::list<EdgeWPtr>::iterator it_e = vertex->edges().begin();
-        while (it_e != vertex->edges().end()) {
-            EdgeWPtr edge_wptr = *it_e++;
-            if (!edge_wptr.expired()) {
-                edge = EdgeSPtr(edge_wptr);
+        for (EdgeWPtr edge_wptr : vertex->edges()) {
+            if ((edge = edge_wptr.lock())) {
                 i++;
             }
         }
@@ -720,10 +713,7 @@ PolyhedronSPtr PolyhedronTransformation::shiftFacets(PolyhedronSPtr polyhedron,
     }
 #endif
 
-    std::list<EdgeSPtr>::iterator it_e = polyhedron->edges().begin();
-    while (it_e != polyhedron->edges().end()) {
-        EdgeSPtr edge = *it_e++;
-
+    for (EdgeSPtr edge : polyhedron->edges()) {
         SkelVertexDataSPtr vertex_src_data = std::dynamic_pointer_cast<SkelVertexData>(
                 edge->getVertexSrc()->getData());
         SkelVertexDataSPtr vertex_dst_data = std::dynamic_pointer_cast<SkelVertexData>(

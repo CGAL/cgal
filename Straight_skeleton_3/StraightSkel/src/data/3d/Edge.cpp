@@ -254,9 +254,7 @@ EdgeSPtr Edge::next(FacetSPtr facet) const {
     EdgeSPtr result = EdgeSPtr();
 
     VertexSPtr vertex_dst = dst(facet);
-    std::list<EdgeWPtr>::const_iterator it_e = vertex_dst->edges().begin();
-    while (it_e != vertex_dst->edges().end()) {
-        EdgeWPtr edge_wptr = *it_e++;
+    for (EdgeWPtr edge_wptr : vertex_dst->edges()) {
         if (EdgeSPtr edge = edge_wptr.lock()) {
             if (edge->src(facet) == vertex_dst) {
                 result = edge;
@@ -305,9 +303,7 @@ EdgeSPtr Edge::prev(FacetSPtr facet) const {
     EdgeSPtr result = EdgeSPtr();
 
     VertexSPtr vertex_src = src(facet);
-    std::list<EdgeWPtr>::const_iterator it_e = vertex_src->edges().begin();
-    while (it_e != vertex_src->edges().end()) {
-        EdgeWPtr edge_wptr = *it_e++;
+    for (EdgeWPtr edge_wptr : vertex_src->edges()) {
         if (EdgeSPtr edge = edge_wptr.lock()) {
             if (edge->dst(facet) == vertex_src) {
                 result = edge;
@@ -362,9 +358,7 @@ EdgeSPtr Edge::next(VertexSPtr vertex) const {
     }
     if (facet) {
         std::list<EdgeSPtr> edges_possible;
-        std::list<EdgeWPtr>::iterator it_e = vertex->edges().begin();
-        while (it_e != vertex->edges().end()) {
-            EdgeWPtr edge_wptr = *it_e++;
+        for (EdgeWPtr edge_wptr : vertex->edges()) {
             if (EdgeSPtr edge = edge_wptr.lock()) {
                 if (edge.get() == this) {
                     continue;
@@ -406,9 +400,7 @@ EdgeSPtr Edge::prev(VertexSPtr vertex) const {
     }
     if (facet) {
         std::list<EdgeSPtr> edges_possible;
-        std::list<EdgeWPtr>::iterator it_e = vertex->edges().begin();
-        while (it_e != vertex->edges().end()) {
-            EdgeWPtr edge_wptr = *it_e++;
+        for (EdgeWPtr edge_wptr : vertex->edges()) {
             if (EdgeSPtr edge = edge_wptr.lock()) {
                 if (edge.get() == this) {
                     continue;

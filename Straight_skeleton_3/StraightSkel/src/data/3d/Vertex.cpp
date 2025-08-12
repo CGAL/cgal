@@ -109,9 +109,7 @@ bool Vertex::removeEdge(EdgeSPtr edge) {
 
 EdgeSPtr Vertex::firstEdge() const {
     EdgeSPtr result;
-    std::list<EdgeWPtr>::const_iterator it_e = edges_.begin();
-    while (it_e != edges_.end()) {
-        EdgeWPtr edge_wptr = *it_e++;
+    for (EdgeWPtr edge_wptr : edges_) {
         if (EdgeSPtr edge = edge_wptr.lock()) {
             result = edge;
             break;
@@ -131,9 +129,7 @@ EdgeSPtr Vertex::getEdge(unsigned int i) {
 
 EdgeSPtr Vertex::findEdge(VertexSPtr dst) const {
     EdgeSPtr result = EdgeSPtr();
-    std::list<EdgeWPtr>::const_iterator it_e = edges_.begin();
-    while (it_e != edges_.end()) {
-        EdgeWPtr edge_wptr = *it_e++;
+    for (EdgeWPtr edge_wptr : edges_) {
         if (EdgeSPtr edge = edge_wptr.lock()) {
             if (edge->getVertexSrc().get() == this &&
                     edge->getVertexDst() == dst) {
@@ -152,9 +148,7 @@ EdgeSPtr Vertex::findEdge(VertexSPtr dst) const {
 
 EdgeSPtr Vertex::findEdge(FacetSPtr facet) const {
     EdgeSPtr result = EdgeSPtr();
-    std::list<EdgeWPtr>::const_iterator it_e = edges_.begin();
-    while (it_e != edges_.end()) {
-        EdgeWPtr edge_wptr = *it_e++;
+    for (EdgeWPtr edge_wptr : edges_) {
         if (EdgeSPtr edge = edge_wptr.lock()) {
             if (edge->src(facet).get() == this) {
                 result = edge;
@@ -186,9 +180,7 @@ bool Vertex::removeFacet(FacetSPtr facet) {
 
 FacetSPtr Vertex::firstFacet() const {
     FacetSPtr result;
-    std::list<FacetWPtr>::const_iterator it_f = facets_.begin();
-    while (it_f != facets_.end()) {
-        FacetWPtr facet_wptr = *it_f++;
+    for (FacetWPtr facet_wptr : facets_) {
         if (FacetSPtr facet = facet_wptr.lock()) {
             result = facet;
             break;
@@ -400,9 +392,7 @@ VertexSPtr Vertex::next(FacetSPtr facet) const {
         return vertex;
     }
 
-    std::list<EdgeWPtr>::const_iterator it_e = edges_.begin();
-    while (it_e != edges_.end()) {
-        EdgeWPtr edge_wptr = *it_e++;
+    for (EdgeWPtr edge_wptr : edges_) {
         if (EdgeSPtr edge = edge_wptr.lock()) {
             if (edge->src(facet) == shared_from_this()) {
                 result = edge->dst(facet);
@@ -564,9 +554,7 @@ void Vertex::setID(int id) {
 
 unsigned int Vertex::degree() const {
     unsigned int result = 0;
-    std::list<EdgeWPtr>::const_iterator it_e = edges_.begin();
-    while (it_e != edges_.end()) {
-        EdgeWPtr edge_wptr = *it_e++;
+    for (EdgeWPtr edge_wptr : edges_) {
         if (!edge_wptr.expired()) {
             ++result;
         }
@@ -579,9 +567,7 @@ bool Vertex::isReflex() const {
         return false;
     }
     bool result = true;
-    std::list<EdgeWPtr>::const_iterator it_e = edges_.begin();
-    while (it_e != edges_.end()) {
-        EdgeWPtr edge_wptr = *it_e++;
+    for (EdgeWPtr edge_wptr : edges_) {
         if (EdgeSPtr edge = edge_wptr.lock()) {
             if (!edge->isReflex()) {
                 result = false;
@@ -596,9 +582,7 @@ bool Vertex::isConvex() const {
         return false;
     }
     bool result = true;
-    std::list<EdgeWPtr>::const_iterator it_e = edges_.begin();
-    while (it_e != edges_.end()) {
-        EdgeWPtr edge_wptr = *it_e++;
+    for (EdgeWPtr edge_wptr : edges_) {
         if (EdgeSPtr edge = edge_wptr.lock()) {
             if (edge->isReflex()) {
                 result = false;
@@ -617,9 +601,7 @@ std::string Vertex::toString() const {
     result += util::StringFactory::fromDouble(CGAL::to_double(getZ())) + ">";
     result += ", Edges:" + util::StringFactory::fromInteger(edges_.size());
     result += ", Facets:" + util::StringFactory::fromInteger(facets_.size()) + " {";
-    std::list<FacetWPtr>::const_iterator it = facets_.begin();
-    while (it != facets_.end()) {
-        FacetWPtr facet_wptr = *it++;
+    for (FacetWPtr facet_wptr : facets_) {
         if (FacetSPtr facet = facet_wptr.lock()) {
             result += " " + std::to_string(facet->getID());
         }
