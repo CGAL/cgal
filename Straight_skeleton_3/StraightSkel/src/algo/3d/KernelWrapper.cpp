@@ -83,6 +83,7 @@ Point3SPtr KernelWrapper::intersection(Plane3SPtr plane, Line3SPtr line) {
         result = KernelFactory::createPoint3(*ipoint);
     } else {
         CGAL_SS3_TRAITS_TRACE_CODE(if (const CGAL::Line3 *iline = std::get_if<CGAL::Line3>(&*res)) {)
+        CGAL_SS3_TRAITS_TRACE_CODE(CGAL_USE(iline);)
         CGAL_SS3_TRAITS_TRACE("Intersection of plane and line is the line itself");
         CGAL_SS3_TRAITS_TRACE_CODE(} else {)
         CGAL_SS3_TRAITS_TRACE("Intersection of plane and line is... something else?");

@@ -456,7 +456,6 @@ Plane3SPtr SimpleStraightSkel::getFinalPlane(FacetSPtr facet,
 
 bool SimpleStraightSkel::savePolyhedron(PolyhedronSPtr polyhedron,
                                         const CGAL::FT& current_offset,
-                                        const bool do_triangulate,
                                         const bool attempt_untilting)
 {
     bool result = true;
@@ -1763,21 +1762,20 @@ void SimpleStraightSkel::collectEdgeEvents(const std::list<EdgeSPtr>& edges,
             FacetSPtr facet_2_dst = edge_2->getFacetDst();
 
             Plane3SPtr plane_l2 = facet_l2->getPlane();
-            Plane3SPtr plane_r2 = facet_r2->getPlane();
-            const CGAL::FT& speed_l2 = std::dynamic_pointer_cast<SkelFacetData>(facet_l2->getData())->getSpeed();
-            const CGAL::FT& speed_r2 = std::dynamic_pointer_cast<SkelFacetData>(facet_r2->getData())->getSpeed();
 
             const CGAL::FT& l2a = plane_l2->a();
             const CGAL::FT& l2b = plane_l2->b();
             const CGAL::FT& l2c = plane_l2->c();
             const CGAL::FT& l2d = plane_l2->d();
-            const CGAL::FT& r2a = plane_r2->a();
-            const CGAL::FT& r2b = plane_r2->b();
-            const CGAL::FT& r2c = plane_r2->c();
-            const CGAL::FT& r2d = plane_r2->d();
-
+            const CGAL::FT& speed_l2 = std::dynamic_pointer_cast<SkelFacetData>(facet_l2->getData())->getSpeed();
             CGAL::FT t = (l2a * point->x() + l2b * point->y() + l2c * point->z() + l2d) / speed_l2;
 
+            CGAL_assertion_code(Plane3SPtr plane_r2 = facet_r2->getPlane();)
+            CGAL_assertion_code(const CGAL::FT& r2a = plane_r2->a();)
+            CGAL_assertion_code(const CGAL::FT& r2b = plane_r2->b();)
+            CGAL_assertion_code(const CGAL::FT& r2c = plane_r2->c();)
+            CGAL_assertion_code(const CGAL::FT& r2d = plane_r2->d();)
+            CGAL_assertion_code(const CGAL::FT& speed_r2 = std::dynamic_pointer_cast<SkelFacetData>(facet_r2->getData())->getSpeed();)
             CGAL_assertion_code(CGAL::FT lt2 = (l2a * point->x() + l2b * point->y() + l2c * point->z() + l2d) / speed_l2);
             CGAL_assertion_code(CGAL::FT rt2 = (r2a * point->x() + r2b * point->y() + r2c * point->z() + r2d) / speed_r2);
             CGAL_assertion(lt2 == rt2);
@@ -4884,9 +4882,7 @@ SimpleStraightSkel::handleSaveOffsetEvent(SaveOffsetEventSPtr event,
     const CGAL::FT& event_offset = event->getOffset();
     polyhedron = shiftToEventOffset(polyhedron, current_offset, event_offset);
 
-    bool res = savePolyhedron(polyhedron, event_offset,
-                              true /*triangulate*/,
-                              false /*attempt untilting*/);
+    bool res = savePolyhedron(polyhedron, event_offset, false /*attempt untilting*/);
 
 #ifdef CGAL_SS3_DUMP_FILES
     db::_3d::OBJFile::save("results/last_save.obj", polyhedron);
@@ -4985,21 +4981,20 @@ SimpleStraightSkel::handleVanishEvent(VanishEventSPtr event,
             FacetSPtr facet_2_dst = edge_2->getFacetDst();
 
             Plane3SPtr plane_l2 = facet_l2->getPlane();
-            Plane3SPtr plane_r2 = facet_r2->getPlane();
-            const CGAL::FT& speed_l2 = std::dynamic_pointer_cast<SkelFacetData>(facet_l2->getData())->getSpeed();
-            const CGAL::FT& speed_r2 = std::dynamic_pointer_cast<SkelFacetData>(facet_r2->getData())->getSpeed();
 
             const CGAL::FT& l2a = plane_l2->a();
             const CGAL::FT& l2b = plane_l2->b();
             const CGAL::FT& l2c = plane_l2->c();
             const CGAL::FT& l2d = plane_l2->d();
-            const CGAL::FT& r2a = plane_r2->a();
-            const CGAL::FT& r2b = plane_r2->b();
-            const CGAL::FT& r2c = plane_r2->c();
-            const CGAL::FT& r2d = plane_r2->d();
-
+            const CGAL::FT& speed_l2 = std::dynamic_pointer_cast<SkelFacetData>(facet_l2->getData())->getSpeed();
             CGAL::FT t = (l2a * point->x() + l2b * point->y() + l2c * point->z() + l2d) / speed_l2;
 
+            CGAL_assertion_code(Plane3SPtr plane_r2 = facet_r2->getPlane();)
+            CGAL_assertion_code(const CGAL::FT& r2a = plane_r2->a();)
+            CGAL_assertion_code(const CGAL::FT& r2b = plane_r2->b();)
+            CGAL_assertion_code(const CGAL::FT& r2c = plane_r2->c();)
+            CGAL_assertion_code(const CGAL::FT& r2d = plane_r2->d();)
+            CGAL_assertion_code(const CGAL::FT& speed_r2 = std::dynamic_pointer_cast<SkelFacetData>(facet_r2->getData())->getSpeed();)
             CGAL_assertion_code(CGAL::FT lt2 = (l2a * point->x() + l2b * point->y() + l2c * point->z() + l2d) / speed_l2);
             CGAL_assertion_code(CGAL::FT rt2 = (r2a * point->x() + r2b * point->y() + r2c * point->z() + r2d) / speed_r2);
             CGAL_assertion(lt2 == rt2);
@@ -6250,6 +6245,7 @@ SimpleStraightSkel::handleTetrahedronEvent(TetrahedronEventSPtr event,
 
     return EventStatus::EVENT_HANDLED;
 }
+
 bool
 SimpleStraightSkel::isActualVertexEvent(VertexEventSPtr event,
                                         PolyhedronSPtr polyhedron)

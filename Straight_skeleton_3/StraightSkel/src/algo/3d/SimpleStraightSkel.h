@@ -110,7 +110,6 @@ public:
      */
     bool savePolyhedron(PolyhedronSPtr polyhedron,
                         const CGAL::FT& current_offset,
-                        const bool do_triangulate = true,
                         const bool attempt_untilting = false);
 
     bool run();

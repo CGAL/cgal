@@ -332,7 +332,6 @@ bool Polyhedron::isConsistent() const {
             break;
         }
         std::list<EdgeWPtr>::const_iterator it_e = vertex->edges().begin();
-        unsigned int vne = 0;
         while (it_e != vertex->edges().end()) {
             EdgeWPtr edge_wptr = *it_e++;
             if (EdgeSPtr edge = edge_wptr.lock()) {
@@ -349,27 +348,12 @@ bool Polyhedron::isConsistent() const {
                     result = false;
                     break;
                 }
-
-                // if (edge->getVertexSrc()->getPoint() == edge->getVertexDst()->getPoint())
-                // {
-                //     std::cerr << "- Degenerate edge!" << std::endl;
-                //     std::cerr << edge->getVertexSrc()->toString() << std::endl;
-                //     std::cerr << edge->getVertexDst()->toString() << std::endl;
-                // }
-
-                ++vne;
             } else {
                 CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << vertex->toString());
             }
         }
 
-        // if (vne < 2) {
-        //     CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << vertex->toString());
-        //     result = false;
-        // }
-
         std::list<FacetWPtr>::const_iterator it_f = vertex->facets().begin();
-        unsigned int vnf = 0;
         while (it_f != vertex->facets().end()) {
             FacetWPtr facet_wptr = *it_f++;
             if (FacetSPtr facet = facet_wptr.lock()) {
@@ -379,16 +363,10 @@ bool Polyhedron::isConsistent() const {
                     result = false;
                     break;
                 }
-                ++vnf;
             } else {
                 CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << vertex->toString());
             }
         }
-
-        // if (vnf < 2) {
-        //     CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << vertex->toString());
-        //     result = false;
-        // }
     }
 
     std::list<EdgeSPtr>::const_iterator it_e = edges_.begin();
