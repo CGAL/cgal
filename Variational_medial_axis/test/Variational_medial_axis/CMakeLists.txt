@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.12...3.31)
-project(Variational_medial_axis_sampling_Tests)
+
+project( Variational_medial_axis_Tests )
 
 find_package(CGAL REQUIRED)
 
