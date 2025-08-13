@@ -382,7 +382,6 @@ Point3SPtr PolyhedronTransformation::shiftPoint(VertexSPtr vertex,
                 if (i == 1) {
                     independent = !(CGAL::parallel(*(planes[0]), *plane));
                 } else if (i == 2) {
-                    // @todo avoid recomputing the intersection from scratch later
                     independent = !is_zero(CGAL::determinant(planes[0]->a(), planes[0]->b(), planes[0]->c(),
                                                              planes[1]->a(), planes[1]->b(), planes[1]->c(),
                                                              plane->a(), plane->b(), plane->c()));

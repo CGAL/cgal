@@ -331,16 +331,11 @@ bool SimpleStraightSkel::isReflex(EdgeSPtr edge,
         FacetSPtr facet_src = edge->getFacetSrc();
         FacetSPtr facet_dst = edge->getFacetDst();
 
-        const CGAL::FT& speed_l = std::dynamic_pointer_cast<SkelFacetData>(facet_l->getData())->getSpeed();
-        const CGAL::FT& speed_r = std::dynamic_pointer_cast<SkelFacetData>(facet_r->getData())->getSpeed();
-        const CGAL::FT& speed_src = std::dynamic_pointer_cast<SkelFacetData>(facet_src->getData())->getSpeed();
-        const CGAL::FT& speed_dst = std::dynamic_pointer_cast<SkelFacetData>(facet_dst->getData())->getSpeed();
-
         CGAL::FT od = future_facing ? -1 : 1;
-        Plane3SPtr offset_plane_l = KernelWrapper::offsetPlane(facet_l->getPlane(), od * speed_l);
-        Plane3SPtr offset_plane_r = KernelWrapper::offsetPlane(facet_r->getPlane(), od * speed_r);
-        Plane3SPtr offset_plane_src = KernelWrapper::offsetPlane(facet_src->getPlane(), od * speed_src);
-        Plane3SPtr offset_plane_dst = KernelWrapper::offsetPlane(facet_dst->getPlane(), od * speed_dst);
+        Plane3SPtr offset_plane_l = PolyhedronTransformation::shiftPlane(facet_l, od);
+        Plane3SPtr offset_plane_r = PolyhedronTransformation::shiftPlane(facet_r, od);
+        Plane3SPtr offset_plane_src = PolyhedronTransformation::shiftPlane(facet_src, od);
+        Plane3SPtr offset_plane_dst = PolyhedronTransformation::shiftPlane(facet_dst, od);
 
         Point3SPtr p_src = KernelWrapper::intersection(offset_plane_src, offset_plane_l, offset_plane_r);
         Point3SPtr p_dst = KernelWrapper::intersection(offset_plane_dst, offset_plane_l, offset_plane_r);
@@ -406,18 +401,10 @@ Line3SPtr SimpleStraightSkel::line(EdgeSPtr edge) {
         FacetSPtr facet_src = edge->getFacetSrc();
         FacetSPtr facet_dst = edge->getFacetDst();
 
-        const CGAL::FT& speed_l = std::dynamic_pointer_cast<SkelFacetData>(facet_l->getData())->getSpeed();
-        const CGAL::FT& speed_r = std::dynamic_pointer_cast<SkelFacetData>(facet_r->getData())->getSpeed();
-        const CGAL::FT& speed_src = std::dynamic_pointer_cast<SkelFacetData>(facet_src->getData())->getSpeed();
-        const CGAL::FT& speed_dst = std::dynamic_pointer_cast<SkelFacetData>(facet_dst->getData())->getSpeed();
-
-        Plane3SPtr plane_l = facet_l->getPlane();
-        Plane3SPtr plane_r = facet_r->getPlane();
-
-        Plane3SPtr offset_plane_l = KernelWrapper::offsetPlane(plane_l, -speed_l);
-        Plane3SPtr offset_plane_r = KernelWrapper::offsetPlane(plane_r, -speed_r);
-        Plane3SPtr offset_plane_src = KernelWrapper::offsetPlane(facet_src->getPlane(), -speed_src);
-        Plane3SPtr offset_plane_dst = KernelWrapper::offsetPlane(facet_dst->getPlane(), -speed_dst);
+        Plane3SPtr offset_plane_l = PolyhedronTransformation::shiftPlane(facet_l, -1);
+        Plane3SPtr offset_plane_r = PolyhedronTransformation::shiftPlane(facet_r, -1);
+        Plane3SPtr offset_plane_src = PolyhedronTransformation::shiftPlane(facet_src, -1);
+        Plane3SPtr offset_plane_dst = PolyhedronTransformation::shiftPlane(facet_dst, -1);
 
         Point3SPtr p_src = KernelWrapper::intersection(offset_plane_src,
                 offset_plane_l, offset_plane_r);
@@ -834,24 +821,12 @@ ArcSPtr SimpleStraightSkel::createArc(VertexSPtr vertex) {
                         facets[2]->getData())->getSpeed();
             }
 
-#if 0 // supporting planes might not intersect in a point
-            Point3SPtr src = vertex->getPoint();
-
-            Plane3SPtr off_1 = KernelWrapper::offsetPlane(plane_1, -speed_1);
-            Plane3SPtr off_2 = KernelWrapper::offsetPlane(plane_2, -speed_2);
-            Plane3SPtr off_3 = KernelWrapper::offsetPlane(plane_3, -speed_3);
-            Point3SPtr dst = KernelWrapper::intersection(off_1, off_2, off_3);
-            if (src && dst) {
-                direction = KernelFactory::createVector3(*dst - *src);
-            }
-#else
             Vector3SPtr n_1 = KernelFactory::createVector3(plane_1);
             Vector3SPtr n_2 = KernelFactory::createVector3(plane_2);
             Vector3SPtr n_3 = KernelFactory::createVector3(plane_3);
 
             // @fixme is division by "speed" correct?
             direction = KernelFactory::createVector3(speed_1 * (*n_1) + speed_2 * (*n_2) + speed_3 * (*n_3));
-#endif
 
             if (direction) {
                 result = Arc::create(data->getNode(), direction);
