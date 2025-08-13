@@ -9,13 +9,14 @@
 #include <CGAL/OSM/OSM.h>
 
 //typedef int CoefficientType;
-typedef CGAL::HDVF::Z2 CoefficientType;
+typedef CGAL::HDVF::Z2 CoefficientTypeX;
 //typedef CGAL::HDVF::Zp<5> CoefficientType;
 
 int main(int argc, char **argv)
 {
-    using ComplexType = CGAL::HDVF::Simplicial_chain_complex<CoefficientType> ;
-    using HDVFType = CGAL::HDVF::Hdvf<CoefficientType, ComplexType> ;
+#if 1
+    using ComplexType = CGAL::HDVF::Simplicial_chain_complex<CoefficientTypeX> ;
+    using HDVFType = CGAL::HDVF::Hdvf<CoefficientTypeX, ComplexType> ;
 
     if (argc != 2)
     {
@@ -48,6 +49,6 @@ int main(int argc, char **argv)
         // Output HDVF to vtk
         hdvf_geometric_chain_complex_output_vtk(hdvf, complex, "res", true) ;
     }
-
+#endif
     return 0;
 }

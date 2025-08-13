@@ -115,13 +115,13 @@ public:
     {
         return (a._i != b._i);
     }
-
+#if 0
     /** \brief Absolute value. */
-    friend Z2  abs(const Z2& a)
+    friend  Z2  abs(const Z2& a)
     {
         return a ;
     }
-
+#endif
     /** \brief Operator<<. */
     friend std::ostream& operator<<(std::ostream& out, const Z2& a)
     {
@@ -137,6 +137,11 @@ public:
         return (in) ;
     }
 };
+
+Z2  abs(const Z2& a)
+    {
+        return a ;
+    }
 
 } /* end namespace HDVF */
 } /* end namespace CGAL */

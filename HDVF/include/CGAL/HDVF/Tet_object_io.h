@@ -32,14 +32,14 @@ namespace HDVF {
 inline size_t read_nodes(const std::string &node_file, bool load_nodes, std::vector<IONodeType> *nodes)
 {
     std::ifstream in_file (node_file) ;
-    if ( not in_file . good () ) {
+    if ( ! in_file . good () ) {
         std::cerr << "SimplicialComplex::loadFromFile. Fatal Error:\n  " << node_file << " not found.\n";
         throw std::runtime_error("File Parsing Error: File not found");
     }
 
     // First line is the number of nodes
     size_t nnodes, nnodes_tmp ;
-    if (not in_file.eof())
+    if ( ! in_file.eof())
     {
         std::string line;
         getline( in_file, line );
@@ -117,14 +117,14 @@ public:
         std::ifstream input_file ( file_edge );
         size_t f_nedges ;
         // Open the input file
-        if ( not input_file . good () )
+        if ( ! input_file . good () )
         {
             std::cerr << "File " << file_edge << " not found.\n";
-            throw std::runtime_error("File Parsing Error: File not found");
+            throw std::runtime_error("File Parsing Error: File ! found");
         }
         // First line is the number of edges
         std::size_t line_number = 0;
-        if (not input_file.eof())
+        if (! input_file.eof())
         {
             ++line_number ;
             std::string line;
@@ -159,14 +159,14 @@ public:
         std::ifstream input_file ( file_face );
         size_t f_nfaces ;
         // Open the input file
-        if ( not input_file . good () )
+        if ( ! input_file . good () )
         {
             std::cerr << "File " << file_face << " not found.\n";
-            throw std::runtime_error("File Parsing Error: File not found");
+            throw std::runtime_error("File Parsing Error: File ! found");
         }
         // First line is the number of edges
         std::size_t line_number = 0;
-        if (not input_file.eof())
+        if (! input_file.eof())
         {
             ++line_number ;
             std::string line;
@@ -202,14 +202,14 @@ public:
         std::ifstream input_file ( file_ele );
         size_t f_ntets ;
         // Open the input file
-        if ( not input_file . good () )
+        if ( ! input_file . good () )
         {
             std::cerr << "File " << file_ele << " not found.\n";
-            throw std::runtime_error("File Parsing Error: File not found");
+            throw std::runtime_error("File Parsing Error: File ! found");
         }
         // First line is the number of edges
         std::size_t line_number = 0;
-        if (not input_file.eof())
+        if (! input_file.eof())
         {
             ++line_number ;
             std::string line;

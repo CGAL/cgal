@@ -16,6 +16,7 @@
 
 #include <vector>
 #include <map>
+#include <cmath>
 #include <CGAL/HDVF/Simplex.h>
 #include <CGAL/HDVF/Mesh_object_io.h>
 #include <CGAL/OSM/OSM.h>
@@ -323,7 +324,7 @@ template<typename CoefficientType>
 Abstract_simplicial_chain_complex<CoefficientType>::Abstract_simplicial_chain_complex(const Mesh_object_io& mesh) : _complex_id(_id_generator++) {
     // Initialize attributes
 
-    _dim = abs(mesh.dim);
+    _dim = std::abs(mesh.dim);
 
     // Initialize vectors of Simplices and cell counts
     _ind2simp.resize(_dim + 1);

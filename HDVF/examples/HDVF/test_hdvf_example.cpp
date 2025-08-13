@@ -165,7 +165,7 @@ int main(int argc, char **argv)
         const std::string filename("test.osm") ;
 
         std::ofstream out ( filename, std::ios::out | std::ios::trunc);
-        if ( not out . good () ) {
+        if ( ! out . good () ) {
             std::cerr << "Out fatal Error:\n  " << filename << " not found.\n";
             throw std::runtime_error("File Parsing Error: File not found");
         }
@@ -176,7 +176,7 @@ int main(int argc, char **argv)
         out.close();
 
         std::ifstream in ( filename );
-        if ( not in . good () ) {
+        if ( ! in . good () ) {
             std::cerr << "In fatal Error:\n  " << filename << " not found.\n";
             throw std::runtime_error("File Parsing Error: File not found");
         }
@@ -202,7 +202,7 @@ int main(int argc, char **argv)
         const std::string filename2("test.hdvf") ;
 
         std::ofstream out2 ( filename2, std::ios::out | std::ios::trunc);
-        if ( not out2 . good () ) {
+        if ( ! out2 . good () ) {
             std::cerr << "Out fatal Error:\n  " << filename2 << " not found.\n";
             throw std::runtime_error("File Parsing Error: File not found");
         }
@@ -211,7 +211,7 @@ int main(int argc, char **argv)
         out2.close() ;
 
         std::ifstream in2 ( filename2 );
-        if ( not in2 . good () ) {
+        if ( ! in2 . good () ) {
             std::cerr << "In fatal Error:\n  " << filename << " not found.\n";
             throw std::runtime_error("File Parsing Error: File not found");
         }

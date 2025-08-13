@@ -131,7 +131,7 @@ public:
         // Load out file...
         std::ofstream out ( filename, std::ios::out | std::ios::trunc);
 
-        if ( not out . good () ) {
+        if ( ! out . good () ) {
             std::cerr << "SimpComplex_to_vtk. Fatal Error:\n  " << filename << " not found.\n";
             throw std::runtime_error("File Parsing Error: File not found");
         }
@@ -252,7 +252,7 @@ void Simplicial_chain_complex<CoefficientType>::chain_complex_chain_to_vtk(const
     // Load out file...
     std::ofstream out ( filename, std::ios::out | std::ios::trunc);
 
-    if ( not out . good () ) {
+    if ( ! out . good () ) {
         std::cerr << "SimpComplex_chain_to_vtk. Fatal Error:\n  " << filename << " not found.\n";
         throw std::runtime_error("File Parsing Error: File not found");
     }

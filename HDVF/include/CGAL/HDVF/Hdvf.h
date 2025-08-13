@@ -353,7 +353,7 @@ public:
      * \param[in] chain2 Second cycle.
      * \param[in] dim Dimension of both cycles.
      */
-    bool are_same_cycles (HDVF_coreT::Column_chain chain1, HDVF_coreT::Column_chain chain2, int dim)
+    bool are_same_cycles (typename HDVF_coreT::Column_chain chain1, typename HDVF_coreT::Column_chain chain2, int dim)
     {
         // Check if both chains are cycles (must belong to the kernel of the boundary operator)
         typename HDVF_coreT::Column_chain bnd1(this->_DD_col.at(dim) * chain1), bnd2(this->_DD_col.at(dim) * chain2) ;
@@ -376,7 +376,7 @@ public:
      * \param[in] chain2 Second co-cycle.
      * \param[in] dim Dimension of both co-cycles.
      */
-    bool are_same_cocycles (HDVF_coreT::Row_chain chain1, HDVF_coreT::Row_chain chain2, int dim)
+    bool are_same_cocycles (typename HDVF_coreT::Row_chain chain1, typename HDVF_coreT::Row_chain chain2, int dim)
     {
         // Check if both chains are cocycles (must belong to the kernel of the boundary^* operator)
         typename HDVF_coreT::Row_chain cobnd1(chain1 * this->_DD_col.at(dim)), cobnd2(chain2 * this->_DD_col.at(dim)) ;

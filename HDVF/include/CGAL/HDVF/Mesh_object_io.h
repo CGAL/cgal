@@ -206,7 +206,7 @@ private:
         // Load ...
         std::ofstream out ( filename, std::ios::out | std::ios::trunc);
 
-        if ( not out . good () ) {
+        if ( !out . good () ) {
             std::cerr << "SimplicialComplex::loadFromFile. Fatal Error:\n  " << filename << " not found.\n";
             throw std::runtime_error("File Parsing Error: File not found");
         }
