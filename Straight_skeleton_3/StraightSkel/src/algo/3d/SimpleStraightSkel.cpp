@@ -16,28 +16,24 @@
 
 // @fixme yesterday:
 
-// @speed
-// - avoid duplicate computations in check_bisectors
-// - check_bisector with base time
-// - delay crashAt bisector checks till pop time
-// - re-enable fast vertex splitter for uniform weights around a vertex
-
 // @fixme:
-// - Enable caching + performance model ==> shared pointer is invalid: edge_tosplit
+// - must delay more combinatorial checks to pop time?
 // - customer data w/ no facet merging had bugs
 
 // @fixme later:
 // - Fix simultaneous events still happening sometimes (likely the same event multiple times
 //   since we don't check the queue before pushing)
-// - Fix expired shared ptr errors in prints
 
 // @fixme latest:
 // - (a) Random perturbations could still create degenerate configurations if unlucky
 // - (b) Random perturbations must be small enough as to not create self-intersections
 // - EPECK -> EPICK could create self-intersections
 
-// @todo:
-// - must delay more combinatorial checks to pop time?
+// @speed
+// - avoid duplicate computations in check_bisectors
+// - rewrite check_bisector to use base times
+// - delay crashAt bisector checks till pop time
+// - re-enable fast vertex splitter for uniform weights around a vertex
 
 // @todo: cleaning
 // - use CGAL kernel everywhere, get rid of the other kernel
@@ -45,25 +41,24 @@
 // - assert / CGAL assertion
 // - indentation 4 --> 2 spaces
 // - merge .h/.cpp into a single file, header only
-// - fix all weak --> shared pointer conversions
 // - harmonize face/facet
 // - nullptr init?
 // - check for overly shared objects, redundant function calls (plane normalization, for example)
+// - debug ptr everywhere
 
 // @todo later:
 // - determine if outward or inward offset. Reject outward if there is no save-offset provided
 //   or stop_on_last_save is false
-// - Fix straight skeleton construction
 // - Lighter data structures
 // - implement lazy perturbations where we only perturb if we encounter an issue?
 //   * Would cost more (detection of simultaneous events, etc.)
 //   * How to detect "hidden" simultaneous events?
 // - zero speed (check divisions)
-// - debug ptr everywhere
 
 // @todo latest:
 // - factorize the three VV events but be very careful with the tiny differences
 // - there should be a function "Facet::copyPropertiesAndData(otherFacet)"
+// - fix straight skeleton construction
 
 // ----
 
@@ -513,6 +508,7 @@ bool SimpleStraightSkel::savePolyhedron(PolyhedronSPtr polyhedron,
         }
     }
 
+#ifdef CGAL_SS3_DUMP_FILES
     std::stringstream ss_filename, ss_filename_triangulated, ss_filename_exact;
     ss_filename << save_path_.string() << "/offset_" << current_offset << ".obj";
     ss_filename_triangulated << save_path_.string() << "/offset_" << current_offset << "_triangulated.obj";
@@ -527,6 +523,7 @@ bool SimpleStraightSkel::savePolyhedron(PolyhedronSPtr polyhedron,
     result = (db::_3d::OBJFile::save(ss_filename_exact.str(), polyhedron,
                                      do_triangulate,
                                      false /*convert_to_double*/) && result);
+#endif
 
     return result;
 }
@@ -3665,7 +3662,6 @@ void SimpleStraightSkel::collectSplitMergeEvents(const std::list<VertexSPtr>& ve
             if (num_equal_facets != 2) {
                 continue;
             }
-
             if (facet_1->next(v1) != facet_2) {
                 FacetSPtr facet_tmp = facet_1;
                 facet_1 = facet_2;
@@ -4866,8 +4862,6 @@ PolyhedronSPtr SimpleStraightSkel::shiftToEventOffset(PolyhedronSPtr polyhedron,
   return polyhedron;
 }
 
-// This 'handle' is in fact more akin to a collect, but the interesting point
-// is that it happens after pop time
 SimpleStraightSkel::EventStatus
 SimpleStraightSkel::handleSaveOffsetEvent(SaveOffsetEventSPtr event,
                                           const CGAL::FT& current_offset,
@@ -5447,8 +5441,8 @@ SimpleStraightSkel::handleEdgeEvent(EdgeEventSPtr event,
 
     bool flipped_valid = false;
 #if 1
-    // if one fails, the other one must be valid and we can avoid self-intersections
-    if (!not_flipped_valid) { // redundant but simply for clarity
+    // if one fails, the other one must be valid and we can avoid testing for self-intersections
+    if (!not_flipped_valid) {
         flipped_valid = true;
     } else
 #endif
@@ -7458,9 +7452,9 @@ SimpleStraightSkel::handlePierceEvent(PierceEventSPtr event,
     }
 
     // the edge with 'facet offset' is convex so these vertices are not interesting
-    CGAL_assertion(!isReflex(vertices[0]));
-    CGAL_assertion(!isReflex(vertices[1]));
-    CGAL_assertion(!isReflex(vertices[2]));
+    CGAL_postcondition(!isReflex(vertices[0]));
+    CGAL_postcondition(!isReflex(vertices[1]));
+    CGAL_postcondition(!isReflex(vertices[2]));
 
     return EventStatus::EVENT_HANDLED;
 }
@@ -7529,20 +7523,6 @@ SimpleStraightSkel::handleEvent(AbstractEventSPtr event,
         CGAL_assertion(false);
         result = EventStatus::EVENT_NOT_HANDLED;
     }
-
-    // Only two event types are currently allowed not to handle:
-    // - Vanish events: since we do not filter during collect time, they can be requalified
-    //                  as contact events at pop time, even while still being valid
-    // - Surface events: other events can change whether an event is a surface event or a split event
-    //                   so we need to consider the possible event until it's popped
-    // - Pierce events: the filtering (i.e., is the contact point actually on the facet)
-    //                  is done at pop time, so the event could in fact not exist
-#if 0 // @todo VV also
-    CGAL_postcondition(event->getType() == AbstractEvent::VANISH_EVENT ||
-                       event->getType() == AbstractEvent::SURFACE_EVENT ||
-                       event->getType() == AbstractEvent::PIERCE_EVENT ||
-                       result == EventStatus::EVENT_HANDLED);
-#endif
 
     CGAL_postcondition_code(for(auto v : polyhedron->vertices()))
     CGAL_postcondition(v->getID() != -1);

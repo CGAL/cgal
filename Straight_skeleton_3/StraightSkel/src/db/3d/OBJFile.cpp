@@ -325,9 +325,9 @@ bool OBJFile::save(const std::string& filename,
                 CGAL_SS3_IO_TRACE("CDT: " << pcdt.number_of_vertices() << " vertices, "
                                   << pcdt.number_of_faces() << " faces");
                 CGAL_SS3_IO_TRACE("Vertices: ");
-                for (PCDT_VH vh : pcdt.finite_vertex_handles()) {
-                    CGAL_SS3_IO_TRACE("  " << vh->point() << " -> " << vh->info()->getID());
-                }
+                CGAL_SS3_IO_TRACE_CODE(for (PCDT_VH vh : pcdt.finite_vertex_handles()) {)
+                CGAL_SS3_IO_TRACE("  " << vh->point() << " -> " << vh->info()->getID());
+                CGAL_SS3_IO_TRACE_CODE(})
             }
 
             if(ne < 3) // degenerate face
