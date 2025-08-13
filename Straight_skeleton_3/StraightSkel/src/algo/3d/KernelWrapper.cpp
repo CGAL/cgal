@@ -262,27 +262,6 @@ Point3SPtr KernelWrapper::intersectionPointOffsetPlanes(Plane3SPtr plane_0,
 
     CGAL::FT den = (-a0*b1*c2*w3 + a0*b1*c3*w2 + a0*b2*c1*w3 - a0*b2*c3*w1 - a0*b3*c1*w2 + a0*b3*c2*w1 + a1*b0*c2*w3 - a1*b0*c3*w2 - a1*b2*c0*w3 + a1*b2*c3*w0 + a1*b3*c0*w2 - a1*b3*c2*w0 - a2*b0*c1*w3 + a2*b0*c3*w1 + a2*b1*c0*w3 - a2*b1*c3*w0 - a2*b3*c0*w1 + a2*b3*c1*w0 + a3*b0*c1*w2 - a3*b0*c2*w1 - a3*b1*c0*w2 + a3*b1*c2*w0 + a3*b2*c0*w1 - a3*b2*c1*w0);
 
-    util::ConfigurationSPtr config = util::Configuration::getInstance();
-    bool usePerturbations = false;
-    if (config->isLoaded()) {
-        if ((config->contains("main", "rand_move_points") &&
-            config->getBool("main", "rand_move_points")) ||
-            (config->contains("main", "rand_move_points_when_degenerated") &&
-            config->getBool("main", "rand_move_points_when_degenerated"))) {
-            usePerturbations = true;
-        }
-    }
-
-    CGAL_assertion(usePerturbations);
-
-    if (!usePerturbations) {
-        if(CGAL::is_zero(den))
-        {
-            CGAL_SS3_TRAITS_TRACE("Warning: no solution in 4 shifted plane system");
-            return { };
-        }
-    }
-
     // note that below is only valid for normalized coefficients
     CGAL::FT x = (b0*c1*d2*w3 - b0*c1*d3*w2 - b0*c2*d1*w3 + b0*c2*d3*w1 + b0*c3*d1*w2 - b0*c3*d2*w1 - b1*c0*d2*w3 + b1*c0*d3*w2 + b1*c2*d0*w3 - b1*c2*d3*w0 - b1*c3*d0*w2 + b1*c3*d2*w0 + b2*c0*d1*w3 - b2*c0*d3*w1 - b2*c1*d0*w3 + b2*c1*d3*w0 + b2*c3*d0*w1 - b2*c3*d1*w0 - b3*c0*d1*w2 + b3*c0*d2*w1 + b3*c1*d0*w2 - b3*c1*d2*w0 - b3*c2*d0*w1 + b3*c2*d1*w0) / den;
 
@@ -341,31 +320,9 @@ CGAL::FT KernelWrapper::intersectionTimeOffsetPlanes(Plane3SPtr plane_0, const C
 
     CGAL::FT den = (-a0*b1*c2*w3 + a0*b1*c3*w2 + a0*b2*c1*w3 - a0*b2*c3*w1 - a0*b3*c1*w2 + a0*b3*c2*w1 + a1*b0*c2*w3 - a1*b0*c3*w2 - a1*b2*c0*w3 + a1*b2*c3*w0 + a1*b3*c0*w2 - a1*b3*c2*w0 - a2*b0*c1*w3 + a2*b0*c3*w1 + a2*b1*c0*w3 - a2*b1*c3*w0 - a2*b3*c0*w1 + a2*b3*c1*w0 + a3*b0*c1*w2 - a3*b0*c2*w1 - a3*b1*c0*w2 + a3*b1*c2*w0 + a3*b2*c0*w1 - a3*b2*c1*w0);
 
-    util::ConfigurationSPtr config = util::Configuration::getInstance();
-    bool usePerturbations = false;
-    if (config->isLoaded()) {
-        if ((config->contains("main", "rand_move_points") &&
-            config->getBool("main", "rand_move_points")) ||
-            (config->contains("main", "rand_move_points_when_degenerated") &&
-            config->getBool("main", "rand_move_points_when_degenerated"))) {
-            usePerturbations = true;
-        }
-    }
-
-    CGAL_assertion(usePerturbations);
-
-    if (!usePerturbations) {
-        if(CGAL::is_zero(den))
-        {
-            CGAL_SS3_TRAITS_TRACE("Warning: no solution in 4 shifted plane system");
-            return { };
-        }
-    }
-
     CGAL::FT t = (-a0*b1*c2*d3 + a0*b1*c3*d2 + a0*b2*c1*d3 - a0*b2*c3*d1 - a0*b3*c1*d2 + a0*b3*c2*d1 + a1*b0*c2*d3 - a1*b0*c3*d2 - a1*b2*c0*d3 + a1*b2*c3*d0 + a1*b3*c0*d2 - a1*b3*c2*d0 - a2*b0*c1*d3 + a2*b0*c3*d1 + a2*b1*c0*d3 - a2*b1*c3*d0 - a2*b3*c0*d1 + a2*b3*c1*d0 + a3*b0*c1*d2 - a3*b0*c2*d1 - a3*b1*c0*d2 + a3*b1*c2*d0 + a3*b2*c0*d1 - a3*b2*c1*d0) / den;
 
-    // It's about as likely to be greater than 'past' than it is to be lower than 'future'
-    if (past_bound && t >= *past_bound) {
+    if (past_bound && t >= *past_bound)  {
         CGAL_SS3_TRAITS_TRACE("Event is strictly in the past");
         return { };
     }
@@ -424,40 +381,36 @@ KernelWrapper::intersectionPointAndTimeOffsetPlanes(Plane3SPtr plane_0,
     CGAL_assertion(isNormalizedPlane(plane_2));
     CGAL_assertion(isNormalizedPlane(plane_3));
 
+    CGAL::FT tn = (-a0*b1*c2*d3 + a0*b1*c3*d2 + a0*b2*c1*d3 - a0*b2*c3*d1 - a0*b3*c1*d2 + a0*b3*c2*d1 + a1*b0*c2*d3 - a1*b0*c3*d2 - a1*b2*c0*d3 + a1*b2*c3*d0 + a1*b3*c0*d2 - a1*b3*c2*d0 - a2*b0*c1*d3 + a2*b0*c3*d1 + a2*b1*c0*d3 - a2*b1*c3*d0 - a2*b3*c0*d1 + a2*b3*c1*d0 + a3*b0*c1*d2 - a3*b0*c2*d1 - a3*b1*c0*d2 + a3*b1*c2*d0 + a3*b2*c0*d1 - a3*b2*c1*d0);
+
     CGAL::FT den = (-a0*b1*c2*w3 + a0*b1*c3*w2 + a0*b2*c1*w3 - a0*b2*c3*w1 - a0*b3*c1*w2 + a0*b3*c2*w1 + a1*b0*c2*w3 - a1*b0*c3*w2 - a1*b2*c0*w3 + a1*b2*c3*w0 + a1*b3*c0*w2 - a1*b3*c2*w0 - a2*b0*c1*w3 + a2*b0*c3*w1 + a2*b1*c0*w3 - a2*b1*c3*w0 - a2*b3*c0*w1 + a2*b3*c1*w0 + a3*b0*c1*w2 - a3*b0*c2*w1 - a3*b1*c0*w2 + a3*b1*c2*w0 + a3*b2*c0*w1 - a3*b2*c1*w0);
 
-    util::ConfigurationSPtr config = util::Configuration::getInstance();
-    bool usePerturbations = false;
-    if (config->isLoaded()) {
-        if ((config->contains("main", "rand_move_points") &&
-            config->getBool("main", "rand_move_points")) ||
-            (config->contains("main", "rand_move_points_when_degenerated") &&
-            config->getBool("main", "rand_move_points_when_degenerated"))) {
-            usePerturbations = true;
-        }
-    }
+    CGAL::Sign s = CGAL::sign(den);
 
-    if (!usePerturbations) {
-        if(CGAL::is_zero(den))
-        {
-            CGAL_SS3_TRAITS_TRACE("Warning: no solution in 4 shifted plane system");
-            return { };
-        }
-    }
-
-    CGAL::FT t = (-a0*b1*c2*d3 + a0*b1*c3*d2 + a0*b2*c1*d3 - a0*b2*c3*d1 - a0*b3*c1*d2 + a0*b3*c2*d1 + a1*b0*c2*d3 - a1*b0*c3*d2 - a1*b2*c0*d3 + a1*b2*c3*d0 + a1*b3*c0*d2 - a1*b3*c2*d0 - a2*b0*c1*d3 + a2*b0*c3*d1 + a2*b1*c0*d3 - a2*b1*c3*d0 - a2*b3*c0*d1 + a2*b3*c1*d0 + a3*b0*c1*d2 - a3*b0*c2*d1 - a3*b1*c0*d2 + a3*b1*c2*d0 + a3*b2*c0*d1 - a3*b2*c1*d0) / den;
-
-    if (past_bound && t >= *past_bound) {
+    // Bound checks. The algorithm works is a decreasing t, so past is greater than future.
+    //
+    // Empirically:
+    // - It's about as likely to be greater than 'past' than it is to be lower than 'future'
+    // - Avoiding the division before the checks does not yield observable gains
+    // - Adding a check past_bound == 0 to simply check tn and den signs also gains nothing...
+    //
+    // t >= past_bound
+    // tn/den - past_bound >= 0
+    //   | tn - den*past_bound >= 0 if den > 0 => + (tn - den*past_bound) >= 0
+    //   | tn - den*past_bound <= 0 if den < 0 => - (tn - den*past_bound) >= 0
+    // sign(den) * (tn - den*past_bound) >= 0
+    if (past_bound && !CGAL::is_negative(s * (tn - *past_bound * den))) {
         CGAL_SS3_TRAITS_TRACE("Event is strictly in the past");
         return { };
     }
 
-    if (future_bound && t <= *future_bound) {
+    if (future_bound && !CGAL::is_positive(s * (tn - *future_bound * den))) {
         CGAL_SS3_TRAITS_TRACE("Event is too far in the future");
         return { };
     }
 
-    // warning: only valid for normalized coefficients!!
+    CGAL::FT t = tn / den;
+
     CGAL::FT x = (b0*c1*d2*w3 - b0*c1*d3*w2 - b0*c2*d1*w3 + b0*c2*d3*w1 + b0*c3*d1*w2 - b0*c3*d2*w1 - b1*c0*d2*w3 + b1*c0*d3*w2 + b1*c2*d0*w3 - b1*c2*d3*w0 - b1*c3*d0*w2 + b1*c3*d2*w0 + b2*c0*d1*w3 - b2*c0*d3*w1 - b2*c1*d0*w3 + b2*c1*d3*w0 + b2*c3*d0*w1 - b2*c3*d1*w0 - b3*c0*d1*w2 + b3*c0*d2*w1 + b3*c1*d0*w2 - b3*c1*d2*w0 - b3*c2*d0*w1 + b3*c2*d1*w0) / den;
 
     CGAL::FT y = (-a0*c1*d2*w3 + a0*c1*d3*w2 + a0*c2*d1*w3 - a0*c2*d3*w1 - a0*c3*d1*w2 + a0*c3*d2*w1 + a1*c0*d2*w3 - a1*c0*d3*w2 - a1*c2*d0*w3 + a1*c2*d3*w0 + a1*c3*d0*w2 - a1*c3*d2*w0 - a2*c0*d1*w3 + a2*c0*d3*w1 + a2*c1*d0*w3 - a2*c1*d3*w0 - a2*c3*d0*w1 + a2*c3*d1*w0 + a3*c0*d1*w2 - a3*c0*d2*w1 - a3*c1*d0*w2 + a3*c1*d2*w0 + a3*c2*d0*w1 - a3*c2*d1*w0) / den;
@@ -466,7 +419,7 @@ KernelWrapper::intersectionPointAndTimeOffsetPlanes(Plane3SPtr plane_0,
 
     Point3SPtr result = KernelFactory::createPoint3(x, y, z);
 
-    CGAL_SS3_TRAITS_TRACE("CHECK x|y|z " << x << " " << y << " " << z);
+    CGAL_SS3_TRAITS_TRACE("CHECK x|y|z|t " << x << " " << y << " " << z << " " << t);
     CGAL_SS3_TRAITS_TRACE("CHECK 0: " << a0*x + b0*y + c0*z + d0 - w0*t);
     CGAL_SS3_TRAITS_TRACE("CHECK 1: " << a1*x + b1*y + c1*z + d1 - w1*t);
     CGAL_SS3_TRAITS_TRACE("CHECK 2: " << a2*x + b2*y + c2*z + d2 - w2*t);
