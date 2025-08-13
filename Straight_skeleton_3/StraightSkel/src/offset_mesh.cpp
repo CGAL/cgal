@@ -8,6 +8,7 @@
 
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/property_map.h>
+#include <CGAL/Real_timer.h>
 
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/orientation.h>
@@ -543,9 +544,15 @@ int main(int argc, char** argv)
   results.reserve(save_offsets.size());
 
   // Main call
+  CGAL::Real_timer timer;
+  timer.start();
+
   bool success = CGAL::face_offset(sm, save_offsets,
                                    results,
                                    CGAL::parameters::face_weight_map(fwm));
+
+  timer.stop();
+  std::cout << "Elapsed: " << timer.time() << std::endl;
 
   // Check the sanity of the results, and save them
   for (std::size_t i=0; i<results.size(); ++i) {
