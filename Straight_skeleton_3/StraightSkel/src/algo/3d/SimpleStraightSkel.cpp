@@ -2653,20 +2653,18 @@ void SimpleStraightSkel::collectVertexEvents(const std::list<VertexSPtr>& vertic
             FacetSPtr facet_1;
             FacetSPtr facet_2;
             int num_equal_facets = 0;
-            std::list<FacetWPtr>::iterator it_f1 = v1->facets().begin();
-            while (it_f1 != v1->facets().end()) {
-                FacetWPtr facet_1_wptr = *it_f1++;
-                if (!facet_1_wptr.expired()) {
-                    std::list<FacetWPtr>::iterator it_f2 = v2->facets().begin();
-                    while (it_f2 != v2->facets().end()) {
-                        FacetWPtr facet_2_wptr = *it_f2++;
-                        if (facet_1_wptr == facet_2_wptr) {
-                            if (num_equal_facets == 0) {
-                                facet_1 = FacetSPtr(facet_1_wptr);
-                            } else {
-                                facet_2 = FacetSPtr(facet_2_wptr);
+            for (FacetWPtr facet_1_wptr : v1->facets()) {
+                if (FacetSPtr f1 = facet_1_wptr.lock()) {
+                    for (FacetWPtr facet_2_wptr : v2->facets()) {
+                        if (FacetSPtr f2 = facet_2_wptr.lock()) {
+                            if (f1 == f2) {
+                                if (num_equal_facets == 0) {
+                                    facet_1 = f1;
+                                } else {
+                                    facet_2 = f2;
+                                }
+                                ++num_equal_facets;
                             }
-                            num_equal_facets++;
                         }
                     }
                 }
@@ -2872,20 +2870,18 @@ void SimpleStraightSkel::collectFlipVertexEvents(const std::list<VertexSPtr>& ve
             FacetSPtr facet_1;
             FacetSPtr facet_2;
             int num_equal_facets = 0;
-            std::list<FacetWPtr>::iterator it_f1 = v1->facets().begin();
-            while (it_f1 != v1->facets().end()) {
-                FacetWPtr facet_1_wptr = *it_f1++;
-                if (!facet_1_wptr.expired()) {
-                    std::list<FacetWPtr>::iterator it_f2 = v2->facets().begin();
-                    while (it_f2 != v2->facets().end()) {
-                        FacetWPtr facet_2_wptr = *it_f2++;
-                        if (facet_1_wptr == facet_2_wptr) {
-                            if (num_equal_facets == 0) {
-                                facet_1 = FacetSPtr(facet_1_wptr);
-                            } else {
-                                facet_2 = FacetSPtr(facet_2_wptr);
+            for (FacetWPtr facet_1_wptr : v1->facets()) {
+                if (FacetSPtr f1 = facet_1_wptr.lock()) {
+                    for (FacetWPtr facet_2_wptr : v2->facets()) {
+                        if (FacetSPtr f2 = facet_2_wptr.lock()) {
+                            if (f1 == f2) {
+                                if (num_equal_facets == 0) {
+                                    facet_1 = f1;
+                                } else {
+                                    facet_2 = f2;
+                                }
+                                ++num_equal_facets;
                             }
-                            num_equal_facets++;
                         }
                     }
                 }
@@ -3641,20 +3637,18 @@ void SimpleStraightSkel::collectSplitMergeEvents(const std::list<VertexSPtr>& ve
             FacetSPtr facet_1;
             FacetSPtr facet_2;
             int num_equal_facets = 0;
-            std::list<FacetWPtr>::iterator it_f1 = v1->facets().begin();
-            while (it_f1 != v1->facets().end()) {
-                FacetWPtr facet_1_wptr = *it_f1++;
-                if (!facet_1_wptr.expired()) {
-                    std::list<FacetWPtr>::iterator it_f2 = v2->facets().begin();
-                    while (it_f2 != v2->facets().end()) {
-                        FacetWPtr facet_2_wptr = *it_f2++;
-                        if (facet_1_wptr == facet_2_wptr) {
-                            if (num_equal_facets == 0) {
-                                facet_1 = FacetSPtr(facet_1_wptr);
-                            } else {
-                                facet_2 = FacetSPtr(facet_2_wptr);
+            for (FacetWPtr facet_1_wptr : v1->facets()) {
+                if (FacetSPtr f1 = facet_1_wptr.lock()) {
+                    for (FacetWPtr facet_2_wptr : v2->facets()) {
+                        if (FacetSPtr f2 = facet_2_wptr.lock()) {
+                            if (f1 == f2) {
+                                if (num_equal_facets == 0) {
+                                    facet_1 = f1;
+                                } else {
+                                    facet_2 = f2;
+                                }
+                                ++num_equal_facets;
                             }
-                            num_equal_facets++;
                         }
                     }
                 }
@@ -4825,9 +4819,8 @@ AbstractEventSPtr SimpleStraightSkel::nextEvent(PQ& queue,
 }
 
 void SimpleStraightSkel::appendEventNode(NodeSPtr node) {
-    std::list<ArcWPtr>::iterator it_a = node->arcs().begin();
-    while (it_a != node->arcs().end()) {
-        ArcWPtr arc_wptr = *it_a++;
+    // @todo why the find?...
+    for (ArcWPtr arc_wptr : node->arcs()) {
         if (ArcSPtr arc = arc_wptr.lock()) {
             arc->setNodeDst(node);
             arc->setNodeDstListIt(util::weak_find(node->arcs().begin(), node->arcs().end(), arc_wptr));
