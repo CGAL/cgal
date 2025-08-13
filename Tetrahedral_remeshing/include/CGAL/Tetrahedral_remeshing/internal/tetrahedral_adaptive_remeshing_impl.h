@@ -32,6 +32,10 @@
 #include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_remeshing_helpers.h>
 #include <CGAL/Tetrahedral_remeshing/internal/compute_c3t3_statistics.h>
 
+//Far points addition
+#include <CGAL/point_generators_3.h>
+#include <CGAL/Kernel_traits.h>
+
 #include <optional>
 #include <boost/container/small_vector.hpp>
 
@@ -207,10 +211,10 @@ public:
   {
     CGAL_assertion(check_vertex_dimensions());
 #ifdef CGAL_TETRAHEDRAL_REMESHING_USE_REFACTORED_COLLAPSE
-        Elementary_remesher<C3t3,SizingFunction,CellSelector,Visitor>::collapse(m_c3t3, m_sizing, m_cell_selector);
+        Elementary_remesher<C3t3,SizingFunction,CellSelector,Visitor>::collapse(m_c3t3, m_sizing, m_cell_selector,m_visitor,m_protect_boundaries);
 #else
     collapse_short_edges(m_c3t3, m_sizing, m_protect_boundaries,
-                         m_cell_selector, m_visitor);
+                                           m_cell_selector, m_visitor);
 #endif
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
@@ -357,6 +361,8 @@ private:
       m_c3t3.triangulation(), "00-c3t3_vertices_before_init_");
 #endif
 
+    //TODO: Adding far points could reduce the number of conflicting locks. add_far_points currently leads to wrong quality metrics. We should debug this and test if performance is improved.
+    //add_far_points(m_c3t3);
     if (input_is_c3t3())
       backup_far_points();
 
@@ -512,6 +518,34 @@ private:
   }
 
 private:
+
+    void add_far_points(C3t3& c3t3)
+    {
+    const Bbox_3& bbox =c3t3.bbox();
+
+    // Compute radius for far sphere
+    const double xdelta = bbox.xmax() - bbox.xmin();
+    const double ydelta = bbox.ymax() - bbox.ymin();
+    const double zdelta = bbox.zmax() - bbox.zmin();
+    const double radius = 5. * std::sqrt(xdelta * xdelta + ydelta * ydelta + zdelta * zdelta);
+    using Vector = typename Kernel_traits<Triangulation::Point>::Kernel::Vector_3;
+    const Vector center(bbox.xmin() + 0.5 * xdelta, bbox.ymin() + 0.5 * ydelta, bbox.zmin() + 0.5 * zdelta);
+    CGAL::Random rnd(0);
+    //CGAL::Random_points_on_sphere_3<Triangulation::Bare_point> random_point(radius, rnd);
+    CGAL::Random_points_on_sphere_3<Triangulation::Point> random_point(radius, rnd);
+    constexpr int num_pseudo_infinite_vertices_per_core = 5;
+    const int NUM_PSEUDO_INFINITE_VERTICES =
+        static_cast<int>(float(std::thread::hardware_concurrency()) *
+                         num_pseudo_infinite_vertices_per_core);
+#ifdef CGAL_MESH_3_VERBOSE
+    std::cerr << "Adding " << NUM_PSEUDO_INFINITE_VERTICES << " points on a far sphere (radius = " << radius << ")...";
+#endif
+
+    for(int i = 0; i < NUM_PSEUDO_INFINITE_VERTICES; ++i, ++random_point)
+      c3t3.add_far_point(c3t3.triangulation().geom_traits().construct_point_3_object()(
+          c3t3.triangulation().geom_traits().construct_translated_point_3_object()(*random_point, center)));
+    }
+
   bool dimension_is_modifiable(const Vertex_handle& v, const int new_dim) const
   {
     const int vdim = v->in_dimension();
@@ -635,7 +669,7 @@ public:
         split();
         collapse();
       }
-      flip();
+        flip();
       smooth();
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE

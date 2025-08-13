@@ -129,13 +129,10 @@ public:
   ElementaryOperationExecutionSequential& operator=(ElementaryOperationExecutionSequential&&) = default;
 
   std::vector<ElementType> collect_candidates(const Operation& op, const C3t3& c3t3) const override {
-
-    // Get all elements from the operation
     auto elements = op.get_element_source(c3t3);
     std::vector<ElementType> candidates;
-    for (const auto& element : elements) {
-      candidates.push_back(element);
-    }
+    candidates.reserve(elements.size());
+    std::copy(elements.begin(), elements.end(), std::back_inserter(candidates));
     return candidates;
   }
 
@@ -206,7 +203,8 @@ private:
     C3t3& c3t3) {
     // Create concurrent priority queue for all elements
     tbb::concurrent_queue<ElementType> work_queue(elements.begin(), elements.end());
-    
+
+    std::atomic<size_t> num_ops = 0;
     size_t num_threads = 8; // Start with single thread for ordered processing
     
     // Parallel work stealing from priority queue
@@ -231,12 +229,20 @@ private:
               }
             }
             // Execute operation once lock is acquired
-            op.execute_operation(element, c3t3);
+            if ( op.execute_operation(element, c3t3))
+            {
+              num_ops++;
+            }
             c3t3.triangulation().unlock_all_elements();
           }
         }
       }
     );
+
+#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+    std::cout << "num_ops:" << num_ops << std::endl;
+    #endif
+
     return true;
   }
 

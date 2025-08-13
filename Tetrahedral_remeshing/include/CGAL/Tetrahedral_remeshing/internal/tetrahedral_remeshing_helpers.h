@@ -1910,6 +1910,14 @@ void remove_from_bimap(const typename EdgesBimap::left_map::key_type& e,
     edges.left.erase(eit);
 }
 
+template<typename EdgeType, typename ShouldSkipContainer>
+void remove_from_bimap(const typename EdgeType& e,
+                      ShouldSkipContainer& should_skip)
+{
+  should_skip[e] = true;
+}
+
+
 // if e is in 'edges'
 template<typename EdgesBimap, typename FT>
 void
@@ -2674,8 +2682,8 @@ void dump_c3t3(const C3t3& c3t3, const char* filename_no_extension)
 
 
 template<typename CellRange>
-std::unordered_set<std::size_t> get_cells_timestamps(const CellRange& cells) {
-  std::unordered_set<std::size_t> timestamps;
+std::set<std::size_t> get_cells_timestamps(const CellRange& cells) {
+  std::set<std::size_t> timestamps;
   
   for(typename CellRange::const_iterator cit = cells.begin(); cit != cells.end(); ++cit) {
     timestamps.insert((*cit)->time_stamp());
