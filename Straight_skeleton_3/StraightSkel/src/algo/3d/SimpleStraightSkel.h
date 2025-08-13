@@ -222,8 +222,8 @@ public:
     /**
      * Returns `true` if the event is in the past
      */
-    static bool isEventInThePast(const CGAL::FT& current_offset,
-                                 AbstractEventSPtr event);
+    static bool isEventInThePast(AbstractEventSPtr event,
+                                 const CGAL::FT& current_offset);
 
     /**
      * Returns `true` if the neighborhood of an event has changed.
@@ -236,8 +236,8 @@ public:
      * The gain is that the event can be invalidated combinatorially by the time
      * it gets popped.
      */
-    static bool isActualEvent(const CGAL::FT& current_offset,
-                              AbstractEventSPtr event,
+    static bool isActualEvent(AbstractEventSPtr event,
+                              const CGAL::FT& current_offset,
                               PolyhedronSPtr polyhedron);
 
     static bool isActualVertexEvent(VertexEventSPtr event,
