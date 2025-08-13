@@ -496,22 +496,7 @@ void PolyhedronTransformation::shiftFacetsInPlace(PolyhedronSPtr polyhedron,
     std::list<FacetSPtr>::iterator it_f = polyhedron->facets().begin();
     while (it_f != polyhedron->facets().end()) {
         FacetSPtr facet = *it_f++;
-
-        // ugly hack while events still use getOffsetXXX() to access elements in the shifted polyhedron
-        //
-        // when getOffsetXXX will no longer be needed, it also means that combinatorics stored
-        // in the events can become weak pointers
-
-        SkelFacetDataSPtr data;
-        if (facet->hasData()) {
-            data = std::dynamic_pointer_cast<SkelFacetData>(facet->getData());
-        } else {
-            data = SkelFacetData::create(facet);
-        }
-        data->setOffsetFacet(facet);
-
-        CGAL::FT speed = data->getSpeed();
-        Plane3SPtr offset_plane = KernelWrapper::offsetPlane(facet->plane(), offset*speed);
+        Plane3SPtr offset_plane = shiftPlane(facet, offset);
         facet->setPlane(offset_plane);
     }
 
@@ -528,32 +513,7 @@ void PolyhedronTransformation::shiftFacetsInPlace(PolyhedronSPtr polyhedron,
             resetPoint(vertex);
             CGAL_assertion(ok);
         }
-
-        // @todo hack
-        SkelVertexDataSPtr data;
-        if (vertex->hasData()) {
-            data = std::dynamic_pointer_cast<SkelVertexData>(vertex->getData());
-        } else {
-            data = SkelVertexData::create(vertex);
-        }
-        data->setOffsetVertex(vertex);
     }
-
-    std::list<EdgeSPtr>::iterator it_e = polyhedron->edges().begin();
-    while (it_e != polyhedron->edges().end()) {
-        EdgeSPtr edge = *it_e++;
-
-        // @todo hack
-        SkelEdgeDataSPtr data;
-        if (edge->hasData()) {
-            data = std::dynamic_pointer_cast<SkelEdgeData>(edge->getData());
-        } else {
-            data = SkelEdgeData::create(edge);
-        }
-        data->setOffsetEdge(edge);
-    }
-
-    CGAL_postcondition(bool(polyhedron) && polyhedron->isConsistent());
 }
 
 // @speed plenty of needless recomputations:

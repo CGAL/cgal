@@ -5345,15 +5345,8 @@ SimpleStraightSkel::handleEdgeEvent(EdgeEventSPtr event,
     appendEventNode(node);
 
     EdgeSPtr edge = event->getEdge();
-    SkelVertexDataSPtr data_src = std::dynamic_pointer_cast<SkelVertexData>(
-                edge->getVertexSrc()->getData());
-    VertexSPtr vertex_src_offset = data_src->getOffsetVertex();
-    SkelVertexDataSPtr data_dst = std::dynamic_pointer_cast<SkelVertexData>(
-                edge->getVertexDst()->getData());
-    VertexSPtr vertex_dst_offset = data_dst->getOffsetVertex();
-    EdgeSPtr edge_offset = vertex_src_offset->findEdge(vertex_dst_offset);
-    vertex_src_offset->setPoint(node->getPoint());
-    vertex_dst_offset->setPoint(node->getPoint());
+    VertexSPtr vertex_src = edge->getVertexSrc();
+    VertexSPtr vertex_dst = edge->getVertexDst();
 
     CGAL_SS3_CORE_TRACE_V(4,"Node:\n" << node->toString());
     CGAL_SS3_CORE_TRACE_V(4,"Edge:\n" << edge->toString());
@@ -5364,19 +5357,19 @@ SimpleStraightSkel::handleEdgeEvent(EdgeEventSPtr event,
         vertices[i] = VertexSPtr();
     }
 
-    vertices[0] = vertex_src_offset->prev(edge_offset->getFacetL());
-    vertices[1] = vertex_src_offset->next(edge_offset->getFacetR());
-    vertices[2] = vertex_dst_offset->prev(edge_offset->getFacetR());
-    vertices[3] = vertex_dst_offset->next(edge_offset->getFacetL());
+    vertices[0] = vertex_src->prev(edge->getFacetL());
+    vertices[1] = vertex_src->next(edge->getFacetR());
+    vertices[2] = vertex_dst->prev(edge->getFacetR());
+    vertices[3] = vertex_dst->next(edge->getFacetL());
 
     FacetSPtr facets[4];
     for (unsigned int i = 0; i < 4; i++) {
         facets[i] = FacetSPtr();
     }
-    facets[1] = edge_offset->getFacetR();
-    facets[3] = edge_offset->getFacetL();
-    facets[0] = facets[3]->next(vertex_src_offset);
-    facets[2] = facets[1]->next(vertex_dst_offset);
+    facets[1] = edge->getFacetR();
+    facets[3] = edge->getFacetL();
+    facets[0] = facets[3]->next(vertex_src);
+    facets[2] = facets[1]->next(vertex_dst);
 
     // check if edge should be flipped
     bool flip_edge = true;
@@ -5406,8 +5399,8 @@ SimpleStraightSkel::handleEdgeEvent(EdgeEventSPtr event,
           dst of Ei = Vi
         */
 
-        VertexSPtr vertex_src_clone = vertex_src_offset->clone();
-        VertexSPtr vertex_dst_clone = vertex_dst_offset->clone();
+        VertexSPtr vertex_src_clone = vertex_src->clone();
+        VertexSPtr vertex_dst_clone = vertex_dst->clone();
         EdgeSPtr edge_no_flip = Edge::create(vertex_src_clone, vertex_dst_clone);
         EdgeSPtr edges[4];
         for (unsigned int i = 0; i < 4; i++) {
@@ -5478,8 +5471,8 @@ SimpleStraightSkel::handleEdgeEvent(EdgeEventSPtr event,
           dst of Ei = Vi
         */
 
-        VertexSPtr vertex_src_clone = vertex_src_offset->clone();
-        VertexSPtr vertex_dst_clone = vertex_dst_offset->clone();
+        VertexSPtr vertex_src_clone = vertex_src->clone();
+        VertexSPtr vertex_dst_clone = vertex_dst->clone();
         EdgeSPtr edge_flipped = Edge::create(vertex_src_clone, vertex_dst_clone);
         EdgeSPtr edges[4];
         for (unsigned int i = 0; i < 4; i++) {
@@ -5585,49 +5578,49 @@ SimpleStraightSkel::handleEdgeEvent(EdgeEventSPtr event,
         for (unsigned int i = 0; i < 4; i++) {
             edges[i] = EdgeSPtr();
         }
-        edges[0] = edge_offset->next(vertex_src_offset);
-        edges[1] = edges[0]->next(vertex_src_offset);
-        edges[2] = edge_offset->next(vertex_dst_offset);
-        edges[3] = edges[2]->next(vertex_dst_offset);
+        edges[0] = edge->next(vertex_src);
+        edges[1] = edges[0]->next(vertex_src);
+        edges[2] = edge->next(vertex_dst);
+        edges[3] = edges[2]->next(vertex_dst);
 
-        facets[3]->removeVertex(vertex_src_offset);
-        facets[2]->addVertex(vertex_src_offset);
-        facets[1]->removeVertex(vertex_dst_offset);
-        facets[0]->addVertex(vertex_dst_offset);
+        facets[3]->removeVertex(vertex_src);
+        facets[2]->addVertex(vertex_src);
+        facets[1]->removeVertex(vertex_dst);
+        facets[0]->addVertex(vertex_dst);
 
-        facets[1]->removeEdge(edge_offset);
-        facets[3]->removeEdge(edge_offset);
-        edge_offset->setFacetL(facets[0]);
-        edge_offset->setFacetR(facets[2]);
-        facets[0]->addEdge(edge_offset);
-        facets[2]->addEdge(edge_offset);
+        facets[1]->removeEdge(edge);
+        facets[3]->removeEdge(edge);
+        edge->setFacetL(facets[0]);
+        edge->setFacetR(facets[2]);
+        facets[0]->addEdge(edge);
+        facets[2]->addEdge(edge);
 
-        if (edges[0]->getVertexSrc() == vertex_src_offset) {
-            edges[0]->replaceVertexSrc(vertex_dst_offset);
-        } else if (edges[0]->getVertexDst() == vertex_src_offset) {
-            edges[0]->replaceVertexDst(vertex_dst_offset);
+        if (edges[0]->getVertexSrc() == vertex_src) {
+            edges[0]->replaceVertexSrc(vertex_dst);
+        } else if (edges[0]->getVertexDst() == vertex_src) {
+            edges[0]->replaceVertexDst(vertex_dst);
         }
-        if (edges[2]->getVertexSrc() == vertex_dst_offset) {
-            edges[2]->replaceVertexSrc(vertex_src_offset);
-        } else if (edges[2]->getVertexDst() == vertex_dst_offset) {
-            edges[2]->replaceVertexDst(vertex_src_offset);
+        if (edges[2]->getVertexSrc() == vertex_dst) {
+            edges[2]->replaceVertexSrc(vertex_src);
+        } else if (edges[2]->getVertexDst() == vertex_dst) {
+            edges[2]->replaceVertexDst(vertex_src);
         }
 
         if (offset_future_bound) {
-            vertex_src_offset->final_point_ = nullptr;
-            vertex_dst_offset->final_point_ = nullptr;
+            vertex_src->final_point_ = nullptr;
+            vertex_dst->final_point_ = nullptr;
         }
 
         // @fixme duplicates with below
-        post_op_vertices_VV_ = {{ vertex_src_offset, vertex_dst_offset }};
+        post_op_vertices_VV_ = {{ vertex_src, vertex_dst }};
 
         // now, in the facets that have grown in size, we also need to collect
         // vertices that might create new events because they are now separated-enough
         // from other vertices in the cycle
-        post_op_vertices_VV_.insert(vertex_src_offset->prev(facets[0]));
-        post_op_vertices_VV_.insert(vertex_dst_offset->next(facets[0]));
-        post_op_vertices_VV_.insert(vertex_src_offset->next(facets[2]));
-        post_op_vertices_VV_.insert(vertex_dst_offset->prev(facets[2]));
+        post_op_vertices_VV_.insert(vertex_src->prev(facets[0]));
+        post_op_vertices_VV_.insert(vertex_dst->next(facets[0]));
+        post_op_vertices_VV_.insert(vertex_src->next(facets[2]));
+        post_op_vertices_VV_.insert(vertex_dst->prev(facets[2]));
         CGAL_assertion(post_op_vertices_VV_.size() == 6);
 
         // if there was no flip, then unmodified vertices should not have new events
@@ -5635,31 +5628,31 @@ SimpleStraightSkel::handleEdgeEvent(EdgeEventSPtr event,
 
     // update arcs and sheets
 #ifndef CGAL_SS3_NO_SKELETON_DS
-    SkelEdgeDataSPtr edge_data = std::dynamic_pointer_cast<SkelEdgeData>(edge_offset->getData());
+    SkelEdgeDataSPtr edge_data = std::dynamic_pointer_cast<SkelEdgeData>(edge->getData());
     edge_data->setSheet(SheetSPtr());
 
-    data_src = std::dynamic_pointer_cast<SkelVertexData>(vertex_src_offset->getData());
-    data_dst = std::dynamic_pointer_cast<SkelVertexData>(vertex_dst_offset->getData());
+    data_src = std::dynamic_pointer_cast<SkelVertexData>(vertex_src->getData());
+    data_dst = std::dynamic_pointer_cast<SkelVertexData>(vertex_dst->getData());
     data_src->setNode(node);
     data_dst->setNode(node);
 
-    ArcSPtr arc_src = createArc(vertex_src_offset);
+    ArcSPtr arc_src = createArc(vertex_src);
     skel_result_->addArc(arc_src);
-    ArcSPtr arc_dst = createArc(vertex_dst_offset);
+    ArcSPtr arc_dst = createArc(vertex_dst);
     skel_result_->addArc(arc_dst);
-    SheetSPtr sheet = createSheet(edge_offset);
+    SheetSPtr sheet = createSheet(edge);
     skel_result_->addSheet(sheet);
 
     event->setPolyhedronResult(polyhedron);
 #endif
     skel_result_->addEvent(event);
 
-    post_op_vertices_ = {{ vertex_src_offset, vertex_dst_offset }};
-    post_op_edges_ = {{ edge_offset,
-                        edge_offset->next(vertex_src_offset),
-                        edge_offset->prev(vertex_src_offset),
-                        edge_offset->next(vertex_dst_offset),
-                        edge_offset->prev(vertex_dst_offset) }};
+    post_op_vertices_ = {{ vertex_src, vertex_dst }};
+    post_op_edges_ = {{ edge,
+                        edge->next(vertex_src),
+                        edge->prev(vertex_src),
+                        edge->next(vertex_dst),
+                        edge->prev(vertex_dst) }};
     post_op_facets_ = {{ facets[0], facets[1], facets[2], facets[3] }};
     CGAL_postcondition(post_op_vertices_.size() == 2 &&
                        post_op_edges_.size() == 5 &&
@@ -5689,25 +5682,18 @@ SimpleStraightSkel::handleEdgeMergeEvent(EdgeMergeEventSPtr event,
 
     appendEventNode(event->getNode());
 
-    SkelFacetDataSPtr facet_data = std::dynamic_pointer_cast<SkelFacetData>(
-                event->getFacet()->getData());
-    FacetSPtr facet = facet_data->getOffsetFacet();
-    SkelEdgeDataSPtr edge_data_1 = std::dynamic_pointer_cast<SkelEdgeData>(
-                event->getEdge1()->getData());
-    SkelEdgeDataSPtr edge_data_2 = std::dynamic_pointer_cast<SkelEdgeData>(
-                event->getEdge2()->getData());
-    EdgeSPtr edge_1 = edge_data_1->getOffsetEdge();
-    EdgeSPtr edge_2 = edge_data_2->getOffsetEdge();
-
+    FacetSPtr facet = event->getFacet();
+    EdgeSPtr edge_1 = event->getEdge1();
+    EdgeSPtr edge_2 = event->getEdge2();
     FacetSPtr facet_l = edge_1->getFacetL();
     FacetSPtr facet_r = edge_1->getFacetR();
     EdgeSPtr edge_toremove_1 = edge_1->next(facet);
     EdgeSPtr edge_toremove_2 = edge_toremove_1->next(facet);
 
-    assert(edge_2 == edge_toremove_2->next(facet));
+    CGAL_assertion(edge_2 == edge_toremove_2->next(facet));
 
     VertexSPtr vertex = edge_toremove_1->dst(facet);
-    vertex->setPoint(event->getNode()->getPoint());
+    vertex->setPoint(event->getNode()->getPoint()); // @fixme unnecessary
     VertexSPtr vertex_1 = edge_1->dst(facet);
     VertexSPtr vertex_2 = edge_2->src(facet);
     EdgeSPtr edge_b = edge_toremove_1->prev(edge_toremove_1->other(facet));
@@ -5812,29 +5798,18 @@ SimpleStraightSkel::handleTriangleEvent(TriangleEventSPtr event,
     VertexSPtr vertices[3];
     event->getVertices(vertices);
 
-    VertexSPtr vertices_offset[3];
-    for (unsigned int i = 0; i < 3; i++) {
-        SkelVertexDataSPtr data = std::dynamic_pointer_cast<SkelVertexData>(
-                vertices[i]->getData());
-        vertices_offset[i] = data->getOffsetVertex();
-    }
-    SkelFacetDataSPtr facet_data = std::dynamic_pointer_cast<SkelFacetData>(
-            event->getFacet()->getData());
-    FacetSPtr facet_offset = facet_data->getOffsetFacet();
+    FacetSPtr facet_offset = event->getFacet();
 
     CGAL_SS3_CORE_TRACE_V(4, "Facet: " << facet_offset->getID());
     CGAL_SS3_CORE_TRACE_V(4, "VS:\n" << vertices[0]->toString() << "\n"
                                      << vertices[1]->toString() << "\n"
                                      << vertices[2]->toString());
-    CGAL_SS3_CORE_TRACE_V(4, "VSO:\n" << vertices_offset[0]->toString() << "\n"
-                                      << vertices_offset[1]->toString() << "\n"
-                                      << vertices_offset[2]->toString());
 
     if (facet_offset->vertices().size() == 3) {
         polyhedron->removeFacet(facet_offset);
     }
     for (unsigned int i = 0; i < 3; i++) {
-        EdgeSPtr edge = vertices_offset[i]->findEdge(vertices_offset[(i+1)%3]);
+        EdgeSPtr edge = vertices[i]->findEdge(vertices[(i+1)%3]);
         if (edge->getFacetL()) {
             edge->getFacetL()->removeEdge(edge);
         }
@@ -5843,51 +5818,51 @@ SimpleStraightSkel::handleTriangleEvent(TriangleEventSPtr event,
         }
         polyhedron->removeEdge(edge);
     }
-    VertexSPtr vertex_offset = Vertex::create(event->getNode()->getPoint());
+    VertexSPtr new_vertex = Vertex::create(event->getNode()->getPoint());
     for (unsigned int i = 0; i < 3; i++) {
-        EdgeSPtr edge_offset = vertices_offset[i]->edges().front().lock();
-        if (edge_offset->getVertexSrc() == vertices_offset[i]) {
-            edge_offset->replaceVertexSrc(vertex_offset);
-        } else if (edge_offset->getVertexDst() == vertices_offset[i]) {
-            edge_offset->replaceVertexDst(vertex_offset);
+        EdgeSPtr edge = vertices[i]->edges().front().lock();
+        if (edge->getVertexSrc() == vertices[i]) {
+            edge->replaceVertexSrc(new_vertex);
+        } else if (edge->getVertexDst() == vertices[i]) {
+            edge->replaceVertexDst(new_vertex);
         }
-        edge_offset->getFacetL()->removeVertex(vertices_offset[i]);
-        edge_offset->getFacetR()->removeVertex(vertices_offset[i]);
-        facet_offset->removeVertex(vertices_offset[i]);
-        polyhedron->removeVertex(vertices_offset[i]);
-        if (!edge_offset->getFacetL()->containsVertex(vertex_offset)) {
-            edge_offset->getFacetL()->addVertex(vertex_offset);
+        edge->getFacetL()->removeVertex(vertices[i]);
+        edge->getFacetR()->removeVertex(vertices[i]);
+        facet_offset->removeVertex(vertices[i]);
+        polyhedron->removeVertex(vertices[i]);
+        if (!edge->getFacetL()->containsVertex(new_vertex)) {
+            edge->getFacetL()->addVertex(new_vertex);
         }
-        if (!edge_offset->getFacetR()->containsVertex(vertex_offset)) {
-            edge_offset->getFacetR()->addVertex(vertex_offset);
+        if (!edge->getFacetR()->containsVertex(new_vertex)) {
+            edge->getFacetR()->addVertex(new_vertex);
         }
     }
-    polyhedron->addVertex(vertex_offset);
+    polyhedron->addVertex(new_vertex);
 
     if (offset_future_bound) {
-        vertex_offset->final_point_ = nullptr;
+        new_vertex->final_point_ = nullptr;
     }
 
 #ifndef CGAL_SS3_NO_SKELETON_DS
-    SkelVertexDataSPtr data_offset = SkelVertexData::create(vertex_offset);
+    SkelVertexDataSPtr data_offset = SkelVertexData::create(new_vertex);
     data_offset->setNode(event->getNode());
-    ArcSPtr arc = createArc(vertex_offset);
+    ArcSPtr arc = createArc(new_vertex);
     skel_result_->addArc(arc);
     event->setPolyhedronResult(polyhedron);
 #endif
     skel_result_->addEvent(event);
 
-    post_op_vertices_ = {{ vertex_offset }};
-    for (EdgeWPtr we : vertex_offset->edges()) {
+    post_op_vertices_ = {{ new_vertex }};
+    for (EdgeWPtr we : new_vertex->edges()) {
         post_op_edges_.insert(EdgeSPtr(we.lock()));
     }
-    for (FacetWPtr wf : vertex_offset->facets()) {
+    for (FacetWPtr wf : new_vertex->facets()) {
         post_op_facets_.insert(wf.lock());
     }
     CGAL_postcondition(post_op_vertices_.size() == 1 && post_op_edges_.size() == 3 && post_op_facets_.size() == 3);
 
     // faces are smaller so nothing from unmodified vertices
-    post_op_vertices_VV_ = {{ vertex_offset }};
+    post_op_vertices_VV_ = {{ new_vertex }};
 
     // Assume a triangle event with a facet whose incident edges are all reflex.
     // At a reflex edge, an epsilon offset is a growth of the facet.
@@ -5897,7 +5872,7 @@ SimpleStraightSkel::handleTriangleEvent(TriangleEventSPtr event,
     //
     // @todo checking for reflexness is (relatively) so cheap that we should insert it
     // anyway, in case the reasoning above is wrong!
-    CGAL_assertion(!isReflex(vertex_offset));
+    CGAL_assertion(!isReflex(new_vertex));
     post_op_vertices_pierce_.clear();
 
     // faces are getting smaller so no need to check unmodified edges
@@ -5922,80 +5897,59 @@ SimpleStraightSkel::handleDblEdgeMergeEvent(DblEdgeMergeEventSPtr event,
 
     appendEventNode(event->getNode());
 
-    SkelEdgeDataSPtr edge_data = std::dynamic_pointer_cast<SkelEdgeData>(
-            event->getEdge11()->getData());
-    EdgeSPtr edge_offset_11 = edge_data->getOffsetEdge();
-    edge_data = std::dynamic_pointer_cast<SkelEdgeData>(
-            event->getEdge12()->getData());
-    EdgeSPtr edge_offset_12 = edge_data->getOffsetEdge();
-    edge_data = std::dynamic_pointer_cast<SkelEdgeData>(
-            event->getEdge21()->getData());
-    EdgeSPtr edge_offset_21 = edge_data->getOffsetEdge();
-    edge_data = std::dynamic_pointer_cast<SkelEdgeData>(
-            event->getEdge22()->getData());
-    EdgeSPtr edge_offset_22 = edge_data->getOffsetEdge();
+    EdgeSPtr edge_11 = event->getEdge11();
+    EdgeSPtr edge_12 = event->getEdge12();
+    EdgeSPtr edge_21 = event->getEdge21();
+    EdgeSPtr edge_22 = event->getEdge22();
 
     VertexSPtr vertices[4];
     event->getVertices(vertices);
-    VertexSPtr vertices_offset[4];
-    for (unsigned int i = 0; i < 4; i++) {
-        SkelVertexDataSPtr vertex_data = std::dynamic_pointer_cast<SkelVertexData>(
-                vertices[i]->getData());
-        vertices_offset[i] = vertex_data->getOffsetVertex();
-    }
-
     EdgeSPtr edges[4];
     event->getEdges(edges);
-    EdgeSPtr edges_offset[4];
-    for (unsigned int i = 0; i < 4; i++) {
-        SkelEdgeDataSPtr edge_data = std::dynamic_pointer_cast<SkelEdgeData>(
-                edges[i]->getData());
-        edges_offset[i] = edge_data->getOffsetEdge();
-    }
 
     // @fixme what's going on here? Aren't we deleting the offset edges multiple times?
     // What's the point of changing vertices of edge_offset_xy if we are deleting them anyway
     for (unsigned int i = 0; i < 4; i++) {
-        EdgeSPtr edge = edges_offset[i];
+        EdgeSPtr edge = edges[i];
         edge->getFacetL()->removeEdge(edge);
         edge->getFacetR()->removeEdge(edge);
         polyhedron->removeEdge(edge);
     }
 
-    if (edge_offset_11->getVertexDst() == vertices_offset[0]) {
-        if (edge_offset_12->getVertexSrc() == vertices_offset[2]) {
-            edge_offset_11->replaceVertexDst(edge_offset_12->getVertexDst());
+    if (edge_11->getVertexDst() == vertices[0]) {
+        if (edge_12->getVertexSrc() == vertices[2]) {
+            edge_11->replaceVertexDst(edge_12->getVertexDst());
         } else {
-            edge_offset_11->replaceVertexDst(edge_offset_12->getVertexSrc());
+            edge_11->replaceVertexDst(edge_12->getVertexSrc());
         }
     } else {
-        if (edge_offset_12->getVertexSrc() == vertices_offset[2]) {
-            edge_offset_11->replaceVertexSrc(edge_offset_12->getVertexDst());
+        if (edge_12->getVertexSrc() == vertices[2]) {
+            edge_11->replaceVertexSrc(edge_12->getVertexDst());
         } else {
-            edge_offset_11->replaceVertexSrc(edge_offset_12->getVertexSrc());
+            edge_11->replaceVertexSrc(edge_12->getVertexSrc());
         }
     }
-    edge_offset_12->getFacetL()->removeEdge(edge_offset_12);
-    edge_offset_12->getFacetR()->removeEdge(edge_offset_12);
-    polyhedron->removeEdge(edge_offset_12);
-    if (edge_offset_21->getVertexDst() == vertices_offset[1]) {
-        if (edge_offset_22->getVertexSrc() == vertices_offset[3]) {
-            edge_offset_21->replaceVertexDst(edge_offset_22->getVertexDst());
+    edge_12->getFacetL()->removeEdge(edge_12);
+    edge_12->getFacetR()->removeEdge(edge_12);
+    polyhedron->removeEdge(edge_12);
+    if (edge_21->getVertexDst() == vertices[1]) {
+        if (edge_22->getVertexSrc() == vertices[3]) {
+            edge_21->replaceVertexDst(edge_22->getVertexDst());
         } else {
-            edge_offset_21->replaceVertexDst(edge_offset_22->getVertexSrc());
+            edge_21->replaceVertexDst(edge_22->getVertexSrc());
         }
     } else {
-        if (edge_offset_22->getVertexSrc() == vertices_offset[3]) {
-            edge_offset_21->replaceVertexSrc(edge_offset_22->getVertexDst());
+        if (edge_22->getVertexSrc() == vertices[3]) {
+            edge_21->replaceVertexSrc(edge_22->getVertexDst());
         } else {
-            edge_offset_21->replaceVertexSrc(edge_offset_22->getVertexSrc());
+            edge_21->replaceVertexSrc(edge_22->getVertexSrc());
         }
     }
-    edge_offset_22->getFacetL()->removeEdge(edge_offset_22);
-    edge_offset_22->getFacetR()->removeEdge(edge_offset_22);
-    polyhedron->removeEdge(edge_offset_22);
+    edge_22->getFacetL()->removeEdge(edge_22);
+    edge_22->getFacetR()->removeEdge(edge_22);
+    polyhedron->removeEdge(edge_22);
     for (unsigned int i = 0; i < 4; i++) {
-        VertexSPtr vertex = vertices_offset[i];
+        VertexSPtr vertex = vertices[i];
         for (auto it_f = vertex->facets().begin(); it_f != vertex->facets().end(); ) { // no C++11
             FacetWPtr facet_wptr = *it_f++;
             if (FacetSPtr facet = facet_wptr.lock()) {
@@ -6011,11 +5965,11 @@ SimpleStraightSkel::handleDblEdgeMergeEvent(DblEdgeMergeEventSPtr event,
     skel_result_->addEvent(event);
 
     post_op_vertices_.clear();
-    post_op_edges_ = {{ edge_offset_11, edge_offset_21 }};
-    post_op_facets_ = {{ edge_offset_11->getFacetL(),
-                         edge_offset_11->getFacetR(),
-                         edge_offset_21->getFacetL(),
-                         edge_offset_21->getFacetR() }};
+    post_op_edges_ = {{ edge_11, edge_21 }};
+    post_op_facets_ = {{ edge_11->getFacetL(),
+                         edge_11->getFacetR(),
+                         edge_21->getFacetL(),
+                         edge_21->getFacetR() }};
     CGAL_postcondition(post_op_vertices_.empty() && post_op_edges_.size() == 2 && post_op_facets_.size() == 4);
 
     // faces are smaller so nothing from unmodified vertices
@@ -6024,8 +5978,8 @@ SimpleStraightSkel::handleDblEdgeMergeEvent(DblEdgeMergeEventSPtr event,
     // no new vertices & only reducing the size of facets so no edge disconnection
     post_op_vertices_pierce_.clear();
 
-    CGAL_assertion(!isReflex(edge_offset_11));
-    CGAL_assertion(!isReflex(edge_offset_21));
+    CGAL_assertion(!isReflex(edge_11));
+    CGAL_assertion(!isReflex(edge_21));
     post_op_edges_edgesplit_.clear();
 
     return EventStatus::EVENT_HANDLED;
@@ -6050,20 +6004,9 @@ SimpleStraightSkel::handleDblTriangleEvent(DblTriangleEventSPtr event,
 
     VertexSPtr vertices[4];
     event->getVertices(vertices);
-    VertexSPtr vertices_offset[4];
-    for (unsigned int i = 0; i < 4; i++) {
-        SkelVertexDataSPtr vertex_data = std::dynamic_pointer_cast<SkelVertexData>(
-                vertices[i]->getData());
-        vertices_offset[i] = vertex_data->getOffsetVertex();
-    }
+
     EdgeSPtr edges[5];
     event->getEdges(edges);
-    EdgeSPtr edges_offset[5];
-    for (unsigned int i = 0; i < 5; i++) {
-        SkelEdgeDataSPtr edge_data = std::dynamic_pointer_cast<SkelEdgeData>(
-                edges[i]->getData());
-        edges_offset[i] = edge_data->getOffsetEdge();
-    }
 
     FacetSPtr facet_l = edge->getFacetL();
     FacetSPtr facet_r = edge->getFacetR();
@@ -6076,33 +6019,14 @@ SimpleStraightSkel::handleDblTriangleEvent(DblTriangleEventSPtr event,
     FacetSPtr facet_rr = edge_r->other(facet_r);
     edge_r = edge_r->prev(facet_rr);
 
-    SkelFacetDataSPtr facet_data_l = std::dynamic_pointer_cast<SkelFacetData>(
-            facet_l->getData());
-    FacetSPtr facet_offset_l = facet_data_l->getOffsetFacet();
-    SkelFacetDataSPtr facet_data_r = std::dynamic_pointer_cast<SkelFacetData>(
-            facet_r->getData());
-    FacetSPtr facet_offset_r = facet_data_r->getOffsetFacet();
-    SkelVertexDataSPtr vertex_data_l = std::dynamic_pointer_cast<SkelVertexData>(
-            vertex_l->getData());
-    VertexSPtr vertex_offset_l = vertex_data_l->getOffsetVertex();
-    SkelVertexDataSPtr vertex_data_r = std::dynamic_pointer_cast<SkelVertexData>(
-            vertex_r->getData());
-    VertexSPtr vertex_offset_r = vertex_data_r->getOffsetVertex();
-    SkelEdgeDataSPtr edge_data_l = std::dynamic_pointer_cast<SkelEdgeData>(
-            edge_l->getData());
-    EdgeSPtr edge_offset_l = edge_data_l->getOffsetEdge();
-    SkelEdgeDataSPtr edge_data_r = std::dynamic_pointer_cast<SkelEdgeData>(
-            edge_r->getData());
-    EdgeSPtr edge_offset_r = edge_data_r->getOffsetEdge();
-
-    if (facet_offset_l->edges().size() == 3) {
-        polyhedron->removeFacet(facet_offset_l);
+    if (facet_l->edges().size() == 3) {
+        polyhedron->removeFacet(facet_l);
     }
-    if (facet_offset_r->edges().size() == 3) {
-        polyhedron->removeFacet(facet_offset_r);
+    if (facet_r->edges().size() == 3) {
+        polyhedron->removeFacet(facet_r);
     }
     for (unsigned int i = 0; i < 5; i++) {
-        EdgeSPtr edge = edges_offset[i];
+        EdgeSPtr edge = edges[i];
         if (edge->getFacetL()) {
             edge->getFacetL()->removeEdge(edge);
         }
@@ -6112,25 +6036,25 @@ SimpleStraightSkel::handleDblTriangleEvent(DblTriangleEventSPtr event,
         polyhedron->removeEdge(edge);
     }
 
-    if (edge_offset_l->getVertexSrc() == vertex_offset_l) {
-        if (edge_offset_r->getVertexDst() == vertex_offset_r) {
-            edge_offset_l->replaceVertexSrc(edge_offset_r->getVertexSrc());
+    if (edge_l->getVertexSrc() == vertex_l) {
+        if (edge_r->getVertexDst() == vertex_r) {
+            edge_l->replaceVertexSrc(edge_r->getVertexSrc());
         } else {
-            edge_offset_l->replaceVertexSrc(edge_offset_r->getVertexDst());
+            edge_l->replaceVertexSrc(edge_r->getVertexDst());
         }
     } else {
-        if (edge_offset_r->getVertexDst() == vertex_offset_r) {
-            edge_offset_l->replaceVertexDst(edge_offset_r->getVertexSrc());
+        if (edge_r->getVertexDst() == vertex_r) {
+            edge_l->replaceVertexDst(edge_r->getVertexSrc());
         } else {
-            edge_offset_l->replaceVertexDst(edge_offset_r->getVertexDst());
+            edge_l->replaceVertexDst(edge_r->getVertexDst());
         }
     }
-    edge_offset_r->getFacetL()->removeEdge(edge_offset_r);
-    edge_offset_r->getFacetR()->removeEdge(edge_offset_r);
-    polyhedron->removeEdge(edge_offset_r);
+    edge_r->getFacetL()->removeEdge(edge_r);
+    edge_r->getFacetR()->removeEdge(edge_r);
+    polyhedron->removeEdge(edge_r);
 
     for (unsigned int i = 0; i < 4; i++) {
-        VertexSPtr vertex = vertices_offset[i];
+        VertexSPtr vertex = vertices[i];
         for (auto it_f = vertex->facets().begin(); it_f != vertex->facets().end(); ) { // no C++11
             FacetWPtr facet_wptr = *it_f++;
             if (FacetSPtr facet = facet_wptr.lock()) {
@@ -6146,7 +6070,7 @@ SimpleStraightSkel::handleDblTriangleEvent(DblTriangleEventSPtr event,
     skel_result_->addEvent(event);
 
     post_op_vertices_.clear();
-    post_op_edges_ = {{ edge_offset_l }};
+    post_op_edges_ = {{ edge_l }};
     post_op_facets_ = {{ facet_ll, facet_rr }};
     CGAL_postcondition(post_op_vertices_.empty() && post_op_edges_.size() == 1 && post_op_facets_.size() == 2);
 
@@ -6157,7 +6081,7 @@ SimpleStraightSkel::handleDblTriangleEvent(DblTriangleEventSPtr event,
     post_op_vertices_pierce_.clear();
 
     // faces are getting smaller so no need to check unmodified edges
-    post_op_edges_edgesplit_ = {{ edge_offset_l }};
+    post_op_edges_edgesplit_ = {{ edge_l }};
 
     return EventStatus::EVENT_HANDLED;
 }
@@ -6179,36 +6103,20 @@ SimpleStraightSkel::handleTetrahedronEvent(TetrahedronEventSPtr event,
 
     VertexSPtr vertices[4];
     event->getVertices(vertices);
-    VertexSPtr vertices_offset[4];
-    for (unsigned int i = 0; i < 4; i++) {
-        SkelVertexDataSPtr vertex_data = std::dynamic_pointer_cast<SkelVertexData>(
-                vertices[i]->getData());
-        vertices_offset[i] = vertex_data->getOffsetVertex();
-    }
+
     EdgeSPtr edges[6];
     event->getEdges(edges);
-    EdgeSPtr edges_offset[6];
-    for (unsigned int i = 0; i < 6; i++) {
-        SkelEdgeDataSPtr edge_data = std::dynamic_pointer_cast<SkelEdgeData>(
-                edges[i]->getData());
-        edges_offset[i] = edge_data->getOffsetEdge();
-    }
+
     FacetSPtr facets[4];
     event->getFacets(facets);
-    FacetSPtr facets_offset[4];
-    for (unsigned int i = 0; i < 4; i++) {
-        SkelFacetDataSPtr facet_data = std::dynamic_pointer_cast<SkelFacetData>(
-                facets[i]->getData());
-        facets_offset[i] = facet_data->getOffsetFacet();
-    }
 
     for (unsigned int i = 0; i < 4; i++) {
-        if (facets_offset[i]->vertices().size() == 3) {
-            polyhedron->removeFacet(facets_offset[i]);
+        if (facets[i]->vertices().size() == 3) {
+            polyhedron->removeFacet(facets[i]);
         }
     }
     for (unsigned int i = 0; i < 6; i++) {
-        EdgeSPtr edge = edges_offset[i];
+        EdgeSPtr edge = edges[i];
         if (edge->getFacetL()) {
             edge->getFacetL()->removeEdge(edge);
         }
@@ -6218,7 +6126,7 @@ SimpleStraightSkel::handleTetrahedronEvent(TetrahedronEventSPtr event,
         polyhedron->removeEdge(edge);
     }
     for (unsigned int i = 0; i < 4; i++) {
-        VertexSPtr vertex = vertices_offset[i];
+        VertexSPtr vertex = vertices[i];
         for (auto it_f = vertex->facets().begin(); it_f != vertex->facets().end(); ) { // no C++11
             FacetWPtr facet_wptr = *it_f++;
             if (FacetSPtr facet = facet_wptr.lock()) {
@@ -6320,20 +6228,10 @@ SimpleStraightSkel::handleVertexEvent(VertexEventSPtr event,
 
     appendEventNode(event->getNode());
 
-    SkelVertexDataSPtr vertex_data_1 = std::dynamic_pointer_cast<SkelVertexData>(
-            event->getVertex1()->getData());
-    SkelVertexDataSPtr vertex_data_2 = std::dynamic_pointer_cast<SkelVertexData>(
-            event->getVertex2()->getData());
-    VertexSPtr vertex_1 = vertex_data_1->getOffsetVertex();
-    VertexSPtr vertex_2 = vertex_data_2->getOffsetVertex();
-    vertex_1->setPoint(event->getNode()->getPoint());
-    vertex_2->setPoint(event->getNode()->getPoint());
-    SkelFacetDataSPtr facet_data_1 = std::dynamic_pointer_cast<SkelFacetData>(
-            event->getFacet1()->getData());
-    SkelFacetDataSPtr facet_data_2 = std::dynamic_pointer_cast<SkelFacetData>(
-            event->getFacet2()->getData());
-    FacetSPtr facet_1 = facet_data_1->getOffsetFacet();
-    FacetSPtr facet_2 = facet_data_2->getOffsetFacet();
+    VertexSPtr vertex_1 = event->getVertex1();
+    VertexSPtr vertex_2 = event->getVertex2();
+    FacetSPtr facet_1 = event->getFacet1();
+    FacetSPtr facet_2 = event->getFacet2();
 
     EdgeSPtr edge_tomerge_1 = EdgeSPtr();
     EdgeSPtr edge_11 = EdgeSPtr();
@@ -6533,21 +6431,10 @@ SimpleStraightSkel::handleFlipVertexEvent(FlipVertexEventSPtr event,
 
     appendEventNode(event->getNode());
 
-    SkelVertexDataSPtr vertex_data_1 = std::dynamic_pointer_cast<SkelVertexData>(
-            event->getVertex1()->getData());
-    SkelVertexDataSPtr vertex_data_2 = std::dynamic_pointer_cast<SkelVertexData>(
-            event->getVertex2()->getData());
-    VertexSPtr vertex_1 = vertex_data_1->getOffsetVertex();
-    VertexSPtr vertex_2 = vertex_data_2->getOffsetVertex();
-    SkelFacetDataSPtr facet_data_1 = std::dynamic_pointer_cast<SkelFacetData>(
-            event->getFacet1()->getData());
-    SkelFacetDataSPtr facet_data_2 = std::dynamic_pointer_cast<SkelFacetData>(
-            event->getFacet2()->getData());
-    FacetSPtr facet_1 = facet_data_1->getOffsetFacet();
-    FacetSPtr facet_2 = facet_data_2->getOffsetFacet();
-
-    vertex_1->setPoint(event->getNode()->getPoint());
-    vertex_2->setPoint(event->getNode()->getPoint());
+    VertexSPtr vertex_1 = event->getVertex1();
+    VertexSPtr vertex_2 = event->getVertex2();
+    FacetSPtr facet_1 = event->getFacet1();
+    FacetSPtr facet_2 = event->getFacet2();
 
     EdgeSPtr edge_1;
     for (EdgeWPtr edge_wptr : vertex_1->edges()) {
@@ -6694,13 +6581,8 @@ SimpleStraightSkel::handleSurfaceEvent(SurfaceEventSPtr event,
     const CGAL::FT& event_offset = event->getOffset();
     polyhedron = shiftToEventOffset(polyhedron, current_offset, event_offset);
 
-    SkelEdgeDataSPtr data_1 = std::dynamic_pointer_cast<SkelEdgeData>(
-      event->getEdge1()->getData());
-    EdgeSPtr edge_1 = data_1->getOffsetEdge();
-    SkelEdgeDataSPtr data_2 = std::dynamic_pointer_cast<SkelEdgeData>(
-      event->getEdge2()->getData());
-    EdgeSPtr edge_2 = data_2->getOffsetEdge();
-
+    EdgeSPtr edge_1 = event->getEdge1();
+    EdgeSPtr edge_2 = event->getEdge2();
     FacetSPtr facet_1_src = edge_1->getFacetSrc();
     FacetSPtr facet_1_dst = edge_1->getFacetDst();
 
@@ -6888,13 +6770,8 @@ SimpleStraightSkel::handlePolyhedronSplitEvent(PolyhedronSplitEventSPtr event,
     CGAL_SS3_CORE_TRACE_V(4, "Edge A = " << event->getEdge1()->toString());
     CGAL_SS3_CORE_TRACE_V(4, "Edge B = " << event->getEdge2()->toString());
 
-    SkelEdgeDataSPtr data_1 = std::dynamic_pointer_cast<SkelEdgeData>(
-            event->getEdge1()->getData());
-    EdgeSPtr edge_1 = data_1->getOffsetEdge();
-    SkelEdgeDataSPtr data_2 = std::dynamic_pointer_cast<SkelEdgeData>(
-            event->getEdge2()->getData());
-    EdgeSPtr edge_2 = data_2->getOffsetEdge();
-
+    EdgeSPtr edge_1 = event->getEdge1();
+    EdgeSPtr edge_2 = event->getEdge2();
     FacetSPtr facet_1_src = edge_1->getFacetSrc();
     FacetSPtr facet_1_dst = edge_1->getFacetDst();
 
@@ -7081,20 +6958,10 @@ SimpleStraightSkel::handleSplitMergeEvent(SplitMergeEventSPtr event,
 
     appendEventNode(event->getNode());
 
-    SkelVertexDataSPtr vertex_data_1 = std::dynamic_pointer_cast<SkelVertexData>(
-            event->getVertex1()->getData());
-    SkelVertexDataSPtr vertex_data_2 = std::dynamic_pointer_cast<SkelVertexData>(
-            event->getVertex2()->getData());
-    VertexSPtr vertex_1 = vertex_data_1->getOffsetVertex();
-    VertexSPtr vertex_2 = vertex_data_2->getOffsetVertex();
-    vertex_1->setPoint(event->getNode()->getPoint());
-    vertex_2->setPoint(event->getNode()->getPoint());
-    SkelFacetDataSPtr facet_data_1 = std::dynamic_pointer_cast<SkelFacetData>(
-            event->getFacet1()->getData());
-    SkelFacetDataSPtr facet_data_2 = std::dynamic_pointer_cast<SkelFacetData>(
-            event->getFacet2()->getData());
-    FacetSPtr facet_1 = facet_data_1->getOffsetFacet();
-    FacetSPtr facet_2 = facet_data_2->getOffsetFacet();
+    VertexSPtr vertex_1 = event->getVertex1();
+    VertexSPtr vertex_2 = event->getVertex2();
+    FacetSPtr facet_1 = event->getFacet1();
+    FacetSPtr facet_2 = event->getFacet2();
 
     EdgeSPtr edge_tomerge_1 = EdgeSPtr();
     EdgeSPtr edge_11 = EdgeSPtr();
@@ -7260,12 +7127,8 @@ SimpleStraightSkel::handleEdgeSplitEvent(EdgeSplitEventSPtr event,
     CGAL_SS3_CORE_TRACE("edge_1 = " << event->getEdge1()->toString());
     CGAL_SS3_CORE_TRACE("edge_2 = " << event->getEdge2()->toString());
 
-    SkelEdgeDataSPtr data_1 = std::dynamic_pointer_cast<SkelEdgeData>(
-            event->getEdge1()->getData());
-    EdgeSPtr edge_1 = data_1->getOffsetEdge();
-    SkelEdgeDataSPtr data_2 = std::dynamic_pointer_cast<SkelEdgeData>(
-            event->getEdge2()->getData());
-    EdgeSPtr edge_2 = data_2->getOffsetEdge();
+    EdgeSPtr edge_1 = event->getEdge1();
+    EdgeSPtr edge_2 = event->getEdge2();
 
     FacetSPtr facet_l1 = edge_1->getFacetL();
     FacetSPtr facet_r1 = edge_1->getFacetR();
@@ -7487,16 +7350,12 @@ SimpleStraightSkel::handlePierceEvent(PierceEventSPtr event,
 
     NodeSPtr node = event->getNode();
 
+    VertexSPtr vertex_offset = event->getVertex();
+    FacetSPtr facet_offset = event->getFacet();
+
     CGAL_SS3_CORE_TRACE("Node: " << node->toString());
     CGAL_SS3_CORE_TRACE("V: " << event->getVertex()->toString());
     CGAL_SS3_CORE_TRACE("F: " << event->getFacet()->toString());
-
-    SkelVertexDataSPtr vertex_data = std::dynamic_pointer_cast<SkelVertexData>(
-            event->getVertex()->getData());
-    VertexSPtr vertex_offset = vertex_data->getOffsetVertex();
-    SkelFacetDataSPtr facet_data = std::dynamic_pointer_cast<SkelFacetData>(
-            event->getFacet()->getData());
-    FacetSPtr facet_offset = facet_data->getOffsetFacet();
 
     // the 3 new vertices cannot be reflex, but since we grow faces,
     // we need to check the other extremities of the edges
