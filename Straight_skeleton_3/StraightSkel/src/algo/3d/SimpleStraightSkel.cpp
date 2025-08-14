@@ -3753,7 +3753,6 @@ void SimpleStraightSkel::collectEdgeSplitEvents(const std::list<EdgeSPtr>& edges
             node->setPoint(point);
             event->setEdge1(edge_1);
             event->setEdge2(edge_2);
-            event->setEdgeOrientation(KernelWrapper::orientation(line(edge_1), line(edge_2)));
 
 #ifndef CGAL_SS3_NO_SKELETON_DS
             SkelEdgeDataSPtr data_1 = std::dynamic_pointer_cast<SkelEdgeData>(
@@ -6790,6 +6789,12 @@ SimpleStraightSkel::handleEdgeSplitEvent(EdgeSplitEventSPtr event,
     CGAL_SS3_CORE_TRACE_V(4, "######  Handle Edge Split Event  #######");
     CGAL_SS3_CORE_TRACE_V(4, "########################################");
 
+    // this must be done **BEFORE** the shift because after the shift there is
+    // an intersection between the two edges, and so the orientation becomes coplanar
+    int orientation = KernelWrapper::orientation(line(event->getEdge1()),
+                                                 line(event->getEdge2()));
+    CGAL_assertion(orientation != 0);
+
     const CGAL::FT& event_offset = event->getOffset();
     polyhedron = shiftToEventOffset(polyhedron, current_offset, event_offset);
 
@@ -6817,7 +6822,8 @@ SimpleStraightSkel::handleEdgeSplitEvent(EdgeSplitEventSPtr event,
         edges[i] = Edge::create(vertices[i], vertices[(i+1)%4]);
         polyhedron->addEdge(edges[i]);
     }
-    if (event->getEdgeOrientation() > 0) {
+
+    if (orientation > 0) {
         edges[0]->setFacetL(edge_2->getFacetR());
         edges[0]->setFacetR(edge_1->getFacetR());
         edges[1]->setFacetL(edge_2->getFacetL());

@@ -80,14 +80,6 @@ void EdgeSplitEvent::setEdge2(EdgeSPtr edge2) {
     this->neighborhood2_ = EdgeFacetNeighborhood(edge2);
 }
 
-int EdgeSplitEvent::getEdgeOrientation() const {
-    return edge_orientation_;
-}
-
-void EdgeSplitEvent::setEdgeOrientation(int edge_orientation) {
-    this->edge_orientation_ = edge_orientation;
-}
-
 void EdgeSplitEvent::setHighlight(bool highlight) {
     EdgeSPtr edge1 = getEdge1();
     EdgeSPtr edge2 = getEdge2();
@@ -116,7 +108,6 @@ std::string EdgeSplitEvent::toString() const {
                                                  << edge1->getVertexDst()->getID() << "]"
          << "; edgeB=" << edge2->getID() << "[" << edge2->getVertexSrc()->getID() << "-"
                                                 << edge2->getVertexDst()->getID() << "])\n";
-    sstr << "\t(edge_orientation=" << edge_orientation_ << ")\n";
     return sstr.str();
 }
 
@@ -148,8 +139,7 @@ bool EdgeSplitEvent::operator==(const EdgeSplitEvent& other) const {
            ((edge1_.lock() == other.edge1_.lock() &&
              edge2_.lock() == other.edge2_.lock()) ||
             (edge1_.lock() == other.edge2_.lock() &&
-             edge2_.lock() == other.edge1_.lock())) &&
-           (edge_orientation_ == other.edge_orientation_);
+             edge2_.lock() == other.edge1_.lock()));
 }
 
 } } }

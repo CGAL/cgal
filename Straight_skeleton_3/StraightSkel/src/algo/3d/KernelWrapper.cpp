@@ -506,8 +506,11 @@ int KernelWrapper::orientation(Line3SPtr line1, Line3SPtr line2) {
     Plane3 plane(p0, p1, p2);
     Point3 point = p2 + dir2;
     CGAL::Oriented_side side = plane.oriented_side(point);
-    if (side == CGAL::ON_POSITIVE_SIDE) result = 1;
-    if (side == CGAL::ON_NEGATIVE_SIDE) result = -1;
+    if (side == CGAL::ON_POSITIVE_SIDE) {
+        result = 1;
+    } else if (side == CGAL::ON_NEGATIVE_SIDE) {
+        result = -1;
+    }
     return result;
 }
 
