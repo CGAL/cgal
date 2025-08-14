@@ -1,6 +1,7 @@
 #ifndef CGAL_DRAW_AOS_ARR_CREATE_PORTALS_H
 #define CGAL_DRAW_AOS_ARR_CREATE_PORTALS_H
 #include <utility>
+#include <variant>
 
 #include <boost/iterator/function_output_iterator.hpp>
 
@@ -41,16 +42,15 @@ public:
   using Feature_portals_map = unordered_flat_map<Feature_const, Portal_exit_vector>;
 
 public:
-  Arr_portals() {}
+  Arr_portals(const Arrangement& arr) { init(arr); }
 
-public:
-  Feature_portals_map create(const Arrangement& arr) const {
+private:
+  void init(const Arrangement& arr) {
     using Object_pair = std::pair<Object, Object>;
     using Vert_decomp_entry = std::pair<Vertex_const_handle, Object_pair>;
 
     Arr_graph_conn conn(arr);
     auto visited_ccbs = std::unordered_set<Vertex_const_handle>();
-    Feature_portals_map feature_portals;
 
     auto func_out_iter = boost::make_function_output_iterator([&](const Vert_decomp_entry& entry) {
       const auto& [vh, obj_pair] = entry;
@@ -62,24 +62,33 @@ public:
       if(Vertex_const_handle above_vh; CGAL::assign(above_vh, above_feat)) {
         // Skip vertex connected to vh
         if(conn.is_connected(above_vh, vh)) return;
-        const auto& [it, _] = feature_portals.try_emplace(above_vh, Portal_exit_vector{});
+        const auto& [it, _] = m_map.try_emplace(above_vh, Portal_exit_vector{});
         it->second.emplace_back(vh);
       } else if(Halfedge_const_handle above_he; CGAL::assign(above_he, above_feat)) {
+        // The given halfedge is always directed from right to left (exactly what we need).
         if(conn.is_connected((above_he)->source(), vh)) return;
-        const auto& [it, _] = feature_portals.try_emplace(above_he, Portal_exit_vector{});
+        const auto& [it, _] = m_map.try_emplace(above_he, Portal_exit_vector{});
         it->second.emplace_back(vh);
-      } else if(Face_const_handle above_fh; CGAL::assign(above_fh, above_feat))
-        // We don't create portals for the unbounded face in bounded arrangements.
-        CGAL_assertion(above_fh->is_unbounded() && !above_fh->has_outer_ccb());
-      else
+      } else // Don't handle faces.
         return;
 
       visited_ccbs.insert(ccb_main_vertex);
     });
 
     decompose(arr, func_out_iter);
-    return feature_portals;
+
+    // reverse portals on each halfedge, as they are stored in left-to-right order
+    for(auto& [feat, portals] : m_map) {
+      if(!std::holds_alternative<Halfedge_const_handle>(feat)) continue;
+      std::reverse(portals.begin(), portals.end());
+    }
   }
+
+public:
+  const Feature_portals_map& get() const { return m_map; }
+
+private:
+  Feature_portals_map m_map;
 };
 
 } // namespace draw_aos
