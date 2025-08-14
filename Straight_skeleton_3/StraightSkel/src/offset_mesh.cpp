@@ -515,7 +515,7 @@ int main(int argc, char** argv)
     return EXIT_FAILURE;
   }
 
-#if 0 // not an issue, but sometimes useful to debug
+#if 0 // not an issue for the algorithm, but sometimes useful to analyze the input
   auto vol_id_map = sm.add_property_map<face_descriptor, std::size_t>().first;
   std::size_t vccn = PMP::volume_connected_components(sm, vol_id_map,
                                                       CGAL::parameters::do_orientation_tests(false));

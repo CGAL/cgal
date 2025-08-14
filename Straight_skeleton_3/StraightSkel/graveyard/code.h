@@ -10107,5 +10107,92 @@ if ((src_y == CGAL::SMALLER && dst_y == CGAL::LARGER) ||
 // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
 
 
+void SimpleStraightSkel::collectEdgeSplitEventsWithBoxD(PolyhedronSPtr polyhedron,
+                                                        const CGAL::FT& current_offset,
+                                                        const std::optional<CGAL::FT>& offset_future_bound,
+                                                        PQ& queue)
+{
+    CGAL_precondition(CGAL::is_zero(current_offset));
+    CGAL_precondition(offset_future_bound.has_value());
+
+#ifdef CGAL_SS3_RUN_TIMERS
+    CGAL::Real_timer timer;
+    timer.start();
+#endif
+
+    std::list<EdgeSPtr> reflex_edges;
+    auto fill_reflex_edges = [&](const std::list<EdgeSPtr>& edges,
+                                 std::list<EdgeSPtr>& reflex_edges) {
+        for (EdgeSPtr edge : edges) {
+            if (isReflex(edge)) {
+              reflex_edges.push_back(edge);
+            }
+        }
+    };
+
+    fill_reflex_edges(polyhedron->edges(), reflex_edges);
+
+    CGAL_SS3_CORE_TRACE_V(1, "  " << reflex_edges.size() << " reflex edges");
+
+#ifdef CGAL_SS3_RUN_TIMERS
+    CGAL_SS3_CORE_TRACE_V(1, "  Collect reflex edges: " << timer.time());
+#endif
+
+    using Box = CGAL::Box_intersection_d::Box_with_handle_d<double, 3, EdgeSPtr>;
+
+    std::vector<Box> boxes;
+    boxes.reserve(reflex_edges.size());
+
+    for (EdgeSPtr edge : reflex_edges) {
+        CGAL::Bbox_3 b1;
+        b1 += edge->getVertexSrc()->getPoint()->bbox();
+        b1 += edge->getVertexDst()->getPoint()->bbox();
+        b1 += getFinalPoint(edge->getVertexSrc(), *offset_future_bound)->bbox();
+        b1 += getFinalPoint(edge->getVertexDst(), *offset_future_bound)->bbox();
+
+        boxes.emplace_back(b1, edge);
+    }
+
+    std::cout << "Boxes #" << boxes.size() << std::endl;
+
+    auto callback = [&](const Box& box_a, const Box& box_b)
+    {
+        EdgeSPtr edge_1 = box_a.handle();
+        EdgeSPtr edge_2 = box_b.handle();
+        return collectEdgeSplitEventsWithBoxD(edge_1, edge_2, polyhderon, use_canonical_event_reps,
+                                              current_offset, offset_future_bound, queue);
+    };
+
+    std::cout << "Queue before: " << queue.size() << std::endl;
+    CGAL::box_self_intersection_d(boxes.begin(), boxes.end(), callback);
+    std::cout << "Queue after: " << queue.size() << std::endl;
+
+#ifdef CGAL_SS3_RUN_TIMERS
+    timer.stop();
+    CGAL_SS3_CORE_TRACE_V(4, "  Sought Edge Split Events in: " << timer.time());
+#endif
+}
+
+
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+
+
+
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+
+
+
+
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+
+
+
+
+
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+
+
+
+
 
 // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //

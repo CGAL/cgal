@@ -18,7 +18,6 @@
 
 // @fixme:
 // - must delay more combinatorial checks to pop time?
-// - customer data w/ no facet merging had bugs
 
 // @fixme later:
 // - Fix simultaneous events still happening sometimes (likely the same event multiple times
@@ -2884,7 +2883,6 @@ void SimpleStraightSkel::collectFlipVertexEvents(const std::list<VertexSPtr>& ve
     timer.stop();
     CGAL_SS3_CORE_TRACE_V(4, "  Sought Flip Vertex Events in: " << timer.time());
 #endif
-
 }
 
 void SimpleStraightSkel::collectFlipVertexEvents(PolyhedronSPtr polyhedron,
@@ -2974,7 +2972,7 @@ void SimpleStraightSkel::collectSurfaceEvent(EdgeSPtr edge_1,
     // convex split event are performed at pop time - see isActualSurfaceEvent()
 
     // let's just check if bboxes overlap first
-    if (offset_future_bound) {
+    if (offset_future_bound.has_value()) {
         CGAL::Bbox_3 b1;
         b1 += edge_1->getVertexSrc()->getPoint()->bbox();
         b1 += edge_1->getVertexDst()->getPoint()->bbox();
@@ -3072,7 +3070,7 @@ void SimpleStraightSkel::collectSurfaceEvents(const std::list<EdgeSPtr>& edges,
         // not outside of the loop just because maybe one day this will be called
         // as the first collect function with an initial bound that gets updated...
         CGAL::Bbox_3 b1;
-        if (offset_future_bound) {
+        if (offset_future_bound.has_value()) {
             b1 += edge_1->getVertexSrc()->getPoint()->bbox();
             b1 += edge_1->getVertexDst()->getPoint()->bbox();
             b1 += getFinalPoint(edge_1->getVertexSrc(), *offset_future_bound)->bbox();
@@ -3148,7 +3146,7 @@ void SimpleStraightSkel::collectSurfaceEvents(const std::list<EdgeSPtr>& edges,
             // convex split even checks are performed at pop time - see isActualSurfaceEvent()
 
             // let's just check if bboxes overlap first
-            if (offset_future_bound) {
+            if (offset_future_bound.has_value()) {
                 CGAL::Bbox_3 b2;
                 b2 += edge_2->getVertexSrc()->getPoint()->bbox();
                 b2 += edge_2->getVertexDst()->getPoint()->bbox();
@@ -3629,7 +3627,7 @@ void SimpleStraightSkel::collectEdgeSplitEvents(const std::list<EdgeSPtr>& edges
         FacetSPtr facet_1_dst = edge_1->getFacetDst();
 
         CGAL::Bbox_3 b1;
-        if (offset_future_bound) {
+        if (offset_future_bound.has_value()) {
             b1 += edge_1->getVertexSrc()->getPoint()->bbox();
             b1 += edge_1->getVertexDst()->getPoint()->bbox();
             b1 += getFinalPoint(edge_1->getVertexSrc(), *offset_future_bound)->bbox();
@@ -3694,7 +3692,7 @@ void SimpleStraightSkel::collectEdgeSplitEvents(const std::list<EdgeSPtr>& edges
             //   will be treated first and the event will be invalid
 
             // let's just check if bboxes overlap first
-            if (offset_future_bound) {
+            if (offset_future_bound.has_value()) {
                 CGAL::Bbox_3 b2;
                 b2 += edge_2->getVertexSrc()->getPoint()->bbox();
                 b2 += edge_2->getVertexDst()->getPoint()->bbox();
@@ -3857,7 +3855,7 @@ void SimpleStraightSkel::collectPierceEvents(const std::list<VertexSPtr>& vertic
 
                 // not outside of the loop just because maybe one day this might get called
                 // as the first collect function with an initial bound that gets updated...
-                if (offset_future_bound) {
+                if (offset_future_bound.has_value()) {
                     Point3SPtr shifted_pt = getFinalPoint(vertex, *offset_future_bound);
                     Plane3SPtr shifted_plane = getFinalPlane(facet, *offset_future_bound);
 
@@ -4167,8 +4165,6 @@ void SimpleStraightSkel::collectLocalEvents(PolyhedronSPtr polyhedron,
 {
     CGAL_SS3_CORE_TRACE_V(2, "collectLocalEvents(" << current_offset << ")");
 
-    // return collectEvents(polyhedron, current_offset, offset_future_bound, queue);
-
 #ifdef CGAL_SS3_RUN_TIMERS
     CGAL::Real_timer timer;
     timer.start();
@@ -4177,6 +4173,7 @@ void SimpleStraightSkel::collectLocalEvents(PolyhedronSPtr polyhedron,
     CGAL_SS3_CORE_TRACE_V(16, "Past bound = " << current_offset);
     CGAL_SS3_CORE_TRACE_IF(offset_future_bound, 4, "Initial future bound = " << *offset_future_bound);
 
+    // == VANISH EVENTS ==
     {
         std::list<EdgeSPtr> local_edges(post_op_edges_.begin(), post_op_edges_.end());
 
@@ -4202,7 +4199,7 @@ void SimpleStraightSkel::collectLocalEvents(PolyhedronSPtr polyhedron,
 #endif
     }
 
-    // V-V events
+    // == VERTEX-VERTEX EVENTS ==
     {
 #if 1
         // for these three events, we need to look farther than the vertices that were involved
@@ -4373,7 +4370,6 @@ void SimpleStraightSkel::collectLocalEvents(PolyhedronSPtr polyhedron,
         // Note that even events that split and create multiple CCs (like an edge merge)
         // do not create new facets, they only create new edge cycles within the same facet.
         std::list<EdgeSPtr> local_edges_EE(post_op_edges_.begin(), post_op_edges_.end());
-
 
         CGAL_SS3_CORE_TRACE_V(8, "Local Edges for Edge Split Events (" << local_edges_EE.size() << ")");
         CGAL_SS3_CORE_TRACE_CODE(for(EdgeSPtr e : local_edges_EE))
@@ -4657,6 +4653,7 @@ SimpleStraightSkel::handleVanishEvent(VanishEventSPtr event,
 
     NodeSPtr node = event->getNode();
     EdgeSPtr edge = event->getEdge();
+    const CGAL::FT& event_offset = event->getOffset();
     Point3SPtr point = node->getPoint();
 
     // @todo would nice:
@@ -5325,7 +5322,7 @@ SimpleStraightSkel::handleEdgeEvent(EdgeEventSPtr event,
             edges[2]->replaceVertexDst(vertex_src);
         }
 
-        if (offset_future_bound) {
+        if (offset_future_bound.has_value()) {
             vertex_src->final_point_ = nullptr;
             vertex_dst->final_point_ = nullptr;
         }
@@ -5467,7 +5464,7 @@ SimpleStraightSkel::handleEdgeMergeEvent(EdgeMergeEventSPtr event,
     }
     polyhedron->removeVertex(vertex_2);
 
-    if (offset_future_bound) {
+    if (offset_future_bound.has_value()) {
         vertex->final_point_ = nullptr;
     }
 
@@ -5558,7 +5555,7 @@ SimpleStraightSkel::handleTriangleEvent(TriangleEventSPtr event,
     }
     polyhedron->addVertex(new_vertex);
 
-    if (offset_future_bound) {
+    if (offset_future_bound.has_value()) {
         new_vertex->final_point_ = nullptr;
     }
 
@@ -6017,7 +6014,7 @@ SimpleStraightSkel::handleVertexEvent(VertexEventSPtr event,
         edge_21->replaceVertexDst(vertex_1);
     }
 
-    if (offset_future_bound) {
+    if (offset_future_bound.has_value()) {
         vertex_1->final_point_ = nullptr;
         vertex_2->final_point_ = nullptr;
     }
@@ -6163,7 +6160,7 @@ SimpleStraightSkel::handleFlipVertexEvent(FlipVertexEventSPtr event,
         edge_2->replaceVertexDst(vertex_1);
     }
 
-    if (offset_future_bound) {
+    if (offset_future_bound.has_value()) {
         vertex_1->final_point_ = nullptr;
         vertex_2->final_point_ = nullptr;
     }
@@ -6340,7 +6337,7 @@ SimpleStraightSkel::handleSurfaceEvent(SurfaceEventSPtr event,
         }
     }
 
-    if (offset_future_bound) {
+    if (offset_future_bound.has_value()) {
         vertex->final_point_ = nullptr;
         vertex_21->final_point_ = nullptr;
         vertex_22->final_point_ = nullptr;
@@ -6524,7 +6521,7 @@ SimpleStraightSkel::handlePolyhedronSplitEvent(PolyhedronSplitEventSPtr event,
         edge_22->replaceFacetR(edge_2->getFacetR());
     }
 
-    if (offset_future_bound) {
+    if (offset_future_bound.has_value()) {
         vertex_l->final_point_ = nullptr;
         vertex_r->final_point_ = nullptr;
     }
@@ -6732,7 +6729,7 @@ SimpleStraightSkel::handleSplitMergeEvent(SplitMergeEventSPtr event,
     edge_tomerge_2->replaceFacetL(edge_tosplit->getFacetL());
     edge_tomerge_2->replaceFacetR(edge_tosplit->getFacetR());
 
-    if (offset_future_bound) {
+    if (offset_future_bound.has_value()) {
         vertex_1->final_point_ = nullptr;
         vertex_2->final_point_ = nullptr;
     }
@@ -6852,7 +6849,7 @@ SimpleStraightSkel::handleEdgeSplitEvent(EdgeSplitEventSPtr event,
         edges[i]->getFacetR()->addEdge(edges[i]);
     }
 
-    if (offset_future_bound) {
+    if (offset_future_bound.has_value()) {
         for (std::size_t i=0; i<4; ++i) {
             vertices[i]->final_point_ = nullptr;
         }
@@ -7082,7 +7079,7 @@ SimpleStraightSkel::handlePierceEvent(PierceEventSPtr event,
         polyhedron->addEdge(edges[i]);
     }
 
-    if (offset_future_bound) {
+    if (offset_future_bound.has_value()) {
         for (std::size_t i=0; i<3; ++i) {
             vertices[i]->final_point_ = nullptr;
         }
