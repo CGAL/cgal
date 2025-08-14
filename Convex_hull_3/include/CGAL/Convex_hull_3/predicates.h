@@ -526,6 +526,7 @@ Vector_3 dir_to_origin(boost::container::small_vector<Vector_3, 4>& simplex) {
     return -simplex[0];
 
   if(simplex.size()==2){
+
     auto a = O+simplex[0];
     auto b = O+simplex[1];
     FT ratio=dot(b-a, O-a);
@@ -551,8 +552,11 @@ Vector_3 dir_to_origin(boost::container::small_vector<Vector_3, 4>& simplex) {
     Vector_3 bc = c-b;
 
     Vector_3 n = cp(ab,-bc);
-    if(n==NULL_VECTOR)
+    if(n==NULL_VECTOR){
+      std::swap(simplex[1],simplex[2]);
+      simplex.pop_back();
       return -cp(cp(ab, a-O), ab);
+    }
 
     FT ratio_ab=dot(ab, O-a)/ab.squared_length();
     FT ratio_ca=dot(ca, O-c)/ca.squared_length();
@@ -679,17 +683,20 @@ Vector_3 dir_to_origin(boost::container::small_vector<Vector_3, 4>& simplex) {
   assert(0);
 }
 
-template<typename K>
+template<typename OK, typename K>
 struct GJK_do_intersect{
 
-  template<typename Convex, typename NamedParameter1, typename NamedParameter2>
-  typename K::FT operator()(const Convex &a, const Convex &b, const NamedParameter1 &np1, const NamedParameter2 &np2) const{
+  template<typename Convex, typename NamedParameters1, typename NamedParameters2>
+  typename OK::FT operator()(const Convex &a, const Convex &b, const NamedParameters1 &np1, const NamedParameters2 &np2) const{
     using Point_3 = typename K::Point_3;
     using Vector_3= typename K::Vector_3;
     using Triangle_3= typename K::Triangle_3;
+    using Plane_3= typename K::Plane_3;
     using FT = typename K::FT;
     const int INTER_MAX_ITER=0;
     boost::container::small_vector<Vector_3, 4> simplex;
+
+    Cartesian_converter<K, OK> converter;
 
     auto cp=K().construct_cross_product_vector_3_object();
     auto dot=K().compute_scalar_product_3_object();
@@ -699,17 +706,16 @@ struct GJK_do_intersect{
 
     unsigned long planeStatPerPair = 0;
     do {
-      ++planeStatPerPair;
       // std::cout << "\nstep " << planeStatPerPair << std::endl;
       // for(auto v: simplex)
       //   std::cout << v << std::endl;
 
       Vector_3 dir=dir_to_origin<K>(simplex);
-      if(dir==NULL_VECTOR) return FT(0);
+      if(dir==NULL_VECTOR) return 0;
 
       Vector_3 sp = extreme_point_3(a, dir.direction(), np1) - extreme_point_3(b, -dir.direction(), np2);
-      if(sp==NULL_VECTOR) return FT(0);
-      if(INTER_MAX_ITER!=0 && (++planeStatPerPair >= INTER_MAX_ITER)) return FT(0);
+      if(sp==NULL_VECTOR) return 0;
+      if(INTER_MAX_ITER!=0 && (++planeStatPerPair >= INTER_MAX_ITER)) return 0;
 
       bool closest_simplex=false;
       for(size_t i=0; i<simplex.size(); ++i)
@@ -718,17 +724,19 @@ struct GJK_do_intersect{
 
       if(closest_simplex)
       {
+        FT dist;
         if(simplex.size()>=3)
-          return squared_distance(Triangle_3(origin+simplex[0],origin+simplex[1],origin+simplex[2]), origin);
+          dist= squared_distance(Plane_3(origin+simplex[0],origin+simplex[1],origin+simplex[2]), origin);
         else if(simplex.size()==2)
-          return squared_distance(typename K::Segment_3(origin+simplex[0],origin+simplex[1]), origin);
-        return squared_distance(origin+simplex[0], origin);
+          dist= squared_distance(typename K::Line_3(origin+simplex[0],origin+simplex[1]), origin);
+        else
+          dist= squared_distance(origin+simplex[0], origin);
+        return converter(dist);
       }
 
       if(simplex.size()==4) simplex.pop_back();
       simplex.push_back(sp);
 
-      assert(planeStatPerPair<=30);
     } while( true );
     return true;
   }
@@ -746,8 +754,12 @@ struct Do_intersect_traits;
 template<typename K, typename IK, typename Converter>
 struct Do_intersect_traits<K, IK, Converter, false>{
   typedef predicates_impl::Functor_do_intersect<K> Do_intersect;
+  typedef predicates_impl::GJK_do_intersect<K, K> Separation_distance;
   Do_intersect do_intersect_object() const {
     return Do_intersect();
+  }
+  Separation_distance separation_distance_object() const {
+    return Separation_distance();
   }
 };
 template<typename K, typename Converter>
@@ -755,6 +767,8 @@ struct Do_intersect_traits<K, K, Converter, true> {
   typedef typename K::Vector_3 Vector_3;
   typedef typename K::Exact_kernel::Vector_3 EVector_3;
   typedef typename K::Approximate_kernel::Vector_3 FVector_3;
+
+  typedef Exact_predicates_exact_constructions_kernel EPECK;
 
   typedef Cartesian_converter<K, K>  IdentityConverter;
   typedef typename K::C2E C2E;
@@ -770,12 +784,18 @@ struct Do_intersect_traits<K, K, Converter, true> {
               IdentityConverter,
               IdentityConverter>  Do_intersect;
 
+  typedef predicates_impl::GJK_do_intersect<K, EPECK> Separation_distance;
+
   Do_intersect do_intersect_object() const
   {
     typename Exact_traits::Do_intersect pe = Exact_traits().do_intersect_object();
     typename Filtering_traits::Do_intersect pf = Filtering_traits().do_intersect_object();
 
     return Do_intersect(pe, pf);
+  }
+
+  Separation_distance separation_distance_object() const {
+    return Separation_distance();
   }
 };
 
@@ -932,7 +952,6 @@ bool do_intersect(const Convex1& c1, const Convex2& c2,
     GT gt = choose_parameter<GT>(get_parameter(np1, internal_np::geom_traits));
     return Do_intersect_traits<GT>().do_intersect_object()(c1, c2, np1, np2);
   } else if constexpr(CGAL::IO::internal::is_Range_v<Convex1>){
-  // if constexpr(CGAL::IO::internal::is_Range_v<Convex1>){
     using NP_helper= Point_set_processing_3_np_helper<Convex1, NamedParameters_1>;
     using GT= typename NP_helper::Geom_traits;
     GT gt = NP_helper::get_geom_traits(c1, np1);
@@ -1153,21 +1172,17 @@ separation_distance(const Convex1& c1, const Convex2& c2,
     using GetGeomTraits = GetGeomTraits<typename Convex1::Mesh, NamedParameters_1>;
     using GT= typename GetGeomTraits::type;
     GT gt = choose_parameter<GT>(get_parameter(np1, internal_np::geom_traits));
-    return CGAL::Convex_hull_3::predicates_impl::GJK_do_intersect<GT>()(c1, c2, np1, np2);
-    // return Do_intersect_traits<GT>().do_intersect_object()(c1, c2, np1, np2);
+    return Do_intersect_traits<GT>().separation_distance_object()(c1, c2, np1, np2);
   } else if constexpr(CGAL::IO::internal::is_Range_v<Convex1>){
-  // if constexpr(CGAL::IO::internal::is_Range_v<Convex1>){
     using NP_helper= Point_set_processing_3_np_helper<Convex1, NamedParameters_1>;
     using GT= typename NP_helper::Geom_traits;
     GT gt = NP_helper::get_geom_traits(c1, np1);
-    return CGAL::Convex_hull_3::predicates_impl::GJK_do_intersect<GT>()(c1, c2, np1, np2);
-    // return Do_intersect_traits<GT>().do_intersect_object()(c1, c2, np1, np2);
+    return Do_intersect_traits<GT>().separation_distance_object()(c1, c2, np1, np2);
   } else {
     using GetGeomTraits = GetGeomTraits<Convex1, NamedParameters_1>;
     using GT= typename GetGeomTraits::type;
     GT gt = choose_parameter<GT>(get_parameter(np1, internal_np::geom_traits));
-    return CGAL::Convex_hull_3::predicates_impl::GJK_do_intersect<GT>()(c1, c2, np1, np2);
-    // return Do_intersect_traits<GT>().do_intersect_object()(c1, c2, np1, np2);
+    return Do_intersect_traits<GT>().separation_distance_object()(c1, c2, np1, np2);
   }
   return true;
 }

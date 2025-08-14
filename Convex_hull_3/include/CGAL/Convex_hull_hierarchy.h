@@ -14,8 +14,10 @@
 #ifndef CGAL_CONVEX_HULL_HIERARCHY_3_H
 #define CGAL_CONVEX_HULL_HIERARCHY_3_H
 
-#include <CGAL/Named_function_parameters.h>
 #include <CGAL/license/Convex_hull_3.h>
+
+#include <CGAL/Named_function_parameters.h>
+#include <CGAL/convex_hull_3.h>
 #include <vector>
 
 #ifdef CGAL_PROFILE_CONVEX_HULL_DO_INTERSECT

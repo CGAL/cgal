@@ -330,8 +330,8 @@ int main(int argc, char** argv)
   std::cout << std::setprecision(17);
 
   // Test<DOUBLE>().full_test(r); //Too hard
-  // Test<EPICK, CGAL::Surface_mesh<EPICK::Point_3> >().full_test(r);
-  // Test<EPICK, CGAL::Polyhedron_3<EPICK> >().full_test(r);
+  Test<EPICK, CGAL::Surface_mesh<EPICK::Point_3> >().full_test(r);
+  Test<EPICK, CGAL::Polyhedron_3<EPICK> >().full_test(r);
   Test<EPECK, CGAL::Surface_mesh<EPECK::Point_3> >().full_test(r);
   // Test<EPECK_with_sqrt>().test_implicit_function(r,10);
   return 0;
