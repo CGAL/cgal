@@ -331,7 +331,7 @@ bool Surface_meshIO::save(const PolyhedronSPtr& polyhedron,
                                        << fh->vertex(2)->point() << std::endl;
                 CGAL::IO::write_polygon_mesh("results/failed.off", sm, CGAL::parameters::stream_precision(17));
 
-                bool cannot_add = CGAL::Euler::can_add_face(vr, sm, true /*verbose*/);
+                CGAL_assertion_code(bool cannot_add = CGAL::Euler::can_add_face(vr, sm, true /*verbose*/);)
                 CGAL_assertion(!cannot_add);
 
                 return false;
