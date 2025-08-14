@@ -36,7 +36,7 @@ public:
    * \return The past-the-end iterator of the output container.
    *
    * \pre Dereferencing `oi` must yield an object of type
-   *      `Arr_conic_traits_2::Approximate_point_2`.
+   *      `AosApproximateTraits_2::Approximate_point_2`.
    */
   template <typename OutputIterator>
   OutputIterator operator()(const X_monotone_curve_2& xcv, double error,
