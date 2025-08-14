@@ -53,10 +53,10 @@ namespace HDVF {
 
  \tparam CoefficientType a model of the `Ring` concept (ring used for homology computation).
  \tparam ComplexType a model of the `AbstractChainComplex` concept (type of the underlying chain complex).
- \tparam Degree_type the scalar type of degrees.
+ \tparam DegreeType the scalar type of degrees.
  */
 
-template <typename CoefficientType, typename ComplexType, typename Degree_type>
+template <typename CoefficientType, typename ComplexType, typename DegreeType>
 class Filtration_core
 {
 public:
@@ -70,7 +70,7 @@ public:
      */
     typedef struct {
         Cell_index_dimension cell_dim ;
-        Degree_type degree ;
+        DegreeType degree ;
     } Filtration_iter_value ;
 
 protected:
@@ -79,7 +79,7 @@ protected:
     /** \brief Vector of cells of the filtration (full ordering of cells). */
     std::vector<Cell_index_dimension> _filtration ;
     /** \brief Vector of degrees of cells along the filtration. */
-    std::vector<Degree_type> _deg ;
+    std::vector<DegreeType> _deg ;
 
     /** \brief Map from cells to their index in the filtration. */
     std::map<Cell_index_dimension,std::size_t> _cell_to_t ;
@@ -119,7 +119,7 @@ public:
      * \param[in] filtration An ordering of the cells of `K` encoded as a vector of its cells.
      * \param[in] deg The (increasing) vector of cells degrees.
      */
-    Filtration_core(const ComplexType& K, const std::vector<Cell_index_dimension>& filtration, const std::vector<Degree_type>& deg) : _K(K), _filtration(filtration), _deg(deg)
+    Filtration_core(const ComplexType& K, const std::vector<Cell_index_dimension>& filtration, const std::vector<DegreeType>& deg) : _K(K), _filtration(filtration), _deg(deg)
     {
         if (!is_valid())
             throw ("Invalid filtration, Filtration_core constructor failed");
@@ -174,7 +174,7 @@ public:
 
         /*! \brief Get degree associated to current iterator.
          */
-        Degree_type degree () const { return _f._deg.at(_i); }
+        DegreeType degree () const { return _f._deg.at(_i); }
 
         /*!
          * \brief Prefix incrementation. Moves to next cell in the filtration.
@@ -235,7 +235,7 @@ public:
 
     /*! \brief Gets the degree of the `i`th element of the filtration.
      */
-    Degree_type degree (std::size_t i) const { return _deg.at(i); }
+    DegreeType degree (std::size_t i) const { return _deg.at(i); }
 
     // Output filtration
     /*! \brief Overload of the `<<`operator for filtrations.
@@ -288,8 +288,8 @@ protected:
     friend class Hdvf_persistence ;
 };
 
-template <typename CoefficientType, typename ComplexType, typename Degree_type>
-void Filtration_core<CoefficientType, ComplexType, Degree_type>::build_filtration_structure()
+template <typename CoefficientType, typename ComplexType, typename DegreeType>
+void Filtration_core<CoefficientType, ComplexType, DegreeType>::build_filtration_structure()
 {
     for (std::size_t i = 0; i<_filtration.size(); ++i)
     {
@@ -299,8 +299,8 @@ void Filtration_core<CoefficientType, ComplexType, Degree_type>::build_filtratio
     }
 }
 
-template <typename CoefficientType, typename ComplexType, typename Degree_type>
-bool Filtration_core<CoefficientType, ComplexType, Degree_type>::is_valid() const
+template <typename CoefficientType, typename ComplexType, typename DegreeType>
+bool Filtration_core<CoefficientType, ComplexType, DegreeType>::is_valid() const
 {
     bool valid = true ;
     for (std::size_t i=0; i<_filtration.size() && valid; ++i)

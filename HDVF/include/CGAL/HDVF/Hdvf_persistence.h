@@ -55,31 +55,31 @@ typedef std::pair<Cell_index_dimension, Cell_index_dimension> CellsPerInterval ;
  *
  * For "infinite" intervals borne at degree d, the interval is set to (d,d-1)
  */
-template <typename DegType>
-using DegreePerIntervalT =  std::pair<DegType,DegType> ;
+template <typename DegreeType>
+using DegreePerIntervalT =  std::pair<DegreeType,DegreeType> ;
 
 /*! \brief Template for (full) persistent interval data:
  * - First element: persistent interval filtration indices
  * - Second element: persistent interval cells
  * - Third element: persistent interval degrees
  */
-template <typename DegType>
-using PerHoleT = std::tuple<FiltrIndexPerInterval, CellsPerInterval, DegreePerIntervalT<DegType> > ;
+template <typename DegreeType>
+using PerHoleT = std::tuple<FiltrIndexPerInterval, CellsPerInterval, DegreePerIntervalT<DegreeType> > ;
 
 /*! \brief Overload of the `<<` operator to display persistent intervals (that is PerHoleT).
  *
  * Format:
  *      birth time (cell, dim) -> death time (cell, dim) / degree duration
  */
-template <typename DegType>
-std::ostream& operator<< (std::ostream& out, const PerHoleT<DegType>& hole)
+template <typename DegreeType>
+std::ostream& operator<< (std::ostream& out, const PerHoleT<DegreeType>& hole)
 {
     // time (cell, dim) -> time (cell, dim) / degree duration
     const FiltrIndexPerInterval per_int(std::get<0>(hole)) ;
     const CellsPerInterval per_int_cells(std::get<1>(hole)) ;
-    const DegreePerIntervalT<DegType> per_int_deg(std::get<2>(hole)) ;
+    const DegreePerIntervalT<DegreeType> per_int_deg(std::get<2>(hole)) ;
 
-    const DegType deg_duration(per_int_deg.second-per_int_deg.first) ;
+    const DegreeType deg_duration(per_int_deg.second-per_int_deg.first) ;
     if (deg_duration >= 0) // finite interval
     {
         out << "[" << per_int.first << " (" << per_int_cells.first.first << ", " << per_int_cells.first.second << ") -> " ;
@@ -135,12 +135,12 @@ std::ostream& operator<< (std::ostream& out, const PerHoleT<DegType>& hole)
 
  \tparam CoefficientType a model of the `Ring` concept  providing the ring used to compute homology.
  \tparam ComplexType a model of the `AbstractChainComplex` concept, providing the type of abstract chain complex used.
- \tparam DegType a scalar data type used for the degrees of the filtration.
+ \tparam DegreeType a scalar data type used for the degrees of the filtration.
  \tparam FiltrationType a model of the `Filtration` concept, providing the filtration used to compute persistence.
 
  */
 
-template<typename CoefficientType, typename ComplexType, typename DegType, typename FiltrationType >
+template<typename CoefficientType, typename ComplexType, typename DegreeType, typename FiltrationType >
 class Hdvf_persistence : public Hdvf_core<CoefficientType,ComplexType, OSM::Sparse_chain, OSM::Sub_sparse_matrix>
 {
 public:
@@ -174,13 +174,13 @@ public:
      */
     typedef FiltrationType Filtration;
 
-    /*! Instanciation of `DegreePerIntervalT` (persistant intervals degrees) for `DegType`.
+    /*! Instanciation of `DegreePerIntervalT` (persistant intervals degrees) for `DegreeType`.
      */
-    typedef DegreePerIntervalT<DegType> DegreePerInterval;
+    typedef DegreePerIntervalT<DegreeType> DegreePerInterval;
 
-    /*! Instanciation of `PerHoleT` (full persistant intervals informations) for `DegType`.
+    /*! Instanciation of `PerHoleT` (full persistant intervals informations) for `DegreeType`.
      */
-    typedef PerHoleT<DegType> PerHole;
+    typedef PerHoleT<DegreeType> PerHole;
 
     /*! Type for `PRIMARY`/`SECONDARY`/`CRITICAL` labels export
      *      Encoding used:
@@ -302,7 +302,7 @@ public:
                 const size_t ki(_per_to_K.at(q).at(i)) ; // K index
                 const Cell_index_dimension c(ki,q) ;
                 const size_t ti(_f._cell_to_t.at(c)) ;
-                const DegType di(_f._deg.at(i)) ;
+                const DegreeType di(_f._deg.at(i)) ;
                 FiltrIndexPerInterval per_int(ti,_f.size()) ;
                 Cell_index_dimension inf(this->_K.number_of_cells(q+1),q+1) ;
                 CellsPerInterval per_int_cell(c,inf) ;
@@ -333,7 +333,7 @@ public:
      *
      * \param[in] hole Persistent interval considered for duration computation
      */
-    DegType hole_duration (const PerHole hole) const
+    DegreeType hole_duration (const PerHole hole) const
     {
         const DegreePerInterval per_int_deg(std::get<2>(hole)) ;
         // Test if the interval is infinite
@@ -675,8 +675,8 @@ private:
 } ;
 
 
-template<typename CoefficientType, typename ComplexType, typename DegType, typename FiltrationType>
-Hdvf_persistence<CoefficientType, ComplexType, DegType, FiltrationType>::Hdvf_persistence(const ComplexType& K, const FiltrationType& f, int hdvf_opt, bool with_export) : Hdvf_core<CoefficientType,ComplexType, OSM::Sparse_chain, OSM::Sub_sparse_matrix>(K,hdvf_opt), _f(f), _with_export(with_export), _t(0)
+template<typename CoefficientType, typename ComplexType, typename DegreeType, typename FiltrationType>
+Hdvf_persistence<CoefficientType, ComplexType, DegreeType, FiltrationType>::Hdvf_persistence(const ComplexType& K, const FiltrationType& f, int hdvf_opt, bool with_export) : Hdvf_core<CoefficientType,ComplexType, OSM::Sparse_chain, OSM::Sub_sparse_matrix>(K,hdvf_opt), _f(f), _with_export(with_export), _t(0)
 {
     // Initialisation of _t_dim, _K_to_per and _per_to_K
     _t_dim.resize(this->_K.dimension()+1, 0) ;
@@ -742,8 +742,8 @@ Hdvf_persistence<CoefficientType, ComplexType, DegType, FiltrationType>::Hdvf_pe
         this->_DD_col.at(q).set_sub(_masks.at(q)) ;
 }
 
-template<typename CoefficientType, typename ComplexType, typename DegType, typename FiltrationType>
-Pair_cells Hdvf_persistence<CoefficientType, ComplexType, DegType, FiltrationType>::find_pair_A(bool &found)
+template<typename CoefficientType, typename ComplexType, typename DegreeType, typename FiltrationType>
+Pair_cells Hdvf_persistence<CoefficientType, ComplexType, DegreeType, FiltrationType>::find_pair_A(bool &found)
 {
     Pair_cells p ;
     // Get current cell (in the basis K)
@@ -785,8 +785,8 @@ Pair_cells Hdvf_persistence<CoefficientType, ComplexType, DegType, FiltrationTyp
     return p;
 }
 
-template<typename CoefficientType, typename ComplexType, typename DegType, typename FiltrationType>
-Pair_cells Hdvf_persistence<CoefficientType, ComplexType, DegType, FiltrationType>::step_persist(bool& found, bool verbose)
+template<typename CoefficientType, typename ComplexType, typename DegreeType, typename FiltrationType>
+Pair_cells Hdvf_persistence<CoefficientType, ComplexType, DegreeType, FiltrationType>::step_persist(bool& found, bool verbose)
 {
     // Compute next persistent pair
 

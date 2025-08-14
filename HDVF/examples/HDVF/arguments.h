@@ -100,11 +100,11 @@ inline Options read_arguments_hdvf(int argc, char** argv) {
         }
     }
 
-    if (word1.compare("hdvf") == 0)
+    if (word1.compare("main_hdvf") == 0)
         opt_res.algorithm = Algorithm::HDVF ;
-    else if (word1.compare("dual_hdvf") == 0)
+    else if (word1.compare("main_dual_hdvf") == 0)
         opt_res.algorithm = Algorithm::DualHDVF ;
-    else if (word1.compare("per_hdvf") == 0)
+    else if (word1.compare("main_per_hdvf") == 0)
         opt_res.algorithm = Algorithm::PerHDVF ;
     else
     {

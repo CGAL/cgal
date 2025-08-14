@@ -128,14 +128,14 @@ void hdvf_geometric_chain_complex_output_vtk (Hdvf_core<CoefType, ComplexType, _
  * \param[in] co_faces Export the cohomology generator or its co-faces (sometimes more convenient for visualisation).
  */
 
-template <typename CoefType, typename ComplexType, typename DegType, typename FiltrationType>
-void hdvf_persistence_geometric_chain_complex_output_vtk (Hdvf_persistence<CoefType, ComplexType, DegType, FiltrationType> &per_hdvf, ComplexType &complex, std::string filename = "per", bool co_faces = false)
+template <typename CoefType, typename ComplexType, typename DegreeType, typename FiltrationType>
+void hdvf_persistence_geometric_chain_complex_output_vtk (Hdvf_persistence<CoefType, ComplexType, DegreeType, FiltrationType> &per_hdvf, ComplexType &complex, std::string filename = "per", bool co_faces = false)
 {
     if (!per_hdvf.with_export())
         throw("Cannot export persistent generators to vtk: with_export is off!") ;
 
-    using perHDVFType = Hdvf_persistence<CoefType, ComplexType, DegType, FiltrationType>;
-    using PerHole = PerHoleT<DegType> ;
+    using perHDVFType = Hdvf_persistence<CoefType, ComplexType, DegreeType, FiltrationType>;
+    using PerHole = PerHoleT<DegreeType> ;
 
     // Export the filtration
     std::string out_file_filtration = filename+"_filtration.vtk" ;

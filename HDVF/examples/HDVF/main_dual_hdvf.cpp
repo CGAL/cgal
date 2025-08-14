@@ -127,7 +127,7 @@ void main_code (const Options &options)
 {
 #ifndef CUST_FILTRATION
     // Standard lower star filtration along x,y or z
-    using DegType = double ;
+    using DegreeType = double ;
 #else
     // TODO
 #endif

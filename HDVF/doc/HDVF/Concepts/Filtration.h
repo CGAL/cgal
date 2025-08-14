@@ -15,8 +15,8 @@ A filtration class provides:
 Cells are indexed along each dimension and thus identified by their index together with their dimension.
 
 \cgalHasModelsBegin
-\cgalHasModelsBare{`CGAL::HDVF::Filtration_core<Degree_type>`}
-\cgalHasModelsBare{`CGAL::HDVF::Filtration_lower_star<Degree_type>`}
+\cgalHasModelsBare{`CGAL::HDVF::Filtration_core<DegreeType>`}
+\cgalHasModelsBare{`CGAL::HDVF::Filtration_lower_star<DegreeType>`}
 \cgalHasModelsEnd
 
 */
@@ -26,7 +26,7 @@ class Filtration
 public:
     /*! \brief (Scalar) type of degrees.
      */
-    typedef unspecified_type Degree_type ;
+    typedef unspecified_type DegreeType ;
 
     /*! \brief Type for indexing uniquely a cell.
      *
@@ -42,7 +42,7 @@ public:
      */
     typedef struct {
         Cell_index_dimension cell_dim ;
-        Degree_type degree ;
+        DegreeType degree ;
     } Filtration_iter_value ;
 
 protected:
@@ -97,7 +97,7 @@ public:
 
         /*! Gets the degree associated to the iterator.
          */
-        Degree_type degree () const ;
+        DegreeType degree () const ;
 
         /*!
          * \brief Prefix incrementation.
@@ -143,7 +143,7 @@ public:
 
     /*! \brief Gets the degree of the `i`th element of the filtration.
      */
-    Degree_type degree (size_t i) const;
+    DegreeType degree (size_t i) const;
 
     // Filtration verification
     /*! \brief Checks that a filtration is valid.
