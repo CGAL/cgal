@@ -167,6 +167,7 @@ implemented as peripheral classes or as free (global) functions.
 \cgalCRPSection{Function Object Concepts}
 
 - `AosTraits::Approximate_2`
+- `AosTraits::ApproximatePoint_2`
 - `AosTraits::AreMergeable_2`
 - `AosTraits::CompareX_2`
 - `AosTraits::CompareXy_2`
