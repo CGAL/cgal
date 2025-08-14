@@ -114,6 +114,7 @@ Release date: July 2025
 -   Fixed the Landmark point-location strategy so that it can be applied to arrangements on a sphere.
 -   Fixed a bug in the extensions of vertex and halfedge types of the DCEL when used to instantiate Arrangement_with_history_2 or similar arrangement classes that derive from Arrangement_2.
 -   Fixed `do_intersect()` of a 2D Arrangement with a curve.
+-   Introduced a Geometry Traits concept for arrangement on surfaces that enables the provision of the disconnected portions of an approximation of a curve within a given bounding box.
 
 ### Triangulations
 -   All triangulations now offer the functions `point(Vertex_handle)` and `point(Simplex, int)`,
