@@ -1,4 +1,4 @@
-// Copyright (c) 2022 INRIA (France) and GeometryFactory (France).
+// Copyright (c) 2022 GeometryFactory (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -8,7 +8,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     : Samuel Hornus, Sébastien Loriot and Léo Valque
+// Author(s)     : Léo Valque
 //
 
 #ifndef CGAL_CONVEX_HULL_3_DISTANCE_H
