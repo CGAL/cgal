@@ -32,10 +32,8 @@ OutputIterator contact_points(const Eigen::MatrixXd &G, OutputIterator Pwns, Eig
 {
 
     typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-    typedef Kernel::FT FT;
     typedef Kernel::Point_3 Point;
     typedef Kernel::Vector_3 Vector;
-    typedef Kernel::Sphere_3 Sphere;
 
     Eigen::MatrixXi contact_indices;
     Eigen::MatrixXd res;
@@ -124,7 +122,7 @@ OutputIterator contact_points(const Eigen::MatrixXd &G, OutputIterator Pwns, Eig
     Eigen::MatrixXd Gn(nn,4);
     np=0;
     nn=0;
-    for (int i=0; i<input_spheres.size(); i++){
+    for (std::size_t i=0; i<input_spheres.size(); i++){
       const std::pair<Sphere,int>& sphere_and_orientation = input_spheres[i];
       const Sphere& sphere = sphere_and_orientation.first;
         if (sphere_and_orientation.second > 0){

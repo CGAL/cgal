@@ -49,7 +49,6 @@ void maximal_empty_spheres(const Eigen::MatrixXd& G,
   using Full_cell = CGAL::Triangulation_full_cell<Kernel, int, DS_full_cell>;
   using TDS = CGAL::Triangulation_data_structure<CGAL::Dimension_tag<D+2>, Vertex, Full_cell>;
   using Triangulation = CGAL::Triangulation<Kernel,TDS>;
-  using Vertex_handle = typename Triangulation::Vertex_handle;
 
   CGAL_precondition(D == G.cols()-1 && "Dimension does not match the number of columns in G");
 
@@ -106,7 +105,7 @@ void maximal_empty_spheres(const Eigen::MatrixXd& G,
   points.reserve(int(Np.rows()));
   std::vector<typename Kernel::FT> p_;
   p_.reserve(D+2);
-  for (int i=0; i<Np.rows(); ++i) {
+  for (long i=0; i<Np.rows(); ++i) {
     p_.clear();
     for (int d=0; d<D+2; ++d) {
       p_.push_back(Np(i,d));
@@ -249,7 +248,7 @@ void maximal_empty_spheres(const Eigen::MatrixXd& G,
   }
 
   Eigen::MatrixXd solutions(solutions_.size(),D+3);
-  for (int i=0; i<solutions_.size(); ++i) {
+  for (std::size_t i=0; i<solutions_.size(); ++i) {
     solutions.row(i) = solutions_[i];
   }
 
@@ -261,7 +260,7 @@ void maximal_empty_spheres(const Eigen::MatrixXd& G,
 
   if (contact_indices) {
     contact_indices->resize(solutions_.size(),D+1);
-    for (int i=0; i<solutions_.size(); ++i) contact_indices->block(i,0,1,D+1) = contact_indices_[i];
+    for (std::size_t i=0; i<solutions_.size(); ++i) contact_indices->block(i,0,1,D+1) = contact_indices_[i];
   }
 }
 

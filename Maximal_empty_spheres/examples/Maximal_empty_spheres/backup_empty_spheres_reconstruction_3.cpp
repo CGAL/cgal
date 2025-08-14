@@ -106,7 +106,7 @@ int main(int argc, char** argv) {
     std::cout << "Read " << input_spheres.size() << " spheres" << std::endl;
 
     Eigen::MatrixXd G(input_spheres.size(), 4);
-    for (int i=0; i<input_spheres.size(); i++) G.row(i) = input_spheres[i];
+    for (std::size_t i=0; i<input_spheres.size(); i++) G.row(i) = input_spheres[i];
 
     Eigen::MatrixXd bbxl(2,3);
     bbxl.row(0) = G.block(0,0,G.rows(),3).colwise().minCoeff();
@@ -118,7 +118,7 @@ int main(int argc, char** argv) {
     Eigen::MatrixXd Gn(G.rows()-nnrc,4);
     int np=0;
     int nn=0;
-    for (int i=0; i<input_spheres.size(); i++){
+    for (std::size_t i=0; i<input_spheres.size(); i++){
         if (input_spheres[i](3) >= 0){
             Gp.row(np++) = input_spheres[i];
         } else {
@@ -145,7 +145,7 @@ int main(int argc, char** argv) {
     }
     // converte pwn to matrices again...
     Eigen::MatrixXd P(Pwns.size(),3),N(Pwns.size(),3);
-    for (int i=0; i<Pwns.size(); i++){
+    for (std::size_t i=0; i<Pwns.size(); i++){
         P.row(i) = Eigen::RowVector3d(Pwns[i].first[0],  Pwns[i].first[1],  Pwns[i].first[2] );
         N.row(i) = Eigen::RowVector3d(Pwns[i].second[0], Pwns[i].second[1], Pwns[i].second[2]);
     }
