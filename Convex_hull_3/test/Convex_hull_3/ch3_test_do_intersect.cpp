@@ -9,7 +9,8 @@
 #include <CGAL/boost/graph/IO/polygon_mesh_io.h>
 #include <CGAL/Extreme_points_traits_adapter_3.h>
 
-#include <CGAL/Convex_hull_3/predicates.h>
+// #include <CGAL/Convex_hull_3/intersections.h>
+#include <CGAL/Convex_hull_3/distance.h>
 #include <CGAL/convex_hull_3.h>
 #include <CGAL/Convex_hull_hierarchy.h>
 
@@ -56,14 +57,6 @@ struct Test{
   typedef boost::vector_property_map<P> PMap;
 
   void test(std::vector<P> &vec_a, std::vector<P> &vec_b, bool result, FT true_distance=FT(0)){
-    // std::cout << "Test\na:" << std::endl;
-    // for(auto &p: vec_a)
-    //   std::cout << p << std::endl;
-    // std::cout << "\nb:" << std::endl;
-    // for(auto &p: vec_b)
-    //   std::cout << p << std::endl;
-    // double eps=0.001;
-
     assert(CGAL::Convex_hull_3::do_intersect(vec_a, vec_b)==result);
     assert(CGAL::Convex_hull_3::do_intersect(vec_b, vec_a)==result);
 
@@ -122,7 +115,7 @@ struct Test{
 
 
       // CGAL::Convex_hull_hierarchy<size_t> hsma_pm(sma_pm, CGAL::make_extreme_points_traits_adapter(va));
-      // CGAL::Convex_hull_with_hierarchy<size_t> hsmb_pm(smb_pm, CGAL::make_extreme_points_traits_adapter(vb));
+      // CGAL::Convex_hull_hierarchy<size_t> hsmb_pm(smb_pm, CGAL::make_extreme_points_traits_adapter(vb));
       // assert(CGAL::Convex_hull_3::do_intersect(hsma_pm, hsmb_pm, CGAL::Convex_hull_3::make_do_intersect_traits_with_point_maps(va, vb))==result);
       // assert(CGAL::Convex_hull_3::do_intersect(hsmb_pm, hsma_pm, CGAL::Convex_hull_3::make_do_intersect_traits_with_point_maps(vb, va))==result);
 
