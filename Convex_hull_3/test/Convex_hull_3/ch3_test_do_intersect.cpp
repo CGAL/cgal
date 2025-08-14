@@ -111,14 +111,14 @@ struct Test{
     assert(CGAL::Convex_hull_3::do_intersect(sm_b_pm, sm_a_pm, CGAL::parameters::vertex_point_map(make_compose_property_map(sm_b_pm.points(), v_b)),
                                                              CGAL::parameters::vertex_point_map(make_compose_property_map(sm_a_pm.points(), v_a)))==result);
 
-    // if constexpr(std::is_same_v<Mesh, CGAL::Surface_mesh<P> >){
-    //   CGAL::Surface_mesh< typename Mesh::Vertex_index > sma_pm2, smb_pm2;
-    //   CGAL::convex_hull_3(vertices(sm_a).begin(), vertices(sm_a).end(), sma_pm2, CGAL::make_extreme_points_traits_adapter(sm_a.points()));
-    //   CGAL::convex_hull_3(vertices(sm_b).begin(), vertices(sm_b).end(), smb_pm2, CGAL::make_extreme_points_traits_adapter(sm_b.points()));
-    //   assert(CGAL::Convex_hull_3::do_intersect(sma_pm2, smb_pm2, CGAL::parameters::vertex_point_map(make_compose_property_map(sma_pm2.points(), sm_a.points())),
-    //                                                             CGAL::parameters::vertex_point_map(make_compose_property_map(smb_pm2.points(), sm_b.points())))==result);
-    //   assert(CGAL::Convex_hull_3::do_intersect(smb_pm2, sma_pm2, CGAL::parameters::vertex_point_map(make_compose_property_map(smb_pm2.points(), sm_b.points())),
-    //                                                             CGAL::parameters::vertex_point_map(make_compose_property_map(sma_pm2.points(), sm_a.points())))==result);
+    if constexpr(std::is_same_v<Mesh, CGAL::Surface_mesh<P> >){
+      CGAL::Surface_mesh< typename Mesh::Vertex_index > sma_pm2, smb_pm2;
+      CGAL::convex_hull_3(vertices(sm_a).begin(), vertices(sm_a).end(), sma_pm2, CGAL::make_extreme_points_traits_adapter(sm_a.points()));
+      CGAL::convex_hull_3(vertices(sm_b).begin(), vertices(sm_b).end(), smb_pm2, CGAL::make_extreme_points_traits_adapter(sm_b.points()));
+      assert(CGAL::Convex_hull_3::do_intersect(sma_pm2, smb_pm2, CGAL::parameters::vertex_point_map(make_compose_property_map(sma_pm2.points(), sm_a.points())),
+                                                                CGAL::parameters::vertex_point_map(make_compose_property_map(smb_pm2.points(), sm_b.points())))==result);
+      assert(CGAL::Convex_hull_3::do_intersect(smb_pm2, sma_pm2, CGAL::parameters::vertex_point_map(make_compose_property_map(smb_pm2.points(), sm_b.points())),
+                                                                CGAL::parameters::vertex_point_map(make_compose_property_map(sma_pm2.points(), sm_a.points())))==result);
 
 
       // CGAL::Convex_hull_hierarchy<size_t> hsma_pm(sma_pm, CGAL::make_extreme_points_traits_adapter(va));
@@ -130,7 +130,7 @@ struct Test{
       // CGAL::Convex_hull_hierarchy<CGAL::Surface_mesh< typename Mesh::Vertex_index > > hsmb_pm2(sm_b, CGAL::make_extreme_points_traits_adapter(sm_b.points()));
       // assert(CGAL::Convex_hull_3::do_intersect(hsma_pm2, hsmb_pm2, CGAL::parameters::vertex_point_map(sm_a.points()), CGAL::parameters::vertex_point_map(sm_b.points()))==result);
       // assert(CGAL::Convex_hull_3::do_intersect(hsmb_pm2, hsma_pm2, CGAL::parameters::vertex_point_map(sm_b.points()), CGAL::parameters::vertex_point_map(sm_a.points()))==result);
-    // }
+    }
   }
 
   void test_cube()
@@ -172,8 +172,7 @@ struct Test{
         for(double z=-1.5; z<=1.5; z+=0.5){
           CGAL::Aff_transformation_3<K> t(CGAL::TRANSLATION, V(x,y,z));
           transform(cube_bis, t);
-          FT true_distance = ((std::abs(x)==1.5)?1./4.:0) + ((std::abs(y)==1.5)?1./4.:0) + ((std::abs(z)==1.5)?1./4.:0);
-          test(cube, cube_bis, true_distance==FT(0), true_distance);
+          test(cube, cube_bis, std::abs(x)<1.5 && std::abs(y)<1.5 && std::abs(z)<1.5);
           transform(cube_bis, t.inverse());
         }
   }
@@ -329,6 +328,7 @@ int main(int argc, char** argv)
   std::cout << "random seed = " << r.get_seed() << std::endl;
 
   std::cout << std::setprecision(17);
+
   // Test<DOUBLE>().full_test(r); //Too hard
   // Test<EPICK, CGAL::Surface_mesh<EPICK::Point_3> >().full_test(r);
   // Test<EPICK, CGAL::Polyhedron_3<EPICK> >().full_test(r);

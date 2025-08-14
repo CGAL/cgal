@@ -20,9 +20,6 @@
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <CGAL/Distance_3/internal/squared_distance_utils_3.h>
-
-#include <CGAL/Kernel_23/internal/Has_boolean_tags.h>
-
 #include <CGAL/Kernel_23/internal/Has_boolean_tags.h>
 
 #include <CGAL/Convex_hull_hierarchy.h>
