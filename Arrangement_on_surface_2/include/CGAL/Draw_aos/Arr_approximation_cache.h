@@ -45,82 +45,71 @@ private:
   using Halfedge_cache_range = boost::iterator_range<Halfedge_cache_const_iterator>;
   using Face_cache_range = boost::iterator_range<Face_cache_const_iterator>;
 
-private:
-  Halfedge_const_handle identify_halfedge(const Halfedge_const_handle& he) const {
-    return he->direction() == ARR_RIGHT_TO_LEFT ? he : he->twin();
-  }
-
 public:
   Arr_approximation_cache() = default;
 
-  void reserve_vertexs(std::size_t size) { m_vertex_cache.reserve(size); }
-  void reserve_halfedges(std::size_t size) { m_halfedge_cache.reserve(size); }
-  void reserve_faces(std::size_t size) { m_face_cache.reserve(size); }
+  void reserve_vertices(std::size_t size) { m_vertices.reserve(size); }
+  void reserve_halfedges(std::size_t size) { m_halfedges.reserve(size); }
+  void reserve_faces(std::size_t size) { m_faces.reserve(size); }
 
   std::pair<Vertex_cache_obj&, bool> try_emplace(const Vertex_const_handle& vh) {
-    const auto& [it, inserted] = m_vertex_cache.try_emplace(vh, Vertex_cache_obj());
+    const auto& [it, inserted] = m_vertices.try_emplace(vh, Vertex_cache_obj());
     return {it->second, inserted};
   }
   std::pair<Halfedge_cache_obj&, bool> try_emplace(const Halfedge_const_handle& he) {
-    const auto& [it, inserted] = m_halfedge_cache.try_emplace(identify_halfedge(he), Halfedge_cache_obj());
+    const auto& [it, inserted] = m_halfedges.try_emplace(he, Halfedge_cache_obj());
     return {it->second, inserted};
   }
   std::pair<Face_cache_obj&, bool> try_emplace(const Face_const_handle& fh) {
-    const auto& [it, inserted] = m_face_cache.try_emplace(fh, Face_cache_obj());
+    const auto& [it, inserted] = m_faces.try_emplace(fh, Face_cache_obj());
     return {it->second, inserted};
   }
 
   std::pair<const Vertex_cache_obj&, bool> get(const Vertex_const_handle& vh) const {
-    auto it = m_vertex_cache.find(vh);
-    if(it != m_vertex_cache.end()) {
+    auto it = m_vertices.find(vh);
+    if(it != m_vertices.end()) {
       return {it->second, true};
     }
     return {Vertex_cache_obj(), false};
   }
   std::pair<const Halfedge_cache_obj&, bool> get(const Halfedge_const_handle& he) const {
-    auto it = m_halfedge_cache.find(identify_halfedge(he));
-    if(it != m_halfedge_cache.end()) {
+    auto it = m_halfedges.find(he);
+    if(it != m_halfedges.end()) {
       return {it->second, true};
     }
     return {Halfedge_cache_obj(), false};
   }
   std::pair<const Face_cache_obj&, bool> get(const Face_const_handle& fh) const {
-    auto it = m_face_cache.find(fh);
-    if(it != m_face_cache.end()) {
+    auto it = m_faces.find(fh);
+    if(it != m_faces.end()) {
       return {it->second, true};
     }
     return {Face_cache_obj(), false};
   }
 
-  bool has(const Vertex_const_handle& vh) const { return m_vertex_cache.find(vh) != m_vertex_cache.end(); }
-  bool has(const Halfedge_const_handle& he) const {
-    return m_halfedge_cache.find(identify_halfedge(he)) != m_halfedge_cache.end();
-  }
-  bool has(const Face_const_handle& fh) const { return m_face_cache.find(fh) != m_face_cache.end(); }
+  bool has(const Vertex_const_handle& vh) const { return m_vertices.find(vh) != m_vertices.end(); }
+  bool has(const Halfedge_const_handle& he) const { return m_halfedges.find(he) != m_halfedges.end(); }
+  bool has(const Face_const_handle& fh) const { return m_faces.find(fh) != m_faces.end(); }
 
-  Vertex_cache_const_iterator vertex_cache_begin() const { return m_vertex_cache.begin(); }
-  Vertex_cache_const_iterator vertex_cache_end() const { return m_vertex_cache.end(); }
-  Vertex_cache_range vertex_cache() const {
-    return boost::make_iterator_range(vertex_cache_begin(), vertex_cache_end());
-  }
-  std::size_t vertex_cache_size() const { return m_vertex_cache.size(); }
+  Vertex_cache_const_iterator vertex_begin() const { return m_vertices.begin(); }
+  Vertex_cache_const_iterator vertex_end() const { return m_vertices.end(); }
+  Vertex_cache_range vertices() const { return boost::make_iterator_range(vertex_begin(), vertex_end()); }
+  std::size_t number_of_vertices() const { return m_vertices.size(); }
 
-  Halfedge_cache_const_iterator halfedge_cache_begin() const { return m_halfedge_cache.begin(); }
-  Halfedge_cache_const_iterator halfedge_cache_end() const { return m_halfedge_cache.end(); }
-  Halfedge_cache_range halfedge_cache() const {
-    return boost::make_iterator_range(halfedge_cache_begin(), halfedge_cache_end());
-  }
-  std::size_t halfedge_cache_size() const { return m_halfedge_cache.size(); }
+  Halfedge_cache_const_iterator halfedge_begin() const { return m_halfedges.begin(); }
+  Halfedge_cache_const_iterator halfedge_end() const { return m_halfedges.end(); }
+  Halfedge_cache_range halfedges() const { return boost::make_iterator_range(halfedge_begin(), halfedge_end()); }
+  std::size_t number_of_halfedges() const { return m_halfedges.size(); }
 
-  Face_cache_const_iterator face_cache_begin() const { return m_face_cache.begin(); }
-  Face_cache_const_iterator face_cache_end() const { return m_face_cache.end(); }
-  Face_cache_range face_cache() const { return boost::make_iterator_range(face_cache_begin(), face_cache_end()); }
-  std::size_t face_cache_size() const { return m_face_cache.size(); }
+  Face_cache_const_iterator face_begin() const { return m_faces.begin(); }
+  Face_cache_const_iterator face_end() const { return m_faces.end(); }
+  Face_cache_range faces() const { return boost::make_iterator_range(face_begin(), face_end()); }
+  std::size_t number_of_faces() const { return m_faces.size(); }
 
 private:
-  Vertex_cache m_vertex_cache;
-  Halfedge_cache m_halfedge_cache;
-  Face_cache m_face_cache;
+  Vertex_cache m_vertices;
+  Halfedge_cache m_halfedges;
+  Face_cache m_faces;
 };
 
 } // namespace draw_aos

@@ -2,8 +2,10 @@
 #define CGAL_DRAW_AOS_ARR_FACE_TRIANGULATOR_H
 
 #include <algorithm>
+#include <cmath>
 #include <cstddef>
 #include <functional>
+#include <type_traits>
 #include <utility>
 #include <vector>
 
@@ -16,7 +18,11 @@
 #include <CGAL/unordered_flat_map.h>
 #include <CGAL/Constrained_triangulation_2.h>
 #include <CGAL/Constrained_triangulation_face_base_2.h>
+#include <CGAL/Bbox_2.h>
+#include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Draw_aos/Arr_render_context.h>
+#include <CGAL/Draw_aos/type_utils.h>
+#include <CGAL/draw_constrained_triangulation_2.h>
 
 #if defined(CGAL_DRAW_AOS_DEBUG) && defined(CGAL_DRAW_AOS_TRIANGULATOR_DEBUG_FILE_DIR)
 #include <fstream>
@@ -42,8 +48,7 @@ class Arr_bounded_face_triangulator
 {
   using Geom_traits = typename Arrangement::Geometry_traits_2;
   using Approx_traits = Arr_approximate_traits<Geom_traits>;
-  using Approx_point = typename Approx_traits::Approx_point;
-  using Point_vec = typename Approx_traits::Approx_point_vec;
+  using Point_geom = typename Approx_traits::Point_geom;
   using Triangle = typename Approx_traits::Triangle;
   using Triangulated_face = typename Approx_traits::Triangulated_face;
 
@@ -66,31 +71,64 @@ class Arr_bounded_face_triangulator
   using Vb = Triangulation_vertex_base_with_info_2<Point_index, Epick>;
   using Fb = Constrained_triangulation_face_base_2<Epick>;
   using Tds = Triangulation_data_structure_2<Vb, Fb>;
-  using Ct = Constrained_triangulation_2<Epick, Tds, Exact_predicates_tag>;
+  // For planar arrangements, Constrained_triangulation_2 is enough.
+  using Ct = std::conditional_t<is_or_derived_from_curved_surf_traits<Geom_traits>,
+                                Constrained_Delaunay_triangulation_2<Epick, Tds, Exact_predicates_tag>,
+                                Constrained_triangulation_2<Epick, Tds, Exact_predicates_tag>>;
   using KPoint = Epick::Point_2;
   using KPoint_with_info = std::pair<KPoint, Point_index>;
 
   using Bounded_render_context = Arr_bounded_render_context<Arrangement>;
 
 public:
-  using Insert_iterator = boost::function_output_iterator<std::function<void(Approx_point)>>;
+  using Insert_iterator = boost::function_output_iterator<std::function<void(Point_geom)>>;
 
 private:
-  static KPoint transform_point(Approx_point pt) { return KPoint(pt.x(), pt.y()); }
+  static KPoint transform_point(Point_geom pt) { return KPoint(pt.x(), pt.y()); }
 
-  static Approx_point offset_boundary_point(Approx_point pt, Side_of_boundary side, double offset) {
+  static Point_geom offset_boundary_point(Point_geom pt, Side_of_boundary side, double offset) {
     CGAL_precondition(side != Side_of_boundary::None);
     switch(side) {
     case Side_of_boundary::Left:
-      return Approx_point(pt.x() - offset, pt.y());
+      return Point_geom(pt.x() - offset, pt.y());
     case Side_of_boundary::Right:
-      return Approx_point(pt.x() + offset, pt.y());
+      return Point_geom(pt.x() + offset, pt.y());
     case Side_of_boundary::Top:
-      return Approx_point(pt.x(), pt.y() + offset);
+      return Point_geom(pt.x(), pt.y() + offset);
     case Side_of_boundary::Bottom:
-      return Approx_point(pt.x(), pt.y() - offset);
+      return Point_geom(pt.x(), pt.y() - offset);
     default:
       return pt; // Should not reach here
+    }
+  }
+
+  /**
+   * Sample the interior of a face for geometry traits on curved surfaces
+   */
+  void sample_interior() { sample_interior_impl<Geom_traits>(); }
+
+  template <typename T, std::enable_if_t<!is_or_derived_from_agas_v<T>, int> = 0>
+  void sample_interior_impl() {}
+
+  template <typename T, std::enable_if_t<is_or_derived_from_agas_v<T>, int> = 0>
+  void sample_interior_impl() {
+    const double scale_factor = 20.0;
+    double cell_size = m_ctx.m_approx_error * scale_factor;
+    std::size_t grid_x_min = m_face_bbox.xmin() / cell_size;
+    std::size_t grid_x_max = std::ceil(m_face_bbox.xmax() / cell_size);
+    std::size_t grid_y_min = m_face_bbox.ymin() / cell_size;
+    std::size_t grid_y_max = std::ceil(m_face_bbox.ymax() / cell_size);
+    for(std::size_t x = grid_x_min + 1; x < grid_x_max; ++x)
+      for(std::size_t y = grid_y_min + 1; y < grid_y_max; ++y)
+        m_points.emplace_back(Point_geom(x * cell_size, y * cell_size));
+    // sample the bbox boundary
+    for(double x = m_face_bbox.xmin(); x <= m_face_bbox.xmax(); x += cell_size) {
+      m_points.emplace_back(Point_geom(x, m_face_bbox.ymin()));
+      m_points.emplace_back(Point_geom(x, m_face_bbox.ymax()));
+    }
+    for(double y = m_face_bbox.ymin(); y <= m_face_bbox.ymax(); y += cell_size) {
+      m_points.emplace_back(Point_geom(m_face_bbox.xmin(), y));
+      m_points.emplace_back(Point_geom(m_face_bbox.xmax(), y));
     }
   }
 
@@ -119,10 +157,14 @@ private:
     auto filtered_end = boost::make_filter_iterator(point_filter, indexes_end, indexes_end);
     auto transformed_begin = boost::make_transform_iterator(filtered_begin, index_to_point_with_info);
     auto transformed_end = boost::make_transform_iterator(filtered_end, index_to_point_with_info);
-    m_ct.template insert_with_info<KPoint_with_info>(transformed_begin, transformed_end);
+    // Constrained_triangulation_2 and Constrained_Delaunay_triangulation_2 have slightly different interfaces.
+    if constexpr(is_or_derived_from_curved_surf_traits<Geom_traits>)
+      m_ct.insert(transformed_begin, transformed_end);
+    else
+      m_ct.template insert_with_info<KPoint_with_info>(transformed_begin, transformed_end);
   }
 
-  Side_of_boundary shared_boundary(const Approx_point& pt1, const Approx_point& pt2) const {
+  Side_of_boundary shared_boundary(const Point_geom& pt1, const Point_geom& pt2) const {
     if(pt1.x() == m_ctx.xmin() && pt2.x() == m_ctx.xmin() && m_ctx.contains_y(pt1.y()) && m_ctx.contains_y(pt2.y()))
       return Side_of_boundary::Left;
     if(pt1.x() == m_ctx.xmax() && pt2.x() == m_ctx.xmax() && m_ctx.contains_y(pt1.y()) && m_ctx.contains_y(pt2.y()))
@@ -134,13 +176,14 @@ private:
     return Side_of_boundary::None;
   }
 
-  void add_boundary_helper_point(Approx_point from, Approx_point to) {
+  void add_boundary_helper_point(Point_geom from, Point_geom to) {
+    if(from == to) return;
     auto shared_side = shared_boundary(from, to);
     if(shared_side == Side_of_boundary::None) return;
     m_helper_indices.push_back(m_points.size());
     m_points.emplace_back(
-        offset_boundary_point(Approx_point((from.x() + to.x()) / 2, (from.y() + to.y()) / 2), shared_side, m_offset));
-    m_offset += 0.5; // It can be arbitrary increment.
+        offset_boundary_point(Point_geom((from.x() + to.x()) / 2, (from.y() + to.y()) / 2), shared_side, m_offset));
+    m_offset += 0.5;
   }
 
 public:
@@ -148,13 +191,12 @@ public:
       : m_ctx(ctx) {}
 
   Insert_iterator insert_iterator() {
-    return boost::make_function_output_iterator(std::function([this](Approx_point pt) {
-      CGAL_assertion_msg(m_ctx.contains(pt), "Outbound point in Ccb_constraint.");
+    return boost::make_function_output_iterator(std::function([this](Point_geom pt) {
+      CGAL_assertion_msg(m_ctx.contains(pt), "Point should be within the bounding box.");
 
-      if(m_points.size() != 0) {
-        add_boundary_helper_point(m_points.back(), pt);
-      }
+      if(m_points.size() != 0) add_boundary_helper_point(m_points.back(), pt);
       m_points.emplace_back(pt);
+      this->m_face_bbox += pt.bbox();
     }));
   }
 
@@ -168,25 +210,26 @@ public:
       return Triangulated_face();
     }
 
+    m_constraint_end = m_points.size();
     add_boundary_helper_point(m_points.back(), m_points.front());
+    sample_interior();
     insert_ccb();
     // insert_constraint() should be called after insert_with_info(), or info will not be set correctly.
     m_ct.insert_constraint(boost::make_transform_iterator(m_points.begin(), transform_point),
-                           boost::make_transform_iterator(m_points.end(), transform_point), true);
+                           boost::make_transform_iterator(m_points.begin() + m_constraint_end, transform_point), true);
+    if(m_ct.number_of_faces() == 0) {
+      return Triangulated_face();
+    }
 
 #if defined(CGAL_DRAW_AOS_DEBUG)
     debug_print(*this);
 #endif
 
-    if(m_ct.number_of_faces() == 0) {
-      return Triangulated_face();
-    }
-
     unordered_flat_map<typename Ct::Face_handle, bool> in_domain_map;
     in_domain_map.reserve(m_ct.number_of_faces());
     boost::associative_property_map<decltype(in_domain_map)> in_domain(in_domain_map);
     CGAL::mark_domain_in_triangulation(m_ct, in_domain);
-
+    // Collect triangles within the constrained domain.
     Triangulated_face tf;
     tf.triangles.reserve(m_ct.number_of_faces());
     for(auto fit = m_ct.finite_faces_begin(); fit != m_ct.finite_faces_end(); ++fit) {
@@ -205,9 +248,11 @@ public:
 private:
   const Bounded_render_context& m_ctx;
   Ct m_ct;
-  std::vector<Approx_point> m_points;
-  double m_offset = 0.5;                     // Doesn't matter how much we offset.
-  std::vector<std::size_t> m_helper_indices; // The offseted point indices when inserting outer ccb constraint
+  std::vector<Point_geom> m_points;
+  Bbox_2 m_face_bbox;                        // The bounding box of the face.
+  std::vector<std::size_t> m_helper_indices; // The extra helper point indices when inserting outer ccb constraint.
+  std::size_t m_constraint_end;              // The index past the last point in the outer ccb constraint.
+  double m_offset{0.5};
 };
 
 #if defined(CGAL_DRAW_AOS_DEBUG) && defined(CGAL_DRAW_AOS_TRIANGULATOR_DEBUG_FILE_DIR)
@@ -232,7 +277,7 @@ void debug_print(const Arr_bounded_face_triangulator<Arrangement>& triangulator)
 
   std::ofstream ofs_ccb(ccb_file_path);
   std::size_t helper_indices_index = 0;
-  for(std::size_t i = 0; i < m_points.size(); ++i) {
+  for(std::size_t i = 0; i < triangulator.m_constraint_end; ++i) {
     const auto& pt = m_points[i];
     if(helper_indices_index < m_helper_indices.size() && i == m_helper_indices[helper_indices_index]) {
       helper_indices_index++;
@@ -242,7 +287,8 @@ void debug_print(const Arr_bounded_face_triangulator<Arrangement>& triangulator)
   }
 
   std::ofstream ofs_ccb_constraint(ccb_constraint_file_path);
-  for(const auto& pt : m_points) {
+  for(std::size_t i = 0; i < triangulator.m_constraint_end; ++i) {
+    const auto& pt = m_points[i];
     ofs_ccb_constraint << pt.x() << " " << pt.y() << "\n";
   }
 }
