@@ -51,6 +51,8 @@
 -   Introduced a new concept called `AosApproximateTraits_2`. It refines the concept `AosApproximatePointTraits_2`. This concept requires the provision of a functor called `Approximate_2`. In addition to an operator that approximates the coordinates of a point, it also requires the provision of (i) an operator that approximates a points, and (ii) an operator that approximates a curve.
 -   Changed all "typedef" style statements in the user manual to "using" style. (Observe that a similar update to the examples has already been made in a previous release.)
 -   Fixed do_intersect() of a 2D Arrangement and a curve.
+-   Added overloads of `draw(Arrangement_on_surface_2& arr, Bbox& bbox, ...)` that enable the drawing of arrangements induced by unbounded curves.
+-   Introduced a Geometry Traits concept for arrangement on surfaces that enables the provision of the disconnected portions of an approximation of a curve within a given bounding box.
 
 ### [3D Mesh Generation](https://doc.cgal.org/6.1/Manual/packages.html#PkgMesh3)
 
@@ -58,7 +60,7 @@
   - `initial_points_generator` : enables the user to specify a functor that generates initial points,
   - `initial_points` : enables the user to specify a `Range` of initial points.
 -   Added a new meshing parameter `surface_only`, to improve performances when the user is only interested in surface mesh generation.
-  
+
 ### [Poisson Surface Reconstruction](https://doc.cgal.org/6.1/Manual/packages.html#PkgPoissonSurfaceReconstruction3)
 -   Added a new mesh domain `Poisson_mesh_domain_3` that integrates some optimizations from the deprecated 3D Surface Mesh Generation package.
 
