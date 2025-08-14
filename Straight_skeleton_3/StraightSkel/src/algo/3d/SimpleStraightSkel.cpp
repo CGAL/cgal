@@ -30,9 +30,10 @@
 // - EPECK -> EPICK could create self-intersections
 
 // @speed
+// - Box_d for local edge splits
+// - Bench pierce and order filters
+// - analyze surface events filters + box_d for surface events?
 // - avoid duplicate computations in check_bisectors
-// - rewrite check_bisector to use base times
-// - delay crashAt bisector checks till pop time
 // - re-enable fast vertex splitter for uniform weights around a vertex
 
 // @todo: cleaning
@@ -1212,7 +1213,7 @@ std::pair<Point3SPtr, CGAL::FT> SimpleStraightSkel::vanishesAt(EdgeSPtr edge,
 bool SimpleStraightSkel::check_bisector(EdgeSPtr edge,
                                         FacetSPtr f,
                                         const CGAL::FT& t,
-                                        FacetSPtr f_third, // @todo superfluous parameter
+                                        FacetSPtr f_third,
                                         Point3SPtr point)
 {
     // @todo for speeds 0, when this function is called from crashAt, the t
@@ -1275,10 +1276,10 @@ bool SimpleStraightSkel::check_bisector(EdgeSPtr edge,
     CGAL_assertion(sp != 0);
 
     // now, check on which side of the bisector we are
-    const CGAL::FT& a_third = plane_third->a();
-    const CGAL::FT& b_third = plane_third->b();
-    const CGAL::FT& c_third = plane_third->c();
-    const CGAL::FT& d_third = plane_third->d();
+    const CGAL::FT& a_third = f_third->getBasePlane()->a();
+    const CGAL::FT& b_third = f_third->getBasePlane()->b();
+    const CGAL::FT& c_third = f_third->getBasePlane()->c();
+    const CGAL::FT& d_third = f_third->getBasePlane()->d();
     CGAL::FT t_third = (a_third * point->x() + b_third * point->y() + c_third * point->z() + d_third) / speed_third;
 
     CGAL_SS3_CORE_TRACE_V(128, "edge = " << edge->toString());
@@ -1317,7 +1318,7 @@ bool SimpleStraightSkel::check_bisector(EdgeSPtr edge,
     return true;
 }
 
-// Check that the point is inside bounds
+// Check that the point is inside the moving plane of the edge, bounded by the incident arcs
 bool
 SimpleStraightSkel::check_bisectors(EdgeSPtr edge_1,
                                     EdgeSPtr edge_2,
@@ -1334,10 +1335,31 @@ SimpleStraightSkel::check_bisectors(EdgeSPtr edge_1,
     FacetSPtr facet_2_src = edge_2->getFacetSrc();
     FacetSPtr facet_2_dst = edge_2->getFacetDst();
 
-    CGAL_SS3_CORE_TRACE_V(16, "Facet 1 SRC = " << facet_1_src->getID());
-    CGAL_SS3_CORE_TRACE_V(16, "Facet 1 DST = " << facet_1_dst->getID());
-    CGAL_SS3_CORE_TRACE_V(16, "Facet 2 SRC = " << facet_2_src->getID());
-    CGAL_SS3_CORE_TRACE_V(16, "Facet 2 DST = " << facet_2_dst->getID());
+    CGAL_SS3_CORE_TRACE_V(32, "Bisectors check");
+
+    CGAL_SS3_CORE_TRACE_V(32, "Facet L1 = " << facet_l1->getID());
+    CGAL_SS3_CORE_TRACE_V(32, "Facet R1 = " << facet_r1->getID());
+    CGAL_SS3_CORE_TRACE_V(32, "Facet L2 = " << facet_l2->getID());
+    CGAL_SS3_CORE_TRACE_V(32, "Facet R2 = " << facet_r2->getID());
+
+    CGAL_SS3_CORE_TRACE_V(32, "Facet 1 SRC = " << facet_1_src->getID());
+    CGAL_SS3_CORE_TRACE_V(32, "Facet 1 DST = " << facet_1_dst->getID());
+    CGAL_SS3_CORE_TRACE_V(32, "Facet 2 SRC = " << facet_2_src->getID());
+    CGAL_SS3_CORE_TRACE_V(32, "Facet 2 DST = " << facet_2_dst->getID());
+
+    // Since the algorithm shrinks the polyhedron, "not to be in the past" is equivalent to
+    // "being on the negative side of the planes of the facets incident to the edge" (assuming positive weights)
+    //
+    // Since we have filtered with a past bound, this is already checked
+    CGAL_assertion_code(Plane3SPtr plane_l1 = facet_l1->getPlane();)
+    CGAL_assertion_code(Plane3SPtr plane_r1 = facet_r1->getPlane();)
+    CGAL_assertion_code(Plane3SPtr plane_l2 = facet_l2->getPlane();)
+    CGAL_assertion_code(Plane3SPtr plane_r2 = facet_r2->getPlane();)
+
+    CGAL_assertion(!(KernelWrapper::side(plane_l1, point) > 0 ||
+                     KernelWrapper::side(plane_r1, point) > 0));
+    CGAL_assertion(!(KernelWrapper::side(plane_l2, point) > 0 ||
+                     KernelWrapper::side(plane_r2, point) > 0));
 
     // We want the point to be left of the right arc, and right of the left arc
     //
@@ -1442,73 +1464,13 @@ SimpleStraightSkel::crashAt(EdgeSPtr edge_1, EdgeSPtr edge_2,
         return { };
     }
 
-    CGAL_SS3_CORE_TRACE_V(16, "Intersection: " << *point << " @ " << event_offset);
+    CGAL_SS3_CORE_TRACE_V(16, "Tentative intersection: " << *point << " @ " << event_offset);
 
-    const CGAL::FT& speed_l1 = std::dynamic_pointer_cast<SkelFacetData>(facet_l1->getData())->getSpeed();
-    const CGAL::FT& speed_r1 = std::dynamic_pointer_cast<SkelFacetData>(facet_r1->getData())->getSpeed();
-    const CGAL::FT& speed_l2 = std::dynamic_pointer_cast<SkelFacetData>(facet_l2->getData())->getSpeed();
-    const CGAL::FT& speed_r2 = std::dynamic_pointer_cast<SkelFacetData>(facet_r2->getData())->getSpeed();
-    CGAL_USE(speed_l1);
-    CGAL_USE(speed_r1);
-    CGAL_USE(speed_l2);
-    CGAL_USE(speed_r2);
-
-    CGAL_SS3_CORE_TRACE_CODE(CGAL::FT current_offset = (facet_l1->getBasePlane()->d()
-                                                        - facet_l1->getPlane()->d()) / speed_l1);
-    CGAL_SS3_CORE_TRACE_CODE(CGAL::FT shift_offset = event_offset - current_offset);
-    CGAL_SS3_CORE_TRACE_V(16, "current offset " << current_offset);
-    CGAL_SS3_CORE_TRACE_V(16, "shift offset " << shift_offset);
-    CGAL_SS3_CORE_TRACE_CODE(Segment3SPtr offset_e1 = PolyhedronTransformation::shiftEdge(edge_1, shift_offset);)
-    CGAL_SS3_CORE_TRACE_CODE(Segment3SPtr offset_e2 = PolyhedronTransformation::shiftEdge(edge_2, shift_offset);)
-    CGAL_SS3_CORE_TRACE_V(16, "Offset edge 1: " << *offset_e1);
-    CGAL_SS3_CORE_TRACE_V(16, "Offset edge 2: " << *offset_e2);
-
-    Plane3SPtr plane_l1 = facet_l1->getPlane();
-    Plane3SPtr plane_r1 = facet_r1->getPlane();
-    Plane3SPtr plane_l2 = facet_l2->getPlane();
-    Plane3SPtr plane_r2 = facet_r2->getPlane();
-
-    // Since the algorithm shrinks the polyhedron, "not to be in the past" is equivalent to
-    // "being on the negative side of the planes of the facets incident to the edge" (assuming positive weights)
-    //
-    // Since we have filtered positive times, this is already checked
-    CGAL_assertion(!(KernelWrapper::side(plane_l1, point) > 0 ||
-                     KernelWrapper::side(plane_r1, point) > 0));
-    CGAL_assertion(!(KernelWrapper::side(plane_l2, point) > 0 ||
-                     KernelWrapper::side(plane_r2, point) > 0));
-
-    const CGAL::FT& l1a = plane_l1->a();
-    const CGAL::FT& l1b = plane_l1->b();
-    const CGAL::FT& l1c = plane_l1->c();
-    const CGAL::FT& l1d = plane_l1->d();
-    const CGAL::FT& r1a = plane_r1->a();
-    const CGAL::FT& r1b = plane_r1->b();
-    const CGAL::FT& r1c = plane_r1->c();
-    const CGAL::FT& r1d = plane_r1->d();
-    const CGAL::FT& l2a = plane_l2->a();
-    const CGAL::FT& l2b = plane_l2->b();
-    const CGAL::FT& l2c = plane_l2->c();
-    const CGAL::FT& l2d = plane_l2->d();
-    const CGAL::FT& r2a = plane_r2->a();
-    const CGAL::FT& r2b = plane_r2->b();
-    const CGAL::FT& r2c = plane_r2->c();
-    const CGAL::FT& r2d = plane_r2->d();
-
-    CGAL_SS3_CORE_TRACE_V(16, "time: " << event_offset);
-
-    CGAL_assertion_code(CGAL::FT lt1 = (l1a * point->x() + l1b * point->y() + l1c * point->z() + l1d) / speed_l1;)
-    CGAL_assertion_code(CGAL::FT rt1 = (r1a * point->x() + r1b * point->y() + r1c * point->z() + r1d) / speed_r1;)
-    CGAL_assertion_code(CGAL::FT lt2 = (l2a * point->x() + l2b * point->y() + l2c * point->z() + l2d) / speed_l2;)
-    CGAL_assertion_code(CGAL::FT rt2 = (r2a * point->x() + r2b * point->y() + r2c * point->z() + r2d) / speed_r2;)
-    CGAL_assertion(lt1 == rt1 && lt1 == lt2 && lt1 == rt2);
-
-#ifndef CGAL_SS3_CHECK_BISECTORS_AT_POP_TIME
-    // @speed use base planes and event_offset
-    CGAL::FT t = (l1a * point->x() + l1b * point->y() + l1c * point->z() + l1d) / speed_l1;
-    if (!check_bisectors(edge_1, edge_2, point, t)) {
+    if (!check_bisectors(edge_1, edge_2, point, event_offset)) {
         return { };
     }
-#endif
+
+    CGAL_SS3_CORE_TRACE_V(16, "Confirmed intersection: " << *point << " @ " << event_offset);
 
     return { point, event_offset };
 }
@@ -1741,7 +1703,7 @@ void SimpleStraightSkel::collectEdgeEvents(const std::list<EdgeSPtr>& edges,
 #endif
             }
 
-            if (!check_bisector(edge_2, facet_r2, t /*rt2*/, facet_2_src, point)) {
+            if (!check_bisector(edge_2, facet_r2, offset_event, facet_2_src, point)) {
 #ifdef CGAL_SS3_EXIT_ASAP
                 continue;
 #else
@@ -1749,7 +1711,7 @@ void SimpleStraightSkel::collectEdgeEvents(const std::list<EdgeSPtr>& edges,
 #endif
             }
 
-            if (!check_bisector(edge_2, facet_l2, t /*lt2*/, facet_2_dst, point)) {
+            if (!check_bisector(edge_2, facet_l2, offset_event, facet_2_dst, point)) {
 #ifdef CGAL_SS3_EXIT_ASAP
                 continue;
 #else
@@ -4757,16 +4719,16 @@ SimpleStraightSkel::handleVanishEvent(VanishEventSPtr event,
             CGAL_assertion_code(CGAL::FT rt2 = (r2a * point->x() + r2b * point->y() + r2c * point->z() + r2d) / speed_r2);
             CGAL_assertion(lt2 == rt2);
 
-            if (is_positive(t)) {
+            if (is_positive(event_offset)) {
                 // can 'break' directly because it's the same value for all 'edge_2's
                 break;
             }
 
-            if (!check_bisector(edge_2, facet_r2, t/*rt2*/, facet_2_src, point)) {
+            if (!check_bisector(edge_2, facet_r2, event_offset, facet_2_src, point)) {
                 continue;
             }
 
-            if (!check_bisector(edge_2, facet_l2, t/*lt2*/, facet_2_dst, point)) {
+            if (!check_bisector(edge_2, facet_l2, event_offset, facet_2_dst, point)) {
                 continue;
             }
 
