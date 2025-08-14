@@ -113,6 +113,7 @@ implemented as peripheral classes or as free (global) functions.
 
 - `AosApproximateTraits_2`
 - `AosApproximatePointTraits_2`
+- `AosApproximateUnboundedTraits_2`
 - `AosBasicTopologyTraits`
 - `AosBasicTraits_2`
 - `AosBottomSideTraits_2`
@@ -168,6 +169,7 @@ implemented as peripheral classes or as free (global) functions.
 
 - `AosTraits::Approximate_2`
 - `AosTraits::ApproximatePoint_2`
+- `AosTraits::ApproximateUnbounded_2`
 - `AosTraits::AreMergeable_2`
 - `AosTraits::CompareX_2`
 - `AosTraits::CompareXy_2`
