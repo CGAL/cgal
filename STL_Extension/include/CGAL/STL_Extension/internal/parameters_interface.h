@@ -69,6 +69,9 @@ CGAL_add_named_parameter(stream_precision_t, stream_precision, stream_precision)
 // List of named parameters that we use in the package 'Mesh_3'
 CGAL_add_named_parameter(vertex_feature_degree_t, vertex_feature_degree, vertex_feature_degree_map)
 
+// List of named parameters that we use in the package 'Convex_hull_3'
+CGAL_add_named_parameter(geom_traits_converter_t, geom_traits_converter, geom_traits_converter)
+
 // List of named parameters used in the package 'Polygon Mesh Processing'
 CGAL_add_named_parameter(geom_traits_t, geom_traits, geom_traits)
 CGAL_add_named_parameter(vertex_incident_patches_t, vertex_incident_patches, vertex_incident_patches_map)
