@@ -25,17 +25,17 @@ int main()
     
     // Compute per-volume vertex count
     std::vector<std::size_t> volume_scalars;
-    for(auto it = lcc.template one_dart_per_cell<3>().begin(), 
-             itend = lcc.template one_dart_per_cell<3>().end(); 
-        it != itend; ++it)
+    for(auto it = lcc.template one_dart_per_cell<3>().begin(),
+             itend = lcc.template one_dart_per_cell<3>().end(); it != itend; ++it)
     {
-        volume_scalars.push_back(
-            std::distance(
-                lcc.template one_dart_per_incident_cell<0,3>(lcc.dart_descriptor(*it)).begin(), 
-                lcc.template one_dart_per_incident_cell<0,3>(lcc.dart_descriptor(*it)).end()
-            )
-        );
+      auto d = lcc.dart_descriptor(*it);
+      std::size_t nbv = lcc.template one_dart_per_incident_cell<0,3>(d).size();
+      volume_scalars.push_back(nbv);
     }
+
+    if(!CGAL::IO::write_VTK<LCC,float,std::size_t>(lcc,
+         "data/beam-with-mixed-cells.vtk", nullptr, &volume_scalars))
+      return EXIT_FAILURE;
     
     // Write to VTK with explicit template parameters
     CGAL::IO::write_VTK<LCC, float, std::size_t>(
