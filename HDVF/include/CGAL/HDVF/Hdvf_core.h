@@ -46,14 +46,14 @@ const int OPT_FULL = 0b1000;
  *
  * Cells are always sorted so that the dimension of `sigma` is lesser than the dimension of `tau`.
  */
-struct Pair_cells {
+struct Cell_pair {
     size_t sigma;  /// Index of the first cell
     size_t tau;    /// Index of the second cell
     int dim;    /// Dimension of cells: `dim`/`dim`+1 for A and R, `dim`/`dim` for other operations
 };
 
-/** \brief Overload of operator<< for Pair_cells type. */
-inline std::ostream& operator<<(std::ostream &out, const std::vector<Pair_cells>& pairs)
+/** \brief Overload of operator<< for Cell_pair type. */
+inline std::ostream& operator<<(std::ostream &out, const std::vector<Cell_pair>& pairs)
 {
     for (const auto& pair : pairs) {
         out << "Sigma: " << pair.sigma << ", Tau: " << pair.tau << ", Dim: " << pair.dim << std::endl;
@@ -161,17 +161,17 @@ public:
     ~Hdvf_core() { }
 
     /**
-     * \brief Finds a valid Pair_cells of dimension q / q+1 for A.
+     * \brief Finds a valid Cell_pair of dimension q / q+1 for A.
      *
      * The function searches a pair of critical cells \f$(\gamma_1, \gamma2)\f$ of dimension q / q+1, valid for A (ie.\ such that \f$\langle \partial_{q+1}(\gamma_2), \gamma_1 \rangle\f$ invertible). It returns the first valid pair found by iterators.
      *
      * \param[in] q Lower dimension of the pair.
      * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      */
-    virtual Pair_cells find_pair_A(int q, bool &found) const;
+    virtual Cell_pair find_pair_A(int q, bool &found) const;
 
     /**
-     * \brief Finds a valid Pair_cells for A containing `gamma` (a cell of dimension `q`)
+     * \brief Finds a valid Cell_pair for A containing `gamma` (a cell of dimension `q`)
      *
      * The function searches a cell \f$\gamma'\f$ such that one of the following conditions holds:
      * - \f$\gamma'\f$ has dimension q+1 and \f$(\gamma, \gamma')\f$ is valid for A (ie.\ such that \f$\langle \partial_{q+1}(\gamma'), \gamma \rangle\f$ invertible),
@@ -181,10 +181,10 @@ public:
      * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      * \param[in] gamma Index of a cell to pair.
      */
-    virtual Pair_cells find_pair_A(int q, bool &found, size_t gamma) const;
+    virtual Cell_pair find_pair_A(int q, bool &found, size_t gamma) const;
 
     /**
-     * \brief Finds *all* valid Pair_cells of dimension q / q+1 for A.
+     * \brief Finds *all* valid Cell_pair of dimension q / q+1 for A.
      *
      * The function searches all pairs of critical cells \f$(\gamma_1, \gamma2)\f$ of dimension q / q+1, valid for A (ie.\ such that \f$\langle \partial_{q+1}(\gamma_2), \gamma_1 \rangle\f$ invertible).
      * It returns a vector of such pairs.
@@ -192,10 +192,10 @@ public:
      * \param[in] q Lower dimension of the pair.
      * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      */
-    virtual std::vector<Pair_cells> find_pairs_A(int q, bool &found) const;
+    virtual std::vector<Cell_pair> find_pairs_A(int q, bool &found) const;
 
     /**
-     * \brief Finds *all* valid Pair_cells for A containing `gamma` (a cell of dimension `q`)
+     * \brief Finds *all* valid Cell_pair for A containing `gamma` (a cell of dimension `q`)
      *
      * The function searches all `CRITICAL` cells \f$\gamma'\f$ such that one of the following conditions holds:
      * - \f$\gamma'\f$ has dimension q+1 and \f$(\gamma, \gamma')\f$ is valid for A (ie.\ such that \f$\langle \partial_{q+1}(\gamma'), \gamma \rangle\f$ invertible),
@@ -206,7 +206,7 @@ public:
      * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      * \param[in] gamma Index of a cell to pair.
      */
-    virtual std::vector<Pair_cells> find_pairs_A(int q, bool &found, size_t gamma) const;
+    virtual std::vector<Cell_pair> find_pairs_A(int q, bool &found, size_t gamma) const;
 
     /**
      * \brief A operation: pairs critical cells.
@@ -230,9 +230,9 @@ public:
      *
      * \param[in] verbose If this parameter is `true`, all intermediate reductions are printed out.
      *
-     * \return The vector of all `Pair_cells` paired with A.
+     * \return The vector of all `Cell_pair` paired with A.
      */
-    std::vector<Pair_cells> compute_perfect_hdvf(bool verbose = false);
+    std::vector<Cell_pair> compute_perfect_hdvf(bool verbose = false);
 
     /**
      * \brief Computes a random perfect HDVF.
@@ -248,7 +248,7 @@ public:
      *
      * \return The vector of all pairs of cells used for apply A.
      */
-    std::vector<Pair_cells> compute_rand_perfect_hdvf(bool verbose = false);
+    std::vector<Cell_pair> compute_rand_perfect_hdvf(bool verbose = false);
 
     /**
      * \brief Tests if a HDVF is perfect.
@@ -589,12 +589,12 @@ std::ostream& Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixTyp
 // First version: returns a pair of dimensions q / q+1
 // Second version: returns all the pairs containing sigma
 
-// find a valid Pair_cells for A in dimension q
+// find a valid Cell_pair for A in dimension q
 template<typename CoefficientType, typename ComplexType, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
-Pair_cells Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::find_pair_A(int q, bool &found) const
+Cell_pair Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::find_pair_A(int q, bool &found) const
 {
     found = false;
-    Pair_cells p;
+    Cell_pair p;
 
     // Iterate through columns of _DD_col[q+1]
     for (OSM::Bitboard::iterator it_col = _DD_col[q+1].begin(); (it_col != _DD_col[q+1].end() && !found); ++it_col)
@@ -615,12 +615,12 @@ Pair_cells Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>:
     return p;
 }
 
-// find a valid Pair_cells containing tau for A in dimension q
+// find a valid Cell_pair containing tau for A in dimension q
 template<typename CoefficientType, typename ComplexType, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
-Pair_cells Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::find_pair_A(int q, bool &found, size_t gamma) const
+Cell_pair Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::find_pair_A(int q, bool &found, size_t gamma) const
 {
     found = false;
-    Pair_cells p ;
+    Cell_pair p ;
 
     // Search for a q-1 cell tau' such that <_d(tau),tau'> invertible
     const Column_chain& tmp2(OSM::cget_column(_DD_col.at(q), gamma)) ;
@@ -652,9 +652,9 @@ Pair_cells Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>:
 
 // find all the valid PairCells for A in dimension q
 template<typename CoefficientType, typename ComplexType, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
-std::vector<Pair_cells> Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::find_pairs_A(int q, bool &found) const
+std::vector<Cell_pair> Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::find_pairs_A(int q, bool &found) const
 {
-    std::vector<Pair_cells> pairs;
+    std::vector<Cell_pair> pairs;
     found = false ;
 
     // Iterate through columns of _DD_col[q+1]
@@ -666,7 +666,7 @@ std::vector<Pair_cells> Hdvf_core<CoefficientType, ComplexType, ChainType, Spars
         for (typename Column_chain::const_iterator it = col.begin(); it != col.end(); ++it) {
             if ((it->second == 1) || (it->second == -1)) {
                 // If an entry with coefficient 1 or -1 is found, set the pair and mark as found
-                Pair_cells p;
+                Cell_pair p;
                 p.sigma = it->first;
                 p.tau = *it_col;
                 p.dim = q;
@@ -678,12 +678,12 @@ std::vector<Pair_cells> Hdvf_core<CoefficientType, ComplexType, ChainType, Spars
     return pairs;
 }
 
-// find all the valid Pair_cells containing gamma for A in dimension q
+// find all the valid Cell_pair containing gamma for A in dimension q
 template<typename CoefficientType, typename ComplexType, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
-std::vector<Pair_cells> Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::find_pairs_A(int q, bool &found, size_t gamma) const
+std::vector<Cell_pair> Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::find_pairs_A(int q, bool &found, size_t gamma) const
 {
     found = false;
-    std::vector<Pair_cells> pairs;
+    std::vector<Cell_pair> pairs;
 
     // Search for a q+1 cell tau' such that <_d(tau'),tau> invertible, ie <_cod(tau),tau'> invertible
     Row_chain tmp(OSM::get_row(_DD_col.at(q+1), gamma)) ;
@@ -692,7 +692,7 @@ std::vector<Pair_cells> Hdvf_core<CoefficientType, ComplexType, ChainType, Spars
         if (abs(it->second) == 1)
         {
             found = true ;
-            Pair_cells p ;
+            Cell_pair p ;
             p.sigma = gamma ;
             p.tau = it->first ;
             p.dim = q ;
@@ -706,7 +706,7 @@ std::vector<Pair_cells> Hdvf_core<CoefficientType, ComplexType, ChainType, Spars
         if (abs(it->second) == 1)
         {
             found = true ;
-            Pair_cells p ;
+            Cell_pair p ;
             p.sigma = it->first ;
             p.tau = gamma ;
             p.dim = q-1 ;
@@ -852,8 +852,8 @@ void Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::A(siz
 
 // Method to compute a perfect Hdvf_core
 template<typename CoefficientType, typename ComplexType, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
-std::vector<Pair_cells> Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::compute_perfect_hdvf(bool verbose) {
-    std::vector<Pair_cells> pair_list; // Vector to store the list of pairs
+std::vector<Cell_pair> Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::compute_perfect_hdvf(bool verbose) {
+    std::vector<Cell_pair> pair_list; // Vector to store the list of pairs
     bool trouve = false; // Flag to indicate whether a pair was found
     int dim = _K.dimension(); // Get the dimension of the complex K
 
@@ -862,7 +862,7 @@ std::vector<Pair_cells> Hdvf_core<CoefficientType, ComplexType, ChainType, Spars
         std::cout << std::endl << "-> pairing cells of dimension " << q << " and " << q+1 << std::endl ;
 
         // Find a pair of cells in dimension q
-        Pair_cells pair = find_pair_A(q, trouve);
+        Cell_pair pair = find_pair_A(q, trouve);
 
         // While a pair is found
         while (trouve) {
@@ -888,10 +888,10 @@ std::vector<Pair_cells> Hdvf_core<CoefficientType, ComplexType, ChainType, Spars
 }
 
 // Method to compute a random perfect Hdvf_core
-// Returns a vector of Pair_cells objects representing the pairs found
+// Returns a vector of Cell_pair objects representing the pairs found
 template<typename CoefficientType, typename ComplexType, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
-std::vector<Pair_cells> Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::compute_rand_perfect_hdvf(bool verbose) {
-    std::vector<Pair_cells> pair_list; // Vector to store the list of pairs
+std::vector<Cell_pair> Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::compute_rand_perfect_hdvf(bool verbose) {
+    std::vector<Cell_pair> pair_list; // Vector to store the list of pairs
     bool trouve = false; // Flag to indicate whether a pair was found
     int dim = _K.dimension(); // Get the dimension of the complex K
 
@@ -904,9 +904,9 @@ std::vector<Pair_cells> Hdvf_core<CoefficientType, ComplexType, ChainType, Spars
         std::cout << "-> pairing cells of dimension " << q << " and " << q+1 << std::endl ;
         // Incorrect: the number of cells is the number of cols in _DD_col ... (duality)
 
-        std::vector<Pair_cells> pairs = find_pairs_A(q, trouve);
+        std::vector<Cell_pair> pairs = find_pairs_A(q, trouve);
 
-        Pair_cells pair ;
+        Cell_pair pair ;
 
         // While a pair is found
         while (trouve)

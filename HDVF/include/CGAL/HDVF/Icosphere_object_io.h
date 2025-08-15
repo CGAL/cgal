@@ -34,7 +34,7 @@ public:
     using Index=size_t ;
     using Lookup=std::map<std::pair<Index, Index>, Index>;
 
-    Icosphere_object_io(size_t subdivisions, const IONodeType &c = IONodeType({0, 0, 0}), double r=1.) : Mesh_object_io(2, vertices_ico, triangles_ico)
+    Icosphere_object_io(size_t subdivisions, const Io_node_type &c = Io_node_type({0, 0, 0}), double r=1.) : Mesh_object_io(2, vertices_ico, triangles_ico)
     {
         for (size_t i=0; i<subdivisions; ++i)
         {
@@ -49,14 +49,14 @@ public:
     inline static const float Z=.850650808352039932f;
     inline static const float N=0.f;
 
-    inline static const std::vector<IONodeType> vertices_ico =
+    inline static const std::vector<Io_node_type> vertices_ico =
     {
-        IONodeType({-X,N,Z}), IONodeType({X,N,Z}), IONodeType({-X,N,-Z}), IONodeType({X,N,-Z}),
-        IONodeType({N,Z,X}), IONodeType({N,Z,-X}), IONodeType({N,-Z,X}), IONodeType({N,-Z,-X}),
-        IONodeType({Z,X,N}), IONodeType({-Z,X, N}), IONodeType({Z,-X,N}), IONodeType({-Z,-X, N})
+        Io_node_type({-X,N,Z}), Io_node_type({X,N,Z}), Io_node_type({-X,N,-Z}), Io_node_type({X,N,-Z}),
+        Io_node_type({N,Z,X}), Io_node_type({N,Z,-X}), Io_node_type({N,-Z,X}), Io_node_type({N,-Z,-X}),
+        Io_node_type({Z,X,N}), Io_node_type({-Z,X, N}), Io_node_type({Z,-X,N}), Io_node_type({-Z,-X, N})
     };
 
-    inline static const std::vector<IOCellType> triangles_ico =
+    inline static const std::vector<Io_cell_type> triangles_ico =
     {
         {0,4,1},{0,9,4},{9,5,4},{4,5,8},{4,8,1},
         {8,10,1},{8,3,10},{5,3,8},{5,2,3},{2,7,3},
@@ -74,9 +74,9 @@ public:
         auto inserted=lookup.insert({key, nodes.size()});
         if (inserted.second)
         {
-            IONodeType& edge0(nodes[first]);
-            IONodeType& edge1(nodes[second]);
-            IONodeType& point(edge0+edge1);
+            Io_node_type& edge0(nodes[first]);
+            Io_node_type& edge1(nodes[second]);
+            Io_node_type& point(edge0+edge1);
             normalize(point) ;
             add_node(point);
         }
@@ -87,9 +87,9 @@ public:
     void subdivide()
     {
         Lookup lookup;
-        std::vector<IOCellType> result ;
+        std::vector<Io_cell_type> result ;
 
-        for (IOCellType & each:cells)
+        for (Io_cell_type & each:cells)
         {
             std::array<Index, 3> mid;
             std::vector<size_t> each_vertex ;
@@ -106,11 +106,11 @@ public:
             result.push_back({mid[0], mid[1], mid[2]});
         }
         clear_cells() ;
-        for (IOCellType c : result)
+        for (Io_cell_type c : result)
             add_cell(c) ;
     }
 
-    void rigid_transformation(const IONodeType &c, double r)
+    void rigid_transformation(const Io_node_type &c, double r)
     {
         for (size_t i=0; i<nvertices; ++i)
         {

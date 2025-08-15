@@ -26,60 +26,59 @@
 namespace CGAL {
 namespace HDVF {
 
-// ------ For simplicial complexes
 /** \brief Type of cells of Mesh_object_io.
  *
  * *Sorted* vector of the vertex indices.
  */
-typedef std::vector<size_t> IOCellType ;
+typedef std::vector<size_t> Io_cell_type ;
 /** \brief Type of pre-chains in Mesh_object_io (list of cells without coefficients). */
-typedef std::vector<IOCellType> IOChainType ;
+typedef std::vector<Io_cell_type> Io_chain_type ;
 
 /*!
  \ingroup PkgHDVFAlgorithmClasses
 
- The class `IONodeType` implements a simple data type used to import vertices coordinates (nodes) in various dimensions.
+ The class `Io_node_type` implements a simple data type used to import vertices coordinates (nodes) in various dimensions.
  Hence, coordinates are loaded as vectors of `double`.
 
  The class provides standard affine geometry functions on such points.
  */
 
 // Type of points (for vertices coordinates in R^d)
-struct IONodeType {
+struct Io_node_type {
 private:
     std::vector<double> _coords;
 
 public:
-    IONodeType(size_t d = 3, double x = 0.) : _coords(d,x) {}
-    IONodeType(std::vector<double> v) : _coords(v) {}
-    IONodeType(const IONodeType& v) : _coords(v._coords) {}
+    Io_node_type(size_t d = 3, double x = 0.) : _coords(d,x) {}
+    Io_node_type(std::vector<double> v) : _coords(v) {}
+    Io_node_type(const Io_node_type& v) : _coords(v._coords) {}
 
     size_t size() const { return _coords.size(); }
     double at(size_t i) const { return _coords.at(i) ;}
     double& operator[](size_t i) { return _coords.at(i) ;}
-    IONodeType& operator=(const IONodeType& v) { _coords = v._coords ; return *this ; }
+    Io_node_type& operator=(const Io_node_type& v) { _coords = v._coords ; return *this ; }
     void push_back(double x) { _coords.push_back(x) ; }
     std::vector<double> get_coords() const { return _coords; }
 
-    friend IONodeType & operator+(const IONodeType &v1, const IONodeType &v2)
+    friend Io_node_type & operator+(const Io_node_type &v1, const Io_node_type &v2)
     {
         assert(v1.size() == v2.size()) ;
-        IONodeType &tmp = *new(IONodeType)(v1.size(),0) ;
+        Io_node_type &tmp = *new(Io_node_type)(v1.size(),0) ;
         for (size_t i =0; i<v1.size(); ++i)
             tmp[i] = (v1.at(i) + v2.at(i)) ;
         return tmp ;
     }
 
-    friend IONodeType & operator-(const IONodeType &v1, const IONodeType &v2)
+    friend Io_node_type & operator-(const Io_node_type &v1, const Io_node_type &v2)
     {
         assert(v1.size() == v2.size()) ;
-        IONodeType &tmp = *new(IONodeType)(v1.size(),0) ;
+        Io_node_type &tmp = *new(Io_node_type)(v1.size(),0) ;
         for (size_t i =0; i<v1.size(); ++i)
             tmp[i] = (v1.at(i) - v2.at(i)) ;
         return tmp ;
     }
 
-    friend IONodeType & operator+= (IONodeType &v1, const IONodeType &v2)
+    friend Io_node_type & operator+= (Io_node_type &v1, const Io_node_type &v2)
     {
         assert(v1.size() == v2.size()) ;
         for (size_t i =0; i<v1.size(); ++i)
@@ -87,36 +86,36 @@ public:
         return v1 ;
     }
 
-    friend IONodeType operator/(const IONodeType &v1, double d)
+    friend Io_node_type operator/(const Io_node_type &v1, double d)
     {
-        IONodeType &tmp = *new(IONodeType)(v1.size(),0) ;
+        Io_node_type &tmp = *new(Io_node_type)(v1.size(),0) ;
         for (size_t i =0; i<v1.size(); ++i)
             tmp[i] = v1.at(i)/d ;
         return tmp ;
     }
 
-    friend IONodeType & operator/=(IONodeType &v1, double d)
+    friend Io_node_type & operator/=(Io_node_type &v1, double d)
     {
         for (size_t i =0; i<v1.size(); ++i)
             v1[i] /= d ;
         return v1 ;
     }
 
-    friend IONodeType & operator*=(IONodeType &v, double d)
+    friend Io_node_type & operator*=(Io_node_type &v, double d)
     {
         for (size_t i =0; i<v.size(); ++i)
             v[i] *= d ;
         return v ;
     }
 
-    friend IONodeType & operator*=(IONodeType &v, IONodeType &lambda)
+    friend Io_node_type & operator*=(Io_node_type &v, Io_node_type &lambda)
     {
         for (size_t i =0; i<v.size(); ++i)
             v[i] *= lambda.at(i) ;
         return v ;
     }
 
-    friend double dist(const IONodeType &v1, const IONodeType &v2)
+    friend double dist(const Io_node_type &v1, const Io_node_type &v2)
     {
         assert(v1.size() == v2.size()) ;
         double x=0., tmp ;
@@ -129,27 +128,27 @@ public:
         return sqrt(x) ;
     }
 
-    friend IONodeType max(const IONodeType &v1, const IONodeType &v2)
+    friend Io_node_type max(const Io_node_type &v1, const Io_node_type &v2)
     {
         assert(v1.size() == v2.size()) ;
-        IONodeType tmp(v1) ;
+        Io_node_type tmp(v1) ;
         for (size_t i=0; i<v1.size(); ++i)
             tmp[i] = std::max(tmp.at(i), v2.at(i)) ;
         return tmp ;
     }
 
-    friend IONodeType min(const IONodeType &v1, const IONodeType &v2)
+    friend Io_node_type min(const Io_node_type &v1, const Io_node_type &v2)
     {
         assert(v1.size() == v2.size()) ;
-        IONodeType tmp(v1) ;
+        Io_node_type tmp(v1) ;
         for (size_t i=0; i<v1.size(); ++i)
             tmp[i] = std::min(tmp.at(i), v2.at(i)) ;
         return tmp ;
     }
 
-    friend void normalize(IONodeType &v)
+    friend void normalize(Io_node_type &v)
     {
-        const IONodeType zero = IONodeType(v.size(),0) ;
+        const Io_node_type zero = Io_node_type(v.size(),0) ;
         double n = dist(zero, v) ;
         for (size_t i =0; i<v.size(); ++i)
             v[i] /= n ;
@@ -203,7 +202,7 @@ class Mesh_object_io
 private:
     // Write vtk file
     template <typename CoefficientType>
-    void write_vtk(const std::string &filename, const std::vector<IONodeType> &nodes, const std::vector<IOChainType> &chains, const std::vector<CoefficientType> *labels=NULL, const std::string scalar_type="none")
+    void write_vtk(const std::string &filename, const std::vector<Io_node_type> &nodes, const std::vector<Io_chain_type> &chains, const std::vector<CoefficientType> *labels=NULL, const std::string scalar_type="none")
     {
         bool with_scalars = (labels != NULL) ;
         // Load ...
@@ -223,7 +222,7 @@ private:
         // Points
         size_t nnodes = nodes.size() ;
         out << "POINTS " << nnodes << " double" << std::endl ;
-        for (IONodeType n : nodes)
+        for (Io_node_type n : nodes)
             out << n.at(0) << " " << n.at(1) << " " << n.at(2) << std::endl ;
 
         // Cells
@@ -233,7 +232,7 @@ private:
         for (size_t i = 0; i<chains.size(); ++i)
         {
             // for each cells in the ith chain
-            for (IOCellType c : chains.at(i))
+            for (Io_cell_type c : chains.at(i))
             {
                 ncells_tot += 1 ;
                 size_cells_tot += (c.size()+1) ;
@@ -246,9 +245,9 @@ private:
         std::vector<CoefficientType> scalars ;
         for (size_t i = 0; i<chains.size(); ++i)
         {
-            const IOChainType cc = chains.at(i) ;
+            const Io_chain_type cc = chains.at(i) ;
 
-            for (IOCellType c : cc)
+            for (Io_cell_type c : cc)
             {
                 const int d = c.size() ;
                 const size_t cell_type = VTK_types_IO.at(d-1) ;
@@ -288,8 +287,8 @@ public:
     // - if dim < 0 : Mesh_object_io encodes a complex (possibly incomplete) of dimension d
     int dim = 0 ;
     size_t nvertices, ncells, nedges ;
-    std::vector<IONodeType> nodes ; // Coordinates of vertices (optional)
-    std::vector<IOCellType> cells ;
+    std::vector<Io_node_type> nodes ; // Coordinates of vertices (optional)
+    std::vector<Io_cell_type> cells ;
 
     /* \brief Default constructor.
      *
@@ -297,7 +296,7 @@ public:
      */
     Mesh_object_io() : dim(0), nvertices(0), ncells(0), nedges(0) {}
 
-    /** \brief Constructor from a vector of IONodeType (vertices coordinates) and a vector of simplices.
+    /** \brief Constructor from a vector of Io_node_type (vertices coordinates) and a vector of simplices.
      *
      * Simplices are described by the list of vertices indices.
      *
@@ -309,7 +308,7 @@ public:
      * \param[in] sort_data If `true` the vectors of vertex indices are sorted, if `false` they are assumed to be sorted (faster).
      *
      */
-    Mesh_object_io(int d, const std::vector<IONodeType> &vnodes, const std::vector<IOCellType> &vcells, bool sort_data = false) : dim(d), nvertices(vnodes.size()), ncells(vcells.size()), nedges(0), nodes(vnodes), cells(vcells) {
+    Mesh_object_io(int d, const std::vector<Io_node_type> &vnodes, const std::vector<Io_cell_type> &vcells, bool sort_data = false) : dim(d), nvertices(vnodes.size()), ncells(vcells.size()), nedges(0), nodes(vnodes), cells(vcells) {
         check_dimension() ;
         if (sort_data) {
             // Sort the vector encoding each cell
@@ -325,7 +324,7 @@ public:
     std::vector<std::vector<double> > get_nodes ()
     {
         std::vector<std::vector<double> > res ;
-        for (IONodeType v : nodes)
+        for (Io_node_type v : nodes)
             res.push_back(v.get_coords()) ;
         return res ;
     }
@@ -343,14 +342,14 @@ public:
         // Append all the cells (and increment their indices by off)
         for (size_t i=0; i<mesh.cells.size(); ++i)
         {
-            IOCellType tmp ;
+            Io_cell_type tmp ;
             for (size_t c : mesh.cells.at(i))
                 tmp.push_back(c+off) ;
             cells.push_back(tmp) ;
         }
     }
 
-    void add_node(const IONodeType &v) {nodes.push_back(v); ++nvertices ;}
+    void add_node(const Io_node_type &v) {nodes.push_back(v); ++nvertices ;}
 
     void clear_cells() { cells.clear() ; ncells = 0 ; }
 
@@ -358,12 +357,12 @@ public:
 
     void clear() { clear_nodes() ; clear_cells() ;}
 
-    void add_cell(const IOCellType &c) {cells.push_back(c); ++ncells ;}
+    void add_cell(const Io_cell_type &c) {cells.push_back(c); ++ncells ;}
 
     size_t cells_of_dim (int q) const
     {
         size_t n = 0 ;
-        for (IOCellType c : cells)
+        for (Io_cell_type c : cells)
         {
             if (c.size() == (q+1))
                 ++n ;
@@ -404,7 +403,7 @@ public:
                 return false;
             }
             std::istringstream info_stream(info);
-            IONodeType p(3) ;
+            Io_node_type p(3) ;
             info_stream >> p[0] >> p[1] >> p[2] ;
             nodes[i] = p ;
         }
@@ -419,7 +418,7 @@ public:
             unsigned long n;
             unsigned long index;
             info_stream >> n;
-            IOCellType c ;
+            Io_cell_type c ;
             // Read vertices indices
             for (auto j = 0; j < n; ++j) {
                 info_stream >> index;
@@ -472,7 +471,7 @@ public:
     // VTK
     void write_to_vtk(const std::string &filename)
     {
-        std::vector<IOChainType> chains{cells} ;
+        std::vector<Io_chain_type> chains{cells} ;
         write_vtk<int>(filename, nodes, chains) ;
     }
 
@@ -489,7 +488,7 @@ public:
         // 1 - write cells
         for (size_t i=0; i<ncells; ++i)
         {
-            const IOCellType cell = cells.at(i) ;
+            const Io_cell_type cell = cells.at(i) ;
             for (size_t c : cell)
                 outfile << c << " " ;
             outfile << std::endl ;
@@ -522,7 +521,7 @@ public:
                     throw std::runtime_error("File Parsing Error: Invalid file");
                 }
             }
-            IOCellType cell ;
+            Io_cell_type cell ;
             std::istringstream is( line );
             size_t v;
             // Read vertices indices
@@ -555,12 +554,12 @@ public:
     }
 
     // Mesh computations
-    IONodeType barycenter()
+    Io_node_type barycenter()
     {
         // Init the barycenter
-        IONodeType bary(3,0) ;
+        Io_node_type bary(3,0) ;
         // Compute the barycenter
-        for (IONodeType v : nodes)
+        for (Io_node_type v : nodes)
         {
             bary += v ;
         }
@@ -568,34 +567,34 @@ public:
         return bary;
     }
 
-    double radius(const IONodeType &bary)
+    double radius(const Io_node_type &bary)
     {
         double r = 0 ;
-        for (IONodeType v : nodes)
+        for (Io_node_type v : nodes)
         {
             r = std::max (r, dist(v,bary)) ;
         }
         return r ;
     }
-    std::pair<IONodeType, IONodeType> BB(double ratio=1.)
+    std::pair<Io_node_type, Io_node_type> BB(double ratio=1.)
     {
-        IONodeType minBB(nodes.at(0)), maxBB(nodes.at(0)) ;
+        Io_node_type minBB(nodes.at(0)), maxBB(nodes.at(0)) ;
         for (size_t i=1; i<nodes.size(); ++i)
         {
             minBB = min(minBB, nodes.at(i)) ;
             maxBB = max(maxBB, nodes.at(i)) ;
         }
-        IONodeType c = (minBB+maxBB)/2. ;
-        IONodeType rad = (maxBB-minBB)/2. ;
+        Io_node_type c = (minBB+maxBB)/2. ;
+        Io_node_type rad = (maxBB-minBB)/2. ;
         rad *= ratio ;
-        return std::pair<IONodeType, IONodeType>(c-rad, c+rad) ;
+        return std::pair<Io_node_type, Io_node_type>(c-rad, c+rad) ;
     }
 private:
     void check_dimension()
     {
         if (dim > 0) // exact dimension
         {
-            for (IOCellType cell : cells)
+            for (Io_cell_type cell : cells)
             {
                 if (cell.size() != (dim+1))
                     throw "Mesh has a cell of inconsistent dimension" ;
@@ -603,7 +602,7 @@ private:
         }
         else // max dim
         {
-            for (IOCellType cell : cells)
+            for (Io_cell_type cell : cells)
             {
                 if ((cell.size() > (-dim+1)))
                     throw "Mesh has a cell of inconsistent dimension" ;
@@ -612,21 +611,21 @@ private:
     }
 } ;
 
-inline Mesh_object_io mesh_BB(const IONodeType &BBmin, const IONodeType &BBmax)
+inline Mesh_object_io mesh_BB(const Io_node_type &BBmin, const Io_node_type &BBmax)
 {
     Mesh_object_io m ;
-    IONodeType delta = BBmax-BBmin ;
+    Io_node_type delta = BBmax-BBmin ;
     m.nvertices = 8 ;
     m.ncells = 12 ;
     m.nodes.resize(8) ;
-    m.nodes[0] = IONodeType({0, 0, 0}) ;
-    m.nodes[1] = IONodeType({1, 0, 0}) ;
-    m.nodes[2] = IONodeType({1, 1, 0}) ;
-    m.nodes[3] = IONodeType({0, 1, 0}) ;
-    m.nodes[4] = IONodeType({0, 0, 1}) ;
-    m.nodes[5] = IONodeType({1, 0, 1}) ;
-    m.nodes[6] = IONodeType({1, 1, 1}) ;
-    m.nodes[7] = IONodeType({0, 1, 1}) ;
+    m.nodes[0] = Io_node_type({0, 0, 0}) ;
+    m.nodes[1] = Io_node_type({1, 0, 0}) ;
+    m.nodes[2] = Io_node_type({1, 1, 0}) ;
+    m.nodes[3] = Io_node_type({0, 1, 0}) ;
+    m.nodes[4] = Io_node_type({0, 0, 1}) ;
+    m.nodes[5] = Io_node_type({1, 0, 1}) ;
+    m.nodes[6] = Io_node_type({1, 1, 1}) ;
+    m.nodes[7] = Io_node_type({0, 1, 1}) ;
     for (size_t i=0; i<8; ++i)
     {
         m.nodes[i] *= delta ;
@@ -634,18 +633,18 @@ inline Mesh_object_io mesh_BB(const IONodeType &BBmin, const IONodeType &BBmax)
     }
 
     m.cells.resize(12) ;
-    m.cells[0] = IOCellType({0, 1, 4}) ;
-    m.cells[1] = IOCellType({1, 4, 5}) ;
-    m.cells[2] = IOCellType({1, 2, 6}) ;
-    m.cells[3] = IOCellType({1, 5, 6}) ;
-    m.cells[4] = IOCellType({0, 1, 3}) ;
-    m.cells[5] = IOCellType({1, 2, 3}) ;
-    m.cells[6] = IOCellType({2, 3, 6}) ;
-    m.cells[7] = IOCellType({3, 6, 7}) ;
-    m.cells[8] = IOCellType({0, 3, 4}) ;
-    m.cells[9] = IOCellType({3, 4, 7}) ;
-    m.cells[10] = IOCellType({4, 5, 6}) ;
-    m.cells[11] = IOCellType({4, 6, 7}) ;
+    m.cells[0] = Io_cell_type({0, 1, 4}) ;
+    m.cells[1] = Io_cell_type({1, 4, 5}) ;
+    m.cells[2] = Io_cell_type({1, 2, 6}) ;
+    m.cells[3] = Io_cell_type({1, 5, 6}) ;
+    m.cells[4] = Io_cell_type({0, 1, 3}) ;
+    m.cells[5] = Io_cell_type({1, 2, 3}) ;
+    m.cells[6] = Io_cell_type({2, 3, 6}) ;
+    m.cells[7] = Io_cell_type({3, 6, 7}) ;
+    m.cells[8] = Io_cell_type({0, 3, 4}) ;
+    m.cells[9] = Io_cell_type({3, 4, 7}) ;
+    m.cells[10] = Io_cell_type({4, 5, 6}) ;
+    m.cells[11] = Io_cell_type({4, 6, 7}) ;
     return m;
 }
 

@@ -314,7 +314,7 @@ public:
     typedef struct {
         ComplexType& L ;
         SubCCType& K ;
-        std::vector<IONodeType> nodes ;
+        std::vector<Io_node_type> nodes ;
     } TripleRes ;
 
     /** \brief Generates a subcomplex \f$K\f$K and a complex \f$L\f$ with \f$K\subseteq L\f$ from a simplicial complex `_K`.
@@ -336,7 +336,7 @@ public:
 
         // Closing K by adding the icosphere
         //  Compute a bounding icosphere
-        IONodeType bary = mesh_L.barycenter() ;
+        Io_node_type bary = mesh_L.barycenter() ;
         double r = mesh_L.radius(bary) ;
         Icosphere_object_io ico(2,bary, BB_ratio*r) ;
         ico.print_infos() ;
@@ -378,7 +378,7 @@ public:
     /** \brief Exports a SimpComplex to a MeshObject  */
     static Mesh_object_io& export_meshObject(const ComplexType& _CC)
     {
-        std::vector<IOCellType> vcells ;
+        std::vector<Io_cell_type> vcells ;
         for (int q = 0; q <= _CC.dimension(); ++q)
             for (size_t i = 0; i<_CC.number_of_cells(q); ++i)
             {
@@ -386,9 +386,9 @@ public:
                 vcells.push_back(s.get_vertices()) ;
             }
 
-        std::vector<IONodeType> coords;
+        std::vector<Io_node_type> coords;
         for (auto it = _CC.get_vertices_coords().begin(); it != _CC.get_vertices_coords().begin(); ++it)
-            coords.push_back(IONodeType(*it));
+            coords.push_back(Io_node_type(*it));
         Mesh_object_io &m = *(new Mesh_object_io(-3, coords, vcells)) ;
         return m ;
     }

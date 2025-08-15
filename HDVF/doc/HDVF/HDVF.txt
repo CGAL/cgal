@@ -650,8 +650,8 @@ performs a pairing between the cells \f$\gamma_1\f$ (index `id1` in dimension `q
 
 The package provide a family of methods to search for valid pairings:
 \code
-    Pair_cells pair;
-    std::vector<Pair_cells> pairs;
+    Cell_pair pair;
+    std::vector<Cell_pair> pairs;
     bool found;
 
     // Search for the first valid pair in dimension `q`

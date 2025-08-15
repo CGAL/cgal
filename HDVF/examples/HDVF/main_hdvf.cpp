@@ -51,7 +51,7 @@ template <typename CoefficientType, typename ComplexType>
 CGAL::HDVF::Hdvf<CoefficientType, ComplexType>& HDVF_comput (const ComplexType& complex, const Options &options)
 {
     CGAL::HDVF::Hdvf<CoefficientType, ComplexType>& hdvf(*(new CGAL::HDVF::Hdvf<CoefficientType, ComplexType>(complex, options.HDVF_opt)));
-    std::vector<CGAL::HDVF::Pair_cells> pairs ;
+    std::vector<CGAL::HDVF::Cell_pair> pairs ;
     if (!options.random)
         pairs = hdvf.compute_perfect_hdvf(options.verbose);
     else

@@ -105,7 +105,7 @@ private:
     /*! Type of parent filtration instance. */
     typedef Filtration_core<CoefficientType, ComplexType, DegreeType> FiltrationCoreT;
     /*! Type of cell identifier (cell index and dimension). */
-    typedef FiltrationCoreT::Cell_index_dimension Cell_index_dimension;
+    typedef FiltrationCoreT::Cell Cell;
     /*! Type of value returned by the iterator. */
     typedef FiltrationCoreT::Filtration_iter_value Filtration_iter_value;
 public:
@@ -165,13 +165,13 @@ void Filtration_lower_star<CoefficientType, ComplexType, DegreeType>::star_filtr
     // Create filtration and degrees for all cells according to deg
     // -> lower star: maximum degree of vertices
     // -> upper star: minimum degree of vertices
-    std::vector<Cell_index_dimension> tmp_filtration ;
+    std::vector<Cell> tmp_filtration ;
     std::vector<DegreeType> tmp_deg ;
     std::vector<size_t> tmp_perm ;
     for (size_t i=0; i<deg.size(); ++i)
     {
         tmp_perm.push_back(i) ;
-        tmp_filtration.push_back(Cell_index_dimension(i,0)) ;
+        tmp_filtration.push_back(Cell(i,0)) ;
         tmp_deg.push_back(deg.at(i)) ;
     }
     // For all other cells
@@ -179,7 +179,7 @@ void Filtration_lower_star<CoefficientType, ComplexType, DegreeType>::star_filtr
     {
         for (size_t i=0; i<this->_K.number_of_cells(q); ++i)
         {
-            tmp_filtration.push_back(Cell_index_dimension(i,q)) ;
+            tmp_filtration.push_back(Cell(i,q)) ;
 
             // Compute corresponding degree
             // Vertices of the cell

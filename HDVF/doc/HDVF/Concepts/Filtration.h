@@ -30,18 +30,18 @@ public:
 
     /*! \brief Type for indexing uniquely a cell.
      *
-     * As stated in `AbstractChainComplex`, cells are identified by their dimension, together with their index along this dimension. The type `Cell_index_dimension` stores this pair:
+     * As stated in `AbstractChainComplex`, cells are identified by their dimension, together with their index along this dimension. The type `Cell` stores this pair:
      *
      * - First element of the pair: index of the cell.
      * - Second element of the pair: dimension of the cell.
      */
-    typedef std::pair<size_t, int> Cell_index_dimension ;
+    typedef std::pair<size_t, int> Cell ;
 
     /*! \brief Value type of the filtration iterator.
-     * Contains a cell (identified by its index and dimension in a `Cell_index_dimension`) and its associated degree.
+     * Contains a cell (identified by its index and dimension in a `Cell`) and its associated degree.
      */
     typedef struct {
-        Cell_index_dimension cell_dim ;
+        Cell cell_dim ;
         DegreeType degree ;
     } Filtration_iter_value ;
 
@@ -91,9 +91,9 @@ public:
          */
         size_t time () const ;
 
-        /*! Gets the `Cell_index_dimension` (cell and its dimension) associated to the iterator.
+        /*! Gets the `Cell` (cell and its dimension) associated to the iterator.
          */
-        Cell_index_dimension cell_dim () const ;
+        Cell cell_dim () const ;
 
         /*! Gets the degree associated to the iterator.
          */
@@ -139,7 +139,7 @@ public:
 
     /*! \brief Gets the cell (that is cell index and dimension) at the index `i` of the filtration.
      */
-    Cell_index_dimension cell_index_dimension (size_t i) const;
+    Cell cell_index_dimension (size_t i) const;
 
     /*! \brief Gets the degree of the `i`th element of the filtration.
      */

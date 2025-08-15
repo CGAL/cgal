@@ -49,7 +49,7 @@ void mesh_complex_output(const MeshType& mesh, const ComplexType& L, const CGAL:
     }
 }
 
-inline std::ostream& dual_pairs_output(const std::vector<CGAL::HDVF::Pair_cells>& pairs, std::ostream& out=std::cout)
+inline std::ostream& dual_pairs_output(const std::vector<CGAL::HDVF::Cell_pair>& pairs, std::ostream& out=std::cout)
 {
     out << "Pairs found by compute_perfect_hdvf:" << std::endl;
     for (const auto& pair : pairs) {
@@ -62,7 +62,7 @@ template <typename CoefficientType, typename ComplexType>
 void dual_HDVF_pair (CGAL::HDVF::Hdvf_duality<CoefficientType, ComplexType>& dual_hdvf, const Options &options)
 {
     // Compute pairing
-    std::vector<CGAL::HDVF::Pair_cells> pairs = dual_hdvf.compute_pairing_hdvf() ;
+    std::vector<CGAL::HDVF::Cell_pair> pairs = dual_hdvf.compute_pairing_hdvf() ;
 
     if (options.with_output)
     {

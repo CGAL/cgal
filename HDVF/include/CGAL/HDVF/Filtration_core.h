@@ -64,12 +64,12 @@ public:
      * - First element of the pair: index of the cell.
      * - Second element of the pair: dimension of the cell.
      */
-    typedef std::pair<std::size_t, int> Cell_index_dimension ;
+    typedef std::pair<std::size_t, int> Cell ;
 
     /*! \brief Type of value returned by the iterator.
      */
     typedef struct {
-        Cell_index_dimension cell_dim ;
+        Cell cell_dim ;
         DegreeType degree ;
     } Filtration_iter_value ;
 
@@ -77,12 +77,12 @@ protected:
     /** \brief Constant reference to the underlying chain complex. */
     const ComplexType& _K ;
     /** \brief Vector of cells of the filtration (full ordering of cells). */
-    std::vector<Cell_index_dimension> _filtration ;
+    std::vector<Cell> _filtration ;
     /** \brief Vector of degrees of cells along the filtration. */
     std::vector<DegreeType> _deg ;
 
     /** \brief Map from cells to their index in the filtration. */
-    std::map<Cell_index_dimension,std::size_t> _cell_to_t ;
+    std::map<Cell,std::size_t> _cell_to_t ;
 
     /*!
      Type of column-major sparse matrices
@@ -119,7 +119,7 @@ public:
      * \param[in] filtration An ordering of the cells of `K` encoded as a vector of its cells.
      * \param[in] deg The (increasing) vector of cells degrees.
      */
-    Filtration_core(const ComplexType& K, const std::vector<Cell_index_dimension>& filtration, const std::vector<DegreeType>& deg) : _K(K), _filtration(filtration), _deg(deg)
+    Filtration_core(const ComplexType& K, const std::vector<Cell>& filtration, const std::vector<DegreeType>& deg) : _K(K), _filtration(filtration), _deg(deg)
     {
         if (!is_valid())
             throw ("Invalid filtration, Filtration_core constructor failed");
@@ -170,7 +170,7 @@ public:
 
         /*! \brief Get the cell (identified by its index and dimension) associated to current iterator.
          */
-        Cell_index_dimension cell_dim () const { return _f._filtration.at(_i); }
+        Cell cell_dim () const { return _f._filtration.at(_i); }
 
         /*! \brief Get degree associated to current iterator.
          */
@@ -231,7 +231,7 @@ public:
 
     /*! \brief Gets the cell (that is cell index and dimension) at the index `i` of the filtration.
      */
-    Cell_index_dimension cell_index_dimension (std::size_t i) const { return _filtration.at(i); }
+    Cell cell_index_dimension (std::size_t i) const { return _filtration.at(i); }
 
     /*! \brief Gets the degree of the `i`th element of the filtration.
      */
@@ -265,7 +265,7 @@ public:
         {
             for (std::size_t i = 0; i<this->_K.number_of_cells(q); ++i)
             {
-                const Cell_index_dimension cell(i,q) ;
+                const Cell cell(i,q) ;
                 const std::size_t t(_cell_to_t.at(cell));
                 labels.at(q).push_back(t) ;
             }
@@ -293,7 +293,7 @@ void Filtration_core<CoefficientType, ComplexType, DegreeType>::build_filtration
 {
     for (std::size_t i = 0; i<_filtration.size(); ++i)
     {
-        const Cell_index_dimension c(_filtration.at(i)) ;
+        const Cell c(_filtration.at(i)) ;
         // c : filtration index i, index in the basis reordered by filtration : j
         _cell_to_t[c] = i ;
     }
@@ -307,7 +307,7 @@ bool Filtration_core<CoefficientType, ComplexType, DegreeType>::is_valid() const
     {
         if (i>0)
             valid = valid & (_deg.at(i) >= _deg.at(i-1)) ;
-        Cell_index_dimension c(_filtration.at(i)) ;
+        Cell c(_filtration.at(i)) ;
         std::cout << i << " -> " << c.first << " dim "<< c.second << std::endl ;
         const int q = c.second ;
         if (q>0)
@@ -317,7 +317,7 @@ bool Filtration_core<CoefficientType, ComplexType, DegreeType>::is_valid() const
             for (typename Column_chain::iterator it = dc.begin(); it != dc.end() && valid; ++it)
             {
                 // Faces of c
-                const Cell_index_dimension face(it->first,q-1) ;
+                const Cell face(it->first,q-1) ;
                 // Check if the face c belongs to the filtration
                 auto it_face(_cell_to_t.find(face)) ;
                 valid = valid & (it_face != _cell_to_t.end()) ;

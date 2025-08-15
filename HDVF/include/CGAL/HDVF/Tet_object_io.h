@@ -29,7 +29,7 @@ namespace HDVF {
 
 // Tetgen related
 
-inline size_t read_nodes(const std::string &node_file, bool load_nodes, std::vector<IONodeType> *nodes)
+inline size_t read_nodes(const std::string &node_file, bool load_nodes, std::vector<Io_node_type> *nodes)
 {
     std::ifstream in_file (node_file) ;
     if ( ! in_file . good () ) {
@@ -53,7 +53,7 @@ inline size_t read_nodes(const std::string &node_file, bool load_nodes, std::vec
     {
         size_t trash ;
         double x ;
-        IONodeType node ;
+        Io_node_type node ;
         --nnodes_tmp ;
         std::string line;
         getline( in_file, line );
@@ -105,7 +105,7 @@ public:
     {
         for (size_t i=0; i<nvertices; ++i)
         {
-            IOCellType cell({i}) ;
+            Io_cell_type cell({i}) ;
             cells.push_back(cell) ;
         }
         std::cout << "--- " << nvertices << "vert" << std::endl ;
@@ -146,7 +146,7 @@ public:
             is >> trash ;
             is >> i ;
             is >> j ;
-            IOCellType cell({i,j}) ;
+            Io_cell_type cell({i,j}) ;
             add_cell(cell) ;
         }
         input_file.close() ;
@@ -189,7 +189,7 @@ public:
             is >> i ;
             is >> j ;
             is >> k ;
-            IOCellType cell({i, j, k}) ;
+            Io_cell_type cell({i, j, k}) ;
             add_cell(cell) ;
         }
         input_file.close() ;
@@ -233,7 +233,7 @@ public:
             is >> j ;
             is >> k ;
             is >> l ;
-            IOCellType cell({i, j, k, l}) ;
+            Io_cell_type cell({i, j, k, l}) ;
             add_cell(cell) ;
         }
         input_file.close() ;

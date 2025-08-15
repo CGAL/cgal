@@ -154,7 +154,7 @@ typedef unspecified_type ComplexType;
  *
  * Cells are always sorted so that the dimension of `sigma` is lesser than the dimension of `tau`.
  */
-struct Pair_cells {
+struct Cell_pair {
     /// Index of the first cell
     size_t sigma; 
     /// Index of the second cell
@@ -189,17 +189,17 @@ typedef SparseMatrixType<CoefficientType, CGAL::OSM::ROW> Row_matrix;
 /// @{
 
 /*!
- * \brief Finds a valid Pair_cells of dimension q / q+1 for A.
+ * \brief Finds a valid Cell_pair of dimension q / q+1 for A.
  *
  * The function searches a pair of critical cells \f$(\gamma_1, \gamma2)\f$ of dimension q / q+1, valid for A (ie.\ such that \f$\langle \partial_{q+1}(\gamma_2), \gamma_1 \rangle\f$ invertible). It returns the first valid pair found by iterators.
  *
  * \param[in] q Lower dimension of the pair.
  * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
  */
-virtual Pair_cells find_pair_A(int q, bool &found) const;
+virtual Cell_pair find_pair_A(int q, bool &found) const;
 
 /*!
- * \brief Finds a valid Pair_cells for A containing `gamma` (a cell of dimension `q`)
+ * \brief Finds a valid Cell_pair for A containing `gamma` (a cell of dimension `q`)
  *
  * The function searches a cell \f$\gamma'\f$ such that one of the following conditions holds:
  * - \f$\gamma'\f$ has dimension q+1 and \f$(\gamma, \gamma')\f$ is valid for A (ie.\ such that \f$\langle \partial_{q+1}(\gamma'), \gamma \rangle\f$ invertible),
@@ -209,10 +209,10 @@ virtual Pair_cells find_pair_A(int q, bool &found) const;
  * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
  * \param[in] gamma Index of a cell to pair.
  */
-virtual Pair_cells find_pair_A(int q, bool &found, size_t gamma) const;
+virtual Cell_pair find_pair_A(int q, bool &found, size_t gamma) const;
 
 /**
- * \brief Finds *all* valid Pair_cells of dimension q / q+1 for A.
+ * \brief Finds *all* valid Cell_pair of dimension q / q+1 for A.
  *
  * The function searches all pairs of critical cells \f$(\gamma_1, \gamma2)\f$ of dimension q / q+1, valid for A (ie.\ such that \f$\langle \partial_{q+1}(\gamma_2), \gamma_1 \rangle\f$ invertible).
  * It returns a vector of such pairs.
@@ -220,10 +220,10 @@ virtual Pair_cells find_pair_A(int q, bool &found, size_t gamma) const;
  * \param[in] q Lower dimension of the pair.
  * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
  */
-virtual std::vector<Pair_cells> find_pairs_A(int q, bool &found) const;
+virtual std::vector<Cell_pair> find_pairs_A(int q, bool &found) const;
 
 /**
- * \brief Finds *all* valid Pair_cells for A containing `gamma` (a cell of dimension `q`)
+ * \brief Finds *all* valid Cell_pair for A containing `gamma` (a cell of dimension `q`)
  *
  * The function searches all critical cells \f$\gamma'\f$ such that one of the following conditions holds:
  * - \f$\gamma'\f$ has dimension q+1 and \f$(\gamma, \gamma')\f$ is valid for A (ie.\ such that \f$\langle \partial_{q+1}(\gamma'), \gamma \rangle\f$ invertible),
@@ -234,7 +234,7 @@ virtual std::vector<Pair_cells> find_pairs_A(int q, bool &found) const;
  * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
  * \param[in] gamma Index of a cell to pair.
  */
-virtual std::vector<Pair_cells> find_pairs_A(int q, bool &found, size_t gamma) const;
+virtual std::vector<Cell_pair> find_pairs_A(int q, bool &found, size_t gamma) const;
 
 
 /// @}
@@ -261,7 +261,7 @@ void A(size_t gamma1, size_t gamma2, int q);
  * \param verbose If `true`, all intermediate reductions are printed out.
  *
  */
-std::vector<Pair_cells> compute_perfect_hdvf(bool verbose = false);
+std::vector<Cell_pair> compute_perfect_hdvf(bool verbose = false);
 
 /*!
  * \brief Computes a random perfect HDVF.
@@ -273,7 +273,7 @@ std::vector<Pair_cells> compute_perfect_hdvf(bool verbose = false);
  *
  * \param verbose If `true`, all intermediate reductions are printed out.
  */
-std::vector<Pair_cells> compute_rand_perfect_hdvf(bool verbose = false);
+std::vector<Cell_pair> compute_rand_perfect_hdvf(bool verbose = false);
 /// @}
 
 /// \name Getters

@@ -24,7 +24,7 @@
 namespace CGAL {
 namespace HDVF {
 
-inline std::ostream & operator<< (std::ostream &out, const Pair_cells& p)
+inline std::ostream & operator<< (std::ostream &out, const Cell_pair& p)
 {
     out << "(" << p.sigma << "/" << p.tau << " - dim " << p.dim << ")" ;
     return out ;
@@ -56,7 +56,7 @@ void interaction_loop(Hdvf<CoefType, ComplexType> &hdvf,
             std::cout << "Provide sigma / q (separate with space):" << std::endl ;
             std::cin >> sigma >> q ;
             bool found = false ;
-            std::vector<Pair_cells> possM(hdvf.find_pairs_M(q, found, sigma)) ;
+            std::vector<Cell_pair> possM(hdvf.find_pairs_M(q, found, sigma)) ;
             std::cout << "-> possible pairings for M:" << std::endl ;
             for (int i = 0; i<possM.size(); ++i)
                 std::cout << i << " : " << possM.at(i) << std::endl ;
@@ -66,7 +66,7 @@ void interaction_loop(Hdvf<CoefType, ComplexType> &hdvf,
                 std::cin >> ipair ;
                 if ((ipair >= 0) && (ipair < possM.size()))
                 {
-                    Pair_cells p(possM.at(ipair)) ;
+                    Cell_pair p(possM.at(ipair)) ;
                     std::cout << "M(" << p << ")" << std::endl ;
                     hdvf.M(p.sigma, p.tau, p.dim) ;
                     //                    hdvf.insert_matrices() ;
@@ -80,7 +80,7 @@ void interaction_loop(Hdvf<CoefType, ComplexType> &hdvf,
             std::cout << "Provide sigma / q (separate with space):" << std::endl ;
             std::cin >> sigma >> q ;
             bool found = false ;
-            std::vector<Pair_cells> possW(hdvf.find_pairs_W(q, found, sigma)) ;
+            std::vector<Cell_pair> possW(hdvf.find_pairs_W(q, found, sigma)) ;
             std::cout << "-> possible pairings for W:" << std::endl ;
             for (int i = 0; i<possW.size(); ++i)
                 std::cout << i << " : " << possW.at(i) << std::endl ;
@@ -90,7 +90,7 @@ void interaction_loop(Hdvf<CoefType, ComplexType> &hdvf,
                 std::cin >> ipair ;
                 if ((ipair >= 0) && (ipair < possW.size()))
                 {
-                    Pair_cells p(possW.at(ipair)) ;
+                    Cell_pair p(possW.at(ipair)) ;
                     std::cout << "W(" << p << ")" << std::endl ;
                     hdvf.W(p.sigma, p.tau, p.dim) ;
                     //                    hdvf.insert_matrices() ;
@@ -104,7 +104,7 @@ void interaction_loop(Hdvf<CoefType, ComplexType> &hdvf,
             std::cout << "Provide sigma / q (separate with space):" << std::endl ;
             std::cin >> sigma >> q ;
             bool found = false ;
-            std::vector<Pair_cells> possMW(hdvf.find_pairs_MW(q, found, sigma)) ;
+            std::vector<Cell_pair> possMW(hdvf.find_pairs_MW(q, found, sigma)) ;
             std::cout << "-> possible pairings for MW:" << std::endl ;
             for (int i = 0; i<possMW.size(); ++i)
                 std::cout << i << " : " << possMW.at(i) << std::endl ;
@@ -114,7 +114,7 @@ void interaction_loop(Hdvf<CoefType, ComplexType> &hdvf,
                 std::cin >> ipair ;
                 if ((ipair >= 0) && (ipair < possMW.size()))
                 {
-                    Pair_cells p(possMW.at(ipair)) ;
+                    Cell_pair p(possMW.at(ipair)) ;
                     std::cout << "MW(" << p << ")" << std::endl ;
                     hdvf.MW(p.sigma, p.tau, p.dim) ;
                     //                    hdvf.insert_matrices() ;

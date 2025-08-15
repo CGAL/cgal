@@ -41,7 +41,7 @@ typedef std::pair<size_t, size_t> FiltrIndexPerInterval ;
  *
  * "Infinite cells" are defined as (-1,q+1) where q is the dimension of the chain complex.
  */
-typedef std::pair<size_t, int> Cell_index_dimension ;
+typedef std::pair<size_t, int> Cell ;
 
 /*! \brief Type for describing the pair of cells associated to a persistence interval:
  * - First element of the pair: cell entailing the birth of the hole.
@@ -49,7 +49,7 @@ typedef std::pair<size_t, int> Cell_index_dimension ;
  *
  * For infinite intervals, the "infinite cells" is defined as (-1,q+1) where q is the dimension of the chain complex.
  */
-typedef std::pair<Cell_index_dimension, Cell_index_dimension> CellsPerInterval ;
+typedef std::pair<Cell, Cell> CellsPerInterval ;
 
 /*! \brief Template for persistent intervals degrees (birth/death degrees)
  *
@@ -271,13 +271,13 @@ public:
      *
      * \param[in] verbose If this parameter is `true`, all intermediate reductions are printed out.
      *
-     * \returns The vector of all `Pair_cells` paired with A.
+     * \returns The vector of all `Cell_pair` paired with A.
      */
-    std::vector<Pair_cells> compute_perfect_hdvf(bool verbose = false)
+    std::vector<Cell_pair> compute_perfect_hdvf(bool verbose = false)
     {
         bool found;
-        Pair_cells pair;
-        std::vector<Pair_cells> res ;
+        Cell_pair pair;
+        std::vector<Cell_pair> res ;
         for (size_t i=0; i < _f._filtration.size(); ++i)
         {
             this->progress_bar(i, _f._filtration.size()) ;
@@ -298,13 +298,13 @@ public:
                 //  -> index : nb_cell(q+1)
                 //  -> time : size of the filtration
                 //  -> degree : di - 1
-                const Pair_cells p = {i, this->_K.number_of_cells(q+1), q} ;
+                const Cell_pair p = {i, this->_K.number_of_cells(q+1), q} ;
                 const size_t ki(_per_to_K.at(q).at(i)) ; // K index
-                const Cell_index_dimension c(ki,q) ;
+                const Cell c(ki,q) ;
                 const size_t ti(_f._cell_to_t.at(c)) ;
                 const DegreeType di(_f._deg.at(i)) ;
                 FiltrIndexPerInterval per_int(ti,_f.size()) ;
-                Cell_index_dimension inf(this->_K.number_of_cells(q+1),q+1) ;
+                Cell inf(this->_K.number_of_cells(q+1),q+1) ;
                 CellsPerInterval per_int_cell(c,inf) ;
                 DegreePerInterval per_deg_int(di,di-1) ;
                 PerHole hole(per_int, per_int_cell, per_deg_int) ;
@@ -609,7 +609,7 @@ private:
      * This method exports and saves PSC labels, homology and cohomology generators of the current persistent pair `p` to corresponding private vectors (_export_label, _export_g, _export_fstar).
      * The method is invoqued on the result of `find_pair_A` before pairing cells with the A operation.
      */
-    void export_hdvf_persistence_pair(Pair_cells p)
+    void export_hdvf_persistence_pair(Cell_pair p)
     {
         // Export labels
         ExpLabels labels(this->psc_labels()) ;
@@ -657,21 +657,21 @@ private:
     }
 
     /*
-     * \brief Find a valid Pair_cells for A for persistent homology.
+     * \brief Find a valid Cell_pair for A for persistent homology.
      *
      * The function searches, at a given time \f$t\f$ in the filtration, the youngest critical cell \f$\gamma'\f$ forming a valid pair with the cell \f$\gamma\f$. Hence, \f$(\gamma', \gamma)\f$ valid pair is a valid pair
      * (ie.\ such that \f$\langle \partial(\gamma), \gamma' \rangle\f$ invertible).
      *
      * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      */
-    Pair_cells find_pair_A(bool &found) ;
+    Cell_pair find_pair_A(bool &found) ;
 
     /*
      * \brief Step forward along the filtration.
      *
      * Searches a possible persistent pair for A with `find_pair_A`, apply A and update internal structures.
      */
-    Pair_cells step_persist(bool& found, bool verbose = false) ;
+    Cell_pair step_persist(bool& found, bool verbose = false) ;
 } ;
 
 
@@ -690,7 +690,7 @@ Hdvf_persistence<CoefficientType, ComplexType, DegreeType, FiltrationType>::Hdvf
 
     for (size_t i = 0; i<_f._filtration.size(); ++i)
     {
-        const Cell_index_dimension c(_f._filtration.at(i));
+        const Cell c(_f._filtration.at(i));
         const int q(c.second) ;
         const size_t ind_K_i(c.first) ;
         const size_t ind_per_i(_per_to_K.at(q).size()) ;
@@ -743,12 +743,12 @@ Hdvf_persistence<CoefficientType, ComplexType, DegreeType, FiltrationType>::Hdvf
 }
 
 template<typename CoefficientType, typename ComplexType, typename DegreeType, typename FiltrationType>
-Pair_cells Hdvf_persistence<CoefficientType, ComplexType, DegreeType, FiltrationType>::find_pair_A(bool &found)
+Cell_pair Hdvf_persistence<CoefficientType, ComplexType, DegreeType, FiltrationType>::find_pair_A(bool &found)
 {
-    Pair_cells p ;
+    Cell_pair p ;
     // Get current cell (in the basis K)
     const size_t current_time(_t-1);
-    Cell_index_dimension c(_f._filtration.at(current_time)) ;
+    Cell c(_f._filtration.at(current_time)) ;
     const int q(c.second), sigma(_K_to_per.at(q).at(c.first))  ;
     // Search for pairing
     found = false;
@@ -786,7 +786,7 @@ Pair_cells Hdvf_persistence<CoefficientType, ComplexType, DegreeType, Filtration
 }
 
 template<typename CoefficientType, typename ComplexType, typename DegreeType, typename FiltrationType>
-Pair_cells Hdvf_persistence<CoefficientType, ComplexType, DegreeType, FiltrationType>::step_persist(bool& found, bool verbose)
+Cell_pair Hdvf_persistence<CoefficientType, ComplexType, DegreeType, FiltrationType>::step_persist(bool& found, bool verbose)
 {
     // Compute next persistent pair
 
@@ -799,14 +799,14 @@ Pair_cells Hdvf_persistence<CoefficientType, ComplexType, DegreeType, Filtration
     this->_DD_col.at(q_current).set_bit_on(t_dim_current) ; // Update _DD_col mask
 
     // Search for pairing
-    Pair_cells p(find_pair_A(found)) ;
+    Cell_pair p(find_pair_A(found)) ;
     if (found)
     {
         // Corresponding persistent interval
         const int q(p.dim) ;
         // indices of both cells in the _K basis
         const size_t ki(_per_to_K.at(q).at(p.sigma)), kj(_per_to_K.at(q+1).at(p.tau)) ;
-        Cell_index_dimension ci(ki, q), cj(kj, q+1) ; // cells of the interval - in the K basis
+        Cell ci(ki, q), cj(kj, q+1) ; // cells of the interval - in the K basis
         size_t ti(_f._cell_to_t.at(ci)), tj(_f._cell_to_t.at(cj)) ; // times of the interval
         FiltrIndexPerInterval interval(ti, tj) ;
         CellsPerInterval interval_cells(ci, cj) ;
