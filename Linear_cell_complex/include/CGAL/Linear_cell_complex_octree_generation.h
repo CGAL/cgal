@@ -21,6 +21,10 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
+#include <CGAL/boost/graph/helpers.h>
+#include <type_traits>
+#include <string>
+#include <boost/graph/graph_traits.hpp>
 
 #include <iostream>
 #include <fstream>
@@ -30,10 +34,13 @@
 
 namespace CGAL {
 
-/** @file Linear_cell_complex_octree_generation.h
- * Octree generation operations for linear cell complexes from OFF files.
- */
-
+ /** @file Linear_cell_complex_octree_generation.h
+  * Octree generation for linear cell complexes:
+  * - Preferred overload: from an in-memory FaceGraph (e.g. CGAL::Surface_mesh)
+  * - Convenience overloads: from an OFF filename (std::string / const char*)
+  * A boolean `regularized` (currently a stub) is reserved for future 1‑irregular balancing
+  */
+ 
 namespace internal {
 
 // Internal AABB intersector for octree generation
@@ -72,7 +79,7 @@ public:
   }
   
   bool empty() const { return !valid || tree.empty(); }
-  const typename Tree::Bounding_box bbox() const { return tree.bbox(); }
+  typename Tree::Bounding_box bbox() const { return tree.bbox(); }
   
 bool is_outside(double x1, double y1, double z1, 
                double x2, double y2, double z2) const {
@@ -98,6 +105,58 @@ bool is_intersect(double x1, double y1, double z1,
   return tree.do_intersect(cube);
 }
 };
+
+template<typename Kernel, typename FaceGraph>
+class Simple_AABB_intersector_fgraph {
+  typedef AABB_face_graph_triangle_primitive<FaceGraph> Primitive;
+  typedef AABB_traits_3<Kernel, Primitive> Traits;
+  typedef CGAL::AABB_tree<Traits> Tree;
+
+  const FaceGraph* fg;
+  Tree tree;
+  bool valid;
+
+public:
+  Simple_AABB_intersector_fgraph(const FaceGraph& graph)
+    : fg(&graph), valid(false)
+  {
+    if(faces(graph).first == faces(graph).second) return;
+    tree.insert(faces(graph).first, faces(graph).second, graph);
+    tree.accelerate_distance_queries();
+    valid = !tree.empty();
+  }
+
+  bool empty() const { return !valid; }
+  typename Tree::Bounding_box bbox() const { return tree.bbox(); }
+
+  bool is_outside(double x1,double y1,double z1,
+                  double x2,double y2,double z2) const
+  {
+    if(!valid) return true;
+    typename Kernel::Iso_cuboid_3 cube(
+      typename Kernel::Point_3(x1,y1,z1),
+      typename Kernel::Point_3(x2,y2,z2));
+    return !tree.do_intersect(cube);
+  }
+
+  bool is_intersect(double x1,double y1,double z1,
+                    double x2,double y2,double z2) const
+  {
+    if(!valid) return false;
+    typename Kernel::Iso_cuboid_3 cube(
+      typename Kernel::Point_3(x1,y1,z1),
+      typename Kernel::Point_3(x2,y2,z2));
+    return tree.do_intersect(cube);
+    }
+};
+
+// ==== regularization stub ========================================
+template<typename LCC>
+void regularize_octree(LCC& /*lcc*/)
+{
+  // Stub: current octree is uniform (single level) nothing to balance yet.
+}
+// ===========================================================================
 
 template<typename Intersector>
 void compute_initial_grid_size(unsigned int init,
@@ -210,7 +269,8 @@ void create_initial_hexahedral_grid(LCC& lcc,
  * @param create_all_voxels if true, creates all voxels in bounding box; 
  *                         if false, creates only intersecting voxels
  * @param no_remove_outside if true, keeps voxels outside the surface (currently not used)
- * @param regularized if true, generates regularized mesh (currently not used)
+ * @param regularized if true, requests a 1-irregular (balanced) octree.
+ *                    Currently a stub (octree is uniform).
  * 
  * @pre `LCC::dimension >= 3`
  * @pre `LCC::ambient_dimension == 3`
@@ -248,6 +308,10 @@ internal::Simple_AABB_intersector<Kernel> intersector(off_filename);
   internal::create_initial_hexahedral_grid(lcc, intersector,
                                           sx, sy, sz, initX, initY, initZ,
                                           create_all_voxels);
+
+  if (regularized) {
+    internal::regularize_octree(lcc);
+  }
     
   if (IO::is_pretty(std::cout)) {
     std::cout << "Basic octree generated (level 0/" << max_subdivision_level << ")" << std::endl;
@@ -260,7 +324,78 @@ internal::Simple_AABB_intersector<Kernel> intersector(off_filename);
   // Unused parameters (for future implementation)
   (void)max_subdivision_level;
   (void)no_remove_outside;
-  (void)regularized;
+}
+// END OF compute_octree with filename
+
+// Overload for const char*
+template<typename LCC>
+void compute_octree(LCC& lcc,
+                    const char* filename,
+                    unsigned int initial_grid_size = 2,
+                    unsigned int max_subdivision_level = 5,
+                    bool create_all_voxels = false,
+                    bool no_remove_outside = false,
+                    bool regularized = false)
+{
+  compute_octree(lcc, std::string(filename),
+                 initial_grid_size, max_subdivision_level,
+                 create_all_voxels, no_remove_outside, regularized);
+}
+
+/**
+ * FaceGraph-based overload: builds the octree from an already loaded mesh.
+ * @tparam LCC  model of LinearCellComplex (dim >=3, ambient 3)
+ * @tparam FaceGraph model of FaceGraph (triangulated or triangulable)
+ * @param regularized If true requests 1-irregular balancing (stub now).
+ */
+template<typename LCC, typename FaceGraph,
+         typename std::enable_if<
+           std::is_class<typename std::decay<FaceGraph>::type>::value &&           
+           !std::is_same<typename std::decay<FaceGraph>::type, std::string>::value && 
+           !std::is_pointer<typename std::decay<FaceGraph>::type>::value &&        
+           !std::is_array<FaceGraph>::value                                       
+         , int>::type = 0>
+void compute_octree(LCC& lcc,
+                    const FaceGraph& fg,
+                    unsigned int initial_grid_size = 2,
+                    unsigned int max_subdivision_level = 5,
+                    bool create_all_voxels = false,
+                    bool no_remove_outside = false,
+                    bool regularized = false)
+{
+  typedef Simple_cartesian<double> Kernel;
+  static_assert(LCC::dimension >= 3, "LCC dimension must be >= 3");
+  static_assert(LCC::ambient_dimension == 3, "LCC ambient dimension must be 3");
+
+  internal::Simple_AABB_intersector_fgraph<Kernel, FaceGraph> intersector(fg);
+  if(intersector.empty()) {
+    std::cerr << "Error: empty FaceGraph passed to compute_octree\n";
+    return;
+  }
+
+  double sx, sy, sz;
+  int longestAxis;
+  unsigned int initX, initY, initZ;
+  internal::compute_initial_grid_size(initial_grid_size, intersector,
+                                      longestAxis, sx, sy, sz,
+                                      initX, initY, initZ);
+
+  internal::create_initial_hexahedral_grid(lcc, intersector,
+                                           sx, sy, sz, initX, initY, initZ,
+                                           create_all_voxels);
+
+  if (regularized) internal::regularize_octree(lcc);
+
+  if (IO::is_pretty(std::cout)) {
+    std::cout << "Basic octree generated (level 0/" << max_subdivision_level << ")\n"
+              << "Parameters: grid=" << initial_grid_size
+              << ", all_voxels=" << create_all_voxels
+              << ", no_remove_outside=" << no_remove_outside
+              << ", regularized=" << regularized << std::endl;
+  }
+
+  (void)max_subdivision_level;
+  (void)no_remove_outside;
 }
 
 } // namespace CGAL

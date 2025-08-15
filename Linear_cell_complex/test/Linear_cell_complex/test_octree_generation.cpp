@@ -1,6 +1,9 @@
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/Linear_cell_complex_for_generalized_map.h>
 #include <CGAL/Linear_cell_complex_octree_generation.h>
+#include <CGAL/Surface_mesh.h>
+#include <CGAL/IO/OFF.h>
+#include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 #include <cassert>
 
 void trace_test_begin()
@@ -115,44 +118,65 @@ bool test_octree_generation()
   trace_test_begin();
   LCC lcc_level1, lcc_level2;
   
-  // Test different subdivision levels
-  CGAL::compute_octree(lcc_level1, "data/meshes/cube.off", 2, 1, false); // init=1 (1x1x1)
-  CGAL::compute_octree(lcc_level2, "data/meshes/cube.off", 2, 3, false); // init=3 (3x3x3)
+  // Signature: (lcc, filename, initial_grid_size, max_subdivision_level, create_all_voxels, no_remove_outside, regularized)
+  // Use different initial_grid_size values to force different dart counts.
+  CGAL::compute_octree(lcc_level1, "data/meshes/cube.off", 2, 1, false); // initial_grid_size = 2
+  CGAL::compute_octree(lcc_level2, "data/meshes/cube.off", 3, 1, false); // initial_grid_size = 3
   
-  if (!check_octree_basic_properties(lcc_level1, 24))
-    return false;
-  if (!check_octree_basic_properties(lcc_level2, 24))
-    return false;
-    
-  // Different parameters should produce valid octrees
-std::cout<<"Subdivision test: "<<lcc_level1.number_of_darts()
-         <<" vs "<<lcc_level2.number_of_darts()<<" darts"<<std::endl;
-// Note: both should be valid octrees, count may be same depending on geometry
+  if (!check_octree_basic_properties(lcc_level1, 24)) return false;
+  if (!check_octree_basic_properties(lcc_level2, 24)) return false;
   
+  if (lcc_level2.number_of_darts() <= lcc_level1.number_of_darts()) {
+    std::cout<<"ERROR: larger initial_grid_size should yield >= darts"<<std::endl;
+    return false;
+  }
+
+  std::cout<<"Grid size test: "<<lcc_level1.number_of_darts()
+           <<" vs "<<lcc_level2.number_of_darts()<<" darts"<<std::endl;
   trace_test_end();
-  
+
+  // ****************** TEST REGULARIZED FLAG  ******************
+  trace_test_begin();
+  LCC lcc_reg_false, lcc_reg_true;
+  CGAL::compute_octree(lcc_reg_false, "data/meshes/cube.off", 2, 1, false, false, false);
+  CGAL::compute_octree(lcc_reg_true,  "data/meshes/cube.off", 2, 1, false, false, true);
+  if (lcc_reg_false.number_of_darts() != lcc_reg_true.number_of_darts()) {
+    std::cout<<"ERROR: regularized stub should not change dart count"<<std::endl;
+    return false;
+  }
+  trace_test_end();
+
   // ****************** TEST CREATE_ALL_VOXELS EFFECT ******************
   trace_test_begin();
   LCC lcc_inside, lcc_all;
-  
-  // Test create_all_voxels parameter
   CGAL::compute_octree(lcc_inside, "data/meshes/sphere.off", 3, 2, false, false, false); // only intersecting
-  CGAL::compute_octree(lcc_all, "data/meshes/sphere.off", 3, 2, true, false, false);     // all voxels
+  CGAL::compute_octree(lcc_all,    "data/meshes/sphere.off", 3, 2, true,  false, false); // all voxels
   
-  if (!check_octree_basic_properties(lcc_inside, 24))
-    return false;
-  if (!check_octree_basic_properties(lcc_all, 24))
-    return false;
-    
-  // create_all_voxels should generate more or equal darts
-  if (lcc_all.number_of_darts() < lcc_inside.number_of_darts())
-  {
+  if (!check_octree_basic_properties(lcc_inside, 24)) return false;
+  if (!check_octree_basic_properties(lcc_all, 24))   return false;
+  if (lcc_all.number_of_darts() < lcc_inside.number_of_darts()) {
     std::cout<<"ERROR: create_all_voxels should generate more or equal darts ("
              <<lcc_inside.number_of_darts()<<" vs "<<lcc_all.number_of_darts()<<")"<<std::endl;
     return false;
   }
   trace_test_end();
-  
+
+  // ****************** TEST FACEGRAPH OVERLOAD ******************
+  trace_test_begin();
+  {
+    std::ifstream in_fg("data/meshes/cube.off");
+    if(!in_fg) { std::cout<<"ERROR: cannot open cube.off\n"; return false; }
+    CGAL::Surface_mesh< CGAL::Simple_cartesian<double>::Point_3 > sm;
+    if(!(in_fg >> sm)) { std::cout<<"ERROR: invalid cube.off\n"; return false; }
+    if(!CGAL::is_triangle_mesh(sm))
+      CGAL::Polygon_mesh_processing::triangulate_faces(sm);
+
+    LCC lcc_fg;
+    CGAL::compute_octree(lcc_fg, sm, 2, 1, false);
+    if(!check_octree_basic_properties(lcc_fg, 48)) return false;
+  }
+  trace_test_end();
+
   return true;
 }
 
