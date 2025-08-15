@@ -71,6 +71,7 @@ public:
     typedef struct {
         Cell cell_dim ;
         DegreeType degree ;
+        size_t time;
     } Filtration_iter_value ;
 
 protected:
@@ -161,20 +162,9 @@ public:
             Filtration_iter_value res ;
             res.cell_dim = _f._filtration.at(_i) ;
             res.degree = _f._deg.at(_i) ;
+            res.time = _i;
             return res ;
         }
-
-        /*! \brief Get the time (or index in the filtration) associated to current iterator.
-         */
-        std::size_t time () const { return _i ; }
-
-        /*! \brief Get the cell (identified by its index and dimension) associated to current iterator.
-         */
-        Cell cell_dim () const { return _f._filtration.at(_i); }
-
-        /*! \brief Get degree associated to current iterator.
-         */
-        DegreeType degree () const { return _f._deg.at(_i); }
 
         /*!
          * \brief Prefix incrementation. Moves to next cell in the filtration.

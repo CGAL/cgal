@@ -25,7 +25,7 @@ int main(int argc, char **argv)
         CGAL::OSM::set_coefficient(MC_rw, 1, 0, 2) ;
         CGAL::OSM::set_coefficient(MC_rw, 1, 2, -2) ;
         
-        write_matrix(MC_rw, "test_col_mat.osm");
+        CGAL::OSM::write_matrix(MC_rw, "test_col_mat.osm");
         
         Column_matrix MC_rw2 ;
         

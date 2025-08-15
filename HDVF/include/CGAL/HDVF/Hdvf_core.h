@@ -421,17 +421,56 @@ public:
     /**
      * \brief Saves a HDVF together with the associated reduction (f, g, h, d matrices)
      *
-     * Save a HDVF to a `.hdvf` file, a simple text file format (see for a specification).
+     * Save a HDVF to a stream in `hdvf` file format (a simple text file format, see for a specification).
      */
     std::ostream& insert_hdvf_reduction(std::ostream& out) ;
+    
+    /**
+     * \brief Saves a HDVF together with the associated reduction to a file (f, g, h, d matrices).
+     *
+     * Save a HDVF to a file in `hdvf` file format (a simple text file format, see for a specification).
+     */
+    void write_hdvf_reduction(std::string filename)
+    {
+        std::ofstream out_file ( filename, std::ios::out | std::ios::trunc);
+        if ( not out_file . good () ) {
+            std::cerr << "Out fatal Error:\n  " << filename << " not found.\n";
+            throw std::runtime_error("File Parsing Error: File not found");
+        }
+
+        insert_hdvf_reduction(out_file) ;
+
+        out_file.close();
+    }
 
     /**
      * \brief Loads a HDVF together with the associated reduction (f, g, h, d matrices)
      *
-     * Load a HDVF and its reduction from a `.hdvf` file, a simple text file format (see for a specification).
+     * Load a HDVF and its reduction from a stream in `hdvf` file format, a simple text file format (see for a specification).
      * \warning The underlying complex is not stored in the file!
      */
-    std::istream& extract_hdvf_reduction(std::istream& out) ;
+    std::istream& extract_hdvf_reduction(std::istream& in_stream) ;
+    
+    /**
+     * \brief Loads a HDVF together with the associated reduction from a file (f, g, h, d matrices)
+     *
+     * Load a HDVF and its reduction from a file in `hdvf` file format, a simple text file format (see for a specification).
+     * \warning The underlying complex is not stored in the file!
+     */
+    void read_hdvf_reduction(std::string filename)
+    {
+        std::ifstream in_file (filename);
+        if ( not in_file . good () ) {
+            std::cerr << "Out fatal Error:\n  " << filename << " not found.\n";
+            throw std::runtime_error("File Parsing Error: File not found");
+        }
+
+        extract_hdvf_reduction(in_file);
+
+        in_file.close();
+    }
+    
+    
 
 protected:
     /* \brief Project a chain onto a given flag
@@ -1095,11 +1134,11 @@ std::ostream& Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixTyp
 
 // Save HDVF and reduction
 template<typename CoefficientType, typename ComplexType, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
-std::istream& Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::extract_hdvf_reduction(std::istream& in)
+std::istream& Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixType>::extract_hdvf_reduction(std::istream& in_stream)
 {
     // Load and check HDVF save type
     int type ;
-    in >> type ;
+    in_stream >> type ;
     if (type != 0)
     {
         std::cerr << "extract_hdvf_reduction error: trying to load a pure HDVF file..." << std::endl ;
@@ -1108,7 +1147,7 @@ std::istream& Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixTyp
 
     // Load and check dimension
     int d ;
-    in >> d ;
+    in_stream >> d ;
     if (d != _K.dimension())
     {
         std::cerr << "extract_hdvf_reduction error: dimension loaded incompatible with the dimension of the underlying complex" << std::endl ;
@@ -1118,7 +1157,7 @@ std::istream& Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixTyp
     int nb ;
     for (int q=0; q<=_K.dimension(); ++q)
     {
-        in >> nb ;
+        in_stream >> nb ;
         if (nb != _K.number_of_cells(q))
         {
             std::string mess("extract_hdvf_reduction error: incoherent number of cells in dimension ");
@@ -1133,7 +1172,7 @@ std::istream& Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixTyp
     {
         for (int i=0; i<_K.number_of_cells(q); ++i)
         {
-            in >> flag ;
+            in_stream >> flag ;
             if (flag == -1)
                 _flag.at(q).at(i) = PRIMARY ;
             else if (flag == 1)
@@ -1146,24 +1185,24 @@ std::istream& Hdvf_core<CoefficientType, ComplexType, ChainType, SparseMatrixTyp
     // F
     for (int q=0; q<=_K.dimension(); ++q)
     {
-        OSM::read_matrix(_F_row.at(q), in) ;
+        OSM::read_matrix(_F_row.at(q), in_stream) ;
     }
     // G
     for (int q=0; q<=_K.dimension(); ++q)
     {
-        OSM::read_matrix(_G_col.at(q), in) ;
+        OSM::read_matrix(_G_col.at(q), in_stream) ;
     }
     // H
     for (int q=0; q<=_K.dimension(); ++q)
     {
-        OSM::read_matrix(_H_col.at(q), in) ;
+        OSM::read_matrix(_H_col.at(q), in_stream) ;
     }
     // DD
     for (int q=0; q<=_K.dimension(); ++q)
     {
-        OSM::read_matrix(_DD_col.at(q), in) ;
+        OSM::read_matrix(_DD_col.at(q), in_stream) ;
     }
-    return in ;
+    return in_stream ;
 }
 
 } /* end namespace HDVF */

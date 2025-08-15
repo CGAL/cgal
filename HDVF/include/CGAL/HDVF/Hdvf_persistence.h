@@ -98,8 +98,6 @@ std::ostream& operator<< (std::ostream& out, const PerHoleT<DegreeType>& hole)
 
  The class `Hdvf_persistence` computes persistent homology using HDVFs. Hence, unlike other persistence algorithms, beside standard persistent intervals informations (birth/death indices, degrees, associated cells), `Hdvf_persistence` also provides **homology and cohomology generators for persistent pairs**. Intuitively, holes die when they are "filled" by a cell: associated homology and cohomology generators provide a representation of the hole and of the cells filling the hole.
 
- \warning The ring of coefficients provided should actually be a **field**.
-
  Given a `Filtration`, the `Hdvf_persistence` constructor basically builds a HDVF where indices of cells in the bases follow the filtration order (permutations between initial indices of cells in the chain complex and new indices given by the filtration are stored).
  Besides, `Hdvf_persistence` derives from `Hdvf_core` with the SparseMatrix parameter type set to `Sub_sparse_matrix`. Hence, `Hdvf_persistence` computes homology over a larger and larger sub-complex of `K` (encoded through a Bitboard mask of `Sub_sparse_matrix`) following the filtration `f`. At each step of the filtration, the new cell is paired (A operation) with the youngest cell valid for A.
 
@@ -133,7 +131,7 @@ std::ostream& operator<< (std::ostream& out, const PerHoleT<DegreeType>& hole)
 
  \cgalModels{HDVF}
 
- \tparam CoefficientType a model of the `Ring` concept  providing the ring used to compute homology.
+ \tparam CoefficientType a model of the `Ring` concept  providing the ring used to compute homology. The ring of coefficients provided should actually be a **field**.
  \tparam ComplexType a model of the `AbstractChainComplex` concept, providing the type of abstract chain complex used.
  \tparam DegreeType a scalar data type used for the degrees of the filtration.
  \tparam FiltrationType a model of the `Filtration` concept, providing the filtration used to compute persistence.
