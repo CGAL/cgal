@@ -324,7 +324,7 @@ public:
     /** \brief Writes a sparse ROW matrix to a stream. */
     template <typename _CT>
     friend std::ostream& write_matrix (const Sparse_matrix<_CT, OSM::ROW>& M, std::ostream& out);
-    
+
     /** \brief Writes a sparse COLUMN matrix to a file. */
     template <typename _CT>
     friend void write_matrix (const Sparse_matrix<_CT, OSM::COLUMN>& M, std::string filename);
@@ -352,7 +352,7 @@ public:
     /** \brief Reads a sparse ROW matrix from a stream. */
     template <typename _CT>
     friend std::istream& read_matrix (Sparse_matrix<_CT, OSM::ROW>& M, std::istream& in);
-    
+
     /** \brief Reads a sparse COLUMN matrix from a file. */
     template <typename _CT>
     friend void read_matrix (Sparse_matrix<_CT, OSM::COLUMN>& M, std::string filename);
@@ -440,13 +440,15 @@ public:
      * \return A new matrix representing the result.
      */
     template <typename _CT, int _CTF>
-    friend Sparse_matrix operator*(const Sparse_matrix<_CT, _CTF> &matrix, const _CT& lambda) {
-        Sparse_matrix newMatrix = matrix;
+    friend Sparse_matrix<_CT, _CTF> operator*(const Sparse_matrix<_CT, _CTF> &matrix, const _CT& lambda);
+#if 0
+     {
+        Sparse_matrix<_CT, _CTF> newMatrix = matrix;
         newMatrix *= lambda;
 
         return newMatrix;
     }
-
+#endif
     /**
      * \defgroup MatrixMatrixProdCol Matrices product (with column-based result).
      * \ingroup PkgHDVFAlgorithmClasses
@@ -1162,6 +1164,14 @@ public:
     }
 };
 
+template <typename _CT, int _CTF>
+Sparse_matrix<_CT, _CTF> operator*(const Sparse_matrix<_CT, _CTF> &matrix, const _CT& lambda){
+    Sparse_matrix<_CT, _CTF> newMatrix = matrix;
+     newMatrix *= lambda;
+
+    return newMatrix;
+}
+
 
 // Matrix-matrix product
 // COLUMN x COLUMN -> COLUMN
@@ -1744,9 +1754,9 @@ void write_matrix (const Sparse_matrix<_CT, OSM::COLUMN>& M, std::string filenam
         std::cerr << "Out fatal Error:\n  " << filename << " not found.\n";
         throw std::runtime_error("File Parsing Error: File not found");
     }
-    
+
     CGAL::OSM::write_matrix(M, out) ;
-    
+
     out.close();
 }
 
@@ -1758,9 +1768,9 @@ void write_matrix (const Sparse_matrix<_CT, OSM::ROW>& M, std::string filename)
         std::cerr << "Out fatal Error:\n  " << filename << " not found.\n";
         throw std::runtime_error("File Parsing Error: File not found");
     }
-    
+
     CGAL::OSM::write_matrix(M, out) ;
-    
+
     out.close();
 }
 
@@ -1832,9 +1842,9 @@ void read_matrix (Sparse_matrix<_CT, OSM::COLUMN>& M, std::string filename)
         std::cerr << "Out fatal Error:\n  " << filename << " not found.\n";
         throw std::runtime_error("File Parsing Error: File not found");
     }
-    
+
     CGAL::OSM::read_matrix(M, in_file) ;
-    
+
     in_file.close();
 }
 
@@ -1846,9 +1856,9 @@ void read_matrix (Sparse_matrix<_CT, OSM::ROW>& M, std::string filename)
         std::cerr << "Out fatal Error:\n  " << filename << " not found.\n";
         throw std::runtime_error("File Parsing Error: File not found");
     }
-    
+
     CGAL::OSM::read_matrix(M, in_file) ;
-    
+
     in_file.close();
 }
 
