@@ -301,9 +301,13 @@ public:
      *
      * Simplices are described by the list of vertices indices.
      *
-     * The dimension `d` can be positive or negative:
+     * \param[in] d The dimension `d` can be positive or negative:
      * - if positive: the set of simplicial cells loaded is a "mesh" and all cells have the same dimension
      * - if negative: the set of simplicial cells loaded have various dimensions and `d` must be the maximum of these dimensions.
+     * \param[in] vnodes Vector of vertices coordinates.
+     * \param[in] vcells Vector of cells (described by a sorted vector of indices)
+     * \param[in] sort_data If `true` the vectors of vertex indices are sorted, if `false` they are assumed to be sorted (faster).
+     *
      */
     Mesh_object_io(int d, const std::vector<IONodeType> &vnodes, const std::vector<IOCellType> &vcells, bool sort_data = false) : dim(d), nvertices(vnodes.size()), ncells(vcells.size()), nedges(0), nodes(vnodes), cells(vcells) {
         check_dimension() ;

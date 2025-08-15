@@ -48,6 +48,7 @@ class Simplex {
     /** \brief Constructor from a vector of vertices indices.
      *
      * \param[in] vertices Vector of the simplex vertices indices (a simplex of dimension \f$q\f$ has \f$q+1\f$ vertices and the vector must be **sorted**).
+     * \param[in] sort_data If `true` vectors of vertex indices are sorted, if `false` indices are assumed to be sorted (faster).
      */
     Simplex(const Simplex_data_type& vertices, bool sort_data = false) : _vertices(vertices) {
         if (sort_data)
