@@ -305,8 +305,15 @@ public:
      * - if positive: the set of simplicial cells loaded is a "mesh" and all cells have the same dimension
      * - if negative: the set of simplicial cells loaded have various dimensions and `d` must be the maximum of these dimensions.
      */
-    Mesh_object_io(int d, const std::vector<IONodeType> &vnodes, const std::vector<IOCellType> &vcells) : dim(d), nvertices(vnodes.size()), ncells(vcells.size()), nedges(0), nodes(vnodes), cells(vcells) { check_dimension() ;}
-
+    Mesh_object_io(int d, const std::vector<IONodeType> &vnodes, const std::vector<IOCellType> &vcells, bool sort_data = false) : dim(d), nvertices(vnodes.size()), ncells(vcells.size()), nedges(0), nodes(vnodes), cells(vcells) {
+        check_dimension() ;
+        if (sort_data) {
+            // Sort the vector encoding each cell
+            for (int i=0; i<ncells; ++i) {
+                std::sort(cells.at(i).begin(), cells.at(i).end());
+            }
+        }
+    }
 
     /* \brief Copy constructor. */
     Mesh_object_io(const Mesh_object_io &m) : dim(m.dim), nvertices(m.nvertices), ncells(m.ncells), nedges(m.nedges), nodes(m.nodes), cells(m.cells) {}

@@ -7,18 +7,18 @@
 #include <CGAL/HDVF/Mesh_object_io.h>
 
 int main() {
-// Test constructor for a mesh (all cells have the same dimension d -> "pure" mesh
+    // ------ Test constructor from vectors of nodes and IOCellTypes
     
-    std::vector<std::vector<double> > nodes1, nodes2;
+    std::vector<CGAL::HDVF::IONodeType> nodes1, nodes2;
     std::vector<CGAL::HDVF::IOCellType> cells1, cells2;
     
     // (nodes1, cells1) : "pure" mesh
     // (nodes2, cells2) : heterogeneous simplicial complex
-    nodes1.push_back({0,0,0});
-    nodes1.push_back({0,1,0});
-    nodes1.push_back({0,0,1});
+    nodes1.push_back(CGAL::HDVF::IONodeType({0,0,0}));
+    nodes1.push_back(CGAL::HDVF::IONodeType({0,1,0}));
+    nodes1.push_back(CGAL::HDVF::IONodeType({0,0,1}));
     nodes2 = nodes1;
-    nodes2.push_back({0,1,1});
+    nodes2.push_back(CGAL::HDVF::IONodeType({0,1,1}));
     
     cells1.push_back(CGAL::HDVF::IOCellType({1,2,3}));
     cells1.push_back(CGAL::HDVF::IOCellType({1,2,3}));
@@ -57,6 +57,30 @@ int main() {
     } catch (...) {
         std::cerr << "-- check_dimension() failed" << std::endl;
         assert(false);
+    }
+    
+    // Test read_off()
+    {
+        std::cerr << "Test read_off with data/three_triangles.off (with ordering of vertices indices)" << std::endl;
+        CGAL::HDVF::Mesh_object_io mio2;
+        mio2.read_off("data/three_triangles.off") ;
+        assert(mio2.nvertices == 6);
+        assert(mio2.ncells == 3);
+        assert(mio2.cells.at(0) == CGAL::HDVF::IOCellType({0,1,2}));
+        assert(mio2.cells.at(1) == CGAL::HDVF::IOCellType({2,3,4}));
+        assert(mio2.cells.at(2) == CGAL::HDVF::IOCellType({1,3,5}));
+    }
+    
+    // Test read_simp()
+    {
+        std::cerr << "Test read_simp with data/simple_simplicial_complex.simp (with ordering of vertices indices)" << std::endl;
+        CGAL::HDVF::Mesh_object_io mio2;
+        mio2.read_simp("data/simple_simplicial_complex.simp") ;
+        assert(mio2.nvertices == 0);
+        assert(mio2.ncells == 3);
+        assert(mio2.cells.at(0) == CGAL::HDVF::IOCellType({1,2,3}));
+        assert(mio2.cells.at(1) == CGAL::HDVF::IOCellType({2,4}));
+        assert(mio2.cells.at(2) == CGAL::HDVF::IOCellType({3,4}));
     }
     
     return 0;
