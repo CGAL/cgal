@@ -200,7 +200,7 @@ public:
      */
     std::vector<size_t> bottom_faces(size_t id_cell, int q) const
     {
-        std::set<size_t> verts(_ind2simp.at(q).at(id_cell).get_vertices()) ;
+        std::vector<size_t> verts(_ind2simp.at(q).at(id_cell).get_vertices()) ;
         std::vector<size_t> res ;
         // For each vertex in verts, compute the corresponding dimension 0 cell
         for (size_t vert_id : verts)
@@ -333,8 +333,6 @@ Abstract_simplicial_chain_complex<CoefficientType>::Abstract_simplicial_chain_co
 
     // Iterate through the mesh cells and add them to the complex
     for (const auto& cell : mesh.cells) {
-        //        Simplex simplex(std::set<size_t>(cell.begin(), cell.end()));
-        //        insert_simplex(simplex);
         insert_simplex(cell) ;
     }
 

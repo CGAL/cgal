@@ -366,7 +366,7 @@ public:
         {
             for (size_t i=0; i<_K.number_of_cells(q); ++i)
             {
-                const std::set<size_t>& simplex(_K._ind2simp.at(q).at(i).get_vertices()) ;
+                const std::vector<size_t>& simplex(_K._ind2simp.at(q).at(i).get_vertices()) ;
                 const size_t id(L._simp2ind.at(q)[simplex]) ;
                 K.set_bit_on(q, id) ;
             }
@@ -386,7 +386,10 @@ public:
                 vcells.push_back(s.get_vertices()) ;
             }
 
-        Mesh_object_io &m = *(new Mesh_object_io(-3, _CC.get_vertices_coords(), vcells)) ;
+        std::vector<IONodeType> coords;
+        for (auto it = _CC.get_vertices_coords().begin(); it != _CC.get_vertices_coords().begin(); ++it)
+            coords.push_back(IONodeType(*it));
+        Mesh_object_io &m = *(new Mesh_object_io(-3, coords, vcells)) ;
         return m ;
     }
 } ;

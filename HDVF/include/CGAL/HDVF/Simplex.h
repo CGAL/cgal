@@ -79,22 +79,7 @@ class Simplex {
      *
      * The method returns the vector of the simplices in the boundary of the object.
      */
-//    std::vector<Simplex> boundary() const
-//    {
-//        std::vector<Simplex> result;
-//        result.reserve(_vertices.size());
-//
-//        auto it = _vertices.begin();
-//        for (size_t i = 0; i < _vertices.size(); ++i) {
-//            std::set<size_t> simplex_vertices;
-//            std::copy_if(_vertices.begin(), _vertices.end(), std::inserter(simplex_vertices, simplex_vertices.begin()),
-//                         [it](const size_t& vertex) { return vertex != *it; });
-//            result.emplace_back(simplex_vertices);
-//            ++it;
-//        }
-//
-//        return result;
-//    }
+
     std::vector<Simplex> boundary() const
     {
         std::vector<Simplex> result;
