@@ -205,7 +205,7 @@ public:
         // For each vertex in verts, compute the corresponding dimension 0 cell
         for (size_t vert_id : verts)
         {
-            const size_t i(_simp2ind.at(0).at(Simplex(std::set<size_t>({vert_id})))) ;
+            const size_t i(_simp2ind.at(0).at(Simplex(std::vector<size_t>({vert_id})))) ;
             res.push_back(i) ;
         }
         return res ;

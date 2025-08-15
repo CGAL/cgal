@@ -27,8 +27,11 @@ namespace CGAL {
 namespace HDVF {
 
 // ------ For simplicial complexes
-/** \brief Type of cells of Mesh_object_io. */
-typedef std::set<size_t> IOCellType ;
+/** \brief Type of cells of Mesh_object_io.
+ *
+ * *Sorted* vector of the vertex indices.
+ */
+typedef std::vector<size_t> IOCellType ;
 /** \brief Type of pre-chains in Mesh_object_io (list of cells without coefficients). */
 typedef std::vector<IOCellType> IOChainType ;
 
@@ -297,21 +300,13 @@ public:
     /** \brief Constructor from a vector of IONodeType (vertices coordinates) and a vector of simplices.
      *
      * Simplices are described by the list of vertices indices.
+     *
+     * The dimension `d` can be positive or negative:
+     * - if positive: the set of simplicial cells loaded is a "mesh" and all cells have the same dimension
+     * - if negative: the set of simplicial cells loaded have various dimensions and `d` must be the maximum of these dimensions.
      */
     Mesh_object_io(int d, const std::vector<IONodeType> &vnodes, const std::vector<IOCellType> &vcells) : dim(d), nvertices(vnodes.size()), ncells(vcells.size()), nedges(0), nodes(vnodes), cells(vcells) { check_dimension() ;}
 
-    /** \brief Constructor from a vector of vectors of doubles (vertices coordinates) and a vector of simplices.
-     *
-     * Simplices are described by the list of vertices indices.
-     */
-    Mesh_object_io(int d, const std::vector<std::vector<double> > &vnodes, const std::vector<IOCellType> &vcells) : dim(d), nvertices(vnodes.size()), ncells(vcells.size()), nedges(0), cells(vcells)
-    {
-        for (std::vector<double> v : vnodes)
-        {
-            nodes.push_back(IONodeType(v)) ;
-        }
-        check_dimension() ;
-    }
 
     /* \brief Copy constructor. */
     Mesh_object_io(const Mesh_object_io &m) : dim(m.dim), nvertices(m.nvertices), ncells(m.ncells), nedges(m.nedges), nodes(m.nodes), cells(m.cells) {}
@@ -325,6 +320,7 @@ public:
     }
 
     // Mesh operations
+    // Add a Mesh_object_io to the current Mesh_object_io
     void push_back(const Mesh_object_io &mesh)
     {
         size_t off = nvertices ; // The index of all the cells of mesh has to be incremented by off
@@ -338,7 +334,7 @@ public:
         {
             IOCellType tmp ;
             for (size_t c : mesh.cells.at(i))
-                tmp.insert(c+off) ;
+                tmp.push_back(c+off) ;
             cells.push_back(tmp) ;
         }
     }
@@ -413,10 +409,14 @@ public:
             unsigned long index;
             info_stream >> n;
             IOCellType c ;
+            // Read vertices indices
             for (auto j = 0; j < n; ++j) {
                 info_stream >> index;
-                c.insert(index) ;
+                c.push_back(index) ;
             }
+            // Sort the vector
+            std::sort(c.begin(), c.end());
+            // Insert the cell
             cells[i] = c ;
             dim = (c.size()-1>dim)?c.size()-1:dim ;
         }
@@ -514,8 +514,11 @@ public:
             IOCellType cell ;
             std::istringstream is( line );
             size_t v;
+            // Read vertices indices
             while ( is >> v )
-                cell.insert(v);
+                cell.push_back(v);
+            // Sort the vector of indices
+            std::sort(cell.begin(), cell.end());
             // Add this simplex to cells
             if (!(cell.empty()))
             {
@@ -621,17 +624,17 @@ inline Mesh_object_io mesh_BB(const IONodeType &BBmin, const IONodeType &BBmax)
 
     m.cells.resize(12) ;
     m.cells[0] = IOCellType({0, 1, 4}) ;
-    m.cells[1] = IOCellType({1, 5, 4}) ;
+    m.cells[1] = IOCellType({1, 4, 5}) ;
     m.cells[2] = IOCellType({1, 2, 6}) ;
-    m.cells[3] = IOCellType({1, 6, 5}) ;
-    m.cells[4] = IOCellType({3, 1, 0}) ;
-    m.cells[5] = IOCellType({2, 1, 3}) ;
+    m.cells[3] = IOCellType({1, 5, 6}) ;
+    m.cells[4] = IOCellType({0, 1, 3}) ;
+    m.cells[5] = IOCellType({1, 2, 3}) ;
     m.cells[6] = IOCellType({2, 3, 6}) ;
-    m.cells[7] = IOCellType({6, 3, 7}) ;
-    m.cells[8] = IOCellType({3, 0, 4}) ;
-    m.cells[9] = IOCellType({7, 3, 4}) ;
-    m.cells[10] = IOCellType({6, 4, 5}) ;
-    m.cells[11] = IOCellType({6, 7, 4}) ;
+    m.cells[7] = IOCellType({3, 6, 7}) ;
+    m.cells[8] = IOCellType({0, 3, 4}) ;
+    m.cells[9] = IOCellType({3, 4, 7}) ;
+    m.cells[10] = IOCellType({4, 5, 6}) ;
+    m.cells[11] = IOCellType({4, 6, 7}) ;
     return m;
 }
 

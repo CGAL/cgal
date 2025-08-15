@@ -97,7 +97,7 @@ public:
     Point get_vertex_coords (size_t i) const
     {
         const Simplex simpl(this->_ind2simp.at(0).at(i)) ;
-        const std::set<size_t> verts(simpl.get_vertices()) ;
+        const std::vector<size_t> verts(simpl.get_vertices()) ;
         const size_t id(*(verts.cbegin())) ;
         return _coords.at(id);
     }

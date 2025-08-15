@@ -281,13 +281,8 @@ public:
      *
      * \return A new chain representing the result.
      */
-    template <int _CTF>
-    friend Sparse_chain operator*(const Sparse_chain<CoefficientType, _CTF> &chain, const CoefficientType& lambda) {
-        Sparse_chain newChain = chain;
-        newChain *= lambda;
-
-        return newChain;
-    }
+    template <typename _CT, int _CTF>
+    friend Sparse_chain<_CT, _CTF> operator*(const Sparse_chain<_CT, _CTF> &chain, const _CT& lambda);
 
     /**
      * \brief Performs matrix multiplication between two chains (COLUMN x ROW) and return a COLUMN matrix.
@@ -835,6 +830,14 @@ template <typename _CT>
 bool operator==(const Sparse_chain<_CT, OSM::ROW>& chain, const Sparse_chain<_CT, OSM::COLUMN> &other)
 {
     return false;
+}
+
+template <typename _CT, int _CTF>
+Sparse_chain<_CT, _CTF> operator*(const Sparse_chain<_CT, _CTF> &chain, const _CT& lambda) {
+    Sparse_chain newChain = chain;
+    newChain *= lambda;
+
+    return newChain;
 }
 
 } /* end namespace OSM */

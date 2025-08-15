@@ -40,12 +40,22 @@ class Simplex {
     friend class Abstract_simplicial_chain_complex ;
 
     private:
-    // Indices of the simplex vertices
-    std::set<size_t> _vertices;
+    typedef std::vector<size_t> Simplex_data_type;
+    // Indices of the simplex vertices - sorted vector
+    Simplex_data_type _vertices;
 
     public:
+    /** \brief Constructor from a vector of vertices indices.
+     *
+     * \param[in] vertices Vector of the simplex vertices indices (a simplex of dimension \f$q\f$ has \f$q+1\f$ vertices and the vector must be **sorted**).
+     */
+    Simplex(const Simplex_data_type& vertices, bool sort_data = false) : _vertices(vertices) {
+        if (sort_data)
+            std::sort(_vertices.begin(), _vertices.end());
+    }
+    
     /** \brief Constant iterator over the vertices of a simplex. */
-    typedef std::set<size_t>::const_iterator const_iterator ;
+    typedef Simplex_data_type::const_iterator const_iterator ;
 
     /** \brief Returning a constant iterator on the first vertex of the simplex. */
     const_iterator cbegin ()
@@ -54,12 +64,6 @@ class Simplex {
     }
     /** \brief Returning a constant iterator after the last vertex of the simplex. */
     const_iterator cend () { return _vertices.cend() ; }
-
-    /** \brief Constructor from a set of vertices indices.
-     *
-     * \param[in] vertices Set of the simplex vertices indices (a simplex of dimension \f$q\f$ has \f$q+1\f$ vertices.
-     */
-    Simplex(const std::set<size_t>& vertices) : _vertices(vertices) {}
 
     /** \brief Returns the dimension of a simplex.
      *
@@ -74,6 +78,22 @@ class Simplex {
      *
      * The method returns the vector of the simplices in the boundary of the object.
      */
+//    std::vector<Simplex> boundary() const
+//    {
+//        std::vector<Simplex> result;
+//        result.reserve(_vertices.size());
+//
+//        auto it = _vertices.begin();
+//        for (size_t i = 0; i < _vertices.size(); ++i) {
+//            std::set<size_t> simplex_vertices;
+//            std::copy_if(_vertices.begin(), _vertices.end(), std::inserter(simplex_vertices, simplex_vertices.begin()),
+//                         [it](const size_t& vertex) { return vertex != *it; });
+//            result.emplace_back(simplex_vertices);
+//            ++it;
+//        }
+//
+//        return result;
+//    }
     std::vector<Simplex> boundary() const
     {
         std::vector<Simplex> result;
@@ -81,7 +101,7 @@ class Simplex {
 
         auto it = _vertices.begin();
         for (size_t i = 0; i < _vertices.size(); ++i) {
-            std::set<size_t> simplex_vertices;
+            Simplex_data_type simplex_vertices;
             std::copy_if(_vertices.begin(), _vertices.end(), std::inserter(simplex_vertices, simplex_vertices.begin()),
                          [it](const size_t& vertex) { return vertex != *it; });
             result.emplace_back(simplex_vertices);
@@ -92,7 +112,7 @@ class Simplex {
     }
 
     /** \brief Gets the set of vertices indices of the simplex. */
-    const std::set<size_t>& get_vertices() const
+    const Simplex_data_type& get_vertices() const
     {
         return _vertices ;
     }
@@ -106,6 +126,15 @@ class Simplex {
     bool operator<(const Simplex& other) const {
         return _vertices < other._vertices;
     }
+    
+    /** \brief Equality operator.
+     *
+     * As vertex indices must be store in increasing order, comparison just comes to compare the ordered vector of indices.
+     */
+    bool operator==(const Simplex& other) const {
+        return _vertices == other._vertices;
+    }
+    
 
     /** \brief Outputs a simplex.
      */
