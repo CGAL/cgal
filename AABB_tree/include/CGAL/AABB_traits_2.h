@@ -167,8 +167,9 @@ class AABB_traits_2
 #endif
 {
   typedef typename CGAL::Object Object;
-  typedef GeomTraits Geom_traits;
+
 public:
+  typedef GeomTraits Geom_traits;
 
   typedef AABB_traits_2<GeomTraits, AABBPrimitive, BboxMap> AT;
   // AABBTraits concept types
