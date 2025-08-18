@@ -68,13 +68,209 @@ strictly_on_left_of_triangle_edge(const typename K::Point_3& pt,
   return (::CGAL::internal::wdot(::CGAL::internal::wcross(edge, normal, k), diff, k) < RT(0));
 }
 
+template <class K>
+inline bool
+strictly_on_left_of_triangle_edge(const typename K::Vector_3& pt,
+                                  const typename K::Vector_3& normal,
+                                  const typename K::Vector_3& edge,
+                                  const K& k)
+{
+  auto cross=K().construct_cross_product_vector_3_object();
+  auto dot=k.compute_scalar_product_3_object();
+  auto orientation = K().orientation_3_object();
+
+  // return (::CGAL::internal::wdot(::CGAL::internal::wcross(edge, normal, k), diff, k) < RT(0));
+  return is_negative(dot(cross(edge, normal), pt));
+}
+
+template<typename K, typename Vector_3>
+Vector_3 triangle_dir_to_origin(boost::container::small_vector<Vector_3, 4>& simplex){
+  using Triangle_3=typename K::Triangle_3;
+  using Plane_3=typename K::Plane_3;
+  using FT=typename K::FT;
+
+  const typename K::Point_3 O(0,0,0);
+
+  auto cross=K().construct_cross_product_vector_3_object();
+  auto dot=K().compute_scalar_product_3_object();
+  auto orientation = K().orientation_3_object();
+
+  Vector_3 &a = simplex[0];
+  Vector_3 &b = simplex[1];
+  Vector_3 &c = simplex[2];
+  Vector_3 ab = b-a;
+  Vector_3 ca = a-c;
+  Vector_3 bc = c-b;
+
+  Vector_3 n = cross(ab,-bc);
+  // assert(n!=NULL_VECTOR);
+  if(n==NULL_VECTOR){
+    //We preserve the last found support
+    std::swap(simplex[1],simplex[2]);
+    simplex.pop_back();
+    return -cross(cross(ab, a), ab);
+  }
+
+  // The origin cannot be on the side of ab, we abuse of this
+  FT ratio_ab=dot(ab, -a)/ab.squared_length();
+  FT ratio_ca=dot(ca, -c); ///ca.squared_length();
+  //FT ratio_bc=dot(bc, -b)/bc.squared_length();
+  FT ratio_cb=dot(-bc, -c);
+
+  // bool on_left_of_ab = strictly_on_left_of_triangle_edge(-a, n, ab, K());
+  bool on_left_of_ca = strictly_on_left_of_triangle_edge(-c, n, ca, K());
+  bool on_left_of_bc = strictly_on_left_of_triangle_edge(-b, n, bc, K());
+
+  if(/*!on_left_of_ab &&*/ !on_left_of_ca && !on_left_of_bc){
+    if(is_negative(dot(n, -a))){
+      // std::swap(simplex[1], simplex[2]);
+      return -n;
+    }
+    std::swap(simplex[1], simplex[2]);
+    return n;
+  }
+
+  // if(on_left_of_ab && ratio_ab>=0 && ratio_ab<=1){
+  //   simplex.pop_back();
+  //   return -cross(cross(ab, a), ab);
+  // }
+  if(on_left_of_ca && ratio_ca>=0 /*&& ratio_ca<=1*/){
+    simplex[1] = simplex[2];
+    simplex.pop_back();
+    return -cross(cross(ca, c), ca);
+  }
+  if(on_left_of_bc && ratio_cb>=0/*ratio_bc>=0 && ratio_bc<=1*/){
+    simplex[0] = simplex[2];
+    simplex.pop_back();
+    return -cross(cross(bc, b), bc);
+  }
+
+  // if(ratio_ab<0 && ratio_ca>1){
+  //   simplex.pop_back();
+  //   simplex.pop_back();
+  //   return -a;
+  // }
+  // if(ratio_ab>1 && ratio_bc<0){
+  //   simplex[0] = simplex[1];
+  //   simplex.pop_back();
+  //   simplex.pop_back();
+  //   return -b;
+  // }
+  simplex[0] = simplex[2];
+  simplex.pop_back();
+  simplex.pop_back();
+  return -c;
+}
+
+template<typename K, typename Vector_3>
+Vector_3 tetrahedron_dir_to_origin(boost::container::small_vector<Vector_3, 4>& simplex) {
+  using Triangle_3=typename K::Triangle_3;
+  using Plane_3=typename K::Plane_3;
+  using FT=typename K::FT;
+
+  auto cp=K().construct_cross_product_vector_3_object();
+  auto cross=K().construct_cross_product_vector_3_object();
+  auto dot=K().compute_scalar_product_3_object();
+  auto orientation = K().orientation_3_object();
+
+  typename K::Point_3 O(0,0,0);
+
+  // We use the fact that the origin do not be on the side of abc
+
+  Vector_3 &a=simplex[0];
+  Vector_3 &b=simplex[1];
+  Vector_3 &c=simplex[2];
+  Vector_3 &d=simplex[3];
+
+  Vector_3 ab=b-a;
+  Vector_3 ac=c-a;
+  Vector_3 ad=d-a;
+
+  // assert(orientation(ab, ac, ad) != NEGATIVE);
+  if(orientation(ab, ac, ad) == NEGATIVE){
+    std::swap(simplex[1], simplex[2]);
+    // b=simplex[1];
+    // c=simplex[2];
+    std::swap(ab,ac);
+  }
+
+  bool ori_adb=orientation(a,d,b) == POSITIVE;
+  bool ori_bdc=orientation(b,d,c) == POSITIVE;
+  bool ori_cda=orientation(c,d,a) == POSITIVE;
+
+  // std::cout << ori_adb << ori_bdc << ori_cda << std::endl;
+
+  if(orientation(ab, ac, ad) == COPLANAR){
+    ori_adb=!Triangle_3(O+a,O+b,O+d).is_degenerate();
+    ori_bdc=!Triangle_3(O+c,O+b,O+d).is_degenerate();
+    ori_cda=!Triangle_3(O+a,O+c,O+d).is_degenerate();
+  }
+
+  if(!ori_adb && !ori_bdc && !ori_cda)
+    return NULL_VECTOR;
+
+  if(ori_adb && Triangle_3(O+a,O+b,O+d).has_on(Plane_3(O+a,O+b,O+d).projection(O))){
+    Vector_3 dir = cross(ab, ad);
+    simplex[2]=simplex[3];
+    simplex.pop_back();
+    if(is_negative(dot(dir, -a))){
+      std::swap(simplex[1], simplex[2]);
+      return -dir;
+    }
+    return dir;
+  }
+
+  if(ori_cda && Triangle_3(O+a,O+c,O+d).has_on(Plane_3(O+a,O+c,O+d).projection(O))){
+    Vector_3 dir = cross(ac, ad);
+    simplex[1]=simplex[3];
+    simplex.pop_back();
+    if(is_negative(dot(dir, -a))){
+      std::swap(simplex[1], simplex[2]);
+      return -dir;
+    }
+    return dir;
+  }
+
+  if(ori_bdc && Triangle_3(O+b,O+d,O+c).has_on(Plane_3(O+b,O+d,O+c).projection(O))){
+    Vector_3 dir = cross(d-b, d-c);
+    simplex[0]=simplex[3];
+    simplex.pop_back();
+    if(is_negative(dot(dir, -b))){
+      std::swap(simplex[1], simplex[2]);
+      return -dir;
+    }
+    return dir;
+  }
+
+
+  if(ori_adb){
+    simplex[2]=simplex[3];
+    simplex.pop_back();
+    return triangle_dir_to_origin<K>(simplex);
+  }
+  if(ori_bdc){
+    simplex[0]=simplex[3];
+    std::swap(simplex[0],simplex[2]);
+    simplex.pop_back();
+    return triangle_dir_to_origin<K>(simplex);
+  }
+  if(ori_cda){
+    simplex[1]=simplex[3];
+    std::swap(simplex[1],simplex[2]);
+    simplex.pop_back();
+    return triangle_dir_to_origin<K>(simplex);
+  }
+
+  assert(0);
+}
+
 template<typename K, typename Vector_3>
 Vector_3 dir_to_origin(boost::container::small_vector<Vector_3, 4>& simplex) {
   using Triangle_3=typename K::Triangle_3;
   using Plane_3=typename K::Plane_3;
   using FT=typename K::FT;
 
-  auto cp=K().construct_cross_product_vector_3_object();
+  auto cross=K().construct_cross_product_vector_3_object();
   auto dot=K().compute_scalar_product_3_object();
   auto orientation = K().orientation_3_object();
 
@@ -88,160 +284,29 @@ Vector_3 dir_to_origin(boost::container::small_vector<Vector_3, 4>& simplex) {
 
   if(simplex.size()==2){
 
-    auto a = O+simplex[0];
-    auto b = O+simplex[1];
-    FT ratio=dot(b-a, O-a);
+    Vector_3 &a = simplex[0];
+    Vector_3 &b = simplex[1];
+    Vector_3 ab=b-a;
+    FT ratio=dot(ab, -a);
     if(is_negative(ratio)){
       simplex.pop_back();
-      return O-a;
+      return -a;
     }
-    if(ratio>(b-a).squared_length()){
+    if(ratio>ab.squared_length()){
       simplex[0]=simplex[1];
       simplex.pop_back();
-      return O-b;
+      return -b;
     }
-    Vector_3 dir= -cp(cp(b-a, a-O), b-a);
+    Vector_3 dir= -cross(cross(ab, a), ab);
     return dir;
   }
 
   if(simplex.size()==3){
-    auto a = O+simplex[0];
-    auto b = O+simplex[1];
-    auto c = O+simplex[2];
-    Vector_3 ab = b-a;
-    Vector_3 ca = a-c;
-    Vector_3 bc = c-b;
-
-    Vector_3 n = cp(ab,-bc);
-    if(n==NULL_VECTOR){
-      std::swap(simplex[1],simplex[2]);
-      simplex.pop_back();
-      return -cp(cp(ab, a-O), ab);
-    }
-
-    FT ratio_ab=dot(ab, O-a)/ab.squared_length();
-    FT ratio_ca=dot(ca, O-c)/ca.squared_length();
-    FT ratio_bc=dot(bc, O-b)/bc.squared_length();
-
-    bool on_left_of_ab = strictly_on_left_of_triangle_edge(O, n, a, b, K());
-    bool on_left_of_ca = strictly_on_left_of_triangle_edge(O, n, c, a, K());
-    bool on_left_of_bc = strictly_on_left_of_triangle_edge(O, n, b, c, K());
-
-    if(!on_left_of_ab && !on_left_of_ca && !on_left_of_bc){
-      if(is_negative(dot(n, O-a))){
-        std::swap(simplex[1], simplex[2]);
-        return -n;
-      }
-      return n;
-    }
-
-    if(on_left_of_ab && ratio_ab>=0 && ratio_ab<=1){
-      simplex.pop_back();
-      return -cp(cp(b-a, a-O), b-a);
-    }
-    if(on_left_of_ca && ratio_ca>=0 && ratio_ca<=1){
-      simplex[1] = simplex[2];
-      simplex.pop_back();
-      return -cp(cp(a-c, c-O), a-c);
-    }
-    if(on_left_of_bc && ratio_bc>=0 && ratio_bc<=1){
-      simplex[0] = simplex[2];
-      simplex.pop_back();
-      return -cp(cp(c-b, b-O), c-b);
-    }
-
-    if(ratio_ab<0 && ratio_ca>1){
-      simplex.pop_back();
-      simplex.pop_back();
-      return O-a;
-    }
-    if(ratio_ab>1 && ratio_bc<0){
-      simplex[0] = simplex[1];
-      simplex.pop_back();
-      simplex.pop_back();
-      return O-b;
-    }
-    simplex[0] = simplex[2];
-    simplex.pop_back();
-    simplex.pop_back();
-    return O-c;
+    return triangle_dir_to_origin<K>(simplex);
   }
 
-  auto a = O+simplex[0];
-  auto b = O+simplex[1];
-  auto c = O+simplex[2];
-  auto d = O+simplex[3];
+  return tetrahedron_dir_to_origin<K>(simplex);
 
-  if(orientation(a, b, c, d) == NEGATIVE){
-    std::swap(b,c);
-    std::swap(simplex[1], simplex[2]);
-  }
-
-  bool ori_adb=orientation(O, a,d,b) == POSITIVE;
-  bool ori_bdc=orientation(O, b,d,c) == POSITIVE;
-  bool ori_cda=orientation(O, c,d,a) == POSITIVE;
-
-  if(orientation(a, b, c, d) == COPLANAR){
-    ori_adb=!Triangle_3(a,b,d).is_degenerate();
-    ori_bdc=!Triangle_3(c,b,d).is_degenerate();
-    ori_cda=!Triangle_3(a,c,d).is_degenerate();
-  }
-
-  if(!ori_adb && !ori_bdc && !ori_cda)
-    return NULL_VECTOR;
-
-  if(ori_adb && Triangle_3(a,b,d).has_on(Plane_3(a,b,d).projection(O))){
-    Vector_3 dir = cp(b-a, d-a);
-    simplex[2]=simplex[3];
-    simplex.pop_back();
-    if(is_negative(dot(dir, O-a))){
-      std::swap(simplex[1], simplex[2]);
-      return -dir;
-    }
-    return dir;
-  }
-
-  if(ori_bdc && Triangle_3(b,d,c).has_on(Plane_3(b,d,c).projection(O))){
-    Vector_3 dir = cp(b-d, c-d);
-    simplex[0]=simplex[3];
-    simplex.pop_back();
-    if(is_negative(dot(dir, O-b))){
-      std::swap(simplex[1], simplex[2]);
-      return -dir;
-    }
-    return dir;
-  }
-
-  if(ori_cda && Triangle_3(a,c,d).has_on(Plane_3(a,c,d).projection(O))){
-    Vector_3 dir = cp(c-a, d-a);
-    simplex[1]=simplex[3];
-    simplex.pop_back();
-    if(is_negative(dot(dir, O-a))){
-      std::swap(simplex[1], simplex[2]);
-      return -dir;
-    }
-    return dir;
-  }
-
-  if(ori_adb){
-    simplex[2]=simplex[3];
-    simplex.pop_back();
-    return dir_to_origin<K>(simplex);
-  }
-
-  if(ori_bdc){
-    simplex[0]=simplex[3];
-    simplex.pop_back();
-    return dir_to_origin<K>(simplex);
-  }
-
-  if(ori_cda){
-    simplex[1]=simplex[3];
-    simplex.pop_back();
-    return dir_to_origin<K>(simplex);
-  }
-
-  assert(0);
 }
 
 template<typename OK, typename K>
@@ -298,6 +363,7 @@ struct GJK_do_intersect{
       if(simplex.size()==4) simplex.pop_back();
       simplex.push_back(sp);
 
+      assert(++planeStatPerPair<=30);
     } while( true );
     return true;
   }
