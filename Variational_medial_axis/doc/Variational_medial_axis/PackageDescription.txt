@@ -28,7 +28,7 @@
 \cgalCRPSection{Functions}
 - `CGAL::extract_variational_medial_skeleton()`
 
-\cgalCPRSection{Classes}
+\cgalCRPSection{Classes}
 - `CGAL::Variational_medial_axis`
 - `CGAL::Medial_Skeleton`
 */
