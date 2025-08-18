@@ -9,7 +9,7 @@
 #include <CGAL/Extreme_points_traits_adapter_3.h>
 #include <CGAL/convex_hull_3.h>
 #include <CGAL/Convex_hull_hierarchy.h>
-#include <CGAL/Convex_hull_3/predicates.h>
+#include <CGAL/Convex_hull_3/distance.h>
 
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
 #include <CGAL/IO/polygon_soup_io.h>
@@ -77,7 +77,7 @@ private:
       P q2 = random_point();
       P q3 = random_point();
 
-      CGAL::do_intersect(Tet(p0, p1, p2, p3), Tet(q0, q1, q2, q3));
+      // CGAL::do_intersect(Tet(p0, p1, p2, p3), Tet(q0, q1, q2, q3));
     }
     t.stop();
     std::cout << t.time() << " sec" << std::endl;
@@ -90,9 +90,25 @@ private:
       PR a({random_point(), random_point(), random_point(), random_point()});
       PR b({random_point(), random_point(), random_point(), random_point()});
 
-      CGAL::Convex_hull_3::do_intersect(a, b);
+      // CGAL::Convex_hull_3::do_intersect(a, b);
     }
     t.stop();
+    std::cout << "  Number points read per test: " << double(nb_visited)/double(N) << std::endl;
+    std::cout << t.time() << " sec" << std::endl << std::endl;
+    nb_visited=0;
+
+    std::cout << "Spearation distance of Convex Hull" << std::endl;
+    t.reset();
+    t.start();
+    for(int i=0; i<N; ++i)
+    {
+      PR a({random_point(), random_point(), random_point(), random_point()});
+      PR b({random_point(), random_point(), random_point(), random_point()});
+
+      CGAL::Convex_hull_3::separation_distance(a, b);
+    }
+    t.stop();
+    std::cout << "  Number points read per test: " << double(nb_visited)/double(N) << std::endl;
     std::cout << t.time() << " sec" << std::endl << std::endl;
 
   }
@@ -335,21 +351,21 @@ public:
   void run()
   {
     std::cout << "Kernel: " << typeid(K).name() << std::endl;
-    Tet_tet(1000);
-    Tet_mirror(1000);
-    Tet_shift(1000);
-    Tet_stretched(1000);
+    Tet_tet(10000);
+    // Tet_mirror(1000);
+    // Tet_shift(1000);
+    // Tet_stretched(1000);
 
-    Test_sphere(1000, 40);
-    Test_sphere(1000, 100);
-    Test_sphere(1000, 350);
-    Test_sphere(1000, 1000);
-    Test_sphere(300, 3500);
-    Test_sphere(50, 10000);
-    Test_sphere(25, 35000);
-    Test_sphere(25, 100000);
-    Test_sphere(10, 350000);
-    Test_sphere(10, 1000000);
+    // Test_sphere(1000, 40);
+    // Test_sphere(1000, 100);
+    // Test_sphere(1000, 350);
+    // Test_sphere(1000, 1000);
+    // Test_sphere(300, 3500);
+    // Test_sphere(50, 10000);
+    // Test_sphere(25, 35000);
+    // Test_sphere(25, 100000);
+    // Test_sphere(10, 350000);
+    // Test_sphere(10, 1000000);
     std::cout << std::endl;
   }
 };

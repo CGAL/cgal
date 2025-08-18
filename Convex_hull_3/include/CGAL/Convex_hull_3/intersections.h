@@ -467,7 +467,6 @@ struct Functor_do_intersect{
 
   template<typename Convex, typename NamedParameter1, typename NamedParameter2>
   bool operator()(const Convex &a, const Convex &b, const NamedParameter1 &np1, const NamedParameter2 &np2) const{
-    using Point_3 = typename K::Point_3;
     using Vector_3= typename K::Vector_3;
     const int INTER_MAX_ITER=0;
     SphericalPolygon<Vector_3> positiveBound, tempPoly;
