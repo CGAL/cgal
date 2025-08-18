@@ -21,7 +21,7 @@ typedef CGAL::HDVF::Hdvf_persistence<CoefficientType, ComplexType, DegreeType, F
 
 int main(int argc, char **argv)
 {
-   
+
 
     if (argc != 2)
     {
@@ -46,26 +46,26 @@ int main(int argc, char **argv)
         {
             // --- First: build the function mapping the index of a vertex to its degree (here the "z" coordinate of a vertex
             std::function<DegreeType(size_t)> f(CGAL::HDVF::deg_fun(complex, CGAL::HDVF::f_z));
-            
+
             // -- Second: build the associated lower star filtration
             FiltrationType filtration(complex, f);
-            
-            
+
+
             // Build empty persistant HDVF (with vtk export activated)
             HDVFType hdvf(complex, filtration, CGAL::HDVF::OPT_FULL, true);
-            
+
             // Compute a perfect HDVF
             hdvf.compute_perfect_hdvf();
-            
+
             // Output HDVF to console
             hdvf.insert_matrices();
             hdvf.insert_reduction();
             std::cout << hdvf ;
-            
+
             // Output HDVF to vtk
             hdvf_persistence_geometric_chain_complex_output_vtk(hdvf, complex, "res", true) ;
         }
-        
+
         /* Example 2 : build a lower star filtration "slicing" the object according to the index of vertices (we can imagine any other filtration that does not depend on the geometry (e.g. color of vertices...)
             -> AbstractChainComplex in this case
          */
@@ -75,22 +75,22 @@ int main(int argc, char **argv)
             {
                 return DegreeType(i) ;
             } ;
-            
+
             // -- Second: build the associated lower star filtration
             FiltrationType filtration(complex, f);
-            
-            
+
+
             // Build empty persistant HDVF (with vtk export activated)
             HDVFType hdvf(complex, filtration, CGAL::HDVF::OPT_FULL, true);
-            
+
             // Compute a perfect HDVF
             hdvf.compute_perfect_hdvf();
-            
+
             // Output HDVF to console
             hdvf.insert_matrices();
             hdvf.insert_reduction();
             std::cout << hdvf ;
-            
+
             // Output HDVF to vtk
             hdvf_persistence_geometric_chain_complex_output_vtk(hdvf, complex, "res2", true) ;
         }
