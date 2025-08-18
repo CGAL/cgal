@@ -1096,6 +1096,7 @@ private:
                                const Vector_3& n,                 // inverse of search direction
                                FT delta_convergence = FT(1e-5)) { // model has to be normalized in [0, 1]^3
     using face_descriptor = typename Tree::Primitive_id;
+    auto approximate_angle = GT().compute_approximate_angle_3_object();
     delta_convergence *= scale_;
     const FT denoise_preserve = FT(20.0); // in degree
     const int iteration_limit = 30;
@@ -1131,7 +1132,7 @@ private:
         break;
       }
       Point_3 c_next = p - (r_next * n);
-      FT separation_angle = CGAL::approximate_angle<GT>(p - c_next, q_next - c_next);
+      FT separation_angle = approximate_angle(p - c_next, q_next - c_next);
       if(j > 0 && separation_angle < denoise_preserve) {
         break; // denoise preserve angle achieved
       }
@@ -1149,6 +1150,7 @@ private:
                                                       const Vector_3& n, // inverse of search direction
                                                       FT delta_convergence = FT(1e-5)) {
 
+    auto approximate_angle = GT().compute_approximate_angle_3_object();
     delta_convergence *= scale_;
     const FT denoise_preserve = FT(20.0); // in degree
     const int iteration_limit = 30;
@@ -1172,7 +1174,7 @@ private:
         break;
       }
       Point_3 c_next = p - (r_next * n);
-      FT seperation_angle = CGAL::approximate_angle<GT>(p - c_next, q_next - c_next);
+      FT seperation_angle = approximate_angle(p - c_next, q_next - c_next);
       if(j > 0 && seperation_angle < denoise_preserve) {
         /* std::cout << "Denoise preserve angle achieved at iteration: " << j
                   << ", Angle: " << CGAL::to_double(seperation_angle) << " degrees, Center: " << c_next
