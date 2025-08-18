@@ -57,7 +57,7 @@ def write_out_html(d, fn):
     f.write('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">\n')
     f.write('<html xmlns=\"http://www.w3.org/1999/xhtml\">')
     if d.html() is not None:
-      f.write(d.html(method='html'))
+      f.write(d.html().replace("&#13;",""))
     f.write('\n')
     f.write('</html>\n')
     f.close()
@@ -392,9 +392,6 @@ removes some unneeded files, and performs minor repair on some glitches.''')
       url_f=url_f[0]+"/"+url_f[1]
       canonical_link="<link rel=\"canonical\" href=\"https://doc.cgal.org/latest/"+url_f+"\"/>\n"
       re_replace_first_in_file(r'<head>', r'<head>\n'+canonical_link, f)
-    ## special case for how_to_cite.html
-    canonical_link="<link rel=\"canonical\" href=\"https://doc.cgal.org/latest/Manual/how_to_cite.html\"/>\n"
-    re_replace_first_in_file(r'<body>', r'<head>\n'+canonical_link+"</head>\n<body>", os.path.join("Manual","how_to_cite.html"))
 
 if __name__ == "__main__":
     main()
