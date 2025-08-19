@@ -269,7 +269,7 @@ public:
     sp = Infi_box::simplify(sp);
     CGAL_NEF_TRACEN( "Locating "<<sp <<" in "<<v->point());
     SM_point_locator L(&*v);
-    Object_handle o = L.locate(sp);
+    Object_handle o = L.locate(sp, true);
 
     SFace_handle sf;
     if(!CGAL::assign(sf,o)) {
