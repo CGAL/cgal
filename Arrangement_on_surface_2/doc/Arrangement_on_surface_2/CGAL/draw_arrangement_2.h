@@ -57,31 +57,39 @@ namespace CGAL {
  */
 
 template <typename GeometryTraits, typename TopologyTraits>
-void draw(const Arrangement_on_surface_2<GeometryTraits, TopologyTraits>& arr, const BBox& bbox, const GSOptions& gso,
+void draw(const Arrangement_on_surface_2<GeometryTraits, TopologyTraits>& arr,
+          const Bbox_2& bbox, const GSOptions& gso,
           const char* title = "2D Arrangement on Surface");
 
 /*! \ingroup PkgArrangementOnSurface2Draw
  *
- *   A shortcut to `CGAL::draw(arr, bbox, Graphics_scene_options<Aos, Aos::Vertex_const_handle, Aos::Halfedge_const_handle, Aos::Face_const_handle>{})`, where `Aos` is `Arrangement_on_surface_2<GeometryTraits, TopologyTraits>`.
+ * A shortcut to `CGAL::draw(arr, bbox, Graphics_scene_options<Aos,
+ * Aos::Vertex_const_handle, Aos::Halfedge_const_handle,
+ * Aos::Face_const_handle>{})`, where `Aos` is
+ * `Arrangement_on_surface_2<GeometryTraits, TopologyTraits>`.
  */
 
 template <typename GeometryTraits, typename TopologyTraits>
-void draw(const Arrangement_on_surface_2<GeometryTraits, TopologyTraits>& arr, const BBox& bbox,
-          const char* title = "2D Arrangement on Surface");
+void draw(const Arrangement_on_surface_2<GeometryTraits, TopologyTraits>& arr,
+          const Bbox_2& bbox, const char* title = "2D Arrangement on Surface");
 
 /*! \ingroup PkgArrangementOnSurface2Draw
  *
- *   Similar to `CGAL::draw(arr, bbox, gso)`, where the bounding box `bbox` is computed to bound all points
- *   and curves of the arrangement in parameter space.
+ * Similar to `CGAL::draw(arr, bbox, gso)`, where the bounding box `bbox` is
+ * computed to bound all points and curves of the arrangement in parameter
+ * space.
  */
 
 template <typename GeometryTraits, typename TopologyTraits>
-void draw(const Arrangement_on_surface_2<GeometryTraits, TopologyTraits>& arr, const GSOptions& gso,
-          const char* title = "2D Arrangement on Surface");
+void draw(const Arrangement_on_surface_2<GeometryTraits, TopologyTraits>& arr,
+          const GSOptions& gso, const char* title = "2D Arrangement on Surface");
 
 /*! \ingroup PkgArrangementOnSurface2Draw
  *
- *   A shortcut to `CGAL::draw(arr, Graphics_scene_options<Aos, Aos::Vertex_const_handle, Aos::Halfedge_const_handle, Aos::Face_const_handle>{})`, where `Aos` is `Arrangement_on_surface_2<GeometryTraits, TopologyTraits>`.
+ * A shortcut to `CGAL::draw(arr, Graphics_scene_options<Aos,
+ * Aos::Vertex_const_handle, Aos::Halfedge_const_handle,
+ * Aos::Face_const_handle>{})`, where `Aos` is
+ * `Arrangement_on_surface_2<GeometryTraits, TopologyTraits>`.
  */
 
 template <typename GeometryTraits, typename TopologyTraits>
