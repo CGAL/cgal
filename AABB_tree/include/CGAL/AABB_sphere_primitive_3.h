@@ -40,7 +40,7 @@ namespace internal {
     get(Self, key_type it)
     {
       const typename GeomTraits::Point_3 c = it->center();
-      FT r = sqrt(it->squared_radius());
+      const typename GeomTraits::FT r = sqrt(it->squared_radius());
       return typename GeomTraits::Point_3(c.x(), c.y(), c.z() + r);
     }
   };
