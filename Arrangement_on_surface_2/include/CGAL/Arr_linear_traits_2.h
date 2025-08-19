@@ -1517,9 +1517,24 @@ public:
 
   /// \name Functor definitions for the landmarks point-location strategy.
   //@{
-  typedef double                          Approximate_number_type;
+  typedef double                                        Approximate_number_type;
+  typedef CGAL::Cartesian<Approximate_number_type>      Approximate_kernel;
+  typedef Approximate_kernel::Point_2                   Approximate_point_2;
 
   class Approximate_2 {
+  protected:
+    using Traits = Arr_linear_traits_2<Kernel>;
+
+    /*! The traits (in case it has state) */
+    const Traits& m_traits;
+
+    /*! constructs
+     * \param traits the traits.
+     */
+    Approximate_2(const Traits& traits) : m_traits(traits) {}
+
+    friend class Arr_linear_traits_2<Kernel>;
+
   public:
     /*! obtains an approximation of a point coordinate.
      * \param p The exact point.
@@ -1533,10 +1548,98 @@ public:
       CGAL_precondition((i == 0) || (i == 1));
       return (i == 0) ? CGAL::to_double(p.x()) : CGAL::to_double(p.y());
     }
+
+    /*! obtains an approximation of a point.
+     */
+    Approximate_point_2 operator()(const Point_2& p) const
+    { return Approximate_point_2(operator()(p, 0), operator()(p, 1)); }
+
+    /*! obtains an approximation of an \f$x\f$-monotone curve.
+     */
+    template <typename OutputIterator>
+    OutputIterator operator()(const X_monotone_curve_2& xcv, double /* error */,
+                              OutputIterator oi, bool l2r = true) const {
+      auto min_vertex = m_traits.construct_min_vertex_2_object();
+      auto max_vertex = m_traits.construct_max_vertex_2_object();
+      const auto& src = (l2r) ? min_vertex(xcv) : max_vertex(xcv);
+      const auto& trg = (l2r) ? max_vertex(xcv) : min_vertex(xcv);
+      auto xs = CGAL::to_double(src.x());
+      auto ys = CGAL::to_double(src.y());
+      auto xt = CGAL::to_double(trg.x());
+      auto yt = CGAL::to_double(trg.y());
+      *oi++ = Approximate_point_2(xs, ys);
+      *oi++ = Approximate_point_2(xt, yt);
+      return oi;
+    }
+
+    /*! obtains an approximation of an \f$x\f$-monotone curve.
+     */
+    template <typename OutputIterator>
+    OutputIterator operator()(const X_monotone_curve_2& xcv, double /* error */,
+                              OutputIterator oi, const Bbox_2& bbox,
+                              bool l2r = true) const
+    {
+      using Approx_pnt = Approximate_point_2;
+      using Approx_seg = Approximate_kernel::Segment_2;
+      auto xmin = bbox.xmin();
+      auto ymin = bbox.ymin();
+      auto xmax = bbox.xmax();
+      auto ymax = bbox.ymax();
+      Approximate_kernel::Iso_rectangle_2 rect(xmin, ymin, xmax, ymax);
+      auto xs = CGAL::to_double(xcv.source().x());
+      auto ys = CGAL::to_double(xcv.source().y());
+      auto xt = CGAL::to_double(xcv.target().x());
+      auto yt = CGAL::to_double(xcv.target().y());
+      if (xcv.is_ray()) {
+        using Approx_ray = Approximate_kernel::Ray_2;
+        Approx_ray ray(Approx_pnt(xs, ys), Approx_pnt(xt, yt));
+        const auto result = CGAL::intersection(rect, ray);
+        if (! result) return oi;
+
+        if (const auto* res_seg = std::get_if<Approx_seg>(&*result)) {
+          *oi++ = res_seg->source();
+          *oi++ = res_seg->target();
+          return oi;
+        }
+        const auto* res_pnt = std::get_if<Approx_pnt>(&*result);
+        CGAL_assertion(res_pnt != nullptr);
+        *oi++ = *res_pnt;
+        return oi;
+      }
+      if (xcv.is_line()) {
+        using Approx_lin = Approximate_kernel::Line_2;
+        Approx_lin line(Approx_pnt(xs, ys), Approx_pnt(xt, yt));
+        const auto result = CGAL::intersection(rect, line);
+        if (! result) return oi;
+
+        if (const auto* res_seg = std::get_if<Approx_seg>(&*result)) {
+          *oi++ = res_seg->source();
+          *oi++ = res_seg->target();
+          return oi;
+        }
+        const auto* res_pnt = std::get_if<Approx_pnt>(&*result);
+        CGAL_assertion(res_pnt != nullptr);
+        *oi++ = *res_pnt;
+        return oi;
+      }
+      Approx_seg seg(Approx_pnt(xs, ys), Approx_pnt(xt, yt));
+      const auto result = CGAL::intersection(rect, seg);
+      if (! result) return oi;
+
+      if (const auto* res_seg = std::get_if<Approx_seg>(&*result)) {
+        *oi++ = res_seg->source();
+        *oi++ = res_seg->target();
+        return oi;
+      }
+      const auto* res_pnt = std::get_if<Approx_pnt>(&*result);
+      CGAL_assertion(res_pnt != nullptr);
+      *oi++ = *res_pnt;
+      return oi;
+    }
   };
 
   /*! obtains an `Approximate_2` functor object. */
-  Approximate_2 approximate_2_object() const { return Approximate_2(); }
+  Approximate_2 approximate_2_object() const { return Approximate_2(*this); }
 
   //! Functor
   class Construct_x_monotone_curve_2 {
