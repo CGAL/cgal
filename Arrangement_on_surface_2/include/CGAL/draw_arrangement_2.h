@@ -65,11 +65,13 @@ namespace draw_function_for_arrangement_2
            it != face->inner_ccbs_end(); ++it)
       { add_ccb(*it); }
 
-      for (Outer_ccb_const_iterator it = face->outer_ccbs_begin();
-           it != face->outer_ccbs_end(); ++it)
-      {
-        add_ccb(*it);
-        draw_region(*it);
+      if (! face->is_unbounded()) {
+        for (Outer_ccb_const_iterator it = face->outer_ccbs_begin();
+             it != face->outer_ccbs_end(); ++it)
+        {
+          add_ccb(*it);
+          draw_region(*it);
+        }
       }
     }
 
