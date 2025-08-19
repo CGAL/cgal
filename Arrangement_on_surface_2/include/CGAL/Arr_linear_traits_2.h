@@ -28,6 +28,7 @@
 
 #include <variant>
 
+#include <CGAL/Cartesian.h>
 #include <CGAL/tags.h>
 #include <CGAL/intersections.h>
 #include <CGAL/Arr_tags.h>
