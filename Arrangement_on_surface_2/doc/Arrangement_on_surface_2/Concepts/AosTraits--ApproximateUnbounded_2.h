@@ -41,7 +41,7 @@ public:
    */
   template <typename OutputIterator>
   OutputIterator operator()(const X_monotone_curve_2& xcv, double error, OutputIterator oi,
-                            const BBox& bbox, bool l2r = true) const;
+                            const Bbox_2& bbox, bool l2r = true) const;
 
   /// @}
 }; /* end AosTraits::Approximate_2 */
