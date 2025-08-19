@@ -81,7 +81,7 @@ class Vertex_base {
     shalfedges_begin_(), shalfedges_last_(),
     sfaces_begin_(), sfaces_last_(), shalfloop_(),
     info_()
-    // , sm_(Vertex_handle((SNC_in_place_list_vertex<Vertex_base>*) this))
+    // , sm_(Vertex_handle((SNC_in_place_list<Vertex_base>*) this))
       {}
 
     Vertex_base(const Point_3& p, Mark m) :
@@ -90,11 +90,11 @@ class Vertex_base {
       shalfedges_begin_(), shalfedges_last_(),
       sfaces_begin_(), sfaces_last_(), shalfloop_(),
       info_()
-      //    , sm_(Vertex_handle((SNC_in_place_list_vertex<Vertex_base>*) this))
+      //    , sm_(Vertex_handle((SNC_in_place_list<Vertex_base>*) this))
         {}
 
       Vertex_base(const Vertex_base<Refs>& v)
-      //      : sm_(Vertex_handle((SNC_in_place_list_vertex<Vertex_base>*)this))
+      //      : sm_(Vertex_handle((SNC_in_place_list<Vertex_base>*)this))
         {
           point_at_center_ = v.point_at_center_;
           mark_ = v.mark_;
