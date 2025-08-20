@@ -1,7 +1,7 @@
 
-#include "hexmeshing_sequential.h"
-#include "hexmeshing_parallel.h"
-#include "utils.h"
+#include <CGAL/hexmeshing/Hexmeshing_outer_alias.h>
+#include <CGAL/hexmeshing/LCC_items_for_hexmeshing.h>
+#include <CGAL/hexmeshing/Hexmeshing_grid.h>
 
 #include <CGAL/Combinatorial_map_save_load.h>
 #include <CGAL/config.h>
@@ -11,7 +11,7 @@
 #include <filesystem>
 #include <iostream>
 
-using namespace CGAL::HexRefinement;
+using namespace CGAL::Hexmeshing;
 
 Polyhedron load_surface(const std::string& file) {
   std::ifstream off_file(file);
@@ -34,7 +34,7 @@ Tree get_surface_aabb(Polyhedron& poly) {
   return tree;
 }
 
-TwoRefinement::Grid cubic_grid_from_aabb(Tree& aabb, int cube_cells_per_dim){
+Grid cubic_grid_from_aabb(Tree& aabb, int cube_cells_per_dim){
   auto bbox = aabb.bbox();
 
   Point center = {bbox.xmin() + (bbox.x_span()/2),
@@ -42,18 +42,18 @@ TwoRefinement::Grid cubic_grid_from_aabb(Tree& aabb, int cube_cells_per_dim){
                   bbox.zmin() + (bbox.z_span()/2)};
 
   double max_size = std::max(std::max(bbox.x_span(), bbox.y_span()), bbox.z_span());
-  return TwoRefinement::Grid::make_centered_cube(center, max_size / cube_cells_per_dim, cube_cells_per_dim);
+  return Grid::make_centered_cube(center, max_size / cube_cells_per_dim, cube_cells_per_dim);
 }
 
 LCC default_two_refinement(const std::string& path, int cube_cells_per_dim, int nb_levels = 1){
   Polyhedron poly = load_surface(path);
   Tree aabb = get_surface_aabb(poly);
-  TwoRefinement::Grid grid = cubic_grid_from_aabb(aabb, cube_cells_per_dim);
+  Grid grid = cubic_grid_from_aabb(aabb, cube_cells_per_dim);
 
   return two_refinement_mt(
     grid,
-    TwoRefinement::is_volume_intersecting_poly(aabb),
-    // TwoRefinement::is_volume_intersecting_poly(aabb),
+    is_volume_intersecting_poly(aabb),
+    // is_volume_intersecting_poly(aabb),
     4,
     nb_levels
   );

@@ -1,10 +1,18 @@
-#include "unit_test_framework.h"
-#include "lcc_jacobian.h"
+#include <CGAL/hexmeshing/Hexmeshing_set_attributes.h>
+#include <CGAL/hexmeshing/Hexmeshing_laplacian_smoothing.h>
+#include <CGAL/hexmeshing/Hexmeshing_move_points_onto_mesh.h>
+#include <CGAL/hexmeshing/Hexmeshing_resolve_non_manifold_case.h>
+#include <CGAL/lcc_jacobian.h>
 
+#include "unit_test_framework.h"
+
+#include <vector>
+#include <array>
 #include <boost/graph/isomorphism.hpp>
 #include <boost/graph/adjacency_list.hpp>
 
 #include <fstream>
+
 
 
 template<int SKBT>
@@ -1257,11 +1265,11 @@ bool test_surface_smoothing<2>() {
 
 int main() {
   
-    TestFramework test;
+  TestFramework test;
 
-    // テストいっぱい
-    test.test("test set_dual_edges", test_set_dual_edges<1>);
-    test.test("test __set_gradient_at_dual_node", test_set_gradient_at_dual_node<1>);
+  // テストいっぱい
+  test.test("test set_dual_edges", test_set_dual_edges<1>);
+  test.test("test __set_gradient_at_dual_node", test_set_gradient_at_dual_node<1>);
   test.test_approximate_value<std::vector<Point>>("test laplacian_smoothing_for_unmarked_cells without move", answer_laplacian_smoothing_for_unmarked_cells<1>(), test_laplacian_smoothing_for_unmarked_cells<1>, [](std::vector<Point> a, std::vector<Point> b)->bool{return is_approximately_equal_Points(a, b);});
   test.test_approximate_value<std::vector<Point>>("test laplacian_smoothing_for_unmarked_cells with move", answer_laplacian_smoothing_for_unmarked_cells<2>(), test_laplacian_smoothing_for_unmarked_cells<2>, [](std::vector<Point> a, std::vector<Point> b)->bool{return is_approximately_equal_Points(a, b);});
   test.test("test laplacian_smoothing_for_unmarked_cells with Jacobians", test2_laplacian_smoothing_for_unmarked_cells<1>);
@@ -1284,5 +1292,5 @@ int main() {
   test.test("test surface_smoothing a plane", test_surface_smoothing<1>);
   test.test("test surface_smoothing a curved plane", test_surface_smoothing<2>);
 
-    test.print_summary();
+  test.print_summary();
 }

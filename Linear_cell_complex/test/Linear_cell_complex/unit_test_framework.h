@@ -1,7 +1,7 @@
-#include "hexmeshing_sequential.h"
+#include <CGAL/Hexmeshing_for_linear_cell_complex_sequential.h>
 #include <iostream>
 
-using namespace CGAL::HexRefinement::TwoRefinement;
+using namespace CGAL::Hexmeshing;
 
 class TestFramework {
 private:
