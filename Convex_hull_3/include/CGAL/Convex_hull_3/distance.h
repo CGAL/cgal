@@ -101,20 +101,22 @@ Vector_3 triangle_dir_to_origin(boost::container::small_vector<Vector_3, 4>& sim
   }
 
   if(on_left_of_ca && ratio_ca>=0 /*&& ratio_ca<=1*/){
+    Vector_3 dir=-cross(cross(ca, c), ca);
     simplex[1] = simplex[2];
     simplex.pop_back();
-    return -cross(cross(ca, c), ca);
+    return dir;
   }
   if(on_left_of_bc && ratio_cb>=0 /*&& ratio_cb<=1*/){
+    Vector_3 dir=-cross(cross(bc, b), bc);
     simplex[0] = simplex[2];
     simplex.pop_back();
-    return -cross(cross(bc, b), bc);
+    return dir;
   }
 
   simplex[0] = simplex[2];
   simplex.pop_back();
   simplex.pop_back();
-  return -c;
+  return -simplex[0];
 }
 
 /*
@@ -195,10 +197,11 @@ Vector_3 tetrahedron_dir_to_origin(boost::container::small_vector<Vector_3, 4>& 
       simplex.pop_back();
       return -simplex[0];
     }
+    Vector_3 dir=-cross(cross(ad, d), ad);
     simplex[1]=simplex[3];
     simplex.pop_back();
     simplex.pop_back();
-    return -cross(cross(ad, d), ad);
+    return dir;
   }
 
   if(on_left_of_bd && on_right_of_bd){
@@ -210,10 +213,11 @@ Vector_3 tetrahedron_dir_to_origin(boost::container::small_vector<Vector_3, 4>& 
       simplex.pop_back();
       return -simplex[0];
     }
+    Vector_3 dir=-cross(cross(bd, d), bd);
     simplex[0]=simplex[3];
     simplex.pop_back();
     simplex.pop_back();
-    return -cross(cross(bd, d), bd);
+    return dir;
   }
 
   assert(on_left_of_cd && on_right_of_cd);
@@ -225,11 +229,12 @@ Vector_3 tetrahedron_dir_to_origin(boost::container::small_vector<Vector_3, 4>& 
     simplex.pop_back();
     return -simplex[0];
   }
+  Vector_3 dir=-cross(cross(cd, d), cd);
   simplex[0]=simplex[2];
   simplex[1]=simplex[3];
   simplex.pop_back();
   simplex.pop_back();
-  return -cross(cross(cd, d), cd);
+  return dir;
 }
 
 template<typename K, typename Vector_3>
@@ -255,9 +260,10 @@ Vector_3 dir_to_origin(boost::container::small_vector<Vector_3, 4>& simplex, con
       return -a;
     }
     if(ratio>ab.squared_length()){
+      Vector_3 dir=-b;
       simplex[0]=simplex[1];
       simplex.pop_back();
-      return -b;
+      return dir;
     }
     return -cross(cross(ab, a), ab);
     break;
