@@ -34,6 +34,7 @@
 #include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_enums.h>
 #include <CGAL/Arr_geometry_traits/Segment_assertions.h>
+#include "CGAL/number_utils.h"
 
 namespace CGAL {
 
@@ -1560,6 +1561,7 @@ public:
     template <typename OutputIterator>
     OutputIterator operator()(const X_monotone_curve_2& xcv, double /* error */,
                               OutputIterator oi, bool l2r = true) const {
+      if(xcv.is_ray() || xcv.is_line()) return oi;
       auto min_vertex = m_traits.construct_min_vertex_2_object();
       auto max_vertex = m_traits.construct_max_vertex_2_object();
       const auto& src = (l2r) ? min_vertex(xcv) : max_vertex(xcv);
@@ -1582,24 +1584,25 @@ public:
     {
       using Approx_pnt = Approximate_point_2;
       using Approx_seg = Approximate_kernel::Segment_2;
+      using Approx_ray = Approximate_kernel::Ray_2;
+      using Approx_lin = Approximate_kernel::Line_2;
       auto xmin = bbox.xmin();
       auto ymin = bbox.ymin();
       auto xmax = bbox.xmax();
       auto ymax = bbox.ymax();
-      Approximate_kernel::Iso_rectangle_2 rect(xmin, ymin, xmax, ymax);
-      auto xs = CGAL::to_double(xcv.source().x());
-      auto ys = CGAL::to_double(xcv.source().y());
-      auto xt = CGAL::to_double(xcv.target().x());
-      auto yt = CGAL::to_double(xcv.target().y());
+      Approximate_kernel::Iso_rectangle_2 rect(xmin, ymin, xmax, ymax);        
       if (xcv.is_ray()) {
-        using Approx_ray = Approximate_kernel::Ray_2;
-        Approx_ray ray(Approx_pnt(xs, ys), Approx_pnt(xt, yt));
-        const auto result = CGAL::intersection(rect, ray);
+        auto ray = xcv.ray();
+        Kernel kernel;
+        auto construct_vertex = kernel.construct_point_on_2_object();
+        Approx_pnt s = this->operator()(construct_vertex(ray, 0));
+        Approx_pnt t = this->operator()(construct_vertex(ray, 1));
+        const auto result = CGAL::intersection(rect, Approx_ray(s, t));
         if (! result) return oi;
 
         if (const auto* res_seg = std::get_if<Approx_seg>(&*result)) {
-          *oi++ = res_seg->source();
-          *oi++ = res_seg->target();
+          *oi++ = l2r ? res_seg->min() : res_seg->max();
+          *oi++ = l2r ? res_seg->max() : res_seg->min();
           return oi;
         }
         const auto* res_pnt = std::get_if<Approx_pnt>(&*result);
@@ -1608,14 +1611,17 @@ public:
         return oi;
       }
       if (xcv.is_line()) {
-        using Approx_lin = Approximate_kernel::Line_2;
-        Approx_lin line(Approx_pnt(xs, ys), Approx_pnt(xt, yt));
-        const auto result = CGAL::intersection(rect, line);
+        const Line_2 & supp_line = xcv.supp_line();
+        Approx_lin approx_supp_line(
+          CGAL::to_double(supp_line.a()),  
+          CGAL::to_double(supp_line.b()), 
+          CGAL::to_double(supp_line.c()));
+        const auto result = CGAL::intersection(rect, approx_supp_line);
         if (! result) return oi;
 
         if (const auto* res_seg = std::get_if<Approx_seg>(&*result)) {
-          *oi++ = res_seg->source();
-          *oi++ = res_seg->target();
+          *oi++ = l2r ? res_seg->min() : res_seg->max();
+          *oi++ = l2r ? res_seg->max() : res_seg->min();
           return oi;
         }
         const auto* res_pnt = std::get_if<Approx_pnt>(&*result);
@@ -1623,13 +1629,13 @@ public:
         *oi++ = *res_pnt;
         return oi;
       }
-      Approx_seg seg(Approx_pnt(xs, ys), Approx_pnt(xt, yt));
+      Approx_seg seg(this->operator()(xcv.source()), this->operator()(xcv.target()));
       const auto result = CGAL::intersection(rect, seg);
       if (! result) return oi;
 
       if (const auto* res_seg = std::get_if<Approx_seg>(&*result)) {
-        *oi++ = res_seg->source();
-        *oi++ = res_seg->target();
+        *oi++ = l2r ? res_seg->min() : res_seg->max();
+        *oi++ = l2r ? res_seg->max() : res_seg->min();
         return oi;
       }
       const auto* res_pnt = std::get_if<Approx_pnt>(&*result);

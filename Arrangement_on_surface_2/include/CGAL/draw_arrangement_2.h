@@ -11,16 +11,20 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s): Efi Fogel <efifogel@gmail.com>
+// Author(s): Efi Fogel     <efifogel@gmail.com>
+//            Shepard Liu	  <shepard0liu@gmail.com>
 
 #ifndef CGAL_DRAW_ARRANGEMENT_2_H
 #define CGAL_DRAW_ARRANGEMENT_2_H
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
+#include <cstddef>
 #include <cstdlib>
+#include <iterator>
 #include <type_traits>
 #include <unordered_map>
+#include <utility>
 
 #include <CGAL/Arr_geodesic_arc_on_sphere_traits_2.h>
 #include <CGAL/Arrangement_2.h>
@@ -30,99 +34,16 @@
 #include <CGAL/Graphics_scene_options.h>
 #include <CGAL/Random.h>
 #include <CGAL/config.h>
+#include <CGAL/Arr_observer.h>
+#include <CGAL/unordered_flat_map.h>
+#include <CGAL/Draw_aos/type_utils.h>
 #include <CGAL/Draw_aos/Arr_viewer.h>
+#include "CGAL/Bbox_2.h"
 
 namespace CGAL {
 
-namespace draw_function_for_arrangement_2 {
+namespace draw_aos {
 
-// ============================
-// Detection idiom using void_t
-// ============================
-
-// ========
-
-// Primary templates: detection fails by default
-// Does the traits have approximate_2_object()?
-template <typename, typename = std::void_t<>>
-struct has_approximate_2_object : std::false_type
-{};
-
-// Specialization: detection succeeds if decltype(T::approximate_2_object()) is valid
-template <typename T>
-struct has_approximate_2_object<T, std::void_t<decltype(std::declval<T>().approximate_2_object())>> : std::true_type
-{};
-
-// Convenience variable
-template <typename T>
-inline constexpr bool has_approximate_2_object_v = has_approximate_2_object<T>::value;
-
-// ========
-
-// Primary templates: detection fails by default
-// Does a class have operator()(const Point&)?
-template <typename, typename, typename = std::void_t<>>
-struct has_operator_point : std::false_type
-{};
-
-// Specialization: detection succeeds if decltype works out
-template <typename T, typename A>
-struct has_operator_point<T, A, std::void_t<decltype(std::declval<A>()(std::declval<const typename T::Point_2&>()))>>
-    : std::true_type
-{};
-
-// Convenience variable
-template <typename T, typename A>
-inline constexpr bool has_operator_point_v = has_operator_point<T, A>::value;
-
-// ========
-
-// Primary templates: detection fails by default
-// Does a class have operator()(const X_monotone_curve&)?
-template <typename, typename, typename = std::void_t<>>
-struct has_operator_xcv : std::false_type
-{};
-
-// Specialization: detection succeeds if decltype works out
-struct Dummy_output
-{};
-using Concrete_output_iterator = Dummy_output*;
-
-template <typename T, typename A>
-struct has_operator_xcv<T,
-                        A,
-                        std::void_t<decltype(std::declval<A>()(std::declval<const typename T::X_monotone_curve_2&>(),
-                                                               std::declval<double>,
-                                                               std::declval<Concrete_output_iterator>(),
-                                                               std::declval<bool>()))>> : std::true_type
-{};
-
-// Convenience variable
-template <typename T, typename A>
-inline constexpr bool has_operator_xcv_v = has_operator_xcv<T, A>::value;
-
-// ========
-
-// Helper: detect whether T is or derives from Arr_geodesic_arc_on_sphere_traits_2<*, *, *>
-template <typename T>
-struct is_or_derived_from_agas
-{
-private:
-  template <typename Kernel_, int AtanX, int AtanY>
-  static std::true_type test(const Arr_geodesic_arc_on_sphere_traits_2<Kernel_, AtanX, AtanY>*);
-
-  static std::false_type test(...);
-
-public:
-  static constexpr bool value = decltype(test(static_cast<const T*>(nullptr)))::value;
-};
-
-template <typename T>
-inline constexpr bool is_or_derived_from_agas_v = is_or_derived_from_agas<T>::value;
-
-// ========
-
-///
 template <typename Arr, typename GSOptions>
 class Draw_arr_tool
 {
@@ -149,7 +70,7 @@ public:
     // std::cout << "add_face()\n";
     for(Inner_ccb_const_iterator it = face->inner_ccbs_begin(); it != face->inner_ccbs_end(); ++it) add_ccb(*it);
 
-    if (! face->is_unbounded()) {
+    if(!face->is_unbounded()) {
       for(Outer_ccb_const_iterator it = face->outer_ccbs_begin(); it != face->outer_ccbs_end(); ++it) {
         add_ccb(*it);
         draw_region(*it);
@@ -210,13 +131,13 @@ public:
   /// Compile time dispatching
 
   ///
-  template <typename T, typename A, std::enable_if_t<!has_operator_point_v<T, A>, int> = 0>
+  template <typename T, typename A, std::enable_if_t<!has_approximate_point_v<T, A>, int> = 0>
   void draw_region_impl2(const T& /* traits */, const A& /* approximate */, Halfedge_const_handle curr) {
     draw_exact_region(curr);
   }
 
   ///
-  template <typename T, typename A, std::enable_if_t<has_operator_point_v<T, A>, int> = 0>
+  template <typename T, typename A, std::enable_if_t<has_approximate_point_v<T, A>, int> = 0>
   auto draw_region_impl2(const T& /* traits */, const A& approx, Halfedge_const_handle curr) {
     draw_approximate_region(curr, approx);
   }
@@ -308,14 +229,14 @@ public:
   }
 
   ///
-  template <typename T, typename A, std::enable_if_t<!has_operator_point_v<T, A>, int> = 0>
+  template <typename T, typename A, std::enable_if_t<!has_approximate_point_v<T, A>, int> = 0>
   void draw_point_impl2(
       const T& /* traits */, const A& /* approximate */, const Point& p, bool colored, const CGAL::IO::Color& c) {
     draw_exact_point(p, colored, c);
   }
 
   ///
-  template <typename T, typename A, std::enable_if_t<has_operator_point_v<T, A>, int> = 0>
+  template <typename T, typename A, std::enable_if_t<has_approximate_point_v<T, A>, int> = 0>
   auto
   draw_point_impl2(const T& /* traits */, const A& approx, const Point& p, bool colored, const CGAL::IO::Color& c) {
     draw_approximate_point(p, approx, colored, c);
@@ -475,7 +396,7 @@ public:
   }
 
   ///
-  template <typename T, typename A, std::enable_if_t<!has_operator_point_v<T, A>, int> = 0>
+  template <typename T, typename A, std::enable_if_t<!has_approximate_point_v<T, A>, int> = 0>
   void draw_curve_impl2(const T& /* traits */,
                         const A& /* approximate */,
                         const X_monotone_curve& xcv,
@@ -485,7 +406,7 @@ public:
   }
 
   ///
-  template <typename T, typename A, std::enable_if_t<has_operator_point_v<T, A>, int> = 0>
+  template <typename T, typename A, std::enable_if_t<has_approximate_point_v<T, A>, int> = 0>
   auto draw_curve_impl2(
       const T& /* traits */, const A& approx, const X_monotone_curve& xcv, bool colored, const CGAL::IO::Color& c) {
     draw_approximate_curve(xcv, approx, colored, c);
@@ -580,29 +501,273 @@ protected:
   std::unordered_map<Face_const_handle, bool> m_visited;
 };
 
-} // namespace draw_function_for_arrangement_2
+template <typename Value1, typename Value2, typename Range1, typename Range2>
+static auto map_from_pair_ranges(Range1 range1, Range2 range2) {
+  CGAL_assertion_msg(range1.size() == range2.size(), "The two ranges must have the same size.");
+  auto begin = boost::make_zip_iterator(boost::make_tuple(range1.begin(), range2.begin()));
+  auto end = boost::make_zip_iterator(boost::make_tuple(range1.end(), range2.end()));
+  auto tuple_to_pair = [](const auto& t) { return std::make_pair(boost::get<0>(t), boost::get<1>(t)); };
+  return unordered_flat_map<Value1, Value2>(boost::make_transform_iterator(begin, tuple_to_pair),
+                                            boost::make_transform_iterator(end, tuple_to_pair));
+}
 
-#define CGAL_ARR_TYPE CGAL::Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>
+/*!
+ * \brief tracking changes between an arrangement and its copy that will be later inserted to.
+ *
+ * \note tracks insertions only. If any other actions made(e.g. deletions, merging, etc), the state of the tracker
+ * instance may become invalid.
+ *
+ * \tparam Arrangement
+ */
+template <typename Arrangement>
+class Arr_insertion_tracker : Arr_observer<Arrangement>
+{
+  using Base = Arr_observer<Arrangement>;
+  using Halfedge_handle = typename Arrangement::Halfedge_handle;
+  using Halfedge_const_handle = typename Arrangement::Halfedge_const_handle;
+  using Face_handle = typename Arrangement::Face_handle;
+  using Face_const_handle = typename Arrangement::Face_const_handle;
+  using Vertex_handle = typename Arrangement::Vertex_handle;
+  using Vertex_const_handle = typename Arrangement::Vertex_const_handle;
+  using X_monotone_curve_2 = typename Arrangement::X_monotone_curve_2;
 
-/// Draw an arrangement on surface.
-template <typename GeometryTraits_2, typename TopologyTraits, class GSOptions>
-void draw(const CGAL_ARR_TYPE& aos,
-          const GSOptions& gso,
-          const char* title = "2D Arrangement on Surface Basic Viewer") {
-  using Arrangement = CGAL_ARR_TYPE;
+protected:
+  virtual void after_create_vertex(Vertex_handle v) override { m_vertex_map[v] = Vertex_const_handle(); }
 
-  Qt::init_ogl_context(4, 3);
-  int argc;
-  QApplication app(argc, nullptr);
-  auto viewer = draw_aos::Arr_viewer<Arrangement, GSOptions>(app.activeWindow(), aos, gso, title);
+  virtual void after_create_edge(Halfedge_handle e) override {
+    m_halfedge_map[e] = Halfedge_const_handle();
+    m_halfedge_map[e->twin()] = Halfedge_const_handle(); // twin is created as well
+  }
+
+  virtual void before_split_edge(Halfedge_handle e,
+                                 Vertex_handle v,
+                                 const X_monotone_curve_2& c1,
+                                 const X_monotone_curve_2& c2) override {
+    if(m_vertex_map.find(v) == m_vertex_map.end()) m_vertex_map[v] = Vertex_const_handle(); // v is newly created
+  }
+
+  virtual void after_split_edge(Halfedge_handle e1, Halfedge_handle e2) override {
+    if(auto it = m_halfedge_map.find(e1); it == m_halfedge_map.end())
+      m_halfedge_map[e2] = e1;
+    else if(it->second == Halfedge_const_handle())
+      m_halfedge_map[e2] = Halfedge_const_handle(); // e1 has no corresponding edge in the original arrangement
+    else
+      m_halfedge_map[e2] = it->second; // e1 is created by splitting an existing edge
+  }
+
+  virtual void after_split_face(Face_handle f1, Face_handle f2, bool) override {
+    // Face cannot be created but by splitting an existing face.
+    if(auto it = m_face_map.find(f1); it == m_face_map.end())
+      m_face_map[f2] = f1;
+    else
+      m_face_map[f2] = it->second; // f1 is created by splitting an existing face
+  }
+
+public:
+  Arr_insertion_tracker(Arrangement& arr)
+      : Base(arr) {}
+
+  /*!
+   * \brief Query the original face of a given face.
+   *
+   * \param fh a valid face handle in the modified arrangement.
+   * \return Face_const_handle
+   */
+  Face_const_handle original_face(Face_const_handle fh) const {
+    auto it = m_face_map.find(fh);
+    if(it == m_face_map.end()) return fh;
+    return it->second; // new face from splitting an existing face
+  }
+
+  /*!
+   * \brief Query the original halfedge of a given halfedge.
+   *
+   * \param heh a valid halfedge handle in the modified arrangement.
+   * \return Halfedge_const_handle
+   */
+  Halfedge_const_handle original_halfedge(Halfedge_const_handle he) const {
+    auto it = m_halfedge_map.find(he);
+    if(it == m_halfedge_map.end()) return he;
+    if(it->second == Halfedge_const_handle()) return Halfedge_const_handle(); // newly created halfedge
+    return it->second;
+  }
+
+  /*!
+   * \brief Query the original vertex of a given vertex.
+   *
+   * \param vh a valid vertex handle in the modified arrangement.
+   * \return Vertex_const_handle
+   */
+  Vertex_const_handle original_vertex(Vertex_const_handle vh) const {
+    auto it = m_vertex_map.find(vh);
+    if(it == m_vertex_map.end()) return vh;
+    if(it->second == Vertex_const_handle()) return Vertex_const_handle(); // newly created vertex
+    return it->second;                                                    // it will never reach here.
+  }
+
+private:
+  /*!
+   * Maps tracking the changes between the original arrangement and modified arrangement.
+   * The key is the current feature, and the value is the corresponding feature before modification.
+   * If there is no entry about a feature, the corresponding feature is itself.
+   * If the value is a invalid handle, it means that the feature is newly created and thus has no corresponding
+   * feature in the original arrangement.
+   */
+  unordered_flat_map<Face_const_handle, Face_const_handle> m_face_map;
+  unordered_flat_map<Halfedge_const_handle, Halfedge_const_handle> m_halfedge_map;
+  unordered_flat_map<Vertex_const_handle, Vertex_const_handle> m_vertex_map;
+};
+
+void draw_unimplemented() {
+  std::cerr << "Geometry traits type of arrangement is required to support approximation of Point_2 and "
+               "X_monotone_curve_2. Traits on curved surfaces needs additional support for parameterization."
+            << std::endl;
+  exit(1);
+}
+
+template <typename Arrangement, typename GSOptions>
+void draw_impl_planar(
+    const Arrangement& arr, const GSOptions& gso, const char* title, Bbox_2 initial_bbox, QApplication& app) {
+  Arr_viewer viewer(app.activeWindow(), arr, gso, title, initial_bbox);
   viewer.show();
   app.exec();
 }
 
-/// Draw an arrangement on surface.
-template <typename GeometryTraits_2, typename TopologyTraits>
-void draw(const CGAL_ARR_TYPE& aos, const char* title = "2D Arrangement on Surface Basic Viewer") {
-  using Arrangement = CGAL_ARR_TYPE;
+template <typename Arrangement, typename GSOptions>
+void draw_impl_agas(
+    const Arrangement& arr, const GSOptions& gso, const char* title, Bbox_2 initial_bbox, QApplication& app) {
+  using Halfedge_const_handle = typename Arrangement::Halfedge_const_handle;
+  using Face_const_handle = typename Arrangement::Face_const_handle;
+  using Vertex_const_handle = typename Arrangement::Vertex_const_handle;
+  using Geom_traits = typename Arrangement::Geometry_traits_2;
+  using X_monotone_curve_2 = typename Geom_traits::X_monotone_curve_2;
+  using Direction_3 = typename Geom_traits::Direction_3;
+  using Point_2 = typename Geom_traits::Point_2;
+  using Agas_template_args = tmpl_args<Geom_traits>;
+
+  Arrangement derived_arr(arr);
+  auto vertex_map = map_from_pair_ranges<Vertex_const_handle, Vertex_const_handle>(derived_arr.vertex_handles(),
+                                                                                   arr.vertex_handles());
+  auto halfedge_map = map_from_pair_ranges<Halfedge_const_handle, Halfedge_const_handle>(derived_arr.halfedge_handles(),
+                                                                                         arr.halfedge_handles());
+  auto face_map =
+      map_from_pair_ranges<Face_const_handle, Face_const_handle>(derived_arr.face_handles(), arr.face_handles());
+  // setup tracker and insert the identification curve.
+  Arr_insertion_tracker<Arrangement> tracker(derived_arr);
+  X_monotone_curve_2 id_curve = arr.geometry_traits()->construct_x_monotone_curve_2_object()(
+      Point_2(Direction_3(0, 0, -1), Point_2::MIN_BOUNDARY_LOC),
+      Point_2(Direction_3(0, 0, 1), Point_2::MAX_BOUNDARY_LOC),
+      Direction_3(Agas_template_args::atan_y, -Agas_template_args::atan_x, 0));
+  insert(derived_arr, id_curve);
+
+  // derived_gso proxies the call to the original gso
+  GSOptions derived_gso(gso);
+  derived_gso.draw_vertex = [&](const Arrangement&, const Vertex_const_handle& vh) {
+    Vertex_const_handle original_vh = tracker.original_vertex(vh);
+    if(original_vh == Vertex_const_handle() || vertex_map.find(original_vh) == vertex_map.end()) return false;
+    return gso.draw_vertex(arr, vertex_map.at(original_vh));
+  };
+  derived_gso.colored_vertex = [&](const Arrangement&, const Vertex_const_handle& vh) {
+    Vertex_const_handle original_vh = tracker.original_vertex(vh);
+    if(original_vh == Vertex_const_handle() || vertex_map.find(original_vh) == vertex_map.end()) return false;
+    return gso.colored_vertex(arr, vertex_map.at(original_vh));
+  };
+  derived_gso.vertex_color = [&](const Arrangement&, const Vertex_const_handle& vh) -> CGAL::IO::Color {
+    Vertex_const_handle original_vh = tracker.original_vertex(vh);
+    if(original_vh == Vertex_const_handle() || vertex_map.find(original_vh) == vertex_map.end())
+      return CGAL::IO::Color();
+    return gso.vertex_color(arr, vertex_map.at(original_vh));
+  };
+  derived_gso.draw_edge = [&](const Arrangement&, const Halfedge_const_handle& he) {
+    Halfedge_const_handle original_he = tracker.original_halfedge(he);
+    if(original_he == Halfedge_const_handle() || halfedge_map.find(original_he) == halfedge_map.end()) return false;
+    return gso.draw_edge(arr, halfedge_map.at(original_he));
+  };
+  derived_gso.colored_edge = [&](const Arrangement&, const Halfedge_const_handle& he) {
+    Halfedge_const_handle original_he = tracker.original_halfedge(he);
+    if(original_he == Halfedge_const_handle() || halfedge_map.find(original_he) == halfedge_map.end()) return false;
+    return gso.colored_edge(arr, halfedge_map.at(original_he));
+  };
+  derived_gso.edge_color = [&](const Arrangement&, const Halfedge_const_handle& he) -> CGAL::IO::Color {
+    Halfedge_const_handle original_he = tracker.original_halfedge(he);
+    if(original_he == Halfedge_const_handle() || halfedge_map.find(original_he) == halfedge_map.end())
+      return CGAL::IO::Color();
+    return gso.edge_color(arr, halfedge_map.at(original_he));
+  };
+  derived_gso.draw_face = [&](const Arrangement&, const Face_const_handle& fh) {
+    Face_const_handle original_fh = tracker.original_face(fh);
+    if(face_map.find(original_fh) == face_map.end()) return false;
+    return gso.draw_face(arr, face_map.at(original_fh));
+  };
+  derived_gso.colored_face = [&](const Arrangement&, const Face_const_handle& fh) {
+    Face_const_handle original_fh = tracker.original_face(fh);
+    if(face_map.find(original_fh) == face_map.end()) return false;
+    return gso.draw_face(arr, face_map.at(original_fh));
+  };
+  derived_gso.face_color = [&](const Arrangement&, const Face_const_handle& fh) -> CGAL::IO::Color {
+    Face_const_handle original_fh = tracker.original_face(fh);
+    if(face_map.find(original_fh) == face_map.end()) return CGAL::IO::Color();
+    return gso.face_color(arr, face_map.at(original_fh));
+  };
+
+  Arr_viewer viewer(app.activeWindow(), derived_arr, derived_gso, title, initial_bbox);
+  viewer.show();
+  app.exec();
+}
+
+template <typename Arrangement, typename GSOptions, typename... Args>
+void draw(const Arrangement& arr, const GSOptions& gso, Args&&... args) {
+  using Geom_traits = typename Arrangement::Geometry_traits_2;
+
+  if constexpr(!has_approximate_traits_v<Geom_traits>)
+    return draw_unimplemented();
+  else if constexpr(is_or_derived_from_agas_v<Geom_traits>)
+    // Arrangements on curved surfaces require special handling. The identification curve must be present to make the
+    // curved surface homeomorphic to a bounded plane.
+    return draw_impl_agas(arr, gso, std::forward<Args>(args)...);
+  else
+    return draw_impl_planar(arr, gso, std::forward<Args>(args)...);
+}
+
+} // namespace draw_aos
+
+/*!
+ * \brief Draw an arrangement on surface.
+ *
+ * \tparam Arrangement
+ * \tparam GSOptions
+ * \param arr the arrangement to be drawn
+ * \param gso graphics scene options
+ * \param title title of the viewer window
+ * \param initial_bbox parameter space bounding box to be shown intially. If empty, the approximate bounding box of the
+ * arrangement is used. For arrangements induced by unbounded curves, the default initial bounding box is computed from
+ * vertex coordinates.
+ */
+template <typename Arrangement, typename GSOptions>
+void draw(const Arrangement& arr,
+          const GSOptions& gso,
+          const char* title = "2D Arrangement on Surface Viewer",
+          Bbox_2 initial_bbox = Bbox_2(0, 0, 0, 0)) {
+  Qt::init_ogl_context(4, 3);
+  int argc;
+  QApplication app(argc, nullptr);
+  draw_aos::draw(arr, gso, title, initial_bbox, app);
+}
+
+/*!
+ * \brief Draw an arrangement on surface with default graphics scene options. Faces are colored randomly.
+ *
+ * \tparam Arrangement
+ * \param arr the arrangement to be drawn
+ * \param title title of the viewer window
+ * \param initial_bbox parameter space bounding box to be shown intially. If empty, the approximate bounding box of the
+ * arrangement is used. For arrangements induced by unbounded curves, the default initial bounding box is computed from
+ * vertex coordinates.
+ */
+template <typename Arrangement>
+void draw(const Arrangement& arr,
+          const char* title = "2D Arrangement on Surface Viewer",
+          Bbox_2 initial_bbox = Bbox_2(0, 0, 0, 0)) {
   using Face_const_handle = typename Arrangement::Face_const_handle;
   using Vertex_const_handle = typename Arrangement::Vertex_const_handle;
   using Halfedge_const_handle = typename Arrangement::Halfedge_const_handle;
@@ -610,32 +775,73 @@ void draw(const CGAL_ARR_TYPE& aos, const char* title = "2D Arrangement on Surfa
       CGAL::Graphics_scene_options<Arrangement, Vertex_const_handle, Halfedge_const_handle, Face_const_handle>;
 
   GSOptions gso;
-  gso.enable_faces();
-  gso.colored_face = [](const Arrangement&, const Face_const_handle&) { return true; };
-  gso.face_color = [](const Arrangement&, const Face_const_handle& fh) -> CGAL::IO::Color {
-    CGAL::Random random((size_t(fh.ptr())));
-    return get_random_color(random);
-  };
-  gso.enable_edges();
-  gso.colored_edge = [](const Arrangement&, const Halfedge_const_handle&) { return true; };
-  gso.edge_color = [](const Arrangement&, const Halfedge_const_handle& heh) -> CGAL::IO::Color {
-    return CGAL::IO::Color(0, 0, 0);
-  };
   gso.enable_vertices();
+  gso.draw_vertex = [](const Arrangement&, const Vertex_const_handle&) { return true; };
   gso.colored_vertex = [](const Arrangement&, const Vertex_const_handle&) { return true; };
   gso.vertex_color = [](const Arrangement&, const Vertex_const_handle& vh) -> CGAL::IO::Color {
     return CGAL::IO::Color(255, 0, 0);
   };
+  gso.enable_edges();
+  gso.draw_edge = [](const Arrangement&, const Halfedge_const_handle&) { return true; };
+  gso.colored_edge = [](const Arrangement&, const Halfedge_const_handle&) { return true; };
+  gso.edge_color = [](const Arrangement&, const Halfedge_const_handle& heh) -> CGAL::IO::Color {
+    return CGAL::IO::Color(0, 0, 0);
+  };
+  gso.enable_faces();
+  gso.draw_face = [](const Arrangement&, const Face_const_handle&) { return true; };
+  gso.colored_face = [](const Arrangement&, const Face_const_handle&) { return true; };
+  gso.face_color = [](const Arrangement&, const Face_const_handle& fh) -> CGAL::IO::Color {
+    CGAL::Random random(std::size_t(fh.ptr()));
+    return get_random_color(random);
+  };
 
-  Qt::init_ogl_context(4, 3);
-  int argc;
-  QApplication app(argc, nullptr);
-  auto viewer = draw_aos::Arr_viewer<Arrangement, GSOptions>(app.activeWindow(), aos, gso, title);
-  viewer.show();
-  app.exec();
+  draw(arr, gso, title, initial_bbox);
 }
 
-#undef CGAL_ARR_TYPE
+#define CGAL_ARR_TYPE CGAL::Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>
+
+///
+template <typename GeometryTraits_2, typename TopologyTraits, class GSOptions>
+void add_to_graphics_scene(const CGAL_ARR_TYPE& aos, CGAL::Graphics_scene& graphics_scene, const GSOptions& gso) {
+  draw_aos::Draw_arr_tool dar(aos, graphics_scene, gso);
+  dar.add_elements();
+}
+
+///
+template <typename GeometryTraits_2, typename TopologyTraits>
+void add_to_graphics_scene(const CGAL_ARR_TYPE& aos, CGAL::Graphics_scene& graphics_scene) {
+  CGAL::Graphics_scene_options<CGAL_ARR_TYPE, typename CGAL_ARR_TYPE::Vertex_const_handle,
+                               typename CGAL_ARR_TYPE::Halfedge_const_handle, typename CGAL_ARR_TYPE::Face_const_handle>
+      gso;
+  // colored face?
+  gso.colored_face = [](const CGAL_ARR_TYPE&, typename CGAL_ARR_TYPE::Face_const_handle) -> bool { return true; };
+
+  // face color
+  gso.face_color = [](const CGAL_ARR_TYPE&, typename CGAL_ARR_TYPE::Face_const_handle fh) -> CGAL::IO::Color {
+    CGAL::Random random((unsigned int)(std::size_t)(&*fh));
+    return get_random_color(random);
+  };
+
+  add_to_graphics_scene(aos, graphics_scene, gso);
+}
+
+/// Draw an arrangement on surface.
+template <typename GeometryTraits_2, typename TopologyTraits, class GSOptions>
+void draw_old(const CGAL_ARR_TYPE& aos,
+              const GSOptions& gso,
+              const char* title = "2D Arrangement on Surface Basic Viewer") {
+  CGAL::Graphics_scene graphics_scene;
+  add_to_graphics_scene(aos, graphics_scene, gso);
+  draw_graphics_scene(graphics_scene, title);
+}
+
+/// Draw an arrangement on surface.
+template <typename GeometryTraits_2, typename TopologyTraits>
+void draw_old(const CGAL_ARR_TYPE& aos, const char* title = "2D Arrangement on Surface Basic Viewer") {
+  CGAL::Graphics_scene graphics_scene;
+  add_to_graphics_scene(aos, graphics_scene);
+  draw_graphics_scene(graphics_scene, title);
+}
 
 } // namespace CGAL
 
