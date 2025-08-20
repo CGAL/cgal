@@ -24,6 +24,17 @@ typedef std::vector<Point3>                                           MultiPoint
 typedef std::vector<Linestring3>                                      MultiLinestring3;
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+bool test_mismatch()
+{
+    Point3 p(1,2,3);
+    MultiPoint3 mq;
+    std::stringstream ss;
+    CGAL::IO::write_point_WKT(ss, p);
+    bool b = CGAL::IO::read_multi_point_WKT(ss, mq);
+    assert(!b);
+    return !b;
+}
+
 bool test_WKT_3D()
 {
   {
@@ -336,6 +347,8 @@ int main()
   ok = test_write_WKT();
   assert(ok);
   ok = test_WKT_3D();
+  assert(ok);
+  ok = test_mismatch();
   assert(ok);
 
   return EXIT_SUCCESS;

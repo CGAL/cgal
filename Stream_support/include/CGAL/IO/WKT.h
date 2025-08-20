@@ -133,16 +133,19 @@ bool read_multi_point_WKT(std::istream& in,
                           MultiPoint& mp)
 {
   std::string line;
+  bool found = false;
   while(internal::get_a_new_line(in, line))
   {
     if(line.substr(0, 10).compare("MULTIPOINT") == 0)
     {
       CGAL::internal::Geometry_container<MultiPoint, boost::geometry::multi_point_tag> gc(mp);
-      internal::read_wkt_or_fail_stream(in, line, gc);
+      found = internal::read_wkt_or_fail_stream(in, line, gc);
       break;
     }
   }
-
+  if(! found){
+    return false;
+  }
   return !in.fail();
 }
 
@@ -168,16 +171,20 @@ bool read_linestring_WKT(std::istream& in,
                          LineString& polyline)
 {
   std::string line;
+  bool found = false;
   while(internal::get_a_new_line(in, line))
   {
     if(line.substr(0, 10).compare("LINESTRING") == 0)
     {
       CGAL::internal::Geometry_container<LineString, boost::geometry::linestring_tag> gc(polyline);
-      internal::read_wkt_or_fail_stream(in, line, gc);
+      found = internal::read_wkt_or_fail_stream(in, line, gc);
       break;
     }
   }
 
+  if(! found){
+    return false;
+  }
   return !in.fail();
 }
 
@@ -199,6 +206,7 @@ bool read_multi_linestring_WKT(std::istream& in,
                                MultiLineString& mls)
 {
   std::string line;
+  bool found = false;
   while(internal::get_a_new_line(in, line))
   {
     if(line.substr(0, 15).compare("MULTILINESTRING") == 0)
@@ -209,7 +217,7 @@ bool read_multi_linestring_WKT(std::istream& in,
       std::vector<LineString> pr_range;
       CGAL::internal::Geometry_container<std::vector<LineString>, boost::geometry::multi_linestring_tag> gc(pr_range);
 
-      internal::read_wkt_or_fail_stream(in, line, gc);
+      found = internal::read_wkt_or_fail_stream(in, line, gc);
       for(LineString& ls : gc) {
         mls.push_back(*ls.range);
       }
@@ -237,14 +245,18 @@ bool read_polygon_WKT(std::istream& in,
                       Polygon& polygon)
 {
   std::string line;
+  bool found = false;
   while(internal::get_a_new_line(in, line))
   {
     if(line.substr(0, 7).compare("POLYGON") == 0)
     {
-      internal::read_wkt_or_fail_stream(in, line, polygon);
+      found = internal::read_wkt_or_fail_stream(in, line, polygon);
       internal::pop_back_if_equal_to_front(polygon);
       break;
     }
+  }
+  if(! found){
+    return false;
   }
   return !in.fail();
 }
@@ -268,12 +280,13 @@ bool read_multi_polygon_WKT(std::istream& in,
                             MultiPolygon& polygons)
 {
   std::string line;
+  bool found = false;
   while(internal::get_a_new_line(in, line))
   {
     if(line.substr(0, 12).compare("MULTIPOLYGON") == 0)
     {
       CGAL::internal::Geometry_container<MultiPolygon, boost::geometry::multi_polygon_tag> gc(polygons);
-      internal::read_wkt_or_fail_stream(in, line, gc);
+      found = internal::read_wkt_or_fail_stream(in, line, gc);
 
       for(auto& p : gc)
         internal::pop_back_if_equal_to_front(p);
@@ -281,7 +294,9 @@ bool read_multi_polygon_WKT(std::istream& in,
       break;
     }
   }
-
+  if(! found){
+    return false;
+  }
   return !in.fail();
 }
 
