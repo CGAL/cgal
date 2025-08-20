@@ -476,6 +476,7 @@ bool read_WKT(std::istream& is,
 {
   auto fail = [&is]() { is.clear(is.rdstate() | std::ios::failbit); return false; };
 
+  bool found = false;
   std::string line;
   while(is >> std::ws && is.good() && std::getline(is, line))
   {
@@ -505,44 +506,57 @@ bool read_WKT(std::istream& is,
     {
       Point p;
       if(!IO::read_point_WKT(iss, p) ) return fail();
+      found = true;
       points.push_back(p);
     }
     else if(type == "LINESTRING")
     {
       LineString l;
       if(!IO::read_linestring_WKT(iss, l)) return fail();
+      found = true;
       polylines.push_back(std::move(l));
     }
     else if(type == "POLYGON")
     {
       Polygon p;
       if(!IO::read_polygon_WKT(iss, p)) return fail();
-      if(!p.outer_boundary().is_empty())
+      if(!p.outer_boundary().is_empty()){
+        found = true;
         polygons.push_back(std::move(p));
+      }
     }
     else if(type == "MULTIPOINT")
     {
       MultiPoint mp;
       if(!IO::read_multi_point_WKT(iss, mp)) return fail();
-      for(const Point& point : mp)
+      for(const Point& point : mp){
         points.push_back(point);
+        found = true;
+      }
     }
     else if(type == "MULTILINESTRING")
     {
       MultiLineString mls;
       if(!IO::read_multi_linestring_WKT(iss, mls)) return fail();
-      for(LineString& ls : mls)
+      for(LineString& ls : mls){
         polylines.push_back(std::move(ls));
+        found = true;
+      }
     }
     else if(type == "MULTIPOLYGON")
     {
       MultiPolygon mp;
       if(!IO::read_multi_polygon_WKT(iss, mp)) return fail();
-      for(Polygon& poly : mp)
+      for(Polygon& poly : mp){
         polygons.push_back(std::move(poly));
+        found = true;
+      }
     }
   }
 
+  if(!found){
+    return false;
+  }
 
   return !is.fail();
 }
