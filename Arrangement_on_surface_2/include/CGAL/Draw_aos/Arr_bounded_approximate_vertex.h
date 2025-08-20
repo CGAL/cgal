@@ -1,10 +1,23 @@
+// Copyright (c) 2025
+// Utrecht University (The Netherlands),
+// ETH Zurich (Switzerland),
+// INRIA Sophia-Antipolis (France),
+// Max-Planck-Institute Saarbruecken (Germany),
+// and Tel-Aviv University (Israel).  All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org)
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+// Author(s): Shepard Liu	 <shepard0liu@gmail.com>
 
 #ifndef CGAL_DRAW_AOS_ARR_BOUNDED_APPROXIMATE_VERTEX_H
 #define CGAL_DRAW_AOS_ARR_BOUNDED_APPROXIMATE_VERTEX_H
 
 #include <CGAL/Draw_aos/type_utils.h>
 #include <CGAL/Draw_aos/Arr_render_context.h>
-#include "CGAL/Draw_aos/Arr_projector.h"
 
 namespace CGAL {
 namespace draw_aos {
@@ -15,7 +28,7 @@ class Arr_bounded_approximate_vertex
   using Geom_traits = typename Arrangement::Geometry_traits_2;
   using Point_2 = typename Geom_traits::Point_2;
   using Vertex_const_handle = typename Arrangement::Vertex_const_handle;
-  using Point_geom = typename Arr_approximate_traits<Geom_traits>::Point_geom;
+  using Point_geom = typename Arr_approximate_traits<Geom_traits>::Point;
   using Bounded_render_context = Arr_bounded_render_context<Arrangement>;
 
 public:
@@ -32,9 +45,10 @@ public:
    * @return const Point_geom&
    */
   const Point_geom& operator()(const Vertex_const_handle& vh) const {
-    auto [point, inserted] = m_ctx.m_cache.try_emplace(vh);
+    auto [iter, inserted] = m_ctx.m_cache.vertices().try_emplace(vh);
+    Point_geom& point = iter->second;
     if(!inserted) return point;
-    return point = Arr_projector(m_ctx.m_traits).project(m_ctx.m_traits.approximate_2_object()(vh->point()));
+    return point = m_ctx.to_uv(m_ctx.m_traits.approximate_2_object()(vh->point()));
   }
 
 private:

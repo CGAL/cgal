@@ -1,7 +1,5 @@
 //! \file examples/Arrangement_on_surface_2/spherical_insert.cpp
 // Constructing an arrangement of arcs of great circles.
-#define CGAL_DRAW_AOS_DEBUG
-#define CGAL_DRAW_AOS_TRIANGULATOR_DEBUG_FILE_DIR "/Users/shep/Codes/aos_2_js_helper"
 #include <list>
 #include <cmath>
 #include <cstdio>
