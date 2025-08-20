@@ -506,8 +506,6 @@ struct Do_intersect_traits<K, K, Converter, true> {
   typedef typename K::Exact_kernel::Vector_3 EVector_3;
   typedef typename K::Approximate_kernel::Vector_3 FVector_3;
 
-  typedef Exact_predicates_exact_constructions_kernel EPECK;
-
   typedef Cartesian_converter<K, K>  IdentityConverter;
   typedef typename K::C2E C2E;
   typedef typename K::C2F C2F;
