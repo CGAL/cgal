@@ -355,9 +355,9 @@ public:
         size_t i = 0 ;
         for (PerHole hole : per_hdvf._persist)
         {
-            if (abs(per_hdvf.hole_duration(hole)) > 0)
-                out << i << " --- duration : " << per_hdvf.hole_duration(hole) << " -- " << hole << std::endl ;
-            ++i ;
+            //if (abs(per_hdvf.hole_duration(hole)) > DegreeType(0))
+             //   out << i << " --- duration : " << per_hdvf.hole_duration(hole) << " -- " << hole << std::endl ;
+            //++i ;
         }
         return out ;
     }
