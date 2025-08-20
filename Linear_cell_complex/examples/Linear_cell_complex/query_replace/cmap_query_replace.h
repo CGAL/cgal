@@ -30,10 +30,7 @@
 #include <utility>
 #include <vector>
 
-#include "cmap_copy.h" // TEMPO TO REMOVE
-#include <CGAL/draw_linear_cell_complex.h> // TEMPO TO REMOVE
 #include "cmap_3close_cc.h"
-#include "cmap_copy.h"
 #include "cmap_query_replace_geometry.h"
 #include "cmap_isomorphisms.h"
 #include "cmap_signature.h"
