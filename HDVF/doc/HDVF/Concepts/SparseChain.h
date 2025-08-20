@@ -7,8 +7,8 @@ The concept `SparseChain` describes the requirements for sparse vectors (called 
  `SparseChains` encode non zero coefficients of (sparse) chains.
 
  `SparseChain`  can be either row or column vectors. The following constants, called `ChainTypeFlag`, encode the direction of sparse chains (and sparse matrices).
- - `OSM::COLUMN` for column-major chains and matrices (which is the default),
- - `OSM::ROW` for row-major chains and matrices.
+ - `CGAL::OSM::COLUMN` for column-major chains and matrices (which is the default),
+ - `CGAL::OSM::ROW` for row-major chains and matrices.
 
 
 \cgalHasModelsBegin

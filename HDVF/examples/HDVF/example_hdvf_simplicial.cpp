@@ -16,7 +16,7 @@ int main(int argc, char **argv)
 {
 #if 1
     using ComplexType = CGAL::HDVF::Simplicial_chain_complex<CoefficientTypeX> ;
-    using HDVFType = CGAL::HDVF::Hdvf<CoefficientTypeX, ComplexType> ;
+    using HDVFType = CGAL::HDVF::Hdvf<ComplexType> ;
 
     if (argc != 2)
     {

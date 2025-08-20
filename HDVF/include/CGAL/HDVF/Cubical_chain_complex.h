@@ -86,13 +86,16 @@ std::ostream & operator<<(std::ostream & out, std::vector<size_t> c)
 
  \cgalModels{GeometricChainComplex}
 
- \tparam CoefficientType a model of the `Ring` concept.
+ \tparam CoefficientType a model of the `EuclideanRing` concept.
  */
 
 
 template<typename CoefficientType>
 class Cubical_chain_complex {
 public:
+    /*! \brief Type of coefficients used to compute homology. */
+    typedef CoefficientType Coefficient_type;
+    
     /** \brief Type of vertices coordinates */
     typedef std::vector<double> Point ;
 private:

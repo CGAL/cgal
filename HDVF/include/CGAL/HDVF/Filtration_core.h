@@ -51,15 +51,17 @@ namespace HDVF {
 
  \cgalModels{Filtration}
 
- \tparam CoefficientType a model of the `Ring` concept (ring used for homology computation).
  \tparam ComplexType a model of the `AbstractChainComplex` concept (type of the underlying chain complex).
  \tparam DegreeType the scalar type of degrees.
  */
 
-template <typename CoefficientType, typename ComplexType, typename DegreeType>
+template <typename ComplexType, typename DegreeType>
 class Filtration_core
 {
 public:
+    /*! \brief Type of coefficients used to compute homology. */
+    typedef ComplexType::Coefficient_type Coefficient_type;
+    
     /*! \brief Type for indexing uniquely a cell.
      * - First element of the pair: index of the cell.
      * - Second element of the pair: dimension of the cell.
@@ -88,21 +90,21 @@ protected:
     /*!
      Type of column-major sparse matrices
      */
-    typedef CGAL::OSM::Sparse_matrix<CoefficientType,CGAL::OSM::COLUMN> Column_matrix ;
+    typedef CGAL::OSM::Sparse_matrix<Coefficient_type,CGAL::OSM::COLUMN> Column_matrix ;
 
     /*!
      Type of row-major sparse matrices
      */
-    typedef CGAL::OSM::Sparse_matrix<CoefficientType,CGAL::OSM::ROW> Row_matrix ;
+    typedef CGAL::OSM::Sparse_matrix<Coefficient_type,CGAL::OSM::ROW> Row_matrix ;
     /*!
      Type of column-major chains
      */
-    typedef CGAL::OSM::Sparse_chain<CoefficientType,CGAL::OSM::COLUMN> Column_chain ;
+    typedef CGAL::OSM::Sparse_chain<Coefficient_type,CGAL::OSM::COLUMN> Column_chain ;
 
     /*!
      Type of row-major chains
      */
-    typedef CGAL::OSM::Sparse_chain<CoefficientType,CGAL::OSM::ROW> Row_chain ;
+    typedef CGAL::OSM::Sparse_chain<Coefficient_type,CGAL::OSM::ROW> Row_chain ;
 public:
     /*! \brief Filtration_core default constructor
      *
@@ -274,12 +276,12 @@ protected:
     void build_filtration_structure() ;
 
     /* Friend class: Hdvf_persistence. */
-    template <typename CoefT, typename ComplexT, typename DegT, typename FiltrT>
+    template <typename ComplexT, typename DegT, typename FiltrT>
     friend class Hdvf_persistence ;
 };
 
-template <typename CoefficientType, typename ComplexType, typename DegreeType>
-void Filtration_core<CoefficientType, ComplexType, DegreeType>::build_filtration_structure()
+template <typename ComplexType, typename DegreeType>
+void Filtration_core<ComplexType, DegreeType>::build_filtration_structure()
 {
     for (std::size_t i = 0; i<_filtration.size(); ++i)
     {
@@ -289,8 +291,8 @@ void Filtration_core<CoefficientType, ComplexType, DegreeType>::build_filtration
     }
 }
 
-template <typename CoefficientType, typename ComplexType, typename DegreeType>
-bool Filtration_core<CoefficientType, ComplexType, DegreeType>::is_valid() const
+template <typename ComplexType, typename DegreeType>
+bool Filtration_core<ComplexType, DegreeType>::is_valid() const
 {
     bool valid = true ;
     for (std::size_t i=0; i<_filtration.size() && valid; ++i)

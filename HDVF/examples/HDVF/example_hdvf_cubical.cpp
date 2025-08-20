@@ -13,7 +13,7 @@ typedef int CoefficientType;
 int main(int argc, char **argv)
 {
     using ComplexType = CGAL::HDVF::Cubical_chain_complex<CoefficientType> ;
-    using HDVFType = CGAL::HDVF::Hdvf<CoefficientType, ComplexType> ;
+    using HDVFType = CGAL::HDVF::Hdvf<ComplexType> ;
 
     if (argc != 2)
     {

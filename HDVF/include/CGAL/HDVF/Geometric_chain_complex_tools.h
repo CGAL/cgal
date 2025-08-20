@@ -69,10 +69,11 @@ namespace HDVF {
  *<img src="HDVF_dtorus_all.png" align="center" width=30%/>
  */
 
-template <typename CoefType, typename ComplexType, template <typename, int> typename _ChainType = OSM::Sparse_chain, template <typename, int> typename _SparseMatrixType = OSM::Sparse_matrix, typename VertexIdType = size_t>
-void hdvf_geometric_chain_complex_output_vtk (Hdvf_core<CoefType, ComplexType, _ChainType, _SparseMatrixType> &hdvf, ComplexType &complex, std::string filename = "test", bool co_faces = false)
+template <typename ComplexType, template <typename, int> typename _ChainType = OSM::Sparse_chain, template <typename, int> typename _SparseMatrixType = OSM::Sparse_matrix, typename VertexIdType = size_t>
+void hdvf_geometric_chain_complex_output_vtk (Hdvf_core<ComplexType, _ChainType, _SparseMatrixType> &hdvf, ComplexType &complex, std::string filename = "test", bool co_faces = false)
 {
-    typedef Hdvf_core<CoefType, ComplexType, _ChainType, _SparseMatrixType> HDVF_type;
+    typedef typename ComplexType::Coefficient_type Coefficient_type;
+    typedef Hdvf_core<ComplexType, _ChainType, _SparseMatrixType> HDVF_type;
     // Export PSC labelling
     std::string outfile(filename+"_PSC.vtk") ;
     std::vector<std::vector<int> > labels = hdvf.psc_labels() ;
@@ -91,14 +92,14 @@ void hdvf_geometric_chain_complex_output_vtk (Hdvf_core<CoefType, ComplexType, _
                 {
                     std::string outfile_g(filename+"_G_"+std::to_string(c)+"_dim_"+std::to_string(q)+".vtk") ;
                     //                    std::vector<std::vector<size_t> > labels = hdvf.export_label(G,c,q) ;
-                    OSM::Sparse_chain<CoefType,OSM::COLUMN> chain(hdvf.homology_chain(c,q)) ;
+                    OSM::Sparse_chain<Coefficient_type,OSM::COLUMN> chain(hdvf.homology_chain(c,q)) ;
                     ComplexType::chain_complex_chain_to_vtk(complex, outfile_g, chain, q, c) ;
                 }
                 // Cohomology generators
                 if (hdvf.hdvf_opts() & (OPT_FULL | OPT_F))
                 {
                     std::string outfile_f(filename+"_FSTAR_"+std::to_string(c)+"_dim_"+std::to_string(q)+".vtk") ;
-                    OSM::Sparse_chain<CoefType,OSM::COLUMN> chain(hdvf.cohomology_chain(c, q)) ;
+                    OSM::Sparse_chain<Coefficient_type,OSM::COLUMN> chain(hdvf.cohomology_chain(c, q)) ;
                     if (!co_faces)
                     {
                         ComplexType::chain_complex_chain_to_vtk(complex, outfile_f, chain, q, c) ;
@@ -128,13 +129,14 @@ void hdvf_geometric_chain_complex_output_vtk (Hdvf_core<CoefType, ComplexType, _
  * \param[in] co_faces Export the cohomology generator or its co-faces (sometimes more convenient for visualisation).
  */
 
-template <typename CoefType, typename ComplexType, typename DegreeType, typename FiltrationType>
-void hdvf_persistence_geometric_chain_complex_output_vtk (Hdvf_persistence<CoefType, ComplexType, DegreeType, FiltrationType> &per_hdvf, ComplexType &complex, std::string filename = "per", bool co_faces = false)
+template <typename ComplexType, typename DegreeType, typename FiltrationType>
+void hdvf_persistence_geometric_chain_complex_output_vtk (Hdvf_persistence<ComplexType, DegreeType, FiltrationType> &per_hdvf, ComplexType &complex, std::string filename = "per", bool co_faces = false)
 {
+    typedef typename ComplexType::Coefficient_type Coefficient_type;
     if (!per_hdvf.with_export())
         throw("Cannot export persistent generators to vtk: with_export is off!") ;
 
-    using perHDVFType = Hdvf_persistence<CoefType, ComplexType, DegreeType, FiltrationType>;
+    using perHDVFType = Hdvf_persistence<ComplexType, DegreeType, FiltrationType>;
     using PerHole = PerHoleT<DegreeType> ;
 
     // Export the filtration
@@ -210,7 +212,7 @@ void hdvf_persistence_geometric_chain_complex_output_vtk (Hdvf_persistence<CoefT
         ++i ;
     }
     info_file.close() ;
-    hdvf_geometric_chain_complex_output_vtk<CoefType, ComplexType>(per_hdvf, complex, filename+"_inf", co_faces) ;
+    hdvf_geometric_chain_complex_output_vtk<ComplexType>(per_hdvf, complex, filename+"_inf", co_faces) ;
 }
 
 // Hdvf_duality vtk export
@@ -225,10 +227,11 @@ void hdvf_persistence_geometric_chain_complex_output_vtk (Hdvf_persistence<CoefT
  \param[in] co_faces Export the cohomology generator or its co-faces (sometimes more convenient for visualisation).
  */
 
-template <typename CoefType, typename ComplexType, typename VertexIdType = size_t>
-void hdvf_duality_geometric_chain_complex_output_vtk (Hdvf_duality<CoefType, ComplexType> &hdvf, ComplexType &complex, std::string filename = "test", bool co_faces = false)
+template <typename ComplexType, typename VertexIdType = size_t>
+void hdvf_duality_geometric_chain_complex_output_vtk (Hdvf_duality<ComplexType> &hdvf, ComplexType &complex, std::string filename = "test", bool co_faces = false)
 {
-    typedef Hdvf_duality<CoefType, ComplexType> HDVF_type;
+    typedef typename ComplexType::Coefficient_type Coefficient_type;
+    typedef Hdvf_duality<ComplexType> HDVF_type;
     // Export PSC labelling
     std::string outfile(filename+"_PSC.vtk") ;
     std::vector<std::vector<int> > labels = hdvf.psc_labels() ;
@@ -247,14 +250,14 @@ void hdvf_duality_geometric_chain_complex_output_vtk (Hdvf_duality<CoefType, Com
                 {
                     std::string outfile_g(filename+"_G_"+std::to_string(c)+"_dim_"+std::to_string(q)+".vtk") ;
                     //                    std::vector<std::vector<size_t> > labels = hdvf.export_label(G,c,q) ;
-                    OSM::Sparse_chain<CoefType,OSM::COLUMN> chain(hdvf.homology_chain(c,q)) ;
+                    OSM::Sparse_chain<Coefficient_type,OSM::COLUMN> chain(hdvf.homology_chain(c,q)) ;
                     ComplexType::chain_complex_chain_to_vtk(complex, outfile_g, chain, q, c) ;
                 }
                 // Cohomology generators
                 if (hdvf.hdvf_opts() & (OPT_FULL | OPT_F))
                 {
                     std::string outfile_f(filename+"_FSTAR_"+std::to_string(c)+"_dim_"+std::to_string(q)+".vtk") ;
-                    OSM::Sparse_chain<CoefType,OSM::COLUMN> chain(hdvf.cohomology_chain(c, q)) ;
+                    OSM::Sparse_chain<Coefficient_type,OSM::COLUMN> chain(hdvf.cohomology_chain(c, q)) ;
                     if (!co_faces)
                     {
                         ComplexType::chain_complex_chain_to_vtk(complex, outfile_f, chain, q, c) ;
@@ -264,8 +267,8 @@ void hdvf_duality_geometric_chain_complex_output_vtk (Hdvf_duality<CoefType, Com
                         if (q < complex.dimension())
                         {
                             // Restrict the cofaces of the cohomology generator to the current sub chain complex
-                            OSM::Sparse_chain<CoefType,OSM::COLUMN> cofaces_chain(complex.cofaces_chain(chain, q)) ;
-                            Sub_chain_complex_mask<CoefType,ComplexType> sub(hdvf.get_current_mask());
+                            OSM::Sparse_chain<Coefficient_type,OSM::COLUMN> cofaces_chain(complex.cofaces_chain(chain, q)) ;
+                            Sub_chain_complex_mask<ComplexType> sub(hdvf.get_current_mask());
                             sub.screen_chain(cofaces_chain, q+1);
                             // Display
                             ComplexType::chain_complex_chain_to_vtk(complex, outfile_f, cofaces_chain, q+1, c) ;
@@ -300,7 +303,7 @@ public:
     /** \brief Type of simplicial chain complex encoding `L`. */
     typedef Simplicial_chain_complex<CoefficientType> ComplexType ;
     /** \brief Type of sub chain complex mask encoding the sub complex `K`. */
-    typedef Sub_chain_complex_mask<CoefficientType, ComplexType> SubCCType ;
+    typedef Sub_chain_complex_mask<ComplexType> SubCCType ;
     /** \brief Default constructor. */
     Duality_simplicial_complex_tools() {}
 
@@ -418,7 +421,7 @@ public:
     /** \brief Type of cubical complexes used for the initial complex and \f$L\f$. */
     typedef Cubical_chain_complex<CoefficientType> ComplexType ;
     /** \brief Type of sub chain complex mask used to encode the sub-complex  \f$K\f$. */
-    typedef Sub_chain_complex_mask<CoefficientType, ComplexType> SubCCType ;
+    typedef Sub_chain_complex_mask<ComplexType> SubCCType ;
     // Constructor
     Duality_cubical_complex_tools() {}
 

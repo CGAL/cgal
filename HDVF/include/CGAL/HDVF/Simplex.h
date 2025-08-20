@@ -30,7 +30,7 @@ namespace HDVF {
 
  The class `Simplex` is used by the class `Abstract_simplicial_chain_complex` to implement the structure de simplex (i.e.\ cells of a simplicial complex).
 
- Simplices are described by the set of the indices of their vertices (see the documentation of `Abstract_simplicial_chain_complex` for examples).
+ Simplices are described by the *ordered vector* of the indices of their vertices (see the documentation of `Abstract_simplicial_chain_complex` for examples).
 
  */
 

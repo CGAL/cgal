@@ -131,19 +131,17 @@ public:
 /// @{
 
 /*!
- * \brief Type of coefficients stored in the matrix (a model of `Ring`).
- */
-typedef unspecified_type CoefficientType;
-
-/*!
  * \brief Type of underlying chain complex (a model of `AbstractChainComplex`).
  */
 typedef unspecified_type ComplexType;
+    
+/*! \brief Type of coefficients used to compute homology. */
+typedef ComplexType::Coefficient_type Coefficient_type;
 
 /*!
  * \brief Type of sparse chains (a model of `SparseChain`).
  */
-    typedef unspecified_type ChainType;
+    typedef unspecified_type SparseChainType;
 
 /*!
  * \brief Type of sparse matrices (a model of `SparseMatrix`).
@@ -166,12 +164,12 @@ struct Cell_pair {
 /*!
  Type of column-major chains
  */
-typedef ChainType<CoefficientType, CGAL::OSM::COLUMN> Column_chain;
+typedef SparseChainType<CoefficientType, CGAL::OSM::COLUMN> Column_chain;
 
 /*!
  Type of row-major chains
  */
-typedef ChainType<CoefficientType, CGAL::OSM::ROW> Row_chain ;
+typedef SparseChainType<CoefficientType, CGAL::OSM::ROW> Row_chain ;
 
 /*!
  Type of column-major sparse matrices

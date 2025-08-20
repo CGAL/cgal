@@ -37,10 +37,10 @@ inline std::ostream & operator<< (std::ostream &out, const Cell_pair& p)
  * Then all possible paired cells are listed and the user can chose one of them (or none).
  */
 
-template <typename CoefType, typename ComplexType>
-void interaction_loop(Hdvf<CoefType, ComplexType> &hdvf,
+template <typename ComplexType>
+void interaction_loop(Hdvf<ComplexType> &hdvf,
                       ComplexType &complex,
-                      const std::function<void(Hdvf<CoefType, ComplexType> &hdvf, ComplexType &complex)> &output_vtk)
+                      const std::function<void(Hdvf<ComplexType> &hdvf, ComplexType &complex)> &output_vtk)
 {
     bool over = false ;
     output_vtk(hdvf, complex) ;

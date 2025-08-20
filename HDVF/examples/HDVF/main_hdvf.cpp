@@ -47,10 +47,11 @@ void mesh_complex_output(const MeshType& mesh, const ComplexType& complex, const
     }
 }
 
-template <typename CoefficientType, typename ComplexType>
-CGAL::HDVF::Hdvf<CoefficientType, ComplexType>& HDVF_comput (const ComplexType& complex, const Options &options)
+template <typename ComplexType>
+CGAL::HDVF::Hdvf<ComplexType>& HDVF_comput (const ComplexType& complex, const Options &options)
 {
-    CGAL::HDVF::Hdvf<CoefficientType, ComplexType>& hdvf(*(new CGAL::HDVF::Hdvf<CoefficientType, ComplexType>(complex, options.HDVF_opt)));
+    typedef typename ComplexType::Coefficient_type Coefficient_type;
+    CGAL::HDVF::Hdvf<ComplexType>& hdvf(*(new CGAL::HDVF::Hdvf<ComplexType>(complex, options.HDVF_opt)));
     std::vector<CGAL::HDVF::Cell_pair> pairs ;
     if (!options.random)
         pairs = hdvf.compute_perfect_hdvf(options.verbose);
@@ -83,14 +84,14 @@ CGAL::HDVF::Hdvf<CoefficientType, ComplexType>& HDVF_comput (const ComplexType& 
     return hdvf ;
 }
 
-template <typename CoefficientType>
+template <typename Coefficient_type>
 void main_code (const Options &options)
 {
     /// SIMP format
     if (options.in_format == InputFormat::SIMP)
     {
-        using ComplexType = CGAL::HDVF::Abstract_simplicial_chain_complex<CoefficientType>  ;
-        using HDVFType = CGAL::HDVF::Hdvf<CoefficientType, ComplexType> ;
+        using ComplexType = CGAL::HDVF::Abstract_simplicial_chain_complex<Coefficient_type>  ;
+        using HDVFType = CGAL::HDVF::Hdvf<ComplexType> ;
 
         // MeshObject
         CGAL::HDVF::Mesh_object_io mesh ;
@@ -102,7 +103,7 @@ void main_code (const Options &options)
         mesh_complex_output<CGAL::HDVF::Mesh_object_io, ComplexType>(mesh, complex, options) ;
 
         // Hdvf computation, export, output
-        HDVFType hdvf(HDVF_comput<CoefficientType,ComplexType>(complex, options)) ;
+        HDVFType hdvf(HDVF_comput<ComplexType>(complex, options)) ;
 
         // Export to vtk
         // None for SIMP format
@@ -110,8 +111,8 @@ void main_code (const Options &options)
     /// OFF format
     else if (options.in_format == InputFormat::OFF)
     {
-        using ComplexType = CGAL::HDVF::Simplicial_chain_complex<CoefficientType> ;
-        using HDVFType = CGAL::HDVF::Hdvf<CoefficientType, ComplexType> ;
+        using ComplexType = CGAL::HDVF::Simplicial_chain_complex<Coefficient_type> ;
+        using HDVFType = CGAL::HDVF::Hdvf<ComplexType> ;
 
         // MeshObject
         CGAL::HDVF::Mesh_object_io mesh ;
@@ -123,7 +124,7 @@ void main_code (const Options &options)
         mesh_complex_output<CGAL::HDVF::Mesh_object_io, ComplexType>(mesh, complex, options) ;
 
         // Hdvf computation, export, output
-        HDVFType hdvf(HDVF_comput<CoefficientType,ComplexType>(complex, options)) ;
+        HDVFType hdvf(HDVF_comput<ComplexType>(complex, options)) ;
 
         // Loop on operations with vtk export
         if (options.loop)
@@ -133,7 +134,7 @@ void main_code (const Options &options)
                 CGAL::HDVF::hdvf_geometric_chain_complex_output_vtk(hdvf, complex, options.outfile_root, options.co_faces) ;
             } ;
 
-            CGAL::HDVF::interaction_loop<CoefficientType, ComplexType>(hdvf, complex, output_vtk_simp) ;
+            CGAL::HDVF::interaction_loop<ComplexType>(hdvf, complex, output_vtk_simp) ;
         }
         // Export to vtk
         else if (options.with_vtk_export)
@@ -145,8 +146,8 @@ void main_code (const Options &options)
     // CubComplex
     else if ((options.in_format == InputFormat::PGM) || (options.in_format == InputFormat::CUB))
     {
-        using ComplexType = CGAL::HDVF::Cubical_chain_complex<CoefficientType> ;
-        using HDVFType = CGAL::HDVF::Hdvf<CoefficientType, ComplexType> ;
+        using ComplexType = CGAL::HDVF::Cubical_chain_complex<Coefficient_type> ;
+        using HDVFType = CGAL::HDVF::Hdvf<ComplexType> ;
 
         CGAL::HDVF::Cub_object_io mesh ;
         typename ComplexType::typeComplexCube primal_dual(ComplexType::PRIMAL) ;
@@ -172,7 +173,7 @@ void main_code (const Options &options)
         mesh_complex_output<CGAL::HDVF::Cub_object_io, ComplexType>(mesh, complex, options) ;
 
         // Hdvf computation, export, output
-        HDVFType hdvf(HDVF_comput<CoefficientType,ComplexType>(complex, options)) ;
+        HDVFType hdvf(HDVF_comput<ComplexType>(complex, options)) ;
 
         // Loop on operations with vtk export
         if (options.loop)
@@ -182,7 +183,7 @@ void main_code (const Options &options)
                 CGAL::HDVF::hdvf_geometric_chain_complex_output_vtk(hdvf, complex, options.outfile_root, options.co_faces) ;
             } ;
 
-            CGAL::HDVF::interaction_loop<CoefficientType, ComplexType>(hdvf, complex, output_vtk_cub) ;
+            CGAL::HDVF::interaction_loop<ComplexType>(hdvf, complex, output_vtk_cub) ;
         }
         // Export to vtk
         else if (options.with_vtk_export)
@@ -217,25 +218,25 @@ int main(int argc, char **argv)
         std::cout << "after2: " << gamma.is_null() << std::endl ;
         std::cout << "END TEST" << std::endl ;
 
-        // ----- Definition of the CoefficientType
+        // ----- Definition of the Coefficient_type
 #ifndef SCALAR
         if (options.scalar == 0)
         {
-            using CoefficientType = int ;
-            main_code<CoefficientType>(options) ;
+            using Coefficient_type = int ;
+            main_code<Coefficient_type>(options) ;
         }
         else if (options.scalar == 2)
         {
-//            using CoefficientType = CGAL::HDVF::Zp<2,int8_t> ;
-            using CoefficientType = CGAL::HDVF::Z2 ;
-            main_code<CoefficientType>(options) ;
+//            using Coefficient_type = CGAL::HDVF::Zp<2,int8_t> ;
+            using Coefficient_type = CGAL::HDVF::Z2 ;
+            main_code<Coefficient_type>(options) ;
         }
         else
         {
             std::cerr << "Z" << options.scalar << " not instantiated, use the #define at line 27" << std::endl ;
         }
 #else
-        typedef Zp<SCALAR> CoefficientType;
+        typedef Zp<SCALAR> Coefficient_type;
 #endif
     }
 

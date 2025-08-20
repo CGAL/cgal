@@ -35,13 +35,16 @@ namespace HDVF {
  \warning For efficiency reasons, when a `Sub_chain_complex_mask` is used to screen sparse matrices  (with the `screen_matrices` method), screening is **only** performed on the major direction of matrices (thus column-major matrices are restricted over columns and row-major matrices are restricted over rows). Iterators are restricted accordingly. But chains themselves are not restricted.<br>
  However, if `A` is a proper sub-complex of `K` (that is, closed with respect to faces), chains automatically comply with the screening. Indeed, for any \f$q\f$-cell \f$\sigma\in A\f$ (thus the corresponding bit is on in the mask), all the faces of \f$\sigma\f$ also belong to \f$A\f$. Thus for any \f$q-1\f$-cell \f$\tau\f$ in the boundary of \f$\sigma\f$ (that is, such that \f$\langle\partial_k(\sigma),\tau\rangle\neq 0\f$), \f$\tau\f$ belongs to \f$A\f$ (and thus the corresponding bit in the mask is also on).
 
- \tparam CoefficientType a model of the `Ring` concept.
  \tparam ComplexType a model of the `AbstractChainComplex` concept (type of the chain complex screened by `Sub_chain_complex_mask`).
  */
 
-template <typename CoefficientType, typename ComplexType>
+template <typename ComplexType>
 class Sub_chain_complex_mask
 {
+public:
+    /*! \brief Type of coefficients used to compute homology. */
+    typedef ComplexType::Coefficient_type Coefficient_type;
+    
 protected:
     /** \brief Dimension of the underlying complex. */
     int _dim ;
@@ -76,8 +79,8 @@ private:
                     if (q>0) // Then faces must be considered
                     {
                         // Add all its faces to faces.at(q-1)
-                        OSM::Sparse_chain<CoefficientType, OSM::COLUMN> bnd(_K.d(i,q)) ;
-                        for (typename OSM::Sparse_chain<CoefficientType, OSM::COLUMN>::const_iterator it = bnd.cbegin(); it != bnd.cend(); ++it)
+                        OSM::Sparse_chain<Coefficient_type, OSM::COLUMN> bnd(_K.d(i,q)) ;
+                        for (typename OSM::Sparse_chain<Coefficient_type, OSM::COLUMN>::const_iterator it = bnd.cbegin(); it != bnd.cend(); ++it)
                         {
                             const int c(it->first) ;
                             if (!_sub.at(q-1).isOn(c))

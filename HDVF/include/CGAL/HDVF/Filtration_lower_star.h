@@ -93,17 +93,18 @@ std::function<double(size_t)>  deg_fun (const ComplexType& complex, std::functio
 
  \cgalModels{Filtration}
 
- \tparam CoefficientType a model of the `Ring` concept (ring used for homology computation).
  \tparam ComplexType a model of the `AbstractChainComplex` concept (type of the underlying chain complex).
  \tparam DegreeType the scalar type of degrees.
  */
 
-template <typename CoefficientType, typename ComplexType, typename DegreeType>
-class Filtration_lower_star : public Filtration_core<CoefficientType, ComplexType, DegreeType>
+template <typename ComplexType, typename DegreeType>
+class Filtration_lower_star : public Filtration_core<ComplexType, DegreeType>
 {
 private:
+    /*! \brief Type of coefficients used to compute homology. */
+    typedef ComplexType::Coefficient_type Coefficient_type;
     /*! Type of parent filtration instance. */
-    typedef Filtration_core<CoefficientType, ComplexType, DegreeType> FiltrationCoreT;
+    typedef Filtration_core<ComplexType, DegreeType> FiltrationCoreT;
     /*! Type of cell identifier (cell index and dimension). */
     typedef FiltrationCoreT::Cell Cell;
     /*! Type of value returned by the iterator. */
@@ -156,8 +157,8 @@ protected:
 
 
 
-template <typename CoefficientType, typename ComplexType, typename DegreeType>
-void Filtration_lower_star<CoefficientType, ComplexType, DegreeType>::star_filtration(const std::vector<DegreeType> &deg)
+template <typename ComplexType, typename DegreeType>
+void Filtration_lower_star<ComplexType, DegreeType>::star_filtration(const std::vector<DegreeType> &deg)
 {
     if (deg.size() != this->_K.number_of_cells(0))
         throw "Star filtration error : deg should provide one value by vertex" ;
@@ -220,8 +221,8 @@ void Filtration_lower_star<CoefficientType, ComplexType, DegreeType>::star_filtr
     }
 }
 
-template <typename CoefficientType, typename ComplexType, typename DegreeType>
-void Filtration_lower_star<CoefficientType, ComplexType, DegreeType>::star_filtration(std::function<DegreeType(size_t)>& deg_fun)
+template <typename ComplexType, typename DegreeType>
+void Filtration_lower_star<ComplexType, DegreeType>::star_filtration(std::function<DegreeType(size_t)>& deg_fun)
 {
     std::vector<DegreeType> deg ;
     for (size_t i=0; i<this->_K.number_of_cells(0); ++i)

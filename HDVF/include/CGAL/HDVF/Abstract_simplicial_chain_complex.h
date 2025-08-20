@@ -36,7 +36,7 @@ template<typename CoefficientType> class Duality_simplicial_complex_tools ;
 
  <img src="simplicial_complex.png" align="center" width=45%/>
 
- A simplex of dimension q contains exactly q+1 vertices (we will thus denote it by \f$\langle v_0, \ldots, v_q \rangle\f$). A 0-cell is thus a vertex, a 1-cell contains two vertices (edge), a 2-cell contains three vertices (triangle) while a 3-cell is a tetrahedron.
+ A simplex of dimension q contains exactly q+1 vertices (we will thus denote it by \f$\langle v_0, \ldots, v_q \rangle\f$, vertices indices **must be sorted**). A 0-cell is thus a vertex, a 1-cell contains two vertices (edge), a 2-cell contains three vertices (triangle) while a 3-cell is a tetrahedron.
 
  The boundary map of the complex is computed by the constructor of the class using the standard formula:
  \f[ \partial_q\left( \langle v_0, \ldots, v_q \rangle\right) = \sum_{i=0}^q (-1)^i\cdot \langle v_0, \ldots, \widehat{v_i}, \cdots, v_q \rangle\f]
@@ -46,13 +46,16 @@ template<typename CoefficientType> class Duality_simplicial_complex_tools ;
 
  \cgalModels{AbstractChainComplex}
 
- \tparam CoefficientType a model of the `Ring` concept.
+ \tparam CoefficientType a model of the `EuclideanRing` concept.
  */
 
 
 template<typename CoefficientType>
 class Abstract_simplicial_chain_complex {
 public:
+    /*! \brief Type of coefficients used to compute homology. */
+    typedef CoefficientType Coefficient_type;
+    
     /**
      * \brief %Default constructor (empty simplicial complex of dimension `q`).
      *
@@ -108,7 +111,7 @@ public:
      */
     Column_chain d(size_t id_cell, int q) const
     {
-        if (q > 0)
+        if ((q > 0) && (q <= _dim))
             return OSM::get_column(_d[q], id_cell);
         else
             return Column_chain(0) ;
@@ -128,7 +131,7 @@ public:
      */
     Row_chain cod(size_t id_cell, int q) const
     {
-        if (q < _dim)
+        if ((q < _dim) && (q >= 0))
             return OSM::get_row(_d[q+1], id_cell);
         else
             return Row_chain(0) ;

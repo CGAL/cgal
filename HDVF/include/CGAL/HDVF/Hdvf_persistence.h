@@ -131,42 +131,44 @@ std::ostream& operator<< (std::ostream& out, const PerHoleT<DegreeType>& hole)
 
  \cgalModels{HDVF}
 
- \tparam CoefficientType a model of the `Ring` concept  providing the ring used to compute homology. The ring of coefficients provided should actually be a **field**.
  \tparam ComplexType a model of the `AbstractChainComplex` concept, providing the type of abstract chain complex used.
  \tparam DegreeType a scalar data type used for the degrees of the filtration.
  \tparam FiltrationType a model of the `Filtration` concept, providing the filtration used to compute persistence.
 
  */
 
-template<typename CoefficientType, typename ComplexType, typename DegreeType, typename FiltrationType >
-class Hdvf_persistence : public Hdvf_core<CoefficientType,ComplexType, OSM::Sparse_chain, OSM::Sub_sparse_matrix>
+template<typename ComplexType, typename DegreeType, typename FiltrationType >
+class Hdvf_persistence : public Hdvf_core<ComplexType, OSM::Sparse_chain, OSM::Sub_sparse_matrix>
 {
 public:
+    /*! \brief Type of coefficients used to compute homology. */
+    typedef ComplexType::Coefficient_type Coefficient_type;
+    
     // Matrices types
     /*!
      Type of column-major chains
      */
-    typedef CGAL::OSM::Sparse_chain<CoefficientType, CGAL::OSM::COLUMN> Column_chain;
+    typedef CGAL::OSM::Sparse_chain<Coefficient_type, CGAL::OSM::COLUMN> Column_chain;
 
     /*!
      Type of row-major chains
      */
-    typedef CGAL::OSM::Sparse_chain<CoefficientType, CGAL::OSM::ROW> Row_chain;
+    typedef CGAL::OSM::Sparse_chain<Coefficient_type, CGAL::OSM::ROW> Row_chain;
 
     /*!
      Type of column-major sparse matrices
      */
-    typedef CGAL::OSM::Sub_sparse_matrix<CoefficientType, CGAL::OSM::COLUMN> Column_matrix;
+    typedef CGAL::OSM::Sub_sparse_matrix<Coefficient_type, CGAL::OSM::COLUMN> Column_matrix;
 
     /*!
      Type of row-major sparse matrices
      */
-    typedef CGAL::OSM::Sub_sparse_matrix<CoefficientType, CGAL::OSM::ROW> Row_matrix;
+    typedef CGAL::OSM::Sub_sparse_matrix<Coefficient_type, CGAL::OSM::ROW> Row_matrix;
 
     /*! Type of parent HDVF class (Hdvf_core with appropriate template parameters)
      * The SparseMatrix model is set to Sub_sparse_matrix to activate (co)homology computation over a subcomplex.
      */
-    typedef Hdvf_core<CoefficientType, ComplexType, CGAL::OSM::Sparse_chain, CGAL::OSM::Sub_sparse_matrix> HDVFParent ;
+    typedef Hdvf_core<ComplexType, CGAL::OSM::Sparse_chain, CGAL::OSM::Sub_sparse_matrix> HDVF_core_type ;
 
     /*! Type of filtrations used to compute persistence.
      */
@@ -244,9 +246,9 @@ private:
     // Hide find_pair_A methods of the Hdvf_core class
     // Hide A operation of the Hdvf_core class
     // This operation is redefined with a different prototype in Hdvf_persistence and set as private since persistence lets no choice for A pairing (rule of the "youngest")
-    using HDVFParent::find_pair_A;
-    using HDVFParent::find_pairs_A;
-    using HDVFParent::A;
+    using HDVF_core_type::find_pair_A;
+    using HDVF_core_type::find_pairs_A;
+    using HDVF_core_type::A;
 public:
     /**
      * \brief Hdvf_persistence default constructor
@@ -673,8 +675,8 @@ private:
 } ;
 
 
-template<typename CoefficientType, typename ComplexType, typename DegreeType, typename FiltrationType>
-Hdvf_persistence<CoefficientType, ComplexType, DegreeType, FiltrationType>::Hdvf_persistence(const ComplexType& K, const FiltrationType& f, int hdvf_opt, bool with_export) : Hdvf_core<CoefficientType,ComplexType, OSM::Sparse_chain, OSM::Sub_sparse_matrix>(K,hdvf_opt), _f(f), _with_export(with_export), _t(0)
+template<typename ComplexType, typename DegreeType, typename FiltrationType>
+Hdvf_persistence<ComplexType, DegreeType, FiltrationType>::Hdvf_persistence(const ComplexType& K, const FiltrationType& f, int hdvf_opt, bool with_export) : Hdvf_core<ComplexType, OSM::Sparse_chain, OSM::Sub_sparse_matrix>(K,hdvf_opt), _f(f), _with_export(with_export), _t(0)
 {
     // Initialisation of _t_dim, _K_to_per and _per_to_K
     _t_dim.resize(this->_K.dimension()+1, 0) ;
@@ -725,7 +727,7 @@ Hdvf_persistence<CoefficientType, ComplexType, DegreeType, FiltrationType>::Hdvf
             for (typename Column_chain::const_iterator it = col.begin(); it != col.end(); ++it)
             {
                 const size_t i(it->first) ;
-                const CoefficientType v(it->second) ;
+                const Coefficient_type v(it->second) ;
                 // Cells in the _K basis : i(dim q-1) / j(dim q)
                 // Convert to indices in the persistent order
                 const size_t pi(_K_to_per.at(q-1).at(i)), pj(_K_to_per.at(q).at(j)) ;
@@ -740,8 +742,8 @@ Hdvf_persistence<CoefficientType, ComplexType, DegreeType, FiltrationType>::Hdvf
         this->_DD_col.at(q).set_sub(_masks.at(q)) ;
 }
 
-template<typename CoefficientType, typename ComplexType, typename DegreeType, typename FiltrationType>
-Cell_pair Hdvf_persistence<CoefficientType, ComplexType, DegreeType, FiltrationType>::find_pair_A(bool &found)
+template<typename ComplexType, typename DegreeType, typename FiltrationType>
+Cell_pair Hdvf_persistence<ComplexType, DegreeType, FiltrationType>::find_pair_A(bool &found)
 {
     Cell_pair p ;
     // Get current cell (in the basis K)
@@ -783,8 +785,8 @@ Cell_pair Hdvf_persistence<CoefficientType, ComplexType, DegreeType, FiltrationT
     return p;
 }
 
-template<typename CoefficientType, typename ComplexType, typename DegreeType, typename FiltrationType>
-Cell_pair Hdvf_persistence<CoefficientType, ComplexType, DegreeType, FiltrationType>::step_persist(bool& found, bool verbose)
+template<typename ComplexType, typename DegreeType, typename FiltrationType>
+Cell_pair Hdvf_persistence<ComplexType, DegreeType, FiltrationType>::step_persist(bool& found, bool verbose)
 {
     // Compute next persistent pair
 

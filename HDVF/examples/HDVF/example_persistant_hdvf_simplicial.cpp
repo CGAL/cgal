@@ -10,13 +10,12 @@
 #include <CGAL/HDVF/Hdvf_persistence.h>
 #include <CGAL/OSM/OSM.h>
 
-//typedef int CoefficientType;
 //typedef CGAL::HDVF::Zp<5> CoefficientType;
 typedef CGAL::HDVF::Z2 CoefficientType;
 typedef CGAL::HDVF::Simplicial_chain_complex<CoefficientType> ComplexType;
 typedef double DegreeType;
-typedef CGAL::HDVF::Filtration_lower_star<CoefficientType,ComplexType, DegreeType> FiltrationType;
-typedef CGAL::HDVF::Hdvf_persistence<CoefficientType, ComplexType, DegreeType, FiltrationType> HDVFType;
+typedef CGAL::HDVF::Filtration_lower_star<ComplexType, DegreeType> FiltrationType;
+typedef CGAL::HDVF::Hdvf_persistence<ComplexType, DegreeType, FiltrationType> HDVFType;
 
 
 int main(int argc, char **argv)

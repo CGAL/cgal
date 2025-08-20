@@ -28,19 +28,29 @@ public:
 /// @{
 
 /*!
+Type of coefficients used to compute homology (model of `EuclideanRing)
+ */
+typedef unspecified_type CoefficientType;
+    
+/*!
+Type of coefficients provided publicly. 
+ */
+typedef CoefficientType Coefficient_type;
+    
+/*!
  Type of column-major chains (returned by the boundary operator)
  */
-typedef CGAL::OSM::Sparse_chain<CoefficientType, CGAL::OSM::COLUMN> Column_chain;
+typedef SparseChain<CoefficientType, CGAL::OSM::COLUMN> Column_chain;
 
 /*!
  Type of row-major chains (returned by the co-boundary operator)
  */
-typedef CGAL::OSM::Sparse_chain<CoefficientType, CGAL::OSM::ROW> Row_chain ;
+typedef SparseChain<CoefficientType, CGAL::OSM::ROW> Row_chain ;
 
 /*!
  Type of column-major sparse matrices (used to store the boundary operator)
  */
-typedef CGAL::OSM::Sparse_matrix<CoefficientType, CGAL::OSM::COLUMN> Column_matrix;
+typedef SparseMatrix<CoefficientType, CGAL::OSM::COLUMN> Column_matrix;
 
 /// @}
 

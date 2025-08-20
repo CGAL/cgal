@@ -24,9 +24,15 @@ Cells are indexed along each dimension and thus identified by their index togeth
 class Filtration
 {
 public:
-    /*! \brief (Scalar) type of degrees.
+    /*! \brief Type of the underlying complex. */
+    typedef unspecified_type ComplexType;
+    
+    /*! \brief (Scalar) type of degrees (model of `RealEmbeddable`).
      */
     typedef unspecified_type DegreeType ;
+    
+    /*! \brief Type of coefficients used to compute homology. */
+    typedef ComplexType::Coefficient_type Coefficient_type;
 
     /*! \brief Type for indexing uniquely a cell.
      *
@@ -49,22 +55,22 @@ protected:
     /*!
      Type of column-major sparse matrices.
      */
-    typedef CGAL::OSM::Sparse_matrix<_CoefType,CGAL::OSM::COLUMN> Column_matrix ;
+    typedef SparseMatrix<_CoefType,CGAL::OSM::COLUMN> Column_matrix ;
 
     /*!
      Type of row-major sparse matrices.
      */
-    typedef CGAL::OSM::Sparse_matrix<_CoefType,CGAL::OSM::ROW> Row_matrix ;
+    typedef SparseMatrix<_CoefType,CGAL::OSM::ROW> Row_matrix ;
 
     /*!
      Type of column-major chains.
      */
-    typedef CGAL::OSM::Sparse_chain<_CoefType,CGAL::OSM::COLUMN> Column_chain ;
+    typedef SparseChain<_CoefType,CGAL::OSM::COLUMN> Column_chain ;
 
     /*!
      Type of row-major chains.
      */
-    typedef CGAL::OSM::Sparse_chain<_CoefType,CGAL::OSM::ROW> Row_chain ;
+    typedef SparseChain<_CoefType,CGAL::OSM::ROW> Row_chain ;
 
 public:
     /**
