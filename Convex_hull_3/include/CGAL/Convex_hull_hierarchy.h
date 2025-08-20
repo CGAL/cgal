@@ -45,9 +45,9 @@ template < class PolygonMesh>
 struct Convex_hull_hierarchy{
   // parameterization of the hierarchy
   /// @private
-  constexpr static size_t RATIO = 32;
+  constexpr static size_t RATIO = 24;
   /// @private
-  constexpr static size_t MINSIZE_FOR_NEXT_LEVEL = RATIO*4;
+  constexpr static size_t MINSIZE_FOR_NEXT_LEVEL = RATIO*6;
   /// @private
   constexpr static size_t MAXSIZE_FOR_NAIVE_SEARCH = RATIO;
 
@@ -182,7 +182,6 @@ struct Convex_hull_hierarchy{
 
     using GetVertexPointMap = GetVertexPointMap<PolygonMesh, NamedParameters>;
     using VPM = typename GetVertexPointMap::const_type;
-    // VPM pm = GetVertexPointMap::get_const_map(np, hierarchy_sm[0]);
 
     using GetGeomTraits = GetGeomTraits<PolygonMesh, NamedParameters>;
     using Mesh_GT= typename GetGeomTraits::type;
@@ -206,14 +205,12 @@ struct Convex_hull_hierarchy{
     size_t level=maxlevel();
 
     const PolygonMesh &sm = hierarchy_sm[maxlevel()];
-    const auto &init_pm = sm.points();
-    // const auto &pm = make_compose_property_map(sm.points(), point_map);
+    const VPM &pm = GetVertexPointMap::get_const_map(np, sm);
 
     vertex_descriptor argmax=*vertices(sm).begin();
-    Vector_3 vec=gt.construct_vector_3_object()(ORIGIN, converter(get(init_pm, argmax)));
+    Vector_3 vec=gt.construct_vector_3_object()(ORIGIN, converter(get(pm, argmax)));
     FT sp_max=gt.compute_scalar_product_3_object()(vec,dir.vector());
     if(vertices(sm).size() <= MAXSIZE_FOR_NAIVE_SEARCH){
-      const auto &pm = sm.points();
       //If maxlevel is small, we simply go through all its vertices
       for(auto vh=++(vertices(sm).begin()); vh!=vertices(sm).end(); ++vh){
         vertex_descriptor v=*vh;
@@ -237,11 +234,11 @@ struct Convex_hull_hierarchy{
       }
     }
 
-    for(; level>=0; --level){
+    for(; true; --level){
       // Starting from the vertex of the previous level, we walk on the graph
       // along neighbors that increase the "score"
       const PolygonMesh &csm = mesh(level);
-      const auto &pm = csm.points();//make_compose_property_map(csm.points(), point_map);
+      const VPM &pm = GetVertexPointMap::get_const_map(np, csm);
       bool is_local_max;
       do{
         is_local_max=true;
