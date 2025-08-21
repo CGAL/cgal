@@ -495,7 +495,7 @@ separation_distance(const Convex1& c1, const Convex2& c2,
   //The function need exact computation to works correctly
   using EPECK=Exact_predicates_exact_constructions_kernel;
   using GT= typename predicates_impl::GetGeomTraitsFromConvex<Convex1, NamedParameters_1>::type;
-  GT gt = choose_parameter<GT>(get_parameter(np1, internal_np::geom_traits));
+  // GT gt = choose_parameter<GT>(get_parameter(np1, internal_np::geom_traits));
   return predicates_impl::Separation_distance_functor<GT, EPECK>()(c1, c2, np1, np2);
 }
 

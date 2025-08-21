@@ -696,9 +696,8 @@ bool do_intersect(const Convex1& c1, const Convex2& c2,
   using CGAL::parameters::get_parameter;
 
   using GT= typename predicates_impl::GetGeomTraitsFromConvex<Convex1, NamedParameters_1>::type;
-  GT gt = choose_parameter<GT>(get_parameter(np1, internal_np::geom_traits));
+  // GT gt = choose_parameter<GT>(get_parameter(np1, internal_np::geom_traits));
   return Do_intersect_traits<GT>().do_intersect_object()(c1, c2, np1, np2);
-
 }
 #endif
 
