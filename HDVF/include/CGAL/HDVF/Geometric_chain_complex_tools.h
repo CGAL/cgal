@@ -153,9 +153,12 @@ void hdvf_persistence_geometric_chain_complex_output_vtk (Hdvf_persistence<Chain
         typename HDVF_type::PerIntervalInformation hole_data(*it) ;
         const PerHole hole(hole_data.hole) ;
         // Export informations of this hole
+        /* V1 */
         info_file << i << " -> " << " --- duration : " << hole.duration() << " -- " ;
         hole.insert(info_file);
         info_file << std::endl ;
+        /* V2 */
+//        info_file << i << " -> " << " --- duration : " << hole.duration() << " -- " << hole << std::endl ;
 
         if (hole.duration()>0) // Export vtk of "finite" holes
         {
