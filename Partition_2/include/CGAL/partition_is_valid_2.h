@@ -156,7 +156,11 @@ partition_is_valid_2 (InputIterator point_first, InputIterator point_last,
 #ifdef CGAL_PARTITION_CHECK_DEBUG
    int poly_num = 0;
    #endif
-   for (; poly_first != poly_last; poly_first++, poly_num++)
+   for (; poly_first != poly_last; poly_first++
+#ifdef CGAL_PARTITION_CHECK_DEBUG
+      , poly_num++
+#endif
+   )
    {
       vtx_begin = (*poly_first).vertices_begin();
       vtx_end = (*poly_first).vertices_end();
