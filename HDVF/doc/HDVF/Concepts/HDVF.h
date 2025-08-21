@@ -116,7 +116,7 @@ That is, for all \f$q\in \mathbb N\f$, if
  \sa `SparseChain`
  \sa `SparseMatrix`
 
- *How to describe constants declared in the namespace HDVF and used everywhere? FlagType, options, exporttype*
+ *How to describe constants declared in the namespace HDVF and used everywhere? Flag_type, options, exporttype*
 
  [AGL, 2017] Aldo Gonzalez-Lorenzo, Alexandra Bac, Jean-Luc Mari, Pedro Real. Allowing cycles in discrete Morse theory, Topology and its Applications, Volume 228, 2017, Pages 1-35.
 
@@ -282,19 +282,19 @@ std::vector<Cell_pair> compute_rand_perfect_hdvf(bool verbose = false);
  *
  * The function returns in each dimension the vector of cells with a given `flag`.
  */
-std::vector<std::vector<size_t> > flag (FlagType flag) const;
+std::vector<std::vector<size_t> > flag (Flag_type flag) const;
 
 /*!
  * \brief Gets cells with a given `flag` in dimension `q`.
  *
  * The function returns the vector of cells of dimension `q` with a given `flag`.
  */
-std::vector<size_t> flag_dim (FlagType flag, int q) const;
+std::vector<size_t> flag_dim (Flag_type flag, int q) const;
 
 /*!
  * \brief Gets the flag of the cell `tau` in dimension `q`.
  */
-FlagType cell_flag (int q, size_t tau) const;
+Flag_type cell_flag (int q, size_t tau) const;
 
 /*!
  * \brief Gets HDVF option.

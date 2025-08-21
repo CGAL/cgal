@@ -35,14 +35,6 @@ namespace HDVF {
  */
 typedef std::pair<size_t, size_t> FiltrIndexPerInterval ;
 
-/*! \brief Type for indexing uniquely a cell.
- * - First element of the pair: index of the cell.
- * - Second element of the pair: dimension of the cell.
- *
- * "Infinite cells" are defined as (-1,q+1) where q is the dimension of the chain complex.
- */
-typedef std::pair<size_t, int> Cell ;
-
 /*! \brief Type for describing the pair of cells associated to a persistence interval:
  * - First element of the pair: cell entailing the birth of the hole.
  * - Second element of the pair: cell entailing the death of the hole.
@@ -168,7 +160,7 @@ public:
     /*! Type of parent HDVF class (Hdvf_core with appropriate template parameters)
      * The SparseMatrix model is set to Sub_sparse_matrix to activate (co)homology computation over a subcomplex.
      */
-    typedef Hdvf_core<ChainComplex, CGAL::OSM::Sparse_chain, CGAL::OSM::Sub_sparse_matrix> HDVF_core_type ;
+    typedef Hdvf_core<ChainComplex, CGAL::OSM::Sparse_chain, CGAL::OSM::Sub_sparse_matrix> HDVF_parent ;
 
     /*! Type of filtrations used to compute persistence.
      */
@@ -246,9 +238,9 @@ private:
     // Hide find_pair_A methods of the Hdvf_core class
     // Hide A operation of the Hdvf_core class
     // This operation is redefined with a different prototype in Hdvf_persistence and set as private since persistence lets no choice for A pairing (rule of the "youngest")
-    using HDVF_core_type::find_pair_A;
-    using HDVF_core_type::find_pairs_A;
-    using HDVF_core_type::A;
+    using HDVF_parent::find_pair_A;
+    using HDVF_parent::find_pairs_A;
+    using HDVF_parent::A;
 public:
     /**
      * \brief Hdvf_persistence default constructor

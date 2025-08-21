@@ -81,7 +81,7 @@ private:
     typedef CGAL::OSM::Sparse_chain<Coefficient_ring, CGAL::OSM::ROW> Row_chain;
 
     // Type of parent HDVF
-    typedef Hdvf_core<ChainComplex, CGAL::OSM::Sparse_chain, CGAL::OSM::Sub_sparse_matrix> HDVF_core_type ;
+    typedef Hdvf_core<ChainComplex, CGAL::OSM::Sparse_chain, CGAL::OSM::Sub_sparse_matrix> HDVF_parent ;
 
     // Complex L
     const ChainComplex& _L ;
@@ -244,7 +244,7 @@ public:
      *
      * \param[in] flag Flag to select.
      */
-    std::vector<std::vector<size_t> > flag (FlagType flag) const ;
+    std::vector<std::vector<size_t> > flag (Flag_type flag) const ;
 
     /**
      * \brief Gets cells with a given `flag` in dimension `q` *in the current sub chain complex*.
@@ -254,7 +254,7 @@ public:
      * \param[in] flag Flag to select.
      * \param[in] q Dimension visited.
      */
-    std::vector<size_t> flag_dim (FlagType flag, int q) const ;
+    std::vector<size_t> flag_dim (Flag_type flag, int q) const ;
 
     // Hdvf_duality I/O
 
@@ -316,8 +316,8 @@ public:
                     if ((this->_flag[q][i] == CRITICAL) && (_subCC.get_bit(q, i))) {
                         out << "g(" << i << ") = (" << i << ")";
                         // Iterate over the ith column of _G_col
-                        typename HDVF_core_type::Column_chain col(OSM::get_column(this->_G_col.at(q), i)) ; // TODO cget
-                        for (typename HDVF_core_type::Column_chain::const_iterator it_col = col.cbegin(); it_col != col.cend(); ++it_col) {
+                        typename HDVF_parent::Column_chain col(OSM::get_column(this->_G_col.at(q), i)) ; // TODO cget
+                        for (typename HDVF_parent::Column_chain::const_iterator it_col = col.cbegin(); it_col != col.cend(); ++it_col) {
                             out << " + " << it_col->second << ".(" << it_col->first << ") + ";
                         }
                         out << std::endl;
@@ -336,8 +336,8 @@ public:
                     if ((this->_flag[q][i] == CRITICAL) && (_subCC.get_bit(q, i))) {
                         out << "f*(" << i << ") = (" << i << ")";
                         // Iterate over the ith row of _F_row
-                        typename HDVF_core_type::Row_chain row(OSM::get_row(this->_F_row.at(q), i)) ; // TODO cget
-                        for (typename HDVF_core_type::Row_chain::const_iterator it_row = row.cbegin(); it_row != row.cend(); ++it_row) {
+                        typename HDVF_parent::Row_chain row(OSM::get_row(this->_F_row.at(q), i)) ; // TODO cget
+                        for (typename HDVF_parent::Row_chain::const_iterator it_row = row.cbegin(); it_row != row.cend(); ++it_row) {
                             out << " + " << it_row->second << ".(" << it_row->first << ") + ";
                         }
                         out << std::endl;
@@ -510,11 +510,11 @@ Cell_pair Hdvf_duality<ChainComplex>::find_pair_A(int q, bool &found) const
     // Iterate through columns of _DD_col[q+1]
     for (OSM::Bitboard::iterator it_col = this->_DD_col[q+1].begin(); (it_col != this->_DD_col[q+1].end() && !found); ++it_col)
     {
-        const typename HDVF_core_type::Column_chain& col(OSM::cget_column(this->_DD_col[q+1], *it_col)) ;
+        const typename HDVF_parent::Column_chain& col(OSM::cget_column(this->_DD_col[q+1], *it_col)) ;
 
         // Iterate through the entries of the column
         // Check that the row belongs to the subchaincomplex
-        for (typename HDVF_core_type::Column_chain::const_iterator it = col.begin(); (it != col.end() && !found); ++it) {
+        for (typename HDVF_parent::Column_chain::const_iterator it = col.begin(); (it != col.end() && !found); ++it) {
             if (_subCC.get_bit(q, it->first) && (abs(it->second) == 1)) {
                 // If an entry with coefficient 1 or -1 is found, set the pair and mark as found
                 p.sigma = it->first;
@@ -539,8 +539,8 @@ Cell_pair Hdvf_duality<ChainComplex>::find_pair_A(int q, bool &found, size_t tau
 
     // Search for a q-1 cell tau' such that <_d(tau),tau'> invertible
     // and tau' belongs to _subCC
-    const typename HDVF_core_type::Column_chain& tmp2(OSM::cget_column(this->_DD_col.at(q), tau)) ;
-    for (typename HDVF_core_type::Column_chain::const_iterator it = tmp2.cbegin(); (it != tmp2.cend() && !found); ++it)
+    const typename HDVF_parent::Column_chain& tmp2(OSM::cget_column(this->_DD_col.at(q), tau)) ;
+    for (typename HDVF_parent::Column_chain::const_iterator it = tmp2.cbegin(); (it != tmp2.cend() && !found); ++it)
     {
         if (_subCC.get_bit(q-1, it->first) && abs(it->second) == 1)
         {
@@ -553,8 +553,8 @@ Cell_pair Hdvf_duality<ChainComplex>::find_pair_A(int q, bool &found, size_t tau
 
     // Search for a q+1 cell tau' such that <_d(tau'),tau> invertible, ie <_cod(tau),tau'> invertible
     // and tau' belongs to _subCC
-    typename HDVF_core_type::Row_chain tmp(OSM::get_row(this->_DD_col.at(q+1), tau)) ;
-    for (typename HDVF_core_type::Row_chain::const_iterator it = tmp.cbegin(); (it != tmp.cend() && !found); ++it)
+    typename HDVF_parent::Row_chain tmp(OSM::get_row(this->_DD_col.at(q+1), tau)) ;
+    for (typename HDVF_parent::Row_chain::const_iterator it = tmp.cbegin(); (it != tmp.cend() && !found); ++it)
     {
         if (_subCC.get_bit(q+1, it->first) && (abs(it->second) == 1))
         {
@@ -578,10 +578,10 @@ std::vector<Cell_pair> Hdvf_duality<ChainComplex>::find_pairs_A(int q, bool &fou
     // Iterate through columns of _DD_col[q+1]
     for (OSM::Bitboard::iterator it_col = this->_DD_col[q+1].begin(); it_col != this->_DD_col[q+1].end(); ++it_col)
     {
-        const typename HDVF_core_type::Column_chain& col(OSM::cget_column(this->_DD_col[q+1], *it_col)) ;
+        const typename HDVF_parent::Column_chain& col(OSM::cget_column(this->_DD_col[q+1], *it_col)) ;
 
         // Iterate through the entries of the column
-        for (typename HDVF_core_type::Column_chain::const_iterator it = col.begin(); it != col.end(); ++it) {
+        for (typename HDVF_parent::Column_chain::const_iterator it = col.begin(); it != col.end(); ++it) {
             if (_subCC.get_bit(q, it->first) && ((it->second == 1) || (it->second == -1))) {
                 // If an entry of _subCC with coefficient 1 or -1 is found, set the pair and mark as found
                 Cell_pair p;
@@ -608,8 +608,8 @@ std::vector<Cell_pair> Hdvf_duality<ChainComplex>::find_pairs_A(int q, bool &fou
 
     // Search for a q+1 cell tau' such that <_d(tau'),tau> invertible, ie <_cod(tau),tau'> invertible
     // and tau' belongs to _subCC
-    typename HDVF_core_type::Row_chain tmp(OSM::get_row(this->_DD_col.at(q+1), tau)) ;
-    for (typename HDVF_core_type::Row_chain::const_iterator it = tmp.cbegin(); it != tmp.cend(); ++it)
+    typename HDVF_parent::Row_chain tmp(OSM::get_row(this->_DD_col.at(q+1), tau)) ;
+    for (typename HDVF_parent::Row_chain::const_iterator it = tmp.cbegin(); it != tmp.cend(); ++it)
     {
         if (_subCC.get_bit(q+1, it->first) && (abs(it->second) == 1))
         {
@@ -623,8 +623,8 @@ std::vector<Cell_pair> Hdvf_duality<ChainComplex>::find_pairs_A(int q, bool &fou
     }
     // Search for a q-1 cell tau' such that <_d(tau),tau'> invertible
     // and tau' belongs to _subCC
-    const typename HDVF_core_type::Column_chain& tmp2(OSM::cget_column(this->_DD_col.at(q), tau)) ;
-    for (typename HDVF_core_type::Column_chain::const_iterator it = tmp2.cbegin(); it != tmp2.cend(); ++it)
+    const typename HDVF_parent::Column_chain& tmp2(OSM::cget_column(this->_DD_col.at(q), tau)) ;
+    for (typename HDVF_parent::Column_chain::const_iterator it = tmp2.cbegin(); it != tmp2.cend(); ++it)
     {
         if (_subCC.get_bit(q-1, it->first) && (abs(it->second) == 1))
         {
@@ -649,7 +649,7 @@ std::vector<Cell_pair> Hdvf_duality<ChainComplex>::compute_perfect_hdvf(bool ver
     // Restrict _DD_col accordingly
     _subCC.screen_matrices(this->_DD_col);
     // Compute perfect HDVF over K
-    std::vector<Cell_pair> tmp = HDVF_core_type::compute_perfect_hdvf(verbose) ;
+    std::vector<Cell_pair> tmp = HDVF_parent::compute_perfect_hdvf(verbose) ;
     std::cout << tmp.size() << " cells paired" << std::endl ;
     _critical_K = flag(CRITICAL) ;
 
@@ -659,7 +659,7 @@ std::vector<Cell_pair> Hdvf_duality<ChainComplex>::compute_perfect_hdvf(bool ver
     // Restrict _DD_col accordingly
     _subCC.screen_matrices(this->_DD_col);
     // Compute perfect HDVF over L-K
-    std::vector<Cell_pair> tmp2 = HDVF_core_type::compute_perfect_hdvf(verbose) ;
+    std::vector<Cell_pair> tmp2 = HDVF_parent::compute_perfect_hdvf(verbose) ;
     std::cout << tmp2.size() << " cells paired" << std::endl ;
     _critical_L_K = flag(CRITICAL) ;
 
@@ -678,7 +678,7 @@ std::vector<Cell_pair> Hdvf_duality<ChainComplex>::compute_rand_perfect_hdvf(boo
     // Restrict _DD_col accordingly
     _subCC.screen_matrices(this->_DD_col);
     // Compute perfect HDVF over K
-    std::vector<Cell_pair> tmp = HDVF_core_type::compute_rand_perfect_hdvf(verbose) ;
+    std::vector<Cell_pair> tmp = HDVF_parent::compute_rand_perfect_hdvf(verbose) ;
     std::cout << tmp.size() << " cells paired" << std::endl ;
     _critical_K = flag(CRITICAL) ;
 
@@ -688,7 +688,7 @@ std::vector<Cell_pair> Hdvf_duality<ChainComplex>::compute_rand_perfect_hdvf(boo
     // Restrict _DD_col accordingly
     _subCC.screen_matrices(this->_DD_col);
     // Compute perfect HDVF over L-K
-    std::vector<Cell_pair> tmp2 = HDVF_core_type::compute_rand_perfect_hdvf(verbose) ;
+    std::vector<Cell_pair> tmp2 = HDVF_parent::compute_rand_perfect_hdvf(verbose) ;
     std::cout << tmp2.size() << " cells paired" << std::endl ;
     _critical_L_K = flag(CRITICAL) ;
 
@@ -709,7 +709,7 @@ std::vector<Cell_pair> Hdvf_duality<ChainComplex>::compute_pairing_hdvf()
     _subCC = Sub_chain_complex_mask<ChainComplex>(_L) ;
     _subCC.screen_matrices(this->_DD_col);
     // If necessary, copy the HDVF before computing the pairing -> otherwise we loose it...
-    std::vector<Cell_pair> pairing = HDVF_core_type::compute_perfect_hdvf() ;
+    std::vector<Cell_pair> pairing = HDVF_parent::compute_perfect_hdvf() ;
     return pairing ;
 }
 
@@ -725,13 +725,13 @@ std::vector<Cell_pair> Hdvf_duality<ChainComplex>::compute_rand_pairing_hdvf()
     _subCC = Sub_chain_complex_mask<ChainComplex>(_L) ;
     _subCC.screen_matrices(this->_DD_col);
     // If necessary, copy the HDVF before computing the pairing -> otherwise we loose it...
-    std::vector<Cell_pair> pairing = HDVF_core_type::compute_rand_perfect_hdvf() ;
+    std::vector<Cell_pair> pairing = HDVF_parent::compute_rand_perfect_hdvf() ;
     return pairing ;
 }
 
 // Method to get cells of _subCC with a given flag for each dimension
 template<typename ChainComplex>
-std::vector<std::vector<size_t> > Hdvf_duality<ChainComplex>::flag (FlagType flag) const
+std::vector<std::vector<size_t> > Hdvf_duality<ChainComplex>::flag (Flag_type flag) const
 {
     std::vector<std::vector<size_t> > res(_L.dimension()+1) ;
     for (int q=0; q<=_L.dimension(); ++q)
@@ -747,7 +747,7 @@ std::vector<std::vector<size_t> > Hdvf_duality<ChainComplex>::flag (FlagType fla
 
 // Method to get cells of _subCC with a given flag for a given dimension
 template<typename ChainComplex>
-std::vector<size_t> Hdvf_duality<ChainComplex>::flag_dim (FlagType flag, int q) const
+std::vector<size_t> Hdvf_duality<ChainComplex>::flag_dim (Flag_type flag, int q) const
 {
     std::vector<size_t> res ;
     for (size_t i=0; i<this->_K.number_of_cells(q); ++i)

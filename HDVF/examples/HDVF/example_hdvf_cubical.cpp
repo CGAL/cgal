@@ -22,7 +22,7 @@ int main(int argc, char **argv)
     else
     {
         // Choose between PRIMAL and DUAL construction
-        const Complex::typeComplexCube primal_dual = Complex::PRIMAL;
+        const Complex::Cubical_complex_primal_dual primal_dual = Complex::PRIMAL;
         // Adapt pgm loading into Cub_complex accordingly
         const bool khalimsky_coords = (primal_dual == Complex::PRIMAL) ? true : false ;
 

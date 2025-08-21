@@ -69,15 +69,15 @@ namespace HDVF {
  *<img src="HDVF_dtorus_all.png" align="center" width=30%/>
  */
 
-template <typename ChainComplex, template <typename, int> typename _ChainType = OSM::Sparse_chain, template <typename, int> typename _SparseMatrixType = OSM::Sparse_matrix, typename VertexIdType = size_t>
-void hdvf_geometric_chain_complex_output_vtk (Hdvf_core<ChainComplex, _ChainType, _SparseMatrixType> &hdvf, ChainComplex &complex, std::string filename = "test", bool co_faces = false)
+template <typename Chain_complex, template <typename, int> typename _ChainType = OSM::Sparse_chain, template <typename, int> typename _SparseMatrixType = OSM::Sparse_matrix, typename VertexIdType = size_t>
+void hdvf_geometric_chain_complex_output_vtk (Hdvf_core<Chain_complex, _ChainType, _SparseMatrixType> &hdvf, Chain_complex &complex, std::string filename = "test", bool co_faces = false)
 {
-    typedef typename ChainComplex::Coefficient_ring Coefficient_ring;
-    typedef Hdvf_core<ChainComplex, _ChainType, _SparseMatrixType> HDVF_type;
+    typedef typename Chain_complex::Coefficient_ring Coefficient_ring;
+    typedef Hdvf_core<Chain_complex, _ChainType, _SparseMatrixType> HDVF_parent;
     // Export PSC labelling
     std::string outfile(filename+"_PSC.vtk") ;
     std::vector<std::vector<int> > labels = hdvf.psc_labels() ;
-    ChainComplex::chain_complex_to_vtk(complex, outfile, &labels) ;
+    Chain_complex::chain_complex_to_vtk(complex, outfile, &labels) ;
 
     if (hdvf.hdvf_opts() != OPT_BND)
     {
@@ -93,7 +93,7 @@ void hdvf_geometric_chain_complex_output_vtk (Hdvf_core<ChainComplex, _ChainType
                     std::string outfile_g(filename+"_G_"+std::to_string(c)+"_dim_"+std::to_string(q)+".vtk") ;
                     //                    std::vector<std::vector<size_t> > labels = hdvf.export_label(G,c,q) ;
                     OSM::Sparse_chain<Coefficient_ring,OSM::COLUMN> chain(hdvf.homology_chain(c,q)) ;
-                    ChainComplex::chain_complex_chain_to_vtk(complex, outfile_g, chain, q, c) ;
+                    Chain_complex::chain_complex_chain_to_vtk(complex, outfile_g, chain, q, c) ;
                 }
                 // Cohomology generators
                 if (hdvf.hdvf_opts() & (OPT_FULL | OPT_F))
@@ -102,13 +102,13 @@ void hdvf_geometric_chain_complex_output_vtk (Hdvf_core<ChainComplex, _ChainType
                     OSM::Sparse_chain<Coefficient_ring,OSM::COLUMN> chain(hdvf.cohomology_chain(c, q)) ;
                     if (!co_faces)
                     {
-                        ChainComplex::chain_complex_chain_to_vtk(complex, outfile_f, chain, q, c) ;
+                        Chain_complex::chain_complex_chain_to_vtk(complex, outfile_f, chain, q, c) ;
                     }
                     else
                     {
                         if (q < complex.dimension())
                         {
-                            ChainComplex::chain_complex_chain_to_vtk(complex, outfile_f, complex.cofaces_chain(chain, q), q+1, c) ;
+                            Chain_complex::chain_complex_chain_to_vtk(complex, outfile_f, complex.cofaces_chain(chain, q), q+1, c) ;
                         }
                     }
                 }
@@ -129,20 +129,20 @@ void hdvf_geometric_chain_complex_output_vtk (Hdvf_core<ChainComplex, _ChainType
  * \param[in] co_faces Export the cohomology generator or its co-faces (sometimes more convenient for visualisation).
  */
 
-template <typename ChainComplex, typename Degree, typename FiltrationType>
-void hdvf_persistence_geometric_chain_complex_output_vtk (Hdvf_persistence<ChainComplex, Degree, FiltrationType> &per_hdvf, ChainComplex &complex, std::string filename = "per", bool co_faces = false)
+template <typename Chain_complex, typename Degree, typename FiltrationType>
+void hdvf_persistence_geometric_chain_complex_output_vtk (Hdvf_persistence<Chain_complex, Degree, FiltrationType> &per_hdvf, Chain_complex &complex, std::string filename = "per", bool co_faces = false)
 {
-    typedef typename ChainComplex::Coefficient_ring Coefficient_ring;
+    typedef typename Chain_complex::Coefficient_ring Coefficient_ring;
     if (!per_hdvf.with_export())
         throw("Cannot export persistent generators to vtk: with_export is off!") ;
 
-    using perHDVFType = Hdvf_persistence<ChainComplex, Degree, FiltrationType>;
+    using perHDVFType = Hdvf_persistence<Chain_complex, Degree, FiltrationType>;
     using PerHole = PerHoleT<Degree> ;
 
     // Export the filtration
     std::string out_file_filtration = filename+"_filtration.vtk" ;
     std::vector<std::vector<size_t> > filtr_labels = per_hdvf.get_filtration().export_filtration();
-    ChainComplex::template chain_complex_to_vtk<size_t>(complex, out_file_filtration, &filtr_labels, "unsigned_long") ;
+    Chain_complex::template chain_complex_to_vtk<size_t>(complex, out_file_filtration, &filtr_labels, "unsigned_long") ;
 
     // Iterate over persistence diagram (iterator over non zero intervals)
     // Batch informations are stored in file filename_infos.txt
@@ -160,7 +160,7 @@ void hdvf_persistence_geometric_chain_complex_output_vtk (Hdvf_persistence<Chain
             // Build name associated to the ith hole : filename_i
             std::string out_file = filename+"_"+std::to_string(i) ;
             // Export PSC labels to vtk
-            ChainComplex::chain_complex_to_vtk(complex, out_file+"_PSC.vtk", &hole_data.labelsPSC) ;
+            Chain_complex::chain_complex_to_vtk(complex, out_file+"_PSC.vtk", &hole_data.labelsPSC) ;
             const CellsPerInterval per_int_cells(std::get<1>(hole_data.hole)) ;
             // Export homology generators (g)
             if (per_hdvf.hdvf_opts()  & (OPT_FULL | OPT_G))
@@ -170,14 +170,14 @@ void hdvf_persistence_geometric_chain_complex_output_vtk (Hdvf_persistence<Chain
                     const size_t id(per_int_cells.first.first) ;
                     const int dim(per_int_cells.first.second) ;
                     std::string tmp(out_file+"_g_"+std::to_string(id)+"_"+std::to_string(dim)+".vtk") ;
-                    ChainComplex::chain_complex_chain_to_vtk(complex, tmp, hole_data.g_chain_sigma, dim);
+                    Chain_complex::chain_complex_chain_to_vtk(complex, tmp, hole_data.g_chain_sigma, dim);
                 }
                 // Second generator : filename_i_g_tau_q+1.vtk
                 {
                     const size_t id(per_int_cells.second.first) ;
                     const int dim(per_int_cells.second.second) ;
                     std::string tmp(out_file+"_g_"+std::to_string(id)+"_"+std::to_string(dim)+".vtk") ;
-                    ChainComplex::chain_complex_chain_to_vtk(complex, tmp, hole_data.g_chain_tau, dim);
+                    Chain_complex::chain_complex_chain_to_vtk(complex, tmp, hole_data.g_chain_tau, dim);
                 }
             }
             // Export cohomology generators (fstar)
@@ -190,10 +190,10 @@ void hdvf_persistence_geometric_chain_complex_output_vtk (Hdvf_persistence<Chain
                     std::string tmp(out_file+"_fstar_"+std::to_string(id)+"_"+std::to_string(dim)+".vtk") ;
                     if (co_faces)
                     {
-                        ChainComplex::chain_complex_chain_to_vtk(complex, tmp, complex.cofaces_chain(hole_data.fstar_chain_sigma, dim), dim+1);
+                        Chain_complex::chain_complex_chain_to_vtk(complex, tmp, complex.cofaces_chain(hole_data.fstar_chain_sigma, dim), dim+1);
                     }
                     else
-                        ChainComplex::chain_complex_chain_to_vtk(complex, tmp, hole_data.fstar_chain_sigma, dim);
+                        Chain_complex::chain_complex_chain_to_vtk(complex, tmp, hole_data.fstar_chain_sigma, dim);
                 }
                 // Second generator : filename_i_fstar_tau_q+1.vtk
                 {
@@ -202,17 +202,17 @@ void hdvf_persistence_geometric_chain_complex_output_vtk (Hdvf_persistence<Chain
                     std::string tmp(out_file+"_fstar_"+std::to_string(id)+"_"+std::to_string(dim)+".vtk") ;
                     if (co_faces)
                     {
-                        ChainComplex::chain_complex_chain_to_vtk(complex, tmp, complex.cofaces_chain(hole_data.fstar_chain_tau, dim), dim+1);
+                        Chain_complex::chain_complex_chain_to_vtk(complex, tmp, complex.cofaces_chain(hole_data.fstar_chain_tau, dim), dim+1);
                     }
                     else
-                        ChainComplex::chain_complex_chain_to_vtk(complex, tmp, hole_data.fstar_chain_tau, dim);
+                        Chain_complex::chain_complex_chain_to_vtk(complex, tmp, hole_data.fstar_chain_tau, dim);
                 }
             }
         }
         ++i ;
     }
     info_file.close() ;
-    hdvf_geometric_chain_complex_output_vtk<ChainComplex>(per_hdvf, complex, filename+"_inf", co_faces) ;
+    hdvf_geometric_chain_complex_output_vtk<Chain_complex>(per_hdvf, complex, filename+"_inf", co_faces) ;
 }
 
 // Hdvf_duality vtk export
@@ -227,15 +227,15 @@ void hdvf_persistence_geometric_chain_complex_output_vtk (Hdvf_persistence<Chain
  \param[in] co_faces Export the cohomology generator or its co-faces (sometimes more convenient for visualisation).
  */
 
-template <typename ChainComplex, typename VertexIdType = size_t>
-void hdvf_duality_geometric_chain_complex_output_vtk (Hdvf_duality<ChainComplex> &hdvf, ChainComplex &complex, std::string filename = "test", bool co_faces = false)
+template <typename Chain_complex, typename VertexIdType = size_t>
+void hdvf_duality_geometric_chain_complex_output_vtk (Hdvf_duality<Chain_complex> &hdvf, Chain_complex &complex, std::string filename = "test", bool co_faces = false)
 {
-    typedef typename ChainComplex::Coefficient_ring Coefficient_ring;
-    typedef Hdvf_duality<ChainComplex> HDVF_type;
+    typedef typename Chain_complex::Coefficient_ring Coefficient_ring;
+    typedef Hdvf_duality<Chain_complex> HDVF_parent;
     // Export PSC labelling
     std::string outfile(filename+"_PSC.vtk") ;
     std::vector<std::vector<int> > labels = hdvf.psc_labels() ;
-    ChainComplex::chain_complex_to_vtk(complex, outfile, &labels) ;
+    Chain_complex::chain_complex_to_vtk(complex, outfile, &labels) ;
 
     if (hdvf.hdvf_opts() != OPT_BND)
     {
@@ -251,7 +251,7 @@ void hdvf_duality_geometric_chain_complex_output_vtk (Hdvf_duality<ChainComplex>
                     std::string outfile_g(filename+"_G_"+std::to_string(c)+"_dim_"+std::to_string(q)+".vtk") ;
                     //                    std::vector<std::vector<size_t> > labels = hdvf.export_label(G,c,q) ;
                     OSM::Sparse_chain<Coefficient_ring,OSM::COLUMN> chain(hdvf.homology_chain(c,q)) ;
-                    ChainComplex::chain_complex_chain_to_vtk(complex, outfile_g, chain, q, c) ;
+                    Chain_complex::chain_complex_chain_to_vtk(complex, outfile_g, chain, q, c) ;
                 }
                 // Cohomology generators
                 if (hdvf.hdvf_opts() & (OPT_FULL | OPT_F))
@@ -260,7 +260,7 @@ void hdvf_duality_geometric_chain_complex_output_vtk (Hdvf_duality<ChainComplex>
                     OSM::Sparse_chain<Coefficient_ring,OSM::COLUMN> chain(hdvf.cohomology_chain(c, q)) ;
                     if (!co_faces)
                     {
-                        ChainComplex::chain_complex_chain_to_vtk(complex, outfile_f, chain, q, c) ;
+                        Chain_complex::chain_complex_chain_to_vtk(complex, outfile_f, chain, q, c) ;
                     }
                     else // Compute co-faces
                     {
@@ -268,10 +268,10 @@ void hdvf_duality_geometric_chain_complex_output_vtk (Hdvf_duality<ChainComplex>
                         {
                             // Restrict the cofaces of the cohomology generator to the current sub chain complex
                             OSM::Sparse_chain<Coefficient_ring,OSM::COLUMN> cofaces_chain(complex.cofaces_chain(chain, q)) ;
-                            Sub_chain_complex_mask<ChainComplex> sub(hdvf.get_current_mask());
+                            Sub_chain_complex_mask<Chain_complex> sub(hdvf.get_current_mask());
                             sub.screen_chain(cofaces_chain, q+1);
                             // Display
-                            ChainComplex::chain_complex_chain_to_vtk(complex, outfile_f, cofaces_chain, q+1, c) ;
+                            Chain_complex::chain_complex_chain_to_vtk(complex, outfile_f, cofaces_chain, q+1, c) ;
                         }
                     }
                 }
@@ -301,9 +301,9 @@ template<typename CoefficientRing>
 class Duality_simplicial_complex_tools {
 public:
     /** \brief Type of simplicial chain complex encoding `L`. */
-    typedef Simplicial_chain_complex<CoefficientRing> ChainComplex ;
+    typedef Simplicial_chain_complex<CoefficientRing> Chain_complex ;
     /** \brief Type of sub chain complex mask encoding the sub complex `K`. */
-    typedef Sub_chain_complex_mask<ChainComplex> SubCCType ;
+    typedef Sub_chain_complex_mask<Chain_complex> Sub_chain_complex ;
     /** \brief Default constructor. */
     Duality_simplicial_complex_tools() {}
 
@@ -315,14 +315,14 @@ public:
      * - The vector of vertices coordinates of `L`
      */
     typedef struct {
-        ChainComplex& L ;
-        SubCCType& K ;
+        Chain_complex& L ;
+        Sub_chain_complex& K ;
         std::vector<Io_node_type> nodes ;
-    } TripleRes ;
+    } Complex_duality_data ;
 
     /** \brief Generates a subcomplex \f$K\f$K and a complex \f$L\f$ with \f$K\subseteq L\f$ from a simplicial complex `_K`.
      *
-     * `_K` is embedded into a larger icosphere and a 3D constrained Delaunay triangulation is generated. Then \f$K\f$, \f$L\f$ and vertices coordinates are extracted and stored in a `TripleRes` structure.
+     * `_K` is embedded into a larger icosphere and a 3D constrained Delaunay triangulation is generated. Then \f$K\f$, \f$L\f$ and vertices coordinates are extracted and stored in a `Complex_duality_data` structure.
      *
      * The following figures shows the resulting complex with an initial `Twirl` mesh (right - sectional view):
      * <img src="HDVF_twirl_view1.png" align="center" width=35%/>
@@ -332,7 +332,7 @@ public:
      * \param[in] BB_ratio Ratio of the "closing" icosphere diameter with respect to the diameter of the object's bounding box.
      * \param[in] out_file_prefix Prefix of tetgen intermediate files (default: "file_K_closed.off").
      */
-    static TripleRes simplicial_chain_complex_bb (const ChainComplex& _K, double BB_ratio=1.5, const std::string& out_file_prefix = "file_K_closed.off")
+    static Complex_duality_data simplicial_chain_complex_bb (const Chain_complex& _K, double BB_ratio=1.5, const std::string& out_file_prefix = "file_K_closed.off")
     {
         // Export _K to a MeshObject to add the icosphere and mesh with tetGen
         Mesh_object_io mesh_L = Duality_simplicial_complex_tools::export_meshObject(_K) ;
@@ -360,10 +360,10 @@ public:
         Tet_object_io tetL(out_file_prefix) ;
 
         // Build the associated SimpComplex
-        ChainComplex& L = *new ChainComplex(tetL, tetL.get_nodes()) ;
+        Chain_complex& L = *new Chain_complex(tetL, tetL.get_nodes()) ;
 
         // Build the Sub_chain_complex_mask encoding _K inside L
-        SubCCType& K(*new SubCCType(L, false)) ;
+        Sub_chain_complex& K(*new Sub_chain_complex(L, false)) ;
         // Visit all cells of _K and activate the corresponding bit in K
         for (int q=0; q<=_K.dimension(); ++q)
         {
@@ -374,12 +374,12 @@ public:
                 K.set_bit_on(q, id) ;
             }
         }
-        TripleRes t = {L,K,tetL.nodes} ;
+        Complex_duality_data t = {L,K,tetL.nodes} ;
         return t ;
     }
 
     /** \brief Exports a SimpComplex to a MeshObject  */
-    static Mesh_object_io& export_meshObject(const ChainComplex& _CC)
+    static Mesh_object_io& export_meshObject(const Chain_complex& _CC)
     {
         std::vector<Io_cell_type> vcells ;
         for (int q = 0; q <= _CC.dimension(); ++q)
@@ -419,9 +419,9 @@ template<typename CoefficientRing>
 class Duality_cubical_complex_tools {
 public:
     /** \brief Type of cubical complexes used for the initial complex and \f$L\f$. */
-    typedef Cubical_chain_complex<CoefficientRing> ChainComplex ;
+    typedef Cubical_chain_complex<CoefficientRing> Chain_complex ;
     /** \brief Type of sub chain complex mask used to encode the sub-complex  \f$K\f$. */
-    typedef Sub_chain_complex_mask<ChainComplex> SubCCType ;
+    typedef Sub_chain_complex_mask<Chain_complex> Sub_chain_complex ;
     // Constructor
     Duality_cubical_complex_tools() {}
 
@@ -436,7 +436,7 @@ public:
      *
      * \param[in] _K Initial cubical chain complex (working mesh).
      */
-    static std::pair<ChainComplex&, SubCCType&> cubical_chain_complex_bb (const ChainComplex& _K)
+    static std::pair<Chain_complex&, Sub_chain_complex&> cubical_chain_complex_bb (const Chain_complex& _K)
     {
         Cub_object_io tmp ;
         tmp.dim = _K.dimension() ;
@@ -450,10 +450,10 @@ public:
             (tmp.ncubs)[dtmp] += 1 ;
             tmp.cubs.push_back(tmpkhal) ;
         }
-        ChainComplex& L(*new ChainComplex(tmp, ChainComplex::PRIMAL)) ;
+        Chain_complex& L(*new Chain_complex(tmp, Chain_complex::PRIMAL)) ;
 
         // Build the Sub_chain_complex_mask corresponding to _CC
-        SubCCType& K(*new SubCCType(L, false)) ;
+        Sub_chain_complex& K(*new Sub_chain_complex(L, false)) ;
         // Visit all cells of _CC and activate the corresponding bit in K
         for (int q=0; q<=_K.dimension(); ++q)
         {
@@ -464,7 +464,7 @@ public:
                 K.set_bit_on(q,j) ;
             }
         }
-        return std::pair<ChainComplex&, SubCCType&>(L,K) ;
+        return std::pair<Chain_complex&, Sub_chain_complex&>(L,K) ;
     }
 } ;
 

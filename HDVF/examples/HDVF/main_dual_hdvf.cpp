@@ -173,7 +173,7 @@ void main_code (const Options &options)
 
         // Build L (bounding sphere meshed with tetgen), K and L-K
 
-        typename ToolsType::TripleRes t(ToolsType::simplicial_chain_complex_bb(*complex)) ;
+        typename ToolsType::Complex_duality_data t(ToolsType::simplicial_chain_complex_bb(*complex)) ;
         delete complex ;
         Complex& L(t.L) ;
         SubCCType& K(t.K) ;
@@ -213,7 +213,7 @@ void main_code (const Options &options)
         using ToolsType = CGAL::HDVF::Duality_cubical_complex_tools<Coefficient_ring> ;
 
         CGAL::HDVF::Cub_object_io mesh ;
-        typename Complex::typeComplexCube primal_dual(Complex::PRIMAL) ;
+        typename Complex::Cubical_complex_primal_dual primal_dual(Complex::PRIMAL) ;
         if (options.primal)
         {
             if (options.in_format == InputFormat::PGM)

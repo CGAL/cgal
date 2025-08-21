@@ -219,7 +219,7 @@ void main_code (const Options &options)
         using HDVF_type = CGAL::HDVF::Hdvf_persistence<Complex, Degree, FiltrationType> ;
 
         CGAL::HDVF::Cub_object_io mesh ;
-        typename Complex::typeComplexCube primal_dual(Complex::PRIMAL) ;
+        typename Complex::Cubical_complex_primal_dual primal_dual(Complex::PRIMAL) ;
         if (options.primal)
         {
             if (options.in_format == InputFormat::PGM)

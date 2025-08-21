@@ -25,7 +25,7 @@ namespace CGAL {
 namespace HDVF {
 
 /** \brief HDVF Enum for the label of cells. */
-static enum FlagType {
+static enum Flag_type {
     PRIMARY,
     SECONDARY,
     CRITICAL,
@@ -66,7 +66,7 @@ inline std::ostream& operator<<(std::ostream &out, const std::vector<Cell_pair>&
 
  The class `Hdvf_core` is the core implementation of homological discrete vector fields (HDVF for short). The ring of coefficients for homology computation must be a model of `Ring`.
 
- An enumeration `FlagType` is defined in the `HDVF` namespace and the `Hdvf_core` class maps each cell to one of the flags (namely `PRIMARY`, `SECONDARY`, `CRITICAL`). The NONE flag is used in child classes (such as `Hdvf_duality` or `Hdvf_reduced`) when computing relative homology on a sub-complex.
+ An enumeration `Flag_type` is defined in the `HDVF` namespace and the `Hdvf_core` class maps each cell to one of the flags (namely `PRIMARY`, `SECONDARY`, `CRITICAL`). The NONE flag is used in child classes (such as `Hdvf_duality` or `Hdvf_reduced`) when computing relative homology on a sub-complex.
  The flag of each cell is stored in an appropriate structure and getters are provided to access to this information.
 
  The `Hdvf_core` class stores the associated reduction in sparse matrices: row-major for \f$f\f$, and column-major for \f$g\f$, \f$h\f$ and \f$\partial'\f$. Getters are provided to access this information. However, according to the chosen HDVF computation option (`OPT_BND`, `OPT_F`, `OPT_G`, `OPT_FULL`) the reduction can be computed only partially (and thus faster).
@@ -116,7 +116,7 @@ protected:
     /* \brief Flags of the cells.
      * _flag.at(q) contains the flags of cells of dimension q
      */
-    std::vector<std::vector<FlagType>> _flag;
+    std::vector<std::vector<Flag_type>> _flag;
     /* \brief Number of `PRIMARY` cells. */
     std::vector<size_t> _nb_P;
     /* \brief Number of `SECONDARY` cells. */
@@ -281,7 +281,7 @@ public:
 
     // !!! Why should it be virtual for duality?????
 
-    virtual std::vector<std::vector<size_t> > flag (FlagType flag) const ;
+    virtual std::vector<std::vector<size_t> > flag (Flag_type flag) const ;
 
     /**
      * \brief Gets cells with a given `flag` in dimension `q`.
@@ -291,7 +291,7 @@ public:
      * \param[in] flag Flag to select.
      * \param[in] q Dimension visited.
      */
-    virtual std::vector<size_t> flag_dim (FlagType flag, int q) const ;
+    virtual std::vector<size_t> flag_dim (Flag_type flag, int q) const ;
 
     /*!
      * \brief Gets the flag of the cell `tau` in dimension `q`.
@@ -299,7 +299,7 @@ public:
      * \param[in] tau Index of the cell.
      * \param[in] q Dimension of the cell.
      */
-    FlagType cell_flag (int q, size_t tau) const { return _flag.at(q).at(tau); }
+    Flag_type cell_flag (int q, size_t tau) const { return _flag.at(q).at(tau); }
 
     /**
      * \brief Gets HDVF computation option.
@@ -485,7 +485,7 @@ protected:
      * \result Returns a copy of `chain` where only coefficients of cells of flag `flag` are kept (all other coefficients are cancelled).
      */
     template<int ChainTypeFlag>
-    ChainType<Coefficient_ring, ChainTypeFlag> projection(const ChainType<Coefficient_ring, ChainTypeFlag>& chain, FlagType flag, int q) const {
+    ChainType<Coefficient_ring, ChainTypeFlag> projection(const ChainType<Coefficient_ring, ChainTypeFlag>& chain, Flag_type flag, int q) const {
         // Create a new chain to store the result
         // Better to initialize 'result' directly with the correct size and iterate over it
         ChainType<Coefficient_ring, ChainTypeFlag> result(chain);
@@ -583,7 +583,7 @@ Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::Hdvf_core(const ChainCompl
 
     // Initialize the flags for each dimension to CRITICAL
     for (int q = 0; q <= dim; q++) {
-        _flag[q] = std::vector<FlagType>(_K.number_of_cells(q), CRITICAL);
+        _flag[q] = std::vector<Flag_type>(_K.number_of_cells(q), CRITICAL);
     }
 
     // Populate the DD matrices
@@ -979,7 +979,7 @@ std::vector<Cell_pair> Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::com
 
 // Method to get cells if with a given flag (P,S,C) for each dimension
 template<typename ChainComplex, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
-std::vector<std::vector<size_t> > Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::flag (FlagType flag) const
+std::vector<std::vector<size_t> > Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::flag (Flag_type flag) const
 {
     std::vector<std::vector<size_t> > res(_K.dimension()+1) ;
     for (int q=0; q<=_K.dimension(); ++q)
@@ -995,7 +995,7 @@ std::vector<std::vector<size_t> > Hdvf_core<ChainComplex, ChainType, SparseMatri
 
 // Method to get cells with a given flag (P,S,C) for a given dimension
 template<typename ChainComplex, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
-std::vector<size_t> Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::flag_dim (FlagType flag, int q) const
+std::vector<size_t> Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::flag_dim (Flag_type flag, int q) const
 {
     std::vector<size_t> res ;
     for (size_t i=0; i<_K.number_of_cells(q); ++i)

@@ -105,7 +105,7 @@ private:
 
 public:
     /** \brief Type used to encode primal or dual construction. */
-    enum typeComplexCube {PRIMAL, DUAL};
+    enum Cubical_complex_primal_dual {PRIMAL, DUAL};
 
     /**
      * \brief Default constructor (empty cubical complex).
@@ -127,7 +127,7 @@ public:
      * \param[in] cub A Cub_object_io containing a set of "cubical" cells.
      * \param[in] type Type of construction used (PRIMAL or DUAL).
      */
-    Cubical_chain_complex(const Cub_object_io& cub,typeComplexCube type);
+    Cubical_chain_complex(const Cub_object_io& cub,Cubical_complex_primal_dual type);
 
     /** \brief Friend class `Duality_cubical_complex_tools` provides tools for Alexander duality. */
     friend Duality_cubical_complex_tools<CoefficientRing> ;
@@ -652,7 +652,7 @@ private:
     // Protected methods
 protected:
     /* Initialize _cells, _base2bool and _bool2base */
-    void initialize_cells(const Cub_object_io& cub,typeComplexCube type);
+    void initialize_cells(const Cub_object_io& cub,Cubical_complex_primal_dual type);
 
     /** \brief Computes Khalimsky coordinates from boolean index */
     std::vector<size_t> ind2khal(size_t index) const {
@@ -757,7 +757,7 @@ size_t Cubical_chain_complex<CoefficientRing>::_id_generator(0) ;
 
 // Constructor implementation
 template<typename CoefficientRing>
-Cubical_chain_complex<CoefficientRing>::Cubical_chain_complex(const Cub_object_io& cub,typeComplexCube type) : _dim(cub.dim), _size_bb(_dim+1), _P(_dim+1,1), _base2bool(_dim+1), _bool2base(_dim+1), _complex_id(_id_generator++)
+Cubical_chain_complex<CoefficientRing>::Cubical_chain_complex(const Cub_object_io& cub,Cubical_complex_primal_dual type) : _dim(cub.dim), _size_bb(_dim+1), _P(_dim+1,1), _base2bool(_dim+1), _bool2base(_dim+1), _complex_id(_id_generator++)
 
 {
     // Initialize _size_bb and _P
@@ -790,7 +790,7 @@ Cubical_chain_complex<CoefficientRing>::Cubical_chain_complex(const Cub_object_i
 
 // initialize_cells implementation
 template<typename CoefficientRing>
-void Cubical_chain_complex<CoefficientRing>::initialize_cells(const Cub_object_io& cub, typeComplexCube type)
+void Cubical_chain_complex<CoefficientRing>::initialize_cells(const Cub_object_io& cub, Cubical_complex_primal_dual type)
 {
     if (type == PRIMAL)
     {
@@ -851,7 +851,7 @@ void Cubical_chain_complex<CoefficientRing>::initialize_cells(const Cub_object_i
     }
     else
     {
-        throw std::invalid_argument("Invalid typeComplexCube");
+        throw std::invalid_argument("Invalid Cubical_complex_primal_dual");
     }
 }
 

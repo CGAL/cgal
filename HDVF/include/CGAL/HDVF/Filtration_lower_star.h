@@ -104,11 +104,9 @@ private:
     /*! \brief Type of coefficients used to compute homology. */
     typedef ChainComplex::Coefficient_ring Coefficient_ring;
     /*! Type of parent filtration instance. */
-    typedef Filtration_core<ChainComplex, Degree> FiltrationCoreT;
-    /*! Type of cell identifier (cell index and dimension). */
-    typedef FiltrationCoreT::Cell Cell;
+    typedef Filtration_core<ChainComplex, Degree> Filtration_parent;
     /*! Type of value returned by the iterator. */
-    typedef FiltrationCoreT::Filtration_iter_value Filtration_iter_value;
+    typedef Filtration_parent::Filtration_iter_value Filtration_iter_value;
 public:
     /*!
      * \brief Copy constructor.
@@ -117,7 +115,7 @@ public:
      *
      * \param[in] f An initial lower star filtration.
      */
-    Filtration_lower_star(const Filtration_lower_star& f) : FiltrationCoreT(f) {}
+    Filtration_lower_star(const Filtration_lower_star& f) : Filtration_parent(f) {}
 
     /*! \brief Constructor from vertex degrees.
      *
@@ -126,7 +124,7 @@ public:
      * \param[in] K Constant reference to the underlying complex.
      * \param[in] deg Vector of vertex degrees.
      */
-    Filtration_lower_star(const ChainComplex& K, const std::vector<Degree>& deg) : FiltrationCoreT(K)
+    Filtration_lower_star(const ChainComplex& K, const std::vector<Degree>& deg) : Filtration_parent(K)
     {
         star_filtration(deg);
     }
@@ -138,7 +136,7 @@ public:
      * \param[in] K Constant reference to the underlying complex.
      * \param[in] deg_fun Function mapping vertices of `K` to their degree.
      */
-    Filtration_lower_star(const ChainComplex& K, std::function<Degree(size_t)>& deg_fun) : FiltrationCoreT(K)
+    Filtration_lower_star(const ChainComplex& K, std::function<Degree(size_t)>& deg_fun) : Filtration_parent(K)
     {
         star_filtration(deg_fun);
     }
