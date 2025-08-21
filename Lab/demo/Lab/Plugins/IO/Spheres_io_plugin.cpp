@@ -44,7 +44,7 @@ public:
 
   bool canSave(const CGAL::Three::Scene_item*) override;
   bool save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>&) override;
-  bool applicable(QAction* a) const override {
+  bool applicable(QAction* ) const override {
       return false;
   }
   QList<QAction*> actions() const override{
