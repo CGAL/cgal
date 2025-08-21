@@ -1,13 +1,10 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-<<<<<<< HEAD
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-=======
->>>>>>> f20ff8e8d621ce72d1f9941c60f140519a7fcbc8
 
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Extreme_points_traits_adapter_3.h>
 #include <CGAL/convex_hull_3.h>
-#include <CGAL/Convex_hull_3/predicates.h>
+#include <CGAL/Convex_hull_3/distance.h>
+#include <CGAL/Convex_hull_3/intersections.h>
 #include <CGAL/Convex_hull_hierarchy.h>
 
 #include <CGAL/boost/graph/IO/polygon_mesh_io.h>
@@ -16,11 +13,7 @@
 #include <vector>
 #include <fstream>
 
-<<<<<<< HEAD
-typedef CGAL::Exact_predicates_exact_constructions_kernel      K;
-=======
 typedef CGAL::Exact_predicates_inexact_constructions_kernel      K;
->>>>>>> f20ff8e8d621ce72d1f9941c60f140519a7fcbc8
 typedef K::Point_3                                               Point_3;
 typedef CGAL::Surface_mesh<Point_3>                              Mesh;
 typedef Mesh::Property_map<Mesh::Vertex_index, Point_3>          PointMap;
@@ -64,7 +57,9 @@ int main(int argc, char* argv[])
   res = CGAL::Convex_hull_3::do_intersect(hsm1, hsm2);
   std::cout << "do convex hulls intersect? " << std::boolalpha << res << "\n";
 
-  // CGAL::Convex_hull_3::GJK(hsm1, hsm2);
+  // Separation distance provides the squared distance between the two objects if they do not intersect but it's slower
+  K::FT dist = CGAL::Convex_hull_3::separation_distance(hsm1, hsm2);
+  std::cout << "Squared distance between convex hulls: " << dist << "\n";
 
 
   return 0;
