@@ -44,23 +44,23 @@ namespace OSM {
 
  \cgalModels{SparseChain}
 
- \tparam CoefficientType a model of the `Ring` concept, providing the ring used to compute homology.
+ \tparam CoefficientRing a model of the `Ring` concept, providing the ring used to compute homology.
  \tparam ChainTypeFlag an integer constant encoding the type of matrices (`OSM::COLUMN` or `OSM::ROW`).
 */
 
-template <typename CoefficientType, int ChainTypeFlag>
+template <typename CoefficientRing, int ChainTypeFlag>
 class Sparse_chain {
 
 public:
     /*!
      Type of chains iterators.
      */
-    typedef typename std::unordered_map<size_t, CoefficientType>::iterator iterator;
+    typedef typename std::unordered_map<size_t, CoefficientRing>::iterator iterator;
 
     /*!
      Type of chains constant iterators.
      */
-    typedef typename std::unordered_map<size_t, CoefficientType>::const_iterator const_iterator;
+    typedef typename std::unordered_map<size_t, CoefficientRing>::const_iterator const_iterator;
 
     // Allow the Sparse_matrix class to access other templated Sparse_matrix and
     // Sparse_chain protected members.
@@ -116,10 +116,10 @@ public:
 
 protected:
     /* \brief Type of data stored in the chain: map between indexes and coefficients. */
-    typedef std::pair<size_t, CoefficientType> pair;
+    typedef std::pair<size_t, CoefficientRing> pair;
 
     /* \brief The chain inner representation and storage of data. */
-    std::unordered_map<size_t, CoefficientType> _chainData;
+    std::unordered_map<size_t, CoefficientRing> _chainData;
 
     /* \brief The chain boundary. */
     size_t _upperBound;
@@ -133,7 +133,7 @@ public:
      */
     Sparse_chain() {
         _upperBound = 0;
-        _chainData = std::unordered_map<size_t, CoefficientType>();
+        _chainData = std::unordered_map<size_t, CoefficientRing>();
     }
 
     /**
@@ -145,7 +145,7 @@ public:
      */
     Sparse_chain(const size_t chainSize) {
         _upperBound = chainSize;
-        _chainData = std::unordered_map<size_t, CoefficientType>();
+        _chainData = std::unordered_map<size_t, CoefficientRing>();
     }
 
 
@@ -155,7 +155,7 @@ public:
      *
      * Copy constructor, initialize a SparseChain from an existing SparseChain.
      *
-     * \pre The chains have the same `CoefficientType` and `ChainTypeFlag`.
+     * \pre The chains have the same `CoefficientRing` and `ChainTypeFlag`.
 
      * \param[in] otherToCopy The chain to copy.
      */
@@ -171,7 +171,7 @@ public:
      *
      * \pre The chains have the same coefficent type.
      *
-     * \warning Chains must have the same `CoefficientType`.
+     * \warning Chains must have the same `CoefficientRing`.
      *
      * \param[in] otherToCopy The chain we want to copy.
      */
@@ -216,9 +216,9 @@ public:
      *
      * Adds two chains together and return the result in a new matrix.
      *
-     * \pre Chains must have the same `CoefficientType` and the same `ChainTypeFlag`.
+     * \pre Chains must have the same `CoefficientRing` and the same `ChainTypeFlag`.
      *
-     * \warning Will raise an error if the two chains are not the same `CoefficientType`.
+     * \warning Will raise an error if the two chains are not the same `CoefficientRing`.
      * \warning Will raise an error if the two chains don't have the same `ChainTypeFlag`.
      *
      * \param[in] first The first chain.
@@ -227,7 +227,7 @@ public:
      * \return A new chain representing the result.
      */
     template <int _CTF>
-    friend Sparse_chain operator+(const Sparse_chain &first, const Sparse_chain<CoefficientType, _CTF> &second) {
+    friend Sparse_chain operator+(const Sparse_chain &first, const Sparse_chain<CoefficientRing, _CTF> &second) {
         Sparse_chain newChain = first;
         newChain += second;
 
@@ -239,9 +239,9 @@ public:
      *
      * Subtract two chains together and return the result in a new matrix.
      *
-     * \pre Chains must have the same `CoefficientType` and the same `ChainTypeFlag`.
+     * \pre Chains must have the same `CoefficientRing` and the same `ChainTypeFlag`.
      *
-     * \warning Will raise an error if the two chains are not the same `CoefficientType`.
+     * \warning Will raise an error if the two chains are not the same `CoefficientRing`.
      * \warning Will raise an error if the two chains don't have the same `ChainTypeFlag`.
      *
      * \param[in] first The first chain.
@@ -250,7 +250,7 @@ public:
      * \return A new chain representing the result.
      */
     template <int _CTF>
-    friend Sparse_chain operator-(const Sparse_chain &first, const Sparse_chain<CoefficientType, _CTF> &second) {
+    friend Sparse_chain operator-(const Sparse_chain &first, const Sparse_chain<CoefficientRing, _CTF> &second) {
         Sparse_chain newChain = first;
         newChain -= second;
 
@@ -266,7 +266,7 @@ public:
      * \return A new chain representing the result.
      */
     template <int _CTF>
-    friend Sparse_chain operator*(const CoefficientType& lambda, const Sparse_chain<CoefficientType, _CTF> &chain) {
+    friend Sparse_chain operator*(const CoefficientRing& lambda, const Sparse_chain<CoefficientRing, _CTF> &chain) {
         Sparse_chain newChain = chain;
         newChain *= lambda;
 
@@ -289,9 +289,9 @@ public:
      *
      * Generate a column-based matrix from the matrix multiplication and return it.
      *
-     * \pre Chains must have the same `CoefficientType`.
+     * \pre Chains must have the same `CoefficientRing`.
      *
-     * \warning Will raise an error if chains do not have the same `CoefficientType`.
+     * \warning Will raise an error if chains do not have the same `CoefficientRing`.
      *
      * \param[in] column The column chain.
      * \param[in] row The row chain.
@@ -306,9 +306,9 @@ public:
      *
      * Generate a row-based matrix from the matrix multiplication and return it.
      *
-     * \pre Chains must have the same `CoefficientType`.
+     * \pre Chains must have the same `CoefficientRing`.
      *
-     * \warning Will raise an error if chains do not have the same `CoefficientType`.
+     * \warning Will raise an error if chains do not have the same `CoefficientRing`.
      *
      * \param[in] column The column chain.
      * \param[in] row The row chain.
@@ -321,14 +321,14 @@ public:
     /**
      * \brief Performs dot product between two chains (ROW x COLUMN).
      *
-     * \pre Chains must have the same `CoefficientType`.
+     * \pre Chains must have the same `CoefficientRing`.
      *
-     * \warning Will raise an error if the chains do not have the same `CoefficientType`.
+     * \warning Will raise an error if the chains do not have the same `CoefficientRing`.
      *
      * \param[in] row The row chain.
      * \param[in] column The column chain.
      *
-     * \return The result of type CoefficientType.
+     * \return The result of type CoefficientRing.
      */
     template <typename _CT>
     friend _CT operator*(const Sparse_chain<_CT, ROW> &row, const Sparse_chain<_CT, COLUMN> &column);
@@ -338,9 +338,9 @@ public:
      *
      * Add a chain to `this`.
      *
-     * \pre Chains must have the same `CoefficientType` and the same `ChainTypeFlag`.
+     * \pre Chains must have the same `CoefficientRing` and the same `ChainTypeFlag`.
      *
-     * \warning Will raise an error if the two chains are not the same `CoefficientType`.
+     * \warning Will raise an error if the two chains are not the same `CoefficientRing`.
      * \warning Will raise an error if the two chains don't have the same `ChainTypeFlag`.
      *
      * \param[in] other The other chain.
@@ -368,9 +368,9 @@ public:
      *
      * Subtract a chain to `this`.
      *
-     * \pre Chains must have the same `CoefficientType` and the same `ChainTypeFlag`.
+     * \pre Chains must have the same `CoefficientRing` and the same `ChainTypeFlag`.
      *
-     * \warning Will raise an error if the two chains are not the same `CoefficientType`.
+     * \warning Will raise an error if the two chains are not the same `CoefficientRing`.
      * \warning Will raise an error if the two chains don't have the same `ChainTypeFlag`.
      *
      * \param[in] other The other chain.
@@ -402,7 +402,7 @@ public:
      *
      * \return The modified chain representing the result.
      */
-    Sparse_chain& operator*=(const CoefficientType& lambda) {
+    Sparse_chain& operator*=(const CoefficientRing& lambda) {
         if (lambda == 0) {
             this->_chainData.clear();
             return *this;
@@ -424,7 +424,7 @@ public:
      *
      * \return The value of the coefficient.
      */
-    CoefficientType operator[](size_t index) const {
+    CoefficientRing operator[](size_t index) const {
         if (index >= _upperBound) {
             throw std::runtime_error("Provided index should be less than " + std::to_string(_upperBound) + ".");
         }
@@ -444,7 +444,7 @@ public:
      *
      * \return The value of the coefficient.
      */
-    CoefficientType get_coefficient(size_t index) const {
+    CoefficientRing get_coefficient(size_t index) const {
         if (index >= _upperBound) {
             throw std::runtime_error("Provided index should be less than " + std::to_string(_upperBound) + ".");
         }
@@ -465,7 +465,7 @@ public:
      * \param[in] index The coefficient index.
      * \param[in] d Value of the coefficient
      */
-    void set_coefficient(size_t index, CoefficientType d)
+    void set_coefficient(size_t index, CoefficientRing d)
     {
         if (index >= _upperBound) {
             throw std::runtime_error("Provided index should be less than " + std::to_string(_upperBound) + ".");
@@ -668,8 +668,8 @@ public:
      *
      * \return A new chain where the chain type flag is changed.
      */
-    Sparse_chain<CoefficientType, COLUMN + ROW - ChainTypeFlag> transpose() {
-        Sparse_chain<CoefficientType, COLUMN + ROW - ChainTypeFlag> chain;
+    Sparse_chain<CoefficientRing, COLUMN + ROW - ChainTypeFlag> transpose() {
+        Sparse_chain<CoefficientRing, COLUMN + ROW - ChainTypeFlag> chain;
 
         chain._upperBound = this->_upperBound;
         chain._chainData = this->_chainData;
@@ -707,7 +707,7 @@ private:
      *
      * \return The reference to the assigned coefficient.
      */
-    CoefficientType& operator[](const size_t index)  {
+    CoefficientRing& operator[](const size_t index)  {
         if (index >= _upperBound) {
             throw std::runtime_error("Provided index should be less than " + std::to_string(_upperBound) + ".");
         }
@@ -742,19 +742,19 @@ Sparse_matrix<_CT, ROW> operator%(const Sparse_chain<_CT, COLUMN> &column, const
 }
 
 // Dot product (ROW chain x COLUMN chain)
-template <typename CoefficientType>
-CoefficientType operator*(const Sparse_chain<CoefficientType, ROW> &row, const Sparse_chain<CoefficientType, COLUMN> &column) {
+template <typename CoefficientRing>
+CoefficientRing operator*(const Sparse_chain<CoefficientRing, ROW> &row, const Sparse_chain<CoefficientRing, COLUMN> &column) {
     // Get indexes (avoid adding double indexes).
     std::unordered_map<size_t, int> indexes;
-    for (std::pair<size_t, CoefficientType> pair: row._chainData) {
+    for (std::pair<size_t, CoefficientRing> pair: row._chainData) {
         indexes[pair.first] = 1;
     }
-    for (std::pair<size_t, CoefficientType> pair: column._chainData) {
+    for (std::pair<size_t, CoefficientRing> pair: column._chainData) {
         indexes[pair.first] += 1;
     }
 
     // Perform dot product
-    CoefficientType result = CoefficientType();
+    CoefficientRing result = CoefficientRing();
     for (std::pair<size_t, int> index: indexes) {
         if (index.second == 2) {
             result += row._chainData.at(index.first) * column._chainData.at(index.first);

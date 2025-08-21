@@ -32,8 +32,8 @@
 
 // Hdvf computation, output and export
 
-template <typename MeshType, typename ComplexType>
-void mesh_complex_output(const MeshType& mesh, const ComplexType& complex, const Options& options)
+template <typename MeshType, typename Complex>
+void mesh_complex_output(const MeshType& mesh, const Complex& complex, const Options& options)
 {
     if (options.with_output)
     {
@@ -47,11 +47,11 @@ void mesh_complex_output(const MeshType& mesh, const ComplexType& complex, const
     }
 }
 
-template <typename ComplexType>
-CGAL::HDVF::Hdvf<ComplexType>& HDVF_comput (const ComplexType& complex, const Options &options)
+template <typename Complex>
+CGAL::HDVF::Hdvf<Complex>& HDVF_comput (const Complex& complex, const Options &options)
 {
-    typedef typename ComplexType::Coefficient_type Coefficient_type;
-    CGAL::HDVF::Hdvf<ComplexType>& hdvf(*(new CGAL::HDVF::Hdvf<ComplexType>(complex, options.HDVF_opt)));
+    typedef typename Complex::Coefficient_ring Coefficient_ring;
+    CGAL::HDVF::Hdvf<Complex>& hdvf(*(new CGAL::HDVF::Hdvf<Complex>(complex, options.HDVF_opt)));
     std::vector<CGAL::HDVF::Cell_pair> pairs ;
     if (!options.random)
         pairs = hdvf.compute_perfect_hdvf(options.verbose);
@@ -84,26 +84,26 @@ CGAL::HDVF::Hdvf<ComplexType>& HDVF_comput (const ComplexType& complex, const Op
     return hdvf ;
 }
 
-template <typename Coefficient_type>
+template <typename Coefficient_ring>
 void main_code (const Options &options)
 {
     /// SIMP format
     if (options.in_format == InputFormat::SIMP)
     {
-        using ComplexType = CGAL::HDVF::Abstract_simplicial_chain_complex<Coefficient_type>  ;
-        using HDVFType = CGAL::HDVF::Hdvf<ComplexType> ;
+        using Complex = CGAL::HDVF::Abstract_simplicial_chain_complex<Coefficient_ring>  ;
+        using HDVF_type = CGAL::HDVF::Hdvf<Complex> ;
 
         // MeshObject
         CGAL::HDVF::Mesh_object_io mesh ;
         mesh.read_simp(options.in_file) ;
 
         // Complex
-        ComplexType complex(mesh);
+        Complex complex(mesh);
 
-        mesh_complex_output<CGAL::HDVF::Mesh_object_io, ComplexType>(mesh, complex, options) ;
+        mesh_complex_output<CGAL::HDVF::Mesh_object_io, Complex>(mesh, complex, options) ;
 
         // Hdvf computation, export, output
-        HDVFType hdvf(HDVF_comput<ComplexType>(complex, options)) ;
+        HDVF_type hdvf(HDVF_comput<Complex>(complex, options)) ;
 
         // Export to vtk
         // None for SIMP format
@@ -111,30 +111,30 @@ void main_code (const Options &options)
     /// OFF format
     else if (options.in_format == InputFormat::OFF)
     {
-        using ComplexType = CGAL::HDVF::Simplicial_chain_complex<Coefficient_type> ;
-        using HDVFType = CGAL::HDVF::Hdvf<ComplexType> ;
+        using Complex = CGAL::HDVF::Simplicial_chain_complex<Coefficient_ring> ;
+        using HDVF_type = CGAL::HDVF::Hdvf<Complex> ;
 
         // MeshObject
         CGAL::HDVF::Mesh_object_io mesh ;
         mesh.read_off(options.in_file) ;
 
         // Complex
-        ComplexType complex(mesh, mesh.get_nodes());
+        Complex complex(mesh, mesh.get_nodes());
 
-        mesh_complex_output<CGAL::HDVF::Mesh_object_io, ComplexType>(mesh, complex, options) ;
+        mesh_complex_output<CGAL::HDVF::Mesh_object_io, Complex>(mesh, complex, options) ;
 
         // Hdvf computation, export, output
-        HDVFType hdvf(HDVF_comput<ComplexType>(complex, options)) ;
+        HDVF_type hdvf(HDVF_comput<Complex>(complex, options)) ;
 
         // Loop on operations with vtk export
         if (options.loop)
         {
-            auto output_vtk_simp = [options](HDVFType &hdvf, ComplexType& complex)
+            auto output_vtk_simp = [options](HDVF_type &hdvf, Complex& complex)
             {
                 CGAL::HDVF::hdvf_geometric_chain_complex_output_vtk(hdvf, complex, options.outfile_root, options.co_faces) ;
             } ;
 
-            CGAL::HDVF::interaction_loop<ComplexType>(hdvf, complex, output_vtk_simp) ;
+            CGAL::HDVF::interaction_loop<Complex>(hdvf, complex, output_vtk_simp) ;
         }
         // Export to vtk
         else if (options.with_vtk_export)
@@ -146,11 +146,11 @@ void main_code (const Options &options)
     // CubComplex
     else if ((options.in_format == InputFormat::PGM) || (options.in_format == InputFormat::CUB))
     {
-        using ComplexType = CGAL::HDVF::Cubical_chain_complex<Coefficient_type> ;
-        using HDVFType = CGAL::HDVF::Hdvf<ComplexType> ;
+        using Complex = CGAL::HDVF::Cubical_chain_complex<Coefficient_ring> ;
+        using HDVF_type = CGAL::HDVF::Hdvf<Complex> ;
 
         CGAL::HDVF::Cub_object_io mesh ;
-        typename ComplexType::typeComplexCube primal_dual(ComplexType::PRIMAL) ;
+        typename Complex::typeComplexCube primal_dual(Complex::PRIMAL) ;
         if (options.primal)
         {
             if (options.in_format == InputFormat::PGM)
@@ -164,26 +164,26 @@ void main_code (const Options &options)
                 mesh.read_pgm(options.in_file, false) ; // Read with pixel coordinates (for dual)
             else
                 mesh.read_cub(options.in_file, false) ; // Read with pixel coordinates (for dual)
-            primal_dual = ComplexType::DUAL ;
+            primal_dual = Complex::DUAL ;
         }
 
         // Complex
-        ComplexType complex(mesh, primal_dual);
+        Complex complex(mesh, primal_dual);
 
-        mesh_complex_output<CGAL::HDVF::Cub_object_io, ComplexType>(mesh, complex, options) ;
+        mesh_complex_output<CGAL::HDVF::Cub_object_io, Complex>(mesh, complex, options) ;
 
         // Hdvf computation, export, output
-        HDVFType hdvf(HDVF_comput<ComplexType>(complex, options)) ;
+        HDVF_type hdvf(HDVF_comput<Complex>(complex, options)) ;
 
         // Loop on operations with vtk export
         if (options.loop)
         {
-            auto output_vtk_cub = [options](HDVFType &hdvf, ComplexType& complex)
+            auto output_vtk_cub = [options](HDVF_type &hdvf, Complex& complex)
             {
                 CGAL::HDVF::hdvf_geometric_chain_complex_output_vtk(hdvf, complex, options.outfile_root, options.co_faces) ;
             } ;
 
-            CGAL::HDVF::interaction_loop<ComplexType>(hdvf, complex, output_vtk_cub) ;
+            CGAL::HDVF::interaction_loop<Complex>(hdvf, complex, output_vtk_cub) ;
         }
         // Export to vtk
         else if (options.with_vtk_export)
@@ -218,25 +218,25 @@ int main(int argc, char **argv)
         std::cout << "after2: " << gamma.is_null() << std::endl ;
         std::cout << "END TEST" << std::endl ;
 
-        // ----- Definition of the Coefficient_type
+        // ----- Definition of the Coefficient_ring
 #ifndef SCALAR
         if (options.scalar == 0)
         {
-            using Coefficient_type = int ;
-            main_code<Coefficient_type>(options) ;
+            using Coefficient_ring = int ;
+            main_code<Coefficient_ring>(options) ;
         }
         else if (options.scalar == 2)
         {
-//            using Coefficient_type = CGAL::HDVF::Zp<2,int8_t> ;
-            using Coefficient_type = CGAL::HDVF::Z2 ;
-            main_code<Coefficient_type>(options) ;
+//            using Coefficient_ring = CGAL::HDVF::Zp<2,int8_t> ;
+            using Coefficient_ring = CGAL::HDVF::Z2 ;
+            main_code<Coefficient_ring>(options) ;
         }
         else
         {
             std::cerr << "Z" << options.scalar << " not instantiated, use the #define at line 27" << std::endl ;
         }
 #else
-        typedef Zp<SCALAR> Coefficient_type;
+        typedef Zp<SCALAR> Coefficient_ring;
 #endif
     }
 

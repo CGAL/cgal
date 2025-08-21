@@ -35,15 +35,15 @@ namespace HDVF {
  \warning For efficiency reasons, when a `Sub_chain_complex_mask` is used to screen sparse matrices  (with the `screen_matrices` method), screening is **only** performed on the major direction of matrices (thus column-major matrices are restricted over columns and row-major matrices are restricted over rows). Iterators are restricted accordingly. But chains themselves are not restricted.<br>
  However, if `A` is a proper sub-complex of `K` (that is, closed with respect to faces), chains automatically comply with the screening. Indeed, for any \f$q\f$-cell \f$\sigma\in A\f$ (thus the corresponding bit is on in the mask), all the faces of \f$\sigma\f$ also belong to \f$A\f$. Thus for any \f$q-1\f$-cell \f$\tau\f$ in the boundary of \f$\sigma\f$ (that is, such that \f$\langle\partial_k(\sigma),\tau\rangle\neq 0\f$), \f$\tau\f$ belongs to \f$A\f$ (and thus the corresponding bit in the mask is also on).
 
- \tparam ComplexType a model of the `AbstractChainComplex` concept (type of the chain complex screened by `Sub_chain_complex_mask`).
+ \tparam ChainComplex a model of the `AbstractChainComplex` concept (type of the chain complex screened by `Sub_chain_complex_mask`).
  */
 
-template <typename ComplexType>
+template <typename ChainComplex>
 class Sub_chain_complex_mask
 {
 public:
     /*! \brief Type of coefficients used to compute homology. */
-    typedef ComplexType::Coefficient_type Coefficient_type;
+    typedef ChainComplex::Coefficient_ring Coefficient_ring;
     
 protected:
     /** \brief Dimension of the underlying complex. */
@@ -53,7 +53,7 @@ protected:
     /** \brief Number of cells in the mask in each dimension. */
     std::vector<int> _nb_cells ;
     /** \brief Constant reference to the underlying complex. */
-    const ComplexType& _K ;
+    const ChainComplex& _K ;
     /** \brief Is full sub_complex.
      * This boolean flag is true is all bits in the bitboards are on. */
     bool _full ;
@@ -79,8 +79,8 @@ private:
                     if (q>0) // Then faces must be considered
                     {
                         // Add all its faces to faces.at(q-1)
-                        OSM::Sparse_chain<Coefficient_type, OSM::COLUMN> bnd(_K.d(i,q)) ;
-                        for (typename OSM::Sparse_chain<Coefficient_type, OSM::COLUMN>::const_iterator it = bnd.cbegin(); it != bnd.cend(); ++it)
+                        OSM::Sparse_chain<Coefficient_ring, OSM::COLUMN> bnd(_K.d(i,q)) ;
+                        for (typename OSM::Sparse_chain<Coefficient_ring, OSM::COLUMN>::const_iterator it = bnd.cbegin(); it != bnd.cend(); ++it)
                         {
                             const int c(it->first) ;
                             if (!_sub.at(q-1).isOn(c))
@@ -124,7 +124,7 @@ public:
      * \param[in] K A constant reference to the underlying complex.
      * \param[in] full Build full / empty masks (default: full).
      */
-    Sub_chain_complex_mask(const ComplexType& K, bool full=true) : _K(K)
+    Sub_chain_complex_mask(const ChainComplex& K, bool full=true) : _K(K)
     {
         _dim = K.dimension() ;
         _sub.resize(_dim+1) ;
@@ -152,7 +152,7 @@ public:
      * \param[in] cells A vector containing, in each dimension, a vector of cells indexes.
      * \param[in] close If this boolean is true, the faces of `cells` are also set to 1.
      */
-    Sub_chain_complex_mask(const ComplexType& K, const std::vector<std::vector<int> > &cells, bool close = true) : _K(K)
+    Sub_chain_complex_mask(const ChainComplex& K, const std::vector<std::vector<int> > &cells, bool close = true) : _K(K)
     {
         _dim = K.dimension() ;
         _sub.resize(_dim+1) ;

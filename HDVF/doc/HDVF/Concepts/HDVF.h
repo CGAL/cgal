@@ -133,10 +133,10 @@ public:
 /*!
  * \brief Type of underlying chain complex (a model of `AbstractChainComplex`).
  */
-typedef unspecified_type ComplexType;
+typedef unspecified_type Complex;
     
 /*! \brief Type of coefficients used to compute homology. */
-typedef ComplexType::Coefficient_type Coefficient_type;
+typedef Complex::Coefficient_ring Coefficient_ring;
 
 /*!
  * \brief Type of sparse chains (a model of `SparseChain`).

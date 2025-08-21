@@ -543,44 +543,44 @@ Let us point out that whatever the type of chain complex, cells are indexed alon
 
 - `Abstract_simplicial_chain_complex` (see section \ref secHDVFsimplicial_chain_complex) are built using the `Mesh_object_io` intermediate class from abstract simplices (vertices have no coordinates). Therefore, such complexes are usually computed from `.simp` files (a simple file format enumerating on each line vertices of simplices, see section secHDVFsimpFile):
     \code
-        using ComplexType = Abstract_simplicial_chain_complex<CoefficientType> ;
+        using Complex = Abstract_simplicial_chain_complex<CoefficientType> ;
         Mesh_object_io mesh ;
         mesh.read_simp(filename);
-        ComplexType complex(mesh);
+        Complex complex(mesh);
     \endcode
 - `Simplicial_chain_complex` are also built using the `Mesh_object_io` intermediate structure to import mesh files (`.off` format):
     \code
-        using ComplexType = Simplicial_chain_complex<CoefficientType> ;
+        using Complex = Simplicial_chain_complex<CoefficientType> ;
         Mesh_object_io mesh ;
         mesh.read_off(filename);
-        ComplexType complex(mesh);
+        Complex complex(mesh);
     \endcode
 - `Cubical_chain_complex` are built using the `Cub_object_io` intermediate structure by importing either simple `.cub` files (enumerating Khalimsky coordinates of cells, see section \ref secHDVFcubFile) or `.pgm` files.
     - For `.cub` files enumerating Khalimsky coordinates, cells are imported and their faces are added to produce a proper complex.
         \code
-            using ComplexType = Cubical_chain_complex<CoefficientType> ;
+            using Complex = Cubical_chain_complex<CoefficientType> ;
             Cub_object_io mesh ;
             mesh.read_cub(filename, true);
-            ComplexType complex(mesh);
+            Complex complex(mesh);
         \endcode
     - For `.pgm` files (ie.\ for binary images or volumes), two constructions are available for cubical complexes:
         - PRIMAL, encoding \f$3^d-1\f$-adjacency  (where cells are imported as such, see figure \cgalFigureRef{HDVF_primal_dual}, middle)
         \code
-            using ComplexType = Cubical_chain_complex<CoefficientType> ;
+            using Complex = Cubical_chain_complex<CoefficientType> ;
             Cub_object_io mesh ;
             // Read pgm file (store Khalimsky coordinates)
             mesh.read_pgm(filename, true);
             // Build the PRIMAL complex associated
-            ComplexType complex(mesh, CGAL::HDVF::ComplexType::PRIMAL);
+            Complex complex(mesh, CGAL::HDVF::Complex::PRIMAL);
         \endcode
         - DUAL, encoding \f$2d\f$-adjacency (where cubes produce vertices... see figure \cgalFigureRef{HDVF_primal_dual} right)
         \code
-            using ComplexType = Cubical_chain_complex<CoefficientType> ;
+            using Complex = Cubical_chain_complex<CoefficientType> ;
             Cub_object_io mesh ;
             // Read pgm file (store voxel coordinates)
             mesh.read_pgm(filename, false);
             // Build the DUAL complex associated
-            ComplexType complex(mesh, CGAL::HDVF::ComplexType::DUAL);
+            Complex complex(mesh, CGAL::HDVF::Complex::DUAL);
         \endcode
 
 \cgalFigureBegin{HDVF_primal_dual,HDVF_primal_dual.png}
@@ -614,8 +614,8 @@ Example of `cub` file. <B>Left:</B> a cubical complex; <B>Right:</B> associated 
 
 An empty HDVF is built from a chain complex:
 \code
-    using HDVFType = Hdvf<CoefficientType, ComplexType> ;
-    HDVFType hdvf(complex, OPT_FULL) ;
+    using HDVF_type = Hdvf<CoefficientType, Complex> ;
+    HDVF_type hdvf(complex, OPT_FULL) ;
 \endcode
 
 Several HDVF options are available:
@@ -675,7 +675,7 @@ How to extract (co)homological information then? Various solutions and output ar
         // Labels extraction
         vector<vector<int> > labels = hdvf.psc_labels() ;
         // VTK export
-        ComplexType::chain_complex_to_vtk(complex, filename, &labels) ;
+        Complex::chain_complex_to_vtk(complex, filename, &labels) ;
     \endcode
 - **Betti numbers**:
     For a perfect HDVF, the Betti number in dimension \f$q\f$ equals \f$|C_q|\f$, the number of critical cells.
@@ -692,13 +692,13 @@ How to extract (co)homological information then? Various solutions and output ar
     Each critical cell \f$\gamma\f$ bears an associated homology generator: \f$g(\gamma)\f$ and cohomology generator: \f$f^*(\gamma)\f$.
     - Generators associated to \f$\gamma\f$ (index `id`, dimension `q`) can be extracted as column chains (ie.\ column `Sparse_chain`):
     \code
-        HDVFType::Column_chain hom_generator(hdvf.homology_chain(id, q)) ;
-        HDVFType::Column_chain cohom_generator(hdvf.cohomology_chain(id, q)) ;
+        HDVF_type::Column_chain hom_generator(hdvf.homology_chain(id, q)) ;
+        HDVF_type::Column_chain cohom_generator(hdvf.cohomology_chain(id, q)) ;
     \endcode
     These chains can be visited as described in section \ref secHDVFmatrixChain.
     - The HDVF package also provides a vtk exporter for such chains (cells with a non zero coefficient are exported). For instance:
     \code
-        ComplexType::chain_complex_chain_to_vtk(complex, filename, hom_generator, q, id) ;
+        Complex::chain_complex_chain_to_vtk(complex, filename, hom_generator, q, id) ;
     \endcode
     If `id` is provided, a `Label` integer property is added to the vtk file (0 for the cell `id`, 2 for other cells).
 - **Reduction maps**
@@ -706,7 +706,7 @@ How to extract (co)homological information then? Various solutions and output ar
 - **Automated vtk export**
     In order to ease `vtk` export, an "automated" method `hdvf_geometric_chain_complex_output_vtk` is also provided, exporting in distinct files, the HDVF flags and all the generators computed (homology / cohomology depending of the HDVF option):
     \code
-        CGAL::HDVF::hdvf_geometric_chain_complex_output_vtk<CoefficientType, ComplexType>(hdvf, complex, outfile_root, co_faces) ;
+        CGAL::HDVF::hdvf_geometric_chain_complex_output_vtk<CoefficientType, Complex>(hdvf, complex, outfile_root, co_faces) ;
     \endcode
     where `outfile_root` is the root of the `.vtk` file names and `co_faces` is a %Boolean (if `true`, cohomology generators are represented through their cofaces).
 - HDVFs and reductions can also be saved / loaded to `.hdvf` files (a simple text file format described in section \ref secHDVFHDVF_format) with `insert_hdvf_reduction()` and `extract_hdvf_reduction()`.

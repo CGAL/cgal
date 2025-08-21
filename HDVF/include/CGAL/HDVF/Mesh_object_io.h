@@ -201,8 +201,8 @@ class Mesh_object_io
 {
 private:
     // Write vtk file
-    template <typename CoefficientType>
-    void write_vtk(const std::string &filename, const std::vector<Io_node_type> &nodes, const std::vector<Io_chain_type> &chains, const std::vector<CoefficientType> *labels=NULL, const std::string scalar_type="none")
+    template <typename CoefficientRing>
+    void write_vtk(const std::string &filename, const std::vector<Io_node_type> &nodes, const std::vector<Io_chain_type> &chains, const std::vector<CoefficientRing> *labels=NULL, const std::string scalar_type="none")
     {
         bool with_scalars = (labels != NULL) ;
         // Load ...
@@ -242,7 +242,7 @@ private:
         out << "CELLS " << ncells_tot << " " << size_cells_tot << std::endl ;
         // Output cells
         std::vector<size_t> types ;
-        std::vector<CoefficientType> scalars ;
+        std::vector<CoefficientRing> scalars ;
         for (size_t i = 0; i<chains.size(); ++i)
         {
             const Io_chain_type cc = chains.at(i) ;
@@ -274,7 +274,7 @@ private:
             out << "CELL_DATA " << ncells_tot << std::endl ;
             out << "SCALARS CriticalCellsId " << scalar_type << " 1" << std::endl ;
             out << "LOOKUP_TABLE default" << std::endl ;
-            for (CoefficientType s : scalars)
+            for (CoefficientRing s : scalars)
                 out << s << " " ;
             out << std::endl ;
         }

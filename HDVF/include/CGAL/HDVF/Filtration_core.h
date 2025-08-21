@@ -51,16 +51,16 @@ namespace HDVF {
 
  \cgalModels{Filtration}
 
- \tparam ComplexType a model of the `AbstractChainComplex` concept (type of the underlying chain complex).
- \tparam DegreeType the scalar type of degrees.
+ \tparam ChainComplex a model of the `AbstractChainComplex` concept (type of the underlying chain complex).
+ \tparam Degree the scalar type of degrees.
  */
 
-template <typename ComplexType, typename DegreeType>
+template <typename ChainComplex, typename Degree>
 class Filtration_core
 {
 public:
     /*! \brief Type of coefficients used to compute homology. */
-    typedef ComplexType::Coefficient_type Coefficient_type;
+    typedef ChainComplex::Coefficient_ring Coefficient_ring;
     
     /*! \brief Type for indexing uniquely a cell.
      * - First element of the pair: index of the cell.
@@ -72,17 +72,17 @@ public:
      */
     typedef struct {
         Cell cell_dim ;
-        DegreeType degree ;
+        Degree degree ;
         size_t time;
     } Filtration_iter_value ;
 
 protected:
     /** \brief Constant reference to the underlying chain complex. */
-    const ComplexType& _K ;
+    const ChainComplex& _K ;
     /** \brief Vector of cells of the filtration (full ordering of cells). */
     std::vector<Cell> _filtration ;
     /** \brief Vector of degrees of cells along the filtration. */
-    std::vector<DegreeType> _deg ;
+    std::vector<Degree> _deg ;
 
     /** \brief Map from cells to their index in the filtration. */
     std::map<Cell,std::size_t> _cell_to_t ;
@@ -90,21 +90,21 @@ protected:
     /*!
      Type of column-major sparse matrices
      */
-    typedef CGAL::OSM::Sparse_matrix<Coefficient_type,CGAL::OSM::COLUMN> Column_matrix ;
+    typedef CGAL::OSM::Sparse_matrix<Coefficient_ring,CGAL::OSM::COLUMN> Column_matrix ;
 
     /*!
      Type of row-major sparse matrices
      */
-    typedef CGAL::OSM::Sparse_matrix<Coefficient_type,CGAL::OSM::ROW> Row_matrix ;
+    typedef CGAL::OSM::Sparse_matrix<Coefficient_ring,CGAL::OSM::ROW> Row_matrix ;
     /*!
      Type of column-major chains
      */
-    typedef CGAL::OSM::Sparse_chain<Coefficient_type,CGAL::OSM::COLUMN> Column_chain ;
+    typedef CGAL::OSM::Sparse_chain<Coefficient_ring,CGAL::OSM::COLUMN> Column_chain ;
 
     /*!
      Type of row-major chains
      */
-    typedef CGAL::OSM::Sparse_chain<Coefficient_type,CGAL::OSM::ROW> Row_chain ;
+    typedef CGAL::OSM::Sparse_chain<Coefficient_ring,CGAL::OSM::ROW> Row_chain ;
 public:
     /*! \brief Filtration_core default constructor
      *
@@ -112,7 +112,7 @@ public:
      *
      *\param[in] K A chain complex (a model of `AbstractChainComplex`), the underlying chain complex of the filtration.
      */
-    Filtration_core(const ComplexType& K) : _K(K)
+    Filtration_core(const ChainComplex& K) : _K(K)
     {}
 
     /*! \brief Constructor from a vector of cells (ordering of cells) and an associated vector of degrees.
@@ -122,7 +122,7 @@ public:
      * \param[in] filtration An ordering of the cells of `K` encoded as a vector of its cells.
      * \param[in] deg The (increasing) vector of cells degrees.
      */
-    Filtration_core(const ComplexType& K, const std::vector<Cell>& filtration, const std::vector<DegreeType>& deg) : _K(K), _filtration(filtration), _deg(deg)
+    Filtration_core(const ChainComplex& K, const std::vector<Cell>& filtration, const std::vector<Degree>& deg) : _K(K), _filtration(filtration), _deg(deg)
     {
         if (!is_valid())
             throw ("Invalid filtration, Filtration_core constructor failed");
@@ -227,7 +227,7 @@ public:
 
     /*! \brief Gets the degree of the `i`th element of the filtration.
      */
-    DegreeType degree (std::size_t i) const { return _deg.at(i); }
+    Degree degree (std::size_t i) const { return _deg.at(i); }
 
     // Output filtration
     /*! \brief Overload of the `<<`operator for filtrations.
@@ -280,8 +280,8 @@ protected:
     friend class Hdvf_persistence ;
 };
 
-template <typename ComplexType, typename DegreeType>
-void Filtration_core<ComplexType, DegreeType>::build_filtration_structure()
+template <typename ChainComplex, typename Degree>
+void Filtration_core<ChainComplex, Degree>::build_filtration_structure()
 {
     for (std::size_t i = 0; i<_filtration.size(); ++i)
     {
@@ -291,8 +291,8 @@ void Filtration_core<ComplexType, DegreeType>::build_filtration_structure()
     }
 }
 
-template <typename ComplexType, typename DegreeType>
-bool Filtration_core<ComplexType, DegreeType>::is_valid() const
+template <typename ChainComplex, typename Degree>
+bool Filtration_core<ChainComplex, Degree>::is_valid() const
 {
     bool valid = true ;
     for (std::size_t i=0; i<_filtration.size() && valid; ++i)

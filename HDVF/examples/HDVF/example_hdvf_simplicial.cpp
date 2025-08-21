@@ -15,8 +15,8 @@ typedef CGAL::HDVF::Z2 CoefficientTypeX;
 int main(int argc, char **argv)
 {
 #if 1
-    using ComplexType = CGAL::HDVF::Simplicial_chain_complex<CoefficientTypeX> ;
-    using HDVFType = CGAL::HDVF::Hdvf<ComplexType> ;
+    using Complex = CGAL::HDVF::Simplicial_chain_complex<CoefficientTypeX> ;
+    using HDVF_type = CGAL::HDVF::Hdvf<Complex> ;
 
     if (argc != 2)
     {
@@ -31,12 +31,12 @@ int main(int argc, char **argv)
         mesh.print_infos();
 
         // Build simplicial chain complex
-        ComplexType complex(mesh, mesh.get_nodes());
+        Complex complex(mesh, mesh.get_nodes());
 
         std::cout << complex;
 
         // Build empty HDVF
-        HDVFType hdvf(complex, CGAL::HDVF::OPT_FULL) ;
+        HDVF_type hdvf(complex, CGAL::HDVF::OPT_FULL) ;
 
         // Compute a perfect HDVF
         hdvf.compute_perfect_hdvf();

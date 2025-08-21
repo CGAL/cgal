@@ -24,7 +24,7 @@ namespace CGAL {
 namespace HDVF {
 
 // Forward declaration of SimpComplexTools
-template<typename CoefficientType> class Duality_simplicial_complex_tools ;
+template<typename CoefficientRing> class Duality_simplicial_complex_tools ;
 
 /*!
  \ingroup PkgHDVFAlgorithmClasses
@@ -33,11 +33,11 @@ template<typename CoefficientType> class Duality_simplicial_complex_tools ;
 
  \cgalModels{GeometricChainComplex}
 
- \tparam CoefficientType a model of the `Ring` concept.
+ \tparam CoefficientRing a model of the `Ring` concept.
  */
 
-template<typename CoefficientType>
-class Simplicial_chain_complex : public Abstract_simplicial_chain_complex<CoefficientType> {
+template<typename CoefficientRing>
+class Simplicial_chain_complex : public Abstract_simplicial_chain_complex<CoefficientRing> {
 public:
     /** \brief Type of vertices coordinates */
     typedef std::vector<double> Point ;
@@ -63,7 +63,7 @@ public:
      *
      * Builds a simplicial complex from a Mesh_object_io and saves the vector of vertices coordinates.
      */
-    Simplicial_chain_complex(const Mesh_object_io& mesh, std::vector<Point> coords) : Abstract_simplicial_chain_complex<CoefficientType>(mesh), _coords(coords) {} ;
+    Simplicial_chain_complex(const Mesh_object_io& mesh, std::vector<Point> coords) : Abstract_simplicial_chain_complex<CoefficientRing>(mesh), _coords(coords) {} ;
 
     /**
      * \brief Assignment operator for simplicial complexes.
@@ -74,13 +74,13 @@ public:
      */
     Simplicial_chain_complex& operator= (const Simplicial_chain_complex& complex)
     {
-        this->Abstract_simplicial_chain_complex<CoefficientType>::operator=(complex) ;
+        this->Abstract_simplicial_chain_complex<CoefficientRing>::operator=(complex) ;
         _coords = complex._coords ;
         return *this ;
     }
 
     /** \brief Friend class `Duality_simplicial_complex_tools` computes the complementary simplicial complex for Alexander duality */
-    friend Duality_simplicial_complex_tools<CoefficientType> ;
+    friend Duality_simplicial_complex_tools<CoefficientRing> ;
 
     /** \brief Gets the vector of vertices coordinates  */
     const std::vector<Point>& get_vertices_coords() const
@@ -119,7 +119,7 @@ public:
     template <typename LabelType = int>
     static void chain_complex_to_vtk(const Simplicial_chain_complex &K, const std::string &filename, const std::vector<std::vector<LabelType> > *labels=NULL, std::string label_type_name = "int")
     {
-        typedef Simplicial_chain_complex<CoefficientType> ComplexType;
+        typedef Simplicial_chain_complex<CoefficientRing> ChainComplex;
         if (K._coords.size() != K.number_of_cells(0))
         {
             std::cerr << "SimpComplex_to_vtk. Error, wrong number of points provided.\n";
@@ -145,7 +145,7 @@ public:
         // Points
         size_t nnodes = K._coords.size() ;
         out << "POINTS " << nnodes << " double" << std::endl ;
-        const std::vector<ComplexType::Point>& coords(K.get_vertices_coords()) ;
+        const std::vector<ChainComplex::Point>& coords(K.get_vertices_coords()) ;
         for (size_t n = 0; n < nnodes; ++n)
         {
             std::vector<double> p(coords.at(n)) ;
@@ -182,7 +182,7 @@ public:
                     for (typename Simplex::const_iterator it = verts.cbegin(); it != verts.cend(); ++it)
                         out << *it << " " ;
                     out << std::endl ;
-                    types.push_back(ComplexType::VTK_simptypes.at(q)) ;
+                    types.push_back(ChainComplex::VTK_simptypes.at(q)) ;
                     if (with_scalars)
                     {
                         scalars.push_back((*labels).at(q).at(id)) ;
@@ -228,19 +228,19 @@ public:
      * \param[in] q Dimension of the cells of the chain.
      * \param[in] cellId If cellID is not -1 (that is MAX_SIZE_T), labels are exported to distinguish cells of the chain (label 2) from cellId cell (label 0).
      */
-    static void chain_complex_chain_to_vtk(const Simplicial_chain_complex &K, const std::string &filename, const OSM::Sparse_chain<CoefficientType, OSM::COLUMN>& chain, int q, size_t cellId = -1) ;
+    static void chain_complex_chain_to_vtk(const Simplicial_chain_complex &K, const std::string &filename, const OSM::Sparse_chain<CoefficientRing, OSM::COLUMN>& chain, int q, size_t cellId = -1) ;
 };
 
 // Initialization of static VTK_simptypes
-template <typename CoefficientType> const
-std::vector<int> Simplicial_chain_complex<CoefficientType>::VTK_simptypes({1, 3, 5, 10});
+template <typename CoefficientRing> const
+std::vector<int> Simplicial_chain_complex<CoefficientRing>::VTK_simptypes({1, 3, 5, 10});
 
 
 // chain_complex_chain_to_vtk
-template <typename CoefficientType>
-void Simplicial_chain_complex<CoefficientType>::chain_complex_chain_to_vtk(const Simplicial_chain_complex &K, const std::string &filename, const OSM::Sparse_chain<CoefficientType, OSM::COLUMN>& chain, int q, size_t cellId)
+template <typename CoefficientRing>
+void Simplicial_chain_complex<CoefficientRing>::chain_complex_chain_to_vtk(const Simplicial_chain_complex &K, const std::string &filename, const OSM::Sparse_chain<CoefficientRing, OSM::COLUMN>& chain, int q, size_t cellId)
 {
-    typedef Simplicial_chain_complex<CoefficientType> ComplexType ;
+    typedef Simplicial_chain_complex<CoefficientRing> ChainComplex ;
     if (K._coords.size() != K.number_of_cells(0))
     {
         std::cerr << "SimpComplex_chain_to_vtk. Error, wrong number of points provided.\n";
@@ -266,7 +266,7 @@ void Simplicial_chain_complex<CoefficientType>::chain_complex_chain_to_vtk(const
     // Points
     size_t nnodes = K._coords.size() ;
     out << "POINTS " << nnodes << " double" << std::endl ;
-    const std::vector<ComplexType::Point>& coords(K.get_vertices_coords()) ;
+    const std::vector<ChainComplex::Point>& coords(K.get_vertices_coords()) ;
     for (size_t n = 0; n < nnodes; ++n)
     {
         std::vector<double> p(coords.at(n)) ;
@@ -310,7 +310,7 @@ void Simplicial_chain_complex<CoefficientType>::chain_complex_chain_to_vtk(const
                     for (typename Simplex::const_iterator it = verts.cbegin(); it != verts.cend(); ++it)
                         out << *it << " " ;
                     out << std::endl ;
-                    types.push_back(ComplexType::VTK_simptypes.at(q)) ;
+                    types.push_back(ChainComplex::VTK_simptypes.at(q)) ;
                     if (with_scalars)
                     {
                         ids.push_back(id) ;

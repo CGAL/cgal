@@ -31,8 +31,8 @@
 //#define SCALAR 5
 
 
-template <typename MeshType, typename ComplexType>
-void mesh_complex_output(const MeshType& mesh, const ComplexType& L, const CGAL::HDVF::Sub_chain_complex_mask<ComplexType>& K, const Options& options)
+template <typename MeshType, typename Complex>
+void mesh_complex_output(const MeshType& mesh, const Complex& L, const CGAL::HDVF::Sub_chain_complex_mask<Complex>& K, const Options& options)
 {
     if (options.with_output)
     {
@@ -58,8 +58,8 @@ inline std::ostream& dual_pairs_output(const std::vector<CGAL::HDVF::Cell_pair>&
     return out ;
 }
 
-template <typename ComplexType>
-void dual_HDVF_pair (CGAL::HDVF::Hdvf_duality<ComplexType>& dual_hdvf, const Options &options)
+template <typename Complex>
+void dual_HDVF_pair (CGAL::HDVF::Hdvf_duality<Complex>& dual_hdvf, const Options &options)
 {
     // Compute pairing
     std::vector<CGAL::HDVF::Cell_pair> pairs = dual_hdvf.compute_pairing_hdvf() ;
@@ -83,14 +83,14 @@ void dual_HDVF_pair (CGAL::HDVF::Hdvf_duality<ComplexType>& dual_hdvf, const Opt
     }
 }
 
-template <typename ComplexType>
-CGAL::HDVF::Hdvf_duality<ComplexType>& dual_HDVF_comput (const ComplexType& L,  CGAL::HDVF::Sub_chain_complex_mask<ComplexType>& K, const Options &options)
+template <typename Complex>
+CGAL::HDVF::Hdvf_duality<Complex>& dual_HDVF_comput (const Complex& L,  CGAL::HDVF::Sub_chain_complex_mask<Complex>& K, const Options &options)
 {
-    using Coefficient_type = typename ComplexType::Coefficient_type;
-    using HDVFType = CGAL::HDVF::Hdvf_duality<ComplexType> ;
-    using SubCCType = CGAL::HDVF::Sub_chain_complex_mask<ComplexType> ;
+    using Coefficient_ring = typename Complex::Coefficient_ring;
+    using HDVF_type = CGAL::HDVF::Hdvf_duality<Complex> ;
+    using SubCCType = CGAL::HDVF::Sub_chain_complex_mask<Complex> ;
 
-    HDVFType& hdvf(*(new HDVFType(L, K, options.HDVF_opt)));
+    HDVF_type& hdvf(*(new HDVF_type(L, K, options.HDVF_opt)));
 
     std::cout << "----> START computing dual HDVF" << std::endl ;
     if (options.random)
@@ -123,12 +123,12 @@ CGAL::HDVF::Hdvf_duality<ComplexType>& dual_HDVF_comput (const ComplexType& L,  
 }
 
 
-template <typename Coefficient_type>
+template <typename Coefficient_ring>
 void main_code (const Options &options)
 {
 #ifndef CUST_FILTRATION
     // Standard lower star filtration along x,y or z
-    using DegreeType = double ;
+    using Degree = double ;
 #else
     // TODO
 #endif
@@ -136,20 +136,20 @@ void main_code (const Options &options)
     /// SIMP format
     if (options.in_format == InputFormat::SIMP)
     {
-//        using ComplexType = AbstractSimpComplex<Coefficient_type>  ;
-//        using HDVFType = HDVF<Coefficient_type, ComplexType> ;
+//        using Complex = AbstractSimpComplex<Coefficient_ring>  ;
+//        using HDVF_type = HDVF<Coefficient_ring, Complex> ;
 //
 //        // MeshObject
 //        MeshObject mesh ;
 //        mesh.read_simp(options.in_file) ;
 //
 //        // Complex
-//        ComplexType complex(mesh);
+//        Complex complex(mesh);
 //
-//        mesh_complex_output<MeshObject, ComplexType>(mesh, complex, options) ;
+//        mesh_complex_output<MeshObject, Complex>(mesh, complex, options) ;
 //
 //        // HDVF computation, export, output
-//        HDVFType hdvf(HDVF_comput<Coefficient_type,ComplexType>(complex, options)) ;
+//        HDVF_type hdvf(HDVF_comput<Coefficient_ring,Complex>(complex, options)) ;
 //
 //        // Export to vtk
 //        // None for SIMP format
@@ -159,31 +159,31 @@ void main_code (const Options &options)
     /// OFF format
     else if (options.in_format == InputFormat::OFF)
     {
-        using ComplexType = CGAL::HDVF::Simplicial_chain_complex<Coefficient_type> ;
-        using HDVFType = CGAL::HDVF::Hdvf_duality<ComplexType> ;
-        using ToolsType = CGAL::HDVF::Duality_simplicial_complex_tools<Coefficient_type> ;
-        using SubCCType = CGAL::HDVF::Sub_chain_complex_mask<ComplexType> ;
+        using Complex = CGAL::HDVF::Simplicial_chain_complex<Coefficient_ring> ;
+        using HDVF_type = CGAL::HDVF::Hdvf_duality<Complex> ;
+        using ToolsType = CGAL::HDVF::Duality_simplicial_complex_tools<Coefficient_ring> ;
+        using SubCCType = CGAL::HDVF::Sub_chain_complex_mask<Complex> ;
 
         // MeshObject
         CGAL::HDVF::Mesh_object_io mesh ;
         mesh.read_off(options.in_file) ;
 
         // Complex
-        ComplexType* complex = new ComplexType(mesh, mesh.get_nodes());
+        Complex* complex = new Complex(mesh, mesh.get_nodes());
 
         // Build L (bounding sphere meshed with tetgen), K and L-K
 
         typename ToolsType::TripleRes t(ToolsType::simplicial_chain_complex_bb(*complex)) ;
         delete complex ;
-        ComplexType& L(t.L) ;
+        Complex& L(t.L) ;
         SubCCType& K(t.K) ;
 
         // Output/export mesh and complex
 
-        mesh_complex_output<CGAL::HDVF::Mesh_object_io, ComplexType>(mesh, L, K, options) ;
+        mesh_complex_output<CGAL::HDVF::Mesh_object_io, Complex>(mesh, L, K, options) ;
 
         // HDVF computation, export, output
-        HDVFType& hdvf(dual_HDVF_comput<ComplexType>(L, K, options)) ;
+        HDVF_type& hdvf(dual_HDVF_comput<Complex>(L, K, options)) ;
 
         // Export to vtk
         if (options.with_vtk_export)
@@ -202,18 +202,18 @@ void main_code (const Options &options)
         }
 
         // Compute pairing
-        dual_HDVF_pair<ComplexType>(hdvf, options) ;
+        dual_HDVF_pair<Complex>(hdvf, options) ;
     }
     // CubComplex
     else if ((options.in_format == InputFormat::PGM) || (options.in_format == InputFormat::CUB))
     {
-        using ComplexType = CGAL::HDVF::Cubical_chain_complex<Coefficient_type> ;
-        using HDVFType = CGAL::HDVF::Hdvf_duality<ComplexType> ;
-        using SubCCType = CGAL::HDVF::Sub_chain_complex_mask<ComplexType> ;
-        using ToolsType = CGAL::HDVF::Duality_cubical_complex_tools<Coefficient_type> ;
+        using Complex = CGAL::HDVF::Cubical_chain_complex<Coefficient_ring> ;
+        using HDVF_type = CGAL::HDVF::Hdvf_duality<Complex> ;
+        using SubCCType = CGAL::HDVF::Sub_chain_complex_mask<Complex> ;
+        using ToolsType = CGAL::HDVF::Duality_cubical_complex_tools<Coefficient_ring> ;
 
         CGAL::HDVF::Cub_object_io mesh ;
-        typename ComplexType::typeComplexCube primal_dual(ComplexType::PRIMAL) ;
+        typename Complex::typeComplexCube primal_dual(Complex::PRIMAL) ;
         if (options.primal)
         {
             if (options.in_format == InputFormat::PGM)
@@ -227,7 +227,7 @@ void main_code (const Options &options)
                 mesh.read_pgm(options.in_file, false) ; // Read with pixel coordinates (for dual)
             else
                 mesh.read_cub(options.in_file, false) ; // Read with pixel coordinates (for dual)
-            primal_dual = ComplexType::DUAL ;
+            primal_dual = Complex::DUAL ;
         }
 
         // Frame (add 1 voxel around data)
@@ -237,21 +237,21 @@ void main_code (const Options &options)
         }
 
         // Complex
-        ComplexType* complex = new ComplexType(mesh, primal_dual);
+        Complex* complex = new Complex(mesh, primal_dual);
 
         // Build L, K and L-K
 
-        std::pair<ComplexType&, SubCCType&> p(ToolsType::cubical_chain_complex_bb(*complex)) ;
+        std::pair<Complex&, SubCCType&> p(ToolsType::cubical_chain_complex_bb(*complex)) ;
         delete complex ;
-        ComplexType &L(p.first) ;
+        Complex &L(p.first) ;
         SubCCType &K(p.second) ;
 
         // Output/export mesh and complex
 
-        mesh_complex_output<CGAL::HDVF::Cub_object_io, ComplexType>(mesh, L, K, options) ;
+        mesh_complex_output<CGAL::HDVF::Cub_object_io, Complex>(mesh, L, K, options) ;
 
         // HDVF computation, export, output
-        HDVFType& hdvf(dual_HDVF_comput<ComplexType>(L, K, options)) ;
+        HDVF_type& hdvf(dual_HDVF_comput<Complex>(L, K, options)) ;
 
         // Export to vtk
         if (options.with_vtk_export)
@@ -270,7 +270,7 @@ void main_code (const Options &options)
         }
 
         // Compute pairing
-        dual_HDVF_pair<ComplexType>(hdvf, options) ;
+        dual_HDVF_pair<Complex>(hdvf, options) ;
     }
 }
 
@@ -288,24 +288,24 @@ int main(int argc, char **argv)
         Options options(read_arguments_hdvf(argc, argv)) ;
         std::cout << "options:" << std::endl << options ;
 
-        // ----- Definition of the Coefficient_type
+        // ----- Definition of the Coefficient_ring
 #ifndef SCALAR
         if (options.scalar == 0)
         {
-            using Coefficient_type = int ;
-            main_code<Coefficient_type>(options) ;
+            using Coefficient_ring = int ;
+            main_code<Coefficient_ring>(options) ;
         }
         else if (options.scalar == 2)
         {
-            using Coefficient_type = CGAL::HDVF::Zp<2,int8_t> ;
-            main_code<Coefficient_type>(options) ;
+            using Coefficient_ring = CGAL::HDVF::Zp<2,int8_t> ;
+            main_code<Coefficient_ring>(options) ;
         }
         else
         {
             std::cerr << "Z" << options.scalar << " not instantiated, use the #define at line 27" << std::endl ;
         }
 #else
-        typedef CGAL::HDVF::Zp<SCALAR> Coefficient_type;
+        typedef CGAL::HDVF::Zp<SCALAR> Coefficient_ring;
 #endif
     }
 

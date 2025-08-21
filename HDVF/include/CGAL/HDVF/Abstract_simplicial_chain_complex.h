@@ -25,7 +25,7 @@ namespace CGAL {
 namespace HDVF {
 
 // Forward declaration of SimpComplexTools
-template<typename CoefficientType> class Duality_simplicial_complex_tools ;
+template<typename CoefficientRing> class Duality_simplicial_complex_tools ;
 
 /*!
  \ingroup PkgHDVFAlgorithmClasses
@@ -46,15 +46,15 @@ template<typename CoefficientType> class Duality_simplicial_complex_tools ;
 
  \cgalModels{AbstractChainComplex}
 
- \tparam CoefficientType a model of the `EuclideanRing` concept.
+ \tparam CoefficientRing a model of the `Ring` concept.
  */
 
 
-template<typename CoefficientType>
+template<typename CoefficientRing>
 class Abstract_simplicial_chain_complex {
 public:
     /*! \brief Type of coefficients used to compute homology. */
-    typedef CoefficientType Coefficient_type;
+    typedef CoefficientRing Coefficient_ring;
     
     /**
      * \brief %Default constructor (empty simplicial complex of dimension `q`).
@@ -73,11 +73,11 @@ public:
     Abstract_simplicial_chain_complex(const Mesh_object_io& mesh);
 
     /** \brief Type of column-major chains */
-    typedef CGAL::OSM::Sparse_chain<CoefficientType, CGAL::OSM::COLUMN> Column_chain;
+    typedef CGAL::OSM::Sparse_chain<CoefficientRing, CGAL::OSM::COLUMN> Column_chain;
     /** \brief Type of row-major chains */
-    typedef CGAL::OSM::Sparse_chain<CoefficientType, CGAL::OSM::ROW> Row_chain ;
+    typedef CGAL::OSM::Sparse_chain<CoefficientRing, CGAL::OSM::ROW> Row_chain ;
     /** \brief Type of column-major sparse matrices */
-    typedef CGAL::OSM::Sparse_matrix<CoefficientType, CGAL::OSM::COLUMN> Column_matrix;
+    typedef CGAL::OSM::Sparse_matrix<CoefficientRing, CGAL::OSM::COLUMN> Column_matrix;
 
 
     /**
@@ -306,12 +306,12 @@ private:
 };
 
 // Initialization of _id_generator
-template <typename CoefficientType>
-size_t Abstract_simplicial_chain_complex<CoefficientType>::_id_generator(0);
+template <typename CoefficientRing>
+size_t Abstract_simplicial_chain_complex<CoefficientRing>::_id_generator(0);
 
 //constructors
-template<typename CoefficientType>
-Abstract_simplicial_chain_complex<CoefficientType>::Abstract_simplicial_chain_complex(int q) : _complex_id(_id_generator++) {
+template<typename CoefficientRing>
+Abstract_simplicial_chain_complex<CoefficientRing>::Abstract_simplicial_chain_complex(int q) : _complex_id(_id_generator++) {
     // Initialize attributes
     _dim = q;
 
@@ -323,8 +323,8 @@ Abstract_simplicial_chain_complex<CoefficientType>::Abstract_simplicial_chain_co
     _d.resize(_dim+1);
 }
 
-template<typename CoefficientType>
-Abstract_simplicial_chain_complex<CoefficientType>::Abstract_simplicial_chain_complex(const Mesh_object_io& mesh) : _complex_id(_id_generator++) {
+template<typename CoefficientRing>
+Abstract_simplicial_chain_complex<CoefficientRing>::Abstract_simplicial_chain_complex(const Mesh_object_io& mesh) : _complex_id(_id_generator++) {
     // Initialize attributes
 
     _dim = std::abs(mesh.dim);
@@ -346,8 +346,8 @@ Abstract_simplicial_chain_complex<CoefficientType>::Abstract_simplicial_chain_co
 }
 
 // Recursive insertion method
-template<typename CoefficientType>
-void Abstract_simplicial_chain_complex<CoefficientType>::insert_simplex(const Simplex& tau) {
+template<typename CoefficientRing>
+void Abstract_simplicial_chain_complex<CoefficientRing>::insert_simplex(const Simplex& tau) {
     int q = tau.dimension();
     if (q == -1) return;
 
@@ -365,8 +365,8 @@ void Abstract_simplicial_chain_complex<CoefficientType>::insert_simplex(const Si
 }
 
 // calculate _d boundary matrix
-template<typename CoefficientType>
-void Abstract_simplicial_chain_complex<CoefficientType>::calculate_d(int dim) const {
+template<typename CoefficientRing>
+void Abstract_simplicial_chain_complex<CoefficientRing>::calculate_d(int dim) const {
     size_t nb_lignes = (dim == 0) ? 0 : _nb_cells[dim - 1];
     _d[dim] = Column_matrix(nb_lignes, _nb_cells[dim]);
 
@@ -399,8 +399,8 @@ void Abstract_simplicial_chain_complex<CoefficientType>::calculate_d(int dim) co
 }
 
 // Method to display the complex's information
-template<typename CoefficientType>
-std::ostream& Abstract_simplicial_chain_complex<CoefficientType>::print_complex(std::ostream& out) const {
+template<typename CoefficientRing>
+std::ostream& Abstract_simplicial_chain_complex<CoefficientRing>::print_complex(std::ostream& out) const {
     out << "Complex dimension: " << _dim << std::endl;
 
     // Total number of cells
@@ -427,8 +427,8 @@ std::ostream& Abstract_simplicial_chain_complex<CoefficientType>::print_complex(
     return out ;
 }
 
-template <typename CoefficientType>
-std::ostream& operator<< (std::ostream& out, const Abstract_simplicial_chain_complex<CoefficientType>& complex)
+template <typename CoefficientRing>
+std::ostream& operator<< (std::ostream& out, const Abstract_simplicial_chain_complex<CoefficientRing>& complex)
 {
     return complex.print_complex(out);
 }

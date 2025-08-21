@@ -28,7 +28,7 @@ public:
     /*!
      * \brief Type of coefficients stored in the matrix (a model of `Ring`).
      */
-    typedef Ring CoefficientType;
+    typedef Ring CoefficientRing;
 
     /*!
      * \brief Matrix and chain type (either OSM::ROW or OSM::COLUMN).
@@ -74,7 +74,7 @@ public:
      *
      * Assign to other chain coefficient-wise, equivalent to copying it.
      *
-     * SparseChain must have the same `CoefficientType`.
+     * SparseChain must have the same `CoefficientRing`.
      */
     SparseChain& operator=(const SparseChain &other);
 
@@ -149,7 +149,7 @@ public:
      * \brief Adds two chains together.
      *
      * Add two chains and return the result in a new matrix.
-     * Chains must have the same `CoefficientType` and the same `ChainTypeFlag`.
+     * Chains must have the same `CoefficientRing` and the same `ChainTypeFlag`.
      */
     friend Sparse_chain operator+(const Sparse_chain &first, const Sparse_chain &second);
 
@@ -157,48 +157,48 @@ public:
      * \brief Subtracts a chain from another chain.
      *
      * Subtract two chains and return the result in a new matrix.
-     * Chains must have the same `CoefficientType` and the same `ChainTypeFlag`.
+     * Chains must have the same `CoefficientRing` and the same `ChainTypeFlag`.
      */
     friend Sparse_chain operator-(const Sparse_chain &first, const Sparse_chain &second);
 
     /*!
      * \brief Applies multiplication on each coefficient.
      */
-    friend Sparse_chain operator*(const CoefficientType& lambda, const Sparse_chain &chain);
+    friend Sparse_chain operator*(const CoefficientRing& lambda, const Sparse_chain &chain);
 
     /*!
      * \brief Applies multiplication on each coefficient.
      */
-    friend Sparse_chain operator*(const Sparse_chain &_chain, const CoefficientType& lambda);
+    friend Sparse_chain operator*(const Sparse_chain &_chain, const CoefficientRing& lambda);
 
     /*!
      * \brief Performs matrix multiplication between two chains (COLUMN x ROW) and return a COLUMN matrix.
      *
      * Generate a column-based matrix from the matrix multiplication and return it.
-     * Chains must have the same `CoefficientType`.
+     * Chains must have the same `CoefficientRing`.
      */
-    friend Sparse_matrix<CoefficientType, COLUMN> operator*(const Sparse_chain<CoefficientType, COLUMN> &column, const Sparse_chain<CoefficientType, ROW> &row);
+    friend Sparse_matrix<CoefficientRing, COLUMN> operator*(const Sparse_chain<CoefficientRing, COLUMN> &column, const Sparse_chain<CoefficientRing, ROW> &row);
 
     /*!
      * \brief Performs matrix multiplication between two chains (COLUMN x ROW) and return a ROW matrix.
      *
      * Generate a row-based matrix from the matrix multiplication and return it.
-     * Chains must have the same `CoefficientType`.
+     * Chains must have the same `CoefficientRing`.
      */
-    friend Sparse_matrix<CoefficientType, ROW> operator%(const Sparse_chain<CoefficientType, COLUMN> &column, const Sparse_chain<CoefficientType, ROW> &row);
+    friend Sparse_matrix<CoefficientRing, ROW> operator%(const Sparse_chain<CoefficientRing, COLUMN> &column, const Sparse_chain<CoefficientRing, ROW> &row);
 
     /*!
      * \brief Performs dot product between two chains (ROW x COLUMN).
      *
-     * Chains must have the same `CoefficientType`.
+     * Chains must have the same `CoefficientRing`.
      */
-    friend CoefficientType operator*(const Sparse_chain<CoefficientType, ROW> &row, const Sparse_chain<CoefficientType, COLUMN> &column);
+    friend CoefficientRing operator*(const Sparse_chain<CoefficientRing, ROW> &row, const Sparse_chain<CoefficientRing, COLUMN> &column);
 
     /*!
      * \brief Adds a chain to `this`.
      *
      * Add a chain to `this`.
-     * Chains must have the same `CoefficientType` and the same `ChainTypeFlag`.
+     * Chains must have the same `CoefficientRing` and the same `ChainTypeFlag`.
      */
     Sparse_chain& operator+=(const Sparse_chain &_other);
 
@@ -206,14 +206,14 @@ public:
      * \brief Subtracts a chain from `this`.
      *
      * Subtract a chain from `this`.
-     * Chains must have the same `CoefficientType` and the same `ChainTypeFlag`.
+     * Chains must have the same `CoefficientRing` and the same `ChainTypeFlag`.
      */
     Sparse_chain& operator-=(const Sparse_chain &_other);
 
     /*!
      * \brief Applies multiplication on each coefficient of `this`.
      */
-    Sparse_chain& operator*=(const CoefficientType& lambda);
+    Sparse_chain& operator*=(const CoefficientRing& lambda);
 
     /*!
      * \brief Transposes a SparseChain.
@@ -235,17 +235,17 @@ public:
     /*!
      * \brief Gets the value of a coefficient of the chain.
      */
-    CoefficientType operator[](size_t index);
+    CoefficientRing operator[](size_t index);
 
     /*!
      * \brief Gets the value of a coefficient of the chain.
      */
-    CoefficientType get_coefficient(size_t index) const ;
+    CoefficientRing get_coefficient(size_t index) const ;
 
     /**
      * \brief Sets a given coefficient of the chain.
      */
-    void set_coefficient(size_t index, CoefficientType d);
+    void set_coefficient(size_t index, CoefficientRing d);
 
     /*!
      * \brief Checks if a coefficient of the chain is null.

@@ -63,33 +63,33 @@ namespace HDVF {
 
  \cgalModels{HDVF}
 
- \tparam ComplexType a model of the `AbstractChainComplex` concept, providing the type of abstract chain complex used.
+ \tparam ChainComplex a model of the `AbstractChainComplex` concept, providing the type of abstract chain complex used.
 
  [Gonzalez and al. 2025] Gonzalez-Lorenzo, A., Bac, A. & Gazull, YS. A constructive approach of Alexander duality. J Appl. and Comput. Topology 9, 2 (2025).
  */
 
-template<typename ComplexType>
-class Hdvf_duality : public Hdvf_core<ComplexType, OSM::Sparse_chain, OSM::Sub_sparse_matrix> {
+template<typename ChainComplex>
+class Hdvf_duality : public Hdvf_core<ChainComplex, OSM::Sparse_chain, OSM::Sub_sparse_matrix> {
 public:
     /*! \brief Type of coefficients used to compute homology. */
-    typedef ComplexType::Coefficient_type Coefficient_type;
+    typedef ChainComplex::Coefficient_ring Coefficient_ring;
     
 private:
     // Type of column-major chains
-    typedef CGAL::OSM::Sparse_chain<Coefficient_type, CGAL::OSM::COLUMN> Column_chain;
+    typedef CGAL::OSM::Sparse_chain<Coefficient_ring, CGAL::OSM::COLUMN> Column_chain;
      // Type of row-major chains
-    typedef CGAL::OSM::Sparse_chain<Coefficient_type, CGAL::OSM::ROW> Row_chain;
+    typedef CGAL::OSM::Sparse_chain<Coefficient_ring, CGAL::OSM::ROW> Row_chain;
 
     // Type of parent HDVF
-    typedef Hdvf_core<ComplexType, CGAL::OSM::Sparse_chain, CGAL::OSM::Sub_sparse_matrix> HDVF_core_type ;
+    typedef Hdvf_core<ChainComplex, CGAL::OSM::Sparse_chain, CGAL::OSM::Sub_sparse_matrix> HDVF_core_type ;
 
     // Complex L
-    const ComplexType& _L ;
+    const ChainComplex& _L ;
     const int _hdvf_opt ;
     // Subcomplex K
     // _KCC is the Sub_chain_complex_mask describing the subcomplex K
     // _subCC is the Sub_chain_complex_mask describing the current subcomplex (K, L-K or remaining critical cells for pairing)
-    Sub_chain_complex_mask<ComplexType> _KCC, _subCC ;
+    Sub_chain_complex_mask<ChainComplex> _KCC, _subCC ;
 
     // Critical cells of perfect HDVFs (over K / L-K respectively)
     std::vector<std::vector<size_t> > _critical_K, _critical_L_K ;
@@ -106,7 +106,7 @@ public:
      * \param[in] K A sub complex of `L` encoded through a bitboard.
      * \param[in] hdvf_opt Option for HDVF computation (`OPT_BND`, `OPT_F`, `OPT_G` or `OPT_FULL`).
      */
-    Hdvf_duality(const ComplexType& L, Sub_chain_complex_mask<ComplexType>& K, int hdvf_opt = OPT_FULL) ;
+    Hdvf_duality(const ChainComplex& L, Sub_chain_complex_mask<ChainComplex>& K, int hdvf_opt = OPT_FULL) ;
 
     /**
      * \brief Finds a valid Cell_pair of dimension q / q+1 for A *in the current sub chain complex*.
@@ -178,7 +178,7 @@ public:
 
     /** \brief Returns the value of the current sub chain complex mask.
      */
-    Sub_chain_complex_mask<ComplexType> get_current_mask()
+    Sub_chain_complex_mask<ChainComplex> get_current_mask()
     {
         return _subCC;
     }
@@ -359,7 +359,7 @@ public:
     */
     std::ostream& print_bnd_pairing(std::ostream& out = std::cout)
     {
-        Sub_chain_complex_mask<ComplexType> subPair(_L, false) ;
+        Sub_chain_complex_mask<ChainComplex> subPair(_L, false) ;
         for (int q=0; q<=_L.dimension(); ++q)
         {
             for (size_t i=0; i<_critical_K.at(q).size(); ++i)
@@ -496,13 +496,13 @@ public:
 } ;
 
 // Constructor
-template<typename ComplexType>
-Hdvf_duality<ComplexType>::Hdvf_duality(const ComplexType& L, Sub_chain_complex_mask<ComplexType>& K, int hdvf_opt) :
-Hdvf_core<ComplexType, OSM::Sparse_chain, OSM::Sub_sparse_matrix>(L,hdvf_opt), _L(L), _hdvf_opt(hdvf_opt), _KCC(K), _subCC(K) {}
+template<typename ChainComplex>
+Hdvf_duality<ChainComplex>::Hdvf_duality(const ChainComplex& L, Sub_chain_complex_mask<ChainComplex>& K, int hdvf_opt) :
+Hdvf_core<ChainComplex, OSM::Sparse_chain, OSM::Sub_sparse_matrix>(L,hdvf_opt), _L(L), _hdvf_opt(hdvf_opt), _KCC(K), _subCC(K) {}
 
 // find a valid Cell_pair for A in dimension q
-template<typename ComplexType>
-Cell_pair Hdvf_duality<ComplexType>::find_pair_A(int q, bool &found) const
+template<typename ChainComplex>
+Cell_pair Hdvf_duality<ChainComplex>::find_pair_A(int q, bool &found) const
 {
     found = false;
     Cell_pair p;
@@ -528,8 +528,8 @@ Cell_pair Hdvf_duality<ComplexType>::find_pair_A(int q, bool &found) const
 }
 
 // find a valid Cell_pair containing tau for A in dimension q
-template<typename ComplexType>
-Cell_pair Hdvf_duality<ComplexType>::find_pair_A(int q, bool &found, size_t tau) const
+template<typename ChainComplex>
+Cell_pair Hdvf_duality<ChainComplex>::find_pair_A(int q, bool &found, size_t tau) const
 {
     found = false;
     Cell_pair p ;
@@ -569,8 +569,8 @@ Cell_pair Hdvf_duality<ComplexType>::find_pair_A(int q, bool &found, size_t tau)
 }
 
 // find all the valid Cell_pair for A in dimension q
-template<typename ComplexType>
-std::vector<Cell_pair> Hdvf_duality<ComplexType>::find_pairs_A(int q, bool &found) const
+template<typename ChainComplex>
+std::vector<Cell_pair> Hdvf_duality<ChainComplex>::find_pairs_A(int q, bool &found) const
 {
     std::vector<Cell_pair> pairs;
     found = false ;
@@ -597,8 +597,8 @@ std::vector<Cell_pair> Hdvf_duality<ComplexType>::find_pairs_A(int q, bool &foun
 }
 
 // find all the valid Cell_pair containing tau for A in dimension q
-template<typename ComplexType>
-std::vector<Cell_pair> Hdvf_duality<ComplexType>::find_pairs_A(int q, bool &found, size_t tau) const
+template<typename ChainComplex>
+std::vector<Cell_pair> Hdvf_duality<ChainComplex>::find_pairs_A(int q, bool &found, size_t tau) const
 {
     found = false;
     std::vector<Cell_pair> pairs;
@@ -640,8 +640,8 @@ std::vector<Cell_pair> Hdvf_duality<ComplexType>::find_pairs_A(int q, bool &foun
 }
 
 // Compute dual perfect HDVFs (over K and L-K)
-template<typename ComplexType>
-std::vector<Cell_pair> Hdvf_duality<ComplexType>::compute_perfect_hdvf(bool verbose)
+template<typename ChainComplex>
+std::vector<Cell_pair> Hdvf_duality<ChainComplex>::compute_perfect_hdvf(bool verbose)
 {
     std::cout << std::endl << "==== Compute perfect HDVF over K" << std::endl ;
     // Set _subCC to K
@@ -669,8 +669,8 @@ std::vector<Cell_pair> Hdvf_duality<ComplexType>::compute_perfect_hdvf(bool verb
 }
 
 // Compute random dual perfect HDVFs (over K and L-K)
-template<typename ComplexType>
-std::vector<Cell_pair> Hdvf_duality<ComplexType>::compute_rand_perfect_hdvf(bool verbose)
+template<typename ChainComplex>
+std::vector<Cell_pair> Hdvf_duality<ChainComplex>::compute_rand_perfect_hdvf(bool verbose)
 {
     std::cout << std::endl << "==== Compute perfect HDVF over K" << std::endl ;
     // Set _subCC to K
@@ -698,15 +698,15 @@ std::vector<Cell_pair> Hdvf_duality<ComplexType>::compute_rand_perfect_hdvf(bool
 }
 
 // Compute Alexander isomorphism (A pairing between critical cells of K / L-K)
-template<typename ComplexType>
-std::vector<Cell_pair> Hdvf_duality<ComplexType>::compute_pairing_hdvf()
+template<typename ChainComplex>
+std::vector<Cell_pair> Hdvf_duality<ChainComplex>::compute_pairing_hdvf()
 {
     // TODO : check both HDVFs are perfect
 
     std::cout << std::endl << "==== Compute pairing" << std::endl ;
 
     // Create a full Sub_chain_complex_mask
-    _subCC = Sub_chain_complex_mask<ComplexType>(_L) ;
+    _subCC = Sub_chain_complex_mask<ChainComplex>(_L) ;
     _subCC.screen_matrices(this->_DD_col);
     // If necessary, copy the HDVF before computing the pairing -> otherwise we loose it...
     std::vector<Cell_pair> pairing = HDVF_core_type::compute_perfect_hdvf() ;
@@ -714,15 +714,15 @@ std::vector<Cell_pair> Hdvf_duality<ComplexType>::compute_pairing_hdvf()
 }
 
 // Compute random Alexander isomorphism (A pairing between critical cells of K / L-K)
-template<typename ComplexType>
-std::vector<Cell_pair> Hdvf_duality<ComplexType>::compute_rand_pairing_hdvf()
+template<typename ChainComplex>
+std::vector<Cell_pair> Hdvf_duality<ChainComplex>::compute_rand_pairing_hdvf()
 {
     // TODO : check both HDVFs are perfect
 
     std::cout << std::endl << "==== Compute pairing" << std::endl ;
 
     // Create a full Sub_chain_complex_mask
-    _subCC = Sub_chain_complex_mask<ComplexType>(_L) ;
+    _subCC = Sub_chain_complex_mask<ChainComplex>(_L) ;
     _subCC.screen_matrices(this->_DD_col);
     // If necessary, copy the HDVF before computing the pairing -> otherwise we loose it...
     std::vector<Cell_pair> pairing = HDVF_core_type::compute_rand_perfect_hdvf() ;
@@ -730,8 +730,8 @@ std::vector<Cell_pair> Hdvf_duality<ComplexType>::compute_rand_pairing_hdvf()
 }
 
 // Method to get cells of _subCC with a given flag for each dimension
-template<typename ComplexType>
-std::vector<std::vector<size_t> > Hdvf_duality<ComplexType>::flag (FlagType flag) const
+template<typename ChainComplex>
+std::vector<std::vector<size_t> > Hdvf_duality<ChainComplex>::flag (FlagType flag) const
 {
     std::vector<std::vector<size_t> > res(_L.dimension()+1) ;
     for (int q=0; q<=_L.dimension(); ++q)
@@ -746,8 +746,8 @@ std::vector<std::vector<size_t> > Hdvf_duality<ComplexType>::flag (FlagType flag
 }
 
 // Method to get cells of _subCC with a given flag for a given dimension
-template<typename ComplexType>
-std::vector<size_t> Hdvf_duality<ComplexType>::flag_dim (FlagType flag, int q) const
+template<typename ChainComplex>
+std::vector<size_t> Hdvf_duality<ChainComplex>::flag_dim (FlagType flag, int q) const
 {
     std::vector<size_t> res ;
     for (size_t i=0; i<this->_K.number_of_cells(q); ++i)

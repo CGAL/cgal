@@ -25,7 +25,7 @@ namespace CGAL {
 namespace HDVF {
 
 /* Standard functions for lower star filtration */
-/* DegreeType = double */
+/* Degree = double */
 
 //std::function<double(size_t)> deg_fun_x = [&complex](size_t i)
 //{
@@ -58,8 +58,8 @@ std::function<double(const std::vector<double>&)> f_z = [](const std::vector<dou
 } ;
 
 /** \brief Degree function from a coordinates to scalar map. */
-template<typename ComplexType>
-std::function<double(size_t)>  deg_fun (const ComplexType& complex, std::function<double(const std::vector<double>&)>& f)
+template<typename ChainComplex>
+std::function<double(size_t)>  deg_fun (const ChainComplex& complex, std::function<double(const std::vector<double>&)>& f)
 {
     std::function<double(size_t)> deg_fun_f = [&complex, &f](size_t i)
     {
@@ -76,7 +76,7 @@ std::function<double(size_t)>  deg_fun (const ComplexType& complex, std::functio
 
  A filtration associated to a chain complex `K` associates to each cell of `K` a scalar value (called degree) such that the degree of a cell is larger than the degrees of its faces.
 
- Let `DegreeType` be a scalar type. The lower star filtration is a filtration obtained from a map \f$\mathrm{deg}\,:\, K_0 \to \mathrm{DegreeType}\f$ (where \f$K_0\f$ denotes the set of vertices of \f$K\f$) associating a degree to each vertex of the complex \f$K\f$.
+ Let `Degree` be a scalar type. The lower star filtration is a filtration obtained from a map \f$\mathrm{deg}\,:\, K_0 \to \mathrm{Degree}\f$ (where \f$K_0\f$ denotes the set of vertices of \f$K\f$) associating a degree to each vertex of the complex \f$K\f$.
 
  The map is extended to cells of any dimension by setting, for a cell \f$\sigma\f$:
  \f[\mathrm{deg}(\sigma) = \max_{\substack{v\in K_0\\v\text{ face of }\sigma}} \mathrm{deg}(v)
@@ -93,18 +93,18 @@ std::function<double(size_t)>  deg_fun (const ComplexType& complex, std::functio
 
  \cgalModels{Filtration}
 
- \tparam ComplexType a model of the `AbstractChainComplex` concept (type of the underlying chain complex).
- \tparam DegreeType the scalar type of degrees.
+ \tparam ChainComplex a model of the `AbstractChainComplex` concept (type of the underlying chain complex).
+ \tparam Degree the scalar type of degrees.
  */
 
-template <typename ComplexType, typename DegreeType>
-class Filtration_lower_star : public Filtration_core<ComplexType, DegreeType>
+template <typename ChainComplex, typename Degree>
+class Filtration_lower_star : public Filtration_core<ChainComplex, Degree>
 {
 private:
     /*! \brief Type of coefficients used to compute homology. */
-    typedef ComplexType::Coefficient_type Coefficient_type;
+    typedef ChainComplex::Coefficient_ring Coefficient_ring;
     /*! Type of parent filtration instance. */
-    typedef Filtration_core<ComplexType, DegreeType> FiltrationCoreT;
+    typedef Filtration_core<ChainComplex, Degree> FiltrationCoreT;
     /*! Type of cell identifier (cell index and dimension). */
     typedef FiltrationCoreT::Cell Cell;
     /*! Type of value returned by the iterator. */
@@ -126,7 +126,7 @@ public:
      * \param[in] K Constant reference to the underlying complex.
      * \param[in] deg Vector of vertex degrees.
      */
-    Filtration_lower_star(const ComplexType& K, const std::vector<DegreeType>& deg) : FiltrationCoreT(K)
+    Filtration_lower_star(const ChainComplex& K, const std::vector<Degree>& deg) : FiltrationCoreT(K)
     {
         star_filtration(deg);
     }
@@ -138,7 +138,7 @@ public:
      * \param[in] K Constant reference to the underlying complex.
      * \param[in] deg_fun Function mapping vertices of `K` to their degree.
      */
-    Filtration_lower_star(const ComplexType& K, std::function<DegreeType(size_t)>& deg_fun) : FiltrationCoreT(K)
+    Filtration_lower_star(const ChainComplex& K, std::function<Degree(size_t)>& deg_fun) : FiltrationCoreT(K)
     {
         star_filtration(deg_fun);
     }
@@ -148,17 +148,17 @@ protected:
     // Build lower-star filtration
     /*! \brief Function building the filtration from the vector of vertices degrees.
      */
-    void star_filtration(const std::vector<DegreeType>& deg) ;
+    void star_filtration(const std::vector<Degree>& deg) ;
 
     /*! \brief Function building the filtration from a function mapping vertices to their degree.
      */
-    void star_filtration(std::function<DegreeType(size_t)>& deg_fun) ;
+    void star_filtration(std::function<Degree(size_t)>& deg_fun) ;
 };
 
 
 
-template <typename ComplexType, typename DegreeType>
-void Filtration_lower_star<ComplexType, DegreeType>::star_filtration(const std::vector<DegreeType> &deg)
+template <typename ChainComplex, typename Degree>
+void Filtration_lower_star<ChainComplex, Degree>::star_filtration(const std::vector<Degree> &deg)
 {
     if (deg.size() != this->_K.number_of_cells(0))
         throw "Star filtration error : deg should provide one value by vertex" ;
@@ -167,7 +167,7 @@ void Filtration_lower_star<ComplexType, DegreeType>::star_filtration(const std::
     // -> lower star: maximum degree of vertices
     // -> upper star: minimum degree of vertices
     std::vector<Cell> tmp_filtration ;
-    std::vector<DegreeType> tmp_deg ;
+    std::vector<Degree> tmp_deg ;
     std::vector<size_t> tmp_perm ;
     for (size_t i=0; i<deg.size(); ++i)
     {
@@ -186,10 +186,10 @@ void Filtration_lower_star<ComplexType, DegreeType>::star_filtration(const std::
             // Vertices of the cell
             std::vector<size_t> verts(this->_K.bottom_faces(i,q)) ;
             // Compute the degree of the cell
-            DegreeType d = deg.at(verts.at(0)) ;
+            Degree d = deg.at(verts.at(0)) ;
             for (size_t j=1; j<verts.size(); ++j)
             {
-                const DegreeType tmp_d(deg.at(verts.at(j))) ;
+                const Degree tmp_d(deg.at(verts.at(j))) ;
                 if (tmp_d > d)
                     d = tmp_d ;
                 // If upper star filtration (for cohomology)
@@ -221,10 +221,10 @@ void Filtration_lower_star<ComplexType, DegreeType>::star_filtration(const std::
     }
 }
 
-template <typename ComplexType, typename DegreeType>
-void Filtration_lower_star<ComplexType, DegreeType>::star_filtration(std::function<DegreeType(size_t)>& deg_fun)
+template <typename ChainComplex, typename Degree>
+void Filtration_lower_star<ChainComplex, Degree>::star_filtration(std::function<Degree(size_t)>& deg_fun)
 {
-    std::vector<DegreeType> deg ;
+    std::vector<Degree> deg ;
     for (size_t i=0; i<this->_K.number_of_cells(0); ++i)
     {
         deg.push_back(deg_fun(i)) ;

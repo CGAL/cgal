@@ -55,31 +55,31 @@ typedef std::pair<Cell, Cell> CellsPerInterval ;
  *
  * For "infinite" intervals borne at degree d, the interval is set to (d,d-1)
  */
-template <typename DegreeType>
-using DegreePerIntervalT =  std::pair<DegreeType,DegreeType> ;
+template <typename Degree>
+using DegreePerIntervalT =  std::pair<Degree,Degree> ;
 
 /*! \brief Template for (full) persistent interval data:
  * - First element: persistent interval filtration indices
  * - Second element: persistent interval cells
  * - Third element: persistent interval degrees
  */
-template <typename DegreeType>
-using PerHoleT = std::tuple<FiltrIndexPerInterval, CellsPerInterval, DegreePerIntervalT<DegreeType> > ;
+template <typename Degree>
+using PerHoleT = std::tuple<FiltrIndexPerInterval, CellsPerInterval, DegreePerIntervalT<Degree> > ;
 
 /*! \brief Overload of the `<<` operator to display persistent intervals (that is PerHoleT).
  *
  * Format:
  *      birth time (cell, dim) -> death time (cell, dim) / degree duration
  */
-template <typename DegreeType>
-std::ostream& operator<< (std::ostream& out, const PerHoleT<DegreeType>& hole)
+template <typename Degree>
+std::ostream& operator<< (std::ostream& out, const PerHoleT<Degree>& hole)
 {
     // time (cell, dim) -> time (cell, dim) / degree duration
     const FiltrIndexPerInterval per_int(std::get<0>(hole)) ;
     const CellsPerInterval per_int_cells(std::get<1>(hole)) ;
-    const DegreePerIntervalT<DegreeType> per_int_deg(std::get<2>(hole)) ;
+    const DegreePerIntervalT<Degree> per_int_deg(std::get<2>(hole)) ;
 
-    const DegreeType deg_duration(per_int_deg.second-per_int_deg.first) ;
+    const Degree deg_duration(per_int_deg.second-per_int_deg.first) ;
     if (deg_duration >= 0) // finite interval
     {
         out << "[" << per_int.first << " (" << per_int_cells.first.first << ", " << per_int_cells.first.second << ") -> " ;
@@ -96,7 +96,7 @@ std::ostream& operator<< (std::ostream& out, const PerHoleT<DegreeType>& hole)
 /*!
  \ingroup PkgHDVFAlgorithmClasses
 
- The class `Hdvf_persistence` computes persistent homology using HDVFs. Hence, unlike other persistence algorithms, beside standard persistent intervals informations (birth/death indices, degrees, associated cells), `Hdvf_persistence` also provides **homology and cohomology generators for persistent pairs**. Intuitively, holes die when they are "filled" by a cell: associated homology and cohomology generators provide a representation of the hole and of the cells filling the hole.
+ The class `Hdvf_persistence` computes persistent homology using HDVFs (over a ring of coefficients which should actually be a **field**). Hence, unlike other persistence algorithms, beside standard persistent intervals informations (birth/death indices, degrees, associated cells), `Hdvf_persistence` also provides **homology and cohomology generators for persistent pairs**. Intuitively, holes die when they are "filled" by a cell: associated homology and cohomology generators provide a representation of the hole and of the cells filling the hole.
 
  Given a `Filtration`, the `Hdvf_persistence` constructor basically builds a HDVF where indices of cells in the bases follow the filtration order (permutations between initial indices of cells in the chain complex and new indices given by the filtration are stored).
  Besides, `Hdvf_persistence` derives from `Hdvf_core` with the SparseMatrix parameter type set to `Sub_sparse_matrix`. Hence, `Hdvf_persistence` computes homology over a larger and larger sub-complex of `K` (encoded through a Bitboard mask of `Sub_sparse_matrix`) following the filtration `f`. At each step of the filtration, the new cell is paired (A operation) with the youngest cell valid for A.
@@ -131,56 +131,56 @@ std::ostream& operator<< (std::ostream& out, const PerHoleT<DegreeType>& hole)
 
  \cgalModels{HDVF}
 
- \tparam ComplexType a model of the `AbstractChainComplex` concept, providing the type of abstract chain complex used.
- \tparam DegreeType a scalar data type used for the degrees of the filtration.
+ \tparam ChainComplex a model of the `AbstractChainComplex` concept, providing the type of abstract chain complex used (the underlying ring of coefficients should be a model of `Field`).
+ \tparam Degree a scalar data type used for the degrees of the filtration.
  \tparam FiltrationType a model of the `Filtration` concept, providing the filtration used to compute persistence.
 
  */
 
-template<typename ComplexType, typename DegreeType, typename FiltrationType >
-class Hdvf_persistence : public Hdvf_core<ComplexType, OSM::Sparse_chain, OSM::Sub_sparse_matrix>
+template<typename ChainComplex, typename Degree, typename FiltrationType >
+class Hdvf_persistence : public Hdvf_core<ChainComplex, OSM::Sparse_chain, OSM::Sub_sparse_matrix>
 {
 public:
     /*! \brief Type of coefficients used to compute homology. */
-    typedef ComplexType::Coefficient_type Coefficient_type;
+    typedef ChainComplex::Coefficient_ring Coefficient_ring;
     
     // Matrices types
     /*!
      Type of column-major chains
      */
-    typedef CGAL::OSM::Sparse_chain<Coefficient_type, CGAL::OSM::COLUMN> Column_chain;
+    typedef CGAL::OSM::Sparse_chain<Coefficient_ring, CGAL::OSM::COLUMN> Column_chain;
 
     /*!
      Type of row-major chains
      */
-    typedef CGAL::OSM::Sparse_chain<Coefficient_type, CGAL::OSM::ROW> Row_chain;
+    typedef CGAL::OSM::Sparse_chain<Coefficient_ring, CGAL::OSM::ROW> Row_chain;
 
     /*!
      Type of column-major sparse matrices
      */
-    typedef CGAL::OSM::Sub_sparse_matrix<Coefficient_type, CGAL::OSM::COLUMN> Column_matrix;
+    typedef CGAL::OSM::Sub_sparse_matrix<Coefficient_ring, CGAL::OSM::COLUMN> Column_matrix;
 
     /*!
      Type of row-major sparse matrices
      */
-    typedef CGAL::OSM::Sub_sparse_matrix<Coefficient_type, CGAL::OSM::ROW> Row_matrix;
+    typedef CGAL::OSM::Sub_sparse_matrix<Coefficient_ring, CGAL::OSM::ROW> Row_matrix;
 
     /*! Type of parent HDVF class (Hdvf_core with appropriate template parameters)
      * The SparseMatrix model is set to Sub_sparse_matrix to activate (co)homology computation over a subcomplex.
      */
-    typedef Hdvf_core<ComplexType, CGAL::OSM::Sparse_chain, CGAL::OSM::Sub_sparse_matrix> HDVF_core_type ;
+    typedef Hdvf_core<ChainComplex, CGAL::OSM::Sparse_chain, CGAL::OSM::Sub_sparse_matrix> HDVF_core_type ;
 
     /*! Type of filtrations used to compute persistence.
      */
     typedef FiltrationType Filtration;
 
-    /*! Instanciation of `DegreePerIntervalT` (persistant intervals degrees) for `DegreeType`.
+    /*! Instanciation of `DegreePerIntervalT` (persistant intervals degrees) for `Degree`.
      */
-    typedef DegreePerIntervalT<DegreeType> DegreePerInterval;
+    typedef DegreePerIntervalT<Degree> DegreePerInterval;
 
-    /*! Instanciation of `PerHoleT` (full persistant intervals informations) for `DegreeType`.
+    /*! Instanciation of `PerHoleT` (full persistant intervals informations) for `Degree`.
      */
-    typedef PerHoleT<DegreeType> PerHole;
+    typedef PerHoleT<Degree> PerHole;
 
     /*! Type for `PRIMARY`/`SECONDARY`/`CRITICAL` labels export
      *      Encoding used:
@@ -261,7 +261,7 @@ public:
      * \param[in] hdvf_opt Option for HDVF computation (`OPT_BND`, `OPT_F`, `OPT_G` or `OPT_FULL`)
      * \param[in] with_export Boolean option to activate or not the export of PSC labels and homology/cohomology generators for of persistent intervals of positive duration. This information is used by vtk exporters.
      */
-    Hdvf_persistence(const ComplexType& K, const Filtration& f, int hdvf_opt = OPT_BND, bool with_export = false) ;
+    Hdvf_persistence(const ChainComplex& K, const Filtration& f, int hdvf_opt = OPT_BND, bool with_export = false) ;
 
     /**
      * \brief Computes a perfect persistent HDVF.
@@ -302,7 +302,7 @@ public:
                 const size_t ki(_per_to_K.at(q).at(i)) ; // K index
                 const Cell c(ki,q) ;
                 const size_t ti(_f._cell_to_t.at(c)) ;
-                const DegreeType di(_f._deg.at(i)) ;
+                const Degree di(_f._deg.at(i)) ;
                 FiltrIndexPerInterval per_int(ti,_f.size()) ;
                 Cell inf(this->_K.number_of_cells(q+1),q+1) ;
                 CellsPerInterval per_int_cell(c,inf) ;
@@ -333,7 +333,7 @@ public:
      *
      * \param[in] hole Persistent interval considered for duration computation
      */
-    DegreeType hole_duration (const PerHole hole) const
+    Degree hole_duration (const PerHole hole) const
     {
         const DegreePerInterval per_int_deg(std::get<2>(hole)) ;
         // Test if the interval is infinite
@@ -355,7 +355,7 @@ public:
         size_t i = 0 ;
         for (PerHole hole : per_hdvf._persist)
         {
-            //if (abs(per_hdvf.hole_duration(hole)) > DegreeType(0))
+            //if (abs(per_hdvf.hole_duration(hole)) > Degree(0))
              //   out << i << " --- duration : " << per_hdvf.hole_duration(hole) << " -- " << hole << std::endl ;
             //++i ;
         }
@@ -675,8 +675,8 @@ private:
 } ;
 
 
-template<typename ComplexType, typename DegreeType, typename FiltrationType>
-Hdvf_persistence<ComplexType, DegreeType, FiltrationType>::Hdvf_persistence(const ComplexType& K, const FiltrationType& f, int hdvf_opt, bool with_export) : Hdvf_core<ComplexType, OSM::Sparse_chain, OSM::Sub_sparse_matrix>(K,hdvf_opt), _f(f), _with_export(with_export), _t(0)
+template<typename ChainComplex, typename Degree, typename FiltrationType>
+Hdvf_persistence<ChainComplex, Degree, FiltrationType>::Hdvf_persistence(const ChainComplex& K, const FiltrationType& f, int hdvf_opt, bool with_export) : Hdvf_core<ChainComplex, OSM::Sparse_chain, OSM::Sub_sparse_matrix>(K,hdvf_opt), _f(f), _with_export(with_export), _t(0)
 {
     // Initialisation of _t_dim, _K_to_per and _per_to_K
     _t_dim.resize(this->_K.dimension()+1, 0) ;
@@ -727,7 +727,7 @@ Hdvf_persistence<ComplexType, DegreeType, FiltrationType>::Hdvf_persistence(cons
             for (typename Column_chain::const_iterator it = col.begin(); it != col.end(); ++it)
             {
                 const size_t i(it->first) ;
-                const Coefficient_type v(it->second) ;
+                const Coefficient_ring v(it->second) ;
                 // Cells in the _K basis : i(dim q-1) / j(dim q)
                 // Convert to indices in the persistent order
                 const size_t pi(_K_to_per.at(q-1).at(i)), pj(_K_to_per.at(q).at(j)) ;
@@ -742,8 +742,8 @@ Hdvf_persistence<ComplexType, DegreeType, FiltrationType>::Hdvf_persistence(cons
         this->_DD_col.at(q).set_sub(_masks.at(q)) ;
 }
 
-template<typename ComplexType, typename DegreeType, typename FiltrationType>
-Cell_pair Hdvf_persistence<ComplexType, DegreeType, FiltrationType>::find_pair_A(bool &found)
+template<typename ChainComplex, typename Degree, typename FiltrationType>
+Cell_pair Hdvf_persistence<ChainComplex, Degree, FiltrationType>::find_pair_A(bool &found)
 {
     Cell_pair p ;
     // Get current cell (in the basis K)
@@ -785,8 +785,8 @@ Cell_pair Hdvf_persistence<ComplexType, DegreeType, FiltrationType>::find_pair_A
     return p;
 }
 
-template<typename ComplexType, typename DegreeType, typename FiltrationType>
-Cell_pair Hdvf_persistence<ComplexType, DegreeType, FiltrationType>::step_persist(bool& found, bool verbose)
+template<typename ChainComplex, typename Degree, typename FiltrationType>
+Cell_pair Hdvf_persistence<ChainComplex, Degree, FiltrationType>::step_persist(bool& found, bool verbose)
 {
     // Compute next persistent pair
 
@@ -833,6 +833,7 @@ Cell_pair Hdvf_persistence<ComplexType, DegreeType, FiltrationType>::step_persis
             this->insert_matrices(std::cout) ;
         }
     }
+    return p;
 }
 
 } /* end namespace HDVF */

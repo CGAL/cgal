@@ -35,13 +35,13 @@ namespace OSM {
 
  \cgalModels{SparseMatrix}
 
- \tparam CoefficientType a model of the `Ring` concept, providing the ring used to compute homology.
+ \tparam CoefficientRing a model of the `Ring` concept, providing the ring used to compute homology.
  \tparam ChainTypeFlag an integer constant encoding the type of matrices (`OSM::COLUMN` or `OSM::ROW`).
 */
 
 
-template <typename CoefficientType, int ChainTypeFlag>
-class Sub_sparse_matrix : public Sparse_matrix<CoefficientType, ChainTypeFlag> {
+template <typename CoefficientRing, int ChainTypeFlag>
+class Sub_sparse_matrix : public Sparse_matrix<CoefficientRing, ChainTypeFlag> {
 
 protected:
     /** \brief A bitboard describing subchains restriction. */
@@ -54,12 +54,12 @@ public:
     /**
      * \brief Default constructor of a new `Sub_sparse_matrix` (with given rows/columns sizes and mask set to `full`).
      *
-     * Default constructor. Constructor with sizes, initialize an empty Sub_sparse_matrix of type `ChainTypeFlag` with coefficients of type `CoefficientType`, a given size along rows/columns. The constructor sets the mask to `full`.
+     * Default constructor. Constructor with sizes, initialize an empty Sub_sparse_matrix of type `ChainTypeFlag` with coefficients of type `CoefficientRing`, a given size along rows/columns. The constructor sets the mask to `full`.
      *
      * \param[in] rowCount The number of rows to preallocate (default 0).
      * \param[in] columnCount The number of columns to preallocate (default 0).
      */
-    Sub_sparse_matrix(size_t rowCount=0, size_t columnCount=0) : Sparse_matrix<CoefficientType, ChainTypeFlag>(rowCount, columnCount)
+    Sub_sparse_matrix(size_t rowCount=0, size_t columnCount=0) : Sparse_matrix<CoefficientRing, ChainTypeFlag>(rowCount, columnCount)
     {
         if (ChainTypeFlag == OSM::COLUMN)
             _subChains = OSM::Bitboard(columnCount,false) ;
@@ -71,23 +71,23 @@ public:
     /**
      * \brief Constructor with given rows/columns sizes and a mask.
      *
-     * Create a new empty `Sub_sparse_matrix` of type `ChainTypeFlag` with coefficients of type `CoefficientType`, a given size along rows/columns and a given mask.
+     * Create a new empty `Sub_sparse_matrix` of type `ChainTypeFlag` with coefficients of type `CoefficientRing`, a given size along rows/columns and a given mask.
      *
      * \param[in] rowCount The number of rows to preallocate.
      * \param[in] columnCount The number of columns to preallocate.
      * \param[in] subChain Bitboard describing the subset of indices considered as a mask.
      */
-    Sub_sparse_matrix(size_t rowCount, size_t columnCount, const Bitboard& subChain) : Sparse_matrix<CoefficientType, ChainTypeFlag>(rowCount, columnCount), _subChains(subChain), _subChainsStates(this->_chainsStates & subChain)
+    Sub_sparse_matrix(size_t rowCount, size_t columnCount, const Bitboard& subChain) : Sparse_matrix<CoefficientRing, ChainTypeFlag>(rowCount, columnCount), _subChains(subChain), _subChainsStates(this->_chainsStates & subChain)
     {
     }
 
     /** \brief Copy constructor from another `Sub_sparse_matrix`.
      *
-     * Create a new empty `Sub_sparse_matrix` from another of type `ChainTypeFlag` with coefficients of type `CoefficientType`, a given size along rows/columns and a given mask.
+     * Create a new empty `Sub_sparse_matrix` from another of type `ChainTypeFlag` with coefficients of type `CoefficientRing`, a given size along rows/columns and a given mask.
      *
      * \param[in] otherToCopy `Sub_sparse_matrix` copied into `this`.
      */
-    Sub_sparse_matrix(const Sub_sparse_matrix& otherToCopy) : Sparse_matrix<CoefficientType, ChainTypeFlag>(otherToCopy), _subChains(otherToCopy._subChains), _subChainsStates(otherToCopy._subChainsStates) {}
+    Sub_sparse_matrix(const Sub_sparse_matrix& otherToCopy) : Sparse_matrix<CoefficientRing, ChainTypeFlag>(otherToCopy), _subChains(otherToCopy._subChains), _subChainsStates(otherToCopy._subChainsStates) {}
 
     /** \brief Copy constructor from `Sparse_matrix`.
      *
@@ -95,7 +95,7 @@ public:
      *
      * \param[in] otherToCopy The matrix copied.
      */
-    Sub_sparse_matrix(const Sparse_matrix<CoefficientType,ChainTypeFlag>& otherToCopy) : Sparse_matrix<CoefficientType, ChainTypeFlag>(otherToCopy)
+    Sub_sparse_matrix(const Sparse_matrix<CoefficientRing,ChainTypeFlag>& otherToCopy) : Sparse_matrix<CoefficientRing, ChainTypeFlag>(otherToCopy)
     {
         if (ChainTypeFlag == OSM::COLUMN)
             _subChains = OSM::Bitboard(otherToCopy.dimensions().second,false) ;
@@ -168,7 +168,7 @@ public:
      */
     inline Sub_sparse_matrix& operator=(const Sub_sparse_matrix &otherToCopy)
     {
-        (dynamic_cast<Sparse_matrix<CoefficientType,ChainTypeFlag>&>(*this)).operator=(otherToCopy) ;
+        (dynamic_cast<Sparse_matrix<CoefficientRing,ChainTypeFlag>&>(*this)).operator=(otherToCopy) ;
         _subChains = otherToCopy._subChains ;
         _subChainsStates = otherToCopy._subChainsStates ;
         return *this ;
@@ -185,7 +185,7 @@ public:
      * \return A reference to the modified stream.
      */
     friend std::ostream& operator<<(std::ostream &stream, const Sub_sparse_matrix &matrix) {
-        stream << static_cast<const Sparse_matrix<CoefficientType, ChainTypeFlag>&>(matrix) ;
+        stream << static_cast<const Sparse_matrix<CoefficientRing, ChainTypeFlag>&>(matrix) ;
         stream << matrix._subChains << std::endl ;
         return stream ;
     }

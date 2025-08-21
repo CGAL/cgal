@@ -56,11 +56,11 @@ namespace OSM {
 
  \cgalModels{SparseMatrix}
 
- \tparam CoefficientType a model of the `Ring` concept, providing the ring used to compute homology.
+ \tparam CoefficientRing a model of the `Ring` concept, providing the ring used to compute homology.
  \tparam ChainTypeFlag an integer constant encoding the type of matrices (`OSM::COLUMN` or `OSM::ROW`).
 */
 
-template <typename CoefficientType, int ChainTypeFlag>
+template <typename CoefficientRing, int ChainTypeFlag>
 class Sparse_matrix {
 
 public:
@@ -68,7 +68,7 @@ public:
     /*!
      Type of chains associated to the matrix.
      */
-    typedef Sparse_chain<CoefficientType, ChainTypeFlag> Matrix_chain;
+    typedef Sparse_chain<CoefficientRing, ChainTypeFlag> Matrix_chain;
 
     // Allow the Sparse_matrix class to access other templated Sparse_matrix private members.
     template <typename _CT, int _CTF>
@@ -76,7 +76,7 @@ public:
 
 protected:
     /* \brief The inner chain storage. */
-    std::vector<Sparse_chain<CoefficientType, ChainTypeFlag>> _chains;
+    std::vector<Sparse_chain<CoefficientRing, ChainTypeFlag>> _chains;
 
     /* \brief A bitboard containing state of each columns. */
     Bitboard _chainsStates;
@@ -111,7 +111,7 @@ public:
     /**
      * \brief Default constructor (empty new `Sparse_matrix` object).
      *
-     * Create an empty matrix of type `ChainTypeFlag` with coefficients of type `CoefficientType`.
+     * Create an empty matrix of type `ChainTypeFlag` with coefficients of type `CoefficientRing`.
      * The default matrix size is 0x0.
      */
     Sparse_matrix() {
@@ -123,7 +123,7 @@ public:
     /**
      * \brief Constructor with given rows/columns sizes.
      *
-     * Create a new empty Sparse_matrix object of type `ChainTypeFlag` with coefficients of type `CoefficientType` and a given size along rows/columns.
+     * Create a new empty Sparse_matrix object of type `ChainTypeFlag` with coefficients of type `CoefficientRing` and a given size along rows/columns.
      *
      * \param[in] rowCount The number of rows to preallocate.
      * \param[in] columnCount The number of columns to preallocate.
@@ -132,9 +132,9 @@ public:
         size_t mainSize = ChainTypeFlag == COLUMN ? columnCount : rowCount;
         size_t secondarySize = ChainTypeFlag == COLUMN ? rowCount : columnCount;
 
-        _chains = std::vector<Sparse_chain<CoefficientType, ChainTypeFlag>>(mainSize);
+        _chains = std::vector<Sparse_chain<CoefficientRing, ChainTypeFlag>>(mainSize);
         for (size_t i = 0 ; i < mainSize ; i++) {
-            _chains[i] = Sparse_chain<CoefficientType, ChainTypeFlag>(secondarySize);
+            _chains[i] = Sparse_chain<CoefficientRing, ChainTypeFlag>(secondarySize);
         }
 
         _chainsStates = Bitboard(mainSize);
@@ -150,7 +150,7 @@ public:
      * \param[in] otherToCopy The matrix copied.
      */
     template <int CTF>
-    Sparse_matrix(const Sparse_matrix<CoefficientType,CTF> &otherToCopy) {
+    Sparse_matrix(const Sparse_matrix<CoefficientRing,CTF> &otherToCopy) {
         if (ChainTypeFlag == CTF)
         {
             _chainsStates = otherToCopy._chainsStates;
@@ -159,9 +159,9 @@ public:
             _chains.resize(otherToCopy._chains.size()) ;
             for (size_t i = 0; i<otherToCopy._chains.size(); ++i)
             {
-                const Sparse_chain<CoefficientType, CTF>& tmp(otherToCopy._chains.at(i)) ;
-                Sparse_chain<CoefficientType,ChainTypeFlag> res(tmp.dimension()) ;
-                for (typename Sparse_chain<CoefficientType, CTF>::const_iterator it = tmp.cbegin(); it != tmp.cend(); ++it)
+                const Sparse_chain<CoefficientRing, CTF>& tmp(otherToCopy._chains.at(i)) ;
+                Sparse_chain<CoefficientRing,ChainTypeFlag> res(tmp.dimension()) ;
+                for (typename Sparse_chain<CoefficientRing, CTF>::const_iterator it = tmp.cbegin(); it != tmp.cend(); ++it)
                 {
                     res[it->first] = it->second ;
                 }
@@ -177,13 +177,13 @@ public:
             _chainsStates = OSM::Bitboard(vec_size) ;
             for (size_t i=0; i<vec_size; ++i)
             {
-                _chains.at(i) = Sparse_chain<CoefficientType,ChainTypeFlag>(chain_size) ;
+                _chains.at(i) = Sparse_chain<CoefficientRing,ChainTypeFlag>(chain_size) ;
             }
 
             for (size_t i = 0; i<otherToCopy._chains.size(); ++i)
             {
-                const Sparse_chain<CoefficientType, CTF>& tmp(otherToCopy._chains.at(i)) ;
-                for (typename Sparse_chain<CoefficientType, CTF>::const_iterator it = tmp.cbegin(); it != tmp.cend(); ++it)
+                const Sparse_chain<CoefficientRing, CTF>& tmp(otherToCopy._chains.at(i)) ;
+                for (typename Sparse_chain<CoefficientRing, CTF>::const_iterator it = tmp.cbegin(); it != tmp.cend(); ++it)
                 {
                     _chains[it->first][i] = it->second ;
                     _chainsStates.setOn(it->first) ;
@@ -293,7 +293,7 @@ public:
         {
             for (size_t j=0; j<matrix._size.second; ++j)
             {
-                CoefficientType tmp = matrix.get_coefficient(i,j) ;
+                CoefficientRing tmp = matrix.get_coefficient(i,j) ;
 
                 if (tmp == 0)
                     stream << ".\t" ;
@@ -368,9 +368,9 @@ public:
      *
      * Adds each coefficient of the matrices together and returns a new matrix (of the same type as `first`) representing the result (when possible, prefer `+=` for efficiency).
      *
-     * \pre Matrices must have the same `CoefficientType` but can have different `ChainTypeFlag`.
+     * \pre Matrices must have the same `CoefficientRing` but can have different `ChainTypeFlag`.
      *
-     * \warning Will raise an error if the other matrix is not the same `CoefficientType`.
+     * \warning Will raise an error if the other matrix is not the same `CoefficientRing`.
      *
      * \param[in] first The first matrix.
      * \param[in] second The second matrix.
@@ -378,7 +378,7 @@ public:
      * \return A new matrix representing the result.
      */
     template <int _CTF>
-    friend Sparse_matrix operator+(const Sparse_matrix &first, const Sparse_matrix<CoefficientType, _CTF> &second) {
+    friend Sparse_matrix operator+(const Sparse_matrix &first, const Sparse_matrix<CoefficientRing, _CTF> &second) {
         Sparse_matrix newMatrix(first);
         newMatrix += second;
 
@@ -390,9 +390,9 @@ public:
      *
      * Substracts each coefficient of the matrix together and returns a new matrix (of the same type as `first`) representing the result (when possible, prefer `-=` for efficiency).
      *
-     * \pre Matrices must have the same `CoefficientType` but can have different `ChainTypeFlag`.
+     * \pre Matrices must have the same `CoefficientRing` but can have different `ChainTypeFlag`.
      *
-     * \warning Will raise an error if the other matrix is not the same `CoefficientType`.
+     * \warning Will raise an error if the other matrix is not the same `CoefficientRing`.
      *
      * \param[in] first The first matrix.
      * \param[in] second The second matrix.
@@ -400,7 +400,7 @@ public:
      * \return A new matrix representing the result.
      */
     template <int _CTF>
-    friend Sparse_matrix operator-(const Sparse_matrix &first, const Sparse_matrix<CoefficientType, _CTF> &second) {
+    friend Sparse_matrix operator-(const Sparse_matrix &first, const Sparse_matrix<CoefficientRing, _CTF> &second) {
         Sparse_matrix newMatrix = first;
         newMatrix -= second;
 
@@ -454,7 +454,7 @@ public:
      * \ingroup PkgHDVFAlgorithmClasses
      * @brief  Perform multiplication between matrices and returns a new column-major matrix.
      *
-     * Perform standard linear algebra product between matrices and returns a new column-major matrix (when possible, prefer `*=` for efficiency). Matrices must have the same `CoefficientType` but can have different `ChainTypeFlag`. The product is optimized (using standard definition or block products) for each combination of `ChainTypeFlag`. However, efficiency depends on `ChainTypeFlag` (when possible, prefer row-major by column-major products).
+     * Perform standard linear algebra product between matrices and returns a new column-major matrix (when possible, prefer `*=` for efficiency). Matrices must have the same `CoefficientRing` but can have different `ChainTypeFlag`. The product is optimized (using standard definition or block products) for each combination of `ChainTypeFlag`. However, efficiency depends on `ChainTypeFlag` (when possible, prefer row-major by column-major products).
      *
      * @param first The first matrix.
      * @param second The second matrix.
@@ -485,7 +485,7 @@ public:
      * \ingroup PkgHDVFAlgorithmClasses
      * @brief  Perform multiplication between a sparse matrix (column or row major) and a column-chain. The function returns a new column-major chain.
      *
-     * Perform standard linear algebra product between a matrix and a column-chain (ie.\ matrix / column vector product) and returns a new column-major chain. Both arguments must have the same `CoefficientType` but the matrix can have any `ChainTypeFlag` (and the product is optimized for each of them).
+     * Perform standard linear algebra product between a matrix and a column-chain (ie.\ matrix / column vector product) and returns a new column-major chain. Both arguments must have the same `CoefficientRing` but the matrix can have any `ChainTypeFlag` (and the product is optimized for each of them).
      *
      * @param first The matrix.
      * @param second The column-major chain.
@@ -508,7 +508,7 @@ public:
      * \ingroup PkgHDVFAlgorithmClasses
      * @brief  Perform multiplication between a row-chain and a sparse matrix (column or row major). The function returns a new row-major chain.
      *
-     * Perform standard linear algebra product between a row-chain and a matrix (ie.\ row vector / matrix product) and returns a new row-major chain. Both arguments must have the same `CoefficientType` but the matrix can have any `ChainTypeFlag` (and the product is optimized for each of them).
+     * Perform standard linear algebra product between a row-chain and a matrix (ie.\ row vector / matrix product) and returns a new row-major chain. Both arguments must have the same `CoefficientRing` but the matrix can have any `ChainTypeFlag` (and the product is optimized for each of them).
      *
      * @param first The row-major chain.
      * @param second The matrix.
@@ -531,7 +531,7 @@ public:
      * \ingroup PkgHDVFAlgorithmClasses
      * @brief  Perform multiplication between matrices and returns a new row-major matrix.
      *
-     * Perform standard linear algebra product between matrices and returns a new row-major matrix (when possible, prefer `*=` for efficiency). Matrices must have the same `CoefficientType` but can have different `ChainTypeFlag`. The product is optimized (using standard definition or block products) for each combination of `ChainTypeFlag`. However, efficiency depends on `ChainTypeFlag`.
+     * Perform standard linear algebra product between matrices and returns a new row-major matrix (when possible, prefer `*=` for efficiency). Matrices must have the same `CoefficientRing` but can have different `ChainTypeFlag`. The product is optimized (using standard definition or block products) for each combination of `ChainTypeFlag`. However, efficiency depends on `ChainTypeFlag`.
      *
      * @param first The first matrix.
      * @param second The second matrix.
@@ -562,7 +562,7 @@ public:
      * \ingroup PkgHDVFAlgorithmClasses
      * @brief  Perform addition between matrices and assigns the result to `matrix`.
      *
-     * Perform standard linear algebra addition. Matrices must have the same `CoefficientType` but can have different `ChainTypeFlag`. The addition is optimized for each combination of `ChainTypeFlag`.
+     * Perform standard linear algebra addition. Matrices must have the same `CoefficientRing` but can have different `ChainTypeFlag`. The addition is optimized for each combination of `ChainTypeFlag`.
      *
      * @param matrix The first matrix.
      * @param other The second matrix.
@@ -603,7 +603,7 @@ public:
      * \ingroup PkgHDVFAlgorithmClasses
      * @brief  Perform subtraction between matrices and assigns the result to `matrix`.
      *
-     * Perform standard linear algebra subtraction. Matrices must have the same `CoefficientType` but can have different `ChainTypeFlag`. The addition is optimized for each combination of `ChainTypeFlag`.
+     * Perform standard linear algebra subtraction. Matrices must have the same `CoefficientRing` but can have different `ChainTypeFlag`. The addition is optimized for each combination of `ChainTypeFlag`.
      *
      * @param matrix The first matrix.
      * @param other The second matrix.
@@ -648,7 +648,7 @@ public:
      *
      * \return The modified matrix representing the result.
      */
-    Sparse_matrix& operator*=(const CoefficientType& lambda) {
+    Sparse_matrix& operator*=(const CoefficientRing& lambda) {
         if (lambda == 0) {
             this->nullify();
             return *this;
@@ -683,7 +683,7 @@ public:
      * \ingroup PkgHDVFAlgorithmClasses
      * @brief  Perform product between matrices and assigns the result to `matrix`.
      *
-     * Perform standard linear algebra product. Matrices must have the same `CoefficientType` but can have different `ChainTypeFlag`. The product is optimized for each combination of `ChainTypeFlag`.
+     * Perform standard linear algebra product. Matrices must have the same `CoefficientRing` but can have different `ChainTypeFlag`. The product is optimized for each combination of `ChainTypeFlag`.
      *
      * @param matrix The first matrix.
      * @param other The second matrix.
@@ -731,7 +731,7 @@ public:
 
 protected:
     // Protected method for set_coefficient
-    void set_coefficient(const size_t i, const size_t j, const CoefficientType d) {
+    void set_coefficient(const size_t i, const size_t j, const CoefficientRing d) {
         if (i >= _size.first) {
             throw std::runtime_error("Provided i index should be less than " + std::to_string(_size.first) + ".");
         }
@@ -771,7 +771,7 @@ public:
 
 protected:
     // Protected method for get_coefficient
-    CoefficientType get_coefficient(const size_t i, const size_t j) const {
+    CoefficientRing get_coefficient(const size_t i, const size_t j) const {
         if (i >= _size.first) {
             throw std::runtime_error("Provided _i index should be less than " + std::to_string(_size.first) + ".");
         }
@@ -1142,8 +1142,8 @@ public:
      *
      * \return A new matrix where the chain type flag has been swapped between COLUMN and ROW and data chains have been transposed.
      */
-    Sparse_matrix<CoefficientType, COLUMN + ROW - ChainTypeFlag> transpose() {
-        Sparse_matrix<CoefficientType, COLUMN + ROW - ChainTypeFlag> transposed(this->_size.second, this->_size.first);
+    Sparse_matrix<CoefficientRing, COLUMN + ROW - ChainTypeFlag> transpose() {
+        Sparse_matrix<CoefficientRing, COLUMN + ROW - ChainTypeFlag> transposed(this->_size.second, this->_size.first);
 
         for (size_t index : this->_chainsStates) {
             transposed._chains[index] = this->_chains[index].transpose();

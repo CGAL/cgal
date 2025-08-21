@@ -12,10 +12,10 @@
 
 //typedef CGAL::HDVF::Zp<5> CoefficientType;
 typedef CGAL::HDVF::Z2 CoefficientType;
-typedef CGAL::HDVF::Simplicial_chain_complex<CoefficientType> ComplexType;
-typedef double DegreeType;
-typedef CGAL::HDVF::Filtration_lower_star<ComplexType, DegreeType> FiltrationType;
-typedef CGAL::HDVF::Hdvf_persistence<ComplexType, DegreeType, FiltrationType> HDVFType;
+typedef CGAL::HDVF::Simplicial_chain_complex<CoefficientType> Complex;
+typedef double Degree;
+typedef CGAL::HDVF::Filtration_lower_star<Complex, Degree> FiltrationType;
+typedef CGAL::HDVF::Hdvf_persistence<Complex, Degree, FiltrationType> HDVF_type;
 
 
 int main(int argc, char **argv)
@@ -35,7 +35,7 @@ int main(int argc, char **argv)
         mesh.print_infos();
 
         // Build simplicial chain complex
-        ComplexType complex(mesh, mesh.get_nodes());
+        Complex complex(mesh, mesh.get_nodes());
 
         std::cout << complex;
 
@@ -44,14 +44,14 @@ int main(int argc, char **argv)
          */
         {
             // --- First: build the function mapping the index of a vertex to its degree (here the "z" coordinate of a vertex
-            std::function<DegreeType(size_t)> f(CGAL::HDVF::deg_fun(complex, CGAL::HDVF::f_z));
+            std::function<Degree(size_t)> f(CGAL::HDVF::deg_fun(complex, CGAL::HDVF::f_z));
 
             // -- Second: build the associated lower star filtration
             FiltrationType filtration(complex, f);
 
 
             // Build empty persistant HDVF (with vtk export activated)
-            HDVFType hdvf(complex, filtration, CGAL::HDVF::OPT_FULL, true);
+            HDVF_type hdvf(complex, filtration, CGAL::HDVF::OPT_FULL, true);
 
             // Compute a perfect HDVF
             hdvf.compute_perfect_hdvf();
@@ -70,9 +70,9 @@ int main(int argc, char **argv)
          */
         {
             // --- First: build the function mapping the index of a vertex to its degree (here the index itself)
-            std::function<DegreeType(size_t)> f = [&complex](size_t i)
+            std::function<Degree(size_t)> f = [&complex](size_t i)
             {
-                return DegreeType(i) ;
+                return Degree(i) ;
             } ;
 
             // -- Second: build the associated lower star filtration
@@ -80,7 +80,7 @@ int main(int argc, char **argv)
 
 
             // Build empty persistant HDVF (with vtk export activated)
-            HDVFType hdvf(complex, filtration, CGAL::HDVF::OPT_FULL, true);
+            HDVF_type hdvf(complex, filtration, CGAL::HDVF::OPT_FULL, true);
 
             // Compute a perfect HDVF
             hdvf.compute_perfect_hdvf();

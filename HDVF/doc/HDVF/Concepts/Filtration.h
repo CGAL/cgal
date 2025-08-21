@@ -15,8 +15,8 @@ A filtration class provides:
 Cells are indexed along each dimension and thus identified by their index together with their dimension.
 
 \cgalHasModelsBegin
-\cgalHasModelsBare{`CGAL::HDVF::Filtration_core<DegreeType>`}
-\cgalHasModelsBare{`CGAL::HDVF::Filtration_lower_star<DegreeType>`}
+\cgalHasModelsBare{`CGAL::HDVF::Filtration_core<Degree>`}
+\cgalHasModelsBare{`CGAL::HDVF::Filtration_lower_star<Degree>`}
 \cgalHasModelsEnd
 
 */
@@ -25,14 +25,14 @@ class Filtration
 {
 public:
     /*! \brief Type of the underlying complex. */
-    typedef unspecified_type ComplexType;
+    typedef unspecified_type Complex;
     
     /*! \brief (Scalar) type of degrees (model of `RealEmbeddable`).
      */
-    typedef unspecified_type DegreeType ;
+    typedef unspecified_type Degree ;
     
     /*! \brief Type of coefficients used to compute homology. */
-    typedef ComplexType::Coefficient_type Coefficient_type;
+    typedef Complex::Coefficient_ring Coefficient_ring;
 
     /*! \brief Type for indexing uniquely a cell.
      *
@@ -48,7 +48,7 @@ public:
      */
     typedef struct {
         Cell cell_dim ;
-        DegreeType degree ;
+        Degree degree ;
     } Filtration_iter_value ;
 
 protected:
@@ -103,7 +103,7 @@ public:
 
         /*! Gets the degree associated to the iterator.
          */
-        DegreeType degree () const ;
+        Degree degree () const ;
 
         /*!
          * \brief Prefix incrementation.
@@ -149,7 +149,7 @@ public:
 
     /*! \brief Gets the degree of the `i`th element of the filtration.
      */
-    DegreeType degree (size_t i) const;
+    Degree degree (size_t i) const;
 
     // Filtration verification
     /*! \brief Checks that a filtration is valid.

@@ -12,8 +12,8 @@ typedef int CoefficientType;
 
 int main(int argc, char **argv)
 {
-    using ComplexType = CGAL::HDVF::Cubical_chain_complex<CoefficientType> ;
-    using HDVFType = CGAL::HDVF::Hdvf<ComplexType> ;
+    using Complex = CGAL::HDVF::Cubical_chain_complex<CoefficientType> ;
+    using HDVF_type = CGAL::HDVF::Hdvf<Complex> ;
 
     if (argc != 2)
     {
@@ -22,9 +22,9 @@ int main(int argc, char **argv)
     else
     {
         // Choose between PRIMAL and DUAL construction
-        const ComplexType::typeComplexCube primal_dual = ComplexType::PRIMAL;
+        const Complex::typeComplexCube primal_dual = Complex::PRIMAL;
         // Adapt pgm loading into Cub_complex accordingly
-        const bool khalimsky_coords = (primal_dual == ComplexType::PRIMAL) ? true : false ;
+        const bool khalimsky_coords = (primal_dual == Complex::PRIMAL) ? true : false ;
 
         CGAL::HDVF::Cub_object_io mesh ;
 
@@ -33,12 +33,12 @@ int main(int argc, char **argv)
         mesh.print_infos();
 
         // Build simplicial chain complex
-        ComplexType complex(mesh, primal_dual);
+        Complex complex(mesh, primal_dual);
 
         std::cout << complex;
 
         // Build empty HDVF
-        HDVFType hdvf(complex, CGAL::HDVF::OPT_FULL) ;
+        HDVF_type hdvf(complex, CGAL::HDVF::OPT_FULL) ;
 
         // Compute a perfect HDVF
         hdvf.compute_perfect_hdvf();

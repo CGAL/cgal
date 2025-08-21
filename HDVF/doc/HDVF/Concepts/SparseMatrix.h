@@ -44,7 +44,7 @@ public:
     /*!
      * \brief Type of coefficients stored in the matrix (a model of `Ring`).
      */
-    typedef Ring CoefficientType;
+    typedef Ring CoefficientRing;
 
     /*!
      * \brief Matrix and chain type (either ROW or COLUMN).
@@ -70,7 +70,7 @@ public:
     /*!
      * \brief Creates an empty new sparse matrix object.
      *
-     * Default constructor, initialize an empty matrix of type `ChainTypeFlag` with coefficients of type `CoefficientType`.
+     * Default constructor, initialize an empty matrix of type `ChainTypeFlag` with coefficients of type `CoefficientRing`.
      * The default matrix size is 0x0.
      */
     SparseMatrix() ;
@@ -78,7 +78,7 @@ public:
     /*!
      * \brief Creates a new sparse matrix object with given rows/columns sizes.
      *
-     * Constructor with sizes, initialize an empty matrix of type `ChainTypeFlag` with coefficients of type `CoefficientType` and a given size along rows/columns.
+     * Constructor with sizes, initialize an empty matrix of type `ChainTypeFlag` with coefficients of type `CoefficientRing` and a given size along rows/columns.
      */
     SparseMatrix(const size_t rowCount, const size_t columnCount) ;
 
@@ -184,7 +184,7 @@ public:
      * \brief Adds a matrix and assign.
      *
      * Adds each coefficient of the matrix together and stores the result in `this`.
-     * Matrices must have the same `CoefficientType` but can have different `ChainTypeFlag`.
+     * Matrices must have the same `CoefficientRing` but can have different `ChainTypeFlag`.
      */
     friend SparseMatrix& operator+=(SparseMatrix &matrix, const SparseMatrix &other);
 
@@ -192,7 +192,7 @@ public:
      * \brief Adds two matrices together.
      *
      * Adds each coefficient of the matrices together and returns a new matrix (of the same type as `first`) representing the result (when possible, prefer `+=` for efficiency).
-     * Matrices must have the same `CoefficientType` but can have different `ChainTypeFlag`.
+     * Matrices must have the same `CoefficientRing` but can have different `ChainTypeFlag`.
      */
     friend SparseMatrix operator+(const SparseMatrix &first, const SparseMatrix &second);
 
@@ -201,7 +201,7 @@ public:
      * \brief Substracts a matrix and assign.
      *
      * Substracts each coefficient of the matrix together and stores the result in `matrix`.
-     * Matrices must have the same `CoefficientType` but can have different `ChainTypeFlag`.
+     * Matrices must have the same `CoefficientRing` but can have different `ChainTypeFlag`.
      */
     SparseMatrix& operator-=(SparseMatrix &matrix, const SparseMatrix &other);
 
@@ -209,7 +209,7 @@ public:
      * \brief Substracts two matrices together.
      *
      * Substracts each coefficient of the matrix together and returns a new matrix (of the same type as `first`) representing the result (when possible, prefer `-=` for efficiency).
-     * Matrices must have the same `CoefficientType` but can have different `ChainTypeFlag`.
+     * Matrices must have the same `CoefficientRing` but can have different `ChainTypeFlag`.
      */
     friend SparseMatrix operator-(const SparseMatrix &first, const SparseMatrix &second);
 
@@ -225,41 +225,41 @@ public:
      *
      * This method creates a new matrix obtained by multiplying the matrix by a scalar factor `lambda`. If `lambda` is zero, the function comes to nullify the matrix (when possible, prefer `*=` for efficiency).
      */
-    friend SparseMatrix operator*(const CoefficientType& lambda, const SparseMatrix &matrix);
+    friend SparseMatrix operator*(const CoefficientRing& lambda, const SparseMatrix &matrix);
 
     /**
      * \brief Applies factor on each coefficients into a new matrix.
      *
      * This method creates a new matrix obtained by multiplying the matrix by a scalar factor `lambda`. If `lambda` is zero, the function comes to nullify the matrix (when possible, prefer `*=` for efficiency).
      */
-    friend SparseMatrix operator*(const SparseMatrix &matrix, const CoefficientType& lambda);
+    friend SparseMatrix operator*(const SparseMatrix &matrix, const CoefficientRing& lambda);
 
     /**
      * \brief Applies factor on each coefficient and assign.
      *
      * This method multiplies the matrix by a scalar factor `lambda`.
      */
-    SparseMatrix& operator*=(const CoefficientType& lambda);
+    SparseMatrix& operator*=(const CoefficientRing& lambda);
 
     /**
      * \brief Multiplies a matrix and assign.
      *
      * Multiply each coefficient of the matrix together and stores the result in `matrix`.
-     * Matrices must have the same `CoefficientType` but can have different `ChainTypeFlag`.
+     * Matrices must have the same `CoefficientRing` but can have different `ChainTypeFlag`.
      */
     friend SparseMatrix& operator*=(SparseMatrix &matrix, const SparseMatrix &other);
 
     /**
      * \brief Performs multiplication between matrices and returns a new column-major matrix.
      *
-     * Perform standard linear algebra product between matrices and returns a new column-major matrix (when possible, prefer `*=` for efficiency). Matrices must have the same `CoefficientType` but can have different `ChainTypeFlag`. Efficiency of the product depends of `ChainTypeFlag` (when possible, prefer row-major by column-major products).
+     * Perform standard linear algebra product between matrices and returns a new column-major matrix (when possible, prefer `*=` for efficiency). Matrices must have the same `CoefficientRing` but can have different `ChainTypeFlag`. Efficiency of the product depends of `ChainTypeFlag` (when possible, prefer row-major by column-major products).
      */
     friend SparseMatrix operator*(const SparseMatrix &first, const SparseMatrix &second);
 
     /**
      * \brief Performs multiplication between matrices and returns a new row-major matrix.
      *
-     * Perform standard linear algebra product between matrices and returns a new row-major matrix (when possible, prefer `*=` for efficiency). Matrices must have the same `CoefficientType` but can have different `ChainTypeFlag`. Efficiency of the product depends of `ChainTypeFlag`.
+     * Perform standard linear algebra product between matrices and returns a new row-major matrix (when possible, prefer `*=` for efficiency). Matrices must have the same `CoefficientRing` but can have different `ChainTypeFlag`. Efficiency of the product depends of `ChainTypeFlag`.
      */
     friend SparseMatrix operator%(const SparseMatrix &first, const SparseMatrix &second);
 
@@ -270,7 +270,7 @@ public:
      *
      * The matrix and the chain must have the same coefficient type.
      */
-    friend Sparse_chain<CoefficientType, COLUMN> operator*(const SparseMatrix& first, const Sparse_chain<CoefficientType, COLUMN>& second);
+    friend Sparse_chain<CoefficientRing, COLUMN> operator*(const SparseMatrix& first, const Sparse_chain<CoefficientRing, COLUMN>& second);
 
     /**
      * \brief Performs multiplication between a row-based chain and a matrix.
@@ -279,7 +279,7 @@ public:
      *
      * The matrix and the chain must have the same coefficient type.
      */
-    friend Sparse_chain<CoefficientType, ROW> operator*(const Sparse_chain<CoefficientType, ROW>& first, const SparseMatrix& second);
+    friend Sparse_chain<CoefficientRing, ROW> operator*(const Sparse_chain<CoefficientRing, ROW>& first, const SparseMatrix& second);
 
     /**
      * \brief Transposes a matrix.
@@ -306,38 +306,38 @@ public:
      *
      * Assign the scalar `d` to the coefficient on row `i` and column `j`.
      */
-    friend void set_coefficient(SparseMatrix& matrix, size_t i, size_t j, const CoefficientType d);
+    friend void set_coefficient(SparseMatrix& matrix, size_t i, size_t j, const CoefficientRing d);
 
     /**
      * \brief Gets a given coefficient.
      *
      * Returns the coefficient on row `i` and column `j` of the matrix.
      */
-    friend CoefficientType get_coefficient(const SparseMatrix& matrix, size_t i, size_t j);
+    friend CoefficientRing get_coefficient(const SparseMatrix& matrix, size_t i, size_t j);
 
     /**
      * \brief Gets the value of the column at a given `index` from the matrix (whatever the `ChainTypeFlag` of the matrix).
      *
      * For column-matrices, it is equivalent to `operator[]`, for row-matrices a traversal of the matrix is required (in \f$\mathcal O(n)\f$).
      */
-    friend Sparse_chain<CoefficientType, COLUMN> get_column(const SparseMatrix &matrix, size_t index);
+    friend Sparse_chain<CoefficientRing, COLUMN> get_column(const SparseMatrix &matrix, size_t index);
 
     /**
      * \brief Gets the value of the row at a given `index` from the matrix (whatever the `ChainTypeFlag` of the matrix).
      *
      * For row-matrices, it is equivalent to `operator[]`, for column-matrices a traversal of the matrix is required (in \f$\mathcal O(n)\f$).
      */
-    friend Sparse_chain<CoefficientType, ROW> get_row(const SparseMatrix &matrix, size_t index);
+    friend Sparse_chain<CoefficientRing, ROW> get_row(const SparseMatrix &matrix, size_t index);
 
     /**
      * \brief Gets a constant reference over the column of  index`i` from a column matrix.
      */
-    const Sparse_chain<CoefficientType, COLUMN> & cget_column(const SparseMatrix<CoefficientType, COLUMN> & matrix, size_t i);
+    const Sparse_chain<CoefficientRing, COLUMN> & cget_column(const SparseMatrix<CoefficientRing, COLUMN> & matrix, size_t i);
 
     /**
      * \brief Gets a constant reference over the row of  index`i` from a row matrix.
      */
-    const Sparse_chain<CoefficientType, ROW> & cget_row(const SparseMatrix<CoefficientType, ROW> & matrix, size_t i);
+    const Sparse_chain<CoefficientRing, ROW> & cget_row(const SparseMatrix<CoefficientRing, ROW> & matrix, size_t i);
 
     /**
      * \brief Sets a column in the matrix (whatever the `ChainTypeFlag` of the matrix).
@@ -345,7 +345,7 @@ public:
      * Set the `i`th column of `matrix` to `chain`.
      * For column-matrices, it should be equivalent to an assignment, however, for row-matrices, a traversal of the matrix is required (in \f$\mathcal O(n)\f$).
      */
-    void set_column(SparseMatrix &matrix, size_t i, const Sparse_chain<CoefficientType, COLUMN> &chain);
+    void set_column(SparseMatrix &matrix, size_t i, const Sparse_chain<CoefficientRing, COLUMN> &chain);
 
     /**
      * \brief Sets a row in `matrix` (whatever the `ChainTypeFlag` of the matrix).
@@ -353,7 +353,7 @@ public:
      * Set the `i`th row of `matrix` to `chain`.
      * For row-matrices, it should be equivalent to an assignment, however, for column-matrices, a traversal of the matrix is required (in \f$\mathcal O(n)\f$).
      */
-    void set_row(SparseMatrix &matrix, size_t i, const Sparse_chain<CoefficientType, ROW> &chain);
+    void set_row(SparseMatrix &matrix, size_t i, const Sparse_chain<CoefficientRing, ROW> &chain);
 
     /**
      * \brief Gets a submatrix from the matrix.

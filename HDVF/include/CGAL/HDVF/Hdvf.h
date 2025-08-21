@@ -78,19 +78,19 @@ Using appropriate combinations of such operations, one can change a HDVF until c
 
 \cgalModels{HDVF}
 
-\tparam ComplexType a model of the `AbstractChainComplex` concept, providing the type of abstract chain complex used.
+\tparam ChainComplex a model of the `AbstractChainComplex` concept, providing the type of abstract chain complex used.
  */
 
-template<typename ComplexType>
-class Hdvf : public Hdvf_core<ComplexType, OSM::Sparse_chain, OSM::Sparse_matrix> {
+template<typename ChainComplex>
+class Hdvf : public Hdvf_core<ChainComplex, OSM::Sparse_chain, OSM::Sparse_matrix> {
 public:
     /*! \brief Type of coefficients used to compute homology. */
-    typedef ComplexType::Coefficient_type Coefficient_type;
+    typedef ChainComplex::Coefficient_ring Coefficient_ring;
     
     /*!
      Type of parent Hdvf_core class.
      */
-    typedef Hdvf_core<ComplexType, OSM::Sparse_chain, OSM::Sparse_matrix> HDVF_core_type ;
+    typedef Hdvf_core<ChainComplex, OSM::Sparse_chain, OSM::Sparse_matrix> HDVF_core_type ;
 
     /**
      * \brief Default constructor.
@@ -100,7 +100,7 @@ public:
      * \param[in] K A chain complex (a model of `AbstractChainComplex`)
      * \param[in] hdvf_opt Option for HDVF computation (`OPT_BND`, `OPT_F`, `OPT_G` or `OPT_FULL`)
      */
-    Hdvf(const ComplexType& K, int hdvf_opt = OPT_FULL) ;
+    Hdvf(const ChainComplex& K, int hdvf_opt = OPT_FULL) ;
 
     /*
      * \brief Constructor by copy.
@@ -109,7 +109,7 @@ public:
      *
      * \param[in] hdvf An initial HDVF.
      */
-    Hdvf(const Hdvf& hdvf) : Hdvf_core<ComplexType, OSM::Sparse_chain, OSM::Sparse_matrix>(hdvf) { }
+    Hdvf(const Hdvf& hdvf) : Hdvf_core<ChainComplex, OSM::Sparse_chain, OSM::Sparse_matrix>(hdvf) { }
 
     /*
      * \brief HDVF destructor. */
@@ -393,8 +393,8 @@ public:
 };
 
 // Constructor for the Hdvf class
-template<typename ComplexType>
-Hdvf<ComplexType>::Hdvf(const ComplexType& K, int hdvf_opt) : Hdvf_core<ComplexType, OSM::Sparse_chain, OSM::Sparse_matrix>(K, hdvf_opt) { }
+template<typename ChainComplex>
+Hdvf<ChainComplex>::Hdvf(const ChainComplex& K, int hdvf_opt) : Hdvf_core<ChainComplex, OSM::Sparse_chain, OSM::Sparse_matrix>(K, hdvf_opt) { }
 
 
 
@@ -405,8 +405,8 @@ Hdvf<ComplexType>::Hdvf(const ComplexType& K, int hdvf_opt) : Hdvf_core<ComplexT
 
 // \brief find a valid Cell_pair for M in dimension q
 
-template<typename ComplexType>
-Cell_pair Hdvf<ComplexType>::find_pair_M(int q, bool &found) const
+template<typename ChainComplex>
+Cell_pair Hdvf<ChainComplex>::find_pair_M(int q, bool &found) const
 {
     found = false;
     Cell_pair p;
@@ -435,8 +435,8 @@ Cell_pair Hdvf<ComplexType>::find_pair_M(int q, bool &found) const
 
 // find a valid Cell_pair containing tau for M in dimension q
 
-template<typename ComplexType>
-Cell_pair Hdvf<ComplexType>::find_pair_M(int q, bool &found, size_t tau) const
+template<typename ChainComplex>
+Cell_pair Hdvf<ChainComplex>::find_pair_M(int q, bool &found, size_t tau) const
 {
     found = false;
     Cell_pair p;
@@ -482,8 +482,8 @@ Cell_pair Hdvf<ComplexType>::find_pair_M(int q, bool &found, size_t tau) const
 }
 
 // find all the valid Cell_pair for M in dimension q
-template<typename ComplexType>
-std::vector<Cell_pair> Hdvf<ComplexType>::find_pairs_M(int q, bool &found) const
+template<typename ChainComplex>
+std::vector<Cell_pair> Hdvf<ChainComplex>::find_pairs_M(int q, bool &found) const
 {
     found = false;
     std::vector<Cell_pair> pairs;
@@ -512,8 +512,8 @@ std::vector<Cell_pair> Hdvf<ComplexType>::find_pairs_M(int q, bool &found) const
 }
 
 // find all the valid Cell_pair containing tau for M in dimension q
-template<typename ComplexType>
-std::vector<Cell_pair> Hdvf<ComplexType>::find_pairs_M(int q, bool &found, size_t tau) const
+template<typename ChainComplex>
+std::vector<Cell_pair> Hdvf<ChainComplex>::find_pairs_M(int q, bool &found, size_t tau) const
 {
     found = false;
     std::vector<Cell_pair> pairs;
@@ -569,8 +569,8 @@ std::vector<Cell_pair> Hdvf<ComplexType>::find_pairs_M(int q, bool &found, size_
 // Second version: returns all the pairs containing sigma
 
 // find a valid Cell_pair for W in dimension q
-template<typename ComplexType>
-Cell_pair Hdvf<ComplexType>::find_pair_W(int q, bool &found) const
+template<typename ChainComplex>
+Cell_pair Hdvf<ChainComplex>::find_pair_W(int q, bool &found) const
 {
     found = false;
     Cell_pair p;
@@ -598,8 +598,8 @@ Cell_pair Hdvf<ComplexType>::find_pair_W(int q, bool &found) const
 }
 
 // find a valid Cell_pair containing tau for W in dimension q
-template<typename ComplexType>
-Cell_pair Hdvf<ComplexType>::find_pair_W(int q, bool &found, size_t tau) const
+template<typename ChainComplex>
+Cell_pair Hdvf<ChainComplex>::find_pair_W(int q, bool &found, size_t tau) const
 {
     found = false;
     Cell_pair p;
@@ -642,8 +642,8 @@ Cell_pair Hdvf<ComplexType>::find_pair_W(int q, bool &found, size_t tau) const
 }
 
 // find all the valid Cell_pair for W in dimension q
-template<typename ComplexType>
-std::vector<Cell_pair> Hdvf<ComplexType>::find_pairs_W(int q, bool &found) const
+template<typename ChainComplex>
+std::vector<Cell_pair> Hdvf<ChainComplex>::find_pairs_W(int q, bool &found) const
 {
     found = false;
     std::vector<Cell_pair> pairs;
@@ -673,8 +673,8 @@ std::vector<Cell_pair> Hdvf<ComplexType>::find_pairs_W(int q, bool &found) const
 }
 
 // find all the valid Cell_pair containing tau for W in dimension q
-template<typename ComplexType>
-std::vector<Cell_pair> Hdvf<ComplexType>::find_pairs_W(int q, bool &found, size_t tau) const
+template<typename ChainComplex>
+std::vector<Cell_pair> Hdvf<ChainComplex>::find_pairs_W(int q, bool &found, size_t tau) const
 {
     found = false;
     std::vector<Cell_pair> pairs;
@@ -725,8 +725,8 @@ std::vector<Cell_pair> Hdvf<ComplexType>::find_pairs_W(int q, bool &found, size_
 // Second version: returns all the pairs containing sigma
 
 // find a valid Cell_pair for MW in dimension q
-template<typename ComplexType>
-Cell_pair Hdvf<ComplexType>::find_pair_MW(int q, bool &found) const
+template<typename ChainComplex>
+Cell_pair Hdvf<ChainComplex>::find_pair_MW(int q, bool &found) const
 {
     found = false;
     Cell_pair p;
@@ -751,8 +751,8 @@ Cell_pair Hdvf<ComplexType>::find_pair_MW(int q, bool &found) const
 
                     // Compute xi and xi' to test the validity of MW
 
-                    const Coefficient_type xi = projS_cod_sigma * H11 ;
-                    const Coefficient_type xip = H11q1 * projP_d_pi ;
+                    const Coefficient_ring xi = projS_cod_sigma * H11 ;
+                    const Coefficient_ring xip = H11q1 * projP_d_pi ;
                     found = ((abs(xi) == 1) && (abs(xip) == 1)) ;
                     if (found)
                     {
@@ -768,8 +768,8 @@ Cell_pair Hdvf<ComplexType>::find_pair_MW(int q, bool &found) const
 }
 
 // find a valid Cell_pair containing tau for MW in dimension q
-template<typename ComplexType>
-Cell_pair Hdvf<ComplexType>::find_pair_MW(int q, bool &found, size_t tau) const
+template<typename ChainComplex>
+Cell_pair Hdvf<ChainComplex>::find_pair_MW(int q, bool &found, size_t tau) const
 {
     found = false;
     Cell_pair p;
@@ -803,8 +803,8 @@ Cell_pair Hdvf<ComplexType>::find_pair_MW(int q, bool &found, size_t tau) const
                     if (!projS_cod_sigma.is_null())
                     {
                         // test xi and xip
-                        const Coefficient_type xi = projS_cod_sigma * H11 ;
-                        const Coefficient_type xip = H11q1 * projP_d_pi ;
+                        const Coefficient_ring xi = projS_cod_sigma * H11 ;
+                        const Coefficient_ring xip = H11q1 * projP_d_pi ;
                         found = ((abs(xi) == 1) && (abs(xip) == 1)) ;
                         if (found)
                         {
@@ -839,8 +839,8 @@ Cell_pair Hdvf<ComplexType>::find_pair_MW(int q, bool &found, size_t tau) const
                 if (!projP_d_pi.is_null())
                 {
                     // test xi and xip
-                    const Coefficient_type xi = projS_cod_sigma * H11 ;
-                    const Coefficient_type xip = H11q1 * projP_d_pi ;
+                    const Coefficient_ring xi = projS_cod_sigma * H11 ;
+                    const Coefficient_ring xip = H11q1 * projP_d_pi ;
                     found = ((abs(xi) == 1) && (abs(xip) == 1)) ;
                     if (found)
                     {
@@ -856,8 +856,8 @@ Cell_pair Hdvf<ComplexType>::find_pair_MW(int q, bool &found, size_t tau) const
 }
 
 // find all the valid Cell_pair for MW in dimension q
-template<typename ComplexType>
-std::vector<Cell_pair> Hdvf<ComplexType>::find_pairs_MW(int q, bool &found) const
+template<typename ChainComplex>
+std::vector<Cell_pair> Hdvf<ChainComplex>::find_pairs_MW(int q, bool &found) const
 {
     found = false;
     std::vector<Cell_pair> pairs;
@@ -882,8 +882,8 @@ std::vector<Cell_pair> Hdvf<ComplexType>::find_pairs_MW(int q, bool &found) cons
 
                     // Compute xi and xi' to test the validity of MW
 
-                    const Coefficient_type xi = projS_cod_sigma * H11 ;
-                    const Coefficient_type xip = H11q1 * projP_d_pi ;
+                    const Coefficient_ring xi = projS_cod_sigma * H11 ;
+                    const Coefficient_ring xip = H11q1 * projP_d_pi ;
                     found = ((abs(xi) == 1) && (abs(xip) == 1)) ;
                     if (found)
                     {
@@ -902,8 +902,8 @@ std::vector<Cell_pair> Hdvf<ComplexType>::find_pairs_MW(int q, bool &found) cons
 }
 
 // find all the valid Cell_pair containing tau for MW in dimension q
-template<typename ComplexType>
-std::vector<Cell_pair> Hdvf<ComplexType>::find_pairs_MW(int q, bool &found, size_t tau) const
+template<typename ChainComplex>
+std::vector<Cell_pair> Hdvf<ChainComplex>::find_pairs_MW(int q, bool &found, size_t tau) const
 {
     found = false;
     std::vector<Cell_pair> pairs;
@@ -936,8 +936,8 @@ std::vector<Cell_pair> Hdvf<ComplexType>::find_pairs_MW(int q, bool &found, size
                     if (!projS_cod_sigma.is_null())
                     {
                         // test xi and xip
-                        const Coefficient_type xi = projS_cod_sigma * H11 ;
-                        const Coefficient_type xip = H11q1 * projP_d_pi ;
+                        const Coefficient_ring xi = projS_cod_sigma * H11 ;
+                        const Coefficient_ring xip = H11q1 * projP_d_pi ;
                         found = ((abs(xi) == 1) && (abs(xip) == 1)) ;
                         if (found)
                         {
@@ -974,8 +974,8 @@ std::vector<Cell_pair> Hdvf<ComplexType>::find_pairs_MW(int q, bool &found, size
                 if (!projP_d_pi.is_null())
                 {
                     // test xi and xip
-                    const Coefficient_type xi = projS_cod_sigma * H11 ;
-                    const Coefficient_type xip = H11q1 * projP_d_pi ;
+                    const Coefficient_ring xi = projS_cod_sigma * H11 ;
+                    const Coefficient_ring xip = H11q1 * projP_d_pi ;
                     found = ((abs(xi) == 1) && (abs(xip) == 1)) ;
                     if (found)
                     {
@@ -996,8 +996,8 @@ std::vector<Cell_pair> Hdvf<ComplexType>::find_pairs_MW(int q, bool &found, size
 
 // Method to perform operation R
 // pi is in dimension q, sigma is in dimension q+1
-template<typename ComplexType>
-void Hdvf<ComplexType>::R(size_t pi, size_t sigma, int q) {
+template<typename ChainComplex>
+void Hdvf<ChainComplex>::R(size_t pi, size_t sigma, int q) {
     //----------------------------------------------- Submatrices of H ----------------------------------------------------
 
     if (this->_hdvf_opt & OPT_FULL)
@@ -1010,11 +1010,11 @@ void Hdvf<ComplexType>::R(size_t pi, size_t sigma, int q) {
         typename HDVF_core_type::Column_chain H21 = OSM::get_column(this->_H_col[q], pi); // H21 is the column chain from this->_H_col[q] at index pi
 
         // Get the coefficient at the intersection of H12 and H21
-        Coefficient_type H11(H12[pi]); // H11 is the coefficient at row sigma and column pi
+        Coefficient_ring H11(H12[pi]); // H11 is the coefficient at row sigma and column pi
 
         // Assert that H11 is either 1 or -1 (check invertibility)
         assert((H11 == 1) || (H11 == -1)); // !!!!! Test invertibility
-        Coefficient_type H11_inv = H11; // Inverse of H11 (which is itself for 1 or -1)
+        Coefficient_ring H11_inv = H11; // Inverse of H11 (which is itself for 1 or -1)
 
         // Remove the contributions of pi from H12 and sigma from H21
         H12 /= std::vector<size_t>({pi}); // Remove column pi from H12
@@ -1114,8 +1114,8 @@ void Hdvf<ComplexType>::R(size_t pi, size_t sigma, int q) {
 
 // Method to perform operation M
 // pi is in dimension q, gamma is in dimension q
-template<typename ComplexType>
-void Hdvf<ComplexType>::M(size_t pi, size_t gamma, int q) {
+template<typename ChainComplex>
+void Hdvf<ChainComplex>::M(size_t pi, size_t gamma, int q) {
     //----------------------------------------------- Submatrices of F ----------------------------------------------------
 
     if (this->_hdvf_opt & OPT_FULL)
@@ -1131,11 +1131,11 @@ void Hdvf<ComplexType>::M(size_t pi, size_t gamma, int q) {
         typename HDVF_core_type::Column_chain F21(OSM::get_column(this->_F_row[q], pi)); // F21 is the column chain from this->_F_row[q] at index pi
 
         // Get the coefficient at the intersection of F12 and F21
-        const Coefficient_type F11(F12.get_coefficient(pi)); // F11 is the coefficient at row gamma and column pi
+        const Coefficient_ring F11(F12.get_coefficient(pi)); // F11 is the coefficient at row gamma and column pi
 
         // Assert that F11 is either 1 or -1 (for invertibility)
         assert((F11 == 1) || (F11 == -1)); // !!!!! Test invertibility
-        Coefficient_type F11_inv = F11; // Inverse of F11 (which is itself for 1 or -1)
+        Coefficient_ring F11_inv = F11; // Inverse of F11 (which is itself for 1 or -1)
 
         // Remove the contributions of pi from F12 and gamma from F21
         F12 /= std::vector<size_t>({pi}); // Remove column pi from F12
@@ -1211,7 +1211,7 @@ void Hdvf<ComplexType>::M(size_t pi, size_t gamma, int q) {
             typename HDVF_core_type::Column_chain projection_c = this->projection(c, CRITICAL, q-1); // Project boundary chain to CRITICAL
 
             // Set the column pi of this->_G_col[q] to (-1 * this->_H_col[q-1]) * projection_p
-            OSM::set_column(this->_G_col[q], pi, (Coefficient_type(-1) * this->_H_col[q - 1]) * projection_p);
+            OSM::set_column(this->_G_col[q], pi, (Coefficient_ring(-1) * this->_H_col[q - 1]) * projection_p);
 
             // Update this->_DD_col
             // Extract projections and perform updates
@@ -1231,8 +1231,8 @@ void Hdvf<ComplexType>::M(size_t pi, size_t gamma, int q) {
 
 // Method to perform operation W
 // gamma is in dimension q, sigma is in dimension q
-template<typename ComplexType>
-void Hdvf<ComplexType>::W(size_t sigma, size_t gamma, int q) {
+template<typename ChainComplex>
+void Hdvf<ChainComplex>::W(size_t sigma, size_t gamma, int q) {
     //----------------------------------------------- Submatrices of G ----------------------------------------------------
 
     if (this->_hdvf_opt & OPT_FULL)
@@ -1248,11 +1248,11 @@ void Hdvf<ComplexType>::W(size_t sigma, size_t gamma, int q) {
         typename HDVF_core_type::Column_chain G21(OSM::get_column(this->_G_col[q], gamma)); // G21 is the column chain from this->_G_col[q] at index gamma
 
         // Get the coefficient at the intersection of G12 and G21
-        Coefficient_type G11(G12.get_coefficient(gamma)); // G11 is the coefficient at row sigma and column gamma
+        Coefficient_ring G11(G12.get_coefficient(gamma)); // G11 is the coefficient at row sigma and column gamma
 
         // Assert that G11 is either 1 or -1 (for invertibility)
         assert((G11 == 1) || (G11 == -1)); // !!!!! Test invertibility
-        Coefficient_type G11_inv = G11; // Inverse of G11 (which is itself for 1 or -1)
+        Coefficient_ring G11_inv = G11; // Inverse of G11 (which is itself for 1 or -1)
 
         // Remove the contributions of gamma from G12 and sigma from G21
         G12 /= std::vector<size_t>({gamma}); // Remove column gamma from G12
@@ -1352,8 +1352,8 @@ void Hdvf<ComplexType>::W(size_t sigma, size_t gamma, int q) {
 
 // Method to perform operation MW
 // gamma is in dimension q, sigma is in dimension q
-template<typename ComplexType>
-void Hdvf<ComplexType>::MW(size_t pi, size_t sigma, int q) {
+template<typename ChainComplex>
+void Hdvf<ChainComplex>::MW(size_t pi, size_t sigma, int q) {
     //----------------------------------------------- Submatrices of G ----------------------------------------------------
 
     if (this->_hdvf_opt & OPT_FULL)
@@ -1394,8 +1394,8 @@ void Hdvf<ComplexType>::MW(size_t pi, size_t sigma, int q) {
 
         // Compute xi and xi' to test the validity of MW
 
-        Coefficient_type xi = projS_cod_sigma * H11 ;
-        Coefficient_type xip = H11q1 * projP_d_pi ;
+        Coefficient_ring xi = projS_cod_sigma * H11 ;
+        Coefficient_ring xip = H11q1 * projP_d_pi ;
 
         if (abs(xi) != 1)
             throw "MW impossible, xi non invertible" ;

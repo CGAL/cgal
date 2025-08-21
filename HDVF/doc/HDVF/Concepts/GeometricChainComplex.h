@@ -8,8 +8,8 @@ The concept `GeometricChainComplex` refines the concept `AbstractChainComplex` a
  \cgalRefines{AbstractChainComplex}
 
 \cgalHasModelsBegin
-\cgalHasModelsBare{`CGAL::HDVF::Simplicial_chain_complex<CoefficientType>`}
-\cgalHasModelsBare{`CGAL::HDVF::Cubical_chain_complex<CoefficientType>`}
+\cgalHasModelsBare{`CGAL::HDVF::Simplicial_chain_complex<CoefficientRing>`}
+\cgalHasModelsBare{`CGAL::HDVF::Cubical_chain_complex<CoefficientRing>`}
 \cgalHasModelsEnd
 
 */
@@ -20,6 +20,11 @@ public:
 /// \name Types
 /// @{
 
+/*!
+Type of coefficients used to compute homology (model of `Ring`)
+ */
+typedef Ring CoefficientRing;
+    
 /*!
  Type of coordinates (the vector size is free, hence coordinates can be any dimension).
  */
