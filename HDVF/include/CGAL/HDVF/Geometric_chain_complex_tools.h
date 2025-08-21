@@ -290,7 +290,7 @@ void hdvf_duality_geometric_chain_complex_output_vtk (Hdvf_duality<ChainComplex>
 
 The class `Duality_simplicial_complex_tools` is dedicated to Alexander duality for 3D surface meshes. Starting from a simplicial chain complex (encoding a 3D surface mesh), it provides methods to embed the complex into a larger icosphere and generate a 3D constrained Delaunay triangulation.
 
-Technically, starting from a Simplicial_chain_complex `_K`, the method `simp_complex_bb` builds a Simplicial_chain_complex L and a Sub_chain_complex_mask K.
+Technically, starting from a Simplicial_chain_complex `_K`, the method `simplicial_complex_bb()` builds a Simplicial_chain_complex L and a Sub_chain_complex_mask K.
 - L : complex built out of _K together with a closing icosphere, meshed by tetgen (constrained Delaunay triangulation)
 - K (Sub_chain_complex_mask) : Sub_chain_complex_mask identifying _K inside L
 
