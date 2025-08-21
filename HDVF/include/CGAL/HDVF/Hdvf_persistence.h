@@ -81,31 +81,11 @@ class Hdvf_persistence : public Hdvf_core<ChainComplex, OSM::Sparse_chain, OSM::
 public:
     /*! \brief Type of coefficients used to compute homology. */
     typedef ChainComplex::Coefficient_ring Coefficient_ring;
-    
-    /*! \brief Type to store persistent intervals filtration indices (birth/death indices)
-     *
-     * For "infinite" intervals borne at index i, the interval is set to (i,i-1)
-     */
-    typedef std::pair<size_t, size_t> FiltrIndexPerInterval ;
 
-    /*! \brief Type for describing the pair of cells associated to a persistence interval:
-     * - First element of the pair: cell entailing the birth of the hole.
-     * - Second element of the pair: cell entailing the death of the hole.
-     *
-     * For infinite intervals, the "infinite cells" is defined as (-1,q+1) where q is the dimension of the chain complex.
-     */
-    typedef std::pair<Cell, Cell> CellsPerInterval ;
-
-    /*! \brief Template for persistent intervals degrees (birth/death degrees)
-     *
-     * For "infinite" intervals borne at degree d, the interval is set to (d,d-1)
-     */
-    typedef std::pair<Degree,Degree> DegreePerInterval;
-
-    /*! \brief Template for (full) persistent interval data:
-     * - First element: persistent interval filtration indices
-     * - Second element: persistent interval cells
-     * - Third element: persistent interval degrees
+    /*! \brief Structure storing (full) persistent interval data:
+     * - `time_birth`, `time_death`: persistent interval filtration indices
+     * - `cell_birth`, `cell_death`: persistent interval cells
+     * - `degree_birth`, `degree_death`: persistent interval degrees
      *
      * Infinite holes are encoded by setting birth data = death data (time, degree and cell).
      */
@@ -117,8 +97,6 @@ public:
         /** \brief Computes the (degree) duration of a persistent interval (ie.\ persistent hole)
          *
          * By definitions of "default" values, infinite intervals have a duration of -1.
-         *
-         * \param[in] hole Persistent interval considered for duration computation
          */
         inline Degree duration () const
         {
@@ -127,6 +105,24 @@ public:
                 return -1 ;
             else
                 return degree_death-degree_birth;
+        }
+        
+        /**
+         * \brief Output the hole to a stream.
+         */
+        inline std::ostream& insert (std::ostream& out_stream) const
+        {
+            if (time_death != time_birth) // finite interval
+            {
+                out_stream << "[" << time_birth << " (" << cell_birth.first << ", " << cell_birth.second << ") -> " ;
+                out_stream << time_death << " (" << cell_death.first << ", " << cell_death.second << ") / duration: " << duration() << "]" << std::endl ;
+            }
+            else
+            {
+                out_stream << "[" << time_birth << " (" << cell_birth.first << ", " << cell_birth.second << ") -> " ;
+                out_stream << "inf]" << std::endl ;
+            }
+            return out_stream ;
         }
     };
     
@@ -159,14 +155,6 @@ public:
     /*! Type of filtrations used to compute persistence.
      */
     typedef FiltrationType Filtration;
-
-//    /*! Instanciation of `DegreePerIntervalT` (persistant intervals degrees) for `Degree`.
-//     */
-//    typedef DegreePerIntervalT<Degree> DegreePerInterval;
-//
-//    /*! Instanciation of `PerHoleT` (full persistant intervals informations) for `Degree`.
-//     */
-//    typedef PerHoleT<Degree> PerHole;
 
     /*! Type for `PRIMARY`/`SECONDARY`/`CRITICAL` labels export
      *      Encoding used:
@@ -281,16 +269,13 @@ public:
             {
                 // i : persistence index
                 // encoding of the second "infinite" cell:
-                //  -> equals the first cell
+                //  -> equals the first cell (ie. birth = death)
                 const Cell_pair p = {i, this->_K.number_of_cells(q+1), q} ;
                 const size_t ki(_per_to_K.at(q).at(i)) ; // K index
                 const Cell c(ki,q) ;
                 const size_t ti(_f._cell_to_t.at(c)) ;
                 const Degree di(_f._deg.at(i)) ;
-//                FiltrIndexPerInterval per_int(ti,_f.size()) ;
-//                Cell inf(this->_K.number_of_cells(q+1),q+1) ;
-//                CellsPerInterval per_int_cell(c,inf) ;
-//                DegreePerInterval per_deg_int(di,di-1) ;
+
                 PerHole hole;
                 hole.time_birth = ti;
                 hole.time_death = ti;
@@ -325,16 +310,20 @@ public:
      * \param[in] out Reference to an out stream.
      * \param[in] per_hdvf Constant reference on the Hdvf_persistence to print.
      */
-    friend std::ostream& operator<< (std::ostream& out, const Hdvf_persistence& per_hdvf)
+    friend std::ostream& operator<< (std::ostream& out_stream, const Hdvf_persistence& per_hdvf)
     {
         size_t i = 0 ;
         for (PerHole hole : per_hdvf._persist)
         {
-            //if (abs(per_hdvf.hole_duration(hole)) > Degree(0))
-             //   out << i << " --- duration : " << per_hdvf.hole_duration(hole) << " -- " << hole << std::endl ;
-            //++i ;
+            if (hole.duration() > 0)
+            {
+                out_stream << i << " --- duration : " << hole.duration() << " -- " ;
+                hole.insert(out_stream);
+                out_stream << std::endl ;
+            }
+            ++i ;
         }
-        return out ;
+        return out_stream ;
     }
 
     /** \brief Prints informations related to the filtration.
@@ -577,13 +566,6 @@ public:
      * \returns The iterator to the ending of the chains indices.
      */
     iterator end() { return iterator(*this, _persist.size()) ; }
-    
-//    /*! \brief Overload of the `<<` operator to display persistent intervals (that is PerHole).
-//     *
-//     * Format:
-//     *      birth time (cell, dim) -> death time (cell, dim) / degree duration
-//     */
-//    friend std::ostream& operator<< (std::ostream& out, const PerHole& hole);
 
 private:
     /* \brief Export current persistent pair informations.
@@ -825,6 +807,7 @@ Cell_pair Hdvf_persistence<ChainComplex, Degree, FiltrationType>::step_persist(b
     return p;
 }
 
+// HELP !!!!!
 template<typename ChainComplex, typename Degree, typename FiltrationType >
 std::ostream& operator<< (std::ostream& out_stream, const typename Hdvf_persistence<ChainComplex, Degree, FiltrationType>::PerHole& hole)
 {
