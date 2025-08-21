@@ -481,51 +481,11 @@ FT separation_distance(const Convex_hull_hierarchy<PolygonMesh>& ch1, const Conv
                        const NamedParameters_2& np2 = parameters::default_values());
 
 #else
-/**
-* \ingroup PkgConvexHull3Predicates
-*
-* provides a lower bound on the squared distance between two convex sets. Consider the convex hull of point sets provide.
-*
-* @tparam Convex1: can be a model of the concept `Container`, `IncidenceGraph`, `Convex_hull_hierarchy` or any object 'M'
-* such that exists a function 'extreme_point_3(M, Kernel::Vector_3, Converter)' returning a Kernel::Point_3
-* @tparam Convex2: same as Convex1
-* @tparam NamedParameters_1 a sequence of \ref bgl_namedparameters "Named Parameters"
-* @tparam NamedParameters_2 a sequence of \ref bgl_namedparameters "Named Parameters"
-*
-* @param c1 first convex set considered in the do-intersect test
-* @param c2 second convex set considered in the do-intersect test
-* @param np1 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
-* @param np2 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
-*
-* \cgalNamedParamsBegin
-*   \cgalParamNBegin{point_map}
-*     \cgalParamDescription{a property map associating points to the elements of `c1` (`c2`)}
-*     \cgalParamType{a model of `ReadablePropertyMap` whose value types are the same for `np1` and `np2`}
-*     \cgalParamDefault{`CGAL::Identity_property_map`}
-*   \cgalParamNEnd
-*   \cgalParamNBegin{geom_traits}
-*     \cgalParamDescription{An instance of a geometric traits class}
-*     \cgalParamType{a class model of `Kernel`}
-*     \cgalParamDefault{a \cgal kernel deduced from the point type, using `CGAL::Kernel_traits`}
-*     \cgalParamExtra{`np1` only}
-*   \cgalParamNEnd
-*   \cgalParamNBegin{number_of_iterations}
-*     \cgalParamDescription{if not `0` (no limit), indicates the maximum number of iterations performed by the algorithm.
-*                           If this value is not `0`, then the return value can be zero even if the convex hulls does not intersect.
-*                           However, the value reported remains a lower bound of the distance between the convex.}
-*     \cgalParamType{a positive integer convertible to `std::size_t`}
-*     \cgalParamExtra{`np1` only}
-*     \cgalParamDefault{`0`}
-*   \cgalParamNEnd
-* \cgalNamedParamsEnd
-*
-* \returns If the convex intersect, the return value is zero.
-*
-*/
+
 template <class Convex1, class Convex2,
           class NamedParameters_1 = parameters::Default_named_parameters,
           class NamedParameters_2 = parameters::Default_named_parameters>
-typename Point_set_processing_3_np_helper<Convex1, NamedParameters_1>::Geom_traits::FT
+typename predicates_impl::GetGeomTraitsFromConvex<Convex1, NamedParameters_1>::type::FT
 separation_distance(const Convex1& c1, const Convex2& c2,
                     const NamedParameters_1& np1 = parameters::default_values(),
                     const NamedParameters_2& np2 = parameters::default_values()){
@@ -534,24 +494,9 @@ separation_distance(const Convex1& c1, const Convex2& c2,
 
   //The function need exact computation to works correctly
   using EPECK=Exact_predicates_exact_constructions_kernel;
-
-  if constexpr(is_instance_of_v<Convex1, Convex_hull_hierarchy>){
-    using GetGeomTraits = GetGeomTraits<typename Convex1::Mesh, NamedParameters_1>;
-    using GT= typename GetGeomTraits::type;
-    GT gt = choose_parameter<GT>(get_parameter(np1, internal_np::geom_traits));
-    return predicates_impl::Separation_distance_functor<GT, EPECK>()(c1, c2, np1, np2);
-  } else if constexpr(CGAL::IO::internal::is_Range_v<Convex1>){
-    using NP_helper= Point_set_processing_3_np_helper<Convex1, NamedParameters_1>;
-    using GT= typename NP_helper::Geom_traits;
-    GT gt = NP_helper::get_geom_traits(c1, np1);
-    return predicates_impl::Separation_distance_functor<GT, EPECK>()(c1, c2, np1, np2);
-  } else {
-    using GetGeomTraits = GetGeomTraits<Convex1, NamedParameters_1>;
-    using GT= typename GetGeomTraits::type;
-    GT gt = choose_parameter<GT>(get_parameter(np1, internal_np::geom_traits));
-    return predicates_impl::Separation_distance_functor<GT, EPECK>()(c1, c2, np1, np2);
-  }
-  return true;
+  using GT= typename predicates_impl::GetGeomTraitsFromConvex<Convex1, NamedParameters_1>::type;
+  GT gt = choose_parameter<GT>(get_parameter(np1, internal_np::geom_traits));
+  return predicates_impl::Separation_distance_functor<GT, EPECK>()(c1, c2, np1, np2);
 }
 
 #endif

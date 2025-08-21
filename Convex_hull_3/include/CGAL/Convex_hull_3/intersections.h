@@ -50,7 +50,26 @@ inline constexpr bool is_instance_of_v<Template<Args...>, Template> = true;
 namespace Convex_hull_3 {
 
 namespace predicates_impl{
-  template <class Range, class Vector_3, class NamedParameters>
+
+// template class to deduce the GT from Convex and NamedParameters
+template<class Convex,
+         class NamedParameters,
+         bool Is_range=CGAL::IO::internal::is_Range_v<Convex> >
+struct GetGeomTraitsFromConvex{
+  typedef typename GetGeomTraits<Convex, NamedParameters>::type type;
+};
+
+template<class Convex, class NamedParameters>
+struct GetGeomTraitsFromConvex<Convex, NamedParameters, true>{
+  typedef typename Point_set_processing_3_np_helper<Convex, NamedParameters>::Geom_traits type;
+};
+
+template<class Mesh, class NamedParameters>
+struct GetGeomTraitsFromConvex<Convex_hull_hierarchy<Mesh>, NamedParameters, false>{
+  typedef typename GetGeomTraits<Mesh, NamedParameters>::type type;
+};
+
+template <class Range, class Vector_3, class NamedParameters>
 typename Kernel_traits<Vector_3>::Kernel::Point_3 extreme_point_range_3(const Range& r, const Vector_3 &dir, const NamedParameters &np) {
   using CGAL::parameters::choose_parameter;
   using CGAL::parameters::get_parameter;
@@ -676,24 +695,9 @@ bool do_intersect(const Convex1& c1, const Convex2& c2,
   using CGAL::parameters::choose_parameter;
   using CGAL::parameters::get_parameter;
 
-  if constexpr(is_instance_of_v<Convex1, Convex_hull_hierarchy>){
-    using GetGeomTraits = GetGeomTraits<typename Convex1::Mesh, NamedParameters_1>;
-    using GT= typename GetGeomTraits::type;
-    GT gt = choose_parameter<GT>(get_parameter(np1, internal_np::geom_traits));
-    return Do_intersect_traits<GT>().do_intersect_object()(c1, c2, np1, np2);
-  } else if constexpr(CGAL::IO::internal::is_Range_v<Convex1>){
-    using NP_helper= Point_set_processing_3_np_helper<Convex1, NamedParameters_1>;
-    using GT= typename NP_helper::Geom_traits;
-    GT gt = NP_helper::get_geom_traits(c1, np1);
-    return Do_intersect_traits<GT>().do_intersect_object()(c1, c2, np1, np2);
-  } else {
-    using GetGeomTraits = GetGeomTraits<Convex1, NamedParameters_1>;
-    using GT= typename GetGeomTraits::type;
-    GT gt = choose_parameter<GT>(get_parameter(np1, internal_np::geom_traits));
-    return Do_intersect_traits<GT>().do_intersect_object()(c1, c2, np1, np2);
-  }
-  return true;
-
+  using GT= typename predicates_impl::GetGeomTraitsFromConvex<Convex1, NamedParameters_1>::type;
+  GT gt = choose_parameter<GT>(get_parameter(np1, internal_np::geom_traits));
+  return Do_intersect_traits<GT>().do_intersect_object()(c1, c2, np1, np2);
 
 }
 #endif
