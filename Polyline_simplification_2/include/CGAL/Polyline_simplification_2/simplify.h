@@ -229,7 +229,7 @@ public:
     return n;
   }
 
-  void
+  int
   initialize_costs()
   {
     int n=0;
@@ -237,6 +237,7 @@ public:
     for(; cit!=e; ++cit){
       n+= initialize_costs(*cit);
     }
+    return n;
   }
 
   bool
