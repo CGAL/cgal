@@ -136,8 +136,8 @@ void hdvf_persistence_geometric_chain_complex_output_vtk (Hdvf_persistence<Chain
     if (!per_hdvf.with_export())
         throw("Cannot export persistent generators to vtk: with_export is off!") ;
 
-    using perHDVFType = Hdvf_persistence<Chain_complex, Degree, FiltrationType>;
-    using PerHole = PerHoleT<Degree> ;
+    using HDVF_type = Hdvf_persistence<Chain_complex, Degree, FiltrationType>;
+    using PerHole = HDVF_type::PerHole;
 
     // Export the filtration
     std::string out_file_filtration = filename+"_filtration.vtk" ;
@@ -148,34 +148,34 @@ void hdvf_persistence_geometric_chain_complex_output_vtk (Hdvf_persistence<Chain
     // Batch informations are stored in file filename_infos.txt
     std::ofstream info_file(filename+"_infos.txt") ;
     size_t i = 0 ;
-    for (typename perHDVFType::iterator it = per_hdvf.begin(); it != per_hdvf.end(); ++it)
+    for (typename HDVF_type::iterator it = per_hdvf.begin(); it != per_hdvf.end(); ++it)
     {
-        typename perHDVFType::PerIntervalInformation hole_data(*it) ;
+        typename HDVF_type::PerIntervalInformation hole_data(*it) ;
         const PerHole hole(hole_data.hole) ;
         // Export informations of this hole
-        info_file << i << " -> " << " --- duration : " << per_hdvf.hole_duration(hole) << " -- " << hole << std::endl ;
+        info_file << i << " -> " << " --- duration : " << hole.duration() << " -- " << hole << std::endl ;
 
-        if (per_hdvf.hole_duration(hole)>0) // Export vtk of "finite" holes
+        if (hole.duration()>0) // Export vtk of "finite" holes
         {
             // Build name associated to the ith hole : filename_i
             std::string out_file = filename+"_"+std::to_string(i) ;
             // Export PSC labels to vtk
             Chain_complex::chain_complex_to_vtk(complex, out_file+"_PSC.vtk", &hole_data.labelsPSC) ;
-            const CellsPerInterval per_int_cells(std::get<1>(hole_data.hole)) ;
+//            const typename HDVF_type::CellsPerInterval per_int_cells(std::get<1>(hole_data.hole)) ;
             // Export homology generators (g)
             if (per_hdvf.hdvf_opts()  & (OPT_FULL | OPT_G))
             {
                 // First generator : filename_i_g_sigma_q.vtk
                 {
-                    const size_t id(per_int_cells.first.first) ;
-                    const int dim(per_int_cells.first.second) ;
+                    const size_t id(hole_data.hole.cell_birth.first) ;
+                    const int dim(hole_data.hole.cell_birth.second) ;
                     std::string tmp(out_file+"_g_"+std::to_string(id)+"_"+std::to_string(dim)+".vtk") ;
                     Chain_complex::chain_complex_chain_to_vtk(complex, tmp, hole_data.g_chain_sigma, dim);
                 }
                 // Second generator : filename_i_g_tau_q+1.vtk
                 {
-                    const size_t id(per_int_cells.second.first) ;
-                    const int dim(per_int_cells.second.second) ;
+                    const size_t id(hole_data.hole.cell_death.first) ;
+                    const int dim(hole_data.hole.cell_death.second) ;
                     std::string tmp(out_file+"_g_"+std::to_string(id)+"_"+std::to_string(dim)+".vtk") ;
                     Chain_complex::chain_complex_chain_to_vtk(complex, tmp, hole_data.g_chain_tau, dim);
                 }
@@ -185,8 +185,8 @@ void hdvf_persistence_geometric_chain_complex_output_vtk (Hdvf_persistence<Chain
             {
                 // First generator : filename_i_fstar_sigma_q.vtk
                 {
-                    const size_t id(per_int_cells.first.first) ;
-                    const int dim(per_int_cells.first.second) ;
+                    const size_t id(hole_data.hole.cell_birth.first) ;
+                    const int dim(hole_data.hole.cell_birth.second) ;
                     std::string tmp(out_file+"_fstar_"+std::to_string(id)+"_"+std::to_string(dim)+".vtk") ;
                     if (co_faces)
                     {
@@ -197,8 +197,8 @@ void hdvf_persistence_geometric_chain_complex_output_vtk (Hdvf_persistence<Chain
                 }
                 // Second generator : filename_i_fstar_tau_q+1.vtk
                 {
-                    const size_t id(per_int_cells.second.first) ;
-                    const int dim(per_int_cells.second.second) ;
+                    const size_t id(hole_data.hole.cell_death.first) ;
+                    const int dim(hole_data.hole.cell_death.second) ;
                     std::string tmp(out_file+"_fstar_"+std::to_string(id)+"_"+std::to_string(dim)+".vtk") ;
                     if (co_faces)
                     {
