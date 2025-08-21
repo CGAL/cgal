@@ -61,7 +61,7 @@ struct Convex_hull_hierarchy{
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
 
   /// @private
-  typedef typename PolygonMesh::Property_map<vertex_descriptor, vertex_descriptor> Property_map;
+  typedef typename PolygonMesh::template Property_map<vertex_descriptor, vertex_descriptor> Property_map;
 
   // /// returns the number of the higher level of the hierarchy.
   /// @private
