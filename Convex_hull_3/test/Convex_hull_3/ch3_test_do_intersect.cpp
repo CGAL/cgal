@@ -19,12 +19,10 @@
 #include <vector>
 #include <fstream>
 
-// typedef CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt        EPECK_with_sqrt;
-typedef CGAL::Exact_predicates_exact_constructions_kernel        EPECK;
-typedef CGAL::Exact_predicates_inexact_constructions_kernel      EPICK;
-// typedef CGAL::Simple_cartesian<double>                           DOUBLE_K;
-
-const double PI=3.14159265358979323846;
+// typedef CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt        Epeck_with_sqrt;
+typedef CGAL::Exact_predicates_exact_constructions_kernel        Epeck;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel      Epick;
+// typedef CGAL::Simple_cartesian<double>                           Cartesian;
 
 template<typename K>
 struct Sphere{
@@ -96,7 +94,7 @@ struct Test{
       v_a[i]=vec_a[i];
     for(size_t i=0; i<vec_b.size(); ++i)
       v_b[i]=vec_b[i];
-    std::vector< size_t > pm_a(vec_a.size(),0), pm_b(vec_b.size(), 0); //Vector d'indices
+    std::vector< size_t > pm_a(vec_a.size(),0), pm_b(vec_b.size(), 0); //Vector of indexes
     std::iota(pm_a.begin(), pm_a.end(), 0);
     std::iota(pm_b.begin(), pm_b.end(), 0);
     assert(CGAL::Convex_hull_3::do_intersect(pm_a, pm_b, CGAL::parameters::point_map(v_a), CGAL::parameters::point_map(v_b))==result);
@@ -200,7 +198,7 @@ struct Test{
     test(vertex1,vertex1, true);
 
     test(origin, vertex1, false, 1);
-    test(vertex1, vertex2, false, 1);
+    test(vertex1, vertex2, false, 2);
 
     //Segments
     std::vector<P> seg1({P(0,0,0),P(2,0,0)});
@@ -240,21 +238,11 @@ struct Test{
   void test_half_sphere()
   {
     std::vector<P> half_sphere;
-    // constexpr K::FT eps(std::pow(2,-40));
-    constexpr double pi=3.14159265358979323846;
     for(double phi=25./16.; phi>0; phi-=1./4.)
-      for(double theta=0; theta<2*pi; theta+=0.25)
+      for(double theta=0; theta<2*CGAL_PI; theta+=0.25)
             half_sphere.push_back(P(std::sin(phi) * std::cos(theta),
                                     std::sin(phi) * std::sin(theta),
                                     std::cos(phi)));
-
-
-    // constexpr double pi=3.14159265358979323846;
-    // for(double phi=25./16.; phi>0; phi-=1./4.)
-    //   for(double theta=0; theta<2*pi; theta+=0.25)
-    //         half_sphere.push_back(P(std::sin(phi) * std::cos(theta),
-    //                                 std::sin(phi) * std::sin(theta),
-    //                                 std::cos(phi)));
 
     for(double x=-0.5; x<=0.5; x+=0.1)
       for(double y=-0.5; y<=0.5; y+=0.1){
@@ -294,8 +282,8 @@ struct Test{
   void test_random_sphere(int N, int M, CGAL::Random &r)
   {
     auto random_sphere_point=[&](){
-      double a=r.get_double(0,2*PI);
-      double b=r.get_double(-PI/2,PI/2);
+      double a=r.get_double(0,2*CGAL_PI);
+      double b=r.get_double(-CGAL_PI/2,CGAL_PI/2);
       return P( std::cos(a)*std::cos(b), std::sin(a)*std::cos(b), std::sin(b));
     };
     for(int i=0; i<M; ++i)
@@ -325,7 +313,7 @@ struct Test{
   }
 
   void full_test(CGAL::Random &r){
-    // test_degenerate();
+    test_degenerate();
     test_cube();
     test_half_sphere();
     test_random_tetrahedra(1000, r);
@@ -341,10 +329,10 @@ int main(int argc, char** argv)
 
   std::cout << std::setprecision(17);
 
-  // Test<DOUBLE_K>().full_test(r); //Too hard
-  Test<EPICK, CGAL::Surface_mesh<EPICK::Point_3> >().full_test(r);
-  Test<EPICK, CGAL::Polyhedron_3<EPICK> >().full_test(r);
-  Test<EPECK, CGAL::Surface_mesh<EPECK::Point_3> >().full_test(r);
-  // Test<EPECK_with_sqrt>().test_implicit_function(r,10);
+  // Test<C>().full_test(r); //Too hard
+  Test<Epick, CGAL::Surface_mesh<Epick::Point_3> >().full_test(r);
+  Test<Epick, CGAL::Polyhedron_3<Epick> >().full_test(r);
+  Test<Epeck, CGAL::Surface_mesh<Epeck::Point_3> >().full_test(r);
+  // Test<Epeck_with_sqrt>().test_implicit_function(r,10);
   return 0;
 }
