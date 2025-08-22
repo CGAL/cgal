@@ -28,16 +28,6 @@ namespace HDVF {
 // Forward declaration of Duality_cubical_complex_tools
 template<typename T> class Duality_cubical_complex_tools ;
 
-// TOOLS
-
-std::ostream & operator<<(std::ostream & out, std::vector<size_t> c)
-{
-    for (size_t i:c)
-        out << i << " " ;
-    out << std::endl ;
-    return out ;
-}
-
 /*!
  \ingroup PkgHDVFAlgorithmClasses
 

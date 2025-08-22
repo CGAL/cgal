@@ -311,10 +311,7 @@ size_t Abstract_simplicial_chain_complex<CoefficientRing>::_id_generator(0);
 
 //constructors
 template<typename CoefficientRing>
-Abstract_simplicial_chain_complex<CoefficientRing>::Abstract_simplicial_chain_complex(int q) : _complex_id(_id_generator++) {
-    // Initialize attributes
-    _dim = q;
-
+Abstract_simplicial_chain_complex<CoefficientRing>::Abstract_simplicial_chain_complex(int q) : _dim(q), _complex_id(_id_generator++) {
     // Initialize vectors of Simplices and cell counts
     _ind2simp.resize(_dim + 1);
     _simp2ind.resize(_dim + 1);
@@ -400,20 +397,20 @@ void Abstract_simplicial_chain_complex<CoefficientRing>::calculate_d(int dim) co
 
 // Method to display the complex's information
 template<typename CoefficientRing>
-std::ostream& Abstract_simplicial_chain_complex<CoefficientRing>::print_complex(std::ostream& out) const {
-    out << "Complex dimension: " << _dim << std::endl;
+std::ostream& Abstract_simplicial_chain_complex<CoefficientRing>::print_complex(std::ostream& out_stream) const {
+    out_stream << "Complex dimension: " << _dim << std::endl;
 
     // Total number of cells
     size_t nb_total_cells = 0;
     for (size_t i = 0; i <= _dim; ++i) {
         nb_total_cells += _nb_cells[i];
     }
-    out << "Total number of cells: " << nb_total_cells << std::endl;
+    out_stream << "Total number of cells: " << nb_total_cells << std::endl;
 
     // Cells per dimension
     for (int q = 0; q <= _dim; ++q) {
-        out << "--- dimension " << q << std::endl;
-        out << number_of_cells(q) << " cells" << std::endl ;
+        out_stream << "--- dimension " << q << std::endl;
+        out_stream << number_of_cells(q) << " cells" << std::endl ;
         //        for (size_t j = 0; j < _nb_cells.at(q); ++j) {
         //            Simplex s(_ind2Simp.at(q).at(j));
         //            std::cout << j << " -> " << s << " -> " << _Simp2ind.at(q).at(s) << std::std::endl;
@@ -421,10 +418,10 @@ std::ostream& Abstract_simplicial_chain_complex<CoefficientRing>::print_complex(
     }
 
     // Boundary matrices
-    out << "---------------------------" << std::endl << "Boundary matrices" << std::endl;
+    out_stream << "---------------------------" << std::endl << "Boundary matrices" << std::endl;
     for (int q = 1; q <= _dim; ++q)
-        out << "_d[" << q << "] : " << _d[q].dimensions().first << "x" << _d[q].dimensions().second << std::endl <<  _d[q] << std::endl;
-    return out ;
+        out_stream << "_d[" << q << "] : " << _d[q].dimensions().first << "x" << _d[q].dimensions().second << std::endl <<  _d[q] << std::endl;
+    return out_stream ;
 }
 
 template <typename CoefficientRing>

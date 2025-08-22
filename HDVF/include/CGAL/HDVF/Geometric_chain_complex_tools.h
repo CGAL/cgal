@@ -339,18 +339,26 @@ public:
      */
     static Complex_duality_data simplicial_chain_complex_bb (const Chain_complex& _K, double BB_ratio=1.5, const std::string& out_file_prefix = "file_K_closed.off")
     {
+        
+        std::cerr << "-- Starting simplicial_chain_complex_bb" << std::endl;
+        std::cerr << "Imported mesh" << std::endl;
+        _K.print_complex();
         // Export _K to a MeshObject to add the icosphere and mesh with tetGen
         Mesh_object_io mesh_L = Duality_simplicial_complex_tools::export_meshObject(_K) ;
+        std::cerr << "Mesh_object_io from mesh" << std::endl;
+        mesh_L.print_infos();
 
         // Closing K by adding the icosphere
         //  Compute a bounding icosphere
         Io_node_type bary = mesh_L.barycenter() ;
         double r = mesh_L.radius(bary) ;
         Icosphere_object_io ico(2,bary, BB_ratio*r) ;
+        std::cerr << "Icosphere generated" << std::endl;
         ico.print_infos() ;
 
         // Add it to the mesh
         mesh_L.push_back(ico) ;
+        std::cerr << "Mesh concatenation" << std::endl;
         mesh_L.print_infos() ;
 
         // Write this mesh to an off file for Tetgen
@@ -395,7 +403,7 @@ public:
             }
 
         std::vector<Io_node_type> coords;
-        for (auto it = _CC.get_vertices_coords().begin(); it != _CC.get_vertices_coords().begin(); ++it)
+        for (auto it = _CC.get_vertices_coords().begin(); it != _CC.get_vertices_coords().end(); ++it)
             coords.push_back(Io_node_type(*it));
         Mesh_object_io &m = *(new Mesh_object_io(-3, coords, vcells)) ;
         return m ;
