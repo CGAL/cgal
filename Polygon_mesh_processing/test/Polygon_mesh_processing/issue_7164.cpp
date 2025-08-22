@@ -37,5 +37,25 @@ int main(/*int argc, char** argv*/)
   PMP::bounded_error_Hausdorff_distance<CGAL::Sequential_tag>(A, B, bound);
   PMP::bounded_error_Hausdorff_distance<CGAL::Sequential_tag>(B, A, bound);
 
+  // The bug was possible with closed models
+  std::vector<Point_3> pts_C;
+  std::vector<std::vector<size_t>> trs_C;
+  pts_C.emplace_back(0,0,0);
+  pts_C.emplace_back(1,1,0);
+  pts_C.emplace_back(1,0,1);
+  pts_C.emplace_back(0,1,1);
+  pts_C.emplace_back(0.75,0.75,0);
+  trs_C.emplace_back(std::vector<size_t>{0,1,2});
+  trs_C.emplace_back(std::vector<size_t>{3,1,0});
+  trs_C.emplace_back(std::vector<size_t>{3,2,1});
+  trs_C.emplace_back(std::vector<size_t>{0,2,4});
+  trs_C.emplace_back(std::vector<size_t>{3,0,4});
+  trs_C.emplace_back(std::vector<size_t>{3,4,2});
+  Mesh C;
+  PMP::polygon_soup_to_polygon_mesh(pts_C, trs_C, C);
+
+  PMP::bounded_error_Hausdorff_distance<CGAL::Sequential_tag>(A, C, bound);
+  PMP::bounded_error_Hausdorff_distance<CGAL::Sequential_tag>(C, A, bound);
+
   return EXIT_SUCCESS;
 }
