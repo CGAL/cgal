@@ -19,10 +19,10 @@
 #include <vector>
 #include <fstream>
 
-typedef CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt        EPECK_with_sqrt;
+// typedef CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt        EPECK_with_sqrt;
 typedef CGAL::Exact_predicates_exact_constructions_kernel        EPECK;
 typedef CGAL::Exact_predicates_inexact_constructions_kernel      EPICK;
-typedef CGAL::Simple_cartesian<double>                           DOUBLE;
+// typedef CGAL::Simple_cartesian<double>                           DOUBLE_K;
 
 const double PI=3.14159265358979323846;
 
@@ -341,7 +341,7 @@ int main(int argc, char** argv)
 
   std::cout << std::setprecision(17);
 
-  // Test<DOUBLE>().full_test(r); //Too hard
+  // Test<DOUBLE_K>().full_test(r); //Too hard
   Test<EPICK, CGAL::Surface_mesh<EPICK::Point_3> >().full_test(r);
   Test<EPICK, CGAL::Polyhedron_3<EPICK> >().full_test(r);
   Test<EPECK, CGAL::Surface_mesh<EPECK::Point_3> >().full_test(r);
