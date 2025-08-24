@@ -57,7 +57,7 @@ void draw_lakes() {
   CGAL::draw(arr, "lakes");
 }
 
-void draw_guassian_map() {
+void draw_gaussian_map() {
   Arrangement arr;
   const auto& traits = *arr.geometry_traits();
   auto ctr_p = traits.construct_point_2_object();
@@ -67,7 +67,7 @@ void draw_guassian_map() {
   auto arcs = {ctr_cv(p1, p2), ctr_cv(p2, p3), ctr_cv(p3, p1), ctr_cv(p1, p4), ctr_cv(p2, p4), ctr_cv(p3, p4)};
   CGAL::insert(arr, arcs.begin(), arcs.end());
   print_arrangement_size(arr);
-  CGAL::draw(arr, "guassian map of a tetrahedron");
+  CGAL::draw(arr, "gaussian map of a tetrahedron");
 }
 
 void draw_random_arcs(int n) {
@@ -87,7 +87,8 @@ void draw_random_arcs(int n) {
   std::vector<Curve> curves;
   for(int i = 0; i < n; ++i) {
     int j = random.get_int(0, n - 1);
-    if(i == j) j = (j + 1) % n;
+    if(i == j)
+      j = (j + 1) % n;
     curves.push_back(ctr_cv(points[i], points[j]));
   }
 
