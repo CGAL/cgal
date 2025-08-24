@@ -100,7 +100,7 @@ void draw_random_arcs(int n) {
 int main() {
   draw_face_crossing_boundary();
   draw_lakes();
-  draw_guassian_map();
+  draw_gaussian_map();
   draw_random_arcs(100);
   return 0;
 }
