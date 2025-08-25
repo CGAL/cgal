@@ -13,15 +13,15 @@ using Polygon_2 = CGAL::Polygon_2<Kernel>;
 
 int main() {
   Polygon_2 P;
-  P.push_back(Point_2(-1,1));
-  P.push_back(Point_2(0,-1));
-  P.push_back(Point_2(1,1));
+  P.push_back(Point_2(-1, 1));
+  P.push_back(Point_2(0, -1));
+  P.push_back(Point_2(1, 1));
   std::cout << "P = "; print_polygon(P);
 
   Polygon_2 Q;
-  Q.push_back(Point_2(-1,-1));
-  Q.push_back(Point_2(1,-1));
-  Q.push_back(Point_2(0,1));
+  Q.push_back(Point_2(-1, -1));
+  Q.push_back(Point_2(1, -1));
+  Q.push_back(Point_2(0, 1));
   std::cout << "Q = "; print_polygon(Q);
 
   if ((CGAL::do_intersect(P, Q)))
