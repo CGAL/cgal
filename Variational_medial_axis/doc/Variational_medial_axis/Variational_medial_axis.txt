@@ -73,11 +73,11 @@ To accelerate this closest point query, two types of spatial search structures a
 - `CGAL::KD_tree_tag`: uses a KD-tree constructed from the surface vertices.
 - `CGAL::BVH_tag`: uses a bounding volume hierarchy (BVH) built from the input triangle mesh.
 
-The user can choose the desired structure by passing the corresponding tag via the `CGAL::parameters::acceleration_structure` named parameter.
+The user can choose the desired structure by passing the corresponding tag via the `CGAL::parameters::acceleration_structure()` named parameter.
 
-In general, we recommend using the KD-tree (which is also the default) if the surface mesh has sufficiently dense vertex sampling.
+In general, we recommend using the KD-tree (which is also the default) if the surface mesh has a sufficiently dense vertex sampling.
 However, for sparse meshes, the KD-tree may cause the resulting medial spheres to drift outside the shape boundaries.
-In such cases, the BVH may offer better geometric containment, though it is not guaranteed to produce strictly interior medial spheres.
+In such cases, the BVH may offer better geometric containment, though it is neither guaranteed to produce strictly interior medial spheres.
 
 
 \subsection VMASfree Free function
@@ -88,7 +88,7 @@ This function accepts the following parameters:
 - `number_of_iterations`: maximum number of iterations (default: 1000)
 - `concurrency_tag`: execution mode - sequential or parallel (default: Sequential_tag)
 
-The following example showcase the usage of this function:
+The following example showcases the usage of this function:
 
 \cgalExample{Variational_medial_axis/vmas_free_function_example.cpp}
 
@@ -121,7 +121,7 @@ In practice, several factors can lead to topological discrepancies between the i
 
 
 \section VMASDesign Design and Implementation History
-This package is the result of the work of Qijia HUANG during the 2025 season of the Google Summer of Code, mentored by Sébastian Loriot.
+This package is the result of the work of Qijia HUANG during the 2025 season of the Google Summer of Code, mentored by Sébastien Loriot.
 
 */
 } /* namespace CGAL */

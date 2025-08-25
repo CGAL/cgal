@@ -19,12 +19,12 @@
 namespace CGAL {
 
 /// \ingroup PkgVMASRef
-/// @brief extracts medial skeleton for the triangle mesh `tmesh`.
+/// @brief extracts a medial skeleton for the triangle mesh `tmesh`.
 /// This function uses the class CGAL::Variational_medial_axis_sampling with the default parameters.
 /// @pre `tmesh` is a triangle mesh without borders
-/// @pre The specialization `boost::property_map<TriangleMesh, CGAL::vertex_point_t>::%type` and `get(vertex_point, tmesh)` are defined.
+/// @pre The specialization `boost::property_map<TriangleMesh, CGAL::vertex_point_t>::%const_type` and `get(vertex_point, tmesh)` are defined.
 ///
-/// @pre The value type of `boost::property_map<TriangleMesh, CGAL::vertex_point_t>::%type` is a point type from a \cgal
+/// @pre The value type of `boost::property_map<TriangleMesh, CGAL::vertex_point_t>::%const_type` is a point type from a \cgal
 /// Kernel.
 ///
 /// @tparam TriangleMesh

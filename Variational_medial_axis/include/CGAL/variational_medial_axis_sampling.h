@@ -202,7 +202,7 @@ template <typename TriangleMesh_, typename GeomTraits_ = Default> class Medial_S
 
 public:
   /**
-   * \brief Write the medial skeleton to a PLY file.
+   * \brief writes the medial skeleton to a PLY file.
    *
    * @param filepath The name of the file to write to.
    *
@@ -272,7 +272,7 @@ public:
     ofs.close();
   }
   /**
-   * Load a medial skeleton from a PLY file.
+   * loads a medial skeleton from a PLY file.
    *
    * @param filepath
    *     Filepath to the PLY file containing the medial skeleton data.
@@ -512,32 +512,32 @@ public:
   /// \name Accessor methods
   /// @{
   /**
-   * Returns the container of vertices, where each vertex is a medial sphere (`Sphere_3`).
+   * returns the container of vertices, where each vertex is a medial sphere (`Sphere_3`).
    */
   const std::vector<Sphere_3>& vertices() const { return vertices_; }
   /**
-   * Returns the container of edges, where each edge is represented as a pair of indices in the vertices vector.
+   * returns the container of edges, where each edge is represented as a pair of indices in the vertices vector.
    */
   const std::vector<std::pair<std::size_t, std::size_t>>& edges() const { return edges_; }
   /**
-   * Returns the container of faces, where each face is represented as an array of three indices in the vertices vector.
+   * returns the container of faces, where each face is represented as an array of three indices in the vertices vector.
    */
   const std::vector<std::array<std::size_t, 3>>& faces() const { return faces_; }
   /**
-   * Returns the number of vertices in the medial skeleton.
+   * returns the number of vertices in the medial skeleton.
    */
   std::size_t number_of_vertices() const { return vertices_.size(); }
   /**
-   * Returns the number of edges in the medial skeleton.
+   * returns the number of edges in the medial skeleton.
    */
   std::size_t number_of_edges() const { return edges_.size(); }
   /**
-   * Returns the number of faces in the medial skeleton.
+   * returns the number of faces in the medial skeleton.
    */
   std::size_t number_of_faces() const { return faces_.size(); }
 
   /**
-   * Clears the data for the medial skeleton.
+   * clears the data for the medial skeleton.
    */
   void clear() {
     vertices_.clear();
@@ -545,7 +545,7 @@ public:
     faces_.clear();
   }
   /**
-   * Sets the data for the medial skeleton.
+   * sets the data for the medial skeleton.
    * @param vertices A vector of `Sphere_3` representing the vertices (medial spheres).
    * @param edges A vector of pairs representing the edges, where each pair contains indices of vertices.
    * @param faces A vector of arrays representing the faces, where each array contains three indices of vertices.
@@ -569,9 +569,9 @@ private:
 /// \ingroup PkgVMASRef
 /// \brief Function object for extracting a variational medial skeleton from a triangulated surface mesh.
 ///
-/// This algorithm takes as input a triangulated surface mesh and iteratively samples the medial axis
+/// This class takes as input a triangulated surface mesh and iteratively samples the medial axis
 /// by optimizing the placement of medial spheres. The result is a non-manifold triangle mesh that
-/// captures the medial structure of the shape, consisting of both curve segments (1D) and face patches (2D),
+/// captures the medial structure of the shape, consisting of both curve segments (1D) and triangle face patches (2D),
 /// derived from the adjacency of clusters associated with each medial sphere.
 ///
 /// The process terminates when either the desired number of spheres is reached, or a maximum number
@@ -624,7 +624,6 @@ template <typename TriangleMesh_,
           typename VertexPointMap_ = Default>
 class Variational_medial_axis
 {
-private:
   using VPM = typename Default::Get<VertexPointMap_,
                                     typename boost::property_map<TriangleMesh_, vertex_point_t>::const_type>::type;
   using GT = typename Default::Get<
@@ -740,7 +739,7 @@ public:
 
   /**
    *
-   * \brief Computes a static skeleton based on the Variational Medial Axis Sampling method.
+   * \brief computes a static skeleton based on the Variational Medial Axis Sampling method.
    *
    * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
    *
@@ -815,7 +814,7 @@ public:
         success = true;
         break;
       }
-      iteration_count_++;
+      ++iteration_count_;
     }
 
     // Final neighbor update
@@ -834,7 +833,7 @@ public:
     return success;
   }
   /**
-   * \brief Update the medial spheres by performing a single step of the algorithm.
+   * \brief updates the medial spheres by performing a single step of the algorithm.
    *
    * This function performs one iteration of the algorithm, updating sphere positions and computing errors.
    * It can optionally enable sphere splitting based on convergence criteria.
@@ -886,7 +885,7 @@ public:
     return false;
   }
   /**
-   * \brief Perform a specified number of algorithm iterations.
+   * \brief performs a specified number of algorithm iterations.
    *
    * This function allows manual control over the algorithm execution,
    * performing only position optimization without sphere splitting.
@@ -902,7 +901,7 @@ public:
   }
 
   /**
-   * \brief Add spheres by iteratively splitting existing spheres.
+   * \brief adds spheres by iteratively splitting existing spheres.
    *
    * This function attempts to add the specified number of spheres
    * by running the algorithm with sphere splitting enabled until
@@ -937,7 +936,7 @@ public:
   }
 
   /**
-   * Add a new sphere by splitting sphere with the id sphere_id.
+   * adds a new sphere by splitting sphere with the id `sphere_id`.
    *
    * This function is aimed to be called during interactive sessions, where the use
    * can specify a sphere to split and add a new sphere based on the split vertex.
@@ -956,7 +955,7 @@ public:
     update(nb_iteration);
   }
   /**
-   * Remove a sphere by its sphere_id.
+   * removes a sphere by its sphere_id.
    * This function is aimed to be called during interactive sessions, where the user
    * can specify a sphere to remove.
    * \param sphere_id
@@ -971,7 +970,7 @@ public:
   }
 
   /**
-   * \brief Export the medial skeleton as a `Medial_Skeleton` object.
+   * \brief exports the medial skeleton as a `Medial_Skeleton` object.
    *
    * This function builds a `Medial_Skeleton` from the current state of the medial sphere mesh.
    * It extracts the vertices, edges, and faces from the medial sphere mesh and constructs
@@ -990,7 +989,7 @@ public:
   /// \name Parameters
   /// @{
   /**
-   * \brief Lambda parameter for the algorithm.
+   * \brief gets the Lambda parameter for the algorithm.
    *
    * This parameter controls the balance between the SQEM and Euclidean energy terms.
    * Smaller values encourage the skeleton to extend deeper into local geometric features of the shape.
@@ -998,7 +997,7 @@ public:
   FT lambda_param() const { return lambda_; }
 
   /**
-   * \brief set function for `lambda_param()`.
+   * \brief sets function for `lambda_param()`.
    * Note: The lambda must be strictly positive; if set to zero, it will default to 0.2.
    */
   void set_lambda(FT lambda) {
@@ -1014,19 +1013,19 @@ public:
    */
   int number_of_spheres() const { return desired_number_of_spheres_; }
   /**
-   * \brief set function for `number_of_spheres()`.
+   * \brief sets the expected number of spheres.
    */
   void set_number_of_spheres(int num) { desired_number_of_spheres_ = num; }
 
   /**
-   * \brief The maximum number of iterations for the algorithm.
+   * \brief gets the maximum number of iterations for the algorithm.
    *
    * In case the algorithm does not converge, it will stop after this number of iterations.
    */
   int max_iteration() const { return max_iteration_; }
 
   /**
-   * \brief set function for `max_iteration()`.
+   * \brief sets the maximum number of iterations.
    */
   void set_max_iteration(int max_iter) { max_iteration_ = max_iter; }
   ///@}
