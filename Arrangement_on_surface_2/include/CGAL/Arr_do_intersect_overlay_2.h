@@ -1,4 +1,4 @@
-// Copyright (c) 2005,2006,2007,2008,2009,2010,2011 Tel-Aviv University (Israel).
+// Copyright (c) 2025 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -8,11 +8,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s):      Baruch Zukerman <baruchzu@post.tau.ac.il>
-//                 Efi Fogel <efifogel@gmail.com>
+// Author(s):      Efi Fogel <efifogel@gmail.com>
 
-#ifndef CGAL_ARR_OVERLAY_2_H
-#define CGAL_ARR_OVERLAY_2_H
+#ifndef CGAL_ARR_DO_INTERSECT_OVERLAY_2_H
+#define CGAL_ARR_DO_INTERSECT_OVERLAY_2_H
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
@@ -20,84 +19,19 @@
 
 /*! \file
  *
- * Definition of the global Arr_overlay_2() function.
+ * Definition of the global do_intersect_overlay_2() function.
  */
-
-#include <vector>
-#include <optional>
-#include <boost/mpl/or.hpp>
-#include <boost/type_traits.hpp>
 
 #include <CGAL/Arrangement_on_surface_2.h>
 #include <CGAL/Surface_sweep_2.h>
 #include <CGAL/Surface_sweep_2/Arr_default_overlay_traits_base.h>
 #include <CGAL/Surface_sweep_2/Arr_overlay_traits_2.h>
-#include <CGAL/Surface_sweep_2/Arr_overlay_ss_visitor.h>
+#include <CGAL/Surface_sweep_2/Arr_do_intersect_overlay_ss_visitor.h>
 #include <CGAL/Surface_sweep_2/Arr_overlay_event.h>
 #include <CGAL/Surface_sweep_2/Arr_overlay_subcurve.h>
 #include <CGAL/assertions.h>
 
 namespace CGAL {
-
-template <typename Arr1, typename Arr2, typename Curve>
-class Indexed_sweep_accessor {
-private:
-  const Arr1& m_arr1;
-  const Arr2& m_arr2;
-  mutable std::vector<void*> m_backup_inc;
-
-public:
-  Indexed_sweep_accessor(const Arr1& arr1, const Arr2& arr2) : m_arr1(arr1), m_arr2(arr2) {}
-
-  std::size_t nb_vertices() const { return m_arr1.number_of_vertices() + m_arr2.number_of_vertices(); }
-
-  std::size_t min_end_index(const Curve& c) const {
-    if (c.red_halfedge_handle() != typename Curve::HH_red())
-      return reinterpret_cast<std::size_t>(c.red_halfedge_handle()->target()->inc());
-    // else
-    CGAL_assertion (c.blue_halfedge_handle() != typename Curve::HH_blue());
-    return reinterpret_cast<std::size_t>(c.blue_halfedge_handle()->target()->inc());
-  }
-
-  std::size_t max_end_index(const Curve& c) const {
-    if (c.red_halfedge_handle() != typename Curve::HH_red())
-      return reinterpret_cast<std::size_t>(c.red_halfedge_handle()->source()->inc());
-    // else
-    CGAL_assertion (c.blue_halfedge_handle() != typename Curve::HH_blue());
-    return reinterpret_cast<std::size_t>(c.blue_halfedge_handle()->source()->inc());
-  }
-
-  const Curve& curve(const Curve& c) const { return c; }
-
-  // Initializes indices by squatting Vertex::inc();
-  void before_init() const {
-    std::size_t idx = 0;
-    m_backup_inc.resize (nb_vertices());
-    for (auto vit = m_arr1.vertices_begin(); vit != m_arr1.vertices_end(); ++vit, ++idx) {
-      CGAL_assertion(idx < m_backup_inc.size());
-      m_backup_inc[idx] = vit->inc();
-      vit->set_inc(reinterpret_cast<void*>(idx));
-    }
-    for (auto vit = m_arr2.vertices_begin(); vit != m_arr2.vertices_end(); ++vit, ++idx) {
-      CGAL_assertion(idx < m_backup_inc.size());
-      m_backup_inc[idx] = vit->inc();
-      vit->set_inc(reinterpret_cast<void*>(idx));
-    }
-  }
-
-  // Restores state of arrangements before index squatting
-  void after_init() const {
-    std::size_t idx = 0;
-    for (auto vit = m_arr1.vertices_begin(); vit != m_arr1.vertices_end(); ++vit, ++idx) {
-      CGAL_assertion(idx < m_backup_inc.size());
-      vit->set_inc(m_backup_inc[idx]);
-    }
-    for (auto vit = m_arr2.vertices_begin(); vit != m_arr2.vertices_end(); ++vit, ++idx) {
-      CGAL_assertion(idx < m_backup_inc.size());
-      vit->set_inc(m_backup_inc[idx]);
-    }
-  }
-};
 
 /*! Compute the overlay of two input arrangements.
  * \tparam GeometryTraitsA_2 the geometry traits of the first arrangement.
@@ -125,10 +59,11 @@ template <typename GeometryTraitsA_2,
           typename TopologyTraitsB,
           typename TopologyTraitsRes,
           typename OverlayTraits>
-void overlay(const Arrangement_on_surface_2<GeometryTraitsA_2, TopologyTraitsA>& arr1,
-             const Arrangement_on_surface_2<GeometryTraitsB_2, TopologyTraitsB>& arr2,
-             Arrangement_on_surface_2<GeometryTraitsRes_2, TopologyTraitsRes>& arr,
-             OverlayTraits& ovl_tr) {
+bool do_intersect_overlay(const Arrangement_on_surface_2<GeometryTraitsA_2, TopologyTraitsA>& arr1,
+                          const Arrangement_on_surface_2<GeometryTraitsB_2, TopologyTraitsB>& arr2,
+                          Arrangement_on_surface_2<GeometryTraitsRes_2, TopologyTraitsRes>& arr,
+                          OverlayTraits& ovl_tr,
+                          bool ignore_isolated_vertices = true) {
   using Agt2 = GeometryTraitsA_2;
   using Bgt2 = GeometryTraitsB_2;
   using Rgt2 = GeometryTraitsRes_2;
@@ -160,7 +95,7 @@ void overlay(const Arrangement_on_surface_2<GeometryTraitsA_2, TopologyTraitsA>&
   using Ovl_event = Arr_overlay_event<Ovl_gt2, Arr_res, Allocator>;
   using Ovl_curve = Arr_overlay_subcurve<Ovl_gt2, Ovl_event, Allocator>;
   using Ovl_helper = typename TopologyTraitsRes::template Overlay_helper<Ovl_gt2, Ovl_event, Ovl_curve, Arr_a, Arr_b>;
-  using Ovl_visitor = Arr_overlay_ss_visitor<Ovl_helper, Overlay_traits>;
+  using Diovl_visitor = Arr_do_intersect_overlay_ss_visitor<Ovl_helper, Overlay_traits>;
 
   using Ovl_x_monotone_curve_2 = typename Ovl_gt2::X_monotone_curve_2;
   using Ovl_point_2 = typename Ovl_gt2::Point_2;
@@ -180,9 +115,8 @@ void overlay(const Arrangement_on_surface_2<GeometryTraitsA_2, TopologyTraitsA>&
   // directed from right to left.
   typename Arr_a::Halfedge_const_handle invalid_he1;
   typename Arr_b::Halfedge_const_handle invalid_he2;
-  std::vector<Ovl_x_monotone_curve_2>
-    xcvs_vec(arr1.number_of_edges() + arr2.number_of_edges());
-  unsigned int i = 0;
+  std::vector<Ovl_x_monotone_curve_2> xcvs_vec(arr1.number_of_edges() + arr2.number_of_edges());
+  std::size_t i = 0;
 
   for (auto eit1 = arr1.edges_begin(); eit1 != arr1.edges_end(); ++eit1, ++i) {
     typename Arr_a::Halfedge_const_handle he1 = eit1;
@@ -213,14 +147,12 @@ void overlay(const Arrangement_on_surface_2<GeometryTraitsA_2, TopologyTraitsA>&
    */
   std::conditional_t<std::is_same_v<Gt_adaptor_2, Ovl_gt2>, const Ovl_gt2&, Ovl_gt2> ex_traits(*traits_adaptor);
 
-  Ovl_visitor visitor(&arr1, &arr2, &arr, &ovl_tr);
-  Ss2::Surface_sweep_2<Ovl_visitor> surface_sweep(&ex_traits, &visitor);
+  Diovl_visitor visitor(&arr1, &arr2, &arr, &ovl_tr);
+  Ss2::Surface_sweep_2<Diovl_visitor> surface_sweep(&ex_traits, &visitor);
 
-  // In case both arrangement do not contain isolated vertices, go on and
-  // overlay them.
-  const std::size_t total_iso_verts = arr1.number_of_isolated_vertices() + arr2.number_of_isolated_vertices();
-
-  if (total_iso_verts == 0) {
+  // In case both arrangement do not contain isolated vertices, go on and overlay them.
+  if (ignore_isolated_vertices ||
+      ((arr1.number_of_isolated_vertices() == 0) && (arr2.number_of_isolated_vertices() == 0))) {
     // Clear the result arrangement and perform the sweep to construct it.
     arr.clear();
     if (std::is_same<typename Agt2::Bottom_side_category, Arr_contracted_side_tag>::value)
@@ -228,12 +160,12 @@ void overlay(const Arrangement_on_surface_2<GeometryTraitsA_2, TopologyTraitsA>&
     else
       surface_sweep.indexed_sweep(xcvs_vec, Indexed_sweep_accessor<Arr_a, Arr_b, Ovl_x_monotone_curve_2>(arr1, arr2));
     xcvs_vec.clear();
-    return;
+    return false;
   }
 
   // Prepare a vector of extended points that represent all isolated vertices
   // in both input arrangements.
-  std::vector<Ovl_point_2> pts_vec(total_iso_verts);
+  std::vector<Ovl_point_2> pts_vec(arr1.number_of_isolated_vertices() + arr2.number_of_isolated_vertices());
 
   i = 0;
   for (auto vit1 = arr1.vertices_begin(); vit1 != arr1.vertices_end(); ++vit1) {
@@ -261,6 +193,7 @@ void overlay(const Arrangement_on_surface_2<GeometryTraitsA_2, TopologyTraitsA>&
                                 pts_vec.begin(), pts_vec.end());
   xcvs_vec.clear();
   pts_vec.clear();
+  return false;
 }
 
 /*! Compute the (simple) overlay of two input arrangements.
@@ -274,9 +207,9 @@ template <typename GeometryTraitsA_2,
           typename TopologyTraitsA,
           typename TopologyTraitsB,
           typename TopologyTraitsRes>
-void overlay(const Arrangement_on_surface_2<GeometryTraitsA_2, TopologyTraitsA>& arr1,
-             const Arrangement_on_surface_2<GeometryTraitsB_2, TopologyTraitsB>& arr2,
-             Arrangement_on_surface_2<GeometryTraitsRes_2, TopologyTraitsRes>& arr) {
+bool do_intersect_overlay(const Arrangement_on_surface_2<GeometryTraitsA_2, TopologyTraitsA>& arr1,
+                          const Arrangement_on_surface_2<GeometryTraitsB_2, TopologyTraitsB>& arr2,
+                          Arrangement_on_surface_2<GeometryTraitsRes_2, TopologyTraitsRes>& arr) {
   using Agt2 = GeometryTraitsA_2;
   using Bgt2 = GeometryTraitsB_2;
   using Rgt2 = GeometryTraitsRes_2;
@@ -288,7 +221,7 @@ void overlay(const Arrangement_on_surface_2<GeometryTraitsA_2, TopologyTraitsA>&
   using Arr_res = Arrangement_on_surface_2<Rgt2, Rtt>;
 
   _Arr_default_overlay_traits_base<Arr_a, Arr_b, Arr_res> ovl_traits;
-  overlay(arr1, arr2, arr, ovl_traits);
+  return do_intersect_overlay(arr1, arr2, arr, ovl_traits);
 }
 
 } // namespace CGAL

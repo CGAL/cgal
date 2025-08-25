@@ -7,7 +7,7 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
+// Author(s):      Baruch Zukerman <baruchzu@post.tau.ac.il>
 //                 Efi Fogel <efif@post.tau.ac.il>
 
 #ifndef CGAL_GENERAL_POLYGON_SET_2_H
@@ -27,25 +27,20 @@
 namespace CGAL {
 
 // General_polygon_set_2
-template <class Traits_, class Dcel_ = Gps_default_dcel<Traits_> >
-class General_polygon_set_2 : public General_polygon_set_on_surface_2
-  <Traits_, typename Default_planar_topology<Traits_, Dcel_>::Traits>
-{
-protected:
-  typedef General_polygon_set_2<Traits_, Dcel_>           Self;
+template <typename Traits_, typename Dcel_ = Gps_default_dcel<Traits_>>
+class General_polygon_set_2 :
+  public General_polygon_set_on_surface_2<
+    Traits_, typename Default_planar_topology<Traits_, Dcel_>::Traits> {
 
 public:
-  typedef Traits_                                         Traits_2;
-  typedef Dcel_                                           Dcel;
-
-  typedef General_polygon_set_on_surface_2 <Traits_2,
-    typename Default_planar_topology<Traits_2, Dcel >::Traits>
-                                                          Base;
-
-  typedef CGAL::Arrangement_2<Traits_2, Dcel>             Arrangement_2;
-
-  typedef typename Base::Polygon_2                        Polygon_2;
-  typedef typename Base::Polygon_with_holes_2             Polygon_with_holes_2;
+  using Traits_2 = Traits_;
+  using Dcel = Dcel_;
+  using Self = General_polygon_set_2<Traits_2, Dcel>;
+  using Topology_traits = typename Default_planar_topology<Traits_2, Dcel>::Traits;
+  using Base = General_polygon_set_on_surface_2<Traits_2, Topology_traits>;
+  using Arrangement_2 = CGAL::Arrangement_2<Traits_2, Dcel>;
+  using Polygon_2 = typename Base::Polygon_2;
+  using Polygon_with_holes_2 = typename Base::Polygon_with_holes_2;
 
   // default constructor
   General_polygon_set_2() : Base() {}
@@ -80,19 +75,16 @@ public:
   using Base::join;
   using Base::symmetric_difference;
 
-  inline void intersection(const Self& ps1, const Self& ps2)
-  {
+  inline void intersection(const Self& ps1, const Self& ps2) {
     Base::intersection(static_cast<const Base&>(ps1),
                        static_cast<const Base&>(ps2));
   }
 
-  inline void join(const Self& ps1, const Self& ps2)
-  {
+  inline void join(const Self& ps1, const Self& ps2) {
     Base::join(static_cast<const Base&>(ps1), static_cast<const Base&>(ps2));
   }
 
-  inline void symmetric_difference(const Self& ps1, const Self& ps2)
-  {
+  inline void symmetric_difference(const Self& ps1, const Self& ps2) {
     Base::symmetric_difference(static_cast<const Base&>(ps1),
                                static_cast<const Base&>(ps2));
   }
