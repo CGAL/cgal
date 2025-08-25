@@ -131,7 +131,7 @@ void main_code (const Options &options)
         {
             auto output_vtk_simp = [options](HDVF_type &hdvf, Complex& complex)
             {
-                CGAL::HDVF::hdvf_geometric_chain_complex_output_vtk(hdvf, complex, options.outfile_root, options.co_faces) ;
+                CGAL::IO::write_VTK(hdvf, complex, options.outfile_root, options.co_faces) ;
             } ;
 
             CGAL::HDVF::interaction_loop<Complex>(hdvf, complex, output_vtk_simp) ;
@@ -140,7 +140,7 @@ void main_code (const Options &options)
         else if (options.with_vtk_export)
         {
             std::cout << "----> exporting to vtk" << std::endl ;
-            CGAL::HDVF::hdvf_geometric_chain_complex_output_vtk(hdvf, complex, options.outfile_root, options.co_faces) ;
+            CGAL::IO::write_VTK(hdvf, complex, options.outfile_root, options.co_faces) ;
         }
     }
     // CubComplex
@@ -180,7 +180,7 @@ void main_code (const Options &options)
         {
             auto output_vtk_cub = [options](HDVF_type &hdvf, Complex& complex)
             {
-                CGAL::HDVF::hdvf_geometric_chain_complex_output_vtk(hdvf, complex, options.outfile_root, options.co_faces) ;
+                CGAL::IO::write_VTK(hdvf, complex, options.outfile_root, options.co_faces) ;
             } ;
 
             CGAL::HDVF::interaction_loop<Complex>(hdvf, complex, output_vtk_cub) ;
@@ -189,7 +189,7 @@ void main_code (const Options &options)
         else if (options.with_vtk_export)
         {
             std::cout << "----> exporting to vtk" << std::endl ;
-            CGAL::HDVF::hdvf_geometric_chain_complex_output_vtk(hdvf, complex, options.outfile_root, options.co_faces) ;
+            CGAL::IO::write_VTK(hdvf, complex, options.outfile_root, options.co_faces) ;
         }
     }
 }

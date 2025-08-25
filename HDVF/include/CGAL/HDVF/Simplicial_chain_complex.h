@@ -79,9 +79,6 @@ public:
         return *this ;
     }
 
-    /** \brief Friend class `Duality_simplicial_complex_tools` computes the complementary simplicial complex for Alexander duality */
-    friend Duality_simplicial_complex_tools<CoefficientRing> ;
-
     /** \brief Gets the vector of vertices coordinates  */
     const std::vector<Point>& get_vertices_coords() const
     {
@@ -228,7 +225,7 @@ public:
      * \param[in] q Dimension of the cells of the chain.
      * \param[in] cellId If cellID is not -1 (that is MAX_SIZE_T), labels are exported to distinguish cells of the chain (label 2) from cellId cell (label 0).
      */
-    static void chain_complex_chain_to_vtk(const Simplicial_chain_complex &K, const std::string &filename, const OSM::Sparse_chain<CoefficientRing, OSM::COLUMN>& chain, int q, size_t cellId = -1) ;
+    static void chain_to_vtk(const Simplicial_chain_complex &K, const std::string &filename, const OSM::Sparse_chain<CoefficientRing, OSM::COLUMN>& chain, int q, size_t cellId = -1) ;
 };
 
 // Initialization of static VTK_simptypes
@@ -236,9 +233,9 @@ template <typename CoefficientRing> const
 std::vector<int> Simplicial_chain_complex<CoefficientRing>::VTK_simptypes({1, 3, 5, 10});
 
 
-// chain_complex_chain_to_vtk
+// chain_to_vtk
 template <typename CoefficientRing>
-void Simplicial_chain_complex<CoefficientRing>::chain_complex_chain_to_vtk(const Simplicial_chain_complex &K, const std::string &filename, const OSM::Sparse_chain<CoefficientRing, OSM::COLUMN>& chain, int q, size_t cellId)
+void Simplicial_chain_complex<CoefficientRing>::chain_to_vtk(const Simplicial_chain_complex &K, const std::string &filename, const OSM::Sparse_chain<CoefficientRing, OSM::COLUMN>& chain, int q, size_t cellId)
 {
     typedef Simplicial_chain_complex<CoefficientRing> ChainComplex ;
     if (K._coords.size() != K.number_of_cells(0))

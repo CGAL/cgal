@@ -47,7 +47,7 @@ int main(int argc, char **argv)
         hdvf.insert_reduction();
 
         // Output HDVF to vtk
-        hdvf_geometric_chain_complex_output_vtk(hdvf, complex, "res", true) ;
+        CGAL::IO::write_VTK(hdvf, complex, "res", true) ;
         
         // Save HDVF to .hdvf file
         hdvf.write_hdvf_reduction("test.hdvf") ;

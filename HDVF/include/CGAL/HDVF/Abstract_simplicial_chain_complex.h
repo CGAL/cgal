@@ -24,9 +24,6 @@
 namespace CGAL {
 namespace HDVF {
 
-// Forward declaration of SimpComplexTools
-template<typename CoefficientRing> class Duality_simplicial_complex_tools ;
-
 /*!
  \ingroup PkgHDVFAlgorithmClasses
 
@@ -68,7 +65,7 @@ public:
      *
      * Builds the abstract simplicial complex associated to a triangular mesh (i.e. performs the down closure of cells and set the boundary matrices in any dimension).
      *
-     * \param[in] mesh A `Mesh_object_io` containing a triangular mesh.
+     * \param[in] mesh A `Mesh_object_io` containing a triangular mesh. Cells
      */
     Abstract_simplicial_chain_complex(const Mesh_object_io& mesh);
 
@@ -161,6 +158,19 @@ public:
             return 0 ;
     }
 
+    /** \brief Returns the simplex of index i in dimension q. */
+    const Simplex& index_to_cell (size_t i, int q) const
+    {
+        return _ind2simp.at(q).at(i);
+    }
+    
+    /** \brief Returns the index of a given simplex. */
+    size_t cell_to_index (const Simplex& simplex) const
+    {
+        const int q(simplex.dimension());
+        return _simp2ind.at(q).at(simplex);
+    }
+    
     /**
      * \brief Returns a constant reference to the vector of boundary matrices (along each dimension).
      *
@@ -411,10 +421,10 @@ std::ostream& Abstract_simplicial_chain_complex<CoefficientRing>::print_complex(
     for (int q = 0; q <= _dim; ++q) {
         out_stream << "--- dimension " << q << std::endl;
         out_stream << number_of_cells(q) << " cells" << std::endl ;
-        //        for (size_t j = 0; j < _nb_cells.at(q); ++j) {
-        //            Simplex s(_ind2Simp.at(q).at(j));
-        //            std::cout << j << " -> " << s << " -> " << _Simp2ind.at(q).at(s) << std::std::endl;
-        //        }
+                for (size_t j = 0; j < _nb_cells.at(q); ++j) {
+                    Simplex s(this->_ind2simp.at(q).at(j));
+                    out_stream << j << " -> " << s << " -> " << _simp2ind.at(q).at(s) << std::endl;
+                }
     }
 
     // Boundary matrices

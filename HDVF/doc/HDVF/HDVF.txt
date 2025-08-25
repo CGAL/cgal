@@ -698,15 +698,15 @@ How to extract (co)homological information then? Various solutions and output ar
     These chains can be visited as described in section \ref secHDVFmatrixChain.
     - The HDVF package also provides a vtk exporter for such chains (cells with a non zero coefficient are exported). For instance:
     \code
-        Complex::chain_complex_chain_to_vtk(complex, filename, hom_generator, q, id) ;
+        Complex::chain_to_vtk(complex, filename, hom_generator, q, id) ;
     \endcode
     If `id` is provided, a `Label` integer property is added to the vtk file (0 for the cell `id`, 2 for other cells).
 - **Reduction maps**
     Matrices of the reduction (\f$F\f$, \f$G\f$, \f$H\f$ and \f$D\f$) can be also obtained using `matrix_f`, `matrix_g`, `matrix_h` and `matrix_dd`.
 - **Automated vtk export**
-    In order to ease `vtk` export, an "automated" method `hdvf_geometric_chain_complex_output_vtk` is also provided, exporting in distinct files, the HDVF flags and all the generators computed (homology / cohomology depending of the HDVF option):
+    In order to ease `vtk` export, an "automated" method `CGAL::IO::write_VTK` is also provided, exporting in distinct files, the HDVF flags and all the generators computed (homology / cohomology depending of the HDVF option):
     \code
-        CGAL::HDVF::hdvf_geometric_chain_complex_output_vtk<CoefficientType, Complex>(hdvf, complex, outfile_root, co_faces) ;
+            CGAL::IO::write_VTK<CoefficientType, Complex>(hdvf, complex, outfile_root, co_faces) ;
     \endcode
     where `outfile_root` is the root of the `.vtk` file names and `co_faces` is a %Boolean (if `true`, cohomology generators are represented through their cofaces).
 - HDVFs and reductions can also be saved / loaded to `.hdvf` files (a simple text file format described in section \ref secHDVFHDVF_format) with `insert_hdvf_reduction()` and `extract_hdvf_reduction()`.

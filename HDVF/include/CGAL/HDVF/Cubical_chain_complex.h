@@ -25,9 +25,6 @@
 namespace CGAL {
 namespace HDVF {
 
-// Forward declaration of Duality_cubical_complex_tools
-template<typename T> class Duality_cubical_complex_tools ;
-
 /*!
  \ingroup PkgHDVFAlgorithmClasses
 
@@ -119,8 +116,8 @@ public:
      */
     Cubical_chain_complex(const Cub_object_io& cub,Cubical_complex_primal_dual type);
 
-    /** \brief Friend class `Duality_cubical_complex_tools` provides tools for Alexander duality. */
-    friend Duality_cubical_complex_tools<CoefficientRing> ;
+//    /** \brief Friend class `Duality_cubical_complex_tools` provides tools for Alexander duality. */
+//    friend Duality_cubical_complex_tools<CoefficientRing> ;
 
     /** \brief Type of column-major chains */
     typedef CGAL::OSM::Sparse_chain<CoefficientRing, CGAL::OSM::COLUMN> Column_chain;
@@ -189,18 +186,6 @@ public:
     }
 
     /**
-     * \brief Returns the dimension of the complex.
-     *
-     * Returns the dimension of the cubical complex.
-     *
-     * \return The dimension of the complex..
-     */
-    int dimension() const
-    {
-        return _dim ;
-    }
-
-    /**
      * \brief Returns the number of cells in a given dimension.
      *
      * \param[in] q Dimension along which the number of cells is returned.
@@ -214,7 +199,62 @@ public:
         else
             return 0 ;
     }
+    
+    /**
+     * \brief Returns the dimension of the complex.
+     *
+     * Returns the dimension of the cubical complex.
+     *
+     * \return The dimension of the complex..
+     */
+    int dimension() const
+    {
+        return _dim ;
+    }
+    
+    /** \brief Get the size of the Khalimsky bounding box.  */
+    std::vector<size_t> size_bb() const {
+        return _size_bb;
+    }
+    
+    /** \brief Returns the total size of the complex.
+     *
+     * Product of the sizes of the complex along each dimension.
+     */
+    size_t size() const {
+        return _P.at(dimension());
+    }
 
+    /** \brief Returns Khalimsky coordinates of the cell of index i in dimension q. */
+    std::vector<size_t> index_to_cell (size_t i, int q) const
+    {
+        const size_t id_bool(_base2bool.at(q).at(i));
+        return ind2khal(id_bool);
+    }
+    
+    /** \brief Returns the index of a cell given by its Khalimsky coordinates . */
+    size_t cell_to_index (std::vector<size_t> cell) const
+    {
+        const size_t id_bool(khal2ind(cell));
+        const int q(dimension(cell));
+        return (_bool2base.at(q)).at(id_bool);
+    }
+    
+    /** \brief Returns the dimension of a cell (given in Khalimsky coordinates). */
+    int dimension(const std::vector<size_t>& cell) const;
+    
+    /** \brief Returns Khalimsky coordinates of the cell of boolean index i. */
+    std::vector<size_t> bindex_to_cell (size_t i) const
+    {
+        return ind2khal(i);
+    }
+    
+    /** \brief Returns the boolean index of a cell given by its Khalimsky coordinates . */
+    size_t cell_to_bindex (std::vector<size_t> cell) const
+    {
+        return khal2ind(cell);
+    }
+    
     /**
      * \brief Returns a constant reference to the vector of boundary matrices (along each dimension).
      *
@@ -480,14 +520,10 @@ public:
      * \param[in] q Dimension of the cells of the chain.
      * \param[in] cellId If different from MAX_SIZE_T, labels are exported to distinguish cells of the chain (label 2) from cellId cell (label 0).
      */
-    static void chain_complex_chain_to_vtk(const Cubical_chain_complex<CoefficientRing> &K, const std::string &filename, const OSM::Sparse_chain<CoefficientRing, OSM::COLUMN>& chain, int q, size_t cellId = -1) ;
+    static void chain_to_vtk(const Cubical_chain_complex<CoefficientRing> &K, const std::string &filename, const OSM::Sparse_chain<CoefficientRing, OSM::COLUMN>& chain, int q, size_t cellId = -1) ;
 
 protected:
     // Methods to access data
-    /* \brief Get the size of the Khalimsky bounding box \f$(N_1,\ldots,N_{\mathrm{\_dim}})\f$ */
-    std::vector<size_t> get_size_bb() const {
-        return _size_bb;
-    }
 
     /* \brief Get _P (coefficients used for the vectorisation of the Khalimsky boolean matrix) */
     std::vector<size_t> get_P() const {
@@ -613,7 +649,7 @@ protected:
         }
         return vertices_id ;
     }
-
+    
     // Member data
 protected:
     /* \brief Dimension of the complex */
@@ -676,6 +712,12 @@ protected:
         }
     }
 
+    /* \brief Calculate the dimension of a cell (given by its boolean index) */
+    int dimension(size_t cell_index) const
+    {
+        return dimension(ind2khal(cell_index)) ;
+    }
+    
     /* \brief Computes voxel coordinates (in a binary object) from an index in a boolean vector
      *
      * This function is used ONLY for DUAL construction from a binary object (binary image in 2D, binary volume in 3D...)
@@ -723,14 +765,6 @@ protected:
 
     /* \brief Insert a cell into the complex (and its faces if necessary) */
     void insert_cell(size_t cell);
-
-    /* \brief Calculate the dimension of a cell (given in Khalimsky coordinates) */
-    int calculate_dimension(const std::vector<size_t>& cell) const;
-    /* \brief Calculate the dimension of a cell (given by its boolean index) */
-    int calculate_dimension(size_t cell_index) const
-    {
-        return calculate_dimension(ind2khal(cell_index)) ;
-    }
 
     /* \brief Compute (the boolean indices of) cells belonging to the boundary of `cell` (given by its boolean index) */
     std::vector<size_t> calculate_boundaries(size_t cell) const;
@@ -807,7 +841,7 @@ void Cubical_chain_complex<CoefficientRing>::initialize_cells(const Cub_object_i
 
             _cells.at(cell_index) = true ;
             // Add the cell in _base2bool and _bool2base
-            const int dim(calculate_dimension(coords)) ;
+            const int dim(dimension(coords)) ;
             const size_t n(_base2bool.at(dim).size()) ;
             _base2bool.at(dim).push_back(cell_index) ;
             _bool2base.at(dim)[cell_index] = n ;
@@ -818,7 +852,7 @@ void Cubical_chain_complex<CoefficientRing>::initialize_cells(const Cub_object_i
 
             for (size_t i = 0; i < _P[_dim]; ++i) {
 
-                if (calculate_dimension(ind2khal(i)) == q) {
+                if (dimension(ind2khal(i)) == q) {
                     std::vector<size_t> boundaries = calculate_boundaries(i);
                     bool all_boundaries_present = true;
                     for (const auto& boundary_cell : boundaries) {
@@ -830,7 +864,7 @@ void Cubical_chain_complex<CoefficientRing>::initialize_cells(const Cub_object_i
                     if (all_boundaries_present) {
                         _cells.at(i)=  true ;
                         // Add the cell in _base2bool and _bool2base
-                        const int dim(calculate_dimension(i)) ;
+                        const int dim(dimension(i)) ;
                         const size_t n(_base2bool.at(dim).size()) ;
                         _base2bool.at(dim).push_back(i) ;
                         _bool2base.at(dim)[i] = n ;
@@ -879,7 +913,7 @@ void Cubical_chain_complex<CoefficientRing>::insert_cell(size_t cell) {
     }
 
     std::vector<size_t> cell_coords(ind2khal(cell));
-    int dim = calculate_dimension(cell_coords);
+    int dim = dimension(cell_coords);
 
     _cells[cell] = true;
     size_t cell_base_index = _base2bool[dim].size();
@@ -915,9 +949,9 @@ void Cubical_chain_complex<CoefficientRing>::calculate_d(int dim)  {
     }
 }
 
-// calculate_dimension implementation
+// dimension implementation
 template<typename CoefficientRing>
-int Cubical_chain_complex<CoefficientRing>::calculate_dimension(const std::vector<size_t>& cell) const {
+int Cubical_chain_complex<CoefficientRing>::dimension(const std::vector<size_t>& cell) const {
     int dimension = 0;
     for (size_t index : cell) {
         if (index % 2 == 1) { // Un index impair indique une dimension plus élevée
@@ -955,7 +989,7 @@ std::vector<size_t> Cubical_chain_complex<CoefficientRing>::calculate_boundaries
  */
 
 template <typename CoefficientRing>
-void Cubical_chain_complex<CoefficientRing>::chain_complex_chain_to_vtk(const Cubical_chain_complex<CoefficientRing> &K, const std::string &filename, const OSM::Sparse_chain<CoefficientRing, OSM::COLUMN>& chain, int q, size_t cellId)
+void Cubical_chain_complex<CoefficientRing>::chain_to_vtk(const Cubical_chain_complex<CoefficientRing> &K, const std::string &filename, const OSM::Sparse_chain<CoefficientRing, OSM::COLUMN>& chain, int q, size_t cellId)
 {
     bool with_scalars = (cellId != -1) ;
 

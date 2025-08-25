@@ -71,11 +71,11 @@ namespace HDVF {
 
  \tparam ChainComplex a model of the `AbstractChainComplex` concept, providing the type of abstract chain complex used (the underlying ring of coefficients should be a model of `Field`).
  \tparam Degree a scalar data type used for the degrees of the filtration.
- \tparam FiltrationType a model of the `Filtration` concept, providing the filtration used to compute persistence.
+ \tparam Filtration_ a model of the `Filtration` concept, providing the filtration used to compute persistence.
 
  */
 
-template<typename ChainComplex, typename Degree, typename FiltrationType >
+template<typename ChainComplex, typename Degree, typename Filtration_ >
 class Hdvf_persistence : public Hdvf_core<ChainComplex, OSM::Sparse_chain, OSM::Sub_sparse_matrix>
 {
 public:
@@ -89,7 +89,7 @@ public:
      *
      * Infinite holes are encoded by setting birth data = death data (time, degree and cell).
      */
-    struct PerHole {
+    struct Persistent_hole {
         size_t time_birth, time_death;
         Degree degree_birth, degree_death;
         Cell cell_birth, cell_death;
@@ -154,27 +154,15 @@ public:
 
     /*! Type of filtrations used to compute persistence.
      */
-    typedef FiltrationType Filtration;
-
-    /*! Type for `PRIMARY`/`SECONDARY`/`CRITICAL` labels export
-     *      Encoding used:
-     *          - `PRIMARY`: -1
-     *          - `SECONDARY`: +1
-     *          - `CRITICAL`: 0
-     */
-    typedef std::vector<std::vector<int> > ExpLabels ;
-
-    /*! Type  chains export (column-major chains)
-     */
-    typedef Column_chain ExpChain ;
+    typedef Filtration_ Filtration;
 
     /*! For persistent diagram iterator (returned by *it)
      */
     typedef struct {
-        PerHole hole ;
-        ExpLabels labelsPSC ;
-        ExpChain g_chain_sigma, g_chain_tau, fstar_chain_sigma, fstar_chain_tau ;
-    } PerIntervalInformation ;
+        Persistent_hole hole ;
+        std::vector<std::vector<int> > labelsPSC ;
+        Column_chain g_chain_sigma, g_chain_tau, fstar_chain_sigma, fstar_chain_tau ;
+    } Persistent_interval_iterator_value ;
 
 protected:
     /* \brief Reference to the filtration used for persistence */
@@ -186,7 +174,7 @@ protected:
     std::vector<std::vector<size_t> > _K_to_per, _per_to_K ;
 
     /* \brief Vector of persistent pairs computed */
-    std::vector<PerHole> _persist ;
+    std::vector<Persistent_hole> _persist ;
 
     /* \brief Boolean determining weather or not export homology/cohomology generators associated to persistent pairs
      * - If _with_export is true, PSC labels and homology/cohomology generators are stored for each persistent pair of duration (that is, such as the difference between degrees of birth/death) strictly positive.
@@ -195,10 +183,10 @@ protected:
     bool _with_export ;
 
     /* \brief Vector of exported PSC labels */
-    std::vector<ExpLabels> _export_labels ;
+    std::vector<std::vector<std::vector<int> >> _export_labels ;
 
     /* \brief Vector of exported homology/cohomology generators */
-    std::vector<std::pair<ExpChain, ExpChain> > _export_g, _export_fstar ;
+    std::vector<std::pair<Column_chain, Column_chain> > _export_g, _export_fstar ;
 
     /* Warning:
      * In order to encode "time" as an unsigned int while the initial value is -1,
@@ -276,7 +264,7 @@ public:
                 const size_t ti(_f._cell_to_t.at(c)) ;
                 const Degree di(_f._deg.at(i)) ;
 
-                PerHole hole;
+                Persistent_hole hole;
                 hole.time_birth = ti;
                 hole.time_death = ti;
                 hole.degree_birth = di;
@@ -313,7 +301,7 @@ public:
     friend std::ostream& operator<< (std::ostream& out_stream, const Hdvf_persistence& per_hdvf)
     {
         size_t i = 0 ;
-        for (PerHole hole : per_hdvf._persist)
+        for (Persistent_hole hole : per_hdvf._persist)
         {
             if (hole.duration() > 0)
             {
@@ -460,7 +448,7 @@ public:
         // Iterator tags
         using iterator_category = std::forward_iterator_tag;
         using difference_type   = std::ptrdiff_t;
-        using value_type        = PerIntervalInformation;
+        using value_type        = Persistent_interval_iterator_value;
 
         /*! \brief Iterator constructor
          *
@@ -486,11 +474,11 @@ public:
         // Operators
         /*! \brief Iterator dereference
          *
-         * \returns A `PerIntervalInformation` structure containing the information of the current persistence interval.
+         * \returns A `Persistent_interval_iterator_value` structure containing the information of the current persistence interval.
          */
         value_type operator*() const
         {
-            PerIntervalInformation res ;
+            Persistent_interval_iterator_value res ;
             res.hole = _per_hdvf._persist.at(_i) ;
             res.labelsPSC = _per_hdvf._export_labels.at(_i) ;
             if (_per_hdvf._hdvf_opt & (OPT_G | OPT_FULL))
@@ -576,7 +564,7 @@ private:
     void export_hdvf_persistence_pair(Cell_pair p)
     {
         // Export labels
-        ExpLabels labels(this->psc_labels()) ;
+        std::vector<std::vector<int> > labels(this->psc_labels()) ;
         _export_labels.push_back(labels) ;
         // Export g (according to options)
         if (this->_hdvf_opt & (OPT_FULL | OPT_G))
@@ -604,7 +592,7 @@ private:
     void export_hdvf_persistence_pair()
     {
         // Export labels
-        ExpLabels labels ;
+        std::vector<std::vector<int> > labels ;
         _export_labels.push_back(labels) ;
         // Export g (according to options)
         if (this->_hdvf_opt & (OPT_FULL | OPT_G))
@@ -639,8 +627,8 @@ private:
 } ;
 
 
-template<typename ChainComplex, typename Degree, typename FiltrationType>
-Hdvf_persistence<ChainComplex, Degree, FiltrationType>::Hdvf_persistence(const ChainComplex& K, const FiltrationType& f, int hdvf_opt, bool with_export) : Hdvf_core<ChainComplex, OSM::Sparse_chain, OSM::Sub_sparse_matrix>(K,hdvf_opt), _f(f), _with_export(with_export), _t(0)
+template<typename ChainComplex, typename Degree, typename Filtration_>
+Hdvf_persistence<ChainComplex, Degree, Filtration_>::Hdvf_persistence(const ChainComplex& K, const Filtration_& f, int hdvf_opt, bool with_export) : Hdvf_core<ChainComplex, OSM::Sparse_chain, OSM::Sub_sparse_matrix>(K,hdvf_opt), _f(f), _with_export(with_export), _t(0)
 {
     // Initialisation of _t_dim, _K_to_per and _per_to_K
     _t_dim.resize(this->_K.dimension()+1, 0) ;
@@ -706,8 +694,8 @@ Hdvf_persistence<ChainComplex, Degree, FiltrationType>::Hdvf_persistence(const C
         this->_DD_col.at(q).set_sub(_masks.at(q)) ;
 }
 
-template<typename ChainComplex, typename Degree, typename FiltrationType>
-Cell_pair Hdvf_persistence<ChainComplex, Degree, FiltrationType>::find_pair_A(bool &found)
+template<typename ChainComplex, typename Degree, typename Filtration_>
+Cell_pair Hdvf_persistence<ChainComplex, Degree, Filtration_>::find_pair_A(bool &found)
 {
     Cell_pair p ;
     // Get current cell (in the basis K)
@@ -749,8 +737,8 @@ Cell_pair Hdvf_persistence<ChainComplex, Degree, FiltrationType>::find_pair_A(bo
     return p;
 }
 
-template<typename ChainComplex, typename Degree, typename FiltrationType>
-Cell_pair Hdvf_persistence<ChainComplex, Degree, FiltrationType>::step_persist(bool& found, bool verbose)
+template<typename ChainComplex, typename Degree, typename Filtration_>
+Cell_pair Hdvf_persistence<ChainComplex, Degree, Filtration_>::step_persist(bool& found, bool verbose)
 {
     // Compute next persistent pair
 
@@ -775,8 +763,8 @@ Cell_pair Hdvf_persistence<ChainComplex, Degree, FiltrationType>::step_persist(b
 //        FiltrIndexPerInterval interval(ti, tj) ;
 //        CellsPerInterval interval_cells(ci, cj) ;
 //        DegreePerInterval interval_deg(_f._deg.at(ti), _f._deg.at(tj)) ;
-//        PerHole hole(interval, interval_cells, interval_deg) ;
-        PerHole hole;
+//        Persistent_hole hole(interval, interval_cells, interval_deg) ;
+        Persistent_hole hole;
         hole.time_birth = ti;
         hole.time_death = tj;
         hole.degree_birth = _f._deg.at(ti);
@@ -808,10 +796,10 @@ Cell_pair Hdvf_persistence<ChainComplex, Degree, FiltrationType>::step_persist(b
 }
 
 // HELP !!!!!
-template<typename ChainComplex, typename Degree, typename FiltrationType >
-std::ostream& operator<< (std::ostream& out_stream, const typename Hdvf_persistence<ChainComplex, Degree, FiltrationType>::PerHole& hole)
+template<typename ChainComplex, typename Degree, typename Filtration_ >
+std::ostream& operator<< (std::ostream& out_stream, const typename Hdvf_persistence<ChainComplex, Degree, Filtration_>::Persistent_hole& hole)
 {
-    typedef Hdvf_persistence<ChainComplex, Degree, FiltrationType> HDVF_parent;
+    typedef Hdvf_persistence<ChainComplex, Degree, Filtration_> HDVF_parent;
     // time (cell, dim) -> time (cell, dim) / degree duration
 
     if (hole.time_death != hole.time_birth) // finite interval

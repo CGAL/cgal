@@ -208,7 +208,7 @@ void main_code (const Options &options)
         if (options.with_vtk_export)
         {
             std::cout << "----> exporting to vtk" << std::endl ;
-            hdvf_persistence_geometric_chain_complex_output_vtk(hdvf, complex, options.outfile_root, options.co_faces) ;
+            CGAL::IO::write_VTK(hdvf, complex, options.outfile_root, options.co_faces) ;
         }
     }
     // CubComplex
@@ -251,7 +251,7 @@ void main_code (const Options &options)
         if (options.with_vtk_export)
         {
             std::cout << "----> exporting to vtk" << std::endl ;
-            hdvf_persistence_geometric_chain_complex_output_vtk(hdvf, complex, options.outfile_root, options.co_faces) ;
+            CGAL::IO::write_VTK(hdvf, complex, options.outfile_root, options.co_faces) ;
         }
     }
 }

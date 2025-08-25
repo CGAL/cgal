@@ -49,7 +49,7 @@ private:
     std::vector<double> _coords;
 
 public:
-    Io_node_type(size_t d = 3, double x = 0.) : _coords(d,x) {}
+    Io_node_type(size_t d = 0, double x = 0.) : _coords(d,x) {}
     Io_node_type(std::vector<double> v) : _coords(v) {}
     Io_node_type(const Io_node_type& v) : _coords(v._coords) {}
 
@@ -357,7 +357,11 @@ public:
 
     void clear() { clear_nodes() ; clear_cells() ;}
 
-    void add_cell(const Io_cell_type &c) {cells.push_back(c); ++ncells ;}
+    void add_cell(Io_cell_type &c, bool sort_indices = false) {
+        if (sort_indices)
+            std::sort(c.begin(), c.end());
+        cells.push_back(c); ++ncells ;
+    }
 
     size_t cells_of_dim (int q) const
     {

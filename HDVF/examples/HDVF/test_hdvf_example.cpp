@@ -54,7 +54,7 @@ int main(int argc, char **argv)
         hdvf.insert_reduction();
 
         // Output HDVF to vtk
-        hdvf_geometric_chain_complex_output_vtk(hdvf, complex, "res") ;
+        CGAL::IO::write_VTK(hdvf, complex, "res") ;
 
         // Test get_annotation
 
@@ -80,7 +80,7 @@ int main(int argc, char **argv)
         cycle2.set_coefficient(12, 1) ;
         HDVF_type::Column_chain annot2(hdvf.get_annotation(cycle2,1));
         std::cout << "Cycle2:" << cycle1 << std::endl ;
-        Complex::chain_complex_chain_to_vtk(complex, "cycle2.vtk", cycle2, 1) ;
+        Complex::chain_to_vtk(complex, "cycle2.vtk", cycle2, 1) ;
         std::cout << "Annotation of cycle 2: " << annot2 << std::endl ;
 
         // Test get_coannotation
@@ -104,13 +104,13 @@ int main(int argc, char **argv)
         HDVF_type::Column_chain cycle3(cycle1) ;
         cycle3 += CGAL::OSM::cget_column(complex.boundary_matrix(2), 0); // Add the boundary of the 2-cell
         std::cout << "Cycle3: " << cycle3 << std::endl ;
-        Complex::chain_complex_chain_to_vtk(complex, "cycle3.vtk", cycle3, 1) ;
+        Complex::chain_to_vtk(complex, "cycle3.vtk", cycle3, 1) ;
         std::cout << "are_same_cycles cycle1 and cycle3: " << hdvf.are_same_cycles(cycle1, cycle3, 1) << std::endl ;
 
         HDVF_type::Column_chain cycle4(cycle3) ;
         cycle4 += hdvf.homology_chain(criticals.at(1), 1) ; // Cycle4: cycle3 + second hole
         std::cout << "Cycle4: " << cycle4 << std::endl ;
-        Complex::chain_complex_chain_to_vtk(complex, "cycle4.vtk", cycle4, 1) ;
+        Complex::chain_to_vtk(complex, "cycle4.vtk", cycle4, 1) ;
         std::cout << "are_same_cycles cycle1 and cycle4: " << hdvf.are_same_cycles(cycle1, cycle4, 1) << std::endl ;
 
         // Test are_same_cocycles

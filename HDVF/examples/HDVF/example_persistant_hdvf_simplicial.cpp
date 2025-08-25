@@ -62,7 +62,7 @@ int main(int argc, char **argv)
             std::cout << hdvf ;
 
             // Output HDVF to vtk
-            hdvf_persistence_geometric_chain_complex_output_vtk(hdvf, complex, "res", true) ;
+            CGAL::IO::write_VTK(hdvf, complex, "res", true) ;
         }
 
         /* Example 2 : build a lower star filtration "slicing" the object according to the index of vertices (we can imagine any other filtration that does not depend on the geometry (e.g. color of vertices...)
@@ -91,7 +91,7 @@ int main(int argc, char **argv)
             std::cout << hdvf ;
 
             // Output HDVF to vtk
-            hdvf_persistence_geometric_chain_complex_output_vtk(hdvf, complex, "res2", true) ;
+            CGAL::IO::write_VTK(hdvf, complex, "res2", true) ;
         }
     }
 

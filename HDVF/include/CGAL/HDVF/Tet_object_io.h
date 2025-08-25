@@ -88,8 +88,9 @@ public:
         dim = -3 ;
         add_nodes() ;
         create_nodes() ;
-        add_edges() ;
-        add_faces() ;
+        // If the user wished to keep tetgen indices, insert edges and faces below. Otherwise, they will be created by the Abstract_simplicial_chain_complex constructor
+//        add_edges() ;
+//        add_faces() ;
         add_tets() ;
         ncells = cells.size() ;
     }
@@ -200,7 +201,7 @@ public:
     {
         const std::string file_ele = ftets_from_prefix(_prefix) ;
         std::ifstream input_file ( file_ele );
-        size_t f_ntets ;
+        size_t f_ntets, tmp ;
         // Open the input file
         if ( ! input_file . good () )
         {
@@ -218,12 +219,14 @@ public:
             // First number is the number of nodes
             std::istringstream is (line);
             is >> f_ntets ;
+            
         }
-        while ( !(input_file.eof()) && (f_ntets>0))
+        tmp = f_ntets ;
+        while ( !(input_file.eof()) && (tmp>0))
         {
             size_t trash, i, j, k, l ;
             ++ line_number;
-            --f_ntets ;
+            --tmp ;
             std::string line;
             getline( input_file, line );
             check_sanity_line(line, file_ele) ;
@@ -233,8 +236,8 @@ public:
             is >> j ;
             is >> k ;
             is >> l ;
-            Io_cell_type cell({i, j, k, l}) ;
-            add_cell(cell) ;
+            Io_cell_type tmp_cell({i, j, k, l});
+            add_cell(tmp_cell, true) ;
         }
         input_file.close() ;
         std::cout << "--- " << f_ntets << " tets" << std::endl ;

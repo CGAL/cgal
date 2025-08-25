@@ -192,12 +192,12 @@ void main_code (const Options &options)
             // K
             {
                 hdvf.set_mask_K() ;
-                hdvf_duality_geometric_chain_complex_output_vtk(hdvf, L, options.outfile_root+"_complex_K", options.co_faces) ;
+                CGAL::IO::write_VTK(hdvf, L, options.outfile_root+"_complex_K", options.co_faces) ;
             }
             // L-K
             {
                 hdvf.set_mask_L_K() ;
-                hdvf_duality_geometric_chain_complex_output_vtk(hdvf, L, options.outfile_root+"_cocomplex_L_K", options.co_faces) ;
+                CGAL::IO::write_VTK(hdvf, L, options.outfile_root+"_cocomplex_L_K", options.co_faces) ;
             }
         }
 
@@ -260,12 +260,12 @@ void main_code (const Options &options)
             // K
             {
                 hdvf.set_mask_K() ;
-                hdvf_duality_geometric_chain_complex_output_vtk(hdvf, L, options.outfile_root+"_complex_K", options.co_faces) ;
+                CGAL::IO::write_VTK(hdvf, L, options.outfile_root+"_complex_K", options.co_faces) ;
             }
             // L-K
             {
                 hdvf.set_mask_L_K() ;
-                hdvf_duality_geometric_chain_complex_output_vtk(hdvf, L, options.outfile_root+"_cocomplex_L_K", options.co_faces) ;
+                CGAL::IO::write_VTK(hdvf, L, options.outfile_root+"_cocomplex_L_K", options.co_faces) ;
             }
         }
 
