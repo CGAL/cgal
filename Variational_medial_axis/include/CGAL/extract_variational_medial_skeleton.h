@@ -57,8 +57,7 @@ namespace CGAL {
 /// produce skeletons that follow local features more closely.}
 ///    \cgalParamType{FT}
 ///    \cgalParamDefault{FT(0.2)}
-///    \cgalParamExtra{This parameter must be strictly positive; setting it to zero may prevent correct skeleton
-/// connectivity construction.}
+///    \cgalParamExtra{The range of this parameter is (0,1].}
 ///  \cgalParamNEnd
 ///  \cgalParamNBegin{concurrency_tag}
 ///    \cgalParamDescription{Tag indicating whether the algorithm should run sequentially or in parallel.}

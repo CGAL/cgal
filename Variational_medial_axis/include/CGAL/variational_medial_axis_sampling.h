@@ -567,7 +567,7 @@ private:
 };
 
 /// \ingroup PkgVMASRef
-/// \brief Function object for extracting a variational medial skeleton from a triangulated surface mesh.
+/// \brief Algorithm class for extracting a variational medial skeleton from a triangulated surface mesh.
 ///
 /// This class takes as input a triangulated surface mesh and iteratively samples the medial axis
 /// by optimizing the placement of medial spheres. The result is a non-manifold triangle mesh that
@@ -579,7 +579,8 @@ private:
 ///
 /// \note This method is designed to generate coarse approximations of the medial axis. The number of
 /// spheres that can be reliably generated depends on the density of the input surface sampling. For best
-/// results, we recommend keeping the total number of medial spheres under nb_vertices/100.
+/// results, we recommend keeping the total number of medial spheres under nb_vertices/100. 
+/// In addition, the user can explicitly request cluster merging or splitting operations to locally simplify or refine the skeleton structure.
 ///
 /// @tparam TriangleMesh_
 ///         a model of `FaceListGraph`
@@ -691,13 +692,12 @@ public:
   ///    \cgalParamDescription{The maximum number of iterations for the optimization process.}
   ///    \cgalParamType{int}
   ///    \cgalParamDefault{1000}
-  ///    \cgalParamExtra{This parameter must be strictly positive; setting it to zero may prevent correct skeleton connectivity construction.}
   ///  \cgalParamNEnd
   ///   \cgalParamNBegin{lambda}
   ///     \cgalParamDescription{A weight balancing the two energy terms (SQEM and Euclidean). Smaller values encourage the skeleton to extend deeper into local geometric features of the shape.}
   ///     \cgalParamType{FT}
   ///     \cgalParamDefault{FT(0.2)}
-  ///     \cgalParamExtra{This parameter must be strictly positive; setting it to zero may prevent correct skeleton connectivity construction.}
+  ///     \cgalParamExtra{The range of this parameter is (0,1].}
   ///   \cgalParamNEnd
   ///   \cgalParamNBegin{verbose}
   ///     \cgalParamDescription{If true, the algorithm will print detailed information about its progress.}
@@ -755,18 +755,15 @@ public:
    *     \cgalParamDescription{The maximum number of iterations for the optimization process.}
    *     \cgalParamType{int}
    *     \cgalParamDefault{1000}
-   *     \cgalParamExtra{This parameter must be strictly positive; setting it to zero may prevent correct skeleton
-   * connectivity construction.}
    *   \cgalParamNEnd
    *   \cgalParamNBegin{lambda}
    *     \cgalParamDescription{A weight balancing the two energy terms (SQEM and Euclidean). Smaller values encourage the skeleton to extend deeper into local geometric features of the shape.}
    *     \cgalParamType{FT}
    *     \cgalParamDefault{FT(0.2)}
-   *     \cgalParamExtra{This parameter must be strictly positive; setting it to zero may prevent correct skeleton
-   * connectivity construction.}
+   *     \cgalParamExtra{The range of this parameter is (0,1].}
    *   \cgalParamNEnd
    *   \cgalParamNBegin{verbose}
-  *     \cgalParamDescription{If true, the algorithm will print detailed information about its progress.}
+  *     \cgalParamDescription{If true, the algorithm will print detailed information about its progress on the standard output.}
   *     \cgalParamType{bool}
   *     \cgalParamDefault{false}
   *   \cgalParamNEnd
@@ -802,10 +799,10 @@ public:
     }
 
     if(verbose_) {
-    std::cout << "Starting variational medial axis computation..." << std::endl;
-    std::cout << "Target number of spheres: " << desired_number_of_spheres_ << std::endl;
-    std::cout << "Lambda: " << lambda_ << std::endl;
-    std::cout << "Max iterations: " << max_iteration_ << std::endl;
+        std::cout << "Starting variational medial axis computation..." << std::endl;
+      std::cout << "Target number of spheres: " << desired_number_of_spheres_ << std::endl;
+      std::cout << "Lambda: " << lambda_ << std::endl;
+      std::cout << "Max iterations: " << max_iteration_ << std::endl;
     }
     // Main algorithm loop
     while(iteration_count_ < max_iteration_) {
@@ -865,7 +862,7 @@ public:
     total_error_diff_ = std::abs(total_error_ - last_total_error_);
     last_total_error_ = total_error_;
     if(verbose_) {
-    std::cout << "Iteration " << iteration_count_ << ": spheres=" << sphere_mesh_->nb_spheres()
+        std::cout << "Iteration " << iteration_count_ << ": spheres=" << sphere_mesh_->nb_spheres()
                 << ", error=" << total_error_ << ", error_diff=" << total_error_diff_ << std::endl;
     }
     // Check convergence
@@ -892,7 +889,6 @@ public:
    *
    * \param nb_iteration Number of iterations to perform
    *
-   * \pre nb_iteration must be positive
    */
   void update(std::size_t nb_iteration) {
     for(std::size_t i = 0; i < nb_iteration; i++) {

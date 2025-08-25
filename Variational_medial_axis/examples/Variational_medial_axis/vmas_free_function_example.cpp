@@ -22,7 +22,7 @@ int main(int argc, char** argv)
       .number_of_spheres(200) // target number of spheres
       .lambda(0.2) // lambda parameter for the optimization
       .concurrency_tag(CGAL::Parallel_tag{}) // use parallel execution
-      .acceleration_structure(CGAL::BVH_tag{}) // use KD-tree for acceleration
+      .acceleration_structure(CGAL::BVH_tag{}) // use BVH for acceleration
       .verbose(true)); // enable verbose output
   // Write skeleton to PLY file
   std::string output_filename = "skeleton.ply";
