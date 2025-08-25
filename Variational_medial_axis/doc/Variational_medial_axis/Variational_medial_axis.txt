@@ -74,7 +74,7 @@ To accelerate this closest point query, two types of spatial search structures a
 - `CGAL::BVH_tag`: uses a bounding volume hierarchy (BVH) built from the input triangle mesh.
 
 The user can choose the desired structure by passing the corresponding tag via the `CGAL::parameters::acceleration_structure()` named parameter.
-
+The essential difference is that the KD-tree restricts sphere placement to be constrained by surface vertices only, while the BVH allows medial spheres to touch the interior of mesh faces.
 In general, we recommend using the KD-tree (which is also the default) if the surface mesh has a sufficiently dense vertex sampling.
 However, for sparse meshes, the KD-tree may cause the resulting medial spheres to drift outside the shape boundaries.
 In such cases, the BVH may offer better geometric containment, though it is neither guaranteed to produce strictly interior medial spheres.
@@ -83,10 +83,10 @@ In such cases, the BVH may offer better geometric containment, though it is neit
 \subsection VMASfree Free function
 The function `CGAL::extract_variational_medial_skeleton()` provides a convenient interface for users who want to quickly extract a medial skeleton with specified parameters.
 This function accepts the following parameters:
-- `number_of_spheres`: target number of medial spheres (default: 100)
-- `lambda`: weight balancing the energy terms (default: 0.2)
-- `number_of_iterations`: maximum number of iterations (default: 1000)
-- `concurrency_tag`: execution mode - sequential or parallel (default: Sequential_tag)
+- `number_of_spheres`: target number of medial spheres
+- `lambda`: weight balancing the energy terms 
+- `number_of_iterations`: maximum number of iterations
+- `concurrency_tag`: execution mode - sequential or parallel
 
 The following example showcases the usage of this function:
 
@@ -96,7 +96,9 @@ The following example showcases the usage of this function:
 The class `CGAL::Variational_medial_axis` provides some advanced usage of the algorithm
 Several key functions are provided for algorithm control:
 - `CGAL::Variational_medial_axis::compute_variational_medial_axis_sampling()`: Executes the complete algorithm with specified parameters and returns a boolean indicating success.
+The algorithm may fail either when the optimization does not converge (the error stays above the error threshold) or when the input surface sampling is too sparse to generate a sufficient number of medial spheres.
 The paramters are the same of the free function.
+
 
 - `CGAL::Variational_medial_axis::update_single_step()`: Performs a single iteration of the optimization process, with optional sphere splitting enabled. This allows for step-by-step execution and monitoring of the algorithm's progress.
 
