@@ -85,9 +85,7 @@ using Disable_if_Polygon_2_iterator =
 // Convert Polygon_2 to General_polygon_2<Polyline_traits>
   template <typename Kernel, typename Container, typename ArrTraits>
 General_polygon_2<ArrTraits>
-convert_polygon(const Polygon_2<Kernel, Container>& polygon,
-                const ArrTraits& traits)
-{
+convert_polygon(const Polygon_2<Kernel, Container>& polygon, const ArrTraits& traits) {
   auto ctr = traits.construct_curve_2_object();
   if (polygon.is_empty()) return General_polygon_2<ArrTraits>();
   using Point = typename ArrTraits::Point_2;
@@ -99,9 +97,8 @@ convert_polygon(const Polygon_2<Kernel, Container>& polygon,
   General_polygon_2<ArrTraits> gpgn;
   auto make_x_mtn = traits.make_x_monotone_2_object();
   make_x_mtn(cv,
-             boost::make_function_output_iterator
-             ([&](const Make_x_monotone_result& obj)
-              { gpgn.push_back(*(std::get_if<X_monotone_curve>(&obj))); }));
+             boost::make_function_output_iterator([&](const Make_x_monotone_result& obj)
+             { gpgn.push_back(*(std::get_if<X_monotone_curve>(&obj))); }));
   return gpgn;
 }
 
@@ -112,9 +109,8 @@ convert_polygon(const Polygon_with_holes_2<Kernel, Container>& pwh,
                 const ArrTraits& traits) {
   using General_pgn = General_polygon_2<ArrTraits>;
   using Pgn = Polygon_2<Kernel, Container>;
-  auto converter = [&](const Pgn& pgn)->General_pgn {
-    return convert_polygon(pgn, traits);
-  };
+  auto converter = [&](const Pgn& pgn)->General_pgn
+  { return convert_polygon(pgn, traits); };
   return General_polygon_with_holes_2<General_polygon_2<ArrTraits>>
     (convert_polygon(pwh.outer_boundary(), traits),
      boost::make_transform_iterator(pwh.holes().begin(), converter),
@@ -140,9 +136,8 @@ Polygon_with_holes_2<Kernel, Container>
 convert_polygon_back(const General_polygon_with_holes_2<General_polygon_2<ArrTraits>>& gpwh) {
   using Pgn = Polygon_2<Kernel, Container>;
   using General_pgn = General_polygon_2<ArrTraits>;
-  auto converter = [](const General_pgn& gpgn)->Pgn {
-    return convert_polygon_back<Kernel, Container>(gpgn);
-  };
+  auto converter = [](const General_pgn& gpgn)->Pgn
+  { return convert_polygon_back<Kernel, Container>(gpgn); };
   return Polygon_with_holes_2<Kernel, Container>
     (convert_polygon_back<Kernel, Container>(gpwh.outer_boundary()),
      boost::make_transform_iterator(gpwh.holes().begin(), converter),
@@ -162,9 +157,8 @@ convert_polygon_iterator(InputIterator it, const Traits& traits) {
   using Return_type = typename General_polygon_of_polygon<Input_type>::type;
   using Function_type = std::function<Return_type(Input_type)>;
 
-  Function_type func =
-    [&traits](const Input_type& p)->Return_type
-    { return convert_polygon(p, traits); };
+  Function_type func = [&traits](const Input_type& p)->Return_type
+  { return convert_polygon(p, traits); };
 
   return boost::transform_iterator<Function_type, InputIterator>(it, func);
 }
