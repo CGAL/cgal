@@ -288,7 +288,7 @@ public:
     if (this->is_plane() || other.is_plane()) return true;
     Aos_2 res_arr;
     Gps_do_intersect_functor<Aos_2> func;
-    do_intersect_overlay(*m_arr, *(other.m_arr), res_arr, func);
+    if (do_intersect_overlay(*m_arr, *(other.m_arr), res_arr, func)) return true;
     return func.found_reg_intersection();
   }
 

@@ -115,19 +115,19 @@ bool do_intersect_overlay(const Arrangement_on_surface_2<GeometryTraitsA_2, Topo
   // directed from right to left.
   typename Arr_a::Halfedge_const_handle invalid_he1;
   typename Arr_b::Halfedge_const_handle invalid_he2;
-  std::vector<Ovl_x_monotone_curve_2> xcvs_vec(arr1.number_of_edges() + arr2.number_of_edges());
+  std::vector<Ovl_x_monotone_curve_2> xcvs(arr1.number_of_edges() + arr2.number_of_edges());
   std::size_t i = 0;
 
   for (auto eit1 = arr1.edges_begin(); eit1 != arr1.edges_end(); ++eit1, ++i) {
     typename Arr_a::Halfedge_const_handle he1 = eit1;
     if (he1->direction() != ARR_RIGHT_TO_LEFT) he1 = he1->twin();
-    xcvs_vec[i] = Ovl_x_monotone_curve_2(eit1->curve(), he1, invalid_he2);
+    xcvs[i] = Ovl_x_monotone_curve_2(eit1->curve(), he1, invalid_he2);
   }
 
   for (auto eit2 = arr2.edges_begin(); eit2 != arr2.edges_end(); ++eit2, ++i) {
     typename Arr_b::Halfedge_const_handle he2 = eit2;
     if (he2->direction() != ARR_RIGHT_TO_LEFT) he2 = he2->twin();
-    xcvs_vec[i] = Ovl_x_monotone_curve_2(eit2->curve(), invalid_he1, he2);
+    xcvs[i] = Ovl_x_monotone_curve_2(eit2->curve(), invalid_he1, he2);
   }
 
   // Obtain an extended traits-class object and define the sweep-line visitor.
@@ -155,12 +155,18 @@ bool do_intersect_overlay(const Arrangement_on_surface_2<GeometryTraitsA_2, Topo
       ((arr1.number_of_isolated_vertices() == 0) && (arr2.number_of_isolated_vertices() == 0))) {
     // Clear the result arrangement and perform the sweep to construct it.
     arr.clear();
-    if (std::is_same<typename Agt2::Bottom_side_category, Arr_contracted_side_tag>::value)
-      surface_sweep.sweep(xcvs_vec.begin(), xcvs_vec.end());
-    else
-      surface_sweep.indexed_sweep(xcvs_vec, Indexed_sweep_accessor<Arr_a, Arr_b, Ovl_x_monotone_curve_2>(arr1, arr2));
-    xcvs_vec.clear();
-    return false;
+    if (std::is_same<typename Agt2::Bottom_side_category, Arr_contracted_side_tag>::value) {
+      surface_sweep.sweep(xcvs.begin(), xcvs.end());
+      xcvs.clear();
+      return visitor.found_intersection();
+    }
+    {
+      for (const auto& xcv : xcvs) std::cout << xcv << std::endl;
+      std::cout << std::endl;
+    }
+    surface_sweep.indexed_sweep(xcvs, Indexed_sweep_accessor<Arr_a, Arr_b, Ovl_x_monotone_curve_2>(arr1, arr2));
+    xcvs.clear();
+    return visitor.found_intersection();
   }
 
   // Prepare a vector of extended points that represent all isolated vertices
@@ -186,14 +192,17 @@ bool do_intersect_overlay(const Arrangement_on_surface_2<GeometryTraitsA_2, Topo
 
   // Clear the result arrangement and perform the sweep to construct it.
   arr.clear();
-  if (std::is_same<typename Agt2::Bottom_side_category, Arr_contracted_side_tag>::value)
-    surface_sweep.sweep(xcvs_vec.begin(), xcvs_vec.end(), pts_vec.begin(), pts_vec.end());
-  else
-    surface_sweep.indexed_sweep(xcvs_vec, Indexed_sweep_accessor<Arr_a, Arr_b, Ovl_x_monotone_curve_2>(arr1, arr2),
-                                pts_vec.begin(), pts_vec.end());
-  xcvs_vec.clear();
+  if (std::is_same<typename Agt2::Bottom_side_category, Arr_contracted_side_tag>::value) {
+    surface_sweep.sweep(xcvs.begin(), xcvs.end(), pts_vec.begin(), pts_vec.end());
+    xcvs.clear();
+    pts_vec.clear();
+    return visitor.found_intersection();
+  }
+  surface_sweep.indexed_sweep(xcvs, Indexed_sweep_accessor<Arr_a, Arr_b, Ovl_x_monotone_curve_2>(arr1, arr2),
+                              pts_vec.begin(), pts_vec.end());
+  xcvs.clear();
   pts_vec.clear();
-  return false;
+  return visitor.found_intersection();
 }
 
 /*! Compute the (simple) overlay of two input arrangements.

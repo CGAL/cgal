@@ -46,18 +46,18 @@ inline bool do_intersect(const Polygon_2<Kernel, Container>& pgn1,
                          Traits& traits)
 { return s_do_intersect(pgn1, pgn2, traits); }
 
-// With Tag_true
-template <typename Kernel, typename Container>
-inline bool do_intersect(const Polygon_2<Kernel, Container>& pgn1,
-                         const Polygon_2<Kernel, Container>& pgn2,
-                         Tag_true = Tag_true())
-{ return s_do_intersect(pgn1, pgn2); }
+// With Tag_true is cancelled
+// template <typename Kernel, typename Container>
+// inline bool do_intersect(const Polygon_2<Kernel, Container>& pgn1,
+//                          const Polygon_2<Kernel, Container>& pgn2,
+//                          Tag_true)
+// { return s_do_intersect(pgn1, pgn2); }
 
 // With Tag_false
 template <typename Kernel, typename Container>
 inline bool do_intersect(const Polygon_2<Kernel, Container>& pgn1,
                          const Polygon_2<Kernel, Container>& pgn2,
-                         Tag_false) {
+                         Tag_false = Tag_false()) {
   using Polygon = Polygon_2<Kernel, Container>;
   typename Gps_default_traits<Polygon>::Traits traits;
   return s_do_intersect(pgn1, pgn2, traits);
@@ -71,18 +71,18 @@ inline bool do_intersect(const Polygon_2<Kernel, Container>& pgn1,
                          Traits& traits)
 { return s_do_intersect(pgn1, pgn2, traits); }
 
-// With Tag_true
-template <typename Kernel, typename Container>
-inline bool do_intersect(const Polygon_2<Kernel, Container>& pgn1,
-                         const Polygon_with_holes_2<Kernel, Container>& pgn2,
-                         Tag_true = Tag_true())
-{ return s_do_intersect(pgn1, pgn2); }
+// With Tag_true is cancelled
+// template <typename Kernel, typename Container>
+// inline bool do_intersect(const Polygon_2<Kernel, Container>& pgn1,
+//                          const Polygon_with_holes_2<Kernel, Container>& pgn2,
+//                          Tag_true)
+// { return s_do_intersect(pgn1, pgn2); }
 
 // With Tag_false
 template <typename Kernel, typename Container>
 inline bool do_intersect(const Polygon_2<Kernel, Container>& pgn1,
                          const Polygon_with_holes_2<Kernel, Container>& pgn2,
-                         Tag_false) {
+                         Tag_false = Tag_false()) {
   // Use the first polygon to determine the (default) traits
   using Polygon = Polygon_2<Kernel, Container>;
   typename Gps_default_traits<Polygon>::Traits traits;
@@ -97,18 +97,18 @@ inline bool do_intersect(const Polygon_with_holes_2<Kernel, Container>& pgn1,
                          Traits& traits)
 { return s_do_intersect(pgn1, pgn2, traits); }
 
-// With Tag_true
-template <typename Kernel, typename Container>
-inline bool do_intersect(const Polygon_with_holes_2<Kernel, Container>& pgn1,
-                         const Polygon_2<Kernel, Container>& pgn2,
-                         Tag_true = Tag_true())
-{ return s_do_intersect(pgn1, pgn2); }
+// With Tag_true is cancelled
+// template <typename Kernel, typename Container>
+// inline bool do_intersect(const Polygon_with_holes_2<Kernel, Container>& pgn1,
+//                          const Polygon_2<Kernel, Container>& pgn2,
+//                          Tag_true)
+// { return s_do_intersect(pgn1, pgn2); }
 
 // With Tag_false
 template <typename Kernel, typename Container>
 inline bool do_intersect(const Polygon_with_holes_2<Kernel, Container>& pgn1,
                          const Polygon_2<Kernel, Container>& pgn2,
-                         Tag_false)
+                         Tag_false = Tag_false())
 {
   // Use the first polygon to determine the (default) traits
   using Polygon_with_holes = Polygon_with_holes_2<Kernel, Container>;
@@ -124,18 +124,18 @@ inline bool do_intersect(const Polygon_with_holes_2<Kernel, Container>& pgn1,
                          Traits& traits)
 { return s_do_intersect(pgn1, pgn2, traits); }
 
-// With Tag_true
-template <typename Kernel, typename Container>
-inline bool do_intersect(const Polygon_with_holes_2<Kernel, Container>& pgn1,
-                         const Polygon_with_holes_2<Kernel, Container>& pgn2,
-                         Tag_true = Tag_true())
-{ return s_do_intersect(pgn1, pgn2); }
+// With Tag_true is canclled
+// template <typename Kernel, typename Container>
+// inline bool do_intersect(const Polygon_with_holes_2<Kernel, Container>& pgn1,
+//                          const Polygon_with_holes_2<Kernel, Container>& pgn2,
+//                          Tag_true)
+// { return s_do_intersect(pgn1, pgn2); }
 
 // With Tag_false
 template <typename Kernel, typename Container>
 inline bool do_intersect(const Polygon_with_holes_2<Kernel, Container>& pgn1,
                          const Polygon_with_holes_2<Kernel, Container>& pgn2,
-                         Tag_false) {
+                         Tag_false = Tag_false()) {
   // Use the first polygon to determine the (default) traits
   using Polygon_with_holes = Polygon_with_holes_2<Kernel, Container>;
   typename Gps_default_traits<Polygon_with_holes>::Traits traits;
@@ -233,21 +233,20 @@ inline bool do_intersect(InputIterator begin, InputIterator end, Traits& traits,
 { return r_do_intersect(begin, end, traits, k); }
 
 // Without Traits
-// Tag_true => convert to polylines
-template <typename InputIterator>
-inline bool do_intersect(InputIterator begin, InputIterator end,
-                         Tag_true = Tag_true(), unsigned int k = 5,
-                         std::enable_if_t<CGAL::is_iterator<InputIterator>::value>* = 0,
-                         Enable_if_Polygon_2_iterator<InputIterator>* = 0)
-{ return r_do_intersect(begin, end, k); }
+// Tag_true => convert to polylines canclled
+// template <typename InputIterator>
+// inline bool do_intersect(InputIterator begin, InputIterator end,
+//                          Tag_true, unsigned int k = 5,
+//                          std::enable_if_t<CGAL::is_iterator<InputIterator>::value>* = 0,
+//                          Enable_if_Polygon_2_iterator<InputIterator>* = 0)
+// { return r_do_intersect(begin, end, k); }
 
 // Tag_false => do not convert to polylines
 template <typename InputIterator>
 inline bool do_intersect(InputIterator begin, InputIterator end,
-                         Tag_false, unsigned int k=5,
+                         Tag_false = Tag_false(), unsigned int k = 5,
                          std::enable_if_t<CGAL::is_iterator<InputIterator>::value>* = 0,
-                         Enable_if_Polygon_2_iterator<InputIterator>* = 0)
-{
+                         Enable_if_Polygon_2_iterator<InputIterator>* = 0) {
   typename Iterator_to_gps_traits<InputIterator>::Traits traits;
   return r_do_intersect(begin, end, traits, k);
 }
@@ -255,10 +254,9 @@ inline bool do_intersect(InputIterator begin, InputIterator end,
 // General polygons or polygons with holes
 template <typename InputIterator>
 inline bool do_intersect(InputIterator begin, InputIterator end,
-                         unsigned int k=5,
+                         unsigned int k = 5,
                          std::enable_if_t<CGAL::is_iterator<InputIterator>::value>* = 0,
-                         Disable_if_Polygon_2_iterator<InputIterator>* = 0)
-{
+                         Disable_if_Polygon_2_iterator<InputIterator>* = 0) {
   typename Iterator_to_gps_traits<InputIterator>::Traits traits;
   return do_intersect(begin, end, traits, k);
 }
@@ -267,23 +265,23 @@ inline bool do_intersect(InputIterator begin, InputIterator end,
 template <typename InputIterator1, typename InputIterator2, typename Traits>
 inline bool do_intersect(InputIterator1 begin1, InputIterator1 end1,
                          InputIterator2 begin2, InputIterator2 end2,
-                         Traits& traits, unsigned int k=5)
+                         Traits& traits, unsigned int k = 5)
 { return r_do_intersect(begin1, end1, begin2, end2, traits, k); }
 
 // Without Traits
-// Tag_true => convert to polylines
-template <typename InputIterator1, typename InputIterator2>
-inline bool do_intersect(InputIterator1 begin1, InputIterator1 end1,
-                         InputIterator2 begin2, InputIterator2 end2,
-                         Tag_true = Tag_true(), unsigned int k=5,
-                         Enable_if_Polygon_2_iterator<InputIterator1>* = 0)
-{ return r_do_intersect(begin1, end1, begin2, end2, k); }
+// Tag_true => convert to polylines cancelled
+// template <typename InputIterator1, typename InputIterator2>
+// inline bool do_intersect(InputIterator1 begin1, InputIterator1 end1,
+//                          InputIterator2 begin2, InputIterator2 end2,
+//                          Tag_true, unsigned int k = 5,
+//                          Enable_if_Polygon_2_iterator<InputIterator1>* = 0)
+// { return r_do_intersect(begin1, end1, begin2, end2, k); }
 
 // Tag_false => do not convert to polylines
 template <typename InputIterator1, typename InputIterator2>
 inline bool do_intersect(InputIterator1 begin1, InputIterator1 end1,
                          InputIterator2 begin2, InputIterator2 end2,
-                         Tag_false, unsigned int k=5,
+                         Tag_false = Tag_false(), unsigned int k = 5,
                          Enable_if_Polygon_2_iterator<InputIterator1>* = 0)
 { return r_do_intersect(begin1, end1, begin2, end2, k); }
 
@@ -291,7 +289,7 @@ inline bool do_intersect(InputIterator1 begin1, InputIterator1 end1,
 template <typename InputIterator1, typename InputIterator2>
 inline bool do_intersect(InputIterator1 begin1, InputIterator1 end1,
                          InputIterator2 begin2, InputIterator2 end2,
-                         unsigned int k=5,
+                         unsigned int k = 5,
                          Disable_if_Polygon_2_iterator<InputIterator1>* = 0)
 {
   typename Iterator_to_gps_traits<InputIterator1>::Traits traits;

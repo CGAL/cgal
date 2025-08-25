@@ -49,21 +49,67 @@ private:
   using Visitor = typename Default::Get<Visitor_, Self>::type;
   using Base = Arr_overlay_ss_visitor<Overlay_helper, Overlay_traits, Visitor>;
 
+protected:
+  bool m_found_x;
+
 public:
   using Arrangement_red_2 = typename Base::Arrangement_red_2;
   using Arrangement_blue_2 = typename Base::Arrangement_blue_2;
   using Arrangement_2 = typename Base::Arrangement_2;
+  using Event = typename Base::Event;
+  using Subcurve = typename Base::Subcurve;
+  using Status_line_iterator = typename Base::Status_line_iterator;
+  using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
+  using Point_2 = typename Base::Point_2;
 
   /*! Constructor */
   Arr_do_intersect_overlay_ss_visitor(const Arrangement_red_2* red_arr,
                                       const Arrangement_blue_2* blue_arr,
                                       Arrangement_2* res_arr,
                                       Overlay_traits* overlay_traits) :
-    Base(red_arr, blue_arr, res_arr, overlay_traits)
+    Base(red_arr, blue_arr, res_arr, overlay_traits),
+    m_found_x(false)
   {}
 
   /*! Destructor */
   virtual ~Arr_do_intersect_overlay_ss_visitor() {}
+
+  // template <typename CurveIterator>
+  // void sweep(CurveIterator begin, CurveIterator end)
+  // { this->surface_sweep()->sweep(begin, end); }
+
+  // template <typename CurveIterator, typename PointIterator>
+  // void sweep(CurveIterator cvs_begin, CurveIterator cvs_end, PointIterator pts_begin, PointIterator pts_end)
+  // { this->surface_sweep()->sweep(cvs_begin, cvs_end, pts_begin, pts_end); }
+
+  /*! Update an event that corresponds to a curve endpoint. */
+  void update_event(Event* e, const Point_2& end_point, const X_monotone_curve_2& cv, Arr_curve_end cv_end, bool is_new)
+  { return Base::update_event(e, end_point, cv, cv_end, is_new); }
+
+  /*! Update an event that corresponds to a curve endpoint */
+  void update_event(Event* e, const X_monotone_curve_2& cv, Arr_curve_end cv_end, bool is_new )
+  { return Base::update_event(e, cv, cv_end, is_new); }
+
+  /*! Update an event that corresponds to a curve endpoint */
+  void update_event(Event* e, const Point_2& p, bool is_new)
+  { return Base::update_event(e, p, is_new); }
+
+  /*! Update an event that corresponds to an intersection */
+  void update_event(Event*, Subcurve*) { m_found_x = true; }
+
+  /*! Update an event that corresponds to an intersection between curves */
+  void update_event(Event*, Subcurve*, Subcurve*, bool is_new) { m_found_x = true; }
+
+  /*! found an overlap */
+  void found_overlap(Subcurve*, Subcurve*, Subcurve*) { m_found_x = true; }
+
+  bool after_handle_event(Event* e, Status_line_iterator iter, bool flag) {
+    if (m_found_x) this->surface_sweep()->stop_sweep();
+    return Base::after_handle_event(e, iter, flag);
+  }
+
+  /*! Getter */
+  bool found_intersection() { return m_found_x; }
 };
 
 } // namespace CGAL
