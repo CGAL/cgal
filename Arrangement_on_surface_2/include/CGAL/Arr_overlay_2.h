@@ -8,8 +8,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s):      Baruch Zukerman <baruchzu@post.tau.ac.il>
-//                 Efi Fogel <efifogel@gmail.com>
+// Author(s) : Baruch Zukerman <baruchzu@post.tau.ac.il>
+//             Efi Fogel <efifogel@gmail.com>
 
 #ifndef CGAL_ARR_OVERLAY_2_H
 #define CGAL_ARR_OVERLAY_2_H

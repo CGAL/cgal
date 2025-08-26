@@ -7,8 +7,8 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
-//                 Ron Wein        <wein@post.tau.ac.il>
+// Author(s) : Baruch Zukerman <baruchzu@post.tau.ac.il>
+//             Ron Wein        <wein@post.tau.ac.il>
 
 #ifndef CGAL_BSO_2_GSP_AGG_OP_SURFACE_SWEEP_2_H
 #define CGAL_BSO_2_GSP_AGG_OP_SURFACE_SWEEP_2_H
@@ -27,34 +27,34 @@ namespace Ss2 = Surface_sweep_2;
 template <typename Arrangement_, typename Visitor_>
 class Gps_agg_op_surface_sweep_2 : public Ss2::Surface_sweep_2<Visitor_> {
 public:
-  typedef Arrangement_                                  Arrangement_2;
-  typedef Visitor_                                      Visitor;
+  using Arrangement_2 = Arrangement_;
+  using Visitor = Visitor_;
 
-  typedef typename Visitor::Geometry_traits_2           Geometry_traits_2;
+  using Geometry_traits_2 = typename Visitor::Geometry_traits_2;
 
-  typedef Arrangement_2                                 Arr;
-  typedef Geometry_traits_2                             Gt2;
+  using Arr = Arrangement_2;
+  using Gt2 = Geometry_traits_2;
 
-  typedef typename Gt2::Point_2                         Point_2;
-  typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
+  using Point_2 = typename Gt2::Point_2;
+  using X_monotone_curve_2 = typename Gt2::X_monotone_curve_2;
 
-  typedef typename Arr::Vertex_handle                   Vertex_handle;
-  typedef typename Arr::Halfedge_handle                 Halfedge_handle;
+  using Vertex_handle = typename Arr::Vertex_handle;
+  using Halfedge_handle = typename Arr::Halfedge_handle;
 
-  typedef std::pair<Arr*, std::vector<Vertex_handle> *> Arr_entry;
+  using Arr_entry = std::pair<Arr*, std::vector<Vertex_handle> *>;
 
-  typedef Ss2::Surface_sweep_2<Visitor>                 Base;
+  using Base = Ss2::Surface_sweep_2<Visitor>;
 
-  typedef typename Visitor::Event                       Event;
-  typedef typename Visitor::Subcurve                    Subcurve;
+  using Event = typename Visitor::Event;
+  using Subcurve = typename Visitor::Subcurve;
 
-  typedef typename Base::Event_queue_iterator           EventQueueIter;
-  typedef typename Event::Subcurve_iterator             EventCurveIter;
+  using EventQueueIter = typename Base::Event_queue_iterator;
+  using EventCurveIter = typename Event::Subcurve_iterator;
 
-  typedef typename Event::Attribute                     Attribute;
+  using Attribute = typename Event::Attribute;
 
-  typedef std::list<Subcurve*>                          SubCurveList;
-  typedef typename SubCurveList::iterator               SubCurveListIter;
+  using SubCurveList = std::list<Subcurve*>;
+  using SubCurveListIter = typename SubCurveList::iterator;
 
 public:
   /*! Constructor.
@@ -73,18 +73,16 @@ public:
   /*! Perform the sweep. */
   template <class CurveInputIterator>
   void sweep(CurveInputIterator curves_begin, CurveInputIterator curves_end,
-             unsigned int lower, unsigned int upper, unsigned int jump,
-             std::vector<Arr_entry>& arr_vec)
-  {
+             std::size_t lower, std::size_t upper, std::size_t jump,
+             std::vector<Arr_entry>& arr_vec) {
     CGAL_assertion(this->m_queue->empty() && this->m_statusLine.size() == 0);
 
-    typedef Unique_hash_map<Vertex_handle, Event*>      Vertices_map;
-    typedef typename Gt2::Compare_xy_2                  Compare_xy_2;
+    using Vertices_map = Unique_hash_map<Vertex_handle, Event*>;
+    using Compare_xy_2 = typename Gt2::Compare_xy_2;
 
     this->m_visitor->before_sweep();
     // Allocate all of the Subcurve objects as one block.
-    this->m_num_of_subCurves =
-      static_cast<unsigned int>(std::distance(curves_begin, curves_end));
+    this->m_num_of_subCurves = std::distance(curves_begin, curves_end);
     if (this->m_num_of_subCurves > 0)
       this->m_subCurves =
         this->m_subCurveAlloc.allocate(this->m_num_of_subCurves);
@@ -95,9 +93,9 @@ public:
     Vertices_map vert_map;
     Vertex_handle vh;
     Vertex_handle invalid_v;
-    unsigned int i = lower;
-    unsigned int n = static_cast<unsigned int>((arr_vec[i].second)->size());
-    unsigned int j;
+    std::size_t i = lower;
+    auto n = (arr_vec[i].second)->size();
+    std::size_t j;
     EventQueueIter q_iter;
     bool first = true;
     Attribute event_type;
@@ -135,7 +133,7 @@ public:
     for (i += jump; i <= upper; i += jump) {
       // Merge the vertices of the other vectors into the existing queue.
       q_iter = this->m_queue->begin();
-      n = static_cast<unsigned int>((arr_vec[i].second)->size());
+      n = (arr_vec[i].second)->size();
 
       for (j = 0; j < n && (vh = (*(arr_vec[i].second))[j]) != invalid_v; j++) {
         event_type = _type_of_vertex(vh);
@@ -170,7 +168,7 @@ public:
 
     // Go over all curves (which are associated with halfedges) and associate
     // them with the events we have just created.
-    unsigned int index = 0;
+    std::size_t index = 0;
     CurveInputIterator iter;
     Halfedge_handle he;
     Event* e_left;
@@ -194,7 +192,7 @@ public:
       }
 
       // Create the subcurve object.
-      typedef decltype(this->m_subCurveAlloc) Subcurve_alloc;
+      using Subcurve_alloc = decltype(this->m_subCurveAlloc);
       std::allocator_traits<Subcurve_alloc>::construct(this->m_subCurveAlloc, this->m_subCurves + index,
                                       this->m_masterSubcurve);
       (this->m_subCurves + index)->init(*iter);
@@ -218,8 +216,7 @@ private:
    * Check if the given vertex is an endpoint of an edge we are going
    * to use in the sweep.
    */
-  Attribute _type_of_vertex(Vertex_handle v)
-  {
+  Attribute _type_of_vertex(Vertex_handle v) {
     typename Arr::Halfedge_around_vertex_circulator first, circ;
 
     circ = first = v->incident_halfedges();

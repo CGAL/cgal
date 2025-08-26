@@ -52,7 +52,7 @@ inline bool s_do_intersect(const Pgn1& pgn1, const Pgn2& pgn2) {
 // With Traits
 template <typename InputIterator, typename Traits>
 inline bool r_do_intersect(InputIterator begin, InputIterator end,
-                           Traits& traits, unsigned int k = 5) {
+                           Traits& traits, std::size_t k = 5) {
   if (begin == end) return false;
   General_polygon_set_2<Traits> gps(*begin, traits);
   return gps.do_intersect(std::next(begin), end, k);
@@ -61,7 +61,7 @@ inline bool r_do_intersect(InputIterator begin, InputIterator end,
 // Without Traits
 template <typename InputIterator>
 inline bool r_do_intersect(InputIterator begin, InputIterator end,
-                           unsigned int k = 5) {
+                           std::size_t k = 5) {
   using Pgn = typename std::iterator_traits<InputIterator>::value_type;
   typename Gps_polyline_traits<Pgn>::Traits traits;
   const typename Gps_polyline_traits<Pgn>::Polyline_traits& ptraits(traits);
@@ -74,7 +74,7 @@ inline bool r_do_intersect(InputIterator begin, InputIterator end,
 template <typename InputIterator1, typename InputIterator2, typename Traits>
 inline bool r_do_intersect(InputIterator1 begin1, InputIterator1 end1,
                            InputIterator2 begin2, InputIterator2 end2,
-                           Traits& traits, unsigned int k = 5) {
+                           Traits& traits, std::size_t k = 5) {
   if (begin1 == end1) return do_intersect(begin2, end2, traits, k);
   General_polygon_set_2<Traits> gps(*begin1, traits);
   return gps.do_intersect(std::next(begin1), end1, begin2, end2, k);
@@ -84,7 +84,7 @@ inline bool r_do_intersect(InputIterator1 begin1, InputIterator1 end1,
 template <typename InputIterator1, typename InputIterator2>
 inline bool r_do_intersect (InputIterator1 begin1, InputIterator1 end1,
                             InputIterator2 begin2, InputIterator2 end2,
-                            unsigned int k = 5) {
+                            std::size_t k = 5) {
   using Pgn = typename std::iterator_traits<InputIterator1>::value_type;
   typename Gps_polyline_traits<Pgn>::Traits traits;
   const typename Gps_polyline_traits<Pgn>::Polyline_traits& ptraits(traits);
@@ -162,7 +162,7 @@ inline OutputIterator s_intersection(const Pgn1& pgn1, const Pgn2& pgn2,
 template <typename InputIterator, typename OutputIterator, typename Traits>
 inline OutputIterator r_intersection(InputIterator begin, InputIterator end,
                                      OutputIterator oi, Traits& traits,
-                                     unsigned int k = 5) {
+                                     std::size_t k = 5) {
   if (begin == end) return (oi);
   General_polygon_set_2<Traits> gps(*begin, traits);
   gps.intersection(std::next(begin), end, k);
@@ -172,7 +172,7 @@ inline OutputIterator r_intersection(InputIterator begin, InputIterator end,
 // Without Traits
 template <typename InputIterator, typename OutputIterator>
 inline OutputIterator r_intersection(InputIterator begin, InputIterator end,
-                                     OutputIterator oi, unsigned int k = 5) {
+                                     OutputIterator oi, std::size_t k = 5) {
   using Pgn = typename std::iterator_traits<InputIterator>::value_type;
   typename Gps_polyline_traits<Pgn>::Traits traits;
   const typename Gps_polyline_traits<Pgn>::Polyline_traits& ptraits(traits);
@@ -189,7 +189,7 @@ template <typename InputIterator1, typename InputIterator2,
 inline OutputIterator r_intersection(InputIterator1 begin1, InputIterator1 end1,
                                      InputIterator2 begin2, InputIterator2 end2,
                                      OutputIterator oi, Traits& traits,
-                                     unsigned int k = 5) {
+                                     std::size_t k = 5) {
   if (begin1 == end1) return r_intersection(begin2, end2, oi, traits, k);
   General_polygon_set_2<Traits> gps(*begin1, traits);
   gps.intersection(std::next(begin1), end1, begin2, end2, k);
@@ -202,7 +202,7 @@ template <typename InputIterator1, typename InputIterator2,
 inline OutputIterator
 r_intersection(InputIterator1 begin1, InputIterator1 end1,
                InputIterator2 begin2, InputIterator2 end2,
-               OutputIterator oi, unsigned int k = 5) {
+               OutputIterator oi, std::size_t k = 5) {
   using Pgn = typename std::iterator_traits<InputIterator1>::value_type;
   typename Gps_polyline_traits<Pgn>::Traits traits;
   const typename Gps_polyline_traits<Pgn>::Polyline_traits& ptraits(traits);
@@ -286,7 +286,7 @@ inline bool s_join(const Pgn1& pgn1, const Pgn2& pgn2, Pwh& pwh) {
 template <typename InputIterator, typename OutputIterator, typename Traits>
 inline OutputIterator r_join(InputIterator begin, InputIterator end,
                              OutputIterator oi, Traits& traits,
-                             unsigned int k = 5) {
+                             std::size_t k = 5) {
   if (begin == end) return oi;
   General_polygon_set_2<Traits> gps(*begin, traits);
   gps.join(std::next(begin), end, k);
@@ -296,7 +296,7 @@ inline OutputIterator r_join(InputIterator begin, InputIterator end,
 // Without traits
 template <typename InputIterator, typename OutputIterator>
 inline OutputIterator r_join(InputIterator begin, InputIterator end,
-                             OutputIterator oi, unsigned int k = 5) {
+                             OutputIterator oi, std::size_t k = 5) {
   using Pgn = typename std::iterator_traits<InputIterator>::value_type;
   typename Gps_polyline_traits<Pgn>::Traits traits;
   const typename Gps_polyline_traits<Pgn>::Polyline_traits& ptraits(traits);
@@ -315,7 +315,7 @@ template <typename InputIterator1, typename InputIterator2,
 inline OutputIterator r_join(InputIterator1 begin1, InputIterator1 end1,
                              InputIterator2 begin2, InputIterator2 end2,
                              OutputIterator oi, Traits& traits,
-                             unsigned int k = 5) {
+                             std::size_t k = 5) {
   if (begin1 == end1) return r_join(begin2, end2, oi, traits, k);
   General_polygon_set_2<Traits> gps(*begin1, traits);
   gps.join(std::next(begin1), end1, begin2, end2, k);
@@ -327,7 +327,7 @@ template <typename InputIterator1, typename InputIterator2,
           typename OutputIterator>
 inline OutputIterator r_join(InputIterator1 begin1, InputIterator1 end1,
                              InputIterator2 begin2, InputIterator2 end2,
-                             OutputIterator oi, unsigned int k = 5) {
+                             OutputIterator oi, std::size_t k = 5) {
   using Pgn = typename std::iterator_traits<InputIterator1>::value_type;
   typename Gps_polyline_traits<Pgn>::Traits traits;
   const typename Gps_polyline_traits<Pgn>::Polyline_traits& ptraits(traits);
@@ -407,7 +407,7 @@ template <typename InputIterator, typename OutputIterator, typename Traits>
 inline
 OutputIterator r_symmetric_difference(InputIterator begin, InputIterator end,
                                       OutputIterator oi, Traits& traits,
-                                      unsigned int k = 5) {
+                                      std::size_t k = 5) {
   if (begin == end) return (oi);
   General_polygon_set_2<Traits> gps(*begin, traits);
   gps.symmetric_difference(std::next(begin), end, k);
@@ -419,7 +419,7 @@ template <typename InputIterator, typename OutputIterator>
 inline OutputIterator r_symmetric_difference(InputIterator begin,
                                              InputIterator end,
                                              OutputIterator oi,
-                                             unsigned int k = 5) {
+                                             std::size_t k = 5) {
   using Pgn = typename std::iterator_traits<InputIterator>::value_type;
   typename Gps_polyline_traits<Pgn>::Traits traits;
   const typename Gps_polyline_traits<Pgn>::Polyline_traits& ptraits(traits);
@@ -438,7 +438,7 @@ inline OutputIterator r_symmetric_difference(InputIterator1 begin1,
                                              InputIterator2 begin2,
                                              InputIterator2 end2,
                                              OutputIterator oi, Traits& traits,
-                                             unsigned int k = 5) {
+                                             std::size_t k = 5) {
   if (begin1 == end1) return r_symmetric_difference(begin2, end2, oi, traits, k);
   General_polygon_set_2<Traits> gps(*begin1, traits);
   gps.symmetric_difference(std::next(begin1), end1, begin2, end2, k);
@@ -453,7 +453,7 @@ inline OutputIterator r_symmetric_difference(InputIterator1 begin1,
                                              InputIterator2 begin2,
                                              InputIterator2 end2,
                                              OutputIterator oi,
-                                             unsigned int k = 5) {
+                                             std::size_t k = 5) {
   using Pgn = typename std::iterator_traits<InputIterator1>::value_type;
   typename Gps_polyline_traits<Pgn>::Traits traits;
   const typename Gps_polyline_traits<Pgn>::Polyline_traits& ptraits(traits);

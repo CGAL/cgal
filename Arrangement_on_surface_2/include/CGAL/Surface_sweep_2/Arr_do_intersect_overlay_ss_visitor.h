@@ -8,7 +8,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s):      Efi Fogel <efif@post.tau.ac.il>
+// Author(s) : Efi Fogel <efif@post.tau.ac.il>
 
 #ifndef CGAL_DO_INTERSECT_ARR_OVERLAY_SS_VISITOR_H
 #define CGAL_DO_INTERSECT_ARR_OVERLAY_SS_VISITOR_H

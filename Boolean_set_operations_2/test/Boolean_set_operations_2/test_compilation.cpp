@@ -257,45 +257,25 @@ void test_CGAL_Polygon_variants()
   Traits tr;
 
   CGAL::do_intersect(pgn1, pgn2);
-  CGAL::do_intersect(pgn1, pgn2, CGAL::Tag_true());
-  CGAL::do_intersect(pgn1, pgn2, CGAL::Tag_false());
   CGAL::do_intersect(pgn1, pgn2, tr);
 
   CGAL::do_intersect(pgn1, pgn_with_holes2);
-  CGAL::do_intersect(pgn1, pgn_with_holes2, CGAL::Tag_true());
-  CGAL::do_intersect(pgn1, pgn_with_holes2, CGAL::Tag_false());
   CGAL::do_intersect(pgn1, pgn_with_holes2, tr);
 
   CGAL::do_intersect(pgn_with_holes1, pgn2);
-  CGAL::do_intersect(pgn_with_holes1, pgn2, CGAL::Tag_true());
-  CGAL::do_intersect(pgn_with_holes1, pgn2, CGAL::Tag_false());
   CGAL::do_intersect(pgn_with_holes1, pgn2, tr);
 
   CGAL::do_intersect(pgn_with_holes1, pgn_with_holes2);
-  CGAL::do_intersect(pgn_with_holes1, pgn_with_holes2, CGAL::Tag_true());
-  CGAL::do_intersect(pgn_with_holes1, pgn_with_holes2, CGAL::Tag_false());
   CGAL::do_intersect(pgn_with_holes1, pgn_with_holes2, tr);
 
   CGAL::do_intersect(polygons.begin(), polygons.end());
-  CGAL::do_intersect(polygons.begin(), polygons.end(), CGAL::Tag_true());
-  CGAL::do_intersect(polygons.begin(), polygons.end(), CGAL::Tag_false());
   CGAL::do_intersect(polygons.begin(), polygons.end(), tr);
 
   CGAL::do_intersect(polygons_with_holes.begin(), polygons_with_holes.end());
-  CGAL::do_intersect(polygons_with_holes.begin(), polygons_with_holes.end(),
-                     CGAL::Tag_true());
-  CGAL::do_intersect(polygons_with_holes.begin(), polygons_with_holes.end(),
-                     CGAL::Tag_false());
   CGAL::do_intersect(polygons_with_holes.begin(), polygons_with_holes.end(), tr);
 
   CGAL::do_intersect(polygons.begin(), polygons.end(),
                      polygons_with_holes.begin(), polygons_with_holes.end());
-  CGAL::do_intersect(polygons.begin(), polygons.end(),
-                     polygons_with_holes.begin(), polygons_with_holes.end(),
-                     CGAL::Tag_true());
-  CGAL::do_intersect(polygons.begin(), polygons.end(),
-                     polygons_with_holes.begin(), polygons_with_holes.end(),
-                     CGAL::Tag_false());
   CGAL::do_intersect(polygons.begin(), polygons.end(),
                      polygons_with_holes.begin(), polygons_with_holes.end(), tr);
 

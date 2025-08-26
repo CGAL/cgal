@@ -7,7 +7,7 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
+// Author(s):      Baruch Zukerman <baruchzu@post.tau.ac.il>
 //                 Ophir Setter    <ophir.setter@cs.tau.ac.il>
 
 #ifndef CGAL_BSO_2_GPS_AGG_OP_H
@@ -39,29 +39,29 @@ namespace CGAL {
 
 template <typename Arrangement_, typename BfsVisitor>
 class Gps_agg_op {
-  typedef Arrangement_                                  Arrangement_2;
-  typedef BfsVisitor                                    Bfs_visitor;
+  using Arrangement_2 = Arrangement_;
+  using Bfs_visitor = BfsVisitor;
 
-  typedef typename Arrangement_2::Traits_adaptor_2      Geometry_traits_2;
-  typedef typename Arrangement_2::Topology_traits       Topology_traits;
+  using Geometry_traits_2 = typename Arrangement_2::Traits_adaptor_2;
+  using Topology_traits = typename Arrangement_2::Topology_traits;
 
-  typedef Arrangement_2                                 Arr;
-  typedef Geometry_traits_2                             Gt2;
-  typedef Topology_traits                               Tt;
+  using Arr = Arrangement_2;
+  using Gt2 = Geometry_traits_2;
+  using Tt = Topology_traits;
 
-  typedef typename Gt2::Curve_const_iterator            Curve_const_iterator;
-  typedef Gps_agg_meta_traits<Arr>                      Mgt2;
-  typedef typename Mgt2::Curve_data                     Curve_data;
-  typedef typename Mgt2::X_monotone_curve_2             Meta_X_monotone_curve_2;
+  using Curve_const_iterator = typename Gt2::Curve_const_iterator;
+  using Mgt2 = Gps_agg_meta_traits<Arr>;
+  using Curve_data = typename Mgt2::Curve_data;
+  using Meta_X_monotone_curve_2 = typename Mgt2::X_monotone_curve_2;
 
-  typedef typename Arr::Halfedge_handle                 Halfedge_handle;
-  typedef typename Arr::Halfedge_iterator               Halfedge_iterator;
-  typedef typename Arr::Face_handle                     Face_handle;
-  typedef typename Arr::Edge_iterator                   Edge_iterator;
-  typedef typename Arr::Vertex_handle                   Vertex_handle;
-  typedef typename Arr::Allocator                       Allocator;
+  using Halfedge_handle = typename Arr::Halfedge_handle;
+  using Halfedge_iterator = typename Arr::Halfedge_iterator;
+  using Face_handle = typename Arr::Face_handle;
+  using Edge_iterator = typename Arr::Edge_iterator;
+  using Vertex_handle = typename Arr::Vertex_handle;
+  using Allocator = typename Arr::Allocator;
 
-  typedef std::pair<Arr*, std::vector<Vertex_handle> *> Arr_entry;
+  using Arr_entry = std::pair<Arr*, std::vector<Vertex_handle> *>;
 
   // We obtain a proper helper type from the topology traits of the arrangement.
   // However, the arrangement is parametrized with the Gt2 geometry traits,
@@ -70,21 +70,17 @@ class Gps_agg_op {
   // We cannot parameterized the arrangement with the Mgt2 geometry
   // traits to start with, because it extends the curve type with arrangement
   // dependent types. (It is parameterized with the arrangement type.)
-  typedef Indexed_event<Mgt2, Arr, Allocator>           Event;
-  typedef Arr_construction_subcurve<Mgt2, Event, Allocator>
-                                                        Subcurve;
-  typedef typename Tt::template Construction_helper<Event, Subcurve>
-                                                        Helper_tmp;
-  typedef typename Helper_tmp::template rebind<Mgt2, Arr, Event, Subcurve>::other
-                                                        Helper;
-  typedef Gps_agg_op_visitor<Helper, Arr>               Visitor;
-  typedef Gps_agg_op_surface_sweep_2<Arr, Visitor>      Surface_sweep_2;
+  using Event = Indexed_event<Mgt2, Arr, Allocator>;
+  using Subcurve = Arr_construction_subcurve<Mgt2, Event, Allocator>;
+  using Helper_tmp = typename Tt::template Construction_helper<Event, Subcurve>;
+  using Helper = typename Helper_tmp::template rebind<Mgt2, Arr, Event, Subcurve>::other;
+  using Visitor = Gps_agg_op_visitor<Helper, Arr>;
+  using Surface_sweep_2 = Gps_agg_op_surface_sweep_2<Arr, Visitor>;
 
-  typedef Unique_hash_map<Halfedge_handle, unsigned int>
-                                                        Edges_hash;
+  using Edges_hash = Unique_hash_map<Halfedge_handle, std::size_t>;
 
-  typedef Unique_hash_map<Face_handle, unsigned int>    Faces_hash;
-  typedef Gps_bfs_scanner<Arr, Bfs_visitor>             Bfs_scanner;
+  using Faces_hash = Unique_hash_map<Face_handle, std::size_t>;
+  using Bfs_scanner = Gps_bfs_scanner<Arr, Bfs_visitor>;
 
 protected:
   Arr* m_arr;
@@ -103,17 +99,15 @@ public:
     m_surface_sweep(m_traits, &m_visitor)
   {}
 
-  void sweep_arrangements(unsigned int lower, unsigned int upper,
-                          unsigned int jump, std::vector<Arr_entry>& arr_vec)
-  {
+  void sweep_arrangements(std::size_t lower, std::size_t upper,
+                          std::size_t jump, std::vector<Arr_entry>& arr_vec) {
     std::list<Meta_X_monotone_curve_2> curves_list;
 
-    unsigned int n_inf_pgn = 0; // number of infinite polygons (arrangement
+    std::size_t n_inf_pgn = 0;  // number of infinite polygons (arrangement
                                 // with a contained unbounded face
-    unsigned int n_pgn = 0;     // number of polygons (arrangements)
-    unsigned int i;
+    std::size_t n_pgn = 0;      // number of polygons (arrangements)
 
-    for (i = lower; i <= upper; i += jump, ++n_pgn) {
+    for (std::size_t i = lower; i <= upper; i += jump, ++n_pgn) {
       // The BFS scan (after the loop) starts in the reference face,
       // so we count the number of polygons that contain the reference face.
       Arr* arr = (arr_vec[i]).first;

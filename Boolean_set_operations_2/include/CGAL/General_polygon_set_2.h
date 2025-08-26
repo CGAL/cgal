@@ -7,8 +7,8 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s):      Baruch Zukerman <baruchzu@post.tau.ac.il>
-//                 Efi Fogel <efif@post.tau.ac.il>
+// Author(s) : Baruch Zukerman <baruchzu@post.tau.ac.il>
+//             Efi Fogel <efif@post.tau.ac.il>
 
 #ifndef CGAL_GENERAL_POLYGON_SET_2_H
 #define CGAL_GENERAL_POLYGON_SET_2_H

@@ -8,7 +8,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
+// Author(s):      Baruch Zukerman <baruchzu@post.tau.ac.il>
 //                 Ron Wein        <wein@post.tau.ac.il>
 
 #ifndef CGAL_BSO_2_GSP_AGG_OP_VISITOR_H
@@ -34,30 +34,28 @@ class Gps_agg_op_base_visitor :
                                                             Visitor_> >::type>
 {
 public:
-  typedef Helper_                                       Helper;
-  typedef Arrangement_                                  Arrangement_2;
+  using Helper = Helper_;
+  using Arrangement_2 = Arrangement_;
 
-  typedef typename Helper::Geometry_traits_2            Geometry_traits_2;
-  typedef typename Helper::Event                        Event;
-  typedef typename Helper::Subcurve                     Subcurve;
+  using Geometry_traits_2 = typename Helper::Geometry_traits_2;
+  using Event = typename Helper::Event;
+  using Subcurve = typename Helper::Subcurve;
 
 private:
-  typedef Geometry_traits_2                             Gt2;
-  typedef Arrangement_2                                 Arr;
+  using Gt2 = Geometry_traits_2;
+  using Arr = Arrangement_2;
 
-  typedef Gps_agg_op_base_visitor<Helper, Arr, Visitor_>
-                                                        Self;
-  typedef typename Default::Get<Visitor_, Self>::type   Visitor;
-  typedef Arr_construction_ss_visitor<Helper, Visitor>  Base;
+  using Self = Gps_agg_op_base_visitor<Helper, Arr, Visitor_>;
+  using Visitor = typename Default::Get<Visitor_, Self>::type;
+  using Base = Arr_construction_ss_visitor<Helper, Visitor>;
 
 public:
-  typedef typename Arr::Halfedge_handle                 Halfedge_handle;
-  typedef typename Arr::Vertex_handle                   Vertex_handle;
-  typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
-  typedef typename Gt2::Point_2                         Point_2;
+  using Halfedge_handle = typename Arr::Halfedge_handle;
+  using Vertex_handle = typename Arr::Vertex_handle;
+  using X_monotone_curve_2 = typename Gt2::X_monotone_curve_2;
+  using Point_2 = typename Gt2::Point_2;
 
-  typedef Unique_hash_map<Halfedge_handle, unsigned int>
-                                                        Edges_hash;
+  using Edges_hash = Unique_hash_map<Halfedge_handle, std::size_t>;
 
 protected:
   Edges_hash* m_edges_hash; // maps halfedges to their BC (coundary counter)
@@ -138,29 +136,29 @@ class Gps_agg_op_visitor :
                                                     Visitor_> >
 {
 public:
-  typedef Helper_                                       Helper;
-  typedef Arrangement_                                  Arrangement_2;
+  using Helper = Helper_;
+  using Arrangement_2 = Arrangement_;
 
-  typedef typename Helper::Geometry_traits_2            Geometry_traits_2;
-  typedef typename Helper::Event                        Event;
-  typedef typename Helper::Subcurve                     Subcurve;
+  using Geometry_traits_2 = typename Helper::Geometry_traits_2;
+  using Event = typename Helper::Event;
+  using Subcurve = typename Helper::Subcurve;
 
 private:
-  typedef Geometry_traits_2                             Gt2;
-  typedef Arrangement_2                                 Arr;
+  using Gt2 = Geometry_traits_2;
+  using Arr = Arrangement_2;
 
-  typedef Gps_agg_op_visitor<Helper, Arr, Visitor_>     Self;
-  typedef typename Default::Get<Visitor_, Self>::type   Visitor;
-  typedef Gps_agg_op_base_visitor<Helper, Arr, Visitor> Base;
+  using Self = Gps_agg_op_visitor<Helper, Arr, Visitor_>;
+  using Visitor = typename Default::Get<Visitor_, Self>::type;
+  using Base = Gps_agg_op_base_visitor<Helper, Arr, Visitor>;
 
 public:
-  typedef typename Base::Halfedge_handle                Halfedge_handle;
-  typedef typename Base::Vertex_handle                  Vertex_handle;
-  typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
-  typedef typename Gt2::Point_2                         Point_2;
+  using Halfedge_handle = typename Base::Halfedge_handle;
+  using Vertex_handle = typename Base::Vertex_handle;
+  using X_monotone_curve_2 = typename Gt2::X_monotone_curve_2;
+  using Point_2 = typename Gt2::Point_2;
 
 protected:
-  unsigned int m_event_count;                   // The number of events so far.
+  std::size_t m_event_count;                    // The number of events so far.
   std::vector<Vertex_handle>* m_vertices_vec;   // The vertices, sorted in
                                                 // ascending order.
 
@@ -172,15 +170,13 @@ public:
     m_vertices_vec(vertices_vec)
   {}
 
-  void before_handle_event(Event* event)
-  {
+  void before_handle_event(Event* event) {
     event->set_index(m_event_count);
     m_event_count++;
   }
 
   virtual Halfedge_handle
-  insert_in_face_interior(const X_monotone_curve_2& cv, Subcurve* sc)
-  {
+  insert_in_face_interior(const X_monotone_curve_2& cv, Subcurve* sc) {
     Halfedge_handle res_he = Base::insert_in_face_interior(cv, sc);
 
     // We now have a halfedge whose source vertex is associated with the
@@ -198,8 +194,7 @@ public:
 
   virtual Halfedge_handle insert_from_right_vertex(const X_monotone_curve_2& cv,
                                                    Halfedge_handle he,
-                                                   Subcurve* sc)
-  {
+                                                   Subcurve* sc) {
     Halfedge_handle res_he = Base::insert_from_right_vertex(cv, he, sc);
 
     // We now have a halfedge whose target vertex is associated with the
@@ -213,8 +208,7 @@ public:
 
   virtual Halfedge_handle insert_from_left_vertex(const X_monotone_curve_2& cv,
                                                   Halfedge_handle he,
-                                                  Subcurve* sc)
-  {
+                                                  Subcurve* sc) {
     Halfedge_handle  res_he = Base::insert_from_left_vertex(cv, he, sc);
 
     // We now have a halfedge whose target vertex is associated with the
@@ -228,13 +222,11 @@ public:
   }
 
 private:
-  void _insert_vertex(const Event* event, Vertex_handle v)
-  {
-    const unsigned int index = event->index();
+  void _insert_vertex(const Event* event, Vertex_handle v) {
+    const auto index = event->index();
     if (index >= m_vertices_vec->size()) m_vertices_vec->resize(2 * (index + 1));
     (*m_vertices_vec)[index] = v;
   }
-
 };
 
 } // namespace CGAL

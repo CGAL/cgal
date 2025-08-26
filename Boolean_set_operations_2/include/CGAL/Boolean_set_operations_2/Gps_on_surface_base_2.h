@@ -7,9 +7,9 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s):      Baruch Zukerman <baruchzu@post.tau.ac.il>
-//                 Ophir Setter    <ophir.setter@cs.tau.ac.il>
-//                 Guy Zucker <guyzucke@post.tau.ac.il>
+// Author(s) : Baruch Zukerman <baruchzu@post.tau.ac.il>
+//             Ophir Setter    <ophir.setter@cs.tau.ac.il>
+//             Guy Zucker <guyzucke@post.tau.ac.il>
 
 
 #ifndef CGAL_GPS_ON_SURFACE_BASE_2_H
@@ -131,7 +131,7 @@ protected:
   Aos_2* m_arr;
 
 public:
-  // default constructor
+  // constructs default
   Gps_on_surface_base_2() :
     m_traits(new Traits_2()),
     m_traits_adaptor(*m_traits),
@@ -140,7 +140,7 @@ public:
   {}
 
 
-  // constructor with traits object
+  // constructs with traits object
   Gps_on_surface_base_2(const Traits_2& tr) :
     m_traits(&tr),
     m_traits_adaptor(*m_traits),
@@ -148,7 +148,7 @@ public:
     m_arr(new Aos_2(m_traits))
   {}
 
-  // Copy constructor
+  // copy constructs
   Gps_on_surface_base_2(const Self& ps) :
     m_traits(new Traits_2(*(ps.m_traits))),
     m_traits_adaptor(*m_traits),
@@ -156,7 +156,7 @@ public:
     m_arr(new Aos_2(*(ps.m_arr)))
   {}
 
-  // Assignment operator
+  // assigns
   Gps_on_surface_base_2& operator=(const Self& ps) {
     if (this == &ps) return (*this);
 
@@ -169,7 +169,7 @@ public:
     return (*this);
   }
 
-  // Constructor
+  // constructs
   explicit Gps_on_surface_base_2(const Polygon_2& pgn) :
     m_traits(new Traits_2()),
     m_traits_adaptor(*m_traits),
@@ -179,7 +179,7 @@ public:
     _insert(pgn, *m_arr);
   }
 
-  // Constructor
+  // constructs
   explicit Gps_on_surface_base_2(const Polygon_2& pgn, const Traits_2& tr) :
     m_traits(&tr),
     m_traits_adaptor(*m_traits),
@@ -189,7 +189,7 @@ public:
     _insert(pgn, *m_arr);
   }
 
-  // Constructor
+  // constructs
   explicit Gps_on_surface_base_2(const Polygon_with_holes_2& pgn_with_holes) :
     m_traits(new Traits_2()),
     m_traits_adaptor(*m_traits),
@@ -199,7 +199,7 @@ public:
     _insert(pgn_with_holes, *m_arr);
   }
 
-  // Constructor
+  // constructs
   explicit Gps_on_surface_base_2(const Polygon_with_holes_2& pgn_with_holes,
                                  const Traits_2& tr) :
     m_traits(&tr),
@@ -211,14 +211,15 @@ public:
   }
 
 protected:
-  Gps_on_surface_base_2(Aos_2* arr) : m_traits(new Traits_2()),
-                                              m_traits_adaptor(*m_traits),
-                                              m_traits_owner(true),
-                                              m_arr(arr)
+  Gps_on_surface_base_2(Aos_2* arr) :
+    m_traits(new Traits_2()),
+    m_traits_adaptor(*m_traits),
+    m_traits_owner(true),
+    m_arr(arr)
    {}
 
 public:
-  //destructor
+  // destructs
   virtual ~Gps_on_surface_base_2() {
     delete m_arr;
 
@@ -241,25 +242,25 @@ public:
     gps.polygons_with_holes(oi);
   }
 
-  // insert a simple polygon
+  // inserts a simple polygon
   void insert(const Polygon_2& pgn) {
     ValidationPolicy::is_valid(pgn, *m_traits);
     _insert(pgn, *m_arr);
   }
 
-  // insert a polygon with holes
+  // inserts a polygon with holes
   void insert(const Polygon_with_holes_2& pgn_with_holes) {
     ValidationPolicy::is_valid(pgn_with_holes, *m_traits);
     _insert(pgn_with_holes, *m_arr);
   }
 
-  // insert a range of polygons that can be either simple polygons
+  // inserts a range of polygons that can be either simple polygons
   // or polygons with holes
   // precondition: the polygons are disjoint and simple
   template <typename PolygonIterator>
   void insert(PolygonIterator pgn_begin, PolygonIterator pgn_end);
 
-  // insert two ranges of : the first one for simple polygons,
+  // inserts two ranges of : the first one for simple polygons,
   // the second one for polygons with holes
   // precondition: the first range is disjoint simple polygons
   //               the second range is disjoint polygons with holes
@@ -268,21 +269,21 @@ public:
               PolygonWithHolesIterator pgn_with_holes_begin,
               PolygonWithHolesIterator pgn_with_holes_end);
 
-  // test for intersection with a simple polygon
+  // tests for intersection with a simple polygon
   bool do_intersect(const Polygon_2& pgn) const {
     ValidationPolicy::is_valid(pgn, *m_traits);
     Self other(pgn, *m_traits);
     return do_intersect(other);
   }
 
-  // test for intersection with a polygon with holes
+  // tests for intersection with a polygon with holes
   bool do_intersect(const Polygon_with_holes_2& pgn_with_holes) const {
     ValidationPolicy::is_valid(pgn_with_holes, *m_traits);
     Self other(pgn_with_holes, *m_traits);
     return do_intersect(other);
   }
 
-  //test for intersection with another Gps_on_surface_base_2 object
+  // tests for intersection with another Gps_on_surface_base_2 object
   bool do_intersect(const Self& other) const {
     if (this->is_empty() || other.is_empty()) return false;
     if (this->is_plane() || other.is_plane()) return true;
@@ -292,19 +293,19 @@ public:
     return func.found_reg_intersection();
   }
 
-  // intersection with a simple polygon
+  // intersects with a simple polygon
   void intersection(const Polygon_2& pgn) {
     ValidationPolicy::is_valid(pgn, *m_traits);
     _intersection(pgn);
   }
 
-  // intersection with a polygon with holes
+  // intersects with a polygon with holes
   void intersection(const Polygon_with_holes_2& pgn) {
     ValidationPolicy::is_valid(pgn, *m_traits);
     _intersection(pgn);
   }
 
-  // intersection with another Gps_on_surface_base_2 object
+  // intersects with another Gps_on_surface_base_2 object
   void intersection(const Self& other) { _intersection(other); }
 
   void intersection(const Self& gps1, const Self& gps2) {
@@ -312,19 +313,19 @@ public:
     _intersection(*(gps1.m_arr), *(gps2.m_arr), *(this->m_arr));
   }
 
-  // join with a simple polygon
+  // joins with a simple polygon
   void join(const Polygon_2& pgn) {
     ValidationPolicy::is_valid(pgn, *m_traits);
     _join(pgn);
   }
 
-  // join with a polygon with holes
+  // joins with a polygon with holes
   void join(const Polygon_with_holes_2& pgn) {
     ValidationPolicy::is_valid(pgn, *m_traits);
     _join(pgn);
   }
 
-  //join with another Gps_on_surface_base_2 object
+  // joins with another Gps_on_surface_base_2 object
   void join(const Self& other) { _join(other); }
 
   void join(const Self& gps1, const Self& gps2) {
@@ -332,19 +333,19 @@ public:
     _join(*(gps1.m_arr), *(gps2.m_arr), *(this->m_arr));
   }
 
-  // difference with a simple polygon
+  // computes the difference with a simple polygon
   void difference(const Polygon_2& pgn) {
     ValidationPolicy::is_valid(pgn, *m_traits);
     _difference(pgn);
   }
 
-  // difference with a polygon with holes
+  // computes the difference with a polygon with holes
   void difference(const Polygon_with_holes_2& pgn) {
     ValidationPolicy::is_valid(pgn, *m_traits);
     _difference(pgn);
   }
 
-  //difference with another Gps_on_surface_base_2 object
+  // computes the difference with another Gps_on_surface_base_2 object
   void difference(const Self& other) { _difference(other); }
 
   void difference(const Self& gps1, const Self& gps2) {
@@ -352,19 +353,19 @@ public:
     _difference(*(gps1.m_arr), *(gps2.m_arr), *(this->m_arr));
   }
 
-  // symmetric_difference with a simple polygon
+  // computes the symmetric_difference with a simple polygon
   void symmetric_difference(const Polygon_2& pgn) {
     ValidationPolicy::is_valid(pgn, *m_traits);
     _symmetric_difference(pgn);
   }
 
-  // symmetric_difference with a polygon with holes
+  // computes the symmetric_difference with a polygon with holes
   void symmetric_difference(const Polygon_with_holes_2& pgn) {
     ValidationPolicy::is_valid(pgn, *m_traits);
     _symmetric_difference(pgn);
   }
 
-  //symmetric_difference with another Gps_on_surface_base_2 object
+  // computes the symmetric_difference with another Gps_on_surface_base_2 object
   void symmetric_difference(const Self& other) { _symmetric_difference(other); }
 
   void symmetric_difference(const Self& gps1, const Self& gps2) {
@@ -414,7 +415,6 @@ public:
     Face_const_iterator f;
     if (CGAL::assign(f, obj)) {
       if (f->contained()) return ON_POSITIVE_SIDE;
-
       return ON_NEGATIVE_SIDE ;
     }
     return ON_ORIENTED_BOUNDARY ;
@@ -433,14 +433,10 @@ public:
   }
 
   Oriented_side oriented_side(const Self& other) const {
-    if (this->is_empty() || other.is_empty())
-      return ON_NEGATIVE_SIDE;
-
-    if (this->is_plane() || other.is_plane())
-      return ON_POSITIVE_SIDE;
+    if (this->is_empty() || other.is_empty()) return ON_NEGATIVE_SIDE;
+    if (this->is_plane() || other.is_plane()) return ON_POSITIVE_SIDE;
 
     Aos_2 res_arr;
-
     Gps_do_intersect_functor<Aos_2> func;
     overlay(*m_arr, *(other.m_arr), res_arr, func);
     if (func.found_reg_intersection()) return ON_POSITIVE_SIDE;
@@ -448,15 +444,15 @@ public:
     return ON_NEGATIVE_SIDE;
   }
 
-  // returns the location of the query point
+  // obtains the location of the query point
   bool locate(const Point_2& q, Polygon_with_holes_2& pgn) const;
 
-  /*! Obtain a const reference to the underlying arrangement
+  /*! obtains a const reference to the underlying arrangement
    * \return the underlying arrangement.
    */
   const Aos_2& arrangement() const { return *m_arr; }
 
-  /*! Obtain a reference to the underlying arrangement
+  /*! obtains a reference to the underlying arrangement
    * \return the underlying arrangement.
    */
   Aos_2& arrangement() { return *m_arr; }
@@ -486,16 +482,16 @@ protected:
   }
 
 public:
-  /*! */
+  //
   bool is_valid() { return _is_valid(*this->m_arr); }
 
-  // get the simple polygons, takes O(n)
+  // obtains the simple polygons, takes O(n)
   template <typename OutputIterator>
   OutputIterator polygons_with_holes(OutputIterator out) const;
 
-  // test for intersection of a range of polygons
+  // tests for intersection of a range of polygons
   template <typename InputIterator>
-  bool do_intersect(InputIterator begin, InputIterator end, unsigned int k = 5) {
+  bool do_intersect(InputIterator begin, InputIterator end, std::size_t k = 5) {
     Self other(*this);
     other.intersection(begin, end, k);
     return (other.is_empty());
@@ -504,32 +500,32 @@ public:
   template <typename InputIterator1, typename InputIterator2>
   bool do_intersect(InputIterator1 begin1, InputIterator1 end1,
                     InputIterator2 begin2, InputIterator2 end2,
-                    unsigned int k = 5) {
+                    std::size_t k = 5) {
     Self other(*this);
     other.intersection(begin1, end1, begin2, end2, k);
     return (other.is_empty());
   }
 
-  // join a range of polygons
+  // joins a range of polygons
   template <typename InputIterator>
-  void join(InputIterator begin, InputIterator end, unsigned int k = 5) {
+  void join(InputIterator begin, InputIterator end, std::size_t k = 5) {
     typename std::iterator_traits<InputIterator>::value_type pgn;
     this->join(begin, end, pgn, k);
     this->remove_redundant_edges();
     this->_reset_faces();
   }
 
-  // join range of simple polygons
+  // joins a range of simple polygons
   // 5 is the magic number in which we switch to a sweep-based algorithm
   // instead of a D&C algorithm. This point should be further studies, as
   // it is hard to believe that this is the best value for all applications.
   template <typename InputIterator>
   inline void join(InputIterator begin, InputIterator end, Polygon_2&,
-                   unsigned int k = 5) {
+                   std::size_t k = 5) {
     std::vector<Arr_entry> arr_vec(std::distance(begin, end) + 1);
 
     arr_vec[0].first = this->m_arr;
-    unsigned int i = 1;
+    std::size_t i = 1;
     for (InputIterator itr = begin; itr != end; ++itr, ++i) {
       ValidationPolicy::is_valid((*itr), *m_traits);
       arr_vec[i].first = new Aos_2(m_traits);
@@ -537,22 +533,22 @@ public:
     }
 
     Join_merge<Aos_2> join_merge;
-    _build_sorted_vertices_vectors (arr_vec);
-    _divide_and_conquer(0, static_cast<unsigned int>(arr_vec.size()-1), arr_vec, k, join_merge);
+    _build_sorted_vertices_vectors(arr_vec);
+    _divide_and_conquer(0, arr_vec.size() - 1, arr_vec, k, join_merge);
 
     //the result arrangement is at index 0
     this->m_arr = arr_vec[0].first;
     delete arr_vec[0].second;
   }
 
-  //join range of polygons with holes (see previous comment about k=5).
+  // joins a range of polygons with holes (see previous comment about k=5).
   template <typename InputIterator>
   inline void join(InputIterator begin, InputIterator end,
-                   Polygon_with_holes_2&, unsigned int k = 5) {
+                   Polygon_with_holes_2&, std::size_t k = 5) {
     std::vector<Arr_entry> arr_vec(std::distance(begin, end) + 1);
     arr_vec[0].first = this->m_arr;
 
-    unsigned int i = 1;
+    std::size_t i = 1;
     for (InputIterator itr = begin; itr!=end; ++itr, ++i) {
       ValidationPolicy::is_valid((*itr), *m_traits);
       arr_vec[i].first = new Aos_2(m_traits);
@@ -560,10 +556,10 @@ public:
     }
 
     Join_merge<Aos_2> join_merge;
-    _build_sorted_vertices_vectors (arr_vec);
-    _divide_and_conquer(0, static_cast<unsigned int>(arr_vec.size()-1), arr_vec, k, join_merge);
+    _build_sorted_vertices_vectors(arr_vec);
+    _divide_and_conquer(0, arr_vec.size() - 1, arr_vec, k, join_merge);
 
-    //the result arrangement is at index 0
+    // the result arrangement is at index 0
     this->m_arr = arr_vec[0].first;
     delete arr_vec[0].second;
   }
@@ -572,11 +568,11 @@ public:
   template <typename InputIterator1, typename InputIterator2>
   inline void join(InputIterator1 begin1, InputIterator1 end1,
                    InputIterator2 begin2, InputIterator2 end2,
-                   unsigned int k = 5) {
+                   std::size_t k = 5) {
     std::vector<Arr_entry> arr_vec(std::distance(begin1, end1) + std::distance(begin2, end2) + 1);
 
     arr_vec[0].first = this->m_arr;
-    unsigned int i = 1;
+    std::size_t i = 1;
 
     for (InputIterator1 itr1 = begin1; itr1 != end1; ++itr1, ++i) {
       arr_vec[i].first = new Aos_2(m_traits);
@@ -589,8 +585,8 @@ public:
     }
 
     Join_merge<Aos_2> join_merge;
-    _build_sorted_vertices_vectors (arr_vec);
-    _divide_and_conquer(0, static_cast<unsigned int>(arr_vec.size()-1), arr_vec, k, join_merge);
+    _build_sorted_vertices_vectors(arr_vec);
+    _divide_and_conquer(0, arr_vec.size() - 1, arr_vec, k, join_merge);
 
     // the result arrangement is at index 0
     this->m_arr = arr_vec[0].first;
@@ -599,23 +595,23 @@ public:
     this->_reset_faces();
   }
 
-  // intersect range of polygins (see previous comment about k=5).
+  // intersects a range of polygins (see previous comment about k=5).
   template <typename InputIterator>
   inline void intersection(InputIterator begin, InputIterator end,
-                           unsigned int k = 5) {
+                           std::size_t k = 5) {
     typename std::iterator_traits<InputIterator>::value_type pgn;
     this->intersection(begin, end, pgn, k);
     this->remove_redundant_edges();
     this->_reset_faces();
   }
 
-  // intersect range of simple polygons
+  // intersects a range of simple polygons
   template <typename InputIterator>
   inline void intersection(InputIterator begin, InputIterator end,
-                           Polygon_2&, unsigned int k) {
+                           Polygon_2&, std::size_t k) {
     std::vector<Arr_entry> arr_vec(std::distance(begin, end) + 1);
     arr_vec[0].first = this->m_arr;
-    unsigned int i = 1;
+    std::size_t i = 1;
 
     for (InputIterator itr = begin; itr != end; ++itr, ++i) {
       ValidationPolicy::is_valid((*itr), *m_traits);
@@ -625,20 +621,20 @@ public:
 
     Intersection_merge<Aos_2> intersection_merge;
     _build_sorted_vertices_vectors(arr_vec);
-    _divide_and_conquer(0, static_cast<unsigned int>(arr_vec.size()-1), arr_vec, k, intersection_merge);
+    _divide_and_conquer(0, arr_vec.size() - 1, arr_vec, k, intersection_merge);
 
-    //the result arrangement is at index 0
+    // the result arrangement is at index 0
     this->m_arr = arr_vec[0].first;
     delete arr_vec[0].second;
   }
 
-  // intersect range of polygons with holes
+  // intersects a range of polygons with holes
   template <typename InputIterator>
   inline void intersection(InputIterator begin, InputIterator end,
-                           Polygon_with_holes_2&, unsigned int k) {
+                           Polygon_with_holes_2&, std::size_t k) {
     std::vector<Arr_entry> arr_vec(std::distance(begin, end) + 1);
     arr_vec[0].first = this->m_arr;
-    unsigned int i = 1;
+    std::size_t i = 1;
 
     for (InputIterator itr = begin; itr!=end; ++itr, ++i) {
       ValidationPolicy::is_valid((*itr), *m_traits);
@@ -647,10 +643,10 @@ public:
     }
 
     Intersection_merge<Aos_2> intersection_merge;
-    _build_sorted_vertices_vectors (arr_vec);
-    _divide_and_conquer(0, static_cast<unsigned int>(arr_vec.size()-1), arr_vec, k, intersection_merge);
+    _build_sorted_vertices_vectors(arr_vec);
+    _divide_and_conquer(0, arr_vec.size() - 1, arr_vec, k, intersection_merge);
 
-    //the result arrangement is at index 0
+    // the result arrangement is at index 0
     this->m_arr = arr_vec[0].first;
     delete arr_vec[0].second;
   }
@@ -658,10 +654,10 @@ public:
   template <typename InputIterator1, typename InputIterator2>
   inline void intersection(InputIterator1 begin1, InputIterator1 end1,
                            InputIterator2 begin2, InputIterator2 end2,
-                           unsigned int k = 5) {
+                           std::size_t k = 5) {
     std::vector<Arr_entry> arr_vec(std::distance(begin1, end1) + std::distance(begin2, end2) + 1);
     arr_vec[0].first = this->m_arr;
-    unsigned int i = 1;
+    std::size_t i = 1;
 
     for (InputIterator1 itr1 = begin1; itr1!=end1; ++itr1, ++i) {
       ValidationPolicy::is_valid(*itr1, *m_traits);
@@ -676,34 +672,34 @@ public:
     }
 
     Intersection_merge<Aos_2> intersection_merge;
-    _build_sorted_vertices_vectors (arr_vec);
-    _divide_and_conquer(0, static_cast<unsigned int>(arr_vec.size()-1), arr_vec, k, intersection_merge);
+    _build_sorted_vertices_vectors(arr_vec);
+    _divide_and_conquer(0, arr_vec.size() - 1, arr_vec, k, intersection_merge);
 
-    //the result arrangement is at index 0
+    // the result arrangement is at index 0
     this->m_arr = arr_vec[0].first;
     delete arr_vec[0].second;
     this->remove_redundant_edges();
     this->_reset_faces();
   }
 
-  // symmetric_difference of a range of polygons (similar to xor)
+  // computes the symmetric_difference of a range of polygons (similar to xor)
   // (see previous comment about k=5).
   template <typename InputIterator>
     inline void symmetric_difference(InputIterator begin, InputIterator end,
-                                     unsigned int k = 5) {
+                                     std::size_t k = 5) {
     typename std::iterator_traits<InputIterator>::value_type pgn;
     this->symmetric_difference(begin, end, pgn, k);
     this->remove_redundant_edges();
     this->_reset_faces();
   }
 
-  // intersect range of simple polygons (see previous comment about k=5).
+  // intersect a range of simple polygons (see previous comment about k=5).
   template <typename InputIterator>
   inline void symmetric_difference(InputIterator begin, InputIterator end,
-                                   Polygon_2&, unsigned int k = 5) {
+                                   Polygon_2&, std::size_t k = 5) {
     std::vector<Arr_entry> arr_vec(std::distance(begin, end) + 1);
     arr_vec[0].first = this->m_arr;
-    unsigned int i = 1;
+    std::size_t i = 1;
 
     for (InputIterator itr = begin; itr!=end; ++itr, ++i) {
       ValidationPolicy::is_valid(*itr,*m_traits);
@@ -712,33 +708,33 @@ public:
     }
 
     Xor_merge<Aos_2> xor_merge;
-    _build_sorted_vertices_vectors (arr_vec);
-    _divide_and_conquer(0, static_cast<unsigned int>(arr_vec.size()-1), arr_vec, k, xor_merge);
+    _build_sorted_vertices_vectors(arr_vec);
+    _divide_and_conquer(0, arr_vec.size() - 1, arr_vec, k, xor_merge);
 
-    //the result arrangement is at index 0
+    // the result arrangement is at index 0
     this->m_arr = arr_vec[0].first;
     delete arr_vec[0].second;
   }
 
-  //intersect range of polygons with holes (see previous comment about k=5).
+  // intersects a range of polygons with holes (see previous comment about k=5).
   template <typename InputIterator>
   inline void symmetric_difference(InputIterator begin, InputIterator end,
-                                   Polygon_with_holes_2&, unsigned int k = 5) {
+                                   Polygon_with_holes_2&, std::size_t k = 5) {
     std::vector<Arr_entry> arr_vec(std::distance(begin, end) + 1);
     arr_vec[0].first = this->m_arr;
-    unsigned int i = 1;
+    std::size_t i = 1;
 
-    for (InputIterator itr = begin; itr!=end; ++itr, ++i) {
+    for (InputIterator itr = begin; itr != end; ++itr, ++i) {
       ValidationPolicy::is_valid(*itr,*m_traits);
       arr_vec[i].first = new Aos_2(m_traits);
       _insert(*itr, *(arr_vec[i].first));
     }
 
     Xor_merge<Aos_2> xor_merge;
-    _build_sorted_vertices_vectors (arr_vec);
-    _divide_and_conquer(0, static_cast<unsigned int>(arr_vec.size()-1), arr_vec, k, xor_merge);
+    _build_sorted_vertices_vectors(arr_vec);
+    _divide_and_conquer(0, arr_vec.size() - 1, arr_vec, k, xor_merge);
 
-    //the result arrangement is at index 0
+    // the result arrangement is at index 0
     this->m_arr = arr_vec[0].first;
     delete arr_vec[0].second;
   }
@@ -747,28 +743,28 @@ public:
   template <typename InputIterator1, typename InputIterator2>
   inline void symmetric_difference(InputIterator1 begin1, InputIterator1 end1,
                                    InputIterator2 begin2, InputIterator2 end2,
-                                   unsigned int k = 5) {
+                                   std::size_t k = 5) {
     std::vector<Arr_entry> arr_vec(std::distance(begin1, end1) + std::distance(begin2, end2) + 1);
     arr_vec[0].first = this->m_arr;
-    unsigned int i = 1;
+    std::size_t i = 1;
 
-    for (InputIterator1 itr1 = begin1; itr1!=end1; ++itr1, ++i) {
+    for (InputIterator1 itr1 = begin1; itr1 != end1; ++itr1, ++i) {
       ValidationPolicy::is_valid(*itr1, *m_traits);
       arr_vec[i].first = new Aos_2(m_traits);
       _insert(*itr1, *(arr_vec[i].first));
     }
 
-    for (InputIterator2 itr2 = begin2; itr2!=end2; ++itr2, ++i) {
+    for (InputIterator2 itr2 = begin2; itr2 != end2; ++itr2, ++i) {
       ValidationPolicy::is_valid(*itr2, *m_traits);
       arr_vec[i].first = new Aos_2(m_traits);
       _insert(*itr2, *(arr_vec[i].first));
     }
 
     Xor_merge<Aos_2> xor_merge;
-    _build_sorted_vertices_vectors (arr_vec);
-    _divide_and_conquer(0, static_cast<unsigned int>(arr_vec.size()-1), arr_vec, k, xor_merge);
+    _build_sorted_vertices_vectors(arr_vec);
+    _divide_and_conquer(0, arr_vec.size() - 1, arr_vec, k, xor_merge);
 
-    //the result arrangement is at index 0
+    // the result arrangement is at index 0
     this->m_arr = arr_vec[0].first;
     delete arr_vec[0].second;
     this->remove_redundant_edges();
@@ -1051,9 +1047,9 @@ protected:
         // thus this hack
         f = *(face_handles[(*uf_faces.find(face_handles[f->id()]))->id()]);
         if (h->flag() == ON_INNER_CCB) {
-          bool reuse_inner_ccb = !inner_ccbs_to_remove.empty();
-          typename Dcel::Inner_ccb* inner_ccb = !reuse_inner_ccb?
-            accessor.new_inner_ccb():inner_ccbs_to_remove.back();
+          bool reuse_inner_ccb = ! inner_ccbs_to_remove.empty();
+          typename Dcel::Inner_ccb* inner_ccb = ! reuse_inner_ccb ?
+            accessor.new_inner_ccb() : inner_ccbs_to_remove.back();
           if ( reuse_inner_ccb ) inner_ccbs_to_remove.pop_back();
 
           Halfedge_handle hstart = h;
@@ -1115,11 +1111,11 @@ protected:
     typename Traits_2::Compare_xy_2 comp_xy;
 
   public:
-    Less_vertex_handle (const typename Traits_2::Compare_xy_2& cmp) :
+    Less_vertex_handle(const typename Traits_2::Compare_xy_2& cmp) :
     comp_xy(cmp)
     {}
 
-    bool operator() (Vertex_handle v1, Vertex_handle v2) const
+    bool operator()(Vertex_handle v1, Vertex_handle v2) const
     { return (comp_xy (v1->point(), v2->point()) == SMALLER); }
   };
 
@@ -1136,7 +1132,7 @@ protected:
     }
   }
 
-  //fix the directions of the curves (given correct marked face)
+  // fixes the directions of the curves (given correct marked face)
   // it should be called mostly after  symmetric_difference.
   void _fix_curves_direction(Aos_2& arr) {
     Compare_endpoints_xy_2 cmp_endpoints =
@@ -1160,21 +1156,17 @@ protected:
   }
 
   void _build_sorted_vertices_vectors(std::vector<Arr_entry>& arr_vec) {
-    Less_vertex_handle comp (m_traits->compare_xy_2_object());
-    Aos_2* p_arr;
-    Vertex_iterator vit;
+    Less_vertex_handle comp(m_traits->compare_xy_2_object());
     const std::size_t n = arr_vec.size();
-    std::size_t i, j;
-
-    for (i = 0; i < n; i++) {
-      // Allocate a vector of handles to all vertices in the current
-      // arrangement.
-      p_arr = arr_vec[i].first;
+    for (std::size_t i = 0; i < n; i++) {
+      // Allocate a vector of handles to all vertices in the current arrangement.
+      Aos_2* p_arr = arr_vec[i].first;
       arr_vec[i].second = new std::vector<Vertex_handle>;
-      arr_vec[i].second->resize (p_arr->number_of_vertices());
+      arr_vec[i].second->resize(p_arr->number_of_vertices());
 
-      for (j = 0, vit = p_arr->vertices_begin(); vit != p_arr->vertices_end(); j++, ++vit) {
-        (*(arr_vec[i].second))[j] = vit;
+      std::size_t j = 0;
+      for (auto vit = p_arr->vertices_begin(); vit != p_arr->vertices_end(); ++vit) {
+        (*(arr_vec[i].second))[j++] = vit;
       }
 
       // Sort the vector.
@@ -1183,25 +1175,25 @@ protected:
   }
 
   template <typename Merge>
-  void _divide_and_conquer(unsigned int lower, unsigned int upper,
+  void _divide_and_conquer(std::size_t lower, std::size_t upper,
                            std::vector<Arr_entry>& arr_vec,
-                           unsigned int k, Merge merge_func) {
+                           std::size_t k, Merge merge_func) {
     if ((upper - lower) < k) {
       merge_func(lower, upper, 1, arr_vec);
       return;
     }
 
-    unsigned int sub_size = ((upper - lower + 1) / k);
-    unsigned int curr_lower = lower;
+    auto sub_size = ((upper - lower + 1) / k);
+    auto curr_lower = lower;
 
-    for (unsigned int i = 0; i < k - 1; ++i, curr_lower += sub_size) {
+    for (std::size_t i = 0; i < k - 1; ++i, curr_lower += sub_size) {
       _divide_and_conquer(curr_lower, curr_lower + sub_size-1, arr_vec, k, merge_func);
     }
-    _divide_and_conquer(curr_lower, upper,arr_vec, k, merge_func);
-    merge_func(lower, curr_lower, sub_size ,arr_vec);
+    _divide_and_conquer(curr_lower, upper, arr_vec, k, merge_func);
+    merge_func(lower, curr_lower, sub_size, arr_vec);
   }
 
-  // mark all faces as non-visited
+  // marks all faces as non-visited
   void _reset_faces() const { _reset_faces(m_arr); }
 
   void _reset_faces(Aos_2* arr) const {
@@ -1250,7 +1242,7 @@ protected:
       GP_Holes_const_iterator> pair =
       m_traits->construct_holes_object()(pgn);
     return (unbounded && (pair.first == pair.second));
-    //used to return
+    // used to return
     //  (pgn.is_unbounded() && (pgn.holes_begin() == pgn.holes_end()))
   }
 
@@ -1262,7 +1254,7 @@ protected:
 
     m_arr = res_arr;
     remove_redundant_edges();
-    //fix_curves_direction(); // not needed for intersection
+    // fix_curves_direction(); // not needed for intersection
     CGAL_assertion(is_valid());
   }
 
@@ -1315,7 +1307,7 @@ protected:
 
     m_arr = res_arr;
     remove_redundant_edges();
-    //fix_curves_direction(); // not needed for join
+    // fix_curves_direction(); // not needed for join
     CGAL_assertion(is_valid());
   }
 
@@ -1323,7 +1315,7 @@ protected:
     Gps_join_functor<Aos_2> func;
     overlay(arr1, arr2, res, func);
     _remove_redundant_edges(&res);
-    //_fix_curves_direction(res); // not needed for join
+    // _fix_curves_direction(res); // not needed for join
     CGAL_assertion(_is_valid(res));
   }
 

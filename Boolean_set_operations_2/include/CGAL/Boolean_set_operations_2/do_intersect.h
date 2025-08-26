@@ -201,13 +201,13 @@ inline bool do_intersect(const General_polygon_with_holes_2<Polygon_>& pgn1,
 // With Traits
 template <typename InputIterator, typename Traits>
 inline bool do_intersect(InputIterator begin, InputIterator end, Traits& traits,
-                         unsigned int k = 5,
+                         std::size_t k = 5,
                          std::enable_if_t<CGAL::is_iterator<InputIterator>::value>* = 0)
 { return r_do_intersect(begin, end, traits, k); }
 
 // Without Traits
 template <typename InputIterator>
-inline bool do_intersect(InputIterator begin, InputIterator end, unsigned int k = 5,
+inline bool do_intersect(InputIterator begin, InputIterator end, std::size_t k = 5,
                          std::enable_if_t<CGAL::is_iterator<InputIterator>::value>* = 0,
                          Enable_if_Polygon_2_iterator<InputIterator>* = 0) {
   typename Iterator_to_gps_traits<InputIterator>::Traits traits;
@@ -217,7 +217,7 @@ inline bool do_intersect(InputIterator begin, InputIterator end, unsigned int k 
 // General polygons or polygons with holes
 template <typename InputIterator>
 inline bool do_intersect(InputIterator begin, InputIterator end,
-                         unsigned int k = 5,
+                         std::size_t k = 5,
                          std::enable_if_t<CGAL::is_iterator<InputIterator>::value>* = 0,
                          Disable_if_Polygon_2_iterator<InputIterator>* = 0) {
   typename Iterator_to_gps_traits<InputIterator>::Traits traits;
@@ -228,14 +228,14 @@ inline bool do_intersect(InputIterator begin, InputIterator end,
 template <typename InputIterator1, typename InputIterator2, typename Traits>
 inline bool do_intersect(InputIterator1 begin1, InputIterator1 end1,
                          InputIterator2 begin2, InputIterator2 end2,
-                         Traits& traits, unsigned int k = 5)
+                         Traits& traits, std::size_t k = 5)
 { return r_do_intersect(begin1, end1, begin2, end2, traits, k); }
 
 // Without Traits
 template <typename InputIterator1, typename InputIterator2>
 inline bool do_intersect(InputIterator1 begin1, InputIterator1 end1,
                          InputIterator2 begin2, InputIterator2 end2,
-                         unsigned int k = 5,
+                         std::size_t k = 5,
                          Enable_if_Polygon_2_iterator<InputIterator1>* = 0)
 { return r_do_intersect(begin1, end1, begin2, end2, k); }
 
@@ -243,7 +243,7 @@ inline bool do_intersect(InputIterator1 begin1, InputIterator1 end1,
 template <typename InputIterator1, typename InputIterator2>
 inline bool do_intersect(InputIterator1 begin1, InputIterator1 end1,
                          InputIterator2 begin2, InputIterator2 end2,
-                         unsigned int k = 5,
+                         std::size_t k = 5,
                          Disable_if_Polygon_2_iterator<InputIterator1>* = 0) {
   typename Iterator_to_gps_traits<InputIterator1>::Traits traits;
   return r_do_intersect(begin1, end1, begin2, end2, traits, k);
