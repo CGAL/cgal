@@ -321,7 +321,7 @@ public:
     /* \brief Copy constructor. */
     Mesh_object_io(const Mesh_object_io &m) : dim(m.dim), nvertices(m.nvertices), ncells(m.ncells), nedges(m.nedges), nodes(m.nodes), cells(m.cells) {}
 
-    std::vector<std::vector<double> > get_nodes ()
+    std::vector<std::vector<double> > get_nodes () const
     {
         std::vector<std::vector<double> > res ;
         for (Io_node_type v : nodes)

@@ -61,9 +61,9 @@ public:
     /**
      * \brief Constructor from a Mesh_object_io.
      *
-     * Builds a simplicial complex from a Mesh_object_io and saves the vector of vertices coordinates.
+     * Builds a simplicial complex from a Mesh_object_io describing maximal faces and vertices coordinates.
      */
-    Simplicial_chain_complex(const Mesh_object_io& mesh, std::vector<Point> coords) : Abstract_simplicial_chain_complex<CoefficientRing>(mesh), _coords(coords) {} ;
+    Simplicial_chain_complex(const Mesh_object_io& mesh) : Abstract_simplicial_chain_complex<CoefficientRing>(mesh), _coords(mesh.get_nodes()) {} ;
 
     /**
      * \brief Assignment operator for simplicial complexes.

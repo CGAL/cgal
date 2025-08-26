@@ -35,7 +35,7 @@ int main(int argc, char **argv)
         mesh.print_infos();
 
         // Build simplicial chain complex
-        Complex complex(mesh, mesh.get_nodes());
+        Complex complex(mesh);
 
         std::cout << complex;
 

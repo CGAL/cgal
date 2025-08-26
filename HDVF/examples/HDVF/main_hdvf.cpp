@@ -119,7 +119,7 @@ void main_code (const Options &options)
         mesh.read_off(options.in_file) ;
 
         // Complex
-        Complex complex(mesh, mesh.get_nodes());
+        Complex complex(mesh);
 
         mesh_complex_output<CGAL::HDVF::Mesh_object_io, Complex>(mesh, complex, options) ;
 

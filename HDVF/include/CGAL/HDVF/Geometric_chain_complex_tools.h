@@ -376,7 +376,7 @@ public:
         Tet_object_io tetL(out_file_prefix) ;
 
         // Build the associated SimpComplex
-        ChainComplex& L = *new ChainComplex(tetL, tetL.get_nodes()) ;
+        ChainComplex& L = *new ChainComplex(tetL) ;
         std::cout << "------ L:" << L;
 
         // Build the Sub_chain_complex_mask encoding _K inside L

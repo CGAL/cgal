@@ -169,7 +169,7 @@ void main_code (const Options &options)
         mesh.read_off(options.in_file) ;
 
         // Complex
-        Complex* complex = new Complex(mesh, mesh.get_nodes());
+        Complex* complex = new Complex(mesh);
 
         // Build L (bounding sphere meshed with tetgen), K and L-K
 

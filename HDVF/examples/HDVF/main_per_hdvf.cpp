@@ -194,7 +194,7 @@ void main_code (const Options &options)
         mesh.read_off(options.in_file) ;
 
         // Complex
-        Complex complex(mesh, mesh.get_nodes());
+        Complex complex(mesh);
 
         // Build filtration
         FiltrationType& f(build_filtration<Complex, Degree, FiltrationType>(complex, options)) ;
