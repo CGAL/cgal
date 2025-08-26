@@ -160,10 +160,6 @@ bool do_intersect_overlay(const Arrangement_on_surface_2<GeometryTraitsA_2, Topo
       xcvs.clear();
       return visitor.found_intersection();
     }
-    {
-      for (const auto& xcv : xcvs) std::cout << xcv << std::endl;
-      std::cout << std::endl;
-    }
     surface_sweep.indexed_sweep(xcvs, Indexed_sweep_accessor<Arr_a, Arr_b, Ovl_x_monotone_curve_2>(arr1, arr2));
     xcvs.clear();
     return visitor.found_intersection();
