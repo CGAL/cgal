@@ -404,8 +404,6 @@ public:
         for (int q = 0; q <= _CC.dimension(); ++q)
             for (size_t i = 0; i<_CC.number_of_cells(q); ++i)
             {
-//                const Simplex& s(_CC._ind2simp.at(q).at(i)) ;
-//                vcells.push_back(s.get_vertices()) ;
                 const Simplex& s(_CC.index_to_cell(i,q)) ;
                 vcells.push_back(s.get_vertices()) ;
             }
