@@ -7,7 +7,7 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s):      Baruch Zukerman <baruchzu@post.tau.ac.il>
+// Author(s) : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
 #ifndef CGAL_GPS_MERGE_H
 #define CGAL_GPS_MERGE_H
@@ -71,7 +71,7 @@ public:
 /*! Join_merge is used to join two sets of polygons together in the D&C
  * algorithm. It is a base merge with a visitor that joins faces.
  */
-template <class Arrangement_>
+template <typename Arrangement_>
 class Join_merge : public Base_merge<Arrangement_, Gps_bfs_join_visitor<Arrangement_>>
 {};
 
@@ -79,7 +79,7 @@ class Join_merge : public Base_merge<Arrangement_, Gps_bfs_join_visitor<Arrangem
 /*! Intersection_merge is used to merge two sets of polygons creating their
  * intersection.
  */
-template <class Arrangement_>
+template <typename Arrangement_>
 class Intersection_merge : public Base_merge<Arrangement_, Gps_bfs_intersection_visitor<Arrangement_>>
 {};
 
@@ -87,7 +87,7 @@ class Intersection_merge : public Base_merge<Arrangement_, Gps_bfs_intersection_
 /*! Xor_merge is used to merge two sets of polygons creating their
  * symmetric difference.
  */
-template <class Arrangement_>
+template <typename Arrangement_>
 class Xor_merge : public Base_merge<Arrangement_, Gps_bfs_xor_visitor<Arrangement_>>
 {};
 

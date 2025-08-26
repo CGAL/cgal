@@ -21,7 +21,7 @@
 
 namespace CGAL {
 
-template <class Arrangement_>
+template <typename Arrangement_>
 class Gps_bfs_xor_visitor :
     public Gps_bfs_base_visitor<Arrangement_, Gps_bfs_xor_visitor<Arrangement_>> {
   using Arrangement = Arrangement_;
@@ -51,10 +51,10 @@ public:
 
   //! after_scan postprocessing after bfs scan.
   /*! The function fixes some of the curves, to be in the same direction as the
-    half-edges.
-
-    \param arr The given arrangement.
-  */
+   * half-edges.
+   *
+   * \param arr The given arrangement.
+   */
   void after_scan(Arrangement& arr) {
     typedef typename Arrangement::Geometry_traits_2 Traits;
     typedef typename Traits::Compare_endpoints_xy_2 Compare_endpoints_xy_2;
@@ -63,9 +63,8 @@ public:
     typedef typename Arrangement::Edge_iterator     Edge_iterator;
 
     Traits tr;
-    Compare_endpoints_xy_2 cmp_endpoints =
-      tr.compare_endpoints_xy_2_object();
-    Construct_opposite_2 ctr_opp = tr.construct_opposite_2_object();
+    auto cmp_endpoints = tr.compare_endpoints_xy_2_object();
+    auto ctr_opp = tr.construct_opposite_2_object();
 
     for (auto eit = arr.edges_begin(); eit != arr.edges_end(); ++eit) {
       Halfedge_iterator he = eit;

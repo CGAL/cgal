@@ -1,4 +1,3 @@
-
 #include <vector>
 
 #include <CGAL/Simple_cartesian.h>
@@ -13,35 +12,32 @@
 #include <CGAL/Polygon_set_2.h>
 
 //typedef CGAL::Quotient<CGAL::MP_Float>                Number_type;
-typedef int Number_type;
+using Number_type = int;
 
-typedef CGAL::Simple_cartesian<Number_type>             Kernel;
+using Kernel = CGAL::Simple_cartesian<Number_type>;
 
-typedef CGAL::Gps_segment_traits_2<Kernel>              Traits;
-typedef CGAL::Polygon_set_2<Kernel>                     Ps;
+using Traits = CGAL::Gps_segment_traits_2<Kernel>;
+using Ps = CGAL::Polygon_set_2<Kernel>;
 
-typedef CGAL::Arr_segment_traits_2<Kernel>              Arr_traits;
-typedef CGAL::Gps_traits_2<Arr_traits>                  General_traits;
-typedef CGAL::General_polygon_set_2<General_traits>     Gps;
+using Arr_traits = CGAL::Arr_segment_traits_2<Kernel>;
+using General_traits = CGAL::Gps_traits_2<Arr_traits>;
+using Gps = CGAL::General_polygon_set_2<General_traits>;
 
-typedef CGAL::Arr_non_caching_segment_traits_2<Kernel>  Nc_traits;
-typedef CGAL::Gps_segment_traits_2<Kernel,
-                                   std::vector<Kernel::Point_2>,
-                                   Nc_traits>           Traits_non_caching;
-typedef CGAL::General_polygon_set_2<Traits_non_caching> Gps_non_caching;
+using Nc_traits = CGAL::Arr_non_caching_segment_traits_2<Kernel>;
+using Traits_non_caching = CGAL::Gps_segment_traits_2<Kernel, std::vector<Kernel::Point_2>, Nc_traits>;
+using Gps_non_caching = CGAL::General_polygon_set_2<Traits_non_caching>;
 
-template <class GPS>
-void test()
-{
-  typedef typename GPS::Traits_2                        Traits;
-  typedef typename Traits::Point_2                      Point_2;
-  typedef typename Traits::Polygon_2                    Polygon_2;
-  typedef typename Traits::Polygon_with_holes_2         Polygon_with_holes_2;
+template <typename GPS>
+void test() {
+  using Traits = typename GPS::Traits_2;
+  using Point_2 = typename Traits::Point_2;
+  using Polygon_2 = typename Traits::Polygon_2;
+  using Polygon_with_holes_2 = typename Traits::Polygon_with_holes_2;
 
   Polygon_2 pgn1, pgn2;
-  Polygon_with_holes_2  pgn_with_holes1, pgn_with_holes2;
-  std::vector<Polygon_2>             polygons;
-  std::vector<Polygon_with_holes_2>  polygons_with_holes;
+  Polygon_with_holes_2 pgn_with_holes1, pgn_with_holes2;
+  std::vector<Polygon_2> polygons;
+  std::vector<Polygon_with_holes_2> polygons_with_holes;
   GPS gps;
   GPS other;
 
@@ -242,8 +238,7 @@ void test()
   GPS new_gps2 = gps;
 }
 
-void test_CGAL_Polygon_variants()
-{
+void test_CGAL_Polygon_variants() {
   typedef CGAL::Polygon_2<Kernel>               Polygon_2;
   typedef CGAL::Polygon_with_holes_2<Kernel>    Polygon_with_holes_2;
   typedef CGAL::Gps_default_traits<Polygon_2>::Traits Traits;
@@ -499,8 +494,7 @@ void test_CGAL_Polygon_variants()
   CGAL::complement(pgn_with_holes1, std::back_inserter(result), tr);
 }
 
-int main()
-{
+int main() {
   test<Gps>();
   test<Ps>();
   test<Gps_non_caching>();

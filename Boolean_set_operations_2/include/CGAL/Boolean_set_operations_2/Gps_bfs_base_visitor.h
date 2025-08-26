@@ -27,7 +27,7 @@ namespace CGAL {
  * which determines if we should mark the face as contained given the inside
  * count of the face.
  */
-template <class Arrangement_, class DerivedVisitor>
+template <typename Arrangement_, typename DerivedVisitor>
 class Gps_bfs_base_visitor {
   using Arrangement = Arrangement_;
   using Face_iterator = typename Arrangement::Face_iterator;

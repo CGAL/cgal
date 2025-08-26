@@ -71,7 +71,7 @@ public:
   {}
 
   /*! Perform the sweep. */
-  template <class CurveInputIterator>
+  template <typename CurveInputIterator>
   void sweep(CurveInputIterator curves_begin, CurveInputIterator curves_end,
              std::size_t lower, std::size_t upper, std::size_t jump,
              std::vector<Arr_entry>& arr_vec) {

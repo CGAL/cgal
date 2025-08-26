@@ -8,10 +8,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s): Baruch Zukerman <baruchzu@post.tau.ac.il>
-//            Ron Wein        <wein@post.tau.ac.il>
-//            Efi Fogel       <efif@post.tau.ac.il>
-//            Simon Giraudot  <simon.giraudot@geometryfactory.com>
+// Author(s) : Baruch Zukerman <baruchzu@post.tau.ac.il>
+//             Ron Wein        <wein@post.tau.ac.il>
+//             Efi Fogel       <efif@post.tau.ac.il>
+//             Simon Giraudot  <simon.giraudot@geometryfactory.com>
 
 #ifndef CGAL_BSO_INTERNAL_FUNCTIONS_H
 #define CGAL_BSO_INTERNAL_FUNCTIONS_H

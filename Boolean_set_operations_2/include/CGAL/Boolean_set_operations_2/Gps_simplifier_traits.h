@@ -7,7 +7,6 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-//
 // Author(s) : Baruch Zukerman <baruchzu@post.tau.ac.il>
 //             Efi Fogel       <efifogel@gmail.com>
 
@@ -214,8 +213,7 @@ public:
 
   public:
     void operator()(const X_monotone_curve_2& cv, const Point_2 & p,
-                    X_monotone_curve_2& c1, X_monotone_curve_2& c2) const
-    {
+                    X_monotone_curve_2& c1, X_monotone_curve_2& c2) const {
       const auto* base_traits = m_traits.m_base_traits;
       auto base_split = base_traits->split_2_object();
       base_split(cv.base(), p.base(), c1.base(), c2.base());

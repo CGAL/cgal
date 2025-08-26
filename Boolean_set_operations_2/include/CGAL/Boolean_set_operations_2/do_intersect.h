@@ -8,10 +8,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s): Baruch Zukerman <baruchzu@post.tau.ac.il>
-//            Ron Wein        <wein@post.tau.ac.il>
-//            Efi Fogel       <efif@post.tau.ac.il>
-//            Simon Giraudot  <simon.giraudot@geometryfactory.com>
+// Author(s) : Baruch Zukerman <baruchzu@post.tau.ac.il>
+//             Ron Wein        <wein@post.tau.ac.il>
+//             Efi Fogel       <efif@post.tau.ac.il>
+//             Simon Giraudot  <simon.giraudot@geometryfactory.com>
 
 #ifndef CGAL_BOOLEAN_SET_OPERATIONS_2_DO_INTERSECT_H
 #define CGAL_BOOLEAN_SET_OPERATIONS_2_DO_INTERSECT_H

@@ -8,8 +8,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s):      Baruch Zukerman <baruchzu@post.tau.ac.il>
-//                 Ron Wein        <wein@post.tau.ac.il>
+// Author(s) : Baruch Zukerman  <baruchzu@post.tau.ac.il>
+//             Ron Wein         <wein@post.tau.ac.il>
 
 #ifndef CGAL_BSO_2_GSP_AGG_OP_VISITOR_H
 #define CGAL_BSO_2_GSP_AGG_OP_VISITOR_H
@@ -31,8 +31,7 @@ class Gps_agg_op_base_visitor :
     Helper_,
     typename Default::Get<Visitor_, Gps_agg_op_base_visitor<Helper_,
                                                             Arrangement_,
-                                                            Visitor_> >::type>
-{
+                                                            Visitor_> >::type> {
 public:
   using Helper = Helper_;
   using Arrangement_2 = Arrangement_;
@@ -70,8 +69,7 @@ public:
   // TODO add mpl-warning
 
   virtual Halfedge_handle insert_in_face_interior(const X_monotone_curve_2& cv,
-                                                  Subcurve* sc)
-  {
+                                                  Subcurve* sc) {
     Halfedge_handle he = Base::insert_in_face_interior(cv, sc);
     insert_edge_to_hash(he, cv);
     return he;
@@ -81,8 +79,7 @@ public:
                                              Halfedge_handle hhandle,
                                              Halfedge_handle prev,
                                              Subcurve* sc,
-                                             bool& new_face_created)
-  {
+                                             bool& new_face_created) {
     Halfedge_handle res_he =
       Base::insert_at_vertices(cv, hhandle, prev, sc, new_face_created);
     insert_edge_to_hash(res_he, cv);
@@ -91,8 +88,7 @@ public:
 
   virtual Halfedge_handle insert_from_right_vertex(const X_monotone_curve_2& cv,
                                                    Halfedge_handle he,
-                                                   Subcurve* sc)
-  {
+                                                   Subcurve* sc) {
     Halfedge_handle res_he = Base::insert_from_right_vertex(cv, he, sc);
     insert_edge_to_hash(res_he, cv);
     return res_he;
@@ -100,16 +96,14 @@ public:
 
   virtual Halfedge_handle insert_from_left_vertex(const X_monotone_curve_2& cv,
                                                   Halfedge_handle he,
-                                                  Subcurve* sc)
-  {
+                                                  Subcurve* sc) {
     Halfedge_handle res_he = Base::insert_from_left_vertex(cv, he, sc);
     insert_edge_to_hash(res_he, cv);
     return res_he;
   }
 
 private:
-  void insert_edge_to_hash(Halfedge_handle he, const X_monotone_curve_2& cv)
-  {
+  void insert_edge_to_hash(Halfedge_handle he, const X_monotone_curve_2& cv) {
     const Comparison_result he_dir =
       ((Arr_halfedge_direction)he->direction() == ARR_LEFT_TO_RIGHT) ?
       SMALLER : LARGER;
@@ -131,10 +125,9 @@ private:
 
 template <typename Helper_, typename Arrangement_, typename Visitor_ = Default>
 class Gps_agg_op_visitor :
-  public Gps_agg_op_base_visitor<Helper_, Arrangement_,
-                                 Gps_agg_op_visitor<Helper_, Arrangement_,
-                                                    Visitor_> >
-{
+  public Gps_agg_op_base_visitor<
+    Helper_, Arrangement_,
+    Gps_agg_op_visitor<Helper_, Arrangement_, Visitor_>> {
 public:
   using Helper = Helper_;
   using Arrangement_2 = Arrangement_;
@@ -209,7 +202,7 @@ public:
   virtual Halfedge_handle insert_from_left_vertex(const X_monotone_curve_2& cv,
                                                   Halfedge_handle he,
                                                   Subcurve* sc) {
-    Halfedge_handle  res_he = Base::insert_from_left_vertex(cv, he, sc);
+    Halfedge_handle res_he = Base::insert_from_left_vertex(cv, he, sc);
 
     // We now have a halfedge whose target vertex is associated with the
     // current event(we have already dealt with its source vertex).

@@ -9,8 +9,8 @@
 //
 //
 
-// Author(s):      Baruch Zukerman <baruchzu@post.tau.ac.il>
-//                 Ophir Setter    <ophir.setter@cs.tau.ac.il>
+// Author(s) : Baruch Zukerman <baruchzu@post.tau.ac.il>
+//             Ophir Setter    <ophir.setter@cs.tau.ac.il>
 
 #ifndef CGAL_GPS_BFS_INTERSECTION_VISITOR_H
 #define CGAL_GPS_BFS_INTERSECTION_VISITOR_H
@@ -21,7 +21,7 @@
 
 namespace CGAL {
 
-template <class Arrangement_>
+template <typename Arrangement_>
 class Gps_bfs_intersection_visitor :
     public Gps_bfs_base_visitor<Arrangement_, Gps_bfs_intersection_visitor<Arrangement_>> {
   using Arrangement = Arrangement_;

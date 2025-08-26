@@ -7,8 +7,8 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s):      Baruch Zukerman <baruchzu@post.tau.ac.il>
-//                 Ophir Setter    <ophir.setter@cs.tau.ac.il>
+// Author(s) : Baruch Zukerman <baruchzu@post.tau.ac.il>
+//             Ophir Setter    <ophir.setter@cs.tau.ac.il>
 
 #ifndef CGAL_BSO_2_GPS_AGG_OP_H
 #define CGAL_BSO_2_GPS_AGG_OP_H
