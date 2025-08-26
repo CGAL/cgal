@@ -295,7 +295,7 @@ public:
      *
      * Prints out finite and infinite persistence intervals.
      *
-     * \param[in] out Reference to an out stream.
+     * \param[in] out_stream Reference to an out stream.
      * \param[in] per_hdvf Constant reference on the Hdvf_persistence to print.
      */
     friend std::ostream& operator<< (std::ostream& out_stream, const Hdvf_persistence& per_hdvf)

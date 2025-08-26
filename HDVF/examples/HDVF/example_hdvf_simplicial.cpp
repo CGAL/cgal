@@ -20,7 +20,7 @@ int main(int argc, char **argv)
 
     if (argc != 2)
     {
-        std::cout << "usage: example_hdvf_simplicial off_file" << std::endl;
+        std::cerr << "usage: example_hdvf_simplicial off_file" << std::endl;
     }
     else
     {

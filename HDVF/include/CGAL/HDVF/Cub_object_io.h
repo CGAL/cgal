@@ -51,7 +51,7 @@ public:
      *
      * Create an empty Cub_object_io of dimension 3.
      */
-    Cub_object_io() : dim(3), ncubs(std::vector<size_t>(3)), N(std::vector<size_t>(3)), khalimsky(false) {}
+    Cub_object_io() : dim(3), ncubs(std::vector<size_t>(4)), N(std::vector<size_t>(4)), khalimsky(false) {}
 
     /**
      * \brief Constructor from a vector of cells.
@@ -59,7 +59,7 @@ public:
      * Cells coordinates are given in Khalimsky coordinates if the boolean `khal` is `true`, and as integer indices of voxels otherwise.
      *
      */
-    Cub_object_io(int d, const std::vector<IOCubCellType> &vcubs, bool khal = false) : dim(d), ncubs(std::vector<size_t>(d)), N(std::vector<size_t>(d)), cubs(vcubs), khalimsky(khal)
+    Cub_object_io(int d, const std::vector<IOCubCellType> &vcubs, bool khal = false) : dim(d), ncubs(std::vector<size_t>(d+1)), N(std::vector<size_t>(d+1)), cubs(vcubs), khalimsky(khal)
     { check_dimension() ;}
 
     /* \brief Copy constructor. */

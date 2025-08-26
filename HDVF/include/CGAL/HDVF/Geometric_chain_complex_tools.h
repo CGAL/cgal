@@ -69,11 +69,11 @@ namespace IO {
  *<img src="HDVF_dtorus_all.png" align="center" width=30%/>
  */
 
-template <typename ChainComplex, template <typename, int> typename _ChainType = OSM::Sparse_chain, template <typename, int> typename _SparseMatrixType = OSM::Sparse_matrix, typename VertexIdType = size_t>
-void write_VTK (HDVF::Hdvf_core<ChainComplex, _ChainType, _SparseMatrixType> &hdvf, ChainComplex &complex, std::string filename = "test", bool co_faces = false)
+template <typename ChainComplex, template <typename, int> typename ChainType = OSM::Sparse_chain, template <typename, int> typename SparseMatrixType = OSM::Sparse_matrix, typename VertexIdType = size_t>
+void write_VTK (HDVF::Hdvf_core<ChainComplex, ChainType, SparseMatrixType> &hdvf, ChainComplex &complex, std::string filename = "test", bool co_faces = false)
 {
     typedef typename ChainComplex::Coefficient_ring Coefficient_ring;
-    typedef HDVF::Hdvf_core<ChainComplex, _ChainType, _SparseMatrixType> HDVF_parent;
+    typedef HDVF::Hdvf_core<ChainComplex, ChainType, SparseMatrixType> HDVF_parent;
     // Export PSC labelling
     std::string outfile(filename+"_PSC.vtk") ;
     std::vector<std::vector<int> > labels = hdvf.psc_labels() ;
@@ -466,7 +466,6 @@ public:
         // Visit all boolean indices in the BB of _CC and insert corresponding cells in the Cub_object_io of L
         for (size_t i=0; i<_K.size(); ++i)
         {
-//            const std::vector<size_t> tmpkhal(_K.ind2khal(i)) ;
             const std::vector<size_t> tmpkhal(_K.bindex_to_cell(i)) ;
             const int dtmp(_K.dimension(tmpkhal)) ;
             (tmp_L.ncubs)[dtmp] += 1 ;

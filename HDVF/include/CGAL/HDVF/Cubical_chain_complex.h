@@ -212,30 +212,45 @@ public:
         return _dim ;
     }
     
-    /** \brief Get the size of the Khalimsky bounding box.  */
+    /** \brief Get the size of the Khalimsky bounding box.
+     *
+     * The Khalimsky coordinate of a cell `c` in dimension `q` is strictly lesser than `size_bb().at(q)`.
+     */
     std::vector<size_t> size_bb() const {
         return _size_bb;
     }
     
     /** \brief Returns the total size of the complex.
      *
-     * Product of the sizes of the complex along each dimension.
+     * Khalimsky coordinates in dimension `q` are bounded above by `size_bb().at(q)`; the total memory size of the complex is the product of these sizes.
      */
     size_t size() const {
         return _P.at(dimension());
     }
 
-    /** \brief Returns Khalimsky coordinates of the cell of index i in dimension q. */
+    /** \brief Returns Khalimsky coordinates of the cell of "basis index" i in dimension q.
+     * In `AbstractChainComplex`, cells of dimenson `q` are identified by their index in the basis of \f$q\f$-cells together with their dimension. In the context of cubical complexes, this index is called "basis index" (to distinguish from its "boolean index", see above).
+     *
+     * \param[in] i "basis index" of a cell.
+     * \param[in] q dimension of the cell.
+     * \returns Khalimsky coordinates of the cell.
+     */
     std::vector<size_t> index_to_cell (size_t i, int q) const
     {
         const size_t id_bool(_base2bool.at(q).at(i));
-        return ind2khal(id_bool);
+        return bindex_to_cell(id_bool);
     }
     
-    /** \brief Returns the index of a cell given by its Khalimsky coordinates . */
+    /** \brief Returns the "basis index" of a cell given by its Khalimsky coordinates.
+     *
+     * In `AbstractChainComplex`, cells of dimenson `q` are identified by their index in the basis of \f$q\f$-cells together with their dimension. In the context of cubical complexes, this index is called "basis index" (to distinguish from its "boolean index", see above).
+     *
+     * \param[in] cell Khalimsky coordinates of a cell (of dimension \f$q\f$).
+     * \returns The "basis index" of the cell among \f$q\f$-cells.
+     */
     size_t cell_to_index (std::vector<size_t> cell) const
     {
-        const size_t id_bool(khal2ind(cell));
+        const size_t id_bool(cell_to_bindex(cell));
         const int q(dimension(cell));
         return (_bool2base.at(q)).at(id_bool);
     }
@@ -243,16 +258,48 @@ public:
     /** \brief Returns the dimension of a cell (given in Khalimsky coordinates). */
     int dimension(const std::vector<size_t>& cell) const;
     
-    /** \brief Returns Khalimsky coordinates of the cell of boolean index i. */
-    std::vector<size_t> bindex_to_cell (size_t i) const
-    {
-        return ind2khal(i);
+    /** \brief Returns Khalimsky coordinates of the cell of boolean index i.
+     *
+     * In `Cubical_chain_complex`, a cells of dimenson `q`, besides its index in the basis of \f$q\f$-cells, has an index in the vectorisation of the Khalimsky representation, called its "boolean index" (see above).
+     *
+     * \param[in] i The "boolean" index of a cell.
+     * \returns Khalimsky coordinates of the cell.
+     */
+    std::vector<size_t> bindex_to_cell (size_t i) const {
+        if (i > _P[_dim])
+            throw std::invalid_argument("Index exceeds the size of boolean vector");
+        std::vector<size_t> khal(_dim);
+        for (size_t k = 0; k < _dim; ++k) {
+            khal[k] = i % _size_bb[k];
+            i /= _size_bb[k];
+        }
+        return khal;
     }
     
-    /** \brief Returns the boolean index of a cell given by its Khalimsky coordinates . */
-    size_t cell_to_bindex (std::vector<size_t> cell) const
-    {
-        return khal2ind(cell);
+    /** \brief Returns the boolean index of a cell given by its Khalimsky coordinates .
+     *
+     * In `Cubical_chain_complex`, a cells of dimenson `q`, besides its index in the basis of \f$q\f$-cells, has an index in the vectorisation of the Khalimsky representation, called its "boolean index" (see above).
+     *
+     * \param[in] cell Khalimsky coordinates of a cell.
+     * \returns The "boolean" index of the cell.
+     */
+    size_t cell_to_bindex (std::vector<size_t> cell) const {
+        if (cell.size() != _dim) {
+            throw std::invalid_argument("Dimension of cell does not match dimension of the complex");
+        }
+
+        size_t cell_index = 0;
+        for (size_t i = 0; i < _dim; ++i) {
+            cell_index += cell[i] * _P[i];
+        }
+
+        // verify if cell_index is within bounds of _cells
+        if ((cell_index >= 0) && (cell_index < _P.at(_dim))) {
+            return cell_index;
+        } else {
+            std::cerr << "Invalid cell index in _cells: " << cell_index << std::endl;
+            throw std::out_of_range("Cell index out of bounds in _cells");
+        }
     }
     
     /**
@@ -295,7 +342,7 @@ public:
     std::vector<size_t> bottom_faces(size_t id_cell, int q) const
     {
         // Khalimsky coordinates of the cell
-        const std::vector<size_t> coords(ind2khal(_base2bool.at(q).at(id_cell))) ;
+        const std::vector<size_t> coords(bindex_to_cell(_base2bool.at(q).at(id_cell))) ;
         return khal_to_verts(coords) ;
     }
 
@@ -337,7 +384,7 @@ protected:
             out << "cellules de dimension " << q << " : " << _base2bool.at(q).size() << std::endl;
             for (size_t id_base = 0; id_base < _base2bool.at(q).size(); ++id_base) {
                 size_t id_bool = _base2bool.at(q).at(id_base);
-                std::vector<size_t> khal = ind2khal(id_bool);
+                std::vector<size_t> khal = bindex_to_cell(id_bool);
                 out << id_base << " -> " << id_bool << " -> " << _bool2base.at(q).at(id_bool) << " -> ";
                 for (size_t k : khal) out << k << " ";
                 out << std::endl;
@@ -369,7 +416,7 @@ public:
 
     Point get_vertex_coords(size_t i) const
     {
-        const std::vector<size_t> coords(ind2khal(_base2bool.at(0).at(i))) ;
+        const std::vector<size_t> coords(bindex_to_cell(_base2bool.at(0).at(i))) ;
         std::vector<double> res ;
         for (size_t c : coords)
             res.push_back(c/2. + .5) ;
@@ -469,7 +516,7 @@ public:
                 const size_t size_cell = 1<<q ; //int_exp(2, q) ;
                 for (size_t id =0; id < K.number_of_cells(q); ++id)
                 {
-                    std::vector<size_t> verts(K.khal_to_verts(K.ind2khal(K._base2bool.at(q).at(id)))) ;
+                    std::vector<size_t> verts(K.khal_to_verts(K.bindex_to_cell(K._base2bool.at(q).at(id)))) ;
                     out << size_cell << " " ;
                     for (size_t i : verts)
                         out << i << " " ;
@@ -561,7 +608,7 @@ protected:
         Column_chain boundary(nb_lignes);
 
         size_t index_bool = _base2bool[dim][index_base];
-        std::vector<size_t> c = ind2khal(index_bool);
+        std::vector<size_t> c = bindex_to_cell(index_bool);
 
         CoefficientRing sign = 1;
         for (size_t i = 0; i < _dim; ++i) {
@@ -645,7 +692,7 @@ protected:
         std::vector<size_t> vertices_id ;
         for (std::vector<size_t> vert : vertices)
         {
-            vertices_id.push_back(_bool2base[0].at(khal2ind(vert))) ;
+            vertices_id.push_back(_bool2base[0].at(cell_to_bindex(vert))) ;
         }
         return vertices_id ;
     }
@@ -680,42 +727,10 @@ protected:
     /* Initialize _cells, _base2bool and _bool2base */
     void initialize_cells(const Cub_object_io& cub,Cubical_complex_primal_dual type);
 
-    /** \brief Computes Khalimsky coordinates from boolean index */
-    std::vector<size_t> ind2khal(size_t index) const {
-        if (index > _P[_dim])
-            throw std::invalid_argument("Index exceeds the size of boolean vector");
-        std::vector<size_t> khal(_dim);
-        for (size_t k = 0; k < _dim; ++k) {
-            khal[k] = index % _size_bb[k];
-            index /= _size_bb[k];
-        }
-        return khal;
-    }
-
-    /* \brief Computes boolean index from Khalimsky coordinates */
-    size_t khal2ind(const std::vector<size_t>& base_indices) const {
-        if (base_indices.size() != _dim) {
-            throw std::invalid_argument("Dimension of base_indices does not match _dim");
-        }
-
-        size_t cell_index = 0;
-        for (size_t i = 0; i < _dim; ++i) {
-            cell_index += base_indices[i] * _P[i];
-        }
-
-        // verify if cell_index is within bounds of _cells
-        if ((cell_index >= 0) && (cell_index < _P.at(_dim))) {
-            return cell_index;
-        } else {
-            std::cerr << "Invalid cell index in _cells: " << cell_index << std::endl;
-            throw std::out_of_range("Cell index out of bounds in _cells");
-        }
-    }
-
     /* \brief Calculate the dimension of a cell (given by its boolean index) */
     int dimension(size_t cell_index) const
     {
-        return dimension(ind2khal(cell_index)) ;
+        return dimension(bindex_to_cell(cell_index)) ;
     }
     
     /* \brief Computes voxel coordinates (in a binary object) from an index in a boolean vector
@@ -820,7 +835,7 @@ void Cubical_chain_complex<CoefficientRing>::initialize_cells(const Cub_object_i
     {
         for (size_t i=0; i<cub.cubs.size(); ++i)
         {
-            const size_t id(khal2ind(cub.cubs.at(i))) ;
+            const size_t id(cell_to_bindex(cub.cubs.at(i))) ;
             insert_cell(id);
         }
     }
@@ -837,7 +852,7 @@ void Cubical_chain_complex<CoefficientRing>::initialize_cells(const Cub_object_i
             // Calculate the coordinates of the voxel in the dual complex
             for (size_t i=0; i<_dim; ++i)
                 coords.at(i)*=2 ;
-            const size_t cell_index(khal2ind(coords)) ;
+            const size_t cell_index(cell_to_bindex(coords)) ;
 
             _cells.at(cell_index) = true ;
             // Add the cell in _base2bool and _bool2base
@@ -852,7 +867,7 @@ void Cubical_chain_complex<CoefficientRing>::initialize_cells(const Cub_object_i
 
             for (size_t i = 0; i < _P[_dim]; ++i) {
 
-                if (dimension(ind2khal(i)) == q) {
+                if (dimension(bindex_to_cell(i)) == q) {
                     std::vector<size_t> boundaries = calculate_boundaries(i);
                     bool all_boundaries_present = true;
                     for (const auto& boundary_cell : boundaries) {
@@ -912,7 +927,7 @@ void Cubical_chain_complex<CoefficientRing>::insert_cell(size_t cell) {
         return; // cell has already been visited
     }
 
-    std::vector<size_t> cell_coords(ind2khal(cell));
+    std::vector<size_t> cell_coords(bindex_to_cell(cell));
     int dim = dimension(cell_coords);
 
     _cells[cell] = true;
@@ -965,7 +980,7 @@ int Cubical_chain_complex<CoefficientRing>::dimension(const std::vector<size_t>&
 template<typename CoefficientRing>
 std::vector<size_t> Cubical_chain_complex<CoefficientRing>::calculate_boundaries(size_t idcell) const {
     std::vector<size_t> boundaries;
-    std::vector<size_t> c = ind2khal(idcell);
+    std::vector<size_t> c = bindex_to_cell(idcell);
 
     for (size_t i = 0; i < _dim; ++i) {
         if (c[i] % 2 == 1)
@@ -1048,8 +1063,8 @@ void Cubical_chain_complex<CoefficientRing>::chain_to_vtk(const Cubical_chain_co
             {
                 if (!chain.is_null(id))
                 {
-                    std::vector<size_t> khal(K.ind2khal(K._base2bool.at(q).at(id))) ;
-                    std::vector<size_t> verts(K.khal_to_verts(K.ind2khal(K._base2bool.at(q).at(id)))) ;
+                    std::vector<size_t> khal(K.bindex_to_cell(K._base2bool.at(q).at(id))) ;
+                    std::vector<size_t> verts(K.khal_to_verts(K.bindex_to_cell(K._base2bool.at(q).at(id)))) ;
                     out << size_cell << " " ;
                     for (size_t i : verts)
                         out << i << " " ;
