@@ -78,7 +78,6 @@ class Gps_agg_op {
   using Surface_sweep_2 = Gps_agg_op_surface_sweep_2<Arr, Visitor>;
 
   using Edges_hash = Unique_hash_map<Halfedge_handle, std::size_t>;
-
   using Faces_hash = Unique_hash_map<Face_handle, std::size_t>;
   using Bfs_scanner = Gps_bfs_scanner<Arr, Bfs_visitor>;
 
@@ -113,12 +112,12 @@ public:
       Arr* arr = (arr_vec[i]).first;
       if (arr->reference_face()->contained()) ++n_inf_pgn;
 
-      Edge_iterator  itr = arr->edges_begin();
+      Edge_iterator itr = arr->edges_begin();
       for(; itr != arr->edges_end(); ++itr) {
         // take only relevant edges (which separate between contained and
         // non-contained faces.
         Halfedge_iterator he = itr;
-        if(he->face()->contained() == he->twin()->face()->contained())
+        if (he->face()->contained() == he->twin()->face()->contained())
           continue;
         if ((Arr_halfedge_direction)he->direction() == ARR_RIGHT_TO_LEFT)
           he = he->twin();
