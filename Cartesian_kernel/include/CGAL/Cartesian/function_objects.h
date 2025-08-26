@@ -3180,7 +3180,7 @@ public:
     { return CommonKernelFunctors::Construct_projected_point_3<K>()(r,p,K()); }
 
     Point_3
-      operator()(const Sphere_3& s, const Point_3& p) const
+    operator()(const Sphere_3& s, const Point_3& p) const
     { return CommonKernelFunctors::Construct_projected_point_3<K>()(s, p, K()); }
 
     const Point_3&
