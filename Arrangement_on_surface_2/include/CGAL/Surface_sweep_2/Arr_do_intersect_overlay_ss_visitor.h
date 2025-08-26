@@ -74,14 +74,6 @@ public:
   /*! Destructor */
   virtual ~Arr_do_intersect_overlay_ss_visitor() {}
 
-  // template <typename CurveIterator>
-  // void sweep(CurveIterator begin, CurveIterator end)
-  // { this->surface_sweep()->sweep(begin, end); }
-
-  // template <typename CurveIterator, typename PointIterator>
-  // void sweep(CurveIterator cvs_begin, CurveIterator cvs_end, PointIterator pts_begin, PointIterator pts_end)
-  // { this->surface_sweep()->sweep(cvs_begin, cvs_end, pts_begin, pts_end); }
-
   /*! Update an event that corresponds to a curve endpoint. */
   void update_event(Event* e, const Point_2& end_point, const X_monotone_curve_2& cv, Arr_curve_end cv_end, bool is_new)
   { return Base::update_event(e, end_point, cv, cv_end, is_new); }
@@ -95,13 +87,10 @@ public:
   { return Base::update_event(e, p, is_new); }
 
   /*! Update an event that corresponds to an intersection */
-  void update_event(Event*, Subcurve*) { m_found_x = true; }
+  void update_event(Event* e, Subcurve* sc) { return Base::update_event(e, sc); }
 
   /*! Update an event that corresponds to an intersection between curves */
   void update_event(Event*, Subcurve*, Subcurve*, bool is_new) { m_found_x = true; }
-
-  /*! found an overlap */
-  void found_overlap(Subcurve*, Subcurve*, Subcurve*) { m_found_x = true; }
 
   bool after_handle_event(Event* e, Status_line_iterator iter, bool flag) {
     if (m_found_x) this->surface_sweep()->stop_sweep();
