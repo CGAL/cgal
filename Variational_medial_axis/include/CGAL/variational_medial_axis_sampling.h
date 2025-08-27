@@ -607,8 +607,6 @@ public:
   ///
   /// @param tmesh
   ///        The input triangle mesh without borders.
-  /// @param vpm
-  ///        The vertex point map of the input triangle mesh.
   /// @param gt
   ///        The geometric traits class used for geometric computations.
   /// @param np
@@ -631,6 +629,12 @@ public:
   ///     \cgalParamDefault{FT(0.2)}
   ///     \cgalParamExtra{The range of this parameter is (0,1].}
   ///   \cgalParamNEnd
+  ///   \cgalParamNBegin{vertex_point_map}
+  ///     \cgalParamDescription{a property map associating points to the vertices of `pmesh`}
+  ///     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+  ///                    as key type and `%Point_3` as value type}
+  ///     \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
+  ///   \cgalParamNEnd
   ///   \cgalParamNBegin{verbose}
   ///     \cgalParamDescription{If true, the algorithm will print detailed information about its progress.}
   ///     \cgalParamType{bool}
@@ -640,12 +644,10 @@ public:
   ///
   template <class NamedParameters = parameters::Default_named_parameters>
   Variational_medial_axis(const TriangleMesh_& tmesh,
-                          VPM vpm,
                           const NamedParameters& np = parameters::default_values(),
                           const GT& gt = GT())
       : tmesh_(tmesh)
-      , traits_(gt)
-      , vpm_(vpm) {
+      , traits_(gt) {
 
     using parameters::choose_parameter;
     using parameters::get_parameter;
@@ -654,6 +656,8 @@ public:
     lambda_ = choose_parameter(get_parameter(np, internal_np::lambda), FT(0.2));
     max_iteration_ = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 1000);
     verbose_ = choose_parameter(get_parameter(np, internal_np::verbose), false);
+    vpm_ = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                             get_const_property_map(CGAL::vertex_point, tmesh));
 #ifndef CGAL_LINKED_WITH_TBB
     static_assert(!std::is_same_v<ConcurrencyTag_, Parallel_tag>, "Parallel_tag is enabled but TBB is unavailable.");
 #endif
@@ -661,13 +665,6 @@ public:
   }
   ///
   ///@}
-#ifndef DOXYGEN_RUNNING
-  template <class NamedParameters = parameters::Default_named_parameters>
-  Variational_medial_axis(const TriangleMesh_& tmesh,
-                          const NamedParameters& np = parameters::default_values(),
-                          const GT& gt = GT())
-      : Variational_medial_axis(tmesh, get(vertex_point, tmesh), np, gt) {}
-#endif // DOXYGEN_RUNNING
 
   /**
    *
