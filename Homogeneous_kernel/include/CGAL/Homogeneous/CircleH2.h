@@ -84,20 +84,20 @@ public:
     CircleH2<R>
     opposite() const;
 
-    Oriented_side
+    typename R_::Oriented_side
     oriented_side(const Point_2& ) const;
 
-    Bounded_side
+    typename R_::Bounded_side
     bounded_side(const Point_2& ) const;
 
     bool  operator==( const CircleH2<R>& ) const;
     bool  operator!=( const CircleH2<R>& ) const;
-    bool  has_on_positive_side(const Point_2& ) const;
-    bool  has_on_negative_side(const Point_2& ) const;
-    bool  has_on_boundary( const Point_2& ) const;
-    bool  has_on_bounded_side( const Point_2& ) const;
-    bool  has_on_unbounded_side(const Point_2&) const;
-    bool  is_degenerate() const;
+    typename R_::Boolean has_on_positive_side(const Point_2& ) const;
+    typename R_::Boolean has_on_negative_side(const Point_2& ) const;
+    typename R_::Boolean has_on_boundary( const Point_2& ) const;
+    typename R_::Boolean has_on_bounded_side( const Point_2& ) const;
+    typename R_::Boolean has_on_unbounded_side(const Point_2&) const;
+    typename R_::Boolean is_degenerate() const;
 
     // bool  oriented_equal( const CircleH2<R>& ) const;
     // bool  unoriented_equal( const CircleH2<R>& ) const;
@@ -133,17 +133,15 @@ CircleH2<R>::orientation() const
 
 template <class R>
 CGAL_KERNEL_INLINE
-Oriented_side
+typename R::Oriented_side
 CircleH2<R>::oriented_side( const typename CircleH2<R>::Point_2& p) const
 {
   FT sq_dist = squared_distance( p, center() );
-  FT sq_rad  = squared_radius();
-  Comparison_result vgl = CGAL_NTS compare( sq_dist, sq_rad );
-  Oriented_side rel_pos = (vgl == LARGER ) ?
-                                   ON_NEGATIVE_SIDE :
-                                   ( (vgl == SMALLER ) ?
-                                          ON_POSITIVE_SIDE :
-                                          ON_ORIENTED_BOUNDARY);
+  const FT& sq_rad  = squared_radius();
+  typename R::Comparison_result vgl = CGAL_NTS compare( sq_dist, sq_rad );
+  typename R::Oriented_side rel_pos = (vgl == LARGER ) ? ON_NEGATIVE_SIDE
+                                                       : ((vgl == SMALLER) ? ON_POSITIVE_SIDE
+                                                                           : ON_ORIENTED_BOUNDARY);
   if (orientation() == POSITIVE)
   { return rel_pos; }
   else       // NEGATIVE
@@ -152,7 +150,7 @@ CircleH2<R>::oriented_side( const typename CircleH2<R>::Point_2& p) const
 
 template <class R>
 CGAL_KERNEL_INLINE
-bool
+typename R::Boolean
 CircleH2<R>::has_on_positive_side(const typename CircleH2<R>::Point_2& p) const
 {
   if ( orientation() == POSITIVE )
@@ -163,7 +161,7 @@ CircleH2<R>::has_on_positive_side(const typename CircleH2<R>::Point_2& p) const
 
 template <class R>
 CGAL_KERNEL_INLINE
-bool
+typename R::Boolean
 CircleH2<R>::has_on_boundary(const typename CircleH2<R>::Point_2& p) const
 {
   FT sq_dist = squared_distance( p, center() );
@@ -173,7 +171,7 @@ CircleH2<R>::has_on_boundary(const typename CircleH2<R>::Point_2& p) const
 
 template <class R>
 CGAL_KERNEL_INLINE
-bool
+typename R::Boolean
 CircleH2<R>::has_on_negative_side( const typename CircleH2<R>::Point_2&p) const
 {
   if ( orientation() == NEGATIVE )
@@ -188,12 +186,12 @@ CircleH2<R>::has_on_negative_side( const typename CircleH2<R>::Point_2&p) const
 
 template <class R>
 CGAL_KERNEL_INLINE
-Bounded_side
+typename R::Bounded_side
 CircleH2<R>::bounded_side(const typename CircleH2<R>::Point_2& p) const
 {
   FT sq_dist = squared_distance( p, center() );
-  FT sq_rad  = squared_radius();
-  Comparison_result vgl = CGAL_NTS compare( sq_dist, sq_rad );
+  const FT& sq_rad  = squared_radius();
+  typename R::Comparison_result vgl = CGAL_NTS compare( sq_dist, sq_rad );
   return  (vgl == LARGER ) ? ON_UNBOUNDED_SIDE :
                                    ( (vgl == SMALLER ) ?
                                           ON_BOUNDED_SIDE :
@@ -202,33 +200,33 @@ CircleH2<R>::bounded_side(const typename CircleH2<R>::Point_2& p) const
 
 template <class R>
 CGAL_KERNEL_INLINE
-bool
+typename R::Boolean
 CircleH2<R>::has_on_bounded_side(const typename CircleH2<R>::Point_2& p) const
 {
   FT sq_dist = squared_distance( p, center() );
-  FT sq_rad  = squared_radius();
+  const FT& sq_rad  = squared_radius();
   return ( sq_dist < sq_rad );
 }
 
 template <class R>
 CGAL_KERNEL_INLINE
-bool
+typename R::Boolean
 CircleH2<R>::has_on_unbounded_side(const typename CircleH2<R>::Point_2&p) const
 {
   FT sq_dist = squared_distance( p, center() );
-  FT sq_rad  = squared_radius();
+  const FT& sq_rad  = squared_radius();
   return ( sq_rad < sq_dist );
 }
 
 template <class R>
 inline
-bool
+typename R::Boolean
 CircleH2<R>::is_degenerate() const
 { return ( squared_radius() == FT(0) ); }
 
 template <class R>
 CGAL_KERNEL_INLINE
-bool
+typename R::Boolean
 CircleH2<R>::operator==(const CircleH2<R>& c) const
 {
   return  ( center() == c.center() )
@@ -238,7 +236,7 @@ CircleH2<R>::operator==(const CircleH2<R>& c) const
 
 template <class R>
 inline
-bool
+typename R::Boolean
 CircleH2<R>::operator!=(const CircleH2<R>& c) const
 { return !(*this == c); }
 

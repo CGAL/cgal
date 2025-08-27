@@ -77,25 +77,27 @@ squared_distance(const typename K::Line_3& line,
   return squared_distance(ray, line, k);
 }
 
+template <class K>
+typename K::Comparison_result
+compare_squared_distance(const typename K::Ray_3& ray,
+                         const typename K::Line_3& line,
+                         const K& k,
+                         const typename K::FT& d2)
+{
+  return ::CGAL::compare(squared_distance(ray, line, k), d2);
+}
+
+template <class K>
+typename K::Comparison_result
+compare_squared_distance(const typename K::Line_3& line,
+                         const typename K::Ray_3& ray,
+                         const K& k,
+                         const typename K::FT& d2)
+{
+  return compare_squared_distance(ray, line, k, d2);
+}
+
 } // namespace internal
-
-template <class K>
-inline
-typename K::FT
-squared_distance(const Line_3<K>& line,
-                 const Ray_3<K>& ray)
-{
-  return K().compute_squared_distance_3_object()(line, ray);
-}
-
-template <class K>
-inline
-typename K::FT
-squared_distance(const Ray_3<K>& ray,
-                 const Line_3<K>& line)
-{
-  return K().compute_squared_distance_3_object()(ray, line);
-}
 
 } // namespace CGAL
 

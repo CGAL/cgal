@@ -15,7 +15,7 @@
 #include <CGAL/config.h>
 #include <CGAL/assertions.h>
 
-// This has only been implemented for MacOSX/Darwin, Linux and VC++ for now.
+// This has only been implemented for macOS/Darwin, Linux and VC++ for now.
 #if !defined _MSC_VER && !defined __linux__ && !defined __APPLE__
 
 #include <iostream>

@@ -42,7 +42,7 @@ int main()
   {
     std::cout << "vertices around face " << f << std::endl;
     CGAL::Vertex_around_face_iterator<Mesh> vbegin, vend;
-    for(boost::tie(vbegin, vend) = vertices_around_face(m.halfedge(f), m);
+    for(std::tie(vbegin, vend) = vertices_around_face(m.halfedge(f), m);
         vbegin != vend;
         ++vbegin){
       std::cout << *vbegin << std::endl;

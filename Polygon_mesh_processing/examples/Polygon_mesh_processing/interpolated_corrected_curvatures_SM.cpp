@@ -32,11 +32,11 @@ int main(int argc, char* argv[])
   Mesh::Property_map<vertex_descriptor, Epic_kernel::FT>
     mean_curvature_map, Gaussian_curvature_map;
 
-  boost::tie(mean_curvature_map, created) =
+  std::tie(mean_curvature_map, created) =
     smesh.add_property_map<vertex_descriptor, Epic_kernel::FT>("v:mean_curvature_map", 0);
   assert(created);
 
-  boost::tie(Gaussian_curvature_map, created) =
+  std::tie(Gaussian_curvature_map, created) =
     smesh.add_property_map<vertex_descriptor, Epic_kernel::FT>("v:Gaussian_curvature_map", 0);
   assert(created);
 
@@ -44,7 +44,7 @@ int main(int argc, char* argv[])
   Mesh::Property_map<vertex_descriptor, PMP::Principal_curvatures_and_directions<Epic_kernel>>
     principal_curvatures_and_directions_map;
 
-  boost::tie(principal_curvatures_and_directions_map, created) =
+  std::tie(principal_curvatures_and_directions_map, created) =
     smesh.add_property_map<vertex_descriptor, PMP::Principal_curvatures_and_directions<Epic_kernel>>
     ("v:principal_curvatures_and_directions_map", { 0, 0,
         Epic_kernel::Vector_3(0,0,0),

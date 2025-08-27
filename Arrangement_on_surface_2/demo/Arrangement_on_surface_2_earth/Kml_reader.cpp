@@ -1,4 +1,4 @@
-// Copyright(c) 2023, 2024  Tel-Aviv University (Israel).
+// Copyright (c) 2023, 2024  Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -269,7 +269,7 @@ Kml::Nodes Kml::generate_ids_approx(Placemarks& placemarks, const double eps) {
 
         for (const auto& node : lring->nodes) {
           // check if there is a node sufficiently close to the current one
-          auto node_index = std::numeric_limits<std::size_t>::max();
+          auto node_index = (std::numeric_limits<std::size_t>::max)();
           for (std::size_t i = 0; i < nodes.size(); ++i) {
             const auto dist = node.distance_to(nodes[i]);
             if (dist < eps) {
@@ -278,7 +278,7 @@ Kml::Nodes Kml::generate_ids_approx(Placemarks& placemarks, const double eps) {
             }
           }
 
-          if (node_index == std::numeric_limits<std::size_t>::max()) {
+          if (node_index == (std::numeric_limits<std::size_t>::max)()) {
             // insert new node
             nodes.push_back(node);
             const auto node_id = nodes.size() - 1;
@@ -301,7 +301,7 @@ Kml::Nodes Kml::generate_ids_approx(Placemarks& placemarks, const double eps) {
   }
 
   // find the pair of closest nodes
-  double min_dist = std::numeric_limits<double>::max();
+  double min_dist = (std::numeric_limits<double>::max)();
   std::size_t ni1 = 0;
   std::size_t ni2 = 0;
   std::size_t num_nodes = nodes.size();

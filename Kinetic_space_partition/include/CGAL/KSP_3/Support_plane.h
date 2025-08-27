@@ -119,8 +119,10 @@ public:
 
     std::vector<IEdge> iedges;
     std::vector<Point_2> original_vertices;
+    std::vector<typename Intersection_kernel::Point_2> exact_vertices;
     std::vector<Vector_2> original_vectors;
     std::vector<Direction_2> original_directions;
+    std::vector<typename Intersection_kernel::Direction_2> exact_directions;
     std::vector<typename Intersection_kernel::Ray_2> original_rays;
 
     FT distance_tolerance;
@@ -345,11 +347,12 @@ public:
     CGAL_assertion(is_valid_polygon(points));
 
     To_exact to_exact;
+    From_exact from_exact;
 
     CGAL_assertion(points.size() >= 3);
     std::vector<Triangle_2> tris(points.size() - 2);
     for (std::size_t i = 2; i < points.size(); i++)
-      tris[i - 2] = Triangle_2(points[0].first, points[i - 1].first, points[i].first);
+      tris[i - 2] = Triangle_2(from_exact(points[0].first), from_exact(points[i - 1].first), from_exact(points[i].first));
 
     m_data->centroid = CGAL::centroid(tris.begin(), tris.end(), CGAL::Dimension_tag<2>());
 
@@ -358,22 +361,23 @@ public:
     CGAL_assertion(n >= 3);
     vertices.reserve(n);
     m_data->original_vertices.resize(n);
+    m_data->exact_vertices.resize(n);
     m_data->original_vectors.resize(n);
     m_data->original_directions.resize(n);
+    m_data->exact_directions.resize(n);
     m_data->original_rays.resize(n);
 
     FT sum_length = FT(0);
-    std::vector<Vector_2> directions;
+    std::vector<typename Intersection_kernel::Vector_2> directions;
     directions.reserve(n);
 
-    std::vector<std::pair<std::size_t, Direction_2> > dir_vec;
+    std::vector<std::pair<std::size_t, typename Intersection_kernel::Direction_2> > dir_vec;
 
     FT num = 0;
     for (const auto& pair : points) {
       const auto& point = pair.first;
-      directions.push_back(Vector_2(m_data->centroid, point));
-      const FT length = static_cast<FT>(
-        CGAL::approximate_sqrt(CGAL::abs(directions.back() * directions.back())));
+      directions.push_back(typename Intersection_kernel::Vector_2(to_exact(m_data->centroid), point));
+      const FT length = CGAL::approximate_sqrt(CGAL::abs(from_exact(directions.back() * directions.back())));
       sum_length += length;
       num += 1;
     }
@@ -382,21 +386,23 @@ public:
 
     dir_vec.reserve(n);
     for (std::size_t i = 0; i < n; i++)
-      dir_vec.push_back(std::pair<std::size_t, Direction_2>(i, directions[i]));
+      dir_vec.push_back(std::pair<std::size_t, typename Intersection_kernel::Direction_2>(i, directions[i]));
 
     std::sort(dir_vec.begin(), dir_vec.end(),
-      [&](const std::pair<std::size_t, Direction_2>& a,
-        const std::pair<std::size_t, Direction_2>& b) -> bool {
+      [&](const std::pair<std::size_t, typename Intersection_kernel::Direction_2>& a,
+        const std::pair<std::size_t, typename Intersection_kernel::Direction_2>& b) -> bool {
           return a.second < b.second;
       });
 
     for (std::size_t i = 0; i < n; ++i) {
       const auto& point = points[dir_vec[i].first].first;
-      const auto vi = m_data->mesh.add_vertex(point);
-      m_data->original_vertices[i] = point;
-      m_data->original_vectors[i] = directions[dir_vec[i].first] / sum_length;
-      m_data->original_directions[i] = Direction_2(directions[dir_vec[i].first]);
-      m_data->original_rays[i] = typename Intersection_kernel::Ray_2(to_exact(point), to_exact(m_data->original_vectors[i]));
+      const auto vi = m_data->mesh.add_vertex(from_exact(point));
+      m_data->original_vertices[i] = from_exact(point);
+      m_data->exact_vertices[i] = point;
+      m_data->original_vectors[i] = from_exact(directions[dir_vec[i].first]) / sum_length;
+      m_data->original_directions[i] = Direction_2(from_exact(directions[dir_vec[i].first]));
+      m_data->exact_directions[i] = dir_vec[i].second;
+      m_data->original_rays[i] = typename Intersection_kernel::Ray_2(point, directions[dir_vec[i].first] / sum_length);
       m_data->v_original_map[vi] = true;
       vertices.push_back(vi);
     }
@@ -404,9 +410,9 @@ public:
     for (std::size_t i = 0; i < m_data->original_directions.size(); i++) {
       for (std::size_t j = 0; j < m_data->original_directions.size(); j++) {
         if (j < i)
-          assert(m_data->original_directions[j] < m_data->original_directions[i]);
+          CGAL_assertion(m_data->original_directions[j] < m_data->original_directions[i]);
         if (j > i)
-          assert(m_data->original_directions[i] < m_data->original_directions[j]);
+          CGAL_assertion(m_data->original_directions[i] < m_data->original_directions[j]);
       }
     }
 
@@ -448,20 +454,22 @@ public:
 
   template<typename Pair>
   bool is_simple_polygon(const std::vector<Pair>& points) const {
+    From_exact from_exact;
     std::vector<Point_2> polygon;
     polygon.reserve(points.size());
     for (const auto& pair : points)
-      polygon.push_back(pair.first);
+      polygon.push_back(from_exact(pair.first));
     CGAL_assertion(polygon.size() == points.size());
     return CGAL::is_simple_2(polygon.begin(), polygon.end());
   }
 
   template<typename Pair>
   bool is_convex_polygon(const std::vector<Pair>& points) const {
+    From_exact from_exact;
     std::vector<Point_2> polygon;
     polygon.reserve(points.size());
     for (const auto& pair : points)
-      polygon.push_back(pair.first);
+      polygon.push_back(from_exact(pair.first));
     CGAL_assertion(polygon.size() == points.size());
     return CGAL::is_convex_2(polygon.begin(), polygon.end());
   }
@@ -668,8 +676,9 @@ public:
       m_data->plane.to_2d(Point_3(0, 0, 0) + vec));
   }
 
-  template<typename = typename std::enable_if<identical_kernel>::type >
-  const typename Intersection_kernel::Point_2 to_2d(const typename Intersection_kernel::Point_3& point) const {
+  template<class IK = Intersection_kernel>
+  auto to_2d(const typename Intersection_kernel::Point_3& point) const
+      ->std::enable_if_t<!std::is_same_v<Kernel, IK>, const typename Intersection_kernel::Point_2> {
     return m_data->exact_plane.to_2d(point);
   }
 
@@ -679,8 +688,9 @@ public:
       m_data->plane.to_2d(line.point() + line.to_vector()));
   }
 
-  template<typename = typename std::enable_if<identical_kernel>::type >
-  const typename Intersection_kernel::Line_2 to_2d(const typename Intersection_kernel::Line_3& line) const {
+  template <typename IK = Intersection_kernel>
+  auto to_2d(const typename Intersection_kernel::Line_3& line) const
+      -> std::enable_if_t<!std::is_same_v<Kernel, IK>, const typename Intersection_kernel::Line_2> {
     return typename Intersection_kernel::Line_2(
       m_data->exact_plane.to_2d(line.point()),
       m_data->exact_plane.to_2d(line.point() + line.to_vector()));
@@ -692,25 +702,21 @@ public:
       m_data->plane.to_2d(segment.target()));
   }
 
-  template<typename = typename std::enable_if<identical_kernel>::type >
-  const typename Intersection_kernel::Segment_2 to_2d(const typename Intersection_kernel::Segment_3& segment) const {
+  template <typename IK = Intersection_kernel>
+  auto to_2d(const typename Intersection_kernel::Segment_3& segment) const
+      -> std::enable_if_t<!std::is_same_v<Kernel, IK>, const typename Intersection_kernel::Segment_2> {
     return typename Intersection_kernel::Segment_2(
       m_data->exact_plane.to_2d(segment.source()),
       m_data->exact_plane.to_2d(segment.target()));
-  }
-
-  const Vector_3 to_3d(const Vector_2& vec) const {
-    return Vector_3(
-      m_data->plane.to_3d(Point_2(FT(0), FT(0))),
-      m_data->plane.to_3d(Point_2(FT(0), FT(0)) + vec));
   }
 
   const Point_3 to_3d(const Point_2& point) const {
     return m_data->plane.to_3d(point);
   }
 
-  template<typename = typename std::enable_if<identical_kernel>::type >
-  const typename Intersection_kernel::Point_3 to_3d(const typename Intersection_kernel::Point_2& point) const {
+  template <typename IK = Intersection_kernel>
+  auto to_3d(const typename Intersection_kernel::Point_2& point) const
+      ->std::enable_if_t<!std::is_same_v<Kernel, IK>, const typename Intersection_kernel::Point_3> {
     return m_data->exact_plane.to_3d(point);
   }
 

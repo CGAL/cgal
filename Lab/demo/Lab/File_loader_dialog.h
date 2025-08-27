@@ -9,15 +9,16 @@ class File_loader_dialog : public QDialog, private Ui::FileLoaderDialog
 {
   Q_OBJECT
   public:
-    File_loader_dialog()
+    File_loader_dialog(QWidget* parent = nullptr)
+      : QDialog(parent)
     {
       setupUi(this);
     }
   static
     std::pair<QString,bool>
-    getItem(QString filename, const QStringList& item_list, bool* ok)
+    getItem(QWidget* parent, QString filename, const QStringList& item_list, bool* ok)
     {
-      File_loader_dialog dialog;
+      File_loader_dialog dialog(parent);
       dialog.buttonBox->button(QDialogButtonBox::Ok)->setDefault(true);
       dialog.buttonBox->button(QDialogButtonBox::Ok)->setFocus();
       dialog.pluginBox->addItems(item_list);

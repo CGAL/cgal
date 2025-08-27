@@ -20,6 +20,7 @@ CGAL_add_named_parameter(visitor_t, visitor, visitor)
 CGAL_add_named_parameter(point_t, point_map, point_map)
 
 CGAL_add_named_parameter(edge_is_constrained_t, edge_is_constrained, edge_is_constrained_map)
+CGAL_add_named_parameter(edge_is_marked_map_t, edge_is_marked_map, edge_is_marked_map)
 CGAL_add_named_parameter(first_index_t, first_index, first_index)
 CGAL_add_named_parameter(number_of_iterations_t, number_of_iterations, number_of_iterations)
 CGAL_add_named_parameter(verbosity_level_t, verbosity_level, verbosity_level)
@@ -28,6 +29,7 @@ CGAL_add_named_parameter(use_binary_mode_t, use_binary_mode, use_binary_mode)
 CGAL_add_named_parameter(metis_options_t, METIS_options, METIS_options)
 CGAL_add_named_parameter(vertex_partition_id_t, vertex_partition_id, vertex_partition_id_map)
 CGAL_add_named_parameter(face_partition_id_t, face_partition_id, face_partition_id_map)
+CGAL_add_named_parameter(edge_weight_t, edge_weight, edge_weight_map)
 
 CGAL_add_named_parameter(vertex_output_iterator_t, vertex_output_iterator, vertex_output_iterator)
 CGAL_add_named_parameter(face_output_iterator_t, face_output_iterator, face_output_iterator)
@@ -57,6 +59,8 @@ CGAL_add_named_parameter(face_color_output_iterator_t, face_color_output_iterato
 CGAL_add_named_parameter(vertex_normal_map_t, vertex_normal_map, vertex_normal_map)
 CGAL_add_named_parameter(vertex_color_map_t, vertex_color_map, vertex_color_map)
 CGAL_add_named_parameter(vertex_texture_map_t, vertex_texture_map, vertex_texture_map)
+CGAL_add_named_parameter(vertex_oriented_side_map_t, vertex_oriented_side_map, vertex_oriented_side_map)
+
 CGAL_add_named_parameter(face_color_map_t, face_color_map, face_color_map)
 CGAL_add_named_parameter(repair_polygon_soup_t, repair_polygon_soup, repair_polygon_soup)
 CGAL_add_named_parameter(output_color_t, output_color, output_color)
@@ -101,6 +105,10 @@ CGAL_add_named_parameter(vertex_mean_curvature_t, vertex_mean_curvature, vertex_
 CGAL_add_named_parameter(vertex_Gaussian_curvature_t, vertex_Gaussian_curvature, vertex_Gaussian_curvature)
 CGAL_add_named_parameter(vertex_principal_curvatures_and_directions_t, vertex_principal_curvatures_and_directions, vertex_principal_curvatures_and_directions)
 CGAL_add_named_parameter(ball_radius_t, ball_radius, ball_radius)
+CGAL_add_named_parameter(gradation_factor_t, gradation_factor, gradation_factor)
+CGAL_add_named_parameter(use_postprocessing_qem_t, use_postprocessing_qem, use_postprocessing_qem)
+CGAL_add_named_parameter(use_qem_based_energy_t, use_qem_based_energy, use_qem_based_energy)
+CGAL_add_named_parameter(vertex_count_ratio_t, vertex_count_ratio, vertex_count_ratio)
 CGAL_add_named_parameter(outward_orientation_t, outward_orientation, outward_orientation)
 CGAL_add_named_parameter(overlap_test_t, overlap_test, do_overlap_test_of_bounded_sides)
 CGAL_add_named_parameter(preserve_genus_t, preserve_genus, preserve_genus)
@@ -164,6 +172,13 @@ CGAL_add_named_parameter(region_primitive_map_t, region_primitive_map, region_pr
 CGAL_add_named_parameter(postprocess_regions_t, postprocess_regions, postprocess_regions)
 CGAL_add_named_parameter(sizing_function_t, sizing_function, sizing_function)
 CGAL_add_named_parameter(bbox_scaling_t, bbox_scaling, bbox_scaling)
+CGAL_add_named_parameter(weight_function_t, weight_function, weight_function)
+CGAL_add_named_parameter(weight_limiting_t, weight_limiting, weight_limiting)
+CGAL_add_named_parameter(progressive_t, progressive, progressive)
+CGAL_add_named_parameter(tiling_t, tiling, tiling)
+CGAL_add_named_parameter(dimension_t, dimension, dimension)
+CGAL_add_named_parameter(apply_iterative_snap_rounding_t, apply_iterative_snap_rounding, apply_iterative_snap_rounding)
+CGAL_add_named_parameter(snap_grid_size_t, snap_grid_size, snap_grid_size)
 
 // List of named parameters that we use in the package 'Surface Mesh Simplification'
 CGAL_add_named_parameter(get_cost_policy_t, get_cost_policy, get_cost)
@@ -178,6 +193,7 @@ CGAL_add_named_parameter(do_lock_mesh_t, do_lock_mesh, do_lock_mesh)
 CGAL_add_named_parameter(do_simplify_border_t, do_simplify_border, do_simplify_border)
 CGAL_add_named_parameter(algorithm_t, algorithm, algorithm)
 CGAL_add_named_parameter(use_smoothing_t, use_smoothing, use_smoothing)
+CGAL_add_named_parameter(force_filtering_t, force_filtering, force_filtering)
 
 //internal
 CGAL_add_named_parameter(weight_calculator_t, weight_calculator, weight_calculator)
@@ -239,6 +255,11 @@ CGAL_add_named_parameter(with_dihedral_angle_t, with_dihedral_angle, with_dihedr
 CGAL_add_named_parameter(optimize_anchor_location_t, optimize_anchor_location, optimize_anchor_location)
 CGAL_add_named_parameter(optimize_boundary_anchor_location_t, optimize_boundary_anchor_location, optimize_boundary_anchor_location)
 CGAL_add_named_parameter(pca_plane_t, pca_plane, pca_plane)
+
+// List of named parameters used in Isosurfacing_3
+CGAL_add_named_parameter(use_topologically_correct_marching_cubes_t, use_topologically_correct_marching_cubes, use_topologically_correct_marching_cubes)
+CGAL_add_named_parameter(constrain_to_cell_t, constrain_to_cell, constrain_to_cell)
+CGAL_add_named_parameter(isovalue_nudging_t, isovalue_nudging, isovalue_nudging)
 
 // tetrahedral remeshing parameters
 CGAL_add_named_parameter(remesh_boundaries_t, remesh_boundaries, remesh_boundaries)
@@ -346,6 +367,8 @@ CGAL_add_named_parameter_with_compatibility(do_reset_c3t3_t, do_reset_c3t3, do_r
 CGAL_add_named_parameter_with_compatibility(mesh_param_t, mesh_param, mesh_options)
 CGAL_add_named_parameter_with_compatibility(manifold_param_t, manifold_param, manifold_option)
 CGAL_add_named_parameter_with_compatibility(features_option_param_t,features_options_param,features_options)
+CGAL_add_named_parameter_with_compatibility(initial_points_generator_param_t,initial_points_generator_param,initial_points_generator)
+CGAL_add_named_parameter_with_compatibility(initial_points_param_t,initial_points_param,initial_points)
 
 CGAL_add_named_parameter_with_compatibility_cref_only(image_3_param_t, image_3_param, image)
 CGAL_add_named_parameter_with_compatibility(iso_value_param_t, iso_value_param, iso_value)
@@ -374,6 +397,13 @@ CGAL_add_named_parameter_with_compatibility(cell_min_size_param_t, cell_min_size
 CGAL_add_named_parameter_with_compatibility(function_param_t, function_param, function)
 CGAL_add_named_parameter_with_compatibility(bounding_object_param_t, bounding_object_param, bounding_object)
 
+// List of named parameters used in the package ' 3D Surface Subdivision Methods'
+CGAL_add_named_parameter(do_not_modify_geometry_t, do_not_modify_geometry, do_not_modify_geometry)
+
 //List of named parameters used in Straight_skeleton_2
 CGAL_add_named_parameter_with_compatibility_ref_only(angles_param_t, angles_param, angles)
 CGAL_add_named_parameter(maximum_height_t, maximum_height, maximum_height)
+
+// List of named parameters used in the package 'Constrained_triangulation_3'
+CGAL_add_named_parameter(plc_face_id_t, plc_face_id, plc_face_id)
+CGAL_add_named_parameter(with_plc_face_id_t, with_plc_face_id, with_plc_face_id)

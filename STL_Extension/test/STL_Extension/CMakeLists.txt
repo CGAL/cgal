@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.12...3.29)
+cmake_minimum_required(VERSION 3.12...3.31)
 project(STL_Extension_Tests)
 
 find_package(CGAL REQUIRED)
@@ -22,7 +22,7 @@ create_single_source_cgal_program("test_composition.cpp")
 create_single_source_cgal_program("test_Concatenate_iterator.cpp")
 create_single_source_cgal_program("test_Concurrent_compact_container.cpp")
 if(TARGET CGAL::TBB_support)
-  target_link_libraries(test_Concurrent_compact_container PUBLIC CGAL::TBB_support)
+  target_link_libraries(test_Concurrent_compact_container PRIVATE CGAL::TBB_support)
 endif()
 create_single_source_cgal_program("test_dispatch_output.cpp")
 create_single_source_cgal_program("test_Flattening_iterator.cpp")
@@ -36,8 +36,8 @@ create_single_source_cgal_program("test_multiset.cpp")
 create_single_source_cgal_program("test_cgal_named_params.cpp")
 
 add_executable(test_multiset_cc "test_multiset.cpp")
-target_link_libraries(test_multiset_cc PUBLIC CGAL::CGAL)
-target_compile_options(test_multiset_cc PUBLIC -DCGAL_MULTISET_USE_COMPACT_CONTAINER_AS_DEFAULT)
+target_link_libraries(test_multiset_cc PRIVATE CGAL::CGAL)
+target_compile_options(test_multiset_cc PRIVATE -DCGAL_MULTISET_USE_COMPACT_CONTAINER_AS_DEFAULT)
 cgal_add_test(test_multiset_cc)
 add_to_cached_list(CGAL_EXECUTABLE_TARGETS test_multiset_cc)
 
@@ -58,16 +58,16 @@ create_single_source_cgal_program("test_fwd_make_array.cpp")
 
 if(TARGET CGAL::TBB_support)
   message(STATUS "Found TBB")
-  target_link_libraries(test_for_each PUBLIC CGAL::TBB_support)
+  target_link_libraries(test_for_each PRIVATE CGAL::TBB_support)
 endif()
 
 find_package(OpenMesh QUIET)
 if(OpenMesh_FOUND)
   message(STATUS "Found OpenMesh")
-  include(UseOpenMesh)
+  include(CGAL_OpenMesh_support)
 
   create_single_source_cgal_program("test_hash_OpenMesh.cpp")
-  target_link_libraries(test_hash_OpenMesh PRIVATE ${OPENMESH_LIBRARIES})
+  target_link_libraries(test_hash_OpenMesh PRIVATE CGAL::OpenMesh_support)
 else()
   message(STATUS "NOTICE: Tests that use OpenMesh will not be compiled.")
 endif()

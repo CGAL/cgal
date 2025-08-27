@@ -49,7 +49,7 @@
 #include <QSequentialIterable>
 #include <QDir>
 #include <QJSValue>
-
+#include <QLoggingCategory>
 
 #include <CGAL/Three/Three.h>
 #include <CGAL/Three/CGAL_Lab_plugin_interface.h>
@@ -111,7 +111,7 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
   ui = new Ui::MainWindow;
   ui->setupUi(this);
   menuBar()->setNativeMenuBar(false);
-  searchAction = new QWidgetAction(nullptr);
+  searchAction = new QWidgetAction(this);
   CGAL::Three::Three::s_mainwindow = this;
   menu_map[ui->menuOperations->title()] = ui->menuOperations;
   this->verbose = verbose;
@@ -543,6 +543,8 @@ void MainWindow::setMenus(QString name, QString parentName, QAction* a )
   }
 }
 
+QLoggingCategory qlog_cgallab_plugins("cgal.lab.plugins");
+
 bool MainWindow::load_plugin(QString fileName, bool blacklisted)
 {
   if(fileName.contains("plugin") && QLibrary::isLibrary(fileName)) {
@@ -563,9 +565,8 @@ bool MainWindow::load_plugin(QString fileName, bool blacklisted)
         return true;
       }
     }
-    QDebug qdebug = qDebug();
     if(verbose)
-      qdebug << "### Loading \"" << fileName.toUtf8().data() << "\"... ";
+      qCDebug(qlog_cgallab_plugins) << "### Loading" << fileName << "... ";
     QPluginLoader loader;
     loader.setFileName(fileinfo.absoluteFilePath());
     QJsonArray keywords = loader.metaData().value("MetaData").toObject().value("Keywords").toArray();
@@ -595,7 +596,7 @@ bool MainWindow::load_plugin(QString fileName, bool blacklisted)
       bool init2 = initIOPlugin(obj);
       if (!init1 && !init2)
       {
-        pluginsStatus_map[name] = QString("Not for this program.");
+        pluginsStatus_map[name] = QString("ERROR: Not for this program.");
       }
       else{
         QJSValue objectValue =
@@ -607,12 +608,16 @@ bool MainWindow::load_plugin(QString fileName, bool blacklisted)
     }
     else if(!do_load)
     {
-      pluginsStatus_map[name]="Wrong Keywords.";
+      pluginsStatus_map[name]="ERROR: Wrong Keywords.";
       ignored_map[name] = true;
     }
     else{
-      pluginsStatus_map[name] = loader.errorString();
-
+      pluginsStatus_map[name] = "ERROR: " + loader.errorString();
+    }
+    if(verbose && pluginsStatus_map[name].startsWith("ERROR")) {
+      qCDebug(qlog_cgallab_plugins) << "  plugin " << name << ": " << pluginsStatus_map[name]
+          << "\n  plugin keywords: " << s_keywords
+          << "\n     app keywords: " << accepted_keywords;
     }
     PathNames_map[name].push_back(fileinfo.absoluteDir().absolutePath());
     return true;
@@ -1124,10 +1129,10 @@ void MainWindow::open(QString filename)
     ok=true;
     break;
   case 0:
-    load_pair = File_loader_dialog::getItem(fileinfo.fileName(), all_items, &ok);
+    load_pair = File_loader_dialog::getItem(this, fileinfo.fileName(), all_items, &ok);
     break;
   default:
-    load_pair = File_loader_dialog::getItem(fileinfo.fileName(), selected_items, &ok);
+    load_pair = File_loader_dialog::getItem(this, fileinfo.fileName(), selected_items, &ok);
   }
   //viewer->makeCurrent();
   if(!ok || load_pair.first.isEmpty()) { return; }
@@ -2396,8 +2401,12 @@ void MainWindow::viewerShowObject()
   }
   if(item) {
     const Scene::Bbox bbox = item->bbox();
-    CGAL::qglviewer::Vec min(static_cast<float>(bbox.xmin())+viewer->offset().x, static_cast<float>(bbox.ymin())+viewer->offset().y, static_cast<float>(bbox.zmin())+viewer->offset().z),
-        max(static_cast<float>(bbox.xmax())+viewer->offset().x, static_cast<float>(bbox.ymax())+viewer->offset().y, static_cast<float>(bbox.zmax())+viewer->offset().z);
+    CGAL::qglviewer::Vec min{static_cast<float>(bbox.xmin()) + viewer->offset().x,
+                             static_cast<float>(bbox.ymin()) + viewer->offset().y,
+                             static_cast<float>(bbox.zmin()) + viewer->offset().z};
+    CGAL::qglviewer::Vec max{static_cast<float>(bbox.xmax()) + viewer->offset().x,
+                             static_cast<float>(bbox.ymax()) + viewer->offset().y,
+                             static_cast<float>(bbox.zmax()) + viewer->offset().z};
     viewer->setSceneBoundingBox(min, max);
     viewerShow(static_cast<float>(min.x), static_cast<float>(min.y), static_cast<float>(min.z),
                static_cast<float>(max.x), static_cast<float>(max.y), static_cast<float>(max.z));

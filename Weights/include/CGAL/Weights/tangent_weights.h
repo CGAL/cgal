@@ -401,7 +401,7 @@ public:
       return FT(0);
 
     FT weight = FT(0);
-    if (is_border_edge(he, m_pmesh)) // ie, opp(he, pmesh) is a border halfedge
+    if (is_border_edge(he, m_pmesh)) // i.e., opp(he, pmesh) is a border halfedge
     {
       const halfedge_descriptor h1 = next(he, m_pmesh);
 

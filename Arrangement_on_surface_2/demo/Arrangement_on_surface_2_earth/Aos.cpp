@@ -1,4 +1,4 @@
-// Copyright(c) 2023, 2024 Tel-Aviv University (Israel).
+// Copyright (c) 2023, 2024 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -40,7 +40,7 @@ namespace {
     Flag(bool init) : v{ init } {}
   };
 
-  // EXTENDED AOS for analysing the arrangement
+  // EXTENDED AOS for analyzing the arrangement
   using Ext_dcel = CGAL::Arr_extended_dcel<Geom_traits, Flag, Flag, Flag>;
   using Ext_topol_traits =
     CGAL::Arr_spherical_topology_traits_2<Geom_traits, Ext_dcel>;

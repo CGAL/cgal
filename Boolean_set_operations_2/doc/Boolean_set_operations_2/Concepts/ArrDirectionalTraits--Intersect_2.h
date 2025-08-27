@@ -6,7 +6,7 @@ namespace ArrDirectionalTraits {
 \cgalRefines{AdaptableBinaryFunction}
 
 \cgalHasModelsBegin
-\cgalHasModels{ArrangementDirectionalXMonotoneTraits_2::Intersect_2}
+\cgalHasModels{AosDirectionalXMonotoneTraits_2::Intersect_2}
 \cgalHasModelsEnd
 
 */

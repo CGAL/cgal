@@ -301,10 +301,6 @@ private:
   }
 
 public:
-  typedef Oriented_side              result_type;
-  typedef Site_2                     argument_type;
-
-
   Oriented_side
   operator()(const Site_2& t1, const Site_2& t2, const Site_2& q) const
   {

@@ -28,6 +28,7 @@
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Side_of_triangle_mesh.h>
 
+#include <boost/range/has_range_iterator.hpp>
 #include <boost/iterator/function_output_iterator.hpp>
 
 #include <exception>

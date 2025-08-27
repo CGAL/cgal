@@ -1,10 +1,9 @@
-/// \defgroup PkgSegmentDelaunayGraphLinf2Ref L Infinity Segment Delaunay Graphs Reference
+/// \defgroup PkgSegmentDelaunayGraphLinf2Ref Reference Manual
 /// \defgroup PkgSegmentDelaunayGraphLinf2Concepts Concepts
 /// \ingroup PkgSegmentDelaunayGraphLinf2Ref
 
 /*!
 \addtogroup PkgSegmentDelaunayGraphLinf2Ref
-\todo check generated documentation
 
 \cgalPkgDescriptionBegin{L Infinity Segment Delaunay Graphs,PkgSegmentDelaunayGraphLinf2}
 \cgalPkgPicture{sdglinf-small.png}

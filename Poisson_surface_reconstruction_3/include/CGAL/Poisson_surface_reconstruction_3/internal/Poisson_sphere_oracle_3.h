@@ -24,7 +24,7 @@
 #include <CGAL/number_utils.h>
 #include <CGAL/Origin.h>
 
-#include <boost/tuple/tuple.hpp>
+#include <tuple>
 
 namespace CGAL {
 
@@ -102,7 +102,7 @@ namespace CGAL {
     {
       const Self& oracle;
 
-      boost::tuple<int, FT, FT>
+      std::tuple<int, FT, FT>
       intersection_line_sphere_lambda(const Surface_3& sphere,
                                       const Point& a,
                                       const Point& b) const
@@ -154,18 +154,18 @@ namespace CGAL {
         switch( CGAL::sign(deltaprime) )
         {
         case ZERO:
-          return boost::make_tuple(1, ab_ac / ab2, 0);
+          return std::make_tuple(1, ab_ac / ab2, 0);
         case POSITIVE:
           {
             const FT sqrt_deltaprime = CGAL::sqrt(deltaprime);
-            return boost::make_tuple(2,
-                                     (ab_ac - sqrt_deltaprime) / ab2,
-                                     (ab_ac + sqrt_deltaprime) / ab2);
+            return std::make_tuple(2,
+                                   (ab_ac - sqrt_deltaprime) / ab2,
+                                   (ab_ac + sqrt_deltaprime) / ab2);
           }
         case NEGATIVE:
           break;
         }
-        return boost::make_tuple(0, 0, 0);
+        return std::make_tuple(0, 0, 0);
       } //end intersection_line_sphere_lambda
 
       template <class Assert_on_lambda>
@@ -185,7 +185,7 @@ namespace CGAL {
 
         int number_of_roots;
         FT root_1, root_2;
-        boost::tie(number_of_roots, root_1, root_2) =
+        std::tie(number_of_roots, root_1, root_2) =
           intersection_line_sphere_lambda(sphere, a, b);
 
         const Vector ab = vector(a, b);
@@ -291,7 +291,7 @@ namespace CGAL {
         int number_of_roots;
         FT root_1, root_2;
 
-        boost::tie(number_of_roots, root_1, root_2) =
+        std::tie(number_of_roots, root_1, root_2) =
           intersection_line_sphere_lambda(sphere, a, b);
 
 #ifdef CGAL_SURFACE_MESHER_DEBUG_IMPLICIT_ORACLE
@@ -353,7 +353,7 @@ namespace CGAL {
         int number_of_roots;
         FT root_1, root_2;
 
-        boost::tie(number_of_roots, root_1, root_2) =
+        std::tie(number_of_roots, root_1, root_2) =
           intersection_line_sphere_lambda(sphere, a, b);
 
         if( number_of_roots == 2 && root_2 > FT(0) )
@@ -392,7 +392,7 @@ namespace CGAL {
         int number_of_roots;
         FT root_1, root_2;
 
-        boost::tie(number_of_roots, root_1, root_2) =
+        std::tie(number_of_roots, root_1, root_2) =
           intersection_line_sphere_lambda(sphere, a, b);
 
         if( number_of_roots == 2 )

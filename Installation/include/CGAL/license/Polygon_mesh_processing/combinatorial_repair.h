@@ -9,7 +9,7 @@
 //
 // Author(s) : Andreas Fabri
 //
-// Warning: this file is generated, see include/CGAL/licence/README.md
+// Warning: this file is generated, see include/CGAL/license/README.md
 //          not entirely true due to the backward compatibility issue
 
 #ifndef CGAL_LICENSE_POLYGON_MESH_PROCESSING_COMBINATORIAL_REPAIR_H

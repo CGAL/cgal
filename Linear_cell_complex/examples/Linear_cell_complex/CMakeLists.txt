@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.12...3.29)
+cmake_minimum_required(VERSION 3.12...3.31)
 project(Linear_cell_complex_Examples)
 
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
@@ -20,6 +20,7 @@ find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 
 create_single_source_cgal_program("hexmeshing_demo.cpp")
 create_single_source_cgal_program("hexmeshing_simple_test.cpp")
+# add_compile_definitions(CGAL_DISABLE_ROUNDING_MATH_CHECK)
 
 create_single_source_cgal_program("gmap_linear_cell_complex_3.cpp")
 create_single_source_cgal_program("linear_cell_complex_3.cpp")
