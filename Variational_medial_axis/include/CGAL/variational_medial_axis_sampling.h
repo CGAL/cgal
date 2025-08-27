@@ -129,7 +129,7 @@ public:
   inline static const Sphere_ID INVALID_SPHERE_ID = Sphere_container::null_descriptor;
 
 public:
-   Sphere_ID add_sphere(const Sphere_3& s) {
+  Sphere_ID add_sphere(const Sphere_3& s) {
     Sphere_ID id = spheres_.emplace(s);
     spheres_[id].set_id(id);
     return id;
@@ -202,76 +202,6 @@ template <typename TriangleMesh_, typename GeomTraits_ = Default> class Medial_S
 
 public:
   /**
-   * \brief writes the medial skeleton to a PLY file.
-   *
-   * @param filepath The name of the file to write to.
-   *
-   * This function writes the medial skeleton to a PLY file in ASCII format.
-   * Note: The file format is :
-   * ```
-   * ply
-   * format ascii 1.0
-   * element vertex N
-   * property float x
-   * property float y
-   * property float z
-   * property float radius
-   * element edge M
-   * property int vertex1
-   * property int vertex2
-   * element face K
-   * property list uchar int vertex_indices
-   * end_header
-   * x1 y1 z1 r1
-   * ...        //N vertices
-   * xN yN zN rN
-   * v1 v2
-   * ...        //M edges
-   * vM vN
-   * 3 v1 v2 v3
-   * ...        //K faces
-   * 3 vX vY vZ
-   * ```
-   */
-  void write_to_ply_file(const std::string& filepath) const {
-    std::ofstream ofs(filepath);
-    if(!ofs) {
-      std::cerr << "Error opening file: " << filepath << std::endl;
-      return;
-    }
-
-    // Write header
-    ofs << "ply\nformat ascii 1.0\n";
-    ofs << "element vertex " << vertices_.size() << "\n";
-    ofs << "property float x\nproperty float y\nproperty float z\n";
-    ofs << "property float radius\n";
-    ofs << "element edge " << edges_.size() << "\n";
-    ofs << "property int vertex1\nproperty int vertex2\n";
-    ofs << "element face " << faces_.size() << "\n";
-    ofs << "property list uchar int vertex_indices\n";
-    ofs << "end_header\n";
-
-    // Write vertices (sphere centers and radii)
-    for(const auto& sphere : vertices_) {
-      const Point_3& center = sphere.center();
-      FT radius = CGAL::sqrt(sphere.squared_radius());
-      ofs << CGAL::to_double(center.x()) << " " << CGAL::to_double(center.y()) << " " << CGAL::to_double(center.z())
-          << " " << CGAL::to_double(radius) << "\n";
-    }
-
-    // Write edges
-    for(const auto& e : edges_) {
-      ofs << e.first << " " << e.second << "\n";
-    }
-
-    // Write faces
-    for(const auto& f : faces_) {
-      ofs << "3 " << f[0] << " " << f[1] << " " << f[2] << "\n";
-    }
-
-    ofs.close();
-  }
-  /**
    * loads a medial skeleton from a PLY file.
    *
    * @param filepath
@@ -305,7 +235,7 @@ public:
    * 3 vx vy vz
    * ```
    */
-  bool load_skeleton_from_ply(std::string& filepath){
+  bool load_skeleton_from_ply(std::string& filepath) {
     clear();
     std::ifstream ifs(filepath);
     if(!ifs) {
@@ -579,8 +509,9 @@ private:
 ///
 /// \note This method is designed to generate coarse approximations of the medial axis. The number of
 /// spheres that can be reliably generated depends on the density of the input surface sampling. For best
-/// results, we recommend keeping the total number of medial spheres under nb_vertices/100. 
-/// In addition, the user can explicitly request cluster merging or splitting operations to locally simplify or refine the skeleton structure.
+/// results, we recommend keeping the total number of medial spheres under nb_vertices/100.
+/// In addition, the user can explicitly request cluster merging or splitting operations to locally simplify or refine
+/// the skeleton structure.
 ///
 /// @tparam TriangleMesh_
 ///         a model of `FaceListGraph`
@@ -694,7 +625,8 @@ public:
   ///    \cgalParamDefault{1000}
   ///  \cgalParamNEnd
   ///   \cgalParamNBegin{lambda}
-  ///     \cgalParamDescription{A weight balancing the two energy terms (SQEM and Euclidean). Smaller values encourage the skeleton to extend deeper into local geometric features of the shape.}
+  ///     \cgalParamDescription{A weight balancing the two energy terms (SQEM and Euclidean). Smaller values encourage
+  ///     the skeleton to extend deeper into local geometric features of the shape.}
   ///     \cgalParamType{FT}
   ///     \cgalParamDefault{FT(0.2)}
   ///     \cgalParamExtra{The range of this parameter is (0,1].}
@@ -723,7 +655,7 @@ public:
     max_iteration_ = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 1000);
     verbose_ = choose_parameter(get_parameter(np, internal_np::verbose), false);
 #ifndef CGAL_LINKED_WITH_TBB
-      static_assert(!std::is_same_v<ConcurrencyTag_, Parallel_tag>, "Parallel_tag is enabled but TBB is unavailable.");
+    static_assert(!std::is_same_v<ConcurrencyTag_, Parallel_tag>, "Parallel_tag is enabled but TBB is unavailable.");
 #endif
     init();
   }
@@ -757,16 +689,18 @@ public:
    *     \cgalParamDefault{1000}
    *   \cgalParamNEnd
    *   \cgalParamNBegin{lambda}
-   *     \cgalParamDescription{A weight balancing the two energy terms (SQEM and Euclidean). Smaller values encourage the skeleton to extend deeper into local geometric features of the shape.}
+   *     \cgalParamDescription{A weight balancing the two energy terms (SQEM and Euclidean). Smaller values encourage
+   * the skeleton to extend deeper into local geometric features of the shape.}
    *     \cgalParamType{FT}
    *     \cgalParamDefault{FT(0.2)}
    *     \cgalParamExtra{The range of this parameter is (0,1].}
    *   \cgalParamNEnd
    *   \cgalParamNBegin{verbose}
-  *     \cgalParamDescription{If true, the algorithm will print detailed information about its progress on the standard output.}
-  *     \cgalParamType{bool}
-  *     \cgalParamDefault{false}
-  *   \cgalParamNEnd
+   *     \cgalParamDescription{If true, the algorithm will print detailed information about its progress on the standard
+   * output.}
+   *     \cgalParamType{bool}
+   *     \cgalParamDefault{false}
+   *   \cgalParamNEnd
    * \cgalNamedParamsEnd
    *
    *
@@ -788,18 +722,17 @@ public:
     // Initialize with one sphere
     Sphere_3 init_sphere(Point_3(0., 0., 0.), FT(1.0));
     sphere_mesh_->add_sphere(init_sphere);
-    if constexpr(std::is_same_v<ConcurrencyTag_, Parallel_tag>){
+    if constexpr(std::is_same_v<ConcurrencyTag_, Parallel_tag>) {
 #if CGAL_LINKED_WITH_TBB
       // Compute the shrinking balls in parallel
       compute_shrinking_balls_parallel();
 #endif
-    }
-    else{
-        compute_shrinking_balls();
+    } else {
+      compute_shrinking_balls();
     }
 
     if(verbose_) {
-        std::cout << "Starting variational medial axis computation..." << std::endl;
+      std::cout << "Starting variational medial axis computation..." << std::endl;
       std::cout << "Target number of spheres: " << desired_number_of_spheres_ << std::endl;
       std::cout << "Lambda: " << lambda_ << std::endl;
       std::cout << "Max iterations: " << max_iteration_ << std::endl;
@@ -862,7 +795,7 @@ public:
     total_error_diff_ = std::abs(total_error_ - last_total_error_);
     last_total_error_ = total_error_;
     if(verbose_) {
-        std::cout << "Iteration " << iteration_count_ << ": spheres=" << sphere_mesh_->nb_spheres()
+      std::cout << "Iteration " << iteration_count_ << ": spheres=" << sphere_mesh_->nb_spheres()
                 << ", error=" << total_error_ << ", error_diff=" << total_error_diff_ << std::endl;
     }
     // Check convergence
@@ -894,6 +827,7 @@ public:
     for(std::size_t i = 0; i < nb_iteration; i++) {
       update_single_step();
     }
+    update_sphere_neighbors();
   }
 
   /**
@@ -928,6 +862,7 @@ public:
         std::cout << "Failed to add " << nb_sphere << " spheres within the maximum iterations." << std::endl;
       }
     }
+    update_sphere_neighbors();
     return converged;
   }
 
@@ -981,7 +916,6 @@ public:
     return skeleton;
   }
 
-
   /// \name Parameters
   /// @{
   /**
@@ -1026,7 +960,6 @@ public:
   void set_max_iteration(int max_iter) { max_iteration_ = max_iter; }
   ///@}
 private:
-
   /// Initialization that compute some global variable for the algorithm.
   void init() {
     namespace PMP = CGAL::Polygon_mesh_processing;
@@ -1087,7 +1020,7 @@ private:
   }
   std::pair<Point_3, FT>
   shrinking_ball_algorithm_bvh(std::vector<face_descriptor> incident_faces,
-                               const Point_3& p,                        // point on the surface
+                               const Point_3& p,                  // point on the surface
                                const Vector_3& n,                 // inverse of search direction
                                FT delta_convergence = FT(1e-5)) { // model has to be normalized in [0, 1]^3
     using face_descriptor = typename Tree::Primitive_id;
@@ -1101,8 +1034,8 @@ private:
     face_descriptor last_face;
     while(true) {
       // get the hint directly from the kd-tree only to illustrate the use of the internal kd-tree
-      //auto hint = tree_->kd_tree().closest_point(c);
-      //auto [q_next, closest_face] = tree_->closest_point_and_primitive(c, hint);
+      // auto hint = tree_->kd_tree().closest_point(c);
+      // auto [q_next, closest_face] = tree_->closest_point_and_primitive(c, hint);
       auto [q_next, closest_face] = tree_->closest_point_and_primitive(c);
       FT squared_dist = (q_next - c).squared_length();
       if(squared_dist >= (r - delta_convergence) * (r - delta_convergence)) {
@@ -1122,7 +1055,7 @@ private:
         break; // no change in closest face
       }
       FT r_next = compute_radius(p, n, q_next);
-       if(!CGAL::is_finite(r_next) || r_next <= FT(0)){
+      if(!CGAL::is_finite(r_next) || r_next <= FT(0)) {
         std::cerr << "Invalid radius at iteration " << j << ": " << r_next << std::endl;
         break;
       }
@@ -1186,14 +1119,12 @@ private:
     return {c, r};
   }
 
-  std::pair<Point_3, FT>
-  compute_shrinking_ball_impl(const Point_3& p, const Vector_3& normal,CGAL::KD_tree_tag) {
+  std::pair<Point_3, FT> compute_shrinking_ball_impl(const Point_3& p, const Vector_3& normal, CGAL::KD_tree_tag) {
 
     return shrinking_ball_algorithm_kdt(p, normal);
   }
 
-  std::pair<Point_3, FT>
-  compute_shrinking_ball_impl(const Point_3& p, const Vector_3& normal, CGAL::BVH_tag) {
+  std::pair<Point_3, FT> compute_shrinking_ball_impl(const Point_3& p, const Vector_3& normal, CGAL::BVH_tag) {
     auto [q, closest_face] = tree_->closest_point_and_primitive(p);
     auto face_range = CGAL::faces_around_face(halfedge(closest_face, tmesh_), tmesh_);
     std::vector<face_descriptor> incident_faces(face_range.begin(), face_range.end());
@@ -1604,6 +1535,102 @@ private:
   Face_normal_map face_normal_map_;
   Face_area_map face_area_map_;
 };
+
+namespace IO {
+/**
+ * @ingroup PkgVMASRef
+ * @brief writes the medial skeleton to a PLY file.
+ *
+ * @tparam TriangleMesh
+ *         a model of `FaceListGraph`
+ * @tparam GeomTraits
+ *         a model of `Kernel`
+ * @tparam NamedParameters
+ *         a sequence of \ref bgl_namedparameters "Named Parameters"
+ *
+ * @param skeleton The medial skeleton to write.
+ * @param filepath The name of the file to write to.
+ * @param np optional \ref bgl_namedparameters "Named Parameters" described below
+ *
+ * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{stream_precision}
+ *   \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output
+ * stream}
+ *   \cgalParamType{int}
+ *   \cgalParamDefault{the precision of the stream `os`}
+ *   \cgalParamNEnd
+ * \cgalNamedParamsEnd
+ *
+ * Note:  This function writes the medial skeleton to a PLY file in ASCII format. The format is :
+ * ```
+ * ply
+ * format ascii 1.0
+ * element vertex N
+ * property float x
+ * property float y
+ * property float z
+ * property float radius
+ * element edge M
+ * property int vertex1
+ * property int vertex2
+ * element face K
+ * property list uchar int vertex_indices
+ * end_header
+ * x1 y1 z1 r1
+ * ...        //N vertices
+ * xN yN zN rN
+ * v1 v2
+ * ...        //M edges
+ * vM vN
+ * 3 v1 v2 v3
+ * ...        //K faces
+ * 3 vX vY vZ
+ * ```
+ *
+ * @returns `true` if writing was successful, `false` otherwise.
+ */
+template <typename TriangleMesh, typename GeomTraits, class NamedParameters = parameters::Default_named_parameters>
+bool write_PLY(const Medial_Skeleton<TriangleMesh, GeomTraits>& skeleton,
+               const std::string& filepath,
+               const NamedParameters& np = parameters::default_values()) {
+  std::ofstream ofs(filepath);
+  set_stream_precision_from_NP(ofs, np);
+  if(!ofs) {
+    std::cerr << "Error opening file: " << filepath << std::endl;
+    return false;
+  }
+
+  // Write header
+  ofs << "ply\nformat ascii 1.0\n";
+  ofs << "element vertex " << skeleton.number_of_vertices() << "\n";
+  ofs << "property float x\nproperty float y\nproperty float z\n";
+  ofs << "property float radius\n";
+  ofs << "element edge " << skeleton.number_of_edges() << "\n";
+  ofs << "property int vertex1\nproperty int vertex2\n";
+  ofs << "element face " << skeleton.number_of_faces() << "\n";
+  ofs << "property list uchar int vertex_indices\n";
+  ofs << "end_header\n";
+
+  // Write vertices (sphere centers and radii)
+  for(const auto& sphere : skeleton.vertices()) {
+    const auto& center = sphere.center();
+    auto radius = CGAL::sqrt(sphere.squared_radius());
+    ofs << CGAL::to_double(center.x()) << " " << CGAL::to_double(center.y()) << " " << CGAL::to_double(center.z())
+        << " " << CGAL::to_double(radius) << "\n";
+  }
+
+  // Write edges
+  for(const auto& e : skeleton.edges()) {
+    ofs << e.first << " " << e.second << "\n";
+  }
+
+  // Write faces
+  for(const auto& f : skeleton.faces()) {
+    ofs << "3 " << f[0] << " " << f[1] << " " << f[2] << "\n";
+  }
+  return true;
+}
+} // namespace IO
 
 } // namespace CGAL
 #endif

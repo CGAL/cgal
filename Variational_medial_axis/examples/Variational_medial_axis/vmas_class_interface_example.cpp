@@ -34,7 +34,7 @@ int main(int argc, char** argv)
 
   // Write skeleton to PLY file
   std::string output_filename = "skeleton.ply";
-  skeleton.write_to_ply_file(output_filename);
+  CGAL::IO::write_PLY(skeleton, output_filename, CGAL::parameters::stream_precision(9));
 
 }
 
