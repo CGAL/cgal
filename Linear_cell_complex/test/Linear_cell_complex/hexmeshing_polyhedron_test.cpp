@@ -41,7 +41,7 @@ public:
       Point(-2, -phi2, 0)
     };
     for (const auto& v : vertices) {
-      B.add_vertex(v + CGAL::Hexmeshing::Vector(5, 5, 5));
+      B.add_vertex(v + CGAL::internal::Hexmeshing::Vector(5, 5, 5));
     }
     
     std::vector<std::vector<int>> faces = {
@@ -90,7 +90,7 @@ public:
       Point(-l, -l, -l)
     };
     for (const auto& v : vertices) {
-      B.add_vertex(v + CGAL::Hexmeshing::Vector(5, 5, 5));
+      B.add_vertex(v + CGAL::internal::Hexmeshing::Vector(5, 5, 5));
     }
     
     std::vector<std::vector<int>> faces = {
@@ -108,7 +108,7 @@ public:
   }
 };
 
-using namespace CGAL::Hexmeshing;
+using namespace CGAL::internal::Hexmeshing;
 using HalfedgeDS = Polyhedron::HalfedgeDS;
 
 template <int FACE=4>
@@ -147,9 +147,9 @@ LCC create_refined_test_mesh(int level = 1) {
   Grid grid = Grid::make_cube(Point(0, 0, 0), 1.0, 10);
 
   Polyhedron poly = create_polyhedron<FACE>();
-  CGAL::MeshDataForHexmeshing mesh(poly, grid);
+  CGAL::Mesh_data_for_hexmeshing mesh(poly, grid);
 
-  CGAL::HexMeshingData hdata;
+  CGAL::Hexmeshing_for_linear_cell_complex hdata;
 
   hdata.two_refinement(
     mesh,
@@ -212,20 +212,22 @@ LCC create_refined_test_mesh_with_volume_fraction() {
 
 template <int FACE, bool start_with_volume_fraction>
 void render_meshes_at_each_phase() {
-  CGAL::HexMeshingData hdata;
+  double z_start = 0., z_end = 10.;
+  CGAL::Hexmeshing_for_linear_cell_complex hdata;
   LCC& lcc = hdata.lcc;
 
   if constexpr(start_with_volume_fraction) {
     lcc = create_refined_test_mesh_with_volume_fraction<FACE>();
   } else {
     Polyhedron poly = create_polyhedron<FACE>();
-    CGAL::MeshDataForHexmeshing mesh(poly);
+    CGAL::Mesh_data_for_hexmeshing mesh(poly);
     auto cellIdentifier = is_volume_intersecting_poly(*mesh.get_tree_pointer());
     auto decideFunc = is_inner_point(*mesh.get_tree_pointer());
     const int refinement_level = 1;
     lcc = create_refined_test_mesh<FACE>(refinement_level);
     set_fraction(lcc, 1./(1<<refinement_level), cellIdentifier, decideFunc);
   }
+
 
   size_type half_mark = lcc.get_new_mark();
   set_centroids(lcc);
@@ -234,7 +236,7 @@ void render_meshes_at_each_phase() {
     // if(0.1 < lcc.attribute<3>(volume)->info().fraction and lcc.attribute<3>(volume)->info().fraction < 0.9) {
     //   std::cout << lcc.attribute<3>(volume)->info().fraction << ' ' << lcc.attribute<3>(volume)->info().centroid << std::endl;
     // }
-    if(lcc.attribute<3>(volume)->info().centroid.z() < 5.0)
+    if(lcc.attribute<3>(volume)->info().centroid.z() < (z_start + z_end)*0.5)
       lcc.mark_cell<3>(volume, half_mark);
   }
   
@@ -246,16 +248,16 @@ void render_meshes_at_each_phase() {
   // auto trimming_func = is_volume_intersecting_poly(aabb);
   trim_excedent_volumes(lcc, trimming_func);
   std::cout << "Rendering the result of move_points_onto_mesh_with_volume_fraction" << std::endl;
-  render_two_refinement_result(hdata);
+  // render_two_refinement_result(hdata);
   
   surface_smoothing(lcc, move_mark, inner_mark);
   std::cout << "Rendering the result of surface_smoothing" << std::endl;
-  render_two_refinement_result(hdata);
+  // render_two_refinement_result(hdata);
 
-  render_two_refinement_result_with_mark(hdata, half_mark);
+  // render_two_refinement_result_with_mark(hdata, half_mark);
   volume_smoothing(lcc, move_mark);
   std::cout << "Rendering the result of volume_smoothing" << std::endl;
-  render_two_refinement_result_with_mark(hdata, half_mark);
+  // render_two_refinement_result_with_mark(hdata, half_mark);
 
   lcc.free_mark(move_mark);
   lcc.free_mark(inner_mark);

@@ -6,7 +6,7 @@
 #include <CGAL/hexmeshing/Hexmeshing_two_refinement_utils.h>
 #include <cassert>
 
-namespace CGAL::Hexmeshing {
+namespace CGAL::internal::Hexmeshing {
   /**
    * @brief Marks all k-cells that are part of a given i-cell
    * 

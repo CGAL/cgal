@@ -5,7 +5,7 @@
 #include <mutex>
 #include <condition_variable>
 
-namespace CGAL::Hexmeshing {
+namespace CGAL::internal::Hexmeshing {
   /**
    * @brief Thread-safe producer-consumer queue implementation
    * @tparam T The type of elements stored in the queue

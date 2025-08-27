@@ -4,7 +4,7 @@
 
 #include <CGAL/hexmeshing/LCC_items_for_hexmeshing.h>
 
-namespace CGAL::Hexmeshing {
+namespace CGAL::internal::Hexmeshing {
   template <typename HexData>
   void thread_number_vertex_in_edge(HexData& hdata,
     Dart_handle node, Dart_handle extremity0, Dart_handle extremity1){}

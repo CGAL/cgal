@@ -16,7 +16,7 @@
 #include <CGAL/Cell_attribute_with_point.h>
 
 
-namespace CGAL::Hexmeshing {
+namespace CGAL::internal::Hexmeshing {
 using Kernel = CGAL::Exact_predicates_inexact_constructions_kernel;
 using FT = Kernel::FT;
 using Point = Kernel::Point_3;

@@ -4,9 +4,10 @@
 #include <CGAL/hexmeshing/LCC_items_for_hexmeshing.h>
 #include <CGAL/hexmeshing/Hexmeshing_two_refinement_mark_utils.h>
 #include <CGAL/hexmeshing/Hexmeshing_resolve_non_manifold_case.h>
+#include <CGAL/hexmeshing/Hexmeshing_function_generator.h>
 #include <vector>
 
-namespace CGAL::Hexmeshing {
+namespace CGAL::internal::Hexmeshing {
   // func sets intersection and normal for dual edge
   // normal should be normalized
   void move_points_onto_mesh(LCC& lcc, size_type move_mark, DetectingFunction func) {

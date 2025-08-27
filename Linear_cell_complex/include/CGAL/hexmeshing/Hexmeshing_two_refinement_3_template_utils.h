@@ -6,7 +6,7 @@
 #include <CGAL/hexmeshing/Hexmeshing_threads_utils.h>
 #include <cassert>
 
-namespace CGAL::Hexmeshing {
+namespace CGAL::internal::Hexmeshing {
   /**
    * @brief Finds the origin dart of a 3-template pattern
    * 

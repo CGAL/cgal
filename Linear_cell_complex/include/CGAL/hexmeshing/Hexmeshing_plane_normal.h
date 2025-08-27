@@ -1,7 +1,7 @@
 #ifndef HEXMESHING_PLANE_NORMAL_H
 #define HEXMESHING_PLANE_NORMAL_H
 
-namespace CGAL::Hexmeshing {
+namespace CGAL::internal::Hexmeshing {
   /**
   * @brief Enumeration representing the normal direction of a plane in 3D space
   * 

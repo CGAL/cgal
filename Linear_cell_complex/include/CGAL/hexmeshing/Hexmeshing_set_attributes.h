@@ -7,7 +7,7 @@
 #include <CGAL/Eigen_matrix.h>
 #include <CGAL/Eigen_vector.h>
 
-namespace CGAL::Hexmeshing {
+namespace CGAL::internal::Hexmeshing {
   void __set_centroid(LCC& lcc, Dart_handle dart) {
     auto attr = get_or_create_attr<3>(lcc, dart);
     auto &vol_attr = attr->info();

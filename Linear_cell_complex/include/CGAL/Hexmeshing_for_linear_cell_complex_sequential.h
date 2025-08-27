@@ -28,18 +28,13 @@ namespace CGAL {
  * including the Linear Cell Complex (LCC), grid configuration, and various
  * markers used during mesh generation and refinement.
  */
-struct HexMeshingData {
-  // using Kernel = Exact_predicates_inexact_constructions_kernel;
-  // using LCCTraits = Linear_cell_complex_traits<3,Kernel>;
-  // using LCC = Linear_cell_complex_for_combinatorial_map<3,3, LCCTraits, Hexmeshing::LCCItemsForHexmeshing>;
-  // using Dart_handle = typename LCC::Dart_handle;
-  // using DartInfo = Hexmeshing::LCCItemsForHexmeshing::Dart_wrapper<LCC::Storage>;
-  // using size_type = typename LCC::size_type;
-  using Kernel = Hexmeshing::Kernel;
-  using LCC = Hexmeshing::LCC;
-  using Dart_handle = Hexmeshing::Dart_handle;
-  using DartInfo = Hexmeshing::DartInfo;
-  using size_type = Hexmeshing::size_type;
+class Hexmeshing_for_linear_cell_complex {
+public:
+  using Kernel = internal::Hexmeshing::Kernel;
+  using LCC = internal::Hexmeshing::LCC;
+  using Dart_handle = internal::Hexmeshing::Dart_handle;
+  using DartInfo = internal::Hexmeshing::DartInfo;
+  using size_type = internal::Hexmeshing::size_type;
   using PlaneCC = std::vector<Dart_handle>; // One dart per face connected components
   using PlaneSet = std::vector<PlaneCC>; // A set of planes 
   /**
@@ -54,7 +49,7 @@ struct HexMeshingData {
     Pattern_substituer<LCC> partial_templates;   ///< Pattern substituter for partial hexahedral templates
   };
   // Required initialization
-  Hexmeshing::Grid grid;                  ///< Grid configuration defining the mesh structure
+  internal::Hexmeshing::Grid grid;                  ///< Grid configuration defining the mesh structure
   ExternalRessources* ext;    ///< Pointer to external resources for pattern substitution
 
   // Initialized by the algorithm
@@ -69,7 +64,7 @@ struct HexMeshingData {
   std::array<PlaneSet, 3> first_face_of_planes;  ///< First faces of each plane set (X, Y, Z)
 
   /// @brief Default constructor
-  HexMeshingData() {}
+  Hexmeshing_for_linear_cell_complex() {}
 
   /**
    * @brief Fixes invalid dart handles after refinement
@@ -135,8 +130,8 @@ struct HexMeshingData {
       auto n2 = lcc.attribute<0>(lcc.beta(face, 1, 1))->point();
       // auto n3 = lcc.attribute<0>(lcc.beta(face, 1, 1, 1));
 
-      Hexmeshing::Vector normal = cross_product(n1 - n0, n2 - n1);
-      Hexmeshing::Vector plane_up = [&]() -> Hexmeshing::Vector {
+      internal::Hexmeshing::Vector normal = cross_product(n1 - n0, n2 - n1);
+      internal::Hexmeshing::Vector plane_up = [&]() -> internal::Hexmeshing::Vector {
         switch (plane_normal){
         default: return {1,0,0};
         case 1: return {0,1,0};
@@ -184,7 +179,7 @@ struct HexMeshingData {
     auto all_valid = [&](){
       for (int p = 0; p < 3; p++){
         for (auto& non_valid : plane_non_valid_faces[p]){
-          CGAL_assertion_msg(non_valid.second.size() == 0, "HexMeshingData::fix_planes_sets, not all stored planes were fixed");
+          CGAL_assertion_msg(non_valid.second.size() == 0, "Hexmeshing_for_linear_cell_complex::fix_planes_sets, not all stored planes were fixed");
         }
       }
 
@@ -195,7 +190,7 @@ struct HexMeshingData {
           for (int cc_id = 0; cc_id < plane_cc.size(); cc_id++){
             auto& face = plane_cc[cc_id];
             auto face_attr = lcc.attribute<2>(face);
-            CGAL_assertion_msg(valid_face(face, p, cc_id), "HexMeshingData::fix_planes_sets, face was not valid after fix");
+            CGAL_assertion_msg(valid_face(face, p, cc_id), "Hexmeshing_for_linear_cell_complex::fix_planes_sets, face was not valid after fix");
           }
         }
       }
@@ -211,7 +206,7 @@ struct HexMeshingData {
    * @param ext Pointer to external resources
    * @param grid Grid configuration for the mesh
    */
-  void init(ExternalRessources* ext, Hexmeshing::Grid grid) {
+  void init(ExternalRessources* ext, internal::Hexmeshing::Grid grid) {
     this->ext = ext;
     this->grid = grid;
   }
@@ -226,7 +221,7 @@ struct HexMeshingData {
    * 
    * The function performs the following operations:
    * 
-   * 1. **Resource Initialization**: Creates `HexMeshingData` and `ExternalRessources`
+   * 1. **Resource Initialization**: Creates `Hexmeshing_for_linear_cell_complex` and `ExternalRessources`
    *    structures to hold the mesh data and pattern substitution resources
    * 
    * 2. **Pattern Loading**: Calls `load_patterns` to load all necessary template
@@ -258,11 +253,11 @@ struct HexMeshingData {
    *             which volumes to keep in the final mesh.
    */
   void two_refinement(
-      MeshDataForHexmeshing& mesh,
+      Mesh_data_for_hexmeshing& mesh,
       int nb_levels = 1,
       bool trim = false)
   {
-    using namespace Hexmeshing;
+    using namespace internal::Hexmeshing;
 
     Tree* tree = mesh.get_tree_pointer();
     MarkingFunction cellIdentifier = is_volume_intersecting_poly(*tree);
@@ -277,6 +272,23 @@ struct HexMeshingData {
 
     // assumes grid cells to be cubes
     post_processing(lcc, grid.size.x()/(1<<nb_levels), trim, cellIdentifier, decideFunc);
+  }
+
+  void two_refinement_without_post_processing(
+      Mesh_data_for_hexmeshing& mesh,
+      int nb_levels = 1)
+  {
+    using namespace internal::Hexmeshing;
+
+    Tree* tree = mesh.get_tree_pointer();
+    MarkingFunction cellIdentifier = is_volume_intersecting_poly(*tree);
+
+    ExternalRessources res;
+
+    load_patterns(res.regular_templates, res.partial_templates);
+    init(&res, *mesh.get_grid_pointer());
+
+    two_refinement_algorithm(*this, cellIdentifier, nb_levels);
   }
 };
 

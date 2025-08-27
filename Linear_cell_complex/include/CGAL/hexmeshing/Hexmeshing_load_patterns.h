@@ -5,7 +5,7 @@
 #include <CGAL/query_replace/cmap_query_replace.h>
 
 
-namespace CGAL::Hexmeshing {
+namespace CGAL::internal::Hexmeshing {
   void mark_1template_face(LCC& lcc, size_type mark){
     auto dart = lcc.one_dart_per_cell<3>().begin();
     lcc.mark_cell<0>(lcc.beta(dart, 0, 2, 0, 0), mark);

@@ -5,6 +5,7 @@
 #include <CGAL/hexmeshing/LCC_items_for_hexmeshing.h>
 #include <CGAL/hexmeshing/Hexmeshing_refinement_data.h>
 #include <CGAL/hexmeshing/Hexmeshing_adjacent_face_on_plane.h>
+#include <CGAL/hexmeshing/Hexmeshing_function_alias.h>
 #include <CGAL/Union_find.h>
 #include <queue>
 #include <array>
@@ -12,7 +13,7 @@
 #include <boost/container/static_vector.hpp>
 
 
-namespace CGAL::Hexmeshing {
+namespace CGAL::internal::Hexmeshing {
   template <typename T>
   // TODO make union_find arg const
   std::vector<typename CGAL::Union_find<T>::handle> get_partitions(CGAL::Union_find<T>& union_find){

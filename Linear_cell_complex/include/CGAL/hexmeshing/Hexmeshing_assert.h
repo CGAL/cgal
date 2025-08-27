@@ -4,7 +4,7 @@
 #include <CGAL/hexmeshing/LCC_items_for_hexmeshing.h>
 #include <CGAL/Hexmeshing_for_linear_cell_complex_sequential.h>
 
-namespace CGAL::Hexmeshing {
+namespace CGAL::internal::Hexmeshing {
   /**
    * @brief Asserts that all dart attributes in the given arrays are unique
    * 

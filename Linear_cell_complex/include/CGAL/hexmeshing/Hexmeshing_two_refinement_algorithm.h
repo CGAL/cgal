@@ -13,7 +13,7 @@
 #include <CGAL/hexmeshing/Hexmeshing_function_alias.h>
 
 
-namespace CGAL::Hexmeshing {
+namespace CGAL::internal::Hexmeshing {
   /**
    * @brief Main algorithm for hexahedral mesh refinement
    * 
