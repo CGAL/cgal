@@ -213,17 +213,18 @@ public:
   /// returns the length of the polyline
   FT length() const
   {
-    //TODO: cache result
-    FT result (0);
-    const_iterator it = points_.begin();
-    const_iterator previous = it++;
-
-    for ( const_iterator end = points_.end() ; it != end ; ++it, ++previous )
+    if(length_ < 0.)
     {
-      result += distance(*previous,*it);
-    }
+      FT result(0);
+      const_iterator it = points_.begin();
+      const_iterator previous = it++;
 
-    return result;
+      for(const_iterator end = points_.end(); it != end; ++it, ++previous) {
+        result += distance(*previous, *it);
+      }
+      length_ = result;
+    }
+    return length_;
   }
 
   /// returns the signed geodesic distance between `p` and `q`.
@@ -244,13 +245,23 @@ public:
       else
       { return -result; }
     }
-    if(is_loop()) {
-      const FT positive_distance = curve_segment_length(p, q, CGAL::POSITIVE, pit, qit);
-      const FT negative_distance = curve_segment_length(p, q, CGAL::NEGATIVE, pit, qit);
-      return (positive_distance < negative_distance)
-        ?    positive_distance
-        : (- negative_distance);
-    } else {
+    if(is_loop())
+    {
+      FT positive_distance, negative_distance;
+      if(pit <= qit)
+      {
+        positive_distance = curve_segment_length(p, q, CGAL::POSITIVE, pit, qit);
+        negative_distance = length() - positive_distance;
+      }
+      else
+      {
+        negative_distance = curve_segment_length(q, p, CGAL::POSITIVE, qit, pit);
+        positive_distance = length() - negative_distance;
+      }
+      return (positive_distance < negative_distance) ? positive_distance : (-negative_distance);
+    }
+    else
+    {
       return (pit <= qit)
         ?     curve_segment_length(p, q, CGAL::POSITIVE, pit, qit)
         : ( - curve_segment_length(p, q, CGAL::NEGATIVE, pit, qit) );
@@ -448,6 +459,10 @@ private:
 
 public:
   Data points_;
+
+private:
+  mutable FT length_ = -1.;
+
 }; // end class Polyline
 
 
