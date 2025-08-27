@@ -5,7 +5,7 @@
 #include <CGAL/hexmeshing/Hexmeshing_plane_normal.h>
 #include <vector>
 
-namespace CGAL::Hexmeshing {
+namespace CGAL::internal::Hexmeshing {
   /**
    * @brief Data structure for managing mesh refinement operations
    * 

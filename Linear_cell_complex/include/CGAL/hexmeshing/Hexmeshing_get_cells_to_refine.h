@@ -5,7 +5,7 @@
 #include <CGAL/hexmeshing/LCC_items_for_hexmeshing.h>
 #include <iostream>
 
-namespace CGAL::Hexmeshing {
+namespace CGAL::internal::Hexmeshing {
   /**
    * @brief Explores a face in a plane to identify marked nodes and gather adjacent faces
    *

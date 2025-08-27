@@ -2,10 +2,11 @@
 #define HEXMESHING_LAPLACIAN_SMOOTHING_H
 
 #include <CGAL/hexmeshing/LCC_items_for_hexmeshing.h>
+#include <CGAL/hexmeshing/Hexmeshing_two_refinement_mark_utils.h>
 #include <CGAL/Eigen_matrix.h>
 #include <vector>
 
-namespace CGAL::Hexmeshing {
+namespace CGAL::internal::Hexmeshing {
   // laplacian smoothing on points which isn't on the surface of the grid and don't have mark
   void laplacian_smoothing_for_unmarked_cells(LCC& lcc, size_type surface_mark) {
     auto vertices = lcc.one_dart_per_cell<0>();

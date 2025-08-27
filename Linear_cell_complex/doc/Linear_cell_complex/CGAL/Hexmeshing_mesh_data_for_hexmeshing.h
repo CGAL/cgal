@@ -1,16 +1,17 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgHexmeshingLinearCellComplex
+\ingroup PkgLinearCellComplexClasses
 
-The class `MeshDataForHexmeshing` encapsulates required data for hexmeshing.
+The class `Mesh_data_for_hexmeshing` encapsulates required data for hexmeshing.
 
-\cgalModels{MeshDataForHexmeshing}
+\cgalModels{Mesh_data_for_hexmeshing}
 
 \sa `CGAL::Linear_cell_complex_for_combinatorial_map`
+\sa `CGAL::Hexmeshing_for_linear_cell_complex_sequential`
 
 */
-struct MeshDataForHexmeshing
+struct Mesh_data_for_hexmeshing
 {
 public:
   /// \name Creation
@@ -19,7 +20,11 @@ public:
   /*!
   default constructor
   */
-  MeshDataForHexmeshing();
+  Mesh_data_for_hexmeshing();
+  /*!
+  construct with the mesh poly_out
+  */
+  Mesh_data_for_hexmeshing(Polyhedron_3& poly_out);
 
   /// @}
 

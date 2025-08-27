@@ -2,8 +2,8 @@
 #include <CGAL/hexmeshing/Hexmeshing_laplacian_smoothing.h>
 #include <CGAL/hexmeshing/Hexmeshing_move_points_onto_mesh.h>
 #include <CGAL/hexmeshing/Hexmeshing_resolve_non_manifold_case.h>
-#include <CGAL/lcc_jacobian.h>
 
+#include "lcc_jacobian.h"
 #include "unit_test_framework.h"
 
 #include <vector>

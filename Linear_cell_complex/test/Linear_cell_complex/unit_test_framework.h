@@ -1,8 +1,6 @@
 #include <CGAL/Hexmeshing_for_linear_cell_complex_sequential.h>
 #include <iostream>
 
-using namespace CGAL::Hexmeshing;
-
 class TestFramework {
 private:
   int total_tests = 0;
@@ -58,6 +56,8 @@ public:
   }
 };
 
+
+using namespace CGAL::internal::Hexmeshing;
 
 bool is_approximately_equal_double(const double a, const double b, const double tolerance = 1e-10) {
   return std::abs(a - b) < tolerance;
@@ -115,7 +115,7 @@ LCC create_grid_mesh(int nx, int ny, int nz) {
   Grid grid(Point(0, 0, 0), {1., 1., 1.}, {nx, ny, nz});
   
   LCC lcc;
-  generate_grid(lcc, grid);
+  Grid::generate_grid(lcc, grid);
   
   return lcc;
 }

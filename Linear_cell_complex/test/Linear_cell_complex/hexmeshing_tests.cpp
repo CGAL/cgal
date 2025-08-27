@@ -2,10 +2,13 @@
 #include <CGAL/hexmeshing/Hexmeshing_outer_alias.h>
 #include <CGAL/hexmeshing/LCC_items_for_hexmeshing.h>
 #include <CGAL/hexmeshing/Hexmeshing_grid.h>
+#include <CGAL/hexmeshing/Hexmeshing_function_alias.h>
+#include <CGAL/hexmeshing/Hexmeshing_function_generator.h>
 
 #include <CGAL/Combinatorial_map_save_load.h>
 #include <CGAL/config.h>
 #include <CGAL/draw_polyhedron.h>
+#include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 #include <CGAL/Graphics_scene_options.h>
 #include <cstdlib>
 #include <filesystem>

@@ -7,7 +7,7 @@
 #include <CGAL/hexmeshing/Hexmeshing_laplacian_smoothing.h>
 #include <CGAL/hexmeshing/Hexmeshing_two_refinement_utils.h>
 
-namespace CGAL::Hexmeshing {
+namespace CGAL::internal::Hexmeshing {
   void post_processing(LCC& lcc, double length_of_4_template, bool trim, MarkingFunction cellIdentifier, DecideInsideFunction decideFunc) {
     size_type move_mark = lcc.get_new_mark();
     size_type inner_mark = lcc.get_new_mark();

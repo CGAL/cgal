@@ -4,7 +4,7 @@
 #include <array>
 
 
-namespace CGAL::Hexmeshing {
+namespace CGAL::internal::Hexmeshing {
   /**
    * @brief A generic 3D point class with basic arithmetic operations
    * @tparam T The numeric type used for coordinates (e.g., int, char)

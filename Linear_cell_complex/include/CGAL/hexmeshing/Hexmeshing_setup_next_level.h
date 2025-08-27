@@ -8,7 +8,7 @@
 #include <cassert>
 
 
-namespace CGAL::Hexmeshing {
+namespace CGAL::internal::Hexmeshing {
   /**
    * @brief Cleans up mesh attributes and reevaluates cell identification status after refinement
    * 

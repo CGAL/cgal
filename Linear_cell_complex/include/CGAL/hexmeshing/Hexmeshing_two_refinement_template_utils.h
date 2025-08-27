@@ -10,7 +10,7 @@
 #include <boost/range/join.hpp>
 
 
-namespace CGAL::Hexmeshing {
+namespace CGAL::internal::Hexmeshing {
   const size_t CONST_SIZE_T_MAX = std::numeric_limits<size_t>::max();
   
   /**

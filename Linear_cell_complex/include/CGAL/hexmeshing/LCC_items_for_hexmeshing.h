@@ -7,7 +7,7 @@
 #include <CGAL/hexmeshing/Hexmeshing_generic_point.h>
 #include <CGAL/hexmeshing/Hexmeshing_outer_alias.h>
 
-namespace CGAL::Hexmeshing {
+namespace CGAL::internal::Hexmeshing {
 /**
  * @brief Enumeration representing the type of volume in the hexahedral mesh
  * 

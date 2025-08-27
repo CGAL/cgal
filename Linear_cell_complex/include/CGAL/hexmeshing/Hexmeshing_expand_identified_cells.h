@@ -3,7 +3,7 @@
 
 #include <CGAL/hexmeshing/LCC_items_for_hexmeshing.h>
 
-namespace CGAL::Hexmeshing {
+namespace CGAL::internal::Hexmeshing {
   /**
    * @brief Expands the set of identified cells by propagating identification to neighboring cells
    * 

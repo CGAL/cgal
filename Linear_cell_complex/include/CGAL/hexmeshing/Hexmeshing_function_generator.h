@@ -10,7 +10,7 @@
 #include <functional>
 
 
-namespace CGAL::Hexmeshing {
+namespace CGAL::internal::Hexmeshing {
 
   auto is_volume_intersecting_poly(Tree& tree) {
     return [&](LCC& lcc, Dart_handle dart){
@@ -65,7 +65,7 @@ namespace CGAL::Hexmeshing {
         N_2 = lcc.attribute<3>(dart3)->info().gradient;
       }
       Vector N = N_1 + ((s - frac1)/(frac2 - frac1))*(N_2 - N_1);
-      face_attr.normal = (1. / sqrt(N*N)) * N;
+      face_attr.normal = (1. / std::sqrt(N*N)) * N;
 
       return true;
     };

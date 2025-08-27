@@ -10,7 +10,7 @@
 #include <cassert>
 
 
-namespace CGAL::Hexmeshing {
+namespace CGAL::internal::Hexmeshing {
   // all volume cells need to have attribute
   int __get_signal(LCC& lcc, Dart_handle vertex, size_type inner_mark) {
     std::array<Dart_handle, 8> volumes = volumes_around_node(lcc, vertex);

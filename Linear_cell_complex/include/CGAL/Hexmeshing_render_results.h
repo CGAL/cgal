@@ -53,17 +53,17 @@ namespace CGAL {
    * @param hdata The hex-meshing data which contains refined linear cell complex
    * @param title Title for the graphics window (default: "TwoRefinement Result")
    */
-  void render_two_refinement_result(const HexMeshingData& hdata, const char* title = "TwoRefinement Result"){
-    const Hexmeshing::LCC& lcc = hdata.lcc;
+  void render_two_refinement_result(const Hexmeshing_for_linear_cell_complex& hdata, const char* title = "TwoRefinement Result"){
+    const internal::Hexmeshing::LCC& lcc = hdata.lcc;
 
-    LCCSceneOptions<Hexmeshing::LCC> gso;
+    LCCSceneOptions<internal::Hexmeshing::LCC> gso;
 
-    gso.colored_volume = [&](const Hexmeshing::LCC& lcc, Hexmeshing::LCC::Dart_const_handle dart){ return true; };
-    gso.volume_color = [&](const Hexmeshing::LCC& lcc, Hexmeshing::LCC::Dart_const_handle dart){
+    gso.colored_volume = [&](const internal::Hexmeshing::LCC& lcc, internal::Hexmeshing::LCC::Dart_const_handle dart){ return true; };
+    gso.volume_color = [&](const internal::Hexmeshing::LCC& lcc, internal::Hexmeshing::LCC::Dart_const_handle dart){
       double f = lcc.attribute<3>(dart)->info().fraction;
       return viridis255(f);
     };
-    gso.draw_volume = [&](const Hexmeshing::LCC& lcc, Hexmeshing::LCC::Dart_const_handle dart){
+    gso.draw_volume = [&](const internal::Hexmeshing::LCC& lcc, internal::Hexmeshing::LCC::Dart_const_handle dart){
       return true;
     };
 
@@ -72,16 +72,16 @@ namespace CGAL {
     draw_graphics_scene(buffer);
   }
 
-  void render_two_refinement_result_with_mark(const HexMeshingData& hdata, Hexmeshing::size_type mark, const char* title = "TwoRefinement Result"){
-    const Hexmeshing::LCC& lcc = hdata.lcc;
+  void render_two_refinement_result_with_mark(const Hexmeshing_for_linear_cell_complex& hdata, internal::Hexmeshing::size_type mark, const char* title = "TwoRefinement Result"){
+    const internal::Hexmeshing::LCC& lcc = hdata.lcc;
     
-    LCCSceneOptions<Hexmeshing::LCC> gso;
+    LCCSceneOptions<internal::Hexmeshing::LCC> gso;
 
-    gso.colored_volume = [&](const Hexmeshing::LCC& lcc, Hexmeshing::LCC::Dart_const_handle dart){ return true; };
-    gso.volume_color = [&](const Hexmeshing::LCC& lcc, Hexmeshing::LCC::Dart_const_handle dart){
+    gso.colored_volume = [&](const internal::Hexmeshing::LCC& lcc, internal::Hexmeshing::LCC::Dart_const_handle dart){ return true; };
+    gso.volume_color = [&](const internal::Hexmeshing::LCC& lcc, internal::Hexmeshing::LCC::Dart_const_handle dart){
       return viridis255(lcc.attribute<3>(dart)->info().fraction);
     };
-    gso.draw_volume = [&](const Hexmeshing::LCC& lcc, Hexmeshing::LCC::Dart_const_handle dart){
+    gso.draw_volume = [&](const internal::Hexmeshing::LCC& lcc, internal::Hexmeshing::LCC::Dart_const_handle dart){
       return lcc.is_marked(dart, mark);
     };
 

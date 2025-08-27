@@ -5,7 +5,7 @@
 #include <CGAL/hexmeshing/Hexmeshing_grid.h>
 #include <boost/container/static_vector.hpp>
 
-namespace CGAL::Hexmeshing {
+namespace CGAL::internal::Hexmeshing {
   /**
    * @brief Internal function to find the adjacent face on a given plane
    * 

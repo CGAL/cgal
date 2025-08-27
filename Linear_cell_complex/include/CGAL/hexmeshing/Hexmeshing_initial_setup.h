@@ -3,7 +3,7 @@
 
 #include <CGAL/hexmeshing/LCC_items_for_hexmeshing.h>
 
-namespace CGAL::Hexmeshing {
+namespace CGAL::internal::Hexmeshing {
   /**
    * @brief Sets up the initial plane structure for the hexahedral mesh refinement algorithm
    * 

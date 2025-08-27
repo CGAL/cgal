@@ -12,7 +12,7 @@
 #include <cassert>
 
 
-namespace CGAL::Hexmeshing {
+namespace CGAL::internal::Hexmeshing {
   /**
    * @brief A structure representing a 3D grid for hexahedral mesh generation
    * 
