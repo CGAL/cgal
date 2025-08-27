@@ -73,7 +73,6 @@ namespace CGAL {
 ///  \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
-/// @pre `tmesh` is a triangulated surface mesh without borders
 ///
 template <class TriangleMesh, class NamedParameters = parameters::Default_named_parameters>
 typename CGAL::Medial_Skeleton<TriangleMesh>
