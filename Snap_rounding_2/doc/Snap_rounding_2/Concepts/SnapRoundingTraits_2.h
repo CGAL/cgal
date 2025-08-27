@@ -9,7 +9,7 @@ the free function \ref CGAL::snap_rounding_2() `CGAL::snap_rounding_2<Traits,Inp
 The list includes the nested types of the geometric primitives used in this class and
 some function object types for the required predicates on those primitives.
 
-\cgalRefines{ArrangementTraits_2}
+\cgalRefines{AosTraits_2}
 
 \cgalHasModelsBegin
 \cgalHasModels{CGAL::Snap_rounding_traits_2<Kernel>}

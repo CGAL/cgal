@@ -627,6 +627,7 @@ public:
     out << "SweepStatus:\n";
     typename SweepStatus::iterator sit3;
     for( sit3 = YS.begin(); *sit3 != &sh; ++sit3 ) {
+      if (*sit3==&sl) continue;
       int b = orientation(sit3, p_sweep);
       if(*sit3 == &sl) out << " 1";
       else if(*sit3 == &sh) out <<"-1";

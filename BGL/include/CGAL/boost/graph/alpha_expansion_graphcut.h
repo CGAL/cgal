@@ -238,7 +238,7 @@ public:
     // initialize vertex indices, it is necessary since we are using VertexList = listS
     Vertex_iterator v_begin, v_end;
     Traits::vertices_size_type index = 0;
-    for(boost::tie(v_begin, v_end) = vertices(graph); v_begin != v_end; ++v_begin) {
+    for(std::tie(v_begin, v_end) = vertices(graph); v_begin != v_end; ++v_begin) {
       boost::put(boost::vertex_index, graph, *v_begin, index++);
     }
   }
@@ -269,8 +269,8 @@ public:
     Edge_descriptor v1_v2, v2_v1;
     bool v1_v2_added, v2_v1_added;
 
-    boost::tie(v1_v2, v1_v2_added) = boost::add_edge(v1, v2, graph);
-    boost::tie(v2_v1, v2_v1_added) = boost::add_edge(v2, v1, graph);
+    std::tie(v1_v2, v1_v2_added) = boost::add_edge(v1, v2, graph);
+    std::tie(v2_v1, v2_v1_added) = boost::add_edge(v2, v1, graph);
 
     CGAL_assertion(v1_v2_added && v2_v1_added);
     //put edge capacities
@@ -360,7 +360,7 @@ public:
     // however from our edge_map, we know that each (2i, 2i + 1) is reverse pairs, how to facilitate that ?
     // will look it back
     Graph::edge_iterator ei, ee;
-    for(boost::tie(ei, ee) = boost::edges(graph); ei != ee; ++ei) {
+    for(std::tie(ei, ee) = boost::edges(graph); ei != ee; ++ei) {
       Graph::vertex_descriptor v1 = boost::source(*ei, graph);
       Graph::vertex_descriptor v2 = boost::target(*ei, graph);
       std::pair<Graph::edge_descriptor, bool> opp_edge = boost::edge(v2, v1, graph);
@@ -509,7 +509,8 @@ class Alpha_expansion_MaxFlow_impl;
      \cgalParamNEnd
    \cgalNamedParamsEnd
 
-   \note The `MaxFlow` implementation is provided by the \ref PkgSurfaceMeshSegmentationRef
+
+   \note The `MaxFlow` implementation is provided by the \ref PkgSurfaceMeshSegmentation package
    under GPL license. The header `<CGAL/boost/graph/Alpha_expansion_MaxFlow_tag.h>`
    must be included if users want to use this implementation.
 */

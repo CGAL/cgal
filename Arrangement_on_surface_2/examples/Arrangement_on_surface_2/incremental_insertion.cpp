@@ -1,7 +1,6 @@
 //! \file examples/Arrangement_on_surface_2/incremental_insertion.cpp
 // Using the global incremental insertion functions.
 
-#include <CGAL/basic.h>
 #include <CGAL/Arr_naive_point_location.h>
 
 #include "arr_exact_construction_segments.h"

@@ -82,6 +82,7 @@ GraphicsViewPolylineInput_non_templated_base::mousePressEvent(QGraphicsSceneMous
     qpp.addPolygon(polygon);
     path_item = new QGraphicsPathItem(qpp);
     path_item->setPen(QPen(::Qt::red, 0, ::Qt::SolidLine, ::Qt::RoundCap, ::Qt::RoundJoin));
+    path_item->setZValue(z);
     scene_->addItem(path_item);
     return true;
   }
@@ -98,11 +99,13 @@ GraphicsViewPolylineInput_non_templated_base::rubberbands(const QPointF& p)
   }
   if(!b && closed_ ){
     b = new QGraphicsLineItem();
+    b->setZValue(z);
     b->setPen(QPen(::Qt::red, 0, ::Qt::SolidLine, ::Qt::RoundCap, ::Qt::RoundJoin));
     scene_->addItem(b);
   }
   if( !e){
     e = new QGraphicsLineItem();
+    e->setZValue(z);
     e->setPen(QPen(::Qt::red, 0, ::Qt::SolidLine, ::Qt::RoundCap, ::Qt::RoundJoin));
     scene_->addItem(e);
   }
@@ -165,6 +168,7 @@ GraphicsViewPolylineInput_non_templated_base::keyPressEvent ( QKeyEvent * event 
   QPainterPath qpp;
   qpp.addPolygon(polygon);
   path_item = new QGraphicsPathItem(qpp);
+  path_item->setZValue(z);
   path_item->setPen(QPen(::Qt::red, 0, ::Qt::SolidLine, ::Qt::RoundCap, ::Qt::RoundJoin));
   scene_->addItem(path_item);
   rubberbands(sp);

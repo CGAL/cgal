@@ -306,7 +306,7 @@ edge(typename boost::graph_traits<Dual<P> >::vertex_descriptor u,
      const Dual<P>& dual)
 {
   typename boost::graph_traits<Dual<P> >::out_edge_iterator e, e_end;
-  for(boost::tie(e, e_end) = out_edges(u, dual); e != e_end; ++e) {
+  for(std::tie(e, e_end) = out_edges(u, dual); e != e_end; ++e) {
     if(target(*e, dual) == v)
       return std::make_pair(*e, true);
   }
@@ -391,7 +391,7 @@ halfedge(typename boost::graph_traits<Dual<P> >::vertex_descriptor u,
          const Dual<P>& dual)
 {
   typename boost::graph_traits<Dual<P> >::out_edge_iterator e, e_end;
-  for(boost::tie(e, e_end) = out_edges(u, dual); e != e_end; ++e) {
+  for(std::tie(e, e_end) = out_edges(u, dual); e != e_end; ++e) {
     if(target(*e, dual) == v)
       return std::make_pair(halfedge(*e, dual), true);
   }

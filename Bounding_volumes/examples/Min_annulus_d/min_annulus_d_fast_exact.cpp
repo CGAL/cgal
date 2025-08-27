@@ -11,6 +11,7 @@ typedef CGAL::Exact_integer ET;
 
 #include <iostream>
 #include <cassert>
+#include <array>
 
 // use an inexact kernel...
 typedef CGAL::Homogeneous<double>                          K;
@@ -24,10 +25,10 @@ typedef CGAL::Min_annulus_d<Traits>                        Min_annulus;
 int main()
 {
   // points on the squares [-1,1]^2 and [-2,2]^2
-  Point P[8] = { Point(-1,-1), Point(-1,1), Point(1,-1), Point(1,1),
-                 Point(-2,-2), Point(-2,2), Point(2,-2), Point(2,2)};
+  std::array<Point, 8> P = { Point(-1,-1), Point(-1,1), Point(1,-1), Point(1,1),
+                             Point(-2,-2), Point(-2,2), Point(2,-2), Point(2,2)};
 
-  Min_annulus ma(P, P+8);
+  Min_annulus ma(P.begin(), P.end());
   assert (ma.is_valid());
 
   // get center of annulus

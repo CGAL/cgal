@@ -19,6 +19,7 @@
 #define CGAL_TAGS_H
 
 #include <CGAL/IO/io_tags.h>
+#include <type_traits>
 
 namespace CGAL {
 
@@ -95,5 +96,27 @@ struct Remove_needs_FT<Needs_FT<T> >
 };
 
 } // namespace CGAL
+
+#if __cpp_lib_execution >= 201603L && defined(CGAL_LINKED_WITH_TBB)
+#  include <execution>
+
+namespace CGAL {
+  constexpr auto std_execution_policy_aux(Sequential_tag)
+  {
+    return std::execution::seq;
+  }
+  constexpr auto std_execution_policy_aux(Parallel_tag)
+  {
+    return std::execution::par;
+  }
+
+  template <typename Tag>
+  inline constexpr auto std_execution_policy = std_execution_policy_aux(Tag{});
+} // namespace CGAL
+
+#  define CGAL_MAYBE_EXEC_POLICY(Tag) CGAL::std_execution_policy<Tag>, // with the comma
+#else // not CGAL_LINKED_WITH_TBB
+#  define CGAL_MAYBE_EXEC_POLICY(Tag)
+#endif // not CGAL_LINKED_WITH_TBB
 
 #endif // CGAL_TAGS_H

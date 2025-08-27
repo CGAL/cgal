@@ -1,4 +1,4 @@
-/// \defgroup PkgBooleanSetOperations2Ref 2D Regularized Boolean Set-Operations Reference
+/// \defgroup PkgBooleanSetOperations2Ref Reference Manual
 /// \defgroup PkgBooleanSetOperations2Concepts Concepts
 /// \ingroup PkgBooleanSetOperations2Ref
 
@@ -14,7 +14,6 @@ namespace ArrDirectionalTraits {}
 
 /*!
 \addtogroup PkgBooleanSetOperations2Ref
-\todo check generated documentation
 \cgalPkgDescriptionBegin{2D Regularized Boolean Set-Operations,PkgBooleanSetOperations2}
 \cgalPkgPicture{Boolean_set_operations_2.png}
 \cgalPkgSummaryBegin
@@ -42,7 +41,7 @@ containment predicates.
 - `GpsTraitsGeneralPolygon_2`
 - `GpsTraitsGeneralPolygonWithHoles_2`
 - `GeneralPolygon_2`
-- `ArrangementDirectionalXMonotoneTraits_2`
+- `AosDirectionalXMonotoneTraits_2`
 - `GeneralPolygonSetTraits_2`
 - `GeneralPolygonSetDcel`
 - `GeneralPolygonSetDcelFace`

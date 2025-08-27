@@ -29,7 +29,7 @@ int main(int argc, char** argv)
 
   // Definition of the region of interest (use the whole mesh)
   vertex_iterator vb,ve;
-  boost::tie(vb, ve) = vertices(mesh);
+  std::tie(vb, ve) = vertices(mesh);
   deform_mesh.insert_roi_vertices(vb, ve);
 
   // Select two control vertices ...

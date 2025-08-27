@@ -754,7 +754,7 @@ is_collapse_topologically_valid(const Profile& profile)
   // The following loop checks the link condition for v0_v1.
   // Specifically, that for every vertex 'k' adjacent to both 'p and 'q', 'pkq' is a face of the mesh.
   //
-  for(boost::tie(eb1,ee1) = halfedges_around_source(profile.v0(), m_tm); res && eb1 != ee1; ++eb1)
+  for(std::tie(eb1,ee1) = halfedges_around_source(profile.v0(), m_tm); res && eb1 != ee1; ++eb1)
   {
     halfedge_descriptor v0_k = *eb1;
 
@@ -762,7 +762,7 @@ is_collapse_topologically_valid(const Profile& profile)
     {
       vertex_descriptor k = target(v0_k, m_tm);
 
-      for(boost::tie(eb2,ee2) = halfedges_around_source(k, m_tm); res && eb2 != ee2; ++eb2)
+      for(std::tie(eb2,ee2) = halfedges_around_source(k, m_tm); res && eb2 != ee2; ++eb2)
       {
         halfedge_descriptor k_v1 = *eb2;
 

@@ -39,7 +39,7 @@ int main(int argc, char** argv)
   // by copying the faces in a vector to get a direct access to faces
   std::size_t nb_faces=num_faces(tmesh);
   face_iterator fit, fit_end;
-  boost::tie(fit, fit_end) = faces(tmesh);
+  std::tie(fit, fit_end) = faces(tmesh);
   std::vector<face_descriptor> face_vector(fit, fit_end);
   // and creating a vector of Face_location objects
   const std::size_t nb_source_points = 30;
@@ -59,7 +59,7 @@ int main(int argc, char** argv)
   // into a file readable using the CGAL Tmesh demo
   std::ofstream output("shortest_paths_multiple_sources.polylines.txt");
   vertex_iterator vit, vit_end;
-  for ( boost::tie(vit, vit_end) = vertices(tmesh);
+  for ( std::tie(vit, vit_end) = vertices(tmesh);
         vit != vit_end; ++vit)
   {
     std::vector<Traits::Point_3> points;

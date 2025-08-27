@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.12...3.29)
+cmake_minimum_required(VERSION 3.12...3.31)
 project(Spatial_searching_)
 
 find_package(CGAL REQUIRED COMPONENTS Core)
@@ -46,5 +46,5 @@ foreach(
   sizeof
   # deque # see above
   )
-  target_link_libraries(${target} PUBLIC CGAL::Eigen3_support)
+  target_link_libraries(${target} PRIVATE CGAL::Eigen3_support)
 endforeach()

@@ -270,13 +270,11 @@ private Q_SLOTS:
   /*! @name Mouse event handlers */
   //@{
 protected:
-  virtual void mousePressEvent(QMouseEvent *const event, Camera *const camera);
-  virtual void mouseMoveEvent(QMouseEvent *const event, Camera *const camera);
-  virtual void mouseReleaseEvent(QMouseEvent *const event,
-                                 Camera *const camera);
-  virtual void mouseDoubleClickEvent(QMouseEvent *const event,
-                                     Camera *const camera);
-  virtual void wheelEvent(QWheelEvent *const event, Camera *const camera);
+  void mousePressEvent (QMouseEvent *const event, Camera *const camera) override;
+  void mouseMoveEvent (QMouseEvent *const event, Camera *const camera) override;
+  void mouseReleaseEvent (QMouseEvent *const event, Camera *const camera) override;
+  void mouseDoubleClickEvent(QMouseEvent *const event, Camera *const camera) override;
+  void wheelEvent(QWheelEvent *const event, Camera *const camera) override;
   //@}
 
 public:
@@ -299,7 +297,7 @@ public:
   /*! @name MouseGrabber implementation */
   //@{
 public:
-  virtual void checkIfGrabsMouse(int x, int y, const Camera *const camera);
+  void checkIfGrabsMouse(int x, int y, const Camera *const camera)  override;
   //@}
 
 #ifndef DOXYGEN

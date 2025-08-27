@@ -836,7 +836,7 @@ namespace CGAL {
 
     /** Set the status of the management of the attributes of the Map
      */
-    void set_update_attributes(bool newval)
+    void set_automatic_attributes_management(bool newval)
     {
       if (this->automatic_attributes_management == false && newval == true)
       {
@@ -847,6 +847,10 @@ namespace CGAL {
 
       this->automatic_attributes_management = newval;
     }
+
+    void set_automatic_attributes_management_without_correction(bool newval)
+    { this->automatic_attributes_management = newval; }
+
   };
 
 } // namespace CGAL

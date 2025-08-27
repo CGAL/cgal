@@ -117,6 +117,16 @@ squared_distance(const typename K::Ray_3& ray1,
   }
 }
 
+template <class K>
+typename K::Comparison_result
+compare_squared_distance(const typename K::Ray_3& ray1,
+                         const typename K::Ray_3& ray2,
+                         const K& k,
+                         const typename K::FT& d2)
+{
+  return ::CGAL::compare(squared_distance(ray1, ray2, k), d2);
+}
+
 } // namespace internal
 
 template <class K>
@@ -127,15 +137,6 @@ ray_ray_squared_distance_parallel(const Vector_3<K>& ray1dir,
                                   const Vector_3<K>& s1_min_s2)
 {
   return internal::ray_ray_squared_distance_parallel(ray1dir, ray2dir, s1_min_s2, K());
-}
-
-template <class K>
-inline
-typename K::FT
-squared_distance(const Ray_3<K>& ray1,
-                 const Ray_3<K>& ray2)
-{
-  return K().compute_squared_distance_3_object()(ray1, ray2);
 }
 
 } // namespace CGAL

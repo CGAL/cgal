@@ -1,4 +1,4 @@
-/// \defgroup PkgOptimalBoundingBoxRef Optimal Bounding Box Reference
+/// \defgroup PkgOptimalBoundingBoxRef Reference Manual
 
 /// \defgroup PkgOptimalBoundingBoxConcepts Concepts
 /// \ingroup PkgOptimalBoundingBoxRef

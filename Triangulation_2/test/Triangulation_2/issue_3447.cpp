@@ -1,7 +1,8 @@
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Constrained_triangulation_plus_2.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+
 typedef CGAL::Triangulation_vertex_base_2<K> Vb;
 typedef CGAL::Constrained_triangulation_face_base_2<K> Fb;
 typedef CGAL::Triangulation_data_structure_2<Vb, Fb>           TDS;

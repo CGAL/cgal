@@ -36,6 +36,9 @@ namespace internal {
     // when T does not have a Has_timestamp tag
   {};
 
+  template <typename T>
+  constexpr bool has_timestamp_v = Has_timestamp<T>::value;
+
 } // end namespace internal
 } // end namespace CGAL
 

@@ -1465,7 +1465,7 @@ template <class Gt, class Tds >
 typename Triangulation_2<Gt,Tds>::Vertex_handle
 Triangulation_2<Gt,Tds>::
 insert(const Point& p, Locate_type lt, Face_handle loc, int li)
-  // insert a point p, whose localisation is known (lt, f, i)
+  // insert a point p, whose localization is known (lt, f, i)
 {
   if(number_of_vertices() == 0) {
     return(insert_first(p));

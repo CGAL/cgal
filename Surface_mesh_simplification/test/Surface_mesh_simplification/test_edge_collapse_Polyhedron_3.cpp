@@ -136,7 +136,7 @@ public:
     Profile::Triangle_vector triangles;
 
     out_edge_iterator eb, ee;
-    for(boost::tie(eb,ee) = halfedges_around_source(opposite(halfedge(mV,tm()),tm()),tm()); eb != ee; ++ eb)
+    for(std::tie(eb,ee) = halfedges_around_source(opposite(halfedge(mV,tm()),tm()),tm()); eb != ee; ++ eb)
     {
       halfedge_descriptor out_edge1 = *eb;
       halfedge_descriptor out_edge2 = out_edge1->opposite()->next();

@@ -25,7 +25,7 @@ protected:
   typedef std::map<Vertex_const_handle, int> Vertex2int_map;
   Vertex2int_map ring_index_map;
 
-  //vertex indices are initialised to -1
+  //vertex indices are initialized to -1
   void reset_ring_indices(std::vector <Vertex_const_handle> &vces);
 
   //i >= 1; from a start vertex on the current i-1 ring, push non-visited neighbors
@@ -64,7 +64,7 @@ T_PolyhedralSurf_rings(const TPoly& P)
 {
   //init the ring_index_map
   Vertex_const_iterator itb, ite;
-  boost::tie(itb,ite) = vertices(P);
+  std::tie(itb,ite) = vertices(P);
   for(;itb!=ite;itb++) ring_index_map[*itb] = -1;
 }
 

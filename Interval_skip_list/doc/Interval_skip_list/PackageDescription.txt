@@ -1,4 +1,4 @@
-/// \defgroup PkgIntervalSkipListRef Interval Skip List Reference
+/// \defgroup PkgIntervalSkipListRef Reference Manual
 /// \defgroup PkgIntervalSkipListConcepts Concepts
 /// \ingroup PkgIntervalSkipListRef
 /*!

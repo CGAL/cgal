@@ -23,26 +23,25 @@ namespace CGAL {
 template <typename Arrangement>
 class Aos_observer {
 public:
-
   /// \name Types
   /// @{
 
-  //! the type of the associated arrangement.
+  /// the type of the associated arrangement.
   typedef unspecified_type Arrangement_2;
 
-  //! the point type.
+  /// the point type.
   typedef typename Arrangement_2::Point_2 Point_2;
 
-  //! the \f$x\f$-monotone curve type.
+  /// the \f$x\f$-monotone curve type.
   typedef typename Arrangement_2::X_monotone_curve_2 X_monotone_curve_2;
 
-  //! the type of a handle to an arrangement vertex.
+  /// the type of a handle to an arrangement vertex.
   typedef typename Arrangement_2::Vertex_handle Vertex_handle;
 
-  //! the type of a handle to an arrangement halfedge.
+  /// the type of a handle to an arrangement halfedge.
   typedef typename Arrangement_2::Halfedge_handle Halfedge_handle;
 
-  //! the type of a handle to an arrangement face.
+  /// the type of a handle to an arrangement face.
   typedef typename Arrangement_2::Face_handle Face_handle;
 
   /*! represents a connected component of the boundary (CCB), either an outer
@@ -77,11 +76,11 @@ public:
   /// \name Notifications on Global Arrangement Operations
   /// @{
 
-  /*! issued just before the attached arrangement is assigned with the contents of another
-   * arrangement.
-   * \param arr The other arrangement. Notice that the arrangement type is the type used to
-   *            instantiate the observer, which is conveniently defined as
-   *            `Arrangement_2::Base_aos`.
+  /*! issued just before the attached arrangement is assigned with the contents
+   * of another arrangement.
+   * \param arr The other arrangement. Notice that the arrangement type is the
+   *            type used to instantiate the observer, which is conveniently
+   *            defined as `Arrangement_2::Base_aos`.
    */
   virtual void before_assign(const typename Arrangement_2::Base_aos& arr);
 
@@ -419,6 +418,6 @@ public:
   virtual void after_remove_inner_ccb(Face_handle f);
 
   /// @}
-
 }; /* end Aos_observer */
+
 } /* end namespace CGAL */

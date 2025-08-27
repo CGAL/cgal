@@ -162,7 +162,7 @@ public:
 public:
 // The face_iterator_base_begin  gives the possibility to iterate over all
 // faces in the container  independently of the dimension.
-  // public for the need of file_ouput() of Constrained triangulation
+  // public for the need of file_output() of Constrained triangulation
   // should be made private later
 
   Face_iterator face_iterator_base_begin() const    {

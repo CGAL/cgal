@@ -116,7 +116,7 @@ int main(int argc, char* argv[])
 
   std::cout << argv[2]
             << " was generated successfully"
-            << ", dont forget to add it to test_construction.cmd"
+            << ", don't forget to add it to test_construction.cmd"
             << std::endl;
   return 0;
 }

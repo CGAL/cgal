@@ -27,6 +27,8 @@ namespace CGAL {
 template <class R_>
 class SphereC3
 {
+  typedef typename R_::Boolean              Boolean;
+  typedef typename R_::Bounded_side         Bounded_side;
   typedef typename R_::FT                   FT;
 // https://doc.cgal.org/latest/Manual/devman_code_format.html#secprogramming_conventions
   typedef typename R_::Point_3              Point_3_;
@@ -124,17 +126,17 @@ public:
   //! precond: ! x.is_degenerate() (when available)
   // Returns R::ON_POSITIVE_SIDE, R::ON_ORIENTED_BOUNDARY or
   // R::ON_NEGATIVE_SIDE
-  typename R::Boolean   has_on(const Circle_3 &p) const;
-  typename R::Boolean   has_on(const Point_3_ &p) const;
-  typename R::Boolean   has_on_boundary(const Point_3_ &p) const;
-  typename R::Boolean   has_on_positive_side(const Point_3_ &p) const;
-  typename R::Boolean   has_on_negative_side(const Point_3_ &p) const;
+  Boolean has_on(const Circle_3 &p) const;
+  Boolean has_on(const Point_3_ &p) const;
+  Boolean has_on_boundary(const Point_3_ &p) const;
+  Boolean has_on_positive_side(const Point_3_ &p) const;
+  Boolean has_on_negative_side(const Point_3_ &p) const;
 
-  typename R_::Bounded_side bounded_side(const Point_3_ &p) const;
+  Bounded_side bounded_side(const Point_3_ &p) const;
   //! precond: ! x.is_degenerate() (when available)
   // Returns R::ON_BOUNDED_SIDE, R::ON_BOUNDARY or R::ON_UNBOUNDED_SIDE
-  typename R::Boolean   has_on_bounded_side(const Point_3_ &p) const;
-  typename R::Boolean   has_on_unbounded_side(const Point_3_ &p) const;
+  Boolean has_on_bounded_side(const Point_3_ &p) const;
+  Boolean has_on_unbounded_side(const Point_3_ &p) const;
 };
 
 template < class R >
@@ -163,6 +165,7 @@ typename R::Oriented_side
 SphereC3<R>::
 oriented_side(const typename SphereC3<R>::Point_3_ &p) const
 {
+  typedef typename R::Oriented_side Oriented_side;
   return enum_cast<Oriented_side>(bounded_side(p)) * orientation();
 }
 
@@ -172,6 +175,7 @@ typename R::Bounded_side
 SphereC3<R>::
 bounded_side(const typename SphereC3<R>::Point_3_ &p) const
 {
+  typedef typename R::Bounded_side Bounded_side;
   return enum_cast<Bounded_side>(compare(squared_radius(),
                                          squared_distance(center(), p)));
 }

@@ -47,7 +47,7 @@ also avoid CMake to link with the native threads support library on your system.
 
 Much of the \cgal code contains assert statements for preconditions, and postconditions of functions
 as well as in the code.  These assertions can be switched on and off per package
-and the user can change the error behaviour. For details see Section \ref secchecks
+and the user can change the error behavior. For details see Section \ref secchecks
 of Chapter \ref Chapter_STL_Extensions_for_CGAL.
 
 \section Preliminaries_flags Compile-time Flags to Control Inlining

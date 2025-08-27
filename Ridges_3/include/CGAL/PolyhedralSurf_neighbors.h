@@ -158,7 +158,7 @@ T_PolyhedralSurf_neighbors(const TriangleMesh& P)
 {
   //init the is_visited_map
   Vertex_const_iterator itb, ite;
-  boost::tie(itb,ite) = vertices(P);
+  std::tie(itb,ite) = vertices(P);
   for(;itb!=ite;itb++) is_visited_map[*itb] = false;
 }
 

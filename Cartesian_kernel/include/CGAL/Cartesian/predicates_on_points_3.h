@@ -24,7 +24,7 @@ namespace CGAL {
 
 template < class K >
 inline
-bool
+typename K::Boolean
 equal_xy(const PointC3<K> &p, const PointC3<K> &q)
 {
   return K().equal_xy_3_object()(p, q);
@@ -32,7 +32,7 @@ equal_xy(const PointC3<K> &p, const PointC3<K> &q)
 
 template < class K >
 inline
-bool
+typename K::Boolean
 equal_xyz(const PointC3<K> &p, const PointC3<K> &q)
 {
   return p.x() == q.x() && p.y() == q.y() && p.z() == q.z();
@@ -40,7 +40,7 @@ equal_xyz(const PointC3<K> &p, const PointC3<K> &q)
 
 template < class K >
 inline
-Comparison_result
+typename K::Comparison_result
 compare_xy(const PointC3<K> &p, const PointC3<K> &q)
 {
   return K().compare_xy_3_object()(p, q);
@@ -48,7 +48,7 @@ compare_xy(const PointC3<K> &p, const PointC3<K> &q)
 
 template < class K >
 inline
-Comparison_result
+typename K::Comparison_result
 compare_lexicographically_xy(const PointC3<K> &p, const PointC3<K> &q)
 {
   return K().compare_xy_3_object()(p, q);
@@ -56,7 +56,7 @@ compare_lexicographically_xy(const PointC3<K> &p, const PointC3<K> &q)
 
 template < class K >
 inline
-bool
+typename K::Boolean
 lexicographically_xy_smaller_or_equal(const PointC3<K> &p,
                                       const PointC3<K> &q)
 {
@@ -65,7 +65,7 @@ lexicographically_xy_smaller_or_equal(const PointC3<K> &p,
 
 template < class K >
 inline
-bool
+typename K::Boolean
 lexicographically_xy_smaller(const PointC3<K> &p,
                              const PointC3<K> &q)
 {
@@ -74,7 +74,7 @@ lexicographically_xy_smaller(const PointC3<K> &p,
 
 template < class K >
 inline
-bool
+typename K::Boolean
 strict_dominance(const PointC3<K> &p,
                  const PointC3<K> &q)
 {
@@ -84,7 +84,7 @@ strict_dominance(const PointC3<K> &p,
 
 template < class K >
 inline
-bool
+typename K::Boolean
 dominance(const PointC3<K> &p,
           const PointC3<K> &q)
 {

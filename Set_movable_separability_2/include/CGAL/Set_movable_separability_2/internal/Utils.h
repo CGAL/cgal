@@ -41,7 +41,7 @@ get_segment_outer_circle(const typename Kernel::Segment_2 seg,
 }
 
 template <typename Kernel>
-bool is_any_edge_colinear(const CGAL::Polygon_2<Kernel>& pgn, Kernel& kernel)
+bool is_any_edge_collinear(const CGAL::Polygon_2<Kernel>& pgn, Kernel& kernel)
 {
   typedef typename Kernel::Point_2                      Point_2;
   typedef typename CGAL::Polygon_2<Kernel>              Polygon_2;

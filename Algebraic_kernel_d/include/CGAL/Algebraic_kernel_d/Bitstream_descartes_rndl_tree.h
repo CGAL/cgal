@@ -865,7 +865,7 @@ public:
     by trying randomly and checking.  This randomization means
     the same polynomial and same initial interval may give rise
     to different intervals each time this class is used.
-    As indicated in the paper, we favour subdivision ratios
+    As indicated in the paper, we favor subdivision ratios
     with a small denominator. Hence we first try denominator
     2 (subdivision at midpoint), then denominator 16, and
     only then the "proper" denominator prescribed by theory.

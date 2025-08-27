@@ -5,8 +5,6 @@
 #  GMP_LIBRARIES_DIR     - directory where the GMP libraries are located
 #  GMP_LIBRARIES         - Link these to use GMP
 
-# TODO: support MacOSX
-
 include(FindPackageHandleStandardArgs)
 include(${CMAKE_CURRENT_LIST_DIR}/CGAL_GeneratorSpecificSettings.cmake)
 

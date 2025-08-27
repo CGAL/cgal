@@ -252,7 +252,7 @@ Before applying the sew operation, the eight vertices of the first cube are colo
 \subsection Linear_cell_complexAutomaticAttributesManagement Automatic Attribute Management
 \anchor ssecAttributesManagement
 
-The following example illustrates the use of the automatic attributes management for a linear cell complex. An off file is loaded into a 2D linear cell complex embedded in 3D. Then, a certain percentage of edges is removed from the linear cell complex. The same method is applied twice: the first time by using the automatic attributes management (which is the default behaviour) and the second time by calling first  \link GenericMap::set_automatic_attributes_management `set_automatic_attributes_management(false)`\endlink to disable the automatic updating of attributes.
+The following example illustrates the use of the automatic attributes management for a linear cell complex. An off file is loaded into a 2D linear cell complex embedded in 3D. Then, a certain percentage of edges is removed from the linear cell complex. The same method is applied twice: the first time by using the automatic attributes management (which is the default behavior) and the second time by calling first  \link GenericMap::set_automatic_attributes_management `set_automatic_attributes_management(false)`\endlink to disable the automatic updating of attributes.
 
 We can observe that the second run is faster than the first one. Indeed, updating attribute for each edge removal give a bigger complexity. Moreover, the gain increases when the percentage of removed edges increases.
 

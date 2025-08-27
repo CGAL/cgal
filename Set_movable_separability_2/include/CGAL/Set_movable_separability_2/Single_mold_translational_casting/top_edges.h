@@ -75,7 +75,7 @@ OutputIterator top_edges(const CGAL::Polygon_2<CastingTraits_2>& polygon,
   typedef CastingTraits_2                               Traits;
 
   CGAL_precondition(polygon.is_simple());
-  CGAL_precondition(!internal::is_any_edge_colinear(polygon, traits));
+  CGAL_precondition(!internal::is_any_edge_collinear(polygon, traits));
 
   auto e_it = polygon.edges_begin();
   auto segment_outer_circle =

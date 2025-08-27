@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12...3.29)
+cmake_minimum_required(VERSION 3.12...3.31)
 project(Three_examples)
 
 if(NOT POLICY CMP0070 AND POLICY CMP0053)
@@ -28,5 +28,5 @@ if(RUNNING_CGAL_AUTO_TEST OR CGAL_TEST_SUITE)
   cgal_lab_plugin(basic_item_plugin Basic_item_plugin)
 
   #  links the library containing the scene_plane_item with the plugin
-  target_link_libraries(basic_item_plugin PUBLIC scene_basic_objects)
+  target_link_libraries(basic_item_plugin PRIVATE scene_basic_objects)
 endif()

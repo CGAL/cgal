@@ -15,7 +15,7 @@ namespace CGAL {
 <img src="header.png" style="max-width:50%; width:50%;"/>
 </center>
 
-This package enables the computation of Delaunay triangulations of
+This package enables the computation of hyperbolic Delaunay triangulations of
 point sets in the Poincar&eacute; disk model of the hyperbolic plane.
 
 \section HT2_Poincare_model The Poincar&eacute; Disk Model of the Hyperbolic Plane

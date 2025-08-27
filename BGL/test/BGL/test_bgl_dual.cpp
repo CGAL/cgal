@@ -42,13 +42,13 @@ int main()
 
   {
     out_edge_iterator b,e;
-    boost::tie(b,e) = out_edges(vd,dual);
+    std::tie(b,e) = out_edges(vd,dual);
     std::cerr << vd << " " << source(*b,dual) << std::endl;
   }
 
   {
     in_edge_iterator b,e;
-    boost::tie(b,e) = in_edges(vd,dual);
+    std::tie(b,e) = in_edges(vd,dual);
     std::cerr << vd << " " << source(*b,dual) << std::endl;
   }
   std::cerr << "done"<< std::endl;

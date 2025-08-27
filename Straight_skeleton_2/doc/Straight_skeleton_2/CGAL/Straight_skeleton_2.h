@@ -96,10 +96,10 @@ of the straight skeleton HDS, such border halfedges are oriented such that their
 outwards the polygon. Therefore, the opposite halfedge of any border halfedge is oriented such that
 its left side faces inward the polygon.
 
-This \cgal package requires the input polygon (with holes) to be weakly simple and oriented counter-clockwise.
+This \cgal package requires the input polygon (with holes) to be weakly simple and oriented counterclockwise.
 
 The skeleton halfedges are oriented such that their <I>left</I> side faces inward the region they bound.
-That is, the vertices (both contour and skeleton) of a face are circulated in counter-clockwise order.
+That is, the vertices (both contour and skeleton) of a face are circulated in counterclockwise order.
 There is one and only one contour halfedge incident upon any face.
 
 The contours of the input polygon are traced by the border halfedges of the HDS (those facing outward),
@@ -115,7 +115,7 @@ Thus, the 2 opposite halfedges of a skeleton edge link the edge to its 2 definin
 Starting from any border contour halfedge, circulating the structure walks through border counter
 halfedges and traces the vertices of the polygon's contours (in opposite order).
 
-Starting from any non-border but contour halfedge, circulating the structure walks counter-clockwise
+Starting from any non-border but contour halfedge, circulating the structure walks counterclockwise
 around the face corresponding to that contour halfedge. The vertices around a face always describe
 a non-convex weakly simple polygon.
 
@@ -151,7 +151,7 @@ provided by the vertex class. The degree of a vertex is not cached and cannot be
 from the vertex, but you can calculate this number by manually counting the number of incident halfedges
 around the vertex.
 
-Each vertex stores a 2D point and a time, which is the euclidean distance from the vertex's point
+Each vertex stores a 2D point and a time, which is the Euclidean distance from the vertex's point
 to the lines supporting each of the defining contour edges of the vertex (the distance is
 the same to each line). Unless the polygon is convex, this distance is not equal to the edges,
 as in the case of a Medial Axis, therefore, the time of a skeleton vertex does not correspond

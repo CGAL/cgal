@@ -5,7 +5,7 @@ namespace CGAL {
 \ingroup PkgTriangulation3VertexCellClasses
 
 The class `Triangulation_simplex_3` stores a simplex of any dimension
-defined by the `Triangulation_3` class. It also defines the
+defined by the `TriangulationDataStructure_3` class. It also defines the
 operator less such that simplices can be stored in a `map` or a
 `set` of simplices. The simplex is invalidated by any change in
 the triangulation.
@@ -18,7 +18,7 @@ from.
 \sa `CGAL::Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>`
 
 */
-template< typename Triangulation_3 >
+template< typename TriangulationDataStructure_3 >
 class Triangulation_simplex_3 {
 public:
 
@@ -29,67 +29,67 @@ public:
 
 The simplex class itself.
 */
-typedef Triangulation_simplex_3<Triangulation_3> Simplex;
+typedef Triangulation_simplex_3<TriangulationDataStructure_3> Simplex;
 
 /*!
 
 */
-typedef Triangulation_3::Vertex_handle Vertex_handle;
+typedef TriangulationDataStructure_3::Vertex_handle Vertex_handle;
 
 /*!
 
 */
-typedef Triangulation_3::Edge Edge;
+typedef TriangulationDataStructure_3::Edge Edge;
 
 /*!
 
 */
-typedef Triangulation_3::Facet Facet;
+typedef TriangulationDataStructure_3::Facet Facet;
 
 /*!
 
 */
-typedef Triangulation_3::Cell_handle Cell_handle;
+typedef TriangulationDataStructure_3::Cell_handle Cell_handle;
 
 /*!
 
 */
-typedef Triangulation_3::Cell_circulator Cell_circulator;
+typedef TriangulationDataStructure_3::Cell_circulator Cell_circulator;
 
 /*!
 
 */
-typedef Triangulation_3::Facet_circulator Facet_circulator;
+typedef TriangulationDataStructure_3::Facet_circulator Facet_circulator;
 
 /*!
 
 */
-typedef Triangulation_3::Edge_iterator Edge_iterator;
+typedef TriangulationDataStructure_3::Edge_iterator Edge_iterator;
 
 /*!
 
 */
-typedef Triangulation_3::Facet_iterator Facet_iterator;
+typedef TriangulationDataStructure_3::Facet_iterator Facet_iterator;
 
 /*!
 
 */
-typedef Triangulation_3::Finite_vertices_iterator Finite_vertices_iterator;
+typedef TriangulationDataStructure_3::Finite_vertices_iterator Finite_vertices_iterator;
 
 /*!
 
 */
-typedef Triangulation_3::Finite_edges_iterator Finite_edges_iterator;
+typedef TriangulationDataStructure_3::Finite_edges_iterator Finite_edges_iterator;
 
 /*!
 
 */
-typedef Triangulation_3::Finite_facets_iterator Finite_facets_iterator;
+typedef TriangulationDataStructure_3::Finite_facets_iterator Finite_facets_iterator;
 
 /*!
 
 */
-typedef Triangulation_3::Finite_cells_iterator Finite_cells_iterator;
+typedef TriangulationDataStructure_3::Finite_cells_iterator Finite_cells_iterator;
 
 /// @}
 
@@ -188,7 +188,7 @@ Test whether two
 simplices are equal.
 */
 bool operator==(const
-Triangulation_simplex_3<Triangulation_3> &s1);
+Triangulation_simplex_3<TriangulationDataStructure_3> &s1);
 
 /*!
 Defines a ordering
@@ -196,7 +196,7 @@ on the simplices. This ordering depends on the memory layout and is
 independent of the geometry. Therefore, the ordering is not intrinsic
 */
 bool operator< (const
-Triangulation_simplex_3<Triangulation_3> &s1);
+Triangulation_simplex_3<TriangulationDataStructure_3> &s1);
 
 /// @}
 

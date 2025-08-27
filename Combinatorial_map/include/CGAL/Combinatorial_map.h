@@ -662,7 +662,7 @@ namespace CGAL {
     }
 
     /** Create a new dart and add it to the map.
-     * The marks of the darts are initialised with mmask_marks, i.e. the dart
+     * The marks of the darts are initialized with mmask_marks, i.e. the dart
      * is unmarked for all the marks.
      * @return a Dart_descriptor on the new dart.
      */
@@ -969,7 +969,7 @@ namespace CGAL {
     { return mnb_used_marks; }
 
     /** Test if a given mark is reserved.
-     *  @return true iff the mark is reserved (ie in used).
+     *  @return true iff the mark is reserved (i.e. in used).
      */
     bool is_reserved(size_type amark) const
     {
@@ -3707,6 +3707,9 @@ namespace CGAL {
       this->automatic_attributes_management = newval;
     }
 
+    void set_automatic_attributes_management_without_correction(bool newval)
+    { this->automatic_attributes_management = newval; }
+
     /** Create an half-edge.
      * @return a dart of the new half-edge.
      */
@@ -4111,7 +4114,7 @@ namespace CGAL {
         }
         if (ah != null_descriptor)
         {
-          // We initialise the 0-atttrib to ah
+          // We initialize the 0-atttrib to ah
           internal::Set_i_attribute_of_dart_functor<Self, 0>::
             run(*this, d1, ah);
         }

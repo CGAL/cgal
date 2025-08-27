@@ -41,9 +41,9 @@ Point_set_item_classification::Point_set_item_classification(Scene_points_with_n
 
   backup_existing_colors_and_add_new();
   bool training_found = false;
-  boost::tie (m_training, training_found) = m_points->point_set()->add_property_map<int>("training", -1);
+  std::tie (m_training, training_found) = m_points->point_set()->add_property_map<int>("training", -1);
   bool classif_found = false;
-  boost::tie (m_classif, classif_found) = m_points->point_set()->add_property_map<int>("label", -1);
+  std::tie (m_classif, classif_found) = m_points->point_set()->add_property_map<int>("label", -1);
 
   training_found = !training_found; // add_property_map returns false if
   classif_found = !classif_found;   // property was already there

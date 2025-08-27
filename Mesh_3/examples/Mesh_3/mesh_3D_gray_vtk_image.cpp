@@ -1,5 +1,5 @@
 
-#include <vtkNew.h>
+#include <vtkSmartPointer.h>
 #include <vtkImageData.h>
 #include <vtkDICOMImageReader.h>
 #include <vtkNIFTIImageReader.h>
@@ -36,14 +36,15 @@ typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
 // Criteria
 typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
 
-class Less {
+template <bool less_than_iso>
+class Is_interior {
   double iso;
 public:
-  Less(double iso): iso(iso) {}
+  Is_interior(double iso): iso(iso) {}
 
   template <typename T>
   int operator()(T v) const {
-    return int(v < iso);
+    return int( (v < iso) == less_than_iso);
   }
 };
 
@@ -53,15 +54,16 @@ int main(int argc, char* argv[])
 {
   // Loads image
 
-  // Usage: mesh_3D_gray_vtk_image <nii file or dicom directory> iso_level=1  facet_size=1  facet_distance=0.1  cell_size=1
+  // Usage: mesh_3D_gray_vtk_image <nii file or dicom directory> iso_level=1  facet_size=1  facet_distance=0.1  cell_size=1 interior_less_than_isolevel=true
 
   const std::string fname = (argc>1)?argv[1]:CGAL::data_file_path("images/squircle.nii");
 
-  vtkImageData* vtk_image = nullptr;
+  vtkSmartPointer<vtkImageData> vtk_image = nullptr;
   Image_word_type iso = (argc>2)? boost::lexical_cast<Image_word_type>(argv[2]): 1;
   double fs = (argc>3)? boost::lexical_cast<double>(argv[3]): 1;
   double fd = (argc>4)? boost::lexical_cast<double>(argv[4]): 0.1;
   double cs = (argc>5)? boost::lexical_cast<double>(argv[5]): 1;
+  bool less = (argc>6)? boost::lexical_cast<bool>(argv[6]): true;
 
   fs::path path(fname);
 
@@ -70,7 +72,7 @@ int main(int argc, char* argv[])
     if (path.has_extension()){
       fs::path stem = path.stem();
       if ((path.extension() == ".nii") || (stem.has_extension() && (stem.extension() == ".nii") && (path.extension() == ".gz"))) {
-        vtkNIFTIImageReader* reader = vtkNIFTIImageReader::New();
+        auto reader = vtkSmartPointer<vtkNIFTIImageReader>::New();
         reader->SetFileName(fname.c_str());
         reader->Update();
         vtk_image = reader->GetOutput();
@@ -79,7 +81,7 @@ int main(int argc, char* argv[])
     }
   }
   else if (fs::is_directory(path)) {
-    vtkDICOMImageReader* dicom_reader = vtkDICOMImageReader::New();
+    auto dicom_reader = vtkSmartPointer<vtkDICOMImageReader>::New();
     dicom_reader->SetDirectoryName(argv[1]);
 
     vtkDemandDrivenPipeline* executive =
@@ -89,7 +91,7 @@ int main(int argc, char* argv[])
         executive->SetReleaseDataFlag(0, 0); // where 0 is the port index
       }
 
-    vtkImageGaussianSmooth* smoother = vtkImageGaussianSmooth::New();
+    auto smoother = vtkSmartPointer<vtkImageGaussianSmooth>::New();
     smoother->SetStandardDeviations(1., 1., 1.);
     smoother->SetInputConnection(dicom_reader->GetOutputPort());
     smoother->Update();
@@ -108,10 +110,12 @@ int main(int argc, char* argv[])
   /// [Domain creation]
   namespace params = CGAL::parameters;
 
-  Mesh_domain domain = Mesh_domain::create_gray_image_mesh_domain
-    (image,
-     params::image_values_to_subdomain_indices(Less(iso)).
-             value_outside(iso+1));
+  Mesh_domain domain = less ? Mesh_domain::create_gray_image_mesh_domain(image,
+                                params::image_values_to_subdomain_indices(Is_interior<true>(iso)).
+                                value_outside(iso+1))
+                            : Mesh_domain::create_gray_image_mesh_domain(image,
+                                params::image_values_to_subdomain_indices(Is_interior<false>(iso)).
+                                value_outside(iso+1));
   /// [Domain creation]
 
   // Mesh criteria

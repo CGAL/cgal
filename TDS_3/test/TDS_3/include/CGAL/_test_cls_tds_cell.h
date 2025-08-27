@@ -11,6 +11,7 @@
 // Author(s)     : Rebufat Francois (Francois.Rebufat@sophia.inria.fr)
 
 #include <cassert>
+#include <iostream>
 
 template <class Tds>
 void
@@ -20,14 +21,14 @@ _test_cell_tds_3(const Tds &)
   typedef typename Tds::Cell_handle              Cell_handle;
 
   std::cout << "   Cells Tds Constructors " << std::endl;
-  int ind;
+  [[maybe_unused]] int ind;
   Tds tds;
   tds.set_dimension(3);
   Vertex_handle v0= tds.create_vertex();
   Vertex_handle v1= tds.create_vertex();
   Vertex_handle v2= tds.create_vertex();
   Vertex_handle v3= tds.create_vertex();
-  Cell_handle c1 = tds.create_cell(v0, v1, v2, v3);
+  [[maybe_unused]] Cell_handle c1 = tds.create_cell(v0, v1, v2, v3);
   assert(c1->has_vertex(v0));
   assert(c1->has_vertex(v1));
   assert(c1->has_vertex(v2));

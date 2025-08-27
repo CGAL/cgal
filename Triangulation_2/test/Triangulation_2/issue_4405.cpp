@@ -4,7 +4,7 @@
 #include <CGAL/Projection_traits_xy_3.h>
 #include <CGAL/Triangulation_face_base_with_info_2.h>
 #include <CGAL/Triangulation_vertex_base_with_id_2.h>
-#include <CGAL/Base_with_time_stamp.h>
+#include <CGAL/Triangulation_simplex_base_with_time_stamp.h>
 
 typedef CGAL::Epick Kernel;
 typedef Kernel::FT FieldNumberType;
@@ -17,7 +17,7 @@ struct FaceInfo2
 };
 typedef CGAL::Projection_traits_xy_3<Kernel> TriangulationTraits;
 typedef CGAL::Triangulation_vertex_base_with_id_2<TriangulationTraits> VertexBaseWithId;
-typedef CGAL::Base_with_time_stamp<VertexBaseWithId> Vb2;
+typedef CGAL::Triangulation_simplex_base_with_time_stamp<VertexBaseWithId> Vb2;
 typedef CGAL::Triangulation_vertex_base_2<TriangulationTraits, Vb2> VertexBase;
 typedef CGAL::Triangulation_face_base_with_info_2<FaceInfo2, Kernel> FaceBaseWithInfo;
 typedef CGAL::Constrained_triangulation_face_base_2<TriangulationTraits, FaceBaseWithInfo> FaceBase;

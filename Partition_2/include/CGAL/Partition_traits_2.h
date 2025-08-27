@@ -74,11 +74,11 @@ public:
 
     const PointPropertyMap& ppmap;
 
-    typename BaseFct::result_type operator()(const Arg_type& p, const Arg_type& q) const {
+    decltype(auto) operator()(const Arg_type& p, const Arg_type& q) const {
       return static_cast<const BaseFct*>(this)->operator()(get(ppmap,p),get(ppmap,q));
     }
 
-    typename BaseFct::result_type operator()(const Arg_type& p, const Arg_type& q, const Arg_type& r) const {
+    decltype(auto) operator()(const Arg_type& p, const Arg_type& q, const Arg_type& r) const {
       return static_cast<const BaseFct*>(this)->operator()(get(ppmap,p),get(ppmap,q),get(ppmap,r));
     }
   };

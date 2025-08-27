@@ -25,6 +25,7 @@ template < typename K_base, typename SFK >
 class Is_degenerate_3
   : public K_base::Is_degenerate_3
 {
+  typedef typename K_base::Boolean   Boolean;
   typedef typename K_base::Ray_3     Ray_3;
   typedef typename K_base::Segment_3 Segment_3;
   typedef typename K_base::Plane_3 Plane_3;
@@ -35,25 +36,21 @@ class Is_degenerate_3
   typedef typename SFK::Equal_3 Equal_3;
 
 public:
-
-  typedef typename Base::result_type  result_type;
-
   using Base::operator();
 
-  result_type
+  Boolean
   operator()(const Segment_3& s) const
   {
     return Equal_3()(Construct_source_3()(s), Construct_target_3()(s));
   }
 
-
-  result_type
+  Boolean
   operator()(const Ray_3& r) const
   {
     return Equal_3()(Construct_source_3()(r), Construct_second_point_3()(r));
   }
 
-  result_type
+  Boolean
   operator()(const Plane_3& p) const
   {
     CGAL_BRANCH_PROFILER(std::string("semi-static attempts/calls to   : ") +

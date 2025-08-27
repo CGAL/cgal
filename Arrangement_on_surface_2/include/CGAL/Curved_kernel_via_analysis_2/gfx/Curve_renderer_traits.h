@@ -24,7 +24,7 @@
  * \brief
  * defines class Curve_renderer_traits.
  *
- * provides specialisations of Curve_renderer_traits for different number
+ * provides specializations of Curve_renderer_traits for different number
  * types compatible with the curve renderer
 */
 

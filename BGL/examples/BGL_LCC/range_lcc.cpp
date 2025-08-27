@@ -42,10 +42,10 @@ void fct(const LCC& lcc)
     std::cout << vd->point() << std::endl;
   }
 
-  std::cout << "boost::tie + std::for_each" << std::endl;
+  std::cout << "std::tie + std::for_each" << std::endl;
   vertex_iterator vb, ve;
 
-  boost::tie(vb,ve) = vertices_range(lcc);
+  std::tie(vb,ve) = vertices_range(lcc);
   std::for_each(vb,ve, Fct());
 }
 

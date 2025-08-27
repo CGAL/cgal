@@ -1,6 +1,8 @@
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Triangulation_2.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
+
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
 #include <boost/iterator/zip_iterator.hpp>
 #include <vector>
 #include <cassert>

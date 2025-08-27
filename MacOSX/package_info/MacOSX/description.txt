@@ -1,3 +1,0 @@
-Package for MacOSX support.
-Contains scripts and icon files needed for creating demos
-in the MacOSX operating system.

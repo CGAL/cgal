@@ -272,7 +272,7 @@ template<class R_> struct Power_side_of_bounded_power_circumsphere : private Sto
           typename Get_functor<R_, Power_distance_tag>::type pd(this->kernel());
 
           // ON_UNBOUNDED_SIDE = -1
-          return enum_cast<Bounded_side>(-CGAL::sign(pd(pc(f, e), p0)));
+          return enum_cast<result_type>(-CGAL::sign(pd(pc(f, e), p0)));
         }
 };
 

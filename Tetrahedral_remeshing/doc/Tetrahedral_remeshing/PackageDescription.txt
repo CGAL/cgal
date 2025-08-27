@@ -1,6 +1,4 @@
-// Tetrahedral Remeshing
-
-/// \defgroup PkgTetrahedralRemeshingRef Tetrahedral Remeshing Reference
+/// \defgroup PkgTetrahedralRemeshingRef Reference Manual
 /// \defgroup PkgTetrahedralRemeshingConcepts Concepts
 /// \ingroup PkgTetrahedralRemeshingRef
 

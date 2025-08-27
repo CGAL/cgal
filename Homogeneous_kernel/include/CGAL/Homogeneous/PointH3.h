@@ -90,8 +90,8 @@ public:
   Direction_3 direction() const;
   Point_3     transform( const Aff_transformation_3 & t) const;
 
-  bool  operator==( const PointH3<R>& p) const;
-  bool  operator!=( const PointH3<R>& p) const;
+  typename R::Boolean operator==( const PointH3<R>& p) const;
+  typename R::Boolean operator!=( const PointH3<R>& p) const;
 };
 
 
@@ -175,7 +175,7 @@ PointH3<R>::direction() const
 
 template < class R >
 inline
-bool
+typename R::Boolean
 PointH3<R>::operator==( const PointH3<R> & p) const
 {
   return base == p.base;
@@ -183,7 +183,7 @@ PointH3<R>::operator==( const PointH3<R> & p) const
 
 template < class R >
 inline
-bool
+typename R::Boolean
 PointH3<R>::operator!=( const PointH3<R> & p) const
 { return !(*this == p); }
 

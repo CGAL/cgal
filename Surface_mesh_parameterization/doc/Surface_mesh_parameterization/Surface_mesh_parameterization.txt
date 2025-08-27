@@ -93,7 +93,7 @@ using the `Surface_mesh` built-in property mechanism.
 
 \cgalExample{Surface_mesh_parameterization/simple_parameterization.cpp}
 
-Figure \cgalFigureRef{Surface_mesh_parameterizationfigsimple} illustrates the input and output
+\cgalFigureRef{Surface_mesh_parameterizationfigsimple} illustrates the input and output
 of this program.
 
 \cgalFigureAnchor{Surface_mesh_parameterizationfigsimple}
@@ -179,9 +179,9 @@ depending on the type of border parameterization that is required: fixed border,
 free border, and borderless.
 
 Illustrations of the different methods are obtained with the same input model,
-the <i>hand</i> model, shown in Figure \cgalFigureRef{Surface_mesh_parameterizationfigbase}.
+the <i>hand</i> model, shown in \cgalFigureRef{Surface_mesh_parameterizationfigbase}.
 The hand is a topological sphere, and a `Seam_mesh` is used to cut it into
-a topological disk. In Figure \cgalFigureRef{Surface_mesh_parameterizationfigbase},
+a topological disk. In \cgalFigureRef{Surface_mesh_parameterizationfigbase},
 the seam is traced in red and the four cones used for Orbifold Tutte
 Parameterization (Section \ref Surface_mesh_parameterizationOrbi) are marked with green dots.
 

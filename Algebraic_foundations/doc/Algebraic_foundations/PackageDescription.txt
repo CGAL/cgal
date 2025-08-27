@@ -1,11 +1,10 @@
-/// \defgroup PkgAlgebraicFoundationsRef Algebraic Foundations Reference
+/// \defgroup PkgAlgebraicFoundationsRef Reference Manual
 
 /// \defgroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts Concepts
 /// \ingroup PkgAlgebraicFoundationsRef
 
 /*!
 \addtogroup PkgAlgebraicFoundationsRef
-\todo check generated documentation
 
 \cgalPkgDescriptionBegin{Algebraic Foundations,PkgAlgebraicFoundations}
 \cgalPkgPicture{Algebraic_foundations2.png}

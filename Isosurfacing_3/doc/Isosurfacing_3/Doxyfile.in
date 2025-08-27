@@ -1,0 +1,14 @@
+@INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
+
+PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - 3D Isosurfacing"
+
+HTML_EXTRA_FILES           =  ${CGAL_PACKAGE_DOC_DIR}/fig/isosurfacing_teaser.png \
+                              ${CGAL_PACKAGE_DOC_DIR}/fig/MC_cases.png \
+                              ${CGAL_PACKAGE_DOC_DIR}/fig/MC_DC.png \
+                              ${CGAL_PACKAGE_DOC_DIR}/fig/MC_DC_open.png \
+                              ${CGAL_PACKAGE_DOC_DIR}/fig/DC.png \
+                              ${CGAL_PACKAGE_DOC_DIR}/fig/MC.png \
+                              ${CGAL_PACKAGE_DOC_DIR}/fig/isosurfacing_inrimage.png \
+                              ${CGAL_PACKAGE_DOC_DIR}/fig/MC_TMC.png \
+                              ${CGAL_PACKAGE_DOC_DIR}/fig/MC_octree.png \
+                              ${CGAL_PACKAGE_DOC_DIR}/fig/MC_DC_performance.png

@@ -83,7 +83,7 @@ CGAL_Lab::CGAL_Lab(int& argc, char **argv,
                                   tr("Ignore the autostart.js file, if any."));
   parser.addOption(no_autostart);
   QCommandLineOption verbose("verbose",
-                                   tr("Print the paths explored byt the application searching for plugins."));
+                                   tr("Print the paths explored by the application searching for plugins."));
   parser.addOption(verbose);
   QCommandLineOption old("old",
     tr("Force OpenGL 2.1 context."));

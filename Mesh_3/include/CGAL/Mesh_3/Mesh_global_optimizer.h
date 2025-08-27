@@ -32,7 +32,6 @@
 #include <CGAL/Time_stamper.h>
 
 #include <CGAL/iterator.h>
-#include <CGAL/tuple.h>
 
 #include <CGAL/Mesh_3/Concurrent_mesher_config.h>
 
@@ -74,8 +73,13 @@ protected:
   // The sizing field info is stored inside the move vector because it is computed
   // when the move is computed. This is because the parallel version uses the threadsafe
   // version of incident_cells (which thus requires points to not be moving yet)
-  typedef std::vector<std::tuple<typename Tr::Vertex_handle, Vector_3, FT> >
-                                                            Moves_vector;
+  struct Move
+  {
+    typename Tr::Vertex_handle vertex_;
+    Vector_3 move_;
+    FT size_;
+  };
+  typedef std::vector<Move>                                 Moves_vector;
   typedef unsigned int                                      Nb_frozen_points_type;
 
   Mesh_global_optimizer_base(const Bbox_3 &, int)
@@ -129,8 +133,14 @@ protected:
   typedef typename GT::FT                                   FT;
   typedef typename GT::Vector_3                             Vector_3;
   typedef typename Tr::Lock_data_structure                  Lock_data_structure;
-  typedef tbb::concurrent_vector<std::tuple<typename Tr::Vertex_handle, Vector_3, FT> >
-                                                            Moves_vector;
+
+  struct Move
+  {
+    typename Tr::Vertex_handle vertex_;
+    Vector_3 move_;
+    FT size_;
+  };
+  typedef tbb::concurrent_vector<Move>                      Moves_vector;
   typedef std::atomic<unsigned int>                         Nb_frozen_points_type ;
 
   Mesh_global_optimizer_base(const Bbox_3 &bbox, int num_grid_cells_per_axis)
@@ -411,6 +421,7 @@ private:
     {
       typename GT::Construct_point_3 cp = m_gt.construct_point_3_object();
       typename GT::Construct_translated_point_3 translate = m_gt.construct_translated_point_3_object();
+      typedef typename Moves_vector_::value_type Move;
 
       Vector_3 move = m_mgo.compute_move(oldv);
       if ( CGAL::NULL_VECTOR != move )
@@ -429,7 +440,7 @@ private:
         //note : this is not happening for Lloyd and ODT so it's commented
         //       maybe for a new global optimizer it should be de-commented
 
-        m_moves.push_back(std::make_tuple(oldv, move, size));
+        m_moves.push_back(Move{oldv, move, size});
       }
       else // CGAL::NULL_VECTOR == move
       {
@@ -517,13 +528,13 @@ private:
     {
       for( size_t i = r.begin() ; i != r.end() ; ++i)
       {
-        const Vertex_handle& v = std::get<0>(m_moves[i]);
-        const Vector_3& move = std::get<1>(m_moves[i]);
+        const Vertex_handle& v = m_moves[i].vertex_;
+        const Vector_3& move = m_moves[i].move_;
 
         // Get size at new position
         if ( MGO::Sizing_field::is_vertex_update_needed )
         {
-          FT size = std::get<2>(m_moves[i]);
+          const FT size = m_moves[i].size_;
 
           // Move point
           bool could_lock_zone;
@@ -846,7 +857,7 @@ compute_moves(Moving_vertices_set& moving_vertices)
           size = sizing_field_(new_position, oldv);
         }
 
-        moves.push_back(std::make_tuple(oldv, move, size));
+        moves.push_back({oldv, move, size});
       }
       else // CGAL::NULL_VECTOR == move
       {
@@ -965,12 +976,12 @@ update_mesh(const Moves_vector& moves,
          it != moves.end() ;
          ++it )
     {
-      const Vertex_handle& v = std::get<0>(*it);
-      const Vector_3& move = std::get<1>(*it);
+      const Vertex_handle& v = it->vertex_;
+      const Vector_3& move = it->move_;
       // Get size at new position
       if ( Sizing_field::is_vertex_update_needed )
       {
-        FT size = std::get<2>(*it);
+        const FT size = it->size_;
 
 #ifdef CGAL_MESH_3_OPTIMIZER_VERY_VERBOSE
         std::cerr << "Moving #" << it - moves.begin()

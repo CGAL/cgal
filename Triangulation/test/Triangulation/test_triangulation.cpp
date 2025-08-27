@@ -33,7 +33,7 @@ void test(const int d, const string & type, int N)
 
     vector<RT> coords(d);
     vector<Point> points;
-    CGAL::Random rng;
+    CGAL::Random rng(0);
     Random_points_iterator rand_it(d, 1.0, rng);
     std::copy_n(rand_it, N, std::back_inserter(points));
 
@@ -52,9 +52,14 @@ void test(const int d, const string & type, int N)
     cerr << nbfs << " + ";
     vector<Full_cell_handle> infinite_full_cells;
     tri.tds().incident_full_cells(tri.infinite_vertex(), std::back_inserter(infinite_full_cells));
+    for( typename vector<Full_cell_handle>::iterator it = infinite_full_cells.begin();
+         it != infinite_full_cells.end(); ++it )
+    {
+        assert( tri.is_infinite(*it) );
+    }
     nbis = infinite_full_cells.size();
     cerr << nbis << " = " << (nbis+nbfs)
-    << " = " << tri.number_of_full_cells();
+    << " = " << tri.number_of_full_cells() << std::endl;
     assert(nbfs + nbis == tri.number_of_full_cells());
 
     cerr << "\nTraversing finite facets... ";
@@ -73,7 +78,7 @@ void test(const int d, const string & type, int N)
     {
         ++fvit, ++nbfv;
     }
-    cerr << nbfv << " finite vertices (should be " << tri.number_of_vertices() << ").";
+    cerr << nbfv << " finite vertices (should be " << tri.number_of_vertices() << ")." << std::endl;
     assert(nbfv == tri.number_of_vertices());
 
     // TEST Copy Constructor
@@ -145,7 +150,7 @@ void go(int N)
 
 int main(int argc, char **argv)
 {
-    srand(static_cast<unsigned int>(time(nullptr)));
+    // srand(static_cast<unsigned int>(time(nullptr)));
     int N = 1000;
     if( argc > 1 )
         N = atoi(argv[1]);

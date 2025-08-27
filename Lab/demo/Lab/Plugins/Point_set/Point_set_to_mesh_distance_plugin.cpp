@@ -223,10 +223,10 @@ private Q_SLOTS:
     bool d, r, g, b;
     new_item->point_set()->remove_colors();
     //bind pmaps
-    boost::tie(distance_map  , d) = new_item->point_set()->add_property_map<double>("distance",0);
-    boost::tie(fred_map  , r) = new_item->point_set()->add_property_map<double>("red",0);
-    boost::tie(fgreen_map, g)  = new_item->point_set()->add_property_map<double>("green",0);
-    boost::tie(fblue_map , b)  = new_item->point_set()->add_property_map<double>("blue",0);
+    std::tie(distance_map  , d) = new_item->point_set()->add_property_map<double>("distance",0);
+    std::tie(fred_map  , r) = new_item->point_set()->add_property_map<double>("red",0);
+    std::tie(fgreen_map, g)  = new_item->point_set()->add_property_map<double>("green",0);
+    std::tie(fblue_map , b)  = new_item->point_set()->add_property_map<double>("blue",0);
     new_item->point_set()->check_colors();
 
     Point_set* points = new_item->point_set();

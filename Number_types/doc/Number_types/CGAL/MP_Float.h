@@ -24,8 +24,8 @@ plan to also have a multiprecision exponent to fix this issue.
 
 The implementation of `MP_Float` is simple but provides a quadratic
 complexity for multiplications. This can be a problem for large operands.
-For faster implementations of the same functionality with large integral
-values, you may want to consider using `GMP` or `LEDA` instead.
+For faster implementations of the same functionality, if \gmp is available,
+you may want to consider using `Mpzf` or `Gmpzf`.
 
 */
 

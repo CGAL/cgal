@@ -37,7 +37,7 @@ or `Dynamic_dimension_tag`. In the latter case, the dimension of the space is sp
 \attention Only the interfaces specific to this class are listed below. Refer to the
 concepts for the rest.
 
-\attention Known bugs: the functor `Kernel_d::Intersect_d` is not yet implemented. `Kernel_d::Contained_in_affine_hull` assumes that the iterators refer to an affinely independent family. `Kernel_d::Orientation_d` only works for points, not vectors. Visual Studio 2015 is not supported.
+\attention Known bugs: the functor `Kernel_d::Intersect_d` is not yet implemented. `Kernel_d::Contained_in_affine_hull_d` assumes that the iterators refer to an affinely independent family. `Kernel_d::Orientation_d` only works for points, not vectors. Visual Studio 2015 is not supported.
 
 \attention This kernel requires the \ref thirdpartyEigen "Eigen" library.
 
@@ -52,6 +52,17 @@ concepts for the rest.
 */
 template< typename DimensionTag >
 struct Epeck_d {
+
+/*! the dimension
+*/
+typedef DimensionTag Dimension;
+
+/*!
+A bidirectional iterator over the %Cartesian coordinates of a point
+*/
+class Cartesian_const_iterator{};
+
+
 /*!
 represents a point in the Euclidean space
 \cgalModels{DefaultConstructible,Assignable}
@@ -70,7 +81,7 @@ Point_d(double x0, double x1, ...);
 template<typename ForwardIterator>
 Point_d(ForwardIterator first, ForwardIterator end);
 
-/*! returns the i'th coordinate of a point.
+/*! returns the i-th coordinate of a point.
     \pre `i` is non-negative and less than the dimension. */
 double operator[](int i)const;
 
@@ -158,10 +169,32 @@ public:
  */
 FT operator()(Weighted_point_d pw, Weighted_point_d qw);
 };
-Construct_circumcenter_d construct_circumcenter_d_object();
+
+class Construct_bbox_d {
+public:
+/*! returns the bounding box of point `p`.
+ */
+  Bbox_d<DimensionTag> operator()(Point_d p);
+};
+
+class Construct_cartesian_const_iterator_d {
+public:
+/*! returns the begin iterator to iterate over the %Cartesian coordinates of point `p`.
+ */
+  Cartesian_const_iterator_d operator()(Point_d p);
+
+  /*! returns the past-the-end iterator to iterate over the %Cartesian coordinates of point `p`.
+ */
+  Cartesian_const_iterator_d operator()(Point_d p, int);
+};
+
+
 Compute_power_product_d compute_power_product_d_object();
 Compute_squared_radius_d compute_squared_radius_d_object();
 Compute_squared_radius_smallest_orthogonal_sphere_d compute_squared_radius_smallest_orthogonal_sphere_d_object();
+Construct_bbox_d construct_bbox_d_object();
+Construct_cartesian_const_iterator_d  construct_cartesian_const_iterator_d_object();
+Construct_circumcenter_d construct_circumcenter_d_object();
 Construct_power_sphere_d construct_power_sphere_d_object();
 Power_side_of_bounded_power_sphere_d power_side_of_bounded_power_sphere_d_object();
 }; /* end Epeck_d */

@@ -30,7 +30,7 @@ there are <I>convincing</I> reasons.
 <LI>Words in the names of concepts (<I>e.g.</I>, template parameters)
       should be separated using capital letters.  The only use of underscores
       in concept names is before the dimension suffix.  For example, one
-      should use a name such as ConvexHullTraits_2 for the concept
+      should use a name such as `ConvexHullTraits_2` for the concept
       in contrast to `Convex_hull_traits_2` for the name of the class that
       is a model of this concept.  This different naming scheme for concepts
       and classes was adopted mainly for two reasons (a) it is consistent with
@@ -49,10 +49,10 @@ there are <I>convincing</I> reasons.
       <LI>The first word of a class or enumeration name should be capitalized
       (<I>e.g.</I>, `Quotient`, `Orientation`).
 <LI>Function names are in lowercase
-      (<I>e.g.</I>, `is_zero`).
+      (<I>e.g.</I>, `is_zero()`).
 <LI>Boolean function names should begin with a verb.  For example, use
-      `is_empty` instead of simply `empty` and
-      `has_on_bounded_side` instead of `on_bounded_side`.
+      `is_empty()` instead of simply `empty()` and
+      `has_on_bounded_side()` instead of `on_bounded_side()`.
 <LI>Names of macros should begin with the prefix `CGAL_`.
 
 </UL>
@@ -72,23 +72,23 @@ there are <I>convincing</I> reasons.
 
 <UL>
 <LI>Names for geometric data structures and algorithms should follow
-      the "spirit" of the rules given so far, <I>e.g.</I> a data structure for
+      the "spirit" of the rules given so far, <I>e.g.</I>, a data structure for
       triangulations in the plane is named `Triangulation_2`, and a
-      convex hull algorithm in 3-space is named `convex_hull_3`.
+      convex hull algorithm in 3-space is named `convex_hull_3()`.
 <LI>Member functions realizing predicates should start with `is_` or
-      `has_`, <I>e.g.</I> the data structure `Min_ellipse_2` has member
-      functions `is_empty` and `has_on_bounded_side`.
+      `has_`, <I>e.g.</I>, the data structure `Min_ellipse_2` has member
+      functions `is_empty()` and `has_on_bounded_side()`.
 <LI>Access to data structures is given via iterators and
       circulators (Chapter  \ref devman_iterators_and_circulators ).
       For iterators and functions
       returning them we extend
       the \stl names with a prefix describing the items to be accessed.
-      For example, the functions `vertices_begin` and `vertices_end`
+      For example, the functions `vertices_begin()` and `vertices_end()`
       return a `Vertex_iterator`. (Note that we use the name of the items
       in singular for the iterator type name and in plural for the functions
       returning the iterator.) Names related to circulators are handled
       similarly, using the suffix `_circulator`. For example, the
-      function `edges_circulator` returns an `Edge_circulator`.
+      function `edges_circulator()` returns an `Edge_circulator`.
 </UL>
 
 \subsection Developer_manualKerneltraits Kernel traits
@@ -183,7 +183,7 @@ In addition, for each functor the kernel traits class has a member
 function that returns an instance of this functor.  The name of this
 function should be the (uncapitalized) name of the
 functor followed by the suffix `_object`.For example, the function that returns an instance of the
-`Less_xy_2` functor is called `less_xy_2_object`.
+`Less_xy_2` functor is called `less_xy_2_object()`.
 
 \subsection Developer_manualFilenames File names
 

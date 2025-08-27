@@ -2040,7 +2040,7 @@ void Viewer::mouseReleaseEvent(QMouseEvent *event)
             } else {
                 displayMessage( tr("No point is selected.") );
             }
-        } else {  /* select multiple points, ie. selection window > 1 */
+        } else {  /* select multiple points, i.e. selection window > 1 */
             // define selection window
             if( m_rectSel.width() < 10 )
                 setSelectRegionWidth( 10 );

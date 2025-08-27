@@ -75,7 +75,7 @@ public:
             return false;
         }
         bool found(false);
-        // These two typename below are OK because TDS fulfils the
+        // These two typename below are OK because TDS fulfills the
         // TriangulationDataStructure concept.
         typename TDS::Full_cell::Vertex_handle_iterator vit(full_cell()->vertices_begin());
         typedef typename TDS::Vertex_handle Vertex_handle;

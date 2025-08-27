@@ -73,6 +73,8 @@ squared_distance(const typename K::Segment_3& seg,
   const Point_3& ss = seg.source();
   const Point_3& se = seg.target();
 
+  //TODO This seems complicated compared to Segment_3_Segment_3.h. Consider improving by adapting Lumelsky's method for segment-segment intersection.
+
   if(ss == se)
     return sq_dist(ss, ray);
 
@@ -166,6 +168,26 @@ squared_distance(const typename K::Ray_3& ray,
   return squared_distance(seg, ray, k);
 }
 
+template <class K>
+typename K::Comparison_result
+compare_squared_distance(const typename K::Ray_3& ray,
+                         const typename K::Segment_3& seg,
+                         const K& k,
+                         const typename K::FT& d2)
+{
+  return ::CGAL::compare(squared_distance(ray, seg, k), d2);
+}
+
+template <class K>
+typename K::Comparison_result
+compare_squared_distance(const typename K::Segment_3& seg,
+                         const typename K::Ray_3& ray,
+                         const K& k,
+                         const typename K::FT& d2)
+{
+  return compare_squared_distance(ray, seg, k, d2);
+}
+
 } // namespace internal
 
 template <class K>
@@ -175,24 +197,6 @@ squared_distance_parallel(const Segment_3<K>& seg,
                           const Ray_3<K>& ray)
 {
   return internal::squared_distance_parallel(ray, seg, K());
-}
-
-template <class K>
-inline
-typename K::FT
-squared_distance(const Segment_3<K>& seg,
-                 const Ray_3<K>& ray)
-{
-  return K().compute_squared_distance_3_object()(seg, ray);
-}
-
-template <class K>
-inline
-typename K::FT
-squared_distance(const Ray_3<K>& ray,
-                 const Segment_3<K>& seg)
-{
-  return K().compute_squared_distance_3_object()(ray, seg);
 }
 
 } // namespace CGAL

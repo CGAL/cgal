@@ -150,28 +150,8 @@ and used to output values to the output stream to which it is bound.
 \cgal provides extensions of the classes `istream_iterator`
 and `ostream_iterator`. The class `CGAL::Ostream_iterator<T,Stream>`
 is an output iterator adaptor for the stream class `Stream` and value
-
 type `T`.  It provides output iterators that can be used to output values
 of type `T` to objects of the class `Stream`.
-For example, the following code fragment inserts a list of segments into
-a window stream (<I>i.e.</I>, it draws the segments in the window) using the
-standard copy function:
-
-\code{.cpp}
-typedef CGAL::Cartesian<double>   K;
-typedef K::Segment_2              Segment;
-
-std::vector<Segment>       segments;
-Window_stream        W( 400, 400);
-
-int main (int argc, char** argv)
-{
-  // initialize segments
-  std::copy( segments.begin(),
-             segments.end(),
-             CGAL::Ostream_iterator< Segment, Window_stream>( W));
-}
-\endcode
 
 Likewise, the class `CGAL::Istream_iterator<T,Stream>` is an input
 iterator adaptor for the stream class `Stream` and value type `T`.

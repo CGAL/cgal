@@ -16,7 +16,7 @@ circumcenter.
 \tparam Traits is the geometric traits class and must be a model of `RegularTriangulationTraits_3`.
 
 \tparam Cb is a cell base class from which
-`Regular_triangulation_cell_base_with_weighted_circumcenter_3` derives. Cb should
+`Regular_triangulation_cell_base_with_weighted_circumcenter_3` derives. Cb must
 be a model of `RegularTriangulationCellBase_3`.
 It has the default value `Regular_triangulation_cell_base_3<RT>`.
 

@@ -4,7 +4,7 @@
 \cgalConcept
 
 This concept defines the requirements for traits classes of \f$ d\f$-dimensional
-optimisation algorithms.
+optimization algorithms.
 
 \cgalHasModelsBegin
 \cgalHasModels{CGAL::Polytope_distance_d_traits_2<K,ET,NT>}

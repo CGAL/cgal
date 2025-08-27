@@ -100,7 +100,7 @@ public:
         std::size_t J = grid.y(i);
         values[i] = float(dtm(I,J) - get (point_map, *(input.begin() + i)).z());
       }
-      dtm.free();
+      (dtm.free)();
     }
 
   }

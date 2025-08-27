@@ -806,7 +806,7 @@ private:
   }
 
   //for face query: traverse the face to get all edges
-  //and sort vertices in counter-clockwise order.
+  //and sort vertices in counterclockwise order.
   void input_face (Face_const_handle fh) const
   {
     Ccb_halfedge_const_circulator curr = fh->outer_ccb();
@@ -840,7 +840,7 @@ private:
     }
   }
   //for vertex or edge query: traverse the face to get all edges
-  //and sort vertices in counter-clockwise order.
+  //and sort vertices in counterclockwise order.
   void input_face (Face_const_handle fh,
                    EHs& good_edges,
                    Arrangement_2& bbox) const

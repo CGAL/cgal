@@ -5,6 +5,7 @@
 
 #include <CGAL/Concatenate_iterator.h>
 #include <CGAL/use.h>
+#include <CGAL/Simple_cartesian.h>
 
 template<class C1, class C2>
 class Concatenate_container
@@ -217,6 +218,53 @@ int main()
     assert( test(v1, v2) );
     assert( test(v2, v2) );
   }
+
+  // Cartesian_const_iterator
+  {
+    using Kernel = CGAL::Simple_cartesian<double>;
+    using Point = Kernel::Point_3;
+    using Cartesian_const_iterator = typename Kernel::Cartesian_const_iterator_3;
+    using Construct_cartesian_const_iterator = typename Kernel::Construct_cartesian_const_iterator_3;
+    using Concatenate_iterator =CGAL::Concatenate_iterator<Cartesian_const_iterator,Cartesian_const_iterator>;
+
+    Point p0(0,1,2), p1(10,11,12);
+    Construct_cartesian_const_iterator ccc;
+    // return Iterator(c1.end(), c2.begin(), c1.begin());
+    Concatenate_iterator ppb(ccc(p0,0), ccc(p1), ccc(p0));
+
+    // return Iterator(c1.end(), c2.begin(), c2.end(), 0);
+    Concatenate_iterator ppe(ccc(p0,0), ccc(p1), ccc(p1,0),0);
+    assert(ppb != ppe);
+    ++ppb;
+    assert(ppb != ppe);
+    ++ppb;
+    assert(ppb != ppe);
+     ++ppb;
+    assert(ppb != ppe);
+    for(; ppb != ppe; ++ppb){
+      std::cout << *ppb << std::endl;
+    }
+  }
+  {
+    using Kernel = CGAL::Simple_cartesian<double>;
+    using Point = Kernel::Point_3;
+    using Cartesian_const_iterator = typename Kernel::Cartesian_const_iterator_3;
+    using Construct_cartesian_const_iterator = typename Kernel::Construct_cartesian_const_iterator_3;
+    using Concatenate_iterator =CGAL::Concatenate_iterator<Cartesian_const_iterator,Cartesian_const_iterator>;
+    Point p[2] = {Point(0,1,2), Point(10,11,12)};
+
+    Construct_cartesian_const_iterator ccc;
+    Concatenate_iterator ppb(ccc(p[0],0), ccc(p[1]), ccc(p[0]));
+    Concatenate_iterator ppe(ccc(p[0],0), ccc(p[1]), ccc(p[1],0),0);
+    assert(ppb != ppe);
+    ++ppb;
+    assert(ppb != ppe);
+     ++ppb;
+     assert(ppb != ppe);
+     ++ppb;
+     assert(ppb != ppe);
+  }
+
 
   //------------------------------------------------------------------
 #if 0

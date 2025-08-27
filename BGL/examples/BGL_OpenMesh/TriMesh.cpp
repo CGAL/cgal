@@ -1,17 +1,18 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-#include <OpenMesh/Core/IO/MeshIO.hh>
 #include <OpenMesh/Core/Mesh/TriMesh_ArrayKernelT.hh>
 
 #include <CGAL/boost/graph/graph_traits_TriMesh_ArrayKernelT.h>
+#include <CGAL/boost/graph/properties_TriMesh_ArrayKernelT.h>
+
 #include <CGAL/boost/graph/iterator.h>
-#include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/IO/polygon_mesh_io.h>
+
+#include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/mesh_segmentation.h>
-#include <CGAL/property_map.h>
 
 #include <iostream>
-#include <fstream>
+
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 

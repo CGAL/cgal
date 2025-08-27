@@ -354,7 +354,6 @@ camera is manipulated) : main drawing method. Should be overloaded. \arg
 postDraw() : display of visual hints (world axis, FPS...) */
 CGAL_INLINE_FUNCTION
 void CGAL::QGLViewer::paintGL() {
-  makeCurrent();
   // Clears screen, set model view matrix...
   preDraw();
   // Used defined method. Default calls draw()
@@ -364,7 +363,6 @@ void CGAL::QGLViewer::paintGL() {
     draw();
   // Add visual hints: axis, camera, grid...
   postDraw();
-  doneCurrent();
   Q_EMIT drawFinished(true);
 }
 

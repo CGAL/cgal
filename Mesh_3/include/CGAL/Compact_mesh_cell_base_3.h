@@ -21,12 +21,12 @@
 #include <CGAL/array.h>
 #include <CGAL/assertions.h>
 #include <CGAL/basic.h>
-#include <CGAL/TDS_3/internal/Dummy_tds_3.h>
-#include <CGAL/tags.h>
 #include <CGAL/Has_timestamp.h>
-
 #include <CGAL/Regular_triangulation_cell_base_3.h>
 #include <CGAL/SMDS_3/io_signature.h>
+#include <CGAL/tags.h>
+#include <CGAL/TDS_3/internal/Dummy_tds_3.h>
+#include <CGAL/Time_stamper.h>
 
 #ifdef CGAL_LINKED_WITH_TBB
 # include <atomic>
@@ -644,7 +644,7 @@ private:
 #ifdef CGAL_INTRUSIVE_LIST
   Cell_handle next_intrusive_ = {}, previous_intrusive_ = {};
 #endif
-  std::size_t time_stamp_;
+  std::size_t time_stamp_ = Time_stamper<void>::invalid_time_stamp;
 
   std::array<Index, 4> surface_center_index_table_ = {};
   /// Stores visited facets (4 first bits)

@@ -1,6 +1,6 @@
 # This is the CMake script for compiling the AABB tree demo.
 
-cmake_minimum_required(VERSION 3.12...3.29)
+cmake_minimum_required(VERSION 3.12...3.31)
 project(AABB_tree_Demo)
 
 # Find includes in corresponding build directories
@@ -14,7 +14,7 @@ find_package(Qt6 QUIET COMPONENTS Gui OpenGL)
 
 if(CGAL_Qt6_FOUND AND Qt6_FOUND)
 
-  add_definitions(-DQT_NO_KEYWORDS)
+  add_compile_definitions(QT_NO_KEYWORDS)
 
   # Instruct CMake to run moc/ui/rcc automatically when needed.
   set(CMAKE_AUTOMOC ON)

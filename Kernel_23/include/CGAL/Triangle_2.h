@@ -89,18 +89,6 @@ public:
     return R().oriented_side_2_object()(*this,p);
   }
 
-  typename R::Boolean
-  operator==(const Triangle_2 &t) const
-  {
-    return R().equal_2_object()(*this,t);
-  }
-
-  typename R::Boolean
-  operator!=(const Triangle_2 &t) const
-  {
-    return !(*this == t);
-  }
-
   decltype(auto)
   vertex(int i) const
   {

@@ -147,7 +147,7 @@ Quadratic_program_solution();
 /*!
 returns `true` iff `sol` is not
 associated to a program. The condition
-!`sol``.is_void()` is a precondition for all access methods below.
+!`sol.is_void()` is a precondition for all access methods below.
 */
 bool is_void() const;
 
@@ -386,9 +386,9 @@ correctness of the solution. Any non-void object of
 /*!
 returns a random access iterator over the optimality certificate
 \f$ \qplambda\f$ as given in Lemma 1, with respect to the solution \f$ \qpx^*\f$
-obtained from `sol``.variable_values_begin()`. The value type
+obtained from `sol.variable_values_begin()`. The value type
 is `Quotient<ET>`, and the valid iterator range has length \f$ m\f$.
-\pre `sol``.is_optimal()`.
+\pre `sol.is_optimal()`.
 
 <B>Lemma 1(optimality certificate):</B> A feasible \f$ n\f$-vector \f$\qpx^*\f$ is an
 optimal solution of (QP) if an \f$ m\f$-vector \f$ \qplambda\f$ with
@@ -467,7 +467,7 @@ optimality_certificate_numerators_end() const;
 returns a random access iterator over the infeasibility certificate
 \f$ \qplambda\f$ as given in Lemma 2. The value type
 is `ET`, and the valid iterator range has length \f$ m\f$.
-\pre `sol``.is_infeasible()`.
+\pre `sol.is_infeasible()`.
 
 
 <B>Lemma 2 (infeasibility certificate):</B> The program (QP) is
@@ -520,9 +520,9 @@ infeasibility_certificate_end() const;
 /*!
 returns a random access iterator over the unbounded direction \f$ \qpw\f$
 as given in Lemma 3,with respect to the solution \f$ \qpx^*\f$
-obtained from `sol``.variable_values_begin()`. The value type
+obtained from `sol.variable_values_begin()`. The value type
 is `ET`, and the valid iterator range has length \f$ n\f$.
-\pre `sol``.is_unbounded()`.
+\pre `sol.is_unbounded()`.
 
 <B>Lemma 3 (unboundedness certificate:)</B> Let \f$\qpx^*\f$ be a feasible
 solution of (QP). The program (QP) is unbounded if an \f$n\f$-vector

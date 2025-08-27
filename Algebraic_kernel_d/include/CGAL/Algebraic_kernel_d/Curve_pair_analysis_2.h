@@ -875,7 +875,7 @@ private:
      * Checks intersection with symbolic methods
      */
     bool check_candidate_symbolically(Status_line_CA_1& e1,size_type ,
-                                      Status_line_CA_1& CGAL_precondition_code(e2),size_type ,
+                                      Status_line_CA_1& CGAL_assertion_code(e2),size_type ,
                                       size_type k) const {
         Polynomial_1 p = -coprincipal_subresultants(k-1);
         Polynomial_1 q = principal_subresultants(k)*Coefficient(k);
@@ -1173,7 +1173,7 @@ private:
     /*
      * \brief reduces the number of possible intersections
      *
-     * At the position given by the event lins \c e1 and \c e2 and the slice
+     * At the position given by the event lines \c e1 and \c e2 and the slice
      * info object \c slice, the points on the event lines are further refined
      * until there are only \c n possible intersection points. The method can
      * be interrupted if all possible intersection points are known to have

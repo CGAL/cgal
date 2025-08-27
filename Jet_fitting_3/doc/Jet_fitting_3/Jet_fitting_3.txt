@@ -280,7 +280,7 @@ computed using rings on the triangulation. Results are twofold:
 numerical information on the computation: condition number and the
 PCA basis;
 <LI>another text file that records raw data (better for a visualization
-post-processing).
+postprocessing).
 </UL>
 
 \cgalFigureRef{figjet3figdavid} and

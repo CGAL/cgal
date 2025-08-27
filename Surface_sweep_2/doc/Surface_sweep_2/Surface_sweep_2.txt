@@ -33,7 +33,7 @@ all degenerate cases, including overlapping curves, vertical segments,
 and tangency between curves. The robustness of the algorithm is
 guaranteed if the functions are instantiated with a traits class that
 employs certified computations. This traits class must be a model of
-the `ArrangementTraits_2` concept - see the Chapter \ref
+the `AosTraits_2` concept - see the Chapter \ref
 chapterArrangement_on_surface_2 "2D Arrangements" for more details.
 
 The complexity of the surface-sweep algorithm is \cgalBigO{(n +

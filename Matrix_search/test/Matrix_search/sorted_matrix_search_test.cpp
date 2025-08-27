@@ -148,7 +148,7 @@ main( int argc, char* argv[])
     */
 
     // evt. update max_entry:
-    max_entry = max( a[dim - 1] + b[dim - 1], max_entry);
+    max_entry = (max)( a[dim - 1] + b[dim - 1], max_entry);
 
     // keep both vectors:
     vectors.push_back( a);

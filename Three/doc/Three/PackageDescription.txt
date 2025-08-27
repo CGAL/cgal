@@ -1,4 +1,4 @@
-/// \defgroup PkgThreeRef Three Reference
+/// \defgroup PkgThreeRef Reference Manual
 ///
 /*!
 \addtogroup PkgThreeRef

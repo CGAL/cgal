@@ -446,7 +446,7 @@ private:
     for(face_descriptor f : faces(m_intrinsic_tm)) {
       CGAL::Vertex_around_face_iterator<TriangleMesh> vbegin, vend, vmiddle;
 
-      boost::tie(vbegin, vend) = vertices_around_face(halfedge(f,m_intrinsic_tm),m_intrinsic_tm);
+      std::tie(vbegin, vend) = vertices_around_face(halfedge(f,m_intrinsic_tm),m_intrinsic_tm);
       halfedge_descriptor hd = halfedge(f,m_intrinsic_tm);
       if(face(hd,m_intrinsic_tm) != f) {
         hd = opposite(hd,m_intrinsic_tm);

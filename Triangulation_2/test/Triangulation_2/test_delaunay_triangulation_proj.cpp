@@ -1,11 +1,13 @@
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
 #include <CGAL/Projection_traits_xy_3.h>
 #include <CGAL/Projection_traits_yz_3.h>
 #include <CGAL/Projection_traits_xz_3.h>
 #include <CGAL/Delaunay_triangulation_2.h>
-#include <iostream>
-
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
+
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
+#include <iostream>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Projection_traits_xy_3<Kernel>   Gt_xy;

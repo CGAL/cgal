@@ -14,7 +14,6 @@ int main ()
 }
 #else
 
-#include <CGAL/basic.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_algebraic_segment_traits_2.h>
 

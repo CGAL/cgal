@@ -1,11 +1,10 @@
-/// \defgroup PkgInscribedAreasRef Inscribed Areas Reference
+/// \defgroup PkgInscribedAreasRef Reference Manual
 
 /// \defgroup PkgInscribedAreasConcepts Concepts
 /// \ingroup PkgInscribedAreasRef
 
 /*!
 \addtogroup PkgInscribedAreasRef
-\todo check generated documentation
 \cgalPkgDescriptionBegin{Inscribed Areas,PkgInscribedAreas}
 \cgalPkgPicture{ler-detail.png}
 \cgalPkgSummaryBegin

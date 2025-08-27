@@ -600,6 +600,7 @@ inline long longValue(const BigFloat& bf)
 {
   return bf.longValue();
 }
+//@}
 
 } //namespace CORE
 

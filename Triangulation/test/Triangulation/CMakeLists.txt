@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.12...3.29)
+cmake_minimum_required(VERSION 3.12...3.31)
 project(Triangulation_Tests)
 
 if(CMAKE_COMPILER_IS_GNUCCX AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 4.4)
@@ -26,7 +26,7 @@ if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program("issue_8347.cpp")
   foreach(target test_triangulation test_delaunay test_regular test_tds
                  test_torture test_insert_if_in_star simple_io_test issue_8347)
-    target_link_libraries(${target} PUBLIC CGAL::Eigen3_support)
+    target_link_libraries(${target} PRIVATE CGAL::Eigen3_support)
   endforeach()
 
 else()

@@ -39,7 +39,7 @@ int main(const int, const char**) {
   std::vector<Point_3> vtx;
   std::vector<std::vector<std::size_t> > polylist;
 
-  std::vector<FT> lambdas{0.3, 0.5, 0.7, 0.8, 0.9, 0.95, 0.99};
+  std::vector<FT> lambdas{0.5, 0.7, 0.8, 0.9};
 
   bool non_empty = false;
 

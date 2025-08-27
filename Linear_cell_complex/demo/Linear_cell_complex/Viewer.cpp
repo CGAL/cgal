@@ -65,12 +65,12 @@ void Viewer::sceneChanged()
   CGAL::add_to_graphics_scene(*scene->lcc, m_graphic_buffer, m_gs_options);
 
   this->camera()->setSceneBoundingBox(
-      CGAL::qglviewer::Vec(gBuffer.bounding_box().xmin(),
-                           gBuffer.bounding_box().ymin(),
-                           gBuffer.bounding_box().zmin()),
-      CGAL::qglviewer::Vec(gBuffer.bounding_box().xmax(),
-                           gBuffer.bounding_box().ymax(),
-                           gBuffer.bounding_box().zmax()));
+      CGAL::qglviewer::Vec(m_graphic_buffer.bounding_box().xmin(),
+                           m_graphic_buffer.bounding_box().ymin(),
+                           m_graphic_buffer.bounding_box().zmin()),
+      CGAL::qglviewer::Vec(m_graphic_buffer.bounding_box().xmax(),
+                           m_graphic_buffer.bounding_box().ymax(),
+                           m_graphic_buffer.bounding_box().zmax()));
   Base::redraw();
   if (m_previous_scene_empty)
   { this->showEntireScene(); }

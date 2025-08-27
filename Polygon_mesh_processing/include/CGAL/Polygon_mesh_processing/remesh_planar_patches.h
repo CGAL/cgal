@@ -32,6 +32,10 @@
 #include <boost/iterator/function_output_iterator.hpp>
 #include <boost/container/small_vector.hpp>
 
+#ifdef CGAL_DEBUG_DECIMATION
+#include <CGAL/IO/polygon_soup_io.h>
+#endif
+
 #include <algorithm>
 #include <unordered_map>
 
@@ -243,7 +247,7 @@ bool is_edge_between_coplanar_faces(edge_descriptor e,
   Point_ref_3 s = get(vpm, target(next(opposite(h, tm), tm), tm) );
 
   if (coplanar_cos_threshold==-1)
-    return coplanar(p, q, r, s);
+    return coplanar(p, q, r, s) && coplanar_orientation(p, q, r, s)!=CGAL::POSITIVE;
   else
   {
     typename Kernel::Compare_dihedral_angle_3 pred;
@@ -280,9 +284,9 @@ bool is_target_vertex_a_corner(halfedge_descriptor h,
   // (for example when there is a tangency between surfaces and is shared)
   if (h2 == graph_traits::null_halfedge()) return true;
 
-  const Point_3& p = get(vpm, source(h, tm));
-  const Point_3& q = get(vpm, target(h, tm));
-  const Point_3& r = get(vpm, source(h2, tm));
+  const Point_3 p = get(vpm, source(h, tm));
+  const Point_3 q = get(vpm, target(h, tm));
+  const Point_3 r = get(vpm, source(h2, tm));
 
   if (coplanar_cos_threshold==-1)
     return !collinear(p, q, r);
@@ -834,7 +838,7 @@ bool decimate_impl(const TriangleMeshIn& tm_in,
   }
 
   std::vector< boost::container::small_vector<std::size_t,3> > faces;
-  bool remeshing_failed = decimate_impl<Kernel>(tm_in,
+  bool decimate_success = decimate_impl<Kernel>(tm_in,
                                                 nb_corners_and_nb_cc,
                                                 vertex_corner_id,
                                                 edge_is_constrained,
@@ -848,6 +852,10 @@ bool decimate_impl(const TriangleMeshIn& tm_in,
 
   if (!is_polygon_soup_a_polygon_mesh(faces))
   {
+#ifdef CGAL_DEBUG_DECIMATION
+    CGAL::IO::write_polygon_soup("soup.off", corners, faces);
+    std::cout << "the output is not a valid polygon mesh!" << std::endl;
+#endif
     return false;
   }
 
@@ -856,7 +864,7 @@ bool decimate_impl(const TriangleMeshIn& tm_in,
                                parameters::point_to_vertex_map(f_id_tracker.v2v_map()).
                                            polygon_to_face_map(f_id_tracker.f2f_map()),
                                parameters::vertex_point_map(vpm_out));
-  return remeshing_failed;
+  return decimate_success;
 }
 
 template <typename vertex_descriptor,
@@ -1025,6 +1033,7 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
                                                  MeshMap mesh_map,
                                                  const TagFunction& tag_function,
                                                  const std::vector<VertexPointMap>& vpms,
+                                                 bool shared_on_boundary_only,
                                                  bool do_not_triangulate_faces)
 {
   typedef typename boost::property_traits<MeshMap>::value_type Triangle_mesh;
@@ -1092,23 +1101,37 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
 
   //start by detecting and marking all shared vertices
   mesh_id = 0;
+
+  auto register_point =
+    [&vertex_shared_maps, &point_to_vertex_maps, &vpms]
+    (vertex_descriptor v, std::size_t mesh_id)
+  {
+    std::multimap<std::size_t, vertex_descriptor>& mesh_id_to_vertex =
+      point_to_vertex_maps[get(vpms[mesh_id], v)];
+    if (!mesh_id_to_vertex.empty())
+      put(vertex_shared_maps[mesh_id], v, true);
+    if (mesh_id_to_vertex.size()==1)
+    {
+      std::pair<std::size_t, vertex_descriptor> other=*mesh_id_to_vertex.begin();
+      put(vertex_shared_maps[other.first], other.second, true);
+    }
+    mesh_id_to_vertex.insert( std::make_pair(mesh_id, v) );
+  };
+
   for(Triangle_mesh* tm_ptr : mesh_ptrs)
   {
     Triangle_mesh& tm = *tm_ptr;
 
-    for(vertex_descriptor v : vertices(tm))
-    {
-      std::multimap<std::size_t, vertex_descriptor>& mesh_id_to_vertex =
-        point_to_vertex_maps[get(vpms[mesh_id], v)];
-      if (!mesh_id_to_vertex.empty())
-        put(vertex_shared_maps[mesh_id], v, true);
-      if (mesh_id_to_vertex.size()==1)
+    if (shared_on_boundary_only)
+      for(halfedge_descriptor h : halfedges(tm))
       {
-        std::pair<std::size_t, vertex_descriptor> other=*mesh_id_to_vertex.begin();
-        put(vertex_shared_maps[other.first], other.second, true);
+        if (!is_border(h,tm)) continue;
+        vertex_descriptor v = target(h, tm);
+        register_point(v, mesh_id);
       }
-      mesh_id_to_vertex.insert( std::make_pair(mesh_id, v) );
-    }
+    else
+      for(vertex_descriptor v : vertices(tm))
+        register_point(v, mesh_id);
 
     ++mesh_id;
   }
@@ -1222,7 +1245,7 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
         {
           typedef std::pair<const std::size_t, vertex_descriptor> Map_pair_type;
           auto find_res = point_to_vertex_maps.find(corners[cid]);
-          assert(find_res != point_to_vertex_maps.end());
+          if (find_res == point_to_vertex_maps.end()) continue; // the point is not shared
           for(Map_pair_type& mp : find_res->second)
           {
             std::size_t other_mesh_id = mp.first;
@@ -1279,6 +1302,7 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
                                                  MeshMap mesh_map,
                                                  double coplanar_cos_threshold,
                                                  const std::vector<VertexPointMap>& vpms,
+                                                 bool shared_on_boundary_only,
                                                  bool do_not_triangulate_faces)
 {
   typedef typename boost::property_traits<MeshMap>::value_type Triangle_mesh;
@@ -1300,6 +1324,7 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
                                                              mesh_map,
                                                              tag_function,
                                                              vpms,
+                                                             shared_on_boundary_only,
                                                              do_not_triangulate_faces);
 
 }
@@ -1661,7 +1686,7 @@ bool decimate_meshes_with_common_interfaces(TriangleMeshRange& meshes, double co
 
   for(Mesh_descriptor& md : meshes)
     vpms.push_back( get(boost::vertex_point, mesh_map[md]) );
-  return Planar_segmentation::decimate_meshes_with_common_interfaces_impl<Kernel>(meshes, mesh_map, coplanar_cos_threshold, vpms, do_not_triangulate_faces);
+  return Planar_segmentation::decimate_meshes_with_common_interfaces_impl<Kernel>(meshes, mesh_map, coplanar_cos_threshold, vpms, true, do_not_triangulate_faces);
 }
 
 template <class TriangleMesh>

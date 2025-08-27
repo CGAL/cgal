@@ -3896,7 +3896,7 @@ public:
   /*!
     returns a bounding box of `i`.
   */
-  CGAL::Bbox_3 operator()(const Kernel::Iso_Cuboid_3
+  CGAL::Bbox_3 operator()(const Kernel::Iso_cuboid_3
                           &i);
 
   /*!
@@ -4009,7 +4009,7 @@ public:
 
 
   /*!
-    returns an iterator on the 0'th %Cartesian coordinate of `p`.
+    returns an iterator on the zeroth %Cartesian coordinate of `p`.
   */
   Kernel::Cartesian_const_iterator_2 operator()(const Kernel::Point_2
                                                 &p);
@@ -4021,7 +4021,7 @@ public:
                                                 &p, int);
 
   /*!
-    returns an iterator on the 0'th %Cartesian coordinate of `v`.
+    returns an iterator on the zeroth %Cartesian coordinate of `v`.
   */
   Kernel::Cartesian_const_iterator_2 operator()(const Kernel::Vector_2
                                                 &v);
@@ -4054,7 +4054,7 @@ public:
   /// @{
 
   /*!
-    returns an iterator on the 0'th %Cartesian coordinate of `p`.
+    returns an iterator on the zeroth %Cartesian coordinate of `p`.
   */
   Kernel::Cartesian_const_iterator_3 operator()(const Kernel::Point_3
                                                 &p);
@@ -4066,7 +4066,7 @@ public:
                                                 &p, int);
 
   /*!
-    returns an iterator on the 0'th %Cartesian coordinate of `v`.
+    returns an iterator on the zeroth %Cartesian coordinate of `v`.
   */
   Kernel::Cartesian_const_iterator_3 operator()(const Kernel::Vector_3
                                                 &v);
@@ -4338,7 +4338,7 @@ public:
     Kernel::Vector_3 const& n);
 
   /*!
-    introduces a variable of type `Kernel::Point_3`.
+    introduces a variable of type `Kernel::Circle_3`.
     It is initialized to the circle passing through the three points.
     \pre The three points are not collinear.
   */
@@ -7074,7 +7074,7 @@ public:
   /*!
     introduces a null vector.
   */
-  Kernel::Vector_2 operator()(const Null_vector &NULL_VECTOR);
+  Kernel::Vector_2 operator()(const CGAL::Null_vector &v);
 
   /// @}
 
@@ -7133,7 +7133,7 @@ public:
   /*!
     introduces a null vector.
   */
-  Kernel::Vector_3 operator()(const Null_vector &NULL_VECTOR);
+  Kernel::Vector_3 operator()(const CGAL::Null_vector &v);
 
 
   /// @}
@@ -7168,7 +7168,7 @@ public:
                              &s, int i);
 
   /*!
-    returns the i'th vertex of
+    returns the i-th vertex of
     `r` in counterclockwise order, starting with the lower left
     vertex. The parameter `i` is taken modulo 4.
   */
@@ -7176,7 +7176,7 @@ public:
                              Kernel::Iso_rectangle_2 &r, int i);
 
   /*!
-    returns the i'th vertex of `t`. The parameter
+    returns the i-th vertex of `t`. The parameter
     `i` is taken modulo 3.
   */
   Kernel::Point_2 operator()(const Kernel::Triangle_2
@@ -7189,9 +7189,6 @@ public:
 /*!
   \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalConcept
-
-\image html IsoCuboid.png
-\image latex IsoCuboid.png
 
 \cgalRefines{AdaptableBinaryFunction}
 
@@ -7217,23 +7214,25 @@ public:
                              &s, int i);
 
   /*!
-    returns the i'th vertex of
+    returns the i-th vertex of
     `c`, as indicated in the figure below. The parameter `i` is
     taken modulo 8.
 
+    \image html IsoCuboid.png
+    \image latex IsoCuboid.png
   */
   Kernel::Point_3 operator()(const
                              Kernel::Iso_cuboid_3 &c, int i);
 
   /*!
-    returns the i'th vertex of `t`. The parameter
+    returns the i-th vertex of `t`. The parameter
     `i` is taken modulo 3.
   */
   Kernel::Point_3 operator()(const Kernel::Triangle_3
                              &t, int i);
 
   /*!
-    returns the i'th vertex of
+    returns the i-th vertex of
     `t`. The parameter `i` is taken modulo 4.
   */
   Kernel::Point_3 operator()(const
@@ -7600,7 +7599,7 @@ public:
     and also for `Type1` and `Type2` of respective types
 
     - `Kernel::Triangle_3` and `Kernel::Tetrahedron_3`
-    - `Kernel::Plane_3` and `Kernel::Sphere_3` (or the contrary)
+    - `Kernel::Plane_3` and `Kernel::Sphere_3`
     - `Kernel::Sphere_3` and `Kernel::Sphere_3`.
 
   */
@@ -8125,6 +8124,12 @@ public:
                   const Kernel::Point_3&p);
 
   /*!
+    returns true iff `p` lies on the bounded side of `c`.
+  */
+  bool operator()(const Kernel::Circle_3& c,
+                  const Kernel::Point_3& p);
+
+  /*!
     returns true iff the line segment `ab` is inside the union of the
     bounded sides of `s1` and `s2`.
   */
@@ -8386,6 +8391,11 @@ public:
   bool operator()(const Kernel::Iso_cuboid_3&c,
                   const Kernel::Point_3&p);
 
+  /*!
+    returns true iff `p` lies on the unbounded side of `c`.
+  */
+  bool operator()(const Kernel::Circle_3&c,
+                  const Kernel::Point_3&p);
 
   /// @}
 

@@ -969,7 +969,7 @@ sample_triangle_mesh(const TriangleMesh& tm,
  *                     of the smallest non-null edge of the soup or the value passed to the named parameter
  *                     `grid_spacing`.}
  *   \cgalParamNEnd
- * *   \cgalParamNBegin{use_monte_carlo_sampling}
+ *     \cgalParamNBegin{use_monte_carlo_sampling}
  *     \cgalParamDescription{if `true` is passed, points are generated randomly in each triangle.}
  *     \cgalParamType{Boolean}
  *     \cgalParamDefault{`false`}
@@ -1485,7 +1485,7 @@ bounded_error_squared_Hausdorff_distance_impl(const TriangleMesh1& tm1,
   TM1_hd_traits traversal_traits_tm1(tm2_tree, tm1, tm2, vpm1, vpm2,
                                      infinity_value, sq_initial_bound, sq_distance_bound);
 
-  // Find candidate triangles in TM1, which might realise the Hausdorff bound.
+  // Find candidate triangles in TM1, which might realize the Hausdorff bound.
   // We build a sorted structure while collecting the candidates.
   const Point_3 stub(0, 0, 0); // dummy point given as query since it is not needed
 

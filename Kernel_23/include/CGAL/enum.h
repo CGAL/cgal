@@ -21,8 +21,6 @@
 #include <CGAL/Kernel/Same_uncertainty.h>
 #include <CGAL/Origin.h>
 
-// If you add/change one type here, please update Is_a_predicate.h as well.
-
 namespace CGAL {
 
 enum  Sign

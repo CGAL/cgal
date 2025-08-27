@@ -536,7 +536,7 @@ protected:
   The efficiency of this point location module is mostly based on
   heuristics. Therefore worst case bounds are not very expressive. The
   query operations take up to linear time for subsequent query
-  operations though they are better in practise. They trigger a one-time
+  operations though they are better in practice. They trigger a one-time
   initialization which needs worst case $O(n^2)$ time though runtime
   tests often show subquadratic results. The necessary space for the
   query structure is subsumed in the storage space $O(n)$ of the input

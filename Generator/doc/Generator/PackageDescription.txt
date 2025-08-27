@@ -1,4 +1,4 @@
-/// \defgroup PkgGeneratorsRef Geometric Object Generators Reference
+/// \defgroup PkgGeneratorsRef Reference Manual
 /// \defgroup PkgGeneratorsConcepts Concepts
 /// \ingroup PkgGeneratorsRef
 /*!

@@ -77,7 +77,7 @@ Chapter_2D_Regularized_Boolean_Set-Operations
 "2D Regularized Boolean Set-Operations" for the precise definition
 of simple polygons. Secondly, any consecutive three vertices cannot be
 collinear. If you suspect that the input polygon may not satisfy the
-latter condition, pre-process the polygon to eliminate this
+latter condition, preprocess the polygon to eliminate this
 ill-condition.
 
 The implementation is based on an algorithm developed by Shamai and

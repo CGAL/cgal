@@ -6,7 +6,7 @@
 # the configuration.
 #
 # See https://stackoverflow.com/a/43300621/1728537 for the starting point.
-cmake_minimum_required(VERSION 3.12...3.29)
+cmake_minimum_required(VERSION 3.12...3.31)
 
 if(CGAL_SKIP_CMAKE_HOOKS)
   return()

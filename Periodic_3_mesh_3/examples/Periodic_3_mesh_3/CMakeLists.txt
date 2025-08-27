@@ -1,7 +1,7 @@
 # Created by the script cgal_create_CMakeLists
 # This is the CMake script for compiling a set of CGAL applications.
 
-cmake_minimum_required(VERSION 3.12...3.29)
+cmake_minimum_required(VERSION 3.12...3.31)
 project(Periodic_3_mesh_3_Examples)
 
 # CGAL and its components
@@ -30,5 +30,5 @@ foreach(
   mesh_implicit_shape_with_optimizers
   mesh_implicit_shape_with_features
   mesh_periodic_polyhedral_domain)
-  target_link_libraries(${target} PUBLIC CGAL::Eigen3_support)
+  target_link_libraries(${target} PRIVATE CGAL::Eigen3_support)
 endforeach()

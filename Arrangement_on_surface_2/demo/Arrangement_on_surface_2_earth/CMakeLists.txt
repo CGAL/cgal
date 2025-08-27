@@ -1,6 +1,6 @@
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.12...3.29)
+cmake_minimum_required(VERSION 3.12...3.31)
 project(Arrangement_on_surface_2_earth_Demo)
 
 if(NOT POLICY CMP0070 AND POLICY CMP0053)
@@ -16,30 +16,27 @@ find_package(Qt6 QUIET COMPONENTS Core Gui OpenGL OpenGLWidgets Widgets Xml)
 find_package(CGAL COMPONENTS Qt6)
 find_package(nlohmann_json QUIET 3.9)
 
-if (NOT CGAL_FOUND OR NOT CGAL_Qt6_FOUND OR NOT Qt6_FOUND OR NOT Boost_FOUND OR NOT nlohmann_json_FOUND)
-  if (NOT CGAL_FOUND)
-    set(MISSING_DEPS "the CGAL library, ${MISSING_DEPS}")
-  endif()
-  if (NOT CGAL_Qt6_FOUND)
-    set(MISSING_DEPS "the CGAL Qt6 component, ${MISSING_DEPS}")
-  endif()
-  if (NOT Qt6_FOUND)
-    set(MISSING_DEPS "the Qt6 library, ${MISSING_DEPS}")
-  endif()
-  if (NOT Boost_FOUND)
-    set(MISSING_DEPS "the Boost library, ${MISSING_DEPS}")
-  endif()
-  if (NOT nlohmann_json_FOUND)
-    set(MISSING_DEPS "JSON for Modern C++ 3.9+ (know as nlohmann_json), ${MISSING_DEPS}")
-  endif()
+set(MISSING_DEPS "")
+if (NOT CGAL_FOUND)
+  set(MISSING_DEPS "the CGAL library, ${MISSING_DEPS}")
+endif()
+if (NOT CGAL_Qt6_FOUND)
+  set(MISSING_DEPS "the CGAL Qt6 component, ${MISSING_DEPS}")
+endif()
+if (NOT Qt6_FOUND)
+  set(MISSING_DEPS "the Qt6 library, ${MISSING_DEPS}")
+endif()
+if (NOT nlohmann_json_FOUND)
+  set(MISSING_DEPS "JSON for Modern C++ 3.9+ (know as nlohmann_json), ${MISSING_DEPS}")
+endif()
 
-  message(STATUS "NOTICE: This project requires ${MISSING_DEPS} and will not be compiled.")
+if (MISSING_DEPS)
+  message(STATUS "NOTICE: This project requires ${MISSING_DEPS}and will not be compiled.")
   return()
 endif()
 
 
-
-add_definitions(-DQT_NO_VERSION_TAGGING)
+add_compile_definitions(QT_NO_VERSION_TAGGING)
 
 # AOS
 file(GLOB source_files_aos Aos.h Aos.cpp Aos_defs.h

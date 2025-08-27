@@ -1,4 +1,4 @@
-/// \defgroup PkgStreamSupportRef I/O Streams Reference
+/// \defgroup PkgStreamSupportRef Reference Manual
 /// \defgroup IOstreamOperators Stream Operators
 /// \ingroup PkgStreamSupportRef
 /// \defgroup IOstreamFunctions I/O Functions

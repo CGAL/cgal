@@ -163,9 +163,6 @@ private:
   }
 
 public:
-  typedef Orientation                  result_type;
-  typedef Site_2                       argument_type;
-
   Orientation operator()(const Site_2& p, const Site_2& q,
                          const Site_2& r) const
   {

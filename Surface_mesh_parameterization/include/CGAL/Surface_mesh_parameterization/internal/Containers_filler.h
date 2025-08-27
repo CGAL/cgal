@@ -86,7 +86,7 @@ struct Index_map_filler
     {
       typename Map::iterator it;
       bool new_element;
-      boost::tie(it,new_element) = map->insert(std::make_pair(vd,1));
+      std::tie(it,new_element) = map->insert(std::make_pair(vd,1));
       if(new_element) {
         it->second = index++;
       }

@@ -3,10 +3,10 @@ namespace CGAL {
 /*! \ingroup PkgArrangementOnSurface2TraitsClasses
  *
  * The traits class `Arr_linear_traits_2` is a model of the
- * `ArrangementTraits_2` concept, which enables the construction and maintenance
+ * `AosTraits_2` concept, which enables the construction and maintenance
  * of arrangements of linear objects. The linear objects may be bounded (line
  * segments) or unbounded (rays and lines). Thus, it is also a model of the
- * concept `ArrangementOpenBoundaryTraits_2`. The traits class is parameterized
+ * concept `AosOpenBoundaryTraits_2`. The traits class is parameterized
  * parameterized with a \cgal-kernel model; see the reference page of
  * `Arr_segment_traits_2<Kernel>` for further explanations and recommendations
  * on choosing a kernel.
@@ -14,35 +14,34 @@ namespace CGAL {
  * `Arr_linear_traits_2` defines `Kernel::Point_2` as its point type. The nested
  * `X_monotone_curve_2` and `Curve_2` types defined by the traits class (as is
  * the case with the various segment-traits classes, both types refer to the
- * same class, as <I>every</I> linear object is (weakly) \f$ x\f$-monotone), are
+ * same class, as <I>every</I> linear object is (weakly) \f$x\f$-monotone), are
  * constructible from a point, a line segment, a ray and from a line (objects of
  * types `Kernel::Point_2`, `Kernel::Segment_2`, `Kernel::Ray_2` and
  * `Kernel::Line_2`, respectively). On the other hand, when we are given a curve
  * we can find out its actual type and convert it to the respective kernel
  * object (say, to a `Kernel::Ray_2`).
  *
- * \cgalModels{ArrangementTraits_2,ArrangementLandmarkTraits_2,ArrangementOpenBoundaryTraits_2}
+ * \cgalModels{AosTraits_2,AosLandmarkTraits_2,AosOpenBoundaryTraits_2}
  */
-template< typename Kernel >
+template <typename Kernel>
 class Arr_linear_traits_2 {
 public:
-
   /// \name Types
   /// @{
 
-  //!
+  ///
   typedef typename Kernel::Segment_2 Segment_2;
 
-  //!
+  ///
   typedef typename Kernel::Ray_2 Ray_2;
 
-  //!
+  ///
   typedef typename Kernel::Line_2 Line_2;
 
-  //!
+  ///
   typedef typename Kernel::Point_2 Point_2;
 
-  //!
+  ///
   typedef typename X_monotone_curve_2 Curve_2;
 
   /// @}
@@ -57,20 +56,19 @@ public:
    */
   class X_monotone_curve_2 {
   public:
-
     /// \name Types
     /// @{
 
-    //!
+    ///
     typedef typename Kernel::Point_2 Point_2;
 
-    //!
+    ///
     typedef typename Kernel::Segment_2 Segment_2;
 
-    //!
+    ///
     typedef typename Kernel::Ray_2 Ray_2;
 
-    //!
+    ///
     typedef typename Kernel::Line_2 Line_2;
 
     /// @}
@@ -139,7 +137,6 @@ public:
     Point_2 target() const;
 
     /// @}
-
   }; /* end Arr_linear_traits_2::X_monotone_curve_2 */
 
   class Trim_2 {
@@ -147,7 +144,7 @@ public:
     /// \name Creation
     /// @{
 
-    /*! Trims the given x-monotone curve to an from src to tgt.
+    /*! trims the given \f$x\f$-monotone curve to an from `src` to `tgt`.
      * \ pre `src` and `tgt` lies on the curve
      */
     X_monotone_curve_2 operator()(const X_monotone_curve_2& xcv,
@@ -157,7 +154,6 @@ public:
   } /* end Arr_linear_traits_2::Trim_2 */
 
   Trim_2 trim_2_object() const;
-
 }; /* end Arr_linear_traits_2 */
 
 } /* end namespace CGAL */

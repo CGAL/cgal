@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <string>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polygon_repair/repair.h>
@@ -11,8 +12,11 @@ using Polygon_2 = CGAL::Polygon_2<Kernel>;
 using Polygon_with_holes_2 = CGAL::Polygon_with_holes_2<Kernel>;
 using Multipolygon_with_holes_2 = CGAL::Multipolygon_with_holes_2<Kernel>;
 
-int main() {
-  std::ifstream in("data/bridge-edge.wkt");
+int main(int argc, char* argv[]) {
+
+  const char* filename = (argc > 1) ? argv[1] : "data/bridge-edge.wkt";
+
+  std::ifstream in(filename);
   Polygon_with_holes_2 pin;
   CGAL::IO::read_polygon_WKT(in, pin);
 

@@ -79,12 +79,12 @@ bool is_forward(Halfedge_const_handle e) const
 
 void check_order_preserving_embedding(Vertex_const_handle v) const;
 /*{\Mop checks if the embedding of the targets of the edges in
-the adjacency list |A(v)| is counter-clockwise order-preserving with
+the adjacency list |A(v)| is counterclockwise order-preserving with
 respect to the order of the edges in |A(v)|.}*/
 
 void check_order_preserving_embedding() const;
 /*{\Mop checks if the embedding of all vertices of |P| is
-counter-clockwise order-preserving with respect to the adjacency
+counterclockwise order-preserving with respect to the adjacency
 list ordering of all vertices.}*/
 
 void check_forward_prefix_condition(Vertex_const_handle v) const;

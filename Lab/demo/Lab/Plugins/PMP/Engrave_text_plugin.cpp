@@ -897,7 +897,7 @@ private:
       {
         typename Map::iterator it;
         bool insert_ok;
-        boost::tie(it,insert_ok) =
+        std::tie(it,insert_ok) =
             descriptors.insert(std::make_pair(fit->vertex(i),vertex_descriptor()));
         if (insert_ok){
           const EPICK::Point_2& pt=fit->vertex(i)->point();

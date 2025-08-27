@@ -17,14 +17,14 @@
 
 // CGAL includes.
 #include <CGAL/Timer.h>
-#include <CGAL/optimal_bounding_box.h>
-#include <CGAL/Boolean_set_operations_2.h>
+//#include <CGAL/optimal_bounding_box.h>
+//#include <CGAL/Boolean_set_operations_2.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/intersections.h>
 #include <CGAL/min_quadrilateral_2.h>
-#include <CGAL/Aff_transformation_2.h>
-#include <boost/optional/optional_io.hpp>
+//#include <CGAL/Aff_transformation_2.h>
+//#include <boost/optional/optional_io.hpp>
 
 // Internal includes.
 #include <CGAL/KSP/utils.h>
@@ -74,7 +74,7 @@ private:
   using From_exact = CGAL::Cartesian_converter<Intersection_kernel, Kernel>;
 
   using Bbox_3 = CGAL::Bbox_3;
-  using OBB_traits = CGAL::Oriented_bounding_box_traits_3<Kernel>;
+  //using OBB_traits = CGAL::Oriented_bounding_box_traits_3<Kernel>;
 
   using Parameters = KSP::internal::Parameters_3<FT>;
 
@@ -402,7 +402,6 @@ private:
         typename Intersection_kernel::Point_2 a(sp.to_2d(m_data.point_3(m_data.source(pair.second[0]))));
         typename Intersection_kernel::Point_2 b(sp.to_2d(m_data.point_3(m_data.target(pair.second[0]))));
         typename Intersection_kernel::Line_2 exact_line(a, b);
-        Line_2 l = from_exact(exact_line);
 
         typename Intersection_kernel::Vector_2 ldir = exact_line.to_vector();
         ldir = (typename Intersection_kernel::FT(1.0) / CGAL::approximate_sqrt(ldir * ldir)) * ldir;
@@ -413,43 +412,38 @@ private:
         typename Intersection_kernel::FT emin = (std::numeric_limits<double>::max)();
         typename Intersection_kernel::FT emax = -(std::numeric_limits<double>::max)();
         FT min_speed = (std::numeric_limits<double>::max)(), max_speed = -(std::numeric_limits<double>::max)();
-
-        CGAL::Oriented_side last_side = l.oriented_side(sp.data().original_vertices.back());
+        CGAL::Oriented_side last_side = exact_line.oriented_side(sp.data().exact_vertices.back());
         Point_2 minp, maxp;
         typename Intersection_kernel::Point_2 eminp, emaxp;
 
         // Map polygon to line and get min&max projection
         for (std::size_t v = 0; v < sp.data().original_vertices.size(); v++) {
-          const Point_2& p = sp.data().original_vertices[v];
-
-          CGAL::Oriented_side s = l.oriented_side(p);
+          CGAL::Oriented_side s = exact_line.oriented_side(sp.data().exact_vertices[v]);
           if (last_side != s) {
             // Fetch former point to add segment.
-            const Point_2& prev = sp.data().original_vertices[(v + sp.data().original_vertices.size() - 1) % sp.data().original_vertices.size()];
+            auto eprev = sp.data().exact_vertices[(v + sp.data().exact_vertices.size() - 1) % sp.data().exact_vertices.size()];
             const Vector_2 edge_dir = sp.original_edge_direction((v + sp.data().original_vertices.size() - 1) % sp.data().original_vertices.size(), v);
-            typename Intersection_kernel::Segment_2 seg(to_exact(prev), to_exact(p));
+
+            typename Intersection_kernel::Segment_2 seg(eprev, sp.data().exact_vertices[v]);
             const auto result = CGAL::intersection(seg, exact_line);
+
             typename Intersection_kernel::Point_2 intersection;
 
             if (result && CGAL::assign(intersection, result)) {
               typename Intersection_kernel::FT eproj = (intersection - exact_line.point()) * ldir;
-              //FT proj = to_inexact(eproj);
+
               if (eproj < emin) {
                 eminp = intersection;
                 emin = eproj;
                 minp = from_exact(intersection);
-                //min = proj;
-                typename Intersection_kernel::FT p = dir * edge_dir;
-                assert(p != 0);
-                min_speed = CGAL::approximate_sqrt(edge_dir * edge_dir) / from_exact(p);
+                FT p = dir * edge_dir;
+                min_speed = CGAL::approximate_sqrt(edge_dir * edge_dir) / p;
               }
               if (emax < eproj) {
                 emaxp = intersection;
                 emax = eproj;
                 maxp = from_exact(intersection);
-                //max = proj;
                 typename Intersection_kernel::FT p = dir * edge_dir;
-                assert(p != 0);
                 max_speed = CGAL::approximate_sqrt(edge_dir * edge_dir) / from_exact(p);
               }
             }
@@ -499,7 +493,7 @@ private:
 
                 typename Intersection_graph::Kinetic_interval& kinetic_interval = m_data.igraph().kinetic_interval(e, sp_idx);
                 crossing_iedges.push_back(e);
-                if (emin > s) {
+                if (emin > s || std::isinf(CGAL::to_double(min_speed))) {
                   typename Intersection_kernel::FT bary_edge_exact = (emin - s) / (t - s);
                   FT bary_edge = from_exact((emin - s) / (t - s));
                   CGAL_assertion(bary_edge_exact >= 0);
@@ -511,7 +505,7 @@ private:
                   kinetic_interval.push_back(std::pair<FT, FT>(0, 0));
                 }
 
-                if (t > emax) {
+                if (t > emax || std::isinf(CGAL::to_double(max_speed))) {
                   typename Intersection_kernel::FT bary_edge_exact = (emax - s) / (t - s);
                   FT bary_edge = from_exact((emax - s) / (t - s));
                   CGAL_assertion(0 <= bary_edge_exact && bary_edge_exact <= 1);
@@ -665,7 +659,7 @@ private:
   }
 
   void add_input_polygons() {
-    using Polygon_2 = std::vector<Point_2>;
+    using Polygon_2 = std::vector<typename Intersection_kernel::Point_2>;
     using Indices = std::vector<std::size_t>;
 
     std::map< std::size_t, std::pair<Polygon_2, Indices> > polygons;
@@ -689,20 +683,19 @@ private:
   }
 
   template<typename PointRange>
-  void convert_polygon(const std::size_t support_plane_idx, const PointRange& polygon_3, std::vector<Point_2>& polygon_2) {
+  void convert_polygon(const std::size_t support_plane_idx, const PointRange& polygon_3, std::vector<typename Intersection_kernel::Point_2>& polygon_2) {
     polygon_2.clear();
     polygon_2.reserve(polygon_3.size());
+    To_exact to_exact;
     for (const auto& point : polygon_3) {
-      const Point_3 converted(static_cast<FT>(point.x()), static_cast<FT>(point.y()), static_cast<FT>(point.z()));
-
-      polygon_2.push_back(m_data.support_plane(support_plane_idx).to_2d(converted));
+      polygon_2.push_back(m_data.support_plane(support_plane_idx).to_2d(to_exact(point)));
     }
     CGAL_assertion(polygon_2.size() == polygon_3.size());
   }
 
-  void preprocess_polygons(std::map< std::size_t, std::pair<std::vector<Point_2>, std::vector<std::size_t> > >& polygons) {
+  void preprocess_polygons(std::map< std::size_t, std::pair<std::vector<typename Intersection_kernel::Point_2>, std::vector<std::size_t> > >& polygons) {
     std::size_t input_index = 0;
-    std::vector<Point_2> polygon_2;
+    std::vector<typename Intersection_kernel::Point_2> polygon_2;
     std::vector<std::size_t> input_indices;
     for (std::size_t i = 0; i < m_input_polygons.size(); i++) {
       bool is_added = true;
@@ -729,8 +722,8 @@ private:
     }
   }
 
-  void merge_polygons(const std::size_t support_plane_idx, const std::vector<Point_2>& polygon_a, std::vector<Point_2>& polygon_b) {
-    const bool is_debug = false;
+  void merge_polygons(const std::size_t support_plane_idx, const std::vector<typename Intersection_kernel::Point_2>& polygon_a, std::vector<typename Intersection_kernel::Point_2>& polygon_b) {
+    const bool is_debug = true;
     CGAL_assertion(support_plane_idx >= 6);
     if (is_debug) {
       std::cout << std::endl << "support plane idx: " << support_plane_idx << std::endl;
@@ -743,18 +736,19 @@ private:
     }
 
     // Create the merged polygon.
-    std::vector<Point_2> merged;
+    std::vector<typename Intersection_kernel::Point_2> merged;
     create_merged_polygon(points, merged);
 
     if (is_debug) {
       std::cout << "merged polygon: " << std::endl;
+      From_exact from_exact;
       for (std::size_t i = 0; i < merged.size(); ++i) {
         const std::size_t ip = (i + 1) % merged.size();
         const auto& p = merged[i];
         const auto& q = merged[ip];
         std::cout << "2 " <<
-          m_data.to_3d(support_plane_idx, p) << " " <<
-          m_data.to_3d(support_plane_idx, q) << std::endl;
+          m_data.to_3d(support_plane_idx, from_exact(p)) << " " <<
+          m_data.to_3d(support_plane_idx, from_exact(q)) << std::endl;
       }
     }
 
@@ -762,7 +756,7 @@ private:
     polygon_b = merged;
   }
 
-  void create_merged_polygon(const std::vector<Point_2>& points, std::vector<Point_2>& merged) const {
+  void create_merged_polygon(const std::vector<typename Intersection_kernel::Point_2>& points, std::vector<typename Intersection_kernel::Point_2>& merged) const {
     merged.clear();
 
     CGAL::convex_hull_2(points.begin(), points.end(), std::back_inserter(merged));

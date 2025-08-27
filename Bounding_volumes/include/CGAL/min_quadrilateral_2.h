@@ -376,7 +376,7 @@ min_rectangle_2(
 
   // quadruple of points defining the current rectangle
   ForwardIterator curr[4];
-  // initialised to the points defining the bounding box
+  // initialized to the points defining the bounding box
   convex_bounding_box_2(f, l, curr, t);
 
   // curr[i] can be advanced (cyclically) until it reaches limit[i]
@@ -482,7 +482,7 @@ min_parallelogram_2(ForwardIterator f,
 
   // quadruple of points defining the bounding box
   ForwardIterator curr[4];
-  // initialised to the points defining the bounding box
+  // initialized to the points defining the bounding box
   convex_bounding_box_2(first, l, curr, t);
 
 
@@ -659,7 +659,7 @@ min_strip_2(ForwardIterator f,
 
   // quadruple of points defining the bounding box
   ForwardIterator curr[4];
-  // initialised to the points defining the bounding box
+  // initialized to the points defining the bounding box
   convex_bounding_box_2(first, l, curr, t);
 
   ForwardIterator low = curr[0];

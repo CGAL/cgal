@@ -99,7 +99,7 @@ Test for inequality.
 bool operator!=(const Iso_cuboid_3<Kernel> &c2) const;
 
 /*!
-returns the i'th vertex modulo 8 of `c`.
+returns the i-th vertex modulo 8 of `c`.
 starting with the lower left vertex.
 \cgalEpicExact
 */

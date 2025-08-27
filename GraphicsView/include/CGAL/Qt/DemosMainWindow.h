@@ -79,7 +79,9 @@ protected:
   void setupOptionsMenu(QMenu* menu  = nullptr);
   void addAboutCGAL(QMenu* menu  = nullptr);
   void addAboutDemo(QString htmlResourceName, QMenu* menu  = nullptr);
+#if QT_SVG_LIB
   void setupExportSVG(QAction*, QGraphicsView*);
+#endif
 
   void addRecentFiles(QMenu* menu, QAction* insertBefore = nullptr);
 

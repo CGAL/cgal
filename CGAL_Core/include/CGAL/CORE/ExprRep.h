@@ -595,7 +595,7 @@ public:
   }
 
   void operator delete( void *p, size_t ){
-    MemoryPool<ConstPolyRep>::global_allocator().free(p);
+    (MemoryPool<ConstPolyRep>::global_allocator().free)(p);
   }
 
 private:
@@ -1248,7 +1248,7 @@ void * AddSubRep<O>::operator new( size_t size)
 
 template <typename O>
 void AddSubRep<O>::operator delete( void *p, size_t )
-{ MemoryPool<AddSubRep<O> >::global_allocator().free(p); }
+{ (MemoryPool<AddSubRep<O> >::global_allocator().free)(p); }
 
 
 /// \typedef AddRep

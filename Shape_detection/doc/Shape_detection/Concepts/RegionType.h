@@ -24,10 +24,10 @@ public:
   /// The parameters of the primitive covering the region.
   typedef unspecified_type Primitive;
 
-  /// The reference type to the elements of the input range, e.g., a const_iterator of the input range.
+  /// The reference type to the elements of the input range, e.g., a `const_iterator` of the input range.  Must be a model of `Hashable`.
   typedef unspecified_type Item;
 
-  // The region types is defined by a vector of Items.
+  // The Region type is defined by a `vector` of items.
   typedef std::vector<Item> Region;
 
   /*!
@@ -38,11 +38,11 @@ public:
   typedef unspecified_type Region_index_map;
 
   /*!
-    checks if the item `i` can be added to the region represented by `region`.
+    checks if the `Item` `i` can be added to the `Region` represented by `region`.
 
     `CGAL::Shape_detection::Region_growing` calls this function each time when
-    trying to add a new item to a region. If this function returns `true`, the
-    item with the index `i`, is added to the region, otherwise ignored.
+    trying to add a new item to a `Region`. If this function returns `true`, the
+    item with the index `i`, is added to the `region`, otherwise ignored.
   */
   bool is_part_of_region(
     const Item i,
@@ -53,8 +53,8 @@ public:
     checks if `region` satisfies all necessary conditions.
 
     `CGAL::Shape_detection::Region_growing` calls this function at the end of each
-    propagation phase. If this function returns `true`, the region is accepted,
-    otherwise rejected. If the region is rejected, all its items are released and
+    propagation phase. If this function returns `true`, the `region` is accepted,
+    otherwise rejected. If the `region` is rejected, all its items are released and
     available for region growing again.
   */
   bool is_valid_region(
@@ -69,7 +69,7 @@ public:
   }
 
   /*!
-    enables to update any information about the region represented by the collection of Items `region`.
+    enables to update any information about the region represented by the collection of items `region`.
 
     `CGAL::Shape_detection::Region_growing` calls this function each time when a
     new seed item is selected. This case can be identified by checking the
@@ -77,8 +77,8 @@ public:
     when enlarging the region. This case can be identified by checking the
     condition `region.size() > 1`.
 
-    This function also returns a Boolean at the first call when a new region
-    with one seed item is being created. When it is `true`, the new region is
+    This function also returns a boolean at the first call when a new `region`
+    with one seed item is being created. When it is `true`, the new `region` is
     further propagated, otherwise, it is rejected.
   */
   bool update(

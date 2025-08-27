@@ -7,56 +7,55 @@
 Names, in particular (member) function names and class names should
 be descriptive and easily remembered. So it is not surprising that
 different libraries or packages choose the same name for corresponding
-or similar classes and functions. A common approach to solving the
-naming problem is to add a prefix, for example,
-OpenGL adds `gl`
-and FLTK adds `fl`. \leda uses prefix `leda_`
-
-to some extent,
-but you have to tell \leda not to make the corresponding unprefixed names
-available as well.\cgalFootnote{\cgal's makefile does this by setting \cgalFootnoteCode{-DLEDA_PREFIX}.} Initially, \cgal used
-prefix `CGAL_`.
-At the beginning of 1999, it was decided to drop prefix `CGAL_` and to
-introduce namespace `CGAL`.
+or similar classes and functions. A common approach to avoid ambiguities
+is to add a prefix, for example, OpenGL adds `gl` and FLTK adds `fl`,
+but the better alternative is the usage of `namespace`.
 
 \section Developer_manualNamespaceCGAL Namespace CGAL
 
-All names introduced by \cgal should be in namespace `CGAL`, <I>e.g.</I>:
+All names introduced by \cgal should be in namespace `CGAL`,  or in a subnamespace
+corresponding to a package, <I>e.g.</I>:
 \code{.cpp}
 #include <something>
 
 namespace CGAL {
 
-class My_new_cgal_class {};
+/*!
+  * This class ...
+  */
+class Foo {};
 
-My_new_cgal_class
-my_new_function( My_new_cgal_class& );
 
+namespace Polygon_mesh_processing {
+
+/*!
+  * modifies `f` by ...
+  */
+void
+bar( foo & f);
+
+} // namespace Polygon_mesh_processing
 } // namespace CGAL
 \endcode
-Make sure not to have include statements nested between
-<TT> namespace CGAL { </TT> and <TT> } // namespace CGAL</TT>.
-Otherwise all names defined in the file included will be
-added to namespace `CGAL`.
+
+Make sure not to have include statements inside the
+`namespace CGAL`. Otherwise, all names defined in the file included will be
+added to the namespace.
 
 \section Developer_manualNamespaceinternal Namespace internal
 
 All names introduced by \cgal which are not documented to the user
 should be under an `internal` subnamespace of `CGAL`, <I>e.g.</I>:
 \code{.cpp}
-namespace CGAL { namespace internal {
+namespace CGAL {
+namespace Polygon_mesh_processing {
+namespace internal {
 
-class My_undocumented_class {};
+class Baz_used_by_foo {};
 
-void my_new_function( My_undocumented_class& );
-
-}} // namespace CGAL::internal
-
-namespace CGAL { namespace internal { namespace Package { namespace tags {
-
-class Some_further_class_local_to_Package;
-
-}}}} // namespace CGAL::internal::Package::tags
+} // namespace internal
+} // namespace Polygon_mesh_processing
+} // namespace CGAL
 \endcode
 
 \section Developer_manualNoteonglobaltemplatefunctions Note on global template functions

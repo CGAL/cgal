@@ -36,13 +36,6 @@ using Trap_pl = CGAL::Arr_trapezoid_ric_point_location<Gm>;
 using Geom_traits = Gm::Geometry_traits_2;
 using Point_2 = Geom_traits::Point_2;
 
-using Point_location_result = CGAL::Arr_point_location_result<Gm>;
-using Query_result = std::pair<Point_2, Point_location_result::Type>;
-
-using Vertex_const_handle = Gm::Vertex_const_handle;
-using Halfedge_const_handle = Gm::Halfedge_const_handle;
-using Face_const_handle = Gm::Face_const_handle;
-
 int main() {
   Gm_polyhedron p;
   p.make_tetrahedron(Point_3(1.0, 0.0, 0.0), Point_3(0.0, 1.0, 0.0),
@@ -50,7 +43,7 @@ int main() {
   Gm gm;
 
   Naive_pl naive_pl(gm);
-  // Landmarks_pl landmarks_pl(gm);
+  Landmarks_pl landmarks_pl(gm);
   Walk_pl walk_pl(gm);
   // Trap_pl trap_pl(gm);
 
@@ -70,30 +63,17 @@ int main() {
   locate_point(naive_pl, points[1]);
   locate_point(naive_pl, points[2]);
 
+  // locate_point(walk_pl, points[0]);
+  // locate_point(walk_pl, points[1]);
+  // locate_point(walk_pl, points[2]);
+
+  locate_point(landmarks_pl, points[0]);
+  locate_point(landmarks_pl, points[1]);
+  locate_point(landmarks_pl, points[2]);
+
   // locate_point(trap_pl, points[0]);
-
-  ////////
-  std::list<Query_result> results;
-  // The following cause an assertion failure.
-  // CGAL::locate(gm, &points[0], &points[3], std::back_inserter(results));
-
-  // Print the results.
-  for (auto it = results.begin(); it != results.end(); ++it) {
-    std::cout << "The point (" << it->first << ") is located ";
-    if (const Face_const_handle* f =
-        std::get_if<Face_const_handle>(&(it->second)))       // inside a face
-      std::cout << "inside "
-                << (((*f)->is_unbounded()) ? "the unbounded" : "a bounded")
-                << " face.\n";
-    else if (const Halfedge_const_handle* e =
-             std::get_if<Halfedge_const_handle>(&(it->second))) // on an edge
-      std::cout << "on an edge: " << (*e)->curve() << std::endl;
-    else if (const Vertex_const_handle* v =
-             std::get_if<Vertex_const_handle>(&(it->second)))  // on a vertex
-      std::cout << "on "
-                << (((*v)->is_isolated()) ? "an isolated" : "a")
-                << " vertex: " << (*v)->point() << std::endl;
-  }
+  // locate_point(trap_pl, points[1]);
+  // locate_point(trap_pl, points[2]);
 
   return 0;
 }

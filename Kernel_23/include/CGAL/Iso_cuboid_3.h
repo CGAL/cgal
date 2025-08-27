@@ -29,6 +29,8 @@ namespace CGAL {
 template <class R_>
 class Iso_cuboid_3 : public R_::Kernel_base::Iso_cuboid_3
 {
+  typedef typename R_::Boolean            Boolean;
+  typedef typename R_::Bounded_side       Bounded_side;
   typedef typename R_::RT                 RT;
   typedef typename R_::FT                 FT;
   typedef typename R_::Point_3            Point_3;
@@ -173,25 +175,25 @@ public:
        return zmax();
   }
 
-  bool
+  typename R::Boolean
   has_on_bounded_side(const Point_3 &p) const
   {
     return R().has_on_bounded_side_3_object()(*this,p);
   }
 
-  bool
+  Boolean
   has_on_unbounded_side(const Point_3 &p) const
   {
     return R().has_on_unbounded_side_3_object()(*this,p);
   }
 
-  bool
+  Boolean
   has_on_boundary(const Point_3 &p) const
   {
     return R().has_on_boundary_3_object()(*this,p);
   }
 
-  bool
+  Boolean
   has_on(const Point_3 &p) const
   {
     return has_on_boundary(p);
@@ -203,7 +205,7 @@ public:
     return R().bounded_side_3_object()(*this,p);
   }
 
-  bool
+  Boolean
   is_degenerate() const
   {
     return R().is_degenerate_3_object()(*this);

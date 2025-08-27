@@ -151,13 +151,13 @@ public:
 
   /*!
     returns the \f$i^{th}\f$ component of the rgb color (the
-    \f$0^{th}\f$ is red, the \f$1^{st}\f$ is blue, etc.).
+    \f$0^{th}\f$ is red, the \f$1^{st}\f$ is green, the \f$2^{nd}\f$ is blue and the \f$3^{rd}\f$ is alpha).
   */
   unsigned char operator[] (std::size_t i) const { return m_data[i]; }
 
   /*!
-    returns a reference on the \f$i^{th}\f$ component of `c` (the
-    \f$0^{th}\f$ is red, the \f$1^{st}\f$ is blue, etc.).
+    returns a reference on the \f$i^{th}\f$ component of the rgb color (the
+    \f$0^{th}\f$ is red, the \f$1^{st}\f$ is green, the \f$2^{nd}\f$ is blue and the \f$3^{rd}\f$ is alpha).
   */
   unsigned char& operator[] (std::size_t i)  { return m_data[i]; }
 

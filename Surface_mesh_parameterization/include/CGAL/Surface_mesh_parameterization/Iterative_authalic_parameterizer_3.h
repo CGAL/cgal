@@ -218,7 +218,7 @@ public:
 
     for(face_descriptor f : face_range)
     {
-      // get area in parameterised mesh
+      // get area in parameterized mesh
       const halfedge_descriptor h = halfedge(f, tmesh);
       const NT a_2D = abs(CGAL::area(get(uvmap, source(h, tmesh)),
                                      get(uvmap, target(h, tmesh)),
@@ -531,7 +531,7 @@ private:
         theta_sum += theta;
       }
 
-      // Normalise the angle
+      // Normalize the angle
       double factor = 2. / theta_sum;
       factor *= CGAL_PI;
       for(int n=0; n<neighborsCounter; ++n)

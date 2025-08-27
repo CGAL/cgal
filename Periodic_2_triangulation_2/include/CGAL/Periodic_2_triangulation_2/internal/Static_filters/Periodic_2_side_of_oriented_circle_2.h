@@ -45,8 +45,6 @@ private:
   const Iso_rectangle_2 * _dom;
 
 public:
-  typedef typename Base::result_type  result_type;
-
   Periodic_2_side_of_oriented_circle_2(const Iso_rectangle_2 * dom,
                                        const Base& socb)
     : Base(socb), _dom(dom)

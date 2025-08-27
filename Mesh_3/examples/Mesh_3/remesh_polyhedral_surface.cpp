@@ -36,13 +36,10 @@ int main()
     return EXIT_FAILURE;
   }
 
-  // Create a vector with only one element: the pointer to the polyhedron.
-  std::vector<Polyhedron*> poly_ptrs_vector(1, &poly);
-
   // Create a polyhedral domain, with only one polyhedron,
-  // and no "bounding polyhedron", so the volumetric part of the domain will be
-  // empty.
-  Mesh_domain domain(poly_ptrs_vector.begin(), poly_ptrs_vector.end());
+  // and no "bounding polyhedron".
+  // The volumetric part will be omitted by the use of `params::surface_only()`
+  Mesh_domain domain(poly);
 
   // Get sharp features
   domain.detect_features(); //includes detection of borders
@@ -54,7 +51,7 @@ int main()
                                  facet_distance(0.001));
 
   // Mesh generation
-  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, params::no_perturb().no_exude());
+  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, params::surface_only());
 
   // Output the facets of the c3t3 to an OFF file. The facets will not be
   // oriented.

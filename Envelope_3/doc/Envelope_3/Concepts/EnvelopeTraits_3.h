@@ -3,7 +3,7 @@
  *
  * This concept defines the minimal set of geometric predicates and operations
  * needed to compute the envelope of a set of arbitrary surfaces in \f$
- * \mathbb{R}^3\f$. It refines the `ArrangementXMonotoneTraits_2` concept. In
+ * \mathbb{R}^3\f$. It refines the `AosXMonotoneTraits_2` concept. In
  * addition to the `Point_2` and `X_monotone_curve_2` types and the
  * `Has_boundary_category` category tag listed in the base concept, it also
  * lists the `Surface_3` and `Xy_monotone_surface_3` types, which represent
@@ -12,7 +12,7 @@
  * operations usually involve the projection of 3D objects onto the \f$
  * xy\f$-plane.
  *
- * \cgalRefines{ArrangementXMonotoneTraits_2}
+ * \cgalRefines{AosXMonotoneTraits_2}
  *
  * \cgalHasModelsBegin
  * \cgalHasModels{CGAL::Env_triangle_traits_3<Kernel, ArrLinearTraits>}

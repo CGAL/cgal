@@ -206,4 +206,4 @@ public:
 
 #include <CGAL/enable_warnings.h>
 
-#endif // CGAL_CIRCULAR_KERNEL_CIRCULAR_ARC_TRAITS_H
+#endif

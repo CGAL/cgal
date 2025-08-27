@@ -2,7 +2,6 @@
 // Associating a name attribute with segments using the generic curve-data
 // traits.
 
-#include <CGAL/basic.h>
 #include <CGAL/Arr_curve_data_traits_2.h>
 
 #include "arr_polylines.h"

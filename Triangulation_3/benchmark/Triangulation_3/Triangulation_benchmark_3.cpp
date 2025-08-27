@@ -306,7 +306,7 @@ void benchmark_remove(std::vector<typename Tr::Point>& pts,
 
   if (nb_pts > max_pts)
   {
-    std::cerr << "ERROR: nb_pts > max_pts. Cancelling..." << std::endl;
+    std::cerr << "ERROR: nb_pts > max_pts. Canceling..." << std::endl;
     return;
   }
 

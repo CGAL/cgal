@@ -81,6 +81,9 @@ _test_cls_const_triang_plus_2( const TrP & )
   assert( (*currentin2 == va &&  *++currentin2 == vb) ||
           (*currentin2 == vb &&  *++currentin2 == va));
 
+  //test copy of the hierarchy
+  auto hierarchy = trp.hierarchy_ref();
+
   //test copy and swap
   std::cout << "test copy and swap" << std::endl;
   TrP  trp2(trp);
@@ -151,7 +154,7 @@ _test_cls_const_triang_plus_2( const TrP & )
     std::size_t n = 0;
     for(Constraint_iterator cit = trp.constraints_begin(); cit != trp.constraints_end(); ++cit){
       Constraint_id  cid = *cit;
-      n += cid.second->all_size();
+      n += cid.vl_ptr()->all_size();
     }
     assert( n == 9);
   }

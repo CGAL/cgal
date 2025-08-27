@@ -1,4 +1,4 @@
-/// \defgroup PkgPolygonMeshProcessingRef Polygon Mesh Processing Reference
+/// \defgroup PkgPolygonMeshProcessingRef Reference Manual
 /// \defgroup PkgPolygonMeshProcessingConcepts Concepts
 /// \ingroup PkgPolygonMeshProcessingRef
 
@@ -25,7 +25,7 @@
 /// \ingroup PkgPolygonMeshProcessingRef
 
 /// \defgroup PMP_measure_grp Geometric Measure Functions
-/// Functions to compute lengths of edges and borders, areas of faces and patches, as well as volumes of closed meshes.
+/// Functions to compute discrete curvatures, lengths of edges and borders, areas of faces and patches, volumes of closed meshes.
 /// \ingroup PkgPolygonMeshProcessingRef
 
 /// \defgroup PMP_orientation_grp Orientation Functions
@@ -79,7 +79,7 @@
 \cgalPkgPicture{hole_filling_ico.png}
 
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{David Coeurjolly, Jaques-Olivier Lachaud,  Konstantinos Katrioplas, Sébastien Loriot, Ivan Pađen, Mael Rouxel-Labbé, Hossam Saeed, Jane Tournois, and Ilker %O. Yaz}
+\cgalPkgAuthors{David Coeurjolly, Jaques-Olivier Lachaud,  Konstantinos Katrioplas, Sébastien Loriot, Ivan Pađen, Mael Rouxel-Labbé, Hossam Saeed, Jane Tournois, Sébastien Valette, and Ilker %O. Yaz}
 \cgalPkgDesc{This package provides a collection of methods and classes for polygon mesh processing,
 ranging from basic operations on simplices, to complex geometry processing algorithms such as
 Boolean operations, remeshing, repairing, collision and intersection detection, and more.}
@@ -127,12 +127,14 @@ The page \ref bgl_namedparameters "Named Parameters" describes their usage.
 - \link PMP_meshing_grp `CGAL::Polygon_mesh_processing::isotropic_remeshing()` \endlink
 - \link PMP_meshing_grp `CGAL::Polygon_mesh_processing::surface_Delaunay_remeshing()` \endlink
 - \link PMP_meshing_grp `CGAL::Polygon_mesh_processing::split_long_edges()` \endlink
+- `CGAL::Polygon_mesh_processing::approximated_centroidal_Voronoi_diagram_remeshing()`
 - `CGAL::Polygon_mesh_processing::extrude_mesh()`
 - `CGAL::Polygon_mesh_processing::smooth_mesh()` (deprecated)
 - `CGAL::Polygon_mesh_processing::angle_and_area_smoothing()`
 - `CGAL::Polygon_mesh_processing::tangential_relaxation()`
 - `CGAL::Polygon_mesh_processing::smooth_shape()`
 - `CGAL::Polygon_mesh_processing::random_perturbation()`
+
 
 \cgalCRPSection{Sizing Fields}
 - `CGAL::Polygon_mesh_processing::Uniform_sizing_field`
@@ -239,6 +241,11 @@ The page \ref bgl_namedparameters "Named Parameters" describes their usage.
 - `CGAL::Polygon_mesh_processing::sample_triangle_mesh()`
 
 \cgalCRPSection{Geometric Measure Functions}
+- \link PMP_measure_grp `CGAL::Polygon_mesh_processing::angle_sum()` \endlink
+- \link PMP_measure_grp `CGAL::Polygon_mesh_processing::discrete_Gaussian_curvatures()` \endlink
+- \link PMP_measure_grp `CGAL::Polygon_mesh_processing::discrete_Gaussian_curvature()` \endlink
+- \link PMP_measure_grp `CGAL::Polygon_mesh_processing::discrete_mean_curvature()` \endlink
+- \link PMP_measure_grp `CGAL::Polygon_mesh_processing::discrete_mean_curvatures()` \endlink
 - \link PMP_measure_grp `CGAL::Polygon_mesh_processing::edge_length()` \endlink
 - \link PMP_measure_grp `CGAL::Polygon_mesh_processing::squared_edge_length()` \endlink
 - \link PMP_measure_grp `CGAL::Polygon_mesh_processing::face_area()` \endlink
@@ -248,7 +255,6 @@ The page \ref bgl_namedparameters "Named Parameters" describes their usage.
 - \link PMP_measure_grp `CGAL::Polygon_mesh_processing::face_border_length()` \endlink
 - \link PMP_measure_grp `CGAL::Polygon_mesh_processing::longest_border()` \endlink
 - \link PMP_measure_grp `CGAL::Polygon_mesh_processing::centroid()` \endlink
-- \link PMP_measure_grp `CGAL::Polygon_mesh_processing::match_faces()` \endlink
 
 \cgalCRPSection{Feature Detection Functions}
 - `CGAL::Polygon_mesh_processing::sharp_edges_segmentation()`
@@ -271,6 +277,7 @@ The page \ref bgl_namedparameters "Named Parameters" describes their usage.
 - `CGAL::Polygon_mesh_processing::region_growing_of_planes_on_faces()`
 - `CGAL::Polygon_mesh_processing::detect_corners_of_regions()`
 - `CGAL::Polygon_mesh_processing::refine_mesh_at_isolevel()`
+- `CGAL::Polygon_mesh_processing::refine_with_plane()`
 
 \cgalCRPSection{I/O Functions}
 - \link PMP_IO_grp `CGAL::Polygon_mesh_processing::IO::read_polygon_mesh()`\endlink

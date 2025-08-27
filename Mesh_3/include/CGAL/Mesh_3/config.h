@@ -18,7 +18,7 @@
 
 //#define CGAL_MESH_3_VERBOSE 1
 
-// Use optimisations of Mesh_3
+// Use optimizations of Mesh_3
 #  define CGAL_CONSTRUCT_INTRUSIVE_LIST_RANGE_CONSTRUCTOR 1
 #  define CGAL_MESH_3_NEW_GET_FACETS 1
 #  define CGAL_MESH_3_GET_FACETS_USING_INTRUSIVE_LIST 1

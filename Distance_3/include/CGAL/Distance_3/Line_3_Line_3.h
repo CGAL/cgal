@@ -45,16 +45,17 @@ squared_distance(const typename K::Line_3& line1,
   return squared_distance_to_plane(normal, diff, k);
 }
 
-} // namespace internal
-
 template <class K>
-inline
-typename K::FT
-squared_distance(const Line_3<K>& line1,
-                 const Line_3<K>& line2)
+typename K::Comparison_result
+compare_squared_distance(const typename K::Line_3& line1,
+                         const typename K::Line_3& line2,
+                         const K& k,
+                         const typename K::FT& d2)
 {
-  return K().compute_squared_distance_3_object()(line1, line2);
+  return ::CGAL::compare(squared_distance(line1,line2,k),d2);
 }
+
+} // namespace internal
 
 } // namespace CGAL
 

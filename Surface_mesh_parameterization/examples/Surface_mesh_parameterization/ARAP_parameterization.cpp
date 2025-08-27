@@ -26,6 +26,11 @@ namespace SMP = CGAL::Surface_mesh_parameterization;
 
 int main(int argc, char** argv)
 {
+#ifdef CGAL_SMP_USE_SUITESPARSE_SOLVERS
+  std::cout << "Using SuiteSparse" << std::endl;
+#else
+  std::cout << "Using Eigen3" << std::endl;
+#endif
   const std::string filename = (argc>1) ? argv[1] : CGAL::data_file_path("meshes/head.off");
 
   SurfaceMesh sm;

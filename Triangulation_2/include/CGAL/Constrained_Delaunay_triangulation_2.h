@@ -40,7 +40,7 @@ struct Get_iterator_value_type{
 
 template <class T>
 struct Get_iterator_value_type<T,true>{
- typedef typename std::iterator_traits<T>::value_type type;
+  using type = typename std::iterator_traits<T>::value_type;
 };
 
 } } //namespace CGAL::internal
@@ -56,8 +56,8 @@ class Cdt_2_less_edge
 {
   const Tr* tr_ptr;
 
-  typedef typename Tr::Point  Point;
-  typedef typename Tr::Edge   Edge;
+  using Point = typename Tr::Point;
+  using Edge = typename Tr::Edge;
 
 public:
   Cdt_2_less_edge(const Tr* tr_ptr) : tr_ptr(tr_ptr) { }
@@ -94,39 +94,49 @@ class Constrained_Delaunay_triangulation_2
   : public  Constrained_triangulation_2<Gt, Tds_, Itag_>
 {
 public:
-  typedef Constrained_triangulation_2<Gt,Tds_,Itag_>            Ctr;
-  typedef typename Ctr::Tds Tds;
-  typedef typename Ctr::Itag Itag;
+  using Base = Constrained_triangulation_2<Gt,Tds_,Itag_>;
+  using Ctr = Base;
 
-  typedef Constrained_Delaunay_triangulation_2<Gt,Tds_,Itag_>    CDt;
-  typedef typename Ctr::Geom_traits      Geom_traits;
-  typedef typename Ctr::Intersection_tag Intersection_tag;
+  // using-declarations, to import types from the base class
+  //   (do not mix-up with type aliases)
+  // see:  https://en.cppreference.com/w/cpp/language/type_alias
+  //       https://en.cppreference.com/w/cpp/language/using_declaration
+  using typename Ctr::Tds;
+  using typename Ctr::Itag;
 
-  typedef typename Ctr::Constraint    Constraint;
-  typedef typename Ctr::Vertex_handle Vertex_handle;
-  typedef typename Ctr::Face_handle   Face_handle;
-  typedef typename Ctr::Edge          Edge;
-  typedef typename Ctr::Finite_faces_iterator Finite_faces_iterator;
-  typedef typename Ctr::Constrained_edges_iterator Constrained_edges_iterator;
-  typedef typename Ctr::Face_circulator       Face_circulator;
-  typedef typename Ctr::size_type             size_type;
-  typedef typename Ctr::Locate_type           Locate_type;
+  using typename Ctr::Geom_traits;
+  using typename Ctr::Intersection_tag;
 
-  typedef typename Ctr::List_edges List_edges;
-  typedef typename Ctr::List_faces List_faces;
-  typedef typename Ctr::List_vertices  List_vertices;
-  typedef typename Ctr::List_constraints List_constraints;
+  using typename Ctr::Constraint;
+#if defined(BOOST_MSVC) && (BOOST_MSVC < 1920)
+  using Vertex_handle = typename Ctr::Vertex_handle; // workaround for VC++ 19.16 (from MSVC 2017)
+#else
+  using typename Ctr::Vertex_handle;
+#endif
+  using typename Ctr::Face_handle;
+  using typename Ctr::Edge;
+  using typename Ctr::Finite_faces_iterator;
+  using typename Ctr::Constrained_edges_iterator;
+  using typename Ctr::Face_circulator;
+  using typename Ctr::size_type;
+  using typename Ctr::Locate_type;
 
-  typedef internal::Cdt_2_less_edge<CDt> Less_edge;
-  typedef boost::container::flat_set<Edge, Less_edge> Edge_set;
+  using typename Ctr::List_edges;
+  using typename Ctr::List_faces;
+  using typename Ctr::List_vertices;
+  using typename Ctr::List_constraints;
+
+  // type aliases (aka type defs)
+  using CDt = Constrained_Delaunay_triangulation_2<Gt,Tds_,Itag_>;
+  using Point = typename Geom_traits::Point_2;
 
   //Tag to distinguish Delaunay from regular triangulations
-  typedef Tag_false Weighted_tag;
+  using Weighted_tag = Tag_false;
 
   // Tag to distinguish periodic triangulations from others
-  typedef Tag_false Periodic_tag;
+  using Periodic_tag = Tag_false;
 
-#ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
+  // using-declarations to import member functions from the base class
   using Ctr::geom_traits;
   using Ctr::number_of_vertices;
   using Ctr::finite_faces_begin;
@@ -151,9 +161,6 @@ public:
   using Ctr::delete_vertex;
   using Ctr::push_back;
   using Ctr::mirror_index;
-#endif
-
-  typedef typename Geom_traits::Point_2  Point;
 
   Constrained_Delaunay_triangulation_2(const Geom_traits& gt=Geom_traits())
     : Ctr(gt) { }
@@ -176,7 +183,7 @@ public:
       CGAL_postcondition( is_valid() );
     }
 
-  virtual ~Constrained_Delaunay_triangulation_2() {}
+  ~Constrained_Delaunay_triangulation_2() override {}
 
 
   // Ensure rule-of-five: define the copy- and move- constructors
@@ -293,17 +300,17 @@ public:
   bool is_valid(bool verbose = false, int level = 0) const;
 
 protected:
-  virtual Vertex_handle virtual_insert(const Point & a,
-                                       Face_handle start = Face_handle());
-  virtual Vertex_handle virtual_insert(const Point& a,
-                                       Locate_type lt,
-                                       Face_handle loc,
-                                       int li );
+  Vertex_handle virtual_insert(const Point & a,
+                               Face_handle start = Face_handle()) override;
+  Vertex_handle virtual_insert(const Point& a,
+                               Locate_type lt,
+                               Face_handle loc,
+                               int li ) override;
 //Vertex_handle special_insert_in_edge(const Point & a, Face_handle f, int i);
   void remove_2D(Vertex_handle v );
-  virtual void triangulate_hole(List_faces& intersected_faces,
-                                List_edges& conflict_boundary_ab,
-                                List_edges& conflict_boundary_ba);
+  void triangulate_hole(List_faces& intersected_faces,
+                        List_edges& conflict_boundary_ab,
+                        List_edges& conflict_boundary_ba) override;
 
 public:
   // MESHING
@@ -388,8 +395,8 @@ private:
       indices.push_back(index++);
     }
 
-    typedef typename Pointer_property_map<Point>::type Pmap;
-    typedef Spatial_sort_traits_adapter_2<Geom_traits,Pmap> Search_traits;
+    using Pmap = typename Pointer_property_map<Point>::type;
+    using Search_traits = Spatial_sort_traits_adapter_2<Geom_traits,Pmap>;
 
     spatial_sort(indices.begin(),
                  indices.end(),
@@ -603,6 +610,9 @@ public:
   int i, ii, indf, indn;
   Face_handle ni, f,ff;
   Edge ei,eni;
+
+  using Less_edge = internal::Cdt_2_less_edge<CDt>;
+  using Edge_set = boost::container::flat_set<Edge, Less_edge>;
 
   Less_edge less_edge(this);
   Edge_set edge_set(less_edge);
@@ -925,7 +935,7 @@ template < class Gt, class Tds, class Itag >
 typename Constrained_Delaunay_triangulation_2<Gt,Tds,Itag>::Vertex_handle
 Constrained_Delaunay_triangulation_2<Gt,Tds,Itag>::
 insert(const Point& a, Locate_type lt, Face_handle loc, int li)
-// insert a point p, whose localisation is known (lt, f, i)
+// insert a point p, whose localization is known (lt, f, i)
 // constrained edges are updated
 // Delaunay property is restored
 {

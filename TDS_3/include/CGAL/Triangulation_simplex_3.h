@@ -43,7 +43,7 @@ public:
 
   // Constructors
 
-  // Default constructor initialises to undefined simplex:
+  // Default constructor initializes to undefined simplex:
   Triangulation_simplex_3() : ref(-1), ch() { }
 
   Triangulation_simplex_3(Vertex_handle vh) {
@@ -293,6 +293,8 @@ struct Output_rep<Triangulation_simplex_3<TriangulationDataStructure_3>, Tag >
 
   Simplex simplex;
   Tag tag;
+
+  Output_rep(const Simplex& s, Tag t = {}) : simplex(s), tag(t) {}
 
   std::ostream& operator()(std::ostream& os) const {
     auto display_vert = [&](auto v) {

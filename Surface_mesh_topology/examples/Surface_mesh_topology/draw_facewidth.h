@@ -1,8 +1,6 @@
 #ifndef DRAW_FACEWIDTH_H
 #define DRAW_FACEWIDTH_H
 
-#ifdef CGAL_USE_BASIC_VIEWER
-
 #include <CGAL/draw_linear_cell_complex.h>
 #include <CGAL/Graphics_scene_options.h>
 
@@ -54,7 +52,5 @@ void draw_facewidth(const LCC& lcc,
   lcc.free_mark(vertex_mark);
   lcc.free_mark(face_mark);
 }
-
-#endif // CGAL_USE_BASIC_VIEWER
 
 #endif // DRAW_FACEWIDTH_H

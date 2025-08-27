@@ -1,4 +1,4 @@
-/// \defgroup PkgCircularKernel3Ref 3D Spherical Geometry Kernel Reference
+/// \defgroup PkgCircularKernel3Ref Reference Manual
 
 /// \defgroup PkgCircularKernel3GeometricConcepts Geometric Concepts
 /// \ingroup PkgCircularKernel3Ref

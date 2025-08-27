@@ -421,31 +421,32 @@ struct Default_visitor{
   typedef typename GT::halfedge_descriptor halfedge_descriptor;
   typedef typename GT::vertex_descriptor vertex_descriptor;
 // face visitor functions
-  void before_subface_creations(face_descriptor /*f_old*/,TriangleMesh&){}
-  void after_subface_creations(TriangleMesh&){}
-  void before_subface_created(TriangleMesh&){}
-  void after_subface_created(face_descriptor /*f_new*/,TriangleMesh&){}
-  void before_face_copy(face_descriptor /*f_old*/, const TriangleMesh&, TriangleMesh&){}
+  void before_subface_creations(face_descriptor /*f_old*/, const TriangleMesh&){}
+  void after_subface_creations(const TriangleMesh&){}
+  void before_subface_created(const TriangleMesh&){}
+  void after_subface_created(face_descriptor /*f_new*/,const TriangleMesh&){}
+  void before_face_copy(face_descriptor /*f_old*/, const TriangleMesh&, const TriangleMesh&){}
   void after_face_copy(face_descriptor /*f_old*/, const TriangleMesh&,
-                       face_descriptor /* f_new */, TriangleMesh&){}
+                       face_descriptor /* f_new */, const TriangleMesh&){}
+  void subface_of_coplanar_faces_intersection(face_descriptor /*f*/, const TriangleMesh&) {}
 // edge visitor functions
-  void before_edge_split(halfedge_descriptor /* h */, TriangleMesh& /* tm */){}
-  void edge_split(halfedge_descriptor /* hnew */, TriangleMesh& /* tm */){}
+  void before_edge_split(halfedge_descriptor /* h */, const TriangleMesh& /* tm */){}
+  void edge_split(halfedge_descriptor /* hnew */, const TriangleMesh& /* tm */){}
   void after_edge_split(){}
 
-  void add_retriangulation_edge(halfedge_descriptor /* h */ , TriangleMesh& /* tm */) {} // edges added during split face retriangulation
+  void add_retriangulation_edge(halfedge_descriptor /* h */ , const TriangleMesh& /* tm */) {} // edges added during split face retriangulation
 
-  void before_edge_copy(halfedge_descriptor /*h_old*/, const TriangleMesh&, TriangleMesh&){}
+  void before_edge_copy(halfedge_descriptor /*h_old*/, const TriangleMesh&, const TriangleMesh&){}
   void after_edge_copy(halfedge_descriptor /*h_old*/, const TriangleMesh&,
-                       halfedge_descriptor /* f_new */, TriangleMesh&){}
+                       halfedge_descriptor /* f_new */, const TriangleMesh&){}
 
-  void before_edge_duplicated(halfedge_descriptor /*h_old*/, TriangleMesh&){} // called before a patch border edge is duplicated
+  void before_edge_duplicated(halfedge_descriptor /*h_old*/, const TriangleMesh&){} // called before a patch border edge is duplicated
   void after_edge_duplicated(halfedge_descriptor /*h_old*/,
-                             halfedge_descriptor /* f_new */, TriangleMesh&){} // called after a patch border edge is duplicated
+                             halfedge_descriptor /* f_new */, const TriangleMesh&){} // called after a patch border edge is duplicated
 
   void intersection_edge_copy(halfedge_descriptor /* h_old1 */, const TriangleMesh& /* tm1 */,
                               halfedge_descriptor /* h_old2 */, const TriangleMesh& /* tm2 */,
-                              halfedge_descriptor /* h_new */,  TriangleMesh& /* tm_new */){}
+                              halfedge_descriptor /* h_new */,  const TriangleMesh& /* tm_new */){}
 // vertex visitor functions
   void new_vertex_added(std::size_t /* node_id */,
                         vertex_descriptor /* vh */,
@@ -459,9 +460,9 @@ struct Default_visitor{
                                    const TriangleMesh& /* tm2 */,
                                    bool /* is_target_coplanar */,
                                    bool /* is_source_coplanar */) {}
-  void before_vertex_copy(vertex_descriptor /*v_src*/, const TriangleMesh& /*tm_src*/, TriangleMesh& /*tm_tgt*/){}
+  void before_vertex_copy(vertex_descriptor /*v_src*/, const TriangleMesh& /*tm_src*/, const TriangleMesh& /*tm_tgt*/){}
   void after_vertex_copy(vertex_descriptor /*v_src*/, const TriangleMesh& /*tm_src*/,
-                         vertex_descriptor /* v_tgt */, TriangleMesh& /*tm_tgt*/){}
+                         vertex_descriptor /* v_tgt */, const TriangleMesh& /*tm_tgt*/){}
 
   // progress tracking
   void start_filtering_intersections() const {}
