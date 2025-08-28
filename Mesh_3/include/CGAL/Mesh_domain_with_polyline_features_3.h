@@ -57,6 +57,7 @@ class Polyline
 
 public:
   typedef typename Data::const_iterator const_iterator;
+  typedef std::pair<Point_3, const_iterator> Point_and_location;
 
   Polyline() {}
   ~Polyline() {}
@@ -119,7 +120,9 @@ public:
 
   bool is_curve_segment_covered(CGAL::Orientation orientation,
                                 const Point_3& c1, const Point_3& c2,
-                                const FT sq_r1, const FT sq_r2) const
+                                const FT sq_r1, const FT sq_r2,
+                                const const_iterator cc1_it,
+                                const const_iterator cc2_it) const
   {
     CGAL_assertion(orientation != CGAL::ZERO);
     typename Kernel::Has_on_bounded_side_3 cover_pred =
@@ -129,8 +132,8 @@ public:
     const Sphere_3 s1(c1, sq_r1);
     const Sphere_3 s2(c2, sq_r2);
 
-    const_iterator c1_it = locate(c1);
-    const_iterator c2_it = locate(c2);
+    const_iterator c1_it = cc1_it;
+    const_iterator c2_it = cc2_it;
 
     if(orientation == CGAL::NEGATIVE) {
       ++c1_it;
@@ -272,7 +275,7 @@ public:
   /// returns a point at geodesic distance `distance` from p along the
   /// polyline. The polyline is oriented from starting point to end point.
   /// The distance could be negative.
-  Point_3 point_at(const Point_3& p, FT distance) const
+  Point_and_location point_at(const Point_3& p, FT distance) const
   {
     // use first point of the polyline instead of p
     distance += curve_segment_length(start_point(),p,CGAL::POSITIVE);
@@ -302,7 +305,7 @@ public:
       ++pit;
 
       if (pit == points_.end())
-        return *previous;
+        return {*previous, previous};
 
       segment_length = this->distance(*previous,*pit);
     }
@@ -311,7 +314,8 @@ public:
     typedef typename Kernel::Vector_3 Vector_3;
     Vector_3 v (*previous, *pit);
 
-    return (*previous) + (distance / CGAL::sqrt(v.squared_length())) * v;
+    return {(*previous) + (distance / CGAL::sqrt(v.squared_length())) * v,
+            previous};
   }
 
   bool are_ordered_along(const Point_3& p, const Point_3& q) const
@@ -582,6 +586,9 @@ public:
   typedef GT                                         R;
   typedef typename MD::Point_3                       Point_3;
 
+  using Polyline_const_iterator = typename Mesh_3::internal::Polyline<GT>::const_iterator;
+  using Point_and_location = typename Mesh_3::internal::Polyline<GT>::Point_and_location;
+
   /// \name Creation
   /// @{
 
@@ -732,7 +739,7 @@ public:
   FT curve_length(const Curve_index& curve_index) const;
 
   /// implements `MeshDomainWithFeatures_3::construct_point_on_curve()`.
-  Point_3
+  Point_and_location
   construct_point_on_curve(const Point_3& starting_point,
                            const Curve_index& curve_index,
                            FT distance) const;
@@ -753,7 +760,9 @@ public:
   bool is_curve_segment_covered(const Curve_index& index,
                                 CGAL::Orientation orientation,
                                 const Point_3& c1, const Point_3& c2,
-                                const FT sq_r1, const FT sq_r2) const;
+                                const FT sq_r1, const FT sq_r2,
+                                const Polyline_const_iterator c1_it,
+                                const Polyline_const_iterator c2_it) const;
 
   /**
    * Returns the index to be stored in a vertex lying on the surface identified
@@ -865,6 +874,8 @@ private:
 
   typedef CGAL::AABB_traits_3<GT,
                               Curves_primitives> AABB_curves_traits;
+
+//  typedef typename Polyline::const_iterator Polyline_const_iterator;
 
   Corners corners_;
   Corners_tmp_incidences corners_tmp_incidences_;
@@ -1030,7 +1041,7 @@ curve_length(const Curve_index& curve_index) const
 
 
 template <class MD_>
-typename Mesh_domain_with_polyline_features_3<MD_>::Point_3
+typename Mesh_domain_with_polyline_features_3<MD_>::Point_and_location
 Mesh_domain_with_polyline_features_3<MD_>::
 construct_point_on_curve(const Point_3& starting_point,
                          const Curve_index& curve_index,
@@ -1550,13 +1561,17 @@ Mesh_domain_with_polyline_features_3<MD_>::
 is_curve_segment_covered(const Curve_index& index,
                          CGAL::Orientation orientation,
                          const Point_3& c1, const Point_3& c2,
-                         const FT sq_r1, const FT sq_r2) const
+                         const FT sq_r1, const FT sq_r2,
+                         const Polyline_const_iterator c1_it,
+                         const Polyline_const_iterator c2_it) const
 {
   typename Edges::const_iterator eit = edges_.find(index);
   CGAL_assertion(eit != edges_.end());
 
   return eit->second.is_curve_segment_covered(orientation,
-                                              c1, c2, sq_r1, sq_r2);
+                                              c1, c2,
+                                              sq_r1, sq_r2,
+                                              c1_it, c2_it);
 }
 
 } //namespace CGAL

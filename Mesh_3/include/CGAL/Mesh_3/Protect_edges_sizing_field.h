@@ -46,6 +46,7 @@
 #include <CGAL/iterator.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/Delaunay_triangulation_3.h>
+#include <CGAL/Mesh_domain_with_polyline_features_3.h>
 
 #include <CGAL/boost/iterator/transform_iterator.hpp>
 
@@ -141,6 +142,8 @@ public:
 
   using Distance_Function =
     typename CGAL::Default::Get<DistanceFunction, NoDistanceFunction>::type;
+
+  using Polyline_iter = typename CGAL::Mesh_3::internal::Polyline<GT>::const_iterator;
 
 private:
   typedef typename CGAL::Kernel_traits<MeshDomain>::Kernel   Kernel;
@@ -491,6 +494,17 @@ private:
     return use_edge_distance_;
   }
 
+  Polyline_iter polyline_locate(Vertex_handle vh) const
+  {
+    CGAL_assertion(vh->in_dimension() < 2);
+    return vertex_to_polyline_iterator_.at(vh);
+  }
+  void set_polyline_iterator(Vertex_handle vh, Polyline_iter it)
+  {
+    CGAL_assertion(vh->in_dimension() < 2);
+    vertex_to_polyline_iterator_[vh] = it;
+  }
+
 private:
   C3T3& c3t3_;
   const MeshDomain& domain_;
@@ -504,6 +518,7 @@ private:
   int refine_balls_iteration_nb;
   bool nonlinear_growth_of_balls;
   const std::size_t maximal_number_of_vertices_;
+  std::unordered_map<Vertex_handle, Polyline_iter> vertex_to_polyline_iterator_;
   Mesh_error_code* const error_code_;
 #ifndef CGAL_NO_ATOMIC
   /// Pointer to the atomic Boolean that can stop the process
@@ -1054,7 +1069,7 @@ insert_balls_on_edges()
 
           FT curve_length = domain_.curve_length(curve_index);
 
-          Bare_point other_point =
+          auto [other_point, polyline_iter] =
             domain_.construct_point_on_curve(p,
                                              curve_index,
                                              curve_length / 2);
@@ -1066,7 +1081,9 @@ insert_balls_on_edges()
                                   p_index,
                                   Vertex_handle(),
                                   CGAL::Emptyset_iterator()).first;
+          set_polyline_iterator(vp, polyline_iter);
         }
+
         // No 'else' because in that case 'is_vertex(..)' already filled
         // the variable 'vp'.
         vq = vp;
@@ -1238,10 +1255,11 @@ insert_balls(const Vertex_handle& vp,
                                         curve_index, d_sign)
                 << ")\n";
 #endif
-      const Bare_point new_point =
+      const auto [bp, polyline_iter] =
         domain_.construct_point_on_curve(cp(vp_wp),
                                          curve_index,
                                          d_signF * d / 2);
+      const Bare_point new_point = bp;
       const int dim = 1; // new_point is on edge
       const Index index = domain_.index_from_curve_index(curve_index);
       const FT point_weight = CGAL::square(size_(new_point, dim, index));
@@ -1256,8 +1274,10 @@ insert_balls(const Vertex_handle& vp,
                            index,
                            Vertex_handle(),
                            out);
-      if(forced_stop()) return out;
       const Vertex_handle new_vertex = pair.first;
+      set_polyline_iterator(new_vertex, polyline_iter);
+
+      if(forced_stop()) return out;
       out = pair.second;
       const FT sn = get_radius(new_vertex);
       if(sp <= sn) {
@@ -1332,8 +1352,9 @@ insert_balls(const Vertex_handle& vp,
   for ( int i = 1 ; i <= n ; ++i )
   {
     // New point position
-    Bare_point new_point =
+    const auto [bp, polyline_iter] =
       domain_.construct_point_on_curve(p, curve_index, pt_dist);
+    const Bare_point& new_point = bp;
 
     // Weight (use as size the min between norm_step_size and linear interpolation)
     FT current_size = (std::min)(norm_step_size, sp + CGAL::abs(pt_dist)/d*(sq-sp));
@@ -1347,6 +1368,7 @@ insert_balls(const Vertex_handle& vp,
     std::pair<Vertex_handle, ErasedVeOutIt> pair =
       smart_insert_point(new_point, point_weight, dim, index, prev, out);
     Vertex_handle new_vertex = pair.first;
+    set_polyline_iterator(new_vertex, polyline_iter);
     out = pair.second;
 
     // Add edge to c3t3
@@ -1559,7 +1581,7 @@ approx_is_too_large(const Edge& e, const bool is_edge_in_complex) const
   // Construct the geodesic middle point
   const Curve_index curve_index = c3t3_.curve_index(e);
   const FT signed_geodesic_distance = domain_.signed_geodesic_distance(pa, pb, curve_index);
-  const Bare_point geodesic_middle = (signed_geodesic_distance >= FT(0))
+  const auto [geodesic_middle, _ /*polyline_iter*/] = (signed_geodesic_distance >= FT(0))
       ? domain_.construct_point_on_curve(pa, curve_index, signed_geodesic_distance / 2)
       : domain_.construct_point_on_curve(pb, curve_index, -signed_geodesic_distance / 2);
 
@@ -1882,7 +1904,10 @@ is_sampling_dense_enough(const Vertex_handle& v1, const Vertex_handle& v2,
     const bool cov = domain_.is_curve_segment_covered(curve_index,
                                                       orientation,
                                                       cp(v1_wp), cp(v2_wp),
-                                                      cw(v1_wp), cw(v2_wp));
+                                                      cw(v1_wp), cw(v2_wp),
+                                                      polyline_locate(v1),
+                                                      polyline_locate(v2));
+
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
     if(cov) {
       std::cerr << "      But the curve is locally covered\n";
