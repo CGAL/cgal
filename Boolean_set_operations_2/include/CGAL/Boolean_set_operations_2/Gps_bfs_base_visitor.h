@@ -43,7 +43,6 @@ protected:
   std::size_t m_num_of_polygons; // number of polygons
 
 public:
-
   Gps_bfs_base_visitor(Edges_hash* edges_hash,
                        Faces_hash* faces_hash,
                        std::size_t n_pgn):
@@ -79,12 +78,12 @@ public:
 protected:
   // compute the inside count of a face
   std::size_t compute_ic(Face_iterator f1,
-                          Face_iterator f2,
-                          Halfedge_iterator he) {
+                         Face_iterator f2,
+                         Halfedge_iterator he) {
     CGAL_assertion(m_edges_hash->is_defined(he) &&
                    m_edges_hash->is_defined(he->twin()) &&
                    m_faces_hash->is_defined(f1) &&
-                   !m_faces_hash->is_defined(f2));
+                   ! m_faces_hash->is_defined(f2));
     std::size_t ic_f2 =
       (*m_faces_hash)[f1] - (*m_edges_hash)[he] + (*m_edges_hash)[he->twin()];
     (*m_faces_hash)[f2] = ic_f2;

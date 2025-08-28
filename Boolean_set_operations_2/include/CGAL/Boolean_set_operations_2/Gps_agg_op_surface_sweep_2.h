@@ -7,11 +7,12 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s) : Baruch Zukerman <baruchzu@post.tau.ac.il>
-//             Ron Wein        <wein@post.tau.ac.il>
+// Author(s) : Baruch Zukerman  <baruchzu@post.tau.ac.il>
+//             Ron Wein         <wein@post.tau.ac.il>
+//             Efi Fogel        <efifogel@gmail.com>
 
-#ifndef CGAL_BSO_2_GSP_AGG_OP_SURFACE_SWEEP_2_H
-#define CGAL_BSO_2_GSP_AGG_OP_SURFACE_SWEEP_2_H
+#ifndef CGAL_GSP_AGG_OP_SURFACE_SWEEP_2_H
+#define CGAL_GSP_AGG_OP_SURFACE_SWEEP_2_H
 
 #include <vector>
 
@@ -70,17 +71,15 @@ public:
     Base(traits, visitor)
   {}
 
-  /*! Perform the sweep. */
   template <typename CurveInputIterator>
-  void sweep(CurveInputIterator curves_begin, CurveInputIterator curves_end,
-             std::size_t lower, std::size_t upper, std::size_t jump,
-             std::vector<Arr_entry>& arr_vec) {
+  void pre_process(CurveInputIterator curves_begin, CurveInputIterator curves_end,
+                   std::size_t lower, std::size_t upper, std::size_t jump,
+                   std::vector<Arr_entry>& arr_vec) {
     CGAL_assertion(this->m_queue->empty() && this->m_statusLine.size() == 0);
 
     using Vertices_map = Unique_hash_map<Vertex_handle, Event*>;
     using Compare_xy_2 = typename Gt2::Compare_xy_2;
 
-    this->m_visitor->before_sweep();
     // Allocate all of the Subcurve objects as one block.
     this->m_num_of_subCurves = std::distance(curves_begin, curves_end);
     if (this->m_num_of_subCurves > 0)
@@ -203,13 +202,29 @@ public:
       e_right->add_curve_to_left(this->m_subCurves + index);
       this->_add_curve_to_right(e_left, this->m_subCurves + index);
     }
+  }
 
-    // Perform the sweep:
+  /*! Perform the sweep. */
+  template <typename CurveInputIterator>
+  void sweep(CurveInputIterator curves_begin, CurveInputIterator curves_end,
+             std::size_t lower, std::size_t upper, std::size_t jump, std::vector<Arr_entry>& arr_vec) {
+    this->m_visitor->before_sweep();
+    pre_process(curves_begin, curves_end,lower, upper, jump, arr_vec);
     this->_sweep();
     this->_complete_sweep();
     this->m_visitor->after_sweep();
+  }
 
-    return;
+  /*! Perform the sweep. */
+  template <typename CurveInputIterator>
+  bool sweep_intercept(CurveInputIterator curves_begin, CurveInputIterator curves_end,
+                       std::size_t lower, std::size_t upper, std::size_t jump, std::vector<Arr_entry>& arr_vec) {
+    this->m_visitor->before_sweep();
+    pre_process(curves_begin, curves_end,lower, upper, jump, arr_vec);
+    this->_sweep();
+    this->_complete_sweep();
+    this->m_visitor->after_sweep();
+    return this->m_visitor->found_intersection();
   }
 
 private:
@@ -230,7 +245,6 @@ private:
         else return (Event::LEFT_END);
       }
       ++circ;
-
     } while (circ != first);
 
     // If we reached here, we should not keep this vertex.

@@ -7,11 +7,12 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s) : Baruch Zukerman <baruchzu@post.tau.ac.il>
-//             Ophir Setter    <ophir.setter@cs.tau.ac.il>
+// Author(s) : Baruch Zukerman  <baruchzu@post.tau.ac.il>
+//             Ophir Setter     <ophir.setter@cs.tau.ac.il>
+//             Efi Fogel        <efifogel@gmail.com>
 
-#ifndef CGAL_BSO_2_GPS_AGG_OP_H
-#define CGAL_BSO_2_GPS_AGG_OP_H
+#ifndef CGAL_GPS_AGG_OP_H
+#define CGAL_GPS_AGG_OP_H
 
 #include <CGAL/license/Boolean_set_operations_2.h>
 
@@ -19,8 +20,8 @@
  *
  * The class Gps_agg_op is responsible for aggregated Boolean set operations
  * depending on a visitor template parameter.  It uses the surface-sweep
- * algorithm from the arrangement packages to overlay all the polygon sets, and
- * then it uses a BFS that determines which of the faces is contained in the
+ * algorithm from the surface-sweep package to overlay all the polygon sets, and
+ * then it uses a BFS that determines which of the faces are contained in the
  * result using the visitor.
  */
 
@@ -37,7 +38,7 @@
 
 namespace CGAL {
 
-template <typename Arrangement_, typename BfsVisitor>
+template <typename Arrangement_, typename BfsVisitor, template <typename, typename> class SweepVisitor>
 class Gps_agg_op {
   using Arrangement_2 = Arrangement_;
   using Bfs_visitor = BfsVisitor;
@@ -74,7 +75,7 @@ class Gps_agg_op {
   using Subcurve = Arr_construction_subcurve<Mgt2, Event, Allocator>;
   using Helper_tmp = typename Tt::template Construction_helper<Event, Subcurve>;
   using Helper = typename Helper_tmp::template rebind<Mgt2, Arr, Event, Subcurve>::other;
-  using Visitor = Gps_agg_op_visitor<Helper, Arr>;
+  using Visitor = SweepVisitor<Helper, Arr>;
   using Surface_sweep_2 = Gps_agg_op_surface_sweep_2<Arr, Visitor>;
 
   using Edges_hash = Unique_hash_map<Halfedge_handle, std::size_t>;
@@ -90,7 +91,7 @@ protected:
   Faces_hash m_faces_hash;      // maps face to its IC (inside count)
 
 public:
-  /*! Constructor. */
+  /*! constructs. */
   Gps_agg_op(Arr& arr, std::vector<Vertex_handle>& vert_vec, const Gt2& tr) :
     m_arr(&arr),
     m_traits(new Mgt2(tr)),
@@ -98,38 +99,38 @@ public:
     m_surface_sweep(m_traits, &m_visitor)
   {}
 
-  void sweep_arrangements(std::size_t lower, std::size_t upper,
-                          std::size_t jump, std::vector<Arr_entry>& arr_vec) {
-    std::list<Meta_X_monotone_curve_2> curves_list;
-
+  std::size_t prepare(std::size_t lower, std::size_t upper, std::size_t jump,
+                      std::vector<Arr_entry>& arr_vec, std::list<Meta_X_monotone_curve_2>& curves_list) {
     std::size_t n_inf_pgn = 0;  // number of infinite polygons (arrangement
                                 // with a contained unbounded face
-    std::size_t n_pgn = 0;      // number of polygons (arrangements)
-
-    for (std::size_t i = lower; i <= upper; i += jump, ++n_pgn) {
+    for (auto i = lower; i <= upper; i += jump) {
       // The BFS scan (after the loop) starts in the reference face,
       // so we count the number of polygons that contain the reference face.
       Arr* arr = (arr_vec[i]).first;
       if (arr->reference_face()->contained()) ++n_inf_pgn;
 
-      Edge_iterator itr = arr->edges_begin();
-      for(; itr != arr->edges_end(); ++itr) {
+      for (auto itr = arr->edges_begin(); itr != arr->edges_end(); ++itr) {
         // take only relevant edges (which separate between contained and
         // non-contained faces.
-        Halfedge_iterator he = itr;
-        if (he->face()->contained() == he->twin()->face()->contained())
-          continue;
-        if ((Arr_halfedge_direction)he->direction() == ARR_RIGHT_TO_LEFT)
-          he = he->twin();
+        Halfedge_handle he = itr;
+        if (he->face()->contained() == he->twin()->face()->contained()) continue;
+        if ((Arr_halfedge_direction)he->direction() == ARR_RIGHT_TO_LEFT) he = he->twin();
 
         Curve_data cv_data(arr, he, 1, 0);
         curves_list.push_back(Meta_X_monotone_curve_2(he->curve(), cv_data));
       }
     }
+    return n_inf_pgn;
+  }
 
-    m_surface_sweep.sweep(curves_list.begin(), curves_list.end(),
-                          lower, upper, jump, arr_vec);
-
+  /*! sweeps the plane without interceptions.
+   */
+  void sweep_arrangements(std::size_t lower, std::size_t upper, std::size_t jump,
+                          std::vector<Arr_entry>& arr_vec) {
+    std::size_t n_pgn = upper - lower + 1;      // number of polygons (arrangements)
+    std::list<Meta_X_monotone_curve_2> curves_list;
+    auto n_inf_pgn = prepare(lower, upper, jump, arr_vec, curves_list);
+    m_surface_sweep.sweep(curves_list.begin(), curves_list.end(), lower, upper, jump, arr_vec);
     m_faces_hash[m_arr->reference_face()] = n_inf_pgn;
     Bfs_visitor visitor(&m_edges_hash, &m_faces_hash, n_pgn);
     visitor.visit_ubf(m_arr->faces_begin(), n_inf_pgn);
@@ -138,7 +139,26 @@ public:
     visitor.after_scan(*m_arr);
   }
 
-  /*! Destruct.
+  /*! sweeps the plane without interceptions, but stop when an intersection occurs.
+   */
+  bool sweep_intercept_arrangements(std::size_t lower, std::size_t upper, std::size_t jump,
+                                    std::vector<Arr_entry>& arr_vec) {
+    std::list<Meta_X_monotone_curve_2> curves_list;
+    auto n_inf_pgn = prepare(lower, upper, jump, arr_vec, curves_list);
+    auto res = m_surface_sweep.sweep_intercept(curves_list.begin(), curves_list.end(), lower, upper, jump, arr_vec);
+    if (res) return true;
+
+    m_faces_hash[m_arr->reference_face()] = n_inf_pgn;
+    std::size_t n_pgn = upper - lower + 1;      // number of polygons (arrangements)
+    Bfs_visitor visitor(&m_edges_hash, &m_faces_hash, n_pgn);
+    visitor.visit_ubf(m_arr->faces_begin(), n_inf_pgn);
+    Bfs_scanner scanner(visitor);
+    scanner.scan(*m_arr);
+    visitor.after_scan(*m_arr);
+    return false;
+  }
+
+  /*! destructs.
    */
   ~Gps_agg_op() { delete m_traits; }
 };

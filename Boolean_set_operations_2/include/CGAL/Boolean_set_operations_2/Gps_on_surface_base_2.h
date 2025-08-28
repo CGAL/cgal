@@ -10,7 +10,7 @@
 // Author(s) : Baruch Zukerman <baruchzu@post.tau.ac.il>
 //             Ophir Setter    <ophir.setter@cs.tau.ac.il>
 //             Guy Zucker <guyzucke@post.tau.ac.il>
-
+//             Efi Fogel        <efifogel@gmail.com>
 
 #ifndef CGAL_GPS_ON_SURFACE_BASE_2_H
 #define CGAL_GPS_ON_SURFACE_BASE_2_H
@@ -388,18 +388,19 @@ public:
 
   const Traits_2& traits() const { return *m_traits; }
 
-  bool is_empty() const {
-    // We have to check that all the faces of an empty arrangement are not
-    // contained in the polygon set (there can be several faces in an empty
-    // arrangement, dependent on the topology traits.
-    // The point is that if the arrangement is "empty" (meaning that no curve
-    // or point were inserted and that it is in its original state) then
-    // all the faces (created by the topology traits) should have the same
-    // result for contained() --- from Boolean operations point of view there
-    // can not be an empty arrangement which has several faces with different
-    // attributes.
-    return (m_arr->is_empty() && !m_arr->faces_begin()->contained());
-  }
+  // We have to check that all the faces of an empty arrangement are not
+  // contained in the polygon set (there can be several faces in an empty
+  // arrangement, dependent on the topology traits.
+  // The point is that if the arrangement is "empty" (meaning that no curve
+  // or point were inserted and that it is in its original state) then
+  // all the faces (created by the topology traits) should have the same
+  // result for contained() --- from Boolean operations point of view there
+  // can not be an empty arrangement which has several faces with different
+  // attributes.
+  bool is_empty() const { this->_is_empty(m_arr); }
+
+  bool _is_empty(Aos_2* arr) const
+  { return (arr->is_empty() && ! arr->faces_begin()->contained()); }
 
   bool is_plane() const {
     // Same comment as in "is_empty" above, just with adjustments.
@@ -493,8 +494,33 @@ public:
   template <typename InputIterator>
   bool do_intersect(InputIterator begin, InputIterator end, std::size_t k = 5) {
     Self other(*this);
-    other.intersection(begin, end, k);
-    return (other.is_empty());
+    return other._do_intersect(begin, end, k);
+  }
+
+  // intersects a range of polygons
+  template <typename InputIterator>
+  inline bool _do_intersect(InputIterator begin, InputIterator end, std::size_t k) {
+    std::vector<Arr_entry> arr_vec(std::distance(begin, end) + 1);
+    arr_vec[0].first = this->m_arr;
+    std::size_t i = 1;
+
+    for (auto it = begin; it != end; ++it, ++i) {
+      ValidationPolicy::is_valid((*it), *m_traits);
+      arr_vec[i].first = new Aos_2(m_traits);
+      _insert(*it, *(arr_vec[i].first));
+    }
+
+    Do_intersect_merge<Aos_2> do_intersect_merge;
+    auto res = do_intersect_divide_and_conquer(0, arr_vec.size() - 1, arr_vec, k, do_intersect_merge);
+
+    // The resulting arrangement is at index 0
+    this->m_arr = arr_vec[0].first;
+    delete arr_vec[0].second;
+    if (res) return res;
+
+    _remove_redundant_edges(arr_vec[0].first);
+    _reset_faces(arr_vec[0].first);
+    return (_is_empty(arr_vec[0].first));
   }
 
   template <typename InputIterator1, typename InputIterator2>
@@ -502,8 +528,40 @@ public:
                     InputIterator2 begin2, InputIterator2 end2,
                     std::size_t k = 5) {
     Self other(*this);
-    other.intersection(begin1, end1, begin2, end2, k);
-    return (other.is_empty());
+    return other._do_intersect(begin1, end1, begin2, end2, k);
+  }
+
+  template <typename InputIterator1, typename InputIterator2>
+  bool _do_intersect(InputIterator1 begin1, InputIterator1 end1,
+                     InputIterator2 begin2, InputIterator2 end2,
+                     std::size_t k = 5) {
+    std::vector<Arr_entry> arr_vec(std::distance(begin1, end1) + std::distance(begin2, end2) + 1);
+    arr_vec[0].first = this->m_arr;
+    std::size_t i = 1;
+
+    for (InputIterator1 itr1 = begin1; itr1 != end1; ++itr1, ++i) {
+      ValidationPolicy::is_valid(*itr1, *m_traits);
+      arr_vec[i].first = new Aos_2(m_traits);
+      _insert(*itr1, *(arr_vec[i].first));
+    }
+
+    for (InputIterator2 itr2 = begin2; itr2 != end2; ++itr2, ++i) {
+      ValidationPolicy::is_valid(*itr2,*m_traits);
+      arr_vec[i].first = new Aos_2(m_traits);
+      _insert(*itr2, *(arr_vec[i].first));
+    }
+
+    Do_intersect_merge<Aos_2> do_intersect_merge;
+    auto res = do_intersect_divide_and_conquer(0, arr_vec.size() - 1, arr_vec, k, do_intersect_merge);
+
+    // The resulting arrangement is at index 0
+    this->m_arr = arr_vec[0].first;
+    delete arr_vec[0].second;
+    if (res) return res;
+
+    _remove_redundant_edges(arr_vec[0].first);
+    _reset_faces(arr_vec[0].first);
+    return (_is_empty(arr_vec[0].first));
   }
 
   // joins a range of polygons
@@ -533,7 +591,6 @@ public:
     }
 
     Join_merge<Aos_2> join_merge;
-    _build_sorted_vertices_vectors(arr_vec);
     _divide_and_conquer(0, arr_vec.size() - 1, arr_vec, k, join_merge);
 
     //the result arrangement is at index 0
@@ -556,7 +613,6 @@ public:
     }
 
     Join_merge<Aos_2> join_merge;
-    _build_sorted_vertices_vectors(arr_vec);
     _divide_and_conquer(0, arr_vec.size() - 1, arr_vec, k, join_merge);
 
     // the result arrangement is at index 0
@@ -585,7 +641,6 @@ public:
     }
 
     Join_merge<Aos_2> join_merge;
-    _build_sorted_vertices_vectors(arr_vec);
     _divide_and_conquer(0, arr_vec.size() - 1, arr_vec, k, join_merge);
 
     // the result arrangement is at index 0
@@ -620,7 +675,6 @@ public:
     }
 
     Intersection_merge<Aos_2> intersection_merge;
-    _build_sorted_vertices_vectors(arr_vec);
     _divide_and_conquer(0, arr_vec.size() - 1, arr_vec, k, intersection_merge);
 
     // the result arrangement is at index 0
@@ -636,14 +690,13 @@ public:
     arr_vec[0].first = this->m_arr;
     std::size_t i = 1;
 
-    for (InputIterator itr = begin; itr!=end; ++itr, ++i) {
+    for (InputIterator itr = begin; itr != end; ++itr, ++i) {
       ValidationPolicy::is_valid((*itr), *m_traits);
       arr_vec[i].first = new Aos_2(m_traits);
       _insert(*itr, *(arr_vec[i].first));
     }
 
     Intersection_merge<Aos_2> intersection_merge;
-    _build_sorted_vertices_vectors(arr_vec);
     _divide_and_conquer(0, arr_vec.size() - 1, arr_vec, k, intersection_merge);
 
     // the result arrangement is at index 0
@@ -659,20 +712,19 @@ public:
     arr_vec[0].first = this->m_arr;
     std::size_t i = 1;
 
-    for (InputIterator1 itr1 = begin1; itr1!=end1; ++itr1, ++i) {
+    for (InputIterator1 itr1 = begin1; itr1 != end1; ++itr1, ++i) {
       ValidationPolicy::is_valid(*itr1, *m_traits);
       arr_vec[i].first = new Aos_2(m_traits);
       _insert(*itr1, *(arr_vec[i].first));
     }
 
-    for (InputIterator2 itr2 = begin2; itr2!=end2; ++itr2, ++i) {
+    for (InputIterator2 itr2 = begin2; itr2 != end2; ++itr2, ++i) {
       ValidationPolicy::is_valid(*itr2,*m_traits);
       arr_vec[i].first = new Aos_2(m_traits);
       _insert(*itr2, *(arr_vec[i].first));
     }
 
     Intersection_merge<Aos_2> intersection_merge;
-    _build_sorted_vertices_vectors(arr_vec);
     _divide_and_conquer(0, arr_vec.size() - 1, arr_vec, k, intersection_merge);
 
     // the result arrangement is at index 0
@@ -708,7 +760,6 @@ public:
     }
 
     Xor_merge<Aos_2> xor_merge;
-    _build_sorted_vertices_vectors(arr_vec);
     _divide_and_conquer(0, arr_vec.size() - 1, arr_vec, k, xor_merge);
 
     // the result arrangement is at index 0
@@ -731,7 +782,6 @@ public:
     }
 
     Xor_merge<Aos_2> xor_merge;
-    _build_sorted_vertices_vectors(arr_vec);
     _divide_and_conquer(0, arr_vec.size() - 1, arr_vec, k, xor_merge);
 
     // the result arrangement is at index 0
@@ -761,7 +811,6 @@ public:
     }
 
     Xor_merge<Aos_2> xor_merge;
-    _build_sorted_vertices_vectors(arr_vec);
     _divide_and_conquer(0, arr_vec.size() - 1, arr_vec, k, xor_merge);
 
     // the result arrangement is at index 0
@@ -1155,10 +1204,10 @@ protected:
     }
   }
 
-  void _build_sorted_vertices_vectors(std::vector<Arr_entry>& arr_vec) {
+  //! Allocate, collect , and sort the vertex handles of the arrangements in the given interval
+  void _build_sorted_vertices_vectors(std::size_t lower, std::size_t upper, std::vector<Arr_entry>& arr_vec) {
     Less_vertex_handle comp(m_traits->compare_xy_2_object());
-    const std::size_t n = arr_vec.size();
-    for (std::size_t i = 0; i < n; i++) {
+    for (std::size_t i = lower; i < upper + 1; i++) {
       // Allocate a vector of handles to all vertices in the current arrangement.
       Aos_2* p_arr = arr_vec[i].first;
       arr_vec[i].second = new std::vector<Vertex_handle>;
@@ -1174,11 +1223,16 @@ protected:
     }
   }
 
+  //! Divide & conquer
   template <typename Merge>
   void _divide_and_conquer(std::size_t lower, std::size_t upper,
                            std::vector<Arr_entry>& arr_vec,
                            std::size_t k, Merge merge_func) {
+    static int indent = 0;
+    std::cout << std::setw(indent) << "" << "D&C [" << lower << "," << upper << "," << k << "]\n";
     if ((upper - lower) < k) {
+      std::cout << std::setw(indent) << "" << "Merging [" << lower << "," << upper << "," << 1 << "]\n";
+      _build_sorted_vertices_vectors(lower, upper, arr_vec);
       merge_func(lower, upper, 1, arr_vec);
       return;
     }
@@ -1187,10 +1241,69 @@ protected:
     auto curr_lower = lower;
 
     for (std::size_t i = 0; i < k - 1; ++i, curr_lower += sub_size) {
+      indent += 2;
       _divide_and_conquer(curr_lower, curr_lower + sub_size-1, arr_vec, k, merge_func);
+      indent -= 2;
     }
+    indent += 2;
     _divide_and_conquer(curr_lower, upper, arr_vec, k, merge_func);
+    indent -= 2;
+    std::cout << std::setw(indent) << "" << "Merging [" << lower << "," <<  curr_lower << "," << sub_size << "]\n";
     merge_func(lower, curr_lower, sub_size, arr_vec);
+  }
+
+  /*! Divide & conquer tailored for the do_intersect() function.
+   * It returns a Boolean value indicating whether an intersection in the
+   * interiors of the curves have been detected. Also, it terminates
+   * as a sson as such an intersection has been detected.
+   */
+  template <typename Merge>
+  bool do_intersect_divide_and_conquer(std::size_t lower, std::size_t upper,
+                                       std::vector<Arr_entry>& arr_vec,
+                                       std::size_t k, Merge merge_func) {
+    static int indent = 0;
+    std::cout << std::setw(indent) << "" << "D&C [" << lower << "," << upper << "," << k << "]\n";
+    if ((upper - lower) < k) {
+      std::cout << std::setw(indent) << "" << "Merging [" << lower << "," << upper << "," << 1 << "]\n";
+      _build_sorted_vertices_vectors(lower, upper, arr_vec);
+      return merge_func(lower, upper, 1, arr_vec);
+    }
+
+    auto sub_size = ((upper - lower + 1) / k);
+    auto curr_lower = lower;
+
+    bool res = false;
+    for (std::size_t i = 0; i < k - 1; ++i, curr_lower += sub_size) {
+      indent += 2;
+      res = do_intersect_divide_and_conquer(curr_lower, curr_lower + sub_size-1, arr_vec, k, merge_func);
+      indent -= 2;
+      if (res) break;
+    }
+    if (res) {
+      // Clean up the entries that have been created
+      std::cout << std::setw(indent) << "" << "Cleaning [" << lower + sub_size << "," << curr_lower << "," << sub_size << "]\n";
+      for (auto count = lower + sub_size; count <= curr_lower; count += sub_size) {
+        delete (arr_vec[count].first);
+        delete (arr_vec[count].second);
+      }
+      return true;
+    }
+
+    indent += 2;
+    res = do_intersect_divide_and_conquer(curr_lower, upper, arr_vec, k, merge_func);
+    indent -= 2;
+    if (res) {
+      // Clean up the entries that have been created
+      std::cout << std::setw(indent) << "" << "Cleaning [" << lower + sub_size << "," << curr_lower << "," << sub_size << "]\n";
+      for (std::size_t count = lower + sub_size; count <= curr_lower; count += sub_size) {
+        delete (arr_vec[count].first);
+        delete (arr_vec[count].second);
+      }
+      return true;
+    }
+
+    std::cout << std::setw(indent) << "" << "Merging [" << lower << "," <<  curr_lower << "," << sub_size << "]\n";
+    return merge_func(lower, curr_lower, sub_size, arr_vec);
   }
 
   // marks all faces as non-visited

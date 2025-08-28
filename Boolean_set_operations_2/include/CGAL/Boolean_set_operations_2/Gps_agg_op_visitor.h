@@ -7,12 +7,12 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-//
 // Author(s) : Baruch Zukerman  <baruchzu@post.tau.ac.il>
 //             Ron Wein         <wein@post.tau.ac.il>
+//             Efi Fogel        <efifogel@gmail.com>
 
-#ifndef CGAL_BSO_2_GSP_AGG_OP_VISITOR_H
-#define CGAL_BSO_2_GSP_AGG_OP_VISITOR_H
+#ifndef CGAL_GSP_AGG_OP_VISITOR_H
+#define CGAL_GSP_AGG_OP_VISITOR_H
 
 #include <CGAL/license/Boolean_set_operations_2.h>
 
@@ -31,7 +31,7 @@ class Gps_agg_op_base_visitor :
     Helper_,
     typename Default::Get<Visitor_, Gps_agg_op_base_visitor<Helper_,
                                                             Arrangement_,
-                                                            Visitor_> >::type> {
+                                                            Visitor_>>::type> {
 public:
   using Helper = Helper_;
   using Arrangement_2 = Arrangement_;
@@ -43,7 +43,6 @@ public:
 private:
   using Gt2 = Geometry_traits_2;
   using Arr = Arrangement_2;
-
   using Self = Gps_agg_op_base_visitor<Helper, Arr, Visitor_>;
   using Visitor = typename Default::Get<Visitor_, Self>::type;
   using Base = Arr_construction_ss_visitor<Helper, Visitor>;
@@ -127,7 +126,8 @@ template <typename Helper_, typename Arrangement_, typename Visitor_ = Default>
 class Gps_agg_op_visitor :
   public Gps_agg_op_base_visitor<
     Helper_, Arrangement_,
-    Gps_agg_op_visitor<Helper_, Arrangement_, Visitor_>> {
+    typename Default::Get<Visitor_,
+                          Gps_agg_op_visitor<Helper_, Arrangement_, Visitor_>>::type> {
 public:
   using Helper = Helper_;
   using Arrangement_2 = Arrangement_;
@@ -145,6 +145,7 @@ private:
   using Base = Gps_agg_op_base_visitor<Helper, Arr, Visitor>;
 
 public:
+  using Edges_hash = typename Base::Edges_hash;
   using Halfedge_handle = typename Base::Halfedge_handle;
   using Vertex_handle = typename Base::Vertex_handle;
   using X_monotone_curve_2 = typename Gt2::X_monotone_curve_2;
@@ -156,7 +157,7 @@ protected:
                                                 // ascending order.
 
 public:
-  Gps_agg_op_visitor(Arr* arr, typename Base::Edges_hash* hash,
+  Gps_agg_op_visitor(Arr* arr, Edges_hash* hash,
                      std::vector<Vertex_handle>* vertices_vec) :
     Base(arr, hash),
     m_event_count(0),
@@ -210,7 +211,7 @@ public:
 
     CGAL_assertion((Arr_halfedge_direction)res_he->direction() ==
                     ARR_LEFT_TO_RIGHT);
-    _insert_vertex (curr_event, res_he->target());
+    _insert_vertex(curr_event, res_he->target());
     return res_he;
   }
 
