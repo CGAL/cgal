@@ -494,14 +494,22 @@ private:
     return use_edge_distance_;
   }
 
-  Polyline_iter polyline_locate(Vertex_handle vh) const
+  Polyline_iter locate_in_polyline(Vertex_handle vh, const Curve_index& index) const
   {
     CGAL_assertion(vh->in_dimension() < 2);
-    return vertex_to_polyline_iterator_.at(vh);
+
+    if(vh->in_dimension() == 0) //corner
+    {
+      auto cp = c3t3_.triangulation().geom_traits().construct_point_3_object();
+      return domain_.locate_corner(index, cp(vh->point()));
+    }
+    else
+      return vertex_to_polyline_iterator_.at(vh);
   }
+
   void set_polyline_iterator(Vertex_handle vh, Polyline_iter it)
   {
-    CGAL_assertion(vh->in_dimension() < 2);
+    CGAL_assertion(vh->in_dimension() == 1);
     vertex_to_polyline_iterator_[vh] = it;
   }
 
@@ -1368,8 +1376,8 @@ insert_balls(const Vertex_handle& vp,
     std::pair<Vertex_handle, ErasedVeOutIt> pair =
       smart_insert_point(new_point, point_weight, dim, index, prev, out);
     Vertex_handle new_vertex = pair.first;
-    set_polyline_iterator(new_vertex, polyline_iter);
     out = pair.second;
+    set_polyline_iterator(new_vertex, polyline_iter);
 
     // Add edge to c3t3
     if(!c3t3_.is_in_complex(prev, new_vertex)) {
@@ -1850,6 +1858,8 @@ curve_segment_length(const Vertex_handle v1,
   FT arc_length = (v1_valid_curve_index && v2_valid_curve_index)
     ? domain_.curve_segment_length(cp(v1_wp),
                                    cp(v2_wp),
+                                   locate_in_polyline(v1, curve_index),
+                                   locate_in_polyline(v2, curve_index),
                                    curve_index,
                                    orientation)
     : compute_distance(v1, v2); //curve polyline may not be consistent
@@ -1905,8 +1915,8 @@ is_sampling_dense_enough(const Vertex_handle& v1, const Vertex_handle& v2,
                                                       orientation,
                                                       cp(v1_wp), cp(v2_wp),
                                                       cw(v1_wp), cw(v2_wp),
-                                                      polyline_locate(v1),
-                                                      polyline_locate(v2));
+                                                      locate_in_polyline(v1, curve_index),
+                                                      locate_in_polyline(v2, curve_index));
 
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
     if(cov) {

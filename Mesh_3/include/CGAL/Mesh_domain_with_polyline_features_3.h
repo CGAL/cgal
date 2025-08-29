@@ -305,7 +305,7 @@ public:
       ++pit;
 
       if (pit == points_.end())
-        return {*previous, previous};
+        return {*previous, last_segment_source()};
 
       segment_length = this->distance(*previous,*pit);
     }
@@ -316,6 +316,18 @@ public:
 
     return {(*previous) + (distance / CGAL::sqrt(v.squared_length())) * v,
             previous};
+  }
+
+  const_iterator locate_corner(const Point_3& p) const
+  {
+    const_iterator res = points_.end();
+    if(p == start_point())
+      res = points_.begin();
+    else if(p == end_point())
+      res = last_segment_source();
+
+    CGAL_assertion(res != points_.end());
+    return res;
   }
 
   bool are_ordered_along(const Point_3& p, const Point_3& q) const
@@ -586,8 +598,9 @@ public:
   typedef GT                                         R;
   typedef typename MD::Point_3                       Point_3;
 
-  using Polyline_const_iterator = typename Mesh_3::internal::Polyline<GT>::const_iterator;
-  using Point_and_location = typename Mesh_3::internal::Polyline<GT>::Point_and_location;
+  using Polyline = Mesh_3::internal::Polyline<GT>;
+  using Polyline_const_iterator = typename Polyline::const_iterator;
+  using Point_and_location = typename Polyline::Point_and_location;
 
   /// \name Creation
   /// @{
@@ -735,6 +748,13 @@ public:
                           const Curve_index& curve_index,
                           CGAL::Orientation orientation) const;
 
+  FT curve_segment_length(const Point_3& p,
+                          const Point_3 q,
+                          const Polyline_const_iterator p_it,
+                          const Polyline_const_iterator q_it,
+                          const Curve_index& curve_index,
+                          CGAL::Orientation orientation) const;
+
   /// implements `MeshDomainWithFeatures_3::curve_length()`.
   FT curve_length(const Curve_index& curve_index) const;
 
@@ -763,6 +783,10 @@ public:
                                 const FT sq_r1, const FT sq_r2,
                                 const Polyline_const_iterator c1_it,
                                 const Polyline_const_iterator c2_it) const;
+
+  /// locates the corner point `p` on the curve identified by `curve_index`
+  Polyline_const_iterator locate_corner(const Curve_index& curve_index,
+                                        const Point_3& p) const;
 
   /**
    * Returns the index to be stored in a vertex lying on the surface identified
@@ -1026,6 +1050,22 @@ curve_segment_length(const Point_3& p, const Point_3 q,
   return eit->second.curve_segment_length(p, q, orientation);
 }
 
+template <class MD_>
+typename Mesh_domain_with_polyline_features_3<MD_>::FT
+Mesh_domain_with_polyline_features_3<MD_>::
+curve_segment_length(const Point_3& p,
+                     const Point_3 q,
+                     const Polyline_const_iterator p_it,
+                     const Polyline_const_iterator q_it,
+                     const Curve_index& curve_index,
+                     CGAL::Orientation orientation) const
+{
+  // Get corresponding polyline
+  typename Edges::const_iterator eit = edges_.find(curve_index);
+  CGAL_assertion(eit != edges_.end());
+
+  return eit->second.curve_segment_length(p, q, orientation, p_it, q_it);
+}
 
 template <class MD_>
 typename Mesh_domain_with_polyline_features_3<MD_>::FT
@@ -1572,6 +1612,17 @@ is_curve_segment_covered(const Curve_index& index,
                                               c1, c2,
                                               sq_r1, sq_r2,
                                               c1_it, c2_it);
+}
+
+template <class MD_>
+typename Mesh_domain_with_polyline_features_3<MD_>::Polyline_const_iterator
+Mesh_domain_with_polyline_features_3<MD_>::
+locate_corner(const Curve_index& curve_index,
+              const Point_3& p) const
+{
+  typename Edges::const_iterator eit = edges_.find(curve_index);
+  CGAL_assertion(eit != edges_.end());
+  return eit->second.locate_corner(p);
 }
 
 } //namespace CGAL
