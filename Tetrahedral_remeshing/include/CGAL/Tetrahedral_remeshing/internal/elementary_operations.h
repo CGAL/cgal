@@ -17,11 +17,13 @@
 
 #include <atomic>
 #include <algorithm>
+#include <random>
 #include <vector>
 #include <thread>
 #include <string>
 #include <utility>
 #include <iostream>
+#include <fstream>
 
 namespace CGAL {
 namespace Tetrahedral_remeshing {
@@ -131,8 +133,15 @@ public:
   std::vector<ElementType> collect_candidates(const Operation& op, const C3t3& c3t3) const override {
     auto elements = op.get_element_source(c3t3);
     std::vector<ElementType> candidates;
-    candidates.reserve(elements.size());
-    std::copy(elements.begin(), elements.end(), std::back_inserter(candidates));
+    //candidates.reserve(elements.size());
+    //std::copy(elements.begin(), elements.end(), std::back_inserter(candidates));
+
+    if constexpr(std::is_same<decltype(elements), std::vector<ElementType>>::value) {
+      candidates = std::move(elements); // directly move if vector
+    } else {
+      candidates.reserve(std::distance(elements.begin(), elements.end()));
+      std::copy(elements.begin(), elements.end(), std::back_inserter(candidates));
+    }
     return candidates;
   }
 
@@ -182,16 +191,17 @@ public:
 
   std::vector<ElementType> collect_candidates(const Operation& op, const C3t3& c3t3) const override {
     auto elements = op.get_element_source(c3t3);
-    tbb::combinable<std::vector<ElementType>> local_candidates;
-    tbb::parallel_for_each(elements.begin(), elements.end(),
-      [&](const ElementType& element) {
-          local_candidates.local().push_back(element);
-      }
-    );
     std::vector<ElementType> candidates;
-    local_candidates.combine_each([&](const std::vector<ElementType>& local) {
-      candidates.insert(candidates.end(), local.begin(), local.end());
-    });
+    if constexpr(std::is_same<decltype(elements), std::vector<ElementType>>::value) {
+      candidates = std::move(elements); // directly move if vector
+    } else {
+      tbb::combinable<std::vector<ElementType>> local_candidates;
+      tbb::parallel_for_each(elements.begin(), elements.end(),
+                             [&](const ElementType& element) { local_candidates.local().push_back(element); });
+      local_candidates.combine_each([&](const std::vector<ElementType>& local) {
+        candidates.insert(candidates.end(), local.begin(), local.end());
+      });
+    }
     return candidates;
   }
 
@@ -204,8 +214,13 @@ private:
     // Create concurrent priority queue for all elements
     tbb::concurrent_queue<ElementType> work_queue(elements.begin(), elements.end());
 
+
+#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
     std::atomic<size_t> num_ops = 0;
-    size_t num_threads = 8; // Start with single thread for ordered processing
+    std::atomic<size_t> num_failed_locks = 0;
+#endif
+    //size_t num_threads = 8; // Start with single thread for ordered processing
+    size_t num_threads = std::thread::hardware_concurrency() / 2;
     
     // Parallel work stealing from priority queue
     tbb::parallel_for(tbb::blocked_range<size_t>(0, num_threads),
@@ -226,13 +241,16 @@ private:
                 c3t3.triangulation().unlock_all_elements();
                 // Optional: small delay to reduce contention
                 std::this_thread::yield();
+                num_failed_locks++;
               }
             }
             // Execute operation once lock is acquired
-            if ( op.execute_operation(element, c3t3))
-            {
+            bool success = op.execute_operation(element, c3t3);
+            #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+            if(success) {
               num_ops++;
             }
+            #endif
             c3t3.triangulation().unlock_all_elements();
           }
         }
@@ -240,7 +258,20 @@ private:
     );
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-    std::cout << "num_ops:" << num_ops << std::endl;
+    {
+      const char* csv_path = "lock_stats.csv";
+      bool need_header = true;
+      {
+        std::ifstream ifs(csv_path);
+        need_header = !ifs.good() || (ifs.peek() == std::ifstream::traits_type::eof());
+      }
+      std::ofstream ofs(csv_path, std::ios::app);
+      if (need_header) {
+        ofs << "operation,num_ops,num_failed_locks,lock_success_rate" << std::endl;
+      }
+      double lock_success_rate = (num_failed_locks == 0) ? 100.0 : 100*static_cast<double>(num_ops) / num_failed_locks;
+      ofs << op.operation_name() << "," << num_ops << "," << num_failed_locks << "," << lock_success_rate << std::endl;
+    }
     #endif
 
     return true;
@@ -251,6 +282,15 @@ private:
     std::vector<ElementType>& elements,
     Operation& op,
     C3t3& c3t3) {
+    std::random_device rd;
+    std::mt19937 g(rd());
+
+    std::shuffle(elements.begin(), elements.end(), g);
+
+#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+    std::atomic<size_t> num_ops = 0;
+    std::atomic<size_t> num_failed_locks = 0;
+#endif
     tbb::parallel_for_each(elements, [&](const ElementType& element) {
       bool lock_acquired = false;
       while(!lock_acquired) {
@@ -258,12 +298,34 @@ private:
         if(!lock_acquired) {
           c3t3.triangulation().unlock_all_elements();
           std::this_thread::yield(); // backoff to reduce contention
+          num_failed_locks++;
         }
       }
 
-      op.execute_operation(element, c3t3);
+      bool success = op.execute_operation(element, c3t3);
+      #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+      if(success) {
+        num_ops++;
+      }
+      #endif
       c3t3.triangulation().unlock_all_elements();
     });
+#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+    {
+      const char* csv_path = "lock_stats.csv";
+      bool need_header = true;
+      {
+        std::ifstream ifs(csv_path);
+        need_header = !ifs.good() || (ifs.peek() == std::ifstream::traits_type::eof());
+      }
+      std::ofstream ofs(csv_path, std::ios::app);
+      if (need_header) {
+        ofs << "operation,num_ops,num_failed_locks,lock_success_rate" << std::endl;
+      }
+      double lock_success_rate = (num_failed_locks == 0) ? 100.0 : 100*static_cast<double>(num_ops) / num_failed_locks;
+      ofs << op.operation_name() << "," << num_ops << "," << num_failed_locks << "," << lock_success_rate << std::endl;
+    }
+    #endif
     return true;
   }
 

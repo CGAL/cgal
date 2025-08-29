@@ -1,21 +1,29 @@
-//#define CGAL_TETRAHEDRAL_REMESHING_USE_ELEMENTARY
-#define CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-#ifndef NDEBUG
-//#define CGAL_TETRAHEDRAL_REMESHING_DEBUG_MLS
-#endif
-//#define USE_THREADSAFE_INCIDENT_CELLS
-//#define CGAL_TETRAHEDRAL_REMESHING_USE_REFACTORED_FLIP
+#define USE_REFACTORED_TETRAHEDRAL_REMESHING
+//#define CGAL_CONCURRENT_TETRAHEDRAL_REMESHING
+//#define CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+
 #include "benchmark_refactored_tetrahedral_remeshing_macros_config.h"
 #include "benchmark_tetrahedral_remeshing_common.h"
 #include "mesh_quality.h"
 #include <CGAL/Tetrahedral_remeshing/internal/elementary_remesh_impl.h>
 #include <CGAL/Real_timer.h>
+#include <CGAL/Mesh_complex_3_in_triangulation_3.h>
+#include <CGAL/Tetrahedral_remeshing/Remeshing_cell_base_3.h>
+#include <CGAL/Tetrahedral_remeshing/Remeshing_vertex_base_3.h>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <string>
 #include <iomanip>
 #include <nlohmann/json.hpp>
+
+ #ifdef CGAL_CONCURRENT_TETRAHEDRAL_REMESHING
+ 	#define USE_THREADSAFE_INCIDENT_CELLS
+ #endif
+
+#if defined CGAL_TETRAHEDRAL_REMESHING_USE_COMPLEX_EDGE_SMOOTHING && defined CGAL_TETRAHEDRAL_REMESHING_USE_SURFACE_VERTEX_SMOOTHING && defined CGAL_TETRAHEDRAL_REMESHING_USE_INTERNAL_VERTEX_SMOOTHING
+    #define CGAL_TETRAHEDRAL_REMESHING_USE_REFACTORED_SMOOTH
+#endif
 
 #ifdef CGAL_CONCURRENT_TETRAHEDRAL_REMESHING
   #include <tbb/version.h>
@@ -25,6 +33,19 @@
     #include <tbb/task_scheduler_init.h>
   #endif
 #endif
+
+#ifdef CGAL_CONCURRENT_TETRAHEDRAL_REMESHING
+  #define Concurrency_tag CGAL::Parallel_tag
+#else
+  #define Concurrency_tag CGAL::Sequential_tag
+#endif
+// Define C3t3 type wrapped around Remeshing_triangulation
+using K = CGAL::Exact_predicates_inexact_constructions_kernel;
+using Vb = CGAL::Tetrahedral_remeshing::Remeshing_vertex_base_3<K>;
+using Cb = CGAL::Tetrahedral_remeshing::Remeshing_cell_base_3<K>;
+using T3 = CGAL::Triangulation_3<K, CGAL::Triangulation_data_structure_3<Vb,Cb,Concurrency_tag>>;
+using C3t3 = CGAL::Mesh_complex_3_in_triangulation_3<T3, int, int>;
+
 
 int main(int argc, char** argv) {
   using namespace benchmarking;
@@ -75,18 +96,23 @@ int main(int argc, char** argv) {
   append_run_info(results_json, "Num_work_items_per_batch", "N/A");
 #endif
 
-  Remeshing_triangulation tr;
+  //Remeshing_triangulation tr;
+  C3t3 c3t3;
+  T3& tr = c3t3.triangulation();
   std::ifstream is(input, std::ios_base::in);
-  if(!CGAL::IO::read_MEDIT(is, tr)) {
+  if(!CGAL::IO::read_MEDIT(is, tr)){
     std::cerr << "Error: Could not read input mesh '" << input << "'" << std::endl;
     fatal_error(std::string("Could not read input mesh '") + input + "'");
-  }
+  } 
+
+  std::cout << "Number of vertices: " << tr.number_of_vertices() << std::endl;
+  std::cout << "Number of cells: " << tr.number_of_cells() << std::endl;
 
   // Extract input_name from input path
   std::string input_name = std::filesystem::path(input).stem().string();
-  write_triangulation_info(results_json, tr, input_name);
+  write_triangulation_info(results_json, c3t3.triangulation(), input_name);
 
-  const double avg_edge_length = compute_average_edge_length(tr);
+  const double avg_edge_length = compute_average_edge_length(c3t3.triangulation());
   if(avg_edge_length <= 0.0) {
     fatal_error("Could not compute average edge length.");
   }
@@ -96,16 +122,35 @@ int main(int argc, char** argv) {
   append_run_info(results_json, "Technique", "Atomic");
   append_run_info(results_json, "Edge Length", target_edge_length);
 
+  //std::cout << "Before remeshing:" << std::endl;
+  //for(auto it=c3t3.finite_vertices_begin(); it!=c3t3.finite_vertices_end(); ++it) {
+  //  if(it->in_dimension() == -1) {
+  //    std::cout << "Vertex " << it->point() << " is not in the complex." << std::endl;
+  //  }
+  //}
   CGAL::Real_timer t_atomic;
   t_atomic.start();
 
+  // Create C3t3 object wrapped around the remeshed triangulation
+  //C3t3 c3t3;
+  //c3t3.triangulation() = tr;
   // Create and run atomic remesher
-  CGAL::tetrahedral_isotropic_remeshing(tr, target_edge_length,
+  CGAL::tetrahedral_isotropic_remeshing(c3t3, target_edge_length,
                                         CGAL::parameters::number_of_iterations(num_iterations).smooth_constrained_edges(smooth_constrained_edges));
-
   t_atomic.stop();
+  
+  //std::cout << "After remeshing:" << std::endl;
+  //for(auto it=tr.finite_vertices_begin(); it!=tr.finite_vertices_end(); ++it) {
+  //  if(it->in_dimension() == -1) {
+  //    std::cout << "Vertex " << it->point() << " is not in the complex." << std::endl;
+  //  }
+  //}
+  //std::ofstream os("remeshed_allcells_"+input_name+".mesh");
+  //CGAL::IO::write_MEDIT(os, tr, CGAL::parameters::all_cells(true));
+  //CGAL::Tetrahedral_remeshing::debug::dump_triangulation_cells(tr, "triangulation_cells.mesh");
+  //CGAL::Tetrahedral_remeshing::debug::dump_binary(tr, "binary_remeshed");
   append_metric_result(results_json, "Performance", "Total_Time", "Value", t_atomic.time());
-  generate_quality_metrics(tr, results_json);
+  generate_quality_metrics(c3t3, results_json);
 
   append_metric_result(results_json, "Performance", "Memory", "Value", CGAL::Memory_sizer().virtual_size() >> 20);
 
@@ -114,6 +159,6 @@ int main(int argc, char** argv) {
 
   // Write JSON
   write_results_json(results_json, results_json_path);
-
+  //system("pause");
   return 0;
 }

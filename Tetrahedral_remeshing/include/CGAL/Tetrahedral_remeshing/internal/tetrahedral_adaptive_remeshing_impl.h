@@ -157,14 +157,13 @@ public:
     , m_vertex_smoother(sizing, cell_selector, protect_boundaries, smooth_constrained_edges)
     , m_c3t3_pbackup(&c3t3)
       , m_tr_pbackup(NULL)
-      , m_elementary_remesher(c3t3, sizing, cell_selector, visitor)
   {
     m_c3t3.swap(c3t3);
 
     init_c3t3(vcmap, ecmap, fcmap);
     m_vertex_smoother.init(m_c3t3);
 
-    m_elementary_remesher.smooth_init(c3t3,sizing,cell_selector,m_protect_boundaries,smooth_constrained_edges);
+    m_elementary_remesher.smooth_init(m_c3t3,m_sizing,cell_selector,m_protect_boundaries,smooth_constrained_edges);
 
 #ifdef CGAL_DUMP_REMESHING_STEPS
     CGAL::Tetrahedral_remeshing::debug::dump_c3t3(m_c3t3, "00-init");
@@ -213,7 +212,7 @@ public:
 #ifdef CGAL_TETRAHEDRAL_REMESHING_USE_REFACTORED_COLLAPSE
         Elementary_remesher<C3t3,SizingFunction,CellSelector,Visitor>::collapse(m_c3t3, m_sizing, m_cell_selector,m_visitor,m_protect_boundaries);
 #else
-    collapse_short_edges(m_c3t3, m_sizing, m_protect_boundaries,
+   collapse_short_edges(m_c3t3, m_sizing, m_protect_boundaries,
                                            m_cell_selector, m_visitor);
 #endif
 
@@ -362,7 +361,16 @@ private:
 #endif
 
     //TODO: Adding far points could reduce the number of conflicting locks. add_far_points currently leads to wrong quality metrics. We should debug this and test if performance is improved.
-    //add_far_points(m_c3t3);
+    //CGAL::Tetrahedral_remeshing::debug::dump_medit(m_c3t3, "before_addition_far_points.medit");
+    //CGAL::Tetrahedral_remeshing::debug::count_far_points(m_c3t3);
+#ifdef ADD_FAR_POINTS
+    add_far_points(m_c3t3);
+    #endif
+    //CGAL::Tetrahedral_remeshing::debug::dump_far_points(m_c3t3, "far_points_debug");
+    //CGAL::Tetrahedral_remeshing::debug::dump_triangulation_cells(m_c3t3.triangulation(), "far_point_cells.mesh");
+    //CGAL::Tetrahedral_remeshing::debug::count_far_points(m_c3t3);
+    //CGAL::Tetrahedral_remeshing::debug::dump_medit(m_c3t3, "after_addition_far_points.medit");
+    //CGAL::Tetrahedral_remeshing::debug::dump_binary(m_c3t3, "after_addition_far_points");
     if (input_is_c3t3())
       backup_far_points();
 
@@ -537,7 +545,7 @@ private:
     const int NUM_PSEUDO_INFINITE_VERTICES =
         static_cast<int>(float(std::thread::hardware_concurrency()) *
                          num_pseudo_infinite_vertices_per_core);
-#ifdef CGAL_MESH_3_VERBOSE
+#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
     std::cerr << "Adding " << NUM_PSEUDO_INFINITE_VERTICES << " points on a far sphere (radius = " << radius << ")...";
 #endif
 

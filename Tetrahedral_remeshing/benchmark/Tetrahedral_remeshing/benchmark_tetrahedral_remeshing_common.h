@@ -119,7 +119,8 @@ double compute_average_edge_length(const T& tr) {
  * @param tr The remeshing triangulation.
  * @param input_name The name of the input mesh.
  */
-inline void write_triangulation_info(nlohmann::json& results_json, const Remeshing_triangulation& tr, const std::string& input_name) {
+template<typename Tr>
+inline void write_triangulation_info(nlohmann::json& results_json, const Tr& tr, const std::string& input_name) {
   append_run_info(results_json, "Mesh",
                   {{"Name", input_name},
                    {"Vertices", tr.number_of_vertices()},

@@ -59,8 +59,8 @@ struct Volume_quality
   double biggest_v_sma;
 };
 
-template <typename Remeshing_triangulation>
-void generate_surface_quality_metrics(const Remeshing_triangulation& tr,
+template <typename C3t3>
+void generate_surface_quality_metrics(const C3t3& c3t3,
                                      Surface_quality& surface_quality)
 {
   surface_quality.minimum_edge_length = -1.;
@@ -77,15 +77,16 @@ void generate_surface_quality_metrics(const Remeshing_triangulation& tr,
   surface_quality.total_area = -1.;
 
   // edge length
-  if(tr.number_of_finite_edges() > 0)
+  if(c3t3.number_of_edges_in_complex() > 0)
   {
     std::vector<double> edge_lengths;
 
-    for(auto eit = tr.finite_edges_begin(); eit != tr.finite_edges_end(); ++eit)
+    for(auto eit = c3t3.edges_in_complex_begin(); eit != c3t3.edges_in_complex_end(); ++eit)
     {
       auto c = eit->first;
       int i = eit->second;
       int j = eit->third;
+      
       const auto& pi = c->vertex(i)->point();
       const auto& pj = c->vertex(j)->point();
 
@@ -93,21 +94,22 @@ void generate_surface_quality_metrics(const Remeshing_triangulation& tr,
       edge_lengths.push_back(edge_length);
     }
 
-    surface_quality.minimum_edge_length = *std::min_element(edge_lengths.begin(), edge_lengths.end());
-    surface_quality.maximum_edge_length = *std::max_element(edge_lengths.begin(), edge_lengths.end());
-    surface_quality.mean_edge_length = std::accumulate(edge_lengths.begin(), edge_lengths.end(), 0.) / edge_lengths.size();
+    if (!edge_lengths.empty()) {
+      surface_quality.minimum_edge_length = *std::min_element(edge_lengths.begin(), edge_lengths.end());
+      surface_quality.maximum_edge_length = *std::max_element(edge_lengths.begin(), edge_lengths.end());
+      surface_quality.mean_edge_length = std::accumulate(edge_lengths.begin(), edge_lengths.end(), 0.) / edge_lengths.size();
+    }
   }
 
   // area
-  if(tr.number_of_finite_facets() > 0)
+  if(c3t3.number_of_facets_in_complex() > 0)
   {
     std::vector<double> areas;
 
-    for(auto fit = tr.finite_facets_begin(); fit != tr.finite_facets_end(); ++fit)
+    for(auto fit = c3t3.facets_in_complex_begin(); fit != c3t3.facets_in_complex_end(); ++fit)
     {
       auto c = fit->first;
       int s = fit->second;
-
 
       const auto& pi = c->vertex((s+1)%4)->point();
       const auto& pj = c->vertex((s+2)%4)->point();
@@ -117,18 +119,20 @@ void generate_surface_quality_metrics(const Remeshing_triangulation& tr,
       areas.push_back(area);
     }
 
-    surface_quality.minimum_area = *std::min_element(areas.begin(), areas.end());
-    surface_quality.maximum_area = *std::max_element(areas.begin(), areas.end());
-    surface_quality.total_area = std::accumulate(areas.begin(), areas.end(), 0.);
-    surface_quality.mean_area = surface_quality.total_area / areas.size();
+    if (!areas.empty()) {
+      surface_quality.minimum_area = *std::min_element(areas.begin(), areas.end());
+      surface_quality.maximum_area = *std::max_element(areas.begin(), areas.end());
+      surface_quality.total_area = std::accumulate(areas.begin(), areas.end(), 0.);
+      surface_quality.mean_area = surface_quality.total_area / areas.size();
+    }
   }
 
   // angle
-  if(tr.number_of_finite_facets() > 0)
+  if(c3t3.number_of_facets_in_complex() > 0)
   {
     std::vector<double> angles;
 
-    for(auto fit = tr.finite_facets_begin(); fit != tr.finite_facets_end(); ++fit)
+    for(auto fit = c3t3.facets_in_complex_begin(); fit != c3t3.facets_in_complex_end(); ++fit)
     {
       auto c = fit->first;
       int s = fit->second;
@@ -145,13 +149,15 @@ void generate_surface_quality_metrics(const Remeshing_triangulation& tr,
       }
     }
 
-    surface_quality.minimum_angle = *std::min_element(angles.begin(), angles.end());
-    surface_quality.maximum_angle = *std::max_element(angles.begin(), angles.end());
+    if (!angles.empty()) {
+      surface_quality.minimum_angle = *std::min_element(angles.begin(), angles.end());
+      surface_quality.maximum_angle = *std::max_element(angles.begin(), angles.end());
+    }
   }
 }
 
-template <typename Remeshing_triangulation>
-void generate_volume_quality_metrics(const Remeshing_triangulation& tr,
+template <typename C3t3>
+void generate_volume_quality_metrics(const C3t3& c3t3,
                                      Volume_quality& volume_quality)
 {
   volume_quality.minimum_dihedral_angle = (std::numeric_limits<double>::max)();
@@ -169,11 +175,11 @@ void generate_volume_quality_metrics(const Remeshing_triangulation& tr,
   volume_quality.biggest_v_sma = 0;
 
   // volume
-  if(tr.number_of_finite_cells() > 0)
+  if(c3t3.number_of_cells_in_complex() > 0)
   {
     std::vector<double> volumes;
 
-    for(auto cit = tr.finite_cells_begin(); cit != tr.finite_cells_end(); ++cit)
+    for(auto cit = c3t3.cells_in_complex_begin(); cit != c3t3.cells_in_complex_end(); ++cit)
     {
       const auto& p0 = cit->vertex(0)->point();
       const auto& p1 = cit->vertex(1)->point();
@@ -184,20 +190,22 @@ void generate_volume_quality_metrics(const Remeshing_triangulation& tr,
       volumes.push_back(volume);
     }
 
-    volume_quality.minimum_volume = *std::min_element(volumes.begin(), volumes.end());
-    volume_quality.maximum_volume = *std::max_element(volumes.begin(), volumes.end());
-    volume_quality.total_volume = std::accumulate(volumes.begin(), volumes.end(), 0.);
-    volume_quality.mean_volume = volume_quality.total_volume / volumes.size();
+    if (!volumes.empty()) {
+      volume_quality.minimum_volume = *std::min_element(volumes.begin(), volumes.end());
+      volume_quality.maximum_volume = *std::max_element(volumes.begin(), volumes.end());
+      volume_quality.total_volume = std::accumulate(volumes.begin(), volumes.end(), 0.);
+      volume_quality.mean_volume = volume_quality.total_volume / volumes.size();
+    }
   }
 
   // dihedral angle
-  if(tr.number_of_finite_cells() > 0)
+  if(c3t3.number_of_cells_in_complex() > 0)
   {
     std::vector<double> dihedral_angles;
 
-    for(auto cit = tr.finite_cells_begin(); cit != tr.finite_cells_end(); ++cit)
+    for(auto cit = c3t3.cells_in_complex_begin(); cit != c3t3.cells_in_complex_end(); ++cit)
     {
-      std::array<typename Remeshing_triangulation::Point, 4> pts;
+      std::array<typename C3t3::Triangulation::Point, 4> pts;
       for(int i=0; i<4; ++i)
         pts[i] = cit->vertex(i)->point();
 
@@ -215,15 +223,17 @@ void generate_volume_quality_metrics(const Remeshing_triangulation& tr,
       }
     }
 
-    volume_quality.minimum_dihedral_angle = *std::min_element(dihedral_angles.begin(), dihedral_angles.end());
-    volume_quality.maximum_dihedral_angle = *std::max_element(dihedral_angles.begin(), dihedral_angles.end());
-    volume_quality.mean_dihedral_angle = std::accumulate(dihedral_angles.begin(), dihedral_angles.end(), 0.) / dihedral_angles.size();
+    if (!dihedral_angles.empty()) {
+      volume_quality.minimum_dihedral_angle = *std::min_element(dihedral_angles.begin(), dihedral_angles.end());
+      volume_quality.maximum_dihedral_angle = *std::max_element(dihedral_angles.begin(), dihedral_angles.end());
+      volume_quality.mean_dihedral_angle = std::accumulate(dihedral_angles.begin(), dihedral_angles.end(), 0.) / dihedral_angles.size();
+    }
   }
 
   // smallest edge-radius ratio
-  if(tr.number_of_finite_cells() > 0)
+  if(c3t3.number_of_cells_in_complex() > 0)
   {
-    for(auto cit = tr.finite_cells_begin(); cit != tr.finite_cells_end(); ++cit)
+    for(auto cit = c3t3.cells_in_complex_begin(); cit != c3t3.cells_in_complex_end(); ++cit)
     {
       const auto& p0 = cit->vertex(0)->point();
       const auto& p1 = cit->vertex(1)->point();
@@ -272,14 +282,14 @@ void generate_volume_quality_metrics(const Remeshing_triangulation& tr,
   }
 }
 
-template <typename Remeshing_triangulation>
-void generate_quality_metrics(const Remeshing_triangulation& tr, nlohmann::json& results_json)
+template <typename C3t3>
+void generate_quality_metrics(const C3t3& c3t3, nlohmann::json& results_json)
 {
   Surface_quality surface_quality;
   Volume_quality volume_quality;
 
-  generate_surface_quality_metrics(tr, surface_quality);
-  generate_volume_quality_metrics(tr, volume_quality);
+  generate_surface_quality_metrics(c3t3, surface_quality);
+  generate_volume_quality_metrics(c3t3, volume_quality);
 
   // Edge Length
   append_metric_result(results_json, "Quality", "Edge_Length", "Minimum", surface_quality.minimum_edge_length);

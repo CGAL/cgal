@@ -12,6 +12,26 @@ if (Python_FOUND)
 else()
     message(FATAL_ERROR "Python interpreter not found. Please install Python 3 or ensure it's in your PATH.")
 endif()
+# Prefer a usable Python executable (Windows Store paths may be non-invokable). Build a fallback.
+set(METADATA_PYTHON "")
+if (EXISTS "${Python_EXECUTABLE}")
+  # Usable absolute path
+  set(METADATA_PYTHON "${Python_EXECUTABLE}")
+else()
+  # Try the Windows 'py' launcher first
+  find_program(PY_LAUNCHER py)
+  if (PY_LAUNCHER)
+    set(METADATA_PYTHON "${PY_LAUNCHER}" -3)
+  else()
+    # Fallback to 'python' on PATH
+    find_program(SYS_PYTHON python)
+    if (SYS_PYTHON)
+      set(METADATA_PYTHON "${SYS_PYTHON}")
+    else()
+      message(FATAL_ERROR "No usable Python interpreter found (Python_EXECUTABLE invalid, no 'py' launcher, and no 'python' on PATH).")
+    endif()
+  endif()
+endif()
 # Fix the metadata generation command
 # Path to your Python script - note the path correction
 set(METADATA_SCRIPT "${CMAKE_CURRENT_SOURCE_DIR}/generate_source_exec_metadata.py")
@@ -63,9 +83,9 @@ endif()
 add_custom_command(TARGET benchmark_tetrahedral_remeshing POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E echo "Generating metadata for $<TARGET_FILE:benchmark_tetrahedral_remeshing>"
     # Combine environment setting and Python execution into a single command
-    COMMAND ${CMAKE_COMMAND} -E env 
+    COMMAND ${CMAKE_COMMAND} -E env
             "PYTHONPATH=${CMAKE_CURRENT_SOURCE_DIR}"
-            "${Python_EXECUTABLE}" 
+            ${METADATA_PYTHON}
             "${METADATA_SCRIPT}"
             "$<TARGET_FILE:benchmark_tetrahedral_remeshing>"
             "${CMAKE_CURRENT_SOURCE_DIR}/benchmark_tetrahedral_remeshing.cpp"
@@ -76,9 +96,9 @@ add_custom_command(TARGET benchmark_tetrahedral_remeshing POST_BUILD
 
 add_custom_command(TARGET benchmark_adaptive_tetrahedral_remeshing POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E echo "Generating metadata for $<TARGET_FILE:benchmark_adaptive_tetrahedral_remeshing>"
-    COMMAND ${CMAKE_COMMAND} -E env 
+    COMMAND ${CMAKE_COMMAND} -E env
             "PYTHONPATH=${CMAKE_CURRENT_SOURCE_DIR}"
-            "${Python_EXECUTABLE}" 
+            ${METADATA_PYTHON}
             "${METADATA_SCRIPT}"
             "$<TARGET_FILE:benchmark_adaptive_tetrahedral_remeshing>"
             "${CMAKE_CURRENT_SOURCE_DIR}/benchmark_adaptive_tetrahedral_remeshing.cpp"
@@ -89,9 +109,9 @@ add_custom_command(TARGET benchmark_adaptive_tetrahedral_remeshing POST_BUILD
 
 add_custom_command(TARGET benchmark_refactored_tetrahedral_remeshing POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E echo "Generating metadata for $<TARGET_FILE:benchmark_refactored_tetrahedral_remeshing>"
-    COMMAND ${CMAKE_COMMAND} -E env 
+    COMMAND ${CMAKE_COMMAND} -E env
             "PYTHONPATH=${CMAKE_CURRENT_SOURCE_DIR}"
-            "${Python_EXECUTABLE}" 
+            ${METADATA_PYTHON}
             "${METADATA_SCRIPT}"
             "$<TARGET_FILE:benchmark_refactored_tetrahedral_remeshing>"
             "${CMAKE_CURRENT_SOURCE_DIR}/benchmark_refactored_tetrahedral_remeshing.cpp"

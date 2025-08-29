@@ -60,17 +60,6 @@ private:
   const CellSelector& m_cell_selector;
   bool m_protect_boundaries;
   static int s_operation_counter; // Static counter for operation tracking
-  
-  boost::container::small_vector<Cell_handle, 64> get_incident_cells(Vertex_handle vh, const C3t3& c3t3) const {
-    boost::container::small_vector<Cell_handle, 64> inc_cells;
-#ifdef USE_THREADSAFE_INCIDENT_CELLS
-    c3t3.triangulation().incident_cells_threadsafe(vh, std::back_inserter(inc_cells));
-#else
-    c3t3.triangulation().incident_cells(vh, std::back_inserter(inc_cells));
-#endif
-    return inc_cells;
-  }
-
   // Helper function to create a unique identifier for an edge
   std::string edge_id(const ElementType& vp) const {
     std::ostringstream oss;

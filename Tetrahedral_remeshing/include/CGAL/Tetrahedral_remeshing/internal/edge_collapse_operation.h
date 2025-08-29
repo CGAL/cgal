@@ -21,16 +21,15 @@
 #include <iterator>
 #include <algorithm>
 
+//#define EDGE_COLLAPSE_DEBUG
 
 namespace CGAL {
 namespace Tetrahedral_remeshing {
 namespace internal {
 
-template<typename C3t3, typename SizingFunction, typename CellSelector>
-class EdgeCollapseOperation :
-    public ElementaryOperation<C3t3,
-                          std::pair<typename C3t3::Vertex_handle, typename C3t3::Vertex_handle>,
-                          std::vector<std::pair<typename C3t3::Vertex_handle, typename C3t3::Vertex_handle>>,
+#ifdef EDGE_COLLAPSE_DEBUG
+static debug::ThreadSafeLogger logger("edge_collapse_debug.log");
+#endif
 
 template<typename C3t3, typename SizingFunction, typename CellSelector, typename Visitor>
 class EdgeCollapseOperation 
@@ -142,11 +141,12 @@ public:
       bool ok_adj0 = tr.try_lock_and_get_adjacent_vertices_and_cells_3(v0, std::back_inserter(adj_vertices_0), inc_cells_0);
       bool ok_adj1 = tr.try_lock_and_get_adjacent_vertices_and_cells_3(v1, std::back_inserter(adj_vertices_1), inc_cells_1);
       locked = ok_adj0 && ok_adj1;
-
-  Lock_zone get_lock_zone(const ElementType& vp, const C3t3& c3t3) const override {
-    Lock_zone zone;
-    std::cout<<"EdgeCollapseOperation::get_lock_zone"<<std::endl;
-    return zone;
+#ifdef EDGE_COLLAPSE_DEBUG
+      logger.log("adjacent_vertices_and_cells_3(v0): ok=", ok_adj0,
+                 " adj0=", adj_vertices_0.size(), " inc0=", inc_cells_0.size());
+      logger.log("adjacent_vertices_and_cells_3(v1): ok=", ok_adj1,
+                 " adj1=", adj_vertices_1.size(), " inc1=", inc_cells_1.size());
+#endif
       if(locked){
         for(const auto& adj_vertex : adj_vertices_0) {
             std::vector<Cell_handle> adj_inc_cells;
@@ -196,12 +196,19 @@ public:
     //
     //return true;
           #endif
-  }
 
-  bool execute_pre_operation(const ElementType& vp, C3t3& c3t3) override {
-    std::cout<<"EdgeCollapseOperation::execute_pre_operation"<<std::endl;
-    return true;
+#ifdef EDGE_COLLAPSE_DEBUG
+    logger.log("LOCK_ZONE begin: locked=", locked,
+               " inc0=", inc_cells_0.size(), " inc1=", inc_cells_1.size());
+    logger.log("LOCK_ZONE handles: v0=", (const void*)(&*v0), " v1=", (const void*)(&*v1));
+    const std::size_t sampleN = 4;
+    for(std::size_t k=0; k<inc_cells_0.size() && k<sampleN; ++k) {
+      logger.log("INC0[", k, "]=", (const void*)(&*inc_cells_0[k]));
     }
+    for(std::size_t k=0; k<inc_cells_1.size() && k<sampleN; ++k) {
+      logger.log("INC1[", k, "]=", (const void*)(&*inc_cells_1[k]));
+    }
+#endif
 
   }
 
@@ -215,6 +222,13 @@ public:
     const Vertex_handle v0 = edge.first->vertex(edge.second);
     const Vertex_handle v1 = edge.first->vertex(edge.third);
 
+#ifdef EDGE_COLLAPSE_DEBUG
+    // Capture cell timestamps before operation for change detection
+    std::set<std::size_t> before_cells_timestamps(debug::get_cells_timestamps(tr.finite_cell_handles()));
+    logger.log("EXEC begin: locked_cells_ts_count=", m_locked_cells_timestamps.size());
+    logger.log("EXEC handles: edge_cell=", (const void*)(&*edge.first),
+               " v0=", (const void*)(&*v0), " v1=", (const void*)(&*v1));
+#endif
 
     // Use existing collapse_edge function from collapse_short_edges.h
     Vertex_handle result = collapse_edge(edge, c3t3, m_sizing, m_protect_boundaries, 
@@ -237,5 +251,11 @@ public:
 } // namespace internal
 } // namespace Tetrahedral_remeshing
 } // namespace CGAL
+
+#ifdef EDGE_COLLAPSE_DEBUG
+// Define the thread_local static member variable
+template<typename C3t3, typename SizingFunction, typename CellSelector, typename Visitor>
+thread_local std::set<std::size_t> CGAL::Tetrahedral_remeshing::internal::EdgeCollapseOperation<C3t3, SizingFunction, CellSelector, Visitor>::m_locked_cells_timestamps;
+#endif
 
 #endif // CGAL_TETRAHEDRAL_REMESHING_EDGE_COLLAPSE_OPERATION_H 
