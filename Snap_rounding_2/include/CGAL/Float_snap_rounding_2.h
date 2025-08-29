@@ -23,6 +23,10 @@
 #include <set>
 #include <vector>
 
+typedef CGAL::Exact_predicates_inexact_constructions_kernel     Epeck;
+
+#include  <CGAL/mutex.h>
+
 namespace CGAL {
 
 template<typename Kernel_>
@@ -33,6 +37,7 @@ struct Float_snap_rounding_traits_2{
   typedef typename Kernel::Point_2   Point_2;
   typedef typename Kernel::Segment_2 Segment_2;
   typedef typename Kernel::Vector_2  Vector_2;
+  typedef typename Kernel::Line_2  Line_2;
 
   typedef typename Kernel::Less_x_2  Less_x_2;
   typedef typename Kernel::Less_y_2  Less_y_2;
@@ -108,13 +113,14 @@ public:
 
 }
 
-template <class Traits, class PointsRange , class PolylineRange>
+template <class Concurrency_tag=Sequential_tag, class Traits, class PointsRange , class PolylineRange>
 void double_snap_rounding_2_disjoint(PointsRange &pts, PolylineRange &polylines)
 {
   using Kernel =    typename Traits::Kernel;
   using Point_2 =   typename Traits::Point_2;
   using Segment_2 = typename Traits::Segment_2;
   using Vector_2  = typename Traits::Vector_2;
+  using Line_2  = typename Traits::Line_2;
 
   using Comparison_result = typename Kernel::Comparison_result;
 
@@ -157,6 +163,7 @@ void double_snap_rounding_2_disjoint(PointsRange &pts, PolylineRange &polylines)
   };
 
 #ifdef DOUBLE_2D_SNAP_VERBOSE
+  std::cout << "Nb of points: " << pts.size() << " , nb of polylines: " << polylines.size() << std::endl;
   std::cout << "Sort the input points" << std::endl;
 #endif
   // Compute the order of the points along the 2 axis
@@ -173,14 +180,22 @@ void double_snap_rounding_2_disjoint(PointsRange &pts, PolylineRange &polylines)
     p_sort_by_y.insert(i);
   }
 
+  const double max_coordinate=std::max(std::max(to_double(pts[*p_sort_by_x.begin()].x()), to_double(pts[*(--p_sort_by_x.end())].x())),
+                                       std::max(to_double(pts[*p_sort_by_y.begin()].y()), to_double(pts[*(--p_sort_by_y.end())].y())));
+  const double global_bound=max_coordinate*std::pow(2, -20);
+
   //Prepare boxes for box_intersection_d
   std::vector<PBox> points_boxes;
   std::vector<SBox> segs_boxes;
-  for(std::size_t i=0; i<pts.size(); ++i)
+  std::vector<double> round_bound_pts;
+  for(std::size_t i=0; i<pts.size(); ++i){
     points_boxes.emplace_back(pts[i].bbox(),i);
+    round_bound_pts.emplace_back(round_bound(pts[i]));
+  }
   for(std::size_t i=0; i<polylines.size(); ++i)
     segs_boxes.emplace_back(pts[polylines[i][0]].bbox()+pts[polylines[i][polylines[i].size()-1]].bbox(),i);
 
+  CGAL_MUTEX mutex_callback;
   // Callback used for box_intersection_d
   auto callback=[&](PBox &bp, SBox &bseg){
     std::size_t pi=bp.index();
@@ -194,24 +209,34 @@ void double_snap_rounding_2_disjoint(PointsRange &pts, PolylineRange &polylines)
       return;
 
     Point_2& p= pts[bp.index()];
+
+    // Early exit for better running time
+    if(certainly(csq_dist_2(p, Line_2(pts[pl[0]], pts[pl[1]]), global_bound)==LARGER))
+      return;
+
     Segment_2 seg(pts[pl[0]], pts[pl[1]]);
 
     // (A+B)^2 <= 4*max(A^2,B^2), we take some margin
-    double bound = round_bound(pts[pi]);
+    // double bound = round_bound(pts[pi]);
+    double bound=round_bound_pts[pi];
     for(size_t i=0; i<pl.size(); ++i)
-      bound = (std::max)(bound, round_bound(pts[pl[i]]));
+      // bound = (std::max)(bound, round_bound(pts[pl[i]]));
+      bound = (std::max)(bound, round_bound_pts[pl[i]]);
     bound*=16;
 
     // If the segment is closed to the vertex, we subdivide it at same x coordinate that this vertex
     if(possibly(csq_dist_2(p, seg, bound)!=CGAL::LARGER) &&
        compare(source(seg).x(),p.x())!=compare(target(seg).x(),p.x()))
     {
+      CGAL_SCOPED_LOCK(mutex_callback);
       pts.emplace_back(p.x(), seg.supporting_line().y_at_x(p.x()));
       auto pair=p_sort_by_x.insert(pts.size()-1);
-      if(pair.second)
+      if(pair.second){
+        round_bound_pts.emplace_back(round_bound(pts[pts.size()-1]));
         p_sort_by_y.insert(pts.size()-1);
-      else
+      } else {
         pts.pop_back(); // Remove the new point if it is already exist
+      }
       polylines[si].emplace_back(*pair.first); // Some duplicates maybe introduced, it will be removed later
     }
   };
@@ -222,11 +247,15 @@ void double_snap_rounding_2_disjoint(PointsRange &pts, PolylineRange &polylines)
 
   do{
     std::size_t size_before=pts.size();
-    CGAL::box_intersection_d(points_boxes.begin(), points_boxes.end(), segs_boxes.begin(), segs_boxes.end(), callback);
+    CGAL::box_intersection_d<Concurrency_tag>(points_boxes.begin(), points_boxes.end(), segs_boxes.begin(), segs_boxes.end(), callback);
     points_boxes.clear();
     points_boxes.reserve(pts.size()-size_before);
     // The new vertices may intersect another segment when rounded, we repeat until they are not new vertices
 #ifdef DOUBLE_2D_SNAP_VERBOSE
+    std::cout << nb_calls << std::endl;
+    std::cout << nb_tests << std::endl;
+    std::cout << nb_execute << std::endl;
+    std::cout << nb_already_exists << std::endl;
     std::cout << pts.size()-size_before << " subdivisions performed" << std::endl;
 #endif
     for(std::size_t i=size_before; i<pts.size(); ++i)
@@ -344,10 +373,17 @@ void double_snap_rounding_2_disjoint(PointsRange &pts, PolylineRange &polylines)
 }
 
 
-/*
-TODO doc
+/**
+* ingroup
+*
+* Given a range of segments, compute rounded polylines that are pairwise disjoint in their interior, as induced by the input curves.
+*
+* @tparam Concurrency_tag enables to choose whether the algorithm is to be run in
+* parallel, if CGAL::Parallel_tag is specified and CGAL has been linked with the Intel TBB library, or sequentially, if CGAL::Sequential_tag - the default value - is specified.
+* @tparam InputIterator iterator of a segment range
+* @tparam OutputContainer inserter of a segment range
 */
-template <class InputIterator , class OutputContainer>
+template <class Concurrency_tag=Sequential_tag, class InputIterator , class OutputContainer>
 typename OutputContainer::iterator double_snap_rounding_2(InputIterator  	input_begin,
 		                                                      InputIterator  	input_end,
 		                                                      OutputContainer&  output)
@@ -397,7 +433,7 @@ typename OutputContainer::iterator double_snap_rounding_2(InputIterator  	input_
   }
 
   // Main algorithm
-  double_snap_rounding_2_disjoint<Float_snap_rounding_traits_2<Kernel> >(pts, polylines);
+  double_snap_rounding_2_disjoint<Concurrency_tag, Float_snap_rounding_traits_2<Kernel> >(pts, polylines);
 
 #ifdef DOUBLE_2D_SNAP_VERBOSE
   std::cout << "Build output" << std::endl;
@@ -415,10 +451,17 @@ typename OutputContainer::iterator double_snap_rounding_2(InputIterator  	input_
   return output.begin();
 }
 
-/*
-TODO doc
+/**
+* ingroup
+*
+* Given a range of segments, compute rounded subsegments that are pairwise disjoint in their interior, as induced by the input curves.
+*
+* @tparam Concurrency_tag That template parameter enables to choose whether the algorithm is to be run in
+* parallel, if CGAL::Parallel_tag is specified and CGAL has been linked with the Intel TBB library, or sequentially, if CGAL::Sequential_tag - the default value - is specified.
+* @tparam InputIterator iterator of a segment range
+* @tparam OutputContainer inserter of a segment range
 */
-template <class InputIterator , class OutputContainer>
+template <class Concurrency_tag=Sequential_tag, class InputIterator , class OutputContainer>
 typename OutputContainer::iterator compute_snapped_subcurves_2(InputIterator  	input_begin,
 		                                                           InputIterator  	input_end,
 		                                                           OutputContainer&  output)
@@ -427,11 +470,10 @@ typename OutputContainer::iterator compute_snapped_subcurves_2(InputIterator  	i
   using Point_2 = typename Default_arr_traits<Segment_2>::Traits::Point_2;
   using Kernel = typename Kernel_traits<Point_2>::Kernel;
 
-  std::vector<Segment_2> segs;
+  std::vector<Segment_2> segs(input_begin, input_end);
 #ifdef DOUBLE_2D_SNAP_VERBOSE
   std::cout << "Solved intersections" << std::endl;
 #endif
-
   compute_subcurves(input_begin, input_end, std::back_inserter(segs));
 
 #ifdef DOUBLE_2D_SNAP_VERBOSE
@@ -442,6 +484,7 @@ typename OutputContainer::iterator compute_snapped_subcurves_2(InputIterator  	i
   std::vector<Point_2> pts;
   std::vector< std::vector< std::size_t> > polylines;
 
+  // Transform range of the segments in the range of points and polyline of indexes
   for(typename std::vector<Segment_2>::iterator it=segs.begin(); it!=segs.end(); ++it)
   {
     const Point_2& p1 = it->source();
@@ -466,8 +509,9 @@ typename OutputContainer::iterator compute_snapped_subcurves_2(InputIterator  	i
     polylines.push_back({index1, index2});
   }
 
+
   // Main algorithm
-  double_snap_rounding_2_disjoint<Float_snap_rounding_traits_2<Kernel> >(pts, polylines);
+  double_snap_rounding_2_disjoint<Concurrency_tag, Float_snap_rounding_traits_2<Kernel> >(pts, polylines);
 
 #ifdef DOUBLE_2D_SNAP_VERBOSE
   std::cout << "Build output" << std::endl;
