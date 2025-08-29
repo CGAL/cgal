@@ -71,7 +71,7 @@ inline std::ostream& operator<<(std::ostream &out, const std::vector<Cell_pair>&
 
  The `Hdvf_core` class stores the associated reduction in sparse matrices: row-major for \f$f\f$, and column-major for \f$g\f$, \f$h\f$ and \f$\partial'\f$. Getters are provided to access this information. However, according to the chosen HDVF computation option (`OPT_BND`, `OPT_F`, `OPT_G`, `OPT_FULL`) the reduction can be computed only partially (and thus faster).
 
- The class provides perfect HDVF constuction operations: `compute_perfect_hdvf()` and `compute_rand_perfect_hdvf()`, which build perfect HDVFs by pairing iteratively critical cells through the `A()` operation.
+ The class provides perfect HDVF construction operations: `compute_perfect_hdvf()` and `compute_rand_perfect_hdvf()`, which build perfect HDVFs by pairing iteratively critical cells through the `A()` operation.
 
  If the user wishes to build an HDVF using other criteria, several `find_pair_A()` functions are provided (searching for valid pairs of cells for `A`respecting various constraints). The `A` operation can be applied to any pair returned by these functions.
 
