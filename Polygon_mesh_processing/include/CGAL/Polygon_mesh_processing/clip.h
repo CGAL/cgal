@@ -199,7 +199,7 @@ bool close(PolygonMesh& pm, VertexPointMap vpm, typename Traits::Vector_3 plane_
   // arrange polygons
   int axis = 0;
   if ((gbox.ymax()-gbox.ymin()) > (gbox.xmax()-gbox.xmin())) axis=1;
-  if ((gbox.zmax()-gbox.zmin()) > (gbox.max(axis)-gbox.min(axis))) axis=2;
+  if ((gbox.zmax()-gbox.zmin()) > ((gbox.max)(axis)-(gbox.min)(axis))) axis=2;
 
   std::vector<std::size_t> poly_ids(polygons.size());
   std::iota(poly_ids.begin(), poly_ids.end(), 0);
