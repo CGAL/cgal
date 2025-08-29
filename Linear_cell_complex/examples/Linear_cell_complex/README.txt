@@ -26,3 +26,7 @@ Examples for Linear_cell_complex package:
 * linear_cell_complex_3_with_mypoint.cpp
 
   Example showing how to customize the type of points used in LCC.
+
+* hexmeshing_cube.cpp
+
+  Example showing how to generate hexahedral LCC grid with .off file.

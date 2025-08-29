@@ -1,15 +1,8 @@
-
 #include <CGAL/Hexmeshing_for_linear_cell_complex_sequential.h>
 #include <CGAL/Hexmeshing_mesh_data_for_hexmeshing.h>
 #include <CGAL/Hexmeshing_render_results.h>
 
-#include <CGAL/Combinatorial_map_save_load.h>
-#include <CGAL/config.h>
-#include <CGAL/Graphics_scene_options.h>
 #include <string>
-#include <cstdlib>
-#include <filesystem>
-#include <iostream>
 
 
 void render_two_refinement(const std::string& file, int cube_cells_per_dim, int nb_levels = 1){

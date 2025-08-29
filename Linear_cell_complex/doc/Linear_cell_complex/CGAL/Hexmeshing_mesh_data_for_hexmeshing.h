@@ -38,6 +38,7 @@ public:
 
   /*!
   construct cube_cells_per_dim^3 grid from the imported polygon mesh.
+  \pre cube_cells_per_dim > 2
   */
   void cubic_grid_from_aabb(int cube_cells_per_dim);
 
