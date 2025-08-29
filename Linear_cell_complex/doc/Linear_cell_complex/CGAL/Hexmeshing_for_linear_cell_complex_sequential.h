@@ -31,6 +31,10 @@ public:
   This function implements the two_refinement algorithm as described in the \cgalCite{cgal:owen2017template-based},
   operating on a 3-dimensional linear cell complex. It performs grid-based hexahedral meshing
   with multiple refinement levels.
+  \param mesh Grid configuration defining the initial mesh structure and dimensions
+  \param nb_levels Number of refinement levels to perform (default: 1)
+  \param trim Whether to apply trimming to remove excess volumes after refinement
+              (default: false)
   \pre mesh have polygon mesh data as well as grid data.
   */
   void two_refinement_algorithm(Mesh_data_for_hexmeshing &mesh, int nb_levels, bool trim);
