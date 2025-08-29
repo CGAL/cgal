@@ -275,10 +275,12 @@ public:
   /// returns a point at geodesic distance `distance` from p along the
   /// polyline. The polyline is oriented from starting point to end point.
   /// The distance could be negative.
-  Point_and_location point_at(const Point_3& p, FT distance) const
+  Point_and_location point_at(const Point_3& p,
+                              FT distance,
+                              const_iterator p_it) const
   {
     // use first point of the polyline instead of p
-    distance += curve_segment_length(start_point(),p,CGAL::POSITIVE);
+    distance += curve_segment_length(start_point(),p,CGAL::POSITIVE, points_.begin(), p_it);
 
     // If polyline is a loop, ensure that distance is given from start_point()
     if ( is_loop() )
@@ -762,7 +764,8 @@ public:
   Point_and_location
   construct_point_on_curve(const Point_3& starting_point,
                            const Curve_index& curve_index,
-                           FT distance) const;
+                           FT distance,
+                           Polyline_const_iterator starting_point_it) const;
   /// implements `MeshDomainWithFeatures_3::distance_sign_along_loop()`.
   CGAL::Sign distance_sign_along_loop(const Point_3& p,
                                       const Point_3& q,
@@ -1012,6 +1015,7 @@ get_curves(OutputIterator out) const
     }
 
     *out++ = {eit->first,
+              eit->second.points_.begin(),
               std::make_pair(p,p_index),
               std::make_pair(q,q_index)};
   }
@@ -1085,14 +1089,15 @@ typename Mesh_domain_with_polyline_features_3<MD_>::Point_and_location
 Mesh_domain_with_polyline_features_3<MD_>::
 construct_point_on_curve(const Point_3& starting_point,
                          const Curve_index& curve_index,
-                         FT distance) const
+                         FT distance,
+                         Polyline_const_iterator starting_point_it) const
 {
   // Get corresponding polyline
   typename Edges::const_iterator eit = edges_.find(curve_index);
   CGAL_assertion(eit != edges_.end());
 
   // Return point at geodesic_distance distance from starting_point
-  return eit->second.point_at(starting_point,distance);
+  return eit->second.point_at(starting_point, distance, starting_point_it);
 }
 
 

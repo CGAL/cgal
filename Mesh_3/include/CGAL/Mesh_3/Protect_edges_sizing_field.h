@@ -1032,6 +1032,7 @@ insert_balls_on_edges()
   struct Feature_tuple
   {
     Curve_index curve_index_;
+    Polyline_iter polyline_begin_;
     std::pair<Bare_point, Index> point_s_;
     std::pair<Bare_point, Index> point_t_;
   };
@@ -1049,16 +1050,16 @@ insert_balls_on_edges()
       std::cerr << "\n** treat curve #" << curve_index << std::endl;
 #endif
       const Bare_point& p = ft.point_s_.first;
-      const Bare_point& q = ft.point_t_.first;
-
       const Index& p_index = ft.point_s_.second;
-      const Index& q_index = ft.point_t_.second;
 
       Vertex_handle vp,vq;
       if ( ! domain_.is_loop(curve_index) )
       {
         vp = get_vertex_corner_from_point(p,p_index);
-        vq = get_vertex_corner_from_point(q,q_index);
+
+        const Bare_point& q = ft.point_t_.first;
+        const Index& q_index = ft.point_t_.second;
+        vq = get_vertex_corner_from_point(q, q_index);
       }
       else
       {
@@ -1080,7 +1081,8 @@ insert_balls_on_edges()
           auto [other_point, polyline_iter] =
             domain_.construct_point_on_curve(p,
                                              curve_index,
-                                             curve_length / 2);
+                                             curve_length / 2,
+                                             ft.polyline_begin_);
           p_size = (std::min)(p_size,
                               compute_distance(p, other_point) / 3);
           vp = smart_insert_point(p,
@@ -1266,7 +1268,8 @@ insert_balls(const Vertex_handle& vp,
       const auto [bp, polyline_iter] =
         domain_.construct_point_on_curve(cp(vp_wp),
                                          curve_index,
-                                         d_signF * d / 2);
+                                         d_signF * d / 2,
+                                         locate_in_polyline(vp, curve_index));
       const Bare_point new_point = bp;
       const int dim = 1; // new_point is on edge
       const Index index = domain_.index_from_curve_index(curve_index);
@@ -1361,7 +1364,7 @@ insert_balls(const Vertex_handle& vp,
   {
     // New point position
     const auto [bp, polyline_iter] =
-      domain_.construct_point_on_curve(p, curve_index, pt_dist);
+      domain_.construct_point_on_curve(p, curve_index, pt_dist, locate_in_polyline(vp, curve_index));
     const Bare_point& new_point = bp;
 
     // Weight (use as size the min between norm_step_size and linear interpolation)
@@ -1583,15 +1586,24 @@ approx_is_too_large(const Edge& e, const bool is_edge_in_complex) const
   if ( ! is_edge_in_complex )
     return false;
 
-  const Bare_point& pa = e.first->vertex(e.second)->point().point();
-  const Bare_point& pb = e.first->vertex(e.third)->point().point();
+  Vertex_handle va = e.first->vertex(e.second);
+  Vertex_handle vb = e.first->vertex(e.third);
+
+  const Bare_point& pa = va->point().point();
+  const Bare_point& pb = vb->point().point();
 
   // Construct the geodesic middle point
   const Curve_index curve_index = c3t3_.curve_index(e);
   const FT signed_geodesic_distance = domain_.signed_geodesic_distance(pa, pb, curve_index);
   const auto [geodesic_middle, _ /*polyline_iter*/] = (signed_geodesic_distance >= FT(0))
-      ? domain_.construct_point_on_curve(pa, curve_index, signed_geodesic_distance / 2)
-      : domain_.construct_point_on_curve(pb, curve_index, -signed_geodesic_distance / 2);
+      ? domain_.construct_point_on_curve(pa,
+                                         curve_index,
+                                         signed_geodesic_distance / 2,
+                                         locate_in_polyline(va, curve_index))
+      : domain_.construct_point_on_curve(pb,
+                                         curve_index,
+                                         -signed_geodesic_distance / 2,
+                                         locate_in_polyline(vb, curve_index));
 
   const Bare_point edge_middle = CGAL::midpoint(pa, pb);
   const FT squared_evaluated_distance = CGAL::squared_distance(edge_middle, geodesic_middle);
