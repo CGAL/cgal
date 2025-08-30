@@ -11,8 +11,8 @@
 //             Ron Wein <wein@post.tau.ac.il>
 //             Efi Fogel <efifogel@gmail.com>
 
-#ifndef CGAL_BSO_2_INDEXED_VISITOR_H
-#define CGAL_BSO_2_INDEXED_VISITOR_H
+#ifndef CGAL_INDEXED_VISITOR_H
+#define CGAL_INDEXED_VISITOR_H
 
 #include <CGAL/license/Boolean_set_operations_2.h>
 

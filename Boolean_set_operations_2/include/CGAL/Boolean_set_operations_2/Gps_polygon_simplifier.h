@@ -7,11 +7,10 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-//
 // Author(s) : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
-#ifndef CGAL_BSO_2_GPS_POLYGON_SIMPILFIER_H
-#define CGAL_BSO_2_GPS_POLYGON_SIMPILFIER_H
+#ifndef CGAL_GPS_POLYGON_SIMPILFIER_H
+#define CGAL_GPS_POLYGON_SIMPILFIER_H
 
 #include <CGAL/license/Boolean_set_operations_2.h>
 
