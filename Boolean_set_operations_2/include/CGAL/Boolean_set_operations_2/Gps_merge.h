@@ -81,6 +81,24 @@ class Base_intercepted_merge {
   using Arr_entry = std::pair<Arrangement_2*, std::vector<Vertex_handle>*>;
 
 public:
+  template <typename InputIterator>
+  bool operator()(InputIterator begin, InputIterator end) {
+    CGAL_assertion(begin != end);
+
+    const auto* tr = begin->first->geometry_traits();
+    Arrangement_2* arr = new Arrangement_2(tr);
+    std::vector<Vertex_handle>* verts = new std::vector<Vertex_handle>;
+
+    using Agg_op = Gps_agg_op<Arrangement_2, Visitor, Gps_do_intersect_agg_op_visitor>;
+    Agg_op agg_op(*arr, *verts, *(arr->traits_adaptor()));
+    auto res = agg_op.sweep_intercept_arrangements2(begin, end);
+
+    begin->first = arr;
+    begin->second = verts;
+
+    return res;
+  }
+
   bool operator()(std::size_t i, std::size_t j, std::size_t jump, std::vector<Arr_entry>& arr_vec) {
     if (i == j) return false;
 
@@ -94,7 +112,9 @@ public:
 
     for (auto count = i; count <= j; count += jump) {
       delete (arr_vec[count].first);
+      arr_vec[count].first = nullptr;
       delete (arr_vec[count].second);
+      arr_vec[count].second = nullptr;
     }
 
     arr_vec[i].first = arr;

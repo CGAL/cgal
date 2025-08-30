@@ -99,11 +99,13 @@ public:
     m_surface_sweep(m_traits, &m_visitor)
   {}
 
-  std::size_t prepare(std::size_t lower, std::size_t upper, std::size_t jump,
-                      std::vector<Arr_entry>& arr_vec, std::list<Meta_X_monotone_curve_2>& curves_list) {
+  std::pair<std::size_t, std::size_t>
+  prepare(std::size_t lower, std::size_t upper, std::size_t jump,
+          std::vector<Arr_entry>& arr_vec, std::list<Meta_X_monotone_curve_2>& curves_list) {
     std::size_t n_inf_pgn = 0;  // number of infinite polygons (arrangement
                                 // with a contained unbounded face
-    for (auto i = lower; i <= upper; i += jump) {
+    std::size_t n_pgn = 0;      // number of polygons (arrangements)
+    for (auto i = lower; i <= upper; i += jump, ++n_pgn) {
       // The BFS scan (after the loop) starts in the reference face,
       // so we count the number of polygons that contain the reference face.
       Arr* arr = (arr_vec[i]).first;
@@ -120,16 +122,16 @@ public:
         curves_list.push_back(Meta_X_monotone_curve_2(he->curve(), cv_data));
       }
     }
-    return n_inf_pgn;
+    return std::make_pair(n_inf_pgn, n_pgn);
   }
 
   /*! sweeps the plane without interceptions.
    */
   void sweep_arrangements(std::size_t lower, std::size_t upper, std::size_t jump,
                           std::vector<Arr_entry>& arr_vec) {
-    std::size_t n_pgn = upper - lower + 1;      // number of polygons (arrangements)
+    std::size_t n_inf_pgn, n_pgn;
     std::list<Meta_X_monotone_curve_2> curves_list;
-    auto n_inf_pgn = prepare(lower, upper, jump, arr_vec, curves_list);
+    std::tie(n_inf_pgn, n_pgn) = prepare(lower, upper, jump, arr_vec, curves_list);
     m_surface_sweep.sweep(curves_list.begin(), curves_list.end(), lower, upper, jump, arr_vec);
     m_faces_hash[m_arr->reference_face()] = n_inf_pgn;
     Bfs_visitor visitor(&m_edges_hash, &m_faces_hash, n_pgn);
@@ -143,13 +145,56 @@ public:
    */
   bool sweep_intercept_arrangements(std::size_t lower, std::size_t upper, std::size_t jump,
                                     std::vector<Arr_entry>& arr_vec) {
+    std::size_t n_inf_pgn, n_pgn;
     std::list<Meta_X_monotone_curve_2> curves_list;
-    auto n_inf_pgn = prepare(lower, upper, jump, arr_vec, curves_list);
+    std::tie(n_inf_pgn, n_pgn) = prepare(lower, upper, jump, arr_vec, curves_list);
     auto res = m_surface_sweep.sweep_intercept(curves_list.begin(), curves_list.end(), lower, upper, jump, arr_vec);
     if (res) return true;
 
     m_faces_hash[m_arr->reference_face()] = n_inf_pgn;
-    std::size_t n_pgn = upper - lower + 1;      // number of polygons (arrangements)
+    Bfs_visitor visitor(&m_edges_hash, &m_faces_hash, n_pgn);
+    visitor.visit_ubf(m_arr->faces_begin(), n_inf_pgn);
+    Bfs_scanner scanner(visitor);
+    scanner.scan(*m_arr);
+    visitor.after_scan(*m_arr);
+    return false;
+  }
+
+  template <typename InputIterator>
+  std::size_t prepare2(InputIterator begin, InputIterator end, std::list<Meta_X_monotone_curve_2>& curves_list) {
+    std::size_t n_inf_pgn = 0;  // number of infinite polygons (arrangement
+                                // with a contained unbounded face
+    for (auto it = begin; it != end; ++it) {
+      // The BFS scan (after the loop) starts in the reference face,
+      // so we count the number of polygons that contain the reference face.
+      Arr* arr = it->first;
+      if (arr->reference_face()->contained()) ++n_inf_pgn;
+
+      for (auto ite = arr->edges_begin(); ite != arr->edges_end(); ++ite) {
+        // take only relevant edges (which separate between contained and
+        // non-contained faces.
+        Halfedge_handle he = ite;
+        if (he->face()->contained() == he->twin()->face()->contained()) continue;
+        if ((Arr_halfedge_direction)he->direction() == ARR_RIGHT_TO_LEFT) he = he->twin();
+
+        Curve_data cv_data(arr, he, 1, 0);
+        curves_list.push_back(Meta_X_monotone_curve_2(he->curve(), cv_data));
+      }
+    }
+    return n_inf_pgn;
+  }
+
+  /*! sweeps the plane without interceptions, but stop when an intersection occurs.
+   */
+  template <typename InputIterator>
+  bool sweep_intercept_arrangements2(InputIterator begin, InputIterator end) {
+    std::list<Meta_X_monotone_curve_2> curves_list;
+    auto n_inf_pgn = prepare2(begin, end, curves_list);
+    auto res = m_surface_sweep.sweep_intercept2(curves_list.begin(), curves_list.end(), begin, end);
+    if (res) return true;
+
+    m_faces_hash[m_arr->reference_face()] = n_inf_pgn;
+    std::size_t n_pgn = std::distance(begin, end);      // number of polygons (arrangements)
     Bfs_visitor visitor(&m_edges_hash, &m_faces_hash, n_pgn);
     visitor.visit_ubf(m_arr->faces_begin(), n_inf_pgn);
     Bfs_scanner scanner(visitor);

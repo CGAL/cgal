@@ -7,13 +7,15 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s) : Baruch Zukerman <baruchzu@post.tau.ac.il>
-//             Ophir Setter    <ophir.setter@cs.tau.ac.il>
-//             Guy Zucker <guyzucke@post.tau.ac.il>
+// Author(s) : Baruch Zukerman  <baruchzu@post.tau.ac.il>
+//             Ophir Setter     <ophir.setter@cs.tau.ac.il>
+//             Guy Zucker       <guyzucke@post.tau.ac.il>
 //             Efi Fogel        <efifogel@gmail.com>
 
 #ifndef CGAL_GPS_ON_SURFACE_BASE_2_H
 #define CGAL_GPS_ON_SURFACE_BASE_2_H
+
+#include <algorithm>
 
 #include <CGAL/license/Boolean_set_operations_2.h>
 
@@ -114,8 +116,8 @@ private:
   using Vertex_const_handle = typename Aos_2::Vertex_const_handle;
 
   using Halfedge_around_vertex_const_circulator = typename Aos_2::Halfedge_around_vertex_const_circulator;
-
-  using Arr_entry = std::pair<Aos_2 *, std::vector<Vertex_handle> *>;
+  using Vertices = std::vector<Vertex_handle>;
+  using Arr_entry = std::pair<Aos_2*, Vertices*>;
 
   using Point_location = typename Arrangement_on_surface_2::Topology_traits::Default_point_location_strategy;
 
@@ -127,8 +129,9 @@ protected:
   CGAL::Arr_traits_adaptor_2<Traits_2> m_traits_adaptor;
   bool m_traits_owner;
 
-  // the underlying arrangement
-  Aos_2* m_arr;
+
+  Aos_2* m_arr;		// the underlying arrangement
+  Vertices* m_vertices; // sorted vertices
 
 public:
   // constructs default
@@ -500,6 +503,16 @@ public:
   // intersects a range of polygons
   template <typename InputIterator>
   inline bool _do_intersect(InputIterator begin, InputIterator end, std::size_t k) {
+    // m_vertices = new Vertices;
+    // sort_vertices(*m_arr, *m_vertices);
+    // Do_intersect_merge<Aos_2> do_intersect_merge;
+    // auto res = do_intersect_divide_and_conquer2(begin, end, k, do_intersect_merge);
+    // delete m_vertices;
+    // if (res) return res;
+    // remove_redundant_edges();
+    // _reset_faces();
+    // return is_empty();
+
     std::vector<Arr_entry> arr_vec(std::distance(begin, end) + 1);
     arr_vec[0].first = this->m_arr;
     std::size_t i = 1;
@@ -516,7 +529,13 @@ public:
     // The resulting arrangement is at index 0
     this->m_arr = arr_vec[0].first;
     delete arr_vec[0].second;
-    if (res) return res;
+    if (res) {
+      for (auto i = 1; i < arr_vec.size(); ++i) {
+        if (arr_vec[i].first) delete arr_vec[i].first;
+        if (arr_vec[i].second) delete arr_vec[i].second;
+      }
+      return res;
+    }
 
     _remove_redundant_edges(arr_vec[0].first);
     _reset_faces(arr_vec[0].first);
@@ -557,7 +576,13 @@ public:
     // The resulting arrangement is at index 0
     this->m_arr = arr_vec[0].first;
     delete arr_vec[0].second;
-    if (res) return res;
+    if (res) {
+      for (auto i = 1; i < arr_vec.size(); ++i) {
+        if (arr_vec[i].first) delete arr_vec[i].first;
+        if (arr_vec[i].second) delete arr_vec[i].second;
+      }
+      return res;
+    }
 
     _remove_redundant_edges(arr_vec[0].first);
     _reset_faces(arr_vec[0].first);
@@ -680,6 +705,7 @@ public:
     // the result arrangement is at index 0
     this->m_arr = arr_vec[0].first;
     delete arr_vec[0].second;
+    std::cout << "XXXX 1 no. faces: " << m_arr->number_of_faces() << "\n";
   }
 
   // intersects a range of polygons with holes
@@ -702,6 +728,7 @@ public:
     // the result arrangement is at index 0
     this->m_arr = arr_vec[0].first;
     delete arr_vec[0].second;
+    std::cout << "XXXX 2 no. edges: " << m_arr->number_of_edges() << "\n";
   }
 
   template <typename InputIterator1, typename InputIterator2>
@@ -1223,6 +1250,17 @@ protected:
     }
   }
 
+  //! extracts and sorts the vertices
+  void sort_vertices(Aos_2& arr, Vertices& vertices) {
+    std::size_t j = 0;
+    vertices.resize(arr.number_of_vertices());
+    for (auto vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit) vertices[j++] = vit;
+
+    // Sort the vector.
+    Less_vertex_handle comp(m_traits->compare_xy_2_object());
+    std::sort(vertices.begin(), vertices.end(), comp);
+  }
+
   //! Divide & conquer
   template <typename Merge>
   void _divide_and_conquer(std::size_t lower, std::size_t upper,
@@ -1261,10 +1299,10 @@ protected:
   bool do_intersect_divide_and_conquer(std::size_t lower, std::size_t upper,
                                        std::vector<Arr_entry>& arr_vec,
                                        std::size_t k, Merge merge_func) {
-    static int indent = 0;
-    std::cout << std::setw(indent) << "" << "D&C [" << lower << "," << upper << "," << k << "]\n";
+    // static int indent = 0;
+    // std::cout << std::setw(indent) << "" << "D&C [" << lower << "," << upper << "," << k << "]\n";
     if ((upper - lower) < k) {
-      std::cout << std::setw(indent) << "" << "Merging [" << lower << "," << upper << "," << 1 << "]\n";
+      // std::cout << std::setw(indent) << "" << "Merging [" << lower << "," << upper << "," << 1 << "]\n";
       _build_sorted_vertices_vectors(lower, upper, arr_vec);
       return merge_func(lower, upper, 1, arr_vec);
     }
@@ -1272,38 +1310,55 @@ protected:
     auto sub_size = ((upper - lower + 1) / k);
     auto curr_lower = lower;
 
-    bool res = false;
     for (std::size_t i = 0; i < k - 1; ++i, curr_lower += sub_size) {
-      indent += 2;
-      res = do_intersect_divide_and_conquer(curr_lower, curr_lower + sub_size-1, arr_vec, k, merge_func);
-      indent -= 2;
-      if (res) break;
-    }
-    if (res) {
-      // Clean up the entries that have been created
-      std::cout << std::setw(indent) << "" << "Cleaning [" << lower + sub_size << "," << curr_lower << "," << sub_size << "]\n";
-      for (auto count = lower + sub_size; count <= curr_lower; count += sub_size) {
-        delete (arr_vec[count].first);
-        delete (arr_vec[count].second);
-      }
-      return true;
+      // indent += 2;
+      auto res = do_intersect_divide_and_conquer(curr_lower, curr_lower + sub_size-1, arr_vec, k, merge_func);
+      // indent -= 2;
+      if (res) return res;
     }
 
-    indent += 2;
-    res = do_intersect_divide_and_conquer(curr_lower, upper, arr_vec, k, merge_func);
-    indent -= 2;
-    if (res) {
-      // Clean up the entries that have been created
-      std::cout << std::setw(indent) << "" << "Cleaning [" << lower + sub_size << "," << curr_lower << "," << sub_size << "]\n";
-      for (std::size_t count = lower + sub_size; count <= curr_lower; count += sub_size) {
-        delete (arr_vec[count].first);
-        delete (arr_vec[count].second);
-      }
-      return true;
-    }
+    // indent += 2;
+    auto res = do_intersect_divide_and_conquer(curr_lower, upper, arr_vec, k, merge_func);
+    // indent -= 2;
+    if (res) return res;
 
-    std::cout << std::setw(indent) << "" << "Merging [" << lower << "," <<  curr_lower << "," << sub_size << "]\n";
+    // std::cout << std::setw(indent) << "" << "Merging [" << lower << "," <<  curr_lower << "," << sub_size << "]\n";
     return merge_func(lower, curr_lower, sub_size, arr_vec);
+  }
+
+  template <typename InputIterator, typename Merge>
+  bool do_intersect_divide_and_conquer2(InputIterator begin, InputIterator end, std::size_t k, Merge merge) {
+    std::vector<Arr_entry> arr_entries;
+    arr_entries.reserve(k);
+    arr_entries.resize(1);
+    arr_entries[0].first = m_arr;
+    arr_entries[0].second = m_vertices;
+    std::size_t size = std::distance(begin, end);
+    auto it = begin;
+    while (it != end) {
+      std::size_t num = std::min(size+1, k);
+      arr_entries.resize(num);
+      for (std::size_t i = 1; i < num; ++i) {
+        // process pgn
+        auto* p_arr = new Aos_2(m_traits);
+        auto* p_vertices = new Vertices;
+        ValidationPolicy::is_valid(*it, *m_traits);
+        arr_entries[i].first = p_arr;
+        arr_entries[i].second = p_vertices;
+        _insert(*it++, *p_arr);
+        sort_vertices(*p_arr, *p_vertices);
+      }
+      auto res = merge(arr_entries.begin(), arr_entries.end());
+      for (std::size_t i = 1; i < num; ++i) {
+        delete arr_entries[i].first;
+        delete arr_entries[i].second;
+      }
+      arr_entries.resize(1);
+      size -= (num-1);
+    }
+    m_arr = arr_entries[0].first;
+    m_vertices = arr_entries[0].second;
+    arr_entries.clear();
   }
 
   // marks all faces as non-visited
