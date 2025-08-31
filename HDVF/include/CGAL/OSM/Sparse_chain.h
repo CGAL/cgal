@@ -70,6 +70,7 @@ public:
     template <typename _CT, int _CTF>
     friend class Sparse_matrix;
 
+private:
     // Friend methods (friends of Sparse_matrix)
     template <typename _CT>
     friend Sparse_chain<_CT, COLUMN> operator*(const Sparse_matrix<_CT, COLUMN> &_first, const Sparse_chain<_CT, COLUMN> &_second);
@@ -219,45 +220,42 @@ public:
      * \pre Chains must have the same `CoefficientRing` and the same `ChainTypeFlag`.
      *
      * \warning Will raise an error if the two chains are not the same `CoefficientRing`.
-     * \warning Will raise an error if the two chains don't have the same `ChainTypeFlag`.
+     * \warning Will raise a compilation error if the two chains don't have the same `ChainTypeFlag`.
      *
-     * \param[in] first The first chain.
-     * \param[in] second The second chain.
+     * \param[in] other The other chain.
      *
      * \return A new chain representing the result.
      */
-    template <int _CTF>
-    friend Sparse_chain operator+(const Sparse_chain &first, const Sparse_chain<CoefficientRing, _CTF> &second) {
-        Sparse_chain newChain = first;
-        newChain += second;
+    Sparse_chain operator+(const Sparse_chain &other) {
+        Sparse_chain newChain = *this;
+        newChain += other;
 
         return newChain;
     }
 
     /**
-     * \brief Subtracts a chain from another chain.
+     * \brief Subtracts a chain from current chain.
      *
-     * Subtract two chains together and return the result in a new matrix.
+     * Subtract `other` chain from current chain and return the result in a new matrix.
      *
      * \pre Chains must have the same `CoefficientRing` and the same `ChainTypeFlag`.
      *
      * \warning Will raise an error if the two chains are not the same `CoefficientRing`.
-     * \warning Will raise an error if the two chains don't have the same `ChainTypeFlag`.
+     * \warning Will raise a compilation error if the two chains don't have the same `ChainTypeFlag`.
      *
-     * \param[in] first The first chain.
-     * \param[in] second The second chain.
+     * \param[in] other The other chain.
      *
      * \return A new chain representing the result.
      */
-    template <int _CTF>
-    friend Sparse_chain operator-(const Sparse_chain &first, const Sparse_chain<CoefficientRing, _CTF> &second) {
-        Sparse_chain newChain = first;
-        newChain -= second;
+    Sparse_chain operator-(const Sparse_chain &other) {
+        Sparse_chain newChain = *this;
+        newChain -= other;
 
         return newChain;
     }
 
-    /**
+    /*! \relates Sparse_chain
+     *
      * \brief Applies multiplication on each coefficient.
      *
      * \param[in] lambda The factor to apply.
@@ -276,15 +274,19 @@ public:
     /**
      * \brief Applies multiplication on each coefficient.
      *
-     * \param[in] chain The  chain.
      * \param[in] lambda The factor to apply.
      *
      * \return A new chain representing the result.
      */
-    template <typename _CT, int _CTF>
-    friend Sparse_chain<_CT, _CTF> operator*(const Sparse_chain<_CT, _CTF> &chain, const _CT& lambda);
+    Sparse_chain operator*(const CoefficientRing& lambda) {
+        Sparse_chain newChain = *this;
+        newChain *= lambda;
 
-    /**
+        return newChain;
+    }
+
+    /** \relates Sparse_chain
+     *
      * \brief Performs matrix multiplication between two chains (COLUMN x ROW) and return a COLUMN matrix.
      *
      * Generate a column-based matrix from the matrix multiplication and return it.
@@ -301,7 +303,8 @@ public:
     template <typename _CT>
     friend Sparse_matrix<_CT, COLUMN> operator*(const Sparse_chain<_CT, COLUMN>& column, const Sparse_chain<_CT, ROW>& row);
 
-    /**
+    /** \relates Sparse_chain
+     *
      * \brief Performs matrix multiplication between two chains (COLUMN x ROW) and return a ROW matrix.
      *
      * Generate a row-based matrix from the matrix multiplication and return it.
@@ -318,7 +321,8 @@ public:
     template <typename _CT>
     friend Sparse_matrix<_CT, ROW> operator%(const Sparse_chain<_CT, COLUMN> &column, const Sparse_chain<_CT, ROW> &row);
 
-    /**
+    /** \relates Sparse_chain
+     *
      * \brief Performs dot product between two chains (ROW x COLUMN).
      *
      * \pre Chains must have the same `CoefficientRing`.
@@ -495,7 +499,8 @@ public:
         return _chainData.size() == 0;
     }
 
-    /**
+    /**\relates Sparse_chain
+     *
      * \defgroup ChainChainComparison Compares two chains.
      * \ingroup PkgHDVFAlgorithmClasses
      * @brief  Compare two chains and return `true` if both chains equal (and `false` otherwise).
@@ -506,7 +511,8 @@ public:
      * @{
      */
 
-    /** \brief Comparison of two COLUMN chains. */
+    /** \brief Comparison of two COLUMN chains.
+     */
     template <typename _CT>
     friend bool operator==(const Sparse_chain<_CT, OSM::COLUMN>& chain, const Sparse_chain<_CT, OSM::COLUMN> &other);
 
@@ -531,24 +537,28 @@ public:
      *
      * \note Will return a copy of the chain if `indices` is empty.
      *
-     * \param[in] chain The chain to process.
      * \param[in] indices The indexes to remove.
      *
      * \return A new chain representing the result.
      */
-    template <typename _CT, int _CTF>
-    friend Sparse_chain<_CT, _CTF> operator/(const Sparse_chain<_CT, _CTF> &chain, const std::vector<size_t> &indices);
+    Sparse_chain operator/(const std::vector<size_t> &indices) {
+        Sparse_chain newChain = *this;
+        newChain /= indices;
+        return newChain;
+    }
 
     /**
      * \brief Gets a subchain from the chain.
      *
      * Return a new chain where the coefficients at a given index is removed.
      *
-     * \param[in] chain The chain to process.
      * \param[in] index The index to remove.
      */
-    template <typename _CT, int _CTF>
-    friend Sparse_chain<_CT, _CTF> operator/(const Sparse_chain<_CT, _CTF> &chain, size_t index);
+    Sparse_chain operator/(size_t index) {
+        Sparse_chain newChain = *this;
+        newChain /= index;
+        return newChain;
+    }
 
     /**
      * \brief Restricts the chain to a sub-chain by removing indices.
@@ -764,21 +774,21 @@ CoefficientRing operator*(const Sparse_chain<CoefficientRing, ROW> &row, const S
     return result;
 }
 
-// Get a subchain from the chain and assign.
-template <typename _CT, int _CTF>
-Sparse_chain<_CT, _CTF> operator/(const Sparse_chain<_CT, _CTF> &chain, const std::vector<size_t> &indices) {
-    Sparse_chain<_CT, _CTF> newChain = chain;
-    newChain /= indices;
-    return newChain;
-}
-
-// Get a subchain from the chain and assign.
-template <typename _CT, int _CTF>
-Sparse_chain<_CT, _CTF> operator/(const Sparse_chain<_CT, _CTF> &chain, size_t index) {
-    Sparse_chain<_CT, _CTF> newChain = chain;
-    newChain /= index;
-    return newChain;
-}
+//// Get a subchain from the chain and assign.
+//template <typename _CT, int _CTF>
+//Sparse_chain<_CT, _CTF> operator/(const Sparse_chain<_CT, _CTF> &chain, const std::vector<size_t> &indices) {
+//    Sparse_chain<_CT, _CTF> newChain = chain;
+//    newChain /= indices;
+//    return newChain;
+//}
+//
+//// Get a subchain from the chain and assign.
+//template <typename _CT, int _CTF>
+//Sparse_chain<_CT, _CTF> operator/(const Sparse_chain<_CT, _CTF> &chain, size_t index) {
+//    Sparse_chain<_CT, _CTF> newChain = chain;
+//    newChain /= index;
+//    return newChain;
+//}
 
 template <typename _CT>
 bool operator==(const Sparse_chain<_CT, OSM::COLUMN>& chain, const Sparse_chain<_CT, OSM::COLUMN> &other)

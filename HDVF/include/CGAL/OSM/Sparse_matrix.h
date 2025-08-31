@@ -307,7 +307,8 @@ public:
         return stream;
     }
 
-    /**
+    /** \relates Sparse_matrix
+     *
      * \defgroup WriteMatrix Writes matrix to an output stream or a file.
      * \ingroup PkgHDVFAlgorithmClasses
      * @brief  Write a sparse matrix to an output stream or a file using the `.osm` file format.
@@ -335,7 +336,8 @@ public:
 
     /** @} */
 
-    /**
+    /** \relates Sparse_matrix
+     *
      * \defgroup ReadMatrix Reads matrix from an input stream.
      * \ingroup PkgHDVFAlgorithmClasses
      * @brief  Read a sparse matrix from an input stream or a file using the `.osm` file format.
@@ -366,21 +368,20 @@ public:
     /**
      * \brief Adds two matrices together into a new matrix.
      *
-     * Adds each coefficient of the matrices together and returns a new matrix (of the same type as `first`) representing the result (when possible, prefer `+=` for efficiency).
+     * Adds each coefficient of the matrices together and returns a new matrix (of the same type as `this`) representing the result (when possible, prefer `+=` for efficiency).
      *
      * \pre Matrices must have the same `CoefficientRing` but can have different `ChainTypeFlag`.
      *
      * \warning Will raise an error if the other matrix is not the same `CoefficientRing`.
      *
-     * \param[in] first The first matrix.
-     * \param[in] second The second matrix.
+     * \param[in] other The second matrix.
      *
      * \return A new matrix representing the result.
      */
     template <int _CTF>
-    friend Sparse_matrix operator+(const Sparse_matrix &first, const Sparse_matrix<CoefficientRing, _CTF> &second) {
-        Sparse_matrix newMatrix(first);
-        newMatrix += second;
+    Sparse_matrix operator+(const Sparse_matrix<CoefficientRing, _CTF> &other) {
+        Sparse_matrix newMatrix(*this);
+        newMatrix += other;
 
         return newMatrix;
     }
@@ -388,26 +389,26 @@ public:
     /**
      * \brief Substracts two matrices together into a new matrix.
      *
-     * Substracts each coefficient of the matrix together and returns a new matrix (of the same type as `first`) representing the result (when possible, prefer `-=` for efficiency).
+     * Substracts each coefficient of the matrix `other` and returns a new matrix (of the same type as `this`) representing the result (when possible, prefer `-=` for efficiency).
      *
      * \pre Matrices must have the same `CoefficientRing` but can have different `ChainTypeFlag`.
      *
      * \warning Will raise an error if the other matrix is not the same `CoefficientRing`.
      *
-     * \param[in] first The first matrix.
-     * \param[in] second The second matrix.
+     * \param[in] other The second matrix.
      *
      * \return A new matrix representing the result.
      */
     template <int _CTF>
-    friend Sparse_matrix operator-(const Sparse_matrix &first, const Sparse_matrix<CoefficientRing, _CTF> &second) {
-        Sparse_matrix newMatrix = first;
-        newMatrix -= second;
+    Sparse_matrix operator-(const Sparse_matrix<CoefficientRing, _CTF> &other) {
+        Sparse_matrix newMatrix(*this);
+        newMatrix -= other;
 
         return newMatrix;
     }
 
-    /**
+    /** \relates Sparse_matrix
+     *
      * \brief Applies factor on each coefficients into a new matrix.
      *
      * This method creates a new matrix obtained by multiplying the matrix by a scalar factor `lambda`.
@@ -434,21 +435,17 @@ public:
      *
      * If `lambda` is zero, the function comes to nullify the matrix (when possible, prefer `*=` for efficiency).
      *
-     * \param[in] matrix The matrix.
      * \param[in] lambda The factor to apply.
      *
      * \return A new matrix representing the result.
      */
-    template <typename _CT, int _CTF>
-    friend Sparse_matrix<_CT, _CTF> operator*(const Sparse_matrix<_CT, _CTF> &matrix, const _CT& lambda);
-#if 0
-     {
-        Sparse_matrix<_CT, _CTF> newMatrix = matrix;
+    Sparse_matrix operator*(const CoefficientRing& lambda) {
+        Sparse_matrix newMatrix = *this;
         newMatrix *= lambda;
 
         return newMatrix;
     }
-#endif
+    
     /**
      * \defgroup MatrixMatrixProdCol Matrices product (with column-based result).
      * \ingroup PkgHDVFAlgorithmClasses
