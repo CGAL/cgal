@@ -23,19 +23,19 @@
 
 namespace CGAL::internal::Hexmeshing {
   const size_t CONST_SIZE_T_MAX = std::numeric_limits<size_t>::max();
-  
+
   /**
    * @brief Fixes impossible template cases by resolving conflicts in 2-templates and 3-templates
-   * 
+   *
    * This function identifies and resolves impossible refinement patterns that cannot be
    * processed by the standard template substitution. It handles two main cases:
    * 1. Faces with template_id=2 that have diagonal marking patterns (non-consecutive marks)
    * 2. Faces with template_id=3 that are adjacent to other 3-templates sharing unmarked nodes
-   * 
+   *
    * The function performs an iterative process: it first examines all existing faces in the
    * current plane, then processes any new faces that are added to the faces_to_check queue
    * during the fixing process. This continues until no more faces need to be checked.
-   * 
+   *
    * @tparam HexData Type of the hexahedral meshing data structure
    * @param hdata Hexahedral meshing data containing the Linear Cell Complex and marks
    * @param rdata Refinement data containing the faces of the current plane and collections
@@ -52,7 +52,7 @@ namespace CGAL::internal::Hexmeshing {
 
     // faces_of_plane will grow, we only want to examine only faces that existed right now
     int faces_end = rdata.faces_of_plane.size();
-    
+
     for (int i = 0; i < faces_end; i++){
       Dart_handle face = rdata.faces_of_plane[i];
       auto& face_attr = hdata.lcc.template attribute<2>(face)->info();

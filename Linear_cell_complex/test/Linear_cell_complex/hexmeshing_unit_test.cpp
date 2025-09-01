@@ -50,7 +50,7 @@ bool test_set_dual_edges<1>() {
     if(!exist)
       return false;
   }
-  
+
   for(auto answer: answer_inner) {
     bool exist = false;
     for(auto seg: result) {
@@ -105,7 +105,7 @@ bool test_set_gradient_at_dual_node<1>() {
         ch[i] = 0;
       }
     }
-    
+
     std::array<double, 3> answer;
     if(ch == std::array<int, 3>({0, 0, 0})) {
       answer = {0., 0., 0.};
@@ -344,7 +344,7 @@ bool test2_laplacian_smoothing_for_unmarked_cells<1>() {
   int inv_counter = 0;
   auto volumes = lcc.one_dart_per_cell<3>();
   for(auto volume = volumes.begin(); volume != volumes.end(); volume++) {
-    std::array<typename LCC::Vertex_attribute_descriptor, 8> nodes = {lcc.attribute<0>(volume), lcc.attribute<0>(lcc.beta(volume, 1)), lcc.attribute<0>(lcc.beta(volume, 1, 1)), lcc.attribute<0>(lcc.beta(volume, 0)), 
+    std::array<typename LCC::Vertex_attribute_descriptor, 8> nodes = {lcc.attribute<0>(volume), lcc.attribute<0>(lcc.beta(volume, 1)), lcc.attribute<0>(lcc.beta(volume, 1, 1)), lcc.attribute<0>(lcc.beta(volume, 0)),
                                                                       lcc.attribute<0>(lcc.beta(volume, 0, 2, 1, 1)), lcc.attribute<0>(lcc.beta(volume, 2, 1, 1)), lcc.attribute<0>(lcc.beta(volume, 2, 0)), lcc.attribute<0>(lcc.beta(volume, 1, 2, 0))};
     double j = scale_jacobian_of_hexa(lcc, nodes);
     if(j < 0.) inv_counter++;
@@ -356,7 +356,7 @@ bool test2_laplacian_smoothing_for_unmarked_cells<1>() {
 
   inv_counter = 0;
   for(auto volume = volumes.begin(); volume != volumes.end(); volume++) {
-    std::array<typename LCC::Vertex_attribute_descriptor, 8> nodes = {lcc.attribute<0>(volume), lcc.attribute<0>(lcc.beta(volume, 1)), lcc.attribute<0>(lcc.beta(volume, 1, 1)), lcc.attribute<0>(lcc.beta(volume, 0)), 
+    std::array<typename LCC::Vertex_attribute_descriptor, 8> nodes = {lcc.attribute<0>(volume), lcc.attribute<0>(lcc.beta(volume, 1)), lcc.attribute<0>(lcc.beta(volume, 1, 1)), lcc.attribute<0>(lcc.beta(volume, 0)),
                                                                       lcc.attribute<0>(lcc.beta(volume, 0, 2, 1, 1)), lcc.attribute<0>(lcc.beta(volume, 2, 1, 1)), lcc.attribute<0>(lcc.beta(volume, 2, 0)), lcc.attribute<0>(lcc.beta(volume, 1, 2, 0))};
     double j = scale_jacobian_of_hexa(lcc, nodes);
     if(j < 0.) inv_counter++;
@@ -386,7 +386,7 @@ bool test_move_points_onto_mesh<1>() {
 
     Vector p_vec = p-CGAL::ORIGIN;
     Vector q_vec = q-CGAL::ORIGIN;
-    
+
     face_attr.intersection = CGAL::ORIGIN + p_vec + ((xyz_sum-p_sum)/(q_sum-p_sum))*(q_vec-p_vec);
     face_attr.normal = {1./sqrt(3.), 1./sqrt(3.), 1./sqrt(3.)};
 
@@ -397,7 +397,7 @@ bool test_move_points_onto_mesh<1>() {
   auto vertices = lcc.one_dart_per_cell<0>();
   for(auto vertex = vertices.begin(); vertex != vertices.end(); vertex++) {
     Point p = lcc.point(vertex);
-    
+
     double x = p.x(), y = p.y(), z = p.z();
     if(!is_approximately_equal_Point(p, Point(int(x+0.1), int(y+0.1), int(z+0.1)))) {
       if(!lcc.is_marked(vertex, move_mark)) {
@@ -418,7 +418,7 @@ bool test_move_points_onto_mesh<1>() {
       }
     }
   }
-  
+
   return true;
 }
 
@@ -458,13 +458,13 @@ bool test_move_points_onto_mesh<2>() {
   auto vertices = lcc.one_dart_per_cell<0>();
   for(auto vertex = vertices.begin(); vertex != vertices.end(); vertex++) {
     Point p = lcc.point(vertex);
-    
+
     double x = p.x(), y = p.y(), z = p.z();
     if(!is_approximately_equal_Point(p, Point(int(x+0.1), int(y+0.1), int(z+0.1)))) {
       if(!lcc.is_marked(vertex, move_mark)) {
         return false;
       }
-      
+
       if(!is_approximately_equal_Point(p, {(1.+xy_size)*0.5, (1.+xy_size)*0.5, p.z()}) and !is_approximately_equal_Point(p, {0., xy_size, p.z()}) and !is_approximately_equal_Point(p, {xy_size, 0., p.z()})) {
         return false;
       }
@@ -475,7 +475,7 @@ bool test_move_points_onto_mesh<2>() {
       }
     }
   }
-  
+
   return true;
 }
 
@@ -510,7 +510,7 @@ bool test_volumes_around_node<1>() {
     }
     return false;
   };
-  
+
   auto darts = lcc.darts();
   for(auto dart = darts.begin(); dart != darts.end(); dart++) {
     if(is_approximately_equal_Point({1, 1, 1}, lcc.point(dart))) {
@@ -541,7 +541,7 @@ bool test_get_signal<1>() {
       if(volume == nullptr or lcc.attribute<3>(volume) == nullptr)
         is_invalid = true;
     }
-    
+
     if(is_invalid) {
       if(__get_signal(lcc, vertex, test_mark) != -1) {
         return false;
@@ -560,7 +560,7 @@ bool test_get_signal<1>() {
     if(__get_signal(lcc, volumes[0], test_mark) != i) {
       return false;
     }
-    
+
     lcc.unmark_all(test_mark);
   }
   lcc.free_mark(test_mark);
@@ -611,7 +611,7 @@ bool test_get_non_manifold_template_list<1>() {
     graph[4][7] = graph[7][4] = !((i^(i>>3))&16);
     graph[5][6] = graph[6][5] = !((i^(i>>1))&32);
     graph[6][7] = graph[7][6] = !((i^(i>>1))&64);
-    
+
     std::array<int, 8> group = {-1, -1, -1, -1, -1, -1, -1, -1};
     int group_id = 0;
     for(int j = 0; j < 8; j++) if(group[j] == -1) {
@@ -645,7 +645,7 @@ template<>
 bool test_get_solution_to_non_manifold_templates_list<1>() {
   std::array<int, 256> is_in_templates = __get_non_manifold_template_list();
   std::array<std::vector<int>, 256> resolve_templates = __get_solution_to_non_manifold_templates_list();
-  
+
   for(int i = 0; i < 256; i++) {
     if(!is_in_templates[i]) {
       if(!resolve_templates[i].empty()) {
@@ -760,9 +760,9 @@ bool test_resolve_non_manifold_case<2>() {
   size_type inner_mark = lcc.get_new_mark();
 
   set_plane(lcc, c_xyz, d_xyz, inner_mark);
-  
+
   resolve_non_manifold_case(lcc, 0.5, inner_mark);
-  
+
   auto is_in_template = __get_non_manifold_template_list();
   auto vertices = lcc.one_dart_per_cell<0>();
   for(auto vertex = vertices.begin(); vertex != vertices.end(); vertex++) {
@@ -801,9 +801,9 @@ bool test_resolve_non_manifold_case<3>() {
   size_type inner_mark = lcc.get_new_mark();
 
   set_plane(lcc, c_xyz, d_xyz, inner_mark);
-  
+
   resolve_non_manifold_case(lcc, 0.5, inner_mark);
-  
+
   auto is_in_template = __get_non_manifold_template_list();
   auto vertices = lcc.one_dart_per_cell<0>();
   for(auto vertex = vertices.begin(); vertex != vertices.end(); vertex++) {
@@ -849,9 +849,9 @@ bool test_resolve_non_manifold_case<4>() {
       vol_attr.fraction = 0.1;
     }
   }
-  
+
   resolve_non_manifold_case(lcc, 0.5, inner_mark);
-  
+
   auto is_in_template = __get_non_manifold_template_list();
   auto vertices = lcc.one_dart_per_cell<0>();
   for(auto vertex = vertices.begin(); vertex != vertices.end(); vertex++) {
@@ -888,7 +888,7 @@ bool test_detect_intersection_with_volume_fraction<1>() {
   size_type inner_mark = lcc.get_new_mark();
 
   set_plane(lcc, xyz_sum, 100., inner_mark);
-  
+
   auto detectIntersection = detect_intersection_with_volume_fraction(0.5, inner_mark, move_mark);
 
   set_dual_edges(lcc);
@@ -900,7 +900,7 @@ bool test_detect_intersection_with_volume_fraction<1>() {
     Point p = dual_edge.source(), q = dual_edge.target();
     double px = p.x(), py = p.y(), pz = p.z();
     double qx = q.x(), qy = q.y(), qz = q.z();
-    
+
     if(detectIntersection(lcc, face)) {
       if(lcc.is_free<3>(face)) {
         return false;
@@ -960,7 +960,7 @@ bool test_move_points_onto_mesh_with_volume_fraction<1>() {
       frac2 = vol_attr.fraction;
     }
   }
-  
+
   move_points_onto_mesh_with_volume_fraction(lcc, move_mark, inner_mark);
   for(auto volume = volumes.begin(); volume != volumes.end(); volume++) {
     auto &vol_attr = lcc.attribute<3>(volume)->info();
@@ -1264,7 +1264,7 @@ bool test_surface_smoothing<2>() {
 
 
 int main() {
-  
+
   TestFramework test;
 
   // テストいっぱい

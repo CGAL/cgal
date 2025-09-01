@@ -127,7 +127,7 @@ namespace CGAL::internal::Hexmeshing {
         vec(i) = 0.0;
       }
       Vector barycenter = CGAL::NULL_VECTOR;
-      
+
       for(auto neighbor: neighbors_list[id]) {
         Vector diff = lcc.point(neighbor) - lcc.point(vertex);
         double x = diff * T_1, y = diff * T_2, z = diff * N_k;
@@ -142,7 +142,7 @@ namespace CGAL::internal::Hexmeshing {
         barycenter += Vector(x, y, z);
       }
       barycenter /= neighbors_list[id].size();
-      
+
       double lam = 0.;
       for(int i = 0; i < 5; i++) lam += mat(i, i);
       // the main diagonal values supposed here are mat(2, 2) and mat(4, 4)

@@ -43,7 +43,7 @@ public:
     for (const auto& v : vertices) {
       B.add_vertex(v + CGAL::internal::Hexmeshing::Vector(5, 5, 5));
     }
-    
+
     std::vector<std::vector<int>> faces = {
       {0, 4, 8}, {1, 7, 10}, {2, 5, 11}, {3, 6, 9},
       {1, 8, 6}, {0, 10, 5}, {2, 9, 4}, {3, 11, 7},
@@ -51,7 +51,7 @@ public:
       {4, 6, 8}, {6, 4, 9}, {5, 7, 11}, {7, 5, 10},
       {8, 10, 0}, {10, 8, 1}, {9, 11, 3}, {11, 9, 2}
     };
-    
+
     for (const auto& f : faces) {
       B.begin_facet();
       for (int v : f) {
@@ -92,11 +92,11 @@ public:
     for (const auto& v : vertices) {
       B.add_vertex(v + CGAL::internal::Hexmeshing::Vector(5, 5, 5));
     }
-    
+
     std::vector<std::vector<int>> faces = {
       {0, 1, 3}, {0, 3, 2}, {4, 6, 7}, {4, 7, 5}, {0, 2, 6}, {0, 6, 4}, {1, 5, 7}, {1, 7, 3}, {0, 4, 5}, {0, 5, 1}, {7, 6, 2}, {7, 2, 3}
     };
-    
+
     for (const auto& f : faces) {
       B.begin_facet();
       for (int v : f) {
@@ -143,7 +143,7 @@ Polyhedron create_polyhedron() {
 template <int FACE>
 LCC create_refined_test_mesh(int level = 1) {
   std::cout << "Creating refined test mesh..." << std::endl;
-  
+
   Grid grid = Grid::make_cube(Point(0, 0, 0), 1.0, 10);
 
   Polyhedron poly = create_polyhedron<FACE>();
@@ -156,19 +156,19 @@ LCC create_refined_test_mesh(int level = 1) {
     level,
     false
   );
-  
+
   return hdata.lcc;
 }
 
 template<int FACE=6>
 LCC create_refined_test_mesh_with_volume_fraction() {
   std::cout << "Creating refined test mesh..." << std::endl;
-  
+
   Grid grid = Grid::make_cube(Point(0, 0, 0), 1.0, 13);
 
   LCC lcc;
   Grid::generate_grid(lcc, grid);
-  
+
   const double l0 = 0.7;
 
   set_centroids(lcc);
@@ -239,17 +239,17 @@ void render_meshes_at_each_phase() {
     if(lcc.attribute<3>(volume)->info().centroid.z() < (z_start + z_end)*0.5)
       lcc.mark_cell<3>(volume, half_mark);
   }
-  
+
   size_type move_mark = lcc.get_new_mark();
   size_type inner_mark = lcc.get_new_mark();
   move_points_onto_mesh_with_volume_fraction(lcc, move_mark, inner_mark);
-  
+
   auto trimming_func = is_marked_volume(inner_mark);
   // auto trimming_func = is_volume_intersecting_poly(aabb);
   trim_excedent_volumes(lcc, trimming_func);
   std::cout << "Rendering the result of move_points_onto_mesh_with_volume_fraction" << std::endl;
   // render_two_refinement_result(hdata);
-  
+
   surface_smoothing(lcc, move_mark, inner_mark);
   std::cout << "Rendering the result of surface_smoothing" << std::endl;
   // render_two_refinement_result(hdata);

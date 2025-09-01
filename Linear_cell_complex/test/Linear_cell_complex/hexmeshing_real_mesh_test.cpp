@@ -45,5 +45,5 @@ int main(){
   // render_two_refinement("anc101.off", 20, 2);
   render_two_refinement("bunny00.off", 20, 2);
   render_two_refinement("dragon_res2.off", 20, 2);
-  
+
 }

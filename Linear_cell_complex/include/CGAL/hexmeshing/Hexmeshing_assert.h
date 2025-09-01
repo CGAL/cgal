@@ -19,12 +19,12 @@
 namespace CGAL::internal::Hexmeshing {
   /**
    * @brief Asserts that all dart attributes in the given arrays are unique
-   * 
+   *
    * This template function checks that all dart attributes of dimension i in the provided
    * arrays are unique (i.e., no duplicate attributes exist across the arrays). It uses
    * a hash map to track encountered attributes and raises assertions if duplicates are found.
    * This function is typically used for debugging to ensure data integrity during mesh operations.
-   * 
+   *
    * @tparam i The dimension of the cell attributes to check (0 for vertex, 1 for edge, 2 for face, 3 for volume)
    * @tparam DartArray Variadic template parameter for the dart handle arrays
    * @param lcc The Linear Cell Complex
@@ -52,12 +52,12 @@ namespace CGAL::internal::Hexmeshing {
 
   /**
    * @brief Asserts that all faces of the plane are valid
-   * 
+   *
    * This function validates that all faces in the current refinement plane have consistent
    * template IDs. It checks that each face's template_id matches the number of marked nodes
    * on that face. This validation ensures that the mesh refinement process has correctly
    * assigned template IDs to faces based on their marked node patterns.
-   * 
+   *
    * @tparam HexData Type of the hexahedral meshing data structure
    * @param hdata Hexahedral meshing data containing the mesh and marks
    * @param rdata Refinement data containing the faces of the current plane
@@ -85,13 +85,13 @@ namespace CGAL::internal::Hexmeshing {
   // hdata は未使用
   /**
    * @brief Asserts that all faces in the Linear Cell Complex are quadrilateral
-   * 
+   *
    * This function validates that every face in the mesh has exactly 4 edges,
    * ensuring the mesh consists only of quadrilateral faces. It iterates through
    * all faces in the Linear Cell Complex and checks that each face has exactly
    * 4 edges. If any face is found with a different number of edges, an assertion
    * is triggered.
-   * 
+   *
    * @param lcc The Linear Cell Complex to validate
    */
   void assert_all_faces_are_quadrilateral(LCC &lcc){
@@ -108,13 +108,13 @@ namespace CGAL::internal::Hexmeshing {
 
   /**
    * @brief Asserts that all volumes in the Linear Cell Complex are hexahedral
-   * 
+   *
    * This function validates that every volume in the mesh has exactly 24 edges
    * (4 edges per face × 6 faces), ensuring the mesh consists only of hexahedral
    * volumes. It iterates through all volumes in the Linear Cell Complex and
    * checks that each volume has exactly 24 edges. If any volume is found with
    * a different number of edges, an assertion is triggered.
-   * 
+   *
    * @param lcc The Linear Cell Complex to validate
    */
   void assert_all_volumes_are_hexes(LCC &lcc){

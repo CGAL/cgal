@@ -48,11 +48,11 @@ namespace CGAL::internal::Hexmeshing {
 
   /**
    * @brief Internal function to iterate over faces and their edges in a plane
-   * 
+   *
    * This function performs a breadth-first traversal of faces in a plane, ensuring each face
    * and edge is processed exactly once. It uses marks to track visited elements and applies
    * the provided operations to faces and edges.
-   * 
+   *
    * @tparam FaceOp Type of the face operation functor
    * @tparam EdgeOp Type of the edge operation functor
    * @param lcc The Linear Cell Complex
@@ -93,13 +93,13 @@ namespace CGAL::internal::Hexmeshing {
 
   /**
    * @brief Retrieves all faces of a hexahedral cell
-   * 
+   *
    * This function returns an array containing dart handles for all six faces of a hexahedron.
    * The faces are returned in a specific order:
    * 1. The input face (vol)
    * 2-5. The faces adjacent to the edges of the input face
    * 6. The opposite face
-   * 
+   *
    * @param lcc The Linear Cell Complex
    * @param vol A dart handle representing the initial face of the hexahedron
    * @return std::array<Dart_handle, 6> Array of dart handles for all faces
@@ -122,11 +122,11 @@ namespace CGAL::internal::Hexmeshing {
 
   /**
    * @brief Iterates over all faces in a plane and applies specified operations
-   * 
+   *
    * This function performs a breadth-first traversal of faces in a plane, starting from
    * a given face. For each face and its edges, it applies the provided operation functors.
    * The function ensures that each face and edge is processed exactly once by using marks.
-   * 
+   *
    * @tparam FaceOp Type of the face operation functor
    * @tparam EdgeOp Type of the edge operation functor
    * @param lcc The Linear Cell Complex
@@ -151,11 +151,11 @@ namespace CGAL::internal::Hexmeshing {
 
   /**
    * @brief Gets or creates an attribute for a cell in the Linear Cell Complex
-   * 
+   *
    * This template function retrieves an existing attribute for a cell, or creates a new one
    * if it doesn't exist. The attribute type and cell dimension are specified through template
    * parameters.
-   * 
+   *
    * @tparam i The dimension of the cell (0 for vertex, 1 for edge, 2 for face, 3 for volume)
    * @param lcc The Linear Cell Complex
    * @param dart A dart handle representing the cell
@@ -174,13 +174,13 @@ namespace CGAL::internal::Hexmeshing {
 
   /**
    * @brief Gets or creates a volume attribute for refinement operations
-   * 
+   *
    * This function retrieves an existing volume attribute or creates a new one if it doesn't exist.
    * The created volume attribute is initialized with default values suitable for refinement:
    * - type is set to VolumeType::REFINEMENT
    * - iteration is set to -1
    * - cc_id is set to the maximum possible value
-   * 
+   *
    * @param lcc The Linear Cell Complex
    * @param dart A dart handle representing the volume
    * @return The volume attribute descriptor
@@ -198,10 +198,10 @@ namespace CGAL::internal::Hexmeshing {
 
   /**
    * @brief Retrieves all 26-connected neighboring cells of a given cell
-   * 
+   *
    * This function collects all cells that share a vertex, edge, or face with the given cell.
    * In a 3D grid, a cell can have up to 26 neighbors.
-   * 
+   *
    * @param lcc The Linear Cell Complex
    * @param dart A dart handle representing the central cell
    * @param include_self_vol Whether to include the input cell in the result (default: false)
@@ -246,12 +246,12 @@ namespace CGAL::internal::Hexmeshing {
 
   /**
    * @brief Finds all faces around a node that lie on a specific plane
-   * 
+   *
    * This function collects all faces that are adjacent to a given node and lie on the specified plane.
    * There may be up to 8 faces adjacent to a vertex, where each dart handle belongs to a unique edge
    * and a unique face on the plane around the selected node. The function performs a traversal around
    * the node to gather all connected faces on the plane.
-   * 
+   *
    * @param lcc The Linear Cell Complex
    * @param rdata Refinement data containing the current iteration direction
    * @param node A dart handle representing the node to find faces around
@@ -313,25 +313,25 @@ namespace CGAL::internal::Hexmeshing {
 
   /**
    * @brief Removes volumes from the Linear Cell Complex based on a trimming function
-   * 
+   *
    * This function iterates through all volumes in the Linear Cell Complex and removes
    * those that do not satisfy the criteria specified by the trimming function.
-   * 
+   *
    * The function performs the following operations:
-   * 
+   *
    * 1. **Volume Iteration**: Iterates through all volumes (3-cells) in the Linear Cell Complex
    *    using `lcc.one_dart_per_cell<3>()`
-   * 
+   *
    * 2. **Volume Evaluation**: For each volume, calls the provided trimming function
    *    `func(lcc, it)` to determine if the volume should be kept
-   * 
+   *
    * 3. **Volume Removal**: If the trimming function returns false (indicating the volume
    *    should be removed), calls `lcc.remove_cell<3>(it)` to remove the volume from the mesh
-   * 
+   *
    * This function is typically used to remove volumes that are outside the desired domain
    * or do not meet certain geometric or topological criteria. It is commonly called after
    * the refinement process to clean up the final mesh.
-   * 
+   *
    * @param lcc The Linear Cell Complex containing the mesh
    * @param func Trimming function that determines whether a volume should be kept
    *             (returns true to keep, false to remove)
@@ -363,7 +363,7 @@ namespace CGAL::internal::Hexmeshing {
    *        z
    *        ^　　　　　y
    *        |  ┐
-   *        | /     
+   *        | /
    *        |/
    *        +------> x
    *

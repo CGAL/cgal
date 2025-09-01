@@ -106,7 +106,7 @@ namespace CGAL::internal::Hexmeshing {
       if(inner_signal == -1) continue;
       if(is_in_templates[inner_signal]) que.emplace(vertex, inner_signal);
     }
-    
+
     const int NUMBER_OF_EPSILONS = 15;
     std::array<double, NUMBER_OF_EPSILONS> epsilons = {0.05, 0.07, 0.11, 0.13, 0.17, 0.19, 0.23, 0.29, 0.31, 0.37, 0.41, 0.43, 0.47, 0.53, 0.59};
     std::vector<int> counter(set_vertex_ids(lcc));
@@ -120,7 +120,7 @@ namespace CGAL::internal::Hexmeshing {
       assert(counter[id] < NUMBER_OF_EPSILONS);
       double eps = epsilons[counter[id]++];
       std::array<Dart_handle, 8> volumes = volumes_around_node(lcc, vertex);
-  
+
       int able_to_change = 0;
       for(auto volume: volumes) {
         able_to_change <<= 1;

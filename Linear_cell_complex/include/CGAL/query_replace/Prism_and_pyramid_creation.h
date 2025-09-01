@@ -169,7 +169,7 @@ bool is_volume_combinatorial_prism(const Map& amap,
 template < class Map >
 bool is_volume_combinatorial_pyramid(const Map& amap,
                                      typename Map::Dart_const_handle d1)
-{ 
+{
   typename Map::Dart_const_handle d2 = amap.beta(d1, 2);
   typename Map::Dart_const_handle d3 = amap.beta(d1, 0, 2);
   typename Map::Dart_const_handle d4 = amap.beta(d1, 1, 1, 2);

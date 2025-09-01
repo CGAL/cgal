@@ -21,10 +21,10 @@
 namespace CGAL::internal::Hexmeshing {
   /**
    * @brief Finds the origin dart of a 3-template pattern
-   * 
+   *
    * This function searches for the origin dart of a 3-template pattern by traversing
    * through the marked faces.
-   * 
+   *
    * @param lcc The Linear Cell Complex
    * @param marked_face A dart handle representing the marked face to start the search from
    * @param template_mark The mark used to identify template faces
@@ -64,15 +64,15 @@ namespace CGAL::internal::Hexmeshing {
 
   /**
    * @brief Fixes adjacent 3-templates by transforming them into 4-templates when they share an unmarked node
-   * 
+   *
    * This function handles the case where two adjacent faces both have template_id 3 and share
    * an unmarked node. In such cases, the refinement pattern becomes impossible to resolve,
    * so the function marks the shared unmarked node to force both faces to become 4-templates.
-   * 
+   *
    * The function finds the unmarked edge on the given face, checks if the adjacent face
    * on the same plane also has template_id 3, and if so, marks the unmarked node to resolve
    * the conflict.
-   * 
+   *
    * @param lcc the linear cell complex
    * @param rdata Refinement data containing the current iteration direction
    * @param template_mark HexMeshingData template_mark
@@ -135,12 +135,12 @@ namespace CGAL::internal::Hexmeshing {
 
   /**
    * @brief Cleans up a 3-template by removing temporary elements and merging face attributes
-   * 
+   *
    * This function performs the cleanup phase after a 3-template refinement operation.
    * It removes temporary elements created during the refinement process and merges
    * the face attributes of the two neighboring faces that were split during the
    * 3-template creation.
-   * 
+   *
    * The function performs the following operations:
    * 1. Preserves face attributes before they are potentially destroyed
    * 2. Inserts barycenters in the lower edge and contracts them
@@ -148,7 +148,7 @@ namespace CGAL::internal::Hexmeshing {
    * 4. Removes the temporary volume created by the partial template substitution
    * 5. Sews the two neighboring volumes together if both faces are valid
    * 6. Merges the plane information from the two original faces into a single face attribute
-   * 
+   *
    * @tparam HexData Type of the hexahedral meshing data structure
    * @param hdata Hexahedral meshing data containing the Linear Cell Complex
    * @param origin_dart The origin dart of the 3-template volume to be cleaned up

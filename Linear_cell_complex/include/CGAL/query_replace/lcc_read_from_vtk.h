@@ -30,7 +30,7 @@ typename LCC::Dart_handle read_vtk(const std::string& filename, LCC& lcc)
 
   typename LCC::Dart_handle res=nullptr;
   My_linear_cell_complex_incremental_builder_3<LCC> ib(lcc);
-  
+
   std::size_t npoints, ncells, ncells2;
   std::string line,tmp;
 
@@ -51,15 +51,15 @@ typename LCC::Dart_handle read_vtk(const std::string& filename, LCC& lcc)
   // std::cout<<points[0]<<" "<<points[1]<<" "<<points[2]<<"\n";
 
   // Read Connectivity
-  // read until you find the CELLS  line 
-  // this is needed because meshes exported from Paraview have sometimes 
+  // read until you find the CELLS  line
+  // this is needed because meshes exported from Paraview have sometimes
   // a METADATA section
   while(line.find("CELLS")==std::string::npos)
   { std::getline(file,line); }
   ss=std::stringstream(line);
   std::getline(ss,tmp,' '); // skip CELLS
   ss>>ncells;
-   
+
   // std::cout<<ncells<<std::endl;
 
   std::size_t points_per_cell;
@@ -137,11 +137,11 @@ typename LCC::Dart_handle read_vtk(const std::string& filename, LCC& lcc)
     if(itv->dart()==nullptr)
     { lcc.erase_vertex_attribute(itv); }
   }
-  // Read weights    
-  // Read until you find the POINTDATA  line 
+  // Read weights
+  // Read until you find the POINTDATA  line
   /*  while(line.find("POINT_DATA") == std::string::npos)
   { std::getline(file,line); }
-    
+
   std::stringstream ss1(line);
 
   std::size_t nweights;
@@ -151,7 +151,7 @@ typename LCC::Dart_handle read_vtk(const std::string& filename, LCC& lcc)
   // skip next two lines
   std::getline(file,line);
   std::getline(file,line);
-    
+
   std::vector<float> weights(npoints);
   for(std::size_t i = 0 ; i < npoints; i++)
   { file >> weights[i]; }

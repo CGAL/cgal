@@ -14,7 +14,7 @@
 
 #include "Prism_and_pyramid_creation.h"
 
-enum cell_topo 
+enum cell_topo
   {
     SQUARE = 0,
     TRIANGLE = 1,

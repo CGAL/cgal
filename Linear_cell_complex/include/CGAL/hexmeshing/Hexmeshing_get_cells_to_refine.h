@@ -109,16 +109,16 @@ namespace CGAL::internal::Hexmeshing {
 
   /**
    * @brief Marks faces for propagation based on the template pattern of the given face
-   * 
+   *
    * This function identifies which faces need to be marked for propagation based on the
    * template_id of the given face. It handles two cases:
    * 1. For template_id=1: Finds the single marked node and marks three adjacent faces
    * 2. For template_id=2: Finds the edge with both endpoints marked and marks two adjacent faces
-   * 
+   *
    * The function locates the marked edge(s) on the face and then marks the appropriate
    * half-faces for propagation using the propagation_face_mark. This ensures that
    * refinement patterns can properly propagate to adjacent volumes.
-   * 
+   *
    * @tparam HexData Type of the hexahedral meshing data structure
    * @param hdata Hexahedral meshing data containing the Linear Cell Complex and marks
    * @param face A dart handle representing the face to analyze for propagation marking
@@ -174,7 +174,7 @@ namespace CGAL::internal::Hexmeshing {
 
   /**
    * @brief Propagates refinement from a marked face to adjacent volumes and faces
-   * 
+   *
    * This function handles the propagation of refinement patterns from a marked face
    * to its adjacent volumes and faces. It performs the following operations:
    * 1. Marks the current volume for refinement and sets its iteration
@@ -183,10 +183,10 @@ namespace CGAL::internal::Hexmeshing {
    * 4. Marks the back face for refinement if not already explored
    * 5. Iterates through all edges of the back volume face
    * 6. Marks unmarked nodes and adds incident faces to the refinement list
-   * 
+   *
    * This function ensures that refinement patterns properly propagate through the
    * mesh structure, maintaining consistency across adjacent volumes and faces.
-   * 
+   *
    * @tparam HexData Type of the hexahedral meshing data structure
    * @param hdata Hexahedral meshing data containing the Linear Cell Complex and marks
    * @param rdata Refinement data containing the current iteration and collections
@@ -243,24 +243,24 @@ namespace CGAL::internal::Hexmeshing {
 
   /**
    * @brief Executes the propagation stage of the refinement algorithm
-   * 
+   *
    * This function handles the propagation of refinement patterns across the mesh.
    * It consists of two main phases:
-   * 
+   *
    * Phase 1 (for iterations > 0): Propagates from 4-template faces
    * - Iterates through all faces in the current plane
    * - For faces with template_id=4, checks if they are marked for propagation
    * - Calls propagate_face for both the face and its opposite face (if it exists)
-   * 
+   *
    * Phase 2 (for iterations < 2): Marks faces for future propagation
    * - Iterates through all faces in the current plane
    * - For faces with template_id=1 or 2, calls mark_template_for_propagation
    * - Handles both the face and its opposite face (if it exists)
-   * 
+   *
    * The function skips propagation entirely for iteration 0 and stops marking
    * for propagation after iteration 2, as the refinement patterns are fully
    * established by that point.
-   * 
+   *
    * @tparam HexData Type of the hexahedral meshing data structure
    * @param hdata Hexahedral meshing data containing the Linear Cell Complex and marks
    * @param rdata Refinement data containing the current iteration and faces of the plane
@@ -313,10 +313,10 @@ namespace CGAL::internal::Hexmeshing {
 
   /**
    * @brief Collects cells that need refinement from the current plane
-   * 
+   *
    * This function processes all faces in the current refinement plane and identifies
    * which cells (faces and volumes) need to be refined. It performs the following operations:
-   * 
+   *
    * 1. For each face in the plane, iterates through all its edges
    * 2. For edges with marked nodes, finds incident faces normal to the plane
    * 3. Adds unmarked incident faces to the faces_to_refine collection
@@ -324,10 +324,10 @@ namespace CGAL::internal::Hexmeshing {
    *    - Creates or updates volume attributes with the current iteration
    *    - Adds volumes to volumes_to_refine or partial_templates_to_refine based on template_id
    *    - Handles both the current face's volume and its opposite volume (if it exists)
-   * 
+   *
    * The function ensures that all cells affected by the refinement patterns are properly
    * identified and categorized for subsequent refinement operations.
-   * 
+   *
    * @tparam HexData Type of the hexahedral meshing data structure
    * @param hdata Hexahedral meshing data containing the Linear Cell Complex and marks
    * @param rdata Refinement data containing the faces of the plane and collections to populate
@@ -413,22 +413,22 @@ namespace CGAL::internal::Hexmeshing {
 
   /**
    * @brief Collects cells that need refinement from additional volumes discovered during plane exploration
-   * 
+   *
    * This function processes additional volumes that were discovered during the plane exploration
    * phase but are not directly accessible from the current plane. These volumes typically
    * represent cells that are inside the refinement domain but not directly connected to
    * the current refinement plane.
-   * 
+   *
    * For each additional volume, the function:
    * 1. Checks if either endpoint of the volume's edge is marked
    * 2. If marked nodes are found, adds the volume to the refinement list
    * 3. Identifies the four adjacent faces of the volume
    * 4. Adds unmarked adjacent faces to the faces_to_refine collection
    * 5. Handles face marking based on which specific nodes are marked
-   * 
+   *
    * The function ensures that all volumes and faces affected by the refinement patterns
    * are properly identified, even if they are not directly accessible from the main plane.
-   * 
+   *
    * @tparam HexData Type of the hexahedral meshing data structure
    * @param hdata Hexahedral meshing data containing the Linear Cell Complex and marks
    * @param rdata Refinement data containing the additional volumes and collections to populate
@@ -493,20 +493,20 @@ namespace CGAL::internal::Hexmeshing {
 
   /**
    * @brief Main function to identify and collect all cells that need refinement for a given plane direction
-   * 
+   *
    * This function orchestrates the complete process of identifying cells that need refinement
    * for a specific plane direction (X, Y, or Z). It performs the following sequence of operations:
-   * 
+   *
    * 1. **Plane Exploration**: Explores all even planes in the specified direction using breadth-first search
    * 2. **Validation**: Validates that all faces in the plane have consistent template IDs
    * 3. **Conflict Resolution**: Fixes impossible template cases (diagonal 2-templates and adjacent 3-templates)
    * 4. **Node Communication**: Communicates marked nodes between threads (in parallel version)
    * 5. **Propagation**: Executes the propagation stage to mark faces for future propagation
    * 6. **Cell Collection**: Collects cells to refine from both the plane and additional volumes
-   * 
+   *
    * The function manages marks for tracking explored edges and faces, and ensures proper cleanup
    * of these marks at the end. This is the central coordination function for the refinement process.
-   * 
+   *
    * @tparam HexData Type of the hexahedral meshing data structure
    * @param hdata Hexahedral meshing data containing the Linear Cell Complex and plane information
    * @param rdata Refinement data to be populated with cells that need refinement
@@ -517,7 +517,7 @@ namespace CGAL::internal::Hexmeshing {
   {
     using PlaneCC = std::vector<Dart_handle>;
     using PlaneSet = std::vector<PlaneCC>;
-    
+
     LCC& lcc = hdata.lcc;
     rdata.iteration = iterationPlane;
 

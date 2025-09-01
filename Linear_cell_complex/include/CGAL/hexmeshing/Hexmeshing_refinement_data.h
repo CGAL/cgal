@@ -20,7 +20,7 @@
 namespace CGAL::internal::Hexmeshing {
   /**
    * @brief Data structure for managing mesh refinement operations
-   * 
+   *
    * This structure contains the necessary data for performing mesh refinement,
    * including iteration direction, marked elements, and collections of elements
    * that need to be refined.

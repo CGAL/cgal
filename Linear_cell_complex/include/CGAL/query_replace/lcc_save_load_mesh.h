@@ -228,19 +228,19 @@ void save_object_3D(const std::string& filename, LCC& lcc)
   std::unordered_map<typename LCC::Vertex_attribute_handle, std::size_t> index;
   std::size_t nb=0;
   typename LCC::Dart_handle sd;
-  
+
   // all vertices
   for(auto itv=lcc.vertex_attributes().begin(),
         itvend=lcc.vertex_attributes().end(); itv!=itvend; ++itv)
-  {    
+  {
     fo<<itv->point()<<std::endl;
     index[itv]=nb++;
   }
   fo<<std::endl;
-  
+
   // all volumes; using indices of vertices
   for(auto itvol=lcc.template one_dart_per_cell<3>().begin(),
-        itvolend=lcc.template one_dart_per_cell<3>().end(); 
+        itvolend=lcc.template one_dart_per_cell<3>().end();
       itvol!=itvolend; ++itvol)
   {
     /* Convention used in CGAL LCC (different than the one used in the file, cf above)
@@ -299,7 +299,7 @@ void save_object_3D(const std::string& filename, LCC& lcc)
         <<index[lcc.vertex_attribute(sd)]<<" "
         <<index[lcc.vertex_attribute(lcc.template beta<1>(sd))]<<" "
         <<index[lcc.vertex_attribute(lcc.template beta<0>(sd))]<<" ";
-      
+
       // Move to the up face
       typename LCC::Dart_handle d2=lcc.template beta<2, 1, 1, 2>(sd);
       fo<<index[lcc.vertex_attribute(lcc.template beta<1>(d2))]<<" "

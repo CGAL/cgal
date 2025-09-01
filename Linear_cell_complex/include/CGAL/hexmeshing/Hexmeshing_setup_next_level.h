@@ -23,12 +23,12 @@
 namespace CGAL::internal::Hexmeshing {
   /**
    * @brief Cleans up mesh attributes and reevaluates cell identification status after refinement
-   * 
+   *
    * This function performs cleanup operations after a refinement level is completed.
    * It handles the removal of attributes for cells outside the refinement domain and
    * reevaluates the identification status of cells within the domain. The function
    * performs the following operations:
-   * 
+   *
    * 1. **Face Attribute Cleanup**: Removes face attributes for faces that are not
    *    associated with volumes inside the refinement domain or unowned ghost zones
    * 2. **Volume Attribute Cleanup**: Removes volume attributes for volumes outside
@@ -39,11 +39,11 @@ namespace CGAL::internal::Hexmeshing {
    *    previously identified volumes using the provided cellIdentifier function
    * 5. **Validation**: Ensures that the cleanup operations correctly removed the
    *    expected number of attributes
-   * 
+   *
    * Since the refinement process subdivides each original cell into 8 new cells
    * uniformly, this function only needs to reevaluate cells that were previously
    * identified to determine if they should remain identified in the new refined mesh.
-   * 
+   *
    * @tparam HexData Type of the hexahedral meshing data structure
    * @param hdata Hexahedral meshing data containing the Linear Cell Complex
    * @param cellIdentifier Function that determines whether a cell should be identified
@@ -112,36 +112,36 @@ namespace CGAL::internal::Hexmeshing {
 
   /**
    * @brief Sets up face attributes and union-find structures for the next refinement level
-   * 
+   *
    * This function processes a single face during the setup phase for the next refinement level.
    * It handles the creation and management of union-find structures for both odd and even planes,
    * ensuring proper connectivity tracking for faces that belong to identified volumes.
-   * 
+   *
    * The function performs the following operations:
-   * 
+   *
    * 1. **Volume Identification Check**: Determines if the current face and its opposite face
    *    belong to volumes that are identified for refinement (type >= VolumeType::ID_EXPANSION)
-   * 
+   *
    * 2. **Face Marking**: Marks the current face to avoid reprocessing and adds unvisited
    *    adjacent faces to the exploration queue
-   * 
+   *
    * 3. **Edge Processing**: For each edge of the face:
    *    - Finds adjacent faces on the same plane using `__adjacent_face_on_plane`
    *    - Adds unvisited adjacent faces to the exploration queue
    *    - Performs union-find operations for odd planes if either volume is identified
    *    - Performs union-find operations for even planes if the current volume is identified
-   * 
-   * 4. **Union-Find Management**: 
+   *
+   * 4. **Union-Find Management**:
    *    - For odd planes: Unifies connected components when both volumes are identified
    *    - For even planes: Creates and manages connected components for the back face
    *    - Handles the creation of new union-find sets when needed
-   * 
+   *
    * 5. **Attribute Assignment**: Assigns the appropriate connected component IDs to face
    *    attributes based on the union-find results
-   * 
+   *
    * This function is part of the plane reconstruction process that occurs after each
    * refinement level to maintain proper plane connectivity for the next refinement iteration.
-   * 
+   *
    * @tparam HexData Type of the hexahedral meshing data structure
    * @param hdata Hexahedral meshing data containing the Linear Cell Complex
    * @param odd_face_to_handle Map from face attributes to odd plane union-find handles
@@ -259,42 +259,42 @@ namespace CGAL::internal::Hexmeshing {
 
   /**
    * @brief Reconstructs the plane structure for the next refinement level
-   * 
+   *
    * This function reconstructs the plane structure after a refinement level has been completed.
    * It processes the existing planes and creates new plane sets that reflect the refined mesh
    * structure. The function handles the transition from the old plane structure to the new one
    * that will be used in the next refinement iteration.
-   * 
+   *
    * The function performs the following operations:
-   * 
+   *
    * 1. **Plane Processing**: For each axis (X, Y, Z), processes all existing planes:
    *    - Iterates through each plane in the current plane set
    *    - Uses breadth-first traversal to explore all faces in each plane
    *    - Calls `setup_next_level_face` for each face to build union-find structures
-   * 
+   *
    * 2. **Union-Find Analysis**: For each plane, creates separate union-find structures:
    *    - `odd_union_find` and `even_union_find` for tracking connected components
    *    - Maps face attributes to union-find handles for both odd and even planes
    *    - Uses `get_partitions` to extract connected component partitions
-   * 
+   *
    * 3. **New Plane Creation**: Creates new plane sets based on the union-find results:
    *    - Each old plane is split into two new planes (odd and even)
    *    - Uses the `create_plane` lambda function to build new plane structures
    *    - Assigns new plane IDs and connected component IDs to face attributes
-   * 
+   *
    * 4. **Attribute Management**: Updates face attributes with new plane information:
    *    - Sets the appropriate plane bit in the plane bitset
    *    - Assigns new plane_id values (pid * 2 for odd, pid * 2 + 1 for even)
    *    - Sets cc_id based on the connected component partition
-   * 
+   *
    * 5. **Cleanup**: Manages marks and updates the global plane structure:
    *    - Frees edge and face marks after processing each axis
    *    - Replaces the old plane structure with the new one
-   * 
+   *
    * This reconstruction is essential because after refinement, the mesh topology has changed,
    * and the plane structure needs to be updated to reflect the new connectivity patterns
    * for the next refinement iteration.
-   * 
+   *
    * @tparam HexData Type of the hexahedral meshing data structure
    * @param hdata Hexahedral meshing data containing the Linear Cell Complex and plane information
    */
@@ -435,32 +435,32 @@ namespace CGAL::internal::Hexmeshing {
 
   /**
    * @brief Sets up the mesh structure for the next refinement level
-   * 
+   *
    * This function performs the necessary setup operations to prepare the mesh
    * for the next refinement level. It handles the transition from the current
    * refinement level to the next one by updating the plane structure and
    * reevaluating cell identification status.
-   * 
+   *
    * The function performs three main operations in sequence:
-   * 
+   *
    * 1. **Plane Reconstruction**: Calls `setup_next_level_plane` to reconstruct
    *    the plane structure after the previous refinement level. This updates
    *    the plane organization to reflect the new mesh topology created by
    *    the refinement operations.
-   * 
+   *
    * 2. **Attribute Cleanup and Reevaluation**: Calls `clean_up_and_reevaluate_attributes`
    *    to remove attributes for cells outside the refinement domain and
    *    reevaluate the identification status of cells within the domain.
    *    This ensures that only relevant cells are tracked for the next level.
-   * 
+   *
    * 3. **Level Increment**: Increments the refinement level counter in the
    *    hexahedral meshing data structure to track the current refinement progress.
-   * 
+   *
    * This function is called at the beginning of each refinement level (except
    * the first level, which uses `initial_setup`). It ensures that the mesh
    * structure is properly prepared for the refinement operations that will
    * follow in the current level.
-   * 
+   *
    * @tparam HexData Type of the hexahedral meshing data structure
    * @param hdata Hexahedral meshing data containing the Linear Cell Complex and plane information
    * @param cellIdentifier Function that determines whether a cell should be identified

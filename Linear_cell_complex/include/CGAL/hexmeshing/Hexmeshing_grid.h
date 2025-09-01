@@ -26,7 +26,7 @@
 namespace CGAL::internal::Hexmeshing {
   /**
    * @brief A structure representing a 3D grid for hexahedral mesh generation
-   * 
+   *
    * This structure defines a regular grid in 3D space, specified by its position,
    * cell size, and dimensions. It provides methods for creating both centered and
    * non-centered grids, as well as specialized cube grid creation.
@@ -117,34 +117,34 @@ namespace CGAL::internal::Hexmeshing {
 
     /**
      * @brief Generates a regular hexahedral grid in the Linear Cell Complex
-     * 
+     *
      * This function creates a regular 3D grid of hexahedral cells based on the provided
      * grid configuration. It generates the initial mesh structure that will be used
      * as the starting point for the hexahedral refinement algorithm.
-     * 
+     *
      * The function performs the following operations:
-     * 
+     *
      * 1. **Grid Iteration**: Iterates through all grid positions in three dimensions
      *    (x, y, z) based on the grid dimensions specified in `grid.dims`
-     * 
+     *
      * 2. **Coordinate Calculation**: For each grid position, calculates the coordinates
      *    of the eight vertices that define a hexahedral cell:
      *    - Bottom face vertices: (x1,y1,z1), (x2,y1,z1), (x2,y2,z1), (x1,y2,z1)
      *    - Top face vertices: (x1,y1,z2), (x2,y1,z2), (x2,y2,z2), (x1,y2,z2)
      *    Where x1, y1, z1 are the coordinates of the current grid position, and
      *    x2, y2, z2 are the coordinates of the next grid position
-     * 
+     *
      * 3. **Hexahedron Creation**: Creates a hexahedral cell at each grid position using
      *    `lcc.make_hexahedron()` with the calculated vertex coordinates
-     * 
+     *
      * 4. **Face Sewing**: After creating all hexahedra, calls `lcc.sew3_same_facets()`
      *    to properly connect adjacent faces and establish the correct topological
      *    relationships between neighboring cells
-     * 
+     *
      * The resulting mesh is a regular grid where each cell is a hexahedron with
      * faces properly connected to its neighbors. This provides the foundation for
      * the subsequent refinement operations.
-     * 
+     *
      * @param lcc The Linear Cell Complex where the grid will be created
      * @param grid Grid configuration containing position, size, and dimensions
      */
@@ -172,7 +172,7 @@ namespace CGAL::internal::Hexmeshing {
     }
   };
 
-  
+
 }
 
 
