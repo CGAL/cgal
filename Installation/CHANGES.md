@@ -155,6 +155,13 @@ Release date: July 2025
 
 -   **Breaking change**: Classes based on the RS Library are no longer provided.
 
+### [2D Regularized Boolean Set-Operations](https://doc.cgal.org/6.1/Manual/packages.html#PkgBooleanSetOperations2)
+
+-   Optimized `do_intersect()`: (i) made it robust even with an inexact-predicate kernel, and (ii) made it quit the
+    once an intersection is detected. (In the past, the intersection was computed in one phase and examined in a
+    subsequent phase. This optimization somehow break backward compatibility, as the variants that accepts a third
+    parameter, namely UsePolylines, which determines whether the boundaries of the input polygons are treated as cyclic
+    sequences of single (`x`-monotone) segments or as a cyclic sequences of (`x`-monotone) polylines.
 
 ## [Release 6.0.1](https://github.com/CGAL/cgal/releases/tag/v6.0.1)
 
