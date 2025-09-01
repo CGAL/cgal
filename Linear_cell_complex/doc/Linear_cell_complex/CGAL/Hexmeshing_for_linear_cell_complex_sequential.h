@@ -11,7 +11,7 @@ The class `Hexmeshing_for_linear_cell_complex` contains two refinement algorithm
 \sa `CGAL::Hexmeshing_mesh_data_for_hexmeshing`
 
 */
-struct Hexmeshing_for_linear_cell_complex
+class Hexmeshing_for_linear_cell_complex
 {
 public:
   /// \name Creation

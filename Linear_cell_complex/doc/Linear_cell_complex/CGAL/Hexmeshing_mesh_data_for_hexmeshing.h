@@ -11,7 +11,7 @@ The class `Mesh_data_for_hexmeshing` encapsulates required data for hexmeshing.
 \sa `CGAL::Hexmeshing_for_linear_cell_complex_sequential`
 
 */
-struct Mesh_data_for_hexmeshing
+class Mesh_data_for_hexmeshing
 {
 public:
   /// \name Creation
