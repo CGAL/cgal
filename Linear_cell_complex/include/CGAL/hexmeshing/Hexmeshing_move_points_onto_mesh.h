@@ -39,7 +39,7 @@ namespace CGAL::internal::Hexmeshing {
           int id = lcc.attribute<0>(vertex)->id;
           Vector P_new_add = ((lcc.point(vertex) - CGAL::ORIGIN) - (face_attr.normal * (lcc.point(vertex) - face_attr.intersection))*face_attr.normal);
           P_news[id] += P_new_add;
-          
+
           if(count_intersect[id]) {
             N_news[id] += face_attr.normal;
           }

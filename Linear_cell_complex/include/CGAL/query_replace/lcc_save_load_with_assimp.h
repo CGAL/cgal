@@ -83,7 +83,7 @@ template<class LCC>
 void save_object_3D_with_assimp(const std::string& filename, LCC& lcc)
 {
   std::unordered_map<typename LCC::Vertex_attribute_handle, std::size_t> index;
-  
+
   aiScene scene;
   scene.mRootNode=new aiNode();
   scene.mRootNode->mMeshes=new unsigned int[1];

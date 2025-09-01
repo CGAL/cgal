@@ -46,22 +46,22 @@ namespace CGAL {
 
   /**
    * @brief Renders the result of the two-refinement algorithm as a graphics scene
-   * 
+   *
    * This function creates a visual representation of the hexahedral mesh generated
-   * by the two-refinement algorithm. 
-   * 
+   * by the two-refinement algorithm.
+   *
    * The function performs the following operations:
-   * 
+   *
    * 1. **Scene Options Setup**: Creates `LCCSceneOptions` with custom rendering behavior:
    *    - Enables colored volume rendering for all volumes
    *    - Assigns random colors to volumes using `rand_color_from_dart`
    *    - Configures volume visibility based on intersection with AABB tree when trimming is enabled
-   * 
+   *
    * 2. **Graphics Scene Creation**: Creates a `CGAL::Graphics_scene` buffer and adds
    *    the Linear Cell Complex to it using the configured scene options
-   * 
+   *
    * 3. **Scene Display**: Calls `CGAL::draw_graphics_scene` to render the mesh
-   * 
+   *
    * @param hdata The hex-meshing data which contains refined linear cell complex
    * @param title Title for the graphics window (default: "TwoRefinement Result")
    */
@@ -86,7 +86,7 @@ namespace CGAL {
 
   void render_two_refinement_result_with_mark(const Hexmeshing_for_linear_cell_complex& hdata, internal::Hexmeshing::size_type mark, const char* title = "TwoRefinement Result"){
     const internal::Hexmeshing::LCC& lcc = hdata.lcc;
-    
+
     LCCSceneOptions<internal::Hexmeshing::LCC> gso;
 
     gso.colored_volume = [&](const internal::Hexmeshing::LCC& lcc, internal::Hexmeshing::LCC::Dart_const_handle dart){ return true; };

@@ -260,7 +260,7 @@ double jacobian_of_hexahedron(LCC& lcc, typename LCC::Dart_descriptor d)
   vertices[5]=lcc.vertex_attribute(lcc.beta(d, 2));
   vertices[6]=lcc.vertex_attribute(lcc.beta(d, 1, 1));
   vertices[7]=lcc.vertex_attribute(lcc.beta(d, 1, 2, 0));
-  
+
   return scale_jacobian_of_hexa(lcc, vertices);
 }
 ////////////////////////////////////////////////////////////////////////////////
@@ -269,7 +269,7 @@ void display_all_jacobians(LCC& lcc)
 {
   /// Special function that work only for triangulated hexahedra
   /// The code commented out allow to triangulate the face of hex if you wand
-  
+
   // Triangulate all squares
 /*   std::vector<Dart_descriptor> faces_to_subdivide;
   faces_to_subdivide.reserve(lcc.number_of_darts()/4);

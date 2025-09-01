@@ -57,7 +57,7 @@ namespace CGAL::internal::Hexmeshing {
       }
 
       face_attr.intersection = p1 + ((s - frac1)/(frac2 - frac1))*(p2 - p1);
-      
+
       if(!lcc.is_marked(dart, set_gradient_mark)) {
         __set_gradient_at_dual_node(lcc, dart);
         lcc.mark_cell<3>(dart, set_gradient_mark);
@@ -66,7 +66,7 @@ namespace CGAL::internal::Hexmeshing {
         __set_gradient_at_dual_node(lcc, dart3);
         lcc.mark_cell<3>(dart3, set_gradient_mark);
       }
-      
+
       Vector N_1 = lcc.attribute<3>(dart)->info().gradient, N_2;
       if(lcc.is_free<3>(dart)) {
         double frac = lcc.attribute<3>(dart)->info().fraction;

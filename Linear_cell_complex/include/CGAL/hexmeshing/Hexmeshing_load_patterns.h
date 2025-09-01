@@ -74,31 +74,31 @@ namespace CGAL::internal::Hexmeshing {
 
   /**
    * @brief Loads pattern substitution templates for hexahedral mesh refinement
-   * 
+   *
    * This function loads the pattern substitution templates that are used during
    * the hexahedral mesh refinement process. It loads both regular templates for
    * complete refinement patterns and partial templates for 3-template cases.
-   * 
+   *
    * The function performs the following operations:
-   * 
+   *
    * 1. **Memory Reservation**: Reserves memory for pattern storage to avoid
    *    reallocation issues during loading (temporary fix for missing move operators)
-   * 
+   *
    * 2. **Face Pattern Loading**: Loads face patterns for regular template substitution:
    *    - pattern1-face.moka: 1-template face pattern
    *    - pattern2-face.moka: 2-template face pattern
-   * 
+   *
    * 3. **Volume Pattern Loading**: Loads volume patterns for regular template substitution:
    *    - pattern1.moka: 1-template volume pattern
-   *    - pattern2.moka: 2-template volume pattern  
+   *    - pattern2.moka: 2-template volume pattern
    *    - pattern4.moka: 4-template volume pattern
-   * 
+   *
    * 4. **Partial Template Loading**: Loads partial volume patterns for 3-template cases:
    *    - pattern3.moka: 3-template partial volume pattern
-   * 
+   *
    * Each pattern is loaded with its corresponding marking function that identifies
    * the nodes that should be marked for the specific template type.
-   * 
+   *
    * @param regular_templates Pattern substituter for regular hexahedral templates
    * @param partial_3_template Pattern substituter for partial 3-template patterns
    */

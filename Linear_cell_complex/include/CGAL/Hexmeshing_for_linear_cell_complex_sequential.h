@@ -34,7 +34,7 @@ namespace CGAL {
 
 /**
  * @brief Core data structure for hexahedral mesh generation and refinement
- * 
+ *
  * This structure maintains the state of the hexahedral meshing process,
  * including the Linear Cell Complex (LCC), grid configuration, and various
  * markers used during mesh generation and refinement.
@@ -47,10 +47,10 @@ public:
   using DartInfo = internal::Hexmeshing::DartInfo;
   using size_type = internal::Hexmeshing::size_type;
   using PlaneCC = std::vector<Dart_handle>; // One dart per face connected components
-  using PlaneSet = std::vector<PlaneCC>; // A set of planes 
+  using PlaneSet = std::vector<PlaneCC>; // A set of planes
   /**
    * @brief Container for external pattern substitution resources used in hexahedral meshing
-   * 
+   *
    * This structure holds pattern substituters for both regular and partial templates.
    * These templates are used during the mesh refinement process to replace existing
    * mesh patterns with more refined ones.
@@ -79,7 +79,7 @@ public:
 
   /**
    * @brief Fixes invalid dart handles after refinement
-   * 
+   *
    * After refinement, some dart handles may become invalid. This function
    * iterates over all attributes to replace invalid handles with valid ones.
    * It ensures the consistency of the mesh structure after modifications.
@@ -224,38 +224,38 @@ public:
 
   /**
    * @brief Main entry point for the two-refinement hexahedral mesh generation algorithm
-   * 
+   *
    * This function provides a high-level interface for generating hexahedral meshes
    * using the two-refinement algorithm. It orchestrates the complete process from
    * initialization to final mesh generation, including pattern loading, algorithm
    * execution, optional trimming, and post-processing with volume fraction analysis.
-   * 
+   *
    * The function performs the following operations:
-   * 
+   *
    * 1. **Resource Initialization**: Creates `Hexmeshing_for_linear_cell_complex` and `ExternalRessources`
    *    structures to hold the mesh data and pattern substitution resources
-   * 
+   *
    * 2. **Pattern Loading**: Calls `load_patterns` to load all necessary template
    *    patterns for both regular and partial template substitution
-   * 
+   *
    * 3. **Data Initialization**: Initializes the hexahedral meshing data with the
    *    provided grid configuration and external resources
-   * 
+   *
    * 4. **Algorithm Execution**: Calls `two_refinement_algorithm` to perform the
    *    complete refinement process with the specified number of levels
-   * 
+   *
    * 5. **Optional Trimming**: If trim is true, calls `trim_excedent_volumes` to remove
    *    excess volumes using the provided trimming function
-   * 
+   *
    * 6. **Post-Processing**: Applies volume fraction analysis and mesh smoothing:
    *    - Sets volume fractions based on the domain geometry
    *    - Performs volume fraction-based mesh optimization
    *    - Applies surface and volume smoothing for improved mesh quality
-   * 
+   *
    * The function returns a Linear Cell Complex containing the refined hexahedral mesh
    * with optimized geometry and volume fractions. The mesh quality is enhanced through
    * both topological refinement and geometric post-processing.
-   * 
+   *
    * @pre grid have cubic cells  (grid.size.x() = grid.size.y() = grid.size.z())
    * @param mesh Grid configuration defining the initial mesh structure and dimensions
    * @param nb_levels Number of refinement levels to perform (default: 1)

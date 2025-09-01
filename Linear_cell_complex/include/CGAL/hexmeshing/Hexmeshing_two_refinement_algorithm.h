@@ -28,16 +28,16 @@
 namespace CGAL::internal::Hexmeshing {
   /**
    * @brief Main algorithm for hexahedral mesh refinement
-   * 
+   *
    * This function implements the complete two-refinement algorithm for hexahedral
    * mesh generation. It performs multiple levels of refinement, each consisting
    * of plane-based refinement operations along the X, Y, and Z axes.
-   * 
+   *
    * The algorithm performs the following operations:
-   * 
+   *
    * 1. **Initialization**: Sets up marks, generates the initial grid, and
    *    performs initial setup for the first refinement level
-   * 
+   *
    * 2. **Refinement Levels**: For each refinement level:
    *    - Sets up the next level structure (except for the first level)
    *    - Expands identified cells to include neighboring cells
@@ -48,9 +48,9 @@ namespace CGAL::internal::Hexmeshing {
    *      - Refines marked faces and volumes
    *      - Validates mesh quality
    *      - Cleans up marks
-   * 
+   *
    * 3. **Cleanup**: Removes ghost cells and performs final cleanup
-   * 
+   *
    * @tparam HexData Type of the hexahedral meshing data structure
    * @param hdata Hexahedral meshing data containing the Linear Cell Complex and configuration
    * @param cellIdentifier Function that determines which cells should be refined

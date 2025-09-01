@@ -37,8 +37,8 @@ struct Add_vertex_to_face<LCC, CGAL::Combinatorial_map_tag>
   {
     typename LCC::Dart_handle res=lcc.create_dart(vh);
     if (prev_dart!=lcc.null_handle)
-    { 
-       lcc.template link_beta<1>(prev_dart, res); 
+    {
+       lcc.template link_beta<1>(prev_dart, res);
     }
     return res;
   }

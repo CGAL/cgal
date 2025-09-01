@@ -11,7 +11,7 @@ public:
   void test(const std::string test_name, std::function<bool()> test_func) {
     total_tests++;
     std::cout << "Running test: " << test_name << " ... ";
-    
+
     try {
       bool result = test_func();
       if (result) {
@@ -113,10 +113,10 @@ bool is_approximately_equal_Segment(const Segment a, const Segment b, const doub
 
 LCC create_grid_mesh(int nx, int ny, int nz) {
   Grid grid(Point(0, 0, 0), {1., 1., 1.}, {nx, ny, nz});
-  
+
   LCC lcc;
   Grid::generate_grid(lcc, grid);
-  
+
   return lcc;
 }
 

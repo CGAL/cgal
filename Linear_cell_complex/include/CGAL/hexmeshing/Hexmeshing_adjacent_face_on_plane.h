@@ -20,13 +20,13 @@
 namespace CGAL::internal::Hexmeshing {
   /**
    * @brief Internal function to find the adjacent face on a given plane
-   * 
+   *
    * This function searches for a face adjacent to the given edge that lies on the specified plane.
    * It traverses through the mesh using beta operations to find faces that share the edge
    * and checks if they belong to the target plane. The function may fail if the adjacent face
    * is not directly accessible from beta3 to the current face. To complete the search, you should
    * call this function with both edge and lcc.beta<3>(edge)
-   * 
+   *
    * @param lcc The Linear Cell Complex
    * @param plane The plane normal direction to search for
    * @param edge A dart handle representing the edge to find adjacent faces for
@@ -69,12 +69,12 @@ namespace CGAL::internal::Hexmeshing {
 
   /**
    * @brief Internal function to find the adjacent face on a given plane with additional volume collection
-   * 
+   *
    * This overload of __adjacent_face_on_plane additionally collects volumes that couldn't be reached
    * directly from the plane during the search. It searches for a face adjacent to the given edge
    * that lies on the specified plane, and stores any encountered volumes that are inside the
    * refinement domain but not directly accessible from the plane.
-   * 
+   *
    * @param lcc The Linear Cell Complex
    * @param plane The plane normal direction to search for
    * @param edge A dart handle representing the edge to find adjacent faces for
@@ -123,12 +123,12 @@ namespace CGAL::internal::Hexmeshing {
 
   /**
    * @brief Finds the adjacent face on a given plane
-   * 
+   *
    * This function searches for a face adjacent to the given edge that lies on the specified plane.
    * It uses the internal __adjacent_face_on_plane function and handles cases where the adjacent face
    * might not be directly accessible from the current orientation. If the first search fails,
    * it tries again with the opposite orientation (beta<3> of the edge).
-   * 
+   *
    * @param lcc The Linear Cell Complex
    * @param plane The plane normal direction to search for
    * @param edge A dart handle representing the edge to find adjacent faces for
@@ -147,12 +147,12 @@ namespace CGAL::internal::Hexmeshing {
 
   /**
    * @brief Finds the adjacent face on a given plane with additional volume collection
-   * 
+   *
    * This overload of adjacent_face_on_plane additionally collects volumes that couldn't be reached
    * directly from the plane during the search. It uses the internal __adjacent_face_on_plane function
    * with volume collection and handles cases where the adjacent face might not be directly accessible
    * from the current orientation. If the first search fails, it tries again with the opposite orientation.
-   * 
+   *
    * @param lcc The Linear Cell Complex
    * @param plane The plane normal direction to search for
    * @param edge A dart handle representing the edge to find adjacent faces for

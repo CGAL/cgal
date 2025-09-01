@@ -20,7 +20,7 @@ namespace CGAL::internal::Hexmeshing {
   /**
    * @brief A generic 3D point class with basic arithmetic operations
    * @tparam T The numeric type used for coordinates (e.g., int, char)
-   * 
+   *
    * This class represents a point in 3D space with x, y, and z coordinates.
    * It provides basic arithmetic operations such as addition, subtraction,
    * and division. The class is designed to be used with different numeric

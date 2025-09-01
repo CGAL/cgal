@@ -21,7 +21,7 @@
 namespace CGAL::internal::Hexmeshing {
 /**
  * @brief Enumeration representing the type of volume in the hexahedral mesh
- * 
+ *
  * This enum class defines the different states a volume can be in during
  * the hexahedral mesh generation and refinement process.
  */
@@ -38,7 +38,7 @@ public:
   /**
    * @brief A wrapper class for Linear Cell Complex dart attributes
    * @tparam Storage The storage type for the Linear Cell Complex
-   * 
+   *
    * This class defines the attributes associated with vertices, faces, and volumes
    * in the hexahedral mesh.
    */
@@ -47,7 +47,7 @@ public:
   {
     /**
      * @brief Attribute class for vertices with point information
-     * 
+     *
      * Extends CGAL::Cell_attribute_with_point to store vertex coordinates and IDs.
      * Each vertex can be identified by a unique ID, which can be a simple number
      * or a composite of up to three numbers.
@@ -74,7 +74,7 @@ public:
 
     /**
      * @brief Attribute values for volumes in the hexahedral mesh
-     * 
+     *
      * Stores information about the state and properties of a volume cell,
      * including its iteration state, type, area ID, ownership, and connected component ID.
      */
@@ -95,7 +95,7 @@ public:
 
     /**
      * @brief Attribute values for faces in the hexahedral mesh
-     * 
+     *
      * Stores information about face properties including template ID,
      * plane orientation, plane ID, and connected component ID.
      */

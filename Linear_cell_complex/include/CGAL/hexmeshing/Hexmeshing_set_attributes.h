@@ -26,16 +26,16 @@ namespace CGAL::internal::Hexmeshing {
 
     Vector centroid = CGAL::NULL_VECTOR;
     int vertex_count = 0;
-    
+
     for(auto it = lcc.one_dart_per_incident_cell<0, 3>(dart).begin(),
-              end = lcc.one_dart_per_incident_cell<0, 3>(dart).end(); 
+              end = lcc.one_dart_per_incident_cell<0, 3>(dart).end();
             it != end; it++) {
       centroid = centroid + (lcc.point(it) - CGAL::ORIGIN);
       vertex_count++;
     }
 
     assert(vertex_count == 8);
-    
+
     vol_attr.centroid = CGAL::ORIGIN + centroid / vertex_count;
   }
 

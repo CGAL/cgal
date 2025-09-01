@@ -18,27 +18,27 @@
 namespace CGAL::internal::Hexmeshing {
   /**
    * @brief Expands the set of identified cells by propagating identification to neighboring cells
-   * 
+   *
    * This function expands the identification of cells that need refinement by propagating
    * the identification status to neighboring cells in the mesh. The expansion is performed
    * multiple times based on the current refinement level and total number of levels.
-   * 
+   *
    * The function calculates the number of expansion iterations needed using a height-based
    * formula that depends on the current level and total number of refinement levels:
    * - For levels < nb_levels-2: 3 iterations
-   * - For level nb_levels-2: 2 iterations  
+   * - For level nb_levels-2: 2 iterations
    * - For level nb_levels-1: 0 iterations
-   * 
+   *
    * During each expansion iteration, the function:
    * 1. Collects all volumes that have type >= VolumeType::ID_EXPANSION
    * 2. For each identified volume, finds all 26-connected neighboring volumes
    * 3. Sets the type of neighboring volumes to VolumeType::ID_EXPANSION if they
    *    currently have a lower type
-   * 
+   *
    * This expansion ensures that the refinement region has sufficient padding around
    * the originally identified cells to maintain mesh quality and prevent artifacts
    * at the boundaries of the refinement domain.
-   * 
+   *
    * @tparam HexData Type of the hexahedral meshing data structure
    * @param hdata Hexahedral meshing data containing the Linear Cell Complex
    * @param current_lvl The current refinement level (0-based)

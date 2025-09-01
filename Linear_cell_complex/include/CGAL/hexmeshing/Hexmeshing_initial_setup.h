@@ -18,32 +18,32 @@
 namespace CGAL::internal::Hexmeshing {
   /**
    * @brief Sets up the initial plane structure for the hexahedral mesh refinement algorithm
-   * 
+   *
    * This function initializes the plane structure that will be used throughout the refinement
    * process. It creates and organizes faces into planes along the X, Y, and Z axes, establishing
    * the foundation for the refinement algorithm's plane-based approach.
-   * 
+   *
    * The function performs two main operations:
-   * 
+   *
    * 1. **Plane Extraction**: For each axis (X, Y, Z), it extracts the first faces of each plane
    *    by traversing the mesh structure using beta operations. It uses helper functions:
    *    - `__first_plane`: Finds the starting face for each plane direction
    *    - `__next_plane`: Navigates to the next plane in the sequence
    *    The extraction iterates through all planes in each direction based on the grid dimensions.
-   * 
+   *
    * 2. **Attribute Creation**: For all faces in all planes, it creates and initializes face
    *    attributes with the following properties:
    *    - Sets the appropriate plane bit in the plane bitset
    *    - Assigns a plane_id based on the plane's position in the sequence
    *    - Sets cc_id (connected component ID) to 0 for all faces
-   * 
+   *
    * The function uses `plane_for_each_face` to traverse all faces in each plane and ensure
    * proper attribute initialization. This setup is crucial for the refinement algorithm to
    * properly identify and process faces during the refinement stages.
-   * 
+   *
    * Note: The last odd plane in each direction is not considered in the current implementation,
    * as indicated by the commented code at the end of the function.
-   * 
+   *
    * @tparam HexData Type of the hexahedral meshing data structure
    * @param hdata Hexahedral meshing data containing the Linear Cell Complex and grid information
    */
@@ -122,28 +122,28 @@ namespace CGAL::internal::Hexmeshing {
 
   /**
    * @brief Performs the initial setup for the hexahedral mesh refinement algorithm
-   * 
+   *
    * This function performs the essential initialization steps required before starting
    * the refinement process. It establishes the foundational structure that the refinement
    * algorithm will use throughout its execution.
-   * 
+   *
    * The function performs two main operations:
-   * 
+   *
    * 1. **Plane Setup**: Calls `setup_initial_planes` to initialize the plane structure
    *    along the X, Y, and Z axes. This creates the organizational framework for
    *    the refinement algorithm's plane-based approach.
-   * 
+   *
    * 2. **Cell Identification**: Iterates through all volumes in the Linear Cell Complex
    *    and identifies which cells should be marked for refinement. For each volume:
    *    - Creates a volume attribute if it doesn't exist
    *    - Uses the provided `cellIdentifier` function to determine if the volume
    *      should be marked as identified for refinement
    *    - Sets the volume type to `VolumeType::IDENTIFIED` if the cell should be refined
-   * 
+   *
    * This initialization is crucial because it establishes which cells will be the
    * starting points for the refinement process. The identified cells will be used
    * to determine the refinement patterns and guide the subsequent refinement operations.
-   * 
+   *
    * @tparam HexData Type of the hexahedral meshing data structure
    * @param hdata Hexahedral meshing data containing the Linear Cell Complex and grid information
    * @param cellIdentifier Function that determines whether a cell should be identified
