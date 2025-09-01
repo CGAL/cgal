@@ -59,6 +59,8 @@
 - `CGAL::Cell_attribute_with_point<LCC,Info_,Tag,OnMerge,OnSplit>`
 - `CGAL::Cell_attribute_with_point_and_id<LCC,Info_,Tag,OnMerge,OnSplit>`
 - `CGAL::Linear_cell_complex_incremental_builder_3<LCC>`
+- `CGAL::Hexmeshing_for_linear_cell_complex`
+- `CGAL::Mesh_data_for_hexmeshing`
 
 \cgalCRPSection{Global Functions}
 \cgalCRPSubsection{Constructions for Linear Cell Complex}
