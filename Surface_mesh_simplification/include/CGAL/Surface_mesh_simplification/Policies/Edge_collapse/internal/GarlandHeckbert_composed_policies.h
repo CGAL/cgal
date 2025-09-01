@@ -21,7 +21,12 @@ namespace CGAL {
 namespace Surface_mesh_simplification {
 namespace internal {
 
-template <typename TriangleMesh, typename GeomTraits, typename Quadric_calculator_1, typename Quadric_calculator_2>
+/*
+That policy was created to merge the line policy with the existing ones.
+Since it is a technical feature, it is internal to the library.
+*/
+
+template <typename TriangleMesh, typename GeomTraits, typename Quadric_calculator_1, typename Quadric_calculator_2, bool invertible=false>
 class Composed_quadric_calculator
 {
   typedef typename GarlandHeckbert_matrix_types<GeomTraits>::Mat_4             Mat_4;
@@ -34,7 +39,7 @@ class Composed_quadric_calculator
   double weight_2;
 
 public:
-  Composed_quadric_calculator(Quadric_calculator_1 &&qc1, Quadric_calculator_2 &&qc2, double w1=1., double w2=1.):
+  Composed_quadric_calculator(Quadric_calculator_1 &qc1, Quadric_calculator_2 &qc2, double w1=1., double w2=1.):
     quadric_calculator_1(qc1), quadric_calculator_2(qc2), weight_1(w1), weight_2(w2){}
   Composed_quadric_calculator(double w1=1., double w2=1.): weight_1(w1), weight_2(w2){}
 
@@ -54,8 +59,8 @@ public:
                                     const VertexPointMap point_map,
                                     const GeomTraits& gt) const
   {
-    return weight_1 * Quadric_calculator_1().construct_quadric_from_edge(he, tmesh, point_map, gt) +
-           weight_2 * Quadric_calculator_2().construct_quadric_from_edge(he, tmesh, point_map, gt);
+    return weight_1 * quadric_calculator_1.construct_quadric_from_edge(he, tmesh, point_map, gt) +
+           weight_2 * quadric_calculator_2.construct_quadric_from_edge(he, tmesh, point_map, gt);
   }
 
   template <typename VertexPointMap>
@@ -64,8 +69,8 @@ public:
                                     const VertexPointMap point_map,
                                     const GeomTraits& gt) const
   {
-    return weight_1 * Quadric_calculator_1().construct_quadric_from_face(f, tmesh, point_map, gt) +
-           weight_2 * Quadric_calculator_2().construct_quadric_from_face(f, tmesh, point_map, gt);
+    return weight_1 * quadric_calculator_1.construct_quadric_from_face(f, tmesh, point_map, gt) +
+           weight_2 * quadric_calculator_2.construct_quadric_from_face(f, tmesh, point_map, gt);
   }
 
 
@@ -73,31 +78,33 @@ public:
                                 const Col_4& p0,
                                 const Col_4& p1) const
   {
-    //TODO How merge here?
-    return construct_optimal_point_singular<GeomTraits>(quadric, p0, p1);
+    if constexpr(invertible)
+      return construct_optimal_point_invertible<GeomTraits>(quadric);
+    else
+      return construct_optimal_point_singular<GeomTraits>(quadric, p0, p1);
   }
 };
 
-} // namespace internal
-
-template<typename TriangleMesh, typename GeomTraits, typename GH_policies_1, typename GH_policies_2>
+template<typename TriangleMesh, typename GeomTraits, typename GH_policies_1, typename GH_policies_2, bool invertible=false>
 class GarlandHeckbert_composed_policies
   : public internal::GarlandHeckbert_cost_and_placement<
              internal::Composed_quadric_calculator<TriangleMesh, GeomTraits,
                                                    typename GH_policies_1::Quadric_calculator,
-                                                   typename GH_policies_2::Quadric_calculator>,
+                                                   typename GH_policies_2::Quadric_calculator,
+                                                   invertible>,
              TriangleMesh, GeomTraits>
 {
 public:
   typedef internal::Composed_quadric_calculator<TriangleMesh, GeomTraits,
                                                    typename GH_policies_1::Quadric_calculator,
-                                                   typename GH_policies_2::Quadric_calculator>
+                                                   typename GH_policies_2::Quadric_calculator,
+                                                   invertible>
           Quadric_calculator;
 
 private:
   typedef internal::GarlandHeckbert_cost_and_placement<
             Quadric_calculator, TriangleMesh, GeomTraits>                      Base;
-  typedef GarlandHeckbert_composed_policies<TriangleMesh, GeomTraits, GH_policies_1, GH_policies_2>             Self;
+  typedef GarlandHeckbert_composed_policies<TriangleMesh, GeomTraits, GH_policies_1, GH_policies_2, invertible> Self;
 
 public:
   typedef Self                                                                 Get_cost;
@@ -111,11 +118,12 @@ public:
     : Base(tmesh, Quadric_calculator(w1, w2), dm)
   { }
 
-  // GarlandHeckbert_composed_policies(TriangleMesh& tmesh,
-  //                                   GH_policies_1
-  //                                   double w1=1., double w2=1.,const FT dm = FT(100))
-  //   : Base(tmesh, Quadric_calculator(w1, w2), dm)
-  // { }
+  GarlandHeckbert_composed_policies(TriangleMesh& tmesh,
+                                    GH_policies_1 ghp1,
+                                    GH_policies_2 ghp2,
+                                    double w1=1., double w2=1.,const FT dm = FT(100))
+    : Base(tmesh, Quadric_calculator(ghp1.m_quadric_calculator, ghp2.m_quadric_calculator, w1, w2), dm)
+  { }
 
 public:
   const Get_cost& get_cost() const { return *this; }
@@ -124,6 +132,7 @@ public:
   using Base::operator();
 };
 
+} // namespace internal
 } // namespace Surface_mesh_simplification
 } // namespace CGAL
 

@@ -21,6 +21,11 @@ namespace CGAL {
 namespace Surface_mesh_simplification {
 namespace internal {
 
+/*
+This policy is not useful on its own; it is designed to be combined with another policy using a small weight.
+Therefore, it is kept internal.
+*/
+
 template <typename TriangleMesh, typename GeomTraits>
 class Line_quadric_calculator
 {
@@ -67,8 +72,6 @@ public:
   }
 };
 
-} // namespace internal
-
 template<typename TriangleMesh, typename GeomTraits>
 class GarlandHeckbert_line_policies
   : public internal::GarlandHeckbert_cost_and_placement<
@@ -101,6 +104,7 @@ public:
   using Base::operator();
 };
 
+} // namespace internal
 } // namespace Surface_mesh_simplification
 } // namespace CGAL
 
