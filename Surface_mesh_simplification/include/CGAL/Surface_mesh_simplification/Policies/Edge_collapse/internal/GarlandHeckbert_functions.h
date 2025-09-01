@@ -21,6 +21,9 @@
 
 #include <CGAL/Origin.h>
 
+#include <Eigen/Dense>
+#include <Eigen/Eigenvalues>
+
 #include <iostream>
 
 namespace CGAL {
@@ -238,7 +241,9 @@ construct_optimal_point_singular(const typename GarlandHeckbert_matrix_types<Geo
   }
   else
   {
+#if 1
     Col_4 opt_pt;
+    const Col_4 mean = (p1+p0)/2;
 
     const Col_4 p1mp0 = p1 - p0;
     const FT a = (p1mp0.transpose() * quadric * p1mp0)(0, 0);
@@ -273,6 +278,26 @@ construct_optimal_point_singular(const typename GarlandHeckbert_matrix_types<Geo
         opt_pt = p0 + ext_t * (p1 - p0);
       }
     }
+
+#else
+    /*
+    Note:
+    A simpler code for the case of an not invertible matrix
+    Experiments that the results is identical to above in the majority of the cases and nearly identical runtime
+    Therefore old case was kept.
+    */
+
+    // low rank -> svd pseudo-inverse
+    Eigen::JacobiSVD<Eigen::MatrixXd> svd_decomp(mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
+    svd_decomp.setThreshold(1e-5);
+
+    opt_pt(0) = mean.x();
+    opt_pt(1) = mean.y();
+    opt_pt(2) = mean.z();
+    opt_pt(3) = 1.;
+
+    opt_pt += svd_decomp.solve(Col_4(0,0,0,1) - mat * opt_pt);
+#endif
 
     return opt_pt;
   }
@@ -549,37 +574,6 @@ construct_line_quadric_from_vertex(const typename boost::graph_traits<TriangleMe
   const Vector_3 normal = Polygon_mesh_processing::compute_vertex_normal(v, mesh, parameters::geom_traits(gt).vertex_point_map(vpm));
   return construct_line_quadric_from_normal(normal, get(vpm, v), gt);
 }
-
-// template <typename TriangleMesh, typename VertexPointMap, typename GeomTraits>
-// typename GarlandHeckbert_matrix_types<GeomTraits>::Mat_4
-// construct_classic_line_quadric_from_edge(typename boost::graph_traits<TriangleMesh>::halfedge_descriptor he,
-//                                           const TriangleMesh& mesh,
-//                                           const VertexPointMap vpm,
-//                                           const GeomTraits& gt)
-// {
-//   typedef typename GeomTraits::Vector_3                                        Vector_3;
-
-//   const Vector_3 normal = construct_edge_normal(he, mesh, vpm, gt);
-
-//   // use this normal to construct the quadric analogously to constructing quadric
-//   // from the normal of the face
-//   return construct_classic_line_quadric_from_normal(normal, get(vpm, target(he, mesh)), gt);
-// }
-
-// template <typename TriangleMesh, typename VertexPointMap, typename GeomTraits>
-// typename GarlandHeckbert_matrix_types<GeomTraits>::Mat_4
-// construct_classic_line_quadric_from_face(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
-//                                           const TriangleMesh& mesh,
-//                                           const VertexPointMap vpm,
-//                                           const GeomTraits& gt)
-// {
-//   auto normal = construct_unit_normal_from_face(f, mesh, vpm, gt);
-
-//   // get any point of the face
-//   const auto p = get(vpm, target(halfedge(f, mesh), mesh));
-
-//   return construct_classic_line_quadric_from_normal(normal, p, gt);
-// }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// PROB VARIANCE
