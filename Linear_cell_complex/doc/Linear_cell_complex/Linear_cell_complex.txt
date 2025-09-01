@@ -154,7 +154,7 @@ mechanism.
 Hexmeshing_for_linear_cell_complex is a utility class that, following the method described in \cgalCite{cgal:owen2017template-based}, performs hexahedral mesh refinement and smoothing using a sequential approach. Given a mesh supplied as an .off file or a `Polyhedron_3`, it generates a `Linear_cell_complex_for_combinatorial_map` grid in which the regions near the intersections with the input mesh are finely subdivided by 2-refinement. It then applies Laplacian smoothing to drive the 3-cell shapes toward more cube-like hexahedra.
 
 \cgalFigureBegin{fig_dragon_summary,dragon_summary.png}
-Example of hexahedral two-refinement for \href{https://graphics.stanford.edu/data/3Dscanrep/}{Stanford dragon}. <B>Left</B>: Initial mesh. <B>Middle</B>: Result of the hexahedral 2-refinement. <B>Right</B>: Cross-section of the result of the smoothing.
+Example of hexahedral two-refinement for <a href="https://graphics.stanford.edu/data/3Dscanrep/">Stanford dragon</a>. <B>Left</B>: Initial mesh. <B>Middle</B>: Result of the hexahedral 2-refinement. <B>Right</B>: Cross-section of the result of the smoothing.
 \cgalFigureEnd
 
 \section Linear_cell_complexExamples Examples
