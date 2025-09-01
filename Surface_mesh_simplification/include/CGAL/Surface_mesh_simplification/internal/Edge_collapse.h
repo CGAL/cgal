@@ -668,6 +668,8 @@ loop()
       CGAL_SMS_TRACE(1, edge_to_string(*opt_h) << " uncomputable cost." );
     }
   }
+
+  CGAL_assertion_code(CGAL_USE(non_collapsable_count));
 }
 
 template<class TM, class GT, class SP, class VIM, class VPM,class HIM, class ECM, class CF, class PF, class SI, class V, bool URH>

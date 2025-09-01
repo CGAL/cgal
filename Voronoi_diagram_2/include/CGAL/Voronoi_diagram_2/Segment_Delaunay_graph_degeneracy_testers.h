@@ -209,6 +209,8 @@ class Segment_Delaunay_graph_face_tester_2
       ++ec;
     } while ( ec != ec_start );
 
+    CGAL_USE(n_inf);
+
     if ( deg == n_degen ) { return true; }
     if ( n_non_degen != 2 ) { return false; }
 
