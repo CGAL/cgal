@@ -404,7 +404,7 @@ public:
      *
      * \return The value of the coefficient.
      */
-    CoefficientRing get_coefficient(size_t index) const {
+    inline CoefficientRing get_coefficient(size_t index) const {
         if (index >= _upperBound) {
             throw std::runtime_error("Provided index should be less than " + std::to_string(_upperBound) + ".");
         }
@@ -425,7 +425,7 @@ public:
      * \param[in] index The coefficient index.
      * \param[in] d Value of the coefficient
      */
-    void set_coefficient(size_t index, CoefficientRing d)
+    inline void set_coefficient(size_t index, CoefficientRing d)
     {
         if (index >= _upperBound) {
             throw std::runtime_error("Provided index should be less than " + std::to_string(_upperBound) + ".");
