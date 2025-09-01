@@ -4,7 +4,7 @@
 #include <CGAL/hexmeshing/Hexmeshing_resolve_non_manifold_case.h>
 
 #include "lcc_jacobian.h"
-#include "unit_test_framework.h"
+#include "hexmeshing_unit_test.h"
 
 #include <vector>
 #include <array>
