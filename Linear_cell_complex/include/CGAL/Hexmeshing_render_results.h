@@ -14,6 +14,7 @@
 #define HEXMESHING_RENDER_RESULTS_H
 
 #include <CGAL/hexmeshing/LCC_items_for_hexmeshing.h>
+#include <CGAL/Hexmeshing_for_linear_cell_complex_sequential.h>
 #include <CGAL/draw_linear_cell_complex.h>
 #include <CGAL/Graphics_scene_options.h>
 #include <CGAL/Graphics_scene.h>
