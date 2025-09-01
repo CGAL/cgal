@@ -248,25 +248,38 @@ public:
      * @{
      */
 
-    /** \brief Comparison of two COLUMN matrices. */
+    /** \relates Sparse_matrix
+     *
+     * \brief Comparison of two COLUMN matrices.
+     */
     template <typename _CT>
     friend bool operator==(const Sparse_matrix<_CT, OSM::COLUMN>& matrix, const Sparse_matrix<_CT, OSM::COLUMN> &other);
 
-    /** \brief Comparison of a COLUMN  and a ROW matrix. */
+    /** \relates Sparse_matrix
+     *
+     * \brief Comparison of a COLUMN  and a ROW matrix.
+     */
     template <typename _CT>
     friend bool operator==(const Sparse_matrix<_CT, OSM::COLUMN>& matrix, const Sparse_matrix<_CT, OSM::ROW> &other);
 
-    /** \brief Comparison of a ROW and a COLUMN matrix. */
+    /** \relates Sparse_matrix
+     *
+     * \brief Comparison of a ROW and a COLUMN matrix.
+     */
     template <typename _CT>
     friend bool operator==(const Sparse_matrix<_CT, OSM::ROW>& matrix, const Sparse_matrix<_CT, OSM::COLUMN> &other);
 
-    /** \brief Comparison of two ROW matrices. */
+    /** \relates Sparse_matrix
+     *
+     * \brief Comparison of two ROW matrices.
+     */
     template <typename _CT>
     friend bool operator==(const Sparse_matrix<_CT, OSM::ROW>& matrix, const Sparse_matrix<_CT, OSM::ROW> &other);
 
     /** @} */
 
-    /**
+    /** \relates Sparse_matrix
+     *
      * \brief Displays a matrix in the output stream.
      *
      * \param[in] stream The output stream.
@@ -318,19 +331,31 @@ public:
      * @{
      */
 
-    /** \brief Writes a sparse COLUMN matrix to a stream. */
+    /** \relates Sparse_matrix
+     *
+     * \brief Writes a sparse COLUMN matrix to a stream.
+     */
     template <typename _CT>
     friend std::ostream& write_matrix (const Sparse_matrix<_CT, OSM::COLUMN>& M, std::ostream& out);
 
-    /** \brief Writes a sparse ROW matrix to a stream. */
+    /** \relates Sparse_matrix
+     *
+     * \brief Writes a sparse ROW matrix to a stream.
+     */
     template <typename _CT>
     friend std::ostream& write_matrix (const Sparse_matrix<_CT, OSM::ROW>& M, std::ostream& out);
 
-    /** \brief Writes a sparse COLUMN matrix to a file. */
+    /** \relates Sparse_matrix
+     *
+     * \brief Writes a sparse COLUMN matrix to a file.
+     */
     template <typename _CT>
     friend void write_matrix (const Sparse_matrix<_CT, OSM::COLUMN>& M, std::string filename);
 
-    /** \brief Writes a sparse ROW matrix to a file. */
+    /** \relates Sparse_matrix
+     *
+     * \brief Writes a sparse ROW matrix to a file.
+     */
     template <typename _CT>
     friend void write_matrix (const Sparse_matrix<_CT, OSM::ROW>& M, std::string filename);
 
@@ -347,19 +372,31 @@ public:
      * @{
      */
 
-    /** \brief Reads a sparse COLUMN matrix from a stream. */
+    /** \relates Sparse_matrix
+     *
+     * \brief Reads a sparse COLUMN matrix from a stream.
+     */
     template <typename _CT>
     friend std::istream& read_matrix (Sparse_matrix<_CT, OSM::COLUMN>& M, std::istream& in);
 
-    /** \brief Reads a sparse ROW matrix from a stream. */
+    /** \relates Sparse_matrix
+     *
+     * \brief Reads a sparse ROW matrix from a stream.
+     */
     template <typename _CT>
     friend std::istream& read_matrix (Sparse_matrix<_CT, OSM::ROW>& M, std::istream& in);
 
-    /** \brief Reads a sparse COLUMN matrix from a file. */
+    /** \relates Sparse_matrix
+     *
+     * \brief Reads a sparse COLUMN matrix from a file.
+     */
     template <typename _CT>
     friend void read_matrix (Sparse_matrix<_CT, OSM::COLUMN>& M, std::string filename);
 
-    /** \brief Reads a sparse ROW matrix from a file. */
+    /** \relates Sparse_matrix
+     *
+     * \brief Reads a sparse ROW matrix from a file.
+     */
     template <typename _CT>
     friend void read_matrix (Sparse_matrix<_CT, OSM::ROW>& M, std::string filename);
 
@@ -460,19 +497,31 @@ public:
      * @{
      */
 
-    /** \brief Matrices product: COLUMN x COLUMN -> COLUMN */
+    /** \relates Sparse_matrix
+     *
+     * \brief Matrices product: COLUMN x COLUMN -> COLUMN
+     */
     template <typename _CT>
     friend Sparse_matrix<_CT, COLUMN> operator*(const Sparse_matrix<_CT, COLUMN> &first, const Sparse_matrix<_CT, COLUMN> &second);
 
-    /** \brief Matrices product: ROW x COLUMN -> COLUMN */
+    /** \relates Sparse_matrix
+     *
+     * \brief Matrices product: ROW x COLUMN -> COLUMN
+     */
     template <typename _CT>
     friend Sparse_matrix<_CT, COLUMN> operator*(const Sparse_matrix<_CT, ROW> &first, const Sparse_matrix<_CT, COLUMN> &second);
 
-    /** \brief Matrices product: COLUMN x ROW -> COLUMN */
+    /** \relates Sparse_matrix
+     *
+     * \brief Matrices product: COLUMN x ROW -> COLUMN
+     */
     template <typename _CT>
     friend Sparse_matrix<_CT, COLUMN> operator*(const Sparse_matrix<_CT, COLUMN> &first, const Sparse_matrix<_CT, ROW> &second);
 
-    /** \brief Matrices product: ROW x ROW -> COLUMN */
+    /** \relates Sparse_matrix
+     *
+     * \brief Matrices product: ROW x ROW -> COLUMN
+     */
     template <typename _CT>
     friend Sparse_matrix<_CT, COLUMN> operator*(const Sparse_matrix<_CT, ROW> &first, const Sparse_matrix<_CT, ROW> &second);
 
@@ -492,11 +541,17 @@ public:
      * @{
      */
 
-    /** \brief Matrix/column chain product: COLUMN matrix x COLUMN chain -> COLUMN chain. */
+    /** \relates Sparse_matrix
+     *
+     * \brief Matrix/column chain product: COLUMN matrix x COLUMN chain -> COLUMN chain.
+     */
     template <typename _CT>
     friend Sparse_chain<_CT, COLUMN> operator*(const Sparse_matrix<_CT, COLUMN> &_first, const Sparse_chain<_CT, COLUMN> &_second);
 
-    /** \brief Matrix/column chain product: ROW matrix x COLUMN chain -> COLUMN chain. */
+    /** \relates Sparse_matrix
+     *
+     * \brief Matrix/column chain product: ROW matrix x COLUMN chain -> COLUMN chain.
+     */
     template <typename _CT>
     friend Sparse_chain<_CT, COLUMN> operator*(const Sparse_matrix<_CT, ROW> &_first, const Sparse_chain<_CT, COLUMN> &_second);
 
@@ -516,11 +571,17 @@ public:
      * @{
      */
 
-    /** \brief Row chain/matrix product: ROW chain x COLUMN matrix -> ROW chain. */
+    /** \relates Sparse_matrix
+     *
+     * \brief Row chain/matrix product: ROW chain x COLUMN matrix -> ROW chain.
+     */
     template <typename _CT>
     friend Sparse_chain<_CT, ROW> operator*(const Sparse_chain<_CT, ROW> &_first, const Sparse_matrix<_CT, ROW> &_second) ;
 
-    /** \brief Row chain/matrix product: ROW chain x ROW matrix -> ROW chain. */
+    /** \relates Sparse_matrix
+     *
+     * \brief Row chain/matrix product: ROW chain x ROW matrix -> ROW chain.
+     */
     template <typename _CT>
     friend Sparse_chain<_CT, ROW> operator*(const Sparse_chain<_CT, ROW> &_first, const Sparse_matrix<_CT, COLUMN> &_second) ;
 
@@ -540,19 +601,31 @@ public:
      * @{
      */
 
-    /** \brief Matrices product: COLUMN x COLUMN -> ROW */
+    /** \relates Sparse_matrix
+     *
+     * \brief Matrices product: COLUMN x COLUMN -> ROW
+     */
     template <typename _CT>
     friend Sparse_matrix<_CT, ROW> operator%(const Sparse_matrix<_CT, COLUMN> &_first, const Sparse_matrix<_CT, COLUMN> &_second);
 
-    /** \brief Matrices product: ROW x COLUMN -> ROW */
+    /** \relates Sparse_matrix
+     *
+     * \brief Matrices product: ROW x COLUMN -> ROW
+     */
     template <typename _CT>
     friend Sparse_matrix<_CT, ROW> operator%(const Sparse_matrix<_CT, ROW> &_first, const Sparse_matrix<_CT, COLUMN> &_second);
 
-    /** \brief Matrices product: COLUMN x ROW -> ROW */
+    /** \relates Sparse_matrix
+     *
+     * \brief Matrices product: COLUMN x ROW -> ROW
+     */
     template <typename _CT>
     friend Sparse_matrix<_CT, ROW> operator%(const Sparse_matrix<_CT, COLUMN> &_first, const Sparse_matrix<_CT, ROW> &_second);
 
-    /** \brief Matrices product: ROW x ROW -> ROW */
+    /** \relates Sparse_matrix
+     *
+     * \brief Matrices product: ROW x ROW -> ROW
+     */
     template <typename _CT>
     friend Sparse_matrix<_CT, ROW> operator%(const Sparse_matrix<_CT, ROW> &_first, const Sparse_matrix<_CT, ROW> &_second);
 
@@ -572,7 +645,10 @@ public:
      * @{
      */
 
-    /** \brief Matrices sum and assign: COLUMN += COLUMN or ROW += ROW. */
+    /** \relates Sparse_matrix
+     *
+     * \brief Matrices sum and assign: COLUMN += COLUMN or ROW += ROW.
+     */
     Sparse_matrix& operator+=(const Sparse_matrix &other) {
         if (this->_size != other._size) {
             throw std::runtime_error("Matrices must be the same _size.");
@@ -590,11 +666,17 @@ public:
         return *this;
     }
 
-    /** \brief Matrices sum and assign: COLUMN += ROW. */
+    /** \relates Sparse_matrix
+     *
+     * \brief Matrices sum and assign: COLUMN += ROW.
+     */
     template <typename _CT>
     friend Sparse_matrix<_CT, COLUMN>& operator+=(Sparse_matrix<_CT, COLUMN> &matrix, const Sparse_matrix<_CT, ROW> &other);
 
-    /** \brief Matrices sum and assign: ROW += COLUMN. */
+    /** \relates Sparse_matrix
+     *
+     * \brief Matrices sum and assign: ROW += COLUMN.
+     */
     template <typename _CT>
     friend Sparse_matrix<_CT, ROW>& operator+=(Sparse_matrix<_CT, ROW> &matrix, const Sparse_matrix<_CT, COLUMN> &other);
 
@@ -614,7 +696,10 @@ public:
      * @{
      */
 
-    /** \brief Matrices subtraction and assign: COLUMN -= COLUMN or ROW -= ROW. */
+    /** \relates Sparse_matrix
+     *
+     * \brief Matrices subtraction and assign: COLUMN -= COLUMN or ROW -= ROW.
+     */
     Sparse_matrix& operator-=(const Sparse_matrix &other) {
         if (this->_size != other._size) {
             throw std::runtime_error("Matrices must be the same _size.");
@@ -632,11 +717,17 @@ public:
         return *this;
     }
 
-    /** \brief Matrices subtraction and assign: COLUMN -= ROW. */
+    /** \relates Sparse_matrix
+     *
+     * \brief Matrices subtraction and assign: COLUMN -= ROW.
+     */
     template <typename _CT>
     friend Sparse_matrix<_CT, COLUMN>& operator-=(Sparse_matrix<_CT, COLUMN> &matrix, const Sparse_matrix<_CT, ROW> &other);
 
-    /** \brief Matrices subtraction and assign: ROW -= COLUMN. */
+    /** \relates Sparse_matrix
+     *
+     * \brief Matrices subtraction and assign: ROW -= COLUMN.
+     */
     template <typename _CT>
     friend Sparse_matrix<_CT, ROW>& operator-=(Sparse_matrix<_CT, ROW> &matrix, const Sparse_matrix<_CT, COLUMN> &other);
 
@@ -695,19 +786,31 @@ public:
      * @{
      */
 
-    /** \brief Matrices product and assign: COLUMN *= COLUMN. */
+    /** \relates Sparse_matrix
+     *
+     * \brief Matrices product and assign: COLUMN *= COLUMN.
+     */
     template <typename _CT>
     friend Sparse_matrix<_CT, COLUMN>& operator*=(Sparse_matrix<_CT, COLUMN> &matrix, const Sparse_matrix<_CT, COLUMN> &other);
 
-    /** \brief Matrices product and assign: ROW *= ROW. */
+    /** \relates Sparse_matrix
+     *
+     * \brief Matrices product and assign: ROW *= ROW.
+     */
     template <typename _CT>
     friend Sparse_matrix<_CT, ROW>& operator*=(Sparse_matrix<_CT, ROW> &matrix, const Sparse_matrix<_CT, ROW> &other);
 
-    /** \brief Matrices product and assign: COLUMN *= ROW. */
+    /** \relates Sparse_matrix
+     *
+     * \brief Matrices product and assign: COLUMN *= ROW.
+     */
     template <typename _CT>
     friend Sparse_matrix<_CT, COLUMN>& operator*=(Sparse_matrix<_CT, COLUMN> &matrix, const Sparse_matrix<_CT, ROW> &other);
 
-    /** \brief Matrices product and assign: ROW *= COLUMN. */
+    /** \relates Sparse_matrix
+     *
+     * \brief Matrices product and assign: ROW *= COLUMN.
+     */
     template <typename _CT>
     friend Sparse_matrix<_CT, ROW>& operator*=(Sparse_matrix<_CT, ROW> &matrix, const Sparse_matrix<_CT, COLUMN> &other);
 
@@ -823,11 +926,17 @@ public:
      * @{
      */
 
-    /** \brief Gets a column from a COLUMN matrix. */
+    /** \relates Sparse_matrix
+     *
+     * \brief Gets a column from a COLUMN matrix.
+     */
     template <typename _CT>
     friend Sparse_chain<_CT, COLUMN> get_column(const Sparse_matrix<_CT, COLUMN> &matrix,  size_t index);
 
-    /** \brief Gets a column from a ROW matrix. */
+    /** \relates Sparse_matrix
+     *
+     * \brief Gets a column from a ROW matrix.
+     */
     template <typename _CT>
     friend Sparse_chain<_CT, COLUMN> get_column(const Sparse_matrix<_CT, ROW> &matrix,  size_t index);
 
@@ -849,11 +958,17 @@ public:
      * @{
      */
 
-    /** \brief Gets a row from a COLUMN matrix. */
+    /** \relates Sparse_matrix
+     *
+     * \brief Gets a row from a COLUMN matrix.
+     */
     template <typename _CT>
     friend Sparse_chain<_CT, ROW> get_row(const Sparse_matrix<_CT, COLUMN> &matrix,  size_t index);
 
-    /** \brief Gets a row from a ROW matrix. */
+    /** \relates Sparse_matrix
+     *
+     * \brief Gets a row from a ROW matrix.
+     */
     template <typename _CT>
     friend Sparse_chain<_CT, ROW> get_row(const Sparse_matrix<_CT, ROW> &matrix,  size_t index);
 
@@ -908,11 +1023,17 @@ public:
      * @{
      */
 
-    /** \brief Sets a column in a COLUMN matrix. */
+    /** \relates Sparse_matrix
+     *
+     * \brief Sets a column in a COLUMN matrix.
+     */
     template <typename _CT>
     friend void set_column(Sparse_matrix<_CT, COLUMN> &matrix,  size_t index, const Sparse_chain<_CT, COLUMN> &chain);
 
-    /** \brief Sets a column in a ROW matrix. */
+    /** \relates Sparse_matrix
+     *
+     * \brief Sets a column in a ROW matrix.
+     */
     template <typename _CT>
     friend void set_column(Sparse_matrix<_CT, ROW> &matrix,  size_t index, const Sparse_chain<_CT, COLUMN> &chain);
 
@@ -934,11 +1055,17 @@ public:
      * @{
      */
 
-    /** \brief Sets a row in a COLUMN matrix. */
+    /** \relates Sparse_matrix
+     *
+     * \brief Sets a row in a COLUMN matrix.
+     */
     template <typename _CT>
     friend void set_row(Sparse_matrix<_CT, COLUMN> &matrix,  size_t index, const Sparse_chain<_CT, ROW> &chain);
 
-    /** \brief Sets a row in a ROW matrix. */
+    /** \relates Sparse_matrix
+     *
+     * \brief Sets a row in a ROW matrix.
+     */
     template <typename _CT>
     friend void set_row(Sparse_matrix<_CT, ROW> &matrix,  size_t index, const Sparse_chain<_CT, ROW> &chain);
 
@@ -1223,7 +1350,7 @@ Sparse_matrix<_CT, COLUMN> operator*(const Sparse_matrix<_CT, ROW> &first, const
         for (size_t rowLeft: first._chainsStates) {
             _CT coef = first._chains[rowLeft] * second._chains[colRight];
             if (coef != 0) {
-                column[rowLeft] = coef;
+                column.set_coefficient(rowLeft, coef);
             }
         }
 
@@ -1260,7 +1387,7 @@ Sparse_matrix<_CT, COLUMN> operator*(const Sparse_matrix<_CT, ROW> &first, const
         for (size_t rowLeft: first._chainsStates) {
             _CT coef = first._chains[rowLeft] * get_column(second, i);
             if (coef != 0) {
-                column[rowLeft] = coef;
+                column.set_coefficient(rowLeft, coef);
             }
         }
 
@@ -1352,7 +1479,7 @@ Sparse_matrix<_CT, ROW> operator%(const Sparse_matrix<_CT, COLUMN> &first, const
         for (size_t colRight: second._chainsStates) {
             _CT coef = get_row(first, i) * second._chains[colRight];
             if (coef != 0) {
-                row[colRight] = coef;
+                row.set_coefficient(colRight, coef);
             }
         }
 
@@ -1377,7 +1504,7 @@ Sparse_matrix<_CT, ROW> operator%(const Sparse_matrix<_CT, ROW> &first, const Sp
         for (size_t colRight: second._chainsStates) {
             _CT coef = first._chains[rowLeft] * second._chains[colRight];
             if (coef != 0) {
-                row[colRight] = coef;
+                row.set_coefficient(colRight,coef);
             }
         }
 
