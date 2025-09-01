@@ -70,7 +70,7 @@ namespace IO {
  */
 
 template <typename ChainComplex, template <typename, int> typename ChainType = OSM::Sparse_chain, template <typename, int> typename SparseMatrixType = OSM::Sparse_matrix, typename VertexIdType = size_t>
-void write_VTK (HDVF::Hdvf_core<ChainComplex, ChainType, SparseMatrixType> &hdvf, ChainComplex &complex, std::string filename = "test", bool co_faces = false)
+void write_VTK (HDVF::Hdvf_core<ChainComplex, ChainType, SparseMatrixType>& hdvf, ChainComplex &complex, std::string filename = "test", bool co_faces = false)
 {
     typedef typename ChainComplex::Coefficient_ring Coefficient_ring;
     typedef HDVF::Hdvf_core<ChainComplex, ChainType, SparseMatrixType> HDVF_parent;
@@ -217,7 +217,8 @@ void write_VTK (HDVF::Hdvf_persistence<ChainComplex, Degree, FiltrationType> &pe
         ++i ;
     }
     info_file.close() ;
-    CGAL::IO::write_VTK<ChainComplex>(per_hdvf, complex, filename+"_inf", co_faces) ;
+    // Export infinite holes by calling Hdvf_core write_VTK
+    (static_cast<void (*) (HDVF::Hdvf_core<ChainComplex, CGAL::OSM::Sparse_chain,CGAL::OSM::Sub_sparse_matrix>&, ChainComplex&, std::string, bool)>(CGAL::IO::write_VTK<ChainComplex,CGAL::OSM::Sparse_chain,CGAL::OSM::Sub_sparse_matrix, size_t>))(per_hdvf, complex, filename+"_inf", co_faces);
 }
 
 // Hdvf_duality vtk export

@@ -70,51 +70,6 @@ public:
     template <typename _CT, int _CTF>
     friend class Sparse_matrix;
 
-private:
-    // Friend methods (friends of Sparse_matrix)
-    template <typename _CT>
-    friend Sparse_chain<_CT, COLUMN> operator*(const Sparse_matrix<_CT, COLUMN> &_first, const Sparse_chain<_CT, COLUMN> &_second);
-    template <typename _CT>
-    friend Sparse_chain<_CT, COLUMN> operator*(const Sparse_matrix<_CT, COLUMN> &_first, const Sparse_chain<_CT, ROW> &_second);
-    template <typename _CT>
-    friend Sparse_chain<_CT, COLUMN> operator*(const Sparse_matrix<_CT, ROW> &_first, const Sparse_chain<_CT, COLUMN> &_second);
-    template <typename _CT>
-    friend Sparse_chain<_CT, COLUMN> operator*(const Sparse_matrix<_CT, ROW> &_first, const Sparse_chain<_CT, ROW> &_second);
-    template <typename _CT>
-    friend Sparse_chain<_CT, ROW> operator*(const Sparse_chain<_CT, ROW> &_first, const Sparse_matrix<_CT, COLUMN> &_second);
-    template <typename _CT>
-    friend Sparse_matrix<_CT, COLUMN> operator*(const Sparse_matrix<_CT, COLUMN> &_first, const Sparse_matrix<_CT, COLUMN> &_second);
-    template <typename _CT>
-    friend Sparse_matrix<_CT, COLUMN> operator*(const Sparse_matrix<_CT, COLUMN> &_first, const Sparse_matrix<_CT, ROW> &_second);
-    template <typename _CT>
-    friend Sparse_matrix<_CT, COLUMN> operator*(const Sparse_matrix<_CT, ROW> &_first, const Sparse_matrix<_CT, COLUMN> &_second);
-    template <typename _CT>
-    friend Sparse_matrix<_CT, COLUMN> operator*(const Sparse_matrix<_CT, ROW> &_first, const Sparse_matrix<_CT, ROW> &_second);
-    template <typename _CT>
-    friend Sparse_matrix<_CT, ROW> operator%(const Sparse_matrix<_CT, COLUMN> &_first, const Sparse_matrix<_CT, COLUMN> &_second);
-    template <typename _CT>
-    friend Sparse_matrix<_CT, ROW> operator%(const Sparse_matrix<_CT, COLUMN> &_first, const Sparse_matrix<_CT, ROW> &_second);
-    template <typename _CT>
-    friend Sparse_matrix<_CT, ROW> operator%(const Sparse_matrix<_CT, ROW> &_first, const Sparse_matrix<_CT, COLUMN> &_second);
-    template <typename _CT>
-    friend Sparse_matrix<_CT, ROW> operator%(const Sparse_matrix<_CT, ROW> &_first, const Sparse_matrix<_CT, ROW> &_second);
-    template <typename _CT>
-    friend Sparse_chain<_CT, COLUMN> get_column(const Sparse_matrix<_CT, COLUMN> &_matrix,  size_t _index);
-    template <typename _CT>
-    friend Sparse_chain<_CT, COLUMN> get_column(const Sparse_matrix<_CT, ROW> &_matrix,  size_t _index);
-    template <typename _CT>
-    friend Sparse_chain<_CT, ROW> get_row(const Sparse_matrix<_CT, COLUMN> &_matrix,  size_t _index);
-    template <typename _CT>
-    friend Sparse_chain<_CT, ROW> get_row(const Sparse_matrix<_CT, ROW> &_matrix,  size_t _index);
-    template <typename _CT>
-    friend void set_column(Sparse_matrix<_CT, COLUMN> &matrix,  size_t index, const Sparse_chain<_CT, COLUMN> &chain);
-    template <typename _CT>
-    friend void set_column(Sparse_matrix<_CT, ROW> &matrix,  size_t index, const Sparse_chain<_CT, COLUMN> &chain);
-    template <typename _CT>
-    friend void set_row(Sparse_matrix<_CT, COLUMN> &_matrix,  size_t _index, const Sparse_chain<_CT, ROW> &_chain);
-    template <typename _CT>
-    friend void set_row(Sparse_matrix<_CT, ROW> &_matrix,  size_t _index, const Sparse_chain<_CT, ROW> &_chain);
-
 protected:
     /* \brief Type of data stored in the chain: map between indexes and coefficients. */
     typedef std::pair<size_t, CoefficientRing> pair;
@@ -190,7 +145,8 @@ public:
      */
     size_t dimension() const { return _upperBound ; }
 
-    /**
+    /** \relates Sparse_chain
+     *
      * \brief Displays a Sparse_chain in the output stream.
      *
      * \param[in] stream The output stream.
@@ -499,7 +455,7 @@ public:
         return _chainData.size() == 0;
     }
 
-    /**\relates Sparse_chain
+    /** \relates Sparse_chain
      *
      * \defgroup ChainChainComparison Compares two chains.
      * \ingroup PkgHDVFAlgorithmClasses
@@ -511,20 +467,31 @@ public:
      * @{
      */
 
-    /** \brief Comparison of two COLUMN chains.
+    /** \relates Sparse_chain
+     *
+     * \brief Comparison of two COLUMN chains.
      */
     template <typename _CT>
     friend bool operator==(const Sparse_chain<_CT, OSM::COLUMN>& chain, const Sparse_chain<_CT, OSM::COLUMN> &other);
 
-    /** \brief Comparison of a COLUMN  and a ROW chain. */
+    /** \relates Sparse_chain
+     *
+     * \brief Comparison of a COLUMN  and a ROW chain.
+     */
     template <typename _CT>
     friend bool operator==(const Sparse_chain<_CT, OSM::COLUMN>& chain, const Sparse_chain<_CT, OSM::ROW> &other);
 
-    /** \brief Comparison of a ROW and a COLUMN chain. */
+    /** \relates Sparse_chain
+     *
+     * \brief Comparison of a ROW and a COLUMN chain.
+     */
     template <typename _CT>
     friend bool operator==(const Sparse_chain<_CT, OSM::ROW>& chain, const Sparse_chain<_CT, OSM::COLUMN> &other);
 
-    /** \brief Comparison of two ROW chains. */
+    /** \relates Sparse_chain
+     *
+     * \brief Comparison of two ROW chains.
+     */
     template <typename _CT>
     friend bool operator==(const Sparse_chain<_CT, OSM::ROW>& chain, const Sparse_chain<_CT, OSM::ROW> &other);
 
