@@ -16,23 +16,25 @@
 #include <CGAL/Surface_mesh_simplification/internal/Common.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/internal/GarlandHeckbert_policy_base.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/internal/GarlandHeckbert_functions.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/internal/GarlandHeckbert_composed_policies.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/internal/GarlandHeckbert_line_policies.h>
 
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/GarlandHeckbert_composed_policies.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/GarlandHeckbert_plane_policies.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/GarlandHeckbert_line_policies.h>
 
 namespace CGAL {
 namespace Surface_mesh_simplification {
 
 template<typename TriangleMesh, typename GeomTraits>
 class GarlandHeckbert_plane_plus_line_policies
-  : public GarlandHeckbert_composed_policies<TriangleMesh, GeomTraits,
+  : public internal::GarlandHeckbert_composed_policies<TriangleMesh, GeomTraits,
                                              GarlandHeckbert_plane_policies<TriangleMesh, GeomTraits>,
-                                             GarlandHeckbert_line_policies<TriangleMesh, GeomTraits> >
+                                             internal::GarlandHeckbert_line_policies<TriangleMesh, GeomTraits>,
+                                             true>
 {
-  typedef GarlandHeckbert_composed_policies<TriangleMesh, GeomTraits,
+  typedef internal::GarlandHeckbert_composed_policies<TriangleMesh, GeomTraits,
                                              GarlandHeckbert_plane_policies<TriangleMesh, GeomTraits>,
-                                             GarlandHeckbert_line_policies<TriangleMesh, GeomTraits> > Base;
+                                             internal::GarlandHeckbert_line_policies<TriangleMesh, GeomTraits>,
+                                             true> Base;
 
 public:
   typedef typename Base::Quadric_calculator Quadric_calculator;
