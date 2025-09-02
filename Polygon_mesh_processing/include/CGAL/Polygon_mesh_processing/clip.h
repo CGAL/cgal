@@ -207,7 +207,7 @@ bool close(PolygonMesh& pm, VertexPointMap vpm, typename Traits::Vector_3 plane_
   std::sort(poly_ids.begin(), poly_ids.end(),
             [&bboxes, axis](std::size_t i, std::size_t j)
             {
-              return bboxes[i].min(axis) < bboxes[j].min(axis);
+              return (bboxes[i].min)(axis) < (bboxes[j].min)(axis);
             });
 
 
