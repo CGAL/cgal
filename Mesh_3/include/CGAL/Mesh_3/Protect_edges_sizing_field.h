@@ -143,7 +143,7 @@ public:
   using Distance_Function =
     typename CGAL::Default::Get<DistanceFunction, NoDistanceFunction>::type;
 
-  using Polyline_iter = typename CGAL::Mesh_3::internal::Polyline<GT>::const_iterator;
+  using Polyline_iterator = typename CGAL::Mesh_3::internal::Polyline<GT>::const_iterator;
 
 private:
   typedef typename CGAL::Kernel_traits<MeshDomain>::Kernel   Kernel;
@@ -494,7 +494,7 @@ private:
     return use_edge_distance_;
   }
 
-  Polyline_iter locate_in_polyline(Vertex_handle vh, const Curve_index& index) const
+  Polyline_iterator locate_in_polyline(Vertex_handle vh, const Curve_index& index) const
   {
     CGAL_assertion(vh->in_dimension() < 2);
 
@@ -507,7 +507,7 @@ private:
       return vertex_to_polyline_iterator_.at(vh);
   }
 
-  void set_polyline_iterator(Vertex_handle vh, Polyline_iter it)
+  void set_polyline_iterator(Vertex_handle vh, Polyline_iterator it)
   {
     CGAL_assertion(vh->in_dimension() == 1);
     vertex_to_polyline_iterator_[vh] = it;
@@ -526,7 +526,7 @@ private:
   int refine_balls_iteration_nb;
   bool nonlinear_growth_of_balls;
   const std::size_t maximal_number_of_vertices_;
-  std::unordered_map<Vertex_handle, Polyline_iter> vertex_to_polyline_iterator_;
+  std::unordered_map<Vertex_handle, Polyline_iterator> vertex_to_polyline_iterator_;
   Mesh_error_code* const error_code_;
 #ifndef CGAL_NO_ATOMIC
   /// Pointer to the atomic Boolean that can stop the process
@@ -1032,7 +1032,7 @@ insert_balls_on_edges()
   struct Feature_tuple
   {
     Curve_index curve_index_;
-    Polyline_iter polyline_begin_;
+    Polyline_iterator polyline_begin_;
     std::pair<Bare_point, Index> point_s_;
     std::pair<Bare_point, Index> point_t_;
   };
@@ -1592,18 +1592,22 @@ approx_is_too_large(const Edge& e, const bool is_edge_in_complex) const
   const Bare_point& pa = va->point().point();
   const Bare_point& pb = vb->point().point();
 
-  // Construct the geodesic middle point
   const Curve_index curve_index = c3t3_.curve_index(e);
-  const FT signed_geodesic_distance = domain_.signed_geodesic_distance(pa, pb, curve_index);
+  Polyline_iterator pa_it = locate_in_polyline(va, curve_index);
+  Polyline_iterator pb_it = locate_in_polyline(vb, curve_index);
+
+  // Construct the geodesic middle point
+  const FT signed_geodesic_distance
+      = domain_.signed_geodesic_distance(pa, pb, pa_it, pb_it, curve_index);
   const auto [geodesic_middle, _ /*polyline_iter*/] = (signed_geodesic_distance >= FT(0))
       ? domain_.construct_point_on_curve(pa,
                                          curve_index,
                                          signed_geodesic_distance / 2,
-                                         locate_in_polyline(va, curve_index))
+                                         pa_it)
       : domain_.construct_point_on_curve(pb,
                                          curve_index,
                                          -signed_geodesic_distance / 2,
-                                         locate_in_polyline(vb, curve_index));
+                                         pb_it);
 
   const Bare_point edge_middle = CGAL::midpoint(pa, pb);
   const FT squared_evaluated_distance = CGAL::squared_distance(edge_middle, geodesic_middle);
@@ -1973,7 +1977,9 @@ orientation_of_walk(const Vertex_handle& start,
              cp(start_wp), cp(next_wp), cp(next_along_curve_wp), curve_index);
   } else {
     // otherwise, the sign is just the sign of the geodesic distance
-    return domain_.distance_sign(cp(start_wp), cp(next_wp), curve_index);
+    return domain_.distance_sign(cp(start_wp), cp(next_wp), curve_index,
+                                 locate_in_polyline(start, curve_index),
+                                 locate_in_polyline(next, curve_index));
   }
 }
 
