@@ -60,7 +60,7 @@ int main(int argc, char** argv) {
         CGAL::create_adaptive_remeshing_sizing_field(temp_tr),
         CGAL::parameters::number_of_iterations(num_iterations));
     t.stop();
-    generate_quality_metrics(temp_tr, results_json);
+    //generate_quality_metrics(temp_tr, results_json);
     append_metric_result(results_json, "Performance", "Memory", "Value", CGAL::Memory_sizer().virtual_size() >> 20);
     append_metric_result(results_json, "Performance", "Total_Time", "Value", t.time());
     // Status
@@ -68,4 +68,4 @@ int main(int argc, char** argv) {
     // Write JSON
     write_results_json(results_json, results_json_path);
     return 0;
-} 
+}

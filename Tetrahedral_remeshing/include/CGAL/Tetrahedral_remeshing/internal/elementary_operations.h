@@ -84,7 +84,7 @@ public:
 
     // Ensure lock data structure is initialized for parallel mode
     ensure_lock_data_structure_initialized(c3t3);
- 
+
     // Apply operations on elements
     return apply_operation_on_elements(candidates, op, c3t3);
   }
@@ -221,7 +221,7 @@ private:
 #endif
     //size_t num_threads = 8; // Start with single thread for ordered processing
     size_t num_threads = std::thread::hardware_concurrency() / 2;
-    
+
     // Parallel work stealing from priority queue
     tbb::parallel_for(tbb::blocked_range<size_t>(0, num_threads),
       [&](const tbb::blocked_range<size_t>& r) {
@@ -241,7 +241,9 @@ private:
                 c3t3.triangulation().unlock_all_elements();
                 // Optional: small delay to reduce contention
                 std::this_thread::yield();
+#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
                 num_failed_locks++;
+#endif
               }
             }
             // Execute operation once lock is acquired
@@ -298,7 +300,9 @@ private:
         if(!lock_acquired) {
           c3t3.triangulation().unlock_all_elements();
           std::this_thread::yield(); // backoff to reduce contention
+#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
           num_failed_locks++;
+#endif
         }
       }
 
@@ -352,7 +356,7 @@ public:
 }; // class ElementaryOperationExecution
 
 } // namespace internal
-} // namespace Tetrahedral_remeshing  
+} // namespace Tetrahedral_remeshing
 } // namespace CGAL
 
 #endif // CGAL_TETRAHEDRAL_REMESHING_ELEMENTARY_OPERATIONS_H
