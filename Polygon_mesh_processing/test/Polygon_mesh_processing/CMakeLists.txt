@@ -72,6 +72,7 @@ create_single_source_cgal_program("test_isolevel_refinement.cpp")
 create_single_source_cgal_program("test_corefinement_nm_bo.cpp")
 create_single_source_cgal_program("test_corefinement_cavities.cpp")
 create_single_source_cgal_program("issue_8730.cpp")
+create_single_source_cgal_program("issue_7164.cpp")
 #  create_single_source_cgal_program("test_pmp_repair_self_intersections.cpp")
 
 find_package(Eigen3 3.2.0 QUIET) #(requires 3.2.0 or greater)
