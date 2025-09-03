@@ -29,6 +29,8 @@
 #include <iterator>
 #include <tuple>
 
+#include "C3t3_type.h"
+
 #ifdef CGAL_LINKED_WITH_TBB
 #include <functional>
 #include <tbb/blocked_range.h>
@@ -509,7 +511,7 @@ template <class TriangleMesh_, class GeomTraits_ = Default> class Medial_skeleto
   using Point_3 = typename GT::Point_3;
   using Vector_3 = typename GT::Vector_3;
   using Sphere_3 = typename GT::Sphere_3;
-  using MSkeleton = Medial_Skeleton<TriangleMesh_, GT>;
+  using MSkeleton = Medial_Skeleton<TriangleMesh_, GeomTraits_>;
   // AABB tree types over spheres
   using Iterator = typename std::vector<Sphere_3>::const_iterator;
   using Primitive = CGAL::AABB_sphere_primitive_3<GT, Iterator>;
@@ -653,7 +655,7 @@ private:
     const FT A = a * (a - r21 * r21);
     const FT B = 2 * b * (r21 * r21 - a);
     const FT C = b * b - r21 * r21 * c;
-    FT t1, t2, dist1, dist2;
+    FT t1 = 0, t2 = 0, dist1, dist2;
     int root_nb = solve_quadric(A, B, C, t1, t2);
     if(root_nb != 0) {
       t1 = std::clamp(t1, FT(0), FT(1));
@@ -699,7 +701,7 @@ private:
     const FT e = CGAL::scalar_product(c23, c3p);
     const FT f = CGAL::scalar_product(c3p, c3p);
     // x^2 = a*t1^2 + b*t2^2 + 2*c*t1*t2 + 2*d*t1 + 2*e*t2 + f
-    FT t1 = 0, t2 = 0, dist1 = 0, dist2 = 0, dist3 = 0;
+    FT t1 = 0, t2 = 0, dist1 = 0, dist2 = 0;
 
     // three spheres have the same radius
     if(r13 == FT(0) && r23 == FT(0)) {
