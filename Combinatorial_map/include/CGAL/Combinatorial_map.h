@@ -4019,6 +4019,182 @@ namespace CGAL {
       return make_combinatorial_hexahedron(d1, d2, d3, d4, d5, d6);
     }
 
+    /** Test if a volume is a combinatorial prism.
+     * @param adart an intial dart
+     * @return true iff the volume containing adart is a combinatorial prism.
+     */
+    bool is_volume_combinatorial_prism(Dart_const_descriptor d1) const
+    {
+      Dart_const_descriptor d2=beta(d1, 2);
+      Dart_const_descriptor d3=beta(d1, 1, 2);
+      Dart_const_descriptor d4=beta(d1, 0, 2);
+      Dart_const_descriptor d5=beta(d2, 1, 1, 2);
+
+      if ( d1==null_dart_descriptor || d2==null_dart_descriptor ||
+           d3==null_dart_descriptor || d4==null_dart_descriptor ||
+           d5==null_dart_descriptor ) { return false; }
+
+      if (!is_face_combinatorial_polygon(d1, 3) ||
+          !is_face_combinatorial_polygon(d2, 4) ||
+          !is_face_combinatorial_polygon(d3, 4) ||
+          !is_face_combinatorial_polygon(d4, 4) ||
+          !is_face_combinatorial_polygon(d5, 3)) { return false; }
+
+      // TODO do better with marks.
+      if (belong_to_same_cell<2,1>(d1, d2) ||
+          belong_to_same_cell<2,1>(d1, d3) ||
+          belong_to_same_cell<2,1>(d1, d4) ||
+          belong_to_same_cell<2,1>(d1, d5) ||
+          belong_to_same_cell<2,1>(d2, d3) ||
+          belong_to_same_cell<2,1>(d2, d4) ||
+          belong_to_same_cell<2,1>(d2, d5) ||
+          belong_to_same_cell<2,1>(d3, d4) ||
+          belong_to_same_cell<2,1>(d3, d5) ||
+          belong_to_same_cell<2,1>(d4, d5))
+      { return false; }
+
+      if (beta(d2,0,2)  !=beta(d3,1) ||
+          beta(d2,1,2)  !=beta(d4,0) ||
+          beta(d3,0,2)  !=beta(d4,1) ||
+          beta(d3,1,1,2)!=beta(d5,0) ||
+          beta(d4,1,1,2)!=beta(d5,1)) { return false; }
+
+      return true;
+    }
+
+    /** Create a combinatorial prism from 2 triangles and 3 squares.
+     * @param d1 a dart onto a first triangle.
+     * @param d2 a dart onto a first square.
+     * @param d3 a dart onto a second square.
+     * @param d4 a dart onto a thirth square.
+     * @param d5 a dart onto a second triangle.
+     * @return a new dart.
+     */
+    Dart_descriptor make_combinatorial_prism(Dart_descriptor d1,
+                                             Dart_descriptor d2,
+                                             Dart_descriptor d3,
+                                             Dart_descriptor d4,
+                                             Dart_descriptor d5)
+    {
+      // 2-link for first triangle
+      basic_link_beta_for_involution(d1, d2, 2);
+      basic_link_beta_for_involution(beta(d1, 1), d3, 2);
+      basic_link_beta_for_involution(beta(d1, 0), d4, 2);
+
+      // 2-link for quandrangles between them
+      basic_link_beta_for_involution(beta(d2, 0), beta(d3, 1), 2);
+      basic_link_beta_for_involution(beta(d2, 1), beta(d4, 0), 2);
+      basic_link_beta_for_involution(beta(d3, 0), beta(d4, 1), 2);
+
+      // 2-link for second triangle
+      basic_link_beta_for_involution(beta(d2, 1, 1), d5, 2);
+      basic_link_beta_for_involution(beta(d3, 1, 1), beta(d5, 0), 2);
+      basic_link_beta_for_involution(beta(d4, 1, 1), beta(d5, 1), 2);
+
+      return d1;
+    }
+
+    /** Create a new combinatorial prism.
+     * @return a new dart.
+     */
+    Dart_descriptor make_combinatorial_prism()
+    {
+      Dart_descriptor d1 = make_combinatorial_polygon(3);
+      Dart_descriptor d2 = make_combinatorial_polygon(4);
+      Dart_descriptor d3 = make_combinatorial_polygon(4);
+      Dart_descriptor d4 = make_combinatorial_polygon(4);
+      Dart_descriptor d5 = make_combinatorial_polygon(3);
+
+      return make_combinatorial_prism( d1, d2, d3, d4, d5);
+    }
+
+    /** Test if a volume is a combinatorial pyramid.
+     * @param adart an intial dart
+     * @return true iff the volume containing adart is a combinatorial pyramid.
+     */
+    bool is_volume_combinatorial_pyramid(Dart_const_descriptor d1) const
+    {
+      Dart_const_descriptor d2=beta(d1, 2);
+      Dart_const_descriptor d3=beta(d1, 0, 2);
+      Dart_const_descriptor d4=beta(d1, 1, 1, 2);
+      Dart_const_descriptor d5=beta(d1, 1, 2);
+
+      if (d1==null_dart_descriptor || d2==null_dart_descriptor ||
+          d3==null_dart_descriptor || d4==null_dart_descriptor ||
+          d5==null_dart_descriptor) { return false; }
+
+      if (!is_face_combinatorial_polygon(d1, 4) ||
+          !is_face_combinatorial_polygon(d2, 3) ||
+          !is_face_combinatorial_polygon(d3, 3) ||
+          !is_face_combinatorial_polygon(d4, 3) ||
+          !is_face_combinatorial_polygon(d5, 3)) { return false; }
+
+      // TODO do better with marks.
+      if (belong_to_same_cell<2,1>(d1, d2) ||
+          belong_to_same_cell<2,1>(d1, d3) ||
+          belong_to_same_cell<2,1>(d1, d4) ||
+          belong_to_same_cell<2,1>(d1, d5) ||
+          belong_to_same_cell<2,1>(d2, d3) ||
+          belong_to_same_cell<2,1>(d2, d4) ||
+          belong_to_same_cell<2,1>(d2, d5) ||
+          belong_to_same_cell<2,1>(d3, d4) ||
+          belong_to_same_cell<2,1>(d3, d5) ||
+          belong_to_same_cell<2,1>(d4, d5))
+      { return false; }
+
+      if (beta(d2,1,2)!=beta(d3,0) ||
+          beta(d2,0,2)!=beta(d5,1) ||
+          beta(d5,0,2)!=beta(d4,1) ||
+          beta(d4,0,2)!=beta(d3,1)) { return false; }
+
+      return true;
+    }
+
+    /** Create a combinatorial pyramid from 1 square and 4 triangles.
+     * @param d1 a dart onto the square.
+     * @param d2 a dart onto a first triangle.
+     * @param d3 a dart onto a second triangle.
+     * @param d4 a dart onto a thirth triangle.
+     * @param d5 a dart onto a fourth triangle.
+     * @return a new dart.
+     */
+    Dart_descriptor make_combinatorial_pyramid(Dart_descriptor d1,
+                                               Dart_descriptor d2,
+                                               Dart_descriptor d3,
+                                               Dart_descriptor d4,
+                                               Dart_descriptor d5)
+    {
+      // 2-link for the square
+      basic_link_beta_for_involution(d1, d2, 2);
+      basic_link_beta_for_involution(beta(d1, 1), d5, 2);
+      basic_link_beta_for_involution(beta(d1, 1, 1), d4, 2);
+      basic_link_beta_for_involution(beta(d1, 0), d3, 2);
+
+      // 2-link for first triangle
+      basic_link_beta_for_involution(beta(d2, 1), beta(d3, 0), 2);
+      basic_link_beta_for_involution(beta(d2, 0), beta(d5, 1), 2);
+
+      // 2-link for triangles between them
+      basic_link_beta_for_involution(beta(d5, 0), beta(d4, 1), 2);
+      basic_link_beta_for_involution(beta(d4, 0), beta(d3, 1), 2);
+
+      return d1;
+    }
+
+    /** Create a new combinatorial pyramid.
+     * @return a new dart.
+     */
+    Dart_descriptor make_combinatorial_pyramid()
+    {
+      Dart_descriptor d1=make_combinatorial_polygon(4);
+      Dart_descriptor d2=make_combinatorial_polygon(3);
+      Dart_descriptor d3=make_combinatorial_polygon(3);
+      Dart_descriptor d4=make_combinatorial_polygon(3);
+      Dart_descriptor d5=make_combinatorial_polygon(3);
+
+      return make_combinatorial_pyramid(d1, d2, d3, d4, d5);
+    }
+
     /** Test if an i-cell can be removed.
      *  An i-cell can be removed if i==dimension or i==dimension-1,
      *     or if there are at most two (i+1)-cell incident to it.
