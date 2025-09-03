@@ -23,13 +23,13 @@ namespace HDVF {
 /*!
  \ingroup PkgHDVFAlgorithmClasses
 
- The class `Zp` implements the concept `Ring` with the field \f$\mathbb Z/p\mathbb Z\f$. This is a "lightweight" implementation which aims at providing fast operations and constructors.
+ The class `Zp` implements the concept `IntegralDomainWithoutDivision` with the field \f$\mathbb Z/p\mathbb Z\f$. This is a "lightweight" implementation which aims at providing fast operations and constructors.
 
  According to the value of `p`, users can chose the size of the representation used to store values (default size: `int`).
 
  \warning For \f$\mathbb Z/2\mathbb Z\f$, prefer the class `Z2` which is optimized.
 
- \cgalModels{Ring}
+ \cgalModels{IntegralDomainWithoutDivision}
 
  \tparam p an integer.
  \tparam _TSlot a type used for the inner storage of the values (default: `int`).

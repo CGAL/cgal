@@ -52,7 +52,7 @@ namespace HDVF {
  \cgalModels{Filtration}
 
  \tparam ChainComplex a model of the `AbstractChainComplex` concept (type of the underlying chain complex).
- \tparam Degree the scalar type of degrees.
+ \tparam Degree the scalar type of degrees (a model of the `RealEmbeddable` concept).
  */
 
 /*! \brief Type for indexing uniquely a cell.

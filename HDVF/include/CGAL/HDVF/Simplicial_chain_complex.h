@@ -33,7 +33,7 @@ template<typename CoefficientRing> class Duality_simplicial_complex_tools ;
 
  \cgalModels{GeometricChainComplex}
 
- \tparam CoefficientRing a model of the `Ring` concept.
+ \tparam CoefficientRing a model of the `IntegralDomainWithoutDivision` concept.
  */
 
 template<typename CoefficientRing>

@@ -516,7 +516,7 @@ In order to compute the homology/cohomology of a discrete object with an HDVF, t
 
 \subsection secHDVFCoefficientType Defining the ring of coefficients
 
-The ring of coefficients must be a model of the `Ring` concept:
+The ring of coefficients must be a model of the `IntegralDomainWithoutDivision` concept:
 - the ring \f$\mathbb Z\f$
 \code
     typedef int CoefficientType ;

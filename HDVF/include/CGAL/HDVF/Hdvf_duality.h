@@ -116,7 +116,7 @@ public:
      * \param[in] q Lower dimension of the pair.
      * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      */
-    virtual Cell_pair find_pair_A(int q, bool &found) const;
+    Cell_pair find_pair_A(int q, bool &found) const;
 
     /**
      * \brief Finds a valid Cell_pair for A containing `gamma` *in the current sub chain complex* (a cell of dimension `q`)
@@ -129,7 +129,7 @@ public:
      * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      * \param[in] gamma Index of a cell to pair.
      */
-    virtual Cell_pair find_pair_A(int q, bool &found, size_t gamma) const;
+    Cell_pair find_pair_A(int q, bool &found, size_t gamma) const;
 
     /**
      * \brief Finds *all* valid Cell_pair of dimension q / q+1 *in the current sub chain complex* for A.
@@ -140,7 +140,7 @@ public:
      * \param[in] q Lower dimension of the pair.
      * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      */
-    virtual std::vector<Cell_pair> find_pairs_A(int q, bool &found) const;
+    std::vector<Cell_pair> find_pairs_A(int q, bool &found) const;
 
     /**
      * \brief Finds *all* valid Cell_pair for A containing `gamma` *in the current sub chain complex* (a cell of dimension `q`)
@@ -154,7 +154,7 @@ public:
      * \param[in] found Reference to a %Boolean variable. The method sets `found` to `true` if a valid pair is found, `false` otherwise.
      * \param[in] gamma Index of a cell to pair.
      */
-    virtual std::vector<Cell_pair> find_pairs_A(int q, bool &found, size_t gamma) const;
+    std::vector<Cell_pair> find_pairs_A(int q, bool &found, size_t gamma) const;
 
     /** \brief Sets the current sub chain complex masks over `K`.
      *
@@ -187,7 +187,7 @@ public:
      * \brief Computes a perfect HDVF over the current sub chain complex.
      *
      * As long as valid pairs for A exist in the current sub chain complex, the function selects the first available pair (returned by `find_pair_A()`) and applies the corresponding `A()` operation.
-     * If the `Ring` of coefficients is a field, this operation always produces a perfect HDVF (ie.\ the reduced boundary is null and the reduction provides homology and cohomology information).
+     * If the `IntegralDomainWithoutDivision` of coefficients is a field, this operation always produces a perfect HDVF (ie.\ the reduced boundary is null and the reduction provides homology and cohomology information).
      * Otherwise the operation produces a maximal HDVF with a residual boundary matrix over critical cells.
      *
      * If the HDVF is initially not trivial (some cells have already been paired), the function completes it into a perfect HDVF.
@@ -202,7 +202,7 @@ public:
      * \brief Computes a random perfect HDVF over the current sub chain complex.
      *
      * As long as valid pairs for A exist in the current sub chain complex, the function selects a random pair (among pairs returned by `find_pairs_A()`) and applies the corresponding `A()` operation.
-     * If the `Ring` of coefficients is a field, this operation always produces a perfect HDVF (that  is the reduced boundary is null and the reduction provides homology and cohomology information).
+     * If the `IntegralDomainWithoutDivision` of coefficients is a field, this operation always produces a perfect HDVF (that  is the reduced boundary is null and the reduction provides homology and cohomology information).
      *
      * If the HDVF is initially not trivial (some cells have already been paired), the function randomly completes it into a perfect HDVF.
      *
@@ -265,7 +265,7 @@ public:
      *
      * By default, outputs the complex to `std::cout`.
     */
-    virtual std::ostream& insert_reduction(std::ostream& out = std::cout)
+    std::ostream& insert_reduction(std::ostream& out = std::cout)
     {
         // Print K
         out << "----> K" << std::endl ;
@@ -291,7 +291,7 @@ public:
      *
      * By default, outputs the complex to `std::cout`.
     */
-    virtual std::ostream& print_reduction_sub(std::ostream& out = std::cout) // const;
+    std::ostream& print_reduction_sub(std::ostream& out = std::cout) // const;
     {
         // Print critical cells
         out << "----- critical cells:" << std::endl;
@@ -401,7 +401,7 @@ public:
      *
      * \return A vector containing, for each dimension, the vector of labels by cell index.
      */
-    virtual std::vector<std::vector<int> > psc_labels () const
+    std::vector<std::vector<int> > psc_labels () const
     {
         std::vector<std::vector<int> > labels(this->_K.dimension()+1) ;
         for (int q=0; q<=this->_K.dimension(); ++q)
@@ -425,25 +425,25 @@ public:
     }
 
     /**
-     * \brief Exports homology generators *of the current sub chain complex* associated to `cell` (critical cell) of dimension  `q` (used by vtk export).
+     * \brief Exports homology generators *of the current sub chain complex* associated to `cell_index` (critical cell) of dimension  `q` (used by vtk export).
      *
-     * The method exports the chain \f$g(\sigma)\f$ for \f$\sigma\f$ the cell of index `cell` and dimension `q`.
+     * The method exports the chain \f$g(\sigma)\f$ for \f$\sigma\f$ the cell of index `cell_index` and dimension `q`.
      *
      * \return A column-major chain.
      */
-    virtual Column_chain homology_chain (size_t cell, int dim) const
+    Column_chain homology_chain (size_t cell_index, int dim) const
     {
         if ((dim<0) || (dim>this->_K.dimension()))
             throw "Error : homology_chain with dim out of range" ;
-        if (!_subCC.get_bit(dim, cell))
+        if (!_subCC.get_bit(dim, cell_index))
             throw "Error : homology_chain for a cell out of current sub chain complex" ;
 
         if (this->_hdvf_opt & (OPT_FULL | OPT_G))
         {
             // Get g(cell, dim) with per indices
-            Column_chain g_cell(OSM::get_column(this->_G_col.at(dim), cell)) ;
+            Column_chain g_cell(OSM::get_column(this->_G_col.at(dim), cell_index)) ;
             // Add 1 to the cell
-            g_cell.set_coefficient(cell, 1) ;
+            g_cell.set_coefficient(cell_index, 1) ;
             // Keep cells of the chain belonging to _subCC
             Column_chain g_cell_sub(g_cell.dimension()) ;
             for (typename Column_chain::const_iterator it = g_cell.begin(); it != g_cell.end(); ++it)
@@ -461,24 +461,24 @@ public:
     }
 
     /**
-     * \brief Exports cohomology generators *of the current sub chain complex* associated to `cell` (critical cell) of dimension  `q` (used by vtk export).
+     * \brief Exports cohomology generators *of the current sub chain complex* associated to `cell_index` (critical cell) of dimension  `q` (used by vtk export).
      *
-     * The method exports the chain \f$f^\star(\sigma)\f$ for \f$\sigma\f$ the cell of index `cell` and dimension `q`.
+     * The method exports the chain \f$f^\star(\sigma)\f$ for \f$\sigma\f$ the cell of index `cell_index` and dimension `q`.
      *
      * \return A column-major chain.
      */
-    virtual Column_chain cohomology_chain (size_t cell, int dim) const
+    Column_chain cohomology_chain (size_t cell_index, int dim) const
     {
         if ((dim<0) || (dim>this->_K.dimension()))
             throw "Error : cohomology_chain with dim out of range" ;
-        if (!_subCC.get_bit(dim, cell))
+        if (!_subCC.get_bit(dim, cell_index))
             throw "Error : cohomology_chain for a cell out of current sub chain complex" ;
 
         if (this->_hdvf_opt & (OPT_FULL | OPT_F))
         {
-            Row_chain fstar_cell(OSM::get_row(this->_F_row.at(dim), cell)) ;
+            Row_chain fstar_cell(OSM::get_row(this->_F_row.at(dim), cell_index)) ;
             // Add 1 to the cell
-            fstar_cell.set_coefficient(cell, 1) ;
+            fstar_cell.set_coefficient(cell_index, 1) ;
 
             // Keep cells of the chain belonging to _subCC
             Column_chain fstar_cell_sub(fstar_cell.dimension()) ;

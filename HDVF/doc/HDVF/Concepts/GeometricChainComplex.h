@@ -21,9 +21,9 @@ public:
 /// @{
 
 /*!
-Type of coefficients used to compute homology (model of `Ring`)
+Type of coefficients used to compute homology (model of `IntegralDomainWithoutDivision`)
  */
-typedef Ring CoefficientRing;
+typedef IntegralDomainWithoutDivision CoefficientRing;
     
 /*!
  Type of coordinates (the vector size is free, hence coordinates can be any dimension).

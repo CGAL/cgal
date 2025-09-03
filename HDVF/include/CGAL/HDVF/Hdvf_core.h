@@ -64,9 +64,9 @@ inline std::ostream& operator<<(std::ostream &out, const std::vector<Cell_pair>&
 /*!
  \ingroup PkgHDVFAlgorithmClasses
 
- The class `Hdvf_core` is the core implementation of homological discrete vector fields (HDVF for short). The ring of coefficients for homology computation must be a model of `Ring`.
+ The class `Hdvf_core` is the core implementation of homological discrete vector fields (HDVF for short). The ring of coefficients for homology computation must be a model of `IntegralDomainWithoutDivision`.
 
- An enumeration `Flag_type` is defined in the `HDVF` namespace and the `Hdvf_core` class maps each cell to one of the flags (namely `PRIMARY`, `SECONDARY`, `CRITICAL`). The NONE flag is used in child classes (such as `Hdvf_duality` or `Hdvf_reduced`) when computing relative homology on a sub-complex.
+ An enumeration `Flag_type` is defined in the `HDVF` namespace and the `Hdvf_core` class maps each cell to one of the flags (namely `PRIMARY`, `SECONDARY`, `CRITICAL`). The NONE flag is used in child classes (such as `Hdvf_duality`) when computing relative homology on a sub-complex.
  The flag of each cell is stored in an appropriate structure and getters are provided to access to this information.
 
  The `Hdvf_core` class stores the associated reduction in sparse matrices: row-major for \f$f\f$, and column-major for \f$g\f$, \f$h\f$ and \f$\partial'\f$. Getters are provided to access this information. However, according to the chosen HDVF computation option (`OPT_BND`, `OPT_F`, `OPT_G`, `OPT_FULL`) the reduction can be computed only partially (and thus faster).
@@ -225,7 +225,7 @@ public:
      * \brief Computes a perfect HDVF.
      *
      * As long as valid pairs for A exist, the function selects the first available pair (returned by `find_pair_A`()) and applies the corresponding `A()` operation.
-     * If the `Ring` of coefficients is a field, this operation always produces a perfect HDVF (ie.\ the reduced boundary is null and the reduction provides homology and cohomology information).
+     * If the `IntegralDomainWithoutDivision` of coefficients is a field, this operation always produces a perfect HDVF (ie.\ the reduced boundary is null and the reduction provides homology and cohomology information).
      * Otherwise the operation produces a maximal HDVF with a residual boundary matrix over critical cells.
      *
      * If the HDVF is initially not trivial (some cells have already been paired), the function completes it into a perfect HDVF.
@@ -240,7 +240,7 @@ public:
      * \brief Computes a random perfect HDVF.
      *
      * As long as valid pairs for A exist, the function selects a random pair (among pairs returned by `find_pairs_A()`) and applies the corresponding `A()` operation.
-     * If the `Ring` of coefficients is a field, this operation always produces a perfect HDVF (that  is the reduced boundary is null and the reduction provides homology and cohomology information).
+     * If the `IntegralDomainWithoutDivision` of coefficients is a field, this operation always produces a perfect HDVF (that  is the reduced boundary is null and the reduction provides homology and cohomology information).
      *
      * If the HDVF is initially not trivial (some cells have already been paired), the function randomly completes it into a perfect HDVF.
      *
@@ -374,19 +374,19 @@ public:
     /**
      * \brief Gets homology generators associated to `cell` (critical cell) of dimension  `q` (used by vtk export).
      *
-     * The method exports the chain \f$g(\sigma)\f$ for \f$\sigma\f$ the cell of index `cell` and dimension `q`.
+     * The method exports the chain \f$g(\sigma)\f$ for \f$\sigma\f$ the cell of index `cell_index` and dimension `q`.
      *
      * \return A column-major chain.
      */
-    virtual Column_chain homology_chain (size_t cell, int q) const
+    virtual Column_chain homology_chain (size_t cell_index, int q) const
     {
         if ((q<0) || (q>_K.dimension()))
             throw "Error : homology_chain with dim out of range" ;
         if (_hdvf_opt & (OPT_FULL | OPT_G))
         {
-            Column_chain g_cell(OSM::get_column(_G_col.at(q), cell)) ;
+            Column_chain g_cell(OSM::get_column(_G_col.at(q), cell_index)) ;
             // Add 1 to the cell
-            g_cell.set_coefficient(cell, 1) ;
+            g_cell.set_coefficient(cell_index, 1) ;
             return g_cell ;
         }
         else
@@ -394,24 +394,24 @@ public:
     }
 
     /**
-     * \brief Gets cohomology generators associated to `cell` (critical cell) of dimension  `q` (used by vtk export).
+     * \brief Gets cohomology generators associated to `cell_index` (critical cell) of dimension  `q` (used by vtk export).
      *
-     * The method exports the chain \f$f^\star(\sigma)\f$ for \f$\sigma\f$ the cell of index `cell` and dimension `q`.
+     * The method exports the chain \f$f^\star(\sigma)\f$ for \f$\sigma\f$ the cell of index `cell_index` and dimension `q`.
      *
-     * \param[in] cell Index of the (critical) cell.
+     * \param[in] cell_index Index of the (critical) cell.
      * \param[in] dim Dimension of the (critical) cell.
      *
      * \return A column-major chain.
      */
-    virtual Column_chain cohomology_chain (size_t cell, int dim) const
+    virtual Column_chain cohomology_chain (size_t cell_index, int dim) const
     {
         if ((dim<0) || (dim>_K.dimension()))
             throw "Error : cohomology_chain with dim out of range" ;
         if (_hdvf_opt & (OPT_FULL | OPT_F))
         {
-            Row_chain fstar_cell(OSM::get_row(_F_row.at(dim), cell)) ;
+            Row_chain fstar_cell(OSM::get_row(_F_row.at(dim), cell_index)) ;
             // Add 1 to the cell
-            fstar_cell.set_coefficient(cell, 1) ;
+            fstar_cell.set_coefficient(cell_index, 1) ;
 
             return fstar_cell.transpose() ;
 
@@ -484,15 +484,15 @@ protected:
      *
      * \result Returns a copy of `chain` where only coefficients of cells of flag `flag` are kept (all other coefficients are cancelled).
      */
-    template<int ChainTypeFlag>
-    ChainType<Coefficient_ring, ChainTypeFlag> projection(const ChainType<Coefficient_ring, ChainTypeFlag>& chain, Flag_type flag, int q) const {
+    template<int StorageFormat>
+    ChainType<Coefficient_ring, StorageFormat> projection(const ChainType<Coefficient_ring, StorageFormat>& chain, Flag_type flag, int q) const {
         // Create a new chain to store the result
         // Better to initialize 'result' directly with the correct size and iterate over it
-        ChainType<Coefficient_ring, ChainTypeFlag> result(chain);
+        ChainType<Coefficient_ring, StorageFormat> result(chain);
 
         // Iterate over each element of the chain
         std::vector<size_t> tmp ;
-        for (typename ChainType<Coefficient_ring, ChainTypeFlag>::const_iterator it = result.cbegin(); it != result.cend(); ++it)
+        for (typename ChainType<Coefficient_ring, StorageFormat>::const_iterator it = result.cbegin(); it != result.cend(); ++it)
         {
             size_t cell_index = it->first;
             Coefficient_ring value = it->second;

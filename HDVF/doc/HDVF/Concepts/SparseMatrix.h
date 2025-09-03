@@ -9,7 +9,7 @@ Traditionally, sparse matrices data structures encode non zero coefficients of (
 
  The `SparseMatrix` concept describes requirements for such sparse matrix. It relies on the model of `SparseChain` which encodes sparse row or column vectors. Matrices are either column major or row major (hence they either store column sparse chains or row sparse chains).
 
- The following constants, called `ChainTypeFlag`, encode the major direction of both sparse chains and sparse matrices.
+ The following constants, called `StorageFormat`, encode the major direction of both sparse chains and sparse matrices.
  - `CGAL::OSM::COLUMN` for column-major chains and matrices (which is the default),
  - `CGAL::OSM::ROW` for row-major chains and matrices.
 
@@ -28,10 +28,10 @@ Traditionally, sparse matrices data structures encode non zero coefficients of (
  - A row-major representation of \f$A\f$ is: \f$[0\mapsto c_0, 1\mapsto c_1, 2\mapsto c_2]\f$ with the row-chains: \f$c_0 = [0\mapsto 1]\f$ and \f$c_1 = [0\mapsto -1, 2\mapsto 2]\f$ and \f$c_2 = [2\mapsto 1]\f$.
 
 \cgalHasModelsBegin
-\cgalHasModelsBare{`CGAL::OSM::Sparse_matrix<Ring, ChainTypeFlag>`}
+\cgalHasModelsBare{`CGAL::OSM::Sparse_matrix<IntegralDomainWithoutDivision, StorageFormat>`}
 \cgalHasModelsEnd
 
- \sa `Ring`
+ \sa `IntegralDomainWithoutDivision`
  \sa `SparseChain`
 */
 
@@ -42,14 +42,14 @@ public:
     /// @{
 
     /*!
-     * \brief Type of coefficients stored in the matrix (a model of `Ring`).
+     * \brief Type of coefficients stored in the matrix (a model of `IntegralDomainWithoutDivision`).
      */
-    typedef Ring CoefficientRing;
+    typedef IntegralDomainWithoutDivision CoefficientRing;
 
     /*!
-     * \brief Matrix and chain type (either ROW or COLUMN).
+     * \brief Matrix and chain storage format (either ROW or COLUMN).
      */
-    typedef int ChainTypeFlag;
+    typedef int StorageFormat;
 
     /*!
      * \brief A data structure storing indices of non empty chains.
@@ -70,7 +70,7 @@ public:
     /*!
      * \brief Creates an empty new sparse matrix object.
      *
-     * Default constructor, initialize an empty matrix of type `ChainTypeFlag` with coefficients of type `CoefficientRing`.
+     * Default constructor, initialize an empty matrix of type `StorageFormat` with coefficients of type `CoefficientRing`.
      * The default matrix size is 0x0.
      */
     SparseMatrix() ;
@@ -78,14 +78,14 @@ public:
     /*!
      * \brief Creates a new sparse matrix object with given rows/columns sizes.
      *
-     * Constructor with sizes, initialize an empty matrix of type `ChainTypeFlag` with coefficients of type `CoefficientRing` and a given size along rows/columns.
+     * Constructor with sizes, initialize an empty matrix of type `StorageFormat` with coefficients of type `CoefficientRing` and a given size along rows/columns.
      */
     SparseMatrix(const size_t rowCount, const size_t columnCount) ;
 
     /**
-     * \brief Creates a new sparse matrix from another sparse matrix object (with possibly a different `ChainTypeFlag`).
+     * \brief Creates a new sparse matrix from another sparse matrix object (with possibly a different `StorageFormat`).
      *
-     * Copy constructor, initialize a sparse matrix of same sizes, containing the same coefficients (but not necessarly of the same `ChainTypeFlag`).
+     * Copy constructor, initialize a sparse matrix of same sizes, containing the same coefficients (but not necessarly of the same `StorageFormat`).
      * If types are different, the constructor performs conversion.
      */
     SparseMatrix(const SparseMatrix& otherToCopy);
@@ -184,7 +184,7 @@ public:
      * \brief Adds a matrix and assign.
      *
      * Adds each coefficient of the matrix together and stores the result in `this`.
-     * Matrices must have the same `CoefficientRing` but can have different `ChainTypeFlag`.
+     * Matrices must have the same `CoefficientRing` but can have different `StorageFormat`.
      */
     friend SparseMatrix& operator+=(SparseMatrix &matrix, const SparseMatrix &other);
 
@@ -192,7 +192,7 @@ public:
      * \brief Adds two matrices together.
      *
      * Adds each coefficient of the matrices together and returns a new matrix (of the same type as `first`) representing the result (when possible, prefer `+=` for efficiency).
-     * Matrices must have the same `CoefficientRing` but can have different `ChainTypeFlag`.
+     * Matrices must have the same `CoefficientRing` but can have different `StorageFormat`.
      */
     friend SparseMatrix operator+(const SparseMatrix &first, const SparseMatrix &second);
 
@@ -201,7 +201,7 @@ public:
      * \brief Substracts a matrix and assign.
      *
      * Substracts each coefficient of the matrix together and stores the result in `matrix`.
-     * Matrices must have the same `CoefficientRing` but can have different `ChainTypeFlag`.
+     * Matrices must have the same `CoefficientRing` but can have different `StorageFormat`.
      */
     SparseMatrix& operator-=(SparseMatrix &matrix, const SparseMatrix &other);
 
@@ -209,7 +209,7 @@ public:
      * \brief Substracts two matrices together.
      *
      * Substracts each coefficient of the matrix together and returns a new matrix (of the same type as `first`) representing the result (when possible, prefer `-=` for efficiency).
-     * Matrices must have the same `CoefficientRing` but can have different `ChainTypeFlag`.
+     * Matrices must have the same `CoefficientRing` but can have different `StorageFormat`.
      */
     friend SparseMatrix operator-(const SparseMatrix &first, const SparseMatrix &second);
 
@@ -245,21 +245,21 @@ public:
      * \brief Multiplies a matrix and assign.
      *
      * Multiply each coefficient of the matrix together and stores the result in `matrix`.
-     * Matrices must have the same `CoefficientRing` but can have different `ChainTypeFlag`.
+     * Matrices must have the same `CoefficientRing` but can have different `StorageFormat`.
      */
     friend SparseMatrix& operator*=(SparseMatrix &matrix, const SparseMatrix &other);
 
     /**
      * \brief Performs multiplication between matrices and returns a new column-major matrix.
      *
-     * Perform standard linear algebra product between matrices and returns a new column-major matrix (when possible, prefer `*=` for efficiency). Matrices must have the same `CoefficientRing` but can have different `ChainTypeFlag`. Efficiency of the product depends of `ChainTypeFlag` (when possible, prefer row-major by column-major products).
+     * Perform standard linear algebra product between matrices and returns a new column-major matrix (when possible, prefer `*=` for efficiency). Matrices must have the same `CoefficientRing` but can have different `StorageFormat`. Efficiency of the product depends of `StorageFormat` (when possible, prefer row-major by column-major products).
      */
     friend SparseMatrix operator*(const SparseMatrix &first, const SparseMatrix &second);
 
     /**
      * \brief Performs multiplication between matrices and returns a new row-major matrix.
      *
-     * Perform standard linear algebra product between matrices and returns a new row-major matrix (when possible, prefer `*=` for efficiency). Matrices must have the same `CoefficientRing` but can have different `ChainTypeFlag`. Efficiency of the product depends of `ChainTypeFlag`.
+     * Perform standard linear algebra product between matrices and returns a new row-major matrix (when possible, prefer `*=` for efficiency). Matrices must have the same `CoefficientRing` but can have different `StorageFormat`. Efficiency of the product depends of `StorageFormat`.
      */
     friend SparseMatrix operator%(const SparseMatrix &first, const SparseMatrix &second);
 
@@ -316,14 +316,14 @@ public:
     friend CoefficientRing get_coefficient(const SparseMatrix& matrix, size_t i, size_t j);
 
     /**
-     * \brief Gets the value of the column at a given `index` from the matrix (whatever the `ChainTypeFlag` of the matrix).
+     * \brief Gets the value of the column at a given `index` from the matrix (whatever the `StorageFormat` of the matrix).
      *
      * For column-matrices, it is equivalent to `operator[]`, for row-matrices a traversal of the matrix is required (in \f$\mathcal O(n)\f$).
      */
     friend Sparse_chain<CoefficientRing, COLUMN> get_column(const SparseMatrix &matrix, size_t index);
 
     /**
-     * \brief Gets the value of the row at a given `index` from the matrix (whatever the `ChainTypeFlag` of the matrix).
+     * \brief Gets the value of the row at a given `index` from the matrix (whatever the `StorageFormat` of the matrix).
      *
      * For row-matrices, it is equivalent to `operator[]`, for column-matrices a traversal of the matrix is required (in \f$\mathcal O(n)\f$).
      */
@@ -340,7 +340,7 @@ public:
     const Sparse_chain<CoefficientRing, ROW> & cget_row(const SparseMatrix<CoefficientRing, ROW> & matrix, size_t i);
 
     /**
-     * \brief Sets a column in the matrix (whatever the `ChainTypeFlag` of the matrix).
+     * \brief Sets a column in the matrix (whatever the `StorageFormat` of the matrix).
      *
      * Set the `i`th column of `matrix` to `chain`.
      * For column-matrices, it should be equivalent to an assignment, however, for row-matrices, a traversal of the matrix is required (in \f$\mathcal O(n)\f$).
@@ -348,7 +348,7 @@ public:
     void set_column(SparseMatrix &matrix, size_t i, const Sparse_chain<CoefficientRing, COLUMN> &chain);
 
     /**
-     * \brief Sets a row in `matrix` (whatever the `ChainTypeFlag` of the matrix).
+     * \brief Sets a row in `matrix` (whatever the `StorageFormat` of the matrix).
      *
      * Set the `i`th row of `matrix` to `chain`.
      * For row-matrices, it should be equivalent to an assignment, however, for column-matrices, a traversal of the matrix is required (in \f$\mathcal O(n)\f$).
@@ -379,14 +379,14 @@ public:
     /**
      * \brief Nullifies a column from the matrix.
      *
-     * Removes column of index `i` whatever the `ChainTypeFlag` of the matrix. For column matrices, it just comes to the `\=` operator and for row matrices, it entails a traversal of the matrix.
+     * Removes column of index `i` whatever the `StorageFormat` of the matrix. For column matrices, it just comes to the `\=` operator and for row matrices, it entails a traversal of the matrix.
      */
     friend SparseMatrix& del_column(SparseMatrix& matrix, size_t index);
 
     /**
      * \brief Nullifies a row from the matrix.
      *
-     * Removes row of index `i` whatever the `ChainTypeFlag` of the matrix. For row matrices, it just comes to the `\=` operator and for column matrices, it entails a traversal of the matrix.
+     * Removes row of index `i` whatever the `StorageFormat` of the matrix. For row matrices, it just comes to the `\=` operator and for column matrices, it entails a traversal of the matrix.
      */
     friend SparseMatrix& del_row(SparseMatrix& matrix, size_t index);
 

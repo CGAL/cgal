@@ -105,14 +105,14 @@ That is, for all \f$q\in \mathbb N\f$, if
 
 
 \cgalHasModelsBegin
-\cgalHasModelsBare{`CGAL::HDVF::Hdvf_core<Ring, AbstractChainComplex, SparseChain, Sparse_matrix>`}
-\cgalHasModelsBare{`CGAL::HDVF:Hdvf<Ring, AbstractChainComplex>`}
-\cgalHasModelsBare{`CGAL::HDVF:Hdvf_persistence<Ring, AbstractChainComplex>`}
-\cgalHasModelsBare{`CGAL::HDVF:Hdvf_duality<Ring, AbstractChainComplex>`}
+\cgalHasModelsBare{`CGAL::HDVF::Hdvf_core<IntegralDomainWithoutDivision, AbstractChainComplex, SparseChain, Sparse_matrix>`}
+\cgalHasModelsBare{`CGAL::HDVF:Hdvf<IntegralDomainWithoutDivision, AbstractChainComplex>`}
+\cgalHasModelsBare{`CGAL::HDVF:Hdvf_persistence<IntegralDomainWithoutDivision, AbstractChainComplex>`}
+\cgalHasModelsBare{`CGAL::HDVF:Hdvf_duality<IntegralDomainWithoutDivision, AbstractChainComplex>`}
 \cgalHasModelsEnd
 
  \sa `AbstractChainComplex`
- \sa `Ring`
+ \sa `IntegralDomainWithoutDivision`
  \sa `SparseChain`
  \sa `SparseMatrix`
 
@@ -252,7 +252,7 @@ void A(size_t gamma1, size_t gamma2, int q);
  * \brief Computes a perfect HDVF.
  *
  * As long as valid pairs for A exist, the function selects the first available pair (returned by `find_pair_A()`) and applies the corresponding `A()` operation.
- * If the `Ring` of coefficients is a field, this operation always produces a perfect HDVF (ie.\ the reduced boundary is null and the reduction provides homology and cohomology information).
+ * If the `IntegralDomainWithoutDivision` of coefficients is a field, this operation always produces a perfect HDVF (ie.\ the reduced boundary is null and the reduction provides homology and cohomology information).
  *
  * If the HDVF is initially not trivial (some cells have already been paired), the function completes it into a perfect HDVF.
  *
@@ -265,7 +265,7 @@ std::vector<Cell_pair> compute_perfect_hdvf(bool verbose = false);
  * \brief Computes a random perfect HDVF.
  *
  *As long as valid pairs for A exist, the function selects a random pair (among pairs returned by `find_pairs_A()`) and applies the corresponding `A()` operation.
- * If the `Ring` of coefficients is a field, this operation always produces a perfect HDVF (ie.\ the reduced boundary is null and the reduction provides homology and cohomology information).
+ * If the `IntegralDomainWithoutDivision` of coefficients is a field, this operation always produces a perfect HDVF (ie.\ the reduced boundary is null and the reduction provides homology and cohomology information).
  *
  * If the HDVF is initially not trivial (some cells have already been paired), the function randomly completes it into a perfect HDVF.
  *
@@ -375,19 +375,19 @@ std::istream& extract_hdvf_reduction(std::istream& out) ;
 virtual std::vector<std::vector<int> > psc_labels () const;
 
 /*!
- * \brief Returns a chain containing the homology generator associated to `cell` (critical cell) of dimension  `q` (in particular for vtk export).
+ * \brief Returns a chain containing the homology generator associated to `cell_index` (critical cell) of dimension  `q` (in particular for vtk export).
  *
- * The method exports the chain \f$g(\sigma)\f$ for \f$\sigma\f$ the cell of index `cell` and dimension `q`.
+ * The method exports the chain \f$g(\sigma)\f$ for \f$\sigma\f$ the cell of index `cell_index` and dimension `q`.
  *
  * \return A column-major chain.
  */
-virtual Column_chain homology_chain (size_t cell, int q) const;
+virtual Column_chain homology_chain (size_t cell_index, int q) const;
 
 /*!
- * \brief Returns a chain containing the cohomology generators associated to `cell` (critical cell) of dimension  `q` (in particular for vtk export).
+ * \brief Returns a chain containing the cohomology generators associated to `cell_index` (critical cell) of dimension  `q` (in particular for vtk export).
  *
  * The method exports:
- * - the chain \f$f^\star(\sigma)\f$ for \f$\sigma\f$ the cell of index `cell` and dimension `q`,
+ * - the chain \f$f^\star(\sigma)\f$ for \f$\sigma\f$ the cell of index `cell_index` and dimension `q`,
  * - or the co-faces of this chain if `co_faces` is true (sometimes easier to view cohomology generators)
  *
  * Below, a sample mesh with, (left) homology generators, (right) two examples of cohomology generators (corresponding generators/co-generators bear similar colours):
@@ -407,7 +407,7 @@ virtual Column_chain homology_chain (size_t cell, int q) const;
  *
  * \return A column-major chain.
  */
-virtual Column_chain cohomology_chain (size_t cell, int dim, bool co_faces = false) const;
+virtual Column_chain cohomology_chain (size_t cell_index, int dim, bool co_faces = false) const;
 
 /// @}
 

@@ -303,7 +303,7 @@ Technically, starting from a Simplicial_chain_complex `_K`, the method `simplici
 - L : complex built out of _K together with a closing icosphere, meshed by tetgen (constrained Delaunay triangulation)
 - K (Sub_chain_complex_mask) : Sub_chain_complex_mask identifying _K inside L
 
-\tparam CoefficientRing a model of the `Ring` concept providing the ring used to compute homology.
+\tparam CoefficientRing a model of the `IntegralDomainWithoutDivision` concept providing the ring used to compute homology.
 */
 
 template<typename CoefficientRing>
@@ -432,7 +432,7 @@ Starting from a Cubical_chain_complex `_K`, the method `cubical_chain_complex_BB
 
 Use the `frame` method from the `Cub_object_io` class to enlarge the bounding box (via a 1 pixel dilatation) if necessary.
 
-\tparam CoefficientRing a model of the `Ring` concept providing the ring used to compute homology.
+\tparam CoefficientRing a model of the `IntegralDomainWithoutDivision` concept providing the ring used to compute homology.
 */
 
 template<typename CoefficientRing>

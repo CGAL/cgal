@@ -23,11 +23,11 @@ namespace HDVF {
 /*!
  \ingroup PkgHDVFAlgorithmClasses
 
- The class `Z2` implements the concept `Ring` with the field \f$\mathbb Z/2\mathbb Z\f$. This implementation is optimized to use bitwise operations and should be prefered to `Zp<2>`.
+ The class `Z2` implements the concept `IntegralDomainWithoutDivision` with the field \f$\mathbb Z/2\mathbb Z\f$. This implementation is optimized to use bitwise operations and should be prefered to `Zp<2>`.
 
  \warning For \f$\mathbb Z/2\mathbb Z\f$, prefer the class `Z2` which is optimized.
 
- \cgalModels{Ring}
+ \cgalModels{IntegralDomainWithoutDivision}
  */
 
 class Z2 {

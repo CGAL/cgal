@@ -38,17 +38,17 @@ namespace OSM {
  Now, as chains considered in homology are boundaries of cells, most \f$\lambda_i\f$ coefficients are null.
  Hence `Sparse_chain` encodes such vectors in a "sparse" way, that is, storing only non zero coefficients through a map:
  \f\[i\mapsto \lambda_i\ \ \ \forall i=1\ldots n_q\text{ such that }\lambda_i\neq 0\f\]
- Moreover, as per any linear algebra vector, a `Sparse_chain` is either a column or row vector (the `ChainTypeFlag` parameter determines the type).
+ Moreover, as per any linear algebra vector, a `Sparse_chain` is either a column or row vector (the `StorageFormat` parameter determines this storage format).
 
  The class `Sparse_chain` provides standard linear algebra operators and fast iterators and block operations (set, get and nullify) which are required to implement efficiently HDVFs.
 
  \cgalModels{SparseChain}
 
- \tparam CoefficientRing a model of the `Ring` concept, providing the ring used to compute homology.
- \tparam ChainTypeFlag an integer constant encoding the type of matrices (`OSM::COLUMN` or `OSM::ROW`).
+ \tparam CoefficientRing a model of the `IntegralDomainWithoutDivision` concept, providing the ring used to compute homology.
+ \tparam StorageFormat an integer constant encoding the storage format of matrices (`OSM::COLUMN` or `OSM::ROW`).
 */
 
-template <typename CoefficientRing, int ChainTypeFlag>
+template <typename CoefficientRing, int StorageFormat>
 class Sparse_chain {
 
 public:
@@ -111,7 +111,7 @@ public:
      *
      * Copy constructor, initialize a SparseChain from an existing SparseChain.
      *
-     * \pre The chains have the same `CoefficientRing` and `ChainTypeFlag`.
+     * \pre The chains have the same `CoefficientRing` and `StorageFormat`.
 
      * \param[in] otherToCopy The chain to copy.
      */
@@ -173,10 +173,10 @@ public:
      *
      * Adds two chains together and return the result in a new matrix.
      *
-     * \pre Chains must have the same `CoefficientRing` and the same `ChainTypeFlag`.
+     * \pre Chains must have the same `CoefficientRing` and the same `StorageFormat`.
      *
      * \warning Will raise an error if the two chains are not the same `CoefficientRing`.
-     * \warning Will raise a compilation error if the two chains don't have the same `ChainTypeFlag`.
+     * \warning Will raise a compilation error if the two chains don't have the same `StorageFormat`.
      *
      * \param[in] other The other chain.
      *
@@ -194,10 +194,10 @@ public:
      *
      * Subtract `other` chain from current chain and return the result in a new matrix.
      *
-     * \pre Chains must have the same `CoefficientRing` and the same `ChainTypeFlag`.
+     * \pre Chains must have the same `CoefficientRing` and the same `StorageFormat`.
      *
      * \warning Will raise an error if the two chains are not the same `CoefficientRing`.
-     * \warning Will raise a compilation error if the two chains don't have the same `ChainTypeFlag`.
+     * \warning Will raise a compilation error if the two chains don't have the same `StorageFormat`.
      *
      * \param[in] other The other chain.
      *
@@ -298,10 +298,10 @@ public:
      *
      * Add a chain to `this`.
      *
-     * \pre Chains must have the same `CoefficientRing` and the same `ChainTypeFlag`.
+     * \pre Chains must have the same `CoefficientRing` and the same `StorageFormat`.
      *
      * \warning Will raise an error if the two chains are not the same `CoefficientRing`.
-     * \warning Will raise an error if the two chains don't have the same `ChainTypeFlag`.
+     * \warning Will raise an error if the two chains don't have the same `StorageFormat`.
      *
      * \param[in] other The other chain.
      *
@@ -328,10 +328,10 @@ public:
      *
      * Subtract a chain to `this`.
      *
-     * \pre Chains must have the same `CoefficientRing` and the same `ChainTypeFlag`.
+     * \pre Chains must have the same `CoefficientRing` and the same `StorageFormat`.
      *
      * \warning Will raise an error if the two chains are not the same `CoefficientRing`.
-     * \warning Will raise an error if the two chains don't have the same `ChainTypeFlag`.
+     * \warning Will raise an error if the two chains don't have the same `StorageFormat`.
      *
      * \param[in] other The other chain.
      *
@@ -641,12 +641,12 @@ public:
     /**
      * \brief Transposes a Sparse_chain.
      *
-     * The result is a chain with `ChainTypeFlag` switched between COLUMN and ROW.
+     * The result is a chain with `StorageFormat` switched between COLUMN and ROW.
      *
      * \return A new chain where the chain type flag is changed.
      */
-    Sparse_chain<CoefficientRing, COLUMN + ROW - ChainTypeFlag> transpose() {
-        Sparse_chain<CoefficientRing, COLUMN + ROW - ChainTypeFlag> chain;
+    Sparse_chain<CoefficientRing, COLUMN + ROW - StorageFormat> transpose() {
+        Sparse_chain<CoefficientRing, COLUMN + ROW - StorageFormat> chain;
 
         chain._upperBound = this->_upperBound;
         chain._chainData = this->_chainData;
@@ -660,7 +660,7 @@ public:
      * \return true if chain is column-major, false otherwise.
      */
     bool is_column() const {
-        return ChainTypeFlag == COLUMN;
+        return StorageFormat == COLUMN;
     }
 
     /**
@@ -669,7 +669,7 @@ public:
      * \return true if chain is row-major, false otherwise.
      */
     bool is_row() const {
-        return ChainTypeFlag == ROW;
+        return StorageFormat == ROW;
     }
 
 private:

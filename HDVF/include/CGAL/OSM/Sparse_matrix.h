@@ -35,7 +35,7 @@ namespace OSM {
 
  The class `Sparse_matrix` implements the concept `SparseMatrix`, that is, sparse matrices optimized for topological computations. It provides standard linear algebra operators and fast iterators and block operations (set, get and nullify) which are required to implement efficiently HDVFs.
 
- The implementation is based on mapped sparse matrices. Hence matrices of the `Sparse_matrix` class are either column of row major (the `ChainTypeFlag` parameter determines the type). A column-major (resp. row-major) `Sparse_matrix` is a vector of `Sparse_chains` which encode columns (res. rows). Moreover, in order to efficiently iterate over non empty columns (resp. rows) the `Bitboard` data structure implements the concept `SparseMatrix::NonZeroChainIndices`. A bitboard is basically a bucket of bits recording the indices of non empty chains. However, this data structure has been designed in order to efficiently remove or add indices, as well as  provide efficient iterators to visit non empty chains.
+ The implementation is based on mapped sparse matrices. Hence matrices of the `Sparse_matrix` class are either column of row major (the `StorageFormat` parameter determines this storage format). A column-major (resp. row-major) `Sparse_matrix` is a vector of `Sparse_chain` which encode columns (res. rows). Moreover, in order to efficiently iterate over non empty columns (resp. rows) the `Bitboard` data structure implements the concept `SparseMatrix::NonZeroChainIndices`. A bitboard is basically a bucket of bits recording the indices of non empty chains. However, this data structure has been designed in order to efficiently remove or add indices, as well as  provide efficient iterators to visit non empty chains.
 
  For instance, let us consider  the \f$5\times 4\f$ matrix:
  \f[
@@ -56,11 +56,11 @@ namespace OSM {
 
  \cgalModels{SparseMatrix}
 
- \tparam CoefficientRing a model of the `Ring` concept, providing the ring used to compute homology.
- \tparam ChainTypeFlag an integer constant encoding the type of matrices (`OSM::COLUMN` or `OSM::ROW`).
+ \tparam CoefficientRing a model of the `IntegralDomainWithoutDivision` concept, providing the ring used to compute homology.
+ \tparam StorageFormat an integer constant encoding the storage format of matrices (`OSM::COLUMN` or `OSM::ROW`).
 */
 
-template <typename CoefficientRing, int ChainTypeFlag>
+template <typename CoefficientRing, int StorageFormat>
 class Sparse_matrix {
 
 public:
@@ -68,7 +68,7 @@ public:
     /*!
      Type of chains associated to the matrix.
      */
-    typedef Sparse_chain<CoefficientRing, ChainTypeFlag> Matrix_chain;
+    typedef Sparse_chain<CoefficientRing, StorageFormat> Matrix_chain;
 
     // Allow the Sparse_matrix class to access other templated Sparse_matrix private members.
     template <typename _CT, int _CTF>
@@ -76,7 +76,7 @@ public:
 
 protected:
     /* \brief The inner chain storage. */
-    std::vector<Sparse_chain<CoefficientRing, ChainTypeFlag>> _chains;
+    std::vector<Sparse_chain<CoefficientRing, StorageFormat>> _chains;
 
     /* \brief A bitboard containing state of each columns. */
     Bitboard _chainsStates;
@@ -96,10 +96,10 @@ protected:
      * \return The reference to the chain stored at given index.
      */
     Matrix_chain& operator[](const size_t _index) {
-        if (ChainTypeFlag == COLUMN && _index >= _size.second) {
+        if (StorageFormat == COLUMN && _index >= _size.second) {
             throw std::runtime_error("Provided index should be less than " + std::to_string(_size.second) + ".");
         }
-        if (ChainTypeFlag == ROW && _index >= _size.first) {
+        if (StorageFormat == ROW && _index >= _size.first) {
             throw std::runtime_error("Provided index should be less than " + std::to_string(_size.first) + ".");
         }
 
@@ -111,7 +111,7 @@ public:
     /**
      * \brief Default constructor (empty new `Sparse_matrix` object).
      *
-     * Create an empty matrix of type `ChainTypeFlag` with coefficients of type `CoefficientRing`.
+     * Create an empty matrix of type `StorageFormat` with coefficients of type `CoefficientRing`.
      * The default matrix size is 0x0.
      */
     Sparse_matrix() {
@@ -123,18 +123,18 @@ public:
     /**
      * \brief Constructor with given rows/columns sizes.
      *
-     * Create a new empty Sparse_matrix object of type `ChainTypeFlag` with coefficients of type `CoefficientRing` and a given size along rows/columns.
+     * Create a new empty Sparse_matrix object of type `StorageFormat` with coefficients of type `CoefficientRing` and a given size along rows/columns.
      *
      * \param[in] rowCount The number of rows to preallocate.
      * \param[in] columnCount The number of columns to preallocate.
      */
     Sparse_matrix(const size_t rowCount, const size_t columnCount) {
-        size_t mainSize = ChainTypeFlag == COLUMN ? columnCount : rowCount;
-        size_t secondarySize = ChainTypeFlag == COLUMN ? rowCount : columnCount;
+        size_t mainSize = StorageFormat == COLUMN ? columnCount : rowCount;
+        size_t secondarySize = StorageFormat == COLUMN ? rowCount : columnCount;
 
-        _chains = std::vector<Sparse_chain<CoefficientRing, ChainTypeFlag>>(mainSize);
+        _chains = std::vector<Sparse_chain<CoefficientRing, StorageFormat>>(mainSize);
         for (size_t i = 0 ; i < mainSize ; i++) {
-            _chains[i] = Sparse_chain<CoefficientRing, ChainTypeFlag>(secondarySize);
+            _chains[i] = Sparse_chain<CoefficientRing, StorageFormat>(secondarySize);
         }
 
         _chainsStates = Bitboard(mainSize);
@@ -144,14 +144,14 @@ public:
     /**
      * \brief Copy constructor.
      *
-     * Create a new SparseMatrix from another SparseMatrix object (with possibly a different `ChainTypeFlag`). Initialize a SparseMatrix of same sizes, containing the same coefficients (but not necessarly of the same `ChainTypeFlag`).
+     * Create a new SparseMatrix from another SparseMatrix object (with possibly a different `StorageFormat`). Initialize a SparseMatrix of same sizes, containing the same coefficients (but not necessarly of the same `StorageFormat`).
      * If types are different, the constructor performs conversion.
      *
      * \param[in] otherToCopy The matrix copied.
      */
     template <int CTF>
     Sparse_matrix(const Sparse_matrix<CoefficientRing,CTF> &otherToCopy) {
-        if (ChainTypeFlag == CTF)
+        if (StorageFormat == CTF)
         {
             _chainsStates = otherToCopy._chainsStates;
             _size = otherToCopy._size;
@@ -160,7 +160,7 @@ public:
             for (size_t i = 0; i<otherToCopy._chains.size(); ++i)
             {
                 const Sparse_chain<CoefficientRing, CTF>& tmp(otherToCopy._chains.at(i)) ;
-                Sparse_chain<CoefficientRing,ChainTypeFlag> res(tmp.dimension()) ;
+                Sparse_chain<CoefficientRing,StorageFormat> res(tmp.dimension()) ;
                 for (typename Sparse_chain<CoefficientRing, CTF>::const_iterator it = tmp.cbegin(); it != tmp.cend(); ++it)
                 {
                     res[it->first] = it->second ;
@@ -171,13 +171,13 @@ public:
         else // Copy coefficient by coefficient
         {
             _size = otherToCopy._size;
-            size_t vec_size = (ChainTypeFlag == OSM::COLUMN)?_size.second:_size.first ;
-            size_t chain_size = (ChainTypeFlag == OSM::COLUMN)?_size.first:_size.second ;
+            size_t vec_size = (StorageFormat == OSM::COLUMN)?_size.second:_size.first ;
+            size_t chain_size = (StorageFormat == OSM::COLUMN)?_size.first:_size.second ;
             _chains.resize(vec_size) ;
             _chainsStates = OSM::Bitboard(vec_size) ;
             for (size_t i=0; i<vec_size; ++i)
             {
-                _chains.at(i) = Sparse_chain<CoefficientRing,ChainTypeFlag>(chain_size) ;
+                _chains.at(i) = Sparse_chain<CoefficientRing,StorageFormat>(chain_size) ;
             }
 
             for (size_t i = 0; i<otherToCopy._chains.size(); ++i)
@@ -407,7 +407,7 @@ public:
      *
      * Adds each coefficient of the matrices together and returns a new matrix (of the same type as `this`) representing the result (when possible, prefer `+=` for efficiency).
      *
-     * \pre Matrices must have the same `CoefficientRing` but can have different `ChainTypeFlag`.
+     * \pre Matrices must have the same `CoefficientRing` but can have different `StorageFormat`.
      *
      * \warning Will raise an error if the other matrix is not the same `CoefficientRing`.
      *
@@ -428,7 +428,7 @@ public:
      *
      * Substracts each coefficient of the matrix `other` and returns a new matrix (of the same type as `this`) representing the result (when possible, prefer `-=` for efficiency).
      *
-     * \pre Matrices must have the same `CoefficientRing` but can have different `ChainTypeFlag`.
+     * \pre Matrices must have the same `CoefficientRing` but can have different `StorageFormat`.
      *
      * \warning Will raise an error if the other matrix is not the same `CoefficientRing`.
      *
@@ -489,7 +489,7 @@ public:
      * \ingroup PkgHDVFAlgorithmClasses
      * @brief  Perform multiplication between matrices and returns a new column-major matrix.
      *
-     * Perform standard linear algebra product between matrices and returns a new column-major matrix (when possible, prefer `*=` for efficiency). Matrices must have the same `CoefficientRing` but can have different `ChainTypeFlag`. The product is optimized (using standard definition or block products) for each combination of `ChainTypeFlag`. However, efficiency depends on `ChainTypeFlag` (when possible, prefer row-major by column-major products).
+     * Perform standard linear algebra product between matrices and returns a new column-major matrix (when possible, prefer `*=` for efficiency). Matrices must have the same `CoefficientRing` but can have different `StorageFormat`. The product is optimized (using standard definition or block products) for each combination of `StorageFormat`. However, efficiency depends on `StorageFormat` (when possible, prefer row-major by column-major products).
      *
      * @param first The first matrix.
      * @param second The second matrix.
@@ -533,7 +533,7 @@ public:
      * \ingroup PkgHDVFAlgorithmClasses
      * @brief  Perform multiplication between a sparse matrix (column or row major) and a column-chain. The function returns a new column-major chain.
      *
-     * Perform standard linear algebra product between a matrix and a column-chain (ie.\ matrix / column vector product) and returns a new column-major chain. Both arguments must have the same `CoefficientRing` but the matrix can have any `ChainTypeFlag` (and the product is optimized for each of them).
+     * Perform standard linear algebra product between a matrix and a column-chain (ie.\ matrix / column vector product) and returns a new column-major chain. Both arguments must have the same `CoefficientRing` but the matrix can have any `StorageFormat` (and the product is optimized for each of them).
      *
      * @param first The matrix.
      * @param second The column-major chain.
@@ -563,7 +563,7 @@ public:
      * \ingroup PkgHDVFAlgorithmClasses
      * @brief  Perform multiplication between a row-chain and a sparse matrix (column or row major). The function returns a new row-major chain.
      *
-     * Perform standard linear algebra product between a row-chain and a matrix (ie.\ row vector / matrix product) and returns a new row-major chain. Both arguments must have the same `CoefficientRing` but the matrix can have any `ChainTypeFlag` (and the product is optimized for each of them).
+     * Perform standard linear algebra product between a row-chain and a matrix (ie.\ row vector / matrix product) and returns a new row-major chain. Both arguments must have the same `CoefficientRing` but the matrix can have any `StorageFormat` (and the product is optimized for each of them).
      *
      * @param first The row-major chain.
      * @param second The matrix.
@@ -593,7 +593,7 @@ public:
      * \ingroup PkgHDVFAlgorithmClasses
      * @brief  Perform multiplication between matrices and returns a new row-major matrix.
      *
-     * Perform standard linear algebra product between matrices and returns a new row-major matrix (when possible, prefer `*=` for efficiency). Matrices must have the same `CoefficientRing` but can have different `ChainTypeFlag`. The product is optimized (using standard definition or block products) for each combination of `ChainTypeFlag`. However, efficiency depends on `ChainTypeFlag`.
+     * Perform standard linear algebra product between matrices and returns a new row-major matrix (when possible, prefer `*=` for efficiency). Matrices must have the same `CoefficientRing` but can have different `StorageFormat`. The product is optimized (using standard definition or block products) for each combination of `StorageFormat`. However, efficiency depends on `StorageFormat`.
      *
      * @param first The first matrix.
      * @param second The second matrix.
@@ -637,7 +637,7 @@ public:
      * \ingroup PkgHDVFAlgorithmClasses
      * @brief  Perform addition between matrices and assigns the result to `matrix`.
      *
-     * Perform standard linear algebra addition. Matrices must have the same `CoefficientRing` but can have different `ChainTypeFlag`. The addition is optimized for each combination of `ChainTypeFlag`.
+     * Perform standard linear algebra addition. Matrices must have the same `CoefficientRing` but can have different `StorageFormat`. The addition is optimized for each combination of `StorageFormat`.
      *
      * @param matrix The first matrix.
      * @param other The second matrix.
@@ -688,7 +688,7 @@ public:
      * \ingroup PkgHDVFAlgorithmClasses
      * @brief  Perform subtraction between matrices and assigns the result to `matrix`.
      *
-     * Perform standard linear algebra subtraction. Matrices must have the same `CoefficientRing` but can have different `ChainTypeFlag`. The addition is optimized for each combination of `ChainTypeFlag`.
+     * Perform standard linear algebra subtraction. Matrices must have the same `CoefficientRing` but can have different `StorageFormat`. The addition is optimized for each combination of `StorageFormat`.
      *
      * @param matrix The first matrix.
      * @param other The second matrix.
@@ -778,7 +778,7 @@ public:
      * \ingroup PkgHDVFAlgorithmClasses
      * @brief  Perform product between matrices and assigns the result to `matrix`.
      *
-     * Perform standard linear algebra product. Matrices must have the same `CoefficientRing` but can have different `ChainTypeFlag`. The product is optimized for each combination of `ChainTypeFlag`.
+     * Perform standard linear algebra product. Matrices must have the same `CoefficientRing` but can have different `StorageFormat`. The product is optimized for each combination of `StorageFormat`.
      *
      * @param matrix The first matrix.
      * @param other The second matrix.
@@ -826,10 +826,10 @@ public:
      * \return The chain stored at given index.
      */
     Matrix_chain operator[](size_t index) const {
-        if (ChainTypeFlag == COLUMN && index >= _size.second) {
+        if (StorageFormat == COLUMN && index >= _size.second) {
             throw std::runtime_error("Provided index should be less than " + std::to_string(_size.second) + ".");
         }
-        if (ChainTypeFlag == ROW && index >= _size.first) {
+        if (StorageFormat == ROW && index >= _size.first) {
             throw std::runtime_error("Provided index should be less than " + std::to_string(_size.first) + ".");
         }
 
@@ -848,7 +848,7 @@ protected:
 
         if (d != 0)
         {
-            if (ChainTypeFlag == COLUMN)
+            if (StorageFormat == COLUMN)
             {
                 (*this)[j][i] = d ;
             }
@@ -887,7 +887,7 @@ protected:
             throw std::runtime_error("Provided _j index should be less than " + std::to_string(_size.second) + ".");
         }
 
-        if (ChainTypeFlag == COLUMN)
+        if (StorageFormat == COLUMN)
             return (this->_chains)[j][i] ;
         else // ROW
             return (this->_chains)[i][j] ;
@@ -914,7 +914,7 @@ public:
      *
      * \defgroup GetColumn Gets a column.
      * \ingroup PkgHDVFAlgorithmClasses
-     * @brief Get the value of the column at a given `index` from the matrix (whatever the `ChainTypeFlag` of the matrix).
+     * @brief Get the value of the column at a given `index` from the matrix (whatever the `StorageFormat` of the matrix).
      *
      * \note For column-matrices, it is equivalent to `operator[]`, for row-matrices a traversal of the matrix is required (in \f$\mathcal O(n)\f$).
      *
@@ -946,7 +946,7 @@ public:
      *
      * \defgroup GetRow Gets a row.
      * \ingroup PkgHDVFAlgorithmClasses
-     * @brief Get the value of the row at a given `index` from the matrix (whatever the `ChainTypeFlag` of the matrix).
+     * @brief Get the value of the row at a given `index` from the matrix (whatever the `StorageFormat` of the matrix).
      *
      * \note For row-matrices, it is equivalent to `operator[]`, for column-matrices a traversal of the matrix is required (in \f$\mathcal O(n)\f$).
      *
@@ -1011,7 +1011,7 @@ public:
      *
      * \defgroup SetColumn Sets a column.
      * \ingroup PkgHDVFAlgorithmClasses
-     * @brief Set the value of the column at a given `index` from the matrix to `chain` (whatever the `ChainTypeFlag` of the matrix).
+     * @brief Set the value of the column at a given `index` from the matrix to `chain` (whatever the `StorageFormat` of the matrix).
      *
      * \note For column-matrices, it is equivalent to `operator[]` followed by an assignment, for row-matrices a traversal of the matrix is required (in \f$\mathcal O(n)\f$).
      *
@@ -1043,7 +1043,7 @@ public:
      *
      * \defgroup SetRow Sets a row.
      * \ingroup PkgHDVFAlgorithmClasses
-     * @brief Set the value of the row at a given `index` from the matrix to `chain` (whatever the `ChainTypeFlag` of the matrix).
+     * @brief Set the value of the row at a given `index` from the matrix to `chain` (whatever the `StorageFormat` of the matrix).
      *
      * \note For row-matrices, it is equivalent to `operator[]` followed by an assignment, for column-matrices a traversal of the matrix is required (in \f$\mathcal O(n)\f$).
      *
@@ -1139,7 +1139,7 @@ protected:
     // Protected version of del_column
     Sparse_matrix& del_column(size_t index) {
         std::vector<size_t> tmp_id{index} ;
-        if (ChainTypeFlag == OSM::COLUMN)
+        if (StorageFormat == OSM::COLUMN)
         {
             (*this)/=tmp_id ;
         }
@@ -1162,7 +1162,7 @@ public:
      *
      * \brief Removes a column from the matrix.
      *
-     * Removes column of index `index` whatever the `ChainTypeFlag` of the matrix. For column matrices, it just comes to the `\=` operator and for row matrices, it entails a traversal of the matrix.
+     * Removes column of index `index` whatever the `StorageFormat` of the matrix. For column matrices, it just comes to the `\=` operator and for row matrices, it entails a traversal of the matrix.
      *
      * \param[in] matrix Reference on the matrix to modify.
      * \param[in] index The index to remove.
@@ -1177,7 +1177,7 @@ protected:
     Sparse_matrix& del_row(size_t index)
     {
         std::vector<size_t> tmp_id{index};
-        if (ChainTypeFlag == OSM::ROW) {
+        if (StorageFormat == OSM::ROW) {
             (*this) /= tmp_id;
         } else // OSM::COLUMN
         {
@@ -1198,7 +1198,7 @@ public:
      *
      * \brief Removes a row from the matrix.
      *
-     * Removes row of index `index` whatever the `ChainTypeFlag` of the matrix. For row matrices, it just comes to the `\=` operator and for column matrices, it entails a traversal of the matrix.
+     * Removes row of index `index` whatever the `StorageFormat` of the matrix. For row matrices, it just comes to the `\=` operator and for column matrices, it entails a traversal of the matrix.
      *
      * \param[in] matrix Reference on the matrix to modify.
      * \param[in] index The index to remove.
@@ -1212,7 +1212,7 @@ protected:
     // Protected version of del_coefficient
     Sparse_matrix& del_coefficient(size_t i, size_t j) {
         // OSM::COLUMN
-        if (ChainTypeFlag == OSM::COLUMN) {
+        if (StorageFormat == OSM::COLUMN) {
             std::vector<size_t> tmp_id({i}) ;
             Matrix_chain &tmp(_chains[j]);
             tmp /= tmp_id;
@@ -1284,8 +1284,8 @@ public:
      *
      * \return A new matrix where the chain type flag has been swapped between COLUMN and ROW and data chains have been transposed.
      */
-    Sparse_matrix<CoefficientRing, COLUMN + ROW - ChainTypeFlag> transpose() {
-        Sparse_matrix<CoefficientRing, COLUMN + ROW - ChainTypeFlag> transposed(this->_size.second, this->_size.first);
+    Sparse_matrix<CoefficientRing, COLUMN + ROW - StorageFormat> transpose() {
+        Sparse_matrix<CoefficientRing, COLUMN + ROW - StorageFormat> transposed(this->_size.second, this->_size.first);
 
         for (size_t index : this->_chainsStates) {
             transposed._chains[index] = this->_chains[index].transpose();

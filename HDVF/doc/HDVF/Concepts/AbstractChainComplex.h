@@ -15,8 +15,8 @@ It provides methods to:
 
 
 \cgalHasModelsBegin
-\cgalHasModelsBare{`CGAL::HDVF::Abstract_simplicial_chain_complex<Ring>`}
-\cgalHasModelsBare{`CGAL::HDVF::Sub_chain_complex_mask<Ring, AbstractChainComplex>`}
+\cgalHasModelsBare{`CGAL::HDVF::Abstract_simplicial_chain_complex<IntegralDomainWithoutDivision>`}
+\cgalHasModelsBare{`CGAL::HDVF::Sub_chain_complex_mask<IntegralDomainWithoutDivision, AbstractChainComplex>`}
 \cgalHasModelsEnd
 
 */
@@ -28,9 +28,9 @@ public:
 /// @{
 
 /*!
-Type of coefficients used to compute homology (model of `Ring`)
+Type of coefficients used to compute homology (model of `IntegralDomainWithoutDivision`)
  */
-typedef Ring CoefficientRing;
+typedef IntegralDomainWithoutDivision CoefficientRing;
     
 /*!
 Type of coefficients provided publicly. 
@@ -120,10 +120,13 @@ std::vector<size_t> bottom_faces(size_t id_cell, int q) const;
 /*!
  * \brief Returns the cofaces of a given chain in dimension `q`.
  *
- * The resulting chain lies in dimension `q`+1 and is null if this dimension exceeds the dimension of the complex.
+ * The resulting chain, whatever the storage format of the input, is column-major, lies in dimension `q`+1 and is null if this dimension exceeds the dimension of the complex.
+ *
+ * \tparam CoefficientR `CoefficientRing` of the chain.
+ * \tparam StorageF `StorageFormat` of the chain.
 */
-template <typename CoefficientT, int ChainTypeF>
-Column_chain cofaces_chain (SparseChain<CoefficientT, ChainTypeF> chain, int q) const;
+template <typename CoefficientR, int StorageF>
+Column_chain cofaces_chain (SparseChain<CoefficientR, StorageF> chain, int q) const;
 
 /// @}
 

@@ -43,7 +43,7 @@ namespace HDVF {
 
  \cgalModels{AbstractChainComplex}
 
- \tparam CoefficientRing a model of the `Ring` concept.
+ \tparam CoefficientRing a model of the `IntegralDomainWithoutDivision` concept.
  */
 
 

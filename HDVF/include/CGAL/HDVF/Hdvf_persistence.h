@@ -70,7 +70,7 @@ namespace HDVF {
  \cgalModels{HDVF}
 
  \tparam ChainComplex a model of the `AbstractChainComplex` concept, providing the type of abstract chain complex used (the underlying ring of coefficients should be a model of `Field`).
- \tparam Degree a scalar data type used for the degrees of the filtration.
+ \tparam Degree a scalar data type used for the degrees of the filtration (a model of `RealEmbeddable` concept).
  \tparam Filtration_ a model of the `Filtration` concept, providing the filtration used to compute persistence.
 
  */
@@ -229,7 +229,7 @@ public:
      * \brief Computes a perfect persistent HDVF.
      *
      * This method follows the filtration and considers cells one by one. For each of them, it searches the youngest possible cell valid for A (returned by `find_pair_A()`), and applies the corresponding `A()` operation.
-     * By definition of persistent homology, the `Ring` of coefficients *must be* a field.
+     * By definition of persistent homology, the `IntegralDomainWithoutDivision` of coefficients *must be* a field.
      *
      * \param[in] verbose If this parameter is `true`, all intermediate reductions are printed out.
      *
@@ -349,7 +349,7 @@ public:
      *
      * \returns A vector containing, for each dimension, the vector of labels by cell index.
      */
-    virtual std::vector<std::vector<int> > psc_labels () const
+    std::vector<std::vector<int> > psc_labels () const
     {
         std::vector<std::vector<int> > labels(this->_K.dimension()+1) ;
         for (int q=0; q<=this->_K.dimension(); ++q)
@@ -376,13 +376,13 @@ public:
     }
 
     /**
-     * \brief Exports homology generators associated to `cell` (critical cell) of dimension  `q` (e.g. forx@ vtk export).
+     * \brief Exports homology generators associated to `cell_index` (critical cell) of dimension  `q` (e.g. forx@ vtk export).
      *
-     * The method exports the chain \f$g(\sigma)\f$ for \f$\sigma\f$ the cell of index `cell` and dimension `q`.
+     * The method exports the chain \f$g(\sigma)\f$ for \f$\sigma\f$ the cell of index `cell_index` and dimension `q`.
      *
      * \returns A column-major chain.
      */
-    virtual Column_chain homology_chain (size_t cell, int q) const
+    Column_chain homology_chain (size_t cell_index, int q) const
     {
         if ((q<0) || (q>this->_K.dimension()))
             throw "Error : homology_chain with dim out of range" ;
@@ -390,9 +390,9 @@ public:
         if (this->_hdvf_opt & (OPT_FULL | OPT_G))
         {
             // Get g(cell, dim) with per indices
-            Column_chain g_cell(OSM::get_column(this->_G_col.at(q), cell)) ;
+            Column_chain g_cell(OSM::get_column(this->_G_col.at(q), cell_index)) ;
             // Add 1 to the cell
-            g_cell.set_coefficient(cell, 1) ;
+            g_cell.set_coefficient(cell_index, 1) ;
             // Compute the chain with _K indices
             Column_chain g_cell_K(g_cell.dimension()) ;
             for (typename Column_chain::const_iterator it = g_cell.begin(); it != g_cell.end(); ++it)
@@ -413,7 +413,7 @@ public:
      *
      * \returns A column-major chain.
      */
-    virtual Column_chain cohomology_chain (size_t cell, int q) const
+    Column_chain cohomology_chain (size_t cell_index, int q) const
     {
         if ((q<0) || (q>this->_K.dimension()))
             throw "Error : homology_chain with dim out of range" ;
@@ -421,9 +421,9 @@ public:
         if (this->_hdvf_opt & (OPT_FULL | OPT_F))
         {
             // Get fstar(cell, dim) with per indices
-            Row_chain fstar_cell(OSM::get_row(this->_F_row.at(q), cell)) ;
+            Row_chain fstar_cell(OSM::get_row(this->_F_row.at(q), cell_index)) ;
             // Add 1 to the cell
-            fstar_cell.set_coefficient(cell, 1) ;
+            fstar_cell.set_coefficient(cell_index, 1) ;
 
             // Compute the chain with _K indices
             Column_chain fstar_cell_K(fstar_cell.dimension()) ;

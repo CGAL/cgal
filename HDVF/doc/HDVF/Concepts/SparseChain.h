@@ -6,16 +6,16 @@ The concept `SparseChain` describes the requirements for sparse vectors (called 
 
  `SparseChains` encode non zero coefficients of (sparse) chains.
 
- `SparseChain`  can be either row or column vectors. The following constants, called `ChainTypeFlag`, encode the direction of sparse chains (and sparse matrices).
+ `SparseChain`  can be either row or column vectors. The following constants, called `StorageFormat`, encode the direction of sparse chains (and sparse matrices).
  - `CGAL::OSM::COLUMN` for column-major chains and matrices (which is the default),
  - `CGAL::OSM::ROW` for row-major chains and matrices.
 
 
 \cgalHasModelsBegin
-\cgalHasModelsBare{`CGAL::OSM::Sparse_chain<Ring, ChainTypeFlag>`}
+\cgalHasModelsBare{`CGAL::OSM::Sparse_chain<IntegralDomainWithoutDivision, StorageFormat>`}
 \cgalHasModelsEnd
 
- \sa `Ring`
+ \sa `IntegralDomainWithoutDivision`
  \sa `SparseMatrix`
 */
 
@@ -26,14 +26,14 @@ public:
     /// @{
 
     /*!
-     * \brief Type of coefficients stored in the matrix (a model of `Ring`).
+     * \brief Type of coefficients stored in the matrix (a model of `IntegralDomainWithoutDivision`).
      */
-    typedef Ring CoefficientRing;
+    typedef IntegralDomainWithoutDivision CoefficientRing;
 
     /*!
-     * \brief Matrix and chain type (either OSM::ROW or OSM::COLUMN).
+     * \brief Matrix and chain storage format (either OSM::ROW or OSM::COLUMN).
      */
-    typedef int ChainTypeFlag;
+    typedef int StorageFormat;
 
     /*!
      * \brief SparseChain iterator type.
@@ -52,13 +52,15 @@ public:
 
     /*!
      * \brief Creates new empty sparse chain.
+     *
+     * Creates a sparse chain encoding an empty linear combination of cells.
      */
     SparseChain();
 
     /*!
-     * \brief Creates new empty sparse chain of given size.
+     * \brief Creates new empty sparse chain (ie. zero-chain) of given size.
      *
-     * Constructor with size, initializes an empty sparse chain.
+     * Constructor with size, initializes an empty sparse chain encoding a linear combination of cells with all coefficients null.
      */
     SparseChain(size_t chainSize);
 
@@ -149,7 +151,7 @@ public:
      * \brief Adds two chains together.
      *
      * Add two chains and return the result in a new matrix.
-     * Chains must have the same `CoefficientRing` and the same `ChainTypeFlag`.
+     * Chains must have the same `CoefficientRing` and the same `StorageFormat`.
      */
     friend Sparse_chain operator+(const Sparse_chain &first, const Sparse_chain &second);
 
@@ -157,7 +159,7 @@ public:
      * \brief Subtracts a chain from another chain.
      *
      * Subtract two chains and return the result in a new matrix.
-     * Chains must have the same `CoefficientRing` and the same `ChainTypeFlag`.
+     * Chains must have the same `CoefficientRing` and the same `StorageFormat`.
      */
     friend Sparse_chain operator-(const Sparse_chain &first, const Sparse_chain &second);
 
@@ -198,7 +200,7 @@ public:
      * \brief Adds a chain to `this`.
      *
      * Add a chain to `this`.
-     * Chains must have the same `CoefficientRing` and the same `ChainTypeFlag`.
+     * Chains must have the same `CoefficientRing` and the same `StorageFormat`.
      */
     Sparse_chain& operator+=(const Sparse_chain &_other);
 
@@ -206,7 +208,7 @@ public:
      * \brief Subtracts a chain from `this`.
      *
      * Subtract a chain from `this`.
-     * Chains must have the same `CoefficientRing` and the same `ChainTypeFlag`.
+     * Chains must have the same `CoefficientRing` and the same `StorageFormat`.
      */
     Sparse_chain& operator-=(const Sparse_chain &_other);
 
@@ -218,7 +220,7 @@ public:
     /*!
      * \brief Transposes a SparseChain.
      *
-     * The result is a chain with `ChainTypeFlag` switched between COLUMN and ROW.
+     * The result is a chain with `StorageFormat` switched between COLUMN and ROW.
      */
     Sparse_chain transpose();
 
