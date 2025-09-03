@@ -34,13 +34,6 @@ polyhedral surface.
 template <class Traits>
 bool read_OFF( std::istream& in, CGAL::Polyhedron_3<Traits>& P);
 
-/*!
-\deprecated This function is deprecated since \cgal 5.3,
-            \ref read_OFF(std::istream&, Polyhedron_3<Traits>&) should be used instead.
-*/
-template <class Traits>
-bool read_off( std::istream& in, CGAL::Polyhedron_3<Traits>& P);
-
 } // namespace IO
 
 /*!
@@ -79,12 +72,6 @@ This function overloads the generic function \link PkgBGLIoFuncsOFF `write_OFF(s
 template <class Traits>
 bool write_OFF( std::ostream& out, const CGAL::Polyhedron_3<Traits>& P);
 
-/*!
-\deprecated This function is deprecated since \cgal 5.3,
-            \ref CGAL::IO::write_OFF(std::ostream&, const Polyhedron_3<Traits>&) should be used instead.
-*/
-template <class Traits>
-bool write_off( std::ostream& out, const CGAL::Polyhedron_3<Traits>& P);
 
 } // namespace IO
 
