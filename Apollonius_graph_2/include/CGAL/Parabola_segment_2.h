@@ -63,7 +63,7 @@ struct Parabola_segment_2 : public Parabola_2< Gt >
   }
 
   int compute_k(const FT tt, const FT STEP) const {
-    return int(CGAL::to_double(CGAL::sqrt(tt / STEP)));
+    return int(CGAL::to_double(CGAL::approximate_sqrt(tt / STEP)));
   }
 
   // s0 and s1 define a desired drawing "range"
