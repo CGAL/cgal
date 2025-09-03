@@ -105,7 +105,7 @@ namespace LAS {
   inline void output_value(LASpoint& r, const float& v, const LAS_property::Scan_angle&)
   {
 #if LAS_TOOLS_VERSION < 250517
-    r.set_scan_angle_rank(v);
+    r.set_scan_angle_rank(I8_QUANTIZE(v));
 #else
     r.set_scan_angle(v);
 #endif

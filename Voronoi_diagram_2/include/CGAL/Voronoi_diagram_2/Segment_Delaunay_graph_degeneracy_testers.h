@@ -188,7 +188,6 @@ class Segment_Delaunay_graph_face_tester_2
     Edge_circulator ec = ec_start;
     size_type deg = 0;       // vertex degree
     size_type n_degen = 0;   // number of degenerate/non-infinite edges
-    size_type n_inf = 0;     // number of infinite edges
     // number of non-degenerate/non-infinite edges
     size_type n_non_degen = 0;
 
@@ -196,8 +195,7 @@ class Segment_Delaunay_graph_face_tester_2
     Edge_tester e_tester;
     do {
       if ( e_tester(dual, ec) ) { ++n_degen; }
-      else if ( dual.is_infinite(ec) ) { ++n_inf; }
-      else {
+      else if ( !dual.is_infinite(ec) ) {
         if ( !dual.is_infinite(ec) ) {
           if ( n_non_degen < 2 ) {
             e[n_non_degen] = *ec;
@@ -208,8 +206,6 @@ class Segment_Delaunay_graph_face_tester_2
       deg++;
       ++ec;
     } while ( ec != ec_start );
-
-    CGAL_USE(n_inf);
 
     if ( deg == n_degen ) { return true; }
     if ( n_non_degen != 2 ) { return false; }
