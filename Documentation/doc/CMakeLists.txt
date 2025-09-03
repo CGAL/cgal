@@ -288,7 +288,7 @@ list(GET DOXYGEN_VERSION 0 DOXYGEN_VERSION)
 message(VERBOSE "Doxygen version ${DOXYGEN_VERSION}: ${DOXYGEN_EXECUTABLE}")
 
 # The Doxygen version is search in that sorted list (to find the index for which the version is less or equal)
-set(CGAL_DOXYGEN_RESOURCES_VERSIONS 1.8.13 1.9.6 1.10.0)
+set(CGAL_DOXYGEN_RESOURCES_VERSIONS 1.8.13 1.9.6 1.14.0)
 list(SORT CGAL_DOXYGEN_RESOURCES_VERSIONS COMPARE NATURAL)
 
 # The GLOB is here to check that the list in CGAL_DOXYGEN_RESOURCES_VERSIONS is correct.

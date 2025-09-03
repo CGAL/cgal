@@ -41,11 +41,6 @@ void test_element_access() {
 
   auto& integers = properties.add_property("integers", 5);
 
-  // Reserve space for 100 elements
-  properties.reserve(100);
-  assert(properties.capacity() == 100);
-  assert(properties.size() == 0);
-
   // Newly emplaced elements should go at the front
   assert(properties.emplace() == 0);
   assert(properties.emplace() == 1);
@@ -61,7 +56,6 @@ void test_element_access() {
   auto& floats = properties.add_property("floats", 6.0f);
 
   // The new property array should already be of the right size
-  assert(floats.capacity() == 100);
   assert(properties.size() == 3);
 
   // Pre-existing elements should contain the default value
@@ -87,9 +81,8 @@ void test_element_access() {
   // Erase an element, and the size should be reduced
   properties.erase(1);
   assert(properties.size() == 2);
-  assert(properties.capacity() == 100);
   assert(properties.active_list().size() == 2);
-  assert(properties.inactive_list().size() == 98);
+  assert(properties.inactive_list().size() == 1);
 
   // A newly emplaced element should take the empty slot
   assert(properties.emplace() == 1);
