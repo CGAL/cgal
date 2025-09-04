@@ -4,3 +4,4 @@ PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - STL Extensions for CGAL"
 
 INPUT += ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/value_type_traits.h
 INPUT += ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/functional.h
+INPUT += ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Triangulation_simplex_base_with_time_stamp.h

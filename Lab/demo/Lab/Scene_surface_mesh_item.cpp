@@ -734,7 +734,7 @@ void Scene_surface_mesh_item_priv::initialize_colors() const
   if(item->property("recompute_colors").toBool())
   {
     colors_.clear();
-    compute_color_map(item->color(), (std::max)(1, max + 1 - min_patch_id),
+    compute_deterministic_color_map(item->color(), (std::max)(1, max + 1 - min_patch_id),
                       std::back_inserter(colors_));
     qDebug()<<colors_.size()<<" colors in item";
   }
