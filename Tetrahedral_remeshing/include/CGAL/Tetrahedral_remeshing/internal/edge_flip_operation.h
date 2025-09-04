@@ -35,13 +35,13 @@ protected:
   typedef typename Tr::Geom_traits           Gt;
   typedef typename Gt::Point_3               Point_3;
   typedef typename Gt::FT                    FT;
+  typedef typename boost::container::small_vector<Cell_handle, 64> Cells_vector;
 
   C3t3& m_c3t3;
   CellSelector& m_cell_selector;
   bool m_protect_boundaries;
   Visitor m_visitor;
-  mutable tbb::concurrent_unordered_map<Vertex_handle,
-    boost::container::small_vector<Cell_handle, 64> > inc_cells;
+  mutable tbb::concurrent_unordered_map<Vertex_handle, Cells_vector> inc_cells;
 
 public:
   EdgeFlipOperationBase(C3t3& c3t3,
@@ -85,6 +85,7 @@ public:
   using BaseClass::m_cell_selector;
   using BaseClass::m_protect_boundaries;
   using BaseClass::m_visitor;
+  using BaseClass::inc_cells;
 
   // Import types from base class
   using typename BaseClass::Tr;
@@ -119,7 +120,7 @@ public:
   }
 
   bool lock_zone(const ElementType& e, const C3t3& c3t3) const override {
-    
+
       auto& tr = c3t3.triangulation();
       #if 1
     boost::container::small_vector<Cell_handle, 64> inc_cells_first,inc_cells_second;
@@ -127,9 +128,9 @@ public:
     //Cache the incident cells
     inc_cells[e.first] = inc_cells_first;
     inc_cells[e.second] = inc_cells_second;
-return successfully_locked; 
+return successfully_locked;
 #else
-    
+
     const auto& vp = e;
     // We need to lock v individually first, to be sure v->cell() is valid
     if(!tr.try_lock_vertex(vp.first) || !tr.try_lock_vertex(vp.second))
@@ -149,7 +150,7 @@ return successfully_locked;
         return false;
       ++ccirc;
     } while(ccirc != cdone);
-    
+
     return true;
     #endif
   }
@@ -251,6 +252,7 @@ public:
   using BaseClass::m_cell_selector;
   using BaseClass::m_protect_boundaries;
   using BaseClass::m_visitor;
+  using BaseClass::inc_cells;
 
   // Import types from base class
   using typename BaseClass::Tr;
@@ -359,9 +361,9 @@ public:
 
     C3t3::Triangulation::Facet_circulator ccirc(edge_to_flip);
   C3t3::Triangulation::Facet_circulator cdone = ccirc;
-    
+
       do {
-		if(!tr.try_lock_facet(*ccirc)) 
+		if(!tr.try_lock_facet(*ccirc))
         ++ccirc;
       } while(ccirc!=cdone);
 
@@ -483,7 +485,7 @@ private:
 
           // Update valences
           //TODO: In a parallel context we should be sure that this is (thread) safe.
-          // Whatever tests we have done there were no crashes. 
+          // Whatever tests we have done there were no crashes.
           // tbb offers a concurrent hash map
           get_static_boundary_vertices_valences()[vh0][surfi]--;
           get_static_boundary_vertices_valences()[vh1][surfi]--;

@@ -84,7 +84,7 @@ public:
 
     // Ensure lock data structure is initialized for parallel mode
     ensure_lock_data_structure_initialized(c3t3);
- 
+
     // Apply operations on elements
     return apply_operation_on_elements(candidates, op, c3t3);
   }
