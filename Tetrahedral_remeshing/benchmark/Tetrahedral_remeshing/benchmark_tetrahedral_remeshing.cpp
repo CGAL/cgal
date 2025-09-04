@@ -1,4 +1,4 @@
-#define CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+//#define CGAL_TETRAHEDRAL_REMESHING_VERBOSE
 
 #include "benchmark_refactored_tetrahedral_remeshing_macros_config.h"
 #include "benchmark_tetrahedral_remeshing_common.h"
@@ -96,7 +96,7 @@ int main(int argc, char** argv) {
   if(!CGAL::IO::read_MEDIT(is, tr)){
     std::cerr << "Error: Could not read input mesh '" << input << "'" << std::endl;
     fatal_error(std::string("Could not read input mesh '") + input + "'");
-  } 
+  }
 
   std::cout << "Number of vertices: " << tr.number_of_vertices() << std::endl;
   std::cout << "Number of cells: " << tr.number_of_cells() << std::endl;
@@ -131,7 +131,7 @@ int main(int argc, char** argv) {
   CGAL::tetrahedral_isotropic_remeshing(c3t3, target_edge_length,
                                         CGAL::parameters::number_of_iterations(num_iterations).smooth_constrained_edges(smooth_constrained_edges));
   t_atomic.stop();
-  
+
   //std::cout << "After remeshing:" << std::endl;
   //for(auto it=tr.finite_vertices_begin(); it!=tr.finite_vertices_end(); ++it) {
   //  if(it->in_dimension() == -1) {

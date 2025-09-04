@@ -1,6 +1,6 @@
 #define USE_REFACTORED_TETRAHEDRAL_REMESHING
 #define CGAL_CONCURRENT_TETRAHEDRAL_REMESHING
-#define CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+//#define CGAL_TETRAHEDRAL_REMESHING_VERBOSE
 
 #include "benchmark_refactored_tetrahedral_remeshing_macros_config.h"
 #include "benchmark_tetrahedral_remeshing_common.h"
