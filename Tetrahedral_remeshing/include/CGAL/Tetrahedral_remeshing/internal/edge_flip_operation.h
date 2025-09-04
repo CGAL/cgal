@@ -35,13 +35,13 @@ protected:
   typedef typename Tr::Geom_traits           Gt;
   typedef typename Gt::Point_3               Point_3;
   typedef typename Gt::FT                    FT;
+  typedef typename boost::container::small_vector<Cell_handle, 64> Cells_vector;
 
   C3t3& m_c3t3;
   CellSelector& m_cell_selector;
   bool m_protect_boundaries;
   Visitor m_visitor;
-  mutable tbb::concurrent_unordered_map<Vertex_handle,
-    boost::container::small_vector<Cell_handle, 64> > inc_cells;
+  mutable tbb::concurrent_unordered_map<Vertex_handle, Cells_vector> inc_cells;
 
 public:
   EdgeFlipOperationBase(C3t3& c3t3,
