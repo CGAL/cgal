@@ -18,6 +18,7 @@ find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
 create_single_source_cgal_program( "draw_test_polygons.cpp" )
 create_single_source_cgal_program( "exact_test.cpp")
 create_single_source_cgal_program( "repair_polygon_2_test.cpp" )
+create_single_source_cgal_program( "repair_polygon_non_zero_2_test.cpp" )
 
 if(CGAL_Qt6_FOUND)
   target_link_libraries(draw_test_polygons PRIVATE CGAL::CGAL_Basic_viewer)

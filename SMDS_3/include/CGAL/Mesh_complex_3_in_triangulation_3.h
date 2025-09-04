@@ -1114,8 +1114,7 @@ public:
   }
 
   /// returns a `Facets_in_complex_iterator` to the first facet of the 2D complex
-  Facets_in_complex_iterator
-    facets_in_complex_begin(const Surface_patch_index& index) const
+  Facets_in_complex_iterator facets_in_complex_begin(const Surface_patch_index& index) const
   {
     return CGAL::filter_iterator(tr_.finite_facets_end(),
       Facet_iterator_not_in_complex(*this, index),

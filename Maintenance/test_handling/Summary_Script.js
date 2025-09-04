@@ -5,7 +5,18 @@ let release = "";
 let packages = [];
 
 function getAllTestDirectories(data) {
-    return data.platforms.flatMap(platform => platform.test_directories.map(directory => directory.test_directory));
+    if (!data || !data.platforms) return [];
+    return data.platforms
+        .filter(platform => platform && platform.test_directories)
+        .flatMap(platform => {
+            try {
+                return platform.test_directories.map(directory => directory?.test_directory || '')
+                    .filter(dir => dir);
+            } catch (e) {
+                console.warn(`Error processing test directories for platform: `, platform);
+                return [];
+            }
+        });
 }
 
 function clearPackagesOptions() {
@@ -171,7 +182,7 @@ function platformContainer(platforms) {
     platforms.forEach(platform => {
         const $container = $('<div>', { class: 'platform ' + platform.name }).appendTo($platformContainer);
         $container.html(`<h2>Results of ${platform.name}</h2>`);
-        const tplArray = platform.third_party_libs;
+        const tplArray = platform.third_party_libs || [];
         const $toggleButton = $('<button>', {
             text: 'Third Party Libraries',
             class: 'tpl-toggle-button',
@@ -206,8 +217,12 @@ function platformContainer(platforms) {
         letters.forEach(letter => {
             const $letterContainer = $('<div>', { class: 'letter_container ' + letter }).appendTo($container);
             $('<h3>').text(letter).appendTo($letterContainer);
+            if (!platform.test_directories){
+                platform.test_directories = [];
+            }
             const testDirectoriesForLetter = platform.test_directories.filter(directory => directory.letters === letter);
             testDirectoriesForLetter.forEach(directory => {
+                if (!directory) return;
                 const $directoryContainer = $('<div>', { class: 'directory_container' }).appendTo($letterContainer);
                 const $directoryName = $('<a>', {
                     href: `${release}/${directory.test_directory}/TestReport_${platform.name}.gz`,
