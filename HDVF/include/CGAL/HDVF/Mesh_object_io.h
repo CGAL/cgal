@@ -294,7 +294,7 @@ public:
      *
      * Create an empty Mesh_object_io.
      */
-    Mesh_object_io() : dim(0), nvertices(0), ncells(0), nedges(0) {}
+    Mesh_object_io(int d = 0) : dim(d), nvertices(0), ncells(0), nedges(0) {}
 
     /** \brief Constructor from a vector of Io_node_type (vertices coordinates) and a vector of simplices.
      *
@@ -306,7 +306,6 @@ public:
      * \param[in] vnodes Vector of vertices coordinates.
      * \param[in] vcells Vector of cells (described by a sorted vector of indices)
      * \param[in] sort_data If `true` the vectors of vertex indices are sorted, if `false` they are assumed to be sorted (faster).
-     *
      */
     Mesh_object_io(int d, const std::vector<Io_node_type> &vnodes, const std::vector<Io_cell_type> &vcells, bool sort_data = false) : dim(d), nvertices(vnodes.size()), ncells(vcells.size()), nedges(0), nodes(vnodes), cells(vcells) {
         check_dimension() ;
@@ -317,9 +316,6 @@ public:
             }
         }
     }
-
-    /* \brief Copy constructor. */
-    Mesh_object_io(const Mesh_object_io &m) : dim(m.dim), nvertices(m.nvertices), ncells(m.ncells), nedges(m.nedges), nodes(m.nodes), cells(m.cells) {}
 
     std::vector<std::vector<double> > get_nodes () const
     {
