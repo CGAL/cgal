@@ -537,19 +537,14 @@ public:
     const auto& edges = skeleton_.edges();
     for(const auto& e : edges) {
       const std::size_t i = e.first, j = e.second;
-      if(i < n && j < n) {
         edge_adj_[i].push_back(j);
         edge_adj_[j].push_back(i);
       }
-    }
     for(std::size_t fid = 0; fid < faces_->size(); ++fid) {
       const auto& f = (*faces_)[fid];
       const std::size_t a = f[0], b = f[1], c = f[2];
-      if(a < n)
         face_incident_[a].push_back(fid);
-      if(b < n)
         face_incident_[b].push_back(fid);
-      if(c < n)
         face_incident_[c].push_back(fid);
     }
 
@@ -564,10 +559,6 @@ public:
     const Iterator it = pp.second; // iterator into spheres_
     const std::size_t i = static_cast<std::size_t>(std::distance(spheres_->begin(), it));
 
-    eval_sphere(i, p, dmin);
-    for(std::size_t j : edge_adj_[i]) {
-      eval_sphere(j, p, dmin);
-    }
 
     // Cones (edges) incident to the closest sphere
     for(std::size_t j : edge_adj_[i]) {
