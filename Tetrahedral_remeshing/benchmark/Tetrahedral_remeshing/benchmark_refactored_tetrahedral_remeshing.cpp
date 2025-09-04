@@ -1,6 +1,6 @@
 #define USE_REFACTORED_TETRAHEDRAL_REMESHING
-//#define CGAL_CONCURRENT_TETRAHEDRAL_REMESHING
-//#define CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+#define CGAL_CONCURRENT_TETRAHEDRAL_REMESHING
+#define CGAL_TETRAHEDRAL_REMESHING_VERBOSE
 
 #include "benchmark_refactored_tetrahedral_remeshing_macros_config.h"
 #include "benchmark_tetrahedral_remeshing_common.h"
@@ -21,10 +21,6 @@
  	#define USE_THREADSAFE_INCIDENT_CELLS
  #endif
 
-#if defined CGAL_TETRAHEDRAL_REMESHING_USE_COMPLEX_EDGE_SMOOTHING && defined CGAL_TETRAHEDRAL_REMESHING_USE_SURFACE_VERTEX_SMOOTHING && defined CGAL_TETRAHEDRAL_REMESHING_USE_INTERNAL_VERTEX_SMOOTHING
-    #define CGAL_TETRAHEDRAL_REMESHING_USE_REFACTORED_SMOOTH
-#endif
-
 #ifdef CGAL_CONCURRENT_TETRAHEDRAL_REMESHING
   #include <tbb/version.h>
   #if TBB_VERSION_MAJOR >= 2018
@@ -39,13 +35,11 @@
 #else
   #define Concurrency_tag CGAL::Sequential_tag
 #endif
-// Define C3t3 type wrapped around Remeshing_triangulation
 using K = CGAL::Exact_predicates_inexact_constructions_kernel;
 using Vb = CGAL::Tetrahedral_remeshing::Remeshing_vertex_base_3<K>;
 using Cb = CGAL::Tetrahedral_remeshing::Remeshing_cell_base_3<K>;
 using T3 = CGAL::Triangulation_3<K, CGAL::Triangulation_data_structure_3<Vb,Cb,Concurrency_tag>>;
 using C3t3 = CGAL::Mesh_complex_3_in_triangulation_3<T3, int, int>;
-
 
 int main(int argc, char** argv) {
   using namespace benchmarking;
@@ -86,7 +80,6 @@ int main(int argc, char** argv) {
   // append_run_info(results_json, "Lock_radius", Concurrent_tetrahedral_remesher_config::get().first_grid_lock_radius);
   // append_run_info(results_json, "Num_work_items_per_batch", Concurrent_tetrahedral_remesher_config::get().num_work_items_per_batch);
 #else
-  std::cout << "-- Sequential Atomic Tetrahedral Remeshing --" << std::endl;
   if(num_threads != 1) {
     std::cerr << "Warning: num_threads argument ignored in sequential mode (should be 1)." << std::endl;
   }
@@ -103,7 +96,7 @@ int main(int argc, char** argv) {
   if(!CGAL::IO::read_MEDIT(is, tr)){
     std::cerr << "Error: Could not read input mesh '" << input << "'" << std::endl;
     fatal_error(std::string("Could not read input mesh '") + input + "'");
-  } 
+  }
 
   std::cout << "Number of vertices: " << tr.number_of_vertices() << std::endl;
   std::cout << "Number of cells: " << tr.number_of_cells() << std::endl;
@@ -138,7 +131,7 @@ int main(int argc, char** argv) {
   CGAL::tetrahedral_isotropic_remeshing(c3t3, target_edge_length,
                                         CGAL::parameters::number_of_iterations(num_iterations).smooth_constrained_edges(smooth_constrained_edges));
   t_atomic.stop();
-  
+
   //std::cout << "After remeshing:" << std::endl;
   //for(auto it=tr.finite_vertices_begin(); it!=tr.finite_vertices_end(); ++it) {
   //  if(it->in_dimension() == -1) {

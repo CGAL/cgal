@@ -80,4 +80,4 @@ int main(int argc, char** argv) {
     // Write JSON
     write_results_json(results_json, results_json_path);
     return 0;
-} 
+}

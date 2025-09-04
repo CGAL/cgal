@@ -149,7 +149,7 @@ public:
     std::vector<ElementType>& elements,
     Operation& op,
     C3t3& c3t3) override {
-    size_t num_ops = 0;
+    size_t num_successful_locks = 0;
     bool success = true;
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
     std::cout << "Executing operation sequentially: " << op.operation_name() << "...";
@@ -157,14 +157,14 @@ public:
 
     for (const auto& element : elements) {
       if(op.execute_operation(element, c3t3)) {
-      num_ops++;
+      num_successful_locks++;
       }
 
     }
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
     std::cout << " done num_elements:" << elements.size()
-              << ", num_ops : " <<num_ops << std::endl;
+              << ", num_successful_locks : " <<num_successful_locks << std::endl;
     #endif
 
     return true;
@@ -216,7 +216,7 @@ private:
 
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-    std::atomic<size_t> num_ops = 0;
+    std::atomic<size_t> num_successful_locks = 0;
     std::atomic<size_t> num_failed_locks = 0;
 #endif
     //size_t num_threads = 8; // Start with single thread for ordered processing
@@ -241,15 +241,15 @@ private:
                 c3t3.triangulation().unlock_all_elements();
                 // Optional: small delay to reduce contention
                 std::this_thread::yield();
+#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
                 num_failed_locks++;
+#endif
               }
             }
             // Execute operation once lock is acquired
             bool success = op.execute_operation(element, c3t3);
             #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-            if(success) {
-              num_ops++;
-            }
+		  num_successful_locks++;
             #endif
             c3t3.triangulation().unlock_all_elements();
           }
@@ -267,10 +267,12 @@ private:
       }
       std::ofstream ofs(csv_path, std::ios::app);
       if (need_header) {
-        ofs << "operation,num_ops,num_failed_locks,lock_success_rate" << std::endl;
+        ofs << "operation,num_successful_locks,num_failed_locks,lock_success_rate(%),operation_exec_counter" << std::endl;
       }
-      double lock_success_rate = (num_failed_locks == 0) ? 100.0 : 100*static_cast<double>(num_ops) / num_failed_locks;
-      ofs << op.operation_name() << "," << num_ops << "," << num_failed_locks << "," << lock_success_rate << std::endl;
+      size_t operation_exec_counter = (op.operation_name() == std::string("Edge Split")) ? g_edge_split_exec_counter : 0;
+      const size_t attempts = static_cast<size_t>(num_successful_locks + num_failed_locks);
+      const double lock_success_rate = (attempts == 0) ? 0.0 : 100.0 * static_cast<double>(num_successful_locks) / static_cast<double>(attempts);
+      ofs << op.operation_name() << "," << num_successful_locks << "," << num_failed_locks << "," << lock_success_rate << "," << operation_exec_counter << std::endl;
     }
     #endif
 
@@ -288,7 +290,7 @@ private:
     std::shuffle(elements.begin(), elements.end(), g);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-    std::atomic<size_t> num_ops = 0;
+    std::atomic<size_t> num_successful_locks = 0;
     std::atomic<size_t> num_failed_locks = 0;
 #endif
     tbb::parallel_for_each(elements, [&](const ElementType& element) {
@@ -298,15 +300,15 @@ private:
         if(!lock_acquired) {
           c3t3.triangulation().unlock_all_elements();
           std::this_thread::yield(); // backoff to reduce contention
+#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
           num_failed_locks++;
+#endif
         }
       }
 
       bool success = op.execute_operation(element, c3t3);
       #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-      if(success) {
-        num_ops++;
-      }
+	num_successful_locks++;
       #endif
       c3t3.triangulation().unlock_all_elements();
     });
@@ -320,10 +322,12 @@ private:
       }
       std::ofstream ofs(csv_path, std::ios::app);
       if (need_header) {
-        ofs << "operation,num_ops,num_failed_locks,lock_success_rate" << std::endl;
+        ofs << "operation,num_successful_locks,num_failed_locks,lock_success_rate(%),operation_exec_counter" << std::endl;
       }
-      double lock_success_rate = (num_failed_locks == 0) ? 100.0 : 100*static_cast<double>(num_ops) / num_failed_locks;
-      ofs << op.operation_name() << "," << num_ops << "," << num_failed_locks << "," << lock_success_rate << std::endl;
+      size_t operation_exec_counter = (op.operation_name() == std::string("Edge Split")) ? g_edge_split_exec_counter : 0;
+      const size_t attempts = static_cast<size_t>(num_successful_locks + num_failed_locks);
+      const double lock_success_rate = (attempts == 0) ? 0.0 : 100.0 * static_cast<double>(num_successful_locks) / static_cast<double>(attempts);
+      ofs << op.operation_name() << "," << num_successful_locks << "," << num_failed_locks << "," << lock_success_rate << "," << operation_exec_counter << std::endl;
     }
     #endif
     return true;

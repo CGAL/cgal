@@ -59,7 +59,6 @@ private:
   const SizingFunction& m_sizing;
   const CellSelector& m_cell_selector;
   bool m_protect_boundaries;
-  static int s_operation_counter; // Static counter for operation tracking
   // Helper function to create a unique identifier for an edge
   std::string edge_id(const ElementType& vp) const {
     std::ostringstream oss;
@@ -264,12 +263,8 @@ public:
   std::string operation_name() const override {
     return "Edge Split";
   }
-
+  
 };
-
-// Initialize static counter
-template<typename C3t3, typename SizingFunction, typename CellSelector>
-int EdgeSplitOperation<C3t3, SizingFunction, CellSelector>::s_operation_counter = 0;
 
 } // namespace internal
 } // namespace Tetrahedral_remeshing

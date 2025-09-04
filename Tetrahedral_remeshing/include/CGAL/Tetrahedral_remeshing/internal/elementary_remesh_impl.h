@@ -108,8 +108,6 @@ public:
       m_context->refresh(c3t3);
 
       if(!protect_boundaries) {
-		#ifdef CGAL_TETRAHEDRAL_REMESHING_USE_COMPLEX_EDGE_SMOOTHING
-          // Smooth vertices on complex edges
           if(smooth_constrained_edges && m_edge_smooth_op) {
               ExecutionPolicy<ComplexEdgeSmoothOp> executor;
               executor.execute(*m_edge_smooth_op, c3t3);
@@ -119,9 +117,7 @@ public:
             std::cerr << "Complex edge smoothing operation not initialized." << std::endl;
           }
           #endif
-          #endif
 
-          #ifdef CGAL_TETRAHEDRAL_REMESHING_USE_SURFACE_VERTEX_SMOOTHING
           // Smooth vertices on surface
           if(m_surface_vertices_smooth_op) {
               ExecutionPolicy<SurfaceVertexSmoothOp> executor;
@@ -132,16 +128,13 @@ public:
             std::cerr << "Surface vertex smoothing operation not initialized." << std::endl;
           }
           #endif
-          #endif
       }
 
-	#ifdef CGAL_TETRAHEDRAL_REMESHING_USE_INTERNAL_VERTEX_SMOOTHING
       // Smooth internal vertices
       {
           ExecutionPolicy<InternalVertexSmoothOp> executor;
           executor.execute(*m_internal_vertices_smooth_op, c3t3);
       }
-      #endif
   }
   };
 
