@@ -666,13 +666,16 @@ private:
         dist2 = cone_distance(p, c1, c2, r1, r2, t2);
         dmin = std::min(dmin, dist2);
       }
-    } else {
+    }
       dmin = std::min(dmin, cone_distance(p, c1, c2, r1, r2, FT(0)));
       dmin = std::min(dmin, cone_distance(p, c1, c2, r1, r2, FT(1)));
     }
-  }
 
   void eval_slab(std::size_t ia, std::size_t ib, std::size_t ic, const Point_3& p, FT& dmin) const {
+    constexpr FT EPS = FT(1e-12);
+    auto is_zero = [&](FT x) { return CGAL::abs(x) <= EPS; };
+    auto feasible = [&](FT u, FT v) { return u >= FT(0) && v >= FT(0) && u + v <= FT(1) && u <= FT(1) && v <= FT(1); };
+
     const Point_3& c1 = spheres_->at(ia).center();
     const Point_3& c2 = spheres_->at(ib).center();
     const Point_3& c3 = spheres_->at(ic).center();
@@ -704,7 +707,7 @@ private:
     FT t1 = 0, t2 = 0, dist1 = 0, dist2 = 0;
 
     // three spheres have the same radius
-    if(r13 == FT(0) && r23 == FT(0)) {
+    if(is_zero(r13) && is_zero(r23)) {
       //     x*c13                                         = 0
       //===> ||c13||^2 * t1 + (c13 *c23)* t2 + (c13 * c3p) = 0
       //===> a*t1 + c*t2 + d                               = 0
@@ -714,9 +717,11 @@ private:
       //===> b*t2 + c*t1 + e                               = 0
 
       const FT denom = a * b - c * c;
+      if(!is_zero(denom)) {
       t1 = (c * e - b * d) / denom;
       t2 = (c * d - a * e) / denom;
-    } else if(r13 == FT(0) && r23 != FT(0)) {
+      }
+    } else if(is_zero(r13) && !is_zero(r23)) {
       // x * c13 = 0 ===> a*t1 + c*t2 + d = 0 ===> t1 = -(c/a)*t2 - d/a
       const FT h = -c / a;
       const FT k = -d / a;
@@ -726,8 +731,8 @@ private:
       //===>         (x * c23)^2 = ||x||^2 * r23^2
       //===> (b*t2 + c*t1 + e)^2 = ||x||^2 * r23^2
       const FT A = (b + c * h) * (b + c * h) - r23 * r23 * (a * h * h + b + FT(2) * c * h);
-      const FT B =
-          (FT(2) * (b + c * h) * (c * k + e) - r23 * r23 * (FT(2) * a * h * k + FT(2) * c * k + FT(2) * d * h + FT(2) * e));
+      const FT B = (FT(2) * (b + c * h) * (c * k + e) -
+                    r23 * r23 * (FT(2) * a * h * k + FT(2) * c * k + FT(2) * d * h + FT(2) * e));
       const FT C = (c * k + e) * (c * k + e) - r23 * r23 * (a * k * k + FT(2) * d * k + f);
       FT t1_1 = 0, t1_2 = 0, t2_1 = 0, t2_2 = 0;
       solve_quadric(A, B, C, t2_1, t2_2);
@@ -742,7 +747,7 @@ private:
         t1 = t1_1;
         t2 = t2_1;
       }
-    } else if(r13 != FT(0) && r23 == FT(0)) {
+    } else if(!is_zero(r13) && is_zero(r23)) {
       // x * c23 = 0 ===> b*t2 + c*t1 + e = 0 ===> t1 = -(b/c)*t2 - e/c
       const FT h = -b / c;
       const FT k = -e / c;
@@ -779,7 +784,7 @@ private:
       const FT v = r23 * c - r13 * b;
       const FT w = r23 * d - r13 * e;
       // ===> u*t1 + v*t2 + w = 0
-      if(u == 0 && v != 0) {
+      if(is_zero(u) && !is_zero(v)) {
         t2 = -w / v;
         const FT A = a * a - r13 * r13 * a;
         const FT B = FT(2) * a * (c * t2 + d) - r13 * r13 * (FT(2) * c * t2 + FT(2) * d);
@@ -808,8 +813,8 @@ private:
           t2 = t2_1;
         }
       } else {
-        const FT h = -u / v;
-        const FT k = -w / v;
+        const FT h = -v / u;
+        const FT k = -w / u;
         const FT A = (b + c * h) * (b + c * h) - r23 * r23 * (a * h * h + b + FT(2) * c * h);
         const FT B = (2 * (b + c * h) * (c * k + e) -
                       r23 * r23 * (FT(2) * a * h * k + FT(2) * c * k + FT(2) * d * h + FT(2) * e));
@@ -829,7 +834,7 @@ private:
         }
       }
     }
-    if((t1 + t2) < FT(1) && t1 > FT(0) && t2 > FT(0) && t1 < FT(1) && t2 < FT(1)) {
+    if(feasible(t1, t2)) {
       dmin = std::min(dmin, slab_distance(p, c1, c2, c3, r1, r2, r3, t1, t2));
       return;
     }
