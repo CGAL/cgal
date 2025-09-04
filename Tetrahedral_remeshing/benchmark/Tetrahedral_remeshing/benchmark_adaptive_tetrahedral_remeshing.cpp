@@ -9,6 +9,17 @@
 #include <iomanip>
 #include <nlohmann/json.hpp>
 
+#ifdef CGAL_CONCURRENT_TETRAHEDRAL_REMESHING
+  #define Concurrency_tag CGAL::Parallel_tag
+#else
+  #define Concurrency_tag CGAL::Sequential_tag
+#endif
+using K = CGAL::Exact_predicates_inexact_constructions_kernel;
+using Vb = CGAL::Tetrahedral_remeshing::Remeshing_vertex_base_3<K>;
+using Cb = CGAL::Tetrahedral_remeshing::Remeshing_cell_base_3<K>;
+using T3 = CGAL::Triangulation_3<K, CGAL::Triangulation_data_structure_3<Vb,Cb,Concurrency_tag>>;
+using C3t3 = CGAL::Mesh_complex_3_in_triangulation_3<T3, int, int>;
+
 int main(int argc, char** argv) {
     using namespace benchmarking;
     using nlohmann::json;
@@ -44,23 +55,24 @@ int main(int argc, char** argv) {
     append_run_info(results_json, "Lock_radius", "N/A");
     append_run_info(results_json, "Num_work_items_per_batch", "N/A");
 #endif
-    Remeshing_triangulation tr;
-    std::ifstream is(input, std::ios_base::in);
-    if(!CGAL::IO::read_MEDIT(is, tr)) {
-        fatal_error(std::string("Could not read input mesh '") + input + "'");
-    }
+  C3t3 c3t3;
+  T3& tr = c3t3.triangulation();
+  std::ifstream is(input, std::ios_base::in);
+  if(!CGAL::IO::read_MEDIT(is, tr)){
+    std::cerr << "Error: Could not read input mesh '" << input << "'" << std::endl;
+    fatal_error(std::string("Could not read input mesh '") + input + "'");
+  } 
     // Extract input_name from input path
     std::string input_name = std::filesystem::path(input).stem().string();
     write_triangulation_info(results_json, tr, input_name);
     CGAL::Real_timer t;
     t.start();
     append_run_info(results_json, "Technique", "Adaptive");
-    Remeshing_triangulation temp_tr = tr;
-    CGAL::tetrahedral_isotropic_remeshing(temp_tr,
-        CGAL::create_adaptive_remeshing_sizing_field(temp_tr),
+    CGAL::tetrahedral_isotropic_remeshing(tr,
+        CGAL::create_adaptive_remeshing_sizing_field(tr),
         CGAL::parameters::number_of_iterations(num_iterations));
     t.stop();
-    generate_quality_metrics(temp_tr, results_json);
+    generate_quality_metrics(c3t3, results_json);
     append_metric_result(results_json, "Performance", "Memory", "Value", CGAL::Memory_sizer().virtual_size() >> 20);
     append_metric_result(results_json, "Performance", "Total_Time", "Value", t.time());
     // Status

@@ -40,6 +40,8 @@ protected:
   CellSelector& m_cell_selector;
   bool m_protect_boundaries;
   Visitor m_visitor;
+  mutable tbb::concurrent_unordered_map<Vertex_handle,
+    boost::container::small_vector<Cell_handle, 64> > inc_cells;
 
 public:
   EdgeFlipOperationBase(C3t3& c3t3,
@@ -56,17 +58,6 @@ public:
   CellSelector& get_cell_selector() { return m_cell_selector; }
   bool get_protect_boundaries() const { return m_protect_boundaries; }
 
-protected:
-  // Helper to get incident cells for a vertex
-  boost::container::small_vector<Cell_handle, 64> get_incident_cells(Vertex_handle vh, const C3t3& c3t3) const {
-    boost::container::small_vector<Cell_handle, 64> inc_cells;
-#ifdef USE_THREADSAFE_INCIDENT_CELLS
-    c3t3.triangulation().incident_cells_threadsafe(vh, std::back_inserter(inc_cells));
-#else
-    c3t3.triangulation().incident_cells(vh, std::back_inserter(inc_cells));
-#endif
-    return inc_cells;
-  }
 };
 
 // Internal Edge Flip Operation - processes vertex pairs like original get_internal_edges
@@ -94,7 +85,6 @@ public:
   using BaseClass::m_cell_selector;
   using BaseClass::m_protect_boundaries;
   using BaseClass::m_visitor;
-  using BaseClass::get_incident_cells;
 
   // Import types from base class
   using typename BaseClass::Tr;
@@ -132,8 +122,12 @@ public:
     
       auto& tr = c3t3.triangulation();
       #if 1
-    std::vector<Cell_handle> inc_cells_first,inc_cells_second;
-    return tr.try_lock_and_get_incident_cells(e.first, inc_cells_first) &&tr.try_lock_and_get_incident_cells(e.second, inc_cells_second);
+    boost::container::small_vector<Cell_handle, 64> inc_cells_first,inc_cells_second;
+    bool successfully_locked=tr.try_lock_and_get_incident_cells(e.first, inc_cells_first) &&tr.try_lock_and_get_incident_cells(e.second, inc_cells_second);
+    //Cache the incident cells
+    inc_cells[e.first] = inc_cells_first;
+    inc_cells[e.second] = inc_cells_second;
+return successfully_locked; 
 #else
     
     const auto& vp = e;
@@ -191,20 +185,21 @@ private:
     auto& tr = c3t3.triangulation();
 
     // Get incident cells for first vertex only
-    auto inc_vh = get_incident_cells(vp.first, c3t3);
+    //auto inc_vh = get_incident_cells(vp.first, c3t3);
+    boost::container::small_vector<Cell_handle, 64>& o_inc_vh = inc_cells[vp.first];
+    if (o_inc_vh.empty())
+      o_inc_vh=get_incident_cells(vp.first, c3t3);
 
     Cell_handle ch;
     int i0, i1;
-    if (is_edge_uv(vp.first, vp.second, inc_vh, ch, i0, i1))
+    if (is_edge_uv(vp.first, vp.second, o_inc_vh, ch, i0, i1))
     {
       Edge edge_to_flip(ch, i0, i1);
 
       // Create a map starting with the cells we already computed
-      std::unordered_map<Vertex_handle, boost::container::small_vector<Cell_handle, 64>> temp_inc_cells; //TODO: Could this be cached?
-      temp_inc_cells[vp.first] = inc_vh;
 
       Sliver_removal_result res = find_best_flip(edge_to_flip, c3t3, MIN_ANGLE_BASED,
-                                               temp_inc_cells, m_cell_selector, m_visitor);
+                                               inc_cells, m_cell_selector, m_visitor);
 
       if (res == INVALID_CELL || res == INVALID_VERTEX || res == INVALID_ORIENTATION)
       {
@@ -256,7 +251,6 @@ public:
   using BaseClass::m_cell_selector;
   using BaseClass::m_protect_boundaries;
   using BaseClass::m_visitor;
-  using BaseClass::get_incident_cells;
 
   // Import types from base class
   using typename BaseClass::Tr;
@@ -323,8 +317,11 @@ public:
   bool lock_zone(const ElementType& e, const C3t3& c3t3) const override {
     auto& tr = c3t3.triangulation();
   #if 1
-    std::vector<Cell_handle> inc_cells_first,inc_cells_second;
-    return tr.try_lock_and_get_incident_cells(e.first, inc_cells_first) &&tr.try_lock_and_get_incident_cells(e.second, inc_cells_second);
+    boost::container::small_vector<Cell_handle, 64> inc_cells_first,inc_cells_second;
+    bool successfully_locked = tr.try_lock_and_get_incident_cells(e.first, inc_cells_first) &&tr.try_lock_and_get_incident_cells(e.second, inc_cells_second);
+    inc_cells[e.first] = inc_cells_first;
+    inc_cells[e.second] = inc_cells_second;
+    return successfully_locked;
     //      const auto& vp = e;
     //// We need to lock v individually first, to be sure v->cell() is valid
     //if(!tr.try_lock_vertex(vp.first) || !tr.try_lock_vertex(vp.second))
@@ -411,11 +408,14 @@ private:
     auto& tr = c3t3.triangulation();
 
     // Use shared inc_cells cache (matches original behavior)
-    boost::container::small_vector<Cell_handle, 64> inc_vh0 = get_incident_cells(vh0, c3t3);
+    //boost::container::small_vector<Cell_handle, 64> inc_vh0 = get_incident_cells(vh0, c3t3);
+    boost::container::small_vector<Cell_handle, 64>& o_inc_vh = inc_cells[vp.first];
+    if (o_inc_vh.empty())
+      o_inc_vh=get_incident_cells(vp.first, c3t3);
 
     Cell_handle c;
     int i, j;
-    if (!is_edge_uv(vh0, vh1, inc_vh0, c, i, j))
+    if (!is_edge_uv(vh0, vh1, o_inc_vh, c, i, j))
       return false;
 
     Edge edge_to_flip(c, i, j);
@@ -466,13 +466,9 @@ private:
                     + (v3 - m3)*(v3 - m3);
 
       if (initial_cost > final_cost) {
-        // Create a map starting with the cells we already computed
-        std::unordered_map<Vertex_handle, boost::container::small_vector<Cell_handle, 64>> temp_inc_cells;
-        temp_inc_cells[vh0] = inc_vh0;
-
         // Perform the flip using temporary inc_cells map
         Sliver_removal_result db = flip_on_surface(c3t3, edge_to_flip, vh2, vh3,
-                                                 temp_inc_cells, MIN_ANGLE_BASED, m_visitor);
+                                                 inc_cells, MIN_ANGLE_BASED, m_visitor);
 
         if (db == VALID_FLIP) {
           // Add new facets to complex
