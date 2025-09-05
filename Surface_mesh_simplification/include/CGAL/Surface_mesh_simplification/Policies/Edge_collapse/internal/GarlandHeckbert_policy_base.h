@@ -164,8 +164,6 @@ public:
                   const VertexPointMap vpm,
                   const GeomTraits& gt) const
   {
-    Mat_4 zero_mat = Mat_4::Zero();
-
     for(vertex_descriptor v : vertices(tmesh))
       put(vcm(), v, construct_quadric(v, tmesh, vpm, gt));
 

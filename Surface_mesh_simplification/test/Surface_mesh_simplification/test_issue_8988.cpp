@@ -165,7 +165,6 @@ int main()
     auto t_end = std::chrono::steady_clock::now();
     double elapsed_sec = std::chrono::duration_cast<std::chrono::duration<double>>(t_end - t_start).count();
 
-    std::cout << "diff " << neighbor_size/nb_call << std::endl;
     std::cout << "\nSimplification finished." << std::endl;
     std::cout << "Edges removed: " << r << std::endl;
     std::cout << "Final mesh: " << mesh.number_of_faces() << " faces." << std::endl;

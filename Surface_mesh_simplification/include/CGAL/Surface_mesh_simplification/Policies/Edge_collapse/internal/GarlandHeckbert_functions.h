@@ -243,8 +243,6 @@ construct_optimal_point_singular(const typename GarlandHeckbert_matrix_types<Geo
   {
 #if 1
     Col_4 opt_pt;
-    const Col_4 mean = (p1+p0)/2;
-
     const Col_4 p1mp0 = p1 - p0;
     const FT a = (p1mp0.transpose() * quadric * p1mp0)(0, 0);
     const FT b = 2 * (p0.transpose() * quadric * p1mp0)(0, 0);
@@ -545,10 +543,7 @@ construct_line_quadric_from_normal(const typename GeomTraits::Vector_3& normal,
                                            const typename GeomTraits::Point_3& point,
                                            const GeomTraits& gt)
 {
-  typedef typename GeomTraits::FT                                              FT;
   typedef typename GeomTraits::Vector_3                                        Vector_3;
-
-  typedef typename GarlandHeckbert_matrix_types<GeomTraits>::Row_4             Row_4;
 
   auto cp = gt.construct_cross_product_vector_3_object();
   auto plane = gt.construct_plane_3_object();
