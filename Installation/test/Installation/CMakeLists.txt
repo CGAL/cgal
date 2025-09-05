@@ -1,7 +1,4 @@
-# Created by the script cgal_create_cmake_script
-# This is the CMake script for compiling a CGAL application.
-
-cmake_minimum_required(VERSION 3.12...3.31)
+cmake_minimum_required(VERSION 3.19...3.31)
 
 project( Installation_Tests )
 
@@ -51,9 +48,9 @@ if(WIN32 OR CMAKE_SYSTEM_NAME STREQUAL Windows)
   create_single_source_cgal_program(test_gmp_mpfr_dll.cpp)
   target_link_libraries(test_gmp_mpfr_dll PRIVATE version)
   string(RANDOM RDM_DIR)#5 random chars to avoid conflicts in parallel testsuites
-  set(NON_STANDARD_INSTALL_PREFIX $ENV{TEMP}/${RDM_DIR})
+  set(WORKING_DIRS_PREFIX $ENV{TEMP}/${RDM_DIR})
 else()
-  set(NON_STANDARD_INSTALL_PREFIX ${CMAKE_BINARY_DIR})
+  set(WORKING_DIRS_PREFIX ${CMAKE_BINARY_DIR})
 endif()
 
 if(WITH_CGAL_Qt6)
@@ -71,193 +68,195 @@ if(LEDA_FOUND)
 endif()
 
 if("$ENV{INIT_FILE}" STREQUAL "")
-  set(INIT_FILE )
+  set(INIT_FILE)
 else()
-  set(INIT_FILE -C$ENV{INIT_FILE})
+  set(INIT_FILE "-C$ENV{INIT_FILE}")
 endif()
-
+##
+# Function: CGAL_installation_test_find_package_version
+# Adds a test for finding the CGAL package with a specific version mode.
+##
 function(CGAL_installation_test_find_package_version mode)
-  set(EXACT)
+  file(REMOVE_RECURSE "${CMAKE_CURRENT_BINARY_DIR}/build-test_find_package_version_${mode}")
+  file(REMOVE_RECURSE "${CMAKE_CURRENT_BINARY_DIR}/test_find_package_version_${mode}")
+  file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/build-test_find_package_version_${mode}")
+  file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/test_find_package_version_${mode}")
+
+  set(EXACT "")
+  set(FAIL FALSE)
   if(mode STREQUAL "less")
     set(CGAL_MINOR_VERSION 0)
-  endif()
-  if(mode STREQUAL "less_major")
+  elseif(mode STREQUAL "less_major")
     set(CGAL_MAJOR_VERSION 0)
-  endif()
-  if(mode STREQUAL "greater" OR mode STREQUAL "fail-exact")
+  elseif(mode STREQUAL "greater" OR mode STREQUAL "fail-exact")
     math(EXPR CGAL_MINOR_VERSION "${CGAL_MINOR_VERSION} + 1")
   endif()
   if(mode STREQUAL "exact" OR mode STREQUAL "fail-exact")
     set(EXACT "EXACT ")
   endif()
-  if(CGAL_BUGFIX_VERSION AND CGAL_BUGFIX_VERSION GREATER 0)
-    set(VERSION
-        "${CGAL_MAJOR_VERSION}.${CGAL_MINOR_VERSION}.${CGAL_BUGFIX_VERSION}")
-  else()
-    set(VERSION "${CGAL_MAJOR_VERSION}.${CGAL_MINOR_VERSION}")
+  if(ARGN STREQUAL "FAIL")
+    set(FAIL TRUE)
   endif()
-  file(REMOVE_RECURSE "${CMAKE_CURRENT_BINARY_DIR}/build-test_find_package_version_${mode}")
-  file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/build-test_find_package_version_${mode})
-  file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/test_find_package_version_${mode})
 
-  configure_file(test_find_package.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/test_find_package_version_${mode}/CMakeLists.txt)
+  set(VERSION "${CGAL_MAJOR_VERSION}.${CGAL_MINOR_VERSION}")
+  if(CGAL_BUGFIX_VERSION AND CGAL_BUGFIX_VERSION GREATER 0)
+    set(VERSION "${VERSION}.${CGAL_BUGFIX_VERSION}")
+  endif()
+  configure_file(test_find_package.cmake.in "${CMAKE_CURRENT_BINARY_DIR}/test_find_package_version_${mode}/CMakeLists.txt" @ONLY)
 
-  add_test(NAME test_find_package_version_${mode}
-    COMMAND ${CMAKE_COMMAND} ${INIT_FILE} -DCMAKE_BUILD_TYPE=Release ${CMAKE_CURRENT_BINARY_DIR}/test_find_package_version_${mode}
+  add_test(NAME "test_find_package_version_${mode}"
+    COMMAND ${CMAKE_COMMAND} ${INIT_FILE}
+                             -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+                             -S "${CMAKE_CURRENT_BINARY_DIR}/test_find_package_version_${mode}"
+                             -B "${CMAKE_CURRENT_BINARY_DIR}/build-test_find_package_version_${mode}"
     )
-  cgal_setup_test_properties(test_find_package_version_${mode})
-  set_property(TEST test_find_package_version_${mode}
-    PROPERTY
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/build-test_find_package_version_${mode})
+  cgal_setup_test_properties("test_find_package_version_${mode}")
+  if(ARGN STREQUAL "FAIL")
+    set_tests_properties("test_find_package_version_${mode}" PROPERTIES WILL_FAIL TRUE)
+  endif()
 endfunction()
 
 CGAL_installation_test_find_package_version(less)
 CGAL_installation_test_find_package_version(less_major)
 CGAL_installation_test_find_package_version(equal)
-CGAL_installation_test_find_package_version(greater)
+CGAL_installation_test_find_package_version(greater FAIL)
 CGAL_installation_test_find_package_version(exact)
-CGAL_installation_test_find_package_version(fail-exact)
-
-set_tests_properties(
-  test_find_package_version_greater
-  test_find_package_version_fail-exact
-  PROPERTIES WILL_FAIL TRUE)
+CGAL_installation_test_find_package_version(fail-exact FAIL)
 
 find_package(CGAL COMPONENTS Qt6)
 
-file(MAKE_DIRECTORY "${NON_STANDARD_INSTALL_PREFIX}/non_standard_install")
-file(MAKE_DIRECTORY ${NON_STANDARD_INSTALL_PREFIX}/non_standard_build)
-file(MAKE_DIRECTORY ${NON_STANDARD_INSTALL_PREFIX}/test_config_file)
-
-if(CGAL_Qt6_FOUND)
-  file(MAKE_DIRECTORY ${NON_STANDARD_INSTALL_PREFIX}/non_standard_install_qt)
-  file(MAKE_DIRECTORY ${NON_STANDARD_INSTALL_PREFIX}/non_standard_build_qt)
-  file(MAKE_DIRECTORY ${NON_STANDARD_INSTALL_PREFIX}/test_config_file_qt)
-  configure_file(test_configuration_qt.cmake.in ${CMAKE_BINARY_DIR}/test_config_file_qt/CMakeLists.txt @ONLY)
-endif()#CGAL_Qt6_FOUND
-
 #If ctest is ran from a global config, CGAL_SOURCE_DIR exists, but from Installation/test it doesn't. In that case, however, there is a CGAL_DIR.
-if("${CGAL_SOURCE_DIR}" STREQUAL "")
-  if("$ENV{CGAL_RELEASE_DIR}" STREQUAL "")
-    set(CGAL_SOURCE_DIR ${CGAL_DIR})
+if(NOT CGAL_SOURCE_DIR)
+  if(NOT ENV{CGAL_RELEASE_DIR})
+    set(CGAL_SOURCE_DIR "${CGAL_DIR}")
   else()
-    set(CGAL_SOURCE_DIR $ENV{CGAL_RELEASE_DIR})
+    set(CGAL_SOURCE_DIR "${ENV{CGAL_RELEASE_DIR}}")
   endif()
 endif()
-string(REGEX REPLACE "/cygdrive/c/" "C:/" CGAL_SOURCE_DIR ${CGAL_SOURCE_DIR})
+string(REGEX REPLACE "/cygdrive/c/" "C:/" CGAL_SOURCE_DIR "${CGAL_SOURCE_DIR}")
 
-configure_file(test_configuration.cmake.in ${CMAKE_BINARY_DIR}/test_config_file/CMakeLists.txt @ONLY)
+file(MAKE_DIRECTORY "${WORKING_DIRS_PREFIX}/test_config_file")
+configure_file(test_configuration.cmake.in "${CMAKE_BINARY_DIR}/test_config_file/CMakeLists.txt" @ONLY)
 
-#test CGAL_DIR = source_dir (Git_root or CGAL-5.x dir.
-get_filename_component(CGAL_DIR_CORRECT_PATH "${CGAL_SOURCE_DIR}/CGALConfig.cmake" DIRECTORY)
-add_test(NAME test_config_file_in_CGAL_SOURCE_DIR
-  COMMAND ${CMAKE_COMMAND} ${GENERATOR} ${INIT_FILE} -DCMAKE_BUILD_TYPE=Release -DCGAL_DIR=${CGAL_DIR_CORRECT_PATH} -DCGAL_GIVEN_DIR=${CGAL_DIR_CORRECT_PATH}
-    "${CMAKE_BINARY_DIR}/test_config_file" #src
-  WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/build-test_config_file_in_CGAL_SOURCE_DIR") #build
-list(APPEND test_config_lst "test_config_file_in_CGAL_SOURCE_DIR")
+if(CGAL_Qt6_FOUND)
+  file(MAKE_DIRECTORY "${WORKING_DIRS_PREFIX}/test_config_file_qt")
+  configure_file(test_configuration_qt.cmake.in "${CMAKE_BINARY_DIR}/test_config_file_qt/CMakeLists.txt" @ONLY)
+endif()#CGAL_Qt6_FOUND
 
-if(RUNNING_CGAL_AUTO_TEST OR CGAL_TEST_SUITE)#CGAL_BRANCH_BUILD
-  #test CGAL_DIR = CGAL-5.x/lib/cmake/CGAL
-  get_filename_component(CGAL_DIR_CORRECT_PATH "${CGAL_SOURCE_DIR}/lib/cmake/CGAL/CGALConfig.cmake" DIRECTORY)
-  add_test(NAME test_config_file_in_lib_cmake_CGAL
-    COMMAND ${CMAKE_COMMAND} ${GENERATOR} ${INIT_FILE} -DCMAKE_BUILD_TYPE=Release -DCGAL_DIR=${CGAL_DIR_CORRECT_PATH} -DCGAL_GIVEN_DIR=${CGAL_DIR_CORRECT_PATH}
-      "${CMAKE_BINARY_DIR}/test_config_file"
-    WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/build-test_config_file_in_lib_cmake_CGAL")
-else()#CGAL_BRANCH_BUILD
-  #use the CGAL_DIR
-  get_filename_component(CGAL_DIR_CORRECT_PATH "${CGAL_SOURCE_DIR}/Installation/lib/cmake/CGAL/CGALConfig.cmake" DIRECTORY)
-  add_test(NAME test_config_file_in_lib_cmake_CGAL
-    COMMAND ${CMAKE_COMMAND} ${GENERATOR} ${INIT_FILE} -DCMAKE_BUILD_TYPE=Release -DCGAL_DIR=${CGAL_DIR_CORRECT_PATH} -DCGAL_GIVEN_DIR=${CGAL_DIR_CORRECT_PATH}
-      "${CMAKE_BINARY_DIR}/test_config_file"
-    WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/build-test_config_file_in_lib_cmake_CGAL")
-endif()#CGAL_BRANCH_BUILD
-list(APPEND test_config_lst "test_config_file_in_lib_cmake_CGAL")
+##
+# Function: CGAL_add_config_file_test
+# Adds a config file test for a given CGAL config path
+##
+function(CGAL_add_config_file_test test_name src_dir build_dir cgal_config_path)
+  get_filename_component(cgal_dir ${cgal_config_path} DIRECTORY)
+  add_test(NAME config___${test_name}
+    COMMAND ${CMAKE_COMMAND} ${GENERATOR} ${INIT_FILE}
+                             -DCGAL_ENABLE_TESTING=ON
+                             -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+                             "-DCGAL_DIR=${cgal_dir}"
+                             "-DCGAL_GIVEN_DIR=${cgal_dir}"
+                             -S "${src_dir}" -B "${build_dir}")
+  add_test(NAME "setup____${test_name}"  COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_BINARY_DIR}/build-${test_name}")
+  add_test(NAME "cleanup__${test_name}"  COMMAND ${CMAKE_COMMAND} -E remove_directory "${CMAKE_BINARY_DIR}/build-${test_name}")
+  add_test(NAME "test_____${test_name}"
+    COMMAND ${CMAKE_CTEST_COMMAND} --test-dir "${CMAKE_BINARY_DIR}/build-${test_name}" --build-config "$<CONFIG>")
+  set_property(TEST "test_____${test_name}" APPEND PROPERTY DEPENDS "config__${test_name}")
 
-#configure cgal for a non standard install without Qt6
-get_filename_component(CORRECT_INSTALL_PATH "${NON_STANDARD_INSTALL_PREFIX}/non_standard_install/dummy.txt" DIRECTORY)
-add_test(NAME config_non_standard_cgal
-  COMMAND ${CMAKE_COMMAND} ${GENERATOR} ${INIT_FILE} -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${CORRECT_INSTALL_PATH} -DCGAL_INSTALL_LIB_DIR=lib
-  "${CGAL_SOURCE_DIR}"
-  WORKING_DIRECTORY "${NON_STANDARD_INSTALL_PREFIX}/non_standard_build")
-#install cgal in the non standard place
-add_test(NAME install_non_standard_cgal
-  COMMAND ${CMAKE_COMMAND} --build "${NON_STANDARD_INSTALL_PREFIX}/non_standard_build" --target "install" --config "$<CONFIG>")
+  set_property(TEST "setup____${test_name}" APPEND PROPERTY FIXTURES_SETUP "${test_name}_fixture")
+  set_property(TEST "cleanup__${test_name}" APPEND PROPERTY FIXTURES_CLEANUP "${test_name}_fixture")
+  set_property(TEST "config___${test_name}"
+                    "test_____${test_name}"
+              APPEND PROPERTY FIXTURES_REQUIRED "${test_name}_fixture")
+
+  set_property(TEST "setup____${test_name}"
+                    "cleanup__${test_name}"
+                    "config___${test_name}"
+                    "test_____${test_name}"
+               APPEND PROPERTY LABELS Installation_Tests CGAL_cmake_testsuite)
+
+endfunction()
+
+##
+# Function: test_CGAL_installation
+# Adds config and install tests for a CGAL installation
+##
+function(test_CGAL_installation test_name install_prefix build_dir)
+  add_test(NAME config_${test_name}
+    COMMAND ${CMAKE_COMMAND} ${GENERATOR} ${INIT_FILE} "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
+                                                       "-DCMAKE_INSTALL_PREFIX=${install_prefix}"
+                                                       "-DCGAL_INSTALL_LIB_DIR=lib"
+                                                       -S "${CGAL_SOURCE_DIR}" -B "${build_dir}")
+  add_test(NAME install_${test_name}
+    COMMAND ${CMAKE_COMMAND} --install "${build_dir}" --config "$<CONFIG>")
+  set_property(TEST install_${test_name} APPEND PROPERTY DEPENDS config_${test_name})
+  set_property(TEST install_${test_name}
+                    config_${test_name}
+               APPEND PROPERTY LABELS Installation_Tests CGAL_cmake_testsuite)
+  set_property(TEST install_${test_name} APPEND PROPERTY FIXTURES_SETUP install_${test_name}_fixture)
+endfunction()
+
+CGAL_add_config_file_test(
+  test_config_file_in_CGAL_SOURCE_DIR
+  "${CMAKE_BINARY_DIR}/test_config_file"
+  "${CMAKE_BINARY_DIR}/build-test_config_file_in_CGAL_SOURCE_DIR"
+  "${CGAL_SOURCE_DIR}/CGALConfig.cmake"
+)
+
+if(EXISTS "${CGAL_SOURCE_DIR}/Installation/lib/cmake/CGAL/CGALConfig.cmake")
+  set(CGAL_INSTALLATION_FILES_DIR "${CGAL_SOURCE_DIR}/Installation")
+else()
+  set(CGAL_INSTALLATION_FILES_DIR "${CGAL_SOURCE_DIR}")
+endif()
+
+CGAL_add_config_file_test(
+  test_config_file_in_lib_cmake_CGAL
+  "${CMAKE_BINARY_DIR}/test_config_file"
+  "${CMAKE_BINARY_DIR}/build-test_config_file_in_lib_cmake_CGAL"
+  "${CGAL_INSTALLATION_FILES_DIR}/lib/cmake/CGAL/CGALConfig.cmake"
+)
+
+# install cgal in the non standard place without Qt6
+get_filename_component(CORRECT_INSTALL_PATH "${WORKING_DIRS_PREFIX}/non_standard_install/dummy.txt" DIRECTORY)
+test_CGAL_installation(
+  non_standard_cgal
+  "${CORRECT_INSTALL_PATH}"
+  "${WORKING_DIRS_PREFIX}/non_standard_build"
+)
 
 #test CGAL_DIR=non standard place without cgal_qt
-get_filename_component(CGAL_DIR_CORRECT_PATH "${NON_STANDARD_INSTALL_PREFIX}/non_standard_install/lib/cmake/CGAL/CGALConfig.cmake" DIRECTORY)
-add_test(NAME test_config_file_non_standard_install_lib_cmake
-COMMAND ${CMAKE_COMMAND} ${INIT_FILE} -DCMAKE_BUILD_TYPE=Release -DCGAL_DIR=${CGAL_DIR_CORRECT_PATH} -DCGAL_GIVEN_DIR=${CGAL_DIR_CORRECT_PATH}
-"${CMAKE_BINARY_DIR}/test_config_file"
-WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/build-test_config_file_non_standard_install_lib_cmake")
-list(APPEND test_config_lst "test_config_file_non_standard_install_lib_cmake")
+CGAL_add_config_file_test(
+  test_config_file_non_standard_install_lib_cmake
+  "${CMAKE_BINARY_DIR}/test_config_file"
+  "${CMAKE_BINARY_DIR}/build-test_config_file_non_standard_install_lib_cmake"
+  "${WORKING_DIRS_PREFIX}/non_standard_install/lib/cmake/CGAL/CGALConfig.cmake"
+)
+
+set_property(TEST config___test_config_file_non_standard_install_lib_cmake
+             APPEND PROPERTY FIXTURES_REQUIRED install_non_standard_cgal_fixture)
 
 if(CGAL_Qt6_FOUND)
   #configure cgal for a non standard install with Qt6
-  add_test(NAME config_non_standard_cgal_qt
-    COMMAND ${CMAKE_COMMAND} ${INIT_FILE} -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${NON_STANDARD_INSTALL_PREFIX}/non_standard_install_qt -DCGAL_INSTALL_LIB_DIR=lib
-    "${CGAL_SOURCE_DIR}"
-    WORKING_DIRECTORY "${NON_STANDARD_INSTALL_PREFIX}/non_standard_build_qt")
-  #install cgal in the non standard place
-  add_test(NAME install_non_standard_cgal_qt
-    COMMAND ${CMAKE_COMMAND} --build "${NON_STANDARD_INSTALL_PREFIX}/non_standard_build_qt" --target "install" --config "$<CONFIG>")
+  test_CGAL_installation(
+    non_standard_cgal_qt
+    "${WORKING_DIRS_PREFIX}/non_standard_install_qt"
+    "${WORKING_DIRS_PREFIX}/non_standard_build_qt"
+  )
 
   #test CGAL_DIR=non standard place with cgal_qt
-  get_filename_component(CGAL_DIR_CORRECT_PATH "${NON_STANDARD_INSTALL_PREFIX}/non_standard_install_qt/lib/cmake/CGAL/CGALConfig.cmake" DIRECTORY)
-  add_test(NAME test_config_file_non_standard_install_lib_cmake_with_qt
-    COMMAND ${CMAKE_COMMAND} ${INIT_FILE} -DCMAKE_BUILD_TYPE=Release -DCGAL_DIR=${CGAL_DIR_CORRECT_PATH} -DCGAL_GIVEN_DIR=${CGAL_DIR_CORRECT_PATH}
+  CGAL_add_config_file_test(
+    test_config_file_non_standard_install_lib_cmake_with_qt
     "${CMAKE_BINARY_DIR}/test_config_file_qt"
-    WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/build-test_config_file_non_standard_install_lib_cmake_with_qt")
-  list(APPEND test_config_lst "test_config_file_non_standard_install_lib_cmake_with_qt")
+    "${CMAKE_BINARY_DIR}/build-test_config_file_non_standard_install_lib_cmake_with_qt"
+    "${WORKING_DIRS_PREFIX}/non_standard_install_qt/lib/cmake/CGAL/CGALConfig.cmake"
+  )
+
+  set_property(TEST config___test_config_file_non_standard_install_lib_cmake_with_qt
+               APPEND PROPERTY FIXTURES_REQUIRED install_non_standard_cgal_qt_fixture)
 endif()#CGAL_Qt6_FOUND
 
-#test CGAL_DIR=non standard build
-get_filename_component(CGAL_DIR_CORRECT_PATH "${NON_STANDARD_INSTALL_PREFIX}/non_standard_build/CGALConfig.cmake" DIRECTORY)
-add_test(NAME test_config_file_non_standard
-COMMAND ${CMAKE_COMMAND} ${INIT_FILE} -DCMAKE_BUILD_TYPE=Release -DCGAL_DIR=${CGAL_DIR_CORRECT_PATH} -DCGAL_GIVEN_DIR=${CGAL_DIR_CORRECT_PATH}
- "${CMAKE_BINARY_DIR}/test_config_file"
- WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/build-test_config_file_non_standard")
-list(APPEND test_config_lst "test_config_file_non_standard")
-
-foreach(tgt ${test_config_lst})
-  #add_custom_target(${tgt}_target)
-  add_test(NAME "${tgt}_SetupFixture"  COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_BINARY_DIR}/build-${tgt}")
-  add_test(NAME "${tgt}_CleanupFixture"  COMMAND ${CMAKE_COMMAND} -E remove_directory "${CMAKE_BINARY_DIR}/build-${tgt}")
-  add_test(NAME compile__${tgt}
-    COMMAND ${CMAKE_COMMAND} --build "${CMAKE_BINARY_DIR}/build-${tgt}" --config "$<CONFIG>")
-    add_test(NAME exec__${tgt}
-      COMMAND ./test_configuration
-      WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/build-${tgt}")
-
-  set_property(TEST "${tgt}_SetupFixture" APPEND PROPERTY FIXTURES_SETUP ${tgt}_target)
-  set_property(TEST "${tgt}_CleanupFixture" APPEND PROPERTY FIXTURES_CLEANUP ${tgt}_target)
-  set_property(TEST ${tgt} APPEND PROPERTY FIXTURES_REQUIRED ${tgt}_target)
-  set_property(TEST compile__${tgt} APPEND PROPERTY FIXTURES_REQUIRED ${tgt}_target)
-  set_property(TEST compile__${tgt} APPEND PROPERTY DEPENDS ${tgt})
-  set_property(TEST exec__${tgt} APPEND PROPERTY FIXTURES_REQUIRED ${tgt}_target)
-  set_property(TEST exec__${tgt} APPEND PROPERTY DEPENDS compile__${tgt})
-
-  set_property(TEST "${tgt}_SetupFixture" APPEND PROPERTY LABELS Installation_Tests CGAL_cmake_testsuite)
-  set_property(TEST "${tgt}_CleanupFixture" APPEND PROPERTY LABELS Installation_Tests CGAL_cmake_testsuite)
-  set_property(TEST ${tgt} APPEND PROPERTY LABELS Installation_Tests CGAL_cmake_testsuite)
-  set_property(TEST compile__${tgt} APPEND PROPERTY LABELS Installation_Tests CGAL_cmake_testsuite)
-  set_property(TEST exec__${tgt} APPEND PROPERTY LABELS Installation_Tests CGAL_cmake_testsuite)
-
-endforeach()
-
-set_property(TEST install_non_standard_cgal APPEND PROPERTY DEPENDS config_non_standard_cgal)
-set_property(TEST config_non_standard_cgal APPEND PROPERTY FIXTURES_SETUP test_config_file_non_standard_install_lib_cmake_target)
-set_property(TEST install_non_standard_cgal APPEND PROPERTY FIXTURES_SETUP test_config_file_non_standard_install_lib_cmake_target)
-set_property(TEST test_config_file_non_standard_install_lib_cmake test_config_file_non_standard APPEND PROPERTY FIXTURES_REQUIRED test_config_file_non_standard_install_lib_cmake_target)
-
-set_property(TEST install_non_standard_cgal APPEND PROPERTY LABELS Installation_Tests CGAL_cmake_testsuite)
-set_property(TEST config_non_standard_cgal APPEND PROPERTY LABELS Installation_Tests CGAL_cmake_testsuite)
-
-if(CGAL_Qt6_FOUND)
-  set_property(TEST install_non_standard_cgal_qt APPEND PROPERTY DEPENDS config_non_standard_cgal_qt)
-  set_property(TEST config_non_standard_cgal_qt APPEND PROPERTY FIXTURES_SETUP test_config_file_non_standard_install_lib_cmake_with_qt_target)
-  set_property(TEST install_non_standard_cgal_qt APPEND PROPERTY FIXTURES_SETUP test_config_file_non_standard_install_lib_cmake_with_qt_target)
-  set_property(TEST test_config_file_non_standard_install_lib_cmake_with_qt APPEND PROPERTY FIXTURES_REQUIRED test_config_file_non_standard_install_lib_cmake_with_qt_target)
-
-  set_property(TEST install_non_standard_cgal_qt APPEND PROPERTY LABELS Installation_Tests CGAL_cmake_testsuite)
-  set_property(TEST config_non_standard_cgal_qt APPEND PROPERTY LABELS Installation_Tests CGAL_cmake_testsuite)
-endif()#CGAL_Qt6_FOUND
+CGAL_add_config_file_test(
+  test_config_file_non_standard
+  "${CMAKE_BINARY_DIR}/test_config_file"
+  "${CMAKE_BINARY_DIR}/build-test_config_file_non_standard"
+  "${WORKING_DIRS_PREFIX}/non_standard_build/CGALConfig.cmake"
+)
