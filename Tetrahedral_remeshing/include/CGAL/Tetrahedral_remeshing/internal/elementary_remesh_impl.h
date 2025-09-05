@@ -39,7 +39,7 @@ class Elementary_remesher
   typedef typename Tr::Vertex_handle Vertex_handle;
   typedef typename Tr::Edge Edge;
 
-#ifdef CGAL_CONCURRENT_TETRAHEDRAL_REMESHING && CGAL_LINKED_WITH_TBB
+#if defined CGAL_CONCURRENT_TETRAHEDRAL_REMESHING && defined CGAL_LINKED_WITH_TBB
   template <typename Operation> using ExecutionPolicy = ElementaryOperationExecutionParallel<Operation>;
 #else
   template <typename Operation> using ExecutionPolicy = ElementaryOperationExecutionSequential<Operation>;

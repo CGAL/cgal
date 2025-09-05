@@ -105,7 +105,7 @@ private:
   // Ensure the lock data structure is initialized when needed
   void ensure_lock_data_structure_initialized(C3t3& c3t3)
   {
-#ifdef CGAL_CONCURRENT_TETRAHEDRAL_REMESHING && CGAL_LINKED_WITH_TBB
+#if defined CGAL_CONCURRENT_TETRAHEDRAL_REMESHING && defined CGAL_LINKED_WITH_TBB
     auto& triangulation = c3t3.triangulation();
     if (!triangulation.get_lock_data_structure()) {
       // Create a lock data structure using the C3T3's bounding box
@@ -209,7 +209,7 @@ public:
     if constexpr(std::is_same<decltype(elements), std::vector<ElementType>>::value) {
       candidates = std::move(elements); // directly move if vector
     } else {
-#ifdef CGAL_CONCURRENT_TETRAHEDRAL_REMESHING && CGAL_LINKED_WITH_TBB
+#if defined CGAL_CONCURRENT_TETRAHEDRAL_REMESHING && defined CGAL_LINKED_WITH_TBB
       tbb::combinable<std::vector<ElementType>> local_candidates;
       tbb::parallel_for_each(elements.begin(), elements.end(),
                              [&](const ElementType& element) { local_candidates.local().push_back(element); });
@@ -226,7 +226,9 @@ private:
   bool apply_ordered_processing(
     std::vector<ElementType>& elements,
     Operation& op,
-    C3t3& c3t3) {
+    C3t3& c3t3)
+    {
+#if defined CGAL_CONCURRENT_TETRAHEDRAL_REMESHING && defined CGAL_LINKED_WITH_TBB
     // Create concurrent priority queue for all elements
     tbb::concurrent_queue<ElementType> work_queue(elements.begin(), elements.end());
 
@@ -291,6 +293,7 @@ private:
 //      ofs << op.operation_name() << "," << num_successful_locks << "," << num_failed_locks << "," << lock_success_rate << /"," /<< operation_exec_counter << std::endl;
     }
     #endif
+#endif //concurrent
 
     return true;
   }
@@ -299,7 +302,9 @@ private:
   bool apply_unordered_processing(
     std::vector<ElementType>& elements,
     Operation& op,
-    C3t3& c3t3) {
+    C3t3& c3t3)
+    {
+#if defined CGAL_CONCURRENT_TETRAHEDRAL_REMESHING && defined CGAL_LINKED_WITH_TBB
     std::random_device rd;
     std::mt19937 g(rd());
 
@@ -346,6 +351,7 @@ private:
 //      ofs << op.operation_name() << "," << num_successful_locks << "," << num_failed_locks << "," << lock_success_rate << "," << operation_exec_counter << std::endl;
     }
     #endif
+#endif //concurrent
     return true;
   }
 

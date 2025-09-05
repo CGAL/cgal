@@ -55,7 +55,12 @@ protected:
   CellSelector& m_cell_selector;
   bool m_protect_boundaries;
   Visitor m_visitor;
+
+#if defined CGAL_CONCURRENT_TETRAHEDRAL_REMESHING && defined CGAL_LINKED_WITH_TBB
   mutable tbb::concurrent_unordered_map<Vertex_handle, Cells_vector> inc_cells;
+#else
+  std::unordered_map<Vertex_handle, Cells_vector> inc_cells;
+#endif
 
 public:
   EdgeFlipOperationBase(C3t3& c3t3,

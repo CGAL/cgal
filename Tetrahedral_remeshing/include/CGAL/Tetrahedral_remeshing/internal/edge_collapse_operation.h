@@ -28,10 +28,13 @@
 #include <optional>
 #include <vector>
 #include <iostream>
-#include <tbb/concurrent_unordered_map.h>
 #include <unordered_set>
 #include <iterator>
 #include <algorithm>
+
+#ifdef CGAL_LINKED_WITH_TBB
+#include <tbb/concurrent_unordered_map.h>
+#endif
 
 //#define EDGE_COLLAPSE_DEBUG
 
@@ -70,7 +73,12 @@ private:
   const CellSelector& m_cell_selector;
   bool m_protect_boundaries;
   const Visitor& m_visitor;
+
+#if defined CGAL_CONCURRENT_TETRAHEDRAL_REMESHING && defined CGAL_LINKED_WITH_TBB
   tbb::concurrent_unordered_map<Edge,bool> should_skip_edge;
+#else
+  boost::unordered_map<Edge, bool> should_skip_edge;
+#endif
 
   // Debug data member to store locked cells
   //thread_local static std::set<std::size_t> m_locked_cells_timestamps;
