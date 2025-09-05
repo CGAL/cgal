@@ -78,15 +78,15 @@ public:
 
 	//---------- Delaunay related methods
 	void flip(Dart_descriptor dart);
-	unsigned make_Delaunay();
+	unsigned make_Delaunay();  // private
 	void insert(Point const & query, Anchor & hint);
 	void insert(Point const & query);
 
 	//---------- eps-net methods
 	bool epsilon_net(double const epsilon);
-	bool is_epsilon_covering(const double epsilon);  // make const
-	bool is_epsilon_packing(const double epsilon); // make const
-	bool is_epsilon_net(const double epsilon); // make const
+	bool is_epsilon_covering(const double epsilon) const;
+	bool is_epsilon_packing(const double epsilon) const;
+	bool is_epsilon_net(const double epsilon) const;
 	
 	double shortest_loop() const;
 	double shortest_edge() const;
@@ -1016,20 +1016,20 @@ epsilon_net(double const epsilon)
 	bool is_packing = is_epsilon_packing(epsilon);
 	CGAL_assertion(is_covering);
 	CGAL_assertion(is_packing);
-	return is_covering&&is_packing;
+	return is_covering && is_packing;
 }
 
 template<class Traits>
 bool
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
-is_epsilon_covering(const double epsilon)
+is_epsilon_covering(const double epsilon) const
 {
 	Interval delta_epsilon = cosh(epsilon) - 1;
 	Number lower_bound = Number(lower(delta_epsilon));
 	bool is_covering = true;
-	for (typename Face_range::iterator it = this->combinatorial_map_.template one_dart_per_cell<2>().begin();
+	for (typename Face_const_range::const_iterator it = this->combinatorial_map_.template one_dart_per_cell<2>().begin();
 		it != this->combinatorial_map_.template one_dart_per_cell<2>().end(); ++it) {
-		Anchor& current_anchor = anchor(it);
+		Anchor const & current_anchor = anchor(it);
 
 		Traits gt;
 		CGAL::internal::Construct_hyperbolic_circumcenter_CK_2<Traits> chc(gt);
@@ -1047,22 +1047,22 @@ is_epsilon_covering(const double epsilon)
 template<class Traits>
 bool
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
-is_epsilon_packing(const double epsilon)
+is_epsilon_packing(const double epsilon) const
 {
 	Interval delta_epsilon = cosh(epsilon)-1;
 	bool is_packing = true;
-	for (typename Edge_range::iterator it = this->combinatorial_map_.template one_dart_per_cell<1>().begin();
+	for (typename Edge_const_range::const_iterator it = this->combinatorial_map_.template one_dart_per_cell<1>().begin();
 									   it != this->combinatorial_map_.template one_dart_per_cell<1>().end(); ++it) {
-		Anchor& current_anchor = anchor(it);
+		Anchor const & current_anchor = anchor(it);
 		unsigned index = index_in_anchor(it);
-		Point & a = current_anchor.vertices[index];
-		Point & b = current_anchor.vertices[ccw(index)];
+		Point const & a = current_anchor.vertices[index];
+		Point const & b = current_anchor.vertices[ccw(index)];
 		
 		if (delta(a, b) < lower(delta_epsilon)) {
 			is_packing = false;  // consider that it's not a packing
 
 			// check if the edge is a loop
-			Dart_descriptor next = Base::ccw(it);
+			Dart_const_descriptor next = Base::const_ccw(it);
 			auto doc = this->combinatorial_map_.template darts_of_cell<0>(it);
 			for (auto dart = doc.begin(); dart != doc.end(); ++dart) {
 				if (next == dart) {
@@ -1077,7 +1077,7 @@ is_epsilon_packing(const double epsilon)
 template<class Traits>
 bool
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
-is_epsilon_net(const double epsilon)
+is_epsilon_net(const double epsilon) const
 {
 	return is_epsilon_covering(epsilon) && is_epsilon_packing(epsilon);
 }

@@ -34,23 +34,23 @@ typedef typename Delaunay_triangulation::Anchor                                 
 int main(int argc, char **argv)
 {
 	// 1. GENERATE THE INPUT
-	// Domain domain;
-	// int seed;
-	// if (argc <= 2) {
-	// 	seed = time(NULL);
-	// 	std::cout << "Generating surface with random seed " << seed << "..." << std::endl;
-	// } else {
-	// 	seed = atoi(argv[2]);
-	// 	std::cout << "Generating surface with seed " << seed << "..." << std::endl;
-	// }
-	// Factory factory;
-	// domain = factory.make_hyperbolic_fundamental_domain_g2(seed);
+	Domain domain;
+	int seed;
+	if (argc <= 2) {
+		seed = time(NULL);
+		std::cout << "Generating surface with random seed " << seed << "..." << std::endl;
+	} else {
+		seed = atoi(argv[2]);
+		std::cout << "Generating surface with seed " << seed << "..." << std::endl;
+	}
+	Factory factory;
+	domain = factory.make_hyperbolic_fundamental_domain_g2(seed);
 
 	// 2. GET A VERTEX
 	// So that if you run the demo on a same surface but with different values of epsilon,
 	// the drawing will be centered at the same vertex and it will look similar.
-	Domain domain;
-	std::ifstream("/home/clanuel/Documents/camille/cgal_camille/benchmarks/input_domains/FM-genus-7.txt") >> domain;
+	// Domain domain;
+	// std::ifstream("/home/clanuel/Documents/camille/cgal_camille/benchmarks/input_domains/FM-genus-3.3.txt") >> domain;
 	Delaunay_triangulation dt = Delaunay_triangulation(domain);
 	Point v0 = dt.anchor().vertices[0];
 
