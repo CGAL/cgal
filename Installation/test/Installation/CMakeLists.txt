@@ -164,7 +164,7 @@ function(CGAL_add_config_file_test test_name src_dir cgal_config_path)
   set(build_dir "${CMAKE_BINARY_DIR}/CGAL_cmake_test_suite/build-${test_name}")
   get_filename_component(cgal_dir "${cgal_config_path}" DIRECTORY)
   if(arg_TEST_EXAMPLES)
-    set(extra_ctest_args "-R terrain_with_info")
+    set(extra_ctest_args -R terrain_with_info)
   endif()
   add_test(NAME "config___${test_name}"
     COMMAND ${CMAKE_COMMAND} ${GENERATOR} ${INIT_FILE}
