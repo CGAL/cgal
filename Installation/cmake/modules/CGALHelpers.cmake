@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.16)
 include_guard(GLOBAL)
 
 function(process_CGAL_subdirectory entry subdir type_name)
@@ -10,6 +10,7 @@ function(process_CGAL_subdirectory entry subdir type_name)
   endif()
 
   message("-- Configuring ${subdir} in ${subdir}/${ENTRY_DIR_NAME}")
+  list(APPEND CMAKE_MESSAGE_INDENT "  ")
 
   set(source_dir "")
   if(EXISTS ${entry}/CMakeLists.txt)
@@ -30,10 +31,10 @@ function(process_CGAL_subdirectory entry subdir type_name)
   if(source_dir)
     add_subdirectory( "${source_dir}" "${CMAKE_BINARY_DIR}/${subdir}/${ENTRY_DIR_NAME}" EXCLUDE_FROM_ALL)
   endif()
+  list(POP_BACK CMAKE_MESSAGE_INDENT)
 endfunction()
 
 function(CGAL_handle_subdirectories subdir_name plural_name)
-  string(TOUPPER "${plural_name}" plural_name_upper)
   if("${plural_name}" MATCHES "s$")
     string(LENGTH "${plural_name}" plural_name_length)
     math(EXPR plural_name_length_minus_one "${plural_name_length} - 1")
@@ -42,19 +43,21 @@ function(CGAL_handle_subdirectories subdir_name plural_name)
     set(singular_name "${plural_name}")
   endif()
 
-  project(CGAL_${plural_name_upper})
-
   if(CGAL_BRANCH_BUILD)
 
     foreach(package ${CGAL_CONFIGURED_PACKAGES})
       #message (STATUS "Current package: ${package}")
-      file(GLOB listtmp "${package}/${subdir_name}/*")
-      list(APPEND list CONFIGURE_DEPENDS ${listtmp})
+      file(GLOB listtmp CONFIGURE_DEPENDS "${package}/${subdir_name}/*")
+      list(APPEND list ${listtmp})
     endforeach()
+
+  elseif(EXISTS "${CMAKE_SOURCE_DIR}/../../Installation/cmake/modules/CGAL_add_test.cmake")
+
+    file(GLOB list CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/../../*/${subdir_name}/*")
 
   else()
 
-    file(GLOB list "${subdir_name}/*")
+    file(GLOB list CONFIGURE_DEPENDS "${subdir_name}/*")
 
   endif()
 
@@ -67,7 +70,7 @@ function(CGAL_handle_subdirectories subdir_name plural_name)
   message("== Generating build files for ${plural_name} ==")
   foreach(entry ${list})
 
-    if(NOT ${entry} MATCHES ".*\\.svn\$" AND IS_DIRECTORY ${entry})
+    if(IS_DIRECTORY ${entry})
 
       file(GLOB files "${entry}/*.cpp")
 
