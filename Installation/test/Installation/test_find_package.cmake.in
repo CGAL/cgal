@@ -1,7 +1,13 @@
+
 cmake_minimum_required(VERSION 3.12...3.31)
-project( test_find_package_${mode} )
-find_package(CGAL ${VERSION} ${EXACT}REQUIRED
-  PATHS ${CGAL_DIR}
+project(test_find_package_${mode})
+
+if(@FAIL@)
+  message("\n  This test is expected to fail\n")
+endif()
+
+find_package(CGAL "@VERSION@" ${EXACT} REQUIRED
+  PATHS "@CGAL_DIR@"
   NO_DEFAULT_PATH
   NO_PACKAGE_ROOT_PATH
   NO_CMAKE_PATH
@@ -11,4 +17,4 @@ find_package(CGAL ${VERSION} ${EXACT}REQUIRED
   NO_CMAKE_BUILDS_PATH
   NO_CMAKE_SYSTEM_PATH
   NO_CMAKE_SYSTEM_PACKAGE_REGISTRY
-  )
+)
