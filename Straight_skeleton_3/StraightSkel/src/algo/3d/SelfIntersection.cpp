@@ -56,7 +56,7 @@ bool SelfIntersection::doEdgesShareAVertex(EdgeSPtr edge1,
 
     return (v1_src == v2_src || v1_src == v2_dst ||
             v1_dst == v2_src || v1_dst == v2_dst);
-};
+}
 
 bool SelfIntersection::isSelfIntersectingFacet(FacetSPtr facet) {
     Plane3SPtr pl = facet->plane();
