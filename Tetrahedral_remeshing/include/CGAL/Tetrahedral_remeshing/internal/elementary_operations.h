@@ -1,3 +1,15 @@
+// Copyright (c) 2025 GeometryFactory (France) and Telecom Paris (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org)
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+//
+// Author(s)     : Iasonas Manolas, Jane Tournois
+
 #ifndef CGAL_TETRAHEDRAL_REMESHING_ELEMENTARY_OPERATIONS_H
 #define CGAL_TETRAHEDRAL_REMESHING_ELEMENTARY_OPERATIONS_H
 
@@ -91,8 +103,9 @@ public:
 
 private:
   // Ensure the lock data structure is initialized when needed
-  void ensure_lock_data_structure_initialized(C3t3& c3t3) {
-#ifdef CGAL_CONCURRENT_TETRAHEDRAL_REMESHING
+  void ensure_lock_data_structure_initialized(C3t3& c3t3)
+  {
+#ifdef CGAL_CONCURRENT_TETRAHEDRAL_REMESHING && CGAL_LINKED_WITH_TBB
     auto& triangulation = c3t3.triangulation();
     if (!triangulation.get_lock_data_structure()) {
       // Create a lock data structure using the C3T3's bounding box
@@ -189,18 +202,21 @@ public:
   ElementaryOperationExecutionParallel& operator=(const ElementaryOperationExecutionParallel&) = default;
   ElementaryOperationExecutionParallel& operator=(ElementaryOperationExecutionParallel&&) = default;
 
-  std::vector<ElementType> collect_candidates(const Operation& op, const C3t3& c3t3) const override {
+  std::vector<ElementType> collect_candidates(const Operation& op, const C3t3& c3t3) const override
+  {
     auto elements = op.get_element_source(c3t3);
     std::vector<ElementType> candidates;
     if constexpr(std::is_same<decltype(elements), std::vector<ElementType>>::value) {
       candidates = std::move(elements); // directly move if vector
     } else {
+#ifdef CGAL_CONCURRENT_TETRAHEDRAL_REMESHING && CGAL_LINKED_WITH_TBB
       tbb::combinable<std::vector<ElementType>> local_candidates;
       tbb::parallel_for_each(elements.begin(), elements.end(),
                              [&](const ElementType& element) { local_candidates.local().push_back(element); });
       local_candidates.combine_each([&](const std::vector<ElementType>& local) {
         candidates.insert(candidates.end(), local.begin(), local.end());
       });
+#endif
     }
     return candidates;
   }
@@ -221,7 +237,7 @@ private:
 #endif
     //size_t num_threads = 8; // Start with single thread for ordered processing
     size_t num_threads = std::thread::hardware_concurrency() / 2;
-    
+
     // Parallel work stealing from priority queue
     tbb::parallel_for(tbb::blocked_range<size_t>(0, num_threads),
       [&](const tbb::blocked_range<size_t>& r) {
@@ -269,10 +285,10 @@ private:
       if (need_header) {
         ofs << "operation,num_successful_locks,num_failed_locks,lock_success_rate(%),operation_exec_counter" << std::endl;
       }
-      size_t operation_exec_counter = (op.operation_name() == std::string("Edge Split")) ? g_edge_split_exec_counter : 0;
-      const size_t attempts = static_cast<size_t>(num_successful_locks + num_failed_locks);
-      const double lock_success_rate = (attempts == 0) ? 0.0 : 100.0 * static_cast<double>(num_successful_locks) / static_cast<double>(attempts);
-      ofs << op.operation_name() << "," << num_successful_locks << "," << num_failed_locks << "," << lock_success_rate << "," << operation_exec_counter << std::endl;
+//      size_t operation_exec_counter = (op.operation_name() == std::string("Edge Split")) ? g_edge_split_exec_counter : 0;
+//      const size_t attempts = static_cast<size_t>(num_successful_locks + num_failed_locks);
+//      const double lock_success_rate = (attempts == 0) ? 0.0 : 100.0 * static_cast<double>(num_successful_locks) / //static_cast<double>(attempts);
+//      ofs << op.operation_name() << "," << num_successful_locks << "," << num_failed_locks << "," << lock_success_rate << /"," /<< operation_exec_counter << std::endl;
     }
     #endif
 
@@ -324,10 +340,10 @@ private:
       if (need_header) {
         ofs << "operation,num_successful_locks,num_failed_locks,lock_success_rate(%),operation_exec_counter" << std::endl;
       }
-      size_t operation_exec_counter = (op.operation_name() == std::string("Edge Split")) ? g_edge_split_exec_counter : 0;
-      const size_t attempts = static_cast<size_t>(num_successful_locks + num_failed_locks);
-      const double lock_success_rate = (attempts == 0) ? 0.0 : 100.0 * static_cast<double>(num_successful_locks) / static_cast<double>(attempts);
-      ofs << op.operation_name() << "," << num_successful_locks << "," << num_failed_locks << "," << lock_success_rate << "," << operation_exec_counter << std::endl;
+//      size_t operation_exec_counter = (op.operation_name() == std::string("Edge Split")) ? g_edge_split_exec_counter : 0;
+//      const size_t attempts = static_cast<size_t>(num_successful_locks + num_failed_locks);
+//      const double lock_success_rate = (attempts == 0) ? 0.0 : 100.0 * static_cast<double>(num_successful_locks) / static_cast<double>(attempts);
+//      ofs << op.operation_name() << "," << num_successful_locks << "," << num_failed_locks << "," << lock_success_rate << "," << operation_exec_counter << std::endl;
     }
     #endif
     return true;
@@ -356,7 +372,7 @@ public:
 }; // class ElementaryOperationExecution
 
 } // namespace internal
-} // namespace Tetrahedral_remeshing  
+} // namespace Tetrahedral_remeshing
 } // namespace CGAL
 
 #endif // CGAL_TETRAHEDRAL_REMESHING_ELEMENTARY_OPERATIONS_H

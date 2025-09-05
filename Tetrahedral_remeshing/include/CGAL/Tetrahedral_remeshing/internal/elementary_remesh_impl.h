@@ -1,3 +1,15 @@
+// Copyright (c) 2025 GeometryFactory (France) and Telecom Paris (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org)
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+//
+// Author(s)     : Iasonas Manolas, Jane Tournois
+
 #ifndef CGAL_TETRAHEDRAL_REMESHING_ELEMENTARY_REMESH_IMPL_H
 #define CGAL_TETRAHEDRAL_REMESHING_ELEMENTARY_REMESH_IMPL_H
 
@@ -27,7 +39,7 @@ class Elementary_remesher
   typedef typename Tr::Vertex_handle Vertex_handle;
   typedef typename Tr::Edge Edge;
 
-#ifdef CGAL_CONCURRENT_TETRAHEDRAL_REMESHING
+#ifdef CGAL_CONCURRENT_TETRAHEDRAL_REMESHING && CGAL_LINKED_WITH_TBB
   template <typename Operation> using ExecutionPolicy = ElementaryOperationExecutionParallel<Operation>;
 #else
   template <typename Operation> using ExecutionPolicy = ElementaryOperationExecutionSequential<Operation>;
@@ -78,7 +90,7 @@ public:
      InternalEdgeFlipOp internal_flip_op(c3t3, cell_selector, protect_boundaries, visitor);
      ExecutionPolicy<InternalEdgeFlipOp> internal_executor;
      internal_executor.execute(internal_flip_op, c3t3);
-     
+
      // Flip boundary edges if not protecting boundaries
      if (!protect_boundaries) {
        BoundaryEdgeFlipOp boundary_flip_op(c3t3, cell_selector, protect_boundaries, visitor);
@@ -143,4 +155,4 @@ public:
 } // namespace Tetrahedral_remeshing
 } // namespace CGAL
 
-#endif // CGAL_TETRAHEDRAL_REMESHING_ELEMENTARY_REMESH_IMPL_H 
+#endif // CGAL_TETRAHEDRAL_REMESHING_ELEMENTARY_REMESH_IMPL_H

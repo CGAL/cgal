@@ -1,3 +1,15 @@
+// Copyright (c) 2025 GeometryFactory (France) and Telecom Paris (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org)
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+//
+// Author(s)     : Iasonas Manolas, Jane Tournois
+
 #ifndef CGAL_TETRAHEDRAL_REMESHING_EDGE_SPLIT_OPERATION_H
 #define CGAL_TETRAHEDRAL_REMESHING_EDGE_SPLIT_OPERATION_H
 
@@ -26,7 +38,7 @@ static ThreadSafeLogger long_edges_logger("debug_logs/long_edges_collection.log"
 #endif
 
 template<typename C3t3, typename SizingFunction, typename CellSelector>
-class EdgeSplitOperation 
+class EdgeSplitOperation
   : public ElementaryOperation<C3t3,
                               std::pair<typename C3t3::Triangulation::Geom_traits::FT,std::pair<typename C3t3::Triangulation::Vertex_handle, typename C3t3::Triangulation::Vertex_handle>>,
                               std::vector<std::pair<typename C3t3::Triangulation::Geom_traits::FT,std::pair<typename C3t3::Triangulation::Vertex_handle, typename C3t3::Triangulation::Vertex_handle>>>,
@@ -122,21 +134,21 @@ public:
   ElementSource get_element_source(const C3t3& c3t3) const override {
     // Collect long edges as vertex pairs
     auto long_edges = get_long_edges(c3t3);
-    
+
 #ifdef CGAL_TETRAHEDRAL_REMESHING_EDGE_SPLIT_DEBUG
     // Log the collection of long edges to separate file
     long_edges_logger.log("=== LONG EDGES COLLECTION - Thread: ", std::this_thread::get_id(), " ===");
     long_edges_logger.log("Total long edges found: ", long_edges.size());
-    
+
     for (size_t i = 0; i < long_edges.size(); ++i) {
       const auto& edge_data = long_edges[i];
       const auto& length = edge_data.first;
-      
+
       long_edges_logger.log("Edge[", i, "] length:", length);
     }
     long_edges_logger.log("=== END LONG EDGES COLLECTION ===");
 #endif
-    
+
     return long_edges;
   }
 
@@ -147,20 +159,20 @@ public:
     const auto& edge_length =el.first;
       #if 1
     std::vector<Cell_handle> inc_cells_first,inc_cells_second;
-    
-    bool lock_success = tr.try_lock_and_get_incident_cells(vertex_pair.first, inc_cells_first) && 
+
+    bool lock_success = tr.try_lock_and_get_incident_cells(vertex_pair.first, inc_cells_first) &&
                        tr.try_lock_and_get_incident_cells(vertex_pair.second, inc_cells_second);
-    
+
 #ifdef CGAL_TETRAHEDRAL_REMESHING_EDGE_SPLIT_DEBUG
     if(!lock_success) {
         edge_split_logger.log("[LOCK_FAILED] length:", edge_length, " - Thread: ", std::this_thread::get_id());
     }
 #endif
-    
+
     return lock_success;
-    
+
     #else
-    
+
     //auto& tr = c3t3.triangulation();
     // We need to lock v individually first, to be sure v->cell() is valid
     if(!tr.try_lock_vertex(vertex_pair.first) || !tr.try_lock_vertex(vertex_pair.second))
@@ -184,7 +196,7 @@ public:
       }
       ++ccirc;
     } while(ccirc != cdone);
-    
+
     return true;
     #endif
   }
@@ -224,12 +236,12 @@ public:
 #endif
         return false;
       }
-      
+
 #ifdef CGAL_TETRAHEDRAL_REMESHING_EDGE_SPLIT_DEBUG
       // Debug log for successful split
       edge_split_logger.log("[SPLIT_SUCCESS] on edge with length:", vp.first, " - Thread: ", std::this_thread::get_id());
 #endif
-      
+
         //if(vh != Vertex_handle())
         //  m_visitor.after_split(tr, vh);
 
@@ -248,7 +260,7 @@ public:
 #endif
       return true;
    }
-   
+
 #ifdef CGAL_TETRAHEDRAL_REMESHING_EDGE_SPLIT_DEBUG
    // Debug log for edge not found
    edge_split_logger.log("[SPLIT_FAILED] edge not found. length:", vp.first, " - Thread: ", std::this_thread::get_id());
@@ -263,11 +275,11 @@ public:
   std::string operation_name() const override {
     return "Edge Split";
   }
-  
+
 };
 
 } // namespace internal
 } // namespace Tetrahedral_remeshing
 } // namespace CGAL
 
-#endif // CGAL_TETRAHEDRAL_REMESHING_EDGE_SPLIT_OPERATION_H 
+#endif // CGAL_TETRAHEDRAL_REMESHING_EDGE_SPLIT_OPERATION_H

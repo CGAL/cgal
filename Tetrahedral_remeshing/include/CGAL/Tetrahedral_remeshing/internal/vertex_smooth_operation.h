@@ -1,3 +1,15 @@
+// Copyright (c) 2025 GeometryFactory (France) and Telecom Paris (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org)
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+//
+// Author(s)     : Iasonas Manolas, Jane Tournois
+
 #ifndef CGAL_TETRAHEDRAL_REMESHING_VERTEX_SMOOTH_OPERATION_H
 #define CGAL_TETRAHEDRAL_REMESHING_VERTEX_SMOOTH_OPERATION_H
 

@@ -1,3 +1,15 @@
+// Copyright (c) 2025 GeometryFactory (France) and Telecom Paris (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org)
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+//
+// Author(s)     : Iasonas Manolas, Jane Tournois
+
 #ifndef CGAL_TETRAHEDRAL_REMESHING_EDGE_COLLAPSE_OPERATION_H
 #define CGAL_TETRAHEDRAL_REMESHING_EDGE_COLLAPSE_OPERATION_H
 
@@ -32,7 +44,7 @@ static debug::ThreadSafeLogger logger("edge_collapse_debug.log");
 #endif
 
 template<typename C3t3, typename SizingFunction, typename CellSelector, typename Visitor>
-class EdgeCollapseOperation 
+class EdgeCollapseOperation
   : public ElementaryOperation<C3t3,
                               typename C3t3::Triangulation::Edge,
                               std::vector<typename C3t3::Triangulation::Edge>,
@@ -59,7 +71,7 @@ private:
   bool m_protect_boundaries;
   const Visitor& m_visitor;
   tbb::concurrent_unordered_map<Edge,bool> should_skip_edge;
-  
+
   // Debug data member to store locked cells
   //thread_local static std::set<std::size_t> m_locked_cells_timestamps;
 
@@ -88,7 +100,7 @@ public:
   std::vector<ElementType> get_short_edges(const C3t3& c3t3) const {
     std::vector<std::pair<Edge,FT>> short_edges_with_length;
     const auto& tr = c3t3.triangulation();
-    
+
     for (const Edge& e : tr.finite_edges()) {
       auto [collapsible, boundary] = can_be_collapsed(e, c3t3, m_protect_boundaries, m_cell_selector);
       if (!collapsible)
@@ -166,9 +178,9 @@ public:
         }
       }
     }
-    
+
     return locked;
-    
+
     #else
     if(!tr.is_vertex(v0) || !tr.is_vertex(v1)) {
       return false;
@@ -231,9 +243,9 @@ public:
 #endif
 
     // Use existing collapse_edge function from collapse_short_edges.h
-    Vertex_handle result = collapse_edge(edge, c3t3, m_sizing, m_protect_boundaries, 
+    Vertex_handle result = collapse_edge(edge, c3t3, m_sizing, m_protect_boundaries,
                                         m_cell_selector, should_skip_edge, m_visitor);
-    
+
     bool success = (result != Vertex_handle());
 
 
@@ -258,4 +270,4 @@ template<typename C3t3, typename SizingFunction, typename CellSelector, typename
 thread_local std::set<std::size_t> CGAL::Tetrahedral_remeshing::internal::EdgeCollapseOperation<C3t3, SizingFunction, CellSelector, Visitor>::m_locked_cells_timestamps;
 #endif
 
-#endif // CGAL_TETRAHEDRAL_REMESHING_EDGE_COLLAPSE_OPERATION_H 
+#endif // CGAL_TETRAHEDRAL_REMESHING_EDGE_COLLAPSE_OPERATION_H
