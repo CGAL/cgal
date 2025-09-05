@@ -21,6 +21,7 @@
 #include <CGAL/Segment_2.h>
 #include <CGAL/Point_2.h>
 #include <CGAL/kernel_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/predicates_on_points_2.h>
 #include <CGAL/Line_2.h>
@@ -141,8 +142,7 @@ seg_seg_do_intersect_crossing(
     default:
       CGAL_unreachable();
     }
-    CGAL_kernel_assertion(false);
-    return S2S2_inter_info(false);
+    CGAL_unreachable();
 }
 
 // used internally by Arr_segment_traits_2template <class K>
@@ -202,8 +202,7 @@ seg_seg_do_intersect_contained(
     default:
       CGAL_unreachable();
     }
-    CGAL_kernel_assertion(false);
-    return S2S2_inter_info(false);
+    CGAL_unreachable();
 }
 
 // used internally by Arr_segment_traits_2
@@ -319,8 +318,7 @@ do_intersect_with_info(const typename K::Segment_2 &seg1,
       CGAL_unreachable();
     }
 
-    CGAL_kernel_assertion(false);
-    return S2S2_inter_info(false);
+    CGAL_unreachable();
 }
 
 
