@@ -1,6 +1,5 @@
-project(CGAL_Demos)
-
 cmake_minimum_required(VERSION 3.12...3.31)
+project(CGAL_Demos)
 
 file(GLOB pkgs RELATIVE ${CMAKE_SOURCE_DIR} "*")
 list(SORT pkgs)
