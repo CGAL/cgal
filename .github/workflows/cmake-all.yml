@@ -17,7 +17,7 @@ jobs:
       run: |
         set -e
         mkdir build && cd build && CXX=clang++ cmake -DWITH_examples=ON -DWITH_tests=ON -DWITH_demos=ON -DCGAL_ENABLE_TESTING=ON ..
-        ctest -L Installation -j $(getconf _NPROCESSORS_ONLN)
+        ctest -L Installation -j $(getconf _NPROCESSORS_ONLN) --output-on-failure
 
   cmake-testsuite-with-qt:
     if: github.repository == 'CGAL/cgal' || github.event_name != 'push'
@@ -30,4 +30,4 @@ jobs:
       run: |
         set -e
         mkdir build && cd build && CXX=clang++ cmake -DWITH_examples=ON -DWITH_tests=ON -DWITH_demos=ON -DCGAL_ENABLE_TESTING=ON ..
-        ctest -L Installation -j $(getconf _NPROCESSORS_ONLN)
+        ctest -L Installation -j $(getconf _NPROCESSORS_ONLN) --output-on-failure
