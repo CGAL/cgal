@@ -1,0 +1,118 @@
+# Generic Benchmark Pipeline Configuration Template
+# This template shows how to configure the pipeline for any type of benchmark
+
+pipeline:
+  results_dir: /path/to/results  # Directory where results will be stored
+  run_benchmarks: true           # Whether to run benchmarks or just process existing results
+  export_csv: true               # Whether to export CSV files (enabled by default)
+  export_charts: true            # Whether to generate charts (optional)
+  report: true                   # Whether to generate HTML report (enabled by default)
+  report_chart_grid_cols: 2      # Number of columns in chart grid for report
+  resource_monitoring: true      # Whether to enable system resource monitoring during benchmark execution
+
+# Optional: Configure report title (defaults to "Benchmark Report")
+report_title: "My Custom Benchmark Report"
+
+# Benchmark configurations - can have multiple benchmarks
+benchmarks:
+  - name: my_benchmark_1
+    exec: /path/to/executable1
+    sweep:
+      # File-based parameters (automatically detected as file paths)
+      input_file: [/path/to/file1.dat, /path/to/file2.dat]
+      
+      # Numeric parameters
+      threads: [1, 2, 4, 8]
+      iterations: [10, 100, 1000]
+      
+      # String parameters
+      algorithm: ["method_a", "method_b"]
+      
+      # Range-based parameters (using dict notation)
+      learning_rate: 
+        range: [0.001, 0.1, 0.01]  # start, stop, step
+      
+      # Glob-based file selection
+      test_data:
+        glob: "*.csv"
+        base_dir: "/path/to/test/data"
+      
+      # Explicit file lists
+      models:
+        files: ["model1.pkl", "model2.pkl"]
+        base_dir: "/path/to/models"
+
+  - name: my_benchmark_2
+    exec: /path/to/executable2
+    sweep:
+      # Different parameter set for different benchmark
+      batch_size: [32, 64, 128]
+      epochs: [10, 50, 100]
+      dataset: ["/path/to/dataset1", "/path/to/dataset2"]
+
+# Chart configurations
+charts:
+  - kind: scatter
+    x: "run_metadata.input_arguments.threads"
+    y: "metrics.performance.execution_time"
+    hue: "run_metadata.input_arguments.algorithm"
+    title: "Execution Time vs Threads by Algorithm"
+    save_as: "execution_time_vs_threads.png"
+    
+  - kind: line
+    x: "run_metadata.input_arguments.iterations"
+    y: "metrics.accuracy.final_score"
+    hue: "run_metadata.input_arguments.learning_rate"
+    title: "Accuracy vs Iterations by Learning Rate"
+    save_as: "accuracy_vs_iterations.png"
+    
+  - kind: box
+    x: "run_metadata.input_arguments.algorithm"
+    y: "metrics.performance.memory_usage"
+    title: "Memory Usage Distribution by Algorithm"
+    save_as: "memory_usage_by_algorithm.png"
+    filter:
+      benchmark_name: my_benchmark_1
+
+  # Resource usage analysis charts
+  - kind: scatter
+    x: "run_metadata.input_arguments.threads"
+    y: "resource_usage.memory.peak_rss_mb"
+    hue: "run_metadata.input_arguments.algorithm"
+    title: "Peak Memory Usage vs Threads"
+    save_as: "resource_memory_vs_threads.png"
+    
+  - kind: line
+    x: "run_metadata.input_arguments.threads"
+    y: "resource_usage.cpu.mean_percent"
+    hue: "benchmark_name"
+    title: "Average CPU Usage vs Threads"
+    save_as: "resource_cpu_vs_threads.png"
+    
+  - kind: scatter
+    x: "resource_usage.memory.peak_rss_mb"
+    y: "metrics.performance.execution_time"
+    hue: "benchmark_name"
+    title: "Execution Time vs Memory Usage"
+    save_as: "execution_time_vs_memory.png"
+
+# Optional: Specify which columns to include in report tables
+report_metrics:
+  - benchmark: my_benchmark_1
+    columns:
+      - benchmark_name
+      - run_metadata.input_arguments.threads
+      - run_metadata.input_arguments.algorithm
+      - metrics.performance.execution_time
+      - metrics.accuracy.final_score
+      
+  - benchmark: my_benchmark_2
+    columns:
+      - benchmark_name
+      - run_metadata.input_arguments.batch_size
+      - run_metadata.input_arguments.epochs
+      - metrics.performance.training_time
+      - metrics.accuracy.validation_score
+
+# Optional: Schema file for validating result JSON structure
+schema_file: results_schema.yaml 

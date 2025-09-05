@@ -1,0 +1,7 @@
+- metrics:
+    - Performance
+    - Quality
+- run_metadata:
+    - status
+    - run_info
+    - input_arguments
