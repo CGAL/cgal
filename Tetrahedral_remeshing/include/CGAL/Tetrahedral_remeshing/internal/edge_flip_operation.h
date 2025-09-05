@@ -362,12 +362,13 @@ public:
     C3t3::Triangulation::Facet_circulator ccirc(edge_to_flip);
   C3t3::Triangulation::Facet_circulator cdone = ccirc;
 
-      do {
-		if(!tr.try_lock_facet(*ccirc))
+    do
+    {
+      if(!tr.try_lock_facet(*ccirc))
         ++ccirc;
-      } while(ccirc!=cdone);
+    } while(ccirc!=cdone);
 
-       return true;
+    return true;
 
        #endif
 
