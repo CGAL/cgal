@@ -14,11 +14,9 @@
 
 #include <CGAL/assertions.h>
 #include <CGAL/tags.h>
-#include <CGAL/Point_3.h>
-#include <CGAL/Segment_3.h>
-#include <CGAL/Triangle_3.h>
 
 #include <CGAL/Kernel/global_functions_2.h>
+#include <CGAL/intersection_3.h>
 #include <CGAL/Kernel_23/internal/Has_boolean_tags.h>
 #include <CGAL/Triangulation_structural_filtering_traits.h>
 
