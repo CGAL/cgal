@@ -4,9 +4,9 @@ namespace Surface_mesh_simplification {
 /*!
 \ingroup PkgSurfaceMeshSimplificationRef
 
-\deprecated This class is deprecated since \cgal 5.5 and the introduction of variations
-of Garland-Heckbert policies (Section \ref SurfaceMeshSimplificationGarlandHeckbertStrategy).
-The class `GarlandHeckbert_plane_policies` is the modern equivalent to this class.
+since \cgal 6.2, this class is an alias for the current state of the art of Garland-Heckbert policies
+(Section \ref SurfaceMeshSimplificationGarlandHeckbertStrategy).
+It is currently an alias of `GarlandHeckbert_plane_plus_line_policies`.
 
 The class `GarlandHeckbert_policies` regroups the cost and placement policies
 based on the Garland-Heckbert strategy (Section \ref SurfaceMeshSimplificationGarlandHeckbertStrategy),
@@ -22,6 +22,12 @@ such as `Constrained_placement` or `Bounded_normal_change_placement`.
                    named parameters in the call to `edge_collapse()`, the types must be identical.
 
 These policies depend on the third party \ref thirdpartyEigen library.
+
+\sa `GarlandHeckbert_plane_policies`
+\sa `GarlandHeckbert_probabilistic_plane_policies`
+\sa `GarlandHeckbert_triangle_policies`
+\sa `GarlandHeckbert_probabilistic_triangle_policies`
+\sa `GarlandHeckbert_plane_plus_line_policies`
 
 */
 template <typename TriangleMesh, typename GeomTraits>

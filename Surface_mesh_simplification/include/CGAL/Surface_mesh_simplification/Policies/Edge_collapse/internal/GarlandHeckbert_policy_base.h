@@ -59,7 +59,8 @@ struct GarlandHeckbert_quadrics_storage
 
   typedef QuadricCalculator                                                    Quadric_calculator;
 
-protected:
+  public:
+// protected:
   Vertex_cost_map m_cost_matrices;
   Quadric_calculator m_quadric_calculator;
 
@@ -130,6 +131,15 @@ public:
 
 public:
   template <typename VertexPointMap>
+  Mat_4 construct_quadric(const vertex_descriptor v,
+                          const TriangleMesh& tmesh,
+                          const VertexPointMap vpm,
+                          const GeomTraits& gt) const
+  {
+    return quadric_calculator().construct_quadric_from_vertex(v, tmesh, vpm, gt);
+  }
+
+  template <typename VertexPointMap>
   Mat_4 construct_quadric(const halfedge_descriptor he,
                           const TriangleMesh& tmesh,
                           const VertexPointMap vpm,
@@ -154,10 +164,8 @@ public:
                   const VertexPointMap vpm,
                   const GeomTraits& gt) const
   {
-    Mat_4 zero_mat = Mat_4::Zero();
-
     for(vertex_descriptor v : vertices(tmesh))
-      put(vcm(), v, zero_mat);
+      put(vcm(), v, construct_quadric(v, tmesh, vpm, gt));
 
     for(face_descriptor f : faces(tmesh))
     {

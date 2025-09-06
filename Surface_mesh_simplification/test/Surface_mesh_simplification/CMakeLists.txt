@@ -13,6 +13,7 @@ create_single_source_cgal_program("test_edge_collapse_Polyhedron_3.cpp")
 create_single_source_cgal_program("test_edge_profile_link.cpp")
 create_single_source_cgal_program("test_edge_deprecated_stop_predicates.cpp")
 create_single_source_cgal_program("test_edge_collapse_stability.cpp")
+create_single_source_cgal_program("test_issue_8988.cpp")
 
 find_package(Eigen3 3.1.0 QUIET) #(3.1.0 or greater)
 include(CGAL_Eigen3_support)
