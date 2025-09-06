@@ -157,11 +157,16 @@ Release date: July 2025
 
 ### [2D Regularized Boolean Set-Operations](https://doc.cgal.org/6.1/Manual/packages.html#PkgBooleanSetOperations2)
 
--   Optimized `do_intersect()`: (i) made it robust even with an inexact-predicate kernel, and (ii) made it quit the
+-   Optimized `do_intersect()`: (i) made it robust even with an inexact-predicate kernel, and (ii) made it quit
     once an intersection is detected. (In the past, the intersection was computed in one phase and examined in a
-    subsequent phase. This optimization somehow break backward compatibility, as the variants that accepts a third
-    parameter, namely UsePolylines, which determines whether the boundaries of the input polygons are treated as cyclic
-    sequences of single (`x`-monotone) segments or as a cyclic sequences of (`x`-monotone) polylines.
+    subsequent phase.) This optimization break backward compatibility in two places:
+    1. The variants of the free function `do_intersect()` that accept a third optional parameter, namely UsePolylines,
+    which determines whether the boundaries of the input polygons are treated as cyclic sequences of
+    (`x`-monotone) segments or as a cyclic sequences of (`x`-monotone) polylines, do not accept this third
+    parameter any longer. (This third optional parameter was introduced a few years ago, and now abandoned for
+    `do_intersect()`.)
+    2. One of the visitor overloaded functions `update_event()` of the surface sweep visitor now accepts a fifth
+    parameter, namely, the multiplicity.
 
 ## [Release 6.0.1](https://github.com/CGAL/cgal/releases/tag/v6.0.1)
 
