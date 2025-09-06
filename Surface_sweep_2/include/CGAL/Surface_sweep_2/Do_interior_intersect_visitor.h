@@ -7,9 +7,9 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
-//                 Ron Wein <wein@post.tau.ac.il>
-//                 Efi Fogel <efif@post.tau.ac.il>
+// Author(s) : Baruch Zukerman  <baruchzu@post.tau.ac.il>
+//             Ron Wein         <wein@post.tau.ac.il>
+//             Efi Fogel        <efif@post.tau.ac.il>
 
 #ifndef CGAL_SURFACE_SWEEP_2_DO_INTERIOR_INTERSECT_VISITORS_H
 #define CGAL_SURFACE_SWEEP_2_DO_INTERIOR_INTERSECT_VISITORS_H
@@ -39,27 +39,27 @@ template <typename GeometryTraits_2,
 class Do_interior_intersect_visitor :
   public Default_visitor<Do_interior_intersect_visitor<GeometryTraits_2,
                                                        Allocator_>,
-                         GeometryTraits_2, Allocator_>
-{
+                         GeometryTraits_2, Allocator_> {
 public:
-  typedef GeometryTraits_2                              Geometry_traits_2;
-  typedef Allocator_                                    Allocator;
+  using Geometry_traits_2 = GeometryTraits_2;
+  using Allocator = Allocator_;
 
 private:
-  typedef Geometry_traits_2                             Gt2;
-  typedef Do_interior_intersect_visitor<Gt2, Allocator> Self;
-  typedef Default_visitor<Self, Gt2, Allocator>         Base;
+  using Gt2 = Geometry_traits_2;
+  using Self = Do_interior_intersect_visitor<Gt2, Allocator>;
+  using Base = Default_visitor<Self, Gt2, Allocator>;
 
 public:
-  typedef typename Base::Event                          Event;
-  typedef typename Base::Subcurve                       Subcurve;
+  using Event = typename Base::Event;
+  using Subcurve = typename Base::Subcurve;
 
-  typedef typename Subcurve::Status_line_iterator       Status_line_iterator;
+  using Status_line_iterator = typename Subcurve::Status_line_iterator;
 
-  typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
-  typedef typename Gt2::Point_2                         Point_2;
+  using X_monotone_curve_2 = typename Gt2::X_monotone_curve_2;
+  using Point_2 = typename Gt2::Point_2;
+  using Multiplicity = typename Gt2::Multiplicity;
 
-  typedef typename Base::Surface_sweep_2                Surface_sweep_2;
+  using Surface_sweep_2 = typename Base::Surface_sweep_2;
 
 protected:
   // Data members:
@@ -69,8 +69,7 @@ public:
   Do_interior_intersect_visitor() : m_found_x(false) {}
 
   template <typename CurveIterator>
-  void sweep(CurveIterator begin, CurveIterator end)
-  {
+  void sweep(CurveIterator begin, CurveIterator end) {
     std::vector<X_monotone_curve_2> curves_vec;
     std::vector<Point_2> points_vec;
 
@@ -89,7 +88,8 @@ public:
   void update_event(Event* /* e */,
                     Subcurve* /* sc1 */,
                     Subcurve* /* sc2 */,
-                    bool /* is_new */)
+                    bool /* is_new */,
+                    Multiplicity multiplicity = 0)
   { m_found_x = true; }
 
   void update_event(Event* /* e */,
@@ -115,8 +115,7 @@ public:
   {}
 
   template <typename XCurveIterator>
-  void sweep_xcurves(XCurveIterator begin, XCurveIterator end)
-  {
+  void sweep_xcurves(XCurveIterator begin, XCurveIterator end) {
     // Perform the sweep.
     Surface_sweep_2* sl = this->surface_sweep();
     sl->sweep(begin, end);
@@ -129,8 +128,7 @@ public:
 
   bool after_handle_event(Event* /* event */,
                           Status_line_iterator /* iter */,
-                          bool /* flag */)
-  {
+                          bool /* flag */) {
     if (m_found_x) {
       Surface_sweep_2* sl = this->surface_sweep();
       sl->stop_sweep();
