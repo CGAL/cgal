@@ -71,6 +71,7 @@ private:
 public:
   using X_monotone_curve_2 = typename Gt2::X_monotone_curve_2;
   using Point_2 = typename Gt2::Point_2;
+  using Multiplicity = typename Gt2::Multiplicity;
 
   // The input arrangements (the "red" and the "blue" one):
   using Halfedge_handle_red = typename Ar2::Halfedge_const_handle;
@@ -182,7 +183,8 @@ public:
   void update_event(Event* /* e */,
                     Subcurve* /* c1 */,
                     Subcurve* /* c2 */,
-                    bool CGAL_assertion_code(is_new))
+                    bool CGAL_assertion_code(is_new),
+                    Multiplicity /* multiplicity */)
   { CGAL_assertion(is_new == true); }
 
   /*! Update an event. */

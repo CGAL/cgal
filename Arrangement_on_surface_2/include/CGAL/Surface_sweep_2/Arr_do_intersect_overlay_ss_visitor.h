@@ -40,7 +40,6 @@ class Arr_do_intersect_overlay_ss_visitor :
       OverlayHelper, OverlayTraits,
       typename Default::Get<Visitor_,
                             Arr_do_intersect_overlay_ss_visitor<OverlayHelper, OverlayTraits, Visitor_> >::type> {
-
 private:
   using Overlay_helper = OverlayHelper;
   using Overlay_traits = OverlayTraits;
@@ -61,6 +60,7 @@ public:
   using Status_line_iterator = typename Base::Status_line_iterator;
   using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
   using Point_2 = typename Base::Point_2;
+  using Multiplicity = typename Base::Multiplicity;
 
   /*! Constructor */
   Arr_do_intersect_overlay_ss_visitor(const Arrangement_red_2* red_arr,
@@ -90,11 +90,15 @@ public:
   void update_event(Event* e, Subcurve* sc) { return Base::update_event(e, sc); }
 
   /*! Update an event that corresponds to an intersection between curves */
-  void update_event(Event*, Subcurve*, Subcurve*, bool is_new) { m_found_x = true; }
+  void update_event(Event* e, Subcurve* sc1, Subcurve* sc2, bool is_new, Multiplicity multiplicity) {
+    if ((multiplicity % 2) == 1) m_found_x = true;
+    Base::update_event(e, sc1, sc2, is_new, multiplicity);
+  }
 
   bool after_handle_event(Event* e, Status_line_iterator iter, bool flag) {
+    auto res = Base::after_handle_event(e, iter, flag);
     if (m_found_x) this->surface_sweep()->stop_sweep();
-    return Base::after_handle_event(e, iter, flag);
+    return res;
   }
 
   /*! Getter */

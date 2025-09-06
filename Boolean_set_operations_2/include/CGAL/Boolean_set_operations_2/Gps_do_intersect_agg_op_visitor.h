@@ -48,6 +48,7 @@ public:
   using Status_line_iterator = typename Base::Status_line_iterator;
   using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
   using Point_2 = typename Base::Point_2;
+  using Multiplicity = typename Base::Multiplicity;
 
   Gps_do_intersect_agg_op_visitor(Arr* arr, Edges_hash* hash,
                                   std::vector<Vertex_handle>* vertices_vec) :
@@ -57,22 +58,26 @@ public:
 
   /*! Update an event that corresponds to a curve endpoint. */
   void update_event(Event* e, const Point_2& end_point, const X_monotone_curve_2& cv, Arr_curve_end cv_end, bool is_new)
-  { return Base::update_event(e, end_point, cv, cv_end, is_new); }
+  { Base::update_event(e, end_point, cv, cv_end, is_new); }
 
   /*! Update an event that corresponds to a curve endpoint */
   void update_event(Event* e, const X_monotone_curve_2& cv, Arr_curve_end cv_end, bool is_new )
-  { return Base::update_event(e, cv, cv_end, is_new); }
+  { Base::update_event(e, cv, cv_end, is_new); }
 
   /*! Update an event that corresponds to a curve endpoint */
   void update_event(Event* e, const Point_2& p, bool is_new)
-  { return Base::update_event(e, p, is_new); }
+  { Base::update_event(e, p, is_new); }
 
   /*! Update an event that corresponds to an intersection */
-  void update_event(Event* e, Subcurve* sc) { return Base::update_event(e, sc); }
+  void update_event(Event* e, Subcurve* sc) { Base::update_event(e, sc); }
 
   /*! Update an event that corresponds to an intersection between curves */
-  void update_event(Event*, Subcurve*, Subcurve*, bool is_new) { m_found_x = true; }
+  void update_event(Event* e, Subcurve* sc1, Subcurve* sc2, bool is_new, Multiplicity multiplicity) {
+    if ((multiplicity % 2) == 1) m_found_x = true;
+    Base::update_event(e, sc1, sc2, is_new, multiplicity);
+  }
 
+  //!
   bool after_handle_event(Event* e, Status_line_iterator iter, bool flag) {
     auto res = Base::after_handle_event(e, iter, flag);
     if (m_found_x) this->surface_sweep()->stop_sweep();

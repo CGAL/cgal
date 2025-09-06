@@ -539,9 +539,10 @@ public:
 
     _remove_redundant_edges(arr_vec[0].first);
     _reset_faces(arr_vec[0].first);
-    return (_is_empty(arr_vec[0].first));
+    return ! _is_empty(arr_vec[0].first);
   }
 
+  //!
   template <typename InputIterator1, typename InputIterator2>
   bool do_intersect(InputIterator1 begin1, InputIterator1 end1,
                     InputIterator2 begin2, InputIterator2 end2,
@@ -550,6 +551,7 @@ public:
     return other._do_intersect(begin1, end1, begin2, end2, k);
   }
 
+  //!
   template <typename InputIterator1, typename InputIterator2>
   bool _do_intersect(InputIterator1 begin1, InputIterator1 end1,
                      InputIterator2 begin2, InputIterator2 end2,
@@ -558,13 +560,13 @@ public:
     arr_vec[0].first = this->m_arr;
     std::size_t i = 1;
 
-    for (InputIterator1 itr1 = begin1; itr1 != end1; ++itr1, ++i) {
+    for (auto itr1 = begin1; itr1 != end1; ++itr1, ++i) {
       ValidationPolicy::is_valid(*itr1, *m_traits);
       arr_vec[i].first = new Aos_2(m_traits);
       _insert(*itr1, *(arr_vec[i].first));
     }
 
-    for (InputIterator2 itr2 = begin2; itr2 != end2; ++itr2, ++i) {
+    for (auto itr2 = begin2; itr2 != end2; ++itr2, ++i) {
       ValidationPolicy::is_valid(*itr2,*m_traits);
       arr_vec[i].first = new Aos_2(m_traits);
       _insert(*itr2, *(arr_vec[i].first));
@@ -586,7 +588,7 @@ public:
 
     _remove_redundant_edges(arr_vec[0].first);
     _reset_faces(arr_vec[0].first);
-    return (_is_empty(arr_vec[0].first));
+    return ! _is_empty(arr_vec[0].first);
   }
 
   // joins a range of polygons
@@ -705,7 +707,6 @@ public:
     // the result arrangement is at index 0
     this->m_arr = arr_vec[0].first;
     delete arr_vec[0].second;
-    std::cout << "XXXX 1 no. faces: " << m_arr->number_of_faces() << "\n";
   }
 
   // intersects a range of polygons with holes
@@ -728,7 +729,6 @@ public:
     // the result arrangement is at index 0
     this->m_arr = arr_vec[0].first;
     delete arr_vec[0].second;
-    std::cout << "XXXX 2 no. edges: " << m_arr->number_of_edges() << "\n";
   }
 
   template <typename InputIterator1, typename InputIterator2>
@@ -1267,9 +1267,9 @@ protected:
                            std::vector<Arr_entry>& arr_vec,
                            std::size_t k, Merge merge_func) {
     static int indent = 0;
-    std::cout << std::setw(indent) << "" << "D&C [" << lower << "," << upper << "," << k << "]\n";
+    // std::cout << std::setw(indent) << "" << "D&C [" << lower << "," << upper << "," << k << "]\n";
     if ((upper - lower) < k) {
-      std::cout << std::setw(indent) << "" << "Merging [" << lower << "," << upper << "," << 1 << "]\n";
+      // std::cout << std::setw(indent) << "" << "Merging [" << lower << "," << upper << "," << 1 << "]\n";
       _build_sorted_vertices_vectors(lower, upper, arr_vec);
       merge_func(lower, upper, 1, arr_vec);
       return;
@@ -1286,7 +1286,7 @@ protected:
     indent += 2;
     _divide_and_conquer(curr_lower, upper, arr_vec, k, merge_func);
     indent -= 2;
-    std::cout << std::setw(indent) << "" << "Merging [" << lower << "," <<  curr_lower << "," << sub_size << "]\n";
+    // std::cout << std::setw(indent) << "" << "Merging [" << lower << "," <<  curr_lower << "," << sub_size << "]\n";
     merge_func(lower, curr_lower, sub_size, arr_vec);
   }
 
