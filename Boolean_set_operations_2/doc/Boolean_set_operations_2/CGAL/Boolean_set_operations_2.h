@@ -723,6 +723,11 @@ namespace CGAL {
 //////// Traits-less
 
 /*! determines whether two polygons intersect in their interior.
+ *
+ * The kernel used to instantiate the type of the input polygons must support
+ * exact predicates to guarantee correct results; however, inexact constructions
+ * are tolerated.
+ *
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
  * \return `true` if `pgn1` and `pgn2` intersect in their interior and `false`
@@ -733,6 +738,11 @@ bool do_intersect(const Polygon_2<Kernel, Container>& pgn1,
                   const Polygon_2<Kernel, Container>& pgn2);
 
 /*! determines whether two polygons intersect in their interior.
+ *
+ * The kernel used to instantiate the type of the input polygons must support
+ * exact predicates to guarantee correct results; however, inexact constructions
+ * are tolerated.
+ *
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
  * \return `true` if `pgn1` and `pgn2` intersect in their interior and `false`
@@ -743,6 +753,11 @@ bool do_intersect(const Polygon_2<Kernel, Container>& pgn1,
                   const Polygon_with_holes_2<Kernel, Container>& pgn2);
 
 /*! determines whether two polygons intersect in their interior.
+ *
+ * The kernel used to instantiate the type of the input polygons must support
+ * exact predicates to guarantee correct results; however, inexact constructions
+ * are tolerated.
+ *
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
  * \return `true` if `pgn1` and `pgn2` intersect in their interior and `false`
@@ -753,6 +768,11 @@ bool do_intersect(const Polygon_with_holes_2<Kernel, Container>& pgn1,
                   const Polygon_2<Kernel, Container>& pgn2);
 
 /*! determines whether two polygons with holes intersect in their interior.
+ *
+ * The kernel used to instantiate the type of the input polygons must support
+ * exact predicates to guarantee correct results; however, inexact constructions
+ * are tolerated.
+ *
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
  * \return `true` if `pgn1` and `pgn2` intersect in their interior and `false`
@@ -814,6 +834,13 @@ bool do_intersect(const General_polygon_with_holes_2<Polygon>& pgn1,
  * of general polygons or a range of general polygons with holes) determines
  * whether the open polygons (respectively general polygons) in the range have a common
  * point.
+ *
+ * When the operation is applied to linear polygons (that is, the value type of
+ * the input iterator is either `Polygon_2` or `Polygon_with_holes_2`), the
+ * kernel used to instantiate the type of the input polygons must support exact
+ * predicates to guarantee correct results; however, inexact constructions are
+ * tolerated.
+ *
  * \param begin the first iterator of the input range. Its value type is
  *        either `Polygon_2` (respectively `General_polygon_2`) or
  *        `Polygon_with_holes_2` (respectively `General_polygon_with_holes_2`).
@@ -830,6 +857,13 @@ bool do_intersect(InputIterator begin, InputIterator end);
 /*! Given a range of polygons (respectively general polygons) and a range of polygons
  * with holes (respectively general polygons with holes) determines whether the open
  * polygons (respectively general polygons) in the two ranges have a common point.
+ *
+ * When the operation is applied to linear polygons (that is, the value type of
+ * any input iterator is either `Polygon_2` or `Polygon_with_holes_2`), the
+ * kernel used to instantiate the type of the input polygons must support exact
+ * predicates to guarantee correct results; however, inexact constructions are
+ * tolerated.
+ *
  * \param begin1 the first iterator of the 1st input range. Its value type is
  *        `Polygon_2` (respectively `General_polygon_2`).
  * \param end1 the past-the-end iterator of the 1st input range. Its value
@@ -850,6 +884,11 @@ bool do_intersect(InputIterator1 begin1, InputIterator1 end1,
 //////// With Traits
 
 /*! determines whether two polygons intersect in their interior.
+ *
+ * The kernel used to instantiate the type of the input polygons must support
+ * exact predicates to guarantee correct results; however, inexact constructions
+ * are tolerated.
+ *
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
  * \param traits a traits object.
@@ -863,6 +902,11 @@ bool do_intersect(const Polygon_2<Kernel, Container>& pgn1,
                   const GpsTraits& traits);
 
 /*! determines whether two polygons intersect in their interior.
+ *
+ * The kernel used to instantiate the type of the input polygons must support
+ * exact predicates to guarantee correct results; however, inexact constructions
+ * are tolerated.
+ *
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
  * \param traits a traits object.
@@ -876,6 +920,11 @@ bool do_intersect(const Polygon_2<Kernel, Container>& pgn1,
                   const GpsTraits& traits);
 
 /*! determines whether two polygons intersect in their interior.
+ *
+ * The kernel used to instantiate the type of the input polygons must support
+ * exact predicates to guarantee correct results; however, inexact constructions
+ * are tolerated.
+ *
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
  * \param traits a traits object.
@@ -889,6 +938,11 @@ bool do_intersect(const Polygon_with_holes_2<Kernel, Container>& pgn1,
                   const GpsTraits& traits);
 
 /*! determines whether two polygons with holes intersect in their interior.
+ *
+ * The kernel used to instantiate the type of the input polygons must support
+ * exact predicates to guarantee correct results; however, inexact constructions
+ * are tolerated.
+ *
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
  * \param traits a traits object.
@@ -967,6 +1021,12 @@ bool do_intersect(const General_polygon_with_holes_2<Polygon>& pgn1,
  * of general polygons or a range of general polygons with holes) determines
  * whether the open polygons (respectively general polygons) in the range have a common
  * point.
+ *
+ * When the operation is applied to linear polygons (that is, the value type of
+ * the input iterator is either `Polygon_2` or `Polygon_with_holes_2`), the
+ * traits parameter `GpsTraits` must support exact predicates to guarantee
+ * correct results; however, inexact constructions are tolerated.
+ *
  * \param begin the first iterator of the input range. Its value type is
  *        either `Polygon_2` (respectively `General_polygon_2`) or
  *        `Polygon_with_holes_2` (respectively `General_polygon_with_holes_2`).
@@ -986,6 +1046,12 @@ bool do_intersect(InputIterator begin, InputIterator end,
 /*! Given a range of polygons (respectively general polygons) and a range of polygons
  * with holes (respectively general polygons with holes) determines whether the open
  * polygons (respectively general polygons) in the two ranges have a common point.
+ *
+ * When the operation is applied to linear polygons (that is, the value type of
+ * any input iterator is either `Polygon_2` or `Polygon_with_holes_2`), the
+ * traits parameter `GpsTraits` must support exact predicates to guarantee
+ * correct results; however, inexact constructions are tolerated.
+ *
  * \param begin1 the first iterator of the 1st input range. Its value type is
  *        `Polygon_2` (respectively `General_polygon_2`).
  * \param end1 the past-the-end iterator of the 1st input range. Its value
