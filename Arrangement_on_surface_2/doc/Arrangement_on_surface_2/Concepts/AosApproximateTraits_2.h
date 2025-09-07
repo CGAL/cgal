@@ -19,7 +19,7 @@
  * \sa `AosApproximatePointTraits_2`
  * \sa `AosConstructXMonotoneCurveTraits_2`
  * \sa `AosXMonotoneTraits_2`
- * \sa `draw()`
+ * \sa \link PkgArrangementOnSurface2Draw `CGAL::draw()`\endlink
  */
 class AosApproximateTraits_2 {
 public:
