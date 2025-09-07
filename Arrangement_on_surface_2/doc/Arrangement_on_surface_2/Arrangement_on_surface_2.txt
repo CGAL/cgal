@@ -6856,10 +6856,10 @@ and defines a simple textual input/output format.
 <!-- ----------------------------------------------------------------------- -->
 
 An arrangement data structure can be visualized by calling one of the
-\link PkgArrangementOnSurface2Draw CGAL::draw<arr>() \endlink
+\link PkgArrangementOnSurface2Draw `CGAL::draw()` \endlink
 overloaded template functions. Every variant opens a new window
 showing the given arrangement. A call to any \link
-PkgArrangementOnSurface2Draw CGAL::draw<arr>() \endlink function is
+PkgArrangementOnSurface2Draw `CGAL::draw()` \endlink function is
 blocking; that is, the program continues execution only after the user
 closes the window. The most simple variant accepts the arrangement to
 draw and an optional string used as the title of the window. In the
@@ -6881,7 +6881,7 @@ of 14 vertices, 15 edges, and 3 faces. Notice that the colors are generated at r
 \cgalFigureEnd
 
 Another pair of overloaded \link PkgArrangementOnSurface2Draw
-CGAL::draw<arr>() \endlink functions also accept a bounding box. Each
+`CGAL::draw()` \endlink functions also accept a bounding box. Each
 of these two variants can be ised to draw arrangements induced by
 unbounded curves.
 
