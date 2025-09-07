@@ -4195,6 +4195,185 @@ namespace CGAL {
       return make_combinatorial_pyramid(d1, d2, d3, d4, d5);
     }
 
+    /** Test if a volume is a combinatorial pentagonal prism.
+     * @param adart an initial dart
+     * @return true iff the volume containing adart is a combinatorial pentagonal prism.
+     */
+    bool is_volume_combinatorial_pentagonal_prism(Dart_const_descriptor d1) const
+    {
+      Dart_const_descriptor d2=beta(d1, 2);
+      Dart_const_descriptor d3=beta(d1, 1, 2);
+      Dart_const_descriptor d4=beta(d1, 1, 1, 2);
+      Dart_const_descriptor d5=beta(d1, 0, 0, 2);
+      Dart_const_descriptor d6=beta(d1, 0, 2);
+      Dart_const_descriptor d7=beta(d2, 1, 1, 2);
+
+      if (d1==null_dart_descriptor || d2==null_dart_descriptor ||
+          d3==null_dart_descriptor || d4==null_dart_descriptor ||
+          d5==null_dart_descriptor || d6==null_dart_descriptor ||
+          d7==null_dart_descriptor)
+      { return false; }
+
+      if (!is_face_combinatorial_polygon(d1, 5) ||
+          !is_face_combinatorial_polygon(d2, 4) ||
+          !is_face_combinatorial_polygon(d3, 4) ||
+          !is_face_combinatorial_polygon(d4, 4) ||
+          !is_face_combinatorial_polygon(d5, 4) ||
+          !is_face_combinatorial_polygon(d6, 4) ||
+          !is_face_combinatorial_polygon(d7, 5)) { return false; }
+
+      // TODO do better with marks.
+      if (belong_to_same_cell<2,1>(d1, d2) ||
+          belong_to_same_cell<2,1>(d1, d3) ||
+          belong_to_same_cell<2,1>(d1, d4) ||
+          belong_to_same_cell<2,1>(d1, d5) ||
+          belong_to_same_cell<2,1>(d1, d6) ||
+          belong_to_same_cell<2,1>(d1, d7) ||
+          belong_to_same_cell<2,1>(d2, d3) ||
+          belong_to_same_cell<2,1>(d2, d4) ||
+          belong_to_same_cell<2,1>(d2, d5) ||
+          belong_to_same_cell<2,1>(d2, d6) ||
+          belong_to_same_cell<2,1>(d2, d7) ||
+          belong_to_same_cell<2,1>(d3, d4) ||
+          belong_to_same_cell<2,1>(d3, d5) ||
+          belong_to_same_cell<2,1>(d3, d6) ||
+          belong_to_same_cell<2,1>(d3, d7) ||
+          belong_to_same_cell<2,1>(d4, d5) ||
+          belong_to_same_cell<2,1>(d4, d6) ||
+          belong_to_same_cell<2,1>(d4, d7) ||
+          belong_to_same_cell<2,1>(d5, d6) ||
+          belong_to_same_cell<2,1>(d5, d7) ||
+          belong_to_same_cell<2,1>(d6, d7))
+      { return false; }
+
+      if (beta(d2,0,2)  !=beta(d3,1) ||
+          beta(d3,0,2)  !=beta(d4,1) ||
+          beta(d4,0,2)  !=beta(d5,1) ||
+          beta(d5,0,2)  !=beta(d6,1) ||
+          beta(d6,0,2)  !=beta(d2,1) ||
+          beta(d3,1,1,2)!=beta(d7,0) ||
+          beta(d4,1,1,2)!=beta(d7,0,0) ||
+          beta(d5,1,1,2)!=beta(d7,1,1) ||
+          beta(d6,1,1,2)!=beta(d7,1)) { return false; }
+
+      return true;
+
+    }
+
+    /** Test if a volume is a combinatorial hexagonal prism.
+     * @param adart an initial dart
+     * @return true iff the volume containing adart is a combinatorial hexagonal prism.
+     */
+    bool is_volume_combinatorial_hexagonal_prism(Dart_const_descriptor d1) const
+    {
+      Dart_const_descriptor d2=beta(d1, 2);
+      Dart_const_descriptor d3=beta(d1, 1, 2);
+      Dart_const_descriptor d4=beta(d1, 1, 1, 2);
+      Dart_const_descriptor d5=beta(d1, 1, 1, 1, 2);
+      Dart_const_descriptor d6=beta(d1, 0, 0, 2);
+      Dart_const_descriptor d7=beta(d1, 0, 2);
+      Dart_const_descriptor d8=beta(d2, 1, 1, 2);
+
+      if (d1==null_dart_descriptor || d2==null_dart_descriptor ||
+          d3==null_dart_descriptor || d4==null_dart_descriptor ||
+          d5==null_dart_descriptor || d6==null_dart_descriptor ||
+          d7==null_dart_descriptor || d8==null_dart_descriptor)
+      { return false; }
+
+      if (!is_face_combinatorial_polygon(d1, 6) ||
+          !is_face_combinatorial_polygon(d2, 4) ||
+          !is_face_combinatorial_polygon(d3, 4) ||
+          !is_face_combinatorial_polygon(d4, 4) ||
+          !is_face_combinatorial_polygon(d5, 4) ||
+          !is_face_combinatorial_polygon(d6, 4) ||
+          !is_face_combinatorial_polygon(d7, 4) ||
+          !is_face_combinatorial_polygon(d8, 6)) { return false; }
+
+      // TODO do better with marks.
+      if (belong_to_same_cell<2,1>(d1, d2) ||
+          belong_to_same_cell<2,1>(d1, d3) ||
+          belong_to_same_cell<2,1>(d1, d4) ||
+          belong_to_same_cell<2,1>(d1, d5) ||
+          belong_to_same_cell<2,1>(d1, d6) ||
+          belong_to_same_cell<2,1>(d1, d7) ||
+          belong_to_same_cell<2,1>(d1, d8) ||
+          belong_to_same_cell<2,1>(d2, d3) ||
+          belong_to_same_cell<2,1>(d2, d4) ||
+          belong_to_same_cell<2,1>(d2, d5) ||
+          belong_to_same_cell<2,1>(d2, d6) ||
+          belong_to_same_cell<2,1>(d2, d7) ||
+          belong_to_same_cell<2,1>(d2, d8) ||
+          belong_to_same_cell<2,1>(d3, d4) ||
+          belong_to_same_cell<2,1>(d3, d5) ||
+          belong_to_same_cell<2,1>(d3, d6) ||
+          belong_to_same_cell<2,1>(d3, d7) ||
+          belong_to_same_cell<2,1>(d3, d8) ||
+          belong_to_same_cell<2,1>(d4, d5) ||
+          belong_to_same_cell<2,1>(d4, d6) ||
+          belong_to_same_cell<2,1>(d4, d7) ||
+          belong_to_same_cell<2,1>(d4, d8) ||
+          belong_to_same_cell<2,1>(d5, d6) ||
+          belong_to_same_cell<2,1>(d5, d7) ||
+          belong_to_same_cell<2,1>(d5, d8) ||
+          belong_to_same_cell<2,1>(d6, d7) ||
+          belong_to_same_cell<2,1>(d6, d8) ||
+          belong_to_same_cell<2,1>(d7, d8))
+      { return false; }
+
+      if (beta(d2,0,2)  !=beta(d3,1) ||
+          beta(d3,0,2)  !=beta(d4,1) ||
+          beta(d4,0,2)  !=beta(d5,1) ||
+          beta(d5,0,2)  !=beta(d6,1) ||
+          beta(d6,0,2)  !=beta(d7,1) ||
+          beta(d7,0,2)  !=beta(d2,1) ||
+          beta(d3,1,1,2)!=beta(d8,0) ||
+          beta(d4,1,1,2)!=beta(d8,0,0) ||
+          beta(d5,1,1,2)!=beta(d8,0,0,0) ||
+          beta(d6,1,1,2)!=beta(d8,1,1) ||
+          beta(d7,1,1,2)!=beta(d8,1)) { return false; }
+
+      return true;
+    }
+
+    /** Test if a volume is a combinatorial tetrahedron10.
+     * @param adart an initial dart
+     * @return true iff the volume containing adart is a combinatorial tetrahedron.
+     */
+    bool is_volume_combinatorial_tetrahedron10(Dart_const_descriptor d1) const
+    {
+      Dart_const_descriptor d2=beta(d1, 2,0);
+      Dart_const_descriptor d3=beta(d2, 0,2);
+      Dart_const_descriptor d4=beta(d2, 1,1,1,2);
+
+      if(d1==null_dart_descriptor || d2==null_dart_descriptor ||
+         d3==null_dart_descriptor || d4==null_dart_descriptor)
+      { return false; }
+
+      if(!is_face_combinatorial_polygon(d1, 6) ||
+         !is_face_combinatorial_polygon(d2, 6) ||
+         !is_face_combinatorial_polygon(d3, 6) ||
+         !is_face_combinatorial_polygon(d4, 6)) { return false; }
+
+      if(beta(d1, 1,2)!=beta(d1, 2,0) ||
+         beta(d2, 1,2)!=beta(d2, 2,0) ||
+         beta(d3, 1,2)!=beta(d3, 2,0) ||
+         beta(d4, 1,2)!=beta(d4, 2,0)) { return false; }
+
+      // TODO do better with marks (?).
+      if(belong_to_same_cell<2,1>(d1, d2) ||
+         belong_to_same_cell<2,1>(d1, d3) ||
+         belong_to_same_cell<2,1>(d1, d4) ||
+         belong_to_same_cell<2,1>(d2, d3) ||
+         belong_to_same_cell<2,1>(d2, d4) ||
+         belong_to_same_cell<2,1>(d3, d4)) { return false; }
+
+      if(beta(d1,1,1,2)!=beta(d3,0) ||
+         beta(d1,0,2)!=beta(d4,1,1) ||
+         beta(d4,0,2)!=beta(d3,1,1)) { return false; }
+
+      return true;
+    }
+
     /** Test if an i-cell can be removed.
      *  An i-cell can be removed if i==dimension or i==dimension-1,
      *     or if there are at most two (i+1)-cell incident to it.
