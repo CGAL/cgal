@@ -11,8 +11,11 @@
 
 #ifndef CGAL_LCC_IO_VTK_H
 #define CGAL_LCC_IO_VTK_H 1
+
 #include <CGAL/Linear_cell_complex_incremental_builder_3.h>
 #include <CGAL/assertions.h>
+#include <CGAL/Element_topo.h>
+
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -24,7 +27,8 @@ namespace CGAL {
 namespace IO {
 
 /** \file VTK.h
- * Functions to import/export 3D Linear_cell_complex from/to VTK legacy ASCII format.
+ * Functions to import/export 3D Linear_cell_complex from/to VTK legacy ASCII
+ * format.
  *
  * Only supports:
  * - Linear_cell_complex_for_combinatorial_map<3,3>
@@ -47,7 +51,8 @@ namespace IO {
 // ============================================================================
 
 /**
- * \brief Read a VTK legacy ASCII file and load it into a 3D Linear_cell_complex.
+ * \brief Read a VTK legacy ASCII file and load it into a 3D
+ *        Linear_cell_complex.
  * \ingroup PkgLinearCellComplexExamples
  *
  * \tparam LCC must be a Linear_cell_complex_for_combinatorial_map<3,3>
@@ -61,11 +66,12 @@ namespace IO {
  *                      If provided, will be resized to match number of volumes.
  * \return `true` if loading was successful, `false` otherwise
  */
-template <typename LCC, typename VertexScalarType = float, typename VolumeScalarType = float>
+template <typename LCC, typename VertexScalarType,
+          typename VolumeScalarType>
 bool read_VTK(LCC& alcc,
               const char* filename,
-              std::vector<VertexScalarType>* vertex_scalars = nullptr,
-              std::vector<VolumeScalarType>* volume_scalars = nullptr);
+              std::vector<VertexScalarType>* vertex_scalars,
+              std::vector<VolumeScalarType>* volume_scalars);
 
 /**
  * \brief Write a 3D Linear_cell_complex to a VTK legacy ASCII file.
@@ -82,208 +88,205 @@ bool read_VTK(LCC& alcc,
  *                      same size as number of 3-cells in the LCC.
  * \return `true` if writing was successful, `false` otherwise
  */
-template <typename LCC, typename VertexScalarType = float, typename VolumeScalarType = float>
+template <typename LCC, typename VertexScalarType,
+          typename VolumeScalarType>
 bool write_VTK(const LCC& alcc,
                const char* filename,
-               const std::vector<VertexScalarType>* vertex_scalars = nullptr,
-               const std::vector<VolumeScalarType>* volume_scalars = nullptr);
+               const std::vector<VertexScalarType>* vertex_scalars,
+               const std::vector<VolumeScalarType>* volume_scalars);
 
-// Advanced versions with functors
-template <typename LCC, typename VertexScalarReader, typename CellScalarReader>
-bool read_VTK(LCC& alcc, const char* filename, VertexScalarReader vertex_reader, CellScalarReader cell_reader);
-
+// "Advanced" versions with functors
 template <typename LCC, typename PointFunctor, typename CellFunctor>
-bool write_VTK(const LCC& alcc, const char* filename, PointFunctor ptval, CellFunctor cellval);
+bool write_VTK_with_fct(const LCC& alcc, const char* filename,
+                        PointFunctor ptval, CellFunctor cellval);
 
 // ============================================================================
 //                          Implementation details
 // ============================================================================
 
-namespace internal {
+namespace internal
+{
+  /////////////////////////////////////////////////////////////////////////////
+  // VTK type name mapping
+  // bit, unsigned_char, char, unsigned_short, short, unsigned_int, int,
+  // unsigned_long, long, float, double.
+  template<typename T>
+  struct gettype
+  { static std::string name() { return "unknown"; }};
+  template<>
+  struct gettype<bool>
+  { static std::string name() { return "bit"; }};
+  template<>
+  struct gettype<unsigned char>
+  { static std::string name() { return "unsigned_char"; }};
+  template<>
+  struct gettype<char>
+  { static std::string name() { return "char"; }};
+  template<>
+  struct gettype<unsigned short int>
+  { static std::string name() { return "unsigned_short"; }};
+  template<>
+  struct gettype<short int>
+  { static std::string name() { return "short"; }};
+  template<>
+  struct gettype<unsigned int>
+  { static std::string name() { return "unsigned_int"; }};
+  template<>
+  struct gettype<int>
+  { static std::string name() { return "int"; }};
+  template<>
+  struct gettype<unsigned long int>
+  { static std::string name() { return "unsigned_long"; }};
+  template<>
+  struct gettype<long int>
+  { static std::string name() { return "long"; }};
+  template<>
+  struct gettype<float>
+  { static std::string name() { return "float"; }};
+  template<>
+  struct gettype<double>
+  { static std::string name() { return "double"; }};
+  /////////////////////////////////////////////////////////////////////////////
+  // VTK cell type constants
+  enum VTK_Cell_Type
+  {
+    VTK_TETRA = 10,
+    VTK_VOXEL = 11,
+    VTK_HEXAHEDRON = 12,
+    VTK_WEDGE = 13, // Prism
+    VTK_PYRAMID = 14,
+    VTK_PENTAGONAL_PRISM = 15,
+    VTK_HEXAGONAL_PRISM = 16,
+    VTK_POLYHEDRON = 42 // Generic cell
+  };
+  /////////////////////////////////////////////////////////////////////////////
+  /// Write cell_data.
+  template<typename FCT>
+  struct Write_cell_data
+  {
+    /// nb is the number of cells,
+    /// fct is a function having 3 parameters: a lcc,  a dart_descriptor,
+    ///    an the index of the cell.
+    template<typename LCC>
+    static void run(std::ofstream& fo, LCC& lcc, std::size_t nb, FCT fct)
+    {
+      fo<<"CELL_DATA "<<nb<<std::endl;
+      fo<<"SCALARS cell_scalars "
+         <<gettype<decltype(fct(lcc, lcc.null_dart_descriptor, 0))>::name()
+         <<" 1"<<std::endl;
+      fo<<"LOOKUP_TABLE default"<<std::endl;
+      std::size_t i=0;
+      for(auto itvol=lcc.template one_dart_per_cell<3>().begin(),
+           itvolend=lcc.template one_dart_per_cell<3>().end();
+           itvol!=itvolend; ++itvol, ++i)
+      { fo<<fct(lcc, itvol, i)<<std::endl; }
+      fo<<std::endl;
+    }
+  };
+  template<>
+  struct Write_cell_data<std::nullptr_t>
+  {
+    template<typename LCC>
+    static void run(std::ofstream&, LCC&, std::size_t, std::nullptr_t)
+    {}
+  };
+  /////////////////////////////////////////////////////////////////////////////
+  /// Write point_data.
+  template<typename FCT>
+  struct Write_point_data
+  {
+    /// nb is the number of cells,
+    /// fct is a function having 3 parameters: a lcc,  a dart_descriptor,
+    ///    an the index of the cell.
+    template<typename LCC>
+    static void run(std::ofstream& fo, LCC& lcc, std::size_t nb, FCT fct)
+    {
+      fo<<"POINT_DATA "<<nb<<std::endl;
+      fo<<"SCALARS point_scalars "
+         <<gettype<decltype(fct(lcc, lcc.null_dart_descriptor, 0))>::name()
+         <<" 1"<<std::endl;
+      fo<<"LOOKUP_TABLE default"<<std::endl;
+      std::size_t i=0;
+      for(auto itv=lcc.vertex_attributes().begin(),
+           itvend=lcc.vertex_attributes().end(); itv!=itvend; ++itv, ++i)
+      { fo<<fct(lcc, lcc.template dart_of_attribute<0>(itv), i)<<std::endl; }
+      fo<<std::endl;
+    }
+  };
+  /////////////////////////////////////////////////////////////////////////////
+  template<>
+  struct Write_point_data<std::nullptr_t>
+  {
+    template<typename LCC>
+    static void run(std::ofstream&, LCC&, std::size_t, std::nullptr_t)
+    {}
+  };
+  /////////////////////////////////////////////////////////////////////////////
+  // Read data, stored values as T.
+  template<typename T>
+  bool read_data(std::istream& fi, std::string& line, std::vector<T>& data)
+  {
+    std::string txt, data_type;
+    std::size_t nb;
+    std::istringstream inputline(line);
+    inputline>>txt>>nb;  // "CELL_DATA xxx"
+    fi>>txt>>txt; // "SCALARS cell_scalars "
+    fi>>data_type>>txt; // type for data
+    fi>>txt>>txt; // "LOOKUP_TABLE default"
+    if(!fi.good())
+    { return false; }
+    data.clear();
+    data.reserve(nb);
+    for(std::size_t i=0; i<nb; ++i)
+    {
+      if(!(fi>>txt))
+      { return false; }
 
-// Helper: read a scalar of the right type from stream
-template <typename Functor>
-bool read_scalar_by_vtk_type(std::istream& is, const std::string& vtk_type, std::size_t n, Functor f) {
-  if(vtk_type == "float") {
-    for(std::size_t i = 0; i < n; ++i) {
-      float v;
-      if(!(is >> v))
-        return false;
-      f(i, v);
+      std::stringstream ss{txt};
+      T t;
+      ss>>t;
+
+      data.push_back(t);
     }
-  } else if(vtk_type == "double") {
-    for(std::size_t i = 0; i < n; ++i) {
-      double v;
-      if(!(is >> v))
-        return false;
-      f(i, v);
-    }
-  } else if(vtk_type == "int") {
-    for(std::size_t i = 0; i < n; ++i) {
-      int v;
-      if(!(is >> v))
-        return false;
-      f(i, v);
-    }
-  } else if(vtk_type == "unsigned_int") {
-    for(std::size_t i = 0; i < n; ++i) {
-      unsigned int v;
-      if(!(is >> v))
-        return false;
-      f(i, v);
-    }
-  } else if(vtk_type == "short") {
-    for(std::size_t i = 0; i < n; ++i) {
-      short int v;
-      if(!(is >> v))
-        return false;
-      f(i, v);
-    }
-  } else if(vtk_type == "unsigned_short") {
-    for(std::size_t i = 0; i < n; ++i) {
-      unsigned short int v;
-      if(!(is >> v))
-        return false;
-      f(i, v);
-    }
-  } else if(vtk_type == "char") {
-    for(std::size_t i = 0; i < n; ++i) {
-      char v;
-      int tmp;
-      if(!(is >> tmp))
-        return false;
-      v = static_cast<char>(tmp);
-      f(i, v);
-    }
-  } else if(vtk_type == "unsigned_char") {
-    for(std::size_t i = 0; i < n; ++i) {
-      unsigned char v;
-      int tmp;
-      if(!(is >> tmp))
-        return false;
-      v = static_cast<unsigned char>(tmp);
-      f(i, v);
-    }
-  } else if(vtk_type == "long") {
-    for(std::size_t i = 0; i < n; ++i) {
-      long int v;
-      if(!(is >> v))
-        return false;
-      f(i, v);
-    }
-  } else if(vtk_type == "unsigned_long") {
-    for(std::size_t i = 0; i < n; ++i) {
-      unsigned long int v;
-      if(!(is >> v))
-        return false;
-      f(i, v);
-    }
-  } else {
-    std::cerr << "[ERROR] read_VTK: unsupported scalar type: " << vtk_type << std::endl;
-    return false;
+    return true;
   }
-  return true;
-}
-
-// VTK type name mapping
-template <typename T> struct gettype
+  /////////////////////////////////////////////////////////////////////////////
+  // Helper: detect VTK cell type from a 3-cell
+  template<typename LCC>
+  VTK_Cell_Type get_vtk_cell_type(const LCC& lcc,
+                                  typename LCC::Dart_const_descriptor itvol,
+                                  typename LCC::Dart_const_descriptor& sd)
+  {
+    using namespace CGAL::CMap::Element_topo;
+    cell_topo vol_type=get_cell_topo<3>(lcc, itvol, sd);
+    switch(vol_type)
+    {
+      case TETRAHEDRON: return VTK_TETRA;
+      case PYRAMID: return VTK_PYRAMID;
+      case PRISM: return VTK_WEDGE;
+      case HEXAHEDRON: return VTK_HEXAHEDRON;
+      // case PENTAGONAL_PRISM: return VTK_PENTAGONAL_PRISM;
+      // case HEXAGONAL_PRISM: return VTK_HEXAGONAL_PRISM;
+        //       24 QUADRATIC_TETRA
+        //       25 QUADRATIC_HEXAHEDRON
+        //       26 QUADRATIC_WEDGE
+        //       27 QUADRATIC_PYRAMID
+      default: break;
+    }
+    return VTK_POLYHEDRON;
+  }
+  /////////////////////////////////////////////////////////////////////////////
+template <typename LCC, typename VertexScalarType=float,
+          typename CellScalarType=float>
+bool read_lcc_from_vtk_ascii(std::istream& is, LCC& alcc,
+                             std::vector<VertexScalarType>* vertex_scalars=nullptr,
+                             std::vector<CellScalarType>* cell_scalars=nullptr)
 {
-  static std::string name() { return "unknown"; }
-};
-template <> struct gettype<bool>
-{
-  static std::string name() { return "bit"; }
-};
-template <> struct gettype<unsigned char>
-{
-  static std::string name() { return "unsigned_char"; }
-};
-template <> struct gettype<char>
-{
-  static std::string name() { return "char"; }
-};
-template <> struct gettype<unsigned short int>
-{
-  static std::string name() { return "unsigned_short"; }
-};
-template <> struct gettype<short int>
-{
-  static std::string name() { return "short"; }
-};
-template <> struct gettype<unsigned int>
-{
-  static std::string name() { return "unsigned_int"; }
-};
-template <> struct gettype<int>
-{
-  static std::string name() { return "int"; }
-};
-template <> struct gettype<unsigned long int>
-{
-  static std::string name() { return "unsigned_long"; }
-};
-template <> struct gettype<long int>
-{
-  static std::string name() { return "long"; }
-};
-template <> struct gettype<float>
-{
-  static std::string name() { return "float"; }
-};
-template <> struct gettype<double>
-{
-  static std::string name() { return "double"; }
-};
-
-// VTK cell type constants
-enum VTK_Cell_Type {
-  VTK_TETRA = 10,
-  VTK_VOXEL = 11,
-  VTK_HEXAHEDRON = 12,
-  VTK_WEDGE = 13,
-  VTK_PYRAMID = 14,
-  VTK_PENTAGONAL_PRISM = 15,
-  VTK_HEXAGONAL_PRISM = 16,
-  VTK_POLYHEDRON = 42
-};
-
-// Helper: detect VTK cell type from a 3-cell
-template <typename LCC, typename Dart> inline VTK_Cell_Type get_vtk_cell_type(const LCC& lcc, Dart itvol) {
-  // Heuristic: count number of vertices and faces
-  std::size_t nbv = 0, nbf = 0;
-  for(auto itv = lcc.template one_dart_per_incident_cell<0, 3>(itvol).begin(),
-           itvend = lcc.template one_dart_per_incident_cell<0, 3>(itvol).end();
-      itv != itvend; ++itv)
-    ++nbv;
-  for(auto itf = lcc.template one_dart_per_incident_cell<2, 3>(itvol).begin(),
-           itfend = lcc.template one_dart_per_incident_cell<2, 3>(itvol).end();
-      itf != itfend; ++itf)
-    ++nbf;
-
-  if(nbv == 4 && nbf == 4)
-    return VTK_TETRA;
-  if(nbv == 5 && nbf == 5)
-    return VTK_PYRAMID;
-  if(nbv == 6 && nbf == 5)
-    return VTK_WEDGE;
-  if(nbv == 8 && nbf == 6)
-    return VTK_HEXAHEDRON;
-  if(nbv == 10 && nbf == 7)
-    return VTK_PENTAGONAL_PRISM;
-  if(nbv == 12 && nbf == 8)
-    return VTK_HEXAGONAL_PRISM;
-  return VTK_POLYHEDRON;
-}
-
-template <typename LCC, typename VertexScalarReader, typename CellScalarReader>
-bool read_lcc_from_vtk_ascii(std::istream& is, LCC& alcc, VertexScalarReader vertex_reader, CellScalarReader cell_reader) {
-  static_assert(LCC::dimension == 3 && LCC::ambient_dimension == 3,
+  static_assert(LCC::dimension==3 && LCC::ambient_dimension==3,
                 "read_VTK() only supports 3D Linear_cell_complexes (3,3)");
 
-  using Point = typename LCC::Point;
-  using FT = typename LCC::FT;
-
-  alcc.clear();
+  using Point=typename LCC::Point;
+  using FT=typename LCC::FT;
 
   Linear_cell_complex_incremental_builder_3<LCC> ib(alcc);
 
@@ -291,297 +294,295 @@ bool read_lcc_from_vtk_ascii(std::istream& is, LCC& alcc, VertexScalarReader ver
   std::size_t npoints, ncells;
 
   // Skip to POINTS section
-  while(std::getline(is, line)) {
-    if(line.find("POINTS") != std::string::npos)
-      break;
-  }
-  if(is.eof()) {
-    std::cerr << "[ERROR] read_VTK: POINTS section not found" << std::endl;
+  while(std::getline(is, line) && line.find("POINTS")==std::string::npos)
+  {}
+  if(is.eof())
+  {
+    std::cerr<<"[ERROR] read_VTK: POINTS section not found"<<std::endl;
     return false;
   }
 
   std::stringstream ss(line);
   std::getline(ss, tmp, ' '); // skip "POINTS"
-  ss >> npoints;
+  ss>>npoints;
 
   // Read points
   std::vector<typename LCC::Vertex_attribute_descriptor> points(npoints);
-  for(std::size_t i = 0; i < npoints; ++i) {
+  for(std::size_t i=0; i<npoints; ++i)
+  {
     FT x, y, z;
-    if(!(is >> x >> y >> z)) {
-      std::cerr << "[ERROR] read_VTK: failed to read point " << i << std::endl;
+    if(!(is>>x>>y>>z))
+    {
+      std::cerr<<"[ERROR] read_VTK: failed to read point "<<i<<std::endl;
       return false;
     }
-    points[i] = ib.add_vertex(Point(x, y, z));
+    points[i]=ib.add_vertex(Point(x, y, z));
   }
 
   // Skip to CELLS section
-  while(std::getline(is, line)) {
-    if(line.find("CELLS") != std::string::npos)
-      break;
-  }
-  if(is.eof()) {
-    std::cerr << "[ERROR] read_VTK: CELLS section not found" << std::endl;
+  while(std::getline(is, line) && line.find("CELLS")==std::string::npos)
+  {}
+  if(is.eof())
+  {
+    std::cerr<<"[ERROR] read_VTK: CELLS section not found"<<std::endl;
     return false;
   }
 
-  ss = std::stringstream(line);
+  ss=std::stringstream(line);
   std::getline(ss, tmp, ' '); // skip "CELLS"
-  ss >> ncells;
+  ss>>ncells;
 
   // Read connectivity
   std::vector<std::vector<std::size_t>> faces(ncells);
   std::size_t points_per_cell;
-  for(std::size_t i = 0; i < ncells; ++i) {
-    if(!(is >> points_per_cell)) {
-      std::cerr << "[ERROR] read_VTK: failed to read cell " << i << std::endl;
+  for(std::size_t i=0; i<ncells; ++i)
+  {
+    if(!(is>>points_per_cell))
+    {
+      std::cerr<<"[ERROR] read_VTK: failed to read cell "<<i<<std::endl;
       return false;
     }
     faces[i].resize(points_per_cell);
-    for(std::size_t j = 0; j < points_per_cell; ++j) {
-      if(!(is >> faces[i][j])) {
-        std::cerr << "[ERROR] read_VTK: failed to read cell " << i << " vertex " << j << std::endl;
+    for(std::size_t j=0; j<points_per_cell; ++j)
+    {
+      if(!(is>>faces[i][j]))
+      {
+        std::cerr<<"[ERROR] read_VTK: failed to read cell "<<i<<" vertex "<<j<< std::endl;
         return false;
       }
     }
   }
 
   // Skip to CELL_TYPES section
-  while(std::getline(is, line)) {
-    if(line.find("CELL_TYPES") != std::string::npos)
-      break;
-  }
-  if(is.eof()) {
-    std::cerr << "[ERROR] read_VTK: CELL_TYPES section not found" << std::endl;
+  while(std::getline(is, line) && line.find("CELL_TYPES")==std::string::npos)
+  {}
+  if(is.eof())
+  {
+    std::cerr<<"[ERROR] read_VTK: CELL_TYPES section not found"<<std::endl;
     return false;
   }
 
   // Create cells based on types
   std::size_t cell_type;
-  for(std::size_t i = 0; i < ncells; ++i) {
-    if(!(is >> cell_type)) {
-      std::cerr << "[ERROR] read_VTK: failed to read cell type " << i << std::endl;
+  for(std::size_t i = 0; i<ncells; ++i)
+  {
+    if(!(is>>cell_type))
+    {
+      std::cerr<<"[ERROR] read_VTK: failed to read cell type "<<i<< std::endl;
       return false;
     }
-    const auto& v = faces[i];
-    switch(cell_type) {
-    case 10: // TETRA
-      if(v.size() == 4)
-        make_tetrahedron_with_builder(ib, v[0], v[1], v[2], v[3]);
+    const auto& v=faces[i];
+    switch(cell_type)
+    {
+    case VTK_TETRA:
+      if(v.size()==4)
+      { make_tetrahedron_with_builder(ib, v[0], v[1], v[2], v[3]); }
       break;
-    case 11: // VOXEL
-      if(v.size() == 8)
-        make_hexahedron_with_builder(ib, v[0], v[1], v[3], v[2], v[4], v[5], v[7], v[6]);
+    case VTK_VOXEL:
+      if(v.size()==8)
+      { make_hexahedron_with_builder(ib, v[0], v[1], v[3], v[2], v[4], v[5],
+                                     v[7], v[6]); }
       break;
-    case 12: // HEXAHEDRON
-      if(v.size() == 8)
-        make_hexahedron_with_builder(ib, v[0], v[1], v[2], v[3], v[4], v[5], v[6], v[7]);
+    case VTK_HEXAHEDRON:
+      if(v.size()==8)
+      { make_hexahedron_with_builder(ib, v[0], v[1], v[2], v[3], v[4], v[5],
+                                     v[6], v[7]); }
       break;
-    case 13: // PRISM (WEDGE)
-      if(v.size() == 6)
-        make_prism_with_builder(ib, v[0], v[1], v[2], v[3], v[4], v[5]);
+    case VTK_WEDGE: // PRISM
+      if(v.size()==6)
+      { make_prism_with_builder(ib, v[0], v[1], v[2], v[3], v[4], v[5]); }
       break;
-    case 14: // PYRAMID
-      if(v.size() == 5)
-        make_pyramid_with_builder(ib, v[0], v[1], v[2], v[3], v[4]);
+    case VTK_PYRAMID:
+      if(v.size()==5)
+      { make_pyramid_with_builder(ib, v[0], v[1], v[2], v[3], v[4]); }
       break;
-    case 15: // PENTAGONAL_PRISM
-      if(v.size() == 10)
-        make_pentagonal_prism_with_builder(ib, v[0], v[1], v[2], v[3], v[4], v[5], v[6], v[7], v[8], v[9]);
+    case VTK_PENTAGONAL_PRISM:
+      if(v.size()==10)
+      { make_pentagonal_prism_with_builder(ib, v[0], v[1], v[2], v[3], v[4],
+                                           v[5], v[6], v[7], v[8], v[9]); }
       break;
-    case 16: // HEXAGONAL_PRISM
-      if(v.size() == 12)
-        make_hexagonal_prism_with_builder(ib, v[0], v[1], v[2], v[3], v[4], v[5], v[6], v[7], v[8], v[9], v[10], v[11]);
+    case VTK_HEXAGONAL_PRISM:
+      if(v.size()==12)
+      { make_hexagonal_prism_with_builder(ib, v[0], v[1], v[2], v[3], v[4],
+                                          v[5], v[6], v[7], v[8], v[9],
+                                          v[10], v[11]); }
       break;
-    case 42: // GENERIC CELL
+    case VTK_POLYHEDRON: // GENERIC CELL
       make_generic_cell_with_builder(ib, v);
       break;
     default:
-      std::cerr << "[ERROR] read_VTK: type " << cell_type << " unknown." << std::endl;
+      std::cerr<<"[ERROR] read_VTK: type "<<cell_type<<" unknown."<<std::endl;
     }
   }
 
   // Clean up unused vertex attributes
-  for(auto itv = alcc.vertex_attributes().begin(); itv != alcc.vertex_attributes().end();) {
-    if(alcc.template dart_of_attribute<0>(itv) == alcc.null_descriptor) {
-      alcc.erase_vertex_attribute(itv);
-    } else {
-      ++itv;
-    }
+  for(auto itv=alcc.vertex_attributes().begin();
+       itv!=alcc.vertex_attributes().end(); ++itv)
+  {
+    if(alcc.template dart_of_attribute<0>(itv)==alcc.null_descriptor)
+    { alcc.erase_vertex_attribute(itv); }
   }
 
-  // Read POINT_DATA scalars if present
-  while(std::getline(is, line)) {
-    if(line.find("POINT_DATA") != std::string::npos) {
-      std::size_t ndata;
-      ss = std::stringstream(line);
-      std::getline(ss, tmp, ' '); // skip "POINT_DATA"
-      ss >> ndata;
-
-      std::getline(is, line); // SCALARS line
-      std::stringstream scalars_line(line);
-      std::string scalars, name, vtk_type;
-      scalars_line >> scalars >> name >> vtk_type;
-
-      std::getline(is, line); // LOOKUP_TABLE line
-
-      if(!read_scalar_by_vtk_type(is, vtk_type, ndata, vertex_reader)) {
-        std::cerr << "[ERROR] read_VTK: failed to read POINT_DATA" << std::endl;
+  while(std::getline(is, line))
+  {
+    // Read POINT_DATA scalars if present
+    if(vertex_scalars!=nullptr && line.find("POINT_DATA")!=std::string::npos)
+    {
+      if(!read_data(is, line, *vertex_scalars))
+      {
+        std::cerr<<"[ERROR] read_VTK: error when reading POINT_DATA."
+                 <<std::endl;
       }
-      break;
     }
-  }
-
-  // Read CELL_DATA scalars if present
-  while(std::getline(is, line)) {
-    if(line.find("CELL_DATA") != std::string::npos) {
-      std::size_t ndata;
-      ss = std::stringstream(line);
-      std::getline(ss, tmp, ' '); // skip "CELL_DATA"
-      ss >> ndata;
-
-      std::getline(is, line); // SCALARS line
-      std::stringstream scalars_line(line);
-      std::string scalars, name, vtk_type;
-      scalars_line >> scalars >> name >> vtk_type;
-
-      std::getline(is, line); // LOOKUP_TABLE line
-
-      if(!read_scalar_by_vtk_type(is, vtk_type, ndata, cell_reader)) {
-        std::cerr << "[ERROR] read_VTK: failed to read CELL_DATA" << std::endl;
+    // Read CELL_DATA scalars if present
+    else if(cell_scalars!=nullptr && line.find("CELL_DATA")!=std::string::npos)
+    {
+      if(!read_data(is, line, *cell_scalars))
+      {
+        std::cerr<<"[ERROR] read_VTK: error when reading CELL_DATA."
+                  <<std::endl;
       }
-      break;
     }
   }
-
   return true;
 }
-
-template <typename LCC, typename PointFunctor, typename CellFunctor>
-bool write_lcc_to_vtk_ascii(std::ostream& os, const LCC& alcc, PointFunctor ptval, CellFunctor cellval) {
-  static_assert(LCC::dimension == 3 && LCC::ambient_dimension == 3,
+/////////////////////////////////////////////////////////////////////////////
+template<class LCC>
+bool write_lcc_topo_to_vtk_ascii(std::ostream& os, const LCC& alcc,
+                                 std::size_t& nbpts, std::size_t& nbcells)
+{
+  static_assert(LCC::dimension==3 && LCC::ambient_dimension==3,
                 "write_VTK() only supports 3D Linear_cell_complexes (3,3)");
 
   // Write VTK header
-  os << "# vtk DataFile Version 2.0\n";
-  os << "CGAL Linear_cell_complex\n";
-  os << "ASCII\n";
-  os << "DATASET UNSTRUCTURED_GRID\n\n";
+  os<<"# vtk DataFile Version 2.0\n";
+  os<<"CGAL Linear_cell_complex\n";
+  os<<"ASCII\n";
+  os<<"DATASET UNSTRUCTURED_GRID\n\n";
 
-  // Build vertex index map
-  std::unordered_map<typename LCC::Vertex_attribute_const_descriptor, std::size_t> vertex_index;
-  std::size_t nbpts = 0;
-
-  for(auto itv = alcc.vertex_attributes().begin(), itvend = alcc.vertex_attributes().end(); itv != itvend; ++itv) {
-    vertex_index[itv] = nbpts++;
+  // Build vertex index map and write points
+  std::unordered_map<typename LCC::Vertex_attribute_const_descriptor, std::size_t>
+      index;
+  nbpts=0;
+  os<<"POINTS "<<alcc.vertex_attributes().size()<<" double"<<std::endl;
+  for(auto itv=alcc.vertex_attributes().begin(),
+       itvend=alcc.vertex_attributes().end(); itv!=itvend; ++itv)
+  {
+    os<<" "<<itv->point()<<std::endl;
+    index[itv]=nbpts++;
   }
-
-  // Write points
-  os << "POINTS " << nbpts << " double\n";
-  for(auto itv = alcc.vertex_attributes().begin(), itvend = alcc.vertex_attributes().end(); itv != itvend; ++itv) {
-    const auto& p = itv->point();
-    os << p.x() << " " << p.y() << " " << p.z() << "\n";
-  }
-  os << "\n";
+  os<<std::endl;
 
   // Count cells and build connectivity
-  std::size_t nbcells = 0;
-  std::size_t total_size = 0;
-  std::ostringstream cell_stream;
-  std::ostringstream type_stream;
-
-  for(auto itvol = alcc.template one_dart_per_cell<3>().begin(), itvolend = alcc.template one_dart_per_cell<3>().end();
-      itvol != itvolend; ++itvol)
-  {
-    ++nbcells;
-    VTK_Cell_Type cell_type = get_vtk_cell_type(alcc, itvol);
-    type_stream << static_cast<int>(cell_type) << "\n";
-
-    if(cell_type == VTK_POLYHEDRON) {
-      // Generic polyhedron format write as face-vertex connectivity
-      std::vector<std::vector<std::size_t>> faces;
-      std::size_t cell_size = 1; // Start with 1 for number of faces
-
-      for(auto itface = alcc.template one_dart_per_incident_cell<2, 3>(itvol).begin(),
-               itfaceend = alcc.template one_dart_per_incident_cell<2, 3>(itvol).end();
-          itface != itfaceend; ++itface)
-      {
-        faces.push_back(std::vector<std::size_t>());
-        auto& face = faces.back();
-
-        for(auto itvert = alcc.template darts_of_orbit<1>(itface).begin(),
-                 itvertend = alcc.template darts_of_orbit<1>(itface).end();
-            itvert != itvertend; ++itvert)
-        {
-          face.push_back(vertex_index[alcc.vertex_attribute(itvert)]);
-        }
-        cell_size += face.size() + 1; // +1 for face size
-      }
-
-      cell_stream << cell_size << " " << faces.size();
-      for(const auto& face : faces) {
-        cell_stream << " " << face.size();
-        for(auto v : face) {
-          cell_stream << " " << v;
-        }
-      }
-      cell_stream << "\n";
-      total_size += cell_size + 1; // +1 for cell size
-
-    } else {
-      // Standard cell types write vertex connectivity directly
-      std::vector<std::size_t> vertices;
-
-      for(auto itvert = alcc.template one_dart_per_incident_cell<0, 3>(itvol).begin(),
-               itvertend = alcc.template one_dart_per_incident_cell<0, 3>(itvol).end();
-          itvert != itvertend; ++itvert)
-      {
-        vertices.push_back(vertex_index[alcc.vertex_attribute(itvert)]);
-      }
-
-      cell_stream << vertices.size();
-      for(auto v : vertices) {
-        cell_stream << " " << v;
-      }
-      cell_stream << "\n";
-      total_size += vertices.size() + 1;
-    }
-  }
+  nbcells=0;
+  std::size_t total_size=0;
+  std::ostringstream cell_stream, type_stream;
+  typename LCC::Dart_const_descriptor sd;
 
   // Write cells section
-  os << "CELLS " << nbcells << " " << total_size << "\n";
-  os << cell_stream.str();
-  os << "\n";
+  for(typename LCC::template One_dart_per_cell_range<3>::const_iterator
+           itvol=alcc.template one_dart_per_cell<3>().begin(),
+       itvolend=alcc.template one_dart_per_cell<3>().end();
+      itvol!=itvolend; ++itvol)
+  {
+    ++nbcells;
+    ++total_size; // for the number of vertices
+    VTK_Cell_Type cell_type=get_vtk_cell_type(alcc, itvol, sd);
+    type_stream<<static_cast<int>(cell_type)<<std::endl;
+
+    if(cell_type==VTK_TETRA)
+    {
+      cell_stream<<" 4 "
+         <<index[alcc.vertex_attribute(sd)]<<" "
+         <<index[alcc.vertex_attribute(alcc.template beta<1>(sd))]<<" "
+         <<index[alcc.vertex_attribute(alcc.template beta<0>(sd))]<<" "
+         <<index[alcc.vertex_attribute(alcc.template beta<2, 0>(sd))]<<std::endl;
+      total_size+=4;
+    }
+    else if(cell_type==VTK_PYRAMID)
+    {
+      cell_stream<<" 5 "
+         <<index[alcc.vertex_attribute(sd)]<<" "
+         <<index[alcc.vertex_attribute(alcc.template beta<1>(sd))]<<" "
+         <<index[alcc.vertex_attribute(alcc.template beta<1,1>(sd))]<<" "
+         <<index[alcc.vertex_attribute(alcc.template beta<0>(sd))]<<" "
+         <<index[alcc.vertex_attribute(alcc.template beta<2,0>(sd))]<<std::endl;
+      total_size+=5;
+    }
+    else if(cell_type==VTK_WEDGE)
+    {
+      cell_stream<<" 6 "
+         <<index[alcc.vertex_attribute(sd)]<<" "
+         <<index[alcc.vertex_attribute(alcc.template beta<1>(sd))]<<" "
+         <<index[alcc.vertex_attribute(alcc.template beta<0>(sd))]<<" ";
+      // Move to the up face
+      typename LCC::Dart_const_descriptor d2=alcc.template beta<2, 1, 1, 2>(sd);
+      cell_stream<<index[alcc.vertex_attribute(alcc.template beta<1>(d2))]<<" "
+         <<index[alcc.vertex_attribute(d2)]<<" "
+         <<index[alcc.vertex_attribute(alcc.template beta<0>(d2))]<<std::endl;
+      total_size+=6;
+    }
+    else if(cell_type==VTK_HEXAHEDRON)
+    {
+      cell_stream<<" 8 ";
+      for(unsigned int i=0; i<4; ++i)
+      {
+        cell_stream<<index[alcc.vertex_attribute(sd)]<<" ";
+        sd=alcc.template beta<1>(sd);
+      }
+      typename LCC::Dart_const_descriptor d2=alcc.template beta<2, 1, 1, 2, 1>(sd);
+      // Darts associated with particles 4, 5, 6, 7
+      for(unsigned int i = 0; i < 4; i++)
+      {
+        cell_stream<<index[alcc.vertex_attribute(d2)]<<" ";
+        d2 = alcc.template beta<0>(d2);
+      }
+      cell_stream<<std::endl;
+      total_size+=8;
+    }
+    // TODO: 15 PENTAGONAL_PRISM
+    //       16 HEXAGONAL_PRISM
+    //       24 QUADRATIC_TETRA
+    //       25 QUADRATIC_HEXAHEDRON
+    //       26 QUADRATIC_WEDGE
+    //       27 QUADRATIC_PYRAMID
+    else
+    {
+      // Generic polyhedron format write as face-vertex connectivity
+      std::vector<std::vector<std::size_t>> faces;
+      std::size_t cell_size=1; // Start with 1 for number of faces
+      ++total_size; // for the same reason
+      for(auto itface=alcc.template one_dart_per_incident_cell<2, 3, 2>(itvol).begin(),
+               itfaceend=alcc.template one_dart_per_incident_cell<2, 3, 2>(itvol).end();
+          itface!=itfaceend; ++itface)
+      {
+        faces.push_back(std::vector<std::size_t>());
+        typename LCC::Dart_const_descriptor curdh=itface;
+        do
+        {
+          faces.back().push_back(index[alcc.vertex_attribute(curdh)]);
+          curdh=alcc.template beta<1>(curdh);
+        }
+        while(curdh!=itface);
+        cell_size+=faces.back().size()+1; // +1 for the number of vertices in the face
+      }
+      cell_stream<<cell_size<<" "<<faces.size();
+      for(const auto& face : faces)
+      {
+        cell_stream<<" "<<face.size();
+        for(auto v : face)
+        { cell_stream<<" "<<v; }
+        total_size+=face.size()+1; // +1 for the number of vertices in the face
+      }
+      cell_stream<<std::endl;
+    }
+  }
+  os<<"CELLS "<<nbcells<<" "<<total_size<<std::endl;
+  os<<cell_stream.str()<<std::endl;
 
   // Write cell types
-  os << "CELL_TYPES " << nbcells << "\n";
-  os << type_stream.str();
-  os << "\n";
-
-  // Write vertex scalars if ptval is not nullptr
-  if constexpr(!std::is_same_v<PointFunctor, std::nullptr_t>) {
-    os << "POINT_DATA " << nbpts << "\n";
-    os << "SCALARS vertex_scalars " << gettype<decltype(ptval(alcc, alcc.null_dart_descriptor))>::name() << " 1\n";
-    os << "LOOKUP_TABLE default\n";
-    for(auto itv = alcc.vertex_attributes().begin(), itvend = alcc.vertex_attributes().end(); itv != itvend; ++itv) {
-      auto dart = alcc.template dart_of_attribute<0>(itv);
-      CGAL_assertion(dart != alcc.null_dart_descriptor);
-      os << ptval(alcc, dart) << "\n";
-    }
-  }
-
-  // Write cell scalars if cellval is not nullptr/pointer
-  if constexpr(!std::is_same_v<CellFunctor, std::nullptr_t> && !std::is_pointer_v<CellFunctor>) {
-    os << "CELL_DATA " << nbcells << "\n";
-    os << "SCALARS volume_scalars " << gettype<decltype(cellval(alcc, alcc.null_dart_descriptor))>::name() << " 1\n";
-    os << "LOOKUP_TABLE default\n";
-    for(auto itvol = alcc.template one_dart_per_cell<3>().begin(),
-             itvolend = alcc.template one_dart_per_cell<3>().end();
-        itvol != itvolend; ++itvol)
-    {
-      os << cellval(alcc, itvol) << "\n";
-    }
-  }
+  os<<"CELL_TYPES "<<nbcells<<std::endl;
+  os<<type_stream.str()<<std::endl;
 
   return true;
 }
@@ -592,82 +593,122 @@ bool write_lcc_to_vtk_ascii(std::ostream& os, const LCC& alcc, PointFunctor ptva
 //                        Public interface implementation
 // ============================================================================
 
-// Functor-based versions
-template <typename LCC, typename VertexScalarReader, typename CellScalarReader>
-inline bool read_VTK(LCC& alcc, const char* filename, VertexScalarReader vertex_reader, CellScalarReader cell_reader) {
-  CGAL_assertion(filename != nullptr);
-  std::ifstream file(filename);
-  if(!file.is_open()) {
-    std::cerr << "[ERROR] read_VTK: cannot open file " << filename << std::endl;
-    return false;
-  }
-  return internal::read_lcc_from_vtk_ascii(file, alcc, vertex_reader, cell_reader);
-}
-
-template <typename LCC, typename PointFunctor, typename CellFunctor>
-inline bool write_VTK(const LCC& alcc, const char* filename, PointFunctor ptval, CellFunctor cellval) {
-  CGAL_assertion(filename != nullptr);
-  std::ofstream file(filename);
-  if(!file.is_open()) {
-    std::cerr << "[ERROR] write_VTK: cannot open file " << filename << std::endl;
-    return false;
-  }
-  return internal::write_lcc_to_vtk_ascii(file, alcc, ptval, cellval);
-}
-
-// Vector-based versions (convenience wrappers)
+////////////////////////////////////////////////////////////////////////////////////
 template <typename LCC, typename VertexScalarType, typename VolumeScalarType>
-inline bool read_VTK(LCC& alcc,
+bool read_VTK(LCC& alcc,
               const char* filename,
               std::vector<VertexScalarType>* vertex_scalars,
-              std::vector<VolumeScalarType>* volume_scalars) {
-  auto v_writer = [&](std::size_t i, auto val) {
-    if(vertex_scalars) {
-      if(vertex_scalars->size() <= i)
-        vertex_scalars->resize(i + 1);
-      (*vertex_scalars)[i] = static_cast<VertexScalarType>(val);
-    }
-  };
-  auto c_writer = [&](std::size_t i, auto val) {
-    if(volume_scalars) {
-      if(volume_scalars->size() <= i)
-        volume_scalars->resize(i + 1);
-      (*volume_scalars)[i] = static_cast<VolumeScalarType>(val);
-    }
-  };
-  return read_VTK(alcc, filename, v_writer, c_writer);
+              std::vector<VolumeScalarType>* volume_scalars)
+{
+  CGAL_assertion(filename!=nullptr);
+  std::ifstream file(filename);
+  if(!file.is_open())
+  {
+    std::cerr<<"[ERROR] read_VTK: cannot open file "<<filename<<std::endl;
+    return false;
+  }
+  return internal::read_lcc_from_vtk_ascii(file, alcc,
+                                           vertex_scalars, volume_scalars);
 }
 
+template <typename LCC>
+bool read_VTK(LCC& alcc,
+    const char* filename)
+{ return read_VTK<LCC, float, float>
+      (alcc, filename, nullptr, nullptr); }
+
+template <typename LCC, typename VertexScalarType>
+bool read_VTK(LCC& alcc,
+    const char* filename,
+    std::vector<VertexScalarType>* vertex_scalars)
+{ return read_VTK<LCC, VertexScalarType, float>
+      (alcc, filename, vertex_scalars, nullptr); }
+
+template <typename LCC, typename VolumeScalarType>
+bool read_VTK(LCC& alcc,
+    const char* filename,
+    std::nullptr_t,
+    std::vector<VolumeScalarType>* volume_scalars)
+{ return read_VTK<LCC, float, VolumeScalarType>
+      (alcc, filename, nullptr, volume_scalars); }
+////////////////////////////////////////////////////////////////////////////////////
+template <typename LCC, typename PointFunctor, typename CellFunctor>
+inline bool write_VTK_with_fct(const LCC& alcc, const char* filename,
+                               PointFunctor pointfct, CellFunctor cellfct)
+{
+  CGAL_assertion(filename!=nullptr);
+  std::ofstream file(filename);
+  if(!file.good())
+  {
+    std::cerr<<"[ERROR] write_VTK: cannot open file "<<filename<<std::endl;
+    return false;
+  }
+  std::size_t nbpts=0, nbcells=0;
+  bool res=internal::write_lcc_topo_to_vtk_ascii(file, alcc, nbpts, nbcells);
+  if(res)
+  {
+    if(pointfct)
+    { internal::Write_point_data<PointFunctor>::
+          run(file, alcc, nbpts, pointfct); }
+    if(cellfct)
+    { internal::Write_cell_data<CellFunctor>::
+          run(file, alcc, nbcells, cellfct); }
+  }
+  file.close();
+  return true;
+}
+////////////////////////////////////////////////////////////////////////////////////
 template <typename LCC, typename VertexScalarType, typename VolumeScalarType>
-inline bool write_VTK(const LCC& alcc,
-               const char* filename,
+bool write_VTK(const LCC& alcc, const char* filename,
                const std::vector<VertexScalarType>* vertex_scalars,
-               const std::vector<VolumeScalarType>* volume_scalars) {
-  // Build index maps
-  std::unordered_map<typename LCC::Vertex_attribute_const_descriptor, std::size_t> vertex_indices;
-  std::size_t idx = 0;
-  for(auto itv = alcc.vertex_attributes().begin(), itvend = alcc.vertex_attributes().end(); itv != itvend; ++itv)
-    vertex_indices[itv] = idx++;
+               const std::vector<VolumeScalarType>* volume_scalars)
+{
+  std::function<VertexScalarType(const LCC&,
+                                 typename LCC::Dart_const_descriptor,
+                                 std::size_t i)> vertexfct;
+  std::function<VolumeScalarType(const LCC&,
+                                 typename LCC::Dart_const_descriptor,
+                                 std::size_t i)> cellfct;
+  if(vertex_scalars!=nullptr)
+  {
+    vertexfct=[&vertex_scalars](const LCC&, typename LCC::Dart_const_descriptor,
+                               std::size_t i) -> VertexScalarType
+    { return (*vertex_scalars)[i]; };
+  }
 
-  std::unordered_map<typename LCC::Dart_const_descriptor, std::size_t> volume_indices;
-  idx = 0;
-  for(auto itvol = alcc.template one_dart_per_cell<3>().begin(), itvolend = alcc.template one_dart_per_cell<3>().end();
-      itvol != itvolend; ++itvol)
-    volume_indices[itvol] = idx++;
+  if(volume_scalars!=nullptr)
+  {
+    cellfct=[&volume_scalars](const LCC&, typename LCC::Dart_const_descriptor,
+                             std::size_t i) -> VolumeScalarType
+    { return (*volume_scalars)[i]; };
+  }
 
-  return write_VTK(
-      alcc, filename,
-      [vertex_scalars, &vertex_indices](const LCC& lcc, typename LCC::Dart_const_descriptor d) -> VertexScalarType {
-        if(vertex_scalars)
-          return (*vertex_scalars)[vertex_indices.at(lcc.template attribute<0>(d))];
-        return VertexScalarType();
-      },
-      [volume_scalars, &volume_indices](const LCC& lcc, typename LCC::Dart_const_descriptor d) -> VolumeScalarType {
-        if(volume_scalars)
-          return (*volume_scalars)[volume_indices.at(d)];
-        return VolumeScalarType();
-      });
+  return write_VTK_with_fct(alcc, filename, vertexfct, cellfct);
 }
+
+template <typename LCC>
+bool write_VTK(const LCC& alcc, const char* filename)
+{
+  return write_VTK<LCC, float, float>(alcc, filename, nullptr, nullptr);
+}
+
+template <typename LCC, typename VertexScalarType>
+bool write_VTK(const LCC& alcc, const char* filename,
+    const std::vector<VertexScalarType>* vertex_scalars)
+{
+  return write_VTK<LCC, VertexScalarType, float>(alcc, filename, vertex_scalars,
+                                                 nullptr);
+}
+
+template <typename LCC, typename VolumeScalarType>
+bool write_VTK(const LCC& alcc, const char* filename,
+    std::nullptr_t,
+    const std::vector<VolumeScalarType>* volume_scalars)
+{
+  return write_VTK<LCC, float, VolumeScalarType>(alcc, filename, nullptr,
+                                                 volume_scalars);
+}
+////////////////////////////////////////////////////////////////////////////////////
 
 } // namespace IO
 } // namespace CGAL
