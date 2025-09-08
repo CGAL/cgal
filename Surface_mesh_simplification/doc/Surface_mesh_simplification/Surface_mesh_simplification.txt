@@ -406,7 +406,7 @@ steps of the simplification algorithm.
 
 Each Garland-Heckbert simplification strategy is implemented with a single class that regroups
 both the cost and the placement policies, which must be used together as they share vertex quadric data.
-The state of the art strategy of using plane-based quadric error metrics plus line-base quadric error metrix is implemented with the class
+The state of the art strategy of using plane-based quadric error metrics plus line-base quadric error metrics is implemented with the class
 `Surface_mesh_simplification::GarlandHeckbert_policies`.
 Although both policies must be used together, it is still possible to wrap either policy
 using behavior modifiers such as `Surface_mesh_simplification::Bounded_normal_change_placement`.
