@@ -36,11 +36,11 @@ typedef SMS::GarlandHeckbert_plane_policies<Surface_mesh, Kernel>               
 typedef SMS::GarlandHeckbert_probabilistic_plane_policies<Surface_mesh, Kernel>    Prob_plane;
 typedef SMS::GarlandHeckbert_triangle_policies<Surface_mesh, Kernel>               Classic_tri;
 typedef SMS::GarlandHeckbert_probabilistic_triangle_policies<Surface_mesh, Kernel> Prob_tri;
-typedef SMS::GarlandHeckbert_policies<Surface_mesh, Kernel>                        Classic_plane_plus_line;
+typedef SMS::GarlandHeckbert_policies<Surface_mesh, Kernel>                        Classic_plane_and_line;
 
 // Old policies composed with line policies
 typedef SMS::internal::GarlandHeckbert_line_policies<Surface_mesh, Kernel> Line_quadric;
-typedef SMS::internal::GarlandHeckbert_composed_policies<Surface_mesh, Kernel, Prob_plane, Line_quadric> Proba_plane_plus_line;
+typedef SMS::internal::GarlandHeckbert_composed_policies<Surface_mesh, Kernel, Prob_plane, Line_quadric> Proba_plane_and_line;
 typedef SMS::internal::GarlandHeckbert_composed_policies<Surface_mesh, Kernel, Classic_tri, Line_quadric> Classic_tri_plus_line;
 typedef SMS::internal::GarlandHeckbert_composed_policies<Surface_mesh, Kernel, Prob_tri, Line_quadric> Proba_tri_plus_line;
 
@@ -125,15 +125,15 @@ int main(int argc, char** argv)
     else if(policy == "Prob_triangle")
       time=collapse_gh(tmesh, ratio, Prob_tri(tmesh));
     else if(policy == "Plane_plus_line_0.1")
-      time=collapse_gh(tmesh, ratio, Classic_plane_plus_line(tmesh, 100, 0.1));
+      time=collapse_gh(tmesh, ratio, Classic_plane_and_line(tmesh, 100, 0.1));
     else if(policy == "Plane_plus_line_0.01")
-      time=collapse_gh(tmesh, ratio, Classic_plane_plus_line(tmesh, 100, 0.01));
+      time=collapse_gh(tmesh, ratio, Classic_plane_and_line(tmesh, 100, 0.01));
     else if(policy == "Plane_plus_line_0.001")
-      time=collapse_gh(tmesh, ratio, Classic_plane_plus_line(tmesh, 100, 0.001));
+      time=collapse_gh(tmesh, ratio, Classic_plane_and_line(tmesh, 100, 0.001));
     else if(policy == "Classic_tri_line")
       time=collapse_gh(tmesh, ratio, Classic_tri_plus_line(tmesh, 100));
     else if(policy == "Proba_plane_line")
-      time=collapse_gh(tmesh, ratio, Proba_plane_plus_line(tmesh, Prob_plane(tmesh), Line_quadric(tmesh), 100));
+      time=collapse_gh(tmesh, ratio, Proba_plane_and_line(tmesh, Prob_plane(tmesh), Line_quadric(tmesh), 100));
     else if(policy == "Proba_tri_line")
       time=collapse_gh(tmesh, ratio, Proba_tri_plus_line(tmesh, Prob_tri(tmesh), Line_quadric(tmesh), 100));
 

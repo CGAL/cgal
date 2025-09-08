@@ -26,7 +26,7 @@ These policies depend on the third party \ref thirdpartyEigen library.
 \sa `GarlandHeckbert_plane_policies`
 \sa `GarlandHeckbert_probabilistic_plane_policies`
 \sa `GarlandHeckbert_triangle_policies`
-\sa `GarlandHeckbert_plane_plus_line_policies`
+\sa `GarlandHeckbert_plane_and_line_policies`
 */
 template <typename TriangleMesh, typename GeomTraits>
 class GarlandHeckbert_probabilistic_triangle_policies

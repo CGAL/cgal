@@ -6,7 +6,7 @@ namespace Surface_mesh_simplification {
 
 since \cgal 6.2, this class is an alias for the current state of the art of Garland-Heckbert policies
 (Section \ref SurfaceMeshSimplificationGarlandHeckbertStrategy).
-It is currently an alias of `GarlandHeckbert_plane_plus_line_policies`.
+It is currently an alias of `GarlandHeckbert_plane_and_line_policies`.
 
 The class `GarlandHeckbert_policies` regroups the cost and placement policies
 based on the Garland-Heckbert strategy (Section \ref SurfaceMeshSimplificationGarlandHeckbertStrategy),
@@ -27,7 +27,7 @@ These policies depend on the third party \ref thirdpartyEigen library.
 \sa `GarlandHeckbert_probabilistic_plane_policies`
 \sa `GarlandHeckbert_triangle_policies`
 \sa `GarlandHeckbert_probabilistic_triangle_policies`
-\sa `GarlandHeckbert_plane_plus_line_policies`
+\sa `GarlandHeckbert_plane_and_line_policies`
 
 */
 template <typename TriangleMesh, typename GeomTraits>

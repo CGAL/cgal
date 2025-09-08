@@ -8,8 +8,8 @@
 //
 // Author(s)     : Leo Valque
 
-#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_GARLANDHECKBERT_PLANE_PLUS_LINE_POLICIES_H
-#define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_GARLANDHECKBERT_PLANE_PLUS_LINE_POLICIES_H
+#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_GARLANDHECKBERT_PLANE_AND_LINE_POLICIES_H
+#define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_GARLANDHECKBERT_PLANE_AND_LINE_POLICIES_H
 
 #include <CGAL/license/Surface_mesh_simplification.h>
 
@@ -25,7 +25,7 @@ namespace CGAL {
 namespace Surface_mesh_simplification {
 
 template<typename TriangleMesh, typename GeomTraits>
-class GarlandHeckbert_plane_plus_line_policies
+class GarlandHeckbert_plane_and_line_policies
   : public internal::GarlandHeckbert_composed_policies<TriangleMesh, GeomTraits,
                                              GarlandHeckbert_plane_policies<TriangleMesh, GeomTraits>,
                                              internal::GarlandHeckbert_line_policies<TriangleMesh, GeomTraits>,
@@ -42,7 +42,7 @@ public:
   typedef typename GeomTraits::FT                                              FT;
 
 public:
-  GarlandHeckbert_plane_plus_line_policies(TriangleMesh& tmesh,
+  GarlandHeckbert_plane_and_line_policies(TriangleMesh& tmesh,
                                            const FT dm = FT(100),
                                            const FT line_weight=FT(0.01))
     : Base(tmesh, FT(1.)/line_weight, dm)
@@ -57,4 +57,4 @@ public:
 } // namespace Surface_mesh_simplification
 } // namespace CGAL
 
-#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_GARLANDHECKBERT_PLANE_PLUS_LINE_POLICIES_H
+#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_GARLANDHECKBERT_PLANE_AND_LINE_POLICIES_H

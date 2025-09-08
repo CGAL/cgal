@@ -24,7 +24,7 @@ typedef SMS::GarlandHeckbert_plane_policies<Surface_mesh, Kernel>               
 typedef SMS::GarlandHeckbert_probabilistic_plane_policies<Surface_mesh, Kernel>    Prob_plane;
 typedef SMS::GarlandHeckbert_triangle_policies<Surface_mesh, Kernel>               Classic_tri;
 typedef SMS::GarlandHeckbert_probabilistic_triangle_policies<Surface_mesh, Kernel> Prob_tri;
-typedef SMS::GarlandHeckbert_plane_plus_line_policies<Surface_mesh, Kernel>        Plane_plus_line;
+typedef SMS::GarlandHeckbert_plane_and_line_policies<Surface_mesh, Kernel>         Plane_and_line;
 
 template <typename GHPolicies>
 void collapse_gh(Surface_mesh& mesh,
@@ -60,7 +60,7 @@ void collapse_gh(Surface_mesh& mesh,
 
 // Usage:
 // ./command [input] [ratio] [policy] [output]
-// policy can be "cp" (classic plane), "ct" (classic triangle), "pp" (probabilistic plane), "pt" (probabilistic triangle), "pl" (plane plus line)
+// policy can be "cp" (classic plane), "ct" (classic triangle), "pp" (probabilistic plane), "pt" (probabilistic triangle), "pl" (plane and line)
 int main(int argc, char** argv)
 {
   Surface_mesh mesh;
@@ -95,7 +95,7 @@ int main(int argc, char** argv)
   else if(policy == "pt")
     collapse_gh<Prob_tri>(mesh, ratio);
   else
-    collapse_gh<Plane_plus_line>(mesh, ratio);
+    collapse_gh<Plane_and_line>(mesh, ratio);
 
   CGAL::IO::write_polygon_mesh((argc > 4) ? argv[4] : "out.off", mesh, CGAL::parameters::stream_precision(17));
 
