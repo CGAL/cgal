@@ -1193,7 +1193,7 @@ typename C3t3::Vertex_handle collapse_edge(const typename C3t3::Edge& edge,
       if (in_cx)
         nb_valid_collapse++;
 #endif
-      return collapse(edge, collapse_type, cell_selector, c3t3, short_edges);
+      return collapse<C3t3>(edge, collapse_type, cell_selector, c3t3, short_edges);
     }
   }
 #ifdef CGAL_DEBUG_TET_REMESHING_IN_PLUGIN
