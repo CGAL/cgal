@@ -423,6 +423,11 @@ bool read_lcc_from_vtk_ascii(std::istream& is, LCC& alcc,
     { alcc.erase_vertex_attribute(itv); }
   }
 
+  if(vertex_scalars!=nullptr)
+  { vertex_scalars->clear(); }
+  if(cell_scalars!=nullptr)
+  { cell_scalars->clear(); }
+
   while(std::getline(is, line))
   {
     // Read POINT_DATA scalars if present
