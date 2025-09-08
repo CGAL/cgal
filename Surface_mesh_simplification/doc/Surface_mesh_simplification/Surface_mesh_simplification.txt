@@ -426,7 +426,7 @@ The implementation of the Garland-Heckbert simplification policies is the result
 of Baskın Şenbaşlar (Google Summer of Code 2019), and Julian Komaromy (Google Summer of Code 2021)
 They both were mentored by Mael Rouxel-Labbé, who also contributed to the code and to the documentation.
 
-Valque Léo added the `GarlandHeckbert_plane_and_line_policies` functionality in \cgal 6.2.
+Léo Valque added the `GarlandHeckbert_plane_and_line_policies` functionality in \cgal 6.2.
 
 */
 } /* namespace CGAL */
