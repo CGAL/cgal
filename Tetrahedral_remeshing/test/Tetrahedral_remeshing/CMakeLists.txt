@@ -11,6 +11,19 @@ find_package(CGAL REQUIRED COMPONENTS ImageIO)
 add_compile_definitions(CGAL_TETRAHEDRAL_REMESHING_VERBOSE)
 #add_compile_definitions(CGAL_CHECK_EXPENSIVE) #to activate expensive assertions
 
+# Concurrent Mesh_3 and Tetrahedral_remeshing
+option(CGAL_ACTIVATE_CONCURRENT_MESHING "Activate parallelism in Mesh_3 and Tetrahedral_remeshing" OFF)
+if(CGAL_ACTIVATE_CONCURRENT_MESHING OR "$ENV{CGAL_ACTIVATE_CONCURRENT_MESH_3}")
+  add_compile_definitions(CGAL_CONCURRENT_MESH_3)
+  add_compile_definitions(CGAL_CONCURRENT_TETRAHEDRAL_REMESHING)
+  find_package(TBB REQUIRED)
+  include(CGAL_TBB_support)
+else()
+  find_package(TBB QUIET)
+  include(CGAL_TBB_support)
+endif()
+
+
 create_single_source_cgal_program("test_tetrahedral_remeshing.cpp")
 create_single_source_cgal_program("test_tetrahedral_remeshing_with_features.cpp")
 create_single_source_cgal_program("test_tetrahedral_remeshing_of_one_subdomain.cpp")
@@ -59,4 +72,7 @@ else()
   message(STATUS "NOTICE: Some tests require Eigen 3.1 (or greater), and will not be compiled.")
 endif()
 
-
+if(CGAL_ACTIVATE_CONCURRENT_MESHING AND TARGET CGAL::TBB_support)
+  message(STATUS "Found TBB")
+  target_link_libraries(features_and_adaptive_sizing PRIVATE CGAL::TBB_support)
+endif()
