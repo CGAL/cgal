@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.12...3.31)
+project(CGAL_Demos)
 
 if(NOT CGAL_MODULES_DIR)
   find_package(CGAL REQUIRED)
