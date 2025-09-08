@@ -851,6 +851,7 @@ void compute_candidate(Candidate<GeomTraits> &c, const Bbox_3& bb, typename Geom
   c.ch.volume = volume<GeomTraits>(c.ch.points, c.ch.indices);
 
   CGAL_assertion(c.ch.volume > 0);
+  c.ch.bbox = bbox_3(c.ch.points.begin(), c.ch.points.end());
 
   c.ch.voxel_volume = (voxel_size * voxel_size * voxel_size) * FT(double(c.inside.size() + c.surface.size() + c.new_surface.size()));
   c.ch.volume_error = CGAL::abs(c.ch.volume - c.ch.voxel_volume) / c.ch.voxel_volume;
@@ -1116,13 +1117,19 @@ void choose_splitting_location_by_concavity(unsigned int& axis, unsigned int& lo
         conc2 = abs(diam2[i] - diam2[i - 1]);
       }
 
-  if (conc2 > conc1)
-    pos1 = pos2;
 
-  if (pos1 < 2 || (length - 3) < pos1)
-    location = (bbox.upper[axis] + bbox.lower[axis]) / 2;
-  else
-    location = ((conc1 > conc2) ? pos1 : pos2) + bbox.lower[axis];
+  if (conc1 <= conc2) {
+    if (pos1 < 2 || (length - 3) < pos1)
+      location = (bbox.upper[axis] + bbox.lower[axis]) / 2;
+    else
+      location = pos1 + bbox.lower[axis];
+  }
+  else {
+    if (pos2 < 2 || (length - 3) < pos2)
+      location = (bbox.upper[axis] + bbox.lower[axis]) / 2;
+    else
+      location = pos2 + bbox.lower[axis];
+  }
 }
 
 template<typename GeomTraits, typename NamedParameters>
@@ -1189,7 +1196,11 @@ void recurse(std::vector<Candidate<GeomTraits>>& candidates, std::vector<int8_t>
       });
   }
 
-  std::swap(candidates, final_candidates);
+  if (candidates.empty())
+    std::swap(candidates, final_candidates);
+  else
+    std::move(final_candidates.begin(), final_candidates.end(), std::back_inserter(candidates));
+
 #else
   CGAL_USE(candidates);
   CGAL_USE(grid);
@@ -1229,7 +1240,10 @@ void recurse(std::vector<Candidate<GeomTraits>>& candidates, std::vector<int8_t>
       compute_candidate(c, bbox, voxel_size);
   }
 
-  std::swap(candidates, final_candidates);
+  if (candidates.empty())
+    std::swap(candidates, final_candidates);
+  else
+    std::move(final_candidates.begin(), final_candidates.end(), std::back_inserter(candidates));
 }
 
 template<typename GeomTraits, typename NamedParameters>
