@@ -9,8 +9,8 @@ based on the Garland-Heckbert "Plane and line" strategy of Liu et al. \cgalCite{
  (Section \ref SurfaceMeshSimplificationGarlandHeckbertStrategy).
 
 This policy enhances the original Garland-Heckbert quadric error metrics,
-by adding to the cost the distance to the line passing through the input vertice and aligned with their normals.
-Compared to the "classic" plane strategy, this strategy improces the speed and the quality of the result.
+by adding to the cost the distance to the line passing through the input vertices and aligned with their normals.
+Compared to the "classic" plane strategy, this strategy improves the speed and the quality of the result.
 (Section \ref SurfaceMeshSimplificationGarlandHeckbertStrategy).
 
 Both the cost and the placement policies must be used together as they internally use
