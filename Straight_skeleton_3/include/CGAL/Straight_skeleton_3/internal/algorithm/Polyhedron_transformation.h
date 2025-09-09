@@ -17,9 +17,10 @@
 #ifndef CGAL_STRAIGHT_SKELETON_3_INTERNAL_ALGORITHM_POLYHEDRON_TRANSFORMATION_H
 #define CGAL_STRAIGHT_SKELETON_3_INTERNAL_ALGORITHM_POLYHEDRON_TRANSFORMATION_H
 
-#include <CGAL/Straight_skeleton_3/internal/HDS/Polyhedron.h>
 #include <CGAL/Straight_skeleton_3/internal/kernel/Kernel_factory.h>
 #include <CGAL/Straight_skeleton_3/internal/kernel/Kernel_wrapper.h>
+#include <CGAL/Straight_skeleton_3/internal/algorithm/Offset_utils.h>
+#include <CGAL/Straight_skeleton_3/internal/HDS/Polyhedron.h>
 #include <CGAL/Straight_skeleton_3/IO/String_factory.h>
 #include <CGAL/Straight_skeleton_3/Configuration.h>
 
@@ -98,6 +99,7 @@ private:
 private:
   using KernelFactory = kernel::KernelFactory<Traits>;
   using KernelWrapper = kernel::KernelWrapper<Traits>;
+  using OffsetUtils = algorithm::OffsetUtils<Traits>;
 
 private:
   struct Size_shenanigans
@@ -866,10 +868,10 @@ public:
     }
 
     // Offset the two common planes
-    Plane3SPtr offset_plane_l = KernelWrapper::offsetPlane(facet_l->plane(), offset*speed_l);
-    Plane3SPtr offset_plane_r = KernelWrapper::offsetPlane(facet_r->plane(), offset*speed_r);
-    Plane3SPtr offset_plane_src = KernelWrapper::offsetPlane(facet_src->plane(), offset*speed_src);
-    Plane3SPtr offset_plane_dst = KernelWrapper::offsetPlane(facet_dst->plane(), offset*speed_dst);
+    Plane3SPtr offset_plane_l = OffsetUtils::offsetPlane(facet_l->plane(), offset*speed_l);
+    Plane3SPtr offset_plane_r = OffsetUtils::offsetPlane(facet_r->plane(), offset*speed_r);
+    Plane3SPtr offset_plane_src = OffsetUtils::offsetPlane(facet_src->plane(), offset*speed_src);
+    Plane3SPtr offset_plane_dst = OffsetUtils::offsetPlane(facet_dst->plane(), offset*speed_dst);
 
 #if 0
     // leaving it here because it's not that intuitive: factoring the intersection of the
@@ -897,7 +899,7 @@ public:
       facet_speed = std::dynamic_pointer_cast<SkelFacetData>(facet->getData())->getSpeed();
     }
 
-    return KernelWrapper::offsetPlane(facet->plane(), facet_speed*offset);
+    return OffsetUtils::offsetPlane(facet->plane(), facet_speed*offset);
   }
 
   /**
@@ -1140,7 +1142,7 @@ public:
           data->setSpeed(speed);
         }
 
-        Plane3SPtr offset_plane = KernelWrapper::offsetPlane(facet->plane(), offset*speed);
+        Plane3SPtr offset_plane = OffsetUtils::offsetPlane(facet->plane(), offset*speed);
         offset_facet->plane_ = offset_plane;
         offset_facet->base_plane_ = facet->base_plane_;
         offset_facet->final_plane_ = facet->final_plane_;

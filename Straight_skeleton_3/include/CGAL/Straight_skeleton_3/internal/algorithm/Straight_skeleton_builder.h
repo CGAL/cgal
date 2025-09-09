@@ -130,6 +130,7 @@
 #include <CGAL/Straight_skeleton_3/internal/kernel/Kernel_wrapper.h>
 #include <CGAL/Straight_skeleton_3/internal/HDS/Polyhedron.h>
 #include <CGAL/Straight_skeleton_3/internal/SDS/Straight_skeleton.h>
+#include <CGAL/Straight_skeleton_3/internal/algorithm/Offset_utils.h>
 #include <CGAL/Straight_skeleton_3/internal/algorithm/vertex_splitters.h>
 #include <CGAL/Straight_skeleton_3/internal/algorithm/events.h>
 #include <CGAL/Straight_skeleton_3/internal/algorithm/Polyhedron_transformation.h>
@@ -306,6 +307,7 @@ private:
 private:
   using KernelFactory = kernel::KernelFactory<Traits>;
   using KernelWrapper = kernel::KernelWrapper<Traits>;
+  using OffsetUtils = algorithm::OffsetUtils<Traits>;
   using PolyhedronTransformation = algorithm::PolyhedronTransformation<Traits>;
   using SelfIntersection = algorithm::SelfIntersection<Traits>;
 
@@ -998,8 +1000,8 @@ public:
         }
       } else {
         Line3SPtr line = KernelWrapper::intersection(plane_l, plane_r);
-        Plane3SPtr offset_l = KernelWrapper::offsetPlane(plane_l, -speed_l);
-        Plane3SPtr offset_r = KernelWrapper::offsetPlane(plane_r, -speed_r);
+        Plane3SPtr offset_l = OffsetUtils::offsetPlane(plane_l, -speed_l);
+        Plane3SPtr offset_r = OffsetUtils::offsetPlane(plane_r, -speed_r);
         Line3SPtr line_offset = KernelWrapper::intersection(offset_l, offset_r);
         Point3SPtr point_1 = KernelFactory::createPoint3(line->point());
         Vector3SPtr direction = KernelFactory::createVector3(line);
@@ -1513,9 +1515,9 @@ public:
     const FT& speed_2 = std::dynamic_pointer_cast<SkelFacetData>(facet_2->getData())->getSpeed();
     const FT& speed_3 = std::dynamic_pointer_cast<SkelFacetData>(facet_3->getData())->getSpeed();
 
-    return KernelWrapper::intersectionPointAndTimeOffsetPlanes(plane_0, speed_0, plane_1, speed_1,
-                                                               plane_2, speed_2, plane_3, speed_3,
-                                                               offset_past_bound, offset_future_bound);
+    return OffsetUtils::intersectionPointAndTimeOffsetPlanes(plane_0, speed_0, plane_1, speed_1,
+                                                             plane_2, speed_2, plane_3, speed_3,
+                                                             offset_past_bound, offset_future_bound);
   }
 
   /**
@@ -1907,7 +1909,7 @@ public:
 
     FT shift = event->getOffset() - current_offset;
     const FT& speed = std::dynamic_pointer_cast<SkelFacetData>(pf->getData())->getSpeed();
-    Plane3SPtr offset_plane = KernelWrapper::offsetPlane(pf->getPlane(), shift*speed);
+    Plane3SPtr offset_plane = OffsetUtils::offsetPlane(pf->getPlane(), shift*speed);
     facet_clone->setPlane(offset_plane);
 
     // abusing the fact that vertices will have the same order in both facets
