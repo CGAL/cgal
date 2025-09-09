@@ -645,6 +645,11 @@ Release date: July 2023
     [`Face_count_ratio_stop_predicate`](https://doc.cgal.org/5.6/Surface_mesh_simplification/classCGAL_1_1Surface__mesh__simplification_1_1Face__count__ratio__stop__predicate.html),
     which can be used to stop the simplification algorithm based on a desired number of faces in the output, or a ratio between input and output face numbers.
 
+-   Added the class `CGAL::Surface_mesh_simplification::GarlandHeckbert_plane_and_line_policies`, which provides improved output for `CGAL::Surface_mesh_simplification::edge_collapse`.
+-   That class works the same as previous `GarlandHeckbert_policies`
+-   Its constructor takes a `Mesh` and an optional `double` parameter specifying the weight of the line policy relative to the plane policy (default: 0.01).
+-   `CGAL::Surface_mesh_simplification::GarlandHeckbert_policies.h` is now an alias of `CGAL::Surface_mesh_simplification::GarlandHeckbert_plane_plus_line_policies.h` and is no longer deprecated.
+
 ### [2D Regularized Boolean Set Operations](https://doc.cgal.org/5.6/Manual/packages.html#PkgBooleanSetOperations2)
 -   Exposed all required member functions of the
     [`GeneralPolygonWithHoles_2`](https://doc.cgal.org/5.6/Polygon/classGeneralPolygonWithHoles__2.html)

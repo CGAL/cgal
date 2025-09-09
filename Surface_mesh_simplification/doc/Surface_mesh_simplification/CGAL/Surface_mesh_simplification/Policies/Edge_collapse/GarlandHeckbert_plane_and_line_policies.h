@@ -4,9 +4,10 @@ namespace Surface_mesh_simplification {
 /*!
 \ingroup PkgSurfaceMeshSimplificationRef
 
-The class `GarlandHeckbert_plane_plus_line_policies` regroups the cost and placement policies
-based on the Garland-Heckbert "Plane plus line" strategy of Liu et al. \cgalCite{10.1111:cgf.70184}
-(Section \ref SurfaceMeshSimplificationGarlandHeckbertStrategy).
+The class `GarlandHeckbert_plane_and_line_policies` regroups the cost and placement policies
+based on the Garland-Heckbert "Plane and line" strategy of Liu et al. \cgalCite{10.1111:cgf.70184}
+ (Section \ref SurfaceMeshSimplificationGarlandHeckbertStrategy).
+
 This policy enhances the original Garland-Heckbert quadric error metrics,
 by adding to the cost the distance to the line passing through the input vertice and aligned with their normals.
 Compared to the "classic" plane strategy, this strategy improces the speed and the quality of the result.
