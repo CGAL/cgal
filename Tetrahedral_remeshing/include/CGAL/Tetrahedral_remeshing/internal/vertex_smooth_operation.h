@@ -858,7 +858,7 @@ public:
       const Point_3 smoothed_position = point(v->point()) + move;
 
 #ifdef CGAL_TET_REMESHING_SMOOTHING_WITH_MLS
-      Point_3 normal_projection = project_on_tangent_plane(smoothed_position,
+      Point_3 normal_projection = BaseClass::project_on_tangent_plane(smoothed_position,
                                                            current_pos,
                                                            m_context->m_vertices_normals.at(v).at(si));
       std::optional<Point_3> mls_projection = project(si, normal_projection);
@@ -981,6 +981,8 @@ public:
   using ElementSource = typename Base::ElementSource;
   using Lock_zone = typename Base::Lock_zone;
 
+  using Surface_patch_index = typename C3t3::Surface_patch_index;
+
   using BaseClass::m_sizing;
   using BaseClass::m_cell_selector;
   using BaseClass::m_protect_boundaries;
@@ -1048,7 +1050,7 @@ public:
       const std::vector<Surface_patch_index>& v_surface_indices = m_context->m_vertices_surface_indices.at(v);
       for (const Surface_patch_index& si : v_surface_indices)
       {
-        Point_3 normal_projection = project_on_tangent_plane(smoothed_position,
+        Point_3 normal_projection = BaseClass::project_on_tangent_plane(smoothed_position,
                                                              current_pos,
                                                              m_context->m_vertices_normals.at(v).at(si));
 
