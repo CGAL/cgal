@@ -78,14 +78,12 @@ private:
   using Vector_3 = typename Traits::Vector_3;
   using Line_3 = typename Traits::Line_3;
   using Plane_3 = typename Traits::Plane_3;
-  using Sphere_3 = typename Traits::Sphere_3;
 
   using Point3SPtr = std::shared_ptr<Point_3>;
   using Segment3SPtr = std::shared_ptr<Segment_3>;
   using Vector3SPtr = std::shared_ptr<Vector_3>;
   using Line3SPtr = std::shared_ptr<Line_3>;
   using Plane3SPtr = std::shared_ptr<Plane_3>;
-  using Sphere3SPtr = std::shared_ptr<Sphere_3>;
 
 public:
   template <typename GT>

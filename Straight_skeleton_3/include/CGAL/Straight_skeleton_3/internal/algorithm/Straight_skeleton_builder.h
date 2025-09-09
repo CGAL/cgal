@@ -377,8 +377,6 @@ public:
 
   void initVertexSplitter()
   {
-    use_fast_vertex_splitter_ = false;
-
     ConfigurationSPtr config = Configuration::getInstance();
     std::string s_vertex_splitter;
     if (config->isLoaded()) {
@@ -709,7 +707,7 @@ public:
     }
 #endif
 
-    if (init(polyhedron, vertex_splitter_, use_fast_vertex_splitter_)) {
+    if (init(polyhedron, vertex_splitter_)) {
       // if we stop immediately after the last save event, there is no point investigating events
       // that are farther away
       std::optional<FT> offset_future_bound;
@@ -1053,8 +1051,7 @@ public:
     * initializes the data variables of all edges and vertices.
     */
   static bool init(PolyhedronSPtr polyhedron,
-                   AbstractVertexSplitterSPtr vertex_splitter,
-                   const bool use_fast_vertex_splitter = false)
+                   AbstractVertexSplitterSPtr vertex_splitter)
   {
     bool result = true;
 
@@ -1095,58 +1092,13 @@ public:
     CGAL_SS3_CORE_TRACE_V(2, vertices_tosplit.size() << " vertices to split");
 
     for (VertexSPtr vertex : vertices_tosplit) {
-      bool equal_speeds = false;
+      CGAL_SS3_SPLITTER_TRACE("Generic split vertex:\n" << vertex->toString());
 
-      if (use_fast_vertex_splitter) {
-        equal_speeds = true;
-        FT first_speed = 1.0;
-        bool first_speed_set = false;
-
-        for (FacetWPtr facet_wptr : vertex->facets()) {
-          if (FacetSPtr facet = facet_wptr.lock()) {
-            const FT& speed = std::dynamic_pointer_cast<SkelFacetData>(facet->getData())->getSpeed();
-
-            if (!first_speed_set) {
-              first_speed = speed;
-              first_speed_set = true;
-            } else if (speed != first_speed) {
-              equal_speeds = false;
-              break;
-            }
-          }
-        }
+      if (vertex->degree() > 15) {
+        CGAL_SS3_SPLITTER_TRACE("Warning: vertex degree is so high that even a combinatorial split with eary exit will take forever.");
       }
 
-      if (equal_speeds && vertex->isConvex()) {
-        AbstractVertexSplitter::splitConvexVertex(vertex);
-      } else if (equal_speeds && vertex->isReflex()) {
-        AbstractVertexSplitter::splitReflexVertex(vertex);
-      } else {
-        CGAL_SS3_SPLITTER_TRACE("Generic split vertex:\n" << vertex->toString());
-
-#ifdef CGAL_SS3_USE_COMBINATORIAL_SPLITTER_FOR_HIGH_DEGREE_VERTICES
-        if (vertex->degree() > 15) {
-          CGAL_SS3_SPLITTER_TRACE("Warning: degree is so high that even a combinatorial split will take forever.");
-        }
-
-        if (vertex->degree() > 10) {
-#ifdef CGAL_SS3_RUN_TIMERS
-          CGAL::Real_timer timer;
-          timer.start();
-#endif
-
-          CGAL_SS3_SPLITTER_TRACE("High degree, use a combinatorial splitter");
-          AbstractVertexSplitterSPtr combi_splitter = CombiVertexSplitter::create();
-          combi_splitter->splitVertex(vertex);
-
-#ifdef CGAL_SS3_RUN_TIMERS
-          CGAL_SS3_SPLITTER_TRACE("Time taken to split vertex #" << vertex->getID() << " = " << timer.time());
-#endif
-        } else
-#endif // CGAL_SS3_USE_COMBINATORIAL_SPLITTER_FOR_HIGH_DEGREE_VERTICES
-
-          vertex_splitter->splitVertex(vertex);
-      }
+      vertex_splitter->splitVertex(vertex);
     }
 
 #ifdef CGAL_SS3_DUMP_FILES
@@ -1644,24 +1596,6 @@ public:
     CGAL_SS3_CORE_TRACE_V(16, "Confirmed intersection: " << *point << " @ " << event_offset);
 
     return { point, event_offset };
-  }
-
-  /**
-    * Returns the offset (time) when the facet will reach the given point.
-    */
-  static FT offsetDist(FacetSPtr facet,
-                       Point3SPtr point)
-  {
-    Plane3SPtr plane = facet->getPlane();
-    FT result = KernelWrapper::distance(plane, point);
-    if (KernelWrapper::side(plane, point) < 0) {
-      result *= -1.0;
-    }
-    if (facet->hasData()) {
-      const FT& speed = std::dynamic_pointer_cast<SkelFacetData>(facet->getData())->getSpeed();
-      result /= speed;
-    }
-    return result;
   }
 
   /**
@@ -4567,12 +4501,8 @@ public:
     CGAL_SS3_CORE_TRACE_V(1, "  Built boxes: " << timer.time());
 #endif
 
-    int callback_count = 0; // @tmp hide behind macros
-
     auto callback = [&](const Box& box_a, const Box& box_b)
     {
-      ++callback_count;
-
       EdgeSPtr edge_1 = box_a.handle();
       EdgeSPtr edge_2 = box_b.handle();
 
@@ -7705,7 +7635,6 @@ private:
 
   std::vector<FT> save_offsets_;
   std::filesystem::path save_path_;
-  bool use_fast_vertex_splitter_;
   AbstractVertexSplitterSPtr vertex_splitter_;
   int edge_event_;
 

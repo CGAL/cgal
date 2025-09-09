@@ -33,14 +33,12 @@ class KernelFactory
   using Vector_3 = typename K::Vector_3;
   using Line_3 = typename K::Line_3;
   using Plane_3 = typename K::Plane_3;
-  using Sphere_3 = typename K::Sphere_3;
 
   using Point3SPtr = std::shared_ptr<Point_3>;
   using Segment3SPtr = std::shared_ptr<Segment_3>;
   using Vector3SPtr = std::shared_ptr<Vector_3>;
   using Line3SPtr = std::shared_ptr<Line_3>;
   using Plane3SPtr = std::shared_ptr<Plane_3>;
-  using Sphere3SPtr = std::shared_ptr<Sphere_3>;
 
 public:
   static Point3SPtr createPoint3(const FT& x, const FT& y, const FT& z)
@@ -58,14 +56,6 @@ public:
     Point3SPtr result;
     result = Point3SPtr(new Point_3((*vector)[0], (*vector)[1], (*vector)[2]));
     return result;
-  }
-
-  /**
-  * returns the center of the sphere.
-  */
-  static Point3SPtr createPoint3(Sphere3SPtr sphere)
-  {
-    return createPoint3(sphere->center());
   }
 
   static Segment3SPtr createSegment3(Point3SPtr src, Point3SPtr dst)
@@ -126,16 +116,6 @@ public:
   static Plane3SPtr createPlane3(const Plane_3& plane)
   {
     return std::make_shared<Plane_3>(plane);
-  }
-
-  static Sphere3SPtr createSphere3(Point3SPtr center, const FT& radius)
-  {
-    return std::make_shared<Sphere_3>(*center, radius);
-  }
-
-  static Sphere3SPtr createSphere3(const Sphere_3& sphere)
-  {
-    return std::make_shared<Sphere_3>(sphere);
   }
 
   static Vector3SPtr createVector3(const FT& x, const FT& y, const FT& z)

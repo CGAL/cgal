@@ -43,14 +43,12 @@ class KernelWrapper
   using Vector_3 = typename K::Vector_3;
   using Line_3 = typename K::Line_3;
   using Plane_3 = typename K::Plane_3;
-  using Sphere_3 = typename K::Sphere_3;
 
   using Point3SPtr = std::shared_ptr<Point_3>;
   using Segment3SPtr = std::shared_ptr<Segment_3>;
   using Vector3SPtr = std::shared_ptr<Vector_3>;
   using Line3SPtr = std::shared_ptr<Line_3>;
   using Plane3SPtr = std::shared_ptr<Plane_3>;
-  using Sphere3SPtr = std::shared_ptr<Sphere_3>;
 
   using KernelFactory = kernel::KernelFactory<K>;
 
@@ -126,32 +124,6 @@ public:
     return result;
   }
 
-  /**
-    * If a line intersects a sphere, there are 2 intersection points.
-    * The first one is returned here.
-    */
-  static Point3SPtr intersection(Sphere3SPtr sphere, Line3SPtr line)
-  {
-    Point3SPtr result = Point3SPtr();
-    Point3SPtr p_center = KernelFactory::createPoint3(sphere);
-    FT radius;
-
-    radius = CGAL::disallowed_sqrt(sphere->squared_radius());
-    Vector3SPtr dir = normalize(KernelFactory::createVector3(line));
-    Plane3SPtr plane = KernelFactory::createPlane3(p_center, dir);
-    Point3SPtr p_intersect = intersection(plane, line);
-    FT dist = distance(p_center, p_intersect);
-    if (dist == radius) {
-      result = p_intersect;
-    } else if (dist < radius) {
-      FT amount = - CGAL::disallowed_sqrt(radius*radius - dist*dist);
-      result = KernelFactory::createPoint3((*p_intersect) + ((*dir)*amount));
-    }
-
-    CGAL_SS3_DEBUG_SPTR(result);
-    return result;
-  }
-
   static Plane3SPtr bisector(Plane3SPtr plane1, Plane3SPtr plane2)
   {
     Plane3SPtr result = Plane3SPtr();
@@ -186,21 +158,6 @@ public:
     return CGAL::squared_distance(*plane, *point);
   }
 
-  static FT distance(Point3SPtr p1, Point3SPtr p2)
-  {
-    return CGAL::disallowed_sqrt(CGAL::squared_distance(*p1, *p2));
-  }
-
-  static FT distance(Plane3SPtr plane, Point3SPtr point)
-  {
-    return CGAL::disallowed_sqrt(CGAL::squared_distance(*plane, *point));
-  }
-
-  static FT distance(Line3SPtr line, Point3SPtr point)
-  {
-    return CGAL::disallowed_sqrt(CGAL::squared_distance(*line, *point));
-  }
-
   static Plane3SPtr opposite(Plane3SPtr plane) {
     Plane3SPtr result = KernelFactory::createPlane3(plane->opposite());
     CGAL_SS3_DEBUG_SPTR(result);
@@ -211,13 +168,6 @@ public:
   {
     Line3SPtr result = KernelFactory::createLine3(line->opposite());
     CGAL_SS3_DEBUG_SPTR(result);
-    return result;
-  }
-
-  static Vector3SPtr normalize(Vector3SPtr v)
-  {
-    Vector3SPtr result;
-    result = KernelFactory::createVector3(*v / CGAL::disallowed_sqrt(v->squared_length()));
     return result;
   }
 
@@ -465,61 +415,6 @@ public:
     return { result, t };
   }
 
-  /**
-    * http://de.wikipedia.org/wiki/Drehmatrix
-    *
-    *              [ n_x^2 (1 - cos(alpha)) + cos(alpha)         n_x n_y (1 - cos(alpha)) - n_z sin(alpha)   n_x n_z (1 - cos(alpha)) + n_y sin(alpha) ]
-    * R_n(alpha) = [ n_y n_x (1 - cos(alpha)) + n_z sin(alpha)   n_y^2 (1 - cos(alpha)) + cos(alpha)         n_y n_z (1 - cos(alpha)) - n_x sin(alpha) ]
-    *              [ n_z n_x (1 - cos(alpha)) - n_y sin(alpha)   n_z n_y (1 - cos(alpha)) + n_x sin(alpha)   n_z^2 (1 - cos(alpha)) + cos(alpha)       ]
-    */
-  static Vector3SPtr rotateVector(Vector3SPtr vector, Vector3SPtr axis, const FT& angle)
-  {
-    Vector3SPtr result;
-    Vector3SPtr v_n = KernelWrapper::normalize(axis);
-    FT n[3];
-    for (unsigned int i = 0; i < 3; ++i) {
-      n[i] = (*v_n)[i];
-    }
-
-    FT cos_angle = std::cos(CGAL::to_double(angle));
-    FT sin_angle = std::sin(CGAL::to_double(angle));
-
-    FT rotation[3][3];   // http://de.wikipedia.org/wiki/Drehmatrix
-    rotation[0][0] = n[0]*n[0] * (1.0-cos_angle) + cos_angle;
-    rotation[0][1] = n[0]*n[1] * (1.0-cos_angle) - n[2] * sin_angle;
-    rotation[0][2] = n[0]*n[2] * (1.0-cos_angle) + n[1] * sin_angle;
-    rotation[1][0] = n[1]*n[0] * (1.0-cos_angle) + n[2] * sin_angle;
-    rotation[1][1] = n[1]*n[1] * (1.0-cos_angle) + cos_angle;
-    rotation[1][2] = n[1]*n[2] * (1.0-cos_angle) - n[0] * sin_angle;
-    rotation[2][0] = n[2]*n[0] * (1.0-cos_angle) - n[1] * sin_angle;
-    rotation[2][1] = n[2]*n[1] * (1.0-cos_angle) + n[0] * sin_angle;
-    rotation[2][2] = n[2]*n[2] * (1.0-cos_angle) + cos_angle;
-
-    FT rotated[3];
-    for (unsigned int r = 0; r < 3; r++) {
-      rotated[r] = 0.0;
-      for (unsigned int c = 0; c < 3; c++) {
-        rotated[r] += rotation[r][c] * (*vector)[c];
-      }
-    }
-    result = KernelFactory::createVector3(rotated[0], rotated[1], rotated[2]);
-    CGAL_SS3_DEBUG_SPTR(result);
-    return result;
-  }
-
-  static Plane3SPtr rotatePlane(Plane3SPtr plane, Line3SPtr line, const FT& angle)
-  {
-    Plane3SPtr result;
-    Point3SPtr point;
-    point = KernelFactory::createPoint3(line->point(0));
-    Vector3SPtr dir = KernelFactory::createVector3(line);
-    Vector3SPtr normal = KernelFactory::createVector3(plane);
-    Vector3SPtr normal_rotated = rotateVector(normal, dir, angle);
-    result = KernelFactory::createPlane3(point, normal_rotated);
-    CGAL_SS3_DEBUG_SPTR(result);
-    return result;
-  }
-
   static int side(Plane3SPtr plane, Point3SPtr point)
   {
     int result = 0;
@@ -636,36 +531,6 @@ public:
   {
     Point3SPtr result = Point3SPtr();
     result = KernelFactory::createPoint3(plane->projection(*point));
-    CGAL_SS3_DEBUG_SPTR(result);
-    return result;
-  }
-
-  static int comparePoints(Vector3SPtr v_dir, Point3SPtr p_1, Point3SPtr p_2)
-  {
-    int result = 0;
-    FT value = *v_dir * (*p_2 - *p_1);
-    if (value > 0.0) {         // angle < CGAL_PI/2.0
-      result = -1;
-    } else if (value < 0.0) {  // angle > CGAL_PI/2.0
-      result = 1;
-    }
-    return result;
-  }
-
-  static Point3SPtr replaceCoord(Point3SPtr point,
-                                 Point3SPtr replacement,
-                                 unsigned int coord)
-  {
-    Point3SPtr result = Point3SPtr();
-
-    if (coord == 0) {
-      result = Point3SPtr(new Point_3(replacement->x(), point->y(), point->z()));
-    } else if (coord == 1) {
-      result = Point3SPtr(new Point_3(point->x(), replacement->y(), point->z()));
-    } else if (coord == 2) {
-      result = Point3SPtr(new Point_3(point->x(), point->y(), replacement->z()));
-    }
-
     CGAL_SS3_DEBUG_SPTR(result);
     return result;
   }
