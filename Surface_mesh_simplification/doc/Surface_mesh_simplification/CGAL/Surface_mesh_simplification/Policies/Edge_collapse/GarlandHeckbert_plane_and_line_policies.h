@@ -31,7 +31,7 @@ These policies depend on the third party \ref thirdpartyEigen library.
 \sa `GarlandHeckbert_probabilistic_triangle_policies`
 */
 template <typename TriangleMesh, typename GeomTraits>
-class GarlandHeckbert_plane_policies
+class GarlandHeckbert_plane_and_line_policies
 {
 public:
   /// The type of the Garland Heckbert cost functor, a model of the concept `GetCost`
@@ -46,7 +46,7 @@ public:
   /*!
   initializes the Garland-Heckbert Plane policies.
   */
-  GarlandHeckbert_plane_policies(TriangleMesh& tmesh);
+  GarlandHeckbert_plane_and_line_policies(TriangleMesh& tmesh);
 
   /// @}
 
