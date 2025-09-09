@@ -267,7 +267,7 @@ private:
             // Execute operation once lock is acquired
             bool success = op.execute_operation(element, c3t3);
             #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-		  num_successful_locks++;
+            num_successful_locks++;
             #endif
             c3t3.triangulation().unlock_all_elements();
           }

@@ -18,7 +18,7 @@
 #include <nlohmann/json.hpp>
 
  #ifdef CGAL_CONCURRENT_TETRAHEDRAL_REMESHING
- 	#define USE_THREADSAFE_INCIDENT_CELLS
+   #define USE_THREADSAFE_INCIDENT_CELLS
  #endif
 
 #ifdef CGAL_CONCURRENT_TETRAHEDRAL_REMESHING
@@ -35,6 +35,7 @@
 #else
   #define Concurrency_tag CGAL::Sequential_tag
 #endif
+
 using K = CGAL::Exact_predicates_inexact_constructions_kernel;
 using Vb = CGAL::Tetrahedral_remeshing::Remeshing_vertex_base_3<K>;
 using Cb = CGAL::Tetrahedral_remeshing::Remeshing_cell_base_3<K>;

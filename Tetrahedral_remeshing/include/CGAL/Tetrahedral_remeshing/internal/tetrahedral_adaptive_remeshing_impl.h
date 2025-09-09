@@ -171,7 +171,7 @@ public:
       "00-facets_in_complex_after_init.off");
 #endif
   }
-	Elementary_remesher<C3t3, SizingFunction, CellSelector, Visitor> m_elementary_remesher;
+  Elementary_remesher<C3t3, SizingFunction, CellSelector, Visitor> m_elementary_remesher;
 
   bool input_is_c3t3() const
   {
