@@ -42,7 +42,7 @@ public:
       offset_(-1)
   { }
 
-  ConstOffsetEvent(FT offset = FT{-1})
+  ConstOffsetEvent(const FT& offset = FT{-1})
     : Base(Base::CONST_OFFSET_EVENT),
       offset_(offset)
   { }

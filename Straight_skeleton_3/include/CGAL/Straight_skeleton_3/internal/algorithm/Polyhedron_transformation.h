@@ -240,10 +240,10 @@ public:
 
     FT scale_factor = std::numeric_limits<double>::max(); // do not put FT
     for (unsigned int i = 0; i < 3; ++i) {
-        FT s = (*v_size)[i]/(*v_size_curr)[i];
-        if (scale_factor > s) {
-            scale_factor = s;
-        }
+      FT s = (*v_size)[i]/(*v_size_curr)[i];
+      if (scale_factor > s) {
+        scale_factor = s;
+      }
     }
     scale_factor = floor(CGAL::to_double(scale_factor)*1000.0)/1000.0; // @fixme interval
     Vector3SPtr v_s = KernelFactory::createVector3(
@@ -268,7 +268,7 @@ public:
     ConfigurationSPtr config = Configuration::getInstance();
     double range = 1e-10;
     if (config->isLoaded()) {
-        range = config->getDouble("main", "truncate_precision");
+      range = config->getDouble("main", "truncate_precision");
     }
 
     CGAL_SS3_TRANSF_TRACE_V(4, "Lower precision of input polyhedron");
@@ -990,7 +990,6 @@ public:
   // - when we do shiftPoint for adjacent points
   // - when we call shiftPoint, and then call shiftPlane later on
   // - ...
-  // @todo get rid of recompute_positions, seems obsolete now
   static PolyhedronSPtr shiftFacets(PolyhedronSPtr polyhedron,
                                     const FT& offset,
                                     const bool recompute_positions = true)
@@ -1246,11 +1245,10 @@ public:
 
     std::list<VertexSPtr> facet_vertices = facet->vertices();
 
-    std::list<FacetSPtr> created_facets;
     CGAL_precondition(facet && polyhedron && facet->vertices().size() >= 3);
 
     if (facet_vertices.size() == 3) {
-        return { facet_vertices, { facet } };
+      return { facet_vertices, { facet } };
     }
 
     facet->sortVertices();
@@ -1265,7 +1263,7 @@ public:
     boost::associative_property_map<std::unordered_map<PCDT_FH, bool>> in_domain(in_domain_map);
     CGAL::mark_domain_in_triangulation(pcdt, in_domain);
 
-   // Speed of the subdivded facet is applied to all the subfacets
+    // Speed of the subdivided facet is applied to all the subfacets
     FT parent_speed = 1.0;
     if (facet->hasData()) {
       parent_speed = std::dynamic_pointer_cast<SkelFacetData>(facet->getData())->getSpeed();
@@ -1274,6 +1272,7 @@ public:
     polyhedron->removeFacet(facet);
 
     // Create new facets and edges for each triangle
+    std::list<FacetSPtr> created_facets;
     for (auto fh : pcdt.finite_face_handles()) {
       if (!get(in_domain, fh)) {
         continue;
@@ -1385,7 +1384,6 @@ public:
         break;
       }
     }
-
     return result;
   }
 

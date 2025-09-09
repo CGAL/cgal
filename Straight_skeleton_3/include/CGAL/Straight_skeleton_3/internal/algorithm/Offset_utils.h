@@ -230,8 +230,6 @@ public:
 
     FT den = (-a0*b1*c2*w3 + a0*b1*c3*w2 + a0*b2*c1*w3 - a0*b2*c3*w1 - a0*b3*c1*w2 + a0*b3*c2*w1 + a1*b0*c2*w3 - a1*b0*c3*w2 - a1*b2*c0*w3 + a1*b2*c3*w0 + a1*b3*c0*w2 - a1*b3*c2*w0 - a2*b0*c1*w3 + a2*b0*c3*w1 + a2*b1*c0*w3 - a2*b1*c3*w0 - a2*b3*c0*w1 + a2*b3*c1*w0 + a3*b0*c1*w2 - a3*b0*c2*w1 - a3*b1*c0*w2 + a3*b1*c2*w0 + a3*b2*c0*w1 - a3*b2*c1*w0);
 
-    CGAL::Sign s = CGAL::sign(den);
-
     // Bound checks. The algorithm works with a decreasing t, so past is greater than future.
     //
     // Empirically:
@@ -244,6 +242,7 @@ public:
     //   | tn - den*past_bound >= 0 if den > 0 => + (tn - den*past_bound) >= 0
     //   | tn - den*past_bound <= 0 if den < 0 => - (tn - den*past_bound) >= 0
     // sign(den) * (tn - den*past_bound) >= 0
+    CGAL::Sign s = CGAL::sign(den);
     if (past_bound && !CGAL::is_negative(s * (tn - *past_bound * den))) {
       CGAL_SS3_TRAITS_TRACE("Intersection is strictly in the past");
       return { };

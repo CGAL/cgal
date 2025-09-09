@@ -299,23 +299,6 @@ public:
     return result;
   }
 
-  static bool isInside(Point3SPtr p, Point3SPtr p_box_1, Point3SPtr p_box_2)
-  {
-    bool result = true;
-    for (unsigned int i = 0; i < 3; ++i) {
-      if ((*p_box_1)[i] < (*p_box_2)[i]) {
-        if (!( (*p_box_1)[i] <= (*p)[i] && (*p)[i] <= (*p_box_2)[i] )) {
-          result = false;
-        }
-      } else {
-        if (!( (*p_box_2)[i] <= (*p)[i] && (*p)[i] <= (*p_box_1)[i] )) {
-          result = false;
-        }
-      }
-    }
-    return result;
-  }
-
   static Vector3SPtr cross(Vector3SPtr v1, Vector3SPtr v2)
   {
     CGAL_SS3_DEBUG_SPTR(v1);

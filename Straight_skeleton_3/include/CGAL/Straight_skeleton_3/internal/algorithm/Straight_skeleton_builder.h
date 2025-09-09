@@ -432,7 +432,6 @@ public:
     CGAL_SS3_DEBUG_SPTR(edge);
 
     if (edge->getReflexStatus()) {
-      // std::cout << "yes cache (high)" << std::endl;
       return *(edge->getReflexStatus());
     }
 
@@ -443,8 +442,6 @@ public:
 
     // @todo is degenerate edge? pointer comparison or actual position comparison?
     if (*(vertex_src->getPoint()) == *(vertex_dst->getPoint())) {
-      // std::cout << "no cache [degen]" << std::endl;
-
       FacetSPtr facet_l = edge->getFacetL();
       FacetSPtr facet_r = edge->getFacetR();
       FacetSPtr facet_src = edge->getFacetSrc();
@@ -1258,13 +1255,11 @@ public:
   // f: one of the faces incident to the edge
   // t: the time of vanishing or the time of crash
   // f_third: edge shared between 'f' and either the dst of the edge seen in f
-  //
-  // @todo this could be a predicate (oriented_side_of_event_point_wrt_bisectorC2)
   static bool check_bisector(EdgeSPtr edge,
-                              FacetSPtr f,
-                              const FT& t,
-                              FacetSPtr f_third,
-                              Point3SPtr point)
+                             FacetSPtr f,
+                             const FT& t,
+                             FacetSPtr f_third,
+                             Point3SPtr point)
   {
     CGAL_SS3_DEBUG_SPTR(edge);
     CGAL_SS3_DEBUG_SPTR(f);
@@ -1547,12 +1542,9 @@ public:
   // @speed how about a first filter before Point&Time computation: IsEdgeGrowing
   // if not, then there is definitely no intersection
   std::pair<Point3SPtr, FT> vanishesAt(EdgeSPtr edge,
-                                              const std::optional<FT>& offset_past_bound = std::nullopt,
-                                              const std::optional<FT>& offset_future_bound = std::nullopt)
+                                       const std::optional<FT>& offset_past_bound = std::nullopt,
+                                       const std::optional<FT>& offset_future_bound = std::nullopt)
   {
-    Point3SPtr point = Point3SPtr();
-    FT offset_event;
-
     CGAL_SS3_CORE_TRACE_V(16, "vanishesAt " << edge->toString());
 
     CGAL_SS3_DEBUG_SPTR(edge);
@@ -4097,6 +4089,7 @@ public:
     };
 
     fill_reflex_edges(edges_1, edges_reflex_1);
+
     if (edges_reflex_1.empty()) {
 #ifdef CGAL_SS3_RUN_TIMERS
       timer.stop();
@@ -5258,7 +5251,8 @@ public:
   /**
     * Determines the next event.
     */
-  AbstractEventSPtr nextEvent(PQ& queue, const FT& current_offset)
+  AbstractEventSPtr nextEvent(PQ& queue,
+                              const FT& current_offset)
   {
     if (queue.empty() && save_offsets_.empty())
       return { };

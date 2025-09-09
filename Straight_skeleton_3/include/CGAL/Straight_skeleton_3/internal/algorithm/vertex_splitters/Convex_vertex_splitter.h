@@ -22,8 +22,10 @@
 #include <CGAL/Straight_skeleton_3/internal/algorithm/Polyhedron_transformation.h>
 #include <CGAL/Straight_skeleton_3/internal/algorithm/Polyhedron_self_intersection.h>
 
+#include <list>
 #include <memory>
 #include <string>
+#include <vector>
 
 namespace CGAL {
 namespace Straight_skeletons_3 {
