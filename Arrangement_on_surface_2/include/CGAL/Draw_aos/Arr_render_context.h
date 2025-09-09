@@ -11,7 +11,7 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s): Shepard Liu	 <shepard0liu@gmail.com>
+// Author(s): Shepard Li        <shepard0liu@gmail.com>
 
 #ifndef CGAL_DRAW_AOS_ARR_RENDER_CONTEXT_H
 #define CGAL_DRAW_AOS_ARR_RENDER_CONTEXT_H
