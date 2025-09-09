@@ -778,7 +778,8 @@ private:
     Vector_3 res_normal = CGAL::NULL_VECTOR;
     Vector_3 result(CGAL::ORIGIN, gi);
 
-    const BaseClass::Context::FMLS& fmls = m_context->subdomain_FMLS[m_context->subdomain_FMLS_indices.at(si)];
+    const typename BaseClass::Context::FMLS& fmls
+      = m_context->subdomain_FMLS[m_context->subdomain_FMLS_indices.at(si)];
 
     int it_nb = 0;
     const int max_it_nb = 5;

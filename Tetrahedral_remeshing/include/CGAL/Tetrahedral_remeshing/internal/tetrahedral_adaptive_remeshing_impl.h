@@ -536,11 +536,12 @@ private:
     const double ydelta = bbox.ymax() - bbox.ymin();
     const double zdelta = bbox.zmax() - bbox.zmin();
     const double radius = 5. * std::sqrt(xdelta * xdelta + ydelta * ydelta + zdelta * zdelta);
-    using Vector = typename Kernel_traits<Triangulation::Point>::Kernel::Vector_3;
+    using Pt = typename Triangulation::Point;
+    using Vector = typename Kernel_traits<Pt>::Kernel::Vector_3;
     const Vector center(bbox.xmin() + 0.5 * xdelta, bbox.ymin() + 0.5 * ydelta, bbox.zmin() + 0.5 * zdelta);
     CGAL::Random rnd(0);
     //CGAL::Random_points_on_sphere_3<Triangulation::Bare_point> random_point(radius, rnd);
-    CGAL::Random_points_on_sphere_3<Triangulation::Point> random_point(radius, rnd);
+    CGAL::Random_points_on_sphere_3<Pt> random_point(radius, rnd);
     constexpr int num_pseudo_infinite_vertices_per_core = 5;
     const int NUM_PSEUDO_INFINITE_VERTICES =
         static_cast<int>(float(std::thread::hardware_concurrency()) *
