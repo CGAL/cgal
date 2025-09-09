@@ -130,7 +130,7 @@ protected:
   bool m_traits_owner;
 
 
-  Aos_2* m_arr;		// the underlying arrangement
+  Aos_2* m_arr;         // the underlying arrangement
   Vertices* m_vertices; // sorted vertices
 
 public:
