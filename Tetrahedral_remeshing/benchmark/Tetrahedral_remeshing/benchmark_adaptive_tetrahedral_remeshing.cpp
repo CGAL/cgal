@@ -61,7 +61,7 @@ int main(int argc, char** argv) {
   if(!CGAL::IO::read_MEDIT(is, tr)){
     std::cerr << "Error: Could not read input mesh '" << input << "'" << std::endl;
     fatal_error(std::string("Could not read input mesh '") + input + "'");
-  } 
+  }
     // Extract input_name from input path
     std::string input_name = std::filesystem::path(input).stem().string();
     write_triangulation_info(results_json, tr, input_name);

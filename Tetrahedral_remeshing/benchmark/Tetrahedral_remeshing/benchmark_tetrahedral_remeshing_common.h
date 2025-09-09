@@ -145,4 +145,4 @@ inline void write_results_json(const nlohmann::json& results_json, const std::st
     }
 }
 
-} // namespace benchmarking 
+} // namespace benchmarking

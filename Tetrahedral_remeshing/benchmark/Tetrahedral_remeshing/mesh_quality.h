@@ -86,7 +86,7 @@ void generate_surface_quality_metrics(const C3t3& c3t3,
       auto c = eit->first;
       int i = eit->second;
       int j = eit->third;
-      
+
       const auto& pi = c->vertex(i)->point();
       const auto& pj = c->vertex(j)->point();
 

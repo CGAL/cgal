@@ -761,11 +761,10 @@ std::size_t smooth_vertices_on_surfaces(C3t3& c3t3,
     const Point_3 current_pos = point(v->point());
 
     const auto& incident_surface_patches = vertices_surface_indices.at(v);
-    
     if (incident_surface_patches.size() > 1) {
       continue;
     }
-    
+
     const Surface_patch_index si = incident_surface_patches[0];
 
     CGAL_assertion(si != Surface_patch_index());

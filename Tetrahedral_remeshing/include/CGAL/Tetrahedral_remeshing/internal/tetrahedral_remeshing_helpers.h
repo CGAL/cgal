@@ -2659,18 +2659,18 @@ void dump_triangulation_cells_timestamps(const Tr& tr, const char* filename)
 {
   std::ofstream ofs(filename);
   ofs.precision(17);
-  
+
   // Write header comment
   ofs << "# Cell timestamps for triangulation" << std::endl;
   ofs << "# Format: timestamp_value" << std::endl;
-  
+
   for (typename Tr::Finite_cells_iterator cit = tr.finite_cells_begin();
        cit != tr.finite_cells_end(); ++cit)
   {
     // Output the timestamp of each cell on its own row
     ofs << cit->time_stamp() << std::endl;
   }
-  
+
   ofs.close();
 }
 
@@ -2706,11 +2706,11 @@ void dump_c3t3(const C3t3& c3t3, const char* filename_no_extension)
 template<typename CellRange>
 std::set<std::size_t> get_cells_timestamps(const CellRange& cells) {
   std::set<std::size_t> timestamps;
-  
+
   for(typename CellRange::const_iterator cit = cells.begin(); cit != cells.end(); ++cit) {
     timestamps.insert((*cit)->time_stamp());
   }
-  
+
   return timestamps;
 }
 
@@ -2722,13 +2722,13 @@ class ThreadSafeLogger {
 private:
     std::ofstream log_file;
     std::mutex log_mutex;
-    
+
 public:
     ThreadSafeLogger(const std::string& filename) : log_file(filename) {
         // Set precision to 17 decimal places
         log_file << std::fixed << std::setprecision(17);
     }
-    
+
     template<typename... Args>
     void log(Args&&... args) {
         std::lock_guard<std::mutex> lock(log_mutex);
@@ -2738,7 +2738,7 @@ public:
         log_file << oss.str() << std::endl;
         log_file.flush(); // Ensure immediate write
     }
-    
+
     ~ThreadSafeLogger() {
         std::lock_guard<std::mutex> lock(log_mutex);
         if (log_file.is_open()) {
@@ -2749,7 +2749,9 @@ public:
 } //namespace debug
 
 template<typename C3t3>
-inline boost::container::small_vector<typename C3t3::Cell_handle, 64> get_incident_cells(typename C3t3::Vertex_handle vh, const C3t3& c3t3) {
+inline boost::container::small_vector<typename C3t3::Cell_handle, 64>
+get_incident_cells(typename C3t3::Vertex_handle vh, const C3t3& c3t3)
+{
   boost::container::small_vector<typename C3t3::Cell_handle, 64> inc_cells;
 #ifdef USE_THREADSAFE_INCIDENT_CELLS
   c3t3.triangulation().incident_cells_threadsafe(vh, std::back_inserter(inc_cells));
