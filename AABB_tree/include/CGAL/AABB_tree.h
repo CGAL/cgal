@@ -81,6 +81,9 @@ namespace CGAL {
     typedef typename AABBTraits::Primitive Primitive;
     /// Identifier for a primitive in the tree.
     typedef typename Primitive::Id Primitive_id;
+    #ifndef DOXYGEN_RUNNING
+    using Primitive_iterator = typename Primitives::iterator;
+    #endif
     /// Unsigned integral size type.
     typedef typename Primitives::size_type size_type;
     /// Type of bounding box.
@@ -662,6 +665,9 @@ public:
       }
       return std::addressof(m_nodes[0]);
     }
+
+    Primitive_iterator primitives_begin() { return m_primitives.begin(); };
+    Primitive_iterator primitives_end() { return m_primitives.end(); };
 
     Node& new_node()
     {
