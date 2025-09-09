@@ -78,6 +78,7 @@ public:
 
   void setNode(NodeSPtr node)
   {
+    CGAL_SS3_DEBUG_SPTR(node);
     this->node_ = node;
   }
 
@@ -95,6 +96,7 @@ public:
 
   void setEdgeBegin(EdgeSPtr edge_begin)
   {
+    CGAL_SS3_DEBUG_SPTR(edge_begin);
     this->edge_begin_ = edge_begin;
     this->neighborhood_ = EdgeFacetNeighborhood(edge_begin);
   }

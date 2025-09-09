@@ -64,6 +64,7 @@ public:
 
   static bool checkSplitted(PolyhedronSPtr polyhedron)
   {
+    CGAL_SS3_DEBUG_SPTR(polyhedron);
     bool result = false;
     PolyhedronSPtr polyhedron_offset = PolyhedronTransformation::shiftFacets(polyhedron, -1.0);
     if (polyhedron_offset) {

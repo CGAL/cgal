@@ -356,12 +356,14 @@ public:
 
   static SimpleStraightSkelSPtr create(PolyhedronSPtr polyhedron)
   {
+    CGAL_SS3_DEBUG_SPTR(polyhedron);
     return std::make_shared<SimpleStraightSkel>(polyhedron);
   }
 
   static SimpleStraightSkelSPtr create(PolyhedronSPtr polyhedron,
                                        const std::vector<FT>& save_offsets)
   {
+    CGAL_SS3_DEBUG_SPTR(polyhedron);
     return std::make_shared<SimpleStraightSkel>(polyhedron, save_offsets);
   }
 
@@ -369,6 +371,7 @@ public:
                                        const std::vector<FT>& save_offsets,
                                        const std::filesystem::path& save_path)
   {
+    CGAL_SS3_DEBUG_SPTR(polyhedron);
     return std::make_shared<SimpleStraightSkel>(polyhedron, save_offsets, save_path);
   }
 
@@ -426,6 +429,8 @@ public:
   static bool isReflex(EdgeSPtr edge,
                        const bool future_facing = true)
   {
+    CGAL_SS3_DEBUG_SPTR(edge);
+
     if (edge->getReflexStatus()) {
       // std::cout << "yes cache (high)" << std::endl;
       return *(edge->getReflexStatus());
@@ -474,6 +479,7 @@ public:
 
   static bool isReflex(VertexSPtr vertex)
   {
+    CGAL_SS3_DEBUG_SPTR(vertex);
     if (vertex->degree() == 0) {
       return false;
     }
@@ -491,6 +497,7 @@ public:
 
   static bool isConvex(VertexSPtr vertex)
   {
+    CGAL_SS3_DEBUG_SPTR(vertex);
     if (vertex->degree() == 0) {
       return false;
     }
@@ -508,6 +515,7 @@ public:
 
   static Line3SPtr line(EdgeSPtr edge)
   {
+    CGAL_SS3_DEBUG_SPTR(edge);
     Line3SPtr result = Line3SPtr();
     VertexSPtr vertex_src = edge->getVertexSrc();
     VertexSPtr vertex_dst = edge->getVertexDst();
@@ -537,20 +545,20 @@ public:
   static Point3SPtr getFinalPoint(VertexSPtr vertex,
                                   const FT& offset_future_bound)
   {
+    CGAL_SS3_DEBUG_SPTR(vertex);
     if (!vertex->hasFinalPoint()) {
       PolyhedronTransformation::resetFinalPoint(vertex, offset_future_bound);
     }
-
     return vertex->getFinalPoint();
   }
 
   static Plane3SPtr getFinalPlane(FacetSPtr facet,
                                   const FT& offset_future_bound)
   {
+    CGAL_SS3_DEBUG_SPTR(facet);
     if (!facet->hasFinalPlane()) {
       PolyhedronTransformation::resetFinalPlane(facet, offset_future_bound);
     }
-
     return facet->getFinalPlane();
   }
 
@@ -561,6 +569,8 @@ public:
                       const FT& current_offset,
                       const bool attempt_untilting)
   {
+    CGAL_SS3_DEBUG_SPTR(polyhedron);
+
     bool result = true;
 
     // attempt naive un-tilting
@@ -865,6 +875,7 @@ public:
     */
   static NodeSPtr createNode(VertexSPtr vertex)
   {
+    CGAL_SS3_DEBUG_SPTR(vertex);
     NodeSPtr result = NodeSPtr();
     SkelVertexDataSPtr data;
     if (vertex->hasData()) {
@@ -884,6 +895,7 @@ public:
     */
   static ArcSPtr createArc(VertexSPtr vertex)
   {
+    CGAL_SS3_DEBUG_SPTR(vertex);
     ArcSPtr result = ArcSPtr();
     if (vertex->degree() == 3) {
       SkelVertexDataSPtr data;
@@ -963,6 +975,7 @@ public:
     */
   static SheetSPtr createSheet(EdgeSPtr edge)
   {
+    CGAL_SS3_DEBUG_SPTR(edge);
     SheetSPtr result = SheetSPtr();
     SkelEdgeDataSPtr data;
     if (edge->hasData()) {
@@ -1038,11 +1051,11 @@ public:
     */
   void cacheBasePlanes(PolyhedronSPtr polyhedron)
   {
+    CGAL_SS3_DEBUG_SPTR(polyhedron);
     for (FacetSPtr facet : polyhedron->facets()) {
       if (!facet->hasData()) {
         SkelFacetData::create(facet);
       }
-
       Plane3SPtr base_plane = KernelFactory::createPlane3(*(facet->getPlane()));
       facet->setBasePlane(base_plane);
     }
@@ -1055,6 +1068,8 @@ public:
   static bool init(PolyhedronSPtr polyhedron,
                    AbstractVertexSplitterSPtr vertex_splitter)
   {
+    CGAL_SS3_DEBUG_SPTR(polyhedron);
+
     bool result = true;
 
     CGAL_SS3_CORE_TRACE("Input: " << polyhedron->vertices().size() << " NV " << polyhedron->facets().size() << " NF");
@@ -1159,6 +1174,8 @@ public:
   static bool isTriangle(FacetSPtr facet,
                          EdgeSPtr edge_begin)
   {
+    CGAL_SS3_DEBUG_SPTR(facet);
+    CGAL_SS3_DEBUG_SPTR(edge_begin);
     bool result = false;
     if (!facet->containsEdge(edge_begin)) {
       return false;
@@ -1202,6 +1219,7 @@ public:
     */
   static bool isTetrahedron(EdgeSPtr edge_begin)
   {
+    CGAL_SS3_DEBUG_SPTR(edge_begin);
     bool result = true;
     VertexSPtr vertices[4];
     for (unsigned int i = 0; i < 4; ++i) {
@@ -1248,9 +1266,9 @@ public:
                               FacetSPtr f_third,
                               Point3SPtr point)
   {
-    // @todo for speeds 0, when this function is called from crashAt, the t
-    // is the event time, but maybe if f or f_third have speed 0, we could quickly
-    // check like below?
+    CGAL_SS3_DEBUG_SPTR(edge);
+    CGAL_SS3_DEBUG_SPTR(f);
+    CGAL_SS3_DEBUG_SPTR(f_third);
 
     Plane3SPtr plane_third = f_third->getPlane();
     const FT& speed_third = std::dynamic_pointer_cast<SkelFacetData>(f_third->getData())->getSpeed();
@@ -1355,6 +1373,9 @@ public:
                               Point3SPtr point,
                               const FT& t)
   {
+    CGAL_SS3_DEBUG_SPTR(edge_1);
+    CGAL_SS3_DEBUG_SPTR(edge_2);
+
     FacetSPtr facet_l1 = edge_1->getFacetL();
     FacetSPtr facet_r1 = edge_1->getFacetR();
     FacetSPtr facet_l2 = edge_2->getFacetL();
@@ -1534,6 +1555,8 @@ public:
 
     CGAL_SS3_CORE_TRACE_V(16, "vanishesAt " << edge->toString());
 
+    CGAL_SS3_DEBUG_SPTR(edge);
+
     FacetSPtr facetL = edge->getFacetL();
     FacetSPtr facetR = edge->getFacetR();
     CGAL_SS3_CORE_TRACE_V(16, "facetL: " << facetL->getID());
@@ -1565,6 +1588,9 @@ public:
                                     const std::optional<FT>& offset_future_bound = std::nullopt)
   {
     CGAL_SS3_CORE_TRACE_V(16, "-- Crash At\n    " << edge_1->toString() << "\n    " << edge_2->toString());
+
+    CGAL_SS3_DEBUG_SPTR(edge_1);
+    CGAL_SS3_DEBUG_SPTR(edge_2);
 
     FacetSPtr facet_l1 = edge_1->getFacetL();
     FacetSPtr facet_r1 = edge_1->getFacetR();
@@ -1604,7 +1630,9 @@ public:
     * Returns `true` if the event is in the past
     */
   static bool isEventInThePast(AbstractEventSPtr event,
-                               const FT& current_offset) {
+                               const FT& current_offset)
+  {
+    CGAL_SS3_DEBUG_SPTR(event);
     CGAL_precondition(event->isValid());
     return event->getOffset() >= current_offset;
   }
@@ -1614,6 +1642,7 @@ public:
     */
   static bool isEventObsolete(AbstractEventSPtr event)
   {
+    CGAL_SS3_DEBUG_SPTR(event);
     CGAL_precondition(event->isValid());
     return event->isObsolete();
   }
@@ -1623,6 +1652,8 @@ public:
     CGAL_SS3_CORE_TRACE_V(8, "########################################");
     CGAL_SS3_CORE_TRACE_V(8, "#######  Tentative Vertex Event  #######");
     CGAL_SS3_CORE_TRACE_V(8, "########################################");
+
+    CGAL_SS3_DEBUG_SPTR(event);
 
     VertexSPtr vertex_1 = event->getVertex1();
     VertexSPtr vertex_2 = event->getVertex2();
@@ -1669,6 +1700,8 @@ public:
     CGAL_SS3_CORE_TRACE_V(8, "#####  Tentative Flip Vertex Event  ####");
     CGAL_SS3_CORE_TRACE_V(8, "########################################");
 
+    CGAL_SS3_DEBUG_SPTR(event);
+
     VertexSPtr vertex_1 = event->getVertex1();
     VertexSPtr vertex_2 = event->getVertex2();
     FacetSPtr facet_1 = event->getFacet1();
@@ -1712,6 +1745,8 @@ public:
     CGAL_SS3_CORE_TRACE_V(8, "########################################");
     CGAL_SS3_CORE_TRACE_V(8, "######  Tentative Surface Event  #######");
     CGAL_SS3_CORE_TRACE_V(8, "########################################");
+
+    CGAL_SS3_DEBUG_SPTR(event);
 
     EdgeSPtr edge_1 = event->getEdge1();
     EdgeSPtr edge_2 = event->getEdge2();
@@ -1759,6 +1794,8 @@ public:
     CGAL_SS3_CORE_TRACE_V(8, "####  Tentative Split Merge Event  #####");
     CGAL_SS3_CORE_TRACE_V(8, "########################################");
 
+    CGAL_SS3_DEBUG_SPTR(event);
+
     // @speed is_degenerate(4 planes)? But it would be a sure filter failure, so, costly...
     const FT& offset_event = event->getOffset();
     FT shift = offset_event - current_offset;
@@ -1775,6 +1812,8 @@ public:
     CGAL_SS3_CORE_TRACE_V(8, "########################################");
     CGAL_SS3_CORE_TRACE_V(8, "####  Tentative Split Merge Event  #####");
     CGAL_SS3_CORE_TRACE_V(8, "########################################");
+
+    CGAL_SS3_DEBUG_SPTR(event);
 
     VertexSPtr vertex_1 = event->getVertex1();
     VertexSPtr vertex_2 = event->getVertex2();
@@ -1824,6 +1863,8 @@ public:
     CGAL_SS3_CORE_TRACE_V(8, "#####  Tentative Edge Split Event  #####");
     CGAL_SS3_CORE_TRACE_V(8, "########################################");
 
+    CGAL_SS3_DEBUG_SPTR(event);
+
 #ifdef CGAL_SS3_CHECK_BISECTORS_AT_POP_TIME_FOR_EDGE_SPLIT
     Point3SPtr point = event->getNode()->getPoint();
     const FT& event_offset = event->getOffset();
@@ -1847,6 +1888,8 @@ public:
     CGAL_SS3_CORE_TRACE_V(8, "########################################");
     CGAL_SS3_CORE_TRACE_V(8, "######  Tentative Pierce Event  ########");
     CGAL_SS3_CORE_TRACE_V(8, "########################################");
+
+    CGAL_SS3_DEBUG_SPTR(event);
 
     VertexSPtr pv = event->getVertex();
     FacetSPtr pf = event->getFacet();
@@ -1967,6 +2010,7 @@ public:
                             const FT& current_offset,
                             const std::optional<FT>& offset_future_bound)
   {
+    CGAL_SS3_DEBUG_SPTR(event);
     CGAL_precondition(event->isValid());
 
     bool result = true;
@@ -2007,7 +2051,7 @@ public:
 #endif
 
     for (EdgeSPtr edge : edges) {
-      CGAL_assertion(edge->getID() != -1);
+      CGAL_SS3_DEBUG_SPTR(edge);
 
       VertexSPtr vertex_src = edge->getVertexSrc();
       VertexSPtr vertex_dst = edge->getVertexDst();
@@ -2067,7 +2111,7 @@ public:
     CGAL_SS3_CORE_TRACE_V(4, ">>> Collect Edge Events [" << current_offset << "]");
 
     for (EdgeSPtr edge : edges) {
-      CGAL_assertion(edge->getID() != -1);
+      CGAL_SS3_DEBUG_SPTR(edge);
 
       VertexSPtr vertex_src = edge->getVertexSrc();
       VertexSPtr vertex_dst = edge->getVertexDst();
@@ -2273,7 +2317,7 @@ public:
     CGAL_SS3_CORE_TRACE_V(4, ">>> Collect Edge Merge Events [" << current_offset << "]");
 
     for (EdgeSPtr edge : edges) {
-      CGAL_assertion(edge->getID() != -1);
+      CGAL_SS3_DEBUG_SPTR(edge);
 
       VertexSPtr vertex_src = edge->getVertexSrc();
       VertexSPtr vertex_dst = edge->getVertexDst();
@@ -2428,7 +2472,7 @@ public:
     CGAL_SS3_CORE_TRACE_V(4, ">>> Collect Triangle Event [" << current_offset << "]");
 
     for (EdgeSPtr edge : edges) {
-      CGAL_assertion(edge->getID() != -1);
+      CGAL_SS3_DEBUG_SPTR(edge);
 
       if (edge->getVertexSrc()->getPoint() == edge->getVertexDst()->getPoint()) {
         continue;
@@ -2540,7 +2584,7 @@ public:
     CGAL_SS3_CORE_TRACE_V(4, ">>> Collect Dbl Edge Merge Events [" << current_offset << "]");
 
     for (EdgeSPtr edge : edges) {
-      CGAL_assertion(edge->getID() != -1);
+      CGAL_SS3_DEBUG_SPTR(edge);
 
       if (!isReflex(edge)) {
         continue;
@@ -2663,7 +2707,7 @@ public:
     CGAL_SS3_CORE_TRACE_V(4, ">>> Collect Dbl Triangle Events [" << current_offset << "]");
 
     for (EdgeSPtr edge : edges) {
-      CGAL_assertion(edge->getID() != -1);
+      CGAL_SS3_DEBUG_SPTR(edge);
 
       if (isTetrahedron(edge)) {
         continue;
@@ -2742,10 +2786,9 @@ public:
     CGAL_SS3_CORE_TRACE_V(4, ">>> Collect Tetrahedron Events [" << current_offset << "]");
 
     for (EdgeSPtr edge : edges) {
-      CGAL_assertion(edge->getID() != -1);
+      CGAL_SS3_DEBUG_SPTR(edge);
 
       if (isTetrahedron(edge)) {
-
 #ifdef CGAL_SS3_ENFORCE_UNIQUE_EVENT_REPRESENTATIONS
         if (use_canonical_event_reps) {
           // rep canonicity: only investigate this event if we are in the smallest edge
@@ -2834,7 +2877,7 @@ public:
 #endif
 
     for (VertexSPtr vertex_1 : vertices) {
-      CGAL_assertion(vertex_1->getID() != -1);
+      CGAL_SS3_DEBUG_SPTR(vertex_1);
 
       if (isConvex(vertex_1)) {
         continue;
@@ -2975,7 +3018,7 @@ public:
 #endif // CGAL_SS3_NEWER_VV_VERTEX_2_DETECTION
 
       for (VertexSPtr vertex_2 : vertices_2) {
-        CGAL_assertion(vertex_2->getID() != -1);
+        CGAL_SS3_DEBUG_SPTR(vertex_2);
         if (vertex_1 == vertex_2) {
           continue;
         }
@@ -3371,7 +3414,7 @@ public:
 #endif
 
     for (VertexSPtr vertex_1 : vertices) {
-      CGAL_assertion(vertex_1->getID() != -1);
+      CGAL_SS3_DEBUG_SPTR(vertex_1);
 
       if (isConvex(vertex_1)) {
         continue;
@@ -3417,7 +3460,7 @@ public:
 #endif // CGAL_SS3_NEWER_VV_VERTEX_2_DETECTION
 
     for (VertexSPtr vertex_2 : vertices_2) {
-        CGAL_assertion(vertex_2->getID() != -1);
+        CGAL_SS3_DEBUG_SPTR(vertex_2);
 
         if (vertex_1 == vertex_2) {
           continue;
@@ -3576,8 +3619,8 @@ public:
   {
     CGAL_SS3_CORE_TRACE_V(8, ">>> Collect Surface Event [\n  " << edge_1->toString() << "\n  " << edge_2->toString() << "]");
 
-    CGAL_assertion(edge_1->getID() != -1);
-    CGAL_assertion(edge_2->getID() != -1);
+    CGAL_SS3_DEBUG_SPTR(edge_1);
+    CGAL_SS3_DEBUG_SPTR(edge_2);
 
     if (edge_1 == edge_2) {
       return;
@@ -3727,7 +3770,7 @@ public:
 #endif
 
     for (EdgeSPtr edge_1 : edges) {
-      CGAL_assertion(edge_1->getID() != -1);
+      CGAL_SS3_DEBUG_SPTR(edge_1);
 
       FacetSPtr facet_1_src = edge_1->getFacetSrc();
       FacetSPtr facet_1_dst = edge_1->getFacetDst();
@@ -3746,7 +3789,7 @@ public:
       }
 
       for (EdgeSPtr edge_2 : edges_2) {
-        CGAL_assertion(edge_2->getID() != -1);
+        CGAL_SS3_DEBUG_SPTR(edge_2);
 
         CGAL_SS3_CORE_TRACE_V(64, "Possible surface event:\n\t" << edge_1->toString() << "\n\t"
                                                                 << edge_2->toString());
@@ -3910,9 +3953,6 @@ public:
     CGAL_SS3_DEBUG_SPTR(edge_1);
     CGAL_SS3_DEBUG_SPTR(edge_2);
 
-    CGAL_assertion(edge_1->getID() != -1);
-    CGAL_assertion(edge_2->getID() != -1);
-
     FacetSPtr facet_1_src = edge_1->getFacetSrc();
     FacetSPtr facet_1_dst = edge_1->getFacetDst();
 
@@ -3992,7 +4032,7 @@ public:
 #endif
 
     for (EdgeSPtr edge_1 : edges) {
-      CGAL_assertion(edge_1->getID() != -1);
+      CGAL_SS3_DEBUG_SPTR(edge_1);
 
       if (!isReflex(edge_1)) {
         continue;
@@ -4082,7 +4122,7 @@ public:
     std::cout << "Queue before: " << queue.size() << std::endl;
 
     for (EdgeSPtr edge_1 : edges_reflex_1) {
-      CGAL_assertion(edge_1->getID() != -1);
+      CGAL_SS3_DEBUG_SPTR(edge_1);
 
       FacetSPtr facet_1_src = edge_1->getFacetSrc();
       FacetSPtr facet_1_dst = edge_1->getFacetDst();
@@ -4096,7 +4136,7 @@ public:
       }
 
       for (EdgeSPtr edge_2 : edges_reflex_2) {
-        CGAL_assertion(edge_2->getID() != -1);
+        CGAL_SS3_DEBUG_SPTR(edge_2);
 
         CGAL_SS3_CORE_TRACE_V(64, "Possible edge split event\n\t" << edge_1->toString() << "\n\t"
                                                                   << edge_2->toString());
@@ -4286,8 +4326,8 @@ public:
     FacetSPtr facet_1_src = edge_1->getFacetSrc();
     FacetSPtr facet_1_dst = edge_1->getFacetDst();
 
-    CGAL_assertion(edge_1->getID() != -1);
-    CGAL_assertion(edge_2->getID() != -1);
+    CGAL_SS3_DEBUG_SPTR(edge_1);
+    CGAL_SS3_DEBUG_SPTR(edge_2);
 
 #ifdef CGAL_SS3_ENFORCE_UNIQUE_EVENT_REPRESENTATIONS
     if (use_canonical_event_reps) {
@@ -5025,6 +5065,7 @@ public:
                              const std::optional<FT>& offset_future_bound)
   {
     CGAL_SS3_CORE_TRACE("checkQueueCorrectness()");
+    CGAL_SS3_DEBUG_SPTR(polyhedron);
 
     // Compute a queue from scratch using collectEvents()
     PQ queue_from_scratch;
@@ -5313,6 +5354,8 @@ public:
     */
   void appendEventNode(NodeSPtr node)
   {
+    CGAL_SS3_DEBUG_SPTR(node);
+
     // @fixme why the find?...
     for (ArcWPtr arc_wptr : node->arcs()) {
       if (ArcSPtr arc = arc_wptr.lock()) {
@@ -5332,6 +5375,8 @@ public:
                                     const FT& start_offset,
                                     const FT& target_offset)
   {
+    CGAL_SS3_DEBUG_SPTR(polyhedron);
+
     const FT shift = target_offset - start_offset;
     CGAL_precondition(!is_zero(shift));
 
@@ -5357,6 +5402,8 @@ public:
     CGAL_SS3_CORE_TRACE_V(4, "#########  Handle Save Event  ##########");
     CGAL_SS3_CORE_TRACE_V(4, "########################################");
 
+    CGAL_SS3_DEBUG_SPTR(event);
+
     skel_result_->addEvent(event);
 
     const FT& event_offset = event->getOffset();
@@ -5380,6 +5427,8 @@ public:
     CGAL_SS3_CORE_TRACE_V(4, "########################################");
     CGAL_SS3_CORE_TRACE_V(4, "#########  Handle Const Event  #########");
     CGAL_SS3_CORE_TRACE_V(4, "########################################");
+
+    CGAL_SS3_DEBUG_SPTR(event);
 
     const FT& event_offset = event->getOffset();
     polyhedron = shiftToEventOffset(polyhedron, current_offset, event_offset);
@@ -5406,6 +5455,8 @@ public:
     CGAL_SS3_CORE_TRACE_V(8, "########################################");
     CGAL_SS3_CORE_TRACE_V(8, "####### Tentative Vanish Event  ########");
     CGAL_SS3_CORE_TRACE_V(8, "########################################");
+
+    CGAL_SS3_DEBUG_SPTR(event);
 
     NodeSPtr node = event->getNode();
     EdgeSPtr edge = event->getEdge();

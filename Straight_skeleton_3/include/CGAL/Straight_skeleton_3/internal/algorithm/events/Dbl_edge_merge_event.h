@@ -83,6 +83,7 @@ public:
 
   void setNode(NodeSPtr node)
   {
+    CGAL_SS3_DEBUG_SPTR(node);
     this->node_ = node;
   }
 
@@ -100,6 +101,7 @@ public:
 
   void setFacet1(FacetSPtr facet_1)
   {
+    CGAL_SS3_DEBUG_SPTR(facet_1);
     this->facet_1_ = facet_1;
   }
 
@@ -111,6 +113,7 @@ public:
 
   void setEdge11(EdgeSPtr edge_11)
   {
+    CGAL_SS3_DEBUG_SPTR(edge_11);
     this->edge_11_ = edge_11;
   }
 
@@ -122,6 +125,7 @@ public:
 
   void setEdge12(EdgeSPtr edge_12)
   {
+    CGAL_SS3_DEBUG_SPTR(edge_12);
     this->edge_12_ = edge_12;
   }
 
@@ -133,6 +137,7 @@ public:
 
   void setFacet2(FacetSPtr facet_2)
   {
+    CGAL_SS3_DEBUG_SPTR(facet_2);
     this->facet_2_ = facet_2;
   }
 
@@ -144,6 +149,7 @@ public:
 
   void setEdge21(EdgeSPtr edge_21)
   {
+    CGAL_SS3_DEBUG_SPTR(edge_21);
     this->edge_21_ = edge_21;
   }
 
@@ -155,6 +161,7 @@ public:
 
   void setEdge22(EdgeSPtr edge_22)
   {
+    CGAL_SS3_DEBUG_SPTR(edge_22);
     this->edge_22_ = edge_22;
   }
 

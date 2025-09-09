@@ -17,6 +17,7 @@
 #ifndef CGAL_STRAIGHT_SKELETON_3_INTERNAL_KERNEL_KERNEL_WRAPPER_H
 #define CGAL_STRAIGHT_SKELETON_3_INTERNAL_KERNEL_KERNEL_WRAPPER_H
 
+#include <CGAL/Straight_skeleton_3/internal/debug.h>
 #include <CGAL/Straight_skeleton_3/internal/kernel/Kernel_factory.h>
 
 #include <CGAL/enum.h>
@@ -55,6 +56,10 @@ class KernelWrapper
 public:
   static Point3SPtr intersection(Plane3SPtr plane1, Plane3SPtr plane2, Plane3SPtr plane3)
   {
+    CGAL_SS3_DEBUG_SPTR(plane1);
+    CGAL_SS3_DEBUG_SPTR(plane2);
+    CGAL_SS3_DEBUG_SPTR(plane3);
+
     Point3SPtr result = Point3SPtr();
 
     auto res = CGAL::intersection(*plane1, *plane2, *plane3);
@@ -80,6 +85,9 @@ public:
 
   static Line3SPtr intersection(Plane3SPtr plane1, Plane3SPtr plane2)
   {
+    CGAL_SS3_DEBUG_SPTR(plane1);
+    CGAL_SS3_DEBUG_SPTR(plane2);
+
     Line3SPtr result = Line3SPtr();
 
     auto res = CGAL::intersection(*plane1, *plane2);
@@ -102,6 +110,9 @@ public:
 
   static Point3SPtr intersection(Plane3SPtr plane, Line3SPtr line)
   {
+    CGAL_SS3_DEBUG_SPTR(plane);
+    CGAL_SS3_DEBUG_SPTR(line);
+
     Point3SPtr result = Point3SPtr();
 
     auto res = CGAL::intersection(*plane, *line);
@@ -126,6 +137,9 @@ public:
 
   static Plane3SPtr bisector(Plane3SPtr plane1, Plane3SPtr plane2)
   {
+    CGAL_SS3_DEBUG_SPTR(plane1);
+    CGAL_SS3_DEBUG_SPTR(plane2);
+
     Plane3SPtr result = Plane3SPtr();
 
     CGAL_SS3_TRAITS_TRACE("Warning: bisector call brings a SQRT");
@@ -140,25 +154,35 @@ public:
 
   static FT squared_distance(Point3SPtr p1, Point3SPtr p2)
   {
+    CGAL_SS3_DEBUG_SPTR(p1);
+    CGAL_SS3_DEBUG_SPTR(p2);
     return CGAL::squared_distance(*p1, *p2);
   }
 
   static FT squared_distance(Segment3SPtr segment, Point3SPtr point)
   {
+    CGAL_SS3_DEBUG_SPTR(segment);
+    CGAL_SS3_DEBUG_SPTR(point);
     return CGAL::squared_distance(*segment, *point);
   }
 
   static FT squared_distance(Line3SPtr line, Point3SPtr point)
   {
+    CGAL_SS3_DEBUG_SPTR(line);
+    CGAL_SS3_DEBUG_SPTR(point);
     return CGAL::squared_distance(*line, *point);
   }
 
   static FT squared_distance(Plane3SPtr plane, Point3SPtr point)
   {
+    CGAL_SS3_DEBUG_SPTR(plane);
+    CGAL_SS3_DEBUG_SPTR(point);
     return CGAL::squared_distance(*plane, *point);
   }
 
-  static Plane3SPtr opposite(Plane3SPtr plane) {
+  static Plane3SPtr opposite(Plane3SPtr plane)
+  {
+    CGAL_SS3_DEBUG_SPTR(plane);
     Plane3SPtr result = KernelFactory::createPlane3(plane->opposite());
     CGAL_SS3_DEBUG_SPTR(result);
     return result;
@@ -166,6 +190,7 @@ public:
 
   static Line3SPtr opposite(Line3SPtr line)
   {
+    CGAL_SS3_DEBUG_SPTR(line);
     Line3SPtr result = KernelFactory::createLine3(line->opposite());
     CGAL_SS3_DEBUG_SPTR(result);
     return result;
@@ -173,6 +198,8 @@ public:
 
   static bool isNormalizedPlane(Plane3SPtr plane)
   {
+    CGAL_SS3_DEBUG_SPTR(plane);
+
     const FT& a = plane->a();
     const FT& b = plane->b();
     const FT& c = plane->c();
@@ -183,6 +210,8 @@ public:
 
   static int side(Plane3SPtr plane, Point3SPtr point)
   {
+    CGAL_SS3_DEBUG_SPTR(plane);
+    CGAL_SS3_DEBUG_SPTR(point);
     int result = 0;
     CGAL::Oriented_side side = plane->oriented_side(*point);
     if (side == CGAL::ON_POSITIVE_SIDE) result = 1;
@@ -192,6 +221,8 @@ public:
 
   static int orientation(Line3SPtr line1, Line3SPtr line2)
   {
+    CGAL_SS3_DEBUG_SPTR(line1);
+    CGAL_SS3_DEBUG_SPTR(line2);
     int result = 0;
     Vector_3 dir1 = line1->to_vector();
     Vector_3 dir2 = line2->to_vector();
@@ -211,6 +242,8 @@ public:
 
   double angle(Vector3SPtr v1, Vector3SPtr v2)
   {
+    CGAL_SS3_DEBUG_SPTR(v1);
+    CGAL_SS3_DEBUG_SPTR(v2);
     double result = 0.0;
     FT arg = 0.0;
     arg = ((*v1)*(*v2)) / CGAL::disallowed_sqrt(v1->squared_length() * v2->squared_length());
@@ -227,6 +260,8 @@ public:
 
   double angle(Line3SPtr line1, Line3SPtr line2)
   {
+    CGAL_SS3_DEBUG_SPTR(line1);
+    CGAL_SS3_DEBUG_SPTR(line2);
     double result = 0.0;
     Vector3SPtr v1 = KernelFactory::createVector3(line1);
     Vector3SPtr v2 = KernelFactory::createVector3(line2);
@@ -236,6 +271,8 @@ public:
 
   double angle(Plane3SPtr plane, Line3SPtr line)
   {
+    CGAL_SS3_DEBUG_SPTR(plane);
+    CGAL_SS3_DEBUG_SPTR(line);
     double result = 0.0;
     Vector3SPtr v_plane = KernelFactory::createVector3(plane);
     Vector3SPtr v_line = KernelFactory::createVector3(line);
@@ -253,6 +290,8 @@ public:
     */
   static double angle(Plane3SPtr plane1, Plane3SPtr plane2)
   {
+    CGAL_SS3_DEBUG_SPTR(plane1);
+    CGAL_SS3_DEBUG_SPTR(plane2);
     double result = 0.0;
     Vector3SPtr v1 = KernelFactory::createVector3(plane1);
     Vector3SPtr v2 = KernelFactory::createVector3(plane2);
@@ -279,6 +318,8 @@ public:
 
   static Vector3SPtr cross(Vector3SPtr v1, Vector3SPtr v2)
   {
+    CGAL_SS3_DEBUG_SPTR(v1);
+    CGAL_SS3_DEBUG_SPTR(v2);
     Vector3SPtr result = Vector3SPtr();
     result = KernelFactory::createVector3(CGAL::cross_product(*v1, *v2));
     CGAL_SS3_DEBUG_SPTR(result);
@@ -287,6 +328,8 @@ public:
 
   static Point3SPtr projection(Line3SPtr line, Point3SPtr point)
   {
+    CGAL_SS3_DEBUG_SPTR(line);
+    CGAL_SS3_DEBUG_SPTR(point);
     Point3SPtr result = Point3SPtr();
     result = KernelFactory::createPoint3(line->projection(*point));
     CGAL_SS3_DEBUG_SPTR(result);
@@ -295,6 +338,8 @@ public:
 
   static Point3SPtr projection(Plane3SPtr plane, Point3SPtr point)
   {
+    CGAL_SS3_DEBUG_SPTR(plane);
+    CGAL_SS3_DEBUG_SPTR(point);
     Point3SPtr result = Point3SPtr();
     result = KernelFactory::createPoint3(plane->projection(*point));
     CGAL_SS3_DEBUG_SPTR(result);

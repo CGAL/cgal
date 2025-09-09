@@ -80,6 +80,7 @@ public:
 
   void setNode(NodeSPtr node)
   {
+    CGAL_SS3_DEBUG_SPTR(node);
     this->node_ = node;
   }
 
@@ -97,6 +98,7 @@ public:
 
   void setFacet(FacetSPtr facet)
   {
+    CGAL_SS3_DEBUG_SPTR(facet);
     this->facet_ = facet;
   }
 
@@ -108,6 +110,7 @@ public:
 
   void setVertex(VertexSPtr vertex)
   {
+    CGAL_SS3_DEBUG_SPTR(vertex);
     this->vertex_ = vertex;
     this->neighborhood_ = VertexFacetNeighborhood(vertex);
   }

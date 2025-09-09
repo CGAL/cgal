@@ -83,6 +83,7 @@ public:
 
   void setNode(NodeSPtr node)
   {
+    CGAL_SS3_DEBUG_SPTR(node);
     this->node_ = node;
   }
 
@@ -100,6 +101,7 @@ public:
 
   void setVertex1(VertexSPtr vertex_1)
   {
+    CGAL_SS3_DEBUG_SPTR(vertex_1);
     this->vertex_1_ = vertex_1;
     this->neighborhood_1_ = VertexFacetNeighborhood(vertex_1);
   }
@@ -112,6 +114,7 @@ public:
 
   void setVertex2(VertexSPtr vertex_2)
   {
+    CGAL_SS3_DEBUG_SPTR(vertex_2);
     this->vertex_2_ = vertex_2;
     this->neighborhood_2_ = VertexFacetNeighborhood(vertex_2);
   }
@@ -124,6 +127,7 @@ public:
 
   void setFacet1(FacetSPtr facet_1)
   {
+    CGAL_SS3_DEBUG_SPTR(facet_1);
     this->facet_1_ = facet_1;
   }
 
@@ -135,6 +139,7 @@ public:
 
   void setFacet2(FacetSPtr facet_2)
   {
+    CGAL_SS3_DEBUG_SPTR(facet_2);
     this->facet_2_ = facet_2;
   }
 

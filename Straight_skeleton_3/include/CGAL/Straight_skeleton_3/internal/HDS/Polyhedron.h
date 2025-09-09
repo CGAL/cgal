@@ -114,6 +114,7 @@ public:
 
       static VertexDataSPtr create(VertexSPtr vertex)
       {
+        CGAL_SS3_DEBUG_SPTR(vertex);
         VertexDataSPtr result = std::make_shared<VertexData>();
         result->setVertex(vertex);
         vertex->setData(result);
@@ -122,11 +123,13 @@ public:
 
       VertexSPtr getVertex() const
       {
+        CGAL_SS3_DEBUG_WPTR(vertex_);
         return this->vertex_.lock();
       }
 
       void setVertex(VertexSPtr vertex)
       {
+        CGAL_SS3_DEBUG_SPTR(vertex);
         this->vertex_ = vertex;
       }
 
@@ -153,6 +156,7 @@ public:
 
       static SkelVertexDataSPtr create(VertexSPtr vertex)
       {
+        CGAL_SS3_DEBUG_SPTR(vertex);
         SkelVertexDataSPtr result = std::make_shared<SkelVertexData>();
         result->setVertex(vertex);
         vertex->setData(result);
@@ -167,16 +171,19 @@ public:
 
       void setArc(ArcSPtr arc)
       {
+        CGAL_SS3_DEBUG_SPTR(arc);
         this->arc_ = arc;
       }
 
       NodeSPtr getNode() const
       {
+        CGAL_SS3_DEBUG_WPTR(node_);
         return this->node_.lock();
       }
 
       void setNode(NodeSPtr node)
       {
+        CGAL_SS3_DEBUG_SPTR(node);
         this->node_ = node;
       }
 
@@ -188,6 +195,7 @@ public:
 
       void setOffsetVertex(VertexSPtr offset_vertex)
       {
+        CGAL_SS3_DEBUG_SPTR(offset_vertex);
         this->offset_vertex_ = offset_vertex;
       }
 
@@ -225,6 +233,7 @@ public:
 
     static VertexSPtr create(Point3SPtr point)
     {
+      CGAL_SS3_DEBUG_SPTR(point);
       return std::make_shared<Vertex>(point);
     }
 
@@ -241,6 +250,7 @@ public:
 
     void setPoint(Point3SPtr point)
     {
+      CGAL_SS3_DEBUG_SPTR(point);
       point_ = point;
     }
 

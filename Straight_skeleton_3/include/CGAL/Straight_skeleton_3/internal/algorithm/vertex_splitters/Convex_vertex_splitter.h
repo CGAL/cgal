@@ -77,6 +77,7 @@ public:
 
   static int countConvexEdges(PolyhedronSPtr polyhedron)
   {
+    CGAL_SS3_DEBUG_SPTR(polyhedron);
     int result = 0;
     typename std::list<EdgeSPtr>::iterator it_e = polyhedron->edges().begin();
     while (it_e != polyhedron->edges().end()) {
@@ -90,15 +91,15 @@ public:
 
   virtual PolyhedronSPtr splitVertex(VertexSPtr vertex)
   {
-    std::cout << "\n> Splitting " << vertex->toString() << std::endl;
-
+    CGAL_SS3_DEBUG_SPTR(vertex);
+    CGAL_SS3_SPLITTER_TRACE_V(16, "\n> Splitting " << vertex->toString());
     PolyhedronSPtr polyhedron = vertex->getPolyhedron();
     if (vertex->degree() <= 3) {
         return polyhedron;
     }
     vertex->sort();
     std::list<combi> combinations = Base::generateAllCombinations(vertex->degree());
-    std::cout << combinations.size() << " combinations" << std::endl;
+    CGAL_SS3_SPLITTER_TRACE_V(16, combinations.size() << " combinations");
 
     combi combi_opt;
     PolyhedronSPtr poly_opt;
@@ -109,7 +110,7 @@ public:
     std::list<combi>::iterator it_combi = combinations.begin();
     while (it_combi != combinations.end()) {
       combi combination = *it_combi++;
-      // std::cout << "-- Testing split-combination: " << Base::combiToString(combination) << std::endl;
+      // CGAL_SS3_SPLITTER_TRACE_V(64, "-- Testing split-combination: " << Base::combiToString(combination));
 
       // don't take it out of the loop
       PolyhedronSPtr poly_c = Base::copyVertex(vertex);
@@ -122,12 +123,9 @@ public:
 
       PolyhedronSPtr poly_c_offset = PolyhedronTransformation::shiftFacets(poly_c, -1.0);
       if (!poly_c_offset) {
-        std::cerr << "Warning: failed to create offset of corner" << std::endl;
+        CGAL_SS3_SPLITTER_TRACE("Warning: failed to create offset of corner");
         continue;
       }
-
-      // std::cout << "= Base Polyhedron\n" << poly_c->toString() << std::endl;
-      // std::cout << "= Shifted Polyhedron\n" << poly_c_offset->toString() << std::endl;
 
       // static int test_id = -1;
       // ++test_id;

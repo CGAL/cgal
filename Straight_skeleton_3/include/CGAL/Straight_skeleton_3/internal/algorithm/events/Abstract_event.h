@@ -209,6 +209,8 @@ public:
   bool operator()(const std::shared_ptr<AbstractEvent<Traits> >& eventA,
                   const std::shared_ptr<AbstractEvent<Traits> >& eventB) const
   {
+    CGAL_SS3_DEBUG_SPTR(eventA);
+    CGAL_SS3_DEBUG_SPTR(eventB);
     if (eventA->getOffset() == eventB->getOffset()) {
       if (eventA->getType() == eventB->getType()) { // @fixme get rid of that and IDs directly?
         // Give priority to newer (higher) IDs. The point is that if an event has been updated

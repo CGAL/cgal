@@ -128,6 +128,7 @@ private:
 public:
   static Point3SPtr boundingBoxMin(PolyhedronSPtr polyhedron)
   {
+    CGAL_SS3_DEBUG_SPTR(polyhedron);
     FT p_min[3];
     for (unsigned int i = 0; i < 3; ++i) {
       p_min[i] = std::numeric_limits<double>::max();
@@ -146,6 +147,7 @@ public:
 
   static Point3SPtr boundingBoxMax(PolyhedronSPtr polyhedron)
   {
+    CGAL_SS3_DEBUG_SPTR(polyhedron);
     FT p_max[3];
     for (unsigned int i = 0; i < 3; ++i) {
       p_max[i] = -std::numeric_limits<double>::max();
@@ -165,6 +167,9 @@ public:
   static bool isInsideBox(PolyhedronSPtr polyhedron,
                           Point3SPtr p_box_min, Point3SPtr p_box_max)
   {
+    CGAL_SS3_DEBUG_SPTR(polyhedron);
+    CGAL_SS3_DEBUG_SPTR(p_box_min);
+    CGAL_SS3_DEBUG_SPTR(p_box_max);
     bool result = true;
     for (VertexSPtr vertex : polyhedron->vertices()) {
       Point3SPtr p = vertex->getPoint();
@@ -185,6 +190,9 @@ public:
   static void translate(PolyhedronSPtr polyhedron,
                         Vector3SPtr v_t)
   {
+    CGAL_SS3_DEBUG_SPTR(polyhedron);
+    CGAL_SS3_DEBUG_SPTR(v_t);
+
     for (VertexSPtr vertex : polyhedron->vertices()) {
       Point3SPtr p = vertex->getPoint();
       Point3SPtr p_t = KernelFactory::createPoint3(*p + *v_t);
@@ -194,8 +202,12 @@ public:
     polyhedron->initPlanes();
   }
 
-  static void scale(PolyhedronSPtr polyhedron, Vector3SPtr v_s)
+  static void scale(PolyhedronSPtr polyhedron,
+                    Vector3SPtr v_s)
   {
+    CGAL_SS3_DEBUG_SPTR(polyhedron);
+    CGAL_SS3_DEBUG_SPTR(v_s);
+
     for (VertexSPtr vertex : polyhedron->vertices()) {
       Point3SPtr p = vertex->getPoint();
       Point3SPtr p_s = KernelFactory::createPoint3((*p)[0] * (*v_s)[0],
@@ -210,6 +222,10 @@ public:
   static void translateNscale(PolyhedronSPtr polyhedron,
                               Point3SPtr p_box_min, Point3SPtr p_box_max)
   {
+    CGAL_SS3_DEBUG_SPTR(polyhedron);
+    CGAL_SS3_DEBUG_SPTR(p_box_min);
+    CGAL_SS3_DEBUG_SPTR(p_box_max);
+
     Vector3SPtr v_box_min = KernelFactory::createVector3(p_box_min);
     Vector3SPtr v_box_max = KernelFactory::createVector3(p_box_max);
     Vector3SPtr v_size = KernelFactory::createVector3(*v_box_max - *v_box_min);
@@ -247,7 +263,6 @@ public:
 
   static void truncatePrecision(PolyhedronSPtr polyhedron)
   {
-    CGAL_SS3_TRANSF_TRACE_V(4, "Lower precision of input polyhedron");
     CGAL_SS3_DEBUG_SPTR(polyhedron);
 
     ConfigurationSPtr config = Configuration::getInstance();
@@ -256,6 +271,7 @@ public:
         range = config->getDouble("main", "truncate_precision");
     }
 
+    CGAL_SS3_TRANSF_TRACE_V(4, "Lower precision of input polyhedron");
     CGAL_SS3_TRANSF_TRACE_V(8, " truncate precision: " << range);
 
     double exp = std::ceil(std::log2(1.0 / range));
@@ -278,6 +294,8 @@ public:
   static bool hasCoplanarFacets(EdgeSPtr edge,
                                 const double epsilon)
   {
+    CGAL_SS3_DEBUG_SPTR(edge);
+
     bool result = false;
     FacetSPtr facet_l = edge->getFacetL();
     FacetSPtr facet_r = edge->getFacetR();
@@ -313,7 +331,9 @@ public:
                           FacetSPtr facet_from,
                           PolyhedronSPtr polyhedron)
   {
-    CGAL_precondition(facet_into && facet_from);
+    CGAL_SS3_DEBUG_SPTR(edge);
+    CGAL_SS3_DEBUG_SPTR(facet_into);
+    CGAL_SS3_DEBUG_SPTR(facet_from);
     CGAL_precondition(facet_into != facet_from);
     CGAL_precondition(edge->getFacetL() == facet_from || edge->getFacetR() == facet_from);
     CGAL_precondition(edge->getFacetL() == facet_into || edge->getFacetR() == facet_into);
@@ -340,6 +360,8 @@ public:
 
   static void mergeFacets(EdgeSPtr edge, PolyhedronSPtr polyhedron)
   {
+    CGAL_SS3_DEBUG_SPTR(edge);
+    CGAL_SS3_DEBUG_SPTR(polyhedron);
     return mergeFacets(edge, edge->getFacetL(), edge->getFacetR(), polyhedron);
   }
 
@@ -348,6 +370,8 @@ public:
   {
     CGAL_SS3_TRANSF_TRACE_V(4, "\nMerging coplanar faces with epsilon = " << epsilon);
     CGAL_SS3_TRANSF_TRACE_V(4, "  initial face count: " << polyhedron->facets().size());
+
+    CGAL_SS3_DEBUG_SPTR(polyhedron);
 
 #ifdef CGAL_SS3_DUMP_FILES
     IO::OBJFile::save("results/coplanar_merge_before.obj", polyhedron, false /*do not triangulate*/);
@@ -388,6 +412,7 @@ public:
 
   static int mergeCoplanarFacets(PolyhedronSPtr polyhedron)
   {
+    CGAL_SS3_DEBUG_SPTR(polyhedron);
     double epsilon = 0.0;
     ConfigurationSPtr config = Configuration::getInstance();
     if (config->isLoaded()) {
@@ -405,6 +430,8 @@ public:
   {
     CGAL_SS3_TRANSF_TRACE("Remove Vertices with degree < 3");
     CGAL_SS3_TRANSF_TRACE("  initial vertex count: " << polyhedron->vertices().size());
+
+    CGAL_SS3_DEBUG_SPTR(polyhedron);
 
     int result = 0;
     std::list<VertexSPtr> vertices_toremove;
@@ -528,6 +555,7 @@ public:
 
   static int removeFacetsDegLt3(PolyhedronSPtr polyhedron)
   {
+    CGAL_SS3_DEBUG_SPTR(polyhedron);
     int result = 0;
     std::list<FacetSPtr> facets_tomerge;
     for (FacetSPtr facet : polyhedron->facets()) {
@@ -576,7 +604,9 @@ public:
 
   static int sanitize(PolyhedronSPtr polyhedron)
   {
-    CGAL_SS3_TRANSF_TRACE("Sanitizing...");
+    CGAL_SS3_TRANSF_TRACE("Sanitizing polyhedron...");
+
+    CGAL_SS3_DEBUG_SPTR(polyhedron);
 
     // - removeVerticesDegLt3 can create facets with fewer than 3 vertices
     // - removeFacetsDegLt3 removes facets with fewer than 3 vertices
@@ -599,6 +629,8 @@ public:
   template <typename CDT2Tag>
   static auto constructFacetTriangulation(FacetSPtr facet)
   {
+    CGAL_SS3_DEBUG_SPTR(facet);
+
     using Itag = CDT2Tag;
     using PK = CGAL::Projection_traits_3<Traits>;
     using PVbb = CGAL::Triangulation_vertex_base_with_info_2<VertexSPtr, PK>;
@@ -659,6 +691,9 @@ public:
                          const std::array<Plane3SPtr, 3>& planes)
   {
     CGAL_SS3_DEBUG_SPTR(vertex);
+    CGAL_SS3_DEBUG_SPTR(planes[0]);
+    CGAL_SS3_DEBUG_SPTR(planes[1]);
+    CGAL_SS3_DEBUG_SPTR(planes[2]);
 
     Point3SPtr point = KernelWrapper::intersection(planes[0], planes[1], planes[2]);
     if (!point) {
@@ -708,6 +743,7 @@ public:
   static bool resetPoints(PolyhedronSPtr polyhedron)
   {
     CGAL_SS3_TRANSF_TRACE("Reset point positions");
+    CGAL_SS3_DEBUG_SPTR(polyhedron);
     typename std::list<VertexSPtr>::iterator it_v = polyhedron->vertices().begin();
     while (it_v != polyhedron->vertices().end()) {
       VertexSPtr vertex = *it_v++;
@@ -767,6 +803,7 @@ public:
   static void resetFinalPlane(FacetSPtr facet,
                               const FT& offset_future_bound)
   {
+    CGAL_SS3_DEBUG_SPTR(facet);
     Plane3SPtr plane = shiftPlane(facet, offset_future_bound);
     facet->setFinalPlane(plane);
   }
@@ -779,7 +816,7 @@ public:
                                const FT& offset)
   {
     CGAL_SS3_TRANSF_TRACE_V(32, "shift " << vertex->toString() << "\noffset = " << offset);
-
+    CGAL_SS3_DEBUG_SPTR(vertex);
     CGAL_precondition(vertex->degree() >= 3);
 
     Plane3SPtr planes[3];
@@ -842,6 +879,8 @@ public:
   static Segment3SPtr shiftEdge(EdgeSPtr edge,
                                 const FT& offset)
   {
+    CGAL_SS3_DEBUG_SPTR(edge);
+
     FacetSPtr facet_l = edge->getFacetL();
     FacetSPtr facet_r = edge->getFacetR();
     FacetSPtr facet_src = edge->getFacetL()->next(edge->getVertexSrc());
@@ -894,6 +933,8 @@ public:
   static Plane3SPtr shiftPlane(FacetSPtr facet,
                                const FT& offset)
   {
+    CGAL_SS3_DEBUG_SPTR(facet);
+
     FT facet_speed = 1.0;
     if (facet->hasData()) {
       facet_speed = std::dynamic_pointer_cast<SkelFacetData>(facet->getData())->getSpeed();
@@ -916,6 +957,7 @@ public:
                                  const bool recompute_positions = true)
   {
     CGAL_SS3_TRANSF_TRACE("~~~~ Shift polyhedron by " << offset << " [in place]");
+    CGAL_SS3_DEBUG_SPTR(polyhedron);
 
     typename std::list<FacetSPtr>::iterator it_f = polyhedron->facets().begin();
     while (it_f != polyhedron->facets().end()) {
@@ -953,6 +995,7 @@ public:
                                     const FT& offset,
                                     const bool recompute_positions = true)
   {
+    CGAL_SS3_DEBUG_SPTR(polyhedron);
     CGAL_precondition(offset != 0);
 
     PolyhedronSPtr result = Polyhedron::create();
@@ -1198,6 +1241,8 @@ public:
     CGAL_SS3_TRANSF_TRACE("Triangulate facet " << facet->getID() << " of polyhedron "
                           << polyhedron->getID() << " with " << facet->vertices().size()
                           << " vertices");
+    CGAL_SS3_DEBUG_SPTR(facet);
+    CGAL_SS3_DEBUG_SPTR(polyhedron);
 
     std::list<VertexSPtr> facet_vertices = facet->vertices();
 
@@ -1258,6 +1303,7 @@ public:
   */
   static void normalizeFacetPlanes(PolyhedronSPtr polyhedron)
   {
+    CGAL_SS3_DEBUG_SPTR(polyhedron);
     for (FacetSPtr facet : polyhedron->facets()) {
       facet->normalizePlaneCoefficients();
     }
@@ -1268,6 +1314,7 @@ public:
     */
   static bool doAll2PlanesIntersect(PolyhedronSPtr polyhedron)
   {
+    CGAL_SS3_DEBUG_SPTR(polyhedron);
     bool result = true;
     typename std::list<FacetSPtr>::iterator it_f1 = polyhedron->facets().begin();
     while (it_f1 != polyhedron->facets().end()) {
@@ -1294,6 +1341,7 @@ public:
 
   static bool doAll3PlanesIntersect(PolyhedronSPtr polyhedron)
   {
+    CGAL_SS3_DEBUG_SPTR(polyhedron);
     bool result = true;
     typename std::list<FacetSPtr>::iterator it_f1 = polyhedron->facets().begin();
     while (it_f1 != polyhedron->facets().end()) {
@@ -1328,8 +1376,8 @@ public:
 
   static bool areAllVerticesDegree3(PolyhedronSPtr polyhedron)
   {
+    CGAL_SS3_DEBUG_SPTR(polyhedron);
     bool result = true;
-
     for (VertexSPtr vertex : polyhedron->vertices()) {
       if (vertex->degree() != 3) {
         CGAL_SS3_TRANSF_TRACE("High-degree vertex: " << vertex->toString());
@@ -1348,8 +1396,8 @@ public:
     */
   static bool isTiltCompatible(PolyhedronSPtr polyhedron)
   {
+    CGAL_SS3_DEBUG_SPTR(polyhedron);
     bool result = true;
-
     for (FacetSPtr facet : polyhedron->facets()) {
       if (facet->numHighDegreeVertices() > 2) {
         CGAL_SS3_TRANSF_TRACE("facet " << facet->getID() << " has too many high-degree vertices "
@@ -1358,12 +1406,13 @@ public:
         break;
       }
     }
-
     return result;
   }
 
   static void randMovePoints(PolyhedronSPtr polyhedron)
   {
+    CGAL_SS3_DEBUG_SPTR(polyhedron);
+
     double range = 0.001;
     ConfigurationSPtr config = Configuration::getInstance();
     if (config->isLoaded()) {
@@ -1408,6 +1457,8 @@ public:
 
   static void randTiltPlanes(PolyhedronSPtr polyhedron)
   {
+    CGAL_SS3_DEBUG_SPTR(polyhedron);
+
     double range = 1e-10;
     ConfigurationSPtr config = Configuration::getInstance();
     if (config->isLoaded()) {
@@ -1442,6 +1493,7 @@ public:
   static void randTiltPlanesv3(PolyhedronSPtr polyhedron)
   {
     CGAL_SS3_TRANSF_TRACE("Random Plane Tilt (v3)");
+    CGAL_SS3_DEBUG_SPTR(polyhedron);
 
     double range = 1e-10;
     ConfigurationSPtr config = Configuration::getInstance();

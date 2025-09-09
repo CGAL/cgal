@@ -66,6 +66,9 @@ public:
                                   EdgeSPtr edge2,
                                   bool handle_degree_1_as_ray)
   {
+    CGAL_SS3_DEBUG_SPTR(edge1);
+    CGAL_SS3_DEBUG_SPTR(edge2);
+
     // if handle_degree_1_as_ray is true, then that extremitiy is not considered
     VertexSPtr v1_src = edge1->getVertexSrc();
     if (handle_degree_1_as_ray && v1_src->degree() == 1) {
@@ -96,6 +99,8 @@ public:
                                bool handle_degree_1_as_ray, // @todo always true?...
                                const ProjectionTraits& traits)
   {
+    CGAL_SS3_DEBUG_SPTR(edge1);
+    CGAL_SS3_DEBUG_SPTR(edge2);
     CGAL_precondition(edge1 != edge2);
     CGAL_precondition(edge1->getVertexSrc() != edge1->getVertexDst() &&
                       edge2->getVertexSrc() != edge2->getVertexDst());
@@ -182,6 +187,8 @@ public:
   static bool isSelfIntersectingFacet(FacetSPtr facet,
                                       const ProjectionTraits& traits)
   {
+    CGAL_SS3_DEBUG_SPTR(facet);
+
     bool result = false;
 
     // We can't use is_simple_polygon_2 + projection traits because some edges are rays
@@ -213,6 +220,7 @@ public:
 
   static bool isSelfIntersectingFacet(FacetSPtr facet)
   {
+    CGAL_SS3_DEBUG_SPTR(facet);
     Plane3SPtr pl = facet->plane();
     Vector3SPtr normal = KernelFactory::createVector3(pl);
     if (is_zero(normal->z())) {
@@ -228,6 +236,7 @@ public:
 
   static unsigned int hasSelfIntersectingFacets(PolyhedronSPtr polyhedron)
   {
+    CGAL_SS3_DEBUG_SPTR(polyhedron);
     unsigned int result = 0;
     for (FacetSPtr facet : polyhedron->facets()) {
       if (isSelfIntersectingFacet(facet)) {
@@ -246,6 +255,8 @@ public:
                                       FacetSPtr facet,
                                       const bool handle_degree_1_as_ray)
   {
+    CGAL_SS3_DEBUG_SPTR(facet);
+
     CGAL_SS3_ALGO_TRACE("isInsideWithRayShooting(" << point << ", F" << facet->getID() << ")");
 
     Plane3SPtr pl = facet->plane();
@@ -576,6 +587,9 @@ public:
                                 EdgeSPtr edge,
                                 bool handle_degree_1_as_ray)
   {
+    CGAL_SS3_DEBUG_SPTR(facet);
+    CGAL_SS3_DEBUG_SPTR(edge);
+
     CGAL_SS3_ALGO_TRACE("\n> isEdgeInsideFacet()");
     CGAL_SS3_ALGO_TRACE("  " << facet->toString());
     CGAL_SS3_ALGO_TRACE("  " << edge->toString());
@@ -748,7 +762,10 @@ public:
   }
 
   // @fixme self-intersection on boundaries does not seem well defined
-  static bool hasSelfIntersectingSurface(PolyhedronSPtr polyhedron) {
+  static bool hasSelfIntersectingSurface(PolyhedronSPtr polyhedron)
+  {
+    CGAL_SS3_DEBUG_SPTR(polyhedron);
+
     CGAL_SS3_ALGO_TRACE("\n> hasSelfIntersectingSurface()");
 
     // @speed O(nf*nfe*nfe) algorithm

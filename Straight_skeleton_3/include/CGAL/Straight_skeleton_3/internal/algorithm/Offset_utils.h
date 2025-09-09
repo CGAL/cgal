@@ -44,16 +44,16 @@ class OffsetUtils
 public:
   static Plane3SPtr offsetPlane(Plane3SPtr plane, const FT& offset)
   {
-    Plane3SPtr result = Plane3SPtr();
+    CGAL_SS3_DEBUG_SPTR(plane);
     CGAL_precondition(KernelWrapper::isNormalizedPlane(plane));
+
+    CGAL_SS3_TRAITS_TRACE("Plane offset from: " << *plane);
 
     const FT& a = plane->a();
     const FT& b = plane->b();
     const FT& c = plane->c();
     const FT& d = plane->d();
-
-    CGAL_SS3_TRAITS_TRACE("Plane offset from: " << *plane);
-    result = KernelFactory::createPlane3(a, b, c, d - offset);
+    Plane3SPtr result = KernelFactory::createPlane3(a, b, c, d - offset);
     CGAL_SS3_TRAITS_TRACE("Plane offset to: " << *result);
 
     CGAL_SS3_DEBUG_SPTR(result);
@@ -65,6 +65,10 @@ public:
                                                   Plane3SPtr plane_2, const FT& w2,
                                                   Plane3SPtr plane_3, const FT& w3)
   {
+    CGAL_SS3_DEBUG_SPTR(plane_0);
+    CGAL_SS3_DEBUG_SPTR(plane_1);
+    CGAL_SS3_DEBUG_SPTR(plane_2);
+    CGAL_SS3_DEBUG_SPTR(plane_3);
     CGAL_precondition(!(is_zero(w0) && is_zero(w1) && is_zero(w2) && is_zero(w3)));
 
     const FT& a0 = plane_0->a();
@@ -122,6 +126,10 @@ public:
                                          const std::optional<FT>& past_bound = std::nullopt,
                                          const std::optional<FT>& future_bound = std::nullopt)
   {
+    CGAL_SS3_DEBUG_SPTR(plane_0);
+    CGAL_SS3_DEBUG_SPTR(plane_1);
+    CGAL_SS3_DEBUG_SPTR(plane_2);
+    CGAL_SS3_DEBUG_SPTR(plane_3);
     CGAL_precondition(!(is_zero(w0) && is_zero(w1) && is_zero(w2) && is_zero(w3)));
 
     const FT& a0 = plane_0->a();
@@ -180,6 +188,10 @@ public:
                                                                         const std::optional<FT>& past_bound = std::nullopt,
                                                                         const std::optional<FT>& future_bound = std::nullopt)
   {
+    CGAL_SS3_DEBUG_SPTR(plane_0);
+    CGAL_SS3_DEBUG_SPTR(plane_1);
+    CGAL_SS3_DEBUG_SPTR(plane_2);
+    CGAL_SS3_DEBUG_SPTR(plane_3);
     CGAL_precondition(!(is_zero(w0) && is_zero(w1) && is_zero(w2) && is_zero(w3)));
 
     const FT& a0 = plane_0->a();
