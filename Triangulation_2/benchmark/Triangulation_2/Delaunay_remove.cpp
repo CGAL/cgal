@@ -1,3 +1,4 @@
+#include <CGAL/Random.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Timer.h>
@@ -24,6 +25,7 @@ int main(int argc, char **argv)
     rep=atoi(argv[2]);
   std::vector<Point> points;
   points.reserve(n);
+  CGAL::get_default_random() = CGAL::Random(42);
   CGAL::Random_points_in_disc_2<Point,Creator> g(1);
   std::copy_n( g, n, std::back_inserter(points));
   Delaunay original;
