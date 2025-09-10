@@ -45,9 +45,10 @@ public:
   /// @{
 
   /*!
-  initializes the Garland-Heckbert Plane policies.
+  initializes the Garland-Heckbert Plane policies. The `line_weight` parameter (default: 0.01) defines the weight of the line
+  policy relative to the plane policy.
   */
-  GarlandHeckbert_plane_and_line_policies(TriangleMesh& tmesh);
+  GarlandHeckbert_plane_and_line_policies(TriangleMesh& tmesh, const FT line_weight=FT(0.01));
 
   /// @}
 

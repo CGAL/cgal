@@ -46,19 +46,19 @@ public:
   }
 
   template <typename VertexPointMap>
-  Mat_4 construct_quadric_from_edge(typename boost::graph_traits<TriangleMesh>::halfedge_descriptor he,
-                                    const TriangleMesh& tmesh,
-                                    const VertexPointMap point_map,
-                                    const GeomTraits& gt) const
+  Mat_4 construct_quadric_from_edge(typename boost::graph_traits<TriangleMesh>::halfedge_descriptor /*he*/,
+                                    const TriangleMesh& /*tmesh*/,
+                                    const VertexPointMap /*point_map*/,
+                                    const GeomTraits& /*gt*/) const
   {
     return Mat_4::Zero();
   }
 
   template <typename VertexPointMap>
-  Mat_4 construct_quadric_from_face(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
-                                    const TriangleMesh& tmesh,
-                                    const VertexPointMap point_map,
-                                    const GeomTraits& gt) const
+  Mat_4 construct_quadric_from_face(typename boost::graph_traits<TriangleMesh>::face_descriptor /*f*/,
+                                    const TriangleMesh& /*tmesh*/,
+                                    const VertexPointMap /*point_map*/,
+                                    const GeomTraits& /*gt*/) const
   {
     return Mat_4::Zero();
   }

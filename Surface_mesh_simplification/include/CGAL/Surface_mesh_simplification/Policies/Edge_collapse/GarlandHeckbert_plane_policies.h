@@ -33,10 +33,10 @@ public:
   Plane_quadric_calculator() { }
 
   template <typename VertexPointMap>
-  Mat_4 construct_quadric_from_vertex(typename boost::graph_traits<TriangleMesh>::vertex_descriptor v,
-                                      const TriangleMesh& tmesh,
-                                      const VertexPointMap point_map,
-                                      const GeomTraits& gt) const
+  Mat_4 construct_quadric_from_vertex(typename boost::graph_traits<TriangleMesh>::vertex_descriptor /*v*/,
+                                      const TriangleMesh& /*tmesh*/,
+                                      const VertexPointMap /*point_map*/,
+                                      const GeomTraits& /*gt*/) const
   {
     return Mat_4::Zero();
   }

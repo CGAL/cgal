@@ -43,8 +43,8 @@ public:
 
 public:
   GarlandHeckbert_plane_and_line_policies(TriangleMesh& tmesh,
-                                           const FT dm = FT(100),
-                                           const FT line_weight=FT(0.01))
+                                          const FT line_weight=FT(0.01),
+                                          const FT dm = FT(100))
     : Base(tmesh, FT(1.)/line_weight, dm)
   { }
 

@@ -648,7 +648,7 @@ Release date: July 2023
 -   Added the class `CGAL::Surface_mesh_simplification::GarlandHeckbert_plane_and_line_policies`, which provides improved output for `CGAL::Surface_mesh_simplification::edge_collapse`.
 -   That class works the same as previous `GarlandHeckbert_policies`
 -   Its constructor takes a `Mesh` and an optional `double` parameter specifying the weight of the line policy relative to the plane policy (default: 0.01).
--   `CGAL::Surface_mesh_simplification::GarlandHeckbert_policies.h` is now an alias of `CGAL::Surface_mesh_simplification::GarlandHeckbert_plane_plus_line_policies.h` and is no longer deprecated.
+-   `CGAL::Surface_mesh_simplification::GarlandHeckbert_policies.h` is now an alias of `CGAL::Surface_mesh_simplification::GarlandHeckbert_plane_and_line_policies.h` and is no longer deprecated.
 
 ### [2D Regularized Boolean Set Operations](https://doc.cgal.org/5.6/Manual/packages.html#PkgBooleanSetOperations2)
 -   Exposed all required member functions of the
