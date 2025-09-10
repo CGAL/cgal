@@ -232,9 +232,10 @@ public:
   void
   initialize_costs()
   {
+    int n=0;
     Constraint_iterator cit = pct.constraints_begin(), e = pct.constraints_end();
     for(; cit!=e; ++cit){
-      initialize_costs(*cit);
+      n+=initialize_costs(*cit);
     }
   }
 
