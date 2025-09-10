@@ -13,7 +13,7 @@
 #ifndef CGAL_DELAUNAY_FACE_BASE_2_H
 #define CGAL_DELAUNAY_FACE_BASE_2_H
 
-#include <CGAL/license/Mesh_2.h>
+#include <CGAL/license/Triangulation_2.h>
 
 
 #include <CGAL/Constrained_Delaunay_triangulation_face_base_2.h>
