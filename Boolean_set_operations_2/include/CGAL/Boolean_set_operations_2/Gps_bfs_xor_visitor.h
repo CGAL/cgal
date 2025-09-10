@@ -57,7 +57,7 @@ public:
    */
   void after_scan(Arrangement& arr) {
     using Traits = typename Arrangement::Geometry_traits_2;
-    using X_monotone_curve_2 = typedef typename Traits::X_monotone_curve_2;
+    using X_monotone_curve_2 = typename Traits::X_monotone_curve_2;
 
     Traits tr;
     auto cmp_endpoints = tr.compare_endpoints_xy_2_object();
