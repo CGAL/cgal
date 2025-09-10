@@ -400,7 +400,7 @@ public:
   // result for contained() --- from Boolean operations point of view there
   // can not be an empty arrangement which has several faces with different
   // attributes.
-  bool is_empty() const { this->_is_empty(m_arr); }
+  bool is_empty() const { return this->_is_empty(m_arr); }
 
   bool _is_empty(Aos_2* arr) const
   { return (arr->is_empty() && ! arr->faces_begin()->contained()); }
@@ -1266,7 +1266,7 @@ protected:
   void _divide_and_conquer(std::size_t lower, std::size_t upper,
                            std::vector<Arr_entry>& arr_vec,
                            std::size_t k, Merge merge_func) {
-    static int indent = 0;
+    // static int indent = 0;
     // std::cout << std::setw(indent) << "" << "D&C [" << lower << "," << upper << "," << k << "]\n";
     if ((upper - lower) < k) {
       // std::cout << std::setw(indent) << "" << "Merging [" << lower << "," << upper << "," << 1 << "]\n";
@@ -1279,13 +1279,13 @@ protected:
     auto curr_lower = lower;
 
     for (std::size_t i = 0; i < k - 1; ++i, curr_lower += sub_size) {
-      indent += 2;
+      // indent += 2;
       _divide_and_conquer(curr_lower, curr_lower + sub_size-1, arr_vec, k, merge_func);
-      indent -= 2;
+      // indent -= 2;
     }
-    indent += 2;
+    // indent += 2;
     _divide_and_conquer(curr_lower, upper, arr_vec, k, merge_func);
-    indent -= 2;
+    // indent -= 2;
     // std::cout << std::setw(indent) << "" << "Merging [" << lower << "," <<  curr_lower << "," << sub_size << "]\n";
     merge_func(lower, curr_lower, sub_size, arr_vec);
   }
