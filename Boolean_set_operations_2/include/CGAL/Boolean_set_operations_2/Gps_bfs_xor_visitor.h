@@ -56,11 +56,8 @@ public:
    * \param arr The given arrangement.
    */
   void after_scan(Arrangement& arr) {
-    typedef typename Arrangement::Geometry_traits_2 Traits;
-    typedef typename Traits::Compare_endpoints_xy_2 Compare_endpoints_xy_2;
-    typedef typename Traits::Construct_opposite_2   Construct_opposite_2;
-    typedef typename Traits::X_monotone_curve_2     X_monotone_curve_2;
-    typedef typename Arrangement::Edge_iterator     Edge_iterator;
+    using Traits = typename Arrangement::Geometry_traits_2;
+    using X_monotone_curve_2 = typedef typename Traits::X_monotone_curve_2;
 
     Traits tr;
     auto cmp_endpoints = tr.compare_endpoints_xy_2_object();
