@@ -89,7 +89,7 @@ public:
                     Subcurve* /* sc1 */,
                     Subcurve* /* sc2 */,
                     bool /* is_new */,
-                    Multiplicity multiplicity = 0)
+                    Multiplicity /* multiplicity */)
   { m_found_x = true; }
 
   void update_event(Event* /* e */,
