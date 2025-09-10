@@ -38,7 +38,7 @@
 
 namespace CGAL {
 
-  template <typename Arrangement_, typename BfsVisitor, template <typename, typename, typename> class SweepVisitor>
+template <typename Arrangement_, typename BfsVisitor, template <typename, typename, typename> class SweepVisitor>
 class Gps_agg_op {
   using Arrangement_2 = Arrangement_;
   using Bfs_visitor = BfsVisitor;
@@ -75,7 +75,7 @@ class Gps_agg_op {
   using Subcurve = Arr_construction_subcurve<Mgt2, Event, Allocator>;
   using Helper_tmp = typename Tt::template Construction_helper<Event, Subcurve>;
   using Helper = typename Helper_tmp::template rebind<Mgt2, Arr, Event, Subcurve>::other;
-  using Visitor = SweepVisitor<Helper, Arr>;
+  using Visitor = SweepVisitor<Helper, Arr, Default>;
   using Surface_sweep_2 = Gps_agg_op_surface_sweep_2<Arr, Visitor>;
 
   using Edges_hash = Unique_hash_map<Halfedge_handle, std::size_t>;
