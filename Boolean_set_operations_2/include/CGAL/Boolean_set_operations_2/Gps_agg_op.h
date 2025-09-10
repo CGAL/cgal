@@ -38,7 +38,7 @@
 
 namespace CGAL {
 
-template <typename Arrangement_, typename BfsVisitor, template <typename, typename> class SweepVisitor>
+  template <typename Arrangement_, typename BfsVisitor, template <typename, typename, typename> class SweepVisitor>
 class Gps_agg_op {
   using Arrangement_2 = Arrangement_;
   using Bfs_visitor = BfsVisitor;
