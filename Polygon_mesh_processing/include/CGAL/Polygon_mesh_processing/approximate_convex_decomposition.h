@@ -16,6 +16,7 @@
 #include <CGAL/license/Polygon_mesh_processing/combinatorial_repair.h>
 
 #include <unordered_set>
+#include <queue>
 
 #include <CGAL/Iso_cuboid_3.h>
 
@@ -30,9 +31,6 @@
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/utils_classes.h>
 
-#include <CGAL/Surface_mesh.h>
-#include <CGAL/IO/polygon_soup_io.h>
-
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits_3.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
@@ -45,11 +43,6 @@
 #else
 #include <unordered_map>
 #endif
-
-#include <CGAL/Timer.h>
-#include <CGAL/Memory_sizer.h>
-
-#include <queue>
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
@@ -742,36 +735,6 @@ typename GeomTraits::FT volume(const std::vector<typename GeomTraits::Point_3> &
   return vol;
 }
 
-
-template<typename PointRange, typename Point_3 = typename PointRange::value_type>
-void convex_hull(const PointRange& pts, std::vector<Point_3> &hull_points, std::vector<std::array<unsigned int, 3> > &hull_indices) {
-  using Mesh = CGAL::Surface_mesh<Point_3>;
-  Mesh m;
-
-  convex_hull_3(pts.begin(), pts.end(), m);
-//   if (pts.size() < 20) {
-//     export_points("convex_hull" + std::to_string(cnt) + ".xyz", pts);
-//     std::cout << pts.size() << " " << cnt++ << std::endl;
-//     convex_hull_3(pts.begin(), pts.end(), hull_points, hull_indices);// needs bugfix in convex_hull_3 for indexed triangle list
-//   }
-  hull_points.resize(m.number_of_vertices());
-  hull_indices.resize(m.number_of_faces());
-
-  std::size_t idx = 0;
-  for (const typename Mesh::vertex_index v : m.vertices())
-    hull_points[idx++] = m.point(v);
-
-  idx = 0;
-  for (const typename Mesh::face_index f : m.faces()) {
-    auto he = m.halfedge(f);
-    hull_indices[idx][0] = m.source(he);
-    he = m.next(he);
-    hull_indices[idx][1] = m.source(he);
-    he = m.next(he);
-    hull_indices[idx++][2] = m.source(he);
-  }
-}
-
 void enlarge(Bbox_uint& bbox, const Vec3_uint& v) {
   bbox.lower[0] = (std::min<unsigned int>)(bbox.lower[0], v[0]);
   bbox.lower[1] = (std::min<unsigned int>)(bbox.lower[1], v[1]);
@@ -846,7 +809,7 @@ void compute_candidate(Candidate<GeomTraits> &c, const Bbox_3& bb, typename Geom
     voxel_points.insert(Point_3(xmax, ymax, zmax));
   }
 
-  convex_hull(voxel_points, c.ch.points, c.ch.indices);
+  convex_hull_3(voxel_points.begin(), voxel_points.end(), c.ch.points, c.ch.indices);
 
   c.ch.volume = volume<GeomTraits>(c.ch.points, c.ch.indices);
 
@@ -1295,7 +1258,7 @@ void merge(std::vector<Convex_hull_candidate<GeomTraits>>& candidates, const typ
     std::vector<Point_3> pts(ci.points.begin(), ci.points.end());
     pts.reserve(pts.size() + cj.points.size());
     std::copy(cj.points.begin(), cj.points.end(), std::back_inserter(pts));
-    convex_hull(pts, ch.points, ch.indices);
+    convex_hull_3(pts.begin(), pts.end(), ch.points, ch.indices);
 
     ch.volume = volume<GeomTraits>(ch.points, ch.indices);
 
@@ -1430,7 +1393,7 @@ void merge(std::vector<Convex_hull_candidate<GeomTraits>>& candidates, const typ
     std::vector<Point_3> pts(ci.points.begin(), ci.points.end());
     pts.reserve(pts.size() + cj.points.size());
     std::copy(cj.points.begin(), cj.points.end(), std::back_inserter(pts));
-    convex_hull(pts, ch.points, ch.indices);
+    convex_hull_3(pts.begin(), pts.end(), ch.points, ch.indices);
 
     ch.volume = volume<GeomTraits>(ch.points, ch.indices);
 
@@ -1452,7 +1415,7 @@ void merge(std::vector<Convex_hull_candidate<GeomTraits>>& candidates, const typ
         std::vector<Point_3> pts(ci.points.begin(), ci.points.end());
         pts.reserve(pts.size() + cj.points.size());
         std::copy(cj.points.begin(), cj.points.end(), std::back_inserter(pts));
-        convex_hull(pts, ch.points, ch.indices);
+        convex_hull_3(pts.begin(), pts.end(), ch.points, ch.indices);
 
         ch.volume = volume<GeomTraits>(ch.points, ch.indices);
 
@@ -1503,7 +1466,7 @@ void merge(std::vector<Convex_hull_candidate<GeomTraits>>& candidates, const typ
         std::vector<Point_3> pts(ci.points.begin(), ci.points.end());
         pts.reserve(pts.size() + cj.points.size());
         std::copy(cj.points.begin(), cj.points.end(), std::back_inserter(pts));
-        convex_hull(pts, ch.points, ch.indices);
+        convex_hull_3(pts.begin(), pts.end(), ch.points, ch.indices);
 
         ch.volume = volume<GeomTraits>(ch.points, ch.indices);
 
