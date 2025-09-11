@@ -74,7 +74,15 @@ endif()
 
 if(CGAL_ACTIVATE_CONCURRENT_MESHING AND TARGET CGAL::TBB_support)
   message(STATUS "Found TBB")
-  target_link_libraries(features_and_adaptive_sizing PRIVATE CGAL::TBB_support)
-  target_link_libraries(test_mesh_and_remesh_image PRIVATE CGAL::TBB_support)
-  target_link_libraries(test_mesh_and_remesh_polyhedron_with_features PRIVATE CGAL::TBB_support)
+  foreach(target features_and_adaptive_sizing
+                 test_mesh_and_remesh_image
+                 test_mesh_and_remesh_polyhedron_with_features
+                 test_mesh_and_remesh_with_sizing_field
+    )
+    if(TARGET ${target})
+      target_compile_definitions(${target}
+            PRIVATE -DCGAL_CONCURRENT_MESH_3 -DCGAL_CONCURRENT_TETRAHEDRAL_REMESHING)
+      target_link_libraries(${target} PRIVATE CGAL::TBB_support)
+    endif()
+  endforeach()
 endif()
