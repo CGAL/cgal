@@ -120,12 +120,16 @@ public:
       }
     }
     // Sort ascending: shortest first
-    auto length_comp = [&](const std::pair<Edge, FT>& a, const std::pair<Edge, FT>& b) { return a.second < b.second; };
-    std::stable_sort(short_edges_with_length.begin(), short_edges_with_length.end(), length_comp);
+    auto length_comp = [&](const std::pair<Edge, FT>& a, const std::pair<Edge, FT>& b)
+                          { return a.second < b.second; };
+    std::stable_sort(short_edges_with_length.begin(),
+                     short_edges_with_length.end(),
+                     length_comp);
 
     std::vector<ElementType> short_edges;
     short_edges.reserve(short_edges_with_length.size());
-    for (const auto& ef : short_edges_with_length) short_edges.push_back(ef.first);
+    for (const auto& ef : short_edges_with_length)
+      short_edges.push_back(ef.first);
     return short_edges;
   }
 
