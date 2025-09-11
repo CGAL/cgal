@@ -145,9 +145,12 @@ public:
     boost::container::small_vector<Cell_handle, 64> inc_cells_first,inc_cells_second;
     bool successfully_locked=tr.try_lock_and_get_incident_cells(e.first, inc_cells_first) &&tr.try_lock_and_get_incident_cells(e.second, inc_cells_second);
     //Cache the incident cells
-    inc_cells[e.first] = inc_cells_first;
-    inc_cells[e.second] = inc_cells_second;
-return successfully_locked;
+    if(successfully_locked) {
+      inc_cells[e.first] = inc_cells_first;
+      inc_cells[e.second] = inc_cells_second;
+    }
+
+	return successfully_locked; 
 #else
 
     const auto& vp = e;
@@ -190,16 +193,12 @@ private:
   bool execute_internal_edge_flip(const ElementType& e, C3t3& c3t3) {
     const auto& vp = e;
 
-#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
+#ifdef CGAL_TETRAHEDRAL_REMESHING_EDGE_FLIP_DEBUG
     static thread_local std::size_t internal_edge_counter = 0;
-    static thread_local bool show_debug = true;
 
-    if (show_debug && internal_edge_counter < 5000) {
-      std::cout << "REFACTORED: Processing internal edge #" << internal_edge_counter << " from vertex " << vp.first->point() << " to vertex " << vp.second->point() << std::endl;
-    }
-
-    if (internal_edge_counter == 4999) show_debug = false;
-    internal_edge_counter++;
+      edge_flip_logger.log("REFACTORED: Processing internal edge #", internal_edge_counter++,
+                           " from vertex ", vp.first->point(),
+                           " to vertex ", vp.second->point());
 #endif
 
     auto& tr = c3t3.triangulation();
@@ -223,20 +222,7 @@ private:
 
       if (res == INVALID_CELL || res == INVALID_VERTEX || res == INVALID_ORIENTATION)
       {
-#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
-        if (show_debug && internal_edge_counter-1 < 5000) {
-          std::cout << "REFACTORED: Edge flip problem for edge #" << internal_edge_counter-1 << " from vertex " << vp.first->point() << " to vertex " << vp.second->point() << std::endl;
-        }
-#endif
         return false;
-      }
-
-      if (res == VALID_FLIP) {
-#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
-        if (show_debug && internal_edge_counter-1 < 5000) {
-          std::cout << "REFACTORED: Successfully flipped edge #" << internal_edge_counter-1 << " from vertex " << vp.first->point() << " to vertex " << vp.second->point() << std::endl;
-        }
-#endif
       }
 
       return (res == VALID_FLIP);
@@ -340,8 +326,10 @@ public:
   #if 1
     boost::container::small_vector<Cell_handle, 64> inc_cells_first,inc_cells_second;
     bool successfully_locked = tr.try_lock_and_get_incident_cells(e.first, inc_cells_first) &&tr.try_lock_and_get_incident_cells(e.second, inc_cells_second);
-    inc_cells[e.first] = inc_cells_first;
-    inc_cells[e.second] = inc_cells_second;
+    if(successfully_locked) {
+      inc_cells[e.first] = inc_cells_first;
+      inc_cells[e.second] = inc_cells_second;
+    }
     return successfully_locked;
     //      const auto& vp = e;
     //// We need to lock v individually first, to be sure v->cell() is valid
@@ -414,13 +402,15 @@ private:
     const auto& vh0 = vp.first;
     const auto& vh1 = vp.second;
 
-#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
+#ifdef CGAL_TETRAHEDRAL_REMESHING_EDGE_FLIP_DEBUG
     // DEBUG: Log boundary edge processing order with edge info (first 5000 only)
     static thread_local std::size_t boundary_edge_counter = 0;
     static thread_local bool show_boundary_debug = true;
 
     if (show_boundary_debug && boundary_edge_counter < 5000) {
-      std::cout << "REFACTORED: Processing boundary edge #" << boundary_edge_counter << " from vertex " << vh0->point() << " to vertex " << vh1->point() << std::endl;
+      edge_flip_logger.log("REFACTORED: Processing boundary edge #", boundary_edge_counter,
+                           " from vertex ", vh0->point(),
+                           " to vertex ", vh1->point());
     }
 
     if (boundary_edge_counter == 4999) show_boundary_debug = false; // Stop after first 5000 edges (0-4999)
@@ -512,9 +502,11 @@ private:
           get_static_boundary_vertices_valences()[vh2][surfi]++;
           get_static_boundary_vertices_valences()[vh3][surfi]++;
 
-#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
+#ifdef CGAL_TETRAHEDRAL_REMESHING_EDGE_FLIP_DEBUG
           if (show_boundary_debug && boundary_edge_counter-1 < 5000) {
-            std::cout << "REFACTORED: Successfully flipped boundary edge #" << boundary_edge_counter-1 << " from vertex " << vh0->point() << " to vertex " << vh1->point() << std::endl;
+            edge_flip_logger.log("REFACTORED: Successfully flipped boundary edge #", boundary_edge_counter-1,
+                                 " from vertex ", vh0->point(),
+                                 " to vertex ", vh1->point());
           }
 #endif
           return true;
