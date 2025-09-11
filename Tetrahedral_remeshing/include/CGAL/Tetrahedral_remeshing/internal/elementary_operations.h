@@ -233,13 +233,13 @@ private:
     tbb::concurrent_queue<ElementType> work_queue(elements.begin(), elements.end());
 
 
-#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+#ifdef CGAL_TETRAHEDRAL_REMESHING_WRITE_LOCK_STATS
     std::atomic<size_t> num_successful_locks = 0;
     std::atomic<size_t> num_failed_locks = 0;
 #endif
     //size_t num_threads = 8; // Start with single thread for ordered processing
     size_t num_threads = std::thread::hardware_concurrency() / 2;
-
+    
     // Parallel work stealing from priority queue
     tbb::parallel_for(tbb::blocked_range<size_t>(0, num_threads),
       [&](const tbb::blocked_range<size_t>& r) {
@@ -259,23 +259,23 @@ private:
                 c3t3.triangulation().unlock_all_elements();
                 // Optional: small delay to reduce contention
                 std::this_thread::yield();
-#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+#ifdef CGAL_TETRAHEDRAL_REMESHING_WRITE_LOCK_STATS
                 num_failed_locks++;
 #endif
               }
             }
             // Execute operation once lock is acquired
             bool success = op.execute_operation(element, c3t3);
-            #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-            num_successful_locks++;
-            #endif
+#ifdef CGAL_TETRAHEDRAL_REMESHING_WRITE_LOCK_STATS
+		  num_successful_locks++;
+#endif
             c3t3.triangulation().unlock_all_elements();
           }
         }
       }
     );
 
-#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+#ifdef CGAL_TETRAHEDRAL_REMESHING_WRITE_LOCK_STATS
     {
       const char* csv_path = "lock_stats.csv";
       bool need_header = true;
@@ -285,12 +285,12 @@ private:
       }
       std::ofstream ofs(csv_path, std::ios::app);
       if (need_header) {
-        ofs << "operation,num_successful_locks,num_failed_locks,lock_success_rate(%),operation_exec_counter" << std::endl;
+        ofs << "operation,num_successful_locks,num_failed_locks,lock_success_rate(%)" << std::endl;
       }
-//      size_t operation_exec_counter = (op.operation_name() == std::string("Edge Split")) ? g_edge_split_exec_counter : 0;
-//      const size_t attempts = static_cast<size_t>(num_successful_locks + num_failed_locks);
-//      const double lock_success_rate = (attempts == 0) ? 0.0 : 100.0 * static_cast<double>(num_successful_locks) / //static_cast<double>(attempts);
-//      ofs << op.operation_name() << "," << num_successful_locks << "," << num_failed_locks << "," << lock_success_rate << /"," /<< operation_exec_counter << std::endl;
+      size_t operation_exec_counter = (op.operation_name() == std::string("Edge Split")) ? g_edge_split_exec_counter : 0;
+      const size_t attempts = static_cast<size_t>(num_successful_locks + num_failed_locks);
+      const double lock_success_rate = (attempts == 0) ? 0.0 : 100.0 * static_cast<double>(num_successful_locks) / static_cast<double>(attempts);
+      ofs << op.operation_name() << "," << num_successful_locks << "," << num_failed_locks << "," << lock_success_rate << "," << operation_exec_counter << std::endl;
     }
     #endif
 #endif //concurrent
@@ -310,7 +310,7 @@ private:
 
     std::shuffle(elements.begin(), elements.end(), g);
 
-#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+#ifdef CGAL_TETRAHEDRAL_REMESHING_WRITE_LOCK_STATS
     std::atomic<size_t> num_successful_locks = 0;
     std::atomic<size_t> num_failed_locks = 0;
 #endif
@@ -321,7 +321,7 @@ private:
         if(!lock_acquired) {
           c3t3.triangulation().unlock_all_elements();
           std::this_thread::yield(); // backoff to reduce contention
-#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+#ifdef CGAL_TETRAHEDRAL_REMESHING_WRITE_LOCK_STATS
           num_failed_locks++;
 #endif
         }
@@ -329,11 +329,13 @@ private:
 
       bool success = op.execute_operation(element, c3t3);
       #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-      num_successful_locks++;
+	num_successful_locks++;
       #endif
       c3t3.triangulation().unlock_all_elements();
     });
-#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+    //#endif
+
+#ifdef CGAL_TETRAHEDRAL_REMESHING_WRITE_LOCK_STATS
     {
       const char* csv_path = "lock_stats.csv";
       bool need_header = true;
@@ -342,13 +344,18 @@ private:
         need_header = !ifs.good() || (ifs.peek() == std::ifstream::traits_type::eof());
       }
       std::ofstream ofs(csv_path, std::ios::app);
-      if (need_header) {
-        ofs << "operation,num_successful_locks,num_failed_locks,lock_success_rate(%),operation_exec_counter" << std::endl;
+      if(need_header) {
+        ofs << "operation,num_successful_locks,num_failed_locks,lock_success_rate(%)" << std::endl;
       }
 //      size_t operation_exec_counter = (op.operation_name() == std::string("Edge Split")) ? g_edge_split_exec_counter : 0;
 //      const size_t attempts = static_cast<size_t>(num_successful_locks + num_failed_locks);
 //      const double lock_success_rate = (attempts == 0) ? 0.0 : 100.0 * static_cast<double>(num_successful_locks) / static_cast<double>(attempts);
 //      ofs << op.operation_name() << "," << num_successful_locks << "," << num_failed_locks << "," << lock_success_rate << "," << operation_exec_counter << std::endl;
+      const size_t attempts = static_cast<size_t>(num_successful_locks + num_failed_locks);
+      const double lock_success_rate =
+          (attempts == 0) ? 0.0 : 100.0 * static_cast<double>(num_successful_locks) / static_cast<double>(attempts);
+      ofs << op.operation_name() << "," << num_successful_locks << "," << num_failed_locks << "," << lock_success_rate
+          << std::endl;
     }
     #endif
 #endif //concurrent
@@ -378,7 +385,7 @@ public:
 }; // class ElementaryOperationExecution
 
 } // namespace internal
-} // namespace Tetrahedral_remeshing
+} // namespace Tetrahedral_remeshing  
 } // namespace CGAL
 
 #endif // CGAL_TETRAHEDRAL_REMESHING_ELEMENTARY_OPERATIONS_H
