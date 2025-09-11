@@ -22,6 +22,7 @@
 #include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_remeshing_helpers.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 
+#include <type_traits>
 #include <iostream>
 #include <memory>
 
@@ -40,9 +41,14 @@ class Elementary_remesher
   typedef typename Tr::Edge Edge;
 
 #if defined CGAL_CONCURRENT_TETRAHEDRAL_REMESHING && defined CGAL_LINKED_WITH_TBB
-  template <typename Operation> using ExecutionPolicy = ElementaryOperationExecutionParallel<Operation>;
+  template <typename Operation>
+  using ExecutionPolicy = std::conditional_t<
+        std::is_convertible<typename Tr::Concurrency_tag, CGAL::Parallel_tag>::value,
+        ElementaryOperationExecutionParallel<Operation>,
+        ElementaryOperationExecutionSequential<Operation> >;
 #else
-  template <typename Operation> using ExecutionPolicy = ElementaryOperationExecutionSequential<Operation>;
+  template <typename Operation>
+  using ExecutionPolicy = ElementaryOperationExecutionSequential<Operation>;
 #endif
 
 public:
@@ -99,7 +105,12 @@ public:
      }
   }
 
-  void smooth_init(C3t3& c3t3, const SizingFunction& sizing, const CellSelector& cell_selector, const bool protect_boundaries, const bool smooth_constrained_edges) {
+  void smooth_init(C3t3& c3t3,
+                   const SizingFunction& sizing,
+                   const CellSelector& cell_selector,
+                   const bool protect_boundaries,
+                   const bool smooth_constrained_edges)
+  {
       // Create shared context for vertex smoothing operations
       m_context=std::make_shared<VertexSmoothingContext>(c3t3, cell_selector, protect_boundaries,smooth_constrained_edges);
       m_edge_smooth_op = std::make_unique<ComplexEdgeSmoothOp>(c3t3, sizing, cell_selector, protect_boundaries,smooth_constrained_edges,m_context);
