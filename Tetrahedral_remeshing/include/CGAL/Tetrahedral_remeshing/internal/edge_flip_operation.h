@@ -150,7 +150,7 @@ public:
       inc_cells[e.second] = inc_cells_second;
     }
 
-	return successfully_locked; 
+    return successfully_locked; 
 #else
 
     const auto& vp = e;
