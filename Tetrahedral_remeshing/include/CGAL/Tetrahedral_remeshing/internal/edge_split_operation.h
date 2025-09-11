@@ -33,8 +33,8 @@ namespace internal {
 //#define CGAL_TETRAHEDRAL_REMESHING_EDGE_SPLIT_DEBUG
 // Thread-safe debug logger for edge split operations
 #ifdef CGAL_TETRAHEDRAL_REMESHING_EDGE_SPLIT_DEBUG
-static ThreadSafeLogger edge_split_logger("debug_logs/edge_split_debug.log");
-static ThreadSafeLogger long_edges_logger("debug_logs/long_edges_collection.log");
+static debug::ThreadSafeLogger edge_split_logger("debug_logs/edge_split_debug.log");
+static debug::ThreadSafeLogger long_edges_logger("debug_logs/long_edges_collection.log");
 #endif
 
 template<typename C3t3, typename SizingFunction, typename CellSelector>
@@ -220,11 +220,6 @@ public:
 #endif
         return false;
       }
-#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
-      else
-        can_be_split_ofs << "2 " << edge.first->vertex(edge.second)->point() << " "
-                         << edge.first->vertex(edge.third)->point() << std::endl;
-#endif
       // m_visitor.before_split(tr, edge);
       Vertex_handle vh = split_edge(edge, m_cell_selector, c3t3);
 
@@ -245,8 +240,7 @@ public:
         //if(vh != Vertex_handle())
         //  m_visitor.after_split(tr, vh);
 
-#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
-      else
+#ifdef CGAL_TETRAHEDRAL_REMESHING_EDGE_SPLIT_DEBUG
         split_failed_ofs << "2 " << edge.first->vertex(edge.second)->point() << " "
                          << edge.first->vertex(edge.third)->point() << std::endl;
       if (vh != Vertex_handle())
