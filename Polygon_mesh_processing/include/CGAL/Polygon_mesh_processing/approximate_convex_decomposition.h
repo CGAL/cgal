@@ -1591,26 +1591,16 @@ std::size_t approximate_convex_decomposition(const FaceGraph& mesh, OutputIterat
 
   if (max_convex_hulls == 1) {
     internal::Convex_hull_candidate<Geom_traits> ch;
-    using Mesh = Surface_mesh<typename Geom_traits::Point_3>;
-    Mesh m;
-    convex_hull_3(mesh, m);
 
-    ch.points.resize(m.number_of_vertices());
-    ch.indices.resize(m.number_of_faces());
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
+    using VPM = typename GetVertexPointMap<FaceGraph, NamedParameters>::const_type;
+    typedef CGAL::Property_map_to_unary_function<VPM> Vpmap_fct;
 
-    std::size_t idx = 0;
-    for (const typename Mesh::vertex_index v : m.vertices())
-      ch.points[idx++] = m.point(v);
+    VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point), get_const_property_map(CGAL::vertex_point, mesh));
+    Vpmap_fct v2p(vpm);
 
-    idx = 0;
-    for (const typename Mesh::face_index f : m.faces()) {
-      auto he = m.halfedge(f);
-      ch.indices[idx][0] = m.source(he);
-      he = m.next(he);
-      ch.indices[idx][1] = m.source(he);
-      he = m.next(he);
-      ch.indices[idx++][2] = m.source(he);
-    }
+    convex_hull_3(boost::make_transform_iterator(vertices(mesh).begin(), v2p), boost::make_transform_iterator(vertices(mesh).end(), v2p), ch.points, ch.indices);
 
     *out_hulls = std::make_pair(std::move(ch.points), std::move(ch.indices));
     return 1;
