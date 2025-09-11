@@ -239,7 +239,7 @@ private:
 #endif
     //size_t num_threads = 8; // Start with single thread for ordered processing
     size_t num_threads = std::thread::hardware_concurrency() / 2;
-    
+
     // Parallel work stealing from priority queue
     tbb::parallel_for(tbb::blocked_range<size_t>(0, num_threads),
       [&](const tbb::blocked_range<size_t>& r) {
@@ -385,7 +385,7 @@ public:
 }; // class ElementaryOperationExecution
 
 } // namespace internal
-} // namespace Tetrahedral_remeshing  
+} // namespace Tetrahedral_remeshing
 } // namespace CGAL
 
 #endif // CGAL_TETRAHEDRAL_REMESHING_ELEMENTARY_OPERATIONS_H
