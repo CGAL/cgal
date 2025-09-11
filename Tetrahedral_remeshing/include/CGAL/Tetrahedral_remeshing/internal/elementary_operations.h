@@ -161,24 +161,31 @@ public:
   bool apply_operation_on_elements(
     std::vector<ElementType>& elements,
     Operation& op,
-    C3t3& c3t3) override {
-    size_t num_successful_locks = 0;
-    bool success = true;
+    C3t3& c3t3) override
+  {
+#ifdef CGAL_TETRAHEDRAL_REMESHING_WRITE_LOCK_STATS
+    std::size_t num_successful_locks = 0;
+#endif
+
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
     std::cout << "Executing operation sequentially: " << op.operation_name() << "...";
     #endif
 
     for (const auto& element : elements) {
       if(op.execute_operation(element, c3t3)) {
-      num_successful_locks++;
+#ifdef CGAL_TETRAHEDRAL_REMESHING_WRITE_LOCK_STATS
+        num_successful_locks++;
+#endif
       }
-
     }
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
     std::cout << " done num_elements:" << elements.size()
-              << ", num_successful_locks : " <<num_successful_locks << std::endl;
-    #endif
+#ifdef CGAL_TETRAHEDRAL_REMESHING_WRITE_LOCK_STATS
+              << ", num_successful_locks : " << num_successful_locks
+#endif
+              << std::endl;
+#endif
 
     return true;
   }
