@@ -15,8 +15,6 @@
 
 #include <CGAL/license/Voronoi_diagram_2.h>
 
-
-#include <CGAL/use.h>
 #include <CGAL/Voronoi_diagram_2/basic.h>
 #include <CGAL/Voronoi_diagram_2/Adaptation_traits_base_2.h>
 #include <CGAL/Voronoi_diagram_2/Identity_rejectors.h>
@@ -209,7 +207,7 @@ class Segment_Delaunay_graph_face_tester_2
       deg++;
       ++ec;
     } while ( ec != ec_start );
-    CGAL_USE(n_inf);
+
     if ( deg == n_degen ) { return true; }
     if ( n_non_degen != 2 ) { return false; }
 
