@@ -94,8 +94,13 @@ public:
       return false;
     }
 
+#if defined CGAL_CONCURRENT_TETRAHEDRAL_REMESHING && defined CGAL_LINKED_WITH_TBB
     // Ensure lock data structure is initialized for parallel mode
-    ensure_lock_data_structure_initialized(c3t3);
+    using Tr = typename C3t3::Triangulation;
+    using Concurrency = typename Tr::Concurrency_tag;
+    if constexpr (std::is_convertible<Concurrency, CGAL::Parallel_tag>::value)
+      ensure_lock_data_structure_initialized(c3t3);
+#endif
 
     // Apply operations on elements
     return apply_operation_on_elements(candidates, op, c3t3);
@@ -105,25 +110,20 @@ private:
   // Ensure the lock data structure is initialized when needed
   void ensure_lock_data_structure_initialized(C3t3& c3t3)
   {
-#if defined CGAL_CONCURRENT_TETRAHEDRAL_REMESHING && defined CGAL_LINKED_WITH_TBB
     auto& triangulation = c3t3.triangulation();
     if (!triangulation.get_lock_data_structure()) {
       // Create a lock data structure using the C3T3's bounding box
 
-        #ifndef USE_TAG_NON_BLOCKING
+#ifndef USE_TAG_NON_BLOCKING
       static typename C3t3::Triangulation::Lock_data_structure lock_ds(
         c3t3.bbox(),  // Use C3T3's bounding box
         8  // Default grid size (same as Mesh_3 default)
       );
-      #else
+#else
       static CGAL::Spatial_lock_grid_3<Tag_non_blocking> lock_ds(c3t3.bbox(), 8);
-          #endif
+#endif
       triangulation.set_lock_data_structure(&lock_ds);
     }
-#else
-    // In sequential mode, no lock data structure is needed
-    (void)c3t3;  // Suppress unused parameter warning
-#endif
   }
 };
 
@@ -327,10 +327,11 @@ private:
         }
       }
 
-      bool success = op.execute_operation(element, c3t3);
-      #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+      op.execute_operation(element, c3t3);
+#ifdef CGAL_TETRAHEDRAL_REMESHING_WRITE_LOCK_STATS
       num_successful_locks++;
-      #endif
+#endif
+
       c3t3.triangulation().unlock_all_elements();
     });
     //#endif
