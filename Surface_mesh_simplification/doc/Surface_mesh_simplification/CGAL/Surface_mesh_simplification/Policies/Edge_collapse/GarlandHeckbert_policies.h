@@ -4,7 +4,7 @@ namespace Surface_mesh_simplification {
 /*!
 \ingroup PkgSurfaceMeshSimplificationRef
 
-since \cgal 6.2, this class is an alias for the current state of the art of Garland-Heckbert policies
+This class is an alias for the current state-of-the-art Garland-Heckbert policies
 (Section \ref SurfaceMeshSimplificationGarlandHeckbertStrategy).
 It is currently an alias of `GarlandHeckbert_plane_and_line_policies`.
 

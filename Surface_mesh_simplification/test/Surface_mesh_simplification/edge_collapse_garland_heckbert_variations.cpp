@@ -32,7 +32,7 @@ typedef SMS::GarlandHeckbert_plane_policies<Surface_mesh, Kernel>               
 typedef SMS::GarlandHeckbert_probabilistic_plane_policies<Surface_mesh, Kernel>    Prob_plane;
 typedef SMS::GarlandHeckbert_triangle_policies<Surface_mesh, Kernel>               Classic_tri;
 typedef SMS::GarlandHeckbert_probabilistic_triangle_policies<Surface_mesh, Kernel> Prob_tri;
-typedef SMS::GarlandHeckbert_plane_and_line_policies<Surface_mesh, Kernel>        Classic_plane_and_line;
+typedef SMS::GarlandHeckbert_plane_and_line_policies<Surface_mesh, Kernel>         Classic_plane_and_line;
 
 // settings for benchmarking - throw away the first n_burns results and keep the n_samples samples
 constexpr int n_burns = 1;

@@ -280,8 +280,8 @@ construct_optimal_point_singular(const typename GarlandHeckbert_matrix_types<Geo
 #else
     /*
     Note:
-    A simpler code for the case of an not invertible matrix
-    Experiments that the results is identical to above in the majority of the cases and nearly identical runtime
+    A simpler code for the case of a non-invertible matrix
+    Experiments show that the results are identical to the version above in the majority of the cases, and nearly identical runtime
     Therefore old case was kept.
     */
 
@@ -550,9 +550,9 @@ construct_line_quadric_from_normal(const typename GeomTraits::Vector_3& normal,
   auto c_point = gt.construct_point_3_object();
   auto base= gt.construct_base_vector_3_object();
 
-  Vector_3 x=base(plane(c_point(0,0,0),normal), 1);
+  Vector_3 x = base(plane(c_point(0,0,0),normal), 1);
   CGAL::Polygon_mesh_processing::internal::normalize(x, gt);
-  Vector_3 y=cp(x,normal);
+  Vector_3 y = cp(x,normal);
 
   return construct_classic_plane_quadric_from_normal(x, point, gt)+construct_classic_plane_quadric_from_normal(y, point, gt);
 }

@@ -96,9 +96,9 @@ class GarlandHeckbert_composed_policies
 {
 public:
   typedef internal::Composed_quadric_calculator<TriangleMesh, GeomTraits,
-                                                   typename GH_policies_1::Quadric_calculator,
-                                                   typename GH_policies_2::Quadric_calculator,
-                                                   invertible>
+                                               typename GH_policies_1::Quadric_calculator,
+                                               typename GH_policies_2::Quadric_calculator,
+                                               invertible>
           Quadric_calculator;
 
 private:

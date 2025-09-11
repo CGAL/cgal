@@ -89,9 +89,6 @@ std::string getFileNameWithoutExtension(const std::string& filePath) {
     return path.stem().string();  // 'stem' gets the filename without extension
 }
 
-// Usage:
-// ./command [input] [ratio] [policy] [output]
-// policy can be "cp" (classic plane), "ct" (classic triangle), "pp" (probabilistic plane), "pt" (probabilistic triangle)
 int main(int argc, char** argv)
 {
   Surface_mesh mesh;
