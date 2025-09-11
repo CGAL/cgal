@@ -1066,9 +1066,7 @@ public:
     bool success = false;
     reset_algorithm_state();
     sphere_mesh_->spheres().reserve(desired_number_of_spheres_);
-    // Initialize with one sphere
-    Sphere_3 init_sphere(Point_3(0., 0., 0.), FT(1.0));
-    sphere_mesh_->add_sphere(init_sphere);
+    
     if constexpr(std::is_same_v<ConcurrencyTag_, Parallel_tag>) {
 #if CGAL_LINKED_WITH_TBB
       // Compute the shrinking balls in parallel
@@ -1077,7 +1075,11 @@ public:
     } else {
       compute_shrinking_balls();
     }
-
+    vertex_descriptor v = *vertices(tmesh_).first;
+    Point_3 init_center = get(vertex_medial_sphere_pos_map_, v);
+    FT init_radius = get(vertex_medial_sphere_radius_map_, v);
+    Sphere_3 init_sphere(init_center, init_radius * init_radius);
+    sphere_mesh_->add_sphere(init_sphere);
     if(verbose_) {
       std::cout << "Starting variational medial axis computation..." << std::endl;
       std::cout << "Target number of spheres: " << desired_number_of_spheres_ << std::endl;
