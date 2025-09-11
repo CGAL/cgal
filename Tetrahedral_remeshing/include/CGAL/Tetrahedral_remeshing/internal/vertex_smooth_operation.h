@@ -610,13 +610,13 @@ public:
     : BaseClass(sizing, cell_selector, protect_boundaries,smooth_constrained_edges, context)
   {}
 
-  void perform_global_preprocessing(const C3t3& c3t3) const {
+  void perform_global_preprocessing(const C3t3& c3t3) const
+  {
   auto& tr = c3t3.triangulation();
 
   const std::size_t nbv = tr.number_of_vertices();
-    const typename BaseClass::Context::Move default_move{CGAL::NULL_VECTOR, 0 /*neighbors*/, 0. /*mass*/};
-  std::vector<typename BaseClass::Context::Move> moves(nbv, default_move);
-
+  const typename BaseClass::Context::Move default_move{CGAL::NULL_VECTOR, 0 /*neighbors*/, 0. /*mass*/};
+  m_context->m_moves.assign(nbv, default_move);
 
   for (const Edge& e : tr.finite_edges())
   {
