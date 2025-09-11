@@ -116,7 +116,7 @@ public:
       , m_smooth_constrained_edges(smooth_constrained_edges)
   {
     refresh(c3t3);
-    assert(protect_boundaries == false);
+
     #ifdef CGAL_TET_REMESHING_SMOOTHING_WITH_MLS
     createMLSSurfaces(subdomain_FMLS,
                       subdomain_FMLS_indices,
@@ -1008,9 +1008,7 @@ public:
                                   const bool smooth_constrained_edges,
                                   std::shared_ptr<typename BaseClass::Context> context)
     : BaseClass( sizing, cell_selector, protect_boundaries,smooth_constrained_edges, context)
-  {
-    assert(protect_boundaries == false);
-  }
+  {}
 
   ElementSource get_element_source(const C3t3& c3t3) const override {
     perform_global_preprocessing(c3t3);
