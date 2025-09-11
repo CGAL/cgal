@@ -225,7 +225,9 @@ bool read_multi_linestring_WKT(std::istream& in,
       break;
     }
   }
-
+  if(! found){
+    return false;
+  }
   return !in.fail();
 }
 
