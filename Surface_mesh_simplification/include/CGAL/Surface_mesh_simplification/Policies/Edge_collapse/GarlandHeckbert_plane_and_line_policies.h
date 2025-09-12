@@ -24,17 +24,23 @@
 namespace CGAL {
 namespace Surface_mesh_simplification {
 
-template<typename TriangleMesh, typename GeomTraits>
+template<typename TriangleMesh,
+         typename GeomTraits,
+         typename VertexNormalMap = typename boost::property_map<TriangleMesh,
+                                                CGAL::dynamic_vertex_property_t<typename GeomTraits::Vector_3> >::const_type >
 class GarlandHeckbert_plane_and_line_policies
   : public internal::GarlandHeckbert_composed_policies<TriangleMesh, GeomTraits,
                                              GarlandHeckbert_plane_policies<TriangleMesh, GeomTraits>,
-                                             internal::GarlandHeckbert_line_policies<TriangleMesh, GeomTraits>,
+                                             internal::GarlandHeckbert_line_policies<TriangleMesh, GeomTraits, VertexNormalMap>,
                                              true>
 {
+  typedef GarlandHeckbert_plane_policies<TriangleMesh, GeomTraits>                            GH_plane_polices;
+  typedef internal::GarlandHeckbert_line_policies<TriangleMesh, GeomTraits, VertexNormalMap>  GH_line_polices;
   typedef internal::GarlandHeckbert_composed_policies<TriangleMesh, GeomTraits,
-                                             GarlandHeckbert_plane_policies<TriangleMesh, GeomTraits>,
-                                             internal::GarlandHeckbert_line_policies<TriangleMesh, GeomTraits>,
-                                             true> Base;
+                                                      GH_plane_polices,
+                                                      GH_line_polices,
+                                                      true>                                   Base;
+
 
 public:
   typedef typename Base::Quadric_calculator Quadric_calculator;
@@ -45,7 +51,15 @@ public:
   GarlandHeckbert_plane_and_line_policies(TriangleMesh& tmesh,
                                           const FT line_weight = FT(0.01),
                                           const FT dm = FT(100))
-    : Base(tmesh, FT(1.)/line_weight, dm)
+    : Base(tmesh, GH_plane_polices(tmesh, dm), GH_line_polices(tmesh, dm), FT(1.)/line_weight, dm)
+  { }
+
+  template<typename VNM>
+  GarlandHeckbert_plane_and_line_policies(TriangleMesh& tmesh,
+                                          const FT line_weight,
+                                          const FT dm,
+                                          const VNM vnm)
+    : Base(tmesh, GH_plane_polices(tmesh, dm), GH_line_polices(tmesh, dm, vnm), FT(1.)/line_weight, dm)
   { }
 
 public:

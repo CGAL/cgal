@@ -24,6 +24,9 @@ namespace internal {
 /*
 That policy was created to merge the line policy with the existing ones.
 Since it is a technical feature, it is internal to the library.
+The composition of some quadrics is always invertible, but this is not necessarily true for all composed quadrics.
+`invertible` boolean parameter reflects this distinction.
+
 */
 
 template <typename TriangleMesh, typename GeomTraits, typename Quadric_calculator_1, typename Quadric_calculator_2, bool invertible=false>
@@ -39,9 +42,14 @@ class Composed_quadric_calculator
   double weight_2;
 
 public:
-  Composed_quadric_calculator(Quadric_calculator_1 &qc1, Quadric_calculator_2 &qc2, double w1=1., double w2=1.):
-    quadric_calculator_1(qc1), quadric_calculator_2(qc2), weight_1(w1), weight_2(w2){}
-  Composed_quadric_calculator(double w1=1., double w2=1.): weight_1(w1), weight_2(w2){}
+  Composed_quadric_calculator(const Quadric_calculator_1& qc1, const Quadric_calculator_2& qc2, double w1 = 1., double w2 = 1.)
+      : quadric_calculator_1(qc1)
+      , quadric_calculator_2(qc2)
+      , weight_1(w1)
+      , weight_2(w2) {}
+  Composed_quadric_calculator(double w1 = 1., double w2 = 1.)
+      : weight_1(w1)
+      , weight_2(w2) {}
 
   template <typename VertexPointMap>
   Mat_4 construct_quadric_from_vertex(typename boost::graph_traits<TriangleMesh>::vertex_descriptor v,
@@ -122,7 +130,7 @@ public:
                                     GH_policies_1 ghp1,
                                     GH_policies_2 ghp2,
                                     double w1=1., double w2=1.,const FT dm = FT(100))
-    : Base(tmesh, Quadric_calculator(ghp1.m_quadric_calculator, ghp2.m_quadric_calculator, w1, w2), dm)
+    : Base(tmesh, Quadric_calculator(ghp1.quadric_calculator(), ghp2.quadric_calculator(), w1, w2), dm)
   { }
 
 public:

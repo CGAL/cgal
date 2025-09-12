@@ -59,8 +59,7 @@ struct GarlandHeckbert_quadrics_storage
 
   typedef QuadricCalculator                                                    Quadric_calculator;
 
-  public:
-// protected:
+protected:
   Vertex_cost_map m_cost_matrices;
   Quadric_calculator m_quadric_calculator;
 
@@ -72,6 +71,10 @@ public:
     : m_quadric_calculator(quadric_calculator)
   {
     m_cost_matrices = get(Cost_property(), tmesh);
+  }
+
+  Quadric_calculator quadric_calculator() const{
+    return m_quadric_calculator;
   }
 };
 
