@@ -105,11 +105,11 @@ There are several member functions allowing to insert specific configurations of
 
 There are two functions allowing to build a linear cell complex from two other \cgal data types:
 <UL>
-<LI>\link ::import_from_triangulation_3 `import_from_triangulation_3(lcc,atr)`\endlink: adds in `lcc` all the tetrahedra present in `atr`, a \link CGAL::Triangulation_3 `Triangulation_3`\endlink;
-<LI>\link ::import_from_polyhedron_3 `import_from_polyhedron_3(lcc,ap)`\endlink: adds in `lcc` all the cells present in `ap`, a `Polyhedron_3`.
+<LI>\link CGAL::import_from_triangulation_3 `import_from_triangulation_3(lcc,atr)`\endlink: adds in `lcc` all the tetrahedra present in `atr`, a \link CGAL::Triangulation_3 `Triangulation_3`\endlink;
+<LI>\link CGAL::import_from_polyhedron_3 `import_from_polyhedron_3(lcc,ap)`\endlink: adds in `lcc` all the cells present in `ap`, a `Polyhedron_3`.
 </UL>
 
-Lastly, the function \link ::import_from_plane_graph `import_from_plane_graph(lcc,ais)`\endlink adds in `lcc` all the cells reconstructed from the planar graph read in `ais`, a `std::istream` (see the  \link ::import_from_plane_graph `reference manual`\endlink for the file format).
+Lastly, the function \link CGAL::import_from_plane_graph `import_from_plane_graph(lcc,ais)`\endlink adds in `lcc` all the cells reconstructed from the planar graph read in `ais`, a `std::istream` (see the  \link CGAL::import_from_plane_graph `reference manual`\endlink for the file format).
 
 \subsection Linear_cell_complexModificationOperations Modification Operations
 \anchor ssecmodifop
