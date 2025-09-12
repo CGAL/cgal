@@ -71,6 +71,7 @@
 #include <array>
 #include <cstddef>
 #include <exception>
+#include <iostream>
 #include <iterator>
 #include <optional>
 #include <vector>
@@ -2105,18 +2106,15 @@ private:
     for(std::size_t i = 0; i < intersecting_edges.size(); ++i) {
       const auto intersecting_edge = intersecting_edges[i];
       const auto [v_above, v_below] = tr().vertices(intersecting_edge);
-#if CGAL_CDT_3_CAN_USE_CXX20_FORMAT
-      if(this->debug_regions()) {
+      if constexpr (cdt_3_can_use_cxx20_format()) if(this->debug_regions()) {
         std::cerr << cdt_3_format("restore_subface_region face index: {}, region #{}, intersecting edge #{}: ({}   {})\n",
                                   face_index, region_index, i,
                                   IO::oformat(v_above, with_point_and_info),
                                   IO::oformat(v_below, with_point_and_info));
         dump_region(face_index, region_index, cdt_2);
       }
-#endif // CGAL_CDT_3_CAN_USE_CXX20_FORMAT
 
-#if CGAL_CDT_3_CAN_USE_CXX20_FORMAT
-      if(this->debug_regions()) {
+      if constexpr (cdt_3_can_use_cxx20_format()) if(this->debug_regions()) {
         const auto p_above = this->point(v_above);
         const auto p_below = this->point(v_below);
         const auto edge_segment = typename Geom_traits::Segment_3{p_above, p_below};
@@ -2180,25 +2178,20 @@ private:
           }
         }
       }
-#endif // CGAL_CDT_3_CAN_USE_CXX20_FORMAT
 
       auto test_edge = [&](Cell_handle cell, Vertex_handle v0, int index_v0, Vertex_handle v1, int index_v1,
                            [[maybe_unused]] int expected) {
         auto value_returned = [this](bool b) {
           CGAL_USE(this);
-#if CGAL_CDT_3_CAN_USE_CXX20_FORMAT
-          if(this->debug_regions()) {
+          if constexpr (cdt_3_can_use_cxx20_format()) if(this->debug_regions()) {
             std::cerr << cdt_3_format("   return {}\n", b);
           }
-#endif // CGAL_CDT_3_CAN_USE_CXX20_FORMAT
           return b;
         };
-#if CGAL_CDT_3_CAN_USE_CXX20_FORMAT
-        if(this->debug_regions()) {
+        if constexpr (cdt_3_can_use_cxx20_format()) if(this->debug_regions()) {
           std::cerr << cdt_3_format("  test_edge {}   {}  ", IO::oformat(v0, with_point_and_info),
                                    IO::oformat(v1, with_point_and_info));
         }
-#endif // CGAL_CDT_3_CAN_USE_CXX20_FORMAT
         auto [cached_value_it, not_visited] = new_edge(v0, v1, false);
         if(!not_visited) return value_returned(cached_value_it->second);
         int v0v1_intersects_region = (v0->ccdt_3_data().is_marked(Vertex_marker::REGION_INSIDE) ||
@@ -2593,14 +2586,12 @@ private:
       }
       return vertices;
     });
-#if CGAL_CDT_3_CAN_USE_CXX20_FORMAT
-    if(this->debug_regions()) {
+    if constexpr (cdt_3_can_use_cxx20_format()) if(this->debug_regions()) {
       std::cerr << "region_border_vertices.size() = " << region_border_vertices.size() << "\n";
       for(auto v : region_border_vertices) {
         std::cerr << cdt_3_format("  {}\n", IO::oformat(v, with_point));
       }
     }
-#endif // CGAL_CDT_3_CAN_USE_CXX20_FORMAT
     for(auto v: region_border_vertices) {
       v->ccdt_3_data().set_mark(Vertex_marker::REGION_BORDER);
     }
@@ -2669,7 +2660,6 @@ private:
           }
         }
 
-#if CGAL_CAN_USE_CXX20_FORMAT
         if constexpr (cdt_3_can_use_cxx20_format()) if(this->debug_regions()) {
           std::cerr << cdt_3_format
               ("NOTE: diagonal: {:.6} {:.6}  {} in tr\n",
@@ -2710,7 +2700,6 @@ private:
             }
           }
         }
-#endif // CGAL_CAN_USE_CXX20_FORMAT
       }
       return false;
     };
@@ -2788,8 +2777,7 @@ private:
       return true;
     };
 
-#if CGAL_CDT_3_CAN_USE_CXX20_FORMAT
-    if(this->debug_regions()) {
+    if constexpr (cdt_3_can_use_cxx20_format()) if(this->debug_regions()) {
       std::cerr << cdt_3_format("Cavity has {} cells and {} edges, "
                               "{} vertices in upper cavity and {} in lower, "
                               "{} facets in upper cavity and {} in lower\n",
@@ -2814,7 +2802,6 @@ private:
         // dump_facets_of_cavity(face_index, region_index, "upper", original_facets_of_upper_cavity);
       }
     }
-#endif // CGAL_CDT_3_CAN_USE_CXX20_FORMAT
     auto register_internal_constrained_facet = [this](Facet f) { this->register_facet_to_be_constrained(f); };
 
     if(this->debug_copy_triangulation_into_hole()) {
@@ -3003,8 +2990,7 @@ private:
       const auto upper_inner_map = tr().create_triangulation_inner_map(
           upper_cavity_triangulation, map_upper_cavity_vertices_to_ambient_vertices, false);
 
-#if CGAL_CDT_3_CAN_USE_CXX20_FORMAT
-      if(this->debug_copy_triangulation_into_hole()) {
+      if constexpr (cdt_3_can_use_cxx20_format()) if(this->debug_copy_triangulation_into_hole()) {
         std::cerr << "upper_inner_map:\n";
         for(auto [vt, _] : upper_inner_map) {
           std::cerr << cdt_3_format("  {:.6}, {:.6}, {:.6})\n",
@@ -3013,7 +2999,6 @@ private:
                                   IO::oformat(vt[2], with_point));
         }
       }
-#endif // CGAL_CDT_3_CAN_USE_CXX20_FORMAT
       if(this->debug_copy_triangulation_into_hole()) {
         std::cerr << "# glu the lower triangulation of the cavity\n";
       }
@@ -3042,8 +3027,8 @@ private:
     {
       const auto lower_inner_map = tr().create_triangulation_inner_map(
           lower_cavity_triangulation, map_lower_cavity_vertices_to_ambient_vertices, false);
-#if CGAL_CDT_3_CAN_USE_CXX20_FORMAT
-      if(this->debug_copy_triangulation_into_hole()) {
+#if CGAL_CAN_USE_CXX20_FORMAT
+      if constexpr (cdt_3_can_use_cxx20_format()) if(this->debug_copy_triangulation_into_hole()) {
         std::cerr << "outer_map:\n";
         for(auto [vt, _] : outer_map) {
           std::cerr << cdt_3_format("  {:.6}, {:.6}, {:.6})\n",
@@ -3056,7 +3041,7 @@ private:
         write_facets(out, *this, std::ranges::views::values(outer_map));
         out.close();
       }
-#endif // CGAL_CDT_3_CAN_USE_CXX20_FORMAT
+#endif // CGAL_CAN_USE_CXX20_FORMAT
       this->copy_triangulation_into_hole(map_lower_cavity_vertices_to_ambient_vertices, std::move(outer_map), lower_inner_map,
                                          this->new_cells_output_iterator());
     }
@@ -3217,14 +3202,12 @@ private:
           tr().is_infinite(v) ? cavity_triangulation.infinite_vertex() : cavity_triangulation.insert(this->point(v));
       map_ambient_vertices_to_cavity_vertices[v] = cavity_v;
       map_cavity_vertices_to_ambient_vertices[cavity_v] = v;
-#if CGAL_CDT_3_CAN_USE_CXX20_FORMAT
-      if(this->debug_regions()) {
+      if constexpr (cdt_3_can_use_cxx20_format()) if(this->debug_regions()) {
         std::cerr << cdt_3_format("inserted {}cavity vertex {:.6} -> {:.6}\n",
                                 extra,
                                 IO::oformat(cavity_v, with_point_and_info),
                                 IO::oformat(v, with_point_and_info));
       }
-#endif // CGAL_CDT_3_CAN_USE_CXX20_FORMAT
       return cavity_v;
     };
 
@@ -3464,25 +3447,21 @@ private:
   bool restore_face(CDT_3_signed_index face_index) {
     CDT_2& non_const_cdt_2 = face_cdt_2[face_index];
     const CDT_2& cdt_2 = non_const_cdt_2;
-#if CGAL_CDT_3_CAN_USE_CXX20_FORMAT
-    if(this->debug_copy_triangulation_into_hole()) {
+    if constexpr (cdt_3_can_use_cxx20_format()) if(this->debug_copy_triangulation_into_hole()) {
       std::cerr << cdt_3_format("restore_face({}): CDT_2 has {} vertices\n", face_index, cdt_2.number_of_vertices());
     }
-#endif // CGAL_CDT_3_CAN_USE_CXX20_FORMAT
     for(const auto& edge : cdt_2.finite_edges()) {
       const auto fh = edge.first;
       const auto i = edge.second;
       const auto va_3d = fh->vertex(cdt_2.cw(i))->info().vertex_handle_3d;
       const auto vb_3d = fh->vertex(cdt_2.ccw(i))->info().vertex_handle_3d;
       const bool is_3d = this->is_edge(va_3d, vb_3d);
-#if CGAL_CDT_3_CAN_USE_CXX20_FORMAT
-      if(this->debug_copy_triangulation_into_hole()) {
+      if constexpr (cdt_3_can_use_cxx20_format()) if(this->debug_copy_triangulation_into_hole()) {
         std::cerr << cdt_3_format("Edge is 3D: {:6}  ({} , {})\n",
                                   is_3d,
                                   IO::oformat(va_3d, with_point_and_info),
                                   IO::oformat(vb_3d, with_point_and_info));
       }
-#endif // CGAL_CDT_3_CAN_USE_CXX20_FORMAT
       CGAL_assertion(is_3d || !cdt_2.is_constrained(edge));
       fh->info().is_edge_also_in_3d_triangulation[unsigned(i)] = is_3d;
       const auto reverse_edge = cdt_2.mirror_edge(edge);
