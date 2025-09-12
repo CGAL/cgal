@@ -93,6 +93,7 @@ public:
 
   Id last_item_picked() const
   {
+    CGAL_assertion(last_picked_id != std::size_t(-1));
     return ids[last_picked_id];
   }
 };
