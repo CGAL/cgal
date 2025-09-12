@@ -81,6 +81,9 @@ namespace CGAL {
     typedef typename AABBTraits::Primitive Primitive;
     /// Identifier for a primitive in the tree.
     typedef typename Primitive::Id Primitive_id;
+    #ifndef DOXYGEN_RUNNING
+    using Primitive_iterator = typename Primitives::iterator;
+    #endif
     /// Unsigned integral size type.
     typedef typename Primitives::size_type size_type;
     /// Type of bounding box.
@@ -456,6 +459,14 @@ public:
       return build_kd_tree(first,beyond);
     }
 
+    //TODO: add doc
+    template<typename ConstPointIterator, typename PointMap>
+    bool accelerate_distance_queries(ConstPointIterator first, ConstPointIterator beyond, PointMap pmap)
+    {
+      return build_kd_tree(make_transform_iterator_from_property_map (first, pmap),
+                           make_transform_iterator_from_property_map (beyond, pmap));
+    }
+
     /// returns the minimum squared distance between the query point
     /// and all input primitives. The internal KD-tree is not used.
     /// \pre `!empty()`
@@ -620,6 +631,12 @@ public:
       return Helper::get_datum(p, this->traits());
     }
 
+    // warning: the tree must have been built
+    const Search_tree& kd_tree() const
+    {
+      return *m_p_search_tree;
+    }
+
   private:
     //Traits class
     AABBTraits m_traits;
@@ -648,6 +665,9 @@ public:
       }
       return std::addressof(m_nodes[0]);
     }
+
+    Primitive_iterator primitives_begin() { return m_primitives.begin(); };
+    Primitive_iterator primitives_end() { return m_primitives.end(); };
 
     Node& new_node()
     {
