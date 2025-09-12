@@ -12,35 +12,27 @@
 
 #include <string>
 
-// Domain
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
+// Domain
 typedef CGAL::Image_3 Image;
 typedef CGAL::Labeled_mesh_domain_3<K> Mesh_domain;
 
-// Triangulation
-typedef CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
-typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
-
-// Mesh Criteria
-typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
-typedef Mesh_criteria::Facet_criteria    Facet_criteria;
-typedef Mesh_criteria::Cell_criteria     Cell_criteria;
-
-typedef CGAL::Triangulation_3<typename Tr::Geom_traits,
-                              typename Tr::Triangulation_data_structure> T3;
-
 using namespace CGAL::parameters;
 
-int main()
-{
-  const std::string filename = CGAL::data_file_path("images/liver.inr.gz");
 
-  CGAL::Image_3 image;
-  if (!image.read(filename)) {
-    std::cerr << "Error: Cannot read file " << filename << std::endl;
-    return EXIT_FAILURE;
-  }
+template <typename Concurrency_tag>
+void mesh(const CGAL::Image_3& image)
+{
+  // Triangulation
+  typedef CGAL::Mesh_triangulation_3<Mesh_domain, CGAL::Default, Concurrency_tag>::type Tr;
+  typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
+
+  // Mesh Criteria
+  typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
+  typedef Mesh_criteria::Facet_criteria Facet_criteria;
+  typedef Mesh_criteria::Cell_criteria Cell_criteria;
+
   Mesh_domain domain = Mesh_domain::create_labeled_image_mesh_domain(image, relative_error_bound = 1e-9);
 
   // Mesh criteria
@@ -54,6 +46,10 @@ int main()
   std::cout << "Meshing done." << std::endl;
 
   //Remeshing : extract triangulation
+  typedef Tr::Geom_traits GT;
+  typedef Tr::Triangulation_data_structure TDS; // includes concurrency tag
+  typedef CGAL::Triangulation_3<GT, TDS> T3;
+
   T3 t3 = CGAL::convert_to_triangulation_3(c3t3);
 
   //Remeshing : coarsen
@@ -70,6 +66,25 @@ int main()
     CGAL::parameters::number_of_iterations(2).remesh_boundaries(false));
 
   std::cout << "Remeshing 2 done." << std::endl;
+}
 
-  return 0;
+int main()
+{
+  const std::string filename = CGAL::data_file_path("images/liver.inr.gz");
+  CGAL::Image_3 image;
+  if(!image.read(filename)) {
+    std::cerr << "Error: Cannot read file " << filename << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  std::cout << "Running test with the CGAL::Sequential_tag tag." << std::endl;
+  mesh<CGAL::Sequential_tag>(image);
+
+#ifdef CGAL_LINKED_WITH_TBB
+  std::cout << std::endl;
+  std::cout << "Running test with the CGAL::Parallel_tag tag." << std::endl;
+  mesh<CGAL::Parallel_tag>(image);
+#endif
+
+  return EXIT_SUCCESS;
 }
