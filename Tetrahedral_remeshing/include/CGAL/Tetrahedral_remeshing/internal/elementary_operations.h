@@ -41,8 +41,12 @@ namespace CGAL {
 namespace Tetrahedral_remeshing {
 namespace internal {
 
-template<typename C3t3_, typename ElementType_, typename ElementSource_, typename LockElementType_>
-class ElementaryOperation {
+template<typename C3t3_,
+         typename ElementType_,
+         typename ElementSource_,
+         typename LockElementType_>
+class ElementaryOperation
+{
 public:
   using C3t3 = C3t3_;
   using Triangulation = typename C3t3::Triangulation;
@@ -65,7 +69,8 @@ public:
 
 // Base class for operation execution strategies
 template<typename Operation>
-class ElementaryOperationExecution {
+class ElementaryOperationExecution
+{
 public:
   using C3t3 = typename Operation::C3t3;
   using Cell_handle = typename C3t3::Triangulation::Cell_handle;

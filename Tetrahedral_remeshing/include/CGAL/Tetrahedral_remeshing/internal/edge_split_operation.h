@@ -40,29 +40,35 @@ static debug::ThreadSafeLogger long_edges_logger("debug_logs/long_edges_collecti
 template<typename C3t3, typename SizingFunction, typename CellSelector>
 class EdgeSplitOperation
   : public ElementaryOperation<C3t3,
-                              std::pair<typename C3t3::Triangulation::Geom_traits::FT,std::pair<typename C3t3::Triangulation::Vertex_handle, typename C3t3::Triangulation::Vertex_handle>>,
-                              std::vector<std::pair<typename C3t3::Triangulation::Geom_traits::FT,std::pair<typename C3t3::Triangulation::Vertex_handle, typename C3t3::Triangulation::Vertex_handle>>>,
+                              std::pair<typename C3t3::Triangulation::Geom_traits::FT,
+                                         std::pair<typename C3t3::Triangulation::Vertex_handle,
+                                                   typename C3t3::Triangulation::Vertex_handle>>,
+                              std::vector<std::pair<typename C3t3::Triangulation::Geom_traits::FT,
+                                                    std::pair<typename C3t3::Triangulation::Vertex_handle,
+                                                              typename C3t3::Triangulation::Vertex_handle>>>,
                               typename C3t3::Triangulation::Cell_handle>
 {
 
 public:
-  using Complex = C3t3;
   using Tr = typename C3t3::Triangulation;
   using Vertex_handle = typename Tr::Vertex_handle;
+  using Cell_handle = typename Tr::Cell_handle;
   using Edge_vv = std::pair<Vertex_handle, Vertex_handle>;
   using FT = typename Tr::Geom_traits::FT;
+
+  using Long_edges_with_lengths = std::vector<std::pair<FT, Edge_vv>>;
   using Base = ElementaryOperation<C3t3,
-                              std::pair<FT ,std::pair<typename C3t3::Triangulation::Vertex_handle, typename C3t3::Triangulation::Vertex_handle>>,
-                              std::vector<std::pair<double,std::pair<typename C3t3::Triangulation::Vertex_handle, typename C3t3::Triangulation::Vertex_handle>>>,
-                              typename C3t3::Triangulation::Cell_handle>;
+                                   std::pair<FT, Edge_vv>,
+                                   Long_edges_with_lengths,
+                                   Cell_handle>;
   using Edge = typename Tr::Edge;
   using ElementType = typename Base::ElementType;
   using ElementSource = typename Base::ElementSource;
-  using VertexPair = std::pair<typename C3t3::Triangulation::Vertex_handle, typename C3t3::Triangulation::Vertex_handle>;
-  using Cell_handle = typename Tr::Cell_handle;
+  using VertexPair = std::pair<Vertex_handle, Vertex_handle>;
   using Point = typename Tr::Point;
   using Lock_zone = typename Base::Lock_zone;
   using Facet = typename Tr::Facet;
+
   using Subdomain_index = typename C3t3::Subdomain_index;
   using Surface_patch_index = typename C3t3::Surface_patch_index;
   using Curve_index = typename C3t3::Curve_index;
@@ -71,6 +77,7 @@ private:
   const SizingFunction& m_sizing;
   const CellSelector& m_cell_selector;
   bool m_protect_boundaries;
+
   // Helper function to create a unique identifier for an edge
   std::string edge_id(const ElementType& vp) const {
     std::ostringstream oss;
@@ -88,13 +95,14 @@ public:
   {}
 
 
-  std::vector<std::pair<FT,std::pair<typename C3t3::Vertex_handle, typename C3t3::Vertex_handle>>>
-  get_long_edges(const C3t3& c3t3) const {
-    std::vector<std::pair<FT, std::pair<typename C3t3::Vertex_handle, typename C3t3::Vertex_handle>>>
-        long_edges_with_lengths;
+  Long_edges_with_lengths
+  get_long_edges(const C3t3& c3t3) const
+  {
+    Long_edges_with_lengths long_edges_with_lengths;
     const Tr& tr = c3t3.triangulation();
 
-    for(Edge e : tr.finite_edges()) {
+    for(Edge e : tr.finite_edges())
+    {
       auto [splittable, boundary] = can_be_split(e, c3t3, m_protect_boundaries, m_cell_selector);
       if(!splittable)
         continue;
@@ -104,17 +112,13 @@ public:
         auto edge_pair = make_vertex_pair(e);
         long_edges_with_lengths.push_back(make_pair(*sqlen, edge_pair));
       }
-
-      for(const auto& length_edge_pair : long_edges_with_lengths) {
-        auto edge_pair = length_edge_pair.second;
-      }
     }
 
     // Custom comparator to match bimap's tie-breaking behavior
     // Bimap: multiset_of<FT, std::greater<FT>> preserves insertion order for equal keys
     // We use stable_sort with simple length comparison to achieve the same behavior
-    auto bimap_comparator = [](const std::pair<double, std::pair<Vertex_handle, Vertex_handle>>& a,
-                               const std::pair<double, std::pair<Vertex_handle, Vertex_handle>>& b) {
+    auto bimap_comparator = [](const std::pair<FT, Edge_vv>& a,
+                               const std::pair<FT, Edge_vv>& b) {
       // Only compare by length - stable_sort will preserve insertion order for equal lengths
       return a.first > b.first; // std::greater<FT> behavior (descending order)
     };
@@ -153,11 +157,11 @@ public:
   }
 
 
-  bool lock_zone(const ElementType& el, const Complex& c3t3) const override {
+  bool lock_zone(const ElementType& el, const C3t3& c3t3) const override {
     auto& tr = c3t3.triangulation();
     const auto& vertex_pair =el.second;
     const auto& edge_length =el.first;
-      #if 1
+#if 1
     std::vector<Cell_handle> inc_cells_first,inc_cells_second;
 
     bool lock_success = tr.try_lock_and_get_incident_cells(vertex_pair.first, inc_cells_first) &&
@@ -201,7 +205,7 @@ public:
     #endif
   }
 
-  bool execute_operation(const ElementType& vp, Complex& c3t3) override {
+  bool execute_operation(const ElementType& vp, C3t3& c3t3) override {
     auto& tr = c3t3.triangulation();
 
     Edge_vv e = vp.second;

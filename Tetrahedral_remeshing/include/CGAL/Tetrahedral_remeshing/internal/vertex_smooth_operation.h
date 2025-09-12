@@ -974,11 +974,13 @@ class ComplexEdgeVertexSmoothOperation
 {
 public:
   using BaseClass = VertexSmoothOperationBase<C3t3, SizingFunction, CellSelector>;
+  using Vertex_handle = typename C3t3::Triangulation::Vertex_handle;
+
   using Base = ElementaryOperation<C3t3,
-                              typename C3t3::Triangulation::Vertex_handle,
-                              typename C3t3::Triangulation::Finite_vertex_handles,
-                              typename C3t3::Triangulation::Vertex_handle>;
-  using ElementType = typename C3t3::Triangulation::Vertex_handle;
+                                   Vertex_handle,
+                                   typename C3t3::Triangulation::Finite_vertex_handles,
+                                   Vertex_handle>;
+  using ElementType = Vertex_handle;
   using ElementSource = typename Base::ElementSource;
   using Lock_zone = typename Base::Lock_zone;
 
@@ -993,7 +995,6 @@ public:
   // Import types from base class
   using typename BaseClass::Tr;
   using typename BaseClass::Cell_handle;
-  using typename BaseClass::Vertex_handle;
   using typename BaseClass::Edge;
   using typename BaseClass::Point_3;
   using typename BaseClass::Vector_3;

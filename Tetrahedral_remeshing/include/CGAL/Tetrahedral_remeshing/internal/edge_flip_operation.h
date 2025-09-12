@@ -59,7 +59,7 @@ protected:
 #if defined CGAL_CONCURRENT_TETRAHEDRAL_REMESHING && defined CGAL_LINKED_WITH_TBB
   mutable tbb::concurrent_unordered_map<Vertex_handle, Cells_vector> inc_cells;
 #else
-  mutable boost::unordered_map<Vertex_handle, Cells_vector> inc_cells;
+  mutable std::unordered_map<Vertex_handle, Cells_vector> inc_cells;
 #endif
 
 public:
@@ -90,12 +90,15 @@ class InternalEdgeFlipOperation
 {
 public:
   using BaseClass = EdgeFlipOperationBase<C3t3, CellSelector, Visitor>;
-  using VertexPair = std::pair<typename C3t3::Vertex_handle, typename C3t3::Vertex_handle>;
+  using Cell_handle = typename C3t3::Cell_handle;
+  using Vertex_handle = typename C3t3::Vertex_handle;
+  using Edge_vv = std::pair<Vertex_handle, Vertex_handle>;
 
   using Base = ElementaryOperation<C3t3,
-                              std::pair<typename C3t3::Vertex_handle, typename C3t3::Vertex_handle>,
-                              std::vector<std::pair<typename C3t3::Vertex_handle, typename C3t3::Vertex_handle>>,
-                              typename C3t3::Triangulation::Cell_handle>;
+                                   Edge_vv,
+                                   std::vector<Edge_vv>,
+                                   Cell_handle>;
+
   using ElementType = typename Base::ElementType;
   using ElementSource = typename Base::ElementSource;
   using Lock_zone = typename Base::Lock_zone;
@@ -107,9 +110,6 @@ public:
   using BaseClass::inc_cells;
 
   // Import types from base class
-  using typename BaseClass::Tr;
-  using typename BaseClass::Cell_handle;
-  using typename BaseClass::Vertex_handle;
   using typename BaseClass::Edge;
 
 public:
@@ -243,12 +243,14 @@ class BoundaryEdgeFlipOperation
 {
 public:
   using BaseClass = EdgeFlipOperationBase<C3t3, CellSelector, Visitor>;
-  using VertexPair = std::pair<typename C3t3::Vertex_handle, typename C3t3::Vertex_handle>;
+  using Cell_handle = typename C3t3::Cell_handle;
+  using Vertex_handle = typename C3t3::Vertex_handle;
+  using Edge_vv = std::pair<Vertex_handle, Vertex_handle>;
 
   using Base = ElementaryOperation<C3t3,
-                              std::pair<typename C3t3::Vertex_handle, typename C3t3::Vertex_handle>,
-                              std::vector<std::pair<typename C3t3::Vertex_handle, typename C3t3::Vertex_handle>>,
-                              typename C3t3::Triangulation::Cell_handle>;
+                                   Edge_vv,
+                                   std::vector<Edge_vv>,
+                                   Cell_handle>;
   using ElementType = typename Base::ElementType;
   using ElementSource = typename Base::ElementSource;
   using Lock_zone = typename Base::Lock_zone;
@@ -260,18 +262,17 @@ public:
   using BaseClass::inc_cells;
 
   // Import types from base class
-  using typename BaseClass::Tr;
-  using typename BaseClass::Cell_handle;
-  using typename BaseClass::Vertex_handle;
   using typename BaseClass::Edge;
   using typename BaseClass::Facet;
-  using typename BaseClass::Surface_patch_index;
+
+  using Subdomain_index = typename C3t3::Subdomain_index;
+  using Surface_patch_index = typename C3t3::Surface_patch_index;
 
 private:
 
     //NOTE: Is the usage of s_boundary_vertices_valences static variable in a multithreaded enviroment safe?
   //// Boundary-specific preprocessing data - recreated every call like original
-  using BVV =boost::unordered_map<Vertex_handle,
+  using BVV = boost::unordered_map<Vertex_handle,
                                    boost::unordered_map<Surface_patch_index, unsigned int>>;
   static BVV s_boundary_vertices_valences;
   static BVV& get_static_boundary_vertices_valences() {
@@ -289,19 +290,19 @@ public:
   {}
 
   //TODO: collectBoundaryEdgesAndComputeVerticesValences is quite wasteful and should be refactored
-  void perform_global_preprocessing(const C3t3& c3t3) const {
+  void perform_global_preprocessing(const C3t3& c3t3) const
+  {
     // Collect boundary edges and compute vertices valences (needed for boundary flipping)
-    std::vector<typename C3t3::Edge> boundary_edges; // We don't need to store this
-  boost::unordered_map<Vertex_handle,
-                                   std::unordered_set<typename C3t3::Subdomain_index>> vertices_subdomain_indices;
+    std::vector<Edge> boundary_edges; // We don't need to store this
+    boost::unordered_map<Vertex_handle,
+                         std::unordered_set<Subdomain_index>> vertices_subdomain_indices;
     collectBoundaryEdgesAndComputeVerticesValences(c3t3, m_cell_selector, boundary_edges,
                                                    get_static_boundary_vertices_valences(),
                                                    vertices_subdomain_indices);
-
   }
 
-
-  std::vector<ElementType> get_element_source(const C3t3& c3t3) const override {
+  std::vector<ElementType> get_element_source(const C3t3& c3t3) const override
+  {
     // Perform global preprocessing (valences computation, subdomain collection)
     perform_global_preprocessing(c3t3);
 
@@ -309,9 +310,8 @@ public:
     std::vector<ElementType> boundary_vertex_pairs;
 
     // Collect boundary edges as vertex pairs to match original behavior
-    for (auto eit = c3t3.triangulation().finite_edges_begin();
-         eit != c3t3.triangulation().finite_edges_end(); ++eit) {
-      const auto& e = *eit;
+    for (const Edge& e : c3t3.triangulation().finite_edges())
+    {
       if (is_boundary(c3t3, e, m_cell_selector) && !c3t3.is_in_complex(e)) {
         boundary_vertex_pairs.push_back(make_vertex_pair(e));
       }

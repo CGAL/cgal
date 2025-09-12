@@ -54,17 +54,20 @@ class EdgeCollapseOperation
                               typename C3t3::Triangulation::Cell_handle>
 {
 public:
+  using Triangulation = typename C3t3::Triangulation;
+  using Vertex_handle = typename Triangulation::Vertex_handle;
+  using Edge = typename Triangulation::Edge;
+  using Short_edges = std::vector<Edge>;
+  using Cell_handle = typename Triangulation::Cell_handle;
+
   using Base = ElementaryOperation<C3t3,
-                              typename C3t3::Triangulation::Edge,
-                              std::vector<typename C3t3::Triangulation::Edge>,
-                              typename C3t3::Triangulation::Cell_handle>;
+                                   Edge,
+                                   Short_edges,
+                                   Cell_handle>;
+
   using ElementType = typename Base::ElementType;
   using ElementSource = typename Base::ElementSource;
   using Lock_zone = typename Base::Lock_zone;
-  using Triangulation = typename C3t3::Triangulation;
-  using Edge = typename Triangulation::Edge;
-  using Cell_handle = typename Triangulation::Cell_handle;
-  using Vertex_handle = typename Triangulation::Vertex_handle;
   using Point = typename Triangulation::Point;
   using FT = typename Triangulation::Geom_traits::FT;
 
@@ -105,7 +108,8 @@ public:
     , m_visitor(visitor)
   {}
 
-  std::vector<ElementType> get_short_edges(const C3t3& c3t3) const {
+  std::vector<ElementType> get_short_edges(const C3t3& c3t3) const
+  {
     std::vector<std::pair<Edge,FT>> short_edges_with_length;
     const auto& tr = c3t3.triangulation();
 
