@@ -34,6 +34,7 @@ class Generic_random_point_generator : public Random_generator_base<P>
   std::vector<double> weights;
   ObjectFromIdMap object_from_id_map;
   Random& random;
+  std::size_t last_picked_id = std::size_t(-1);
 
 protected:
   void generate_point();
@@ -89,13 +90,18 @@ public:
       return 0;
     return weights.back();
   }
+
+  Id last_item_picked() const
+  {
+    return ids[last_picked_id];
+  }
 };
 
 template < typename Id, class ObjectFromIdMap, class GeneratorOnObject, class P >
 void Generic_random_point_generator<Id, ObjectFromIdMap,  GeneratorOnObject, P>::generate_point()
 {
   //shoot a random value in weights
-  std::size_t target = std::distance(
+  last_picked_id = std::distance(
     weights.begin(),
     std::upper_bound(
       weights.begin(),
@@ -105,7 +111,7 @@ void Generic_random_point_generator<Id, ObjectFromIdMap,  GeneratorOnObject, P>:
   );
 
   // generate the points
-  GeneratorOnObject pointCreator(object_from_id_map(ids[target]), random);
+  GeneratorOnObject pointCreator(object_from_id_map(ids[last_picked_id]));
   this->d_item = *pointCreator;
 }
 
