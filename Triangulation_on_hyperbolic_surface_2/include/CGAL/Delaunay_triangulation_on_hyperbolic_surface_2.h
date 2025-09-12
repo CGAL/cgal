@@ -101,14 +101,14 @@ private:
 	unsigned cw(unsigned i) const;
 	void set_attribute(Dart_descriptor dart, Anchor const & anchor);
 	void set_attribute(Dart_descriptor dart, Complex const & cross_ratio);
-	std::shared_ptr<Anchor> update_infos(Dart_descriptor dart, Point const & r, Point const & s, Point const & t, Point const & query);
+	void update_infos(Dart_descriptor dart, Point const & r, Point const & s, Point const & t, Point const & query);
 	
 	//---------- location and insertion
 	Anchor locate_visibility_walk(Point const & query, Locate_type & lt, unsigned & li, unsigned & ld, Anchor const & hint); // const ?
 	Anchor locate_straight_walk(Point const & query, Locate_type & lt, unsigned & li, unsigned & ld, Anchor const & hint); // const ?
-	std::vector<std::shared_ptr<Anchor>> insert_in_face(Point const & query, Anchor & anch);  // use shared_ptr ?
-	std::vector<std::shared_ptr<Anchor>> insert_in_edge(Point const & query, unsigned & li, Anchor & anch);
-	std::vector<std::shared_ptr<Anchor>> split_insert(Point const & query, Anchor & anch, bool use_visibility = false);
+	std::vector<Dart_descriptor> insert_in_face(Point const & query, Anchor & anch);  // return dart_descriptor
+	std::vector<Dart_descriptor> insert_in_edge(Point const & query, unsigned & li, Anchor & anch);
+	std::vector<Dart_descriptor> split_insert(Point const & query, Anchor & anch, bool use_visibility = false);
 
 	//---------- Delaunay related methods
 	void push_flippable_edge(Dart_descriptor const dart, std::list<Dart_descriptor> & darts_to_flip);
@@ -650,7 +650,7 @@ locate(Point const & query, Locate_type & lt, unsigned & li, unsigned & ld, Anch
 // The cross-ratio of the edge [r, q] is set.
 // Warning: the other cross-ratios are not updated, they will be in insert_in_edge and insert_in_face.
 template<class Traits>
-std::shared_ptr<typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Anchor>
+void
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
 update_infos(Dart_descriptor dart, Point const & r, Point const & s, Point const & t, Point const & query)
 {       
@@ -669,36 +669,35 @@ update_infos(Dart_descriptor dart, Point const & r, Point const & s, Point const
 	this->combinatorial_map_.template info<2>(dart) = *anch;
 
 	set_attribute(Base::ccw(dart), Base::cross_ratio(query, t, r, s));
-
-	return anch;
 }
 
 // Output: the three anchors incident to query after its insertion inside anch.
 // the darts of the new anchors correspond to the edges of the triangle the point was inserted in
 // Note to self: No need to manage triangulation's anchor as it is done in update_infos.
 template<class Traits>
-std::vector<std::shared_ptr<typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Anchor>>
+std::vector<typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Dart_descriptor>
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
 insert_in_face(Point const & query, Anchor & anch)
 {       
 	Dart_descriptor current_dart = anch.dart;
 	this->combinatorial_map_.insert_cell_0_in_cell_2(anch.dart);
-	std::vector<std::shared_ptr<Anchor>> new_anchors;
+	std::vector<Dart_descriptor> darts_of_new_anchors;
 	for (unsigned i = 0; i < NB_SIDES; ++i) {
 		Point & c = anch.vertices[i];
 		Point & a = anch.vertices[ccw(i)];
 		Point & b = anch.vertices[cw(i)];
-		new_anchors.push_back(update_infos(current_dart, a, b, c, query));
+		update_infos(current_dart, a, b, c, query);
+		darts_of_new_anchors.push_back(current_dart);
 		current_dart = Base::ccw(Base::opposite(Base::ccw(current_dart)));
 	}
 
-	return new_anchors;
+	return darts_of_new_anchors;
 }
 
 // Output: the four anchors incident to query after its insertion on one edge of anch.
 // the darts of the new anchors correspond to the edges of the triangle the point was inserted in
 template<class Traits>
-std::vector<std::shared_ptr<typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Anchor>>
+std::vector<typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Dart_descriptor>
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
 insert_in_edge(Point const & query, unsigned & li, Anchor & anch)
 {
@@ -706,7 +705,7 @@ insert_in_edge(Point const & query, unsigned & li, Anchor & anch)
 	Dart_descriptor insertion_dart = ith_dart(li, anch);
 
 	// gather information
-	std::vector<std::shared_ptr<Anchor>> new_anchors;
+	std::vector<Dart_descriptor> darts_of_new_anchors;
 	Point & c = anch.vertices[li];
 	Point & a = anch.vertices[ccw(li)];
 	Point & b = anch.vertices[cw(li)];
@@ -728,17 +727,22 @@ insert_in_edge(Point const & query, unsigned & li, Anchor & anch)
 	CGAL_assertion(Base::ccw(dart_da) == Base::opposite(Base::cw(dart_ab)));
 
 	// set new anchors and cross-ratios
-	new_anchors.push_back(update_infos(dart_ab, b, c, a, query));
-	new_anchors.push_back(update_infos(dart_bc, c, a, b, query));
-	new_anchors.push_back(update_infos(dart_cd, d, a, c, query));
-	new_anchors.push_back(update_infos(dart_da, a, c, d, query));
+	update_infos(dart_ab, b, c, a, query);
+	update_infos(dart_bc, c, a, b, query);
+	update_infos(dart_cd, d, a, c, query);
+	update_infos(dart_da, a, c, d, query);
 
-	return new_anchors;
+	darts_of_new_anchors.push_back(dart_ab);
+	darts_of_new_anchors.push_back(dart_bc);
+	darts_of_new_anchors.push_back(dart_cd);
+	darts_of_new_anchors.push_back(dart_da);
+
+	return darts_of_new_anchors;
 }
 
 // the darts of the new anchors correspond to the edges of the triangle the point was inserted in 
 template<class Traits>
-std::vector<std::shared_ptr<typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Anchor>>
+std::vector<typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Dart_descriptor>
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
 split_insert(Point const & query, Anchor & anch, bool use_visibility)
 {
@@ -748,13 +752,13 @@ split_insert(Point const & query, Anchor & anch, bool use_visibility)
 	Anchor locate_anchor = locate(query, lt, li, ld, anch, use_visibility);
 	CGAL_precondition(lt != OUTSIDE);
 
-	std::vector<std::shared_ptr<Anchor>> new_anchors;
+	std::vector<Dart_descriptor> darts_of_new_anchors;
 	if (lt == FACE) {
-		new_anchors = insert_in_face(query, locate_anchor);
+		darts_of_new_anchors = insert_in_face(query, locate_anchor);
 	} else if (lt == EDGE) {
-		new_anchors = insert_in_edge(query, li, locate_anchor);
+		darts_of_new_anchors = insert_in_edge(query, li, locate_anchor);
 	}
-	return new_anchors;
+	return darts_of_new_anchors;
 }
 
 
@@ -865,11 +869,11 @@ insert(Point const & query, Anchor & hint)
 {
 	CGAL_expensive_precondition(Base::is_Delaunay());
 
-	std::vector<std::shared_ptr<Anchor>> new_anchors = split_insert(query, hint);
+	std::vector<Dart_descriptor> darts_of_new_anchors = split_insert(query, hint);
 	std::list<Dart_descriptor> darts_to_flip;
-	for (int i = 0; i < new_anchors.size(); ++i) {
-		push_flippable_edge(new_anchors[i].dart, darts_to_flip);
-		push_flippable_edge(Base::ccw(new_anchors[i].dart), darts_to_flip);
+	for (Dart_descriptor dart : darts_of_new_anchors) {
+		push_flippable_edge(darts_of_new_anchors, darts_to_flip);
+		push_flippable_edge(Base::ccw(darts_of_new_anchors), darts_to_flip);
 	}
 	std::vector<Dart_descriptor> flipped_darts;
 	restore_Delaunay(darts_to_flip, flipped_darts);
@@ -994,12 +998,12 @@ epsilon_net(double const epsilon)
 			if (delta(c, current_anchor.vertices[0]) > BOUND) {
 				Point approx_c = approx_circumcenter(c);
 				CGAL_assertion(norm(Complex_number(c.x(), c.y())) < Number(1));
-				std::vector<std::shared_ptr<Anchor>> new_anchors = split_insert(approx_c, current_anchor, true);
+				std::vector<Dart_descriptor> darts_of_new_anchors = split_insert(approx_c, current_anchor, true);
 				std::list<Dart_descriptor> darts_to_flip;
-				for (std::shared_ptr<Anchor> const new_anchor : new_anchors) {
-					push_triangle(new_anchor->dart, triangles, triangles_list_mark);
-					push_flippable_edge(new_anchor->dart, darts_to_flip);  //the darts of the new anchors correspond to the edges of the triangle the point was inserted in
-					push_flippable_edge(Base::ccw(new_anchor->dart), darts_to_flip);
+				for (Dart_descriptor const & dart : darts_of_new_anchors) {
+					push_triangle(dart, triangles, triangles_list_mark);
+					push_flippable_edge(dart, darts_to_flip);  //the darts of the new anchors correspond to the edges of the triangle the point was inserted in
+					push_flippable_edge(Base::ccw(dart), darts_to_flip);
 				}
 
 				std::vector<Dart_descriptor> flipped_darts;
