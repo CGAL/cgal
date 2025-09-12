@@ -19,6 +19,7 @@
 #include <CGAL/Polygon_mesh_processing/internal/AABB_traversal_traits_with_Hausdorff_distance.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/Polygon_mesh_processing/bbox.h>
+#include <CGAL/Polygon_mesh_processing/internal/poisson_disk_sampling.h>
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits_3.h>
@@ -473,6 +474,33 @@ struct Triangle_structure_sampler_for_triangle_mesh
     min_sq_edge_length = (std::numeric_limits<double>::max)();
   }
 
+  void procede()
+  {
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
+    using parameters::is_default_parameter;
+
+    bool use_pds_e = choose_parameter(get_parameter(this->np, internal_np::use_poisson_disk_sampling_euclidean), false);
+//    bool use_pds_g = choose_parameter(get_parameter(this->np, internal_np::use_poisson_disk_sampling_geodesic), false);
+    double sampling_radius = choose_parameter(get_parameter(this->np, internal_np::sampling_radius), 1.);
+    std::size_t number_of_darts = choose_parameter(get_parameter(this->np, internal_np::number_of_darts),30.);
+    CGAL::Random random_seed = choose_parameter(get_parameter(this->np, internal_np::random_seed),CGAL::get_default_random());
+
+
+    if (use_pds_e /* || use_pds_g */)
+    {
+      std::vector<typename GeomTraits::Point_3> points = /* use_pds_e ? */
+                    internal::poisson_disk_sampling<GeomTraits, internal::EUCLIDEAN_DISTANCE>(tm, sampling_radius,number_of_darts,random_seed)
+              /*  : internal::poisson_disk_sampling<GeomTraits, internal::GEODESIC_DISTANCE>(tm, sampling_radius,number_of_darts,random_seed) */;
+      std::copy(points.begin(), points.end(), this->out);
+    }
+    else
+    {
+      static_cast<Base*>(this)->procede();
+    }
+  }
+
+
   std::pair<TriangleIterator, TriangleIterator> get_range()
   {
     return std::make_pair(faces(tm).begin(), faces(tm).end());
@@ -889,6 +917,36 @@ struct Triangle_structure_sampler_for_triangle_soup
  *     \cgalParamType{unsigned int}
  *     \cgalParamDefault{`0`}
  *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{use_poisson_disk_sampling_euclidean}
+ *     \cgalParamDescription{if `true` is passed, the Euclidean distance is used to compute the distance between sampled points.}
+ *     \cgalParamType{Boolean}
+ *     \cgalParamDefault{`false`}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{use_poisson_disk_sampling_geodesic}
+ *     \cgalParamDescription{if `true` is passed, the approximate geodesic distance is used to compute the distance between
+ *                          sampled points.}
+ *     \cgalParamType{Boolean}
+ *     \cgalParamDefault{`false`}
+ *     \cgalParamExtra{The geodesic distance is approximated using the 'locally_shortest_path'
+ *                     function.}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{sampling_radius}
+ *     \cgalParamDescription{a value used by Poisson disk sampling to specify the minimum allowable distance between
+ *                          points in the sample.}
+ *     \cgalParamType{double}
+ *     \cgalParamDefault{`1`}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{number_of_darts}
+ *     \cgalParamDescription{a value used by Poisson disk sampling to specify the number of attempts to find a point in the annulus
+ *                          around a sample point that is sufficiently far from all other points in the sample.}
+ *     \cgalParamType{std::size_t}
+ *     \cgalParamDefault{`30`}
+ *   \cgalParamNEnd
+ *
  * \cgalNamedParamsEnd
  *
  * @see `CGAL::Polygon_mesh_processing::sample_triangle_soup()`
@@ -969,7 +1027,7 @@ sample_triangle_mesh(const TriangleMesh& tm,
  *                     of the smallest non-null edge of the soup or the value passed to the named parameter
  *                     `grid_spacing`.}
  *   \cgalParamNEnd
- *     \cgalParamNBegin{use_monte_carlo_sampling}
+ *   \cgalParamNBegin{use_monte_carlo_sampling}
  *     \cgalParamDescription{if `true` is passed, points are generated randomly in each triangle.}
  *     \cgalParamType{Boolean}
  *     \cgalParamDefault{`false`}
