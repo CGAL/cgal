@@ -1285,8 +1285,6 @@ perturb_vertex( PVertex pv
 
   CGAL_assertion(pv.is_perturbable());
 
-  int num_new_vertices_to_treat = 0;
-
   Cell_vector slivers;
   slivers.reserve(8);
   if (!helper_.try_lock_and_get_incident_slivers(
@@ -1349,8 +1347,7 @@ perturb_vertex( PVertex pv
         pv.increment_try_nb();
 
         // update modified vertices
-        num_new_vertices_to_treat +=
-          update_priority_queue(modified_vertices, sliver_bound, visitor, bad_vertices);
+        update_priority_queue(modified_vertices, sliver_bound, visitor, bad_vertices);
       }
       else
       {
@@ -1372,7 +1369,6 @@ perturb_vertex( PVertex pv
       if (pv.is_perturbable())
       {
         enqueue_task(pv, sliver_bound, visitor, bad_vertices);
-        ++num_new_vertices_to_treat;
       }
     }
     else
