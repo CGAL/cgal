@@ -52,10 +52,10 @@ public:
       : m_vertex_normal_map(vnm)
   { }
 
-  Line_quadric_calculator(TriangleMesh& tmesh):m_vertex_normal_map(tmesh.number_of_vertices())
-  {
-    Polygon_mesh_processing::compute_vertex_normals(tmesh, m_vertex_normal_map);
-  }
+  // Line_quadric_calculator(const TriangleMesh& tmesh):m_vertex_normal_map(tmesh.number_of_vertices())
+  // {
+  //   Polygon_mesh_processing::compute_vertex_normals(tmesh, m_vertex_normal_map);
+  // }
 
   template <typename VertexPointMap>
   Mat_4 construct_quadric_from_vertex(typename boost::graph_traits<TriangleMesh>::vertex_descriptor v,
@@ -118,13 +118,9 @@ public:
   typedef typename GeomTraits::FT                                                   FT;
 
 public:
-  GarlandHeckbert_line_policies(TriangleMesh& tmesh, const FT dm = FT(100))
-    : Base(tmesh, Quadric_calculator(tmesh), dm)
-  { }
-
   template<typename VNM>
-  GarlandHeckbert_line_policies(TriangleMesh& tmesh, const FT dm, const VNM vnm)
-    : Base(tmesh, Quadric_calculator(tmesh), dm, vnm)
+  GarlandHeckbert_line_policies(TriangleMesh& tmesh, const VNM vnm)
+    : Base(tmesh, Quadric_calculator(vnm), 0)
   { }
 
 public:

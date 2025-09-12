@@ -99,7 +99,7 @@ Surface_mesh edge_collapse(Surface_mesh& mesh,
 
   std::cout << "Edge collapse mesh of " << num_edges(mesh) << " edges. Policy: " << typeid(Policy).name() << std::endl;
 
-  const Policy p { mesh, 100 };
+  const Policy p ( mesh );
 
   const Cost& cost = p.get_cost();
   const Placement& unbounded_placement = p.get_placement();
