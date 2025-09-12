@@ -63,20 +63,10 @@ public:
 
   using VertexSmoothingContext = VertexSmoothingContext<C3t3, SizingFunction, CellSelector>;
 
-  std::unique_ptr<ComplexEdgeSmoothOp> m_edge_smooth_op;
-  std::unique_ptr<SurfaceVertexSmoothOp> m_surface_vertices_smooth_op;
-  std::unique_ptr<InternalVertexSmoothOp> m_internal_vertices_smooth_op;
-  std::shared_ptr<VertexSmoothingContext> m_context;
-  Elementary_remesher()
-    : m_edge_smooth_op(nullptr), m_surface_vertices_smooth_op(nullptr), m_internal_vertices_smooth_op(nullptr), m_context(nullptr), m_visitor(nullptr)
-  {}
-
-  Elementary_remesher(C3t3& c3t3, const SizingFunction& sizing, const CellSelector& cell_selector, const Visitor* visitor = nullptr)
-    : m_edge_smooth_op(nullptr), m_surface_vertices_smooth_op(nullptr), m_internal_vertices_smooth_op(nullptr), m_context(nullptr), m_visitor(visitor)
-  {}
-
-private:
-  const Visitor* m_visitor;
+  std::unique_ptr<ComplexEdgeSmoothOp> m_edge_smooth_op = nullptr;
+  std::unique_ptr<SurfaceVertexSmoothOp> m_surface_vertices_smooth_op = nullptr;
+  std::unique_ptr<InternalVertexSmoothOp> m_internal_vertices_smooth_op = nullptr;
+  std::shared_ptr<VertexSmoothingContext> m_context = nullptr;
 
 public:
   static void split(C3t3& c3t3, const SizingFunction& sizing, const CellSelector& cell_selector, const bool protect_boundaries) {

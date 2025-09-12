@@ -277,7 +277,7 @@ private:
               }
             }
             // Execute operation once lock is acquired
-            bool success = op.execute_operation(element, c3t3);
+            op.execute_operation(element, c3t3);
 #ifdef CGAL_TETRAHEDRAL_REMESHING_WRITE_LOCK_STATS
             num_successful_locks++;
 #endif
