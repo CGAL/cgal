@@ -143,7 +143,8 @@ public:
       auto& tr = c3t3.triangulation();
       #if 1
     boost::container::small_vector<Cell_handle, 64> inc_cells_first,inc_cells_second;
-    bool successfully_locked=tr.try_lock_and_get_incident_cells(e.first, inc_cells_first) &&tr.try_lock_and_get_incident_cells(e.second, inc_cells_second);
+    bool successfully_locked = tr.try_lock_and_get_incident_cells(e.first, inc_cells_first)
+                            && tr.try_lock_and_get_incident_cells(e.second, inc_cells_second);
     //Cache the incident cells
     if(successfully_locked) {
       inc_cells[e.first] = inc_cells_first;
@@ -325,7 +326,8 @@ public:
     auto& tr = c3t3.triangulation();
   #if 1
     boost::container::small_vector<Cell_handle, 64> inc_cells_first,inc_cells_second;
-    bool successfully_locked = tr.try_lock_and_get_incident_cells(e.first, inc_cells_first) &&tr.try_lock_and_get_incident_cells(e.second, inc_cells_second);
+    bool successfully_locked = tr.try_lock_and_get_incident_cells(e.first, inc_cells_first)
+                            && tr.try_lock_and_get_incident_cells(e.second, inc_cells_second);
     if(successfully_locked) {
       inc_cells[e.first] = inc_cells_first;
       inc_cells[e.second] = inc_cells_second;
