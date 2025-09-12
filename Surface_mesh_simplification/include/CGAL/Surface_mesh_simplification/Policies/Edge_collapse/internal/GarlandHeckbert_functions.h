@@ -14,10 +14,10 @@
 
 #include <CGAL/license/Surface_mesh_simplification.h>
 
-#include <CGAL/Polygon_mesh_processing/compute_normal.h>
-
 #include <CGAL/Surface_mesh_simplification/internal/Common.h>
 #include <CGAL/boost/graph/helpers.h>
+
+#include <CGAL/Polygon_mesh_processing/compute_normal.h>
 
 #include <CGAL/Origin.h>
 
@@ -540,10 +540,10 @@ construct_prob_triangle_quadric_from_face(typename boost::graph_traits<TriangleM
 template <typename GeomTraits>
 typename GarlandHeckbert_matrix_types<GeomTraits>::Mat_4
 construct_line_quadric_from_normal(const typename GeomTraits::Vector_3& normal,
-                                           const typename GeomTraits::Point_3& point,
-                                           const GeomTraits& gt)
+                                   const typename GeomTraits::Point_3& point,
+                                   const GeomTraits& gt)
 {
-  typedef typename GeomTraits::Vector_3                                        Vector_3;
+  typedef typename GeomTraits::Vector_3 Vector_3;
 
   auto cp = gt.construct_cross_product_vector_3_object();
   auto plane = gt.construct_plane_3_object();
@@ -557,18 +557,20 @@ construct_line_quadric_from_normal(const typename GeomTraits::Vector_3& normal,
   return construct_classic_plane_quadric_from_normal(x, point, gt)+construct_classic_plane_quadric_from_normal(y, point, gt);
 }
 
+/*
 template <typename TriangleMesh, typename VertexPointMap, typename GeomTraits>
 typename GarlandHeckbert_matrix_types<GeomTraits>::Mat_4
 construct_line_quadric_from_vertex(const typename boost::graph_traits<TriangleMesh>::vertex_descriptor v,
-                                           const TriangleMesh& mesh,
-                                           const VertexPointMap vpm,
-                                           const GeomTraits& gt)
+                                   const TriangleMesh& mesh,
+                                   const VertexPointMap vpm,
+                                   const GeomTraits& gt)
 {
-  typedef typename GeomTraits::Vector_3                                        Vector_3;
+  typedef typename GeomTraits::Vector_3 Vector_3;
 
   const Vector_3 normal = Polygon_mesh_processing::compute_vertex_normal(v, mesh, parameters::geom_traits(gt).vertex_point_map(vpm));
   return construct_line_quadric_from_normal(normal, get(vpm, v), gt);
 }
+*/
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// PROB VARIANCE
