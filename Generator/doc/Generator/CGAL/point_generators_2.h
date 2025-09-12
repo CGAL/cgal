@@ -390,6 +390,11 @@ typedef const Point_2& reference;
  */
  typedef const Point_2& reference;
 
+/// @}
+
+/// \name Functions
+/// @{
+
 /*!
 Creates  an input iterator `g` generating points of type `Point_2` uniformly
 distributed between the triangles of the triangulation. Each triangle has a probability to be chosen to hold the point depending on its area.
@@ -397,6 +402,13 @@ distributed between the triangles of the triangulation. Each triangle has a prob
 */
 Random_points_in_triangle_mesh_2(const Triangulation& triangulation, Random& rnd =
 get_default_random() );
+
+/*!
+returns a face containing the last point generated.
+\pre a point must have been generated before calling the function
+*/
+typename Triangulation::Face_handle
+last_item_picked() const;
 
 /// @}
 
@@ -455,6 +467,11 @@ get_default_random() );
  */
  typedef const Point_2& reference;
 
+/// @}
+
+ /// \name Functions
+ /// @{
+
 /*!
 Creates  an input iterator `g` generating points of type `Point_2` uniformly
 distributed between the triangles of the range. Each triangle has a probability to be chosen to hold the point depending on its area.
@@ -463,6 +480,13 @@ distributed between the triangles of the range. Each triangle has a probability 
 template<typename TriangleRange>
 Random_points_in_triangles_2(const TriangleRange& triangles, Random& rnd =
 get_default_random() );
+
+/*!
+returns the address of an input triangle containing the last point generated.
+\pre a point must have been generated before calling the function
+*/
+const Triangle_2*
+last_item_picked() const;
 
 /// @}
 
