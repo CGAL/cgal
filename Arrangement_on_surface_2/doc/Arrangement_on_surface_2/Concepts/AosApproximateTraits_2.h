@@ -17,6 +17,8 @@
  * \cgalHasModelsEnd
  *
  * \sa `AosApproximatePointTraits_2`
+ * \sa `AosConstructXMonotoneCurveTraits_2`
+ * \sa `AosXMonotoneTraits_2`
  * \sa `draw()`
  */
 class AosApproximateTraits_2 {
