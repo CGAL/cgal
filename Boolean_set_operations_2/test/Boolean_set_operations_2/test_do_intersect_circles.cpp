@@ -25,7 +25,6 @@ int main(int argc, char* argv[]) {
   using Circle_segment_pnt_2 = Circle_segment_arr_traits_2::Point_2;
   using Circle_segment_gps_traits_2 = CGAL::Gps_traits_2<Circle_segment_arr_traits_2>;
   using Circle_segment_polygon = Circle_segment_gps_traits_2::General_polygon_2;
-  using Circle_segment_polygon_with_holes = Circle_segment_gps_traits_2::General_polygon_with_holes_2;
 
   Circle_segment_arr_traits_2 circle_segment_traits;
 
