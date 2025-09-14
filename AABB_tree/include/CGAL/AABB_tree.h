@@ -674,6 +674,8 @@ public:
       m_nodes.emplace_back();
       return m_nodes.back();
     }
+
+    std::size_t nb_node() const { return m_nodes.size(); }
   private:
     const Primitive& singleton_data() const {
       CGAL_assertion(size() == 1);

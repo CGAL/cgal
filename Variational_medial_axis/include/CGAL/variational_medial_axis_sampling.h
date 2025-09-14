@@ -24,6 +24,7 @@
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/Side_of_triangle_mesh.h>
+#include <CGAL/fast_winding_number.h>
 #include <Eigen/Dense>
 #include <algorithm>
 #include <iterator>
@@ -936,6 +937,8 @@ class Variational_medial_axis
   using Face_normal_map = typename boost::property_map<TriangleMesh_, Face_normal_tag>::const_type;
   using Face_area_tag = CGAL::dynamic_face_property_t<FT>;
   using Face_area_map = typename boost::property_map<TriangleMesh_, Face_area_tag>::const_type;
+  using Face_centroid_tag = CGAL::dynamic_face_property_t<Point_3>;
+  using Face_centroid_map = typename boost::property_map<TriangleMesh_, Face_centroid_tag>::const_type;
   using Vertex_error_tag = CGAL::dynamic_vertex_property_t<FT>;
   using Vertex_error_map = typename boost::property_map<TriangleMesh_, Vertex_error_tag>::const_type;
   using Vertex_cluster_sphere_tag = CGAL::dynamic_vertex_property_t<Sphere_ID>;
@@ -946,6 +949,7 @@ class Variational_medial_axis
   using Vertex_medial_sphere_radius_tag = CGAL::dynamic_vertex_property_t<FT>;
   using Vertex_medial_sphere_radius_map =
       typename boost::property_map<TriangleMesh_, Vertex_medial_sphere_radius_tag>::const_type;
+  using FWN = CGAL::Fast_winding_number<TriangleMesh_, Face_normal_map, Face_area_map,Face_centroid_map,Tree>;
 
 public:
   /// \name Constructor
@@ -1008,6 +1012,7 @@ public:
     verbose_ = choose_parameter(get_parameter(np, internal_np::verbose), false);
     vpm_ = choose_parameter(get_parameter(np, internal_np::vertex_point),
                              get_const_property_map(CGAL::vertex_point, tmesh));
+    beta_ = FT(2.0);
 #ifndef CGAL_LINKED_WITH_TBB
     static_assert(!std::is_same_v<ConcurrencyTag_, Parallel_tag>, "Parallel_tag is enabled but TBB is unavailable.");
 #endif
@@ -1333,7 +1338,7 @@ private:
     vertex_medial_sphere_radius_map_ = get(Vertex_medial_sphere_radius_tag(), tmesh_, FT(0.));
     face_normal_map_ = get(Face_normal_tag(), tmesh_, Vector_3(0., 0., 0.));
     face_area_map_ = get(Face_area_tag(), tmesh_, 0.);
-
+    face_centroid_map_ = get(Face_centroid_tag(), tmesh_, Point_3(0., 0., 0.));
     // Compute normals
     PMP::compute_vertex_normals(tmesh_, vertex_normal_map_);
     PMP::compute_face_normals(tmesh_, face_normal_map_);
@@ -1342,10 +1347,24 @@ private:
     for(face_descriptor f : faces(tmesh_)) {
       double area = PMP::face_area(f, tmesh_);
       put(face_area_map_, f, area);
+      FT sum = FT(0), x = FT(0), y = FT(0), z = FT(0);
       for(vertex_descriptor v : vertices_around_face(halfedge(f, tmesh_), tmesh_)) {
         put(vertex_area_map_, v, get(vertex_area_map_, v) + area / 3.0);
+        const Point_3& point = get(vpm_, v);
+        x += point.x();
+        y += point.y();
+        z += point.z();
+        sum += FT(1);
       }
+      CGAL_precondition(sum > FT(0));
+      x /= sum;
+      y /= sum;
+      z /= sum;
+      put(face_centroid_map_, f, Point_3(x, y, z));
+      put(face_area_map_, f, area);
     }
+    // Initialize the fast winding number function
+    fast_winding_number_ = std::make_unique<FWN>(tmesh_, face_normal_map_, face_area_map_, face_centroid_map_, *tree_, beta_);
     sphere_mesh_ = std::make_unique<MSMesh>();
 
     // Algorithm variables
@@ -1432,7 +1451,7 @@ private:
     const FT denoise_preserve = FT(20.0); // in degree
     const int iteration_limit = 30;
     int j = 0;
-    FT r = FT(0.25) * scale_; // initial radius
+    FT r = FT(1.0) * scale_; // initial radius
     Point_3 c = p - (r * n);
 
     while(true) {
@@ -1547,14 +1566,14 @@ private:
 
   void correct_sphere(MSphere& sphere, const Eigen::Matrix<FT, 4, 1>& optimized_sphere_params) {
 
-    Side_of_triangle_mesh<TriangleMesh_, GT, VPM, Tree> side_of(*tree_, traits_);
+    //Side_of_triangle_mesh<TriangleMesh_, GT, VPM, Tree> side_of(*tree_, traits_);
     Point_3 optimal_center(optimized_sphere_params(0), optimized_sphere_params(1), optimized_sphere_params(2));
     auto [cp, closest_face] = tree_->closest_point_and_primitive(optimal_center);
     FT len = (optimal_center - cp).squared_length();
 
     Vector_3 normal = (cp - optimal_center) / CGAL::approximate_sqrt(len);
 
-    if((side_of(optimal_center) == CGAL::ON_UNBOUNDED_SIDE))
+    if(!fast_winding_number_->is_inside(optimal_center))
       normal = -normal; // if the center is outside, flip the normal
 
     auto [c, r] = compute_shrinking_ball_impl(cp, normal, AccelerationType_{});
@@ -1594,6 +1613,8 @@ private:
         EVec4 lhs = EVec4::Zero();
         FT rhs = 0.0;
         for(face_descriptor f : faces_around_target(halfedge(v, tmesh_), tmesh_)) {
+          if(f == boost::graph_traits<TriangleMesh_>::null_face())
+            continue;
           Vector_3 normal = get(face_normal_map_, f);
           EVec3 normal_eigen(normal.x(), normal.y(), normal.z());
           EVec4 n4(normal_eigen(0), normal_eigen(1), normal_eigen(2), 1.0);
