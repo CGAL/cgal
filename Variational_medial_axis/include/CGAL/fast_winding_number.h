@@ -261,7 +261,7 @@ public:
     precompute_coeffs();
   }
   ///@}
-  
+
   /**
    *
    * \brief computes the fast winding number of a given query point.
