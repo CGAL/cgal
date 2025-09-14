@@ -1070,7 +1070,7 @@ public:
     bool success = false;
     reset_algorithm_state();
     sphere_mesh_->spheres().reserve(desired_number_of_spheres_);
-    
+
     if constexpr(std::is_same_v<ConcurrencyTag_, Parallel_tag>) {
 #if CGAL_LINKED_WITH_TBB
       // Compute the shrinking balls in parallel
@@ -1906,7 +1906,7 @@ private:
   Face_normal_map face_normal_map_;
   Face_area_map face_area_map_;
   Face_centroid_map face_centroid_map_;
-  
+
 };
 
 namespace IO {

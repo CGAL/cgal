@@ -61,7 +61,7 @@ int main() {
   Face_area_map face_area_map_ = get(Face_area_tag(), mesh, 0.);
   Face_centroid_map face_centroid_map_ = get(Face_centroid_tag(), mesh, Point(0., 0., 0.));
   // Compute face normals, areas, centroids
-  namespace PMP = CGAL::Polygon_mesh_processing;  
+  namespace PMP = CGAL::Polygon_mesh_processing;
   PMP::compute_face_normals(mesh, face_normal_map_);
   for(face_descriptor f : faces(mesh)) {
     double area = PMP::face_area(f, mesh);

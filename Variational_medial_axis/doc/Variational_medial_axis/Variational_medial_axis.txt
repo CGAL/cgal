@@ -84,7 +84,7 @@ In such cases, the BVH may offer better geometric containment, though it is neit
 The function `CGAL::extract_variational_medial_skeleton()` provides a convenient interface for users who want to quickly extract a medial skeleton with specified parameters.
 This function accepts the following parameters:
 - `number_of_spheres`: target number of medial spheres
-- `lambda`: weight balancing the energy terms 
+- `lambda`: weight balancing the energy terms
 - `number_of_iterations`: maximum number of iterations
 - `concurrency_tag`: execution mode - sequential or parallel
 
