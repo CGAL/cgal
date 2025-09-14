@@ -1891,8 +1891,10 @@ private:
   FT last_total_error_;
   FT total_error_;
   FT converged_threshold_;
+  FT beta_; // parameter for fast_winding_number
   std::unique_ptr<Tree> tree_;
   std::unique_ptr<MSMesh> sphere_mesh_;
+  std::unique_ptr<FWN> fast_winding_number_;
   FT scale_;
   bool verbose_;
   // Property maps
@@ -1904,6 +1906,8 @@ private:
   Vertex_medial_sphere_radius_map vertex_medial_sphere_radius_map_;
   Face_normal_map face_normal_map_;
   Face_area_map face_area_map_;
+  Face_centroid_map face_centroid_map_;
+  
 };
 
 namespace IO {
