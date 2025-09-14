@@ -412,4 +412,4 @@ CGAL_add_named_parameter(plc_face_id_t, plc_face_id, plc_face_id)
 CGAL_add_named_parameter(with_plc_face_id_t, with_plc_face_id, with_plc_face_id)
 
 //List of named parameters used in the package 'Variational_medial_axis_sampling'
-CGAL_add_named_parameter(fast_winding_number_t, fast_winding_number, fast_winding_number)
+CGAL_add_named_parameter(fast_winding_number_beta_t, fast_winding_number_beta, fast_winding_number_beta)

@@ -179,12 +179,9 @@ template <class TriangleMesh,
           class Tree,
           int ORDER = 3,
           class GeomTraits = Default,
-          typename VertexPointMap = Default>
+          class VertexPointMap = Default>
 class Fast_winding_number
 {
-  using parameters::choose_parameter;
-  using parameters::get_parameter;
-
   using VPM = typename Default::Get<VertexPointMap,
                                     typename boost::property_map<TriangleMesh, vertex_point_t>::const_type>::type;
   using GT = typename Default::Get<
@@ -203,58 +200,60 @@ class Fast_winding_number
   using Mat3 = Eigen::Matrix<FT, 3, 3>;
 
 public:
-  　/** \name Constructor
-  　*@{
-  　* The constructor of a vmas object.
-  　*
-  　* @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
-  　*
-  　* @param tmesh
-  　*        The input triangle mesh without borders.
-  　* @param fnm
-  　*        A readable property map that maps each face of `tmesh` to its normal vector.
-  　* @param fam
-  　*        A readable property map that maps each face of `tmesh` to its area.
-  　* @param fcm
-  　*        A readable property map that maps each face of `tmesh` to its centroid.
-  　* @param tree
-  　*        A built AABB tree over the faces of `tmesh`.
-  　* @param gt
-  　*        The geometric traits class used for geometric computations.
-  　* @param np
-  　*        An optional sequence of \ref bgl_namedparameters "Named Parameters", listed below:
-  　*
-  　* \cgalNamedParamsBegin
-  　*   \cgalParamNBegin{vertex_point_map}
-  　*     \cgalParamDescription{a property map associating points to the vertices of `pmesh`}
-  　*     \cgalParamType{a class model of `ReadablePropertyMap` with
-  　*     `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
-  　*                    as key type and `%Point_3` as value type}
-  　*     \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
-  　*   \cgalParamNEnd
-  　*   \cgalParamNBegin{beta}
-  　*     \cgalParamDescription{The parameter to control the accuracy/speed trade-off of the fast winding number
-  　*     evaluation. little values lead to more accurate results, but slower evaluation.}
-  　*     \cgalParamType{FT}
-  　*     \cgalParamDefault{FT(2.0)}
-  　*     \cgalParamExtra{The range of this parameter is (0,+inf).}
-  　*   \cgalParamNEnd
-  　* \cgalNamedParamsEnd
-  　*/
-      template <class NamedParameters = parameters::Default_named_parameters>
-      Fast_winding_number(const TriangleMesh& tmesh,
-                          const FaceNormalMap& fnm,
-                          const FaceAreaMap& fam,
-                          const FaceCentroidMap& fcm,
-                          Tree& tree,
-                          const NamedParameters& np = parameters::default_values(),
-                          const GT& gt = GT())
+  /** \name Constructor
+   *@{
+   * The constructor of a vmas object.
+   *
+   * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+   *
+   * @param tmesh
+   *        The input triangle mesh without borders.
+   * @param fnm
+   *        A readable property map that maps each face of `tmesh` to its normal vector.
+   * @param fam
+   *        A readable property map that maps each face of `tmesh` to its area.
+   * @param fcm
+   *        A readable property map that maps each face of `tmesh` to its centroid.
+   * @param tree
+   *        A built AABB tree over the faces of `tmesh`.
+   * @param gt
+   *        The geometric traits class used for geometric computations.
+   * @param np
+   *        An optional sequence of \ref bgl_namedparameters "Named Parameters", listed below:
+   *
+   * \cgalNamedParamsBegin
+   *   \cgalParamNBegin{vertex_point_map}
+   *     \cgalParamDescription{a property map associating points to the vertices of `pmesh`}
+   *     \cgalParamType{a class model of `ReadablePropertyMap` with
+   *     `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+   *                    as key type and `%Point_3` as value type}
+   *     \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
+   *   \cgalParamNEnd
+   *   \cgalParamNBegin{beta}
+   *     \cgalParamDescription{The parameter to control the accuracy/speed trade-off of the fast winding number
+   *     evaluation. little values lead to more accurate results, but slower evaluation.}
+   *     \cgalParamType{FT}
+   *     \cgalParamDefault{FT(2.0)}
+   *     \cgalParamExtra{The range of this parameter is (0,+inf).}
+   *   \cgalParamNEnd
+   * \cgalNamedParamsEnd
+   */
+  template <class NamedParameters = parameters::Default_named_parameters>
+  Fast_winding_number(const TriangleMesh& tmesh,
+                      const FaceNormalMap& fnm,
+                      const FaceAreaMap& fam,
+                      const FaceCentroidMap& fcm,
+                      Tree& tree,
+                      const NamedParameters& np = parameters::default_values(),
+                      const GT& gt = GT())
       : tmesh_(tmesh)
       , tree_(tree)
       , fnm_(fnm)
       , fam_(fam)
       , fcm_(fcm)
       , gt_(gt) {
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
     vpm_ = choose_parameter(get_parameter(np, internal_np::vertex_point),
                             get_const_property_map(CGAL::vertex_point, tmesh));
     beta_ = choose_parameter(get_parameter(np, internal_np::fast_winding_number_beta), FT(2.0));
@@ -289,8 +288,9 @@ public:
    * @return the fast winding number of `p`
    */
   template <class NamedParameters = parameters::Default_named_parameters>
-  FT evaluate_fast_winding_number(const Point_3& p, const NamedParameters& np = parameters::default_values()) const {
-
+  FT evaluate_fast_winding_number(const Point_3& p, const NamedParameters& np = parameters::default_values())  {
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
     beta_ = choose_parameter(get_parameter(np, internal_np::fast_winding_number_beta), FT(2.0));
 
     FT winding_number = FT(0);
@@ -520,13 +520,13 @@ private:
   const FaceNormalMap& fnm_;
   const FaceAreaMap& fam_;
   const FaceCentroidMap& fcm_;
-  const VPM vpm_;
+  VPM vpm_;
   const GT gt_;
 
   std::vector<FT> node_radius_;
   std::vector<Coeff> coeffs_;
   Tree& tree_;
-  const FT beta_;
+  FT beta_;
 };
 
 } // end of namespace CGAL
