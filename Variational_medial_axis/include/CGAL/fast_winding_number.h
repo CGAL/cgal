@@ -216,8 +216,6 @@ public:
    *        A readable property map that maps each face of `tmesh` to its centroid.
    * @param tree
    *        A built AABB tree over the faces of `tmesh`.
-   * @param gt
-   *        The geometric traits class used for geometric computations.
    * @param np
    *        An optional sequence of \ref bgl_namedparameters "Named Parameters", listed below:
    *
@@ -244,14 +242,14 @@ public:
                       const FaceAreaMap& fam,
                       const FaceCentroidMap& fcm,
                       Tree& tree,
-                      const NamedParameters& np = parameters::default_values(),
-                      const GT& gt = GT())
+                      const NamedParameters& np = parameters::default_values()
+                      )
       : tmesh_(tmesh)
       , tree_(tree)
       , fnm_(fnm)
       , fam_(fam)
       , fcm_(fcm)
-      , gt_(gt) {
+      {
     using parameters::choose_parameter;
     using parameters::get_parameter;
     vpm_ = choose_parameter(get_parameter(np, internal_np::vertex_point),
@@ -263,14 +261,7 @@ public:
     precompute_coeffs();
   }
   ///@}
-
-  Fast_winding_number(const TriangleMesh& tmesh,
-                      const FaceNormalMap& fnm,
-                      const FaceAreaMap& fam,
-                      const FaceCentroidMap& fcm,
-                      Tree& tree,
-                      const FT beta)
-      : Fast_winding_number(tmesh, fnm, fam, fcm, tree, beta, get(CGAL::vertex_point, tmesh)) {}
+  
   /**
    *
    * \brief computes the fast winding number of a given query point.
@@ -355,7 +346,7 @@ public:
    * @param p the query point
    * @return `true` if `p` is inside the input mesh, `false` otherwise.
    */
-  bool is_inside(const Point_3& p) const { return evaluate_fast_winding_number(p) > FT(0.5); }
+  bool is_inside(const Point_3& p) { return evaluate_fast_winding_number(p) > FT(0.5); }
 
 private:
   std::size_t node_id(const Node* node) const { return std::size_t(node - tree_.root_node()); }
@@ -521,7 +512,6 @@ private:
   const FaceAreaMap& fam_;
   const FaceCentroidMap& fcm_;
   VPM vpm_;
-  const GT gt_;
 
   std::vector<FT> node_radius_;
   std::vector<Coeff> coeffs_;

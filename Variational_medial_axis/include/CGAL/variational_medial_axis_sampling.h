@@ -1012,7 +1012,6 @@ public:
     verbose_ = choose_parameter(get_parameter(np, internal_np::verbose), false);
     vpm_ = choose_parameter(get_parameter(np, internal_np::vertex_point),
                              get_const_property_map(CGAL::vertex_point, tmesh));
-    beta_ = FT(2.0);
 #ifndef CGAL_LINKED_WITH_TBB
     static_assert(!std::is_same_v<ConcurrencyTag_, Parallel_tag>, "Parallel_tag is enabled but TBB is unavailable.");
 #endif
@@ -1364,7 +1363,7 @@ private:
       put(face_area_map_, f, area);
     }
     // Initialize the fast winding number function
-    fast_winding_number_ = std::make_unique<FWN>(tmesh_, face_normal_map_, face_area_map_, face_centroid_map_, *tree_, beta_);
+    fast_winding_number_ = std::make_unique<FWN>(tmesh_, face_normal_map_, face_area_map_, face_centroid_map_, *tree_);
     sphere_mesh_ = std::make_unique<MSMesh>();
 
     // Algorithm variables
@@ -1891,7 +1890,7 @@ private:
   FT last_total_error_;
   FT total_error_;
   FT converged_threshold_;
-  FT beta_; // parameter for fast_winding_number
+
   std::unique_ptr<Tree> tree_;
   std::unique_ptr<MSMesh> sphere_mesh_;
   std::unique_ptr<FWN> fast_winding_number_;
