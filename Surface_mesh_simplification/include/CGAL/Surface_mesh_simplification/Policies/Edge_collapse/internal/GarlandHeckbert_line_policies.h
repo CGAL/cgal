@@ -21,6 +21,7 @@
 
 #include <CGAL/Default.h>
 #include <boost/property_map/property_map.hpp>
+#include <boost/property_map/function_property_map.hpp>
 
 namespace CGAL {
 namespace Surface_mesh_simplification {
@@ -31,7 +32,7 @@ This policy is not useful on its own; it is designed to be combined with another
 Therefore, it is kept internal.
 */
 
-template <typename TriangleMesh, typename GeomTraits, typename VertexNormalMap>
+template <typename TriangleMesh, typename GeomTraits>
 class Line_quadric_calculator
 {
   typedef typename GarlandHeckbert_matrix_types<GeomTraits>::Mat_4             Mat_4;
@@ -42,20 +43,15 @@ class Line_quadric_calculator
   typedef typename GeomTraits::Vector_3                                        Vector_3;
 
 private:
-  VertexNormalMap m_vertex_normal_map;
+  std::function<Vector_3(vertex_descriptor)> m_vertex_normal_map;
 
 public:
   Line_quadric_calculator() = delete;
 
   template <typename VNM>
   Line_quadric_calculator(const VNM vnm)
-      : m_vertex_normal_map(vnm)
+      : m_vertex_normal_map([vnm](vertex_descriptor v) -> Vector_3{ return get(vnm, v); })
   { }
-
-  // Line_quadric_calculator(const TriangleMesh& tmesh):m_vertex_normal_map(tmesh.number_of_vertices())
-  // {
-  //   Polygon_mesh_processing::compute_vertex_normals(tmesh, m_vertex_normal_map);
-  // }
 
   template <typename VertexPointMap>
   Mat_4 construct_quadric_from_vertex(typename boost::graph_traits<TriangleMesh>::vertex_descriptor v,
@@ -63,7 +59,7 @@ public:
                                       const VertexPointMap point_map,
                                       const GeomTraits& gt) const
   {
-    return construct_line_quadric_from_normal(get(m_vertex_normal_map, v), get(point_map, v), gt);
+    return construct_line_quadric_from_normal(m_vertex_normal_map(v), get(point_map, v), gt);
   }
 
   template <typename VertexPointMap>
@@ -101,10 +97,10 @@ template<typename TriangleMesh,
                                                 CGAL::dynamic_vertex_property_t<typename GeomTraits::Vector_3> >::const_type >
 class GarlandHeckbert_line_policies
   : public internal::GarlandHeckbert_cost_and_placement<
-             internal::Line_quadric_calculator<TriangleMesh, GeomTraits, VertexNormalMap>, TriangleMesh, GeomTraits>
+             internal::Line_quadric_calculator<TriangleMesh, GeomTraits>, TriangleMesh, GeomTraits>
 {
 public:
-  typedef internal::Line_quadric_calculator<TriangleMesh, GeomTraits, VertexNormalMap> Quadric_calculator;
+  typedef internal::Line_quadric_calculator<TriangleMesh, GeomTraits> Quadric_calculator;
 
 private:
   typedef internal::GarlandHeckbert_cost_and_placement<

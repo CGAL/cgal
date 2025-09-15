@@ -23,6 +23,7 @@
 
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
+#include <boost/property_map/function_property_map.hpp>
 
 namespace CGAL {
 namespace Surface_mesh_simplification {
@@ -50,8 +51,9 @@ struct GH_helper{
 
     Vertex_normal_map vertex_normals = choose_parameter(get_parameter(np, internal_np::vertex_normal_map),
                                                         get(Vertex_normal_tag(), tmesh));
-    if constexpr(must_compute_vertex_normals)
+    if constexpr(must_compute_vertex_normals){
       Polygon_mesh_processing::compute_vertex_normals(tmesh, vertex_normals, np);
+    }
     return vertex_normals;
   }
 
@@ -64,25 +66,21 @@ struct GH_helper{
   FT dm(const NamedParameters& np) const {
     using parameters::choose_parameter;
     using parameters::get_parameter;
-    // choose_parameter(get_parameter(np, internal_np::discontinuity_multiplier), 100);
-    return FT(100);
+    return choose_parameter(get_parameter(np, internal_np::discontinuity_multiplier), 100);
   }
 };
 
 }
 
-template<typename TriangleMesh,
-         typename GeomTraits,
-         typename VertexNormalMap = typename boost::property_map<TriangleMesh,
-                                                CGAL::dynamic_vertex_property_t<typename GeomTraits::Vector_3> >::const_type >
+template<typename TriangleMesh, typename GeomTraits>
 class GarlandHeckbert_plane_and_line_policies
   : public internal::GarlandHeckbert_composed_policies<TriangleMesh, GeomTraits,
                                              GarlandHeckbert_plane_policies<TriangleMesh, GeomTraits>,
-                                             internal::GarlandHeckbert_line_policies<TriangleMesh, GeomTraits, VertexNormalMap>,
+                                             internal::GarlandHeckbert_line_policies<TriangleMesh, GeomTraits>,
                                              true>
 {
   typedef GarlandHeckbert_plane_policies<TriangleMesh, GeomTraits>                            GH_plane_polices;
-  typedef internal::GarlandHeckbert_line_policies<TriangleMesh, GeomTraits, VertexNormalMap>  GH_line_polices;
+  typedef internal::GarlandHeckbert_line_policies<TriangleMesh, GeomTraits>                   GH_line_polices;
   typedef internal::GarlandHeckbert_composed_policies<TriangleMesh, GeomTraits,
                                                       GH_plane_polices,
                                                       GH_line_polices,
@@ -99,24 +97,10 @@ public:
   typedef typename GeomTraits::FT                                              FT;
 
 public:
-  // GarlandHeckbert_plane_and_line_policies(TriangleMesh& tmesh,
-  //                                         const FT line_weight = FT(0.001),
-  //                                         const FT dm = FT(100))
-  //   : Base(tmesh, GH_plane_polices(tmesh, dm), GH_line_polices(tmesh, dm), FT(1.)/line_weight, dm)
-  // { }
-
-  template<typename VNM>
-  GarlandHeckbert_plane_and_line_policies(TriangleMesh& tmesh,
-                                          const FT line_weight,
-                                          const FT dm,
-                                          const VNM vnm)
-    : Base(tmesh, GH_plane_polices(tmesh, dm), GH_line_polices(tmesh, dm, vnm), FT(1.)/line_weight, dm)
-  { }
-
   template<typename NP = parameters::Default_named_parameters>
   GarlandHeckbert_plane_and_line_policies(TriangleMesh& tmesh, const NP& np = parameters::default_values()):
     Base(tmesh,
-      GH_plane_polices(tmesh, internal::GH_helper<TM,NP>().dm(np)),
+      GH_plane_polices(tmesh),
       GH_line_polices(tmesh, internal::GH_helper<TM,NP>().vnm(tmesh, np)),
       FT(1.)/internal::GH_helper<TM,NP>().lw(np),
       FT(1.),

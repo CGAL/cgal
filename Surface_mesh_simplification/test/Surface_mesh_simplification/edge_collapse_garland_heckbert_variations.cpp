@@ -91,15 +91,14 @@ get_all_meshes(const std::vector<std::string>& filenames)
 
 template <typename Policy>
 Surface_mesh edge_collapse(Surface_mesh& mesh,
-                           const double ratio = 0.2)
+                           const double ratio,
+                           const Policy p)
 {
   typedef typename Policy::Get_cost Cost;
   typedef typename Policy::Get_placement Placement;
   typedef SMS::Bounded_normal_change_placement<Placement> Bounded_placement;
 
   std::cout << "Edge collapse mesh of " << num_edges(mesh) << " edges. Policy: " << typeid(Policy).name() << std::endl;
-
-  const Policy p ( mesh );
 
   const Cost& cost = p.get_cost();
   const Placement& unbounded_placement = p.get_placement();
@@ -117,6 +116,12 @@ Surface_mesh edge_collapse(Surface_mesh& mesh,
   std::cout << edges(mesh).size() << " edges. Elapsed: " << std::to_string(elapsed_ns) << " (ms)\n";
 
   return mesh;
+}
+
+template <typename Policy>
+Surface_mesh edge_collapse(Surface_mesh& mesh,
+                           const double ratio = 0.2){
+  return edge_collapse(mesh, ratio, Policy(mesh));
 }
 
 // =================================================================================================
@@ -281,6 +286,14 @@ void run(const std::pair<TriangleMesh, std::string>& input)
   gather_face_aspect_ratio(input.first, out);
 }
 
+template<typename TriangleMesh>
+void test_parameters_plane_and_line(const TriangleMesh& mesh){
+  using CGAL::Surface_mesh_simplification::make_GarlandHeckbert_plane_and_line_policies;
+  TriangleMesh cp = mesh;
+  edge_collapse(cp, 0.2, make_GarlandHeckbert_plane_and_line_policies(cp,
+                                  CGAL::parameters::line_policies_weight(0.001).discontinuity_multiplier(50).geom_traits(Kernel())));
+}
+
 int main(int argc, char** argv)
 {
   std::vector<std::string> default_data = { "data/helmet.off",
@@ -295,8 +308,10 @@ int main(int argc, char** argv)
     data = default_data;
 
   std::vector<std::pair<Surface_mesh, std::string> > named_meshes = get_all_meshes(data);
-  for(const auto& e : named_meshes)
+  for(const auto& e : named_meshes){
     run(e);
+    test_parameters_plane_and_line(e.first);
+  }
 
   std::cout << "Done!" << std::endl;
 
