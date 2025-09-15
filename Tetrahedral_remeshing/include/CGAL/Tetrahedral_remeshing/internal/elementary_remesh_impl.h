@@ -111,8 +111,8 @@ public:
 
   void smooth(
       C3t3& c3t3,
-      const SizingFunction& sizing,
-      const CellSelector& cell_selector,
+      const SizingFunction& /* sizing */,
+      const CellSelector& /* cell_selector */,
       const bool protect_boundaries,
       const bool smooth_constrained_edges)
   {

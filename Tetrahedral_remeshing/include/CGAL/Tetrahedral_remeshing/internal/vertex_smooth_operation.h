@@ -601,7 +601,7 @@ public:
   using typename BaseClass::FT;
 
 public:
-  InternalVertexSmoothOperation(const C3t3& c3t3,
+  InternalVertexSmoothOperation(const C3t3& /* c3t3 */,
                                const SizingFunction& sizing,
                                const CellSelector& cell_selector,
                                const bool protect_boundaries,
@@ -804,7 +804,7 @@ private:
   }
 
 public:
-  SurfaceVertexSmoothOperation(const C3t3& c3t3,
+  SurfaceVertexSmoothOperation(const C3t3& /* c3t3 */,
                               const SizingFunction& sizing,
                               const CellSelector& cell_selector,
                               const bool protect_boundaries,
@@ -1002,7 +1002,7 @@ public:
 
 public:
 
-  ComplexEdgeVertexSmoothOperation(const C3t3& c3t3,
+  ComplexEdgeVertexSmoothOperation(const C3t3& /* c3t3 */,
                                   const SizingFunction& sizing,
                                   const CellSelector& cell_selector,
                                   const bool protect_boundaries,
