@@ -289,9 +289,16 @@ void run(const std::pair<TriangleMesh, std::string>& input)
 template<typename TriangleMesh>
 void test_parameters_plane_and_line(const TriangleMesh& mesh){
   using CGAL::Surface_mesh_simplification::make_GarlandHeckbert_plane_and_line_policies;
+  using PMap = boost::associative_property_map<std::map<typename boost::graph_traits<TriangleMesh>::vertex_descriptor, typename Kernel::Vector_3>>;
+  std::map<typename boost::graph_traits<TriangleMesh>::vertex_descriptor, typename Kernel::Vector_3> map;
+  PMap pmap(map);
+  CGAL::Polygon_mesh_processing::compute_vertex_normals(mesh, pmap);
   TriangleMesh cp = mesh;
   edge_collapse(cp, 0.2, make_GarlandHeckbert_plane_and_line_policies(cp,
-                                  CGAL::parameters::line_policies_weight(0.001).discontinuity_multiplier(50).geom_traits(Kernel())));
+                                  CGAL::parameters::line_policies_weight(0.001)
+                                    .discontinuity_multiplier(50)
+                                    .geom_traits(Kernel())
+                                    .vertex_normal_map(pmap)));
 }
 
 int main(int argc, char** argv)
