@@ -356,7 +356,7 @@ private:
     const Node* root = tree_.root_node();
 
     std::size_t nb_primitives = tree_.size();
-    std::vector<std::tuple<const Node*, Tree::Primitive_iterator, std::size_t>> traversal_queue;
+    std::vector<std::tuple<const Node*, typename Tree::Primitive_iterator, std::size_t>> traversal_queue;
     traversal_queue.emplace_back(root, tree_.primitives_begin(), nb_primitives);
 
     while(!traversal_queue.empty()) {
