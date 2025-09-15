@@ -153,8 +153,8 @@ public:
     const Vertex_handle v1 = edge.first->vertex(edge.third);
     if(!(tr.try_lock_vertex(v0) && tr.try_lock_vertex(v1))) {
       return false;
-   }
-    bool locked =true ;
+    }
+
     //Cell_handle c;
     //int i,j;
     //if(!tr.is_edge(v0, v1, c, i, j)) {
@@ -163,6 +163,7 @@ public:
     //}
     //// Lock all incident cells to both vertices (similar to edge split)
     #if 0
+    bool locked =true ;
     std::vector<Cell_handle> inc_cells_0,inc_cells_1;
     std::vector<Vertex_handle> adj_vertices_0,adj_vertices_1;
     if(locked) {
@@ -242,15 +243,16 @@ public:
 
 
   bool execute_operation(const ElementType& edge, C3t3& c3t3) override {
-    auto& tr = c3t3.triangulation();
+
     if (should_skip_edge.contains(edge)) {
       return true;
     }
+#ifdef EDGE_COLLAPSE_DEBUG
     // Get vertices for debug logging
+    auto& tr = c3t3.triangulation();
     const Vertex_handle v0 = edge.first->vertex(edge.second);
     const Vertex_handle v1 = edge.first->vertex(edge.third);
 
-#ifdef EDGE_COLLAPSE_DEBUG
     // Capture cell timestamps before operation for change detection
     std::set<std::size_t> before_cells_timestamps(debug::get_cells_timestamps(tr.finite_cell_handles()));
     logger.log("EXEC begin: locked_cells_ts_count=", m_locked_cells_timestamps.size());

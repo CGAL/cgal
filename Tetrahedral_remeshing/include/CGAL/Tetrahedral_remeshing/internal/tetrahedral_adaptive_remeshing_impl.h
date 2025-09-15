@@ -94,7 +94,7 @@ class Adaptive_remesher
 
   typedef Tetrahedral_remeshing_smoother<C3t3, SizingFunction, CellSelector> Smoother;
 
-  typedef Elementary_remesher<C3t3, SizingFunction, CellSelector, Visitor> Elementary_remesher;
+  typedef Elementary_remesher<C3t3, SizingFunction, CellSelector, Visitor> ElementaryRemesher;
 
 private:
   C3t3 m_c3t3;
@@ -103,7 +103,7 @@ private:
   CellSelector m_cell_selector;
   Visitor& m_visitor;
   Smoother m_vertex_smoother;//initialized with initial surface
-  Elementary_remesher m_elementary_remesher;
+  ElementaryRemesher m_elementary_remesher;
 
   C3t3* m_c3t3_pbackup;
   std::vector<Vertex_handle> m_far_points;
@@ -184,7 +184,7 @@ public:
   {
     CGAL_assertion(check_vertex_dimensions());
 #ifdef CGAL_TETRAHEDRAL_REMESHING_USE_REFACTORED_SPLIT
-    Elementary_remesher::split(m_c3t3, m_sizing, m_cell_selector, m_protect_boundaries);
+    ElementaryRemesher::split(m_c3t3, m_sizing, m_cell_selector, m_protect_boundaries);
 #else
     split_long_edges(m_c3t3, m_sizing, m_protect_boundaries,
                      m_cell_selector, m_visitor);
@@ -212,7 +212,7 @@ public:
   {
     CGAL_assertion(check_vertex_dimensions());
 #ifdef CGAL_TETRAHEDRAL_REMESHING_USE_REFACTORED_COLLAPSE
-    Elementary_remesher::collapse(m_c3t3, m_sizing, m_cell_selector,m_visitor,m_protect_boundaries);
+    ElementaryRemesher::collapse(m_c3t3, m_sizing, m_cell_selector,m_visitor,m_protect_boundaries);
 #else
    collapse_short_edges(m_c3t3, m_sizing, m_protect_boundaries,
                                            m_cell_selector, m_visitor);
@@ -237,7 +237,7 @@ public:
   void flip()
   {
 #ifdef CGAL_TETRAHEDRAL_REMESHING_USE_REFACTORED_FLIP
-    Elementary_remesher::flip(m_c3t3, m_cell_selector,m_visitor,m_protect_boundaries);
+    ElementaryRemesher::flip(m_c3t3, m_cell_selector,m_visitor,m_protect_boundaries);
 #else
     flip_edges(m_c3t3, m_protect_boundaries,
                m_cell_selector, m_visitor);

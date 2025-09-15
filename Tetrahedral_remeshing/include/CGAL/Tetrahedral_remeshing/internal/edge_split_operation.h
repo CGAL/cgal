@@ -160,7 +160,7 @@ public:
   bool lock_zone(const ElementType& el, const C3t3& c3t3) const override {
     auto& tr = c3t3.triangulation();
     const auto& vertex_pair =el.second;
-    const auto& edge_length =el.first;
+
 #if 1
     std::vector<Cell_handle> inc_cells_first,inc_cells_second;
 
@@ -169,7 +169,8 @@ public:
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_EDGE_SPLIT_DEBUG
     if(!lock_success) {
-        edge_split_logger.log("[LOCK_FAILED] length:", edge_length, " - Thread: ", std::this_thread::get_id());
+      const auto& edge_length =el.first;
+      edge_split_logger.log("[LOCK_FAILED] length:", edge_length, " - Thread: ", std::this_thread::get_id());
     }
 #endif
 

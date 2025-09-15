@@ -202,7 +202,7 @@ private:
                            " to vertex ", vp.second->point());
 #endif
 
-    auto& tr = c3t3.triangulation();
+    // auto& tr = c3t3.triangulation();
 
     // Get incident cells for first vertex only
     //auto inc_vh = get_incident_cells(vp.first, c3t3);

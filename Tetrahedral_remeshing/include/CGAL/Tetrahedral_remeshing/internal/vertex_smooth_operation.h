@@ -44,7 +44,7 @@ namespace Tetrahedral_remeshing {
 namespace internal {
 
 template<typename C3t3, typename SizingFunction, typename CellSelector>
-class VertexSmoothingContext {
+class Vertex_smoothing_context {
 public:
   using Tr = typename C3t3::Triangulation;
   using Surface_patch_index = typename C3t3::Surface_patch_index;
@@ -107,10 +107,10 @@ public:
   using FMLS = CGAL::Tetrahedral_remeshing::internal::FMLS<Gt>;
   std::vector<FMLS> subdomain_FMLS;
   std::unordered_map<Surface_patch_index, std::size_t, boost::hash<Surface_patch_index>> subdomain_FMLS_indices;
-  VertexSmoothingContext(C3t3& c3t3,
-                         const CellSelector& cell_selector,
-                         const bool protect_boundaries,
-      const bool smooth_constrained_edges)
+  Vertex_smoothing_context(C3t3& c3t3,
+                           const CellSelector& cell_selector,
+                           const bool protect_boundaries,
+                           const bool smooth_constrained_edges)
       : m_cell_selector(cell_selector)
       , m_protect_boundaries(protect_boundaries)
       , m_smooth_constrained_edges(smooth_constrained_edges)
@@ -425,7 +425,7 @@ protected:
    using AABB_triangle_traits = CGAL::AABB_traits_3<Gt, Triangle_primitive>;
    using AABB_triangle_tree = CGAL::AABB_tree<AABB_triangle_traits>;
 
-  using Context = VertexSmoothingContext<C3t3, SizingFunction, CellSelector>;
+  using Context = Vertex_smoothing_context<C3t3, SizingFunction, CellSelector>;
 
   const SizingFunction& m_sizing;
   const CellSelector& m_cell_selector;
@@ -444,8 +444,8 @@ public:
      m_sizing(sizing)
     , m_cell_selector(cell_selector)
     , m_protect_boundaries(protect_boundaries)
-    , m_smooth_constrained_edges(smooth_constrained_edges)
     , m_context(context)
+    , m_smooth_constrained_edges(smooth_constrained_edges)
   {}
 
   void set_context(std::shared_ptr<Context> p_context) {
@@ -623,33 +623,33 @@ public:
     if (is_outside(e, c3t3, m_cell_selector))
       continue;
 
-      const auto [vh0, vh1] =  make_vertex_pair(e);
+    const auto [vh0, vh1] =  make_vertex_pair(e);
 
-      const std::size_t& i0 = m_context->m_vertex_id.at(vh0);
-      const std::size_t& i1 = m_context->m_vertex_id.at(vh1);
+    const std::size_t& i0 = m_context->m_vertex_id.at(vh0);
+    const std::size_t& i1 = m_context->m_vertex_id.at(vh1);
 
-      const bool vh0_moving = (c3t3.in_dimension(vh0) == 3 && m_context->m_free_vertices[i0]);
-      const bool vh1_moving = (c3t3.in_dimension(vh1) == 3 && m_context->m_free_vertices[i1]);
+    const bool vh0_moving = (c3t3.in_dimension(vh0) == 3 && m_context->m_free_vertices[i0]);
+    const bool vh1_moving = (c3t3.in_dimension(vh1) == 3 && m_context->m_free_vertices[i1]);
 
-      if (!vh0_moving && !vh1_moving)
-        continue;
+    if (!vh0_moving && !vh1_moving)
+      continue;
 
-      const Point_3& p0 = point(vh0->point());
-      const Point_3& p1 = point(vh1->point());
-      const FT density = BaseClass::density_along_segment(e, c3t3);
+    const Point_3& p0 = point(vh0->point());
+    const Point_3& p1 = point(vh1->point());
+    const FT density = BaseClass::density_along_segment(e, c3t3);
 
-      if (vh0_moving)
-      {
-        m_context->m_moves[i0].move += density * Vector_3(p0, p1);
-        m_context->m_moves[i0].mass += density;
-        ++m_context->m_moves[i0].neighbors;
-      }
-      if (vh1_moving)
-      {
-        m_context->m_moves[i1].move += density * Vector_3(p1, p0);
-        m_context->m_moves[i1].mass += density;
-        ++m_context->m_moves[i1].neighbors;
-      }
+    if (vh0_moving)
+    {
+      m_context->m_moves[i0].move += density * Vector_3(p0, p1);
+      m_context->m_moves[i0].mass += density;
+      ++m_context->m_moves[i0].neighbors;
+    }
+    if (vh1_moving)
+    {
+      m_context->m_moves[i1].move += density * Vector_3(p1, p0);
+      m_context->m_moves[i1].mass += density;
+      ++m_context->m_moves[i1].neighbors;
+    }
   }
 
 

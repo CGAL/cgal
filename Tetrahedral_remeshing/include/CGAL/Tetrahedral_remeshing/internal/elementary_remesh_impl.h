@@ -61,7 +61,7 @@ public:
   typedef SurfaceVertexSmoothOperation<C3t3, SizingFunction, CellSelector> SurfaceVertexSmoothOp;
   typedef ComplexEdgeVertexSmoothOperation<C3t3, SizingFunction, CellSelector> ComplexEdgeSmoothOp;
 
-  using VertexSmoothingContext = VertexSmoothingContext<C3t3, SizingFunction, CellSelector>;
+  using VertexSmoothingContext = Vertex_smoothing_context<C3t3, SizingFunction, CellSelector>;
 
   std::unique_ptr<ComplexEdgeSmoothOp> m_edge_smooth_op = nullptr;
   std::unique_ptr<SurfaceVertexSmoothOp> m_surface_vertices_smooth_op = nullptr;
