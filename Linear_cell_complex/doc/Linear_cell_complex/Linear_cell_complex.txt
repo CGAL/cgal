@@ -105,11 +105,12 @@ There are several member functions allowing to insert specific configurations of
 
 There are two functions allowing to build a linear cell complex from two other \cgal data types:
 <UL>
-<LI>\link ::triangulation_3_to_lcc `triangulation_3_to_lcc(lcc,atr)`\endlink: adds in `lcc` all the tetrahedra present in `atr`, a \link CGAL::Triangulation_3 `Triangulation_3`\endlink;
-<LI>\link ::polyhedron_3_to_lcc `polyhedron_3_to_lcc(lcc,ap)`\endlink: adds in `lcc` all the cells present in `ap`, a `Polyhedron_3`.
+
+<LI>\link CGAL::triangulation_3_to_lcc `triangulation_3_to_lcc(lcc,atr)`\endlink: adds in `lcc` all the tetrahedra present in `atr`, a \link CGAL::Triangulation_3 `Triangulation_3`\endlink;
+<LI>\link CGAL::polyhedron_3_to_lcc `polyhedron_3_to_lcc(lcc,ap)`\endlink: adds in `lcc` all the cells present in `ap`, a `Polyhedron_3`.
 </UL>
 
-Lastly, the function \link ::read_plane_graph_in_lcc `read_plane_graph_in_lcc(lcc,ais)`\endlink adds in `lcc` all the cells reconstructed from the planar graph read in `ais`, a `std::istream` (see the \link ::read_plane_graph_in_lcc `reference manual`\endlink for the file format).
+Lastly, the function \link CGAL::read_plane_graph_in_lcc `read_plane_graph_in_lcc(lcc,ais)`\endlink adds in `lcc` all the cells reconstructed from the planar graph read in `ais`, a `std::istream` (see the \link CGAL::read_plane_graph_in_lcc `reference manual`\endlink for the file format).
 
 \subsection Linear_cell_complexModificationOperations Modification Operations
 \anchor ssecmodifop
