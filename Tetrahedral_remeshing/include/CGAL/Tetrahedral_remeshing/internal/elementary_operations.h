@@ -253,14 +253,15 @@ private:
     size_t num_threads = std::thread::hardware_concurrency() / 2;
 
     // Parallel work stealing from priority queue
-    tbb::parallel_for(tbb::blocked_range<size_t>(0, num_threads),
-      [&](const tbb::blocked_range<size_t>& r) {
-        for (size_t thread_id = r.begin(); thread_id != r.end(); ++thread_id) {
-          while (!work_queue.empty()) {
-            ElementType element;
-            if(!work_queue.try_pop(element)) {
-              continue;
-            }
+    tbb::parallel_for(0,                       // beginning
+      tbb::this_task_arena::max_concurrency(), // max nb of threads
+      [&](int /*thread_id*/)
+      {
+        while(true)
+        {
+          ElementType element;
+          if(work_queue.try_pop(element))
+          {
             // Process element - priority order maintained by queue
             // Retry until lock is acquired
             bool lock_acquired = false;
@@ -283,6 +284,8 @@ private:
 #endif
             c3t3.triangulation().unlock_all_elements();
           }
+          else
+            break;// work_queue is empty : break while(true) loop
         }
       }
     );
