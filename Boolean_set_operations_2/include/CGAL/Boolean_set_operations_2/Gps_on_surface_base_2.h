@@ -530,7 +530,7 @@ public:
     this->m_arr = arr_vec[0].first;
     delete arr_vec[0].second;
     if (res) {
-      for (auto i = 1; i < arr_vec.size(); ++i) {
+      for (std::size_t i = 1; i < arr_vec.size(); ++i) {
         if (arr_vec[i].first) delete arr_vec[i].first;
         if (arr_vec[i].second) delete arr_vec[i].second;
       }
@@ -579,7 +579,7 @@ public:
     this->m_arr = arr_vec[0].first;
     delete arr_vec[0].second;
     if (res) {
-      for (auto i = 1; i < arr_vec.size(); ++i) {
+      for (std::size_t i = 1; i < arr_vec.size(); ++i) {
         if (arr_vec[i].first) delete arr_vec[i].first;
         if (arr_vec[i].second) delete arr_vec[i].second;
       }
@@ -1336,7 +1336,7 @@ protected:
     std::size_t size = std::distance(begin, end);
     auto it = begin;
     while (it != end) {
-      std::size_t num = (std::min)(size+1, k);
+      std::size_t num = std::min(size+1, k);
       arr_entries.resize(num);
       for (std::size_t i = 1; i < num; ++i) {
         // process pgn
@@ -1353,12 +1353,17 @@ protected:
         delete arr_entries[i].first;
         delete arr_entries[i].second;
       }
+      if (res) {
+        arr_entries.clear();
+        return res;
+      }
       arr_entries.resize(1);
       size -= (num-1);
     }
     m_arr = arr_entries[0].first;
     m_vertices = arr_entries[0].second;
     arr_entries.clear();
+    return false;
   }
 
   // marks all faces as non-visited
