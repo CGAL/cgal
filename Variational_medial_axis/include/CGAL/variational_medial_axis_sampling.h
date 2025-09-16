@@ -34,6 +34,7 @@
 #include <iterator>
 #include <tuple>
 #include <unordered_set>
+#include <boost/iterator/zip_iterator.hpp>
 
 
 // #include "C3t3_type.h"
@@ -1347,21 +1348,85 @@ private:
       std::size_t nb_sample = get(face_nb_samples_map_, f);
       point_area_map_[*it] = area / FT(nb_sample);
     }
-    // Build Knn graph, k = 6
-    using Base_Traits = CGAL::Search_traits_3<GT>;
-    using Traits = CGAL::Search_traits_adapter<Point_Index, typename Point_set::Point_map, Base_Traits>;
+    using Point_with_index = boost::tuple<Point_3, Point_Index>;
+    using BaseTraits = CGAL::Search_traits_3<GT>;
+    using Traits =
+        CGAL::Search_traits_adapter<Point_with_index, CGAL::Nth_of_tuple_property_map<0, Point_with_index>, BaseTraits>;
     using KNN = CGAL::Orthogonal_k_neighbor_search<Traits>;
     using Kd_tree = typename KNN::Tree;
-    Kd_tree kd_tree(tpoints_.begin(), tpoints_.end());
-    for(auto it = tpoints_.begin(), end = tpoints_.end(); it != end; ++it) {
-      Point_3 q = tpoints_.point(*it);
-      KNN knn(kd_tree, q, k_ );
-      auto nearest = knn.begin();
-      for(auto it_knn = knn.begin(); it_knn != knn.end(); ++it_knn) {
-        Point_Index idx = it_knn->first;
-        point_knn_map_[*it].push_back(idx);
+    typedef KNN::Distance Distance;
+    std::vector<Point_3> points;
+    std::vector<Point_Index> indices;
+    points.reserve(tpoints_.size());
+    indices.reserve(tpoints_.size());
+    for(auto it = tpoints_.begin(); it != tpoints_.end(); ++it) {
+      points.push_back(tpoints_.point(*it));
+      indices.push_back(*it);
+    }
+
+     Kd_tree tree(boost::make_zip_iterator(boost::make_tuple(points.begin(), indices.begin())),
+                 boost::make_zip_iterator(boost::make_tuple(points.end(), indices.end())));
+
+    for(auto it = tpoints_.begin(); it != tpoints_.end(); ++it) {
+      Point_Index idx = *it;
+      const Point_3& query_point = tpoints_.point(idx);
+      KNN knn(tree, query_point, k_ + 1);
+      Distance tr_dist;
+      auto& neighbors = point_knn_map_[idx];
+      neighbors.clear();
+      neighbors.reserve(k_);
+
+      for(auto knn_it = knn.begin(); knn_it != knn.end(); ++knn_it) {
+        Point_Index neighbor_idx = boost::get<1>(knn_it->first);
+        if(neighbor_idx != idx) {
+          neighbors.push_back(neighbor_idx);
+          if(neighbors.size() >= k_)
+            break;
+        }
+
+
       }
     }
+    /*using KD_Tree = CGAL::Kd_tree<CGAL::Search_traits_3<GT>>;
+
+    std::vector<Point_3> points;
+    std::vector<Point_Index> indices;
+    points.reserve(tpoints_.size());
+    indices.reserve(tpoints_.size());
+
+    for(auto it = tpoints_.begin(); it != tpoints_.end(); ++it) {
+      points.push_back(tpoints_.point(*it));
+      indices.push_back(*it);
+    }
+
+    KD_Tree kd_tree(points.begin(), points.end());
+
+
+    for(std::size_t i = 0; i < indices.size(); ++i) {
+      Point_Index idx = indices[i];
+      const Point_3& q = points[i];
+
+      using KNN_Search = CGAL::Orthogonal_k_neighbor_search<CGAL::Search_traits_3<GT>>;
+      KNN_Search knn(kd_tree, q, k_ + 1);
+
+      auto& neighbors = point_knn_map_[idx];
+      neighbors.clear();
+      neighbors.reserve(k_);
+
+      for(auto knn_it = knn.begin(); knn_it != knn.end(); ++knn_it) {
+        Point_3 neighbor_point = knn_it->first;
+
+        for(std::size_t j = 0; j < points.size(); ++j) {
+          if(j != i && points[j] == neighbor_point) {
+            neighbors.push_back(indices[j]);
+            if(neighbors.size() >= k_)
+              break;
+          }
+        }
+        if(neighbors.size() >= k_)
+          break;
+      }
+    }*/
   }
 
   /// Initialization that compute some global variable for the algorithm.
@@ -1577,7 +1642,8 @@ private:
   }
 
   void compute_shrinking_balls() {
-    for(Point_Index idx : tpoints_.indices()) {
+    for(auto it = tpoints_.begin(); it!= tpoints_.end(); ++it) {
+      Point_Index idx = *it;
       compute_one_vertex_shrinking_ball(idx);
     }
   }
@@ -1678,7 +1744,7 @@ private:
       idx = 0;
 
       for(Point_Index id : cluster_points) {
-        Point_3 p = tpoints_.point(idx);
+        Point_3 p = tpoints_.point(id);
         EVec3 pos(p.x(), p.y(), p.z());
 
         // compute sqem energy
@@ -1708,6 +1774,7 @@ private:
         // compute euclidean energy
         EVec3 d = pos - EVec3(s(0), s(1), s(2));
         FT l = d.norm();
+
         FT area = CGAL::approximate_sqrt(point_area_map_[id]);
         J.row(idx) = EVec4(-(d[0] / l), -(d[1] / l), -(d[2] / l), -1.0) * area * lambda_;
         b(idx) = -(l - s(3)) * area * lambda_;
@@ -1964,7 +2031,7 @@ private:
   FT last_total_error_;
   FT total_error_;
   FT converged_threshold_;
-  int k_ = 6; // number of nearest neighbors
+  int k_ = 8; // number of nearest neighbors
   std::unique_ptr<Tree> tree_;
   std::unique_ptr<MSMesh> sphere_mesh_;
   std::unique_ptr<FWN> fast_winding_number_;
