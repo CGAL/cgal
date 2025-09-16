@@ -12,7 +12,7 @@ using Point_2 = Kernel::Point_2;
 using Polygon_2 = CGAL::Polygon_2<Kernel>;
 using Circle_2 = Kernel::Circle_2;
 
-int main(int argc, char* argv[]) {
+int main() {
   Kernel kernel;
   auto ctr_circle = kernel.construct_circle_2_object();
   auto circle1 = ctr_circle(Point_2(0, 1), 1);
