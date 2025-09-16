@@ -148,7 +148,7 @@ private:
    * \brief Add a helper point on the shared boundary of two points if they are on the same boundary side.
    *
    * When triangulating a arrangement face within a bounding box, curves outside the bounding box are projected on the
-   * four sides of the bbox. Topological errors could be introduced if several polylines are lying on the same side.
+   * four sides of the bbox. Topological errors could be introduced if several segments are lying on the same side.
    * Thus we add the midpoint in between the two points on boundary and move it outward with an increasing offset.
    */
   void add_boundary_helper_point(Point from, Point to) {
@@ -204,7 +204,7 @@ public:
   void push_back(Point pt) {
     CGAL_assertion_msg(m_curr_cst_begin.has_value(), "Call start_constraint() before push_back().");
 
-    if(m_points.size() - *m_curr_cst_begin >= 2) add_boundary_helper_point(m_points.back(), pt);
+    if(m_points.size() - *m_curr_cst_begin >= 1) add_boundary_helper_point(m_points.back(), pt);
     m_points.push_back(pt);
     m_point_types.push_back(Vertex_and_constraint);
   }
