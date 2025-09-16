@@ -36,9 +36,9 @@
 #include <CGAL/config.h>
 #include <CGAL/Arr_observer.h>
 #include <CGAL/unordered_flat_map.h>
+#include <CGAL/Bbox_2.h>
 #include <CGAL/Draw_aos/type_utils.h>
 #include <CGAL/Draw_aos/Arr_viewer.h>
-#include "CGAL/Bbox_2.h"
 
 namespace CGAL {
 

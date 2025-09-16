@@ -252,8 +252,8 @@ public:
 
 private:
   const Bounded_render_context& m_ctx;
-  Bounded_approximate_halfedge m_bounded_approx_halfedge;
-  Bounded_approximate_vertex m_bounded_approx_vertex;
+  const Bounded_approximate_halfedge m_bounded_approx_halfedge;
+  const Bounded_approximate_vertex m_bounded_approx_vertex;
 };
 
 } // namespace draw_aos
