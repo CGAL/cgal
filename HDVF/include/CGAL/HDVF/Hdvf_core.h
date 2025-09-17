@@ -47,9 +47,12 @@ const int OPT_FULL = 0b1000;
  * Cells are always sorted so that the dimension of `sigma` is lesser than the dimension of `tau`.
  */
 struct Cell_pair {
-    size_t sigma;  /// Index of the first cell
-    size_t tau;    /// Index of the second cell
-    int dim;    /// Dimension of cells: `dim`/`dim`+1 for A and R, `dim`/`dim` for other operations
+    /// Index of the first cell
+    size_t sigma;
+    /// Index of the second cell
+    size_t tau;
+    /// Dimension of cells: `dim`/`dim`+1 for A and R, `dim`/`dim` for other operations
+    int dim;
 };
 
 /** \brief Overload of operator<< for Cell_pair type. */
