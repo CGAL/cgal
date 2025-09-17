@@ -10177,6 +10177,1968 @@ void SimpleStraightSkel::collectEdgeSplitEventsWithBoxD(PolyhedronSPtr polyhedro
 // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
 
 
+/**
+  * If a line intersects a sphere, there are 2 intersection points.
+  * The first one is returned here.
+  */
+static Point3SPtr intersection(Sphere3SPtr sphere, Line3SPtr line)
+{
+  Point3SPtr result = Point3SPtr();
+  Point3SPtr p_center = KernelFactory::createPoint3(sphere);
+  FT radius;
+
+  radius = CGAL::disallowed_sqrt(sphere->squared_radius());
+  Vector3SPtr dir = normalize(KernelFactory::createVector3(line));
+  Plane3SPtr plane = KernelFactory::createPlane3(p_center, dir);
+  Point3SPtr p_intersect = intersection(plane, line);
+  FT dist = distance(p_center, p_intersect);
+  if (dist == radius) {
+    result = p_intersect;
+  } else if (dist < radius) {
+    FT amount = - CGAL::disallowed_sqrt(radius*radius - dist*dist);
+    result = KernelFactory::createPoint3((*p_intersect) + ((*dir)*amount));
+  }
+
+  CGAL_SS3_DEBUG_SPTR(result);
+  return result;
+}
+
+
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+
+/**
+  * Returns the offset (time) when the facet will reach the given point.
+  */
+static FT offsetDist(FacetSPtr facet,
+                      Point3SPtr point)
+{
+  Plane3SPtr plane = facet->getPlane();
+  FT result = KernelWrapper::distance(plane, point);
+  if (KernelWrapper::side(plane, point) < 0) {
+    result *= -1.0;
+  }
+  if (facet->hasData()) {
+    const FT& speed = std::dynamic_pointer_cast<SkelFacetData>(facet->getData())->getSpeed();
+    result /= speed;
+  }
+  return result;
+}
+
+
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+
+
+
+CGAL_SS3_CORE_TRACE_V(2, vertices_tosplit.size() << " vertices to split");
+
+for (VertexSPtr vertex : vertices_tosplit) {
+  bool equal_speeds = false;
+
+  if (use_fast_vertex_splitter) {
+    equal_speeds = true;
+    FT first_speed = 1.0;
+    bool first_speed_set = false;
+
+    for (FacetWPtr facet_wptr : vertex->facets()) {
+      if (FacetSPtr facet = facet_wptr.lock()) {
+        const FT& speed = std::dynamic_pointer_cast<SkelFacetData>(facet->getData())->getSpeed();
+
+        if (!first_speed_set) {
+          first_speed = speed;
+          first_speed_set = true;
+        } else if (speed != first_speed) {
+          equal_speeds = false;
+          break;
+        }
+      }
+    }
+  }
+
+  if (equal_speeds && vertex->isConvex()) {
+    AbstractVertexSplitter::splitConvexVertex(vertex);
+  } else if (equal_speeds && vertex->isReflex()) {
+    AbstractVertexSplitter::splitReflexVertex(vertex);
+  } else {
+    CGAL_SS3_SPLITTER_TRACE("Generic split vertex:\n" << vertex->toString());
+
+#ifdef CGAL_SS3_USE_COMBINATORIAL_SPLITTER_FOR_HIGH_DEGREE_VERTICES
+    if (vertex->degree() > 15) {
+      CGAL_SS3_SPLITTER_TRACE("Warning: degree is so high that even a combinatorial split will take forever.");
+    }
+
+    if (vertex->degree() > 10) {
+#ifdef CGAL_SS3_RUN_TIMERS
+      CGAL::Real_timer timer;
+      timer.start();
+#endif
+
+      CGAL_SS3_SPLITTER_TRACE("High degree, use a combinatorial splitter");
+      AbstractVertexSplitterSPtr combi_splitter = CombiVertexSplitter::create();
+      combi_splitter->splitVertex(vertex);
+
+#ifdef CGAL_SS3_RUN_TIMERS
+      CGAL_SS3_SPLITTER_TRACE("Time taken to split vertex #" << vertex->getID() << " = " << timer.time());
+#endif
+    } else
+#endif // CGAL_SS3_USE_COMBINATORIAL_SPLITTER_FOR_HIGH_DEGREE_VERTICES
+
+      vertex_splitter->splitVertex(vertex);
+  }
+}
+
+static PolyhedronSPtr splitConvexVertex(VertexSPtr vertex)
+{
+  assert(vertex->isConvex());
+  PolyhedronSPtr result = vertex->getPolyhedron();
+  while (vertex->degree() > 3) {
+    FT sq_speed_max = 0.0;
+    FacetSPtr facet_1;
+    FacetSPtr facet_2;
+    typename std::list<FacetWPtr>::iterator it_f = vertex->facets().begin();
+    while (it_f != vertex->facets().end()) {
+      FacetWPtr facet_wptr = *it_f++;
+      if (FacetSPtr facet = facet_wptr.lock()) {
+        FacetSPtr facet_prev = facet->prev(vertex);
+        FacetSPtr facet_next = facet->next(vertex);
+        FT speed = 1.0;
+        if (facet->hasData()) {
+          speed = std::dynamic_pointer_cast<SkelFacetData>(facet->getData())->getSpeed();
+        }
+        FT speed_prev = 1.0;
+        if (facet_prev->hasData()) {
+          speed_prev = std::dynamic_pointer_cast<SkelFacetData>(facet_prev->getData())->getSpeed();
+        }
+        FT speed_next = 1.0;
+        if (facet_next->hasData()) {
+          speed_next = std::dynamic_pointer_cast<SkelFacetData>(facet_next->getData())->getSpeed();
+        }
+
+        // @todo I don't think the quick split of this function works for weighted cases
+        CGAL_assertion(speed == 1.0 && speed_prev == 1.0 && speed_next == 1.0);
+
+        Plane3SPtr offset_plane = KernelWrapper::offsetPlane(facet->plane(), - speed);
+        Plane3SPtr offset_plane_prev = KernelWrapper::offsetPlane(facet_prev->plane(), -speed_prev);
+        Plane3SPtr offset_plane_next = KernelWrapper::offsetPlane(facet_next->plane(), -speed_next);
+
+        Point3SPtr offset_point = KernelWrapper::intersection(offset_plane_prev, offset_plane, offset_plane_next);
+
+        FT sq_speed = KernelWrapper::squared_distance(vertex->getPoint(), offset_point);
+        if (sq_speed > sq_speed_max) {
+          facet_1 = facet_next;
+          facet_2 = facet_prev;
+          sq_speed_max = sq_speed;
+        }
+      }
+    }
+    VertexSPtr vertex_splitted = vertex->split(facet_1, facet_2);
+    if (vertex->hasData()) {
+      SkelVertexDataSPtr data = std::dynamic_pointer_cast<SkelVertexData>(vertex->getData());
+      SkelVertexDataSPtr data_splitted = SkelVertexData::create(vertex_splitted);
+      data_splitted->setNode(data->getNode());
+    }
+  }
+  return result;
+}
+
+static PolyhedronSPtr splitReflexVertex(VertexSPtr vertex)
+{
+  CGAL_precondition(vertex->isReflex());
+
+  PolyhedronSPtr result = vertex->getPolyhedron();
+  while (vertex->degree() > 3) {
+    FT speed_min = std::numeric_limits<double>::max(); // do not put FT
+    FacetSPtr facet_1;
+    FacetSPtr facet_2;
+    typename std::list<FacetWPtr>::iterator it_f = vertex->facets().begin();
+    while (it_f != vertex->facets().end()) {
+      FacetWPtr facet_wptr = *it_f++;
+      if (FacetSPtr facet = facet_wptr.lock()) {
+        FacetSPtr facet_prev = facet->prev(vertex);
+        FacetSPtr facet_next = facet->next(vertex);
+        FT speed = 1.0;
+        if (facet->hasData()) {
+          speed = std::dynamic_pointer_cast<SkelFacetData>(facet->getData())->getSpeed();
+        }
+        FT speed_prev = 1.0;
+        if (facet_prev->hasData()) {
+          speed_prev = std::dynamic_pointer_cast<SkelFacetData>(facet_prev->getData())->getSpeed();
+        }
+        FT speed_next = 1.0;
+        if (facet_next->hasData()) {
+          speed_next = std::dynamic_pointer_cast<SkelFacetData>(facet_next->getData())->getSpeed();
+        }
+
+        // @todo I don't think the quick split of this function works for weighted cases
+        CGAL_assertion(speed == 1.0 && speed_prev == 1.0 && speed_next == 1.0);
+
+        Plane3SPtr offset_plane = KernelWrapper::offsetPlane(facet->plane(), -speed);
+        Plane3SPtr offset_plane_prev = KernelWrapper::offsetPlane(facet_prev->plane(), -speed_prev);
+        Plane3SPtr offset_plane_next = KernelWrapper::offsetPlane(facet_next->plane(), -speed_next);
+
+        Point3SPtr offset_point = KernelWrapper::intersection(
+                offset_plane_prev, offset_plane, offset_plane_next);
+
+        FT v_speed = KernelWrapper::distance(vertex->getPoint(), offset_point);
+        if (v_speed < speed_min) {
+          facet_1 = facet_next;
+          facet_2 = facet_prev;
+          speed_min = v_speed;
+        }
+      }
+    }
+    VertexSPtr vertex_splitted = vertex->split(facet_1, facet_2);
+    if (vertex->hasData()) {
+      SkelVertexDataSPtr data = std::dynamic_pointer_cast<SkelVertexData>(vertex->getData());
+      SkelVertexDataSPtr data_splitted = SkelVertexData::create(vertex_splitted);
+      data_splitted->setNode(data->getNode());
+    }
+  }
+  return result;
+}
+
+
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+
+static Vector3SPtr normalize(Vector3SPtr v)
+{
+  Vector3SPtr result;
+  result = KernelFactory::createVector3(*v / CGAL::disallowed_sqrt(v->squared_length()));
+  return result;
+}
+
+/**
+  * http://de.wikipedia.org/wiki/Drehmatrix
+  *
+  *              [ n_x^2 (1 - cos(alpha)) + cos(alpha)         n_x n_y (1 - cos(alpha)) - n_z sin(alpha)   n_x n_z (1 - cos(alpha)) + n_y sin(alpha) ]
+  * R_n(alpha) = [ n_y n_x (1 - cos(alpha)) + n_z sin(alpha)   n_y^2 (1 - cos(alpha)) + cos(alpha)         n_y n_z (1 - cos(alpha)) - n_x sin(alpha) ]
+  *              [ n_z n_x (1 - cos(alpha)) - n_y sin(alpha)   n_z n_y (1 - cos(alpha)) + n_x sin(alpha)   n_z^2 (1 - cos(alpha)) + cos(alpha)       ]
+  */
+static Vector3SPtr rotateVector(Vector3SPtr vector, Vector3SPtr axis, const FT& angle)
+{
+  Vector3SPtr result;
+  Vector3SPtr v_n = KernelWrapper::normalize(axis);
+  FT n[3];
+  for (unsigned int i = 0; i < 3; ++i) {
+    n[i] = (*v_n)[i];
+  }
+
+  FT cos_angle = std::cos(CGAL::to_double(angle));
+  FT sin_angle = std::sin(CGAL::to_double(angle));
+
+  FT rotation[3][3];   // http://de.wikipedia.org/wiki/Drehmatrix
+  rotation[0][0] = n[0]*n[0] * (1.0-cos_angle) + cos_angle;
+  rotation[0][1] = n[0]*n[1] * (1.0-cos_angle) - n[2] * sin_angle;
+  rotation[0][2] = n[0]*n[2] * (1.0-cos_angle) + n[1] * sin_angle;
+  rotation[1][0] = n[1]*n[0] * (1.0-cos_angle) + n[2] * sin_angle;
+  rotation[1][1] = n[1]*n[1] * (1.0-cos_angle) + cos_angle;
+  rotation[1][2] = n[1]*n[2] * (1.0-cos_angle) - n[0] * sin_angle;
+  rotation[2][0] = n[2]*n[0] * (1.0-cos_angle) - n[1] * sin_angle;
+  rotation[2][1] = n[2]*n[1] * (1.0-cos_angle) + n[0] * sin_angle;
+  rotation[2][2] = n[2]*n[2] * (1.0-cos_angle) + cos_angle;
+
+  FT rotated[3];
+  for (unsigned int r = 0; r < 3; r++) {
+    rotated[r] = 0.0;
+    for (unsigned int c = 0; c < 3; c++) {
+      rotated[r] += rotation[r][c] * (*vector)[c];
+    }
+  }
+  result = KernelFactory::createVector3(rotated[0], rotated[1], rotated[2]);
+  CGAL_SS3_DEBUG_SPTR(result);
+  return result;
+}
+
+static Plane3SPtr rotatePlane(Plane3SPtr plane, Line3SPtr line, const FT& angle)
+{
+  Plane3SPtr result;
+  Point3SPtr point;
+  point = KernelFactory::createPoint3(line->point(0));
+  Vector3SPtr dir = KernelFactory::createVector3(line);
+  Vector3SPtr normal = KernelFactory::createVector3(plane);
+  Vector3SPtr normal_rotated = rotateVector(normal, dir, angle);
+  result = KernelFactory::createPlane3(point, normal_rotated);
+  CGAL_SS3_DEBUG_SPTR(result);
+  return result;
+}
+
+
+
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+
+
+
+static int comparePoints(Vector3SPtr v_dir, Point3SPtr p_1, Point3SPtr p_2)
+{
+  int result = 0;
+  FT value = *v_dir * (*p_2 - *p_1);
+  if (value > 0.0) {         // angle < CGAL_PI/2.0
+    result = -1;
+  } else if (value < 0.0) {  // angle > CGAL_PI/2.0
+    result = 1;
+  }
+  return result;
+}
+
+
+static Point3SPtr replaceCoord(Point3SPtr point,
+                                Point3SPtr replacement,
+                                unsigned int coord)
+{
+  Point3SPtr result = Point3SPtr();
+
+  if (coord == 0) {
+    result = Point3SPtr(new Point_3(replacement->x(), point->y(), point->z()));
+  } else if (coord == 1) {
+    result = Point3SPtr(new Point_3(point->x(), replacement->y(), point->z()));
+  } else if (coord == 2) {
+    result = Point3SPtr(new Point_3(point->x(), point->y(), replacement->z()));
+  }
+
+  CGAL_SS3_DEBUG_SPTR(result);
+  return result;
+}
+
+
+static bool isInside(Point3SPtr p, Point3SPtr p_box_1, Point3SPtr p_box_2)
+{
+  bool result = true;
+  for (unsigned int i = 0; i < 3; ++i) {
+    if ((*p_box_1)[i] < (*p_box_2)[i]) {
+      if (!( (*p_box_1)[i] <= (*p)[i] && (*p)[i] <= (*p_box_2)[i] )) {
+        result = false;
+      }
+    } else {
+      if (!( (*p_box_2)[i] <= (*p)[i] && (*p)[i] <= (*p_box_1)[i] )) {
+        result = false;
+      }
+    }
+  }
+  return result;
+}
+
+static Point3SPtr offsetPoint(Point3SPtr point, Vector3SPtr dir, const FT& offset)
+{
+  Point3SPtr result;
+  Vector_3 dir_normalized = *dir / CGAL::disallowed_sqrt(dir->squared_length());
+  Point_3 p_moved = *point + (dir_normalized * offset);
+  result = KernelFactory::createPoint3(p_moved);
+  CGAL_SS3_DEBUG_SPTR(result);
+  return result;
+}
+
+
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+
+
+
+class VertexData
+{
+  using VertexWPtr = std::weak_ptr<Vertex<GT> >;
+  using VertexSPtr = std::shared_ptr<Vertex<GT> >;
+
+  using VertexDataSPtr = std::shared_ptr<VertexData>;
+
+public:
+  VertexData() { /*intentionally does nothing*/ }
+  virtual ~VertexData() { /*intentionally does nothing*/ }
+
+  static VertexDataSPtr create(VertexSPtr vertex)
+  {
+    CGAL_SS3_DEBUG_SPTR(vertex);
+    VertexDataSPtr result = std::make_shared<VertexData>();
+    result->setVertex(vertex);
+    vertex->setData(result);
+    return result;
+  }
+
+  VertexSPtr getVertex() const
+  {
+    CGAL_SS3_DEBUG_WPTR(vertex_);
+    return this->vertex_.lock();
+  }
+
+  void setVertex(VertexSPtr vertex)
+  {
+    CGAL_SS3_DEBUG_SPTR(vertex);
+    this->vertex_ = vertex;
+  }
+
+protected:
+  VertexWPtr vertex_;
+};
+
+
+    class SkelVertexData
+      : public VertexData
+    {
+      using VertexWPtr = std::weak_ptr<Vertex<GT> >;
+      using VertexSPtr = std::shared_ptr<Vertex<GT> >;
+
+      using NodeWPtr = std::weak_ptr<SDS::Node<GT> >;
+      using NodeSPtr = std::shared_ptr<SDS::Node<GT> >;
+      using ArcWPtr = std::weak_ptr<SDS::Arc<GT> >;
+      using ArcSPtr = std::shared_ptr<SDS::Arc<GT> >;
+
+      using SkelVertexDataSPtr = std::shared_ptr<SkelVertexData>;
+
+    public:
+      SkelVertexData() { /*intentionally does nothing*/ }
+      virtual ~SkelVertexData() { /*intentionally does nothing*/ }
+
+      static SkelVertexDataSPtr create(VertexSPtr vertex)
+      {
+        CGAL_SS3_DEBUG_SPTR(vertex);
+        SkelVertexDataSPtr result = std::make_shared<SkelVertexData>();
+        result->setVertex(vertex);
+        vertex->setData(result);
+        return result;
+      }
+
+      ArcSPtr getArc() const
+      {
+        CGAL_SS3_DEBUG_WPTR(arc_);
+        return this->arc_.lock();
+      }
+
+      void setArc(ArcSPtr arc)
+      {
+        CGAL_SS3_DEBUG_SPTR(arc);
+        this->arc_ = arc;
+      }
+
+      NodeSPtr getNode() const
+      {
+        CGAL_SS3_DEBUG_WPTR(node_);
+        return this->node_.lock();
+      }
+
+      void setNode(NodeSPtr node)
+      {
+        CGAL_SS3_DEBUG_SPTR(node);
+        this->node_ = node;
+      }
+
+      VertexSPtr getOffsetVertex() const
+      {
+        CGAL_SS3_DEBUG_WPTR(offset_vertex_);
+        return this->offset_vertex_.lock();
+      }
+
+      void setOffsetVertex(VertexSPtr offset_vertex)
+      {
+        CGAL_SS3_DEBUG_SPTR(offset_vertex);
+        this->offset_vertex_ = offset_vertex;
+      }
+
+    protected:
+      ArcWPtr arc_;
+      NodeWPtr node_;
+      VertexWPtr offset_vertex_;
+    };
+
+
+
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+
+
+
+
+  /**
+  * Save offset, attempt to un-tilt if there is a tilt
+  */
+  bool savePolyhedron(PolyhedronSPtr polyhedron,
+                      const FT& current_offset,
+                      const bool attempt_untilting)
+  {
+    CGAL_SS3_DEBUG_SPTR(polyhedron);
+
+    bool result = true;
+
+    // attempt naive un-tilting
+    if (attempt_untilting) {
+      CGAL_SS3_CORE_TRACE_V(4, "Attempting to un-tilt polyhedron...");
+
+#ifdef CGAL_SS3_DUMP_FILES
+      IO::OBJFile::save("results/pre-untilt_attempt.obj", polyhedron,
+                        false /*do_triangulate*/,
+                        true /*convert_to_double*/);
+#endif
+
+      PolyhedronSPtr polyhedron_cpy = polyhedron->clone();
+
+      for (FacetSPtr facet : polyhedron_cpy->facets()) {
+        // this assumes we have perturbed at the start ('0')
+        facet->restorePlaneCoefficients(0, current_offset);
+      }
+
+      // As to avoid having a vertex not be defined by e.g. 3 planes with 2 being equal post un-tilt
+      // That vertex is then useless, so just remove it
+      // Do it here, before we recompute point positions
+      PolyhedronTransformation::mergeCoplanarFacets(polyhedron_cpy, 0.0);
+
+#ifdef CGAL_SS3_DUMP_FILES
+      IO::OBJFile::save("results/restored_merged.obj", polyhedron_cpy,
+                        false /*do_triangulate*/,
+                        true /*convert_to_double*/);
+#endif
+
+      CGAL_assertion(polyhedron_cpy && polyhedron_cpy->isConsistent());
+
+      PolyhedronTransformation::sanitize(polyhedron_cpy);
+
+#ifdef CGAL_SS3_DUMP_FILES
+      IO::OBJFile::save("results/restored_final.obj", polyhedron_cpy,
+                        false /*do_triangulate*/,
+                        true /*convert_to_double*/);
+#endif
+
+      PolyhedronTransformation::resetPoints(polyhedron_cpy);
+      if (!polyhedron_cpy || !polyhedron_cpy->isConsistent()) {
+        CGAL_SS3_CORE_TRACE("Warning: failed to un-tilt polyhedron");
+        result = false;
+      } else {
+        polyhedron = polyhedron_cpy;
+        if (SelfIntersection::hasSelfIntersectingSurface(polyhedron)) {
+          CGAL_SS3_CORE_TRACE("Warning: self-intersections after un-tilting");
+        } else {
+          CGAL_SS3_CORE_TRACE("Successfully un-tilted polyhedron");
+        }
+        result = true;
+      }
+    }
+
+#ifdef CGAL_SS3_DUMP_FILES
+    std::stringstream ss_filename, ss_filename_triangulated, ss_filename_exact;
+    ss_filename << save_path_.string() << "/offset_" << current_offset << ".obj";
+    ss_filename_triangulated << save_path_.string() << "/offset_" << current_offset << "_triangulated.obj";
+    ss_filename_exact << save_path_.string() << "/offset_" << current_offset << "_exact.obj";
+
+    result = (IO::OBJFile::save(ss_filename.str(), polyhedron,
+                                false /*do_triangulate*/,
+                                true /*convert_to_double*/) && result);
+    result = (IO::OBJFile::save(ss_filename_triangulated.str(), polyhedron,
+                                true /*do_triangulate*/,
+                                true /*convert_to_double*/) && result);
+    result = (IO::OBJFile::save(ss_filename_exact.str(), polyhedron,
+                                true /*do_triangulate*/,
+                                false /*convert_to_double*/) && result);
+#endif
+
+    return result;
+  }
+
+
+
+
+
+
+
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+
+
+
+
+  /**
+    * Creates an offset polyhedron.
+    * Negative offset points to the interior of the polyhedron.
+    */
+  // @speed plenty of needless recomputations:
+  // - when we do shiftPoint for adjacent points
+  // - when we call shiftPoint, and then call shiftPlane later on
+  // - ...
+  static PolyhedronSPtr shiftFacets(PolyhedronSPtr polyhedron,
+                                    const FT& offset,
+                                    const bool recompute_positions = true)
+  {
+    CGAL_SS3_DEBUG_SPTR(polyhedron);
+    CGAL_precondition(offset != 0);
+
+    PolyhedronSPtr result = Polyhedron::create();
+
+    typename std::list<VertexSPtr>::iterator it_v = polyhedron->vertices().begin();
+    while (it_v != polyhedron->vertices().end()) {
+      VertexSPtr vertex = *it_v++;
+
+      // this could be handled, but they are useless and should have been removed with
+      // calls to the function removeVerticesDegLt3()
+      CGAL_precondition(vertex->degree() != 2);
+
+      // those are treated in the next loop
+      if (vertex->degree() == 1) {
+        continue;
+      }
+
+      Point3SPtr old_point = vertex->getPoint(), new_point;
+      if (offset != 0 || recompute_positions) {
+        new_point = shiftPoint(vertex, offset);
+        if (!new_point) {
+          std::cerr << "Warning: Failed to create shifted point" << std::endl;
+          return { };
+        }
+      }
+
+      VertexSPtr offset_vertex = Vertex::create(new_point);
+      // SkelVertexData for each vertex should be created by init
+      SkelVertexDataSPtr data;
+      if (vertex->hasData()) {
+        data = std::dynamic_pointer_cast<SkelVertexData>(vertex->getData());
+        SkelVertexDataSPtr offset_data = SkelVertexData::create(offset_vertex);
+        offset_data->setArc(data->getArc());
+      } else {
+        data = SkelVertexData::create(vertex);
+      }
+      data->setOffsetVertex(offset_vertex);
+      result->addVertex(offset_vertex);
+    }
+
+    // Now, deal with degree 1 vertices.
+    //
+    // Do NOT merge the two vertices loops together: this function assumes that degree 1 vertices
+    // are adjacent to degree 3+ vertices that have been offset in the first loop, and offsets
+    // degree 1 vertices using the offset of the adjacent degree 3+ vertex.
+#if 1
+    it_v = polyhedron->vertices().begin();
+    while (it_v != polyhedron->vertices().end()) {
+      VertexSPtr vertex = *it_v++;
+
+      CGAL_precondition(vertex->degree() != 2);
+
+      // those are treated in the first loop
+      if (vertex->degree() >= 3) {
+        continue;
+      }
+
+      EdgeSPtr edge;
+      CGAL_assertion_code(unsigned int i = 0;)
+      for (EdgeWPtr edge_wptr : vertex->edges()) {
+        if ((edge = edge_wptr.lock())) {
+          CGAL_assertion_code(++i;)
+        }
+      }
+
+      CGAL_assertion(i == 1);
+
+      VertexSPtr vertex_other = edge->other(vertex);
+      CGAL_assertion(vertex_other->degree() >= 3);
+
+      FacetSPtr facet1 = edge->getFacetL();
+      FacetSPtr facet2 = edge->getFacetR();
+      Plane3SPtr plane1 = facet1->plane();
+      Plane3SPtr plane2 = facet2->plane();
+      Line3SPtr intersection_line = KernelWrapper::intersection(plane1, plane2);
+      CGAL_assertion(bool(intersection_line));
+
+      // Determine the direction using the unshifted positions
+      Point3SPtr point_other = vertex_other->getPoint();
+      Point3SPtr point = vertex->getPoint();
+      CGAL_assertion(*point != *point_other);
+      Vector_3 direction = intersection_line->to_vector();
+      if (CGAL::scalar_product(direction, *point - *point_other) < 0) {
+        direction = -direction;
+      }
+
+      // Apply the shift to the offset vertex
+      SkelVertexDataSPtr data_other = std::dynamic_pointer_cast<SkelVertexData>(vertex_other->getData());
+      VertexSPtr offset_vertex_other = data_other->getOffsetVertex();
+
+      // The length of the direction does not matter: when degree 1 are evaluated, the code
+      // treats them as infinite rays
+      Point3SPtr offset_point = KernelFactory::createPoint3(*(offset_vertex_other->getPoint()) + direction);
+      VertexSPtr offset_vertex = Vertex::create(offset_point);
+      SkelVertexDataSPtr data;
+      if (vertex->hasData()) {
+        data = std::dynamic_pointer_cast<SkelVertexData>(vertex->getData());
+      } else {
+        data = SkelVertexData::create(vertex);
+      }
+      data->setOffsetVertex(offset_vertex);
+      result->addVertex(offset_vertex);
+    }
+#else
+    it_v = polyhedron->vertices().begin();
+    while (it_v != polyhedron->vertices().end()) {
+      VertexSPtr vertex = *it_v++;
+      Point3SPtr point = vertex->getPoint();
+
+      EdgeSPtr edge;
+      unsigned int i = 0;
+      for (EdgeWPtr edge_wptr : vertex->edges()) {
+        if ((edge = edge_wptr.lock())) {
+          ++i;
+        }
+      }
+      if (i == 1) {
+        VertexSPtr vertex_other = (edge->getVertexSrc() == vertex) ? edge->getVertexDst()
+                                                                    : edge->getVertexSrc();
+
+        // otherwise vertex_other has not been offset in the previous vertex loop
+        CGAL_assertion(vertex_other->degree() >= 3);
+
+        if (offset != 0 || recompute_positions) {
+          SkelVertexDataSPtr data_other = std::dynamic_pointer_cast<SkelVertexData>(vertex_other->getData());
+          VertexSPtr offset_vertex_other = data_other->getOffsetVertex();
+          Vector_3 direction = *(offset_vertex_other->getPoint()) - *(vertex_other->getPoint());
+          point = KernelFactory::createPoint3(*(vertex->getPoint()) + direction);
+        }
+
+        VertexSPtr offset_vertex = Vertex::create(point);
+        SkelVertexDataSPtr data;
+        if (vertex->hasData()) {
+          data = std::dynamic_pointer_cast<SkelVertexData>(vertex->getData());
+        } else {
+          data = SkelVertexData::create(vertex);
+        }
+        data->setOffsetVertex(offset_vertex);
+        result->addVertex(offset_vertex);
+      } else {
+        CGAL_assertion_msg(i != 0, "no edge on degree 1 vertex?");
+      }
+    }
+#endif
+
+    for (EdgeSPtr edge : polyhedron->edges()) {
+        SkelVertexDataSPtr vertex_src_data = std::dynamic_pointer_cast<SkelVertexData>(
+                edge->getVertexSrc()->getData());
+        SkelVertexDataSPtr vertex_dst_data = std::dynamic_pointer_cast<SkelVertexData>(
+                edge->getVertexDst()->getData());
+
+        if (vertex_src_data && vertex_dst_data) {
+          VertexSPtr vertex_src = edge->getVertexSrc();
+          VertexSPtr vertex_dst = edge->getVertexDst();
+          VertexSPtr offset_vertex_src = vertex_src_data->getOffsetVertex();
+          VertexSPtr offset_vertex_dst = vertex_dst_data->getOffsetVertex();
+          EdgeSPtr offset_edge = Edge::create(offset_vertex_src, offset_vertex_dst);
+
+          SkelEdgeDataSPtr data;
+          if (edge->hasData()) {
+            data = std::dynamic_pointer_cast<SkelEdgeData>(edge->getData());
+            SkelEdgeDataSPtr offset_data = SkelEdgeData::create(offset_edge);
+            offset_data->setSheet(data->getSheet());
+          } else {
+            data = SkelEdgeData::create(edge);
+          }
+          data->setOffsetEdge(offset_edge);
+
+          result->addEdge(offset_edge);
+        }
+    }
+
+    typename std::list<FacetSPtr>::iterator it_f = polyhedron->facets().begin();
+    while (it_f != polyhedron->facets().end()) {
+        FacetSPtr facet = *it_f++;
+        FacetSPtr offset_facet = Facet::create();
+        SkelFacetDataSPtr data;
+        FT speed = 1.0;
+        if (facet->hasData()) {
+          data = std::dynamic_pointer_cast<SkelFacetData>(facet->getData());
+          speed = data->getSpeed();
+          SkelFacetDataSPtr data_offset = SkelFacetData::create(offset_facet);
+          data_offset->setFacetOrigin(data->getFacetOrigin());
+          data_offset->setSpeed(speed);
+        } else {
+          data = SkelFacetData::create(facet);
+          data->setSpeed(speed);
+        }
+
+        Plane3SPtr offset_plane = OffsetUtils::offsetPlane(facet->plane(), offset*speed);
+        offset_facet->plane_ = offset_plane;
+        offset_facet->base_plane_ = facet->base_plane_;
+        offset_facet->final_plane_ = facet->final_plane_;
+
+        typename std::list<VertexSPtr>::iterator it_v = facet->vertices().begin();
+        while (it_v != facet->vertices().end()) {
+          VertexSPtr vertex = *it_v++;
+          if (vertex->hasData()) {
+            SkelVertexDataSPtr vertex_data = std::dynamic_pointer_cast<SkelVertexData>(vertex->getData());
+            VertexSPtr offset_vertex = vertex_data->getOffsetVertex();
+            if (offset_vertex) {
+              offset_facet->addVertex(offset_vertex);
+              CGAL_assertion(offset_plane->has_on(*(offset_vertex->getPoint())));
+            }
+          }
+        }
+        typename std::list<EdgeSPtr>::iterator it_e = facet->edges().begin();
+        while (it_e != facet->edges().end()) {
+          EdgeSPtr edge = *it_e++;
+          SkelEdgeDataSPtr edge_data = std::dynamic_pointer_cast<SkelEdgeData>(edge->getData());
+          EdgeSPtr offset_edge = edge_data->getOffsetEdge();
+          if (facet == edge->getFacetL()) {
+            offset_edge->setFacetL(offset_facet);
+            offset_facet->addEdge(offset_edge);
+          }
+          if (facet == edge->getFacetR()) {
+            offset_edge->setFacetR(offset_facet);
+            offset_facet->addEdge(offset_edge);
+          }
+        }
+        data->setOffsetFacet(offset_facet);
+        result->addFacet(offset_facet);
+    }
+
+    result->initializeAllIDs();
+
+    CGAL_postcondition(polyhedron->vertices().size() == result->vertices().size());
+    CGAL_postcondition(polyhedron->edges().size() == result->edges().size());
+    CGAL_postcondition(polyhedron->facets().size() == result->facets().size());
+
+    return result;
+  }
+
+
+
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+
+
+bool isReflex() const
+{
+  if (degree() == 0) {
+      return false;
+  }
+  bool result = true;
+  for (EdgeWPtr edge_wptr : edges_) {
+    if (EdgeSPtr edge = edge_wptr.lock()) {
+      if (!edge->isReflex()) {
+        result = false;
+      }
+    }
+  }
+  return result;
+}
+
+bool isConvex() const
+{
+  if (degree() == 0) {
+    return false;
+  }
+  bool result = true;
+  for (EdgeWPtr edge_wptr : edges_) {
+    if (EdgeSPtr edge = edge_wptr.lock()) {
+      if (edge->isReflex()) {
+        result = false;
+      }
+    }
+  }
+  return result;
+}
+
+
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+
+
+  /**
+  * Nudge the plane coefficients by a number of nextafter steps
+  * in a random direction.
+  */
+  // I can go lower
+  void perturbPlaneCoefficientsSteps(int steps)
+  {
+    CGAL_precondition(isNormalizedPlane());
+
+    // @todo storing coefficients is only useful if we plan on untilting at the end.
+    // storePlaneCoefficients();
+
+    CGAL_SS3_TRANSF_TRACE_V(16, "Nudging (Steps) Face " << this->getID());
+    CGAL_SS3_TRANSF_TRACE_V(16, "  From coefficients [" << plane_->a() << " " << plane_->b() << " "
+                                                        << plane_->c() << " " << plane_->d() << "]");
+
+    auto nudge = [&](const FT& v)
+    {
+      std::random_device rd;
+      unsigned int s = 0; // rd()
+      // CGAL_SS3_TRANSF_TRACE("seed = " << s);
+      std::mt19937 gen(s);
+      std::uniform_int_distribution<> step_dis(1, steps);
+      std::uniform_int_distribution<> dir_dis(0, 1); // 0: negative, 1: positive
+      int n = step_dis(gen);
+      int dir = dir_dis(gen);
+      double direction = dir ? INFINITY : -INFINITY;
+      double nv = CGAL::to_double(v);
+      for (int i = 0; i < n; ++i) {
+        nv = std::nextafter(nv, direction);
+      }
+      return nv;
+    };
+
+    double na = nudge(plane_->a());
+    double nb = nudge(plane_->b());
+    double nc = nudge(plane_->c());
+    double nd = nudge(plane_->d()); // @todo do not nudge 'd'? (mind the 'to_double()')
+
+    double n = CGAL::approximate_sqrt(CGAL::square(na) + CGAL::square(nb) + CGAL::square(nc));
+    CGAL_assertion(n != 0); // should not happen since we have normalized and the shift is tiny
+
+    // below doesn't seem to matter? Probably need specific static filters...
+#if 0
+    plane_ = KernelFactory::createPlane3(na/n, nb/n, nc/n, nd/n);
+#else
+    // cast to_double() *after* the normalization to have double coordinates in the planes
+    // the downside is that we won't have a^2 + b^2 + c^2 == 1,
+    // but then again, who does...
+    plane_ = KernelFactory::createPlane3(CGAL::to_double(na/n),
+                                          CGAL::to_double(nb/n),
+                                          CGAL::to_double(nc/n),
+                                          CGAL::to_double(nd/n));
+#endif
+
+    CGAL_SS3_TRANSF_TRACE_V(16, "  To coefficients [" << plane_->a() << " " << plane_->b() << " "
+                                                      << plane_->c() << " " << plane_->d() << "]");
+
+    CGAL_postcondition(isNormalizedPlane());
+  }
+
+  /**
+  * Nudge the plane coefficients by a random value in the range [0, 1] / den.
+  */
+  // I can go lower
+  void perturbPlaneCoefficientsExact(const FT& den)
+  {
+    CGAL_precondition(isNormalizedPlane());
+
+    // @todo storing coefficients is only useful if we plan on untilting at the end.
+    // storePlaneCoefficients();
+
+    CGAL_SS3_TRANSF_TRACE_V(16, "Nudging (Exact) Face " << this->getID());
+    CGAL_SS3_TRANSF_TRACE_V(16, "  From coefficients [" << plane_->a() << " " << plane_->b() << " "
+                                                        << plane_->c() << " " << plane_->d() << "]");
+
+    auto nudge = [&](const FT& v)
+    {
+      static std::random_device rd;
+      unsigned int s = 0; // rd()
+      // CGAL_SS3_TRANSF_TRACE("seed = " << s);
+      static std::mt19937 gen(s);
+      static std::uniform_real_distribution<> rdist(0, 1);
+      FT step = rdist(gen);
+      return v + step / CGAL::square(den);
+    };
+
+    FT na = nudge(plane_->a());
+    FT nb = nudge(plane_->b());
+    FT nc = nudge(plane_->c());
+    FT nd = nudge(plane_->d()); // @todo do not nudge 'd'?
+
+    // so small, needless to normalize (@todo should we even normalize others?)
+    plane_ = KernelFactory::createPlane3(na, nb, nc, nd);
+
+    CGAL_SS3_TRANSF_TRACE_V(16, "  To coefficients [" << plane_->a() << " " << plane_->b() << " "
+                                                      << plane_->c() << " " << plane_->d() << "]");
+
+    CGAL_postcondition(isNormalizedPlane());
+  }
+
+
+  enum class PerturbationType
+  {
+    NUDGE,
+    STEPS,
+    EXACT,
+    HIGH_DEGREES
+  };
+
+
+    /**
+  * Nudge the plane coefficients to get rid of simultaneous events
+  */
+  void perturbPlaneCoefficients(PerturbationType type = PerturbationType::HIGH_DEGREES)
+  {
+    double range = 1e-10;
+    ConfigurationSPtr config = Configuration::getInstance();
+    if (config->isLoaded()) {
+      range = config->getDouble("main", "rand_move_points_range");
+    }
+
+    if (type == PerturbationType::NUDGE) {
+      perturbPlaneCoefficientsNudge(range);
+    } else if (type == PerturbationType::STEPS) {
+      perturbPlaneCoefficientsSteps(10);
+    } else if (type == PerturbationType::EXACT) {
+      perturbPlaneCoefficientsExact(FT(1e100));
+    } else if (type == PerturbationType::HIGH_DEGREES) {
+      perturbPlaneCoefficientsHighDegrees(range);
+    } else {
+      CGAL_error_msg("Unknown perturbation type");
+    }
+  }
+
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+
+double angleTo(EdgeSPtr edge) const
+{
+  double result = 0.0;
+  VertexSPtr vertex;
+  if (vertex_src_ == edge->getVertexSrc() ||
+      vertex_src_ == edge->getVertexDst()) {
+    vertex = vertex_src_;
+  } else if (vertex_dst_ == edge->getVertexSrc() ||
+              vertex_dst_ == edge->getVertexDst()) {
+    vertex = vertex_dst_;
+  }
+  FacetSPtr facet;
+  FacetSPtr facet_l = getFacetL();
+  FacetSPtr facet_r = getFacetR();
+  if (facet_l == edge->getFacetL() ||
+      facet_l == edge->getFacetR()) {
+    facet = facet_l;
+  } else if (facet_r == edge->getFacetL() ||
+              facet_r == edge->getFacetR()) {
+    facet = facet_r;
+  }
+  if (vertex && facet) {
+    Vector3SPtr normal = KernelFactory::createVector3(facet->plane());
+    Vector3SPtr dir_self;
+    if (vertex == vertex_src_) {
+      dir_self = KernelFactory::createVector3(*(vertex_dst_->getPoint()) - *(vertex_src_->getPoint()));
+    } else {
+      dir_self = KernelFactory::createVector3(*(vertex_src_->getPoint()) - *(vertex_dst_->getPoint()));
+    }
+    Vector3SPtr dir_other;
+    if (vertex == edge->getVertexSrc()) {
+      dir_other = KernelFactory::createVector3(*(edge->getVertexDst()->getPoint()) - *(edge->getVertexSrc()->getPoint()));
+    } else {
+      dir_other = KernelFactory::createVector3(*(edge->getVertexSrc()->getPoint()) - *(edge->getVertexDst()->getPoint()));
+    }
+    double angle = acos(CGAL::to_double(((*dir_self) * (*dir_other)) /
+      CGAL::disallowed_sqrt(dir_self->squared_length() * dir_other->squared_length())));
+
+    if ((facet_l == edge->getFacetR() && facet_r == edge->getFacetL()) ||
+        (facet_l == edge->getFacetL() && facet_r == edge->getFacetR())) {
+      if (angle < CGAL_PI/2.0) {
+        result = 0.0;
+      } else {
+        result = CGAL_PI;
+      }
+    } else {
+      result = angle;
+      double angle_normal = 0.0;
+
+      Vector_3 crossprod = CGAL::cross_product(*dir_self, *dir_other);
+      angle_normal = acos(CGAL::to_double(((*normal) * crossprod) /
+        CGAL::disallowed_sqrt(normal->squared_length() * crossprod.squared_length())));
+
+      if (angle_normal > CGAL_PI/2.0) {
+        result += CGAL_PI;
+      }
+    }
+  } else {
+    CGAL_SS3_HDS_TRACE("Warning: Edges do not have a shared Vertex and a shared Facet.");
+  }
+  return result;
+}
+
+/**
+  * counter clockwise from outside
+  */
+EdgeSPtr next(VertexSPtr vertex) const
+{
+  EdgeSPtr result = EdgeSPtr();
+  FacetSPtr facet;
+  if (vertex == vertex_src_) {
+    facet = FacetSPtr(facet_l_);
+  } else if (vertex == vertex_dst_) {
+    facet = FacetSPtr(facet_r_);
+  }
+  if (facet) {
+    std::list<EdgeSPtr> edges_possible;
+    for (EdgeWPtr edge_wptr : vertex->edges()) {
+      if (EdgeSPtr edge = edge_wptr.lock()) {
+        if (edge.get() == this) {
+          continue;
+        }
+        if (edge->dst(facet) == vertex) {
+          edges_possible.push_back(edge);
+        }
+      }
+    }
+    if (edges_possible.size() == 1) {
+      result = edges_possible.front();
+    } else {
+      std::exit(1);
+      double angle_min = 2*CGAL_PI;
+      typename std::list<EdgeSPtr>::iterator it_e = edges_possible.begin();
+      while (it_e != edges_possible.end()) {
+        EdgeSPtr edge = *it_e++;
+        double angle = angleTo(edge);
+        if (angle == angle_min) {
+          CGAL_SS3_HDS_TRACE("Warning: Not able to distinguish possible next edges.");
+        }
+        if (angle <= angle_min) {
+          result = edge;
+          angle_min = angle;
+        }
+      }
+    }
+  }
+  CGAL_SS3_DEBUG_SPTR(result);
+  return result;
+}
+
+EdgeSPtr prev(VertexSPtr vertex) const
+{
+  EdgeSPtr result = EdgeSPtr();
+  FacetSPtr facet;
+  if (vertex == vertex_src_) {
+    facet = FacetSPtr(facet_r_);
+  } else if (vertex == vertex_dst_) {
+    facet = FacetSPtr(facet_l_);
+  }
+  if (facet) {
+    std::list<EdgeSPtr> edges_possible;
+    for (EdgeWPtr edge_wptr : vertex->edges()) {
+      if (EdgeSPtr edge = edge_wptr.lock()) {
+        if (edge.get() == this) {
+          continue;
+        }
+        if (edge->src(facet) == vertex) {
+          edges_possible.push_back(edge);
+        }
+      }
+    }
+    if (edges_possible.size() == 1) {
+      result = edges_possible.front();
+    } else {
+      std::exit(1);
+      double angle_max = 0.0;
+      typename std::list<EdgeSPtr>::iterator it_e = edges_possible.begin();
+      while (it_e != edges_possible.end()) {
+        EdgeSPtr edge = *it_e++;
+        double angle = angleTo(edge);
+        if (angle == angle_max) {
+          CGAL_SS3_HDS_TRACE("Warning: Not able to distinguish possible next edges.");
+        }
+        if (angle >= angle_max) {
+          result = edge;
+          angle_max = angle;
+        }
+      }
+    }
+  }
+  CGAL_SS3_DEBUG_SPTR(result);
+  return result;
+}
+
+double angle() const
+{
+  double result = 0.0;
+  FacetSPtr facet_l, facet_r;
+  if ((facet_l = getFacetL()) && (facet_r = getFacetR())) {
+    Vector3SPtr v1 = KernelFactory::createVector3(facet_l->plane());
+    Vector3SPtr v2 = KernelFactory::createVector3(facet_r->plane());
+    result = acos(CGAL::to_double(((*v1) * (*v2)) /
+              CGAL::disallowed_sqrt(v1->squared_length() * v2->squared_length())));
+    result = CGAL_PI - result;
+    if (isReflex()) {
+      result = 2.0*CGAL_PI - result;
+    }
+  } else {
+    CGAL_SS3_HDS_TRACE("Warning: Not able to determine angle.");
+    CGAL_SS3_HDS_TRACE(toString());
+  }
+  return result;
+}
+
+
+
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+
+
+static double KernelWrapper::angle(Vector3SPtr v1, Vector3SPtr v2)
+{
+  CGAL_SS3_DEBUG_SPTR(v1);
+  CGAL_SS3_DEBUG_SPTR(v2);
+  double result = 0.0;
+  FT arg = 0.0;
+  arg = ((*v1)*(*v2)) / CGAL::disallowed_sqrt(v1->squared_length() * v2->squared_length());
+  // fixes issues with floating point precision
+  if (arg <= -1.0) {
+    result = CGAL_PI;
+  } else if (arg >= 1.0) {
+    result = 0.0;
+  } else {
+    result = acos(CGAL::to_double(arg));
+  }
+  return result;
+}
+
+static double KernelWrapper::angle(Line3SPtr line1, Line3SPtr line2)
+{
+  CGAL_SS3_DEBUG_SPTR(line1);
+  CGAL_SS3_DEBUG_SPTR(line2);
+  double result = 0.0;
+  Vector3SPtr v1 = KernelFactory::createVector3(line1);
+  Vector3SPtr v2 = KernelFactory::createVector3(line2);
+  result = angle(v1, v2);
+  return result;
+}
+
+static double KernelWrapper::angle(Plane3SPtr plane, Line3SPtr line)
+{
+  CGAL_SS3_DEBUG_SPTR(plane);
+  CGAL_SS3_DEBUG_SPTR(line);
+  double result = 0.0;
+  Vector3SPtr v_plane = KernelFactory::createVector3(plane);
+  Vector3SPtr v_line = KernelFactory::createVector3(line);
+  result = angle(v_plane, v_line);
+  if (result > CGAL_PI/2.0) {
+    result = result - CGAL_PI/2.0;
+  } else {
+    result = CGAL_PI/2.0 - result;
+  }
+  return result;
+}
+
+/**
+  * Computes the angle between the normal vectors of given planes.
+  */
+static double KernelWrapper::angle(Plane3SPtr plane1, Plane3SPtr plane2)
+{
+  CGAL_SS3_DEBUG_SPTR(plane1);
+  CGAL_SS3_DEBUG_SPTR(plane2);
+  double result = 0.0;
+  Vector3SPtr v1 = KernelFactory::createVector3(plane1);
+  Vector3SPtr v2 = KernelFactory::createVector3(plane2);
+  result = angle(v1, v2);
+  return result;
+}
+
+
+
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+
+
+bool makeFirstConvex()
+{
+  bool result = false;
+  if (!plane_) {
+    return false;
+  }
+  EdgeSPtr edge_begin;
+  FacetSPtr self(this->shared_from_this());
+  Vector3SPtr normal = KernelFactory::createVector3(plane_);
+  EdgeSPtr edge = edges_.front();
+  EdgeSPtr first = EdgeSPtr();
+  while (edge != first) {
+    if (!first) {
+      first = edge;
+    }
+    EdgeSPtr edge_next = edge->next(self);
+    Point3SPtr points[3];
+    points[0] = edge->src(self)->getPoint();
+    points[1] = edge->dst(self)->getPoint();
+    points[2] = edge_next->dst(self)->getPoint();
+
+#if 1 // @fixme is this correct? the CGAL_PI/4.0 below is confusing... Was it supposed to be CGAL_PI/2.0?
+    if (!CGAL::collinear(*(points[0]), *(points[1]), *(points[2]))) {
+      if (CGAL::angle(*(points[0]), *(points[1]), *(points[2]), *normal) == CGAL::ACUTE) {
+        edge_begin = edge;
+        result = true;
+        break;
+      }
+    }
+#else // old code; has issues with collinear points
+    if (points[0] != points[1] &&
+        points[1] != points[2] &&
+        points[2] != points[0]) {
+      Plane3SPtr plane_current = KernelFactory::createPlane3(
+              points[0], points[1], points[2]);
+      Vector3SPtr normal_current = KernelFactory::createVector3(plane_current);
+      double angle = 0.0;
+      double arg = 0.0;
+      arg = CGAL::to_double(((*normal)*(*normal_current)) /
+              CGAL::disallowed_sqrt(normal->squared_length() * normal_current->squared_length()));
+
+      // fixes issues with floating point precision
+      if (arg <= -1.0) {
+        angle = CGAL_PI;
+      } else if (arg >= 1.0) {
+        angle = 0.0;
+      } else {
+        angle = acos(arg);
+      }
+      if (angle < CGAL_PI/4.0) {
+        edge_begin = edge;
+        result = true;
+        break;
+      }
+    }
+#endif
+    edge = edge_next;
+  }
+
+
+
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+
+#include <CGAL/number_utils.h>
+
+namespace CGAL {
+
+template <typename FT>
+decltype(auto) sqrt_with_warning(const FT& v)
+{
+  return CGAL::approximate_sqrt(v);
+}
+
+template <typename FT>
+FT disallowed_sqrt(const FT& v)
+{
+  CGAL_assertion(false);
+  std::exit(1);
+  return CGAL::approximate_sqrt(v);
+}
+
+} // namespace CGAL
+
+
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+
+
+/**
+* Store the current plane ahead of perturbation
+*/
+void storePlaneCoefficients()
+{
+  CGAL_precondition(bool(this->plane_));
+
+  // need a different shared ptr here because plane_ will change with the perturbation
+  cachedPlane_ = KernelFactory::createPlane3(*(plane_));
+
+  CGAL_SS3_TRANSF_TRACE("caching plane of Facet " << this->id_ << " : [" << *cachedPlane_ << "]");
+}
+
+
+/**
+* Restores the plane coefficients to the previous value, updating 'd' so that the plane
+* matches the desired offset.
+*/
+static void restorePlaneCoefficients(FacetSPtr facet,
+                                      const FT& perturbationOffset,
+                                      const FT& perturbationEndOffset)
+{
+  CGAL_SS3_TRANSF_TRACE("plane of Facet " << facet->getID() << " is [" << *(facet->getPlane()) << "]");
+
+  if (!HdsUtils::getCachedPlane(facet)) {
+    std::cerr << "Warning: no plane coefficients to restore" << std::endl;
+    return;
+  }
+
+  const FT speed = HdsUtils::getSPeed(facet);
+  Plane3SPtr cachedPlane = HdsUtils::getCachedPlane(facet);
+
+  CGAL_SS3_TRANSF_TRACE("OLD d = " << cachedPlane->d());
+  CGAL_SS3_TRANSF_TRACE("perturbationOffset = " << perturbationOffset);
+  CGAL_SS3_TRANSF_TRACE("perturbationEndOffset = " << perturbationEndOffset);
+
+  // The minus sign "d - ..." is because we shrink, so the plane needs to be offset
+  // by the difference of offsets, but in the direction opposite of its normal.
+  //
+  // This is similar to when we call, e.g.:
+  //   Plane3SPtr offset_plane_l = KernelWrapper::offsetPlane(plane_l, - speed_l);
+  //                                                                  ^^^
+  const FT d = cachedPlane->d() - speed * (perturbationEndOffset - perturbationOffset);
+
+  facet->setPlane(KernelFactory::createPlane3(cachedPlane->a(), cachedPlane->b(), cachedPlane->c(), d));
+  CGAL_assertion_code(FT sq_n = CGAL::square(facet->getPlane()->a()) + CGAL::square(facet->getPlane()->b()) + CGAL::square(facet->getPlane()->c()));
+  CGAL_assertion((sq_n - 1) < 1e-5);
+
+  CGAL_SS3_TRANSF_TRACE("plane of Facet " << facet->getID() << " restored to [" << *(facet->getPlane()) << "]");
+}
+
+
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+
+
+
+/**
+* Offsets the polyhedron `polyhedron`, which may have degree 1 vertices.
+* Negative offset points to the interior of the polyhedron.
+*/
+static bool shiftFacetsDegree1(PolyhedronSPtr polyhedron,
+                                const FT& offset)
+{
+  CGAL_SS3_TRANSF_TRACE("~~~~ Shift polyhedron by " << offset << " [in place, enhanced]");
+  CGAL_SS3_DEBUG_SPTR(polyhedron);
+
+  // Maps to store shifted planes and points
+  std::unordered_map<FacetSPtr, Plane3SPtr> facet_to_shifted_plane;
+  std::unordered_map<VertexSPtr, Point3SPtr> vertex_to_shifted_point;
+
+  for (FacetSPtr facet : polyhedron->facets()) {
+    Plane3SPtr offset_plane = shiftPlane(facet, offset);
+    facet_to_shifted_plane[facet] = offset_plane;
+  }
+
+  // Degree 1 vertices are shifted by translating the shifted adjacent degree 3+ vertex adjacent
+  // to the degree 1 vertex by the same direction and distance as the unshifted vertices.
+  // So, before treating degree 1 vertices, we must treat the degree 3 vertices.
+  for (VertexSPtr vertex : polyhedron->vertices()) {
+    if (vertex->degree() >= 3) {
+      std::array<Plane3SPtr, 3> shifted_planes;
+      unsigned int i = 0;
+      typename std::list<FacetWPtr>::iterator it_f = vertex->facets().begin();
+      while (i < 3 && it_f != vertex->facets().end()) {
+        FacetWPtr facet_wptr = *it_f++;
+        if (FacetSPtr facet = facet_wptr.lock()) {
+          shifted_planes[i++] = facet_to_shifted_plane[facet];
+        }
+      }
+      CGAL_postcondition(i == 3);
+
+      Point3SPtr shifted_point = KernelWrapper::intersection(shifted_planes[0], shifted_planes[1], shifted_planes[2]);
+      if (!shifted_point) {
+        CGAL_SS3_TRANSF_TRACE_V(1, "Error: triplet of shifted planes doesn't define a point!");
+        return false;
+      }
+      vertex_to_shifted_point[vertex] = shifted_point;
+    }
+  }
+
+  // Now we can shift degree 1 vertices
+  for (VertexSPtr vertex : polyhedron->vertices()) {
+    if (vertex->degree() == 1) {
+      EdgeSPtr edge = nullptr;
+      unsigned int i = 0;
+      for (EdgeWPtr edge_wptr : vertex->edges()) {
+        if ((edge = edge_wptr.lock())) {
+          ++i;
+        }
+      }
+      CGAL_assertion(i == 1);
+
+      VertexSPtr vertex_other = edge->other(vertex);
+      CGAL_assertion(vertex_other->degree() >= 3);
+
+      FacetSPtr facet1 = edge->getFacetL();
+      FacetSPtr facet2 = edge->getFacetR();
+      Plane3SPtr plane1 = facet_to_shifted_plane[facet1];
+      Plane3SPtr plane2 = facet_to_shifted_plane[facet2];
+      Line3SPtr intersection_line = KernelWrapper::intersection(plane1, plane2);
+      CGAL_assertion(bool(intersection_line));
+
+      // Determine the direction using the unshifted positions
+      Point3SPtr point_other = vertex_to_shifted_point[vertex_other];
+      Point3SPtr point = vertex->getPoint();
+      CGAL_assertion(*point != *point_other);
+      Vector_3 direction = intersection_line->to_vector();
+      if (CGAL::scalar_product(direction, *point - *vertex_other->getPoint()) < 0) {
+        direction = -direction;
+      }
+
+      // Apply the shift to the vertex
+      Point3SPtr offset_point = KernelFactory::createPoint3(*point_other + direction);
+      if (!offset_point) {
+        return false;
+      }
+      vertex_to_shifted_point[vertex] = offset_point;
+    }
+  }
+
+  // Apply all shifts
+  for (FacetSPtr facet : polyhedron->facets()) {
+    facet->setPlane(facet_to_shifted_plane[facet]);
+  }
+  for (VertexSPtr vertex : polyhedron->vertices()) {
+    if (vertex_to_shifted_point.count(vertex)) {
+      vertex->setPoint(vertex_to_shifted_point[vertex]);
+    }
+  }
+
+  return true;
+}
+
+
+
+
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+
+
+
+PolyhedronSPtr polyhedron_no_flip = Polyhedron::create(facets_clone);
+not_flipped_valid =
+    (Transformation::shiftFacetsDegree1(polyhedron_no_flip, -1.0) &&
+      !SelfIntersection::hasSelfIntersectingSurface(polyhedron_no_flip));
+
+
+PolyhedronSPtr polyhedron_flipped = Polyhedron::create(facets_clone);
+flipped_valid =
+    (Transformation::shiftFacetsDegree1(polyhedron_flipped, -1.0) &&
+      !SelfIntersection::hasSelfIntersectingSurface(polyhedron_flipped));
+
+
+static bool checkSplitted(PolyhedronSPtr polyhedron)
+{
+  CGAL_SS3_DEBUG_SPTR(polyhedron);
+  bool result = false;
+  PolyhedronSPtr polyhedron_cpy = polyhedron->clone();
+  result = Transformation::shiftFacetsDegree1(polyhedron_cpy, -1.0);
+  result = result && !SelfIntersection::hasSelfIntersectingSurface(polyhedron_cpy);
+  return result;
+}
+
+
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+
+
+/**
+  * Creates an offset polyhedron.
+  * Negative offset points to the interior of the polyhedron.
+  */
+// @speed plenty of needless recomputations:
+// - when we do shiftPoint for adjacent points
+// - when we call shiftPoint, and then call shiftPlane later on
+// - ...
+static PolyhedronSPtr shiftFacetsDuplicate(const PolyhedronSPtr& polyhedron,
+                                            const FT& offset,
+                                            const bool recompute_positions = true)
+{
+  CGAL_SS3_DEBUG_SPTR(polyhedron);
+
+  PolyhedronSPtr result = Polyhedron::create();
+
+  typename std::list<VertexSPtr>::iterator it_v = polyhedron->vertices().begin();
+  while (it_v != polyhedron->vertices().end()) {
+    VertexSPtr vertex = *it_v++;
+
+    // this could be handled, but they are useless and should have been removed with
+    // calls to the function removeVerticesDegLt3()
+    CGAL_precondition(vertex->degree() != 2);
+
+    // those are treated in the next loop
+    if (vertex->degree() == 1) {
+      continue;
+    }
+
+    Point3SPtr old_point = vertex->getPoint(), new_point = old_point;
+    if (offset != 0 || recompute_positions) {
+      new_point = shiftPoint(vertex, offset);
+      if (!new_point) {
+        std::cerr << "Warning: Failed to create shifted point" << std::endl;
+        return { };
+      }
+    }
+
+    VertexSPtr offset_vertex = Vertex::create(new_point);
+    // SkelVertexData for each vertex should be created by init
+    SkelVertexDataSPtr data;
+    if (vertex->hasData()) {
+      data = std::dynamic_pointer_cast<SkelVertexData>(vertex->getData());
+      SkelVertexDataSPtr offset_data = SkelVertexData::create(offset_vertex);
+      offset_data->setArc(data->getArc());
+    } else {
+      data = SkelVertexData::create(vertex);
+    }
+    data->setOffsetVertex(offset_vertex);
+    result->addVertex(offset_vertex);
+  }
+
+  // Now, deal with degree 1 vertices.
+  //
+  // Do NOT merge the two vertices loops together: this function assumes that degree 1 vertices
+  // are adjacent to degree 3+ vertices that have been offset in the first loop, and offsets
+  // degree 1 vertices using the offset of the adjacent degree 3+ vertex.
+#if 1
+  it_v = polyhedron->vertices().begin();
+  while (it_v != polyhedron->vertices().end()) {
+    VertexSPtr vertex = *it_v++;
+
+    CGAL_precondition(vertex->degree() != 2);
+
+    // those are treated in the first loop
+    if (vertex->degree() >= 3) {
+      continue;
+    }
+
+    EdgeSPtr edge;
+    CGAL_assertion_code(unsigned int i = 0;)
+    for (EdgeWPtr edge_wptr : vertex->edges()) {
+      if ((edge = edge_wptr.lock())) {
+        CGAL_assertion_code(++i;)
+      }
+    }
+
+    CGAL_assertion(i == 1);
+
+    VertexSPtr vertex_other = edge->other(vertex);
+    CGAL_assertion(vertex_other->degree() >= 3);
+
+    FacetSPtr facet1 = edge->getFacetL();
+    FacetSPtr facet2 = edge->getFacetR();
+    Plane3SPtr plane1 = facet1->plane();
+    Plane3SPtr plane2 = facet2->plane();
+    Line3SPtr intersection_line = KernelWrapper::intersection(plane1, plane2);
+    CGAL_assertion(bool(intersection_line));
+
+    // Determine the direction using the unshifted positions
+    Point3SPtr point_other = vertex_other->getPoint();
+    Point3SPtr point = vertex->getPoint();
+    CGAL_assertion(*point != *point_other);
+    Vector_3 direction = intersection_line->to_vector();
+    if (CGAL::scalar_product(direction, *point - *point_other) < 0) {
+      direction = -direction;
+    }
+
+    // Apply the shift to the offset vertex
+    SkelVertexDataSPtr data_other = std::dynamic_pointer_cast<SkelVertexData>(vertex_other->getData());
+    VertexSPtr offset_vertex_other = data_other->getOffsetVertex();
+
+    // The length of the direction does not matter: when degree 1 are evaluated, the code
+    // treats them as infinite rays
+    Point3SPtr offset_point = KernelFactory::createPoint3(*(offset_vertex_other->getPoint()) + direction);
+    VertexSPtr offset_vertex = Vertex::create(offset_point);
+    SkelVertexDataSPtr data;
+    if (vertex->hasData()) {
+      data = std::dynamic_pointer_cast<SkelVertexData>(vertex->getData());
+    } else {
+      data = SkelVertexData::create(vertex);
+    }
+    data->setOffsetVertex(offset_vertex);
+    result->addVertex(offset_vertex);
+  }
+#else
+  it_v = polyhedron->vertices().begin();
+  while (it_v != polyhedron->vertices().end()) {
+    VertexSPtr vertex = *it_v++;
+    Point3SPtr point = vertex->getPoint();
+
+    EdgeSPtr edge;
+    unsigned int i = 0;
+    for (EdgeWPtr edge_wptr : vertex->edges()) {
+      if ((edge = edge_wptr.lock())) {
+        ++i;
+      }
+    }
+    if (i == 1) {
+      VertexSPtr vertex_other = (edge->getVertexSrc() == vertex) ? edge->getVertexDst()
+                                                                  : edge->getVertexSrc();
+
+      // otherwise vertex_other has not been offset in the previous vertex loop
+      CGAL_assertion(vertex_other->degree() >= 3);
+
+      if (offset != 0 || recompute_positions) {
+        SkelVertexDataSPtr data_other = std::dynamic_pointer_cast<SkelVertexData>(vertex_other->getData());
+        VertexSPtr offset_vertex_other = data_other->getOffsetVertex();
+        Vector_3 direction = *(offset_vertex_other->getPoint()) - *(vertex_other->getPoint());
+        point = KernelFactory::createPoint3(*(vertex->getPoint()) + direction);
+      }
+
+      VertexSPtr offset_vertex = Vertex::create(point);
+      SkelVertexDataSPtr data;
+      if (vertex->hasData()) {
+        data = std::dynamic_pointer_cast<SkelVertexData>(vertex->getData());
+      } else {
+        data = SkelVertexData::create(vertex);
+      }
+      data->setOffsetVertex(offset_vertex);
+      result->addVertex(offset_vertex);
+    } else {
+      CGAL_assertion_msg(i != 0, "no edge on degree 1 vertex?");
+    }
+  }
+#endif
+
+  for (const EdgeSPtr& edge : polyhedron->edges()) {
+      SkelVertexDataSPtr vertex_src_data = std::dynamic_pointer_cast<SkelVertexData>(
+              edge->getVertexSrc()->getData());
+      SkelVertexDataSPtr vertex_dst_data = std::dynamic_pointer_cast<SkelVertexData>(
+              edge->getVertexDst()->getData());
+
+      if (vertex_src_data && vertex_dst_data) {
+        VertexSPtr vertex_src = edge->getVertexSrc();
+        VertexSPtr vertex_dst = edge->getVertexDst();
+        VertexSPtr offset_vertex_src = vertex_src_data->getOffsetVertex();
+        VertexSPtr offset_vertex_dst = vertex_dst_data->getOffsetVertex();
+        EdgeSPtr offset_edge = Edge::create(offset_vertex_src, offset_vertex_dst);
+
+        SkelEdgeDataSPtr data;
+        if (edge->hasData()) {
+          data = std::dynamic_pointer_cast<SkelEdgeData>(edge->getData());
+          SkelEdgeDataSPtr offset_data = SkelEdgeData::create(offset_edge);
+          offset_data->setSheet(data->getSheet());
+        } else {
+          data = SkelEdgeData::create(edge);
+        }
+        data->setOffsetEdge(offset_edge);
+
+        result->addEdge(offset_edge);
+      }
+  }
+
+  typename std::list<FacetSPtr>::iterator it_f = polyhedron->facets().begin();
+  while (it_f != polyhedron->facets().end()) {
+      FacetSPtr facet = *it_f++;
+      FacetSPtr offset_facet = Facet::create();
+      SkelFacetDataSPtr data;
+      FT speed = 1.0;
+      if (facet->hasData()) {
+        data = std::dynamic_pointer_cast<SkelFacetData>(facet->getData());
+        speed = data->getSpeed();
+        SkelFacetDataSPtr data_offset = SkelFacetData::create(offset_facet);
+        data_offset->setFacetOrigin(data->getFacetOrigin());
+        data_offset->setSpeed(speed);
+      } else {
+        data = SkelFacetData::create(facet);
+        data->setSpeed(speed);
+      }
+
+      Plane3SPtr offset_plane = GeomUtils::offsetPlane(facet->plane(), offset*speed);
+      offset_facet->setPlane(offset_plane);
+
+      typename std::list<VertexSPtr>::iterator it_v = facet->vertices().begin();
+      while (it_v != facet->vertices().end()) {
+        VertexSPtr vertex = *it_v++;
+        if (vertex->hasData()) {
+          SkelVertexDataSPtr vertex_data = std::dynamic_pointer_cast<SkelVertexData>(vertex->getData());
+          VertexSPtr offset_vertex = vertex_data->getOffsetVertex();
+          if (offset_vertex) {
+            offset_facet->addVertex(offset_vertex);
+            CGAL_assertion(offset_plane->has_on(*(offset_vertex->getPoint())));
+          }
+        }
+      }
+      typename std::list<EdgeSPtr>::iterator it_e = facet->edges().begin();
+      while (it_e != facet->edges().end()) {
+        EdgeSPtr edge = *it_e++;
+        SkelEdgeDataSPtr edge_data = std::dynamic_pointer_cast<SkelEdgeData>(edge->getData());
+        EdgeSPtr offset_edge = edge_data->getOffsetEdge();
+        if (facet == edge->getFacetL()) {
+          offset_edge->setFacetL(offset_facet);
+          offset_facet->addEdge(offset_edge);
+        }
+        if (facet == edge->getFacetR()) {
+          offset_edge->setFacetR(offset_facet);
+          offset_facet->addEdge(offset_edge);
+        }
+      }
+      data->setOffsetFacet(offset_facet);
+      result->addFacet(offset_facet);
+  }
+
+  result->initializeAllIDs();
+
+  CGAL_postcondition(polyhedron->vertices().size() == result->vertices().size());
+  CGAL_postcondition(polyhedron->edges().size() == result->edges().size());
+  CGAL_postcondition(polyhedron->facets().size() == result->facets().size());
+
+  return result;
+}
+
+
+
+
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+
+
+
+
+EdgeSPtr Edge::next(const FacetSPtr& facet) const
+{
+  EdgeSPtr result = EdgeSPtr();
+  VertexSPtr vertex_dst = dst(facet);
+  for (EdgeWPtr edge_wptr : vertex_dst->edges()) {
+    if (EdgeSPtr edge = edge_wptr.lock()) {
+      if (edge->src(facet) == vertex_dst) {
+        result = edge;
+        break;
+      }
+    }
+  }
+  CGAL_SS3_DEBUG_SPTR(result);
+  return result;
+
+#if 0
+  EdgeSPtr result = EdgeSPtr();
+  std::list<EdgeSPtr>::const_iterator it_e = facet->edges().begin();
+  while (it_e != facet->edges().end()) {
+      EdgeSPtr edge = *it_e;
+      if (edge == this->shared_from_this()) {
+        result = edge;
+        break;
+      }
+      ++it_e;
+  }
+  if (it_e != facet->edges().end()) {
+    VertexSPtr vertex_dst = this->dst(facet);
+    std::list<EdgeSPtr>::const_iterator it_e_begin = it_e++;
+    if (it_e == facet->edges().end()) {
+      it_e = facet->edges().begin();
+    }
+    while (it_e != it_e_begin) {
+      EdgeSPtr edge = *it_e++;
+      if (it_e == facet->edges().end()) {
+        it_e = facet->edges().begin();
+      }
+      if (vertex_dst == edge->src(facet)) {
+        result = edge;
+        break;
+      }
+    }
+  }
+  CGAL_SS3_DEBUG_SPTR(result);
+  return result;
+#endif
+}
+
+EdgeSPtr Edge::prev(const FacetSPtr& facet) const
+{
+  EdgeSPtr result = EdgeSPtr();
+  VertexSPtr vertex_src = src(facet);
+  for (EdgeWPtr edge_wptr : vertex_src->edges()) {
+    if (EdgeSPtr edge = edge_wptr.lock()) {
+      if (edge->dst(facet) == vertex_src) {
+        result = edge;
+        break;
+      }
+    }
+  }
+  CGAL_SS3_DEBUG_SPTR(result);
+  return result;
+
+#if 0
+  EdgeSPtr result = EdgeSPtr();
+  std::list<EdgeSPtr>::const_reverse_iterator it_e = facet->edges().rbegin();
+  while (it_e != facet->edges().rend()) {
+    EdgeSPtr edge = *it_e;
+    if (edge == this->shared_from_this()) {
+      result = edge;
+      break;
+    }
+    ++it_e;
+  }
+  if (it_e != facet->edges().rend()) {
+    VertexSPtr vertex_src = this->src(facet);
+    std::list<EdgeSPtr>::const_reverse_iterator it_e_begin = it_e++;
+    if (it_e == facet->edges().rend()) {
+        it_e = facet->edges().rbegin();
+    }
+    while (it_e != it_e_begin) {
+      EdgeSPtr edge = *it_e++;
+      if (it_e == facet->edges().rend()) {
+        it_e = facet->edges().rbegin();
+      }
+      if (vertex_src == edge->dst(facet)) {
+        result = edge;
+        break;
+      }
+    }
+  }
+  CGAL_SS3_DEBUG_SPTR(result);
+  return result;
+#endif
+}
+
+
+VertexSPtr Vertex::next(const FacetSPtr& facet) const
+{
+  VertexSPtr result = VertexSPtr();
+
+  if (facet->vertices().size() == 1) { // @fixme what's the point of this loop...
+    VertexSPtr vertex = *facet->vertices().begin();
+    CGAL_assertion(vertex == this->shared_from_this());
+    return vertex;
+  }
+
+  for (EdgeWPtr edge_wptr : edges_) {
+    if (EdgeSPtr edge = edge_wptr.lock()) {
+      if (edge->src(facet) == this->shared_from_this()) {
+        result = edge->dst(facet);
+        break;
+      }
+    }
+  }
+
+  CGAL_SS3_DEBUG_SPTR(result);
+  return result;
+
+# if 0
+  VertexSPtr result = VertexSPtr();
+  std::list<VertexSPtr>::const_iterator it_v = facet->vertices().begin();
+  while (it_v != facet->vertices().end()) {
+    VertexSPtr vertex = *it_v;
+    if (vertex == this->shared_from_this()) {
+      if (facet->vertices().size() == 1) { // @fixme what's the point of this loop...
+        result = vertex;
+      }
+      break;
+    }
+    it_v++;
+  }
+  if (it_v != facet->vertices().end()) {
+    std::list<VertexSPtr>::const_iterator it_v_begin = it_v++;
+    if (it_v == facet->vertices().end()) {
+      it_v = facet->vertices().begin();
+    }
+    while (it_v != it_v_begin) {
+      VertexSPtr vertex = *it_v++;
+      if (it_v == facet->vertices().end()) {
+        it_v = facet->vertices().begin();
+      }
+      EdgeSPtr edge = findEdge(vertex);
+      if (edge) {
+        if (edge->dst(facet) == vertex) {
+          result = vertex;
+          break;
+        }
+      }
+    }
+  }
+  CGAL_SS3_DEBUG_SPTR(result);
+  return result;
+#endif
+}
+
+VertexSPtr Vertex::prev(const FacetSPtr& facet) const
+{
+  VertexSPtr result = VertexSPtr();
+  CGAL_assertion(facet->vertices().size() > 1);
+
+  for (EdgeWPtr edge_wptr : edges_) {
+    if (EdgeSPtr edge = edge_wptr.lock()) {
+      if (edge->dst(facet) == this->shared_from_this()) {
+        result = edge->src(facet);
+        break;
+      }
+    }
+  }
+
+  CGAL_SS3_DEBUG_SPTR(result);
+  return result;
+
+#if 0
+  VertexSPtr result = VertexSPtr();
+  typename std::list<VertexSPtr>::const_reverse_iterator it_v = facet->vertices().rbegin();
+  while (it_v != facet->vertices().rend()) {
+    VertexSPtr vertex = *it_v;
+    if (vertex == this->shared_from_this()) {
+      if (facet->vertices().size() == 1) {
+        result = vertex;
+      }
+      break;
+    }
+    ++it_v;
+  }
+  if (it_v != facet->vertices().rend()) {
+    typename std::list<VertexSPtr>::const_reverse_iterator it_v_begin = it_v++;
+    if (it_v == facet->vertices().rend()) {
+      it_v = facet->vertices().rbegin();
+    }
+    while (it_v != it_v_begin) {
+      VertexSPtr vertex = *it_v++;
+      if (it_v == facet->vertices().rend()) {
+        it_v = facet->vertices().rbegin();
+      }
+      EdgeSPtr edge = findEdge(vertex);
+      if (edge) {
+        if (edge->src(facet) == vertex) {
+          result = vertex;
+          break;
+        }
+      }
+    }
+  }
+  CGAL_SS3_DEBUG_SPTR(result);
+  return result;
+#endif
+}
+
 
 // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
 
@@ -10184,7 +12146,6 @@ void SimpleStraightSkel::collectEdgeSplitEventsWithBoxD(PolyhedronSPtr polyhedro
 
 
 // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
-
 
 
 
