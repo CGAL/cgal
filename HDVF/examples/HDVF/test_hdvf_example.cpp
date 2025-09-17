@@ -59,8 +59,8 @@ int main(int argc, char **argv)
         // Test get_annotation
 
         // Compute the annotation of cycle1 in the homology basis
-        std::vector<std::vector<size_t> > crit =  hdvf.flag(CGAL::HDVF::CRITICAL);
-        std::vector<size_t> criticals = hdvf.flag_dim(CGAL::HDVF::CRITICAL, 1) ;
+        std::vector<std::vector<size_t> > crit =  hdvf.psc_flags(CGAL::HDVF::CRITICAL);
+        std::vector<size_t> criticals = hdvf.psc_flags(CGAL::HDVF::CRITICAL, 1) ;
         HDVF_type::Column_chain cycle1(hdvf.homology_chain(criticals.at(0), 1)) ;
         HDVF_type::Column_chain annot1(hdvf.get_annotation(cycle1,1));
         std::cout << "Cycle1:" << cycle1 << std::endl ;

@@ -284,7 +284,7 @@ public:
     /**
      * \brief Transposes a matrix.
      *
-     * The function returns a new matrix where the chain type flag is changed.
+     * The function returns a new matrix where the `StorageFormat` is changed.
      */
     SparseMatrix transpose();
 

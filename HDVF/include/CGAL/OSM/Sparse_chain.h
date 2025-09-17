@@ -643,7 +643,7 @@ public:
      *
      * The result is a chain with `StorageFormat` switched between COLUMN and ROW.
      *
-     * \return A new chain where the chain type flag is changed.
+     * \return A new chain where the `StorageFormat` is changed.
      */
     Sparse_chain<CoefficientRing, COLUMN + ROW - StorageFormat> transpose() {
         Sparse_chain<CoefficientRing, COLUMN + ROW - StorageFormat> chain;

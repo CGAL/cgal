@@ -1282,7 +1282,7 @@ public:
     /**
      * \brief Transposes a matrix.
      *
-     * \return A new matrix where the chain type flag has been swapped between COLUMN and ROW and data chains have been transposed.
+     * \return A new matrix where the `StorageFormat` has been swapped between COLUMN and ROW and data chains have been transposed.
      */
     Sparse_matrix<CoefficientRing, COLUMN + ROW - StorageFormat> transpose() {
         Sparse_matrix<CoefficientRing, COLUMN + ROW - StorageFormat> transposed(this->_size.second, this->_size.first);

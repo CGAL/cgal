@@ -238,23 +238,23 @@ public:
 
     // Hdvf_duality getters
     /**
-     * \brief Gets cells with a given `flag` in any dimension *in the current sub chain complex*.
+     * \brief Gets cells with a given `PSC_flag` in any dimension *in the current sub chain complex*.
      *
-     * The function returns a vector containing, for each dimension, the vector of cells with a given `flag`.
+     * The function returns a vector containing, for each dimension, the vector of cells with a given `PSC_flag`.
      *
-     * \param[in] flag Flag to select.
+     * \param[in] flag PSC_flag to select.
      */
-    std::vector<std::vector<size_t> > flag (Flag_type flag) const ;
+    std::vector<std::vector<size_t> > psc_flags (PSC_flag flag) const ;
 
     /**
-     * \brief Gets cells with a given `flag` in dimension `q` *in the current sub chain complex*.
+     * \brief Gets cells with a given `PSC_flag` in dimension `q` *in the current sub chain complex*.
      *
-     * The function returns the vector of cells of dimension `q` with a given `flag`.
+     * The function returns the vector of cells of dimension `q` with a given `PSC_flag`.
      *
-     * \param[in] flag Flag to select.
+     * \param[in] flag PSC_flag to select.
      * \param[in] q Dimension visited.
      */
-    std::vector<size_t> flag_dim (Flag_type flag, int q) const ;
+    std::vector<size_t> psc_flags (PSC_flag flag, int q) const ;
 
     // Hdvf_duality I/O
 
@@ -651,7 +651,7 @@ std::vector<Cell_pair> Hdvf_duality<ChainComplex>::compute_perfect_hdvf(bool ver
     // Compute perfect HDVF over K
     std::vector<Cell_pair> tmp = HDVF_parent::compute_perfect_hdvf(verbose) ;
     std::cout << tmp.size() << " cells paired" << std::endl ;
-    _critical_K = flag(CRITICAL) ;
+    _critical_K = psc_flags(CRITICAL) ;
 
     std::cout << std::endl << "==== Compute perfect HDVF over L-K" << std::endl ;
     // set _subCC to L-K
@@ -661,7 +661,7 @@ std::vector<Cell_pair> Hdvf_duality<ChainComplex>::compute_perfect_hdvf(bool ver
     // Compute perfect HDVF over L-K
     std::vector<Cell_pair> tmp2 = HDVF_parent::compute_perfect_hdvf(verbose) ;
     std::cout << tmp2.size() << " cells paired" << std::endl ;
-    _critical_L_K = flag(CRITICAL) ;
+    _critical_L_K = psc_flags(CRITICAL) ;
 
     // Return the vector of paired cells
     tmp.insert(tmp.end(), tmp2.begin(), tmp2.end());
@@ -680,7 +680,7 @@ std::vector<Cell_pair> Hdvf_duality<ChainComplex>::compute_rand_perfect_hdvf(boo
     // Compute perfect HDVF over K
     std::vector<Cell_pair> tmp = HDVF_parent::compute_rand_perfect_hdvf(verbose) ;
     std::cout << tmp.size() << " cells paired" << std::endl ;
-    _critical_K = flag(CRITICAL) ;
+    _critical_K = psc_flags(CRITICAL) ;
 
     std::cout << std::endl << "==== Compute perfect HDVF over L-K" << std::endl ;
     // set _subCC to L-K
@@ -690,7 +690,7 @@ std::vector<Cell_pair> Hdvf_duality<ChainComplex>::compute_rand_perfect_hdvf(boo
     // Compute perfect HDVF over L-K
     std::vector<Cell_pair> tmp2 = HDVF_parent::compute_rand_perfect_hdvf(verbose) ;
     std::cout << tmp2.size() << " cells paired" << std::endl ;
-    _critical_L_K = flag(CRITICAL) ;
+    _critical_L_K = psc_flags(CRITICAL) ;
 
     // Return the vector of paired cells
     tmp.insert(tmp.end(), tmp2.begin(), tmp2.end());
@@ -729,9 +729,9 @@ std::vector<Cell_pair> Hdvf_duality<ChainComplex>::compute_rand_pairing_hdvf()
     return pairing ;
 }
 
-// Method to get cells of _subCC with a given flag for each dimension
+// Method to get cells of _subCC with a given PSC_flag for each dimension
 template<typename ChainComplex>
-std::vector<std::vector<size_t> > Hdvf_duality<ChainComplex>::flag (Flag_type flag) const
+std::vector<std::vector<size_t> > Hdvf_duality<ChainComplex>::psc_flags (PSC_flag flag) const
 {
     std::vector<std::vector<size_t> > res(_L.dimension()+1) ;
     for (int q=0; q<=_L.dimension(); ++q)
@@ -745,9 +745,9 @@ std::vector<std::vector<size_t> > Hdvf_duality<ChainComplex>::flag (Flag_type fl
     return res ;
 }
 
-// Method to get cells of _subCC with a given flag for a given dimension
+// Method to get cells of _subCC with a given PSC_flag for a given dimension
 template<typename ChainComplex>
-std::vector<size_t> Hdvf_duality<ChainComplex>::flag_dim (Flag_type flag, int q) const
+std::vector<size_t> Hdvf_duality<ChainComplex>::psc_flags (PSC_flag flag, int q) const
 {
     std::vector<size_t> res ;
     for (size_t i=0; i<this->_K.number_of_cells(q); ++i)

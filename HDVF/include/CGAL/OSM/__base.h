@@ -21,21 +21,21 @@
 namespace CGAL {
 namespace OSM {
 
-/** \brief Chain type flag for column chain. */
+/** \brief StorageFormat for column chain. */
 const int COLUMN = 0b01;
-/** \brief Chain type flag for row chain. */
+/** \brief StorageFormat flag for row chain. */
 const int ROW    = 0b10;
 
 /** \brief The default type for signed integers. */
 typedef int ZCoefficient;
 
 // Class Sparse_matrix
-template <typename _CoefficientType = OSM::ZCoefficient, int _ChainTypeFlag = OSM::COLUMN>
+template <typename _CoefficientType = OSM::ZCoefficient, int _StorageFormat = OSM::COLUMN>
 class Sparse_matrix;
 
 // Class Sparse_chain
 
-template <typename _CoefficientType = OSM::ZCoefficient, int _ChainTypeFlag = OSM::COLUMN>
+template <typename _CoefficientType = OSM::ZCoefficient, int _StorageFormat = OSM::COLUMN>
 class Sparse_chain;
 
 // Class Bitboard

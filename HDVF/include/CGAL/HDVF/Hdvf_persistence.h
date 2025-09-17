@@ -87,9 +87,9 @@ public:
      * - `cell_birth`, `cell_death`: persistent interval cells
      * - `degree_birth`, `degree_death`: persistent interval degrees
      *
-     * Infinite holes are encoded by setting birth data = death data (time, degree and cell).
+     * Infinite intervals are encoded by setting birth data = death data (time, degree and cell).
      */
-    struct Persistent_hole {
+    struct Persistent_interval {
         size_t time_birth, time_death;
         Degree degree_birth, degree_death;
         Cell cell_birth, cell_death;
@@ -156,13 +156,17 @@ public:
      */
     typedef Filtration_ Filtration;
 
-    /*! For persistent diagram iterator (returned by *it)
+    /*! \brief Hole information returned by the persistent diagram iterator.
+     *
+     * Information comprises:
+     * - `Persistent_interval` providing informations related to the "times" of the persistent interval (index, degree and cell of birth/death).
+     * - `labelPSC` storing HDVF flags at death time of the hole
      */
     typedef struct {
-        Persistent_hole hole ;
+        Persistent_interval hole ;
         std::vector<std::vector<int> > labelsPSC ;
-        Column_chain g_chain_sigma, g_chain_tau, fstar_chain_sigma, fstar_chain_tau ;
-    } Persistent_interval_iterator_value ;
+        Column_chain homology_chain_birth, homology_chain_death, cohomology_chain_birth, cohomology_chain_death ;
+    } Persistent_hole ;
 
 protected:
     /* \brief Reference to the filtration used for persistence */
@@ -174,7 +178,7 @@ protected:
     std::vector<std::vector<size_t> > _K_to_per, _per_to_K ;
 
     /* \brief Vector of persistent pairs computed */
-    std::vector<Persistent_hole> _persist ;
+    std::vector<Persistent_interval> _persist ;
 
     /* \brief Boolean determining weather or not export homology/cohomology generators associated to persistent pairs
      * - If _with_export is true, PSC labels and homology/cohomology generators are stored for each persistent pair of duration (that is, such as the difference between degrees of birth/death) strictly positive.
@@ -250,7 +254,7 @@ public:
         }
 
         // Compute "infinite" holes
-        std::vector<std::vector<size_t> > criticals(this->flag(CRITICAL)) ;
+        std::vector<std::vector<size_t> > criticals(this->psc_flags(CRITICAL)) ;
         for (int q=0; q < criticals.size(); ++q)
         {
             for (size_t i : criticals.at(q))
@@ -264,7 +268,7 @@ public:
                 const size_t ti(_f._cell_to_t.at(c)) ;
                 const Degree di(_f._deg.at(i)) ;
 
-                Persistent_hole hole;
+                Persistent_interval hole;
                 hole.time_birth = ti;
                 hole.time_death = ti;
                 hole.degree_birth = di;
@@ -301,9 +305,9 @@ public:
     friend std::ostream& operator<< (std::ostream& out_stream, const Hdvf_persistence& per_hdvf)
     {
         size_t i = 0 ;
-        for (Persistent_hole hole : per_hdvf._persist)
+        for (Persistent_interval hole : per_hdvf._persist)
         {
-            if (hole.duration() > 0)
+            if (abs(hole.duration()) > 0)
             {
                 out_stream << i << " --- duration : " << hole.duration() << " -- " ;
                 hole.insert(out_stream);
@@ -448,7 +452,7 @@ public:
         // Iterator tags
         using iterator_category = std::forward_iterator_tag;
         using difference_type   = std::ptrdiff_t;
-        using value_type        = Persistent_interval_iterator_value;
+        using value_type        = Persistent_hole;
 
         /*! \brief Iterator constructor
          *
@@ -474,22 +478,22 @@ public:
         // Operators
         /*! \brief Iterator dereference
          *
-         * \returns A `Persistent_interval_iterator_value` structure containing the information of the current persistence interval.
+         * \returns A `Persistent_hole` is a structure containing all informations related to the current persistence hole.
          */
         value_type operator*() const
         {
-            Persistent_interval_iterator_value res ;
+            Persistent_hole res ;
             res.hole = _per_hdvf._persist.at(_i) ;
             res.labelsPSC = _per_hdvf._export_labels.at(_i) ;
             if (_per_hdvf._hdvf_opt & (OPT_G | OPT_FULL))
             {
-                res.g_chain_sigma = _per_hdvf._export_g.at(_i).first ;
-                res.g_chain_tau = _per_hdvf._export_g.at(_i).second ;
+                res.homology_chain_birth = _per_hdvf._export_g.at(_i).first ;
+                res.homology_chain_death = _per_hdvf._export_g.at(_i).second ;
             }
             if (_per_hdvf._hdvf_opt & (OPT_F | OPT_FULL))
             {
-                res.fstar_chain_sigma = _per_hdvf._export_fstar.at(_i).first ;
-                res.fstar_chain_tau = _per_hdvf._export_fstar.at(_i).second ;
+                res.cohomology_chain_birth = _per_hdvf._export_fstar.at(_i).first ;
+                res.cohomology_chain_death = _per_hdvf._export_fstar.at(_i).second ;
             }
             return res ;
         }
@@ -763,8 +767,8 @@ Cell_pair Hdvf_persistence<ChainComplex, Degree, Filtration_>::step_persist(bool
 //        FiltrIndexPerInterval interval(ti, tj) ;
 //        CellsPerInterval interval_cells(ci, cj) ;
 //        DegreePerInterval interval_deg(_f._deg.at(ti), _f._deg.at(tj)) ;
-//        Persistent_hole hole(interval, interval_cells, interval_deg) ;
-        Persistent_hole hole;
+//        Persistent_interval hole(interval, interval_cells, interval_deg) ;
+        Persistent_interval hole;
         hole.time_birth = ti;
         hole.time_death = tj;
         hole.degree_birth = _f._deg.at(ti);
@@ -797,7 +801,7 @@ Cell_pair Hdvf_persistence<ChainComplex, Degree, Filtration_>::step_persist(bool
 
 // HELP !!!!!
 template<typename ChainComplex, typename Degree, typename Filtration_ >
-std::ostream& operator<< (std::ostream& out_stream, const typename Hdvf_persistence<ChainComplex, Degree, Filtration_>::Persistent_hole& hole)
+std::ostream& operator<< (std::ostream& out_stream, const typename Hdvf_persistence<ChainComplex, Degree, Filtration_>::Persistent_interval& hole)
 {
     typedef Hdvf_persistence<ChainComplex, Degree, Filtration_> HDVF_parent;
     // time (cell, dim) -> time (cell, dim) / degree duration

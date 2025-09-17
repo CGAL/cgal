@@ -63,7 +63,7 @@ Using appropriate combinations of such operations, one can change a HDVF until c
  <img src="HDVF_op3_g3.png" align="center" width=30%/>
 
  Perfect HDVFs provide various topological results:
- - Betti numbers: are well known topological descriptors (providing the number of holes in each dimension). For a perfect HDVF, Betti numbers equal the number of critical cells (that can be obtained through `flag()` or `flag_dim()` with the ``CRITICAL`` flag as argument).
+ - Betti numbers: are well known topological descriptors (providing the number of holes in each dimension). For a perfect HDVF, Betti numbers equal the number of critical cells (that can be obtained through `psc_flags()` with the `CRITICAL``PSC_flag` as argument).
  - Homology/cohomology generators are actually algebraic objects, namely chains. Methods `homology_chain()` and `cohomology_chain()` return the homology and cohomology generator chain associated to a given critical cell. VTK export functions output all the cells of such chains with non zero coefficients. Figures here above illustrate such homology and co-homology generators.
  - Homology/cohomology annotation: use `get_annotation()` or `get_coannotation()` to get the annotation/co-annotation of a cycle/co-cycle in the homology/cohomology basis (as a chain of critical cells).
  - Homology/cohomology comparison: use `are_same_cycles()` or `are_same_cocycles()` to check if two cycles (or co-cycles) belong to the same homology / cohomology class.
@@ -1101,10 +1101,10 @@ void Hdvf<ChainComplex>::R(size_t pi, size_t sigma, int q) {
         }
 
         // Update flags
-        this->_flag[q][pi] = CRITICAL; // Set the flag of pi in dimension q to CRITICAL
+        this->_flag[q][pi] = CRITICAL; // Set the PSC_flag of pi in dimension q to CRITICAL
         ++this->_nb_C.at(q) ;
         --this->_nb_P.at(q) ;
-        this->_flag[q + 1][sigma] = CRITICAL; // Set the flag of sigma in dimension q+1 to CRITICAL
+        this->_flag[q + 1][sigma] = CRITICAL; // Set the PSC_flag of sigma in dimension q+1 to CRITICAL
         ++this->_nb_C.at(q+1) ;
         --this->_nb_S.at(q+1) ;
     }
@@ -1222,8 +1222,8 @@ void Hdvf<ChainComplex>::M(size_t pi, size_t gamma, int q) {
         // else: if the dimension is 0, no change for this->_G_col[q] and this->_DD_col[q]
 
         // Update flags
-        this->_flag[q][pi] = CRITICAL; // Set the flag of pi in dimension q to PRIMARY
-        this->_flag[q][gamma] = PRIMARY; // Set the flag of gamma in dimension q to CRITICAL
+        this->_flag[q][pi] = CRITICAL; // Set the PSC_flag of pi in dimension q to PRIMARY
+        this->_flag[q][gamma] = PRIMARY; // Set the PSC_flag of gamma in dimension q to CRITICAL
     }
     else
         std::cout << "!!! M impossible with partial reduction options" << std::endl;
@@ -1343,8 +1343,8 @@ void Hdvf<ChainComplex>::W(size_t sigma, size_t gamma, int q) {
         // else : if the dimension is maximal, no update of this->_DD_col[q+1] and this->_F_row[q]
 
         // Update flags
-        this->_flag[q][gamma] = SECONDARY; // Set the flag of gamma in dimension q to SECONDARY
-        this->_flag[q][sigma] = CRITICAL; // Set the flag of sigma in dimension q to CRITICAL
+        this->_flag[q][gamma] = SECONDARY; // Set the PSC_flag of gamma in dimension q to SECONDARY
+        this->_flag[q][sigma] = CRITICAL; // Set the PSC_flag of sigma in dimension q to CRITICAL
     }
     else
         std::cout << "!!! W impossible with partial reduction options" << std::endl;
@@ -1461,8 +1461,8 @@ void Hdvf<ChainComplex>::MW(size_t pi, size_t sigma, int q) {
         this->_DD_col.at(q) += (tmp4 * xip) * G11 ;
 
         // Update flags
-        this->_flag[q][pi] = SECONDARY; // Set the flag of gamma in dimension q to SECONDARY
-        this->_flag[q][sigma] = PRIMARY; // Set the flag of sigma in dimension q to PRIMARY
+        this->_flag[q][pi] = SECONDARY; // Set the PSC_flag of gamma in dimension q to SECONDARY
+        this->_flag[q][sigma] = PRIMARY; // Set the PSC_flag of sigma in dimension q to PRIMARY
     }
     else
         std::cout << "!!! MW impossible with partial reduction options" << std::endl;

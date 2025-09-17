@@ -15,11 +15,11 @@ This later theory proved to have a wide range of applications in topological dat
 In parallel, in the late 80's, R. Forman defined a discrete version of Morse theory for CW-complexes, while F. Sergeraert introduced effective homology theory.
 
 In [AGL, 2017], A. Gonzalez-Lorenzo et al. defined the **homological discrete vector field** (which we refer to as HDVF in the present package), a combinatorial object that generalizes previous approaches.
-Precisely, HDVFs\ combine discrete Morse and effective homology theory and fully encode homology information (homology groups decomposition, Betti numbers, homology generators) for cellular complexes.
+Precisely, HDVFs combine discrete Morse and effective homology theory and fully encode homology information (homology groups decomposition, Betti numbers, homology generators) for cellular complexes.
 HDVFs encompass discrete Morse theory, effective homology and Smith Normal form, and: persistent homology can be computed with HDVFs (see [AGL, 2016]), relative homology and Alexander duality (see [AGL, 2025]).
 
  \cgalFigureBegin{HDVFtwirl,HDVF_twirl.png}
- HDVF on a twirl model. <B>Left:</B> a perfect HDVF over the model; <B>Middle:</B> Homology generators associated to this HDVF; <B>Right:</B> Corresponding cohomology generators.
+ HDVF on a twirl model. **Left:** a perfect HDVF over the model; **Middle:** Homology generators associated to this HDVF; **Right:** Corresponding cohomology generators.
  \cgalFigureEnd
 
 Unlike other main stream state of art approaches and librairies (largely based on persistent homology), HDVFs provide a framework for "geometric" homology and cohomology computation, where holes are not only enumerated, but also "localized" (through homology, cohomology generators, annotations...).
@@ -46,7 +46,7 @@ Actually, a set of cells is called a complex \f$K\f$ when:
 The dimension of \f$K\f$ is the largest dimension of its cells.
 
  \cgalFigureBegin{HDVFcomplexes,HDVF_cub_simpl_complex.png}
- Illustration of complexes. <B>Left:</B> a simplicial complex of dimension 3; <B>Right:</B> A cubical complex of dimension 3.
+ Illustration of complexes. **Left:** a simplicial complex of dimension 3; **Right:** A cubical complex of dimension 3.
  \cgalFigureEnd
 
  In order to compute homology and cohomology, algebraic objects are built from such "geometric" complexes, namely chain complexes.
@@ -64,22 +64,26 @@ Given a complex \f$K\f$ of dimension \f$d\f$, a **chain complex** \f$C\f$ is:
 - a sequence of commutative groups, called **chain groups** \f$C_q\f$ for any \f$0\leqslant q \leqslant d\f$ defined as the formal linear combinations of cells with coefficients in \f$A\f$ (or \f$A\f$-module).<br>
 Intuitively, elements of \f$C_q\f$, called **chains** are sums \f$\gamma = \sum_{i=1}^k\lambda_i\cdot \sigma_i\f$ with \f$\lambda_i\in A\f$ and \f$\sigma_i\f$ cells of dimension \f$q\f$, which can be imagined as a set of paths of oriented cells with multiplicity (see \cgalFigureRef{HDVFchain_complexes} where two 1-chains are represented).
 - a sequence of morphisms between chain groups, called **boundary morphisms** \f$\partial_q\,:\, C_q\to C_{q-1}\f$ for any \f$0\leqslant q \leqslant d\f$, "mimicking" algebraically the geometric boundary and satisfying
+
 \f\[\partial_q\partial_{q+1} = 0\f\]
+
 Coming back to the example of \cgalFigureRef{HDVFchain_complexes}, as we will see in section \ref secHDVFsimplicial_chain_complex, the boundary of the edge \f$e_{45}\f$ is the 0-chain \f$v_5-v_4\f$ (ordering is given by vertices indices). Hence, on easily gets that \f$\partial_1(\gamma_1)=0\f$ and \f$\partial_1(\gamma_2)=v_8-v_4\f$, which is a very intuitive result.
 
  \cgalFigureBegin{HDVFchain_complexes,simplicial_complex_chains.png}
- Examples of chains representation in a simplicial complex (with \f$A = \mathbb Z\f$). <B>Pink:</B> representation the 1-chain (of edges) \f$\gamma_1 = e_{24}+e_{46}-e_{26}\f$; <B>Blue:</B> representation of the 1-chain \f$\gamma_2 = e_{45}+e_{56}+e_{67}+e_{78}\f$.
+ Examples of chains representation in a simplicial complex (with \f$A = \mathbb Z\f$). **Pink:** representation the 1-chain (of edges) \f$\gamma_1 = e_{24}+e_{46}-e_{26}\f$; **Blue:** representation of the 1-chain \f$\gamma_2 = e_{45}+e_{56}+e_{67}+e_{78}\f$.
  \cgalFigureEnd
 
 The definition of the boundary operator depends on the underlying complex, it is detailed in next sections for simplicial and cubical complexes respectively.
 
-**Notation** Given a chain \f$\gamma\in C_q\f$ and \f$\sigma\f$ a \f$q\f$-cell, we denote by \f$\langle\gamma,\sigma\rangle\f$ the coefficient of \f$\sigma\f$ in \f$\gamma\in C_q\f$.
+ <B>Notation</B>
+
+Given a chain \f$\gamma\in C_q\f$ and \f$\sigma\f$ a \f$q\f$-cell, we denote by \f$\langle\gamma,\sigma\rangle\f$ the coefficient of \f$\sigma\f$ in \f$\gamma\in C_q\f$.
 
 \subsubsection secHDVFsimplicial_chain_complex Simplicial chain complexes
 
 An **abstract simplicial complex** of dimension \f$d\f$ is built from:
 - a set of vertices identified by an index of type `size_t` (cells of dimension 0 or **0-simplices**)
-- for any \f$q\f$ with \f$0< q\leqslant d\f$, cells of dimension \f$q\f$ (or **\f$q\f$-simplices**) are defined by \f$q+1\f$ vertices (denoted \f$\langle v_0,\ldots,v_{q}\rangle\f$ with vertices sorted by *increasing indices*).
+- for any \f$q\f$ with \f$0< q\leqslant d\f$, cells of dimension \f$q\f$ (or **q-simplices**) are defined by \f$q+1\f$ vertices (denoted \f$\langle v_0,\ldots,v_{q}\rangle\f$ with vertices sorted by *increasing indices*).
 
 A **geometric simplicial complex** equips vertices with coordinates in \f$\mathbb R^q\f$ so that \f$q\f$-simplices are convex hulls of \f$q+1\f$ points.
 
@@ -145,7 +149,7 @@ However in our discrete setting of finite complexes, a space and its dual can be
 The following figure illustrates the coboundary morphism
 
  \cgalFigureBegin{HDVFcoboundary,simplicial_complex_coboundary.png}
- Illustration of the coboundary morphism (with \f$A = \mathbb Z\f$) <B>Pink:</B> coboundary of vertex \f$v_6\f$ (\f$\partial^0(v_6) = e_{26} + e_{46}+e_{56} - e_{67} - e_{68}\f$); <B>Blue:</B> coboundary of edge \f$e_{24}\f$ (\f$\partial^1(e_{24} ) = f_{246} - f_{234}\f$).
+ Illustration of the coboundary morphism (with \f$A = \mathbb Z\f$) **Pink:** coboundary of vertex \f$v_6\f$ (\f$\partial^0(v_6) = e_{26} + e_{46}+e_{56} - e_{67} - e_{68}\f$); **Blue:** coboundary of edge \f$e_{24}\f$ (\f$\partial^1(e_{24} ) = f_{246} - f_{234}\f$).
  \cgalFigureEnd
 
 \subsection secHDVFhomology Homology of discrete chain complexes
@@ -156,12 +160,12 @@ Homology is a topological invariant characterizing the holes of an object of var
 - holes of dimension 2 are cavities
 
  \cgalFigureBegin{HDVFholes_example,holes_example.png}
- Illustration of the holes of a double torus. <B>Black:</B> 1 connected component (dimension 0); <B>Red:</B> 4 holes of dimension 1; <B>Blue</B> 1 cavity of dimension 2.
+ Illustration of the holes of a double torus. **Black:** 1 connected component (dimension 0); **Red:** 4 holes of dimension 1; **Blue** 1 cavity of dimension 2.
  \cgalFigureEnd
 
 Let us now come back to our simplicial complex example:
  \cgalFigureBegin{HDVFsimplicial_cycles_example,simplicial_complex_homology.png}
- Cycles on a simplicial complex. <B>Blue:</B> this cycle is the boundary of \f$f_{234}+f_{246}\f$; <B>Pink:</B> this cycle is not a boundary.
+ Cycles on a simplicial complex. **Blue:** this cycle is the boundary of \f$f_{234}+f_{246}\f$; **Pink:** this cycle is not a boundary.
  \cgalFigureEnd
 
 This example suggests that holes are delineated by *cycles which are not a boundaries*:
@@ -202,7 +206,7 @@ one can define:
 \f\[H^q(C^*) = Z^q(C^*)/B^q(C^*) \f\]
 
  \cgalFigureBegin{HDVFex_hom_cohom,HDVF_ex_hom_cohom.png}
- Illustration of homology and cohomology generators for a simple 2D cubical complex \f$C\f$ (computed with HDVFs). <B>Left:</B> both generators of \f$H_1(C)\f$; <B>Middle, right:</B> both cohomology generators \f$H^1(C)\f$ (for convenience, the dual of cohomology generators has been displayed with bulleted pink lines).
+ Illustration of homology and cohomology generators for a simple 2D cubical complex \f$C\f$ (computed with HDVFs). **Left:** both generators of \f$H_1(C)\f$; **Middle, right:** both cohomology generators \f$H^1(C)\f$ (for convenience, the dual of cohomology generators has been displayed with bulleted pink lines).
  \cgalFigureEnd
 
  \cgalFigureBegin{HDVFex_hom_cohom_cofaces,HDVF_ex_hom_cohom_cofaces.png}
@@ -460,7 +464,7 @@ and the operation is valid (ie.\ produces an HDVF) if and only if:
     The following figure illustrates the M operation.
 
  \cgalFigureBegin{HDVF_M,HDVF_M.png}
- M operation on a cubical complex \f$K\f$. <B>Left:</B> perfect HDVF over \f$K\f$ with cells \f$(\pi, \gamma)\f$ meeting the M operation condition (blue: homology generator associated with \f$\gamma\f$, pink: cohomology generator associated with \f$\gamma\f$); <B>Right:</B> perfect HDVF obtained with \f$M(\pi,\gamma)\f$ and updated generators (associated to \f$\pi\f$ which is now critical).
+ M operation on a cubical complex \f$K\f$. **Left:** perfect HDVF over \f$K\f$ with cells \f$(\pi, \gamma)\f$ meeting the M operation condition (blue: homology generator associated with \f$\gamma\f$, pink: cohomology generator associated with \f$\gamma\f$); **Right:** perfect HDVF obtained with \f$M(\pi,\gamma)\f$ and updated generators (associated to \f$\pi\f$ which is now critical).
  \cgalFigureEnd
 
  - **W operation** (exchange a SECONDARY and a CRITICAL cell)<br>
@@ -473,7 +477,7 @@ and the operation is valid (ie.\ produces an HDVF) if and only if:
     The following figure illustrates the W operation.
 
  \cgalFigureBegin{HDVF_W,HDVF_W.png}
- W operation on a cubical complex \f$K\f$. <B>Left:</B> perfect HDVF over \f$K\f$ with cells \f$(\sigma, \gamma)\f$ meeting the W operation condition (blue: homology generator associated with \f$\gamma\f$, pink: cohomology generator associated with \f$\gamma\f$); <B>Right:</B> perfect HDVF obtained with \f$W(\pi,\gamma)\f$ and updated generators (associated to \f$\sigma\f$ which is now critical).
+ W operation on a cubical complex \f$K\f$. **Left:** perfect HDVF over \f$K\f$ with cells \f$(\sigma, \gamma)\f$ meeting the W operation condition (blue: homology generator associated with \f$\gamma\f$, pink: cohomology generator associated with \f$\gamma\f$); **Right:** perfect HDVF obtained with \f$W(\pi,\gamma)\f$ and updated generators (associated to \f$\sigma\f$ which is now critical).
  \cgalFigureEnd
 
 - **MW operation** (exchange a PRIMARY and a SECONDARY cell)<br>
@@ -486,7 +490,7 @@ and the operation is valid (ie.\ produces an HDVF) if and only if:
     The following figure illustrates the W operation.
 
  \cgalFigureBegin{HDVF_MW,HDVF_MW.png}
- MW operation on a cubical complex \f$K\f$. <B>Top:</B> perfect HDVF over \f$K\f$ with cells \f$(\pi_1, \sigma_1)\f$ and \f$(\pi_2, \sigma_2)\f$ meeting the MW operation condition (blue: homology generators, pink: cohomology generators); <B>Down, left:</B> perfect HDVF obtained with \f$MW(\pi_1,\sigma_1)\f$ and updated generators (a cohomology generator is modified); <B>Down, right:</B> perfect HDVF obtained with \f$MW(\pi_2,\sigma_2)\f$ and updated generators (a homology generator is modified).
+ MW operation on a cubical complex \f$K\f$. **Top:** perfect HDVF over \f$K\f$ with cells \f$(\pi_1, \sigma_1)\f$ and \f$(\pi_2, \sigma_2)\f$ meeting the MW operation condition (blue: homology generators, pink: cohomology generators); **Down, left:** perfect HDVF obtained with \f$MW(\pi_1,\sigma_1)\f$ and updated generators (a cohomology generator is modified); **Down, right:** perfect HDVF obtained with \f$MW(\pi_2,\sigma_2)\f$ and updated generators (a homology generator is modified).
  \cgalFigureEnd
 
 Recent works by Yann-Situ Gazull [YSG1], [YSG2] proved that (when \f$A\f$ is a field):
@@ -584,7 +588,7 @@ Let us point out that whatever the type of chain complex, cells are indexed alon
         \endcode
 
 \cgalFigureBegin{HDVF_primal_dual,HDVF_primal_dual.png}
-Primal and dual constructions of cubical chain complexes from a binary volume. <B>Left:</B> a 3D binary volume; <B>Middle:</B> PRIMAL cubical (chain) complex associated to the volume; <B>Right:</B> DUAL cubical (chain) complex associated to the volume).<br>
+Primal and dual constructions of cubical chain complexes from a binary volume. **Left:** a 3D binary volume; **Middle:** PRIMAL cubical (chain) complex associated to the volume; **Right:** DUAL cubical (chain) complex associated to the volume).<br>
     Figure taken from [AGL, 2016].
 \cgalFigureEnd
 
@@ -594,7 +598,7 @@ The `simp` file format is a very simple text format listing, encoding simplicial
 The file doesn't need to provide an exhaustive enumeration of simplices (with all their faces), indeed, the simplicial chain complex constructors fill them with faces. Figure \cgalFigureRef{HDVF_simp_file} illustrate the format on a simple simplicial complex.
 
 \cgalFigureBegin{HDVF_simp_file,HDVF_simp_file.png}
-Example of `simp` file. <B>Left:</B> a simplicial complex; <B>Right:</B> associated `simp` files describing maximal simplices.
+Example of `simp` file. **Left:** a simplicial complex; **Right:** associated `simp` files describing maximal simplices.
 \cgalFigureEnd
 
 \subsubsection secHDVFcubFile The `.cub` file format
@@ -607,7 +611,7 @@ The `cub` file format is a very simple text format encoding binary volumes:
 The file doesn't need to provide an exhaustive enumeration of cells (with all their faces), indeed, the cubical chain complex constructors fill them with faces. Figure \cgalFigureRef{HDVF_cub_file} illustrate the format on a simple cubical complex.
 
 \cgalFigureBegin{HDVF_cub_file,HDVF_cub_file.png}
-Example of `cub` file. <B>Left:</B> a cubical complex; <B>Right:</B> associated `cub` files describing maximal cells.
+Example of `cub` file. **Left:** a cubical complex; **Right:** associated `cub` files describing maximal cells.
 \cgalFigureEnd
 
 \subsection secHDVFbuild Building and computing a HDVF
@@ -670,7 +674,7 @@ The package provide a family of methods to search for valid pairings:
 
 How to extract (co)homological information then? Various solutions and output are available:
 - **HDVF extraction / visualization**:
-    The method `psc_labels` extracts cells flags in any dimensions. The complex annotated with labels can then be exported to `vtk` for visualization. The `vtk` output includes a `Label` property encoding the HDVF flag (-1 for PRIMARY, 1 for SECONDARY and 0 for CRITICAL cells), and a `CellId` property storing cells indices:
+    The method `psc_labels` extracts cells flags in any dimensions. The complex annotated with labels can then be exported to `vtk` for visualization. The `vtk` output includes a `Label` property encoding the HDVF PSC_flag (-1 for PRIMARY, 1 for SECONDARY and 0 for CRITICAL cells), and a `CellId` property storing cells indices:
     \code
         // Labels extraction
         vector<vector<int> > labels = hdvf.psc_labels() ;
@@ -682,11 +686,11 @@ How to extract (co)homological information then? Various solutions and output ar
     Critical cells can be obtained:
     - either in all dimensions:
     \code
-        std::vector<std::vector<size_t> > criticals =  hdvf.flag(CGAL::HDVF::CRITICAL);
+        std::vector<std::vector<size_t> > criticals =  hdvf.psc_flags(CGAL::HDVF::CRITICAL);
     \endcode
     - or in a given dimension `q`:
     \code
-        std::vector<size_t> criticals_q = hdvf.flag_dim(CGAL::HDVF::CRITICAL, q) ;
+        std::vector<size_t> criticals_q = hdvf.psc_flags(CGAL::HDVF::CRITICAL, q) ;
     \endcode
 - **Homology/cohomology generators**
     Each critical cell \f$\gamma\f$ bears an associated homology generator: \f$g(\gamma)\f$ and cohomology generator: \f$f^*(\gamma)\f$.
