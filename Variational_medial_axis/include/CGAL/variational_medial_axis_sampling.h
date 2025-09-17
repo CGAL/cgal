@@ -558,11 +558,7 @@ public:
   FT operator()(const Point_3& p) const {
     FT dmin = (std::numeric_limits<FT>::max)();
 
-    // Find closest sphere with AABB tree
-    // auto pp = tree_.closest_point_and_primitive(p);
-    // const Iterator it = pp.second; // iterator into spheres_
-    // const std::size_t i = static_cast<std::size_t>(std::distance(spheres_->begin(), it));
-
+    //TODO: the filtering strategy doesn't work
     std::unordered_set<std::pair<std::size_t, std::size_t>, boost::hash<std::pair<std::size_t, std::size_t>>>
         visited_edges;
 
@@ -574,8 +570,11 @@ public:
       const FT& r1 = radii_[a];
       const FT& r2 = radii_[b];
       const FT& r3 = radii_[c];
+      const FT& r_max = r1>r2 ? (r1 > r3 ? r1 : r3) : (r2 > r3 ? r2 : r3);
+      /* if(dmin > eval_slab(c1, c2, c3, r_max, r_max, r_max,p)) {
+         dmin = std::min(dmin, eval_slab(c1, c2, c3, r1, r2, r3, p));
+       }*/
       dmin = std::min(dmin, eval_slab(c1, c2, c3, r1, r2, r3, p));
-
       visited_edges.insert({a, b});
       visited_edges.insert({b, c});
       visited_edges.insert({c, a});
@@ -589,8 +588,10 @@ public:
       const Point_3& c2 = (*spheres_)[j].center();
       const FT& r1 = radii_[i];
       const FT& r2 = radii_[j];
+      const FT r_max = r1 > r2 ? r1 : r2;
+      /*if(dmin > eval_cone(c1, c2, r_max, r_max, p))
+        dmin = std::min(dmin, eval_cone(c1, c2, r1, r2, p));*/
       dmin = std::min(dmin, eval_cone(c1, c2, r1, r2, p));
-
       if(dmin < 0)
         return dmin;
     }
@@ -1023,7 +1024,7 @@ public:
 
     desired_number_of_spheres_ = choose_parameter(get_parameter(np, internal_np::number_of_spheres), 100);
     lambda_ = choose_parameter(get_parameter(np, internal_np::lambda), FT(0.2));
-    max_iteration_ = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 1000);
+    max_iteration_ = choose_parameter(get_parameter(np, internal_np::number_of_iterations), desired_number_of_spheres_*10);
     verbose_ = choose_parameter(get_parameter(np, internal_np::verbose), false);
     vpm_ = choose_parameter(get_parameter(np, internal_np::vertex_point),
                             get_const_property_map(CGAL::vertex_point, tmesh));
@@ -1080,7 +1081,7 @@ public:
     desired_number_of_spheres_ =
         choose_parameter(get_parameter(np, internal_np::number_of_spheres), desired_number_of_spheres_);
     lambda_ = choose_parameter(get_parameter(np, internal_np::lambda), lambda_);
-    max_iteration_ = choose_parameter(get_parameter(np, internal_np::number_of_iterations), max_iteration_);
+    max_iteration_ = choose_parameter(get_parameter(np, internal_np::number_of_iterations), desired_number_of_spheres_*10);
     verbose_ = choose_parameter(get_parameter(np, internal_np::verbose), verbose_);
     bool success = false;
     reset_algorithm_state();
@@ -1331,7 +1332,7 @@ private:
   void sample_surface_mesh() {
   std::size_t nb_samples = std::max(std::size_t(30000), 100 * desired_number_of_spheres_);
     CGAL::Random rng;
-    CGAL::Random_points_in_triangle_mesh_3<TriangleMesh_> g(tmesh_, rng);
+    CGAL::Random_points_in_triangle_mesh_3<TriangleMesh_, VPM> g(tmesh_, vpm_, rng);
     for(std::size_t i = 0; i < nb_samples; ++i) {
       Point_3 p = *g;
       face_descriptor f = g.last_item_picked();
@@ -1367,24 +1368,18 @@ private:
                  boost::make_zip_iterator(boost::make_tuple(points.end(), indices.end())));
 
     for(auto it = tpoints_.begin(); it != tpoints_.end(); ++it) {
-      Point_Index idx = *it;
-      const Point_3& query_point = tpoints_.point(idx);
-      KNN knn(tree, query_point, k_ + 1);
-      auto& neighbors = point_knn_map_[idx];
-      neighbors.clear();
-      neighbors.reserve(k_);
+       Point_Index idx = *it;
+       const Point_3& query_point = tpoints_.point(idx);
+       KNN knn(tree, query_point, k_);
+       auto& neighbors = point_knn_map_[idx];
+       neighbors.clear();
+       neighbors.reserve(k_);
 
-      for(auto knn_it = knn.begin(); knn_it != knn.end(); ++knn_it) {
-        Point_Index neighbor_idx = boost::get<1>(knn_it->first);
-        if(neighbor_idx != idx) {
-          neighbors.push_back(neighbor_idx);
-          if(neighbors.size() >= k_)
-            break;
-        }
-
-
-      }
-    }
+       for(auto knn_it = knn.begin(); knn_it != knn.end(); ++knn_it) {
+         Point_Index neighbor_idx = boost::get<1>(knn_it->first);
+         neighbors.push_back(neighbor_idx);
+       }
+     }
   }
 
   /// Initialization that compute some global variable for the algorithm.
@@ -1917,7 +1912,7 @@ private:
 
   void update_sphere_neighbors() {
 
-    for(auto it = tpoints_.begin(); it != tpoints_.end();; ++it) {
+    for(auto it = tpoints_.begin(); it != tpoints_.end(); ++it) {
       Point_Index idx = *it;
       Sphere_ID s1 = point_cluster_sphere_map_[idx];
       if(s1 == MSMesh::INVALID_SPHERE_ID) continue;
@@ -1989,7 +1984,7 @@ private:
   FT last_total_error_;
   FT total_error_;
   FT converged_threshold_;
-  int k_ = 8; // number of nearest neighbors
+  int k_ = 20; // number of nearest neighbors
   std::unique_ptr<Tree> tree_;
   std::unique_ptr<MSMesh> sphere_mesh_;
   std::unique_ptr<FWN> fast_winding_number_;
