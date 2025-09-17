@@ -1354,7 +1354,6 @@ private:
         CGAL::Search_traits_adapter<Point_with_index, CGAL::Nth_of_tuple_property_map<0, Point_with_index>, BaseTraits>;
     using KNN = CGAL::Orthogonal_k_neighbor_search<Traits>;
     using Kd_tree = typename KNN::Tree;
-    typedef KNN::Distance Distance;
     std::vector<Point_3> points;
     std::vector<Point_Index> indices;
     points.reserve(tpoints_.size());
@@ -1371,7 +1370,6 @@ private:
       Point_Index idx = *it;
       const Point_3& query_point = tpoints_.point(idx);
       KNN knn(tree, query_point, k_ + 1);
-      Distance tr_dist;
       auto& neighbors = point_knn_map_[idx];
       neighbors.clear();
       neighbors.reserve(k_);
@@ -1387,46 +1385,6 @@ private:
 
       }
     }
-    /*using KD_Tree = CGAL::Kd_tree<CGAL::Search_traits_3<GT>>;
-
-    std::vector<Point_3> points;
-    std::vector<Point_Index> indices;
-    points.reserve(tpoints_.size());
-    indices.reserve(tpoints_.size());
-
-    for(auto it = tpoints_.begin(); it != tpoints_.end(); ++it) {
-      points.push_back(tpoints_.point(*it));
-      indices.push_back(*it);
-    }
-
-    KD_Tree kd_tree(points.begin(), points.end());
-
-
-    for(std::size_t i = 0; i < indices.size(); ++i) {
-      Point_Index idx = indices[i];
-      const Point_3& q = points[i];
-
-      using KNN_Search = CGAL::Orthogonal_k_neighbor_search<CGAL::Search_traits_3<GT>>;
-      KNN_Search knn(kd_tree, q, k_ + 1);
-
-      auto& neighbors = point_knn_map_[idx];
-      neighbors.clear();
-      neighbors.reserve(k_);
-
-      for(auto knn_it = knn.begin(); knn_it != knn.end(); ++knn_it) {
-        Point_3 neighbor_point = knn_it->first;
-
-        for(std::size_t j = 0; j < points.size(); ++j) {
-          if(j != i && points[j] == neighbor_point) {
-            neighbors.push_back(indices[j]);
-            if(neighbors.size() >= k_)
-              break;
-          }
-        }
-        if(neighbors.size() >= k_)
-          break;
-      }
-    }*/
   }
 
   /// Initialization that compute some global variable for the algorithm.
@@ -1434,21 +1392,21 @@ private:
     namespace PMP = CGAL::Polygon_mesh_processing;
     // Create point_set property maps
     bool success = false;
-    std::tie(point_from_face_map_, success) = tpoints_.add_property_map<face_descriptor>("points_from_face");
+    std::tie(point_from_face_map_, success) = tpoints_.template add_property_map<face_descriptor>("points_from_face",boost::graph_traits<TriangleMesh_>::null_face());
     CGAL_assertion(success);
-    std::tie(point_normal_map_, success) = tpoints_.add_property_map<Vector_3>("point_normal");
+    std::tie(point_normal_map_, success) = tpoints_.template add_property_map<Vector_3>("point_normal", Vector_3(0., 0., 0.));
     CGAL_assertion(success);
-    std::tie(point_area_map_, success) = tpoints_.add_property_map<FT>("point_area");
+    std::tie(point_area_map_, success) = tpoints_.template add_property_map<FT>("point_area", FT(0.));
     CGAL_assertion(success);
-    std::tie(point_medial_sphere_pos_map_, success) = tpoints_.add_property_map<Point_3>("point_medial_sphere_pos");
+    std::tie(point_medial_sphere_pos_map_, success) = tpoints_.template add_property_map<Point_3>("point_medial_sphere_pos", Point_3(0., 0., 0.));
     CGAL_assertion(success);
-    std::tie(point_medial_sphere_radius_map_, success) = tpoints_.add_property_map<FT>("point_medial_sphere_radius");
+    std::tie(point_medial_sphere_radius_map_, success) = tpoints_.template add_property_map<FT>("point_medial_sphere_radius", FT(0.));
     CGAL_assertion(success);
-    std::tie(point_error_map_, success) = tpoints_.add_property_map<FT>("point_error");
+    std::tie(point_error_map_, success) = tpoints_.template add_property_map<FT>("point_error", FT(0.));
     CGAL_assertion(success);
-    std::tie(point_knn_map_, success) = tpoints_.add_property_map<std::vector<Point_Index>>("point_knn");
+    std::tie(point_knn_map_, success) = tpoints_.template add_property_map<std::vector<Point_Index>>("point_knn", std::vector<Point_Index>());
     CGAL_assertion(success);
-    std::tie(point_cluster_sphere_map_, success) = tpoints_.add_property_map<Sphere_ID>("point_cluster_sphere");
+    std::tie(point_cluster_sphere_map_, success) = tpoints_.template add_property_map<Sphere_ID>("point_cluster_sphere", MSMesh::INVALID_SPHERE_ID);
     CGAL_assertion(success);
 
     // Create Surface_mesh property maps
@@ -1958,8 +1916,8 @@ private:
   }
 
   void update_sphere_neighbors() {
-     auto it0 = tpoints_.begin();
-    for(auto it = tpoints_.begin(), end = tpoints_.end(); it != end; ++it) {
+
+    for(auto it = tpoints_.begin(); it != tpoints_.end();; ++it) {
       Point_Index idx = *it;
       Sphere_ID s1 = point_cluster_sphere_map_[idx];
       if(s1 == MSMesh::INVALID_SPHERE_ID) continue;
