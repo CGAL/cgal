@@ -8,8 +8,8 @@ The concept `GeometricChainComplex` refines the concept `AbstractChainComplex` a
  \cgalRefines{AbstractChainComplex}
 
 \cgalHasModelsBegin
-\cgalHasModelsBare{`CGAL::HDVF::Simplicial_chain_complex<CoefficientRing>`}
-\cgalHasModelsBare{`CGAL::HDVF::Cubical_chain_complex<CoefficientRing>`}
+\cgalHasModelsBare{`CGAL::Homological_discrete_vector_field::Simplicial_chain_complex<CoefficientRing>`}
+\cgalHasModelsBare{`CGAL::Homological_discrete_vector_field::Cubical_chain_complex<CoefficientRing>`}
 \cgalHasModelsEnd
 
 */

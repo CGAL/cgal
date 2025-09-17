@@ -22,7 +22,7 @@
 #include <CGAL/HDVF/Filtration_core.h>
 
 namespace CGAL {
-namespace HDVF {
+namespace Homological_discrete_vector_field {
 
 /* Standard functions for lower star filtration */
 /* Degree = double */
@@ -230,7 +230,7 @@ void Filtration_lower_star<ChainComplex, Degree>::star_filtration(std::function<
     star_filtration(deg) ;
 }
 
-} /* end namespace HDVF */
+} /* end namespace Homological_discrete_vector_field */
 } /* end namespace CGAL */
 
 #endif // CGAL_HDVF_FILTRATION_LOWER_STAR_H

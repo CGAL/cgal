@@ -9,14 +9,14 @@
 #include <CGAL/OSM/OSM.h>
 
 //typedef int CoefficientType;
-typedef CGAL::HDVF::Z2 CoefficientTypeX;
-//typedef CGAL::HDVF::Zp<5> CoefficientType;
+typedef CGAL::Homological_discrete_vector_field::Z2 CoefficientTypeX;
+//typedef CGAL::Homological_discrete_vector_field::Zp<5> CoefficientType;
 
 int main(int argc, char **argv)
 {
 #if 1
-    using Complex = CGAL::HDVF::Simplicial_chain_complex<CoefficientTypeX> ;
-    using HDVF_type = CGAL::HDVF::Hdvf<Complex> ;
+    using Complex = CGAL::Homological_discrete_vector_field::Simplicial_chain_complex<CoefficientTypeX> ;
+    using HDVF_type = CGAL::Homological_discrete_vector_field::Hdvf<Complex> ;
 
     if (argc != 2)
     {
@@ -25,7 +25,7 @@ int main(int argc, char **argv)
     else
     {
         // Load cub object
-        CGAL::HDVF::Mesh_object_io mesh ;
+        CGAL::Homological_discrete_vector_field::Mesh_object_io mesh ;
         mesh.read_off(argv[1]);
 
         mesh.print_infos();
@@ -36,7 +36,7 @@ int main(int argc, char **argv)
         std::cout << complex;
 
         // Build empty HDVF
-        HDVF_type hdvf(complex, CGAL::HDVF::OPT_FULL) ;
+        HDVF_type hdvf(complex, CGAL::Homological_discrete_vector_field::OPT_FULL) ;
 
         // Compute a perfect HDVF
         hdvf.compute_perfect_hdvf();

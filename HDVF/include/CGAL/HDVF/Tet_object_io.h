@@ -24,7 +24,7 @@
 #include <CGAL/HDVF/Mesh_object_io.h>
 
 namespace CGAL {
-namespace HDVF {
+namespace Homological_discrete_vector_field {
 
 
 // Tetgen related
@@ -250,7 +250,7 @@ private:
     std::string ftets_from_prefix(const std::string &prefix) {return prefix+".1.ele"; }
 } ;
 
-} /* end namespace HDVF */
+} /* end namespace Homological_discrete_vector_field */
 } /* end namespace CGAL */
 
 

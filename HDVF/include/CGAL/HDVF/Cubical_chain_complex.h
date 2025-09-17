@@ -23,7 +23,7 @@
 #include <CGAL/OSM/OSM.h>
 
 namespace CGAL {
-namespace HDVF {
+namespace Homological_discrete_vector_field {
 
 /*!
  \ingroup PkgHDVFAlgorithmClasses
@@ -1114,7 +1114,7 @@ std::ostream& operator<<(std::ostream& out, const Cubical_chain_complex<Coeffici
     return complex.print_complex(out);
 }
 
-} /* end namespace HDVF */
+} /* end namespace Homological_discrete_vector_field */
 } /* end namespace CGAL */
 
 #endif // CGAL_HDVF_CUBICAL_CHAIN_COMPLEX_H

@@ -575,7 +575,7 @@ Let us point out that whatever the type of chain complex, cells are indexed alon
             // Read pgm file (store Khalimsky coordinates)
             mesh.read_pgm(filename, true);
             // Build the PRIMAL complex associated
-            Complex complex(mesh, CGAL::HDVF::Complex::PRIMAL);
+            Complex complex(mesh, CGAL::Homological_discrete_vector_field::Complex::PRIMAL);
         \endcode
         - DUAL, encoding \f$2d\f$-adjacency (where cubes produce vertices... see figure \cgalFigureRef{HDVF_primal_dual} right)
         \code
@@ -584,7 +584,7 @@ Let us point out that whatever the type of chain complex, cells are indexed alon
             // Read pgm file (store voxel coordinates)
             mesh.read_pgm(filename, false);
             // Build the DUAL complex associated
-            Complex complex(mesh, CGAL::HDVF::Complex::DUAL);
+            Complex complex(mesh, CGAL::Homological_discrete_vector_field::Complex::DUAL);
         \endcode
 
 \cgalFigureBegin{HDVF_primal_dual,HDVF_primal_dual.png}
@@ -686,11 +686,11 @@ How to extract (co)homological information then? Various solutions and output ar
     Critical cells can be obtained:
     - either in all dimensions:
     \code
-        std::vector<std::vector<size_t> > criticals =  hdvf.psc_flags(CGAL::HDVF::CRITICAL);
+        std::vector<std::vector<size_t> > criticals =  hdvf.psc_flags(CGAL::Homological_discrete_vector_field::CRITICAL);
     \endcode
     - or in a given dimension `q`:
     \code
-        std::vector<size_t> criticals_q = hdvf.psc_flags(CGAL::HDVF::CRITICAL, q) ;
+        std::vector<size_t> criticals_q = hdvf.psc_flags(CGAL::Homological_discrete_vector_field::CRITICAL, q) ;
     \endcode
 - **Homology/cohomology generators**
     Each critical cell \f$\gamma\f$ bears an associated homology generator: \f$g(\gamma)\f$ and cohomology generator: \f$f^*(\gamma)\f$.

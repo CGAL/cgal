@@ -12,8 +12,8 @@ typedef int CoefficientType;
 
 int main(int argc, char **argv)
 {
-    using Complex = CGAL::HDVF::Cubical_chain_complex<CoefficientType> ;
-    using HDVF_type = CGAL::HDVF::Hdvf<Complex> ;
+    using Complex = CGAL::Homological_discrete_vector_field::Cubical_chain_complex<CoefficientType> ;
+    using HDVF_type = CGAL::Homological_discrete_vector_field::Hdvf<Complex> ;
 
     if (argc != 2)
     {
@@ -26,7 +26,7 @@ int main(int argc, char **argv)
         // Adapt pgm loading into Cub_complex accordingly
         const bool khalimsky_coords = (primal_dual == Complex::PRIMAL) ? true : false ;
 
-        CGAL::HDVF::Cub_object_io mesh ;
+        CGAL::Homological_discrete_vector_field::Cub_object_io mesh ;
 
         // Load pgm into cub object
         mesh.read_pgm(argv[1], khalimsky_coords);
@@ -38,7 +38,7 @@ int main(int argc, char **argv)
         std::cout << complex;
 
         // Build empty HDVF
-        HDVF_type hdvf(complex, CGAL::HDVF::OPT_FULL) ;
+        HDVF_type hdvf(complex, CGAL::Homological_discrete_vector_field::OPT_FULL) ;
 
         // Compute a perfect HDVF
         hdvf.compute_perfect_hdvf();

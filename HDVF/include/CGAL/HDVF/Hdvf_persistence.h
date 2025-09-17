@@ -25,7 +25,7 @@
 #include <CGAL/HDVF/Filtration_lower_star.h>
 
 namespace CGAL {
-namespace HDVF {
+namespace Homological_discrete_vector_field {
 
 // Types for persistent homology / cohomology
 
@@ -819,7 +819,7 @@ std::ostream& operator<< (std::ostream& out_stream, const typename Hdvf_persiste
     return out_stream ;
 }
 
-} /* end namespace HDVF */
+} /* end namespace Homological_discrete_vector_field */
 } /* end namespace CGAL */
 
 #endif // CGAL_HDVF_HDVF_PERSISTENCE_H

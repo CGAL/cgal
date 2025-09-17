@@ -23,7 +23,7 @@
 #include <CGAL/OSM/Bitboard.h>
 
 namespace CGAL {
-namespace HDVF {
+namespace Homological_discrete_vector_field {
 
 /*!
  \ingroup PkgHDVFAlgorithmClasses
@@ -1468,7 +1468,7 @@ void Hdvf<ChainComplex>::MW(size_t pi, size_t sigma, int q) {
         std::cout << "!!! MW impossible with partial reduction options" << std::endl;
 }
 
-} /* end namespace HDVF */
+} /* end namespace Homological_discrete_vector_field */
 } /* end namespace CGAL */
 
 #endif // CGAL_HDVF_HDVF_H

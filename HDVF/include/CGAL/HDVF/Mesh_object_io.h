@@ -24,7 +24,7 @@
 #include <cmath>
 
 namespace CGAL {
-namespace HDVF {
+namespace Homological_discrete_vector_field {
 
 /** \brief Type of cells of Mesh_object_io.
  *
@@ -651,7 +651,7 @@ inline Mesh_object_io mesh_BB(const Io_node_type &BBmin, const Io_node_type &BBm
 // TODO : check that de dimensions of nodes are consistent...
 
 
-} /* end namespace HDVF */
+} /* end namespace Homological_discrete_vector_field */
 } /* end namespace CGAL */
 
 

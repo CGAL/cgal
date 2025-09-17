@@ -24,7 +24,7 @@
 #include <CGAL/HDVF/Sub_sparse_matrix.h>
 
 namespace CGAL {
-namespace HDVF {
+namespace Homological_discrete_vector_field {
 
 /*!
  \ingroup PkgHDVFAlgorithmClasses
@@ -758,7 +758,7 @@ std::vector<size_t> Hdvf_duality<ChainComplex>::psc_flags (PSC_flag flag, int q)
     return res ;
 }
 
-} /* end namespace HDVF */
+} /* end namespace Homological_discrete_vector_field */
 } /* end namespace CGAL */
 
 #endif // CGAL_HDVF_HDVF_DUALITY_H

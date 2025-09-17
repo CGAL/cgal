@@ -22,7 +22,7 @@
 // IO tools
 
 namespace CGAL {
-namespace HDVF {
+namespace Homological_discrete_vector_field {
 
 inline std::ostream & operator<< (std::ostream &out, const Cell_pair& p)
 {
@@ -127,7 +127,7 @@ void interaction_loop(Hdvf<ChainComplex> &hdvf,
     }
 }
 
-} /* end namespace HDVF */
+} /* end namespace Homological_discrete_vector_field */
 } /* end namespace CGAL */
 
 #endif // CGAL_HDVF_HDVF_TOOLS_H

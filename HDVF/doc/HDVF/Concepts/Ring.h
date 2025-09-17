@@ -5,8 +5,8 @@
 The concept `Ring` describes the requirements for the ring of coefficients used to compute homology in the `HDVF` concept. Besides ring operators, it also specifies the functions needed to test invertibility in the ring.
 
 \cgalHasModelsBegin
-\cgalHasModelsBare{`CGAL::HDVF::Z2`}
-\cgalHasModelsBare{`CGAL::HDVF::Zp`}
+\cgalHasModelsBare{`CGAL::Homological_discrete_vector_field::Z2`}
+\cgalHasModelsBare{`CGAL::Homological_discrete_vector_field::Zp`}
 \cgalHasModelsEnd
 
 */

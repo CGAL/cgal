@@ -22,7 +22,7 @@
 #include <CGAL/OSM/OSM.h>
 
 namespace CGAL {
-namespace HDVF {
+namespace Homological_discrete_vector_field {
 
 /*!
  \ingroup PkgHDVFAlgorithmClasses
@@ -440,7 +440,7 @@ std::ostream& operator<< (std::ostream& out, const Abstract_simplicial_chain_com
     return complex.print_complex(out);
 }
 
-} /* end namespace HDVF */
+} /* end namespace Homological_discrete_vector_field */
 } /* end namespace CGAL */
 
 #endif // CGAL_HDVF_ABSTRACT_SIMPLICIAL_CHAIN_COMPLEX_H

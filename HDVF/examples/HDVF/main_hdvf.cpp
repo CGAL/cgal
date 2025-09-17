@@ -48,11 +48,11 @@ void mesh_complex_output(const MeshType& mesh, const Complex& complex, const Opt
 }
 
 template <typename Complex>
-CGAL::HDVF::Hdvf<Complex>& HDVF_comput (const Complex& complex, const Options &options)
+CGAL::Homological_discrete_vector_field::Hdvf<Complex>& HDVF_comput (const Complex& complex, const Options &options)
 {
     typedef typename Complex::Coefficient_ring Coefficient_ring;
-    CGAL::HDVF::Hdvf<Complex>& hdvf(*(new CGAL::HDVF::Hdvf<Complex>(complex, options.HDVF_opt)));
-    std::vector<CGAL::HDVF::Cell_pair> pairs ;
+    CGAL::Homological_discrete_vector_field::Hdvf<Complex>& hdvf(*(new CGAL::Homological_discrete_vector_field::Hdvf<Complex>(complex, options.HDVF_opt)));
+    std::vector<CGAL::Homological_discrete_vector_field::Cell_pair> pairs ;
     if (!options.random)
         pairs = hdvf.compute_perfect_hdvf(options.verbose);
     else
@@ -90,17 +90,17 @@ void main_code (const Options &options)
     /// SIMP format
     if (options.in_format == InputFormat::SIMP)
     {
-        using Complex = CGAL::HDVF::Abstract_simplicial_chain_complex<Coefficient_ring>  ;
-        using HDVF_type = CGAL::HDVF::Hdvf<Complex> ;
+        using Complex = CGAL::Homological_discrete_vector_field::Abstract_simplicial_chain_complex<Coefficient_ring>  ;
+        using HDVF_type = CGAL::Homological_discrete_vector_field::Hdvf<Complex> ;
 
         // MeshObject
-        CGAL::HDVF::Mesh_object_io mesh ;
+        CGAL::Homological_discrete_vector_field::Mesh_object_io mesh ;
         mesh.read_simp(options.in_file) ;
 
         // Complex
         Complex complex(mesh);
 
-        mesh_complex_output<CGAL::HDVF::Mesh_object_io, Complex>(mesh, complex, options) ;
+        mesh_complex_output<CGAL::Homological_discrete_vector_field::Mesh_object_io, Complex>(mesh, complex, options) ;
 
         // Hdvf computation, export, output
         HDVF_type hdvf(HDVF_comput<Complex>(complex, options)) ;
@@ -111,17 +111,17 @@ void main_code (const Options &options)
     /// OFF format
     else if (options.in_format == InputFormat::OFF)
     {
-        using Complex = CGAL::HDVF::Simplicial_chain_complex<Coefficient_ring> ;
-        using HDVF_type = CGAL::HDVF::Hdvf<Complex> ;
+        using Complex = CGAL::Homological_discrete_vector_field::Simplicial_chain_complex<Coefficient_ring> ;
+        using HDVF_type = CGAL::Homological_discrete_vector_field::Hdvf<Complex> ;
 
         // MeshObject
-        CGAL::HDVF::Mesh_object_io mesh ;
+        CGAL::Homological_discrete_vector_field::Mesh_object_io mesh ;
         mesh.read_off(options.in_file) ;
 
         // Complex
         Complex complex(mesh);
 
-        mesh_complex_output<CGAL::HDVF::Mesh_object_io, Complex>(mesh, complex, options) ;
+        mesh_complex_output<CGAL::Homological_discrete_vector_field::Mesh_object_io, Complex>(mesh, complex, options) ;
 
         // Hdvf computation, export, output
         HDVF_type hdvf(HDVF_comput<Complex>(complex, options)) ;
@@ -134,7 +134,7 @@ void main_code (const Options &options)
                 CGAL::IO::write_VTK(hdvf, complex, options.outfile_root, options.co_faces) ;
             } ;
 
-            CGAL::HDVF::interaction_loop<Complex>(hdvf, complex, output_vtk_simp) ;
+            CGAL::Homological_discrete_vector_field::interaction_loop<Complex>(hdvf, complex, output_vtk_simp) ;
         }
         // Export to vtk
         else if (options.with_vtk_export)
@@ -146,10 +146,10 @@ void main_code (const Options &options)
     // CubComplex
     else if ((options.in_format == InputFormat::PGM) || (options.in_format == InputFormat::CUB))
     {
-        using Complex = CGAL::HDVF::Cubical_chain_complex<Coefficient_ring> ;
-        using HDVF_type = CGAL::HDVF::Hdvf<Complex> ;
+        using Complex = CGAL::Homological_discrete_vector_field::Cubical_chain_complex<Coefficient_ring> ;
+        using HDVF_type = CGAL::Homological_discrete_vector_field::Hdvf<Complex> ;
 
-        CGAL::HDVF::Cub_object_io mesh ;
+        CGAL::Homological_discrete_vector_field::Cub_object_io mesh ;
         typename Complex::Cubical_complex_primal_dual primal_dual(Complex::PRIMAL) ;
         if (options.primal)
         {
@@ -170,7 +170,7 @@ void main_code (const Options &options)
         // Complex
         Complex complex(mesh, primal_dual);
 
-        mesh_complex_output<CGAL::HDVF::Cub_object_io, Complex>(mesh, complex, options) ;
+        mesh_complex_output<CGAL::Homological_discrete_vector_field::Cub_object_io, Complex>(mesh, complex, options) ;
 
         // Hdvf computation, export, output
         HDVF_type hdvf(HDVF_comput<Complex>(complex, options)) ;
@@ -183,7 +183,7 @@ void main_code (const Options &options)
                 CGAL::IO::write_VTK(hdvf, complex, options.outfile_root, options.co_faces) ;
             } ;
 
-            CGAL::HDVF::interaction_loop<Complex>(hdvf, complex, output_vtk_cub) ;
+            CGAL::Homological_discrete_vector_field::interaction_loop<Complex>(hdvf, complex, output_vtk_cub) ;
         }
         // Export to vtk
         else if (options.with_vtk_export)
@@ -227,8 +227,8 @@ int main(int argc, char **argv)
         }
         else if (options.scalar == 2)
         {
-//            using Coefficient_ring = CGAL::HDVF::Zp<2,int8_t> ;
-            using Coefficient_ring = CGAL::HDVF::Z2 ;
+//            using Coefficient_ring = CGAL::Homological_discrete_vector_field::Zp<2,int8_t> ;
+            using Coefficient_ring = CGAL::Homological_discrete_vector_field::Z2 ;
             main_code<Coefficient_ring>(options) ;
         }
         else

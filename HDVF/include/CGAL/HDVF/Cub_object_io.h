@@ -23,7 +23,7 @@
 #include <set>
 
 namespace CGAL {
-namespace HDVF {
+namespace Homological_discrete_vector_field {
 
 // ------ For cubical complexes
 /** \brief Type of cells coordinates in Cub_object_io (Khalimsky or voxel coordinates) */
@@ -302,7 +302,7 @@ private:
     }
 } ;
 
-} /* end namespace HDVF */
+} /* end namespace Homological_discrete_vector_field */
 } /* end namespace CGAL */
 
 

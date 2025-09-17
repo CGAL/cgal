@@ -15,8 +15,8 @@ It provides methods to:
 
 
 \cgalHasModelsBegin
-\cgalHasModelsBare{`CGAL::HDVF::Abstract_simplicial_chain_complex<IntegralDomainWithoutDivision>`}
-\cgalHasModelsBare{`CGAL::HDVF::Sub_chain_complex_mask<IntegralDomainWithoutDivision, AbstractChainComplex>`}
+\cgalHasModelsBare{`CGAL::Homological_discrete_vector_field::Abstract_simplicial_chain_complex<IntegralDomainWithoutDivision>`}
+\cgalHasModelsBare{`CGAL::Homological_discrete_vector_field::Sub_chain_complex_mask<IntegralDomainWithoutDivision, AbstractChainComplex>`}
 \cgalHasModelsEnd
 
 */

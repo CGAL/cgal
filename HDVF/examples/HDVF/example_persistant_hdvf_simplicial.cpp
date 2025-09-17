@@ -10,12 +10,12 @@
 #include <CGAL/HDVF/Hdvf_persistence.h>
 #include <CGAL/OSM/OSM.h>
 
-//typedef CGAL::HDVF::Zp<5> CoefficientType;
-typedef CGAL::HDVF::Z2 CoefficientType;
-typedef CGAL::HDVF::Simplicial_chain_complex<CoefficientType> Complex;
+//typedef CGAL::Homological_discrete_vector_field::Zp<5> CoefficientType;
+typedef CGAL::Homological_discrete_vector_field::Z2 CoefficientType;
+typedef CGAL::Homological_discrete_vector_field::Simplicial_chain_complex<CoefficientType> Complex;
 typedef double Degree;
-typedef CGAL::HDVF::Filtration_lower_star<Complex, Degree> FiltrationType;
-typedef CGAL::HDVF::Hdvf_persistence<Complex, Degree, FiltrationType> HDVF_type;
+typedef CGAL::Homological_discrete_vector_field::Filtration_lower_star<Complex, Degree> FiltrationType;
+typedef CGAL::Homological_discrete_vector_field::Hdvf_persistence<Complex, Degree, FiltrationType> HDVF_type;
 
 
 int main(int argc, char **argv)
@@ -29,7 +29,7 @@ int main(int argc, char **argv)
     else
     {
         // Load cub object
-        CGAL::HDVF::Mesh_object_io mesh ;
+        CGAL::Homological_discrete_vector_field::Mesh_object_io mesh ;
         mesh.read_off(argv[1]);
 
         mesh.print_infos();
@@ -44,14 +44,14 @@ int main(int argc, char **argv)
          */
         {
             // --- First: build the function mapping the index of a vertex to its degree (here the "z" coordinate of a vertex
-            std::function<Degree(size_t)> f(CGAL::HDVF::deg_fun(complex, CGAL::HDVF::f_z));
+            std::function<Degree(size_t)> f(CGAL::Homological_discrete_vector_field::deg_fun(complex, CGAL::Homological_discrete_vector_field::f_z));
 
             // -- Second: build the associated lower star filtration
             FiltrationType filtration(complex, f);
 
 
             // Build empty persistant HDVF (with vtk export activated)
-            HDVF_type hdvf(complex, filtration, CGAL::HDVF::OPT_FULL, true);
+            HDVF_type hdvf(complex, filtration, CGAL::Homological_discrete_vector_field::OPT_FULL, true);
 
             // Compute a perfect HDVF
             hdvf.compute_perfect_hdvf();
@@ -80,7 +80,7 @@ int main(int argc, char **argv)
 
 
             // Build empty persistant HDVF (with vtk export activated)
-            HDVF_type hdvf(complex, filtration, CGAL::HDVF::OPT_FULL, true);
+            HDVF_type hdvf(complex, filtration, CGAL::Homological_discrete_vector_field::OPT_FULL, true);
 
             // Compute a perfect HDVF
             hdvf.compute_perfect_hdvf();

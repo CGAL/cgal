@@ -22,7 +22,7 @@
 #include <CGAL/OSM/Bitboard.h>
 
 namespace CGAL {
-namespace HDVF {
+namespace Homological_discrete_vector_field {
 
 /** \brief HDVF Enum for the label of cells. */
 static enum PSC_flag {
@@ -1209,7 +1209,7 @@ std::istream& Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::extract_hdvf
     return in_stream ;
 }
 
-} /* end namespace HDVF */
+} /* end namespace Homological_discrete_vector_field */
 } /* end namespace CGAL */
 
 #endif // CGAL_HDVF_HDVF_CORE_H

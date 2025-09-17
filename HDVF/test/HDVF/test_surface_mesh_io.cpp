@@ -11,7 +11,7 @@
 
 typedef CGAL::Simple_cartesian<double> K;
 typedef CGAL::Surface_mesh<K::Point_3> SurfaceMesh;
-typedef CGAL::HDVF::Surface_mesh_io<SurfaceMesh> SurfaceMeshIO;
+typedef CGAL::Homological_discrete_vector_field::Surface_mesh_io<SurfaceMesh> SurfaceMeshIO;
 
 int main() {
     SurfaceMesh mesh;

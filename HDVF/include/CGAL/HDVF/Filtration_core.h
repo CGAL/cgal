@@ -25,7 +25,7 @@
 #include <CGAL/OSM/Sparse_chain.h>
 
 namespace CGAL {
-namespace HDVF {
+namespace Homological_discrete_vector_field {
 
 /*!
  \ingroup PkgHDVFAlgorithmClasses
@@ -327,7 +327,7 @@ bool Filtration_core<ChainComplex, Degree>::is_valid() const
     return valid ;
 }
 
-} /* end namespace HDVF */
+} /* end namespace Homological_discrete_vector_field */
 } /* end namespace CGAL */
 
 #endif // CGAL_HDVF_FILTRATION_CORE_H

@@ -23,7 +23,7 @@
 #include <CGAL/HDVF/Sub_sparse_matrix.h>
 
 namespace CGAL {
-namespace HDVF {
+namespace Homological_discrete_vector_field {
 
 /*!
  \ingroup PkgHDVFAlgorithmClasses
@@ -316,7 +316,7 @@ public:
     }
 };
 
-} /* end namespace HDVF */
+} /* end namespace Homological_discrete_vector_field */
 } /* end namespace CGAL */
 
 #endif // CGAL_HDVF_SUB_CHAIN_COMPLEX_MASK_H

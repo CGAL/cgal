@@ -24,7 +24,7 @@
 #include <CGAL/HDVF/Mesh_object_io.h>
 
 namespace CGAL {
-namespace HDVF {
+namespace Homological_discrete_vector_field {
 
 /* Class used to build an icosphere embedding a triangular mesh (for Alexander Duality) */
 
@@ -120,7 +120,7 @@ public:
     }
 };
 
-} /* end namespace HDVF */
+} /* end namespace Homological_discrete_vector_field */
 } /* end namespace CGAL */
 
 

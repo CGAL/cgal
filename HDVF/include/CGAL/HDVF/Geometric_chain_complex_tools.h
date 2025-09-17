@@ -70,25 +70,25 @@ namespace IO {
  */
 
 template <typename ChainComplex, template <typename, int> typename ChainType = OSM::Sparse_chain, template <typename, int> typename SparseMatrixType = OSM::Sparse_matrix, typename VertexIdType = size_t>
-void write_VTK (HDVF::Hdvf_core<ChainComplex, ChainType, SparseMatrixType>& hdvf, ChainComplex &complex, std::string filename = "test", bool co_faces = false)
+void write_VTK (Homological_discrete_vector_field::Hdvf_core<ChainComplex, ChainType, SparseMatrixType>& hdvf, ChainComplex &complex, std::string filename = "test", bool co_faces = false)
 {
     typedef typename ChainComplex::Coefficient_ring Coefficient_ring;
-    typedef HDVF::Hdvf_core<ChainComplex, ChainType, SparseMatrixType> HDVF_parent;
+    typedef Homological_discrete_vector_field::Hdvf_core<ChainComplex, ChainType, SparseMatrixType> HDVF_parent;
     // Export PSC labelling
     std::string outfile(filename+"_PSC.vtk") ;
     std::vector<std::vector<int> > labels = hdvf.psc_labels() ;
     ChainComplex::chain_complex_to_vtk(complex, outfile, &labels) ;
     
-    if (hdvf.hdvf_opts() != HDVF::OPT_BND)
+    if (hdvf.hdvf_opts() != Homological_discrete_vector_field::OPT_BND)
     {
         // Export generators of all critical cells
-        std::vector<std::vector<size_t> > criticals(hdvf.psc_flags(HDVF::CRITICAL)) ;
+        std::vector<std::vector<size_t> > criticals(hdvf.psc_flags(Homological_discrete_vector_field::CRITICAL)) ;
         for (int q = 0; q <= complex.dimension(); ++q)
         {
             for (size_t c : criticals.at(q))
             {
                 // Homology generators
-                if (hdvf.hdvf_opts() & (HDVF::OPT_FULL | HDVF::OPT_G))
+                if (hdvf.hdvf_opts() & (Homological_discrete_vector_field::OPT_FULL | Homological_discrete_vector_field::OPT_G))
                 {
                     std::string outfile_g(filename+"_hom_"+std::to_string(c)+"_dim_"+std::to_string(q)+".vtk") ;
                     //                    std::vector<std::vector<size_t> > labels = hdvf.export_label(G,c,q) ;
@@ -96,7 +96,7 @@ void write_VTK (HDVF::Hdvf_core<ChainComplex, ChainType, SparseMatrixType>& hdvf
                     ChainComplex::chain_to_vtk(complex, outfile_g, chain, q, c) ;
                 }
                 // Cohomology generators
-                if (hdvf.hdvf_opts() & (HDVF::OPT_FULL | HDVF::OPT_F))
+                if (hdvf.hdvf_opts() & (Homological_discrete_vector_field::OPT_FULL | Homological_discrete_vector_field::OPT_F))
                 {
                     std::string outfile_f(filename+"_cohom_"+std::to_string(c)+"_dim_"+std::to_string(q)+".vtk") ;
                     OSM::Sparse_chain<Coefficient_ring,OSM::COLUMN> chain(hdvf.cohomology_chain(c, q)) ;
@@ -130,13 +130,13 @@ void write_VTK (HDVF::Hdvf_core<ChainComplex, ChainType, SparseMatrixType>& hdvf
  */
 
 template <typename ChainComplex, typename Degree, typename FiltrationType>
-void write_VTK (HDVF::Hdvf_persistence<ChainComplex, Degree, FiltrationType> &per_hdvf, ChainComplex &complex, std::string filename = "per", bool co_faces = false)
+void write_VTK (Homological_discrete_vector_field::Hdvf_persistence<ChainComplex, Degree, FiltrationType> &per_hdvf, ChainComplex &complex, std::string filename = "per", bool co_faces = false)
 {
     typedef typename ChainComplex::Coefficient_ring Coefficient_ring;
     if (!per_hdvf.with_export())
         throw("Cannot export persistent generators to vtk: with_export is off!") ;
     
-    using HDVF_type = HDVF::Hdvf_persistence<ChainComplex, Degree, FiltrationType>;
+    using HDVF_type = Homological_discrete_vector_field::Hdvf_persistence<ChainComplex, Degree, FiltrationType>;
     using Persistent_interval = HDVF_type::Persistent_interval;
     
     // Export the filtration
@@ -168,7 +168,7 @@ void write_VTK (HDVF::Hdvf_persistence<ChainComplex, Degree, FiltrationType> &pe
             ChainComplex::chain_complex_to_vtk(complex, out_file+"_PSC.vtk", &hole_data.labelsPSC) ;
 
             // Export homology generators (g)
-            if (per_hdvf.hdvf_opts()  & (HDVF::OPT_FULL | HDVF::OPT_G))
+            if (per_hdvf.hdvf_opts()  & (Homological_discrete_vector_field::OPT_FULL | Homological_discrete_vector_field::OPT_G))
             {
                 // First generator : filename_i_g_sigma_q.vtk
                 {
@@ -186,7 +186,7 @@ void write_VTK (HDVF::Hdvf_persistence<ChainComplex, Degree, FiltrationType> &pe
                 }
             }
             // Export cohomology generators (fstar)
-            if ((per_hdvf.hdvf_opts() == HDVF::OPT_FULL) || (per_hdvf.hdvf_opts() == HDVF::OPT_F))
+            if ((per_hdvf.hdvf_opts() == Homological_discrete_vector_field::OPT_FULL) || (per_hdvf.hdvf_opts() == Homological_discrete_vector_field::OPT_F))
             {
                 // First generator : filename_i_fstar_sigma_q.vtk
                 {
@@ -218,7 +218,7 @@ void write_VTK (HDVF::Hdvf_persistence<ChainComplex, Degree, FiltrationType> &pe
     }
     info_file.close() ;
     // Export infinite holes by calling Hdvf_core write_VTK
-    (static_cast<void (*) (HDVF::Hdvf_core<ChainComplex, CGAL::OSM::Sparse_chain,CGAL::OSM::Sub_sparse_matrix>&, ChainComplex&, std::string, bool)>(CGAL::IO::write_VTK<ChainComplex,CGAL::OSM::Sparse_chain,CGAL::OSM::Sub_sparse_matrix, size_t>))(per_hdvf, complex, filename+"_inf", co_faces);
+    (static_cast<void (*) (Homological_discrete_vector_field::Hdvf_core<ChainComplex, CGAL::OSM::Sparse_chain,CGAL::OSM::Sub_sparse_matrix>&, ChainComplex&, std::string, bool)>(CGAL::IO::write_VTK<ChainComplex,CGAL::OSM::Sparse_chain,CGAL::OSM::Sub_sparse_matrix, size_t>))(per_hdvf, complex, filename+"_inf", co_faces);
 }
 
 // Hdvf_duality vtk export
@@ -234,25 +234,25 @@ void write_VTK (HDVF::Hdvf_persistence<ChainComplex, Degree, FiltrationType> &pe
  */
 
 template <typename ChainComplex, typename VertexIdType = size_t>
-void write_VTK (HDVF::Hdvf_duality<ChainComplex> &hdvf, ChainComplex &complex, std::string filename = "test", bool co_faces = false)
+void write_VTK (Homological_discrete_vector_field::Hdvf_duality<ChainComplex> &hdvf, ChainComplex &complex, std::string filename = "test", bool co_faces = false)
 {
     typedef typename ChainComplex::Coefficient_ring Coefficient_ring;
-    typedef HDVF::Hdvf_duality<ChainComplex> HDVF_parent;
+    typedef Homological_discrete_vector_field::Hdvf_duality<ChainComplex> HDVF_parent;
     // Export PSC labelling
     std::string outfile(filename+"_PSC.vtk") ;
     std::vector<std::vector<int> > labels = hdvf.psc_labels() ;
     ChainComplex::chain_complex_to_vtk(complex, outfile, &labels) ;
     
-    if (hdvf.hdvf_opts() != HDVF::OPT_BND)
+    if (hdvf.hdvf_opts() != Homological_discrete_vector_field::OPT_BND)
     {
         // Export generators of all critical cells
-        std::vector<std::vector<size_t> > criticals(hdvf.psc_flags(HDVF::CRITICAL)) ;
+        std::vector<std::vector<size_t> > criticals(hdvf.psc_flags(Homological_discrete_vector_field::CRITICAL)) ;
         for (int q = 0; q <= complex.dimension(); ++q)
         {
             for (size_t c : criticals.at(q))
             {
                 // Homology generators
-                if (hdvf.hdvf_opts() & (HDVF::OPT_FULL | HDVF::OPT_G))
+                if (hdvf.hdvf_opts() & (Homological_discrete_vector_field::OPT_FULL | Homological_discrete_vector_field::OPT_G))
                 {
                     std::string outfile_g(filename+"_hom_"+std::to_string(c)+"_dim_"+std::to_string(q)+".vtk") ;
                     //                    std::vector<std::vector<size_t> > labels = hdvf.export_label(G,c,q) ;
@@ -260,7 +260,7 @@ void write_VTK (HDVF::Hdvf_duality<ChainComplex> &hdvf, ChainComplex &complex, s
                     ChainComplex::chain_to_vtk(complex, outfile_g, chain, q, c) ;
                 }
                 // Cohomology generators
-                if (hdvf.hdvf_opts() & (HDVF::OPT_FULL | HDVF::OPT_F))
+                if (hdvf.hdvf_opts() & (Homological_discrete_vector_field::OPT_FULL | Homological_discrete_vector_field::OPT_F))
                 {
                     std::string outfile_f(filename+"_cohom_"+std::to_string(c)+"_dim_"+std::to_string(q)+".vtk") ;
                     OSM::Sparse_chain<Coefficient_ring,OSM::COLUMN> chain(hdvf.cohomology_chain(c, q)) ;
@@ -274,7 +274,7 @@ void write_VTK (HDVF::Hdvf_duality<ChainComplex> &hdvf, ChainComplex &complex, s
                         {
                             // Restrict the cofaces of the cohomology generator to the current sub chain complex
                             OSM::Sparse_chain<Coefficient_ring,OSM::COLUMN> cofaces_chain(complex.cofaces_chain(chain, q)) ;
-                            HDVF::Sub_chain_complex_mask<ChainComplex> sub(hdvf.get_current_mask());
+                            Homological_discrete_vector_field::Sub_chain_complex_mask<ChainComplex> sub(hdvf.get_current_mask());
                             sub.screen_chain(cofaces_chain, q+1);
                             // Display
                             ChainComplex::chain_to_vtk(complex, outfile_f, cofaces_chain, q+1, c) ;
@@ -287,7 +287,7 @@ void write_VTK (HDVF::Hdvf_duality<ChainComplex> &hdvf, ChainComplex &complex, s
 }
 } /* end namespace IO */
 
-namespace HDVF {
+namespace Homological_discrete_vector_field {
 
 // Duality tools
 
@@ -488,7 +488,7 @@ public:
     }
 } ;
 
-} /* end namespace HDVF */
+} /* end namespace Homological_discrete_vector_field */
 } /* end namespace CGAL */
 
 #endif // CGAL_HDVF_GEOMETRIC_CHAIN_COMPLEX_TOOLS_H

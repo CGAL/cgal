@@ -10,13 +10,13 @@
 #include <CGAL/OSM/OSM.h>
 
 typedef int CoefficientType;
-//typedef CGAL::HDVF::Zp<5> CoefficientType;
-//typedef CGAL::HDVF::Z2 CoefficientType;
+//typedef CGAL::Homological_discrete_vector_field::Zp<5> CoefficientType;
+//typedef CGAL::Homological_discrete_vector_field::Z2 CoefficientType;
 
 int main(int argc, char **argv)
 {
-    using Complex = CGAL::HDVF::Cubical_chain_complex<CoefficientType> ;
-    using HDVF_type = CGAL::HDVF::Hdvf<Complex> ;
+    using Complex = CGAL::Homological_discrete_vector_field::Cubical_chain_complex<CoefficientType> ;
+    using HDVF_type = CGAL::Homological_discrete_vector_field::Hdvf<Complex> ;
 
     if (argc != 2)
     {
@@ -25,7 +25,7 @@ int main(int argc, char **argv)
     else
     {
         // Load cub object
-        CGAL::HDVF::Cub_object_io mesh ;
+        CGAL::Homological_discrete_vector_field::Cub_object_io mesh ;
         mesh.read_cub(argv[1], true);
 
         mesh.print_infos();
@@ -36,7 +36,7 @@ int main(int argc, char **argv)
         std::cout << complex;
 
         // Build empty HDVF
-        HDVF_type hdvf(complex, CGAL::HDVF::OPT_FULL) ;
+        HDVF_type hdvf(complex, CGAL::Homological_discrete_vector_field::OPT_FULL) ;
 
         // Build HDVF step by step
         //        hdvf.A(7,0,1);
@@ -59,8 +59,8 @@ int main(int argc, char **argv)
         // Test get_annotation
 
         // Compute the annotation of cycle1 in the homology basis
-        std::vector<std::vector<size_t> > crit =  hdvf.psc_flags(CGAL::HDVF::CRITICAL);
-        std::vector<size_t> criticals = hdvf.psc_flags(CGAL::HDVF::CRITICAL, 1) ;
+        std::vector<std::vector<size_t> > crit =  hdvf.psc_flags(CGAL::Homological_discrete_vector_field::CRITICAL);
+        std::vector<size_t> criticals = hdvf.psc_flags(CGAL::Homological_discrete_vector_field::CRITICAL, 1) ;
         HDVF_type::Column_chain cycle1(hdvf.homology_chain(criticals.at(0), 1)) ;
         HDVF_type::Column_chain annot1(hdvf.get_annotation(cycle1,1));
         std::cout << "Cycle1:" << cycle1 << std::endl ;

@@ -82,10 +82,9 @@ protected:
 
 public:
     /**
-     * \brief Creates new empty Sparse_chain.
+     * \brief Creates new empty sparse chain.
      *
-     * Default constructor, initialize an empty Sparse_chain.
-     * The default chain size is 0.
+     * Creates a sparse chain encoding an empty linear combination of cells.
      */
     Sparse_chain() {
         _upperBound = 0;
@@ -93,9 +92,9 @@ public:
     }
 
     /**
-     * \brief Creates new empty SparseChain of given size.
+     * \brief Creates new empty sparse chain (ie. zero-chain) of given size.
      *
-     * Constructor with size, initialize an empty Sparse_chain.
+     * Constructor with size, initializes an empty sparse chain encoding a linear combination of cells with all coefficients null.
      *
      * \param[in] chainSize The size of the Sparse_chain.
      */

@@ -21,7 +21,7 @@
 #include <CGAL/OSM/OSM.h>
 
 namespace CGAL {
-namespace HDVF {
+namespace Homological_discrete_vector_field {
 
 // Forward declaration of SimpComplexTools
 template<typename CoefficientRing> class Duality_simplicial_complex_tools ;
@@ -345,7 +345,7 @@ void Simplicial_chain_complex<CoefficientRing>::chain_to_vtk(const Simplicial_ch
     out.close() ;
 }
 
-} /* end namespace HDVF */
+} /* end namespace Homological_discrete_vector_field */
 } /* end namespace CGAL */
 
 #endif // CGAL_HDVF_SIMPLICIAL_CHAIN_COMPLEX_H

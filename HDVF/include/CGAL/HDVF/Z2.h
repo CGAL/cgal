@@ -18,7 +18,7 @@
 #include <iostream>
 
 namespace CGAL {
-namespace HDVF {
+namespace Homological_discrete_vector_field {
 
 /*!
  \ingroup PkgHDVFAlgorithmClasses
@@ -143,7 +143,7 @@ Z2  abs(const Z2& a)
         return a ;
     }
 
-} /* end namespace HDVF */
+} /* end namespace Homological_discrete_vector_field */
 } /* end namespace CGAL */
 
 #endif //CGAL_HDVF_Z2_H

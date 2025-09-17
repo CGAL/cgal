@@ -23,7 +23,7 @@
 #include <CGAL/Surface_mesh.h>
 
 namespace CGAL {
-namespace HDVF {
+namespace Homological_discrete_vector_field {
 
 
 /*!
@@ -155,7 +155,7 @@ public:
     }
 } ;
 
-} /* end namespace HDVF */
+} /* end namespace Homological_discrete_vector_field */
 } /* end namespace CGAL */
 
 

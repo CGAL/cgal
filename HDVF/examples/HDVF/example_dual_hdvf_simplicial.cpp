@@ -11,12 +11,12 @@
 #include <CGAL/HDVF/Sub_chain_complex_mask.h>
 #include <CGAL/OSM/OSM.h>
 
-//typedef CGAL::HDVF::Zp<5> CoefficientType;
-typedef CGAL::HDVF::Z2 Coefficient_ring;
-typedef CGAL::HDVF::Simplicial_chain_complex<Coefficient_ring> Complex;
-typedef CGAL::HDVF::Hdvf_duality<Complex> HDVF_type;
-typedef CGAL::HDVF::Duality_simplicial_complex_tools<Coefficient_ring> Tools_type;
-typedef CGAL::HDVF::Sub_chain_complex_mask<Complex> Sub_chain_complex;
+//typedef CGAL::Homological_discrete_vector_field::Zp<5> CoefficientType;
+typedef CGAL::Homological_discrete_vector_field::Z2 Coefficient_ring;
+typedef CGAL::Homological_discrete_vector_field::Simplicial_chain_complex<Coefficient_ring> Complex;
+typedef CGAL::Homological_discrete_vector_field::Hdvf_duality<Complex> HDVF_type;
+typedef CGAL::Homological_discrete_vector_field::Duality_simplicial_complex_tools<Coefficient_ring> Tools_type;
+typedef CGAL::Homological_discrete_vector_field::Sub_chain_complex_mask<Complex> Sub_chain_complex;
 
 int main(int argc, char **argv)
 {
@@ -29,7 +29,7 @@ int main(int argc, char **argv)
     else
     {
         // Load cub object
-        CGAL::HDVF::Mesh_object_io mesh ;
+        CGAL::Homological_discrete_vector_field::Mesh_object_io mesh ;
         mesh.read_off(argv[1]);
 
         mesh.print_infos();
@@ -52,7 +52,7 @@ int main(int argc, char **argv)
         std::cout << K << std::endl ;
      
         // Create and compute a perfect HDVF
-        HDVF_type hdvf(L, K, CGAL::HDVF::OPT_FULL);
+        HDVF_type hdvf(L, K, CGAL::Homological_discrete_vector_field::OPT_FULL);
         hdvf.compute_perfect_hdvf();
         
         // Export K HDVF
@@ -62,7 +62,7 @@ int main(int argc, char **argv)
         hdvf.set_mask_L_K();
         CGAL::IO::write_VTK(hdvf, L, "res_cocomplex_L_K", false) ;
         // Compute pairing
-        std::vector<CGAL::HDVF::Cell_pair> pairs = hdvf.compute_pairing_hdvf();
+        std::vector<CGAL::Homological_discrete_vector_field::Cell_pair> pairs = hdvf.compute_pairing_hdvf();
         // Output pairing
         for (const auto& pair : pairs) {
             std::cout << "Sigma: " << pair.sigma << ", Tau: " << pair.tau << ", Dim: " << pair.dim << std::endl;

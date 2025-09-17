@@ -9,8 +9,8 @@
 #include <CGAL/HDVF/Abstract_simplicial_chain_complex.h>
 #include <CGAL/OSM/Sparse_matrix.h>
 
-typedef CGAL::HDVF::Z2 CoefficientType;
-typedef CGAL::HDVF::Abstract_simplicial_chain_complex<CoefficientType> ChainComplexType;
+typedef CGAL::Homological_discrete_vector_field::Z2 CoefficientType;
+typedef CGAL::Homological_discrete_vector_field::Abstract_simplicial_chain_complex<CoefficientType> ChainComplexType;
 typedef CGAL::OSM::Sparse_matrix<CoefficientType, CGAL::OSM::COLUMN> Column_matrix;
 typedef CGAL::OSM::Sparse_chain<CoefficientType, CGAL::OSM::COLUMN> Column_chain;
 typedef CGAL::OSM::Sparse_chain<CoefficientType, CGAL::OSM::ROW> Row_chain;
@@ -18,7 +18,7 @@ typedef CGAL::OSM::Sparse_chain<CoefficientType, CGAL::OSM::ROW> Row_chain;
 int main() {
     // Test constructor (from simple_simplicial_complex.simp)
     std::cerr << "Test constructor (from simple_simplicial_complex.simp)" << std::endl ;
-    CGAL::HDVF::Mesh_object_io mesh;
+    CGAL::Homological_discrete_vector_field::Mesh_object_io mesh;
     mesh.read_simp("data/simple_simplicial_complex.simp");
     
     ChainComplexType complex(mesh);

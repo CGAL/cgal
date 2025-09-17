@@ -105,10 +105,10 @@ That is, for all \f$q\in \mathbb N\f$, if
 
 
 \cgalHasModelsBegin
-\cgalHasModelsBare{`CGAL::HDVF::Hdvf_core<IntegralDomainWithoutDivision, AbstractChainComplex, SparseChain, Sparse_matrix>`}
-\cgalHasModelsBare{`CGAL::HDVF:Hdvf<IntegralDomainWithoutDivision, AbstractChainComplex>`}
-\cgalHasModelsBare{`CGAL::HDVF:Hdvf_persistence<IntegralDomainWithoutDivision, AbstractChainComplex>`}
-\cgalHasModelsBare{`CGAL::HDVF:Hdvf_duality<IntegralDomainWithoutDivision, AbstractChainComplex>`}
+\cgalHasModelsBare{`CGAL::Homological_discrete_vector_field::Hdvf_core<IntegralDomainWithoutDivision, AbstractChainComplex, SparseChain, Sparse_matrix>`}
+\cgalHasModelsBare{`CGAL::Homological_discrete_vector_field::Hdvf<IntegralDomainWithoutDivision, AbstractChainComplex>`}
+\cgalHasModelsBare{`CGAL::Homological_discrete_vector_field::Hdvf_persistence<IntegralDomainWithoutDivision, AbstractChainComplex>`}
+\cgalHasModelsBare{`CGAL::Homological_discrete_vector_field::Hdvf_duality<IntegralDomainWithoutDivision, AbstractChainComplex>`}
 \cgalHasModelsEnd
 
  \sa `AbstractChainComplex`
@@ -116,7 +116,7 @@ That is, for all \f$q\in \mathbb N\f$, if
  \sa `SparseChain`
  \sa `SparseMatrix`
 
- *How to describe constants declared in the namespace HDVF and used everywhere? PSC_flag, options, exporttype*
+ *How to describe constants declared in the namespace Homological_discrete_vector_field and used everywhere? PSC_flag, options, exporttype*
 
  [AGL, 2017] Aldo Gonzalez-Lorenzo, Alexandra Bac, Jean-Luc Mari, Pedro Real. Allowing cycles in discrete Morse theory, Topology and its Applications, Volume 228, 2017, Pages 1-35.
 
