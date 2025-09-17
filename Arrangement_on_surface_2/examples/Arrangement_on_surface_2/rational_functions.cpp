@@ -2,7 +2,6 @@
 // Constructing an arrangement of arcs of rational functions.
 
 #include <CGAL/config.h>
-#include <CGAL/draw_arrangement_2.h>
 
 #ifndef CGAL_USE_CORE
 #include <iostream>
@@ -56,8 +55,6 @@ int main() {
   Arrangement arr(&traits);
   insert(arr, arcs.begin(), arcs.end());
   print_arrangement(arr);
-
-  CGAL::draw(arr, "rational_functions");
 
   return 0;
 }
