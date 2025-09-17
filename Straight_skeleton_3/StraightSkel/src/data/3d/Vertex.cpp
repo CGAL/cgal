@@ -121,7 +121,7 @@ EdgeSPtr Vertex::firstEdge() const {
 
 EdgeSPtr Vertex::getEdge(unsigned int i) {
     EdgeSPtr edge = firstEdge();
-    for (unsigned int j = 0; j < i; j++) {
+    for (unsigned int j = 0; j < i; ++j) {
         edge = edge->next(shared_from_this());
     }
     return edge;
@@ -192,7 +192,7 @@ FacetSPtr Vertex::firstFacet() const {
 
 FacetSPtr Vertex::getFacet(unsigned int i) {
     FacetSPtr facet = firstFacet();
-    for (unsigned int j = 0; j < i; j++) {
+    for (unsigned int j = 0; j < i; ++j) {
         facet = facet->next(shared_from_this());
     }
     return facet;

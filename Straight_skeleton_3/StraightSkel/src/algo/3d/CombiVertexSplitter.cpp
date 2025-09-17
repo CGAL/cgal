@@ -111,7 +111,7 @@ std::list<vec2i> CombiVertexSplitter::createSingleSplitCombinations(const std::v
     std::list<vec2i> result;
     unsigned int degree = labels.size();
     for (unsigned int i = 0; i < degree-1; i++) {
-        for (unsigned int j = i+2; j < degree; j++) {
+        for (unsigned int j = i+2; j < degree; ++j) {
             if (i == 0 && j == degree-1) {
                 continue;
             }

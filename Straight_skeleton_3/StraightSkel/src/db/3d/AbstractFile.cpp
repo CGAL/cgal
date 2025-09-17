@@ -79,11 +79,11 @@ void AbstractFile::mergeFacets(EdgeSPtr edge,
     CGAL_precondition(edge->getFacetL() == facet_from || edge->getFacetR() == facet_from);
     CGAL_precondition(edge->getFacetL() == facet_into || edge->getFacetR() == facet_into);
 
-    CGAL_SS3_TRANSF_TRACE("Merging F" << facet_from->getID() << " into F" << facet_into->getID() <<
-                          " Common edge E" << edge->getID() << " [V" << edge->getVertexSrc()->getID()
-                                                            << " - V" << edge->getVertexDst()->getID() << "]");
-    CGAL_SS3_TRANSF_TRACE("  FROM normal: " << *(KernelFactory::createVector3(facet_from->getPlane())));
-    CGAL_SS3_TRANSF_TRACE("  INTO normal: " << *(KernelFactory::createVector3(facet_into->getPlane())));
+    CGAL_SS3_TRANSF_TRACE_V(16, "Merging F" << facet_from->getID() << " into F" << facet_into->getID() <<
+                                " Common edge E" << edge->getID() << " [V" << edge->getVertexSrc()->getID()
+                                                                  << " - V" << edge->getVertexDst()->getID() << "]");
+    CGAL_SS3_TRANSF_TRACE_V(16, "  FROM normal: " << *(KernelFactory::createVector3(facet_from->getPlane())));
+    CGAL_SS3_TRANSF_TRACE_V(16, "  INTO normal: " << *(KernelFactory::createVector3(facet_into->getPlane())));
 
     // remove the facet incidence info from the edge such that the facets are not deleted
     // when Polyhedron::removeEdge() is called
@@ -108,8 +108,8 @@ void AbstractFile::mergeFacets(EdgeSPtr edge,
 int AbstractFile::mergeCoplanarFacets(PolyhedronSPtr polyhedron,
                                       double epsilon)
 {
-    CGAL_SS3_TRANSF_TRACE("\nMerging coplanar faces with epsilon = " << epsilon);
-    CGAL_SS3_TRANSF_TRACE("  initial face count: " << polyhedron->facets().size());
+    CGAL_SS3_TRANSF_TRACE_V(4, "\nMerging coplanar faces with epsilon = " << epsilon);
+    CGAL_SS3_TRANSF_TRACE_V(4, "  initial face count: " << polyhedron->facets().size());
 
 #ifdef CGAL_SS3_DUMP_FILES
     db::_3d::OBJFile::save("results/coplanar_merge_before.obj", polyhedron,
@@ -143,7 +143,7 @@ int AbstractFile::mergeCoplanarFacets(PolyhedronSPtr polyhedron,
 
     polyhedron->initializeAllIDs();
 
-    CGAL_SS3_TRANSF_TRACE("  final face count: " << polyhedron->facets().size());
+    CGAL_SS3_TRANSF_TRACE_V(4, "  final face count: " << polyhedron->facets().size());
 
 #ifdef CGAL_SS3_DUMP_FILES
     db::_3d::OBJFile::save("results/coplanar_merge_after.obj", polyhedron,

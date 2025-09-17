@@ -939,7 +939,7 @@ void Facet::restorePlaneCoefficients(const CGAL::FT& perturbationOffset,
     // This is similar to when we call, e.g.:
     //   Plane3SPtr offset_plane_l = KernelWrapper::offsetPlane(plane_l, - speed_l);
     //                                                                  ^^^
-    CGAL:: FT d = cachedPlane_->d() - speed * (perturbationEndOffset - perturbationOffset);
+    CGAL::FT d = cachedPlane_->d() - speed * (perturbationEndOffset - perturbationOffset);
 
     plane_ = KernelFactory::createPlane3(cachedPlane_->a(), cachedPlane_->b(), cachedPlane_->c(), d);
     CGAL_assertion_code(CGAL::FT sq_n = CGAL::square(plane_->a()) + CGAL::square(plane_->b()) + CGAL::square(plane_->c()));

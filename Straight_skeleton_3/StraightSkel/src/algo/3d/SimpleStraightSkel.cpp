@@ -14,54 +14,6 @@
  * @date   2012-03-08
  */
 
-// @fixme yesterday:
-
-// @fixme:
-// - must delay more combinatorial checks to pop time?
-
-// @fixme later:
-// - Fix simultaneous events still happening sometimes (likely the same event multiple times
-//   since we don't check the queue before pushing)
-
-// @fixme latest:
-// - (a) Random perturbations could still create degenerate configurations if unlucky
-// - (b) Random perturbations must be small enough as to not create self-intersections
-// - EPECK -> EPICK could create self-intersections
-
-// @speed
-// - Box_d for local edge splits
-// - Bench pierce and order filters
-// - analyze surface events filters + box_d for surface events?
-// - avoid duplicate computations in check_bisectors
-// - re-enable fast vertex splitter for uniform weights around a vertex
-
-// @todo: cleaning
-// - use CGAL kernel everywhere, get rid of the other kernel
-// - get rid of the KernelWrapper
-// - assert / CGAL assertion
-// - indentation 4 --> 2 spaces
-// - merge .h/.cpp into a single file, header only
-// - harmonize face/facet
-// - nullptr init?
-// - check for overly shared objects, redundant function calls (plane normalization, for example)
-// - debug ptr everywhere
-
-// @todo later:
-// - determine if outward or inward offset. Reject outward if there is no save-offset provided
-//   or stop_on_last_save is false
-// - Lighter data structures
-// - implement lazy perturbations where we only perturb if we encounter an issue?
-//   * Would cost more (detection of simultaneous events, etc.)
-//   * How to detect "hidden" simultaneous events?
-// - zero speed (check divisions)
-
-// @todo latest:
-// - factorize the three VV events but be very careful with the tiny differences
-// - there should be a function "Facet::copyPropertiesAndData(otherFacet)"
-// - fix straight skeleton construction
-
-// ----
-
 /*
   As to not waste energy building the skeleton if we do not care about it
   The construction is also likely broken since the commit that made it so the polyhedron
@@ -1136,7 +1088,7 @@ bool SimpleStraightSkel::isTetrahedron(EdgeSPtr edge_begin) {
         }
     }
     for (unsigned int i = 0; i < 4; i++) {
-        for (unsigned int j = 1; j < 4; j++) {
+        for (unsigned int j = 1; j < 4; ++j) {
             EdgeSPtr edge = vertices[i]->findEdge(vertices[(i+j)%4]);
             if (!edge) {
                 result = false;

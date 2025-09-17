@@ -101,7 +101,7 @@ bool assign_weights(const char* weights_filename,
   std::ifstream weights_in(weights_filename);
 
   if(!weights_filename || !weights_in) {
-    CGAL_SS3_TRACE("Warning: no input weights provided; all weights are set to '1'.");
+    CGAL_SS3_TRACE_V(1, "Warning: no input weights provided; all weights are set to '1'.");
     for(face_descriptor f : faces(pmesh))
       put(fwm, f, 1.);
 
@@ -124,7 +124,7 @@ bool assign_weights(const char* weights_filename,
 
   if(weights_in >> bot_str >> bot_val
                 >> top_str >> top_val) {
-    CGAL_SS3_TRACE("bottom & top weight info detected");
+    CGAL_SS3_TRACE_V(8, "bottom & top weight info detected");
     CGAL_assertion(bot_str == "bottom:" && top_str == "top:");
   } else {
     if(x2_val != y2_val) {
@@ -142,12 +142,12 @@ bool assign_weights(const char* weights_filename,
     return false;
   }
 
-  CGAL_SS3_TRACE("x1_val = " << x1_val);
-  CGAL_SS3_TRACE("x2_val = " << x2_val);
-  CGAL_SS3_TRACE("y1_val = " << y1_val);
-  CGAL_SS3_TRACE("y2_val = " << y2_val);
-  CGAL_SS3_TRACE("bot_val = " << bot_val);
-  CGAL_SS3_TRACE("top_val = " << top_val);
+  CGAL_SS3_TRACE_V(8, "x1_val = " << x1_val);
+  CGAL_SS3_TRACE_V(8, "x2_val = " << x2_val);
+  CGAL_SS3_TRACE_V(8, "y1_val = " << y1_val);
+  CGAL_SS3_TRACE_V(8, "y2_val = " << y2_val);
+  CGAL_SS3_TRACE_V(8, "bot_val = " << bot_val);
+  CGAL_SS3_TRACE_V(8, "top_val = " << top_val);
 
   if(is_zero(x1_val) && is_zero(x2_val) &&
      is_zero(y1_val) && is_zero(y2_val) &&
@@ -164,17 +164,17 @@ bool assign_weights(const char* weights_filename,
   if(bot_val > 0) eps_weight = (std::min)(eps_weight, bot_val);
   if(top_val > 0) eps_weight = (std::min)(eps_weight, top_val);
 
-  CGAL_SS3_TRACE("min_weight = " << eps_weight);
+  CGAL_SS3_TRACE_V(8, "min_weight = " << eps_weight);
 
   // @todo handle true zero
   eps_weight = 1e-10 * eps_weight;
 
-  if(x1_val == 0) { CGAL_SS3_TRACE("x1_val to eps weight " << eps_weight); x1_val = eps_weight; }
-  if(x2_val == 0) { CGAL_SS3_TRACE("x2_val to eps weight " << eps_weight); x2_val = eps_weight; }
-  if(y1_val == 0) { CGAL_SS3_TRACE("y1_val to eps weight " << eps_weight); y1_val = eps_weight; }
-  if(y2_val == 0) { CGAL_SS3_TRACE("y2_val to eps weight " << eps_weight); y2_val = eps_weight; }
-  if(bot_val == 0) { CGAL_SS3_TRACE("bot_val to eps weight " << eps_weight); bot_val = eps_weight; }
-  if(top_val == 0) { CGAL_SS3_TRACE("top_val to eps weight " << eps_weight); top_val = eps_weight; }
+  if(x1_val == 0) { CGAL_SS3_TRACE_V(16, "x1_val to eps weight " << eps_weight); x1_val = eps_weight; }
+  if(x2_val == 0) { CGAL_SS3_TRACE_V(16, "x2_val to eps weight " << eps_weight); x2_val = eps_weight; }
+  if(y1_val == 0) { CGAL_SS3_TRACE_V(16, "y1_val to eps weight " << eps_weight); y1_val = eps_weight; }
+  if(y2_val == 0) { CGAL_SS3_TRACE_V(16, "y2_val to eps weight " << eps_weight); y2_val = eps_weight; }
+  if(bot_val == 0) { CGAL_SS3_TRACE_V(16, "bot_val to eps weight " << eps_weight); bot_val = eps_weight; }
+  if(top_val == 0) { CGAL_SS3_TRACE_V(16, "top_val to eps weight " << eps_weight); top_val = eps_weight; }
 
   for(face_descriptor f : faces(pmesh))
   {
@@ -183,7 +183,7 @@ bool assign_weights(const char* weights_filename,
     CGAL::Polygon_mesh_processing::internal::sum_normals<Point3>(pmesh, f, get(CGAL::vertex_point, pmesh), v, CGAL::K());
     CGAL::FT sq_n = v.squared_length();
 
-    CGAL_SS3_TRACE("facet: " << f << " normal: " << v);
+    CGAL_SS3_TRACE_V(16, "facet: " << f << " normal: " << v);
 
 #if 1
     CGAL::FT sq_cos_x = CGAL::square(v.x()) / sq_n;
@@ -225,7 +225,7 @@ bool assign_weights(const char* weights_filename,
     }
 #endif
 
-    CGAL_SS3_TRACE("facet: " << f << " weight: " << weight);
+    CGAL_SS3_TRACE_V(16, "facet: " << f << " weight: " << weight);
 
     // @todo currently 'double', but only because the run_and_compare.sh pipeline
     // with multiple .cpp needs to save to a file and the f:weight pmap will not
@@ -235,7 +235,7 @@ bool assign_weights(const char* weights_filename,
     CGAL_postcondition(get(fwm, f) != 0);
   }
 
-  CGAL_SS3_TRACE("E-W-S-N weights: " << x1_val << " " << x2_val << " " << y1_val << " " << y2_val);
+  CGAL_SS3_TRACE_V(8, "E-W-S-N weights: " << x1_val << " " << x2_val << " " << y1_val << " " << y2_val);
 
   utils::save_colored_mesh(pmesh, fwm, "results/weighted.ply");
 
