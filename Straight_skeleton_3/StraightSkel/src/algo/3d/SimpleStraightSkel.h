@@ -238,6 +238,7 @@ public:
      */
     static bool isActualEvent(AbstractEventSPtr event,
                               const CGAL::FT& current_offset,
+                              const std::optional<CGAL::FT>& offset_future_bound,
                               PolyhedronSPtr polyhedron);
 
     static bool isActualVertexEvent(VertexEventSPtr event,
@@ -251,8 +252,12 @@ public:
                                              PolyhedronSPtr polyhedron);
     static bool isActualSplitMergeEvent(SplitMergeEventSPtr event,
                                         PolyhedronSPtr polyhedron);
+    static bool isActualEdgeSplitEvent(EdgeSplitEventSPtr event,
+                                       const CGAL::FT& current_offset,
+                                       PolyhedronSPtr polyhedron);
     static bool isActualPierceEvent(PierceEventSPtr event,
                                     const CGAL::FT& current_offset,
+                                    const std::optional<CGAL::FT>& offset_future_bound,
                                     PolyhedronSPtr polyhedron);
 
     /**
@@ -448,6 +453,28 @@ public:
                                 const CGAL::FT& current_offset,
                                 const std::optional<CGAL::FT>& offset_future_bound,
                                 PQ& queue);
+
+
+    // The function below is meant to be used as the callback of the box_d spatial searching:
+    // it does not perform any box-box filtering
+    void collectEdgeSplitEvent(EdgeSPtr edge_1,
+                               EdgeSPtr edge_2,
+                               PolyhedronSPtr polyhedron,
+                               const bool use_canonical_event_reps,
+                               const CGAL::FT& current_offset,
+                               const std::optional<CGAL::FT>& offset_future_bound,
+                               PQ& queue);
+    void collectEdgeSplitEventsWithBoxD(const std::list<EdgeSPtr>& edges_1,
+                                        const std::list<EdgeSPtr>& edges_2,
+                                        PolyhedronSPtr polyhedron,
+                                        const bool use_canonical_event_reps,
+                                        const CGAL::FT& current_offset,
+                                        const std::optional<CGAL::FT>& offset_future_bound,
+                                        PQ& queue);
+    void collectEdgeSplitEventsWithBoxD(PolyhedronSPtr polyhedron,
+                                        const CGAL::FT& current_offset,
+                                        const std::optional<CGAL::FT>& offset_future_bound,
+                                        PQ& queue);
 
     /**
      * A reflex vertex reaches a facet.
