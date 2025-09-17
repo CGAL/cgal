@@ -22,8 +22,7 @@ int main() {
   auto vit = arr.vertices_begin();
   Arrangement::Vertex_const_handle v_max = vit;
   for(++vit; vit != arr.vertices_end(); ++vit)
-    if(vit->degree() > v_max->degree())
-      v_max = vit;
+    if(vit->degree() > v_max->degree()) v_max = vit;
 
   // Locate the vertex with maximum degree.
 
