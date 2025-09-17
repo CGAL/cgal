@@ -6,6 +6,6 @@ project(Arrangement_on_surface_2_Tests)
 
 enable_testing()
 
-find_package(CGAL REQUIRED COMPONENTS Core Qt6)
+find_package(CGAL REQUIRED COMPONENTS Core)
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/cgal_test.cmake)
