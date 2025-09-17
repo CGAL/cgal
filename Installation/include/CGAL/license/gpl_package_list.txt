@@ -90,6 +90,7 @@ Snap_rounding_2 2D Snap Rounding
 Spatial_searching dD Spatial Searching
 Straight_skeleton_2 2D Straight Skeleton and Polygon Offsetting
 Straight_skeleton_extrusion_2 2D Straight Skeleton Extrusion
+Straight_skeleton_3 3D Straight Skeleton and Polyhedron Offsetting
 Stream_lines_2 2D Placement of Streamlines
 Surface_mesh_approximation Triangulated Surface Mesh Approximation
 Surface_mesh_deformation Triangulated Surface Mesh Deformation
