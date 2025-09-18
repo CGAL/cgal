@@ -287,7 +287,7 @@ public:
     }
 
     /**
-     * \brief Restricts a chain in a given dimension to the sub chain complex maks.
+     * \brief Restricts a chain in a given dimension to the sub chain complex mask.
      *
      * Nullify all coefficients out of the mask.
      *

@@ -456,8 +456,6 @@ public:
 
     /** \relates Sparse_chain
      *
-     * \defgroup ChainChainComparison Compares two chains.
-     * \ingroup PkgHDVFAlgorithmClasses
      * @brief  Compare two chains and return `true` if both chains equal (and `false` otherwise).
      *
      * @param chain The first chain.
@@ -468,28 +466,28 @@ public:
 
     /** \relates Sparse_chain
      *
-     * \brief Comparison of two COLUMN chains.
+     * \brief Comparison of two `COLUMN` chains.
      */
     template <typename _CT>
     friend bool operator==(const Sparse_chain<_CT, OSM::COLUMN>& chain, const Sparse_chain<_CT, OSM::COLUMN> &other);
 
     /** \relates Sparse_chain
      *
-     * \brief Comparison of a COLUMN  and a ROW chain.
+     * \brief Comparison of a `COLUMN`  and a `ROW` chain.
      */
     template <typename _CT>
     friend bool operator==(const Sparse_chain<_CT, OSM::COLUMN>& chain, const Sparse_chain<_CT, OSM::ROW> &other);
 
     /** \relates Sparse_chain
      *
-     * \brief Comparison of a ROW and a COLUMN chain.
+     * \brief Comparison of a `ROW` and a `COLUMN` chain.
      */
     template <typename _CT>
     friend bool operator==(const Sparse_chain<_CT, OSM::ROW>& chain, const Sparse_chain<_CT, OSM::COLUMN> &other);
 
     /** \relates Sparse_chain
      *
-     * \brief Comparison of two ROW chains.
+     * \brief Comparison of two `ROW` chains.
      */
     template <typename _CT>
     friend bool operator==(const Sparse_chain<_CT, OSM::ROW>& chain, const Sparse_chain<_CT, OSM::ROW> &other);
