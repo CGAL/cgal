@@ -83,7 +83,7 @@ public:
     /*! \brief Type of coefficients used to compute homology. */
     typedef CoefficientRing Coefficient_ring;
 
-    /** \brief Type of vertices coordinates */
+    /** \brief Type of vertex coordinates */
     typedef std::vector<double> Point ;
 private:
     /* \brief Vector of VTK types associated to cells in each dimension
@@ -425,7 +425,7 @@ public:
         return res ;
     }
 
-    /** \brief Gets the vector of vertices coordinates  */
+    /** \brief Gets the vector of vertex coordinates  */
     const std::vector<Point>& get_vertices_coords() const
     {
         std::vector<Point> res ;

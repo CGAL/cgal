@@ -39,11 +39,11 @@ template<typename CoefficientRing> class Duality_simplicial_complex_tools ;
 template<typename CoefficientRing>
 class Simplicial_chain_complex : public Abstract_simplicial_chain_complex<CoefficientRing> {
 public:
-    /** \brief Type of vertices coordinates */
+    /** \brief Type of vertex coordinates */
     typedef std::vector<double> Point ;
 
 protected:
-    /** \brief Vector of vertices coordinates */
+    /** \brief Vector of vertex coordinates */
     std::vector<Point> _coords ;
 
 private:
@@ -61,7 +61,7 @@ public:
     /**
      * \brief Constructor from a Mesh_object_io.
      *
-     * Builds a simplicial complex from a Mesh_object_io describing maximal faces and vertices coordinates.
+     * Builds a simplicial complex from a Mesh_object_io describing maximal faces and vertex coordinates.
      */
     Simplicial_chain_complex(const Mesh_object_io& mesh) : Abstract_simplicial_chain_complex<CoefficientRing>(mesh), _coords(mesh.get_nodes()) {} ;
 
@@ -79,7 +79,7 @@ public:
         return *this ;
     }
 
-    /** \brief Gets the vector of vertices coordinates  */
+    /** \brief Gets the vector of vertex coordinates  */
     const std::vector<Point>& get_vertices_coords() const
     {
         return _coords ;
