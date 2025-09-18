@@ -310,9 +310,9 @@ template<typename CoefficientRing>
 class Duality_simplicial_complex_tools {
 public:
     /** \brief Type of simplicial chain complex encoding `L`. */
-    typedef Simplicial_chain_complex<CoefficientRing> ChainComplex ;
+    typedef Simplicial_chain_complex<CoefficientRing> Chain_complex ;
     /** \brief Type of sub chain complex mask encoding the sub complex `K`. */
-    typedef Sub_chain_complex_mask<ChainComplex> Sub_chain_complex ;
+    typedef Sub_chain_complex_mask<Chain_complex> Sub_chain_complex ;
     /** \brief Default constructor. */
     Duality_simplicial_complex_tools() {}
 
@@ -324,7 +324,7 @@ public:
      * - The vector of vertices coordinates of `L`
      */
     typedef struct {
-        ChainComplex& L ;
+        Chain_complex& L ;
         Sub_chain_complex& K ;
         std::vector<Io_node_type> nodes ;
     } Complex_duality_data ;
@@ -341,7 +341,7 @@ public:
      * \param[in] BB_ratio Ratio of the "closing" icosphere diameter with respect to the diameter of the object's bounding box.
      * \param[in] out_file_prefix Prefix of tetgen intermediate files (default: "file_K_closed.off").
      */
-    static Complex_duality_data simplicial_chain_complex_bb (const ChainComplex& _K, double BB_ratio=1.5, const std::string& out_file_prefix = "file_K_closed.off")
+    static Complex_duality_data simplicial_chain_complex_bb (const Chain_complex& _K, double BB_ratio=1.5, const std::string& out_file_prefix = "file_K_closed.off")
     {
 
         std::cerr << "-- Starting simplicial_chain_complex_bb" << std::endl;
@@ -377,7 +377,7 @@ public:
         Tet_object_io tetL(out_file_prefix) ;
 
         // Build the associated SimpComplex
-        ChainComplex& L = *new ChainComplex(tetL) ;
+        Chain_complex& L = *new Chain_complex(tetL) ;
         std::cout << "------ L:" << L;
 
         // Build the Sub_chain_complex_mask encoding _K inside L
@@ -399,7 +399,7 @@ public:
     }
 
     /** \brief Exports a SimpComplex to a MeshObject  */
-    static Mesh_object_io& export_meshObject(const ChainComplex& _CC)
+    static Mesh_object_io& export_meshObject(const Chain_complex& _CC)
     {
         std::vector<Io_cell_type> vcells ;
         for (int q = 0; q <= _CC.dimension(); ++q)
@@ -439,9 +439,9 @@ template<typename CoefficientRing>
 class Duality_cubical_complex_tools {
 public:
     /** \brief Type of cubical complexes used for the initial complex and \f$L\f$. */
-    typedef Cubical_chain_complex<CoefficientRing> ChainComplex ;
+    typedef Cubical_chain_complex<CoefficientRing> Chain_complex ;
     /** \brief Type of sub chain complex mask used to encode the sub-complex  \f$K\f$. */
-    typedef Sub_chain_complex_mask<ChainComplex> Sub_chain_complex ;
+    typedef Sub_chain_complex_mask<Chain_complex> Sub_chain_complex ;
     // Constructor
     Duality_cubical_complex_tools() {}
 
@@ -456,7 +456,7 @@ public:
      *
      * \param[in] _K Initial cubical chain complex (working mesh).
      */
-    static std::pair<ChainComplex&, Sub_chain_complex&> cubical_chain_complex_bb (const ChainComplex& _K)
+    static std::pair<Chain_complex&, Sub_chain_complex&> cubical_chain_complex_bb (const Chain_complex& _K)
     {
         Cub_object_io tmp_L ;
         tmp_L.dim = _K.dimension() ;
@@ -470,7 +470,7 @@ public:
             (tmp_L.ncubs)[dtmp] += 1 ;
             tmp_L.cubs.push_back(tmpkhal) ;
         }
-        ChainComplex& L(*new ChainComplex(tmp_L, ChainComplex::PRIMAL)) ;
+        Chain_complex& L(*new Chain_complex(tmp_L, Chain_complex::PRIMAL)) ;
 
         // Build the Sub_chain_complex_mask corresponding to _CC
         Sub_chain_complex& K(*new Sub_chain_complex(L, false)) ;
@@ -484,7 +484,7 @@ public:
                 K.set_bit_on(q,j) ;
             }
         }
-        return std::pair<ChainComplex&, Sub_chain_complex&>(L,K) ;
+        return std::pair<Chain_complex&, Sub_chain_complex&>(L,K) ;
     }
 } ;
 

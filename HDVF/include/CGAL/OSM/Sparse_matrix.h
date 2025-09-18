@@ -1117,7 +1117,7 @@ public:
      */
 
     /** \brief Removes a set of chains from a matrix. */
-    Sparse_matrix& operator/=(const std::vector<size_t> &indexes) {
+    Sparse_matrix& operator/=(const std::vector<size_t> &indices) {
         for (size_t index : indices) {
             *this /= index;
         }
