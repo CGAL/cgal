@@ -42,6 +42,8 @@ public:
     // Copy constructor
     Z2(const Z2& a) : _i(a._i) {}
 
+    bool is_zero() const { return _i == 0 ; }
+
     /** \brief Unary operator+ */
     friend Z2 operator+ (const Z2& a)
     {
@@ -140,10 +142,7 @@ public:
     }
 };
 
-Z2  abs(const Z2& a)
-    {
-        return a ;
-    }
+
 
 } /* end namespace Homological_discrete_vector_field */
 
@@ -153,6 +152,45 @@ template <> class Algebraic_structure_traits< Homological_discrete_vector_field:
     typedef Tag_true            Is_exact;
     typedef Tag_false           Is_numerical_sensitive;
   };
+
+  template <> class Real_embeddable_traits< Homological_discrete_vector_field::Z2 >
+  : public INTERN_RET::Real_embeddable_traits_base< Homological_discrete_vector_field::Z2 , CGAL::Tag_true > {
+  public:
+
+    class Is_positive
+      : public CGAL::cpp98::unary_function< Type, bool > {
+      public:
+        bool operator()( const Type& x_) const {
+          return !x_.is_zero() ;
+        }
+    };
+
+    class Is_negative
+      : public CGAL::cpp98::unary_function< Type, bool > {
+      public:
+        bool operator()( const Type& x_) const {
+          return false;
+        }
+    };
+
+    class Sgn
+      : public CGAL::cpp98::unary_function< Type, ::CGAL::Sign > {
+      public:
+        ::CGAL::Sign operator()( const Type& x ) const {
+          if(x_.is_zero()) return ZERO ;
+          else return POSITIVE ;
+        }
+    };
+
+    class Abs
+    : public CGAL::cpp98::unary_function< Type, Type > {
+      public:
+        Type  operator()( const Type& x ) const {
+          return x ;
+        }
+    };
+  };
+
 } /* end namespace CGAL */
 
 #endif //CGAL_HDVF_Z2_H
