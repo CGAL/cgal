@@ -152,7 +152,7 @@ template <> class Algebraic_structure_traits< Homological_discrete_vector_field:
   public:
     typedef Tag_true            Is_exact;
     typedef Tag_false           Is_numerical_sensitive;
-
+  };
 } /* end namespace CGAL */
 
 #endif //CGAL_HDVF_Z2_H
