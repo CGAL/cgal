@@ -1599,8 +1599,8 @@ public:
         if (! result) return oi;
 
         if (const auto* res_seg = std::get_if<Approx_seg>(&*result)) {
-          *oi++ = l2r ? res_seg->min() : res_seg->max();
-          *oi++ = l2r ? res_seg->max() : res_seg->min();
+          *oi++ = l2r ? res_seg->min() : (res_seg->max)();
+          *oi++ = l2r ? res_seg->max() : (res_seg->min)();
           return oi;
         }
         const auto* res_pnt = std::get_if<Approx_pnt>(&*result);
@@ -1618,8 +1618,8 @@ public:
         if (! result) return oi;
 
         if (const auto* res_seg = std::get_if<Approx_seg>(&*result)) {
-          *oi++ = l2r ? res_seg->min() : res_seg->max();
-          *oi++ = l2r ? res_seg->max() : res_seg->min();
+          *oi++ = l2r ? res_seg->min() : (res_seg->max)();
+          *oi++ = l2r ? res_seg->max() : (res_seg->min)();
           return oi;
         }
         const auto* res_pnt = std::get_if<Approx_pnt>(&*result);
@@ -1632,8 +1632,8 @@ public:
       if (! result) return oi;
 
       if (const auto* res_seg = std::get_if<Approx_seg>(&*result)) {
-        *oi++ = l2r ? res_seg->min() : res_seg->max();
-        *oi++ = l2r ? res_seg->max() : res_seg->min();
+        *oi++ = l2r ? res_seg->min() : (res_seg->max)();
+        *oi++ = l2r ? res_seg->max() : (res_seg->min)();
         return oi;
       }
       const auto* res_pnt = std::get_if<Approx_pnt>(&*result);
