@@ -132,6 +132,7 @@ int main(int argc, char** argv) {
   CGAL::tetrahedral_isotropic_remeshing(c3t3, target_edge_length,
                                         CGAL::parameters::number_of_iterations(num_iterations).smooth_constrained_edges(smooth_constrained_edges));
   t_atomic.stop();
+  std::cout << "Remeshing took " << t_atomic.time() << std::endl;
 
   //std::cout << "After remeshing:" << std::endl;
   //for(auto it=tr.finite_vertices_begin(); it!=tr.finite_vertices_end(); ++it) {
