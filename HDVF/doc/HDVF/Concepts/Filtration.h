@@ -158,6 +158,16 @@ public:
     bool is_valid() const;
 
     // Input/output filtration
+
+
+    /**
+     * \brief Exports the filtration time indices.
+     *
+     * The method exports the time index of every cell in each dimension.
+     */
+    vector<vector<size_t> > export_filtration () const
+};
+
     /*!
     \relates Filtration
     \brief extracts a filtration from a stream.
@@ -169,11 +179,3 @@ public:
     \brief Inserts a filtration into a stream.
      */
     ostream & operator<<(ostream & out, const Filtration &f);
-
-    /**
-     * \brief Exports the filtration time indices.
-     *
-     * The method exports the time index of every cell in each dimension.
-     */
-    vector<vector<size_t> > export_filtration () const
-};
