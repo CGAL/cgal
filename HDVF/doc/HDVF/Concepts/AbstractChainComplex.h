@@ -130,8 +130,8 @@ Column_chain cofaces_chain (SparseChain<CoefficientR, StorageF> chain, int q) co
 
 /// @}
 
-/// \name Output functions
-/// @{
+};
+
 
 /*!
 \relates AbstractChainComplex
@@ -139,6 +139,3 @@ Inserts the chain complex in text mode in the stream.
 */
 std::ostream& operator<<(std::ostream& out, const AbstractChainComplex& complex) const;
 
-/// @}
-
-};
