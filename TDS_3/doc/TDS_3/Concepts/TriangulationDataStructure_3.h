@@ -528,7 +528,7 @@ void flip_flippable(Cell_handle c, int i);
 Creates a new vertex, inserts it in cell `c` and returns its handle.
 The cell `c` is split into four new cells, each of these cells being
 formed by the new vertex and a facet of `c`.
-\pre `tds`.`dimension()` \f$ = 3\f$ and `c` is a cell of `tds`.
+\pre `dimension()` \f$ = 3\f$ and \link is_cell `is_cell(c)`\endlink.
 */
 Vertex_handle insert_in_cell(Cell_handle c);
 
@@ -536,14 +536,14 @@ Vertex_handle insert_in_cell(Cell_handle c);
 Creates a new vertex, inserts it in facet `f` and returns its handle.
 In dimension 3, the two incident cells are split into 3 new cells;
 in dimension 2, the facet is split into 3 facets.
-\pre `tds`.`dimension()` \f$ \geq2\f$ and `f` is a facet of `tds`.
+\pre `dimension()` \f$ \geq2\f$ and \link is_facet(Cell_handle, int)const `is_facet(f.first, f.second)`\endlink.
 */
 Vertex_handle insert_in_facet(const Facet & f);
 
 /*!
 Creates a new vertex, inserts it in facet `i` of `c` and returns its
 handle.
-\pre `tds`.`dimension()` \f$ \geq2\f$, \f$ i \in\{0,1,2,3\}\f$ in dimension 3, \f$ i=3\f$ in dimension 2 and `(c,i)` is a facet of `tds`.
+\pre `dimension()` \f$ \geq2\f$, \f$ i \in\{0,1,2,3\}\f$ in dimension 3, \f$ i=3\f$ in dimension 2 and \link is_facet(Cell_handle, int)const `is_facet(c, i)`\endlink.
 */
 Vertex_handle insert_in_facet(Cell_handle c, int i);
 
@@ -553,14 +553,14 @@ In dimension 3, all the
 incident cells are split into 2 new cells; in dimension 2, the 2
 incident facets are split into 2 new facets; in dimension 1, the edge is
 split into 2 new edges.
-\pre `tds`.`dimension()` \f$ \geq1\f$ and `e` is an edge of `tds`.
+\pre `dimension()` \f$ \geq1\f$ and \link is_edge(Cell_handle, int,int)const `is_edge(e.first, e.second, e.third)`\endlink.
 */
 Vertex_handle insert_in_edge(Edge e);
 
 /*!
 Creates a new vertex, inserts it in edge \f$ (i,j)\f$ of `c` and returns its
 handle.
-\pre `tds`.`dimension()` \f$ \geq1\f$. \f$ i\neq j\f$, \f$ i,j \in\{0,1,2,3\}\f$ in dimension 3, \f$ i,j \in\{0,1,2\}\f$ in dimension 2, \f$ i,j \in\{0,1\}\f$ in dimension 1 and `(c,i,j)` is an edge of `tds`.
+\pre `dimension()` \f$ \geq1\f$. \f$ i\neq j\f$, \f$ i,j \in\{0,1,2,3\}\f$ in dimension 3, \f$ i,j \in\{0,1,2\}\f$ in dimension 2, \f$ i,j \in\{0,1\}\f$ in dimension 1 and \link is_edge(Cell_handle, int,int)const `is_edge(c,i,j)`\endlink.
 */
 Vertex_handle insert_in_edge(Cell_handle c, int i, int j);
 
@@ -582,8 +582,7 @@ This method can be used to insert the first two vertices in an empty
 triangulation.
 
 A handle to `v` is returned.
-\pre `tds`.`dimension()` \f$ = d < 3\f$. When `tds`.`number_of_vertices()` \f$ >0\f$, \f$ star \neq\f$ `Vertex_handle()` and `star` is a vertex of `tds`.
-
+\pre `dimension()` \f$ = d < 3\f$. When `number_of_vertices()` \f$ >0\f$, \f$ star \neq\f$ `Vertex_handle()` and \link is_vertex `is_vertex(star)`\endlink.
 
 \anchor TDS3figtopoinsert_outside_affine_hull
 \image html topo-insert_outside_affine_hull.png "insert_increase_dimension (1-dimensional case)."
@@ -627,7 +626,8 @@ This operation is the reciprocal of `insert_increase_dimension()`.
 It transforms a triangulation of the sphere \f$ S^d\f$ of \f$ \mathbb{R}^{d+1}\f$ into the
 triangulation of the sphere \f$ S^{d-1}\f$ of \f$ \mathbb{R}^{d}\f$ by removing the vertex
 `v`. Delete the cells incident to `w`, keep the others.
-\pre `tds`.`dimension()` \f$ = d \geq-1\f$. `tds`.`degree(v)` \f$ =\f$ `degree(w)` \f$ =\f$ `tds`.`number_of_vertices()` \f$ -1\f$.
+\pre `dimension()` \f$ = d \geq-1\f$.
+\pre \link degree `degree(v)`\endlink \f$ =\f$ \link degree `degree(w)`\endlink \f$ =\f$ `number_of_vertices()` \f$ -1\f$.
 
 */
 void remove_decrease_dimension(Vertex_handle v, Vertex_handle w = v);
@@ -635,10 +635,10 @@ void remove_decrease_dimension(Vertex_handle v, Vertex_handle w = v);
 /*!
 Removes `v`. The incident simplices of maximal dimension incident to
 `v` are replaced by a single simplex of the same dimension. This
-operation is exactly the reciprocal to `tds`.`insert_in_cell(v)` in
-dimension 3, `tds`.`insert_in_facet(v)` in dimension 2, and
-`tds`.`insert_in_edge(v)` in dimension 1.
-\pre `tds`.`degree(v)` \f$ =\f$ `tds`.`dimension()+1`.
+operation is exactly the reciprocal to `insert_in_cell(v)` in
+dimension 3, `insert_in_facet(v)` in dimension 2, and
+`insert_in_edge(v)` in dimension 1.
+\pre \link degree `degree(v)`\endlink \f$ =\f$ `dimension()+1`.
 
 */
 Cell_handle remove_from_maximal_dimension_simplex(Vertex_handle v);
@@ -746,7 +746,7 @@ Cell_handle n2, Cell_handle n3);
 \cgalAdvancedBegin
 Removes the vertex from the triangulation data structure.
 \cgalAdvancedEnd
-\pre The vertex is a vertex of `tds`.
+\pre \link is_vertex `is_vertex(v)`\endlink.
 */
 void delete_vertex( Vertex_handle v );
 
@@ -755,7 +755,7 @@ void delete_vertex( Vertex_handle v );
 \cgalAdvancedBegin
 Removes the cell from the triangulation data structure.
 \cgalAdvancedEnd
-\pre The cell is a cell of `tds`.
+\pre \link is_cell(Cell_handle)const `is_cell(c)`\endlink.
 */
 void delete_cell( Cell_handle c );
 
@@ -924,7 +924,8 @@ Cell_handle start, int f) const;
 Copies the `Cell_handle`s of all cells incident to `v` to the
 output iterator `cells`.
 Returns the resulting output iterator.
-\pre `tds.dimension()` \f$ =3\f$, `v` \f$ \neq\f$ `Vertex_handle()`, `tds.is_vertex(v)`.
+\pre `dimension()` \f$ =3\f$
+\pre `v` \f$ \neq\f$ `Vertex_handle()` and \link is_vertex `is_vertex(v)`\endlink
 */
 template <class OutputIterator>
 OutputIterator
@@ -934,7 +935,8 @@ incident_cells(Vertex_handle v, OutputIterator cells) const;
 Copies the `Facet`s incident to `v` to the output iterator
 `facets`.
 Returns the resulting output iterator.
-\pre `tds.dimension()` \f$ >1\f$, `v` \f$ \neq\f$ `Vertex_handle()`, `tds.is_vertex(v)`.
+\pre `dimension()` \f$ >1\f$
+\pre `v` \f$ \neq\f$ `Vertex_handle()` and \link is_vertex `is_vertex(v)`\endlink
 */
 template <class OutputIterator>
 OutputIterator
@@ -943,7 +945,8 @@ incident_facets(Vertex_handle v, OutputIterator facets) const;
 /*!
 Copies all `Edge`s incident to `v` to the
 output iterator `edges`. Returns the resulting output iterator.
-\pre `tds.dimension()` \f$ >0\f$, `v` \f$ \neq\f$ `Vertex_handle()`, `tds.is_vertex(v)`.
+\pre `dimension()` \f$ >0\f$
+\pre `v` \f$ \neq\f$ `Vertex_handle()` and \link is_vertex `is_vertex(v)`\endlink
 */
 template <class OutputIterator>
 OutputIterator
@@ -951,9 +954,9 @@ incident_edges(Vertex_handle v, OutputIterator edges) const;
 
 /*!
 Copies the `Vertex_handle`s of all vertices adjacent to `v` to the
-output iterator `vertices`. If `tds.dimension()` \f$ <0\f$, then do
+output iterator `vertices`. If `dimension()` \f$ <0\f$, then do
 nothing. Returns the resulting output iterator.
-\pre `v` \f$ \neq\f$ `Vertex_handle()`, `tds.is_vertex(v)`.
+\pre `v` \f$ \neq\f$ `Vertex_handle()` and \link is_vertex `is_vertex(v)`\endlink
 */
 template <class OutputIterator>
 OutputIterator
@@ -961,7 +964,8 @@ adjacent_vertices(Vertex_handle v, OutputIterator vertices) const;
 
 /*!
 Returns the degree of `v`, that is, the number of incident vertices.
-\pre `v` \f$ \neq\f$ `Vertex_handle()`, `tds.is_vertex(v)`.
+\pre `v` \f$ \neq\f$ `Vertex_handle()`
+\pre \link is_vertex `is_vertex(v)`\endlink
 */
 size_type degree(Vertex_handle v) const;
 

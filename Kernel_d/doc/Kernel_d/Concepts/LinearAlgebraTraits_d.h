@@ -66,7 +66,7 @@ Vector& c);
 returns the
 inverse matrix of `M`. More precisely, \f$ 1/D\f$ times the matrix
 returned is the inverse of `M`.
-\pre `determinant(M) != 0`.
+\pre \ref determinant(const Matrix&) "determinant(M)"` != 0`.
 
 \pre \f$ M\f$ is square.
 */

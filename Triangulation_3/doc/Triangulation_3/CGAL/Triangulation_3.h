@@ -1582,7 +1582,8 @@ Cell_handle start, int f) const;
 Copies the `Cell_handle`s of all cells incident to `v` to the output
 iterator `cells`.
 Returns the resulting output iterator.
-\pre `t.dimension() == 3`, `v != Vertex_handle()`, `t.is_vertex(v)`.
+\pre `t.dimension() == 3`
+\pre `v != Vertex_handle()` and \link is_vertex `t.is_vertex(v)`\endlink.
 */
 template <class OutputIterator>
 OutputIterator
@@ -1595,7 +1596,8 @@ Returns `true` in case of success. Otherwise, `cells` is emptied and the functio
 returns false. In any case, the locked cells are not unlocked by
 `try_lock_and_get_incident_cells()`, leaving this choice to the user.
 
-\pre `t.dimension() == 3`, `v != Vertex_handle()`, `t.is_vertex(v)`.
+\pre `t.dimension() == 3`
+\pre `v != Vertex_handle()` and \link is_vertex `t.is_vertex(v)`\endlink.
 */
 bool
   try_lock_and_get_incident_cells(Vertex_handle v,
@@ -1604,7 +1606,8 @@ bool
 Copies the `Cell_handle`s of all finite cells incident to `v` to the output
 iterator `cells`.
 Returns the resulting output iterator.
-\pre `t.dimension() == 3`, `v != Vertex_handle()`, `t.is_vertex(v)`.
+\pre `t.dimension() == 3`
+\pre `v != Vertex_handle()` and \link is_vertex `t.is_vertex(v)`\endlink.
 */
 template <class OutputIterator>
 OutputIterator
@@ -1614,7 +1617,8 @@ finite_incident_cells(Vertex_handle v, OutputIterator cells) const;
 Copies all `Facet`s incident to `v` to the output iterator
 `facets`.
 Returns the resulting output iterator.
-\pre `t.dimension() > 1`, `v != Vertex_handle()`, `t.is_vertex(v)`.
+\pre `t.dimension() > 1`
+\pre `v != Vertex_handle()` and \link is_vertex `t.is_vertex(v)`\endlink.
 */
 template <class OutputIterator>
 OutputIterator
@@ -1624,7 +1628,8 @@ incident_facets(Vertex_handle v, OutputIterator facets) const;
 Copies all finite `Facet`s incident to `v` to the output iterator
 `facets`.
 Returns the resulting output iterator.
-\pre `t.dimension() > 1`, `v != Vertex_handle()`, `t.is_vertex(v)`.
+\pre `t.dimension() > 1`
+\pre `v != Vertex_handle()` and \link is_vertex `t.is_vertex(v)`\endlink.
 */
 template <class OutputIterator>
 OutputIterator
@@ -1633,7 +1638,8 @@ finite_incident_facets(Vertex_handle v, OutputIterator facets) const;
 /*!
 Copies all `Edge`s incident to `v` to the
 output iterator `edges`. Returns the resulting output iterator.
-\pre `t.dimension() > 0`, `v != Vertex_handle()`, `t.is_vertex(v)`.
+\pre `t.dimension() > 0`
+\pre `v != Vertex_handle()` and \link is_vertex `t.is_vertex(v)`\endlink.
 */
 template <class OutputIterator>
 OutputIterator
@@ -1642,7 +1648,8 @@ incident_edges(Vertex_handle v, OutputIterator edges) const;
 /*!
 Copies all finite `Edge`s incident to `v` to the
 output iterator `edges`. Returns the resulting output iterator.
-\pre `t.dimension() > 0`, `v != Vertex_handle()`, `t.is_vertex(v)`.
+\pre `t.dimension() > 0`
+\pre `v != Vertex_handle()` and \link is_vertex `t.is_vertex(v)`\endlink.
 */
 template <class OutputIterator>
 OutputIterator
@@ -1652,7 +1659,7 @@ finite_incident_edges(Vertex_handle v, OutputIterator edges) const;
 Copies the `Vertex_handle`s of all vertices adjacent to `v` to the
 output iterator `vertices`. If `t.dimension() < 0`, then do
 nothing. Returns the resulting output iterator.
-\pre `v != Vertex_handle()`, `t.is_vertex(v)`.
+\pre `v != Vertex_handle()` and \link is_vertex `t.is_vertex(v)`\endlink.
 */
 template <class OutputIterator>
 OutputIterator
@@ -1662,7 +1669,7 @@ adjacent_vertices(Vertex_handle v, OutputIterator vertices) const;
 Copies the `Vertex_handle`s of all finite vertices adjacent to `v` to the
 output iterator `vertices`. If `t.dimension() < 0`, then do
 nothing. Returns the resulting output iterator.
-\pre `v != Vertex_handle()`, `t.is_vertex(v)`.
+\pre `v != Vertex_handle()` and \link is_vertex `t.is_vertex(v)`\endlink.
 */
 template <class OutputIterator>
 OutputIterator
@@ -1671,7 +1678,7 @@ finite_adjacent_vertices(Vertex_handle v, OutputIterator vertices) const;
 /*!
 Returns the degree of `v`, that is, the number of incident vertices.
 The infinite vertex is counted.
-\pre `v != Vertex_handle()`, `t.is_vertex(v)`.
+\pre `v != Vertex_handle()` and \link is_vertex `t.is_vertex(v)`\endlink.
 */
 size_type degree(Vertex_handle v) const;
 

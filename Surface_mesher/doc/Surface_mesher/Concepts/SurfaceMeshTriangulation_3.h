@@ -234,7 +234,7 @@ Finite_facets_iterator finite_facets_end() const;
 Copies the `Cell_handle`s of all cells incident to `v` to the output
 iterator `cells`. If `t.dimension() < 3`, then do nothing.
 Returns the resulting output iterator.
-\pre `v != Vertex_handle()`, `t.is_vertex(v)`.
+\pre `v != Vertex_handle()` and \link is_vertex `is_vertex(v->point())`\endlink.
 */
 template <class OutputIterator>
 OutputIterator

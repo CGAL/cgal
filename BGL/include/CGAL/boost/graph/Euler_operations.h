@@ -1552,7 +1552,7 @@ does_satisfy_link_condition(typename boost::graph_traits<Graph>::edge_descriptor
  *
  * \returns vertex `v1`.
  * \pre g must be a triangulated graph
- * \pre `does_satisfy_link_condition(e,g) == true`.
+ * \pre \link CGAL::Euler::does_satisfy_link_condition `does_satisfy_link_condition`\endlink(e,g) == `true`.
  */
 template<typename Graph>
 typename boost::graph_traits<Graph>::vertex_descriptor
