@@ -1336,7 +1336,7 @@ protected:
     std::size_t size = std::distance(begin, end);
     auto it = begin;
     while (it != end) {
-      std::size_t num = std::min(size+1, k);
+      std::size_t num = (std::min)(size+1, k);
       arr_entries.resize(num);
       for (std::size_t i = 1; i < num; ++i) {
         // process pgn
