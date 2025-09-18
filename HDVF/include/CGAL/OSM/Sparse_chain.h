@@ -454,45 +454,6 @@ public:
         return _chainData.size() == 0;
     }
 
-    /** \relates Sparse_chain
-     *
-     * @brief  Compare two chains and return `true` if both chains equal (and `false` otherwise).
-     *
-     * @param chain The first chain.
-     * @param other The second chain.
-     * @return A boolean.
-     * @{
-     */
-
-    /** \relates Sparse_chain
-     *
-     * \brief Comparison of two `COLUMN` chains.
-     */
-    template <typename _CT>
-    friend bool operator==(const Sparse_chain<_CT, OSM::COLUMN>& chain, const Sparse_chain<_CT, OSM::COLUMN> &other);
-
-    /** \relates Sparse_chain
-     *
-     * \brief Comparison of a `COLUMN`  and a `ROW` chain.
-     */
-    template <typename _CT>
-    friend bool operator==(const Sparse_chain<_CT, OSM::COLUMN>& chain, const Sparse_chain<_CT, OSM::ROW> &other);
-
-    /** \relates Sparse_chain
-     *
-     * \brief Comparison of a `ROW` and a `COLUMN` chain.
-     */
-    template <typename _CT>
-    friend bool operator==(const Sparse_chain<_CT, OSM::ROW>& chain, const Sparse_chain<_CT, OSM::COLUMN> &other);
-
-    /** \relates Sparse_chain
-     *
-     * \brief Comparison of two `ROW` chains.
-     */
-    template <typename _CT>
-    friend bool operator==(const Sparse_chain<_CT, OSM::ROW>& chain, const Sparse_chain<_CT, OSM::ROW> &other);
-
-    /** @} */
 
     /**
      * \brief Gets a subchain from the chain.
@@ -690,6 +651,33 @@ private:
     }
 };
 
+    /** \relates Sparse_chain
+     *
+     * \brief Comparison of two `COLUMN` chains.
+     */
+    template <typename _CT>
+    friend bool operator==(const Sparse_chain<_CT, OSM::COLUMN>& chain, const Sparse_chain<_CT, OSM::COLUMN> &other);
+
+    /** \relates Sparse_chain
+     *
+     * \brief Comparison of a `COLUMN`  and a `ROW` chain.
+     */
+    template <typename _CT>
+    friend bool operator==(const Sparse_chain<_CT, OSM::COLUMN>& chain, const Sparse_chain<_CT, OSM::ROW> &other);
+
+    /** \relates Sparse_chain
+     *
+     * \brief Comparison of a `ROW` and a `COLUMN` chain.
+     */
+    template <typename _CT>
+    friend bool operator==(const Sparse_chain<_CT, OSM::ROW>& chain, const Sparse_chain<_CT, OSM::COLUMN> &other);
+
+    /** \relates Sparse_chain
+     *
+     * \brief Comparison of two `ROW` chains.
+     */
+    template <typename _CT>
+    friend bool operator==(const Sparse_chain<_CT, OSM::ROW>& chain, const Sparse_chain<_CT, OSM::ROW> &other);
 
 // COLUMN chain x ROW chain -> COLUMN matrix
 template <typename _CT>
