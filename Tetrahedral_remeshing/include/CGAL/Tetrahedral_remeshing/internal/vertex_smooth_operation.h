@@ -98,20 +98,22 @@ public:
   std::unordered_map<Vertex_handle, std::unordered_map<Surface_patch_index, Vector_3, boost::hash<Surface_patch_index>>> m_vertices_normals;
 
   FT m_total_move = 0;
-private:
+public:
+
   const CellSelector& m_cell_selector;
+  const SizingFunction& m_sizing;
   const bool m_protect_boundaries;
   const bool m_smooth_constrained_edges;
 
-public:
   using FMLS = CGAL::Tetrahedral_remeshing::internal::FMLS<Gt>;
   std::vector<FMLS> subdomain_FMLS;
   std::unordered_map<Surface_patch_index, std::size_t, boost::hash<Surface_patch_index>> subdomain_FMLS_indices;
   Vertex_smoothing_context(C3t3& c3t3,
+                           const SizingFunction& sizing,
                            const CellSelector& cell_selector,
                            const bool protect_boundaries,
                            const bool smooth_constrained_edges)
-      : m_cell_selector(cell_selector)
+      : m_sizing(sizing),m_cell_selector(cell_selector)
       , m_protect_boundaries(protect_boundaries)
       , m_smooth_constrained_edges(smooth_constrained_edges)
   {
@@ -427,25 +429,12 @@ protected:
 
   using Context = Vertex_smoothing_context<C3t3, SizingFunction, CellSelector>;
 
-  const SizingFunction& m_sizing;
-  const CellSelector& m_cell_selector;
-  bool m_protect_boundaries;
   std::shared_ptr<Context> m_context{nullptr}; // Pointer to shared context
 
 public:
   bool m_smooth_constrained_edges;
-  VertexSmoothOperationBase(
-                       const SizingFunction& sizing,
-                       const CellSelector& cell_selector,
-                       const bool protect_boundaries,
-                       const bool smooth_constrained_edges,
-                            std::shared_ptr<Context> context)
-    :
-     m_sizing(sizing)
-    , m_cell_selector(cell_selector)
-    , m_protect_boundaries(protect_boundaries)
-    , m_context(context)
-    , m_smooth_constrained_edges(smooth_constrained_edges)
+  VertexSmoothOperationBase(std::shared_ptr<Context> context)
+      : m_context(context)
   {}
 
   void set_context(std::shared_ptr<Context> p_context) {
@@ -466,12 +455,12 @@ protected:
   FT density_along_segment(const Edge& e, const C3t3& c3t3, bool boundary_edge = false) const {
     // Simplified density calculation - in practice this would use sizing function
     const auto [pt, dim, index] = midpoint_with_info(e, boundary_edge, c3t3);
-    const FT s = sizing_at_midpoint(e, pt, dim, index, m_sizing, c3t3, m_cell_selector);
+    const FT s = sizing_at_midpoint(e, pt, dim, index, m_context->m_sizing, c3t3, m_context->m_cell_selector);
     const FT density = 1. / s; //density = 1 / size^(dimension)
     return density;
   }
 
-  bool is_selected(const Cell_handle c) const { return get(m_cell_selector, c); }
+  bool is_selected(const Cell_handle c) const { return get(m_context->m_cell_selector, c); }
 
   template<typename CellRange>
   Dihedral_angle_cosine max_cosine(const Tr& tr,
@@ -585,10 +574,6 @@ public:
   using ElementSource = typename Base::ElementSource;
   using Lock_zone = typename Base::Lock_zone;
 
-  using BaseClass::m_sizing;
-  using BaseClass::m_cell_selector;
-  using BaseClass::m_protect_boundaries;
-  using BaseClass::m_smooth_constrained_edges;
   using BaseClass::m_context;
 
   // Import types from base class
@@ -601,13 +586,8 @@ public:
   using typename BaseClass::FT;
 
 public:
-  InternalVertexSmoothOperation(const C3t3& /* c3t3 */,
-                               const SizingFunction& sizing,
-                               const CellSelector& cell_selector,
-                               const bool protect_boundaries,
-                               const bool smooth_constrained_edges,
-                               std::shared_ptr<typename BaseClass::Context> context)
-    : BaseClass(sizing, cell_selector, protect_boundaries,smooth_constrained_edges, context)
+  InternalVertexSmoothOperation(std::shared_ptr<typename BaseClass::Context> context)
+    : BaseClass(context)
   {}
 
   void perform_global_preprocessing(const C3t3& c3t3) const
@@ -620,7 +600,7 @@ public:
 
   for (const Edge& e : tr.finite_edges())
   {
-    if (is_outside(e, c3t3, m_cell_selector))
+    if (is_outside(e, c3t3, m_context->m_cell_selector))
       continue;
 
     const auto [vh0, vh1] =  make_vertex_pair(e);
@@ -708,10 +688,6 @@ public:
   using ElementSource = typename Base::ElementSource;
   using Lock_zone = typename Base::Lock_zone;
 
-  using BaseClass::m_sizing;
-  using BaseClass::m_cell_selector;
-  using BaseClass::m_protect_boundaries;
-  using BaseClass::m_smooth_constrained_edges;
   using BaseClass::m_context;
 
   // Import types from base class
@@ -737,7 +713,7 @@ private:
     m_context->m_moves.assign(nbv, default_move);
 
     for (const Edge& e : tr.finite_edges()) {
-      if (!c3t3.is_in_complex(e) && is_boundary(c3t3, e, m_cell_selector)) {
+      if (!c3t3.is_in_complex(e) && is_boundary(c3t3, e, m_context->m_cell_selector)) {
         const Vertex_handle vh0 = e.first->vertex(e.second);
         const Vertex_handle vh1 = e.first->vertex(e.third);
 
@@ -804,13 +780,8 @@ private:
   }
 
 public:
-  SurfaceVertexSmoothOperation(const C3t3& /* c3t3 */,
-                              const SizingFunction& sizing,
-                              const CellSelector& cell_selector,
-                              const bool protect_boundaries,
-                              const bool smooth_constrained_edges,
-                               std::shared_ptr<typename BaseClass::Context> context)
-    : BaseClass( sizing, cell_selector, protect_boundaries, smooth_constrained_edges, context)
+  SurfaceVertexSmoothOperation(std::shared_ptr<typename BaseClass::Context> context)
+    : BaseClass(context)
   {
   }
 
@@ -986,10 +957,6 @@ public:
 
   using Surface_patch_index = typename C3t3::Surface_patch_index;
 
-  using BaseClass::m_sizing;
-  using BaseClass::m_cell_selector;
-  using BaseClass::m_protect_boundaries;
-  using BaseClass::m_smooth_constrained_edges;
   using BaseClass::m_context;
 
   // Import types from base class
@@ -1002,13 +969,8 @@ public:
 
 public:
 
-  ComplexEdgeVertexSmoothOperation(const C3t3& /* c3t3 */,
-                                  const SizingFunction& sizing,
-                                  const CellSelector& cell_selector,
-                                  const bool protect_boundaries,
-                                  const bool smooth_constrained_edges,
-                                  std::shared_ptr<typename BaseClass::Context> context)
-    : BaseClass( sizing, cell_selector, protect_boundaries,smooth_constrained_edges, context)
+  ComplexEdgeVertexSmoothOperation(std::shared_ptr<typename BaseClass::Context> context)
+    : BaseClass(context)
   {}
 
   ElementSource get_element_source(const C3t3& c3t3) const override {
