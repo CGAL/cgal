@@ -14,6 +14,8 @@
 
 #include <CGAL/license/HDVF.h>
 
+#include <CGAL/number_type_basic.h>
+
 #include <vector>
 #include <iostream>
 
@@ -144,6 +146,13 @@ Z2  abs(const Z2& a)
     }
 
 } /* end namespace Homological_discrete_vector_field */
+
+template <> class Algebraic_structure_traits< Homological_discrete_vector_field::Z2 >
+  : public Algebraic_structure_traits_base< Homological_discrete_vector_field::Z2, Integral_domain_without_division_tag >  {
+  public:
+    typedef Tag_true            Is_exact;
+    typedef Tag_false           Is_numerical_sensitive;
+
 } /* end namespace CGAL */
 
 #endif //CGAL_HDVF_Z2_H
