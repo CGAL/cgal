@@ -8,6 +8,7 @@ project(Polygon_mesh_processing_Examples)
 find_package(CGAL REQUIRED)
 
 create_single_source_cgal_program("sample_example.cpp" )
+create_single_source_cgal_program("poisson_sampling_sm_example.cpp" )
 create_single_source_cgal_program("extrude.cpp" )
 create_single_source_cgal_program( "list_non_pure_triangle_meshes.cpp" )
 create_single_source_cgal_program("polyhedral_envelope.cpp" )
