@@ -590,8 +590,6 @@ loop()
 {
   CGAL_SMS_TRACE(0, "Collapsing edges...");
 
-  CGAL_assertion_code(size_type non_collapsable_count = 0);
-
   // Pops and processes each edge from the PQ
 
   std::optional<halfedge_descriptor> opt_h;
@@ -658,8 +656,6 @@ loop()
           }
           else
           {
-            CGAL_assertion_code(++non_collapsable_count);
-
             m_visitor.OnNonCollapsable(profile);
 
             CGAL_SMS_TRACE(1, edge_to_string(*opt_h) << " NOT Collapsible (filter)" );
@@ -679,8 +675,6 @@ loop()
       }
       else
       {
-        CGAL_assertion_code(++non_collapsable_count);
-
         m_visitor.OnNonCollapsable(profile);
 
         CGAL_SMS_TRACE(1, edge_to_string(*opt_h) << " NOT Collapsible (topology)" );
