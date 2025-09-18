@@ -14,7 +14,7 @@ Release date: July 2026
 
 ## [Release 6.1](https://github.com/CGAL/cgal/releases/tag/v6.1)
 
-Release date: July 2025
+Release date: Sept 2025
 
 ### General Changes
 
