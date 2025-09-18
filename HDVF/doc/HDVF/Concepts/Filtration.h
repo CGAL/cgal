@@ -159,13 +159,13 @@ public:
 
     // Input/output filtration
     /*!
-    \ relates Filtration
+    \relates Filtration
     \brief extracts a filtration from a stream.
      */
     istream & operator>>(istream & in, Filtration &f);
 
     /*!
-    \ relates Filtration
+    \relates Filtration
     \brief Inserts a filtration into a stream.
      */
     ostream & operator<<(ostream & out, const Filtration &f);
