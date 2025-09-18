@@ -151,6 +151,14 @@ template <> class Algebraic_structure_traits< Homological_discrete_vector_field:
   public:
     typedef Tag_true            Is_exact;
     typedef Tag_false           Is_numerical_sensitive;
+
+    class Is_square
+      : public CGAL::cpp98::unary_function< Type, bool > {
+      public:
+        bool operator()( const Type& ) const {
+          return true;
+        }
+    };
   };
 
   template <> class Real_embeddable_traits< Homological_discrete_vector_field::Z2 >
@@ -168,7 +176,7 @@ template <> class Algebraic_structure_traits< Homological_discrete_vector_field:
     class Is_negative
       : public CGAL::cpp98::unary_function< Type, bool > {
       public:
-        bool operator()( const Type& x_) const {
+        bool operator()( const Type&) const {
           return false;
         }
     };
