@@ -102,26 +102,23 @@ public:
                    const bool smooth_constrained_edges)
   {
       // Create shared context for vertex smoothing operations
-      m_context=std::make_shared<VertexSmoothingContext>(c3t3, cell_selector, protect_boundaries,smooth_constrained_edges);
-      m_edge_smooth_op = std::make_unique<ComplexEdgeSmoothOp>(c3t3, sizing, cell_selector, protect_boundaries,smooth_constrained_edges,m_context);
-      m_surface_vertices_smooth_op = std::make_unique<SurfaceVertexSmoothOp>(c3t3, sizing, cell_selector, protect_boundaries,smooth_constrained_edges,m_context);
+      m_context=std::make_shared<VertexSmoothingContext>(c3t3,sizing, cell_selector, protect_boundaries,smooth_constrained_edges);
+      m_edge_smooth_op = std::make_unique<ComplexEdgeSmoothOp>(m_context);
+      m_surface_vertices_smooth_op = std::make_unique<SurfaceVertexSmoothOp>(m_context);
       m_internal_vertices_smooth_op =
-          std::make_unique<InternalVertexSmoothOp>(c3t3, sizing, cell_selector, protect_boundaries, smooth_constrained_edges, m_context);
+          std::make_unique<InternalVertexSmoothOp>(m_context);
   }
 
   void smooth(
-      C3t3& c3t3,
-      const SizingFunction& /* sizing */,
-      const CellSelector& /* cell_selector */,
-      const bool protect_boundaries,
-      const bool smooth_constrained_edges)
+      C3t3& c3t3
+      )
   {
       // Refresh context data right before use to ensure triangulation hasn't changed
       assert(m_context);
       m_context->refresh(c3t3);
 
-      if(!protect_boundaries) {
-          if(smooth_constrained_edges && m_edge_smooth_op) {
+      if(!m_context->m_protect_boundaries) {
+          if(m_context->m_smooth_constrained_edges && m_edge_smooth_op) {
               ExecutionPolicy<ComplexEdgeSmoothOp> executor;
               executor.execute(*m_edge_smooth_op, c3t3);
           }
