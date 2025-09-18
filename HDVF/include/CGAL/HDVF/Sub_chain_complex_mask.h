@@ -32,7 +32,7 @@ namespace Homological_discrete_vector_field {
 
  The `Sub_chain_complex_mask` class is used to compute  reduced homology. This class is based on a set of bitboard masks (one in each dimension) used to define sub chain complexes and their associated reduction encoded in sub-sparse matrices (`OSM::Sub_sparse_matrix` class). Technically, `Sub_chain_complex_mask` are used to partially screen chain complexes and chains in associated boundary matrices, and hence compute homology "locally".
 
- \warning For efficiency reasons, when a `Sub_chain_complex_mask` is used to screen sparse matrices  (with the `screen_matrices` method), screening is **only** performed on the major direction of matrices (thus column-major matrices are restricted over columns and row-major matrices are restricted over rows). Iterators are restricted accordingly. But chains themselves are not restricted.<br>
+ \warning For efficiency reasons, when a `Sub_chain_complex_mask` is used to screen sparse matrices  (with the `screen_matrices()` method), screening is **only** performed on the major direction of matrices (thus column-major matrices are restricted over columns and row-major matrices are restricted over rows). Iterators are restricted accordingly. But chains themselves are not restricted.<br>
  However, if `A` is a proper sub-complex of `K` (that is, closed with respect to faces), chains automatically comply with the screening. Indeed, for any \f$q\f$-cell \f$\sigma\in A\f$ (thus the corresponding bit is on in the mask), all the faces of \f$\sigma\f$ also belong to \f$A\f$. Thus for any \f$q-1\f$-cell \f$\tau\f$ in the boundary of \f$\sigma\f$ (that is, such that \f$\langle\partial_k(\sigma),\tau\rangle\neq 0\f$), \f$\tau\f$ belongs to \f$A\f$ (and thus the corresponding bit in the mask is also on).
 
  \tparam ChainComplex a model of the `AbstractChainComplex` concept (type of the chain complex screened by `Sub_chain_complex_mask`).
@@ -269,13 +269,13 @@ public:
         return _sub.at(q) ;
     }
 
-    /** \brief Screens a sequence of Sub_sparse_matrix (in each dimension).
+    /** \brief Screens a sequence of `OSM::Sub_sparse_matrix` (in each dimension).
      *
-     * Given a sequence of matrices (vector of `Sub_sparse_matrices`) sets the masks of `Sub_sparse_matrices` in each dimension to the current `Sub_chain_complex_mask`.
+     * Given a sequence of matrices (vector of `OSM::Sub_sparse_matrices`) sets the masks of `Sub_sparse_matrices` in each dimension to the current `Sub_chain_complex_mask`.
      *
      * \warning For efficiency, screening is performed on the major direction of matrices (so along columns for column-major matrices and along row for row-major matrices).
      *
-     * \param[in] matrices A vector of Sub_sparse_matrix (in each dimension).
+     * \param[in] matrices A vector of  `OSM::Sub_sparse_matrix` (in each dimension).
      */
     template <typename CT, int CTF>
     void screen_matrices(std::vector<OSM::Sub_sparse_matrix<CT, CTF> >& matrices)

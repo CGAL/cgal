@@ -78,7 +78,7 @@ void write_VTK (Homological_discrete_vector_field::Hdvf_core<ChainComplex, Chain
     std::string outfile(filename+"_PSC.vtk") ;
     std::vector<std::vector<int> > labels = hdvf.psc_labels() ;
     ChainComplex::chain_complex_to_vtk(complex, outfile, &labels) ;
-    
+
     if (hdvf.hdvf_opts() != Homological_discrete_vector_field::OPT_BND)
     {
         // Export generators of all critical cells
@@ -135,15 +135,15 @@ void write_VTK (Homological_discrete_vector_field::Hdvf_persistence<ChainComplex
     typedef typename ChainComplex::Coefficient_ring Coefficient_ring;
     if (!per_hdvf.with_export())
         throw("Cannot export persistent generators to vtk: with_export is off!") ;
-    
+
     using HDVF_type = Homological_discrete_vector_field::Hdvf_persistence<ChainComplex, Degree, FiltrationType>;
     using Persistent_interval = HDVF_type::Persistent_interval;
-    
+
     // Export the filtration
     std::string out_file_filtration = filename+"_filtration.vtk" ;
     std::vector<std::vector<size_t> > filtr_labels = per_hdvf.get_filtration().export_filtration();
     ChainComplex::template chain_complex_to_vtk<size_t>(complex, out_file_filtration, &filtr_labels, "unsigned_long") ;
-    
+
     // Iterate over persistence diagram (iterator over non zero intervals)
     // Batch informations are stored in file filename_infos.txt
     std::ofstream info_file(filename+"_infos.txt") ;
@@ -159,7 +159,7 @@ void write_VTK (Homological_discrete_vector_field::Hdvf_persistence<ChainComplex
         info_file << std::endl ;
         /* V2 */
         //        info_file << i << " -> " << " --- duration : " << hole.duration() << " -- " << hole << std::endl ;
-        
+
         if (hole.duration()>0) // Export vtk of "finite" holes
         {
             // Build name associated to the ith hole : filename_i
@@ -224,9 +224,9 @@ void write_VTK (Homological_discrete_vector_field::Hdvf_persistence<ChainComplex
 // Hdvf_duality vtk export
 
 /** \brief Exports all the `HDVF_duality` information of a geometric chain complex to vtk files.
- 
+
  Export PSC labels and homology/cohomology generators (depending on HDVF options) associated to each persistent intervals to vtk files.
- 
+
  \param[in] hdvf Reference to the HDVF exported.
  \param[in] complex Underlying geometric chain complex.
  \param[in] filename Prefix of all generated files.
@@ -242,7 +242,7 @@ void write_VTK (Homological_discrete_vector_field::Hdvf_duality<ChainComplex> &h
     std::string outfile(filename+"_PSC.vtk") ;
     std::vector<std::vector<int> > labels = hdvf.psc_labels() ;
     ChainComplex::chain_complex_to_vtk(complex, outfile, &labels) ;
-    
+
     if (hdvf.hdvf_opts() != Homological_discrete_vector_field::OPT_BND)
     {
         // Export generators of all critical cells
@@ -299,7 +299,7 @@ namespace Homological_discrete_vector_field {
 
 The class `Duality_simplicial_complex_tools` is dedicated to Alexander duality for 3D surface meshes. Starting from a simplicial chain complex (encoding a 3D surface mesh), it provides methods to embed the complex into a larger icosphere and generate a 3D constrained Delaunay triangulation.
 
-Technically, starting from a Simplicial_chain_complex `_K`, the method `simplicial_complex_bb()` builds a Simplicial_chain_complex L and a Sub_chain_complex_mask K.
+Technically, starting from a Simplicial_chain_complex `_K`, the method `simplicial_chain_complex_bb()` builds a `Simplicial_chain_complex`  `L` and a `Sub_chain_complex_mask`  `K`.
 - L : complex built out of _K together with a closing icosphere, meshed by tetgen (constrained Delaunay triangulation)
 - K (Sub_chain_complex_mask) : Sub_chain_complex_mask identifying _K inside L
 
@@ -316,7 +316,7 @@ public:
     /** \brief Default constructor. */
     Duality_simplicial_complex_tools() {}
 
-    /** \brief Type returned by `simp_complex_bb`.
+    /** \brief Type returned by `simplicial_chain_complex_bb()`.
      *
      * The structure contains a triple:
      * - A simplicial chain complex `L` (homeomorphic to \f$\mathbb B^3\f$).
@@ -343,7 +343,7 @@ public:
      */
     static Complex_duality_data simplicial_chain_complex_bb (const ChainComplex& _K, double BB_ratio=1.5, const std::string& out_file_prefix = "file_K_closed.off")
     {
-        
+
         std::cerr << "-- Starting simplicial_chain_complex_bb" << std::endl;
         std::cerr << "Imported mesh" << std::endl;
         std::cout << _K;
@@ -426,7 +426,7 @@ public:
 
 The class `Duality_cubical_complex_tools` is dedicated to Alexander duality for 3D binary volumes.
 
-Starting from a Cubical_chain_complex `_K`, the method `cubical_chain_complex_BB` builds a Cubical_chain_complex L and Sub_chain_complex_mask K.
+Starting from a Cubical_chain_complex `_K`, the method `cubical_chain_complex_bb()` builds a `Cubical_chain_complex` `L` and `Sub_chain_complex_mask` `K`.
 - L : complex built of the "full" bounding box of _K
 - K (Sub_chain_complex_mask) : Sub_chain_complex_mask identifying _K inside L
 
