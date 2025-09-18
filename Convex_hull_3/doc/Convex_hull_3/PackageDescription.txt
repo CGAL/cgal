@@ -6,9 +6,12 @@
 /// \defgroup PkgConvexHull3Traits Traits Classes
 /// \ingroup PkgConvexHull3Ref
 
+/// \defgroup PkgConvexHull3Predicates Intersection Test Functions
+/// \ingroup PkgConvexHull3Ref
+
 /*! \defgroup PkgConvexHull3Functions Convex Hull Functions
    \ingroup PkgConvexHull3Ref
-The function `convex_hull_3()` computes the convex hull of a given set of
+The function `CGAL::convex_hull_3()` computes the convex hull of a given set of
 three-dimensional points.
 
 Two versions of this function are available. The first can be used when it
@@ -27,7 +30,7 @@ degenerate hull may also be possible.
 \cgalPkgPicture{Convex_hull_3/fig/bunny.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Susan Hert and Stefan Schirra}
-\cgalPkgDesc{This package provides functions  for computing convex hulls in three dimensions as well as functions for checking if sets of points are strongly convex or not. One can compute the convex hull of a set of points in three dimensions in two ways: using a static algorithm or using a triangulation to get a fully dynamic computation.}
+\cgalPkgDesc{This package provides functions  for computing convex hulls in three dimensions as well as functions for checking if sets of points are strongly convex or not or checking if two convex do intersect. One can compute the convex hull of a set of points in three dimensions in two ways: using a static algorithm or using a triangulation to get a fully dynamic computation.}
 \cgalPkgManuals{Chapter_3D_Convex_Hulls,PkgConvexHull3Ref}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
@@ -48,7 +51,7 @@ polytope with vertices in `P`.  A point in `P` is an extreme point
 
 \cgal provides functions for computing convex hulls in two, three
 and arbitrary dimensions as well as functions for testing if a given set of
-points in is strongly convex or not.  This chapter describes the functions
+points in is strongly convex or not or checking if two convex do intersect.  This chapter describes the functions
 available for three dimensions.
 
 \cgalCRPSection{Assertions}
@@ -70,11 +73,21 @@ defining `CGAL_CHECK_EXPENSIVE`.
 - `CGAL::Convex_hull_traits_3<R>`
 - `CGAL::Extreme_points_traits_adapter_3`
 
+\cgalCRPSection{Predicates}
+
+- `CGAL::Convex_hull_3::do_intersect()`
+- `CGAL::Convex_hull_3::separation_distance()`
+
 \cgalCRPSection{Convex Hull Functions}
 
-- `CGAL::convex_hull_3`
-- `CGAL::extreme_points_3`
-- `CGAL::make_extreme_points_traits_adapter`
+- `CGAL::convex_hull_3()`
+- `CGAL::Convex_hull_3::extreme_point_3()`
+- `CGAL::extreme_points_3()`
+- `CGAL::make_extreme_points_traits_adapter()`
+
+\cgalCRPSection{Convex Hull Hierarchy}
+
+- `CGAL::Convex_hull_hierarchy`
 
 \cgalCRPSection{Convexity Checking Function}
 
