@@ -116,7 +116,7 @@ typedef unspecified_type Vertex_handle;
 typedef unspecified_type Cell_handle;
 
 /*!
-Can be `CGAL::Sequential_tag`, `CGAL::Parallel_tag`, or `Parallel_if_available_tag`. If it is
+Can be `CGAL::Sequential_tag`, `CGAL::Parallel_tag`, or `CGAL::Parallel_if_available_tag`. If it is
 `CGAL::Parallel_tag`, the following functions can be called concurrently:
 `create_vertex()`, `create_cell()`, `delete_vertex()`, `delete_cell()`.
 */
@@ -875,7 +875,7 @@ Facet_circulator incident_facets(Edge e) const;
 As above for edge `(i,j)` of `c`.
 
 Only defined in dimension 3, though are defined also in dimension 2:
-there are only two facets sahring an edge in dimension 2.
+there are only two facets sharing an edge in dimension 2.
 */
 Facet_circulator incident_facets(Cell_handle c, int i, int j) const;
 
@@ -883,7 +883,7 @@ Facet_circulator incident_facets(Cell_handle c, int i, int j) const;
 Starts at facet `start`.
 
 Only defined in dimension 3, though are defined also in dimension 2:
-there are only two facets sahring an edge in dimension 2.
+there are only two facets sharing an edge in dimension 2.
 
 \pre `start` is incident to `e`.
 */
@@ -893,7 +893,7 @@ Facet_circulator incident_facets(Edge e, Facet start) const;
 Starts at facet of index `f` in `start`.
 
 Only defined in dimension 3, though are defined also in dimension 2:
-there are only two facets sahring an edge in dimension 2.
+there are only two facets sharing an edge in dimension 2.
 */
 Facet_circulator incident_facets(Edge e, Cell_handle start, int f) const;
 
@@ -901,7 +901,7 @@ Facet_circulator incident_facets(Edge e, Cell_handle start, int f) const;
 As above for edge `(i,j)` of `c`.
 
 Only defined in dimension 3, though are defined also in dimension 2:
-there are only two facets sahring an edge in dimension 2.
+there are only two facets sharing an edge in dimension 2.
 */
 Facet_circulator incident_facets(Cell_handle c, int i, int j,
 Facet start) const;
@@ -910,7 +910,7 @@ Facet start) const;
 As above for edge `(i,j)` of `c` and facet `(start,f)`.
 
 Only defined in dimension 3, though are defined also in dimension 2:
-there are only two facets sahring an edge in dimension 2.
+there are only two facets sharing an edge in dimension 2.
 */
 Facet_circulator incident_facets(Cell_handle c, int i, int j,
 Cell_handle start, int f) const;

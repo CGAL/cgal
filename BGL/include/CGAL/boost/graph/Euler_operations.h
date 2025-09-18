@@ -1670,7 +1670,7 @@ collapse_edge(typename boost::graph_traits<Graph>::edge_descriptor e,
  * \returns vertex `v1`.
  * \pre This function requires `g` to be an oriented 2-manifold with or without boundaries.
  *       Furthermore, the edge `v0v1` must satisfy the link condition, which guarantees that the surface mesh is also 2-manifold after the edge collapse.
- * \pre `get(edge_is_constrained_map, v0v1)==false`.
+ * \pre `get(edge_is_constrained_map, v0v1) == false`.
  * \pre  `v0` and `v1` are not both incident to a constrained edge.
  */
 
