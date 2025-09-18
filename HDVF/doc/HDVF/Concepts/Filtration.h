@@ -26,11 +26,11 @@ class Filtration
 public:
     /*! \brief Type of the underlying complex. */
     typedef unspecified_type Complex;
-    
+
     /*! \brief (Scalar) type of degrees (model of `RealEmbeddable`).
      */
     typedef unspecified_type Degree ;
-    
+
     /*! \brief Type of coefficients used to compute homology. */
     typedef Complex::Coefficient_ring Coefficient_ring;
 
@@ -158,18 +158,22 @@ public:
     bool is_valid() const;
 
     // Input/output filtration
-    /*! \brief Overload of the `>>`operator for filtrations.
+    /*!
+    \ relates Filtration
+    \brief extracts a filtration from a stream.
      */
-    friend istream & operator>>(istream & in, Filtration &f);
-    
-    /*! \brief Overload of the `operator<<()`operator for filtrations.
+    istream & operator>>(istream & in, Filtration &f);
+
+    /*!
+    \ relates Filtration
+    \brief Inserts a filtration into a stream.
      */
-    friend ostream & operator<<(ostream & out, const Filtration &f);
+    ostream & operator<<(ostream & out, const Filtration &f);
 
     /**
      * \brief Exports the filtration time indices.
      *
-     * The method exports the time index of every cells in each dimension.
+     * The method exports the time index of every cell in each dimension.
      */
     vector<vector<size_t> > export_filtration () const
 };

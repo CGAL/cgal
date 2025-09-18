@@ -160,7 +160,7 @@ public:
      *
      * Information comprises:
      * - `Persistent_interval` providing informations related to the "times" of the persistent interval (index, degree and cell of birth/death).
-     * - `labelPSC` storing HDVF flags at death time of the hole
+     * - `labelsPSC` storing HDVF flags at death time of the hole
      */
     typedef struct {
         Persistent_interval hole ;

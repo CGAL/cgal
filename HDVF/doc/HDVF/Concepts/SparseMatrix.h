@@ -365,9 +365,9 @@ public:
     /**
      * \brief Gets a submatrix from the matrix and assign.
      *
-     * Removes (along the major dimension) all indices provided in the vector `indexes` from the matrix and returns it.
+     * Removes (along the major dimension) all indices provided in the vector `indices` from the matrix and returns it.
      */
-    SparseMatrix& operator/=(const std::vector<size_t> &indexes);
+    SparseMatrix& operator/=(const std::vector<size_t> &indices);
 
     /**
      * \brief Gets a submatrix from the matrix and assign.
