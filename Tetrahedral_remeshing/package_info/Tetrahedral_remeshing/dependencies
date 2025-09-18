@@ -8,6 +8,7 @@ Circulator
 Distance_2
 Distance_3
 Filtered_kernel
+Generator
 Hash_map
 Homogeneous_kernel
 Installation
@@ -21,6 +22,7 @@ Number_types
 Polygon_mesh_processing
 Profiling_tools
 Property_map
+Random_numbers
 SMDS_3
 STL_Extension
 Spatial_searching

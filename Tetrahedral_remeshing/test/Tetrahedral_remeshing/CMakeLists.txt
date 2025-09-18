@@ -8,14 +8,24 @@ project(Tetrahedral_remeshing_Tests)
 # CGAL and its components
 find_package(CGAL REQUIRED COMPONENTS ImageIO)
 
-add_compile_definitions(CGAL_TETRAHEDRAL_REMESHING_VERBOSE)
+#add_compile_definitions(CGAL_TETRAHEDRAL_REMESHING_VERBOSE)
 #add_compile_definitions(CGAL_CHECK_EXPENSIVE) #to activate expensive assertions
+
+# Concurrent Mesh_3 and Tetrahedral_remeshing
+option(CGAL_ACTIVATE_CONCURRENT_MESHING "Activate parallelism in Mesh_3 and Tetrahedral_remeshing" ON)
+if(CGAL_ACTIVATE_CONCURRENT_MESHING OR "$ENV{CGAL_ACTIVATE_CONCURRENT_MESH_3}")
+  find_package(TBB REQUIRED)
+  include(CGAL_TBB_support)
+  add_compile_definitions(CGAL_ACTIVATE_CONCURRENT_MESHING)
+endif()
+
 
 create_single_source_cgal_program("test_tetrahedral_remeshing.cpp")
 create_single_source_cgal_program("test_tetrahedral_remeshing_with_features.cpp")
 create_single_source_cgal_program("test_tetrahedral_remeshing_of_one_subdomain.cpp")
 create_single_source_cgal_program("test_tetrahedral_remeshing_io.cpp")
 create_single_source_cgal_program("test_tetrahedral_remeshing_from_mesh_file.cpp")
+create_single_source_cgal_program("test_tetrahedral_remeshing_determinism.cpp")
 
 # Test MLS projection
 add_executable(test_tetrahedral_remeshing_mls
@@ -58,4 +68,17 @@ else()
   message(STATUS "NOTICE: Some tests require Eigen 3.1 (or greater), and will not be compiled.")
 endif()
 
-
+if(CGAL_ACTIVATE_CONCURRENT_MESHING AND TARGET CGAL::TBB_support)
+  message(STATUS "Found TBB")
+  foreach(target features_and_adaptive_sizing
+                 test_mesh_and_remesh_image
+                 test_mesh_and_remesh_polyhedron_with_features
+                 test_mesh_and_remesh_with_sizing_field
+    )
+    if(TARGET ${target})
+      target_compile_definitions(${target}
+            PRIVATE -DCGAL_CONCURRENT_MESH_3 -DCGAL_CONCURRENT_TETRAHEDRAL_REMESHING)
+      target_link_libraries(${target} PRIVATE CGAL::TBB_support)
+    endif()
+  endforeach()
+endif()

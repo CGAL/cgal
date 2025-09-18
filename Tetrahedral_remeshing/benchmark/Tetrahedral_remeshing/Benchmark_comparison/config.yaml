@@ -1,0 +1,45 @@
+results_root: C:/Users/iason.manolas/Documents/learning/gsoc2025-Tetra_remeshing_parallel-imanolas/Tetrahedral_remeshing/build_debug_tetrahedral_remeshing/Benchmark_results  # Folder containing multiple benchmark run folders
+include_reports: []                # Optional: list of subfolders to include, or leave empty for all
+
+# Analysis configuration
+analysis:
+  significant_change_threshold: 0.0 # Only show metrics with >1% change (set to 0 to show all)
+  outlier_threshold: 1.0             # Highlight values >1.0 standard deviations from mean as outliers (for testing)
+  group_by_executable: false         # Set to false to compare across different executables (current vs refactored)
+                                     # Set to true to compare only within same executable (for fine-tuning)
+
+# Report configuration  
+report:
+  chart_grid_cols: 2          # Number of columns in the chart grid (charts will be scaled accordingly)
+
+# Unified charts configuration - supports both time-series and parameter-based charts
+charts:
+  # Time-series chart (no x specified, defaults to timestamp)
+  - kind: line
+    y: metrics.Performance.Total_Time.Value
+    title: "Total Time across versions"
+    # save_as: "total_time_timeseries.png"
+    # filter:
+    #   benchmark_name: uniform
+    style: "o-"
+
+  # Parameter-based charts - compare metrics across different parameter values
+  # Results are automatically grouped by input_arguments + exec_metadata
+  - kind: line
+    y: metrics.Performance.Total_Time.Value
+    x: run_metadata.input_arguments.threads  # The parameter to vary on x-axis
+    title: "Total Time vs Number of Threads"
+    style: "o-"
+  
+  - kind: line
+    y: metrics.Performance.Memory.Value
+    x: run_metadata.input_arguments.threads
+    title: "Memory Usage vs Number of Threads"
+    style: "o-"
+
+  - kind: line
+    y: resource_usage.memory.peak_rss_mb
+    title: "Peak Memory Usage Across Runs"
+    # save_as: "peak_memory_timeseries.png"
+    style: "d-"  # diamonds with lines
+    

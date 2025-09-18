@@ -1,0 +1,45 @@
+pipeline:
+  results_dir: C:/Users/iason.manolas/Documents/learning/gsoc2025-Tetra_remeshing_parallel-imanolas/Tetrahedral_remeshing/build_debug_tetrahedral_remeshing/Benchmark_results
+  run_benchmarks: true
+  export_csv: false
+  export_charts: false
+  report: false
+  report_chart_grid_cols: 2
+  resource_monitoring: false
+
+benchmarks:
+  # - name: original
+  #   exec: C:/Users/iason.manolas/Documents/learning/gsoc2025-Tetra_remeshing_parallel-imanolas/Tetrahedral_remeshing/build_debug_tetrahedral_remeshing/Release/benchmark_tetrahedral_remeshing.exe
+  #   sweep:
+  #     #input_mesh: [C:/Users/iason.manolas/Documents/learning/gsoc2025-Tetra_remeshing_parallel-imanolas/Tetrahedral_remeshing/build_debug_tetrahedral_remeshing/meshes/TetrahedralMeshes/bear.mesh, C:/Users/iason.manolas/Documents/learning/gsoc2025-Tetra_remeshing_parallel-imanolas/Tetrahedral_remeshing/build_debug_tetrahedral_remeshing/meshes/TetrahedralMeshes/armadillo.mesh]
+  #     # input_mesh: [C:/Users/iason.manolas/Documents/learning/gsoc2025-Tetra_remeshing_parallel-imanolas/Tetrahedral_remeshing/build_debug_tetrahedral_remeshing/meshes/TetrahedralMeshes/elephant.mesh]
+  #     input_mesh: [C:/Users/iason.manolas/Documents/learning/gsoc2025-Tetra_remeshing_parallel-imanolas/Tetrahedral_remeshing/build_debug_tetrahedral_remeshing/meshes/TetrahedralMeshes/sphere.mesh]
+  #     num_iterations: [1,2,10]
+  #     target_edge_factor: [0.25,0.5,2]
+  #     threads: [1]
+  - name: Parallel Refactored Complex Edge Smoothing AABB
+    exec: C:/Users/iason.manolas/Documents/learning/gsoc2025-Tetra_remeshing_parallel-imanolas/Tetrahedral_remeshing/build_debug_tetrahedral_remeshing/Release/benchmark_refactored_tetrahedral_remeshing.exe
+    macros_config_file: C:/Users/iason.manolas/Documents/learning/gsoc2025-Tetra_remeshing_parallel-imanolas/Tetrahedral_remeshing/benchmark/Tetrahedral_remeshing/benchmark_refactored_tetrahedral_remeshing_macros_config.h
+    sweep:
+      # input_mesh: [C:/Users/iason.manolas/Documents/learning/gsoc2025-Tetra_remeshing_parallel-imanolas/Tetrahedral_remeshing/build_debug_tetrahedral_remeshing/meshes/TetrahedralMeshes/elephant.mesh]
+      input_mesh: [C:/Users/iason.manolas/Documents/learning/gsoc2025-Tetra_remeshing_parallel-imanolas/Tetrahedral_remeshing/build_debug_tetrahedral_remeshing/meshes/TetrahedralMeshes/sphere.mesh]
+      num_iterations: [1,2,10]
+      target_edge_factor: [0.25,0.5,2]
+      smooth_constrained_edges: [1]
+      threads: [8]
+
+# charts:
+#   - kind: scatter
+#     x: "metrics.Performance.Total_Time.Value"
+#     y: "run_metadata.run_info.Mesh.Cells"
+#     hue: "run_metadata.run_info.Mesh.Name"
+#     title: "Performance vs Quality"
+#     save_as: "perf_vs_quality.png"  
+#   - kind: scatter
+#     x: "run_metadata.input_arguments.threads"
+#     y: "metrics.Performance.Total_Time.Value"
+#     hue: "run_metadata.run_info.Mesh.Name"
+#     filter:
+#       benchmark_name: uniform
+#     title: "Total Time vs Threads by Mesh"
+#     save_as: "total_time_vs_threads_by_mesh.png"

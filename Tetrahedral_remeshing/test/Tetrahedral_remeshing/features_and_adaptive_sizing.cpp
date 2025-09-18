@@ -22,36 +22,26 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Mesh_polyhedron_3<K>::type Polyhedron;
 typedef CGAL::Polyhedral_mesh_domain_with_features_3<K> Mesh_domain;
 
-#ifdef CGAL_CONCURRENT_MESH_3
-typedef CGAL::Parallel_if_available_tag Concurrency_tag;
-#else
-typedef CGAL::Sequential_tag Concurrency_tag;
-#endif
-
-// Triangulation for Meshing
-typedef CGAL::Mesh_triangulation_3<Mesh_domain, CGAL::Default, Concurrency_tag>::type Tr;
-typedef CGAL::Mesh_complex_3_in_triangulation_3<
-  Tr, Mesh_domain::Corner_index, Mesh_domain::Curve_index> C3t3;
-
-// Criteria
-typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
-
-// Triangulation for Remeshing
-typedef CGAL::Triangulation_3<typename Tr::Geom_traits,
-  typename Tr::Triangulation_data_structure> Triangulation_3;
-using Vertex_handle = Triangulation_3::Vertex_handle;
-
-using Vertex_pair = std::pair<Vertex_handle, Vertex_handle>;
-using Constraints_set = std::unordered_set<Vertex_pair, boost::hash<Vertex_pair>>;
-using Constraints_pmap = CGAL::Boolean_property_map<Constraints_set>;
-
-
 // To avoid verbose function and named parameters call
 namespace p = CGAL::parameters;
 
-int main(int argc, char* argv[])
+template <typename Concurrency_tag>
+int mesh(const std::string fname)
 {
-  const std::string fname = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/cube.off");
+  // Triangulation for Meshing
+  using Tr = typename CGAL::Mesh_triangulation_3<Mesh_domain, CGAL::Default, Concurrency_tag>::type;
+  using C3t3 = CGAL::Mesh_complex_3_in_triangulation_3<Tr, Mesh_domain::Corner_index, Mesh_domain::Curve_index>;
+
+  // Criteria
+  using Mesh_criteria = CGAL::Mesh_criteria_3<Tr>;
+
+  // Triangulation for Remeshing
+  using Triangulation_3 = CGAL::Triangulation_3<typename Tr::Geom_traits, typename Tr::Triangulation_data_structure>;
+  using Vertex_handle = typename Triangulation_3::Vertex_handle;
+  using Vertex_pair = std::pair<Vertex_handle, Vertex_handle>;
+  using Constraints_set = std::unordered_set<Vertex_pair, boost::hash<Vertex_pair>>;
+  using Constraints_pmap = CGAL::Boolean_property_map<Constraints_set>;
+
   std::ifstream input(fname);
   Polyhedron polyhedron;
   input >> polyhedron;
@@ -113,6 +103,23 @@ int main(int argc, char* argv[])
   //std::ofstream out("out_remeshing.mesh");
   //CGAL::IO::write_MEDIT(out, tr);
   //out.close();
-
   return EXIT_SUCCESS;
+
+}
+
+int main(int argc, char* argv[])
+{
+  const std::string fname = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/cube.off");
+
+  bool success = true;
+#ifdef CGAL_LINKED_WITH_TBB
+  std::cout << "Running test with the CGAL::Parallel_if_available_tag tag." << std::endl;
+  success = (EXIT_SUCCESS == mesh<CGAL::Parallel_if_available_tag>(fname));
+  std::cout << std::endl;
+#endif
+
+  std::cout << "Running test with the CGAL::Sequential_tag tag." << std::endl;
+  success = success && (EXIT_SUCCESS == mesh<CGAL::Sequential_tag>(fname));
+
+  return success;
 }

@@ -19,18 +19,6 @@ typedef K::Point_3 Point;
 typedef FT(Function)(const Point&);
 typedef CGAL::Labeled_mesh_domain_3<K> Mesh_domain;
 
-// Triangulation
-typedef CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
-typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
-
-// Remeshing
-typedef CGAL::Triangulation_3<Tr::Geom_traits,
-                              Tr::Triangulation_data_structure> T3_remeshing;
-
-// Criteria
-typedef CGAL::Mesh_criteria_3<Tr>     Mesh_criteria;
-typedef Mesh_criteria::Facet_criteria Facet_criteria;
-typedef Mesh_criteria::Cell_criteria  Cell_criteria;
 
 // Sizing field
 struct Spherical_sizing_field
@@ -53,8 +41,23 @@ FT sphere_function(const Point& p)
 
 using namespace CGAL::parameters;
 
-int main()
+template <typename Concurrency_tag>
+void mesh()
 {
+  // Triangulation
+  typedef CGAL::Mesh_triangulation_3<Mesh_domain, CGAL::Default, Concurrency_tag>::type Tr;
+  typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
+
+  // Remeshing
+  typedef typename Tr::Geom_traits Gt;
+  typedef typename Tr::Triangulation_data_structure Tds;
+  typedef CGAL::Triangulation_3<Gt, Tds> T3_remeshing;
+
+  // Criteria
+  typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
+  typedef Mesh_criteria::Facet_criteria Facet_criteria;
+  typedef Mesh_criteria::Cell_criteria Cell_criteria;
+
   CGAL::Real_timer timer;
   timer.start();
 
@@ -94,6 +97,18 @@ int main()
   //std::ofstream os_remeshing("out_remeshing.mesh");
   //CGAL::IO::write_MEDIT(os_remeshing, t3);
   //os_remeshing.close();
+}
 
-  return 0;
+int main()
+{
+#ifdef CGAL_LINKED_WITH_TBB
+  std::cout << "Running test with the CGAL::Parallel_tag tag." << std::endl;
+  mesh<CGAL::Parallel_tag>();
+  std::cout << std::endl;
+#endif
+
+  std::cout << "Running test with the CGAL::Sequential_tag tag." << std::endl;
+  mesh<CGAL::Sequential_tag>();
+
+  return EXIT_SUCCESS;
 }

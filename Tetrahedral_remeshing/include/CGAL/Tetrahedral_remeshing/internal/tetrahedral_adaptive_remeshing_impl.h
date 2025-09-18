@@ -32,8 +32,14 @@
 #include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_remeshing_helpers.h>
 #include <CGAL/Tetrahedral_remeshing/internal/compute_c3t3_statistics.h>
 
+//Far points addition
+#include <CGAL/point_generators_3.h>
+#include <CGAL/Kernel_traits.h>
+
 #include <optional>
 #include <boost/container/small_vector.hpp>
+
+#include <CGAL/Tetrahedral_remeshing/internal/elementary_remesh_impl.h>
 
 namespace CGAL
 {
@@ -88,6 +94,8 @@ class Adaptive_remesher
 
   typedef Tetrahedral_remeshing_smoother<C3t3, SizingFunction, CellSelector> Smoother;
 
+  typedef Elementary_remesher<C3t3, SizingFunction, CellSelector, Visitor> ElementaryRemesher;
+
 private:
   C3t3 m_c3t3;
   const SizingFunction& m_sizing;
@@ -95,6 +103,7 @@ private:
   CellSelector m_cell_selector;
   Visitor& m_visitor;
   Smoother m_vertex_smoother;//initialized with initial surface
+  ElementaryRemesher m_elementary_remesher;
 
   C3t3* m_c3t3_pbackup;
   std::vector<Vertex_handle> m_far_points;
@@ -117,6 +126,7 @@ public:
     , m_cell_selector(cell_selector)
     , m_visitor(visitor)
     , m_vertex_smoother(sizing, cell_selector, protect_boundaries, smooth_constrained_edges)
+    , m_elementary_remesher(m_c3t3)
     , m_c3t3_pbackup(NULL)
     , m_tr_pbackup(&tr)
   {
@@ -124,6 +134,7 @@ public:
 
     init_c3t3(vcmap, ecmap, fcmap);
     m_vertex_smoother.init(m_c3t3);
+    m_elementary_remesher.smooth_init(m_sizing,cell_selector,m_protect_boundaries,smooth_constrained_edges);
 
 #ifdef CGAL_DUMP_REMESHING_STEPS
     CGAL::Tetrahedral_remeshing::debug::dump_c3t3(m_c3t3, "00-init");
@@ -148,6 +159,7 @@ public:
     , m_cell_selector(cell_selector)
     , m_visitor(visitor)
     , m_vertex_smoother(sizing, cell_selector, protect_boundaries, smooth_constrained_edges)
+    , m_elementary_remesher(m_c3t3)
     , m_c3t3_pbackup(&c3t3)
     , m_tr_pbackup(NULL)
   {
@@ -155,6 +167,8 @@ public:
 
     init_c3t3(vcmap, ecmap, fcmap);
     m_vertex_smoother.init(m_c3t3);
+
+    m_elementary_remesher.smooth_init(m_c3t3,m_sizing,cell_selector,m_protect_boundaries,smooth_constrained_edges);
 
 #ifdef CGAL_DUMP_REMESHING_STEPS
     CGAL::Tetrahedral_remeshing::debug::dump_c3t3(m_c3t3, "00-init");
@@ -171,8 +185,12 @@ public:
   void split()
   {
     CGAL_assertion(check_vertex_dimensions());
+#ifdef CGAL_TETRAHEDRAL_REMESHING_USE_REFACTORED_SPLIT
+    m_elementary_remesher.split(m_sizing, m_cell_selector, m_protect_boundaries);
+#else
     split_long_edges(m_c3t3, m_sizing, m_protect_boundaries,
                      m_cell_selector, m_visitor);
+#endif
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
     CGAL_assertion(tr().tds().is_valid(true));
@@ -195,8 +213,12 @@ public:
   void collapse()
   {
     CGAL_assertion(check_vertex_dimensions());
+#ifdef CGAL_TETRAHEDRAL_REMESHING_USE_REFACTORED_COLLAPSE
+    m_elementary_remesher.collapse(m_sizing, m_cell_selector,m_visitor,m_protect_boundaries);
+#else
     collapse_short_edges(m_c3t3, m_sizing, m_protect_boundaries,
-                         m_cell_selector, m_visitor);
+                                           m_cell_selector, m_visitor);
+#endif
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
     CGAL_assertion(tr().tds().is_valid(true));
@@ -216,8 +238,12 @@ public:
 
   void flip()
   {
+#ifdef CGAL_TETRAHEDRAL_REMESHING_USE_REFACTORED_FLIP
+    m_elementary_remesher.flip(m_cell_selector,m_visitor,m_protect_boundaries);
+#else
     flip_edges(m_c3t3, m_protect_boundaries,
                m_cell_selector, m_visitor);
+#endif
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
     CGAL_assertion(tr().tds().is_valid(true));
@@ -237,7 +263,11 @@ public:
 
   void smooth()
   {
+#if defined CGAL_TETRAHEDRAL_REMESHING_USE_REFACTORED_SMOOTH
+    m_elementary_remesher.smooth();
+#else
     m_vertex_smoother.smooth_vertices(m_c3t3);
+#endif
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
     CGAL_assertion(tr().tds().is_valid(true));
@@ -334,6 +364,17 @@ private:
       m_c3t3.triangulation(), "00-c3t3_vertices_before_init_");
 #endif
 
+    //TODO: Adding far points could reduce the number of conflicting locks. add_far_points currently leads to wrong quality metrics. We should debug this and test if performance is improved.
+    //CGAL::Tetrahedral_remeshing::debug::dump_medit(m_c3t3, "before_addition_far_points.medit");
+    //CGAL::Tetrahedral_remeshing::debug::count_far_points(m_c3t3);
+#ifdef ADD_FAR_POINTS
+    add_far_points(m_c3t3);
+    #endif
+    //CGAL::Tetrahedral_remeshing::debug::dump_far_points(m_c3t3, "far_points_debug");
+    //CGAL::Tetrahedral_remeshing::debug::dump_triangulation_cells(m_c3t3.triangulation(), "far_point_cells.mesh");
+    //CGAL::Tetrahedral_remeshing::debug::count_far_points(m_c3t3);
+    //CGAL::Tetrahedral_remeshing::debug::dump_medit(m_c3t3, "after_addition_far_points.medit");
+    //CGAL::Tetrahedral_remeshing::debug::dump_binary(m_c3t3, "after_addition_far_points");
     if (input_is_c3t3())
       backup_far_points();
 
@@ -489,6 +530,35 @@ private:
   }
 
 private:
+
+    void add_far_points(C3t3& c3t3)
+    {
+    const Bbox_3& bbox =c3t3.bbox();
+
+    // Compute radius for far sphere
+    const double xdelta = bbox.xmax() - bbox.xmin();
+    const double ydelta = bbox.ymax() - bbox.ymin();
+    const double zdelta = bbox.zmax() - bbox.zmin();
+    const double radius = 5. * std::sqrt(xdelta * xdelta + ydelta * ydelta + zdelta * zdelta);
+    using Pt = typename Triangulation::Point;
+    using Vector = typename Kernel_traits<Pt>::Kernel::Vector_3;
+    const Vector center(bbox.xmin() + 0.5 * xdelta, bbox.ymin() + 0.5 * ydelta, bbox.zmin() + 0.5 * zdelta);
+    CGAL::Random rnd(0);
+    //CGAL::Random_points_on_sphere_3<Triangulation::Bare_point> random_point(radius, rnd);
+    CGAL::Random_points_on_sphere_3<Pt> random_point(radius, rnd);
+    constexpr int num_pseudo_infinite_vertices_per_core = 5;
+    const int NUM_PSEUDO_INFINITE_VERTICES =
+        static_cast<int>(float(std::thread::hardware_concurrency()) *
+                         num_pseudo_infinite_vertices_per_core);
+#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+    std::cerr << "Adding " << NUM_PSEUDO_INFINITE_VERTICES << " points on a far sphere (radius = " << radius << ")...";
+#endif
+
+    for(int i = 0; i < NUM_PSEUDO_INFINITE_VERTICES; ++i, ++random_point)
+      c3t3.add_far_point(c3t3.triangulation().geom_traits().construct_point_3_object()(
+          c3t3.triangulation().geom_traits().construct_translated_point_3_object()(*random_point, center)));
+    }
+
   bool dimension_is_modifiable(const Vertex_handle& v, const int new_dim) const
   {
     const int vdim = v->in_dimension();
@@ -608,10 +678,11 @@ public:
 #endif
       if (!resolution_reached())
       {
+
         split();
         collapse();
       }
-      flip();
+        flip();
       smooth();
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
@@ -634,6 +705,8 @@ public:
     }
 
     m_vertex_smoother.start_flip_smooth_steps(m_c3t3);
+    m_elementary_remesher.m_context->start_flip_smooth_steps(m_c3t3);
+
     while (it_nb < max_it + nb_extra_iterations)
     {
       ++it_nb;

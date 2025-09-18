@@ -2032,8 +2032,10 @@ public:
     _tds.incident_cells_threadsafe(v, cells, filter);
   }
 
-  bool try_lock_and_get_incident_cells(Vertex_handle v, std::vector<Cell_handle>& cells) const
+  template <typename IncidentCellsContainer>
+  bool try_lock_and_get_incident_cells(Vertex_handle v, IncidentCellsContainer& cells) const
   {
+    static_assert(std::is_same_v<typename IncidentCellsContainer::value_type, Cell_handle>, "Container must contain Cell_handle");
     // We need to lock v individually first, to be sure v->cell() is valid
     if(!this->try_lock_vertex(v))
       return false;
