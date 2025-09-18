@@ -90,7 +90,7 @@ public:
      * \struct Bitboard::iterator
      * \brief The iterator over bitboards.
      *
-     * Return all indexes with a bit set to 1.
+     * Return all indices with a bit set to 1.
      *
      * \note The iterator is constant.
      */
@@ -186,7 +186,7 @@ public:
      * \struct Bitboard::reverse_iterator
      * \brief The reverse iterator over bitboards.
      *
-     * Return all indexes with a bit set to 1 in reverse order.
+     * Return all indices with a bit set to 1 in reverse order.
      *
      * \note The reverse iterator is constant.
      */

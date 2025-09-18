@@ -93,7 +93,7 @@ public:
         size_t time_birth, time_death;
         Degree degree_birth, degree_death;
         Cell cell_birth, cell_death;
-        
+
         /** \brief Computes the (degree) duration of a persistent interval (ie.\ persistent hole)
          *
          * By definitions of "default" values, infinite intervals have a duration of -1.
@@ -106,7 +106,7 @@ public:
             else
                 return degree_death-degree_birth;
         }
-        
+
         /**
          * \brief Output the hole to a stream.
          */
@@ -125,7 +125,7 @@ public:
             return out_stream ;
         }
     };
-    
+
     // Matrices types
     /*!
      Type of column-major chains
@@ -275,7 +275,7 @@ public:
                 hole.degree_death = di;
                 hole.cell_birth = c;
                 hole.cell_death = c;
-                
+
                 _persist.push_back(hole) ;
 
                 // If export is on, store export data
@@ -548,14 +548,14 @@ public:
      *
      * \param[in] discard_small If `true`, the iterator visits only persistent intervals of (strictly) positive degree duration. Otherwise, visit all persistent intervals.
      *
-     * \returns The iterator to the beginning of the chains indices.
+     * \returns The iterator to the beginning of the chain indices.
      */
     iterator begin(bool discard_small = true) { return iterator(*this, 0, discard_small) ; }
 
     /**
-     * \brief Iterator to the ending of the chains indices.
+     * \brief Iterator to the ending of the chain indices.
      *
-     * \returns The iterator to the ending of the chains indices.
+     * \returns The iterator to the ending of the chain indices.
      */
     iterator end() { return iterator(*this, _persist.size()) ; }
 

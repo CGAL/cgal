@@ -71,7 +71,7 @@ public:
     friend class Sparse_matrix;
 
 protected:
-    /* \brief Type of data stored in the chain: map between indexes and coefficients. */
+    /* \brief Type of data stored in the chain: map between indices and coefficients. */
     typedef std::pair<size_t, CoefficientRing> pair;
 
     /* \brief The chain inner representation and storage of data. */
@@ -503,7 +503,7 @@ public:
      *
      * \note Will return a copy of the chain if `indices` is empty.
      *
-     * \param[in] indices The indexes to remove.
+     * \param[in] indices The indices to remove.
      *
      * \return A new chain representing the result.
      */
@@ -720,18 +720,18 @@ Sparse_matrix<_CT, ROW> operator%(const Sparse_chain<_CT, COLUMN> &column, const
 // Dot product (ROW chain x COLUMN chain)
 template <typename CoefficientRing>
 CoefficientRing operator*(const Sparse_chain<CoefficientRing, ROW> &row, const Sparse_chain<CoefficientRing, COLUMN> &column) {
-    // Get indexes (avoid adding double indexes).
-    std::unordered_map<size_t, int> indexes;
+    // Get indices (avoid adding double indices).
+    std::unordered_map<size_t, int> indices;
     for (std::pair<size_t, CoefficientRing> pair: row._chainData) {
-        indexes[pair.first] = 1;
+        indices[pair.first] = 1;
     }
     for (std::pair<size_t, CoefficientRing> pair: column._chainData) {
-        indexes[pair.first] += 1;
+        indices[pair.first] += 1;
     }
 
     // Perform dot product
     CoefficientRing result = CoefficientRing();
-    for (std::pair<size_t, int> index: indexes) {
+    for (std::pair<size_t, int> index: indices) {
         if (index.second == 2) {
             result += row._chainData.at(index.first) * column._chainData.at(index.first);
         }

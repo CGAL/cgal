@@ -482,7 +482,7 @@ public:
 
         return newMatrix;
     }
-    
+
     /** \relates Sparse_matrix
      *
      * \defgroup MatrixMatrixProdCol Matrices product (with column-based result).
@@ -1118,7 +1118,7 @@ public:
 
     /** \brief Removes a set of chains from a matrix. */
     Sparse_matrix& operator/=(const std::vector<size_t> &indexes) {
-        for (size_t index : indexes) {
+        for (size_t index : indices) {
             *this /= index;
         }
 
@@ -1231,7 +1231,7 @@ protected:
 
 public:
     /** \relates Sparse_matrix
-     * 
+     *
      * \brief Removes a coefficient from the matrix.
      *
      * Removes coefficient at row `i` and column `j`.
@@ -1255,9 +1255,9 @@ public:
     inline Bitboard::iterator begin() const noexcept { return _chainsStates.begin(); }
 
     /**
-     * \brief Iterator to the ending of chains indices.
+     * \brief Iterator to the ending of chain indices.
      *
-     * \return The iterator to the ending of chains indices.
+     * \return The iterator to the ending of chain indices.
      */
     inline Bitboard::iterator end() const noexcept { return _chainsStates.end(); }
 
@@ -1272,9 +1272,9 @@ public:
     inline Bitboard::reverse_iterator reverse_begin(size_t index) noexcept { return _chainsStates.reverse_begin(index); }
 
     /**
-     * \brief Reverse iterator to the ending of chains indices.
+     * \brief Reverse iterator to the ending of chain indices.
      *
-     * \return The reverse iterator to the ending of chains indices.
+     * \return The reverse iterator to the ending of chain indices.
      */
     inline Bitboard::reverse_iterator reverse_end() noexcept { return _chainsStates.reverse_end(); }
 

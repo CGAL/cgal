@@ -45,16 +45,16 @@ class Simplex {
     Simplex_data_type _vertices;
 
     public:
-    /** \brief Constructor from a vector of vertices indices.
+    /** \brief Constructor from a vector of vertex indices.
      *
-     * \param[in] vertices Vector of the simplex vertices indices (a simplex of dimension \f$q\f$ has \f$q+1\f$ vertices and the vector must be **sorted**).
+     * \param[in] vertices Vector of the simplex vertex indices (a simplex of dimension \f$q\f$ has \f$q+1\f$ vertices and the vector must be **sorted**).
      * \param[in] sort_data If `true` vectors of vertex indices are sorted, if `false` indices are assumed to be sorted (faster).
      */
     Simplex(const Simplex_data_type& vertices, bool sort_data = false) : _vertices(vertices) {
         if (sort_data)
             std::sort(_vertices.begin(), _vertices.end());
     }
-    
+
     /** \brief Constant iterator over the vertices of a simplex. */
     typedef Simplex_data_type::const_iterator const_iterator ;
 
@@ -97,7 +97,7 @@ class Simplex {
         return result;
     }
 
-    /** \brief Gets the set of vertices indices of the simplex. */
+    /** \brief Gets the set of vertex indices of the simplex. */
     const Simplex_data_type& get_vertices() const
     {
         return _vertices ;
@@ -105,14 +105,14 @@ class Simplex {
 
     /** \brief Comparison operator.
      *
-     * Compare the object with another simplex according to the lexicographical order on vertices indices sets.
+     * Compare the object with another simplex according to the lexicographical order on vertex indices sets.
      *
      * \param[in] other Compare `this` with `other` (returns  `this < other`).
      */
     bool operator<(const Simplex& other) const {
         return _vertices < other._vertices;
     }
-    
+
     /** \brief Equality operator.
      *
      * As vertex indices must be store in increasing order, comparison just comes to compare the ordered vector of indices.
@@ -120,7 +120,7 @@ class Simplex {
     bool operator==(const Simplex& other) const {
         return _vertices == other._vertices;
     }
-    
+
 
     /** \brief Outputs a simplex.
      */

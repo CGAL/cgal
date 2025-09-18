@@ -44,7 +44,7 @@ class Sub_chain_complex_mask
 public:
     /*! \brief Type of coefficients used to compute homology. */
     typedef ChainComplex::Coefficient_ring Coefficient_ring;
-    
+
 protected:
     /** \brief Dimension of the underlying complex. */
     int _dim ;
@@ -62,7 +62,7 @@ private:
      *
      * The method activates bits corresponding to the set of cells encoded by `cells` and recursively activates all bits corresponding to their faces.
      *
-     * \param[in] cells A vector containing, in each dimension, a vector of cells indexes.
+     * \param[in] cells A vector containing, in each dimension, a vector of cell indices.
      */
     void down_closure (const std::vector<std::vector<int> > &cells)
     {
@@ -102,7 +102,7 @@ private:
      *
      * The method activates bits corresponding to the set of cells encoded by `cells`.
      *
-     * \param[in] cells A vector giving, for each dimension, a vector of cells indexes.
+     * \param[in] cells A vector giving, for each dimension, a vector of cell indices.
      */
     void set_cells (const std::vector<std::vector<int> > &cells)
     {
@@ -149,7 +149,7 @@ public:
      * Build masks associated to the underlying complex `K` with all bits corresponding to `cells` (and their faces if `close` is true) set to 1.
      *
      * \param[in] K A constant reference to the underlying complex.
-     * \param[in] cells A vector containing, in each dimension, a vector of cells indexes.
+     * \param[in] cells A vector containing, in each dimension, a vector of cell indices.
      * \param[in] close If this boolean is true, the faces of `cells` are also set to 1.
      */
     Sub_chain_complex_mask(const ChainComplex& K, const std::vector<std::vector<int> > &cells, bool close = true) : _K(K)
