@@ -61,66 +61,70 @@ public:
   typedef SurfaceVertexSmoothOperation<C3t3, SizingFunction, CellSelector> SurfaceVertexSmoothOp;
   typedef ComplexEdgeVertexSmoothOperation<C3t3, SizingFunction, CellSelector> ComplexEdgeSmoothOp;
 
+
+private:
   using VertexSmoothingContext = Vertex_smoothing_context<C3t3, SizingFunction, CellSelector>;
 
+  C3t3& m_c3t3;
   std::unique_ptr<ComplexEdgeSmoothOp> m_edge_smooth_op = nullptr;
   std::unique_ptr<SurfaceVertexSmoothOp> m_surface_vertices_smooth_op = nullptr;
   std::unique_ptr<InternalVertexSmoothOp> m_internal_vertices_smooth_op = nullptr;
-  std::shared_ptr<VertexSmoothingContext> m_context = nullptr;
 
 public:
-  static void split(C3t3& c3t3, const SizingFunction& sizing, const CellSelector& cell_selector, const bool protect_boundaries) {
+  std::shared_ptr<VertexSmoothingContext> m_context = nullptr;
+
+  Elementary_remesher(C3t3& c3t3)
+    : m_c3t3(c3t3) {}
+
+  void split(const SizingFunction& sizing, const CellSelector& cell_selector, const bool protect_boundaries) {
     EdgeSplitOp split_op( sizing, cell_selector, protect_boundaries);
     ExecutionPolicy<EdgeSplitOp> executor;
-    executor.execute(split_op, c3t3);
+    executor.execute(split_op, m_c3t3);
   }
 
-  static void collapse(C3t3& c3t3, const SizingFunction& sizing, const CellSelector& cell_selector,const Visitor& visitor, const bool protect_boundaries) {
+  void collapse(const SizingFunction& sizing, const CellSelector& cell_selector,const Visitor& visitor, const bool protect_boundaries) {
      EdgeCollapseOp collapse_op( sizing, cell_selector,protect_boundaries,visitor);
      ExecutionPolicy<EdgeCollapseOp> executor;
-     executor.execute(collapse_op, c3t3);
+     executor.execute(collapse_op, m_c3t3);
   }
 
-  static void flip(C3t3& c3t3, CellSelector& cell_selector,  Visitor& visitor, const bool protect_boundaries) {
+  void flip(CellSelector& cell_selector,  Visitor& visitor, const bool protect_boundaries) {
      // Flip internal edges
-     InternalEdgeFlipOp internal_flip_op(c3t3, cell_selector, protect_boundaries, visitor);
+     InternalEdgeFlipOp internal_flip_op(m_c3t3, cell_selector, protect_boundaries, visitor);
      ExecutionPolicy<InternalEdgeFlipOp> internal_executor;
-     internal_executor.execute(internal_flip_op, c3t3);
+     internal_executor.execute(internal_flip_op, m_c3t3);
 
      // Flip boundary edges if not protecting boundaries
      if (!protect_boundaries) {
-       BoundaryEdgeFlipOp boundary_flip_op(c3t3, cell_selector, protect_boundaries, visitor);
+       BoundaryEdgeFlipOp boundary_flip_op(m_c3t3, cell_selector, protect_boundaries, visitor);
        ExecutionPolicy<BoundaryEdgeFlipOp> boundary_executor;
-       boundary_executor.execute(boundary_flip_op, c3t3);
+       boundary_executor.execute(boundary_flip_op, m_c3t3);
      }
   }
 
-  void smooth_init(C3t3& c3t3,
-                   const SizingFunction& sizing,
+  void smooth_init(const SizingFunction& sizing,
                    const CellSelector& cell_selector,
                    const bool protect_boundaries,
                    const bool smooth_constrained_edges)
   {
       // Create shared context for vertex smoothing operations
-      m_context=std::make_shared<VertexSmoothingContext>(c3t3,sizing, cell_selector, protect_boundaries,smooth_constrained_edges);
+      m_context=std::make_shared<VertexSmoothingContext>(m_c3t3,sizing, cell_selector, protect_boundaries,smooth_constrained_edges);
       m_edge_smooth_op = std::make_unique<ComplexEdgeSmoothOp>(m_context);
       m_surface_vertices_smooth_op = std::make_unique<SurfaceVertexSmoothOp>(m_context);
       m_internal_vertices_smooth_op =
           std::make_unique<InternalVertexSmoothOp>(m_context);
   }
 
-  void smooth(
-      C3t3& c3t3
-      )
+  void smooth()
   {
       // Refresh context data right before use to ensure triangulation hasn't changed
       assert(m_context);
-      m_context->refresh(c3t3);
+      m_context->refresh(m_c3t3);
 
       if(!m_context->m_protect_boundaries) {
           if(m_context->m_smooth_constrained_edges && m_edge_smooth_op) {
               ExecutionPolicy<ComplexEdgeSmoothOp> executor;
-              executor.execute(*m_edge_smooth_op, c3t3);
+              executor.execute(*m_edge_smooth_op, m_c3t3);
           }
           #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
           else if(!m_edge_smooth_op) {
@@ -131,7 +135,7 @@ public:
           // Smooth vertices on surface
           if(m_surface_vertices_smooth_op) {
               ExecutionPolicy<SurfaceVertexSmoothOp> executor;
-              executor.execute(*m_surface_vertices_smooth_op, c3t3);
+              executor.execute(*m_surface_vertices_smooth_op, m_c3t3);
           }
           #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
           else{
@@ -143,7 +147,7 @@ public:
       // Smooth internal vertices
       {
           ExecutionPolicy<InternalVertexSmoothOp> executor;
-          executor.execute(*m_internal_vertices_smooth_op, c3t3);
+          executor.execute(*m_internal_vertices_smooth_op, m_c3t3);
       }
   }
   };

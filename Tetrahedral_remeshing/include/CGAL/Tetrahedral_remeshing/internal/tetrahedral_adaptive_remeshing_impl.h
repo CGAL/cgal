@@ -126,6 +126,7 @@ public:
     , m_cell_selector(cell_selector)
     , m_visitor(visitor)
     , m_vertex_smoother(sizing, cell_selector, protect_boundaries, smooth_constrained_edges)
+    , m_elementary_remesher(m_c3t3)
     , m_c3t3_pbackup(NULL)
     , m_tr_pbackup(&tr)
   {
@@ -133,7 +134,7 @@ public:
 
     init_c3t3(vcmap, ecmap, fcmap);
     m_vertex_smoother.init(m_c3t3);
-    m_elementary_remesher.smooth_init(m_c3t3,m_sizing,cell_selector,m_protect_boundaries,smooth_constrained_edges);
+    m_elementary_remesher.smooth_init(m_sizing,cell_selector,m_protect_boundaries,smooth_constrained_edges);
 
 #ifdef CGAL_DUMP_REMESHING_STEPS
     CGAL::Tetrahedral_remeshing::debug::dump_c3t3(m_c3t3, "00-init");
@@ -158,8 +159,9 @@ public:
     , m_cell_selector(cell_selector)
     , m_visitor(visitor)
     , m_vertex_smoother(sizing, cell_selector, protect_boundaries, smooth_constrained_edges)
+    , m_elementary_remesher(m_c3t3)
     , m_c3t3_pbackup(&c3t3)
-      , m_tr_pbackup(NULL)
+    , m_tr_pbackup(NULL)
   {
     m_c3t3.swap(c3t3);
 
@@ -184,7 +186,7 @@ public:
   {
     CGAL_assertion(check_vertex_dimensions());
 #ifdef CGAL_TETRAHEDRAL_REMESHING_USE_REFACTORED_SPLIT
-    ElementaryRemesher::split(m_c3t3, m_sizing, m_cell_selector, m_protect_boundaries);
+    m_elementary_remesher.split(m_sizing, m_cell_selector, m_protect_boundaries);
 #else
     split_long_edges(m_c3t3, m_sizing, m_protect_boundaries,
                      m_cell_selector, m_visitor);
@@ -212,9 +214,9 @@ public:
   {
     CGAL_assertion(check_vertex_dimensions());
 #ifdef CGAL_TETRAHEDRAL_REMESHING_USE_REFACTORED_COLLAPSE
-    ElementaryRemesher::collapse(m_c3t3, m_sizing, m_cell_selector,m_visitor,m_protect_boundaries);
+    m_elementary_remesher.collapse(m_sizing, m_cell_selector,m_visitor,m_protect_boundaries);
 #else
-   collapse_short_edges(m_c3t3, m_sizing, m_protect_boundaries,
+    collapse_short_edges(m_c3t3, m_sizing, m_protect_boundaries,
                                            m_cell_selector, m_visitor);
 #endif
 
@@ -237,7 +239,7 @@ public:
   void flip()
   {
 #ifdef CGAL_TETRAHEDRAL_REMESHING_USE_REFACTORED_FLIP
-    ElementaryRemesher::flip(m_c3t3, m_cell_selector,m_visitor,m_protect_boundaries);
+    m_elementary_remesher.flip(m_cell_selector,m_visitor,m_protect_boundaries);
 #else
     flip_edges(m_c3t3, m_protect_boundaries,
                m_cell_selector, m_visitor);
@@ -262,7 +264,7 @@ public:
   void smooth()
   {
 #if defined CGAL_TETRAHEDRAL_REMESHING_USE_REFACTORED_SMOOTH
-  m_elementary_remesher.smooth(m_c3t3);
+    m_elementary_remesher.smooth();
 #else
     m_vertex_smoother.smooth_vertices(m_c3t3);
 #endif

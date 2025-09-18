@@ -429,9 +429,8 @@ protected:
 
   using Context = Vertex_smoothing_context<C3t3, SizingFunction, CellSelector>;
 
-  std::shared_ptr<Context> m_context{nullptr}; // Pointer to shared context
-
 public:
+  std::shared_ptr<Context> m_context{nullptr}; // Pointer to shared context
   bool m_smooth_constrained_edges;
   VertexSmoothOperationBase(std::shared_ptr<Context> context)
       : m_context(context)
