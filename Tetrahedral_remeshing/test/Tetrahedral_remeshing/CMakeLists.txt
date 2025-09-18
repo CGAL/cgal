@@ -8,19 +8,15 @@ project(Tetrahedral_remeshing_Tests)
 # CGAL and its components
 find_package(CGAL REQUIRED COMPONENTS ImageIO)
 
-add_compile_definitions(CGAL_TETRAHEDRAL_REMESHING_VERBOSE)
+#add_compile_definitions(CGAL_TETRAHEDRAL_REMESHING_VERBOSE)
 #add_compile_definitions(CGAL_CHECK_EXPENSIVE) #to activate expensive assertions
 
 # Concurrent Mesh_3 and Tetrahedral_remeshing
-option(CGAL_ACTIVATE_CONCURRENT_MESHING "Activate parallelism in Mesh_3 and Tetrahedral_remeshing" OFF)
+option(CGAL_ACTIVATE_CONCURRENT_MESHING "Activate parallelism in Mesh_3 and Tetrahedral_remeshing" ON)
 if(CGAL_ACTIVATE_CONCURRENT_MESHING OR "$ENV{CGAL_ACTIVATE_CONCURRENT_MESH_3}")
-  add_compile_definitions(CGAL_CONCURRENT_MESH_3)
-  add_compile_definitions(CGAL_CONCURRENT_TETRAHEDRAL_REMESHING)
   find_package(TBB REQUIRED)
   include(CGAL_TBB_support)
-else()
-  find_package(TBB QUIET)
-  include(CGAL_TBB_support)
+  add_compile_definitions(CGAL_ACTIVATE_CONCURRENT_MESHING)
 endif()
 
 
