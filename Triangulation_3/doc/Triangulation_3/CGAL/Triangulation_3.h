@@ -1394,7 +1394,7 @@ The first cell incident to `vt` is the last valid value of the iterator.
 It is followed by `segment_traverser_cells_end()`.
 
 \pre `vs` and `vt` must be different vertices and neither can be the infinite vertex.
-\pre `triangulation.dimension() >= 2`
+\pre `t.dimension() >= 2`
 */
 Segment_cell_iterator segment_traverser_cells_begin(Vertex_handle vs, Vertex_handle vt) const;
 
@@ -1419,7 +1419,7 @@ The optional argument `hint` can reduce the time to construct the iterator
 if it is geometrically close to `ps`.
 
 \pre `ps` and `pt` must be different points.
-\pre  `triangulation.dimension() >= 2`. If the dimension is 2, both `ps` and `pt` must lie in the affine hull.
+\pre  `t.dimension() >= 2`. If the dimension is 2, both `ps` and `pt` must lie in the affine hull.
 */
 Segment_cell_iterator segment_traverser_cells_begin(const Point& ps, const Point& pt, Cell_handle hint = Cell_handle()) const;
 
@@ -1429,7 +1429,7 @@ returns the past-the-end iterator over the intersected cells.
 This iterator cannot be dereferenced. It indicates when the `Segment_cell_iterator` has
 passed the target.
 
-\pre `triangulation.dimension() >= 2`
+\pre `t.dimension() >= 2`
 */
 Segment_cell_iterator segment_traverser_cells_end() const;
 
@@ -1470,7 +1470,7 @@ The initial value of the iterator is `vs`.
 The iterator remains valid until `vt` is passed.
 
 \pre `vs` and `vt` must be different vertices and neither can be the infinite vertex.
-\pre `triangulation.dimension() >= 2`
+\pre `t.dimension() >= 2`
 */
 Segment_simplex_iterator segment_traverser_simplices_begin(Vertex_handle vs, Vertex_handle vt) const;
 
@@ -1486,7 +1486,7 @@ The iterator remains valid until the first simplex containing `pt` is passed.
 The optional argument `hint` can reduce the time to construct the iterator if it is close to `ps`.
 
 \pre `ps` and `pt` must be different points.
-\pre `triangulation.dimension() >= 2`. If the dimension is 2, both `ps` and `pt` must lie in the affine hull.
+\pre `t.dimension() >= 2`. If the dimension is 2, both `ps` and `pt` must lie in the affine hull.
 */
 Segment_simplex_iterator segment_traverser_simplices_begin(const Point& ps, const Point& pt, Cell_handle hint = Cell_handle()) const;
 
@@ -1496,7 +1496,7 @@ returns the past-the-end iterator over the intersected simplices.
 This iterator cannot be dereferenced. It indicates when the `Segment_simplex_iterator` has
 passed the target.
 
-\pre `triangulation.dimension() >= 2`
+\pre `t.dimension() >= 2`
 */
 Segment_simplex_iterator segment_traverser_simplices_end() const;
 

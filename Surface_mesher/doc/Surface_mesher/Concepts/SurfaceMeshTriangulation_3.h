@@ -346,7 +346,7 @@ all the cells (resp. facets) describing the hole, creates a new vertex
 a new cell (resp. facet) with `v` as vertex. Then `v->set_point(p)`
 is called and `v` is returned.
 
-\pre `t.dimension() >= 2`, the set of cells (resp. facets in dimension 2) is connected, its boundary is connected, and `p` lies inside the hole, which is star-shaped wrt `p`.
+\pre `dimension() >= 2`, the set of cells (resp. facets in dimension 2) is connected, its boundary is connected, and `p` lies inside the hole, which is star-shaped wrt `p`.
 */
 template <class CellIt>
 Vertex_handle insert_in_hole(Point p, CellIt cell_begin, CellIt cell_end,
