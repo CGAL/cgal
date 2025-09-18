@@ -321,7 +321,7 @@ public:
      * The structure contains a triple:
      * - A simplicial chain complex `L` (homeomorphic to \f$\mathbb B^3\f$).
      * - A sub chain complex mask `K` (encoding the initial mesh)
-     * - The vector of vertices coordinates of `L`
+     * - The vector of vertex coordinates of `L`
      */
     typedef struct {
         Chain_complex& L ;
@@ -331,7 +331,7 @@ public:
 
     /** \brief Generates a subcomplex \f$K\f$K and a complex \f$L\f$ with \f$K\subseteq L\f$ from a simplicial complex `_K`.
      *
-     * `_K` is embedded into a larger icosphere and a 3D constrained Delaunay triangulation is generated. Then \f$K\f$, \f$L\f$ and vertices coordinates are extracted and stored in a `Complex_duality_data` structure.
+     * `_K` is embedded into a larger icosphere and a 3D constrained Delaunay triangulation is generated. Then \f$K\f$, \f$L\f$ and vertex coordinates are extracted and stored in a `Complex_duality_data` structure.
      *
      * The following figures shows the resulting complex with an initial `Twirl` mesh (right - sectional view):
      * <img src="HDVF_twirl_view1.png" align="center" width=35%/>

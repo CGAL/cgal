@@ -37,13 +37,13 @@ typedef std::vector<Io_cell_type> Io_chain_type ;
 /*!
  \ingroup PkgHDVFAlgorithmClasses
 
- The class `Io_node_type` implements a simple data type used to import vertices coordinates (nodes) in various dimensions.
+ The class `Io_node_type` implements a simple data type used to import vertex coordinates (nodes) in various dimensions.
  Hence, coordinates are loaded as vectors of `double`.
 
  The class provides standard affine geometry functions on such points.
  */
 
-// Type of points (for vertices coordinates in R^d)
+// Type of points (for vertex coordinates in R^d)
 struct Io_node_type {
 private:
     std::vector<double> _coords;
@@ -296,14 +296,14 @@ public:
      */
     Mesh_object_io(int d = 0) : dim(d), nvertices(0), ncells(0), nedges(0) {}
 
-    /** \brief Constructor from a vector of Io_node_type (vertices coordinates) and a vector of simplices.
+    /** \brief Constructor from a vector of Io_node_type (vertex coordinates) and a vector of simplices.
      *
      * Simplices are described by the list of vertex indices.
      *
      * \param[in] d The dimension `d` can be positive or negative:
      * - if positive: the set of simplicial cells loaded is a "mesh" and all cells have the same dimension
      * - if negative: the set of simplicial cells loaded have various dimensions and `d` must be the maximum of these dimensions.
-     * \param[in] vnodes Vector of vertices coordinates.
+     * \param[in] vnodes Vector of vertex coordinates.
      * \param[in] vcells Vector of cells (described by a sorted vector of indices)
      * \param[in] sort_data If `true` the vectors of vertex indices are sorted, if `false` they are assumed to be sorted (faster).
      */

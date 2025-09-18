@@ -28,7 +28,7 @@ public:
     /*!
      * \brief Type of coefficients stored in the matrix (a model of `IntegralDomainWithoutDivision`).
      */
-    typedef IntegralDomainWithoutDivision CoefficientRing;
+    typedef unspecified_type Coefficient_ring;
 
     /*!
      * \brief Matrix and chain storage format (either OSM::ROW or OSM::COLUMN).
