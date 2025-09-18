@@ -2,7 +2,7 @@
 \ingroup PkgHDVFConcepts
 \cgalConcept
 
-The concept `AbstractChainComplex` describes the requirements for (topological) chain complexes associated to abstract complexes used in the concept `CGAL::HDVF`.
+The concept `AbstractChainComplex` describes the requirements for (topological) chain complexes associated to abstract complexes used in the concept `HDVF`.
 
 It provides methods to:
 
@@ -31,12 +31,12 @@ public:
 Type of coefficients used to compute homology (model of `IntegralDomainWithoutDivision`)
  */
 typedef IntegralDomainWithoutDivision CoefficientRing;
-    
+
 /*!
-Type of coefficients provided publicly. 
+Type of coefficients provided publicly.
  */
 typedef CoefficientRing Coefficient_ring;
-    
+
 /*!
  Type of column-major chains (returned by the boundary operator)
  */
@@ -130,16 +130,12 @@ Column_chain cofaces_chain (SparseChain<CoefficientR, StorageF> chain, int q) co
 
 /// @}
 
-/// \name Output functions
-/// @{
+};
+
 
 /*!
-Outputs the chain complex in text mode.
-
-By default, outputs the complex to `std::cout`.
+\relates AbstractChainComplex
+Inserts the chain complex in text mode in the stream.
 */
-friend std::ostream& operator<<(std::ostream& out = std::cout, const AbstractChainComplex& complex) const;
+std::ostream& operator<<(std::ostream& out, const AbstractChainComplex& complex) const;
 
-/// @}
-
-};

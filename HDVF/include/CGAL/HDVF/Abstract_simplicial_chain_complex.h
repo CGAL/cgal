@@ -33,7 +33,7 @@ namespace Homological_discrete_vector_field {
 
  <img src="simplicial_complex.png" align="center" width=45%/>
 
- A simplex of dimension q contains exactly q+1 vertices (we will thus denote it by \f$\langle v_0, \ldots, v_q \rangle\f$, vertices indices **must be sorted**). A 0-cell is thus a vertex, a 1-cell contains two vertices (edge), a 2-cell contains three vertices (triangle) while a 3-cell is a tetrahedron.
+ A simplex of dimension q contains exactly q+1 vertices (we will thus denote it by \f$\langle v_0, \ldots, v_q \rangle\f$, vertex indices **must be sorted**). A 0-cell is thus a vertex, a 1-cell contains two vertices (edge), a 2-cell contains three vertices (triangle) while a 3-cell is a tetrahedron.
 
  The boundary map of the complex is computed by the constructor of the class using the standard formula:
  \f[ \partial_q\left( \langle v_0, \ldots, v_q \rangle\right) = \sum_{i=0}^q (-1)^i\cdot \langle v_0, \ldots, \widehat{v_i}, \cdots, v_q \rangle\f]
@@ -52,7 +52,7 @@ class Abstract_simplicial_chain_complex {
 public:
     /*! \brief Type of coefficients used to compute homology. */
     typedef CoefficientRing Coefficient_ring;
-    
+
     /**
      * \brief %Default constructor (empty simplicial complex of dimension `q`).
      *
@@ -163,14 +163,14 @@ public:
     {
         return _ind2simp.at(q).at(i);
     }
-    
+
     /** \brief Returns the index of a given simplex. */
     size_t cell_to_index (const Simplex& simplex) const
     {
         const int q(simplex.dimension());
         return _simp2ind.at(q).at(simplex);
     }
-    
+
     /**
      * \brief Returns a constant reference to the vector of boundary matrices (along each dimension).
      *
@@ -198,18 +198,18 @@ public:
     }
 
     /**
-     * \brief Returns dimension 0 simplices indexes included in the cell with index id_cell of dimension q.
+     * \brief Returns dimension 0simplex indices included in the cell with index id_cell of dimension q.
      *
-     * Returns the dimension 0 simplices indexes included in the cell with index id_cell of dimension q.
+     * Returns the dimension 0simplex indices included in the cell with index id_cell of dimension q.
      *
-     * \warning This does not come to return vertices indices, as dimension 0 simplices enumerate vertices in any order. For instance, if an abstract simplicial complex is built from 3 vertices {1,2,3} such that the enumeration of dimension 0 simplices is:
+     * \warning This does not come to return vertex indices, as dimension 0 simplices enumerate vertices in any order. For instance, if an abstract simplicial complex is built from 3 vertices {1,2,3} such that the enumeration of dimension 0 simplices is:
      *  id0: 3, id1 : 2, id2: 1
      * then the bottom_faces of the 1-simplex {1,2} are two 0-simplices with id 2 and 1.
      *
      * \param[in] id_cell %Index of the cell.
      * \param[in] q Dimension of the cell.
      *
-     * \return A vector of 0-simplices indexes.
+     * \return A vector of 0-simplex indices.
      */
     std::vector<size_t> bottom_faces(size_t id_cell, int q) const
     {

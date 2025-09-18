@@ -127,30 +127,30 @@ public:
     std::pair<size_t, size_t> dimensions() const;
 
     /**
-     * \brief Iterator to the beginning of the chains indices (visited by increasing indices).
+     * \brief Iterator to the beginning of the chain indices (visited by increasing indices).
      *
-     * The function returns an iterator to the beginning of the (non zero) chains indices.
+     * The function returns an iterator to the beginning of the (non zero) chain indices.
      */
     inline NonZeroChainIndices::iterator begin() const noexcept;
 
     /**
-     * \brief Iterator to the ending of the chains indices (visited by increasing indices).
+     * \brief Iterator to the ending of the chain indices (visited by increasing indices).
      *
-     * The function returns an iterator to the ending of the chains indices.
+     * The function returns an iterator to the ending of the chain indices.
      */
     inline NonZeroChainIndices::iterator end() const noexcept;
 
     /**
-     * \brief Reverse iterator to the beginning of the chains indices (visited by decreasing indices).
+     * \brief Reverse iterator to the beginning of the chain indices (visited by decreasing indices).
      *
-     * The function returns a reverse iterator to the beginning of the (non zero) chains indices.
+     * The function returns a reverse iterator to the beginning of the (non zero) chain indices.
      */
     inline NonZeroChainIndices::iterator reverse_begin() const noexcept;
 
     /**
-     * \brief Reverse iterator to the ending of the chains indices (visited by decreasing indices).
+     * \brief Reverse iterator to the ending of the chain indices (visited by decreasing indices).
      *
-     * The function returns a reverse iterator to the ending of the chains indices.
+     * The function returns a reverse iterator to the ending of the chain indices.
      */
     inline NonZeroChainIndices::iterator reverse_end() const noexcept;
 
@@ -365,9 +365,9 @@ public:
     /**
      * \brief Gets a submatrix from the matrix and assign.
      *
-     * Removes (along the major dimension) all indexes provided in the vector `indexes` from the matrix and returns it.
+     * Removes (along the major dimension) all indices provided in the vector `indices` from the matrix and returns it.
      */
-    SparseMatrix& operator/=(const std::vector<size_t> &indexes);
+    SparseMatrix& operator/=(const std::vector<size_t> &indices);
 
     /**
      * \brief Gets a submatrix from the matrix and assign.

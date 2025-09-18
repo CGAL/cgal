@@ -82,7 +82,7 @@ class Cubical_chain_complex {
 public:
     /*! \brief Type of coefficients used to compute homology. */
     typedef CoefficientRing Coefficient_ring;
-    
+
     /** \brief Type of vertices coordinates */
     typedef std::vector<double> Point ;
 private:
@@ -199,7 +199,7 @@ public:
         else
             return 0 ;
     }
-    
+
     /**
      * \brief Returns the dimension of the complex.
      *
@@ -211,7 +211,7 @@ public:
     {
         return _dim ;
     }
-    
+
     /** \brief Get the size of the Khalimsky bounding box.
      *
      * The Khalimsky coordinate of a cell `c` in dimension `q` is strictly lesser than `size_bb().at(q)`.
@@ -219,7 +219,7 @@ public:
     std::vector<size_t> size_bb() const {
         return _size_bb;
     }
-    
+
     /** \brief Returns the total size of the complex.
      *
      * Khalimsky coordinates in dimension `q` are bounded above by `size_bb().at(q)`; the total memory size of the complex is the product of these sizes.
@@ -240,7 +240,7 @@ public:
         const size_t id_bool(_base2bool.at(q).at(i));
         return bindex_to_cell(id_bool);
     }
-    
+
     /** \brief Returns the "basis index" of a cell given by its Khalimsky coordinates.
      *
      * In `AbstractChainComplex`, cells of dimenson `q` are identified by their index in the basis of \f$q\f$-cells together with their dimension. In the context of cubical complexes, this index is called "basis index" (to distinguish from its "boolean index", see above).
@@ -254,10 +254,10 @@ public:
         const int q(dimension(cell));
         return (_bool2base.at(q)).at(id_bool);
     }
-    
+
     /** \brief Returns the dimension of a cell (given in Khalimsky coordinates). */
     int dimension(const std::vector<size_t>& cell) const;
-    
+
     /** \brief Returns Khalimsky coordinates of the cell of boolean index i.
      *
      * In `Cubical_chain_complex`, a cells of dimenson `q`, besides its index in the basis of \f$q\f$-cells, has an index in the vectorisation of the Khalimsky representation, called its "boolean index" (see above).
@@ -275,7 +275,7 @@ public:
         }
         return khal;
     }
-    
+
     /** \brief Returns the boolean index of a cell given by its Khalimsky coordinates .
      *
      * In `Cubical_chain_complex`, a cells of dimenson `q`, besides its index in the basis of \f$q\f$-cells, has an index in the vectorisation of the Khalimsky representation, called its "boolean index" (see above).
@@ -301,7 +301,7 @@ public:
             throw std::out_of_range("Cell index out of bounds in _cells");
         }
     }
-    
+
     /**
      * \brief Returns a constant reference to the vector of boundary matrices (along each dimension).
      *
@@ -330,14 +330,14 @@ public:
 
 
     /**
-     * \brief Returns dimension 0 cells indexes included in the cell with index id_cell of dimension q.
+     * \brief Returns dimension 0 cell indices included in the cell with index `id_cell` of dimension `q`.
      *
-     * Returns the dimension 0 vertices indexes included in the cell with index id_cell of dimension q.
+     * Returns the dimension 0 vertex indices included in the cell with index `id_cell` of dimension `q`.
      *
      * \param[in] id_cell Index of the cell.
      * \param[in] q Dimension of the cell.
      *
-     * \return A vector of 0-cells indices.
+     * \return A vector of 0-cell indices.
      */
     std::vector<size_t> bottom_faces(size_t id_cell, int q) const
     {
@@ -349,7 +349,7 @@ public:
     /**
      * \brief Returns the cofaces of a given chain in dimension `q`.
      *
-     * The resulting chain lies in dimension `q`+1 and is null if this dimension exceeds the dimension of the complex.
+     * The resulting chain lies in dimension `q+1` and is null if this dimension exceeds the dimension of the complex.
     */
     template <typename CoefficientT, int ChainTypeF>
     Column_chain cofaces_chain (OSM::Sparse_chain<CoefficientT, ChainTypeF> chain, int q) const
@@ -696,7 +696,7 @@ protected:
         }
         return vertices_id ;
     }
-    
+
     // Member data
 protected:
     /* \brief Dimension of the complex */
@@ -732,7 +732,7 @@ protected:
     {
         return dimension(bindex_to_cell(cell_index)) ;
     }
-    
+
     /* \brief Computes voxel coordinates (in a binary object) from an index in a boolean vector
      *
      * This function is used ONLY for DUAL construction from a binary object (binary image in 2D, binary volume in 3D...)

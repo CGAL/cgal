@@ -71,7 +71,7 @@ public:
     friend class Sparse_matrix;
 
 protected:
-    /* \brief Type of data stored in the chain: map between indexes and coefficients. */
+    /* \brief Type of data stored in the chain: map between indices and coefficients. */
     typedef std::pair<size_t, CoefficientRing> pair;
 
     /* \brief The chain inner representation and storage of data. */
@@ -454,47 +454,6 @@ public:
         return _chainData.size() == 0;
     }
 
-    /** \relates Sparse_chain
-     *
-     * \defgroup ChainChainComparison Compares two chains.
-     * \ingroup PkgHDVFAlgorithmClasses
-     * @brief  Compare two chains and return `true` if both chains equal (and `false` otherwise).
-     *
-     * @param chain The first chain.
-     * @param other The second chain.
-     * @return A boolean.
-     * @{
-     */
-
-    /** \relates Sparse_chain
-     *
-     * \brief Comparison of two COLUMN chains.
-     */
-    template <typename _CT>
-    friend bool operator==(const Sparse_chain<_CT, OSM::COLUMN>& chain, const Sparse_chain<_CT, OSM::COLUMN> &other);
-
-    /** \relates Sparse_chain
-     *
-     * \brief Comparison of a COLUMN  and a ROW chain.
-     */
-    template <typename _CT>
-    friend bool operator==(const Sparse_chain<_CT, OSM::COLUMN>& chain, const Sparse_chain<_CT, OSM::ROW> &other);
-
-    /** \relates Sparse_chain
-     *
-     * \brief Comparison of a ROW and a COLUMN chain.
-     */
-    template <typename _CT>
-    friend bool operator==(const Sparse_chain<_CT, OSM::ROW>& chain, const Sparse_chain<_CT, OSM::COLUMN> &other);
-
-    /** \relates Sparse_chain
-     *
-     * \brief Comparison of two ROW chains.
-     */
-    template <typename _CT>
-    friend bool operator==(const Sparse_chain<_CT, OSM::ROW>& chain, const Sparse_chain<_CT, OSM::ROW> &other);
-
-    /** @} */
 
     /**
      * \brief Gets a subchain from the chain.
@@ -503,7 +462,7 @@ public:
      *
      * \note Will return a copy of the chain if `indices` is empty.
      *
-     * \param[in] indices The indexes to remove.
+     * \param[in] indices The indices to remove.
      *
      * \return A new chain representing the result.
      */
@@ -692,6 +651,33 @@ private:
     }
 };
 
+    /** \relates Sparse_chain
+     *
+     * \brief Comparison of two `COLUMN` chains.
+     */
+    template <typename _CT>
+    friend bool operator==(const Sparse_chain<_CT, OSM::COLUMN>& chain, const Sparse_chain<_CT, OSM::COLUMN> &other);
+
+    /** \relates Sparse_chain
+     *
+     * \brief Comparison of a `COLUMN`  and a `ROW` chain.
+     */
+    template <typename _CT>
+    friend bool operator==(const Sparse_chain<_CT, OSM::COLUMN>& chain, const Sparse_chain<_CT, OSM::ROW> &other);
+
+    /** \relates Sparse_chain
+     *
+     * \brief Comparison of a `ROW` and a `COLUMN` chain.
+     */
+    template <typename _CT>
+    friend bool operator==(const Sparse_chain<_CT, OSM::ROW>& chain, const Sparse_chain<_CT, OSM::COLUMN> &other);
+
+    /** \relates Sparse_chain
+     *
+     * \brief Comparison of two `ROW` chains.
+     */
+    template <typename _CT>
+    friend bool operator==(const Sparse_chain<_CT, OSM::ROW>& chain, const Sparse_chain<_CT, OSM::ROW> &other);
 
 // COLUMN chain x ROW chain -> COLUMN matrix
 template <typename _CT>
@@ -720,18 +706,18 @@ Sparse_matrix<_CT, ROW> operator%(const Sparse_chain<_CT, COLUMN> &column, const
 // Dot product (ROW chain x COLUMN chain)
 template <typename CoefficientRing>
 CoefficientRing operator*(const Sparse_chain<CoefficientRing, ROW> &row, const Sparse_chain<CoefficientRing, COLUMN> &column) {
-    // Get indexes (avoid adding double indexes).
-    std::unordered_map<size_t, int> indexes;
+    // Get indices (avoid adding double indices).
+    std::unordered_map<size_t, int> indices;
     for (std::pair<size_t, CoefficientRing> pair: row._chainData) {
-        indexes[pair.first] = 1;
+        indices[pair.first] = 1;
     }
     for (std::pair<size_t, CoefficientRing> pair: column._chainData) {
-        indexes[pair.first] += 1;
+        indices[pair.first] += 1;
     }
 
     // Perform dot product
     CoefficientRing result = CoefficientRing();
-    for (std::pair<size_t, int> index: indexes) {
+    for (std::pair<size_t, int> index: indices) {
         if (index.second == 2) {
             result += row._chainData.at(index.first) * column._chainData.at(index.first);
         }

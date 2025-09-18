@@ -32,7 +32,7 @@ namespace Homological_discrete_vector_field {
 
  The `Sub_chain_complex_mask` class is used to compute  reduced homology. This class is based on a set of bitboard masks (one in each dimension) used to define sub chain complexes and their associated reduction encoded in sub-sparse matrices (`OSM::Sub_sparse_matrix` class). Technically, `Sub_chain_complex_mask` are used to partially screen chain complexes and chains in associated boundary matrices, and hence compute homology "locally".
 
- \warning For efficiency reasons, when a `Sub_chain_complex_mask` is used to screen sparse matrices  (with the `screen_matrices` method), screening is **only** performed on the major direction of matrices (thus column-major matrices are restricted over columns and row-major matrices are restricted over rows). Iterators are restricted accordingly. But chains themselves are not restricted.<br>
+ \warning For efficiency reasons, when a `Sub_chain_complex_mask` is used to screen sparse matrices  (with the `screen_matrices()` method), screening is **only** performed on the major direction of matrices (thus column-major matrices are restricted over columns and row-major matrices are restricted over rows). Iterators are restricted accordingly. But chains themselves are not restricted.<br>
  However, if `A` is a proper sub-complex of `K` (that is, closed with respect to faces), chains automatically comply with the screening. Indeed, for any \f$q\f$-cell \f$\sigma\in A\f$ (thus the corresponding bit is on in the mask), all the faces of \f$\sigma\f$ also belong to \f$A\f$. Thus for any \f$q-1\f$-cell \f$\tau\f$ in the boundary of \f$\sigma\f$ (that is, such that \f$\langle\partial_k(\sigma),\tau\rangle\neq 0\f$), \f$\tau\f$ belongs to \f$A\f$ (and thus the corresponding bit in the mask is also on).
 
  \tparam ChainComplex a model of the `AbstractChainComplex` concept (type of the chain complex screened by `Sub_chain_complex_mask`).
@@ -44,7 +44,7 @@ class Sub_chain_complex_mask
 public:
     /*! \brief Type of coefficients used to compute homology. */
     typedef ChainComplex::Coefficient_ring Coefficient_ring;
-    
+
 protected:
     /** \brief Dimension of the underlying complex. */
     int _dim ;
@@ -62,7 +62,7 @@ private:
      *
      * The method activates bits corresponding to the set of cells encoded by `cells` and recursively activates all bits corresponding to their faces.
      *
-     * \param[in] cells A vector containing, in each dimension, a vector of cells indexes.
+     * \param[in] cells A vector containing, in each dimension, a vector of cell indices.
      */
     void down_closure (const std::vector<std::vector<int> > &cells)
     {
@@ -102,7 +102,7 @@ private:
      *
      * The method activates bits corresponding to the set of cells encoded by `cells`.
      *
-     * \param[in] cells A vector giving, for each dimension, a vector of cells indexes.
+     * \param[in] cells A vector giving, for each dimension, a vector of cell indices.
      */
     void set_cells (const std::vector<std::vector<int> > &cells)
     {
@@ -149,7 +149,7 @@ public:
      * Build masks associated to the underlying complex `K` with all bits corresponding to `cells` (and their faces if `close` is true) set to 1.
      *
      * \param[in] K A constant reference to the underlying complex.
-     * \param[in] cells A vector containing, in each dimension, a vector of cells indexes.
+     * \param[in] cells A vector containing, in each dimension, a vector of cell indices.
      * \param[in] close If this boolean is true, the faces of `cells` are also set to 1.
      */
     Sub_chain_complex_mask(const ChainComplex& K, const std::vector<std::vector<int> > &cells, bool close = true) : _K(K)
@@ -269,13 +269,13 @@ public:
         return _sub.at(q) ;
     }
 
-    /** \brief Screens a sequence of Sub_sparse_matrix (in each dimension).
+    /** \brief Screens a sequence of `OSM::Sub_sparse_matrix` (in each dimension).
      *
-     * Given a sequence of matrices (vector of `Sub_sparse_matrices`) sets the masks of `Sub_sparse_matrices` in each dimension to the current `Sub_chain_complex_mask`.
+     * Given a sequence of matrices (vector of `OSM::Sub_sparse_matrices`) sets the masks of `Sub_sparse_matrices` in each dimension to the current `Sub_chain_complex_mask`.
      *
      * \warning For efficiency, screening is performed on the major direction of matrices (so along columns for column-major matrices and along row for row-major matrices).
      *
-     * \param[in] matrices A vector of Sub_sparse_matrix (in each dimension).
+     * \param[in] matrices A vector of  `OSM::Sub_sparse_matrix` (in each dimension).
      */
     template <typename CT, int CTF>
     void screen_matrices(std::vector<OSM::Sub_sparse_matrix<CT, CTF> >& matrices)
@@ -287,7 +287,7 @@ public:
     }
 
     /**
-     * \brief Restricts a chain in a given dimension to the sub chain complex maks.
+     * \brief Restricts a chain in a given dimension to the sub chain complex mask.
      *
      * Nullify all coefficients out of the mask.
      *

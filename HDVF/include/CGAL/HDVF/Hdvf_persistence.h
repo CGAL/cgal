@@ -93,7 +93,7 @@ public:
         size_t time_birth, time_death;
         Degree degree_birth, degree_death;
         Cell cell_birth, cell_death;
-        
+
         /** \brief Computes the (degree) duration of a persistent interval (ie.\ persistent hole)
          *
          * By definitions of "default" values, infinite intervals have a duration of -1.
@@ -106,7 +106,7 @@ public:
             else
                 return degree_death-degree_birth;
         }
-        
+
         /**
          * \brief Output the hole to a stream.
          */
@@ -125,7 +125,7 @@ public:
             return out_stream ;
         }
     };
-    
+
     // Matrices types
     /*!
      Type of column-major chains
@@ -160,7 +160,7 @@ public:
      *
      * Information comprises:
      * - `Persistent_interval` providing informations related to the "times" of the persistent interval (index, degree and cell of birth/death).
-     * - `labelPSC` storing HDVF flags at death time of the hole
+     * - `labelsPSC` storing HDVF flags at death time of the hole
      */
     typedef struct {
         Persistent_interval hole ;
@@ -275,7 +275,7 @@ public:
                 hole.degree_death = di;
                 hole.cell_birth = c;
                 hole.cell_death = c;
-                
+
                 _persist.push_back(hole) ;
 
                 // If export is on, store export data
@@ -442,10 +442,10 @@ public:
             throw "Error : trying to export f_star_chain without proper HDVF option" ;
     }
 
-    /*! \brief Iterator over (finite) persistent holes.
+    /*! \brief Iterator over (finite) persistent intervals.
      *
-     * Iterate over persistent holes of finite degree duration.
-     * If `discard_small` is true (which is the default), the iterator discards persistent holes with a null degree duration (that is, small persistent holes).
+     * Iterate over persistent intervals of finite degree duration.
+     * If `discard_small` is true (which is the default), the iterator discards persistent intervals with a null degree duration (that is, small persistent holes).
      */
     struct iterator
     {
@@ -458,7 +458,7 @@ public:
          *
          * \param[in] per_hdvf Constant reference over the Hdvf_persistence iterated.
          * \param[in] i The initial index.
-         * \param[in] discard_small If `true` (default), only persistent holes of (strictly) positive degree duration are iterated. Otherwise, all persistent holes are iterated.
+         * \param[in] discard_small If `true` (default), only persistent intervals of (strictly) positive degree duration are iterated. Otherwise, all persistent intervals are iterated.
          */
         iterator(const Hdvf_persistence& per_hdvf, size_t i=0, bool discard_small = true) : _i(i), _per_hdvf(per_hdvf), _discard_small(discard_small)
         {
@@ -499,9 +499,9 @@ public:
         }
 
         /**
-         * \brief Prefix incrementation. Finds next persistent hole.
+         * \brief Prefix incrementation. Finds next persistent interval.
          *
-         * If `discard_small` is true, the iterator searches next persistent holes with a (strictly) positive degree duration, otherwise, the iterator returns next persistent hole.
+         * If `discard_small` is true, the iterator searches next persistent interval with a (strictly) positive degree duration, otherwise, the iterator returns next persistent interval.
          *
          * \returns The reference to the current iterator.
          */
@@ -544,18 +544,18 @@ public:
     };
 
     /**
-     * \brief Iterator to the beginning of persistent holes.
+     * \brief Iterator to the beginning of persistent intervals.
      *
-     * \param[in] discard_small If `true`, the iterator visits only persistent holes of (strictly) positive degree duration. Otherwise, visit all persistent holes.
+     * \param[in] discard_small If `true`, the iterator visits only persistent intervals of (strictly) positive degree duration. Otherwise, visit all persistent intervals.
      *
-     * \returns The iterator to the beginning of persistent holes.
+     * \returns The iterator to the beginning of the chain indices.
      */
     iterator begin(bool discard_small = true) { return iterator(*this, 0, discard_small) ; }
 
     /**
-     * \brief Iterator to the ending of the persistent holes.
+     * \brief Iterator to the ending of the chain indices.
      *
-     * \returns The iterator to the ending of persistent holes.
+     * \returns The iterator to the ending of the chain indices.
      */
     iterator end() { return iterator(*this, _persist.size()) ; }
 

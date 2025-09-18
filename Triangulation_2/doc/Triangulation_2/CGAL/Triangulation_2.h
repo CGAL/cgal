@@ -1282,7 +1282,7 @@ which, given the index of a vertex in a face,
 compute the index of the next vertex of the same face
 in clockwise
 or counterclockwise order.
-This works also for neighbor indexes.
+This works also for neighbor indices.
 Thus, for example the neighbor
 `neighbor(cw(i))` of a face `f` is
 the

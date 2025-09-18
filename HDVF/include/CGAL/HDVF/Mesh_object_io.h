@@ -298,7 +298,7 @@ public:
 
     /** \brief Constructor from a vector of Io_node_type (vertices coordinates) and a vector of simplices.
      *
-     * Simplices are described by the list of vertices indices.
+     * Simplices are described by the list of vertex indices.
      *
      * \param[in] d The dimension `d` can be positive or negative:
      * - if positive: the set of simplicial cells loaded is a "mesh" and all cells have the same dimension
@@ -419,7 +419,7 @@ public:
             unsigned long index;
             info_stream >> n;
             Io_cell_type c ;
-            // Read vertices indices
+            // Read vertex indices
             for (auto j = 0; j < n; ++j) {
                 info_stream >> index;
                 c.push_back(index) ;
@@ -524,7 +524,7 @@ public:
             Io_cell_type cell ;
             std::istringstream is( line );
             size_t v;
-            // Read vertices indices
+            // Read vertex indices
             while ( is >> v )
                 cell.push_back(v);
             // Sort the vector of indices
