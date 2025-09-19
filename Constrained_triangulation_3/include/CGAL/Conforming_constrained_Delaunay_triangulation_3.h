@@ -2030,7 +2030,7 @@ private:
       }
 
       auto test_edge = [&](Cell_handle cell, Vertex_handle v0, int index_v0, Vertex_handle v1, int index_v1,
-                           [[maybe_unused]] int expected) {
+                           int expected) {
         auto value_returned = [this](bool b) {
           CGAL_USE(this);
           if constexpr (cdt_3_can_use_cxx20_format()) if(this->debug_regions()) {
@@ -2130,22 +2130,13 @@ private:
             if(tr().is_infinite(n_ch))
               continue;
             if(new_cell(n_ch)) {
-              auto tetrahedron =
-                  typename Geom_traits::Tetrahedron_3{tr().point(n_ch->vertex(0)), tr().point(n_ch->vertex(1)),
-                                                      tr().point(n_ch->vertex(2)), tr().point(n_ch->vertex(3))};
-              auto tet_bbox = tetrahedron.bbox();
+              const auto tetrahedron = tr().tetrahedron(n_ch);
+              const auto tet_bbox = tetrahedron.bbox();
               if(std::any_of(fh_region.begin(), fh_region.end(), [&](auto fh) {
-                   const auto v0 = fh->vertex(0)->info().vertex_handle_3d;
-                   const auto v1 = fh->vertex(1)->info().vertex_handle_3d;
-                   const auto v2 = fh->vertex(2)->info().vertex_handle_3d;
-                   const auto triangle =
-                       typename Geom_traits::Triangle_3{tr().point(v0), tr().point(v1), tr().point(v2)};
+                   const auto triangle = cdt_2.triangle(fh);
                    const auto tri_bbox = triangle.bbox();
-                   if(CGAL::do_overlap(tet_bbox, tri_bbox)) {
-                     return does_tetrahedron_intersect_triangle_interior(tetrahedron, triangle, tr().geom_traits());
-                   } else {
-                     return false;
-                   }
+                   return CGAL::do_overlap(tet_bbox, tri_bbox) &&
+                       does_tetrahedron_intersect_triangle_interior(tetrahedron, triangle, tr().geom_traits());
                  }))
               {
                 intersecting_cells.insert(n_ch);
@@ -2166,25 +2157,7 @@ private:
       } // last intersecting edge, and new algorithm
     } // end loop on intersecting_edges
     if(this->use_older_cavity_algorithm()) {
-      for(auto intersecting_edge: intersecting_edges) {
-        const auto [v_above, v_below] = tr().vertices(intersecting_edge);
-
-        auto cell_circ = this->incident_cells(intersecting_edge), end = cell_circ;
-        CGAL_assume(cell_circ != nullptr);
-        do {
-          const Cell_handle cell = cell_circ;
-          const auto index_v_above = cell->index(v_above);
-          const auto index_v_below = cell->index(v_below);
-          const auto cell_above = cell->neighbor(index_v_below);
-          const auto cell_below = cell->neighbor(index_v_above);
-          if(0 == intersecting_cells.count(cell_above)) {
-            facets_of_upper_cavity.emplace_back(cell_above, cell_above->index(cell));
-          }
-          if(0 == intersecting_cells.count(cell_below)) {
-            facets_of_lower_cavity.emplace_back(cell_below, cell_below->index(cell));
-          }
-        } while(++cell_circ != end);
-      }
+      process_older_cavity_algorithm(intersecting_edges, intersecting_cells, facets_of_upper_cavity, facets_of_lower_cavity);
     } // older algorithm
 
     std::set<Facet> facets_of_border;
@@ -2322,19 +2295,6 @@ private:
           }
         });
       }
-    } // new algorithm
-    if(this->debug_regions()) {
-      debug_dump_cavity_outputs(face_index, region_index, intersecting_edges, facets_of_border, facets_of_upper_cavity, facets_of_lower_cavity);
-    }
-
-    if(this->debug_regions()) {
-      for(auto edge : intersecting_edges) {
-        auto [v1, v2] = tr().vertices(edge);
-        std::cerr << cdt_3_format("  edge: {}   {}\n", IO::oformat(v1, with_point_and_info),
-                                IO::oformat(v2, with_point_and_info));
-      }
-    }
-    if(this->use_newer_cavity_algorithm()) {
       for(auto facet: facets_of_border) {
         if(this->debug_regions()) {
           debug_output_facet_vertices({facet});
@@ -2356,8 +2316,16 @@ private:
       for(auto v: vertices_of_lower_cavity) {
         v->ccdt_3_data().clear_mark(Vertex_marker::CAVITY_BELOW);
       }
-    }
+    } // new algorithm
 
+    if(this->debug_regions()) {
+      debug_dump_cavity_outputs(face_index, region_index, intersecting_edges, facets_of_border, facets_of_upper_cavity, facets_of_lower_cavity);
+      for(auto edge : intersecting_edges) {
+        auto [v1, v2] = tr().vertices(edge);
+        std::cerr << cdt_3_format("  edge: {}   {}\n", IO::oformat(v1, with_point_and_info),
+                                IO::oformat(v2, with_point_and_info));
+      }
+    }
     return outputs;
   }
 
@@ -3601,6 +3569,32 @@ public:
                                      const Conforming_constrained_Delaunay_triangulation_3_impl &tr) const
   {
     write_facets(out, tr, tr.finite_facets());
+  }
+
+  void process_older_cavity_algorithm(const std::vector<Edge>& intersecting_edges,
+                                      const std::set<Cell_handle>& intersecting_cells,
+                                      std::vector<Facet>& facets_of_upper_cavity,
+                                      std::vector<Facet>& facets_of_lower_cavity)
+  {
+    for(auto intersecting_edge: intersecting_edges) {
+      const auto [v_above, v_below] = tr().vertices(intersecting_edge);
+
+      auto cell_circ = this->incident_cells(intersecting_edge), end = cell_circ;
+      CGAL_assume(cell_circ != nullptr);
+      do {
+        const Cell_handle cell = cell_circ;
+        const auto index_v_above = cell->index(v_above);
+        const auto index_v_below = cell->index(v_below);
+        const auto cell_above = cell->neighbor(index_v_below);
+        const auto cell_below = cell->neighbor(index_v_above);
+        if(0 == intersecting_cells.count(cell_above)) {
+          facets_of_upper_cavity.emplace_back(cell_above, cell_above->index(cell));
+        }
+        if(0 == intersecting_cells.count(cell_below)) {
+          facets_of_lower_cavity.emplace_back(cell_below, cell_below->index(cell));
+        }
+      } while(++cell_circ != end);
+    }
   }
 
   void debug_dump_cavity_outputs(CDT_3_signed_index face_index,
