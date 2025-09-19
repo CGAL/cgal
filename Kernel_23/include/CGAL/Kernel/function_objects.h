@@ -2650,7 +2650,7 @@ namespace CommonKernelFunctors {
     {
       CGAL_kernel_precondition(! K().collinear_3_object()(p,q,r) );
       Vector_3 res = CGAL::cross_product(q-p, r-p);
-      res = res / CGAL::approximate_sqrt(res.squared_length());
+      res = res / sqrt(res.squared_length());
       return res;
     }
   };

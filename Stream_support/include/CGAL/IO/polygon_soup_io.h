@@ -142,6 +142,13 @@ bool read_polygon_soup(const std::string& fname,
  * \param np optional \ref bgl_namedparameters "Named Parameters" described below
  *
  * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{point_map}
+ *     \cgalParamDescription{a property map associating points with floating point coordinates to the elements of the point set `points`}
+ *     \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type
+ *                    of the iterator of `PointRange` and value type is a point type with floating point coordinates}
+ *     \cgalParamDefault{`CGAL::Identity_property_map<geom_traits::Point_3>`}
+ *   \cgalParamNEnd
+ *
  *   \cgalParamNBegin{verbose}
  *     \cgalParamDescription{indicates whether output warnings and error messages should be printed or not.}
  *     \cgalParamType{Boolean}
