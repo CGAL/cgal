@@ -70,12 +70,6 @@ private:
 };
 
 template<typename I>
-Iterator_range<Prevent_deref<I> > make_prevent_deref_range(const Iterator_range<I>& range)
-{
-  return Iterator_range<Prevent_deref<I> >(make_prevent_deref(range.first), make_prevent_deref(range.second));
-}
-
-template<typename I>
 Prevent_deref<I> make_prevent_deref(const I& i)
 {
   return Prevent_deref<I>(i);
@@ -85,6 +79,14 @@ template<typename I>
 Iterator_range<Prevent_deref<I> > make_prevent_deref_range(const I& begin, const I& end)
 {
   return Iterator_range<Prevent_deref<I> >(make_prevent_deref(begin), make_prevent_deref(end));
+}
+
+template<typename R>
+auto make_prevent_deref_range(const R& range)
+{
+  using std::begin;
+  using std::end;
+  return make_range(make_prevent_deref(begin(range)), make_prevent_deref(end(range)));
 }
 
 namespace cpp98 {
