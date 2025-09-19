@@ -32,25 +32,22 @@ bounded region, this region is part of the object.
 
 The types `Type1` and `Type2` can be any of the following:
 
-- `Point_2<Kernel>`
+- `Bbox_2`
+- `Circle_2<Kernel>`
+- `Iso_rectangle_2<Kernel>`
 - `Line_2<Kernel>`
+- `Point_2<Kernel>`
 - `Ray_2<Kernel>`
 - `Segment_2<Kernel>`
 - `Triangle_2<Kernel>`
-- `Iso_rectangle_2<Kernel>`
-
-Also, `Type1` and `Type2` can be both of type
-
-- `Line_2<Kernel>`
-- `Circle_2<Kernel>`
 
 In three-dimensional space, the types `Type1` and
 `Type2` can be any of the following:
 
 - `Bbox_3`.
+- `Line_3<Kernel>`
 - `Point_3<Kernel>`
 - `Plane_3<Kernel>`
-- `Line_3<Kernel>`
 - `Ray_3<Kernel>`
 - `Segment_3<Kernel>`
 - `Sphere_3<Kernel>`
