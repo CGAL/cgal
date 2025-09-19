@@ -49,9 +49,6 @@ if(TARGET Doxygen::doxygen)
     PROPERTY IMPORTED_LOCATION)
 endif()
 
-# Visual Studio users might appreciate this
-# set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-
 macro(subdirlist result curdir)
   file(
     GLOB children
