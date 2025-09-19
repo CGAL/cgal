@@ -2257,7 +2257,7 @@ private:
           if(facets_of_border.count(Facet{circ, face_index}) > 0) {
             const auto other_vertex_index = 6 - index_va - index_vb - face_index;
             const auto other_vertex = circ->vertex(other_vertex_index);
-            if(other_vertex->ccdt_3_data().is_marked(Vertex_marker::CAVITY)) {
+            if(is_marked(other_vertex, Vertex_marker::CAVITY)) {
               vertex_above = circ->vertex(other_vertex_index);
               break;
             }
