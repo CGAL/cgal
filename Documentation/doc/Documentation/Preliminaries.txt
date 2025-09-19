@@ -43,6 +43,40 @@ also avoid CMake to link with the native threads support library on your system.
 
 \cgal is based on the version C++17 of the C++ standard.
 
+\section preliminaries_secconmod Concepts and Models
+
+One of the core principles of \cgal is algorithmic <em>genericity</em>, enabling users to call
+algorithms with custom data types, and to modify their behavior. To achieve this, and following
+the examples of the C++ Standard Template Library (STL) and \boost libraries, \cgal makes heavy
+use of C++ templates.
+
+The traditional design pattern used to specify the requirements of these templates is
+the <em>concept-model pattern</em>. In this context, a <em>concept</em> is an informal,
+abstract set of requirements on a type. A type that satisfies these requirements is said to
+<em>model the concept</em>. A concept's requirements are typically syntactic (the set of valid
+expressions that a type must support, including member types, member functions, and operators)
+and semantic (the expected behavior and invariants of the syntactic requirements) requirements.
+
+For example, the concept `FaceGraph` describes the requirements for a graph data structure that
+explicitly maintains faces defined by halfedges. It requires specific accessors, such as a function
+to get an incident halfedge from a face, and a function to get an incident face from a halfedge.
+Any class that provides these operations with the expected behavior, such as `CGAL::Surface_mesh`
+or `CGAL::Polyhedron_3`, can be said to model the `FaceGraph` concept. This allows these different
+data structures to be used interchangeably as arguments to many mesh processing algorithms of \cgal.
+
+Concepts can also be <em>refined</em>. A refined concept builds upon an existing one by adding
+further requirements. For instance, a MutableFaceGraph concept would inherit all the requirements
+of FaceGraph but add new ones for operations that modify the graph structure, such as adding or
+removing faces. Any type that models MutableFaceGraph also models FaceGraph.
+
+It is important to note that these concepts from the concept-model design pattern should not be
+confused with the <a href="https://en.cppreference.com/w/cpp/language/constraints.html">first-class concepts</a> language feature introduced in C++20.
+The requirements described by the concept-model pattern are more akin to the pre-existing
+<a href="https://en.cppreference.com/w/cpp/named_req.html">C++ Named Requirements</a>
+found in the C++ standard, which serve as a formal description of the interface and behavior
+required of template arguments. The concept-model pattern provides the philosophical framework
+for designing generic libraries like \cgal.
+
 \section preliminaries_secchecks Checks
 
 Much of the \cgal code contains assert statements for preconditions, and postconditions of functions
