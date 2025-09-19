@@ -2268,15 +2268,17 @@ private:
       CGAL_assume(vertex_above != Vertex_handle{});
 
       const auto vertex_above_handle = vertices_of_cavity_handles[vertex_above];
-      auto it = vertices_of_cavity_union_find.begin();
-      while(it != vertices_of_cavity_union_find.end() &&
-            vertices_of_cavity_union_find.same_set(it, vertex_above_handle))
-      {
-        ++it;
-      }
-      CGAL_assertion((it == vertices_of_cavity_union_find.end()) ==
+
+      const auto vertex_below_handle = std::invoke([&] {
+        auto [b, e] = make_prevent_deref_range(vertices_of_cavity_union_find);
+        return *std::find_if_not(
+            b, e, [&](auto handle) { return vertices_of_cavity_union_find.same_set(handle, vertex_above_handle); });
+      });
+      CGAL_assertion(vertex_below_handle == vertices_of_cavity_union_find.end() ||
+                     !vertices_of_cavity_union_find.same_set(vertex_below_handle, vertex_above_handle));
+      CGAL_assertion((vertex_below_handle == vertices_of_cavity_union_find.end()) ==
                      (vertices_of_cavity_union_find.number_of_sets() == 1));
-      const auto vertex_below_handle = it;
+
       for(auto handle = vertices_of_cavity_union_find.begin(), end = vertices_of_cavity_union_find.end();
           handle != end; ++handle)
       {
