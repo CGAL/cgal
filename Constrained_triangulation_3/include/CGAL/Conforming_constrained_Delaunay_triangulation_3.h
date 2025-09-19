@@ -1571,6 +1571,36 @@ public:
 
 private:
 
+  void set_mark(Vertex_handle v, Vertex_marker m) {
+    v->ccdt_3_data().set_mark(m);
+  }
+
+  template <typename Range_of_vertices>
+  void set_marks(Range_of_vertices&& vertices, Vertex_marker m) {
+    for(auto v : vertices) {
+      set_mark(v, m);
+    }
+  }
+
+  void clear_mark(Vertex_handle v, Vertex_marker m) {
+    v->ccdt_3_data().clear_mark(m);
+  }
+
+  template <typename Range_of_vertices>
+  void clear_marks(Range_of_vertices&& vertices, Vertex_marker m) {
+    for(auto v : vertices) {
+      clear_mark(v, m);
+    }
+  }
+
+  bool is_marked(Vertex_handle v, Vertex_marker m) const {
+    return v->ccdt_3_data().is_marked(m);
+  }
+
+  bool is_marked(Vertex_handle v) const {
+    return v->ccdt_3_data().is_marked();
+  }
+
   class Non_planar_plc_facet_exception : public std::exception
   {
     const char* what() const throw()
@@ -1938,8 +1968,8 @@ private:
         const auto index_vd = this->next_around_edge(index_vb, index_va);
 
         //write_segment(dump_edges_around, cell_circ->vertex(index_vc), cell_circ->vertex(index_vd));
-        if(cell_circ->vertex(index_vc)->ccdt_3_data().is_marked(Vertex_marker::REGION_BORDER)) continue;
-        if(cell_circ->vertex(index_vd)->ccdt_3_data().is_marked(Vertex_marker::REGION_BORDER)) continue;
+        if(is_marked(cell_circ->vertex(index_vc), Vertex_marker::REGION_BORDER)) continue;
+        if(is_marked(cell_circ->vertex(index_vd), Vertex_marker::REGION_BORDER)) continue;
         int cd_intersects_region = does_edge_intersect_region(cell_circ, index_vc, index_vd, cdt_2, fh_region);
         if(cd_intersects_region == 1) {
           return Search_first_intersection_result_type{ Edge{cell_circ, index_vc, index_vd}, border_edge };
@@ -2044,8 +2074,8 @@ private:
         }
         auto [cached_value_it, not_visited] = new_edge(v0, v1, false);
         if(!not_visited) return value_returned(cached_value_it->second);
-        int v0v1_intersects_region = (v0->ccdt_3_data().is_marked(Vertex_marker::REGION_INSIDE) ||
-                                      v1->ccdt_3_data().is_marked(Vertex_marker::REGION_INSIDE))
+        int v0v1_intersects_region = (is_marked(v0, Vertex_marker::REGION_INSIDE) ||
+                                      is_marked(v1, Vertex_marker::REGION_INSIDE))
                                          ? expected
                                          : does_edge_intersect_region(cell, index_v0, index_v1, cdt_2, fh_region);
         if(v0v1_intersects_region != 0) {
@@ -2174,8 +2204,8 @@ private:
       Unique_hash_map<Vertex_handle, typename Union_find<Vertex_handle>::handle> vertices_of_cavity_handles;
       for(auto c: intersecting_cells) {
         for(auto v : tr().vertices(c)) {
-          if(!v->ccdt_3_data().is_marked()) {
-            v->ccdt_3_data().set_mark(Vertex_marker::CAVITY);
+          if(!is_marked(v)) {
+            set_mark(v, Vertex_marker::CAVITY);
             vertices_of_cavity_handles[v] = vertices_of_cavity_union_find.make_set(v);
           }
         }
@@ -2185,7 +2215,7 @@ private:
         for(int i = 0; i < 3; ++i) {
           auto v1 = vertices[i];
           auto v2 = vertices[(i + 1) % 3];
-          if(v1->ccdt_3_data().is_marked(Vertex_marker::CAVITY) && v2->ccdt_3_data().is_marked(Vertex_marker::CAVITY)) {
+          if(is_marked(v1, Vertex_marker::CAVITY) && is_marked(v2, Vertex_marker::CAVITY)) {
             vertices_of_cavity_union_find.unify_sets(vertices_of_cavity_handles[v1],
                                                      vertices_of_cavity_handles[v2]);
           }
@@ -2198,8 +2228,7 @@ private:
             for(int j = i + 1; j < 4; ++j) {
               const auto v1 = c->vertex(i);
               const auto v2 = c->vertex(j);
-              if(v1->ccdt_3_data().is_marked(Vertex_marker::CAVITY) &&
-                 v2->ccdt_3_data().is_marked(Vertex_marker::CAVITY) &&
+              if(is_marked(v1, Vertex_marker::CAVITY) && is_marked(v2, Vertex_marker::CAVITY) &&
                  non_intersecting_edges_set.count(make_sorted_pair(v1, v2)) > 0)
               {
                 vertices_of_cavity_union_find.unify_sets(vertices_of_cavity_handles[v1],
@@ -2252,13 +2281,13 @@ private:
           handle != end; ++handle)
       {
         auto v = *handle;
-        v->ccdt_3_data().clear_mark(Vertex_marker::CAVITY);
+        clear_mark(v, Vertex_marker::CAVITY);
         if(vertices_of_cavity_union_find.same_set(handle, vertex_above_handle)) {
           vertices_of_upper_cavity.push_back(v);
-          v->ccdt_3_data().set_mark(Vertex_marker::CAVITY_ABOVE);
+          set_mark(v, Vertex_marker::CAVITY_ABOVE);
         } else if(vertices_of_cavity_union_find.same_set(handle, vertex_below_handle)) {
           vertices_of_lower_cavity.push_back(v);
-          v->ccdt_3_data().set_mark(Vertex_marker::CAVITY_BELOW);
+          set_mark(v, Vertex_marker::CAVITY_BELOW);
         } else {
           CGAL_error();
         }
@@ -2266,7 +2295,7 @@ private:
       while(std::any_of(intersecting_cells.begin(), intersecting_cells.end(), [&](Cell_handle c) {
            const auto vs = tr().vertices(c);
            return std::any_of(vs.begin(), vs.end(), [&](auto v) {
-            if(!v->ccdt_3_data().is_marked()) {
+            if(!is_marked(v)) {
               std::cerr << "INFO: Vertex " << IO::oformat(v, with_point_and_info) << " is not marked\n";
               return true;
             }
@@ -2279,16 +2308,16 @@ private:
             for(int j = i + 1; j < 4; ++j) {
               auto v1 = c->vertex(i);
               auto v2 = c->vertex(j);
-              if(v1->ccdt_3_data().is_marked() != v2->ccdt_3_data().is_marked()) {
-                if(v2->ccdt_3_data().is_marked()) {
+              if(is_marked(v1) != is_marked(v2)) {
+                if(is_marked(v2)) {
                   std::swap(v1, v2);
                 } // here v1 is marked and v2 is not
-                if(v1->ccdt_3_data().is_marked(Vertex_marker::CAVITY_ABOVE)) {
+                if(is_marked(v1, Vertex_marker::CAVITY_ABOVE)) {
                   vertices_of_upper_cavity_.push_back(v2);
-                  v2->ccdt_3_data().set_mark(Vertex_marker::CAVITY_ABOVE);
-                } else if(v1->ccdt_3_data().is_marked(Vertex_marker::CAVITY_BELOW)) {
+                  set_mark(v2, Vertex_marker::CAVITY_ABOVE);
+                } else if(is_marked(v1, Vertex_marker::CAVITY_BELOW)) {
                   vertices_of_lower_cavity_.push_back(v2);
-                  v2->ccdt_3_data().set_mark(Vertex_marker::CAVITY_BELOW);
+                  set_mark(v2, Vertex_marker::CAVITY_BELOW);
                 }
               }
             }
@@ -2300,22 +2329,18 @@ private:
           debug_output_facet_vertices({facet});
         }
         for(auto v: tr().vertices(facet)) {
-          if(v->ccdt_3_data().is_marked(Vertex_marker::CAVITY_ABOVE)) {
+          if(is_marked(v, Vertex_marker::CAVITY_ABOVE)) {
             facets_of_upper_cavity.push_back(facet);
             break;
           }
-          if(v->ccdt_3_data().is_marked(Vertex_marker::CAVITY_BELOW)) {
+          if(is_marked(v, Vertex_marker::CAVITY_BELOW)) {
             facets_of_lower_cavity.push_back(facet);
             break;
           }
         }
       }
-      for(auto v: vertices_of_upper_cavity) {
-        v->ccdt_3_data().clear_mark(Vertex_marker::CAVITY_ABOVE);
-      }
-      for(auto v: vertices_of_lower_cavity) {
-        v->ccdt_3_data().clear_mark(Vertex_marker::CAVITY_BELOW);
-      }
+      clear_marks(vertices_of_upper_cavity, Vertex_marker::CAVITY_ABOVE);
+      clear_marks(vertices_of_lower_cavity, Vertex_marker::CAVITY_BELOW);
     } // new algorithm
 
     if(this->debug_regions()) {
@@ -2390,13 +2415,9 @@ private:
         write_segment(out, edge);
       }
     }
-    for(auto v: region_border_vertices) {
-      v->ccdt_3_data().set_mark(Vertex_marker::REGION_BORDER);
-    }
+    set_marks(region_border_vertices, Vertex_marker::REGION_BORDER);
     const auto found_edge_opt = search_first_intersection(face_index, cdt_2, fh_region, border_edges);
-    for(auto v: region_border_vertices) {
-      v->ccdt_3_data().clear_mark(Vertex_marker::REGION_BORDER);
-    }
+    clear_marks(region_border_vertices, Vertex_marker::REGION_BORDER);
 
     [[maybe_unused]] auto try_flip_region_size_4 = [&] {
       if(region_border_vertices.size() == 4) {
@@ -2534,20 +2555,16 @@ private:
     }
     CGAL_assertion(found_edge_opt != std::nullopt);
 
-    for(auto v : region_border_vertices) {
-      v->ccdt_3_data().set_mark(Vertex_marker::REGION_BORDER);
-    }
+    set_marks(region_border_vertices, Vertex_marker::REGION_BORDER);
     for(auto v : region_vertices) {
-      if(v->ccdt_3_data().is_marked(Vertex_marker::REGION_BORDER))
+      if(is_marked(v, Vertex_marker::REGION_BORDER))
         continue;
-      v->ccdt_3_data().set_mark(Vertex_marker::REGION_INSIDE);
+      set_mark(v, Vertex_marker::REGION_INSIDE);
     }
 
     Scope_exit guard{[&] {
-      for(auto v : region_vertices) {
-        v->ccdt_3_data().clear_mark(Vertex_marker::REGION_BORDER);
-        v->ccdt_3_data().clear_mark(Vertex_marker::REGION_INSIDE);
-      }
+      clear_marks(region_vertices, Vertex_marker::REGION_BORDER);
+      clear_marks(region_vertices, Vertex_marker::REGION_INSIDE);
     }};
 
     const auto [first_intersecting_edge, _] = *found_edge_opt;
