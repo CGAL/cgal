@@ -38,5 +38,5 @@ jobs:
          fi
          # `git diff --quiet` exits with 1 if there is a diff
          if ! git diff --quiet; then
-           git commit -a --amend -m"base commit" && git push -f -u origin master
+           git commit -a --amend -m"base commit" && git push -f -u origin main
          fi

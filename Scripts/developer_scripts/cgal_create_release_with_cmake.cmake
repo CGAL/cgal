@@ -210,7 +210,7 @@ endforeach()
 
 # make an extra copy of examples and demos for the testsuite
 if (TESTSUITE)
-  SET(FMT_ARG "format:SCM branch:%n%H %d%n%nShort log from master:%n")
+  SET(FMT_ARG "format:SCM branch:%n%H %d%n%nShort log from main:%n")
   execute_process(
             COMMAND git --git-dir=${GIT_REPO}/.git --work-tree=${GIT_REPO} log -n1 --format=${FMT_ARG}
             WORKING_DIRECTORY "${release_dir}"
@@ -220,7 +220,7 @@ if (TESTSUITE)
   file(WRITE ${release_dir}/.scm-branch "${OUT_VAR}")
   SET(FMT_ARG "%h %s%n  parents: %p%n")
   execute_process(
-            COMMAND git --git-dir=${GIT_REPO}/.git --work-tree=${GIT_REPO} log --first-parent --format=${FMT_ARG} cgal/master..
+            COMMAND git --git-dir=${GIT_REPO}/.git --work-tree=${GIT_REPO} log --first-parent --format=${FMT_ARG} cgal/main..
             WORKING_DIRECTORY "${release_dir}"
             OUTPUT_VARIABLE OUT_VAR
           )
