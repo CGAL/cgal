@@ -189,8 +189,8 @@ the template parameter pack.
 </TABLE>
 </DIV>
 
-Additional overloads are provided for the type `Point_2` combined with any other type with the result type being
-`std::optional< std::variant< Point_2 > >`.
+Additional overloads are provided for the type `Point_2` combined with any other type in the table above,
+with the result type being `std::optional< std::variant< Point_2 > >`.
 Overloads are also provided for the type `Bbox_2`, for all
 intersections existing with the type `Iso_rectangle_2`. Note that the return type for `Bbox_2` - `Bbox_2`
  is `Bbox_2` and not `Iso_rectangle_2`.
@@ -347,11 +347,11 @@ the template parameter pack.
 </TABLE>
 </DIV>
 
-Additional overloads are provided for the type `Point_3` combined with any other type with the result type being
-`std::optional< std::variant< Point_3 > >`. Overloads are also provided for the type `Bbox_3`, for all
+Additional overloads are provided for the type `Point_3` combined with any other type in the table above,
+with the result type being `std::optional< std::variant< Point_3 > >`.
+Overloads are also provided for the type `Bbox_3`, for all
 intersections existing with the type `Iso_cuboid_3`. Note that the return type for `Bbox_3` - `Bbox_3`
- is `Bbox_3` and not `Iso_cuboid_3`.
-
+is `Bbox_3` and not `Iso_cuboid_3`.
 
 \cgalHeading{Examples}
 
