@@ -12,6 +12,7 @@ Point_set_processing_3
 Polygon
 Polygon_mesh_processing
 Polyhedron
+Property_map
 SMDS_3
 STL_Extension
 Surface_mesh
