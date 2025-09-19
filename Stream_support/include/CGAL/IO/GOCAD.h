@@ -335,7 +335,7 @@ bool write_GOCAD(std::ostream& os,
  *     \cgalParamDescription{a property map associating points with floating point coordinates to the elements of the point set `points`}
  *     \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type
  *                    of the iterator of `PointRange` and value type is a point type with floating point coordinates}
- *     \cgalParamDefault{`CGAL::Identity_property_map<geom_traits::Point_3>`}
+ *     \cgalParamDefault{`CGAL::Identity_property_map<std::iterator_traits<PointRange::iterator>::value_type>`}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{stream_precision}
