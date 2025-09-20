@@ -660,13 +660,13 @@ namespace CGAL {
      *         h0,h5 and to the facet (h0,h5,h6,h1).
      */
     Dart_descriptor make_hexahedron(Vertex_attribute_descriptor h0,
-                                Vertex_attribute_descriptor h1,
-                                Vertex_attribute_descriptor h2,
-                                Vertex_attribute_descriptor h3,
-                                Vertex_attribute_descriptor h4,
-                                Vertex_attribute_descriptor h5,
-                                Vertex_attribute_descriptor h6,
-                                Vertex_attribute_descriptor h7)
+                                    Vertex_attribute_descriptor h1,
+                                    Vertex_attribute_descriptor h2,
+                                    Vertex_attribute_descriptor h3,
+                                    Vertex_attribute_descriptor h4,
+                                    Vertex_attribute_descriptor h5,
+                                    Vertex_attribute_descriptor h6,
+                                    Vertex_attribute_descriptor h7)
     {
       Dart_descriptor d1 = make_quadrangle(h0, h5, h6, h1);
       Dart_descriptor d2 = make_quadrangle(h1, h6, h7, h2);
@@ -715,6 +715,133 @@ namespace CGAL {
                              create_vertex_attribute(p5),
                              create_vertex_attribute(p6),
                              create_vertex_attribute(p7));
+    }
+
+    /** Create an prism given 6 Vertex_attribute_descriptor.
+     *    (6 vertices, 9 edges and 5 facets)
+     * \verbatim
+     *      3---4
+     *      |\ /|
+     *      0-5-1
+     *       \|/
+     *        2
+     * \endverbatim
+     * @param h0 the first vertex handle.
+     * @param h1 the second vertex handle.
+     * @param h2 the third vertex handle.
+     * @param h3 the fourth vertex handle.
+     * @param h4 the fifth vertex handle.
+     * @param h5 the sixth vertex handle.
+     * @return the dart of the new prism incident to h0 and to
+     *         the facet (h0,h1,h2).
+     */
+     Dart_descriptor make_prism(Vertex_attribute_descriptor h0,
+                                Vertex_attribute_descriptor h1,
+                                Vertex_attribute_descriptor h2,
+                                Vertex_attribute_descriptor h3,
+                                Vertex_attribute_descriptor h4,
+                                Vertex_attribute_descriptor h5)
+    {
+      Dart_descriptor d1=make_triangle(h0, h1, h2);
+      Dart_descriptor d2=make_quadrangle(h1, h0, h3, h4);
+      Dart_descriptor d3=make_quadrangle(h2, h1, h4, h5);
+      Dart_descriptor d4=make_quadrangle(h0, h2, h5, h3);
+      Dart_descriptor d5=make_triangle(h4, h3, h5);
+
+      return make_combinatorial_prism(d1, d2, d3, d4, d5);
+    }
+
+    /** Create an prism given 6 points.
+     * \verbatim
+     *      3---4
+     *      |\ /|
+     *      0-5-1
+     *       \|/
+     *        2
+     * \endverbatim
+     * @param p0 the first point.
+     * @param p1 the second point.
+     * @param p2 the third point.
+     * @param p3 the fourth point.
+     * @param p4 the fifth point.
+     * @param p5 the sixth point.
+     * @return the dart of the new prism incident to p0 and to
+     *         the facet (p0,p1,p2).
+     */
+     Dart_descriptor make_prism(const Point& p0,
+                                const Point& p1,
+                                const Point& p2,
+                                const Point& p3,
+                                const Point& p4,
+                                const Point& p5)
+    {
+      return make_prism(create_vertex_attribute(p0),
+                        create_vertex_attribute(p1),
+                        create_vertex_attribute(p2),
+                        create_vertex_attribute(p3),
+                        create_vertex_attribute(p4),
+                        create_vertex_attribute(p5));
+    }
+
+    /** Create an pyramid given 5 Vertex_attribute_descriptor.
+     *    (5 vertices, 8 edges and 5 facets)
+     * \verbatim
+     *       4
+     *      /|\
+     *     0-|-1
+     *     | | |
+     *     3---2
+     * \endverbatim
+     * @param h0 the first vertex handle.
+     * @param h1 the second vertex handle.
+     * @param h2 the third vertex handle.
+     * @param h3 the fourth vertex handle.
+     * @param h4 the fifth vertex handle.
+     * @return the dart of the new pyramid incident to h0 and to
+     *         the facet (h0,h1,h2,h3).
+     */
+    Dart_descriptor make_pyramid(Vertex_attribute_descriptor h0,
+                                 Vertex_attribute_descriptor h1,
+                                 Vertex_attribute_descriptor h2,
+                                 Vertex_attribute_descriptor h3,
+                                 Vertex_attribute_descriptor h4)
+    {
+      Dart_descriptor d1=make_quadrangle(h0, h1, h2, h3);
+      Dart_descriptor d2=make_triangle(h1, h0, h4);
+      Dart_descriptor d3=make_triangle(h0, h3, h4);
+      Dart_descriptor d4=make_triangle(h3, h2, h4);
+      Dart_descriptor d5=make_triangle(h2, h1, h4);
+
+      return make_combinatorial_pyramid(d1, d2, d3, d4, d5);
+    }
+
+    /** Create an pyramid given 5 points.
+     * \verbatim
+     *       4
+     *      /|\
+     *     0-|-1
+     *     | | |
+     *     3---2
+     * \endverbatim
+     * @param p0 the first point.
+     * @param p1 the second point.
+     * @param p2 the third point.
+     * @param p3 the fourth point.
+     * @param p4 the fifth point.
+     * @return the dart of the new pyramid incident to p0 and to
+     *         the facet (p0,p1,p2,p3).
+     */
+    Dart_descriptor make_pyramid(const Point& p0,
+                                 const Point& p1,
+                                 const Point& p2,
+                                 const Point& p3,
+                                 const Point& p4)
+    {
+      return make_pyramid(create_vertex_attribute(p0),
+                          create_vertex_attribute(p1),
+                          create_vertex_attribute(p2),
+                          create_vertex_attribute(p3),
+                          create_vertex_attribute(p4));
     }
 
     /** Compute the barycenter of a given cell.
