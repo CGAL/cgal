@@ -928,7 +928,9 @@ void _test_intersection_construct(SK sk) {
           intersection(s1, s2, pl, std::back_inserter(intersection_1));
           intersection(s1, s3, pl, std::back_inserter(intersection_2));
           if(intersection_1.size() == 1) {
-                  assert(CGAL::do_intersect(s1, s2, pl));
+            assert(CGAL::do_intersect(pl, s1, s2));
+            assert(CGAL::do_intersect(s1, pl, s2));
+            assert(CGAL::do_intersect(s1, s2, pl));
             Circle_3 circle;
             std::pair<Circular_arc_point_3, unsigned> cap;
             if(assign_variant(circle,intersection_1[0])) {
@@ -1006,7 +1008,9 @@ void _test_intersection_construct(SK sk) {
           theIntersect_3(s1, p1, pl, std::back_inserter(intersection_1));
           theIntersect_3(s1, p2, pl, std::back_inserter(intersection_2));
           if(intersection_1.size() == 1) {
-                  assert(theDo_intersect_3(s1, p1, pl));
+            assert(theDo_intersect_3(s1, p1, pl));
+            assert(theDo_intersect_3(p1, s1, pl));
+            assert(theDo_intersect_3(p1, pl, s1));
             Circle_3 circle;
             std::pair<Circular_arc_point_3, unsigned> cap;
             if(assign_variant(circle,intersection_1[0])) {
