@@ -124,7 +124,8 @@ public:
    * @param vpmap the property map with the points associated to the vertices of `tmesh`
    * @param gt an instance of the geometric traits class
    *
-   * @pre `CGAL::is_closed(tmesh) && CGAL::is_triangle_mesh(tmesh)`
+   * @pre \link CGAL::is_closed `CGAL::is_closed(tmesh)` \endlink
+   * @pre \link CGAL::is_triangle_mesh `CGAL::is_triangle_mesh(tmesh)` \endlink
    */
   Side_of_triangle_mesh(const TriangleMesh& tmesh,
                         VertexPointMap vpmap,
@@ -150,7 +151,8 @@ public:
   * @param tmesh the triangulated surface mesh bounding the domain to be tested
   * @param gt an instance of the geometric traits class
   *
-  * @pre `CGAL::is_closed(tmesh) && CGAL::is_triangle_mesh(tmesh)`
+  * @pre \link CGAL::is_closed `CGAL::is_closed(tmesh)` \endlink
+  * @pre \link CGAL::is_triangle_mesh `CGAL::is_triangle_mesh(tmesh)` \endlink
   */
   Side_of_triangle_mesh(const TriangleMesh& tmesh,
                         const GeomTraits& gt=GeomTraits())

@@ -337,8 +337,8 @@ struct Throw_at_first_output {
  * reports all the pairs of faces intersecting between two triangulated surface meshes.
  * This function depends on the package \ref PkgBoxIntersectionD.
  *
- * \pre `CGAL::is_triangle_mesh(tm1)`
- * \pre `CGAL::is_triangle_mesh(tm2)`
+ * @pre \link CGAL::is_triangle_mesh `CGAL::is_triangle_mesh(tm1)` \endlink
+ * @pre \link CGAL::is_triangle_mesh `CGAL::is_triangle_mesh(tm2)` \endlink
  *
  * \tparam TriangleMesh a model of `FaceListGraph`
  * \tparam FaceRange range of `boost::graph_traits<TriangleMesh>::%face_descriptor`,
@@ -475,7 +475,7 @@ compute_face_face_intersection(const FaceRange& face_range1,
  * \attention If a polyline vertex intersects a face, the intersection will
  * be reported twice (or more if it is on a vertex, edge, or point).
  *
- * \pre `CGAL::is_triangle_mesh(tm)`
+ * @pre \link CGAL::is_triangle_mesh `CGAL::is_triangle_mesh(tm)` \endlink
  *
  * \tparam TriangleMesh a model of `FaceListGraph`
  * \tparam FaceRange range of `boost::graph_traits<TriangleMesh>::%face_descriptor`,
@@ -607,7 +607,7 @@ compute_face_polyline_intersection(const FaceRange& face_range,
  * \attention If a polyline vertex intersects a face, the intersection will
  * be reported twice (even more if it is on a vertex, edge, or point).
  *
- * \pre `CGAL::is_triangle_mesh(tm)`
+ * @pre \link CGAL::is_triangle_mesh `CGAL::is_triangle_mesh(tm)` \endlink
  *
  * \tparam TriangleMesh a model of `FaceListGraph`
  * \tparam FaceRange range of `boost::graph_traits<TriangleMesh>::%face_descriptor`,
@@ -939,8 +939,8 @@ compute_polylines_polylines_intersection(const PolylineRange& polylines1,
  * reports all the pairs of faces intersecting between two triangulated surface meshes.
  * This function depends on the package \ref PkgBoxIntersectionD.
  *
- * @pre `CGAL::is_triangle_mesh(tm1)`
- * @pre `CGAL::is_triangle_mesh(tm2)`
+ * @pre \link CGAL::is_triangle_mesh `CGAL::is_triangle_mesh(tm1)` \endlink
+ * @pre \link CGAL::is_triangle_mesh `CGAL::is_triangle_mesh(tm2)` \endlink
  *
  * \tparam TriangleMesh a model of `FaceListGraph`
  * \tparam OutputIterator a model of `OutputIterator` holding objects of type
@@ -998,7 +998,7 @@ compute_face_face_intersection(const TriangleMesh& tm1,
  * \attention If a polyline vertex intersects a face or another polyline, the intersection will
  * be reported twice (even more if it is on a vertex, edge, or point).
  *
- * \pre `CGAL::is_triangle_mesh(tm)`
+ * @pre \link CGAL::is_triangle_mesh `CGAL::is_triangle_mesh(tm)` \endlink
  *
  * \tparam TriangleMesh a model of `FaceListGraph`
  * \tparam Polyline a `RandomAccessRange` of points. The point type of the range must be the
@@ -1223,10 +1223,10 @@ bool do_intersect(const Polyline& polyline1,
  * In that case, the meshes must be closed.
  * This function depends on the package \ref PkgBoxIntersectionD.
  *
- * @pre `CGAL::is_triangle_mesh(tm1)`
- * @pre `CGAL::is_triangle_mesh(tm2)`
- * @pre `!do_overlap_test_of_bounded_sides || CGAL::is_closed(tm1)`
- * @pre `!do_overlap_test_of_bounded_sides || CGAL::is_closed(tm2)`
+ * @pre \link CGAL::is_triangle_mesh `CGAL::is_triangle_mesh(tm1)` \endlink
+ * @pre \link CGAL::is_triangle_mesh `CGAL::is_triangle_mesh(tm2)` \endlink
+ * @pre `!do_overlap_test_of_bounded_sides` || \link CGAL::is_closed `CGAL::is_closed(tm1)` \endlink
+ * @pre `!do_overlap_test_of_bounded_sides` || \link CGAL::is_closed `CGAL::is_closed(tm2)` \endlink
  *
  * @tparam TriangleMesh a model of `FaceListGraph`
  * @tparam NamedParameters1 a sequence of \ref bgl_namedparameters "Named Parameters" for `tm1`
@@ -1323,7 +1323,7 @@ bool do_intersect(const TriangleMesh& tm1,
  * and `false` otherwise.
  * This function depends on the package \ref PkgBoxIntersectionD.
  *
- * @pre `CGAL::is_triangle_mesh(tm)`
+ * @pre \link CGAL::is_triangle_mesh `CGAL::is_triangle_mesh(tm)` \endlink
  *
  * \tparam TriangleMesh a model of `FaceListGraph`
  * \tparam PolylineRange a `RandomAccessRange` of `RandomAccessRange` of points. The point type of the range must be the
@@ -1390,7 +1390,7 @@ bool do_intersect(const TriangleMesh& tm,
  * returns `true` if there exists a face of `tm` and a segment of `polyline` which intersect, and `false` otherwise.
  * This function depends on the package \ref PkgBoxIntersectionD.
  *
- * @pre `CGAL::is_triangle_mesh(tm)`
+ * @pre \link CGAL::is_triangle_mesh `CGAL::is_triangle_mesh(tm)` \endlink
  *
  * \tparam TriangleMesh a model of `FaceListGraph`
  * \tparam Polyline a `RandomAccessRange` of points. The point type of the range must be the

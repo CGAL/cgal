@@ -172,7 +172,8 @@ intersection between an object of type `Segment_3`, `Ray_3` or
 `Intersection operator()(Ray_3 r)`
 
 `Intersection operator()(Line_3 l)`
-\pre do_intersect_surface(s/r/l) == true
+
+\pre `do_intersect_surface_object(s/r/l)` == `true`
 */
 typedef unspecified_type Construct_intersection;
 

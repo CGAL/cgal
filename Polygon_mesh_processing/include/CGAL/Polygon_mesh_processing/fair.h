@@ -118,7 +118,7 @@ bool fair(TriangleMesh& tmesh,
 
   @return `true` if fairing is successful, otherwise no vertices are relocated.
 
-  @pre `is_triangle_mesh(tmesh)`
+  @pre \link CGAL::is_triangle_mesh `CGAL::is_triangle_mesh(tmesh)` \endlink
 
   @warning This function involves linear algebra, that is computed using non-exact, floating-point arithmetic.
 
