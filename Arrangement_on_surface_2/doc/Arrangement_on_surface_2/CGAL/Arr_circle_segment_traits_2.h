@@ -32,7 +32,7 @@ namespace CGAL {
  * same direction as a precondition. Moreover, `Arr_circle_segment_traits_2`
  * supports the merging of curves of opposite directions.
  *
- * \cgalModels{AosTraits_2,AosApproximateTraits_2,AosDirectionalXMonotoneTraits_2}
+ * \cgalModels{AosTraits_2,AosApproximateTraits_2,AosApproximatePointTraits_2,AosDirectionalXMonotoneTraits_2}
  *
  */
 template <typename Kernel>
