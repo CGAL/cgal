@@ -1484,8 +1484,11 @@ protected:
                           (Local_point(bbox.xmin(), bbox.ymin(), bbox.zmin()),
                            Local_point(bbox.xmax(), bbox.ymax(), bbox.zmax())));
       // std::cout<<"Length of the diagonal: "<<d<<std::endl;
+      // std::cout<<"width: "<< this->width() <<std::endl;
+      // std::cout<<"height: "<< this->height() <<std::endl;
+
       m_size_vertices=1.5*d;
-      m_size_edges=d;
+      m_size_edges=is_two_dimensional()?2.5:d;
       m_size_rays=m_size_edges;
       m_size_lines=m_size_edges;
       m_size_normals=d/3;
