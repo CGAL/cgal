@@ -1,32 +1,16 @@
+#include <CGAL/Hexmeshing_generate_two_refinement_mesh.h>
 
-#include <CGAL/Hexmeshing_for_linear_cell_complex_sequential.h>
-#include <CGAL/Hexmeshing_mesh_data_for_hexmeshing.h>
-#include <CGAL/Hexmeshing_render_results.h>
-
-#include <CGAL/Combinatorial_map_save_load.h>
 #include <CGAL/config.h>
-#include <CGAL/Graphics_scene_options.h>
 #include <string>
-#include <cstdlib>
-#include <filesystem>
-#include <iostream>
 
 
 void render_two_refinement(const std::string& file, int cube_cells_per_dim, int nb_levels = 1){
-  CGAL::Mesh_data_for_hexmeshing mesh;
-
-  mesh.load_surface(CGAL::data_file_path("meshes/" + file));
-  mesh.cubic_grid_from_aabb(cube_cells_per_dim);
-
-  CGAL::Hexmeshing_for_linear_cell_complex hdata;
-
-  hdata.two_refinement(
-    mesh,
-    nb_levels,
-    true
-  );
+  CGAL::generate_two_refinement_mesh(CGAL::data_file_path("meshes/" + file), cube_cells_per_dim, nb_levels, true);
 
   // CGAL::render_two_refinement_result(hdata);
+  std::cout << "file: " << file << std::endl;
+  std::cout << "nb_levels: " << nb_levels << std::endl;
+  std::cout << "test passed\n" << std::endl;
 }
 
 

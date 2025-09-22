@@ -14,7 +14,6 @@
 #define HEXMESHING_ASSERT_H
 
 #include <CGAL/hexmeshing/LCC_items_for_hexmeshing.h>
-#include <CGAL/Hexmeshing_for_linear_cell_complex_sequential.h>
 
 namespace CGAL::internal::Hexmeshing {
   /**

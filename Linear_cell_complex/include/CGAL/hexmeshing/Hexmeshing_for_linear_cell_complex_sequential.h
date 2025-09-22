@@ -21,15 +21,22 @@
 #include <CGAL/hexmeshing/Hexmeshing_load_patterns.h>
 #include <CGAL/hexmeshing/Hexmeshing_two_refinement_algorithm.h>
 #include <CGAL/hexmeshing/Hexmeshing_post_processing.h>
+#include <CGAL/hexmeshing/Hexmeshing_outer_alias.h>
+#include <CGAL/hexmeshing/Hexmeshing_mesh_data_for_hexmeshing.h>
 #include <CGAL/query_replace/cmap_query_replace.h>
-#include <CGAL/Hexmeshing_mesh_data_for_hexmeshing.h>
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/Linear_cell_complex_traits.h>
+#include <CGAL/Combinatorial_map_save_load.h>
+#include <CGAL/config.h>
+#include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 #include <vector>
+#include <cstdlib>
+#include <filesystem>
+#include <string>
 
 
 
-namespace CGAL {
+namespace CGAL::internal {
 
 
 /**
@@ -39,15 +46,17 @@ namespace CGAL {
  * including the Linear Cell Complex (LCC), grid configuration, and various
  * markers used during mesh generation and refinement.
  */
+template<typename TriangleMesh=Hexmeshing::Polyhedron>
 class Hexmeshing_for_linear_cell_complex {
 public:
-  using Kernel = internal::Hexmeshing::Kernel;
-  using LCC = internal::Hexmeshing::LCC;
-  using Dart_handle = internal::Hexmeshing::Dart_handle;
-  using DartInfo = internal::Hexmeshing::DartInfo;
-  using size_type = internal::Hexmeshing::size_type;
+  using Kernel = Hexmeshing::Kernel;
+  using LCC = Hexmeshing::LCC;
+  using Dart_handle = Hexmeshing::Dart_handle;
+  using DartInfo = Hexmeshing::DartInfo;
+  using size_type = Hexmeshing::size_type;
   using PlaneCC = std::vector<Dart_handle>; // One dart per face connected components
   using PlaneSet = std::vector<PlaneCC>; // A set of planes
+
   /**
    * @brief Container for external pattern substitution resources used in hexahedral meshing
    *
@@ -59,8 +68,11 @@ public:
     Pattern_substituer<LCC> regular_templates;   ///< Pattern substituter for regular hexahedral templates
     Pattern_substituer<LCC> partial_templates;   ///< Pattern substituter for partial hexahedral templates
   };
+
+  Mesh_data_for_hexmeshing<TriangleMesh> mesh;
+
   // Required initialization
-  internal::Hexmeshing::Grid grid;                  ///< Grid configuration defining the mesh structure
+  Hexmeshing::Grid grid;                  ///< Grid configuration defining the mesh structure
   ExternalRessources* ext;    ///< Pointer to external resources for pattern substitution
 
   // Initialized by the algorithm
@@ -74,8 +86,9 @@ public:
   int level = 0;             ///< Current refinement level
   std::array<PlaneSet, 3> first_face_of_planes;  ///< First faces of each plane set (X, Y, Z)
 
-  /// @brief Default constructor
-  Hexmeshing_for_linear_cell_complex() {}
+  Hexmeshing_for_linear_cell_complex(const std::string& file, int cube_cells_per_dim) : mesh(file, cube_cells_per_dim) {}
+  Hexmeshing_for_linear_cell_complex(TriangleMesh& poly_out, int cube_cells_per_dim) : mesh(poly_out, cube_cells_per_dim) {}
+  Hexmeshing_for_linear_cell_complex(TriangleMesh poly_out, Hexmeshing::Grid grid_out) : mesh(poly_out, grid_out) {}
 
   /**
    * @brief Fixes invalid dart handles after refinement
@@ -141,7 +154,7 @@ public:
       auto n2 = lcc.attribute<0>(lcc.beta(face, 1, 1))->point();
       // auto n3 = lcc.attribute<0>(lcc.beta(face, 1, 1, 1));
 
-      internal::Hexmeshing::Vector normal = cross_product(n1 - n0, n2 - n1);
+      Hexmeshing::Vector normal = cross_product(n1 - n0, n2 - n1);
       internal::Hexmeshing::Vector plane_up = [&]() -> internal::Hexmeshing::Vector {
         switch (plane_normal){
         default: return {1,0,0};
@@ -264,7 +277,6 @@ public:
    *             which volumes to keep in the final mesh.
    */
   void two_refinement(
-      Mesh_data_for_hexmeshing& mesh,
       int nb_levels = 1,
       bool trim = false)
   {
@@ -286,7 +298,6 @@ public:
   }
 
   void two_refinement_without_post_processing(
-      Mesh_data_for_hexmeshing& mesh,
       int nb_levels = 1)
   {
     using namespace internal::Hexmeshing;
