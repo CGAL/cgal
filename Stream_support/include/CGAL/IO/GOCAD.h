@@ -337,7 +337,6 @@ bool write_GOCAD(std::ostream& os,
  *                    of the iterator of `PointRange` and value type is a point type with floating point coordinates}
  *     \cgalParamDefault{`CGAL::Identity_property_map<std::iterator_traits<PointRange::iterator>::value_type>`}
  *   \cgalParamNEnd
- *
  *   \cgalParamNBegin{stream_precision}
  *     \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
  *     \cgalParamType{int}

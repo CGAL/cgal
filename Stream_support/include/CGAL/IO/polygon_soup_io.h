@@ -148,7 +148,6 @@ bool read_polygon_soup(const std::string& fname,
  *                    of the iterator of `PointRange` and value type is a point type with floating point coordinates}
  *     \cgalParamDefault{`CGAL::Identity_property_map<std::iterator_traits<PointRange::iterator>::value_type>`}
  *   \cgalParamNEnd
- *
  *   \cgalParamNBegin{verbose}
  *     \cgalParamDescription{indicates whether output warnings and error messages should be printed or not.}
  *     \cgalParamType{Boolean}
