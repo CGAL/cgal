@@ -23,6 +23,7 @@
 #include <CGAL/Straight_skeleton_3/internal/HDS/Polyhedron.h>
 #include <CGAL/Straight_skeleton_3/internal/SDS/Straight_skeleton.h>
 
+#include <array>
 #include <memory>
 #include <string>
 #include <sstream>
@@ -62,12 +63,6 @@ public:
   virtual ~DblEdgeMergeEvent()
   {
     node_.reset();
-    facet_1_.reset();
-    edge_11_.reset();
-    edge_12_.reset();
-    facet_2_.reset();
-    edge_21_.reset();
-    edge_22_.reset();
   }
 
   static DblEdgeMergeEventSPtr create()
@@ -87,10 +82,10 @@ public:
     this->node_ = node;
   }
 
-  const FT& getOffset() const
+  const FT& getTime() const
   {
     CGAL_SS3_DEBUG_SPTR(node_);
-    return node_->getOffset();
+    return node_->getTime();
   }
 
   FacetSPtr getFacet1() const
@@ -99,7 +94,7 @@ public:
     return facet_1_.lock();
   }
 
-  void setFacet1(FacetSPtr facet_1)
+  void setFacet1(const FacetSPtr& facet_1)
   {
     CGAL_SS3_DEBUG_SPTR(facet_1);
     this->facet_1_ = facet_1;
@@ -111,7 +106,7 @@ public:
     return edge_11_.lock();
   }
 
-  void setEdge11(EdgeSPtr edge_11)
+  void setEdge11(const EdgeSPtr& edge_11)
   {
     CGAL_SS3_DEBUG_SPTR(edge_11);
     this->edge_11_ = edge_11;
@@ -123,7 +118,7 @@ public:
     return edge_12_.lock();
   }
 
-  void setEdge12(EdgeSPtr edge_12)
+  void setEdge12(const EdgeSPtr& edge_12)
   {
     CGAL_SS3_DEBUG_SPTR(edge_12);
     this->edge_12_ = edge_12;
@@ -135,7 +130,7 @@ public:
     return facet_2_.lock();
   }
 
-  void setFacet2(FacetSPtr facet_2)
+  void setFacet2(const FacetSPtr& facet_2)
   {
     CGAL_SS3_DEBUG_SPTR(facet_2);
     this->facet_2_ = facet_2;
@@ -147,7 +142,7 @@ public:
     return edge_21_.lock();
   }
 
-  void setEdge21(EdgeSPtr edge_21)
+  void setEdge21(const EdgeSPtr& edge_21)
   {
     CGAL_SS3_DEBUG_SPTR(edge_21);
     this->edge_21_ = edge_21;
@@ -159,7 +154,7 @@ public:
     return edge_22_.lock();
   }
 
-  void setEdge22(EdgeSPtr edge_22)
+  void setEdge22(const EdgeSPtr& edge_22)
   {
     CGAL_SS3_DEBUG_SPTR(edge_22);
     this->edge_22_ = edge_22;
@@ -224,7 +219,7 @@ public:
     sstr.precision(17);
     sstr << "DblEdgeMergeEvent\n";
     sstr << "\t(ID=" << Base::getID() << ")\n";
-    sstr << "\t(offset=" << IO::StringFactory::fromDouble(CGAL::to_double(getOffset())) << ")\n";
+    sstr << "\t(offset=" << IO::StringFactory::fromDouble(CGAL::to_double(getTime())) << ")\n";
     sstr << "\t(node=" << *(getNode()->getPoint()) << ")";
     for (unsigned int i = 0; i < 4; ++i) {
       sstr << "\n\t(" << vertices[i]->toString() << ")";
@@ -238,7 +233,7 @@ public:
 
   bool operator==(const DblEdgeMergeEvent& other) const
   {
-    return (node_->getOffset() == other.node_->getOffset()) &&
+    return (node_->getTime() == other.node_->getTime()) &&
             (*(node_->getPoint()) == *(other.node_->getPoint())) &&
             ((facet_1_.lock() == other.facet_1_.lock() &&
               edge_11_.lock() == other.edge_11_.lock() &&

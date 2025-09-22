@@ -1,4 +1,4 @@
-#include <CGAL/Straight_skeleton_3/facet_offset.h>
+#include <CGAL/Straight_skeleton_3/face_offset.h>
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_rational.h>
@@ -236,7 +236,7 @@ bool assign_weights(const char* weights_filename,
     // be detected if its value type is, e.g., EPECK::FT
     // Could be FT if there were no intermediary saving
     put(fwm, f, CGAL::to_double(weight));
-    CGAL_postcondition(get(fwm, f) != 0);
+    CGAL_postcondition(get(fwm, f) > 0);
   }
 
   CGAL_SS3_TRACE_V(8, "E-W-S-N weights: " << x1_val << " " << x2_val << " " << y1_val << " " << y2_val);

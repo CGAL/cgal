@@ -94,12 +94,12 @@ public:
     std::map<VertexSPtr, int> vertex_to_index;
     int next_index = 1; // OBJ indices start at 1
 
-    for (VertexSPtr vertex : polyhedron->vertices()) {
+    for (const VertexSPtr& vertex : polyhedron->vertices()) {
       vertex_to_index[vertex] = next_index++;
     }
 
     // Write vertices
-    for (VertexSPtr vertex : polyhedron->vertices()) {
+    for (const VertexSPtr& vertex : polyhedron->vertices()) {
       Point3SPtr pt = vertex->getPoint();
       if (convert_to_double) {
         oss << "v " << CGAL::to_double(pt->x()) << " "
@@ -113,13 +113,13 @@ public:
     }
 
     // Write facets
-    for (FacetSPtr facet : polyhedron->facets()) {
-      bool do_triangulate_face = do_triangulate;
+    for (const FacetSPtr& facet : polyhedron->facets()) {
+      bool do_triangulate_facet = do_triangulate;
       if (facet->edges().size() < 3) {
-        do_triangulate_face = false;
+        do_triangulate_facet = false;
       }
 
-      if (do_triangulate_face) {
+      if (do_triangulate_facet) {
         Vector3SPtr n = KernelFactory::createVector3(facet->plane());
         CGAL_assertion(*n != CGAL::NULL_VECTOR);
 
@@ -128,7 +128,7 @@ public:
 
         std::map<VertexSPtr, PCDT_VH> face_vhs;
 
-        for (VertexSPtr vertex : facet->vertices()) {
+        for (const VertexSPtr& vertex : facet->vertices()) {
           auto res = face_vhs.emplace(vertex, PCDT_VH());
           if (res.second) { // first time seeing this point
             PCDT_VH vh = pcdt.insert(*(vertex->getPoint()));
@@ -138,17 +138,17 @@ public:
         }
 
         auto ne = 0;
-        for (EdgeSPtr edge : facet->edges()) {
+        for (const EdgeSPtr& edge : facet->edges()) {
           VertexSPtr v0 = edge->src(facet);
           VertexSPtr v1 = edge->dst(facet);
 
           if (*(v0->getPoint()) == *(v1->getPoint())) {
-            // std::cerr << "Warning: encountered degenerate edge @ " << *(v0->getPoint()) << std::endl;
+            CGAL_SS3_IO_TRACE("Warning: encountered degenerate edge @ " << *(v0->getPoint()));
 
             CGAL_assertion(v0->degree() != 1); // @todo handle that...
             VertexSPtr vm1 = edge->prev(facet)->src(facet);
 
-            // manually create a degenerate face so that the resulting mesh is conforming
+            // manually create a degenerate facet so that the resulting mesh is conforming
             oss << "f " << vertex_to_index[vm1] << " "
                         << vertex_to_index[v0] << " "
                         << vertex_to_index[v1] << "\n";
@@ -185,12 +185,12 @@ public:
           // CGAL_SS3_IO_TRACE_CODE(})
         }
 
-        if (ne < 3) { // degenerate face
-          std::cerr << "Warning: skipping degenerate face" << std::endl;
+        if (ne < 3) { // degenerate facet
+          CGAL_SS3_IO_TRACE("Warning: skipping degenerate facet");
           continue;
         }
 
-        if (do_triangulate_face) {
+        if (do_triangulate_facet) {
           std::unordered_map<PCDT_FH, bool> in_domain_map;
           boost::associative_property_map<std::unordered_map<PCDT_FH, bool>> in_domain(in_domain_map);
 
@@ -208,17 +208,16 @@ public:
         }
       }
 
-      if (!do_triangulate_face) {
+      if (!do_triangulate_facet) {
         std::set<EdgeSPtr> visited_edges;
 
-        for (EdgeSPtr edge : facet->edges()) {
+        for (const EdgeSPtr& edge : facet->edges()) {
           if (visited_edges.find(edge) != visited_edges.end()) {
             continue; // already visited
           }
 
           std::vector<VertexSPtr> boundary_vertices;
           EdgeSPtr start_edge = edge;
-          // std::cout << "start a walk @ " << start_edge->src(facet)->getID() << " " << start_edge->dst(facet)->getID() << std::endl;
           bool is_open = false;
 
           // Walk forward to collect boundary vertices

@@ -82,10 +82,10 @@ public:
     this->node_ = node;
   }
 
-  const FT& getOffset() const
+  const FT& getTime() const
   {
     CGAL_SS3_DEBUG_SPTR(node_);
-    return node_->getOffset();
+    return node_->getTime();
   }
 
   EdgeSPtr getEdgeBegin() const
@@ -94,7 +94,7 @@ public:
     return edge_begin_.lock();
   }
 
-  void setEdgeBegin(EdgeSPtr edge_begin)
+  void setEdgeBegin(const EdgeSPtr& edge_begin)
   {
     CGAL_SS3_DEBUG_SPTR(edge_begin);
     this->edge_begin_ = edge_begin;
@@ -171,7 +171,7 @@ public:
     sstr.precision(17);
     sstr << "TetrahedronEvent\n";
     sstr << "\t(ID=" << Base::getID() << ")\n";
-    sstr << "\t(offset=" << IO::StringFactory::fromDouble(CGAL::to_double(getOffset())) << ")\n";
+    sstr << "\t(offset=" << IO::StringFactory::fromDouble(CGAL::to_double(getTime())) << ")\n";
     sstr << "\t(node=" << *(getNode()->getPoint()) << ")\n";
     sstr << "\t(vertices";
     for (int i=0; i<4; ++i)
@@ -186,7 +186,7 @@ public:
 
   bool operator==(const TetrahedronEvent& other) const
   {
-    return (node_->getOffset() == other.node_->getOffset()) &&
+    return (node_->getTime() == other.node_->getTime()) &&
             (*(node_->getPoint()) == *(other.node_->getPoint())) &&
             (edge_begin_.lock() == other.edge_begin_.lock());
   }

@@ -44,6 +44,7 @@ public:
     return instance_;
   }
 
+  // Seek a file called 'StraightSkel.ini', either in the working directory
   std::string findDefaultFilename()
   {
     std::string name("StraightSkel");

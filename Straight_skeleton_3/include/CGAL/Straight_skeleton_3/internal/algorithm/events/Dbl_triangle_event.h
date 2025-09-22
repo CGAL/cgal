@@ -80,10 +80,10 @@ public:
     this->node_ = node;
   }
 
-  const FT& getOffset() const
+  const FT& getTime() const
   {
     CGAL_SS3_DEBUG_SPTR(node_);
-    return node_->getOffset();
+    return node_->getTime();
   }
 
   EdgeSPtr getEdge() const
@@ -92,7 +92,7 @@ public:
     return edge_.lock();
   }
 
-  void setEdge(EdgeSPtr edge)
+  void setEdge(const EdgeSPtr& edge)
   {
     CGAL_SS3_DEBUG_SPTR(edge);
     this->edge_ = edge;
@@ -151,7 +151,7 @@ public:
     sstr.precision(17);
     sstr << "DblTriangleEvent\n";
     sstr << "\t(ID=" << Base::getID() << ")\n";
-    sstr << "\t(offset=" << IO::StringFactory::fromDouble(CGAL::to_double(getOffset())) << ")\n";
+    sstr << "\t(offset=" << IO::StringFactory::fromDouble(CGAL::to_double(getTime())) << ")\n";
     sstr << "\t(node=" << *(getNode()->getPoint()) << ")\n";
     sstr << "\t(edge=" << edge->getID() << "\n\t\t[" << edge->getVertexSrc()->toString() << "\n\t\t "
                                                      << edge->getVertexDst()->toString() << "])";
@@ -159,7 +159,7 @@ public:
   }
 
   bool operator==(const DblTriangleEvent& other) const {
-    return (node_->getOffset() == other.node_->getOffset()) &&
+    return (node_->getTime() == other.node_->getTime()) &&
             (*(node_->getPoint()) == *(other.node_->getPoint())) &&
             (edge_.lock() == other.edge_.lock());
   }

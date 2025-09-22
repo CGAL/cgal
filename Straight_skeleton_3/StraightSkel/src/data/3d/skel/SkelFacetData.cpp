@@ -57,7 +57,7 @@ void SkelFacetData::setFacetOrigin(FacetSPtr facet_origin) {
 
 
 const CGAL::FT& SkelFacetData::getSpeed() const {
-    CGAL_assertion(speed_ != 0);
+    CGAL_assertion(speed_ > 0);
     return speed_;
 }
 

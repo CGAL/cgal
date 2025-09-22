@@ -12142,7 +12142,48 @@ VertexSPtr Vertex::prev(const FacetSPtr& facet) const
 
 // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
 
+static void Perturbation::randMovePoints(const PolyhedronSPtr& polyhedron)
+{
+  CGAL_SS3_DEBUG_SPTR(polyhedron);
 
+  double range = 0.001;
+  ConfigurationSPtr config = Configuration::getInstance();
+  if (config->isLoaded()) {
+    double value = config->getDouble("main", "perturbation_epsilon");
+    if (value != 0.0) {
+      range = value;
+    }
+  }
+
+  CGAL_SS3_TRANSF_TRACE("Points will be moved randomly...");
+  CGAL_SS3_TRANSF_TRACE("  perturbation_epsilon =" << range);
+
+  // If we are applying a random point perturbation, the mesh must be a triangle mesh.
+  // Otherwise, points will no longer be on the supporting planes of their incident facets.
+  for (const FacetSPtr& facet : polyhedron->facets()) {
+    if (facet->vertices().size() != 3) {
+      CGAL_SS3_TRANSF_TRACE("Warning: facet " << facet->getID() << " is not a triangle but we are displacing its vertices");
+    }
+  }
+
+  for (const VertexSPtr& vertex : polyhedron->vertices()) {
+    Point3SPtr p = vertex->getPoint();
+    std::array<double, 3> v_r = randVec(-range, range);
+    // since it's random, move to doubles to get static filters and avoid DAGs
+    Point3SPtr p_t = KernelFactory::createPoint3(CGAL::to_double(p->x()) + v_r[0],
+                                                  CGAL::to_double(p->y()) + v_r[1],
+                                                  CGAL::to_double(p->z()) + v_r[2]);
+    vertex->setPoint(p_t);
+  }
+
+  // recompute normalized planes to ensure points are on the supporting planes
+  polyhedron->initPlanes();
+  normalizeFacetPlanes(polyhedron);
+  CGAL_assertion_code(bool success =)
+    Transformation::resetPoints(polyhedron);
+  CGAL_assertion(success);
+  CGAL_postcondition(polyhedron && polyhedron->isConsistent());
+}
 
 
 // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //

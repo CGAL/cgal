@@ -80,13 +80,13 @@ public:
   /**
   * also adds the node
   */
-  void addEvent(AbstractEventSPtr event)
+  void addEvent(const AbstractEventSPtr& event)
   {
     typename std::list<AbstractEventSPtr>::iterator it = events_.insert(events_.end(), event);
     event->setListIt(it);
   }
 
-  bool removeEvent(AbstractEventSPtr event)
+  bool removeEvent(const AbstractEventSPtr& event)
   {
     bool result = false;
     events_.erase(event->getListIt());

@@ -49,17 +49,17 @@
 #define CGAL_SS3_TRACE_LOC CGAL_SS3_TRACE_STREAM << "[DEBUG] " << __FILE__ << ":" << __LINE__ << ": ";
 
 #ifndef CGAL_SS3_TRACE_VERBOSITY
-#  define CGAL_SS3_TRACE_VERBOSITY 2
+#  define CGAL_SS3_TRACE_VERBOSITY 4
 #endif
 
 #define CGAL_SS3_ENABLE_TRACE // generic
 // #define CGAL_SS3_TRAITS_ENABLE_TRACE // traits & kernel
-// #define CGAL_SS3_HDS_ENABLE_TRACE // Polyhedron and related classes
+#define CGAL_SS3_HDS_ENABLE_TRACE // Polyhedron and related classes
 // #define CGAL_SS3_SKEL_DS_ENABLE_TRACE // Skeleton and related classes
-// #define CGAL_SS3_IO_ENABLE_TRACE // DB, IO, ...
-// #define CGAL_SS3_TRANSF_ENABLE_TRACE // Polyhedron transformation (face merging, perturbations, etc.)
-// #define CGAL_SS3_SPLITTER_ENABLE_TRACE // vertex splitters
-// #define CGAL_SS3_ALGO_ENABLE_TRACE // supporting algorithms
+#define CGAL_SS3_IO_ENABLE_TRACE // DB, IO, ...
+#define CGAL_SS3_TRANSF_ENABLE_TRACE // Polyhedron transformation (face merging, perturbations, etc.)
+#define CGAL_SS3_SPLITTER_ENABLE_TRACE // vertex splitters
+#define CGAL_SS3_ALGO_ENABLE_TRACE // supporting algorithms
 #define CGAL_SS3_CORE_ENABLE_TRACE // main algo
 
 // -------------------------------------------------------------------------------------------------

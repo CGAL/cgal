@@ -142,9 +142,9 @@ public:
 
     Plane3SPtr result = Plane3SPtr();
 
-    CGAL_SS3_TRAITS_TRACE("Warning: bisector call brings a SQRT");
-
     // @tmp Hardcore disable the SQRT
+    CGAL_SS3_TRAITS_TRACE("Warning: bisector call brings a SQRT");
+    CGAL_assertion(false);
     std::exit(1);
 
     result = KernelFactory::createPlane3(CGAL::bisector(*plane1, *plane2));
@@ -196,7 +196,7 @@ public:
     return result;
   }
 
-  static bool isNormalizedPlane(Plane3SPtr plane)
+  static bool hasNormalizedPlane(Plane3SPtr plane)
   {
     CGAL_SS3_DEBUG_SPTR(plane);
 
@@ -237,65 +237,6 @@ public:
     } else if (side == CGAL::ON_NEGATIVE_SIDE) {
       result = -1;
     }
-    return result;
-  }
-
-  double angle(Vector3SPtr v1, Vector3SPtr v2)
-  {
-    CGAL_SS3_DEBUG_SPTR(v1);
-    CGAL_SS3_DEBUG_SPTR(v2);
-    double result = 0.0;
-    FT arg = 0.0;
-    arg = ((*v1)*(*v2)) / CGAL::disallowed_sqrt(v1->squared_length() * v2->squared_length());
-    // fixes issues with floating point precision
-    if (arg <= -1.0) {
-      result = CGAL_PI;
-    } else if (arg >= 1.0) {
-      result = 0.0;
-    } else {
-      result = acos(CGAL::to_double(arg));
-    }
-    return result;
-  }
-
-  double angle(Line3SPtr line1, Line3SPtr line2)
-  {
-    CGAL_SS3_DEBUG_SPTR(line1);
-    CGAL_SS3_DEBUG_SPTR(line2);
-    double result = 0.0;
-    Vector3SPtr v1 = KernelFactory::createVector3(line1);
-    Vector3SPtr v2 = KernelFactory::createVector3(line2);
-    result = angle(v1, v2);
-    return result;
-  }
-
-  double angle(Plane3SPtr plane, Line3SPtr line)
-  {
-    CGAL_SS3_DEBUG_SPTR(plane);
-    CGAL_SS3_DEBUG_SPTR(line);
-    double result = 0.0;
-    Vector3SPtr v_plane = KernelFactory::createVector3(plane);
-    Vector3SPtr v_line = KernelFactory::createVector3(line);
-    result = angle(v_plane, v_line);
-    if (result > CGAL_PI/2.0) {
-      result = result - CGAL_PI/2.0;
-    } else {
-      result = CGAL_PI/2.0 - result;
-    }
-    return result;
-  }
-
-  /**
-    * Computes the angle between the normal vectors of given planes.
-    */
-  static double angle(Plane3SPtr plane1, Plane3SPtr plane2)
-  {
-    CGAL_SS3_DEBUG_SPTR(plane1);
-    CGAL_SS3_DEBUG_SPTR(plane2);
-    double result = 0.0;
-    Vector3SPtr v1 = KernelFactory::createVector3(plane1);
-    Vector3SPtr v2 = KernelFactory::createVector3(plane2);
-    result = angle(v1, v2);
     return result;
   }
 

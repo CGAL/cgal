@@ -47,7 +47,7 @@ private:
   using EdgeSPtr = typename Polyhedron::EdgeSPtr;
 
 private:
-  using PolyhedronTransformation = algorithm::PolyhedronTransformation<Traits>;
+  using Transformation = algorithm::PolyhedronTransformation<Traits>;
   using SelfIntersection = algorithm::SelfIntersection<Traits>;
 
 private:
@@ -77,13 +77,11 @@ public:
     return std::make_shared<ConvexVertexSplitter>();
   }
 
-  static int countConvexEdges(PolyhedronSPtr polyhedron)
+  static int countConvexEdges(const PolyhedronSPtr& polyhedron)
   {
     CGAL_SS3_DEBUG_SPTR(polyhedron);
     int result = 0;
-    typename std::list<EdgeSPtr>::iterator it_e = polyhedron->edges().begin();
-    while (it_e != polyhedron->edges().end()) {
-      EdgeSPtr edge = *it_e++;
+    for (EdgeSPtr edge : polyhedron->edges()) {
       if (!edge->isReflex()) {
         result++;
       }
@@ -91,7 +89,7 @@ public:
     return result;
   }
 
-  virtual PolyhedronSPtr splitVertex(VertexSPtr vertex)
+  virtual PolyhedronSPtr splitVertex(const VertexSPtr& vertex)
   {
     CGAL_SS3_DEBUG_SPTR(vertex);
     CGAL_SS3_SPLITTER_TRACE_V(16, "\n> Splitting " << vertex->toString());
@@ -106,13 +104,12 @@ public:
     combi combi_opt;
     PolyhedronSPtr poly_opt;
     PolyhedronSPtr poly_opt_offset;
-    int num_convex_edges = 0;
     int num_convex_edges_opt = 0;
 
     std::list<combi>::iterator it_combi = combinations.begin();
     while (it_combi != combinations.end()) {
       combi combination = *it_combi++;
-      // CGAL_SS3_SPLITTER_TRACE_V(64, "-- Testing split-combination: " << Base::combiToString(combination));
+      CGAL_SS3_SPLITTER_TRACE_V(64, "-- Testing split-combination: " << Base::combiToString(combination));
 
       // don't take it out of the loop
       PolyhedronSPtr poly_c = Base::copyVertex(vertex);
@@ -123,24 +120,16 @@ public:
       VertexSPtr vertex_c = poly_c->vertices().front();
       Base::splitVertex(vertex_c, combination);
 
-      PolyhedronSPtr poly_c_offset = PolyhedronTransformation::shiftFacets(poly_c, -1.0);
-      if (!poly_c_offset) {
+      PolyhedronSPtr poly_c_offset = Base::copyVertex(vertex);
+      bool okShift = Transformation::shiftFacetsDegree1(poly_c_offset, -1.0);
+      if (!okShift) {
         CGAL_SS3_SPLITTER_TRACE("Warning: failed to create offset of corner");
         continue;
       }
 
-      // static int test_id = -1;
-      // ++test_id;
-      // IO::OBJFile::save("results/split_" + std::to_string(test_id) + ".obj", poly_c, false);
-      // IO::OBJFile::save("results/split_" + std::to_string(test_id) + "_offset.obj", poly_c_offset, false);
-
-      // poly_c->dumpEdges("results/last_convex_split_base");
-      // poly_c_offset->dumpEdges("results/last_convex_split_offset");
-
-      num_convex_edges = countConvexEdges(poly_c_offset);
       auto updateOptimalCombination = [&](const combi& combination,
-                                          PolyhedronSPtr& poly_c,
-                                          PolyhedronSPtr& poly_c_offset,
+                                          const PolyhedronSPtr& poly_c,
+                                          const PolyhedronSPtr& poly_c_offset,
                                           int num_convex_edges)
       {
         if (!SelfIntersection::hasSelfIntersectingSurface(poly_c_offset)) {
@@ -151,6 +140,8 @@ public:
           num_convex_edges_opt = num_convex_edges;
         }
       };
+
+      int num_convex_edges = countConvexEdges(poly_c_offset);
 
       if (!poly_opt) {
         updateOptimalCombination(combination, poly_c, poly_c_offset, num_convex_edges);

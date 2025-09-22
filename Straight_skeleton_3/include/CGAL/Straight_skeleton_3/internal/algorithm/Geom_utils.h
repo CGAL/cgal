@@ -8,8 +8,8 @@
 //
 // Author(s)     : Mael Rouxel-Labbé
 
-#ifndef CGAL_STRAIGHT_SKELETON_3_INTERNAL_ALGORITHM_OFFSET_UTILS_H
-#define CGAL_STRAIGHT_SKELETON_3_INTERNAL_ALGORITHM_OFFSET_UTILS_H
+#ifndef CGAL_STRAIGHT_SKELETON_3_INTERNAL_ALGORITHM_GEOM_UTILS_H
+#define CGAL_STRAIGHT_SKELETON_3_INTERNAL_ALGORITHM_GEOM_UTILS_H
 
 #include <CGAL/Straight_skeleton_3/internal/kernel/Kernel_factory.h>
 #include <CGAL/Straight_skeleton_3/internal/kernel/Kernel_wrapper.h>
@@ -29,7 +29,7 @@ namespace internal {
 namespace algorithm {
 
 template <typename K>
-class OffsetUtils
+class GeomUtils
 {
   using FT = typename K::FT;
   using Point_3 = typename K::Point_3;
@@ -42,10 +42,10 @@ class OffsetUtils
   using KernelFactory = kernel::KernelFactory<K>;
 
 public:
-  static Plane3SPtr offsetPlane(Plane3SPtr plane, const FT& offset)
+  static Plane3SPtr offsetPlane(const Plane3SPtr& plane, const FT& offset)
   {
     CGAL_SS3_DEBUG_SPTR(plane);
-    CGAL_precondition(KernelWrapper::isNormalizedPlane(plane));
+    CGAL_precondition(KernelWrapper::hasNormalizedPlane(plane));
 
     CGAL_SS3_TRAITS_TRACE("Plane offset from: " << *plane);
 
@@ -60,10 +60,10 @@ public:
     return result;
   }
 
-  static Point3SPtr intersectionPointOffsetPlanes(Plane3SPtr plane_0, const FT& w0,
-                                                  Plane3SPtr plane_1, const FT& w1,
-                                                  Plane3SPtr plane_2, const FT& w2,
-                                                  Plane3SPtr plane_3, const FT& w3)
+  static Point3SPtr intersectionPointOffsetPlanes(const Plane3SPtr& plane_0, const FT& w0,
+                                                  const Plane3SPtr& plane_1, const FT& w1,
+                                                  const Plane3SPtr& plane_2, const FT& w2,
+                                                  const Plane3SPtr& plane_3, const FT& w3)
   {
     CGAL_SS3_DEBUG_SPTR(plane_0);
     CGAL_SS3_DEBUG_SPTR(plane_1);
@@ -98,10 +98,10 @@ public:
                                                             a2, b2, c2, d2,
                                                             a3, b3, c3, d3));
 
-    CGAL_assertion(KernelWrapper::isNormalizedPlane(plane_0));
-    CGAL_assertion(KernelWrapper::isNormalizedPlane(plane_1));
-    CGAL_assertion(KernelWrapper::isNormalizedPlane(plane_2));
-    CGAL_assertion(KernelWrapper::isNormalizedPlane(plane_3));
+    CGAL_assertion(KernelWrapper::hasNormalizedPlane(plane_0));
+    CGAL_assertion(KernelWrapper::hasNormalizedPlane(plane_1));
+    CGAL_assertion(KernelWrapper::hasNormalizedPlane(plane_2));
+    CGAL_assertion(KernelWrapper::hasNormalizedPlane(plane_3));
 
     FT den = (-a0*b1*c2*w3 + a0*b1*c3*w2 + a0*b2*c1*w3 - a0*b2*c3*w1 - a0*b3*c1*w2 + a0*b3*c2*w1 + a1*b0*c2*w3 - a1*b0*c3*w2 - a1*b2*c0*w3 + a1*b2*c3*w0 + a1*b3*c0*w2 - a1*b3*c2*w0 - a2*b0*c1*w3 + a2*b0*c3*w1 + a2*b1*c0*w3 - a2*b1*c3*w0 - a2*b3*c0*w1 + a2*b3*c1*w0 + a3*b0*c1*w2 - a3*b0*c2*w1 - a3*b1*c0*w2 + a3*b1*c2*w0 + a3*b2*c0*w1 - a3*b2*c1*w0);
 
@@ -114,15 +114,13 @@ public:
 
     Point3SPtr point = KernelFactory::createPoint3(x, y, z);
 
-    // @todo post condition that the points are at the same (weighted) time from the faces
-
     return point;
   }
 
-  static FT intersectionTimeOffsetPlanes(Plane3SPtr plane_0, const FT& w0,
-                                         Plane3SPtr plane_1, const FT& w1,
-                                         Plane3SPtr plane_2, const FT& w2,
-                                         Plane3SPtr plane_3, const FT& w3,
+  static FT intersectionTimeOffsetPlanes(const Plane3SPtr& plane_0, const FT& w0,
+                                         const Plane3SPtr& plane_1, const FT& w1,
+                                         const Plane3SPtr& plane_2, const FT& w2,
+                                         const Plane3SPtr& plane_3, const FT& w3,
                                          const std::optional<FT>& past_bound = std::nullopt,
                                          const std::optional<FT>& future_bound = std::nullopt)
   {
@@ -159,10 +157,10 @@ public:
                                                             a2, b2, c2, d2,
                                                             a3, b3, c3, d3));
 
-    CGAL_assertion(KernelWrapper::isNormalizedPlane(plane_0));
-    CGAL_assertion(KernelWrapper::isNormalizedPlane(plane_1));
-    CGAL_assertion(KernelWrapper::isNormalizedPlane(plane_2));
-    CGAL_assertion(KernelWrapper::isNormalizedPlane(plane_3));
+    CGAL_assertion(KernelWrapper::hasNormalizedPlane(plane_0));
+    CGAL_assertion(KernelWrapper::hasNormalizedPlane(plane_1));
+    CGAL_assertion(KernelWrapper::hasNormalizedPlane(plane_2));
+    CGAL_assertion(KernelWrapper::hasNormalizedPlane(plane_3));
 
     FT den = (-a0*b1*c2*w3 + a0*b1*c3*w2 + a0*b2*c1*w3 - a0*b2*c3*w1 - a0*b3*c1*w2 + a0*b3*c2*w1 + a1*b0*c2*w3 - a1*b0*c3*w2 - a1*b2*c0*w3 + a1*b2*c3*w0 + a1*b3*c0*w2 - a1*b3*c2*w0 - a2*b0*c1*w3 + a2*b0*c3*w1 + a2*b1*c0*w3 - a2*b1*c3*w0 - a2*b3*c0*w1 + a2*b3*c1*w0 + a3*b0*c1*w2 - a3*b0*c2*w1 - a3*b1*c0*w2 + a3*b1*c2*w0 + a3*b2*c0*w1 - a3*b2*c1*w0);
 
@@ -181,10 +179,10 @@ public:
     return t;
   }
 
-  static std::pair<Point3SPtr, FT> intersectionPointAndTimeOffsetPlanes(Plane3SPtr plane_0, const FT& w0,
-                                                                        Plane3SPtr plane_1, const FT& w1,
-                                                                        Plane3SPtr plane_2, const FT& w2,
-                                                                        Plane3SPtr plane_3, const FT& w3,
+  static std::pair<Point3SPtr, FT> intersectionPointAndTimeOffsetPlanes(const Plane3SPtr& plane_0, const FT& w0,
+                                                                        const Plane3SPtr& plane_1, const FT& w1,
+                                                                        const Plane3SPtr& plane_2, const FT& w2,
+                                                                        const Plane3SPtr& plane_3, const FT& w3,
                                                                         const std::optional<FT>& past_bound = std::nullopt,
                                                                         const std::optional<FT>& future_bound = std::nullopt)
   {
@@ -221,16 +219,24 @@ public:
                                                             a2, b2, c2, d2,
                                                             a3, b3, c3, d3));
 
-    CGAL_assertion(KernelWrapper::isNormalizedPlane(plane_0));
-    CGAL_assertion(KernelWrapper::isNormalizedPlane(plane_1));
-    CGAL_assertion(KernelWrapper::isNormalizedPlane(plane_2));
-    CGAL_assertion(KernelWrapper::isNormalizedPlane(plane_3));
-
-    FT tn = (-a0*b1*c2*d3 + a0*b1*c3*d2 + a0*b2*c1*d3 - a0*b2*c3*d1 - a0*b3*c1*d2 + a0*b3*c2*d1 + a1*b0*c2*d3 - a1*b0*c3*d2 - a1*b2*c0*d3 + a1*b2*c3*d0 + a1*b3*c0*d2 - a1*b3*c2*d0 - a2*b0*c1*d3 + a2*b0*c3*d1 + a2*b1*c0*d3 - a2*b1*c3*d0 - a2*b3*c0*d1 + a2*b3*c1*d0 + a3*b0*c1*d2 - a3*b0*c2*d1 - a3*b1*c0*d2 + a3*b1*c2*d0 + a3*b2*c0*d1 - a3*b2*c1*d0);
+    CGAL_assertion(KernelWrapper::hasNormalizedPlane(plane_0));
+    CGAL_assertion(KernelWrapper::hasNormalizedPlane(plane_1));
+    CGAL_assertion(KernelWrapper::hasNormalizedPlane(plane_2));
+    CGAL_assertion(KernelWrapper::hasNormalizedPlane(plane_3));
 
     FT den = (-a0*b1*c2*w3 + a0*b1*c3*w2 + a0*b2*c1*w3 - a0*b2*c3*w1 - a0*b3*c1*w2 + a0*b3*c2*w1 + a1*b0*c2*w3 - a1*b0*c3*w2 - a1*b2*c0*w3 + a1*b2*c3*w0 + a1*b3*c0*w2 - a1*b3*c2*w0 - a2*b0*c1*w3 + a2*b0*c3*w1 + a2*b1*c0*w3 - a2*b1*c3*w0 - a2*b3*c0*w1 + a2*b3*c1*w0 + a3*b0*c1*w2 - a3*b0*c2*w1 - a3*b1*c0*w2 + a3*b1*c2*w0 + a3*b2*c0*w1 - a3*b2*c1*w0);
 
-    // Bound checks. The algorithm works with a decreasing t, so past is greater than future.
+#if 0 // no need to check with weights > 0, and perturbed input planes
+    if (CGAL::is_zero(den)) {
+      CGAL_SS3_TRAITS_TRACE("Planes do not intersect in a single point (den == 0)");
+      return { };
+    }
+#endif
+
+    FT tn = (-a0*b1*c2*d3 + a0*b1*c3*d2 + a0*b2*c1*d3 - a0*b2*c3*d1 - a0*b3*c1*d2 + a0*b3*c2*d1 + a1*b0*c2*d3 - a1*b0*c3*d2 - a1*b2*c0*d3 + a1*b2*c3*d0 + a1*b3*c0*d2 - a1*b3*c2*d0 - a2*b0*c1*d3 + a2*b0*c3*d1 + a2*b1*c0*d3 - a2*b1*c3*d0 - a2*b3*c0*d1 + a2*b3*c1*d0 + a3*b0*c1*d2 - a3*b0*c2*d1 - a3*b1*c0*d2 + a3*b1*c2*d0 + a3*b2*c0*d1 - a3*b2*c1*d0);
+
+    // Bound checks.
+    // The algorithm works with a decreasing time, so a past value is greater than a future value.
     //
     // Empirically:
     // - It's about as likely to be greater than 'past' than it is to be lower than 'future'
@@ -239,8 +245,8 @@ public:
     //
     // t >= past_bound
     // tn/den - past_bound >= 0
-    //   | tn - den*past_bound >= 0 if den > 0 => + (tn - den*past_bound) >= 0
-    //   | tn - den*past_bound <= 0 if den < 0 => - (tn - den*past_bound) >= 0
+    //   { tn - den*past_bound >= 0 if den > 0 => + (tn - den*past_bound) >= 0
+    //   { tn - den*past_bound <= 0 if den < 0 => - (tn - den*past_bound) >= 0
     // sign(den) * (tn - den*past_bound) >= 0
     CGAL::Sign s = CGAL::sign(den);
     if (past_bound && !CGAL::is_negative(s * (tn - *past_bound * den))) {
@@ -283,4 +289,4 @@ public:
 } // namespace Straight_skeletons_3
 } // namespace CGAL
 
-#endif /* CGAL_STRAIGHT_SKELETON_3_INTERNAL_ALGORITHM_OFFSET_UTILS_H */
+#endif /* CGAL_STRAIGHT_SKELETON_3_INTERNAL_ALGORITHM_GEOM_UTILS_H */

@@ -80,7 +80,7 @@ public:
     return facet_b_;
   }
 
-  void setFacetB(FacetSPtr facet_b)
+  void setFacetB(const FacetSPtr& facet_b)
   {
     facet_b_ = facet_b;
   }
@@ -91,7 +91,7 @@ public:
     return facet_f_;
   }
 
-  void setFacetF(FacetSPtr facet_f)
+  void setFacetF(const FacetSPtr& facet_f)
   {
     facet_f_ = facet_f;
   }

@@ -87,12 +87,12 @@ public:
     this->point_ = point;
   }
 
-  const FT& getOffset() const
+  const FT& getTime() const
   {
     return offset_;
   }
 
-  void setOffset(const FT& offset)
+  void setTime(const FT& offset)
   {
     this->offset_ = offset;
   }

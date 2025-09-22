@@ -26,7 +26,6 @@ namespace Straight_skeletons_3 {
 namespace internal {
 namespace algorithm {
 
-// @todo also add all the other boiler code as for other events (DAO, etc.)
 template <typename Traits>
 class VanishEvent
   : public AbstractEvent<Traits>
@@ -57,7 +56,6 @@ public:
   virtual ~VanishEvent()
   {
     node_.reset();
-    edge_.reset(); // @fixme is there still a point since edge_ is a weak pointer?
   }
 
   static VanishEventSPtr create()
@@ -77,10 +75,10 @@ public:
     this->node_ = node;
   }
 
-  const FT& getOffset() const
+  const FT& getTime() const
   {
     CGAL_SS3_DEBUG_SPTR(node_);
-    return node_->getOffset();
+    return node_->getTime();
   }
 
   EdgeSPtr getEdge() const
@@ -89,7 +87,7 @@ public:
     return edge_.lock();
   }
 
-  void setEdge(EdgeSPtr edge)
+  void setEdge(const EdgeSPtr& edge)
   {
     CGAL_SS3_DEBUG_SPTR(edge);
     this->edge_ = edge;
@@ -117,7 +115,7 @@ public:
     sstr.precision(17);
     sstr << "VanishEvent\n";
     sstr << "\t(ID=" << Base::getID() << ")\n";
-    sstr << "\t(offset=" << IO::StringFactory::fromDouble(CGAL::to_double(getOffset())) << ")\n";
+    sstr << "\t(offset=" << IO::StringFactory::fromDouble(CGAL::to_double(getTime())) << ")\n";
     sstr << "\t(node=" << *(getNode()->getPoint()) << ")\n";
     sstr << "\t(edgeA=" << edge->getID() << "\n\t\t[" << edge->getVertexSrc()->toString() << "\n\t\t "
                                                       << edge->getVertexDst()->toString() << "])";
@@ -126,7 +124,7 @@ public:
 
   bool operator==(const VanishEvent& other) const
   {
-    return (node_->getOffset() == other.node_->getOffset()) &&
+    return (node_->getTime() == other.node_->getTime()) &&
             // && (edge_.lock() == other.edge_.lock()) // because of multiple reps...
             (*(node_->getPoint()) == *(other.node_->getPoint()));
   }

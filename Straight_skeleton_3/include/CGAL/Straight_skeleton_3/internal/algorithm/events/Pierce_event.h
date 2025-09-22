@@ -84,10 +84,10 @@ public:
     this->node_ = node;
   }
 
-  const FT& getOffset() const
+  const FT& getTime() const
   {
     CGAL_SS3_DEBUG_SPTR(node_);
-    return node_->getOffset();
+    return node_->getTime();
   }
 
   FacetSPtr getFacet() const
@@ -96,7 +96,7 @@ public:
     return facet_.lock();
   }
 
-  void setFacet(FacetSPtr facet)
+  void setFacet(const FacetSPtr& facet)
   {
     CGAL_SS3_DEBUG_SPTR(facet);
     this->facet_ = facet;
@@ -108,7 +108,7 @@ public:
     return vertex_.lock();
   }
 
-  void setVertex(VertexSPtr vertex)
+  void setVertex(const VertexSPtr& vertex)
   {
     CGAL_SS3_DEBUG_SPTR(vertex);
     this->vertex_ = vertex;
@@ -137,16 +137,16 @@ public:
     sstr.precision(17);
     sstr << "PierceEvent\n";
     sstr << "\t(ID=" << Base::getID() << ")\n";
-    sstr << "\t(offset=" << IO::StringFactory::fromDouble(CGAL::to_double(getOffset())) << ")\n";
+    sstr << "\t(offset=" << IO::StringFactory::fromDouble(CGAL::to_double(getTime())) << ")\n";
     sstr << "\t(node=" << *(getNode()->getPoint()) << ")\n";
     sstr << "\t(vertex=" << vertex->toString() << ")\n";
-    sstr << "\t(face=" << facet->getID() << ")";
+    sstr << "\t(facet=" << facet->getID() << ")";
     return sstr.str();
   }
 
   bool operator==(const PierceEvent& other) const
   {
-    return (node_->getOffset() == other.node_->getOffset()) &&
+    return (node_->getTime() == other.node_->getTime()) &&
             (*(node_->getPoint()) == *(other.node_->getPoint())) &&
             (facet_.lock() == other.facet_.lock()) &&
             (vertex_.lock() == other.vertex_.lock());

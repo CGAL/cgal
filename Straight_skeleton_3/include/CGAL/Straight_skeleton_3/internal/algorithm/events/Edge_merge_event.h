@@ -61,9 +61,6 @@ public:
   virtual ~EdgeMergeEvent()
   {
     node_.reset();
-    facet_.reset();
-    edge1_.reset();
-    edge2_.reset();
   }
 
   static EdgeMergeEventSPtr create()
@@ -82,10 +79,10 @@ public:
     this->node_ = node;
   }
 
-  const FT& getOffset() const
+  const FT& getTime() const
   {
     CGAL_SS3_DEBUG_SPTR(node_);
-    return node_->getOffset();
+    return node_->getTime();
   }
 
   FacetSPtr getFacet() const
@@ -94,7 +91,7 @@ public:
     return facet_.lock();
   }
 
-  void setFacet(FacetSPtr facet)
+  void setFacet(const FacetSPtr& facet)
   {
     CGAL_SS3_DEBUG_SPTR(facet);
     this->facet_ = facet;
@@ -106,7 +103,7 @@ public:
     return edge1_.lock();
   }
 
-  void setEdge1(EdgeSPtr edge1)
+  void setEdge1(const EdgeSPtr& edge1)
   {
     CGAL_SS3_DEBUG_SPTR(edge1);
     this->edge1_ = edge1;
@@ -118,7 +115,7 @@ public:
     return edge2_.lock();
   }
 
-  void setEdge2(EdgeSPtr edge2)
+  void setEdge2(const EdgeSPtr& edge2)
   {
     this->edge2_ = edge2;
   }
@@ -144,7 +141,7 @@ public:
     sstr.precision(17);
     sstr << "EdgeMergeEvent\n";
     sstr << "\t(ID=" << Base::getID() << ")\n";
-    sstr << "\t(offset=" << IO::StringFactory::fromDouble(CGAL::to_double(getOffset())) << ")\n";
+    sstr << "\t(offset=" << IO::StringFactory::fromDouble(CGAL::to_double(getTime())) << ")\n";
     sstr << "\t(node=" << *(getNode()->getPoint()) << ")\n";
     sstr << "\t(facet=" << facet->getID() << ")\n";
     sstr << "\t(edgeA=" << edge1->getID() << "\n\t\t[" << edge1->getVertexSrc()->toString() << "\n\t\t "
@@ -156,7 +153,7 @@ public:
 
   bool operator==(const EdgeMergeEvent& other) const
   {
-    return (node_->getOffset() == other.node_->getOffset()) &&
+    return (node_->getTime() == other.node_->getTime()) &&
             (*(node_->getPoint()) == *(other.node_->getPoint())) &&
             (facet_.lock() == other.facet_.lock()) &&
             ((edge1_.lock() == other.edge1_.lock() &&

@@ -273,7 +273,7 @@ public:
     return result;
   }
 
-  static PolyhedronSPtr copyVertex(VertexSPtr vertex)
+  static PolyhedronSPtr copyVertex(const VertexSPtr& vertex)
   {
     CGAL_SS3_DEBUG_SPTR(vertex);
     PolyhedronSPtr result = Polyhedron::create();
@@ -341,7 +341,8 @@ public:
     return result;
   }
 
-  static PolyhedronSPtr splitVertex(VertexSPtr vertex, const combi& combination)
+  static PolyhedronSPtr splitVertex(const VertexSPtr& vertex,
+                                    const combi& combination)
   {
     CGAL_SS3_DEBUG_SPTR(vertex);
     CGAL_precondition(vertex->degree() - 3 == combination.size());
@@ -450,7 +451,7 @@ public:
   }
 
   static PolyhedronSPtr apply(PolyhedronSPtr poly_split,
-                              VertexSPtr vertex)
+                              const VertexSPtr& vertex)
   {
     CGAL_SS3_DEBUG_SPTR(poly_split);
     CGAL_SS3_DEBUG_SPTR(vertex);
@@ -555,7 +556,7 @@ public:
     return polyhedron;
   }
 
-  virtual PolyhedronSPtr splitVertex(VertexSPtr vertex)
+  virtual PolyhedronSPtr splitVertex(const VertexSPtr& vertex)
   {
     CGAL_SS3_DEBUG_SPTR(vertex);
     PolyhedronSPtr polyhedron = vertex->getPolyhedron();

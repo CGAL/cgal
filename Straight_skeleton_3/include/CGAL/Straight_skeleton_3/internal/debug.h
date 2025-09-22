@@ -13,8 +13,6 @@
 
 #include <CGAL/Straight_skeleton_3/internal/StackTrace.h>
 
-#include <CGAL/number_utils.h>
-
 #include <iostream>
 
 // -------------------------------------------------------------------------------------------------
@@ -45,7 +43,7 @@
 #define CGAL_SS3_HDS_ENABLE_TRACE // Polyhedron and related classes
 // #define CGAL_SS3_SKEL_DS_ENABLE_TRACE // Skeleton and related classes
 #define CGAL_SS3_IO_ENABLE_TRACE // DB, IO, ...
-#define CGAL_SS3_TRANSF_ENABLE_TRACE // Polyhedron transformation (face merging, perturbations, etc.)
+#define CGAL_SS3_TRANSF_ENABLE_TRACE // Polyhedron transformation (facet merging, perturbations, etc.)
 #define CGAL_SS3_SPLITTER_ENABLE_TRACE // vertex splitters
 #define CGAL_SS3_ALGO_ENABLE_TRACE // supporting algorithms
 #define CGAL_SS3_CORE_ENABLE_TRACE // main algo
@@ -227,24 +225,5 @@
 #define CGAL_SS3_DEBUG_WPTR(wptr)
 
 #endif
-
-// @tmp when this is removed, also remove the include
-namespace CGAL {
-
-template <typename FT>
-decltype(auto) sqrt_with_warning(const FT& v)
-{
-  return CGAL::approximate_sqrt(v);
-}
-
-template <typename FT>
-FT disallowed_sqrt(const FT& v)
-{
-  CGAL_assertion(false);
-  std::exit(1);
-  return CGAL::approximate_sqrt(v);
-}
-
-} // namespace CGAL
 
 #endif /* CGAL_STRAIGHT_SKELETON_3_INTERNAL_DEBUG_H */

@@ -64,10 +64,6 @@ public:
   virtual ~SplitMergeEvent()
   {
     node_.reset();
-    vertex_1_.reset();
-    vertex_2_.reset();
-    facet_1_.reset();
-    facet_2_.reset();
   }
 
   static SplitMergeEventSPtr create()
@@ -87,10 +83,10 @@ public:
     this->node_ = node;
   }
 
-  const FT& getOffset() const
+  const FT& getTime() const
   {
     CGAL_SS3_DEBUG_SPTR(node_);
-    return node_->getOffset();
+    return node_->getTime();
   }
 
   VertexSPtr getVertex1() const
@@ -99,7 +95,7 @@ public:
     return vertex_1_.lock();
   }
 
-  void setVertex1(VertexSPtr vertex_1)
+  void setVertex1(const VertexSPtr& vertex_1)
   {
     CGAL_SS3_DEBUG_SPTR(vertex_1);
     this->vertex_1_ = vertex_1;
@@ -112,7 +108,7 @@ public:
     return vertex_2_.lock();
   }
 
-  void setVertex2(VertexSPtr vertex_2)
+  void setVertex2(const VertexSPtr& vertex_2)
   {
     CGAL_SS3_DEBUG_SPTR(vertex_2);
     this->vertex_2_ = vertex_2;
@@ -125,7 +121,7 @@ public:
     return facet_1_.lock();
   }
 
-  void setFacet1(FacetSPtr facet_1)
+  void setFacet1(const FacetSPtr& facet_1)
   {
     CGAL_SS3_DEBUG_SPTR(facet_1);
     this->facet_1_ = facet_1;
@@ -137,7 +133,7 @@ public:
     return facet_2_.lock();
   }
 
-  void setFacet2(FacetSPtr facet_2)
+  void setFacet2(const FacetSPtr& facet_2)
   {
     CGAL_SS3_DEBUG_SPTR(facet_2);
     this->facet_2_ = facet_2;
@@ -176,7 +172,7 @@ public:
     sstr.precision(17);
     sstr << "SplitMergeEvent\n";
     sstr << "\t(ID=" << Base::getID() << ")\n";
-    sstr << "\t(offset=" << IO::StringFactory::fromDouble(CGAL::to_double(getOffset())) << ")\n";
+    sstr << "\t(offset=" << IO::StringFactory::fromDouble(CGAL::to_double(getTime())) << ")\n";
     sstr << "\t(node=" << *(getNode()->getPoint()) << ")\n";
     sstr << "\t(vertex1=" << vertex_1->toString() << ")\n";
     sstr << "\t(vertex2=" << vertex_2->toString() << ")\n";
@@ -187,7 +183,7 @@ public:
 
   bool operator==(const SplitMergeEvent& other) const
   {
-    return (node_->getOffset() == other.node_->getOffset()) &&
+    return (node_->getTime() == other.node_->getTime()) &&
             (*(node_->getPoint()) == *(other.node_->getPoint())) &&
             ((facet_1_.lock() == other.facet_1_.lock() &&
               facet_2_.lock() == other.facet_2_.lock()) ||

@@ -57,12 +57,12 @@ public:
     return std::make_shared<ConstOffsetEvent>(offset);
   }
 
-  const FT& getOffset() const
+  const FT& getTime() const
   {
     return this->offset_;
   }
 
-  void setOffset(const FT& offset)
+  void setTime(const FT& offset)
   {
     this->offset_ = offset;
   }

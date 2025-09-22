@@ -65,7 +65,7 @@ public:
     this->id_ = id;
   }
 
-  virtual const FT& getOffset() const = 0; // abstract
+  virtual const FT& getTime() const = 0; // abstract
 
   static const int SAVE_OFFSET_EVENT = 0;
 
@@ -182,7 +182,7 @@ public:
       default:
         sstr << "AbstractEvent";
     }
-    sstr << "(offset=" << IO::StringFactory::fromDouble(CGAL::to_double(getOffset())) << ")";
+    sstr << "(offset=" << IO::StringFactory::fromDouble(CGAL::to_double(getTime())) << ")";
     return sstr.str();
   }
 
@@ -211,7 +211,7 @@ public:
   {
     CGAL_SS3_DEBUG_SPTR(eventA);
     CGAL_SS3_DEBUG_SPTR(eventB);
-    if (eventA->getOffset() == eventB->getOffset()) {
+    if (eventA->getTime() == eventB->getTime()) {
       if (eventA->getType() == eventB->getType()) { // @fixme get rid of that and IDs directly?
         // Give priority to newer (higher) IDs. The point is that if an event has been updated
         // to a different type and appears multiple (non-zombie) times, it will be processed
@@ -221,7 +221,7 @@ public:
       return (eventA->getType() > eventB->getType());
     }
 
-    return (eventA->getOffset() < eventB->getOffset());
+    return (eventA->getTime() < eventB->getTime());
   }
 };
 
@@ -234,11 +234,11 @@ struct VertexFacetNeighborhood
   using FacetSPtr = typename Polyhedron::FacetSPtr;
 
   VertexFacetNeighborhood() {}
-  VertexFacetNeighborhood(const VertexSPtr v)
+  VertexFacetNeighborhood(const VertexSPtr& v)
     : incident_facets_(VertexFacetNeighborhood::collectIncidentFacets(v))
   { }
 
-  static std::array<int, 3> collectIncidentFacets(const VertexSPtr vertex)
+  static std::array<int, 3> collectIncidentFacets(const VertexSPtr& vertex)
   {
     CGAL_SS3_DEBUG_SPTR(vertex);
     std::array<int, 3> result;
@@ -256,7 +256,7 @@ struct VertexFacetNeighborhood
     return result;
   }
 
-  bool checkNeighborhoodConsistency(const VertexSPtr other) const
+  bool checkNeighborhoodConsistency(const VertexSPtr& other) const
   {
     CGAL_SS3_DEBUG_SPTR(other);
     const std::array<int, 3>& other_ifs = collectIncidentFacets(other);
@@ -292,7 +292,7 @@ struct EdgeFacetNeighborhood
     return result;
   }
 
-  bool checkNeighborhoodConsistency(const EdgeSPtr other) const
+  bool checkNeighborhoodConsistency(const EdgeSPtr& other) const
   {
     CGAL_SS3_DEBUG_SPTR(other);
 

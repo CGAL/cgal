@@ -64,8 +64,6 @@ public:
   virtual ~SurfaceEvent()
   {
     node_.reset();
-    edge1_.reset();
-    edge2_.reset();
   }
 
   static SurfaceEventSPtr create()
@@ -85,10 +83,10 @@ public:
     this->node_ = node;
   }
 
-  const FT& getOffset() const
+  const FT& getTime() const
   {
     CGAL_SS3_DEBUG_SPTR(node_);
-    return node_->getOffset();
+    return node_->getTime();
   }
 
   EdgeSPtr getEdge1() const
@@ -97,7 +95,7 @@ public:
     return edge1_.lock();
   }
 
-  void setEdge1(EdgeSPtr edge1)
+  void setEdge1(const EdgeSPtr& edge1)
   {
     CGAL_SS3_DEBUG_SPTR(edge1);
     this->edge1_ = edge1;
@@ -110,7 +108,7 @@ public:
     return edge2_.lock();
   }
 
-  void setEdge2(EdgeSPtr edge2)
+  void setEdge2(const EdgeSPtr& edge2)
   {
     CGAL_SS3_DEBUG_SPTR(edge2);
     this->edge2_ = edge2;
@@ -146,7 +144,7 @@ public:
     sstr.precision(17);
     sstr << "SurfaceEvent\n";
     sstr << "\t(ID=" << Base::getID() << ")\n";
-    sstr << "\t(offset=" << IO::StringFactory::fromDouble(CGAL::to_double(getOffset())) << ")\n";
+    sstr << "\t(offset=" << IO::StringFactory::fromDouble(CGAL::to_double(getTime())) << ")\n";
     sstr << "\t(node=" << *(getNode()->getPoint()) << ")\n";
     sstr << "\t(edgeA=" << edge1->getID() << "\n\t\t[" << edge1->getVertexSrc()->toString() << "\n\t\t "
                                                        << edge1->getVertexDst()->toString() << "]\n"
@@ -158,7 +156,7 @@ public:
 
 bool operator==(const SurfaceEvent& other) const
 {
-    return (node_->getOffset() == other.node_->getOffset()) &&
+    return (node_->getTime() == other.node_->getTime()) &&
            (*(node_->getPoint()) == *(other.node_->getPoint())) &&
            ((edge1_.lock() == other.edge1_.lock() &&
              edge2_.lock() == other.edge2_.lock()) ||

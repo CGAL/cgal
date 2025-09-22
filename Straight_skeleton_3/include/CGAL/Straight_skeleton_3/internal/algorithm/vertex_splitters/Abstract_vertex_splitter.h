@@ -37,7 +37,7 @@ class AbstractVertexSplitter
   using VertexSPtr = typename Polyhedron::VertexSPtr;
 
 private:
-  using PolyhedronTransformation = algorithm::PolyhedronTransformation<Traits>;
+  using Transformation = algorithm::PolyhedronTransformation<Traits>;
   using SelfIntersection = algorithm::SelfIntersection<Traits>;
 
 public:
@@ -55,21 +55,20 @@ public:
 
   virtual ~AbstractVertexSplitter() { /*intentionally does nothing*/ }
 
-  virtual PolyhedronSPtr splitVertex(VertexSPtr vertex) = 0;  // abstract
+  virtual PolyhedronSPtr splitVertex(const VertexSPtr& vertex) = 0;  // abstract
 
   virtual int getType() const
   {
     return type_;
   }
 
-  static bool checkSplitted(PolyhedronSPtr polyhedron)
+  static bool checkSplitted(const PolyhedronSPtr& polyhedron)
   {
     CGAL_SS3_DEBUG_SPTR(polyhedron);
     bool result = false;
-    PolyhedronSPtr polyhedron_offset = PolyhedronTransformation::shiftFacets(polyhedron, -1.0);
-    if (polyhedron_offset) {
-      result = !SelfIntersection::hasSelfIntersectingSurface(polyhedron_offset);
-    }
+    PolyhedronSPtr polyhedron_cpy = polyhedron->clone();
+    result = Transformation::shiftFacetsDegree1(polyhedron_cpy, -1.0);
+    result = result && !SelfIntersection::hasSelfIntersectingSurface(polyhedron_cpy);
     return result;
   }
 
