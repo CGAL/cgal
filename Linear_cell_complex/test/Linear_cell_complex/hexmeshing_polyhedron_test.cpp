@@ -1,12 +1,11 @@
-#include <CGAL/Hexmeshing_for_linear_cell_complex_sequential.h>
-#include <CGAL/Hexmeshing_mesh_data_for_hexmeshing.h>
-#include <CGAL/Hexmeshing_render_results.h>
+#include <CGAL/hexmeshing/Hexmeshing_for_linear_cell_complex_sequential.h>
+#include <CGAL/hexmeshing/Hexmeshing_mesh_data_for_hexmeshing.h>
 #include <CGAL/hexmeshing/Hexmeshing_outer_alias.h>
 #include <CGAL/hexmeshing/LCC_items_for_hexmeshing.h>
+#include <CGAL/Hexmeshing_generate_two_refinement_mesh.h>
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
-#include <CGAL/draw_polyhedron.h>
 #include <iostream>
 #include <cassert>
 
@@ -147,12 +146,10 @@ LCC create_refined_test_mesh(int level = 1) {
   Grid grid = Grid::make_cube(Point(0, 0, 0), 1.0, 10);
 
   Polyhedron poly = create_polyhedron<FACE>();
-  CGAL::Mesh_data_for_hexmeshing mesh(poly, grid);
 
-  CGAL::Hexmeshing_for_linear_cell_complex hdata;
+  CGAL::internal::Hexmeshing_for_linear_cell_complex hdata(poly, grid);
 
   hdata.two_refinement(
-    mesh,
     level,
     false
   );
@@ -213,14 +210,13 @@ LCC create_refined_test_mesh_with_volume_fraction() {
 template <int FACE, bool start_with_volume_fraction>
 void render_meshes_at_each_phase() {
   double z_start = 0., z_end = 10.;
-  CGAL::Hexmeshing_for_linear_cell_complex hdata;
-  LCC& lcc = hdata.lcc;
+  LCC lcc;
 
   if constexpr(start_with_volume_fraction) {
     lcc = create_refined_test_mesh_with_volume_fraction<FACE>();
   } else {
     Polyhedron poly = create_polyhedron<FACE>();
-    CGAL::Mesh_data_for_hexmeshing mesh(poly);
+    CGAL::internal::Mesh_data_for_hexmeshing mesh(poly, 10);
     auto cellIdentifier = is_volume_intersecting_poly(*mesh.get_tree_pointer());
     auto decideFunc = is_inner_point(*mesh.get_tree_pointer());
     const int refinement_level = 1;
@@ -247,21 +243,25 @@ void render_meshes_at_each_phase() {
   auto trimming_func = is_marked_volume(inner_mark);
   // auto trimming_func = is_volume_intersecting_poly(aabb);
   trim_excedent_volumes(lcc, trimming_func);
-  std::cout << "Rendering the result of move_points_onto_mesh_with_volume_fraction" << std::endl;
+  // std::cout << "Rendering the result of move_points_onto_mesh_with_volume_fraction" << std::endl;
   // render_two_refinement_result(hdata);
 
   surface_smoothing(lcc, move_mark, inner_mark);
-  std::cout << "Rendering the result of surface_smoothing" << std::endl;
+  // std::cout << "Rendering the result of surface_smoothing" << std::endl;
   // render_two_refinement_result(hdata);
 
   // render_two_refinement_result_with_mark(hdata, half_mark);
   volume_smoothing(lcc, move_mark);
-  std::cout << "Rendering the result of volume_smoothing" << std::endl;
+  // std::cout << "Rendering the result of volume_smoothing" << std::endl;
   // render_two_refinement_result_with_mark(hdata, half_mark);
 
   lcc.free_mark(move_mark);
   lcc.free_mark(inner_mark);
   lcc.free_mark(half_mark);
+
+  std::cout << "FACE: " << FACE << std::endl;
+  std::cout << "start_with_volume_fraction: " << std::boolalpha << start_with_volume_fraction << std::noboolalpha << std::endl;
+  std::cout << "test passed\n" << std::endl;
 }
 
 int main() {
