@@ -151,7 +151,9 @@ mechanism.
 
 \subsection Linear_cell_complexHexmeshing Hexahedral Two-refinement
 
-Hexmeshing_for_linear_cell_complex is a utility class that, following the method described in \cgalCite{cgal:owen2017template-based}, performs hexahedral mesh refinement and smoothing using a sequential approach. Given a mesh supplied as an .off file or a `Polyhedron_3`, it generates a `Linear_cell_complex_for_combinatorial_map` grid in which the regions near the intersections with the input mesh are finely subdivided by 2-refinement. It then applies Laplacian smoothing to drive the 3-cell shapes toward more cube-like hexahedra.
+A function \link ::generate_two_refinement_mesh `generate_two_refinement_mesh`\endlink outputs a hexahedral grid created by two refinement algorithm and smoothing described in \cgalCite{cgal:owen2017template-based}.
+Given a surface mesh supplied as an .off file or an any model of FaceGraph (e.g. `Polyhedron_3`), it generates a `Linear_cell_complex_for_combinatorial_map` grid in which the regions near the intersections with the input mesh are finely subdivided.
+It then applies Laplacian smoothing to drive the 3-cell shapes toward more cube-like hexahedra.
 
 \cgalFigureBegin{fig_dragon_summary,dragon_summary.png}
 Example of hexahedral two-refinement for <a href="https://graphics.stanford.edu/data/3Dscanrep/">Stanford dragon</a>. <B>Left</B>: Initial mesh. <B>Middle</B>: Result of the hexahedral 2-refinement. <B>Right</B>: Cross-section of the result of the smoothing.
@@ -294,6 +296,16 @@ The following example shows the use of \link GenericMap::insert_cell_1_between_t
 
 \cgalFigureBegin{fig_lcc_insert,lcc_insert_example.png}
 Result of the run of the linear_cell_complex_3_insert program. A window shows the 3D cube where one face has a hole.
+\cgalFigureEnd
+
+\subsection Linear_cell_complexInsert Hexahedral Mesh Refinement and Smoothing
+
+The following example shows the use of \link ::generate_two_refinement_mesh `generate_two_refinement_mesh`\endlink operation that creates hexahedral LCC grid for a given surface mesh.
+
+\cgalExample{Linear_cell_complex/hexmeshing_cube.cpp}
+
+\cgalFigureBegin{fig_hexmeshing_cube,hexmeshing_cube.png}
+Result of the run of the hexmeshing_cube program. A window shows the 3D grid refined for a cubic surface mesh and smoothed.
 \cgalFigureEnd
 
 \section Linear_cell_complexDesign Design and Implementation History
