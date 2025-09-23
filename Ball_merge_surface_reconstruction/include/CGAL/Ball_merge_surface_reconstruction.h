@@ -67,8 +67,8 @@ namespace CGAL {
  *
  * \ingroup PkgBallMergeRef
  *
- * Class that can be used for running the ball merge surface reconstruction algorithms. Once input points passed,
- * it is possible to run a reconstruction algorithm with different parameters without rebuilding the internal Delaunay Triangulation.
+ * Class that can be used for running the ball merge surface reconstruction algorithms. Once input points are passed,
+ * it is possible to run a reconstruction algorithm with different parameters without rebuilding the internal Delaunay triangulation.
  *
  * \tparam Traits a model of `DelaunayTriangulationTraits_3`, with default using the value type of `PointRange` plugged in `Kernel_traits`
  * \tparam ConcurrencyTag enables sequential versus parallel algorithm.
@@ -289,7 +289,7 @@ public:
   {}
 
   /*!
-   * constructs the class and calls  `build_triangulation(points)`.
+   * constructs the class and calls \link build_triangulation `build_triangulation(points)` \endlink.
    *
    * \tparam PointRange a model of `RandomAccessContainer`, with `Traits::Point_3` as value type
    * \param points is the input points
@@ -385,7 +385,8 @@ public:
   /*!
    *
    * creates two watertight meshes approximating the surface with sample points passed to `build_triangulation()`,
-   * and puts the resulting triangle faces in `out_triangles1` and `out_triangles2`.
+   * and puts the resulting triangle faces in `out_triangles1` and `out_triangles2`. Output triangle faces are triple of indices
+   * refering to the position of the input points passed to `build_triangulation()`.
    * \note As this function creates two shells (outer and inner in arbitrary order) the input point set must only be sampled on a single connected component.
    *
    * \tparam TripleIndexRange a model of `BackInsertionSequence` with `value_type`
@@ -484,6 +485,7 @@ public:
  * \ingroup PkgBallMergeRef
  *
  * creates a triangle soup approximating the surface, and puts the resulting triangle faces in `out_triangles`.
+ * Output triangle faces are triple of indices refering to the position of the input points in `points`.
  *
  * \tparam Traits a model of `DelaunayTriangulationTraits_3`, with default using the value type of `PointRange` plugged in `Kernel_traits`
  * \tparam PointRange a model of `RandomAccessContainer`, with `Traits::Point_3` as value type
@@ -544,6 +546,7 @@ void ball_merge_surface_reconstruction_local(const PointRange& points,
  *
  * creates two watertight meshes approximating the surface, and puts the resulting triangle faces in `out_triangles1` and `out_triangles2`.
  * As this function creates two shells (outer and inner) the input point set shall only be sampled on a single connected component.
+ * Output triangle faces are triple of indices refering to the position of the input points in `points`.
  *
  * \tparam PointRange a model of the concepts `RandomAccessContainer`
  * \tparam TripleIndexRange a model of `BackInsertionSequence` with `value_type`

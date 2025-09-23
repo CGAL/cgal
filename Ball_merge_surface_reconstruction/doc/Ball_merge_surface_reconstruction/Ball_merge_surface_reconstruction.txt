@@ -55,28 +55,28 @@ The main parameter used in \f$ BallMerge \f$ is the intersection ratio \f$\delta
 being empty and  \f$ BallMerge(2) \f$ containing all the triangles of the Delaunay triangulation.
 Experiments show that the \f$ > \delta \f$ value usually lies between 1.5 and 1.95, with 1.8 or 1.85 yielding the best results in most cases.
 Thanks to the useful properties of this intersection ratio, tuning this parameter can be done using the following rule:
-if the reconstructed surface has missing parts, the threshold should be lowered,; conversely, if the reconstructed surface has additional parts, the threshold should be increased.
+if the reconstructed surface has missing parts, the threshold should be lowered, conversely, if the reconstructed surface has additional parts, the threshold should be increased.
 
 If no value is provided to the reconstruction function, the \f$\delta\f$ parameter is automatically estimated using the following method:
 Starting from the maximal value 2, we iteratively decrease \f$\delta\f$ until the reconstructed surface undergoes a sudden vertex-count drop (10% of the total number of input points).
 This indicates that a large number of interior/exterior medial balls have become \f$\delta\f$-merged, causing that part of
-the reconstructed surface to collapse. Consequently, the value from the previous iteration is used as default value.
-Our experiments show that \f$\delta\f$ usually lies within a range of 1.65 to 1.85. The \f$\delta\f$ value used is always returned by the functions.
+the reconstructed surface to collapse. Consequently, the value from the previous iteration is used to generate the output.
+The \f$\delta\f$ value used is always returned by the functions.
 
 \section secBMSRexamples Examples
 
-`ball_merge_surface_reconstruction()` has the following arguments: The set of input points, two output parameters where the resulting meshes will be stored, and the parameter \f$ \delta \f$.
+`ball_merge_surface_reconstruction()` has the following arguments: The set of input points, two output parameters where the resulting meshes will be stored, and optionally the parameter \f$ \delta \f$.
 The function returns two meshes - the largest and second-largest components as sometimes the expected shape will be the second-largest component after merging.
 A sample program showing how to use this function is given below, together with the output reconstructions.
 
 \cgalFigureBegin{figBMSKitten,kitten_ball_merged.png}
-Result of the run of the ball merge algorithm with automatic delta parameter estimation.
+Results of the run of the ball merge algorithm with automatic delta parameter estimation.
 From left to right: Input point cloud (no normal required); one of the two output containing the expected triangle mesh; the second output  representing the non desired part, that is actually a triangle soup with non-manifold edges (shown in red). The `delta` parameter that is automatically estimated is `1`.
 \cgalFigureEnd
 
 \cgalExample{Ball_merge_surface_reconstruction/ball_merge_reconstruction.cpp}
 
-Ideally, the current implementation takes a dense point cloud as input (plain x,y,z coordinates without any additional information like normal and texture) sampled over a smooth surface. Thanks to the "intersection ratio", the algorithm can also handle a few challenging cases with mild noise, outliers or missing data up to an extent.
+Ideally, the current implementation takes a dense point cloud as input (plain x,y,z coordinates without any additional information like normal or texture) sampled over a smooth surface. Thanks to the "intersection ratio", the algorithm can also handle a few challenging cases with mild noise, outliers or missing data up to an extent.
 It is worth noting that outliers sometimes create deep cavities over the surface, and an increased amount of noise shrinks and sometimes misses important features.
 
 Finally, the algorithm is efficient, requiring minimal computation resources relative to the input size, as it completes two swift linear-time passes over the 3D Delaunay triangulation.
