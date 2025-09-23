@@ -17,6 +17,7 @@
 #include <CGAL/license/Variational_medial_axis.h>
 namespace CGAL {
 
+#ifndef DOXYGEN_RUNNING
 template <typename GT> struct Tensor3
 {
   using FT = typename GT::FT;
@@ -58,6 +59,10 @@ template <typename GT> struct Tensor3
   }
 };
 
+// Fast winding number coefficients for different orders of Taylor expansion
+// For more information about the derivation of the coefficients,
+// please refer to the original paper: Fast Winding Numbers for Soups and Clouds of Points
+// by Barill et al., Siggraph 2018
 template <class TriangleMesh, class GeomTraits = Default, int ORDER = 3> struct Fast_winding_number_Coeff;
 
 template <class TriangleMesh, class GeomTraits> struct Fast_winding_number_Coeff<TriangleMesh, GeomTraits, 1>
@@ -130,15 +135,14 @@ template <class TriangleMesh, class GeomTraits> struct Fast_winding_number_Coeff
   Mat3 Q = Mat3::Zero();
   Tensor3<GT> T;
 };
-
+#endif // DOXYGEN_RUNNING
 /**
  * \ingroup PkgVMASRef
  * \class CGAL::Fast_winding_number
- * \brief Fast evaluation of the (normalized) winding number of a closed triangle mesh.
+ * \brief Fast evaluation of the (normalized) winding number of a triangle mesh.
  *
  * This class implements a hierarchical (multipole / cluster–far field) approximation of
- * the generalized winding number for a (reasonably well‑formed) closed, consistently oriented
- * triangle mesh. It supports single or batched point queries and interior testing.
+ * the generalized winding number for a triangle mesh.
  *
  * \tparam TriangleMesh
  *         a model of `FaceListGraph`
@@ -266,6 +270,12 @@ public:
    *
    * \brief computes the fast winding number of a given query point.
    *
+   * This function computes the fast winding number of a given query point `p` recursively.
+   * For a given query point `p`, we first compute its distance `r` to the center of root node in the AABB tree.
+   * If `r` is larger than `beta` times the radius of the root node, we consider the root node as a single dipole
+   * and use the precomputed Taylor expansion coefficients to evaluate the winding number.
+   * Otherwise, we traverse down the tree recursively and repeat the same process for each child node.
+   *
    * @param p the query point
    * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters", listed below:
    * \cgalNamedParamsBegin
@@ -327,7 +337,7 @@ public:
   }
 
   /**
-   * \brief computes the exact winding number of a given query point.
+   * \brief computes the exact winding number of a given query point `p` and the input mesh.
    *
    * @param p the query point
    * @return the exact winding number of `p`
@@ -351,6 +361,9 @@ public:
 private:
   std::size_t node_id(const Node* node) const { return std::size_t(node - tree_.root_node()); }
 
+  //This function precommutes the coefficients for all nodes in the AABB tree.
+  //We search form top to bottom, and for each node, we compute the coefficients
+  //by looping over all of the faces it contains.
   void precompute_coeffs() {
 
     const Node* root = tree_.root_node();
@@ -368,6 +381,8 @@ private:
       Vector_3 sum_normal(0, 0, 0);
       FT total_area = FT(0);
 
+      //First loop:
+      //for each node, we loop over all of the faces it contains and compute the weighted centroid, weighted normal, and total area of the each node
       for(auto it = prim_it; it < prim_it + nb_prim; ++it) {
         face_descriptor f = it->id();
         FT area = get(fam_, f);
@@ -381,7 +396,10 @@ private:
       CGAL_assertion(total_area > FT(0));
       coeff.weighted_centroid =
           Point_3(sum_centroid.x() / total_area, sum_centroid.y() / total_area, sum_centroid.z() / total_area);
-
+      //Second loop:
+      //we loop over all of the faces again to compute the higher order coefficients
+      //The reason we do not compute the higher order coefficients in the first loop is that
+      //we need the weighted centroid of the node (vector R is centralized)
       FT max_norm_sq = 0;
       for(auto it = prim_it; it < prim_it + nb_prim; ++it) {
         face_descriptor f = it->id();
@@ -404,6 +422,7 @@ private:
             iv[i] = Vector_3(pv.x(), pv.y(), pv.z());
             ++i;
           }
+          //See Appendix_B in the original paper for more details about this formula
           Vector_3 v1 = 0.5 * (iv[0] + iv[1]) - (coeff.weighted_centroid - CGAL::ORIGIN);
           Vector_3 v2 = 0.5 * (iv[1] + iv[2]) - (coeff.weighted_centroid - CGAL::ORIGIN);
           Vector_3 v3 = 0.5 * (iv[2] + iv[0]) - (coeff.weighted_centroid - CGAL::ORIGIN);
@@ -421,10 +440,6 @@ private:
       case 3: {
         // partial leaf node
         // left contains data, right is a node with the two remaining primitives
-        /* Mesh::Face_index fl = node->left_data().id();
-         Mesh::Face_index frl = node->right_child().left_data().id();
-         Mesh::Face_index frr = node->right_child().right_data().id();*/
-
         traversal_queue.emplace_back(std::addressof(node->right_child()), prim_it + 1, std::size_t(2));
       } break;
       default: {
@@ -438,6 +453,7 @@ private:
     }
   }
 
+  // This function computes the solid angle of a triangle face `f` seen from a point `p`.
   FT solid_angle(const Point_3& p, const face_descriptor& f) const {
     Vector_3 iv[3];
     int i = 0;
@@ -461,6 +477,7 @@ private:
     return 2 * std::atan2(numerator, denominator);
   }
 
+  //helper function to compute the solid angle of a leaf node
   FT solid_angle_leaf(const Node* node, const Point_3& p, typename Tree::Primitive_iterator prim_it) const {
     FT w = FT(0);
     face_descriptor f1 = node->left_data().id();
@@ -470,7 +487,8 @@ private:
     return w / (4 * CGAL_PI);
   }
 
-  // Evaluate the node as single dipole
+  // helper function to evaluate the node as a single dipole.
+  // This is the case when the query point is far enough from the node.
   FT direct_eval(const Node* node, const Point_3& p, typename Tree::Primitive_iterator prim_it) const {
     FT w = FT(0);
     const Vector_3 R = coeffs_[node_id(node)].weighted_centroid - p;
