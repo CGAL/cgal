@@ -2247,7 +2247,7 @@ private:
         }
       }
 
-      const Vertex_handle vertex_above = std::invoke([&] {
+      const auto [vertex_above, border_facet_above] = std::invoke([&] {
         Edges_container all_border_edges{border_edges.begin(), border_edges.end()};
         std::for_each(border_edges.begin(), border_edges.end(), [&](auto edge) {
           all_border_edges.emplace_back(edge.first, edge.third, edge.second);
@@ -2261,16 +2261,17 @@ private:
             const auto index_va = circ->index(border_edge_va);
             const auto index_vb = circ->index(border_edge_vb);
             const auto face_index = tr().next_around_edge(index_va, index_vb);
-            if(facets_of_border.count(Facet{circ, face_index}) > 0) {
+            Facet facet{circ, face_index};
+            if(facets_of_border.count(facet) > 0) {
               const auto other_vertex_index = 6 - index_va - index_vb - face_index;
               const auto other_vertex = circ->vertex(other_vertex_index);
               if(is_marked(other_vertex, Vertex_marker::CAVITY)) {
-                  return circ->vertex(other_vertex_index);
+                  return std::make_pair(circ->vertex(other_vertex_index), facet);
               }
             }
           } while(++circ != end);
         }
-        return Vertex_handle{};
+        return std::make_pair(Vertex_handle{}, Facet{});
       });
       CGAL_assume(vertex_above != Vertex_handle{});
 
