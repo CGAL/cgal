@@ -298,7 +298,7 @@ The following example shows the use of \link GenericMap::insert_cell_1_between_t
 Result of the run of the linear_cell_complex_3_insert program. A window shows the 3D cube where one face has a hole.
 \cgalFigureEnd
 
-\subsection Linear_cell_complexInsert Hexahedral Mesh Refinement and Smoothing
+\subsection Linear_cell_complexHexaMeshing Hexahedral Mesh Refinement and Smoothing
 
 The following example shows the use of \link ::generate_two_refinement_mesh `generate_two_refinement_mesh`\endlink operation that creates hexahedral LCC grid for a given surface mesh.
 
