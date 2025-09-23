@@ -81,7 +81,7 @@ public:
     using Compare_xy_2 = typename Gt2::Compare_xy_2;
 
     // Allocate all of the Subcurve objects as one block.
-    this->m_num_of_subCurves = std::distance(curves_begin, curves_end);
+    this->m_num_of_subCurves = static_cast<unsigned int>(std::distance(curves_begin, curves_end));
     if (this->m_num_of_subCurves > 0)
       this->m_subCurves =
         this->m_subCurveAlloc.allocate(this->m_num_of_subCurves);
