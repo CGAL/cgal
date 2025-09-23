@@ -1015,6 +1015,11 @@ public:
   ///     \cgalParamDefault{FT(0.2)}
   ///     \cgalParamExtra{The range of this parameter is (0,1].}
   ///   \cgalParamNEnd
+  ///   \cgalParamNBegin{random_seed}
+  ///     \cgalParamDescription{The random seed to sample points on the triangle mesh surface.}
+  ///     \cgalParamType{unsigned int}
+  ///     \cgalParamExtra{Fix the random seed so that the result can be reproduced}
+  ///   \cgalParamNEnd
   ///   \cgalParamNBegin{vertex_point_map}
   ///     \cgalParamDescription{a property map associating points to the vertices of `pmesh`}
   ///     \cgalParamType{a class model of `ReadablePropertyMap` with
@@ -1047,6 +1052,7 @@ public:
     verbose_ = choose_parameter(get_parameter(np, internal_np::verbose), false);
     vpm_ = choose_parameter(get_parameter(np, internal_np::vertex_point),
                             get_const_property_map(CGAL::vertex_point, tmesh));
+    seed_ = choose_parameter(get_parameter(np, internal_np::random_seed), 42);
 #ifndef CGAL_LINKED_WITH_TBB
     static_assert(!std::is_same_v<ConcurrencyTag_, Parallel_tag>, "Parallel_tag is enabled but TBB is unavailable.");
 #endif
@@ -1351,10 +1357,14 @@ private:
   //Sample points on the surface mesh and compute k-nearest neighbors for each point so that we can construct the connectivity of skeleton
   void sample_surface_mesh() {
 
-    CGAL::Random rng;
+    CGAL::Random rng(seed_);
+    std::cout<<"seed: "<<seed_<<std::endl;
     CGAL::Random_points_in_triangle_mesh_3<TriangleMesh_, VPM> g(tmesh_, vpm_, rng);
     for(std::size_t i = 0; i < nb_samples_; ++i) {
       Point_3 p = *g;
+      if(i<5 ){
+        std::cout<<"sampled point "<<i<<": "<<p<<std::endl;
+      }
       face_descriptor f = g.last_item_picked();
       put(face_nb_samples_map_, f, get(face_nb_samples_map_, f) + 1);
       auto it = tpoints_.insert(p);
@@ -2001,6 +2011,7 @@ private:
   FT lambda_;
   std::size_t desired_number_of_spheres_;
   std::size_t nb_samples_;
+  unsigned int seed_;
   int max_iteration_;
   int iteration_count_;
   FT total_error_diff_;

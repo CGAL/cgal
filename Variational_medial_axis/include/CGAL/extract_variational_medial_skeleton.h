@@ -65,6 +65,11 @@ namespace CGAL {
 ///    \cgalParamDefault{FT(0.2)}
 ///    \cgalParamExtra{The range of this parameter is (0,1].}
 ///  \cgalParamNEnd
+///   \cgalParamNBegin{random_seed}
+///     \cgalParamDescription{The random seed to sample points on the triangle mesh surface.}
+///     \cgalParamType{unsigned int}
+///     \cgalParamExtra{Fix the random seed so that the result can be reproduced}
+///   \cgalParamNEnd
 ///  \cgalParamNBegin{concurrency_tag}
 ///    \cgalParamDescription{Tag indicating whether the algorithm should run sequentially or in parallel.}
 ///    \cgalParamType{Concurrency tag type}
@@ -87,12 +92,11 @@ extract_variational_medial_skeleton(const TriangleMesh& tmesh,
   typedef typename internal_np::Lookup_named_param_def<internal_np::concurrency_tag_t, NamedParameters,
                                                        Sequential_tag>::type Concurrency_tag;
   typedef typename internal_np::Lookup_named_param_def<internal_np::acceleration_structure_t, NamedParameters,
-                                                        KD_tree_tag>::type Acceleration_type;
+                                                       KD_tree_tag>::type Acceleration_type;
   using VMAS = CGAL::Variational_medial_axis<TriangleMesh, Concurrency_tag, Acceleration_type>;
   VMAS vmas(tmesh, np);
   vmas.compute_variational_medial_axis_sampling(np);
   return vmas.export_skeleton();
-
 }
 } // end of namespace CGAL
 

@@ -8,7 +8,7 @@ using Medial_Skeleton = CGAL::Medial_Skeleton<Mesh>;
 
 int main(int argc, char** argv)
 {
-  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/elephant_dense.off");
+  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/elephant.off");
 
   Mesh mesh;
   if(!CGAL::IO::read_polygon_mesh(filename, mesh))
@@ -22,6 +22,7 @@ int main(int argc, char** argv)
       .number_of_spheres(200) // target number of spheres
       .number_of_samples(20000) // number of surface samples
       .lambda(0.2) // lambda parameter for the optimization
+      .random_seed(42) // random seed for point sampling  
       .concurrency_tag(CGAL::Parallel_tag{}) // use parallel execution
       .acceleration_structure(CGAL::BVH_tag{}) // use BVH for acceleration
       .verbose(true)); // enable verbose output
