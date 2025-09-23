@@ -1107,10 +1107,21 @@ public:
         choose_parameter(get_parameter(np, internal_np::number_of_spheres), desired_number_of_spheres_);
     lambda_ = choose_parameter(get_parameter(np, internal_np::lambda), lambda_);
     max_iteration_ = choose_parameter(get_parameter(np, internal_np::number_of_iterations), desired_number_of_spheres_*10);
+    max_iteration = std::min(max_iteration_, std::size_t(3000));
     verbose_ = choose_parameter(get_parameter(np, internal_np::verbose), verbose_);
     bool success = false;
     reset_algorithm_state();
     sphere_mesh_->spheres().reserve(desired_number_of_spheres_);
+    if(nb_samples_ < desired_number_of_spheres_ * 100) {
+      // Resample the surface with more points
+      nb_samples_ = desired_number_of_spheres_ * 100;
+      // Sample the surface mesh
+      sample_surface_mesh();
+      // Build AABB-tree
+      if constexpr(std::is_same_v<AccelerationType_, KD_tree_tag>) {
+        tree_->accelerate_distance_queries(tpoints_.begin(), tpoints_.end(), tpoints_.point_map());
+      } 
+    }
 
     if constexpr(std::is_same_v<ConcurrencyTag_, Parallel_tag>) {
 #if CGAL_LINKED_WITH_TBB
@@ -1130,6 +1141,7 @@ public:
       std::cout << "Target number of spheres: " << desired_number_of_spheres_ << std::endl;
       std::cout << "Lambda: " << lambda_ << std::endl;
       std::cout << "Max iterations: " << max_iteration_ << std::endl;
+      std::cout << "Sampled points: " << tpoints_.size() << std::endl;
     }
     // Main algorithm loop
     while(iteration_count_ < max_iteration_) {
@@ -1357,14 +1369,44 @@ private:
   //Sample points on the surface mesh and compute k-nearest neighbors for each point so that we can construct the connectivity of skeleton
   void sample_surface_mesh() {
 
+    // Reset point set
+    tpoints_.clear();
+
+    // Reset face sample counts
+    for(face_descriptor f : faces(tmesh_)) {
+      put(face_nb_samples_map_, f, 0);
+    }
+    bool success = false;
+    // Create point set property maps
+    std::tie(point_from_face_map_, success) = tpoints_.template add_property_map<face_descriptor>(
+        "points_from_face", boost::graph_traits<TriangleMesh_>::null_face());
+    CGAL_assertion(success);
+    std::tie(point_normal_map_, success) =
+        tpoints_.template add_property_map<Vector_3>("point_normal", Vector_3(0., 0., 0.));
+    CGAL_assertion(success);
+    std::tie(point_area_map_, success) = tpoints_.template add_property_map<FT>("point_area", FT(0.));
+    CGAL_assertion(success);
+    std::tie(point_medial_sphere_pos_map_, success) =
+        tpoints_.template add_property_map<Point_3>("point_medial_sphere_pos", Point_3(0., 0., 0.));
+    CGAL_assertion(success);
+    std::tie(point_medial_sphere_radius_map_, success) =
+        tpoints_.template add_property_map<FT>("point_medial_sphere_radius", FT(0.));
+    CGAL_assertion(success);
+    std::tie(point_error_map_, success) = tpoints_.template add_property_map<FT>("point_error", FT(0.));
+    CGAL_assertion(success);
+    std::tie(point_knn_map_, success) =
+        tpoints_.template add_property_map<std::vector<Point_Index>>("point_knn", std::vector<Point_Index>());
+    CGAL_assertion(success);
+    std::tie(point_cluster_sphere_map_, success) =
+        tpoints_.template add_property_map<Sphere_ID>("point_cluster_sphere", MSMesh::INVALID_SPHERE_ID);
+    CGAL_assertion(success);
+    // Sample points on the surface mesh
+
     CGAL::Random rng(seed_);
-    std::cout<<"seed: "<<seed_<<std::endl;
+    
     CGAL::Random_points_in_triangle_mesh_3<TriangleMesh_, VPM> g(tmesh_, vpm_, rng);
     for(std::size_t i = 0; i < nb_samples_; ++i) {
-      Point_3 p = *g;
-      if(i<5 ){
-        std::cout<<"sampled point "<<i<<": "<<p<<std::endl;
-      }
+      Point_3 p = *g;     
       face_descriptor f = g.last_item_picked();
       put(face_nb_samples_map_, f, get(face_nb_samples_map_, f) + 1);
       auto it = tpoints_.insert(p);
@@ -1379,6 +1421,7 @@ private:
       std::size_t nb_sample = get(face_nb_samples_map_, f);
       point_area_map_[*it] = area / FT(nb_sample);
     }
+
 
     // Compute k-nearest neighbors for each point
     // The kd-tree is built temporarily here only for k-nearest neighbor search and discarded after this function
@@ -1420,22 +1463,7 @@ private:
     namespace PMP = CGAL::Polygon_mesh_processing;
     // Create point_set property maps
     bool success = false;
-    std::tie(point_from_face_map_, success) = tpoints_.template add_property_map<face_descriptor>("points_from_face",boost::graph_traits<TriangleMesh_>::null_face());
-    CGAL_assertion(success);
-    std::tie(point_normal_map_, success) = tpoints_.template add_property_map<Vector_3>("point_normal", Vector_3(0., 0., 0.));
-    CGAL_assertion(success);
-    std::tie(point_area_map_, success) = tpoints_.template add_property_map<FT>("point_area", FT(0.));
-    CGAL_assertion(success);
-    std::tie(point_medial_sphere_pos_map_, success) = tpoints_.template add_property_map<Point_3>("point_medial_sphere_pos", Point_3(0., 0., 0.));
-    CGAL_assertion(success);
-    std::tie(point_medial_sphere_radius_map_, success) = tpoints_.template add_property_map<FT>("point_medial_sphere_radius", FT(0.));
-    CGAL_assertion(success);
-    std::tie(point_error_map_, success) = tpoints_.template add_property_map<FT>("point_error", FT(0.));
-    CGAL_assertion(success);
-    std::tie(point_knn_map_, success) = tpoints_.template add_property_map<std::vector<Point_Index>>("point_knn", std::vector<Point_Index>());
-    CGAL_assertion(success);
-    std::tie(point_cluster_sphere_map_, success) = tpoints_.template add_property_map<Sphere_ID>("point_cluster_sphere", MSMesh::INVALID_SPHERE_ID);
-    CGAL_assertion(success);
+    
 
     // Create Surface_mesh property maps
     vertex_normal_map_ = get(Vertex_normal_tag(), tmesh_, Vector_3(0., 0., 0.));
@@ -1467,15 +1495,16 @@ private:
       put(face_area_map_, f, area);
     }
     // Sample the surface mesh
+    tree_ = std::make_unique<Tree>(faces(tmesh_).begin(), faces(tmesh_).end(), tmesh_, vpm_);
+    // get bounding box of the mesh
     sample_surface_mesh();
     // Build AABB-tree
-    tree_ = std::make_unique<Tree>(faces(tmesh_).begin(), faces(tmesh_).end(), tmesh_, vpm_);
     if constexpr(std::is_same_v<AccelerationType_, KD_tree_tag>) {
       tree_->accelerate_distance_queries(tpoints_.begin(), tpoints_.end(), tpoints_.point_map());
     } else {
       tree_->accelerate_distance_queries();
     }
-    // get bounding box of the mesh
+   
     auto bbox = tree_->bbox();
     scale_ = std::max(bbox.xmax() - bbox.xmin(), std::max(bbox.ymax() - bbox.ymin(), bbox.zmax() - bbox.zmin()));
     converged_threshold_ = scale_ * scale_ * 1e-5;
@@ -1503,6 +1532,7 @@ private:
     FT cos_angle = cosine_angle(qp, n);
     return d / (2 * cos_angle);
   }
+
   std::pair<Point_3, FT>
   shrinking_ball_algorithm_bvh(std::vector<face_descriptor> incident_faces,
                                const Point_3& p,                  // point on the surface
@@ -1558,6 +1588,7 @@ private:
 
     return {c, r};
   }
+
   std::pair<Point_3, FT> shrinking_ball_algorithm_kdt(const Point_3& p,  // point on the surface
                                                       const Vector_3& n, // inverse of search direction
                                                       FT delta_convergence = FT(1e-5)) {
@@ -1616,6 +1647,7 @@ private:
     std::vector<face_descriptor> incident_faces(face_range.begin(), face_range.end());
     return shrinking_ball_algorithm_bvh(incident_faces, p, normal);
   }
+
   void compute_one_vertex_shrinking_ball(Point_Index idx) {
 
     Vector_3 normal = point_normal_map_[idx];
@@ -2018,7 +2050,7 @@ private:
   FT last_total_error_;
   FT total_error_;
   FT converged_threshold_;
-  int k_ = 20; // number of nearest neighbors
+  int k_ = 10; // number of nearest neighbors
   std::unique_ptr<Tree> tree_;
   std::unique_ptr<MSMesh> sphere_mesh_;
   std::unique_ptr<FWN> fast_winding_number_;

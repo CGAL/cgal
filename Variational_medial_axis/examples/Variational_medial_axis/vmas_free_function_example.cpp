@@ -22,7 +22,7 @@ int main(int argc, char** argv)
       .number_of_spheres(200) // target number of spheres
       .number_of_samples(20000) // number of surface samples
       .lambda(0.2) // lambda parameter for the optimization
-      .random_seed(42) // random seed for point sampling  
+      .random_seed(10) // random seed for point sampling  
       .concurrency_tag(CGAL::Parallel_tag{}) // use parallel execution
       .acceleration_structure(CGAL::BVH_tag{}) // use BVH for acceleration
       .verbose(true)); // enable verbose output
