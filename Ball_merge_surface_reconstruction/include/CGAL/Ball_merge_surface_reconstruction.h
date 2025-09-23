@@ -34,6 +34,8 @@
 //     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //     SOFTWARE.
 //
+// The original code from the publication mentioned below has been used as the base for the CGAL package,
+// the original version is currently not publicly available.
 //
 // @inproceedings{parakkat2024ballmerge,
 //   title={BallMerge: High-quality Fast Surface Reconstruction via Voronoi Balls},
@@ -281,7 +283,23 @@ public:
 #endif
 public:
   /*!
-   * sets the input points for the triangulation, and (build the internal triangulation.
+   * default constructor
+   */
+  Ball_merge_surface_reconstruction()
+  {}
+
+  /*!
+   * constructs the class and calls  `build_triangulation(points)`.
+   *
+   * \tparam PointRange a model of `RandomAccessContainer`, with `Traits::Point_3` as value type
+   * \param points is the input points
+   */
+  template <class PointRange>
+  Ball_merge_surface_reconstruction(const PointRange& points);
+
+
+  /*!
+   * sets the input points for the triangulation, and builds the internal triangulation.
    * If called several times, only the last point range will be considered for the reconstructions.
    *
    * \tparam PointRange a model of `RandomAccessContainer`, with `Traits::Point_3` as value type
@@ -319,7 +337,7 @@ public:
   /*!
    *
    * creates a triangle soup approximating the surface with sample points passed to `build_triangulation()`,
-   * and puts the resulting triangule faces in `out_triangles`.
+   * and puts the resulting triangle faces in `out_triangles`.
    *
    * \tparam TripleIndexRange a model of `BackInsertionSequence` with `value_type`
    *                          being a model of `RandomAccessContainer` and `BackInsertionSequence` with `value_type`
@@ -367,8 +385,8 @@ public:
   /*!
    *
    * creates two watertight meshes approximating the surface with sample points passed to `build_triangulation()`,
-   * and puts the resulting triangule faces in `out_triangles1` and `out_triangles2`.
-   * As this function creates two shells (outer and inner) the input point set shall only be sampled on a single connected component.
+   * and puts the resulting triangle faces in `out_triangles1` and `out_triangles2`.
+   * \note As this function creates two shells (outer and inner in arbitrary order) the input point set must only be sampled on a single connected component.
    *
    * \tparam TripleIndexRange a model of `BackInsertionSequence` with `value_type`
    *                          being a model of `RandomAccessContainer` and `BackInsertionSequence` with `value_type`
@@ -389,6 +407,7 @@ public:
    *
    * \cgalNamedParamsEnd
    *
+   * \pre `build_triangulation()` should have been called before calling this function.
    */
   template <class NamedParameters = parameters::Default_named_parameters,
             class TripleIndexRange>
@@ -464,7 +483,7 @@ public:
  *
  * \ingroup PkgBallMergeRef
  *
- * creates a triangle soup approximating the surface, and puts the resulting triangule faces in `out_triangles`.
+ * creates a triangle soup approximating the surface, and puts the resulting triangle faces in `out_triangles`.
  *
  * \tparam Traits a model of `DelaunayTriangulationTraits_3`, with default using the value type of `PointRange` plugged in `Kernel_traits`
  * \tparam PointRange a model of `RandomAccessContainer`, with `Traits::Point_3` as value type
@@ -523,7 +542,7 @@ void ball_merge_surface_reconstruction_local(const PointRange& points,
 
 /*! \ingroup PkgBallMergeRef
  *
- * creates two watertight meshes approximating the surface, and puts the resulting triangule faces in `out_triangles1` and `out_triangles2`.
+ * creates two watertight meshes approximating the surface, and puts the resulting triangle faces in `out_triangles1` and `out_triangles2`.
  * As this function creates two shells (outer and inner) the input point set shall only be sampled on a single connected component.
  *
  * \tparam PointRange a model of the concepts `RandomAccessContainer`

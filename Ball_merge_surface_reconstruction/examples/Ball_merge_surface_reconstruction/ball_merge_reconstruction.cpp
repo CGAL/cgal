@@ -14,7 +14,7 @@ int main(int argc, char **argv)
 {
   // reading input points and parameters
   const std::string inFilename=argc>1?argv[1]:CGAL::data_file_path("points_3/kitten.xyz");
-  double delta = argc>2?atof(argv[2]):1.7;
+
   std::vector<Point> points;
   CGAL::IO::read_points(inFilename, std::back_inserter(points));
 
@@ -27,15 +27,23 @@ int main(int argc, char **argv)
   //vectors for storing output triangle indices
   std::vector<std::array<int,3>> meshFaceIndices1, meshFaceIndices2;
 
-  // run the reconstruction with the given parameter
-  CGAL::ball_merge_surface_reconstruction(
-    points,
-    meshFaceIndices1, meshFaceIndices2,
-    params::delta(delta).concurrency_tag(CGAL::Parallel_if_available_tag()));
+  double delta = argc > 2
+    // run the reconstruction with user passed delta parameter
+    ? CGAL::ball_merge_surface_reconstruction(points,
+                                              meshFaceIndices1, meshFaceIndices2,
+                                              params::delta(atof(argv[2]))
+                                                     .concurrency_tag(CGAL::Parallel_if_available_tag()))
+
+  // run the reconstruction with automatic parameter estimation
+    : CGAL::ball_merge_surface_reconstruction(points,
+                                              meshFaceIndices1, meshFaceIndices2,
+                                              params::concurrency_tag(CGAL::Parallel_if_available_tag()));
 
   // write output triangle soups
   CGAL::IO::write_polygon_soup("BMOut1.ply", points, meshFaceIndices1); //The first resulting mesh
   CGAL::IO::write_polygon_soup("BMOut2.ply", points, meshFaceIndices2); //The second resulting mesh
+
+  std::cout << "delta parameter used = " << delta << "\n";
 
   return 0;
 }

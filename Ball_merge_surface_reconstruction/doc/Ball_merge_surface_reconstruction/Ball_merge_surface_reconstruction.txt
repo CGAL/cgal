@@ -8,14 +8,14 @@ namespace CGAL {
 \author Amal Dev Parakkat, Stefan Ohrhallinger, Elmar Eisemann, Pooran Memari
 
 
-This \cgal component implements a surface reconstruction method that takes an unoriented set of 3D points as input and computes a piece-wise linear approximation of the sampled surface. In simple words, the method tries to classify the medial balls (computed from the 3D Delaunay triangulation of the input points) into interior and exterior and returns the interface between them.
+This \cgal component implements a surface reconstruction method that takes an unoriented set of 3D points as input and computes a piecewise linear approximation of the sampled surface. In simple words, the method tries to classify the medial balls (computed from the 3D Delaunay triangulation of the input points) into interior and exterior and returns the interface between them.
 
 The detailed description of the algorithm can be seen in \cgalCite{parakkat2024ballmerge}.
 
 
 \section secBMSRdefinitions Definitions
 
-The method is built upon the fact that whenever a discrete set of sample points approximates a continuous surface, the Voronoi balls (interior/exterior) intersect along the boundary with a ratio inversely proportional to the sampling density (similar to the observation of Amenta et al. \cgalCite{ack-pcubm-01}). Based on this, we define an "intersection ratio" between adjacent Voronoi balls as follows:
+The method is built upon the fact that whenever a discrete set of sample points approximates a continuous surface, the Voronoi balls (interior/exterior) intersect along the boundary with a ratio inversely proportional to the sampling density (similar to the observation of Amenta et al. \cgalCite{ack-pcubm-01}). Based on this, we define an \em intersection \em ratio  between adjacent Voronoi balls as follows:
 
 \f$ ir(B_0,B_1) = max((r_0+r_1-d)/r_0,(r_0+r_1-d)/r_1) \f$
 
@@ -25,14 +25,14 @@ Using this ratio, we can say that if the intersection ratio between two adjacent
 they likely correspond to a pair of interior and exterior balls sharing a thin overlapping region along the underlying surface
 (a 2D case is illustrated in Figure \cgalFigureRef{figBMSRillus}). In other words, given a threshold \f$ \delta \f$, a triangle is said
 to belong to a set \f$ BallMerge(\delta) \f$ if its corresponding adjacent Voronoi balls have an intersection ratio less than \f$ \delta \f$.
-By definition, \f$ BallMerge(\delta) \f$ is a subcomplex of the Delaunay Triangulation of the sample points. It is easy to see that \f$ BallMerge(0) \f$ is empty,
-while \f$ BallMerge(\delta) \f$, for any \f$ \delta \gt 2 \f$ contains all the triangles of the Delaunay Triangulation.
+By definition, \f$ BallMerge(\delta) \f$ is a subcomplex of the Delaunay triangulation of the sample points. It is easy to see that \f$ BallMerge(0) \f$ is empty,
+while \f$ BallMerge(\delta) \f$, for any \f$ \delta \gt 2 \f$ contains all the triangles of the Delaunay triangulation.
 
 \cgalFigureBegin{figBMSRillus,BMSRIllustration.png}
 Top: The interior (red) and exterior (green) medial balls of a point set with decreasing point density from l.t.r. Bottom: Corresponding \f$ \delta \f$-merged components on Delaunay triangulation.
 \cgalFigureEnd
 
-CGAL provides the global variant of BallMerge:
+\cgal provides the global variant of BallMerge as described in \cgalCite{parakkat2024ballmerge}.
 
 `ball_merge_surface_reconstruction()`: Given a threshold \f$ \delta \f$, two Delaunay simplices are called \f$ \delta\f$-merged either
 if their corresponding Voronoi balls are adjacent with an intersection ratio \f$ > \delta \f$ or if there exists another Delaunay simplex,
@@ -42,44 +42,48 @@ with the current component label until no more \f$ \delta\f$-merged simplices re
 unvisited simplex until all have been visited, and output the simplices with the most frequent label. The reconstructed surface is then computed from the boundary of this output.
 
 
-\subsection secBMSRChoose Input Requirement
+\subsection secBMSRChoose Input Requirements
 
-This method is expecting a point cloud representing a single connected compoment manifold close surface. It always returns a watertight and manifold surface.
-As the algorithm tries to close the surface, it can withstand missing data up to an extent and can handle little outliers and noise.
-If there are some significant holes in the data (missing data), the internal flooding algorithm will also generate triangular faces from points seen from the inside of the model.
+This method expects as input a 3D point cloud sampled a manifold close surface with a single connected component.
+It always returns a watertight and manifold surface triangle mesh.
+As the algorithm attempts to close the surface, it can tolerate some missing data and can handle little outliers and noise.
+If there are some significant gaps in the data, the internal flooding algorithm will generate triangle faces from points visible from inside the input surface.
 
 \subsection secBMSRPar Parameter Settings
 
-The main parameter used in BallMerge is the intersection ratio \f$\delta\f$. By definition, the \f$\delta\f$ ranges from 0 to 2 - with  \f$ BallMerge(0) \f$
-being empty and  \f$ BallMerge(2) \f$ containing all the triangles of the Delaunay Triangulation.
-Experiments show that the \f$ > \delta \f$ value usually lies between 1.5 and 1.95 (with 1.8 or 1.85 giving the best results in most cases).
-Thanks to the nice property of this intersection ratio, it is quite easy to tune this parameter based on a simple rule:
-if the reconstructed surface has missing parts, the threshold should be lowered, or if the reconstructed surface has additional parts, the threshold should be increased.
+The main parameter used in \f$ BallMerge \f$ is the intersection ratio \f$\delta\f$. By definition, \f$\delta\f$ ranges from 0 to 2, with  \f$ BallMerge(0) \f$
+being empty and  \f$ BallMerge(2) \f$ containing all the triangles of the Delaunay triangulation.
+Experiments show that the \f$ > \delta \f$ value usually lies between 1.5 and 1.95, with 1.8 or 1.85 yielding the best results in most cases.
+Thanks to the useful properties of this intersection ratio, tuning this parameter can be done using the following rule:
+if the reconstructed surface has missing parts, the threshold should be lowered,; conversely, if the reconstructed surface has additional parts, the threshold should be increased.
 
 If no value is provided to the reconstruction function, the \f$\delta\f$ parameter is automatically estimated using the following method:
-Starting from the maximal value 2, we iteratively decrease \f$\delta\f$ until the reconstructed surface  has a sudden vertex-count decrease (10% of the total number of input points).
-This means that a large amount of interior/exterior medial balls became \f$\delta\f$-merged, meaning that part of
-the reconstructed surface collapsed. Consequently, the value from the previous iteration is used as default value.
-Our experiments show that \f$\delta\f$ usually lies in a range from 1.65 to 1.85.
-
-This \f$\delta\f$ value used is returned by the functions.
+Starting from the maximal value 2, we iteratively decrease \f$\delta\f$ until the reconstructed surface undergoes a sudden vertex-count drop (10% of the total number of input points).
+This indicates that a large number of interior/exterior medial balls have become \f$\delta\f$-merged, causing that part of
+the reconstructed surface to collapse. Consequently, the value from the previous iteration is used as default value.
+Our experiments show that \f$\delta\f$ usually lies within a range of 1.65 to 1.85. The \f$\delta\f$ value used is always returned by the functions.
 
 \section secBMSRexamples Examples
 
 `ball_merge_surface_reconstruction()` has the following arguments: The set of input points, two output parameters where the resulting meshes will be stored, and the parameter \f$ \delta \f$.
 The function returns two meshes - the largest and second-largest components as sometimes the expected shape will be the second-largest component after merging.
-A sample program showing how to use this function is given below:
+A sample program showing how to use this function is given below, together with the output reconstructions.
+
+\cgalFigureBegin{figBMSKitten,kitten_ball_merged.png}
+Result of the run of the ball merge algorithm with automatic delta parameter estimation.
+From left to right: Input point cloud (no normal required); one of the two output containing the expected triangle mesh; the second output  representing the non desired part, that is actually a triangle soup with non-manifold edges (shown in red). The `delta` parameter that is automatically estimated is `1`.
+\cgalFigureEnd
 
 \cgalExample{Ball_merge_surface_reconstruction/ball_merge_reconstruction.cpp}
 
-Ideally, the current implementation takes a dense point cloud as input (plain x,y,z coordinates without any additional information like normal and texture) sampled over a smooth surface. Thanks to the "intersection ratio", the algorithm can also handle a few challenging cases with mild noise, outliers or missing data up to an extent. It is worth noting that, while using \f$ GlobalBallMerge \f$, outliers sometimes create deep cavities over the surface, and an increased amount of noise shrinks and sometimes misses important features.
+Ideally, the current implementation takes a dense point cloud as input (plain x,y,z coordinates without any additional information like normal and texture) sampled over a smooth surface. Thanks to the "intersection ratio", the algorithm can also handle a few challenging cases with mild noise, outliers or missing data up to an extent.
+It is worth noting that outliers sometimes create deep cavities over the surface, and an increased amount of noise shrinks and sometimes misses important features.
 
-Finally, the algorithm is lightweight and requires only a little computation in terms of input size as it performs only two quick linear-time passes on the Delaunay complex.
-
+Finally, the algorithm is efficient, requiring minimal computation resources relative to the input size, as it completes two swift linear-time passes over the 3D Delaunay triangulation.
 
 \section secBMSRhistory  Implementation History
 
-This package is based on a prototype code .....
+This package is based on the original code from the research article \cgalCite{parakkat2024ballmerge} and has been turned into a \cgal package by Amel Dev Parakkat and Sébastien Loriot.
 
 */
 } /* namespace CGAL */
