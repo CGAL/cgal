@@ -2190,18 +2190,24 @@ private:
       process_older_cavity_algorithm(intersecting_edges, intersecting_cells, facets_of_upper_cavity, facets_of_lower_cavity);
     } // older algorithm
 
-    std::set<Facet> facets_of_border;
-    Union_find<Vertex_handle> vertices_of_cavity_union_find;
-    if(this->use_newer_cavity_algorithm()) {
-      for(auto c: intersecting_cells) {
-        for(int i = 0; i < 4; ++i) {
-          auto n = c->neighbor(i);
-          if(intersecting_cells.count(n) == 0) {
-            facets_of_border.emplace(n, n->index(c));
+    // those facets are viewed from the outside of the cavity
+    const std::set<Facet> facets_of_border = std::invoke([&] {
+      std::set<Facet> facets_of_border;
+      if(this->use_newer_cavity_algorithm()) {
+        for(auto c : intersecting_cells) {
+          for(int i = 0; i < 4; ++i) {
+            auto n = c->neighbor(i);
+            if(intersecting_cells.count(n) == 0) {
+              facets_of_border.emplace(n, n->index(c));
+            }
           }
         }
       }
+      return facets_of_border;
+    });
+    if(this->use_newer_cavity_algorithm()) {
       Unique_hash_map<Vertex_handle, typename Union_find<Vertex_handle>::handle> vertices_of_cavity_handles;
+      Union_find<Vertex_handle> vertices_of_cavity_union_find;
       for(auto c: intersecting_cells) {
         for(auto v : tr().vertices(c)) {
           if(!is_marked(v)) {
