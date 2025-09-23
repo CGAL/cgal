@@ -188,7 +188,7 @@ face normals). This variance naturally deteriorates the tightness of the result,
 hand it enables creating more uniform triangulations and the approach is more tolerant to noise,
 while still maintaining feature sensitivity.
 
-Another extension of the Garland–Heckbert approach was introduced by Liu et al. \cgalCite{10.1111:cgf.70184}, 
+Another extension of the Garland–Heckbert approach was introduced by Liu et al. \cgalCite{10.1111:cgf.70184},
 who enhance the classic plane-based quadric error metrics with line quadrics.
 More precisely, line quadrics, which encode the distance to a line, are defined at all input vertices using the supporting lines of the normals.
 These quadrics are then combined with the classic plane quadrics, but with a small weight (0.01 by default).
