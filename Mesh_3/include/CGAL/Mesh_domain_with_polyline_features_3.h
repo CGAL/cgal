@@ -292,6 +292,23 @@ public:
     return it;
   }
 
+  const_iterator next_segment_source(const_iterator it) const
+  {
+    CGAL_assertion(it != points_.end());
+    if(it == last_segment_source())
+    {
+      if(is_loop())
+        return first_segment_source();
+      else
+        return points_.end();
+    }
+    else
+    {
+      ++it;
+      return it;
+    }
+  }
+
   /// returns a point at geodesic distance `distance` from `start_pt` along the
   /// polyline. The polyline is oriented from starting point to end point.
   /// The distance could be negative.
@@ -299,65 +316,53 @@ public:
                               FT distance,
                               const_iterator start_it) const
   {
-    Point_3 p = start_pt;
-    if(start_it == first_segment_source())
+    distance += curve_segment_length(*start_it, start_pt, CGAL::POSITIVE);
+
+    // If polyline is a loop, ensure that distance is given from start_it
+    if(is_loop())
     {
-      if(is_loop() && distance < 0.)
-      {
-        p = *start_it;
-        start_it = previous_segment_source(start_it);
-        distance += last_segment_length();
-      }
+      std::cout << "is loop" << std::endl;
+      if(distance < FT(0))         { distance += length(); }
+      else if(distance > length()) { distance -= length(); }
     }
 
-    while(distance < 0.)
-    {
-      // Move to previous point
-      distance += this->distance(p, *start_it);
-      p = *start_it;
-      if(start_it != first_segment_source())
-        start_it = previous_segment_source(start_it);
-    }
+    CGAL_assertion(distance >= FT(0));
+    CGAL_assertion(distance <= length());
 
-    // use first point of the polyline instead of p
-    distance += this->distance(*start_it, p);
-
-//    // If polyline is a loop, ensure that distance is given from start_point()
-//    if ( is_loop() )
-//    {
-//      if ( distance < FT(0) ) { distance += length(); }
-//      else if ( distance > length() ) { distance -= length(); }
-//    }
-
-    CGAL_assertion( distance >= FT(0) );
-    CGAL_assertion( distance <= length() );
+    if(distance == FT(0) || distance == length())
+      return {*start_it, start_it};
 
     // Initialize iterators
-    const_iterator pit = start_it;
+    const_iterator pit = start_it; // start at start_it, and walk forward
     const_iterator previous = pit++;
 
     // Iterate to find which segment contains the point we want to construct
-    FT segment_length = this->distance(*previous,*pit);
-    while ( distance > segment_length )
+    FT segment_length = this->distance(*previous, *pit);
+    while(distance > segment_length)
     {
       distance -= segment_length;
 
       // Increment iterators and update length
-      ++previous;
-      ++pit;
+      previous = next_segment_source(previous);
+      pit = next_segment_source(pit);
 
-      if (pit == points_.end())
-        return {*previous, last_segment_source()};
-
-      segment_length = this->distance(*previous,*pit);
+      if(pit == points_.end())
+      {
+        CGAL_assertion(distance < this->distance(*previous, end_point()));
+        break;
+      }
+      else
+        segment_length = this->distance(*previous, *pit);
     }
 
     // return point at distance from current segment source
-    typedef typename Kernel::Vector_3 Vector_3;
-    Vector_3 v (*previous, *pit);
+    using Vector_3 = typename Kernel::Vector_3;
+    auto vector = Kernel().construct_vector_3_object();
+    Vector_3 v = (pit != points_.end()) ? vector(*previous, *pit)
+                                        : vector(*previous, end_point());
 
     return {(*previous) + (distance / CGAL::sqrt(v.squared_length())) * v,
-            previous};
+             previous};
   }
 
   const_iterator locate_corner(const Point_3& p) const
@@ -1017,6 +1022,25 @@ public:
     std::cerr << " done (" << timer.time() * 1000 << " ms)" << std::endl;
 #endif
   } // build_curves_aabb_tree()
+
+  void dump_curve(const Curve_index& index, const std::string& prefix) const
+  {
+    std::string filename(prefix);
+    filename += std::to_string(index) + ".polylines.txt";
+
+    std::ofstream os(filename);
+    typename Edges::const_iterator eit = edges_.find(index);
+    if(eit == edges_.end()) {
+      os << "No curve with index " << index << std::endl;
+      return;
+    }
+    const Polyline& polyline = eit->second;
+    os << polyline.points_.size();
+    for(const auto& p : polyline.points_)
+      os << "  " << p;
+    os << std::endl;
+    os.close();
+  }
 
   /// @endcond
 
