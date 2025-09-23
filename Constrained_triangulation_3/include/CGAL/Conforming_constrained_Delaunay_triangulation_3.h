@@ -2240,31 +2240,32 @@ private:
             break;
         }
       }
-      Vertex_handle vertex_above{};
-      Edges_container all_border_edges{border_edges.begin(), border_edges.end()};
-      std::for_each(border_edges.begin(), border_edges.end(), [&](auto edge) {
-        all_border_edges.emplace_back(edge.first, edge.third, edge.second);
-      });
-      for(const auto& border_edge: all_border_edges) {
-        const auto [border_edge_va, border_edge_vb] = tr().vertices(border_edge);
-        auto circ = tr().incident_cells(border_edge);
-        CGAL_assertion(circ != nullptr);
-        const auto end = circ;
-        do {
-          const auto index_va = circ->index(border_edge_va);
-          const auto index_vb = circ->index(border_edge_vb);
-          const auto face_index = tr().next_around_edge(index_va, index_vb);
-          if(facets_of_border.count(Facet{circ, face_index}) > 0) {
-            const auto other_vertex_index = 6 - index_va - index_vb - face_index;
-            const auto other_vertex = circ->vertex(other_vertex_index);
-            if(is_marked(other_vertex, Vertex_marker::CAVITY)) {
-              vertex_above = circ->vertex(other_vertex_index);
-              break;
+
+      const Vertex_handle vertex_above = std::invoke([&] {
+        Edges_container all_border_edges{border_edges.begin(), border_edges.end()};
+        std::for_each(border_edges.begin(), border_edges.end(), [&](auto edge) {
+          all_border_edges.emplace_back(edge.first, edge.third, edge.second);
+        });
+        for(const auto& border_edge: all_border_edges) {
+          const auto [border_edge_va, border_edge_vb] = tr().vertices(border_edge);
+          auto circ = tr().incident_cells(border_edge);
+          CGAL_assertion(circ != nullptr);
+          const auto end = circ;
+          do {
+            const auto index_va = circ->index(border_edge_va);
+            const auto index_vb = circ->index(border_edge_vb);
+            const auto face_index = tr().next_around_edge(index_va, index_vb);
+            if(facets_of_border.count(Facet{circ, face_index}) > 0) {
+              const auto other_vertex_index = 6 - index_va - index_vb - face_index;
+              const auto other_vertex = circ->vertex(other_vertex_index);
+              if(is_marked(other_vertex, Vertex_marker::CAVITY)) {
+                  return circ->vertex(other_vertex_index);
+              }
             }
-          }
-        } while(++circ != end);
-        if(vertex_above != Vertex_handle{}) break;
-      }
+          } while(++circ != end);
+        }
+        return Vertex_handle{};
+      });
       CGAL_assume(vertex_above != Vertex_handle{});
 
       const auto vertex_above_handle = vertices_of_cavity_handles[vertex_above];
