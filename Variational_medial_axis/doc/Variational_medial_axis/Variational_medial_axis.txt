@@ -22,8 +22,8 @@ This package implements a skeletonization algorithm \cgalCite{huang2024dynamic} 
 Unlike the \ref PkgSurfaceMeshSkeletonization "Surface_mesh_skeletonization" package, which computes a purely curve-based (1D) skeleton, the output of this method is a non-manifold triangle mesh that may contain both curve (1D) and surface (2D) elements, a structure sometimes referred to as a **medial mesh**.
 Each vertex of the resulting mesh corresponds to a medial sphere, and the edges and faces encode the adjacency relationships between these spheres.
 One can reconstruct the original mesh by interpolating between spheres according their adjacency relationships.
-For each edge, two spheres are interpolated, obtained a <I>medial cone</I> .
-For each face, three spheres are interpolated, obtained a <I>medial slab</I>.
+For each edge, interpolating between two spheres yields a <I>medial cone</I>.
+For each face, interpolating between three spheres yields a <I>medial slab</I>.
 \cgalFigureAnchor{cone_slab}
 <center>
 <img src="cone_slab.png" width="600px"/>
@@ -60,7 +60,7 @@ The output is stored in a \ref Medial_Skeleton structure, which contains three c
 - **edges**: each element is a `std::pair<std::size_t, std::size_t>` encoding the adjacency between two spheres,
 - **faces**: each element is a triplet of `Sphere_ID`(std::array<std::size_t, 3>) values encoding a triangular patch connecting three spheres.
 
-A helper function `CGAL::Medial_skeleton::write_to_ply_file()` is provided to export the resulting skeleton to a `.ply` file,
+A helper function `CGAL:write_PLY()` is provided to export the resulting skeleton to a `.ply` file,
 which can then be visualized in external software such as Blender.
 
 \subsection VMASacc Acceleration Structure
@@ -70,20 +70,19 @@ To project them back onto the medial axis, the algorithm performs a **correction
 
 To accelerate this closest point query, two types of spatial search structures are supported:
 
-- `CGAL::KD_tree_tag`: uses a KD-tree constructed from the surface vertices.
-- `CGAL::BVH_tag`: uses a bounding volume hierarchy (BVH) built from the input triangle mesh.
+- `CGAL::KD_tree_tag`: uses a KD-tree constructed from the surface sample points.
+- `CGAL::BVH_tag`: uses a bounding volume hierarchy (BVH) built from the faces of the input triangle mesh.
 
 The user can choose the desired structure by passing the corresponding tag via the `CGAL::parameters::acceleration_structure()` named parameter.
-The essential difference is that the KD-tree restricts sphere placement to be constrained by surface vertices only, while the BVH allows medial spheres to touch the interior of mesh faces.
-In general, we recommend using the KD-tree (which is also the default) if the surface mesh has a sufficiently dense vertex sampling.
-However, for sparse meshes, the KD-tree may cause the resulting medial spheres to drift outside the shape boundaries.
-In such cases, the BVH may offer better geometric containment, though it is neither guaranteed to produce strictly interior medial spheres.
+The essential difference is that the KD-tree restricts sphere placement to be constrained by surface sampled points only, while the BVH allows medial spheres to touch the interior of mesh faces.
+In general, we recommend using the KD-tree (which is also the default) since the surface will be densely sampled at the beginning of the algorithm.
 
 
 \subsection VMASfree Free function
 The function `CGAL::extract_variational_medial_skeleton()` provides a convenient interface for users who want to quickly extract a medial skeleton with specified parameters.
 This function accepts the following parameters:
 - `number_of_spheres`: target number of medial spheres
+- `number_of_samples`: number of points that will be sampled on the surface
 - `lambda`: weight balancing the energy terms
 - `number_of_iterations`: maximum number of iterations
 - `concurrency_tag`: execution mode - sequential or parallel
@@ -96,9 +95,8 @@ The following example showcases the usage of this function:
 The class `CGAL::Variational_medial_axis` provides some advanced usage of the algorithm
 Several key functions are provided for algorithm control:
 - `CGAL::Variational_medial_axis::compute_variational_medial_axis_sampling()`: Executes the complete algorithm with specified parameters and returns a boolean indicating success.
-The algorithm may fail either when the optimization does not converge (the error stays above the error threshold) or when the input surface sampling is too sparse to generate a sufficient number of medial spheres.
-The paramters are the same of the free function.
-
+The algorithm may fail either when the optimization does not converge (the error stays above the error threshold) or when the surface sampling is not dense enough to generate a sufficient number of medial spheres.
+The parameters are the same as those of the free function, except for `number_of_samples`, which is fixed when the class instance is constructed.
 
 - `CGAL::Variational_medial_axis::update_single_step()`: Performs a single iteration of the optimization process, with optional sphere splitting enabled. This allows for step-by-step execution and monitoring of the algorithm's progress.
 
@@ -106,7 +104,7 @@ The paramters are the same of the free function.
 
 - `CGAL::Variational_medial_axis::add_spheres(int nb_spheres)`: Adds a specified number of spheres by iteratively splitting existing spheres.
 
-The following example show a different configuration of the parameters and basic usage of above function:
+The following example shows a different configuration of the parameters and basic usage of the above functions:
 
 \cgalExample{Variational_medial_axis/vmas_class_interface_example.cpp}
 
@@ -115,12 +113,6 @@ The following example show a different configuration of the parameters and basic
 By definition, the medial axis of a shape is homotopy equivalent to the original object.
 However, since this algorithm aims to generate coarse approximation of medial axis, it does **not** provide any theoretical guarantee that the extracted skeleton preserves the topology of the input.
 While the algorithm can handle meshes with multiple connected components, the resulting medial skeleton is only topologically faithful when a sufficient number of spheres is used to capture the correct connectivity.
-
-In practice, several factors can lead to topological discrepancies between the input shape and the extracted skeleton:
-
-- **Coarse sampling**: If the number of medial spheres is too small, it may fail to capture essential topological features.
-- **Sparse input mesh**: Poorly sampled or low-resolution meshes, especially in narrow or thin regions, can lead to incorrect clustering or connectivity artifacts.
-
 
 \section VMASDesign Design and Implementation History
 This package is the result of the work of Qijia HUANG during the 2025 season of the Google Summer of Code, mentored by Sébastien Loriot.

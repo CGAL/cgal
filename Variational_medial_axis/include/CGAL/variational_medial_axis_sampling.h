@@ -486,9 +486,9 @@ public:
   }
   /**
    * sets the data for the medial skeleton.
-   * @param vertices A vector of `Sphere_3` representing the vertices (medial spheres).
-   * @param edges A vector of pairs representing the edges, where each pair contains indices of vertices.
-   * @param faces A vector of arrays representing the faces, where each array contains three indices of vertices.
+   * @param vertices A list of `Sphere_3` representing the vertices (medial spheres).
+   * @param edges A list of pairs representing the edges, where each pair contains indices of vertices.
+   * @param faces A list of arrays representing the faces, where each array contains three indices of vertices.
    */
   void set_data(std::vector<Sphere_3>&& vertices,
                 std::vector<std::pair<std::size_t, std::size_t>>&& edges,
@@ -505,7 +505,7 @@ private:
   std::vector<std::pair<std::size_t, std::size_t>> edges_;
   std::vector<std::array<std::size_t, 3>> faces_;
 };
-
+#ifndef DOXYGEN_RUNNING
 template <class TriangleMesh_, class GeomTraits_ = Default> class Medial_skeleton_offset_function
 {
   using GT = typename Default::Get<
@@ -518,43 +518,47 @@ template <class TriangleMesh_, class GeomTraits_ = Default> class Medial_skeleto
   using Sphere_3 = typename GT::Sphere_3;
   using MSkeleton = Medial_Skeleton<TriangleMesh_, GeomTraits_>;
   // AABB tree types over spheres
-  using Iterator = typename std::vector<Sphere_3>::const_iterator;
-  using Primitive = CGAL::AABB_sphere_primitive_3<GT, Iterator>;
-  using Traits = CGAL::AABB_traits_3<GT, Primitive>;
-  using Tree = CGAL::AABB_tree<Traits>;
+  //This is useless now
+  // using Iterator = typename std::vector<Sphere_3>::const_iterator;
+  // using Primitive = CGAL::AABB_sphere_primitive_3<GT, Iterator>;
+  // using Traits = CGAL::AABB_traits_3<GT, Primitive>;
+  // using Tree = CGAL::AABB_tree<Traits>;
 
 public:
   Medial_skeleton_offset_function(const MSkeleton& skeleton)
       : skeleton_(skeleton)
       , spheres_(&skeleton_.vertices())
-      , faces_(&skeleton_.faces())
-      , tree_(spheres_->begin(), spheres_->end()) {
+      // , faces_(&skeleton_.faces())
+      //, tree_(spheres_->begin(), spheres_->end()) 
+      {
     const std::size_t n = skeleton_.number_of_vertices();
     radii_.reserve(n);
     for(const auto& sph : *spheres_)
       radii_.push_back(CGAL::approximate_sqrt(sph.squared_radius()));
-
+    //This is useless now
     // Build adjacency for cones (edges) and incident face lists (slabs)
-    edge_adj_.resize(n);
-    face_incident_.resize(n);
+    // edge_adj_.resize(n);
+    // face_incident_.resize(n);
 
-    const auto& edges = skeleton_.edges();
-    for(const auto& e : edges) {
-      const std::size_t i = e.first, j = e.second;
-      edge_adj_[i].push_back(j);
-      edge_adj_[j].push_back(i);
-    }
-    for(std::size_t fid = 0; fid < faces_->size(); ++fid) {
-      const auto& f = (*faces_)[fid];
-      const std::size_t a = f[0], b = f[1], c = f[2];
-      face_incident_[a].push_back(fid);
-      face_incident_[b].push_back(fid);
-      face_incident_[c].push_back(fid);
-    }
+    // const auto& edges = skeleton_.edges();
+    // for(const auto& e : edges) {
+    //   const std::size_t i = e.first, j = e.second;
+    //   edge_adj_[i].push_back(j);
+    //   edge_adj_[j].push_back(i);
+    // }
+    // for(std::size_t fid = 0; fid < faces_->size(); ++fid) {
+    //   const auto& f = (*faces_)[fid];
+    //   const std::size_t a = f[0], b = f[1], c = f[2];
+    //   face_incident_[a].push_back(fid);
+    //   face_incident_[b].push_back(fid);
+    //   face_incident_[c].push_back(fid);
+    // }
 
-    tree_.accelerate_distance_queries();
+    // tree_.accelerate_distance_queries();
   }
 
+
+  // Evaluate the minimum distance from point p to the interpolated medial axis (cones and slabs)
   FT operator()(const Point_3& p) const {
     FT dmin = (std::numeric_limits<FT>::max)();
 
@@ -562,7 +566,7 @@ public:
     std::unordered_set<std::pair<std::size_t, std::size_t>, boost::hash<std::pair<std::size_t, std::size_t>>>
         visited_edges;
 
-    for(const auto& tri : *faces_) {
+    for(const auto& tri : skeleton_.faces()) {
       const std::size_t a = tri[0], b = tri[1], c = tri[2];
       const Point_3& c1 = (*spheres_)[a].center();
       const Point_3& c2 = (*spheres_)[b].center();
@@ -649,6 +653,7 @@ private:
     return sphere_distance(p, c, r);
   }
 
+  // Evaluate the minimum distrance from point p to the medial cone defined by two spheres (c1,r1) and (c2,r2)
   FT eval_cone(const Point_3& c1, const Point_3& c2, const FT r1, const FT r2, const Point_3& p) const {
 
     FT dmin = (std::numeric_limits<FT>::max)();
@@ -683,6 +688,7 @@ private:
     return dmin;
   }
 
+  // Evaluate the minimum distance from point p to the medial slab defined by three spheres (c1,r1), (c2,r2) and (c3,r3)
   FT eval_slab(const Point_3& c1,
                const Point_3& c2,
                const Point_3& c3,
@@ -859,15 +865,19 @@ private:
 private:
   const MSkeleton& skeleton_;
   const std::vector<Sphere_3>* spheres_;
-  const std::vector<std::array<std::size_t, 3>>* faces_;
+
   std::vector<FT> radii_;
 
-  // adjacency
-  std::vector<std::vector<std::size_t>> edge_adj_;
-  std::vector<std::vector<std::size_t>> face_incident_;
 
-  Tree tree_;
+  // This is useless now
+  // const std::vector<std::array<std::size_t, 3>>* faces_;
+  // std::vector<std::vector<std::size_t>> edge_adj_;
+  // std::vector<std::vector<std::size_t>> face_incident_;
+
+  //Tree tree_;
 };
+#endif // DoXYGEN_RUNNING
+
 /// \ingroup PkgVMASRef
 /// \brief Algorithm class for extracting a variational medial skeleton from a triangulated surface mesh.
 ///
@@ -881,7 +891,7 @@ private:
 ///
 /// \note This method is designed to generate coarse approximations of the medial axis. The number of
 /// spheres that can be reliably generated depends on the density of the input surface sampling. For best
-/// results, we recommend keeping the total number of medial spheres under nb_vertices/100.
+/// results, we recommend keeping the total number of medial spheres under nb_samples/100.
 /// In addition, the user can explicitly request cluster merging or splitting operations to locally simplify or refine
 /// the skeleton structure.
 ///
@@ -986,6 +996,13 @@ public:
   ///     \cgalParamDescription{The desired number of medial spheres in the resulting skeleton.}
   ///     \cgalParamType{unsigned int}
   ///     \cgalParamDefault{100}
+  ///  \cgalParamNEnd
+  ///   \cgalParamNBegin{number_of_samples}
+  ///     \cgalParamDescription{The number of samples on the surface mesh to use for the optimization process.}
+  ///     \cgalParamType{unsigned int}
+  ///     \cgalParamDefault{max(20000, number_of_spheres * 100)}
+  ///     \cgalParamExtra{The number of samples should be significantly larger than the number of spheres.(x100 at least)}
+  ///  \cgalParamNEnd
   /// \cgalParamNBegin{max_iteration_number}
   ///    \cgalParamDescription{The maximum number of iterations for the optimization process.}
   ///    \cgalParamType{int}
@@ -1023,6 +1040,8 @@ public:
     using parameters::get_parameter;
 
     desired_number_of_spheres_ = choose_parameter(get_parameter(np, internal_np::number_of_spheres), 100);
+    nb_samples_ = choose_parameter(get_parameter(np, internal_np::number_of_samples), 100 * desired_number_of_spheres_);
+    nb_samples_ = std::max(nb_samples_, std::size_t(20000));
     lambda_ = choose_parameter(get_parameter(np, internal_np::lambda), FT(0.2));
     max_iteration_ = choose_parameter(get_parameter(np, internal_np::number_of_iterations), desired_number_of_spheres_*10);
     verbose_ = choose_parameter(get_parameter(np, internal_np::verbose), false);
@@ -1053,7 +1072,7 @@ public:
    *  \cgalParamNBegin{max_iteration_number}
    *     \cgalParamDescription{The maximum number of iterations for the optimization process.}
    *     \cgalParamType{int}
-   *     \cgalParamDefault{1000}
+   *     \cgalParamDefault{10* number_of_spheres}
    *   \cgalParamNEnd
    *   \cgalParamNBegin{lambda}
    *     \cgalParamDescription{A weight balancing the two energy terms (SQEM and Euclidean). Smaller values encourage
@@ -1329,11 +1348,12 @@ public:
   void set_max_iteration(int max_iter) { max_iteration_ = max_iter; }
   ///@}
 private:
+  //Sample points on the surface mesh and compute k-nearest neighbors for each point so that we can construct the connectivity of skeleton
   void sample_surface_mesh() {
-  std::size_t nb_samples = std::max(std::size_t(30000), 100 * desired_number_of_spheres_);
+
     CGAL::Random rng;
     CGAL::Random_points_in_triangle_mesh_3<TriangleMesh_, VPM> g(tmesh_, vpm_, rng);
-    for(std::size_t i = 0; i < nb_samples; ++i) {
+    for(std::size_t i = 0; i < nb_samples_; ++i) {
       Point_3 p = *g;
       face_descriptor f = g.last_item_picked();
       put(face_nb_samples_map_, f, get(face_nb_samples_map_, f) + 1);
@@ -1349,6 +1369,9 @@ private:
       std::size_t nb_sample = get(face_nb_samples_map_, f);
       point_area_map_[*it] = area / FT(nb_sample);
     }
+
+    // Compute k-nearest neighbors for each point
+    // The kd-tree is built temporarily here only for k-nearest neighbor search and discarded after this function
     using Point_with_index = boost::tuple<Point_3, Point_Index>;
     using BaseTraits = CGAL::Search_traits_3<GT>;
     using Traits =
@@ -1485,9 +1508,7 @@ private:
     Point_3 c = p - (r * n);
     face_descriptor last_face;
     while(true) {
-      // get the hint directly from the kd-tree only to illustrate the use of the internal kd-tree
-      // auto hint = tree_->kd_tree().closest_point(c);
-      // auto [q_next, closest_face] = tree_->closest_point_and_primitive(c, hint);
+
       auto [q_next, closest_face] = tree_->closest_point_and_primitive(c);
       FT squared_dist = (q_next - c).squared_length();
       if(squared_dist >= (r - delta_convergence) * (r - delta_convergence)) {
@@ -1600,6 +1621,7 @@ private:
       compute_one_vertex_shrinking_ball(idx);
     }
   }
+
 
   void assign_vertices_to_clusters() {
     for(auto it = tpoints_.begin(); it != tpoints_.end(); ++it) {
@@ -1978,6 +2000,7 @@ private:
   VPM vpm_;
   FT lambda_;
   std::size_t desired_number_of_spheres_;
+  std::size_t nb_samples_;
   int max_iteration_;
   int iteration_count_;
   FT total_error_diff_;

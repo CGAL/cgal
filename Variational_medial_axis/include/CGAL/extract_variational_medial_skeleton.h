@@ -45,6 +45,12 @@ namespace CGAL {
 ///    \cgalParamExtra{This number should generally not exceed 300, as the method is designed to produce coarse
 /// skeletons.}
 ///  \cgalParamNEnd
+///   \cgalParamNBegin{number_of_samples}
+///     \cgalParamDescription{The number of samples on the surface mesh to use for the optimization process.}
+///     \cgalParamType{unsigned int}
+///     \cgalParamDefault{max(20000, number_of_spheres * 100)}
+///     \cgalParamExtra{The number of samples should be significantly larger than the number of spheres.(x100 at least)}
+///  \cgalParamNEnd
 ///  \cgalParamNBegin{max_iteration_number}
 ///     \cgalParamDescription{The maximum number of iterations for the optimization process.}
 ///     \cgalParamType{int}
