@@ -533,7 +533,7 @@ public:
     /**
      * \brief Iterator to the beginning of the chain.
      *
-     * \warning The chain is stored unordered for speed reason.
+     * \warning The chain is stored in an unordered map for speed reason.
      *
      * \return The function returns an iterator to the first non zero index.
      */

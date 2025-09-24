@@ -185,7 +185,7 @@ template <> class Algebraic_structure_traits< Homological_discrete_vector_field:
       : public CGAL::cpp98::unary_function< Type, ::CGAL::Sign > {
       public:
         ::CGAL::Sign operator()( const Type& x ) const {
-          if(x_.is_zero()) return ZERO ;
+          if(x.is_zero()) return ZERO ;
           else return POSITIVE ;
         }
     };
