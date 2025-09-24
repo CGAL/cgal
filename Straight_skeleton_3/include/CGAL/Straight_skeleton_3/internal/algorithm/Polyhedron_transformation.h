@@ -9,14 +9,15 @@
 // Author(s)     : Mael Rouxel-Labbé
 
 /**
- * @file   algo/3d/PolyhedronTransformation.h
- * @author Gernot Walzl
- * @date   2012-09-01
+ * file   algo/3d/PolyhedronTransformation.h
+ * author Gernot Walzl
+ * date   2012-09-01
  */
 
 #ifndef CGAL_STRAIGHT_SKELETON_3_INTERNAL_ALGORITHM_POLYHEDRON_TRANSFORMATION_H
 #define CGAL_STRAIGHT_SKELETON_3_INTERNAL_ALGORITHM_POLYHEDRON_TRANSFORMATION_H
 
+#include <CGAL/Straight_skeleton_3/internal/debug.h>
 #include <CGAL/Straight_skeleton_3/internal/kernel/Kernel_factory.h>
 #include <CGAL/Straight_skeleton_3/internal/kernel/Kernel_wrapper.h>
 #include <CGAL/Straight_skeleton_3/internal/algorithm/Geom_utils.h>
@@ -223,19 +224,18 @@ public:
         scale_factor = s;
       }
     }
-    scale_factor = floor(CGAL::to_double(scale_factor)*1000.0)/1000.0; // @fixme interval
-    Vector3SPtr v_s = KernelFactory::createVector3(
-            scale_factor, scale_factor, scale_factor);
+    scale_factor = floor(CGAL::to_double(scale_factor)*1000.0)/1000.0;
+    Vector3SPtr v_s = KernelFactory::createVector3(scale_factor, scale_factor, scale_factor);
 
     Vector3SPtr v_t = KernelFactory::createVector3((*v_center_curr) * -1.0);
     if (v_t->squared_length() > 0.0) {
-        translate(polyhedron, v_t);
+      translate(polyhedron, v_t);
     }
     if (scale_factor != 1.0) {
-        scale(polyhedron, v_s);
+      scale(polyhedron, v_s);
     }
     if (v_center->squared_length() > 0.0) {
-        translate(polyhedron, v_center);
+      translate(polyhedron, v_center);
     }
   }
 
@@ -246,7 +246,7 @@ public:
     ConfigurationSPtr config = Configuration::getInstance();
     double range = 1e-10;
     if (config->isLoaded()) {
-      range = config->getDouble("main", "truncate_precision");
+      range = config->getDouble("Preprocessing", "truncate_precision");
     }
 
     if (range == 0.) {
@@ -261,15 +261,15 @@ public:
     CGAL_SS3_TRANSF_TRACE_V(8,"  scale = " << scale);
 
     for (const VertexSPtr& vertex : polyhedron->vertices()) {
-        Point3SPtr p = vertex->getPoint();
-        CGAL_SS3_TRANSF_TRACE_V(32,"    Truncated from: " << *(vertex->getPoint()));
+      Point3SPtr p = vertex->getPoint();
+      CGAL_SS3_TRANSF_TRACE_V(32,"    Truncated from: " << *(vertex->getPoint()));
 
-        double rx = CGAL::Polygon_mesh_processing::autorefine_impl::double_ceil(p->x() * scale) / scale;
-        double ry = CGAL::Polygon_mesh_processing::autorefine_impl::double_ceil(p->y() * scale) / scale;
-        double rz = CGAL::Polygon_mesh_processing::autorefine_impl::double_ceil(p->z() * scale) / scale;
+      double rx = CGAL::Polygon_mesh_processing::autorefine_impl::double_ceil(p->x() * scale) / scale;
+      double ry = CGAL::Polygon_mesh_processing::autorefine_impl::double_ceil(p->y() * scale) / scale;
+      double rz = CGAL::Polygon_mesh_processing::autorefine_impl::double_ceil(p->z() * scale) / scale;
 
-        vertex->setPoint(KernelFactory::createPoint3(rx, ry, rz));
-        CGAL_SS3_TRANSF_TRACE_V(32,"    Truncated to: " << *(vertex->getPoint()));
+      vertex->setPoint(KernelFactory::createPoint3(rx, ry, rz));
+      CGAL_SS3_TRANSF_TRACE_V(32,"    Truncated to: " << *(vertex->getPoint()));
     }
   }
 
@@ -399,7 +399,7 @@ public:
     double epsilon = 0.0;
     ConfigurationSPtr config = Configuration::getInstance();
     if (config->isLoaded()) {
-      std::string section("main");
+      std::string section("Preprocessing");
       std::string key("coplanarity_epsilon");
       if (config->contains(section, key)) {
         epsilon = config->getDouble(section, key);
@@ -514,7 +514,7 @@ public:
             }
           }
         } else {
-            edge_dst->getFacetL()->removeEdge(edge_dst);
+          edge_dst->getFacetL()->removeEdge(edge_dst);
           edge_dst->getFacetR()->removeEdge(edge_dst);
           polyhedron->removeEdge(edge_dst);
 
@@ -703,8 +703,8 @@ public:
             independent = !(CGAL::parallel(*(planes[0]), *plane));
           } else if (i == 2) {
             independent = !is_zero(CGAL::determinant(planes[0]->a(), planes[0]->b(), planes[0]->c(),
-                                                      planes[1]->a(), planes[1]->b(), planes[1]->c(),
-                                                      plane->a(), plane->b(), plane->c()));
+                                                     planes[1]->a(), planes[1]->b(), planes[1]->c(),
+                                                     plane->a(), plane->b(), plane->c()));
           }
 
           if (!independent) {

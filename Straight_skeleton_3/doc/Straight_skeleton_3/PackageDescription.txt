@@ -1,0 +1,35 @@
+/// \defgroup PkgStraightSkeleton3Ref Reference Manual
+
+/// \defgroup PkgStraightSkeleton3OffsettingFunctions Functions
+/// \ingroup PkgStraightSkeleton3Ref
+///
+/// The following functions are used to construct the face offset of a polyhedron.
+
+/*!
+\addtogroup PkgStraightSkeleton3Ref
+\cgalPkgDescriptionBegin{3D Straight Skeleton and Polyhedron Offsetting,PkgStraightSkeleton3}
+\cgalPkgPicture{Straight_skeleton_3/fig/StraightSkeleton3Teaser.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Mael Rouxel-Labbé}
+\cgalPkgDesc{This package implements an algorithm to construct the weighted straight skeleton
+             in the interior and exterior of 3D polyhedra, and an algorithm to construct inward
+             and outward offset polyhedra at any offset distance.}
+\cgalPkgManuals{Chapter_3D_Straight_Skeleton_and_Polyhedron_Offsetting,PkgStraightSkeleton3Ref}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{6.2}
+\cgalPkgDependsOn{ }
+\cgalPkgBib{cgal:c-sspo3}
+\cgalPkgLicense{\ref licensesGPL  "GPL"}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+\cgalCRPSection{Polyhedron Offsetting}
+- `CGAL::Straight_skeletons_3::face_offset()`
+
+\cgalCRPSection{Classes}
+- `CGAL::Straight_skeletons_3::Configuration`
+
+*/

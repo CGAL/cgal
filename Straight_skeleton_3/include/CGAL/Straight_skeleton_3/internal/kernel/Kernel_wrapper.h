@@ -9,9 +9,9 @@
 // Author(s)     : Mael Rouxel-Labbé
 
 /**
- * @file   algo/3d/KernelWrapper.h
- * @author Gernot Walzl
- * @date   2012-03-08
+ * file   algo/3d/KernelWrapper.h
+ * author Gernot Walzl
+ * date   2012-03-08
  */
 
 #ifndef CGAL_STRAIGHT_SKELETON_3_INTERNAL_KERNEL_KERNEL_WRAPPER_H

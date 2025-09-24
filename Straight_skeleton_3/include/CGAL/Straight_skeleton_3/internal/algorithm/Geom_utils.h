@@ -11,6 +11,7 @@
 #ifndef CGAL_STRAIGHT_SKELETON_3_INTERNAL_ALGORITHM_GEOM_UTILS_H
 #define CGAL_STRAIGHT_SKELETON_3_INTERNAL_ALGORITHM_GEOM_UTILS_H
 
+#include <CGAL/Straight_skeleton_3/internal/debug.h>
 #include <CGAL/Straight_skeleton_3/internal/kernel/Kernel_factory.h>
 #include <CGAL/Straight_skeleton_3/internal/kernel/Kernel_wrapper.h>
 

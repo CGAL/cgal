@@ -9,9 +9,9 @@
 // Author(s)     : Mael Rouxel-Labbé
 
 /**
- * @file   algo/3d/SelfIntersection.h
- * @author Gernot Walzl
- * @date   2012-07-18
+ * file   algo/3d/SelfIntersection.h
+ * author Gernot Walzl
+ * date   2012-07-18
  */
 
 #ifndef CGAL_STRAIGHT_SKELETON_3_INTERNAL_ALGORITHM_POLYHEDRON_SELF_INTERSECTION_H

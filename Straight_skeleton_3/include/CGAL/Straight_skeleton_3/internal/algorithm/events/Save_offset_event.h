@@ -9,9 +9,9 @@
 // Author(s)     : Mael Rouxel-Labbé
 
 /**
- * @file   data/3d/skel/SaveOffsetEvent.h
- * @author Gernot Walzl
- * @date   2013-12-28
+ * file   data/3d/skel/SaveOffsetEvent.h
+ * author Gernot Walzl
+ * date   2013-12-28
  */
 
 #ifndef CGAL_STRAIGHT_SKELETON_3_INTERNAL_ALGORITHM_SAVE_OFFSET_EVENT_H

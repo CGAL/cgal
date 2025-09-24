@@ -9,9 +9,9 @@
 // Author(s)     : Mael Rouxel-Labbé
 
 /**
- * @file   util/StringFuncs.h
- * @author Gernot Walzl
- * @date   2013-12-16
+ * file   util/StringFuncs.h
+ * author Gernot Walzl
+ * date   2013-12-16
  */
 
 #ifndef CGAL_STRAIGHT_SKELETON_3_IO_STRINGFUNCS_H

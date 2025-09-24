@@ -9,9 +9,9 @@
 // Author(s)     : Mael Rouxel-Labbé
 
 /**
- * @file   algo/3d/SimpleStraightSkel.h
- * @author Gernot Walzl
- * @date   2012-03-08
+ * file   algo/3d/SimpleStraightSkel.h
+ * author Gernot Walzl
+ * date   2012-03-08
  */
 
 #ifndef CGAL_STRAIGHT_SKELETON_3_INTERNAL_ALGORITHM_STRAIGHT_SKELETON_BUILDER_H
@@ -22,6 +22,7 @@
 // - 2119792 with perf weights OR zero weights => segfaults
 
 // @fixme:
+// - isEventInthepast should tolerate same time for t=0 (touching) events?
 // - more combinatorial checks should happen at pop time?
 
 // @fixme later:
@@ -76,7 +77,7 @@
   The construction has been broken since the commit that made it so the polyhedron
   is not rebuilt from scratch at each and every iteration
 */
-#define CGAL_SS3_NO_SKELETON_DS
+// #define CGAL_SS3_NO_SKELETON_DS
 
 /*
   Some events can be detected from multime elements. Reduce that to a single element.
@@ -120,6 +121,7 @@
 
 // ----
 
+#include <CGAL/Straight_skeleton_3/internal/debug.h>
 #include <CGAL/Straight_skeleton_3/internal/kernel/Kernel_factory.h>
 #include <CGAL/Straight_skeleton_3/internal/kernel/Kernel_wrapper.h>
 #include <CGAL/Straight_skeleton_3/internal/HDS/Polyhedron.h>
@@ -383,7 +385,7 @@ public:
     ConfigurationSPtr config = Configuration::getInstance();
     std::string s_vertex_splitter;
     if (config->isLoaded()) {
-      s_vertex_splitter = config->getString("algo_3d_SimpleStraightSkel", "vertex_splitter");
+      s_vertex_splitter = config->getString("Algorithm", "vertex_splitter");
       if (s_vertex_splitter.compare("CombiVertexSplitter") == 0) {
         vertex_splitter_ = CombiVertexSplitter::create();
       } else if (s_vertex_splitter.compare("ConvexVertexSplitter") == 0) {
@@ -404,7 +406,7 @@ public:
     ConfigurationSPtr config = Configuration::getInstance();
     std::string s_edge_event;
     if (config->isLoaded()) {
-      s_edge_event = Configuration::getInstance()->getString("algo_3d_SimpleStraightSkel", "edge_event");
+      s_edge_event = Configuration::getInstance()->getString("Algorithm", "edge_event");
       if (s_edge_event.compare("convex") == 0) {
         edge_event_ = 0;
       } else if (s_edge_event.compare("reflex") == 0) {
@@ -524,8 +526,8 @@ public:
       if (!save_offsets_.empty()) {
         ConfigurationSPtr config = Configuration::getInstance();
         if (config->isLoaded()) {
-          if ((config->contains("main", "stop_after_last_save_event") &&
-               config->getBool("main", "stop_after_last_save_event"))) {
+          if ((config->contains("Algorithm", "stop_after_last_save_event") &&
+               config->getBool("Algorithm", "stop_after_last_save_event"))) {
             time_future_bound = save_offsets_.back();
           }
         }
@@ -612,10 +614,6 @@ public:
         CGAL_assertion(skel_result_->isConsistent());
 #endif
 
-        // @fixme for outward offsets without an enclosing bbox, this is wrong
-        CGAL_assertion(p_box_min && p_box_max);
-        CGAL_warning(Transformation::isInsideBox(polyhedron_, p_box_min, p_box_max));
-
         // this is tempting, but the mesh is usually not in a nice state here
         // CGAL_assertion(!SelfIntersection::hasSelfIntersectingSurface(polyhedron_));
 
@@ -627,8 +625,8 @@ public:
         if (event->getType() == AbstractEvent::SAVE_OFFSET_EVENT && save_offsets_.empty()) {
           ConfigurationSPtr config = Configuration::getInstance();
           if (config->isLoaded() &&
-              config->contains("main", "stop_after_last_save_event") &&
-              config->getBool("main", "stop_after_last_save_event")) {
+              config->contains("Algorithm", "stop_after_last_save_event") &&
+              config->getBool("Algorithm", "stop_after_last_save_event")) {
             break;
           }
         }
@@ -5001,7 +4999,7 @@ public:
 
     // Check if the next const event would be (strictly) closer
     FT const_offset = Configuration::getInstance()->getDouble(
-            "algo_3d_SimpleStraightSkel", "const_offset");
+            "Algorithm", "const_offset");
     if (const_offset != 0) {
       FT next_const_offset = floor(CGAL::to_double(current_time / const_offset) + 1.0) * const_offset;
       if (current_time > next_const_offset && next_const_offset > offset_next) {

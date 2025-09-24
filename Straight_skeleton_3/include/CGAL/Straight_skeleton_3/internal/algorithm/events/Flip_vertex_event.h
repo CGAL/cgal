@@ -9,9 +9,9 @@
 // Author(s)     : Mael Rouxel-Labbé
 
 /**
- * @file   data/3d/skel/FlipVertexEvent.h
- * @author Gernot Walzl
- * @date   2012-11-22
+ * file   data/3d/skel/FlipVertexEvent.h
+ * author Gernot Walzl
+ * date   2012-11-22
  */
 
 #ifndef CGAL_STRAIGHT_SKELETON_3_INTERNAL_ALGORITHM_FLIP_VERTEX_EVENT_H

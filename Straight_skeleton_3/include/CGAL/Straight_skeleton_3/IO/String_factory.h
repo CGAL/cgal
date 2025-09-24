@@ -9,9 +9,9 @@
 // Author(s)     : Mael Rouxel-Labbé
 
 /**
- * @file   util/StringFactory.h
- * @author Gernot Walzl
- * @date   2011-12-19
+ * file   util/StringFactory.h
+ * author Gernot Walzl
+ * date   2011-12-19
  */
 
 #ifndef CGAL_STRAIGHT_SKELETON_3_INTERNAL_IO_STRING_FACTORY_H

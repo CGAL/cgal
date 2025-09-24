@@ -9,9 +9,9 @@
 // Author(s)     : Mael Rouxel-Labbé
 
 /**
- * @file   algo/3d/AbstractVertexSplitter.h
- * @author Gernot Walzl
- * @date   2012-10-17
+ * file   algo/3d/AbstractVertexSplitter.h
+ * author Gernot Walzl
+ * date   2012-10-17
  */
 
 #ifndef CGAL_STRAIGHT_SKELETON_3_INTERNAL_ALGORITHM_ABSTRACT_VERTEX_SPLITTER_H

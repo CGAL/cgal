@@ -1,0 +1,3 @@
+/*!
+\example Straight_skeleton_3/face_offset.cpp
+*/

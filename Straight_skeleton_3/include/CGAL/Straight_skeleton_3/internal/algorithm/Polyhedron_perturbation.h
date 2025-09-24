@@ -9,9 +9,9 @@
 // Author(s)     : Mael Rouxel-Labbé
 
 /**
- * @file   algo/3d/SelfIntersection.h
- * @author Gernot Walzl
- * @date   2012-07-18
+ * file   algo/3d/SelfIntersection.h
+ * author Gernot Walzl
+ * date   2012-07-18
  */
 
 #ifndef CGAL_STRAIGHT_SKELETON_3_INTERNAL_ALGORITHM_POLYHEDRON_PERTURBATION_H
@@ -424,7 +424,7 @@ public:
     double range = 1e-10;
     ConfigurationSPtr config = Configuration::getInstance();
     if (config->isLoaded()) {
-      range = config->getDouble("main", "perturbation_epsilon");
+      range = config->getDouble("Preprocessing", "perturbation_epsilon");
     }
 
     // If we only nudged planes with fixed point constraints, we might not ensure generic position,
@@ -456,7 +456,7 @@ public:
     double range = 1e-10;
     ConfigurationSPtr config = Configuration::getInstance();
     if (config->isLoaded()) {
-      range = config->getDouble("main", "perturbation_epsilon");
+      range = config->getDouble("Preprocessing", "perturbation_epsilon");
     }
 
     CGAL_SS3_TRANSF_TRACE("  perturbation_epsilon = " << range);

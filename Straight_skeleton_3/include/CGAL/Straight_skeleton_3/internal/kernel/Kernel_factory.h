@@ -9,9 +9,9 @@
 // Author(s)     : Mael Rouxel-Labbé
 
 /**
- * @file   data/3d/KernelFactory.h
- * @author Gernot Walzl
- * @date   2011-11-26
+ * file   data/3d/KernelFactory.h
+ * author Gernot Walzl
+ * date   2011-11-26
  */
 
 #ifndef CGAL_STRAIGHT_SKELETON_3_KERNEL_FACTORY_H

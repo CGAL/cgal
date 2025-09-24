@@ -9,9 +9,9 @@
 // Author(s)     : Mael Rouxel-Labbé
 
 /**
- * @file   util/Configuration.h
- * @author Gernot Walzl
- * @date   2012-10-30
+ * file   util/Configuration.h
+ * author Gernot Walzl
+ * date   2012-10-30
  */
 
 #ifndef CGAL_STRAIGHT_SKELETON_3_INTERNAL_CONFIGURATION_H
@@ -33,8 +33,60 @@ class Configuration;
 
 using ConfigurationSPtr = std::shared_ptr<Configuration>;
 
+/**
+ * \ingroup PkgStraightSkeleton3Ref
+ *
+ * \class CGAL::Straight_skeletons_3::Configuration
+ *
+ * \brief Handles the reading and storage of configuration options for the 3D straight skeleton package.
+ *
+ * These parameters are fine-tuning options for the 3D straight skeleton algorithm for advanced users.
+ *
+ * This class loads and stores configuration parameters from an INI configuration file. The default
+ * provided configuration file is called `StraightSkel.ini` and is located in the `examples` and `test`
+ * directories. These configuration files can be directly modified by users, or another file
+ * can be loaded explicitly by passing its path using the named parameter `config_file_path`,
+ * provided it follows the format detailed below.
+ *
+ * \cgalHeading{%Configuration File Entries}
+ *
+ * The configuration file is organized in sections, each containing key-value pairs.
+ * The following entries are recognized:
+ *
+ * [Preprocessing]
+ * - `translate_and_scale_polyhedron`: Boolean (`TRUE`/`FALSE`) to enable translation and scaling
+ *                                     of the input polyhedron to fit within a unit cube.
+ * - `truncate_precision`: Positive floating-point value controlling numerical truncation precision.
+ *                         Coordinates of the input polyhedron are rounded to the nearest
+ *                         multiple of this value.
+ * - `merge_coplanar_faces`: Boolean to enable or disable merging of (almost) coplanar faces.
+ * - `coplanarity_epsilon`: Non-negative floating-point value for coplanarity checks.
+ *                          This value controls the threshold for considering two facet normals
+ *                          as coplanar: if the squared Euclidean distance between their normalized
+ *                          normals is less than `coplanarity_epsilon` squared, the facets are
+ *                          considered coplanar and may be merged.
+ * - `perturbation_epsilon`: Positive floating-point value used to create the pertubation to ensure
+ *                           general position. The value is used to nudge the coordinates of the planes.
+ * - `check_degenerate_configuration`: Boolean to enable or disable checking if the result of the *                                     perturbation mechanism is indeed a valid polyhedron (and try again
+ *                                     in the extremely unlikely event that the perturbation
+ *                                     created a degenerate configuration).
+ *
+ * [Algorithm]
+ * - `vertex_splitter`: String to choose the high-degree vertex splitting strategy. Available options:
+ *                      `CombiVertexSplitter`, `ConvexVertexSplitter`.
+ * - `selected_combinatorial_split`: Positive index of the valid combinatorial split combination
+ *                                   to use, when `CombiVertexSplitter` is selected.
+ * - `convex_split_optimization`: String (`min` or `max`) used to specify optimization strategy, when
+ *                                `ConvexVertexSplitter` is selected. The measure being optimized
+ *                                is the number of convex edges in the resulting split configuration.
+ * - `stop_after_last_save_event`: Boolean to enable or disable stopping immediately as soon as the
+ *                                 last save event has been reached.
+ *
+ * \sa `CGAL::Straight_skeletons_3::face_offset()`
+ */
 class Configuration
 {
+#ifndef DOXYGEN_RUNNING
 public:
   static ConfigurationSPtr getInstance()
   {
@@ -176,11 +228,11 @@ public:
     std::string value = getString(section, key);
     if (value.length() != 0) {
       if (value.compare("1") == 0 ||
-            value.compare("t") == 0 ||
-            value.compare("T") == 0 ||
-            value.compare("true") == 0 ||
-            value.compare("TRUE") == 0 ||
-            value.compare("True") == 0) {
+          value.compare("t") == 0 ||
+          value.compare("T") == 0 ||
+          value.compare("true") == 0 ||
+          value.compare("TRUE") == 0 ||
+          value.compare("True") == 0) {
         result = true;
       }
     }
@@ -190,9 +242,12 @@ public:
   static ConfigurationSPtr instance_;
 
   std::map<std::string, std::string> properties_;
+#endif /* DOXYGEN_RUNNING */
 };
 
+#ifndef DOXYGEN_RUNNING
 ConfigurationSPtr Configuration::instance_ = ConfigurationSPtr();
+#endif /* DOXYGEN_RUNNING */
 
 } // namespace Straight_skeletons_3
 } // namespace CGAL

@@ -9,9 +9,9 @@
 // Author(s)     : Mael Rouxel-Labbé
 
 /**
- * @file   algo/3d/CombiVertexSplitter.h
- * @author Gernot Walzl
- * @date   2012-07-26
+ * file   algo/3d/CombiVertexSplitter.h
+ * author Gernot Walzl
+ * date   2012-07-26
  */
 
 #ifndef CGAL_STRAIGHT_SKELETON_3_INTERNAL_ALGORITHM_COMBINATORIAL_VERTEX_SPLITTER_H
@@ -73,7 +73,7 @@ public:
     selected_combi_ = 0;
     ConfigurationSPtr config = Configuration::getInstance();
     if (config->isLoaded()) {
-      selected_combi_ = config->getInt("algo_3d_CombiVertexSplitter", "selected_combi");
+      selected_combi_ = config->getInt("Algorithm", "selected_combinatorial_split");
     }
   }
 
@@ -590,13 +590,13 @@ public:
     CGAL_warning(!combinations_valid.empty());
     CGAL_warning(!polys_split.empty());
 
-    unsigned int selected_combi = selected_combi_ % combinations_valid.size();
+    unsigned int selected_combinatorial_split = selected_combi_ % combinations_valid.size();
     it_combi = combinations_valid.begin();
     typename std::list<PolyhedronSPtr>::iterator it_p = polys_split.begin();
     for (unsigned int i = 0; i < combinations_valid.size(); ++i) {
       combi combination_valid = *it_combi++;
       PolyhedronSPtr poly_split = *it_p++;
-      if (i == selected_combi) {
+      if (i == selected_combinatorial_split) {
         CGAL_SS3_SPLITTER_TRACE("Selected split-combination: " << combiToString(combination_valid));
         apply(poly_split, vertex);
         break;

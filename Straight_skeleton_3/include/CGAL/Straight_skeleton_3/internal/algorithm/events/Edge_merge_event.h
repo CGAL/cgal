@@ -9,9 +9,9 @@
 // Author(s)     : Mael Rouxel-Labbé
 
 /**
- * @file   data/3d/skel/EdgeMergeEvent.h
- * @author Gernot Walzl
- * @date   2012-09-14
+ * file   data/3d/skel/EdgeMergeEvent.h
+ * author Gernot Walzl
+ * date   2012-09-14
  */
 
 #ifndef CGAL_STRAIGHT_SKELETON_3_INTERNAL_ALGORITHM_EDGE_MERGE_EVENT_H

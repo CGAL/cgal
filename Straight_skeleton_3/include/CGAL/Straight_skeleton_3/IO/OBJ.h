@@ -9,9 +9,9 @@
 // Author(s)     : Mael Rouxel-Labbé
 
 /**
- * @file   db/3d/OBJFile.h
- * @author Gernot Walzl
- * @date   2012-05-15
+ * file   db/3d/OBJFile.h
+ * author Gernot Walzl
+ * date   2012-05-15
  */
 
 #ifndef CGAL_STRAIGHT_SKELETON_3_IO_OBJ_H

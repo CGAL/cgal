@@ -32,6 +32,8 @@ namespace CGAL {
 namespace Straight_skeletons_3 {
 
 /*!
+ * \ingroup PkgStraightSkeleton3OffsettingFunctions
+ *
  * Given a range of values, this function generates face offsets of an input triangle mesh.
  *
  * The offset meshes are constructed by translating the faces of the input mesh by a distance
@@ -44,7 +46,8 @@ namespace Straight_skeletons_3 {
  * degenerate positions, meaning a configuration where any three supporting planes of the facets
  * of the input mesh do not intersect in a single point.
  *
- * \tparam TriangleMesh must be a model of `MutableFaceGraph`, `FaceListGraph`, `HalfedgeListGraph`
+ * \tparam TriangleMesh must be a model of `FaceListGraph`, `HalfedgeListGraph`
+ * \tparam PolygonMeshOut must be a model of `MutableFaceGraph`, `FaceListGraph`, `HalfedgeListGraph`
  * \tparam NamedParametersIn must be a model of `NamedParameters`
  * \tparam NamedParametersOut must be a model of `NamedParameters`
  *
@@ -52,7 +55,6 @@ namespace Straight_skeletons_3 {
  * \param save_offsets the offsets to apply to the input mesh
  * \param results the output vector of meshes that will contain the constructed offset meshes
  * \param np_in the input named parameters
- *
  *  \cgalNamedParamsBegin
  *    \cgalParamNBegin{vertex_point_map}
  *      \cgalParamDescription{a property map associating points to the vertices of `tmesh`}
@@ -66,7 +68,8 @@ namespace Straight_skeletons_3 {
  *      \cgalParamDescription{an instance of a geometric traits class}
  *      \cgalParamType{a class model of `Kernel`}
  *      \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
- *      \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+ *      \cgalParamExtra{The geometric traits class must be compatible with the vertex point type
+ *                      and must provide exact predicates and exact constructions.}
  *    \cgalParamNEnd
  *    \cgalParamNBegin{face_weight}
  *      \cgalParamDescription{a property map associating to each face the weight (speed) of the face.}
@@ -81,15 +84,9 @@ namespace Straight_skeletons_3 {
  *      \cgalParamType{`std::string`}
  *      \cgalParamDefault{The path to a default configuration file which must be found in the working directory.}
  *    \cgalParamNEnd
- *    \cgalParamNBegin{io_path}
- *      \cgalParamDescription{}
- *      \cgalParamType{}
- *      \cgalParamDefault{}
- *    \cgalParamNEnd
  *  \cgalNamedParamsEnd
  *
  * \param np_out the output named parameters
- *
  *  \cgalNamedParamsBegin
  *    \cgalParamNBegin{face_weight}
  *      \cgalParamDescription{a property map filled by this function, associating to each face
@@ -101,7 +98,7 @@ namespace Straight_skeletons_3 {
  *  \cgalNamedParamsEnd
  *
  * \pre save offsets should be either all positive, or all negative.
- * \pre the input mesh is a closed, outward oriented, triangle mesh without self-intersections.
+ * \pre the input mesh is a closed, outward-oriented, triangle mesh without self-intersections.
  *
  * \return `true` if offset meshes were successfully constructed; `false` otherwise.
  */
@@ -188,8 +185,8 @@ bool face_offset(TriangleMeshIn& tmesh,
   // Perturbation to ensure generic configuration
   bool safe_mode = true;
   if (config->isLoaded()) {
-    if ((config->contains("main", "check_degenerate_configuration") &&
-         !config->getBool("main", "check_degenerate_configuration"))) {
+    if ((config->contains("Preprocessing", "check_degenerate_configuration") &&
+         !config->getBool("Preprocessing", "check_degenerate_configuration"))) {
       safe_mode = false;
     }
   }

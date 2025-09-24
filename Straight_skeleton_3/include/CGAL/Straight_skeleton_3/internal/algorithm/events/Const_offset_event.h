@@ -9,9 +9,9 @@
 // Author(s)     : Mael Rouxel-Labbé
 
 /**
- * @file   data/3d/skel/ConstOffsetEvent.h
- * @author Gernot Walzl
- * @date   2012-03-27
+ * file   data/3d/skel/ConstOffsetEvent.h
+ * author Gernot Walzl
+ * date   2012-03-27
  */
 
 #ifndef CGAL_STRAIGHT_SKELETON_3_INTERNAL_ALGORITHM_CONST_OFFSET_EVENT_H

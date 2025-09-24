@@ -9,9 +9,9 @@
 // Author(s)     : Mael Rouxel-Labbé
 
 /**
- * @file   util/StackTrace.h
- * @author Gernot Walzl
- * @date   2012-02-28
+ * file   util/StackTrace.h
+ * author Gernot Walzl
+ * date   2012-02-28
  */
 
 #ifndef UTIL_STACKTRACE_H

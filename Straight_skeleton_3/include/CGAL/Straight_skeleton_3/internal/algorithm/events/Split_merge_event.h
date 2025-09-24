@@ -9,9 +9,9 @@
 // Author(s)     : Mael Rouxel-Labbé
 
 /**
- * @file   data/3d/skel/SplitMergeEvent.h
- * @author Gernot Walzl
- * @date   2013-08-09
+ * file   data/3d/skel/SplitMergeEvent.h
+ * author Gernot Walzl
+ * date   2013-08-09
  */
 
 #ifndef CGAL_STRAIGHT_SKELETON_3_INTERNAL_ALGORITHM_SPLIT_MERGE_EVENT_H

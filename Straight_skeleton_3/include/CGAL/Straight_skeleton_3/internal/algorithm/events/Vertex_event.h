@@ -9,9 +9,9 @@
 // Author(s)     : Mael Rouxel-Labbé
 
 /**
- * @file   data/3d/skel/VertexEvent.h
- * @author Gernot Walzl
- * @date   2012-10-25
+ * file   data/3d/skel/VertexEvent.h
+ * author Gernot Walzl
+ * date   2012-10-25
  */
 
 #ifndef CGAL_STRAIGHT_SKELETON_3_INTERNAL_ALGORITHM_VERTEX_EVENT_H

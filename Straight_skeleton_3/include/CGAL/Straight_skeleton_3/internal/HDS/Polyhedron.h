@@ -9,16 +9,15 @@
 // Author(s)     : Mael Rouxel-Labbé
 
 /**
- * @file   data/3d/Polyhedron.h
- * @author Gernot Walzl
- * @date   2011-11-26
+ * file   data/3d/Polyhedron.h
+ * author Gernot Walzl
+ * date   2011-11-26
  */
 
 #ifndef CGAL_STRAIGHT_SKELETON_INTERNAL_HDS_POLYHEDRON_H
 #define CGAL_STRAIGHT_SKELETON_INTERNAL_HDS_POLYHEDRON_H
 
 #include <CGAL/Straight_skeleton_3/internal/debug.h>
-
 #include <CGAL/Straight_skeleton_3/internal/weak_find.h>
 #include <CGAL/Straight_skeleton_3/internal/kernel/Kernel_factory.h>
 #include <CGAL/Straight_skeleton_3/IO/String_factory.h>

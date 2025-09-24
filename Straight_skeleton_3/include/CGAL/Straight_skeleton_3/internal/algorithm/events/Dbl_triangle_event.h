@@ -9,9 +9,9 @@
 // Author(s)     : Mael Rouxel-Labbé
 
 /**
- * @file   data/3d/skel/DblTriangleEvent.h
- * @author Gernot Walzl
- * @date   2012-09-11
+ * file   data/3d/skel/DblTriangleEvent.h
+ * author Gernot Walzl
+ * date   2012-09-11
  */
 
 #ifndef CGAL_STRAIGHT_SKELETON_3_INTERNAL_ALGORITHM_DBL_TRIANGLE_EVENT_H

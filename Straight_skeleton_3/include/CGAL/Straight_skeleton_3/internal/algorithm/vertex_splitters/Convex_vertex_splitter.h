@@ -9,9 +9,9 @@
 // Author(s)     : Mael Rouxel-Labbé
 
 /**
- * @file   algo/3d/ConvexVertexSplitter.h
- * @author Gernot Walzl
- * @date   2013-02-01
+ * file   algo/3d/ConvexVertexSplitter.h
+ * author Gernot Walzl
+ * date   2013-02-01
  */
 
 #ifndef CGAL_STRAIGHT_SKELETON_3_INTERNAL_ALGORITHM_CONVEX_VERTEX_SPLITTER_H
@@ -61,7 +61,7 @@ public:
     optimization_ = -1;
     ConfigurationSPtr config = Configuration::getInstance();
     if (config->isLoaded()) {
-      std::string s_optimization = config->getString("algo_3d_ConvexVertexSplitter", "optimization");
+      std::string s_optimization = config->getString("Algorithm", "convex_split_optimization");
       if (s_optimization.compare("max") == 0) {
         optimization_ = -1;
       } else if (s_optimization.compare("min") == 0) {

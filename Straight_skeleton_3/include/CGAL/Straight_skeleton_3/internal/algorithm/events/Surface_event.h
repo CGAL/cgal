@@ -9,9 +9,9 @@
 // Author(s)     : Mael Rouxel-Labbé
 
 /**
- * @file   data/3d/skel/SurfaceEvent.h
- * @author Gernot Walzl
- * @date   2012-09-10
+ * file   data/3d/skel/SurfaceEvent.h
+ * author Gernot Walzl
+ * date   2012-09-10
  */
 
 #ifndef CGAL_STRAIGHT_SKELETON_3_INTERNAL_ALGORITHM_SURFACE_EVENT_H
