@@ -63,12 +63,12 @@ public:
     const Vector_3 & to_vector() const;
     Line_3  supporting_line() const;
     RayH3<R>   opposite() const;
-    bool           has_on(const Point_3& p) const;
-    bool           collinear_has_on(const Point_3 &p) const;
-    bool           is_degenerate() const;
+    typename R::Boolean has_on(const Point_3& p) const;
+    typename R::Boolean collinear_has_on(const Point_3 &p) const;
+    typename R::Boolean is_degenerate() const;
 
-    bool           operator==(const RayH3<R>& r) const;
-    bool           operator!=(const RayH3<R>& r) const;
+    typename R::Boolean operator==(const RayH3<R>& r) const;
+    typename R::Boolean operator!=(const RayH3<R>& r) const;
 };
 
 template < class R >
@@ -133,7 +133,7 @@ RayH3<R>::opposite() const
 
 template < class R >
 CGAL_KERNEL_INLINE
-bool
+typename R::Boolean
 RayH3<R>::has_on(const typename RayH3<R>::Point_3 &p) const
 {
   return ( (  p == start() )
@@ -142,25 +142,25 @@ RayH3<R>::has_on(const typename RayH3<R>::Point_3 &p) const
 
 template < class R >
 inline                                      /* XXX */
-bool
+typename R::Boolean
 RayH3<R>::collinear_has_on(const typename RayH3<R>::Point_3 &p) const
 { return has_on(p); }
 
 template < class R >
 inline
-bool
+typename R::Boolean
 RayH3<R>::is_degenerate() const
 { return to_vector() == NULL_VECTOR; }
 
 template < class R >
 CGAL_KERNEL_INLINE
-bool
+typename R::Boolean
 RayH3<R>::operator==(const RayH3<R>& r) const
 { return ( (start() == r.start() )&&( direction() == r.direction() ) ); }
 
 template < class R >
 CGAL_KERNEL_INLINE
-bool
+typename R::Boolean
 RayH3<R>::operator!=( const RayH3<R>& r) const
 { return !operator==(r); }
 

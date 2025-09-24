@@ -101,6 +101,7 @@ ALIASES                = "cgal=%CGAL" \
                          "opencv=OpenCV" \
                          "tensorflow=TensorFlow" \
                          "metis=METIS" \
+                         "suitesparse=SuiteSparse" \
                          "zlib=zlib" \
                          "ceres=Ceres" \
                          "glpk=GLPK" \
@@ -197,7 +198,7 @@ ALIASES                = "cgal=%CGAL" \
                          "cgalCRPSection{1}=<h2>\1</h2>" \
                          "cgalCRPSubsection{1}=<h3>\1</h3>" \
                          "cgalCite{1}=<!-- -->\cite \1" \
-                         "cgalPackageSection{2}=\htmlonly[block] <div style=\"background-color: #EEEDF2;\">\endhtmlonly \section \1 \2 ^^ \htmlonly[block] </div>\endhtmlonly" \
+                         "cgalPackageSection{2}=\htmlonly[block] <div class=\"package_section\">\endhtmlonly \section \1 \2 ^^ \htmlonly[block] </div>\endhtmlonly" \
                          "cgalNamedParamsBegin=<dl class=\"params\"><dt>Optional Named Parameters</dt><dd> <table class=\"params\">" \
                          "cgalNamedParamsBegin{1}=<dl class=\"params\"><dt>\1</dt><dd> <table class=\"params\">" \
                          "cgalNamedParamsEnd=</table> </dd> </dl>" \
@@ -222,7 +223,7 @@ ALIASES                = "cgal=%CGAL" \
 # language is one of the parsers supported by doxygen: IDL, Java, JavaScript,
 # Csharp (C#), C, C++, Lex, D, PHP, md (Markdown), Objective-C, Python, Slice,
 # VHDL, Fortran (fixed format Fortran: FortranFixed, free formatted Fortran:
-# FortranFree, unknown formatted Fortran: Fortran. In the later case the parser
+# FortranFree, unknown formatted Fortran: Fortran. In the latter case the parser
 # tries to guess whether the code is fixed or free formatted code, this is the
 # default for Fortran type files). For instance to make doxygen treat .inc files
 # as Fortran files (default is PHP), and .f files as C (default is Fortran),

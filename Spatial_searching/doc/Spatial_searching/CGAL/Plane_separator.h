@@ -7,7 +7,7 @@ The class `Plane_separator` implements a plane separator, i.e., a
 hyperplane that is used to separate two half spaces.
 
 This hyperplane is defined by a cutting dimension `d` and a cutting
-value `v` as `xd=v`, where `v` denotes the `d`th coordinate value.
+value `v` as `xd=v`, where `v` denotes the `d`-th coordinate value.
 
 \cgalModels{SpatialSeparator}
 
@@ -21,7 +21,7 @@ public:
 
 /*!
 Constructs a separator that separates two half spaces by a hyperplane
-defined by `xd=v`, where `v` denotes the `d`th coordinate value.
+defined by `xd=v`, where `v` denotes the `d`-th coordinate value.
 */
 Plane_separator(int d, FT v);
 

@@ -1,4 +1,4 @@
-/// \defgroup PkgSurfaceSweep2Ref 2D Intersection of Curves Reference
+/// \defgroup PkgSurfaceSweep2Ref Reference Manual
 /*!
 \addtogroup PkgSurfaceSweep2Ref
 \cgalPkgDescriptionBegin{2D Intersection of Curves,PkgSurfaceSweep2}

@@ -142,10 +142,19 @@ public :
             this, &Basic_generator_plugin::on_tab_changed);
     connect(dock_widget, &GeneratorWidget::visibilityChanged,
             this, &Basic_generator_plugin::on_tab_changed);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
+    connect(dock_widget->prismCheckBox, &QCheckBox::checkStateChanged,
+            this, &Basic_generator_plugin::on_tab_changed);
+    connect(dock_widget->pyramidCheckBox, &QCheckBox::checkStateChanged,
+            this, &Basic_generator_plugin::on_tab_changed);
+#else
     connect(dock_widget->prismCheckBox, &QCheckBox::stateChanged,
             this, &Basic_generator_plugin::on_tab_changed);
     connect(dock_widget->pyramidCheckBox, &QCheckBox::stateChanged,
             this, &Basic_generator_plugin::on_tab_changed);
+#endif
+    connect(dock_widget->polygon_checkBox, SIGNAL(toggled(bool)),
+            dock_widget->fill_checkBox, SLOT(setEnabled(bool)));
   }
 
   bool applicable(QAction*) const

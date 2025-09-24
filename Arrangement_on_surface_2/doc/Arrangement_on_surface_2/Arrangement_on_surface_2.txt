@@ -1999,7 +1999,7 @@ operates in two-dimensional surfaces (not restricted to the plane),
 (ii) accepts various families of \f$x\f$-monotone curves (not only
 line segments), and (iii) handles overlaps. (Observe that the original
 algorithm did not handle overlaps. Handling overlaps is difficult,
-especially for polyline, as two polylines may overlap in more then one
+especially for polyline, as two polylines may overlap in more than one
 connected component.) The generic implementation serves as the
 foundation of a family of concrete operations described in the rest of
 this section, such as aggregately constructing an arrangement induced
@@ -4196,7 +4196,7 @@ are both parameterized by a geometric kernel and model the concepts
 `AosTraits_2` and `AosLandmarkTraits_2`.
 \cgalFootnote{They also model the refined concept
 \cgalFootnoteCode{AosDirectionalXMonotoneTraits_2}, which enables Boolean set
-operations; see Package \ref PkgBooleanSetOperations2Ref.} The class
+operations; see Package \ref PkgBooleanSetOperations2.} The class
 template `Arr_non_caching_segment_traits_2<Kernel>` derives from the
 instance `Arr_non_caching_segment_basic_traits_2<Kernel>`, which
 models the `AosLandmarkTraits_2` traits concept but not the
@@ -4937,7 +4937,7 @@ template models the concepts `AosTraits_2` and
 `AosOpenBoundaryTraits_2`, but it does not model the
 `AosLandmarkTraits_2` concept. It also models the refined
 concept `AosDirectionalXMonotoneTraits_2`, which enables
-Boolean set operations; see Package \ref PkgBooleanSetOperations2Ref.
+Boolean set operations; see Package \ref PkgBooleanSetOperations2.
 Note that it is not a model of `AosLandmarkTraits_2` concept,
 so it is impossible to use the landmark point-location strategy with
 this traits class.
@@ -5167,7 +5167,7 @@ Every instance of the `Arr_Bezier_curve_traits_2` class templates
 models the concept `AosTraits_2` (but it does not model the
 `AosLandmarkTraits_2` concept). It also models the refined
 concept `AosDirectionalXMonotoneTraits_2`, which enables
-Boolean set operations; see Package \ref PkgBooleanSetOperations2Ref.
+Boolean set operations; see Package \ref PkgBooleanSetOperations2.
 
 <!-- ----------------------------------------------------------------------- -->
 \cgalFigureBegin{aos_fig-bezier_curves,bezier_curves.png}
