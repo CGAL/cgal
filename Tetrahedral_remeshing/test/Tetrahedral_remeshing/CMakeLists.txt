@@ -16,6 +16,7 @@ create_single_source_cgal_program("test_tetrahedral_remeshing_with_features.cpp"
 create_single_source_cgal_program("test_tetrahedral_remeshing_of_one_subdomain.cpp")
 create_single_source_cgal_program("test_tetrahedral_remeshing_io.cpp")
 create_single_source_cgal_program("test_tetrahedral_remeshing_from_mesh_file.cpp")
+create_single_source_cgal_program("test_tetrahedral_remeshing_determinism.cpp")
 
 # Test MLS projection
 add_executable(test_tetrahedral_remeshing_mls

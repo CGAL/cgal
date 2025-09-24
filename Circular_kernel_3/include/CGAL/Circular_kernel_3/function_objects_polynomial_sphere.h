@@ -935,8 +935,10 @@ template < class SK > \
         CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Line_3, Sphere_3)
         CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_3(Sphere_3, Sphere_3, Sphere_3)
         CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_3(Sphere_3, Sphere_3, Plane_3)
+        CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_3(Sphere_3, Plane_3, Sphere_3)
         CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_3(Plane_3, Sphere_3, Sphere_3)
         CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_3(Plane_3, Plane_3, Sphere_3)
+        CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_3(Plane_3, Sphere_3, Plane_3)
         CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_3(Sphere_3, Plane_3, Plane_3)
         CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Circle_3, Plane_3)
         CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Plane_3, Circle_3)
@@ -1026,6 +1028,12 @@ template < class SK > \
 
     template < class OutputIterator >
     OutputIterator
+    operator()(const Sphere_3 & s1, const Plane_3 & p,
+               const Sphere_3 & s2, OutputIterator res) const
+    { return SphericalFunctors::intersect_3<SK> (p,s1,s2,res); }
+
+    template < class OutputIterator >
+    OutputIterator
     operator()(const Plane_3 & p, const Sphere_3 & s1,
                const Sphere_3 & s2, OutputIterator res) const
     { return SphericalFunctors::intersect_3<SK> (p,s1,s2,res); }
@@ -1034,6 +1042,12 @@ template < class SK > \
     OutputIterator
     operator()(const Plane_3 & p1, const Plane_3 & p2,
                const Sphere_3 & s, OutputIterator res) const
+    { return SphericalFunctors::intersect_3<SK> (p1,p2,s,res); }
+
+    template < class OutputIterator >
+    OutputIterator
+    operator()(const Plane_3 & p1, const Sphere_3 & s,
+               const Plane_3 & p2, OutputIterator res) const
     { return SphericalFunctors::intersect_3<SK> (p1,p2,s,res); }
 
     template < class OutputIterator >
