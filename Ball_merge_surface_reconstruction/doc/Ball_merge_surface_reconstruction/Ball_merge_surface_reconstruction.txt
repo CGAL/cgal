@@ -23,7 +23,7 @@ Where \f$ B_0 \f$ and \f$ B_1 \f$ are two adjacent Voronoi balls with radius \f$
 
 Using this ratio, we can say that if the intersection ratio between two adjacent Voronoi balls is small,
 they likely correspond to a pair of interior and exterior balls sharing a thin overlapping region along the underlying surface
-(a 2D case is illustrated in Figure \cgalFigureRef{figBMSRillus}). In other words, given a threshold \f$ \delta \f$, a triangle is said
+(a 2D case is illustrated in \cgalFigureRef{figBMSRillus}). In other words, given a threshold \f$ \delta \f$, a triangle is said
 to belong to a set \f$ BallMerge(\delta) \f$ if its corresponding adjacent Voronoi balls have an intersection ratio less than \f$ \delta \f$.
 By definition, \f$ BallMerge(\delta) \f$ is a subcomplex of the Delaunay triangulation of the sample points. It is easy to see that \f$ BallMerge(0) \f$ is empty,
 while \f$ BallMerge(\delta) \f$, for any \f$ \delta \gt 2 \f$ contains all the triangles of the Delaunay triangulation.
@@ -83,7 +83,7 @@ Finally, the algorithm is efficient, requiring minimal computation resources rel
 
 \section secBMSRhistory  Implementation History
 
-This package is based on the original code from the research article \cgalCite{parakkat2024ballmerge} and has been turned into a \cgal package by Amel Dev Parakkat and Sébastien Loriot.
+This package is based on the original code from the research article \cgalCite{parakkat2024ballmerge} and has been turned into a \cgal package by Amal Dev Parakkat and Sébastien Loriot.
 
 */
 } /* namespace CGAL */
