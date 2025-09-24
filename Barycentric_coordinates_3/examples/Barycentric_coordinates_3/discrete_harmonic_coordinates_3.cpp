@@ -14,8 +14,7 @@ using Surface_mesh = CGAL::Surface_mesh<Point_3>;
 namespace PMP = CGAL::Polygon_mesh_processing;
 using CP3 = CGAL::Barycentric_coordinates::Computation_policy_3;
 
-int main(){
-
+int main() {
   Surface_mesh icosahedron;
   CGAL::make_icosahedron(icosahedron, Point_3(0.0, 0.0, 0.0), 2.0);
   PMP::triangulate_faces(faces(icosahedron), icosahedron);
@@ -24,7 +23,7 @@ int main(){
   std::vector<Point_3> queries{
     Point_3(-1, 1 + PHI, PHI), Point_3(0.5, (1+3*PHI)/2, PHI/2), Point_3(1, 1+PHI, -PHI), //Boundary
     Point_3(-1, 1, 1), Point_3(0, 0, 1), Point_3(0, 2, 1),                                //Interior
-    Point_3(0, 2*PHI, 4), Point_3(0, 3, 2*PHI), Point_3(4, 0, 0)};                        //EXterior
+    Point_3(0, 2*PHI, 4), Point_3(0, 3, 2*PHI), Point_3(4, 0, 0)};                        //Exterior
 
   std::cout << std::endl << "Discrete harmonic coordinates : " << std::endl << std::endl;
 
@@ -32,7 +31,7 @@ int main(){
 
     coords.clear();
     CGAL::Barycentric_coordinates::discrete_harmonic_coordinates_3(
-      icosahedron, query, std::back_inserter(coords), CP3::FAST_WITH_EDGE_CASES);
+      icosahedron, query, std::back_inserter(coords), CP3::FAST);
 
     // Output discrete harmonics coordinates.
     for (std::size_t i = 0; i < coords.size() -1; ++i) {
@@ -41,7 +40,6 @@ int main(){
     std::cout << coords[coords.size() -1] << std::endl;
   }
   std::cout << std::endl;
-
 
   return EXIT_SUCCESS;
 }
