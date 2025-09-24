@@ -241,6 +241,10 @@ namespace Point_set {
 
       const FT cos_value =
         m_scalar_product_2(query_normal, m_normal_of_best_fit);
+
+      if (cos_value < 0)
+        return false;
+
       const FT squared_cos_value = cos_value * cos_value;
 
       FT squared_cos_value_threshold =
