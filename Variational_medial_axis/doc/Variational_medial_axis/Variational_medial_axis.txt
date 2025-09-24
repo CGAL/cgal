@@ -114,7 +114,7 @@ The following example shows a different configuration of the parameters and basi
 By definition, the medial axis of a shape is homotopy equivalent to the original object.
 However, since this algorithm aims to generate coarse approximation of medial axis, it does **not** provide any theoretical guarantee that the extracted skeleton preserves the topology of the input.
 While the algorithm can handle meshes with multiple connected components, the resulting medial skeleton is only topologically faithful when a sufficient number of spheres is used to capture the correct connectivity.
-
+Furthermore, this method does not perform well on CAD models, which typically require additional feature detection to preserve sharp features.
 \section VMASDesign Design and Implementation History
 This package is the result of the work of Qijia HUANG during the 2025 season of the Google Summer of Code, mentored by Sébastien Loriot.
 

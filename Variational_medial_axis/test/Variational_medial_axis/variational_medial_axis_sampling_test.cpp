@@ -251,7 +251,7 @@ bool test_determinism(const TestParams& params, const std::string& mesh_file_pat
 }
 
 int main() {
-  std::vector<TestParams> test_cases = {{"chair", 0.1, 100}, {"chair", 0.2, 150}, {"bug", 0.1, 100}, {"bug", 0.2, 150}, {"fandisk", 0.1, 200}, {"fandisk", 0.2, 200}};
+  std::vector<TestParams> test_cases = {{"chair", 0.1, 100}, {"chair", 0.2, 150}, {"bug", 0.1, 100}, {"bug", 0.2, 150}};
 
   std::cout << "=== Variational Medial Axis Sampling Tests ===" << std::endl;
 
