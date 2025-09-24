@@ -2056,8 +2056,10 @@ private:
       return facets_of_border;
     });
     if(this->use_newer_cavity_algorithm()) {
-      Unique_hash_map<Vertex_handle, typename Union_find<Vertex_handle>::handle> vertices_of_cavity_handles;
+
       Union_find<Vertex_handle> vertices_of_cavity_union_find;
+      using Union_find_handle = typename Union_find<Vertex_handle>::handle;
+      Unique_hash_map<Vertex_handle, Union_find_handle> vertices_of_cavity_handles;
       for(auto c: intersecting_cells) {
         for(auto v : tr().vertices(c)) {
           if(!is_marked(v)) {
@@ -2140,7 +2142,7 @@ private:
                                                                                        facets_of_border.end());
 
         std::stack<Facet> stack;
-        std::optional<typename Union_find<Vertex_handle>::handle> reference_handle_of_the_connected_component;
+        std::optional<Union_find_handle> reference_handle_of_the_connected_component;
         stack.push(border_facet_above);
         remaining_facets_of_border.erase(border_facet_above);
         while(!stack.empty()) {
@@ -2207,8 +2209,13 @@ private:
 
       const auto vertex_below_handle = std::invoke([&] {
         auto [b, e] = make_prevent_deref_range(vertices_of_cavity_union_find);
-        return *std::find_if_not(
+        auto it = std::find_if_not(
             b, e, [&](auto handle) { return vertices_of_cavity_union_find.same_set(handle, vertex_above_handle); });
+        if(it != e) {
+          return *it;
+        } else {
+          return std::as_const(vertices_of_cavity_union_find).end();
+        }
       });
       CGAL_assertion(vertex_below_handle == vertices_of_cavity_union_find.end() ||
                      !vertices_of_cavity_union_find.same_set(vertex_below_handle, vertex_above_handle));
@@ -2223,7 +2230,9 @@ private:
         if(vertices_of_cavity_union_find.same_set(handle, vertex_above_handle)) {
           vertices_of_upper_cavity.push_back(v);
           set_mark(v, Vertex_marker::CAVITY_ABOVE);
-        } else if(vertices_of_cavity_union_find.same_set(handle, vertex_below_handle)) {
+        } else if(vertex_below_handle != vertices_of_cavity_union_find.end() &&
+                  vertices_of_cavity_union_find.same_set(handle, vertex_below_handle))
+        {
           vertices_of_lower_cavity.push_back(v);
           set_mark(v, Vertex_marker::CAVITY_BELOW);
         } else {
