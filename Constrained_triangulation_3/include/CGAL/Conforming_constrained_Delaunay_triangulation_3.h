@@ -34,6 +34,8 @@
 #include <CGAL/iterator.h>
 #include <CGAL/Iterator_range.h>
 #include <CGAL/Bbox_3.h>
+#include <CGAL/assertions.h>
+#include <CGAL/unordered_flat_map.h>
 
 #include <CGAL/boost/graph/Dual.h>
 #include <CGAL/boost/graph/generators.h>
@@ -74,6 +76,7 @@
 #include <iostream>
 #include <iterator>
 #include <optional>
+#include <sstream>
 #include <vector>
 #if CGAL_CXX20 && __has_include(<ranges>)
 #  include <ranges>
@@ -2122,6 +2125,84 @@ private:
       });
       CGAL_assume(vertex_above != Vertex_handle{});
 
+      if(vertices_of_cavity_union_find.number_of_sets() > 2) {
+        const auto border_edges_set = std::invoke([&] {
+          using Ordered_pair = std::pair<Vertex_handle, Vertex_handle>;
+          using Hash = boost::hash<Ordered_pair>;
+          CGAL::unordered_flat_set<Ordered_pair, Hash> border_edges_set;
+          for(auto edge : border_edges) {
+            auto [va, vb] = tr().vertices(edge);
+            border_edges_set.insert(make_sorted_pair(va, vb));
+          }
+          return border_edges_set;
+        });
+        CGAL::unordered_flat_set<Facet, boost::hash<Facet>> remaining_facets_of_border(facets_of_border.begin(),
+                                                                                       facets_of_border.end());
+
+        std::stack<Facet> stack;
+        std::optional<typename Union_find<Vertex_handle>::handle> reference_handle_of_the_connected_component;
+        stack.push(border_facet_above);
+        remaining_facets_of_border.erase(border_facet_above);
+        while(!stack.empty()) {
+          const auto facet = stack.top();
+          stack.pop();
+          const auto [cell, facet_index] = facet; // border facet seen from the outside of the cavity
+          CGAL_assertion(intersecting_cells.count(cell) == 0); //REMOVE
+          CGAL_assertion(intersecting_cells.count(cell->neighbor(facet_index)) > 0); //REMOVE
+          const auto vertices = tr().vertices(facet);
+          for(auto v : vertices) {
+            if(is_marked(v, Vertex_marker::CAVITY)) {
+              if(!reference_handle_of_the_connected_component) {
+                reference_handle_of_the_connected_component = vertices_of_cavity_handles[v];
+              } else {
+                vertices_of_cavity_union_find.unify_sets(*reference_handle_of_the_connected_component,
+                                                         vertices_of_cavity_handles[v]);
+              }
+            }
+          }
+          for(int i = 0; i < 3; ++i) {
+            const auto va = vertices[i];
+            const auto vb = vertices[tr().ccw(i)];
+
+            if((is_marked(va, Vertex_marker::CAVITY) || is_marked(vb, Vertex_marker::CAVITY)) &&
+               border_edges_set.count(make_sorted_pair(va, vb)) == 0)
+            {
+              // loop around the edge [va, vb] to get another facet on the border of the cavity
+              auto previous_cell = cell;
+              auto other_cell = cell->neighbor(facet_index);
+              do {
+                CGAL_assertion(intersecting_cells.count(other_cell) >= 0); // REMOVE
+                auto index_va = other_cell->index(va);
+                auto index_vb = other_cell->index(vb);
+                auto other_facet_index = tr().next_around_edge(index_vb, index_va);
+                previous_cell = other_cell;
+                other_cell = previous_cell->neighbor(other_facet_index);
+
+              } while(intersecting_cells.count(other_cell) > 0);
+              const Facet neighbor_facet{other_cell, other_cell->index(previous_cell)};
+              CGAL_assertion(facets_of_border.count(neighbor_facet) > 0);
+              if(remaining_facets_of_border.erase(neighbor_facet) > 0) {
+                stack.push(neighbor_facet);
+              }
+            }
+          }
+
+          // if the stack is empty but there are still facets to process, we start again to recover
+          // another connected component of the cavity border
+          if(stack.empty() && !remaining_facets_of_border.empty()) {
+            stack.push(*remaining_facets_of_border.begin());
+            remaining_facets_of_border.erase(remaining_facets_of_border.begin());
+            reference_handle_of_the_connected_component.reset();
+          }
+        }
+      }
+      CGAL_assertion_msg(vertices_of_cavity_union_find.number_of_sets() <= 2,
+                       std::invoke([&] {
+                         std::stringstream ss;
+                         ss << "Error: cavity has " << vertices_of_cavity_union_find.number_of_sets()
+                            << " sub-cavities (should be <=2)\n";
+                         return ss.str();
+                       }).c_str());
       const auto vertex_above_handle = vertices_of_cavity_handles[vertex_above];
 
       const auto vertex_below_handle = std::invoke([&] {
