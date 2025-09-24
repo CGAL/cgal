@@ -529,7 +529,7 @@ public:
       : skeleton_(skeleton)
       , spheres_(&skeleton_.vertices())
       // , faces_(&skeleton_.faces())
-      //, tree_(spheres_->begin(), spheres_->end()) 
+      //, tree_(spheres_->begin(), spheres_->end())
       {
     const std::size_t n = skeleton_.number_of_vertices();
     radii_.reserve(n);
@@ -1048,7 +1048,7 @@ public:
     nb_samples_ = choose_parameter(get_parameter(np, internal_np::number_of_samples), 100 * desired_number_of_spheres_);
     nb_samples_ = std::max(nb_samples_, std::size_t(20000));
     lambda_ = choose_parameter(get_parameter(np, internal_np::lambda), FT(0.2));
-    max_iteration_ = choose_parameter(get_parameter(np, internal_np::number_of_iterations), desired_number_of_spheres_*10);
+    max_iteration_ = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 1000);
     verbose_ = choose_parameter(get_parameter(np, internal_np::verbose), false);
     vpm_ = choose_parameter(get_parameter(np, internal_np::vertex_point),
                             get_const_property_map(CGAL::vertex_point, tmesh));
@@ -1075,10 +1075,16 @@ public:
    *     \cgalParamType{unsigned int}
    *     \cgalParamDefault{100}
    *   \cgalParamNEnd
+   *     \cgalParamNBegin{number_of_samples}
+   *      \cgalParamDescription{The number of samples on the surface mesh to use for the optimization process.}
+   *      \cgalParamType{unsigned int}
+   *      \cgalParamDefault{max(20000, number_of_spheres * 100)}
+   *      \cgalParamExtra{The number of samples should be significantly larger than the number of spheres.(x100 at least)}
+   *   \cgalParamNEnd
    *  \cgalParamNBegin{max_iteration_number}
    *     \cgalParamDescription{The maximum number of iterations for the optimization process.}
    *     \cgalParamType{int}
-   *     \cgalParamDefault{10* number_of_spheres}
+   *     \cgalParamDefault{1000}
    *   \cgalParamNEnd
    *   \cgalParamNBegin{lambda}
    *     \cgalParamDescription{A weight balancing the two energy terms (SQEM and Euclidean). Smaller values encourage
@@ -1087,6 +1093,11 @@ public:
    *     \cgalParamDefault{FT(0.2)}
    *     \cgalParamExtra{The range of this parameter is (0,1].}
    *   \cgalParamNEnd
+   *   \cgalParamNBegin{random_seed}
+   *      \cgalParamDescription{The random seed to sample points on the triangle mesh surface.}
+   *      \cgalParamType{unsigned int}
+   *      \cgalParamExtra{Fix the random seed so that the result can be reproduced}
+   *    \cgalParamNEnd
    *   \cgalParamNBegin{verbose}
    *     \cgalParamDescription{If true, the algorithm will print detailed information about its progress on the
    * standard output.}
@@ -1106,9 +1117,10 @@ public:
     desired_number_of_spheres_ =
         choose_parameter(get_parameter(np, internal_np::number_of_spheres), desired_number_of_spheres_);
     lambda_ = choose_parameter(get_parameter(np, internal_np::lambda), lambda_);
-    max_iteration_ = choose_parameter(get_parameter(np, internal_np::number_of_iterations), desired_number_of_spheres_*10);
-    max_iteration = std::min(max_iteration_, std::size_t(3000));
+    max_iteration_ = choose_parameter(get_parameter(np, internal_np::number_of_iterations), max_iteration_);
+    nb_samples_ = choose_parameter(get_parameter(np, internal_np::number_of_samples), nb_samples_);
     verbose_ = choose_parameter(get_parameter(np, internal_np::verbose), verbose_);
+    seed_ = choose_parameter(get_parameter(np, internal_np::random_seed), seed_);
     bool success = false;
     reset_algorithm_state();
     sphere_mesh_->spheres().reserve(desired_number_of_spheres_);
@@ -1120,7 +1132,7 @@ public:
       // Build AABB-tree
       if constexpr(std::is_same_v<AccelerationType_, KD_tree_tag>) {
         tree_->accelerate_distance_queries(tpoints_.begin(), tpoints_.end(), tpoints_.point_map());
-      } 
+      }
     }
 
     if constexpr(std::is_same_v<ConcurrencyTag_, Parallel_tag>) {
@@ -1403,10 +1415,10 @@ private:
     // Sample points on the surface mesh
 
     CGAL::Random rng(seed_);
-    
+
     CGAL::Random_points_in_triangle_mesh_3<TriangleMesh_, VPM> g(tmesh_, vpm_, rng);
     for(std::size_t i = 0; i < nb_samples_; ++i) {
-      Point_3 p = *g;     
+      Point_3 p = *g;
       face_descriptor f = g.last_item_picked();
       put(face_nb_samples_map_, f, get(face_nb_samples_map_, f) + 1);
       auto it = tpoints_.insert(p);
@@ -1463,7 +1475,7 @@ private:
     namespace PMP = CGAL::Polygon_mesh_processing;
     // Create point_set property maps
     bool success = false;
-    
+
 
     // Create Surface_mesh property maps
     vertex_normal_map_ = get(Vertex_normal_tag(), tmesh_, Vector_3(0., 0., 0.));
@@ -1504,7 +1516,7 @@ private:
     } else {
       tree_->accelerate_distance_queries();
     }
-   
+
     auto bbox = tree_->bbox();
     scale_ = std::max(bbox.xmax() - bbox.xmin(), std::max(bbox.ymax() - bbox.ymin(), bbox.zmax() - bbox.zmin()));
     converged_threshold_ = scale_ * scale_ * 1e-5;
@@ -1537,7 +1549,7 @@ private:
   shrinking_ball_algorithm_bvh(std::vector<face_descriptor> incident_faces,
                                const Point_3& p,                  // point on the surface
                                const Vector_3& n,                 // inverse of search direction
-                               FT delta_convergence = FT(1e-5)) { // model has to be normalized in [0, 1]^3
+                               FT delta_convergence = FT(1e-5)) {
     using face_descriptor = typename Tree::Primitive_id;
     auto approximate_angle = GT().compute_approximate_angle_3_object();
     delta_convergence *= scale_;

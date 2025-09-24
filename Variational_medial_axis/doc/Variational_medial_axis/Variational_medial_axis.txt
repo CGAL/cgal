@@ -84,6 +84,7 @@ This function accepts the following parameters:
 - `number_of_spheres`: target number of medial spheres
 - `number_of_samples`: number of points that will be sampled on the surface
 - `lambda`: weight balancing the energy terms
+- `random_seed`: random seed for generating sample points on the surface
 - `number_of_iterations`: maximum number of iterations
 - `concurrency_tag`: execution mode - sequential or parallel
 
@@ -96,7 +97,7 @@ The class `CGAL::Variational_medial_axis` provides some advanced usage of the al
 Several key functions are provided for algorithm control:
 - `CGAL::Variational_medial_axis::compute_variational_medial_axis_sampling()`: Executes the complete algorithm with specified parameters and returns a boolean indicating success.
 The algorithm may fail either when the optimization does not converge (the error stays above the error threshold) or when the surface sampling is not dense enough to generate a sufficient number of medial spheres.
-The parameters are the same as those of the free function, except for `number_of_samples`, which is fixed when the class instance is constructed.
+The parameters are the same as those of the free function.
 
 - `CGAL::Variational_medial_axis::update_single_step()`: Performs a single iteration of the optimization process, with optional sphere splitting enabled. This allows for step-by-step execution and monitoring of the algorithm's progress.
 
