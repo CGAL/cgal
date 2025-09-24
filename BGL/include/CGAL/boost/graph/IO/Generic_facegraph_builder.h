@@ -144,8 +144,10 @@ public:
         face[j] = vertices[m_faces[i][j]];
 
       face_descriptor f = CGAL::Euler::add_face(face, g);
-      if(f == boost::graph_traits<Graph>::null_face())
+      if(f == boost::graph_traits<Graph>::null_face()) {
+        if (verbose) std::cerr << "Error: Failed to add face [" << i << "]\n";
         return false;
+      }
 
       if(has_face_colors)
         put(fcm, f, face_colors[i]);
