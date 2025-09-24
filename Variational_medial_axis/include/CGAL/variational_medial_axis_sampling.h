@@ -1473,9 +1473,6 @@ private:
   /// Initialization that compute some global variable for the algorithm.
   void init() {
     namespace PMP = CGAL::Polygon_mesh_processing;
-    // Create point_set property maps
-    bool success = false;
-
 
     // Create Surface_mesh property maps
     vertex_normal_map_ = get(Vertex_normal_tag(), tmesh_, Vector_3(0., 0., 0.));
@@ -1994,7 +1991,7 @@ private:
       if(s1 == MSMesh::INVALID_SPHERE_ID) continue;
 
       const auto& knn = point_knn_map_[idx]; // std::vector<Point_Index>
-      for(const Point_Index jdx : knn) {
+      for(const Point_Index& jdx : knn) {
         Sphere_ID s2 = point_cluster_sphere_map_[jdx];
         if(s2 == MSMesh::INVALID_SPHERE_ID || s1 == s2) continue;
 
