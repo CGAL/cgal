@@ -2020,174 +2020,21 @@ private:
            facets_of_upper_cavity, facets_of_lower_cavity] = outputs;
 
     // to avoid "warning: captured structured bindings are a C++20 extension [-Wc++20-extensions]""
-    auto& intersecting_edges_ = intersecting_edges;
     auto& vertices_of_upper_cavity_ = vertices_of_upper_cavity;
     auto& vertices_of_lower_cavity_ = vertices_of_lower_cavity;
 
     std::set<std::pair<Vertex_handle, Vertex_handle>> non_intersecting_edges_set;
 
-    // marker for already visited elements
-    std::set<Vertex_handle> visited_vertices;
-    std::map<std::pair<Vertex_handle, Vertex_handle>, bool> visited_edges;
-    std::set<Cell_handle> visited_cells;
-
-    auto make__new_element_functor = [](auto& visited_set) {
-      return [&visited_set](auto... e) {
-        const auto [_, not_already_visited] = visited_set.emplace(e...);
-        return not_already_visited;
-      };
-    };
-
-    auto new_vertex = make__new_element_functor(visited_vertices);
-    auto new_cell = make__new_element_functor(visited_cells);
-    auto new_edge = [&](Vertex_handle v0, Vertex_handle v1, bool does_intersect) {
-      CGAL_assertion(v0 != Vertex_handle{});
-      return visited_edges.emplace(CGAL::make_sorted_pair(v0, v1), does_intersect);
-    };
-
     if constexpr (cdt_3_can_use_cxx20_format()) if(this->debug_regions()) {
       debug_dump_tetrahedra_intersect_region(face_index, region_index, cdt_2, fh_region);
     }
 
-    intersecting_edges.push_back(first_intersecting_edge);
-    const auto [v0, v1] = tr().vertices(first_intersecting_edge);
-    (void)new_edge(v0, v1, true);
-    for(std::size_t i = 0; i < intersecting_edges.size(); ++i) {
-      const auto intersecting_edge = intersecting_edges[i];
-      const auto [v_above, v_below] = tr().vertices(intersecting_edge);
-      if constexpr (cdt_3_can_use_cxx20_format()) if(this->debug_regions()) {
-        debug_dump_edge_region_intersection(face_index, region_index, fh_region, i, v_above, v_below, intersecting_edge);
-      }
-
-      auto test_edge = [&](Cell_handle cell, Vertex_handle v0, int index_v0, Vertex_handle v1, int index_v1,
-                           int expected) {
-        auto value_returned = [this](bool b) {
-          CGAL_USE(this);
-          if constexpr (cdt_3_can_use_cxx20_format()) if(this->debug_regions()) {
-            std::cerr << cdt_3_format("   return {}\n", b);
-          }
-          return b;
-        };
-        if constexpr (cdt_3_can_use_cxx20_format()) if(this->debug_regions()) {
-          std::cerr << cdt_3_format("  test_edge {}   {}  ", IO::oformat(v0, with_point_and_info),
-                                   IO::oformat(v1, with_point_and_info));
-        }
-        auto [cached_value_it, not_visited] = new_edge(v0, v1, false);
-        if(!not_visited) return value_returned(cached_value_it->second);
-        int v0v1_intersects_region = (is_marked(v0, Vertex_marker::REGION_INSIDE) ||
-                                      is_marked(v1, Vertex_marker::REGION_INSIDE))
-                                         ? expected
-                                         : does_edge_intersect_region(cell, index_v0, index_v1, cdt_2, fh_region);
-        if(v0v1_intersects_region != 0) {
-          if(this->use_older_cavity_algorithm()) {
-            if(v0v1_intersects_region != expected) {
-              throw PLC_error{"PLC error: v0v1_intersects_region != expected" ,
-                    __FILE__, __LINE__, face_index, region_index};
-            }
-          }
-          // report the edge with first vertex above the region
-          if(v0v1_intersects_region < 0) {
-            std::swap(index_v0, index_v1);
-          }
-          intersecting_edges_.emplace_back(cell, index_v0, index_v1);
-          cached_value_it->second = true;
-          return value_returned(true);
-        } else {
-          non_intersecting_edges_set.insert(make_sorted_pair(v0, v1));
-          cached_value_it->second = false;
-          return value_returned(false);
-        }
-      };
-
-      if(this->use_older_cavity_algorithm()) {
-        CGAL_assertion(0 == region_border_vertices.count(v_above));
-        CGAL_assertion(0 == region_border_vertices.count(v_below));
-        if(new_vertex(v_above)) {
-          vertices_of_upper_cavity.push_back(v_above);
-        }
-        if(new_vertex(v_below)) {
-          vertices_of_lower_cavity.push_back(v_below);
-        }
-      }
-      auto facet_circ = this->incident_facets(intersecting_edge);
-      const auto facet_circ_end = facet_circ;
-      do { // loop facets around [v_above, v_below]
-        CGAL_assertion(false == this->is_infinite(*facet_circ));
-        const auto cell = facet_circ->first;
-        const auto facet_index = facet_circ->second;
-        CGAL_assertion_msg(!cell->ccdt_3_data().is_facet_constrained(facet_index),
-                           std::invoke([&]() {
-                             this->dump_triangulation_to_off();
-                             return std::string("intersecting polygons!");
-                           }).c_str());
-        if(new_cell(cell)) {
-          intersecting_cells.insert(cell);
-        }
-        const auto index_v_above = cell->index(v_above);
-        const auto index_v_below = cell->index(v_below);
-        const auto index_vc = 6 - index_v_above - index_v_below - facet_index;
-        const auto vc = cell->vertex(index_vc);
-        if(region_border_vertices.count(vc) > 0) continue; // intersecting edges cannot touch the border
-
-        if(!test_edge(cell, v_above, index_v_above, vc, index_vc, 1) &&
-           !test_edge(cell, v_below, index_v_below, vc, index_vc, -1) &&
-           this->use_older_cavity_algorithm())
-        {
-          dump_triangulation();
-          dump_region(face_index, region_index, cdt_2);
-          {
-            std::ofstream out(std::string("dump_two_edges_") + std::to_string(face_index) + ".polylines.txt");
-            out.precision(17);
-            write_segment(out, Edge{cell, index_v_above, index_vc});
-            write_segment(out, Edge{cell, index_v_below, index_vc});
-          }
-          throw PLC_error{"PLC error: !test_edge(v_above..) && !test_edge(v_below..)" ,
-                __FILE__, __LINE__, face_index, region_index};
-        }
-      } while(++facet_circ != facet_circ_end);
-      if(this->use_newer_cavity_algorithm() && i + 1 == intersecting_edges.size()) {
-        for(auto ch: intersecting_cells) {
-          if(this->debug_regions()) {
-            std::cerr << "tetrahedron #" << ch->time_stamp() << " intersects the region\n";
-          }
-          for(int i = 0; i < 4; ++i) {
-            for(int j = i + 1; j < 4; ++j) {
-              test_edge(ch, ch->vertex(i), i, ch->vertex(j), j, 1);
-            }
-          }
-          for(int i = 0; i < 4; ++i) {
-            auto n_ch = ch->neighbor(i);
-            if(tr().is_infinite(n_ch))
-              continue;
-            if(new_cell(n_ch)) {
-              const auto tetrahedron = tr().tetrahedron(n_ch);
-              const auto tet_bbox = tetrahedron.bbox();
-              if(std::any_of(fh_region.begin(), fh_region.end(), [&](auto fh) {
-                   const auto triangle = cdt_2.triangle(fh);
-                   const auto tri_bbox = triangle.bbox();
-                   return CGAL::do_overlap(tet_bbox, tri_bbox) &&
-                       does_tetrahedron_intersect_triangle_interior(tetrahedron, triangle, tr().geom_traits());
-                 }))
-              {
-                intersecting_cells.insert(n_ch);
-                if(this->debug_regions()) {
-                  std::cerr << "tetrahedron #" << n_ch->time_stamp() << " intersects the region\n";
-                }
-              } else if(this->debug_regions()) {
-                std::cerr << "NO, tetrahedron #" << n_ch->time_stamp() << " does not intersect the region\n";
-              }
-              for(int i = 0; i < 4; ++i) {
-                for(int j = i + 1; j < 4; ++j) {
-                  test_edge(n_ch, n_ch->vertex(i), i, n_ch->vertex(j), j, 1);
-                }
-              }
-            }
-          }
-        }
-      } // last intersecting edge, and new algorithm
-    } // end loop on intersecting_edges
+    detect_edges_and_cells_intersecting_region(face_index, region_index, cdt_2, fh_region, region_border_vertices,
+                                               first_intersecting_edge, intersecting_edges, intersecting_cells,
+                                               non_intersecting_edges_set);
     if(this->use_older_cavity_algorithm()) {
-      process_older_cavity_algorithm(intersecting_edges, intersecting_cells, facets_of_upper_cavity, facets_of_lower_cavity);
+      process_older_cavity_algorithm(intersecting_edges, intersecting_cells, vertices_of_upper_cavity,
+                                     vertices_of_lower_cavity, facets_of_upper_cavity, facets_of_lower_cavity);
     } // older algorithm
 
     // those facets are viewed from the outside of the cavity
@@ -3600,11 +3447,22 @@ public:
 
   void process_older_cavity_algorithm(const std::vector<Edge>& intersecting_edges,
                                       const std::set<Cell_handle>& intersecting_cells,
+                                      std::vector<Vertex_handle>& vertices_of_upper_cavity,
+                                      std::vector<Vertex_handle>& vertices_of_lower_cavity,
                                       std::vector<Facet>& facets_of_upper_cavity,
                                       std::vector<Facet>& facets_of_lower_cavity)
   {
+    auto new_vertex = make__new_element_functor<Vertex_handle>();
+
     for(auto intersecting_edge: intersecting_edges) {
       const auto [v_above, v_below] = tr().vertices(intersecting_edge);
+
+      if(new_vertex(v_above)) {
+        vertices_of_upper_cavity.push_back(v_above);
+      }
+      if(new_vertex(v_below)) {
+        vertices_of_lower_cavity.push_back(v_below);
+      }
 
       auto cell_circ = this->incident_cells(intersecting_edge), end = cell_circ;
       CGAL_assume(cell_circ != nullptr);
@@ -3622,6 +3480,167 @@ public:
         }
       } while(++cell_circ != end);
     }
+  }
+
+  template <typename Element_type>
+  static auto make__new_element_functor() {
+    return [visited_set = std::set<Element_type>()](auto... e) mutable {
+      const auto [_, not_already_visited] = visited_set.emplace(e...);
+      return not_already_visited;
+    };
+  };
+
+  template <typename Fh_region, typename Vertices_container>
+  void detect_edges_and_cells_intersecting_region(
+      CDT_3_signed_index face_index,
+      int region_index,
+      const CDT_2& cdt_2,
+      const Fh_region& fh_region,
+      const Vertices_container& region_border_vertices,
+      Edge first_intersecting_edge,
+      std::vector<Edge>& intersecting_edges,
+      std::set<Cell_handle>& intersecting_cells,
+      std::set<std::pair<Vertex_handle, Vertex_handle>>& non_intersecting_edges_set)
+  {
+    // Create visitor functors
+    auto new_cell = make__new_element_functor<Cell_handle>();
+    std::map<std::pair<Vertex_handle, Vertex_handle>, bool> visited_edges;
+    auto new_edge = [&](Vertex_handle v0, Vertex_handle v1, bool does_intersect) {
+      CGAL_assertion(v0 != Vertex_handle{});
+      return visited_edges.emplace(CGAL::make_sorted_pair(v0, v1), does_intersect);
+    };
+
+    // Alias for C++20 extension warning workaround
+    auto& intersecting_edges_ = intersecting_edges;
+
+    intersecting_edges.push_back(first_intersecting_edge);
+    const auto [v0, v1] = tr().vertices(first_intersecting_edge);
+    (void)new_edge(v0, v1, true);
+
+    for(std::size_t i = 0; i < intersecting_edges.size(); ++i) {
+      const auto intersecting_edge = intersecting_edges[i];
+      const auto [v_above, v_below] = tr().vertices(intersecting_edge);
+      if constexpr (cdt_3_can_use_cxx20_format()) if(this->debug_regions()) {
+        debug_dump_edge_region_intersection(face_index, region_index, fh_region, i, v_above, v_below, intersecting_edge);
+      }
+
+      auto test_edge = [&](Cell_handle cell, Vertex_handle v0, int index_v0, Vertex_handle v1, int index_v1,
+                           int expected) {
+        auto value_returned = [this](bool b) {
+          CGAL_USE(this);
+          if constexpr (cdt_3_can_use_cxx20_format()) if(this->debug_regions()) {
+            std::cerr << cdt_3_format("   return {}\n", b);
+          }
+          return b;
+        };
+        if constexpr (cdt_3_can_use_cxx20_format()) if(this->debug_regions()) {
+          std::cerr << cdt_3_format("  test_edge {}   {}  ", IO::oformat(v0, with_point_and_info),
+                                   IO::oformat(v1, with_point_and_info));
+        }
+        auto [cached_value_it, not_visited] = new_edge(v0, v1, false);
+        if(!not_visited) return value_returned(cached_value_it->second);
+        int v0v1_intersects_region = (is_marked(v0, Vertex_marker::REGION_INSIDE) ||
+                                      is_marked(v1, Vertex_marker::REGION_INSIDE))
+                                         ? expected
+                                         : does_edge_intersect_region(cell, index_v0, index_v1, cdt_2, fh_region);
+        if(v0v1_intersects_region != 0) {
+          if(this->use_older_cavity_algorithm()) {
+            if(v0v1_intersects_region != expected) {
+              throw PLC_error{"PLC error: v0v1_intersects_region != expected" ,
+                    __FILE__, __LINE__, face_index, region_index};
+            }
+          }
+          // report the edge with first vertex above the region
+          if(v0v1_intersects_region < 0) {
+            std::swap(index_v0, index_v1);
+          }
+          intersecting_edges_.emplace_back(cell, index_v0, index_v1);
+          cached_value_it->second = true;
+          return value_returned(true);
+        } else {
+          non_intersecting_edges_set.insert(make_sorted_pair(v0, v1));
+          cached_value_it->second = false;
+          return value_returned(false);
+        }
+      };
+
+      auto facet_circ = this->incident_facets(intersecting_edge);
+      const auto facet_circ_end = facet_circ;
+      do { // loop facets around [v_above, v_below]
+        CGAL_assertion(false == this->is_infinite(*facet_circ));
+        const auto cell = facet_circ->first;
+        const auto facet_index = facet_circ->second;
+        CGAL_assertion_msg(!cell->ccdt_3_data().is_facet_constrained(facet_index),
+                           std::invoke([&]() {
+                             this->dump_triangulation_to_off();
+                             return std::string("intersecting polygons!");
+                           }).c_str());
+        if(new_cell(cell)) {
+          intersecting_cells.insert(cell);
+        }
+        const auto index_v_above = cell->index(v_above);
+        const auto index_v_below = cell->index(v_below);
+        const auto index_vc = 6 - index_v_above - index_v_below - facet_index;
+        const auto vc = cell->vertex(index_vc);
+        if(region_border_vertices.count(vc) > 0) continue; // intersecting edges cannot touch the border
+
+        if(!test_edge(cell, v_above, index_v_above, vc, index_vc, 1) &&
+           !test_edge(cell, v_below, index_v_below, vc, index_vc, -1) &&
+           this->use_older_cavity_algorithm())
+        {
+          if(this->debug_regions()) {
+            dump_triangulation();
+            dump_region(face_index, region_index, cdt_2);
+            std::ofstream out(std::string("dump_two_edges_") + std::to_string(face_index) + ".polylines.txt");
+            out.precision(17);
+            write_segment(out, Edge{cell, index_v_above, index_vc});
+            write_segment(out, Edge{cell, index_v_below, index_vc});
+          }
+          throw PLC_error{"PLC error: !test_edge(v_above..) && !test_edge(v_below..)" ,
+                __FILE__, __LINE__, face_index, region_index};
+        }
+      } while(++facet_circ != facet_circ_end);
+      if(this->use_newer_cavity_algorithm() && i + 1 == intersecting_edges.size()) {
+        for(auto ch: intersecting_cells) {
+          if(this->debug_regions()) {
+            std::cerr << "tetrahedron #" << ch->time_stamp() << " intersects the region\n";
+          }
+          for(int i = 0; i < 4; ++i) {
+            for(int j = i + 1; j < 4; ++j) {
+              test_edge(ch, ch->vertex(i), i, ch->vertex(j), j, 1);
+            }
+          }
+          for(int i = 0; i < 4; ++i) {
+            auto n_ch = ch->neighbor(i);
+            if(tr().is_infinite(n_ch))
+              continue;
+            if(new_cell(n_ch)) {
+              const auto tetrahedron = tr().tetrahedron(n_ch);
+              const auto tet_bbox = tetrahedron.bbox();
+              if(std::any_of(fh_region.begin(), fh_region.end(), [&](auto fh) {
+                   const auto triangle = cdt_2.triangle(fh);
+                   const auto tri_bbox = triangle.bbox();
+                   return CGAL::do_overlap(tet_bbox, tri_bbox) &&
+                       does_tetrahedron_intersect_triangle_interior(tetrahedron, triangle, tr().geom_traits());
+                 }))
+              {
+                intersecting_cells.insert(n_ch);
+                if(this->debug_regions()) {
+                  std::cerr << "tetrahedron #" << n_ch->time_stamp() << " intersects the region\n";
+                }
+              } else if(this->debug_regions()) {
+                std::cerr << "NO, tetrahedron #" << n_ch->time_stamp() << " does not intersect the region\n";
+              }
+              for(int i = 0; i < 4; ++i) {
+                for(int j = i + 1; j < 4; ++j) {
+                  test_edge(n_ch, n_ch->vertex(i), i, n_ch->vertex(j), j, 1);
+                }
+              }
+            }
+          }
+        }
+      } // last intersecting edge, and new algorithm
+    } // end loop on intersecting_edges
   }
 
   void debug_dump_cavity_outputs(CDT_3_signed_index face_index,
