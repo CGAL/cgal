@@ -2057,6 +2057,7 @@ private:
     });
     if(this->use_newer_cavity_algorithm()) {
 
+      // create a union-find of the vertices of the cavity (but those on the region border)
       Union_find<Vertex_handle> vertices_of_cavity_union_find;
       using Union_find_handle = typename Union_find<Vertex_handle>::handle;
       Unique_hash_map<Vertex_handle, Union_find_handle> vertices_of_cavity_handles;
@@ -2068,6 +2069,8 @@ private:
           }
         }
       }
+
+      // use edges of the border facets to unify sets
       for(auto facet: facets_of_border) {
         auto vertices = tr().vertices(facet);
         for(int i = 0; i < 3; ++i) {
@@ -2079,6 +2082,8 @@ private:
           }
         }
       }
+
+      // use non-intersecting edges to unify sets, until we have at most 2 sets
       if(vertices_of_cavity_union_find.number_of_sets() > 2) {
         for(auto c : intersecting_cells) {
 
@@ -2099,6 +2104,7 @@ private:
         }
       }
 
+      // find a vertex and a border-facet above the region
       const auto [vertex_above, border_facet_above] = std::invoke([&] {
         Edges_container all_border_edges{border_edges.begin(), border_edges.end()};
         std::for_each(border_edges.begin(), border_edges.end(), [&](auto edge) {
@@ -2127,6 +2133,8 @@ private:
       });
       CGAL_assume(vertex_above != Vertex_handle{});
 
+      // if there are still more than 2 sets, we need to propagate the information
+      // using a DFS on the border facets
       if(vertices_of_cavity_union_find.number_of_sets() > 2) {
         const auto border_edges_set = std::invoke([&] {
           using Ordered_pair = std::pair<Vertex_handle, Vertex_handle>;
@@ -2198,6 +2206,7 @@ private:
           }
         }
       }
+
       CGAL_assertion_msg(vertices_of_cavity_union_find.number_of_sets() <= 2,
                        std::invoke([&] {
                          std::stringstream ss;
@@ -2207,6 +2216,7 @@ private:
                        }).c_str());
       const auto vertex_above_handle = vertices_of_cavity_handles[vertex_above];
 
+      // find a vertex below the region (if any)
       const auto vertex_below_handle = std::invoke([&] {
         auto [b, e] = make_prevent_deref_range(vertices_of_cavity_union_find);
         auto it = std::find_if_not(
@@ -2222,8 +2232,8 @@ private:
       CGAL_assertion((vertex_below_handle == vertices_of_cavity_union_find.end()) ==
                      (vertices_of_cavity_union_find.number_of_sets() == 1));
 
-      for(auto handle = vertices_of_cavity_union_find.begin(), end = vertices_of_cavity_union_find.end();
-          handle != end; ++handle)
+      // use the union-find sets to mark vertices as above or below the region
+      for(auto handle : make_prevent_deref_range(vertices_of_cavity_union_find))
       {
         auto v = *handle;
         clear_mark(v, Vertex_marker::CAVITY);
@@ -2239,6 +2249,10 @@ private:
           CGAL_error();
         }
       }
+
+      // if any vertex is still unmarked, it means that the union-find did not
+      // connect all the vertices of the cavity. Then propagate the information
+      // using the intersecting cells.
       while(std::any_of(intersecting_cells.begin(), intersecting_cells.end(), [&](Cell_handle c) {
            const auto vs = tr().vertices(c);
            return std::any_of(vs.begin(), vs.end(), [&](auto v) {
@@ -2271,6 +2285,8 @@ private:
           }
         });
       }
+
+      // classify the facets of the border of the cavity
       for(auto facet: facets_of_border) {
         if(this->debug_regions()) {
           debug_output_facet_vertices({facet});
