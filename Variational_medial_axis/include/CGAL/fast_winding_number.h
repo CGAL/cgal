@@ -75,7 +75,7 @@ template <class TriangleMesh, class GeomTraits> struct Fast_winding_number_Coeff
   using Point_3 = typename GT::Point_3;
   using Vector_3 = typename GT::Vector_3;
 
-  inline void add(const Vector_3& centered_centroid, const Vector_3& normal, const FT& area) {}
+  inline void add(const Vector_3& /* centered_centroid */, const Vector_3& /* normal */, const FT& /* area */) {}
   FT sum_area = 0;
   Point_3 weighted_centroid = Point_3(0, 0, 0);
   Vector_3 weighted_normal = Vector_3(0, 0, 0);
@@ -249,10 +249,10 @@ public:
                       const NamedParameters& np = parameters::default_values()
                       )
       : tmesh_(tmesh)
-      , tree_(tree)
       , fnm_(fnm)
       , fam_(fam)
       , fcm_(fcm)
+      , tree_(tree)
       {
     using parameters::choose_parameter;
     using parameters::get_parameter;
@@ -308,12 +308,12 @@ public:
       FT r = CGAL::approximate_sqrt(R.squared_length());
       if(r > beta_ * node_radius_[n_id]) {
         // The query point is far enough from the node, so use single dipole approximation
-        winding_number += direct_eval(node, p, prim_it);
+        winding_number += direct_eval(node, p);
       } else {
         switch(nb_prim) {
         case 2: {
           // leaf node
-          winding_number += solid_angle_leaf(node, p, prim_it);
+          winding_number += solid_angle_leaf(node, p);
         } break;
         case 3: {
           // partial leaf node
@@ -478,7 +478,7 @@ private:
   }
 
   //helper function to compute the solid angle of a leaf node
-  FT solid_angle_leaf(const Node* node, const Point_3& p, typename Tree::Primitive_iterator prim_it) const {
+  FT solid_angle_leaf(const Node* node, const Point_3& p) const {
     FT w = FT(0);
     face_descriptor f1 = node->left_data().id();
     w += solid_angle(p, f1);
@@ -489,7 +489,7 @@ private:
 
   // helper function to evaluate the node as a single dipole.
   // This is the case when the query point is far enough from the node.
-  FT direct_eval(const Node* node, const Point_3& p, typename Tree::Primitive_iterator prim_it) const {
+  FT direct_eval(const Node* node, const Point_3& p) const {
     FT w = FT(0);
     const Vector_3 R = coeffs_[node_id(node)].weighted_centroid - p;
     Vec3 R_eigen(R.x(), R.y(), R.z());
