@@ -202,8 +202,21 @@ void maximal_empty_spheres(const Eigen::MatrixXd& G,
   std::vector<Eigen::RowVectorXi> contact_indices_;
   for(auto ch : infinite_cells) {
     int ci = ch->data();
+    std::array<typename Triangulation::Point,D+3> points;
+    int j  = 0;
     for (int i=0; i<D+3; ++i) {
       if(ch->vertex(i) != t.infinite_vertex()) {
+        points[j] = ch->vertex(i)->point();
+        ++j;
+      }
+    }
+    for (int i=0; i<D+3; ++i) {
+      if(ch->vertex(i) != t.infinite_vertex()) {
+        points[j] = t.tds().mirror_vertex(ch,i)->point();
+        auto ori = t.geom_traits().orientation_d_object()(points.begin(), points.end());
+        if(ori == COPLANAR){
+          std::cout << "Coplanar points!" << std::endl;
+        }
         int cj =  ch->neighbor(i)->data();
         if ((ci < cj) &&    // only treat each edge once
             (!full_simplices_only || (full_simplices(ci) && full_simplices(cj)))) {  // only consider edges between full simplices
