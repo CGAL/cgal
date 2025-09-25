@@ -42,12 +42,15 @@ with the current component label until no more \f$ \delta\f$-merged simplices re
 unvisited simplex until all have been visited, and output the simplices with the most frequent label. The reconstructed surface is then computed from the boundary of this output.
 
 
-\subsection secBMSRChoose Input Requirements
+\subsection secBMSRChoose Input Requirements and Output Format
 
 This method expects as input a 3D point cloud sampled a manifold close surface with a single connected component.
-It always returns a watertight and manifold surface triangle mesh.
 As the algorithm attempts to close the surface, it can tolerate some missing data and can handle little outliers and noise.
 If there are some significant gaps in the data, the internal flooding algorithm will generate triangle faces from points visible from inside the input surface.
+
+The output is of the form two triangle soups. It features the two largest components extracted from the flooding algorithm.
+One of them is always a manifold surface mesh, while the second might features some non-manifold edges.
+The fonction `CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh()` can be used to test them.
 
 \subsection secBMSRPar Parameter Settings
 
