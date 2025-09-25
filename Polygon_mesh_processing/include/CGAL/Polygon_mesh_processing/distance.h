@@ -599,9 +599,9 @@ struct Triangle_structure_sampler_for_triangle_soup
                                       GeomTraits,
                                       NamedParameters,
                                       typename TriangleRange::const_iterator,
-                                      Random_points_in_triangle_soup<PointRange,
-                                                                     typename TriangleRange::value_type,
-                                                                     Creator>,
+                                      Random_points_in_triangle_soup_3<PointRange,
+                                                                      typename TriangleRange::value_type,
+                                                                      Creator>,
                                       Creator,
                                       Triangle_structure_sampler_for_triangle_soup<PointRange,
                                                                                    TriangleRange,
@@ -622,14 +622,14 @@ struct Triangle_structure_sampler_for_triangle_soup
                                           GeomTraits,
                                           NamedParameters,
                                           typename TriangleRange::const_iterator,
-                                          Random_points_in_triangle_soup<PointRange, TriangleType, Creator>,
+                                          Random_points_in_triangle_soup_3<PointRange, TriangleType, Creator>,
                                           Creator,
                                           Self>                             Base;
 
   typedef typename GeomTraits::FT                                           FT;
   typedef typename GeomTraits::Point_3                                      Point_3;
 
-  typedef Random_points_in_triangle_soup<PointRange, TriangleType, Creator> Randomizer;
+  typedef Random_points_in_triangle_soup_3<PointRange, TriangleType, Creator> Randomizer;
   typedef typename TriangleRange::const_iterator                            TriangleIterator;
 
   double min_sq_edge_length;
