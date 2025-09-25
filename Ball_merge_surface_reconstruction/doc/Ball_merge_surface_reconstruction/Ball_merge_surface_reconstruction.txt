@@ -24,15 +24,15 @@ Where \f$ B_0 \f$ and \f$ B_1 \f$ are two adjacent Voronoi balls with radius \f$
 Using this ratio, we can say that if the intersection ratio between two adjacent Voronoi balls is small,
 they likely correspond to a pair of interior and exterior balls sharing a thin overlapping region along the underlying surface
 (a 2D case is illustrated in \cgalFigureRef{figBMSRillus}). In other words, given a threshold \f$ \delta \f$, a triangle is said
-to belong to a set \f$ BallMerge(\delta) \f$ if its corresponding adjacent Voronoi balls have an intersection ratio less than \f$ \delta \f$.
-By definition, \f$ BallMerge(\delta) \f$ is a subcomplex of the Delaunay triangulation of the sample points. It is easy to see that \f$ BallMerge(0) \f$ is empty,
-while \f$ BallMerge(\delta) \f$, for any \f$ \delta \gt 2 \f$ contains all the triangles of the Delaunay triangulation.
+to belong to a set \f$ \mathrm{BallMerge}(\delta) \f$ if its corresponding adjacent Voronoi balls have an intersection ratio less than \f$ \delta \f$.
+By definition, \f$ \mathrm{BallMerge}(\delta) \f$ is a subcomplex of the Delaunay triangulation of the sample points. It is easy to see that \f$ \mathrm{BallMerge}(0) \f$ is empty,
+while \f$ \mathrm{BallMerge}(\delta) \f$, for any \f$ \delta \gt 2 \f$ contains all the triangles of the Delaunay triangulation.
 
 \cgalFigureBegin{figBMSRillus,BMSRIllustration.png}
 Top: The interior (red) and exterior (green) medial balls of a point set with decreasing point density from l.t.r. Bottom: Corresponding \f$ \delta \f$-merged components on Delaunay triangulation.
 \cgalFigureEnd
 
-\cgal provides the global variant of BallMerge as described in \cgalCite{parakkat2024ballmerge}.
+\cgal provides the global variant of the ball merge algorithm as described in \cgalCite{parakkat2024ballmerge}.
 
 `ball_merge_surface_reconstruction()`: Given a threshold \f$ \delta \f$, two Delaunay simplices are called \f$ \delta\f$-merged either
 if their corresponding Voronoi balls are adjacent with an intersection ratio \f$ > \delta \f$ or if there exists another Delaunay simplex,
@@ -54,8 +54,8 @@ The fonction `CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh()` c
 
 \subsection secBMSRPar Parameter Settings
 
-The main parameter used in \f$ BallMerge \f$ is the intersection ratio \f$\delta\f$. By definition, \f$\delta\f$ ranges from 0 to 2, with  \f$ BallMerge(0) \f$
-being empty and  \f$ BallMerge(2) \f$ containing all the triangles of the Delaunay triangulation.
+The main parameter used in \f$ \mathrm{BallMerge} \f$ is the intersection ratio \f$\delta\f$. By definition, \f$\delta\f$ ranges from 0 to 2, with  \f$ \mathrm{BallMerge}(0) \f$
+being empty and  \f$ \mathrm{BallMerge}(2) \f$ containing all the triangles of the Delaunay triangulation.
 Experiments show that the \f$ > \delta \f$ value usually lies between 1.5 and 1.95, with 1.8 or 1.85 yielding the best results in most cases.
 Thanks to the useful properties of this intersection ratio, tuning this parameter can be done using the following rule:
 if the reconstructed surface has missing parts, the threshold should be lowered, conversely, if the reconstructed surface has additional parts, the threshold should be increased.

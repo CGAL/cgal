@@ -150,25 +150,6 @@ public:
     m_option = option;
   }
 
-// void flood_from_infinity(std::vector<bool> &outside, int group) const
-// {
-//   std::vector<Cell_handle> queue;
-//     queue.push_back(m_dt3.infinite_cell());
-//     while(!queue.empty())
-//     {
-//       Cell_handle cell = queue.back();
-//       queue.pop_back();
-//       if (outside[cell->info()]) continue;
-//       outside[cell->info()]=true;
-//       for(int i=0;i<4;++i)
-//       {
-//         if(m_cell_groups[cell->neighbor(i)->info()] == group) continue;
-//         if (!outside[cell->neighbor(i)->info()])
-//           queue.push_back(cell->neighbor(i));
-//       }
-//     }
-// }
-
   void run_reconstruction()
   {
     m_group = 1;
