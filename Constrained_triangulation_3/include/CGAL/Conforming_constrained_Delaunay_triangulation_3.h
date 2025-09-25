@@ -190,8 +190,10 @@ does_first_triangle_intersect_second_triangle_interior(const typename K::Triangl
   auto comp = k.compare_xyz_3_object();
   auto sort_ptrs = [&comp](const Point_3* p1, const Point_3* p2) { return comp(*p1, *p2) == SMALLER; };
   auto intersection_is_a_vertex_or_a_common_edge = [&]() {
+    CGAL_assume(nb_of_t1_vertices_in_the_line >= 0 && nb_of_t1_vertices_in_the_line <= 3);
     std::sort(t1_vertices_in_the_line.data(), t1_vertices_in_the_line.data() + nb_of_t1_vertices_in_the_line,
               sort_ptrs);
+    CGAL_assume(nb_of_t2_vertices_in_the_line >= 0 && nb_of_t2_vertices_in_the_line <= 3);
     std::sort(t2_vertices_in_the_line.data(), t2_vertices_in_the_line.data() + nb_of_t2_vertices_in_the_line,
               sort_ptrs);
     std::size_t nb_of_common_vertices = 0;
