@@ -1048,8 +1048,8 @@ not coincide with any existing arrangement vertex and does not lie on
 any edge. As mentioned in Section \ref arr_ssectraverse, it is
 possible to obtain the face containing an isolated vertex calling the
 member function `Arrangement_on_surface_2::Vertex::face()`. The member
-function
-`Arrangement_on_surface_2::remove_isolated_vertex(Vertex_handle v)`
+function \link Arrangement_on_surface_2::remove_isolated_vertex()
+`Arrangement_on_surface_2::remove_isolated_vertex(Vertex_handle v)`\endlink
 accepts a handle to an isolated vertex and removes it from the
 arrangement.
 

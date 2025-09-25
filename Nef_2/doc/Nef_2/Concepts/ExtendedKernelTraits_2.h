@@ -191,21 +191,20 @@ returns `true` iff
 bool is_standard(const Point_2& p) ;
 
 /*!
-returns
-the standard point represented by `p`. \pre `K.is_standard(p)`.
+returns the standard point represented by `p`.
+\pre \ref is_standard(const Point_2& p) "is_standard"(`p`).
 */
 Standard_point_2 standard_point(const Point_2& p) ;
 
 /*!
-returns
-the oriented line representing the bundle of rays defining `p`.
-\pre `!K.is_standard(p)`.
+returns the oriented line representing the bundle of rays defining `p`.
+\pre ! \ref is_standard(const Point_2& p) "is_standard"(`p`).
 */
 Standard_line_2 standard_line(const Point_2& p) ;
 
 /*!
-a ray
-defining `p`. \pre `!K.is_standard(p)`.
+a ray defining `p`.
+\pre ! \ref is_standard(const Point_2& p) "is_standard"(`p`).
 */
 Standard_ray_2 standard_ray(const Point_2& p) ;
 
