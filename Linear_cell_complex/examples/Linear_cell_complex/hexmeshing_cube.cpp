@@ -2,14 +2,12 @@
 #include <CGAL/draw_linear_cell_complex.h>
 #include <string>
 
+int main(int argc, char** argv)
+{
+  std::string filename=(argc<2?CGAL::data_file_path("meshes/cube.off"):argv[1]);
 
-void render_two_refinement(const std::string& file, int cube_cells_per_dim, int nb_levels = 1){
-  auto lcc = CGAL::generate_two_refinement_mesh(CGAL::data_file_path("meshes/" + file), cube_cells_per_dim, nb_levels, true);
-
+  auto lcc=CGAL::generate_two_refinement_mesh(filename, 20, 2, true);
   CGAL::draw(lcc);
-}
 
-
-int main(){
-  render_two_refinement("cube.off", 20, 1);
+  return EXIT_SUCCESS;
 }
