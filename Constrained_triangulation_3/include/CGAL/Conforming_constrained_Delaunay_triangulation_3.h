@@ -2025,6 +2025,7 @@ private:
     // to avoid "warning: captured structured bindings are a C++20 extension [-Wc++20-extensions]""
     auto& vertices_of_upper_cavity_ = vertices_of_upper_cavity;
     auto& vertices_of_lower_cavity_ = vertices_of_lower_cavity;
+    const auto& cr_intersecting_cells = intersecting_cells;
 
     std::set<std::pair<Vertex_handle, Vertex_handle>> non_intersecting_edges_set;
 
@@ -2036,7 +2037,7 @@ private:
                                                first_intersecting_edge, intersecting_edges, intersecting_cells,
                                                non_intersecting_edges_set);
     if(this->use_older_cavity_algorithm()) {
-      process_older_cavity_algorithm(intersecting_edges, intersecting_cells, vertices_of_upper_cavity,
+      process_older_cavity_algorithm(intersecting_edges, cr_intersecting_cells, vertices_of_upper_cavity,
                                      vertices_of_lower_cavity, facets_of_upper_cavity, facets_of_lower_cavity);
     } // older algorithm
 
@@ -2044,10 +2045,10 @@ private:
     const std::set<Facet> facets_of_border = std::invoke([&] {
       std::set<Facet> facets_of_border;
       if(this->use_newer_cavity_algorithm()) {
-        for(auto c : intersecting_cells) {
+        for(auto c : cr_intersecting_cells) {
           for(int i = 0; i < 4; ++i) {
             auto n = c->neighbor(i);
-            if(intersecting_cells.count(n) == 0) {
+            if(cr_intersecting_cells.count(n) == 0) {
               facets_of_border.emplace(n, n->index(c));
             }
           }
@@ -2061,7 +2062,7 @@ private:
       Union_find<Vertex_handle> vertices_of_cavity_union_find;
       using Union_find_handle = typename Union_find<Vertex_handle>::handle;
       Unique_hash_map<Vertex_handle, Union_find_handle> vertices_of_cavity_handles;
-      for(auto c: intersecting_cells) {
+      for(auto c: cr_intersecting_cells) {
         for(auto v : tr().vertices(c)) {
           if(!is_marked(v)) {
             set_mark(v, Vertex_marker::CAVITY);
@@ -2085,7 +2086,7 @@ private:
 
       // use non-intersecting edges to unify sets, until we have at most 2 sets
       if(vertices_of_cavity_union_find.number_of_sets() > 2) {
-        for(auto c : intersecting_cells) {
+        for(auto c : cr_intersecting_cells) {
 
           for(int i = 0; i < 4; ++i) {
             for(int j = i + 1; j < 4; ++j) {
@@ -2157,8 +2158,8 @@ private:
           const auto facet = stack.top();
           stack.pop();
           const auto [cell, facet_index] = facet; // border facet seen from the outside of the cavity
-          CGAL_assertion(intersecting_cells.count(cell) == 0); //REMOVE
-          CGAL_assertion(intersecting_cells.count(cell->neighbor(facet_index)) > 0); //REMOVE
+          CGAL_assertion(cr_intersecting_cells.count(cell) == 0); //REMOVE
+          CGAL_assertion(cr_intersecting_cells.count(cell->neighbor(facet_index)) > 0); //REMOVE
           const auto vertices = tr().vertices(facet);
           for(auto v : vertices) {
             if(is_marked(v, Vertex_marker::CAVITY)) {
@@ -2181,14 +2182,14 @@ private:
               auto previous_cell = cell;
               auto other_cell = cell->neighbor(facet_index);
               do {
-                CGAL_assertion(intersecting_cells.count(other_cell) >= 0); // REMOVE
+                CGAL_assertion(cr_intersecting_cells.count(other_cell) >= 0); // REMOVE
                 auto index_va = other_cell->index(va);
                 auto index_vb = other_cell->index(vb);
                 auto other_facet_index = tr().next_around_edge(index_vb, index_va);
                 previous_cell = other_cell;
                 other_cell = previous_cell->neighbor(other_facet_index);
 
-              } while(intersecting_cells.count(other_cell) > 0);
+              } while(cr_intersecting_cells.count(other_cell) > 0);
               const Facet neighbor_facet{other_cell, other_cell->index(previous_cell)};
               CGAL_assertion(facets_of_border.count(neighbor_facet) > 0);
               if(remaining_facets_of_border.erase(neighbor_facet) > 0) {
@@ -2253,7 +2254,7 @@ private:
       // if any vertex is still unmarked, it means that the union-find did not
       // connect all the vertices of the cavity. Then propagate the information
       // using the intersecting cells.
-      while(std::any_of(intersecting_cells.begin(), intersecting_cells.end(), [&](Cell_handle c) {
+      while(std::any_of(cr_intersecting_cells.begin(), cr_intersecting_cells.end(), [&](Cell_handle c) {
            const auto vs = tr().vertices(c);
            return std::any_of(vs.begin(), vs.end(), [&](auto v) {
             if(!is_marked(v)) {
@@ -2264,7 +2265,7 @@ private:
           });
          }))
       {
-        std::for_each(intersecting_cells.begin(), intersecting_cells.end(), [&](Cell_handle c) {
+        std::for_each(cr_intersecting_cells.begin(), cr_intersecting_cells.end(), [&](Cell_handle c) {
           for(int i = 0; i < 4; ++i) {
             for(int j = i + 1; j < 4; ++j) {
               auto v1 = c->vertex(i);
