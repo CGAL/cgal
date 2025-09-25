@@ -10,7 +10,7 @@
 #include <CGAL/HDVF/Hdvf_persistence.h>
 #include <CGAL/OSM/OSM.h>
 
-//typedef CGAL::Homological_discrete_vector_field::Zp<5> CoefficientType;
+//typedef CGAL::Homological_discrete_vector_field::Zp<5,int,true> CoefficientType;
 typedef CGAL::Homological_discrete_vector_field::Z2 CoefficientType;
 typedef CGAL::Homological_discrete_vector_field::Simplicial_chain_complex<CoefficientType> Complex;
 typedef double Degree;

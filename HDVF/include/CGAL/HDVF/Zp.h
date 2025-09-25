@@ -15,6 +15,9 @@
 
 #include <CGAL/license/HDVF.h>
 
+#include <CGAL/number_type_basic.h>
+#include <CGAL/number_utils.h>
+
 #include <iostream>
 
 namespace CGAL {
@@ -35,7 +38,7 @@ namespace Homological_discrete_vector_field {
  \tparam _TSlot a type used for the inner storage of the values (default: `int`).
  */
 
-template <int p, typename _TSlot = int>
+template <int p, typename _TSlot = int, bool IsPrime>
 class Zp {
     _TSlot _i ;
 public:
@@ -46,6 +49,9 @@ public:
 
     // Copy constructor
     Zp(const Zp& a) : _i(a._i) {}
+
+
+    bool is_zero() const { return _i == 0 ; }
 
     /** \brief Unary operator+ */
     friend Zp operator+ (const Zp& a)
@@ -62,25 +68,25 @@ public:
     /** \brief Operator+. */
     friend Zp     operator+ (const Zp& a, const Zp& b)
     {
-        return Zp<p, _TSlot>((a._i + b._i)) ;
+        return Zp<p, _TSlot, IsPrime>((a._i + b._i)) ;
     }
 
     /** \brief Operator-. */
     friend Zp     operator- (const Zp& a, const Zp& b)
     {
-        return Zp<p, _TSlot>((a._i - b._i)) ;
+        return Zp<p, _TSlot, IsPrime>((a._i - b._i)) ;
     }
 
     /** \brief Operator*. */
     friend Zp     operator* (const Zp& a, const Zp& b)
     {
-        return Zp<p, _TSlot>((a._i * b._i)) ;
+        return Zp<p, _TSlot, IsPrime>((a._i * b._i)) ;
     }
 
     /** \brief Operator/. */
     friend Zp     operator/ (const Zp& a, const Zp& b)
     {
-        return Zp<p, _TSlot>(a._i / b._i) ;
+        return Zp<p, _TSlot, IsPrime>(a._i / b._i) ;
     }
 
     /** \brief Operator+=. */
@@ -154,7 +160,7 @@ public:
     /** \brief Absolute value. */
     friend Zp  abs(const Zp& a)
     {
-        return Zp<p,_TSlot>(abs(a._i)) ;
+        return Zp<p,_TSlot, IsPrime>(abs(a._i)) ;
     }
 
     /** \brief Operator<<. */
@@ -174,6 +180,78 @@ public:
 };
 
 } /* end namespace Homological_discrete_vector_field */
+
+// Specialization for p being not a prime number
+template <int p, typename _TSlot> class Algebraic_structure_traits< Homological_discrete_vector_field::Zp<p, _TSlot, false> >
+  : public Algebraic_structure_traits_base< Homological_discrete_vector_field::Z2, Integral_domain_without_division_tag >  {
+  public:
+    typedef Tag_true            Is_exact;
+    typedef Tag_false           Is_numerical_sensitive;
+
+    class Is_invertible //   AF: Does not yet exist in Number_types and Algebraic_foundations
+      : public CGAL::cpp98::unary_function< Type, bool > {
+      public:
+        bool operator()( const Type& t) const {
+          return t.is_invertible() ;
+        }
+    };
+  };
+
+
+  // Specialization for p being not a prime number
+  template <int p, typename _TSlot> class Algebraic_structure_traits< Homological_discrete_vector_field::Zp<p, _TSlot, true> >
+  : public Algebraic_structure_traits_base< Homological_discrete_vector_field::Z2, Field_tag >  {
+  public:
+    typedef Tag_true            Is_exact;
+    typedef Tag_false           Is_numerical_sensitive;
+
+    class Is_invertible
+      : public CGAL::cpp98::unary_function< Type, bool > {
+      public:
+        bool operator()( const Type& t) const {
+          return ! t.is_zero() ;
+        }
+    };
+  };
+
+template <int p, typename _TSlot, bool IsPrime> class Real_embeddable_traits< Homological_discrete_vector_field::Zp<p, _TSlot, IsPrime> >
+  : public INTERN_RET::Real_embeddable_traits_base< Homological_discrete_vector_field::Zp<p, _TSlot, IsPrime> , CGAL::Tag_true > {
+  public:
+
+    class Is_positive
+      : public CGAL::cpp98::unary_function< Type, bool > {
+      public:
+        bool operator()( const Type& t) const {
+          return ! t.is_zero() ;
+        }
+    };
+
+    class Is_negative
+      : public CGAL::cpp98::unary_function< Type, bool > {
+      public:
+        bool operator()( const Type&) const {
+          return false;
+        }
+    };
+
+    class Sgn
+      : public CGAL::cpp98::unary_function< Type, ::CGAL::Sign > {
+      public:
+        ::CGAL::Sign operator()( const Type& t ) const {
+          if(t.is_zero()) return ZERO ;
+          else return POSITIVE ;
+        }
+    };
+
+    class Abs
+    : public CGAL::cpp98::unary_function< Type, Type > {
+      public:
+        Type  operator()( const Type& t ) const {
+          return t ;
+        }
+    };
+  };
+
 } /* end namespace CGAL */
 
 #endif // CGAL_HDVF_ZP_H

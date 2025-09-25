@@ -11,7 +11,7 @@
 #include <CGAL/HDVF/Sub_chain_complex_mask.h>
 #include <CGAL/OSM/OSM.h>
 
-//typedef CGAL::Homological_discrete_vector_field::Zp<5> CoefficientType;
+//typedef CGAL::Homological_discrete_vector_field::Zp<5,int,true> CoefficientType;
 typedef CGAL::Homological_discrete_vector_field::Z2 Coefficient_ring;
 typedef CGAL::Homological_discrete_vector_field::Simplicial_chain_complex<Coefficient_ring> Complex;
 typedef CGAL::Homological_discrete_vector_field::Hdvf_duality<Complex> HDVF_type;
@@ -44,17 +44,17 @@ int main(int argc, char **argv)
         delete complex ;
         Complex& L(t.L) ;
         Sub_chain_complex& K(t.K) ;
-        
+
         std::cout << "----> complex informations" << std::endl ;
         std::cout << "------> complex L" << std::endl ;
         std::cout << L;
         std::cout << "------> subcomplex K" << std::endl ;
         std::cout << K << std::endl ;
-     
+
         // Create and compute a perfect HDVF
         HDVF_type hdvf(L, K, CGAL::Homological_discrete_vector_field::OPT_FULL);
         hdvf.compute_perfect_hdvf();
-        
+
         // Export K HDVF
         hdvf.set_mask_K();
         CGAL::IO::write_VTK(hdvf, L, "res_complex_K", false) ;
@@ -67,7 +67,7 @@ int main(int argc, char **argv)
         for (const auto& pair : pairs) {
             std::cout << "Sigma: " << pair.sigma << ", Tau: " << pair.tau << ", Dim: " << pair.dim << std::endl;
         }
-        
+
     }
 
     return 0;

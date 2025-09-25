@@ -279,7 +279,7 @@ int main(int argc, char **argv)
         }
         else if (options.scalar == 2)
         {
-            using CoefficientType = CGAL::Homological_discrete_vector_field::Zp<2,int8_t> ;
+            using CoefficientType = CGAL::Homological_discrete_vector_field::Zp<2,int8_t,true> ;
             main_code<CoefficientType>(options) ;
         }
         else
@@ -287,7 +287,7 @@ int main(int argc, char **argv)
             std::cerr << "Z" << options.scalar << " not instantiated, use the #define at line 27" << std::endl ;
         }
 #else
-        typedef CGAL::Homological_discrete_vector_field::Zp<SCALAR> CoefficientType;
+        typedef CGAL::Homological_discrete_vector_field::Zp<SCALAR,int,true> CoefficientType;
 #endif
     }
 

@@ -10,7 +10,7 @@
 #include <CGAL/OSM/OSM.h>
 
 typedef int CoefficientType;
-//typedef CGAL::Homological_discrete_vector_field::Zp<5> CoefficientType;
+//typedef CGAL::Homological_discrete_vector_field::Zp<5,int,true> CoefficientType;
 //typedef CGAL::Homological_discrete_vector_field::Z2 CoefficientType;
 
 int main(int argc, char **argv)

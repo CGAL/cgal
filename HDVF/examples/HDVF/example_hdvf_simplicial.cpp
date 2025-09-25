@@ -10,7 +10,7 @@
 
 //typedef int CoefficientType;
 typedef CGAL::Homological_discrete_vector_field::Z2 CoefficientTypeX;
-//typedef CGAL::Homological_discrete_vector_field::Zp<5> CoefficientType;
+//typedef CGAL::Homological_discrete_vector_field::Zp<5,int,true> CoefficientType;
 
 int main(int argc, char **argv)
 {
@@ -48,7 +48,7 @@ int main(int argc, char **argv)
 
         // Output HDVF to vtk
         CGAL::IO::write_VTK(hdvf, complex, "res", true) ;
-        
+
         // Save HDVF to .hdvf file
         hdvf.write_hdvf_reduction("test.hdvf") ;
     }

@@ -15,6 +15,7 @@
 #include <CGAL/license/HDVF.h>
 
 #include <CGAL/number_type_basic.h>
+#include <CGAL/number_utils.h>
 
 #include <vector>
 #include <iostream>
