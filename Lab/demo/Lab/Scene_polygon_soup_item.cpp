@@ -39,11 +39,7 @@
 
 #include <algorithm>
 #include <iostream>
-#include <map>
-#include <queue>
 #include <set>
-#include <stack>
-#include <streambuf>
 #include <vector>
 
 using namespace CGAL::Three;
@@ -565,7 +561,7 @@ Scene_polygon_soup_item::save(std::ostream& out) const
   }
   writer.write_footer();
 
-  return (bool) out;
+  return false == out.fail();
 }
 
 bool
