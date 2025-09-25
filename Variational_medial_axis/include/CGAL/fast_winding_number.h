@@ -231,7 +231,7 @@ public:
    *                    as key type and `%Point_3` as value type}
    *     \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
    *   \cgalParamNEnd
-   *   \cgalParamNBegin{beta}
+   *   \cgalParamNBegin{fast_winding_number_beta}
    *     \cgalParamDescription{The parameter to control the accuracy/speed trade-off of the fast winding number
    *     evaluation. little values lead to more accurate results, but slower evaluation.}
    *     \cgalParamType{FT}
@@ -279,7 +279,7 @@ public:
    * @param p the query point
    * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters", listed below:
    * \cgalNamedParamsBegin
-   *  \cgalParamNBegin{beta}
+   *  \cgalParamNBegin{fast_winding_number_beta}
    *   \cgalParamDescription{The parameter to control the accuracy/speed trade-off of the fast winding number
    *  evaluation. little values lead to more accurate results, but slower evaluation.}
    *  \cgalParamType{FT}
