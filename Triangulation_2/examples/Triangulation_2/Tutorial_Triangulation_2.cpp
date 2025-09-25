@@ -1,5 +1,5 @@
 //! [TutoT2-include]
-#include <Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delauanay_triangulation_2.h>
 #include <CGAL/draw_triangulation_2.h>
 
