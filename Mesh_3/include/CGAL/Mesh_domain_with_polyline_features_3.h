@@ -309,6 +309,14 @@ public:
     }
   }
 
+  /// returns a point at geodesic distance `distance` from p along the
+  /// polyline. The polyline is oriented from starting point to end point.
+  /// The distance could be negative.
+  Point_3 point_at(const Point_3& start_pt, FT distance) const
+  {
+    return point_at(start_pt, distance, locate(start_pt)).first;
+  }
+
   /// returns a point at geodesic distance `distance` from `start_pt` along the
   /// polyline. The polyline is oriented from starting point to end point.
   /// The distance could be negative.
@@ -316,7 +324,8 @@ public:
                               FT distance,
                               const_iterator start_it) const
   {
-    distance += curve_segment_length(*start_it, start_pt, CGAL::POSITIVE);
+    distance += curve_segment_length(*start_it, start_pt, CGAL::POSITIVE,
+                                     start_it, start_it);
 
     // If polyline is a loop, ensure that distance is given from start_it
     if(is_loop())
@@ -324,12 +333,18 @@ public:
       if(distance < FT(0))         { distance += length(); }
       else if(distance > length()) { distance -= length(); }
     }
+    else if(distance < FT(0)) // If polyline is not a loop and distance is < 0, go backward
+    {
+      Point_3 new_start = start_pt;
+      while(distance < FT(0))
+      {
+        start_it = previous_segment_source(start_it);
+        distance += this->distance(new_start, *start_it);
+      }
+    }
 
     CGAL_assertion(distance >= FT(0));
     CGAL_assertion(distance <= length());
-
-    if(distance == FT(0) || distance == length())
-      return {*start_it, start_it};
 
     // Initialize iterators
     const_iterator pit = start_it; // start at start_it, and walk forward
@@ -348,7 +363,7 @@ public:
       if(pit == points_.end())
       {
         CGAL_assertion(distance < this->distance(*previous, end_point()));
-        break;
+        break; // return {*previous, previous}
       }
       else
         segment_length = this->distance(*previous, *pit);
@@ -817,6 +832,13 @@ public:
                            const Curve_index& curve_index,
                            FT distance,
                            Polyline_const_iterator starting_point_it) const;
+
+  /// implements `MeshDomainWithFeatures_3::construct_point_on_curve()`.
+  Point_3
+  construct_point_on_curve(const Point_3& starting_point,
+                           const Curve_index& curve_index,
+                           FT distance) const;
+
   /// implements `MeshDomainWithFeatures_3::distance_sign_along_loop()`.
   CGAL::Sign distance_sign_along_loop(const Point_3& p,
                                       const Point_3& q,
@@ -895,6 +917,9 @@ public:
     return curve_index(index);
   }
 #endif // CGAL_NO_DEPRECATED_CODE
+
+  FT signed_geodesic_distance(const Point_3& p, const Point_3& q,
+                              const Curve_index& curve_index) const;
 
   FT signed_geodesic_distance(const Point_3& p, const Point_3& q,
                               Polyline_const_iterator pit,
@@ -1174,6 +1199,21 @@ construct_point_on_curve(const Point_3& starting_point,
   return eit->second.point_at(starting_point, distance, starting_point_it);
 }
 
+template <class MD_>
+typename Mesh_domain_with_polyline_features_3<MD_>::Point_3
+Mesh_domain_with_polyline_features_3<MD_>::
+construct_point_on_curve(const Point_3& starting_point,
+                         const Curve_index& curve_index,
+                         FT distance) const
+{
+  // Get corresponding polyline
+  typename Edges::const_iterator eit = edges_.find(curve_index);
+  CGAL_assertion(eit != edges_.end());
+
+  // Return point at geodesic_distance distance from starting_point
+  return eit->second.point_at(starting_point, distance);
+}
+
 
 /// @cond DEVELOPERS
 template <class MD_>
@@ -1325,6 +1365,21 @@ add_features_and_incidences(InputIterator first, InputIterator end,
 }
 
 /// @cond DEVELOPERS
+template <class MD_>
+typename Mesh_domain_with_polyline_features_3<MD_>::FT
+Mesh_domain_with_polyline_features_3<MD_>::
+signed_geodesic_distance(const Point_3& p,
+                         const Point_3& q,
+                         const Curve_index& curve_index) const
+{
+  // Get corresponding polyline
+  typename Edges::const_iterator eit = edges_.find(curve_index);
+  CGAL_assertion(eit != edges_.end());
+
+  // Compute geodesic_distance
+  return eit->second.signed_geodesic_distance(p, q);
+}
+
 template <class MD_>
 typename Mesh_domain_with_polyline_features_3<MD_>::FT
 Mesh_domain_with_polyline_features_3<MD_>::
