@@ -310,7 +310,7 @@ bool write_STL(std::ostream& os,
   typedef Simple_cartesian<double> SC;
   typedef typename SC::Point_3  Point_3;
   typedef typename SC::Vector_3 Vector_3;
-  Cartesian_converter<Kernel,SC> conv;
+  Cartesian_converter<K,SC> conv;
 
   if(get_mode(os) == BINARY)
   {
