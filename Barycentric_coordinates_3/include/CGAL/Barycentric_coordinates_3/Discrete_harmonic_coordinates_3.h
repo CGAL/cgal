@@ -42,14 +42,14 @@ namespace Barycentric_coordinates {
   \tparam GeomTraits
   a model of `BarycentricTraits_3`
 
-  \tparam VertexToPointMap
+  \tparam VertexPointMap
   a property map with boost::graph_traits<TriangleMesh>::vertex_descriptor as
   key type and `GeomTraits::Point_3` as value type.
 */
 template<
 typename TriangleMesh,
 typename GeomTraits,
-typename VertexToPointMap = typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::const_type>
+typename VertexPointMap = typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::const_type>
 class Discrete_harmonic_coordinates_3 {
 
 public:
@@ -60,7 +60,7 @@ public:
   /// \cond SKIP_IN_MANUAL
   using Triangle_mesh = TriangleMesh;
   using Geom_Traits = GeomTraits;
-  using Vertex_to_point_map = VertexToPointMap;
+  using Vertex_point_map = VertexPointMap;
 
   using Construct_vec_3 = typename GeomTraits::Construct_vector_3;
   using Cross_3 = typename GeomTraits::Construct_cross_product_vector_3;
@@ -88,7 +88,7 @@ public:
     This class implements the behavior of discrete harmonic coordinates
     for 3D query points.
 
-    \param triangle_mesh
+    \param tmesh
     an instance of `TriangleMesh`, which must be a convex simplicial polyhedron
 
     \param policy
@@ -99,21 +99,22 @@ public:
     a traits class with geometric objects, predicates, and constructions;
     the default initialization is provided
 
-    \param vertex_to_point_map
-    an instance of `VertexToPointMap` that maps a vertex from `triangle_mesh` to `Point_3`;
+    \param vertex_point_map
+    an instance of `VertexPointMap` that maps a vertex from `tmesh` to `Point_3`;
     the default initialization is provided
 
-    \pre num_vertices(triangle_mesh) >= 4.
-    \pre triangle_mesh is strongly convex.
-    \pre triangle_mesh is simplicial.
+    \pre is_triangle_mesh(`tmesh`)
+    \pre num_vertices(`tmesh`) >= 4.
+    \pre tmesh is strongly convex.
+    \pre tmesh is simplicial.
   */
-  Discrete_harmonic_coordinates_3(const TriangleMesh& triangle_mesh,
+  Discrete_harmonic_coordinates_3(const TriangleMesh& tmesh,
                                   const Computation_policy_3 policy,
-                                  const VertexToPointMap vertex_to_point_map,
+                                  const VertexPointMap vertex_point_map,
                                   const GeomTraits traits = GeomTraits())
-    : m_triangle_mesh(triangle_mesh)
+    : m_tmesh(tmesh)
     , m_computation_policy(policy)
-    , m_vertex_to_point_map(vertex_to_point_map)
+    , m_vertex_point_map(vertex_point_map)
     , m_traits(traits)
     , m_construct_vector_3(m_traits.construct_vector_3_object())
     , m_cross_3(m_traits.construct_cross_product_vector_3_object())
@@ -121,19 +122,19 @@ public:
     , sqrt(internal::Get_sqrt<GeomTraits>::sqrt_object(m_traits))
   {
     // Check if polyhedron is strongly convex
-    CGAL_assertion(is_strongly_convex_3(m_triangle_mesh, m_traits));
-    m_weights.resize(vertices(m_triangle_mesh).size());
+    CGAL_assertion(is_strongly_convex_3(m_tmesh, m_traits));
+    m_weights.resize(vertices(m_tmesh).size());
   }
 
   /// @}
 
-  Discrete_harmonic_coordinates_3(const TriangleMesh& triangle_mesh,
+  Discrete_harmonic_coordinates_3(const TriangleMesh& tmesh,
                                   const Computation_policy_3 policy =
                                   Computation_policy_3::FAST_WITH_EDGE_CASES,
                                   const GeomTraits traits = GeomTraits())
-    : Discrete_harmonic_coordinates_3(triangle_mesh,
+    : Discrete_harmonic_coordinates_3(tmesh,
                                       policy,
-                                      get_const_property_map(CGAL::vertex_point, triangle_mesh),
+                                      get_const_property_map(CGAL::vertex_point, tmesh),
                                       traits)
   {}
 
@@ -149,9 +150,9 @@ public:
 
     The number of returned coordinates equals to the number of vertices.
 
-    After the coordinates \f$b_i\f$ with \f$i = 1\dots n\f$ are computed, where
+    After the coordinates \f$b_i\f$ with \f$i = 0\dots n-1\f$ are computed, where
     \f$n\f$ is the number of vertices, the query point \f$q\f$ can be obtained
-    as \f$q = \sum_{i = 1}^{n}b_ip_i\f$, where \f$p_i\f$ are the polyhedron vertices.
+    as \f$q = \sum_{i = 0}^{n-1}b_ip_i\f$, where \f$p_i\f$ are the polyhedron vertices.
 
     \tparam OutIterator
     a model of `OutputIterator` that accepts values of type `FT`
@@ -175,9 +176,9 @@ public:
   /// @}
 
 private:
-  const TriangleMesh& m_triangle_mesh;
+  const TriangleMesh& m_tmesh;
   const Computation_policy_3 m_computation_policy;
-  const VertexToPointMap m_vertex_to_point_map; // use it to map vertex to Point_3
+  const VertexPointMap m_vertex_point_map; // use it to map vertex to Point_3
   const GeomTraits m_traits;
 
   const Construct_vec_3 m_construct_vector_3;
@@ -200,7 +201,7 @@ private:
       case Computation_policy_3::FAST_WITH_EDGE_CASES:{
         // Calculate query position relative to the polyhedron
         const auto edge_case = internal::locate_wrt_polyhedron(
-          m_vertex_to_point_map, m_triangle_mesh, query, coordinates, m_traits);
+          m_vertex_point_map, m_tmesh, query, coordinates, m_traits);
 
         if(edge_case == internal::Edge_case::BOUNDARY) {
           return coordinates;
@@ -223,7 +224,7 @@ private:
       }
 
       default:{
-        internal::get_default(vertices(m_triangle_mesh).size(), coordinates);
+        internal::get_default(vertices(m_tmesh).size(), coordinates);
         return coordinates;
       }
     }
@@ -239,7 +240,7 @@ private:
     CGAL_assertion(sum != FT(0));
 
     // The coordinates must be saved in the same order as vertices in the vertex range.
-    const auto vd = vertices(m_triangle_mesh);
+    const auto vd = vertices(m_tmesh);
     CGAL_assertion(m_weights.size() == vd.size());
 
     for (std::size_t vi = 0; vi < vd.size(); vi++) {
@@ -259,7 +260,7 @@ private:
 
     // Vertex index.
     std::size_t vi = 0;
-    const auto vd = vertices(m_triangle_mesh);
+    const auto vd = vertices(m_tmesh);
 
     for (const auto& vertex : vd) {
 
@@ -280,11 +281,11 @@ private:
   template<typename Vertex>
   FT compute_dh_vertex_query(const Vertex& vertex, const Point_3& query)
   {
-    const Point_3 vertex_val = get(m_vertex_to_point_map, vertex);
+    const Point_3 vertex_val = get(m_vertex_point_map, vertex);
 
     // Circulator of faces around the vertex
     CGAL::Face_around_target_circulator<Triangle_mesh>
-    face_circulator(halfedge(vertex, m_triangle_mesh), m_triangle_mesh);
+    face_circulator(halfedge(vertex, m_tmesh), m_tmesh);
 
     CGAL::Face_around_target_circulator<Triangle_mesh>
     face_done(face_circulator);
@@ -296,8 +297,8 @@ private:
     do{
 
       //Vertices around face iterator
-      const auto hedge = halfedge(*face_circulator, m_triangle_mesh);
-      const auto vertices = vertices_around_face(hedge, m_triangle_mesh);
+      const auto hedge = halfedge(*face_circulator, m_tmesh);
+      const auto vertices = vertices_around_face(hedge, m_tmesh);
       auto vertex_itr = vertices.begin();
       CGAL_precondition(vertices.size() == 3);
 
@@ -310,7 +311,7 @@ private:
 
         if(*vertex_itr!=vertex){
 
-          points[point_count] = get(m_vertex_to_point_map, *vertex_itr);
+          points[point_count] = get(m_vertex_point_map, *vertex_itr);
           point_count++;
         }
         else
@@ -329,7 +330,7 @@ private:
        m_construct_vector_3(query, point1));
 
       const Vector_3 face_normal = internal::get_face_normal(
-        *face_circulator, m_vertex_to_point_map, m_triangle_mesh, m_traits);
+        *face_circulator, m_vertex_point_map, m_tmesh, m_traits);
 
       FT cot_dihedral = internal::cot_dihedral_angle(
         face_normal, normal_query, m_traits);
@@ -376,7 +377,7 @@ private:
   \tparam OutIterator
   a model of `OutputIterator` that accepts values of type `GeomTraits::FT`
 
-  \param triangle_mesh
+  \param tmesh
   an instance of `TriangleMesh`, which must be a convex simplicial polyhedron
 
   \param query
@@ -392,15 +393,16 @@ private:
   \return an output iterator to the element in the destination range,
   one past the last coordinate stored
 
-  \pre num_vertices(triangle_mesh) >= 4.
-  \pre triangle_mesh is strongly convex.
-  \pre triangle_mesh is simplicial.
+  \pre is_triangle_mesh(`tmesh`)
+  \pre num_vertices(`tmesh`) >= 4.
+  \pre tmesh is strongly convex.
+  \pre tmesh is simplicial.
 */
 template<typename Point_3,
          typename TriangleMesh,
          typename OutIterator>
 OutIterator
-discrete_harmonic_coordinates_3(const TriangleMesh& triangle_mesh,
+discrete_harmonic_coordinates_3(const TriangleMesh& tmesh,
                                 const Point_3& query,
                                 OutIterator c_begin,
                                 const Computation_policy_3 policy =
@@ -408,7 +410,7 @@ discrete_harmonic_coordinates_3(const TriangleMesh& triangle_mesh,
 {
   using Geom_Traits = typename Kernel_traits<Point_3>::Kernel;
 
-  Discrete_harmonic_coordinates_3<TriangleMesh, Geom_Traits> discrete_harmonic(triangle_mesh, policy);
+  Discrete_harmonic_coordinates_3<TriangleMesh, Geom_Traits> discrete_harmonic(tmesh, policy);
   return discrete_harmonic(query, c_begin);
 }
 

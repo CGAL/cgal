@@ -138,23 +138,22 @@ To compute tetrahedron coordinates of the query point `q`, we adopt the simple f
 where \f$V_i\f$ is the signed volume of the sub-tetrahedron opposite to the vertex \f$i\f$ and \f$V\f$
 is the total volume of the tetrahedron, that is \f$V = V_0 + V_1 + V_2 + V_3\f$.
 
-These coordinates can be computed exactly if an exact number type is chosen, for any query point
-in the space and with respect to any non-degenerate tetrahedron. No special cases are handled.
+These coordinates can be computed exactly if an exact number type is chosen, for any query point and with respect to any non-degenerate tetrahedron. No special cases are handled.
 The computation always yields the correct result. The notion of correctness depends on the precision
 of the used number type. Note that for exterior points some coordinate values will be negative.
 
 \subsection gbc_3_degeneracies_wachspress Wachspress Coordinates
 
-For each vertex \f$v\f$, let \f$f_1, f_2, ..., f_k\f$ be the \f$k\f$ faces incident to \f$v\f$. We
+For each vertex \f$v\f$, let \f$f_0, f_1, ..., f_{k-1}\f$ be the \f$k\f$ faces incident to \f$v\f$. We
 are assuming that the faces are taken in counterclockwise order.
 
 We can define \f${p_f}({q}) = \frac{{n_f}}{h_f({q})}\f$,
 and \f$h_f({q}) = ({v} - {q})\cdot {n_f}\f$ as the perpendicular distance of \f$q\f$ to \f$f\f$.
 For the face \f$f\f$, let \f${n_f}\f$ denote its unit outward normal.
 
-So, to compute Wachspress coordinates of the query point `q`, we adopt the simple formula:
+So, to compute Wachspress coordinates of the query point \f$q\f$, we adopt the simple formula:
 <center>
-\f$w_v({q}) = \sum_{i=2}^{k-1}det({p_{f_1}}({q}), {p_{f_i}}({q}), {p_{f_{i+1}}}({q}))\f$
+\f$w_v({q}) = \sum_{i=1}^{k-2}det({p_{f_0}}({q}), {p_{f_i}}({q}), {p_{f_{i+1}}}({q}))\f$
 </center>
 
 In this implementation, Wachspress coordinates are well defined in the closure of any convex
@@ -162,25 +161,25 @@ polyhedra. If an exact number type is chosen, they are computed exactly.
 
 \subsection gbc_3_degeneracies_discrete_harmonic Discrete Harmonic Coordinates
 
-To compute discrete harmonic coordinates of the query point `q`, we adopt the simple formula:
+To compute discrete harmonic coordinates of the query point \f$q\f$, we adopt the simple formula:
 <center>
 \f$w_i = \sum_{T : v_i \in T} \frac{cot[\theta_i^T]h_i^T}{2}\f$
 </center>
 
-where, within a triangle face T = {v1, v2, v3}, \f$\theta_i^T\f$ is the dihedral angle between T and
-triangle {x,\f$v_{i+1}\f$, \f$v_{i−1}\f$}, and \f$h_i^T\f$ is the edge length \f$|v_{i+1} − v_{i−1}|\f$.
+where, within a triangle face \f$T = \{v0, v1, v2\}\f$, \f$\theta_i^T\f$ is the dihedral angle between \f$T\f$ and
+triangle \f$\{x,v_{i+1}\f$, \f$v_{i−1}\}\f$, and \f$h_i^T\f$ is the edge length \f$|v_{i+1} − v_{i−1}|\f$.
 
 Discrete harmonic coordinates cannot be computed exactly due to a square root operation.
 Although, if an exact number type is used, the default precision of the computation depends only on
-two CGAL functions: CGAL::to_double() and CGAL::sqrt(). In this implementation, discrete harmonic
+two %CGAL functions: CGAL::to_double() and CGAL::sqrt(). In this implementation, discrete harmonic
 coordinates are well defined in the closure of any convex polyhedra with triangular faces. Unlike
 Wachspress coordinates, they are not necessarily positive.
 
 \subsection gbc_3_degeneracies_mean_value Mean Value Coordinates
 
-To compute mean value coordinates of the query point `q`, we adopt the simple formula:
+To compute mean value coordinates of the query point \f$q\f$, we adopt the simple formula:
 <center>
-\f$w_i = \frac{1}{2}\sum_{j=1}^3 \beta_j\frac{{m_j}\cdot {m_{i+1}}}{{e_i}\cdot {m_{i+1}}}\f$
+\f$w_i = \frac{1}{2}\sum_{j=0}^2 \beta_j\frac{{m_j}\cdot {m_{i+1}}}{{e_i}\cdot {m_{i+1}}}\f$
 </center>
 
 where a vertex v is projected to the point (unit vector) \f$e_v = \frac{({v} - {q})}{|{v - q}|}\f$, and
@@ -265,9 +264,6 @@ and 16 GB DDR4 2933MHz memory. The installed operating system was Ubuntu 20.04 L
 
 This package was introduced during GSoC 2021 and implemented by Antonio Gomes
 under the supervision of Dmitry Anisimov.
-
-\section gbc_3_acknowledgments Acknowledgments
-
 
 */
 

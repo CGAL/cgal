@@ -43,13 +43,13 @@ namespace Barycentric_coordinates {
   \tparam GeomTraits
   a model of `BarycentricTraits_3`
 
-  \tparam VertexToPointMap
+  \tparam VertexPointMap
   a property map with boost::graph_traits<PolygonMesh>::vertex_descriptor as
   key type and `GeomTraits::Point_3` as value type.
 */
 template<typename PolygonMesh,
          typename GeomTraits,
-         typename VertexToPointMap = typename boost::property_map<PolygonMesh,CGAL::vertex_point_t>::const_type>
+         typename VertexPointMap = typename boost::property_map<PolygonMesh,CGAL::vertex_point_t>::const_type>
 class Wachspress_coordinates_3
 {
 
@@ -61,7 +61,7 @@ public:
   /// \cond SKIP_IN_MANUAL
   using Polygon_mesh = PolygonMesh;
   using Geom_Traits = GeomTraits;
-  using Vertex_to_point_map = VertexToPointMap;
+  using Vertex_point_map = VertexPointMap;
 
   using Dot_3 = typename GeomTraits::Compute_scalar_product_3;
   using Det_3 = typename GeomTraits::Compute_determinant_3;
@@ -100,21 +100,21 @@ public:
     a traits class with geometric objects, predicates, and constructions;
     the default initialization is provided
 
-    \param vertex_to_point_map
-    an instance of `VertexToPointMap` that maps a vertex from `polygon_mesh` to `Point_3`;
+    \param vertex_point_map
+    an instance of `VertexPointMap` that maps a vertex from `polygon_mesh` to `Point_3`;
     the default initialization is provided
 
-    \pre num_vertices(polygon_mesh) >= 4.
-    \pre polygon_mesh is strongly convex.
-    \pre polygon_mesh is simplicial.
+    \pre num_vertices(`polygon_mesh`) >= 4.
+    \pre `polygon_mesh` is strongly convex.
+    \pre `polygon_mesh` is simplicial.
   */
   Wachspress_coordinates_3(const PolygonMesh& polygon_mesh,
                            const Computation_policy_3 policy,
-                           const VertexToPointMap vertex_to_point_map,
+                           const VertexPointMap vertex_point_map,
                            const GeomTraits traits = GeomTraits())
     : m_polygon_mesh(polygon_mesh)
     , m_computation_policy(policy)
-    , m_vertex_to_point_map(vertex_to_point_map)
+    , m_vertex_point_map(vertex_point_map)
     , m_traits(traits)
     , m_dot_3(m_traits.compute_scalar_product_3_object())
     , m_det_3(m_traits.compute_determinant_3_object())
@@ -149,9 +149,9 @@ public:
 
     The number of returned coordinates equals to the number of vertices.
 
-    After the coordinates \f$b_i\f$ with \f$i = 1\dots n\f$ are computed, where
+    After the coordinates \f$b_i\f$ with \f$i = 0\dots n-1\f$ are computed, where
     \f$n\f$ is the number of vertices, the query point \f$q\f$ can be obtained
-    as \f$q = \sum_{i = 1}^{n}b_ip_i\f$, where \f$p_i\f$ are the polyhedron vertices.
+    as \f$q = \sum_{i = 0}^{n-1}b_ip_i\f$, where \f$p_i\f$ are the polyhedron vertices.
 
     \tparam OutIterator
     a model of `OutputIterator` that accepts values of type `FT`
@@ -176,7 +176,7 @@ public:
 private:
   const PolygonMesh& m_polygon_mesh;
   const Computation_policy_3 m_computation_policy;
-  const VertexToPointMap m_vertex_to_point_map; // use it to map vertex to Point_3
+  const VertexPointMap m_vertex_point_map; // use it to map vertex to Point_3
   const GeomTraits m_traits;
 
   const Dot_3 m_dot_3;
@@ -198,7 +198,7 @@ private:
       case Computation_policy_3::FAST_WITH_EDGE_CASES:{
         // Calculate query position relative to the polyhedron
         const auto edge_case = internal::locate_wrt_polyhedron(
-          m_vertex_to_point_map, m_polygon_mesh, query, coordinates, m_traits, true);
+          m_vertex_point_map, m_polygon_mesh, query, coordinates, m_traits, true);
 
         if(edge_case == internal::Edge_case::BOUNDARY) {
           return coordinates;
@@ -278,7 +278,7 @@ private:
   FT compute_wp_vertex_query(const Vertex& vertex, const Point_3& query)
   {
     // Map vertex descriptor to point_3
-    const Point_3& vertex_val = get(m_vertex_to_point_map, vertex);
+    const Point_3& vertex_val = get(m_vertex_point_map, vertex);
     // Vector connecting query point to vertex;
     const Vector_3 query_vertex = m_construct_vector_3(query, vertex_val);
 
@@ -289,7 +289,7 @@ private:
     auto compute_pf_i = [&](halfedge_descriptor h)
     {
       Vector_3 nf = internal::get_face_normal(
-        face(h, m_polygon_mesh), m_vertex_to_point_map, m_polygon_mesh, m_traits);
+        face(h, m_polygon_mesh), m_vertex_point_map, m_polygon_mesh, m_traits);
       nf = nf / approximate_sqrt(nf.squared_length());
       const FT hfx = m_dot_3(query_vertex, nf);
       CGAL_assertion(hfx != FT(0));
@@ -363,9 +363,9 @@ private:
   \return an output iterator to the element in the destination range,
   one past the last coordinate stored
 
-  \pre num_vertices(polygon_mesh) >= 4.
-  \pre polygon_mesh is strongly convex.
-  \pre polygon_mesh is simplicial.
+  \pre num_vertices(`polygon_mesh`) >= 4.
+  \pre `polygon_mesh` is strongly convex.
+  \pre `polygon_mesh` is simplicial.
 */
 template<typename Point_3,
          typename PolygonMesh,

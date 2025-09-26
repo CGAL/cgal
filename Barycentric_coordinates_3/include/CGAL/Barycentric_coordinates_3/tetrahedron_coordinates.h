@@ -135,7 +135,7 @@ OutIterator tetrahedron_coordinates(
   a traits class with geometric objects, predicates, and constructions;
   this parameter can be omitted if the traits class can be deduced from the point type
 
-  \return a array `std::array<GeomTraits::FT, 4>`
+  \return an array `std::array<GeomTraits::FT, 4>`
   with the computed coordinates
 
   \pre `traits.compute_volume_3_object()(p0, p1, p2, p3) != 0`
