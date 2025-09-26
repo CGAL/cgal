@@ -46,7 +46,7 @@ intersection(const A <K> &c1, const B <K> &c2, OutputIterator res) \
 } \
 template <class K> \
 inline \
-bool \
+typename K::Boolean \
 do_intersect(const A <K> &c1, const B <K> &c2) \
 { \
   return typename K::Do_intersect_3()(c1, c2); \
@@ -61,7 +61,7 @@ intersection(const A <K> &c1, const B <K> &c2, const C <K> &c3, OutputIterator r
 } \
 template <class K> \
 inline \
-bool \
+typename K::Boolean \
 do_intersect(const A <K> &c1, const B <K> &c2, const C <K> &c3) \
 { \
   return typename K::Do_intersect_3()(c1, c2, c3); \
@@ -71,8 +71,10 @@ CGAL_SPHERICAL_KERNEL_MACRO_GLOBAL_FUNCTION_JUST_INTERSECTION_2_(Sphere_3, Line_
 CGAL_SPHERICAL_KERNEL_MACRO_GLOBAL_FUNCTION_JUST_INTERSECTION_2_(Line_3, Sphere_3)
 CGAL_SPHERICAL_KERNEL_MACRO_GLOBAL_FUNCTION_INTERSECTION_3_(Sphere_3, Sphere_3, Sphere_3)
 CGAL_SPHERICAL_KERNEL_MACRO_GLOBAL_FUNCTION_INTERSECTION_3_(Sphere_3, Sphere_3, Plane_3)
+CGAL_SPHERICAL_KERNEL_MACRO_GLOBAL_FUNCTION_INTERSECTION_3_(Sphere_3, Plane_3, Sphere_3)
 CGAL_SPHERICAL_KERNEL_MACRO_GLOBAL_FUNCTION_INTERSECTION_3_(Plane_3, Sphere_3, Sphere_3)
 CGAL_SPHERICAL_KERNEL_MACRO_GLOBAL_FUNCTION_INTERSECTION_3_(Plane_3, Plane_3, Sphere_3)
+CGAL_SPHERICAL_KERNEL_MACRO_GLOBAL_FUNCTION_INTERSECTION_3_(Plane_3, Sphere_3, Plane_3)
 CGAL_SPHERICAL_KERNEL_MACRO_GLOBAL_FUNCTION_INTERSECTION_3_(Sphere_3, Plane_3, Plane_3)
 CGAL_SPHERICAL_KERNEL_MACRO_GLOBAL_FUNCTION_INTERSECTION_2_(Circle_3, Plane_3)
 CGAL_SPHERICAL_KERNEL_MACRO_GLOBAL_FUNCTION_INTERSECTION_2_(Plane_3, Circle_3)

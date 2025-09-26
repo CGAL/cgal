@@ -5,7 +5,6 @@
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
 #include <CGAL/Polygon_mesh_processing/shape_predicates.h>
-#include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/property_map.h>
 #include <CGAL/Handle_hash_function.h>
@@ -31,6 +30,7 @@
 #include "triangulate_primitive.h"
 #include <CGAL/boost/graph/Face_filtered_graph.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
+#include <CGAL/boost/graph/dijkstra_shortest_path.h>
 #include <CGAL/boost/graph/properties.h>
 
 using namespace CGAL::Three;
@@ -779,19 +779,26 @@ void Scene_polyhedron_selection_item::set_operation_mode(int mode)
     //set the selection type to vertex
     set_active_handle_type(static_cast<Active_handle::Type>(0));
     break;
-    //Add vertex and face to border
+    //Remove degree 2 vertex
   case 9:
-    Q_EMIT updateInstructions("Select a border edge. (1/2)");
-    //set the selection type to Edge
-    set_active_handle_type(static_cast<Active_handle::Type>(2));
+    Q_EMIT updateInstructions("Select the vertex you want to remove."
+                              "Warning: This will clear the undo stack.");
+    //set the selection type to vertex
+    set_active_handle_type(static_cast<Active_handle::Type>(0));
     break;
-    //Add face to border
+    //Add vertex and face to border
   case 10:
     Q_EMIT updateInstructions("Select a border edge. (1/2)");
     //set the selection type to Edge
     set_active_handle_type(static_cast<Active_handle::Type>(2));
     break;
+    //Add face to border
   case 11:
+    Q_EMIT updateInstructions("Select a border edge. (1/2)");
+    //set the selection type to Edge
+    set_active_handle_type(static_cast<Active_handle::Type>(2));
+    break;
+  case 12:
     Q_EMIT updateInstructions("Select a vertex. (1/2)");
     //set the selection type to Edge
     set_active_handle_type(static_cast<Active_handle::Type>(0));
@@ -1011,7 +1018,24 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<fg_vertex_d
       }
       break;
     }
-    case 11:
+      //Remove degree 2 vertex
+    case 9:
+    {
+      if(degree(vh,*polyhedron()) == 2)
+      {
+        CGAL::Euler::remove_degree_2_vertex(halfedge(vh,*polyhedron()), *polyhedron());
+        polyhedron_item()->invalidateOpenGLBuffers();
+      }
+      else
+      {
+        d->tempInstructions("Vertex not selected: The vertex must have degree 2 (and not be incident to a triangle)",
+                  "Select the vertex you want to remove."
+                  "Warning: This will clear the undo stack.");
+      }
+      break;
+    }
+      //Move point
+    case 12:
       CGAL::QGLViewer* viewer = Three::mainViewer();
       const CGAL::qglviewer::Vec offset = viewer->offset();
       if(viewer->manipulatedFrame() != d->manipulated_frame)
@@ -1032,7 +1056,7 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<fg_vertex_d
           setProperty("need_invalidate_aabb_tree", false);
         }
         invalidateOpenGLBuffers();
-        Q_EMIT updateInstructions("Ctrl+Right-click to move the point. \nHit Ctrl+Z to leave the selection. (2/2)");
+        Q_EMIT updateInstructions("Hold Ctrl+Right-click to move the vertex, or enter new coordinates below.\nHit Ctrl+Z to deselect the vertex. (2/2)");
       }
       else
       {
@@ -1056,13 +1080,6 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<fg_vertex_d
   return false;
 }
 
-//returns true if halfedge's facet's degree >= degree
-/*
-std::size_t facet_degree(fg_halfedge_descriptor h, const Face_graph& polyhedron)
-{
-  return degree(h,polyhedron);
-}
-*/
 bool Scene_polyhedron_selection_item:: treat_selection(const std::set<fg_edge_descriptor>& selection)
 {
   VPmap vpm = get(CGAL::vertex_point, *polyhedron());
@@ -1203,7 +1220,7 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<fg_edge_de
 
       break;
       //Add vertex and face to border
-    case 9:
+    case 10:
     {
       static fg_halfedge_descriptor t;
       if(!d->first_selected)
@@ -1255,7 +1272,7 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<fg_edge_de
       break;
     }
       //Add face to border
-    case 10:
+    case 11:
     {
       static fg_halfedge_descriptor t;
       if(!d->first_selected)
@@ -1486,103 +1503,31 @@ void Scene_polyhedron_selection_item::emitTempInstruct()
   Q_EMIT updateInstructions(QString("<font color='black'>%1</font>").arg(d->m_temp_instructs));
 }
 
-/// An exception used while catching a throw that stops Dijkstra's algorithm
-/// once the shortest path to a target has been found.
-class Dijkstra_end_exception : public std::exception
-{
-  const char* what() const throw ()
-  {
-    return "Dijkstra shortest path: reached the target vertex.";
-  }
-};
-
-/// Visitor to stop Dijkstra's algorithm once the given target turns 'BLACK',
-/// that is when the target has been examined through all its incident edges and
-/// the shortest path is thus known.
-class Stop_at_target_Dijkstra_visitor : boost::default_dijkstra_visitor
-{
-  fg_vertex_descriptor destination_vd;
-
-public:
-  Stop_at_target_Dijkstra_visitor(fg_vertex_descriptor destination_vd)
-    : destination_vd(destination_vd)
-  { }
-
-  void initialize_vertex(const fg_vertex_descriptor& /*s*/, const Face_graph& /*mesh*/) const { }
-  void examine_vertex(const fg_vertex_descriptor& /*s*/, const Face_graph& /*mesh*/) const { }
-  void examine_edge(const fg_edge_descriptor& /*e*/, const Face_graph& /*mesh*/) const { }
-  void edge_relaxed(const fg_edge_descriptor& /*e*/, const Face_graph& /*mesh*/) const { }
-  void discover_vertex(const fg_vertex_descriptor& /*s*/, const Face_graph& /*mesh*/) const { }
-  void edge_not_relaxed(const fg_edge_descriptor& /*e*/, const Face_graph& /*mesh*/) const { }
-  void finish_vertex(const fg_vertex_descriptor &vd, const Face_graph& /* mesh*/) const
-  {
-    if(vd == destination_vd)
-      throw Dijkstra_end_exception();
-  }
-};
 
 void Scene_polyhedron_selection_item_priv::computeAndDisplayPath()
 {
+  const auto& mesh = *item->polyhedron();
+  std::vector<fg_halfedge_descriptor> path_halfedges;
+  for(auto it = constrained_vertices.begin(); it!=constrained_vertices.end()-1; ++it)
+  {
+    fg_vertex_descriptor t(*it), s(*(it+1));
+
+    CGAL::dijkstra_shortest_path(s, t, mesh,
+      std::back_inserter(path_halfedges));
+  }
+
   item->temp_selected_edges.clear();
   path.clear();
 
-  typedef std::unordered_map<fg_vertex_descriptor, fg_vertex_descriptor>     Pred_umap;
-  typedef boost::associative_property_map<Pred_umap>                     Pred_pmap;
-
-  Pred_umap predecessor;
-  Pred_pmap pred_pmap(predecessor);
-
-  vertex_on_path vop;
-  QList<fg_vertex_descriptor>::iterator it;
-  for(it = constrained_vertices.begin(); it!=constrained_vertices.end()-1; ++it)
-  {
-    fg_vertex_descriptor t(*it), s(*(it+1));
-    Stop_at_target_Dijkstra_visitor vis(t);
-
-    try
-    {
-      boost::dijkstra_shortest_paths(*item->polyhedron(), s,
-                                     boost::predecessor_map(pred_pmap).visitor(vis));
-    }
-    catch (const std::exception& e)
-    {
-      std::cout << e.what() << std::endl;
-    }
-
-    // Walk back from target to source and collect vertices along the way
-    do
-    {
-      vop.vertex = t;
-      if(constrained_vertices.contains(t))
-      {
-        vop.is_constrained = true;
-      }
-      else
-        vop.is_constrained = false;
-      path.append(vop);
-      t = get(pred_pmap, t);
-    }
-    while(t != s);
-  }
-
-  // Add the last vertex
-  vop.vertex = constrained_vertices.last();
-  vop.is_constrained = true;
-  path.append(vop);
-
   // Display path
   double path_length = 0;
-  QList<vertex_on_path>::iterator path_it;
-  for(path_it = path.begin(); path_it!=path.end()-1; ++path_it)
+  VPmap vpm = get(CGAL::vertex_point, mesh);
+  for(auto h : path_halfedges)
   {
-    std::pair<fg_halfedge_descriptor, bool> h = halfedge((path_it+1)->vertex,path_it->vertex,*item->polyhedron());
-    if(h.second)
-    {
-      VPmap vpm = get(CGAL::vertex_point,*polyhedron());
-      Point p1(get(vpm, (path_it+1)->vertex)), p2(get(vpm, path_it->vertex));
-          path_length += CGAL::sqrt(Vector(p1,p2).squared_length());
-      item->temp_selected_edges.insert(edge(h.first, *item->polyhedron()));
-    }
+    const Point& p1 = get(vpm, target(h, mesh));
+    const Point& p2 = get(vpm, source(h, mesh));
+    path_length += CGAL::approximate_sqrt(CGAL::squared_distance(p1, p2));
+    item->temp_selected_edges.insert(edge(h, *item->polyhedron()));
   }
   item->printMessage(QString("New path length: %1").arg(path_length));
 }
@@ -1961,6 +1906,23 @@ void Scene_polyhedron_selection_item::moveVertex()
    // poly_item->invalidateOpenGLBuffers();
     d->ready_to_move = false;
   }
+}
+
+void Scene_polyhedron_selection_item::moveVertex(const Point_3& new_position)
+{
+  const CGAL::qglviewer::Vec offset = Three::mainViewer()->offset();
+  fg_vertex_descriptor vh = *temp_selected_vertices.begin();
+
+  VPmap vpm = get(CGAL::vertex_point,*polyhedron());
+  put(vpm, vh, Point_3(new_position.x() - offset.x,
+                       new_position.y() - offset.y,
+                       new_position.z() - offset.z));
+  const Point_3& p = get(vpm,vh);
+  d->manipulated_frame->setPosition(p.x()+offset.x, p.y()+offset.y, p.z()+offset.z);
+  setProperty("need_invalidate_aabb_tree", true);
+  invalidateOpenGLBuffers();
+  poly_item->updateVertex(vh);
+  // poly_item->invalidateOpenGLBuffers();
 }
 
 void Scene_polyhedron_selection_item::validateMoveVertex()

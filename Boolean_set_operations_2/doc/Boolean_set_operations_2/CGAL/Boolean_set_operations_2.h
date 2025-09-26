@@ -90,7 +90,7 @@ void complement(const Polygon_2<Kernel, Container>& pgn,
  * \param pgn the input polygon.
  * \param res the complement of \p pgn.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  */
 template <typename ArrTraits>
 void
@@ -136,7 +136,7 @@ OutputIterator complement(const Polygon_with_holes_2<Kernel, Container>& pgn,
  *             `General_polygon_with_holes_2<<General_polygon_2<ArrTraits>>`.
  * \return the past-the-end iterator of the output container.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  */
 template <typename ArrTraits, typename OutputIterator>
 OutputIterator
@@ -161,7 +161,7 @@ void complement(const Polygon_2<Kernel, Container>& pgn,
  * \param res the resulting complement of \p pgn
  * \param traits a traits object.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  * \pre `GpsTraits` must be a model of the concept `GeneralPolygonSetTraits_2`.
  */
 template <typename ArrTraits, typename GpsTraits>
@@ -193,7 +193,7 @@ OutputIterator complement(const Polygon_with_holes_2<Kernel, Container>& pgn,
  * \param traits a traits object.
  * \return the past-the-end iterator of the output container.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  * \pre `GpsTraits` must be a model of the concept `GeneralPolygonSetTraits_2`.
  */
 template <typename Polygon, typename OutputIterato, typename GpsTraitsr>
@@ -438,7 +438,7 @@ OutputIterator difference(const Polygon_with_holes_2<Kernel, Container>& pgn1,
  *           Its dereference type must be convertibe to
  *             `General_polygon_with_holes_2<General_polygon_2<ArrTraits>>`.
  * \return the past-the-end iterator of the output container.
- * \pre `%ArrTraits` must be a model of the concept `ArrangementDirectionalXMonotoneTraits_2`.
+ * \pre `%ArrTraits` must be a model of the concept `AosDirectionalXMonotoneTraits_2`.
  */
 template <typename ArrTraits, typename OutputIterator>
 OutputIterator difference(const General_polygon_2<ArrTraits>& pgn1,
@@ -454,7 +454,7 @@ OutputIterator difference(const General_polygon_2<ArrTraits>& pgn1,
  *             `General_polygon_with_holes_2<General_polygon_2<ArrTraits>>`.
  * \return the past-the-end iterator of the output container.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  */
 template <typename ArrTraits, typename OutputIterator>
 OutputIterator
@@ -471,7 +471,7 @@ difference(const General_polygon_with_holes_2<General_polygon_2<ArrTraits>>& pgn
  *             `General_polygon_with_holes_2<General_polygon_2<ArrTraits>>`.
  * \return the past-the-end iterator of the output container.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  */
 template <typename ArrTraits, typename OutputIterator>
 OutputIterator
@@ -578,7 +578,7 @@ OutputIterator difference(const Polygon_with_holes_2<Kernel, Container>& pgn1,
  * \param traits a traits object.
  * \return the past-the-end iterator of the output container.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  * \pre GpsTraits must be a model of `GeneralPolygonSetTraits_2`.
  */
 template <typename ArrTraits, typename OutputIterator, typename GpsTraits>
@@ -597,7 +597,7 @@ OutputIterator difference(const General_polygon_2<ArrTraits>& pgn1,
  * \param traits a traits object.
  * \return the past-the-end iterator of the output container.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  * \pre GpsTraits must be a model of `GeneralPolygonSetTraits_2`.
  */
 template <typename ArrTraits, typename OutputIterator, typename GpsTraits>
@@ -617,7 +617,7 @@ difference(const General_polygon_with_holes_2<General_polygon_2<ArrTraits>>& pgn
  * \param traits a traits object.
  * \return the past-the-end iterator of the output container.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  * \pre GpsTraits must be a model of `GeneralPolygonSetTraits_2`.
  */
 template <typename ArrTraits, typename OutputIterator, typename GpsTraits>
@@ -858,7 +858,7 @@ bool do_intersect(const Polygon_with_holes_2<Kernel, Container>& pgn1,
  * \return `true` if `pgn1` and `pgn2` intersect in their interior and `false`
  *         otherwise.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  */
 template <typename ArrTraits>
 bool do_intersect(const General_polygon_2<ArrTraits>& pgn1,
@@ -870,7 +870,7 @@ bool do_intersect(const General_polygon_2<ArrTraits>& pgn1,
  * \return `true` if `pgn1` and `pgn2` intersect in their interior and `false`
  *         otherwise.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  */
 template <typename ArrTraits>
 bool
@@ -883,7 +883,7 @@ do_intersect(const General_polygon_2<ArrTraits>& pgn1,
  * \return `true` if `pgn1` and `pgn2` intersect in their interior and `false`
  *         otherwise.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  */
 template <typename ArrTraits>
 bool do_intersect(const General_polygon_with_holes_2<General_polygon_2<ArrTraits>>& pgn1,
@@ -1058,7 +1058,7 @@ bool do_intersect(const Polygon_with_holes_2<Kernel, Container>& pgn1,
  *         otherwise.
  * \pre `GpsTraits` must be a model of the concept `GeneralPolygonSetTraits_2`.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  */
 template <typename ArrTraits, typename GpsTraits>
 bool do_intersect(const General_polygon_2<ArrTraits>& pgn1,
@@ -1073,7 +1073,7 @@ bool do_intersect(const General_polygon_2<ArrTraits>& pgn1,
  *         otherwise.
  * \pre `GpsTraits` must be a model of the concept `GeneralPolygonSetTraits_2`.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  */
 template <typename ArrTraits, typename GpsTraits>
 bool
@@ -1089,7 +1089,7 @@ do_intersect(const General_polygon_2<ArrTraits>& pgn1,
  *         otherwise.
  * \pre `GpsTraits` must be a model of the concept `GeneralPolygonSetTraits_2`.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  */
 template <typename ArrTraits, typename GpsTraits>
 bool
@@ -1104,7 +1104,7 @@ do_intersect(const General_polygon_with_holes_2<General_polygon_2<ArrTraits>>& p
  * \param traits a traits object.
  * \return `true` if `pgn1` and `pgn2` intersect in their interior and `false`
  *         otherwise.
- * \pre `GpsTraits` must be a model of the concept `GeneralPolygonSetTraits_2`.
+ *
  * \pre `GpsTraits` must be a model of the concept `GeneralPolygonSetTraits_2`.
  */
 template <typename Polygon, typename GpsTraits>
@@ -1415,7 +1415,7 @@ OutputIterator intersection(const Polygon_with_holes_2<Kernel, Container>& pgn1,
  *             `General_polygon_with_holes_2<General_polygon_2<ArrTraits>>`.
  * \return the past-the-end iterator of the output container.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  */
 template <typename ArrTraits, typename OutputIterator>
 OutputIterator intersection(const General_polygon_2<ArrTraits>& pgn1,
@@ -1431,7 +1431,7 @@ OutputIterator intersection(const General_polygon_2<ArrTraits>& pgn1,
  *             `General_polygon_with_holes_2<General_polygon_2<ArrTraits>>`.
  * \return the past-the-end iterator of the output container.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  */
 template <typename ArrTraits, typename OutputIterator>
 OutputIterator
@@ -1448,7 +1448,7 @@ intersection(const General_polygon_with_holes_2<General_polygon_2<ArrTraits>>& p
  *             `General_polygon_with_holes_2<General_polygon_2<ArrTraits>>`.
  * \return the past-the-end iterator of the output container.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  */
 template <typename ArrTraits, typename OutputIterator>
 OutputIterator
@@ -1672,7 +1672,7 @@ intersection(const Polygon_with_holes_2<Kernel, Container>& pgn1,
  * \param traits a traits object.
  * \return the past-the-end iterator of the output container.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  * \pre GpsTraits must be a model of `GeneralPolygonSetTraits_2`.
  */
 template <typename ArrTraits, typename OutputIterator, typename GpsTraits>
@@ -1693,7 +1693,7 @@ OutputIterator intersection(const General_polygon_2<ArrTraits>& pgn1,
  * \param traits a traits object.
  * \return the past-the-end iterator of the output container.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  * \pre GpsTraits must be a model of `GeneralPolygonSetTraits_2`.
  */
 template <typename ArrTraits, typename OutputIterator, typename GpsTraits>
@@ -1715,7 +1715,7 @@ intersection(const General_polygon_with_holes_2<General_polygon_2<ArrTraits>>& p
  * \param traits a traits object.
  * \return the past-the-end iterator of the output container.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  * \pre GpsTraits must be a model of `GeneralPolygonSetTraits_2`.
  */
 template <typename ArrTraits, typename OutputIterator, typename GpsTraits>
@@ -2026,7 +2026,7 @@ bool join(const Polygon_with_holes_2<Kernel, Container>& pgn1,
  * \param res the resulting union of \p pgn1 and \p pgn2.
  * \return `true` if the two input polygons overlap.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  */
 template <typename ArrTraits>
 bool join(const General_polygon_2<ArrTraits>& pgn1,
@@ -2039,7 +2039,7 @@ bool join(const General_polygon_2<ArrTraits>& pgn1,
  * \param res the resulting union of \p pgn1 and \p pgn2.
  * \return `true` if the two input polygons overlap.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  */
 template <typename ArrTraits>
 bool
@@ -2053,7 +2053,7 @@ join(const General_polygon_2<ArrTraits>& pgn1,
  * \param res the resulting union of \p pgn1 and \p pgn2.
  * \return `true` if the two input polygons overlap.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  */
 template <typename ArrTraits>
 bool
@@ -2217,7 +2217,7 @@ bool join(const Polygon_with_holes_2<Kernel, Container>& pgn2,
  * \param traits a traits object.
  * \return `true` if the two input polygons overlap.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  * \pre `GpsTraits` must be a model of the concept `GeneralPolygonSetTraits_2`.
  */
 template <typename ArrTraits, typename GpsTraits>
@@ -2234,7 +2234,7 @@ bool join(const General_polygon_2<ArrTraits>& pgn1,
  * \param traits a traits object.
  * \return `true` if the two input polygons overlap.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  * \pre `GpsTraits` must be a model of the concept `GeneralPolygonSetTraits_2`.
  */
 template <typename ArrTraits, typename GpsTraits>
@@ -2252,7 +2252,7 @@ join(const General_polygon_2<ArrTraits>& pgn1,
  * \param traits a traits object.
  * \return `true` if the two input polygons overlap.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  * \pre `GpsTraits` must be a model of the concept `GeneralPolygonSetTraits_2`.
  */
 template <typename ArrTraits, typename GpsTraits>
@@ -2568,7 +2568,7 @@ oriented_side(const Polygon_with_holes_2<Kernel, Container>& pgn1,
  * \param pgn1 1st the input polygon.
  * \param pgn2 the 2nd input polygon.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  */
 template <typename ArrTraits>
 Oriented_side oriented_side(const General_polygon_2<ArrTraits>& pgn1,
@@ -2578,7 +2578,7 @@ Oriented_side oriented_side(const General_polygon_2<ArrTraits>& pgn1,
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  */
 template <typename ArrTraits>
 Oriented_side
@@ -2589,7 +2589,7 @@ oriented_side(const General_polygon_2<ArrTraits>& pgn1,
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  */
 template <typename ArrTraits>
 Oriented_side
@@ -2655,7 +2655,7 @@ Oriented_side oriented_side(const Polygon_with_holes_2<Kernel, Container>& pgn1,
  * \param pgn2 the 2nd input polygon.
  * \param traits a traits object.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  * \pre `GpsTraits` must be a model of the concept `GeneralPolygonSetTraits_2`.
  *
  */
@@ -2669,7 +2669,7 @@ Oriented_side oriented_side(const General_polygon_2<ArrTraits>& pgn1,
  * \param pgn2 the 2nd input polygon.
  * \param traits a traits object.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  * \pre `GpsTraits` must be a model of the concept `GeneralPolygonSetTraits_2`.
  *
  */
@@ -2684,7 +2684,7 @@ oriented_side(const General_polygon_2<ArrTraits>& pgn1,
  * \param pgn2 the 2nd input polygon.
  * \param traits a traits object.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  * \pre `GpsTraits` must be a model of the concept `GeneralPolygonSetTraits_2`.
  *
  */
@@ -2727,7 +2727,7 @@ Oriented_side oriented_side(const Point_2& p,
  * \param p the input point.
  * \param pgn the input polygon.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  */
 template <typename ArrTraits>
 Oriented_side oriented_side(const Point_2& p,
@@ -2770,7 +2770,7 @@ Oriented_side oriented_side(const Point_2& p,
  * \param pgn the input polygon.
  * \param traits a traits object.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  * \pre `GpsTraits` must be a model of the concept `GeneralPolygonSetTraits_2`.
  */
 template <typename ArrTraits, typename GpsTraits>
@@ -3063,7 +3063,7 @@ symmetric_difference(const Polygon_with_holes_2<Kernel, Container>& pgn1,
  *             `General_polygon_with_holes_2<General_polygon_2<ArrTraits>>`.
  * \return the past-the-end iterator of the output container.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  */
 template <typename ArrTraits, typename OutputIterator>
 OutputIterator symmetric_difference(const General_polygon_2<ArrTraits>& pgn1,
@@ -3081,7 +3081,7 @@ OutputIterator symmetric_difference(const General_polygon_2<ArrTraits>& pgn1,
  *             `General_polygon_with_holes_2<General_polygon_2<ArrTraits>>`.
  * \return the past-the-end iterator of the output container.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  */
 template <typename ArrTraits, typename OutputIterator>
 OutputIterator
@@ -3100,7 +3100,7 @@ symmetric_difference(const General_polygon_with_holes_2<General_polygon_2<ArrTra
  *             `General_polygon_with_holes_2<General_polygon_2<ArrTraits>>`.
  * \return the past-the-end iterator of the output container.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  */
 template <typename ArrTraits, typename OutputIterator>
 OutputIterator
@@ -3332,7 +3332,7 @@ symmetric_difference(const Polygon_with_holes_2<Kernel, Container>& pgn1,
  * \param traits a traits object.
  * \return the past-the-end iterator of the output container.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  * \pre GpsTraits must be a model of `GeneralPolygonSetTraits_2`.
  */
 template <typename ArrTraits, typename OutputIterator, typename GpsTraits>
@@ -3353,7 +3353,7 @@ OutputIterator symmetric_difference(const General_polygon_2<ArrTraits>& pgn1,
  * \param traits a traits object.
  * \return the past-the-end iterator of the output container.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  * \pre GpsTraits must be a model of `GeneralPolygonSetTraits_2`.
  */
 template <typename ArrTraits, typename OutputIterator, typename GpsTraits>
@@ -3375,7 +3375,7 @@ symmetric_difference(const General_polygon_with_holes_2<General_polygon_2<ArrTra
  * \param traits a traits object.
  * \return the past-the-end iterator of the output container.
  * \pre `%ArrTraits` must be a model of the concept
- *      `ArrangementDirectionalXMonotoneTraits_2`.
+ *      `AosDirectionalXMonotoneTraits_2`.
  * \pre GpsTraits must be a model of `GeneralPolygonSetTraits_2`.
  */
 template <typename ArrTraits, typename OutputIterator, typename GpsTraits>

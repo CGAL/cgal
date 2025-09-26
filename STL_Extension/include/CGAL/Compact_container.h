@@ -177,6 +177,8 @@ namespace internal {
     template <typename Element>
     static void set_erase_counter(Element &, unsigned int) {}
     template <typename Element>
+    static void restore_erase_counter(Element*, unsigned int) {}
+    template <typename Element>
     static void increment_erase_counter(Element &) {}
   };
 
@@ -193,9 +195,21 @@ namespace internal {
     }
 
     template <typename Element>
+    static unsigned int erase_counter(Element* e)
+    {
+      return e->erase_counter();
+    }
+
+    template <typename Element>
     static void set_erase_counter(Element &e, unsigned int c)
     {
       e.set_erase_counter(c);
+    }
+
+    template <typename Element>
+    static void restore_erase_counter(Element* e, unsigned int c)
+    {
+      e->set_erase_counter(c);
     }
 
     template <typename Element>
@@ -204,6 +218,33 @@ namespace internal {
       e.increment_erase_counter();
     }
   };
+
+  template <typename T, typename Time_stamper>
+  struct Time_stamp_and_erase_counter_backup_and_restore_guard
+  {
+    T* const ptr;
+    const unsigned int ec;
+    std::size_t ts;
+
+    using EraseCounterStrategy =
+        internal::Erase_counter_strategy<internal::has_increment_erase_counter<T>::value>;
+
+    Time_stamp_and_erase_counter_backup_and_restore_guard(T* ptr)
+      : ptr(ptr), ec(EraseCounterStrategy::erase_counter(ptr))
+    {
+      if constexpr (Time_stamper::has_timestamp) {
+        ts = Time_stamper::time_stamp(ptr);
+      }
+    }
+
+    ~Time_stamp_and_erase_counter_backup_and_restore_guard() {
+      EraseCounterStrategy::restore_erase_counter(ptr, ec);
+      if constexpr (Time_stamper::has_timestamp) {
+        Time_stamper::restore_timestamp(ptr, ts);
+      }
+    }
+  };
+
 }
 
 template < class T,
@@ -220,6 +261,10 @@ class Compact_container
                              CGAL_INCREMENT_COMPACT_CONTAINER_BLOCK_SIZE>
           >::type                                   Increment_policy;
   typedef TimeStamper_                              Ts;
+
+  template <typename U> using EraseCounterStrategy =
+      internal::Erase_counter_strategy<internal::has_increment_erase_counter<U>::value>;
+
   typedef Compact_container <T, Al, Ip, Ts>         Self;
   typedef Compact_container_traits <T>              Traits;
 public:
@@ -354,7 +399,7 @@ public:
     return all_items[block_number].first[index_in_block];
   }
 
-  friend void swap(Compact_container& a, Compact_container b) {
+  friend void swap(Compact_container& a, Compact_container b) noexcept {
     a.swap(b);
   }
 
@@ -390,48 +435,31 @@ public:
   // (just forward the arguments to the constructor, to optimize a copy).
   template < typename... Args >
   iterator
-  emplace(const Args&... args)
+  emplace(Args&&... args)
   {
     if (free_list == nullptr)
       allocate_new_block();
 
     pointer ret = free_list;
     free_list = clean_pointee(ret);
-    std::size_t ts;
-    CGAL_USE(ts);
-    if constexpr (Time_stamper::has_timestamp) {
-      ts = ret->time_stamp();
-    }
-    new (ret) value_type(args...);
-    if constexpr (Time_stamper::has_timestamp) {
-      ret->set_time_stamp(ts);
-    }
+
+    {
+      internal::Time_stamp_and_erase_counter_backup_and_restore_guard<T, Time_stamper>
+          guard(ret);
+
+      new (ret) value_type(std::forward<Args>(args)...);
+    } // this scope is important: the destructor of the guard has to be called
+      // before the time_stamp is set, otherwise it will be set to the wrong value.
     Time_stamper::set_time_stamp(ret, time_stamp);
     CGAL_assertion(type(ret) == USED);
     ++size_;
     return iterator(ret, 0);
   }
 
-  iterator insert(const T &t)
+  template <typename U>
+  iterator insert(U&&u)
   {
-    if (free_list == nullptr)
-      allocate_new_block();
-
-    pointer ret = free_list;
-    free_list = clean_pointee(ret);
-    std::size_t ts;
-    CGAL_USE(ts);
-    if constexpr (Time_stamper::has_timestamp) {
-      ts = ret->time_stamp();
-    }
-    std::allocator_traits<allocator_type>::construct(alloc, ret, t);
-    if constexpr (Time_stamper::has_timestamp) {
-      ret->set_time_stamp(ts);
-    }
-    Time_stamper::set_time_stamp(ret, time_stamp);
-    CGAL_assertion(type(ret) == USED);
-    ++size_;
-    return iterator(ret, 0);
+    return emplace(std::forward<U>(u));
   }
 
   template < class InputIterator >
@@ -450,22 +478,18 @@ public:
 
   void erase(iterator x)
   {
-    typedef internal::Erase_counter_strategy<
-      internal::has_increment_erase_counter<T>::value> EraseCounterStrategy;
+    auto ptr = &*x;
+    CGAL_precondition(type(ptr) == USED);
+    EraseCounterStrategy<T>::increment_erase_counter(*x);
 
-    CGAL_precondition(type(&*x) == USED);
-    EraseCounterStrategy::increment_erase_counter(*x);
-    std::size_t ts;
-    CGAL_USE(ts);
-    if constexpr (Time_stamper::has_timestamp) {
-      ts = x->time_stamp();
-    }
-    std::allocator_traits<allocator_type>::destroy(alloc, &*x);
-    if constexpr (Time_stamper::has_timestamp) {
-      x->set_time_stamp(ts);
+    {
+      internal::Time_stamp_and_erase_counter_backup_and_restore_guard<T, Time_stamper>
+          guard(ptr);
+
+      std::allocator_traits<allocator_type>::destroy(alloc, ptr);
     }
 
-    put_on_free_list(&*x);
+    put_on_free_list(ptr);
     --size_;
   }
 
@@ -540,7 +564,7 @@ public:
       res += s-2;
     }
 
-    return (size_type)-1; // cit does not belong to this compact container
+    return static_cast<size_type>(-1); // cit does not belong to this compact container
   }
 
   // Returns whether the iterator "cit" is in the range [begin(), end()].
@@ -556,21 +580,18 @@ public:
     if (cit == end())
       return true;
 
-    const_pointer c = &*cit;
+    const_pointer ptr = &*cit;
 
-    for (typename All_items::const_iterator it = all_items.begin(), itend = all_items.end();
-         it != itend; ++it) {
-      const_pointer p = it->first;
-      size_type s = it->second;
+    for (const auto& [chunk_ptr, size] : all_items) {
 
       // Are we in the address range of this block (excluding first and last
       // elements) ?
-      if (c <= p || (p+s-1) <= c)
+      if (ptr <= chunk_ptr || (chunk_ptr+size-1) <= ptr)
         continue;
 
-      CGAL_assertion_msg( (c-p)+p == c, "wrong alignment of iterator");
+      CGAL_assertion_msg( (ptr-chunk_ptr)+chunk_ptr == ptr, "wrong alignment of iterator");
 
-      return type(c) == USED;
+      return type(ptr) == USED;
     }
     return false;
   }
@@ -580,7 +601,8 @@ public:
     return cit != end() && owns(cit);
   }
 
-
+  // wrong spelling, kept for backward compatibility
+  //   cspell:disable-next-line
   CGAL_DEPRECATED bool owns_dereferencable(const_iterator cit) const
   {
     return owns_dereferenceable(cit);
@@ -598,25 +620,7 @@ public:
     while ( capacity_<n )
     { // Pb because the order of free list is no more the order of
       // allocate_new_block();
-      pointer new_block = alloc.allocate(block_size + 2);
-      all_items.push_back(std::make_pair(new_block, block_size + 2));
-      capacity_ += block_size;
-      // We insert this new block at the end.
-      if (last_item == nullptr) // First time
-      {
-        first_item = new_block;
-        last_item  = new_block + block_size + 1;
-        set_type(first_item, nullptr, START_END);
-      }
-      else
-      {
-        set_type(last_item, new_block, BLOCK_BOUNDARY);
-        set_type(new_block, last_item, BLOCK_BOUNDARY);
-        last_item = new_block + block_size + 1;
-      }
-      set_type(last_item, nullptr, START_END);
-      // Increase the block_size for the next time.
-      Increment_policy::increase_size(*this);
+      push_back_new_block();
     }
 
     // Now we put all the new elements on freelist, starting from the last block
@@ -627,16 +631,18 @@ public:
     do
     {
       --curblock; // We are sure we have at least create a new block
-      pointer new_block = all_items[curblock].first;
-      for (size_type i = all_items[curblock].second-2; i >= 1; --i)
-        put_on_free_list(new_block + i);
+      auto [new_block, block_size] = all_items[curblock];
+      put_block_on_free_list(new_block, block_size - 2);
     }
     while ( curblock>lastblock );
   }
 
 private:
 
-  void allocate_new_block();
+std::pair<pointer, size_type> push_back_new_block();
+void put_block_on_free_list(pointer new_block, size_type block_size);
+
+void allocate_new_block();
 
   void put_on_free_list(pointer x)
   {
@@ -664,32 +670,40 @@ private:
 
   static char * clean_pointer(char * p)
   {
-    return reinterpret_cast<char*>(reinterpret_cast<std::ptrdiff_t>(p) &
-                                   ~ (std::ptrdiff_t) START_END);
+    auto ptr = reinterpret_cast<std::ptrdiff_t>(p);
+    auto mask = static_cast<std::ptrdiff_t>(START_END);
+    return reinterpret_cast<char*>(ptr & ~mask);
   }
 
   // Returns the pointee, cleaned up from the squatted bits.
-  static pointer clean_pointee(const_pointer ptr)
-  {
-    return (pointer) clean_pointer((char *) Traits::pointer(*ptr));
+  static pointer clean_pointee(const_pointer ptr) {
+    void* raw_ptr = Traits::pointer(*ptr);
+    char* cleaned_ptr = clean_pointer(reinterpret_cast<char*>(raw_ptr));
+    return reinterpret_cast<pointer>(cleaned_ptr);
   }
 
   // Get the type of the pointee.
   static Type type(const_pointer ptr)
   {
-    char * p = (char *) Traits::pointer(*ptr);
-    return (Type) (reinterpret_cast<std::ptrdiff_t>(p) -
-                   reinterpret_cast<std::ptrdiff_t>(clean_pointer(p)));
+    char* p = reinterpret_cast<char*>(Traits::pointer(*ptr));
+    // Compute the difference between the pointer and its cleaned version to extract the last 2 bits.
+    std::ptrdiff_t diff = reinterpret_cast<std::ptrdiff_t>(p) -
+                          reinterpret_cast<std::ptrdiff_t>(clean_pointer(p));
+    return static_cast<Type>(diff);
   }
 
   // Sets the pointer part and the type of the pointee.
-  static void set_type(pointer ptr, void * p, Type t)
+  static void set_type(pointer ptr, void * p, Type type)
   {
     // This out of range compare is always true and causes lots of
     // unnecessary warnings.
     // CGAL_precondition(0 <= t && t < 4);
-    Traits::set_pointer(*ptr, reinterpret_cast<void *>
-      (reinterpret_cast<std::ptrdiff_t>(clean_pointer((char *) p)) + (int) t));
+
+    // Clean the pointer to remove any existing type bits, then set the new type bits.
+    char* p_cleaned = clean_pointer(reinterpret_cast<char*>(p));
+    std::ptrdiff_t p_value = reinterpret_cast<std::ptrdiff_t>(p_cleaned);
+    std::ptrdiff_t new_ptr = p_value + static_cast<std::ptrdiff_t>(type);
+    Traits::set_pointer(*ptr, reinterpret_cast<void*>(new_ptr));
   }
 
 public:
@@ -697,7 +711,7 @@ public:
   static bool is_begin_or_end(const_pointer ptr)
   { return type(ptr)==START_END; }
 
-  void swap(Self &c)
+  void swap(Self &c) noexcept
   {
     std::swap(alloc, c.alloc);
     std::swap(capacity_, c.capacity_);
@@ -803,23 +817,13 @@ void Compact_container<T, Allocator, Increment_policy, TimeStamper>::clear()
 }
 
 template < class T, class Allocator, class Increment_policy, class TimeStamper >
-void Compact_container<T, Allocator, Increment_policy, TimeStamper>::allocate_new_block()
+auto Compact_container<T, Allocator, Increment_policy, TimeStamper>::push_back_new_block()
+    -> std::pair<pointer, size_type>
 {
-  typedef internal::Erase_counter_strategy<
-    internal::has_increment_erase_counter<T>::value> EraseCounterStrategy;
-
   pointer new_block = alloc.allocate(block_size + 2);
+  std::pair<pointer, size_type> result{new_block, block_size};
   all_items.push_back(std::make_pair(new_block, block_size + 2));
   capacity_ += block_size;
-  // We don't touch the first and the last one.
-  // We mark them free in reverse order, so that the insertion order
-  // will correspond to the iterator order...
-  for (size_type i = block_size; i >= 1; --i)
-  {
-    EraseCounterStrategy::set_erase_counter(*(new_block + i), 0);
-    Time_stamper::initialize_time_stamp(new_block + i);
-    put_on_free_list(new_block + i);
-  }
   // We insert this new block at the end.
   if (last_item == nullptr) // First time
   {
@@ -836,7 +840,32 @@ void Compact_container<T, Allocator, Increment_policy, TimeStamper>::allocate_ne
   set_type(last_item, nullptr, START_END);
   // Increase the block_size for the next time.
   Increment_policy::increase_size(*this);
+  return result;
 }
+
+template < class T, class Allocator, class Increment_policy, class TimeStamper >
+void Compact_container<T, Allocator, Increment_policy, TimeStamper>::
+put_block_on_free_list(pointer new_block, size_type block_size)
+{
+  // The block actually has a size==block_size+2.
+  // We don't touch the first and the last one.
+  // We mark them free in reverse order, so that the insertion order
+  // will correspond to the iterator order...
+  for (size_type i = block_size; i >= 1; --i)
+  {
+    EraseCounterStrategy<T>::set_erase_counter(*(new_block + i), 0);
+    Time_stamper::initialize_time_stamp(new_block + i);
+    put_on_free_list(new_block + i);
+  }
+}
+
+template < class T, class Allocator, class Increment_policy, class TimeStamper >
+void Compact_container<T, Allocator, Increment_policy, TimeStamper>::allocate_new_block()
+{
+  auto [new_block, block_size] = push_back_new_block();
+  put_block_on_free_list(new_block, block_size);
+}
+
 
 template < class T, class Allocator, class Increment_policy, class TimeStamper >
 inline
@@ -1272,7 +1301,7 @@ namespace std {
 
     std::size_t operator()(const CGAL::internal::CC_iterator<DSC, Const>& i) const
     {
-      return reinterpret_cast<std::size_t>(&*i) / sizeof(typename DSC::value_type);
+      return hash_value(i);
     }
   };
 #endif // CGAL_CFG_NO_STD_HASH

@@ -32,8 +32,11 @@ int degeneracy_counter = 0;
 // This gives a rough idea of how degenerate a data set is.
 struct traits : public K
 {
-    struct Power_side_of_oriented_power_sphere_3 : public K::Power_side_of_oriented_power_sphere_3
+    struct Power_side_of_oriented_power_sphere_3
+      : public K::Power_side_of_oriented_power_sphere_3
     {
+      using Oriented_side = K::Oriented_side;
+
       typedef K::Weighted_point_3 Weighted_point;
         typedef K::Power_side_of_oriented_power_sphere_3 P3;
         Oriented_side operator() (const Weighted_point &p0,

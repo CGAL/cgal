@@ -72,7 +72,7 @@
 
 #include <boost/type_traits.hpp>
 #include <optional>
-#include <boost/filesystem.hpp>
+#include <filesystem>
 
 #include <cassert>
 #include <cstdlib>
@@ -705,11 +705,7 @@ private:
 
       // Find the right width for the label to accommodate at least 9999
       QFontMetrics metric = x_cubeLabel->fontMetrics();
-#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
       x_cubeLabel->setFixedWidth(metric.horizontalAdvance(QString(".9999.")));
-#else
-      x_cubeLabel->setFixedWidth(metric.width(QString(".9999.")));
-#endif
       x_cubeLabel->setText("0");
       x_cubeLabel->setValidator(validator);
 
@@ -735,11 +731,7 @@ private:
 
       // Find the right width for the label to accommodate at least 9999
       QFontMetrics metric = y_cubeLabel->fontMetrics();
-#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
       y_cubeLabel->setFixedWidth(metric.horizontalAdvance(QString(".9999.")));
-#else
-      y_cubeLabel->setFixedWidth(metric.width(QString(".9999.")));
-#endif
       y_cubeLabel->setText("0");
       y_cubeLabel->setValidator(validator);
       y_slider = new QSlider(mw);
@@ -764,11 +756,7 @@ private:
 
       // Find the right width for the label to accommodate at least 9999
       QFontMetrics metric = z_cubeLabel->fontMetrics();
-#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
       z_cubeLabel->setFixedWidth(metric.horizontalAdvance(QString(".9999.")));
-#else
-      z_cubeLabel->setFixedWidth(metric.width(QString(".9999.")));
-#endif
       z_cubeLabel->setText("0");
       z_cubeLabel->setValidator(validator);
       z_slider = new QSlider(mw);
@@ -1532,10 +1520,10 @@ Image* Io_image_plugin::createDirectoryImage(const QString& dirname,
     CGAL_assertion(ext == Directory_extension_type::BMP);
 
     // vtkBMPReader does not provide SetDirectoryName()...
-    std::vector<boost::filesystem::path> paths;
+    std::vector<std::filesystem::path> paths;
     vtkStringArray* files = vtkStringArray::New();
-    boost::filesystem::path p(dirname.toUtf8().data());
-    for(boost::filesystem::directory_entry& x : boost::filesystem::directory_iterator(p))
+    std::filesystem::path p(dirname.toUtf8().data());
+    for(const std::filesystem::directory_entry& x : std::filesystem::directory_iterator(p))
     {
       std::string s = x.path().string();
       if(CGAL::IO::internal::get_file_extension(s) != "bmp")
@@ -1544,10 +1532,10 @@ Image* Io_image_plugin::createDirectoryImage(const QString& dirname,
       paths.push_back(x.path());
     }
 
-    // boost::filesystem::directory_iterator does not guarantee a sorted order
+    // std::filesystem::directory_iterator does not guarantee a sorted order
     std::sort(std::begin(paths), std::end(paths));
 
-    for(const boost::filesystem::path& p : paths)
+    for(const std::filesystem::path& p : paths)
       files->InsertNextValue(p.string());
 
     if(files->GetSize() == 0)

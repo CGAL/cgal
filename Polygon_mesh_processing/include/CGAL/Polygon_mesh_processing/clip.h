@@ -1,4 +1,4 @@
-// Copyright (c) 2016 GeometryFactory (France).
+// Copyright (c) 2016-2025 GeometryFactory (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -43,9 +43,228 @@
 #include <vector>
 #include <bitset>
 
-namespace CGAL{
+#include <CGAL/Polygon_mesh_processing/refine_with_plane.h>
+
+#ifndef CGAL_PLANE_CLIP_DO_NOT_USE_TRIANGULATION
+#include <CGAL/Triangulation_vertex_base_with_info_2.h>
+#include <CGAL/Triangulation_face_base_with_info_2.h>
+#include <CGAL/Constrained_Delaunay_triangulation_2.h>
+#include <CGAL/Projection_traits_3.h>
+#include <CGAL/mark_domain_in_triangulation.h>
+#include <CGAL/Delaunay_mesh_face_base_2.h>
+#include <boost/iterator/transform_iterator.hpp>
+#endif
+
+namespace CGAL {
 namespace Polygon_mesh_processing {
 namespace internal {
+
+#ifndef CGAL_PLANE_CLIP_DO_NOT_USE_TRIANGULATION
+template <class Traits,
+          class TriangleMesh,
+          class VertexPointMap,
+          class Visitor>
+void close_and_triangulate(TriangleMesh& tm, VertexPointMap vpm, typename Traits::Vector_3 plane_normal, Visitor& visitor)
+{
+  using vertex_descriptor = typename boost::graph_traits<TriangleMesh>::vertex_descriptor;
+  using halfedge_descriptor = typename boost::graph_traits<TriangleMesh>::halfedge_descriptor;
+  using face_descriptor = typename boost::graph_traits<TriangleMesh>::face_descriptor;
+  using P_traits = Projection_traits_3<Traits>;
+  using Vb = Triangulation_vertex_base_with_info_2<vertex_descriptor, P_traits>;
+  using Fb = CGAL::Delaunay_mesh_face_base_2<P_traits>;
+  using TDS = Triangulation_data_structure_2<Vb, Fb>;
+  using Itag = No_constraint_intersection_tag;
+  using CDT = Constrained_Delaunay_triangulation_2<P_traits, TDS, Itag>;
+
+  P_traits p_traits(plane_normal);
+
+  std::vector<std::pair<typename Traits::Point_3, vertex_descriptor>> points;
+  std::vector<std::pair<vertex_descriptor, vertex_descriptor>> csts;
+
+  halfedge_descriptor href = boost::graph_traits<TriangleMesh>::null_halfedge ();
+  bool first=true;
+
+  for (halfedge_descriptor h : halfedges(tm))
+  {
+    if (is_border(h, tm))
+    {
+      if (first)
+      {
+        href=h;
+        first=false;
+      }
+      vertex_descriptor src = source(h, tm), tgt = target(h, tm);
+      points.emplace_back(get(vpm, tgt), tgt);
+      csts.emplace_back(src, tgt);
+    }
+  }
+
+  if (points.empty()) return;
+
+  CDT cdt(p_traits);
+  cdt.insert(points.begin(), points.end());
+
+  // TODO: in case of degenerate edges, we don't triangulate but it's kind of an issue on our side
+  if (cdt.number_of_vertices()!=points.size()) return;
+
+
+  typedef CGAL::dynamic_vertex_property_t<typename CDT::Vertex_handle> V_tag;
+  typename boost::property_map<TriangleMesh, V_tag>::type v2v = get(V_tag(), tm);
+  for (auto vh : cdt.finite_vertex_handles())
+    put(v2v, vh->info(), vh);
+
+  for (auto vv : csts)
+    cdt.insert_constraint(get(v2v, vv.first), get(v2v, vv.second));
+
+  mark_domain_in_triangulation(cdt);
+
+  typename CDT::Edge edge_ref;
+  CGAL_assertion_code(bool OK =)
+  cdt.is_edge(get(v2v, csts[0].first), get(v2v, csts[0].second), edge_ref.first, edge_ref.second);
+  CGAL_assertion(OK);
+
+  if (!edge_ref.first->is_in_domain()) edge_ref = cdt.mirror_edge(edge_ref);
+  CGAL_assertion(edge_ref.first->is_in_domain());
+
+  bool flip_ori = ( edge_ref.first->vertex( (edge_ref.second+1)%3 )->info() != source(href, tm) );
+
+  CGAL_assertion(
+    ( !flip_ori &&
+      edge_ref.first->vertex( (edge_ref.second+1)%3 )->info() == source(href, tm) &&
+      edge_ref.first->vertex( (edge_ref.second+2)%3 )->info() == target(href, tm) )
+    ||
+    ( flip_ori &&
+      edge_ref.first->vertex( (edge_ref.second+2)%3 )->info() == source(href, tm) &&
+      edge_ref.first->vertex( (edge_ref.second+1)%3 )->info() == target(href, tm) )
+  );
+
+  for (auto fh : cdt.finite_face_handles())
+  {
+    if (!fh->is_in_domain()) continue;
+
+    std::array<vertex_descriptor,3> vrts = make_array(fh->vertex(0)->info(),
+                                                      fh->vertex(1)->info(),
+                                                      fh->vertex(2)->info());
+    if (flip_ori) std::swap(vrts[0], vrts[1]);
+
+    CGAL_assertion(Euler::can_add_face(vrts, tm));
+    visitor.before_face_copy(boost::graph_traits<TriangleMesh>::null_face(), tm, tm);
+    face_descriptor f = Euler::add_face(vrts, tm);
+    visitor.after_face_copy(boost::graph_traits<TriangleMesh>::null_face(), tm, f, tm);
+  }
+}
+
+template <class Traits,
+          class PolygonMesh,
+          class VertexPointMap,
+          class Visitor>
+bool close(PolygonMesh& pm, VertexPointMap vpm, typename Traits::Vector_3 plane_normal, Visitor& visitor)
+{
+  //using vertex_descriptor = typename boost::graph_traits<PolygonMesh>::vertex_descriptor;
+  using halfedge_descriptor = typename boost::graph_traits<PolygonMesh>::halfedge_descriptor;
+  // using face_descriptor = typename boost::graph_traits<PolygonMesh>::face_descriptor;
+  using Point_3 = typename Traits::Point_3;
+  using P_traits = Projection_traits_3<Traits>;
+
+  std::vector< std::vector<Point_3> > polygons;
+  std::vector< halfedge_descriptor > border_cycles;
+  std::vector< Bbox_3 > bboxes;
+
+  typedef CGAL::dynamic_halfedge_property_t<bool> H_tag;
+  typename boost::property_map<PolygonMesh, H_tag>::type
+    is_hedge_selected = get(H_tag(), pm, false);
+
+  for (halfedge_descriptor h : halfedges(pm))
+  {
+    if (is_border(h, pm) && get(is_hedge_selected, h)==false)
+    {
+      border_cycles.push_back(h);
+      polygons.emplace_back();
+      bboxes.emplace_back();
+      for (halfedge_descriptor he : CGAL::halfedges_around_face(h, pm))
+      {
+        put(is_hedge_selected, he, true);
+        polygons.back().push_back(get(vpm, target(he, pm)));
+        bboxes.back()+=polygons.back().back().bbox();
+      }
+    }
+  }
+
+  if (bboxes.empty()) return true;
+
+  Bbox_3 gbox;
+  for (const Bbox_3& bb : bboxes)
+    gbox+=bb;
+
+  // arrange polygons
+  int axis = 0;
+  if ((gbox.ymax()-gbox.ymin()) > (gbox.xmax()-gbox.xmin())) axis=1;
+  if ((gbox.zmax()-gbox.zmin()) > ((gbox.max)(axis)-(gbox.min)(axis))) axis=2;
+
+  std::vector<std::size_t> poly_ids(polygons.size());
+  std::iota(poly_ids.begin(), poly_ids.end(), 0);
+
+  std::sort(poly_ids.begin(), poly_ids.end(),
+            [&bboxes, axis](std::size_t i, std::size_t j)
+            {
+              return (bboxes[i].min)(axis) < (bboxes[j].min)(axis);
+            });
+
+
+  std::vector<std::size_t> simply_connected_faces;
+  std::vector<bool> handled(poly_ids.size(), false);
+
+  P_traits ptraits(plane_normal);
+
+
+  for (std::size_t pid=0; pid<poly_ids.size()-1; ++pid)
+  {
+    std::size_t curr_poly_id = poly_ids[pid];
+
+    if (handled[curr_poly_id]) continue;
+
+    std::vector<std::size_t> nested;
+    for (std::size_t npid=pid+1; npid<poly_ids.size(); ++npid)
+    {
+      std::size_t next_poly_id = poly_ids[npid];
+
+      if (do_overlap(bboxes[curr_poly_id], bboxes[next_poly_id]))
+      {
+        //TODO: what about tanjencies?
+        //TODO: check orientation for predicate
+        if (bounded_side_2(polygons[curr_poly_id].begin(), polygons[curr_poly_id].end(),
+                           polygons[next_poly_id].front(), ptraits) == ON_BOUNDED_SIDE)
+        {
+          nested.push_back(next_poly_id);
+          handled[next_poly_id]=true;
+        }
+      }
+      else
+        break; // no further overlaps
+    }
+
+    handled[curr_poly_id] = true;
+
+    if (nested.empty())
+      simply_connected_faces.push_back(curr_poly_id);
+  }
+
+  if (!handled[poly_ids.back()])
+    simply_connected_faces.push_back(poly_ids.back());
+
+  for (std::size_t id : simply_connected_faces)
+  {
+    halfedge_descriptor h = border_cycles[id];
+    visitor.before_face_copy(boost::graph_traits<PolygonMesh>::null_face(), pm, pm);
+    Euler::fill_hole(h, pm);
+    visitor.after_face_copy(boost::graph_traits<PolygonMesh>::null_face(), pm, face(h, pm), pm);
+  }
+
+  return simply_connected_faces.size()==poly_ids.size();
+}
+
+#endif
+
 
 template <class Plane_3,
           class TriangleMesh,
@@ -514,6 +733,49 @@ generic_clip_impl(
   functor(CGAL::Emptyset_iterator(), false, true);
 }
 
+
+
+
+#ifndef CGAL_PLANE_CLIP_DO_NOT_USE_TRIANGULATION
+template <class PolygonMesh, class Clip_visitor>
+struct Visitor_wrapper_for_triangulate_face
+  : public ::CGAL::Polygon_mesh_processing::Hole_filling::Default_visitor
+//TODO: @afabri --> I shouldn't be the one doing the inheritance...
+//TODO: @afabri --> nothing on edge?
+{
+  using face_descriptor = typename boost::graph_traits<PolygonMesh>::face_descriptor;
+
+  Clip_visitor& clip_visitor;
+  const PolygonMesh& pm;
+  std::vector<face_descriptor> triangulation_faces;
+
+  Visitor_wrapper_for_triangulate_face(const PolygonMesh& pm, Clip_visitor& clip_visitor)
+    : clip_visitor(clip_visitor)
+    , pm(pm)
+  {}
+
+  void before_subface_creations(face_descriptor f_split)
+  {
+    CGAL_assertion(triangulation_faces.empty());
+    triangulation_faces.push_back(f_split);
+  }
+  void after_subface_creations()
+  {
+    for (face_descriptor f : triangulation_faces)
+    {
+      clip_visitor.before_face_copy(boost::graph_traits<PolygonMesh>::null_face(), pm, pm);
+      clip_visitor.after_face_copy(boost::graph_traits<PolygonMesh>::null_face(), pm, f, pm);
+    }
+    triangulation_faces.clear();
+  }
+
+  void after_subface_created(face_descriptor f_new)
+  {
+    triangulation_faces.push_back(f_new);
+  }
+};
+#endif
+
 } // end of internal namespace
 
 /**
@@ -521,7 +783,7 @@ generic_clip_impl(
   *
   * \brief clips `tm` by keeping the part that is inside the volume \link coref_def_subsec bounded \endlink by `clipper`.
   *
-  * If `tm` is closed, the clipped part can be closed too if the named parameter `clip_volume` is set to `true`.
+  * If `tm` is closed, the clipped part can be kept closed by setting the named parameter `clip_volume` to `true`.
   * See Subsection \ref coref_clip for more details.
   *
   * \attention With the current implementation, `clipper` will be modified (refined with the intersection with `tm`).
@@ -584,10 +846,11 @@ generic_clip_impl(
   *   \cgalParamNBegin{use_compact_clipper}
   *     \cgalParamDescription{if `false`, the parts of `tm` coplanar with `clipper` will not be part of the output.}
   *     \cgalParamType{Boolean}
-  *     \cgalParamDefault{`false`}
+  *     \cgalParamDefault{`true`}
   *     \cgalParamExtra{This option has an effect only if a surface and not a volume is clipped,
   *                     (i.e., if `clip_volume` is `false` or if `tm` is open).}
   *   \cgalParamNEnd
+  *
   *   \cgalParamNBegin{do_not_modify}
   *     \cgalParamDescription{(`np_c` only) if `true`, `clipper` will not be modified.}
   *     \cgalParamType{Boolean}
@@ -633,119 +896,203 @@ clip(TriangleMesh& tm,
 /**
   * \ingroup PMP_corefinement_grp
   *
-  * \brief clips `tm` by keeping the part that is on the negative side of `plane` (side opposite to its normal vector).
+  * \brief clips `pm` by keeping the part that is on the negative side of `plane` (the side opposite to its normal vector).
   *
-  * If `tm` is closed, the clipped part can be closed too if the named parameter `clip_volume` is set to `true`.
+  * If `pm` is closed, the clipped part can be kept closed by setting the named parameter `clip_volume`to `true`.
   * See Subsection \ref coref_clip for more details.
   *
-  * \note `Plane_3` must be from the same %Kernel as the point of the internal vertex point map of `TriangleMesh`.
-  * \note `Plane_3` must be from the same %Kernel as the point of the vertex point map of `tm`.
-  *
-  * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersect(tm)` \endlink
-  *
-  * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`.
+  * @tparam PolygonMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`.
   *                      An internal property map for `CGAL::vertex_point_t` must be available.
   *
   * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
-  * @param tm input triangulated surface mesh
-  * @param plane plane whose negative side defines the half-space to intersect `tm` with.
-  *              `Plane_3` is the plane type for the same CGAL kernel as the point of the vertex point map of `tm`.
+  * @param pm input surface mesh
+  * @param plane plane whose negative side defines the halfspace to intersect `pm` with.
+  *              `Plane_3` is the plane type for the same CGAL kernel as the point of the vertex point map of `pm`.
   * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
+  *
+  *   \cgalParamNBegin{concurrency_tag}
+  *     \cgalParamDescription{a tag indicating if the task should be performed using one or several threads.}
+  *     \cgalParamType{Either `CGAL::Sequential_tag`, or `CGAL::Parallel_tag`, or `CGAL::Parallel_if_available_tag`}
+  *     \cgalParamDefault{`CGAL::Sequential_tag`}
+  *   \cgalParamNEnd
+  *
   *   \cgalParamNBegin{vertex_point_map}
-  *     \cgalParamDescription{a property map associating points to the vertices of `tm`}
-  *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+  *     \cgalParamDescription{a property map associating points to the vertices of `pm`}
+  *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
   *                    as key type and `%Point_3` as value type}
-  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
+  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, pm)`}
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{visitor}
-  *     \cgalParamDescription{a visitor used to track the creation of new faces}
+  *     \cgalParamDescription{a visitor used to track the creation of new faces, edges, and faces.
+  *                           Note that as there are no mesh associated with `plane`,
+  *                           `boost::graph_traits<PolygonMesh>::null_halfedge()` and `boost::graph_traits<PolygonMesh>::null_face()` will be used when calling
+  *                           functions of the visitor expecting a halfedge or a face from `plane`. Similarly, `pm` will be used as the mesh of `plane`.}
   *     \cgalParamType{a class model of `PMPCorefinementVisitor`}
-  *     \cgalParamDefault{`Corefinement::Default_visitor<TriangleMesh>`}
+  *     \cgalParamDefault{`Corefinement::Default_visitor<PolygonMesh>`}
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{throw_on_self_intersection}
-  *     \cgalParamDescription{If `true`, the set of triangles close to the intersection of `tm`
+  *     \cgalParamDescription{If `true`, the set of triangles close to the intersection of `pm`
   *                           and `plane` will be checked for self-intersections
   *                           and `CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception`
-  *                           will be thrown if at least one self-intersection is found.}
+  *                           will be thrown if at least one self-intersection is found.
+  *                           This option is only taken into account if `pm` is a triangle mesh.}
   *     \cgalParamType{Boolean}
   *     \cgalParamDefault{`false`}
   *   \cgalParamNEnd
   *
+  *   \cgalParamNBegin{allow_self_intersections}
+  *     \cgalParamDescription{If `true`, self-intersections in `pm` are accepted.}
+  *     \cgalParamType{Boolean}
+  *     \cgalParamDefault{`false`}
+  *     \cgalParamExtra{If this option is set to `true`, `pm` is no longer required to be without self-intersection.
+  *                     Setting this option to `true` will automatically set `throw_on_self_intersection` to `false`
+  *                     and `clip_volume` to `false` (overwriting any value provided)}
+  *   \cgalParamNEnd
+  *
   *   \cgalParamNBegin{clip_volume}
-  *     \cgalParamDescription{If `true`, and `tm` is closed, the clipping will be done on
-  *                           the volume \link coref_def_subsec bounded \endlink by `tm`
-  *                           rather than on its surface (i.e., `tm` will be kept closed).}
+  *     \cgalParamDescription{If `true`, and if `pm` is closed, the clipping will be done on
+  *                           the volume \link coref_def_subsec bounded \endlink by `pm`
+  *                           rather than on its surface (i.e., `pm` will remain closed).}
   *     \cgalParamType{Boolean}
   *     \cgalParamDefault{`false`}
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{use_compact_clipper}
-  *     \cgalParamDescription{if `false` the parts of `tm` coplanar with `plane` will not be part of the output}
+  *     \cgalParamDescription{If `false`, the parts of `pm` coplanar with `plane` will not be part of the output.
+  *                           Always `true` if `clip_volume` is `true`.}
   *     \cgalParamType{Boolean}
   *     \cgalParamDefault{`true`}
   *   \cgalParamNEnd
   *
-  *   \cgalParamNBegin{allow_self_intersections}
-  *     \cgalParamDescription{If `true`, self-intersections are accepted for `tm`.}
-  *     \cgalParamType{Boolean}
-  *     \cgalParamDefault{`false`}
-  *     \cgalParamExtra{If this option is set to `true`, `tm` is no longer required to be without self-intersection.
-  *                     Setting this option to `true` will automatically set `throw_on_self_intersection` to `false`
-  *                     and `clip_volume` to `false`.}
-  *   \cgalParamNEnd
+  *    \cgalParamNBegin{do_not_triangulate_faces}
+  *      \cgalParamDescription{If the input mesh is triangulated and this parameter is set to `false`, the mesh will be kept triangulated.
+  *                            Always `true` if `pm` is not a triangle mesh.}
+  *      \cgalParamType{Boolean}
+  *      \cgalParamDefault{`false`}
+  *    \cgalParamNEnd
+  *
   * \cgalNamedParamsEnd
   *
-  * @return `true` if the output surface mesh is manifold.
-  *         If `false` is returned `tm` is only refined by the intersection with `plane`.
+  * @return `true`
   *
   * @see `split()`
   */
-template <class TriangleMesh,
+template <class PolygonMesh,
           class NamedParameters = parameters::Default_named_parameters>
-bool clip(TriangleMesh& tm,
+bool clip(PolygonMesh& pm,
 #ifdef DOXYGEN_RUNNING
           const Plane_3& plane,
 #else
-          const typename GetGeomTraits<TriangleMesh, NamedParameters>::type::Plane_3& plane,
+          const typename GetGeomTraits<PolygonMesh, NamedParameters>::type::Plane_3& plane,
 #endif
           const NamedParameters& np = parameters::default_values())
 {
-  namespace PMP = CGAL::Polygon_mesh_processing;
-  namespace params = CGAL::parameters;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+  using parameters::get_parameter_reference     ;
 
-  using params::get_parameter;
-  using params::choose_parameter;
+  using halfedge_descriptor = typename boost::graph_traits<PolygonMesh>::halfedge_descriptor;
 
-  if(std::begin(faces(tm))==std::end(faces(tm))) return true;
+  using GT = typename GetGeomTraits<PolygonMesh, NamedParameters>::type;
+  GT traits = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
+  auto vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                              get_property_map(vertex_point, pm));
 
-  CGAL::Bbox_3 bbox = ::CGAL::Polygon_mesh_processing::bbox(tm);
 
-  //extend the bbox a bit to avoid border cases
-  double xd=(std::max)(1.,(bbox.xmax()-bbox.xmin())/100);
-  double yd=(std::max)(1.,(bbox.ymax()-bbox.ymin())/100);
-  double zd=(std::max)(1.,(bbox.zmax()-bbox.zmin())/100);
-  bbox=CGAL::Bbox_3(bbox.xmin()-xd, bbox.ymin()-yd, bbox.zmin()-zd,
-                    bbox.xmax()+xd, bbox.ymax()+yd, bbox.zmax()+zd);
-  TriangleMesh clipper;
-  Oriented_side os = internal::clip_to_bbox(plane, bbox, clipper, parameters::default_values());
-  switch(os)
+  using Default_visitor = Corefinement::Default_visitor<PolygonMesh>;
+  Default_visitor default_visitor;
+  using Visitor_ref = typename internal_np::Lookup_named_param_def<internal_np::visitor_t, NamedParameters, Default_visitor>::reference;
+  Visitor_ref visitor = choose_parameter(get_parameter_reference(np, internal_np::visitor), default_visitor);
+  // constexpr bool has_visitor = !std::is_same_v<Default_visitor, std::remove_cv_t<std::remove_reference_t<Visitor_ref>>>;
+
+  typedef typename internal_np::Lookup_named_param_def <
+    internal_np::concurrency_tag_t,
+    NamedParameters,
+    Sequential_tag
+  > ::type Concurrency_tag;
+
+  // config flags
+  bool clip_volume =
+    parameters::choose_parameter(parameters::get_parameter(np, internal_np::clip_volume), false);
+  bool use_compact_clipper =
+    choose_parameter(get_parameter(np, internal_np::use_compact_clipper), true);
+  const bool throw_on_self_intersection =
+    choose_parameter(get_parameter(np, internal_np::throw_on_self_intersection), false);
+  const bool allow_self_intersections =
+    choose_parameter(get_parameter(np, internal_np::allow_self_intersections), false);
+  bool triangulate = !choose_parameter(get_parameter(np, internal_np::do_not_triangulate_faces), false);
+
+  auto vos = get(dynamic_vertex_property_t<Oriented_side>(), pm);
+  auto ecm = get(dynamic_edge_property_t<bool>(), pm, false);
+
+  if (triangulate && !is_triangle_mesh(pm))
+    triangulate = false;
+
+  refine_with_plane(pm, plane, parameters::vertex_oriented_side_map(vos)
+                                          .edge_is_marked_map(ecm)
+                                          .vertex_point_map(vpm)
+                                          .geom_traits(traits)
+                                          .do_not_triangulate_faces(!triangulate)
+                                          .throw_on_self_intersection(!allow_self_intersections &&
+                                                                      throw_on_self_intersection)
+                                          .visitor(std::ref(visitor))
+                                          .concurrency_tag(Concurrency_tag()));
+
+  CGAL_assertion(is_valid_polygon_mesh(pm));
+
+  if (allow_self_intersections)
+    clip_volume=false;
+
+  if (clip_volume && !is_closed(pm)) clip_volume=false;
+  if (clip_volume && !use_compact_clipper) use_compact_clipper=true;
+
+  CGAL_precondition(!clip_volume || !triangulate || does_bound_a_volume(pm));
+
+  auto fcc = get(dynamic_face_property_t<std::size_t>(), pm);
+
+  std::size_t nbcc = connected_components(pm, fcc, CGAL::parameters::edge_is_constrained_map(ecm));
+
+  std::vector<bool> classified(nbcc, false);
+  std::vector<std::size_t> ccs_to_remove;
+
+  for (auto f : faces(pm))
   {
-    case ON_NEGATIVE_SIDE:
-      return true; // nothing to clip, the full mesh is on the negative side
-    case ON_POSITIVE_SIDE:
-      remove_all_elements(tm); // clear the mesh that is fully on the positive side
-      return true;
-    default:
-      break;
+    std::size_t ccid = get(fcc, f);
+    if (classified[ccid]) continue;
+    halfedge_descriptor hf = halfedge(f, pm);
+    for(halfedge_descriptor h : CGAL::halfedges_around_face(hf, pm))
+    {
+      CGAL::Oriented_side os = get(vos, target(h,pm));
+      if (os==CGAL::ON_ORIENTED_BOUNDARY) continue;
+      classified[ccid]=true;
+      if (os==CGAL::ON_POSITIVE_SIDE) ccs_to_remove.push_back(ccid);
+    }
+
+    if (!classified[ccid])
+    {
+      if (!use_compact_clipper) ccs_to_remove.push_back(ccid);
+      classified[ccid]=true;
+    }
   }
 
-  const bool do_not_modify = choose_parameter(get_parameter(np, internal_np::allow_self_intersections), false);
-  return clip(tm, clipper, np, params::do_not_modify(do_not_modify));
+  remove_connected_components(pm, ccs_to_remove, fcc);
+
+  if (clip_volume)
+  {
+    //TODO: add in the traits construct_orthogonal_vector
+    if (triangulate)
+      internal::close_and_triangulate<GT>(pm, vpm, plane.orthogonal_vector(), visitor);
+    else
+      if (!internal::close<GT>(pm, vpm, plane.orthogonal_vector(), visitor))
+        internal::close_and_triangulate<GT>(pm, vpm, plane.orthogonal_vector(), visitor);
+  }
+
+  return true;
 }
 
 /**
@@ -753,11 +1100,11 @@ bool clip(TriangleMesh& tm,
   *
   * \brief clips `tm` by keeping the part that is inside `iso_cuboid`.
   *
-  * If `tm` is closed, the clipped part can be closed too if the named parameter `clip_volume` is set to `true`.
+  * If `tm` is closed, the clipped part can be kept closed by setting the named parameter `clip_volume` to `true`.
   * See Subsection \ref coref_clip for more details.
   *
-  * \note `Iso_cuboid_3` must be from the same %Kernel as the point of the internal vertex point map of `TriangleMesh`.
-  * \note `Iso_cuboid_3` must be from the same %Kernel as the point of the vertex point map of `tm`.
+  * \note `Iso_cuboid_3` must be from the same kernel as the point of the internal vertex point map of `TriangleMesh`.
+  * \note `Iso_cuboid_3` must be from the same kernel as the point of the vertex point map of `tm`.
   *
   * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersect(tm)` \endlink
   *
@@ -777,15 +1124,6 @@ bool clip(TriangleMesh& tm,
   *     \cgalParamDefault{`Corefinement::Default_visitor<TriangleMesh>`}
   *   \cgalParamNEnd
   *
-  *   \cgalParamNBegin{throw_on_self_intersection}
-  *     \cgalParamDescription{If `true`, the set of triangles close to the intersection of `tm`
-  *                           and `iso_cuboid` will be checked for self-intersections
-  *                           and `CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception`
-  *                           will be thrown if at least one self-intersection is found.}
-  *     \cgalParamType{Boolean}
-  *     \cgalParamDefault{`false`}
-  *   \cgalParamNEnd
-  *
   *   \cgalParamNBegin{clip_volume}
   *     \cgalParamDescription{If `true`, and `tm` is closed, the clipping will be done on
   *                           the volume \link coref_def_subsec bounded \endlink by `tm`
@@ -800,14 +1138,24 @@ bool clip(TriangleMesh& tm,
   *     \cgalParamDefault{`true`}
   *   \cgalParamNEnd
   *
+  *   \cgalParamNBegin{throw_on_self_intersection}
+  *     \cgalParamDescription{If `true`, the set of triangles close to the intersection of `tm`
+  *                           and `iso_cuboid` will be checked for self-intersections
+  *                           and `CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception`
+  *                           will be thrown if at least one self-intersection is found.}
+  *     \cgalParamType{Boolean}
+  *     \cgalParamDefault{`false`}
+  *   \cgalParamNEnd
+  *
   *   \cgalParamNBegin{allow_self_intersections}
-  *     \cgalParamDescription{If `true`, self-intersections are accepted for `tm`.}
+  *     \cgalParamDescription{If `true`, self-intersections in `tm` are accepted.}
   *     \cgalParamType{Boolean}
   *     \cgalParamDefault{`false`}
   *     \cgalParamExtra{If this option is set to `true`, `tm` is no longer required to be without self-intersection.
   *                     Setting this option to `true` will automatically set `throw_on_self_intersection` to `false`
   *                     and `clip_volume` to `false`.}
   *   \cgalParamNEnd
+  *
   * \cgalNamedParamsEnd
   *
   * @return `true` if the output surface mesh is manifold.
@@ -939,7 +1287,7 @@ void split(TriangleMesh& tm,
   const bool do_not_modify_splitter = choose_parameter(get_parameter(np_s, internal_np::do_not_modify), false);
 
   PMP::corefine(tm, splitter,
-                CGAL::parameters::vertex_point_map(vpm_tm).edge_is_constrained_map(ecm),
+                CGAL::parameters::vertex_point_map(vpm_tm).edge_is_constrained_map(ecm).visitor(uv),
                 CGAL::parameters::vertex_point_map(vpm_s).do_not_modify(do_not_modify_splitter));
 
   //split mesh along marked edges
@@ -949,90 +1297,109 @@ void split(TriangleMesh& tm,
 /**
   * \ingroup PMP_corefinement_grp
   *
-  * adds intersection edges of `plane` and `tm` in `tm` and duplicates those edges.
+  * splits a polygon mesh with a plane.
   *
-  * \note `Plane_3` must be from the same %Kernel as the point of the internal vertex point map of `TriangleMesh`.
-  * \note `Plane_3` must be from the same %Kernel as the point of the vertex point map of `tm`.
+  * The polygon mesh is refined with the intersection edges, and those edges are duplicated as to create a boundary,
+  * and thus separate connected components on either side of the plane.
   *
-  * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersect(tm)` \endlink
-  *
-  * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph`, and `FaceListGraph`.
+  * @tparam PolygonMesh a model of `MutableFaceGraph`, `HalfedgeListGraph`, and `FaceListGraph`.
   *                      An internal property map for `CGAL::vertex_point_t` must be available.
   * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
-  * @param tm input triangulated surface mesh
-  * @param plane the plane that will be used to split `tm`.
-  *              `Plane_3` is the plane type for the same CGAL kernel as the point of the vertex point map of `tm`.
+  * @param pm input surface mesh
+  * @param plane the plane that will be used to split `pm`.
+  *              `Plane_3` is the plane type for the same CGAL kernel as the point of the vertex point map of `pm`.
   * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
   *   \cgalParamNBegin{vertex_point_map}
-  *     \cgalParamDescription{a property map associating points to the vertices of `tm`}
+  *     \cgalParamDescription{a property map associating points to the vertices of `pm`}
   *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
   *                    as key type and `%Point_3` as value type}
-  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
+  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, pm)`}
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{visitor}
-  *     \cgalParamDescription{a visitor used to track the creation of new faces}
+  *     \cgalParamDescription{a visitor used to track the creation of new faces, edges, and vertices.
+  *                           Note that as there are no mesh associated with `plane`,
+  *                           `boost::graph_traits<PolygonMesh>::null_halfedge()` and `boost::graph_traits<PolygonMesh>::null_face()` will be used when calling
+  *                           functions of the visitor expecting a halfedge or a face from `plane`. Similarly, `pm` will be used as the mesh of `plane`.}}
   *     \cgalParamType{a class model of `PMPCorefinementVisitor`}
   *     \cgalParamDefault{`Corefinement::Default_visitor<TriangleMesh>`}
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{throw_on_self_intersection}
-  *     \cgalParamDescription{If `true`, the set of triangles close to the intersection of `tm`
+  *     \cgalParamDescription{If `true`, the set of triangles close to the intersection of `pm`
   *                           and `plane` will be checked for self-intersections
   *                           and `CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception`
-  *                           will be thrown if at least one self-intersection is found.}
+  *                           will be thrown if at least one self-intersection is found.
+  *                           This option is only taken into account if `pm` is a triangle mesh.}
   *     \cgalParamType{Boolean}
   *     \cgalParamDefault{`false`}
   *   \cgalParamNEnd
   *
-  *   \cgalParamNBegin{allow_self_intersections}
-  *     \cgalParamDescription{If `true`, self-intersections are accepted for `tm`.}
-  *     \cgalParamType{Boolean}
-  *     \cgalParamDefault{`false`}
-  *     \cgalParamExtra{If this option is set to `true`, `tm` is no longer required to be without self-intersection.
-  *                     Setting this option to `true` will automatically set `throw_on_self_intersection` to `false`.}
-  *   \cgalParamNEnd
+  *    \cgalParamNBegin{do_not_triangulate_faces}
+  *      \cgalParamDescription{If the input mesh is triangulated and this parameter is set to `false`, the mesh will be kept triangulated.
+  *                            Always `true` if `pm` is not a triangle mesh.}
+  *      \cgalParamType{Boolean}
+  *      \cgalParamDefault{`false`}
+  *    \cgalParamNEnd
   * \cgalNamedParamsEnd
   *
   * @see `clip()`
   */
-template <class TriangleMesh,
+template <class PolygonMesh,
           class NamedParameters = parameters::Default_named_parameters>
-void split(TriangleMesh& tm,
+void split(PolygonMesh& pm,
 #ifdef DOXYGEN_RUNNING
-           const Plane_3& plane,
+          const Plane_3& plane,
 #else
-           const typename GetGeomTraits<TriangleMesh, NamedParameters>::type::Plane_3& plane,
+          const typename GetGeomTraits<PolygonMesh, NamedParameters>::type::Plane_3& plane,
 #endif
-           const NamedParameters& np = parameters::default_values())
+          const NamedParameters& np = parameters::default_values())
 {
-  namespace PMP = CGAL::Polygon_mesh_processing;
-  namespace params = CGAL::parameters;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+  using parameters::get_parameter_reference;
 
-  using params::get_parameter;
-  using params::choose_parameter;
+  using GT = typename GetGeomTraits<PolygonMesh, NamedParameters>::type;
+  GT traits = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
+  auto vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                              get_property_map(vertex_point, pm));
 
-  // create a splitter mesh for the splitting plane using an internal CGAL function
-  CGAL::Bbox_3 bbox = ::CGAL::Polygon_mesh_processing::bbox(tm, np);
-  double xd = (std::max)(1., 0.01 * (bbox.xmax() - bbox.xmin()));
-  double yd = (std::max)(1., 0.01 * (bbox.ymax() - bbox.ymin()));
-  double zd = (std::max)(1., 0.01 * (bbox.zmax() - bbox.zmin()));
-  bbox = CGAL::Bbox_3(bbox.xmin()-xd, bbox.ymin()-yd, bbox.zmin()-zd,
-                      bbox.xmax()+xd, bbox.ymax()+yd, bbox.zmax()+zd);
+  typedef typename internal_np::Lookup_named_param_def <
+    internal_np::concurrency_tag_t,
+    NamedParameters,
+    Sequential_tag
+  > ::type Concurrency_tag;
 
-  TriangleMesh splitter;
-  CGAL::Oriented_side os = PMP::internal::clip_to_bbox(plane, bbox, splitter, params::default_values());
+  // config flags
+  const bool throw_on_self_intersection =
+    choose_parameter(get_parameter(np, internal_np::throw_on_self_intersection), false);
+  bool triangulate = !choose_parameter(get_parameter(np, internal_np::do_not_triangulate_faces), false);
 
-  if(os == CGAL::ON_ORIENTED_BOUNDARY)
-  {
-    const bool do_not_modify = choose_parameter(get_parameter(np, internal_np::allow_self_intersections), false);
-    return split(tm, splitter, np, params::do_not_modify(do_not_modify));
-  }
+  auto vos = get(dynamic_vertex_property_t<Oriented_side>(), pm);
+  auto ecm = get(dynamic_edge_property_t<bool>(), pm, false);
 
-  //else nothing to do, no intersection.
+  if (triangulate && !is_triangle_mesh(pm))
+    triangulate = false;
+
+  using Default_visitor = Corefinement::Default_visitor<PolygonMesh>;
+  Default_visitor default_visitor;
+  using Visitor_ref = typename internal_np::Lookup_named_param_def<internal_np::visitor_t, NamedParameters, Default_visitor>::reference;
+  Visitor_ref visitor = choose_parameter(get_parameter_reference(np, internal_np::visitor), default_visitor);
+
+  refine_with_plane(pm, plane, parameters::vertex_oriented_side_map(vos)
+                                          .edge_is_marked_map(ecm)
+                                          .vertex_point_map(vpm)
+                                          .geom_traits(traits)
+                                          .do_not_triangulate_faces(!triangulate)
+                                          .throw_on_self_intersection(throw_on_self_intersection)
+                                          .concurrency_tag(Concurrency_tag())
+                                          .visitor(std::ref(visitor)));
+
+  //split mesh along marked edges
+  internal::split_along_edges(pm, ecm, vpm, visitor);
 }
 
 
@@ -1041,8 +1408,8 @@ void split(TriangleMesh& tm,
   *
   * adds intersection edges of `iso_cuboid` and `tm` in `tm` and duplicates those edges.
   *
-  * \note `Iso_cuboid_3` must be from the same %Kernel as the point of the internal vertex point map of `TriangleMesh`.
-  * \note `Iso_cuboid_3` must be from the same %Kernel as the point of the vertex point map of `tm`.
+  * \note `Iso_cuboid_3` must be from the same kernel as the point of the internal vertex point map of `TriangleMesh`.
+  * \note `Iso_cuboid_3` must be from the same kernel as the point of the vertex point map of `tm`.
   *
   * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersect(tm)` \endlink
   *
@@ -1068,15 +1435,6 @@ void split(TriangleMesh& tm,
   *     \cgalParamDefault{`Corefinement::Default_visitor<TriangleMesh>`}
   *   \cgalParamNEnd
   *
-  *   \cgalParamNBegin{throw_on_self_intersection}
-  *     \cgalParamDescription{If `true`, the set of triangles close to the intersection of `tm`
-  *                           and `iso_cuboid` will be checked for self-intersections
-  *                           and `CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception`
-  *                           will be thrown if at least one self-intersection is found.}
-  *     \cgalParamType{Boolean}
-  *     \cgalParamDefault{`false`}
-  *   \cgalParamNEnd
-  *
   *   \cgalParamNBegin{clip_volume}
   *     \cgalParamDescription{If `true`, and `tm` is closed, the clipping will be done on
   *                           the volume \link coref_def_subsec bounded \endlink by `tm`
@@ -1091,14 +1449,24 @@ void split(TriangleMesh& tm,
   *     \cgalParamDefault{`true`}
   *   \cgalParamNEnd
   *
-  * *   \cgalParamNBegin{allow_self_intersections}
-  *     \cgalParamDescription{If `true`, self-intersections are accepted for `tm`.}
+  *   \cgalParamNBegin{throw_on_self_intersection}
+  *     \cgalParamDescription{If `true`, the set of triangles close to the intersection of `tm`
+  *                           and `iso_cuboid` will be checked for self-intersections
+  *                           and `CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception`
+  *                           will be thrown if at least one self-intersection is found.}
+  *     \cgalParamType{Boolean}
+  *     \cgalParamDefault{`false`}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{allow_self_intersections}
+  *     \cgalParamDescription{If `true`, self-intersections in `tm` are accepted.}
   *     \cgalParamType{Boolean}
   *     \cgalParamDefault{`false`}
   *     \cgalParamExtra{If this option is set to `true`, `tm` is no longer required to be without self-intersection.
   *                     Setting this option to `true` will automatically set `throw_on_self_intersection` to `false`
   *                     and `clip_volume` to `false`.}
   *   \cgalParamNEnd
+  *
   * \cgalNamedParamsEnd
   *
   * @see `clip()`

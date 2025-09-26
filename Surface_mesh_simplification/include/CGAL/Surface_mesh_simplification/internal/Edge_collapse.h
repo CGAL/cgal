@@ -296,6 +296,8 @@ private:
 
   void insert_in_PQ(const halfedge_descriptor h, Edge_data& data)
   {
+    CGAL_SMS_TRACE(5, "Insert " << edge_to_string(h) << " in PQ");
+
     CGAL_assertion(is_primary_edge(h));
     CGAL_expensive_assertion(!data.is_in_PQ());
     CGAL_expensive_assertion(!mPQ->contains(h));
@@ -588,18 +590,37 @@ loop()
 {
   CGAL_SMS_TRACE(0, "Collapsing edges...");
 
-  CGAL_assertion_code(size_type non_collapsable_count = 0);
-
   // Pops and processes each edge from the PQ
 
   std::optional<halfedge_descriptor> opt_h;
 
+// #define CGAL_SURF_SIMPL_INTERMEDIATE_STEPS_PRINTING
 #ifdef CGAL_SURF_SIMPL_INTERMEDIATE_STEPS_PRINTING
   int i_rm = 0;
 #endif
 
-  while((opt_h = pop_from_PQ()))
+  for(;;)
   {
+#ifdef CGAL_SURFACE_SIMPLIFICATION_ENABLE_TRACE
+    if(5 <= CGAL_SURFACE_SIMPLIFICATION_ENABLE_TRACE)
+    {
+      CGAL_SMS_TRACE_IMPL("== Current queue ==");
+
+      auto mPQ_clone = *mPQ;
+      std::optional<halfedge_descriptor> opt_th;
+      while((opt_th = mPQ_clone.extract_top()))
+      {
+        CGAL_SMS_TRACE_IMPL("\t" + edge_to_string(*opt_th));
+        Cost_type tcost = get_data(*opt_th).cost();
+        if(tcost)
+          CGAL_SMS_TRACE_IMPL("\t" + std::to_string(CGAL::to_double(*tcost)));
+      }
+    }
+#endif
+
+    if(!(opt_h = pop_from_PQ()))
+      break;
+
     CGAL_SMS_TRACE(1, "Popped " << edge_to_string(*opt_h));
     CGAL_assertion(!is_constrained(*opt_h));
 
@@ -635,11 +656,9 @@ loop()
           }
           else
           {
-            CGAL_assertion_code(++non_collapsable_count);
-
             m_visitor.OnNonCollapsable(profile);
 
-            CGAL_SMS_TRACE(1, edge_to_string(*opt_h) << " NOT Collapsible" );
+            CGAL_SMS_TRACE(1, edge_to_string(*opt_h) << " NOT Collapsible (filter)" );
           }
 
 #ifdef CGAL_SURF_SIMPL_INTERMEDIATE_STEPS_PRINTING
@@ -656,11 +675,9 @@ loop()
       }
       else
       {
-        CGAL_assertion_code(++non_collapsable_count);
-
         m_visitor.OnNonCollapsable(profile);
 
-        CGAL_SMS_TRACE(1, edge_to_string(*opt_h) << " NOT Collapsible" );
+        CGAL_SMS_TRACE(1, edge_to_string(*opt_h) << " NOT Collapsible (topology)" );
       }
     }
     else
@@ -754,7 +771,7 @@ is_collapse_topologically_valid(const Profile& profile)
   // The following loop checks the link condition for v0_v1.
   // Specifically, that for every vertex 'k' adjacent to both 'p and 'q', 'pkq' is a face of the mesh.
   //
-  for(boost::tie(eb1,ee1) = halfedges_around_source(profile.v0(), m_tm); res && eb1 != ee1; ++eb1)
+  for(std::tie(eb1,ee1) = halfedges_around_source(profile.v0(), m_tm); res && eb1 != ee1; ++eb1)
   {
     halfedge_descriptor v0_k = *eb1;
 
@@ -762,7 +779,7 @@ is_collapse_topologically_valid(const Profile& profile)
     {
       vertex_descriptor k = target(v0_k, m_tm);
 
-      for(boost::tie(eb2,ee2) = halfedges_around_source(k, m_tm); res && eb2 != ee2; ++eb2)
+      for(std::tie(eb2,ee2) = halfedges_around_source(k, m_tm); res && eb2 != ee2; ++eb2)
       {
         halfedge_descriptor k_v1 = *eb2;
 
@@ -823,7 +840,10 @@ is_collapse_topologically_valid(const Profile& profile)
   {
     /// ensure two constrained edges cannot get merged
     if(is_edge_adjacent_to_a_constrained_edge(profile, m_ecm))
+    {
+      CGAL_SMS_TRACE(3,"  edge to collapse is adjacent to a constrained edge.");
       return false;
+    }
 
     if(profile.is_v0_v1_a_border())
     {

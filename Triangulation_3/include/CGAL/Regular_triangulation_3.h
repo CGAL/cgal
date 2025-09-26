@@ -665,6 +665,9 @@ public:
   {
     CGAL_precondition(dimension() >= 2);
 
+    if(the_facet_is_in_its_cz)
+      *the_facet_is_in_its_cz = false;
+
     std::vector<Cell_handle> cells;
     cells.reserve(32);
     std::vector<Facet> facets;
@@ -2148,7 +2151,7 @@ side_of_power_circle(Cell_handle c, int i, const Weighted_point& p,
   if(dimension() == 2)
   {
     CGAL_precondition(i == 3);
-    // the triangulation is supposed to be valid, ie the facet
+    // the triangulation is supposed to be valid, i.e. the facet
     // with vertices 0 1 2 in this order is positively oriented
     if(! c->has_vertex(infinite_vertex(), i3))
       return Bounded_side(side_of_oriented_power_circle(c->vertex(0)->point(),

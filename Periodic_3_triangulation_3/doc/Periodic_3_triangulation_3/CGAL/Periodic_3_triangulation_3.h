@@ -552,6 +552,24 @@ size_type number_of_stored_facets() const;
 /// @{
 
 /*!
+Converts the `Periodic_point` `pp` (point-offset pair) to the
+corresponding `Point` in \f$ \mathbb R^3\f$.
+*/
+Point point(const Periodic_point& pp) const;
+
+/*!
+Equivalent to
+the call `t.point(t.periodic_point(v));`
+*/
+Point point(Vertex_handle v) const;
+
+/*!
+Equivalent to
+the call `t.point(t.periodic_point(c,idx));`
+*/
+Point point(Cell_handle c, int idx) const;
+
+/*!
 Returns the periodic point given by vertex `v`. If `t` is
 represented in the 1-sheeted covering space, the offset is always
 zero. Otherwise `v` can correspond to a periodic copy outside
@@ -1294,7 +1312,7 @@ OutputIterator
 adjacent_vertices(Vertex_handle v, OutputIterator vertices) const;
 
 /*!
-Returns the degree of a vertex, that is, the number of adjacent vertices.
+Returns the degree of `v`, that is, the number of adjacent vertices.
 \pre `v` \f$ \neq\f$ `Vertex_handle()`, `t`.`is_vertex(v)`.
 */
 size_type degree(Vertex_handle v) const;

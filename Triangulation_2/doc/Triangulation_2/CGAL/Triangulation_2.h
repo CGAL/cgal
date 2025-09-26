@@ -472,7 +472,7 @@ const TriangulationDataStructure_2 & tds() const;
 
 /// @}
 
-/// \name Non const access
+/// \name Non-Const Access
 /// \attention The responsibility of keeping a valid triangulation belongs to the
 /// user when using advanced operations allowing a direct manipulation
 /// of the `tds`. This method is mainly a help for users implementing
@@ -527,6 +527,11 @@ is_infinite(Edge_circulator ec) const;
 */
 bool
 is_infinite(All_edges_iterator ei) const;
+
+/*!
+`true` if `v` is a vertex of the triangulation.
+*/
+bool is_vertex(Vertex_handle v) const;
 
 /*!
 `true` if there is an edge having `va` and `vb` as
@@ -785,6 +790,7 @@ is returned.
 */
 Vertex_handle move(Vertex_handle v, const Point & p);
 
+/// @}
 
 /// \name Specialized Modifiers
 /// The following member functions offer more specialized versions of
@@ -1116,6 +1122,13 @@ in counterclockwise order around `v`.
 */
 Vertex_circulator incident_vertices(Vertex_handle v, Face_handle f) ;
 
+/*!
+Returns the degree of `v`, that is, the number of incident vertices.
+The infinite vertex is counted.
+\pre `v != Vertex_handle()`, `t.is_vertex(v)`.
+*/
+size_type degree(Vertex_handle v) const;
+
 /// @}
 
 /// \name Traversal Between Adjacent Faces
@@ -1190,6 +1203,18 @@ Returns the line segment corresponding to edge `*ei`.
 */
 Segment
 segment(const Edge_iterator& ei) const;
+
+/*!
+Returns the point given by vertex `i` of face `f`.
+\pre `t.dimension()` \f$ \geq0\f$ and \f$ i \in\{0,1,2\}\f$ in dimension 2, \f$ i \in\{0,1\}\f$ in dimension 1, \f$ i = 0\f$ in dimension 0, and the vertex is finite.
+*/
+const Point& point(Face_handle f, int i) const;
+
+/*!
+Same as the previous method for vertex `v`.
+\pre `t.dimension()` \f$ \geq0\f$ and the vertex is finite.
+*/
+const Point& point(Vertex_handle v) const;
 
 /*!
 Compute the circumcenter of the face pointed to by f. This function

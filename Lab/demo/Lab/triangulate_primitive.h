@@ -145,14 +145,9 @@ private:
     Vertex_handle previous, first, last_inserted;
 
     // Iterate the points of the facet and decide if they must be inserted in the CDT
-    typename Kernel::FT x(0), y(0), z(0);
-
     for(std::size_t i = 0;i<idPoints.size();i++)
     {
       const std::pair<typename Kernel::Point_3, Index>& idPoint = idPoints[i];
-      x += idPoint.first.x();
-      y += idPoint.first.y();
-      z += idPoint.first.z();
 
       Vertex_handle vh;
       // Always insert the first point, then only insert if the distance with the previous is reasonable.

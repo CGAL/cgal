@@ -79,7 +79,7 @@ namespace CGAL {
 
   public:
 
-    /*! Constructor. */
+    /*! constructs. */
     Arrangement_2_writer(const Arrangement_2& arr) :
       m_arr(arr),
       m_dcel(nullptr),
@@ -90,11 +90,11 @@ namespace CGAL {
       m_dcel = &(arr_access.dcel());
     }
 
-    /*! Destructor. */
+    /*! destructs. */
     virtual ~Arrangement_2_writer()
     {}
 
-    /*! Write the arrangement. */
+    /*! writes the arrangement. */
     template <class Formatter>
     void operator()(Formatter& formatter)
     {
@@ -141,7 +141,7 @@ namespace CGAL {
 
   protected:
 
-    /*! Write a vertex. */
+    /*! writes a vertex. */
     template <class Formatter>
     void _write_vertex(Formatter& formatter, Vertex_const_iterator vit)
     {
@@ -174,7 +174,7 @@ namespace CGAL {
       formatter.write_vertex_end();
     }
 
-    /*! Write an edge (a pair of halfedges). */
+    /*! writes an edge (a pair of halfedges). */
     template <class Formatter>
     void _write_edge(Formatter& formatter, Edge_const_iterator hit)
     {
@@ -215,7 +215,7 @@ namespace CGAL {
       formatter.write_edge_end();
     }
 
-    /*! Write a face. */
+    /*! writes a face. */
     template <class Formatter>
     void _write_face(Formatter& formatter, Face_const_iterator fit) const
     {
@@ -284,7 +284,7 @@ namespace CGAL {
       formatter.write_face_end();
     }
 
-    /*! Write the edges along a given CCB. */
+    /*! writes the edges along a given CCB. */
     template <class Formatter>
     void _write_ccb(Formatter& formatter, const DHalfedge* ccb) const
     {
@@ -298,7 +298,7 @@ namespace CGAL {
       formatter.write_ccb_halfedges_end();
     }
 
-    /*! Get the mapped index of a given vertex. */
+    /*! obtains the mapped index of a given vertex. */
     int _index(const DVertex* v) const
     {
       typename Vertex_index_map::const_iterator   pos = m_v_index.find(v);
@@ -307,7 +307,7 @@ namespace CGAL {
       return (pos->second);
     }
 
-    /*! Get the mapped index of a given halfedge. */
+    /*! obtains the mapped index of a given halfedge. */
     int _index(const DHalfedge* he) const
     {
       typename Halfedge_index_map::const_iterator  pos = m_he_index.find(he);
@@ -316,7 +316,7 @@ namespace CGAL {
       return (pos->second);
     }
 
-    /*! Get the number of edges along a given CCB. */
+    /*! obtains the number of edges along a given CCB. */
     std::size_t _circulator_size(const DHalfedge* ccb) const
     {
       CGAL_assertion(ccb != nullptr);
@@ -333,6 +333,6 @@ namespace CGAL {
     }
   };
 
-} //namespace CGAL
+} // namespace CGAL
 
-#endif // CGAL_IO_ARRANGEMENT_2_WRITER_H
+#endif

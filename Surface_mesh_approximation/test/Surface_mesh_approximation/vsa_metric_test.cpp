@@ -102,7 +102,7 @@ int main()
   }
 
   // create compact metric approximation algorithm instance
-  std::cout << "create compact vas instance" << std::endl;
+  std::cout << "create compact vsa instance" << std::endl;
   Compact_metric_point_proxy error_metric(center_pmap, area_pmap);
 
   Compact_approx approx(mesh, vpmap, error_metric);

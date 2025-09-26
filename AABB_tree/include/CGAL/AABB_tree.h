@@ -199,9 +199,7 @@ namespace CGAL {
     }
 
     /// returns the axis-aligned bounding box of the whole tree.
-    /// \pre `!empty()`
     const Bounding_box bbox() const {
-      CGAL_precondition(!empty());
       if(size() > 1)
         return root_node()->bbox();
       else
@@ -551,7 +549,7 @@ public:
         traits.intersection(query, singleton_data());
         break;
       default: // if(size() >= 2)
-        root_node()->template traversal_with_priority_and_group_traversal(m_primitives, query, traits, m_primitives.size(), 0, group_traversal_bound);
+        root_node()->traversal_with_priority_and_group_traversal(m_primitives, query, traits, m_primitives.size(), 0, group_traversal_bound);
       }
     }
 

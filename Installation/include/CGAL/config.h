@@ -37,6 +37,13 @@
 #endif
 
 #ifdef CGAL_INCLUDE_WINDOWS_DOT_H
+
+#if defined(_MSC_VER) && defined(_DEBUG)
+// Include support for memory leak detection
+// This is only available in debug mode and when _CRTDBG_MAP_ALLOC is defined.
+// It will include <crtdbg.h> which will redefine `malloc` and `free`.
+#  define _CRTDBG_MAP_ALLOC 1
+#endif
 // Mimic users including this file which defines min max macros
 // and other names leading to name clashes
 #include <windows.h>
@@ -142,13 +149,17 @@
 #define CGAL_USE_SSE2_FABS
 #endif
 
-// Same for C++17
 #if !(__cplusplus >= 201703L || _MSVC_LANG >= 201703L)
 #error "CGAL requires C++ 17"
 #endif
-// Same for C++20
+
+// Macro to detect C++20
 #if __cplusplus >= 202002L || _MSVC_LANG >= 202002L
 #  define CGAL_CXX20 1
+#endif
+// Same for C++23
+#if __cplusplus >= 202302L || _MSVC_LANG >= 202302L
+#  define CGAL_CXX23 1
 #endif
 
 
@@ -241,20 +252,6 @@
 #  define CGAL_SUNPRO_INITIALIZE(C) C
 #else
 #  define CGAL_SUNPRO_INITIALIZE(C)
-#endif
-
-//----------------------------------------------------------------------//
-// MacOSX specific.
-//----------------------------------------------------------------------//
-
-#ifdef __APPLE__
-#  if defined(__GNUG__) && (__GNUG__ == 4) && (__GNUC_MINOR__ == 0) \
-   && defined(__OPTIMIZE__) && !defined(CGAL_NO_WARNING_FOR_MACOSX_GCC_4_0_BUG)
-#    warning "Your configuration may exhibit run-time errors in CGAL code"
-#    warning "This appears with g++ 4.0 on MacOSX when optimizing"
-#    warning "You can disable this warning using -DCGAL_NO_WARNING_FOR_MACOSX_GCC_4_0_BUG"
-#    warning "For more information, see https://www.cgal.org/FAQ.html#mac_optimization_bug"
-#  endif
 #endif
 
 //-------------------------------------------------------------------//
@@ -358,8 +355,11 @@ using std::max;
 #endif
 
 // Macro CGAL_ASSUME and CGAL_UNREACHABLE
+#ifdef CGAL_CXX23
+#  define CGAL_ASSUME(EX) [[ assume(EX) ]]
+#  define CGAL_UNREACHABLE() std::unreachable()
+#elif __has_builtin(__builtin_unreachable) || (CGAL_GCC_VERSION > 0 && !__STRICT_ANSI__)
 // Call a builtin of the compiler to pass a hint to the compiler
-#if __has_builtin(__builtin_unreachable) || (CGAL_GCC_VERSION > 0 && !__STRICT_ANSI__)
 // From g++ 4.5, there exists a __builtin_unreachable()
 // Also in LLVM/clang
 #  define CGAL_ASSUME(EX) if(!(EX)) { __builtin_unreachable(); }
@@ -461,6 +461,11 @@ namespace CGAL {
   using cpp11::copy_n;
 } // end of the temporary compatibility with CGAL-4.14
 #endif // CGAL_NO_DEPRECATED_CODE
+
+#if __has_include(<version>)
+#  include <version>
+#endif
+
 namespace CGAL {
 
 // Typedef for the type of nullptr.
@@ -476,7 +481,7 @@ namespace cpp11{
 }//namespace cpp11
 } //namespace CGAL
 
-#if __cpp_lib_concepts >= 201806L
+#if __cpp_lib_concepts >= 201806L && __cpp_lib_ranges >= 201911L
 #  define CGAL_CPP20_REQUIRE_CLAUSE(x) requires x
 #  define CGAL_TYPE_CONSTRAINT(x) x
 #else
@@ -501,7 +506,7 @@ namespace cpp11{
 #  define CGAL_FALLTHROUGH while(false){}
 #endif
 
-#if __cpp_lib_format >= 201907L || (__has_include(<format>) && (__cplusplus >= 202000L || _MSVC_LANG >= 202000L))
+#if CGAL_CXX20 && __cpp_lib_format >= 201907L
 #  define CGAL_CAN_USE_CXX20_FORMAT 1
 #endif
 

@@ -6,7 +6,7 @@ namespace CGAL {
  * \f$x\f$-monotone curve. It is used by models geometry traits concept that
  * handle boundary conditions.
  *
- * \sa `ArrangementOpenBoundaryTraits_2`
+ * \sa `AosOpenBoundaryTraits_2`
  */
 enum Arr_curve_end { ARR_MIN_END, ARR_MAX_END };
 

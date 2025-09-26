@@ -59,7 +59,6 @@ void compute(SMesh* sMesh,
   namespace PMP = CGAL::Polygon_mesh_processing;
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic_kernel;
   typedef Epic_kernel::Point_3 Point;
-  typedef Epic_kernel::Point_3 Point;
   typedef Epic_kernel::Vector_3 Vector;
   typedef boost::graph_traits<SMesh>::vertex_descriptor Vertex_descriptor;
 
@@ -68,7 +67,7 @@ void compute(SMesh* sMesh,
   bool created = false;
   SMesh::Property_map<Vertex_descriptor, PMP::Principal_curvatures_and_directions<Epic_kernel>> principal_curvatures_and_directions_map;
 
-  boost::tie(principal_curvatures_and_directions_map, created) = sMesh->add_property_map<Vertex_descriptor, PMP::Principal_curvatures_and_directions<Epic_kernel>>
+  std::tie(principal_curvatures_and_directions_map, created) = sMesh->add_property_map<Vertex_descriptor, PMP::Principal_curvatures_and_directions<Epic_kernel>>
     ("v:principal_curvatures_and_directions_map", { 0, 0,
         Vector(0,0,0),
         Vector(0,0,0) });
@@ -85,7 +84,8 @@ void compute(SMesh* sMesh,
   for (Vertex_descriptor v : vertices(*sMesh))
   {
     const PMP::Principal_curvatures_and_directions<Epic_kernel> pc = principal_curvatures_and_directions_map[v];
-    max_curvature_magnitude_on_mesh = std::max(max_curvature_magnitude_on_mesh, std::max(abs(pc.min_curvature), abs(pc.max_curvature)));
+    max_curvature_magnitude_on_mesh =
+        (std::max)(max_curvature_magnitude_on_mesh, (std::max)(abs(pc.min_curvature), abs(pc.max_curvature)));
   }
 
   for(Vertex_descriptor v : vertices(*sMesh))

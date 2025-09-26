@@ -26,7 +26,7 @@ or `Dynamic_dimension_tag`. In the latter case, the dimension of the space is sp
 \attention Only the interfaces specific to this class are listed below. Refer to the
 concepts for the rest.
 
-\attention Known bugs: the functor `Kernel_d::Intersect_d` is not yet implemented. `Kernel_d::Contained_in_affine_hull` assumes that the iterators refer to an affinely independent family. `Kernel_d::Orientation_d` only works for points, not vectors.
+\attention Known bugs: the functor `Kernel_d::Intersect_d` is not yet implemented. `Kernel_d::Contained_in_affine_hull_d` assumes that the iterators refer to an affinely independent family. `Kernel_d::Orientation_d` only works for points, not vectors.
 
 \attention This kernel requires the \ref thirdpartyEigen "Eigen" library.
 
@@ -41,6 +41,16 @@ concepts for the rest.
 */
 template< typename DimensionTag >
 struct Epick_d {
+
+/*! the dimension
+*/
+typedef DimensionTag Dimension;
+
+/*!
+A bidirectional iterator over the %Cartesian coordinates of a point
+*/
+class Cartesian_const_iterator{};
+
 /*!
 represents a point in the Euclidean space
 \cgalModels{DefaultConstructible,Assignable}
@@ -59,7 +69,7 @@ Point_d(double x0, double x1, ...);
 template<typename InputIterator>
 Point_d(InputIterator first, InputIterator end);
 
-/*! returns the i'th coordinate of a point.
+/*! returns the i-th coordinate of a point.
     \pre `i` is non-negative and less than the dimension. */
 double operator[](int i)const;
 
@@ -67,6 +77,48 @@ double operator[](int i)const;
 Cartesian_const_iterator_d cartesian_begin()const;
 /*! returns an iterator pointing beyond the last Cartesian coordinate. */
 Cartesian_const_iterator_d cartesian_end()const;
+
+/*! returns whether the points coincide. This may not be safe
+    if the points are the result of inexact constructions. */
+friend bool operator==(Point_d,Point_d);
+/*! returns whether the points are distinct. This may not be safe
+    if the points are the result of inexact constructions. */
+friend bool operator!=(Point_d,Point_d);
+};
+
+/*!
+represents a vector in the Euclidean space
+\cgalModels{DefaultConstructible,Assignable}
+*/
+class Vector_d {
+public:
+/*! introduces a vector with coordinates (x0, x1, ...) where the number of
+    coordinates matches the dimension.
+    \pre `DimensionTag` is a fixed dimension, not `Dynamic_dimension_tag`. */
+Vector_d(double x0, double x1, ...);
+
+/*! introduces a vector with coordinate set `[first,end)`.
+    \pre If `DimensionTag` is a fixed dimension, it matches `distance(first,end)`.
+    \tparam InputIterator has its value type that is convertible to `double`.
+    */
+template<typename InputIterator>
+Vector_d(InputIterator first, InputIterator end);
+
+/*! returns the i-th coordinate of a vector.
+    \pre `i` is non-negative and less than the dimension. */
+double operator[](int i)const;
+
+/*! returns an iterator pointing to the zeroth Cartesian coordinate. */
+Cartesian_const_iterator_d cartesian_begin()const;
+/*! returns an iterator pointing beyond the last Cartesian coordinate. */
+Cartesian_const_iterator_d cartesian_end()const;
+
+/*! returns whether the vectors coincide. This may not be safe
+    if the vectors are the result of inexact constructions. */
+friend bool operator==(Vector_d,Vector_d);
+/*! returns whether the vectors are distinct. This may not be safe
+    if the vectors are the result of inexact constructions. */
+friend bool operator!=(Vector_d,Vector_d);
 };
 
 /*!
@@ -147,11 +199,33 @@ public:
  */
 FT operator()(Weighted_point_d pw, Weighted_point_d qw);
 };
-Construct_circumcenter_d construct_circumcenter_d_object();
+
+class Construct_bbox_d {
+public:
+/*! returns the bounding box of point `p`.
+ */
+  Bbox_d<DimensionTag> operator()(Point_d p);
+};
+
+class Construct_cartesian_const_iterator_d {
+public:
+/*! returns the begin iterator to iterate over the %Cartesian coordinates of point `p`.
+ */
+  Cartesian_const_iterator_d operator()(Point_d p);
+
+  /*! returns the past-the-end iterator to iterate over the %Cartesian coordinates of point `p`.
+ */
+  Cartesian_const_iterator_d operator()(Point_d p, int);
+};
+
 Compute_power_product_d compute_power_product_d_object();
 Compute_squared_radius_d compute_squared_radius_d_object();
 Compute_squared_radius_smallest_orthogonal_sphere_d compute_squared_radius_smallest_orthogonal_sphere_d_object();
+Construct_bbox_d construct_bbox_d_object();
+Construct_cartesian_const_iterator_d  construct_cartesian_const_iterator_d_object();
+Construct_circumcenter_d construct_circumcenter_d_object();
 Construct_power_sphere_d construct_power_sphere_d_object();
 Power_side_of_bounded_power_sphere_d power_side_of_bounded_power_sphere_d_object();
+
 }; /* end Epick_d */
 } /* end namespace CGAL */

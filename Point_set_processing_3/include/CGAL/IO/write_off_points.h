@@ -25,7 +25,6 @@
 
 #include <iostream>
 #include <fstream>
-#include <fstream>
 #include <iterator>
 #include <type_traits>
 
@@ -198,107 +197,6 @@ bool write_OFF(const std::string& filename,
 }
 
 } // IO namespace
-
-#ifndef CGAL_NO_DEPRECATED_CODE
-
-/// \cond SKIP_IN_MANUAL
-
-template <typename ForwardIterator,
-          typename PointMap,
-          typename NormalMap,
-          typename Kernel>
-CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::write_off_points_and_normals(), please update your code")
-bool write_off_points_and_normals(std::ostream& os, ///< output stream.
-                                  ForwardIterator first,  ///< iterator over the first input point.
-                                  ForwardIterator beyond, ///< past-the-end iterator over the input points.
-                                  PointMap point_map, ///< property map: value_type of ForwardIterator -> Point_3.
-                                  NormalMap normal_map, ///< property map: value_type of ForwardIterator -> Vector_3.
-                                  const Kernel& /*kernel*/) ///< geometric traits.
-{
-  CGAL::Iterator_range<ForwardIterator> points(first, beyond);
-  return write_off_points(os, points,
-                          CGAL::parameters::point_map(point_map)
-                                           .normal_map(normal_map)
-                                           .geom_traits(Kernel()));
-}
-
-template <typename ForwardIterator,
-          typename PointMap,
-          typename NormalMap
->
-CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::write_off_points_and_normals(), please update your code")
-bool write_off_points_and_normals(std::ostream& os, ///< output stream.
-                                  ForwardIterator first, ///< first input point.
-                                  ForwardIterator beyond, ///< past-the-end input point.
-                                  PointMap point_map, ///< property map: value_type of OutputIterator -> Point_3.
-                                  NormalMap normal_map) ///< property map: value_type of OutputIterator -> Vector_3.
-{
-  CGAL::Iterator_range<ForwardIterator> points(first, beyond);
-  return write_off_points(os, points,
-                          parameters::point_map(point_map)
-                                     .normal_map(normal_map));
-}
-
-template <typename ForwardIterator,
-          typename NormalMap>
-CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::write_off_points_and_normals(), please update your code")
-bool write_off_points_and_normals(std::ostream& os, ///< output stream.
-                                  ForwardIterator first, ///< first input point.
-                                  ForwardIterator beyond, ///< past-the-end input point.
-                                  NormalMap normal_map) ///< property map: value_type of OutputIterator -> Vector_3.
-{
-  CGAL::Iterator_range<ForwardIterator> points(first, beyond);
-  return write_off_points(os, points, parameters::normal_map (normal_map));
-}
-
-template <typename ForwardIterator,
-          typename PointMap,
-          typename Kernel>
-CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::write_off_points(), please update your code")
-bool write_off_points(std::ostream& os, ///< output stream.
-                      ForwardIterator first,  ///< iterator over the first input point.
-                      ForwardIterator beyond, ///< past-the-end iterator over the input points.
-                      PointMap point_map, ///< property map: value_type of ForwardIterator -> Point_3.
-                      const Kernel&) ///< geometric traits.
-{
-  CGAL::Iterator_range<ForwardIterator> points(first, beyond);
-  return write_off_points(os, points,
-                          parameters::point_map(point_map)
-                                     .geom_traits(Kernel()));
-}
-
-template <typename ForwardIterator,
-          typename PointMap>
-CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::write_off_points(), please update your code")
-bool write_off_points(std::ostream& os, ///< output stream.
-                      ForwardIterator first, ///< first input point.
-                      ForwardIterator beyond, ///< past-the-end input point.
-                      PointMap point_map) ///< property map: value_type of OutputIterator -> Point_3.
-{
-  CGAL::Iterator_range<ForwardIterator> points(first, beyond);
-  return write_off_points(os, points, parameters::point_map (point_map));
-}
-
-template <typename ForwardIterator
->
-CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::write_off_points(), please update your code")
-bool write_off_points(std::ostream& os, ///< output stream.
-                      ForwardIterator first, ///< first input point.
-                      ForwardIterator beyond) ///< past-the-end input point.
-{
-  CGAL::Iterator_range<ForwardIterator> points(first, beyond);
-  return write_off_points(os, points);
-}
-
-/// \endcond
-
-template <typename PointRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
-CGAL_DEPRECATED bool write_off_points(std::ostream& os, const PointRange& points, const CGAL_NP_CLASS& np = parameters::default_values())
-{
-  return IO::write_OFF(os, points, np);
-}
-
-#endif // CGAL_NO_DEPRECATED_CODE
 
 } // namespace CGAL
 

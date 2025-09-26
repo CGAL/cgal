@@ -169,10 +169,7 @@ public:
     const std::string& name = property->name();
     if(name == "vertex1" || name == "vertex2")
       return true;
-#ifndef CGAL_NO_DEPRECATED_CODE
-    if(name == "v0" || name == "v1")
-      return true;
-#endif
+
     return false;
   }
 
@@ -939,21 +936,7 @@ bool read_PLY(std::istream& is, Surface_mesh<P>& sm)
 
 } // namespace IO
 
-#ifndef CGAL_NO_DEPRECATED_CODE
 
-/*!
-  \ingroup PkgSurfaceMeshIOFuncDeprecated
-  \deprecated This function is deprecated since \cgal 5.3, `CGAL::IO::read_PLY(std::ostream&, const Surface_mesh<Point>&)` should be used instead.
-*/
-template <typename P>
-CGAL_DEPRECATED bool read_ply(std::istream& is, Surface_mesh<P>& sm, std::string& comments)
-{
-  return IO::read_PLY(is, sm, comments);
-}
-
-#endif // CGAL_NO_DEPRECATED_CODE
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Write
 
@@ -1206,26 +1189,6 @@ bool write_PLY(std::ostream& os, const Surface_mesh<P>& sm, const CGAL_NP_CLASS&
 /// \endcond
 
 } // namespace IO
-
-#ifndef CGAL_NO_DEPRECATED_CODE
-
-/*!
-  \ingroup PkgSurfaceMeshIOFuncDeprecated
-  \deprecated This function is deprecated since \cgal 5.3, `CGAL::IO::write_PLY(std::ostream&, const Surface_mesh<Point>&)` should be used instead.
-*/
-
-template <typename P>
-CGAL_DEPRECATED bool write_ply(std::ostream& os, const Surface_mesh<P>& sm, const std::string& comments)
-{
-  return IO::write_PLY(os, sm, comments);
-}
-
-template <typename P>
-CGAL_DEPRECATED bool write_ply(std::ostream& os, const Surface_mesh<P>& sm)
-{
-  return write_PLY(os, sm, "");
-}
-#endif // CGAL_NO_DEPRECATED_CODE
 
 } // namespace CGAL
 
