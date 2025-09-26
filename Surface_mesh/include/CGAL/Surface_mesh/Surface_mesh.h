@@ -2680,8 +2680,12 @@ collect_garbage(Visitor &visitor)
     for (i=0; i<nH; ++i)
     {
         h = Halfedge_index(i);
-        set_target(h, vmap[target(h)]);
-        set_next(h, hmap[next(h)]);
+        if(target(h) != null_vertex()){
+          set_target(h, vmap[target(h)]);
+        }
+        if(next(h) != null_halfedge()){
+          set_next(h, hmap[next(h)]);
+        }
         if (!is_border(h))
             set_face(h, fmap[face(h)]);
     }
@@ -2691,7 +2695,8 @@ collect_garbage(Visitor &visitor)
     for (i=0; i<nF; ++i)
     {
         f = Face_index(i);
-        set_halfedge(f, hmap[halfedge(f)]);
+        if( halfedge(f) != null_halfedge())
+          set_halfedge(f, hmap[halfedge(f)]);
     }
 
     //apply visitor before invalidating the maps
