@@ -11,7 +11,6 @@ using Epick = CGAL::Exact_predicates_inexact_constructions_kernel;
 int main() {
   std::vector<Kernel::Point_3> points;
   std::vector<std::array<std::size_t, 3>> polygons;
-  auto pm = CGAL::make_cartesian_converter_property_map<Epick::Point_3>(CGAL::make_identity_property_map(Kernel::Point_3()));
-  CGAL::IO::write_polygon_soup("xxx.off", points, polygons, CGAL::parameters::stream_precision(17).point_map(pm));
+  CGAL::IO::write_polygon_soup("xxx.off", points, polygons, CGAL::parameters::stream_precision(17));
   return 0;
 }

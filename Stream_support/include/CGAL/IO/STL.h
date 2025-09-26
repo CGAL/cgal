@@ -17,6 +17,9 @@
 
 #include <CGAL/IO/STL/STL_reader.h>
 #include <CGAL/IO/helpers.h>
+#include <CGAL/Cartesian_converter.h>
+#include <CGAL/Simple_cartesian.h>
+
 
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
@@ -296,7 +299,6 @@ bool write_STL(std::ostream& os,
 
   typedef typename boost::property_traits<PointMap>::value_type             Point;
   typedef typename CGAL::Kernel_traits<Point>::Kernel                       K;
-  typedef typename K::Vector_3                                              Vector_3;
 
   K k = choose_parameter<K>(get_parameter(np, internal_np::geom_traits));
 
@@ -304,6 +306,11 @@ bool write_STL(std::ostream& os,
     return false;
 
   set_stream_precision_from_NP(os, np);
+
+  typedef Simple_cartesian<double> SC;
+  typedef typename SC::Point_3  Point_3;
+  typedef typename SC::Vector_3 Vector_3;
+  Cartesian_converter<Kernel,SC> conv;
 
   if(get_mode(os) == BINARY)
   {
@@ -317,12 +324,16 @@ bool write_STL(std::ostream& os,
       const Point& q = get(point_map, points[face[1]]);
       const Point& r = get(point_map, points[face[2]]);
 
-      const Vector_3 n = collinear(p,q,r) ? Vector_3(1,0,0) : unit_normal(p,q,r);
+      Point_3 pp = conv(p);
+      Point_3 qq = conv(q);
+      Point_3 rr = conv(r);
 
-      const float coords[12] = { static_cast<float>(n.x()), static_cast<float>(n.y()), static_cast<float>(n.z()),
-                                 static_cast<float>(p.x()), static_cast<float>(p.y()), static_cast<float>(p.z()),
-                                 static_cast<float>(q.x()), static_cast<float>(q.y()), static_cast<float>(q.z()),
-                                 static_cast<float>(r.x()), static_cast<float>(r.y()), static_cast<float>(r.z()) };
+      const Vector_3 nn = collinear(pp,qq,rr) ? Vector_3(1,0,0) : unit_normal(pp,qq,rr);
+
+      const float coords[12] = { static_cast<float>(nn.x()), static_cast<float>(nn.y()), static_cast<float>(nn.z()),
+                                 static_cast<float>(pp.x()), static_cast<float>(pp.y()), static_cast<float>(pp.z()),
+                                 static_cast<float>(qq.x()), static_cast<float>(qq.y()), static_cast<float>(qq.z()),
+                                 static_cast<float>(rr.x()), static_cast<float>(rr.y()), static_cast<float>(rr.z()) };
 
       for(int i=0; i<12; ++i)
         os.write(reinterpret_cast<const char *>(&coords[i]), sizeof(coords[i]));
@@ -338,11 +349,15 @@ bool write_STL(std::ostream& os,
       const Point& q = get(point_map, points[face[1]]);
       const Point& r = get(point_map, points[face[2]]);
 
-      const Vector_3 n = internal::construct_normal_of_STL_face(p, q, r, k);
-      os << "facet normal " << n << "\nouter loop\n";
-      os << "vertex " << p << "\n";
-      os << "vertex " << q << "\n";
-      os << "vertex " << r << "\n";
+      Point_3 pp = conv(p);
+      Point_3 qq = conv(q);
+      Point_3 rr = conv(r);
+
+      const Vector_3 nn = conv(internal::construct_normal_of_STL_face(p, q, r, k));
+      os << "facet normal " << nn << "\nouter loop\n";
+      os << "vertex " << pp << "\n";
+      os << "vertex " << qq << "\n";
+      os << "vertex " << rr << "\n";
       os << "endloop\nendfacet\n";
     }
     os << "endsolid"<<std::endl;
