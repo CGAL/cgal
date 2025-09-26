@@ -307,7 +307,7 @@ bool write_STL(std::ostream& os,
 
   set_stream_precision_from_NP(os, np);
 
-  typedef Simple_cartesian<double> SC;
+  typedef Simple_cartesian<float> SC;
   typedef typename SC::Point_3  Point_3;
   typedef typename SC::Vector_3 Vector_3;
   Cartesian_converter<K,SC> conv;
@@ -330,10 +330,10 @@ bool write_STL(std::ostream& os,
 
       const Vector_3 nn = collinear(pp,qq,rr) ? Vector_3(1,0,0) : unit_normal(pp,qq,rr);
 
-      const float coords[12] = { static_cast<float>(nn.x()), static_cast<float>(nn.y()), static_cast<float>(nn.z()),
-                                 static_cast<float>(pp.x()), static_cast<float>(pp.y()), static_cast<float>(pp.z()),
-                                 static_cast<float>(qq.x()), static_cast<float>(qq.y()), static_cast<float>(qq.z()),
-                                 static_cast<float>(rr.x()), static_cast<float>(rr.y()), static_cast<float>(rr.z()) };
+      const float coords[12] = { nn.x(), nn.y(), nn.z(),
+                                 pp.x(), pp.y(), pp.z(),
+                                 qq.x(), qq.y(), qq.z(),
+                                 rr.x(), rr.y(), rr.z() };
 
       for(int i=0; i<12; ++i)
         os.write(reinterpret_cast<const char *>(&coords[i]), sizeof(coords[i]));
