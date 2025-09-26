@@ -321,7 +321,6 @@ public:
     // If polyline is a loop, ensure that distance is given from start_it
     if(is_loop())
     {
-      std::cout << "is loop" << std::endl;
       if(distance < FT(0))         { distance += length(); }
       else if(distance > length()) { distance -= length(); }
     }
