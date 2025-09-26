@@ -96,27 +96,27 @@ enum class Edge_case {
   // Compute normal vector of the face (not normalized).
   template<
     typename Face,
-    typename VertexToPointMap,
+    typename VertexPointMap,
     typename TriangleMesh,
     typename GeomTraits>
   typename GeomTraits::Vector_3 get_face_normal(
     const Face& face,
-    const VertexToPointMap& vertex_to_point_map,
-    const TriangleMesh& triangle_mesh,
+    const VertexPointMap& vertex_point_map,
+    const TriangleMesh& tmesh,
     const GeomTraits& traits){
 
     using Point_3 = typename GeomTraits::Point_3;
     using Vector_3 = typename GeomTraits::Vector_3;
     const auto cross_3 = traits.construct_cross_product_vector_3_object();
 
-    const auto hedge = halfedge(face, triangle_mesh);
-    const auto vertices = vertices_around_face(hedge, triangle_mesh);
+    const auto hedge = halfedge(face, tmesh);
+    const auto vertices = vertices_around_face(hedge, tmesh);
     CGAL_precondition(vertices.size() >= 3);
 
     auto vertex = vertices.begin();
-    const Point_3& point1 = get(vertex_to_point_map, *vertex); ++vertex;
-    const Point_3& point2 = get(vertex_to_point_map, *vertex); ++vertex;
-    const Point_3& point3 = get(vertex_to_point_map, *vertex);
+    const Point_3& point1 = get(vertex_point_map, *vertex); ++vertex;
+    const Point_3& point2 = get(vertex_point_map, *vertex); ++vertex;
+    const Point_3& point3 = get(vertex_point_map, *vertex);
 
     const Vector_3 u = point2 - point1;
     const Vector_3 v = point3 - point1;
@@ -162,14 +162,14 @@ enum class Edge_case {
 
   template<
     typename VertexRange,
-    typename VertexToPointMap,
+    typename VertexPointMap,
     typename TriangleMesh,
     typename OutIterator,
     typename GeomTraits>
   OutIterator boundary_coordinates_3(
     VertexRange& vertices_face,
-    const VertexToPointMap& vertex_to_point_map,
-    const TriangleMesh& triangle_mesh,
+    const VertexPointMap& vertex_point_map,
+    const TriangleMesh& tmesh,
     const typename GeomTraits::Point_3& query,
     OutIterator coordinates,
     const GeomTraits& traits,
@@ -190,8 +190,8 @@ enum class Edge_case {
     const auto v0 = *vertex_itr; vertex_itr++;
     const auto v1 = *vertex_itr; vertex_itr++;
     const auto v2 = *vertex_itr;
-    const Plane_3 face_plane(get(vertex_to_point_map, v0),
-     get(vertex_to_point_map, v1), get(vertex_to_point_map, v2));
+    const Plane_3 face_plane(get(vertex_point_map, v0),
+     get(vertex_point_map, v1), get(vertex_point_map, v2));
 
     // Store 2d vertices
     std::vector<Point_2> polygon;
@@ -200,7 +200,7 @@ enum class Edge_case {
     Point_2 query_2 = face_plane.to_2d(query);
     for(auto v : vertices_face){
 
-      *polygon_itr = face_plane.to_2d(get(vertex_to_point_map, v));
+      *polygon_itr = face_plane.to_2d(get(vertex_point_map, v));
       polygon_itr++;
     }
 
@@ -222,7 +222,7 @@ enum class Edge_case {
 
     // Fill coordinates
     CGAL_assertion(bar_coords_2.size() == num_sides_face);
-    for(auto vertex_polyhedron : vertices(triangle_mesh)){
+    for(auto vertex_polyhedron : vertices(tmesh)){
 
       bool found_vertex = false;
       auto bar_coords_itr = bar_coords_2.begin();
@@ -248,12 +248,12 @@ enum class Edge_case {
 
   // Determine if the query point is on the interior, exterior or boundary
   template<
-    typename VertexToPointMap,
+    typename VertexPointMap,
     typename PolygonMesh,
     typename OutIterator,
     typename GeomTraits>
   Edge_case locate_wrt_polyhedron(
-    const VertexToPointMap& vertex_to_point_map,
+    const VertexPointMap& vertex_point_map,
     const PolygonMesh& polygon_mesh,
     const typename GeomTraits::Point_3& query,
     OutIterator coordinates,
@@ -280,14 +280,14 @@ enum class Edge_case {
       CGAL_precondition(vertices_face.size() >= 3);
 
       auto vertex = vertices_face.begin();
-      const auto vertex_val = get(vertex_to_point_map, *vertex);
+      const auto vertex_val = get(vertex_point_map, *vertex);
 
       // Vector connecting query point to vertex;
       const Vector_3 query_vertex = construct_vector_3(query, vertex_val);
 
       // Calculate normals of faces
       Vector_3 face_normal_i = get_face_normal(
-        face, vertex_to_point_map, polygon_mesh, traits);
+        face, vertex_point_map, polygon_mesh, traits);
       face_normal_i = face_normal_i / sqrt(face_normal_i.squared_length());
 
       // Distance of query to face
@@ -297,7 +297,7 @@ enum class Edge_case {
       if(CGAL::abs(perp_dist_i) < tol){
 
         if(!boundary_flag)
-          boundary_coordinates_3(vertices_face, vertex_to_point_map, polygon_mesh,
+          boundary_coordinates_3(vertices_face, vertex_point_map, polygon_mesh,
            query, coordinates, traits, use_wp_flag);
         boundary_flag = true;
       }

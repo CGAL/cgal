@@ -45,7 +45,7 @@ int main(int argc, char** argv) {
                         CGAL::parameters::do_not_triangulate_faces(false));
 
   CGAL::Barycentric_coordinates::Mean_value_coordinates_3<Surface_mesh, Kernel> mv(quad_cage);
-  auto vertex_to_point_map = get_property_map(CGAL::vertex_point, deformed);
+  auto vertex_point_map = get_property_map(CGAL::vertex_point, deformed);
 
   std::vector<FT> coords;
   std::vector<Point_3> target_cube{p0_new, p1_new, p2_new, p3_new,
@@ -53,7 +53,7 @@ int main(int argc, char** argv) {
 
   for(Surface_mesh::Vertex_index v : vertices(deformed)){
 
-    const Point_3 vertex_val = get(vertex_to_point_map, v);
+    const Point_3 vertex_val = get(vertex_point_map, v);
     coords.clear();
     mv(vertex_val, std::back_inserter(coords));
 
@@ -65,7 +65,7 @@ int main(int argc, char** argv) {
       z += target_cube[i].z() * coords[i];
     }
 
-    put(vertex_to_point_map, v, Point_3(x, y, z));
+    put(vertex_point_map, v, Point_3(x, y, z));
   }
 
   std::ofstream out_original("sphere.off");
