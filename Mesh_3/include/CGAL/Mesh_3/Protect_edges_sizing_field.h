@@ -621,7 +621,9 @@ Protect_edges_sizing_field<C3T3, MD, Sf, Df>::
 insert_corners()
 {
   // Iterate on domain corners
-  typedef std::vector< std::pair<Corner_index, Bare_point> > Initial_corners;
+  using Initial_corner = std::pair<Corner_index, Bare_point>;
+  using Initial_corners = std::vector<Initial_corner>;
+
   Initial_corners corners;
   domain_.get_corners(std::back_inserter(corners));
 
@@ -632,20 +634,16 @@ insert_corners()
 #endif
 
   Dt dt;
-  for ( typename Initial_corners::iterator it = corners.begin(),
-       end = corners.end() ; it != end ; ++it )
+  for ( const auto& [_,p] : corners )
   {
     if(forced_stop()) break;
-    const Bare_point& p = it->second;
     dt.insert(p);
   }
 
-  for ( typename Initial_corners::iterator cit = corners.begin(),
-          end = corners.end() ; cit != end ; ++cit )
+  for ( const auto& [corner_index, p] : corners )
   {
     if(forced_stop()) break;
-    const Bare_point& p = cit->second;
-    Index p_index = domain_.index_from_corner_index(cit->first);
+    Index p_index = domain_.index_from_corner_index(corner_index);
 
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
       std::cerr << "\n** treat corner #" << CGAL::IO::oformat(p_index) << std::endl;
@@ -694,7 +692,7 @@ insert_corners()
     // As C3t3::add_to_complex modifies the 'in_dimension' of the vertex,
     // we need to backup and re-set the 'is_special' marker after.
     const bool special_ball = is_special(v);
-    c3t3_.add_to_complex(v,cit->first);
+    c3t3_.add_to_complex(v, corner_index);
     if(special_ball) {
       set_special(v);
     }
@@ -1051,6 +1049,7 @@ insert_balls_on_edges()
 #endif
       const Bare_point& p = ft.point_s_.first;
       const Index& p_index = ft.point_s_.second;
+      const Polyline_iterator& p_polyline_iter = ft.polyline_begin_;
 
       Vertex_handle vp,vq;
       if ( ! domain_.is_loop(curve_index) )
@@ -1078,7 +1077,7 @@ insert_balls_on_edges()
 
           FT curve_length = domain_.curve_length(curve_index);
 
-          auto [other_point, polyline_iter] =
+          auto [other_point, _] =
             domain_.construct_point_on_curve(p,
                                              curve_index,
                                              curve_length / 2,
@@ -1091,7 +1090,7 @@ insert_balls_on_edges()
                                   p_index,
                                   Vertex_handle(),
                                   CGAL::Emptyset_iterator()).first;
-          set_polyline_iterator(vp, polyline_iter);
+          set_polyline_iterator(vp, p_polyline_iter);
         }
 
         // No 'else' because in that case 'is_vertex(..)' already filled
@@ -1305,7 +1304,7 @@ insert_balls(const Vertex_handle& vp,
     }
   } // nonlinear_growth_of_balls
 
-  FT r = (sq - sp) / FT(n+1);
+  const FT r = (sq - sp) / FT(n+1);
 
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
   std::cerr << "  n=" << n
@@ -1314,9 +1313,9 @@ insert_balls(const Vertex_handle& vp,
 
 
   // Adjust size of steps, D = covered distance
-  FT D = sp*FT(n+1) + FT((n+1)*(n+2)) / FT(2) * r ;
+  const FT D = sp*FT(n+1) + FT((n+1)*(n+2)) / FT(2) * r ;
 
-  FT dleft_frac = d / D;
+  const FT dleft_frac = d / D;
 
   // Initialize step sizes
   FT step_size = sp + r;
@@ -1359,21 +1358,24 @@ insert_balls(const Vertex_handle& vp,
 #endif
   }
 
+  // Index and dimension
+  const int dim = 1; // new_point is on edge
+  const Index index = domain_.index_from_curve_index(curve_index);
+
   // Launch balls
-  for ( int i = 1 ; i <= n ; ++i )
+  Polyline_iterator p_loc = locate_in_polyline(vp, curve_index);
+  Bare_point prev_pt = p;
+  FT dist_to_prev = pt_dist;
+
+  for(int i = 1; i <= n; ++i)
   {
     // New point position
-    const auto [bp, polyline_iter] =
-      domain_.construct_point_on_curve(p, curve_index, pt_dist, locate_in_polyline(vp, curve_index));
-    const Bare_point& new_point = bp;
+    const auto [new_point, polyline_iter] =
+      domain_.construct_point_on_curve(prev_pt, curve_index, dist_to_prev, p_loc);
 
     // Weight (use as size the min between norm_step_size and linear interpolation)
-    FT current_size = (std::min)(norm_step_size, sp + CGAL::abs(pt_dist)/d*(sq-sp));
-    FT point_weight = current_size * current_size;
-
-    // Index and dimension
-    Index index = domain_.index_from_curve_index(curve_index);
-    int dim = 1; // new_point is on edge
+    const FT current_size = (std::min)(norm_step_size, sp + CGAL::abs(pt_dist)/d*(sq-sp));
+    const FT point_weight = current_size * current_size;
 
     // Insert point into c3t3
     std::pair<Vertex_handle, ErasedVeOutIt> pair =
@@ -1392,8 +1394,12 @@ insert_balls(const Vertex_handle& vp,
     step_size += r;
     norm_step_size = dleft_frac * step_size;
 
-    // Increment distance
-    pt_dist += d_signF * norm_step_size;
+    // Update distance
+    dist_to_prev = d_signF* norm_step_size;
+    pt_dist += dist_to_prev;
+
+    prev_pt = new_point;
+    p_loc = polyline_iter;
   }
 
   // Insert last edge into c3t3
