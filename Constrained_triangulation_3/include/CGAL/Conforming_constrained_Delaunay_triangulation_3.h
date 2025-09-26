@@ -2227,7 +2227,7 @@ private:
         if(it != e) {
           return *it;
         } else {
-          return std::as_const(vertices_of_cavity_union_find).end();
+          return vertices_of_cavity_union_find.end();
         }
       });
       CGAL_assertion(vertex_below_handle == vertices_of_cavity_union_find.end() ||

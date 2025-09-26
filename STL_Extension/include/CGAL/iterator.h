@@ -82,8 +82,14 @@ Iterator_range<Prevent_deref<I> > make_prevent_deref_range(const I& begin, const
 }
 
 template<typename R>
-auto make_prevent_deref_range(const R& range)
+auto make_prevent_deref_range(R&& range)
 {
+  static_assert( !std::is_rvalue_reference_v<R&&>,
+                 "make_prevent_deref_range cannot be used with"
+                 " rvalue references to avoid dangling references");
+  // Note: If CGAL were allowed to use C++20, we could use `std::ranges::begin/end`.
+  // That would allow this to work with rvalue ranges when `std::borrowed_range<R>` is `true`.
+  // See https://en.cppreference.com/w/cpp/ranges/begin.html#Notes
   using std::begin;
   using std::end;
   return make_range(make_prevent_deref(begin(range)), make_prevent_deref(end(range)));
