@@ -48,7 +48,7 @@ decltype(auto) cdt_3_format(std::string_view fmt, const Args&... args) {
 
 template <typename... Args>
 constexpr decltype(auto) cdt_3_format(Args&&...) {
-  return "";
+  return std::string{};
 }
 
 constexpr bool cdt_3_can_use_cxx20_format() {

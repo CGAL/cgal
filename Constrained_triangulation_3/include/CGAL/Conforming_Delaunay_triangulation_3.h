@@ -369,6 +369,10 @@ public:
     return debug_flags[static_cast<int>(Debug_flags::use_older_cavity_algorithm)];
   }
 
+  bool use_newer_cavity_algorithm() const {
+    return !debug_flags[static_cast<int>(Debug_flags::use_older_cavity_algorithm)];
+  }
+
   void use_older_cavity_algorithm(bool b) {
     debug_flags.set(static_cast<int>(Debug_flags::use_older_cavity_algorithm), b);
   }

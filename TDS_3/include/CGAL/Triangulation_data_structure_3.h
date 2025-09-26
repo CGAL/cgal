@@ -24,8 +24,6 @@
 #include <CGAL/basic.h>
 
 #include <utility>
-#include <map>
-#include <set>
 #include <vector>
 #include <stack>
 #include <limits>
