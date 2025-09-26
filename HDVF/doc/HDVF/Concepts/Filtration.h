@@ -4,7 +4,7 @@
 
 The concept `Filtration` describes the requirements for persistent filtrations associated to persistent homology computation.
 
-A filtration is associated to an `AbstractChainComplex`. Each cells is equiped with a scalar value (called its degree) and the filtration is an enumeration of cells in any dimension by increasing degrees.
+A filtration is associated to an `AbstractChainComplex`. Each cell is equiped with a scalar value (called its degree) and the filtration is an enumeration of cells in any dimension by increasing degrees.
 
 A filtration class provides:
 
@@ -15,8 +15,8 @@ A filtration class provides:
 Cells are indexed along each dimension and thus identified by their index together with their dimension.
 
 \cgalHasModelsBegin
-\cgalHasModelsBare{`CGAL::Homological_discrete_vector_field::Filtration_core<Degree>`}
-\cgalHasModelsBare{`CGAL::Homological_discrete_vector_field::Filtration_lower_star<Degree>`}
+\cgalHasModelsBare{`CGAL::Homological_discrete_vector_field::Filtration_core<ChainComplex,Degree>`}
+\cgalHasModelsBare{`CGAL::Homological_discrete_vector_field::Filtration_lower_star<ChainComplex,Degree>`}
 \cgalHasModelsEnd
 
 */
@@ -55,22 +55,22 @@ protected:
     /*!
      Type of column-major sparse matrices.
      */
-    typedef SparseMatrix<_CoefType,CGAL::OSM::COLUMN> Column_matrix ;
+    typedef SparseMatrix<Coefficient_ring,CGAL::OSM::COLUMN> Column_matrix ;
 
     /*!
      Type of row-major sparse matrices.
      */
-    typedef SparseMatrix<_CoefType,CGAL::OSM::ROW> Row_matrix ;
+    typedef SparseMatrix<Coefficient_ring,CGAL::OSM::ROW> Row_matrix ;
 
     /*!
      Type of column-major chains.
      */
-    typedef SparseChain<_CoefType,CGAL::OSM::COLUMN> Column_chain ;
+    typedef SparseChain<Coefficient_ring,CGAL::OSM::COLUMN> Column_chain ;
 
     /*!
      Type of row-major chains.
      */
-    typedef SparseChain<_CoefType,CGAL::OSM::ROW> Row_chain ;
+    typedef SparseChain<Coefficient_ring,CGAL::OSM::ROW> Row_chain ;
 
 public:
     /**
