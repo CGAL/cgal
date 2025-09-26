@@ -105,7 +105,6 @@ make_OR_property_map(const PM1& pm1, const PM2& pm2)
 /// \cgalModels{ReadablePropertyMap}
 ///
 /// \tparam InputIterator an input iterator
-/// \endcond
 template<class InputIterator>
 struct Input_iterator_property_map{
   typedef InputIterator key_type;
@@ -118,6 +117,8 @@ struct Input_iterator_property_map{
   reference
   get(Input_iterator_property_map<InputIterator>, const InputIterator& it){ return *it; }
 };
+
+/// \endcond
 
 #ifdef DOXYGEN_RUNNING
 /// \ingroup PkgPropertyMapRef
@@ -274,8 +275,8 @@ struct Compose_property_map<KeyMap, ValueMap, boost::lvalue_property_map_tag>
 };
 #endif
 /// \ingroup PkgPropertyMapRef
-/// \relates Compose_property_map
 /// returns `Compose_property_maps<KeyMap, ValueMap>(km,vm)`
+/// \relates Compose_property_map
 template <class KeyMap, class ValueMap>
 Compose_property_map<KeyMap, ValueMap>
 make_compose_property_map(const KeyMap& km, const ValueMap& vm)
@@ -304,8 +305,8 @@ struct Dereference_property_map
   reference operator[](const Iter_& it) const { return *it; }
 };
 
+/// \ingroup PkgPropertyMapRef
 /// Free function to create a `Dereference_property_map` property map.
-///
 /// \relates Dereference_property_map
 template <class Iter> // Type convertible to `key_type`
 Dereference_property_map<typename CGAL::value_type_traits<Iter>::type>
@@ -371,8 +372,8 @@ struct Identity_property_map_no_lvalue
 };
 /// \endcond
 
+/// \ingroup PkgPropertyMapRef
 /// Free function to create a `Identity_property_map` property map.
-///
 /// \relates Identity_property_map
 template <class T> // Key and value type
 Identity_property_map<T>
@@ -409,8 +410,8 @@ struct First_of_pair_property_map
   /// @}
 };
 
+/// \ingroup PkgPropertyMapRef
 /// Free function to create a `First_of_pair_property_map` property map.
-///
 /// \relates First_of_pair_property_map
 template <class Pair> // Pair type
 First_of_pair_property_map<Pair>
@@ -449,8 +450,8 @@ struct Second_of_pair_property_map
   /// @}
 };
 
+/// \ingroup PkgPropertyMapRef
 /// Free function to create a Second_of_pair_property_map property map.
-///
 /// \relates Second_of_pair_property_map
 template <class Pair> // Pair type
 Second_of_pair_property_map<Pair>
@@ -509,8 +510,8 @@ struct Nth_of_tuple_property_map<N,std::tuple<T...> >
   friend void put(const Self&, key_type& k, const value_type& v) { std::get<N>(k) = v; }
 };
 
+/// \ingroup PkgPropertyMapRef
 /// Free function to create a Nth_of_tuple_property_map property map.
-///
 /// \relates Nth_of_tuple_property_map
 template <int N, class Tuple> // Tuple type
 Nth_of_tuple_property_map<N, Tuple>
@@ -563,6 +564,7 @@ struct Pointer_property_map{
 /// This function is a shortcut to the recommended replacement:
 /// `boost::make_iterator_property_map(<pointer>, boost::typed_identity_property_map<std::size_t>())`
 /// Note that the property map is a mutable `LvaluePropertyMap` with `std::size_t` as key.
+/// \relates Pointer_property_map
 template <class T>
 inline
 typename Pointer_property_map<T>::type
@@ -574,6 +576,7 @@ make_property_map(T* pointer)
 /// \ingroup PkgPropertyMapRef
 /// equivalent to `make_property_map(&v[0])`
 /// Note that `v` must not be modified while using the property map created
+/// \relates Pointer_property_map
 template <class T>
 inline
 typename Pointer_property_map<T>::type
@@ -587,6 +590,7 @@ make_property_map(std::vector<T>& v)
 
 /// \ingroup PkgPropertyMapRef
 /// Non-mutable version
+/// \relates Pointer_property_map
 template <class T>
 inline
 typename Pointer_property_map<T>::const_type
@@ -598,6 +602,7 @@ make_property_map(const T* pointer)
 /// \ingroup PkgPropertyMapRef
 /// equivalent to `make_property_map(&v[0])`
 /// Note that `v` must not be modified while using the property map created
+/// \relates Pointer_property_map
 template <class T>
 inline
 typename Pointer_property_map<T>::const_type
@@ -674,6 +679,7 @@ struct Boolean_property_map
 
 /// \ingroup PkgPropertyMapRef
 /// returns `Boolean_property_map<Set>(set_)`
+/// \relates Boolean_property_map
 template <class Set>
 Boolean_property_map<Set>
 make_boolean_property_map(Set& set_)
@@ -717,6 +723,7 @@ struct Cartesian_converter_property_map
 
 /// \ingroup PkgPropertyMapRef
 /// returns `Cartesian_converter_property_map<GeomObject, Vpm>(vpm)`
+/// \relates Cartesian_converter_property_map
 template<class GeomObject, class Vpm>
 Cartesian_converter_property_map<GeomObject, Vpm>
 make_cartesian_converter_property_map(Vpm vpm)
@@ -766,8 +773,8 @@ public:
 };
 
 /// \ingroup PkgPropertyMapRef
-/// \relates Random_access_property_map
 /// returns `Random_access_property_map<Container>(container)`
+/// \relates Random_access_property_map
 template <class Container>
 Random_access_property_map<Container>
 make_random_access_property_map(Container& container)
@@ -776,6 +783,7 @@ make_random_access_property_map(Container& container)
 }
 
 /// \cond SKIP_IN_MANUAL
+
 // Syntaxic sugar for transform_iterator+pmap_to_unary_function
 template <typename Iterator, typename Pmap>
 typename boost::transform_iterator<CGAL::Property_map_to_unary_function<Pmap>, Iterator>
