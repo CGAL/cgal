@@ -1,0 +1,36 @@
+// PRETTY HDVF should equal the project title in Doxyfile.in
+
+/// \defgroup PkgHDVFRef Homological Discrete Vector Fields Reference
+/// \defgroup PkgHDVFConcepts Concepts
+/// \ingroup PkgHDVFRef
+
+/// \defgroup PkgHDVFAlgorithmClasses Algorithm Classes
+/// \ingroup PkgHDVFRef
+
+/// \defgroup PkgHDVFTraitsClasses Traits Classes
+/// \ingroup PkgHDVFRef
+
+/// \defgroup PkgHDVFMiscellaneous Miscellaneous
+/// \ingroup PkgHDVFRef
+
+/*!
+\cgalPkgDescriptionBegin{HDVF,PkgHDVF}
+\cgalPkgPicture{HDVF-small.png}
+
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Alexandra Bac}
+\cgalPkgDesc{
+The package provides an implementation of Homological Discrete %Vector Fields, a framework computing homology and cohomology information (Betti numbers, generators, annotation functions...) for discrete objects (including persistent homology, Alexander duality isomorphism and reduced homology).}
+\cgalPkgManuals{Chapter_HDVF,PkgHDVFRef}
+\cgalPkgSummaryEnd
+
+\cgalPkgShortInfoBegin
+\cgalPkgSince{6.2}
+\cgalPkgBib{cgal:b-hdvf}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+
+\cgalPkgShortInfoEnd
+
+\cgalPkgDescriptionEnd
+
+*/
