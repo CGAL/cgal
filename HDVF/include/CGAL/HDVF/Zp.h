@@ -250,7 +250,7 @@ template <int p, typename _TSlot, bool IsPrime> class Real_embeddable_traits< Ho
     : public CGAL::cpp98::unary_function< Type, Type > {
       public:
         Type  operator()( const Type& t ) const {
-          return abs(t) ;
+          return t ;
         }
     };
   };
