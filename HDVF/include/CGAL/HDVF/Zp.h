@@ -38,7 +38,7 @@ namespace Homological_discrete_vector_field {
  \tparam _TSlot a type used for the inner storage of the values (default: `int`).
  */
 
-template <int p, typename _TSlot = int, bool IsPrime>
+template <int p, typename _TSlot = int, bool IsPrime = true>
 class Zp {
     _TSlot _i ;
 public:
@@ -160,7 +160,7 @@ public:
     /** \brief Absolute value. */
     friend Zp  abs(const Zp& a)
     {
-        return Zp<p,_TSlot, IsPrime>(abs(a._i)) ;
+        return Zp<p,_TSlot, IsPrime>(abs(int(a._i))) ;
     }
 
     /** \brief Operator<<. */
@@ -183,10 +183,11 @@ public:
 
 // Specialization for p being not a prime number
 template <int p, typename _TSlot> class Algebraic_structure_traits< Homological_discrete_vector_field::Zp<p, _TSlot, false> >
-  : public Algebraic_structure_traits_base< Homological_discrete_vector_field::Z2, Integral_domain_without_division_tag >  {
+  : public Algebraic_structure_traits_base< Homological_discrete_vector_field::Zp<p, _TSlot, false>, Integral_domain_without_division_tag >  {
   public:
-    typedef Tag_true            Is_exact;
-    typedef Tag_false           Is_numerical_sensitive;
+      typedef Tag_true            Is_exact;
+      typedef Tag_false           Is_numerical_sensitive;
+      typedef Homological_discrete_vector_field::Zp<p, _TSlot, false> Type;
 
     class Is_invertible //   AF: Does not yet exist in Number_types and Algebraic_foundations
       : public CGAL::cpp98::unary_function< Type, bool > {
@@ -200,10 +201,11 @@ template <int p, typename _TSlot> class Algebraic_structure_traits< Homological_
 
   // Specialization for p being not a prime number
   template <int p, typename _TSlot> class Algebraic_structure_traits< Homological_discrete_vector_field::Zp<p, _TSlot, true> >
-  : public Algebraic_structure_traits_base< Homological_discrete_vector_field::Z2, Field_tag >  {
+  : public Algebraic_structure_traits_base< Homological_discrete_vector_field::Zp<p, _TSlot, true>, Field_tag >  {
   public:
-    typedef Tag_true            Is_exact;
-    typedef Tag_false           Is_numerical_sensitive;
+      typedef Tag_true            Is_exact;
+      typedef Tag_false           Is_numerical_sensitive;
+      typedef Homological_discrete_vector_field::Zp<p, _TSlot, true> Type;
 
     class Is_invertible
       : public CGAL::cpp98::unary_function< Type, bool > {
@@ -216,6 +218,7 @@ template <int p, typename _TSlot> class Algebraic_structure_traits< Homological_
 
 template <int p, typename _TSlot, bool IsPrime> class Real_embeddable_traits< Homological_discrete_vector_field::Zp<p, _TSlot, IsPrime> >
   : public INTERN_RET::Real_embeddable_traits_base< Homological_discrete_vector_field::Zp<p, _TSlot, IsPrime> , CGAL::Tag_true > {
+      typedef Homological_discrete_vector_field::Zp<p, _TSlot, IsPrime> Type;
   public:
 
     class Is_positive
@@ -247,7 +250,7 @@ template <int p, typename _TSlot, bool IsPrime> class Real_embeddable_traits< Ho
     : public CGAL::cpp98::unary_function< Type, Type > {
       public:
         Type  operator()( const Type& t ) const {
-          return t ;
+          return abs(t) ;
         }
     };
   };

@@ -24,6 +24,7 @@
 #include <CGAL/HDVF/Tet_object_io.h>
 #include "arguments.h"
 #include <CGAL/HDVF/Zp.h>
+#include <CGAL/HDVF/Z2.h>
 
 // ------- A ring
 // For Z/nZ other than Z (ie. n=0) and Z/2Z, uncomment and set the following define properly
@@ -297,7 +298,7 @@ int main(int argc, char **argv)
         }
         else if (options.scalar == 2)
         {
-            using Coefficient_ring = CGAL::Homological_discrete_vector_field::Zp<2,int8_t,true> ;
+            using Coefficient_ring = CGAL::Homological_discrete_vector_field::Z2 ;
             main_code<Coefficient_ring>(options) ;
         }
         else

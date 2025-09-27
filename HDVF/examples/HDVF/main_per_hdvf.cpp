@@ -12,6 +12,7 @@
 #include <type_traits>
 #include <typeinfo>
 #include <CGAL/HDVF/Zp.h>
+#include <CGAL/HDVF/Z2.h>
 #include <CGAL/HDVF/Simplex.h>
 #include <CGAL/HDVF/Simplicial_chain_complex.h>
 #include <CGAL/HDVF/Cubical_chain_complex.h>
@@ -279,7 +280,7 @@ int main(int argc, char **argv)
         }
         else if (options.scalar == 2)
         {
-            using CoefficientType = CGAL::Homological_discrete_vector_field::Zp<2,int8_t,true> ;
+            using CoefficientType = CGAL::Homological_discrete_vector_field::Z2 ;
             main_code<CoefficientType>(options) ;
         }
         else

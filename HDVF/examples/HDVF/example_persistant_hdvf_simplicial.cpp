@@ -10,9 +10,13 @@
 #include <CGAL/HDVF/Hdvf_persistence.h>
 #include <CGAL/OSM/OSM.h>
 
-//typedef CGAL::Homological_discrete_vector_field::Zp<5,int,true> CoefficientType;
-typedef CGAL::Homological_discrete_vector_field::Z2 CoefficientType;
-typedef CGAL::Homological_discrete_vector_field::Simplicial_chain_complex<CoefficientType> Complex;
+namespace HDVF = CGAL::Homological_discrete_vector_field;
+
+//typedef int Coefficient_ring;
+//typedef HDVF::Z2 Coefficient_ring;
+typedef HDVF::Zp<5, char, true> Coefficient_ring;
+
+typedef CGAL::Homological_discrete_vector_field::Simplicial_chain_complex<Coefficient_ring> Complex;
 typedef double Degree;
 typedef CGAL::Homological_discrete_vector_field::Filtration_lower_star<Complex, Degree> FiltrationType;
 typedef CGAL::Homological_discrete_vector_field::Hdvf_persistence<Complex, Degree, FiltrationType> HDVF_type;

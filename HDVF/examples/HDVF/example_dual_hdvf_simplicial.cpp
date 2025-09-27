@@ -11,7 +11,7 @@
 #include <CGAL/HDVF/Sub_chain_complex_mask.h>
 #include <CGAL/OSM/OSM.h>
 
-//typedef CGAL::Homological_discrete_vector_field::Zp<5,int,true> CoefficientType;
+//typedef CGAL::Homological_discrete_vector_field::Zp<5,int,true> Coefficient_ring;
 typedef CGAL::Homological_discrete_vector_field::Z2 Coefficient_ring;
 typedef CGAL::Homological_discrete_vector_field::Simplicial_chain_complex<Coefficient_ring> Complex;
 typedef CGAL::Homological_discrete_vector_field::Hdvf_duality<Complex> HDVF_type;

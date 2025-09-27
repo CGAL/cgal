@@ -8,14 +8,16 @@
 #include <CGAL/HDVF/Hdvf.h>
 #include <CGAL/OSM/OSM.h>
 
-//typedef int CoefficientType;
-typedef CGAL::Homological_discrete_vector_field::Z2 CoefficientTypeX;
-//typedef CGAL::Homological_discrete_vector_field::Zp<5,int,true> CoefficientType;
+namespace HDVF = CGAL::Homological_discrete_vector_field;
+
+//typedef int Coefficient_ring;
+//typedef HDVF::Z2 Coefficient_ring;
+typedef HDVF::Zp<5, char, true> Coefficient_ring;
 
 int main(int argc, char **argv)
 {
 #if 1
-    using Complex = CGAL::Homological_discrete_vector_field::Simplicial_chain_complex<CoefficientTypeX> ;
+    using Complex = CGAL::Homological_discrete_vector_field::Simplicial_chain_complex<Coefficient_ring> ;
     using HDVF_type = CGAL::Homological_discrete_vector_field::Hdvf<Complex> ;
 
     if (argc != 2)

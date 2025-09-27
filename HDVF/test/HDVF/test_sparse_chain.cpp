@@ -6,10 +6,11 @@
 #include <cassert>
 #include <CGAL/OSM/OSM.h>
 
-typedef CGAL::OSM::Sparse_chain<int, CGAL::OSM::COLUMN> Column_chain;
-typedef CGAL::OSM::Sparse_chain<int, CGAL::OSM::ROW> Row_chain ;
-typedef CGAL::OSM::Sparse_matrix<int, CGAL::OSM::COLUMN> Column_matrix;
-typedef CGAL::OSM::Sparse_matrix<int, CGAL::OSM::ROW> Row_matrix;
+typedef int Coefficient_ring;
+typedef CGAL::OSM::Sparse_chain<Coefficient_ring, CGAL::OSM::COLUMN> Column_chain;
+typedef CGAL::OSM::Sparse_chain<Coefficient_ring, CGAL::OSM::ROW> Row_chain ;
+typedef CGAL::OSM::Sparse_matrix<Coefficient_ring, CGAL::OSM::COLUMN> Column_matrix;
+typedef CGAL::OSM::Sparse_matrix<Coefficient_ring, CGAL::OSM::ROW> Row_matrix;
 
 
 int main(int argc, char **argv)

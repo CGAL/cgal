@@ -4,15 +4,19 @@
 #include <CGAL/HDVF/Cubical_chain_complex.h>
 #include <CGAL/HDVF/Geometric_chain_complex_tools.h>
 #include <CGAL/HDVF/Z2.h>
+#include <CGAL/HDVF/Zp.h>
 #include <CGAL/HDVF/Hdvf.h>
 #include <CGAL/OSM/OSM.h>
 
-typedef int CoefficientType;
-//typedef Z2 CoefficientType;
+namespace HDVF = CGAL::Homological_discrete_vector_field;
+
+//typedef int Coefficient_ring;
+//typedef HDVF::Z2 Coefficient_ring;
+typedef HDVF::Zp<5, char, true> Coefficient_ring;
 
 int main(int argc, char **argv)
 {
-    using Complex = CGAL::Homological_discrete_vector_field::Cubical_chain_complex<CoefficientType> ;
+    using Complex = CGAL::Homological_discrete_vector_field::Cubical_chain_complex<Coefficient_ring> ;
     using HDVF_type = CGAL::Homological_discrete_vector_field::Hdvf<Complex> ;
 
     if (argc != 2)

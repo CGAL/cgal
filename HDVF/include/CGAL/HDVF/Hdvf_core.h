@@ -669,7 +669,8 @@ Cell_pair Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::find_pair_A(int 
     const Column_chain& tmp2(OSM::cget_column(_DD_col.at(q), gamma)) ;
     for (typename Column_chain::const_iterator it = tmp2.cbegin(); (it != tmp2.cend() && !found); ++it)
     {
-        if (abs(it->second) == 1)
+//        if (abs(it->second) == 1)
+        if ((it->second == 1) || (it->second == -1))
         {
             found = true ;
             p.sigma = it->first ;
@@ -682,7 +683,8 @@ Cell_pair Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::find_pair_A(int 
     Row_chain tmp(OSM::get_row(_DD_col.at(q+1), gamma)) ;
     for (typename Row_chain::const_iterator it = tmp.cbegin(); (it != tmp.cend() && !found); ++it)
     {
-        if (abs(it->second) == 1)
+//        if (abs(it->second) == 1)
+        if ((it->second == 1) || (it->second == -1))
         {
             found = true ;
             p.sigma = gamma ;
@@ -732,7 +734,8 @@ std::vector<Cell_pair> Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::fin
     Row_chain tmp(OSM::get_row(_DD_col.at(q+1), gamma)) ;
     for (typename Row_chain::const_iterator it = tmp.cbegin(); it != tmp.cend(); ++it)
     {
-        if (abs(it->second) == 1)
+//        if (abs(it->second) == 1)
+        if ((it->second == 1) || (it->second == -1))
         {
             found = true ;
             Cell_pair p ;
@@ -746,7 +749,8 @@ std::vector<Cell_pair> Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::fin
     const Column_chain& tmp2(OSM::cget_column(_DD_col.at(q), gamma)) ;
     for (typename Column_chain::const_iterator it = tmp2.cbegin(); it != tmp2.cend(); ++it)
     {
-        if (abs(it->second) == 1)
+//        if (abs(it->second) == 1)
+        if ((it->second == 1) || (it->second == -1))
         {
             found = true ;
             Cell_pair p ;
