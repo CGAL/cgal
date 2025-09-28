@@ -748,6 +748,14 @@ void draw(const Arrangement& arr,
           const GSOptions& gso,
           const char* title = "2D Arrangement on Surface Viewer",
           Bbox_2 initial_bbox = Bbox_2(0, 0, 0, 0)) {
+#if defined(CGAL_TEST_SUITE)
+  bool cgal_test_suite = true;
+#else
+  bool cgal_test_suite = qEnvironmentVariableIsSet("CGAL_TEST_SUITE");
+#endif
+
+  if (cgal_test_suite) return;
+
   Qt::init_ogl_context(4, 3);
   int argc;
   QApplication app(argc, nullptr);
