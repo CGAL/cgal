@@ -475,8 +475,8 @@ bool collect_intersections(const std::array<typename K::Point_3, 3>& t1,
 
 //  #warning TODO get rid of sort and unique calls
   // because we don't handle intersection type and can have edge-edge edge-vertex duplicates
-  std::sort(inter_pts.begin(), inter_pts.end(), [](auto p, auto q){return std::get<0>(p)<std::get<0>(q);});
-  auto last = std::unique(inter_pts.begin(), inter_pts.end(), [](auto p, auto q){return std::get<0>(p)==std::get<0>(q);});
+  std::sort(inter_pts.begin(), inter_pts.end(), [](const auto& p, const auto& q){return std::get<0>(p)<std::get<0>(q);});
+  auto last = std::unique(inter_pts.begin(), inter_pts.end(), [](const auto& p, const auto& q){return std::get<0>(p)==std::get<0>(q);});
   inter_pts.erase(last, inter_pts.end());
 
 #ifdef CGAL_AUTOREF_DEBUG_DEPTH
