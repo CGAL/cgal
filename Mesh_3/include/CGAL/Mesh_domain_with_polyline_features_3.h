@@ -968,8 +968,6 @@ private:
 
 private:
   typedef std::map<Point_3,Corner_index> Corners;
-
-  typedef Mesh_3::internal::Polyline<GT> Polyline;
   typedef std::map<Curve_index, Polyline> Edges;
   typedef std::map<Curve_index, Surface_patch_index_set > Edges_incidences;
   typedef std::map<Corner_index, std::set<Curve_index> > Corners_tmp_incidences;
