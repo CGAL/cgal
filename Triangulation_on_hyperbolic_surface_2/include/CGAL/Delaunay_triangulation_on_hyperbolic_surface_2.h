@@ -921,6 +921,16 @@ circumcenter(Anchor const & anch) const
 	return chc(anch.vertices[0], anch.vertices[1], anch.vertices[2]);;
 }
 
+/*template<class Traits>
+typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Point
+Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
+approx_circumcenter(Voronoi_point c) const
+{
+	Number x = to_double(c.x());
+	Number y = to_double(c.y());
+	return Point(x, y);
+}*/
+
 template<class Traits>
 typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Point
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
@@ -928,6 +938,22 @@ approx_circumcenter(Voronoi_point c) const
 {
 	Number x = to_double(c.x());
 	Number y = to_double(c.y());
+
+	// std::cout << "avant: " << c.x() << " " << c.y() << std::endl;
+
+	Number root = c.x().root();
+	if(root == Number(0)) {
+		root = c.y().root();
+	}
+	Number root_approx = Number(1);
+
+	for(int i = 0; i < 3 ; ++i) {  // TODO boucle while
+		root_approx = (root_approx + root / root_approx) / 2;
+	}
+
+	x = c.x().a0() + c.x().a1() * root_approx;
+	y = c.y().a0() + c.y().a1() * root_approx;
+	// std::cout << "après: " << x << " " << y << std::endl;
 	return Point(x, y);
 }
 
