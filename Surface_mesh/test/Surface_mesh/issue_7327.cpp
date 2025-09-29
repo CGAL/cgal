@@ -1,11 +1,11 @@
 #include <CGAL/Surface_mesh/Surface_mesh.h>
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include <cstring>
 #include <iostream>
 #include <fstream>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel   Kernel;
+typedef CGAL::Exact_predicates_exact_constructions_kernel   Kernel;
 typedef Kernel::Point_3                                       Point;
 
 typedef CGAL::Surface_mesh<Point>                             SMesh;
@@ -36,10 +36,10 @@ int main()
   mesh.add_property_map<SMesh::Halfedge_index, float>("v", 37.f);
 
   // Append second mesh
-  std::ifstream in2("tetra.ply");
+  std::ifstream in2("epeck_tetra.ply");
   CGAL::IO::read_PLY(in2, mesh);
 
-  std::ofstream out("out.ply");
+  std::ofstream out("epeck_out.ply");
 //  CGAL::IO::set_binary_mode(out);
   CGAL::IO::write_PLY(out, mesh);
 
@@ -73,16 +73,16 @@ int main()
   }
 
   out.close();
-  out.open("out_ascii.ply");
+  out.open("epeck_out_ascii.ply");
   CGAL::IO::write_PLY(out, mesh);
   out.close();
-  out.open("out_binary.ply", std::ios::binary);
+  out.open("epeck_out_binary.ply", std::ios::binary);
   CGAL::IO::set_binary_mode(out);
   CGAL::IO::write_PLY(out, mesh);
   out.close();
   mesh.clear();
 
-  const std::array<std::string,2> fnames = {"out_ascii.ply", "out_binary.ply"};
+  const std::array<std::string,2> fnames = {"epeck_out_ascii.ply", "epeck_out_binary.ply"};
   for (std::string fn : fnames)
   {
     std::cout << "Reading " << fn << "\n";

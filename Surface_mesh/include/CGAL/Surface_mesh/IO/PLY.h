@@ -20,6 +20,7 @@
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/IO/PLY.h>
 
@@ -447,7 +448,7 @@ bool fill_simplex_specific_header(std::ostream& os,
 
   if(prop == "v:point")
   {
-    if(std::is_same<FT, float>::value)
+    if constexpr(std::is_same<FT, float>::value)
     {
       os << "property float x" << std::endl
          << "property float y" << std::endl
@@ -459,7 +460,8 @@ bool fill_simplex_specific_header(std::ostream& os,
       os << "property double x" << std::endl
          << "property double y" << std::endl
          << "property double z" << std::endl;
-      printers.push_back(new Property_printer<VIndex, Point_map>(vpm));
+      auto fvpm = CGAL::make_cartesian_converter_property_map<Epick::Point_3>(vpm);
+      printers.push_back(new Property_printer<VIndex, decltype(fvpm)>(fvpm));
     }
 
     return true;
@@ -470,23 +472,25 @@ bool fill_simplex_specific_header(std::ostream& os,
     auto vnm = get_parameter(np, internal_np::vertex_normal_map);
     typedef decltype(vnm) Normal_map;
     typedef typename Kernel_traits<typename Normal_map::value_type>::Kernel::FT FloatDouble;
-    if(std::is_same<FloatDouble, float>::value)
-      {
-        os << "property float nx" << std::endl
-           << "property float ny" << std::endl
-           << "property float nz" << std::endl;
-      }
-      else
-      {
-        os << "property double nx" << std::endl
-           << "property double ny" << std::endl
-           << "property double nz" << std::endl;
-      }
-    printers.push_back(new Property_printer<VIndex, Normal_map>(vnm));
+    if constexpr (std::is_same<FloatDouble, float>::value)
+    {
+      os << "property float nx" << std::endl
+          << "property float ny" << std::endl
+          << "property float nz" << std::endl;
+      printers.push_back(new Property_printer<VIndex, Normal_map>(vnm));
+    }
+    else
+    {
+      os << "property double nx" << std::endl
+          << "property double ny" << std::endl
+          << "property double nz" << std::endl;
+      auto fvnm = CGAL::make_cartesian_converter_property_map<Epick::Vector_3>(vnm);
+      printers.push_back(new Property_printer<VIndex, decltype(fvnm)>(fvnm));
+    }
     return true;
   }
 
-  if(prop == "v:normal")
+  else if(prop == "v:normal")
   {
     auto pmap = sm.template property_map<VIndex, Vector>(prop);
     if(pmap.has_value())
@@ -496,14 +500,17 @@ bool fill_simplex_specific_header(std::ostream& os,
         os << "property float nx" << std::endl
            << "property float ny" << std::endl
            << "property float nz" << std::endl;
+        printers.push_back(new Property_printer<VIndex, Vector_map>(*pmap));
       }
       else
       {
         os << "property double nx" << std::endl
            << "property double ny" << std::endl
            << "property double nz" << std::endl;
+        auto fvnm = CGAL::make_cartesian_converter_property_map<Epick::Vector_3>(*pmap);
+        printers.push_back(new Property_printer<VIndex, decltype(fvnm)>(fvnm));
       }
-      printers.push_back(new Property_printer<VIndex, Vector_map>(*pmap));
+      // printers.push_back(new Property_printer<VIndex, Vector_map>(*pmap));
       return true;
     }
   }
@@ -914,7 +921,7 @@ bool read_PLY(std::istream& is,
 
 /// \cond SKIP_IN_MANUAL
 
-
+#if 0
 // for backward compatibility
 template <typename P>
 bool read_PLY(std::istream& is,
@@ -924,6 +931,7 @@ bool read_PLY(std::istream& is,
 {
   return read_PLY(is, sm, comments, CGAL::parameters::verbose(verbose));
 }
+#endif
 
 template <typename P>
 bool read_PLY(std::istream& is, Surface_mesh<P>& sm)
