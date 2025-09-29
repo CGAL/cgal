@@ -289,7 +289,8 @@ bool read_PLY(std::istream& is,
  * \param is the input stream
  * \param points points of the soup of polygons
  * \param polygons a range of polygons. Each element in it describes a polygon
- *        using the indices of the points in `points`.
+ *        using the indices of the points in `points`
+ *  \param comments a string that will contain all the comments found in the PLY file
  * \param np optional \ref bgl_namedparameters "Named Parameters" described below
  *
  * \cgalNamedParamsBegin
@@ -364,7 +365,8 @@ bool read_PLY(std::istream& is,
  * \param fname the path to the input file
  * \param points points of the soup of polygons
  * \param polygons a range of polygons. Each element in it describes a polygon
- *        using the indices of the points in `points`.
+ *        using the indices of the points in `points`
+ *  \param comments a string that will contain all the comments found in the PLY file
  * \param np optional \ref bgl_namedparameters "Named Parameters" described below
  *
  * \cgalNamedParamsBegin
