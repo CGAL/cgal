@@ -132,7 +132,7 @@ load(QFileInfo fileinfo, bool& ok, bool add_to_scene) {
     std::vector<std::vector<std::size_t> > polygons;
     std::vector<CGAL::IO::Color> fcolors;
     std::vector<CGAL::IO::Color> vcolors;
-    std::string comments;
+
     if (!(CGAL::IO::read_PLY (in, points, polygons, comments, fcolors, vcolors)))
     {
       CGAL_USE(comments);
