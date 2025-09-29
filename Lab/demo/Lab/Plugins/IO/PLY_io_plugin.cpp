@@ -7,8 +7,6 @@
 #include <CGAL/Three/CGAL_Lab_io_plugin_interface.h>
 #include <CGAL/Surface_mesh/IO/PLY.h>
 #include <CGAL/Three/Three.h>
-#include <CGAL/use.h>
-#include <string>
 
 #include <QInputDialog>
 #include <QApplication>
@@ -134,10 +132,8 @@ load(QFileInfo fileinfo, bool& ok, bool add_to_scene) {
     std::vector<CGAL::IO::Color> fcolors;
     std::vector<CGAL::IO::Color> vcolors;
 
-    std::string unused_comment;
-    if (!(CGAL::IO::read_PLY (in, points, polygons, unused_comment, vcolors)))
+    if (!(CGAL::IO::read_PLY (in, points, polygons, vcolors)))
     {
-      CGAL_USE(unused_comment);
       QApplication::restoreOverrideCursor();
       ok = false;
       return QList<Scene_item*>();
