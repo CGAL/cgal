@@ -188,7 +188,7 @@ face normals). This variance naturally deteriorates the tightness of the result,
 hand it enables creating more uniform triangulations and the approach is more tolerant to noise,
 while still maintaining feature sensitivity.
 
-Another extension of the Garland–Heckbert approach was introduced by Liu et al. \cgalCite{10.1111:cgf.70184},
+Another extension of the Garland–Heckbert approach was introduced by Liu et al. \cgalCite{liu2025linequadrics},
 who enhance the classic plane-based quadric error metrics with line quadrics.
 More precisely, line quadrics, which encode the distance to a line, are defined at all input vertices using the supporting lines of the normals.
 These quadrics are then combined with the classic plane quadrics, but with a small weight (0.01 by default).
@@ -196,13 +196,13 @@ This results in more uniform triangulations, while preserving the tightness of t
 
 \cgalFigureAnchor{SurfaceMeshSimplification_GH}
 <center>
-<img src="sappho.jpg" style="max-width:70%;"/>
+<img src="sappho.png" style="max-width:70%;"/>
 </center>
 \cgalFigureCaptionBegin{SurfaceMeshSimplification_GH}
 <a href="https://ten-thousand-models.appspot.com/detail.html?file_id=72286">Sappho's Head</a> model (leftmost, 34882 vertices).
 From left to right, simplified output (1745 vertices) and symmetric Hausdorff distance
 for the four Garland-Heckbert variations: plane (0.217912), probabilistic
-plane (0.256801), triangle (0.268872), and probabilistic triangle (0.490846).
+plane (0.256801), triangle (0.268872), probabilistic triangle (0.490846) and plane and line (0.173344).
 \cgalFigureCaptionEnd
 
 \subsection Surface_mesh_simplificationCostStrategyPolicies Cost Strategy Policies
