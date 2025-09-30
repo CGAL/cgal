@@ -48,7 +48,8 @@ double mean_aspect_ratio(Surface_mesh& mesh){
   double total_aspect_ratio=0;
   double total_area=0;
   for(auto f: mesh.faces()){
-    double a=PMP::face_area(f, mesh);
+    // double a=PMP::face_area(f, mesh);
+    double a=1.;
     total_aspect_ratio+=a*CGAL::to_double(PMP::face_aspect_ratio(f, mesh));
     total_area+=a;
   }
@@ -57,8 +58,8 @@ double mean_aspect_ratio(Surface_mesh& mesh){
 
 template <typename GHPolicies>
 double collapse_gh(Surface_mesh& mesh,
-                 const double ratio,
-                 GHPolicies gh_policies)
+                   const double ratio,
+                   GHPolicies gh_policies)
 {
   std::chrono::steady_clock::time_point start_time = std::chrono::steady_clock::now();
 
@@ -109,8 +110,10 @@ int main(int argc, char** argv)
   }
 
   const double ratio = (argc > 2) ? std::stod(argv[2]) : 0.2;
+  std::cout << ratio << std::endl;
   std::cout << "\n\nPolicy Approx_Hausdorff Dist_points_to_input mean_aspect_ratio running_time" << std::endl;
   auto collapse=[&](std::string policy){
+    using CGAL::Surface_mesh_simplification::make_GarlandHeckbert_plane_and_line_policies;
     Surface_mesh tmesh(mesh);
     double time;
     if(policy == "Classic_plane")
@@ -121,35 +124,36 @@ int main(int argc, char** argv)
       time=collapse_gh(tmesh, ratio, Prob_plane(tmesh));
     else if(policy == "Prob_triangle")
       time=collapse_gh(tmesh, ratio, Prob_tri(tmesh));
-    else if(policy == "Plane_plus_line_0.1")
-      time=collapse_gh(tmesh, ratio, Classic_plane_and_line(tmesh, 100, 0.1));
+    // else if(policy == "Plane_plus_line_0.1")
+    //   time=collapse_gh(tmesh, ratio, make_GarlandHeckbert_plane_and_line_policies(tmesh, CGAL::parameters::line_policies_weight(0.1)));
     else if(policy == "Plane_plus_line_0.01")
-      time=collapse_gh(tmesh, ratio, Classic_plane_and_line(tmesh, 100, 0.01));
+      time=collapse_gh(tmesh, ratio, make_GarlandHeckbert_plane_and_line_policies(tmesh, CGAL::parameters::line_policies_weight(0.01)));
     else if(policy == "Plane_plus_line_0.001")
-      time=collapse_gh(tmesh, ratio, Classic_plane_and_line(tmesh, 100, 0.001));
-    else if(policy == "Classic_tri_line")
-      time=collapse_gh(tmesh, ratio, Classic_tri_plus_line(tmesh, 100));
-    else if(policy == "Proba_plane_line")
-      time=collapse_gh(tmesh, ratio, Proba_plane_and_line(tmesh, Prob_plane(tmesh), Line_quadric(tmesh), 100));
-    else if(policy == "Proba_tri_line")
-      time=collapse_gh(tmesh, ratio, Proba_tri_plus_line(tmesh, Prob_tri(tmesh), Line_quadric(tmesh), 100));
+      time=collapse_gh(tmesh, ratio, make_GarlandHeckbert_plane_and_line_policies(tmesh, CGAL::parameters::line_policies_weight(0.001)));
+    // else if(policy == "Classic_tri_line")
+    //   time=collapse_gh(tmesh, ratio, Classic_tri_plus_line(tmesh, 100));
+    // else if(policy == "Proba_plane_line")
+    //   time=collapse_gh(tmesh, ratio, Proba_plane_and_line(tmesh, Prob_plane(tmesh), Line_quadric(tmesh), 100));
+    // else if(policy == "Proba_tri_line")
+    //   time=collapse_gh(tmesh, ratio, Proba_tri_plus_line(tmesh, Prob_tri(tmesh), Line_quadric(tmesh), 100));
 
-    std::cout << policy << " " << PMP::approximate_Hausdorff_distance<TAG>(tmesh, mesh)
+    std::cout << policy << " " << PMP::approximate_symmetric_Hausdorff_distance<TAG>(tmesh, mesh)
                         << " " << PMP::max_distance_to_triangle_mesh<TAG>(tmesh.points(),mesh)
                         << " " << mean_aspect_ratio(tmesh)
                         << " " << time << std::endl;
-    CGAL::IO::write_polygon_mesh("out_"+policy+".off", tmesh, CGAL::parameters::stream_precision(17));
+    CGAL::IO::write_polygon_mesh("out_"+policy+"_"+std::to_string(ratio)+".off", tmesh, CGAL::parameters::stream_precision(17));
   };
 
-  // collapse("Classic_plane");
-  // collapse("Classic_triangle");
+  collapse("Classic_plane");
+  collapse("Classic_triangle");
   collapse("Prob_plane");
   collapse("Prob_triangle");
   // collapse("Plane_plus_line_0.1");
   collapse("Plane_plus_line_0.01");
-  collapse("Classic_tri_line");
-  collapse("Proba_plane_line");
-  collapse("Proba_tri_line");
+  collapse("Plane_plus_line_0.001");
+  // collapse("Classic_tri_line");
+  // collapse("Proba_plane_line");
+  // collapse("Proba_tri_line");
   // collapse("Plane_plus_line_0.001");
 
   return EXIT_SUCCESS;
