@@ -5,7 +5,7 @@ namespace Surface_mesh_simplification {
 \ingroup PkgSurfaceMeshSimplificationRef
 
 The class `GarlandHeckbert_plane_and_line_policies` regroups the cost and placement policies
-based on the Garland-Heckbert "Plane and line" strategy of Liu et al. \cgalCite{10.1111:cgf.70184}
+based on the Garland-Heckbert "Plane and line" strategy of Liu et al. \cgalCite{liu2025linequadrics}
  (Section \ref SurfaceMeshSimplificationGarlandHeckbertStrategy).
 
 This policy enhances the original Garland-Heckbert quadric error metrics,
@@ -74,7 +74,7 @@ public:
 
   */
   template<typename NamedParameters = parameters::Default_named_parameters>
-  GarlandHeckbert_plane_and_line_policies(TriangleMesh& tmesh, const NamedParameters &np = parameters::default_values()):
+  GarlandHeckbert_plane_and_line_policies(TriangleMesh& tmesh, const NamedParameters &np = parameters::default_values());
 
   /// @}
 
