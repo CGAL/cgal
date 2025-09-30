@@ -812,6 +812,15 @@ void fill_header(std::ostream& os, const Surface_mesh<Point>& sm,
 /// \param comments a string used to store the potential comments found in the PLY header.
 ///        Each line starting by "comment " in the header is appended to the `comments` string
 ///        (without the "comment " word).
+/// \param np optional \ref bgl_namedparameters "Named Parameters" described below
+///
+/// \cgalNamedParamsBegin
+///   \cgalParamNBegin{verbose}
+///     \cgalParamDescription{whether extra information is printed when an incident occurs during reading}
+///     \cgalParamType{Boolean}
+///     \cgalParamDefault{`false`}
+///   \cgalParamNEnd
+/// \cgalNamedParamsEnd
 ///
 /// \pre The data in the stream must represent a two-manifold. If this is not the case
 ///      the `failbit` of `is` is set and the mesh cleared.
@@ -821,11 +830,8 @@ void fill_header(std::ostream& os, const Surface_mesh<Point>& sm,
 template <typename P, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_PLY(std::istream& is,
               Surface_mesh<P>& sm,
-              std::string& comments
-#ifndef DOXYGEN_RUNNING
-              , const CGAL_NP_CLASS& np = parameters::default_values()
-#endif
-              )
+              std::string& comments,
+              const CGAL_NP_CLASS& np = parameters::default_values())
 {
   typedef typename Surface_mesh<P>::size_type size_type;
 
