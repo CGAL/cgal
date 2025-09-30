@@ -201,8 +201,19 @@ This results in more uniform triangulations, while preserving the tightness of t
 \cgalFigureCaptionBegin{SurfaceMeshSimplification_GH}
 <a href="https://ten-thousand-models.appspot.com/detail.html?file_id=72286">Sappho's Head</a> model (leftmost, 34882 vertices).
 From left to right, simplified output (1745 vertices) and symmetric Hausdorff distance
-for the four Garland-Heckbert variations: plane (0.217912), probabilistic
+for the five Garland-Heckbert variations: plane (0.217912), probabilistic
 plane (0.256801), triangle (0.268872), probabilistic triangle (0.490846) and plane and line (0.173344).
+\cgalFigureCaptionEnd
+
+\cgalFigureAnchor{SurfaceMeshSimplification_GH}
+<center>
+<img src="octocat.png" style="max-width:70%;"/>
+</center>
+\cgalFigureCaptionBegin{SurfaceMeshSimplification_GH}
+<a href="https://ten-thousand-models.appspot.com/detail.html?file_id=32770">Octocat</a> model (top-left, 18944 vertices).
+From top-left to bottom-right, simplified output (1895 vertices) and symmetric Hausdorff distance
+for the five Garland-Heckbert variations: plane (0.19631), probabilistic
+plane (0.59446), triangle (0.377533), probabilistic triangle (0.891286) and plane and line (0.304001).
 \cgalFigureCaptionEnd
 
 \subsection Surface_mesh_simplificationCostStrategyPolicies Cost Strategy Policies
