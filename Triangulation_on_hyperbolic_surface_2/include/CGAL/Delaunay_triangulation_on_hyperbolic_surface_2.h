@@ -967,31 +967,6 @@ push_triangle(Dart_descriptor const dart, std::list<Dart_descriptor> & triangles
 	this->combinatorial_map_.unmark(Base::cw(dart), triangles_list_mark);
 	this->combinatorial_map_.mark(dart, triangles_list_mark);
 	triangles.push_back(dart);
-
-	// papier ESA
-	// bool already_there = false;
-	// Dart_descriptor current = dart;
-	// for(int i=0; i<NB_SIDES; ++i) {
-	// 	if(this->combinatorial_map_.is_marked(current, triangles_list_mark)) {
-	// 		this->combinatorial_map_.unmark(Base::ccw(current), triangles_list_mark);
-	// 		this->combinatorial_map_.unmark(Base::cw(current), triangles_list_mark);
-	// 		already_there = true;
-	// 		break;
-	// 	}
-	// 	current = Base::ccw(current);
-	// }
-	// if(!already_there) {
-	// 	this->combinatorial_map_.mark(dart, triangles_list_mark);
-	// 	triangles.push_back(dart);
-	// }
-
-	// entre les deux
-	// this->combinatorial_map_.unmark(Base::ccw(dart), triangles_list_mark);
-	// this->combinatorial_map_.unmark(Base::cw(dart), triangles_list_mark);
-	// if(!this->combinatorial_map_.is_marked(dart, triangles_list_mark)){
-	// 	this->combinatorial_map_.mark(dart, triangles_list_mark);
-	// 	triangles.push_back(dart);
-	// }
 }
 
 template<class Traits>
