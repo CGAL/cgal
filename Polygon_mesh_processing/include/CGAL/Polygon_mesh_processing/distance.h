@@ -1363,7 +1363,7 @@ preprocess_bounded_error_squared_Hausdorff_distance_impl(const TriangleMesh1& tm
 
     if(is_one_sided_distance) // one-sided distance
     {
-      if(tm1_only.size() > 0) // create TM1 and and full TM2
+      if(tm1_only.size() > 0) // create TM1 and full TM2
       {
         tm1_tree.insert(tm1_only.begin(), tm1_only.end(), tm1, vpm1);
         tm2_tree.insert(faces2.begin(), faces2.end(), tm2, vpm2);
