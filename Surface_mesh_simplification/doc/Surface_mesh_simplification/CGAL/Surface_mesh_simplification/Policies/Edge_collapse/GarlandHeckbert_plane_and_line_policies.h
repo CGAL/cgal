@@ -35,20 +35,46 @@ template <typename TriangleMesh, typename GeomTraits>
 class GarlandHeckbert_plane_and_line_policies
 {
 public:
-  /// The type of the Garland Heckbert cost functor, a model of the concept `GetCost`
+  /// The type of the Garland-Heckbert cost functor, a model of the concept `GetCost`
   typedef unspecified_type Get_cost;
 
-  /// The type of the Garland Heckbert placement functor, a model of the concept `GetPlacement`
+  /// The type of the Garland-Heckbert placement functor, a model of the concept `GetPlacement`
   typedef unspecified_type Get_placement;
 
   /// \name Creation
   /// @{
 
   /*!
-  initializes the Garland-Heckbert Plane policies. The `line_weight` parameter (default: 0.01) defines the weight of the line
-  policy relative to the plane policy.
+  initializes the Garland-Heckbert plane and line policies.
+
+  \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+
+  \param tmesh the triangle mesh
+  \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+  \cgalNamedParamsBegin
+    \cgalParamNBegin{vertex_normal_map}
+      \cgalParamDescription{a property map associating to each vertex of `tmesh` a normal direction for that vertex}
+      \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+                     as key type and `Vector_3` as value type}
+      \cgalParamDefault{a normal map provided by `CGAL::Polygon_mesh_processing::compute_vertex_normals`}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{discontinuity_multiplier}
+      \cgalParamDescription{a multiplier of the error value for boundary edges to preserve the boundaries}
+      \cgalParamType{FT}
+      \cgalParamDefault{100}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{line_policies_weight}
+      \cgalParamDescription{a value that define the weight of the line policies compare to the plane policies}
+      \cgalParamType{FT}
+      \cgalParamDefault{0.01}
+    \cgalParamNEnd
+  \cgalNamedParamsEnd
+
   */
-  GarlandHeckbert_plane_and_line_policies(TriangleMesh& tmesh, const FT line_weight=FT(0.01));
+  template<typename NamedParameters = parameters::Default_named_parameters>
+  GarlandHeckbert_plane_and_line_policies(TriangleMesh& tmesh, const NamedParameters &np = parameters::default_values()):
 
   /// @}
 
@@ -61,6 +87,13 @@ public:
   /// @}
 
 };
+
+/*!
+Create a Garland-Heckbert plane and line policies object
+*/
+template<typename TriangleMesh, typename NamedParameters = parameters::Default_named_parameters>
+GarlandHeckbert_plane_and_line_policies make_GarlandHeckbert_plane_and_line_policies(TriangleMesh& tmesh,
+                                                                                     const NamedParameters& np = parameters::default_values());
 
 } // namespace Surface_mesh_simplification
 } // namespace CGAL
