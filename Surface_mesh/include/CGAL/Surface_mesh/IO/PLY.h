@@ -475,15 +475,15 @@ bool fill_simplex_specific_header(std::ostream& os,
     if constexpr (std::is_same<FloatDouble, float>::value)
     {
       os << "property float nx" << std::endl
-          << "property float ny" << std::endl
-          << "property float nz" << std::endl;
+         << "property float ny" << std::endl
+         << "property float nz" << std::endl;
       printers.push_back(new Property_printer<VIndex, Normal_map>(vnm));
     }
     else
     {
       os << "property double nx" << std::endl
-          << "property double ny" << std::endl
-          << "property double nz" << std::endl;
+         << "property double ny" << std::endl
+         << "property double nz" << std::endl;
       auto fvnm = CGAL::make_cartesian_converter_property_map<Epick::Vector_3>(vnm);
       printers.push_back(new Property_printer<VIndex, decltype(fvnm)>(fvnm));
     }
@@ -989,7 +989,6 @@ namespace IO {
 ///
 /// \returns `true` if writing was successful, `false` otherwise.
 
-
 template <typename P,
           typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_PLY(std::ostream& os,
@@ -1002,6 +1001,7 @@ bool write_PLY(std::ostream& os,
   typedef typename SMesh::Face_index FIndex;
   typedef typename SMesh::Edge_index EIndex;
   typedef typename SMesh::Halfedge_index HIndex;
+
   if(!os.good())
     return false;
 

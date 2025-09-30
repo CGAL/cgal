@@ -161,7 +161,6 @@ bool read_PLY(std::istream& is,
 }
 
 
-
 /*!
   \ingroup PkgBGLIoFuncsPLY
 
@@ -333,10 +332,6 @@ bool read_PLY(const std::string& fname,
     \cgalParamNEnd
  \cgalNamedParamsEnd
 
-\note The point and vector types of the point and normal property map must be `double`or `float`
-      in order to respect the specification of the  PLY file format.
-       A `Cartesian_converter_property_map` can be used to convert the points and vectors on the fly.
-
  \returns `true` if writing was successful, `false` otherwise.
 */
 template <typename Graph, typename CGAL_NP_TEMPLATE_PARAMETERS>
@@ -456,13 +451,13 @@ bool write_PLY(std::ostream& os,
     const Point_3& p = get(vpm, vd);
     internal::output_properties(os, &p, make_ply_point_writer (Identity_property_map<Point_3>()));
     if constexpr (!parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::vertex_normal_map_t>::value)
-  {
-    auto vnm = get_parameter(np, internal_np::vertex_normal_map);
-    typedef decltype(vnm) Normal_map;
-    typedef typename Normal_map::value_type Vector_3;
-    Vector_3 vec = get(vnm,vd);
-    internal::output_properties(os, &vec, make_ply_normal_writer (Identity_property_map<Vector_3>()));
-  }
+    {
+      auto vnm = get_parameter(np, internal_np::vertex_normal_map);
+      typedef decltype(vnm) Normal_map;
+      typedef typename Normal_map::value_type Vector_3;
+      Vector_3 vec = get(vnm,vd);
+      internal::output_properties(os, &vec, make_ply_normal_writer (Identity_property_map<Vector_3>()));
+    }
     if(has_vcolor)
     {
       const CGAL::IO::Color& c = get(vcm, vd);
@@ -575,10 +570,6 @@ bool write_PLY(std::ostream& os, const Graph& g, const CGAL_NP_CLASS& np = param
       \cgalParamExtra{This parameter is only meaningful while using \ascii encoding.}
     \cgalParamNEnd
  \cgalNamedParamsEnd
-
-\note The point and vector types of the point and normal property map must be `double`or `float`
-      in order to respect the specification of the  PLY file format.
-       A `Cartesian_converter_property_map` can be used to convert the points and vectors on the fly.
 
  \returns `true` if writing was successful, `false` otherwise.
 */
