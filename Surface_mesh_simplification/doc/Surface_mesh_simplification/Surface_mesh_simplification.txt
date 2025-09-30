@@ -205,11 +205,11 @@ for the five Garland-Heckbert variations: plane (0.217912), probabilistic
 plane (0.256801), triangle (0.268872), probabilistic triangle (0.490846) and plane and line (0.173344).
 \cgalFigureCaptionEnd
 
-\cgalFigureAnchor{SurfaceMeshSimplification_GH}
+\cgalFigureAnchor{SurfaceMeshSimplification_GH_octocat}
 <center>
 <img src="octocat.png" style="max-width:70%;"/>
 </center>
-\cgalFigureCaptionBegin{SurfaceMeshSimplification_GH}
+\cgalFigureCaptionBegin{SurfaceMeshSimplification_GH_octocat}
 <a href="https://ten-thousand-models.appspot.com/detail.html?file_id=32770">Octocat</a> model (top-left, 18944 vertices).
 From top-left to bottom-right, simplified output (1895 vertices) and symmetric Hausdorff distance
 for the five Garland-Heckbert variations: plane (0.19631), probabilistic
