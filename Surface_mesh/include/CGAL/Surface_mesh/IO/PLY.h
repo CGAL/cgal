@@ -821,8 +821,11 @@ void fill_header(std::ostream& os, const Surface_mesh<Point>& sm,
 template <typename P, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_PLY(std::istream& is,
               Surface_mesh<P>& sm,
-              std::string& comments,
-              const CGAL_NP_CLASS& np = parameters::default_values())
+              std::string& comments
+#ifndef DOXYGEN_RUNNING
+              , const CGAL_NP_CLASS& np = parameters::default_values()
+#endif
+              )
 {
   typedef typename Surface_mesh<P>::size_type size_type;
 
