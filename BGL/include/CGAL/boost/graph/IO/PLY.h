@@ -87,6 +87,7 @@ bool read_PLY_BGL(std::istream& is,
 
   \param is the input stream
   \param g the graph to be built from the input data
+  \param comments a string included line by line in the header of the PLY stream (each line will be precedeed by "comment ")
   \param np optional \ref bgl_namedparameters "Named Parameters" described below
 
   \cgalNamedParamsBegin
@@ -173,6 +174,7 @@ bool read_PLY(std::istream& is,
 
   \param fname the name of the input file
   \param g the graph to be built from the input data
+  \param comments a string included line by line in the header of the PLY stream (each line will be precedeed by "comment
   \param np optional \ref bgl_namedparameters "Named Parameters" described below
 
   \cgalNamedParamsBegin
