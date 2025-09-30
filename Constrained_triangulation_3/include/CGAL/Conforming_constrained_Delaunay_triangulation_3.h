@@ -1805,9 +1805,9 @@ private:
           if(this->is_edge(vb_3d, vd_3d)) {
             // let's insert the diagonal [bd] in the CDT_2
             cdt_2.insert_constraint(vb, vd);
-#if CGAL_DEBUG_CDT_3 & 64
-            std::cerr << "NOTE: CDT_2 has 4 vertices. Flip the diagonal\n";
-#endif
+            if(this->debug_verbose_special_cases()) {
+              std::cerr << "NOTE: CDT_2 has 4 vertices. Flip the diagonal\n";
+            }
           }
         }
         break;
@@ -2762,12 +2762,6 @@ private:
         add_pseudo_cells_to_outer_map(upper_cavity_triangulation, map_upper_cavity_vertices_to_ambient_vertices, true);
 
     {
-// #if CGAL_DEBUG_CDT_3 & 64
-//       std::ofstream out("dump_upper_outer_map.off");
-//       out.precision(17);
-//       write_facets(out, *this, std::ranges::views::values(outer_map));
-//       out.close();
-// #endif // CGAL_DEBUG_CDT_3
       const auto upper_inner_map = tr().create_triangulation_inner_map(
           upper_cavity_triangulation, map_upper_cavity_vertices_to_ambient_vertices, false);
 
@@ -2788,9 +2782,9 @@ private:
                                          upper_inner_map,
                                          this->new_cells_output_iterator());
     }
-#if CGAL_DEBUG_CDT_3 & 64
-    std::cerr << "# glu the lower triangulation of the cavity\n";
-#endif // CGAL_DEBUG_CDT_3
+    if(this->debug_copy_triangulation_into_hole()) {
+      std::cerr << "# glu the lower triangulation of the cavity\n";
+    }
 
     outer_map.clear();
     std::vector<std::pair<Facet, CDT_2_face_handle>> new_constrained_facets;
@@ -3083,10 +3077,10 @@ private:
   {
     const auto& cdt_2 = non_const_cdt_2;
     auto steiner_pt = CGAL::centroid(cdt_2.triangle(fh_2d));
-#if CGAL_DEBUG_CDT_3 & 64 && CGAL_CAN_USE_CXX20_FORMAT
-    std::cerr << cdt_3_format("Trying to insert Steiner (centroid) point {} in non-coplanar face {}.\n", IO::oformat(steiner_pt),
-                             IO::oformat(cdt_2.triangle(fh_2d)));
-#endif // CGAL_DEBUG_CDT_3
+    if constexpr (cdt_3_can_use_cxx20_format()) if(this->debug_verbose_special_cases()) {
+      std::cerr << cdt_3_format("Trying to insert Steiner (centroid) point {} in non-coplanar face {}.\n", IO::oformat(steiner_pt),
+                               IO::oformat(cdt_2.triangle(fh_2d)));
+    }
     auto encroached_edge_opt = return_encroached_constrained_edge(face_index, cdt_2, steiner_pt);
     if(encroached_edge_opt) {
       return encroached_edge_opt;
@@ -3190,22 +3184,22 @@ private:
                               IO::oformat(vb_3d, with_point_and_info));
     }
     auto&& contexts = this->constraint_hierarchy.contexts(va_3d, vb_3d);
-#if CGAL_DEBUG_CDT_3 & 64 && CGAL_CAN_USE_CXX20_FORMAT
-    if(std::next(contexts.begin()) != contexts.end()) {
-      std::cerr << "ERROR: Edge is constrained by more than one constraint\n";
-      for(const auto& c : contexts) {
-        std::cerr << cdt_3_format("  - {} with {} vertices\n", IO::oformat(c.id().vl_ptr()),
-                                                              c.number_of_vertices());
-        for(auto vh_it = c.vertices_begin(), end = c.vertices_end(), current = c.current();
-            vh_it != end; ++vh_it)
-        {
-          std::cerr << cdt_3_format("    {} {}\n",
-                                   (vh_it == current) ? '>' : '-',
-                                   IO::oformat(*vh_it, with_point_and_info));
+    if constexpr (cdt_3_can_use_cxx20_format()) if(this->debug_verbose_special_cases()) {
+      if(std::next(contexts.begin()) != contexts.end()) {
+        std::cerr << "ERROR: Edge is constrained by more than one constraint\n";
+        for(const auto& c : contexts) {
+          std::cerr << cdt_3_format("  - {} with {} vertices\n", IO::oformat(c.id().vl_ptr()),
+                                                                c.number_of_vertices());
+          for(auto vh_it = c.vertices_begin(), end = c.vertices_end(), current = c.current();
+              vh_it != end; ++vh_it)
+          {
+            std::cerr << cdt_3_format("    {} {}\n",
+                                     (vh_it == current) ? '>' : '-',
+                                     IO::oformat(*vh_it, with_point_and_info));
+          }
         }
       }
     }
-#endif // CGAL_DEBUG_CDT_3 & 64
     CGAL_assertion(std::next(contexts.begin()) == contexts.end());
     const auto& context = *contexts.begin();
     const auto constrained_polyline_id = context.id();
@@ -3278,18 +3272,18 @@ private:
           std::cerr << "NOTE: " << what << " in sub-region " << (region_index - 1)
                     << " of face #F" << face_index << '\n';
         }
-#if CGAL_DEBUG_CDT_3 & 64 && CGAL_CAN_USE_CXX20_FORMAT
-        std::cerr << "  constrained edges are:\n";
-        for(auto [c, index]: cdt_2.constrained_edges()) {
-          const auto va = c->vertex(cdt_2.cw(index));
-          const auto vb = c->vertex(cdt_2.ccw(index));
-          const auto va_3d = va->info().vertex_handle_3d;
-          const auto vb_3d = vb->info().vertex_handle_3d;
-          std::cerr << cdt_3_format("    ({:.6} , {:.6})\n",
-                                    IO::oformat(va_3d, with_point_and_info),
-                                    IO::oformat(vb_3d, with_point_and_info));
+        if constexpr (cdt_3_can_use_cxx20_format()) if(this->debug_verbose_special_cases()) {
+          std::cerr << "  constrained edges are:\n";
+          for(auto [c, index]: cdt_2.constrained_edges()) {
+            const auto va = c->vertex(cdt_2.cw(index));
+            const auto vb = c->vertex(cdt_2.ccw(index));
+            const auto va_3d = va->info().vertex_handle_3d;
+            const auto vb_3d = vb->info().vertex_handle_3d;
+            std::cerr << cdt_3_format("    ({:.6} , {:.6})\n",
+                                      IO::oformat(va_3d, with_point_and_info),
+                                      IO::oformat(vb_3d, with_point_and_info));
+          }
         }
-#endif // CGAL_DEBUG_CDT_3
         const auto encroach_edge_opt =
             try_to_insert_circumcenter_in_face_or_return_encroached_edge(face_index, non_const_cdt_2, fh_2d);
         if(encroach_edge_opt) {
@@ -3472,7 +3466,7 @@ public:
         if(restore_face(static_cast <CDT_3_signed_index>(i))) {
           face_constraint_misses_subfaces_reset(i);
         } else {
-          if(this->debug_missing_region()) {
+          if(this->debug_missing_region() || this->debug_Steiner_points()) {
             std::cerr << "restore_face(" << i << ") incomplete, back to conforming...\n";
           }
           Conforming_Dt::restore_Delaunay(insert_in_conflict_visitor);

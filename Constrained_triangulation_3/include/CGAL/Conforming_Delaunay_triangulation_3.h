@@ -169,10 +169,10 @@ protected:
   void add_to_subconstraints_to_conform(Vertex_handle va, Vertex_handle vb,
                                         Constrained_polyline_id id) {
     const auto pair = make_subconstraint(va, vb);
-#if CGAL_DEBUG_CDT_3 & 32
-    std::cerr << "tr().subconstraints_to_conform.push("
-              << display_subcstr(pair) << ")\n";
-#endif // CGAL_DEBUG_CDT_3
+    if(debug_subconstraints_to_conform()) {
+      std::cerr << "tr().subconstraints_to_conform.push("
+                << display_subcstr(pair) << ")\n";
+    }
     subconstraints_to_conform.push({pair, id});
   }
 
@@ -385,12 +385,68 @@ public:
     debug_flags.set(static_cast<int>(Debug_flags::debug_finite_edges_map), b);
   }
 
+  bool debug_subconstraints_to_conform() const {
+    return debug_flags[static_cast<int>(Debug_flags::debug_subconstraints_to_conform)];
+  }
+
+  void debug_subconstraints_to_conform(bool b) {
+    debug_flags.set(static_cast<int>(Debug_flags::debug_subconstraints_to_conform), b);
+  }
+
   bool use_finite_edges_map() const {
     return update_all_finite_edges_ && debug_flags[static_cast<int>(Debug_flags::use_finite_edges_map)];
   }
 
   void use_finite_edges_map(bool b) {
     debug_flags.set(static_cast<int>(Debug_flags::use_finite_edges_map), b);
+  }
+
+  bool debug_verbose_special_cases() const {
+    return debug_flags[static_cast<int>(Debug_flags::verbose_special_cases)];
+  }
+
+  void debug_verbose_special_cases(bool b) {
+    debug_flags.set(static_cast<int>(Debug_flags::verbose_special_cases), b);
+  }
+
+  bool debug_encroaching_vertices() const {
+    return debug_flags[static_cast<int>(Debug_flags::debug_encroaching_vertices)];
+  }
+
+  void debug_encroaching_vertices(bool b) {
+    debug_flags.set(static_cast<int>(Debug_flags::debug_encroaching_vertices), b);
+  }
+
+  bool debug_conforming_validation() const {
+    return debug_flags[static_cast<int>(Debug_flags::debug_conforming_validation)];
+  }
+
+  void debug_conforming_validation(bool b) {
+    debug_flags.set(static_cast<int>(Debug_flags::debug_conforming_validation), b);
+  }
+
+  bool debug_constraint_hierarchy() const {
+    return debug_flags[static_cast<int>(Debug_flags::debug_constraint_hierarchy)];
+  }
+
+  void debug_constraint_hierarchy(bool b) {
+    debug_flags.set(static_cast<int>(Debug_flags::debug_constraint_hierarchy), b);
+  }
+
+  bool debug_geometric_errors() const {
+    return debug_flags[static_cast<int>(Debug_flags::debug_geometric_errors)];
+  }
+
+  void debug_geometric_errors(bool b) {
+    debug_flags.set(static_cast<int>(Debug_flags::debug_geometric_errors), b);
+  }
+
+  bool debug_polygon_insertion() const {
+    return debug_flags[static_cast<int>(Debug_flags::debug_polygon_insertion)];
+  }
+
+  void debug_polygon_insertion(bool b) {
+    debug_flags.set(static_cast<int>(Debug_flags::debug_polygon_insertion), b);
   }
 
   Vertex_handle insert(const Point &p, Locate_type lt, Cell_handle c,
@@ -446,12 +502,12 @@ public:
                        [this](const auto &sc) {
                          const auto [va, vb] = sc;
                          const auto is_edge = this->is_edge(va, vb);
-#if CGAL_DEBUG_CDT_3 & 128 && CGAL_CAN_USE_CXX20_FORMAT
-                         std::cerr << cdt_3_format("is_conforming>> Edge is 3D: {}  ({} , {})\n",
-                                                  is_edge,
-                                                  CGAL::IO::oformat(va, with_point_and_info),
-                                                  CGAL::IO::oformat(vb, with_point_and_info));
-#endif // CGAL_DEBUG_CDT_3
+                         if constexpr (cdt_3_can_use_cxx20_format()) if(debug_conforming_validation()) {
+                           std::cerr << cdt_3_format("is_conforming>> Edge is 3D: {}  ({} , {})\n",
+                                                    is_edge,
+                                                    CGAL::IO::oformat(va, with_point_and_info),
+                                                    CGAL::IO::oformat(vb, with_point_and_info));
+                         }
                          return is_edge;
                        });
   }
@@ -587,10 +643,10 @@ protected:
       if(!constraint_hierarchy.is_subconstraint(va, vb)) {
         continue;
       }
-#if CGAL_DEBUG_CDT_3 & 32
-      std::cerr << "tr().subconstraints_to_conform.pop()="
-                << display_subcstr(subconstraint) << "\n";
-#endif // CGAL_DEBUG_CDT_3
+      if(debug_subconstraints_to_conform()) {
+        std::cerr << "tr().subconstraints_to_conform.pop()="
+                  << display_subcstr(subconstraint) << "\n";
+      }
       conform_subconstraint(subconstraint, constrained_polyline_id, visitor);
     }
   }
@@ -669,10 +725,10 @@ protected:
                                this->constraint_hierarchy.constraints_end(), c_id) != this->constraint_hierarchy.constraints_end());
       CGAL_assertion(this->constraint_hierarchy.vertices_in_constraint_begin(c_id) !=
                      this->constraint_hierarchy.vertices_in_constraint_end(c_id));
-#if CGAL_DEBUG_CDT_3 & 8
-      std::cerr << "constraint " << (void*) c_id.vl_ptr() << " has "
-                << c_id.vl_ptr()->skip_size() << " vertices\n";
-#endif // CGAL_DEBUG_CDT_3
+      if(debug_constraint_hierarchy()) {
+        std::cerr << "constraint " << static_cast<void*>(c_id.vl_ptr()) << " has "
+                  << c_id.vl_ptr()->skip_size() << " vertices\n";
+      }
       const auto begin = this->constraint_hierarchy.vertices_in_constraint_begin(c_id);
       const auto end = this->constraint_hierarchy.vertices_in_constraint_end(c_id);
       const auto c_va = *begin;
@@ -730,9 +786,9 @@ protected:
       encroaching_vertices.insert(v);
     };
     auto fill_encroaching_vertices = [&](const auto simplex) {
-#if CGAL_DEBUG_CDT_3 & 0x10
-      std::cerr << " - " << IO::oformat(simplex, With_point_tag{}) << '\n';
-#endif // CGAL_DEBUG_CDT_3
+      if(debug_encroaching_vertices()) {
+        std::cerr << " - " << IO::oformat(simplex, With_point_tag{}) << '\n';
+      }
       auto visit_cell = [&](Cell_handle cell) {
         for(int i = 0, end = this->tr().dimension() + 1; i < end; ++i) {
           const auto v = cell->vertex(i);
@@ -776,9 +832,9 @@ protected:
           std::cerr << "!! The constraint passes through a vertex!\n";
           std::cerr << "  -> constraint " << display_vert(va) << "     " << display_vert(vb) << '\n';
           std::cerr << "  ->     vertex " << display_vert(v) << '\n';
-#if CGAL_DEBUG_CDT_3
-          debug_dump("bug-through-vertex");
-#endif
+          if(debug_geometric_errors()) {
+            debug_dump("bug-through-vertex");
+          }
           CGAL_error();
         }
       } break;
@@ -788,14 +844,14 @@ protected:
     std::for_each(tr().segment_traverser_simplices_begin(va, vb), tr().segment_traverser_simplices_end(),
                   fill_encroaching_vertices);
     auto vector_of_encroaching_vertices = encroaching_vertices.extract_sequence();
-#if CGAL_DEBUG_CDT_3 & 0x10
-    std::cerr << "  -> vector_of_encroaching_vertices (before filter):\n";
-    std::for_each(vector_of_encroaching_vertices.begin(),
-                  vector_of_encroaching_vertices.end(),
-                  [this](Vertex_handle v){
-                    std::cerr << "    " << this->display_vert(v) << '\n';
-                  });
-#endif // CGAL_DEBUG_CDT_3
+    if(debug_encroaching_vertices()) {
+      std::cerr << "  -> vector_of_encroaching_vertices (before filter):\n";
+      std::for_each(vector_of_encroaching_vertices.begin(),
+                    vector_of_encroaching_vertices.end(),
+                    [this](Vertex_handle v){
+                      std::cerr << "    " << this->display_vert(v) << '\n';
+                    });
+    }
     auto end = std::remove_if(vector_of_encroaching_vertices.begin(),
                               vector_of_encroaching_vertices.end(),
                               [va, vb, pa, pb, &angle_functor, this](Vertex_handle v) {
@@ -804,13 +860,13 @@ protected:
                                                     this->tr().point(v),
                                                     pb) == ACUTE;
                               });
-#if CGAL_DEBUG_CDT_3 & 0x10
-    std::cerr << "  -> vector_of_encroaching_vertices (after filter):\n";
-    std::for_each(vector_of_encroaching_vertices.begin(), end, [&](Vertex_handle v) {
-      std::cerr << "    " << this->display_vert(v) << "  angle " << approximate_angle(pa, this->tr().point(v), pb)
-                << '\n';
-    });
-#endif // CGAL_DEBUG_CDT_3
+    if(debug_encroaching_vertices()) {
+      std::cerr << "  -> vector_of_encroaching_vertices (after filter):\n";
+      std::for_each(vector_of_encroaching_vertices.begin(), end, [&](Vertex_handle v) {
+        std::cerr << "    " << this->display_vert(v) << "  angle " << approximate_angle(pa, this->tr().point(v), pb)
+                  << '\n';
+      });
+    }
     vector_of_encroaching_vertices.erase(end, vector_of_encroaching_vertices.end());
     return vector_of_encroaching_vertices;
   }
@@ -840,10 +896,10 @@ protected:
       return {midpoint_functor(pa, pb), va->cell(), va};
     }
 
-#if CGAL_DEBUG_CDT_3 & 0x10
-    std::cerr << "construct_Steiner_point( " << display_vert(va) << " , "
-              << display_vert(vb) << " )\n";
-#endif // CGAL_DEBUG_CDT_3
+    if(debug_encroaching_vertices()) {
+      std::cerr << "construct_Steiner_point( " << display_vert(va) << " , "
+                << display_vert(vb) << " )\n";
+    }
 
     const auto vector_of_encroaching_vertices = encroaching_vertices(va, vb);
     CGAL_assertion(vector_of_encroaching_vertices.size() > 0);
@@ -984,6 +1040,13 @@ protected:
     use_older_cavity_algorithm,
     debug_finite_edges_map,
     use_finite_edges_map,
+    debug_subconstraints_to_conform,
+    verbose_special_cases,
+    debug_encroaching_vertices,
+    debug_conforming_validation,
+    debug_constraint_hierarchy,
+    debug_geometric_errors,
+    debug_polygon_insertion,
     nb_of_flags
   };
   std::bitset<static_cast<int>(Debug_flags::nb_of_flags)> debug_flags{};

@@ -93,6 +93,13 @@ Usage: cdt_3_from_off [options] input.off output.off
   --debug_copy_triangulation_into_hole: debug copy_triangulation_into_hole
   --debug-validity: add is_valid checks after modifications to the TDS
   --debug-finite-edges-map: debug the use of a hash map for finite edges
+  --debug-subconstraints-to-conform: debug subconstraints to conform
+  --debug-verbose-special-cases: debug verbose output for special cases
+  --debug-encroaching-vertices: debug encroaching vertices computation
+  --debug-conforming-validation: debug edge conforming validation
+  --debug-constraint-hierarchy: debug constraint hierarchy operations
+  --debug-geometric-errors: debug geometric error handling
+  --debug-polygon-insertion: debug polygon insertion process
   --use-finite-edges-map: use a hash map for finite edges (default: false)
 
   --verbose/-V: verbose (can be used several times)
@@ -122,6 +129,13 @@ struct CDT_options
   bool        use_new_cavity_algorithm            = true;
   bool        debug_validity                      = false;
   bool        debug_finite_edges_map              = false;
+  bool        debug_subconstraints_to_conform     = false;
+  bool        debug_verbose_special_cases         = false;
+  bool        debug_encroaching_vertices          = false;
+  bool        debug_conforming_validation         = false;
+  bool        debug_constraint_hierarchy          = false;
+  bool        debug_geometric_errors              = false;
+  bool        debug_polygon_insertion             = false;
   bool        use_finite_edges_map                = false;
   bool        call_is_valid                       = true;
   double      ratio                               = 0.1;
@@ -204,6 +218,20 @@ CDT_options::CDT_options(int argc, char* argv[]) {
       debug_validity                      = true;
     } else if(arg == "--debug-finite-edges-map"sv) {
       debug_finite_edges_map              = true;
+    } else if(arg == "--debug-subconstraints-to-conform"sv) {
+      debug_subconstraints_to_conform     = true;
+    } else if(arg == "--debug-verbose-special-cases"sv) {
+      debug_verbose_special_cases         = true;
+    } else if(arg == "--debug-encroaching-vertices"sv) {
+      debug_encroaching_vertices          = true;
+    } else if(arg == "--debug-conforming-validation"sv) {
+      debug_conforming_validation         = true;
+    } else if(arg == "--debug-constraint-hierarchy"sv) {
+      debug_constraint_hierarchy          = true;
+    } else if(arg == "--debug-geometric-errors"sv) {
+      debug_geometric_errors              = true;
+    } else if(arg == "--debug-polygon-insertion"sv) {
+      debug_polygon_insertion             = true;
     } else if(arg == "--use-finite-edges-map"sv) {
       use_finite_edges_map                = true;
     } else if(arg == "--verbose"sv || arg == "-V"sv) {
@@ -272,6 +300,13 @@ int go(Mesh mesh, CDT_options options) {
   cdt.debug_regions(options.debug_regions);
   cdt.debug_validity(options.debug_validity);
   cdt.debug_finite_edges_map(options.debug_finite_edges_map);
+  cdt.debug_subconstraints_to_conform(options.debug_subconstraints_to_conform);
+  cdt.debug_verbose_special_cases(options.debug_verbose_special_cases);
+  cdt.debug_encroaching_vertices(options.debug_encroaching_vertices);
+  cdt.debug_conforming_validation(options.debug_conforming_validation);
+  cdt.debug_constraint_hierarchy(options.debug_constraint_hierarchy);
+  cdt.debug_geometric_errors(options.debug_geometric_errors);
+  cdt.debug_polygon_insertion(options.debug_polygon_insertion);
   cdt.debug_copy_triangulation_into_hole(options.debug_copy_triangulation_into_hole);
   cdt.use_older_cavity_algorithm(!options.use_new_cavity_algorithm);
   cdt.use_finite_edges_map(options.use_finite_edges_map);
@@ -704,9 +739,9 @@ int go(Mesh mesh, CDT_options options) {
         for(auto vertex_it : CGAL::vertices_around_face(he, mesh)) {
           polygon.push_back(get(pmap, vertex_it));
         }
-  #if CGAL_DEBUG_CDT_3
-        std::cerr << "NEW POLYGON #" << poly_id << '\n';
-  #endif // CGAL_DEBUG_CDT_3
+        if(cdt.debug_polygon_insertion()) {
+          std::cerr << "NEW POLYGON #" << poly_id << '\n';
+        }
         try {
           [[maybe_unused]] auto id = cdt.insert_constrained_polygon(polygon, false);
           assert(id == poly_id);
