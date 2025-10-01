@@ -28,10 +28,10 @@
 namespace CGAL {
 namespace Surface_mesh_simplification {
 
-namespace internal{
+namespace internal {
 
 // Helpers to perform computation in the constructor GH_plane_and_line_policies before calling the constructor of Base
-template< typename TriangleMesh, typename NamedParameters>
+template< typename TriangleMesh = void, typename NamedParameters = void>
 struct GH_helper{
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type GT;
   typedef typename GT::Vector_3 Vector_3;
@@ -43,7 +43,10 @@ struct GH_helper{
                                                        NamedParameters,
                                                        Vertex_normal_dmap>::type    Vertex_normal_map;
 
-  Vertex_normal_map vnm(const TriangleMesh& tmesh, const NamedParameters& np) const{
+  const NamedParameters &np;
+  GH_helper(const NamedParameters &np_):np(np_){ }
+
+  Vertex_normal_map vnm(const TriangleMesh& tmesh) const{
     using parameters::choose_parameter;
     using parameters::is_default_parameter;
     using parameters::get_parameter;
@@ -57,20 +60,21 @@ struct GH_helper{
     return vertex_normals;
   }
 
-  double lw(const NamedParameters& np) const{
+  double lw() const{
     using parameters::choose_parameter;
     using parameters::get_parameter;
     return choose_parameter(get_parameter(np, internal_np::line_policies_weight), 0.01);
   }
 
-  FT dm(const NamedParameters& np) const {
+  FT dm() const{
     using parameters::choose_parameter;
     using parameters::get_parameter;
+
     return choose_parameter(get_parameter(np, internal_np::discontinuity_multiplier), 100);
   }
 };
 
-}
+} // namespace internal
 
 template<typename TriangleMesh, typename GeomTraits>
 class GarlandHeckbert_plane_and_line_policies
@@ -86,11 +90,6 @@ class GarlandHeckbert_plane_and_line_policies
                                                       GH_line_polices,
                                                       true>                                   Base;
 
-private:
-  using TM=TriangleMesh;
-  using GT=GeomTraits;
-
-
 public:
   typedef typename Base::Quadric_calculator Quadric_calculator;
 
@@ -101,10 +100,10 @@ public:
   GarlandHeckbert_plane_and_line_policies(TriangleMesh& tmesh, const NP& np = parameters::default_values()):
     Base(tmesh,
       GH_plane_polices(tmesh),
-      GH_line_polices(tmesh, internal::GH_helper<TM,NP>().vnm(tmesh, np)),
-      FT(1.)/internal::GH_helper<TM,NP>().lw(np),
+      GH_line_polices(tmesh, internal::GH_helper<TriangleMesh,NP>(np).vnm(tmesh)),
+      FT(1.)/internal::GH_helper<TriangleMesh,NP>(np).lw(),
       FT(1.),
-      internal::GH_helper<TM,NP>().dm(np))
+      internal::GH_helper<TriangleMesh,NP>(np).dm())
   { }
 
 public:

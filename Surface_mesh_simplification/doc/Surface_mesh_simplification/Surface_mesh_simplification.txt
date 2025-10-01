@@ -219,7 +219,7 @@ plane (0.59446), triangle (0.377533), probabilistic triangle (0.891286) and plan
 \subsection Surface_mesh_simplificationCostStrategyPolicies Cost Strategy Policies
 
 The cost strategy used by the algorithm is selected by means of three policies:
-`GetPlacement`, `GetCost`, and `Filter`.
+`GetPlacement`, `GetCost`, and `PlacementFilter`.
 
 The `GetPlacement` policy is called to compute the new position
 for the remaining vertex after the halfedge-collapse. It returns

@@ -22,8 +22,7 @@ namespace Surface_mesh_simplification {
 namespace internal {
 
 /*
-That policy was created to merge the line policy with the existing ones.
-Since it is a technical feature, it is internal to the library.
+This policy was created to combine the line policy with the existing ones.
 The composition of some quadrics is always invertible, but this is not necessarily true for all composed quadrics.
 `invertible` boolean parameter reflects this distinction.
 

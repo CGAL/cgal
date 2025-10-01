@@ -81,7 +81,7 @@ public:
   }
 
   /*
-  // Since that policies are never used alone but composed with another one, this code is not used
+  // Since these policies are never used alone but always composed with another one, this code is not used
   Col_4 construct_optimal_point(const Mat_4& quadric,
                                 const Col_4& p0,
                                 const Col_4& p1) const

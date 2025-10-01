@@ -44,14 +44,15 @@ typedef SMS::internal::GarlandHeckbert_composed_policies<Surface_mesh, Kernel, P
 typedef SMS::internal::GarlandHeckbert_composed_policies<Surface_mesh, Kernel, Classic_tri, Line_quadric> Classic_tri_plus_line;
 typedef SMS::internal::GarlandHeckbert_composed_policies<Surface_mesh, Kernel, Prob_tri, Line_quadric> Proba_tri_plus_line;
 
-double mean_aspect_ratio(Surface_mesh& mesh){
-  double total_aspect_ratio=0;
-  double total_area=0;
-  for(auto f: mesh.faces()){
-    // double a=PMP::face_area(f, mesh);
-    double a=1.;
-    total_aspect_ratio+=a*CGAL::to_double(PMP::face_aspect_ratio(f, mesh));
-    total_area+=a;
+double mean_aspect_ratio(Surface_mesh& mesh)
+{
+  double total_aspect_ratio = 0;
+  double total_area = 0;
+  for(auto f: faces(mesh)){
+    // double a = PMP::face_area(f, mesh);
+    double a = 1.;
+    total_aspect_ratio += a*CGAL::to_double(PMP::face_aspect_ratio(f, mesh));
+    total_area += a;
   }
   return total_aspect_ratio/total_area;
 }
@@ -76,9 +77,7 @@ double collapse_gh(Surface_mesh& mesh,
   const GH_placement& gh_placement = gh_policies.get_placement();
   Bounded_GH_placement placement(gh_placement);
 
-  int r = SMS::edge_collapse(mesh, stop,
-                             CGAL::parameters::get_cost(gh_cost)
-                                              .get_placement(placement));
+  SMS::edge_collapse(mesh, stop, CGAL::parameters::get_cost(gh_cost).get_placement(placement));
 
   std::chrono::steady_clock::time_point end_time = std::chrono::steady_clock::now();
 
