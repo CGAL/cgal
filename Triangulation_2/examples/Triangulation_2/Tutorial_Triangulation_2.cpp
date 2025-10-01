@@ -4,14 +4,14 @@
 #include <CGAL/draw_triangulation_2.h>
 
 using Kernel = CGAL::Exact_predicates_inexact_constructions_kernel;
-using Point = Delaunay::Point;
 using Delaunay = CGAL::Delaunay_triangulation_2<Kernel>;
+using Point = Delaunay::Point;
 //! [TutoT2-include]
 
-/! [TutoT2-using]
+//! [TutoT2-using]
 using Vertex_handle = Delaunay::Vertex_handle;
 using Face_handle = Delaunay::Face_handle;
-/! [TutoT2-using]
+//! [TutoT2-using]
 
 int main ()
 {
@@ -28,14 +28,14 @@ int main ()
   //! [TutoT2-traversal]
   std::cout << vh->point() << std::endl;
 
-  for(auto it dt.all_vertices_begin(); it != dt.all_vertices_end(); ++it)
+  for(auto it = dt.all_vertices_begin(); it != dt.all_vertices_end(); ++it)
   {
     if(dt.is_infinite(it))
       continue;
     std::cout << it->point() << std::endl;
   }
 
-  for(auto it dt.finite_vertices_begin(); it != dt.finite_vertices_end(); ++it)
+  for(auto it = dt.finite_vertices_begin(); it != dt.finite_vertices_end(); ++it)
   {
     std::cout << it->point() << std::endl;
   }
@@ -48,7 +48,7 @@ int main ()
   do {
     for(int i = 0; i < 3; ++i){
       if(vh == fc->vertex(i))
-        std::cout << "vh has index " << i  " in the face" << std::endl;
+        std::cout << "vh has index " << i  << " in the face" << std::endl;
     }
   }while(++fc != done);
   //! [TutoT2-incident]
@@ -79,7 +79,7 @@ int main ()
   //! [TutoT2-edge]
   Delaunay::Edge e(fh, ind);
   Delaunay::Edge me =dt.mirror_edge(e);
-  assert(me.first.vertex(me.second) == nvh);
+  assert(me.first->vertex(me.second) == nvh);
   //! [TutoT2-edge]
 
   //! [TutoT2-locate]
