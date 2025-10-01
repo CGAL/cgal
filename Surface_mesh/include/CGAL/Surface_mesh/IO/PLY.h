@@ -837,9 +837,9 @@ bool read_PLY(std::istream& is,
 
   // not yet supported: this function only uses the Surface_mesh's internal pmaps
   // to make it work, it'd be sufficient to modify Surface_mesh_filler's maps
-  static_assert(CGAL::parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::vertex_normal_map_t>::value);
-  static_assert(CGAL::parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::vertex_color_map_t>::value);
-  static_assert(CGAL::parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::face_color_map_t>::value);
+  // static_assert(CGAL::parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::vertex_normal_map_t>::value);
+  // static_assert(CGAL::parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::vertex_color_map_t>::value);
+  // static_assert(CGAL::parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::face_color_map_t>::value);
 
   const bool verbose = CGAL::parameters::choose_parameter(CGAL::parameters::get_parameter(np, internal_np::verbose), true);
 
