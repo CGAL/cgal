@@ -132,7 +132,7 @@ load(QFileInfo fileinfo, bool& ok, bool add_to_scene) {
     std::vector<CGAL::IO::Color> fcolors;
     std::vector<CGAL::IO::Color> vcolors;
 
-    if (!(CGAL::IO::read_PLY (in, points, polygons, vcolors)))
+    if (!(CGAL::IO::read_PLY (in, points, polygons, fcolors, vcolors)))
     {
       QApplication::restoreOverrideCursor();
       ok = false;
