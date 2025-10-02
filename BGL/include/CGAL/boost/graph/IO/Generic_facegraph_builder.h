@@ -145,7 +145,13 @@ public:
 
       face_descriptor f = CGAL::Euler::add_face(face, g);
       if(f == boost::graph_traits<Graph>::null_face()) {
-        if (verbose) std::cerr << "Error: Failed to add face [" << i << "]\n";
+        if (verbose) {
+          std::cerr << "Error: Failed to add face [" << i << "]\n";
+          std::cerr << "Diagnostic:" << std::endl;
+          CGAL_assertion_code(bool cannot_add = )
+            CGAL::Euler::can_add_face(face, g, true /*verbose*/);
+          CGAL_assertion(!cannot_add);
+        }
         return false;
       }
 
