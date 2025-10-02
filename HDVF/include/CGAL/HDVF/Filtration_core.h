@@ -120,7 +120,7 @@ public:
      * The constructor check that the filtration is valid (a cell is introduced in the filtration after its faces and the degree vector is increasing) and throw an exception if not.
      * \param[in] K A chain complex (a model of `AbstractChainComplex`), the underlying chain complex of the filtration.
      * \param[in] filtration An ordering of the cells of `K` encoded as a vector of its cells.
-     * \param[in] deg The (increasing) vector of cells degrees.
+     * \param[in] deg The (increasing) vector of cell degrees.
      */
     Filtration_core(const ChainComplex& K, const std::vector<Cell>& filtration, const std::vector<Degree>& deg) : _K(K), _filtration(filtration), _deg(deg)
     {

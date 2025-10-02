@@ -119,7 +119,7 @@ public:
 
     /*! \brief Constructor from vertex degrees.
      *
-     * The constructor computes all cells degrees as the minimum of the degrees of their vertices and sorts all the cells of the complex to fulfill the filtration ordering constraints.
+     * The constructor computes all cell degrees as the minimum of the degrees of their vertices and sorts all the cells of the complex to fulfill the filtration ordering constraints.
      *
      * \param[in] K Constant reference to the underlying complex.
      * \param[in] deg Vector of vertex degrees.
@@ -131,7 +131,7 @@ public:
 
     /*! \brief Constructor from a function mapping vertices to degrees.
      *
-     * The constructor computes all cells degrees as the minimum of the degrees of their vertices (obtained through `deg_fun`) and sorts all the cells of the complex to fulfill the filtration ordering constraints.
+     * The constructor computes all cell degrees as the minimum of the degrees of their vertices (obtained through `deg_fun`) and sorts all the cells of the complex to fulfill the filtration ordering constraints.
      *
      * \param[in] K Constant reference to the underlying complex.
      * \param[in] deg_fun Function mapping vertices of `K` to their degree.
