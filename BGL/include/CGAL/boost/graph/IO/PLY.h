@@ -370,14 +370,10 @@ bool write_PLY(std::ostream& os,
 
   bool has_vcolor = !is_default_parameter<CGAL_NP_CLASS, internal_np::vertex_color_map_t>::value;
   bool has_fcolor = !is_default_parameter<CGAL_NP_CLASS, internal_np::face_color_map_t>::value;
-  bool has_vnormal;
+  bool has_vnormal = false;
   if constexpr (!parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::vertex_normal_map_t>::value)
   {
     has_vnormal = true;
-  }
-  else
-  {
-    has_vnormal = false;
   }
   VIMap vim = CGAL::get_initialized_vertex_index_map(g, np);
   Vpm vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
@@ -416,7 +412,7 @@ bool write_PLY(std::ostream& os,
        << "property uchar alpha" << std::endl;
   }
 
-  if constexpr (!parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::vertex_normal_map_t>::value)
+  if(has_vnormal)
   {
     auto vnm = get_parameter(np, internal_np::vertex_normal_map);
     typedef decltype(vnm) Normal_map;
