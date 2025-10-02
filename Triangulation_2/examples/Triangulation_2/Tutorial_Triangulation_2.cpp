@@ -2,6 +2,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/draw_triangulation_2.h>
+#include <CGAL/use.h>
 
 using Kernel = CGAL::Exact_predicates_inexact_constructions_kernel;
 using Delaunay = CGAL::Delaunay_triangulation_2<Kernel>;
@@ -58,24 +59,24 @@ int main ()
   int ind =  fh->index(vh);
   auto cwv = fh->vertex(Delaunay::cw(ind));
   auto ccwv = fh->vertex(Delaunay::ccw(ind));
+  assert((ind + fh->index(cwv) + fh->index(ccwv)) == 3);
   //! [TutoT2-cw]
-
 
   //! [TutoT2-index]
   auto nh = fh->neighbor(ind);
   int nind = nh->index(fh);
   auto nvh = nh->vertex(nind);
   //! [TutoT2-index]
-
+  CGAL_USE(nvh);
 
   //! [TutoT2-noauto]
   {
     Face_handle nh = fh->neighbor(ind);
     int nind = nh->index(fh);
     Vertex_handle nvh = nh->vertex(nind);
+    CGAL_USE(nvh);
   }
   //! [TutoT2-noauto]
-
   //! [TutoT2-edge]
   Delaunay::Edge e(fh, ind);
   Delaunay::Edge me =dt.mirror_edge(e);
@@ -85,7 +86,7 @@ int main ()
   //! [TutoT2-locate]
   fh = dt.locate(Point(1, 1));
   //! [TutoT2-locate]
-
+  CGAL_USE(fh);
 
   //! [TutoT2-linewalk]
   auto lfc = dt.line_walk(Point(0.5, 0.5), Point(1.5, 0.5)), lfcdone(lfc);
