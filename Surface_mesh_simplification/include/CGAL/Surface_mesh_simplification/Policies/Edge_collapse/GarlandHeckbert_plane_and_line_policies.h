@@ -38,7 +38,7 @@ struct GH_helper{
   typedef typename GT::FT FT;
 
   typedef dynamic_vertex_property_t<Vector_3>                                       Vertex_normal_tag;
-  typedef typename boost::property_map<TriangleMesh, Vertex_normal_tag>::const_type Vertex_normal_dmap;
+  typedef typename boost::property_map<TriangleMesh, Vertex_normal_tag>::type       Vertex_normal_dmap;
   typedef typename internal_np::Lookup_named_param_def<internal_np::vertex_normal_map_t,
                                                        NamedParameters,
                                                        Vertex_normal_dmap>::type    Vertex_normal_map;
@@ -46,7 +46,7 @@ struct GH_helper{
   const NamedParameters &np;
   GH_helper(const NamedParameters &np_):np(np_){ }
 
-  Vertex_normal_map vnm(const TriangleMesh& tmesh) const{
+  Vertex_normal_map vnm(TriangleMesh& tmesh) const{
     using parameters::choose_parameter;
     using parameters::is_default_parameter;
     using parameters::get_parameter;
@@ -66,7 +66,7 @@ struct GH_helper{
     return choose_parameter(get_parameter(np, internal_np::line_policies_weight), 0.01);
   }
 
-  FT dm() const{
+  double dm() const{
     using parameters::choose_parameter;
     using parameters::get_parameter;
 

@@ -121,15 +121,15 @@ public:
 
 public:
   GarlandHeckbert_composed_policies(TriangleMesh& tmesh,
-                                    double w1=1., double w2=1.,const FT dm = FT(100))
-    : Base(tmesh, Quadric_calculator(w1, w2), dm)
+                                    double w1=1., double w2=1.,const double dm = 100)
+    : Base(tmesh, Quadric_calculator(w1, w2), FT(dm))
   { }
 
   GarlandHeckbert_composed_policies(TriangleMesh& tmesh,
                                     GH_policies_1 ghp1,
                                     GH_policies_2 ghp2,
-                                    double w1=1., double w2=1.,const FT dm = FT(100))
-    : Base(tmesh, Quadric_calculator(ghp1.quadric_calculator(), ghp2.quadric_calculator(), w1, w2), dm)
+                                    double w1=1., double w2=1.,const double dm = 100)
+    : Base(tmesh, Quadric_calculator(ghp1.quadric_calculator(), ghp2.quadric_calculator(), w1, w2), FT(dm))
   { }
 
 public:

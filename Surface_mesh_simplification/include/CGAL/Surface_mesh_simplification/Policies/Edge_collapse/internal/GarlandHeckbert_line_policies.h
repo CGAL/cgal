@@ -94,7 +94,7 @@ public:
 template<typename TriangleMesh,
          typename GeomTraits,
          typename VertexNormalMap = typename boost::property_map<TriangleMesh,
-                                                CGAL::dynamic_vertex_property_t<typename GeomTraits::Vector_3> >::const_type >
+                                                CGAL::dynamic_vertex_property_t<typename GeomTraits::Vector_3> >::type >
 class GarlandHeckbert_line_policies
   : public internal::GarlandHeckbert_cost_and_placement<
              internal::Line_quadric_calculator<TriangleMesh, GeomTraits>, TriangleMesh, GeomTraits>
