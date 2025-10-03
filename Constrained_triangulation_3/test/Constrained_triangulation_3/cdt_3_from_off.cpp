@@ -24,18 +24,18 @@
 
 #include <boost/graph/graph_traits.hpp>
 
-#include <vector>
 #include <cassert>
+#include <chrono>
+#include <exception>
 #include <fstream>
-#include <string>
+#include <optional>
 #include <string_view>
+#include <string>
+#include <vector>
 
 #if CGAL_CXX20 && __cpp_lib_concepts >= 201806L && __cpp_lib_ranges >= 201911L
 #include <ranges>
 #endif
-
-#include <optional>
-#include <chrono>
 
 #if CGAL_CDT_3_USE_EPECK
 
@@ -85,6 +85,7 @@ Usage: cdt_3_from_off [options] input.off output.off
   --dump-after-conforming <filename.off>: dump mesh after conforming in OFF
 
   --no-repair: do not repair the mesh
+  --read-mesh-with-operator: read the mesh with operator>>
   --reject-self-intersections: reject self-intersecting polygon soups
   --no-is-valid: do not call is_valid checks
   --debug-input-faces: debug input faces
@@ -122,6 +123,7 @@ struct CDT_options
   bool        merge_facets_old_method             = false;
   bool        reject_self_intersections           = false;
   bool        repair_mesh                         = true;
+  bool        read_mesh_with_operator             = false;
   bool        debug_input_faces                   = false;
   bool        debug_missing_regions               = false;
   bool        debug_regions                       = false;
@@ -179,6 +181,8 @@ CDT_options::CDT_options(int argc, char* argv[]) {
       reject_self_intersections           = true;
     } else if(arg == "--no-repair"sv) {
       repair_mesh                         = false;
+    } else if(arg == "--read-mesh-with-operator"sv) {
+      read_mesh_with_operator             = true;
     } else if(arg == "--merge-facets-old"sv) {
       merge_facets                        = true;
       merge_facets_old_method             = true;
@@ -886,45 +890,53 @@ int bissect_errors(Mesh mesh, CDT_options options) {
       std::cerr << "number of faces: " << m.number_of_faces() << '\n';
       if(m.number_of_faces() >= nb_faces) {
         std::cerr << "ERROR: could not simplify mesh\n";
-        std::exit(EXIT_FAILURE);
+        return false;
       }
+      return true;
     };
 
-    simplify(mesh);
-    std::ofstream current("current_mesh.off");
-    current.precision(17);
-    current << mesh;
-    current.close();
+    if(simplify(mesh)) {
+      std::ofstream current("current_mesh.off");
+      current.precision(17);
+      current << mesh;
+      current.close();
 
-    try {
-      auto code = go(mesh, options);
-      if(code != EXIT_SUCCESS) {
-        exit_code = code;
+      try {
+        auto code = go(mesh, options);
+        if(code != EXIT_SUCCESS) {
+          exit_code = code;
+        }
+      } catch(std::exception& e) {
+        std::cerr << "CAUGHT EXCEPTION: " << e.what() << '\n';
+        if(std::string(e.what()).find(options.failure_assertion_expression) != std::string::npos) {
+          exit_code = EXIT_FAILURE;
+          std::cerr << "BAD MESH! " << mesh.number_of_faces() << " faces\n";
+          std::ofstream bad("bad_mesh.off");
+          bad.precision(17);
+          bad << mesh;
+          bad_mesh = mesh;
+          bucket = 0;
+          continue;
+        } else {
+          exit_code = EXIT_FAILURE;
+          std::cerr << "ERROR MESH: " << e.what() << '\n';
+          std::ofstream error("error_mesh.off");
+          error.precision(17);
+          error << mesh;
+          std::cerr << "go on...\n";
+        }
       }
-    } catch(CGAL::Failure_exception& e) {
-      std::cerr << "CAUGHT EXCEPTION: " << e.what() << '\n';
-      if(std::string(e.what()).find(options.failure_assertion_expression) != std::string::npos)
-      {
-        exit_code = EXIT_FAILURE;
-        std::cerr << "BAD MESH! " << mesh.number_of_faces() << " faces\n";
-        std::ofstream bad("bad_mesh.off");
-        bad.precision(17);
-        bad << mesh;
-        bad_mesh = mesh;
-        bucket = 0;
-        continue;
-      } else {
-        exit_code = EXIT_FAILURE;
-        std::cerr << "ERROR MESH: " << e.what() << '\n';
-        std::ofstream error("error_mesh.off");
-        error.precision(17);
-        error << mesh;
-        std::cerr << "go on...\n";
-      }
+      std::cerr << "GOOD MESH :-( " << mesh.number_of_faces() << " faces\n";
     }
-    std::cerr << "GOOD MESH :-( " << mesh.number_of_faces() << " faces\n";
     mesh = bad_mesh;
     ++bucket;
+  }
+  if(bad_mesh.number_of_faces() < orig_mesh.number_of_faces()) {
+    std::cerr << "FINAL BAD MESH: " << bad_mesh.number_of_faces() << " faces\n";
+    std::ofstream final_bad("final_bad_mesh.off");
+    final_bad.precision(17);
+    final_bad << bad_mesh;
+    return go(bad_mesh, options);
   }
   return exit_code;
 }
@@ -945,14 +957,30 @@ int main(int argc, char* argv[]) {
   CGAL_CDT_3_TASK_BEGIN(read_input_task_handle);
   auto start_time = std::chrono::high_resolution_clock::now();
 
-  auto read_options = CGAL::parameters::repair_polygon_soup(options.repair_mesh).verbose(options.verbose_level);
-  auto result = CGAL::read_polygon_mesh_for_cdt_3<Mesh>(options.input_filename, read_options);
+  CGAL::CDT_3_read_polygon_mesh_output<Mesh> result;
+  if(options.read_mesh_with_operator) {
+    std::ifstream in(options.input_filename);
+    if(!in) {
+      std::cerr << "Cannot open file: " << options.input_filename << std::endl;
+      return EXIT_FAILURE;
+    }
+    Mesh mesh;
+    in >> mesh;
+    if(!in) {
+      std::cerr << "Error reading mesh with operator>>" << std::endl;
+      return EXIT_FAILURE;
+    }
+    result.polygon_mesh = std::move(mesh);
+  } else {
+    auto read_options = CGAL::parameters::repair_polygon_soup(options.repair_mesh).verbose(options.verbose_level);
+    result = CGAL::read_polygon_mesh_for_cdt_3<Mesh>(options.input_filename, read_options);
+  }
 
   if (!result.polygon_mesh)
   {
     std::cerr << "Not a valid input file." << std::endl;
     std::cerr << "Details:\n" << result.polygon_mesh.error() << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
   Mesh mesh = std::move(*result.polygon_mesh);
   if(!options.quiet) {
@@ -962,16 +990,18 @@ int main(int argc, char* argv[]) {
     std::cout << "Number of edges: " << mesh.number_of_edges() << '\n';
     std::cout << "Number of faces: " << mesh.number_of_faces() << "\n\n";
 
-    std::cout << "Processing was successful.\n";
-    std::cout << "  Number of duplicated points: " << result.nb_of_duplicated_points << '\n';
-    std::cout << "  Number of simplified polygons: " << result.nb_of_simplified_polygons << '\n';
-    std::cout << "  Number of new polygons: " << result.nb_of_new_polygons << '\n';
-    std::cout << "  Number of removed invalid polygons: " << result.nb_of_removed_invalid_polygons << '\n';
-    std::cout << "  Number of removed duplicated polygons: " << result.nb_of_removed_duplicated_polygons << '\n';
-    std::cout << "  Number of removed isolated points: " << result.nb_of_removed_isolated_points << '\n';
-    std::cout << "  Polygon soup self-intersects: " << (result.polygon_soup_self_intersects ? "YES" : "no") << '\n';
-    std::cout << "  Polygon mesh is manifold: " << (result.polygon_mesh_is_manifold ? "yes" : "NO") << '\n';
-    std::cout << std::endl;
+    if(!options.read_mesh_with_operator) {
+      std::cout << "Processing was successful.\n";
+      std::cout << "  Number of duplicated points: " << result.nb_of_duplicated_points << '\n';
+      std::cout << "  Number of simplified polygons: " << result.nb_of_simplified_polygons << '\n';
+      std::cout << "  Number of new polygons: " << result.nb_of_new_polygons << '\n';
+      std::cout << "  Number of removed invalid polygons: " << result.nb_of_removed_invalid_polygons << '\n';
+      std::cout << "  Number of removed duplicated polygons: " << result.nb_of_removed_duplicated_polygons << '\n';
+      std::cout << "  Number of removed isolated points: " << result.nb_of_removed_isolated_points << '\n';
+      std::cout << "  Polygon soup self-intersects: " << (result.polygon_soup_self_intersects ? "YES" : "no") << '\n';
+      std::cout << "  Polygon mesh is manifold: " << (result.polygon_mesh_is_manifold ? "yes" : "NO") << '\n';
+      std::cout << std::endl;
+    }
   }
   CGAL_CDT_3_TASK_END(read_input_task_handle);
 
