@@ -1498,6 +1498,18 @@ public:
       }
     } while(circ != circ_end);
 
+    if(this->debug_input_faces()) {
+      std::stringstream filename;
+      filename << "dump-input-face-" << polygon_contraint_id << "_polygon_" << borders.size() - 1 << ".polylines.txt";
+      std::ofstream os(filename.str());
+      os.precision(17);
+      os << vertex_handles.size() + 1 << "   ";
+      for(auto v : vertex_handles) {
+        os << this->point(v) << "  ";
+      }
+      os << this->point(*first_it) << std::endl;
+    }
+
     if(face_index < 0) {
       const auto accumulated_normal = std::invoke([&] {
         const auto last_it = std::next(first_it, size - 1);
@@ -3231,11 +3243,11 @@ private:
       const auto va_3d = fh->vertex(cdt_2.cw(i))->info().vertex_handle_3d;
       const auto vb_3d = fh->vertex(cdt_2.ccw(i))->info().vertex_handle_3d;
       const bool is_3d = this->is_edge(va_3d, vb_3d);
-      if constexpr (cdt_3_can_use_cxx20_format()) if(this->debug_copy_triangulation_into_hole()) {
-        std::cerr << cdt_3_format("Edge is 3D: {:6}  ({} , {})\n",
-                                  is_3d,
-                                  IO::oformat(va_3d, with_point_and_info),
-                                  IO::oformat(vb_3d, with_point_and_info));
+      if constexpr(cdt_3_can_use_cxx20_format()) {
+        if(this->debug_copy_triangulation_into_hole() || this->debug_conforming_validation()) {
+          std::cerr << cdt_3_format("Edge is 3D: {:6}  ({} , {})\n", is_3d, IO::oformat(va_3d, with_point_and_info),
+                                    IO::oformat(vb_3d, with_point_and_info));
+        }
       }
       CGAL_assertion(is_3d || !cdt_2.is_constrained(edge));
       fh->info().is_edge_also_in_3d_triangulation[unsigned(i)] = is_3d;
