@@ -171,6 +171,8 @@ public:
                           const_iterator q_it) const
   {
     CGAL_assertion(orientation != CGAL::ZERO);
+    CGAL_assertion(p_it == locate(p));
+    CGAL_assertion(q_it == locate(q));
 
     if(p_it == q_it) {
       const CGAL::Comparison_result cmp = compare_distance(*p_it,p,q);
@@ -243,6 +245,9 @@ public:
   FT signed_geodesic_distance(const Point_3& p, const Point_3& q,
                               const_iterator pit, const_iterator qit) const
   {
+    CGAL_assertion(pit == locate(p));
+    CGAL_assertion(qit == locate(q, false));
+
     // If p and q are in the same segment of the polyline
     if ( pit == qit )
     {
@@ -324,8 +329,14 @@ public:
                               FT distance,
                               const_iterator start_it) const
   {
-    distance += curve_segment_length(*start_it, start_pt, CGAL::POSITIVE,
-                                     start_it, start_it);
+    CGAL_assertion(start_it == locate(start_pt));
+
+    const Point_3& start_it_pt = *start_it;
+    const_iterator start_it_locate_pt
+      = (start_it == points_.begin()) ? start_it : std::prev(start_it);
+
+    distance += curve_segment_length(start_it_pt, start_pt, CGAL::POSITIVE,
+                                     start_it_locate_pt, start_it);
 
     // If polyline is a loop, ensure that distance is given from start_it
     if(is_loop())
@@ -340,6 +351,7 @@ public:
       {
         start_it = previous_segment_source(start_it);
         distance += this->distance(new_start, *start_it);
+        new_start = *start_it;
       }
     }
 
@@ -387,8 +399,14 @@ public:
     else if(p == end_point())
       res = last_segment_source();
 
+    CGAL_assertion(res == locate(p));
     CGAL_assertion(res != points_.end());
     return res;
+  }
+
+  const_iterator locate_point(const Point_3& p) const
+  {
+    return locate(p);
   }
 
   bool are_ordered_along(const Point_3& p, const Point_3& q,
@@ -396,9 +414,9 @@ public:
   {
     CGAL_precondition(!is_loop());
 
-//    // Locate p & q on polyline
-//    const_iterator pit = locate(p);
-//    const_iterator qit = locate(q,true);
+    // Locate p & q on polyline
+    CGAL_assertion(pit == locate(p));
+    CGAL_assertion(qit == locate(q, true));
 
     // Points are not located on the same segment
     if ( pit != qit ) { return (pit <= qit); }
@@ -418,12 +436,6 @@ private:
   {
     CGAL_precondition(is_valid());
     return (points_.end() - 2);
-  }
-
-  FT last_segment_length() const
-  {
-    CGAL_precondition(is_valid());
-    return distance( *(points_.end() - 2), *(points_.end() - 1) );
   }
 
   /// returns an iterator on the starting point of the segment of the
@@ -865,6 +877,8 @@ public:
   /// locates the corner point `p` on the curve identified by `curve_index`
   Polyline_const_iterator locate_corner(const Curve_index& curve_index,
                                         const Point_3& p) const;
+
+  Polyline_const_iterator locate_point(const Curve_index& curve_index, const Point_3& p) const;
 
   /**
    * Returns the index to be stored in a vertex lying on the surface identified
@@ -1759,6 +1773,17 @@ locate_corner(const Curve_index& curve_index,
   typename Edges::const_iterator eit = edges_.find(curve_index);
   CGAL_assertion(eit != edges_.end());
   return eit->second.locate_corner(p);
+}
+
+template <class MD_>
+typename Mesh_domain_with_polyline_features_3<MD_>::Polyline_const_iterator
+Mesh_domain_with_polyline_features_3<MD_>::
+locate_point(const Curve_index& curve_index,
+             const Point_3& p) const
+{
+  typename Edges::const_iterator eit = edges_.find(curve_index);
+  CGAL_assertion(eit != edges_.end());
+  return eit->second.locate_point(p);
 }
 
 } //namespace CGAL

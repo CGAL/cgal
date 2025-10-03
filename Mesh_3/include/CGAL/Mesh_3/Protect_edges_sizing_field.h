@@ -1364,6 +1364,7 @@ insert_balls(const Vertex_handle& vp,
 
   // Launch balls
   Polyline_iterator p_loc = locate_in_polyline(vp, curve_index);
+  CGAL_assertion(p_loc == domain_.locate_point(curve_index, p));
   Bare_point prev_pt = p;
   FT dist_to_prev = pt_dist;
 
