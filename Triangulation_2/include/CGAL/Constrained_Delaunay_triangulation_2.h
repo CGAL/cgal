@@ -431,16 +431,36 @@ public:
                                  bool check_duplicates = false)
   {
     std::vector<Point> points(points_first, points_beyond);
-    return internal::insert_constraints(*this,points, indices_first, indices_beyond, check_duplicates);
+    return internal::insert_constraints(*this, points, indices_first, indices_beyond, check_duplicates);
   }
 
 
- template <class ConstraintIterator>
+  template <class ConstraintIterator>
   std::size_t insert_constraints(ConstraintIterator first,
                                  ConstraintIterator beyond,
                                  bool check_duplicates = false)
   {
-    return internal::insert_constraints(*this,first,beyond,check_duplicates);
+    return internal::insert_constraints(*this, first, beyond, check_duplicates);
+  }
+
+  template <class PointIterator, class IndicesIterator>
+  std::size_t insert_unique_constraints(PointIterator points_first,
+                                 PointIterator points_beyond,
+                                 IndicesIterator indices_first,
+                                 IndicesIterator indices_beyond,
+                                 bool check_duplicates = false)
+  {
+    std::vector<Point> points(points_first, points_beyond);
+    return internal::insert_constraints(*this, points, indices_first, indices_beyond, true);
+  }
+
+
+  template <class ConstraintIterator>
+  std::size_t insert_unique_constraints(ConstraintIterator first,
+                                 ConstraintIterator beyond,
+                                 bool check_duplicates = false)
+  {
+    return internal::insert_constraints(*this, first, beyond, true);
   }
 
 

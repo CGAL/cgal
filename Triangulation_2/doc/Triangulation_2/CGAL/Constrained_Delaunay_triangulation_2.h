@@ -213,15 +213,24 @@ is used to improve efficiency.
 More precisely, all endpoints are inserted prior to the segments and according to the order provided by the spatial sort.
 Once endpoints have been inserted, the segments are inserted in the order of the input iterator,
 using the vertex handles of its endpoints.
-As inserting the same constraint several times may cause problems in
-case of intersecting segments and non-exact constructions the function
-can optionally check for duplicates.
 
 \return the number of inserted points.
 \tparam ConstraintIterator must be an `InputIterator` with the value type `std::pair<Point,Point>` or `Segment`.
 */
 template <class ConstraintIterator>
-std::size_t insert_constraints(ConstraintIterator first, ConstraintIterator last, bool check_duplicates = false);
+std::size_t insert_constraints(ConstraintIterator first, ConstraintIterator last);
+
+/*!
+Same as above except that the function check for duplicates.
+
+Inserting the same constraint several times may cause problems in
+case of intersecting segments and non-exact constructions.
+
+\return the number of inserted points.
+\tparam ConstraintIterator must be an `InputIterator` with the value type `std::pair<Point,Point>` or `Segment`.
+*/
+template <class ConstraintIterator>
+std::size_t insert_unique_constraints(ConstraintIterator first, ConstraintIterator last);
 
 /*!
 Same as above except that each constraints is given as a pair of indices of the points
@@ -233,7 +242,18 @@ template <class PointIterator, class IndicesIterator>
 std::size_t insert_constraints(PointIterator points_first, PointIterator points_last,
                                IndicesIterator indices_first, IndicesIterator indices_last);
 
+/*!
+Same as above except that the function check for duplicates.
 
+Inserting the same constraint several times may cause problems in
+case of intersecting segments and non-exact constructions.
+
+\tparam PointIterator is an `InputIterator` with the value type `Point`.
+\tparam IndicesIterator is an `InputIterator` with `std::pair<Int, Int>` where `Int` is an integral type implicitly convertible to `std::size_t`
+*/
+template <class PointIterator, class IndicesIterator>
+std::size_t insert_constraints(PointIterator points_first, PointIterator points_last,
+                               IndicesIterator indices_first, IndicesIterator indices_last);
 
 /*!
 Removes vertex v.
