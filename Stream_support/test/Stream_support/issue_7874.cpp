@@ -132,7 +132,7 @@ int main()
   // from #include <CGAL/Surface_mesh/IO/PLY.h>
   // https://doc.cgal.org/latest/Surface_mesh/group__PkgSurfaceMeshIOFuncPLY.html#ga50f0e9f2b293855d2c7f1a62939cbe8d
   std::ofstream out("overloaded_write_PLY_sm.ply", std::ios::binary);
-  CGAL::set_binary_mode(out);
+  CGAL::IO::set_binary_mode(out);
   CGAL::IO::write_PLY(out, sm, "overloaded_write_PLY(Surface_mesh)",CGAL::parameters::stream_precision(17).use_binary_mode(true)
     .vertex_point_map(scsmvpm).vertex_normal_map(scsmvnpm)  );
 }
