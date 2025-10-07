@@ -12189,11 +12189,338 @@ static void Perturbation::randMovePoints(const PolyhedronSPtr& polyhedron)
 // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
 
 
+  /**
+    * Edge flip event.
+    */
+  void collectEdgeEvents(const std::list<EdgeSPtr>& edges,
+                          const PolyhedronSPtr& /*polyhedron*/,
+                          const FT& current_time,
+                          const std::optional<FT>& time_future_bound,
+                          PQ& queue)
+  {
+    CGAL_SS3_CORE_TRACE_V(4, ">>> Collect Edge Events [" << current_time << "]");
+
+    for (const EdgeSPtr& edge : edges) {
+      CGAL_SS3_DEBUG_SPTR(edge);
+
+      VertexSPtr vertex_src = edge->getVertexSrc();
+      VertexSPtr vertex_dst = edge->getVertexDst();
+      if (vertex_src->getPoint() == vertex_dst->getPoint()) {
+        continue;
+      }
+
+      FacetSPtr facet_l = edge->getFacetL();
+      FacetSPtr facet_r = edge->getFacetR();
+      if (HdsUtils::isTriangle(facet_l, edge) || HdsUtils::isTriangle(facet_r, edge)) {
+        // triangle event
+        continue;
+      }
+
+      Point3SPtr point;
+      FT event_time;
+      std::tie(point, event_time) = vanishesAt(edge, current_time, time_future_bound);
+      if (!point) {
+        continue;
+      }
+
+      CGAL_assertion(event_time < current_time && event_time > time_future_bound);
+
+      FacetSPtr facet_src = edge->getFacetSrc();
+      FacetSPtr facet_dst = edge->getFacetDst();
+
+      // @fixme shouldn't this check also happen in other events?...
+      // This does not work when there is more than one edge between both facets.
+      // EdgeSPtr edge_2 = facet_src->findEdge(facet_dst);
+      std::list<EdgeSPtr> edges_2 = facet_src->findEdges(facet_dst);
+
+      bool split_event = false;
+      for (const EdgeSPtr& edge_2 : edges_2) {
+#if defined(CGAL_SS3_OLD_CODE_BOUND_CHECKS) || defined(CGAL_SS3_COMPARE_BOTH_BOUND_CHECKS)
+        bool split_event_current_1 = true;
+        bool split_event_current_2 = true;
+        bool split_event_current_3 = true;
+
+        SkelEdgeDataSPtr data_2 = std::dynamic_pointer_cast<SkelEdgeData>(edge_2->getData());
+        Vector3SPtr normal_2 = KernelFactory::createVector3(data_2->getSheet()->getPlane());
+        Line3SPtr line_normal_2 = KernelFactory::createLine3(point, normal_2);
+        if (KernelWrapper::orientation(line(edge_2), line_normal_2) < 0) {
+          // out of bounded area
+          split_event_current_1 = false;
+        }
+        SkelVertexDataSPtr data_2_src = std::dynamic_pointer_cast<SkelVertexData>(edge_2->getVertexSrc()->getData());
+        ArcSPtr arc_2_src = data_2_src->getArc();
+        if (KernelWrapper::orientation(arc_2_src->line(), line_normal_2) > 0) {
+          // out of bounded area
+          split_event_current_2 = false;
+        }
+        SkelVertexDataSPtr data_2_dst = std::dynamic_pointer_cast<SkelVertexData>(edge_2->getVertexDst()->getData());
+        ArcSPtr arc_2_dst = data_2_dst->getArc();
+        if (KernelWrapper::orientation(arc_2_dst->line(), line_normal_2) < 0) {
+          // out of bounded area
+          split_event_current_3 = false;
+        }
+
+        const bool split_event_current = (split_event_current_1 &&
+                                          split_event_current_2 &&
+                                          split_event_current_3);
+#endif
+
+#if !defined(CGAL_SS3_OLD_CODE_BOUND_CHECKS) || defined(CGAL_SS3_COMPARE_BOTH_BOUND_CHECKS)
+        bool split_event_current_1_b = true;
+        bool split_event_current_2_b = true;
+        bool split_event_current_3_b = true;
+
+        FacetSPtr facet_l2 = edge_2->getFacetL();
+        FacetSPtr facet_r2 = edge_2->getFacetR();
+        FacetSPtr facet_2_src = edge_2->getFacetSrc();
+        FacetSPtr facet_2_dst = edge_2->getFacetDst();
+
+        Plane3SPtr plane_l2 = facet_l2->getPlane();
+
+        const FT& l2a = plane_l2->a();
+        const FT& l2b = plane_l2->b();
+        const FT& l2c = plane_l2->c();
+        const FT& l2d = plane_l2->d();
+        const FT& speed_l2 = HdsUtils::getSpeed(facet_l2);
+        FT t = (l2a * point->x() + l2b * point->y() + l2c * point->z() + l2d) / speed_l2;
+
+        CGAL_assertion_code(Plane3SPtr plane_r2 = facet_r2->getPlane();)
+        CGAL_assertion_code(const FT& r2a = plane_r2->a();)
+        CGAL_assertion_code(const FT& r2b = plane_r2->b();)
+        CGAL_assertion_code(const FT& r2c = plane_r2->c();)
+        CGAL_assertion_code(const FT& r2d = plane_r2->d();)
+        CGAL_assertion_code(const FT& speed_r2 = HdsUtils::getSpeed(facet_r2);)
+        CGAL_assertion_code(FT lt2 = (l2a * point->x() + l2b * point->y() + l2c * point->z() + l2d) / speed_l2);
+        CGAL_assertion_code(FT rt2 = (r2a * point->x() + r2b * point->y() + r2c * point->z() + r2d) / speed_r2);
+        CGAL_assertion(lt2 == rt2);
+
+        if (is_positive(t)) {
+#ifdef CGAL_SS3_EXIT_ASAP
+          // can 'break' directly because it's the same value for all 'edge_2's
+          break;
+#else
+          split_event_current_1_b = false;
+#endif
+        }
+
+        if (!checkBisector(edge_2, facet_r2, event_time, facet_2_src, point)) {
+#ifdef CGAL_SS3_EXIT_ASAP
+          continue;
+#else
+          split_event_current_2_b = false;
+#endif
+        }
+
+        if (!checkBisector(edge_2, facet_l2, event_time, facet_2_dst, point)) {
+#ifdef CGAL_SS3_EXIT_ASAP
+          continue;
+#else
+          split_event_current_3_b = false;
+#endif
+        }
+
+        const bool split_event_current_b = (split_event_current_1_b &&
+                                            split_event_current_2_b &&
+                                            split_event_current_3_b);
+#endif
+
+#ifdef CGAL_SS3_COMPARE_BOTH_BOUND_CHECKS
+# ifdef CGAL_SS3_EXIT_ASAP
+#  error "Cannot compare if doing early exits"
+# endif
+        CGAL_assertion(split_event_current_1 == split_event_current_1_b);
+        CGAL_assertion(split_event_current_2 == split_event_current_2_b);
+        CGAL_assertion(split_event_current_3 == split_event_current_3_b);
+
+        CGAL_assertion(split_event_current == split_event_current_b);
+#endif
+
+        if (split_event_current_b) {
+          split_event = true;
+          break;
+        }
+      }
+      if (split_event) {
+        continue;
+      }
+      // edge merge event
+      EdgeSPtr edge_prev = edge->prev(facet_l);
+      EdgeSPtr edge_next = edge->next(facet_l)->next(facet_l);
+      if (edge_prev->hasSameFacets(edge_next)) {
+        continue;
+      }
+      edge_prev = edge->prev(facet_l)->prev(facet_l);
+      edge_next = edge->next(facet_l);
+      if (edge_prev->hasSameFacets(edge_next)) {
+        continue;
+      }
+      edge_prev = edge->prev(facet_r);
+      edge_next = edge->next(facet_r)->next(facet_r);
+      if (edge_prev->hasSameFacets(edge_next)) {
+        continue;
+      }
+      edge_prev = edge->prev(facet_r)->prev(facet_r);
+      edge_next = edge->next(facet_r);
+      if (edge_prev->hasSameFacets(edge_next)) {
+        continue;
+      }
+
+      NodeSPtr node = Node::create();
+      EdgeEventSPtr event = EdgeEvent::create();
+      event->setNode(node);
+      node->clear();
+      node->setTime(event_time);
+      node->setPoint(point);
+      event->setEdge(edge);
+
+#ifndef CGAL_SS3_NO_SKELETON_DS
+      SkelVertexDataSPtr data_src = std::dynamic_pointer_cast<SkelVertexData>(edge->getVertexSrc()->getData());
+      SkelVertexDataSPtr data_dst = std::dynamic_pointer_cast<SkelVertexData>(edge->getVertexDst()->getData());
+      node->addArc(data_src->getArc());
+      node->addArc(data_dst->getArc());
+      SkelEdgeDataSPtr data_edge = std::dynamic_pointer_cast<SkelEdgeData>(edge->getData());
+      node->addSheet(data_edge->getSheet());
+#endif
+
+      queue.push(event);
+    }
+  }
+
 
 
 // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
 
 
+PK traits(*n);
+PCDT pcdt(traits);
+
+std::map<NodeSPtr, PCDT_VH> face_vhs;
+
+// Insert all nodes as vertices in the triangulation
+NodeSPtr degree_1_node_1 = NodeSPtr(), degree_1_node_2 = NodeSPtr();
+for (const NodeSPtr& node : nodes) {
+  auto res = face_vhs.emplace(node, PCDT_VH());
+  if (res.second) {
+    PCDT_VH vh = pcdt.insert(*(node->getPoint()));
+    vh->info() = node;
+    res.first->second = vh;
+  }
+
+  std::cout << "    node->point()" << *(node->getPoint()) << " deg " << node->degree() << std::endl;
+  if (node->degree() == 1) {
+    if (!degree_1_node_1) {
+      degree_1_node_1 = node;
+    } else if (!degree_1_node_2) {
+      degree_1_node_2 = node;
+    } else {
+      std::cerr << "Error: more than 2 degree 1 nodes?..." << std::endl;
+      return false;
+    }
+  }
+}
+
+// Insert constraints along the boundary
+for (ArcSPtr arc : sheet->arcs()) {
+  NodeSPtr node_src = arc->getNodeSrc();
+  NodeSPtr node_dst = arc->getNodeDst();
+  PCDT_VH vh0 = face_vhs.at(node_src);
+  PCDT_VH vh1 = face_vhs.at(node_dst);
+  try {
+    pcdt.insert_constraint(vh0, vh1);
+  } catch(const typename PCDT::Intersection_of_constraints_exception&) {
+    CGAL_SS3_IO_TRACE("Warning: Intersection of constraints in sheet triangulation");
+    CGAL_assertion_msg(false, "Intersections in CDT2 are not allowed");
+    continue;
+  }
+}
+
+// Close if sheet is incident to an input edge
+if (degree_1_node_1) {
+  CGAL_assertion(bool(degree_1_node_2));
+  PCDT_VH vh_1 = face_vhs.at(degree_1_node_1);
+  PCDT_VH vh_2 = face_vhs.at(degree_1_node_2);
+  try {
+    pcdt.insert_constraint(vh_1, vh_2);
+  } catch(const typename PCDT::Intersection_of_constraints_exception&) {
+    CGAL_SS3_IO_TRACE("Warning: Intersection of constraints in sheet triangulation");
+    CGAL_assertion_msg(false, "Intersections in CDT2 are not allowed");
+    continue;
+  }
+}
+
+
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+
+
+
+
+/**
+  * Appends a node of an event to the skeleton.
+  * It links all adjacent arcs and sheets to this node.
+  */
+void appendEventNode(NodeSPtr node)
+{
+  CGAL_SS3_DEBUG_SPTR(node);
+
+  for (ArcWPtr arc_wptr : node->arcs()) {
+    if (ArcSPtr arc = arc_wptr.lock()) {
+      arc->setNodeDst(node);
+      arc->setNodeDstListIt(STL_Extension::internal::weak_find(node->arcs().begin(), node->arcs().end(), arc_wptr));
+    }
+  }
+  for (SheetWPtr sheet_wptr : node->sheets()) {
+    if (SheetSPtr sheet = sheet_wptr.lock()) {
+      sheet->addNode(node);
+    }
+  }
+  skel_result_->addNode(node);
+}
+
+
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+
+
+
+
+Plane3SPtr opl1 = Transformation::offsetPlaneFromBase(facet_l1, event_time);
+CGAL_assertion(opl1->has_on(*point));
+Plane3SPtr opr1 = Transformation::offsetPlaneFromBase(facet_r1, event_time);
+CGAL_assertion(opr1->has_on(*point));
+Plane3SPtr opl2 = Transformation::offsetPlaneFromBase(facet_l2, event_time);
+CGAL_assertion(opl2->has_on(*point));
+Plane3SPtr opr2 = Transformation::offsetPlaneFromBase(facet_r2, event_time);
+CGAL_assertion(opr2->has_on(*point));
+
+Segment3SPtr e1o = Transformation::offsetEdgefromBase(edge_1, event_time);
+Segment3SPtr e2o = Transformation::offsetEdgefromBase(edge_2, event_time);
+std::cout << "Edge " << edge_1->toString() << "\nEdge offset at " << event_time << " is " << e1o->source() << " " << e1o->target() << std::endl;
+std::cout << "Edge " << edge_2->toString() << "\nEdge offset at " << event_time << " is " << e2o->source() << " " << e2o->target() << std::endl;
+CGAL_assertion(e1o->supporting_line().has_on(*point));
+CGAL_assertion(e2o->supporting_line().has_on(*point));
+CGAL_assertion(*e1o != *e2o);
+CGAL_assertion(e1o->supporting_line() != e2o->supporting_line());
+
+auto inter = CGAL::intersection(e1o->supporting_line(), e2o->supporting_line());
+CGAL_assertion(bool(inter));
+if (const Point_3* ipoint = std::get_if<Point_3>(&*inter)) {
+  Point3SPtr ip = KernelFactory::createPoint3(*ipoint);
+  CGAL_SS3_CORE_TRACE_V(1, "  intersection of offset lines is a point: " << *ip);
+  if (*ip != *point) {
+    CGAL_SS3_CORE_TRACE_V(1, "  reject: intersection of offset lines is not the same as intersection of offset planes");
+    CGAL_assertion(false);
+  }
+} else {
+  CGAL_SS3_CORE_TRACE_V(1, "  intersection of offset lines is not a point");
+  CGAL_assertion(false);
+}
+
+
+
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+
+
+
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
 
 
 
