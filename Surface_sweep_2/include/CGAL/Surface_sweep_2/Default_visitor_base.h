@@ -7,8 +7,8 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
-//                 Efi Fogel <efif@post.tau.ac.il>
+// Author(s) : Baruch Zukerman  <baruchzu@post.tau.ac.il>
+//             Efi Fogel        <efif@post.tau.ac.il>
 
 #ifndef CGAL_SURFACE_SWEEP_2_DEFAULT_VISITOR_BASE_H
 #define CGAL_SURFACE_SWEEP_2_DEFAULT_VISITOR_BASE_H
@@ -50,28 +50,27 @@ template <typename GeometryTraits_2, typename Event_, typename Subcurve_,
           typename Allocator_, typename Visitor_>
 class Default_visitor_base {
 public:
-  typedef GeometryTraits_2                              Geometry_traits_2;
-  typedef Event_                                        Event;
-  typedef Subcurve_                                     Subcurve;
-  typedef Allocator_                                    Allocator;
-  typedef Visitor_                                      Visitor;
+  using Geometry_traits_2 = GeometryTraits_2;
+  using Event = Event_;
+  using Subcurve = Subcurve_;
+  using Allocator = Allocator_;
+  using Visitor = Visitor_;
 
 private:
-  typedef Geometry_traits_2                             Gt2;
-  typedef Default_visitor_base<Gt2, Event, Subcurve, Allocator, Visitor>
-                                                        Self;
+  using Gt2 = Geometry_traits_2;
+  using Self = Default_visitor_base<Gt2, Event, Subcurve, Allocator, Visitor>;
 
 public:
-  typedef typename Subcurve::Status_line_iterator       Status_line_iterator;
+  using Status_line_iterator = typename Subcurve::Status_line_iterator;
 
-  typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
-  typedef typename Gt2::Point_2                         Point_2;
+  using X_monotone_curve_2 = typename Gt2::X_monotone_curve_2;
+  using Point_2 = typename Gt2::Point_2;
+  using Multiplicity = typename Gt2::Multiplicity;
 
-  typedef typename Event::Subcurve_iterator             Event_subcurve_iterator;
-  typedef typename Event::Subcurve_reverse_iterator
-    Event_subcurve_reverse_iterator;
+  using Event_subcurve_iterator = typename Event::Subcurve_iterator;
+  using Event_subcurve_reverse_iterator = typename Event::Subcurve_reverse_iterator;
 
-  typedef No_intersection_surface_sweep_2<Visitor>      Surface_sweep_2;
+  using Surface_sweep_2 = No_intersection_surface_sweep_2<Visitor>;
 
 protected:
   // Data members:
@@ -134,7 +133,8 @@ public:
   void update_event(Event* /* e */,
                     Subcurve* /* sc1 */,
                     Subcurve* /* sc2 */,
-                    bool /* is_new */)
+                    bool /* is_new */,
+                    Multiplicity /* multiplicity */)
   {}
 
   /*! Update the event. */
