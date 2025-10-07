@@ -118,7 +118,7 @@ public:
     CGAL_SS3_DEBUG_SPTR(p);
     CGAL_SS3_DEBUG_SPTR(q);
     CGAL_SS3_DEBUG_SPTR(r);
-    CGAL_SS3_DEBUG_SPTR(p != q && q != r && r != p);
+    CGAL_assertion(p != q && q != r && r != p);
     Plane3SPtr result = std::make_shared<Plane_3>(*p, *q, *r);
     CGAL_SS3_DEBUG_SPTR(result);
     return result;
