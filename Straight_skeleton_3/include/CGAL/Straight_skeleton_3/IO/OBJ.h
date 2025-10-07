@@ -227,7 +227,7 @@ public:
       if (!do_triangulate_facet) {
         std::set<EdgeSPtr> visited_edges;
 
-        for (const EdgeSPtr& edge : facet->edges()) {
+        for (EdgeSPtr edge : facet->edges()) {
           if (visited_edges.find(edge) != visited_edges.end()) {
             continue; // already visited
           }
@@ -244,7 +244,7 @@ public:
               is_open = true;
               break;
             }
-              edge = edge->next(facet);
+            edge = edge->next(facet);
           } while (edge != start_edge);
 
           // If open, also walk backward to collect remaining boundary vertices
