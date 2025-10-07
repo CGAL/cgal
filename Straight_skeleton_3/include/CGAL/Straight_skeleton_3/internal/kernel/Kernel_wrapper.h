@@ -54,7 +54,9 @@ class KernelWrapper
   using KernelFactory = kernel::KernelFactory<K>;
 
 public:
-  static Point3SPtr intersection(Plane3SPtr plane1, Plane3SPtr plane2, Plane3SPtr plane3)
+  static Point3SPtr intersection(const Plane3SPtr& plane1,
+                                 const Plane3SPtr& plane2,
+                                 const Plane3SPtr& plane3)
   {
     CGAL_SS3_DEBUG_SPTR(plane1);
     CGAL_SS3_DEBUG_SPTR(plane2);
@@ -83,7 +85,8 @@ public:
     return result;
   }
 
-  static Line3SPtr intersection(Plane3SPtr plane1, Plane3SPtr plane2)
+  static Line3SPtr intersection(const Plane3SPtr& plane1,
+                                const Plane3SPtr& plane2)
   {
     CGAL_SS3_DEBUG_SPTR(plane1);
     CGAL_SS3_DEBUG_SPTR(plane2);
@@ -108,7 +111,8 @@ public:
     return result;
   }
 
-  static Point3SPtr intersection(Plane3SPtr plane, Line3SPtr line)
+  static Point3SPtr intersection(const Plane3SPtr& plane,
+                                 const Line3SPtr& line)
   {
     CGAL_SS3_DEBUG_SPTR(plane);
     CGAL_SS3_DEBUG_SPTR(line);
@@ -135,7 +139,8 @@ public:
     return result;
   }
 
-  static Plane3SPtr bisector(Plane3SPtr plane1, Plane3SPtr plane2)
+  static Plane3SPtr bisector(const Plane3SPtr& plane1,
+                             const Plane3SPtr& plane2)
   {
     CGAL_SS3_DEBUG_SPTR(plane1);
     CGAL_SS3_DEBUG_SPTR(plane2);
@@ -152,35 +157,39 @@ public:
     return result;
   }
 
-  static FT squared_distance(Point3SPtr p1, Point3SPtr p2)
+  static FT squared_distance(const Point3SPtr& p1,
+                             const Point3SPtr& p2)
   {
     CGAL_SS3_DEBUG_SPTR(p1);
     CGAL_SS3_DEBUG_SPTR(p2);
     return CGAL::squared_distance(*p1, *p2);
   }
 
-  static FT squared_distance(Segment3SPtr segment, Point3SPtr point)
+  static FT squared_distance(const Segment3SPtr& segment,
+                             const Point3SPtr& point)
   {
     CGAL_SS3_DEBUG_SPTR(segment);
     CGAL_SS3_DEBUG_SPTR(point);
     return CGAL::squared_distance(*segment, *point);
   }
 
-  static FT squared_distance(Line3SPtr line, Point3SPtr point)
+  static FT squared_distance(const Line3SPtr& line,
+                             const Point3SPtr& point)
   {
     CGAL_SS3_DEBUG_SPTR(line);
     CGAL_SS3_DEBUG_SPTR(point);
     return CGAL::squared_distance(*line, *point);
   }
 
-  static FT squared_distance(Plane3SPtr plane, Point3SPtr point)
+  static FT squared_distance(const Plane3SPtr& plane,
+                             const Point3SPtr& point)
   {
     CGAL_SS3_DEBUG_SPTR(plane);
     CGAL_SS3_DEBUG_SPTR(point);
     return CGAL::squared_distance(*plane, *point);
   }
 
-  static Plane3SPtr opposite(Plane3SPtr plane)
+  static Plane3SPtr opposite(const Plane3SPtr& plane)
   {
     CGAL_SS3_DEBUG_SPTR(plane);
     Plane3SPtr result = KernelFactory::createPlane3(plane->opposite());
@@ -188,7 +197,7 @@ public:
     return result;
   }
 
-  static Line3SPtr opposite(Line3SPtr line)
+  static Line3SPtr opposite(const Line3SPtr& line)
   {
     CGAL_SS3_DEBUG_SPTR(line);
     Line3SPtr result = KernelFactory::createLine3(line->opposite());
@@ -196,7 +205,7 @@ public:
     return result;
   }
 
-  static bool hasNormalizedPlane(Plane3SPtr plane)
+  static bool hasNormalizedPlane(const Plane3SPtr& plane)
   {
     CGAL_SS3_DEBUG_SPTR(plane);
 
@@ -208,7 +217,7 @@ public:
     return (a*a + b*b + c*c - 1) <= 1e-5;
   }
 
-  static int side(Plane3SPtr plane, Point3SPtr point)
+  static int side(const Plane3SPtr& plane, const Point3SPtr& point)
   {
     CGAL_SS3_DEBUG_SPTR(plane);
     CGAL_SS3_DEBUG_SPTR(point);
@@ -219,7 +228,8 @@ public:
     return result;
   }
 
-  static int orientation(Line3SPtr line1, Line3SPtr line2)
+  static int orientation(const Line3SPtr& line1,
+                         const Line3SPtr& line2)
   {
     CGAL_SS3_DEBUG_SPTR(line1);
     CGAL_SS3_DEBUG_SPTR(line2);
@@ -240,7 +250,8 @@ public:
     return result;
   }
 
-  static Vector3SPtr cross(Vector3SPtr v1, Vector3SPtr v2)
+  static Vector3SPtr cross(const Vector3SPtr& v1,
+                           const Vector3SPtr& v2)
   {
     CGAL_SS3_DEBUG_SPTR(v1);
     CGAL_SS3_DEBUG_SPTR(v2);
@@ -250,7 +261,8 @@ public:
     return result;
   }
 
-  static Point3SPtr projection(Line3SPtr line, Point3SPtr point)
+  static Point3SPtr projection(const Line3SPtr& line,
+                               const Point3SPtr& point)
   {
     CGAL_SS3_DEBUG_SPTR(line);
     CGAL_SS3_DEBUG_SPTR(point);
@@ -260,7 +272,8 @@ public:
     return result;
   }
 
-  static Point3SPtr projection(Plane3SPtr plane, Point3SPtr point)
+  static Point3SPtr projection(const Plane3SPtr& plane,
+                               const Point3SPtr& point)
   {
     CGAL_SS3_DEBUG_SPTR(plane);
     CGAL_SS3_DEBUG_SPTR(point);
