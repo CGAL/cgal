@@ -35,6 +35,23 @@
 
 namespace CGAL {
 namespace Straight_skeletons_3 {
+
+namespace internal {
+namespace HDS {
+
+template <typename Traits_>
+class Polyhedron;
+
+} // namespace HDS
+
+namespace SDS {
+
+template <typename Traits>
+class StraightSkeleton;
+
+} // namespace SDS
+} // namespace internal
+
 namespace IO {
 
 /**
