@@ -30,6 +30,10 @@
 #include <CGAL/Search_traits_2.h>
 #include <optional>
 
+#include <CGAL/Filtered_predicate.h>
+#include <CGAL/Filtered_kernel/internal/Static_filters/Static_filter_error.h>
+#include <CGAL/Filtered_kernel/internal/Static_filters/tools.h>
+
 /// \file AABB_traits_2.h
 
 namespace CGAL {
@@ -159,7 +163,7 @@ class AABB_tree;
 /// \sa `AABBPrimitiveWithSharedData`
 
 template<typename GeomTraits, typename AABBPrimitive, typename BboxMap = Default>
-class AABB_traits_2
+class AABB_traits_2_base
 #ifndef DOXYGEN_RUNNING
 : public internal::AABB_tree::AABB_traits_base<AABBPrimitive>,
   public internal::AABB_tree::AABB_traits_intersection_base_2<GeomTraits>,
@@ -170,7 +174,7 @@ class AABB_traits_2
   typedef GeomTraits Geom_traits;
 public:
 
-  typedef AABB_traits_2<GeomTraits, AABBPrimitive, BboxMap> AT;
+  typedef AABB_traits_2_base<GeomTraits, AABBPrimitive, BboxMap> AT;
   // AABBTraits concept types
   typedef typename GeomTraits::FT FT;
   typedef AABBPrimitive Primitive;
@@ -224,9 +228,9 @@ public:
   BboxMap bbm;
 
   /// Default constructor.
-  AABB_traits_2() { }
+  AABB_traits_2_base() { }
 
-  AABB_traits_2(BboxMap bbm)
+  AABB_traits_2_base(BboxMap bbm)
     : bbm(bbm)
   {}
 
@@ -249,10 +253,10 @@ public:
    */
   class Split_primitives
   {
-    typedef AABB_traits_2<GeomTraits,AABBPrimitive,BboxMap> Traits;
+    typedef AABB_traits_2_base<GeomTraits,AABBPrimitive,BboxMap> Traits;
     const Traits& m_traits;
   public:
-    Split_primitives(const AABB_traits_2<GeomTraits,AABBPrimitive,BboxMap>& traits)
+    Split_primitives(const AABB_traits_2_base<GeomTraits,AABBPrimitive,BboxMap>& traits)
       : m_traits(traits) {}
 
     typedef void result_type;
@@ -286,9 +290,9 @@ public:
    * @return the bounding box of the primitives of the iterator range
    */
   class Compute_bbox {
-    const AABB_traits_2<GeomTraits,AABBPrimitive, BboxMap>& m_traits;
+    const AABB_traits_2_base<GeomTraits,AABBPrimitive, BboxMap>& m_traits;
   public:
-    Compute_bbox(const AABB_traits_2<GeomTraits,AABBPrimitive, BboxMap>& traits)
+    Compute_bbox(const AABB_traits_2_base<GeomTraits,AABBPrimitive, BboxMap>& traits)
       :m_traits (traits) {}
 
     template<typename ConstPrimitiveIterator>
@@ -311,9 +315,9 @@ public:
   /// In the case the query is a `CGAL::AABB_tree`, the `do_intersect()`
   /// function of this tree is used.
   class Do_intersect {
-    const AABB_traits_2<GeomTraits,AABBPrimitive, BboxMap>& m_traits;
+    const AABB_traits_2_base<GeomTraits,AABBPrimitive, BboxMap>& m_traits;
   public:
-    Do_intersect(const AABB_traits_2<GeomTraits,AABBPrimitive, BboxMap>& traits)
+    Do_intersect(const AABB_traits_2_base<GeomTraits,AABBPrimitive, BboxMap>& traits)
       :m_traits(traits) {}
 
     template<typename Query>
@@ -346,9 +350,9 @@ public:
 
 
   class Intersection {
-    const AABB_traits_2<GeomTraits,AABBPrimitive,BboxMap>& m_traits;
+    const AABB_traits_2_base<GeomTraits,AABBPrimitive,BboxMap>& m_traits;
   public:
-    Intersection(const AABB_traits_2<GeomTraits,AABBPrimitive,BboxMap>& traits)
+    Intersection(const AABB_traits_2_base<GeomTraits,AABBPrimitive,BboxMap>& traits)
       :m_traits(traits) {}
     template<typename Query>
     std::optional< typename Intersection_and_primitive_id<Query>::Type >
@@ -367,9 +371,9 @@ public:
   class Closest_point {
       typedef typename AT::Point Point;
       typedef typename AT::Primitive Primitive;
-    const AABB_traits_2<GeomTraits,AABBPrimitive, BboxMap>& m_traits;
+    const AABB_traits_2_base<GeomTraits,AABBPrimitive, BboxMap>& m_traits;
   public:
-    Closest_point(const AABB_traits_2<GeomTraits,AABBPrimitive, BboxMap>& traits)
+    Closest_point(const AABB_traits_2_base<GeomTraits,AABBPrimitive, BboxMap>& traits)
       : m_traits(traits) {}
 
 
@@ -393,25 +397,12 @@ public:
       typedef typename AT::FT FT;
       typedef typename AT::Primitive Primitive;
   public:
-      CGAL::Comparison_result operator()(const Point& p, const Bounding_box& bb, const Point& bound, Tag_true) const
-      {
-          return do_intersect_circle_iso_rectangle_2
-          (GeomTraits().construct_circle_2_object()
-           (p, GeomTraits().compute_squared_distance_2_object()(p, bound)), bb)?
-          CGAL::SMALLER : CGAL::LARGER;
-      }
-
-      CGAL::Comparison_result operator()(const Point& p, const Bounding_box& bb, const Point& bound, Tag_false) const
-      {
-          return do_intersect_circle_iso_rectangle_2
-          (GeomTraits().construct_circle_2_object()
-           (p, GeomTraits().compute_squared_distance_2_object()(p, bound)), bb)?
-          CGAL::SMALLER : CGAL::LARGER;
-      }
-
       CGAL::Comparison_result operator()(const Point& p, const Bounding_box& bb, const Point& bound) const
       {
-        return (*this)(p, bb, bound, Boolean_tag<internal::Has_static_filters<GeomTraits>::value>());
+        return do_intersect_circle_iso_rectangle_2
+        (GeomTraits().construct_circle_2_object()
+          (p, GeomTraits().compute_squared_distance_2_object()(p, bound)), bb) ?
+          CGAL::SMALLER : CGAL::LARGER;
       }
 
       // The following functions seem unused...?
@@ -500,12 +491,12 @@ private:
   }
 
   /// Comparison functions
-  static bool less_x(const Primitive& pr1, const Primitive& pr2,const AABB_traits_2<GeomTraits,AABBPrimitive, BboxMap>& traits)
+  static bool less_x(const Primitive& pr1, const Primitive& pr2,const AABB_traits_2_base<GeomTraits,AABBPrimitive, BboxMap>& traits)
   {
     return GeomTraits().less_x_2_object()( internal::Primitive_helper<AT>::get_reference_point(pr1,traits),
                                            internal::Primitive_helper<AT>::get_reference_point(pr2,traits) );
   }
-  static bool less_y(const Primitive& pr1, const Primitive& pr2,const AABB_traits_2<GeomTraits,AABBPrimitive, BboxMap>& traits)
+  static bool less_y(const Primitive& pr1, const Primitive& pr2,const AABB_traits_2_base<GeomTraits,AABBPrimitive, BboxMap>& traits)
   {
     return GeomTraits().less_y_2_object()( internal::Primitive_helper<AT>::get_reference_point(pr1,traits),
                                            internal::Primitive_helper<AT>::get_reference_point(pr2,traits) );
@@ -518,8 +509,8 @@ private:
 // Private methods
 //-------------------------------------------------------
   template<typename GT, typename P, typename B>
-  typename AABB_traits_2<GT,P,B>::Axis
-  AABB_traits_2<GT,P,B>::longest_axis(const Bounding_box& bbox)
+  typename AABB_traits_2_base<GT,P,B>::Axis
+    AABB_traits_2_base<GT,P,B>::longest_axis(const Bounding_box& bbox)
 {
   const double dx = bbox.xmax() - bbox.xmin();
   const double dy = bbox.ymax() - bbox.ymin();
@@ -533,6 +524,209 @@ private:
       return CGAL_AXIS_Y;
     }
 }
+
+
+//-------------------------------------------------------
+// Filtered traits
+//-------------------------------------------------------
+
+  template<typename GeomTraits, typename AABBPrimitive, typename BboxMap = Default, bool Has_static_filters = internal::Has_static_filters<GeomTraits>::value>
+  class AABB_traits_2_filtered;
+
+  template<typename GeomTraits, typename AABBPrimitive, typename BboxMap = Default>
+  class AABB_traits_2_filtered_base : public AABB_traits_2_base<GeomTraits, AABBPrimitive, BboxMap> {
+    using Base = AABB_traits_2_base<GeomTraits, AABBPrimitive, BboxMap>;
+  public:
+    typedef GeomTraits                                              Kernel;
+
+    typedef typename Kernel::Exact_kernel                           EKernel;
+    typedef typename Kernel::Approximate_kernel                     AKernel;
+    typedef typename Kernel::C2E                                    C2E;
+    typedef typename Kernel::C2F                                    C2F;
+
+    // Exact traits is based on the exact kernel.
+    typedef AABB_traits_2_base<EKernel, AABBPrimitive, BboxMap> Exact_traits;
+    // Filtering traits is based on the filtering kernel.
+    typedef AABB_traits_2_base<AKernel, AABBPrimitive, BboxMap> Filtering_traits;
+
+    typedef Filtered_predicate<
+      typename Exact_traits::Compare_distance,
+      typename Filtering_traits::Compare_distance,
+      C2E, C2F> Compare_distance;
+
+    AABB_traits_2_filtered_base() : Base() {}
+    AABB_traits_2_filtered_base(BboxMap bbm) : Base(bbm) {}
+
+    Compare_distance compare_distance_object() const
+    {
+      typename Exact_traits::Compare_distance pe = Exact_traits().compare_distance_object();
+      typename Filtering_traits::Compare_distance pf = Filtering_traits().compare_distance_object();
+
+      return Compare_distance(pe, pf);
+    }
+  };
+
+  template<typename GeomTraits, typename AABBPrimitive, typename BboxMap = Default>
+  class AABB_traits_2_static_filtered : public AABB_traits_2_filtered_base<GeomTraits, AABBPrimitive, BboxMap> {
+    using Base = AABB_traits_2_filtered_base<GeomTraits, AABBPrimitive, BboxMap>;
+
+  public:
+    class Compare_distance : public Base::Compare_distance {
+    public:
+      using Point = typename GeomTraits::Point_2;
+      using Bounding_box = CGAL::Bbox_2;
+      using Circle_2 = typename GeomTraits::Circle_2;
+
+      CGAL::Comparison_result operator()(const Point& p, const Bounding_box& b, const Point& bound) const {
+        Circle_2 s = GeomTraits().construct_circle_2_object()(p, GeomTraits().compute_squared_distance_2_object()(p, bound));
+
+        CGAL_BRANCH_PROFILER_3(std::string("semi-static failures/attempts/calls to   : ") +
+          std::string(CGAL_PRETTY_FUNCTION), tmp);
+
+        internal::Static_filters_predicates::Get_approx<Point> get_approx; // Identity functor for all points
+        const Point& c = s.center();
+
+        double scx, scy, ssr;
+        double bxmin = b.xmin(), bymin = b.ymin(),
+          bxmax = b.xmax(), bymax = b.ymax();
+
+        if (internal::fit_in_double(get_approx(c).x(), scx) &&
+          internal::fit_in_double(get_approx(c).y(), scy) &&
+          internal::fit_in_double(s.squared_radius(), ssr))
+        {
+          CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
+
+          if ((ssr < 1.11261183279326254436e-293) || (ssr > 2.80889552322236673473e+306)) {
+            CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
+            return Base::Compare_distance::operator()(p, b, bound);
+          }
+          double distance = 0;
+          double max1 = 0;
+          double double_tmp_result = 0;
+          double eps = 0;
+          if (scx < bxmin)
+          {
+            double bxmin_scx = bxmin - scx;
+            max1 = bxmin_scx;
+
+            distance = square(bxmin_scx);
+            double_tmp_result = (distance - ssr);
+
+            if ((max1 < 3.33558365626356687717e-147) || (max1 > 1.67597599124282407923e+153))
+                return CGAL::SMALLER;
+
+            eps = 1.99986535548615598560e-15 * (std::max)(ssr, square(max1));
+
+            if (double_tmp_result > eps)
+              return CGAL::LARGER;
+          }
+          else if (scx > bxmax)
+          {
+            double scx_bxmax = scx - bxmax;
+            max1 = scx_bxmax;
+
+            distance = square(scx_bxmax);
+            double_tmp_result = (distance - ssr);
+
+            if ((max1 < 3.33558365626356687717e-147) || (max1 > 1.67597599124282407923e+153))
+              return CGAL::SMALLER;
+
+            eps = 1.99986535548615598560e-15 * (std::max)(ssr, square(max1));
+
+            if (double_tmp_result > eps)
+              return CGAL::LARGER;
+          }
+
+          if (scy < bymin)
+          {
+            double bymin_scy = bymin - scy;
+            if (max1 < bymin_scy) {
+              max1 = bymin_scy;
+            }
+
+            distance += square(bymin_scy);
+            double_tmp_result = (distance - ssr);
+
+            if ((max1 < 3.33558365626356687717e-147) || ((max1 > 1.67597599124282407923e+153)))
+              return CGAL::SMALLER;
+
+            eps = 1.99986535548615598560e-15 * (std::max)(ssr, square(max1));
+
+            if (double_tmp_result > eps) {
+              return CGAL::LARGER;
+            }
+          }
+          else if (scy > bymax)
+          {
+            double scy_bymax = scy - bymax;
+            if (max1 < scy_bymax) {
+              max1 = scy_bymax;
+            }
+            distance += square(scy_bymax);
+            double_tmp_result = (distance - ssr);
+
+            if (((max1 < 3.33558365626356687717e-147)) || ((max1 > 1.67597599124282407923e+153)))
+              return CGAL::SMALLER;
+
+            eps = 1.99986535548615598560e-15 * (std::max)(ssr, square(max1));
+
+            if (double_tmp_result > eps)
+              return CGAL::LARGER;
+          }
+
+          // double_tmp_result and eps were growing all the time
+          // no need to test for > eps as done earlier in at least one case
+
+          return CGAL::SMALLER;
+        }
+        return Base::Compare_distance::operator()(p, b, bound);
+      }
+    };
+
+    AABB_traits_2_static_filtered() : Base() {}
+    AABB_traits_2_static_filtered(BboxMap bbm) : Base(bbm) {}
+
+    Compare_distance compare_distance_object() const { return Compare_distance(); }
+  };
+
+  template<typename GeomTraits, typename AABBPrimitive, typename BboxMap>
+  class AABB_traits_2_filtered<GeomTraits, AABBPrimitive, BboxMap, false> : public AABB_traits_2_filtered_base<GeomTraits, AABBPrimitive, BboxMap> {
+    using Base = AABB_traits_2_filtered_base<GeomTraits, AABBPrimitive, BboxMap>;
+
+  public:
+    AABB_traits_2_filtered() : Base() {}
+    AABB_traits_2_filtered(BboxMap bbm) : Base(bbm) {}
+  };
+
+  template<typename GeomTraits, typename AABBPrimitive, typename BboxMap>
+  class AABB_traits_2_filtered<GeomTraits, AABBPrimitive, BboxMap, true> : public AABB_traits_2_static_filtered<GeomTraits, AABBPrimitive, BboxMap> {
+    using Base = AABB_traits_2_static_filtered<GeomTraits, AABBPrimitive, BboxMap>;
+
+  public:
+    AABB_traits_2_filtered() : Base() {}
+    AABB_traits_2_filtered(BboxMap bbm) : Base(bbm) {}
+  };
+
+  template<typename GeomTraits, typename AABBPrimitive, typename BboxMap = Default, bool Has_filtered_predicates_ = internal::Has_filtered_predicates<GeomTraits>::value>
+  class AABB_traits_2;
+
+  template<typename GeomTraits, typename AABBPrimitive, typename BboxMap>
+  class AABB_traits_2<GeomTraits, AABBPrimitive, BboxMap, false> : public AABB_traits_2_base<GeomTraits, AABBPrimitive, BboxMap> {
+    using Base = AABB_traits_2_base<GeomTraits, AABBPrimitive, BboxMap>;
+
+  public:
+    AABB_traits_2() : Base() {}
+    AABB_traits_2(BboxMap bbm) : Base(bbm) {}
+  };
+
+  template<class GeomTraits, typename AABBPrimitive, typename BboxMap>
+  class AABB_traits_2<GeomTraits, AABBPrimitive, BboxMap, true> : public AABB_traits_2_filtered<GeomTraits, AABBPrimitive, BboxMap> {
+    using Base = AABB_traits_2_filtered<GeomTraits, AABBPrimitive, BboxMap>;
+
+  public:
+    AABB_traits_2() : Base() {}
+    AABB_traits_2(BboxMap bbm) : Base(bbm) {}
+  };
 
 /// @}
 
