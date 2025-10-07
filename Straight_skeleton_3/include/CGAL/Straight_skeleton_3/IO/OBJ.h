@@ -61,23 +61,21 @@ class OBJFile
 {
 public:
   /**
-    * It is impossible for an obj file to store holes inside a facet.
+    * It is impossible for an obj file to store holes inside a facet,
+    * so we triangulate facet in this case. (@todo)
     */
-  template <typename PolyhedronSPtr>
+  template <typename Traits>
   static bool save(const std::string& filename,
-                   PolyhedronSPtr polyhedron,
+                   std::shared_ptr<internal::HDS::Polyhedron<Traits> > polyhedron,
                    bool do_triangulate = true,
                    bool convert_to_double = true)
   {
-    using Polyhedron = typename PolyhedronSPtr::element_type;
-
-    using Traits = typename Polyhedron::Traits;
-
     using Point_3 = typename Traits::Point_3;
     using Vector_3 = typename Traits::Vector_3;
     using Point3SPtr = std::shared_ptr<Point_3>;
     using Vector3SPtr = std::shared_ptr<Vector_3>;
 
+    using Polyhedron = internal::HDS::Polyhedron<Traits>;
     using VertexSPtr = typename Polyhedron::VertexSPtr;
     using EdgeSPtr = typename Polyhedron::EdgeSPtr;
     using FacetSPtr = typename Polyhedron::FacetSPtr;
@@ -85,7 +83,7 @@ public:
     using KernelFactory = internal::kernel::KernelFactory<Traits>;
 
     bool result = true;
-    CGAL_SS3_IO_TRACE("-- Save OBJ to " << filename << " --");
+    CGAL_SS3_IO_TRACE("-- OBJ::Save(Polyhedron) to " << filename << " --");
     CGAL_SS3_IO_TRACE("   do_triangulate: " << std::boolalpha << do_triangulate << "\n" <<
                       "   convert_to_double: " << convert_to_double);
     CGAL_SS3_IO_TRACE(polyhedron->vertices().size() << " NV, " << polyhedron->facets().size() << " NF");
