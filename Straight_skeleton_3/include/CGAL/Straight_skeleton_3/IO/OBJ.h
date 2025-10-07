@@ -159,15 +159,15 @@ public:
           VertexSPtr v1 = edge->dst(facet);
 
           if (*(v0->getPoint()) == *(v1->getPoint())) {
-            CGAL_SS3_IO_TRACE("Warning: encountered degenerate edge @ " << *(v0->getPoint()));
+            CGAL_SS3_IO_TRACE("Degenerate edge @ " << *(v0->getPoint()));
 
             CGAL_assertion(v0->degree() != 1); // @todo handle that...
             VertexSPtr vm1 = edge->prev(facet)->src(facet);
 
             // manually create a degenerate facet so that the resulting mesh is conforming
-            oss << "f " << vertex_to_index[vm1] << " "
-                        << vertex_to_index[v0] << " "
-                        << vertex_to_index[v1] << "\n";
+            oss << "f " << vertex_to_index.at(vm1) << " "
+                        << vertex_to_index.at(v0) << " "
+                        << vertex_to_index.at(v1) << "\n";
           }
           else
           {
@@ -217,9 +217,9 @@ public:
             if (!get(in_domain, fh)) {
               continue;
             }
-            oss << "f " << vertex_to_index[fh->vertex(0)->info()] << " "
-                        << vertex_to_index[fh->vertex(1)->info()] << " "
-                        << vertex_to_index[fh->vertex(2)->info()] << "\n";
+            oss << "f " << vertex_to_index.at(fh->vertex(0)->info()) << " "
+                        << vertex_to_index.at(fh->vertex(1)->info()) << " "
+                        << vertex_to_index.at(fh->vertex(2)->info()) << "\n";
           }
         }
       }
@@ -261,7 +261,7 @@ public:
           // Write the boundary as a face
           oss << "f ";
           for (const auto& vertex : boundary_vertices) {
-            oss << vertex_to_index[vertex] << " ";
+            oss << vertex_to_index.at(vertex) << " ";
           }
 
           oss << "\n";
