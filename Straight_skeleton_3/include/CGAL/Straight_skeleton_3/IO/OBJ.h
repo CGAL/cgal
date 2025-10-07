@@ -131,7 +131,7 @@ public:
     // Write facets
     for (const FacetSPtr& facet : polyhedron->facets()) {
       bool do_triangulate_facet = do_triangulate;
-      if (facet->edges().size() < 3) {
+      if (facet->edges().size() <= 3) {
         do_triangulate_facet = false;
       }
 
