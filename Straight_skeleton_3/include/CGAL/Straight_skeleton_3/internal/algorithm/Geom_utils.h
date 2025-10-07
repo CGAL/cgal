@@ -43,7 +43,7 @@ class GeomUtils
   using KernelFactory = kernel::KernelFactory<K>;
 
 public:
-  static Plane3SPtr offsetPlane(const Plane3SPtr& plane, const FT& offset)
+  static Plane3SPtr offsetPlane(const Plane3SPtr& plane, const FT& shift)
   {
     CGAL_SS3_DEBUG_SPTR(plane);
     CGAL_precondition(KernelWrapper::hasNormalizedPlane(plane));
@@ -54,7 +54,7 @@ public:
     const FT& b = plane->b();
     const FT& c = plane->c();
     const FT& d = plane->d();
-    Plane3SPtr result = KernelFactory::createPlane3(a, b, c, d - offset);
+    Plane3SPtr result = KernelFactory::createPlane3(a, b, c, d - shift);
     CGAL_SS3_TRAITS_TRACE("Plane offset to: " << *result);
 
     CGAL_SS3_DEBUG_SPTR(result);
