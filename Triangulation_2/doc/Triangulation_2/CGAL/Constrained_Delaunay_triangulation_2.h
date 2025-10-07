@@ -221,7 +221,7 @@ template <class ConstraintIterator>
 std::size_t insert_constraints(ConstraintIterator first, ConstraintIterator last);
 
 /*!
-Same as above except that the function check for duplicates.
+Same as `insert_constraints(begin,end)` except that duplicated pairs of points are only considered once.
 
 Inserting the same constraint several times may cause problems in
 case of intersecting segments and non-exact constructions.
@@ -243,7 +243,7 @@ std::size_t insert_constraints(PointIterator points_first, PointIterator points_
                                IndicesIterator indices_first, IndicesIterator indices_last);
 
 /*!
-Same as above except that the function check for duplicates.
+Same as insert_constraint(points_first, points_last, indices_first, indices_last)` except that duplicated pair of points are only considered once.
 
 Inserting the same constraint several times may cause problems in
 case of intersecting segments and non-exact constructions.
@@ -252,7 +252,7 @@ case of intersecting segments and non-exact constructions.
 \tparam IndicesIterator is an `InputIterator` with `std::pair<Int, Int>` where `Int` is an integral type implicitly convertible to `std::size_t`
 */
 template <class PointIterator, class IndicesIterator>
-std::size_t insert_constraints(PointIterator points_first, PointIterator points_last,
+std::size_t insert_unique_constraints(PointIterator points_first, PointIterator points_last,
                                IndicesIterator indices_first, IndicesIterator indices_last);
 
 /*!
