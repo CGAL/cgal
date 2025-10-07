@@ -29,12 +29,11 @@ namespace CGAL {
 
 
 
-    template <class T, class IndicesIterator>
+    template <class T, class IndicesIterator, bool check_duplicates = false>
     std::size_t insert_constraints( T& t,
                                     const std::vector<typename T::Point>& points,
                                     IndicesIterator indices_first,
-                                    IndicesIterator indices_beyond,
-                                    bool check_duplicates = false)
+                                    IndicesIterator indices_beyond)
   {
     if(indices_first == indices_beyond){
       return 0;
@@ -77,7 +76,7 @@ namespace CGAL {
       Vertex_handle v1 = vertices[it_cst->first];
       Vertex_handle v2 = vertices[it_cst->second];
       if(v1 != v2){
-        if(check_duplicates){
+        if constexpr(check_duplicates){
           std::pair<Vertex_handle,Vertex_handle> p = (v1 < v2)? std::make_pair(v1,v2): std::make_pair(v2,v1);
           if(inserted.insert(p).second){
             t.insert_constraint(v1, v2);

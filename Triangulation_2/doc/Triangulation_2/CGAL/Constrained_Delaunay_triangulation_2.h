@@ -253,7 +253,7 @@ case of intersecting segments and non-exact constructions.
 */
 template <class PointIterator, class IndicesIterator>
 std::size_t insert_unique_constraints(PointIterator points_first, PointIterator points_last,
-                               IndicesIterator indices_first, IndicesIterator indices_last);
+                                      IndicesIterator indices_first, IndicesIterator indices_last);
 
 /*!
 Removes vertex v.
