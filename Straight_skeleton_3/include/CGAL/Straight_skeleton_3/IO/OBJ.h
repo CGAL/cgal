@@ -91,8 +91,9 @@ public:
     // CGAL_SS3_IO_TRACE("Saving to OBJ:\n" << polyhedron->toString());
 
     // we can tolerate intersections for OBJ::save because it is only used for debugging
-    // using Itag = CGAL::No_constraint_intersection_requiring_constructions_tag;
-    using Itag = CGAL::Exact_intersections_tag;
+    // CGAL::Exact_intersections_tag
+    // CGAL::No_constraint_intersection_requiring_constructions_tag
+    using Itag = CGAL::No_constraint_intersection_requiring_constructions_tag;
     using PK = CGAL::Projection_traits_3<Traits>;
     using PVbb = CGAL::Triangulation_vertex_base_with_info_2<VertexSPtr, PK>;
     using PVb = CGAL::Triangulation_vertex_base_2<PK, PVbb>;
