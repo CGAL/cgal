@@ -1402,7 +1402,7 @@ bool approximated_centroidal_Voronoi_diagram_remeshing(TriangleMesh& tmesh,
                                                        std::size_t nb_vertices,
                                                        const NamedParameters& np = parameters::default_values())
 {
-  auto ps = internal::acvd_impl(tmesh, nb_vertices, np);
+  auto ps = internal::acvd_impl(tmesh, static_cast<int>(nb_vertices), np);
   CGAL_assertion(is_polygon_soup_a_polygon_mesh(ps.second));
 
   auto vpm = parameters::choose_parameter(
