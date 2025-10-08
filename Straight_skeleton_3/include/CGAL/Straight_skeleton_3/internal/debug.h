@@ -213,16 +213,16 @@
 // -------------------------------------------------------------------------------------------------
 // -------------------------------------------------------------------------------------------------
 
-#ifdef DEBUG
-
-/* macros that warn if a smart pointer is invalid */
-#define CGAL_SS3_DEBUG_SPTR(sptr) if (!sptr) { /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << "shared pointer is invalid: " << (#sptr) << std::endl; util::StackTrace::print(CGAL_SS3_TRACE_STREAM); }
-#define CGAL_SS3_DEBUG_WPTR(wptr) if (wptr.expired()) { /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << "weak pointer is expired: " << (#wptr) << std::endl; util::StackTrace::print(CGAL_SS3_TRACE_STREAM); }
-
-#else
+#ifdef NDEBUG
 
 #define CGAL_SS3_DEBUG_SPTR(sptr)
 #define CGAL_SS3_DEBUG_WPTR(wptr)
+
+#else
+
+/* macros that warn if a smart pointer is invalid */
+#define CGAL_SS3_DEBUG_SPTR(sptr) if (!sptr) { /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << "shared pointer is invalid: " << (#sptr) << std::endl; CGAL::Straight_skeletons_3::internal::StackTrace::print(CGAL_SS3_TRACE_STREAM); CGAL_error(); }
+#define CGAL_SS3_DEBUG_WPTR(wptr) if (wptr.expired()) { /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << "weak pointer is expired: " << (#wptr) << std::endl; CGAL::Straight_skeletons_3::internal::StackTrace::print(CGAL_SS3_TRACE_STREAM); CGAL_error(); }
 
 #endif
 
