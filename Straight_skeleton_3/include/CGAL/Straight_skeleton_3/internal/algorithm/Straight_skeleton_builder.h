@@ -18,69 +18,89 @@
 #define CGAL_STRAIGHT_SKELETON_3_INTERNAL_ALGORITHM_STRAIGHT_SKELETON_BUILDER_H
 
 // @fixme yesterday:
+//   What about using Shape detection then...
 // - 362913 queue correctness assertion
-// - 2119792 with perf weights OR zero weights => segfaults
+// - 2119792 with perf weights => segfaults
+// data/wolfgang/724_star-Butterfly.obj
+// data/wolfgang/726_star-PNSplit.obj
+// data/wolfgang/chinese_lion_174.obj
+// data/wolfgang/venus_267.obj
+// -save-time -inf works?
 
 // @fixme:
-// - isEventInthepast should tolerate same time for t=0 (touching) events?
-// - more combinatorial checks should happen at pop time?
+// - more combinatorial checks should happen at pop time (?)
+// - re-using items in event handlers goes against detecting obsolete events with expired pointers
+// - perturbation depth-limit without hardcoded digit size values
+// - merge vertices with equal position in output (save offset at an event time)
 
 // @fixme later:
-// - Fix simultaneous events still happening sometimes (likely the same event multiple times
-//   since we don't check the queue before pushing)
 
 // @fixme latest:
-// - merge vertices with equal position in output (save offset @ event time)
+// - Fix simultaneous events still happening sometimes (likely the same event multiple times
+//   since we don't check the queue before pushing)
 // - EPECK -> EPICK could create self-intersections
 
 // @speed
+// - don't actually shift at all intermediate steps: we can do everything with base planes,
+//   including the computations that use point positions
 // - avoid duplicate computations in checkBisectors()
+// - delay bisector checks till after cheap combinatorial checks
 // - edge split events: add an event ptr within each edge for the next best edge split (might not
 //   be valid anymore with pop time checks)
-// - store vanish event ptr in edges to:
-//   - avoid recomputing it
+// - store vanish event ptr in edges as to:
+//   - avoid recomputing it if the edge is already associated a vanish event
 //   - get a tigther future bound on events: e.g., if the edge vanishes at T0, it's pointless
-//     to investigate contact events at T1 < T0
-// - CGAL_SS3_VV_VERTEX_2_WALK_FACES_FOR_DETECTION
+//     to investigate contact events of that edge at after T0
+// - Fix and use CGAL_SS3_VV_VERTEX_2_WALK_FACES_FOR_DETECTION
+// - If an edge is growing, there is no point computing its vanish event
+// - For contact events: exit early if the 4 planes are clearly not intersecting (diametral spheres
+//   around the edges of size something?)
 
 // @todo: cleaning
-// - fix the insidebox
-// - clean up the local ranges nomenclature
+// - HdsUtils / Polyhedron transformation cyclic dependency
+// - Do not accept non manifold inputs (clarify doc)
+// - clean up all the code related to local queue (horrible variable names, duplicates, etc.)
 // - clean up macros
-// - test & doc
 // - check for overly shared objects, redundant function calls (plane normalization, for example)
+// - CamelCase in header name, classes, variables (?)
+// - tone down the useless shared ptr like the SDS builder
+
+// @todo
+// - add tests; doc figures
 
 // @todo later:
-// - use traits' functors
-// - if checking perturbation and failing because of self-intersections, use a smaller epsilon
-// - perform facet merging using region growing and remesh_planar_faces()
-// - write sanitization without perturbaton, i.e., randTiltPlanesv3(p, 0)
-// - Re-introduce straight skeleton construction (delay all node/sheet/etc. construction
-//   event handle time) + graph checker
-// - tone down the useless shared ptr like the SDS builder
-// - CamelCase in header name, classes, variables (?)
-// - re-enable translate and scale (?)
+// - check if it costly to recompute the time and position at event pop time as make events lighter
+// - Re-introduce graph checker
+// - add navigation to the skeleton data structure (?)
+// - if checking perturbation fails because of self-intersections, use a smaller epsilon
+// - perform facet merging using CGAL's region growing and remesh_planar_faces()
+//   which only ensures that points are on supporting planes, but does NOT perturb the planes.
+// - re-enable the option to translate and scale (?)
+// - tolerate non triangulated inputs
 
 // @todo latest:
+// - use traits' functors
 // - get rid of the exact construction requirement? At least if we do not have to split high degree
 //   vertices, it should be possible, but that would require writing filtered predicates like SLS2's.
 // - factorize the three VV events but be very careful with the tiny differences
 // - lighter polyhedron data structures
+// - write a sanitization algorithm without perturbaton, something akin to: randTiltPlanesv3(p, eps=0),
 // - implement lazy perturbations where we only perturb if we encounter an issue?
 //   * Would cost more (detection of simultaneous events, etc.)
 //   * How to detect "hidden" simultaneous events?
+// - splitting high degree vertices in reasonable time
 
 // ----
 
 /*
   As to not waste energy building the skeleton if we do not care about it.
 */
-// #define CGAL_SS3_NO_SKELETON_DS
+#define CGAL_SS3_NO_SKELETON_DS
 
 /*
   Some events can be detected from multime elements. Reduce that to a single element.
   Not used when adding local elements to the queue because we might encounter
-  some representatives in the subset, but not the canonical one.
+  only *some* representatives in the subset, excludin the canonical one.
 */
 #define CGAL_SS3_ENFORCE_UNIQUE_EVENT_REPRESENTATIONS
 
