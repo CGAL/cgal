@@ -284,6 +284,163 @@ public:
     CGAL_SS3_IO_TRACE("-- Write OBJ end --");
     return result;
   }
+
+  template <typename Traits>
+  static bool save(const std::string& filename,
+                   std::shared_ptr<internal::SDS::StraightSkeleton<Traits> > skeleton,
+                   bool convert_to_double = true)
+  {
+    using Point_3 = typename Traits::Point_3;
+    using Vector_3 = typename Traits::Vector_3;
+    using Point3SPtr = std::shared_ptr<Point_3>;
+    using Vector3SPtr = std::shared_ptr<Vector_3>;
+
+    using Skeleton = internal::SDS::StraightSkeleton<Traits>;
+    using NodeSPtr = typename Skeleton::NodeSPtr;
+    using ArcSPtr = typename Skeleton::ArcSPtr;
+    using SheetSPtr = typename Skeleton::SheetSPtr;
+
+    using KernelFactory = internal::kernel::KernelFactory<Traits>;
+
+    // For triangulation
+    using Itag = CGAL::Exact_intersections_tag;
+    using PK = CGAL::Projection_traits_3<Traits>;
+    using PVbb = CGAL::Triangulation_vertex_base_with_info_2<NodeSPtr, PK>;
+    using PVb = CGAL::Triangulation_vertex_base_2<PK, PVbb>;
+    using PFb = CGAL::Constrained_triangulation_face_base_2<PK>;
+    using PTDS = CGAL::Triangulation_data_structure_2<PVb, PFb>;
+    using PCDT = CGAL::Constrained_Delaunay_triangulation_2<PK, PTDS, Itag>;
+    using PCDT_VH = typename PCDT::Vertex_handle;
+    using PCDT_FH = typename PCDT::Face_handle;
+
+    bool result = true;
+    CGAL_SS3_IO_TRACE("-- OBJ::Save(Skeleton) to " << filename << " --");
+    CGAL_SS3_IO_TRACE("   convert_to_double: " << convert_to_double);
+    CGAL_SS3_IO_TRACE(skeleton->nodes().size() << " NN, " << skeleton->sheets().size() << " NS");
+
+    std::stringstream oss;
+    oss.precision(17);
+
+    // Map for unique nodes and their indices
+    std::map<NodeSPtr, int> node_to_index;
+    int next_index = 1;
+
+    // Collect all unique nodes from all sheets
+    for (const NodeSPtr& node : skeleton->nodes()) {
+      node_to_index[node] = next_index++;
+    }
+
+    // Write vertices
+    for (const NodeSPtr& node : skeleton->nodes()) {
+      Point3SPtr point = node->getPoint();
+      std::cout << "  Node's #arcs " << node->degree() << std::endl;
+      std::cout << "  Node's #sheets " << node->sheets().size() << std::endl;
+
+      if (convert_to_double) {
+        oss << "v " << CGAL::to_double(point->x()) << " "
+                    << CGAL::to_double(point->y()) << " "
+                    << CGAL::to_double(point->z()) << "\n";
+      } else {
+        oss << "v " << point->x().exact() << " "
+                    << point->y().exact() << " "
+                    << point->z().exact() << "\n";
+      }
+    }
+
+    // Write sheets as faces, triangulating if requested
+    for (const SheetSPtr& sheet : skeleton->sheets()) {
+      const auto& nodes = sheet->nodes();
+      if (nodes.size() < 3) {
+        CGAL_warning_msg(false, "Sheet with less than 3 nodes found. Skipping.");
+        continue;
+      }
+
+      std::cout << "  Sheet #nodes " << nodes.size() << std::endl;
+      std::cout << "  Sheet #arcs " << sheet->arcs().size() << std::endl;
+
+      if (nodes.size() == 3) {
+        oss << "f ";
+        for (const NodeSPtr& node : nodes) {
+          oss << node_to_index.at(node) << " ";
+        }
+        oss << "\n";
+      } else {
+        Vector3SPtr n = KernelFactory::createVector3(sheet->getPlane());
+        CGAL_assertion(*n != CGAL::NULL_VECTOR);
+
+        PK traits(*n);
+        PCDT pcdt(traits);
+
+        std::map<NodeSPtr, PCDT_VH> face_vhs;
+        for (const NodeSPtr& node : nodes) {
+          std::cout << " CDT add node " << node->getID() << std::endl;
+          auto res = face_vhs.emplace(node, PCDT_VH());
+          CGAL_warning_msg(res.second, "Node should not be found twice in the sheet's nodes");
+          if (res.second) {
+            PCDT_VH vh = pcdt.insert(*(node->getPoint()));
+            vh->info() = node;
+            res.first->second = vh;
+          }
+        }
+
+        // Insert constraints along the boundary
+        for (const ArcSPtr& arc : sheet->arcs()) {
+          NodeSPtr node_src = arc->getNodeSrc();
+          NodeSPtr node_dst = arc->getNodeDst();
+          std::cout << " CDT arc between " << node_src->getID() << " and " << node_dst->getID() << std::endl;
+          CGAL_SS3_DEBUG_SPTR(node_src);
+          CGAL_SS3_DEBUG_SPTR(node_dst);
+          PCDT_VH vh0 = face_vhs.at(node_src);
+          PCDT_VH vh1 = face_vhs.at(node_dst);
+          try {
+            pcdt.insert_constraint(vh0, vh1);
+          } catch(const typename PCDT::Intersection_of_constraints_exception&) {
+            CGAL_SS3_IO_TRACE("Warning: Intersection of constraints in sheet triangulation");
+            CGAL_assertion_msg(false, "Intersections in CDT2 are not allowed");
+            continue;
+          }
+        }
+
+        for (const ArcSPtr& contour : sheet->contours()) {
+          NodeSPtr v_src = contour->getNodeSrc();
+          NodeSPtr v_dst = contour->getNodeDst();
+          try {
+            pcdt.insert_constraint(*(v_src->getPoint()), *(v_dst->getPoint()));
+          } catch(const typename PCDT::Intersection_of_constraints_exception&) {
+            CGAL_SS3_IO_TRACE("Warning: Intersection of constraints in sheet triangulation");
+            CGAL_assertion_msg(false, "Intersections in CDT2 are not allowed");
+            continue;
+          }
+        }
+
+        // Mark domain and output triangles
+        std::unordered_map<PCDT_FH, bool> in_domain_map;
+        boost::associative_property_map<std::unordered_map<PCDT_FH, bool>> in_domain(in_domain_map);
+        CGAL::mark_domain_in_triangulation(pcdt, in_domain);
+
+        for (auto fh : pcdt.finite_face_handles()) {
+          if (!get(in_domain, fh)) {
+            continue;
+          }
+          oss << "f " << node_to_index.at(fh->vertex(0)->info()) << " "
+                      << node_to_index.at(fh->vertex(1)->info()) << " "
+                      << node_to_index.at(fh->vertex(2)->info()) << "\n";
+        }
+      }
+    }
+
+    std::ofstream ofs(filename.c_str());
+    if (ofs.is_open()) {
+        ofs.precision(17);
+        ofs << oss.str();
+    } else {
+        CGAL_SS3_IO_TRACE("Error: failed to open file");
+        CGAL_assertion(false);
+    }
+
+    CGAL_SS3_IO_TRACE("-- Write OBJ end --");
+    return result;
+  }
 };
 
 } // namespace IO
