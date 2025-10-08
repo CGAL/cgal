@@ -145,14 +145,9 @@ public:
     CGAL_SS3_DEBUG_SPTR(plane1);
     CGAL_SS3_DEBUG_SPTR(plane2);
 
-    Plane3SPtr result = Plane3SPtr();
+    CGAL_SS3_TRAITS_TRACE("Warning: bisector() calls a square root!");
 
-    // @tmp Hardcore disable the SQRT
-    CGAL_SS3_TRAITS_TRACE("Warning: bisector call brings a SQRT");
-    CGAL_assertion(false);
-    std::exit(1);
-
-    result = KernelFactory::createPlane3(CGAL::bisector(*plane1, *plane2));
+    Plane3SPtr result = KernelFactory::createPlane3(CGAL::bisector(*plane1, *plane2));
     CGAL_SS3_DEBUG_SPTR(result);
     return result;
   }

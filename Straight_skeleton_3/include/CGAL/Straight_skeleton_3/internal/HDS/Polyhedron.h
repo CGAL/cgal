@@ -194,7 +194,7 @@ public:
         return final_point_;
       }
 
-      void setFinalPoint(Point3SPtr point)
+      void setFinalPoint(const Point3SPtr& point)
       {
         final_point_ = point;
       }
@@ -252,7 +252,7 @@ public:
       return point_;
     }
 
-    void setPoint(Point3SPtr point)
+    void setPoint(const Point3SPtr& point)
     {
       CGAL_SS3_DEBUG_SPTR(point);
       point_ = point;
@@ -273,7 +273,7 @@ public:
       return polyhedron_.lock();
     }
 
-    void setPolyhedron(PolyhedronSPtr polyhedron)
+    void setPolyhedron(const PolyhedronSPtr& polyhedron)
     {
       polyhedron_ = polyhedron;
     }
@@ -293,7 +293,7 @@ public:
       return id_;
     }
 
-    void setID(int id)
+    void setID(const int id)
     {
       id_ = id;
     }
@@ -304,7 +304,7 @@ public:
       return this->data_;
     }
 
-    void setData(VertexDataSPtr data)
+    void setData(const VertexDataSPtr& data)
     {
       this->data_ = data;
     }
@@ -995,7 +995,7 @@ public:
       return this->polyhedron_.lock();
     }
 
-    void setPolyhedron(PolyhedronSPtr polyhedron)
+    void setPolyhedron(const PolyhedronSPtr& polyhedron)
     {
       this->polyhedron_ = polyhedron;
     }
@@ -1016,7 +1016,7 @@ public:
       return this->id_;
     }
 
-    void setID(int id)
+    void setID(const int id)
     {
       this->id_ = id;
     }
@@ -1027,7 +1027,7 @@ public:
       return this->data_;
     }
 
-    void setData(EdgeDataSPtr data)
+    void setData(const EdgeDataSPtr& data)
     {
       this->data_ = data;
     }
@@ -1486,7 +1486,7 @@ public:
         return this->base_plane_;
       }
 
-      void setBasePlane(Plane3SPtr plane)
+      void setBasePlane(const Plane3SPtr& plane)
       {
         this->base_plane_ = plane;
       }
@@ -1502,7 +1502,7 @@ public:
         return this->final_plane_;
       }
 
-      void setFinalPlane(Plane3SPtr plane)
+      void setFinalPlane(const Plane3SPtr& plane)
       {
         this->final_plane_ = plane;
       }
@@ -1822,7 +1822,7 @@ private:
       return this->polyhedron_.lock();
     }
 
-    void setPolyhedron(PolyhedronSPtr polyhedron)
+    void setPolyhedron(const PolyhedronSPtr& polyhedron)
     {
       this->polyhedron_ = polyhedron;
     }
@@ -1843,7 +1843,7 @@ private:
       return this->data_;
     }
 
-    void setData(FacetDataSPtr data)
+    void setData(const FacetDataSPtr& data)
     {
       this->data_ = data;
     }
@@ -2014,7 +2014,7 @@ private:
       return this->id_;
     }
 
-    void setID(int id)
+    void setID(const int id)
     {
       this->id_ = id;
     }
@@ -2028,7 +2028,7 @@ private:
       return this->plane_;
     }
 
-    void setPlane(Plane3SPtr plane)
+    void setPlane(const Plane3SPtr& plane)
     {
       this->plane_ = plane;
     }
@@ -2707,7 +2707,7 @@ public:
     return this->id_;
   }
 
-  void setID(int id)
+  void setID(const int id)
   {
     this->id_ = id;
   }

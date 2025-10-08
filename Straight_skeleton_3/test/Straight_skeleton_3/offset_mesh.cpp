@@ -42,11 +42,11 @@ int main(int argc, char** argv)
   std::cerr.precision(17);
 
   if (argc == 1) {
-    std::cout << "Usage: " << argv[0] << " <input filename> [--weight-path <weights filename>] [--save-path <output directory>] [--save-offsets <offset_0> <offset_1> ...]" << std::endl;
+    std::cout << "Usage: " << argv[0] << " <input filename> [--weight-path <weights filename>] [--save-path <output directory>] [--save-times <time_0> <time_1> ...]" << std::endl;
     std::cout << "  <input filename>                   Path to input mesh file (required)" << std::endl;
     std::cout << "  --weight-path <weights filename>   Path to weights file (optional)" << std::endl;
     std::cout << "  --save-path <output directory>     Directory to save results (optional, defaults to current directory)" << std::endl;
-    std::cout << "  --save-offsets <offsets>           List of offsets (required, all must be non-zero and same sign)" << std::endl;
+    std::cout << "  --save-times <times>           List of times (required, all must be non-zero and same sign)" << std::endl;
     std::exit(0);
   }
 
@@ -54,7 +54,7 @@ int main(int argc, char** argv)
   const char* mesh_filename = argv[1];
   const char* weights_filename = nullptr;
   std::filesystem::path save_path = std::filesystem::current_path();
-  std::vector<std::string> offset_strings;
+  std::vector<std::string> time_strings;
 
   for (int i = 2; i < argc; ++i) {
     std::string arg = argv[i];
@@ -76,58 +76,63 @@ int main(int argc, char** argv)
         save_path = std::filesystem::current_path();
       }
       ++i;
-    } else if (arg == "--save-offsets") {
+    } else if (arg == "--save-times") {
       // Read all following values until next flag or end
       int j = i + 1;
       while (j < argc && std::string(argv[j]).find("--") != 0) {
-        offset_strings.push_back(argv[j]);
+        time_strings.push_back(argv[j]);
         ++j;
       }
       i = j - 1;
     }
   }
 
-  // offsets at which a result should be produced
-  std::set<FT> unique_save_offsets;
-  for (const auto& s : offset_strings) {
+  // times at which a result should be produced
+  std::set<FT> unique_save_times;
+  for (const auto& s : time_strings) {
     try {
       double val = std::stod(s);
-      unique_save_offsets.insert(val);
+      unique_save_times.insert(val);
     } catch (const std::exception& e) {
-      std::cerr << "Error: invalid offset value '" << s << "'" << std::endl;
+      std::cerr << "Error: invalid time value '" << s << "'" << std::endl;
       return EXIT_FAILURE;
     }
   }
 
-  // Check that all offsets are of the same sign (ignoring zeros)
-  std::vector<FT> save_offsets(std::cbegin(unique_save_offsets), std::cend(unique_save_offsets));
+  // Check that all times are of the same sign (ignoring zeros)
+  std::vector<FT> save_times(std::cbegin(unique_save_times), std::cend(unique_save_times));
 
-  bool has_positive_offsets = false, has_negative_offsets = false;
-  for (auto v : save_offsets) {
+  bool has_positive_times = false, has_negative_times = false;
+  for (auto v : save_times) {
     if (v == 0) {
-      std::cerr << "Error: offset should be non-zero" << std::endl;
+      std::cerr << "Error: time should be non-zero" << std::endl;
       return EXIT_FAILURE;
     } else if (v > 0) {
-      has_positive_offsets = true;
+      has_positive_times = true;
     } else if (v < 0) {
-      has_negative_offsets = true;
+      has_negative_times = true;
     }
   }
 
-  if (has_positive_offsets && has_negative_offsets) {
-    std::cerr << "Error: offsets must all be positive or all negative." << std::endl;
+  if (has_positive_times && has_negative_times) {
+    std::cerr << "Error: times must all be positive or all negative." << std::endl;
     return EXIT_FAILURE;
   }
 
-  std::sort(save_offsets.begin(), save_offsets.end(), [](const FT& a, const FT& b) {
+  std::sort(save_times.begin(), save_times.end(), [](const FT& a, const FT& b) {
     return CGAL::abs(a) < CGAL::abs(b);
   });
 
   // ---
 
   Mesh sm;
-  if(!CGAL::IO::read_polygon_mesh(mesh_filename, sm) || CGAL::is_empty(sm) || !is_valid_face_graph(sm)) {
+  if(!CGAL::IO::read_polygon_mesh(mesh_filename, sm)) {
     std::cerr << "Error: failed to read input " << mesh_filename << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  if(CGAL::is_empty(sm) || !is_valid_face_graph(sm)) {
+    std::cerr << "Error: invalid input " << mesh_filename << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -139,7 +144,7 @@ int main(int argc, char** argv)
   }
 
   // some sanity checks
-  if (PMP::does_self_intersect(sm)) {
+  if (CGAL::is_triangle_mesh(sm) && PMP::does_self_intersect(sm)) {
     std::cerr << "Error: input has self intersections" << std::endl;
     return EXIT_FAILURE;
   }
@@ -169,6 +174,7 @@ int main(int argc, char** argv)
     return EXIT_FAILURE;
   }
 
+#if 0
   // @tmp hardcode weights
   for (face_descriptor f : faces(sm)) {
     bool bottom = true;
@@ -182,15 +188,16 @@ int main(int argc, char** argv)
     put (fwm, f, bottom ? 10.0 : 1.0);
   }
   // @tmp
+#endif
 
   std::vector<Mesh> results;
-  results.reserve(save_offsets.size());
+  results.reserve(save_times.size());
 
   // Main call
   CGAL::Real_timer timer;
   timer.start();
 
-  bool success = SS3::face_offset(sm, save_offsets,
+  bool success = SS3::face_offset(sm, save_times,
                                   results,
                                   CGAL::parameters::face_weight_map(fwm));
 
@@ -199,7 +206,7 @@ int main(int argc, char** argv)
 
   // Check the sanity of the results, and save them
   for (std::size_t i=0; i<results.size(); ++i) {
-    const FT save_offset = save_offsets[i];
+    const FT save_time = save_times[i];
     const Mesh& sm = results[i];
 
     if (!sm.is_valid() || !is_valid_face_graph(sm)) {
@@ -224,7 +231,7 @@ int main(int argc, char** argv)
     }
 
     std::stringstream out_ss;
-    out_ss << save_path.string() << "/result_" << save_offset << ".obj";
+    out_ss << save_path.string() << "/result_" << save_time << ".obj";
 
     // this writes 'double', not FT (aka EPECK::FT), but this is what we want
     if (!CGAL::IO::write_polygon_mesh(out_ss.str(), sm,

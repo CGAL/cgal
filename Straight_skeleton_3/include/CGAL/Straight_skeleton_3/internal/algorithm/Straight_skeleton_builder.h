@@ -95,7 +95,7 @@
 #define CGAL_SS3_USE_GENERIC_VANISH_EVENT
 
 /*
-  Limit the visilibity of other vertices to connected component of the facet for VV events.
+  Limit the visilibity of other vertices to the connected component of the facet for VV events.
   Broken at the moment.
 */
 // #define CGAL_SS3_VV_VERTEX_2_WALK_FACES_FOR_DETECTION
@@ -103,11 +103,13 @@
 /*
   Delay the bisector checks to pop time.
   This could be done for all events, but the other ones are so cheap that it doesn't matter.
-  Also doesn't gain much anyway.
+  Also even for edge splits, the gain is small anyway.
 */
 #define CGAL_SS3_CHECK_BISECTORS_AT_POP_TIME_FOR_EDGE_SPLIT
 
-// use CGAL::box_d to filter edge pairs
+/*
+  Use CGAL::box_d to filter edge pairs
+*/
 #define CGAL_SS3_DETECT_EDGE_SPLIT_EVENTS_WITH_BOX_D
 
 // use v2 (faster) is inside
@@ -141,6 +143,7 @@
 # include <CGAL/Real_timer.h>
 #endif
 
+#include <array>
 #include <filesystem>
 #include <limits>
 #include <list>
@@ -682,7 +685,7 @@ public:
     CGAL_precondition(vertex->hasData());
     SkelVertexDataSPtr data = std::dynamic_pointer_cast<SkelVertexData>(vertex->getData());
 
-    FacetSPtr facets[3];
+    std::array<FacetSPtr, 3> facets;
     unsigned int i = 0;
     typename std::list<FacetWPtr>::iterator it_f = vertex->facets().begin();
     while (i < 3 && it_f != vertex->facets().end()) {
@@ -708,7 +711,7 @@ public:
     Vector3SPtr n_2 = KernelFactory::createVector3(plane_2);
     Vector3SPtr n_3 = KernelFactory::createVector3(plane_3);
 
-    // @fixme is division by "speed" correct?
+    // @fixme likely wrong
     direction = KernelFactory::createVector3(speed_1 * (*n_1) + speed_2 * (*n_2) + speed_3 * (*n_3));
 
     if (direction) {
@@ -738,26 +741,17 @@ public:
 
     Plane3SPtr plane_l = facet_l->getPlane();
     Plane3SPtr plane_r = facet_r->getPlane();
-    FacetSPtr facet_b = facet_l;
+    FacetSPtr facet_b = HdsUtils::getFacetOrigin(facet_l);
     FT speed_l = HdsUtils::getSpeed(facet_l);
-    if (facet_l->hasData()) {
-      SkelFacetDataSPtr data_l = std::dynamic_pointer_cast<SkelFacetData>(facet_l->getData());
-      facet_b = data_l->getFacetOrigin(); // @fixme with in-place shifting, this isn't correct
-    }
-    FacetSPtr facet_f = facet_r;
+    FacetSPtr facet_f = HdsUtils::getFacetOrigin(facet_r);
     FT speed_r = HdsUtils::getSpeed(facet_r);
-    if (facet_r->hasData()) {
-      SkelFacetDataSPtr data_r = std::dynamic_pointer_cast<SkelFacetData>(facet_r->getData());
-      facet_f = data_r->getFacetOrigin();
-    }
+
     Plane3SPtr plane_sheet;
     if (speed_l == speed_r) {
       if (HdsUtils::isReflex(edge)) {
-        plane_sheet = KernelWrapper::bisector(
-            KernelWrapper::opposite(plane_l), plane_r);
+        plane_sheet = KernelWrapper::bisector(KernelWrapper::opposite(plane_l), plane_r);
       } else {
-        plane_sheet = KernelWrapper::bisector(
-            plane_l, KernelWrapper::opposite(plane_r));
+        plane_sheet = KernelWrapper::bisector(plane_l, KernelWrapper::opposite(plane_r));
       }
     } else {
       Line3SPtr line = KernelWrapper::intersection(plane_l, plane_r);
@@ -1210,8 +1204,6 @@ public:
   /**
     * Returns the point where the edge will vanish.
     */
-  // @speed how about a first filter before Point&Time computation: IsEdgeGrowing
-  // if not, then there is definitely no intersection
   std::pair<Point3SPtr, FT> vanishesAt(const EdgeSPtr& edge,
                                        const std::optional<FT>& time_past_bound = std::nullopt,
                                        const std::optional<FT>& time_future_bound = std::nullopt)
@@ -1797,47 +1789,13 @@ public:
       FacetSPtr facet_src = edge->getFacetSrc();
       FacetSPtr facet_dst = edge->getFacetDst();
 
+      // @fixme shouldn't this check also happen in other events?...
       // This does not work when there is more than one edge between both facets.
       // EdgeSPtr edge_2 = facet_src->findEdge(facet_dst);
-      std::list<EdgeSPtr> edges_2 = facet_src->findEdges(facet_dst); // @todo shouldn't this check also happen in other events?...
+      std::list<EdgeSPtr> edges_2 = facet_src->findEdges(facet_dst);
 
       bool split_event = false;
       for (const EdgeSPtr& edge_2 : edges_2) {
-#if defined(CGAL_SS3_OLD_CODE_BOUND_CHECKS) || defined(CGAL_SS3_COMPARE_BOTH_BOUND_CHECKS)
-        bool split_event_current_1 = true;
-        bool split_event_current_2 = true;
-        bool split_event_current_3 = true;
-
-        SkelEdgeDataSPtr data_2 = std::dynamic_pointer_cast<SkelEdgeData>(edge_2->getData());
-        Vector3SPtr normal_2 = KernelFactory::createVector3(data_2->getSheet()->getPlane());
-        Line3SPtr line_normal_2 = KernelFactory::createLine3(point, normal_2);
-        if (KernelWrapper::orientation(line(edge_2), line_normal_2) < 0) {
-          // out of bounded area
-          split_event_current_1 = false;
-        }
-        SkelVertexDataSPtr data_2_src = std::dynamic_pointer_cast<SkelVertexData>(edge_2->getVertexSrc()->getData());
-        ArcSPtr arc_2_src = data_2_src->getArc();
-        if (KernelWrapper::orientation(arc_2_src->line(), line_normal_2) > 0) {
-          // out of bounded area
-          split_event_current_2 = false;
-        }
-        SkelVertexDataSPtr data_2_dst = std::dynamic_pointer_cast<SkelVertexData>(edge_2->getVertexDst()->getData());
-        ArcSPtr arc_2_dst = data_2_dst->getArc();
-        if (KernelWrapper::orientation(arc_2_dst->line(), line_normal_2) < 0) {
-          // out of bounded area
-          split_event_current_3 = false;
-        }
-
-        const bool split_event_current = (split_event_current_1 &&
-                                          split_event_current_2 &&
-                                          split_event_current_3);
-#endif
-
-#if !defined(CGAL_SS3_OLD_CODE_BOUND_CHECKS) || defined(CGAL_SS3_COMPARE_BOTH_BOUND_CHECKS)
-        bool split_event_current_1_b = true;
-        bool split_event_current_2_b = true;
-        bool split_event_current_3_b = true;
-
         FacetSPtr facet_l2 = edge_2->getFacetL();
         FacetSPtr facet_r2 = edge_2->getFacetR();
         FacetSPtr facet_2_src = edge_2->getFacetSrc();
@@ -1861,6 +1819,10 @@ public:
         CGAL_assertion_code(FT lt2 = (l2a * point->x() + l2b * point->y() + l2c * point->z() + l2d) / speed_l2);
         CGAL_assertion_code(FT rt2 = (r2a * point->x() + r2b * point->y() + r2c * point->z() + r2d) / speed_r2);
         CGAL_assertion(lt2 == rt2);
+
+        bool split_event_current_1_b = true;
+        bool split_event_current_2_b = true;
+        bool split_event_current_3_b = true;
 
         if (is_positive(t)) {
 #ifdef CGAL_SS3_EXIT_ASAP
@@ -1890,18 +1852,6 @@ public:
         const bool split_event_current_b = (split_event_current_1_b &&
                                             split_event_current_2_b &&
                                             split_event_current_3_b);
-#endif
-
-#ifdef CGAL_SS3_COMPARE_BOTH_BOUND_CHECKS
-# ifdef CGAL_SS3_EXIT_ASAP
-#  error "Cannot compare if doing early exits"
-# endif
-        CGAL_assertion(split_event_current_1 == split_event_current_1_b);
-        CGAL_assertion(split_event_current_2 == split_event_current_2_b);
-        CGAL_assertion(split_event_current_3 == split_event_current_3_b);
-
-        CGAL_assertion(split_event_current == split_event_current_b);
-#endif
 
         if (split_event_current_b) {
           split_event = true;
@@ -4037,7 +3987,7 @@ public:
 #endif
 
           CGAL_assertion(vertex->facets().size() >= 3);
-          FacetSPtr fs[3];
+          std::array<FacetSPtr, 3> fs;
           for (int i = 0; i < 3; ++i) {
             FacetWPtr wf = *(std::next(vertex->facets().begin(), i));
             CGAL_assertion(!wf.expired());
@@ -4447,7 +4397,7 @@ public:
                              const FT& current_time,
                              const std::optional<FT>& time_future_bound)
   {
-    CGAL_SS3_CORE_TRACE("checkQueueCorrectness()");
+    CGAL_SS3_CORE_TRACE("Checking queue correctness...");
     CGAL_SS3_DEBUG_SPTR(polyhedron);
 
     // Compute a queue from scratch using collectEvents()
@@ -4757,7 +4707,6 @@ public:
     const FT shift = target_time - current_time;
     CGAL_precondition(!is_zero(shift));
 
-    // @speed don't actually shift at all intermediate steps because we can do everything with base planes
     Transformation::shiftFacets(polyhedron, shift);
 
 #ifdef CGAL_SS3_DUMP_FILES
