@@ -243,7 +243,7 @@ std::size_t insert_constraints(PointIterator points_first, PointIterator points_
                                IndicesIterator indices_first, IndicesIterator indices_last);
 
 /*!
-Same as insert_constraint(points_first, points_last, indices_first, indices_last)` except that duplicated pair of points are only considered once.
+Same as `insert_constraint(points_first, points_last, indices_first, indices_last)` except that duplicated pair of points are only considered once.
 
 Inserting the same constraint several times may cause problems in
 case of intersecting segments and non-exact constructions.
