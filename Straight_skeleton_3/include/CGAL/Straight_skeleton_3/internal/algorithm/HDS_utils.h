@@ -15,6 +15,7 @@
 #include <CGAL/Straight_skeleton_3/internal/kernel/Kernel_factory.h>
 #include <CGAL/Straight_skeleton_3/internal/kernel/Kernel_wrapper.h>
 #include <CGAL/Straight_skeleton_3/internal/HDS/Polyhedron.h>
+#include <CGAL/Straight_skeleton_3/internal/SDS/Straight_skeleton.h>
 #include <CGAL/Straight_skeleton_3/internal/algorithm/Polyhedron_transformation.h>
 
 #include <CGAL/assertions.h>
@@ -63,6 +64,15 @@ private:
   using SkelFacetDataSPtr = typename Polyhedron::SkelFacetDataSPtr;
 
 private:
+  using StraightSkeleton = SDS::StraightSkeleton<Traits>;
+  using StraightSkeletonWPtr = std::weak_ptr<StraightSkeleton>;
+  using StraightSkeletonSPtr = std::shared_ptr<StraightSkeleton>;
+
+  using NodeSPtr = typename StraightSkeleton::NodeSPtr;
+  using ArcSPtr = typename StraightSkeleton::ArcSPtr;
+  using SheetSPtr = typename StraightSkeleton::SheetSPtr;
+
+private:
   using KernelWrapper = kernel::KernelWrapper<Traits>;
   using KernelFactory = kernel::KernelFactory<Traits>;
   using Transformation = algorithm::PolyhedronTransformation<Traits>;
@@ -98,6 +108,167 @@ public:
   }
 
 public:
+  static ArcSPtr getArc(const VertexSPtr& vertex)
+  {
+    CGAL_SS3_DEBUG_SPTR(vertex);
+    CGAL_precondition(vertex->hasData());
+    SkelVertexDataSPtr data = std::dynamic_pointer_cast<SkelVertexData>(vertex->getData());
+    CGAL_SS3_DEBUG_SPTR(data);
+    const ArcSPtr& arc = data->getArc();
+    CGAL_SS3_DEBUG_SPTR(arc);
+    return arc;
+  }
+
+  static void setArc(const VertexSPtr& vertex, const ArcSPtr& arc)
+  {
+    CGAL_SS3_DEBUG_SPTR(vertex);
+    CGAL_SS3_DEBUG_SPTR(arc);
+    CGAL_precondition(vertex->hasData());
+    SkelVertexDataSPtr data = std::dynamic_pointer_cast<SkelVertexData>(vertex->getData());
+    CGAL_SS3_DEBUG_SPTR(data);
+    data->setArc(arc);
+  }
+
+  static NodeSPtr getNode(const VertexSPtr& vertex)
+  {
+    CGAL_SS3_DEBUG_SPTR(vertex);
+    CGAL_precondition(vertex->hasData());
+    SkelVertexDataSPtr data = std::dynamic_pointer_cast<SkelVertexData>(vertex->getData());
+    CGAL_SS3_DEBUG_SPTR(data);
+    const NodeSPtr& node = data->getNode();
+    CGAL_SS3_DEBUG_SPTR(node);
+    return node;
+  }
+
+  static void setNode(const VertexSPtr& vertex, const NodeSPtr& node)
+  {
+    CGAL_SS3_DEBUG_SPTR(vertex);
+    CGAL_SS3_DEBUG_SPTR(node);
+    CGAL_precondition(vertex->hasData());
+    SkelVertexDataSPtr data = std::dynamic_pointer_cast<SkelVertexData>(vertex->getData());
+    CGAL_SS3_DEBUG_SPTR(data);
+    data->setNode(node);
+  }
+
+  static bool hasFinalPoint(const VertexSPtr& vertex)
+  {
+    CGAL_SS3_DEBUG_SPTR(vertex);
+    CGAL_precondition(vertex->hasData());
+    SkelVertexDataSPtr data = std::dynamic_pointer_cast<SkelVertexData>(vertex->getData());
+    CGAL_SS3_DEBUG_SPTR(data);
+    return data->hasFinalPoint();
+  }
+
+  static Point3SPtr getFinalPoint(const VertexSPtr& vertex)
+  {
+    CGAL_SS3_DEBUG_SPTR(vertex);
+    CGAL_precondition(vertex->hasData());
+    SkelVertexDataSPtr data = std::dynamic_pointer_cast<SkelVertexData>(vertex->getData());
+    CGAL_SS3_DEBUG_SPTR(data);
+    return data->getFinalPoint();
+  }
+
+  static void setFinalPoint(const VertexSPtr& vertex, const Point3SPtr& point)
+  {
+    CGAL_SS3_DEBUG_SPTR(vertex);
+    CGAL_precondition(vertex->hasData());
+    SkelVertexDataSPtr data = std::dynamic_pointer_cast<SkelVertexData>(vertex->getData());
+    CGAL_SS3_DEBUG_SPTR(data);
+    return data->setFinalPoint(point);
+  }
+
+  /**
+    * updates the final position of the vertex of a polyhedron,
+    * computed from the planes of its incident faces.
+    */
+  static bool resetFinalPoint(const VertexSPtr& vertex,
+                              const FT& offset_future_bound)
+  {
+    CGAL_SS3_TRANSF_TRACE_V(16, "resetFinalPoint() of " << vertex->toString());
+    CGAL_SS3_DEBUG_SPTR(vertex);
+
+    std::array<Plane3SPtr, 3> final_planes;
+    unsigned int i = 0;
+    typename std::list<FacetWPtr>::iterator it_f = vertex->facets().begin();
+    while (i < 3 && it_f != vertex->facets().end()) {
+      FacetWPtr facet_wptr = *it_f++;
+      if (FacetSPtr facet = facet_wptr.lock()) {
+        if (!hasFinalPlane(facet)) {
+          resetFinalPlane(facet, offset_future_bound);
+        }
+
+        final_planes[i++] = getFinalPlane(facet);
+
+        CGAL_SS3_TRANSF_TRACE_V(32,"  Facet " << facet->getID() << " [" << *(getFinalPlane(facet)) << "]");
+      }
+    }
+    CGAL_postcondition(i == 3);
+
+    Point3SPtr point = KernelWrapper::intersection(final_planes[0], final_planes[1], final_planes[2]);
+    if (!point) {
+      CGAL_SS3_TRANSF_TRACE_V(1,"Warning: triplet of planes does not define a point!");
+      Point3SPtr result = Point3SPtr();
+      CGAL_SS3_DEBUG_SPTR(result);
+      return false;
+    }
+
+    CGAL_precondition(vertex->hasData());
+    SkelVertexDataSPtr data = std::dynamic_pointer_cast<SkelVertexData>(vertex->getData());
+    CGAL_SS3_DEBUG_SPTR(data);
+
+    data->setFinalPoint(point);
+    CGAL_SS3_TRANSF_TRACE_V(32,"  New final point = " << *point);
+
+    return true;
+  }
+
+  static Point3SPtr getFinalPoint(const VertexSPtr& vertex,
+                                  const FT& offset_future_bound)
+  {
+    CGAL_SS3_DEBUG_SPTR(vertex);
+    CGAL_precondition(vertex->hasData());
+    SkelVertexDataSPtr data = std::dynamic_pointer_cast<SkelVertexData>(vertex->getData());
+    CGAL_SS3_DEBUG_SPTR(data);
+
+    // @todo technically we should check if it's the correct point
+    if (!data->hasFinalPoint()) {
+      resetFinalPoint(vertex, offset_future_bound);
+    }
+    return data->getFinalPoint();
+  }
+
+public:
+  static SheetSPtr getSheet(const EdgeSPtr& edge)
+  {
+    CGAL_SS3_DEBUG_SPTR(edge);
+    CGAL_precondition(edge->hasData());
+    SkelEdgeDataSPtr data = std::dynamic_pointer_cast<SkelEdgeData>(edge->getData());
+    CGAL_SS3_DEBUG_SPTR(data);
+    const SheetSPtr& sheet = data->getSheet();
+    CGAL_SS3_DEBUG_SPTR(data);
+    return sheet;
+  }
+
+  static void setSheet(const EdgeSPtr& edge, const SheetSPtr& sheet)
+  {
+    CGAL_SS3_DEBUG_SPTR(edge);
+    CGAL_SS3_DEBUG_SPTR(sheet);
+    CGAL_precondition(edge->hasData());
+    SkelEdgeDataSPtr data = std::dynamic_pointer_cast<SkelEdgeData>(edge->getData());
+    CGAL_SS3_DEBUG_SPTR(data);
+    data->setSheet(sheet);
+  }
+
+  static void clearSheet(const EdgeSPtr& edge)
+  {
+    CGAL_SS3_DEBUG_SPTR(edge);
+    CGAL_precondition(edge->hasData());
+    SkelEdgeDataSPtr data = std::dynamic_pointer_cast<SkelEdgeData>(edge->getData());
+    CGAL_SS3_DEBUG_SPTR(data);
+    data->setSheet(SheetSPtr());
+  }
+
+public:
   // just for convenience to avoid all the verbosity of extracting the data
   static const FT& getSpeed(const FacetSPtr& facet)
   {
@@ -115,6 +286,15 @@ public:
     SkelFacetDataSPtr data = std::dynamic_pointer_cast<SkelFacetData>(facet->getData());
     CGAL_SS3_DEBUG_SPTR(data);
     data->setSpeed(speed);
+  }
+
+  static FacetSPtr getFacetOrigin(const FacetSPtr& facet)
+  {
+    CGAL_SS3_DEBUG_SPTR(facet);
+    CGAL_precondition(facet->hasData());
+    SkelFacetDataSPtr data = std::dynamic_pointer_cast<SkelFacetData>(facet->getData());
+    CGAL_SS3_DEBUG_SPTR(data);
+    return data->getFacetOrigin();
   }
 
   static Plane3SPtr getBasePlane(const FacetSPtr& facet)
@@ -194,96 +374,6 @@ public:
       resetFinalPlane(facet, offset_future_bound);
     }
     return data->getFinalPlane();
-  }
-
-public:
-  static bool hasFinalPoint(const VertexSPtr& vertex)
-  {
-    CGAL_SS3_DEBUG_SPTR(vertex);
-    CGAL_precondition(vertex->hasData());
-    SkelVertexDataSPtr data = std::dynamic_pointer_cast<SkelVertexData>(vertex->getData());
-    CGAL_SS3_DEBUG_SPTR(data);
-    return data->hasFinalPoint();
-  }
-
-  static Point3SPtr getFinalPoint(const VertexSPtr& vertex)
-  {
-    CGAL_SS3_DEBUG_SPTR(vertex);
-    CGAL_precondition(vertex->hasData());
-    SkelVertexDataSPtr data = std::dynamic_pointer_cast<SkelVertexData>(vertex->getData());
-    CGAL_SS3_DEBUG_SPTR(data);
-    return data->getFinalPoint();
-  }
-
-  static void setFinalPoint(const VertexSPtr& vertex, const Point3SPtr& point)
-  {
-    CGAL_SS3_DEBUG_SPTR(vertex);
-    CGAL_SS3_DEBUG_SPTR(point);
-    CGAL_precondition(vertex->hasData());
-    SkelVertexDataSPtr data = std::dynamic_pointer_cast<SkelVertexData>(vertex->getData());
-    CGAL_SS3_DEBUG_SPTR(data);
-    return data->setFinalPoint(point);
-  }
-
-
-  /**
-    * updates the final position of the vertex of a polyhedron,
-    * computed from the planes of its incident faces.
-    */
-  static bool resetFinalPoint(const VertexSPtr& vertex,
-                              const FT& offset_future_bound)
-  {
-    CGAL_SS3_TRANSF_TRACE_V(16, "resetFinalPoint() of " << vertex->toString());
-    CGAL_SS3_DEBUG_SPTR(vertex);
-
-    std::array<Plane3SPtr, 3> final_planes;
-    unsigned int i = 0;
-    typename std::list<FacetWPtr>::iterator it_f = vertex->facets().begin();
-    while (i < 3 && it_f != vertex->facets().end()) {
-      FacetWPtr facet_wptr = *it_f++;
-      if (FacetSPtr facet = facet_wptr.lock()) {
-        if (!hasFinalPlane(facet)) {
-          resetFinalPlane(facet, offset_future_bound);
-        }
-
-        final_planes[i++] = getFinalPlane(facet);
-
-        CGAL_SS3_TRANSF_TRACE_V(32,"  Facet " << facet->getID() << " [" << *(getFinalPlane(facet)) << "]");
-      }
-    }
-    CGAL_postcondition(i == 3);
-
-    Point3SPtr point = KernelWrapper::intersection(final_planes[0], final_planes[1], final_planes[2]);
-    if (!point) {
-      CGAL_SS3_TRANSF_TRACE_V(1,"Warning: triplet of planes does not define a point!");
-      Point3SPtr result = Point3SPtr();
-      CGAL_SS3_DEBUG_SPTR(result);
-      return false;
-    }
-
-    CGAL_precondition(vertex->hasData());
-    SkelVertexDataSPtr data = std::dynamic_pointer_cast<SkelVertexData>(vertex->getData());
-    CGAL_SS3_DEBUG_SPTR(data);
-
-    data->setFinalPoint(point);
-    CGAL_SS3_TRANSF_TRACE_V(32,"  New final point = " << *point);
-
-    return true;
-  }
-
-  static Point3SPtr getFinalPoint(const VertexSPtr& vertex,
-                                  const FT& offset_future_bound)
-  {
-    CGAL_SS3_DEBUG_SPTR(vertex);
-    CGAL_precondition(vertex->hasData());
-    SkelVertexDataSPtr data = std::dynamic_pointer_cast<SkelVertexData>(vertex->getData());
-    CGAL_SS3_DEBUG_SPTR(data);
-
-    // @todo technically we should check if it's the correct point
-    if (!data->hasFinalPoint()) {
-      resetFinalPoint(vertex, offset_future_bound);
-    }
-    return data->getFinalPoint();
   }
 
 public:

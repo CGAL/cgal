@@ -34,16 +34,13 @@ class VanishEvent
   using VanishEventSPtr = std::shared_ptr<VanishEvent<Traits> >;
 
 private:
-  using FT = typename Traits::FT;
+  using Point_3 = typename Traits::Point_3;
+  using Point3SPtr = std::shared_ptr<Point_3>;
 
 private:
   using Polyhedron = HDS::Polyhedron<Traits>;
   using EdgeWPtr = typename Polyhedron::EdgeWPtr;
   using EdgeSPtr = typename Polyhedron::EdgeSPtr;
-
-private:
-  using StraightSkeleton = SDS::StraightSkeleton<Traits>;
-  using NodeSPtr = typename StraightSkeleton::NodeSPtr;
 
 private:
   using EdgeFacetNeighborhood = algorithm::EdgeFacetNeighborhood<Traits>;
@@ -54,31 +51,22 @@ public:
   { }
 
   virtual ~VanishEvent()
-  {
-    node_.reset();
-  }
+  { }
 
   static VanishEventSPtr create()
   {
     return std::make_shared<VanishEvent>();
   }
 
-  NodeSPtr getNode() const
+  Point3SPtr getPoint() const
   {
-    CGAL_SS3_DEBUG_SPTR(node_);
-    return node_;
+    CGAL_SS3_DEBUG_SPTR(point_);
+    return point_;
   }
 
-  void setNode(NodeSPtr node)
+  void setPoint(const Point3SPtr& point)
   {
-    CGAL_SS3_DEBUG_SPTR(node);
-    this->node_ = node;
-  }
-
-  const FT& getTime() const
-  {
-    CGAL_SS3_DEBUG_SPTR(node_);
-    return node_->getTime();
+    this->point_ = point;
   }
 
   EdgeSPtr getEdge() const
@@ -96,7 +84,7 @@ public:
 
   bool isValid() const
   {
-    return node_ && !edge_.expired();
+    return (!edge_.expired());
   }
 
   bool isObsolete() const
@@ -115,8 +103,10 @@ public:
     sstr.precision(17);
     sstr << "VanishEvent\n";
     sstr << "\t(ID=" << Base::getID() << ")\n";
-    sstr << "\t(offset=" << IO::StringFactory::fromDouble(CGAL::to_double(getTime())) << ")\n";
-    sstr << "\t(node=" << *(getNode()->getPoint()) << ")\n";
+    sstr << "\t(time=" << IO::StringFactory::fromDouble(CGAL::to_double(Base::getTime())) << ")\n";
+    sstr << "\t(point=<" + IO::StringFactory::fromDouble(CGAL::to_double(getPoint()->x())) + " "
+                         + IO::StringFactory::fromDouble(CGAL::to_double(getPoint()->y())) + " "
+                         + IO::StringFactory::fromDouble(CGAL::to_double(getPoint()->z())) + ">)";
     sstr << "\t(edgeA=" << edge->getID() << "\n\t\t[" << edge->getVertexSrc()->toString() << "\n\t\t "
                                                       << edge->getVertexDst()->toString() << "])";
     return sstr.str();
@@ -124,13 +114,13 @@ public:
 
   bool operator==(const VanishEvent& other) const
   {
-    return (node_->getTime() == other.node_->getTime()) &&
+    return (Base::getTime() == other.getTime()) &&
             // && (edge_.lock() == other.edge_.lock()) // because of multiple reps...
-            (*(node_->getPoint()) == *(other.node_->getPoint()));
+            (*(getPoint()) == *(other.getPoint()));
   }
 
 protected:
-  NodeSPtr node_;
+  Point3SPtr point_;
   EdgeWPtr edge_;
 
   EdgeFacetNeighborhood neighborhood_;

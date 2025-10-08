@@ -58,22 +58,13 @@ private:
   using StraightSkeletonSPtr = std::shared_ptr<StraightSkeleton<Traits> >;
 
 public:
-  Node()
-    : offset_(0), id_(-1)
-  { }
-
-  Node(Point3SPtr point)
-    : point_(point), offset_(0), id_(-1)
-  { }
+  Node() {
+    id_ = next_id_++;
+  }
 
   static NodeSPtr create()
   {
     return std::make_shared<Node>();
-  }
-
-  static NodeSPtr create(Point3SPtr point)
-  {
-    return std::make_shared<Node>(point);
   }
 
   Point3SPtr getPoint() const
@@ -82,19 +73,20 @@ public:
     return point_;
   }
 
-  void setPoint(Point3SPtr point)
+  void setPoint(const Point3SPtr& point)
   {
+    CGAL_SS3_DEBUG_SPTR(point);
     this->point_ = point;
   }
 
   const FT& getTime() const
   {
-    return offset_;
+    return time_;
   }
 
-  void setTime(const FT& offset)
+  void setTime(const FT& time)
   {
-    this->offset_ = offset;
+    this->time_ = time;
   }
 
   StraightSkeletonSPtr getSkel() const
@@ -102,7 +94,7 @@ public:
     return this->skel_.lock();
   }
 
-  void setSkel(StraightSkeletonSPtr skel)
+  void setSkel(const StraightSkeletonSPtr& skel)
   {
     this->skel_ = skel;
   }
@@ -122,13 +114,15 @@ public:
     return this->id_;
   }
 
-  void setID(int id)
+  void setID(const int id)
   {
     this->id_ = id;
   }
 
-  void addArc(ArcSPtr arc)
+  void addArc(const ArcSPtr& arc)
   {
+    CGAL_SS3_DEBUG_SPTR(arc);
+    CGAL_precondition(!containsArc(arc));
     typename std::list<ArcWPtr>::iterator it = arcs_.insert(arcs_.end(), ArcWPtr(arc));
     if (arc->getNodeSrc() == this->shared_from_this()) {
       arc->setNodeSrcListIt(it);
@@ -139,8 +133,10 @@ public:
     }
   }
 
-  bool removeArc(ArcSPtr arc)
+  bool removeArc(const ArcSPtr& arc)
   {
+    CGAL_SS3_DEBUG_SPTR(arc);
+    CGAL_precondition(containsArc(arc));
     bool result = false;
     if (arc->getNodeSrc() == this->shared_from_this()) {
       arcs_.erase(arc->getNodeSrcListIt());
@@ -156,13 +152,17 @@ public:
     return result;
   }
 
-  void addSheet(SheetSPtr sheet)
+  void addSheet(const SheetSPtr& sheet)
   {
+    CGAL_SS3_DEBUG_SPTR(sheet);
+    CGAL_precondition(!containsSheet(sheet));
     sheets_.insert(sheets_.end(), SheetWPtr(sheet));
   }
 
-  bool removeSheet(SheetSPtr sheet)
+  bool removeSheet(const SheetSPtr& sheet)
   {
+    CGAL_SS3_DEBUG_SPTR(sheet);
+    CGAL_precondition(containsSheet(sheet));
     bool result = false;
     typename std::list<SheetWPtr>::iterator it = sheets_.begin();
     while (it != sheets_.end()) {
@@ -177,15 +177,17 @@ public:
     return result;
   }
 
-  bool containsArc(ArcSPtr arc) const
+  bool containsArc(const ArcSPtr& arc) const
   {
+    CGAL_SS3_DEBUG_SPTR(arc);
     ArcWPtr arc_wptr = ArcWPtr(arc);
     bool result = (arcs_.end() != STL_Extension::internal::weak_find(arcs_.begin(), arcs_.end(), arc_wptr));
     return result;
   }
 
-  bool containsSheet(SheetSPtr sheet) const
+  bool containsSheet(const SheetSPtr& sheet) const
   {
+    CGAL_SS3_DEBUG_SPTR(sheet);
     SheetWPtr sheet_wptr = SheetWPtr(sheet);
     bool result = (sheets_.end() != STL_Extension::internal::weak_find(sheets_.begin(), sheets_.end(), sheet_wptr));
     return result;
@@ -244,13 +246,36 @@ public:
     }
     result += "<" + IO::StringFactory::fromDouble(CGAL::to_double(getPoint()->x())) + " ";
     result += IO::StringFactory::fromDouble(CGAL::to_double(getPoint()->y())) + " ";
-    result += IO::StringFactory::fromDouble(CGAL::to_double(getPoint()->z())) + ">)";
+    result += IO::StringFactory::fromDouble(CGAL::to_double(getPoint()->z())) + ">, ";
+    result += ", arcs={";
+    bool first = true;
+    for (const ArcWPtr& arc_wptr : arcs_) {
+      if (ArcSPtr arc = arc_wptr.lock()) {
+        if (!first) result += ", ";
+        result += IO::StringFactory::fromInteger(arc->getID());
+        first = false;
+      }
+    }
+    result += "}";
+    result += ", sheets={";
+    first = true;
+    for (const SheetWPtr& sheet_wptr : sheets_) {
+      if (SheetSPtr sheet = sheet_wptr.lock()) {
+        if (!first) result += ", ";
+        result += IO::StringFactory::fromInteger(sheet->getID());
+        first = false;
+      }
+    }
+    result += "}";
+
+    result += ")";
     return result;
   }
 
 protected:
   Point3SPtr point_;
-  FT offset_;
+  FT time_;
+  int id_;
 
   std::list<ArcWPtr> arcs_;
   std::list<SheetWPtr> sheets_;
@@ -258,8 +283,12 @@ protected:
 
   typename std::list<NodeSPtr>::iterator list_it_;
 
-  int id_;
+private:
+  static int next_id_;
 };
+
+template <typename Traits>
+int Node<Traits>::next_id_ = 0;
 
 } // namespace SDS
 } // namespace internal

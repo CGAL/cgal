@@ -60,6 +60,7 @@ private:
 private:
   using StraightSkeleton = SDS::StraightSkeleton<Traits>;
 
+  using NodeWPtr = typename StraightSkeleton::NodeWPtr;
   using NodeSPtr = typename StraightSkeleton::NodeSPtr;
 
 private:
@@ -383,7 +384,7 @@ public:
           if (vertex->hasData()) {
             SkelVertexDataSPtr data = std::dynamic_pointer_cast<SkelVertexData>(vertex->getData());
             SkelVertexDataSPtr data2 = SkelVertexData::create(vertex2);
-            data2->setNode(data->getNode());
+            data2->setWNode(data->getWNode());
           }
           if (vertex->degree() > 3) {
             vertices_tosplit.push_back(vertex);
@@ -456,10 +457,10 @@ public:
     CGAL_SS3_DEBUG_SPTR(poly_split);
     CGAL_SS3_DEBUG_SPTR(vertex);
     PolyhedronSPtr polyhedron = vertex->getPolyhedron();
-    NodeSPtr node;
+    NodeWPtr node;
     if (vertex->hasData()) {
       SkelVertexDataSPtr data = std::dynamic_pointer_cast<SkelVertexData>(vertex->getData());
-      node = data->getNode();
+      node = data->getWNode();
     }
     std::map<VertexSPtr, VertexSPtr> vertices;
     typename std::list<VertexSPtr>::iterator it_v = poly_split->vertices().begin();
@@ -470,7 +471,7 @@ public:
         vertices[vertex_ps] = vertex_vs;
         polyhedron->addVertex(vertex_vs);
         SkelVertexDataSPtr data = SkelVertexData::create(vertex_vs);
-        data->setNode(node);
+        data->setWNode(node);
       }
     }
 

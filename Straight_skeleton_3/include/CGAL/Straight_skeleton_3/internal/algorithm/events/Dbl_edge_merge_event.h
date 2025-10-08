@@ -41,7 +41,8 @@ class DblEdgeMergeEvent
   using DblEdgeMergeEventSPtr = std::shared_ptr<DblEdgeMergeEvent<Traits> >;
 
 private:
-  using FT = typename Traits::FT;
+  using Point_3 = typename Traits::Point_3;
+  using Point3SPtr = std::shared_ptr<Point_3>;
 
 private:
   using Polyhedron = HDS::Polyhedron<Traits>;
@@ -51,41 +52,28 @@ private:
   using FacetWPtr = typename Polyhedron::FacetWPtr;
   using FacetSPtr = typename Polyhedron::FacetSPtr;
 
-private:
-  using StraightSkeleton = SDS::StraightSkeleton<Traits>;
-  using NodeSPtr = typename StraightSkeleton::NodeSPtr;
-
 public:
   DblEdgeMergeEvent()
     : Base(Base::DBL_EDGE_MERGE_EVENT)
   { }
 
   virtual ~DblEdgeMergeEvent()
-  {
-    node_.reset();
-  }
+  { }
 
   static DblEdgeMergeEventSPtr create()
   {
     return std::make_shared<DblEdgeMergeEvent>();
   }
 
-  NodeSPtr getNode() const
+  Point3SPtr getPoint() const
   {
-    CGAL_SS3_DEBUG_SPTR(node_);
-    return node_;
+    CGAL_SS3_DEBUG_SPTR(point_);
+    return point_;
   }
 
-  void setNode(NodeSPtr node)
+  void setPoint(const Point3SPtr& point)
   {
-    CGAL_SS3_DEBUG_SPTR(node);
-    this->node_ = node;
-  }
-
-  const FT& getTime() const
-  {
-    CGAL_SS3_DEBUG_SPTR(node_);
-    return node_->getTime();
+    this->point_ = point;
   }
 
   FacetSPtr getFacet1() const
@@ -196,8 +184,7 @@ public:
 
   bool isValid() const
   {
-    return (node_ &&
-            !facet_1_.expired() && !edge_11_.expired() && !edge_12_.expired() &&
+    return (!facet_1_.expired() && !edge_11_.expired() && !edge_12_.expired() &&
             !facet_2_.expired() && !edge_21_.expired() && !edge_22_.expired());
   }
 
@@ -219,8 +206,10 @@ public:
     sstr.precision(17);
     sstr << "DblEdgeMergeEvent\n";
     sstr << "\t(ID=" << Base::getID() << ")\n";
-    sstr << "\t(offset=" << IO::StringFactory::fromDouble(CGAL::to_double(getTime())) << ")\n";
-    sstr << "\t(node=" << *(getNode()->getPoint()) << ")";
+    sstr << "\t(time=" << IO::StringFactory::fromDouble(CGAL::to_double(Base::getTime())) << ")\n";
+    sstr << "\t(point=<" + IO::StringFactory::fromDouble(CGAL::to_double(getPoint()->x())) + " "
+                         + IO::StringFactory::fromDouble(CGAL::to_double(getPoint()->y())) + " "
+                         + IO::StringFactory::fromDouble(CGAL::to_double(getPoint()->z())) + ">)";
     for (unsigned int i = 0; i < 4; ++i) {
       sstr << "\n\t(" << vertices[i]->toString() << ")";
     }
@@ -233,8 +222,8 @@ public:
 
   bool operator==(const DblEdgeMergeEvent& other) const
   {
-    return (node_->getTime() == other.node_->getTime()) &&
-            (*(node_->getPoint()) == *(other.node_->getPoint())) &&
+    return (Base::getTime() == other.getTime()) &&
+            (*(getPoint()) == *(other.getPoint())) &&
             ((facet_1_.lock() == other.facet_1_.lock() &&
               edge_11_.lock() == other.edge_11_.lock() &&
               edge_12_.lock() == other.edge_12_.lock() &&
@@ -250,7 +239,7 @@ public:
   }
 
 protected:
-  NodeSPtr node_;
+  Point3SPtr point_;
   FacetWPtr facet_1_;
   EdgeWPtr edge_11_;
   EdgeWPtr edge_12_;

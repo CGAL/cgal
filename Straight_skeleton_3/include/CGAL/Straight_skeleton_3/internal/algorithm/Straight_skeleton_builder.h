@@ -73,9 +73,7 @@
 // ----
 
 /*
-  As to not waste energy building the skeleton if we do not care about it
-  The construction has been broken since the commit that made it so the polyhedron
-  is not rebuilt from scratch at each and every iteration
+  As to not waste energy building the skeleton if we do not care about it.
 */
 // #define CGAL_SS3_NO_SKELETON_DS
 
@@ -322,9 +320,6 @@ public:
       save_path_(std::filesystem::current_path()),
       skel_result_(StraightSkeleton::create())
   {
-#ifndef CGAL_SS3_NO_SKELETON_DS
-    skel_result_->setPolyhedron(polyhedron);
-#endif
     initVertexSplitter();
     initEdgeEvent();
   }
@@ -340,9 +335,6 @@ public:
     std::sort(save_offsets_.begin(), save_offsets_.end(),
               [](const FT& a, const FT& b) { return CGAL::abs(a) < CGAL::abs(b); });
 
-#ifndef CGAL_SS3_NO_SKELETON_DS
-    skel_result_->setPolyhedron(polyhedron);
-#endif
     initVertexSplitter();
     initEdgeEvent();
   }
@@ -351,6 +343,7 @@ public:
   {
     polyhedron_.reset();
     vertex_splitter_.reset();
+    events_.clear();
     skel_result_.reset();
   }
 
@@ -423,32 +416,6 @@ public:
       edge_event_ = 0;
       s_edge_event = "convex";
     }
-    skel_result_->appendConfig("edge_event="+s_edge_event+"; ");
-  }
-
-  bool savePolyhedron(PolyhedronSPtr polyhedron,
-                      const FT& current_time)
-  {
-    CGAL_SS3_DEBUG_SPTR(polyhedron);
-
-    bool result = true;
-
-    std::stringstream ss_filename, ss_filename_triangulated, ss_filename_exact;
-    ss_filename << save_path_.string() << "/offset_" << current_time << ".obj";
-    ss_filename_triangulated << save_path_.string() << "/offset_" << current_time << "_triangulated.obj";
-    ss_filename_exact << save_path_.string() << "/offset_" << current_time << "_exact.obj";
-
-    result = (IO::OBJFile::save(ss_filename.str(), polyhedron,
-                                false /*do_triangulate*/,
-                                true /*convert_to_double*/) && result);
-    result = (IO::OBJFile::save(ss_filename_triangulated.str(), polyhedron,
-                                true /*do_triangulate*/,
-                                true /*convert_to_double*/) && result);
-    result = (IO::OBJFile::save(ss_filename_exact.str(), polyhedron,
-                                true /*do_triangulate*/,
-                                false /*convert_to_double*/) && result);
-
-    return result;
   }
 
   bool run()
@@ -473,8 +440,11 @@ public:
     CGAL_assertion(Perturbation::doAll3PlanesIntersect(polyhedron_));
     CGAL_assertion(!SelfIntersection::hasSelfIntersectingSurface(polyhedron_));
 
+    skel_result_->setPolyhedron(polyhedron_); // skeleton's polyhedron is fixed
+    PolyhedronSPtr polyhedron = polyhedron_->clone();
+
     // store base plane coefficients
-    cacheBasePlanes(polyhedron_);
+    cacheBasePlanes(polyhedron);
 
 // @tmp some hardcoded weights for specific inputs
 // #define CGAL_SS3_ACUTE_WEIGHTS
@@ -500,7 +470,7 @@ public:
 #  error
 # endif
 
-    for (const FacetSPtr& facet : polyhedron_->facets()) {
+    for (const FacetSPtr& facet : polyhedron->facets()) {
       FT speed = other_speed;
       const auto pl = facet->getPlane();
       const auto normal = KernelFactory::createVector3(pl);
@@ -519,143 +489,170 @@ public:
     }
 #endif
 
-    if (init(polyhedron_, vertex_splitter_)) {
-      // if we stop immediately after the last save event, there is no point investigating events
-      // that are farther away
-      std::optional<FT> time_future_bound;
-      if (!save_offsets_.empty()) {
-        ConfigurationSPtr config = Configuration::getInstance();
-        if (config->isLoaded()) {
-          if ((config->contains("Algorithm", "stop_after_last_save_event") &&
-               config->getBool("Algorithm", "stop_after_last_save_event"))) {
-            time_future_bound = save_offsets_.back();
-          }
-        }
-      }
-
-      step_id_ = -1;
-      FT current_time = 0;
-      FT upcoming_event_time;
-
-      CGAL_assertion_code(const bool is_emptiness_expected = save_offsets_.empty();)
-
-      PQ queue;
-      collectEvents(polyhedron_, current_time, time_future_bound, queue);
-
-      for (;;) {
-        ++step_id_;
-
-        CGAL_SS3_CORE_TRACE_V(2, "\n=========== ITERATION #" << step_id_ << " AT OFFSET " << current_time);
-        CGAL_SS3_CORE_TRACE_V(2, polyhedron_->vertices().size() << " NV " << polyhedron_->facets().size() << " NF");
-
-        if (visitor_) {
-          if (!visitor_->go_further(step_id_, polyhedron_, current_time)) {
-            CGAL_SS3_CORE_TRACE_V(2, "Stopping on visitor request");
-            break;
-          }
-        }
-
-        CGAL_assertion_code(for (const FacetSPtr& facet : polyhedron_->facets()) {)
-        CGAL_assertion(facet->getPlane()->a() == HdsUtils::getBasePlane(facet)->a());
-        CGAL_assertion(facet->getPlane()->b() == HdsUtils::getBasePlane(facet)->b());
-        CGAL_assertion(facet->getPlane()->c() == HdsUtils::getBasePlane(facet)->c());
-        CGAL_assertion_code(FT speed = HdsUtils::getSpeed(facet);)
-        CGAL_assertion(facet->getPlane()->d() == HdsUtils::getBasePlane(facet)->d() - speed * current_time);
-        CGAL_assertion_code(})
-
-        AbstractEventSPtr event = nextEvent(queue, current_time);
-        if (!event) {
-          CGAL_SS3_CORE_TRACE_V(2, "No more events to treat");
-          break;
-        }
-
-        CGAL_SS3_CORE_TRACE_V(2, "popped E" << event->getID() << " Type [" << event->getType() << "]");
-
-        static int event_id = -1;
-        CGAL_SS3_CORE_TRACE_V(2, "--> Accepted event #" << ++event_id << " " << event->toString() << " --");
-
-        upcoming_event_time = event->getTime();
-
-        // the next event should be at a time that is further away than the current one
-        CGAL_warning(upcoming_event_time < current_time);
-
-#ifdef CGAL_SS3_RUN_TIMERS
-        CGAL_SS3_CORE_TRACE_V(2, "current elapsed time: " << timer.time());
-#endif
-
-        if (visitor_) {
-          visitor_->before_offset_event(polyhedron_, current_time, event);
-        }
-
-        CGAL_assertion_code(Point3SPtr p_box_min = Transformation::boundingBoxMin(polyhedron_);)
-        CGAL_assertion_code(Point3SPtr p_box_max = Transformation::boundingBoxMax(polyhedron_);)
-
-        // Here is the event treatment: if the event is valid,
-        // shift the polyhedron + apply the combinatorial changes
-        EventStatus es = handleEvent(event, current_time, time_future_bound, polyhedron_);
-        CGAL_assertion(es != EventStatus::EVENT_NOT_HANDLED);
-        if (es == EventStatus::NON_EVENT) {
-          continue;
-        }
-
-        current_time = upcoming_event_time;
-
-#ifdef CGAL_SS3_DUMP_FILES
-        IO::OBJFile::save("results/event_" + std::to_string(event_id) + ".obj", polyhedron_, false /*do triangulate*/);
-        IO::OBJFile::save("results/event_" + std::to_string(event_id) + "_triangulated.obj", polyhedron_);
-#endif
-
-        if (visitor_ && event->getType() == AbstractEvent::SAVE_OFFSET_EVENT) {
-          visitor_->on_save_offset_event(polyhedron_, current_time);
-        }
-
-        CGAL_assertion(polyhedron_->isConsistent());
-#ifndef CGAL_SS3_NO_SKELETON_DS
-        CGAL_assertion(skel_result_->isConsistent());
-#endif
-
-        // this is tempting, but the mesh is usually not in a nice state here
-        // CGAL_assertion(!SelfIntersection::hasSelfIntersectingSurface(polyhedron_));
-
-        if (visitor_) {
-          visitor_->after_offset_event(polyhedron_, current_time);
-        }
-
-        // If we are interested in a specific offset, there is no point going further
-        if (event->getType() == AbstractEvent::SAVE_OFFSET_EVENT && save_offsets_.empty()) {
-          ConfigurationSPtr config = Configuration::getInstance();
-          if (config->isLoaded() &&
-              config->contains("Algorithm", "stop_after_last_save_event") &&
-              config->getBool("Algorithm", "stop_after_last_save_event")) {
-            break;
-          }
-        }
-
-        // Update the event priority queue
-        collectLocalEvents(polyhedron_, current_time, time_future_bound, queue);
-
-        post_op_vertices_.clear();
-        post_op_edges_.clear();
-        post_op_facets_.clear();
-
-        post_op_vertices_VV_.clear();
-        post_op_vertices_pierce_.clear();
-        post_op_edges_edgesplit_.clear();
-      }
-
-      CGAL_SS3_CORE_TRACE_V(8, "== Straight Skeleton 3D finished ==");
-
-      CGAL_warning(!is_emptiness_expected || polyhedron_->empty());
-
-#ifdef CGAL_SS3_RUN_TIMERS
-      timer.stop();
-#endif
-
-      CGAL_SS3_CORE_TRACE_V(2, skel_result_->toString());
-    } else {
+    if (!init(polyhedron, vertex_splitter_)) {
       CGAL_SS3_CORE_TRACE_V(8, "Error: failed to initialize polyhedron");
       return false;
     }
+
+    // If we stop immediately after the last save event, there is no point investigating events
+    // that are farther away than the last save event's time
+    std::optional<FT> time_future_bound;
+    if (!save_times_.empty()) {
+      ConfigurationSPtr config = Configuration::getInstance();
+      if (config->isLoaded()) {
+        if ((config->contains("Algorithm", "stop_after_last_save_event") &&
+              config->getBool("Algorithm", "stop_after_last_save_event"))) {
+          time_future_bound = save_times_.back();
+        }
+      }
+    }
+
+    step_id_ = -1;
+    FT current_time = 0;
+    FT upcoming_event_time;
+
+    CGAL_assertion_code(const bool is_emptiness_expected = save_times_.empty();)
+
+    PQ queue;
+    collectEvents(polyhedron, current_time, time_future_bound, queue);
+
+    for (;;) {
+      ++step_id_;
+
+      CGAL_SS3_CORE_TRACE_V(2, "\n=========== ITERATION #" << step_id_ << " AT TIME " << current_time);
+      CGAL_SS3_CORE_TRACE_V(2, polyhedron->vertices().size() << " NV " << polyhedron->facets().size() << " NF");
+
+      if (visitor_) {
+        if (!visitor_->go_further(step_id_, polyhedron, current_time)) {
+          CGAL_SS3_CORE_TRACE_V(2, "Stopping on visitor request");
+          break;
+        }
+      }
+
+      CGAL_assertion_code(for (const FacetSPtr& facet : polyhedron->facets()) {)
+      CGAL_assertion(facet->getPlane()->a() == HdsUtils::getBasePlane(facet)->a());
+      CGAL_assertion(facet->getPlane()->b() == HdsUtils::getBasePlane(facet)->b());
+      CGAL_assertion(facet->getPlane()->c() == HdsUtils::getBasePlane(facet)->c());
+      CGAL_assertion_code(FT speed = HdsUtils::getSpeed(facet);)
+      CGAL_assertion(facet->getPlane()->d() == HdsUtils::getBasePlane(facet)->d() - speed * current_time);
+      CGAL_assertion_code(})
+
+      AbstractEventSPtr event = nextEvent(queue, current_time);
+      if (!event) {
+        CGAL_SS3_CORE_TRACE_V(2, "No more events to treat");
+        break;
+      }
+
+      CGAL_SS3_CORE_TRACE_V(2, "popped E" << event->getID() << " Type [" << event->getType() << "]");
+
+      static int event_id = -1;
+      CGAL_SS3_CORE_TRACE_V(2, "--> Accepted event #" << ++event_id << " " << event->toString() << " --");
+
+      upcoming_event_time = event->getTime();
+
+      // the next event should be at a time that is further away than the current one
+      CGAL_assertion(upcoming_event_time < current_time);
+
+#ifdef CGAL_SS3_RUN_TIMERS
+      CGAL_SS3_CORE_TRACE_V(2, "current elapsed time: " << timer.time());
+#endif
+
+      if (visitor_) {
+        visitor_->before_event(polyhedron, current_time, event);
+      }
+
+      // Event treatment
+      EventStatus es = handleEvent(event, current_time, time_future_bound, polyhedron);
+      CGAL_assertion(es != EventStatus::EVENT_NOT_HANDLED);
+      if (es == EventStatus::NON_EVENT) {
+        continue;
+      }
+
+      current_time = upcoming_event_time;
+
+#ifdef CGAL_SS3_DUMP_FILES
+      IO::OBJFile::save("results/event_" + std::to_string(event_id) + ".obj", polyhedron, false /*do_triangulate*/);
+      IO::OBJFile::save("results/event_" + std::to_string(event_id) + "_triangulated.obj", polyhedron);
+#endif
+
+      if (visitor_ && event->getType() == AbstractEvent::SAVE_EVENT) {
+        visitor_->on_save_event(polyhedron, current_time);
+      }
+
+      CGAL_assertion(polyhedron->isConsistent());
+
+    CGAL_SS3_CORE_TRACE_V(2, skel_result_->toString());
+
+#if 1 // CGAL_SS3_DUMP_FILES
+    // Dump skeleton nodes in an .xyz file
+    std::ofstream nodes_out("final_nodes.xyz");
+    nodes_out.precision(17);
+    for (NodeSPtr node : skel_result_->nodes()) {
+      nodes_out << *(node->getPoint()) << "\n";
+    }
+    nodes_out.close();
+
+    // Dump skeleton arcs as CGAL polylines
+    std::ofstream arcs_out("final_arcs.polylines.txt");
+    arcs_out.precision(17);
+    for (ArcSPtr arc : skel_result_->arcs()) {
+      arcs_out << "2 ";
+      arcs_out << *(arc->getNodeSrc()->getPoint()) << " ";
+      if (arc->hasNodeDst()) {
+        arcs_out << *(arc->getNodeDst()->getPoint()) << "\n";
+      } else {
+        Point3SPtr src_pt = arc->getNodeSrc()->getPoint();
+        Vector3SPtr dir = arc->getDirection();
+        // Choose a reasonable length for the ray, e.g., 10 units
+        constexpr double ray_length = 0.1;
+        Point_3 ray_pt = *src_pt + ray_length * (*dir);
+        arcs_out << ray_pt << "\n";
+      }
+    }
+    arcs_out.close();
+#endif
+
+      CGAL_assertion(skel_result_->isConsistent());
+
+      if (visitor_) {
+        visitor_->after_event(polyhedron, current_time);
+      }
+
+      // If we are only interested in specific times, there is no point going further
+      if (event->getType() == AbstractEvent::SAVE_EVENT && save_times_.empty()) {
+        ConfigurationSPtr config = Configuration::getInstance();
+        if (config->isLoaded() &&
+            config->contains("Algorithm", "stop_after_last_save_event") &&
+            config->getBool("Algorithm", "stop_after_last_save_event")) {
+          break;
+        }
+      }
+
+      // Update the event priority queue
+      collectLocalEvents(polyhedron, current_time, time_future_bound, queue);
+
+      post_op_vertices_.clear();
+      post_op_edges_.clear();
+      post_op_facets_.clear();
+
+      post_op_vertices_VV_.clear();
+      post_op_vertices_pierce_.clear();
+      post_op_edges_edgesplit_.clear();
+    }
+
+    CGAL_SS3_CORE_TRACE_V(8, "== Straight Skeleton 3D finished ==");
+
+    CGAL_warning(!is_emptiness_expected || polyhedron->empty());
+
+#ifdef CGAL_SS3_RUN_TIMERS
+    timer.stop();
+#endif
+
+    CGAL_SS3_CORE_TRACE_V(2, eventSummary());
+
+
+    CGAL_assertion(skel_result_->isConsistent(false /*is_partial*/));
+    IO::OBJFile::save("final_skeleton.obj", skel_result_, true /*convert_to_double*/);
 
     return true;
   }
@@ -667,15 +664,13 @@ public:
   static NodeSPtr createNode(const VertexSPtr& vertex)
   {
     CGAL_SS3_DEBUG_SPTR(vertex);
-    NodeSPtr result = Node::create(vertex->getPoint());
-    CGAL_precondition(vertex->hasData());
-    SkelVertexDataSPtr data = std::dynamic_pointer_cast<SkelVertexData>(vertex->getData());
-    data->setNode(result);
-    CGAL_SS3_DEBUG_SPTR(result);
+    NodeSPtr result = Node::create();
+    result->setTime(0);
+    result->setPoint(vertex->getPoint());
+    HdsUtils::setNode(vertex, result);
     return result;
   }
 
-#ifndef CGAL_SS3_NO_SKELETON_DS
   /**
     * Creates a new arc for the vertex data.
     * The node of the vertex data has to be set before.
@@ -720,19 +715,6 @@ public:
     if (direction) {
       result = Arc::create(data->getNode(), direction);
       data->setArc(result);
-
-      for (EdgeWPtr edge_wptr : vertex->edges()) {
-        if (EdgeSPtr edge = edge_wptr.lock()) {
-          if (edge->hasData()) {
-            SkelEdgeDataSPtr edge_data =
-                    std::dynamic_pointer_cast<SkelEdgeData>(edge->getData());
-            SheetSPtr sheet = edge_data->getSheet();
-            if (sheet) {
-              sheet->addArc(result);
-            }
-          }
-        }
-      }
     }
 
     CGAL_SS3_DEBUG_SPTR(result);
@@ -746,6 +728,7 @@ public:
   static SheetSPtr createSheet(const EdgeSPtr& edge)
   {
     CGAL_SS3_DEBUG_SPTR(edge);
+    CGAL_precondition(edge->getVertexSrc() != edge->getVertexDst());
 
     SheetSPtr result = SheetSPtr();
 
@@ -798,24 +781,35 @@ public:
     result->setFacetB(facet_b);
     result->setFacetF(facet_f);
 
-    CGAL_precondition(edge->hasData());
-    SkelEdgeDataSPtr data = std::dynamic_pointer_cast<SkelEdgeData>(edge->getData());
-    data->setSheet(result);
+    HdsUtils::setSheet(edge, result);
 
-    SkelVertexDataSPtr data_src = std::dynamic_pointer_cast<SkelVertexData>(edge->getVertexSrc()->getData());
-    SkelVertexDataSPtr data_dst = std::dynamic_pointer_cast<SkelVertexData>(edge->getVertexDst()->getData());
-    if (data_src) {
-      result->addNode(data_src->getNode());
-      result->addArc(data_src->getArc());
+    NodeSPtr node_src = HdsUtils::getNode(edge->getVertexSrc());
+    NodeSPtr node_dst = HdsUtils::getNode(edge->getVertexDst());
+    result->addNode(node_src);
+    if (node_src != node_dst) {
+      result->addNode(node_dst);
     }
-    if (data_dst) {
-      result->addNode(data_dst->getNode());
-      result->addArc(data_dst->getArc());
-    }
+    result->addArc(HdsUtils::getArc(edge->getVertexSrc()));
+    result->addArc(HdsUtils::getArc(edge->getVertexDst()));
 
     return result;
   }
-#endif // CGAL_SS3_NO_SKELETON_DS
+
+  void mergeSheets(EdgeSPtr edge_into,
+                   EdgeSPtr edge_from)
+  {
+    CGAL_precondition(edge_into && edge_from);
+    CGAL_precondition(edge_into != edge_from);
+    CGAL_precondition(HdsUtils::getSheet(edge_into) && HdsUtils::getSheet(edge_from));
+
+    if (HdsUtils::getSheet(edge_into) == HdsUtils::getSheet(edge_from)) {
+      return;
+    }
+
+    skel_result_->mergeSheets(HdsUtils::getSheet(edge_into), HdsUtils::getSheet(edge_from));
+    CGAL_assertion(bool(HdsUtils::getSheet(edge_into)));
+    HdsUtils::setSheet(edge_from, HdsUtils::getSheet(edge_into));
+  }
 
   /**
     * Store within each facet the coefficients of the plane at t=0
@@ -835,8 +829,8 @@ public:
     * Split all vertices with degree > 3 and
     * initializes the data variables of all edges and vertices.
     */
-  static bool init(const PolyhedronSPtr& polyhedron,
-                   AbstractVertexSplitterSPtr vertex_splitter)
+  bool init(const PolyhedronSPtr& polyhedron,
+            AbstractVertexSplitterSPtr vertex_splitter)
   {
     CGAL_SS3_DEBUG_SPTR(polyhedron);
 
@@ -844,53 +838,35 @@ public:
 
     CGAL_SS3_CORE_TRACE("Input: " << polyhedron->vertices().size() << " NV " << polyhedron->facets().size() << " NF");
 
-    // Initialize all data
     for (const VertexSPtr& vertex : polyhedron->vertices()) {
+      CGAL_precondition(vertex->degree() >= 3);
       if (!vertex->hasData()) {
         SkelVertexData::create(vertex);
       }
     }
-    for (const EdgeSPtr& edge : polyhedron->edges()) {
-      if (!edge->hasData()) {
-        SkelEdgeData::create(edge);
-      }
-    }
-    for (const FacetSPtr& facet : polyhedron->facets()) {
-      if (!facet->hasData()) {
-        SkelFacetData::create(facet);
-      }
-    }
 
-#ifndef CGAL_SS3_NO_SKELETON_DS
+    // vertex splitting
+    std::list<VertexSPtr> vertices_tosplit;
+
     for (const VertexSPtr& vertex : polyhedron->vertices()) {
-      if (vertex->degree() < 3) {
-        continue;
-      }
-      // @fixme check when we create node for split, can't we move all that stuff post split?
+#ifndef CGAL_SS3_NO_SKELETON_DS
       NodeSPtr node = createNode(vertex);
-      if (node) {
-        skel_result_->addNode(node);
-      } else {
-        result = false;
-      }
-    }
+      CGAL_SS3_DEBUG_SPTR(node);
+      skel_result_->addNode(node);
 #endif
 
-    CGAL_SS3_CORE_TRACE_V(2, "Using " << vertex_splitter->toString() << " to split vertices.");
-
-    std::list<VertexSPtr> vertices_tosplit;
-    for (const VertexSPtr& vertex : polyhedron->vertices()) {
       if (vertex->degree() > 3) {
         vertices_tosplit.push_back(vertex);
       }
     }
 
     CGAL_SS3_CORE_TRACE_V(2, vertices_tosplit.size() << " vertices to split");
+    CGAL_SS3_CORE_TRACE_V(2, "Using " << vertex_splitter->toString() << " to split vertices.");
 
     for (const VertexSPtr& vertex : vertices_tosplit) {
-      CGAL_SS3_SPLITTER_TRACE("Generic split vertex:\n" << vertex->toString());
+      CGAL_SS3_SPLITTER_TRACE_V(16, "Generic split vertex:\n" << vertex->toString());
       if (vertex->degree() > 15) {
-        CGAL_SS3_SPLITTER_TRACE("Warning: vertex degree is so high that even a combinatorial split with eary exit will take forever.");
+        CGAL_SS3_SPLITTER_TRACE("Warning: degree of vertex is so high that even a combinatorial split with eary exit will take forever.");
       }
       vertex_splitter->splitVertex(vertex);
     }
@@ -910,24 +886,33 @@ public:
     for (const VertexSPtr& vertex : polyhedron->vertices()) {
       CGAL_assertion(vertex->degree() == 3);
       ArcSPtr arc = createArc(vertex);
-      if (arc) {
-        skel_result_->addArc(arc);
-      } else {
-        result = false;
-      }
+      CGAL_SS3_DEBUG_SPTR(arc);
+      skel_result_->addArc(arc);
     }
 
     for (const EdgeSPtr& edge : polyhedron->edges()) {
+      if (!edge->hasData()) {
+        SkelEdgeData::create(edge);
+      }
+
       SheetSPtr sheet = createSheet(edge);
-      if (sheet) {
-        skel_result_->addSheet(sheet);
-      } else {
-        result = false;
+      CGAL_SS3_DEBUG_SPTR(sheet);
+
+      // Squatting the arc type, this isn't really an arc, but a contour edge.
+      // Contours are useful to get a closed polygon (with holes) to draw sheets.
+      ArcSPtr contour = std::make_shared<Arc>(HdsUtils::getNode(edge->getVertexSrc()),
+                                              HdsUtils::getNode(edge->getVertexDst()));
+      sheet->addContour(contour);
+
+      skel_result_->addSheet(sheet);
+    }
+#endif
+
+    for (const FacetSPtr& facet : polyhedron->facets()) {
+      if (!facet->hasData()) {
+        SkelFacetData::create(facet);
       }
     }
-
-    CGAL_postcondition(skel_result_->isConsistent());
-#endif
 
     return result;
   }
@@ -1545,8 +1530,8 @@ public:
     CGAL_SS3_DEBUG_SPTR(event);
 
 #ifdef CGAL_SS3_CHECK_BISECTORS_AT_POP_TIME_FOR_EDGE_SPLIT
-    Point3SPtr point = event->getNode()->getPoint();
     const FT& event_time = event->getTime();
+    Point3SPtr point = event->getPoint();
 
     EdgeSPtr edge_1 = event->getEdge1();
     EdgeSPtr edge_2 = event->getEdge2();
@@ -1626,7 +1611,7 @@ public:
     //
     // Filter if the event point is on an edge (and a fortiori on a vertex)
     // as it will be a different kind of event
-    Point3SPtr point = event->getNode()->getPoint();
+    Point3SPtr point = event->getPoint();
     FacetSPtr facet_clone = pf->clone();
 
     FT shift = event->getTime() - current_time;
@@ -1747,20 +1732,10 @@ public:
 
       CGAL_assertion(event_time < current_time && event_time > time_future_bound);
 
-      NodeSPtr node = Node::create();
       VanishEventSPtr event = VanishEvent::create();
-      event->setNode(node);
-      node->clear();
-      node->setTime(event_time);
-      node->setPoint(point);
+      event->setTime(event_time);
+      event->setPoint(point);
       event->setEdge(edge);
-
-#ifndef CGAL_SS3_NO_SKELETON_DS
-# error "todo"
-#endif
-
-      // CGAL_SS3_CORE_TRACE("Edge " << edge->getID() << " vanishes at " << *point << " @ " << event_time);
-
       queue.push(event);
     }
 
@@ -1953,23 +1928,10 @@ public:
         continue;
       }
 
-      NodeSPtr node = Node::create();
       EdgeEventSPtr event = EdgeEvent::create();
-      event->setNode(node);
-      node->clear();
-      node->setTime(event_time);
-      node->setPoint(point);
+      event->setTime(event_time);
+      event->setPoint(point);
       event->setEdge(edge);
-
-#ifndef CGAL_SS3_NO_SKELETON_DS
-      SkelVertexDataSPtr data_src = std::dynamic_pointer_cast<SkelVertexData>(edge->getVertexSrc()->getData());
-      SkelVertexDataSPtr data_dst = std::dynamic_pointer_cast<SkelVertexData>(edge->getVertexDst()->getData());
-      node->addArc(data_src->getArc());
-      node->addArc(data_dst->getArc());
-      SkelEdgeDataSPtr data_edge = std::dynamic_pointer_cast<SkelEdgeData>(edge->getData());
-      node->addSheet(data_edge->getSheet());
-#endif
-
       queue.push(event);
     }
   }
@@ -2100,31 +2062,12 @@ public:
 
       CGAL_assertion(event_time < current_time && event_time > time_future_bound);
 
-      NodeSPtr node = Node::create();
       EdgeMergeEventSPtr event = EdgeMergeEvent::create();
-      event->setNode(node);
-      node->clear();
-      node->setTime(event_time);
-      node->setPoint(point);
+      event->setTime(event_time);
+      event->setPoint(point);
       event->setFacet(facet);
       event->setEdge1(edge_1);
       event->setEdge2(edge_2);
-
-#ifndef CGAL_SS3_NO_SKELETON_DS
-      EdgeSPtr edge_toremove_1 = edge_1->next(facet);
-      EdgeSPtr edge_toremove_2 = edge_toremove_1->next(facet);
-      SkelVertexDataSPtr data_vertex = std::dynamic_pointer_cast<SkelVertexData>(edge_toremove_1->src(facet)->getData());
-      node->addArc(data_vertex->getArc());
-      data_vertex = std::dynamic_pointer_cast<SkelVertexData>(edge_toremove_1->dst(facet)->getData());
-      node->addArc(data_vertex->getArc());
-      data_vertex = std::dynamic_pointer_cast<SkelVertexData>(edge_toremove_2->dst(facet)->getData());
-      node->addArc(data_vertex->getArc());
-      SkelEdgeDataSPtr data_edge = std::dynamic_pointer_cast<SkelEdgeData>(edge_toremove_1->getData());
-      node->addSheet(data_edge->getSheet());
-      data_edge = std::dynamic_pointer_cast<SkelEdgeData>(edge_toremove_2->getData());
-      node->addSheet(data_edge->getSheet());
-#endif
-
       queue.push(event);
     }
   }
@@ -2207,36 +2150,14 @@ public:
       }
 
       CGAL_assertion(event_time < current_time && event_time > time_future_bound);
-
       CGAL_assertion(KernelWrapper::side(edge->getFacetL()->getPlane(), point) < 0);
       CGAL_assertion(KernelWrapper::side(edge->getFacetR()->getPlane(), point) < 0);
 
-      NodeSPtr node = Node::create();
       TriangleEventSPtr event = TriangleEvent::create();
-      event->setNode(node);
-      node->clear();
-      node->setTime(event_time);
-      node->setPoint(point);
+      event->setTime(event_time);
+      event->setPoint(point);
       event->setFacet(facet);
       event->setEdgeBegin(edge);
-
-#ifndef CGAL_SS3_NO_SKELETON_DS
-      VertexSPtr vertices[3];
-      event->getVertices(vertices);
-      for (unsigned int i = 0; i < 3; ++i) {
-        SkelVertexDataSPtr data = std::dynamic_pointer_cast<SkelVertexData>(vertices[i]->getData());
-        ArcSPtr arc = data->getArc();
-        node->addArc(arc);
-      }
-      EdgeSPtr edges[3];
-      event->getEdges(edges);
-      for (unsigned int i = 0; i < 3; ++i) {
-        SkelEdgeDataSPtr data = std::dynamic_pointer_cast<SkelEdgeData>(edges[i]->getData());
-        SheetSPtr sheet = data->getSheet();
-        node->addSheet(sheet);
-      }
-#endif
-
       queue.push(event);
     }
   }
@@ -2330,36 +2251,15 @@ public:
 
       CGAL_assertion(event_time < current_time && event_time > time_future_bound);
 
-      NodeSPtr node = Node::create();
       DblEdgeMergeEventSPtr event = DblEdgeMergeEvent::create();
-      event->setNode(node);
-      node->clear();
-      node->setTime(event_time);
-      node->setPoint(point);
+      event->setTime(event_time);
+      event->setPoint(point);
       event->setFacet1(facet_1);
       event->setEdge11(edge_11);
       event->setEdge12(edge_12);
       event->setFacet2(facet_2);
       event->setEdge21(edge_21);
       event->setEdge22(edge_22);
-
-#ifndef CGAL_SS3_NO_SKELETON_DS
-      VertexSPtr vertices[4];
-      event->getVertices(vertices);
-      for (unsigned int i = 0; i < 4; ++i) {
-        SkelVertexDataSPtr vertex_data = std::dynamic_pointer_cast<SkelVertexData>(vertices[i]->getData());
-        ArcSPtr arc = vertex_data->getArc();
-        node->addArc(arc);
-      }
-      EdgeSPtr edges[4];
-      event->getEdges(edges);
-      for (unsigned int i = 0; i < 4; ++i) {
-        SkelEdgeDataSPtr edge_data = std::dynamic_pointer_cast<SkelEdgeData>(edges[i]->getData());
-        SheetSPtr sheet = edge_data->getSheet();
-        node->addSheet(sheet);
-      }
-#endif
-
       queue.push(event);
     }
   }
@@ -2412,31 +2312,10 @@ public:
 
       CGAL_assertion(event_time < current_time && event_time > time_future_bound);
 
-      NodeSPtr node = Node::create();
       DblTriangleEventSPtr event = DblTriangleEvent::create();
-      event->setNode(node);
-      node->clear();
-      node->setTime(event_time);
-      node->setPoint(point);
+      event->setTime(event_time);
+      event->setPoint(point);
       event->setEdge(edge);
-
-#ifndef CGAL_SS3_NO_SKELETON_DS
-      VertexSPtr vertices[4];
-      event->getVertices(vertices);
-      for (unsigned int i = 0; i < 4; ++i) {
-        SkelVertexDataSPtr data = std::dynamic_pointer_cast<SkelVertexData>(vertices[i]->getData());
-        ArcSPtr arc = data->getArc();
-        node->addArc(arc);
-      }
-      EdgeSPtr edges[5];
-      event->getEdges(edges);
-      for (unsigned int i = 0; i < 5; ++i) {
-        SkelEdgeDataSPtr data = std::dynamic_pointer_cast<SkelEdgeData>(edges[i]->getData());
-        SheetSPtr sheet = data->getSheet();
-        node->addSheet(sheet);
-      }
-#endif
-
       queue.push(event);
     }
   }
@@ -2488,41 +2367,20 @@ public:
         }
 #endif
 
-          Point3SPtr point;
-          FT event_time;
-          std::tie(point, event_time) = vanishesAt(edge, current_time, time_future_bound);
-          if (!point) {
-            continue;
-          }
+        Point3SPtr point;
+        FT event_time;
+        std::tie(point, event_time) = vanishesAt(edge, current_time, time_future_bound);
+        if (!point) {
+          continue;
+        }
 
-          CGAL_assertion(event_time < current_time && event_time > time_future_bound);
+        CGAL_assertion(event_time < current_time && event_time > time_future_bound);
 
-          NodeSPtr node = Node::create();
-          TetrahedronEventSPtr event = TetrahedronEvent::create();
-          event->setNode(node);
-          node->clear();
-          node->setTime(event_time);
-          node->setPoint(point);
-          event->setEdgeBegin(edge);
-
-#ifndef CGAL_SS3_NO_SKELETON_DS
-          VertexSPtr vertices[4];
-          event->getVertices(vertices);
-          for (unsigned int i = 0; i < 4; ++i) {
-            SkelVertexDataSPtr vertex_data = std::dynamic_pointer_cast<SkelVertexData>(vertices[i]->getData());
-            ArcSPtr arc = vertex_data->getArc();
-            node->addArc(arc);
-          }
-          EdgeSPtr edges[6];
-          event->getEdges(edges);
-          for (unsigned int i = 0; i < 6; ++i) {
-            SkelEdgeDataSPtr edge_data = std::dynamic_pointer_cast<SkelEdgeData>(edges[i]->getData());
-            SheetSPtr sheet = edge_data->getSheet();
-            node->addSheet(sheet);
-          }
-#endif
-
-          queue.push(event);
+        TetrahedronEventSPtr event = TetrahedronEvent::create();
+        event->setTime(event_time);
+        event->setPoint(point);
+        event->setEdgeBegin(edge);
+        queue.push(event);
       }
     }
   }
@@ -2826,24 +2684,13 @@ public:
 
         CGAL_assertion(event_time < current_time && event_time > time_future_bound);
 
-        NodeSPtr node = Node::create();
         VertexEventSPtr event = VertexEvent::create();
-        event->setNode(node);
-        node->clear();
-
-#ifndef CGAL_SS3_NO_SKELETON_DS
-        SkelVertexDataSPtr data_1 = std::dynamic_pointer_cast<SkelVertexData>(v1->getData());
-        node->addArc(data_1->getArc());
-        SkelVertexDataSPtr data_2 = std::dynamic_pointer_cast<SkelVertexData>(->getData());
-        node->addArc(data_2->getArc());
-#endif
-        node->setTime(event_time);
-        node->setPoint(point);
+        event->setTime(event_time);
+        event->setPoint(point);
         event->setVertex1(v1);
         event->setVertex2(v2);
         event->setFacet1(facet_1);
         event->setFacet2(facet_2);
-
         queue.push(event);
       }
     }
@@ -3035,25 +2882,13 @@ public:
 
         CGAL_assertion(event_time < current_time && event_time > time_future_bound);
 
-        NodeSPtr node = Node::create();
         FlipVertexEventSPtr event = FlipVertexEvent::create();
-        event->setNode(node);
-        node->clear();
-
-#ifndef CGAL_SS3_NO_SKELETON_DS
-        SkelVertexDataSPtr data_1 = std::dynamic_pointer_cast<SkelVertexData>(v1->getData());
-        node->addArc(data_1->getArc());
-        SkelVertexDataSPtr data_2 = std::dynamic_pointer_cast<SkelVertexData>(v2->getData());
-        node->addArc(data_2->getArc());
-#endif
-
-        node->setTime(event_time);
-        node->setPoint(point);
+        event->setTime(event_time);
+        event->setPoint(point);
         event->setVertex1(v1);
         event->setVertex2(v2);
         event->setFacet1(facet_1);
         event->setFacet2(facet_2);
-
         queue.push(event);
       }
     }
@@ -3071,6 +2906,396 @@ public:
   {
     return collectFlipVertexEvents(polyhedron->vertices(), polyhedron, true /*use canonical reps*/,
                                    current_time, time_future_bound, queue);
+  }
+
+  /**
+    * Split event on the surface.
+    * Edges do not need to be reflex.
+    */
+  void collectSurfaceEvent(const EdgeSPtr& edge_1,
+                           const EdgeSPtr& edge_2,
+                           const PolyhedronSPtr& /*polyhedron*/,
+                           const FT& current_time,
+                           const std::optional<FT>& time_future_bound,
+                           PQ& queue)
+  {
+    CGAL_SS3_CORE_TRACE_V(8, ">>> Collect Surface Event [\n  " << edge_1->toString() << "\n  " << edge_2->toString() << "]");
+
+    CGAL_SS3_DEBUG_SPTR(edge_1);
+    CGAL_SS3_DEBUG_SPTR(edge_2);
+
+    if (edge_1 == edge_2) {
+      return;
+    }
+
+    FacetSPtr facet_1_src = edge_1->getFacetSrc();
+    FacetSPtr facet_1_dst = edge_1->getFacetDst();
+
+    if (edge_1->getFacetL() == edge_2->getFacetL() ||
+        edge_1->getFacetL() == edge_2->getFacetR() ||
+        edge_1->getFacetR() == edge_2->getFacetL() ||
+        edge_1->getFacetR() == edge_2->getFacetR()) {
+      // on same facet
+      return;
+    }
+
+    if (edge_1->getVertexSrc()->getPoint() == edge_2->getVertexSrc()->getPoint() ||
+        edge_1->getVertexSrc()->getPoint() == edge_2->getVertexDst()->getPoint() ||
+        edge_1->getVertexDst()->getPoint() == edge_2->getVertexSrc()->getPoint() ||
+        edge_1->getVertexDst()->getPoint() == edge_2->getVertexDst()->getPoint()) {
+      // share a vertex
+      return;
+    }
+
+    // vertex of edge_1 splits edge_2
+    if (!((edge_2->getFacetL() == facet_1_src && edge_2->getFacetR() != facet_1_dst) ||
+          (edge_2->getFacetL() == facet_1_dst && edge_2->getFacetR() != facet_1_src) ||
+          (edge_2->getFacetR() == facet_1_src && edge_2->getFacetL() != facet_1_dst) ||
+          (edge_2->getFacetR() == facet_1_dst && edge_2->getFacetL() != facet_1_src))) {
+      // no surface event
+      return;
+    }
+
+    FacetSPtr facet_2_src = edge_2->getFacetSrc();
+    FacetSPtr facet_2_dst = edge_2->getFacetDst();
+    if ((edge_1->getFacetL() == facet_2_src && edge_1->getFacetR() != facet_2_dst) ||
+        (edge_1->getFacetL() == facet_2_dst && edge_1->getFacetR() != facet_2_src) ||
+        (edge_1->getFacetR() == facet_2_src && edge_1->getFacetL() != facet_2_dst) ||
+        (edge_1->getFacetR() == facet_2_dst && edge_1->getFacetL() != facet_2_src)) {
+      // flip vertex event
+      return;
+    }
+
+    if (edge_1->getVertexSrc()->findEdge(edge_2->getVertexSrc()) ||
+        edge_1->getVertexSrc()->findEdge(edge_2->getVertexDst()) ||
+        edge_1->getVertexDst()->findEdge(edge_2->getVertexSrc()) ||
+        edge_1->getVertexDst()->findEdge(edge_2->getVertexDst()) ) {
+      // edge event (when a pyramid grows outwards)
+      // a surface split is not possible with only one edge in between
+      return;
+    }
+
+    if ((edge_1->getFacetL() == facet_2_src && facet_1_src == edge_2->getFacetL()) ||
+        (edge_1->getFacetL() == facet_2_dst && facet_1_src == edge_2->getFacetR()) ||
+        (edge_1->getFacetR() == facet_2_src && facet_1_dst == edge_2->getFacetL()) ||
+        (edge_1->getFacetR() == facet_2_dst && facet_1_dst == edge_2->getFacetR()) ||
+        (edge_1->getFacetR() == facet_2_src && facet_1_src == edge_2->getFacetR()) ||
+        (edge_1->getFacetR() == facet_2_dst && facet_1_src == edge_2->getFacetL()) ||
+        (edge_1->getFacetL() == facet_2_src && facet_1_dst == edge_2->getFacetR()) ||
+        (edge_1->getFacetL() == facet_2_dst && facet_1_dst == edge_2->getFacetL())) {
+      // vertex event
+      return;
+    }
+
+    // convex split event are performed at pop time - see isActualSurfaceEvent()
+
+    // let's just check if bboxes overlap first
+    if (time_future_bound.has_value()) {
+      CGAL::Bbox_3 b1;
+      b1 += edge_1->getVertexSrc()->getPoint()->bbox();
+      b1 += edge_1->getVertexDst()->getPoint()->bbox();
+      b1 += HdsUtils::getFinalPoint(edge_1->getVertexSrc(), *time_future_bound)->bbox();
+      b1 += HdsUtils::getFinalPoint(edge_1->getVertexDst(), *time_future_bound)->bbox();
+
+      CGAL::Bbox_3 b2;
+      b2 += edge_2->getVertexSrc()->getPoint()->bbox();
+      b2 += edge_2->getVertexDst()->getPoint()->bbox();
+      b2 += HdsUtils::getFinalPoint(edge_2->getVertexSrc(), *time_future_bound)->bbox();
+      b2 += HdsUtils::getFinalPoint(edge_2->getVertexDst(), *time_future_bound)->bbox();
+
+      if (!CGAL::do_overlap(b1, b2)) {
+        CGAL_SS3_CORE_TRACE_V(32, "Filtered possible surface event candidates\n\t" << edge_1->toString() << "\n\t"
+                                                                                   << edge_2->toString());
+        return;
+      } else {
+        CGAL_SS3_CORE_TRACE_V(32, "Checking possible surface event event\n\t" << edge_1->toString() << "\n\t"
+                                                                              << edge_2->toString());
+      }
+    }
+
+    // calculate intersection point
+    Point3SPtr point;
+    FT event_time;
+    std::tie(point, event_time) = crashAt(edge_1, edge_2, current_time, time_future_bound);
+    if (!point) {
+      return;
+    }
+
+    CGAL_assertion(event_time < current_time && event_time > time_future_bound);
+
+    SurfaceEventSPtr event = SurfaceEvent::create();
+    event->setTime(event_time);
+    event->setPoint(point);
+    event->setEdge1(edge_1);
+    event->setEdge2(edge_2);
+    queue.push(event);
+  }
+
+  void collectSurfaceEvents(const std::list<EdgeSPtr>& edges,
+                            const PolyhedronSPtr& /*polyhedron*/,
+                            const FT& current_time,
+                            const std::optional<FT>& time_future_bound,
+                            PQ& queue)
+  {
+    CGAL_SS3_CORE_TRACE_V(4, ">>> Collect Surface Events [" << current_time << "]");
+
+#ifdef CGAL_SS3_RUN_TIMERS
+    CGAL::Real_timer timer;
+    timer.start();
+#endif
+
+#ifdef CGAL_SS3_PROFILE_FILTERING_MECHANISMS
+    unsigned int tested_candidates = 0;
+    unsigned int total_candidates = 0;
+#endif
+
+    for (const EdgeSPtr& edge_1 : edges) {
+      CGAL_SS3_DEBUG_SPTR(edge_1);
+
+      FacetSPtr facet_1_src = edge_1->getFacetSrc();
+      FacetSPtr facet_1_dst = edge_1->getFacetDst();
+      std::list<EdgeSPtr> edges_2;
+      edges_2.insert(edges_2.end(), facet_1_src->edges().begin(), facet_1_src->edges().end());
+      edges_2.insert(edges_2.end(), facet_1_dst->edges().begin(), facet_1_dst->edges().end());
+
+      // not outside of the loop just because maybe one day this will be called
+      // as the first collect function with an initial bound that gets updated...
+      CGAL::Bbox_3 b1;
+      if (time_future_bound.has_value()) {
+        b1 += edge_1->getVertexSrc()->getPoint()->bbox();
+        b1 += edge_1->getVertexDst()->getPoint()->bbox();
+        b1 += HdsUtils::getFinalPoint(edge_1->getVertexSrc(), *time_future_bound)->bbox();
+        b1 += HdsUtils::getFinalPoint(edge_1->getVertexDst(), *time_future_bound)->bbox();
+      }
+
+      for (const EdgeSPtr& edge_2 : edges_2) {
+        CGAL_SS3_DEBUG_SPTR(edge_2);
+
+        if (edge_1 == edge_2) {
+          continue;
+        }
+
+        CGAL_SS3_CORE_TRACE_V(64, "Possible surface event:\n\t" << edge_1->toString() << "\n\t"
+                                                                << edge_2->toString());
+
+#ifdef CGAL_SS3_PROFILE_FILTERING_MECHANISMS
+        ++total_candidates;
+#endif
+
+        if (edge_1->getFacetL() == edge_2->getFacetL() ||
+            edge_1->getFacetL() == edge_2->getFacetR() ||
+            edge_1->getFacetR() == edge_2->getFacetL() ||
+            edge_1->getFacetR() == edge_2->getFacetR()) {
+          // on same facet
+          continue;
+        }
+
+        if (edge_1->getVertexSrc()->getPoint() == edge_2->getVertexSrc()->getPoint() ||
+            edge_1->getVertexSrc()->getPoint() == edge_2->getVertexDst()->getPoint() ||
+            edge_1->getVertexDst()->getPoint() == edge_2->getVertexSrc()->getPoint() ||
+            edge_1->getVertexDst()->getPoint() == edge_2->getVertexDst()->getPoint()) {
+          // share a vertex
+          continue;
+        }
+
+        // vertex of edge_1 splits edge_2
+        if (!((edge_2->getFacetL() == facet_1_src && edge_2->getFacetR() != facet_1_dst) ||
+              (edge_2->getFacetL() == facet_1_dst && edge_2->getFacetR() != facet_1_src) ||
+              (edge_2->getFacetR() == facet_1_src && edge_2->getFacetL() != facet_1_dst) ||
+              (edge_2->getFacetR() == facet_1_dst && edge_2->getFacetL() != facet_1_src))) {
+          // no surface event
+          continue;
+        }
+
+        FacetSPtr facet_2_src = edge_2->getFacetSrc();
+        FacetSPtr facet_2_dst = edge_2->getFacetDst();
+        if ((edge_1->getFacetL() == facet_2_src && edge_1->getFacetR() != facet_2_dst) ||
+            (edge_1->getFacetL() == facet_2_dst && edge_1->getFacetR() != facet_2_src) ||
+            (edge_1->getFacetR() == facet_2_src && edge_1->getFacetL() != facet_2_dst) ||
+            (edge_1->getFacetR() == facet_2_dst && edge_1->getFacetL() != facet_2_src)) {
+          // flip vertex event
+          continue;
+        }
+
+        if (edge_1->getVertexSrc()->findEdge(edge_2->getVertexSrc()) ||
+            edge_1->getVertexSrc()->findEdge(edge_2->getVertexDst()) ||
+            edge_1->getVertexDst()->findEdge(edge_2->getVertexSrc()) ||
+            edge_1->getVertexDst()->findEdge(edge_2->getVertexDst()) ) {
+          // edge event (when a pyramid grows outwards)
+          // a surface split is not possible with only one edge in between
+          continue;
+        }
+
+        if ((edge_1->getFacetL() == facet_2_src && facet_1_src == edge_2->getFacetL()) ||
+            (edge_1->getFacetL() == facet_2_dst && facet_1_src == edge_2->getFacetR()) ||
+            (edge_1->getFacetR() == facet_2_src && facet_1_dst == edge_2->getFacetL()) ||
+            (edge_1->getFacetR() == facet_2_dst && facet_1_dst == edge_2->getFacetR()) ||
+            (edge_1->getFacetR() == facet_2_src && facet_1_src == edge_2->getFacetR()) ||
+            (edge_1->getFacetR() == facet_2_dst && facet_1_src == edge_2->getFacetL()) ||
+            (edge_1->getFacetL() == facet_2_src && facet_1_dst == edge_2->getFacetR()) ||
+            (edge_1->getFacetL() == facet_2_dst && facet_1_dst == edge_2->getFacetL())) {
+          // vertex event
+          continue;
+        }
+
+        // convex split event checks are performed at pop time - see isActualSurfaceEvent()
+
+        // let's just check if bboxes overlap first
+        if (time_future_bound.has_value()) {
+          CGAL::Bbox_3 b2;
+          b2 += edge_2->getVertexSrc()->getPoint()->bbox();
+          b2 += edge_2->getVertexDst()->getPoint()->bbox();
+          b2 += HdsUtils::getFinalPoint(edge_2->getVertexSrc(), *time_future_bound)->bbox();
+          b2 += HdsUtils::getFinalPoint(edge_2->getVertexDst(), *time_future_bound)->bbox();
+
+          if (!CGAL::do_overlap(b1, b2)) {
+            CGAL_SS3_CORE_TRACE_V(64, "Filtered possible surface event candidates\n\t" << edge_1->toString() << "\n\t"
+                                                                                        << edge_2->toString());
+            continue;
+          }
+        }
+
+#ifdef CGAL_SS3_PROFILE_FILTERING_MECHANISMS
+        ++tested_candidates;
+#endif
+
+        // calculate intersection point
+        Point3SPtr point;
+        FT event_time;
+        std::tie(point, event_time) = crashAt(edge_1, edge_2, current_time, time_future_bound);
+        if (!point) {
+          continue;
+        }
+
+        CGAL_assertion(event_time < current_time && event_time > time_future_bound);
+
+        SurfaceEventSPtr event = SurfaceEvent::create();
+        event->setTime(event_time);
+        event->setPoint(point);
+        event->setEdge1(edge_1);
+        event->setEdge2(edge_2);
+        queue.push(event);
+      }
+    }
+
+#ifdef CGAL_SS3_PROFILE_FILTERING_MECHANISMS
+    CGAL_SS3_CORE_TRACE_V(16, "  Tested: " << tested_candidates << " / " << total_candidates << " candidates");
+#endif
+
+#ifdef CGAL_SS3_RUN_TIMERS
+    timer.stop();
+    CGAL_SS3_CORE_TRACE_V(4, "  Sought Surface Events in: " << timer.time());
+#endif
+  }
+
+  void collectSurfaceEvents(const PolyhedronSPtr& polyhedron,
+                            const FT& current_time,
+                            const std::optional<FT>& time_future_bound,
+                            PQ& queue)
+  {
+    return collectSurfaceEvents(polyhedron->edges(), polyhedron,
+                                current_time, time_future_bound, queue);
+  }
+
+  /**
+    * This event occurs when two edges collide.
+    * The first edge is always reflex.
+    */
+  void collectPolyhedronSplitEvent(const EdgeSPtr& edge_1,
+                                   const EdgeSPtr& edge_2,
+                                   const PolyhedronSPtr& /*polyhedron*/,
+                                   const FT& current_time,
+                                   const std::optional<FT>& time_future_bound,
+                                   PQ& queue)
+  {
+    CGAL_SS3_DEBUG_SPTR(edge_1);
+    CGAL_SS3_DEBUG_SPTR(edge_2);
+
+    FacetSPtr facet_1_src = edge_1->getFacetSrc();
+    FacetSPtr facet_1_dst = edge_1->getFacetDst();
+
+    if (edge_1->getVertexSrc()->getPoint() == edge_2->getVertexSrc()->getPoint() ||
+        edge_1->getVertexSrc()->getPoint() == edge_2->getVertexDst()->getPoint() ||
+        edge_1->getVertexDst()->getPoint() == edge_2->getVertexSrc()->getPoint() ||
+        edge_1->getVertexDst()->getPoint() == edge_2->getVertexDst()->getPoint()) {
+      // share a vertex
+      return;
+    }
+    if (!((edge_2->getFacetL() == facet_1_src && edge_2->getFacetR() == facet_1_dst) ||
+          (edge_2->getFacetL() == facet_1_dst && edge_2->getFacetR() == facet_1_src))) {
+      // no polyhedron split event
+      return;
+    }
+    if (edge_1->getVertexSrc()->findEdge(edge_2->getVertexSrc()) ||
+        edge_1->getVertexSrc()->findEdge(edge_2->getVertexDst()) ||
+        edge_1->getVertexDst()->findEdge(edge_2->getVertexSrc()) ||
+        edge_1->getVertexDst()->findEdge(edge_2->getVertexDst())) {
+      // does not work when there is only one edge in between
+      return;
+    }
+
+    // calculate intersection point
+    Point3SPtr point;
+    FT event_time;
+    std::tie(point, event_time) = crashAt(edge_1, edge_2, current_time, time_future_bound);
+    if (!point) {
+      return;
+    }
+
+    CGAL_assertion(event_time < current_time && event_time > time_future_bound);
+
+    // degeneracy check is performed at pop time - see isActualPolyhedronSplitEvent()
+
+    PolyhedronSplitEventSPtr event = PolyhedronSplitEvent::create();
+    event->setTime(event_time);
+    event->setPoint(point);
+    event->setEdge1(edge_1);
+    event->setEdge2(edge_2);
+    queue.push(event);
+  }
+
+  void collectPolyhedronSplitEvents(const std::list<EdgeSPtr>& edges,
+                                    const PolyhedronSPtr& polyhedron,
+                                    const FT& current_time,
+                                    const std::optional<FT>& time_future_bound,
+                                    PQ& queue)
+  {
+    CGAL_SS3_CORE_TRACE_V(4, ">>> Collect Polyhedron Split Events [" << current_time << "]");
+
+#ifdef CGAL_SS3_RUN_TIMERS
+    CGAL::Real_timer timer;
+    timer.start();
+#endif
+
+    for (const EdgeSPtr& edge_1 : edges) {
+      CGAL_SS3_DEBUG_SPTR(edge_1);
+
+      if (!HdsUtils::isReflex(edge_1)) {
+        continue;
+      }
+
+      FacetSPtr facet_1_src = edge_1->getFacetSrc();
+      CGAL_assertion(bool(facet_1_src));
+      for (const EdgeSPtr& edge_2 : facet_1_src->edges()) {
+        collectPolyhedronSplitEvent(edge_1, edge_2, polyhedron,
+                                    current_time, time_future_bound,
+                                    queue);
+      }
+    }
+
+#ifdef CGAL_SS3_RUN_TIMERS
+    timer.stop();
+    CGAL_SS3_CORE_TRACE_V(4, "  Sought Polyhedron Split Events in: " << timer.time());
+#endif
+  }
+
+  void collectPolyhedronSplitEvents(const PolyhedronSPtr& polyhedron,
+                                    const FT& current_time,
+                                    const std::optional<FT>& time_future_bound,
+                                    PQ& queue)
+  {
+    return collectPolyhedronSplitEvents(polyhedron->edges(), polyhedron,
+                                        current_time, time_future_bound, queue);
   }
 
   /**
@@ -3245,25 +3470,13 @@ public:
 
         CGAL_assertion(event_time < current_time && event_time > time_future_bound);
 
-        NodeSPtr node = Node::create();
         SplitMergeEventSPtr event = SplitMergeEvent::create();
-        event->setNode(node);
-        node->clear();
-
-#ifndef CGAL_SS3_NO_SKELETON_DS
-        SkelVertexDataSPtr data_1 = std::dynamic_pointer_cast<SkelVertexData>(v1->getData());
-        node->addArc(data_1->getArc());
-        SkelVertexDataSPtr data_2 = std::dynamic_pointer_cast<SkelVertexData>(v2->getData());
-        node->addArc(data_2->getArc());
-#endif
-
-        node->setTime(event_time);
-        node->setPoint(point);
+        event->setTime(event_time);
+        event->setPoint(point);
         event->setVertex1(v1);
         event->setVertex2(v2);
         event->setFacet1(facet_1);
         event->setFacet2(facet_2);
-
         queue.push(event);
       }
     }
@@ -3281,462 +3494,6 @@ public:
   {
     return collectSplitMergeEvents(polyhedron->vertices(), polyhedron, true /*use canonical reps*/,
                                    current_time, time_future_bound, queue);
-  }
-
-  /**
-    * Split event on the surface.
-    * Edges do not need to be reflex.
-    */
-  void collectSurfaceEvent(const EdgeSPtr& edge_1,
-                           const EdgeSPtr& edge_2,
-                           const PolyhedronSPtr& /*polyhedron*/,
-                           const FT& current_time,
-                           const std::optional<FT>& time_future_bound,
-                           PQ& queue)
-  {
-    CGAL_SS3_CORE_TRACE_V(8, ">>> Collect Surface Event [\n  " << edge_1->toString() << "\n  " << edge_2->toString() << "]");
-
-    CGAL_SS3_DEBUG_SPTR(edge_1);
-    CGAL_SS3_DEBUG_SPTR(edge_2);
-
-    if (edge_1 == edge_2) {
-      return;
-    }
-
-    FacetSPtr facet_1_src = edge_1->getFacetSrc();
-    FacetSPtr facet_1_dst = edge_1->getFacetDst();
-
-    if (edge_1->getFacetL() == edge_2->getFacetL() ||
-        edge_1->getFacetL() == edge_2->getFacetR() ||
-        edge_1->getFacetR() == edge_2->getFacetL() ||
-        edge_1->getFacetR() == edge_2->getFacetR()) {
-      // on same facet
-      return;
-    }
-
-    if (edge_1->getVertexSrc()->getPoint() == edge_2->getVertexSrc()->getPoint() ||
-        edge_1->getVertexSrc()->getPoint() == edge_2->getVertexDst()->getPoint() ||
-        edge_1->getVertexDst()->getPoint() == edge_2->getVertexSrc()->getPoint() ||
-        edge_1->getVertexDst()->getPoint() == edge_2->getVertexDst()->getPoint()) {
-      // share a vertex
-      return;
-    }
-
-    // vertex of edge_1 splits edge_2
-    if (!((edge_2->getFacetL() == facet_1_src && edge_2->getFacetR() != facet_1_dst) ||
-          (edge_2->getFacetL() == facet_1_dst && edge_2->getFacetR() != facet_1_src) ||
-          (edge_2->getFacetR() == facet_1_src && edge_2->getFacetL() != facet_1_dst) ||
-          (edge_2->getFacetR() == facet_1_dst && edge_2->getFacetL() != facet_1_src))) {
-      // no surface event
-      return;
-    }
-
-    FacetSPtr facet_2_src = edge_2->getFacetSrc();
-    FacetSPtr facet_2_dst = edge_2->getFacetDst();
-    if ((edge_1->getFacetL() == facet_2_src && edge_1->getFacetR() != facet_2_dst) ||
-        (edge_1->getFacetL() == facet_2_dst && edge_1->getFacetR() != facet_2_src) ||
-        (edge_1->getFacetR() == facet_2_src && edge_1->getFacetL() != facet_2_dst) ||
-        (edge_1->getFacetR() == facet_2_dst && edge_1->getFacetL() != facet_2_src)) {
-      // flip vertex event
-      return;
-    }
-
-    if (edge_1->getVertexSrc()->findEdge(edge_2->getVertexSrc()) ||
-        edge_1->getVertexSrc()->findEdge(edge_2->getVertexDst()) ||
-        edge_1->getVertexDst()->findEdge(edge_2->getVertexSrc()) ||
-        edge_1->getVertexDst()->findEdge(edge_2->getVertexDst()) ) {
-      // edge event (when a pyramid grows outwards)
-      // a surface split is not possible with only one edge in between
-      return;
-    }
-
-    if ((edge_1->getFacetL() == facet_2_src && facet_1_src == edge_2->getFacetL()) ||
-        (edge_1->getFacetL() == facet_2_dst && facet_1_src == edge_2->getFacetR()) ||
-        (edge_1->getFacetR() == facet_2_src && facet_1_dst == edge_2->getFacetL()) ||
-        (edge_1->getFacetR() == facet_2_dst && facet_1_dst == edge_2->getFacetR()) ||
-        (edge_1->getFacetR() == facet_2_src && facet_1_src == edge_2->getFacetR()) ||
-        (edge_1->getFacetR() == facet_2_dst && facet_1_src == edge_2->getFacetL()) ||
-        (edge_1->getFacetL() == facet_2_src && facet_1_dst == edge_2->getFacetR()) ||
-        (edge_1->getFacetL() == facet_2_dst && facet_1_dst == edge_2->getFacetL())) {
-      // vertex event
-      return;
-    }
-
-    // convex split event are performed at pop time - see isActualSurfaceEvent()
-
-    // let's just check if bboxes overlap first
-    if (time_future_bound.has_value()) {
-      CGAL::Bbox_3 b1;
-      b1 += edge_1->getVertexSrc()->getPoint()->bbox();
-      b1 += edge_1->getVertexDst()->getPoint()->bbox();
-      b1 += HdsUtils::getFinalPoint(edge_1->getVertexSrc(), *time_future_bound)->bbox();
-      b1 += HdsUtils::getFinalPoint(edge_1->getVertexDst(), *time_future_bound)->bbox();
-
-      CGAL::Bbox_3 b2;
-      b2 += edge_2->getVertexSrc()->getPoint()->bbox();
-      b2 += edge_2->getVertexDst()->getPoint()->bbox();
-      b2 += HdsUtils::getFinalPoint(edge_2->getVertexSrc(), *time_future_bound)->bbox();
-      b2 += HdsUtils::getFinalPoint(edge_2->getVertexDst(), *time_future_bound)->bbox();
-
-      if (!CGAL::do_overlap(b1, b2)) {
-        CGAL_SS3_CORE_TRACE_V(32, "Filtered possible surface event candidates\n\t" << edge_1->toString() << "\n\t"
-                                                                                   << edge_2->toString());
-        return;
-      } else {
-        CGAL_SS3_CORE_TRACE_V(32, "Checking possible surface event event\n\t" << edge_1->toString() << "\n\t"
-                                                                              << edge_2->toString());
-      }
-    }
-
-    // calculate intersection point
-    Point3SPtr point;
-    FT event_time;
-    std::tie(point, event_time) = crashAt(edge_1, edge_2, current_time, time_future_bound);
-    if (!point) {
-      return;
-    }
-
-    CGAL_assertion(event_time < current_time && event_time > time_future_bound);
-
-    NodeSPtr node = Node::create();
-    SurfaceEventSPtr event = SurfaceEvent::create();
-    event->setNode(node);
-    node->clear();
-    node->setTime(event_time);
-    node->setPoint(point);
-    event->setEdge1(edge_1);
-    event->setEdge2(edge_2);
-
-#ifndef CGAL_SS3_NO_SKELETON_DS
-    SkelEdgeDataSPtr data_1 = std::dynamic_pointer_cast<SkelEdgeData>(edge_1->getData());
-    SkelEdgeDataSPtr data_2 = std::dynamic_pointer_cast<SkelEdgeData>(edge_2->getData());
-    node->addSheet(data_1->getSheet());
-    node->addSheet(data_2->getSheet());
-
-    if (facet_1_src == edge_2->getFacetL() ||
-        facet_1_src == edge_2->getFacetR()) {
-      SkelVertexDataSPtr data_1_src = std::dynamic_pointer_cast<SkelVertexData>(edge_1->getVertexSrc()->getData());
-      node->addArc(data_1_src->getArc());
-    }
-    if (facet_1_dst == edge_2->getFacetL() ||
-        facet_1_dst == edge_2->getFacetR()) {
-      SkelVertexDataSPtr data_1_dst = std::dynamic_pointer_cast<SkelVertexData>(edge_1->getVertexDst()->getData());
-      node->addArc(data_1_dst->getArc());
-    }
-#endif
-
-    queue.push(event);
-  }
-
-  void collectSurfaceEvents(const std::list<EdgeSPtr>& edges,
-                            const PolyhedronSPtr& /*polyhedron*/,
-                            const FT& current_time,
-                            const std::optional<FT>& time_future_bound,
-                            PQ& queue)
-  {
-    CGAL_SS3_CORE_TRACE_V(4, ">>> Collect Surface Events [" << current_time << "]");
-
-#ifdef CGAL_SS3_RUN_TIMERS
-    CGAL::Real_timer timer;
-    timer.start();
-#endif
-
-#ifdef CGAL_SS3_PROFILE_FILTERING_MECHANISMS
-    unsigned int tested_candidates = 0;
-    unsigned int total_candidates = 0;
-#endif
-
-    for (const EdgeSPtr& edge_1 : edges) {
-      CGAL_SS3_DEBUG_SPTR(edge_1);
-
-      FacetSPtr facet_1_src = edge_1->getFacetSrc();
-      FacetSPtr facet_1_dst = edge_1->getFacetDst();
-      std::list<EdgeSPtr> edges_2;
-      edges_2.insert(edges_2.end(), facet_1_src->edges().begin(), facet_1_src->edges().end());
-      edges_2.insert(edges_2.end(), facet_1_dst->edges().begin(), facet_1_dst->edges().end());
-
-      // not outside of the loop just because maybe one day this will be called
-      // as the first collect function with an initial bound that gets updated...
-      CGAL::Bbox_3 b1;
-      if (time_future_bound.has_value()) {
-        b1 += edge_1->getVertexSrc()->getPoint()->bbox();
-        b1 += edge_1->getVertexDst()->getPoint()->bbox();
-        b1 += HdsUtils::getFinalPoint(edge_1->getVertexSrc(), *time_future_bound)->bbox();
-        b1 += HdsUtils::getFinalPoint(edge_1->getVertexDst(), *time_future_bound)->bbox();
-      }
-
-      for (const EdgeSPtr& edge_2 : edges_2) {
-        CGAL_SS3_DEBUG_SPTR(edge_2);
-
-        CGAL_SS3_CORE_TRACE_V(64, "Possible surface event:\n\t" << edge_1->toString() << "\n\t"
-                                                                << edge_2->toString());
-
-#ifdef CGAL_SS3_PROFILE_FILTERING_MECHANISMS
-        ++total_candidates;
-#endif
-
-        if (edge_1 == edge_2) {
-          continue;
-        }
-
-        if (edge_1->getFacetL() == edge_2->getFacetL() ||
-            edge_1->getFacetL() == edge_2->getFacetR() ||
-            edge_1->getFacetR() == edge_2->getFacetL() ||
-            edge_1->getFacetR() == edge_2->getFacetR()) {
-          // on same facet
-          continue;
-        }
-
-        if (edge_1->getVertexSrc()->getPoint() == edge_2->getVertexSrc()->getPoint() ||
-            edge_1->getVertexSrc()->getPoint() == edge_2->getVertexDst()->getPoint() ||
-            edge_1->getVertexDst()->getPoint() == edge_2->getVertexSrc()->getPoint() ||
-            edge_1->getVertexDst()->getPoint() == edge_2->getVertexDst()->getPoint()) {
-          // share a vertex
-          continue;
-        }
-
-        // vertex of edge_1 splits edge_2
-        if (!((edge_2->getFacetL() == facet_1_src && edge_2->getFacetR() != facet_1_dst) ||
-              (edge_2->getFacetL() == facet_1_dst && edge_2->getFacetR() != facet_1_src) ||
-              (edge_2->getFacetR() == facet_1_src && edge_2->getFacetL() != facet_1_dst) ||
-              (edge_2->getFacetR() == facet_1_dst && edge_2->getFacetL() != facet_1_src))) {
-          // no surface event
-          continue;
-        }
-
-        FacetSPtr facet_2_src = edge_2->getFacetSrc();
-        FacetSPtr facet_2_dst = edge_2->getFacetDst();
-        if ((edge_1->getFacetL() == facet_2_src && edge_1->getFacetR() != facet_2_dst) ||
-            (edge_1->getFacetL() == facet_2_dst && edge_1->getFacetR() != facet_2_src) ||
-            (edge_1->getFacetR() == facet_2_src && edge_1->getFacetL() != facet_2_dst) ||
-            (edge_1->getFacetR() == facet_2_dst && edge_1->getFacetL() != facet_2_src)) {
-          // flip vertex event
-          continue;
-        }
-
-        if (edge_1->getVertexSrc()->findEdge(edge_2->getVertexSrc()) ||
-            edge_1->getVertexSrc()->findEdge(edge_2->getVertexDst()) ||
-            edge_1->getVertexDst()->findEdge(edge_2->getVertexSrc()) ||
-            edge_1->getVertexDst()->findEdge(edge_2->getVertexDst()) ) {
-          // edge event (when a pyramid grows outwards)
-          // a surface split is not possible with only one edge in between
-          continue;
-        }
-
-        if ((edge_1->getFacetL() == facet_2_src && facet_1_src == edge_2->getFacetL()) ||
-            (edge_1->getFacetL() == facet_2_dst && facet_1_src == edge_2->getFacetR()) ||
-            (edge_1->getFacetR() == facet_2_src && facet_1_dst == edge_2->getFacetL()) ||
-            (edge_1->getFacetR() == facet_2_dst && facet_1_dst == edge_2->getFacetR()) ||
-            (edge_1->getFacetR() == facet_2_src && facet_1_src == edge_2->getFacetR()) ||
-            (edge_1->getFacetR() == facet_2_dst && facet_1_src == edge_2->getFacetL()) ||
-            (edge_1->getFacetL() == facet_2_src && facet_1_dst == edge_2->getFacetR()) ||
-            (edge_1->getFacetL() == facet_2_dst && facet_1_dst == edge_2->getFacetL())) {
-          // vertex event
-          continue;
-        }
-
-        // convex split even checks are performed at pop time - see isActualSurfaceEvent()
-
-        // let's just check if bboxes overlap first
-        if (time_future_bound.has_value()) {
-          CGAL::Bbox_3 b2;
-          b2 += edge_2->getVertexSrc()->getPoint()->bbox();
-          b2 += edge_2->getVertexDst()->getPoint()->bbox();
-          b2 += HdsUtils::getFinalPoint(edge_2->getVertexSrc(), *time_future_bound)->bbox();
-          b2 += HdsUtils::getFinalPoint(edge_2->getVertexDst(), *time_future_bound)->bbox();
-
-          if (!CGAL::do_overlap(b1, b2)) {
-            CGAL_SS3_CORE_TRACE_V(64, "Filtered possible surface event candidates\n\t" << edge_1->toString() << "\n\t"
-                                                                                        << edge_2->toString());
-            continue;
-          }
-        }
-
-#ifdef CGAL_SS3_PROFILE_FILTERING_MECHANISMS
-        ++tested_candidates;
-#endif
-
-        // calculate intersection point
-        Point3SPtr point;
-        FT event_time;
-        std::tie(point, event_time) = crashAt(edge_1, edge_2, current_time, time_future_bound);
-        if (!point) {
-          continue;
-        }
-
-        CGAL_assertion(event_time < current_time && event_time > time_future_bound);
-
-        NodeSPtr node = Node::create();
-        SurfaceEventSPtr event = SurfaceEvent::create();
-        event->setNode(node);
-        node->clear();
-        node->setTime(event_time);
-        node->setPoint(point);
-        event->setEdge1(edge_1);
-        event->setEdge2(edge_2);
-
-#ifndef CGAL_SS3_NO_SKELETON_DS
-        SkelEdgeDataSPtr data_1 = std::dynamic_pointer_cast<SkelEdgeData>(edge_1->getData());
-        SkelEdgeDataSPtr data_2 = std::dynamic_pointer_cast<SkelEdgeData>(edge_2->getData());
-        node->addSheet(data_1->getSheet());
-        node->addSheet(data_2->getSheet());
-
-        if (facet_1_src == edge_2->getFacetL() ||
-            facet_1_src == edge_2->getFacetR()) {
-          SkelVertexDataSPtr data_1_src = std::dynamic_pointer_cast<SkelVertexData>(edge_1->getVertexSrc()->getData());
-          node->addArc(data_1_src->getArc());
-        }
-        if (facet_1_dst == edge_2->getFacetL() ||
-            facet_1_dst == edge_2->getFacetR()) {
-          SkelVertexDataSPtr data_1_dst = std::dynamic_pointer_cast<SkelVertexData>(edge_1->getVertexDst()->getData());
-          node->addArc(data_1_dst->getArc());
-        }
-#endif
-
-        queue.push(event);
-      }
-    }
-
-#ifdef CGAL_SS3_PROFILE_FILTERING_MECHANISMS
-    CGAL_SS3_CORE_TRACE_V(16, "  Tested: " << tested_candidates << " / " << total_candidates << " candidates");
-#endif
-
-#ifdef CGAL_SS3_RUN_TIMERS
-    timer.stop();
-    CGAL_SS3_CORE_TRACE_V(4, "  Sought Surface Events in: " << timer.time());
-#endif
-  }
-
-  void collectSurfaceEvents(const PolyhedronSPtr& polyhedron,
-                            const FT& current_time,
-                            const std::optional<FT>& time_future_bound,
-                            PQ& queue)
-  {
-    return collectSurfaceEvents(polyhedron->edges(), polyhedron,
-                                current_time, time_future_bound, queue);
-  }
-
-  /**
-    * This event occurs when two edges collide.
-    * The first edge is always reflex.
-    */
-  void collectPolyhedronSplitEvent(const EdgeSPtr& edge_1,
-                                   const EdgeSPtr& edge_2,
-                                   const PolyhedronSPtr& /*polyhedron*/,
-                                   const FT& current_time,
-                                   const std::optional<FT>& time_future_bound,
-                                   PQ& queue)
-  {
-    CGAL_SS3_DEBUG_SPTR(edge_1);
-    CGAL_SS3_DEBUG_SPTR(edge_2);
-
-    FacetSPtr facet_1_src = edge_1->getFacetSrc();
-    FacetSPtr facet_1_dst = edge_1->getFacetDst();
-
-    if (edge_1->getVertexSrc()->getPoint() == edge_2->getVertexSrc()->getPoint() ||
-        edge_1->getVertexSrc()->getPoint() == edge_2->getVertexDst()->getPoint() ||
-        edge_1->getVertexDst()->getPoint() == edge_2->getVertexSrc()->getPoint() ||
-        edge_1->getVertexDst()->getPoint() == edge_2->getVertexDst()->getPoint()) {
-      // share a vertex
-      return;
-    }
-    if (!((edge_2->getFacetL() == facet_1_src && edge_2->getFacetR() == facet_1_dst) ||
-          (edge_2->getFacetL() == facet_1_dst && edge_2->getFacetR() == facet_1_src))) {
-      // no polyhedron split event
-      return;
-    }
-    if (edge_1->getVertexSrc()->findEdge(edge_2->getVertexSrc()) ||
-        edge_1->getVertexSrc()->findEdge(edge_2->getVertexDst()) ||
-        edge_1->getVertexDst()->findEdge(edge_2->getVertexSrc()) ||
-        edge_1->getVertexDst()->findEdge(edge_2->getVertexDst())) {
-      // does not work when there is only one edge in between
-      return;
-    }
-
-    // calculate intersection point
-    Point3SPtr point;
-    FT event_time;
-    std::tie(point, event_time) = crashAt(edge_1, edge_2, current_time, time_future_bound);
-    if (!point) {
-      return;
-    }
-
-    CGAL_assertion(event_time < current_time && event_time > time_future_bound);
-
-    // degeneracy check is performed at pop time - see isActualPolyhedronSplitEvent()
-
-    NodeSPtr node = Node::create();
-    PolyhedronSplitEventSPtr event = PolyhedronSplitEvent::create();
-    event->setNode(node);
-    node->clear();
-    node->setTime(event_time);
-    node->setPoint(point);
-    event->setEdge1(edge_1);
-    event->setEdge2(edge_2);
-
-#ifndef CGAL_SS3_NO_SKELETON_DS
-    SkelEdgeDataSPtr data_1 = std::dynamic_pointer_cast<SkelEdgeData>(edge_1->getData());
-    SkelEdgeDataSPtr data_2 = std::dynamic_pointer_cast<SkelEdgeData>(edge_2->getData());
-    node->addSheet(data_1->getSheet());
-    node->addSheet(data_2->getSheet());
-
-    if (facet_1_src == edge_2->getFacetL() ||
-        facet_1_src == edge_2->getFacetR()) {
-      SkelVertexDataSPtr data_1_src = std::dynamic_pointer_cast<SkelVertexData>(edge_1->getVertexSrc()->getData());
-      node->addArc(data_1_src->getArc());
-    }
-    if (facet_1_dst == edge_2->getFacetL() ||
-        facet_1_dst == edge_2->getFacetR()) {
-      SkelVertexDataSPtr data_1_dst = std::dynamic_pointer_cast<SkelVertexData>(edge_1->getVertexDst()->getData());
-      node->addArc(data_1_dst->getArc());
-    }
-#endif
-
-    queue.push(event);
-  }
-
-  void collectPolyhedronSplitEvents(const std::list<EdgeSPtr>& edges,
-                                    const PolyhedronSPtr& polyhedron,
-                                    const FT& current_time,
-                                    const std::optional<FT>& time_future_bound,
-                                    PQ& queue)
-  {
-    CGAL_SS3_CORE_TRACE_V(4, ">>> Collect Polyhedron Split Events [" << current_time << "]");
-
-#ifdef CGAL_SS3_RUN_TIMERS
-    CGAL::Real_timer timer;
-    timer.start();
-#endif
-
-    for (const EdgeSPtr& edge_1 : edges) {
-      CGAL_SS3_DEBUG_SPTR(edge_1);
-
-      if (!HdsUtils::isReflex(edge_1)) {
-        continue;
-      }
-
-      FacetSPtr facet_1_src = edge_1->getFacetSrc();
-      CGAL_assertion(bool(facet_1_src));
-      for (const EdgeSPtr& edge_2 : facet_1_src->edges()) {
-        collectPolyhedronSplitEvent(edge_1, edge_2, polyhedron,
-                                    current_time, time_future_bound,
-                                    queue);
-      }
-    }
-
-#ifdef CGAL_SS3_RUN_TIMERS
-    timer.stop();
-    CGAL_SS3_CORE_TRACE_V(4, "  Sought Polyhedron Split Events in: " << timer.time());
-#endif
-  }
-
-  void collectPolyhedronSplitEvents(const PolyhedronSPtr& polyhedron,
-                                    const FT& current_time,
-                                    const std::optional<FT>& time_future_bound,
-                                    PQ& queue)
-  {
-    return collectPolyhedronSplitEvents(polyhedron->edges(), polyhedron,
-                                        current_time, time_future_bound, queue);
   }
 
   /**
@@ -3934,33 +3691,11 @@ public:
         }
 #endif
 
-        NodeSPtr node = Node::create();
         EdgeSplitEventSPtr event = EdgeSplitEvent::create();
-        event->setNode(node);
-        node->clear();
-        node->setTime(event_time);
-        node->setPoint(point);
+        event->setTime(event_time);
+        event->setPoint(point);
         event->setEdge1(edge_1);
         event->setEdge2(edge_2);
-
-#ifndef CGAL_SS3_NO_SKELETON_DS
-        SkelEdgeDataSPtr data_1 = std::dynamic_pointer_cast<SkelEdgeData>(edge_1->getData());
-        SkelEdgeDataSPtr data_2 = std::dynamic_pointer_cast<SkelEdgeData>(edge_2->getData());
-        node->addSheet(data_1->getSheet());
-        node->addSheet(data_2->getSheet());
-
-        if (facet_1_src == edge_2->getFacetL() ||
-            facet_1_src == edge_2->getFacetR()) {
-          SkelVertexDataSPtr data_1_src = std::dynamic_pointer_cast<SkelVertexData>(edge_1->getVertexSrc()->getData());
-          node->addArc(data_1_src->getArc());
-        }
-        if (facet_1_dst == edge_2->getFacetL() ||
-            facet_1_dst == edge_2->getFacetR()) {
-          SkelVertexDataSPtr data_1_dst = std::dynamic_pointer_cast<SkelVertexData>(edge_1->getVertexDst()->getData());
-          node->addArc(data_1_dst->getArc());
-        }
-#endif
-
         queue.push(event);
       }
     }
@@ -4091,33 +3826,11 @@ public:
     }
 #endif
 
-    NodeSPtr node = Node::create();
     EdgeSplitEventSPtr event = EdgeSplitEvent::create();
-    event->setNode(node);
-    node->clear();
-    node->setTime(event_time);
-    node->setPoint(point);
+    event->setTime(event_time);
+    event->setPoint(point);
     event->setEdge1(edge_1);
     event->setEdge2(edge_2);
-
-#ifndef CGAL_SS3_NO_SKELETON_DS
-    SkelEdgeDataSPtr data_1 = std::dynamic_pointer_cast<SkelEdgeData>(edge_1->getData());
-    SkelEdgeDataSPtr data_2 = std::dynamic_pointer_cast<SkelEdgeData>(edge_2->getData());
-    node->addSheet(data_1->getSheet());
-    node->addSheet(data_2->getSheet());
-
-    if (facet_1_src == edge_2->getFacetL() ||
-        facet_1_src == edge_2->getFacetR()) {
-      SkelVertexDataSPtr data_1_src = std::dynamic_pointer_cast<SkelVertexData>(edge_1->getVertexSrc()->getData());
-      node->addArc(data_1_src->getArc());
-    }
-    if (facet_1_dst == edge_2->getFacetL() ||
-        facet_1_dst == edge_2->getFacetR()) {
-      SkelVertexDataSPtr data_1_dst = std::dynamic_pointer_cast<SkelVertexData>(edge_1->getVertexDst()->getData());
-      node->addArc(data_1_dst->getArc());
-    }
-#endif
-
     queue.push(event);
   }
 
@@ -4337,20 +4050,11 @@ public:
 
           // actual intersection checks are performed at pop time - see isActualPierceEvent()
 
-          NodeSPtr node = Node::create();
           PierceEventSPtr event = PierceEvent::create();
-          event->setNode(node);
-          node->clear();
-#ifndef CGAL_SS3_NO_SKELETON_DS
-          SkelVertexDataSPtr data = std::dynamic_pointer_cast<SkelVertexData>(vertex->getData());
-          ArcSPtr arc = data->getArc();
-          node->addArc(arc);
-#endif
-          node->setTime(event_time);
-          node->setPoint(point);
+          event->setTime(event_time);
+          event->setPoint(point);
           event->setFacet(facet);
           event->setVertex(vertex);
-
           queue.push(event);
         }
       }
@@ -5021,27 +4725,18 @@ public:
     return event;
   }
 
-  /**
-    * Appends a node of an event to the skeleton.
-    * It links all adjacent arcs and sheets to this node.
-    */
-  void appendEventNode(NodeSPtr node)
+  void addEvent(const AbstractEventSPtr& event)
   {
-    CGAL_SS3_DEBUG_SPTR(node);
+    typename std::list<AbstractEventSPtr>::iterator it = events_.insert(events_.end(), event);
+    event->setListIt(it);
+  }
 
-    // @fixme why the find?...
-    for (ArcWPtr arc_wptr : node->arcs()) {
-      if (ArcSPtr arc = arc_wptr.lock()) {
-        arc->setNodeDst(node);
-        arc->setNodeDstListIt(STL_Extension::internal::weak_find(node->arcs().begin(), node->arcs().end(), arc_wptr));
-      }
-    }
-    for (SheetWPtr sheet_wptr : node->sheets()) {
-      if (SheetSPtr sheet = sheet_wptr.lock()) {
-        sheet->addNode(node);
-      }
-    }
-    skel_result_->addNode(node);
+  bool removeEvent(const AbstractEventSPtr& event)
+  {
+    bool result = false;
+    events_.erase(event->getListIt());
+    event->setListIt(typename std::list<AbstractEventSPtr>::iterator());
+    return result;
   }
 
   void shiftToEventTime(const PolyhedronSPtr& polyhedron,
@@ -5065,17 +4760,62 @@ public:
 #endif
   }
 
-  EventStatus handleSaveOffsetEvent(const SaveOffsetEventSPtr& event,
-                                    const FT& current_time,
-                                    const PolyhedronSPtr& polyhedron)
+  bool savePolyhedron(PolyhedronSPtr polyhedron,
+                      const FT& current_time)
+  {
+    CGAL_SS3_DEBUG_SPTR(polyhedron);
+
+    bool result = true;
+
+    std::stringstream ss_filename, ss_filename_triangulated, ss_filename_exact;
+    ss_filename.precision(17);
+    ss_filename_triangulated.precision(17);
+    ss_filename_exact.precision(17);
+    ss_filename << save_path_.string() << "/time_" << current_time << ".obj";
+    ss_filename_triangulated << save_path_.string() << "/time_" << current_time << "_triangulated.obj";
+    ss_filename_exact << save_path_.string() << "/time_" << current_time << "_exact.obj";
+
+    result = (IO::OBJFile::save(ss_filename.str(), polyhedron,
+                                false /*do_triangulate*/,
+                                true /*convert_to_double*/) && result);
+    result = (IO::OBJFile::save(ss_filename_triangulated.str(), polyhedron,
+                                true /*do_triangulate*/,
+                                true /*convert_to_double*/) && result);
+    result = (IO::OBJFile::save(ss_filename_exact.str(), polyhedron,
+                                true /*do_triangulate*/,
+                                false /*convert_to_double*/) && result);
+
+    return result;
+  }
+
+  bool saveSkeleton(const StraightSkeletonSPtr& skeleton,
+                    const FT& current_time)
+  {
+    CGAL_SS3_DEBUG_SPTR(skeleton);
+
+    bool result = true;
+
+    std::stringstream ss_filename, ss_filename_triangulated, ss_filename_exact;
+    ss_filename << save_path_.string() << "/skel_time_" << current_time << ".obj";
+    ss_filename_exact << save_path_.string() << "/skel_time_" << current_time << "_exact.obj";
+
+    result = (IO::OBJFile::save(ss_filename.str(), skeleton,
+                                true /*convert_to_double*/) && result);
+    result = (IO::OBJFile::save(ss_filename_exact.str(), skeleton,
+                                false /*convert_to_double*/) && result);
+
+    return result;
+  }
+
+  EventStatus handleSaveEvent(const SaveEventSPtr& event,
+                              const FT& current_time,
+                              const PolyhedronSPtr& polyhedron)
   {
     CGAL_SS3_CORE_TRACE_V(4, "########################################");
     CGAL_SS3_CORE_TRACE_V(4, "#########  Handle Save Event  ##########");
     CGAL_SS3_CORE_TRACE_V(4, "########################################");
 
     CGAL_SS3_DEBUG_SPTR(event);
-
-    skel_result_->addEvent(event);
 
     const FT& event_time = event->getTime();
     shiftToEventTime(polyhedron, current_time, event_time);
@@ -5104,10 +4844,7 @@ public:
     const FT& event_time = event->getTime();
     shiftToEventTime(polyhedron, current_time, event_time);
 
-#ifndef CGAL_SS3_NO_SKELETON_DS
-    event->setPolyhedronResult(polyhedron);
-#endif
-    skel_result_->addEvent(event);
+    addEvent(event);
 
     return EventStatus::EVENT_HANDLED;
   }
@@ -5129,10 +4866,9 @@ public:
 
     CGAL_SS3_DEBUG_SPTR(event);
 
-    NodeSPtr node = event->getNode();
     EdgeSPtr edge = event->getEdge();
     const FT& event_time = event->getTime();
-    Point3SPtr point = node->getPoint();
+    Point3SPtr point = event->getPoint();
 
     // @todo would nice:
     // - to avoid redundant checks (e.g. isTriangle multiple times)
@@ -5249,7 +4985,8 @@ public:
 
       // if here, it's an edge event
       EdgeEventSPtr edge_event = EdgeEvent::create();
-      edge_event->setNode(node);
+      edge_event->setTime(event_time);
+      edge_event->setPoint(point);
       edge_event->setEdge(edge);
 
       return handleEdgeEvent(edge_event, current_time, time_future_bound, polyhedron);
@@ -5339,7 +5076,8 @@ public:
 
       // if here, it's an edge merge event
       EdgeMergeEventSPtr edge_merge_event = EdgeMergeEvent::create();
-      edge_merge_event->setNode(node);
+      edge_merge_event->setTime(event_time);
+      edge_merge_event->setPoint(point);
       edge_merge_event->setFacet(facet);
       edge_merge_event->setEdge1(edge_1);
       edge_merge_event->setEdge2(edge_2);
@@ -5387,7 +5125,8 @@ public:
 
       // if here, it's a triangle event
       TriangleEventSPtr triangle_event = TriangleEvent::create();
-      triangle_event->setNode(node);
+      triangle_event->setTime(event_time);
+      triangle_event->setPoint(point);
       triangle_event->setFacet(facet);
       triangle_event->setEdgeBegin(edge);
 
@@ -5461,7 +5200,8 @@ public:
 
       // if here, it's a double edge merge event
       DblEdgeMergeEventSPtr dbl_edge_merge_event = DblEdgeMergeEvent::create();
-      dbl_edge_merge_event->setNode(node);
+      dbl_edge_merge_event->setTime(event_time);
+      dbl_edge_merge_event->setPoint(point);
       dbl_edge_merge_event->setFacet1(facet_1);
       dbl_edge_merge_event->setEdge11(edge_11);
       dbl_edge_merge_event->setEdge12(edge_12);
@@ -5492,7 +5232,8 @@ public:
 
       // if here, it's a double triangle event
       DblTriangleEventSPtr dbl_triangle_event = DblTriangleEvent::create();
-      dbl_triangle_event->setNode(node);
+      dbl_triangle_event->setTime(event_time);
+      dbl_triangle_event->setPoint(point);
       dbl_triangle_event->setEdge(edge);
 
       return handleDblTriangleEvent(dbl_triangle_event, current_time, time_future_bound, polyhedron);
@@ -5508,7 +5249,8 @@ public:
 
       // if here, it's a tetrahedron event
       TetrahedronEventSPtr tetrahedron_event = TetrahedronEvent::create();
-      tetrahedron_event->setNode(node);
+      tetrahedron_event->setTime(event_time);
+      tetrahedron_event->setPoint(point);
       tetrahedron_event->setEdgeBegin(edge);
 
       return handleTetrahedronEvent(tetrahedron_event, current_time, time_future_bound, polyhedron);
@@ -5527,33 +5269,37 @@ public:
     CGAL_SS3_CORE_TRACE_V(4, "########################################");
 
     const FT& event_time = event->getTime();
-    shiftToEventTime(polyhedron, current_time, event_time);
+    Point3SPtr point = event->getPoint();
 
-    NodeSPtr node = event->getNode();
-    appendEventNode(node);
+    shiftToEventTime(polyhedron, current_time, event_time);
 
     EdgeSPtr edge = event->getEdge();
     VertexSPtr vertex_src = edge->getVertexSrc();
     VertexSPtr vertex_dst = edge->getVertexDst();
 
-    CGAL_SS3_CORE_TRACE_V(4,"Node:\n" << node->toString());
     CGAL_SS3_CORE_TRACE_V(4,"Edge:\n" << edge->toString());
 
-    // grab vertices and facets counter clockwise around node
-    VertexSPtr vertices[4];
-    for (unsigned int i = 0; i < 4; ++i) {
-      vertices[i] = VertexSPtr();
-    }
+#ifndef CGAL_SS3_NO_SKELETON_DS
+    NodeSPtr node = Node::create();
+    node->setTime(event_time);
+    node->setPoint(point);
+    skel_result_->addNode(node);
 
+    HdsUtils::getArc(vertex_src)->closeArc(node);
+    HdsUtils::getArc(vertex_dst)->closeArc(node);
+
+    HdsUtils::getSheet(edge)->addNode(node);
+    HdsUtils::clearSheet(edge);
+#endif
+
+    // grab vertices and facets counter clockwise around node
+    std::array<VertexSPtr, 4> vertices;
     vertices[0] = vertex_src->prev(edge->getFacetL());
     vertices[1] = vertex_src->next(edge->getFacetR());
     vertices[2] = vertex_dst->prev(edge->getFacetR());
     vertices[3] = vertex_dst->next(edge->getFacetL());
 
-    FacetSPtr facets[4];
-    for (unsigned int i = 0; i < 4; ++i) {
-      facets[i] = FacetSPtr();
-    }
+    std::array<FacetSPtr, 4> facets;
     facets[1] = edge->getFacetR();
     facets[3] = edge->getFacetL();
     facets[0] = facets[3]->next(vertex_src);
@@ -5590,10 +5336,7 @@ public:
       VertexSPtr vertex_src_clone = vertex_src->clone();
       VertexSPtr vertex_dst_clone = vertex_dst->clone();
       EdgeSPtr edge_no_flip = Edge::create(vertex_src_clone, vertex_dst_clone);
-      EdgeSPtr edges[4];
-      for (unsigned int i = 0; i < 4; ++i) {
-        edges[i] = EdgeSPtr();
-      }
+      std::array<EdgeSPtr, 4> edges;
       edges[0] = Edge::create(vertex_src_clone, vertices[0]->clone());
       edges[1] = Edge::create(vertex_src_clone, vertices[1]->clone());
       edges[2] = Edge::create(vertex_dst_clone, vertices[2]->clone());
@@ -5656,10 +5399,7 @@ public:
       VertexSPtr vertex_src_clone = vertex_src->clone();
       VertexSPtr vertex_dst_clone = vertex_dst->clone();
       EdgeSPtr edge_flipped = Edge::create(vertex_src_clone, vertex_dst_clone);
-      EdgeSPtr edges[4];
-      for (unsigned int i = 0; i < 4; ++i) {
-        edges[i] = EdgeSPtr();
-      }
+      std::array<EdgeSPtr, 4> edges;
       edges[0] = Edge::create(vertex_dst_clone, vertices[0]->clone());
       edges[1] = Edge::create(vertex_src_clone, vertices[1]->clone());
       edges[2] = Edge::create(vertex_src_clone, vertices[2]->clone());
@@ -5719,18 +5459,15 @@ public:
       throw std::runtime_error("Error: not able to handle EdgeEvent (2).");
     }
 
+    std::array<EdgeSPtr, 4> edges;
+    edges[0] = edge->next(vertex_src);
+    edges[1] = edges[0]->next(vertex_src);
+    edges[2] = edge->next(vertex_dst);
+    edges[3] = edges[2]->next(vertex_dst);
+
     CGAL_SS3_CORE_TRACE_V(16, "flip_edge = " << flip_edge);
 
     if (flip_edge) {
-      EdgeSPtr edges[4];
-      for (unsigned int i = 0; i < 4; ++i) {
-        edges[i] = EdgeSPtr();
-      }
-      edges[0] = edge->next(vertex_src);
-      edges[1] = edges[0]->next(vertex_src);
-      edges[2] = edge->next(vertex_dst);
-      edges[3] = edges[2]->next(vertex_dst);
-
       facets[3]->removeVertex(vertex_src);
       facets[2]->addVertex(vertex_src);
       facets[1]->removeVertex(vertex_dst);
@@ -5773,27 +5510,34 @@ public:
       // if there was no flip, then (unmodified) vertices should not have new events
     }
 
-    // update arcs and sheets
 #ifndef CGAL_SS3_NO_SKELETON_DS
-    SkelEdgeDataSPtr edge_data = std::dynamic_pointer_cast<SkelEdgeData>(edge->getData());
-    edge_data->setSheet(SheetSPtr());
+    for (int i = 0; i < 4; ++i) {
+      HdsUtils::getSheet(edges[i])->addNode(node);
+    }
 
-    data_src = std::dynamic_pointer_cast<SkelVertexData>(vertex_src->getData());
-    data_dst = std::dynamic_pointer_cast<SkelVertexData>(vertex_dst->getData());
-    data_src->setNode(node);
-    data_dst->setNode(node);
+    // update arcs and sheets
+    for (VertexSPtr vertex_ext : { vertex_src, vertex_dst }) {
+      HdsUtils::setNode(vertex_ext, node);
 
-    ArcSPtr arc_src = createArc(vertex_src);
-    skel_result_->addArc(arc_src);
-    ArcSPtr arc_dst = createArc(vertex_dst);
-    skel_result_->addArc(arc_dst);
+      ArcSPtr arc = createArc(vertex_ext);
+      skel_result_->addArc(arc);
+
+      // 'edge' is common to both extremities, and is lacking a new sheet at this point
+      for (EdgeWPtr inc_edge_w : vertex_ext->edges()) {
+        if (EdgeSPtr inc_edge = inc_edge_w.lock()) {
+          if (inc_edge != edge) {
+            HdsUtils::getSheet(inc_edge)->addArc(arc);
+          }
+        }
+      }
+    }
+
+    // this sets up the two incident arcs, the nodes, etc.
     SheetSPtr sheet = createSheet(edge);
     skel_result_->addSheet(sheet);
-
-    event->setPolyhedronResult(polyhedron);
 #endif
-    skel_result_->addEvent(event);
 
+    // Gather relevant elements for local queue updates
     post_op_vertices_ = {{ vertex_src, vertex_dst }};
     post_op_edges_ = {{ edge,
                         edge->next(vertex_src),
@@ -5811,6 +5555,8 @@ public:
     }
     CGAL_postcondition(post_op_vertices_pierce_.size() == 6);
 
+    addEvent(event);
+
     return EventStatus::EVENT_HANDLED;
   }
 
@@ -5824,9 +5570,9 @@ public:
     CGAL_SS3_CORE_TRACE_V(4, "########################################");
 
     const FT& event_time = event->getTime();
-    shiftToEventTime(polyhedron, current_time, event_time);
+    Point3SPtr point = event->getPoint();
 
-    appendEventNode(event->getNode());
+    shiftToEventTime(polyhedron, current_time, event_time);
 
     FacetSPtr facet = event->getFacet();
     EdgeSPtr edge_1 = event->getEdge1();
@@ -5838,8 +5584,26 @@ public:
 
     CGAL_assertion(edge_2 == edge_toremove_2->next(facet));
 
+#ifndef CGAL_SS3_NO_SKELETON_DS
+    NodeSPtr node = Node::create();
+    node->setTime(event_time);
+    node->setPoint(point);
+    skel_result_->addNode(node);
+
+    HdsUtils::getArc(edge_toremove_1->src(facet))->closeArc(node);
+    HdsUtils::getArc(edge_toremove_1->dst(facet))->closeArc(node);
+    HdsUtils::getArc(edge_toremove_2->dst(facet))->closeArc(node);
+
+    HdsUtils::getSheet(edge_toremove_1)->addNode(node);
+    HdsUtils::getSheet(edge_toremove_2)->addNode(node);
+    HdsUtils::getSheet(edge_1)->addNode(node);
+    // no need for edge_2, since edge_2's and edge_1's sheets are merged
+
+    mergeSheets(edge_1, edge_2);
+#endif
+
     VertexSPtr vertex = edge_toremove_1->dst(facet);
-    vertex->setPoint(event->getNode()->getPoint()); // @fixme unnecessary
+    vertex->setPoint(point); // @fixme unnecessary
     VertexSPtr vertex_1 = edge_1->dst(facet);
     VertexSPtr vertex_2 = edge_2->src(facet);
     EdgeSPtr edge_b = edge_toremove_1->prev(edge_toremove_1->other(facet));
@@ -5899,14 +5663,20 @@ public:
     }
 
 #ifndef CGAL_SS3_NO_SKELETON_DS
-    SkelVertexDataSPtr vertex_data = std::dynamic_pointer_cast<SkelVertexData>(vertex->getData());
-    vertex_data->setNode(event->getNode());
+    HdsUtils::setNode(vertex, node);
+
     ArcSPtr arc = createArc(vertex);
     skel_result_->addArc(arc);
-    event->setPolyhedronResult(polyhedron);
-#endif
-    skel_result_->addEvent(event);
 
+    for (EdgeWPtr edge_w : vertex->edges()) {
+      if (EdgeSPtr edge = edge_w.lock()) {
+        HdsUtils::getSheet(edge)->addNode(node);
+        HdsUtils::getSheet(edge)->addArc(arc);
+      }
+    }
+#endif
+
+    // Gather relevant elements for local queue updates
     post_op_vertices_ = {{ vertex }};
     post_op_edges_ = {{ edge_1, edge_b1, edge_b, edge_b2 }};
     post_op_facets_ = {{ facet_l, facet_r }};
@@ -5923,6 +5693,8 @@ public:
     post_op_edges_edgesplit_ = {{ edge_1, edge_b1, edge_b, edge_b2 }};
     CGAL_postcondition(post_op_edges_edgesplit_.size() == 4);
 
+    addEvent(event);
+
     return EventStatus::EVENT_HANDLED;
   }
 
@@ -5936,9 +5708,9 @@ public:
     CGAL_SS3_CORE_TRACE_V(4, "########################################");
 
     const FT& event_time = event->getTime();
-    shiftToEventTime(polyhedron, current_time, event_time);
+    Point3SPtr point = event->getPoint();
 
-    appendEventNode(event->getNode());
+    shiftToEventTime(polyhedron, current_time, event_time);
 
     VertexSPtr vertices[3];
     event->getVertices(vertices);
@@ -5949,6 +5721,22 @@ public:
     CGAL_SS3_CORE_TRACE_V(4, "VS:\n" << vertices[0]->toString() << "\n"
                                      << vertices[1]->toString() << "\n"
                                      << vertices[2]->toString());
+
+#ifndef CGAL_SS3_NO_SKELETON_DS
+    NodeSPtr node = Node::create();
+    node->setTime(event_time);
+    node->setPoint(point);
+    skel_result_->addNode(node);
+
+    for (unsigned int i = 0; i < 3; ++i) {
+      HdsUtils::getArc(vertices[i])->closeArc(node);
+    }
+    EdgeSPtr edges[3];
+    event->getEdges(edges);
+    for (unsigned int i = 0; i < 3; ++i) {
+      HdsUtils::getSheet(edges[i])->addNode(node);
+    }
+#endif
 
     if (facet->vertices().size() == 3) {
       polyhedron->removeFacet(facet);
@@ -5963,8 +5751,8 @@ public:
       }
       polyhedron->removeEdge(edge);
     }
-    VertexSPtr new_vertex = Vertex::create(event->getNode()->getPoint());
-    SkelVertexDataSPtr data_offset = SkelVertexData::create(new_vertex);
+    VertexSPtr new_vertex = Vertex::create(point);
+    SkelVertexData::create(new_vertex);
     for (unsigned int i = 0; i < 3; ++i) {
       EdgeSPtr edge = vertices[i]->edges().front().lock();
       if (edge->getVertexSrc() == vertices[i]) {
@@ -5990,13 +5778,22 @@ public:
     }
 
 #ifndef CGAL_SS3_NO_SKELETON_DS
-    data_offset->setNode(event->getNode());
+    HdsUtils::setNode(new_vertex, node);
+
     ArcSPtr arc = createArc(new_vertex);
     skel_result_->addArc(arc);
-    event->setPolyhedronResult(polyhedron);
-#endif
-    skel_result_->addEvent(event);
 
+    for (EdgeWPtr edge_w : new_vertex->edges()) {
+      if (EdgeSPtr edge = edge_w.lock()) {
+        HdsUtils::getSheet(edge)->addNode(node);
+        HdsUtils::getSheet(edge)->addArc(arc);
+      }
+    }
+
+    CGAL_postcondition(arc->sheets().size() == 3);
+#endif
+
+    // Gather relevant elements for local queue updates
     post_op_vertices_ = {{ new_vertex }};
     for (EdgeWPtr we : new_vertex->edges()) {
       post_op_edges_.insert(EdgeSPtr(we.lock()));
@@ -6024,6 +5821,8 @@ public:
     post_op_edges_edgesplit_ = post_op_edges_;
     CGAL_postcondition(post_op_edges_edgesplit_.size() == 3);
 
+    addEvent(event);
+
     return EventStatus::EVENT_HANDLED;
   }
 
@@ -6037,9 +5836,9 @@ public:
     CGAL_SS3_CORE_TRACE_V(4, "########################################");
 
     const FT& event_time = event->getTime();
-    shiftToEventTime(polyhedron, current_time, event_time);
+    Point3SPtr point = event->getPoint();
 
-    appendEventNode(event->getNode());
+    shiftToEventTime(polyhedron, current_time, event_time);
 
     EdgeSPtr edge_11 = event->getEdge11();
     EdgeSPtr edge_12 = event->getEdge12();
@@ -6051,8 +5850,27 @@ public:
     EdgeSPtr edges[4];
     event->getEdges(edges);
 
-    // @fixme what's going on here? Aren't we deleting the offset edges multiple times?
-    // What's the point of changing vertices of edge_offset_xy if we are deleting them anyway
+#ifndef CGAL_SS3_NO_SKELETON_DS
+    NodeSPtr node = Node::create();
+    node->setTime(event_time);
+    node->setPoint(point);
+    skel_result_->addNode(node);
+
+    for (unsigned int i = 0; i < 4; ++i) {
+      HdsUtils::getArc(vertices[i])->closeArc(node);
+    }
+    for (unsigned int i = 0; i < 4; ++i) {
+      HdsUtils::getSheet(edges[i])->addNode(node);
+    }
+
+    HdsUtils::getSheet(edge_11)->addNode(node);
+    HdsUtils::getSheet(edge_21)->addNode(node);
+    // no need for _2 because we merge sheets
+
+    mergeSheets(edge_11, edge_12);
+    mergeSheets(edge_21, edge_22);
+#endif
+
     for (unsigned int i = 0; i < 4; ++i) {
       EdgeSPtr edge = edges[i];
       edge->getFacetL()->removeEdge(edge);
@@ -6103,11 +5921,7 @@ public:
       polyhedron->removeVertex(vertex);
     }
 
-#ifndef CGAL_SS3_NO_SKELETON_DS
-    event->setPolyhedronResult(polyhedron);
-#endif
-    skel_result_->addEvent(event);
-
+    // Gather relevant elements for local queue updates
     post_op_vertices_.clear();
     post_op_edges_ = {{ edge_11, edge_21 }};
     post_op_facets_ = {{ edge_11->getFacetL(),
@@ -6126,6 +5940,8 @@ public:
     CGAL_assertion(!HdsUtils::isReflex(edge_21));
     post_op_edges_edgesplit_.clear();
 
+    addEvent(event);
+
     return EventStatus::EVENT_HANDLED;
   }
 
@@ -6138,9 +5954,9 @@ public:
     CGAL_SS3_CORE_TRACE_V(4, "########################################");
 
     const FT& event_time = event->getTime();
-    shiftToEventTime(polyhedron, current_time, event_time);
+    Point3SPtr point = event->getPoint();
 
-    appendEventNode(event->getNode());
+    shiftToEventTime(polyhedron, current_time, event_time);
 
     EdgeSPtr edge = event->getEdge();
 
@@ -6160,6 +5976,24 @@ public:
     EdgeSPtr edge_r = edge->next(facet_r);
     FacetSPtr facet_rr = edge_r->other(facet_r);
     edge_r = edge_r->prev(facet_rr);
+
+#ifndef CGAL_SS3_NO_SKELETON_DS
+    NodeSPtr node = Node::create();
+    node->setTime(event_time);
+    node->setPoint(point);
+    skel_result_->addNode(node);
+
+    for (unsigned int i = 0; i < 4; ++i) {
+      HdsUtils::getArc(vertices[i])->closeArc(node);
+    }
+    for (unsigned int i = 0; i < 5; ++i) {
+      HdsUtils::getSheet(edges[i])->addNode(node);
+    }
+
+    HdsUtils::getSheet(edge_l)->addNode(node);
+
+    mergeSheets(edge_l, edge_r);
+#endif
 
     if (facet_l->edges().size() == 3) {
       polyhedron->removeFacet(facet_l);
@@ -6206,11 +6040,7 @@ public:
       polyhedron->removeVertex(vertex);
     }
 
-#ifndef CGAL_SS3_NO_SKELETON_DS
-    event->setPolyhedronResult(polyhedron);
-#endif
-    skel_result_->addEvent(event);
-
+    // Gather relevant elements for local queue updates
     post_op_vertices_.clear();
     post_op_edges_ = {{ edge_l }};
     post_op_facets_ = {{ facet_ll, facet_rr }};
@@ -6225,6 +6055,8 @@ public:
     // faces are getting smaller so no need to check unmodified edges
     post_op_edges_edgesplit_ = {{ edge_l }};
 
+    addEvent(event);
+
     return EventStatus::EVENT_HANDLED;
   }
 
@@ -6238,9 +6070,9 @@ public:
     CGAL_SS3_CORE_TRACE_V(4, "########################################");
 
     const FT& event_time = event->getTime();
-    shiftToEventTime(polyhedron, current_time, event_time);
+    Point3SPtr point = event->getPoint();
 
-    appendEventNode(event->getNode());
+    shiftToEventTime(polyhedron, current_time, event_time);
 
     VertexSPtr vertices[4];
     event->getVertices(vertices);
@@ -6250,6 +6082,20 @@ public:
 
     FacetSPtr facets[4];
     event->getFacets(facets);
+
+#ifndef CGAL_SS3_NO_SKELETON_DS
+    NodeSPtr node = Node::create();
+    node->setTime(event_time);
+    node->setPoint(point);
+    skel_result_->addNode(node);
+
+    for (unsigned int i = 0; i < 4; ++i) {
+      HdsUtils::getArc(vertices[i])->closeArc(node);
+    }
+    for (unsigned int i = 0; i < 6; ++i) {
+      HdsUtils::getSheet(edges[i])->addNode(node);
+    }
+#endif
 
     for (unsigned int i = 0; i < 4; ++i) {
       if (facets[i]->vertices().size() == 3) {
@@ -6277,11 +6123,7 @@ public:
       polyhedron->removeVertex(vertex);
     }
 
-#ifndef CGAL_SS3_NO_SKELETON_DS
-    event->setPolyhedronResult(polyhedron);
-#endif
-    skel_result_->addEvent(event);
-
+    // Gather relevant elements for local queue updates
     post_op_vertices_.clear();
     post_op_edges_.clear();
     post_op_facets_.clear();
@@ -6291,6 +6133,8 @@ public:
     post_op_vertices_VV_.clear();
     post_op_vertices_pierce_.clear();
     post_op_edges_edgesplit_.clear();
+
+    addEvent(event);
 
     return EventStatus::EVENT_HANDLED;
   }
@@ -6305,9 +6149,9 @@ public:
     CGAL_SS3_CORE_TRACE_V(4, "########################################");
 
     const FT& event_time = event->getTime();
-    shiftToEventTime(polyhedron, current_time, event_time);
+    Point3SPtr point = event->getPoint();
 
-    appendEventNode(event->getNode());
+    shiftToEventTime(polyhedron, current_time, event_time);
 
     VertexSPtr vertex_1 = event->getVertex1();
     VertexSPtr vertex_2 = event->getVertex2();
@@ -6359,6 +6203,26 @@ public:
       facet_2b = edge_21->getFacetR();
     }
 
+#ifndef CGAL_SS3_NO_SKELETON_DS
+    NodeSPtr node = Node::create();
+    node->setTime(event_time);
+    node->setPoint(point);
+    skel_result_->addNode(node);
+
+    HdsUtils::getArc(vertex_1)->closeArc(node);
+    HdsUtils::getArc(vertex_2)->closeArc(node);
+
+    HdsUtils::getSheet(edge_11)->addNode(node);
+    HdsUtils::getSheet(edge_12)->addNode(node);
+    HdsUtils::getSheet(edge_21)->addNode(node);
+    HdsUtils::getSheet(edge_22)->addNode(node);
+
+    HdsUtils::getSheet(edge_tomerge_1)->addNode(node);
+    // no need it to edge_tomerge_2's sheet because that sheet gets merged with edge_tomerge_1's
+
+    mergeSheets(edge_tomerge_1, edge_tomerge_2);
+#endif
+
     if (edge_tomerge_1->getVertexSrc() == vertex_1) {
       if (edge_tomerge_2->getVertexSrc() == vertex_2) {
         edge_tomerge_1->replaceVertexSrc(edge_tomerge_2->getVertexDst());
@@ -6397,25 +6261,29 @@ public:
     }
 
 #ifndef CGAL_SS3_NO_SKELETON_DS
-    SkelEdgeDataSPtr edge_data = std::dynamic_pointer_cast<SkelEdgeData>(edge_tomerge_2->getData());
-    edge_data->setSheet(SheetSPtr());
+    HdsUtils::clearSheet(edge_tomerge_2);
 
-    vertex_data_1 = std::dynamic_pointer_cast<SkelVertexData>(vertex_1->getData());
-    vertex_data_1->setNode(event->getNode());
-    vertex_data_2 = std::dynamic_pointer_cast<SkelVertexData>(vertex_2->getData());
-    vertex_data_2->setNode(event->getNode());
+    HdsUtils::setNode(vertex_1, node);
+    HdsUtils::setNode(vertex_2, node);
 
     ArcSPtr arc_1 = createArc(vertex_1);
     skel_result_->addArc(arc_1);
     ArcSPtr arc_2 = createArc(vertex_2);
     skel_result_->addArc(arc_2);
+
+    HdsUtils::getSheet(edge_11)->addArc(arc_1);
+    HdsUtils::getSheet(edge_21)->addArc(arc_1);
+    HdsUtils::getSheet(edge_12)->addArc(arc_2);
+    HdsUtils::getSheet(edge_22)->addArc(arc_2);
+
     SheetSPtr sheet = createSheet(edge_tomerge_2);
     skel_result_->addSheet(sheet);
 
-    event->setPolyhedronResult(polyhedron);
+    CGAL_postcondition(arc_1->sheets().size() == 3);
+    CGAL_postcondition(arc_2->sheets().size() == 3);
 #endif
-    skel_result_->addEvent(event);
 
+    // Gather relevant elements for local queue updates
     post_op_vertices_ = {{ vertex_1, vertex_2 }};
     post_op_edges_ = {{ edge_tomerge_1, edge_12, edge_21, edge_tomerge_2, edge_11, edge_22 }};
     for (FacetWPtr wf : vertex_1->facets()) { post_op_facets_.insert(wf.lock()); }
@@ -6436,6 +6304,8 @@ public:
       post_op_vertices_pierce_.insert(poe->getVertexDst());
     }
 
+    addEvent(event);
+
     return EventStatus::EVENT_HANDLED;
   }
 
@@ -6449,14 +6319,32 @@ public:
     CGAL_SS3_CORE_TRACE_V(4, "########################################");
 
     const FT& event_time = event->getTime();
-    shiftToEventTime(polyhedron, current_time, event_time);
+    Point3SPtr point = event->getPoint();
 
-    appendEventNode(event->getNode());
+    shiftToEventTime(polyhedron, current_time, event_time);
 
     VertexSPtr vertex_1 = event->getVertex1();
     VertexSPtr vertex_2 = event->getVertex2();
     FacetSPtr facet_1 = event->getFacet1();
     FacetSPtr facet_2 = event->getFacet2();
+
+#ifndef CGAL_SS3_NO_SKELETON_DS
+    NodeSPtr node = Node::create();
+    node->setTime(event_time);
+    node->setPoint(point);
+    skel_result_->addNode(node);
+
+    HdsUtils::getArc(vertex_1)->closeArc(node);
+    HdsUtils::getArc(vertex_2)->closeArc(node);
+
+    for (VertexSPtr vertex : { vertex_1, vertex_2 }) {
+      for (EdgeWPtr edge_w : vertex->edges()) {
+        if (EdgeSPtr edge = edge_w.lock()) {
+          HdsUtils::getSheet(edge)->addNode(node);
+        }
+      }
+    }
+#endif
 
     EdgeSPtr edge_1;
     for (EdgeWPtr edge_wptr : vertex_1->edges()) {
@@ -6496,19 +6384,24 @@ public:
     }
 
 #ifndef CGAL_SS3_NO_SKELETON_DS
-    vertex_data_1 = std::dynamic_pointer_cast<SkelVertexData>(vertex_1->getData());
-    vertex_data_1->setNode(event->getNode());
-    vertex_data_2 = std::dynamic_pointer_cast<SkelVertexData>(vertex_2->getData());
-    vertex_data_2->setNode(event->getNode());
+    HdsUtils::setNode(vertex_1, node);
+    HdsUtils::setNode(vertex_2, node);
+
     ArcSPtr arc_1 = createArc(vertex_1);
     skel_result_->addArc(arc_1);
     ArcSPtr arc_2 = createArc(vertex_2);
     skel_result_->addArc(arc_2);
 
-    event->setPolyhedronResult(polyhedron);
+    for (VertexSPtr vertex : { vertex_1, vertex_2 }) {
+      for (EdgeWPtr edge_w : vertex->edges()) {
+        if (EdgeSPtr edge = edge_w.lock()) {
+          HdsUtils::getSheet(edge)->addArc(HdsUtils::getArc(vertex));
+        }
+      }
+    }
 #endif
-    skel_result_->addEvent(event);
 
+    // Gather relevant elements for local queue updates
     post_op_vertices_ = {{ vertex_1, vertex_2 }};
     for (EdgeWPtr we : vertex_1->edges()) { post_op_edges_.insert(EdgeSPtr(we.lock())); }
     for (EdgeWPtr we : vertex_2->edges()) { post_op_edges_.insert(EdgeSPtr(we.lock())); }
@@ -6519,12 +6412,14 @@ public:
     // facets did not grow
     post_op_vertices_VV_ = {{ vertex_1, vertex_2 }};
 
-    // probably could improve this but flip vertex events are rare_, so we are rarely
-    // looking for new pierce events after a vertex event so it doesn't matter much
+    // probably could improve this but flip vertex events are uncommon, so we are rarely
+    // looking for new pierce events after a vertex event, and it does not matter much
     for (const EdgeSPtr& poe : post_op_edges_) {
       post_op_vertices_pierce_.insert(poe->getVertexSrc());
       post_op_vertices_pierce_.insert(poe->getVertexDst());
     }
+
+    addEvent(event);
 
     return EventStatus::EVENT_HANDLED;
   }
@@ -6541,10 +6436,9 @@ public:
     CGAL_SS3_CORE_TRACE_V(4, "Edge A = " << event->getEdge1()->toString());
     CGAL_SS3_CORE_TRACE_V(4, "Edge B = " << event->getEdge2()->toString());
 
-    NodeSPtr node = event->getNode();
-    appendEventNode(node);
-
     const FT& event_time = event->getTime();
+    Point3SPtr point = event->getPoint();
+
     shiftToEventTime(polyhedron, current_time, event_time);
 
     EdgeSPtr edge_1 = event->getEdge1();
@@ -6573,11 +6467,32 @@ public:
       edge_b2 = edge_1->prev(edge_1->getFacetR());
     }
 
-    vertex->setPoint(node->getPoint());
-    VertexSPtr vertex_21 = Vertex::create(node->getPoint());
-    VertexSPtr vertex_22 = Vertex::create(node->getPoint());
-    SkelVertexDataSPtr vertex_data_21 = SkelVertexData::create(vertex_21);
-    SkelVertexDataSPtr vertex_data_22 = SkelVertexData::create(vertex_22);
+#ifndef CGAL_SS3_NO_SKELETON_DS
+    NodeSPtr node = Node::create();
+    node->setTime(event_time);
+    node->setPoint(point);
+    skel_result_->addNode(node);
+
+    if (facet_1_src == edge_2->getFacetL() || facet_1_src == edge_2->getFacetR()) {
+      HdsUtils::getArc(edge_1->getVertexSrc())->closeArc(node);
+    }
+    if (facet_1_dst == edge_2->getFacetL() || facet_1_dst == edge_2->getFacetR()) {
+      HdsUtils::getArc(edge_1->getVertexDst())->closeArc(node);
+    }
+
+    for (EdgeWPtr edge_w : vertex->edges()) {
+      if (EdgeSPtr edge = edge_w.lock()) {
+        HdsUtils::getSheet(edge)->addNode(node);
+      }
+    }
+
+    HdsUtils::getSheet(edge_2)->addNode(node);
+#endif
+
+    VertexSPtr vertex_21 = Vertex::create(point);
+    VertexSPtr vertex_22 = Vertex::create(point);
+    SkelVertexData::create(vertex_21);
+    SkelVertexData::create(vertex_22);
     polyhedron->addVertex(vertex_21);
     polyhedron->addVertex(vertex_22);
     if (edge_b1->getVertexSrc() == vertex) {
@@ -6628,38 +6543,42 @@ public:
     }
 
 #ifndef CGAL_SS3_NO_SKELETON_DS
-    SkelEdgeDataSPtr edge_data = std::dynamic_pointer_cast<SkelEdgeData>(edge_2->getData());
-    SheetSPtr sheet = edge_data->getSheet();
-    edge_data = SkelEdgeData::create(edge_tmp);
-    edge_data->setSheet(sheet);
+    SkelEdgeData::create(edge_tmp);
+    HdsUtils::setSheet(edge_tmp, HdsUtils::getSheet(edge_2));
 
-    SkelVertexDataSPtr vertex_data = std::dynamic_pointer_cast<SkelVertexData>(vertex->getData());
-    vertex_data->setNode(node);
-
+    HdsUtils::setNode(vertex, node);
     ArcSPtr arc = createArc(vertex);
     skel_result_->addArc(arc);
-    vertex_data_21->setNode(node);
-    arc = createArc(vertex_21);
-    skel_result_->addArc(arc);
-    vertex_data_22->setNode(node);
-    arc = createArc(vertex_22);
-    skel_result_->addArc(arc);
+    HdsUtils::getSheet(edge_1)->addArc(arc); // other 2 sheets are edge_21/edge_22's, created below
+
+    HdsUtils::setNode(vertex_21, node);
+    ArcSPtr arc_21 = createArc(vertex_21);
+    skel_result_->addArc(arc_21);
+    HdsUtils::getSheet(edge_b1)->addArc(arc_21);
+    HdsUtils::getSheet(edge_2)->addArc(arc_21); // third sheet is edge_21's, created below
+
+    HdsUtils::setNode(vertex_22, node);
+    ArcSPtr arc_22 = createArc(vertex_22);
+    skel_result_->addArc(arc_22);
+    HdsUtils::getSheet(edge_b2)->addArc(arc_22);
+    HdsUtils::getSheet(edge_tmp)->addArc(arc_22); // third sheet is edge_22's, created below
 
     SkelEdgeData::create(edge_21);
-    sheet = createSheet(edge_21);
-    skel_result_->addSheet(sheet);
+    SheetSPtr sheet_21 = createSheet(edge_21);
+    skel_result_->addSheet(sheet_21);
+
     SkelEdgeData::create(edge_22);
-    sheet = createSheet(edge_22);
-    skel_result_->addSheet(sheet);
-
-    event->setPolyhedronResult(polyhedron);
+    SheetSPtr sheet_22 = createSheet(edge_22);
+    skel_result_->addSheet(sheet_22);
 #endif
-    skel_result_->addEvent(event);
 
+    // Gather relevant elements for local queue updates
     post_op_vertices_ = {{ vertex, vertex_21, vertex_22 }};
     for (const VertexSPtr& v : post_op_vertices_) {
-      for (EdgeWPtr we : v->edges()) {
-        post_op_edges_.insert(EdgeSPtr(we.lock()));
+      for (EdgeWPtr edge_w : v->edges()) {
+        if (EdgeSPtr edge = edge_w.lock()) {
+          post_op_edges_.insert(edge);
+        }
       }
     }
 
@@ -6685,6 +6604,8 @@ public:
     post_op_vertices_pierce_ = {{ edge_1->getVertexSrc(), edge_1->getVertexDst(), vertex_21, vertex_22 }};
     CGAL_postcondition(post_op_vertices_pierce_.size() == 4);
 
+    addEvent(event);
+
     return EventStatus::EVENT_HANDLED;
   }
 
@@ -6698,30 +6619,60 @@ public:
     CGAL_SS3_CORE_TRACE_V(4, "########################################");
 
     const FT& event_time = event->getTime();
+    Point3SPtr point = event->getPoint();
+
     shiftToEventTime(polyhedron, current_time, event_time);
-
-    NodeSPtr node = event->getNode();
-    appendEventNode(node);
-
-    CGAL_SS3_CORE_TRACE_V(4, "Node = " << *(node->getPoint()));
-    CGAL_SS3_CORE_TRACE_V(4, "Edge A = " << event->getEdge1()->toString());
-    CGAL_SS3_CORE_TRACE_V(4, "Edge B = " << event->getEdge2()->toString());
 
     EdgeSPtr edge_1 = event->getEdge1();
     EdgeSPtr edge_2 = event->getEdge2();
     FacetSPtr facet_1_src = edge_1->getFacetSrc();
     FacetSPtr facet_1_dst = edge_1->getFacetDst();
 
+    CGAL_SS3_CORE_TRACE_V(4, "Edge 1 = " << edge_1->toString());
+    CGAL_SS3_CORE_TRACE_V(4, "Edge 2 = " << edge_2->toString());
+
     VertexSPtr vertex_l = VertexSPtr();
     VertexSPtr vertex_r = VertexSPtr();
-    EdgeSPtr edge_22;
     if (edge_2->getFacetL() == facet_1_src &&
         edge_2->getFacetR() == facet_1_dst) {
       vertex_l = edge_1->getVertexSrc();
       vertex_r = edge_1->getVertexDst();
-      vertex_l->setPoint(node->getPoint());
-      vertex_r->setPoint(node->getPoint());
+    }
+    if (edge_2->getFacetL() == facet_1_dst &&
+        edge_2->getFacetR() == facet_1_src) {
+      vertex_l = edge_1->getVertexDst();
+      vertex_r = edge_1->getVertexSrc();
+    }
 
+#ifndef CGAL_SS3_NO_SKELETON_DS
+    NodeSPtr node = Node::create();
+    node->setTime(event_time);
+    node->setPoint(point);
+    skel_result_->addNode(node);
+
+    if (facet_1_src == edge_2->getFacetL() || facet_1_src == edge_2->getFacetR()) {
+      HdsUtils::getArc(edge_1->getVertexSrc())->closeArc(node);
+    }
+    if (facet_1_dst == edge_2->getFacetL() || facet_1_dst == edge_2->getFacetR()) {
+      HdsUtils::getArc(edge_1->getVertexDst())->closeArc(node);
+    }
+
+    std::array<EdgeSPtr, 4> edges;
+    edges[0] = edge_1->next(vertex_l);
+    edges[1] = edges[0]->next(vertex_l);
+    edges[2] = edge_1->next(vertex_r);
+    edges[3] = edges[2]->next(vertex_r);
+
+    HdsUtils::getSheet(edge_1)->addNode(node);
+    for (int i = 0; i < 4; ++i) {
+      HdsUtils::getSheet(edges[i])->addNode(node);
+    }
+    HdsUtils::getSheet(edge_2)->addNode(node);
+#endif
+
+    EdgeSPtr edge_22;
+    if (edge_2->getFacetL() == facet_1_src &&
+        edge_2->getFacetR() == facet_1_dst) {
       EdgeSPtr edge_l = edge_1->prev(edge_1->getVertexDst());
       if (edge_l->getVertexSrc() == vertex_r) {
         edge_l->replaceVertexSrc(vertex_l);
@@ -6748,12 +6699,11 @@ public:
       edge_22->replaceFacetL(edge_2->getFacetL());
       edge_22->replaceFacetR(edge_2->getFacetR());
     }
+    // @todo just else it...
     if (edge_2->getFacetL() == facet_1_dst &&
         edge_2->getFacetR() == facet_1_src) {
       vertex_l = edge_1->getVertexDst();
       vertex_r = edge_1->getVertexSrc();
-      vertex_l->setPoint(node->getPoint());
-      vertex_r->setPoint(node->getPoint());
 
       EdgeSPtr edge_l = edge_1->next(edge_1->getVertexSrc());
       if (edge_l->getVertexSrc() == vertex_r) {
@@ -6788,21 +6738,37 @@ public:
     }
 
 #ifndef CGAL_SS3_NO_SKELETON_DS
-    SkelVertexDataSPtr data_l = std::dynamic_pointer_cast<SkelVertexData>(vertex_l->getData());
-    data_l->setNode(node);
-    SkelVertexDataSPtr data_r = std::dynamic_pointer_cast<SkelVertexData>(vertex_r->getData());
-    data_r->setNode(node);
-    SkelEdgeDataSPtr data_22 = std::dynamic_pointer_cast<SkelEdgeData>(edge_22->getData());
-    data_22->setSheet(data_2->getSheet());
+    HdsUtils::setNode(vertex_l, node);
+    HdsUtils::setNode(vertex_r, node);
+
     ArcSPtr arc_l = createArc(vertex_l);
-    ArcSPtr arc_r = createArc(vertex_r);
     skel_result_->addArc(arc_l);
+    ArcSPtr arc_r = createArc(vertex_r);
     skel_result_->addArc(arc_r);
 
-    event->setPolyhedronResult(polyhedron);
-#endif
-    skel_result_->addEvent(event);
+    HdsUtils::setSheet(edge_22, HdsUtils::getSheet(edge_2));
 
+    HdsUtils::getSheet(edge_2)->addArc(arc_l);
+    HdsUtils::getSheet(edge_2)->addArc(arc_r);
+
+    for (EdgeWPtr edge_w : vertex_l->edges()) {
+      if (EdgeSPtr edge = edge_w.lock()) {
+        if (HdsUtils::getSheet(edge) != HdsUtils::getSheet(edge_2)) {
+          HdsUtils::getSheet(edge)->addArc(arc_l);
+        }
+      }
+    }
+
+    for (EdgeWPtr edge_w : vertex_r->edges()) {
+      if (EdgeSPtr edge = edge_w.lock()) {
+        if (HdsUtils::getSheet(edge) != HdsUtils::getSheet(edge_2)) {
+          HdsUtils::getSheet(edge)->addArc(arc_r);
+        }
+      }
+    }
+#endif
+
+    // Gather relevant elements for local queue updates
     post_op_vertices_ = {{ vertex_l, vertex_r }};
     for (const VertexSPtr& v : post_op_vertices_) {
       for (EdgeWPtr we : v->edges()) {
@@ -6819,6 +6785,8 @@ public:
     // looking for new pierce events after a vertex event so it doesn't matter much
     post_op_vertices_pierce_ = {{ vertex_l, vertex_r }};
 
+    addEvent(event);
+
     return EventStatus::EVENT_HANDLED;
   }
 
@@ -6832,9 +6800,9 @@ public:
     CGAL_SS3_CORE_TRACE_V(4, "########################################");
 
     const FT& event_time = event->getTime();
-    shiftToEventTime(polyhedron, current_time, event_time);
+    Point3SPtr point = event->getPoint();
 
-    appendEventNode(event->getNode());
+    shiftToEventTime(polyhedron, current_time, event_time);
 
     VertexSPtr vertex_1 = event->getVertex1();
     VertexSPtr vertex_2 = event->getVertex2();
@@ -6898,6 +6866,24 @@ public:
     }
     CGAL_SS3_DEBUG_SPTR(edge_tosplit);
 
+#ifndef CGAL_SS3_NO_SKELETON_DS
+    NodeSPtr node = Node::create();
+    node->setTime(event_time);
+    node->setPoint(point);
+    skel_result_->addNode(node);
+
+    HdsUtils::getArc(vertex_1)->closeArc(node);
+    HdsUtils::getArc(vertex_2)->closeArc(node);
+
+    for (EdgeSPtr e : {edge_11, edge_12, edge_21, edge_22}) {
+      HdsUtils::getSheet(e)->addNode(node);
+    }
+    HdsUtils::getSheet(edge_tosplit)->addNode(node);
+    HdsUtils::getSheet(edge_tomerge_1)->addNode(node);
+
+    mergeSheets(edge_tomerge_1, edge_tomerge_2);
+#endif
+
     if (edge_tomerge_1->getVertexSrc() == vertex_1) {
       if (edge_tomerge_2->getVertexSrc() == vertex_2) {
         edge_tomerge_1->replaceVertexSrc(edge_tomerge_2->getVertexDst());
@@ -6945,24 +6931,26 @@ public:
     }
 
 #ifndef CGAL_SS3_NO_SKELETON_DS
-    SkelEdgeDataSPtr edge_data = std::dynamic_pointer_cast<SkelEdgeData>(edge_tosplit->getData());
-    SheetSPtr sheet = edge_data->getSheet();
-    edge_data = std::dynamic_pointer_cast<SkelEdgeData>(edge_tomerge_2->getData());
-    edge_data->setSheet(sheet);
+    HdsUtils::setNode(vertex_1, node);
+    HdsUtils::setNode(vertex_2, node);
 
-    vertex_data_1 = std::dynamic_pointer_cast<SkelVertexData>(vertex_1->getData());
-    vertex_data_1->setNode(event->getNode());
-    vertex_data_2 = std::dynamic_pointer_cast<SkelVertexData>(vertex_2->getData());
-    vertex_data_2->setNode(event->getNode());
     ArcSPtr arc_1 = createArc(vertex_1);
     skel_result_->addArc(arc_1);
     ArcSPtr arc_2 = createArc(vertex_2);
     skel_result_->addArc(arc_2);
 
-    event->setPolyhedronResult(polyhedron);
-#endif
-    skel_result_->addEvent(event);
+    HdsUtils::setSheet(edge_tomerge_2, HdsUtils::getSheet(edge_tosplit));
 
+    for (VertexSPtr vertex : { vertex_1, vertex_2 }) {
+      for (EdgeWPtr edge_w : vertex->edges()) {
+        if (EdgeSPtr edge = edge_w.lock()) {
+          HdsUtils::getSheet(edge)->addArc(HdsUtils::getArc(vertex));
+        }
+      }
+    }
+#endif
+
+    // Gather relevant elements for local queue updates
     post_op_vertices_ = {{ vertex_1, vertex_2 }};
     for (const VertexSPtr& v : post_op_vertices_) {
       for (EdgeWPtr we : v->edges()) {
@@ -6983,6 +6971,8 @@ public:
     CGAL_assertion(!HdsUtils::isReflex(vertex_2));
     post_op_vertices_pierce_.clear();
 
+    addEvent(event);
+
     return EventStatus::EVENT_HANDLED;
   }
 
@@ -7002,29 +6992,48 @@ public:
     CGAL_assertion(orientation != 0);
 
     const FT& event_time = event->getTime();
+    Point3SPtr point = event->getPoint();
+
     shiftToEventTime(polyhedron, current_time, event_time);
-
-    NodeSPtr node = event->getNode();
-    appendEventNode(node);
-
-    CGAL_SS3_CORE_TRACE("edge_1 = " << event->getEdge1()->toString());
-    CGAL_SS3_CORE_TRACE("edge_2 = " << event->getEdge2()->toString());
 
     EdgeSPtr edge_1 = event->getEdge1();
     EdgeSPtr edge_2 = event->getEdge2();
+
+    CGAL_SS3_CORE_TRACE("edge_1 = " << event->getEdge1()->toString());
+    CGAL_SS3_CORE_TRACE("edge_2 = " << event->getEdge2()->toString());
 
     FacetSPtr facet_l1 = edge_1->getFacetL();
     FacetSPtr facet_r1 = edge_1->getFacetR();
     FacetSPtr facet_l2 = edge_2->getFacetL();
     FacetSPtr facet_r2 = edge_2->getFacetR();
 
-    VertexSPtr vertices[4];
+#ifndef CGAL_SS3_NO_SKELETON_DS
+    NodeSPtr node = Node::create();
+    node->setTime(event_time);
+    node->setPoint(point);
+    skel_result_->addNode(node);
+
+    FacetSPtr facet_1_src = edge_1->getFacetSrc();
+    FacetSPtr facet_1_dst = edge_1->getFacetDst();
+
+    if (facet_1_src == facet_l2 || facet_1_src == facet_r2) {
+      HdsUtils::getArc(edge_1->getVertexSrc())->closeArc(node);
+    }
+    if (facet_1_dst == facet_l2 || facet_1_dst == facet_r2) {
+      HdsUtils::getArc(edge_1->getVertexDst())->closeArc(node);
+    }
+
+    HdsUtils::getSheet(edge_1)->addNode(node);
+    HdsUtils::getSheet(edge_2)->addNode(node);
+#endif
+
+    std::array<VertexSPtr, 4> vertices;
     for (unsigned int i = 0; i < 4; ++i) {
-      vertices[i] = Vertex::create(node->getPoint());
+      vertices[i] = Vertex::create(point);
       SkelVertexData::create(vertices[i]);
       polyhedron->addVertex(vertices[i]);
     }
-    EdgeSPtr edges[4];
+    std::array<EdgeSPtr, 4> edges;
     for (unsigned int i = 0; i < 4; ++i) {
       edges[i] = Edge::create(vertices[i], vertices[(i+1)%4]);
       polyhedron->addEdge(edges[i]);
@@ -7066,28 +7075,34 @@ public:
     }
 
 #ifndef CGAL_SS3_NO_SKELETON_DS
-    SkelEdgeDataSPtr edge_data_1 = std::dynamic_pointer_cast<SkelEdgeData>(edge_1->getData());
-    SkelEdgeDataSPtr edge_data_12 = SkelEdgeData::create(edge_12);
-    edge_data_12->setSheet(edge_data_1->getSheet());
-    SkelEdgeDataSPtr edge_data_2 = std::dynamic_pointer_cast<SkelEdgeData>(edge_2->getData());
-    SkelEdgeDataSPtr edge_data_22 = SkelEdgeData::create(edge_22);
-    edge_data_22->setSheet(edge_data_2->getSheet());
+    SkelEdgeData::create(edge_12);
+    HdsUtils::setSheet(edge_12, HdsUtils::getSheet(edge_1));
+    SkelEdgeData::create(edge_22);
+    HdsUtils::setSheet(edge_22, HdsUtils::getSheet(edge_2));
+
     for (unsigned int i = 0; i < 4; ++i) {
       SkelVertexDataSPtr vertex_data = std::dynamic_pointer_cast<SkelVertexData>(vertices[i]->getData());
       vertex_data->setNode(node);
       ArcSPtr arc = createArc(vertices[i]);
       skel_result_->addArc(arc);
+
+      for (EdgeWPtr ew : vertices[i]->edges()) {
+        if (EdgeSPtr e = ew.lock()) {
+          // could abuse the fact that new edges have no data or sheet yet, but this is clearer
+          if (std::find(edges.begin(), edges.end(), e) == edges.end()) {
+            HdsUtils::getSheet(e)->addArc(arc); // other 2 are added when sheets are created below
+          }
+        }
+      }
     }
     for (unsigned int i = 0; i < 4; ++i) {
       SkelEdgeData::create(edges[i]);
       SheetSPtr sheet = createSheet(edges[i]);
       skel_result_->addSheet(sheet);
     }
-
-    event->setPolyhedronResult(polyhedron);
 #endif
-    skel_result_->addEvent(event);
 
+    // Gather relevant elements for local queue updates
     post_op_vertices_ = {{ vertices[0], vertices[1], vertices[2], vertices[3] }};
     for (const VertexSPtr& v : post_op_vertices_) {
       for (EdgeWPtr we : v->edges()) {
@@ -7114,6 +7129,8 @@ public:
     }
     CGAL_postcondition(post_op_vertices_pierce_.size() == 8);
 
+    addEvent(event);
+
     return EventStatus::EVENT_HANDLED;
   }
 
@@ -7127,16 +7144,30 @@ public:
     CGAL_SS3_CORE_TRACE_V(4, "########################################");
 
     const FT& event_time = event->getTime();
-    shiftToEventTime(polyhedron, current_time, event_time);
+    Point3SPtr point = event->getPoint();
 
-    NodeSPtr node = event->getNode();
+    shiftToEventTime(polyhedron, current_time, event_time);
 
     VertexSPtr vertex = event->getVertex();
     FacetSPtr facet = event->getFacet();
 
-    CGAL_SS3_CORE_TRACE("Node: " << node->toString());
     CGAL_SS3_CORE_TRACE("V: " << event->getVertex()->toString());
     CGAL_SS3_CORE_TRACE("F: " << event->getFacet()->toString());
+
+#ifndef CGAL_SS3_NO_SKELETON_DS
+    NodeSPtr node = Node::create();
+    node->setTime(event_time);
+    node->setPoint(point);
+    skel_result_->addNode(node);
+
+    HdsUtils::getArc(vertex)->closeArc(node);
+
+    for (EdgeWPtr edge_w : vertex->edges()) {
+      if (EdgeSPtr edge = edge_w.lock()) {
+        HdsUtils::getSheet(edge)->addNode(node);
+      }
+    }
+#endif
 
     // the 3 new vertices cannot be reflex, but since we grow faces,
     // we need to check the other extremities of the edges
@@ -7151,10 +7182,9 @@ public:
 
     CGAL_postcondition(post_op_vertices_pierce_.size() == 3);
 
-    appendEventNode(node);
 
-    FacetSPtr facets[3];
-    EdgeSPtr edges[3];
+    std::array<FacetSPtr, 3> facets;
+    std::array<EdgeSPtr, 3> edges;
     EdgeSPtr edge = vertex->firstEdge();
     for (unsigned int i = 0; i < 3; ++i) {
       edges[i] = edge;
@@ -7166,9 +7196,9 @@ public:
       edge = edge->next(vertex);
     }
 
-    VertexSPtr vertices[3];
+    std::array<VertexSPtr, 3> vertices;
     for (unsigned int i = 0; i < 3; ++i) {
-      vertices[i] = Vertex::create(node->getPoint());
+      vertices[i] = Vertex::create(point);
       SkelVertexData::create(vertices[i]);
       facet->addVertex(vertices[i]);
       polyhedron->addVertex(vertices[i]);
@@ -7187,13 +7217,14 @@ public:
     vertex->facets().clear();
     vertex->edges().clear();
     polyhedron->removeVertex(vertex);
+    std::array<EdgeSPtr, 3> new_edges;
     for (unsigned int i = 0; i < 3; ++i) {
-      edges[i] = Edge::create(vertices[i], vertices[(i+1)%3]);
-      edges[i]->setFacetL(facet);
-      edges[i]->setFacetR(facets[i]);
-      facet->addEdge(edges[i]);
-      facets[i]->addEdge(edges[i]);
-      polyhedron->addEdge(edges[i]);
+      new_edges[i] = Edge::create(vertices[i], vertices[(i+1)%3]);
+      new_edges[i]->setFacetL(facet);
+      new_edges[i]->setFacetR(facets[i]);
+      facet->addEdge(new_edges[i]);
+      facets[i]->addEdge(new_edges[i]);
+      polyhedron->addEdge(new_edges[i]);
     }
 
     if (time_future_bound.has_value()) {
@@ -7204,38 +7235,39 @@ public:
 
 #ifndef CGAL_SS3_NO_SKELETON_DS
     for (unsigned int i = 0; i < 3; ++i) {
-      SkelVertexDataSPtr vertex_data = std::dynamic_pointer_cast<SkelVertexData>(vertices[i]->getData());
-      vertex_data->setNode(event->getNode());
+      HdsUtils::setNode(vertices[i], node);
       ArcSPtr arc = createArc(vertices[i]);
       skel_result_->addArc(arc);
+      HdsUtils::getSheet(edges[i])->addArc(arc); // other 2 sheets are the new edges', created below
     }
     for (unsigned int i = 0; i < 3; ++i) {
-      SkelEdgeData::create(edges[i]);
-      SheetSPtr sheet = createSheet(edges[i]);
+      SkelEdgeData::create(new_edges[i]);
+      SheetSPtr sheet = createSheet(new_edges[i]);
       skel_result_->addSheet(sheet);
     }
-
-    event->setPolyhedronResult(polyhedron);
 #endif
-    skel_result_->addEvent(event);
 
+    // Gather relevant elements for local queue updates
     post_op_vertices_ = {{ vertices[0], vertices[1], vertices[2] }};
     for (const VertexSPtr& v : post_op_vertices_) {
       for (EdgeWPtr we : v->edges()) {
-        post_op_edges_.insert(EdgeSPtr(we.lock()));
+        if (EdgeSPtr e = we.lock()) {
+          post_op_edges_.insert(e);
+        }
       }
     }
     for (unsigned int i = 0; i < 3; ++i) {
-      post_op_facets_.insert(edges[i]->getFacetL());
-      post_op_facets_.insert(edges[i]->getFacetR());
+      post_op_facets_.insert(new_edges[i]->getFacetL());
+      post_op_facets_.insert(new_edges[i]->getFacetR());
     }
     CGAL_postcondition(post_op_vertices_.size() == 3 && post_op_edges_.size() == 6 && post_op_facets_.size() == 4);
 
     post_op_vertices_VV_ = {{ vertices[0], vertices[1], vertices[2] }};
     for (const VertexSPtr& v : { vertices[0], vertices[1], vertices[2] }) {
       for (EdgeWPtr we : v->edges()) {
-        EdgeSPtr e = we.lock();
-        post_op_vertices_VV_.insert(e->other(v));
+        if (EdgeSPtr e = we.lock()) {
+          post_op_vertices_VV_.insert(e->other(v));
+        }
       }
     }
 
@@ -7243,6 +7275,8 @@ public:
     CGAL_postcondition(!HdsUtils::isReflex(vertices[0]));
     CGAL_postcondition(!HdsUtils::isReflex(vertices[1]));
     CGAL_postcondition(!HdsUtils::isReflex(vertices[2]));
+
+    addEvent(event);
 
     return EventStatus::EVENT_HANDLED;
   }
@@ -7263,18 +7297,18 @@ public:
     // - We often waste a lot of time performing checks at collect time. Taking the same pierce
     //   event type, we need to check if the movement of the vertex would actually touch the
     //   polygon facet. This is an expensive check and the facet could change quite a bit
-    //   between collect time and event offset time. Thus, it's cheaper to delay the check,
-    //   even if that means computing the offset event time.
+    //   between collect time and event time. Thus, it's cheaper to delay the check,
+    //   even if that means computing the event time.
     if (!isActualEvent(event, current_time, time_future_bound)) {
       return result;
     }
 
-    if (event->getType() == AbstractEvent::SAVE_OFFSET_EVENT) {
-      result = handleSaveOffsetEvent(std::dynamic_pointer_cast<SaveOffsetEvent>(event),
-                                     current_time, polyhedron);
-    } else if (event->getType() == AbstractEvent::CONST_OFFSET_EVENT) {
-      result = handleConstOffsetEvent(std::dynamic_pointer_cast<ConstOffsetEvent>(event),
-                                      current_time, polyhedron);
+    if (event->getType() == AbstractEvent::SAVE_EVENT) {
+      result = handleSaveEvent(std::dynamic_pointer_cast<SaveEvent>(event),
+                               current_time, polyhedron);
+    } else if (event->getType() == AbstractEvent::CONST_TIME_EVENT) {
+      result = handleConstTimeEvent(std::dynamic_pointer_cast<ConstTimeEvent>(event),
+                                    current_time, polyhedron);
 #ifdef CGAL_SS3_USE_GENERIC_VANISH_EVENT
     } else if (event->getType() == AbstractEvent::VANISH_EVENT) {
       result = handleVanishEvent(std::dynamic_pointer_cast<VanishEvent>(event),
@@ -7333,6 +7367,15 @@ public:
     CGAL_postcondition_code(for (const FacetSPtr& f : polyhedron->facets()))
     CGAL_postcondition(f->getID() != -1);
 
+#ifndef CGAL_SS3_NO_SKELETON_DS
+    CGAL_postcondition_code(for (const VertexSPtr& v : polyhedron->vertices()) {)
+    CGAL_postcondition(HdsUtils::getNode(v) != NodeSPtr());
+    CGAL_postcondition(HdsUtils::getArc(v) != ArcSPtr());
+    CGAL_postcondition_code(})
+    CGAL_postcondition_code(for (const EdgeSPtr& e : polyhedron->edges()))
+    CGAL_postcondition(HdsUtils::getSheet(e) != SheetSPtr());
+#endif
+
     CGAL_SS3_CORE_TRACE_V(4, "-- Finished handling Event --");
     return result;
   }
@@ -7340,22 +7383,67 @@ public:
   StraightSkeletonSPtr getResult() const
   {
 #ifndef CGAL_SS3_NO_SKELETON_DS
-    CGAL_SS3_CORE_TRACE("Error: no skeleton to return: it was not built");
-    return { };
+    CGAL_SS3_CORE_TRACE("Warning: no skeleton to return as it was not built");
 #endif
     return this->skel_result_;
   }
 
+  std::list<AbstractEventSPtr>& events()
+  {
+    return this->events_;
+  }
+
+  int countEvents(int type) const
+  {
+    int result = 0;
+    typename std::list<AbstractEventSPtr>::const_iterator it_e = events_.begin();
+    while (it_e != events_.end()) {
+      AbstractEventSPtr event = *it_e++;
+      if (event->getType() == type) {
+        result += 1;
+      }
+    }
+    return result;
+  }
+
+  std::string eventSummary() const
+  {
+    std::stringstream sstr;
+    sstr << "Events: " << events_.size() << std::endl;
+    sstr << "    ConstTimeEvents:       " << countEvents(AbstractEvent::CONST_TIME_EVENT) << std::endl;
+    sstr << "    SaveEvents:            " << countEvents(AbstractEvent::SAVE_EVENT) << std::endl;
+    sstr << "  VanishEvents:" << std::endl;
+    sstr << "    Generic VanishEvents:  " << countEvents(AbstractEvent::VANISH_EVENT) << std::endl;
+    sstr << "    EdgeEvents:            " << countEvents(AbstractEvent::EDGE_EVENT) << std::endl;
+    sstr << "    EdgeMergeEvents:       " << countEvents(AbstractEvent::EDGE_MERGE_EVENT) << std::endl;
+    sstr << "    TriangleEvents:        " << countEvents(AbstractEvent::TRIANGLE_EVENT) << std::endl;
+    sstr << "    DblEdgeMergeEvents:    " << countEvents(AbstractEvent::DBL_EDGE_MERGE_EVENT) << std::endl;
+    sstr << "    DblTriangleEvents:     " << countEvents(AbstractEvent::DBL_TRIANGLE_EVENT) << std::endl;
+    sstr << "    TetrahedronEvents:     " << countEvents(AbstractEvent::TETRAHEDRON_EVENT) << std::endl;
+    sstr << "  ContactEvents:" << std::endl;
+    sstr << "    VertexEvents:          " << countEvents(AbstractEvent::VERTEX_EVENT) << std::endl;
+    sstr << "    FlipVertexEvents:      " << countEvents(AbstractEvent::FLIP_VERTEX_EVENT) << std::endl;
+    sstr << "    SurfaceEvents:         " << countEvents(AbstractEvent::SURFACE_EVENT) << std::endl;
+    sstr << "    PolyhedronSplitEvents: " << countEvents(AbstractEvent::POLYHEDRON_SPLIT_EVENT) << std::endl;
+    sstr << "    SplitMergeEvents:      " << countEvents(AbstractEvent::SPLIT_MERGE_EVENT) << std::endl;
+    sstr << "    EdgeSplitEvents:       " << countEvents(AbstractEvent::EDGE_SPLIT_EVENT) << std::endl;
+    sstr << "    PierceEvents:          " << countEvents(AbstractEvent::PIERCE_EVENT) << std::endl;
+    sstr << ")" << std::endl;
+    return sstr.str();
+
+  }
+
 private:
   PolyhedronSPtr polyhedron_;
+  AbstractVertexSplitterSPtr vertex_splitter_;
+  int edge_event_;
 
   Base_mesh_offset_visitor<Traits>* visitor_ = nullptr;
 
   std::vector<FT> save_offsets_;
   std::filesystem::path save_path_;
-  AbstractVertexSplitterSPtr vertex_splitter_;
-  int edge_event_;
 
+  std::list<AbstractEventSPtr> events_;
   StraightSkeletonSPtr skel_result_;
 
   int step_id_;
@@ -7363,7 +7451,6 @@ private:
   std::set<VertexSPtr> post_op_vertices_;
   std::set<EdgeSPtr> post_op_edges_;
   std::set<FacetSPtr> post_op_facets_;
-
   std::set<VertexSPtr> post_op_vertices_VV_;
   std::set<VertexSPtr> post_op_vertices_pierce_;
   std::set<EdgeSPtr> post_op_edges_edgesplit_;

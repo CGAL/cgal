@@ -28,6 +28,7 @@
 #include <list>
 #include <memory>
 #include <string>
+#include <unordered_set>
 
 namespace CGAL {
 namespace Straight_skeletons_3 {
@@ -60,13 +61,9 @@ private:
   using AbstractEventSPtr = std::shared_ptr<AbstractEvent>;
 
 public:
-  StraightSkeleton()
-    : id_(-1)
-  { }
-
   ~StraightSkeleton()
   {
-    events_.clear();
+    polyhedron_.reset();
     sheets_.clear();
     arcs_.clear();
     nodes_.clear();
@@ -75,23 +72,6 @@ public:
   static StraightSkeletonSPtr create()
   {
     return std::make_shared<StraightSkeleton>();
-  }
-
-  /**
-  * also adds the node
-  */
-  void addEvent(const AbstractEventSPtr& event)
-  {
-    typename std::list<AbstractEventSPtr>::iterator it = events_.insert(events_.end(), event);
-    event->setListIt(it);
-  }
-
-  bool removeEvent(const AbstractEventSPtr& event)
-  {
-    bool result = false;
-    events_.erase(event->getListIt());
-    event->setListIt(typename std::list<AbstractEventSPtr>::iterator());
-    return result;
   }
 
   void addNode(NodeSPtr node)
@@ -151,19 +131,28 @@ public:
     return result;
   }
 
-  std::list<AbstractEventSPtr>& events()
+  void mergeSheets(SheetSPtr sheet_into,
+                   SheetSPtr sheet_from)
   {
-    return this->events_;
+    CGAL_precondition(sheet_into && sheet_from);
+
+    sheet_into->merge(sheet_from);
+
+    for (NodeSPtr node : sheet_from->nodes()) {
+      node->removeSheet(sheet_from);
+    }
+    for (ArcSPtr arc : sheet_from->arcs()) {
+      arc->removeSheet(sheet_from);
+    }
+    removeSheet(sheet_from);
   }
 
-  std::list<NodeSPtr>& nodes()
-  {
-    return this->nodes_;
+  PolyhedronSPtr getPolyhedron() const {
+      return this->polyhedron_;
   }
 
-  std::list<ArcSPtr>& arcs()
-  {
-    return this->arcs_;
+  void setPolyhedron(PolyhedronSPtr polyhedron) {
+      this->polyhedron_ = polyhedron;
   }
 
   std::list<SheetSPtr>& sheets()
@@ -171,33 +160,18 @@ public:
     return this->sheets_;
   }
 
-  PolyhedronSPtr getPolyhedron() const
+  std::list<ArcSPtr>& arcs()
   {
-    return this->polyhedron_;
+    return this->arcs_;
   }
 
-  void setPolyhedron(PolyhedronSPtr polyhedron)
+  std::list<NodeSPtr>& nodes()
   {
-    this->polyhedron_ = polyhedron;
-  }
-
-  int getID() const
-  {
-    return this->id_;
-  }
-
-  void setID(int id)
-  {
-    this->id_ = id;
+    return this->nodes_;
   }
 
   void resetAllIDs()
   {
-    typename std::list<AbstractEventSPtr>::iterator it_e = events_.begin();
-    while (it_e != events_.end()) {
-      AbstractEventSPtr event = *it_e++;
-      event->setID(-1);
-    }
     typename std::list<SheetSPtr>::iterator it_s = sheets_.begin();
     while (it_s != sheets_.end()) {
       SheetSPtr sheet = *it_s++;
@@ -213,31 +187,87 @@ public:
       NodeSPtr node = *it_n++;
       node->setID(-1);
     }
-    setID(-1);
   }
 
-  std::string getConfig() const
-  {
-    return this->config_;
-  }
-
-  void setConfig(const std::string& config)
-  {
-    this->config_ = config;
-  }
-
-  void appendConfig(const std::string& config)
-  {
-    this->config_.append(config);
-  }
-
-  bool isConsistent() const
+  bool isConsistent(bool is_partial = true) const
   {
     bool result = true;
+
+    // Check for duplicate elements
+    {
+      std::unordered_set<NodeSPtr> node_set;
+      for (const NodeSPtr& node : nodes_) {
+        if (!node_set.insert(node).second) {
+          CGAL_SS3_SKEL_DS_TRACE("Error: duplicate node in nodes_ list");
+          CGAL_SS3_SKEL_DS_TRACE(node->toString());
+          result = false;
+          break;
+        }
+      }
+      std::unordered_set<ArcSPtr> arc_set;
+      for (const ArcSPtr& arc : arcs_) {
+        if (!arc_set.insert(arc).second) {
+          CGAL_SS3_SKEL_DS_TRACE("Error: duplicate arc in arcs_ list");
+          CGAL_SS3_SKEL_DS_TRACE(arc->toString());
+          result = false;
+          break;
+        }
+      }
+      std::unordered_set<SheetSPtr> sheet_set;
+      for (const SheetSPtr& sheet : sheets_) {
+        if (!sheet_set.insert(sheet).second) {
+          CGAL_SS3_SKEL_DS_TRACE("Error: duplicate sheet in sheets_ list");
+          CGAL_SS3_SKEL_DS_TRACE(sheet->toString());
+          result = false;
+          break;
+        }
+      }
+    }
+
+    // Check uniqueness of Node IDs
+    {
+      std::unordered_set<int> node_ids;
+      for (const NodeSPtr& node : nodes_) {
+        int id = node->getID();
+        if (!node_ids.insert(id).second) {
+          CGAL_SS3_SKEL_DS_TRACE("Error: duplicate Node ID in nodes_ list: " << id);
+          CGAL_SS3_SKEL_DS_TRACE(node->toString());
+          result = false;
+          break;
+        }
+      }
+    }
+    // Check uniqueness of Arc IDs
+    {
+      std::unordered_set<int> arc_ids;
+      for (const ArcSPtr& arc : arcs_) {
+        int id = arc->getID();
+        if (!arc_ids.insert(id).second) {
+          CGAL_SS3_SKEL_DS_TRACE("Error: duplicate Arc ID in arcs_ list: " << id);
+          CGAL_SS3_SKEL_DS_TRACE(arc->toString());
+          result = false;
+          break;
+        }
+      }
+    }
+    // Check uniqueness of Sheet IDs
+    {
+      std::unordered_set<int> sheet_ids;
+      for (const SheetSPtr& sheet : sheets_) {
+        int id = sheet->getID();
+        if (!sheet_ids.insert(id).second) {
+          CGAL_SS3_SKEL_DS_TRACE("Error: duplicate Sheet ID in sheets_ list: " << id);
+          CGAL_SS3_SKEL_DS_TRACE(sheet->toString());
+          result = false;
+          break;
+        }
+      }
+    }
 
     typename std::list<NodeSPtr>::const_iterator it_n = nodes_.begin();
     while (it_n != nodes_.end()) {
       NodeSPtr node = *it_n++;
+      CGAL_SS3_DEBUG_SPTR(node);
       if (node->getSkel() != this->shared_from_this()) {
         CGAL_SS3_SKEL_DS_TRACE(node->toString());
         result = false;
@@ -246,30 +276,58 @@ public:
       typename std::list<ArcWPtr>::const_iterator it_a = node->arcs().begin();
       while (it_a != node->arcs().end()) {
         ArcWPtr arc_wptr = *it_a++;
-        if (ArcSPtr arc = arc_wptr.lock()) {
-          if (node != arc->getNodeSrc() && node != arc->getNodeDst()) {
-            CGAL_SS3_SKEL_DS_TRACE(node->toString());
-            CGAL_SS3_SKEL_DS_TRACE(arc->toString());
-            result = false;
-            break;
-          }
-        } else {
+        CGAL_SS3_DEBUG_WPTR(arc_wptr);
+        ArcSPtr arc = arc_wptr.lock();
+        if (arc_wptr.expired() || !arc) {
+          CGAL_SS3_SKEL_DS_TRACE("Error: invalid ArcWPtr (expired or cannot lock) in node's arc list");
           CGAL_SS3_SKEL_DS_TRACE(node->toString());
+          result = false;
+          break;
+        }
+
+        if (std::find(arcs_.begin(), arcs_.end(), arc) == arcs_.end()) {
+          CGAL_SS3_SKEL_DS_TRACE("Error: node references an arc not present in the skeleton's arc list");
+          CGAL_SS3_SKEL_DS_TRACE(node->toString());
+          CGAL_SS3_SKEL_DS_TRACE(arc->toString());
+          result = false;
+          break;
+        }
+
+        if (node != arc->getNodeSrc() && node != arc->getNodeDst()) {
+          CGAL_SS3_SKEL_DS_TRACE("Error: incident arc does not have node as endpoint");
+          CGAL_SS3_SKEL_DS_TRACE(node->toString());
+          CGAL_SS3_SKEL_DS_TRACE(arc->toString());
+          result = false;
+          break;
         }
       }
       typename std::list<SheetWPtr>::const_iterator it_s = node->sheets().begin();
       while (it_s != node->sheets().end()) {
         SheetWPtr sheet_wptr = *it_s++;
-        if (SheetSPtr sheet = sheet_wptr.lock()) {
-          std::list<NodeSPtr> nodes = sheet->nodes();
-          if (nodes.end() == std::find(nodes.begin(), nodes.end(), node)) {
-            CGAL_SS3_SKEL_DS_TRACE(node->toString());
-            CGAL_SS3_SKEL_DS_TRACE(sheet->toString());
-            result = false;
-            break;
-          }
-        } else {
+        CGAL_SS3_DEBUG_WPTR(sheet_wptr);
+        SheetSPtr sheet = sheet_wptr.lock();
+        if (sheet_wptr.expired() || !sheet) {
+          CGAL_SS3_SKEL_DS_TRACE("Error: invalid SheetWPtr (expired or cannot lock) in node's sheet list");
           CGAL_SS3_SKEL_DS_TRACE(node->toString());
+          result = false;
+          break;
+        }
+
+        if (std::find(sheets_.begin(), sheets_.end(), sheet) == sheets_.end()) {
+          CGAL_SS3_SKEL_DS_TRACE("Error: node references a sheet not present in the skeleton's sheet list");
+          CGAL_SS3_SKEL_DS_TRACE(node->toString());
+          CGAL_SS3_SKEL_DS_TRACE(sheet->toString());
+          result = false;
+          break;
+        }
+
+        std::list<NodeSPtr> nodes = sheet->nodes();
+        if (nodes.end() == std::find(nodes.begin(), nodes.end(), node)) {
+          CGAL_SS3_SKEL_DS_TRACE("Error: incident sheet does not have node");
+          CGAL_SS3_SKEL_DS_TRACE(node->toString());
+          CGAL_SS3_SKEL_DS_TRACE(sheet->toString());
+          result = false;
+          break;
         }
       }
     }
@@ -277,24 +335,62 @@ public:
     typename std::list<ArcSPtr>::const_iterator it_a = arcs_.begin();
     while (it_a != arcs_.end()) {
       ArcSPtr arc = *it_a++;
+      CGAL_SS3_DEBUG_SPTR(arc);
       ArcWPtr arc_wptr(arc);
+
       if (arc->getSkel() != this->shared_from_this()) {
         CGAL_SS3_SKEL_DS_TRACE(arc->toString());
         result = false;
         break;
       }
+
+      if (!arc->getNodeSrc()) {
+        CGAL_SS3_SKEL_DS_TRACE("Error: arc does not have source");
+        result = false;
+        break;
+      }
+
+      if (std::find(nodes_.begin(), nodes_.end(), arc->getNodeSrc()) == nodes_.end()) {
+        CGAL_SS3_SKEL_DS_TRACE("Error: arc source is not a node present in the skeleton's node list");
+        CGAL_SS3_SKEL_DS_TRACE(arc->getNodeSrc()->toString());
+        result = false;
+        break;
+      }
+
       std::list<ArcWPtr> warcs = arc->getNodeSrc()->arcs();
       if (warcs.end() == STL_Extension::internal::weak_find(warcs.begin(), warcs.end(), arc_wptr)) {
+        CGAL_SS3_SKEL_DS_TRACE("Error: arc's source node does not have arc");
         CGAL_SS3_SKEL_DS_TRACE(arc->toString());
         CGAL_SS3_SKEL_DS_TRACE(arc->getNodeSrc()->toString());
         result = false;
         break;
       }
+
       if (arc->hasNodeDst()) {
+        if (std::find(nodes_.begin(), nodes_.end(), arc->getNodeDst()) == nodes_.end()) {
+          CGAL_SS3_SKEL_DS_TRACE("Error: arc destination is not a node present in the skeleton's node list");
+          CGAL_SS3_SKEL_DS_TRACE(arc->getNodeDst()->toString());
+          result = false;
+          break;
+        }
+
         warcs = arc->getNodeDst()->arcs();
         if (warcs.end() == STL_Extension::internal::weak_find(warcs.begin(), warcs.end(), arc_wptr)) {
+          CGAL_SS3_SKEL_DS_TRACE("Error: arc's target node does not have arc");
           CGAL_SS3_SKEL_DS_TRACE(arc->toString());
           CGAL_SS3_SKEL_DS_TRACE(arc->getNodeDst()->toString());
+          result = false;
+          break;
+        }
+      } else {
+        if (is_partial) {
+          if (!arc->getDirection()) {
+            CGAL_SS3_SKEL_DS_TRACE("Error: arc does not have destination nor direction (partial skeleton)");
+            result = false;
+            break;
+          }
+        } else {
+          CGAL_SS3_SKEL_DS_TRACE("Error: arc does not have destination (full skeleton)");
           result = false;
           break;
         }
@@ -303,29 +399,48 @@ public:
       typename std::list<SheetWPtr>::const_iterator it_s = arc->sheets().begin();
       while (it_s != arc->sheets().end()) {
         SheetWPtr sheet_wptr = *it_s++;
-        if (SheetSPtr sheet = sheet_wptr.lock()) {
-          ++num_sheets;
-          std::list<ArcSPtr> arcs = sheet->arcs();
-          if (arcs.end() == std::find(arcs.begin(), arcs.end(), arc)) {
-            CGAL_SS3_SKEL_DS_TRACE(arc->toString());
-            CGAL_SS3_SKEL_DS_TRACE(sheet->toString());
-            result = false;
-            break;
-          }
-        } else {
+        CGAL_SS3_DEBUG_WPTR(sheet_wptr);
+        SheetSPtr sheet = sheet_wptr.lock();
+        if (sheet_wptr.expired() || !sheet) {
+          CGAL_SS3_SKEL_DS_TRACE("Error: invalid SheetWPtr (expired or cannot lock) in arc's sheet list");
           CGAL_SS3_SKEL_DS_TRACE(arc->toString());
+          result = false;
+          break;
+        }
+
+        if (std::find(sheets_.begin(), sheets_.end(), sheet) == sheets_.end()) {
+          CGAL_SS3_SKEL_DS_TRACE("Error: arc references a sheet that is not present in the skeleton's sheet list");
+          CGAL_SS3_SKEL_DS_TRACE(arc->toString());
+          CGAL_SS3_SKEL_DS_TRACE(sheet->toString());
+          result = false;
+          break;
+        }
+
+        ++num_sheets;
+
+        std::list<ArcSPtr> arcs = sheet->arcs();
+        if (arcs.end() == std::find(arcs.begin(), arcs.end(), arc)) {
+          CGAL_SS3_SKEL_DS_TRACE("Error: arc's sheet does not have arc");
+          CGAL_SS3_SKEL_DS_TRACE(arc->toString());
+          CGAL_SS3_SKEL_DS_TRACE(sheet->toString());
+          result = false;
+          break;
         }
       }
+
       if (num_sheets != 3) {
-        CGAL_SS3_SKEL_DS_TRACE("Warning: Arc does not have 3 sheets.");
+        CGAL_SS3_SKEL_DS_TRACE("Error: Arc does not have 3 sheets.");
         CGAL_SS3_SKEL_DS_TRACE(arc->toString());
-        CGAL_SS3_SKEL_DS_TRACE(num_sheets);
+        CGAL_SS3_SKEL_DS_TRACE("num_sheets = " << num_sheets);
+        result = false;
+        break;
       }
     }
 
     typename std::list<SheetSPtr>::const_iterator it_s = sheets_.begin();
     while (it_s != sheets_.end()) {
       SheetSPtr sheet = *it_s++;
+      CGAL_SS3_DEBUG_SPTR(sheet);
       SheetWPtr sheet_wptr(sheet);
       if (sheet->getSkel() != this->shared_from_this()) {
         CGAL_SS3_SKEL_DS_TRACE(sheet->toString());
@@ -335,8 +450,19 @@ public:
       typename std::list<NodeSPtr>::const_iterator it_n = sheet->nodes().begin();
       while (it_n != sheet->nodes().end()) {
         NodeSPtr node = *it_n++;
+        CGAL_SS3_DEBUG_SPTR(node);
+
+        if (std::find(nodes_.begin(), nodes_.end(), node) == nodes_.end()) {
+          CGAL_SS3_SKEL_DS_TRACE("Error: sheet references a node that is not present in the skeleton's node list");
+          CGAL_SS3_SKEL_DS_TRACE(sheet->toString());
+          CGAL_SS3_SKEL_DS_TRACE(node->toString());
+          result = false;
+          break;
+        }
+
         std::list<SheetWPtr> wsheets = node->sheets();
         if (wsheets.end() == STL_Extension::internal::weak_find(wsheets.begin(), wsheets.end(), sheet_wptr)) {
+          CGAL_SS3_SKEL_DS_TRACE("Error: sheet's node does not have sheet");
           CGAL_SS3_SKEL_DS_TRACE(sheet->toString());
           CGAL_SS3_SKEL_DS_TRACE(node->toString());
           result = false;
@@ -346,78 +472,113 @@ public:
       typename std::list<ArcSPtr>::const_iterator it_a = sheet->arcs().begin();
       while (it_a != sheet->arcs().end()) {
         ArcSPtr arc = *it_a++;
-        std::list<SheetWPtr> wsheets = arc->sheets();
-        if (wsheets.end() == STL_Extension::internal::weak_find(wsheets.begin(), wsheets.end(), sheet_wptr)) {
+        CGAL_SS3_DEBUG_SPTR(arc);
+
+        if (std::find(arcs_.begin(), arcs_.end(), arc) == arcs_.end()) {
+          CGAL_SS3_SKEL_DS_TRACE("Error: sheet references an arc that is not present in the skeleton's arc list");
           CGAL_SS3_SKEL_DS_TRACE(sheet->toString());
           CGAL_SS3_SKEL_DS_TRACE(arc->toString());
+          result = false;
+          break;
+        }
+
+        std::list<SheetWPtr> wsheets = arc->sheets();
+        if (wsheets.end() == STL_Extension::internal::weak_find(wsheets.begin(), wsheets.end(), sheet_wptr)) {
+          CGAL_SS3_SKEL_DS_TRACE("Error: sheet's arc does not have sheet");
+          CGAL_SS3_SKEL_DS_TRACE(sheet->toString());
+          CGAL_SS3_SKEL_DS_TRACE(arc->toString());
+          result = false;
+          break;
+        }
+
+        std::vector<NodeSPtr> arc_nodes = { arc->getNodeSrc() };
+        if (arc->hasNodeDst()) {
+          arc_nodes.push_back(arc->getNodeDst());
+        }
+        for (NodeSPtr node : arc_nodes) {
+          CGAL_SS3_DEBUG_SPTR(node);
+          std::list<NodeSPtr> nodes = sheet->nodes();
+          if (nodes.end() == std::find(nodes.begin(), nodes.end(), node)) {
+            CGAL_SS3_SKEL_DS_TRACE("Error: Nodes of arc of sheet should be nodes of sheet");
+            CGAL_SS3_SKEL_DS_TRACE(node->toString());
+            CGAL_SS3_SKEL_DS_TRACE(arc->toString());
+            CGAL_SS3_SKEL_DS_TRACE(sheet->toString());
+            result = false;
+            break;
+          }
+        }
+      }
+
+      // Contour checks
+      for (const ArcSPtr& contour : sheet->contours()) {
+        // Check that contour has exactly one incident sheet (the current sheet)
+        int sheet_count = 0;
+        for (const SheetWPtr& contour_sheet_wptr : contour->sheets()) {
+          SheetSPtr contour_sheet = contour_sheet_wptr.lock();
+          if (contour_sheet == sheet) {
+            ++sheet_count;
+          }
+        }
+        if (sheet_count != 1) {
+          CGAL_SS3_SKEL_DS_TRACE("Error: contour arc does not have exactly one incident sheet (should be the current sheet)");
+          CGAL_SS3_SKEL_DS_TRACE(contour->toString());
+          CGAL_SS3_SKEL_DS_TRACE(sheet->toString());
+          result = false;
+          break;
+        }
+
+        // Check that contour has two valid, distinct incident nodes
+        NodeSPtr node_src = contour->getNodeSrc();
+        NodeSPtr node_dst = contour->getNodeDst();
+        if (!node_src || !node_dst) {
+          CGAL_SS3_SKEL_DS_TRACE("Error: contour does not have two valid incident nodes");
+          CGAL_SS3_SKEL_DS_TRACE(contour->toString());
+          result = false;
+          break;
+        }
+
+        // Check that both nodes appear in the sheet's node list
+        const auto& sheet_nodes = sheet->nodes();
+        if (std::find(sheet_nodes.begin(), sheet_nodes.end(), node_src) == sheet_nodes.end() ||
+            std::find(sheet_nodes.begin(), sheet_nodes.end(), node_dst) == sheet_nodes.end()) {
+          CGAL_SS3_SKEL_DS_TRACE("Error: contour's nodes do not appear in sheet's node list");
+          CGAL_SS3_SKEL_DS_TRACE(contour->toString());
+          CGAL_SS3_SKEL_DS_TRACE(sheet->toString());
           result = false;
           break;
         }
       }
     }
 
-    return result;
-  }
+    // @todo check contours
 
-  int countEvents(int type) const
-  {
-    int result = 0;
-    typename std::list<AbstractEventSPtr>::const_iterator it_e = events_.begin();
-    while (it_e != events_.end()) {
-      AbstractEventSPtr event = *it_e++;
-      if (event->getType() == type) {
-        result += 1;
-      }
-    }
     return result;
   }
 
   std::string toString() const
   {
     std::stringstream sstr;
-    sstr << "StraightSkeleton(";
-    if (id_ != -1) {
-        sstr << "id=" << IO::StringFactory::fromInteger(id_);
-    } else {
-        sstr << IO::StringFactory::fromPointer(this);
+    sstr << "StraightSkeleton\n";
+    sstr << "  Nodes:  " << nodes_.size() << std::endl;
+    for (const NodeSPtr& node : nodes_) {
+      sstr << "    " << node->toString() << "\n";
     }
-    sstr << "," << std::endl;
-    sstr << "Nodes:  " << nodes_.size() << std::endl;
-    sstr << "Arcs:   " << arcs_.size() << std::endl;
-    sstr << "Sheets: " << sheets_.size() << std::endl;
-    sstr << "Events: " << events_.size() << std::endl;
-    sstr << "    ConstOffsetEvents:     " << countEvents(AbstractEvent::CONST_OFFSET_EVENT) << std::endl;
-    sstr << "    SaveOffsetEvents:      " << countEvents(AbstractEvent::SAVE_OFFSET_EVENT) << std::endl;
-    sstr << "  VanishEvents:" << std::endl;
-    sstr << "    Generic VanishEvents:  " << countEvents(AbstractEvent::VANISH_EVENT) << std::endl;
-    sstr << "    EdgeEvents:            " << countEvents(AbstractEvent::EDGE_EVENT) << std::endl;
-    sstr << "    EdgeMergeEvents:       " << countEvents(AbstractEvent::EDGE_MERGE_EVENT) << std::endl;
-    sstr << "    TriangleEvents:        " << countEvents(AbstractEvent::TRIANGLE_EVENT) << std::endl;
-    sstr << "    DblEdgeMergeEvents:    " << countEvents(AbstractEvent::DBL_EDGE_MERGE_EVENT) << std::endl;
-    sstr << "    DblTriangleEvents:     " << countEvents(AbstractEvent::DBL_TRIANGLE_EVENT) << std::endl;
-    sstr << "    TetrahedronEvents:     " << countEvents(AbstractEvent::TETRAHEDRON_EVENT) << std::endl;
-    sstr << "  ContactEvents:" << std::endl;
-    sstr << "    VertexEvents:          " << countEvents(AbstractEvent::VERTEX_EVENT) << std::endl;
-    sstr << "    FlipVertexEvents:      " << countEvents(AbstractEvent::FLIP_VERTEX_EVENT) << std::endl;
-    sstr << "    SurfaceEvents:         " << countEvents(AbstractEvent::SURFACE_EVENT) << std::endl;
-    sstr << "    PolyhedronSplitEvents: " << countEvents(AbstractEvent::POLYHEDRON_SPLIT_EVENT) << std::endl;
-    sstr << "    SplitMergeEvents:      " << countEvents(AbstractEvent::SPLIT_MERGE_EVENT) << std::endl;
-    sstr << "    EdgeSplitEvents:       " << countEvents(AbstractEvent::EDGE_SPLIT_EVENT) << std::endl;
-    sstr << "    PierceEvents:          " << countEvents(AbstractEvent::PIERCE_EVENT) << std::endl;
-    sstr << ")" << std::endl;
+    sstr << "  Arcs:   " << arcs_.size() << std::endl;
+    for (const ArcSPtr& arc : arcs_) {
+      sstr << "    " << arc->toString() << "\n";
+    }
+    sstr << "  Sheets: " << sheets_.size() << std::endl;
+    for (const SheetSPtr& sheet : sheets_) {
+      sstr << "    " << sheet->toString() << "\n";
+    }
     return sstr.str();
   }
 
 protected:
   PolyhedronSPtr polyhedron_;
-
-  std::list<AbstractEventSPtr> events_;
   std::list<NodeSPtr> nodes_;
   std::list<ArcSPtr> arcs_;
   std::list<SheetSPtr> sheets_;
-
-  int id_;
-  std::string config_;
 };
 
 } // namespace SDS

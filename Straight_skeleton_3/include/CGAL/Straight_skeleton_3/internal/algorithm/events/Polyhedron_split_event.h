@@ -40,15 +40,13 @@ class PolyhedronSplitEvent
   using PolyhedronSplitEventSPtr = std::shared_ptr<PolyhedronSplitEvent<Traits> >;
 
 private:
-  using FT = typename Traits::FT;
+  using Point_3 = typename Traits::Point_3;
+  using Point3SPtr = std::shared_ptr<Point_3>;
 
+private:
   using Polyhedron = HDS::Polyhedron<Traits>;
   using EdgeWPtr = typename Polyhedron::EdgeWPtr;
   using EdgeSPtr = typename Polyhedron::EdgeSPtr;
-
-private:
-  using StraightSkeleton = SDS::StraightSkeleton<Traits>;
-  using NodeSPtr = typename StraightSkeleton::NodeSPtr;
 
 private:
   using EdgeFacetNeighborhood = algorithm::EdgeFacetNeighborhood<Traits>;
@@ -59,31 +57,22 @@ public:
   { }
 
   virtual ~PolyhedronSplitEvent()
-  {
-    node_.reset();
-  }
+  { }
 
   static PolyhedronSplitEventSPtr create()
   {
     return std::make_shared<PolyhedronSplitEvent>();
   }
 
-  NodeSPtr getNode() const
+  Point3SPtr getPoint() const
   {
-    CGAL_SS3_DEBUG_SPTR(node_);
-    return node_;
+    CGAL_SS3_DEBUG_SPTR(point_);
+    return point_;
   }
 
-  void setNode(NodeSPtr node)
+  void setPoint(const Point3SPtr& point)
   {
-    CGAL_SS3_DEBUG_SPTR(node);
-    this->node_ = node;
-  }
-
-  const FT& getTime() const
-  {
-    CGAL_SS3_DEBUG_SPTR(node_);
-    return node_->getTime();
+    this->point_ = point;
   }
 
   EdgeSPtr getEdge1() const
@@ -114,7 +103,7 @@ public:
 
   bool isValid() const
   {
-    return node_ && !edge1_.expired() && !edge2_.expired();
+    return (!edge1_.expired() && !edge2_.expired());
   }
 
   bool isObsolete() const
@@ -141,8 +130,10 @@ public:
     sstr.precision(17);
     sstr << "PolyhedronSplitEvent\n";
     sstr << "\t(ID=" << Base::getID() << ")\n";
-    sstr << "\t(offset=" << IO::StringFactory::fromDouble(CGAL::to_double(getTime())) << ")\n";
-    sstr << "\t(node=" << *(getNode()->getPoint()) << ")\n";
+    sstr << "\t(time=" << IO::StringFactory::fromDouble(CGAL::to_double(Base::getTime())) << ")\n";
+    sstr << "\t(point=<" + IO::StringFactory::fromDouble(CGAL::to_double(getPoint()->x())) + " "
+                         + IO::StringFactory::fromDouble(CGAL::to_double(getPoint()->y())) + " "
+                         + IO::StringFactory::fromDouble(CGAL::to_double(getPoint()->z())) + ">)";
     sstr << "\t(edgeA=" << edge1->toString() << ")"
          << "; edgeB=" << edge2->toString() << ")";
     return sstr.str();
@@ -150,8 +141,8 @@ public:
 
   bool operator==(const PolyhedronSplitEvent& other) const
   {
-    return (node_->getTime() == other.node_->getTime()) &&
-            (*(node_->getPoint()) == *(other.node_->getPoint())) &&
+    return (Base::getTime() == other.getTime()) &&
+            (*(getPoint()) == *(other.getPoint())) &&
             ((edge1_.lock() == other.edge1_.lock() &&
               edge2_.lock() == other.edge2_.lock()) ||
             (edge1_.lock() == other.edge2_.lock() &&
@@ -159,7 +150,7 @@ public:
   }
 
 protected:
-  NodeSPtr node_;
+  Point3SPtr point_;
   EdgeWPtr edge1_;
   EdgeWPtr edge2_;
 

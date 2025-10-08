@@ -40,7 +40,8 @@ class TetrahedronEvent
   using TetrahedronEventSPtr = std::shared_ptr<TetrahedronEvent<Traits> >;
 
 private:
-  using FT = typename Traits::FT;
+  using Point_3 = typename Traits::Point_3;
+  using Point3SPtr = std::shared_ptr<Point_3>;
 
 private:
   using Polyhedron = HDS::Polyhedron<Traits>;
@@ -50,10 +51,6 @@ private:
   using FacetSPtr = typename Polyhedron::FacetSPtr;
 
 private:
-  using StraightSkeleton = SDS::StraightSkeleton<Traits>;
-  using NodeSPtr = typename StraightSkeleton::NodeSPtr;
-
-private:
   using EdgeFacetNeighborhood = algorithm::EdgeFacetNeighborhood<Traits>;
 
 public:
@@ -61,31 +58,23 @@ public:
     : Base(Base::TETRAHEDRON_EVENT)
   { }
 
-  virtual ~TetrahedronEvent() {
-    node_.reset();
-  }
+  virtual ~TetrahedronEvent()
+  { }
 
   static TetrahedronEventSPtr create()
   {
     return std::make_shared<TetrahedronEvent>();
   }
 
-  NodeSPtr getNode() const
+  Point3SPtr getPoint() const
   {
-    CGAL_SS3_DEBUG_SPTR(node_);
-    return node_;
+    CGAL_SS3_DEBUG_SPTR(point_);
+    return point_;
   }
 
-  void setNode(NodeSPtr node)
+  void setPoint(const Point3SPtr& point)
   {
-    CGAL_SS3_DEBUG_SPTR(node);
-    this->node_ = node;
-  }
-
-  const FT& getTime() const
-  {
-    CGAL_SS3_DEBUG_SPTR(node_);
-    return node_->getTime();
+    this->point_ = point;
   }
 
   EdgeSPtr getEdgeBegin() const
@@ -147,7 +136,7 @@ public:
 
   bool isValid() const
   {
-    return (node_ && !edge_begin_.expired());
+    return (!edge_begin_.expired());
   }
 
   bool isObsolete() const
@@ -171,8 +160,10 @@ public:
     sstr.precision(17);
     sstr << "TetrahedronEvent\n";
     sstr << "\t(ID=" << Base::getID() << ")\n";
-    sstr << "\t(offset=" << IO::StringFactory::fromDouble(CGAL::to_double(getTime())) << ")\n";
-    sstr << "\t(node=" << *(getNode()->getPoint()) << ")\n";
+    sstr << "\t(time=" << IO::StringFactory::fromDouble(CGAL::to_double(Base::getTime())) << ")\n";
+    sstr << "\t(point=<" + IO::StringFactory::fromDouble(CGAL::to_double(getPoint()->x())) + " "
+                         + IO::StringFactory::fromDouble(CGAL::to_double(getPoint()->y())) + " "
+                         + IO::StringFactory::fromDouble(CGAL::to_double(getPoint()->z())) + ">)";
     sstr << "\t(vertices";
     for (int i=0; i<4; ++i)
       sstr << " " << vertices[i]->getID();
@@ -186,13 +177,13 @@ public:
 
   bool operator==(const TetrahedronEvent& other) const
   {
-    return (node_->getTime() == other.node_->getTime()) &&
-            (*(node_->getPoint()) == *(other.node_->getPoint())) &&
+    return (Base::getTime() == other.getTime()) &&
+            (*(getPoint()) == *(other.getPoint())) &&
             (edge_begin_.lock() == other.edge_begin_.lock());
   }
 
 protected:
-  NodeSPtr node_;
+  Point3SPtr point_;
   EdgeWPtr edge_begin_;
 
   EdgeFacetNeighborhood neighborhood_;

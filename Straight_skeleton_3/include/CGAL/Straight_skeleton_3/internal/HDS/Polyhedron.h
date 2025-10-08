@@ -155,10 +155,15 @@ public:
         return this->arc_.lock();
       }
 
-      void setArc(ArcSPtr arc)
+      void setArc(const ArcSPtr& arc)
       {
         CGAL_SS3_DEBUG_SPTR(arc);
         this->arc_ = arc;
+      }
+
+      NodeWPtr getWNode() const
+      {
+        return this->node_;
       }
 
       NodeSPtr getNode() const
@@ -167,7 +172,12 @@ public:
         return this->node_.lock();
       }
 
-      void setNode(NodeSPtr node)
+      void setWNode(NodeWPtr node)
+      {
+        this->node_ = node;
+      }
+
+      void setNode(const NodeSPtr& node)
       {
         CGAL_SS3_DEBUG_SPTR(node);
         this->node_ = node;
@@ -805,7 +815,7 @@ public:
         return this->sheet_.lock();
       }
 
-      void setSheet(SheetSPtr sheet)
+      void setSheet(const SheetSPtr& sheet)
       {
         this->sheet_ = sheet;
       }

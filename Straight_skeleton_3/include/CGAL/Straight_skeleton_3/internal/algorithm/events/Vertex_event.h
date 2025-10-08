@@ -40,7 +40,8 @@ class VertexEvent
   using VertexEventSPtr = std::shared_ptr<VertexEvent<Traits> >;
 
 private:
-  using FT = typename Traits::FT;
+  using Point_3 = typename Traits::Point_3;
+  using Point3SPtr = std::shared_ptr<Point_3>;
 
 private:
   using Polyhedron = HDS::Polyhedron<Traits>;
@@ -48,10 +49,6 @@ private:
   using VertexSPtr = typename Polyhedron::VertexSPtr;
   using FacetWPtr = typename Polyhedron::FacetWPtr;
   using FacetSPtr = typename Polyhedron::FacetSPtr;
-
-private:
-  using StraightSkeleton = SDS::StraightSkeleton<Traits>;
-  using NodeSPtr = typename StraightSkeleton::NodeSPtr;
 
 private:
   using VertexFacetNeighborhood = algorithm::VertexFacetNeighborhood<Traits>;
@@ -62,31 +59,22 @@ public:
   { }
 
   virtual ~VertexEvent()
-  {
-    node_.reset();
-  }
+  { }
 
   static VertexEventSPtr create()
   {
     return std::make_shared<VertexEvent>();
   }
 
-  NodeSPtr getNode() const
+  Point3SPtr getPoint() const
   {
-    CGAL_SS3_DEBUG_SPTR(node_);
-    return node_;
+    CGAL_SS3_DEBUG_SPTR(point_);
+    return point_;
   }
 
-  void setNode(NodeSPtr node)
+  void setPoint(const Point3SPtr& point)
   {
-    CGAL_SS3_DEBUG_SPTR(node);
-    this->node_ = node;
-  }
-
-  const FT& getTime() const
-  {
-    CGAL_SS3_DEBUG_SPTR(node_);
-    return node_->getTime();
+    this->point_ = point;
   }
 
   VertexSPtr getVertex1() const
@@ -142,7 +130,8 @@ public:
 
   bool isValid() const
   {
-    return node_ && !vertex_1_.expired() && !vertex_2_.expired() && !facet_1_.expired() && !facet_2_.expired();
+    return (!vertex_1_.expired() && !vertex_2_.expired() &&
+            !facet_1_.expired() && !facet_2_.expired());
   }
 
   bool isObsolete() const
@@ -171,8 +160,10 @@ public:
     sstr.precision(17);
     sstr << "VertexEvent\n";
     sstr << "\t(ID=" << Base::getID() << ")\n";
-    sstr << "\t(offset=" << IO::StringFactory::fromDouble(CGAL::to_double(getTime())) << ")\n";
-    sstr << "\t(node=" << *(getNode()->getPoint()) << ")\n";
+    sstr << "\t(time=" << IO::StringFactory::fromDouble(CGAL::to_double(Base::getTime())) << ")\n";
+    sstr << "\t(point=<" + IO::StringFactory::fromDouble(CGAL::to_double(getPoint()->x())) + " "
+                         + IO::StringFactory::fromDouble(CGAL::to_double(getPoint()->y())) + " "
+                         + IO::StringFactory::fromDouble(CGAL::to_double(getPoint()->z())) + ">)";
     sstr << "\t(facet A=" << facet_1->getID() << "\n"
          << "\t vertex A=" << vertex_1->toString() << ")\n";
     sstr << "\t(facet B=" << facet_2->getID() << "\n"
@@ -182,8 +173,8 @@ public:
 
   bool operator==(const VertexEvent& other) const
   {
-    return (node_->getTime() == other.node_->getTime()) &&
-            (*(node_->getPoint()) == *(other.node_->getPoint())) &&
+    return (Base::getTime() == other.getTime()) &&
+            (*(getPoint()) == *(other.getPoint())) &&
             ((facet_1_.lock() == other.facet_1_.lock() &&
               facet_2_.lock() == other.facet_2_.lock()) ||
             (facet_1_.lock() == other.facet_2_.lock() &&
@@ -195,7 +186,7 @@ public:
   }
 
 protected:
-  NodeSPtr node_;
+  Point3SPtr point_;
   VertexWPtr vertex_1_;
   VertexWPtr vertex_2_;
   FacetWPtr facet_1_;
