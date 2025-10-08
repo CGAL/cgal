@@ -46,27 +46,27 @@ int main(int argc, char** argv)
 
   std::cout << "Input mesh: " << vertices(sm).size() << " NV " << faces(sm).size() << " NF" << std::endl;
 
-  std::vector<FT> save_offsets = { 1, 2, 3 };
+  std::vector<FT> save_times = { 1, 2, 3 };
 
   std::vector<Mesh> results;
-  results.reserve(save_offsets.size());
+  results.reserve(save_times.size());
 
   CGAL::Real_timer timer;
   timer.start();
 
   // Main call
-  bool success = SS3::face_offset(sm, save_offsets, results);
+  bool success = SS3::face_offset(sm, save_times, results);
 
   timer.stop();
   std::cout << "Elapsed: " << timer.time() << std::endl;
 
   // save the results
   for (std::size_t i=0; i<results.size(); ++i) {
-    const FT save_offset = save_offsets[i];
+    const FT save_time = save_times[i];
     const Mesh& sm = results[i];
 
     std::stringstream out_ss;
-    out_ss <<  "result_" << save_offset << ".obj";
+    out_ss <<  "result_" << save_time << ".obj";
 
     if (!CGAL::IO::write_polygon_mesh(out_ss.str(), sm, CGAL::parameters::stream_precision(17))) {
       std::cerr << "Error: failed to write result " << out_ss.str() << std::endl;

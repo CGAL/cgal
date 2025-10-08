@@ -52,7 +52,7 @@ namespace Straight_skeletons_3 {
  * \tparam NamedParametersOut must be a model of `NamedParameters`
  *
  * \param tmesh the input triangle mesh whose faces are to be offset
- * \param save_offsets the offsets to apply to the input mesh
+ * \param save_times the times at which the offset meshes are to be constructed
  * \param results the output vector of meshes that will contain the constructed offset meshes
  * \param np_in the input named parameters
  *  \cgalNamedParamsBegin
@@ -107,7 +107,7 @@ template <typename TriangleMeshIn, typename PolygonMeshOut,
           typename NamedParametersIn = parameters::Default_named_parameters,
           typename NamedParametersOut = parameters::Default_named_parameters>
 bool face_offset(TriangleMeshIn& tmesh,
-                 std::vector<FT> save_offsets, // intentional copy
+                 std::vector<FT> save_times, // intentional copy
                  std::vector<PolygonMeshOut>& results,
                  const NamedParametersIn& np_in = parameters::default_values(),
                  const NamedParametersOut& np_out = parameters::default_values())
@@ -144,19 +144,18 @@ bool face_offset(TriangleMeshIn& tmesh,
                                                            std::filesystem::current_path());
 
   CGAL_precondition(!CGAL::is_empty(tmesh));
-  CGAL_precondition(CGAL::is_triangle_mesh(tmesh));
   CGAL_precondition(CGAL::is_closed(tmesh));
-  CGAL_precondition(PMP::is_outward_oriented(tmesh));
-  CGAL_precondition(!PMP::does_self_intersect(tmesh));
+  CGAL_precondition(!CGAL::is_triangle_mesh(tmesh) || PMP::is_outward_oriented(tmesh));
+  CGAL_precondition(!CGAL::is_triangle_mesh(tmesh) || !PMP::does_self_intersect(tmesh));
 
-  const bool outwards = (!save_offsets.empty() && CGAL::is_positive(save_offsets.front()));
+  const bool outwards = (!save_times.empty() && CGAL::is_positive(save_times.front()));
 
   // check that all offsets are of the same sign (ignoring zeros)
-  for (const FT& offset : save_offsets) {
-    if (CGAL::is_zero(offset)) {
-      std::cerr << "Error: offset should be non-zero" << std::endl;
+  for (const FT& time : save_times) {
+    if (CGAL::is_zero(time)) {
+      std::cerr << "Error: time should be non-zero" << std::endl;
       return false;
-    } else if (CGAL::is_positive(offset) != outwards) {
+    } else if (CGAL::is_positive(time) != outwards) {
       std::cerr << "Error: offsets must all be positive or all negative." << std::endl;
       return false;
     }
@@ -169,8 +168,8 @@ bool face_offset(TriangleMeshIn& tmesh,
     PMP::reverse_face_orientations(tmesh);
 
     // also switch to negative offsets
-    for (FT& offset : save_offsets) {
-      offset = -offset;
+    for (FT& t : save_times) {
+      t = -t;
     }
   }
 
@@ -218,7 +217,7 @@ bool face_offset(TriangleMeshIn& tmesh,
   {
     Mesh_collector_visitor(std::vector<PolyhedronSPtr>& results) : results_(results) { }
 
-    void on_save_offset_event(PolyhedronSPtr polyhedron, FT) override {
+    void on_save_event(PolyhedronSPtr polyhedron, FT) override {
       PolyhedronSPtr other_polyhedron = polyhedron->clone();
       results_.push_back(other_polyhedron);
     }
@@ -227,7 +226,7 @@ bool face_offset(TriangleMeshIn& tmesh,
     std::vector<PolyhedronSPtr>& results_;
   };
 
-  auto skel_builder = SimpleStraightSkel::create(p, save_offsets, save_path);
+  auto skel_builder = SimpleStraightSkel::create(p, save_times, save_path);
 
   std::vector<PolyhedronSPtr> results_p;
   Mesh_collector_visitor visitor(results_p);
@@ -239,25 +238,25 @@ bool face_offset(TriangleMeshIn& tmesh,
     return false;
   }
 
-  if (results_p.size() != save_offsets.size()) {
+  if (results_p.size() != save_times.size()) {
     return false;
   }
 
   if (outwards) {
-    for (FT& offset : save_offsets) {
-      offset = -offset;
+    for (FT& t : save_times) {
+      t = -t;
     }
   }
 
   for (std::size_t i=0; i<results_p.size(); ++i) {
-    const FT& save_offset = save_offsets[i];
+    const FT& save_time = save_times[i];
 
-    CGAL_SS3_TRACE("Post processing of result @ " << save_offset)
+    CGAL_SS3_TRACE("Post processing of result @ " << save_time)
 
     PolyhedronSPtr result_p = results_p[i];
     CGAL_assertion(result_p && result_p->isConsistent());
 
-    CGAL_SS3_TRACE("At offset: " << save_offset << ", Polyhedron with " << result_p->vertices().size()
+    CGAL_SS3_TRACE("At offset: " << save_time << ", Polyhedron with " << result_p->vertices().size()
                      << " vertices and " << result_p->facets().size() << " faces");
 
     // Convert back to Surface_mesh structure to save the results.
@@ -277,7 +276,7 @@ bool face_offset(TriangleMeshIn& tmesh,
     CGAL_postcondition(!PMP::has_degenerate_faces(result_t));
     CGAL_postcondition(!PMP::does_self_intersect(result_t));
 
-    CGAL_SS3_TRACE("At offset: " << save_offset << ", Surface_mesh with " << num_vertices(result_t)
+    CGAL_SS3_TRACE("At offset: " << save_time << ", Surface_mesh with " << num_vertices(result_t)
                      << " vertices and " << num_faces(result_t) << " faces");
 
     if (outwards) {

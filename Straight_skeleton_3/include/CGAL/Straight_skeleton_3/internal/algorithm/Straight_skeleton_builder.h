@@ -165,9 +165,9 @@ struct Base_mesh_offset_visitor
   using AbstractEventSPtr = std::shared_ptr<AbstractEvent<Traits> >;
 
   virtual bool go_further(int, PolyhedronSPtr, FT) = 0;
-  virtual void before_offset_event(PolyhedronSPtr, FT, AbstractEventSPtr) = 0;
-  virtual void on_save_offset_event(PolyhedronSPtr, FT) = 0;
-  virtual void after_offset_event(PolyhedronSPtr, FT) = 0;
+  virtual void before_event(PolyhedronSPtr, FT, AbstractEventSPtr) = 0;
+  virtual void on_save_event(PolyhedronSPtr, FT) = 0;
+  virtual void after_event(PolyhedronSPtr, FT) = 0;
 };
 
 template <typename Traits>
@@ -179,9 +179,9 @@ struct Default_mesh_offset_visitor
   using AbstractEventSPtr = std::shared_ptr<AbstractEvent<Traits> >;
 
   bool go_further(int, PolyhedronSPtr, FT) override { return true; }
-  void before_offset_event(PolyhedronSPtr, FT, AbstractEventSPtr) override { }
-  void on_save_offset_event(PolyhedronSPtr, FT) override { }
-  void after_offset_event(PolyhedronSPtr, FT) override { }
+  void before_event(PolyhedronSPtr, FT, AbstractEventSPtr) override { }
+  void on_save_event(PolyhedronSPtr, FT) override { }
+  void after_event(PolyhedronSPtr, FT) override { }
 };
 
 template <typename Traits>
@@ -259,10 +259,10 @@ private:
   using AbstractEvent = algorithm::AbstractEvent<Traits>;
   using AbstractEventSPtr = std::shared_ptr<AbstractEvent>;
 
-  using ConstOffsetEvent = algorithm::ConstOffsetEvent<Traits>;
-  using ConstOffsetEventSPtr = std::shared_ptr<ConstOffsetEvent>;
-  using SaveOffsetEvent = algorithm::SaveOffsetEvent<Traits>;
-  using SaveOffsetEventSPtr = std::shared_ptr<SaveOffsetEvent>;
+  using ConstTimeEvent = algorithm::ConstTimeEvent<Traits>;
+  using ConstTimeEventSPtr = std::shared_ptr<ConstTimeEvent>;
+  using SaveEvent = algorithm::SaveEvent<Traits>;
+  using SaveEventSPtr = std::shared_ptr<SaveEvent>;
 
   using VanishEvent = algorithm::VanishEvent<Traits>;
   using VanishEventSPtr = std::shared_ptr<VanishEvent>;
@@ -325,14 +325,14 @@ public:
   }
 
   SimpleStraightSkel(PolyhedronSPtr polyhedron,
-                     const std::vector<FT>& save_offsets,
+                     const std::vector<FT>& save_times,
                      const std::filesystem::path& save_path)
     : polyhedron_(polyhedron),
-      save_offsets_(save_offsets), // intentional copy
+      save_times_(save_times), // intentional copy
       save_path_(save_path),
       skel_result_(StraightSkeleton::create())
   {
-    std::sort(save_offsets_.begin(), save_offsets_.end(),
+    std::sort(save_times_.begin(), save_times_.end(),
               [](const FT& a, const FT& b) { return CGAL::abs(a) < CGAL::abs(b); });
 
     initVertexSplitter();
@@ -354,18 +354,18 @@ public:
   }
 
   static SimpleStraightSkelSPtr create(PolyhedronSPtr polyhedron,
-                                       const std::vector<FT>& save_offsets)
+                                       const std::vector<FT>& save_times)
   {
     CGAL_SS3_DEBUG_SPTR(polyhedron);
-    return std::make_shared<SimpleStraightSkel>(polyhedron, save_offsets);
+    return std::make_shared<SimpleStraightSkel>(polyhedron, save_times);
   }
 
   static SimpleStraightSkelSPtr create(PolyhedronSPtr polyhedron,
-                                       const std::vector<FT>& save_offsets,
+                                       const std::vector<FT>& save_times,
                                        const std::filesystem::path& save_path)
   {
     CGAL_SS3_DEBUG_SPTR(polyhedron);
-    return std::make_shared<SimpleStraightSkel>(polyhedron, save_offsets, save_path);
+    return std::make_shared<SimpleStraightSkel>(polyhedron, save_times, save_path);
   }
 
   void setVisitor(Base_mesh_offset_visitor<Traits>* visitor)
@@ -1234,19 +1234,25 @@ public:
     CGAL_assertion(facetP && facetP != facetL && facetP != facetR);
     CGAL_assertion(facetN && facetN != facetL && facetN != facetR && facetN != facetP);
 
-    return intersectionPointAndTimeOffsetPlanes(facetL, facetP, facetR, facetN,
-                                                time_past_bound, time_future_bound);
+    Point3SPtr point;
+    FT event_time;
+    std::tie(point, event_time) = intersectionPointAndTimeOffsetPlanes(facetL, facetP, facetR, facetN,
+                                                                       time_past_bound, time_future_bound);
+
+    if (!point) {
+      return { };
+    }
+
+    CGAL_SS3_CORE_TRACE_V(1, "Tentative intersection: " << *point << " @ " << event_time);
+
+    return { point, event_time };
   }
 
   /**
     * Returns the point where 2 edges will crash into each other.
     *
-    * If `offset_max` is passed, ignore the crash if it happens in the future.
+    * If bounds are passed, ignore the crash if it happens in the past or too far in the future.
     */
-  // this function does an early exit if the result is irrelevant (in the past or too far in the future)
-  //
-  // @speed, should be able to not solve the system but just exit early if the 4 planes are clearly
-  // not intersecting (diametral spheres around the edges of size something?)
   std::pair<Point3SPtr, FT> crashAt(const EdgeSPtr& edge_1, const EdgeSPtr& edge_2,
                                     const std::optional<FT>& time_past_bound = std::nullopt,
                                     const std::optional<FT>& time_future_bound = std::nullopt)
@@ -4005,7 +4011,7 @@ public:
           }
 
           // # If the facet is so far that even when shifting point and plane by the maximal
-          // offset, the vertex would not cross it, then we are done
+          // time, the vertex would not cross it, then we are done
           if (time_future_bound.has_value()) {
             Point3SPtr shifted_pt = HdsUtils::getFinalPoint(vertex, *time_future_bound);
             Plane3SPtr shifted_plane = HdsUtils::getFinalPlane(facet, *time_future_bound);
@@ -4118,7 +4124,7 @@ public:
       collectDblEdgeMergeEvents(local_edges, polyhedron,
                                 current_time, time_future_bound, queue);
       collectDblTriangleEvents(local_edges, polyhedron,
-                              current_time, time_future_bound, queue);
+                               current_time, time_future_bound, queue);
       collectTetrahedronEvents(local_edges, polyhedron, false /*do not use canonical reps*/,
                               current_time, time_future_bound, queue);
 #endif
@@ -4340,7 +4346,8 @@ public:
                      const std::optional<FT>& time_future_bound,
                      PQ& queue)
   {
-    CGAL_SS3_CORE_TRACE_V(2, "collectEvents(time = " << current_time << ")");
+    CGAL_SS3_CORE_TRACE_V(2, "Collecting events in [" << current_time
+                          << " | " << (time_future_bound.has_value() ? IO::StringFactory::fromDouble(CGAL::to_double(*time_future_bound)) : "") << "]");
 
     AbstractEventSPtr result = AbstractEventSPtr();
     if (!polyhedron || polyhedron->facets().size() == 0) {
@@ -4423,8 +4430,8 @@ public:
 
     CGAL_SS3_CORE_TRACE_CODE(std::stringstream ss;)
     CGAL_SS3_CORE_TRACE_CODE(ss << "Saves:";)
-    CGAL_SS3_CORE_TRACE_CODE(for (const FT& save_offset : save_offsets_))
-    CGAL_SS3_CORE_TRACE_CODE(ss << " " << save_offset;)
+    CGAL_SS3_CORE_TRACE_CODE(for (const FT& save_time : save_times_))
+    CGAL_SS3_CORE_TRACE_CODE(ss << " " << save_time;)
     CGAL_SS3_CORE_TRACE(ss.str());
     CGAL_SS3_CORE_TRACE("-------------------------------------------------");
     CGAL_SS3_CORE_TRACE("-------------------------------------------------");
@@ -4475,14 +4482,14 @@ public:
       }
 
       switch (event_1->getType()) {
-        case AbstractEvent::SAVE_OFFSET_EVENT: {
-          auto save_event_1 = std::dynamic_pointer_cast<SaveOffsetEvent>(event_1);
-          auto save_event_2 = std::dynamic_pointer_cast<SaveOffsetEvent>(event_2);
+        case AbstractEvent::SAVE_EVENT: {
+          auto save_event_1 = std::dynamic_pointer_cast<SaveEvent>(event_1);
+          auto save_event_2 = std::dynamic_pointer_cast<SaveEvent>(event_2);
           return *save_event_1 == *save_event_2;
         }
-        case AbstractEvent::CONST_OFFSET_EVENT: {
-          auto const_event_1 = std::dynamic_pointer_cast<ConstOffsetEvent>(event_1);
-          auto const_event_2 = std::dynamic_pointer_cast<ConstOffsetEvent>(event_2);
+        case AbstractEvent::CONST_TIME_EVENT: {
+          auto const_event_1 = std::dynamic_pointer_cast<ConstTimeEvent>(event_1);
+          auto const_event_2 = std::dynamic_pointer_cast<ConstTimeEvent>(event_2);
           return *const_event_1 == *const_event_2;
         }
         case AbstractEvent::VANISH_EVENT: {
@@ -4638,36 +4645,36 @@ public:
   AbstractEventSPtr nextEvent(PQ& queue,
                               const FT& current_time)
   {
-    if (queue.empty() && save_offsets_.empty())
+    if (queue.empty() && save_times_.empty())
       return { };
 
     AbstractEventSPtr event;
-    FT offset_next = 0;
+    FT time = 0;
 
     // If a save event is closest, delay building it in case a const event is even closer
     bool do_save = false;
 
-    // purge the queue lazily as to avoid wasting time if we stop on the last save offset
-    if (save_offsets_.empty()) {
+    // purge the queue lazily as to avoid wasting time if we stop on the last save event
+    if (save_times_.empty()) {
       event = queue.top();
-      offset_next = event->getTime();
+      time = event->getTime();
     } else {
       // If we have upcoming save events, compare
-      const FT& next_save_offset = save_offsets_.front();
+      const FT& next_save_time = save_times_.front();
 
       if (queue.empty()) {
-        // queue is empty but save_offsets cannot be empty as well
+        // queue is empty but save_times_ cannot be empty as well
         do_save = true;
-        offset_next = save_offsets_.front();
+        time = save_times_.front();
       } else {
-          // neither queue nor save_offsets are empty, take the earliest
-        if (next_save_offset > queue.top()->getTime()) { // save is strictly earlier
+          // neither queue nor save_times_ are empty, take the earliest
+        if (next_save_time > queue.top()->getTime()) { // save is strictly earlier
           do_save = true;
-          offset_next = next_save_offset;
+          time = next_save_time;
         } else {
-          // save offsets exist, but are farther in the future than the next event
+          // save times exist, but are farther in the future than the next event
           event = queue.top();
-          offset_next = event->getTime();
+          time = event->getTime();
         }
       }
     }
@@ -4699,27 +4706,30 @@ public:
     }
 
     CGAL_assertion(do_save || bool(event));
-    CGAL_assertion(offset_next != 0);
+    CGAL_assertion(time != 0);
 
     // Check if the next const event would be (strictly) closer
-    FT const_offset = Configuration::getInstance()->getDouble(
-            "Algorithm", "const_offset");
-    if (const_offset != 0) {
-      FT next_const_offset = floor(CGAL::to_double(current_time / const_offset) + 1.0) * const_offset;
-      if (current_time > next_const_offset && next_const_offset > offset_next) {
+    FT pulse = Configuration::getInstance()->getDouble("Algorithm", "const_offset");
+    if (pulse != 0) {
+      FT next_const_time = floor(CGAL::to_double(current_time / pulse) + 1.0) * pulse;
+      if (current_time > next_const_time && next_const_time > time) {
         do_save = false;
-        return ConstOffsetEvent::create(next_const_offset);
+        ConstTimeEventSPtr const_event = ConstTimeEvent::create();
+        const_event->setTime(next_const_time);
+        return const_event;
       }
     }
 
     if (do_save) { // save event is the topmost
-      save_offsets_.erase(save_offsets_.begin()); // @todo awkward
-      return SaveOffsetEvent::create(offset_next);
+      save_times_.erase(save_times_.begin());
+      SaveEventSPtr save_event = SaveEvent::create();
+      save_event->setTime(time);
+      return save_event;
     }
 
     CGAL_assertion(bool(event));
 
-    // neither a ConstOffsetEvent nor a SaveOffsetEvent
+    // neither a const nor save event
     queue.pop();
 
     return event;
@@ -4824,16 +4834,21 @@ public:
 
 #ifdef CGAL_SS3_DUMP_FILES
     res = savePolyhedron(polyhedron, event_time);
+    // res = saveSkeleton(skel_result_, event_time) && res;
 #endif
+
+    if (res) {
+      addEvent(event);
+    }
 
     return (res ? EventStatus::EVENT_HANDLED : EventStatus::EVENT_NOT_HANDLED);
   }
 
   // This 'handle' is in fact more akin to a collect, but the interesting point
   // is that it happens after pop time
-  EventStatus handleConstOffsetEvent(ConstOffsetEventSPtr event,
-                                     const FT& current_time,
-                                     const PolyhedronSPtr& polyhedron)
+  EventStatus handleConstTimeEvent(ConstTimeEventSPtr event,
+                                   const FT& current_time,
+                                   const PolyhedronSPtr& polyhedron)
   {
     CGAL_SS3_CORE_TRACE_V(4, "########################################");
     CGAL_SS3_CORE_TRACE_V(4, "#########  Handle Const Event  #########");
@@ -5807,7 +5822,7 @@ public:
     post_op_vertices_VV_ = {{ new_vertex }};
 
     // Assume a triangle event with a facet whose incident edges are all reflex.
-    // At a reflex edge, an epsilon offset is a growth of the facet.
+    // At a reflex edge, an epsilon shift is a growth of the facet.
     // If all edges are reflex, the facet will grow and there could not have been
     // a triangle event. So at least one edge is convex and the resulting vertex
     // is not reflex. Since it is not reflex, we don't need to look at its pierce events.
@@ -7440,7 +7455,7 @@ private:
 
   Base_mesh_offset_visitor<Traits>* visitor_ = nullptr;
 
-  std::vector<FT> save_offsets_;
+  std::vector<FT> save_times_;
   std::filesystem::path save_path_;
 
   std::list<AbstractEventSPtr> events_;

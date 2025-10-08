@@ -60,16 +60,24 @@ public:
     return this->id_;
   }
 
-  void setID(int id)
+  void setID(const int id)
   {
     this->id_ = id;
   }
 
-  virtual const FT& getTime() const = 0; // abstract
+  const FT& getTime() const
+  {
+    return time_;
+  }
 
-  static const int SAVE_OFFSET_EVENT = 0;
+  void setTime(const FT& time)
+  {
+    this->time_ = time;
+  }
 
-  static const int CONST_OFFSET_EVENT = 1;
+  static const int SAVE_EVENT = 0;
+
+  static const int CONST_TIME_EVENT = 1;
 
   /** generic vanish event */
   static const int VANISH_EVENT = -1; // @tmp give it a proper ID
@@ -131,11 +139,11 @@ public:
   {
     std::stringstream sstr;
     switch (getType()) {
-      case CONST_OFFSET_EVENT:
-        sstr << "ConstOffsetEvent";
+      case CONST_TIME_EVENT:
+        sstr << "ConstTimeEvent";
         break;
-      case SAVE_OFFSET_EVENT:
-        sstr << "SaveOffsetEvent";
+      case SAVE_EVENT:
+        sstr << "SaveEvent";
         break;
       case VANISH_EVENT:
         sstr << "VanishEvent";
@@ -191,6 +199,7 @@ protected:
 
   int type_;
   int id_; // id of the event
+  FT time_;
 
 private:
   static int next_id_;

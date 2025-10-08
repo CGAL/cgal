@@ -682,9 +682,9 @@ public:
     * \pre vertex->degree() == 3
     */
   static Point3SPtr shiftPoint(const VertexSPtr& vertex,
-                               const FT& offset)
+                               const FT& time)
   {
-    CGAL_SS3_TRANSF_TRACE_V(32, "shift " << vertex->toString() << "\noffset = " << offset);
+    CGAL_SS3_TRANSF_TRACE_V(32, "shift " << vertex->toString() << "\ntime = " << time);
     CGAL_SS3_DEBUG_SPTR(vertex);
     CGAL_precondition(vertex->degree() >= 3);
 
@@ -712,7 +712,7 @@ public:
           }
         }
 
-        planes[i] = shiftPlane(facet, offset);
+        planes[i] = shiftPlane(facet, time);
 
         CGAL_SS3_TRANSF_TRACE_V(64, "facet[" << i << "] = " << facet->getID());
         CGAL_SS3_TRANSF_TRACE_V(64, "Offset Plane[" << i << "] = " << *(planes[i]));
@@ -746,7 +746,7 @@ public:
     * returns the shifted position of the edge of a polyhedron
     */
   static Segment3SPtr shiftEdge(const EdgeSPtr& edge,
-                                const FT& offset)
+                                const FT& time)
   {
     CGAL_SS3_DEBUG_SPTR(edge);
 
@@ -776,10 +776,10 @@ public:
     }
 
     // Offset the two common planes
-    Plane3SPtr offset_plane_l = GeomUtils::offsetPlane(facet_l->plane(), offset*speed_l);
-    Plane3SPtr offset_plane_r = GeomUtils::offsetPlane(facet_r->plane(), offset*speed_r);
-    Plane3SPtr offset_plane_src = GeomUtils::offsetPlane(facet_src->plane(), offset*speed_src);
-    Plane3SPtr offset_plane_dst = GeomUtils::offsetPlane(facet_dst->plane(), offset*speed_dst);
+    Plane3SPtr offset_plane_l = GeomUtils::offsetPlane(facet_l->plane(), speed_l*time);
+    Plane3SPtr offset_plane_r = GeomUtils::offsetPlane(facet_r->plane(), speed_r*time);
+    Plane3SPtr offset_plane_src = GeomUtils::offsetPlane(facet_src->plane(), speed_src*time);
+    Plane3SPtr offset_plane_dst = GeomUtils::offsetPlane(facet_dst->plane(), speed_dst*time);
 
 #if 0
     // leaving it here because it's not that intuitive: factoring the intersection of the
@@ -800,7 +800,7 @@ public:
     * returns the shifted position of the facet of a polyhedron
     */
   static Plane3SPtr shiftPlane(const FacetSPtr& facet,
-                               const FT& offset)
+                               const FT& time)
   {
     CGAL_SS3_DEBUG_SPTR(facet);
 
@@ -809,7 +809,7 @@ public:
       facet_speed = std::dynamic_pointer_cast<SkelFacetData>(facet->getData())->getSpeed();
     }
 
-    return GeomUtils::offsetPlane(facet->plane(), facet_speed*offset);
+    return GeomUtils::offsetPlane(facet->plane(), facet_speed*time);
   }
 
   /**
@@ -818,16 +818,16 @@ public:
     * This function is for the main shift in the event loop.
     */
   static void shiftFacets(const PolyhedronSPtr& polyhedron,
-                          const FT& offset,
+                          const FT& time,
                           const bool recompute_positions = true)
   {
-    CGAL_SS3_TRANSF_TRACE("~~~~ Shift polyhedron by " << offset << " [in place]");
+    CGAL_SS3_TRANSF_TRACE("~~~~ Shift polyhedron by " << time << " [in place]");
     CGAL_SS3_DEBUG_SPTR(polyhedron);
 
     typename std::list<FacetSPtr>::iterator it_f = polyhedron->facets().begin();
     while (it_f != polyhedron->facets().end()) {
       FacetSPtr facet = *it_f++;
-      Plane3SPtr offset_plane = shiftPlane(facet, offset);
+      Plane3SPtr offset_plane = shiftPlane(facet, time);
       facet->setPlane(offset_plane);
     }
 
@@ -839,7 +839,7 @@ public:
       CGAL_assertion(vertex->degree() == 3);
 
       Point3SPtr old_point = vertex->getPoint(), new_point;
-      if (offset != 0 || recompute_positions) {
+      if (time != 0 || recompute_positions) {
         CGAL_assertion_code(bool ok =)
         resetPoint(vertex);
         CGAL_assertion(ok);
@@ -852,9 +852,9 @@ public:
   * Negative offset points to the interior of the polyhedron.
   */
   static bool shiftFacetsDegree1(const PolyhedronSPtr& polyhedron,
-                                 const FT& offset)
+                                 const FT& time)
   {
-    CGAL_SS3_TRANSF_TRACE("~~~~ Shift polyhedron by " << offset << " [in place w/ degree 1]");
+    CGAL_SS3_TRANSF_TRACE("~~~~ Shift polyhedron by " << time << " [in place w/ degree 1]");
     CGAL_SS3_DEBUG_SPTR(polyhedron);
 
     // Maps to store shifted planes and points
@@ -862,7 +862,7 @@ public:
     std::unordered_map<VertexSPtr, Point3SPtr> vertex_to_shifted_point;
 
     for (const FacetSPtr& facet : polyhedron->facets()) {
-      Plane3SPtr offset_plane = shiftPlane(facet, offset);
+      Plane3SPtr offset_plane = shiftPlane(facet, time);
       facet_to_shifted_plane[facet] = offset_plane;
     }
 
@@ -895,10 +895,10 @@ public:
     for (const VertexSPtr& vertex : polyhedron->vertices()) {
       if (vertex->degree() == 1) {
         EdgeSPtr edge = nullptr;
-        unsigned int i = 0;
+        CGAL_assertion_code(unsigned int i = 0;)
         for (EdgeWPtr edge_wptr : vertex->edges()) {
           if ((edge = edge_wptr.lock())) {
-            ++i;
+            CGAL_assertion_code(++i;)
           }
         }
         CGAL_assertion(i == 1);
