@@ -384,14 +384,13 @@ public:
       } else if (s_vertex_splitter.compare("ConvexVertexSplitter") == 0) {
         vertex_splitter_ = ConvexVertexSplitter::create();
       } else {
-        CGAL_SS3_SPLITTER_TRACE("Warning: '" << s_vertex_splitter << "' not found.");
-        CGAL_SS3_SPLITTER_TRACE("Using 'ConvexVertexSplitter'.");
-        vertex_splitter_ = ConvexVertexSplitter::create();
+        CGAL_SS3_SPLITTER_TRACE("Warning: option '" << s_vertex_splitter << "' not found.");
+        CGAL_SS3_SPLITTER_TRACE("Using 'CombiVertexSplitter'.");
+        vertex_splitter_ = CombiVertexSplitter::create();
       }
     } else {
-      vertex_splitter_ = ConvexVertexSplitter::create();
+      vertex_splitter_ = CombiVertexSplitter::create();
     }
-    skel_result_->appendConfig("vertex_splitter="+vertex_splitter_->toString()+"; ");
   }
 
   void initEdgeEvent()
