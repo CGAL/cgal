@@ -494,7 +494,7 @@ public:
     auto dump_facet = [](const std::string& filename, const FacetSPtr& f)
     {
       using CDT2_Tag = CGAL::No_constraint_intersection_tag; // CGAL::Exact_intersections_tag;
-      auto pcdt = constructFacetTriangulation<CDT2_Tag>(f);
+      auto pcdt = Transformation::template constructFacetTriangulation<CDT2_Tag>(f);
 
       using PCDT = decltype(pcdt);
       using PCDT_VH = typename PCDT::Vertex_handle;
