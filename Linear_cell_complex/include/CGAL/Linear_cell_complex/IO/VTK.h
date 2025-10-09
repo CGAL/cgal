@@ -94,7 +94,7 @@ bool write_VTK(const char* filename,
 
 // "Advanced" versions with functors
 template <typename LCC, typename PointFunctor, typename CellFunctor>
-bool write_VTK_with_fct(const char* filename, const LCC& alcc, 
+bool write_VTK_with_fct(const char* filename, const LCC& alcc,
                         PointFunctor ptval, CellFunctor cellval);
 
 // ============================================================================
