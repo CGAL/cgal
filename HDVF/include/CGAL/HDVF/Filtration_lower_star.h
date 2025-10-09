@@ -59,7 +59,7 @@ std::function<double(const std::vector<double>&)> f_z = [](const std::vector<dou
 
 /** \brief Degree function from a coordinates to scalar map. */
 template<typename ChainComplex>
-std::function<double(size_t)>  deg_fun (const ChainComplex& complex, std::function<double(const std::vector<double>&)>& f)
+std::function<double(size_t)>  degree_function (const ChainComplex& complex, std::function<double(const std::vector<double>&)>& f)
 {
     std::function<double(size_t)> deg_fun_f = [&complex, &f](size_t i)
     {
@@ -131,14 +131,14 @@ public:
 
     /*! \brief Constructor from a function mapping vertices to degrees.
      *
-     * The constructor computes all cell degrees as the minimum of the degrees of their vertices (obtained through `deg_fun`) and sorts all the cells of the complex to fulfill the filtration ordering constraints.
+     * The constructor computes all cell degrees as the minimum of the degrees of their vertices (obtained through `degree_function`) and sorts all the cells of the complex to fulfill the filtration ordering constraints.
      *
      * \param[in] K Constant reference to the underlying complex.
-     * \param[in] deg_fun Function mapping vertices of `K` to their degree.
+     * \param[in] degree_function Function mapping vertices of `K` to their degree.
      */
-    Filtration_lower_star(const ChainComplex& K, std::function<Degree(size_t)>& deg_fun) : Filtration_parent(K)
+    Filtration_lower_star(const ChainComplex& K, std::function<Degree(size_t)>& degree_function) : Filtration_parent(K)
     {
-        star_filtration(deg_fun);
+        star_filtration(degree_function);
     }
 
 
@@ -150,7 +150,7 @@ protected:
 
     /*! \brief Function building the filtration from a function mapping vertices to their degree.
      */
-    void star_filtration(std::function<Degree(size_t)>& deg_fun) ;
+    void star_filtration(std::function<Degree(size_t)>& degree_function) ;
 };
 
 
@@ -220,12 +220,12 @@ void Filtration_lower_star<ChainComplex, Degree>::star_filtration(const std::vec
 }
 
 template <typename ChainComplex, typename Degree>
-void Filtration_lower_star<ChainComplex, Degree>::star_filtration(std::function<Degree(size_t)>& deg_fun)
+void Filtration_lower_star<ChainComplex, Degree>::star_filtration(std::function<Degree(size_t)>& degree_function)
 {
     std::vector<Degree> deg ;
     for (size_t i=0; i<this->_K.number_of_cells(0); ++i)
     {
-        deg.push_back(deg_fun(i)) ;
+        deg.push_back(degree_function(i)) ;
     }
     star_filtration(deg) ;
 }

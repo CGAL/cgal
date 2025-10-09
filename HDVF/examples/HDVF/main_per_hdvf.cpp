@@ -47,7 +47,7 @@ using Degree = double ;
 
 // Example returning x+z value for each vertex
 template<typename Complex>
-std::function<Degree(int)>  deg_fun (const Complex& complex)
+std::function<Degree(int)>  degree_function (const Complex& complex)
 {
     std::function<Degree(int)> deg_fun_f = [&complex](int i)
     {
@@ -135,19 +135,19 @@ FiltrationType& build_filtration(const Complex& complex, const Options& options)
 #ifndef CUST_FILTRATION
     // Standard lower star filtration along x,y or z
     if (options.star_filtr == StarFiltrStd::FiltrX)
-        deg_function = (deg_fun(complex, CGAL::Homological_discrete_vector_field::f_x)) ;
+        deg_function = (degree_function(complex, CGAL::Homological_discrete_vector_field::f_x)) ;
     else if (options.star_filtr == StarFiltrStd::FiltrY)
-        deg_function = (deg_fun(complex, CGAL::Homological_discrete_vector_field::f_y)) ;
+        deg_function = (degree_function(complex, CGAL::Homological_discrete_vector_field::f_y)) ;
     else if (options.star_filtr == StarFiltrStd::FiltrZ)
-        deg_function = (deg_fun(complex, CGAL::Homological_discrete_vector_field::f_z)) ;
+        deg_function = (degree_function(complex, CGAL::Homological_discrete_vector_field::f_z)) ;
     else
     {
         std::cout << "Unknown lower start filtration" << std::endl ;
         throw("Unknown lower start filtration") ;
     }
 #else
-    // Use deg_fun defined above
-    deg_function = (deg_fun(complex)) ;
+    // Use degree_function defined above
+    deg_function = (degree_function(complex)) ;
 #endif
 
     std::cout << "----> START building filtration" << std::endl ;

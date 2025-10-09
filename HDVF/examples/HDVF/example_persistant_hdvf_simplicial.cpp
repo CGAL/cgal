@@ -48,7 +48,7 @@ int main(int argc, char **argv)
          */
         {
             // --- First: build the function mapping the index of a vertex to its degree (here the "z" coordinate of a vertex
-            std::function<Degree(size_t)> f(CGAL::Homological_discrete_vector_field::deg_fun(complex, CGAL::Homological_discrete_vector_field::f_z));
+            std::function<Degree(size_t)> f(CGAL::Homological_discrete_vector_field::degree_function(complex, CGAL::Homological_discrete_vector_field::f_z));
 
             // -- Second: build the associated lower star filtration
             FiltrationType filtration(complex, f);
