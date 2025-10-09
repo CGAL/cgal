@@ -26,7 +26,7 @@
 namespace CGAL {
 namespace IO {
 
-/** \file VTK.h
+/*
  * Functions to import/export 3D Linear_cell_complex from/to VTK legacy ASCII
  * format.
  *
@@ -50,10 +50,8 @@ namespace IO {
 //                              Declarations
 // ============================================================================
 
-/**
- * \brief Read a VTK legacy ASCII file and load it into a 3D
- *        Linear_cell_complex.
- * \ingroup PkgLinearCellComplexExamples
+/*
+ * Read a VTK legacy ASCII file and load it into a 3D Linear_cell_complex.
  *
  * \tparam LCC must be a Linear_cell_complex_for_combinatorial_map<3,3>
  * \tparam VertexScalarType Type for vertex scalar data (default: float)
@@ -68,14 +66,13 @@ namespace IO {
  */
 template <typename LCC, typename VertexScalarType,
           typename VolumeScalarType>
-bool read_VTK(LCC& alcc,
-              const char* filename,
+bool read_VTK(const char* filename,
+              LCC& alcc,
               std::vector<VertexScalarType>* vertex_scalars,
               std::vector<VolumeScalarType>* volume_scalars);
 
-/**
- * \brief Write a 3D Linear_cell_complex to a VTK legacy ASCII file.
- * \ingroup PkgLinearCellComplexExamples
+/*
+ * Write a 3D Linear_cell_complex to a VTK legacy ASCII file.
  *
  * \tparam LCC must be a Linear_cell_complex_for_combinatorial_map<3,3>
  * \tparam VertexScalarType Type for vertex scalar data (default: float)
@@ -90,14 +87,14 @@ bool read_VTK(LCC& alcc,
  */
 template <typename LCC, typename VertexScalarType,
           typename VolumeScalarType>
-bool write_VTK(const LCC& alcc,
-               const char* filename,
+bool write_VTK(const char* filename,
+               const LCC& alcc,
                const std::vector<VertexScalarType>* vertex_scalars,
                const std::vector<VolumeScalarType>* volume_scalars);
 
 // "Advanced" versions with functors
 template <typename LCC, typename PointFunctor, typename CellFunctor>
-bool write_VTK_with_fct(const LCC& alcc, const char* filename,
+bool write_VTK_with_fct(const char* filename, const LCC& alcc, 
                         PointFunctor ptval, CellFunctor cellval);
 
 // ============================================================================
@@ -638,7 +635,7 @@ bool read_VTK(LCC& alcc,
       (alcc, filename, nullptr, volume_scalars); }
 ////////////////////////////////////////////////////////////////////////////////////
 template <typename LCC, typename PointFunctor, typename CellFunctor>
-inline bool write_VTK_with_fct(const LCC& alcc, const char* filename,
+inline bool write_VTK_with_fct(const char* filename, const LCC& alcc,
                                PointFunctor pointfct, CellFunctor cellfct)
 {
   CGAL_assertion(filename!=nullptr);
@@ -664,7 +661,7 @@ inline bool write_VTK_with_fct(const LCC& alcc, const char* filename,
 }
 ////////////////////////////////////////////////////////////////////////////////////
 template <typename LCC, typename VertexScalarType, typename VolumeScalarType>
-bool write_VTK(const LCC& alcc, const char* filename,
+bool write_VTK(const char* filename, const LCC& alcc,
                const std::vector<VertexScalarType>* vertex_scalars,
                const std::vector<VolumeScalarType>* volume_scalars)
 {
@@ -688,27 +685,27 @@ bool write_VTK(const LCC& alcc, const char* filename,
     { return (*volume_scalars)[i]; };
   }
 
-  return write_VTK_with_fct(alcc, filename, vertexfct, cellfct);
+  return write_VTK_with_fct(filename, alcc, vertexfct, cellfct);
 }
 
 template <typename LCC>
-bool write_VTK(const LCC& alcc, const char* filename)
+bool write_VTK(const char* filename, const LCC& alcc)
 {
   return write_VTK<LCC, float, float>(alcc, filename, nullptr, nullptr);
 }
 
 template <typename LCC, typename VertexScalarType>
-bool write_VTK(const LCC& alcc, const char* filename,
-    const std::vector<VertexScalarType>* vertex_scalars)
+bool write_VTK(const char* filename, const LCC& alcc,
+               const std::vector<VertexScalarType>* vertex_scalars)
 {
   return write_VTK<LCC, VertexScalarType, float>(alcc, filename, vertex_scalars,
                                                  nullptr);
 }
 
 template <typename LCC, typename VolumeScalarType>
-bool write_VTK(const LCC& alcc, const char* filename,
-    std::nullptr_t,
-    const std::vector<VolumeScalarType>* volume_scalars)
+bool write_VTK(const char* filename, const LCC& alcc,
+               std::nullptr_t,
+               const std::vector<VolumeScalarType>* volume_scalars)
 {
   return write_VTK<LCC, float, VolumeScalarType>(alcc, filename, nullptr,
                                                  volume_scalars);

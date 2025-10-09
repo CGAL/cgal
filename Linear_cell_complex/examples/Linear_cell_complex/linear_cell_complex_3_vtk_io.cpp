@@ -1,14 +1,3 @@
-/*!
-  \ingroup PkgLinearCellComplexExamples
-  \brief Minimal example: read a `.3map` file, compute per-volume vertex count, and write to VTK.
-
-  This example loads a 3D linear cell complex from a `.3map` file using
-  \cgal function `CGAL::load_combinatorial_map()`. It computes for each
-  3-cell (volume) the number of incident vertices (0-cells), stores these values
-  in a `std::vector<std::size_t>`, and writes the result to a `.vtk` file with
-  `CGAL::IO::write_VTK()`, using the computed values as scalars for each volume.
-*/
-
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/Linear_cell_complex/IO/VTK.h>
 #include <CGAL/Combinatorial_map_save_load.h>
@@ -29,7 +18,7 @@ int main()
       volume_scalars.push_back(nbv);
     }
 
-    if(!CGAL::IO::write_VTK(lcc, "beam-with-mixed-cells.vtk", nullptr,
+    if(!CGAL::IO::write_VTK("beam-with-mixed-cells.vtk", lcc, nullptr,
                             &volume_scalars))
     { return EXIT_FAILURE; }
 
