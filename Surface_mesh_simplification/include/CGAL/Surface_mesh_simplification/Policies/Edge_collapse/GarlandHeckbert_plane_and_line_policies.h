@@ -43,7 +43,7 @@ struct GH_helper{
                                                        NamedParameters,
                                                        Vertex_normal_dmap>::type    Vertex_normal_map;
 
-  const NamedParameters &np;
+  NamedParameters np;
   GH_helper(const NamedParameters &np_):np(np_){ }
 
   Vertex_normal_map vnm(TriangleMesh& tmesh) const{

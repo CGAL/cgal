@@ -31,7 +31,6 @@ namespace internal {
 This policy is not useful on its own; it is designed to be combined with another policy using a small weight.
 Therefore, it is kept internal.
 */
-
 template <typename TriangleMesh, typename GeomTraits>
 class Line_quadric_calculator
 {

@@ -25,9 +25,7 @@ namespace internal {
 This policy was created to combine the line policy with the existing ones.
 The composition of some quadrics is always invertible, but this is not necessarily true for all composed quadrics.
 `invertible` boolean parameter reflects this distinction.
-
 */
-
 template <typename TriangleMesh, typename GeomTraits, typename Quadric_calculator_1, typename Quadric_calculator_2, bool invertible=false>
 class Composed_quadric_calculator
 {

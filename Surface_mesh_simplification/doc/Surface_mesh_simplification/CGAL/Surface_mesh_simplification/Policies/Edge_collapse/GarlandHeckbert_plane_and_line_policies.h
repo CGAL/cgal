@@ -5,12 +5,12 @@ namespace Surface_mesh_simplification {
 \ingroup PkgSurfaceMeshSimplificationRef
 
 The class `GarlandHeckbert_plane_and_line_policies` regroups the cost and placement policies
-based on the Garland-Heckbert "Plane and line" strategy of Liu and colleagues \cgalCite{liu2025linequadrics}
+based on the Garland-Heckbert "Plane and line" strategy of Liu and colleagues \cgalCite{liu2025linequadrics}.
 
-This policy enhances the original Garland-Heckbert quadric error metrics,
+This policy enhances the original Garland-Heckbert quadric error metrics
 by adding to the cost the distance to the line passing through the input vertices and aligned with their normals.
-Compared to the "classic" plane strategy, this strategy improves the speed and the quality of the result.
-(Section \ref SurfaceMeshSimplificationGarlandHeckbertStrategy).
+Compared to the "classic" plane strategy, this strategy improves the speed and the quality of the result
+(see Section \ref SurfaceMeshSimplificationGarlandHeckbertStrategy).
 
 \note Both the cost and the placement policies must be used together as they internally use
 and share information associating quadrics to vertices.
@@ -50,6 +50,7 @@ public:
 
   \param tmesh the triangle mesh
   \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+
   \cgalNamedParamsBegin
     \cgalParamNBegin{vertex_normal_map}
       \cgalParamDescription{a property map associating to each vertex of `tmesh` a normal direction for that vertex}
@@ -57,20 +58,17 @@ public:
                      as key type and `Vector_3` as value type}
       \cgalParamDefault{an internal map filled using `CGAL::Polygon_mesh_processing::compute_vertex_normals`}
     \cgalParamNEnd
-
     \cgalParamNBegin{discontinuity_multiplier}
       \cgalParamDescription{a multiplier of the error value for boundary edges to preserve the boundaries}
       \cgalParamType{double}
       \cgalParamDefault{100}
     \cgalParamNEnd
-
     \cgalParamNBegin{line_policies_weight}
-      \cgalParamDescription{a value that define the weight of the line policies compare to the plane policies}
+      \cgalParamDescription{a value that defines the weight of the line policies compared to the plane policies}
       \cgalParamType{double}
       \cgalParamDefault{0.01}
     \cgalParamNEnd
   \cgalNamedParamsEnd
-
   */
   template<typename NamedParameters = parameters::Default_named_parameters>
   GarlandHeckbert_plane_and_line_policies(TriangleMesh& tmesh, const NamedParameters &np = parameters::default_values());
@@ -88,7 +86,7 @@ public:
 };
 
 /*!
-Creates a Garland-Heckbert plane and line policies object
+creates a Garland-Heckbert plane and line policies object.
 */
 template<typename TriangleMesh, typename NamedParameters = parameters::Default_named_parameters>
 GarlandHeckbert_plane_and_line_policies make_GarlandHeckbert_plane_and_line_policies(TriangleMesh& tmesh,
