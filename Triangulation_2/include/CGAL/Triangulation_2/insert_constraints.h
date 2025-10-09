@@ -90,7 +90,7 @@ namespace CGAL {
   }
 
 
-    template <class T, class ConstraintIterator, bool check_duplicates = false0>
+    template <class T, class ConstraintIterator, bool check_duplicates = false>
     std::size_t insert_constraints(T& t,
                                    ConstraintIterator first,
                                    ConstraintIterator beyond)
