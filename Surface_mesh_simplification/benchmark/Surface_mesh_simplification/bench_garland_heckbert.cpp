@@ -81,7 +81,7 @@ double collapse_gh(Surface_mesh& mesh,
   return (std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time).count()) / 1000.;
 }
 
-std::string getFileNameWithoutExtension(const std::string& filePath) 
+std::string getFileNameWithoutExtension(const std::string& filePath)
 {
   std::filesystem::path path(filePath);
   return path.stem().string();  // 'stem' gets the filename without extension
