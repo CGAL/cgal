@@ -288,6 +288,13 @@ The following example shows the use of \link GenericMap::insert_cell_1_between_t
 Result of the run of the linear_cell_complex_3_insert program. A window shows the 3D cube where one face has a hole.
 \cgalFigureEnd
 
+\subsection Linear_cell_complexWriteVTK Write a Linear Cell Complex in a VTK File
+\anchor ssecLCCWriteVtK
+
+This example loads a 3D linear cell complex from a `.3map` file using \cgal function `CGAL::load_combinatorial_map()`. It computes for each 3-cell (volume) the number of incident vertices (0-cells), stores these values in a `std::vector<std::size_t>`, and writes the result to a `.vtk` file with  `CGAL::IO::write_VTK()`, using the computed values as scalars for each volume.
+
+\cgalExample{Linear_cell_complex/linear_cell_complex_3_vtk_io.cpp}
+
 \section Linear_cell_complexDesign Design and Implementation History
 
 This package was developed by Guillaume Damiand, with the help of Andreas Fabri, S&eacute;bastien Loriot and Laurent Rineau. Monique Teillaud and Bernd G&auml;rtner contributed to the manual.
