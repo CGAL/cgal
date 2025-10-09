@@ -68,7 +68,7 @@ inline std::ostream& operator<<(std::ostream &out, const std::vector<Cell_pair>&
 
  The class `Hdvf_core` is the core implementation of homological discrete vector fields (HDVF for short). The ring of coefficients for homology computation must be a model of `IntegralDomainWithoutDivision`.
 
- An enumeration `PSC_flag` is defined in the `HDVF` namespace and the `Hdvf_core` class maps each cell to one of the flags (namely `PRIMARY`, `SECONDARY`, `CRITICAL`). The NONE `PSC_flag` is used in child classes (such as `Hdvf_duality`) when computing relative homology on a sub-complex.
+ An enumeration `PSC_flag` is defined in the `Homological_discrete_vector_field` namespace and the `Hdvf_core` class maps each cell to one of the flags (namely `PRIMARY`, `SECONDARY`, `CRITICAL`). The NONE `PSC_flag` is used in child classes (such as `Hdvf_duality`) when computing relative homology on a sub-complex.
  The `PSC_flag` of each cell is stored in an appropriate structure and getters are provided to access to this information.
 
  The `Hdvf_core` class stores the associated reduction in sparse matrices: row-major for \f$f\f$, and column-major for \f$g\f$, \f$h\f$ and \f$\partial'\f$. Getters are provided to access this information. However, according to the chosen HDVF computation option (`OPT_BND`, `OPT_F`, `OPT_G`, `OPT_FULL`) the reduction can be computed only partially (and thus faster).
