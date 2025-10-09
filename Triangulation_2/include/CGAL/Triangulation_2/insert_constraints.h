@@ -90,11 +90,10 @@ namespace CGAL {
   }
 
 
-    template <class T,class ConstraintIterator>
+    template <class T, class ConstraintIterator, bool check_duplicates = false0>
     std::size_t insert_constraints(T& t,
                                    ConstraintIterator first,
-                                   ConstraintIterator beyond,
-                                   bool check_duplicates = false)
+                                   ConstraintIterator beyond)
   {
     typedef typename T::Point Point;
     typedef typename T::Point Point;
@@ -111,11 +110,10 @@ namespace CGAL {
     for (std::size_t k=0; k < nb_segments; ++k)
       segment_indices.push_back( std::make_pair(2*k,2*k+1) );
 
-    return insert_constraints( t,
-                               points,
-                               segment_indices.begin(),
-                               segment_indices.end(),
-                               check_duplicates);
+    return insert_constraints<check_duplicates>( t,
+                                                 points,
+                                                 segment_indices.begin(),
+                                                 segment_indices.end());
   }
 
 
