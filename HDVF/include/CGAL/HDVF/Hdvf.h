@@ -1021,8 +1021,8 @@ void Hdvf<ChainComplex>::R(size_t pi, size_t sigma, int q) {
         H21 /= std::vector<size_t>({sigma}); // Remove row sigma from H21
 
         // Remove the corresponding row and column from this->_H_col
-        del_row(this->_H_col[q], sigma); // Remove row sigma from this->_H_col[q]
-        del_column(this->_H_col[q], pi); // Remove column pi from this->_H_col[q]
+        remove_row(this->_H_col[q], sigma); // Remove row sigma from this->_H_col[q]
+        remove_column(this->_H_col[q], pi); // Remove column pi from this->_H_col[q]
 
         //---------------------------------------------- Submatrices of F -----------------------------------------------------
 
@@ -1030,7 +1030,7 @@ void Hdvf<ChainComplex>::R(size_t pi, size_t sigma, int q) {
         typename HDVF_parent::Column_chain F11 = OSM::get_column(this->_F_row[q], pi); // F11 is the column chain from this->_F_row[q] at index pi
 
         // Remove the column pi from this->_F_row
-        del_column(this->_F_row[q], pi);
+        remove_column(this->_F_row[q], pi);
 
         //--------------------------------------------- Submatrices of G ------------------------------------------------------
 
@@ -1038,7 +1038,7 @@ void Hdvf<ChainComplex>::R(size_t pi, size_t sigma, int q) {
         typename HDVF_parent::Row_chain G11 = OSM::get_row(this->_G_col[q + 1], sigma); // G11 is the row chain from this->_G_col[q+1] at index sigma
 
         // Remove the row sigma from this->_G_col
-        del_row(this->_G_col[q + 1], sigma);
+        remove_row(this->_G_col[q + 1], sigma);
 
         //--------------------------------------------- Update matrices -------------------------------------------------------
 
@@ -1142,13 +1142,13 @@ void Hdvf<ChainComplex>::M(size_t pi, size_t gamma, int q) {
         F21 /= std::vector<size_t>({gamma}); // Remove row gamma from F21
 
         // Remove the corresponding row and column from this->_F_row
-        del_row(this->_F_row[q], gamma); // Remove row gamma from this->_F_row[q]
-        del_column(this->_F_row[q], pi); // Remove column pi from this->_F_row[q]
+        remove_row(this->_F_row[q], gamma); // Remove row gamma from this->_F_row[q]
+        remove_column(this->_F_row[q], pi); // Remove column pi from this->_F_row[q]
 
         //--------------------------------------------- Submatrices of G ------------------------------------------------------
 
         // Extract the relevant column chain from this->_G_col
-        del_column(this->_G_col[q], gamma); // Remove column gamma from this->_G_col[q]
+        remove_column(this->_G_col[q], gamma); // Remove column gamma from this->_G_col[q]
 
         //---------------------------------------------- Submatrices of H -----------------------------------------------------
 
@@ -1156,20 +1156,20 @@ void Hdvf<ChainComplex>::M(size_t pi, size_t gamma, int q) {
         typename HDVF_parent::Column_chain H11(OSM::get_column(this->_H_col[q], pi)); // H11 is the column chain from this->_H_col[q] at index pi
 
         // Remove the column pi from this->_H_col
-        del_column(this->_H_col[q], pi);
+        remove_column(this->_H_col[q], pi);
 
         //--------------------------------------------- Submatrices of DD_q+1 ------------------------------------------------------
 
         // For DD_q+1 and DD_q:
         // Extract the relevant row chains from this->_DD_col
         typename HDVF_parent::Row_chain D11(OSM::get_row(this->_DD_col[q+1], gamma)); // D11 is the row chain from this->_DD_col[q+1] at index gamma
-        del_row(this->_DD_col[q + 1], gamma); // Remove row gamma from this->_DD_col[q + 1]
+        remove_row(this->_DD_col[q + 1], gamma); // Remove row gamma from this->_DD_col[q + 1]
 
         //--------------------------------------------- Submatrices of DD ------------------------------------------------------
 
         // DD_q (corresponds to the column matrix of this->_DD_col)
         if (q > 0)
-            del_column(this->_DD_col[q], gamma); // Remove column gamma from this->_DD_col[q]
+            remove_column(this->_DD_col[q], gamma); // Remove column gamma from this->_DD_col[q]
 
         //--------------------------------------------- Update matrices -------------------------------------------------------
 
@@ -1259,15 +1259,15 @@ void Hdvf<ChainComplex>::W(size_t sigma, size_t gamma, int q) {
         G21 /= std::vector<size_t>({sigma}); // Remove row sigma from G21
 
         // Remove the corresponding row and column from this->_G_col
-        del_row(this->_G_col[q], sigma); // Remove row sigma from this->_G_col[q]
-        del_column(this->_G_col[q], gamma); // Remove column gamma from this->_G_col[q]
+        remove_row(this->_G_col[q], sigma); // Remove row sigma from this->_G_col[q]
+        remove_column(this->_G_col[q], gamma); // Remove column gamma from this->_G_col[q]
 
         //---------------------------------------------- Submatrices of F -----------------------------------------------------
 
         // Extract the row chain from this->_F_row
 
         // Remove the row gamma from this->_F_row
-        del_row(this->_F_row[q], gamma);
+        remove_row(this->_F_row[q], gamma);
 
         //--------------------------------------------- Submatrices of H ------------------------------------------------------
 
@@ -1275,7 +1275,7 @@ void Hdvf<ChainComplex>::W(size_t sigma, size_t gamma, int q) {
         typename HDVF_parent::Row_chain H11(OSM::get_row(this->_H_col[q-1], sigma)); // H11 is the row chain from this->_H_col[q] at index sigma
 
         // Remove the row sigma from this->_H_col
-        del_row(this->_H_col[q-1], sigma);
+        remove_row(this->_H_col[q-1], sigma);
 
         //--------------------------------------------- Submatrices of DD_q+1 ------------------------------------------------------
 
@@ -1283,7 +1283,7 @@ void Hdvf<ChainComplex>::W(size_t sigma, size_t gamma, int q) {
 
         // Remove the row gamma from this->_DD_col
         if (q < this->_K.dimension())
-            del_row(this->_DD_col[q + 1], gamma);
+            remove_row(this->_DD_col[q + 1], gamma);
 
         //--------------------------------------------- Submatrices of DD_q ------------------------------------------------------
 
@@ -1291,7 +1291,7 @@ void Hdvf<ChainComplex>::W(size_t sigma, size_t gamma, int q) {
         typename HDVF_parent::Column_chain D11_q(OSM::get_column(this->_DD_col[q], gamma)); // D11_q is the column chain from this->_DD_col[q] at index gamma
 
         // Remove the column gamma from this->_DD_col
-        del_column(this->_DD_col[q], gamma);
+        remove_column(this->_DD_col[q], gamma);
 
         //--------------------------------------------- Update matrices -------------------------------------------------------
 
@@ -1378,7 +1378,7 @@ void Hdvf<ChainComplex>::MW(size_t pi, size_t sigma, int q) {
 
         typename HDVF_parent::Row_chain H11q1(OSM::get_row(this->_H_col.at(q-1), sigma)) ;
         // H21_q-1 -> delete H11q1
-        del_row(this->_H_col.at(q-1), sigma) ;
+        remove_row(this->_H_col.at(q-1), sigma) ;
 
         // d(pi)
 
@@ -1406,13 +1406,13 @@ void Hdvf<ChainComplex>::MW(size_t pi, size_t sigma, int q) {
 
         typename HDVF_parent::Column_chain F11(OSM::get_column(this->_F_row.at(q), pi)) ;
         // F12 -> delete col F11
-        del_column(this->_F_row.at(q), pi) ;
+        remove_column(this->_F_row.at(q), pi) ;
 
         // G_q extractions
 
         typename HDVF_parent::Row_chain G11(OSM::get_row(this->_G_col.at(q), sigma)) ;
         // G21 -> dele row G11
-        del_row(this->_G_col.at(q), sigma) ;
+        remove_row(this->_G_col.at(q), sigma) ;
 
         // ----------- Update of the reduction
 

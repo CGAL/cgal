@@ -857,7 +857,7 @@ protected:
         }
         else
         {
-            del_coefficient(i, j);
+            remove_coefficient(i, j);
         }
     }
 public:
@@ -1136,8 +1136,8 @@ public:
     /** @} */
 
 protected:
-    // Protected version of del_column
-    Sparse_matrix& del_column(size_t index) {
+    // Protected version of remove_column
+    Sparse_matrix& remove_column(size_t index) {
         std::vector<size_t> tmp_id{index} ;
         if (StorageFormat == OSM::COLUMN)
         {
@@ -1170,11 +1170,11 @@ public:
      * \return The modified matrix representing the result.
      */
     template <typename _CT, int _CTF>
-    friend Sparse_matrix<_CT, _CTF>& del_column(Sparse_matrix<_CT, _CTF>& matrix, size_t index);
+    friend Sparse_matrix<_CT, _CTF>& remove_column(Sparse_matrix<_CT, _CTF>& matrix, size_t index);
 
 protected:
-    // Protected version of del_row
-    Sparse_matrix& del_row(size_t index)
+    // Protected version of remove_row
+    Sparse_matrix& remove_row(size_t index)
     {
         std::vector<size_t> tmp_id{index};
         if (StorageFormat == OSM::ROW) {
@@ -1206,11 +1206,11 @@ public:
      * \return The modified matrix representing the result.
      */
     template <typename _CT, int _CTF>
-    friend Sparse_matrix<_CT, _CTF>& del_row(Sparse_matrix<_CT, _CTF>& matrix, size_t index);
+    friend Sparse_matrix<_CT, _CTF>& remove_row(Sparse_matrix<_CT, _CTF>& matrix, size_t index);
 
 protected:
-    // Protected version of del_coefficient
-    Sparse_matrix& del_coefficient(size_t i, size_t j) {
+    // Protected version of remove_coefficient
+    Sparse_matrix& remove_coefficient(size_t i, size_t j) {
         // OSM::COLUMN
         if (StorageFormat == OSM::COLUMN) {
             std::vector<size_t> tmp_id({i}) ;
@@ -1243,7 +1243,7 @@ public:
      * \return The modified matrix representing the result.
      */
     template <typename _CT, int _CTF>
-    friend Sparse_matrix<_CT, _CTF>& del_coefficient(Sparse_matrix<_CT, _CTF>& matrix, size_t i, size_t j);
+    friend Sparse_matrix<_CT, _CTF>& remove_coefficient(Sparse_matrix<_CT, _CTF>& matrix, size_t i, size_t j);
 
     /**
      * \brief Iterator to the index of the first non null chain.
@@ -1813,21 +1813,21 @@ inline _CT get_coefficient(const Sparse_matrix<_CT, _CTF>& matrix, size_t i, siz
 }
 
 template <typename _CT, int _CTF>
-inline Sparse_matrix<_CT, _CTF>& del_column(Sparse_matrix<_CT, _CTF>& matrix, size_t index)
+inline Sparse_matrix<_CT, _CTF>& remove_column(Sparse_matrix<_CT, _CTF>& matrix, size_t index)
 {
-    return matrix.del_column(index);
+    return matrix.remove_column(index);
 }
 
 template <typename _CT, int _CTF>
-inline Sparse_matrix<_CT, _CTF>& del_row(Sparse_matrix<_CT, _CTF>& matrix, size_t index)
+inline Sparse_matrix<_CT, _CTF>& remove_row(Sparse_matrix<_CT, _CTF>& matrix, size_t index)
 {
-    return matrix.del_row(index);
+    return matrix.remove_row(index);
 }
 
 template <typename _CT, int _CTF>
-inline Sparse_matrix<_CT, _CTF>& del_coefficient(Sparse_matrix<_CT, _CTF>& matrix, size_t i, size_t j)
+inline Sparse_matrix<_CT, _CTF>& remove_coefficient(Sparse_matrix<_CT, _CTF>& matrix, size_t i, size_t j)
 {
-    return matrix.del_coefficient(i, j);
+    return matrix.remove_coefficient(i, j);
 }
 
 template <typename _CT>

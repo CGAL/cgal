@@ -275,7 +275,7 @@ int main(int argc, char **argv)
 //    
 //    {
 //        Column_matrix tmp(columnMajor), tmp2;
-//        CGAL::OSM::del_column(tmp, 0) ;
+//        CGAL::OSM::remove_column(tmp, 0) ;
 //        CGAL::OSM::read_matrix(tmp2, "data/test_sparse_matrices/columnMajor_del_col.osm");
 //        
 //        bool bres(tmp == tmp2);
@@ -285,7 +285,7 @@ int main(int argc, char **argv)
 //    
 //    {
 //        Column_matrix tmp(columnMajor), tmp2;
-//        CGAL::OSM::del_row(tmp, 1) ;
+//        CGAL::OSM::remove_row(tmp, 1) ;
 //        CGAL::OSM::read_matrix(tmp2, "data/test_sparse_matrices/columnMajor_del_row.osm");
 //        bool bres(tmp == tmp2);
 //        std::cerr << "deletion row 1 in columnMajor: " << bres << std::endl ;
@@ -296,7 +296,7 @@ int main(int argc, char **argv)
 //    
 //    {
 //        Row_matrix tmp(rowMajor), tmp2;
-//        CGAL::OSM::del_row(tmp, 1) ;
+//        CGAL::OSM::remove_row(tmp, 1) ;
 //        CGAL::OSM::read_matrix(tmp2, "data/test_sparse_matrices/rowMajor_del_row.osm");
 //        bool bres(tmp==tmp2);
 //        std::cerr << "deletion row 1 in rowMajor: " << bres << std::endl ;
@@ -305,7 +305,7 @@ int main(int argc, char **argv)
 //    
 //    {
 //        Row_matrix tmp(rowMajor), tmp2;
-//        CGAL::OSM::del_column(tmp, 0) ;
+//        CGAL::OSM::remove_column(tmp, 0) ;
 //        CGAL::OSM::read_matrix(tmp2, "data/test_sparse_matrices/rowMajor_del_column.osm");
 //        bool bres(tmp == tmp2);
 //        std::cerr << "deletion column 0 in rowMajor: " << bres << std::endl ;
@@ -321,7 +321,7 @@ int main(int argc, char **argv)
 //    {
 //        Column_matrix tmp(columnMajor), res, tmp2 ;
 //        
-//        CGAL::OSM::del_coefficient(tmp, 1, 0);
+//        CGAL::OSM::remove_coefficient(tmp, 1, 0);
 //        CGAL::OSM::set_coefficient(tmp, 2, 2, -2) ;
 //        
 //        res = tmp + columnMajor ;
@@ -343,7 +343,7 @@ int main(int argc, char **argv)
 //    {
 //        Column_matrix tmp(columnMajor), res, tmp2 ;
 //        
-//        CGAL::OSM::del_coefficient(tmp, 1, 0);
+//        CGAL::OSM::remove_coefficient(tmp, 1, 0);
 //        CGAL::OSM::set_coefficient(tmp, 2, 2, -2) ;
 //        
 //        res = tmp + rowMajor ;
@@ -364,7 +364,7 @@ int main(int argc, char **argv)
 //    {
 //        Row_matrix tmp(rowMajor), res, tmp2 ;
 //        
-//        CGAL::OSM::del_coefficient(tmp, 1, 0);
+//        CGAL::OSM::remove_coefficient(tmp, 1, 0);
 //        CGAL::OSM::set_coefficient(tmp, 2, 2, -2) ;
 //        
 //        res = tmp + columnMajor ;
@@ -386,7 +386,7 @@ int main(int argc, char **argv)
 //    {
 //        Row_matrix tmp(rowMajor), res, tmp2 ;
 //        
-//        CGAL::OSM::del_coefficient(tmp, 1, 0);
+//        CGAL::OSM::remove_coefficient(tmp, 1, 0);
 //        CGAL::OSM::set_coefficient(tmp, 2, 2, -2) ;
 //        
 //        res = tmp + rowMajor ;
@@ -410,7 +410,7 @@ int main(int argc, char **argv)
 //    {
 //        Column_matrix tmp(columnMajor), res, tmp2 ;
 //        
-//        CGAL::OSM::del_coefficient(tmp, 1, 0);
+//        CGAL::OSM::remove_coefficient(tmp, 1, 0);
 //        CGAL::OSM::set_coefficient(tmp, 2, 2, -2) ;
 //        
 //        res = tmp - columnMajor ;
@@ -432,7 +432,7 @@ int main(int argc, char **argv)
 //    {
 //        Column_matrix tmp(columnMajor), res, tmp2 ;
 //        
-//        CGAL::OSM::del_coefficient(tmp, 1, 0);
+//        CGAL::OSM::remove_coefficient(tmp, 1, 0);
 //        CGAL::OSM::set_coefficient(tmp, 2, 2, -2) ;
 //        
 //        res = tmp - rowMajor ;
@@ -453,7 +453,7 @@ int main(int argc, char **argv)
 //    {
 //        Row_matrix tmp(rowMajor), res, tmp2 ;
 //        
-//        CGAL::OSM::del_coefficient(tmp, 1, 0);
+//        CGAL::OSM::remove_coefficient(tmp, 1, 0);
 //        CGAL::OSM::set_coefficient(tmp, 2, 2, -2) ;
 //        
 //        res = tmp - columnMajor ;
@@ -474,7 +474,7 @@ int main(int argc, char **argv)
 //    {
 //        Row_matrix tmp(rowMajor), res, tmp2 ;
 //        
-//        CGAL::OSM::del_coefficient(tmp, 1, 0);
+//        CGAL::OSM::remove_coefficient(tmp, 1, 0);
 //        CGAL::OSM::set_coefficient(tmp, 2, 2, -2) ;
 //        
 //        res = tmp - rowMajor ;
@@ -499,7 +499,7 @@ int main(int argc, char **argv)
 //        Column_matrix res, tmp2 ;
 //        Column_matrix tmp(columnMajor) ;
 //        
-//        CGAL::OSM::del_coefficient(tmp, 1, 0);
+//        CGAL::OSM::remove_coefficient(tmp, 1, 0);
 //        CGAL::OSM::set_coefficient(tmp, 2, 2, -2) ;
 //        
 //        res = tmp * columnMajor ;
@@ -521,7 +521,7 @@ int main(int argc, char **argv)
 //        Column_matrix res, tmp2 ;
 //        Column_matrix tmp(columnMajor) ;
 //        
-//        CGAL::OSM::del_coefficient(tmp, 1, 0);
+//        CGAL::OSM::remove_coefficient(tmp, 1, 0);
 //        CGAL::OSM::set_coefficient(tmp, 2, 2, -2) ;
 //        
 //        res = tmp * rowMajor ;
@@ -543,7 +543,7 @@ int main(int argc, char **argv)
 //        Column_matrix res, tmp2 ;
 //        Row_matrix tmp(rowMajor) ;
 //        
-//        CGAL::OSM::del_coefficient(tmp, 1, 0);
+//        CGAL::OSM::remove_coefficient(tmp, 1, 0);
 //        CGAL::OSM::set_coefficient(tmp, 2, 2, -2) ;
 //        
 //        res = tmp * columnMajor ;
@@ -566,7 +566,7 @@ int main(int argc, char **argv)
 //        Column_matrix res, tmp2 ;
 //        Row_matrix tmp(rowMajor) ;
 //        
-//        CGAL::OSM::del_coefficient(tmp, 1, 0);
+//        CGAL::OSM::remove_coefficient(tmp, 1, 0);
 //        CGAL::OSM::set_coefficient(tmp, 2, 2, -2) ;
 //        
 //        res = tmp * rowMajor ;
@@ -591,7 +591,7 @@ int main(int argc, char **argv)
 //        Row_matrix res, tmp2 ;
 //        Column_matrix tmp(columnMajor) ;
 //        
-//        CGAL::OSM::del_coefficient(tmp, 1, 0);
+//        CGAL::OSM::remove_coefficient(tmp, 1, 0);
 //        CGAL::OSM::set_coefficient(tmp, 2, 2, -2) ;
 //        
 //        res = tmp % columnMajor ;
@@ -609,7 +609,7 @@ int main(int argc, char **argv)
 //        Row_matrix res, tmp2 ;
 //        Column_matrix tmp(columnMajor) ;
 //        
-//        CGAL::OSM::del_coefficient(tmp, 1, 0);
+//        CGAL::OSM::remove_coefficient(tmp, 1, 0);
 //        CGAL::OSM::set_coefficient(tmp, 2, 2, -2) ;
 //        
 //        res = tmp % rowMajor ;
@@ -626,7 +626,7 @@ int main(int argc, char **argv)
 //        Row_matrix res, tmp2;
 //        Row_matrix tmp(rowMajor);
 //        
-//        CGAL::OSM::del_coefficient(tmp, 1, 0);
+//        CGAL::OSM::remove_coefficient(tmp, 1, 0);
 //        CGAL::OSM::set_coefficient(tmp, 2, 2, -2) ;
 //        
 //        res = tmp % columnMajor ;
@@ -644,7 +644,7 @@ int main(int argc, char **argv)
 //        Row_matrix res, tmp2;
 //        Row_matrix tmp(rowMajor);
 //        
-//        CGAL::OSM::del_coefficient(tmp, 1, 0);
+//        CGAL::OSM::remove_coefficient(tmp, 1, 0);
 //        CGAL::OSM::set_coefficient(tmp, 2, 2, -2) ;
 //        
 //        res = tmp % rowMajor ;

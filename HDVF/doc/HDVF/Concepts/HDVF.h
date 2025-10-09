@@ -141,12 +141,12 @@ typedef Complex::Coefficient_ring Coefficient_ring;
 /*!
  * \brief Type of sparse chains (a model of `SparseChain`).
  */
-    typedef unspecified_type SparseChainType;
+    typedef unspecified_type Sparse_chain;
 
 /*!
  * \brief Type of sparse matrices (a model of `SparseMatrix`).
  */
-    typedef unspecified_type SparseMatrixType;
+    typedef unspecified_type Sparse_matrix;
 
 /*! \brief Structure to represent data for HDVF operations (pairs of cells).
  *
@@ -164,22 +164,22 @@ struct Cell_pair {
 /*!
  Type of column-major chains
  */
-typedef SparseChainType<CoefficientType, CGAL::OSM::COLUMN> Column_chain;
+typedef Sparse_chain<CoefficientType, CGAL::OSM::COLUMN> Column_chain;
 
 /*!
  Type of row-major chains
  */
-typedef SparseChainType<CoefficientType, CGAL::OSM::ROW> Row_chain ;
+typedef Sparse_chain<CoefficientType, CGAL::OSM::ROW> Row_chain ;
 
 /*!
  Type of column-major sparse matrices
  */
-typedef SparseMatrixType<CoefficientType, CGAL::OSM::COLUMN> Column_matrix;
+typedef Sparse_matrix<CoefficientType, CGAL::OSM::COLUMN> Column_matrix;
 
 /*!
  Type of row-major sparse matrices
  */
-typedef SparseMatrixType<CoefficientType, CGAL::OSM::ROW> Row_matrix;
+typedef Sparse_matrix<CoefficientType, CGAL::OSM::ROW> Row_matrix;
 
 /// @}
 

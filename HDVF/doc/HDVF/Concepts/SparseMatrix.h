@@ -381,21 +381,21 @@ public:
      *
      * Removes column of index `i` whatever the `StorageFormat` of the matrix. For column matrices, it just comes to the `\=` operator and for row matrices, it entails a traversal of the matrix.
      */
-    friend SparseMatrix& del_column(SparseMatrix& matrix, size_t index);
+    friend SparseMatrix& remove_column(SparseMatrix& matrix, size_t index);
 
     /**
      * \brief Nullifies a row from the matrix.
      *
      * Removes row of index `i` whatever the `StorageFormat` of the matrix. For row matrices, it just comes to the `\=` operator and for column matrices, it entails a traversal of the matrix.
      */
-    friend SparseMatrix& del_row(SparseMatrix& matrix, size_t index);
+    friend SparseMatrix& remove_row(SparseMatrix& matrix, size_t index);
 
     /**
      * \brief Nullifies a coefficient of the matrix.
      *
      * Removes coefficient on row `i` / column `j` of the matrix.
      */
-    friend SparseMatrix& del_coefficient(SparseMatrix& matrix, size_t i, size_t j);
+    friend SparseMatrix& remove_coefficient(SparseMatrix& matrix, size_t i, size_t j);
 
     /// @}
 
