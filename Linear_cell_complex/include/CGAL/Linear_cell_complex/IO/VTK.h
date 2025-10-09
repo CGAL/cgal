@@ -10,7 +10,7 @@
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 
 #ifndef CGAL_LCC_IO_VTK_H
-#define CGAL_LCC_IO_VTK_H 1
+#define CGAL_LCC_IO_VTK_H
 
 #include <CGAL/Linear_cell_complex_incremental_builder_3.h>
 #include <CGAL/assertions.h>

@@ -261,7 +261,8 @@ public:
     prev_dart =lcc.null_descriptor;
   }
 
-void add_vertex_to_facet(size_type i, std::vector<DH>* tabdarts = nullptr)  {
+  void add_vertex_to_facet(size_type i, std::vector<DH>* tabdarts = nullptr)
+  {
     CGAL_assertion(i<vertex_map.size());
     // std::cout<<i<<"  "<<std::flush;
     DH cur_dart=Add_vertex_to_face<LCC>::run(lcc, vertex_map[i], prev_dart);
@@ -326,13 +327,13 @@ void add_vertex_to_facet(size_type i, std::vector<DH>* tabdarts = nullptr)  {
   }
 
   DH add_facet(std::initializer_list<size_type> l, std::vector<DH>* tabdarts = nullptr)
-{
-  if(tabdarts != nullptr) { tabdarts->reserve(tabdarts->size() + l.size()); }
-  begin_facet();
-  for (size_type i:l)
-  { add_vertex_to_facet(i, tabdarts); }
-  return end_facet();
-}
+  {
+    if(tabdarts != nullptr) { tabdarts->reserve(tabdarts->size() + l.size()); }
+    begin_facet();
+    for (size_type i:l)
+    { add_vertex_to_facet(i, tabdarts); }
+    return end_facet();
+  }
 
   void begin_surface()
   {

@@ -3860,7 +3860,7 @@ namespace CGAL {
     }
 
     /** Test if a volume is a combinatorial tetrahedron.
-     * @param adart an initial dart
+     * @param d1 an initial dart
      * @return true iff the volume containing adart is a combinatorial tetrahedron.
      */
     bool is_volume_combinatorial_tetrahedron(Dart_const_descriptor d1) const
@@ -3953,7 +3953,7 @@ namespace CGAL {
     }
 
     /** Test if a volume is a combinatorial hexahedron.
-     * @param adart an initial dart
+     * @param d1 an initial dart
      * @return true iff the volume containing adart is a combinatorial hexahedron.
      */
     bool is_volume_combinatorial_hexahedron(Dart_const_descriptor d1) const
@@ -4020,7 +4020,7 @@ namespace CGAL {
     }
 
     /** Test if a volume is a combinatorial prism.
-     * @param adart an intial dart
+     * @param d1 an initial dart
      * @return true iff the volume containing adart is a combinatorial prism.
      */
     bool is_volume_combinatorial_prism(Dart_const_descriptor d1) const
@@ -4109,7 +4109,7 @@ namespace CGAL {
     }
 
     /** Test if a volume is a combinatorial pyramid.
-     * @param adart an intial dart
+     * @param d1 an intial dart
      * @return true iff the volume containing adart is a combinatorial pyramid.
      */
     bool is_volume_combinatorial_pyramid(Dart_const_descriptor d1) const
@@ -4196,7 +4196,7 @@ namespace CGAL {
     }
 
     /** Test if a volume is a combinatorial pentagonal prism.
-     * @param adart an initial dart
+     * @param d1 an initial dart
      * @return true iff the volume containing adart is a combinatorial pentagonal prism.
      */
     bool is_volume_combinatorial_pentagonal_prism(Dart_const_descriptor d1) const
@@ -4261,7 +4261,7 @@ namespace CGAL {
     }
 
     /** Test if a volume is a combinatorial hexagonal prism.
-     * @param adart an initial dart
+     * @param d1 an initial dart
      * @return true iff the volume containing adart is a combinatorial hexagonal prism.
      */
     bool is_volume_combinatorial_hexagonal_prism(Dart_const_descriptor d1) const
@@ -4336,8 +4336,8 @@ namespace CGAL {
     }
 
     /** Test if a volume is a combinatorial tetrahedron10.
-     * @param adart an initial dart
-     * @return true iff the volume containing adart is a combinatorial tetrahedron.
+     * @param d1 an initial dart
+     * @return true iff the volume containing adart is a combinatorial tetrahedron10.
      */
     bool is_volume_combinatorial_tetrahedron10(Dart_const_descriptor d1) const
     {

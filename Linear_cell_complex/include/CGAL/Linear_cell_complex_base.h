@@ -717,7 +717,7 @@ namespace CGAL {
                              create_vertex_attribute(p7));
     }
 
-    /** Create an prism given 6 Vertex_attribute_descriptor.
+    /** Create a prism given 6 Vertex_attribute_descriptor.
      *    (6 vertices, 9 edges and 5 facets)
      * \verbatim
      *      3---4
@@ -751,7 +751,7 @@ namespace CGAL {
       return make_combinatorial_prism(d1, d2, d3, d4, d5);
     }
 
-    /** Create an prism given 6 points.
+    /** Create a prism given 6 points.
      * \verbatim
      *      3---4
      *      |\ /|
@@ -783,7 +783,7 @@ namespace CGAL {
                         create_vertex_attribute(p5));
     }
 
-    /** Create an pyramid given 5 Vertex_attribute_descriptor.
+    /** Create a pyramid given 5 Vertex_attribute_descriptor.
      *    (5 vertices, 8 edges and 5 facets)
      * \verbatim
      *       4
@@ -815,7 +815,7 @@ namespace CGAL {
       return make_combinatorial_pyramid(d1, d2, d3, d4, d5);
     }
 
-    /** Create an pyramid given 5 points.
+    /** Create a pyramid given 5 points.
      * \verbatim
      *       4
      *      /|\
