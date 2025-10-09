@@ -545,7 +545,7 @@ const T& operator[] (size_type i) const;
 /*!
 returns the element at pos `i` in the container.
 
-\pre `\link is_used(size_type)const `is_used(i)`\endlink`== true` and \f$ 0 \leq \f$ `i` \f$ < \f$ `capacity()`
+\pre \link is_used(size_type)const `is_used(i)`\endlink`== true` and \f$ 0 \leq \f$ `i` \f$ < \f$ `capacity()`
 */
 
 T& operator[] (size_type i);
