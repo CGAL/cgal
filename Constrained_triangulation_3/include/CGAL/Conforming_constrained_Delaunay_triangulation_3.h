@@ -3908,13 +3908,9 @@ public:
     auto [color_vpmap, _] = tets_intersect_region_mesh.template add_property_map<Face_index, int>("f:patch_id");
 
     for(auto ch : tr().finite_cell_handles()) {
-      auto tetrahedron = typename Geom_traits::Tetrahedron_3{tr().point(ch->vertex(0)), tr().point(ch->vertex(1)),
-                                                             tr().point(ch->vertex(2)), tr().point(ch->vertex(3))};
+      auto tetrahedron = tr().tetrahedron(ch);
       if(!std::any_of(fh_region.begin(), fh_region.end(), [&](auto fh) {
-          const auto v0 = fh->vertex(0)->info().vertex_handle_3d;
-          const auto v1 = fh->vertex(1)->info().vertex_handle_3d;
-          const auto v2 = fh->vertex(2)->info().vertex_handle_3d;
-          const auto triangle = typename Geom_traits::Triangle_3{tr().point(v0), tr().point(v1), tr().point(v2)};
+          const auto triangle = cdt_2.triangle(fh);
           return does_tetrahedron_intersect_triangle_interior(tetrahedron, triangle, tr().geom_traits());
         }))
       {
