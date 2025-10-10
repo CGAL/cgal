@@ -38,7 +38,6 @@ public:
 
 	typedef typename Traits::FT 										Number;
 	typedef typename Root_of_traits<Number>::Root_of_2					Algebraic_number;
-	typedef Fraction_traits<Number> FractionTraits;
 	typedef typename Traits::Complex                                    Complex;
 	typedef typename Traits::Hyperbolic_point_2                         Point;
 	typedef typename Traits::Hyperbolic_Voronoi_point_2                 Voronoi_point;
@@ -54,7 +53,6 @@ public:
 	typedef Hyperbolic_isometry_2<Traits>                               Isometry;
 	typedef Hyperbolic_fundamental_domain_2<Traits>                     Domain;
 	typedef boost::numeric::interval<double>                            Interval;
-	typedef boost::numeric::interval<Number>                  			Number_interval;
 
 	unsigned const NB_SIDES = 3;
 	unsigned const NULL_INDEX = 4;
@@ -124,7 +122,6 @@ private:
 	Number delta(Point const & u, Point const & v) const;
 	Algebraic_number delta(Voronoi_point const & u, Point const & v) const;
 	Voronoi_point circumcenter(Anchor const & anch) const;
-	// Point approx_circumcenter(Voronoi_point const & c, Algebraic_number const & delta_r, double epsilon) const;
 	Point approx_circumcenter(Voronoi_point c, int precision = 1) const;
 	void push_triangle(Dart_descriptor const dart, std::list<Dart_descriptor> & triangles, size_t & triangles_list_mark);
 };
@@ -955,53 +952,6 @@ approx_circumcenter(Voronoi_point c, int p) const
 	Point approx = Point(x, y);
 	return approx;
 }
-
-// template<class Traits>
-// typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Point
-// Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
-// approx_circumcenter(Voronoi_point const & c, Algebraic_number const & delta_r, double epsilon) const
-// {
-// 	Number x = to_double(c.x());
-// 	Number y = to_double(c.y());
-// 	CGAL_assertion(norm(Complex_number(x, y)) < Number(1));
-// 	Point approx = Point(x, y);
-// 	std::cout << "x " << to_double(x) << " y " << to_double(y) << std::endl;
-
-// 	Interval interval_delta_r = Interval(to_interval(delta_r).first, to_interval(delta_r).second);
-// 	Interval sqrt_truc = sqrt(square(interval_delta_r + 1.0) - 1.0);
-// 	Interval cosh_eps = cosh(epsilon);
-// 	Interval sinh_eps = sinh(epsilon);
-// 	Algebraic_number lower_bound = (delta_r + 1) * lower(cosh_eps) + lower(- sinh_eps * sqrt_truc) - 1;
-// 	CGAL_assertion(lower_bound > 0);
-// 	lower_bound = 0.95 * lower_bound;
-// 	CGAL_assertion(lower_bound > 0);
-// 	std::cout << "lower bound " << to_double(lower_bound) << std::endl;
-
-// 	// Newton's method
-// 	Number root = c.x().root();
-// 	if(root == Number(0)) {
-// 		root = c.y().root();
-// 	}
-// 	Number root_approx = 1;
-// 	// std::cout << to_double(root) << std::endl;
-// 	int i = 0;
-// 	Algebraic_number d = delta(c, approx);
-// 	std::cout << to_double(d) << std::endl;
-// 	while( d > lower_bound || norm(Complex_number(x, y)) >= Number(1)) {
-// 		std::cout << "newton " << i << std::endl;
-// 		std::cout << to_double(d) << std::endl;
-// 		std::cout << "x " << to_double(x) << " y " << to_double(y) << std::endl;
-// 		++i;
-// 		root_approx = (root_approx + root / root_approx) / 2;
-// 		x = c.x().a0() + c.x().a1() * root_approx;
-// 		y = c.y().a0() + c.y().a1() * root_approx;
-// 		approx = Point (x, y);
-// 		d = delta(c, approx);
-// 	}
-
-// 	CGAL_assertion(norm(Complex_number(x, y)) < Number(1));
-// 	return approx;
-// }
 
 template<class Traits>
 void
