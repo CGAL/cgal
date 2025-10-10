@@ -4,6 +4,10 @@
 #include <CGAL/Triangulation_on_hyperbolic_surface_2.h>
 #include <boost/numeric/interval.hpp>
 #include <memory>
+#include <CGAL/number_utils.h>
+#include <CGAL/Gmpq.h>
+#include <CGAL/Gmpfr.h>
+#include <type_traits>
 
 
 namespace CGAL{
@@ -34,6 +38,7 @@ public:
 
 	typedef typename Traits::FT 										Number;
 	typedef typename Root_of_traits<Number>::Root_of_2					Algebraic_number;
+	typedef Fraction_traits<Number> FractionTraits;
 	typedef typename Traits::Complex                                    Complex;
 	typedef typename Traits::Hyperbolic_point_2                         Point;
 	typedef typename Traits::Hyperbolic_Voronoi_point_2                 Voronoi_point;
@@ -49,6 +54,7 @@ public:
 	typedef Hyperbolic_isometry_2<Traits>                               Isometry;
 	typedef Hyperbolic_fundamental_domain_2<Traits>                     Domain;
 	typedef boost::numeric::interval<double>                            Interval;
+	typedef boost::numeric::interval<Number>                  			Number_interval;
 
 	unsigned const NB_SIDES = 3;
 	unsigned const NULL_INDEX = 4;
@@ -84,7 +90,7 @@ public:
 	void insert(Point const & query);
 
 	//---------- eps-net methods
-	bool epsilon_net(double const epsilon);
+	bool epsilon_net(double const epsilon, unsigned const p = 0);
 	bool is_epsilon_covering(const double epsilon) const;
 	bool is_epsilon_packing(const double epsilon) const;
 	bool is_epsilon_net(const double epsilon) const;
@@ -118,7 +124,8 @@ private:
 	Number delta(Point const & u, Point const & v) const;
 	Algebraic_number delta(Voronoi_point const & u, Point const & v) const;
 	Voronoi_point circumcenter(Anchor const & anch) const;
-	Point approx_circumcenter(Voronoi_point c) const;
+	// Point approx_circumcenter(Voronoi_point const & c, Algebraic_number const & delta_r, double epsilon) const;
+	Point approx_circumcenter(Voronoi_point c, int precision = 1) const;
 	void push_triangle(Dart_descriptor const dart, std::list<Dart_descriptor> & triangles, size_t & triangles_list_mark);
 };
 
@@ -921,41 +928,80 @@ circumcenter(Anchor const & anch) const
 	return chc(anch.vertices[0], anch.vertices[1], anch.vertices[2]);;
 }
 
-/*template<class Traits>
-typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Point
-Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
-approx_circumcenter(Voronoi_point c) const
-{
-	Number x = to_double(c.x());
-	Number y = to_double(c.y());
-	return Point(x, y);
-}*/
-
 template<class Traits>
 typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Point
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
-approx_circumcenter(Voronoi_point c) const
+approx_circumcenter(Voronoi_point c, int p) const
 {
-	Number x = to_double(c.x());
-	Number y = to_double(c.y());
-
-	// std::cout << "avant: " << c.x() << " " << c.y() << std::endl;
-
-	Number root = c.x().root();
-	if(root == Number(0)) {
-		root = c.y().root();
+	Number x;
+	Number y;
+	if constexpr(std::is_same<Number, Gmpq>::value) {
+		CGAL_precondition(p > 0);
+		p *= 53;
+		Gmpfr a_0 = Gmpfr( c.x().a0().numerator(), p) / Gmpfr( c.x().a0().denominator(), p);
+		Gmpfr a_1 = Gmpfr( c.x().a1().numerator(), p) / Gmpfr( c.x().a1().denominator(), p);
+		Gmpfr r = Gmpfr( c.x().root().numerator(), p) / Gmpfr( c.x().root().denominator(), p);
+		x = a_0 + a_1 * sqrt(r);
+		a_0 = Gmpfr( c.y().a0().numerator(), p) / Gmpfr( c.y().a0().denominator(), p);
+		a_1 = Gmpfr( c.y().a1().numerator(), p) / Gmpfr( c.y().a1().denominator(), p);
+		r = Gmpfr( c.y().root().numerator(), p) / Gmpfr( c.y().root().denominator(), p);
+		y = a_0 + a_1 * sqrt(r);
+	} else {
+		x = to_double(c.x());
+		y = to_double(c.y());
 	}
-	Number root_approx = Number(1);
 
-	for(int i = 0; i < 3 ; ++i) {  // TODO boucle while
-		root_approx = (root_approx + root / root_approx) / 2;
-	}
-
-	x = c.x().a0() + c.x().a1() * root_approx;
-	y = c.y().a0() + c.y().a1() * root_approx;
-	// std::cout << "après: " << x << " " << y << std::endl;
-	return Point(x, y);
+	CGAL_assertion(norm(Complex_number(x, y)) < Number(1));
+	Point approx = Point(x, y);
+	return approx;
 }
+
+// template<class Traits>
+// typename Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::Point
+// Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
+// approx_circumcenter(Voronoi_point const & c, Algebraic_number const & delta_r, double epsilon) const
+// {
+// 	Number x = to_double(c.x());
+// 	Number y = to_double(c.y());
+// 	CGAL_assertion(norm(Complex_number(x, y)) < Number(1));
+// 	Point approx = Point(x, y);
+// 	std::cout << "x " << to_double(x) << " y " << to_double(y) << std::endl;
+
+// 	Interval interval_delta_r = Interval(to_interval(delta_r).first, to_interval(delta_r).second);
+// 	Interval sqrt_truc = sqrt(square(interval_delta_r + 1.0) - 1.0);
+// 	Interval cosh_eps = cosh(epsilon);
+// 	Interval sinh_eps = sinh(epsilon);
+// 	Algebraic_number lower_bound = (delta_r + 1) * lower(cosh_eps) + lower(- sinh_eps * sqrt_truc) - 1;
+// 	CGAL_assertion(lower_bound > 0);
+// 	lower_bound = 0.95 * lower_bound;
+// 	CGAL_assertion(lower_bound > 0);
+// 	std::cout << "lower bound " << to_double(lower_bound) << std::endl;
+
+// 	// Newton's method
+// 	Number root = c.x().root();
+// 	if(root == Number(0)) {
+// 		root = c.y().root();
+// 	}
+// 	Number root_approx = 1;
+// 	// std::cout << to_double(root) << std::endl;
+// 	int i = 0;
+// 	Algebraic_number d = delta(c, approx);
+// 	std::cout << to_double(d) << std::endl;
+// 	while( d > lower_bound || norm(Complex_number(x, y)) >= Number(1)) {
+// 		std::cout << "newton " << i << std::endl;
+// 		std::cout << to_double(d) << std::endl;
+// 		std::cout << "x " << to_double(x) << " y " << to_double(y) << std::endl;
+// 		++i;
+// 		root_approx = (root_approx + root / root_approx) / 2;
+// 		x = c.x().a0() + c.x().a1() * root_approx;
+// 		y = c.y().a0() + c.y().a1() * root_approx;
+// 		approx = Point (x, y);
+// 		d = delta(c, approx);
+// 	}
+
+// 	CGAL_assertion(norm(Complex_number(x, y)) < Number(1));
+// 	return approx;
+// }
 
 template<class Traits>
 void
@@ -972,11 +1018,11 @@ push_triangle(Dart_descriptor const dart, std::list<Dart_descriptor> & triangles
 template<class Traits>
 bool
 Delaunay_triangulation_on_hyperbolic_surface_2<Traits>::
-epsilon_net(double const epsilon)
+epsilon_net(double const epsilon, unsigned const p)
 {
+	CGAL_precondition(is_epsilon_packing(epsilon));
 	Interval const delta_epsilon = cosh(epsilon) - 1;
-	Number const BOUND = Number(upper(delta_epsilon));;
-	CGAL_assertion(is_epsilon_packing(epsilon));
+	Number const BOUND = upper(delta_epsilon);
 	size_t triangles_list_mark = this->combinatorial_map_.get_new_mark();
 		
 	std::list<Dart_descriptor> triangles;
@@ -997,8 +1043,7 @@ epsilon_net(double const epsilon)
 			this->combinatorial_map_.unmark(current_dart, triangles_list_mark);
 			Voronoi_point c = circumcenter(current_anchor);
 			if (delta(c, current_anchor.vertices[0]) > BOUND) {
-				Point approx_c = approx_circumcenter(c);
-				CGAL_assertion(norm(Complex_number(c.x(), c.y())) < Number(1));
+				Point approx_c = approx_circumcenter(c, p);
 				std::vector<Dart_descriptor> darts_of_new_anchors = split_insert(approx_c, current_anchor, true);
 				std::list<Dart_descriptor> darts_to_flip;
 				for (Dart_descriptor const & dart : darts_of_new_anchors) {
