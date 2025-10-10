@@ -13,11 +13,13 @@ typedef Kernel::Vector_3 Vector;
 typedef std::pair<Point, Vector> Pwn;
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 
-int main(void)
+int main(int argc, char** argv)
 {
+  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("points_3/kitten.xyz");
+
   std::vector<Pwn> points;
 
-  if(!CGAL::IO::read_points(CGAL::data_file_path("points_3/kitten.xyz"), std::back_inserter(points),
+  if(!CGAL::IO::read_points(filename, std::back_inserter(points),
                             CGAL::parameters::point_map(CGAL::First_of_pair_property_map<Pwn>())
                                              .normal_map(CGAL::Second_of_pair_property_map<Pwn>())))
   {
@@ -29,6 +31,8 @@ int main(void)
 
   double average_spacing = CGAL::compute_average_spacing<CGAL::Sequential_tag>
     (points, 6, CGAL::parameters::point_map(CGAL::First_of_pair_property_map<Pwn>()));
+
+    std::cout << "Average spacing: " << average_spacing << std::endl;
 
   if (CGAL::poisson_surface_reconstruction_delaunay
       (points.begin(), points.end(),
