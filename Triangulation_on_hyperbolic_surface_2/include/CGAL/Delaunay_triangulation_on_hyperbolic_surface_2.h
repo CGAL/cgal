@@ -83,7 +83,6 @@ public:
 
 	//---------- Delaunay related methods
 	void flip(Dart_descriptor dart);
-	unsigned make_Delaunay();  // private
 	void insert(Point const & query, Anchor & hint);
 	void insert(Point const & query);
 
@@ -115,6 +114,7 @@ private:
 	std::vector<Dart_descriptor> split_insert(Point const & query, Anchor & anch, bool use_visibility = false);
 
 	//---------- Delaunay related methods
+	unsigned make_Delaunay();
 	void push_flippable_edge(Dart_descriptor const dart, std::list<Dart_descriptor> & darts_to_flip);
 	unsigned restore_Delaunay(std::list<Dart_descriptor> & darts_to_flip, std::vector<Dart_descriptor> & flipped_darts);
 
