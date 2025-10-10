@@ -83,7 +83,9 @@
 - \link PkgDrawLinearCellComplex CGAL::add_in_graphics_scene<LCC, BufferType, DrawingFunctor>() \endlink
 
 \cgalCRPSubsection{IO Functions for LCC}
-- `CGAL::IO::Read_VTK<LCC>()`
-- `CGAL::IO::Write_VTK<LCC>()`
+- \link PkgCombinatorialMapsRefIO `std::ostream& operator<< (std::ostream& os, const GenericMap& amap)` \endlink
+- \link PkgCombinatorialMapsRefIO `std::ifstream& operator>> (std::ifstream& is, GenericMap& amap)` \endlink
+- \link PkgLinearCellComplexRefIOVTK `CGAL::IO::Read_VTK<LCC>()` \endlink
+- \link PkgLinearCellComplexRefIOVTK `CGAL::IO::Write_VTK<LCC>()` \endlink
 
 */
