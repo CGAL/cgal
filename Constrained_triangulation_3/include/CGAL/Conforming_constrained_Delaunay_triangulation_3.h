@@ -1589,6 +1589,19 @@ public:
 private:
 
   void set_mark(Vertex_handle v, Vertex_marker m) {
+    if(this->debug_regions()) {
+      std::cerr << " set_mark(" << this->display_vert(v) << ", ";
+      switch(m) {
+        case Vertex_marker::CLEAR: std::cerr << "CLEAR"; break;
+        case Vertex_marker::REGION_BORDER: std::cerr << "REGION_BORDER"; break;
+        case Vertex_marker::REGION_INSIDE: std::cerr << "REGION_INSIDE"; break;
+        case Vertex_marker::CAVITY: std::cerr << "CAVITY"; break;
+        case Vertex_marker::CAVITY_ABOVE: std::cerr << "CAVITY_ABOVE"; break;
+        case Vertex_marker::CAVITY_BELOW: std::cerr << "CAVITY_BELOW"; break;
+        case Vertex_marker::nb_of_markers: CGAL_unreachable(); break;
+      }
+      std::cerr << ")\n";
+    }
     v->ccdt_3_data().set_mark(m);
   }
 
