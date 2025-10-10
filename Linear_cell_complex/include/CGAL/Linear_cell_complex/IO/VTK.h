@@ -597,8 +597,7 @@ bool write_lcc_topo_to_vtk_ascii(std::ostream& os, const LCC& alcc,
 
 ////////////////////////////////////////////////////////////////////////////////////
 template <typename LCC, typename VertexScalarType, typename VolumeScalarType>
-bool read_VTK(LCC& alcc,
-              const char* filename,
+bool read_VTK(const char* filename, LCC& alcc,
               std::vector<VertexScalarType>* vertex_scalars,
               std::vector<VolumeScalarType>* volume_scalars)
 {
@@ -614,25 +613,21 @@ bool read_VTK(LCC& alcc,
 }
 
 template <typename LCC>
-bool read_VTK(LCC& alcc,
-    const char* filename)
-{ return read_VTK<LCC, float, float>
-      (alcc, filename, nullptr, nullptr); }
+bool read_VTK(const char* filename, LCC& alcc)
+{ return read_VTK<LCC, float, float>(filename, alcc, nullptr, nullptr); }
 
 template <typename LCC, typename VertexScalarType>
-bool read_VTK(LCC& alcc,
-    const char* filename,
-    std::vector<VertexScalarType>* vertex_scalars)
+bool read_VTK(const char* filename, LCC& alcc,
+              std::vector<VertexScalarType>* vertex_scalars)
 { return read_VTK<LCC, VertexScalarType, float>
-      (alcc, filename, vertex_scalars, nullptr); }
+      (filename, alcc, vertex_scalars, nullptr); }
 
 template <typename LCC, typename VolumeScalarType>
-bool read_VTK(LCC& alcc,
-    const char* filename,
-    std::nullptr_t,
-    std::vector<VolumeScalarType>* volume_scalars)
+bool read_VTK(const char* filename, LCC& alcc,
+              std::nullptr_t,
+              std::vector<VolumeScalarType>* volume_scalars)
 { return read_VTK<LCC, float, VolumeScalarType>
-      (alcc, filename, nullptr, volume_scalars); }
+      (filename, alcc, nullptr, volume_scalars); }
 ////////////////////////////////////////////////////////////////////////////////////
 template <typename LCC, typename PointFunctor, typename CellFunctor>
 inline bool write_VTK_with_fct(const char* filename, const LCC& alcc,
@@ -691,14 +686,14 @@ bool write_VTK(const char* filename, const LCC& alcc,
 template <typename LCC>
 bool write_VTK(const char* filename, const LCC& alcc)
 {
-  return write_VTK<LCC, float, float>(alcc, filename, nullptr, nullptr);
+  return write_VTK<LCC, float, float>(filename, alcc, nullptr, nullptr);
 }
 
 template <typename LCC, typename VertexScalarType>
 bool write_VTK(const char* filename, const LCC& alcc,
                const std::vector<VertexScalarType>* vertex_scalars)
 {
-  return write_VTK<LCC, VertexScalarType, float>(alcc, filename, vertex_scalars,
+  return write_VTK<LCC, VertexScalarType, float>(filename, alcc, vertex_scalars,
                                                  nullptr);
 }
 
@@ -707,7 +702,7 @@ bool write_VTK(const char* filename, const LCC& alcc,
                std::nullptr_t,
                const std::vector<VolumeScalarType>* volume_scalars)
 {
-  return write_VTK<LCC, float, VolumeScalarType>(alcc, filename, nullptr,
+  return write_VTK<LCC, float, VolumeScalarType>(filename, alcc, nullptr,
                                                  volume_scalars);
 }
 ////////////////////////////////////////////////////////////////////////////////////
