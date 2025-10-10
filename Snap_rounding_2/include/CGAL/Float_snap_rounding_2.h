@@ -18,26 +18,34 @@
 #endif
 #include <CGAL/intersection_2.h>
 #include <CGAL/Surface_sweep_2_algorithms.h>
+#include <CGAL/Arr_segment_traits_2.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Box_intersection_d/Box_d.h>
+#include <CGAL/Snap_rounding_traits_2.h>
+#include <CGAL/Snap_rounding_2.h>
+#include <CGAL/Cartesian_converter.h>
 #include <CGAL/box_intersection_d.h>
 #include <set>
 #include <vector>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel     Epeck;
+using Epeck=CGAL::Exact_predicates_exact_constructions_kernel;
 
 #include  <CGAL/mutex.h>
 
 namespace CGAL {
 
-template<typename Kernel_>
+template<typename Input_Kernel, typename Exact_Kernel=Epeck>
 struct Float_snap_rounding_traits_2{
-  typedef Kernel_ Kernel;
+  typedef Exact_Kernel Kernel;
+
+  typedef Arr_segment_traits_2<Kernel> Traits_2;
 
   typedef typename Kernel::FT        FT;
   typedef typename Kernel::Point_2   Point_2;
-  typedef typename Kernel::Segment_2 Segment_2;
+  // typedef typename Kernel::Segment_2 Segment_2;
+  typedef typename Traits_2::Segment_2 Segment_2;
   typedef typename Kernel::Vector_2  Vector_2;
-  typedef typename Kernel::Line_2  Line_2;
+  typedef typename Kernel::Line_2    Line_2;
 
   typedef typename Kernel::Less_x_2  Less_x_2;
   typedef typename Kernel::Less_y_2  Less_y_2;
@@ -48,32 +56,51 @@ struct Float_snap_rounding_traits_2{
   typedef typename Kernel::Construct_source_2 Construct_source_2;
   typedef typename Kernel::Construct_target_2 Construct_target_2;
 
+  typedef Cartesian_converter<Input_Kernel, Exact_Kernel> Converter_in;
+  typedef Cartesian_converter<Exact_Kernel, Input_Kernel> Converter_out;
+
   struct Squared_round_bound_2{
-    double operator()(const FT &x){
+    double operator()(const FT &x) const{
       double b=std::nextafter(to_interval(x).second - to_interval(x).first, std::numeric_limits<double>::infinity());
       return b*b;
     }
-    double operator()(const Point_2 &p){
+    double operator()(const Point_2 &p) const{
       return (*this)(p.x())+(*this)(p.y());
     }
   };
 
   struct Round_2{
-    double operator()(const FT &x){
+    double operator()(const FT &x) const{
       return to_double(x);
     }
-    Point_2 operator()(const Point_2 &p){
+    Point_2 operator()(const Point_2 &p) const{
       return Point_2((*this)(p.x()),(*this)(p.y()));
     }
   };
 
-  Squared_round_bound_2 squared_round_bound_2_object(){
+  Converter_in converter_to_exact_object() const{
+    return Converter_in();
+  }
+
+  Converter_out converter_from_exact_object() const{
+    return Converter_out();
+  }
+
+  Construct_source_2 construct_source_2_object() const{
+    return Construct_source_2();
+  }
+
+  Construct_target_2 construct_target_2_object() const{
+    return Construct_target_2();
+  }
+
+  Squared_round_bound_2 squared_round_bound_2_object() const{
     return Squared_round_bound_2();
   }
 
   typedef typename Kernel::Compare_squared_distance_2  Compare_squared_distance_2;
-  Compare_squared_distance_2 compare_squared_distance_2_object(){
-    return Kernel::squared_distance_2_object();
+  Compare_squared_distance_2 compare_squared_distance_2_object() const{
+    return Kernel().compare_squared_distance_2_object();
   }
 
   // typedef typename Base_kernel::Segment_2                   Segment_2;
@@ -114,7 +141,7 @@ public:
 }
 
 template <class Concurrency_tag=Sequential_tag, class Traits, class PointsRange , class PolylineRange>
-void double_snap_rounding_2_disjoint(PointsRange &pts, PolylineRange &polylines)
+void double_snap_rounding_2_disjoint(PointsRange &pts, PolylineRange &polylines, const Traits &traits)
 {
   using Kernel =    typename Traits::Kernel;
   using Point_2 =   typename Traits::Point_2;
@@ -142,10 +169,10 @@ void double_snap_rounding_2_disjoint(PointsRange &pts, PolylineRange &polylines)
   using Squared_round_bound_2 = typename Traits::Squared_round_bound_2;
   using Round_2 = typename Traits::Round_2;
 
-  Compare_squared_distance_2 csq_dist_2;
-  Squared_round_bound_2 round_bound;
-  Construct_source_2 source;
-  Construct_target_2 target;
+  Compare_squared_distance_2 csq_dist_2 = traits.compare_squared_distance_2_object();
+  Squared_round_bound_2 round_bound = traits.squared_round_bound_2_object();
+  Construct_source_2 source = traits.construct_source_2_object();
+  Construct_target_2 target = traits.construct_target_2_object();
   Equal_2 equal;
   Round_2 round;
 
@@ -376,12 +403,14 @@ void double_snap_rounding_2_disjoint(PointsRange &pts, PolylineRange &polylines)
 /**
 * ingroup
 *
-* Given a range of segments, compute rounded polylines that are pairwise disjoint in their interior, as induced by the input curves.
+* Given a range of segments, compute rounded subsegments that are pairwise disjoint in their interiors, based on the input curves.
+* The output is a range of polyline with each polyline corresponding to an input segment.
 *
-* @tparam Concurrency_tag enables to choose whether the algorithm is to be run in
-* parallel, if CGAL::Parallel_tag is specified and CGAL has been linked with the Intel TBB library, or sequentially, if CGAL::Sequential_tag - the default value - is specified.
-* @tparam InputIterator iterator of a segment range
-* @tparam OutputContainer inserter of a segment range
+* @tparam Concurrency_tag allows choosing whether the algorithm runs in parallel or sequentially.
+* If `CGAL::Parallel_tag` is specified and CGAL is linked with the Intel TBB library, the algorithm will run in parallel.
+* Otherwise, if `CGAL::Sequential_tag` is specified (the default), the algorithm will run sequentially.
+* @tparam InputIterator iterator over a range of `Segment_2`
+* @tparam OutputContainer inserter over a range of `Polyline`. `Polyline` must be a type that provides a `push_back(Point_2)` function.
 */
 template <class Concurrency_tag=Sequential_tag, class InputIterator , class OutputContainer>
 typename OutputContainer::iterator double_snap_rounding_2(InputIterator  	input_begin,
@@ -460,21 +489,30 @@ typename OutputContainer::iterator double_snap_rounding_2(InputIterator  	input_
 * parallel, if CGAL::Parallel_tag is specified and CGAL has been linked with the Intel TBB library, or sequentially, if CGAL::Sequential_tag - the default value - is specified.
 * @tparam InputIterator iterator of a segment range
 * @tparam OutputContainer inserter of a segment range
+* @tparam The exact kernel needed for computation (Epeck by default)
 */
-template <class Concurrency_tag=Sequential_tag, class InputIterator , class OutputContainer>
-typename OutputContainer::iterator compute_snapped_subcurves_2(InputIterator  	input_begin,
-		                                                           InputIterator  	input_end,
-		                                                           OutputContainer&  output)
+template <class Concurrency_tag=Sequential_tag, class InputIterator , class OutputContainer, class Traits=Float_snap_rounding_traits_2<typename Kernel_traits<std::remove_cv_t<typename std::iterator_traits<InputIterator>::value_type>>::Kernel> >
+typename OutputContainer::iterator compute_snapped_subcurves_2(InputIterator  	 input_begin,
+		                                                           InputIterator  	 input_end,
+		                                                           OutputContainer&  output,
+                                                               const Traits& traits=Traits())
 {
-  using Segment_2 = std::remove_cv_t<typename std::iterator_traits<InputIterator>::value_type>;
-  using Point_2 = typename Default_arr_traits<Segment_2>::Traits::Point_2;
-  using Kernel = typename Kernel_traits<Point_2>::Kernel;
+  using Point_2 = typename Traits::Point_2;
+  using Segment_2 = typename Traits::Segment_2;
+  using I2E = typename Traits::Converter_in;
+  using E2O = typename Traits::Converter_out;
+  using VectorIterator = typename std::vector<Segment_2>::iterator;
+  I2E converter_to_exact=traits.converter_to_exact_object();
+  E2O converter_from_exact=traits.converter_from_exact_object();
 
-  std::vector<Segment_2> segs(input_begin, input_end);
+  std::vector<Segment_2> convert_input;
+  for(InputIterator it=input_begin; it!=input_end; ++it)
+    convert_input.push_back(Segment_2(converter_to_exact(*it)));
+  std::vector<Segment_2> segs;
 #ifdef DOUBLE_2D_SNAP_VERBOSE
   std::cout << "Solved intersections" << std::endl;
 #endif
-  compute_subcurves(input_begin, input_end, std::back_inserter(segs));
+  compute_subcurves(convert_input.begin(), convert_input.end(), std::back_inserter(segs));
 
 #ifdef DOUBLE_2D_SNAP_VERBOSE
   std::cout << "Change format to range of points and indexes" << std::endl;
@@ -485,7 +523,7 @@ typename OutputContainer::iterator compute_snapped_subcurves_2(InputIterator  	i
   std::vector< std::vector< std::size_t> > polylines;
 
   // Transform range of the segments in the range of points and polyline of indexes
-  for(typename std::vector<Segment_2>::iterator it=segs.begin(); it!=segs.end(); ++it)
+  for(VectorIterator it=segs.begin(); it!=segs.end(); ++it)
   {
     const Point_2& p1 = it->source();
     const Point_2& p2 = it->target();
@@ -502,7 +540,7 @@ typename OutputContainer::iterator compute_snapped_subcurves_2(InputIterator  	i
     }
   }
 
-  for(InputIterator it=segs.begin(); it!=segs.end(); ++it)
+  for(VectorIterator it=segs.begin(); it!=segs.end(); ++it)
   {
     std::size_t index1 = point_to_index[it->source()];
     std::size_t index2 = point_to_index[it->target()];
@@ -511,7 +549,7 @@ typename OutputContainer::iterator compute_snapped_subcurves_2(InputIterator  	i
 
 
   // Main algorithm
-  double_snap_rounding_2_disjoint<Concurrency_tag, Float_snap_rounding_traits_2<Kernel> >(pts, polylines);
+  double_snap_rounding_2_disjoint<Concurrency_tag>(pts, polylines, traits);
 
 #ifdef DOUBLE_2D_SNAP_VERBOSE
   std::cout << "Build output" << std::endl;
@@ -524,8 +562,100 @@ typename OutputContainer::iterator compute_snapped_subcurves_2(InputIterator  	i
     for(std::size_t i=1; i<poly.size(); ++i)
       set_out_segs.emplace((std::min)(poly[i-1],poly[i]),(std::max)(poly[i-1],poly[i]));
   }
-  for(auto &pair: set_out_segs)
-    output.emplace_back(pts[pair.first], pts[pair.second]);
+  for(auto &pair: set_out_segs){
+    output.emplace_back(converter_from_exact(pts[pair.first]), converter_from_exact(pts[pair.second]));
+    assert(pts[pair.first]!=pts[pair.second]);
+  }
+
+  return output.begin();
+}
+
+/**
+* ingroup
+*
+* Given a range of segments, compute rounded subsegments that are pairwise disjoint in their interior, as induced by the input curves.
+*
+* @tparam Concurrency_tag That template parameter enables to choose whether the algorithm is to be run in
+* parallel, if CGAL::Parallel_tag is specified and CGAL has been linked with the Intel TBB library, or sequentially, if CGAL::Sequential_tag - the default value - is specified.
+* @tparam InputIterator iterator of a segment range
+* @tparam OutputContainer inserter of a segment range
+* @tparam The exact kernel needed for computation (Epeck by default)
+*/
+template <class Concurrency_tag=Sequential_tag, class InputIterator , class OutputContainer, class Traits=Float_snap_rounding_traits_2<typename Kernel_traits<std::remove_cv_t<typename std::iterator_traits<InputIterator>::value_type>>::Kernel> >
+typename OutputContainer::iterator snap_polygons_2(InputIterator  	 input_begin,
+		                                               InputIterator  	 input_end,
+		                                               OutputContainer&  output,
+                                                   const Traits& traits=Traits())
+{
+  using Point_2 = typename Traits::Point_2;
+  using Segment_2 = typename Traits::Segment_2;
+  using I2E = typename Traits::Converter_in;
+  using E2O = typename Traits::Converter_out;
+  using VectorIterator = typename std::vector<Segment_2>::iterator;
+  I2E converter_to_exact=traits.converter_to_exact_object();
+  E2O converter_from_exact=traits.converter_from_exact_object();
+
+  std::vector<Segment_2> convert_input;
+  for(InputIterator it=input_begin; it!=input_end; ++it)
+    convert_input.push_back(Segment_2(converter_to_exact(*it)));
+  std::vector<Segment_2> segs;
+#ifdef DOUBLE_2D_SNAP_VERBOSE
+  std::cout << "Solved intersections" << std::endl;
+#endif
+  compute_subcurves(convert_input.begin(), convert_input.end(), std::back_inserter(segs));
+
+#ifdef DOUBLE_2D_SNAP_VERBOSE
+  std::cout << "Change format to range of points and indexes" << std::endl;
+#endif
+  std::set<Point_2> unique_point_set;
+  std::map<Point_2, int> point_to_index;
+  std::vector<Point_2> pts;
+  std::vector< std::vector< std::size_t> > polylines;
+
+  // Transform range of the segments in the range of points and polyline of indexes
+  for(VectorIterator it=segs.begin(); it!=segs.end(); ++it)
+  {
+    const Point_2& p1 = it->source();
+    const Point_2& p2 = it->target();
+
+    if (unique_point_set.find(p1) == unique_point_set.end()) {
+      unique_point_set.insert(p1);
+      pts.push_back(p1);
+      point_to_index[p1] = pts.size() - 1;
+    }
+    if (unique_point_set.find(p2) == unique_point_set.end()) {
+      unique_point_set.insert(p2);
+      pts.push_back(p2);
+      point_to_index[p2] = pts.size() - 1;
+    }
+  }
+
+  for(VectorIterator it=segs.begin(); it!=segs.end(); ++it)
+  {
+    std::size_t index1 = point_to_index[it->source()];
+    std::size_t index2 = point_to_index[it->target()];
+    polylines.push_back({index1, index2});
+  }
+
+
+  // Main algorithm
+  double_snap_rounding_2_disjoint<Concurrency_tag>(pts, polylines, traits);
+
+#ifdef DOUBLE_2D_SNAP_VERBOSE
+  std::cout << "Build output" << std::endl;
+#endif
+
+  // Output a range of segments while removing duplicate ones
+  std::set< std::pair<std::size_t,std::size_t> > set_out_segs;
+  output.clear();
+  for(auto &poly: polylines){
+    for(std::size_t i=1; i<poly.size(); ++i)
+      set_out_segs.emplace((std::min)(poly[i-1],poly[i]),(std::max)(poly[i-1],poly[i]));
+  }
+  for(auto &pair: set_out_segs){
+    output.emplace_back(converter_from_exact(pts[pair.first]), converter_from_exact(pts[pair.second]));
+    assert(pts[pair.first]!=pts[pair.second]);
+  }
 
   return output.begin();
 }
