@@ -1930,11 +1930,11 @@ private:
   int does_edge_interior_intersect_region(Cell_handle cell, int index_vc, int index_vd,
                                           const CDT_2& cdt_2, const Fh_region& fh_region)
   {
+    auto orientation = tr().geom_traits().orientation_3_object();
     const auto vc = cell->vertex(index_vd);
     const auto vd = cell->vertex(index_vc);
     const auto pc = this->point(vc);
     const auto pd = this->point(vd);
-    const typename Geom_traits::Segment_3 seg{pc, pd};
     for(const auto fh_2d : fh_region) {
       const auto v0 = fh_2d->vertex(0)->info().vertex_handle_3d;
       const auto v1 = fh_2d->vertex(1)->info().vertex_handle_3d;
@@ -1946,15 +1946,15 @@ private:
       const auto t1 = cdt_2.point(fh_2d->vertex(1));
       const auto t2 = cdt_2.point(fh_2d->vertex(2));
 
-      const auto opc = CGAL::orientation(t0, t1, t2, pc);
-      const auto opd = CGAL::orientation(t0, t1, t2, pd);
+      const auto opc = orientation(t0, t1, t2, pc);
+      const auto opd = orientation(t0, t1, t2, pd);
       if(opc == CGAL::COPLANAR || opd == CGAL::COPLANAR || opc == opd) {
         continue;
       } else {
         // otherwise the segment interior intersects the plane of the triangle
-        if(CGAL::orientation(pc, pd, t0, t1) != opc &&
-           CGAL::orientation(pc, pd, t1, t2) != opc &&
-           CGAL::orientation(pc, pd, t2, t0) != opc)
+        if(orientation(pc, pd, t0, t1) != opc &&
+           orientation(pc, pd, t1, t2) != opc &&
+           orientation(pc, pd, t2, t0) != opc)
         {
           return static_cast<int>(opc);
         }
