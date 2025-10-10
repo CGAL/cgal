@@ -519,14 +519,14 @@ with both vertices and volumes.
   <tr>
     <td rowspan="1" width="75">Input</td>
     <td rowspan="1" width="175">3D Volumetric Mesh</td>
-    <td width="250">`Linear_cell_complex_for_combinatorial_map<3,3>`</td>
-    <td width="550">CGAL::IO::read_VTK()</td>
+    <td width="250">`CGAL::Linear_cell_complex_for_combinatorial_map<3,3>`</td>
+    <td width="550"> \link PkgLinearCellComplexRefIOVTK `CGAL::IO::read_VTK()` \endlink</td>
   </tr>
   <tr>
     <td rowspan="1">Output</td>
     <td rowspan="1">3D Volumetric Mesh</td>
-    <td>`Linear_cell_complex_for_combinatorial_map<3,3>`</td>
-    <td>CGAL::IO::write_VTK()</td>
+    <td>`CGAL::Linear_cell_complex_for_combinatorial_map<3,3>`</td>
+    <td> \link PkgLinearCellComplexRefIOVTK `CGAL::IO::Write_VTK<LCC>()` \endlink</td>
   </tr>
 </table>
 
