@@ -22,6 +22,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include <set>
 
 namespace CGAL {
 namespace IO {
@@ -361,6 +362,7 @@ bool read_lcc_from_vtk_ascii(std::istream& is, LCC& alcc,
 
   // Create cells based on types
   std::size_t cell_type;
+  std::set<std::size_t> error_types;
   for(std::size_t i = 0; i<ncells; ++i)
   {
     if(!(is>>cell_type))
@@ -408,7 +410,11 @@ bool read_lcc_from_vtk_ascii(std::istream& is, LCC& alcc,
       make_generic_cell_with_builder(ib, v);
       break;
     default:
-      std::cerr<<"[ERROR] read_VTK: type "<<cell_type<<" unknown."<<std::endl;
+      if(error_types.count(cell_type)==0)
+      {
+        std::cerr<<"[ERROR] read_VTK: type "<<cell_type<<" unknown."<<std::endl;
+        error_types.insert(cell_type);
+      }
     }
   }
 
