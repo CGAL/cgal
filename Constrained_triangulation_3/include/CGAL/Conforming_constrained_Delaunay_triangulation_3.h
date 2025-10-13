@@ -727,7 +727,7 @@ public:
 
         std::optional<int> face_index;
         for(auto& polyline : polylines) {
-          CGAL_assertion(polyline.front() == polyline.back());
+          CGAL_assertion(!polyline.empty() && polyline.front() == polyline.back());
           polyline.pop_back();
           auto range_of_vertices = CGAL::make_transform_range_from_property_map(polyline, tr_vertex_pmap);
           face_index = cdt_impl.insert_constrained_face(range_of_vertices, false,
