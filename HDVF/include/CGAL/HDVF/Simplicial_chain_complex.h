@@ -151,8 +151,9 @@ public:
             Point p(coords.at(n)) ;
 
             out << p;
-            // @todo  if Traits::Dimension < 3, complete with zeros
-            //    out << "0 " ;
+            if constexpr (Traits::Dimension::value==2){
+                out << " 0" ;
+            }
             out << std::endl ;
         }
 
@@ -271,7 +272,9 @@ void Simplicial_chain_complex<CoefficientRing,Traits>::chain_to_vtk(const Simpli
     {
         Point p(coords.at(n)) ;
         out << p ;
-        // @todo  if Traits::Dimension < 3, complete with zeros;
+        if constexpr (Traits::Dimension::value==2){
+            out << " 0" ;
+        }
         out << std::endl ;
     }
 

@@ -422,9 +422,9 @@ public:
         std::vector<double> res ;
         for (size_t c : coords)
             res.push_back(c/2. + .5) ;
-        for (size_t i = coords.size(); i<3; ++i) // points must be 3D
+        if constexpr (Traits::Dimension::value==2){
             res.push_back(0) ;
-            // @todo deal with dim != 3
+        }
         return Point(res[0], res[1], res[2]) ;
     }
 
@@ -478,7 +478,10 @@ public:
         for (size_t n = 0; n < nnodes; ++n)
         {
             Point p(K.get_vertex_coords(n)) ;
-            out << p ; // @todo  works only for 3D points
+            out << p ;
+            if constexpr (Traits::Dimension::value==2){
+                out << " 0";
+            }
             out << std::endl ;
         }
 
@@ -1029,7 +1032,9 @@ void Cubical_chain_complex<CoefficientRing,Traits>::chain_to_vtk(const Cubical_c
     {
         Point p(K.get_vertex_coords(n)) ;
         out << p;
-        // @todo  points must be 3D -> add zeros
+        if constexpr (Traits::Dimension::value==2){
+            out << " 0";
+        }
         out << std::endl ;
     }
 
