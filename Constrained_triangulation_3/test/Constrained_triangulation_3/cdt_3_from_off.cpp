@@ -721,6 +721,29 @@ int go(Mesh mesh, CDT_options options) {
                            std::make_move_iterator(other_polylines.end()));
         }
 
+        if(polylines.size() > 1) {
+          double max_sq_length = 0;
+          auto longest_it = polylines.begin();
+          for(auto it = polylines.begin(); it != polylines.end(); ++it) {
+            auto& polyline = *it;
+            using CGAL::Bbox_3;
+            Bbox_3 bb;
+            for(auto v : polyline) {
+              bb = bb + Bbox_3(get(mesh_vp_map, v).bbox());
+            }
+            double sq_diagonal_length = CGAL::square(bb.xmax() - bb.xmin()) +
+                                        CGAL::square(bb.ymax() - bb.ymin()) +
+                                        CGAL::square(bb.zmax() - bb.zmin());
+            if(sq_diagonal_length > max_sq_length) {
+              max_sq_length = sq_diagonal_length;
+              longest_it = it;
+            }
+          }
+          if(longest_it != polylines.begin()) {
+            std::iter_swap(longest_it, polylines.begin());
+          }
+        }
+
         std::optional<int> face_index;
         for(auto& polyline : polylines) {
           CGAL_assertion(!polyline.empty() && polyline.front() == polyline.back());
