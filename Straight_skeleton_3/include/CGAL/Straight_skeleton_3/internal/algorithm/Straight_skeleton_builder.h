@@ -601,37 +601,34 @@ public:
         visitor_->on_save_event(polyhedron, current_time);
       }
 
-      CGAL_assertion(polyhedron->isConsistent());
+      CGAL_SS3_CORE_TRACE_V(2, skel_result_->toString());
 
-    CGAL_SS3_CORE_TRACE_V(2, skel_result_->toString());
-
-#if 1 // CGAL_SS3_DUMP_FILES
-    // Dump skeleton nodes in an .xyz file
-    std::ofstream nodes_out("final_nodes.xyz");
-    nodes_out.precision(17);
-    for (NodeSPtr node : skel_result_->nodes()) {
-      nodes_out << *(node->getPoint()) << "\n";
-    }
-    nodes_out.close();
-
-    // Dump skeleton arcs as CGAL polylines
-    std::ofstream arcs_out("final_arcs.polylines.txt");
-    arcs_out.precision(17);
-    for (ArcSPtr arc : skel_result_->arcs()) {
-      arcs_out << "2 ";
-      arcs_out << *(arc->getNodeSrc()->getPoint()) << " ";
-      if (arc->hasNodeDst()) {
-        arcs_out << *(arc->getNodeDst()->getPoint()) << "\n";
-      } else {
-        Point3SPtr src_pt = arc->getNodeSrc()->getPoint();
-        Vector3SPtr dir = arc->getDirection();
-        // Choose a reasonable length for the ray, e.g., 10 units
-        constexpr double ray_length = 0.1;
-        Point_3 ray_pt = *src_pt + ray_length * (*dir);
-        arcs_out << ray_pt << "\n";
+#ifdef CGAL_SS3_DUMP_FILES
+      // Dump skeleton nodes in an .xyz file
+      std::ofstream nodes_out("final_nodes.xyz");
+      nodes_out.precision(17);
+      for (NodeSPtr node : skel_result_->nodes()) {
+        nodes_out << *(node->getPoint()) << "\n";
       }
-    }
-    arcs_out.close();
+      nodes_out.close();
+
+      // Dump skeleton arcs as CGAL polylines
+      std::ofstream arcs_out("final_arcs.polylines.txt");
+      arcs_out.precision(17);
+      for (ArcSPtr arc : skel_result_->arcs()) {
+        arcs_out << "2 ";
+        arcs_out << *(arc->getNodeSrc()->getPoint()) << " ";
+        if (arc->hasNodeDst()) {
+          arcs_out << *(arc->getNodeDst()->getPoint()) << "\n";
+        } else {
+          Point3SPtr src_pt = arc->getNodeSrc()->getPoint();
+          Vector3SPtr dir = arc->getDirection();
+          constexpr double ray_length = 0.1; // @todo relative value
+          Point_3 ray_pt = *src_pt + ray_length * (*dir);
+          arcs_out << ray_pt << "\n";
+        }
+      }
+      arcs_out.close();
 #endif
 
       CGAL_postcondition(polyhedron->isConsistent());
@@ -675,7 +672,9 @@ public:
 
 
     CGAL_assertion(skel_result_->isConsistent(false /*is_partial*/));
+#ifdef CGAL_SS3_DUMP_FILES
     IO::OBJFile::save("final_skeleton.obj", skel_result_, true /*convert_to_double*/);
+#endif
 
     return true;
   }
