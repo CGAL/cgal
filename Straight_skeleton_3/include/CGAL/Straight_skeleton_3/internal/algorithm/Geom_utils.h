@@ -70,7 +70,7 @@ public:
     CGAL_SS3_DEBUG_SPTR(plane_1);
     CGAL_SS3_DEBUG_SPTR(plane_2);
     CGAL_SS3_DEBUG_SPTR(plane_3);
-    CGAL_precondition(!(is_zero(w0) && is_zero(w1) && is_zero(w2) && is_zero(w3)));
+    CGAL_precondition(!is_zero(w0) && !is_zero(w1) && !is_zero(w2) && !is_zero(w3));
 
     const FT& a0 = plane_0->a();
     const FT& b0 = plane_0->b();
@@ -129,7 +129,9 @@ public:
     CGAL_SS3_DEBUG_SPTR(plane_1);
     CGAL_SS3_DEBUG_SPTR(plane_2);
     CGAL_SS3_DEBUG_SPTR(plane_3);
-    CGAL_precondition(!(is_zero(w0) && is_zero(w1) && is_zero(w2) && is_zero(w3)));
+    CGAL_precondition(!is_zero(w0) && !is_zero(w1) && !is_zero(w2) && !is_zero(w3));
+    CGAL_precondition((!past_bound.has_value() || !future_bound.has_value()) ||
+                      *past_bound >= *future_bound);
 
     const FT& a0 = plane_0->a();
     const FT& b0 = plane_0->b();
@@ -165,33 +167,17 @@ public:
 
     FT den = (-a0*b1*c2*w3 + a0*b1*c3*w2 + a0*b2*c1*w3 - a0*b2*c3*w1 - a0*b3*c1*w2 + a0*b3*c2*w1 + a1*b0*c2*w3 - a1*b0*c3*w2 - a1*b2*c0*w3 + a1*b2*c3*w0 + a1*b3*c0*w2 - a1*b3*c2*w0 - a2*b0*c1*w3 + a2*b0*c3*w1 + a2*b1*c0*w3 - a2*b1*c3*w0 - a2*b3*c0*w1 + a2*b3*c1*w0 + a3*b0*c1*w2 - a3*b0*c2*w1 - a3*b1*c0*w2 + a3*b1*c2*w0 + a3*b2*c0*w1 - a3*b2*c1*w0);
 
-    FT tn = (-a0*b1*c2*d3 + a0*b1*c3*d2 + a0*b2*c1*d3 - a0*b2*c3*d1 - a0*b3*c1*d2 + a0*b3*c2*d1 + a1*b0*c2*d3 - a1*b0*c3*d2 - a1*b2*c0*d3 + a1*b2*c3*d0 + a1*b3*c0*d2 - a1*b3*c2*d0 - a2*b0*c1*d3 + a2*b0*c3*d1 + a2*b1*c0*d3 - a2*b1*c3*d0 - a2*b3*c0*d1 + a2*b3*c1*d0 + a3*b0*c1*d2 - a3*b0*c2*d1 - a3*b1*c0*d2 + a3*b1*c2*d0 + a3*b2*c0*d1 - a3*b2*c1*d0);
+    FT t = (-a0*b1*c2*d3 + a0*b1*c3*d2 + a0*b2*c1*d3 - a0*b2*c3*d1 - a0*b3*c1*d2 + a0*b3*c2*d1 + a1*b0*c2*d3 - a1*b0*c3*d2 - a1*b2*c0*d3 + a1*b2*c3*d0 + a1*b3*c0*d2 - a1*b3*c2*d0 - a2*b0*c1*d3 + a2*b0*c3*d1 + a2*b1*c0*d3 - a2*b1*c3*d0 - a2*b3*c0*d1 + a2*b3*c1*d0 + a3*b0*c1*d2 - a3*b0*c2*d1 - a3*b1*c0*d2 + a3*b1*c2*d0 + a3*b2*c0*d1 - a3*b2*c1*d0) / den;
 
-    // Bound checks.
-    // The algorithm works with a decreasing time, so a past value is greater than a future value.
-    //
-    // Empirically:
-    // - It's about as likely to be greater than 'past' than it is to be lower than 'future'
-    // - Avoiding the division before the checks does not yield observable gains
-    // - Adding a check past_bound == 0 to simply check tn and den signs also gains nothing
-    //
-    // t >= past_bound
-    // tn/den - past_bound >= 0
-    //   { tn - den*past_bound >= 0 if den > 0 => + (tn - den*past_bound) >= 0
-    //   { tn - den*past_bound <= 0 if den < 0 => - (tn - den*past_bound) >= 0
-    // sign(den) * (tn - den*past_bound) >= 0
-    CGAL::Sign s = CGAL::sign(den);
-    if (past_bound && !CGAL::is_negative(s * (tn - *past_bound * den))) {
-      CGAL_SS3_TRAITS_TRACE("Intersection is strictly in the past");
-      return std::nullopt;
+    if (past_bound && t >= *past_bound) {
+      CGAL_SS3_TRAITS_TRACE("Event is strictly in the past");
+      return { };
     }
 
-    if (future_bound && !CGAL::is_positive(s * (tn - *future_bound * den))) {
-      CGAL_SS3_TRAITS_TRACE("Intersection is too far in the future");
-      return std::nullopt;
+    if (future_bound && t < *future_bound) {
+      CGAL_SS3_TRAITS_TRACE("Event is too far in the future");
+      return { };
     }
-
-    FT t = tn / den;
 
     return t;
   }
@@ -207,7 +193,9 @@ public:
     CGAL_SS3_DEBUG_SPTR(plane_1);
     CGAL_SS3_DEBUG_SPTR(plane_2);
     CGAL_SS3_DEBUG_SPTR(plane_3);
-    CGAL_precondition(!(is_zero(w0) && is_zero(w1) && is_zero(w2) && is_zero(w3)));
+    CGAL_precondition(!is_zero(w0) && !is_zero(w1) && !is_zero(w2) && !is_zero(w3));
+    CGAL_precondition((!past_bound.has_value() || !future_bound.has_value()) ||
+                      *past_bound >= *future_bound);
 
     const FT& a0 = plane_0->a();
     const FT& b0 = plane_0->b();
@@ -250,33 +238,17 @@ public:
     }
 #endif
 
-    FT tn = (-a0*b1*c2*d3 + a0*b1*c3*d2 + a0*b2*c1*d3 - a0*b2*c3*d1 - a0*b3*c1*d2 + a0*b3*c2*d1 + a1*b0*c2*d3 - a1*b0*c3*d2 - a1*b2*c0*d3 + a1*b2*c3*d0 + a1*b3*c0*d2 - a1*b3*c2*d0 - a2*b0*c1*d3 + a2*b0*c3*d1 + a2*b1*c0*d3 - a2*b1*c3*d0 - a2*b3*c0*d1 + a2*b3*c1*d0 + a3*b0*c1*d2 - a3*b0*c2*d1 - a3*b1*c0*d2 + a3*b1*c2*d0 + a3*b2*c0*d1 - a3*b2*c1*d0);
+    FT t = (-a0*b1*c2*d3 + a0*b1*c3*d2 + a0*b2*c1*d3 - a0*b2*c3*d1 - a0*b3*c1*d2 + a0*b3*c2*d1 + a1*b0*c2*d3 - a1*b0*c3*d2 - a1*b2*c0*d3 + a1*b2*c3*d0 + a1*b3*c0*d2 - a1*b3*c2*d0 - a2*b0*c1*d3 + a2*b0*c3*d1 + a2*b1*c0*d3 - a2*b1*c3*d0 - a2*b3*c0*d1 + a2*b3*c1*d0 + a3*b0*c1*d2 - a3*b0*c2*d1 - a3*b1*c0*d2 + a3*b1*c2*d0 + a3*b2*c0*d1 - a3*b2*c1*d0) / den;
 
-    // Bound checks.
-    // The algorithm works with a decreasing time, so a past value is greater than a future value.
-    //
-    // Empirically:
-    // - It's about as likely to be greater than 'past' than it is to be lower than 'future'
-    // - Avoiding the division before the checks does not yield observable gains
-    // - Adding a check past_bound == 0 to simply check tn and den signs also gains nothing
-    //
-    // t >= past_bound
-    // tn/den - past_bound >= 0
-    //   { tn - den*past_bound >= 0 if den > 0 => + (tn - den*past_bound) >= 0
-    //   { tn - den*past_bound <= 0 if den < 0 => - (tn - den*past_bound) >= 0
-    // sign(den) * (tn - den*past_bound) >= 0
-    CGAL::Sign s = CGAL::sign(den);
-    if (past_bound && !CGAL::is_negative(s * (tn - *past_bound * den))) {
-      CGAL_SS3_TRAITS_TRACE("Intersection is strictly in the past");
+    if (past_bound && t >= *past_bound) {
+      CGAL_SS3_TRAITS_TRACE("Event is strictly in the past");
       return { };
     }
 
-    if (future_bound && !CGAL::is_positive(s * (tn - *future_bound * den))) {
-      CGAL_SS3_TRAITS_TRACE("Intersection is too far in the future");
+    if (future_bound && t < *future_bound) {
+      CGAL_SS3_TRAITS_TRACE("Event is too far in the future");
       return { };
     }
-
-    FT t = tn / den;
 
     FT x = (b0*c1*d2*w3 - b0*c1*d3*w2 - b0*c2*d1*w3 + b0*c2*d3*w1 + b0*c3*d1*w2 - b0*c3*d2*w1 - b1*c0*d2*w3 + b1*c0*d3*w2 + b1*c2*d0*w3 - b1*c2*d3*w0 - b1*c3*d0*w2 + b1*c3*d2*w0 + b2*c0*d1*w3 - b2*c0*d3*w1 - b2*c1*d0*w3 + b2*c1*d3*w0 + b2*c3*d0*w1 - b2*c3*d1*w0 - b3*c0*d1*w2 + b3*c0*d2*w1 + b3*c1*d0*w2 - b3*c1*d2*w0 - b3*c2*d0*w1 + b3*c2*d1*w0) / den;
 
