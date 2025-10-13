@@ -21,6 +21,7 @@
 #include <CGAL/Straight_skeleton_3/internal/kernel/Kernel_factory.h>
 #include <CGAL/Straight_skeleton_3/internal/kernel/Kernel_wrapper.h>
 #include <CGAL/Straight_skeleton_3/internal/algorithm/Geom_utils.h>
+#include <CGAL/Straight_skeleton_3/internal/algorithm/HDS_utils.h>
 #include <CGAL/Straight_skeleton_3/internal/HDS/Polyhedron.h>
 #include <CGAL/Straight_skeleton_3/IO/String_factory.h>
 #include <CGAL/Straight_skeleton_3/Configuration.h>
@@ -62,6 +63,9 @@ namespace internal {
 namespace algorithm {
 
 template <typename Traits>
+class HdsUtils;
+
+template <typename Traits>
 class PolyhedronTransformation
 {
   using FT = typename Traits::FT;
@@ -101,6 +105,7 @@ private:
   using KernelFactory = kernel::KernelFactory<Traits>;
   using KernelWrapper = kernel::KernelWrapper<Traits>;
   using GeomUtils = algorithm::GeomUtils<Traits>;
+  using HdsUtils = algorithm::HdsUtils<Traits>;
 
 public:
   static Point3SPtr boundingBoxMin(const PolyhedronSPtr& polyhedron)
@@ -755,25 +760,10 @@ public:
     FacetSPtr facet_src = edge->getFacetL()->next(edge->getVertexSrc());
     FacetSPtr facet_dst = edge->getFacetR()->next(edge->getVertexDst());
 
-    FT speed_l = 1.0;
-    if (facet_l->hasData()) {
-      speed_l = std::dynamic_pointer_cast<SkelFacetData>(facet_l->getData())->getSpeed();
-    }
-
-    FT speed_r = 1.0;
-    if (facet_r->hasData()) {
-      speed_r = std::dynamic_pointer_cast<SkelFacetData>(facet_r->getData())->getSpeed();
-    }
-
-    FT speed_src = 1.0;
-    if (facet_src->hasData()) {
-      speed_src = std::dynamic_pointer_cast<SkelFacetData>(facet_src->getData())->getSpeed();
-    }
-
-    FT speed_dst = 1.0;
-    if (facet_dst->hasData()) {
-      speed_dst = std::dynamic_pointer_cast<SkelFacetData>(facet_dst->getData())->getSpeed();
-    }
+    const FT& speed_l = HdsUtils::getSpeed(facet_l);
+    const FT& speed_r = HdsUtils::getSpeed(facet_r);
+    const FT& speed_src = HdsUtils::getSpeed(facet_src);
+    const FT& speed_dst = HdsUtils::getSpeed(facet_dst);
 
     // Offset the two common planes
     Plane3SPtr offset_plane_l = GeomUtils::offsetPlane(facet_l->plane(), speed_l*time);
@@ -803,13 +793,9 @@ public:
                                const FT& time)
   {
     CGAL_SS3_DEBUG_SPTR(facet);
-
-    FT facet_speed = 1.0;
-    if (facet->hasData()) {
-      facet_speed = std::dynamic_pointer_cast<SkelFacetData>(facet->getData())->getSpeed();
-    }
-
-    return GeomUtils::offsetPlane(facet->plane(), facet_speed*time);
+    const Plane3SPtr& plane = facet->getPlane();
+    const FT& speed = HdsUtils::getSpeed(facet);
+    return GeomUtils::offsetPlane(plane, speed*time);
   }
 
   /**
@@ -1037,10 +1023,7 @@ public:
     CGAL::mark_domain_in_triangulation(pcdt, in_domain);
 
     // Speed of the subdivided facet is applied to all the subfacets
-    FT parent_speed = 1.0;
-    if (facet->hasData()) {
-      parent_speed = std::dynamic_pointer_cast<SkelFacetData>(facet->getData())->getSpeed();
-    }
+    const FT& parent_speed = HdsUtils::getSpeed(facet);
 
     polyhedron->removeFacet(facet);
 
