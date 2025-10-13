@@ -22,7 +22,7 @@ namespace Homological_discrete_vector_field {
   /*!
  \ingroup PkgHDVFAlgorithmClasses
 
- The class `HDVF_traits_3` implements the `HDVFTraits` concept for 3D data, using a geometric kernel `K`.
+ The class `Hdvf_traits_3` implements the `HDVFTraits` concept for 3D data, using a geometric kernel `K`.
 
  @tparam K a geometric kernel model of the `Kernel` concept.
 

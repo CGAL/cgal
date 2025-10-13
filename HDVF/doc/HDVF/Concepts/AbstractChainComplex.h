@@ -40,17 +40,17 @@ typedef CoefficientRing Coefficient_ring;
 /*!
  Type of column-major chains (returned by the boundary operator)
  */
-typedef SparseChain<CoefficientRing, CGAL::OSM::COLUMN> Column_chain;
+typedef CGAL::OSM::Sparse_chain<CoefficientRing, CGAL::OSM::COLUMN> Column_chain;
 
 /*!
  Type of row-major chains (returned by the co-boundary operator)
  */
-typedef SparseChain<CoefficientRing, CGAL::OSM::ROW> Row_chain ;
+typedef CGAL::OSM::Sparse_chain<CoefficientRing, CGAL::OSM::ROW> Row_chain ;
 
 /*!
  Type of column-major sparse matrices (used to store the boundary operator)
  */
-typedef SparseMatrix<CoefficientRing, CGAL::OSM::COLUMN> Column_matrix;
+typedef CGAL::OSM::Sparse_matrix<CoefficientRing, CGAL::OSM::COLUMN> Column_matrix;
 
 /// @}
 

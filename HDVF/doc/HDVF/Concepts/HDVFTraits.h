@@ -5,7 +5,7 @@
 The concept `HDVFTraits` describes the requirements for geometric traits classes used in this package.
 
 \cgalHasModelsBegin
-\cgalHasModelsBare{`CGAL::Homological_discrete_vector_field::HDVF_traits_3<Kernel>`}
+\cgalHasModelsBare{`CGAL::Homological_discrete_vector_field::Hdvf_traits_3<K>`}
 \cgalHasModelsEnd
 */
 class HDVFTraits

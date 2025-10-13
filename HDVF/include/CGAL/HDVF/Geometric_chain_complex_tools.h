@@ -141,7 +141,7 @@ void write_VTK (Homological_discrete_vector_field::Hdvf_persistence<ChainComplex
 
     // Export the filtration
     std::string out_file_filtration = filename+"_filtration.vtk" ;
-    std::vector<std::vector<size_t> > filtr_labels = per_hdvf.get_filtration().export_filtration();
+    std::vector<std::vector<size_t> > filtr_labels = per_hdvf.filtration().export_filtration();
     ChainComplex::template chain_complex_to_vtk<size_t>(complex, out_file_filtration, &filtr_labels, "unsigned_long") ;
 
     // Iterate over persistence diagram (iterator over non zero intervals)
@@ -430,12 +430,14 @@ public:
 The class `Duality_cubical_complex_tools` is dedicated to Alexander duality for 3D binary volumes.
 
 Starting from a Cubical_chain_complex `_K`, the method `cubical_chain_complex_bb()` builds a `Cubical_chain_complex` `L` and `Sub_chain_complex_mask` `K`.
-- L : complex built of the "full" bounding box of _K
-- K (Sub_chain_complex_mask) : Sub_chain_complex_mask identifying _K inside L
+- L : complex built of the "full" bounding box of `_K`
+- K (Sub_chain_complex_mask) : Sub_chain_complex_mask identifying `_K` inside `L`
 
-Use the `frame` method from the `Cub_object_io` class to enlarge the bounding box (via a 1 pixel dilatation) if necessary.
+Use the `frame()` method from the `Cub_object_io` class to enlarge the bounding box (via a 1 pixel dilatation) if necessary.
 
 \tparam CoefficientRing a model of the `IntegralDomainWithoutDivision` concept providing the ring used to compute homology.
+
+\tparam Traits a geometric traits class model of the `HDVFTraits` concept.
 */
 
 template<typename CoefficientRing, typename Traits>

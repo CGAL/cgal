@@ -293,7 +293,7 @@ public:
 
     /** \brief Get a constant reference on the filtration
      */
-    const Filtration& get_filtration() { return _f; }
+    const Filtration& filtration() { return _f; }
 
     /** \brief Overload of operator<< for Hdvf_persistence.
      *
