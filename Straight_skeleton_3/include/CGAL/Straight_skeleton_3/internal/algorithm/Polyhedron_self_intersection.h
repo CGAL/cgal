@@ -199,10 +199,10 @@ public:
       while (it_e2 != facet->edges().end()) {
         EdgeSPtr edge2 = *it_e2++;
         if (doEdgesIntersect(facet, edge1, edge2, true, traits)) {
-          CGAL_SS3_ALGO_TRACE("edges intersect within the facet:");
-          CGAL_SS3_ALGO_TRACE(facet->toString());
-          CGAL_SS3_ALGO_TRACE(edge1->toString());
-          CGAL_SS3_ALGO_TRACE(edge2->toString());
+          CGAL_SS3_ALGO_TRACE_V(32, "edges intersect within the facet:");
+          CGAL_SS3_ALGO_TRACE_V(32, facet->toString());
+          CGAL_SS3_ALGO_TRACE_V(32, edge1->toString());
+          CGAL_SS3_ALGO_TRACE_V(32, edge2->toString());
 #ifdef CGAL_SS3_EXIT_ASAP
           return true;
 #else
@@ -766,7 +766,7 @@ public:
   {
     CGAL_SS3_DEBUG_SPTR(polyhedron);
 
-    CGAL_SS3_ALGO_TRACE_V(1, "hasSelfIntersectingSurface()");
+    CGAL_SS3_ALGO_TRACE_V(16, "hasSelfIntersectingSurface()");
 
     // @speed O(nf*nfe*nfe) algorithm
     if (SelfIntersection::hasSelfIntersectingFacets(polyhedron)) {
@@ -777,9 +777,9 @@ public:
     for (const FacetSPtr& facet : polyhedron->facets()) {
       for (const EdgeSPtr& edge : polyhedron->edges()) {
         if (isEdgeInsideFacet(facet, edge, true /*handle_degree_1_as_ray*/)) {
-          CGAL_SS3_ALGO_TRACE_V(1, "\nPolyhedron has no self-intersecting facets, but the surface is self-intersecting!");
-          CGAL_SS3_ALGO_TRACE_V(1, facet->toString());
-          CGAL_SS3_ALGO_TRACE_V(1, edge->toString());
+          CGAL_SS3_ALGO_TRACE_V(16, "\nPolyhedron has no self-intersecting facets, but the surface is self-intersecting!");
+          CGAL_SS3_ALGO_TRACE_V(16, facet->toString());
+          CGAL_SS3_ALGO_TRACE_V(16, edge->toString());
           return true;
         }
       }

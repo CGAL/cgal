@@ -529,10 +529,10 @@ PolyhedronSPtr CombiVertexSplitter::splitVertex(VertexSPtr vertex) {
         VertexSPtr vertex_c = poly_c->vertices().front();
         splitVertex(vertex_c, combination);
         if (checkSplitted(poly_c)) {
-            CGAL_SS3_SPLITTER_TRACE("Valid split-combination found: " << combiToString(combination));
+            CGAL_SS3_SPLITTER_TRACE_V(16, "Valid split-combination found: " << combiToString(combination));
             combinations_valid.push_back(combination);
             polys_split.push_back(poly_c);
-            CGAL_SS3_SPLITTER_TRACE("Found valid combination");
+            CGAL_SS3_SPLITTER_TRACE_V(16, "Found valid combination");
             // 'selected_combi_' is usually 0 => stop on the first valid combination
             if(polys_split.size() > selected_combi_) {
                 break;
@@ -540,7 +540,7 @@ PolyhedronSPtr CombiVertexSplitter::splitVertex(VertexSPtr vertex) {
         }
     }
 
-    CGAL_SS3_SPLITTER_TRACE("Valid split-combination #: " << combinations_valid.size());
+    CGAL_SS3_SPLITTER_TRACE_V(16, "Valid split-combination #: " << combinations_valid.size());
 
     CGAL_warning(!combinations_valid.empty());
     CGAL_warning(!polys_split.empty());
@@ -552,7 +552,7 @@ PolyhedronSPtr CombiVertexSplitter::splitVertex(VertexSPtr vertex) {
         combi combination_valid = *it_combi++;
         PolyhedronSPtr poly_split = *it_p++;
         if (i == selected_combi) {
-            CGAL_SS3_SPLITTER_TRACE("Selected split-combination: " << combiToString(combination_valid));
+            CGAL_SS3_SPLITTER_TRACE_V(16, "Selected split-combination: " << combiToString(combination_valid));
             apply(poly_split, vertex);
             break;
         }

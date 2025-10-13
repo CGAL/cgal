@@ -807,7 +807,7 @@ public:
                           const FT& time,
                           const bool recompute_positions = true)
   {
-    CGAL_SS3_TRANSF_TRACE("~~~~ Shift polyhedron by " << time << " [in place]");
+    CGAL_SS3_TRANSF_TRACE_V(32, "~~~~ Shift polyhedron by " << time << " [in place]");
     CGAL_SS3_DEBUG_SPTR(polyhedron);
 
     typename std::list<FacetSPtr>::iterator it_f = polyhedron->facets().begin();
@@ -840,7 +840,7 @@ public:
   static bool shiftFacetsDegree1(const PolyhedronSPtr& polyhedron,
                                  const FT& time)
   {
-    CGAL_SS3_TRANSF_TRACE("~~~~ Shift polyhedron by " << time << " [in place w/ degree 1]");
+    CGAL_SS3_TRANSF_TRACE_V(32, "~~~~ Shift polyhedron by " << time << " [in place w/ degree 1]");
     CGAL_SS3_DEBUG_SPTR(polyhedron);
 
     // Maps to store shifted planes and points
