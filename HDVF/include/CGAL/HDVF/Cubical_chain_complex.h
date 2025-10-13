@@ -74,6 +74,8 @@ namespace Homological_discrete_vector_field {
  \cgalModels{GeometricChainComplex}
 
  \tparam CoefficientRing a model of the `IntegralDomainWithoutDivision` concept.
+
+ \tparam Traits a geometric traits class model of the `HDVFTraits` concept.
  */
 
 
