@@ -447,6 +447,16 @@ public:
         result = false;
         break;
       }
+      if (!polyhedron_->hasFacet(sheet->getFacetB())) {
+        CGAL_SS3_SKEL_DS_TRACE("Error: sheet's facet B is not in the polyhedron");
+        CGAL_SS3_SKEL_DS_TRACE(sheet->toString());
+        result = false;
+      }
+      if (!polyhedron_->hasFacet(sheet->getFacetF())) {
+        CGAL_SS3_SKEL_DS_TRACE("Error: sheet's facet F is not in the polyhedron");
+        CGAL_SS3_SKEL_DS_TRACE(sheet->toString());
+        result = false;
+      }
       typename std::list<NodeSPtr>::const_iterator it_n = sheet->nodes().begin();
       while (it_n != sheet->nodes().end()) {
         NodeSPtr node = *it_n++;
