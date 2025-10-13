@@ -29,8 +29,10 @@ namespace Homological_discrete_vector_field {
 
 // Tetgen related
 
-inline size_t read_nodes(const std::string &node_file, bool load_nodes, std::vector<Io_node_type> *nodes)
+template <typename P>
+inline size_t read_nodes(const std::string &node_file, bool load_nodes, std::vector<P> *nodes)
 {
+    typedef P Point;
     std::ifstream in_file (node_file) ;
     if ( ! in_file . good () ) {
         std::cerr << "SimplicialComplex::loadFromFile. Fatal Error:\n  " << node_file << " not found.\n";
@@ -53,7 +55,7 @@ inline size_t read_nodes(const std::string &node_file, bool load_nodes, std::vec
     {
         size_t trash ;
         double x ;
-        Io_node_type node ;
+        std::vector<double> node ;
         --nnodes_tmp ;
         std::string line;
         getline( in_file, line );
@@ -66,24 +68,28 @@ inline size_t read_nodes(const std::string &node_file, bool load_nodes, std::vec
             node.push_back(x) ;
         }
         if (load_nodes)
-            nodes->push_back(node) ;
+            nodes->push_back(Point(node[0], node[1], node[2])) ;
     }
     in_file.close() ;
     return nnodes;
 }
-
-inline bool Mesh_object_io::read_nodes_file(const std::string &filename)
+template <typename Traits>
+inline bool Mesh_object_io<Traits>::read_nodes_file(const std::string &filename)
 {
     nvertices = read_nodes(filename, true, &nodes) ;
 }
 
 // Tetgen
 
-/* Class used to load tetgen outputs (for Alexander duality). */
-class Tet_object_io : public Mesh_object_io
+/* Class used to load tetgen outputs (for Alexander duality).
+
+ \tparam Traits a geometric traits class model of the `HDVFTraits` concept.
+*/
+template <typename Traits>
+class Tet_object_io : public Mesh_object_io<Traits>
 {
 public:
-    Tet_object_io(const std::string & prefix) : Mesh_object_io(), _prefix(prefix)
+    Tet_object_io(const std::string & prefix) : Mesh_object_io<Traits>(), _prefix(prefix)
     {
         dim = -3 ;
         add_nodes() ;
@@ -219,7 +225,7 @@ public:
             // First number is the number of nodes
             std::istringstream is (line);
             is >> f_ntets ;
-            
+
         }
         tmp = f_ntets ;
         while ( !(input_file.eof()) && (tmp>0))

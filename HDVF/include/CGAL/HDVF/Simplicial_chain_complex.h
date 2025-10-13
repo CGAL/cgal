@@ -24,7 +24,7 @@ namespace CGAL {
 namespace Homological_discrete_vector_field {
 
 // Forward declaration of SimpComplexTools
-template<typename CoefficientRing> class Duality_simplicial_complex_tools ;
+template<typename CoefficientRing, typename Traits> class Duality_simplicial_complex_tools ;
 
 /*!
  \ingroup PkgHDVFAlgorithmClasses
@@ -34,13 +34,16 @@ template<typename CoefficientRing> class Duality_simplicial_complex_tools ;
  \cgalModels{GeometricChainComplex}
 
  \tparam CoefficientRing a model of the `IntegralDomainWithoutDivision` concept.
+
+ \tparam Traits a geometric traits class model of the `HDVFTraits` concept.
  */
 
-template<typename CoefficientRing>
+template<typename CoefficientRing, typename Traits>
 class Simplicial_chain_complex : public Abstract_simplicial_chain_complex<CoefficientRing> {
 public:
+
     /** \brief Type of vertex coordinates */
-    typedef std::vector<double> Point ;
+    typedef typename Traits::Point Point ;
 
 protected:
     /** \brief Vector of vertex coordinates */
@@ -63,7 +66,7 @@ public:
      *
      * Builds a simplicial complex from a Mesh_object_io describing maximal faces and vertex coordinates.
      */
-    Simplicial_chain_complex(const Mesh_object_io& mesh) : Abstract_simplicial_chain_complex<CoefficientRing>(mesh), _coords(mesh.get_nodes()) {} ;
+    Simplicial_chain_complex(const Mesh_object_io<Traits>& mesh) : Abstract_simplicial_chain_complex<CoefficientRing>(mesh), _coords(mesh.get_nodes()) {} ;
 
     /**
      * \brief Assignment operator for simplicial complexes.
@@ -116,7 +119,7 @@ public:
     template <typename LabelType = int>
     static void chain_complex_to_vtk(const Simplicial_chain_complex &K, const std::string &filename, const std::vector<std::vector<LabelType> > *labels=NULL, std::string label_type_name = "int")
     {
-        typedef Simplicial_chain_complex<CoefficientRing> ChainComplex;
+        typedef Simplicial_chain_complex<CoefficientRing,Traits> ChainComplex;
         if (K._coords.size() != K.number_of_cells(0))
         {
             std::cerr << "SimpComplex_to_vtk. Error, wrong number of points provided.\n";
@@ -145,11 +148,11 @@ public:
         const std::vector<ChainComplex::Point>& coords(K.get_vertices_coords()) ;
         for (size_t n = 0; n < nnodes; ++n)
         {
-            std::vector<double> p(coords.at(n)) ;
-            for (double x : p)
-                out << x << " " ;
-            for (size_t i = p.size(); i<3; ++i) // points must be 3D -> add zeros
-                out << "0 " ;
+            Point p(coords.at(n)) ;
+
+            out << p;
+            // @todo  if Traits::Dimension < 3, complete with zeros
+            //    out << "0 " ;
             out << std::endl ;
         }
 
@@ -229,15 +232,15 @@ public:
 };
 
 // Initialization of static VTK_simptypes
-template <typename CoefficientRing> const
-std::vector<int> Simplicial_chain_complex<CoefficientRing>::VTK_simptypes({1, 3, 5, 10});
+template <typename CoefficientRing, typename Traits> const
+std::vector<int> Simplicial_chain_complex<CoefficientRing,Traits>::VTK_simptypes({1, 3, 5, 10});
 
 
 // chain_to_vtk
-template <typename CoefficientRing>
-void Simplicial_chain_complex<CoefficientRing>::chain_to_vtk(const Simplicial_chain_complex &K, const std::string &filename, const OSM::Sparse_chain<CoefficientRing, OSM::COLUMN>& chain, int q, size_t cellId)
+template <typename CoefficientRing, typename Traits>
+void Simplicial_chain_complex<CoefficientRing,Traits>::chain_to_vtk(const Simplicial_chain_complex &K, const std::string &filename, const OSM::Sparse_chain<CoefficientRing, OSM::COLUMN>& chain, int q, size_t cellId)
 {
-    typedef Simplicial_chain_complex<CoefficientRing> ChainComplex ;
+    typedef Simplicial_chain_complex<CoefficientRing,Traits> ChainComplex ;
     if (K._coords.size() != K.number_of_cells(0))
     {
         std::cerr << "SimpComplex_chain_to_vtk. Error, wrong number of points provided.\n";
@@ -266,11 +269,9 @@ void Simplicial_chain_complex<CoefficientRing>::chain_to_vtk(const Simplicial_ch
     const std::vector<ChainComplex::Point>& coords(K.get_vertices_coords()) ;
     for (size_t n = 0; n < nnodes; ++n)
     {
-        std::vector<double> p(coords.at(n)) ;
-        for (double x : p)
-            out << x << " " ;
-        for (size_t i = p.size(); i<3; ++i) // points must be 3D -> add zeros
-            out << "0 " ;
+        Point p(coords.at(n)) ;
+        out << p ;
+        // @todo  if Traits::Dimension < 3, complete with zeros;
         out << std::endl ;
     }
 

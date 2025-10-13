@@ -1,5 +1,7 @@
 #include <iostream>
 #include <fstream>
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/HDVF/Hdvf_traits_3.h>
 #include <CGAL/HDVF/Mesh_object_io.h>
 #include <CGAL/HDVF/Simplicial_chain_complex.h>
 #include <CGAL/HDVF/Geometric_chain_complex_tools.h>
@@ -14,10 +16,13 @@ namespace HDVF = CGAL::Homological_discrete_vector_field;
 //typedef HDVF::Z2 Coefficient_ring;
 typedef HDVF::Zp<5, char, true> Coefficient_ring;
 
+typedef CGAL::Simple_cartesian<double> Kernel;
+typedef HDVF::Hdvf_traits_3<Kernel> Traits;
+
 int main(int argc, char **argv)
 {
 #if 1
-    using Complex = CGAL::Homological_discrete_vector_field::Simplicial_chain_complex<Coefficient_ring> ;
+    using Complex = CGAL::Homological_discrete_vector_field::Simplicial_chain_complex<Coefficient_ring,Traits> ;
     using HDVF_type = CGAL::Homological_discrete_vector_field::Hdvf<Complex> ;
 
     if (argc != 2)
@@ -27,7 +32,7 @@ int main(int argc, char **argv)
     else
     {
         // Load cub object
-        CGAL::Homological_discrete_vector_field::Mesh_object_io mesh ;
+        CGAL::Homological_discrete_vector_field::Mesh_object_io<Traits> mesh ;
         mesh.read_off(argv[1]);
 
         mesh.print_infos();

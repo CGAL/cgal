@@ -1,6 +1,8 @@
 #include <iostream>
 #include <fstream>
 #include <functional>
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/HDVF/Hdvf_traits_3.h>
 #include <CGAL/HDVF/Mesh_object_io.h>
 #include <CGAL/HDVF/Simplicial_chain_complex.h>
 #include <CGAL/HDVF/Geometric_chain_complex_tools.h>
@@ -11,11 +13,16 @@
 #include <CGAL/HDVF/Sub_chain_complex_mask.h>
 #include <CGAL/OSM/OSM.h>
 
+namespace HDVF = CGAL::Homological_discrete_vector_field;
+
+typedef CGAL::Simple_cartesian<double> Kernel;
+typedef HDVF::Hdvf_traits_3<Kernel> Traits;
+
 //typedef CGAL::Homological_discrete_vector_field::Zp<5,int,true> Coefficient_ring;
 typedef CGAL::Homological_discrete_vector_field::Z2 Coefficient_ring;
-typedef CGAL::Homological_discrete_vector_field::Simplicial_chain_complex<Coefficient_ring> Complex;
+typedef CGAL::Homological_discrete_vector_field::Simplicial_chain_complex<Coefficient_ring, Traits> Complex;
 typedef CGAL::Homological_discrete_vector_field::Hdvf_duality<Complex> HDVF_type;
-typedef CGAL::Homological_discrete_vector_field::Duality_simplicial_complex_tools<Coefficient_ring> Tools_type;
+typedef CGAL::Homological_discrete_vector_field::Duality_simplicial_complex_tools<Coefficient_ring,Traits> Tools_type;
 typedef CGAL::Homological_discrete_vector_field::Sub_chain_complex_mask<Complex> Sub_chain_complex;
 
 int main(int argc, char **argv)
@@ -29,7 +36,7 @@ int main(int argc, char **argv)
     else
     {
         // Load cub object
-        CGAL::Homological_discrete_vector_field::Mesh_object_io mesh ;
+        CGAL::Homological_discrete_vector_field::Mesh_object_io<Traits> mesh ;
         mesh.read_off(argv[1]);
 
         mesh.print_infos();

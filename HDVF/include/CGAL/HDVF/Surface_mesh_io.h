@@ -39,7 +39,7 @@ class Surface_mesh_io : public Mesh_object_io
 public:
     typedef SurfaceMesh Surface_mesh;
 private:
-    
+
     /** \brief Storage of vertices Io_cell_type <-> Vertex_index permutation.
      *
      * `_io_cell_to_he_index` maps a Io_cell_type to its associated Halfedge_index in the mesh
@@ -53,7 +53,7 @@ private:
      */
     std::map<Io_cell_type, typename Surface_mesh::halfedge_index> _io_cell_to_he_index;
     std::vector<std::map<typename Surface_mesh::halfedge_index, Io_cell_type> > _he_index_to_io_cell;
-    
+
 public:
     /** \brief Constructor from a `CGAL::Surface_mesh` encoding a triangular mesh.
      *
@@ -61,11 +61,11 @@ public:
      */
     Surface_mesh_io(const Surface_mesh& mesh) : Mesh_object_io(2) {
         typedef typename Surface_mesh::Point Point;
-        
+
         this->nvertices = mesh.vertices().size();
         this->ncells = mesh.vertices().size() + mesh.edges().size() + mesh.faces().size();
         _he_index_to_io_cell.resize(3);
-        
+
         // Load nodes
         typename Surface_mesh::Vertex_range vr = mesh.vertices();
         for (typename Surface_mesh::Vertex_range::iterator it = vr.begin(); it != vr.end(); ++it) {

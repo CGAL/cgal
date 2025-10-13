@@ -11,6 +11,8 @@
 #include <chrono>
 #include <type_traits>
 #include <typeinfo>
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/HDVF/Hdvf_traits_3.h>
 #include <CGAL/HDVF/Zp.h>
 #include <CGAL/HDVF/Z2.h>
 #include <CGAL/HDVF/Simplex.h>
@@ -24,10 +26,15 @@
 #include <CGAL/HDVF/Cub_object_io.h>
 #include "arguments.h"
 
+namespace HDVF = CGAL::Homological_discrete_vector_field;
+
 // ------- A ring
 // For Z/nZ other than Z (ie. n=0) and Z/2Z, uncomment and set the following define properly
 
 //#define SCALAR 5
+
+using Kernel = CGAL::Simple_cartesian<double>;
+using Traits = HDVF::Hdvf_traits_3<Kernel>;
 
 // ------- Filtration
 
@@ -135,11 +142,11 @@ FiltrationType& build_filtration(const Complex& complex, const Options& options)
 #ifndef CUST_FILTRATION
     // Standard lower star filtration along x,y or z
     if (options.star_filtr == StarFiltrStd::FiltrX)
-        deg_function = (degree_function(complex, CGAL::Homological_discrete_vector_field::f_x)) ;
+        deg_function = (degree_function<Complex,typename Traits::Point>(complex, Kernel::Compute_x_3())) ;
     else if (options.star_filtr == StarFiltrStd::FiltrY)
-        deg_function = (degree_function(complex, CGAL::Homological_discrete_vector_field::f_y)) ;
+        deg_function = (degree_function<Complex,typename Traits::Point>(complex, Kernel::Compute_y_3())) ;
     else if (options.star_filtr == StarFiltrStd::FiltrZ)
-        deg_function = (degree_function(complex, CGAL::Homological_discrete_vector_field::f_z)) ;
+        deg_function = (degree_function<Complex,typename Traits::Point>(complex, Kernel::Compute_z_3())) ;
     else
     {
         std::cout << "Unknown lower start filtration" << std::endl ;
@@ -186,12 +193,12 @@ void main_code (const Options &options)
     /// OFF format
     else if (options.in_format == InputFormat::OFF)
     {
-        using Complex = CGAL::Homological_discrete_vector_field::Simplicial_chain_complex<CoefficientType> ;
+        using Complex = CGAL::Homological_discrete_vector_field::Simplicial_chain_complex<CoefficientType, Traits> ;
         using FiltrationType = CGAL::Homological_discrete_vector_field::Filtration_lower_star<Complex, Degree> ;
         using HDVF_type = CGAL::Homological_discrete_vector_field::Hdvf_persistence<Complex, Degree, FiltrationType> ;
 
         // MeshObject
-        CGAL::Homological_discrete_vector_field::Mesh_object_io mesh ;
+        CGAL::Homological_discrete_vector_field::Mesh_object_io<Traits> mesh ;
         mesh.read_off(options.in_file) ;
 
         // Complex
@@ -200,7 +207,7 @@ void main_code (const Options &options)
         // Build filtration
         FiltrationType& f(build_filtration<Complex, Degree, FiltrationType>(complex, options)) ;
 
-        mesh_complex_output<CGAL::Homological_discrete_vector_field::Mesh_object_io, Complex>(mesh, complex, options) ;
+        mesh_complex_output<CGAL::Homological_discrete_vector_field::Mesh_object_io<Traits>, Complex>(mesh, complex, options) ;
 
         // HDVF computation, export, output
         HDVF_type& hdvf(per_HDVF_comput<Complex,Degree, FiltrationType>(complex,f, options)) ;
@@ -215,7 +222,7 @@ void main_code (const Options &options)
     // CubComplex
     else if ((options.in_format == InputFormat::PGM) || (options.in_format == InputFormat::CUB))
     {
-        using Complex = CGAL::Homological_discrete_vector_field::Cubical_chain_complex<CoefficientType> ;
+        using Complex = CGAL::Homological_discrete_vector_field::Cubical_chain_complex<CoefficientType,Traits> ;
         using FiltrationType = CGAL::Homological_discrete_vector_field::Filtration_lower_star<Complex, Degree> ;
         using HDVF_type = CGAL::Homological_discrete_vector_field::Hdvf_persistence<Complex, Degree, FiltrationType> ;
 

@@ -58,12 +58,12 @@ std::function<double(const std::vector<double>&)> f_z = [](const std::vector<dou
 } ;
 
 /** \brief Degree function from a coordinates to scalar map. */
-template<typename ChainComplex>
-std::function<double(size_t)>  degree_function (const ChainComplex& complex, std::function<double(const std::vector<double>&)>& f)
+template<typename ChainComplex, typename P>
+std::function<double(size_t)>  degree_function (const ChainComplex& complex,  const std::function<double(const P&)>& f)
 {
     std::function<double(size_t)> deg_fun_f = [&complex, &f](size_t i)
     {
-        const std::vector<double> Xi(complex.get_vertex_coords(i)) ;
+        const P& Xi(complex.get_vertex_coords(i)) ;
         return f(Xi) ;
     } ;
     return deg_fun_f ;

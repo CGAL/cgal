@@ -67,7 +67,8 @@ public:
      *
      * \param[in] mesh A `Mesh_object_io` containing a triangular mesh. Cells
      */
-    Abstract_simplicial_chain_complex(const Mesh_object_io& mesh);
+    template <typename Traits>
+    Abstract_simplicial_chain_complex(const Mesh_object_io<Traits>& mesh);
 
     /** \brief Type of column-major chains */
     typedef CGAL::OSM::Sparse_chain<CoefficientRing, CGAL::OSM::COLUMN> Column_chain;
@@ -331,7 +332,8 @@ Abstract_simplicial_chain_complex<CoefficientRing>::Abstract_simplicial_chain_co
 }
 
 template<typename CoefficientRing>
-Abstract_simplicial_chain_complex<CoefficientRing>::Abstract_simplicial_chain_complex(const Mesh_object_io& mesh) : _complex_id(_id_generator++) {
+template <typename Traits>
+Abstract_simplicial_chain_complex<CoefficientRing>::Abstract_simplicial_chain_complex(const Mesh_object_io<Traits>& mesh) : _complex_id(_id_generator++) {
     // Initialize attributes
 
     _dim = std::abs(mesh.dim);

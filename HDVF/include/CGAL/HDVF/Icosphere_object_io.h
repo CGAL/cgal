@@ -26,15 +26,21 @@
 namespace CGAL {
 namespace Homological_discrete_vector_field {
 
-/* Class used to build an icosphere embedding a triangular mesh (for Alexander Duality) */
+/* Class used to build an icosphere embedding a triangular mesh (for Alexander Duality)
 
-class Icosphere_object_io : public Mesh_object_io
+ \tparam Traits a geometric traits class model of the `HDVFTraits` concept.
+*/
+
+template <typename Traits>
+class Icosphere_object_io : public Mesh_object_io<Traits>
 {
 public:
+    using Point = typename Traits::Point;
+    using Vector = typename Traits::Vector;
     using Index=size_t ;
     using Lookup=std::map<std::pair<Index, Index>, Index>;
-
-    Icosphere_object_io(size_t subdivisions, const Io_node_type &c = Io_node_type({0, 0, 0}), double r=1.) : Mesh_object_io(2, vertices_ico, triangles_ico)
+    using Point = typename Traits::Point;
+    Icosphere_object_io(size_t subdivisions, const Point &c = Point({0, 0, 0}), double r=1.) : Mesh_object_io(2, vertices_ico, triangles_ico)
     {
         for (size_t i=0; i<subdivisions; ++i)
         {
@@ -49,12 +55,12 @@ public:
     inline static const float Z=.850650808352039932f;
     inline static const float N=0.f;
 
-    inline static const std::vector<Io_node_type> vertices_ico =
+    inline static const std::vector<Point> vertices_ico =
     {
-        Io_node_type({-X,N,Z}), Io_node_type({X,N,Z}), Io_node_type({-X,N,-Z}), Io_node_type({X,N,-Z}),
-        Io_node_type({N,Z,X}), Io_node_type({N,Z,-X}), Io_node_type({N,-Z,X}), Io_node_type({N,-Z,-X}),
-        Io_node_type({Z,X,N}), Io_node_type({-Z,X, N}), Io_node_type({Z,-X,N}), Io_node_type({-Z,-X, N})
-    };
+        Point(-X,N,Z), Point(X,N,Z), Point(-X,N,-Z), Point(X,N,-Z),
+        Point(N,Z,X), Point(N,Z,-X), Point(N,-Z,X), Point(N,-Z,-X),
+        Point(Z,X,N), Point(-Z,X, N), Point(Z,-X,N), Point(Z,-X, N)
+     };
 
     inline static const std::vector<Io_cell_type> triangles_ico =
     {
@@ -74,11 +80,11 @@ public:
         auto inserted=lookup.insert({key, nodes.size()});
         if (inserted.second)
         {
-            Io_node_type& edge0(nodes[first]);
-            Io_node_type& edge1(nodes[second]);
-            Io_node_type& point(edge0+edge1);
-            normalize(point) ;
-            add_node(point);
+            Point& edge0(this->nodes[first]);
+            Point& edge1(this->nodes[second]);
+            Vector v = edge1 - edge0;
+            v = v / std::sqrt(v.squared_length());
+            add_node(ORIGIN + v);
         }
 
         return inserted.first->second;
@@ -110,12 +116,12 @@ public:
             add_cell(c) ;
     }
 
-    void rigid_transformation(const Io_node_type &c, double r)
+    void rigid_transformation(const Point &c, double r)
     {
         for (size_t i=0; i<nvertices; ++i)
         {
-            nodes[i] *= r ;
-            nodes[i] += c ;
+            nodes[i] = ORIGIN + (r * (nodes[i] - ORIGIN)) ;
+            nodes[i] += (c - ORIGIN) ;
         }
     }
 };

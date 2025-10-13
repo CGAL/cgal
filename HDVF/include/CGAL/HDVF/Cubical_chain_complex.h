@@ -77,14 +77,14 @@ namespace Homological_discrete_vector_field {
  */
 
 
-template<typename CoefficientRing>
+template<typename CoefficientRing, typename Traits>
 class Cubical_chain_complex {
 public:
     /*! \brief Type of coefficients used to compute homology. */
     typedef CoefficientRing Coefficient_ring;
 
     /** \brief Type of vertex coordinates */
-    typedef std::vector<double> Point ;
+    typedef typename Traits::Point Point ;
 private:
     /* \brief Vector of VTK types associated to cells in each dimension
      e.g. {1, 3, 8, 11} */
@@ -404,8 +404,8 @@ public:
      *
      * Displays the number of cells in each dimension and the boundary matrix in each dimension.
      */
-    template <typename _CT>
-    friend std::ostream& operator<<(std::ostream& out, const Cubical_chain_complex<_CT>& complex) ;
+    template <typename _CT, typename Traits>
+    friend std::ostream& operator<<(std::ostream& out, const Cubical_chain_complex<_CT,Traits>& complex) ;
 
     /** \brief Gets (unique) object Id.
      * For comparison of constant references to the complex.
@@ -422,7 +422,8 @@ public:
             res.push_back(c/2. + .5) ;
         for (size_t i = coords.size(); i<3; ++i) // points must be 3D
             res.push_back(0) ;
-        return res ;
+            // @todo deal with dim != 3
+        return Point(res[0], res[1], res[2]) ;
     }
 
     /** \brief Gets the vector of vertex coordinates  */
@@ -451,7 +452,7 @@ public:
      * \param[in] label_type_name Typename used in vtk export (e.g. "int" or "unsigned_long", see <a href = "https://docs.vtk.org/en/latest/design_documents/VTKFileFormats.html">VTK manual </a>).
      */
     template <typename LabelType = int>
-    static void chain_complex_to_vtk(const Cubical_chain_complex<CoefficientRing> &K, const std::string &filename, const std::vector<std::vector<LabelType> > *labels=NULL, std::string label_type_name = "int")
+    static void chain_complex_to_vtk(const Cubical_chain_complex<CoefficientRing, Traits> &K, const std::string &filename, const std::vector<std::vector<LabelType> > *labels=NULL, std::string label_type_name = "int")
     {
         bool with_scalars = (labels != NULL) ;
 
@@ -474,11 +475,8 @@ public:
         out << "POINTS " << nnodes << " double" << std::endl ;
         for (size_t n = 0; n < nnodes; ++n)
         {
-            std::vector<double> p(K.get_vertex_coords(n)) ;
-            for (double x : p)
-                out << x << " " ;
-            for (size_t i = p.size(); i<3; ++i) // points must be 3D -> add zeros
-                out << "0 " ;
+            Point p(K.get_vertex_coords(n)) ;
+            out << p ; // @todo  works only for 3D points
             out << std::endl ;
         }
 
@@ -503,7 +501,7 @@ public:
             for (size_t i = 0; i<K.number_of_cells(0); ++i)
             {
                 out << "1 " << i << std::endl ;
-                types.push_back(Cubical_chain_complex<CoefficientRing>::VTK_cubtypes.at(0)) ;
+                types.push_back(Cubical_chain_complex<CoefficientRing, Traits>::VTK_cubtypes.at(0)) ;
                 if (with_scalars)
                 {
                     scalars.push_back((*labels).at(0).at(i)) ;
@@ -521,7 +519,7 @@ public:
                     for (size_t i : verts)
                         out << i << " " ;
                     out << std::endl ;
-                    types.push_back(Cubical_chain_complex<CoefficientRing>::VTK_cubtypes.at(q)) ;
+                    types.push_back(Cubical_chain_complex<CoefficientRing,Traits>::VTK_cubtypes.at(q)) ;
                     if (with_scalars)
                     {
                         scalars.push_back((*labels).at(q).at(id)) ;
@@ -567,7 +565,7 @@ public:
      * \param[in] q Dimension of the cells of the chain.
      * \param[in] cellId If different from MAX_SIZE_T, labels are exported to distinguish cells of the chain (label 2) from cellId cell (label 0).
      */
-    static void chain_to_vtk(const Cubical_chain_complex<CoefficientRing> &K, const std::string &filename, const OSM::Sparse_chain<CoefficientRing, OSM::COLUMN>& chain, int q, size_t cellId = -1) ;
+    static void chain_to_vtk(const Cubical_chain_complex<CoefficientRing, Traits> &K, const std::string &filename, const OSM::Sparse_chain<CoefficientRing, OSM::COLUMN>& chain, int q, size_t cellId = -1) ;
 
 protected:
     // Methods to access data
@@ -787,16 +785,16 @@ protected:
 };
 
 // Initialization of static VTK_cubtypes
-template <typename CoefficientRing> const
-std::vector<int> Cubical_chain_complex<CoefficientRing>::VTK_cubtypes({1, 3, 8, 11}) ;
+template <typename CoefficientRing, typename Traits> const
+std::vector<int> Cubical_chain_complex<CoefficientRing, Traits>::VTK_cubtypes({1, 3, 8, 11}) ;
 
 // Initialization of _id_generator
-template <typename CoefficientRing>
-size_t Cubical_chain_complex<CoefficientRing>::_id_generator(0) ;
+template <typename CoefficientRing,  typename Traits>
+size_t Cubical_chain_complex<CoefficientRing, Traits>::_id_generator(0) ;
 
 // Constructor implementation
-template<typename CoefficientRing>
-Cubical_chain_complex<CoefficientRing>::Cubical_chain_complex(const Cub_object_io& cub,Cubical_complex_primal_dual type) : _dim(cub.dim), _size_bb(_dim+1), _P(_dim+1,1), _base2bool(_dim+1), _bool2base(_dim+1), _complex_id(_id_generator++)
+template<typename CoefficientRing, typename Traits>
+Cubical_chain_complex<CoefficientRing, Traits>::Cubical_chain_complex(const Cub_object_io& cub,Cubical_complex_primal_dual type) : _dim(cub.dim), _size_bb(_dim+1), _P(_dim+1,1), _base2bool(_dim+1), _bool2base(_dim+1), _complex_id(_id_generator++)
 
 {
     // Initialize _size_bb and _P
@@ -828,8 +826,8 @@ Cubical_chain_complex<CoefficientRing>::Cubical_chain_complex(const Cub_object_i
 }
 
 // initialize_cells implementation
-template<typename CoefficientRing>
-void Cubical_chain_complex<CoefficientRing>::initialize_cells(const Cub_object_io& cub, Cubical_complex_primal_dual type)
+template<typename CoefficientRing, typename Traits>
+void Cubical_chain_complex<CoefficientRing, Traits>::initialize_cells(const Cub_object_io& cub, Cubical_complex_primal_dual type)
 {
     if (type == PRIMAL)
     {
@@ -896,8 +894,8 @@ void Cubical_chain_complex<CoefficientRing>::initialize_cells(const Cub_object_i
 
 
 // is_valid_cell implementation
-template<typename CoefficientRing>
-bool Cubical_chain_complex<CoefficientRing>::is_valid_cell(const std::vector<size_t>& cell) const {
+template<typename CoefficientRing, typename Traits>
+bool Cubical_chain_complex<CoefficientRing, Traits>::is_valid_cell(const std::vector<size_t>& cell) const {
     for (size_t i=0; i<_dim; ++i) {
         if (cell[i] < 0 || cell[i] >= _size_bb[i]) {
             return false;
@@ -906,8 +904,8 @@ bool Cubical_chain_complex<CoefficientRing>::is_valid_cell(const std::vector<siz
     return true;
 }
 
-template<typename CoefficientRing>
-bool Cubical_chain_complex<CoefficientRing>::is_valid_cell(size_t id_cell) const
+template<typename CoefficientRing, typename Traits>
+bool Cubical_chain_complex<CoefficientRing, Traits>::is_valid_cell(size_t id_cell) const
 {
     if ((id_cell < 0) || (id_cell > _P[_dim]))
         return false;
@@ -917,8 +915,8 @@ bool Cubical_chain_complex<CoefficientRing>::is_valid_cell(size_t id_cell) const
 
 
 // insert_cell implementation
-template<typename CoefficientRing>
-void Cubical_chain_complex<CoefficientRing>::insert_cell(size_t cell) {
+template<typename CoefficientRing, typename Traits>
+void Cubical_chain_complex<CoefficientRing, Traits>::insert_cell(size_t cell) {
     if (!is_valid_cell(cell))
         throw std::out_of_range("insert_cell: trying to insert cell with invalid index");
 
@@ -948,8 +946,8 @@ void Cubical_chain_complex<CoefficientRing>::insert_cell(size_t cell) {
 
 
 // calculate_d implementation
-template<typename CoefficientRing>
-void Cubical_chain_complex<CoefficientRing>::calculate_d(int dim)  {
+template<typename CoefficientRing, typename Traits>
+void Cubical_chain_complex<CoefficientRing, Traits>::calculate_d(int dim)  {
     size_t nb_lignes = (dim == 0) ? 0 : number_of_cells(dim - 1);
 
     _d[dim] = Column_matrix(nb_lignes, number_of_cells(dim));
@@ -965,8 +963,8 @@ void Cubical_chain_complex<CoefficientRing>::calculate_d(int dim)  {
 }
 
 // dimension implementation
-template<typename CoefficientRing>
-int Cubical_chain_complex<CoefficientRing>::dimension(const std::vector<size_t>& cell) const {
+template<typename CoefficientRing, typename Traits>
+int Cubical_chain_complex<CoefficientRing,Traits>::dimension(const std::vector<size_t>& cell) const {
     int dimension = 0;
     for (size_t index : cell) {
         if (index % 2 == 1) { // Un index impair indique une dimension plus élevée
@@ -977,8 +975,8 @@ int Cubical_chain_complex<CoefficientRing>::dimension(const std::vector<size_t>&
 }
 
 // calculate_boundaries implementation
-template<typename CoefficientRing>
-std::vector<size_t> Cubical_chain_complex<CoefficientRing>::calculate_boundaries(size_t idcell) const {
+template<typename CoefficientRing, typename Traits>
+std::vector<size_t> Cubical_chain_complex<CoefficientRing, Traits>::calculate_boundaries(size_t idcell) const {
     std::vector<size_t> boundaries;
     std::vector<size_t> c = bindex_to_cell(idcell);
 
@@ -1003,8 +1001,8 @@ std::vector<size_t> Cubical_chain_complex<CoefficientRing>::calculate_boundaries
  *           -> If a cell Id is provided scalars are exported (0 for the given cellId / 2 for other cells)
  */
 
-template <typename CoefficientRing>
-void Cubical_chain_complex<CoefficientRing>::chain_to_vtk(const Cubical_chain_complex<CoefficientRing> &K, const std::string &filename, const OSM::Sparse_chain<CoefficientRing, OSM::COLUMN>& chain, int q, size_t cellId)
+template <typename CoefficientRing, typename Traits>
+void Cubical_chain_complex<CoefficientRing,Traits>::chain_to_vtk(const Cubical_chain_complex<CoefficientRing, Traits> &K, const std::string &filename, const OSM::Sparse_chain<CoefficientRing, OSM::COLUMN>& chain, int q, size_t cellId)
 {
     bool with_scalars = (cellId != -1) ;
 
@@ -1027,11 +1025,9 @@ void Cubical_chain_complex<CoefficientRing>::chain_to_vtk(const Cubical_chain_co
     out << "POINTS " << nnodes << " double" << std::endl ;
     for (size_t n = 0; n < nnodes; ++n)
     {
-        std::vector<double> p(K.get_vertex_coords(n)) ;
-        for (double x : p)
-            out << x << " " ;
-        for (size_t i = p.size(); i<3; ++i) // points must be 3D -> add zeros
-            out << "0 " ;
+        Point p(K.get_vertex_coords(n)) ;
+        out << p;
+        // @todo  points must be 3D -> add zeros
         out << std::endl ;
     }
 
@@ -1069,7 +1065,7 @@ void Cubical_chain_complex<CoefficientRing>::chain_to_vtk(const Cubical_chain_co
                     for (size_t i : verts)
                         out << i << " " ;
                     out << std::endl ;
-                    types.push_back(Cubical_chain_complex<CoefficientRing>::VTK_cubtypes.at(q)) ;
+                    types.push_back(Cubical_chain_complex<CoefficientRing,Traits>::VTK_cubtypes.at(q)) ;
 
                     if (with_scalars)
                     {
@@ -1108,8 +1104,8 @@ void Cubical_chain_complex<CoefficientRing>::chain_to_vtk(const Cubical_chain_co
     out.close() ;
 }
 
-template <typename CoefficientRing>
-std::ostream& operator<<(std::ostream& out, const Cubical_chain_complex<CoefficientRing>& complex)
+template <typename CoefficientRing, typename Traits>
+std::ostream& operator<<(std::ostream& out, const Cubical_chain_complex<CoefficientRing, Traits>& complex)
 {
     return complex.print_complex(out);
 }

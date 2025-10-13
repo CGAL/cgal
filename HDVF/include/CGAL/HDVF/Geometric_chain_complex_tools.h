@@ -304,13 +304,16 @@ Technically, starting from a Simplicial_chain_complex `_K`, the method `simplici
 - K (Sub_chain_complex_mask) : Sub_chain_complex_mask identifying _K inside L
 
 \tparam CoefficientRing a model of the `IntegralDomainWithoutDivision` concept providing the ring used to compute homology.
+
+\tparam Traits a geometric traits class model of the `HDVFTraits` concept.
 */
 
-template<typename CoefficientRing>
+template<typename CoefficientRing, typename Traits>
 class Duality_simplicial_complex_tools {
 public:
+    typedef typename Traits::Point Point ;
     /** \brief Type of simplicial chain complex encoding `L`. */
-    typedef Simplicial_chain_complex<CoefficientRing> Chain_complex ;
+    typedef Simplicial_chain_complex<CoefficientRing,Traits> Chain_complex ;
     /** \brief Type of sub chain complex mask encoding the sub complex `K`. */
     typedef Sub_chain_complex_mask<Chain_complex> Sub_chain_complex ;
     /** \brief Default constructor. */
@@ -326,7 +329,7 @@ public:
     typedef struct {
         Chain_complex& L ;
         Sub_chain_complex& K ;
-        std::vector<Io_node_type> nodes ;
+        std::vector<Point> nodes ;
     } Complex_duality_data ;
 
     /** \brief Generates a subcomplex \f$K\f$K and a complex \f$L\f$ with \f$K\subseteq L\f$ from a simplicial complex `_K`.
@@ -354,9 +357,9 @@ public:
 
         // Closing K by adding the icosphere
         //  Compute a bounding icosphere
-        Io_node_type bary = mesh_L.barycenter() ;
-        double r = mesh_L.radius(bary) ;
-        Icosphere_object_io ico(2,bary, BB_ratio*r) ;
+        Point center = mesh_L.centroid() ;
+        double r = mesh_L.radius(center) ;
+        Icosphere_object_io<Traits> ico(2,center, BB_ratio*r) ;
         std::cerr << "Icosphere generated" << std::endl;
         ico.print_infos() ;
 
@@ -374,7 +377,7 @@ public:
         system(tetgen_command.c_str()) ;
 
         // Read the mesh built by tetgen for L
-        Tet_object_io tetL(out_file_prefix) ;
+        Tet_object_io<Traits> tetL(out_file_prefix) ;
 
         // Build the associated SimpComplex
         Chain_complex& L = *new Chain_complex(tetL) ;
@@ -399,7 +402,7 @@ public:
     }
 
     /** \brief Exports a SimpComplex to a MeshObject  */
-    static Mesh_object_io& export_meshObject(const Chain_complex& _CC)
+    static Mesh_object_io<Traits>& export_meshObject(const Chain_complex& _CC)
     {
         std::vector<Io_cell_type> vcells ;
         for (int q = 0; q <= _CC.dimension(); ++q)
@@ -409,10 +412,10 @@ public:
                 vcells.push_back(s.get_vertices()) ;
             }
 
-        std::vector<Io_node_type> coords;
+        std::vector<Point> coords;
         for (auto it = _CC.get_vertices_coords().begin(); it != _CC.get_vertices_coords().end(); ++it)
-            coords.push_back(Io_node_type(*it));
-        Mesh_object_io &m = *(new Mesh_object_io(-3, coords, vcells)) ;
+            coords.push_back(Point(*it));
+        Mesh_object_io<Traits> &m = *(new Mesh_object_io<Traits>(-3, coords, vcells)) ;
         return m ;
     }
 } ;
@@ -435,11 +438,11 @@ Use the `frame` method from the `Cub_object_io` class to enlarge the bounding bo
 \tparam CoefficientRing a model of the `IntegralDomainWithoutDivision` concept providing the ring used to compute homology.
 */
 
-template<typename CoefficientRing>
+template<typename CoefficientRing, typename Traits>
 class Duality_cubical_complex_tools {
 public:
     /** \brief Type of cubical complexes used for the initial complex and \f$L\f$. */
-    typedef Cubical_chain_complex<CoefficientRing> Chain_complex ;
+    typedef Cubical_chain_complex<CoefficientRing, Traits> Chain_complex ;
     /** \brief Type of sub chain complex mask used to encode the sub-complex  \f$K\f$. */
     typedef Sub_chain_complex_mask<Chain_complex> Sub_chain_complex ;
     // Constructor

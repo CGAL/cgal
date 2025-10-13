@@ -1,6 +1,8 @@
 #include <iostream>
 #include <fstream>
 #include <chrono>
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/HDVF/Hdvf_traits_3.h>
 #include <CGAL/Hdvf/Cub_object_io.h>
 #include <CGAL/Hdvf/Cubical_chain_complex.h>
 #include <CGAL/HDVF/Geometric_chain_complex_tools.h>
@@ -9,13 +11,18 @@
 #include <CGAL/Hdvf/Hdvf.h>
 #include <CGAL/OSM/OSM.h>
 
+namespace HDVF = CGAL::Homological_discrete_vector_field;
+
 typedef int CoefficientType;
 //typedef CGAL::Homological_discrete_vector_field::Zp<5,int,true> CoefficientType;
 //typedef CGAL::Homological_discrete_vector_field::Z2 CoefficientType;
 
+typedef CGAL::Simple_cartesian<double> Kernel;
+typedef HDVF::Hdvf_traits_3<Kernel> Traits;
+
 int main(int argc, char **argv)
 {
-    using Complex = CGAL::Homological_discrete_vector_field::Cubical_chain_complex<CoefficientType> ;
+    using Complex = CGAL::Homological_discrete_vector_field::Cubical_chain_complex<CoefficientType, Traits> ;
     using HDVF_type = CGAL::Homological_discrete_vector_field::Hdvf<Complex> ;
 
     if (argc != 2)
