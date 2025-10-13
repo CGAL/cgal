@@ -34,9 +34,17 @@
 /* just a helper for code location */
 #define CGAL_SS3_TRACE_LOC CGAL_SS3_TRACE_STREAM << "[DEBUG] " << __FILE__ << ":" << __LINE__ << ": ";
 
-#ifndef CGAL_SS3_TRACE_VERBOSITY
-#  define CGAL_SS3_TRACE_VERBOSITY 4
-#endif
+namespace CGAL {
+namespace Straight_skeletons_3 {
+namespace internal {
+
+static unsigned int verbosity_level = 4;
+
+void set_verbosity_level(const unsigned int l) { verbosity_level = l; }
+
+} // namespace internal
+} // namespace Straight_skeletons_3
+} // namespace CGAL
 
 #define CGAL_SS3_ENABLE_TRACE // generic
 // #define CGAL_SS3_TRAITS_ENABLE_TRACE // traits & kernel
@@ -54,8 +62,10 @@
 #ifdef CGAL_SS3_ENABLE_TRACE
 # define CGAL_SS3_TRACE_CODE(code) code
 # define CGAL_SS3_TRACE(m) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
-# define CGAL_SS3_TRACE_V(l,m) if (l <= CGAL_SS3_TRACE_VERBOSITY) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
-# define CGAL_SS3_TRACE_IF(c,l,m) if ( (c) && l <= CGAL_SS3_TRACE_VERBOSITY) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
+# define CGAL_SS3_TRACE_V(l,m) if (l <= CGAL::Straight_skeletons_3::internal::verbosity_level) \
+/*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
+# define CGAL_SS3_TRACE_IF(c,l,m) if ( (c) && l <= CGAL::Straight_skeletons_3::internal::verbosity_level) \
+/*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
 #endif
 
 // -------------------------------------------------------------------------------------------------
@@ -63,8 +73,10 @@
 #ifdef CGAL_SS3_TRAITS_ENABLE_TRACE
 # define CGAL_SS3_TRAITS_TRACE_CODE(code) code
 # define CGAL_SS3_TRAITS_TRACE(m) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
-# define CGAL_SS3_TRAITS_TRACE_V(l,m) if (l <= CGAL_SS3_TRACE_VERBOSITY) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
-# define CGAL_SS3_TRAITS_TRACE_IF(c,l,m) if ( (c) && l <= CGAL_SS3_TRACE_VERBOSITY) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
+# define CGAL_SS3_TRAITS_TRACE_V(l,m) if (l <= CGAL::Straight_skeletons_3::internal::verbosity_level) \
+/*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
+# define CGAL_SS3_TRAITS_TRACE_IF(c,l,m) if ( (c) && l <= CGAL::Straight_skeletons_3::internal::verbosity_level) \
+/*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
 #endif
 
 // -------------------------------------------------------------------------------------------------
@@ -73,8 +85,10 @@
 #ifdef CGAL_SS3_HDS_ENABLE_TRACE
 # define CGAL_SS3_HDS_TRACE_CODE(code) code
 # define CGAL_SS3_HDS_TRACE(m) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
-# define CGAL_SS3_HDS_TRACE_V(l,m) if (l <= CGAL_SS3_TRACE_VERBOSITY) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
-# define CGAL_SS3_HDS_TRACE_IF(c,l,m) if ( (c) && l <= CGAL_SS3_TRACE_VERBOSITY) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
+# define CGAL_SS3_HDS_TRACE_V(l,m) if (l <= CGAL::Straight_skeletons_3::internal::verbosity_level) \
+/*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
+# define CGAL_SS3_HDS_TRACE_IF(c,l,m) if ( (c) && l <= CGAL::Straight_skeletons_3::internal::verbosity_level) \
+/*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
 #endif
 
 // -------------------------------------------------------------------------------------------------
@@ -83,8 +97,10 @@
 #ifdef CGAL_SS3_SKEL_DS_ENABLE_TRACE
 # define CGAL_SS3_SKEL_DS_TRACE_CODE(code) code
 # define CGAL_SS3_SKEL_DS_TRACE(m) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
-# define CGAL_SS3_SKEL_DS_TRACE_V(l,m) if (l <= CGAL_SS3_TRACE_VERBOSITY) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
-# define CGAL_SS3_SKEL_DS_TRACE_IF(c,l,m) if ( (c) && l <= CGAL_SS3_TRACE_VERBOSITY) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
+# define CGAL_SS3_SKEL_DS_TRACE_V(l,m) if (l <= CGAL::Straight_skeletons_3::internal::verbosity_level) \
+/*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
+# define CGAL_SS3_SKEL_DS_TRACE_IF(c,l,m) if ( (c) && l <= CGAL::Straight_skeletons_3::internal::verbosity_level) \
+/*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
 #endif
 
 // -------------------------------------------------------------------------------------------------
@@ -93,8 +109,10 @@
 #ifdef CGAL_SS3_IO_ENABLE_TRACE
 # define CGAL_SS3_IO_TRACE_CODE(code) code
 # define CGAL_SS3_IO_TRACE(m) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
-# define CGAL_SS3_IO_TRACE_V(l,m) if (l <= CGAL_SS3_TRACE_VERBOSITY) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
-# define CGAL_SS3_IO_TRACE_IF(c,l,m) if ( (c) && l <= CGAL_SS3_TRACE_VERBOSITY) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
+# define CGAL_SS3_IO_TRACE_V(l,m) if (l <= CGAL::Straight_skeletons_3::internal::verbosity_level) \
+/*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
+# define CGAL_SS3_IO_TRACE_IF(c,l,m) if ( (c) && l <= CGAL::Straight_skeletons_3::internal::verbosity_level) \
+/*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
 #endif
 
 // -------------------------------------------------------------------------------------------------
@@ -103,8 +121,10 @@
 #ifdef CGAL_SS3_TRANSF_ENABLE_TRACE
 # define CGAL_SS3_TRANSF_TRACE_CODE(code) code
 # define CGAL_SS3_TRANSF_TRACE(m) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
-# define CGAL_SS3_TRANSF_TRACE_V(l,m) if (l <= CGAL_SS3_TRACE_VERBOSITY) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
-# define CGAL_SS3_TRANSF_TRACE_IF(c,l,m) if ( (c) && l <= CGAL_SS3_TRACE_VERBOSITY) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
+# define CGAL_SS3_TRANSF_TRACE_V(l,m) if (l <= CGAL::Straight_skeletons_3::internal::verbosity_level) \
+/*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
+# define CGAL_SS3_TRANSF_TRACE_IF(c,l,m) if ( (c) && l <= CGAL::Straight_skeletons_3::internal::verbosity_level) \
+/*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
 #endif
 
 // -------------------------------------------------------------------------------------------------
@@ -113,8 +133,10 @@
 #ifdef CGAL_SS3_SPLITTER_ENABLE_TRACE
 # define CGAL_SS3_SPLITTER_TRACE_CODE(code) code
 # define CGAL_SS3_SPLITTER_TRACE(m) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
-# define CGAL_SS3_SPLITTER_TRACE_V(l,m) if (l <= CGAL_SS3_TRACE_VERBOSITY) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
-# define CGAL_SS3_SPLITTER_TRACE_IF(c,l,m) if ( (c) && l <= CGAL_SS3_TRACE_VERBOSITY) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
+# define CGAL_SS3_SPLITTER_TRACE_V(l,m) if (l <= CGAL::Straight_skeletons_3::internal::verbosity_level) \
+/*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
+# define CGAL_SS3_SPLITTER_TRACE_IF(c,l,m) if ( (c) && l <= CGAL::Straight_skeletons_3::internal::verbosity_level) \
+/*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
 #endif
 
 // -------------------------------------------------------------------------------------------------
@@ -123,8 +145,10 @@
 #ifdef CGAL_SS3_ALGO_ENABLE_TRACE
 # define CGAL_SS3_ALGO_TRACE_CODE(code) code
 # define CGAL_SS3_ALGO_TRACE(m) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
-# define CGAL_SS3_ALGO_TRACE_V(l,m) if (l <= CGAL_SS3_TRACE_VERBOSITY) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
-# define CGAL_SS3_ALGO_TRACE_IF(c,l,m) if ( (c) && l <= CGAL_SS3_TRACE_VERBOSITY) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
+# define CGAL_SS3_ALGO_TRACE_V(l,m) if (l <= CGAL::Straight_skeletons_3::internal::verbosity_level) \
+/*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
+# define CGAL_SS3_ALGO_TRACE_IF(c,l,m) if ( (c) && l <= CGAL::Straight_skeletons_3::internal::verbosity_level) \
+/*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
 #endif
 
 // -------------------------------------------------------------------------------------------------
@@ -133,8 +157,10 @@
 #ifdef CGAL_SS3_CORE_ENABLE_TRACE
 # define CGAL_SS3_CORE_TRACE_CODE(code) code
 # define CGAL_SS3_CORE_TRACE(m) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
-# define CGAL_SS3_CORE_TRACE_V(l,m) if (l <= CGAL_SS3_TRACE_VERBOSITY) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
-# define CGAL_SS3_CORE_TRACE_IF(c,l,m) if ( (c) && l <= CGAL_SS3_TRACE_VERBOSITY) /*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
+# define CGAL_SS3_CORE_TRACE_V(l,m) if (l <= CGAL::Straight_skeletons_3::internal::verbosity_level) \
+/*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
+# define CGAL_SS3_CORE_TRACE_IF(c,l,m) if ( (c) && l <= CGAL::Straight_skeletons_3::internal::verbosity_level) \
+/*CGAL_SS3_TRACE_LOC*/ CGAL_SS3_TRACE_STREAM << m << std::endl;
 #endif
 
 // -------------------------------------------------------------------------------------------------
