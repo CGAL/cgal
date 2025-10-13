@@ -73,7 +73,7 @@ class Hdvf_duality : public Hdvf_core<ChainComplex, OSM::Sparse_chain, OSM::Sub_
 public:
     /*! \brief Type of coefficients used to compute homology. */
     typedef ChainComplex::Coefficient_ring Coefficient_ring;
-    
+
 private:
     // Type of column-major chains
     typedef CGAL::OSM::Sparse_chain<Coefficient_ring, CGAL::OSM::COLUMN> Column_chain;

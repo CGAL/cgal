@@ -134,7 +134,7 @@ public:
  * \brief Type of underlying chain complex (a model of `AbstractChainComplex`).
  */
 typedef unspecified_type Complex;
-    
+
 /*! \brief Type of coefficients used to compute homology. */
 typedef Complex::Coefficient_ring Coefficient_ring;
 
@@ -154,13 +154,13 @@ typedef Complex::Coefficient_ring Coefficient_ring;
  */
 struct Cell_pair {
     /// Index of the first cell
-    size_t sigma; 
+    size_t sigma;
     /// Index of the second cell
-    size_t tau;   
+    size_t tau;
     /// Dimension of cells: `dim`/`dim`+1 for `A()` and `R()`, `dim`/`dim` for other operations
-    int dim;    
+    int dim;
 };
-    
+
 /*!
  Type of column-major chains
  */

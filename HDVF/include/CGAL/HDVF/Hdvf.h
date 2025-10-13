@@ -86,7 +86,7 @@ class Hdvf : public Hdvf_core<ChainComplex, OSM::Sparse_chain, OSM::Sparse_matri
 public:
     /*! \brief Type of coefficients used to compute homology. */
     typedef ChainComplex::Coefficient_ring Coefficient_ring;
-    
+
     /*!
      Type of parent Hdvf_core class.
      */

@@ -50,36 +50,36 @@ namespace OSM {
 
 template <typename CoefficientRing, int StorageFormat>
 class Sparse_chain {
-    
+
 public:
     /*!
      Type of chains iterators.
      */
     typedef typename std::unordered_map<size_t, CoefficientRing>::iterator iterator;
-    
+
     /*!
      Type of chains constant iterators.
      */
     typedef typename std::unordered_map<size_t, CoefficientRing>::const_iterator const_iterator;
-    
+
     // Allow the Sparse_matrix class to access other templated Sparse_matrix and
     // Sparse_chain protected members.
     template <typename _CT, int _CTF>
     friend class Sparse_chain;
-    
+
     template <typename _CT, int _CTF>
     friend class Sparse_matrix;
-    
+
 protected:
     /* \brief Type of data stored in the chain: map between indices and coefficients. */
     typedef std::pair<size_t, CoefficientRing> pair;
-    
+
     /* \brief The chain inner representation and storage of data. */
     std::unordered_map<size_t, CoefficientRing> _chainData;
-    
+
     /* \brief The chain boundary. */
     size_t _upperBound;
-    
+
 public:
     /**
      * \brief Creates new empty sparse chain.
@@ -90,7 +90,7 @@ public:
         _upperBound = 0;
         _chainData = std::unordered_map<size_t, CoefficientRing>();
     }
-    
+
     /**
      * \brief Creates new empty sparse chain (ie. zero-chain) of given size.
      *
@@ -102,23 +102,23 @@ public:
         _upperBound = chainSize;
         _chainData = std::unordered_map<size_t, CoefficientRing>();
     }
-    
-    
-    
+
+
+
     /**
      * \brief Creates new SparseChain by copy.
      *
      * Copy constructor, initialize a SparseChain from an existing SparseChain.
      *
      * \pre The chains have the same `CoefficientRing` and `StorageFormat`.
-     
+
      * \param[in] otherToCopy The chain to copy.
      */
     Sparse_chain(const Sparse_chain &otherToCopy) {
         _upperBound = otherToCopy._upperBound;
         _chainData = otherToCopy._chainData;
     }
-    
+
     /**
      * \brief Assigns to other chain.
      *
@@ -133,17 +133,17 @@ public:
     Sparse_chain& operator=(const Sparse_chain &otherToCopy) {
         _upperBound = otherToCopy._upperBound;
         _chainData = otherToCopy._chainData;
-        
+
         return *this;
     }
-    
+
     /**
      * \brief Size of the chain
      *
      * \return Size allocated for the chain.
      */
     size_t dimension() const { return _upperBound ; }
-    
+
     /** \relates Sparse_chain
      *
      * \brief Displays a Sparse_chain in the output stream.
@@ -158,15 +158,15 @@ public:
         for (const_iterator i = chain._chainData.begin() ; i != chain._chainData.end() ; ++i) {
             stream << i->first << ": " << i->second << ", ";
         }
-        
+
         if (chain._chainData.size() > 0) {
             stream << "\b\b";
         }
         stream << "]";
-        
+
         return stream;
     }
-    
+
     /**
      * \brief Adds two chains together.
      *
@@ -184,10 +184,10 @@ public:
     Sparse_chain operator+(const Sparse_chain &other) {
         Sparse_chain newChain = *this;
         newChain += other;
-        
+
         return newChain;
     }
-    
+
     /**
      * \brief Subtracts a chain from current chain.
      *
@@ -205,10 +205,10 @@ public:
     Sparse_chain operator-(const Sparse_chain &other) {
         Sparse_chain newChain = *this;
         newChain -= other;
-        
+
         return newChain;
     }
-    
+
     /*! \relates Sparse_chain
      *
      * \brief Applies multiplication on each coefficient.
@@ -222,10 +222,10 @@ public:
     friend Sparse_chain operator*(const CoefficientRing& lambda, const Sparse_chain<CoefficientRing, _CTF> &chain) {
         Sparse_chain newChain = chain;
         newChain *= lambda;
-        
+
         return newChain;
     }
-    
+
     /**
      * \brief Applies multiplication on each coefficient.
      *
@@ -236,10 +236,10 @@ public:
     Sparse_chain operator*(const CoefficientRing& lambda) {
         Sparse_chain newChain = *this;
         newChain *= lambda;
-        
+
         return newChain;
     }
-    
+
     /** \relates Sparse_chain
      *
      * \brief Performs matrix multiplication between two chains (COLUMN x ROW) and return a COLUMN matrix.
@@ -257,7 +257,7 @@ public:
      */
     template <typename _CT>
     friend Sparse_matrix<_CT, COLUMN> operator*(const Sparse_chain<_CT, COLUMN>& column, const Sparse_chain<_CT, ROW>& row);
-    
+
     /** \relates Sparse_chain
      *
      * \brief Performs matrix multiplication between two chains (COLUMN x ROW) and return a ROW matrix.
@@ -275,7 +275,7 @@ public:
      */
     template <typename _CT>
     friend Sparse_matrix<_CT, ROW> operator%(const Sparse_chain<_CT, COLUMN> &column, const Sparse_chain<_CT, ROW> &row);
-    
+
     /** \relates Sparse_chain
      *
      * \brief Performs dot product between two chains (ROW x COLUMN).
@@ -291,7 +291,7 @@ public:
      */
     template <typename _CT>
     friend _CT operator*(const Sparse_chain<_CT, ROW> &row, const Sparse_chain<_CT, COLUMN> &column);
-    
+
     /**
      * \brief Adds a chain to `this`.
      *
@@ -310,18 +310,18 @@ public:
         if (this->_upperBound != other._upperBound) {
             throw std::runtime_error("Chains must be the same size.");
         }
-        
+
         for (pair pair: other._chainData) {
             this->_chainData[pair.first] += pair.second;
-            
+
             if (this->_chainData[pair.first] == 0) {
                 this->_chainData.erase(pair.first);
             }
         }
-        
+
         return *this;
     }
-    
+
     /**
      * \brief Sustracts a chain to `this`.
      *
@@ -340,18 +340,18 @@ public:
         if (this->_upperBound != other._upperBound) {
             throw std::runtime_error("Chains must be the same size.");
         }
-        
+
         for (pair pair: other._chainData) {
             this->_chainData[pair.first] -= pair.second;
-            
+
             if (this->_chainData[pair.first] == 0) {
                 this->_chainData.erase(pair.first);
             }
         }
-        
+
         return *this;
     }
-    
+
     /**
      * \brief Applies multiplication on each coefficient of `this`.
      *
@@ -366,14 +366,14 @@ public:
             this->_chainData.clear();
             return *this;
         }
-        
+
         for (pair pair: this->_chainData) {
             this->_chainData[pair.first] = pair.second * lambda;
         }
-        
+
         return *this;
     }
-    
+
     /**
      * \brief Gets the value of a coefficient of the chain.
      *
@@ -387,13 +387,13 @@ public:
         if (index >= _upperBound) {
             throw std::runtime_error("Provided index should be less than " + std::to_string(_upperBound) + ".");
         }
-        
+
         if (_chainData.find(index) == _chainData.end())
             return 0 ;
         else
             return _chainData.at(index);
     }
-    
+
     /**
      * \brief Gets the value of a coefficient of the chain.
      *
@@ -407,13 +407,13 @@ public:
         if (index >= _upperBound) {
             throw std::runtime_error("Provided index should be less than " + std::to_string(_upperBound) + ".");
         }
-        
+
         if (_chainData.find(index) == _chainData.end())
             return 0 ;
         else
             return _chainData.at(index);
     }
-    
+
     /**
      * \brief Sets a given coefficient of the chain.
      *
@@ -434,7 +434,7 @@ public:
         else
             _chainData[index] = d ;
     }
-    
+
     /**
      * \brief Checks if a coefficient is null.
      *
@@ -444,7 +444,7 @@ public:
     const bool is_null(size_t index) const {
         return _chainData.find(index) == _chainData.end();
     }
-    
+
     /**
      * \brief Checks if the chain is null.
      *
@@ -453,8 +453,8 @@ public:
     const bool is_null() const {
         return _chainData.size() == 0;
     }
-    
-    
+
+
     /**
      * \brief Gets a subchain from the chain.
      *
@@ -471,7 +471,7 @@ public:
         newChain /= indices;
         return newChain;
     }
-    
+
     /**
      * \brief Gets a subchain from the chain.
      *
@@ -484,7 +484,7 @@ public:
         newChain /= index;
         return newChain;
     }
-    
+
     /**
      * \brief Restricts the chain to a sub-chain by removing indices.
      *
@@ -500,10 +500,10 @@ public:
         for (size_t index : indices) {
             this->_chainData.erase(index);
         }
-        
+
         return *this;
     }
-    
+
     /**
      * \brief Restricts the chain to a sub-chain by removing a given index.
      *
@@ -517,10 +517,10 @@ public:
      */
     Sparse_chain& operator/=(const size_t index) {
         this->_chainData.erase(index);
-        
+
         return *this;
     }
-    
+
     /**
      * \brief Removes all coefficients from the chain.
      *
@@ -529,7 +529,7 @@ public:
     void nullify() {
         this->_chainData.clear();
     }
-    
+
     /**
      * \brief Iterator to the beginning of the chain.
      *
@@ -540,7 +540,7 @@ public:
     iterator begin() noexcept {
         return _chainData.begin();
     }
-    
+
     /**
      * \brief Constant iterator to the beginning of the chain.
      *
@@ -551,7 +551,7 @@ public:
     const_iterator begin() const noexcept {
         return _chainData.begin();
     }
-    
+
     /**
      * \brief Constant iterator to the beginning of the chain.
      *
@@ -562,7 +562,7 @@ public:
     const_iterator cbegin() const noexcept {
         return _chainData.cbegin();
     }
-    
+
     /**
      * \brief Iterator to the end of the chain.
      *
@@ -573,7 +573,7 @@ public:
     iterator end() noexcept {
         return _chainData.end();
     }
-    
+
     /**
      * \brief Constant iterator to the end of the chain.
      *
@@ -584,7 +584,7 @@ public:
     const_iterator end() const noexcept {
         return _chainData.end();
     }
-    
+
     /**
      * \brief Constant iterator to the end of the chain.
      *
@@ -595,7 +595,7 @@ public:
     const_iterator cend() const noexcept {
         return _chainData.cend();
     }
-    
+
     /**
      * \brief Transposes a Sparse_chain.
      *
@@ -605,13 +605,13 @@ public:
      */
     Sparse_chain<CoefficientRing, COLUMN + ROW - StorageFormat> transpose() {
         Sparse_chain<CoefficientRing, COLUMN + ROW - StorageFormat> chain;
-        
+
         chain._upperBound = this->_upperBound;
         chain._chainData = this->_chainData;
-        
+
         return chain;
     }
-    
+
     /**
      * \brief Checks if chain is a column.
      *
@@ -620,7 +620,7 @@ public:
     bool is_column() const {
         return StorageFormat == COLUMN;
     }
-    
+
     /**
      * \brief Checks if chain is a row.
      *
@@ -629,7 +629,7 @@ public:
     bool is_row() const {
         return StorageFormat == ROW;
     }
-    
+
 private:
     /*
      * \brief Get a reference on a coefficient of the chain.
@@ -646,31 +646,31 @@ private:
         if (index >= _upperBound) {
             throw std::runtime_error("Provided index should be less than " + std::to_string(_upperBound) + ".");
         }
-        
+
         return _chainData[index];
     }
-    
+
     /** \relates Sparse_chain
      *
      * \brief Comparison of two `COLUMN` chains.
      */
     template <typename _CT>
     friend bool operator==(const Sparse_chain<_CT, OSM::COLUMN>& chain, const Sparse_chain<_CT, OSM::COLUMN> &other);
-    
+
     /** \relates Sparse_chain
      *
      * \brief Comparison of a `COLUMN`  and a `ROW` chain.
      */
     template <typename _CT>
     friend bool operator==(const Sparse_chain<_CT, OSM::COLUMN>& chain, const Sparse_chain<_CT, OSM::ROW> &other);
-    
+
     /** \relates Sparse_chain
      *
      * \brief Comparison of a `ROW` and a `COLUMN` chain.
      */
     template <typename _CT>
     friend bool operator==(const Sparse_chain<_CT, OSM::ROW>& chain, const Sparse_chain<_CT, OSM::COLUMN> &other);
-    
+
     /** \relates Sparse_chain
      *
      * \brief Comparison of two `ROW` chains.

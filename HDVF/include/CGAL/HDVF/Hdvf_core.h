@@ -93,7 +93,7 @@ class Hdvf_core {
 public:
     /*! \brief Type of coefficients used to compute homology. */
     typedef ChainComplex::Coefficient_ring Coefficient_ring;
-    
+
     /*!
      Type of column-major chains
      */
@@ -428,7 +428,7 @@ public:
      * Save a HDVF to a stream in `hdvf` file format (a simple text file format, see for a specification).
      */
     std::ostream& insert_hdvf_reduction(std::ostream& out) ;
-    
+
     /**
      * \brief Saves a HDVF together with the associated reduction to a file (f, g, h, d matrices).
      *
@@ -454,7 +454,7 @@ public:
      * \warning The underlying complex is not stored in the file!
      */
     std::istream& extract_hdvf_reduction(std::istream& in_stream) ;
-    
+
     /**
      * \brief Loads a HDVF together with the associated reduction from a file (f, g, h, d matrices)
      *
@@ -473,8 +473,8 @@ public:
 
         in_file.close();
     }
-    
-    
+
+
 
 protected:
     /* \brief Project a chain onto a given PSC_flag

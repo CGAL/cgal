@@ -8,8 +8,8 @@ The concept `GeometricChainComplex` refines the concept `AbstractChainComplex` a
  \cgalRefines{AbstractChainComplex}
 
 \cgalHasModelsBegin
-\cgalHasModelsBare{`CGAL::Homological_discrete_vector_field::Simplicial_chain_complex<CoefficientRing>`}
-\cgalHasModelsBare{`CGAL::Homological_discrete_vector_field::Cubical_chain_complex<CoefficientRing>`}
+\cgalHasModelsBare{`CGAL::Homological_discrete_vector_field::Simplicial_chain_complex<CoefficientRing,Traits>`}
+\cgalHasModelsBare{`CGAL::Homological_discrete_vector_field::Cubical_chain_complex<CoefficientRing,Traits>`}
 \cgalHasModelsEnd
 
 */
@@ -24,11 +24,11 @@ public:
 Type of coefficients used to compute homology (model of `IntegralDomainWithoutDivision`)
  */
 typedef IntegralDomainWithoutDivision CoefficientRing;
-    
+
 /*!
  Type of coordinates (the vector size is free, hence coordinates can be any dimension).
  */
-typedef std::vector<double> Point ;
+typedef unspecified_type Point ;
 /// @}
 
 
