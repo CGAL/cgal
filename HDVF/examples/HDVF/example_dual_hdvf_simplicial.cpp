@@ -18,12 +18,12 @@ namespace HDVF = CGAL::Homological_discrete_vector_field;
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef HDVF::Hdvf_traits_3<Kernel> Traits;
 
-//typedef CGAL::Homological_discrete_vector_field::Zp<5,int,true> Coefficient_ring;
-typedef CGAL::Homological_discrete_vector_field::Z2 Coefficient_ring;
-typedef CGAL::Homological_discrete_vector_field::Simplicial_chain_complex<Coefficient_ring, Traits> Complex;
-typedef CGAL::Homological_discrete_vector_field::Hdvf_duality<Complex> HDVF_type;
-typedef CGAL::Homological_discrete_vector_field::Duality_simplicial_complex_tools<Coefficient_ring,Traits> Tools_type;
-typedef CGAL::Homological_discrete_vector_field::Sub_chain_complex_mask<Complex> Sub_chain_complex;
+//typedef HDVF::Zp<5,int,true> Coefficient_ring;
+typedef HDVF::Z2 Coefficient_ring;
+typedef HDVF::Simplicial_chain_complex<Coefficient_ring, Traits> Complex;
+typedef HDVF::Hdvf_duality<Complex> HDVF_type;
+typedef HDVF::Duality_simplicial_complex_tools<Coefficient_ring,Traits> Tools_type;
+typedef HDVF::Sub_chain_complex_mask<Complex> Sub_chain_complex;
 
 int main(int argc, char **argv)
 {
@@ -36,7 +36,7 @@ int main(int argc, char **argv)
     else
     {
         // Load cub object
-        CGAL::Homological_discrete_vector_field::Mesh_object_io<Traits> mesh ;
+        HDVF::Mesh_object_io<Traits> mesh ;
         mesh.read_off(argv[1]);
 
         mesh.print_infos();
@@ -59,7 +59,7 @@ int main(int argc, char **argv)
         std::cout << K << std::endl ;
 
         // Create and compute a perfect HDVF
-        HDVF_type hdvf(L, K, CGAL::Homological_discrete_vector_field::OPT_FULL);
+        HDVF_type hdvf(L, K, HDVF::OPT_FULL);
         hdvf.compute_perfect_hdvf();
 
         // Export K HDVF
@@ -69,7 +69,7 @@ int main(int argc, char **argv)
         hdvf.set_mask_L_K();
         CGAL::IO::write_VTK(hdvf, L, "res_cocomplex_L_K", false) ;
         // Compute pairing
-        std::vector<CGAL::Homological_discrete_vector_field::Cell_pair> pairs = hdvf.compute_pairing_hdvf();
+        std::vector<HDVF::Cell_pair> pairs = hdvf.compute_pairing_hdvf();
         // Output pairing
         for (const auto& pair : pairs) {
             std::cout << "Sigma: " << pair.sigma << ", Tau: " << pair.tau << ", Dim: " << pair.dim << std::endl;

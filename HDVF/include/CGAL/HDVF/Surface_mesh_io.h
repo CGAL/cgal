@@ -9,8 +9,8 @@
 //
 // Author(s)     : Alexandra Bac <alexandra.bac@univ-amu.fr>
 
-#ifndef CGAL_HDVF_SURFACE_MESH_H
-#define CGAL_HDVF_SURFACE_MESH_H
+#ifndef CGAL_HDVF_SURFACE_MESH_IO_H
+#define CGAL_HDVF_SURFACE_MESH_IO_H
 
 #include <CGAL/license/HDVF.h>
 
@@ -20,7 +20,6 @@
 #include <map>
 #include <cmath>
 #include <CGAL/HDVF/Mesh_object_io.h>
-#include <CGAL/Surface_mesh.h>
 
 namespace CGAL {
 namespace Homological_discrete_vector_field {
@@ -29,15 +28,20 @@ namespace Homological_discrete_vector_field {
 /*!
  \ingroup PkgHDVFAlgorithmClasses
 
- The class `Surface_mesh_io` is an intermediate IO class, used to load `CGAL::Surface_mesh` and produce simplicial complexes.
-
+ The class `Surface_mesh_io` is an intermediate IO class, used to load a triangle mesh and produce simplicial complexes.
+\tparam TriangleMesh a model of `FaceGraph` and `HalfedgeGraph` concepts, e.g., a `CGAL::Surface_mesh`.
+\tparam Traits a geometric traits class model of the `HDVFTraits` concept.
  */
 
-template <typename SurfaceMesh>
-class Surface_mesh_io : public Mesh_object_io
+template <typename TriangleMesh, typename Traits>
+class Surface_mesh_io : public Mesh_object_io<Traits>
 {
 public:
-    typedef SurfaceMesh Surface_mesh;
+    typedef TriangleMesh Surface_mesh;
+    typedef typename boost::graph_traits<Surface_mesh>::vertex_descriptor vertex_descriptor ;
+    typedef typename boost::graph_traits<Surface_mesh>::halfedge_descriptor halfedge_descriptor ;
+    typedef typename boost::graph_traits<Surface_mesh>::edge_descriptor edge_descriptor ;
+    typedef typename boost::graph_traits<Surface_mesh>::face_descriptor face_descriptor ;
 private:
 
     /** \brief Storage of vertices Io_cell_type <-> Vertex_index permutation.
@@ -51,55 +55,50 @@ private:
      * - an edge is the `edge` of the halfedge
      * - a face is the `face` of the halfedge
      */
-    std::map<Io_cell_type, typename Surface_mesh::halfedge_index> _io_cell_to_he_index;
-    std::vector<std::map<typename Surface_mesh::halfedge_index, Io_cell_type> > _he_index_to_io_cell;
+    std::map<Io_cell_type, halfedge_descriptor> _io_cell_to_he_index;
+    std::vector<std::map<halfedge_descriptor, Io_cell_type> > _he_index_to_io_cell;
 
 public:
-    /** \brief Constructor from a `CGAL::Surface_mesh` encoding a triangular mesh.
+    /** \brief Constructor from atriangule mesh.
      *
-     * Build a Surface_mesh_io from a `CGAL::Surface_mesh`.
      */
-    Surface_mesh_io(const Surface_mesh& mesh) : Mesh_object_io(2) {
-        typedef typename Surface_mesh::Point Point;
+    Surface_mesh_io(const TriangleMesh& mesh) : Mesh_object_io(2) {
+        typedef typename Traits::Point Point;
 
-        this->nvertices = mesh.vertices().size();
-        this->ncells = mesh.vertices().size() + mesh.edges().size() + mesh.faces().size();
+        this->nvertices = num_vertices(mesh);
+        this->ncells = num_vertices(mesh) + num_edges(mesh) + num_faces(mesh) ;
         _he_index_to_io_cell.resize(3);
 
+        auto vpm = get(CGAL::vertex_point, mesh);
         // Load nodes
-        typename Surface_mesh::Vertex_range vr = mesh.vertices();
-        for (typename Surface_mesh::Vertex_range::iterator it = vr.begin(); it != vr.end(); ++it) {
-            Point p(mesh.point(*it));
-            Io_node_type node;
-            for (size_t q=0; q<p.dimension(); ++q)
-                node.push_back(p[q]);
-            this->nodes.push_back(node);
+        for (vertex_descriptor v : vertices(mesh)) {
+            Point p(get(vpm,v));
+            this->nodes.push_back(p);
         }
         // Load vertices
         size_t tmp_index(0);
-        for (typename Surface_mesh::Vertex_range::iterator it = vr.begin(); it != vr.end(); ++it) {
+        for (vertex_descriptor v : vertices(mesh)) {
             // Corresponding Io_cell_type
             Io_cell_type tmp_io_cell({tmp_index});
             // Add to cells
             this->cells.push_back(tmp_io_cell);
             // Associated he
-            typename Surface_mesh::Halfedge_index vertex_he(mesh.halfedge(*it));
+            halfedge_descriptor vertex_he(halfedge(v,mesh));
             // Store the permutation
             _io_cell_to_he_index[tmp_io_cell] = vertex_he;
             _he_index_to_io_cell.at(0)[vertex_he] = tmp_io_cell;
             ++tmp_index;
         }
         // Load edges
-        typename Surface_mesh::Edge_range er = mesh.edges();
-        for (typename Surface_mesh::Edge_range::iterator it = er.begin(); it != er.end(); ++it) {
+        for (edge_descriptor e : edges(mesh)) {
             // Associated he
-            typename SurfaceMesh::Halfedge_index edge_he(mesh.halfedge(*it));
+            halfedge_descriptor edge_he(halfedge(e,mesh));
             // Compute corresponding Io_cell
             std::vector<size_t> tmp_cell;
             // Vertex1
             {
                 // Get the halfedge "encoding" the target vertex
-                typename Surface_mesh::Halfedge_index vert_he_ind(mesh.halfedge(mesh.target(edge_he)));
+                halfedge_descriptor vert_he_ind(halfedge(target(edge_he, mesh), mesh));
                 // Get corresponding io_cell
                 Io_cell_type vert(_he_index_to_io_cell.at(0).at(vert_he_ind));
                 assert(vert.size()==1); // vertex
@@ -109,7 +108,7 @@ public:
             // Vertex2
             {
                 // Get the halfedge "encoding" the source vertex
-                typename Surface_mesh::Halfedge_index vert_he_ind(mesh.halfedge(mesh.target(mesh.opposite(edge_he))));
+                halfedge_descriptor vert_he_ind(halfedge(target(opposite(edge_he, mesh), mesh), mesh));
                 // Get the corresponding io_cell
                 Io_cell_type vert(_he_index_to_io_cell.at(0).at(vert_he_ind));
                 assert(vert.size()==1); // vertex
@@ -124,26 +123,23 @@ public:
             _he_index_to_io_cell.at(1)[edge_he] = tmp_cell;
         }
         // Load faces
-        typename Surface_mesh::Face_range fr = mesh.faces();
-        for (typename Surface_mesh::Face_range::iterator it = fr.begin(); it != fr.end(); ++it) {
+        for (face_descriptor f : faces(mesh)) {
             // Associated he
-            typename SurfaceMesh::Halfedge_index face_he(mesh.halfedge(*it));
+            halfedge_descriptor face_he(halfedge(f,mesh));
             // Compute corresponding Io_cell
             std::vector<size_t> tmp_cell;
             // Visit vertices around the face
-            CGAL::Vertex_around_face_circulator<Surface_mesh> hebegin(mesh.halfedge(*it), mesh), hedone(hebegin);
             size_t cpt_verts(0);
-            do {
+            for(vertex_descriptor v : vertices_around_face(halfedge(f,mesh), mesh)){
                 ++cpt_verts;
                 // Get the halfedge stored in the vertex
-                typename Surface_mesh::Halfedge_index vert_he_ind(mesh.halfedge(*hebegin));
+                halfedge_descriptor vert_he_ind(halfedge(v,mesh));
                 // Get the corresponding io_cell
                 Io_cell_type vert(_he_index_to_io_cell.at(0).at(vert_he_ind));
                 assert(vert.size()==1); // vertex
                 // Push_back the index
                 tmp_cell.push_back(vert.at(0));
-                ++hebegin;
-            } while (hebegin != hedone);
+            }
             std::cout << cpt_verts << std::endl;
             std::sort(tmp_cell.begin(), tmp_cell.end());
             // Add to cells
@@ -159,4 +155,4 @@ public:
 } /* end namespace CGAL */
 
 
-#endif // CGAL_HDVF_SURFACE_MESH_H
+#endif // CGAL_HDVF_SURFACE_MESH_IO_H

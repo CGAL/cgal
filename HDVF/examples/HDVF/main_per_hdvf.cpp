@@ -83,10 +83,10 @@ void mesh_complex_output(const MeshType& mesh, const Complex& complex, const Opt
 }
 
 template<typename Complex, typename Degree, typename FiltrationType >
-CGAL::Homological_discrete_vector_field::Hdvf_persistence<Complex, Degree, FiltrationType>& per_HDVF_comput (const Complex& complex, const FiltrationType& f, const Options &options)
+HDVF::Hdvf_persistence<Complex, Degree, FiltrationType>& per_HDVF_comput (const Complex& complex, const FiltrationType& f, const Options &options)
 {
     typedef typename Complex::Coefficient_ring CoefficientType;
-    typedef CGAL::Homological_discrete_vector_field::Hdvf_persistence<Complex, Degree, FiltrationType> HDVF_type ;
+    typedef HDVF::Hdvf_persistence<Complex, Degree, FiltrationType> HDVF_type ;
     HDVF_type& hdvf(*(new HDVF_type(complex, f, options.HDVF_opt, options.with_vtk_export)));
 
     std::cout << "----> START computing persistent homology" << std::endl ;
@@ -193,12 +193,12 @@ void main_code (const Options &options)
     /// OFF format
     else if (options.in_format == InputFormat::OFF)
     {
-        using Complex = CGAL::Homological_discrete_vector_field::Simplicial_chain_complex<CoefficientType, Traits> ;
-        using FiltrationType = CGAL::Homological_discrete_vector_field::Filtration_lower_star<Complex, Degree> ;
-        using HDVF_type = CGAL::Homological_discrete_vector_field::Hdvf_persistence<Complex, Degree, FiltrationType> ;
+        using Complex = HDVF::Simplicial_chain_complex<CoefficientType, Traits> ;
+        using FiltrationType = HDVF::Filtration_lower_star<Complex, Degree> ;
+        using HDVF_type = HDVF::Hdvf_persistence<Complex, Degree, FiltrationType> ;
 
         // MeshObject
-        CGAL::Homological_discrete_vector_field::Mesh_object_io<Traits> mesh ;
+        HDVF::Mesh_object_io<Traits> mesh ;
         mesh.read_off(options.in_file) ;
 
         // Complex
@@ -207,7 +207,7 @@ void main_code (const Options &options)
         // Build filtration
         FiltrationType& f(build_filtration<Complex, Degree, FiltrationType>(complex, options)) ;
 
-        mesh_complex_output<CGAL::Homological_discrete_vector_field::Mesh_object_io<Traits>, Complex>(mesh, complex, options) ;
+        mesh_complex_output<HDVF::Mesh_object_io<Traits>, Complex>(mesh, complex, options) ;
 
         // HDVF computation, export, output
         HDVF_type& hdvf(per_HDVF_comput<Complex,Degree, FiltrationType>(complex,f, options)) ;
@@ -222,11 +222,11 @@ void main_code (const Options &options)
     // CubComplex
     else if ((options.in_format == InputFormat::PGM) || (options.in_format == InputFormat::CUB))
     {
-        using Complex = CGAL::Homological_discrete_vector_field::Cubical_chain_complex<CoefficientType,Traits> ;
-        using FiltrationType = CGAL::Homological_discrete_vector_field::Filtration_lower_star<Complex, Degree> ;
-        using HDVF_type = CGAL::Homological_discrete_vector_field::Hdvf_persistence<Complex, Degree, FiltrationType> ;
+        using Complex = HDVF::Cubical_chain_complex<CoefficientType,Traits> ;
+        using FiltrationType = HDVF::Filtration_lower_star<Complex, Degree> ;
+        using HDVF_type = HDVF::Hdvf_persistence<Complex, Degree, FiltrationType> ;
 
-        CGAL::Homological_discrete_vector_field::Cub_object_io mesh ;
+        HDVF::Cub_object_io mesh ;
         typename Complex::Cubical_complex_primal_dual primal_dual(Complex::PRIMAL) ;
         if (options.primal)
         {
@@ -247,7 +247,7 @@ void main_code (const Options &options)
         // Complex
         Complex complex(mesh, primal_dual);
 
-        mesh_complex_output<CGAL::Homological_discrete_vector_field::Cub_object_io, Complex>(mesh, complex, options) ;
+        mesh_complex_output<HDVF::Cub_object_io, Complex>(mesh, complex, options) ;
 
         // Build filtration
         FiltrationType& f(build_filtration<Complex, Degree, FiltrationType>(complex, options)) ;
@@ -287,7 +287,7 @@ int main(int argc, char **argv)
         }
         else if (options.scalar == 2)
         {
-            using CoefficientType = CGAL::Homological_discrete_vector_field::Z2 ;
+            using CoefficientType = HDVF::Z2 ;
             main_code<CoefficientType>(options) ;
         }
         else
@@ -295,7 +295,7 @@ int main(int argc, char **argv)
             std::cerr << "Z" << options.scalar << " not instantiated, use the #define at line 27" << std::endl ;
         }
 #else
-        typedef CGAL::Homological_discrete_vector_field::Zp<SCALAR,int,true> CoefficientType;
+        typedef HDVF::Zp<SCALAR,int,true> CoefficientType;
 #endif
     }
 

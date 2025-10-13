@@ -22,10 +22,10 @@ typedef HDVF::Hdvf_traits_3<Kernel> Traits;
 typedef Kernel::Compute_z_3 Compute_z;
 typedef Kernel::Point_3 Point_3;
 
-typedef CGAL::Homological_discrete_vector_field::Simplicial_chain_complex<Coefficient_ring,Traits> Complex;
+typedef HDVF::Simplicial_chain_complex<Coefficient_ring,Traits> Complex;
 typedef double Degree;
-typedef CGAL::Homological_discrete_vector_field::Filtration_lower_star<Complex, Degree> FiltrationType;
-typedef CGAL::Homological_discrete_vector_field::Hdvf_persistence<Complex, Degree, FiltrationType> HDVF_type;
+typedef HDVF::Filtration_lower_star<Complex, Degree> FiltrationType;
+typedef HDVF::Hdvf_persistence<Complex, Degree, FiltrationType> HDVF_type;
 
 
 int main(int argc, char **argv)
@@ -39,7 +39,7 @@ int main(int argc, char **argv)
     else
     {
         // Load cub object
-        CGAL::Homological_discrete_vector_field::Mesh_object_io<Traits> mesh ;
+        HDVF::Mesh_object_io<Traits> mesh ;
         mesh.read_off(argv[1]);
 
         mesh.print_infos();
@@ -55,14 +55,14 @@ int main(int argc, char **argv)
         {
             // --- First: build the function mapping the index of a vertex to its degree (here the "z" coordinate of a vertex
             Compute_z compute_z = Kernel().compute_z_3_object() ;
-            std::function<Degree(size_t)> f(CGAL::Homological_discrete_vector_field::degree_function<Complex,Point_3>(complex, compute_z));
+            std::function<Degree(size_t)> f(HDVF::degree_function<Complex,Point_3>(complex, compute_z));
 
             // -- Second: build the associated lower star filtration
             FiltrationType filtration(complex, f);
 
 
             // Build empty persistant HDVF (with vtk export activated)
-            HDVF_type hdvf(complex, filtration, CGAL::Homological_discrete_vector_field::OPT_FULL, true);
+            HDVF_type hdvf(complex, filtration, HDVF::OPT_FULL, true);
 
             // Compute a perfect HDVF
             hdvf.compute_perfect_hdvf();
@@ -91,7 +91,7 @@ int main(int argc, char **argv)
 
 
             // Build empty persistant HDVF (with vtk export activated)
-            HDVF_type hdvf(complex, filtration, CGAL::Homological_discrete_vector_field::OPT_FULL, true);
+            HDVF_type hdvf(complex, filtration, HDVF::OPT_FULL, true);
 
             // Compute a perfect HDVF
             hdvf.compute_perfect_hdvf();
