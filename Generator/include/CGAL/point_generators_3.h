@@ -714,7 +714,7 @@ template <class PointRange,
           class Creator = Creator_uniform_3<
                             typename Kernel_traits< typename PointRange::value_type >::Kernel::RT,
                             typename PointRange::value_type> >
-struct Random_points_in_triangle_soup
+struct Random_points_in_triangle_soup_3
     : public Generic_random_point_generator<Triangle,
                                             internal::Triangle_3_from_soup<Triangle, PointRange>,
                                             Random_points_in_triangle_3<typename PointRange::value_type>,
@@ -728,12 +728,12 @@ struct Random_points_in_triangle_soup
   typedef typename Kernel_traits<Point_3>::Kernel                         Kernel;
   typedef Triangle                                                        Id;
   typedef Point_3                                                         result_type;
-  typedef Random_points_in_triangle_soup<PointRange, Triangle, Creator>   This;
+  typedef Random_points_in_triangle_soup_3<PointRange, Triangle, Creator>   This;
 
   template<typename TriangleRange>
-  Random_points_in_triangle_soup(const TriangleRange& triangles,
-                                 const PointRange& points,
-                                 Random& rnd = get_default_random())
+  Random_points_in_triangle_soup_3(const TriangleRange& triangles,
+                                   const PointRange& points,
+                                   Random& rnd = get_default_random())
     : Base(triangles,
            internal::Triangle_3_from_soup<Triangle, PointRange>(points),
            internal::Apply_approx_sqrt<typename Kernel_traits<Point_3>::Kernel::Compute_squared_area_3>(),
