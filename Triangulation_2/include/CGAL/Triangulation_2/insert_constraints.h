@@ -19,19 +19,21 @@
 #include <CGAL/Spatial_sort_traits_adapter_2.h>
 #include <CGAL/property_map.h>
 #include <CGAL/boost/iterator/counting_iterator.hpp>
+#include <unordered_set>
 #include <vector>
 #include <iterator>
+#include <boost/functional/hash.hpp>
 
 namespace CGAL {
   namespace internal {
 
 
 
-    template <class T, class IndicesIterator>
+    template <class T, class IndicesIterator, bool check_duplicates = false>
     std::size_t insert_constraints( T& t,
                                     const std::vector<typename T::Point>& points,
                                     IndicesIterator indices_first,
-                                    IndicesIterator indices_beyond )
+                                    IndicesIterator indices_beyond)
   {
     if(indices_first == indices_beyond){
       return t.insert(points.begin(), points.end());
@@ -66,20 +68,29 @@ namespace CGAL {
       hint=vertices[*it_pti]->face();
     }
 
+    typedef std::unordered_set< std::pair<Vertex_handle,Vertex_handle>, boost::hash<std::pair<Vertex_handle,Vertex_handle> > >  Inserted;
+    Inserted inserted;
     for(IndicesIterator it_cst=indices_first, end=indices_beyond;
         it_cst!=end; ++it_cst)
     {
       Vertex_handle v1 = vertices[it_cst->first];
       Vertex_handle v2 = vertices[it_cst->second];
-      if(v1 != v2) t.insert_constraint(v1, v2);
+      if(v1 != v2){
+        if constexpr(check_duplicates){
+          std::pair<Vertex_handle,Vertex_handle> p = (v1 < v2)? std::make_pair(v1,v2): std::make_pair(v2,v1);
+          if(inserted.insert(p).second){
+            t.insert_constraint(v1, v2);
+          }
+        }else{
+          t.insert_constraint(v1, v2);
+        }
+      }
     }
-
     return t.number_of_vertices() - n;
   }
 
 
-
-    template <class T,class ConstraintIterator>
+    template <class T, class ConstraintIterator, bool check_duplicates = false>
     std::size_t insert_constraints(T& t,
                                    ConstraintIterator first,
                                    ConstraintIterator beyond)
@@ -98,10 +109,10 @@ namespace CGAL {
     for (std::size_t k=0; k < nb_segments; ++k)
       segment_indices.push_back( std::make_pair(2*k,2*k+1) );
 
-    return insert_constraints( t,
-                               points,
-                               segment_indices.begin(),
-                               segment_indices.end() );
+    return insert_constraints<check_duplicates>( t,
+                                                 points,
+                                                 segment_indices.begin(),
+                                                 segment_indices.end());
   }
 
 
