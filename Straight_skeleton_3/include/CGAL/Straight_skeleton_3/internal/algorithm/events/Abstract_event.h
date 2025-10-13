@@ -220,7 +220,8 @@ public:
   {
     CGAL_SS3_DEBUG_SPTR(eventA);
     CGAL_SS3_DEBUG_SPTR(eventB);
-    if (eventA->getTime() == eventB->getTime()) {
+    Comparison_result cmp = CGAL::compare(eventA->getTime(), eventB->getTime());
+    if (cmp == CGAL::EQUAL) {
       if (eventA->getType() == eventB->getType()) { // @fixme get rid of that and IDs directly?
         // Give priority to newer (higher) IDs. The point is that if an event has been updated
         // to a different type and appears multiple (non-zombie) times, it will be processed
@@ -230,7 +231,7 @@ public:
       return (eventA->getType() > eventB->getType());
     }
 
-    return (eventA->getTime() < eventB->getTime());
+    return (cmp == CGAL::SMALLER);
   }
 };
 
