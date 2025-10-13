@@ -634,7 +634,8 @@ public:
     arcs_out.close();
 #endif
 
-      CGAL_assertion(skel_result_->isConsistent());
+      CGAL_postcondition(polyhedron->isConsistent());
+      CGAL_postcondition(skel_result_->isConsistent());
 
       if (visitor_) {
         visitor_->after_event(polyhedron, current_time);
@@ -1747,7 +1748,8 @@ public:
         continue;
       }
 
-      CGAL_assertion(event_time < current_time && event_time > time_future_bound);
+      CGAL_assertion(event_time < current_time);
+      CGAL_assertion(!time_future_bound.has_value() || event_time >= *time_future_bound);
 
       VanishEventSPtr event = VanishEvent::create();
       event->setTime(event_time);
@@ -1804,7 +1806,8 @@ public:
         continue;
       }
 
-      CGAL_assertion(event_time < current_time && event_time > time_future_bound);
+      CGAL_assertion(event_time < current_time);
+      CGAL_assertion(!time_future_bound.has_value() || event_time >= *time_future_bound);
 
       FacetSPtr facet_src = edge->getFacetSrc();
       FacetSPtr facet_dst = edge->getFacetDst();
@@ -2035,7 +2038,8 @@ public:
         continue;
       }
 
-      CGAL_assertion(event_time < current_time && event_time > time_future_bound);
+      CGAL_assertion(event_time < current_time);
+      CGAL_assertion(!time_future_bound.has_value() || event_time >= *time_future_bound);
 
       EdgeMergeEventSPtr event = EdgeMergeEvent::create();
       event->setTime(event_time);
@@ -2124,7 +2128,9 @@ public:
         continue;
       }
 
-      CGAL_assertion(event_time < current_time && event_time > time_future_bound);
+      CGAL_assertion(event_time < current_time);
+      CGAL_assertion(!time_future_bound.has_value() || event_time >= *time_future_bound);
+
       CGAL_assertion(KernelWrapper::side(edge->getFacetL()->getPlane(), point) < 0);
       CGAL_assertion(KernelWrapper::side(edge->getFacetR()->getPlane(), point) < 0);
 
@@ -2224,7 +2230,8 @@ public:
         continue;
       }
 
-      CGAL_assertion(event_time < current_time && event_time > time_future_bound);
+      CGAL_assertion(event_time < current_time);
+      CGAL_assertion(!time_future_bound.has_value() || event_time >= *time_future_bound);
 
       DblEdgeMergeEventSPtr event = DblEdgeMergeEvent::create();
       event->setTime(event_time);
@@ -2285,7 +2292,8 @@ public:
         continue;
       }
 
-      CGAL_assertion(event_time < current_time && event_time > time_future_bound);
+      CGAL_assertion(event_time < current_time);
+      CGAL_assertion(!time_future_bound.has_value() || event_time >= *time_future_bound);
 
       DblTriangleEventSPtr event = DblTriangleEvent::create();
       event->setTime(event_time);
@@ -2349,7 +2357,8 @@ public:
           continue;
         }
 
-        CGAL_assertion(event_time < current_time && event_time > time_future_bound);
+      CGAL_assertion(event_time < current_time);
+      CGAL_assertion(!time_future_bound.has_value() || event_time >= *time_future_bound);
 
         TetrahedronEventSPtr event = TetrahedronEvent::create();
         event->setTime(event_time);
@@ -2657,7 +2666,8 @@ public:
           continue;
         }
 
-        CGAL_assertion(event_time < current_time && event_time > time_future_bound);
+      CGAL_assertion(event_time < current_time);
+      CGAL_assertion(!time_future_bound.has_value() || event_time >= *time_future_bound);
 
         VertexEventSPtr event = VertexEvent::create();
         event->setTime(event_time);
@@ -2855,7 +2865,8 @@ public:
           continue;
         }
 
-        CGAL_assertion(event_time < current_time && event_time > time_future_bound);
+        CGAL_assertion(event_time < current_time);
+        CGAL_assertion(!time_future_bound.has_value() || event_time >= *time_future_bound);
 
         FlipVertexEventSPtr event = FlipVertexEvent::create();
         event->setTime(event_time);
@@ -2996,7 +3007,8 @@ public:
       return;
     }
 
-    CGAL_assertion(event_time < current_time && event_time > time_future_bound);
+    CGAL_assertion(event_time < current_time);
+    CGAL_assertion(!time_future_bound.has_value() || event_time >= *time_future_bound);
 
     SurfaceEventSPtr event = SurfaceEvent::create();
     event->setTime(event_time);
@@ -3142,7 +3154,8 @@ public:
           continue;
         }
 
-        CGAL_assertion(event_time < current_time && event_time > time_future_bound);
+        CGAL_assertion(event_time < current_time);
+        CGAL_assertion(!time_future_bound.has_value() || event_time >= *time_future_bound);
 
         SurfaceEventSPtr event = SurfaceEvent::create();
         event->setTime(event_time);
@@ -3217,7 +3230,8 @@ public:
       return;
     }
 
-    CGAL_assertion(event_time < current_time && event_time > time_future_bound);
+    CGAL_assertion(event_time < current_time);
+    CGAL_assertion(!time_future_bound.has_value() || event_time >= *time_future_bound);
 
     // degeneracy check is performed at pop time - see isActualPolyhedronSplitEvent()
 
@@ -3443,7 +3457,8 @@ public:
           continue;
         }
 
-        CGAL_assertion(event_time < current_time && event_time > time_future_bound);
+        CGAL_assertion(event_time < current_time);
+        CGAL_assertion(!time_future_bound.has_value() || event_time >= *time_future_bound);
 
         SplitMergeEventSPtr event = SplitMergeEvent::create();
         event->setTime(event_time);
@@ -4021,7 +4036,8 @@ public:
             continue;
           }
 
-          CGAL_assertion(event_time < current_time && event_time > time_future_bound);
+          CGAL_assertion(event_time < current_time);
+          CGAL_assertion(!time_future_bound.has_value() || event_time >= *time_future_bound);
 
           // actual intersection checks are performed at pop time - see isActualPierceEvent()
 
