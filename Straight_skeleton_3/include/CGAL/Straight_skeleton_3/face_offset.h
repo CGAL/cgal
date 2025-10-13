@@ -235,10 +235,12 @@ bool face_offset(TriangleMeshIn& tmesh,
   // main call
   bool success = skel_builder->run();
   if (!success) {
+    std::cerr << "Error: run() returned 'false'" << std::endl;
     return false;
   }
 
   if (results_p.size() != save_times.size()) {
+    std::cerr << "Error: expected " << save_times.size() << " polyhedra but only got " << results_p.size() << std::endl;
     return false;
   }
 
