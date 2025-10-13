@@ -1426,7 +1426,7 @@ public:
         return result;
       }
 
-      virtual FacetDataSPtr clone() const {
+      virtual FacetDataSPtr clone(const FacetSPtr&) const {
         return std::make_shared<FacetData>(*this);
       }
     };
@@ -1454,8 +1454,10 @@ public:
         return result;
       }
 
-      virtual FacetDataSPtr clone() const override {
-        return std::make_shared<SkelFacetData>(*this);
+      virtual FacetDataSPtr clone(const FacetSPtr& origin) const override {
+        SkelFacetDataSPtr result = std::make_shared<SkelFacetData>(*this);
+        result->setFacetOrigin(origin);
+        return result;
       }
 
       FacetSPtr getFacetOrigin() const
@@ -1610,7 +1612,7 @@ private:
       }
       result->setID(getID());
       if (hasData()) {
-        result->setData(getData()->clone());
+        result->setData(getData()->clone(std::const_pointer_cast<Facet>(this->shared_from_this())));
       }
       return result;
     }
@@ -2314,7 +2316,7 @@ public:
         facet_c->addEdge(edge_c);
       }
       if (facet->hasData()) {
-        facet_c->setData(facet->getData()->clone());
+        facet_c->setData(facet->getData()->clone(facet));
       }
       result->addFacet(facet_c);
     }

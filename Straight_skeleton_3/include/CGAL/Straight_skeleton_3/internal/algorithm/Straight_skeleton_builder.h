@@ -5346,7 +5346,7 @@ public:
         facets_clone[i] = Facet::create(); // combinatorics built manually below
         facets_clone[i]->setPlane(facets[i]->getPlane());
         CGAL_assertion(facets[i]->hasData());
-        facets_clone[i]->setData(facets[i]->getData()->clone());
+        facets_clone[i]->setData(facets[i]->getData()->clone(facets[i]));
       }
 
       edge_no_flip->setFacetR(facets_clone[1]);
@@ -5409,7 +5409,7 @@ public:
         facets_clone[i] = Facet::create(); // combinatorics built manually below
         facets_clone[i]->setPlane(facets[i]->getPlane());
         CGAL_assertion(facets[i]->hasData());
-        facets_clone[i]->setData(facets[i]->getData()->clone());
+        facets_clone[i]->setData(facets[i]->getData()->clone(facets[i]));
       }
 
       edge_flipped->setFacetR(facets_clone[2]);
