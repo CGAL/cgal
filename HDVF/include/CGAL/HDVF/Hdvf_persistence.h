@@ -725,7 +725,7 @@ Cell_pair Hdvf_persistence<ChainComplex, Degree, Filtration_>::find_pair_A(bool 
                     found = true ;
                     i = it->first ;
                 }
-                else // update the i with the maximum cell index (persistance)
+                else // update the i with the maximum cell index (persistence)
                 {
                     if (it->first > i)
                         i = it->first ;
@@ -779,7 +779,7 @@ Cell_pair Hdvf_persistence<ChainComplex, Degree, Filtration_>::step_persist(bool
         // Add this interval
         _persist.push_back(hole) ;
 
-        // If export is on, store export data for significant persistant intervals
+        // If export is on, store export data for significant persistent intervals
         if (_with_export)
         {
             if (hole.duration() > 0) /*((interval_deg.second-interval_deg.first)>0)*/

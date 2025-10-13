@@ -2,8 +2,8 @@
 \example HDVF/main_dual_hdvf.cpp
 \example HDVF/main_hdvf.cpp
 \example HDVF/main_per_hdvf.cpp
-\example HDVF/example_hdvf_simplicial.cpp
-\example HDVF/example_hdvf_surface_mesh_simplicial.cpp
-\example HDVF/example_hdvf_cubical.cpp
-\example HDVF/example_matrix_chain.cpp
+\example HDVF/hdvf_simplicial.cpp
+\example HDVF/hdvf_surface_mesh_simplicial.cpp
+\example HDVF/hdvf_cubical.cpp
+\example HDVF/matrix_chain.cpp
 */

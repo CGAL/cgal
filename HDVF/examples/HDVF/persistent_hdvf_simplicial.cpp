@@ -61,7 +61,7 @@ int main(int argc, char **argv)
             FiltrationType filtration(complex, f);
 
 
-            // Build empty persistant HDVF (with vtk export activated)
+            // Build empty persistent HDVF (with vtk export activated)
             HDVF_type hdvf(complex, filtration, HDVF::OPT_FULL, true);
 
             // Compute a perfect HDVF
@@ -90,7 +90,7 @@ int main(int argc, char **argv)
             FiltrationType filtration(complex, f);
 
 
-            // Build empty persistant HDVF (with vtk export activated)
+            // Build empty persistent HDVF (with vtk export activated)
             HDVF_type hdvf(complex, filtration, HDVF::OPT_FULL, true);
 
             // Compute a perfect HDVF

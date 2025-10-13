@@ -733,8 +733,8 @@ The `.hdvf` file format is a simple text format used to save HDVFs. It relies on
 \subsection secHDVFexHDVF HDVF examples
 
 The following examples exhibit the computation of a perfect HDVF over a simplicial (resp. cubical) chain complex built from a `.off` file (resp. a `.pgm` file). Generators are then exported to `.vtk`.
-\cgalExample{HDVF/example_hdvf_simplicial.cpp}
-\cgalExample{HDVF/example_hdvf_cubical.cpp}
+\cgalExample{HDVF/hdvf_simplicial.cpp}
+\cgalExample{HDVF/hdvf_cubical.cpp}
 
 \subsection secHDVFmatrixChain A few words about sparse matrices and chains
 
@@ -749,7 +749,7 @@ Iterating over sparse chains them comes to iterate over a map.
 
 The following example builds a column major matrix, iterate over its non empty columns (ie.\ chains) and then iterate over each chain.
 
-\cgalExample{HDVF/example_matrix_chain.cpp}
+\cgalExample{HDVF/matrix_chain.cpp}
 
 All standard linear algebra operators are provided (and optimized according to the matrix/chain types).
 
