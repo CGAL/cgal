@@ -1222,7 +1222,114 @@ public:
   }
 
   /**
-    * Returns the point where the edge will vanish.
+  * Returns the intersection time of the 4 shifting planes.
+  */
+  std::optional<FT> intersectionPointOffsetPlanes(const FacetSPtr& facet_0,
+                                                  const FacetSPtr& facet_1,
+                                                  const FacetSPtr& facet_2,
+                                                  const FacetSPtr& facet_3)
+  {
+    CGAL_SS3_DEBUG_SPTR(facet_0);
+    CGAL_SS3_DEBUG_SPTR(facet_1);
+    CGAL_SS3_DEBUG_SPTR(facet_2);
+    CGAL_SS3_DEBUG_SPTR(facet_3);
+
+    Plane3SPtr plane_0 = HdsUtils::getBasePlane(facet_0);
+    Plane3SPtr plane_1 = HdsUtils::getBasePlane(facet_1);
+    Plane3SPtr plane_2 = HdsUtils::getBasePlane(facet_2);
+    Plane3SPtr plane_3 = HdsUtils::getBasePlane(facet_3);
+
+    const FT& speed_0 = HdsUtils::getSpeed(facet_0);
+    const FT& speed_1 = HdsUtils::getSpeed(facet_1);
+    const FT& speed_2 = HdsUtils::getSpeed(facet_2);
+    const FT& speed_3 = HdsUtils::getSpeed(facet_3);
+
+    return GeomUtils::intersectionPointOffsetPlanes(plane_0, speed_0, plane_1, speed_1,
+                                                    plane_2, speed_2, plane_3, speed_3);
+  }
+
+  /**
+    * Returns the intersection time of the 4 shifting planes.
+    */
+  std::optional<FT> intersectionTimeOffsetPlanes(const FacetSPtr& facet_0,
+                                                 const FacetSPtr& facet_1,
+                                                 const FacetSPtr& facet_2,
+                                                 const FacetSPtr& facet_3,
+                                                 const std::optional<FT>& time_past_bound = std::nullopt,
+                                                 const std::optional<FT>& time_future_bound = std::nullopt)
+  {
+    CGAL_SS3_DEBUG_SPTR(facet_0);
+    CGAL_SS3_DEBUG_SPTR(facet_1);
+    CGAL_SS3_DEBUG_SPTR(facet_2);
+    CGAL_SS3_DEBUG_SPTR(facet_3);
+
+    Plane3SPtr plane_0 = HdsUtils::getBasePlane(facet_0);
+    Plane3SPtr plane_1 = HdsUtils::getBasePlane(facet_1);
+    Plane3SPtr plane_2 = HdsUtils::getBasePlane(facet_2);
+    Plane3SPtr plane_3 = HdsUtils::getBasePlane(facet_3);
+
+    const FT& speed_0 = HdsUtils::getSpeed(facet_0);
+    const FT& speed_1 = HdsUtils::getSpeed(facet_1);
+    const FT& speed_2 = HdsUtils::getSpeed(facet_2);
+    const FT& speed_3 = HdsUtils::getSpeed(facet_3);
+
+    return GeomUtils::intersectionTimeOffsetPlanes(plane_0, speed_0, plane_1, speed_1,
+                                                   plane_2, speed_2, plane_3, speed_3,
+                                                   time_past_bound, time_future_bound);
+  }
+
+  Point3SPtr vanishesAtPoint(const EdgeSPtr& edge)
+  {
+    CGAL_SS3_CORE_TRACE_V(16, "vanishesAtPoint " << edge->toString());
+
+    CGAL_SS3_DEBUG_SPTR(edge);
+
+    FacetSPtr facetL = edge->getFacetL();
+    FacetSPtr facetR = edge->getFacetR();
+    CGAL_SS3_CORE_TRACE_V(16, "facetL: " << facetL->getID());
+    CGAL_SS3_CORE_TRACE_V(16, "facetR: " << facetR->getID());
+    CGAL_assertion(facetL && facetR && facetL != facetR);
+
+    FacetSPtr facetP = edge->prev(facetL)->other(facetL);
+    FacetSPtr facetN = edge->next(facetL)->other(facetL);
+    CGAL_SS3_CORE_TRACE_V(16, "facetP: " << facetP->getID());
+    CGAL_SS3_CORE_TRACE_V(16, "facetN: " << facetN->getID());
+    CGAL_assertion(facetP && facetP != facetL && facetP != facetR);
+    CGAL_assertion(facetN && facetN != facetL && facetN != facetR && facetN != facetP);
+
+    return intersectionPointOffsetPlanes(facetL, facetP, facetR, facetN);
+  }
+
+  /**
+    * Returns the time at which the edge will vanish.
+    */
+  std::optional<FT> vanishesAtTime(const EdgeSPtr& edge,
+                                   const std::optional<FT>& time_past_bound = std::nullopt,
+                                   const std::optional<FT>& time_future_bound = std::nullopt)
+  {
+    CGAL_SS3_CORE_TRACE_V(16, "vanishesAtTime " << edge->toString());
+
+    CGAL_SS3_DEBUG_SPTR(edge);
+
+    FacetSPtr facetL = edge->getFacetL();
+    FacetSPtr facetR = edge->getFacetR();
+    CGAL_SS3_CORE_TRACE_V(16, "facetL: " << facetL->getID());
+    CGAL_SS3_CORE_TRACE_V(16, "facetR: " << facetR->getID());
+    CGAL_assertion(facetL && facetR && facetL != facetR);
+
+    FacetSPtr facetP = edge->prev(facetL)->other(facetL);
+    FacetSPtr facetN = edge->next(facetL)->other(facetL);
+    CGAL_SS3_CORE_TRACE_V(16, "facetP: " << facetP->getID());
+    CGAL_SS3_CORE_TRACE_V(16, "facetN: " << facetN->getID());
+    CGAL_assertion(facetP && facetP != facetL && facetP != facetR);
+    CGAL_assertion(facetN && facetN != facetL && facetN != facetR && facetN != facetP);
+
+    return intersectionTimeOffsetPlanes(facetL, facetP, facetR, facetN,
+                                        time_past_bound, time_future_bound);
+  }
+
+  /**
+    * Returns the point and time at which the edge will vanish.
     */
   std::pair<Point3SPtr, FT> vanishesAt(const EdgeSPtr& edge,
                                        const std::optional<FT>& time_past_bound = std::nullopt,
@@ -1298,9 +1405,42 @@ public:
 
     CGAL_SS3_CORE_TRACE_V(16, "Tentative intersection: " << *point << " @ " << event_time);
 
+#if 1
+    // This checks whether the point is on the offset edge.
+    auto check_offset_edge = [&](const EdgeSPtr& edge) -> bool
+    {
+      auto edge_vanish_time = vanishesAtTime(edge, time_past_bound, time_future_bound);
+      if (edge_vanish_time.has_value()) {
+        // If the edge vanishes before the event time, we want to ignore this: even in the specific
+        // case where the edge grows again (non-flip edge event), we shall see this event again
+        // after treating the edge event.
+        if(event_time < *edge_vanish_time) {
+          return false;
+        }
+      }
+
+      Point3SPtr o_src = Transformation::offsetPointFromBase(edge->getVertexSrc(), event_time);
+
+      // obviously the whole thing is massively suboptimal
+      if (edge_vanish_time.has_value() && event_time == *edge_vanish_time) {
+        return (*point == *o_src);
+      }
+
+      Point3SPtr o_dst = Transformation::offsetPointFromBase(edge->getVertexDst(), event_time);
+      CGAL_assertion(*o_src != *o_dst);
+      CGAL_assertion(CGAL::collinear(*o_src, *point, *o_dst));
+
+      return CGAL::collinear_are_ordered_along_line(*o_src, *point, *o_dst);
+    };
+
+    if (!check_offset_edge(edge_1) || !check_offset_edge(edge_2)) {
+      return { };
+    }
+#else
     if (!checkBisectors(edge_1, edge_2, point, event_time)) {
       return { };
     }
+#endif
 
     CGAL_SS3_CORE_TRACE_V(16, "Confirmed intersection: " << *point << " @ " << event_time);
 
@@ -1553,6 +1693,7 @@ public:
     EdgeSPtr edge_1 = event->getEdge1();
     EdgeSPtr edge_2 = event->getEdge2();
 
+    // @fixme this should also use the new version?
     if (!checkBisectors(edge_1, edge_2, point, event_time)) {
       CGAL_SS3_CORE_TRACE_V(8, "Edge split rejected at pop time");
       return false;

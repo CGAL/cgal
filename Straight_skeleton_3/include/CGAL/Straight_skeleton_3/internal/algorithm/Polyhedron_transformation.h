@@ -612,6 +612,55 @@ public:
     return result;
   }
 
+  static Point3SPtr offsetPointFromBase(const VertexSPtr& vertex, const FT& time)
+  {
+    CGAL_SS3_TRANSF_TRACE_V(16, "absolute offset of " << vertex->toString());
+    CGAL_SS3_DEBUG_SPTR(vertex);
+
+    std::array<Plane3SPtr, 3> planes;
+    unsigned int i = 0;
+    typename std::list<FacetWPtr>::iterator it_f = vertex->facets().begin();
+    while (i < 3 && it_f != vertex->facets().end()) {
+      FacetWPtr facet_wptr = *it_f++;
+      if (FacetSPtr facet = facet_wptr.lock()) {
+        CGAL_SS3_TRANSF_TRACE_V(16, "  Facet " << facet->getID());
+        CGAL_assertion(facet->hasData());
+        Plane3SPtr base_plane = HdsUtils::getBasePlane(facet);
+        const FT& speed = HdsUtils::getSpeed(facet);
+        planes[i++] = GeomUtils::offsetPlane(base_plane, speed*time);
+      }
+    }
+    CGAL_postcondition(i == 3);
+
+    Point3SPtr point = KernelWrapper::intersection(planes[0], planes[1], planes[2]);
+    if (!point) {
+      CGAL_SS3_TRANSF_TRACE_V(1, "Warning: triplet of offset planes does not define a point!");
+      Point3SPtr result = Point3SPtr();
+      CGAL_SS3_DEBUG_SPTR(result);
+      return { };
+    }
+
+    CGAL_SS3_TRANSF_TRACE_V(16, "  New point = " << *point);
+
+    return point;
+  }
+
+  static Segment3SPtr offsetEdgefromBase(const EdgeSPtr& edge, const FT& time)
+  {
+    CGAL_SS3_DEBUG_SPTR(edge);
+    return KernelFactory::createSegment3(offsetPointFromBase(edge->getVertexSrc(), time),
+                                         offsetPointFromBase(edge->getVertexDst(), time));
+  }
+
+  static Plane3SPtr offsetPlaneFromBase(const FacetSPtr& facet, const FT& time)
+  {
+    CGAL_SS3_DEBUG_SPTR(facet);
+    CGAL_precondition(facet->hasData());
+    Plane3SPtr base_plane = HdsUtils::getBasePlane(facet);
+    const FT& speed = HdsUtils::getSpeed(facet);
+    return GeomUtils::offsetPlane(base_plane, speed*time);
+  }
+
   /**
     * updates the position of the vertex of a polyhedron, computed from the planes of
     * its incident faces.
