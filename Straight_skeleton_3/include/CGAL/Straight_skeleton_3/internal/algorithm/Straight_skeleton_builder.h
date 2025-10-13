@@ -559,7 +559,7 @@ public:
       CGAL_assertion(facet->getPlane()->d() == HdsUtils::getBasePlane(facet)->d() - speed * current_time);
       CGAL_assertion_code(})
 
-      AbstractEventSPtr event = nextEvent(queue, current_time);
+      AbstractEventSPtr event = nextEvent(queue, polyhedron, current_time);
       if (!event) {
         CGAL_SS3_CORE_TRACE_V(2, "No more events to treat");
         break;
@@ -4612,69 +4612,86 @@ public:
     * Determines the next event.
     */
   AbstractEventSPtr nextEvent(PQ& queue,
+                              const PolyhedronSPtr& polyhedron,
                               const FT& current_time)
   {
-    if (queue.empty() && save_times_.empty())
-      return { };
+    // We could "break" directly in run(), but like this, the save events
+    // that are farther than the last event are still processed (arbitrarily decision).
+    if (polyhedron->empty()) {
+      queue = { };
+      // do not return here as to allow save events to exist after the last 'real' event
+    }
 
     AbstractEventSPtr event;
     FT time = 0;
 
     // If a save event is closest, delay building it in case a const event is even closer
-    bool do_save = false;
+    bool is_save_event = false;
 
-    // purge the queue lazily as to avoid wasting time if we stop on the last save event
-    if (save_times_.empty()) {
-      event = queue.top();
-      time = event->getTime();
-    } else {
-      // If we have upcoming save events, compare
-      const FT& next_save_time = save_times_.front();
-
-      if (queue.empty()) {
-        // queue is empty but save_times_ cannot be empty as well
-        do_save = true;
-        time = save_times_.front();
+    while (!queue.empty() || !save_times_.empty()) {
+      // purge the queue lazily as to avoid wasting time if we stop on the last save event
+      if (save_times_.empty()) {
+        event = queue.top();
+        time = event->getTime();
+        is_save_event = false;
       } else {
-          // neither queue nor save_times_ are empty, take the earliest
-        if (next_save_time > queue.top()->getTime()) { // save is strictly earlier
-          do_save = true;
-          time = next_save_time;
+        // If we have upcoming save events, compare
+        const FT& next_save_time = save_times_.front();
+
+        if (queue.empty()) {
+          // queue is empty but save_times_ cannot be empty as well
+          is_save_event = true;
+          time = save_times_.front();
         } else {
-          // save times exist, but are farther in the future than the next event
-          event = queue.top();
-          time = event->getTime();
+          // neither queue nor save_times_ are empty, take the earliest
+          if (next_save_time > queue.top()->getTime()) { // save is strictly earlier
+            is_save_event = true;
+            time = next_save_time;
+          } else {
+            // save times exist, but are farther in the future than the next event
+            event = queue.top();
+            time = event->getTime();
+          }
         }
       }
+
+      // Tentative next event is not a save event, test its sanity.
+      // Do this here because we don't want a const event to get created
+      // because it's before a zombie event.
+      if (!is_save_event) {
+        if (!event->isValid()) {
+          CGAL_SS3_CORE_TRACE_V(16, "Skipping invalid event E" << event->getID());
+          event = {};
+          queue.pop();
+          continue;
+        }
+
+        if (isEventInThePast(event, current_time)) {
+          CGAL_SS3_CORE_TRACE_V(16, "Skipping event-in-the-past E" << event->getID());
+          event = {};
+          queue.pop();
+          continue;
+        }
+
+        // This "isObsolete()" function is only a sufficient condition: if the neighborhoods
+        // have changed, then the event should be discarded.
+        // "IsActual...Event()" takes care of the other checks.
+        if (isEventObsolete(event)) {
+          CGAL_SS3_CORE_TRACE_V(16, "Skipping obsolete event E" << event->getID());
+          event = {};
+          queue.pop();
+          continue;
+        }
+      }
+
+      break;
     }
 
-    // Tentative next event is not a save event, test its sanity.
-    // Do this here because we don't want a const event to get created
-    // because it's before a zombie event.
-    if (!do_save) {
-      if (!event->isValid()) {
-        CGAL_SS3_CORE_TRACE_V(8, "Skipping invalid event E" << event->getID());
-        queue.pop();
-        return nextEvent(queue, current_time);
-      }
-
-      if (isEventInThePast(event, current_time)) {
-        CGAL_SS3_CORE_TRACE_V(8, "Skipping event-in-the-past E" << event->getID());
-        queue.pop();
-        return nextEvent(queue, current_time);
-      }
-
-      // This "isObsolete()" function is only a sufficient condition: if the neighborhoods
-      // have changed, then the event should be discarded.
-      // "IsActual...Event()" takes care of the other checks.
-      if (isEventObsolete(event)) {
-        CGAL_SS3_CORE_TRACE_V(8, "Skipping obsolete event E" << event->getID());
-        queue.pop();
-        return nextEvent(queue, current_time);
-      }
+    if (queue.empty() && save_times_.empty()) {
+      return { };
     }
 
-    CGAL_assertion(do_save || bool(event));
+    CGAL_assertion(is_save_event || bool(event));
     CGAL_assertion(time != 0);
 
     // Check if the next const event would be (strictly) closer
@@ -4682,14 +4699,14 @@ public:
     if (pulse != 0) {
       FT next_const_time = floor(CGAL::to_double(current_time / pulse) + 1.0) * pulse;
       if (current_time > next_const_time && next_const_time > time) {
-        do_save = false;
+        is_save_event = false;
         ConstTimeEventSPtr const_event = ConstTimeEvent::create();
         const_event->setTime(next_const_time);
         return const_event;
       }
     }
 
-    if (do_save) { // save event is the topmost
+    if (is_save_event) {
       save_times_.erase(save_times_.begin());
       SaveEventSPtr save_event = SaveEvent::create();
       save_event->setTime(time);
@@ -4698,7 +4715,7 @@ public:
 
     CGAL_assertion(bool(event));
 
-    // neither a const nor save event
+    // if here, the topmost is neither a const nor save event
     queue.pop();
 
     return event;
