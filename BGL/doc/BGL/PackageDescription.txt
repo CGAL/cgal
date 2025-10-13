@@ -497,6 +497,10 @@ the requirement for traversal of all faces in a graph.
 /// I/O Functions for the \ref IOStreamVTK
 /// \ingroup PkgBGLIOFct
 
+/// \defgroup PkgBGLIoFuncsVTU VTU I/O Functions
+/// I/O Functions for the \ref IOStreamVTK
+/// \ingroup PkgBGLIOFct
+
 /// \defgroup PkgBGLIoFuncsGOCAD GOCAD I/O Functions
 /// I/O Functions for the \ref IOStreamGocad
 /// \ingroup PkgBGLIOFct
@@ -795,6 +799,7 @@ user might encounter.
 - \link PkgBGLIoFuncsOFF I/O for OFF files \endlink
 - \link PkgBGLIoFuncsGOCAD I/O for GOCAD files \endlink
 - \link PkgBGLIoFuncsVTP I/O for VTP files \endlink
+- \link PkgBGLIOFuncsVTU I/O for VTU files \endlink
 - \link PkgBGLIoFuncs3MF I/O for 3MF files \endlink
 - \link PkgBGLIoFuncsWRL I/O for WRL files \endlink
 */

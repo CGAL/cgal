@@ -28,6 +28,7 @@
 #include <vtkXMLPolyDataReader.h>
 #include <vtkPointSet.h>
 #include <vtkPolyData.h>
+#include <vtkXMLUnstructuredGridReader.h>
 #endif
 
 #if defined(CGAL_USE_VTK) || defined(DOXYGEN_RUNNING)
@@ -161,6 +162,73 @@ bool read_VTP(const std::string& fname,
     return false;
   return internal::vtkPointSet_to_polygon_mesh(data, g, np);
 }
+
+/*!
+ * \ingroup PkgBGLIoFuncsVTU
+ *
+ * \brief reads a PolyData in the \ref IOStreamVTK into a triangulated surface mesh.
+ *
+ * The data is expected to represent a 2-manifold (possibly with borders).
+ *
+ * \attention The graph `g` is not cleared, and the data from the file are appended.
+ *
+ * \tparam Graph a model of `MutableFaceGraph`
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+ *
+ * \param fname the path to the file that will be read
+ * \param g the output mesh
+ * \param np optional \ref bgl_namedparameters "Named Parameters" described below
+ *
+ * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{vertex_point_map}
+ *     \cgalParamDescription{a property map associating points to the vertices of `g`}
+ *     \cgalParamType{a class model of `WritablePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
+ *                    as key type and `%Point_3` as value type}
+ *     \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
+ *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+ *                     must be available in `Graph`.}
+ *   \cgalParamNEnd
+ *   \cgalParamNBegin{verbose}
+ *     \cgalParamDescription{whether extra information is printed when an incident occurs during reading}
+ *     \cgalParamType{Boolean}
+ *     \cgalParamDefault{`false`}
+ *   \cgalParamNEnd
+ * \cgalNamedParamsEnd
+ *
+ * \returns `true` if reading was successful, `false` otherwise.
+ */
+template<typename Graph,
+         typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool read_VTU(const std::string& fname,
+              Graph& g,
+              const CGAL_NP_CLASS& np = parameters::default_values())
+{
+  std::ifstream test(fname);
+  if(!test.good())
+  {
+    std::cerr<<"File doesn't exist."<<std::endl;
+    return false;
+  }
+  test.close();
+
+  using parameters::get_parameter;
+  using parameters::choose_parameter;
+
+  bool verbose = choose_parameter(get_parameter(np, internal_np::verbose), false);
+
+  vtkSmartPointer<vtkPointSet> data;
+  vtkSmartPointer<CGAL::IO::internal::ErrorObserverVtk> obs =
+      vtkSmartPointer<CGAL::IO::internal::ErrorObserverVtk>::New();
+
+  data = internal::read_vtk_file<vtkXMLUnstructuredGridReader>(fname, obs)->GetOutput();
+  if(obs->GetError())
+    return false;
+  if(obs->GetWarning() && verbose)
+    std::cout << "VTK Warning message : " << obs->GetWarningMessage().data() << std::endl;
+
+  return internal::vtkPointSet_to_polygon_mesh(data, g, np);
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////

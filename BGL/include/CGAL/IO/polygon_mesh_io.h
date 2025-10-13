@@ -85,7 +85,7 @@ bool read_polygon_mesh(std::istream& is,
  * - \ref IOStreamSTL (`.stl`)
  * - \ref IOStreamPLY (`.ply`)
  * - \ref IOStreamGocad (`.ts`)
- * - \ref IOStreamVTK (`.vtp`)
+ * - \ref IOStreamVTK (`.vtu`, `.vtp`)
  *
  * The format is detected from the filename extension (letter case is not important).
  *
@@ -153,6 +153,8 @@ bool read_polygon_mesh(const std::string& fname,
 #ifdef CGAL_USE_VTK
   else if(ext == "vtp")
     return read_VTP(fname, g, np);
+  else if(ext == "vtu")
+    return read_VTU(fname, g, np);
 #endif
 
   if(verbose)
