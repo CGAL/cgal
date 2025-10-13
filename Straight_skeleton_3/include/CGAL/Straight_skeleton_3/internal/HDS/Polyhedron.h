@@ -2323,6 +2323,104 @@ public:
     return result;
   }
 
+  bool empty()
+  {
+    return vertices_.empty() && edges_.empty() && facets_.empty();
+  }
+
+  int getID() const
+  {
+    return this->id_;
+  }
+
+  void setID(const int id)
+  {
+    this->id_ = id;
+  }
+
+  void initializeAllIDs()
+  {
+    resetAllIDs();
+
+    for (const VertexSPtr& vertex : vertices_) {
+      vertex->setID(next_vertex_id_++);
+    }
+    for (const EdgeSPtr& edge : edges_) {
+      edge->setID(next_edge_id_++);
+    }
+    for (const FacetSPtr& facet : facets_) {
+      facet->setID(next_facet_id_++);
+    }
+    setID(-1);
+  }
+
+  void resetAllIDs()
+  {
+    for (const VertexSPtr& vertex : vertices_) {
+      vertex->setID(-1);
+    }
+    for (const EdgeSPtr& edge : edges_) {
+      edge->setID(-1);
+    }
+    for (const FacetSPtr& facet : facets_) {
+      facet->setID(-1);
+    }
+    setID(-1);
+
+    next_vertex_id_ = 0;
+    next_edge_id_ = 0;
+    next_facet_id_ = 0;
+  }
+
+  std::list<VertexSPtr>& vertices()
+  {
+    return this->vertices_;
+  }
+
+  std::list<EdgeSPtr>& edges()
+  {
+    return this->edges_;
+  }
+
+  std::list<FacetSPtr>& facets()
+  {
+    return this->facets_;
+  }
+
+  bool hasVertex(const VertexSPtr& vertex)
+  {
+    typename std::list<VertexSPtr>::iterator it_v =
+      std::find(vertices_.begin(), vertices_.end(), vertex);
+    return (it_v != vertices_.end());
+  }
+
+  bool hasEdge(const EdgeSPtr& edge)
+  {
+    typename std::list<EdgeSPtr>::iterator it_e =
+      std::find(edges_.begin(), edges_.end(), edge);
+    return (it_e != edges_.end());
+  }
+
+  bool hasFacet(const FacetSPtr& facet)
+  {
+    typename std::list<FacetSPtr>::iterator it_f =
+      std::find(facets_.begin(), facets_.end(), facet);
+    return (it_f != facets_.end());
+  }
+
+  int maxVertexDegree() const
+  {
+    unsigned int max_degree = 0;
+    typename std::list<VertexSPtr>::const_iterator it_v = vertices_.begin();
+    while (it_v != vertices_.end()) {
+      VertexSPtr vertex = *it_v++;
+      if (vertex->degree() > max_degree) {
+        max_degree = vertex->degree();
+      }
+    }
+    return max_degree;
+  }
+
   void addVertex(const VertexSPtr& vertex)
   {
     vertex->setID(next_vertex_id_++);
@@ -2501,34 +2599,6 @@ public:
     }
   }
 
-  std::list<VertexSPtr>& vertices()
-  {
-    return this->vertices_;
-  }
-
-  std::list<EdgeSPtr>& edges()
-  {
-    return this->edges_;
-  }
-
-  std::list<FacetSPtr>& facets()
-  {
-    return this->facets_;
-  }
-
-  int maxVertexDegree() const
-  {
-    unsigned int max_degree = 0;
-    typename std::list<VertexSPtr>::const_iterator it_v = vertices_.begin();
-    while (it_v != vertices_.end()) {
-      VertexSPtr vertex = *it_v++;
-      if (vertex->degree() > max_degree) {
-        max_degree = vertex->degree();
-      }
-    }
-    return max_degree;
-  }
-
   bool isConsistent() const
   {
     bool result = true;
@@ -2697,55 +2767,6 @@ public:
       VertexSPtr vertex = *it_v++;
       this->removeVertex(vertex);
     }
-  }
-
-  bool empty()
-  {
-    return vertices_.empty() && edges_.empty() && facets_.empty();
-  }
-
-  int getID() const
-  {
-    return this->id_;
-  }
-
-  void setID(const int id)
-  {
-    this->id_ = id;
-  }
-
-  void initializeAllIDs()
-  {
-    resetAllIDs();
-
-    for (const VertexSPtr& vertex : vertices_) {
-      vertex->setID(next_vertex_id_++);
-    }
-    for (const EdgeSPtr& edge : edges_) {
-      edge->setID(next_edge_id_++);
-    }
-    for (const FacetSPtr& facet : facets_) {
-      facet->setID(next_facet_id_++);
-    }
-    setID(-1);
-  }
-
-  void resetAllIDs()
-  {
-    for (const VertexSPtr& vertex : vertices_) {
-      vertex->setID(-1);
-    }
-    for (const EdgeSPtr& edge : edges_) {
-      edge->setID(-1);
-    }
-    for (const FacetSPtr& facet : facets_) {
-      facet->setID(-1);
-    }
-    setID(-1);
-
-    next_vertex_id_ = 0;
-    next_edge_id_ = 0;
-    next_facet_id_ = 0;
   }
 
   std::string toString() const
