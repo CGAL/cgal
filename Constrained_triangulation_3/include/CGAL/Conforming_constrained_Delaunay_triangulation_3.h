@@ -684,7 +684,7 @@ public:
 
     using Vertex_handle = typename Triangulation::Vertex_handle;
     using Cell_handle = typename Triangulation::Cell_handle;
-    auto tr_vertex_map = get(CGAL::dynamic_vertex_property_t<Vertex_handle>(), mesh);
+    auto tr_vertex_pmap = get(CGAL::dynamic_vertex_property_t<Vertex_handle>(), mesh);
     Cell_handle hint_ch{};
     for(auto v : vertices(mesh)) {
       if constexpr(has_plc_face_id) {
@@ -694,15 +694,10 @@ public:
       auto vh = cdt_impl.insert(p, hint_ch, false);
       vh->ccdt_3_data().set_vertex_type(CDT_3_vertex_type::CORNER);
       hint_ch = vh->cell();
-      put(tr_vertex_map, v, vh);
+      put(tr_vertex_pmap, v, vh);
     }
 
     cdt_impl.add_bbox_points_if_not_dimension_3();
-
-    struct {
-      decltype(tr_vertex_map)* vertex_map;
-      auto operator()(vertex_descriptor v) const { return get(*vertex_map, v); }
-    } tr_vertex_fct{&tr_vertex_map};
 
     if constexpr(has_plc_face_id) {
       for(int i = 0; i < number_of_patches; ++i) {
@@ -725,7 +720,8 @@ public:
           }
           polylines.erase(non_closed_polylines_begin, polylines.end());
           auto other_polylines = segment_soup_to_polylines(edges);
-          polylines.insert(polylines.end(), std::make_move_iterator(other_polylines.begin()),
+          polylines.insert(polylines.end(),
+                           std::make_move_iterator(other_polylines.begin()),
                            std::make_move_iterator(other_polylines.end()));
         }
 
@@ -733,20 +729,16 @@ public:
         for(auto& polyline : polylines) {
           CGAL_assertion(polyline.front() == polyline.back());
           polyline.pop_back();
-          auto begin = boost::make_transform_iterator(polyline.begin(), tr_vertex_fct);
-          auto end   = boost::make_transform_iterator(polyline.end(), tr_vertex_fct);
-          face_index = cdt_impl.insert_constrained_face(CGAL::make_range(begin, end), false,
+          auto range_of_vertices = CGAL::make_transform_range_from_property_map(polyline, tr_vertex_pmap);
+          face_index = cdt_impl.insert_constrained_face(range_of_vertices, false,
                                                         face_index ? *face_index : -1);
         }
       }
     } else {
       for(auto f : faces(mesh)) {
         auto face_vertices = vertices_around_face(halfedge(f, mesh), mesh);
-
-        auto begin = boost::make_transform_iterator(face_vertices.begin(), tr_vertex_fct);
-        auto end = boost::make_transform_iterator(face_vertices.end(), tr_vertex_fct);
-
-        cdt_impl.insert_constrained_face(CGAL::make_range(begin, end), false);
+        auto range_of_vertices = CGAL::make_transform_range_from_property_map(face_vertices, tr_vertex_pmap);
+        cdt_impl.insert_constrained_face(range_of_vertices, false);
       }
     }
     cdt_impl.restore_Delaunay();
