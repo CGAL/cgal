@@ -16,6 +16,7 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Constrained_triangulation_3/internal/read_polygon_mesh_for_cdt_3.h>
 #include <CGAL/IO/File_binary_mesh_3.h>
+#include <CGAL/utility.h>
 
 #include <CGAL/Polygon_mesh_processing/bbox.h>
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
@@ -31,6 +32,7 @@
 #include <optional>
 #include <string_view>
 #include <string>
+#include <utility>
 #include <vector>
 
 #if CGAL_CXX20 && __cpp_lib_concepts >= 201806L && __cpp_lib_ranges >= 201911L
@@ -111,6 +113,7 @@ Usage: cdt_3_from_off [options] input.off output.off
 
 [[noreturn]] void error(std::string_view message, std::string_view extra = "") {
   std::cerr << "Error: " << message << extra << '\n';
+  help(std::cerr);
   std::exit(EXIT_FAILURE);
 }
 
@@ -296,8 +299,7 @@ CDT_options::CDT_options(int argc, char* argv[]) {
 #  define CGAL_CDT_3_TASK_END(task_handle)
 #endif // no ITT
 
-int go(Mesh mesh, CDT_options options) {
-  CDT cdt;
+void configure_cdt_debug_options(CDT& cdt, const CDT_options& options) {
   cdt.debug_Steiner_points(options.verbose_level > 0);
   cdt.debug_input_faces(options.debug_input_faces);
   cdt.debug_missing_region(options.verbose_level > 1 || options.debug_missing_regions);
@@ -315,7 +317,9 @@ int go(Mesh mesh, CDT_options options) {
   cdt.use_older_cavity_algorithm(!options.use_new_cavity_algorithm);
   cdt.use_finite_edges_map(options.use_finite_edges_map);
   cdt.set_segment_vertex_epsilon(options.segment_vertex_epsilon);
+}
 
+auto compute_bounding_box(const Mesh& mesh, const CDT_options& options) {
   const auto bbox = CGAL::Polygon_mesh_processing::bbox(mesh);
   double d_x = bbox.xmax() - bbox.xmin();
   double d_y = bbox.ymax() - bbox.ymin();
@@ -323,168 +327,18 @@ int go(Mesh mesh, CDT_options options) {
 
   const double bbox_max_width = (std::max)(d_x, (std::max)(d_y, d_z));
 
-  double epsilon = options.vertex_vertex_epsilon;
-
   if(!options.quiet) {
+    double epsilon = options.vertex_vertex_epsilon;
     std::cout << "Bbox width                   : " << bbox_max_width << '\n'
               << "Epsilon                      : " << epsilon << '\n'
               << "Epsilon * Bbox width         : " << epsilon * bbox_max_width << "\n\n";
   }
 
-  auto mesh_vp_map = get(CGAL::vertex_point, mesh);
+  return bbox;
+}
 
-  auto [patch_id_map, patch_id_map_ok] = mesh.add_property_map<face_descriptor, int>("f:patch_id", -2);
-  assert(patch_id_map_ok); CGAL_USE(patch_id_map_ok);
-  auto [v_selected_map, v_selected_map_ok] = mesh.add_property_map<vertex_descriptor, bool>("v:selected", false);
-  assert(v_selected_map_ok); CGAL_USE(v_selected_map_ok);
-  auto [edge_is_border_of_patch_map, edge_is_border_of_patch_map_ok] =
-      mesh.add_property_map<edge_descriptor, bool>("e:is_border_of_patch", false);
-  assert(edge_is_border_of_patch_map_ok);
-  CGAL_USE(edge_is_border_of_patch_map_ok);
-  int number_of_patches = 0;
-  std::vector<std::vector<std::pair<vertex_descriptor, vertex_descriptor>>> patch_edges;
-  if(options.merge_facets) {
-    CGAL_CDT_3_TASK_BEGIN(merge_facets_task_handle);
-    auto start_time = std::chrono::high_resolution_clock::now();
-
-    if(options.merge_facets_old_method) {
-      for(auto f: faces(mesh))
-      {
-        if(get(patch_id_map, f) >= 0) continue;
-        std::stack<face_descriptor> f_stack;
-        f_stack.push(f);
-        while(!f_stack.empty()) {
-          auto f = f_stack.top();
-          f_stack.pop();
-          if(get(patch_id_map, f) >= 0) continue;
-          put(patch_id_map, f, number_of_patches);
-          for(auto h: CGAL::halfedges_around_face(halfedge(f, mesh), mesh)) {
-            auto opp = opposite(h, mesh);
-            if(is_border_edge(opp, mesh)) {
-              continue;
-            }
-            auto n = face(opp, mesh);
-            auto a = get(mesh_vp_map, source(h, mesh));
-            auto b = get(mesh_vp_map, target(h, mesh));
-            auto c = get(mesh_vp_map, target(next(h, mesh), mesh));
-            auto d = get(mesh_vp_map, target(next(opp, mesh), mesh));
-            if(CGAL::orientation(a, b, c, d) != CGAL::COPLANAR) {
-              continue;
-            }
-            if(get(patch_id_map, n) >= 0) continue;
-            f_stack.push(n);
-          }
-        }
-        ++number_of_patches;
-      }
-    } else {
-      namespace np = CGAL::parameters;
-      number_of_patches = CGAL::Polygon_mesh_processing::region_growing_of_planes_on_faces(
-          mesh, patch_id_map,
-          np::maximum_distance(options.coplanar_polygon_max_distance * bbox_max_width)
-             .maximum_angle(options.coplanar_polygon_max_angle));
-      for(auto f: faces(mesh)) {
-        if(get(patch_id_map, f) < 0) {
-          std::cerr << "warning: face " << f << " has no patch id! Reassign it to " << number_of_patches << '\n';
-          for(auto h: CGAL::halfedges_around_face(halfedge(f, mesh), mesh)) {
-            std::cerr << "  " << target(h, mesh) << ", point " << mesh.point(target(h, mesh)) << '\n';
-          }
-          put(patch_id_map, f, number_of_patches++);
-        }
-      }
-      if(!options.dump_surface_mesh_after_merge_filename.empty()) {
-        auto [corner_id_map, corner_id_map_ok] = mesh.add_property_map<vertex_descriptor, std::size_t>("v:corner_id", -1);
-        assert(corner_id_map_ok);
-        CGAL_USE(corner_id_map_ok);
-        const auto nb_corners = CGAL::Polygon_mesh_processing::detect_corners_of_regions(
-            mesh, patch_id_map, number_of_patches, corner_id_map,
-            np::maximum_distance(options.coplanar_polygon_max_distance * bbox_max_width)
-                .maximum_angle(options.coplanar_polygon_max_angle)
-                .edge_is_constrained_map(edge_is_border_of_patch_map));
-        Mesh merged_mesh;
-        CGAL::Polygon_mesh_processing::remesh_almost_planar_patches(
-            mesh, merged_mesh, number_of_patches, nb_corners, patch_id_map, corner_id_map, edge_is_border_of_patch_map,
-            CGAL::parameters::default_values(),
-            CGAL::parameters::do_not_triangulate_faces(true));
-        mesh.remove_property_map(corner_id_map);
-        std::ofstream out(options.dump_surface_mesh_after_merge_filename);
-        out.precision(17);
-        out << merged_mesh;
-      }
-    }
-    if (!options.quiet) {
-      std::cout << "[timings] detected " << number_of_patches << " patches in " << std::chrono::duration_cast<std::chrono::milliseconds>(
-          std::chrono::high_resolution_clock::now() - start_time).count() << " ms\n";
-    }
-    patch_edges.resize(number_of_patches);
-    for(auto h: halfedges(mesh))
-    {
-      if(is_border(h, mesh)) continue;
-      auto f = face(h, mesh);
-      auto patch_id = get(patch_id_map, f);
-      auto opp = opposite(h, mesh);
-      if(is_border(opp, mesh) || patch_id != get(patch_id_map, face(opp, mesh))) {
-        auto va = source(h, mesh);
-        auto vb = target(h, mesh);
-        patch_edges[patch_id].emplace_back(va, vb);
-        put(v_selected_map, va, true);
-        put(v_selected_map, vb, true);
-      }
-    }
-    CGAL_CDT_3_TASK_END(merge_facets_task_handle);
-    if(!options.dump_patches_after_merge_filename.empty()) {
-      CGAL_CDT_3_TASK_BEGIN(output_task_handle);
-      std::ofstream out(options.dump_patches_after_merge_filename);
-      CGAL::IO::write_PLY(out, mesh, CGAL::parameters::stream_precision(17));
-      CGAL_CDT_3_TASK_END(output_task_handle);
-    }
-  }
-  if(!options.dump_patches_borders_prefix.empty()) {
-    CGAL_CDT_3_TASK_BEGIN(output_task_handle);
-    std::set<std::pair<vertex_descriptor, vertex_descriptor>> all_edges;
-    for(int i = 0; i < number_of_patches; ++i) {
-      std::stringstream ss;
-      ss << options.dump_patches_borders_prefix << i << ".polylines.txt";
-      std::ofstream out(ss.str());
-      out.precision(17);
-      const auto& edges = patch_edges[i];
-      for(auto [va, vb]: edges) {
-        all_edges.insert(CGAL::make_sorted_pair(va, vb));
-      }
-      std::cerr << "Patch p#" << i << " has " << edges.size() << " edges\n";
-      const auto polylines = segment_soup_to_polylines(edges);
-      for(const auto& polyline: polylines) {
-        out << polyline.size() << "    ";
-        for(auto v: polyline) {
-          out << get(mesh_vp_map, v) << "  ";
-        }
-        out << '\n';
-      }
-      out.close();
-      std::cerr << "  " << polylines.size() << " polylines\n";
-      for(const auto& polyline: polylines) {
-        std::cerr << "    - " << polyline.size() << " vertices\n";
-        assert(polyline.front() == polyline.back());
-      }
-    }
-    std::stringstream ss;
-    ss << options.dump_patches_borders_prefix << "all_edges.polylines.txt";
-    std::ofstream out(ss.str());
-    out.precision(17);
-    const auto polylines = segment_soup_to_polylines(all_edges);
-    for(const auto& polyline: polylines) {
-      out << polyline.size() << "    ";
-      for(auto v: polyline) {
-        out << get(mesh_vp_map, v) << "  ";
-      }
-      out << '\n';
-    }
-    CGAL_CDT_3_TASK_END(output_task_handle);
-  }
-
-  int exit_code = EXIT_SUCCESS;
-
-  auto finally = [&cdt, &options]() {
+std::function<void()> create_output_finalizer(const CDT& cdt, const CDT_options& options) {
+  return [&cdt, &options]() {
     CGAL_CDT_3_TASK_BEGIN(output_task_handle);
     {
       auto dump_tets_to_medit = [](std::string fname,
@@ -571,18 +425,458 @@ int go(Mesh mesh, CDT_options options) {
     }
     CGAL_CDT_3_TASK_END(output_task_handle);
   };
+}
 
-  auto [tr_vertex_pmap, tr_vertex_pmap_ok] = mesh.add_property_map<vertex_descriptor, CDT::Vertex_handle>("tr_vertex");
+struct Min_distance_result {
+  double min_distance;
+  std::array<CDT::Vertex_handle, 2> vertices_of_min_edge;
+};
+
+Min_distance_result compute_minimum_vertex_distance(const CDT& cdt) {
+#if CGAL_CXX20 && __cpp_lib_concepts >= 201806L && __cpp_lib_ranges >= 201911L
+  auto [min_sq_distance, min_edge] =
+      (std::ranges::min)(cdt.finite_edges() | std::views::transform([&](auto edge) {
+                           return std::make_pair(cdt.segment(edge).squared_length(), edge);
+                         }));
+#else
+  auto transform_fct = [&](auto edge) { return std::make_pair(cdt.segment(edge).squared_length(), edge); };
+  auto min_p = transform_fct(*cdt.finite_edges_begin());
+  for (auto ite=cdt.finite_edges_begin(); ite!=cdt.finite_edges_end(); ++ite)
+  {
+    auto p = transform_fct(*ite);
+    if (p < min_p)
+      p = min_p;
+  }
+  auto [min_sq_distance, min_edge] = min_p;
+#endif
+  auto min_distance = CGAL::approximate_sqrt(min_sq_distance);
+  auto vertices_of_min_edge = cdt.vertices(min_edge);
+
+  return {min_distance, vertices_of_min_edge};
+}
+
+void print_minimum_distance_info(const Min_distance_result& min_dist) {
+  std::cout << "Min distance between vertices: " << min_dist.min_distance << '\n'
+            << "  between vertices:          : "
+            << CGAL::IO::oformat(min_dist.vertices_of_min_edge[0], CGAL::With_point_tag{}) << "    "
+            << CGAL::IO::oformat(min_dist.vertices_of_min_edge[1], CGAL::With_point_tag{}) << "\n\n";
+}
+
+int validate_minimum_vertex_distances(const CDT& cdt, double vertex_vertex_min_distance, const CDT_options& options) {
+  auto result = compute_minimum_vertex_distance(cdt);
+
+  if(!options.quiet) {
+    print_minimum_distance_info(result);
+  }
+  if(result.min_distance < vertex_vertex_min_distance) {
+    std::cerr << "ERROR: min distance between vertices is too small\n";
+    return EXIT_FAILURE;
+  }
+  return EXIT_SUCCESS;
+}
+
+struct Constraint_distance_result {
+  double min_distance;
+  CDT::Vertex_handle min_va, min_vb, min_vertex;
+};
+
+template<typename BordersOfPatches, typename VertexPointMap>
+Constraint_distance_result compute_constraint_vertex_distances_from_patches_borders(
+    CDT& cdt,
+    const BordersOfPatches& patch_edges,
+    const VertexPointMap& tr_vertex_pmap) {
+
+#if CGAL_CXX20 && __cpp_lib_concepts >= 201806L && __cpp_lib_ranges >= 201911L
+  auto edge_results = patch_edges
+    | std::views::join
+    | std::views::transform([&](const auto& edge_pair) {
+        auto [vda, vdb] = edge_pair;
+        auto va = get(tr_vertex_pmap, vda);
+        auto vb = get(tr_vertex_pmap, vdb);
+        auto [min_dist, min_v] = cdt.min_distance_and_vertex_between_constraint_and_encroaching_vertex(va, vb);
+        return std::make_tuple(CGAL::to_double(min_dist), va, vb, min_v);
+      });
+
+  auto min_result = std::ranges::min_element(edge_results, {}, [](const auto& tuple) {
+    return std::get<0>(tuple);
+  });
+
+  auto [min_distance, min_va, min_vb, min_vertex] = *min_result;
+#else
+  double min_distance = (std::numeric_limits<double>::max)();
+  CDT::Vertex_handle min_va, min_vb, min_vertex;
+
+  for(const auto& edges : patch_edges) {
+    for(auto [vda, vdb]: edges) {
+      auto va = get(tr_vertex_pmap, vda);
+      auto vb = get(tr_vertex_pmap, vdb);
+      auto [min_dist, min_v] = cdt.min_distance_and_vertex_between_constraint_and_encroaching_vertex(va, vb);
+      if(min_dist < min_distance) {
+        min_distance = CGAL::to_double(min_dist);
+        min_va = va;
+        min_vb = vb;
+        min_vertex = min_v;
+      }
+    }
+  }
+#endif
+
+  return {min_distance, min_va, min_vb, min_vertex};
+}
+
+template<typename VertexPointMap>
+Constraint_distance_result compute_constraint_vertex_distances_from_faces(
+    CDT& cdt,
+    const Mesh& mesh,
+    const VertexPointMap& tr_vertex_pmap) {
+
+  double min_distance = (std::numeric_limits<double>::max)();
+  CDT::Vertex_handle min_va, min_vb, min_vertex;
+
+  for(auto face_descriptor : faces(mesh)) {
+    auto he = halfedge(face_descriptor, mesh);
+    const auto end = he;
+    do {
+      auto va = get(tr_vertex_pmap, source(he, mesh));
+      auto vb = get(tr_vertex_pmap, target(he, mesh));
+      auto [min_dist, min_v] = cdt.min_distance_and_vertex_between_constraint_and_encroaching_vertex(va, vb);
+      if(min_dist < min_distance) {
+        min_distance = CGAL::to_double(min_dist);
+        min_va = va;
+        min_vb = vb;
+        min_vertex = min_v;
+      }
+      he = next(he, mesh);
+    } while((he = next(he, mesh)) != end);
+  }
+
+  return {min_distance, min_va, min_vb, min_vertex};
+}
+
+template<typename BordersOfPatches, typename VertexPointMap>
+void validate_constraint_vertex_distances_or_throw(
+    CDT& cdt,
+    const Mesh& mesh,
+    const CDT_options& options,
+    const BordersOfPatches& patch_edges,
+    const VertexPointMap& tr_vertex_pmap) {
+
+  auto [min_distance, min_va, min_vb, min_vertex] =
+      options.merge_facets ? compute_constraint_vertex_distances_from_patches_borders(cdt, patch_edges, tr_vertex_pmap)
+                           : compute_constraint_vertex_distances_from_faces(cdt, mesh, tr_vertex_pmap);
+
+  if(!options.quiet) {
+    std::cout << "Min distance between constraint segment and vertex: " << min_distance << '\n'
+              << "  between segment                                 : "
+              << CGAL::IO::oformat(min_va, CDT::Conforming_Dt::with_point) << "    "
+              << CGAL::IO::oformat(min_vb, CDT::Conforming_Dt::with_point) << '\n'
+              << "  and vertex                                      : "
+              << CGAL::IO::oformat(min_vertex, CDT::Conforming_Dt::with_point) << "\n\n";
+  }
+  cdt.check_segment_vertex_distance_or_throw(min_va, min_vb, min_vertex, min_distance,
+                                             CDT::Check_distance::NON_SQUARED_DISTANCE);
+}
+
+template<typename PatchIdMap, typename VertexSelectedMap, typename EdgeBorderMap, typename VertexPointMap>
+struct Mesh_property_maps {
+  PatchIdMap patch_id_map;
+  VertexSelectedMap v_selected_map;
+  EdgeBorderMap edge_is_border_of_patch_map;
+  VertexPointMap mesh_vertex_point_map;
+};
+
+auto setup_mesh_property_maps(Mesh& mesh) {
+  auto [patch_id_map, patch_id_map_ok] = mesh.add_property_map<face_descriptor, int>("f:patch_id", -2);
+  assert(patch_id_map_ok); CGAL_USE(patch_id_map_ok);
+  auto [v_selected_map, v_selected_map_ok] = mesh.add_property_map<vertex_descriptor, bool>("v:selected", false);
+  assert(v_selected_map_ok); CGAL_USE(v_selected_map_ok);
+  auto [edge_is_border_of_patch_map, edge_is_border_of_patch_map_ok] =
+      mesh.add_property_map<edge_descriptor, bool>("e:is_border_of_patch", false);
+  assert(edge_is_border_of_patch_map_ok); CGAL_USE(edge_is_border_of_patch_map_ok);
+  auto mesh_vertex_point_map = get(CGAL::vertex_point, mesh);
+
+  return Mesh_property_maps{patch_id_map, v_selected_map, edge_is_border_of_patch_map, mesh_vertex_point_map};
+}
+
+using Borders_of_patches = std::vector<std::vector<std::pair<vertex_descriptor, vertex_descriptor>>>;
+
+template<typename MeshPropertyMaps>
+auto extract_patch_edges(Mesh& mesh, MeshPropertyMaps pmaps, int number_of_patches) {
+  Borders_of_patches patch_edges(number_of_patches);
+
+  for(auto h: halfedges(mesh))
+  {
+    if(is_border(h, mesh)) continue;
+    auto f = face(h, mesh);
+    auto patch_id = get(pmaps.patch_id_map, f);
+    auto opp = opposite(h, mesh);
+    if(is_border(opp, mesh) || patch_id != get(pmaps.patch_id_map, face(opp, mesh))) {
+      auto va = source(h, mesh);
+      auto vb = target(h, mesh);
+      patch_edges[patch_id].emplace_back(va, vb);
+      put(pmaps.v_selected_map, va, true);
+      put(pmaps.v_selected_map, vb, true);
+    }
+  }
+
+  return patch_edges;
+}
+
+template <typename MeshPropertyMaps>
+int merge_facets_region_growing(Mesh& mesh,
+                                MeshPropertyMaps pmaps,
+                                double coplanar_polygon_max_distance,
+                                double coplanar_polygon_max_angle,
+                                const std::string& dump_surface_mesh_after_merge_filename) {
+  namespace np = CGAL::parameters;
+  int number_of_patches = CGAL::Polygon_mesh_processing::region_growing_of_planes_on_faces(
+      mesh, pmaps.patch_id_map,
+      np::maximum_distance(coplanar_polygon_max_distance)
+         .maximum_angle(coplanar_polygon_max_angle));
+  for(auto f: faces(mesh)) {
+    if(get(pmaps.patch_id_map, f) < 0) {
+      std::cerr << "warning: face " << f << " has no patch id! Reassign it to " << number_of_patches << '\n';
+      for(auto h: CGAL::halfedges_around_face(halfedge(f, mesh), mesh)) {
+        std::cerr << "  " << target(h, mesh) << ", point " << mesh.point(target(h, mesh)) << '\n';
+      }
+      put(pmaps.patch_id_map, f, number_of_patches++);
+    }
+  }
+  if(!dump_surface_mesh_after_merge_filename.empty()) {
+    auto [corner_id_map, corner_id_map_ok] = mesh.add_property_map<vertex_descriptor, std::size_t>("v:corner_id", -1);
+    assert(corner_id_map_ok);
+    CGAL_USE(corner_id_map_ok);
+    const auto nb_corners = CGAL::Polygon_mesh_processing::detect_corners_of_regions(
+        mesh, pmaps.patch_id_map, number_of_patches, corner_id_map,
+        np::maximum_distance(coplanar_polygon_max_distance)
+            .maximum_angle(coplanar_polygon_max_angle)
+            .edge_is_constrained_map(pmaps.edge_is_border_of_patch_map));
+    Mesh merged_mesh;
+    CGAL::Polygon_mesh_processing::remesh_almost_planar_patches(
+        mesh, merged_mesh, number_of_patches, nb_corners, pmaps.patch_id_map,
+        corner_id_map, pmaps.edge_is_border_of_patch_map,
+        CGAL::parameters::default_values(),
+        CGAL::parameters::do_not_triangulate_faces(true));
+    mesh.remove_property_map(corner_id_map);
+    std::ofstream out(dump_surface_mesh_after_merge_filename);
+    out.precision(17);
+    out << merged_mesh;
+  }
+
+  return number_of_patches;
+}
+
+template<typename MeshPropertyMaps>
+int merge_facets_old_method(Mesh& mesh, MeshPropertyMaps pmaps, int initial_number_of_patches) {
+  int number_of_patches = initial_number_of_patches;
+
+  for(auto f: faces(mesh))
+  {
+    if(get(pmaps.patch_id_map, f) >= 0) continue;
+    std::stack<face_descriptor> f_stack;
+    f_stack.push(f);
+    while(!f_stack.empty()) {
+      auto f = f_stack.top();
+      f_stack.pop();
+      if(get(pmaps.patch_id_map, f) >= 0) continue;
+      put(pmaps.patch_id_map, f, number_of_patches);
+      for(auto h: CGAL::halfedges_around_face(halfedge(f, mesh), mesh)) {
+        auto opp = opposite(h, mesh);
+        if(is_border_edge(opp, mesh)) {
+          continue;
+        }
+        auto n = face(opp, mesh);
+        auto a = get(pmaps.mesh_vertex_point_map, source(h, mesh));
+        auto b = get(pmaps.mesh_vertex_point_map, target(h, mesh));
+        auto c = get(pmaps.mesh_vertex_point_map, target(next(h, mesh), mesh));
+        auto d = get(pmaps.mesh_vertex_point_map, target(next(opp, mesh), mesh));
+        if(CGAL::orientation(a, b, c, d) != CGAL::COPLANAR) {
+          continue;
+        }
+        if(get(pmaps.patch_id_map, n) >= 0) continue;
+        f_stack.push(n);
+      }
+    }
+    ++number_of_patches;
+  }
+
+  return number_of_patches;
+}
+
+template<typename MeshPropertyMaps>
+Borders_of_patches maybe_merge_facets(
+    Mesh& mesh,
+    const CDT_options& options,
+    MeshPropertyMaps pmaps,
+    double bbox_max_span) {
+
+  int number_of_patches = 0;
+  Borders_of_patches patch_edges;
+
+  if(options.merge_facets) {
+    CGAL_CDT_3_TASK_BEGIN(merge_facets_task_handle);
+    auto start_time = std::chrono::high_resolution_clock::now();
+
+    if(options.merge_facets_old_method) {
+      number_of_patches = merge_facets_old_method(mesh, pmaps, number_of_patches);
+    } else {
+      number_of_patches = merge_facets_region_growing(
+          mesh, pmaps, options.coplanar_polygon_max_distance * bbox_max_span,
+          options.coplanar_polygon_max_angle, options.dump_surface_mesh_after_merge_filename);
+    }
+    if (!options.quiet) {
+      std::cout << "[timings] detected " << number_of_patches << " patches in " << std::chrono::duration_cast<std::chrono::milliseconds>(
+          std::chrono::high_resolution_clock::now() - start_time).count() << " ms\n";
+    }
+    patch_edges = extract_patch_edges(mesh, pmaps, number_of_patches);
+    CGAL_CDT_3_TASK_END(merge_facets_task_handle);
+    if(!options.dump_patches_after_merge_filename.empty()) {
+      CGAL_CDT_3_TASK_BEGIN(output_task_handle);
+      std::ofstream out(options.dump_patches_after_merge_filename);
+      CGAL::IO::write_PLY(out, mesh, CGAL::parameters::stream_precision(17));
+      CGAL_CDT_3_TASK_END(output_task_handle);
+    }
+  }
+
+  return patch_edges;
+}
+
+template <typename VdToVhPmap, typename BordersOfPatches, typename VertexPointPmap>
+void insert_patches_borders_as_constraints(CDT& cdt,
+                               BordersOfPatches patch_edges,
+                               VdToVhPmap mesh_descriptor_to_vertex_handle_pmap,
+                               VertexPointPmap vertex_point_pmap) {
+
+  for(auto& edges : patch_edges) {
+    if(edges.empty())
+      continue;
+    auto polylines = CGAL::segment_soup_to_polylines(edges);
+    while(true) {
+      const auto non_closed_polylines_begin =
+          std::partition(polylines.begin(), polylines.end(),
+                         [](const auto& polyline) { return polyline.front() == polyline.back(); });
+      if(non_closed_polylines_begin == polylines.end())
+        break;
+      edges.clear();
+      for(auto it = non_closed_polylines_begin; it != polylines.end(); ++it) {
+        auto& polyline = *it;
+        for(auto it = polyline.begin(), end = polyline.end() - 1; it != end; ++it) {
+          edges.emplace_back(*it, *(it + 1));
+        }
+      }
+      polylines.erase(non_closed_polylines_begin, polylines.end());
+      auto other_polylines = CGAL::segment_soup_to_polylines(edges);
+      polylines.insert(polylines.end(),
+                       std::make_move_iterator(other_polylines.begin()),
+                       std::make_move_iterator(other_polylines.end()));
+    }
+
+    if(polylines.size() > 1) {
+      double max_sq_length = 0;
+      auto longest_it = polylines.begin();
+      for(auto it = polylines.begin(); it != polylines.end(); ++it) {
+        auto& polyline = *it;
+        using CGAL::Bbox_3;
+        Bbox_3 bb;
+        for(auto v : polyline) {
+          bb = bb + Bbox_3(get(vertex_point_pmap, v).bbox());
+        }
+        double sq_diagonal_length = CGAL::square(bb.xmax() - bb.xmin()) +
+                                    CGAL::square(bb.ymax() - bb.ymin()) +
+                                    CGAL::square(bb.zmax() - bb.zmin());
+        if(sq_diagonal_length > max_sq_length) {
+          max_sq_length = sq_diagonal_length;
+          longest_it = it;
+        }
+      }
+      if(longest_it != polylines.begin()) {
+        std::iter_swap(longest_it, polylines.begin());
+      }
+    }
+
+    std::optional<int> face_index;
+    for(auto& polyline : polylines) {
+      CGAL_assertion(!polyline.empty() && polyline.front() == polyline.back());
+      polyline.pop_back();
+      auto range_of_vertices = CGAL::make_transform_range_from_property_map(polyline, mesh_descriptor_to_vertex_handle_pmap);
+      face_index = cdt.insert_constrained_face(range_of_vertices, false,
+                                               face_index ? *face_index : -1);
+    }
+  }
+}
+
+template<typename BordersOfPatches, typename MeshPropertyMaps>
+void dump_patches_borders(const BordersOfPatches& patch_edges,
+                          const MeshPropertyMaps& pmaps,
+                          const std::string& dump_patches_borders_prefix) {
+  std::set<std::pair<vertex_descriptor, vertex_descriptor>> all_edges;
+  for(auto i = 0u; i < patch_edges.size(); ++i) {
+    std::stringstream ss;
+    ss << dump_patches_borders_prefix << i << ".polylines.txt";
+    std::ofstream out(ss.str());
+    out.precision(17);
+    const auto& edges = patch_edges[i];
+    for(auto [va, vb]: edges) {
+      all_edges.insert(CGAL::make_sorted_pair(va, vb));
+    }
+    std::cerr << "Patch p#" << i << " has " << edges.size() << " edges\n";
+    const auto polylines = CGAL::segment_soup_to_polylines(edges);
+    for(const auto& polyline: polylines) {
+      out << polyline.size() << "    ";
+      for(auto v: polyline) {
+        out << get(pmaps.mesh_vertex_point_map, v) << "  ";
+      }
+      out << '\n';
+    }
+    out.close();
+    std::cerr << "  " << polylines.size() << " polylines\n";
+    for(const auto& polyline: polylines) {
+      std::cerr << "    - " << polyline.size() << " vertices\n";
+      assert(polyline.front() == polyline.back());
+    }
+  }
+  std::stringstream ss;
+  ss << dump_patches_borders_prefix << "all_edges.polylines.txt";
+  std::ofstream out(ss.str());
+  out.precision(17);
+  const auto polylines = CGAL::segment_soup_to_polylines(all_edges);
+  for(const auto& polyline: polylines) {
+    out << polyline.size() << "    ";
+    for(auto v: polyline) {
+      out << get(pmaps.mesh_vertex_point_map, v) << "  ";
+    }
+    out << '\n';
+  }
+}
+
+int go(Mesh mesh, CDT_options options) {
+  CDT cdt;
+  configure_cdt_debug_options(cdt, options);
+
+  auto bbox = compute_bounding_box(mesh, options);
+  auto bbox_max_span = (std::max)(bbox.x_span(), (std::max)(bbox.y_span(), bbox.z_span()));
+
+  auto pmaps = setup_mesh_property_maps(mesh);
+  auto patch_edges = maybe_merge_facets(mesh, options, pmaps, bbox_max_span);
+  if(!options.dump_patches_borders_prefix.empty()) {
+    CGAL_CDT_3_TASK_BEGIN(output_task_handle);
+    dump_patches_borders(patch_edges, pmaps, options.dump_patches_borders_prefix);
+    CGAL_CDT_3_TASK_END(output_task_handle);
+  }
+
+  int exit_code = EXIT_SUCCESS;
+
+  auto [mesh_descriptor_to_vertex_handle_pmap, tr_vertex_pmap_ok] = mesh.add_property_map<vertex_descriptor, CDT::Vertex_handle>("tr_vertex");
   assert(tr_vertex_pmap_ok); CGAL_USE(tr_vertex_pmap_ok);
 
   CGAL_CDT_3_TASK_BEGIN(insert_vertices_task_handle);
   auto start_time = std::chrono::high_resolution_clock::now();
   CDT::Cell_handle hint{};
   for(auto v: vertices(mesh)) {
-    if(options.merge_facets && false == get(v_selected_map, v)) continue;
-    auto vh = cdt.insert(get(mesh_vp_map, v), hint, false);
+    if(options.merge_facets && false == get(pmaps.v_selected_map, v)) continue;
+    auto vh = cdt.insert(get(pmaps.mesh_vertex_point_map, v), hint, false);
     hint = vh->cell();
-    put(tr_vertex_pmap, v, vh);
+    put(mesh_descriptor_to_vertex_handle_pmap, v, vh);
   }
   if(!options.quiet) {
     std::cout << "[timings] inserted vertices in " << std::chrono::duration_cast<std::chrono::milliseconds>(
@@ -593,277 +887,134 @@ int go(Mesh mesh, CDT_options options) {
     if(!options.quiet) {
       std::cout << "current is 2D... inserting the 8 vertices of an extended bounding box\n";
     }
-    if(d_x == 0) d_x = bbox_max_width;
-    if(d_y == 0) d_y = bbox_max_width;
-    if(d_z == 0) d_z = bbox_max_width;
 
-    cdt.insert(Point(bbox.xmin() - d_x, bbox.ymin() - d_y, bbox.zmin() - d_z));
-    cdt.insert(Point(bbox.xmin() - d_x, bbox.ymax() + d_y, bbox.zmin() - d_z));
-    cdt.insert(Point(bbox.xmin() - d_x, bbox.ymin() - d_y, bbox.zmax() + d_z));
-    cdt.insert(Point(bbox.xmin() - d_x, bbox.ymax() + d_y, bbox.zmax() + d_z));
-    cdt.insert(Point(bbox.xmax() + d_x, bbox.ymin() - d_y, bbox.zmin() - d_z));
-    cdt.insert(Point(bbox.xmax() + d_x, bbox.ymax() + d_y, bbox.zmin() - d_z));
-    cdt.insert(Point(bbox.xmax() + d_x, bbox.ymin() - d_y, bbox.zmax() + d_z));
-    cdt.insert(Point(bbox.xmax() + d_x, bbox.ymax() + d_y, bbox.zmax() + d_z));
+    auto bbox = CGAL::Polygon_mesh_processing::bbox(mesh);
+    auto dx = bbox.x_span();
+    auto dy = bbox.y_span();
+    auto dz = bbox.z_span();
+    auto max_span = (std::max)(dx, (std::max)(dy, dz));
+    if(dx == 0) dx = max_span;
+    if(dy == 0) dy = max_span;
+    if(dz == 0) dz = max_span;
+
+    cdt.insert(Point(bbox.xmin() - dx, bbox.ymin() - dy, bbox.zmin() - dz));
+    cdt.insert(Point(bbox.xmin() - dx, bbox.ymax() + dy, bbox.zmin() - dz));
+    cdt.insert(Point(bbox.xmin() - dx, bbox.ymin() - dy, bbox.zmax() + dz));
+    cdt.insert(Point(bbox.xmin() - dx, bbox.ymax() + dy, bbox.zmax() + dz));
+    cdt.insert(Point(bbox.xmax() + dx, bbox.ymin() - dy, bbox.zmin() - dz));
+    cdt.insert(Point(bbox.xmax() + dx, bbox.ymax() + dy, bbox.zmin() - dz));
+    cdt.insert(Point(bbox.xmax() + dx, bbox.ymin() - dy, bbox.zmax() + dz));
+    cdt.insert(Point(bbox.xmax() + dx, bbox.ymax() + dy, bbox.zmax() + dz));
   }
   CGAL_CDT_3_TASK_END(insert_vertices_task_handle);
 
   start_time = std::chrono::high_resolution_clock::now();
   CGAL_CDT_3_TASK_BEGIN(compute_distances_task_handle);
-  {
-#if CGAL_CXX20 && __cpp_lib_concepts >= 201806L && __cpp_lib_ranges >= 201911L
-    auto [min_sq_distance, min_edge] = (std::ranges::min)(
-        cdt.finite_edges() | std::views::transform([&](auto edge) { return std::make_pair(cdt.segment(edge).squared_length(), edge); }));
-#else
-    auto trsf = [&](auto edge) { return std::make_pair(cdt.segment(edge).squared_length(), edge); };
-    auto min_p = trsf(*cdt.finite_edges_begin());
-    for (auto ite=cdt.finite_edges_begin(); ite!=cdt.finite_edges_end(); ++ite)
-    {
-      auto p = trsf(*ite);
-      if (p < min_p)
-        p = min_p;
-    }
-    auto [min_sq_distance, min_edge]  = min_p;
-#endif
-    auto min_distance = CGAL::approximate_sqrt(min_sq_distance);
-    auto vertices_of_min_edge = cdt.vertices(min_edge);
-    if(!options.quiet) {
-      std::cout << "Min distance between vertices: " << min_distance << '\n'
-                << "  between vertices:          : " << CGAL::IO::oformat(vertices_of_min_edge[0], CGAL::With_point_tag{})
-                << "    " << CGAL::IO::oformat(vertices_of_min_edge[1], CGAL::With_point_tag{}) << "\n\n";
-    }
-    if(min_distance < epsilon * bbox_max_width) {
-      std::cerr << "ERROR: min distance between vertices is too small\n";
-      exit_code = EXIT_FAILURE;
-      return exit_code;
-    }
+
+  exit_code = validate_minimum_vertex_distances(cdt, options.vertex_vertex_epsilon * bbox_max_span, options);
+  if(exit_code != EXIT_SUCCESS) {
+    return exit_code;
   }
-  {
-    double min_distance = (std::numeric_limits<double>::max)();
-    CDT::Vertex_handle min_va, min_vb, min_vertex;
-    if(options.merge_facets) {
-      for(int i = 0; i < number_of_patches; ++i) {
-        const auto& edges = patch_edges[i];
-        for(auto [vda, vdb]: edges) {
-          auto va = get(tr_vertex_pmap, vda);
-          auto vb = get(tr_vertex_pmap, vdb);
-          auto [min_dist, min_v] = cdt.min_distance_and_vertex_between_constraint_and_encroaching_vertex(va, vb);
-          if(min_dist < min_distance) {
-            min_distance = CGAL::to_double(min_dist);
-            min_va = va;
-            min_vb = vb;
-            min_vertex = min_v;
-          }
-        }
-      }
-    } else {
-      for(auto face_descriptor : faces(mesh)) {
-        auto he = halfedge(face_descriptor, mesh);
-        const auto end = he;
-        do {
-          auto va = get(tr_vertex_pmap, source(he, mesh));
-          auto vb = get(tr_vertex_pmap, target(he, mesh));
-          auto [min_dist, min_v] = cdt.min_distance_and_vertex_between_constraint_and_encroaching_vertex(va, vb);
-          if(min_dist < min_distance) {
-            min_distance = CGAL::to_double(min_dist);
-            min_va = va;
-            min_vb = vb;
-            min_vertex = min_v;
-          }
-          he = next(he, mesh);
-        } while((he = next(he, mesh)) != end);
-      }
-    }
-    if(!options.quiet) {
-      std::cout << "Min distance between constraint segment and vertex: " << min_distance << '\n'
-                << "  between segment                                 : "
-                << CGAL::IO::oformat(min_va, CDT::Conforming_Dt::with_point) << "    "
-                << CGAL::IO::oformat(min_vb, CDT::Conforming_Dt::with_point) << '\n'
-                << "  and vertex                                      : "
-                << CGAL::IO::oformat(min_vertex, CDT::Conforming_Dt::with_point) << "\n\n";
-    }
-    cdt.check_segment_vertex_distance_or_throw(min_va, min_vb, min_vertex, min_distance,
-                                               CDT::Check_distance::NON_SQUARED_DISTANCE);
-  }
+
+  validate_constraint_vertex_distances_or_throw(cdt, mesh, options, patch_edges, mesh_descriptor_to_vertex_handle_pmap);
   CGAL_CDT_3_TASK_END(compute_distances_task_handle);
 
   if(!options.quiet) {
     std::cout << "[timings] compute distances on " << std::chrono::duration_cast<std::chrono::milliseconds>(
         std::chrono::high_resolution_clock::now() - start_time).count() << " ms\n";
   }
-  int poly_id = 0;
+
   CGAL_CDT_3_TASK_BEGIN(conforming_task_handle);
-  CDT_3_try {
-    start_time = std::chrono::high_resolution_clock::now();
-    if(options.merge_facets) {
-      for(int i = 0; i < number_of_patches; ++i) {
-        auto& edges = patch_edges[i];
-        if(edges.empty())
-          continue;
-        auto polylines = segment_soup_to_polylines(edges);
-        while(true) {
-          const auto non_closed_polylines_begin =
-              std::partition(polylines.begin(), polylines.end(),
-                             [](const auto& polyline) { return polyline.front() == polyline.back(); });
-          if(non_closed_polylines_begin == polylines.end())
-            break;
-          edges.clear();
-          for(auto it = non_closed_polylines_begin; it != polylines.end(); ++it) {
-            auto& polyline = *it;
-            for(auto it = polyline.begin(), end = polyline.end() - 1; it != end; ++it) {
-              edges.emplace_back(*it, *(it + 1));
-            }
-          }
-          polylines.erase(non_closed_polylines_begin, polylines.end());
-          auto other_polylines = segment_soup_to_polylines(edges);
-          polylines.insert(polylines.end(),
-                           std::make_move_iterator(other_polylines.begin()),
-                           std::make_move_iterator(other_polylines.end()));
-        }
 
-        if(polylines.size() > 1) {
-          double max_sq_length = 0;
-          auto longest_it = polylines.begin();
-          for(auto it = polylines.begin(); it != polylines.end(); ++it) {
-            auto& polyline = *it;
-            using CGAL::Bbox_3;
-            Bbox_3 bb;
-            for(auto v : polyline) {
-              bb = bb + Bbox_3(get(mesh_vp_map, v).bbox());
-            }
-            double sq_diagonal_length = CGAL::square(bb.xmax() - bb.xmin()) +
-                                        CGAL::square(bb.ymax() - bb.ymin()) +
-                                        CGAL::square(bb.zmax() - bb.zmin());
-            if(sq_diagonal_length > max_sq_length) {
-              max_sq_length = sq_diagonal_length;
-              longest_it = it;
-            }
-          }
-          if(longest_it != polylines.begin()) {
-            std::iter_swap(longest_it, polylines.begin());
-          }
-        }
-
-        std::optional<int> face_index;
-        for(auto& polyline : polylines) {
-          CGAL_assertion(!polyline.empty() && polyline.front() == polyline.back());
-          polyline.pop_back();
-          auto range_of_vertices = CGAL::make_transform_range_from_property_map(polyline, tr_vertex_pmap);
-          face_index = cdt.insert_constrained_face(range_of_vertices, false,
-                                                   face_index ? *face_index : -1);
-        }
+  int poly_id = 0;
+  auto output_on_exit_scope_guard = CGAL::make_scope_exit(create_output_finalizer(cdt, options));
+  start_time = std::chrono::high_resolution_clock::now();
+  if(options.merge_facets) {
+    insert_patches_borders_as_constraints(cdt, std::move(patch_edges), mesh_descriptor_to_vertex_handle_pmap,
+                                          pmaps.mesh_vertex_point_map);
+  } else {
+    for(auto face_descriptor : faces(mesh)) {
+      std::vector<Point_3> polygon;
+      const auto he = halfedge(face_descriptor, mesh);
+      for(auto vertex_it : CGAL::vertices_around_face(he, mesh)) {
+        polygon.push_back(get(pmaps.mesh_vertex_point_map, vertex_it));
       }
-    } else {
-      for(auto face_descriptor : faces(mesh)) {
-        std::vector<Point_3> polygon;
-        const auto he = halfedge(face_descriptor, mesh);
-        for(auto vertex_it : CGAL::vertices_around_face(he, mesh)) {
-          polygon.push_back(get(mesh_vp_map, vertex_it));
-        }
-        if(cdt.debug_polygon_insertion()) {
-          std::cerr << "NEW POLYGON #" << poly_id << '\n';
-        }
-        try {
-          [[maybe_unused]] auto id = cdt.insert_constrained_polygon(polygon, false);
-          assert(id == poly_id);
-          ++poly_id;
-        } catch(int error) {
-          exit_code = error;
-        }
-        // std::ofstream dump("dump.binary.cgal");
-        // CGAL::Mesh_3::save_binary_file(dump, cdt);
+      if(cdt.debug_polygon_insertion()) {
+        std::cerr << "NEW POLYGON #" << poly_id << '\n';
       }
-    } // not merge_facets
-    if(!options.quiet) {
-      std::cout << "[timings] registered facets in " << std::chrono::duration_cast<std::chrono::milliseconds>(
-          std::chrono::high_resolution_clock::now() - start_time).count() << " ms\n";
-    }
-    start_time = std::chrono::high_resolution_clock::now();
-    cdt.restore_Delaunay();
-    if(!options.quiet) {
-      std::cout << "[timings] restored Delaunay (conforming of facets borders) in " << std::chrono::duration_cast<std::chrono::milliseconds>(
-          std::chrono::high_resolution_clock::now() - start_time).count() << " ms\n";
-    }
-    CGAL_CDT_3_TASK_END(conforming_task_handle);
-
-    if(!options.dump_after_conforming_filename.empty()) {
-      CGAL_CDT_3_TASK_BEGIN(output_task_handle);
-      using Vertex_index = Mesh::Vertex_index;
-      [[maybe_unused]] std::size_t time_stamp_counter = 0u;
-      for(auto v: cdt.finite_vertex_handles()) {
-        [[maybe_unused]] const auto time_stamp = v->time_stamp();
-        assert(++time_stamp_counter == time_stamp);
-        if(!v->ccdt_3_data().is_Steiner_vertex_on_edge()) continue;
-        const auto [va, vb] = cdt.ancestors_of_Steiner_vertex_on_edge(v);
-        const auto index_va = Vertex_index{static_cast<unsigned>(va->time_stamp() - 1)};
-        const auto index_vb = Vertex_index{static_cast<unsigned>(vb->time_stamp() - 1)};
-        auto [it, end] = CGAL::halfedges_around_source(index_va, mesh);
-        // std::cerr << "  around mesh vertex " << index_va << ", search for vertex " << index_vb << '\n';
-        // for(auto it2 = it; it2 != end; ++it2) {
-        //   auto he = *it2;
-        //   auto vd = target(he, mesh);
-        //   std::cerr << "    " << vd << '\n';
-        // }
-        it = std::find_if(it, end, [&mesh, index_vb](auto he) { return target(he, mesh) == index_vb; });
-        CGAL_assertion(it != end);
-        auto he = CGAL::Euler::split_edge(*it, mesh);
-        auto mesh_v = target(he, mesh);
-        put(mesh_vp_map, mesh_v, v->point());
-        assert(mesh_v == Vertex_index{static_cast<unsigned>(time_stamp - 1)});
-      }
-      // for(auto e: edges(mesh)) {
-      //   auto he = halfedge(e, mesh);
-      //   auto vd1 = target(he, mesh);
-      //   auto vd2 = source(he, mesh);
-      //   if(!get(v_selected_map, vd1) || !get(v_selected_map, vd2)) continue;
-      //   auto p1 = get(pmap, vd1);
-      //   auto p2 = get(pmap, vd2);
-      //   auto n = cdt.number_of_vertices();
-      //   auto v1 = cdt.insert(p1);
-      //   auto v2 = cdt.insert(p2);
-      //   CGAL_assertion(n == cdt.number_of_vertices());
-      //   auto steiner_vertices = cdt.sequence_of_Steiner_vertices(v1, v2);
-      //   if(!steiner_vertices) continue;
-      //   for(auto v: *steiner_vertices) {
-      //     he = CGAL::Euler::split_edge(he, mesh);
-      //     put(pmap, target(he, mesh), v->point());
-      //   }
-      // }
-      std::ofstream out_mesh(options.dump_after_conforming_filename);
-      out_mesh.precision(17);
-      out_mesh << mesh;
-      out_mesh.close();
-      CGAL_CDT_3_TASK_END(output_task_handle);
-    }
-
-    if(!options.quiet) {
-      std::cout << "Number of vertices after conforming: " << cdt.number_of_vertices() << "\n\n";
-    }
-    CGAL_CDT_3_TASK_BEGIN(validation_task_handle);
-    CGAL_assertion(!options.call_is_valid || cdt.Base_triantulation::is_valid(true));
-    CGAL_assertion(!options.call_is_valid || cdt.is_valid(true));
-    CGAL_assertion(!options.call_is_valid || cdt.is_conforming());
-    CGAL_CDT_3_TASK_END(validation_task_handle);
-    if(exit_code == EXIT_SUCCESS) {
       try {
-        CGAL_CDT_3_TASK_BEGIN(cdt_task_handle);
-        start_time = std::chrono::high_resolution_clock::now();
-        cdt.restore_constrained_Delaunay();
-        if(!options.quiet) {
-          std::cout << "[timings] restored constrained Delaunay in " << std::chrono::duration_cast<std::chrono::milliseconds>(
-              std::chrono::high_resolution_clock::now() - start_time).count() << " ms\n";
-          std::cout << "Number of vertices after CDT: " << cdt.number_of_vertices() << "\n\n";
-        }
-        CGAL_CDT_3_TASK_END(cdt_task_handle);
+        [[maybe_unused]] auto id = cdt.insert_constrained_polygon(polygon, false);
+        assert(id == poly_id);
+        ++poly_id;
       } catch(int error) {
         exit_code = error;
       }
+      // std::ofstream dump("dump.binary.cgal");
+      // CGAL::Mesh_3::save_binary_file(dump, cdt);
     }
-  } CDT_3_catch(CGAL::Failure_exception&) {
-    finally();
-    CDT_3_throw_exception_again;
+  } // not merge_facets
+  if(!options.quiet) {
+    std::cout << "[timings] registered facets in " << std::chrono::duration_cast<std::chrono::milliseconds>(
+        std::chrono::high_resolution_clock::now() - start_time).count() << " ms\n";
   }
-  finally();
+  start_time = std::chrono::high_resolution_clock::now();
+  cdt.restore_Delaunay();
+  if(!options.quiet) {
+    std::cout << "[timings] restored Delaunay (conforming of facets borders) in " << std::chrono::duration_cast<std::chrono::milliseconds>(
+        std::chrono::high_resolution_clock::now() - start_time).count() << " ms\n";
+  }
+
+  CGAL_CDT_3_TASK_END(conforming_task_handle);
+
+  if(!options.dump_after_conforming_filename.empty()) {
+    CGAL_CDT_3_TASK_BEGIN(output_task_handle);
+    using Vertex_index = Mesh::Vertex_index;
+    [[maybe_unused]] std::size_t time_stamp_counter = 0u;
+    for(auto v: cdt.finite_vertex_handles()) {
+      [[maybe_unused]] const auto time_stamp = v->time_stamp();
+      assert(++time_stamp_counter == time_stamp);
+      if(!v->ccdt_3_data().is_Steiner_vertex_on_edge()) continue;
+      const auto [va, vb] = cdt.ancestors_of_Steiner_vertex_on_edge(v);
+      const auto index_va = Vertex_index{static_cast<unsigned>(va->time_stamp() - 1)};
+      const auto index_vb = Vertex_index{static_cast<unsigned>(vb->time_stamp() - 1)};
+      auto [it, end] = CGAL::halfedges_around_source(index_va, mesh);
+      it = std::find_if(it, end, [&mesh, index_vb](auto he) { return target(he, mesh) == index_vb; });
+      CGAL_assertion(it != end);
+      auto he = CGAL::Euler::split_edge(*it, mesh);
+      auto mesh_v = target(he, mesh);
+      put(pmaps.mesh_vertex_point_map, mesh_v, v->point());
+      assert(mesh_v == Vertex_index{static_cast<unsigned>(time_stamp - 1)});
+    }
+    std::ofstream out_mesh(options.dump_after_conforming_filename);
+    out_mesh.precision(17);
+    out_mesh << mesh;
+    out_mesh.close();
+    CGAL_CDT_3_TASK_END(output_task_handle);
+  }
+
+  if(!options.quiet) {
+    std::cout << "Number of vertices after conforming: " << cdt.number_of_vertices() << "\n\n";
+  }
+  CGAL_CDT_3_TASK_BEGIN(validation_task_handle);
+  CGAL_assertion(!options.call_is_valid || cdt.Base_triantulation::is_valid(true));
+  CGAL_assertion(!options.call_is_valid || cdt.is_valid(true));
+  CGAL_assertion(!options.call_is_valid || cdt.is_conforming());
+  CGAL_CDT_3_TASK_END(validation_task_handle);
+  if(exit_code == EXIT_SUCCESS) {
+    try {
+      CGAL_CDT_3_TASK_BEGIN(cdt_task_handle);
+      start_time = std::chrono::high_resolution_clock::now();
+      cdt.restore_constrained_Delaunay();
+      if(!options.quiet) {
+        std::cout << "[timings] restored constrained Delaunay in " << std::chrono::duration_cast<std::chrono::milliseconds>(
+            std::chrono::high_resolution_clock::now() - start_time).count() << " ms\n";
+        std::cout << "Number of vertices after CDT: " << cdt.number_of_vertices() << "\n\n";
+      }
+      CGAL_CDT_3_TASK_END(cdt_task_handle);
+    } catch(int error) {
+      exit_code = error;
+    }
+  }
 
   CGAL_CDT_3_TASK_BEGIN(validation_task_handle);
   CGAL_assertion(!options.call_is_valid || cdt.is_conforming());
@@ -873,7 +1024,7 @@ int go(Mesh mesh, CDT_options options) {
   return exit_code;
 }
 
-int bissect_errors(Mesh mesh, CDT_options options) {
+int bisect_errors(Mesh mesh, CDT_options options) {
   auto nb_buckets = static_cast<int>(std::floor(1 / options.ratio)) + 1;
   std::cerr << "RATIO: " << options.ratio << '\n';
 
@@ -974,7 +1125,7 @@ int main(int argc, char* argv[]) {
   CGAL_CDT_3_TASK_BEGIN(read_input_task_handle);
   auto start_time = std::chrono::high_resolution_clock::now();
 
-  CGAL::CDT_3_read_polygon_mesh_output<Mesh> result;
+  CGAL::CDT_3_read_polygon_mesh_output<Mesh> read_mesh_result;
   if(options.read_mesh_with_operator) {
     std::ifstream in(options.input_filename);
     if(!in) {
@@ -987,19 +1138,19 @@ int main(int argc, char* argv[]) {
       std::cerr << "Error reading mesh with operator>>" << std::endl;
       return EXIT_FAILURE;
     }
-    result.polygon_mesh = std::move(mesh);
+    read_mesh_result.polygon_mesh = std::move(mesh);
   } else {
     auto read_options = CGAL::parameters::repair_polygon_soup(options.repair_mesh).verbose(options.verbose_level);
-    result = CGAL::read_polygon_mesh_for_cdt_3<Mesh>(options.input_filename, read_options);
+    read_mesh_result = CGAL::read_polygon_mesh_for_cdt_3<Mesh>(options.input_filename, read_options);
   }
 
-  if (!result.polygon_mesh)
+  if (!read_mesh_result.polygon_mesh)
   {
     std::cerr << "Not a valid input file." << std::endl;
-    std::cerr << "Details:\n" << result.polygon_mesh.error() << std::endl;
+    std::cerr << "Details:\n" << read_mesh_result.polygon_mesh.error() << std::endl;
     return EXIT_FAILURE;
   }
-  Mesh mesh = std::move(*result.polygon_mesh);
+  Mesh mesh = std::move(*read_mesh_result.polygon_mesh);
   if(!options.quiet) {
     std::cout << "[timings] read mesh in " << std::chrono::duration_cast<std::chrono::milliseconds>(
         std::chrono::high_resolution_clock::now() - start_time).count() << " ms\n";
@@ -1009,26 +1160,26 @@ int main(int argc, char* argv[]) {
 
     if(!options.read_mesh_with_operator) {
       std::cout << "Processing was successful.\n";
-      std::cout << "  Number of duplicated points: " << result.nb_of_duplicated_points << '\n';
-      std::cout << "  Number of simplified polygons: " << result.nb_of_simplified_polygons << '\n';
-      std::cout << "  Number of new polygons: " << result.nb_of_new_polygons << '\n';
-      std::cout << "  Number of removed invalid polygons: " << result.nb_of_removed_invalid_polygons << '\n';
-      std::cout << "  Number of removed duplicated polygons: " << result.nb_of_removed_duplicated_polygons << '\n';
-      std::cout << "  Number of removed isolated points: " << result.nb_of_removed_isolated_points << '\n';
-      std::cout << "  Polygon soup self-intersects: " << (result.polygon_soup_self_intersects ? "YES" : "no") << '\n';
-      std::cout << "  Polygon mesh is manifold: " << (result.polygon_mesh_is_manifold ? "yes" : "NO") << '\n';
+      std::cout << "  Number of duplicated points: " << read_mesh_result.nb_of_duplicated_points << '\n';
+      std::cout << "  Number of simplified polygons: " << read_mesh_result.nb_of_simplified_polygons << '\n';
+      std::cout << "  Number of new polygons: " << read_mesh_result.nb_of_new_polygons << '\n';
+      std::cout << "  Number of removed invalid polygons: " << read_mesh_result.nb_of_removed_invalid_polygons << '\n';
+      std::cout << "  Number of removed duplicated polygons: " << read_mesh_result.nb_of_removed_duplicated_polygons << '\n';
+      std::cout << "  Number of removed isolated points: " << read_mesh_result.nb_of_removed_isolated_points << '\n';
+      std::cout << "  Polygon soup self-intersects: " << (read_mesh_result.polygon_soup_self_intersects ? "YES" : "no") << '\n';
+      std::cout << "  Polygon mesh is manifold: " << (read_mesh_result.polygon_mesh_is_manifold ? "yes" : "NO") << '\n';
       std::cout << std::endl;
     }
   }
   CGAL_CDT_3_TASK_END(read_input_task_handle);
 
-  if(options.reject_self_intersections && result.polygon_soup_self_intersects) {
+  if(options.reject_self_intersections && read_mesh_result.polygon_soup_self_intersects) {
     std::cerr << "ERROR: input mesh self-intersects\n";
     return EXIT_FAILURE;
   }
 
   if(!options.failure_assertion_expression.empty()) {
-    return bissect_errors(std::move(mesh), options);
+    return bisect_errors(std::move(mesh), options);
   }
 
   auto exit_code = go(std::move(mesh), options);
