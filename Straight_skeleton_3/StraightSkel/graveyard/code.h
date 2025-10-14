@@ -12554,4 +12554,1275 @@ FT t = tn / den;
 
 
 
+
+static std::optional<FT> intersectionTimeOffsetPlanes(const Plane3SPtr& plane_0, const FT& w0,
+                                                      const Plane3SPtr& plane_1, const FT& w1,
+                                                      const Plane3SPtr& plane_2, const FT& w2,
+                                                      const Plane3SPtr& plane_3, const FT& w3,
+                                                      const std::optional<FT>& past_bound = std::nullopt,
+                                                      const std::optional<FT>& future_bound = std::nullopt)
+{
+  CGAL_SS3_DEBUG_SPTR(plane_0);
+  CGAL_SS3_DEBUG_SPTR(plane_1);
+  CGAL_SS3_DEBUG_SPTR(plane_2);
+  CGAL_SS3_DEBUG_SPTR(plane_3);
+  CGAL_precondition(!is_zero(w0) && !is_zero(w1) && !is_zero(w2) && !is_zero(w3));
+  CGAL_precondition((!past_bound.has_value() || !future_bound.has_value()) ||
+                    *past_bound >= *future_bound);
+
+  const FT& a0 = plane_0->a();
+  const FT& b0 = plane_0->b();
+  const FT& c0 = plane_0->c();
+  const FT& d0 = plane_0->d();
+  const FT& a1 = plane_1->a();
+  const FT& b1 = plane_1->b();
+  const FT& c1 = plane_1->c();
+  const FT& d1 = plane_1->d();
+  const FT& a2 = plane_2->a();
+  const FT& b2 = plane_2->b();
+  const FT& c2 = plane_2->c();
+  const FT& d2 = plane_2->d();
+  const FT& a3 = plane_3->a();
+  const FT& b3 = plane_3->b();
+  const FT& c3 = plane_3->c();
+  const FT& d3 = plane_3->d();
+
+  CGAL_SS3_TRAITS_TRACE("Coefficients\n" << a0 << " " << b0 << " " << c0 << " " << d0 << "\n"
+                                          << a1 << " " << b1 << " " << c1 << " " << d1 << "\n"
+                                          << a2 << " " << b2 << " " << c2 << " " << d2 << "\n"
+                                          << a3 << " " << b3 << " " << c3 << " " << d3);
+  CGAL_SS3_TRAITS_TRACE("Weights\n" << w0 << " " << w1 << " " << w2 << " " << w3);
+  CGAL_SS3_TRAITS_TRACE("CHECK det " << CGAL::determinant(a0, b0, c0, d0,
+                                                          a1, b1, c1, d1,
+                                                          a2, b2, c2, d2,
+                                                          a3, b3, c3, d3));
+
+  CGAL_assertion(KernelWrapper::hasNormalizedPlane(plane_0));
+  CGAL_assertion(KernelWrapper::hasNormalizedPlane(plane_1));
+  CGAL_assertion(KernelWrapper::hasNormalizedPlane(plane_2));
+  CGAL_assertion(KernelWrapper::hasNormalizedPlane(plane_3));
+
+  FT den = (-a0*b1*c2*w3 + a0*b1*c3*w2 + a0*b2*c1*w3 - a0*b2*c3*w1 - a0*b3*c1*w2 + a0*b3*c2*w1 + a1*b0*c2*w3 - a1*b0*c3*w2 - a1*b2*c0*w3 + a1*b2*c3*w0 + a1*b3*c0*w2 - a1*b3*c2*w0 - a2*b0*c1*w3 + a2*b0*c3*w1 + a2*b1*c0*w3 - a2*b1*c3*w0 - a2*b3*c0*w1 + a2*b3*c1*w0 + a3*b0*c1*w2 - a3*b0*c2*w1 - a3*b1*c0*w2 + a3*b1*c2*w0 + a3*b2*c0*w1 - a3*b2*c1*w0);
+
+  FT t = (-a0*b1*c2*d3 + a0*b1*c3*d2 + a0*b2*c1*d3 - a0*b2*c3*d1 - a0*b3*c1*d2 + a0*b3*c2*d1 + a1*b0*c2*d3 - a1*b0*c3*d2 - a1*b2*c0*d3 + a1*b2*c3*d0 + a1*b3*c0*d2 - a1*b3*c2*d0 - a2*b0*c1*d3 + a2*b0*c3*d1 + a2*b1*c0*d3 - a2*b1*c3*d0 - a2*b3*c0*d1 + a2*b3*c1*d0 + a3*b0*c1*d2 - a3*b0*c2*d1 - a3*b1*c0*d2 + a3*b1*c2*d0 + a3*b2*c0*d1 - a3*b2*c1*d0) / den;
+
+  if (past_bound && t >= *past_bound) {
+    CGAL_SS3_TRAITS_TRACE("Event is strictly in the past");
+    return { };
+  }
+
+  if (future_bound && t < *future_bound) {
+    CGAL_SS3_TRAITS_TRACE("Event is too far in the future");
+    return { };
+  }
+
+  return t;
+}
+
+static std::pair<Point3SPtr, FT> intersectionPointAndTimeOffsetPlanes(const Plane3SPtr& plane_0, const FT& w0,
+                                                                      const Plane3SPtr& plane_1, const FT& w1,
+                                                                      const Plane3SPtr& plane_2, const FT& w2,
+                                                                      const Plane3SPtr& plane_3, const FT& w3,
+                                                                      const std::optional<FT>& past_bound = std::nullopt,
+                                                                      const std::optional<FT>& future_bound = std::nullopt)
+{
+  CGAL_SS3_DEBUG_SPTR(plane_0);
+  CGAL_SS3_DEBUG_SPTR(plane_1);
+  CGAL_SS3_DEBUG_SPTR(plane_2);
+  CGAL_SS3_DEBUG_SPTR(plane_3);
+  CGAL_precondition(!is_zero(w0) && !is_zero(w1) && !is_zero(w2) && !is_zero(w3));
+  CGAL_precondition((!past_bound.has_value() || !future_bound.has_value()) ||
+                    *past_bound >= *future_bound);
+
+  const FT& a0 = plane_0->a();
+  const FT& b0 = plane_0->b();
+  const FT& c0 = plane_0->c();
+  const FT& d0 = plane_0->d();
+  const FT& a1 = plane_1->a();
+  const FT& b1 = plane_1->b();
+  const FT& c1 = plane_1->c();
+  const FT& d1 = plane_1->d();
+  const FT& a2 = plane_2->a();
+  const FT& b2 = plane_2->b();
+  const FT& c2 = plane_2->c();
+  const FT& d2 = plane_2->d();
+  const FT& a3 = plane_3->a();
+  const FT& b3 = plane_3->b();
+  const FT& c3 = plane_3->c();
+  const FT& d3 = plane_3->d();
+
+  CGAL_SS3_TRAITS_TRACE("Coefficients\n" << a0 << " " << b0 << " " << c0 << " " << d0 << "\n"
+                                          << a1 << " " << b1 << " " << c1 << " " << d1 << "\n"
+                                          << a2 << " " << b2 << " " << c2 << " " << d2 << "\n"
+                                          << a3 << " " << b3 << " " << c3 << " " << d3);
+  CGAL_SS3_TRAITS_TRACE("Weights\n" << w0 << " " << w1 << " " << w2 << " " << w3);
+  CGAL_SS3_TRAITS_TRACE("CHECK det " << CGAL::determinant(a0, b0, c0, d0,
+                                                          a1, b1, c1, d1,
+                                                          a2, b2, c2, d2,
+                                                          a3, b3, c3, d3));
+
+  CGAL_assertion(KernelWrapper::hasNormalizedPlane(plane_0));
+  CGAL_assertion(KernelWrapper::hasNormalizedPlane(plane_1));
+  CGAL_assertion(KernelWrapper::hasNormalizedPlane(plane_2));
+  CGAL_assertion(KernelWrapper::hasNormalizedPlane(plane_3));
+
+  FT den = (-a0*b1*c2*w3 + a0*b1*c3*w2 + a0*b2*c1*w3 - a0*b2*c3*w1 - a0*b3*c1*w2 + a0*b3*c2*w1 + a1*b0*c2*w3 - a1*b0*c3*w2 - a1*b2*c0*w3 + a1*b2*c3*w0 + a1*b3*c0*w2 - a1*b3*c2*w0 - a2*b0*c1*w3 + a2*b0*c3*w1 + a2*b1*c0*w3 - a2*b1*c3*w0 - a2*b3*c0*w1 + a2*b3*c1*w0 + a3*b0*c1*w2 - a3*b0*c2*w1 - a3*b1*c0*w2 + a3*b1*c2*w0 + a3*b2*c0*w1 - a3*b2*c1*w0);
+
+#if 0 // no need to check with weights > 0, and perturbed input planes
+  if (CGAL::is_zero(den)) {
+    CGAL_SS3_TRAITS_TRACE("Planes do not intersect in a single point (den == 0)");
+    return { };
+  }
+#endif
+
+  FT t = (-a0*b1*c2*d3 + a0*b1*c3*d2 + a0*b2*c1*d3 - a0*b2*c3*d1 - a0*b3*c1*d2 + a0*b3*c2*d1 + a1*b0*c2*d3 - a1*b0*c3*d2 - a1*b2*c0*d3 + a1*b2*c3*d0 + a1*b3*c0*d2 - a1*b3*c2*d0 - a2*b0*c1*d3 + a2*b0*c3*d1 + a2*b1*c0*d3 - a2*b1*c3*d0 - a2*b3*c0*d1 + a2*b3*c1*d0 + a3*b0*c1*d2 - a3*b0*c2*d1 - a3*b1*c0*d2 + a3*b1*c2*d0 + a3*b2*c0*d1 - a3*b2*c1*d0) / den;
+
+  if (past_bound && t >= *past_bound) {
+    CGAL_SS3_TRAITS_TRACE("Event is strictly in the past");
+    return { };
+  }
+
+  if (future_bound && t < *future_bound) {
+    CGAL_SS3_TRAITS_TRACE("Event is too far in the future");
+    return { };
+  }
+
+  FT x = (b0*c1*d2*w3 - b0*c1*d3*w2 - b0*c2*d1*w3 + b0*c2*d3*w1 + b0*c3*d1*w2 - b0*c3*d2*w1 - b1*c0*d2*w3 + b1*c0*d3*w2 + b1*c2*d0*w3 - b1*c2*d3*w0 - b1*c3*d0*w2 + b1*c3*d2*w0 + b2*c0*d1*w3 - b2*c0*d3*w1 - b2*c1*d0*w3 + b2*c1*d3*w0 + b2*c3*d0*w1 - b2*c3*d1*w0 - b3*c0*d1*w2 + b3*c0*d2*w1 + b3*c1*d0*w2 - b3*c1*d2*w0 - b3*c2*d0*w1 + b3*c2*d1*w0) / den;
+
+  FT y = (-a0*c1*d2*w3 + a0*c1*d3*w2 + a0*c2*d1*w3 - a0*c2*d3*w1 - a0*c3*d1*w2 + a0*c3*d2*w1 + a1*c0*d2*w3 - a1*c0*d3*w2 - a1*c2*d0*w3 + a1*c2*d3*w0 + a1*c3*d0*w2 - a1*c3*d2*w0 - a2*c0*d1*w3 + a2*c0*d3*w1 + a2*c1*d0*w3 - a2*c1*d3*w0 - a2*c3*d0*w1 + a2*c3*d1*w0 + a3*c0*d1*w2 - a3*c0*d2*w1 - a3*c1*d0*w2 + a3*c1*d2*w0 + a3*c2*d0*w1 - a3*c2*d1*w0) / den;
+
+  FT z = (a0*b1*d2*w3 - a0*b1*d3*w2 - a0*b2*d1*w3 + a0*b2*d3*w1 + a0*b3*d1*w2 - a0*b3*d2*w1 - a1*b0*d2*w3 + a1*b0*d3*w2 + a1*b2*d0*w3 - a1*b2*d3*w0 - a1*b3*d0*w2 + a1*b3*d2*w0 + a2*b0*d1*w3 - a2*b0*d3*w1 - a2*b1*d0*w3 + a2*b1*d3*w0 + a2*b3*d0*w1 - a2*b3*d1*w0 - a3*b0*d1*w2 + a3*b0*d2*w1 + a3*b1*d0*w2 - a3*b1*d2*w0 - a3*b2*d0*w1 + a3*b2*d1*w0) / den;
+
+  Point3SPtr result = KernelFactory::createPoint3(x, y, z);
+
+  CGAL_SS3_TRAITS_TRACE("CHECK x|y|z|t " << x << " " << y << " " << z << " " << t);
+  CGAL_SS3_TRAITS_TRACE("CHECK 0: " << a0*x + b0*y + c0*z + d0 - w0*t);
+  CGAL_SS3_TRAITS_TRACE("CHECK 1: " << a1*x + b1*y + c1*z + d1 - w1*t);
+  CGAL_SS3_TRAITS_TRACE("CHECK 2: " << a2*x + b2*y + c2*z + d2 - w2*t);
+  CGAL_SS3_TRAITS_TRACE("CHECK 3: " << a3*x + b3*y + c3*z + d3 - w3*t);
+
+  CGAL_postcondition(a0*x + b0*y + c0*z + d0 - w0*t == 0);
+  CGAL_postcondition(a1*x + b1*y + c1*z + d1 - w1*t == 0);
+  CGAL_postcondition(a2*x + b2*y + c2*z + d2 - w2*t == 0);
+  CGAL_postcondition(a3*x + b3*y + c3*z + d3 - w3*t == 0);
+
+  return { result, t };
+}
+
+/**
+  * Returns the intersection point and time of the 4 shifting planes.
+  */
+std::pair<Point3SPtr, FT> intersectionPointAndTimeOffsetPlanes(const FacetSPtr& facet_0,
+                                                                const FacetSPtr& facet_1,
+                                                                const FacetSPtr& facet_2,
+                                                                const FacetSPtr& facet_3,
+                                                                const std::optional<FT>& time_past_bound = std::nullopt,
+                                                                const std::optional<FT>& time_future_bound = std::nullopt)
+{
+  CGAL_SS3_DEBUG_SPTR(facet_0);
+  CGAL_SS3_DEBUG_SPTR(facet_1);
+  CGAL_SS3_DEBUG_SPTR(facet_2);
+  CGAL_SS3_DEBUG_SPTR(facet_3);
+
+  Plane3SPtr plane_0 = HdsUtils::getBasePlane(facet_0);
+  Plane3SPtr plane_1 = HdsUtils::getBasePlane(facet_1);
+  Plane3SPtr plane_2 = HdsUtils::getBasePlane(facet_2);
+  Plane3SPtr plane_3 = HdsUtils::getBasePlane(facet_3);
+
+  const FT& speed_0 = HdsUtils::getSpeed(facet_0);
+  const FT& speed_1 = HdsUtils::getSpeed(facet_1);
+  const FT& speed_2 = HdsUtils::getSpeed(facet_2);
+  const FT& speed_3 = HdsUtils::getSpeed(facet_3);
+
+  return GeomUtils::intersectionPointAndTimeOffsetPlanes(plane_0, speed_0, plane_1, speed_1,
+                                                          plane_2, speed_2, plane_3, speed_3,
+                                                          time_past_bound, time_future_bound);
+}
+
+
+/**
+  * Returns the point and time at which the edge will vanish.
+  */
+std::pair<Point3SPtr, FT> vanishesAt(const EdgeSPtr& edge,
+                                      const std::optional<FT>& time_past_bound = std::nullopt,
+                                      const std::optional<FT>& time_future_bound = std::nullopt)
+{
+  CGAL_SS3_CORE_TRACE_V(16, "vanishesAt " << edge->toString());
+
+  CGAL_SS3_DEBUG_SPTR(edge);
+
+  FacetSPtr facetL = edge->getFacetL();
+  FacetSPtr facetR = edge->getFacetR();
+  CGAL_SS3_CORE_TRACE_V(16, "facetL: " << facetL->getID());
+  CGAL_SS3_CORE_TRACE_V(16, "facetR: " << facetR->getID());
+  CGAL_assertion(facetL && facetR && facetL != facetR);
+
+  FacetSPtr facetP = edge->prev(facetL)->other(facetL);
+  FacetSPtr facetN = edge->next(facetL)->other(facetL);
+  CGAL_SS3_CORE_TRACE_V(16, "facetP: " << facetP->getID());
+  CGAL_SS3_CORE_TRACE_V(16, "facetN: " << facetN->getID());
+  CGAL_assertion(facetP && facetP != facetL && facetP != facetR);
+  CGAL_assertion(facetN && facetN != facetL && facetN != facetR && facetN != facetP);
+
+  Point3SPtr point;
+  FT vanish_time;
+  std::tie(point, vanish_time) = intersectionPointAndTimeOffsetPlanes(facetL, facetP, facetR, facetN,
+                                                                      time_past_bound, time_future_bound);
+
+  if (!point) {
+    HdsUtils::setVanishTime(edge, std::nullopt);
+    return { };
+  }
+
+  CGAL_SS3_CORE_TRACE_V(16, "Tentative intersection: " << *point << " @ " << vanish_time);
+
+  HdsUtils::setVanishTime(edge, vanish_time);
+
+  return { point, vanish_time };
+}
+
+/**
+  * Returns the point where 2 edges will crash into each other.
+  *
+  * If bounds are passed, ignore the crash if it happens in the past or too far in the future.
+  */
+std::pair<Point3SPtr, FT> crashAt(const EdgeSPtr& edge_1, const EdgeSPtr& edge_2,
+                                  const std::optional<FT>& time_past_bound = std::nullopt,
+                                  const std::optional<FT>& time_future_bound = std::nullopt)
+{
+  CGAL_SS3_CORE_TRACE_V(16, "-- Crash At\n    " << edge_1->toString() << "\n    " << edge_2->toString());
+
+  CGAL_SS3_DEBUG_SPTR(edge_1);
+  CGAL_SS3_DEBUG_SPTR(edge_2);
+
+  FacetSPtr facet_l1 = edge_1->getFacetL();
+  FacetSPtr facet_r1 = edge_1->getFacetR();
+  FacetSPtr facet_l2 = edge_2->getFacetL();
+  FacetSPtr facet_r2 = edge_2->getFacetR();
+
+  CGAL_SS3_CORE_TRACE_V(16, "Facet L1 = " << facet_l1->getID());
+  CGAL_SS3_CORE_TRACE_V(16, "Facet R1 = " << facet_r1->getID());
+  CGAL_SS3_CORE_TRACE_V(16, "Facet L2 = " << facet_l2->getID());
+  CGAL_SS3_CORE_TRACE_V(16, "Facet R2 = " << facet_r2->getID());
+
+  // It is pointless to check for contact events that are farther in time than any of the two
+  // involved edges as either they will be gone, or new events will be computed
+  std::optional<FT> tight_future_bound = time_future_bound;
+  if (tight_future_bound.has_value()) {
+    std::optional<FT> vanish_time_1 = HdsUtils::getVanishTime(edge_1);
+    std::optional<FT> vanish_time_2 = HdsUtils::getVanishTime(edge_2);
+    // In the current context, the future time bound is the last save event,
+    // and vanish event times are only stored if they are earlier.
+    CGAL_assertion(!vanish_time_1.has_value() || *vanish_time_1 > *time_future_bound);
+    CGAL_assertion(!vanish_time_2.has_value() || *vanish_time_2 > *time_future_bound);
+    if (vanish_time_1.has_value()) {
+      if (vanish_time_2.has_value()) {
+        tight_future_bound = (*vanish_time_2 < *vanish_time_1) ? vanish_time_1 : vanish_time_2;
+      } else {
+        tight_future_bound = vanish_time_1;
+      }
+    } else if (vanish_time_2.has_value()) {
+      tight_future_bound = vanish_time_2;
+    }
+  }
+
+  Point3SPtr point;
+  FT event_time;
+  std::tie(point, event_time) = intersectionPointAndTimeOffsetPlanes(facet_l1, facet_r1, facet_l2, facet_r2);
+
+  if (!point) {
+    return { };
+  }
+
+  CGAL_SS3_CORE_TRACE_V(16, "Tentative intersection: " << *point << " @ " << event_time);
+
+#if 1
+  if (!checkBisectorV2(edge_1, point, event_time) || !checkBisectorV2(edge_2, point, event_time)) {
+    return { };
+  }
+#else
+  if (!checkBisectors(edge_1, edge_2, point, event_time)) {
+    return { };
+  }
+#endif
+
+  CGAL_SS3_CORE_TRACE_V(16, "Confirmed intersection: " << *point << " @ " << event_time);
+
+  return { point, event_time };
+}
+
 // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+
+
+#if 0
+  Completely unused, just as an example of how a filtered predicate could work.
+  Unused because anyway we need an exact kernel to ensure points on facets.
+  /**
+    * Checks the existence of an event at a time that is within the past and future bounds.
+    * Uses a filtered predicate internally.
+    */
+  bool doesEventExist(const FacetSPtr& facet_0, const FacetSPtr& facet_1,
+                      const FacetSPtr& facet_2, const FacetSPtr& facet_3,
+                      const std::optional<FT>& past_bound = std::nullopt,
+                      const std::optional<FT>& future_bound = std::nullopt)
+  {
+    const Plane_3& plane_0 = *(HdsUtils::getBasePlane(facet_0));
+    const Plane_3& plane_1 = *(HdsUtils::getBasePlane(facet_1));
+    const Plane_3& plane_2 = *(HdsUtils::getBasePlane(facet_2));
+    const Plane_3& plane_3 = *(HdsUtils::getBasePlane(facet_3));
+
+    const FT& speed_0 = HdsUtils::getSpeed(facet_0);
+    const FT& speed_1 = HdsUtils::getSpeed(facet_1);
+    const FT& speed_2 = HdsUtils::getSpeed(facet_2);
+    const FT& speed_3 = HdsUtils::getSpeed(facet_3);
+
+    Straight_skeleton_builder_traits_3<Traits>::Do_ss_event_exist_3 pred;
+
+    return pred(plane_0, speed_0, plane_1, speed_1,
+                plane_2, speed_2, plane_3, speed_3,
+                time_past_bound, time_future_bound);
+  }
+#endif
+
+
+
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+
+/**
+  * Two vertices crash into each other.
+  */
+void collectVertexEvents(const std::list<VertexSPtr>& vertices,
+                          const PolyhedronSPtr& /*polyhedron*/,
+                          const bool use_canonical_event_reps,
+                          const FT& current_time,
+                          const std::optional<FT>& time_future_bound,
+                          PQ& queue)
+{
+  CGAL_SS3_CORE_TRACE_V(4, ">>> Collect Vertex Events [" << current_time << "]");
+
+#ifdef CGAL_SS3_RUN_TIMERS
+  CGAL::Real_timer timer;
+  timer.start();
+#endif
+
+  for (const VertexSPtr& vertex_1 : vertices) {
+    CGAL_SS3_DEBUG_SPTR(vertex_1);
+
+    if (HdsUtils::isConvex(vertex_1)) {
+      continue;
+    }
+
+// this only seeks the first vertex_2 that share the same incident facets as vertex_1 and
+// is in the cycle (instead of all vertex_2 from all cycles of all incident facets...)
+// #define CGAL_SS3_NEWER_VV_VERTEX_2_DETECTION
+#ifdef CGAL_SS3_NEWER_VV_VERTEX_2_DETECTION
+    I do not think whatever is below is enough in case of some weird tangled faces.
+    Indeed, we want the first vertices left and right _on the supporting line_ of the edge
+    but with some weird enough facet, we could have a vertex that is not the first one
+    but that is still the closest to the edge on the supporting line.
+
+    also it is pointless to walk both left and right, just walk one direction for each facet
+
+    also the other_facet looks kinda weird, why edge_r?
+
+    // @todo rewrite all of that stuff not to waste the facet_1/facet_2 information
+    std::set<VertexSPtr> vertices_2;
+    for (FacetWPtr facet_wptr : vertex_1->facets()) {
+      if (FacetSPtr facet = facet_wptr.lock()) {
+        CGAL_SS3_CORE_TRACE("walking facet: " << facet->getID());
+
+        EdgeSPtr edge_l = vertex_1->findEdge(facet);
+        CGAL_SS3_DEBUG_SPTR(edge_l);
+        CGAL_assertion(edge_l->src(facet) == vertex_1);
+        EdgeSPtr edge_r = edge_l->prev(facet);
+        CGAL_assertion(edge_r->dst(facet) == vertex_1);
+
+        // seek to the left
+        CGAL_SS3_CORE_TRACE("------> LEFT WALK");
+        FacetSPtr other_facet = start_e->other(facet);
+        CGAL_SS3_CORE_TRACE("other facet: " << other_facet->getID());
+
+        CGAL_assertion(other_facet != edge_l->other(facet));
+
+        // skip edge_l directly, and ignore one more because we want v-v events, not vanish.
+        // could skip two, but then it becomes annoying with triangular faces
+        CGAL_assertion(edge_l->next(facet) != edge_l);
+        CGAL_assertion(edge_l->next(facet)->next(facet) != edge_l);
+        EdgeSPtr edge_l1 = edge_l->next(facet);
+        EdgeSPtr edge_l2 = edge_l1->next(facet);
+
+        // skip edge_r directly, and ignore one more because we want v-v events, not vanish.
+        // could skip two, but then it becomes annoying with triangular faces
+        CGAL_assertion(edge_r->prev(facet) != edge_r);
+        CGAL_assertion(edge_r->prev(facet)->prev(facet) != edge_r);
+        EdgeSPtr edge_r1 = edge_r->prev(facet);
+        EdgeSPtr edge_r2 = edge_r1->prev(facet);
+
+        EdgeSPtr current_edge = edge_l2;
+        for (;;) {
+          CGAL_SS3_CORE_TRACE("current_edge: " << current_edge->getVertexSrc()->getID()
+                                                << " " << current_edge->getVertexDst()->getID()
+                                                << " faces: " << current_edge->getFacetL()->getID()
+                                                << " " << current_edge->getFacetR()->getID());
+
+          if (current_edge == edge_r1 || current_edge == edge_r) {
+            break;
+          }
+
+          if (current_edge->other(facet) == other_facet) {
+            // we have found another vertex that is along an edge that has the same
+            // incident facets. But to be of interest, this needs to be on the correct side
+            // and not a full loop around
+            if (CGAL::collinear_are_ordered_along_line(*(edge_l->src(facet)->getPoint()),
+                                                        *(edge_l->dst(facet)->getPoint()),
+                                                        *(current_edge->src(facet)->getPoint()))) {
+                CGAL_SS3_CORE_TRACE("left neighbor: " << current_edge->src(facet)->getID());
+                vertices_2.insert(current_edge->src(facet));
+                break;
+              }
+            }
+
+          current_edge = current_edge->next(facet);
+        }
+
+        // seek to the right
+        CGAL_SS3_CORE_TRACE("------> RIGHT WALK");
+        other_facet = edge_l->other(facet);
+        CGAL_assertion(other_facet != edge_r->other(facet));
+
+        current_edge = edge_r2;
+        for (;;) {
+          CGAL_SS3_CORE_TRACE("current_edge: " << current_edge->getVertexSrc()->getID() << " " << current_edge->getVertexDst()->getID() << " faces: " << current_edge->getFacetL()->getID() << " " << current_edge->getFacetR()->getID());
+
+          if (current_edge == edge_l1 || current_edge == edge_l) {
+            break;
+          }
+
+          if (current_edge->other(facet) == other_facet) {
+            // we have found another vertex that is along an edge that has the same
+            // incident facets. But to be of interest, this needs to be on the correct side
+            // and not a full loop around
+            if (CGAL::collinear_are_ordered_along_line(*(edge_r->dst(facet)->getPoint()),
+                                                        *(edge_r->src(facet)->getPoint()),
+                                                        *(current_edge->dst(facet)->getPoint()))) {
+              CGAL_SS3_CORE_TRACE("right neighbor: " << current_edge->dst(facet)->getID());
+              vertices_2.insert(current_edge->dst(facet));
+              break;
+            }
+          }
+
+          current_edge = current_edge->prev(facet);
+        }
+      }
+    }
+#else // CGAL_SS3_NEWER_VV_VERTEX_2_DETECTION
+    std::set<VertexSPtr> vertices_2;
+    for (FacetWPtr facet_wptr : vertex_1->facets()) {
+      if (FacetSPtr facet = facet_wptr.lock()) {
+# ifndef CGAL_SS3_VV_VERTEX_2_WALK_FACES_FOR_DETECTION
+          vertices_2.insert(facet->vertices().begin(), facet->vertices().end());
+# else
+        // Should be enough to check within the same border because different CCs
+        // of the same facet cannot merge again
+
+        // Subtlety: within a facet we are only checking the edge whose source is vertex_1
+        // That's enough for two reasons:
+        // - VV events are symmetrical
+        // - The other edge will be checked when seen from the other facet
+        EdgeSPtr start_e = vertex_1->findEdge(facet);
+        FacetSPtr other_facet = start_e->other(facet);
+        EdgeSPtr current_edge = start_e->next(facet);
+        while (current_edge != start_e) {
+          if (current_edge->other(facet) == other_facet) {
+            vertices_2.insert(current_edge->src(facet));
+            vertices_2.insert(current_edge->dst(facet));
+          }
+
+            current_edge = current_edge->next(facet);
+        }
+# endif
+          // @speed sort vertices_2 as to get the first vertex after start_e->dst(facet)
+      }
+    }
+#endif // CGAL_SS3_NEWER_VV_VERTEX_2_DETECTION
+
+    for (const VertexSPtr& vertex_2 : vertices_2) {
+      CGAL_SS3_DEBUG_SPTR(vertex_2);
+      if (vertex_1 == vertex_2) {
+        continue;
+      }
+#ifdef CGAL_SS3_ENFORCE_UNIQUE_EVENT_REPRESENTATIONS
+      if (use_canonical_event_reps) {
+        CGAL_assertion(vertex_1->getID() != -1 && vertex_2->getID() != -1);
+        if (vertex_1->getID() > vertex_2->getID()) {
+          continue;
+        }
+      }
+#endif
+      if (vertex_1->getPoint() == vertex_2->getPoint()) {
+        continue;
+      }
+      if (vertex_1->findEdge(vertex_2)) {
+        // edge event
+        continue;
+      }
+      if (HdsUtils::isConvex(vertex_2)) {
+        continue;
+      }
+
+      // Subtlety here: this event is not symmetrical because the two chosen edges
+      // incident to vertex_1 and vertex_2 depend on the respective order of the vertices.
+      // Afterwards, we will check the validity of a potential intersection point
+      // with respect to these edges, but not the other potential pair.
+      // However, one pair could be valid while the other one is not.
+      // Thus, whether we look at vertex_1-vertex_2 or vertex_2-vertex_1, we could
+      // get told that the event exists, or that it does not.
+      // But, this is not a real inconsistency: if the event exists for the current order
+      // but does not for the other one, it's because there is another event (e.g. a simple
+      // edge event) that prevents this event from actually existing.
+      // As such, it does not really matter that we do not see that the event does not in fact
+      // exist, because even if it gets put in the queue, it will be invalidated
+      // by the nearer events.
+      //
+      // The point of the swap() below is to ensure consistency whether we are filling
+      // a global queue or a local queue, because otherwise we can get an error in due to the
+      // asymmetry: for example, the event does not exist in the local queue (as vertex_2 -
+      // vertex_1), but exists in the global queue (as vertex_1 - vertex_2).
+      // It is a false positive in the consistency check, but still, might as well ensure
+      // consistency.
+      VertexSPtr v1 = vertex_1;
+      VertexSPtr v2 = vertex_2;
+      if (v1->getID() > v2->getID()) {
+        std::swap(v1, v2);
+      }
+
+      FacetSPtr facet_1;
+      FacetSPtr facet_2;
+      int num_equal_facets = 0;
+      for (FacetWPtr facet_1_wptr : v1->facets()) {
+        if (FacetSPtr f1 = facet_1_wptr.lock()) {
+          for (FacetWPtr facet_2_wptr : v2->facets()) {
+            if (FacetSPtr f2 = facet_2_wptr.lock()) {
+              if (f1 == f2) {
+                if (num_equal_facets == 0) {
+                  facet_1 = f1;
+                } else {
+                  facet_2 = f2;
+                }
+                ++num_equal_facets;
+              }
+            }
+          }
+        }
+      }
+      if (num_equal_facets != 2) {
+        continue;
+      }
+      if (facet_1->next(v1) != facet_2) {
+        FacetSPtr facet_tmp = facet_1;
+        facet_1 = facet_2;
+        facet_2 = facet_tmp;
+      }
+      if (v1->next(facet_1)->next(facet_1) == v2 ||
+          v1->next(facet_2)->next(facet_2) == v2 ||
+          v1->prev(facet_1)->prev(facet_1) == v2 ||
+          v1->prev(facet_2)->prev(facet_2) == v2) {
+        // edge merge event
+        continue;
+      }
+
+      EdgeSPtr edge_11 = EdgeSPtr();
+      EdgeSPtr edge_12 = EdgeSPtr();
+      for (EdgeWPtr edge_1_wptr : v1->edges()) {
+        if (EdgeSPtr edge_1 = edge_1_wptr.lock()) {
+          FacetSPtr facet_1l = edge_1->getFacetL();
+          FacetSPtr facet_1r = edge_1->getFacetR();
+          if ((facet_1l == facet_1 && facet_1r != facet_2) ||
+              (facet_1r == facet_1 && facet_1l != facet_2)) {
+            edge_11 = edge_1;
+          } else if ((facet_1l == facet_2 && facet_1r != facet_1) ||
+                      (facet_1r == facet_2 && facet_1l != facet_1)) {
+            edge_12 = edge_1;
+          }
+        }
+      }
+      EdgeSPtr edge_21 = EdgeSPtr();
+      EdgeSPtr edge_22 = EdgeSPtr();
+      for (EdgeWPtr edge_2_wptr : v2->edges()) {
+        if (EdgeSPtr edge_2 = edge_2_wptr.lock()) {
+          FacetSPtr facet_2l = edge_2->getFacetL();
+          FacetSPtr facet_2r = edge_2->getFacetR();
+          if ((facet_2l == facet_1 && facet_2r != facet_2) ||
+              (facet_2r == facet_1 && facet_2l != facet_2)) {
+            edge_21 = edge_2;
+          } else if ((facet_2l == facet_2 && facet_2r != facet_1) ||
+                      (facet_2r == facet_2 && facet_2l != facet_1)) {
+            edge_22 = edge_2;
+          }
+        }
+      }
+      if (!((edge_11->next(v1) == edge_12 && edge_22->next(v2) == edge_21) ||
+            (edge_12->next(v1) == edge_11 && edge_21->next(v2) == edge_22))) {
+        // flip vertex event
+        continue;
+      }
+
+      // convex split event checks are performed at pop time - see isActualVertexEvent()
+
+      Point3SPtr point;
+      FT event_time;
+      std::tie(point, event_time) = crashAt(edge_11, edge_22, current_time, time_future_bound);
+      if (!point) {
+        continue;
+      }
+
+    CGAL_assertion(event_time < current_time);
+    CGAL_assertion(!time_future_bound.has_value() || event_time >= *time_future_bound);
+
+      VertexEventSPtr event = VertexEvent::create();
+      event->setTime(event_time);
+      event->setPoint(point);
+      event->setVertex1(v1);
+      event->setVertex2(v2);
+      event->setFacet1(facet_1);
+      event->setFacet2(facet_2);
+      queue.push(event);
+    }
+  }
+
+#ifdef CGAL_SS3_RUN_TIMERS
+  timer.stop();
+  CGAL_SS3_CORE_TRACE_V(4, "  Sought Vertex Events in: " << timer.time());
+#endif
+}
+
+
+/**
+  * Split Merge event
+  */
+void collectSplitMergeEvents(const std::list<VertexSPtr>& vertices,
+                              const PolyhedronSPtr& /*polyhedron*/,
+                              const bool use_canonical_event_reps,
+                              const FT& current_time,
+                              const std::optional<FT>& time_future_bound,
+                              PQ& queue)
+{
+  CGAL_SS3_CORE_TRACE_V(4, ">>> Collect Split Merge Events [" << current_time << "]");
+
+#ifdef CGAL_SS3_RUN_TIMERS
+  CGAL::Real_timer timer;
+  timer.start();
+#endif
+
+  for (const VertexSPtr& vertex_1 : vertices) {
+    CGAL_SS3_DEBUG_SPTR(vertex_1);
+
+    if (HdsUtils::isConvex(vertex_1)) {
+      continue;
+    }
+
+#ifdef CGAL_SS3_NEWER_VV_VERTEX_2_DETECTION
+    take code from collectVertexEvents
+#else // CGAL_SS3_NEWER_VV_VERTEX_2_DETECTION
+    std::set<VertexSPtr> vertices_2;
+    for (FacetWPtr facet_wptr : vertex_1->facets()) {
+      if (FacetSPtr facet = facet_wptr.lock()) {
+# ifndef CGAL_SS3_VV_VERTEX_2_WALK_FACES_FOR_DETECTION
+        vertices_2.insert(facet->vertices().begin(), facet->vertices().end());
+# else
+        // Should be enough to check within the same border because different CCs
+        // of the same facet cannot merge again
+
+        currently this improvement creates an annoying fake bug in the queue check:
+        by walking incident faces in a single direction, this introduces
+        some asymetry in the detection of the event: e.g. if the event were 5-6,
+        we could detect it when looking from 5 but not from 6 because the facet walked
+        from 5 has 6, but the facet walked from 6 does not have 5 (5 is in a difference_type CC of the facet) and then we could be at 6 in local, but 5
+        when filling the queue globally
+
+        EdgeSPtr start_e = vertex_1->findEdge(facet);
+        FacetSPtr other_facet = start_e->other(facet);
+        EdgeSPtr current_edge = start_e->next(facet);
+        while (current_edge != start_e) {
+          if (current_edge->other(facet) == other_facet) {
+            vertices_2.insert(current_edge->src(facet));
+            vertices_2.insert(current_edge->dst(facet));
+          }
+
+          current_edge = current_edge->next(facet);
+        }
+# endif
+      }
+  }
+
+# ifdef CGAL_SS3_RUN_TIMERS
+  // CGAL_SS3_CORE_TRACE("filled vertices_2 after " << timer.time() << "s");
+# endif
+#endif // CGAL_SS3_NEWER_VV_VERTEX_2_DETECTION
+
+  for (const VertexSPtr& vertex_2 : vertices_2) {
+      CGAL_SS3_DEBUG_SPTR(vertex_2);
+
+      if (vertex_1 == vertex_2) {
+        continue;
+      }
+#ifdef CGAL_SS3_ENFORCE_UNIQUE_EVENT_REPRESENTATIONS
+      if (use_canonical_event_reps) {
+        if (vertex_1->getID() > vertex_2->getID()) {
+          continue;
+        }
+      }
+#endif
+      if (vertex_1->getPoint() == vertex_2->getPoint()) {
+        continue;
+      }
+      if (vertex_1->findEdge(vertex_2)) {
+        // edge event
+        continue;
+      }
+      if (HdsUtils::isConvex(vertex_2)) {
+        continue;
+      }
+
+      // See comment in the first instance of this swap
+      VertexSPtr v1 = vertex_1;
+      VertexSPtr v2 = vertex_2;
+      if (v1->getID() > v2->getID()) {
+        std::swap(v1, v2);
+      }
+
+      FacetSPtr facet_1;
+      FacetSPtr facet_2;
+      int num_equal_facets = 0;
+      for (FacetWPtr facet_1_wptr : v1->facets()) {
+        if (FacetSPtr f1 = facet_1_wptr.lock()) {
+          for (FacetWPtr facet_2_wptr : v2->facets()) {
+            if (FacetSPtr f2 = facet_2_wptr.lock()) {
+              if (f1 == f2) {
+                if (num_equal_facets == 0) {
+                  facet_1 = f1;
+                } else {
+                  facet_2 = f2;
+                }
+                ++num_equal_facets;
+              }
+            }
+          }
+        }
+      }
+      if (num_equal_facets != 2) {
+        continue;
+      }
+      if (facet_1->next(v1) != facet_2) {
+        FacetSPtr facet_tmp = facet_1;
+        facet_1 = facet_2;
+        facet_2 = facet_tmp;
+      }
+      CGAL_assertion(facet_1->next(v1) == facet_2);
+      if (v1->next(facet_1)->next(facet_1) == v2 ||
+          v1->next(facet_2)->next(facet_2) == v2 ||
+          v1->prev(facet_1)->prev(facet_1) == v2 ||
+          v1->prev(facet_2)->prev(facet_2) == v2) {
+        // edge merge event
+        continue;
+      }
+
+      EdgeSPtr edge_11 = EdgeSPtr();
+      EdgeSPtr edge_12 = EdgeSPtr();
+      for (EdgeWPtr edge_1_wptr : v1->edges()) {
+        if (EdgeSPtr edge_1 = edge_1_wptr.lock()) {
+          FacetSPtr facet_1l = edge_1->getFacetL();
+          FacetSPtr facet_1r = edge_1->getFacetR();
+          if ((facet_1l == facet_1 && facet_1r != facet_2) ||
+              (facet_1r == facet_1 && facet_1l != facet_2)) {
+            edge_11 = edge_1;
+          } else if ((facet_1l == facet_2 && facet_1r != facet_1) ||
+                      (facet_1r == facet_2 && facet_1l != facet_1)) {
+            edge_12 = edge_1;
+          }
+        }
+      }
+      EdgeSPtr edge_21 = EdgeSPtr();
+      EdgeSPtr edge_22 = EdgeSPtr();
+      for (EdgeWPtr edge_2_wptr : v2->edges()) {
+        if (EdgeSPtr edge_2 = edge_2_wptr.lock()) {
+          FacetSPtr facet_2l = edge_2->getFacetL();
+          FacetSPtr facet_2r = edge_2->getFacetR();
+          if ((facet_2l == facet_1 && facet_2r != facet_2) ||
+              (facet_2r == facet_1 && facet_2l != facet_2)) {
+            edge_21 = edge_2;
+          } else if ((facet_2l == facet_2 && facet_2r != facet_1) ||
+                      (facet_2r == facet_2 && facet_2l != facet_1)) {
+            edge_22 = edge_2;
+          }
+        }
+      }
+
+      // convex split event checks are performed at pop time - see isActualSplitMergeEvent()
+
+      Point3SPtr point;
+      FT event_time;
+      std::tie(point, event_time) = crashAt(edge_11, edge_22, current_time, time_future_bound);
+      if (!point) {
+        continue;
+      }
+
+      CGAL_assertion(event_time < current_time);
+      CGAL_assertion(!time_future_bound.has_value() || event_time >= *time_future_bound);
+
+      SplitMergeEventSPtr event = SplitMergeEvent::create();
+      event->setTime(event_time);
+      event->setPoint(point);
+      event->setVertex1(v1);
+      event->setVertex2(v2);
+      event->setFacet1(facet_1);
+      event->setFacet2(facet_2);
+      queue.push(event);
+    }
+  }
+
+#ifdef CGAL_SS3_RUN_TIMERS
+  timer.stop();
+  CGAL_SS3_CORE_TRACE_V(4, "  Sought Split Merge Events in: " << timer.time());
+#endif
+}
+
+
+/**
+  * Flip vertex event
+  */
+void collectFlipVertexEvents(const std::list<VertexSPtr>& vertices,
+                              const PolyhedronSPtr& /*polyhedron*/,
+                              const bool use_canonical_event_reps,
+                              const FT& current_time,
+                              const std::optional<FT>& time_future_bound,
+                              PQ& queue)
+{
+  CGAL_SS3_CORE_TRACE_V(4, ">>> Collect Flip Vertex Events [" << current_time << "]");
+
+#ifdef CGAL_SS3_RUN_TIMERS
+  CGAL::Real_timer timer;
+  timer.start();
+#endif
+
+  // @speed seems like this could be rewritten in a much cheaper manner (and storing
+  // the convexity property). But currently, it's a cheap collect().
+  for (const VertexSPtr& vertex_1 : vertices) {
+    CGAL_assertion(vertex_1->getID() != -1);
+
+    if (HdsUtils::isConvex(vertex_1)) {
+      continue;
+    }
+
+#ifdef CGAL_SS3_NEWER_VV_VERTEX_2_DETECTION
+    take code from collectVertexEvents
+#else // CGAL_SS3_NEWER_VV_VERTEX_2_DETECTION
+    std::set<VertexSPtr> vertices_2;
+    for (FacetWPtr facet_wptr : vertex_1->facets()) {
+      if (FacetSPtr facet = facet_wptr.lock()) {
+# ifndef CGAL_SS3_VV_VERTEX_2_WALK_FACES_FOR_DETECTION
+        vertices_2.insert(facet->vertices().begin(), facet->vertices().end());
+# else
+        // Should be enough to check within the same border because different CCs
+        // of the same facet cannot merge again
+        EdgeSPtr start_e = vertex_1->findEdge(facet);
+        FacetSPtr other_facet = start_e->other(facet);
+        EdgeSPtr current_edge = start_e->next(facet);
+        while (current_edge != start_e) {
+          if (current_edge->other(facet) == other_facet) {
+            vertices_2.insert(current_edge->src(facet));
+            vertices_2.insert(current_edge->dst(facet));
+          }
+
+          current_edge = current_edge->next(facet);
+        }
+# endif
+      }
+    }
+#endif // CGAL_SS3_NEWER_VV_VERTEX_2_DETECTION
+
+    for (const VertexSPtr& vertex_2 : vertices_2) {
+      CGAL_assertion(vertex_2->getID() != -1);
+
+      if (vertex_1 == vertex_2) {
+        continue;
+      }
+#ifdef CGAL_SS3_ENFORCE_UNIQUE_EVENT_REPRESENTATIONS
+      if (use_canonical_event_reps) {
+        if (vertex_1->getID() > vertex_2->getID()) {
+          continue;
+        }
+      }
+#endif
+      if (vertex_1->getPoint() == vertex_2->getPoint()) {
+        continue;
+      }
+      if (vertex_1->findEdge(vertex_2)) {
+        // edge event
+        continue;
+      }
+      if (HdsUtils::isConvex(vertex_2)) {
+        continue;
+      }
+
+      // See comment in the first instance of this swap
+      VertexSPtr v1 = vertex_1;
+      VertexSPtr v2 = vertex_2;
+      if (v1->getID() > v2->getID()) {
+        std::swap(v1, v2);
+      }
+
+      FacetSPtr facet_1;
+      FacetSPtr facet_2;
+      int num_equal_facets = 0;
+      for (FacetWPtr facet_1_wptr : v1->facets()) {
+        if (FacetSPtr f1 = facet_1_wptr.lock()) {
+          for (FacetWPtr facet_2_wptr : v2->facets()) {
+            if (FacetSPtr f2 = facet_2_wptr.lock()) {
+              if (f1 == f2) {
+                if (num_equal_facets == 0) {
+                  facet_1 = f1;
+                } else {
+                  facet_2 = f2;
+                }
+                ++num_equal_facets;
+              }
+            }
+          }
+        }
+      }
+      if (num_equal_facets != 2) {
+        continue;
+      }
+#ifdef CGAL_SS3_ENFORCE_UNIQUE_EVENT_REPRESENTATIONS
+      if (use_canonical_event_reps) {
+        if (facet_1->getID() > facet_2->getID()) {
+          continue;
+        }
+      }
+#endif
+      if (facet_1->next(v1) != facet_2) {
+        FacetSPtr facet_tmp = facet_1;
+        facet_1 = facet_2;
+        facet_2 = facet_tmp;
+      }
+      if (v1->next(facet_1)->next(facet_1) == v2 ||
+          v1->next(facet_2)->next(facet_2) == v2 ||
+          v1->prev(facet_1)->prev(facet_1) == v2 ||
+          v1->prev(facet_2)->prev(facet_2) == v2) {
+        // edge merge event
+        continue;
+      }
+
+      EdgeSPtr edge_11 = EdgeSPtr();
+      EdgeSPtr edge_12 = EdgeSPtr();
+      for (EdgeWPtr edge_1_wptr : v1->edges()) {
+        if (EdgeSPtr edge_1 = edge_1_wptr.lock()) {
+          FacetSPtr facet_1l = edge_1->getFacetL();
+          FacetSPtr facet_1r = edge_1->getFacetR();
+          if ((facet_1l == facet_1 && facet_1r != facet_2) ||
+              (facet_1r == facet_1 && facet_1l != facet_2)) {
+            edge_11 = edge_1;
+          } else if ((facet_1l == facet_2 && facet_1r != facet_1) ||
+                     (facet_1r == facet_2 && facet_1l != facet_1)) {
+            edge_12 = edge_1;
+          }
+        }
+      }
+      EdgeSPtr edge_21 = EdgeSPtr();
+      EdgeSPtr edge_22 = EdgeSPtr();
+      for (EdgeWPtr edge_2_wptr : v2->edges()) {
+        if (EdgeSPtr edge_2 = edge_2_wptr.lock()) {
+          FacetSPtr facet_2l = edge_2->getFacetL();
+          FacetSPtr facet_2r = edge_2->getFacetR();
+          if ((facet_2l == facet_1 && facet_2r != facet_2) ||
+              (facet_2r == facet_1 && facet_2l != facet_2)) {
+            edge_21 = edge_2;
+          } else if ((facet_2l == facet_2 && facet_2r != facet_1) ||
+                     (facet_2r == facet_2 && facet_2l != facet_1)) {
+            edge_22 = edge_2;
+          }
+        }
+      }
+      if (!(edge_12->next(v1) == edge_11 && edge_22->next(v2) == edge_21)) {
+        // vertex event
+        continue;
+      }
+
+      // convex split event checks are performed at pop time - see isActualFlipVertexEvent()
+
+      Point3SPtr point;
+      FT event_time;
+      std::tie(point, event_time) = crashAt(edge_11, edge_22, current_time, time_future_bound);
+      if (!point) {
+        continue;
+      }
+
+      CGAL_assertion(event_time < current_time);
+      CGAL_assertion(!time_future_bound.has_value() || event_time >= *time_future_bound);
+
+      FlipVertexEventSPtr event = FlipVertexEvent::create();
+      event->setTime(event_time);
+      event->setPoint(point);
+      event->setVertex1(v1);
+      event->setVertex2(v2);
+      event->setFacet1(facet_1);
+      event->setFacet2(facet_2);
+      queue.push(event);
+    }
+  }
+
+#ifdef CGAL_SS3_RUN_TIMERS
+  timer.stop();
+  CGAL_SS3_CORE_TRACE_V(4, "  Sought Flip Vertex Events in: " << timer.time());
+#endif
+}
+
+
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+
+
+
+
+/**
+  * Checks if the point `point` is on the correct side of the bisector arc
+  * emaneting from the vertex common to `edge` and the edge
+  * shared by `edge->next(f)` and `f_third`
+  */
+// returns 'true' if the point is on f's side of the bisector between f and f third
+// edge: edge that is vanishing or crashing into another edge
+// f: one of the faces incident to the edge
+// t: the time of vanishing or the time of crash
+// f_third: edge shared between 'f' and either the dst of the edge seen in f
+static bool checkBisector(const EdgeSPtr& edge,
+                          const FacetSPtr& f,
+                          const FT& t,
+                          const FacetSPtr& f_third,
+                          const Point3SPtr& point)
+{
+  CGAL_SS3_DEBUG_SPTR(edge);
+  CGAL_SS3_DEBUG_SPTR(f);
+  CGAL_SS3_DEBUG_SPTR(f_third);
+
+  Plane3SPtr plane_third = f_third->getPlane();
+  const FT& speed_third = HdsUtils::getSpeed(f_third);
+  if (is_zero(speed_third)) {
+    return (KernelWrapper::side(plane_third, point) <= 0);
+  }
+
+  EdgeSPtr edge_f_f_third = edge->next(f);
+  CGAL_precondition(edge_f_f_third->other(f) == f_third);
+
+  // Determine which side of f-third is legal; that is determined by the angle
+  // that the facet makes at the common vertex.
+  //
+  // We can't use the actual geometry of the edges because they might be degenerate,
+  // so everything must be done with planes.
+  //
+  // @todo predicates
+
+  FacetSPtr f_other = edge->other(f);
+  Plane3SPtr plane_f = f->getPlane();
+  Plane3SPtr plane_f_other = f_other->getPlane();
+  Vector3SPtr n_f = KernelFactory::createVector3(plane_f);
+  Vector3SPtr n_f_other = KernelFactory::createVector3(plane_f_other);
+  Vector3SPtr n_f_third = KernelFactory::createVector3(plane_third);
+
+  Vector_3 v_f_f_other = HdsUtils::isReflex(edge) ? CGAL::cross_product(*n_f_other, *n_f)
+                                                  : CGAL::cross_product(*n_f, *n_f_other);
+  Vector_3 v_f_f_third = HdsUtils::isReflex(edge_f_f_third) ? CGAL::cross_product(*n_f_third, *n_f)
+                                                            : CGAL::cross_product(*n_f, *n_f_third);
+
+  Point_3 pvp = *(edge->getVertexSrc()->getPoint()); // the position doesn't matter
+  Point_3 vp = pvp + v_f_f_other;
+  Point_3 nvp = vp + v_f_f_third;
+  CGAL_assertion(pvp != vp && vp != nvp);
+
+  auto n = CGAL::cross_product(nvp - vp, pvp - vp);
+  FT sp = CGAL::scalar_product(*n_f, n);
+
+  CGAL_SS3_CORE_TRACE_V(128, "f = " << f->getID());
+  CGAL_SS3_CORE_TRACE_V(128, "f_other = " << f_other->getID());
+  CGAL_SS3_CORE_TRACE_V(128, "f_third = " << f_third->getID());
+  CGAL_SS3_CORE_TRACE_V(128, "pv = " << pvp);
+  CGAL_SS3_CORE_TRACE_V(128, "v = " << vp);
+  CGAL_SS3_CORE_TRACE_V(128, "nv = " << nvp);
+  CGAL_SS3_CORE_TRACE_V(128, "n_f = " << *n_f);
+  CGAL_SS3_CORE_TRACE_V(128, "n_f_other = " << *n_f_other);
+  CGAL_SS3_CORE_TRACE_V(128, "n_f_third = " << *n_f_third);
+  CGAL_SS3_CORE_TRACE_V(128, "n = " << n);
+  CGAL_SS3_CORE_TRACE_V(128, "sp = " << sp);
+
+  // @todo below means that the edge is aligned, so the two bisectors are coplanar
+  // and it'll be annoying. In that case, we can simply check on which side the
+  // other vertex is and use the third bisector... but currently it's not possible
+  // because no 2 faces are coplanar, so below should always be true!
+  CGAL_assertion(sp != 0);
+
+  // now, check on which side of the bisector we are
+  const FT& a_third = HdsUtils::getBasePlane(f_third)->a();
+  const FT& b_third = HdsUtils::getBasePlane(f_third)->b();
+  const FT& c_third = HdsUtils::getBasePlane(f_third)->c();
+  const FT& d_third = HdsUtils::getBasePlane(f_third)->d();
+  FT t_third = (a_third * point->x() + b_third * point->y() + c_third * point->z() + d_third) / speed_third;
+
+  CGAL_SS3_CORE_TRACE_V(128, "edge = " << edge->toString());
+  CGAL_SS3_CORE_TRACE_V(128, "edge_f_f_third = " << edge_f_f_third->toString());
+  CGAL_SS3_CORE_TRACE_V(128, "time from third = " << t_third);
+  CGAL_assertion(edge_f_f_third != edge);
+
+  // we want SMALLER to mean "on f's side of the bisector"
+  // and     LARGER  to mean "on f_third's side of the bisector"
+  CGAL::Comparison_result f_third_point_side;
+  if (HdsUtils::isReflex(edge_f_f_third)) {
+    CGAL_SS3_CORE_TRACE_V(128, "F1O: reflex edge ");
+    f_third_point_side = CGAL::compare(t, t_third);
+  } else {
+    CGAL_SS3_CORE_TRACE_V(128, "F1O: convex edge ");
+    f_third_point_side = CGAL::compare(t_third, t);
+  }
+
+  CGAL_SS3_CORE_TRACE_V(128, "f_third_point_side = " << f_third_point_side);
+
+  // Finally, combine both info to know on which side we are
+  if (sp < 0) {
+    CGAL_SS3_CORE_TRACE_V(128, "SP: right turn");
+    if (f_third_point_side == CGAL::SMALLER) {
+      CGAL_SS3_CORE_TRACE_V(128, "reject!");
+      return false;
+    }
+  } else {
+    CGAL_SS3_CORE_TRACE_V(128, "SP: left turn");
+    if (f_third_point_side == CGAL::LARGER) {
+      CGAL_SS3_CORE_TRACE_V(128, "reject!");
+      return false;
+    }
+  }
+
+  return true;
+}
+
+static bool checkBisectors(const EdgeSPtr& edge_1,
+                            const EdgeSPtr& edge_2,
+                            const Point3SPtr& point,
+                            const FT& t)
+{
+  CGAL_SS3_DEBUG_SPTR(edge_1);
+  CGAL_SS3_DEBUG_SPTR(edge_2);
+
+  FacetSPtr facet_l1 = edge_1->getFacetL();
+  FacetSPtr facet_r1 = edge_1->getFacetR();
+  FacetSPtr facet_l2 = edge_2->getFacetL();
+  FacetSPtr facet_r2 = edge_2->getFacetR();
+
+  FacetSPtr facet_1_src = edge_1->getFacetSrc();
+  FacetSPtr facet_1_dst = edge_1->getFacetDst();
+  FacetSPtr facet_2_src = edge_2->getFacetSrc();
+  FacetSPtr facet_2_dst = edge_2->getFacetDst();
+
+  CGAL_SS3_CORE_TRACE_V(32, "Bisectors check");
+
+  CGAL_SS3_CORE_TRACE_V(32, "Facet L1 = " << facet_l1->getID());
+  CGAL_SS3_CORE_TRACE_V(32, "Facet R1 = " << facet_r1->getID());
+  CGAL_SS3_CORE_TRACE_V(32, "Facet L2 = " << facet_l2->getID());
+  CGAL_SS3_CORE_TRACE_V(32, "Facet R2 = " << facet_r2->getID());
+
+  CGAL_SS3_CORE_TRACE_V(32, "Facet 1 SRC = " << facet_1_src->getID());
+  CGAL_SS3_CORE_TRACE_V(32, "Facet 1 DST = " << facet_1_dst->getID());
+  CGAL_SS3_CORE_TRACE_V(32, "Facet 2 SRC = " << facet_2_src->getID());
+  CGAL_SS3_CORE_TRACE_V(32, "Facet 2 DST = " << facet_2_dst->getID());
+
+  // Since the algorithm shrinks the polyhedron, "not to be in the past" is equivalent to
+  // "being on the negative side of the planes of the facets incident to the edge" (assuming positive weights)
+  //
+  // Since we have filtered with a past bound, this is already checked
+  CGAL_assertion_code(Plane3SPtr plane_l1 = facet_l1->getPlane();)
+  CGAL_assertion_code(Plane3SPtr plane_r1 = facet_r1->getPlane();)
+  CGAL_assertion_code(Plane3SPtr plane_l2 = facet_l2->getPlane();)
+  CGAL_assertion_code(Plane3SPtr plane_r2 = facet_r2->getPlane();)
+
+  CGAL_assertion(!(KernelWrapper::side(plane_l1, point) > 0 ||
+                    KernelWrapper::side(plane_r1, point) > 0));
+  CGAL_assertion(!(KernelWrapper::side(plane_l2, point) > 0 ||
+                    KernelWrapper::side(plane_r2, point) > 0));
+
+  // We want the point to be left of the right arc, and right of the left arc
+  //
+  // We can just check the position of the query 'point' with respect
+  // to one of the other bisector. A few tricky parts:
+  // - The side of bisector is easy to know: it's comparing times, but that
+  //   depends on whether the edge is reflex or convex
+  // - Once we know on which side of the bisector it is, it's not done yet:
+  //   we need to know which side of the bisector is the correct one and since
+  //   faces can be non-convex polygons, we need to check if we are in a concave
+  //   (within the facet) vertex to know if the clipping bisector is inverted
+
+#ifndef CGAL_SS3_EXIT_ASAP
+  bool reject_2b = false;
+  bool reject_3b = false;
+  bool reject_5b = false;
+  bool reject_6b = false;
+#endif
+
+  if (!(facet_1_src == facet_l2 || facet_1_src == facet_r2)) {
+    // src is the target of the edge when in the right facet
+    if (!checkBisector(edge_1, facet_r1, t /*rt1*/, facet_1_src, point)) {
+#ifdef CGAL_SS3_EXIT_ASAP
+      return false;
+#else
+      reject_2b = true;
+#endif
+    }
+  }
+
+  if (!(facet_1_dst == facet_l2 || facet_1_dst == facet_r2)) {
+    if (!checkBisector(edge_1, facet_l1, t /*lt1*/, facet_1_dst, point)) {
+#ifdef CGAL_SS3_EXIT_ASAP
+      return false;
+#else
+      reject_3b = true;
+#endif
+    }
+  }
+
+  if (!(facet_2_src == facet_l1 || facet_2_src == facet_r1)) {
+    if (!checkBisector(edge_2, facet_r2, t /*rt2*/, facet_2_src, point)) {
+#ifdef CGAL_SS3_EXIT_ASAP
+      return false;
+#else
+      reject_5b = true;
+#endif
+    }
+  }
+
+  if (!(facet_2_dst == facet_l1 || facet_2_dst == facet_r1)) {
+    if (!checkBisector(edge_2, facet_l2, t /*lt2*/, facet_2_dst, point)) {
+#ifdef CGAL_SS3_EXIT_ASAP
+      return false;
+#else
+      reject_6b = true;
+#endif
+    }
+  }
+
+#ifndef CGAL_SS3_EXIT_ASAP
+  const bool reject = (reject_2b || reject_3b || reject_5b || reject_6b);
+  if (reject) {
+    return false;
+  }
+#endif
+
+  return true;
+}
+
+
+
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+
+
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+
+
+
+
+
