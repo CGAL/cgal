@@ -334,21 +334,21 @@ const Column_matrix& matrix_dd (int q) const;
 /// @{
 
 /*!
- * \brief Prints the matrices of the reduction.
+ * \brief Writes the matrices of the reduction.
  *
- * Prints the matrices of the reduction (that is \f$f\f$, \f$g\f$, \f$h\f$, \f$\partial'\f$ the reduced boundary).
+ * Writes the matrices of the reduction (that is \f$f\f$, \f$g\f$, \f$h\f$, \f$\partial'\f$ the reduced boundary).
  *
- * By default, outputs the complex to `std::cout`.
+ * By default, writes the complex to `std::cout`.
 */
-std::ostream& insert_matrices(std::ostream &out = std::cout) const;
+std::ostream& write_matrices(std::ostream &out = std::cout) const;
 
-/*! \brief Prints the homology and cohomology reduction information.
+/*! \brief Writes the homology and cohomology reduction information.
  *
- * Prints the homology and cohomology reduction information (that is \f$f^*\f$, \f$g\f$ \f$\partial'\f$ the reduced boundary over each critical cell).
+ * Writes the homology and cohomology reduction information (that is \f$f^*\f$, \f$g\f$ \f$\partial'\f$ the reduced boundary over each critical cell).
  *
- * By default, outputs the complex to `std::cout`.
+ * By default, writes the complex to `std::cout`.
 */
-std::ostream& insert_reduction(std::ostream &out = std::cout) const;
+std::ostream& write_reduction(std::ostream &out = std::cout) const;
 
 /*!
  *\brief Saves a HDVF and its reduction to a %hdvf file.
@@ -356,14 +356,14 @@ std::ostream& insert_reduction(std::ostream &out = std::cout) const;
  * Save a HDVF together with the associated reduction (f, g, h, d matrices) to a %hdvf file.
  */
 
-std::ostream& insert_hdvf_reduction(std::ostream& out) ;
+std::ostream& write_hdvf_reduction(std::ostream& out) ;
 
 /*!
  * \brief Loads a HDVF and its reduction from a `.hdvf` file.
  *
  * Load a HDVF and its reduction from a `.hdvf` file, a simple text file format (see for a specification).
  */
-std::istream& extract_hdvf_reduction(std::istream& out) ;
+std::istream& read_hdvf_reduction(std::istream& out) ;
 
 /*!
  * \brief Exports primary/secondary/critical labels (in particular for vtk export).

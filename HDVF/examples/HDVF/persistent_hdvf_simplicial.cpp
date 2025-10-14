@@ -68,8 +68,8 @@ int main(int argc, char **argv)
             hdvf.compute_perfect_hdvf();
 
             // Output HDVF to console
-            hdvf.insert_matrices();
-            hdvf.insert_reduction();
+            hdvf.write_matrices();
+            hdvf.write_reduction();
             std::cout << hdvf ;
 
             // Output HDVF to vtk
@@ -97,8 +97,8 @@ int main(int argc, char **argv)
             hdvf.compute_perfect_hdvf();
 
             // Output HDVF to console
-            hdvf.insert_matrices();
-            hdvf.insert_reduction();
+            hdvf.write_matrices();
+            hdvf.write_reduction();
             std::cout << hdvf ;
 
             // Output HDVF to vtk

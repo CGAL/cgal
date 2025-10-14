@@ -69,7 +69,7 @@ void interaction_loop(Hdvf<ChainComplex> &hdvf,
                     Cell_pair p(possM.at(ipair)) ;
                     std::cout << "M(" << p << ")" << std::endl ;
                     hdvf.M(p.sigma, p.tau, p.dim) ;
-                    //                    hdvf.insert_matrices() ;
+                    //                    hdvf.write_matrices() ;
                     output_vtk(hdvf, complex) ;
                 }
             }
@@ -93,7 +93,7 @@ void interaction_loop(Hdvf<ChainComplex> &hdvf,
                     Cell_pair p(possW.at(ipair)) ;
                     std::cout << "W(" << p << ")" << std::endl ;
                     hdvf.W(p.sigma, p.tau, p.dim) ;
-                    //                    hdvf.insert_matrices() ;
+                    //                    hdvf.write_matrices() ;
                     output_vtk(hdvf, complex) ;
                 }
             }
@@ -117,7 +117,7 @@ void interaction_loop(Hdvf<ChainComplex> &hdvf,
                     Cell_pair p(possMW.at(ipair)) ;
                     std::cout << "MW(" << p << ")" << std::endl ;
                     hdvf.MW(p.sigma, p.tau, p.dim) ;
-                    //                    hdvf.insert_matrices() ;
+                    //                    hdvf.write_matrices() ;
                     output_vtk(hdvf, complex) ;
                 }
             }

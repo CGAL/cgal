@@ -109,7 +109,7 @@ HDVF::Hdvf_duality<Complex>& dual_HDVF_comput (const Complex& L,  HDVF::Sub_chai
     if (options.with_output)
     {
         std::cout << "----> reduction" << std::endl ;
-        hdvf.insert_reduction() ;
+        hdvf.write_reduction() ;
     }
     if (options.with_export)
     {
@@ -122,7 +122,7 @@ HDVF::Hdvf_duality<Complex>& dual_HDVF_comput (const Complex& L,  HDVF::Sub_chai
             throw std::runtime_error("File Parsing Error: File not found");
         }
         out << "----> reduction" << std::endl ;
-        hdvf.insert_reduction(out) ;
+        hdvf.write_reduction(out) ;
 
         out.close() ;
     }

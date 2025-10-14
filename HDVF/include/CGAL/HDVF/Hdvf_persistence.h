@@ -794,7 +794,7 @@ Cell_pair Hdvf_persistence<ChainComplex, Degree, Filtration_>::step_persist(bool
         if (verbose)
         {
             std::cout << "A : " << p.sigma << " - " << p.tau << " (dim " << p.dim << ")" << std::endl ;
-            this->insert_matrices(std::cout) ;
+            this->write_matrices(std::cout) ;
         }
     }
     return p;

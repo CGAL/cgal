@@ -57,8 +57,8 @@ int main(int argc, char **argv)
         std::cout << "Step 2: is_perfect_hdvf " << hdvf.is_perfect_hdvf() << std::endl ;
 
         // Output HDVF to console
-        hdvf.insert_matrices();
-        hdvf.insert_reduction();
+        hdvf.write_matrices();
+        hdvf.write_reduction();
 
         // Output HDVF to vtk
         CGAL::IO::write_VTK(hdvf, complex, "res") ;
@@ -213,7 +213,7 @@ int main(int argc, char **argv)
             std::cerr << "Out fatal Error:\n  " << filename2 << " not found.\n";
             throw std::runtime_error("File Parsing Error: File not found");
         }
-        hdvf.insert_hdvf_reduction(out2) ;
+        hdvf.write_hdvf_reduction(out2) ;
 
         out2.close() ;
 
@@ -225,14 +225,14 @@ int main(int argc, char **argv)
 
         HDVF_type hdvf2(complex);
 
-        hdvf2.extract_hdvf_reduction(in2) ;
+        hdvf2.read_hdvf_reduction(in2) ;
 
         in2.close();
 
         out << "=============== HDVF" << std::endl ;
-        hdvf.insert_reduction() ;
+        hdvf.write_reduction() ;
         out << "=============== HDVF2" << std::endl ;
-        hdvf2.insert_reduction() ;
+        hdvf2.write_reduction() ;
     }
 
     // Test == operators

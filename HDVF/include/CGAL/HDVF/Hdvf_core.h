@@ -331,19 +331,19 @@ public:
     /**
      * \brief Prints the matrices of the reduction.
      *
-     * Prints the matrices of the reduction (that is \f$f\f$, \f$g\f$, \f$h\f$, \f$\partial'\f$ the reduced boundary).
-     * By default, outputs the complex to `std::cout`.
+     * Writes the matrices of the reduction (that is \f$f\f$, \f$g\f$, \f$h\f$, \f$\partial'\f$ the reduced boundary).
+     * By default, writes the complex to `std::cout`.
     */
-    std::ostream& insert_matrices(std::ostream &out = std::cout) const;
+    std::ostream& write_matrices(std::ostream &out = std::cout) const;
 
     /**
-     * \brief Prints the homology and cohomology reduction information.
+     * \brief Writes the homology and cohomology reduction information.
      *
-     * Prints \f$f^*\f$, \f$g\f$ \f$\partial'\f$ the reduced boundary over each critical cell.
+     * Writes \f$f^*\f$, \f$g\f$ \f$\partial'\f$ the reduced boundary over each critical cell.
      *
-     * By default, outputs the complex to `std::cout`.
+     * By default, writes the complex to `std::cout`.
     */
-    std::ostream& insert_reduction(std::ostream &out = std::cout) const;
+    std::ostream& write_reduction(std::ostream &out = std::cout) const;
 
 
     /**
@@ -423,16 +423,16 @@ public:
     }
 
     /**
-     * \brief Saves a HDVF together with the associated reduction (f, g, h, d matrices)
+     * \brief Writes a HDVF together with the associated reduction (f, g, h, d matrices)
      *
-     * Save a HDVF to a stream in `hdvf` file format (a simple text file format, see for a specification).
+     * Writes a HDVF to a stream in `hdvf` file format (a simple text file format, see for a specification).
      */
-    std::ostream& insert_hdvf_reduction(std::ostream& out) ;
+    std::ostream& write_hdvf_reduction(std::ostream& out) ;
 
     /**
-     * \brief Saves a HDVF together with the associated reduction to a file (f, g, h, d matrices).
+     * \brief Writes a HDVF together with the associated reduction to a file (f, g, h, d matrices).
      *
-     * Save a HDVF to a file in `hdvf` file format (a simple text file format, see for a specification).
+     * Writes a HDVF to a file in `hdvf` file format (a simple text file format, see for a specification).
      */
     void write_hdvf_reduction(std::string filename)
     {
@@ -442,7 +442,7 @@ public:
             throw std::runtime_error("File Parsing Error: File not found");
         }
 
-        insert_hdvf_reduction(out_file) ;
+        write_hdvf_reduction(out_file) ;
 
         out_file.close();
     }
@@ -453,7 +453,7 @@ public:
      * Load a HDVF and its reduction from a stream in `hdvf` file format, a simple text file format (see for a specification).
      * \warning The underlying complex is not stored in the file!
      */
-    std::istream& extract_hdvf_reduction(std::istream& in_stream) ;
+    std::istream& read_hdvf_reduction(std::istream& in_stream) ;
 
     /**
      * \brief Loads a HDVF together with the associated reduction from a file (f, g, h, d matrices)
@@ -469,7 +469,7 @@ public:
             throw std::runtime_error("File Parsing Error: File not found");
         }
 
-        extract_hdvf_reduction(in_file);
+        read_hdvf_reduction(in_file);
 
         in_file.close();
     }
@@ -597,7 +597,7 @@ Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::Hdvf_core(const ChainCompl
 
 // Method to print the matrices
 template<typename ChainComplex, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
-std::ostream& Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::insert_matrices(std::ostream& out) const {
+std::ostream& Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::write_matrices(std::ostream& out) const {
     // Iterate through each dimension and print the corresponding matrices
     for (int q = 0; q <= _K.dimension(); ++q) {
         out << "------- Dimension " << q << std::endl;
@@ -922,7 +922,7 @@ std::vector<Cell_pair> Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::com
             if (verbose)
             {
                 std::cout << "A : " << pair.sigma << " - " << pair.tau << " (dim " << pair.dim << ")" << std::endl ;
-                insert_matrices(std::cout) ;
+                write_matrices(std::cout) ;
             }
 
             // Find another pair of cells in dimension q
@@ -972,7 +972,7 @@ std::vector<Cell_pair> Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::com
             if (verbose)
             {
                 std::cout << "A : " << pair.sigma << " - " << pair.tau << " (dim " << pair.dim << ")" << std::endl ;
-                insert_matrices(std::cout) ;
+                write_matrices(std::cout) ;
             }
 
             // Compute possible pairings
@@ -1014,7 +1014,7 @@ std::vector<size_t> Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::psc_fl
 
 // Method to print the current state of the reduction
 template<typename ChainComplex, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
-std::ostream& Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::insert_reduction(std::ostream& out) const
+std::ostream& Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::write_reduction(std::ostream& out) const
 {
     // Print PSC
     out << "----- flags of cells:" << std::endl;
@@ -1142,15 +1142,15 @@ std::ostream& Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::insert_hdvf_
 
 // Save HDVF and reduction
 template<typename ChainComplex, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
-std::istream& Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::extract_hdvf_reduction(std::istream& in_stream)
+std::istream& Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::read_hdvf_reduction(std::istream& in_stream)
 {
     // Load and check HDVF save type
     int type ;
     in_stream >> type ;
     if (type != 0)
     {
-        std::cerr << "extract_hdvf_reduction error: trying to load a pure HDVF file..." << std::endl ;
-        throw ("extract_hdvf_reduction error: trying to load a pure HDVF file...");
+        std::cerr << "read_hdvf_reduction error: trying to load a pure HDVF file..." << std::endl ;
+        throw ("read_hdvf_reduction error: trying to load a pure HDVF file...");
     }
 
     // Load and check dimension
@@ -1158,8 +1158,8 @@ std::istream& Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::extract_hdvf
     in_stream >> d ;
     if (d != _K.dimension())
     {
-        std::cerr << "extract_hdvf_reduction error: dimension loaded incompatible with the dimension of the underlying complex" << std::endl ;
-        throw ("extract_hdvf_reduction error: dimension loaded incompatible with the dimension of the underlying complex");
+        std::cerr << "read_hdvf_reduction error: dimension loaded incompatible with the dimension of the underlying complex" << std::endl ;
+        throw ("read_hdvf_reduction error: dimension loaded incompatible with the dimension of the underlying complex");
     }
     // Load and check number of cells
     int nb ;
@@ -1168,7 +1168,7 @@ std::istream& Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::extract_hdvf
         in_stream >> nb ;
         if (nb != _K.number_of_cells(q))
         {
-            std::string mess("extract_hdvf_reduction error: incoherent number of cells in dimension ");
+            std::string mess("read_hdvf_reduction error: incoherent number of cells in dimension ");
             mess += std::to_string(q);
             std::cerr << mess << std::endl ;
             throw (mess);

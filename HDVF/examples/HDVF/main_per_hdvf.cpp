@@ -98,7 +98,7 @@ HDVF::Hdvf_persistence<Complex, Degree, FiltrationType>& per_HDVF_comput (const 
         std::cout << "----> perHDVF" << std::endl ;
         hdvf.print_hdvf_persistence_info(std::cout);
         std::cout << "----> reduction" << std::endl ;
-        hdvf.insert_reduction() ;
+        hdvf.write_reduction() ;
         std::cout << "----> persistent diagram" << std::endl ;
         std::cout << hdvf ;
     }
@@ -115,7 +115,7 @@ HDVF::Hdvf_persistence<Complex, Degree, FiltrationType>& per_HDVF_comput (const 
         out << "----> perHDVF" << std::endl ;
         hdvf.print_hdvf_persistence_info(out);
         out << "----> reduction" << std::endl ;
-        hdvf.insert_reduction(out) ;
+        hdvf.write_reduction(out) ;
 
         out.close() ;
 

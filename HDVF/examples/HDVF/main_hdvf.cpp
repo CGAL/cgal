@@ -70,21 +70,21 @@ HDVF::Hdvf<Complex>& HDVF_comput (const Complex& complex, const Options &options
         std::cout << "----> pairs found by computePerfectHDVF" << std::endl ;
         std::cout << pairs ;
         std::cout << "----> reduction" << std::endl ;
-        hdvf.insert_reduction() ;
+        hdvf.write_reduction() ;
     }
     if (options.with_export)
     {
         std::string file(options.outfile_root+"_reduction.txt") ;
         std::ofstream out ( file, std::ios::out | std::ios::trunc);
 
-        if ( not out . good () ) {
+        if ( ! out . good () ) {
             std::cerr << "hdvf: with_export. Fatal Error:\n  " << file << " not found.\n";
             throw std::runtime_error("File Parsing Error: File not found");
         }
         out << "----> pairs found by computePerfectHDVF" << std::endl ;
         out << pairs ;
         out << "----> reduction" << std::endl ;
-        hdvf.insert_reduction(out) ;
+        hdvf.write_reduction(out) ;
 
         out.close() ;
     }
