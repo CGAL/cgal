@@ -34,23 +34,25 @@ namespace Homological_discrete_vector_field {
 
  \cgalModels{IntegralDomainWithoutDivision}
 
- \tparam p an integer.
+ \tparam p a positive integer.
  \tparam _TSlot a type used for the inner storage of the values (default: `int`).
  */
 
-template <int p, typename _TSlot = int, bool IsPrime = true>
+template <size_t p, typename _TSlot = unsigned int, bool IsPrime = true>
 class Zp {
     _TSlot _i ;
 public:
 
     /** \brief Constructor from a value */
-    Zp(_TSlot i=0) : _i( (i>=0)?(i % p):((i % p) + p) ) { }
-
+    Zp(_TSlot i=0) : _i( (i>=0)?(i % _TSlot(p)):((i % _TSlot(p)) + p) ) { }
 
     // Copy constructor
     Zp(const Zp& a) : _i(a._i) {}
 
-
+    /** \brief Returns the value of p. */
+    static _TSlot p_val () { return _TSlot(p); }
+    
+    /** \brief Tests if the element is 0. */
     bool is_zero() const { return _i == 0 ; }
 
     /** \brief Unary operator+ */
@@ -176,6 +178,17 @@ public:
         in >> tmp ;
         a = Zp(tmp) ;
         return (in) ;
+    }
+    
+    /** \brief Returns the invertibility of the element. */
+    bool is_invertible() {
+        if (IsPrime)
+            return (_i != 0);
+        else
+        {
+            // TODO: optimize with static data
+            return (gcd(_i,p) == 1);
+        }
     }
 };
 
