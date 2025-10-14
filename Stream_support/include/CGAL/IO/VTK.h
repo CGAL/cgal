@@ -20,6 +20,8 @@
 
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
+#include <CGAL/Cartesian_converter.h>
+#include <CGAL/Simple_cartesian.h>
 
 #ifdef CGAL_USE_VTK
 #include <vtkSmartPointer.h>
@@ -255,9 +257,11 @@ void write_soup_points_tag(std::ostream& os,
   }
   else
   {
+    typedef Simple_cartesian<double> SC;
+    Cartesian_converter<Gt,SC> conv;
     os << "\">\n";
     for(const Point& p : points)
-      os << IO::oformat(p.x()) << " " << IO::oformat(p.y()) << " " << IO::oformat(p.z()) << " ";
+      os << conv(p) << " ";
     os << "      </DataArray>\n";
   }
   os << "    </Points>\n";

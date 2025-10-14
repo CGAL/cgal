@@ -21,6 +21,8 @@
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/iterator.h>
 #include <CGAL/Kernel_traits.h>
+#include <CGAL/Cartesian_converter.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/use.h>
 
 #include <boost/range/value_type.hpp>
@@ -295,8 +297,11 @@ bool write_GOCAD(std::ostream& os,
         "END_ORIGINAL_COORDINATE_SYSTEM\n"
         "TFACE\n";
 
+  typedef typename Kernel_traits<typename boost::property_traits<PointMap>::value_type>::type K;
+  typedef Simple_cartesian<double> SC;
+  Cartesian_converter<K,SC> conv;
   for(std::size_t i=0, end=points.size(); i<end; ++i)
-    os << "VRTX " << i << " " << get(point_map, points[i]) << "\n";
+    os << "VRTX " << i << " " << conv(get(point_map, points[i])) << "\n";
 
   for(const Poly& poly : polygons)
   {
@@ -332,13 +337,13 @@ bool write_GOCAD(std::ostream& os,
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{point_map}
- *     \cgalParamDescription{a property map associating points with %Cartesian coordinates to the elements of the point set `points`}
+ *     \cgalParamDescription{a property map associating points to the elements of the range `points`}
  *     \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type
- *                    of the iterator of `PointRange` and value type is a point type with %Cartesian coordinates}
+ *                    of the iterator of `PointRange` and value type is a model of the concept`Point_3`}
  *     \cgalParamDefault{`CGAL::Identity_property_map<std::iterator_traits<PointRange::iterator>::value_type>`}
  *   \cgalParamNEnd
  *   \cgalParamNBegin{stream_precision}
- *     \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
+ *     \cgalParamDescription{a parameter used to set the precision (i.e., how many digits are generated) of the output stream}
  *     \cgalParamType{int}
  *     \cgalParamDefault{the precision of the stream `os`}
  *   \cgalParamNEnd
@@ -380,9 +385,9 @@ bool write_GOCAD(std::ostream& os,
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{point_map}
- *     \cgalParamDescription{a property map associating points with %Cartesian coordinates to the elements of the point set `points`}
+ *     \cgalParamDescription{a property map associating points to the elements of the range `points`}
  *     \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type
- *                    of the iterator of `PointRange` and value type is a point type with %Cartesian coordinates}
+ *                    of the iterator of `PointRange` and value type is a model of the concept `Point_3`}
  *     \cgalParamDefault{`CGAL::Identity_property_map<std::iterator_traits<PointRange::iterator>::value_type>`}
  *   \cgalParamNEnd
  *   \cgalParamNBegin{stream_precision}

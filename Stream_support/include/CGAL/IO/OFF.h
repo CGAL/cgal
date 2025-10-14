@@ -268,9 +268,9 @@ bool read_OFF(const std::string& fname,
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{point_map}
- *     \cgalParamDescription{a property map associating points with %Cartesian coordinates to the elements of the point set `points`}
+ *     \cgalParamDescription{a property map associating points  to the elements of the range`points`}
  *     \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type
- *                    of the iterator of `PointRange` and value type is a point type with %Cartesian coordinates}
+ *                    of the iterator of `PointRange` and value type is a model of the concept `Point_3`}
  *     \cgalParamDefault{`CGAL::Identity_property_map<std::iterator_traits<PointRange::iterator>::value_type>`}
  *   \cgalParamNEnd
  *   \cgalParamNBegin{stream_precision}
@@ -315,9 +315,9 @@ bool write_OFF(std::ostream& os,
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{point_map}
- *     \cgalParamDescription{a property map associating points with %Cartesian coordinates to the elements of the point set `points`}
+ *     \cgalParamDescription{a property map associating points to the elements of the range `points`}
  *     \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type
- *                    of the iterator of `PointRange` and value type is a point type with %Cartesian coordinates}
+ *                    of the iterator of `PointRange` and value type is a model of the concept `Point_3`}
  *     \cgalParamDefault{`CGAL::Identity_property_map<geom_traits::Point_3>`}
  *   \cgalParamNEnd
  *   \cgalParamNBegin{stream_precision}
