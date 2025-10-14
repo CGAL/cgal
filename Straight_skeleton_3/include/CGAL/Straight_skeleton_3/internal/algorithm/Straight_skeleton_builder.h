@@ -692,7 +692,6 @@ public:
     Vector3SPtr n_2 = KernelFactory::createVector3(plane_2);
     Vector3SPtr n_3 = KernelFactory::createVector3(plane_3);
 
-    // @fixme likely wrong
     direction = KernelFactory::createVector3(speed_1 * (*n_1) + speed_2 * (*n_2) + speed_3 * (*n_3));
 
     if (direction) {

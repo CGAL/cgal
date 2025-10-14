@@ -159,10 +159,10 @@ bool preprocess_input(const char* mesh_filename,
 template <typename Mesh,
           typename FaceWeightMap,
           typename FT>
-bool test_datum(const Mesh& sm,
-                const FaceWeightMap fwm,
-                const std::vector<FT>& save_times,
-                const std::filesystem::path& save_path)
+bool run(const Mesh& sm,
+         const FaceWeightMap fwm,
+         const std::vector<FT>& save_times,
+         const std::filesystem::path& save_path)
 {
   namespace PMP = CGAL::Polygon_mesh_processing;
   namespace SS3 = CGAL::Straight_skeletons_3;

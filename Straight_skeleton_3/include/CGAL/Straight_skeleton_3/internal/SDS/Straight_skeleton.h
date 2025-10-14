@@ -436,7 +436,6 @@ public:
         break;
       }
     }
-
     typename std::list<SheetSPtr>::const_iterator it_s = sheets_.begin();
     while (it_s != sheets_.end()) {
       SheetSPtr sheet = *it_s++;

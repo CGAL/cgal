@@ -761,7 +761,6 @@ public:
     return test_o_facet(edge, s);
   }
 
-  // @fixme self-intersection on boundaries does not seem well defined
   static bool hasSelfIntersectingSurface(const PolyhedronSPtr& polyhedron)
   {
     CGAL_SS3_DEBUG_SPTR(polyhedron);

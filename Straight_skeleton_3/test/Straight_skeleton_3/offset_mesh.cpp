@@ -14,7 +14,6 @@
 #include <list>
 #include <vector>
 
-namespace PMP = CGAL::Polygon_mesh_processing;
 namespace SS3 = CGAL::Straight_skeletons_3;
 
 using K = CGAL::Exact_predicates_exact_constructions_kernel;
