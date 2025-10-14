@@ -96,7 +96,8 @@ namespace CGAL {
                                    ConstraintIterator beyond)
   {
     typedef typename T::Point Point;
-    typedef typename T::Point Point;
+    typedef std::vector< std::pair<std::size_t, std::size_t> >::iterator IndicesIterator;
+
     std::vector<Point> points;
     for (ConstraintIterator s_it=first; s_it!=beyond; ++s_it)
     {
@@ -110,10 +111,10 @@ namespace CGAL {
     for (std::size_t k=0; k < nb_segments; ++k)
       segment_indices.push_back( std::make_pair(2*k,2*k+1) );
 
-    return insert_constraints<check_duplicates>( t,
-                                                 points,
-                                                 segment_indices.begin(),
-                                                 segment_indices.end());
+    return insert_constraints<T, IndicesIterator,check_duplicates>(t,
+                                                                   points,
+                                                                   segment_indices.begin(),
+                                                                   segment_indices.end());
   }
 
 

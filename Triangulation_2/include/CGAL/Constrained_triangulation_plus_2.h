@@ -362,7 +362,7 @@ public:
                                  IndicesIterator indices_beyond)
   {
     std::vector<Point> points(points_first, points_beyond);
-    return internal::insert_constraints<check_duplicates>(*this, points, indices_first, indices_beyond);
+    return internal::insert_constraints<Self,IndicesIterator,check_duplicates>(*this, points, indices_first, indices_beyond);
   }
 
 
@@ -370,7 +370,7 @@ public:
   std::size_t insert_constraints(ConstraintIterator first,
                                  ConstraintIterator beyond)
   {
-    return internal::insert_constraints<check_duplicates>(*this, first, beyond);
+    return internal::insert_constraints<Self,ConstraintIterator,check_duplicates>(*this, first, beyond);
   }
 
   template <class PointIterator, class IndicesIterator>
@@ -380,7 +380,7 @@ public:
                                         IndicesIterator indices_beyond)
   {
     std::vector<Point> points(points_first, points_beyond);
-    return internal::insert_constraints<true>(*this, points, indices_first, indices_beyond);
+    return internal::insert_constraints<Self,IndicesIterator,true>(*this, points, indices_first, indices_beyond);
   }
 
 
@@ -388,7 +388,7 @@ public:
   std::size_t insert_unique_constraints(ConstraintIterator first,
                                         ConstraintIterator beyond)
   {
-    return internal::insert_constraints<true>(*this, first, beyond);
+    return internal::insert_constraints<Self,ConstraintIterator,true>(*this, first, beyond);
   }
 
 
