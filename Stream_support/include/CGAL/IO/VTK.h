@@ -243,8 +243,8 @@ void write_soup_points_tag(std::ostream& os,
   typedef typename Gt::FT                                   FT;
 
   std::string format = binary ? "appended" : "ascii";
-  std::string type = (sizeof(FT) == 8) ? "Float64" : "Float32";
-
+  std::string type = (std::is_same_v<CGAL::cpp20::remove_cvref_t<FT>, float>) ? "Float32" : "Float64";
+  std::size_t sizeof_FT = (std::is_same_v<CGAL::cpp20::remove_cvref_t<FT>, float>) ? 4 : 8;
   os << "    <Points>\n"
      << "      <DataArray type =\"" << type << "\" NumberOfComponents=\"3\" format=\""
      << format;
@@ -252,7 +252,7 @@ void write_soup_points_tag(std::ostream& os,
   if(binary)
   {
     os << "\" offset=\"" << offset << "\"/>\n";
-    offset += 3 * points.size() * sizeof(FT) + sizeof(std::size_t);
+    offset += 3 * points.size() * sizeof_FT + sizeof(std::size_t);
     // 3 coords per points + length of the encoded data (size_t)
   }
   else
@@ -387,16 +387,31 @@ void write_soup_polys_points(std::ostream& os,
   typedef typename CGAL::Kernel_traits<Point>::Kernel       Gt;
   typedef typename Gt::FT                                   FT;
 
-  std::vector<FT> coordinates;
+  if(std::is_same_v<CGAL::cpp20::remove_cvref_t<FT>, float> ||
+     std::is_same_v<CGAL::cpp20::remove_cvref_t<FT>, double>){
+    std::vector<FT> coordinates;
 
-  for(const Point& p : points)
-  {
-    coordinates.push_back(p.x());
-    coordinates.push_back(p.y());
-    coordinates.push_back(p.z());
+    for(const Point& p : points)
+    {
+      coordinates.push_back(p.x());
+      coordinates.push_back(p.y());
+      coordinates.push_back(p.z());
+    }
+
+    write_vector<FT>(os, coordinates);
+  }else{
+    std::vector<double> coordinates;
+
+    for(const Point& p : points)
+    {
+      coordinates.push_back(CGAL::to_double(p.x()));
+      coordinates.push_back(CGAL::to_double(p.y()));
+      coordinates.push_back(CGAL::to_double(p.z()));
+    }
+
+    write_vector<double>(os, coordinates);
   }
 
-  write_vector<FT>(os, coordinates);
 }
 
 } // namespace internal
@@ -487,6 +502,7 @@ bool write_VTP(std::ostream& os,
     internal::write_soup_polys(os, polygons,size_map, cell_type);
   }
   os << "</VTKFile>" << std::endl;
+  return true;
 }
 
 /*!
