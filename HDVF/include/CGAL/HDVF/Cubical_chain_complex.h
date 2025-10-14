@@ -416,7 +416,7 @@ public:
 
     /** \brief Gets the coordinates of the ith vertex */
 
-    Point get_vertex_coords(size_t i) const
+    Point point(size_t i) const
     {
         const std::vector<size_t> coords(bindex_to_cell(_base2bool.at(0).at(i))) ;
         std::vector<double> res ;
@@ -429,11 +429,11 @@ public:
     }
 
     /** \brief Gets the vector of vertex coordinates  */
-    const std::vector<Point>& get_vertices_coords() const
+    const std::vector<Point>& points() const
     {
         std::vector<Point> res ;
         for (size_t i=0; i<number_of_cells(0); ++i)
-            res.push_back(get_vertex_coords(i)) ;
+            res.push_back(point(i)) ;
         return res ;
     }
 
@@ -477,7 +477,7 @@ public:
         out << "POINTS " << nnodes << " double" << std::endl ;
         for (size_t n = 0; n < nnodes; ++n)
         {
-            Point p(K.get_vertex_coords(n)) ;
+            Point p(K.point(n)) ;
             out << p ;
             if constexpr (Traits::Dimension::value==2){
                 out << " 0";
@@ -1030,7 +1030,7 @@ void Cubical_chain_complex<CoefficientRing,Traits>::chain_to_vtk(const Cubical_c
     out << "POINTS " << nnodes << " double" << std::endl ;
     for (size_t n = 0; n < nnodes; ++n)
     {
-        Point p(K.get_vertex_coords(n)) ;
+        Point p(K.point(n)) ;
         out << p;
         if constexpr (Traits::Dimension::value==2){
             out << " 0";

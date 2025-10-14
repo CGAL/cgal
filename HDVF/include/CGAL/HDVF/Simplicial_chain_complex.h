@@ -83,7 +83,7 @@ public:
     }
 
     /** \brief Gets the vector of vertex coordinates  */
-    const std::vector<Point>& get_vertices_coords() const
+    const std::vector<Point>& points() const
     {
         return _coords ;
     }
@@ -94,7 +94,7 @@ public:
      *  id0: 3, id1 : 2, id2: 1
      * then the bottom_faces of the 1-simplex {1,2} are two 0-simplices with id 2 and 1.
      */
-    Point get_vertex_coords (size_t i) const
+    Point point(size_t i) const
     {
         const Simplex simpl(this->_ind2simp.at(0).at(i)) ;
         const std::vector<size_t> verts(simpl.get_vertices()) ;
@@ -145,7 +145,7 @@ public:
         // Points
         size_t nnodes = K._coords.size() ;
         out << "POINTS " << nnodes << " double" << std::endl ;
-        const std::vector<ChainComplex::Point>& coords(K.get_vertices_coords()) ;
+        const std::vector<ChainComplex::Point>& coords(K.points()) ;
         for (size_t n = 0; n < nnodes; ++n)
         {
             Point p(coords.at(n)) ;
@@ -267,7 +267,7 @@ void Simplicial_chain_complex<CoefficientRing,Traits>::chain_to_vtk(const Simpli
     // Points
     size_t nnodes = K._coords.size() ;
     out << "POINTS " << nnodes << " double" << std::endl ;
-    const std::vector<ChainComplex::Point>& coords(K.get_vertices_coords()) ;
+    const std::vector<ChainComplex::Point>& coords(K.points()) ;
     for (size_t n = 0; n < nnodes; ++n)
     {
         Point p(coords.at(n)) ;

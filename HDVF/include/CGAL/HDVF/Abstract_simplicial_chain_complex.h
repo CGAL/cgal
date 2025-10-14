@@ -299,9 +299,9 @@ protected:
     /*
      * \brief Method inserting a simplex (and its faces if necessary) into the abstract simplicial complex.
      *
-     * The method (recursively) inserts the simplex into _ind2simp and _simp2ind and its faces. If the simplex is already presend, the method does nothing.
+     * The method (recursively) inserts the simplex into `_ind2simp` and `_simp2ind` and its faces. If the simplex is already present, the method does nothing.
      *
-     * \warning insert_simplex does not update the boundary matrix.
+     * \warning `insert_simplex()` does not update the boundary matrix.
      *
      * \param[in] tau The simplex inserted.
      */
@@ -338,7 +338,7 @@ Abstract_simplicial_chain_complex<CoefficientRing>::Abstract_simplicial_chain_co
 
     _dim = std::abs(mesh.dim);
 
-    // Initialize vectors of Simplices and cell counts
+    // Initialize vectors of simplices and cell counts
     _ind2simp.resize(_dim + 1);
     _simp2ind.resize(_dim + 1);
     _nb_cells.resize(_dim + 1, 0);

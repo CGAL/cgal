@@ -58,7 +58,7 @@ std::function<Degree(int)>  degree_function (const Complex& complex)
 {
     std::function<Degree(int)> deg_fun_f = [&complex](int i)
     {
-        const std::vector<double> Xi(complex.get_vertex_coords(i)) ;
+        const std::vector<double> Xi(complex.point(i)) ;
         /// Define proper filtration value below
         return Xi.at(0)+Xi.at(2) ;
     } ;

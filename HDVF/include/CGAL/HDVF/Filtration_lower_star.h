@@ -29,13 +29,13 @@ namespace Homological_discrete_vector_field {
 
 //std::function<double(size_t)> deg_fun_x = [&complex](size_t i)
 //{
-//    std::vector<double> Xi(complex.get_vertex_coords(i)) ;
+//    std::vector<double> Xi(complex.point(i)) ;
 //    return (Xi.at(0)) ;
 //} ;
 //
 //std::function<double(size_t)> deg_fun_z = [&complex](size_t i)
 //{
-//    std::vector<double> Xi(complex.get_vertex_coords(i)) ;
+//    std::vector<double> Xi(complex.point(i)) ;
 //    return (Xi.at(2)) ;
 //} ;
 
@@ -63,7 +63,7 @@ std::function<double(size_t)>  degree_function (const ChainComplex& complex,  co
 {
     std::function<double(size_t)> deg_fun_f = [&complex, &f](size_t i)
     {
-        const P& Xi(complex.get_vertex_coords(i)) ;
+        const P& Xi(complex.point(i)) ;
         return f(Xi) ;
     } ;
     return deg_fun_f ;

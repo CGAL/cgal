@@ -413,7 +413,7 @@ public:
             }
 
         std::vector<Point> coords;
-        for (auto it = _CC.get_vertices_coords().begin(); it != _CC.get_vertices_coords().end(); ++it)
+        for (auto it = _CC.points().begin(); it != _CC.points().end(); ++it)
             coords.push_back(Point(*it));
         Mesh_object_io<Traits> &m = *(new Mesh_object_io<Traits>(-3, coords, vcells)) ;
         return m ;

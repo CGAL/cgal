@@ -38,12 +38,12 @@ typedef unspecified_type Point ;
 /*!
 Returns the vector of vertex coordinates.
  */
-const std::vector<Point>& get_vertices_coords() const;
+const std::vector<Point>& points() const;
 
 /*!
  Returns the coordinates of the cell of index `i` and dimension 0.
  */
-Point get_vertex_coords (size_t i) const;
+Point point(size_t i) const;
 
 /// @}
 
