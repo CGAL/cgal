@@ -1089,7 +1089,7 @@ std::ostream& Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::write_reduct
 
 // Save HDVF and reduction
 template<typename ChainComplex, template <typename, int> typename ChainType, template <typename, int> typename SparseMatrixType>
-std::ostream& Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::insert_hdvf_reduction(std::ostream& out)
+std::ostream& Hdvf_core<ChainComplex, ChainType, SparseMatrixType>::write_hdvf_reduction(std::ostream& out)
 {
     // HDVF save type
     // 0: HDVF and reduction
