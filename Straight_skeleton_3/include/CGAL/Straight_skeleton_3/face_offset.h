@@ -37,10 +37,10 @@ namespace Straight_skeletons_3 {
  * Given a range of values, this function generates face offsets of an input triangle mesh.
  *
  * The offset meshes are constructed by translating the faces of the input mesh by a distance
- * that depends on the specified offset and their respective weights (speeds). During
+ * that depends on the specified time and their respective weights (speeds). During
  * offsetting, elements of the mesh interact with each other (merging, splitting, etc.).
  *
- * Positive offset values correspond to outward offsets, while negative values correspond to inward offsets.
+ * Positive time values signify outward offsetting, while negative values correspond to inward offsetting.
  *
  * \warning An epsilon perturbation is always applied to the input mesh's geometry as to avoid so-called
  * degenerate positions, meaning a configuration where any three supporting planes of the facets
@@ -95,6 +95,14 @@ namespace Straight_skeletons_3 {
  *                     as key type and `double` as value type}
  *      \cgalParamDefault{unused}
  *    \cgalParamNEnd
+ *   \cgalNamedParamsBegin
+ *     \cgalParamNBegin{do_not_triangulate_faces}
+ *       \cgalParamDescription{a Boolean used to specify whether the offset meshes' faces
+ *                             should be triangulated or not.}
+ *       \cgalParamDefault{`false` (i.e., faces are not triangulated)}
+ *       \cgalParamExtra{Note that sometimes faces must be triangulated to be representable,
+ *                       such as faces with holes.}
+ *     \cgalParamNEnd
  *  \cgalNamedParamsEnd
  *
  * \pre save offsets should be either all positive, or all negative.
@@ -150,18 +158,18 @@ bool face_offset(const TriangleMeshIn& tmesh,
 
   const bool outwards = (!save_times.empty() && CGAL::is_positive(save_times.front()));
 
-  // check that all offsets are of the same sign (ignoring zeros)
+  // check that all times are of the same sign (ignoring zeros)
   for (const FT& time : save_times) {
     if (CGAL::is_zero(time)) {
       std::cerr << "Error: time should be non-zero" << std::endl;
       return false;
     } else if (CGAL::is_positive(time) != outwards) {
-      std::cerr << "Error: offsets must all be positive or all negative." << std::endl;
+      std::cerr << "Error: times must all be positive or all negative." << std::endl;
       return false;
     }
   }
 
-  // The underlying implementation always shrinks the mesh, so for outwards offsets,
+  // The underlying implementation always shrinks the mesh, so for outwards offsetting,
   // we reverse the face orientations, whether the mesh was outward oriented or not.
   if (outwards) {
     for (FT& t : save_times) {
@@ -207,7 +215,7 @@ bool face_offset(const TriangleMeshIn& tmesh,
 
   CGAL_SS3_TRACE("Post perturbation: " << p->vertices().size() << " NV " << p->facets().size() << " NF");
 
-  // visitor to collect the results at save offsets
+  // visitor to collect the results at save times
   struct Mesh_collector_visitor
     : public internal::algorithm::Default_mesh_offset_visitor<Geom_traits>
   {
@@ -254,7 +262,7 @@ bool face_offset(const TriangleMeshIn& tmesh,
     PolyhedronSPtr result_p = results_p[i];
     CGAL_assertion(result_p && result_p->isConsistent());
 
-    CGAL_SS3_TRACE("At offset: " << save_time << ", Polyhedron with " << result_p->vertices().size()
+    CGAL_SS3_TRACE("At time: " << save_time << ", Polyhedron with " << result_p->vertices().size()
                      << " vertices and " << result_p->facets().size() << " faces");
 
     // Convert back to Surface_mesh structure to save the results.
@@ -274,7 +282,7 @@ bool face_offset(const TriangleMeshIn& tmesh,
     CGAL_postcondition(!PMP::has_degenerate_faces(result_t));
     CGAL_postcondition(!PMP::does_self_intersect(result_t));
 
-    CGAL_SS3_TRACE("At offset: " << save_time << ", Surface_mesh with " << num_vertices(result_t)
+    CGAL_SS3_TRACE("At time: " << save_time << ", Surface_mesh with " << num_vertices(result_t)
                      << " vertices and " << num_faces(result_t) << " faces");
 
     if (outwards) {
