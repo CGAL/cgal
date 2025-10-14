@@ -190,8 +190,8 @@ public:
   {
     CGAL_SS3_DEBUG_SPTR(sheet);
 
-    // @fixme something like this should be true once incident facets are fixed
-    // CGAL_precondition(this->facet_b_ == sheet->getFacetB() && this->facet_f_ == sheet->getFacetF());
+    CGAL_precondition((this->facet_b_ == sheet->getFacetB() && this->facet_f_ == sheet->getFacetF()) ||
+                      (this->facet_b_ == sheet->getFacetF() && this->facet_f_ == sheet->getFacetB()));
 
     // copy all arcs that do not yet exist in the sheet
     for (ArcSPtr arc : sheet->arcs()) {
