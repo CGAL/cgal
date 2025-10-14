@@ -153,6 +153,16 @@ public:
     return bool(node_dst_);
   }
 
+  NodeSPtr other(const NodeSPtr& node) const
+  {
+    CGAL_precondition(node == node_src_ || node == node_dst_);
+    if (node == node_src_) {
+      return node_dst_;
+    } else {
+      return node_src_;
+    }
+  }
+
   void closeArc(const NodeSPtr& node_dst)
   {
     CGAL_SS3_DEBUG_SPTR(node_dst);
