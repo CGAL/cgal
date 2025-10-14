@@ -106,7 +106,7 @@ template <typename TriangleMeshIn, typename PolygonMeshOut,
           typename FT,
           typename NamedParametersIn = parameters::Default_named_parameters,
           typename NamedParametersOut = parameters::Default_named_parameters>
-bool face_offset(TriangleMeshIn& tmesh,
+bool face_offset(const TriangleMeshIn& tmesh,
                  std::vector<FT> save_times, // intentional copy
                  std::vector<PolygonMeshOut>& results,
                  const NamedParametersIn& np_in = parameters::default_values(),
@@ -164,10 +164,6 @@ bool face_offset(TriangleMeshIn& tmesh,
   // The underlying implementation always shrinks the mesh, so for outwards offsets,
   // we reverse the face orientations, whether the mesh was outward oriented or not.
   if (outwards) {
-    CGAL_SS3_TRACE("Reversing face orientations...");
-    PMP::reverse_face_orientations(tmesh);
-
-    // also switch to negative offsets
     for (FT& t : save_times) {
       t = -t;
     }
@@ -175,7 +171,7 @@ bool face_offset(TriangleMeshIn& tmesh,
 
   // Convert the suface mesh into the SLS3-specific data structure that allows faces with multiple
   // borders and disconnected facet connected components
-  PolyhedronSPtr p = FaceGraphIO::convert(tmesh, np_in);
+  PolyhedronSPtr p = FaceGraphIO::convert(tmesh, np_in.outward_offsetting(outwards));
   CGAL_SS3_DEBUG_SPTR(p);
   Transformation::normalizeFacetPlanes(p);
 

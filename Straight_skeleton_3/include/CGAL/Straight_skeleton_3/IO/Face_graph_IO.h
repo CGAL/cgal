@@ -27,6 +27,7 @@
 #endif
 #include <CGAL/IO/polygon_mesh_io.h>
 
+#include <algorithm>
 #include <cmath>
 #include <exception>
 #include <iostream>
@@ -88,6 +89,8 @@ public:
     VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                                get_const_property_map(vertex_point, tmesh));
 
+    const bool outward_offsetting = choose_parameter(get_parameter(np, internal_np::outward_offsetting), false);
+
     CGAL_warning(CGAL::is_triangle_mesh(tmesh));
 
     PolyhedronSPtr result = Polyhedron::create();
@@ -133,6 +136,10 @@ public:
           whatstream << "Vertex with id=" << vertex_id << " does not exist.";
           throw std::runtime_error(whatstream.str());
         }
+      }
+
+      if (outward_offsetting) {
+        std::reverse(poly_vertices.begin(), poly_vertices.end());
       }
 
       FacetSPtr facet = Facet::create(poly_vertices);
