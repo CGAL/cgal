@@ -19,6 +19,7 @@
 #include <string>
 
 namespace CGAL {
+namespace Straight_skeletons_3 {
 namespace utils {
 
 // Simple helper function to draw a mesh whose faces are colored according to the weights (speeds).
@@ -68,6 +69,7 @@ void save_colored_mesh(const PolygonMesh& pmesh,
 }
 
 } // namespace utils
+} // namespace Straight_skeletons_3
 } // namespace CGAL
 
 #endif // CGAL_STRAIGHT_SKELETON_3_TEST_COLOR_INPUT_H
