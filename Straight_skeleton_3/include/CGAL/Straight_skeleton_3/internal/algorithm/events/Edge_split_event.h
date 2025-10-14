@@ -131,9 +131,11 @@ public:
     sstr << "EdgeSplitEvent\n";
     sstr << "\t(ID=" << Base::getID() << ")\n";
     sstr << "\t(time=" << IO::StringFactory::fromDouble(CGAL::to_double(Base::getTime())) << ")\n";
-    sstr << "\t(point=<" + IO::StringFactory::fromDouble(CGAL::to_double(getPoint()->x())) + " "
-                         + IO::StringFactory::fromDouble(CGAL::to_double(getPoint()->y())) + " "
-                         + IO::StringFactory::fromDouble(CGAL::to_double(getPoint()->z())) + ">)";
+    if (point_) {
+      sstr << "\t(point=<" + IO::StringFactory::fromDouble(CGAL::to_double(point_->x())) + " "
+                           + IO::StringFactory::fromDouble(CGAL::to_double(point_->y())) + " "
+                           + IO::StringFactory::fromDouble(CGAL::to_double(point_->z())) + ">)";
+    }
     sstr << "\t(edgeA=" << edge1->getID() << "[" << edge1->getVertexSrc()->getID() << "-"
                                                  << edge1->getVertexDst()->getID() << "]"
          << "; edgeB=" << edge2->getID() << "[" << edge2->getVertexSrc()->getID() << "-"
@@ -144,7 +146,7 @@ public:
   bool operator==(const EdgeSplitEvent& other) const
   {
     return (Base::getTime() == other.getTime()) &&
-            (*(getPoint()) == *(other.getPoint())) &&
+            (!point_ || !other.point_ || *point_ == *(other.point_)) &&
             ((edge1_.lock() == other.edge1_.lock() &&
               edge2_.lock() == other.edge2_.lock()) ||
             (edge1_.lock() == other.edge2_.lock() &&

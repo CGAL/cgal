@@ -238,6 +238,24 @@ public:
   }
 
 public:
+  static std::optional<FT> getVanishTime(const EdgeSPtr& edge)
+  {
+    CGAL_SS3_DEBUG_SPTR(edge);
+    CGAL_precondition(edge->hasData());
+    SkelEdgeDataSPtr data = std::dynamic_pointer_cast<SkelEdgeData>(edge->getData());
+    CGAL_SS3_DEBUG_SPTR(data);
+    return data->getVanishTime();
+  }
+
+  static void setVanishTime(const EdgeSPtr& edge, const std::optional<FT>& vanish_time)
+  {
+    CGAL_SS3_DEBUG_SPTR(edge);
+    CGAL_precondition(edge->hasData());
+    SkelEdgeDataSPtr data = std::dynamic_pointer_cast<SkelEdgeData>(edge->getData());
+    CGAL_SS3_DEBUG_SPTR(data);
+    data->setVanishTime(vanish_time);
+  }
+
   static SheetSPtr getSheet(const EdgeSPtr& edge)
   {
     CGAL_SS3_DEBUG_SPTR(edge);

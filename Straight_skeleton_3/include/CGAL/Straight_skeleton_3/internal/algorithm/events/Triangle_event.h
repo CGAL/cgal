@@ -149,9 +149,11 @@ public:
     sstr << "TriangleEvent\n";
     sstr << "\t(ID=" << Base::getID() << ")\n";
     sstr << "\t(time=" << IO::StringFactory::fromDouble(CGAL::to_double(Base::getTime())) << ")\n";
-    sstr << "\t(point=<" + IO::StringFactory::fromDouble(CGAL::to_double(getPoint()->x())) + " "
-                         + IO::StringFactory::fromDouble(CGAL::to_double(getPoint()->y())) + " "
-                         + IO::StringFactory::fromDouble(CGAL::to_double(getPoint()->z())) + ">)";
+    if (point_) {
+      sstr << "\t(point=<" + IO::StringFactory::fromDouble(CGAL::to_double(point_->x())) + " "
+                           + IO::StringFactory::fromDouble(CGAL::to_double(point_->y())) + " "
+                           + IO::StringFactory::fromDouble(CGAL::to_double(point_->z())) + ">)";
+    }
     sstr << "\t(facet=" << facet->getID() << ")";
     return sstr.str();
   }
@@ -159,7 +161,7 @@ public:
   bool operator==(const TriangleEvent& other) const
   {
     return (Base::getTime() == other.getTime()) &&
-            (*(getPoint()) == *(other.getPoint())) &&
+            (!point_ || !other.point_ || *point_ == *(other.point_)) &&
             (facet_.lock() == other.facet_.lock()) &&
             (edge_begin_.lock() == other.edge_begin_.lock());
   }

@@ -140,9 +140,11 @@ public:
     sstr << "DblTriangleEvent\n";
     sstr << "\t(ID=" << Base::getID() << ")\n";
     sstr << "\t(time=" << IO::StringFactory::fromDouble(CGAL::to_double(Base::getTime())) << ")\n";
-    sstr << "\t(point=<" + IO::StringFactory::fromDouble(CGAL::to_double(getPoint()->x())) + " "
-                         + IO::StringFactory::fromDouble(CGAL::to_double(getPoint()->y())) + " "
-                         + IO::StringFactory::fromDouble(CGAL::to_double(getPoint()->z())) + ">)";
+    if (point_) {
+      sstr << "\t(point=<" + IO::StringFactory::fromDouble(CGAL::to_double(point_->x())) + " "
+                           + IO::StringFactory::fromDouble(CGAL::to_double(point_->y())) + " "
+                           + IO::StringFactory::fromDouble(CGAL::to_double(point_->z())) + ">)";
+    }
     sstr << "\t(edge=" << edge->getID() << "\n\t\t[" << edge->getVertexSrc()->toString() << "\n\t\t "
                                                      << edge->getVertexDst()->toString() << "])";
     return sstr.str();
@@ -150,7 +152,7 @@ public:
 
   bool operator==(const DblTriangleEvent& other) const {
     return (Base::getTime() == other.getTime()) &&
-            (*(getPoint()) == *(other.getPoint())) &&
+            (!point_ || !other.point_ || *point_ == *(other.point_)) &&
             (edge_.lock() == other.edge_.lock());
   }
 

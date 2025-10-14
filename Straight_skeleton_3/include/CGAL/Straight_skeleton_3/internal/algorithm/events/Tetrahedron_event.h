@@ -161,9 +161,11 @@ public:
     sstr << "TetrahedronEvent\n";
     sstr << "\t(ID=" << Base::getID() << ")\n";
     sstr << "\t(time=" << IO::StringFactory::fromDouble(CGAL::to_double(Base::getTime())) << ")\n";
-    sstr << "\t(point=<" + IO::StringFactory::fromDouble(CGAL::to_double(getPoint()->x())) + " "
-                         + IO::StringFactory::fromDouble(CGAL::to_double(getPoint()->y())) + " "
-                         + IO::StringFactory::fromDouble(CGAL::to_double(getPoint()->z())) + ">)";
+    if (point_) {
+      sstr << "\t(point=<" + IO::StringFactory::fromDouble(CGAL::to_double(point_->x())) + " "
+                           + IO::StringFactory::fromDouble(CGAL::to_double(point_->y())) + " "
+                           + IO::StringFactory::fromDouble(CGAL::to_double(point_->z())) + ">)";
+    }
     sstr << "\t(vertices";
     for (int i=0; i<4; ++i)
       sstr << " " << vertices[i]->getID();
@@ -178,7 +180,7 @@ public:
   bool operator==(const TetrahedronEvent& other) const
   {
     return (Base::getTime() == other.getTime()) &&
-            (*(getPoint()) == *(other.getPoint())) &&
+            (!point_ || !other.point_ || *point_ == *(other.point_)) &&
             (edge_begin_.lock() == other.edge_begin_.lock());
   }
 

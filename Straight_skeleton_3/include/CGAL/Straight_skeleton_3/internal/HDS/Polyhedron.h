@@ -795,7 +795,7 @@ public:
       using SkelEdgeDataSPtr = std::shared_ptr<SkelEdgeData>;
 
     public:
-      SkelEdgeData() { /*intentionally does nothing*/ }
+      SkelEdgeData() : is_vanish_time_known_(false) { }
       virtual ~SkelEdgeData() { /*intentionally does nothing*/ }
 
       static SkelEdgeDataSPtr create(const EdgeSPtr& edge)
@@ -807,6 +807,18 @@ public:
 
       virtual EdgeDataSPtr clone() const override {
         return std::make_shared<SkelEdgeData>(*this);
+      }
+
+      const std::optional<FT>& getVanishTime()
+      {
+        CGAL_assertion(is_vanish_time_known_);
+        return vanish_time_;
+      }
+
+      void setVanishTime(const std::optional<FT>& vanish_time)
+      {
+        vanish_time_ = vanish_time;
+        is_vanish_time_known_ = true;
       }
 
       SheetSPtr getSheet() const
@@ -821,6 +833,10 @@ public:
       }
 
     protected:
+      // The 'optional' + Boolean is a way to handle "unknown", "known and computed",
+      // and "known and computed but outside of bounds"
+      std::optional<FT> vanish_time_;
+      bool is_vanish_time_known_;
       SheetWPtr sheet_;
     };
 

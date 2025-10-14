@@ -105,29 +105,6 @@
 #define CGAL_SS3_ENFORCE_UNIQUE_EVENT_REPRESENTATIONS
 
 /*
-  Collect a single vanish event type per edge, and determine at queue pop time
-  which type of vanish event it is.
-
-  This is almost entirely because of DblTriangleEvent: a vanish event might change type
-  without the event's representative edge being impacted... It'd probably be cheaper to handle the
-  DblTriangleEvent particularity, and not have to compute and push a ton of useless vanish events...
-*/
-#define CGAL_SS3_USE_GENERIC_VANISH_EVENT
-
-/*
-  Limit the visilibity of other vertices to the connected component of the facet for VV events.
-  Broken at the moment.
-*/
-// #define CGAL_SS3_VV_VERTEX_2_WALK_FACES_FOR_DETECTION
-
-/*
-  Delay the bisector checks to pop time.
-  This could be done for all events, but the other ones are so cheap that it doesn't matter.
-  Also even for edge splits, the gain is small anyway.
-*/
-#define CGAL_SS3_CHECK_BISECTORS_AT_POP_TIME_FOR_EDGE_SPLIT
-
-/*
   Use CGAL::box_d to filter edge pairs
 */
 #define CGAL_SS3_DETECT_EDGE_SPLIT_EVENTS_WITH_BOX_D
@@ -902,12 +879,14 @@ public:
       CGAL_SS3_DEBUG_SPTR(arc);
       skel_result_->addArc(arc);
     }
+#endif
 
     for (const EdgeSPtr& edge : polyhedron->edges()) {
       if (!edge->hasData()) {
         SkelEdgeData::create(edge);
       }
 
+#ifndef CGAL_SS3_NO_SKELETON_DS
       SheetSPtr sheet = createSheet(edge);
       CGAL_SS3_DEBUG_SPTR(sheet);
 
@@ -918,8 +897,8 @@ public:
       sheet->addContour(contour);
 
       skel_result_->addSheet(sheet);
-    }
 #endif
+    }
 
     for (const FacetSPtr& facet : polyhedron->facets()) {
       if (!facet->hasData()) {
@@ -930,301 +909,27 @@ public:
     return result;
   }
 
-  /**
-    * Checks if the point `point` is on the correct side of the bisector arc
-    * emaneting from the vertex common to `edge` and the edge
-    * shared by `edge->next(f)` and `f_third`
-    */
-  // returns 'true' if the point is on f's side of the bisector between f and f third
-  // edge: edge that is vanishing or crashing into another edge
-  // f: one of the faces incident to the edge
-  // t: the time of vanishing or the time of crash
-  // f_third: edge shared between 'f' and either the dst of the edge seen in f
-  static bool checkBisector(const EdgeSPtr& edge,
-                            const FacetSPtr& f,
-                            const FT& t,
-                            const FacetSPtr& f_third,
-                            const Point3SPtr& point)
+  static bool checkBisectorsV2(const EdgeSPtr& edge,
+                               const Point3SPtr& point,
+                               const FT& event_time)
   {
-    CGAL_SS3_DEBUG_SPTR(edge);
-    CGAL_SS3_DEBUG_SPTR(f);
-    CGAL_SS3_DEBUG_SPTR(f_third);
-
-    Plane3SPtr plane_third = f_third->getPlane();
-    const FT& speed_third = HdsUtils::getSpeed(f_third);
-    if (is_zero(speed_third)) {
-      return (KernelWrapper::side(plane_third, point) <= 0);
+    std::optional<FT> vanish_time = HdsUtils::getVanishTime(edge);
+    Point3SPtr o_src = Transformation::offsetPointFromBase(edge->getVertexSrc(), event_time);
+    if (vanish_time.has_value() && event_time == *vanish_time) {
+      return (*point == *o_src);
     }
 
-    EdgeSPtr edge_f_f_third = edge->next(f);
-    CGAL_precondition(edge_f_f_third->other(f) == f_third);
+    Point3SPtr o_dst = Transformation::offsetPointFromBase(edge->getVertexDst(), event_time);
+    CGAL_assertion(*o_src != *o_dst);
+    CGAL_assertion(CGAL::collinear(*o_src, *point, *o_dst));
 
-    // Determine which side of f-third is legal; that is determined by the angle
-    // that the facet makes at the common vertex.
-    //
-    // We can't use the actual geometry of the edges because they might be degenerate,
-    // so everything must be done with planes.
-    //
-    // @todo predicates
-
-    FacetSPtr f_other = edge->other(f);
-    Plane3SPtr plane_f = f->getPlane();
-    Plane3SPtr plane_f_other = f_other->getPlane();
-    Vector3SPtr n_f = KernelFactory::createVector3(plane_f);
-    Vector3SPtr n_f_other = KernelFactory::createVector3(plane_f_other);
-    Vector3SPtr n_f_third = KernelFactory::createVector3(plane_third);
-
-    Vector_3 v_f_f_other = HdsUtils::isReflex(edge) ? CGAL::cross_product(*n_f_other, *n_f)
-                                                    : CGAL::cross_product(*n_f, *n_f_other);
-    Vector_3 v_f_f_third = HdsUtils::isReflex(edge_f_f_third) ? CGAL::cross_product(*n_f_third, *n_f)
-                                                              : CGAL::cross_product(*n_f, *n_f_third);
-
-    Point_3 pvp = *(edge->getVertexSrc()->getPoint()); // the position doesn't matter
-    Point_3 vp = pvp + v_f_f_other;
-    Point_3 nvp = vp + v_f_f_third;
-    CGAL_assertion(pvp != vp && vp != nvp);
-
-    auto n = CGAL::cross_product(nvp - vp, pvp - vp);
-    FT sp = CGAL::scalar_product(*n_f, n);
-
-    CGAL_SS3_CORE_TRACE_V(128, "f = " << f->getID());
-    CGAL_SS3_CORE_TRACE_V(128, "f_other = " << f_other->getID());
-    CGAL_SS3_CORE_TRACE_V(128, "f_third = " << f_third->getID());
-    CGAL_SS3_CORE_TRACE_V(128, "pv = " << pvp);
-    CGAL_SS3_CORE_TRACE_V(128, "v = " << vp);
-    CGAL_SS3_CORE_TRACE_V(128, "nv = " << nvp);
-    CGAL_SS3_CORE_TRACE_V(128, "n_f = " << *n_f);
-    CGAL_SS3_CORE_TRACE_V(128, "n_f_other = " << *n_f_other);
-    CGAL_SS3_CORE_TRACE_V(128, "n_f_third = " << *n_f_third);
-    CGAL_SS3_CORE_TRACE_V(128, "n = " << n);
-    CGAL_SS3_CORE_TRACE_V(128, "sp = " << sp);
-
-    // @todo below means that the edge is aligned, so the two bisectors are coplanar
-    // and it'll be annoying. In that case, we can simply check on which side the
-    // other vertex is and use the third bisector... but currently it's not possible
-    // because no 2 faces are coplanar, so below should always be true!
-    CGAL_assertion(sp != 0);
-
-    // now, check on which side of the bisector we are
-    const FT& a_third = HdsUtils::getBasePlane(f_third)->a();
-    const FT& b_third = HdsUtils::getBasePlane(f_third)->b();
-    const FT& c_third = HdsUtils::getBasePlane(f_third)->c();
-    const FT& d_third = HdsUtils::getBasePlane(f_third)->d();
-    FT t_third = (a_third * point->x() + b_third * point->y() + c_third * point->z() + d_third) / speed_third;
-
-    CGAL_SS3_CORE_TRACE_V(128, "edge = " << edge->toString());
-    CGAL_SS3_CORE_TRACE_V(128, "edge_f_f_third = " << edge_f_f_third->toString());
-    CGAL_SS3_CORE_TRACE_V(128, "time from third = " << t_third);
-    CGAL_assertion(edge_f_f_third != edge);
-
-    // we want SMALLER to mean "on f's side of the bisector"
-    // and     LARGER  to mean "on f_third's side of the bisector"
-    CGAL::Comparison_result f_third_point_side;
-    if (HdsUtils::isReflex(edge_f_f_third)) {
-      CGAL_SS3_CORE_TRACE_V(128, "F1O: reflex edge ");
-      f_third_point_side = CGAL::compare(t, t_third);
-    } else {
-      CGAL_SS3_CORE_TRACE_V(128, "F1O: convex edge ");
-      f_third_point_side = CGAL::compare(t_third, t);
-    }
-
-    CGAL_SS3_CORE_TRACE_V(128, "f_third_point_side = " << f_third_point_side);
-
-    // Finally, combine both info to know on which side we are
-    if (sp < 0) {
-      CGAL_SS3_CORE_TRACE_V(128, "SP: right turn");
-      if (f_third_point_side == CGAL::SMALLER) {
-        CGAL_SS3_CORE_TRACE_V(128, "reject!");
-        return false;
-      }
-    } else {
-      CGAL_SS3_CORE_TRACE_V(128, "SP: left turn");
-      if (f_third_point_side == CGAL::LARGER) {
-        CGAL_SS3_CORE_TRACE_V(128, "reject!");
-        return false;
-      }
-    }
-
-    return true;
-  }
-
-  static bool checkBisectors(const EdgeSPtr& edge_1,
-                             const EdgeSPtr& edge_2,
-                             const Point3SPtr& point,
-                             const FT& t)
-  {
-    CGAL_SS3_DEBUG_SPTR(edge_1);
-    CGAL_SS3_DEBUG_SPTR(edge_2);
-
-    FacetSPtr facet_l1 = edge_1->getFacetL();
-    FacetSPtr facet_r1 = edge_1->getFacetR();
-    FacetSPtr facet_l2 = edge_2->getFacetL();
-    FacetSPtr facet_r2 = edge_2->getFacetR();
-
-    FacetSPtr facet_1_src = edge_1->getFacetSrc();
-    FacetSPtr facet_1_dst = edge_1->getFacetDst();
-    FacetSPtr facet_2_src = edge_2->getFacetSrc();
-    FacetSPtr facet_2_dst = edge_2->getFacetDst();
-
-    CGAL_SS3_CORE_TRACE_V(32, "Bisectors check");
-
-    CGAL_SS3_CORE_TRACE_V(32, "Facet L1 = " << facet_l1->getID());
-    CGAL_SS3_CORE_TRACE_V(32, "Facet R1 = " << facet_r1->getID());
-    CGAL_SS3_CORE_TRACE_V(32, "Facet L2 = " << facet_l2->getID());
-    CGAL_SS3_CORE_TRACE_V(32, "Facet R2 = " << facet_r2->getID());
-
-    CGAL_SS3_CORE_TRACE_V(32, "Facet 1 SRC = " << facet_1_src->getID());
-    CGAL_SS3_CORE_TRACE_V(32, "Facet 1 DST = " << facet_1_dst->getID());
-    CGAL_SS3_CORE_TRACE_V(32, "Facet 2 SRC = " << facet_2_src->getID());
-    CGAL_SS3_CORE_TRACE_V(32, "Facet 2 DST = " << facet_2_dst->getID());
-
-    // Since the algorithm shrinks the polyhedron, "not to be in the past" is equivalent to
-    // "being on the negative side of the planes of the facets incident to the edge" (assuming positive weights)
-    //
-    // Since we have filtered with a past bound, this is already checked
-    CGAL_assertion_code(Plane3SPtr plane_l1 = facet_l1->getPlane();)
-    CGAL_assertion_code(Plane3SPtr plane_r1 = facet_r1->getPlane();)
-    CGAL_assertion_code(Plane3SPtr plane_l2 = facet_l2->getPlane();)
-    CGAL_assertion_code(Plane3SPtr plane_r2 = facet_r2->getPlane();)
-
-    CGAL_assertion(!(KernelWrapper::side(plane_l1, point) > 0 ||
-                     KernelWrapper::side(plane_r1, point) > 0));
-    CGAL_assertion(!(KernelWrapper::side(plane_l2, point) > 0 ||
-                     KernelWrapper::side(plane_r2, point) > 0));
-
-    // We want the point to be left of the right arc, and right of the left arc
-    //
-    // We can just check the position of the query 'point' with respect
-    // to one of the other bisector. A few tricky parts:
-    // - The side of bisector is easy to know: it's comparing times, but that
-    //   depends on whether the edge is reflex or convex
-    // - Once we know on which side of the bisector it is, it's not done yet:
-    //   we need to know which side of the bisector is the correct one and since
-    //   faces can be non-convex polygons, we need to check if we are in a concave
-    //   (within the facet) vertex to know if the clipping bisector is inverted
-
-#ifndef CGAL_SS3_EXIT_ASAP
-    bool reject_2b = false;
-    bool reject_3b = false;
-    bool reject_5b = false;
-    bool reject_6b = false;
-#endif
-
-    if (!(facet_1_src == facet_l2 || facet_1_src == facet_r2)) {
-      // src is the target of the edge when in the right facet
-      if (!checkBisector(edge_1, facet_r1, t /*rt1*/, facet_1_src, point)) {
-#ifdef CGAL_SS3_EXIT_ASAP
-        return false;
-#else
-        reject_2b = true;
-#endif
-      }
-    }
-
-    if (!(facet_1_dst == facet_l2 || facet_1_dst == facet_r2)) {
-      if (!checkBisector(edge_1, facet_l1, t /*lt1*/, facet_1_dst, point)) {
-#ifdef CGAL_SS3_EXIT_ASAP
-        return false;
-#else
-        reject_3b = true;
-#endif
-      }
-    }
-
-    if (!(facet_2_src == facet_l1 || facet_2_src == facet_r1)) {
-      if (!checkBisector(edge_2, facet_r2, t /*rt2*/, facet_2_src, point)) {
-#ifdef CGAL_SS3_EXIT_ASAP
-        return false;
-#else
-        reject_5b = true;
-#endif
-      }
-    }
-
-    if (!(facet_2_dst == facet_l1 || facet_2_dst == facet_r1)) {
-      if (!checkBisector(edge_2, facet_l2, t /*lt2*/, facet_2_dst, point)) {
-#ifdef CGAL_SS3_EXIT_ASAP
-        return false;
-#else
-        reject_6b = true;
-#endif
-      }
-    }
-
-#ifndef CGAL_SS3_EXIT_ASAP
-    const bool reject = (reject_2b || reject_3b || reject_5b || reject_6b);
-    if (reject) {
-      return false;
-    }
-#endif
-
-    return true;
-  }
-
-#if 0
-  Completely unused, just as an example of how a filtered predicate could work.
-  Unused because anyway we need an exact kernel to ensure points on facets.
-  /**
-    * Checks the existence of an event at a time that is within the past and future bounds.
-    * Uses a filtered predicate internally.
-    */
-  bool doesEventExist(const FacetSPtr& facet_0, const FacetSPtr& facet_1,
-                      const FacetSPtr& facet_2, const FacetSPtr& facet_3,
-                      const std::optional<FT>& past_bound = std::nullopt,
-                      const std::optional<FT>& future_bound = std::nullopt)
-  {
-    const Plane_3& plane_0 = *(HdsUtils::getBasePlane(facet_0));
-    const Plane_3& plane_1 = *(HdsUtils::getBasePlane(facet_1));
-    const Plane_3& plane_2 = *(HdsUtils::getBasePlane(facet_2));
-    const Plane_3& plane_3 = *(HdsUtils::getBasePlane(facet_3));
-
-    const FT& speed_0 = HdsUtils::getSpeed(facet_0);
-    const FT& speed_1 = HdsUtils::getSpeed(facet_1);
-    const FT& speed_2 = HdsUtils::getSpeed(facet_2);
-    const FT& speed_3 = HdsUtils::getSpeed(facet_3);
-
-    Straight_skeleton_builder_traits_3<Traits>::Do_ss_event_exist_3 pred;
-
-    return pred(plane_0, speed_0, plane_1, speed_1,
-                plane_2, speed_2, plane_3, speed_3,
-                time_past_bound, time_future_bound);
-  }
-#endif
-
-  /**
-    * Returns the intersection point and time of the 4 shifting planes.
-    */
-  std::pair<Point3SPtr, FT> intersectionPointAndTimeOffsetPlanes(const FacetSPtr& facet_0,
-                                                                 const FacetSPtr& facet_1,
-                                                                 const FacetSPtr& facet_2,
-                                                                 const FacetSPtr& facet_3,
-                                                                 const std::optional<FT>& time_past_bound = std::nullopt,
-                                                                 const std::optional<FT>& time_future_bound = std::nullopt)
-  {
-    CGAL_SS3_DEBUG_SPTR(facet_0);
-    CGAL_SS3_DEBUG_SPTR(facet_1);
-    CGAL_SS3_DEBUG_SPTR(facet_2);
-    CGAL_SS3_DEBUG_SPTR(facet_3);
-
-    Plane3SPtr plane_0 = HdsUtils::getBasePlane(facet_0);
-    Plane3SPtr plane_1 = HdsUtils::getBasePlane(facet_1);
-    Plane3SPtr plane_2 = HdsUtils::getBasePlane(facet_2);
-    Plane3SPtr plane_3 = HdsUtils::getBasePlane(facet_3);
-
-    const FT& speed_0 = HdsUtils::getSpeed(facet_0);
-    const FT& speed_1 = HdsUtils::getSpeed(facet_1);
-    const FT& speed_2 = HdsUtils::getSpeed(facet_2);
-    const FT& speed_3 = HdsUtils::getSpeed(facet_3);
-
-    return GeomUtils::intersectionPointAndTimeOffsetPlanes(plane_0, speed_0, plane_1, speed_1,
-                                                           plane_2, speed_2, plane_3, speed_3,
-                                                           time_past_bound, time_future_bound);
+    return CGAL::collinear_are_ordered_along_line(*o_src, *point, *o_dst);
   }
 
   /**
   * Returns the intersection time of the 4 shifting planes.
   */
-  std::optional<FT> intersectionPointOffsetPlanes(const FacetSPtr& facet_0,
+  static Point3SPtr intersectionPointOffsetPlanes(const FacetSPtr& facet_0,
                                                   const FacetSPtr& facet_1,
                                                   const FacetSPtr& facet_2,
                                                   const FacetSPtr& facet_3)
@@ -1251,12 +956,10 @@ public:
   /**
     * Returns the intersection time of the 4 shifting planes.
     */
-  std::optional<FT> intersectionTimeOffsetPlanes(const FacetSPtr& facet_0,
-                                                 const FacetSPtr& facet_1,
-                                                 const FacetSPtr& facet_2,
-                                                 const FacetSPtr& facet_3,
-                                                 const std::optional<FT>& time_past_bound = std::nullopt,
-                                                 const std::optional<FT>& time_future_bound = std::nullopt)
+  FT intersectionTimeOffsetPlanes(const FacetSPtr& facet_0,
+                                  const FacetSPtr& facet_1,
+                                  const FacetSPtr& facet_2,
+                                  const FacetSPtr& facet_3)
   {
     CGAL_SS3_DEBUG_SPTR(facet_0);
     CGAL_SS3_DEBUG_SPTR(facet_1);
@@ -1274,8 +977,7 @@ public:
     const FT& speed_3 = HdsUtils::getSpeed(facet_3);
 
     return GeomUtils::intersectionTimeOffsetPlanes(plane_0, speed_0, plane_1, speed_1,
-                                                   plane_2, speed_2, plane_3, speed_3,
-                                                   time_past_bound, time_future_bound);
+                                                   plane_2, speed_2, plane_3, speed_3);
   }
 
   Point3SPtr vanishesAtPoint(const EdgeSPtr& edge)
@@ -1307,7 +1009,7 @@ public:
                                    const std::optional<FT>& time_past_bound = std::nullopt,
                                    const std::optional<FT>& time_future_bound = std::nullopt)
   {
-    CGAL_SS3_CORE_TRACE_V(16, "vanishesAtTime " << edge->toString());
+    CGAL_SS3_CORE_TRACE_V(16, "Computing vanish time of " << edge->toString());
 
     CGAL_SS3_DEBUG_SPTR(edge);
 
@@ -1324,58 +1026,61 @@ public:
     CGAL_assertion(facetP && facetP != facetL && facetP != facetR);
     CGAL_assertion(facetN && facetN != facetL && facetN != facetR && facetN != facetP);
 
-    return intersectionTimeOffsetPlanes(facetL, facetP, facetR, facetN,
-                                        time_past_bound, time_future_bound);
-  }
+    const FT vanish_time = intersectionTimeOffsetPlanes(facetL, facetP, facetR, facetN);
 
-  /**
-    * Returns the point and time at which the edge will vanish.
-    */
-  std::pair<Point3SPtr, FT> vanishesAt(const EdgeSPtr& edge,
-                                       const std::optional<FT>& time_past_bound = std::nullopt,
-                                       const std::optional<FT>& time_future_bound = std::nullopt)
-  {
-    CGAL_SS3_CORE_TRACE_V(16, "vanishesAt " << edge->toString());
-
-    CGAL_SS3_DEBUG_SPTR(edge);
-
-    FacetSPtr facetL = edge->getFacetL();
-    FacetSPtr facetR = edge->getFacetR();
-    CGAL_SS3_CORE_TRACE_V(16, "facetL: " << facetL->getID());
-    CGAL_SS3_CORE_TRACE_V(16, "facetR: " << facetR->getID());
-    CGAL_assertion(facetL && facetR && facetL != facetR);
-
-    FacetSPtr facetP = edge->prev(facetL)->other(facetL);
-    FacetSPtr facetN = edge->next(facetL)->other(facetL);
-    CGAL_SS3_CORE_TRACE_V(16, "facetP: " << facetP->getID());
-    CGAL_SS3_CORE_TRACE_V(16, "facetN: " << facetN->getID());
-    CGAL_assertion(facetP && facetP != facetL && facetP != facetR);
-    CGAL_assertion(facetN && facetN != facetL && facetN != facetR && facetN != facetP);
-
-    Point3SPtr point;
-    FT event_time;
-    std::tie(point, event_time) = intersectionPointAndTimeOffsetPlanes(facetL, facetP, facetR, facetN,
-                                                                       time_past_bound, time_future_bound);
-
-    if (!point) {
+    if (time_past_bound && vanish_time >= *time_past_bound) {
+      CGAL_SS3_TRAITS_TRACE("Vanish event is strictly in the past");
+      HdsUtils::setVanishTime(edge, std::nullopt);
       return { };
     }
 
-    CGAL_SS3_CORE_TRACE_V(1, "Tentative intersection: " << *point << " @ " << event_time);
+    if (time_future_bound && vanish_time < *time_future_bound) {
+      CGAL_SS3_TRAITS_TRACE("Vanish event is too far in the future");
+      HdsUtils::setVanishTime(edge, std::nullopt);
+      return { };
+    }
 
-    return { point, event_time };
+    HdsUtils::setVanishTime(edge, vanish_time);
+    return vanish_time;
   }
 
-  /**
-    * Returns the point where 2 edges will crash into each other.
-    *
-    * If bounds are passed, ignore the crash if it happens in the past or too far in the future.
-    */
-  std::pair<Point3SPtr, FT> crashAt(const EdgeSPtr& edge_1, const EdgeSPtr& edge_2,
-                                    const std::optional<FT>& time_past_bound = std::nullopt,
-                                    const std::optional<FT>& time_future_bound = std::nullopt)
+  // for pierce events
+  std::optional<FT> crashAtTime(const VertexSPtr& vertex, const FacetSPtr& facet,
+                                const std::optional<FT>& time_past_bound = std::nullopt,
+                                const std::optional<FT>& time_future_bound = std::nullopt)
   {
-    CGAL_SS3_CORE_TRACE_V(16, "-- Crash At\n    " << edge_1->toString() << "\n    " << edge_2->toString());
+    CGAL_SS3_CORE_TRACE_V(16, "-- Crash At Time (Pierce event)\n  " << vertex->toString() << "\n  " << facet->toString());
+
+    CGAL_assertion(vertex->facets().size() >= 3);
+    std::array<FacetSPtr, 3> fs;
+    for (int i = 0; i < 3; ++i) {
+      FacetWPtr wf = *(std::next(vertex->facets().begin(), i));
+      CGAL_assertion(!wf.expired());
+      fs[i] = wf.lock();
+    }
+
+    FT event_time = intersectionTimeOffsetPlanes(facet, fs[0], fs[1], fs[2]);
+
+    if (time_past_bound && event_time >= *time_past_bound) {
+      CGAL_SS3_TRAITS_TRACE("Contact event is strictly in the past");
+      return { };
+    }
+
+    if (time_future_bound && event_time < *time_future_bound) {
+      CGAL_SS3_TRAITS_TRACE("Contact event is too far in the future");
+      return { };
+    }
+
+    CGAL_SS3_CORE_TRACE_V(16, "Tentative event @ " << event_time);
+
+    return event_time;
+  }
+
+  std::optional<FT> crashAtTime(const EdgeSPtr& edge_1, const EdgeSPtr& edge_2,
+                                const std::optional<FT>& time_past_bound = std::nullopt,
+                                const std::optional<FT>& time_future_bound = std::nullopt)
+  {
+    CGAL_SS3_CORE_TRACE_V(16, "-- Crash At Time\n  " << edge_1->toString() << "\n  " << edge_2->toString());
 
     CGAL_SS3_DEBUG_SPTR(edge_1);
     CGAL_SS3_DEBUG_SPTR(edge_2);
@@ -1390,61 +1095,42 @@ public:
     CGAL_SS3_CORE_TRACE_V(16, "Facet L2 = " << facet_l2->getID());
     CGAL_SS3_CORE_TRACE_V(16, "Facet R2 = " << facet_r2->getID());
 
-    // @speed we could delay point computation and orientation checks below to queue pop time,
-    // but it probably does not gain much: 99.99% of the time, we compute an intersection time
-    // and it is filtered, so the times where we compute a (lazy) point and use it is somewhat
-    // negligible (currently).
-    Point3SPtr point;
-    FT event_time;
-    std::tie(point, event_time) = intersectionPointAndTimeOffsetPlanes(facet_l1, facet_r1, facet_l2, facet_r2,
-                                                                       time_past_bound, time_future_bound);
-
-    if (!point) {
-      return { };
-    }
-
-    CGAL_SS3_CORE_TRACE_V(16, "Tentative intersection: " << *point << " @ " << event_time);
-
-#if 1
-    // This checks whether the point is on the offset edge.
-    auto check_offset_edge = [&](const EdgeSPtr& edge) -> bool
-    {
-      auto edge_vanish_time = vanishesAtTime(edge, time_past_bound, time_future_bound);
-      if (edge_vanish_time.has_value()) {
-        // If the edge vanishes before the event time, we want to ignore this: even in the specific
-        // case where the edge grows again (non-flip edge event), we shall see this event again
-        // after treating the edge event.
-        if(event_time < *edge_vanish_time) {
-          return false;
+    // It is pointless to check for contact events that are farther in time than any of the two
+    // involved edges as either they will be gone, or new events will be computed
+    std::optional<FT> tight_future_bound = time_future_bound;
+    for (const EdgeSPtr& edge : {edge_1, edge_2}) {
+      const std::optional<FT>& vanish_time = HdsUtils::getVanishTime(edge);
+      // In the current context, the future time bound is the last save event,
+      // and vanish event times are only stored if they are earlier.
+      CGAL_assertion(!vanish_time.has_value() || !time_future_bound.has_value() || *vanish_time > *time_future_bound);
+      if (vanish_time.has_value()) {
+        if (tight_future_bound.has_value()) {
+          if (*vanish_time > *tight_future_bound) {
+            tight_future_bound = vanish_time;
+          }
+        } else {
+          tight_future_bound = vanish_time;
         }
       }
+    }
 
-      Point3SPtr o_src = Transformation::offsetPointFromBase(edge->getVertexSrc(), event_time);
+    FT event_time = intersectionTimeOffsetPlanes(facet_l1, facet_r1, facet_l2, facet_r2);
 
-      // obviously the whole thing is massively suboptimal
-      if (edge_vanish_time.has_value() && event_time == *edge_vanish_time) {
-        return (*point == *o_src);
-      }
-
-      Point3SPtr o_dst = Transformation::offsetPointFromBase(edge->getVertexDst(), event_time);
-      CGAL_assertion(*o_src != *o_dst);
-      CGAL_assertion(CGAL::collinear(*o_src, *point, *o_dst));
-
-      return CGAL::collinear_are_ordered_along_line(*o_src, *point, *o_dst);
-    };
-
-    if (!check_offset_edge(edge_1) || !check_offset_edge(edge_2)) {
+    if (time_past_bound && event_time >= *time_past_bound) {
+      CGAL_SS3_TRAITS_TRACE("Contact event is strictly in the past");
       return { };
     }
-#else
-    if (!checkBisectors(edge_1, edge_2, point, event_time)) {
+
+    if (tight_future_bound && event_time < *tight_future_bound) {
+      CGAL_SS3_TRAITS_TRACE("Contact event is too far in the future");
       return { };
     }
-#endif
 
-    CGAL_SS3_CORE_TRACE_V(16, "Confirmed intersection: " << *point << " @ " << event_time);
+    CGAL_SS3_CORE_TRACE_V(16, "Tentative event @ " << event_time);
 
-    return { point, event_time };
+    Point3SPtr point = intersectionPointOffsetPlanes(facet_l1, facet_r1, facet_l2, facet_r2);
+
+    return event_time;
   }
 
   /**
@@ -1476,6 +1162,8 @@ public:
 
     CGAL_SS3_DEBUG_SPTR(event);
 
+    const FT& event_time = event->getTime();
+
     VertexSPtr vertex_1 = event->getVertex1();
     VertexSPtr vertex_2 = event->getVertex2();
     FacetSPtr facet_1 = event->getFacet1();
@@ -1490,6 +1178,18 @@ public:
         if ((facet_1l == facet_1 && facet_1r != facet_2) ||
             (facet_1r == facet_1 && facet_1l != facet_2)) {
           edge_11 = edge_1;
+        }
+      }
+    }
+
+    EdgeSPtr edge_22 = EdgeSPtr();
+    for (EdgeWPtr edge_2_wptr : vertex_2->edges()) {
+      if (EdgeSPtr edge_2 = edge_2_wptr.lock()) {
+        FacetSPtr facet_2l = edge_2->getFacetL();
+        FacetSPtr facet_2r = edge_2->getFacetR();
+        if ((facet_2l == facet_2 && facet_2r != facet_1) ||
+            (facet_2r == facet_2 && facet_2l != facet_1)) {
+          edge_22 = edge_2;
         }
       }
     }
@@ -1511,6 +1211,18 @@ public:
       return false;
     }
 
+    // Bisector check
+    Point3SPtr point = intersectionPointOffsetPlanes(edge_11->getFacetL(), edge_11->getFacetR(),
+                                                     edge_22->getFacetL(), edge_22->getFacetR());
+
+    if (!checkBisectorsV2(edge_11, point, event_time) ||
+        !checkBisectorsV2(edge_22, point, event_time)) {
+      CGAL_SS3_CORE_TRACE_V(8, "Vertex event: bisector check failure");
+      return false;
+    }
+
+    event->setPoint(point);
+
     CGAL_SS3_CORE_TRACE_V(8, "Vertex event: accepted");
     return true;
   }
@@ -1523,11 +1235,13 @@ public:
 
     CGAL_SS3_DEBUG_SPTR(event);
 
+    const FT& event_time = event->getTime();
     VertexSPtr vertex_1 = event->getVertex1();
     VertexSPtr vertex_2 = event->getVertex2();
     FacetSPtr facet_1 = event->getFacet1();
     FacetSPtr facet_2 = event->getFacet2();
 
+    // convex split event checks
     EdgeSPtr edge_11 = EdgeSPtr();
     for (EdgeWPtr edge_1_wptr : vertex_1->edges()) {
       if (EdgeSPtr edge_1 = edge_1_wptr.lock()) {
@@ -1536,6 +1250,18 @@ public:
         if ((facet_1l == facet_1 && facet_1r != facet_2) ||
             (facet_1r == facet_1 && facet_1l != facet_2)) {
           edge_11 = edge_1;
+        }
+      }
+    }
+
+    EdgeSPtr edge_22 = EdgeSPtr();
+    for (EdgeWPtr edge_2_wptr : vertex_2->edges()) {
+      if (EdgeSPtr edge_2 = edge_2_wptr.lock()) {
+        FacetSPtr facet_2l = edge_2->getFacetL();
+        FacetSPtr facet_2r = edge_2->getFacetR();
+        if ((facet_2l == facet_2 && facet_2r != facet_1) ||
+            (facet_2r == facet_2 && facet_2l != facet_1)) {
+          edge_22 = edge_2;
         }
       }
     }
@@ -1557,6 +1283,18 @@ public:
       return false;
     }
 
+    // Bisector check
+    Point3SPtr point = intersectionPointOffsetPlanes(edge_11->getFacetL(), edge_11->getFacetR(),
+                                                     edge_22->getFacetL(), edge_22->getFacetR());
+
+    if (!checkBisectorsV2(edge_11, point, event_time) ||
+        !checkBisectorsV2(edge_22, point, event_time)) {
+      CGAL_SS3_CORE_TRACE_V(8, "Flip Vertex event: bisector check failure");
+      return false;
+    }
+
+    event->setPoint(point);
+
     CGAL_SS3_CORE_TRACE_V(8, "Flip vertex event: accepted");
     return true;
   }
@@ -1569,11 +1307,13 @@ public:
 
     CGAL_SS3_DEBUG_SPTR(event);
 
+    const FT& event_time = event->getTime();
     EdgeSPtr edge_1 = event->getEdge1();
     EdgeSPtr edge_2 = event->getEdge2();
     FacetSPtr facet_1_src = edge_1->getFacetSrc();
     FacetSPtr facet_1_dst = edge_1->getFacetDst();
 
+    // convex split checks
     bool conv_split_event = false;
     std::list<EdgeSPtr> common_edges = edge_1->getFacetL()->findEdges(edge_1->getFacetR());
     for (const EdgeSPtr& edge : common_edges) {
@@ -1604,6 +1344,18 @@ public:
       return false;
     }
 
+    // Bisector check
+    Point3SPtr point = intersectionPointOffsetPlanes(edge_1->getFacetL(), edge_1->getFacetR(),
+                                                     edge_2->getFacetL(), edge_2->getFacetR());
+
+    if (!checkBisectorsV2(edge_1, point, event_time) ||
+        !checkBisectorsV2(edge_2, point, event_time)) {
+      CGAL_SS3_CORE_TRACE_V(8, "Surface event: bisector check failure");
+      return false;
+    }
+
+    event->setPoint(point);
+
     CGAL_SS3_CORE_TRACE_V(8, "Surface event: accepted");
     return true;
   }
@@ -1617,14 +1369,32 @@ public:
 
     CGAL_SS3_DEBUG_SPTR(event);
 
-    // @speed is_degenerate(4 planes)? But it would be a sure filter failure, so, costly...
     const FT& event_time = event->getTime();
-    FT shift = event_time - current_time;
-    Segment3SPtr e1o = Transformation::shiftEdge(event->getEdge1(), shift);
-    if (!e1o->is_degenerate()) {
+
+    // Bisector check
+    EdgeSPtr edge_1 = event->getEdge1();
+    EdgeSPtr edge_2 = event->getEdge2();
+
+    Point3SPtr point = intersectionPointOffsetPlanes(edge_1->getFacetL(), edge_1->getFacetR(),
+                                                     edge_2->getFacetL(), edge_2->getFacetR());
+
+    if (!checkBisectorsV2(edge_1, point, event_time) ||
+        !checkBisectorsV2(edge_2, point, event_time)) {
+      CGAL_SS3_CORE_TRACE_V(8, "Polyhedron split event: bisector check failure");
       return false;
     }
 
+    event->setPoint(point);
+
+    // @speed is_degenerate(4 planes)? But it would be a sure filter failure, so, costly...
+    FT shift = event_time - current_time;
+    Segment3SPtr e1o = Transformation::shiftEdge(event->getEdge1(), shift);
+    if (!e1o->is_degenerate()) {
+      CGAL_SS3_CORE_TRACE_V(8, "Polyhedron split event: bisector check failure");
+      return false;
+    }
+
+    CGAL_SS3_CORE_TRACE_V(8, "Polyhedron split event accepted");
     return true;
   }
 
@@ -1636,11 +1406,13 @@ public:
 
     CGAL_SS3_DEBUG_SPTR(event);
 
+    const FT& event_time = event->getTime();
     VertexSPtr vertex_1 = event->getVertex1();
     VertexSPtr vertex_2 = event->getVertex2();
     FacetSPtr facet_1 = event->getFacet1();
     FacetSPtr facet_2 = event->getFacet2();
 
+    // convex split checks
     EdgeSPtr edge_11 = EdgeSPtr();
     for (EdgeWPtr edge_1_wptr : vertex_1->edges()) {
       if (EdgeSPtr edge_1 = edge_1_wptr.lock()) {
@@ -1649,6 +1421,18 @@ public:
         if ((facet_1l == facet_1 && facet_1r != facet_2) ||
             (facet_1r == facet_1 && facet_1l != facet_2)) {
           edge_11 = edge_1;
+        }
+      }
+    }
+
+    EdgeSPtr edge_22 = EdgeSPtr();
+    for (EdgeWPtr edge_2_wptr : vertex_2->edges()) {
+      if (EdgeSPtr edge_2 = edge_2_wptr.lock()) {
+        FacetSPtr facet_2l = edge_2->getFacetL();
+        FacetSPtr facet_2r = edge_2->getFacetR();
+        if ((facet_2l == facet_2 && facet_2r != facet_1) ||
+            (facet_2r == facet_2 && facet_2l != facet_1)) {
+          edge_22 = edge_2;
         }
       }
     }
@@ -1670,9 +1454,21 @@ public:
       edge_cur = edge_cur->next(facet_1b);
     }
     if (!conv_split_event) {
-      CGAL_SS3_CORE_TRACE_V(8, "Convex split event detected");
+      CGAL_SS3_CORE_TRACE_V(8, "Split merge event: Convex split event detected");
       return false;
     }
+
+    // Bisector check
+    Point3SPtr point = intersectionPointOffsetPlanes(edge_11->getFacetL(), edge_11->getFacetR(),
+                                                     edge_22->getFacetL(), edge_22->getFacetR());
+
+    if (!checkBisectorsV2(edge_11, point, event_time) ||
+        !checkBisectorsV2(edge_22, point, event_time)) {
+      CGAL_SS3_CORE_TRACE_V(8, "Split merge event: bisector check failure");
+      return false;
+    }
+
+    event->setPoint(point);
 
     CGAL_SS3_CORE_TRACE_V(8, "Split merge event accepted");
     return true;
@@ -1686,20 +1482,24 @@ public:
 
     CGAL_SS3_DEBUG_SPTR(event);
 
-#ifdef CGAL_SS3_CHECK_BISECTORS_AT_POP_TIME_FOR_EDGE_SPLIT
     const FT& event_time = event->getTime();
-    Point3SPtr point = event->getPoint();
-
-    EdgeSPtr edge_1 = event->getEdge1();
+    EdgeSPtr edge_1 = event->getEdge1(); // @todo const& all of this
     EdgeSPtr edge_2 = event->getEdge2();
 
-    // @fixme this should also use the new version?
-    if (!checkBisectors(edge_1, edge_2, point, event_time)) {
+    // Bisector check
+    Point3SPtr point = intersectionPointOffsetPlanes(edge_1->getFacetL(), edge_1->getFacetR(),
+                                                     edge_2->getFacetL(), edge_2->getFacetR());
+    CGAL_SS3_DEBUG_SPTR(point);
+
+    if (!checkBisectorsV2(edge_1, point, event_time) ||
+        !checkBisectorsV2(edge_2, point, event_time)) {
       CGAL_SS3_CORE_TRACE_V(8, "Edge split rejected at pop time");
       return false;
     }
-#endif
 
+    event->setPoint(point);
+
+    CGAL_SS3_CORE_TRACE_V(8, "Edge split event accepted");
     return true;
   }
 
@@ -1764,6 +1564,17 @@ public:
         return false;
       }
     }
+
+    // Compute the event position
+    CGAL_assertion(pv->facets().size() >= 3);
+    std::array<FacetSPtr, 3> fs;
+    for (int i = 0; i < 3; ++i) {
+      FacetWPtr wf = *(std::next(pv->facets().begin(), i));
+      CGAL_assertion(!wf.expired());
+      fs[i] = wf.lock();
+    }
+
+    event->setPoint(intersectionPointOffsetPlanes(pf, fs[0], fs[1], fs[2]));
 
     // Filter #3
     //
@@ -1878,22 +1689,21 @@ public:
       VertexSPtr vertex_src = edge->getVertexSrc();
       VertexSPtr vertex_dst = edge->getVertexDst();
       if (vertex_src->getPoint() == vertex_dst->getPoint()) {
+        HdsUtils::setVanishTime(edge, std::nullopt);
         continue;
       }
 
-      Point3SPtr point;
-      FT event_time;
-      std::tie(point, event_time) = vanishesAt(edge, current_time, time_future_bound);
-      if (!point) {
+      std::optional<FT> event_time = vanishesAtTime(edge, current_time, time_future_bound);
+      if (!event_time) {
         continue;
       }
 
-      CGAL_assertion(event_time < current_time);
-      CGAL_assertion(!time_future_bound.has_value() || event_time >= *time_future_bound);
+      CGAL_assertion(*event_time < current_time);
+      CGAL_assertion(!time_future_bound.has_value() || *event_time >= *time_future_bound);
 
       VanishEventSPtr event = VanishEvent::create();
-      event->setTime(event_time);
-      event->setPoint(point);
+      event->setTime(*event_time);
+      event->setPoint(vanishesAtPoint(edge));
       event->setEdge(edge);
       queue.push(event);
     }
@@ -1910,612 +1720,6 @@ public:
                            PQ& queue)
   {
     return collectVanishEvents(polyhedron->edges(), polyhedron, current_time, time_future_bound, queue);
-  }
-
-  /**
-    * Edge flip event.
-    */
-  void collectEdgeEvents(const std::list<EdgeSPtr>& edges,
-                          const PolyhedronSPtr& /*polyhedron*/,
-                          const FT& current_time,
-                          const std::optional<FT>& time_future_bound,
-                          PQ& queue)
-  {
-    CGAL_SS3_CORE_TRACE_V(4, ">>> Collect Edge Events [" << current_time << "]");
-
-    for (const EdgeSPtr& edge : edges) {
-      CGAL_SS3_DEBUG_SPTR(edge);
-
-      VertexSPtr vertex_src = edge->getVertexSrc();
-      VertexSPtr vertex_dst = edge->getVertexDst();
-      if (vertex_src->getPoint() == vertex_dst->getPoint()) {
-        continue;
-      }
-
-      FacetSPtr facet_l = edge->getFacetL();
-      FacetSPtr facet_r = edge->getFacetR();
-      if (HdsUtils::isTriangle(facet_l, edge) || HdsUtils::isTriangle(facet_r, edge)) {
-        // triangle event
-        continue;
-      }
-
-      Point3SPtr point;
-      FT event_time;
-      std::tie(point, event_time) = vanishesAt(edge, current_time, time_future_bound);
-      if (!point) {
-        continue;
-      }
-
-      CGAL_assertion(event_time < current_time);
-      CGAL_assertion(!time_future_bound.has_value() || event_time >= *time_future_bound);
-
-      FacetSPtr facet_src = edge->getFacetSrc();
-      FacetSPtr facet_dst = edge->getFacetDst();
-
-      // @fixme shouldn't this check also happen in other events?...
-      // This does not work when there is more than one edge between both facets.
-      // EdgeSPtr edge_2 = facet_src->findEdge(facet_dst);
-      std::list<EdgeSPtr> edges_2 = facet_src->findEdges(facet_dst);
-
-      bool split_event = false;
-      for (const EdgeSPtr& edge_2 : edges_2) {
-        FacetSPtr facet_l2 = edge_2->getFacetL();
-        FacetSPtr facet_r2 = edge_2->getFacetR();
-        FacetSPtr facet_2_src = edge_2->getFacetSrc();
-        FacetSPtr facet_2_dst = edge_2->getFacetDst();
-
-        Plane3SPtr plane_l2 = facet_l2->getPlane();
-
-        const FT& l2a = plane_l2->a();
-        const FT& l2b = plane_l2->b();
-        const FT& l2c = plane_l2->c();
-        const FT& l2d = plane_l2->d();
-        const FT& speed_l2 = HdsUtils::getSpeed(facet_l2);
-        FT t = (l2a * point->x() + l2b * point->y() + l2c * point->z() + l2d) / speed_l2;
-
-        CGAL_assertion_code(Plane3SPtr plane_r2 = facet_r2->getPlane();)
-        CGAL_assertion_code(const FT& r2a = plane_r2->a();)
-        CGAL_assertion_code(const FT& r2b = plane_r2->b();)
-        CGAL_assertion_code(const FT& r2c = plane_r2->c();)
-        CGAL_assertion_code(const FT& r2d = plane_r2->d();)
-        CGAL_assertion_code(const FT& speed_r2 = HdsUtils::getSpeed(facet_r2);)
-        CGAL_assertion_code(FT lt2 = (l2a * point->x() + l2b * point->y() + l2c * point->z() + l2d) / speed_l2);
-        CGAL_assertion_code(FT rt2 = (r2a * point->x() + r2b * point->y() + r2c * point->z() + r2d) / speed_r2);
-        CGAL_assertion(lt2 == rt2);
-
-        bool split_event_current_1_b = true;
-        bool split_event_current_2_b = true;
-        bool split_event_current_3_b = true;
-
-        if (is_positive(t)) {
-#ifdef CGAL_SS3_EXIT_ASAP
-          // can 'break' directly because it's the same value for all 'edge_2's
-          break;
-#else
-          split_event_current_1_b = false;
-#endif
-        }
-
-        if (!checkBisector(edge_2, facet_r2, event_time, facet_2_src, point)) {
-#ifdef CGAL_SS3_EXIT_ASAP
-          continue;
-#else
-          split_event_current_2_b = false;
-#endif
-        }
-
-        if (!checkBisector(edge_2, facet_l2, event_time, facet_2_dst, point)) {
-#ifdef CGAL_SS3_EXIT_ASAP
-          continue;
-#else
-          split_event_current_3_b = false;
-#endif
-        }
-
-        const bool split_event_current_b = (split_event_current_1_b &&
-                                            split_event_current_2_b &&
-                                            split_event_current_3_b);
-
-        if (split_event_current_b) {
-          split_event = true;
-          break;
-        }
-      }
-      if (split_event) {
-        continue;
-      }
-      // edge merge event
-      EdgeSPtr edge_prev = edge->prev(facet_l);
-      EdgeSPtr edge_next = edge->next(facet_l)->next(facet_l);
-      if (edge_prev->hasSameFacets(edge_next)) {
-        continue;
-      }
-      edge_prev = edge->prev(facet_l)->prev(facet_l);
-      edge_next = edge->next(facet_l);
-      if (edge_prev->hasSameFacets(edge_next)) {
-        continue;
-      }
-      edge_prev = edge->prev(facet_r);
-      edge_next = edge->next(facet_r)->next(facet_r);
-      if (edge_prev->hasSameFacets(edge_next)) {
-        continue;
-      }
-      edge_prev = edge->prev(facet_r)->prev(facet_r);
-      edge_next = edge->next(facet_r);
-      if (edge_prev->hasSameFacets(edge_next)) {
-        continue;
-      }
-
-      EdgeEventSPtr event = EdgeEvent::create();
-      event->setTime(event_time);
-      event->setPoint(point);
-      event->setEdge(edge);
-      queue.push(event);
-    }
-  }
-
-  void collectEdgeEvents(const PolyhedronSPtr& polyhedron,
-                         const FT& current_time,
-                         const std::optional<FT>& time_future_bound,
-                         PQ& queue)
-  {
-    return collectEdgeEvents(polyhedron->edges(), polyhedron,
-                             current_time, time_future_bound, queue);
-  }
-
-  /**
-    * Edge Merge event.
-    */
-  void collectEdgeMergeEvents(const std::list<EdgeSPtr>& edges,
-                              const PolyhedronSPtr& /*polyhedron*/,
-                              const bool use_canonical_event_reps,
-                              const FT& current_time,
-                              const std::optional<FT>& time_future_bound,
-                              PQ& queue)
-  {
-    CGAL_SS3_CORE_TRACE_V(4, ">>> Collect Edge Merge Events [" << current_time << "]");
-
-    for (const EdgeSPtr& edge : edges) {
-      CGAL_SS3_DEBUG_SPTR(edge);
-
-      VertexSPtr vertex_src = edge->getVertexSrc();
-      VertexSPtr vertex_dst = edge->getVertexDst();
-      if (vertex_src->getPoint() == vertex_dst->getPoint()) {
-        continue;
-      }
-
-      FacetSPtr facet_l = edge->getFacetL();
-      FacetSPtr facet_r = edge->getFacetR();
-      if (HdsUtils::isTriangle(facet_l, edge) || HdsUtils::isTriangle(facet_r, edge)) {
-        // triangle event
-        continue;
-      }
-
-      FacetSPtr facet_other = edge->getFacetL();
-      EdgeSPtr edge_next = edge->next(facet_other);
-      facet_other = edge_next->other(facet_other);
-      edge_next = edge_next->prev(facet_other);
-      facet_other = edge_next->other(facet_other);
-      edge_next = edge_next->next(facet_other);
-      facet_other = edge_next->other(facet_other);
-      edge_next = edge_next->prev(facet_other);
-      if (edge_next == edge) {
-        // dbl edge merge event
-        continue;
-      }
-
-      facet_other = edge->getFacetR();
-      edge_next = edge->prev(facet_other);
-      facet_other = edge_next->other(facet_other);
-      edge_next = edge_next->next(facet_other);
-      facet_other = edge_next->other(facet_other);
-      edge_next = edge_next->prev(facet_other);
-      facet_other = edge_next->other(facet_other);
-      edge_next = edge_next->next(facet_other);
-      if (edge_next == edge) {
-        // dbl edge merge event
-        continue;
-      }
-
-      FacetSPtr facet = FacetSPtr();
-      EdgeSPtr edge_1 = EdgeSPtr();
-      EdgeSPtr edge_2 = EdgeSPtr();
-
-      // @todo do we still need to test other combinations if a previous one matched?
-      EdgeSPtr edge_prev = edge->prev(facet_l);
-      edge_next = edge->next(facet_l)->next(facet_l);
-      if (edge_prev->hasSameFacets(edge_next) && edge_prev != edge_next) {
-        facet = facet_l;
-        edge_1 = edge_prev;
-        edge_2 = edge_next;
-      }
-
-#ifndef CGAL_SS3_ENFORCE_UNIQUE_EVENT_REPRESENTATIONS
-      if (use_canonical_event_reps) {
-          // @fixme not sure about all of this...
-          // this is essentially the same as above but if 'edge' were 'edge->prev(facet_l)'
-          // so when we pass by again with this edge, then we will meet it in the check just above.
-          // BUT: the dbl edge merge event filter above applies only to 'edge' so we might filter
-          // for edge->prev(facet_l) which we wouldn't have filtered when seeing it from 'edge'?
-
-          edge_prev = edge->prev(facet_l)->prev(facet_l);
-          edge_next = edge->next(facet_l);
-          if (edge_prev->hasSameFacets(edge_next) && edge_prev != edge_next) {
-            facet = facet_l;
-            edge_1 = edge_prev;
-            edge_2 = edge_next;
-          }
-      }
-#endif
-      edge_prev = edge->prev(facet_r);
-      edge_next = edge->next(facet_r)->next(facet_r);
-      if (edge_prev->hasSameFacets(edge_next) && edge_prev != edge_next) {
-        facet = facet_r;
-        edge_1 = edge_prev;
-        edge_2 = edge_next;
-      }
-#ifndef CGAL_SS3_ENFORCE_UNIQUE_EVENT_REPRESENTATIONS
-      // @fixme not sure about this - see above
-      if (use_canonical_event_reps) {
-        edge_prev = edge->prev(facet_r)->prev(facet_r);
-        edge_next = edge->next(facet_r);
-        if (edge_prev->hasSameFacets(edge_next) && edge_prev != edge_next) {
-          facet = facet_r;
-          edge_1 = edge_prev;
-          edge_2 = edge_next;
-        }
-      }
-#endif
-
-      if (!(facet && edge_1 && edge_2)) {
-        continue;
-      }
-
-      Point3SPtr point;
-      FT event_time;
-      std::tie(point, event_time) = vanishesAt(edge, current_time, time_future_bound);
-      if (!point) {
-        continue;
-      }
-
-      CGAL_assertion(event_time < current_time);
-      CGAL_assertion(!time_future_bound.has_value() || event_time >= *time_future_bound);
-
-      EdgeMergeEventSPtr event = EdgeMergeEvent::create();
-      event->setTime(event_time);
-      event->setPoint(point);
-      event->setFacet(facet);
-      event->setEdge1(edge_1);
-      event->setEdge2(edge_2);
-      queue.push(event);
-    }
-  }
-
-  void collectEdgeMergeEvents(const PolyhedronSPtr& polyhedron,
-                              const FT& current_time,
-                              const std::optional<FT>& time_future_bound,
-                              PQ& queue)
-  {
-    return collectEdgeMergeEvents(polyhedron->edges(), polyhedron, true /*canonical reps*/,
-                                  current_time, time_future_bound, queue);
-  }
-
-  /**
-    * The triangle on the surface vanishes.
-    */
-  void collectTriangleEvents(const std::list<EdgeSPtr>& edges,
-                              const PolyhedronSPtr& /*polyhedron*/,
-                              const bool use_canonical_event_reps,
-                              const FT& current_time,
-                              const std::optional<FT>& time_future_bound,
-                              PQ& queue)
-  {
-    CGAL_SS3_CORE_TRACE_V(4, ">>> Collect Triangle Event [" << current_time << "]");
-
-    for (const EdgeSPtr& edge : edges) {
-      CGAL_SS3_DEBUG_SPTR(edge);
-
-      if (edge->getVertexSrc()->getPoint() == edge->getVertexDst()->getPoint()) {
-        continue;
-      }
-
-      if (HdsUtils::isTetrahedron(edge)) {
-        // tetrahedron event
-        continue;
-      }
-
-      FacetSPtr facet;
-      if (HdsUtils::isTriangle(edge->getFacetL(), edge)) {
-        facet = edge->getFacetL();
-      } else if (HdsUtils::isTriangle(edge->getFacetR(), edge)) {
-        facet = edge->getFacetR();
-      } else {
-        continue;
-      }
-
-#ifdef CGAL_SS3_ENFORCE_UNIQUE_EVENT_REPRESENTATIONS
-      if (use_canonical_event_reps) {
-        // rep canonicity: only check event existence when at the smallest edge of the facet
-        if (edge->getID() > edge->prev(facet)->getID() ||
-            edge->getID() > edge->next(facet)->getID()) {
-          continue;
-        }
-      }
-#endif
-
-      bool dbl_triangle_event = false;
-      EdgeSPtr edge_tmp = edge;
-      for (unsigned int i = 0; i < 3; ++i) {
-        FacetSPtr facet_tmp_l = edge_tmp->getFacetL();
-        FacetSPtr facet_tmp_r = edge_tmp->getFacetR();
-        if (facet_tmp_l && facet_tmp_r) {
-          if (HdsUtils::isTriangle(facet_tmp_l, edge_tmp) &&
-              HdsUtils::isTriangle(facet_tmp_r, edge_tmp)) {
-            dbl_triangle_event = true;
-            break;
-          }
-        }
-        edge_tmp = edge_tmp->next(facet);
-      }
-      if (dbl_triangle_event) {
-        continue;
-      }
-
-      Point3SPtr point;
-      FT event_time;
-      std::tie(point, event_time) = vanishesAt(edge, current_time, time_future_bound);
-      if (!point) {
-        continue;
-      }
-
-      CGAL_assertion(event_time < current_time);
-      CGAL_assertion(!time_future_bound.has_value() || event_time >= *time_future_bound);
-
-      CGAL_assertion(KernelWrapper::side(edge->getFacetL()->getPlane(), point) < 0);
-      CGAL_assertion(KernelWrapper::side(edge->getFacetR()->getPlane(), point) < 0);
-
-      TriangleEventSPtr event = TriangleEvent::create();
-      event->setTime(event_time);
-      event->setPoint(point);
-      event->setFacet(facet);
-      event->setEdgeBegin(edge);
-      queue.push(event);
-    }
-  }
-
-  void collectTriangleEvents(const PolyhedronSPtr& polyhedron,
-                             const FT& current_time,
-                             const std::optional<FT>& time_future_bound,
-                             PQ& queue)
-  {
-    return collectTriangleEvents(polyhedron->edges(), polyhedron, true /*use canonical reps*/,
-                                 current_time, time_future_bound, queue);
-  }
-
-  /**
-    * Dbl Edge Merge.
-    */
-  void collectDblEdgeMergeEvents(const std::list<EdgeSPtr>& edges,
-                                const PolyhedronSPtr& /*polyhedron*/,
-                                const bool /*use_canonical_event_reps*/,
-                                const FT& current_time,
-                                const std::optional<FT>& time_future_bound,
-                                PQ& queue)
-  {
-    CGAL_SS3_CORE_TRACE_V(4, ">>> Collect Dbl Edge Merge Events [" << current_time << "]");
-
-    for (const EdgeSPtr& edge : edges) {
-      CGAL_SS3_DEBUG_SPTR(edge);
-
-      if (!HdsUtils::isReflex(edge)) {
-        continue;
-      }
-
-      bool is_dbl_edge_merge_event = false;
-      FacetSPtr facet_1 = FacetSPtr();
-      EdgeSPtr edge_11 = EdgeSPtr();
-      EdgeSPtr edge_12 = EdgeSPtr();
-      FacetSPtr facet_2 = FacetSPtr();
-      EdgeSPtr edge_21 = EdgeSPtr();
-      EdgeSPtr edge_22 = EdgeSPtr();
-      FacetSPtr facet_other = edge->getFacetL();
-      EdgeSPtr edge_next = edge->next(facet_other);
-      facet_other = edge_next->other(facet_other);
-      edge_next = edge_next->prev(facet_other);
-      facet_other = edge_next->other(facet_other);
-      edge_next = edge_next->next(facet_other);
-      facet_other = edge_next->other(facet_other);
-      edge_next = edge_next->prev(facet_other);
-      if (edge_next == edge) {
-        is_dbl_edge_merge_event = true;
-        facet_1 = edge->getFacetL();
-        edge_11 = edge->prev(facet_1);
-        edge_12 = edge->next(facet_1)->next(facet_1);
-        facet_2 = edge->getFacetR();
-        edge_21 = edge->prev(facet_2);
-        edge_22 = edge->next(facet_2)->next(facet_2);
-      }
-
-      facet_other = edge->getFacetR();
-      edge_next = edge->prev(facet_other);
-      facet_other = edge_next->other(facet_other);
-      edge_next = edge_next->next(facet_other);
-      facet_other = edge_next->other(facet_other);
-      edge_next = edge_next->prev(facet_other);
-      facet_other = edge_next->other(facet_other);
-      edge_next = edge_next->next(facet_other);
-      if (edge_next == edge) {
-        is_dbl_edge_merge_event = true;
-        facet_1 = edge->getFacetR();
-        edge_11 = edge->prev(facet_1)->prev(facet_1);
-        edge_12 = edge->next(facet_1);
-        facet_2 = edge->getFacetL();
-        edge_21 = edge->prev(facet_2)->prev(facet_2);
-        edge_22 = edge->next(facet_2);
-      }
-
-      if (edge_11 == edge_12 || edge_21 == edge_22) {
-        // double triangle event
-        continue;
-      }
-
-      if (!is_dbl_edge_merge_event) {
-        continue;
-      }
-
-      Point3SPtr point;
-      FT event_time;
-      std::tie(point, event_time) = vanishesAt(edge, current_time, time_future_bound);
-      if (!point) {
-        continue;
-      }
-
-      CGAL_assertion(event_time < current_time);
-      CGAL_assertion(!time_future_bound.has_value() || event_time >= *time_future_bound);
-
-      DblEdgeMergeEventSPtr event = DblEdgeMergeEvent::create();
-      event->setTime(event_time);
-      event->setPoint(point);
-      event->setFacet1(facet_1);
-      event->setEdge11(edge_11);
-      event->setEdge12(edge_12);
-      event->setFacet2(facet_2);
-      event->setEdge21(edge_21);
-      event->setEdge22(edge_22);
-      queue.push(event);
-    }
-  }
-
-  void collectDblEdgeMergeEvents(const PolyhedronSPtr& polyhedron,
-                                 const FT& current_time,
-                                 const std::optional<FT>& time_future_bound,
-                                 PQ& queue)
-  {
-    return collectDblEdgeMergeEvents(polyhedron->edges(), polyhedron, true /*use canonical reps*/,
-                                     current_time, time_future_bound, queue);
-  }
-
-  /**
-    * Dbl Triangle
-    */
-  void collectDblTriangleEvents(const std::list<EdgeSPtr>& edges,
-                                const PolyhedronSPtr& /*polyhedron*/,
-                                const bool /*use_canonical_event_reps*/,
-                                const FT& current_time,
-                                const std::optional<FT>& time_future_bound,
-                                PQ& queue)
-  {
-    CGAL_SS3_CORE_TRACE_V(4, ">>> Collect Dbl Triangle Events [" << current_time << "]");
-
-    for (const EdgeSPtr& edge : edges) {
-      CGAL_SS3_DEBUG_SPTR(edge);
-
-      if (HdsUtils::isTetrahedron(edge)) {
-        continue;
-      }
-      FacetSPtr facet_l = edge->getFacetL();
-      FacetSPtr facet_r = edge->getFacetR();
-      if (!facet_l || !facet_r) {
-        continue;
-      }
-
-      // use_canonical_event_reps
-      // rep canonicity: this event is already only seen from its ridge edge because of this check
-      if (!(HdsUtils::isTriangle(facet_l, edge) && HdsUtils::isTriangle(facet_r, edge))) {
-        continue;
-      }
-
-      Point3SPtr point;
-      FT event_time;
-      std::tie(point, event_time) = vanishesAt(edge, current_time, time_future_bound);
-      if (!point) {
-        continue;
-      }
-
-      CGAL_assertion(event_time < current_time);
-      CGAL_assertion(!time_future_bound.has_value() || event_time >= *time_future_bound);
-
-      DblTriangleEventSPtr event = DblTriangleEvent::create();
-      event->setTime(event_time);
-      event->setPoint(point);
-      event->setEdge(edge);
-      queue.push(event);
-    }
-  }
-
-  void collectDblTriangleEvents(const PolyhedronSPtr& polyhedron,
-                                const FT& current_time,
-                                const std::optional<FT>& time_future_bound,
-                                PQ& queue)
-  {
-    return collectDblTriangleEvents(polyhedron->edges(), polyhedron, true /*use canonical reps*/,
-                                    current_time, time_future_bound, queue);
-  }
-
-  /**
-    * A tetrahedron causes one final event only.
-    */
-  void collectTetrahedronEvents(const std::list<EdgeSPtr>& edges,
-                                const PolyhedronSPtr& /*polyhedron*/,
-                                const bool use_canonical_event_reps,
-                                const FT& current_time,
-                                const std::optional<FT>& time_future_bound,
-                                PQ& queue)
-  {
-    CGAL_SS3_CORE_TRACE_V(4, ">>> Collect Tetrahedron Events [" << current_time << "]");
-
-    for (const EdgeSPtr& edge : edges) {
-      CGAL_SS3_DEBUG_SPTR(edge);
-
-      if (HdsUtils::isTetrahedron(edge)) {
-#ifdef CGAL_SS3_ENFORCE_UNIQUE_EVENT_REPRESENTATIONS
-        if (use_canonical_event_reps) {
-          // rep canonicity: only investigate this event if we are in the smallest edge
-          // of the smallest facet of the tetrahedron
-          FacetSPtr facet = (edge->getFacetL()->getID() < edge->getFacetR()->getID()) ? edge->getFacetL()
-                                                                                      : edge->getFacetR();
-
-          // smallest incident facet is the smallest of the tetrahedron
-          if (facet->getID() > edge->prev(facet)->other(facet)->getID() ||
-              facet->getID() > edge->other(facet)->getID() ||
-              facet->getID() > edge->next(facet)->other(facet)->getID()) {
-            continue;
-          }
-
-          // edge is the smallest within the facet
-          if (edge->getID() > edge->next(facet)->getID() ||
-              edge->getID() > edge->prev(facet)->getID()) {
-            continue;
-          }
-        }
-#endif
-
-        Point3SPtr point;
-        FT event_time;
-        std::tie(point, event_time) = vanishesAt(edge, current_time, time_future_bound);
-        if (!point) {
-          continue;
-        }
-
-      CGAL_assertion(event_time < current_time);
-      CGAL_assertion(!time_future_bound.has_value() || event_time >= *time_future_bound);
-
-        TetrahedronEventSPtr event = TetrahedronEvent::create();
-        event->setTime(event_time);
-        event->setPoint(point);
-        event->setEdgeBegin(edge);
-        queue.push(event);
-      }
-    }
-  }
-
-  void collectTetrahedronEvents(const PolyhedronSPtr& polyhedron,
-                                const FT& current_time,
-                                const std::optional<FT>& time_future_bound,
-                                PQ& queue)
-  {
-    return collectTetrahedronEvents(polyhedron->edges(), polyhedron, true /*use canonical reps*/,
-                                    current_time, time_future_bound, queue);
   }
 
   /**
@@ -2542,139 +1746,13 @@ public:
         continue;
       }
 
-// this only seeks the first vertex_2 that share the same incident facets as vertex_1 and
-// is in the cycle (instead of all vertex_2 from all cycles of all incident facets...)
-// #define CGAL_SS3_NEWER_VV_VERTEX_2_DETECTION
-#ifdef CGAL_SS3_NEWER_VV_VERTEX_2_DETECTION
-      I do not think whatever is below is enough in case of some weird tangled faces.
-      Indeed, we want the first vertices left and right _on the supporting line_ of the edge
-      but with some weird enough facet, we could have a vertex that is not the first one
-      but that is still the closest to the edge on the supporting line.
-
-      also it is pointless to walk both left and right, just walk one direction for each facet
-
-      also the other_facet looks kinda weird, why edge_r?
-
-      // @todo rewrite all of that stuff not to waste the facet_1/facet_2 information
       std::set<VertexSPtr> vertices_2;
       for (FacetWPtr facet_wptr : vertex_1->facets()) {
         if (FacetSPtr facet = facet_wptr.lock()) {
-          CGAL_SS3_CORE_TRACE("walking facet: " << facet->getID());
-
-          EdgeSPtr edge_l = vertex_1->findEdge(facet);
-          CGAL_SS3_DEBUG_SPTR(edge_l);
-          CGAL_assertion(edge_l->src(facet) == vertex_1);
-          EdgeSPtr edge_r = edge_l->prev(facet);
-          CGAL_assertion(edge_r->dst(facet) == vertex_1);
-
-          // seek to the left
-          CGAL_SS3_CORE_TRACE("------> LEFT WALK");
-          FacetSPtr other_facet = start_e->other(facet);
-          CGAL_SS3_CORE_TRACE("other facet: " << other_facet->getID());
-
-          CGAL_assertion(other_facet != edge_l->other(facet));
-
-          // skip edge_l directly, and ignore one more because we want v-v events, not vanish.
-          // could skip two, but then it becomes annoying with triangular faces
-          CGAL_assertion(edge_l->next(facet) != edge_l);
-          CGAL_assertion(edge_l->next(facet)->next(facet) != edge_l);
-          EdgeSPtr edge_l1 = edge_l->next(facet);
-          EdgeSPtr edge_l2 = edge_l1->next(facet);
-
-          // skip edge_r directly, and ignore one more because we want v-v events, not vanish.
-          // could skip two, but then it becomes annoying with triangular faces
-          CGAL_assertion(edge_r->prev(facet) != edge_r);
-          CGAL_assertion(edge_r->prev(facet)->prev(facet) != edge_r);
-          EdgeSPtr edge_r1 = edge_r->prev(facet);
-          EdgeSPtr edge_r2 = edge_r1->prev(facet);
-
-          EdgeSPtr current_edge = edge_l2;
-          for (;;) {
-            CGAL_SS3_CORE_TRACE("current_edge: " << current_edge->getVertexSrc()->getID()
-                                                  << " " << current_edge->getVertexDst()->getID()
-                                                  << " faces: " << current_edge->getFacetL()->getID()
-                                                  << " " << current_edge->getFacetR()->getID());
-
-            if (current_edge == edge_r1 || current_edge == edge_r) {
-              break;
-            }
-
-            if (current_edge->other(facet) == other_facet) {
-              // we have found another vertex that is along an edge that has the same
-              // incident facets. But to be of interest, this needs to be on the correct side
-              // and not a full loop around
-              if (CGAL::collinear_are_ordered_along_line(*(edge_l->src(facet)->getPoint()),
-                                                          *(edge_l->dst(facet)->getPoint()),
-                                                          *(current_edge->src(facet)->getPoint()))) {
-                  CGAL_SS3_CORE_TRACE("left neighbor: " << current_edge->src(facet)->getID());
-                  vertices_2.insert(current_edge->src(facet));
-                  break;
-                }
-              }
-
-            current_edge = current_edge->next(facet);
-          }
-
-          // seek to the right
-          CGAL_SS3_CORE_TRACE("------> RIGHT WALK");
-          other_facet = edge_l->other(facet);
-          CGAL_assertion(other_facet != edge_r->other(facet));
-
-          current_edge = edge_r2;
-          for (;;) {
-            CGAL_SS3_CORE_TRACE("current_edge: " << current_edge->getVertexSrc()->getID() << " " << current_edge->getVertexDst()->getID() << " faces: " << current_edge->getFacetL()->getID() << " " << current_edge->getFacetR()->getID());
-
-            if (current_edge == edge_l1 || current_edge == edge_l) {
-              break;
-            }
-
-            if (current_edge->other(facet) == other_facet) {
-              // we have found another vertex that is along an edge that has the same
-              // incident facets. But to be of interest, this needs to be on the correct side
-              // and not a full loop around
-              if (CGAL::collinear_are_ordered_along_line(*(edge_r->dst(facet)->getPoint()),
-                                                          *(edge_r->src(facet)->getPoint()),
-                                                          *(current_edge->dst(facet)->getPoint()))) {
-                CGAL_SS3_CORE_TRACE("right neighbor: " << current_edge->dst(facet)->getID());
-                vertices_2.insert(current_edge->dst(facet));
-                break;
-              }
-            }
-
-            current_edge = current_edge->prev(facet);
-          }
-        }
-      }
-#else // CGAL_SS3_NEWER_VV_VERTEX_2_DETECTION
-      std::set<VertexSPtr> vertices_2;
-      for (FacetWPtr facet_wptr : vertex_1->facets()) {
-        if (FacetSPtr facet = facet_wptr.lock()) {
-# ifndef CGAL_SS3_VV_VERTEX_2_WALK_FACES_FOR_DETECTION
             vertices_2.insert(facet->vertices().begin(), facet->vertices().end());
-# else
-          // Should be enough to check within the same border because different CCs
-          // of the same facet cannot merge again
-
-          // Subtlety: within a facet we are only checking the edge whose source is vertex_1
-          // That's enough for two reasons:
-          // - VV events are symmetrical
-          // - The other edge will be checked when seen from the other facet
-          EdgeSPtr start_e = vertex_1->findEdge(facet);
-          FacetSPtr other_facet = start_e->other(facet);
-          EdgeSPtr current_edge = start_e->next(facet);
-          while (current_edge != start_e) {
-            if (current_edge->other(facet) == other_facet) {
-              vertices_2.insert(current_edge->src(facet));
-              vertices_2.insert(current_edge->dst(facet));
-            }
-
-              current_edge = current_edge->next(facet);
-          }
-# endif
             // @speed sort vertices_2 as to get the first vertex after start_e->dst(facet)
         }
       }
-#endif // CGAL_SS3_NEWER_VV_VERTEX_2_DETECTION
 
       for (const VertexSPtr& vertex_2 : vertices_2) {
         CGAL_SS3_DEBUG_SPTR(vertex_2);
@@ -2799,19 +1877,16 @@ public:
 
         // convex split event checks are performed at pop time - see isActualVertexEvent()
 
-        Point3SPtr point;
-        FT event_time;
-        std::tie(point, event_time) = crashAt(edge_11, edge_22, current_time, time_future_bound);
-        if (!point) {
+        std::optional<FT> event_time = crashAtTime(edge_11, edge_22, current_time, time_future_bound);
+        if (!event_time) {
           continue;
         }
 
-      CGAL_assertion(event_time < current_time);
-      CGAL_assertion(!time_future_bound.has_value() || event_time >= *time_future_bound);
+        CGAL_assertion(*event_time < current_time);
+        CGAL_assertion(!time_future_bound.has_value() || *event_time >= *time_future_bound);
 
         VertexEventSPtr event = VertexEvent::create();
-        event->setTime(event_time);
-        event->setPoint(point);
+        event->setTime(*event_time);
         event->setVertex1(v1);
         event->setVertex2(v2);
         event->setFacet1(facet_1);
@@ -2852,8 +1927,6 @@ public:
     timer.start();
 #endif
 
-    // @speed seems like this could be rewritten in a much cheaper manner (and storing
-    // the convexity property). But currently, it's a cheap collect().
     for (const VertexSPtr& vertex_1 : vertices) {
       CGAL_assertion(vertex_1->getID() != -1);
 
@@ -2861,32 +1934,12 @@ public:
         continue;
       }
 
-#ifdef CGAL_SS3_NEWER_VV_VERTEX_2_DETECTION
-      take code from collectVertexEvents
-#else // CGAL_SS3_NEWER_VV_VERTEX_2_DETECTION
       std::set<VertexSPtr> vertices_2;
       for (FacetWPtr facet_wptr : vertex_1->facets()) {
         if (FacetSPtr facet = facet_wptr.lock()) {
-# ifndef CGAL_SS3_VV_VERTEX_2_WALK_FACES_FOR_DETECTION
           vertices_2.insert(facet->vertices().begin(), facet->vertices().end());
-# else
-          // Should be enough to check within the same border because different CCs
-          // of the same facet cannot merge again
-          EdgeSPtr start_e = vertex_1->findEdge(facet);
-          FacetSPtr other_facet = start_e->other(facet);
-          EdgeSPtr current_edge = start_e->next(facet);
-          while (current_edge != start_e) {
-            if (current_edge->other(facet) == other_facet) {
-              vertices_2.insert(current_edge->src(facet));
-              vertices_2.insert(current_edge->dst(facet));
-            }
-
-            current_edge = current_edge->next(facet);
-          }
-# endif
         }
       }
-#endif // CGAL_SS3_NEWER_VV_VERTEX_2_DETECTION
 
       for (const VertexSPtr& vertex_2 : vertices_2) {
         CGAL_assertion(vertex_2->getID() != -1);
@@ -2998,19 +2051,16 @@ public:
 
         // convex split event checks are performed at pop time - see isActualFlipVertexEvent()
 
-        Point3SPtr point;
-        FT event_time;
-        std::tie(point, event_time) = crashAt(edge_11, edge_22, current_time, time_future_bound);
-        if (!point) {
+        std::optional<FT> event_time = crashAtTime(edge_11, edge_22, current_time, time_future_bound);
+        if (!event_time) {
           continue;
         }
 
-        CGAL_assertion(event_time < current_time);
-        CGAL_assertion(!time_future_bound.has_value() || event_time >= *time_future_bound);
+        CGAL_assertion(*event_time < current_time);
+        CGAL_assertion(!time_future_bound.has_value() || *event_time >= *time_future_bound);
 
         FlipVertexEventSPtr event = FlipVertexEvent::create();
-        event->setTime(event_time);
-        event->setPoint(point);
+        event->setTime(*event_time);
         event->setVertex1(v1);
         event->setVertex2(v2);
         event->setFacet1(facet_1);
@@ -3139,20 +2189,16 @@ public:
       }
     }
 
-    // calculate intersection point
-    Point3SPtr point;
-    FT event_time;
-    std::tie(point, event_time) = crashAt(edge_1, edge_2, current_time, time_future_bound);
-    if (!point) {
+    std::optional<FT> event_time = crashAtTime(edge_1, edge_2, current_time, time_future_bound);
+    if (!event_time) {
       return;
     }
 
-    CGAL_assertion(event_time < current_time);
-    CGAL_assertion(!time_future_bound.has_value() || event_time >= *time_future_bound);
+    CGAL_assertion(*event_time < current_time);
+    CGAL_assertion(!time_future_bound.has_value() || *event_time >= *time_future_bound);
 
     SurfaceEventSPtr event = SurfaceEvent::create();
-    event->setTime(event_time);
-    event->setPoint(point);
+    event->setTime(*event_time);
     event->setEdge1(edge_1);
     event->setEdge2(edge_2);
     queue.push(event);
@@ -3286,20 +2332,16 @@ public:
         ++tested_candidates;
 #endif
 
-        // calculate intersection point
-        Point3SPtr point;
-        FT event_time;
-        std::tie(point, event_time) = crashAt(edge_1, edge_2, current_time, time_future_bound);
-        if (!point) {
+        std::optional<FT> event_time = crashAtTime(edge_1, edge_2, current_time, time_future_bound);
+        if (!event_time) {
           continue;
         }
 
-        CGAL_assertion(event_time < current_time);
-        CGAL_assertion(!time_future_bound.has_value() || event_time >= *time_future_bound);
+        CGAL_assertion(*event_time < current_time);
+        CGAL_assertion(!time_future_bound.has_value() || *event_time >= *time_future_bound);
 
         SurfaceEventSPtr event = SurfaceEvent::create();
-        event->setTime(event_time);
-        event->setPoint(point);
+        event->setTime(*event_time);
         event->setEdge1(edge_1);
         event->setEdge2(edge_2);
         queue.push(event);
@@ -3362,22 +2404,18 @@ public:
       return;
     }
 
-    // calculate intersection point
-    Point3SPtr point;
-    FT event_time;
-    std::tie(point, event_time) = crashAt(edge_1, edge_2, current_time, time_future_bound);
-    if (!point) {
+    std::optional<FT> event_time = crashAtTime(edge_1, edge_2, current_time, time_future_bound);
+    if (!event_time) {
       return;
     }
 
-    CGAL_assertion(event_time < current_time);
-    CGAL_assertion(!time_future_bound.has_value() || event_time >= *time_future_bound);
+    CGAL_assertion(*event_time < current_time);
+    CGAL_assertion(!time_future_bound.has_value() || *event_time >= *time_future_bound);
 
     // degeneracy check is performed at pop time - see isActualPolyhedronSplitEvent()
 
     PolyhedronSplitEventSPtr event = PolyhedronSplitEvent::create();
-    event->setTime(event_time);
-    event->setPoint(point);
+    event->setTime(*event_time);
     event->setEdge1(edge_1);
     event->setEdge2(edge_2);
     queue.push(event);
@@ -3451,44 +2489,16 @@ public:
         continue;
       }
 
-#ifdef CGAL_SS3_NEWER_VV_VERTEX_2_DETECTION
-      take code from collectVertexEvents
-#else // CGAL_SS3_NEWER_VV_VERTEX_2_DETECTION
       std::set<VertexSPtr> vertices_2;
       for (FacetWPtr facet_wptr : vertex_1->facets()) {
         if (FacetSPtr facet = facet_wptr.lock()) {
-# ifndef CGAL_SS3_VV_VERTEX_2_WALK_FACES_FOR_DETECTION
           vertices_2.insert(facet->vertices().begin(), facet->vertices().end());
-# else
-          // Should be enough to check within the same border because different CCs
-          // of the same facet cannot merge again
-
-          currently this improvement creates an annoying fake bug in the queue check:
-          by walking incident faces in a single direction, this introduces
-          some asymetry in the detection of the event: e.g. if the event were 5-6,
-          we could detect it when looking from 5 but not from 6 because the facet walked
-          from 5 has 6, but the facet walked from 6 does not have 5 (5 is in a difference_type CC of the facet) and then we could be at 6 in local, but 5
-          when filling the queue globally
-
-          EdgeSPtr start_e = vertex_1->findEdge(facet);
-          FacetSPtr other_facet = start_e->other(facet);
-          EdgeSPtr current_edge = start_e->next(facet);
-          while (current_edge != start_e) {
-            if (current_edge->other(facet) == other_facet) {
-              vertices_2.insert(current_edge->src(facet));
-              vertices_2.insert(current_edge->dst(facet));
-            }
-
-            current_edge = current_edge->next(facet);
-          }
-# endif
         }
     }
 
 # ifdef CGAL_SS3_RUN_TIMERS
     // CGAL_SS3_CORE_TRACE("filled vertices_2 after " << timer.time() << "s");
 # endif
-#endif // CGAL_SS3_NEWER_VV_VERTEX_2_DETECTION
 
     for (const VertexSPtr& vertex_2 : vertices_2) {
         CGAL_SS3_DEBUG_SPTR(vertex_2);
@@ -3590,19 +2600,16 @@ public:
 
         // convex split event checks are performed at pop time - see isActualSplitMergeEvent()
 
-        Point3SPtr point;
-        FT event_time;
-        std::tie(point, event_time) = crashAt(edge_11, edge_22, current_time, time_future_bound);
-        if (!point) {
+        std::optional<FT> event_time = crashAtTime(edge_11, edge_22, current_time, time_future_bound);
+        if (!event_time) {
           continue;
         }
 
-        CGAL_assertion(event_time < current_time);
-        CGAL_assertion(!time_future_bound.has_value() || event_time >= *time_future_bound);
+        CGAL_assertion(*event_time < current_time);
+        CGAL_assertion(!time_future_bound.has_value() || *event_time >= *time_future_bound);
 
         SplitMergeEventSPtr event = SplitMergeEvent::create();
-        event->setTime(event_time);
-        event->setPoint(point);
+        event->setTime(*event_time);
         event->setVertex1(v1);
         event->setVertex2(v2);
         event->setFacet1(facet_1);
@@ -3782,32 +2789,15 @@ public:
         ++tested_candidates;
 #endif
 
-        // calculate intersection point
-        Point3SPtr point;
-        FT event_time;
-
-#ifdef CGAL_SS3_CHECK_BISECTORS_AT_POP_TIME_FOR_EDGE_SPLIT
-        FacetSPtr facet_l1 = edge_1->getFacetL();
-        FacetSPtr facet_r1 = edge_1->getFacetR();
-        FacetSPtr facet_l2 = edge_2->getFacetL();
-        FacetSPtr facet_r2 = edge_2->getFacetR();
-
-        std::tie(point, event_time) = intersectionPointAndTimeOffsetPlanes(
-            facet_l1, facet_r1, facet_l2, facet_r2, current_time, time_future_bound);
-        if (!point) {
+        std::optional<FT> event_time = crashAtTime(edge_1, edge_2, current_time, time_future_bound);
+        if (!event_time) {
           continue;
         }
-#else
-        std::tie(point, event_time) = crashAt(edge_1, edge_2, current_time, time_future_bound);
-        if (!point) {
-          continue;
-        }
-#endif
 
 #ifdef CGAL_SS3_ENFORCE_UNIQUE_EVENT_REPRESENTATIONS
         // @fixme below needs to be double checked
         if (use_canonical_event_reps) {
-          FT shift = event_time - current_time;
+          FT shift = *event_time - current_time;
           Segment3SPtr e1o = Transformation::shiftEdge(edge_1, shift);
           if (e1o->is_degenerate()) {
             // polyhedron split
@@ -3822,8 +2812,7 @@ public:
 #endif
 
         EdgeSplitEventSPtr event = EdgeSplitEvent::create();
-        event->setTime(event_time);
-        event->setPoint(point);
+        event->setTime(*event_time);
         event->setEdge1(edge_1);
         event->setEdge2(edge_2);
         queue.push(event);
@@ -3917,32 +2906,15 @@ public:
         return;
     }
 
-    // calculate intersection point
-    Point3SPtr point;
-    FT event_time;
-
-#ifdef CGAL_SS3_CHECK_BISECTORS_AT_POP_TIME_FOR_EDGE_SPLIT
-    FacetSPtr facet_l1 = edge_1->getFacetL();
-    FacetSPtr facet_r1 = edge_1->getFacetR();
-    FacetSPtr facet_l2 = edge_2->getFacetL();
-    FacetSPtr facet_r2 = edge_2->getFacetR();
-
-    std::tie(point, event_time) = intersectionPointAndTimeOffsetPlanes(
-        facet_l1, facet_r1, facet_l2, facet_r2, current_time, time_future_bound);
-    if (!point) {
+    std::optional<FT> event_time = crashAtTime(edge_1, edge_2, current_time, time_future_bound);
+    if (!event_time) {
       return;
     }
-#else
-    std::tie(point, event_time) = crashAt(edge_1, edge_2, current_time, time_future_bound);
-    if (!point) {
-      return;
-    }
-#endif
 
 #ifdef CGAL_SS3_ENFORCE_UNIQUE_EVENT_REPRESENTATIONS
     // @fixme below needs to be double checked
     if (use_canonical_event_reps) {
-      FT shift = event_time - current_time;
+      FT shift = *event_time - current_time;
       Segment3SPtr e1o = Transformation::shiftEdge(edge_1, shift);
       if (e1o->is_degenerate()) {
         // polyhedron split
@@ -3957,8 +2929,7 @@ public:
 #endif
 
     EdgeSplitEventSPtr event = EdgeSplitEvent::create();
-    event->setTime(event_time);
-    event->setPoint(point);
+    event->setTime(*event_time);
     event->setEdge1(edge_1);
     event->setEdge2(edge_2);
     queue.push(event);
@@ -4161,29 +3132,18 @@ public:
           ++tested_candidates;
 #endif
 
-          CGAL_assertion(vertex->facets().size() >= 3);
-          std::array<FacetSPtr, 3> fs;
-          for (int i = 0; i < 3; ++i) {
-            FacetWPtr wf = *(std::next(vertex->facets().begin(), i));
-            CGAL_assertion(!wf.expired());
-            fs[i] = wf.lock();
-          }
-
-          Point3SPtr point;
-          FT event_time;
-          std::tie(point, event_time) = intersectionPointAndTimeOffsetPlanes(facet, fs[0], fs[1], fs[2], current_time, time_future_bound);
-          if (!point) {
+          std::optional<FT> event_time = crashAtTime(vertex, facet, current_time, time_future_bound);
+          if (!event_time) {
             continue;
           }
 
-          CGAL_assertion(event_time < current_time);
-          CGAL_assertion(!time_future_bound.has_value() || event_time >= *time_future_bound);
+          CGAL_assertion(*event_time < current_time);
+          CGAL_assertion(!time_future_bound.has_value() || *event_time >= *time_future_bound);
 
           // actual intersection checks are performed at pop time - see isActualPierceEvent()
 
           PierceEventSPtr event = PierceEvent::create();
-          event->setTime(event_time);
-          event->setPoint(point);
+          event->setTime(*event_time);
           event->setFacet(facet);
           event->setVertex(vertex);
           queue.push(event);
@@ -4237,22 +3197,7 @@ public:
       CGAL_SS3_CORE_TRACE_CODE(for (const EdgeSPtr& e : local_edges))
       CGAL_SS3_CORE_TRACE_V(8, "\t" << e->toString());
 
-#ifdef CGAL_SS3_USE_GENERIC_VANISH_EVENT
       collectVanishEvents(local_edges, polyhedron, current_time, time_future_bound, queue);
-#else
-      collectEdgeEvents(local_edges, polyhedron,
-                        current_time, time_future_bound, queue);
-      collectEdgeMergeEvents(local_edges, polyhedron, false /*do not use canonical reps*/,
-                            current_time, time_future_bound, queue);
-      collectTriangleEvents(local_edges, polyhedron, false /*do not use canonical reps*/,
-                            current_time, time_future_bound, queue);
-      collectDblEdgeMergeEvents(local_edges, polyhedron,
-                                current_time, time_future_bound, queue);
-      collectDblTriangleEvents(local_edges, polyhedron,
-                               current_time, time_future_bound, queue);
-      collectTetrahedronEvents(local_edges, polyhedron, false /*do not use canonical reps*/,
-                              current_time, time_future_bound, queue);
-#endif
     }
 
     // == VERTEX-VERTEX EVENTS ==
@@ -4488,16 +3433,10 @@ public:
     CGAL_SS3_CORE_TRACE_IF(time_future_bound, 8, "Initial future bound = " << *time_future_bound);
 
     // --- Vanish Events
-#ifdef CGAL_SS3_USE_GENERIC_VANISH_EVENT
     collectVanishEvents(polyhedron, current_time, time_future_bound, queue);
-#else
-    collectEdgeEvents(polyhedron, current_time, time_future_bound, queue);
-    collectEdgeMergeEvents(polyhedron, current_time, time_future_bound, queue);
-    collectTriangleEvents(polyhedron, current_time, time_future_bound, queue);
-    collectDblEdgeMergeEvents(polyhedron, current_time, time_future_bound, queue);
-    collectDblTriangleEvents(polyhedron, current_time, time_future_bound, queue);
-    collectTetrahedronEvents(polyhedron, current_time, time_future_bound, queue);
-#endif
+
+    CGAL_assertion_code(for (const EdgeSPtr& edge : polyhedron->edges()))
+    CGAL_assertion_code(HdsUtils::getVanishTime(edge);) // check is_known within skeledgedata
 
     // --- Contact Event
     collectVertexEvents(polyhedron, current_time, time_future_bound, queue);
@@ -5024,6 +3963,8 @@ public:
 
     EdgeSPtr edge = event->getEdge();
     const FT& event_time = event->getTime();
+
+    event->setPoint(vanishesAtPoint(edge)); // @tmp somewhere proper
     Point3SPtr point = event->getPoint();
 
     // @todo would nice:
@@ -5058,23 +3999,18 @@ public:
 
       bool split_event = false;
       for (const EdgeSPtr& edge_2 : edges_2) {
-        bool split_event_current_1_b = true;
-        bool split_event_current_2_b = true;
-        bool split_event_current_3_b = true;
-
         FacetSPtr facet_l2 = edge_2->getFacetL();
         FacetSPtr facet_r2 = edge_2->getFacetR();
         FacetSPtr facet_2_src = edge_2->getFacetSrc();
         FacetSPtr facet_2_dst = edge_2->getFacetDst();
 
         Plane3SPtr plane_l2 = facet_l2->getPlane();
-
-        const FT& l2a = plane_l2->a();
-        const FT& l2b = plane_l2->b();
-        const FT& l2c = plane_l2->c();
-        const FT& l2d = plane_l2->d();
-        const FT& speed_l2 = HdsUtils::getSpeed(facet_l2);
-        FT t = (l2a * point->x() + l2b * point->y() + l2c * point->z() + l2d) / speed_l2;
+        CGAL_assertion_code(const FT& l2a = plane_l2->a();)
+        CGAL_assertion_code(const FT& l2b = plane_l2->b();)
+        CGAL_assertion_code(const FT& l2c = plane_l2->c();)
+        CGAL_assertion_code(const FT& l2d = plane_l2->d();)
+        CGAL_assertion_code(const FT& speed_l2 = HdsUtils::getSpeed(facet_l2);)
+        CGAL_assertion_code(FT lt2 = (l2a * point->x() + l2b * point->y() + l2c * point->z() + l2d) / speed_l2);
 
         CGAL_assertion_code(Plane3SPtr plane_r2 = facet_r2->getPlane();)
         CGAL_assertion_code(const FT& r2a = plane_r2->a();)
@@ -5082,30 +4018,17 @@ public:
         CGAL_assertion_code(const FT& r2c = plane_r2->c();)
         CGAL_assertion_code(const FT& r2d = plane_r2->d();)
         CGAL_assertion_code(const FT& speed_r2 = HdsUtils::getSpeed(facet_r2);)
-        CGAL_assertion_code(FT lt2 = (l2a * point->x() + l2b * point->y() + l2c * point->z() + l2d) / speed_l2);
         CGAL_assertion_code(FT rt2 = (r2a * point->x() + r2b * point->y() + r2c * point->z() + r2d) / speed_r2);
+
         CGAL_assertion(lt2 == rt2);
+        CGAL_assertion(!is_positive(lt2));
 
-        if (is_positive(event_time)) {
-          // can 'break' directly because it's the same value for all 'edge_2's
-          break;
-        }
-
-        if (!checkBisector(edge_2, facet_r2, event_time, facet_2_src, point)) {
+        if (!checkBisectorsV2(edge_2, point, event_time)) {
           continue;
         }
 
-        if (!checkBisector(edge_2, facet_l2, event_time, facet_2_dst, point)) {
-          continue;
-        }
-
-        const bool split_event_current_b = (split_event_current_1_b &&
-                                            split_event_current_2_b &&
-                                            split_event_current_3_b);
-        if (split_event_current_b) {
-          split_event = true;
-          break;
-        }
+        split_event = true;
+        break;
       }
 
       if (split_event) {
@@ -6346,7 +5269,7 @@ public:
           edge_21 = edge;
         }
         if (edge->getFacetL() == facet_2 || edge->getFacetR() == facet_2) {
-          edge_22 = edge; // @fixme this is unused...
+          edge_22 = edge;
         }
       }
     }
@@ -6671,6 +5594,10 @@ public:
     EdgeSPtr edge_22 = edge_tmp;
     edge_tmp = edge_22->split(vertex_22);
 
+    SkelEdgeData::create(edge_tmp);
+    SkelEdgeData::create(edge_21);
+    SkelEdgeData::create(edge_22);
+
     if (edge_2->getFacetL() == facet_1_src ||
         edge_2->getFacetL() == facet_1_dst) {
       edge_2->getFacetL()->removeVertex(vertex);
@@ -6699,7 +5626,6 @@ public:
     }
 
 #ifndef CGAL_SS3_NO_SKELETON_DS
-    SkelEdgeData::create(edge_tmp);
     HdsUtils::setSheet(edge_tmp, HdsUtils::getSheet(edge_2));
 
     HdsUtils::setNode(vertex, node);
@@ -6719,11 +5645,9 @@ public:
     HdsUtils::getSheet(edge_b2)->addArc(arc_22);
     HdsUtils::getSheet(edge_tmp)->addArc(arc_22); // third sheet is edge_22's, created below
 
-    SkelEdgeData::create(edge_21);
     SheetSPtr sheet_21 = createSheet(edge_21);
     skel_result_->addSheet(sheet_21);
 
-    SkelEdgeData::create(edge_22);
     SheetSPtr sheet_22 = createSheet(edge_22);
     skel_result_->addSheet(sheet_22);
 #endif
@@ -7192,6 +6116,7 @@ public:
     std::array<EdgeSPtr, 4> edges;
     for (unsigned int i = 0; i < 4; ++i) {
       edges[i] = Edge::create(vertices[i], vertices[(i+1)%4]);
+      SkelEdgeData::create(edges[i]);
       polyhedron->addEdge(edges[i]);
     }
 
@@ -7216,6 +6141,8 @@ public:
     }
     EdgeSPtr edge_12 = edge_1->split(vertices[2]);
     EdgeSPtr edge_22 = edge_2->split(vertices[3]);
+    SkelEdgeData::create(edge_12);
+    SkelEdgeData::create(edge_22);
     edge_1->replaceVertexDst(vertices[0]);
     edge_2->replaceVertexDst(vertices[1]);
     for (unsigned int i = 0; i < 4; ++i) {
@@ -7231,9 +6158,7 @@ public:
     }
 
 #ifndef CGAL_SS3_NO_SKELETON_DS
-    SkelEdgeData::create(edge_12);
     HdsUtils::setSheet(edge_12, HdsUtils::getSheet(edge_1));
-    SkelEdgeData::create(edge_22);
     HdsUtils::setSheet(edge_22, HdsUtils::getSheet(edge_2));
 
     for (unsigned int i = 0; i < 4; ++i) {
@@ -7252,7 +6177,6 @@ public:
       }
     }
     for (unsigned int i = 0; i < 4; ++i) {
-      SkelEdgeData::create(edges[i]);
       SheetSPtr sheet = createSheet(edges[i]);
       skel_result_->addSheet(sheet);
     }
@@ -7376,6 +6300,7 @@ public:
     std::array<EdgeSPtr, 3> new_edges;
     for (unsigned int i = 0; i < 3; ++i) {
       new_edges[i] = Edge::create(vertices[i], vertices[(i+1)%3]);
+      SkelEdgeData::create(new_edges[i]);
       new_edges[i]->setFacetL(facet);
       new_edges[i]->setFacetR(facets[i]);
       facet->addEdge(new_edges[i]);
@@ -7397,7 +6322,6 @@ public:
       HdsUtils::getSheet(edges[i])->addArc(arc); // other 2 sheets are the new edges', created below
     }
     for (unsigned int i = 0; i < 3; ++i) {
-      SkelEdgeData::create(new_edges[i]);
       SheetSPtr sheet = createSheet(new_edges[i]);
       skel_result_->addSheet(sheet);
     }
@@ -7465,30 +6389,9 @@ public:
     } else if (event->getType() == AbstractEvent::CONST_TIME_EVENT) {
       result = handleConstTimeEvent(std::dynamic_pointer_cast<ConstTimeEvent>(event),
                                     current_time, polyhedron);
-#ifdef CGAL_SS3_USE_GENERIC_VANISH_EVENT
     } else if (event->getType() == AbstractEvent::VANISH_EVENT) {
       result = handleVanishEvent(std::dynamic_pointer_cast<VanishEvent>(event),
                                  current_time, time_future_bound, polyhedron);
-#else
-    } else if (event->getType() == AbstractEvent::EDGE_EVENT) {
-      result = handleEdgeEvent(std::dynamic_pointer_cast<EdgeEvent>(event),
-                               current_time, time_future_bound, polyhedron);
-    } else if (event->getType() == AbstractEvent::EDGE_MERGE_EVENT) {
-      result = handleEdgeMergeEvent(std::dynamic_pointer_cast<EdgeMergeEvent>(event),
-                                    current_time, time_future_bound, polyhedron);
-    } else if (event->getType() == AbstractEvent::TRIANGLE_EVENT) {
-      result = handleTriangleEvent(std::dynamic_pointer_cast<TriangleEvent>(event),
-                                   current_time, time_future_bound, polyhedron);
-    } else if (event->getType() == AbstractEvent::DBL_EDGE_MERGE_EVENT) {
-      result = handleDblEdgeMergeEvent(std::dynamic_pointer_cast<DblEdgeMergeEvent>(event),
-                                       current_time, time_future_bound, polyhedron);
-    } else if (event->getType() == AbstractEvent::DBL_TRIANGLE_EVENT) {
-      result = handleDblTriangleEvent(std::dynamic_pointer_cast<DblTriangleEvent>(event),
-                                      current_time, time_future_bound, polyhedron);
-    } else if (event->getType() == AbstractEvent::TETRAHEDRON_EVENT) {
-      result = handleTetrahedronEvent(std::dynamic_pointer_cast<TetrahedronEvent>(event),
-                                      current_time, time_future_bound, polyhedron);
-#endif
     } else if (event->getType() == AbstractEvent::VERTEX_EVENT) {
       result = handleVertexEvent(std::dynamic_pointer_cast<VertexEvent>(event),
                                  current_time, time_future_bound, polyhedron);

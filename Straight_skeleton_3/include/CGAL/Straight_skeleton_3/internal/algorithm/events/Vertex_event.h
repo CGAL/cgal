@@ -161,9 +161,11 @@ public:
     sstr << "VertexEvent\n";
     sstr << "\t(ID=" << Base::getID() << ")\n";
     sstr << "\t(time=" << IO::StringFactory::fromDouble(CGAL::to_double(Base::getTime())) << ")\n";
-    sstr << "\t(point=<" + IO::StringFactory::fromDouble(CGAL::to_double(getPoint()->x())) + " "
-                         + IO::StringFactory::fromDouble(CGAL::to_double(getPoint()->y())) + " "
-                         + IO::StringFactory::fromDouble(CGAL::to_double(getPoint()->z())) + ">)";
+    if (point_) {
+      sstr << "\t(point=<" + IO::StringFactory::fromDouble(CGAL::to_double(point_->x())) + " "
+                           + IO::StringFactory::fromDouble(CGAL::to_double(point_->y())) + " "
+                           + IO::StringFactory::fromDouble(CGAL::to_double(point_->z())) + ">)";
+    }
     sstr << "\t(facet A=" << facet_1->getID() << "\n"
          << "\t vertex A=" << vertex_1->toString() << ")\n";
     sstr << "\t(facet B=" << facet_2->getID() << "\n"
@@ -174,7 +176,7 @@ public:
   bool operator==(const VertexEvent& other) const
   {
     return (Base::getTime() == other.getTime()) &&
-            (*(getPoint()) == *(other.getPoint())) &&
+            (!point_ || !other.point_ || *point_ == *(other.point_)) &&
             ((facet_1_.lock() == other.facet_1_.lock() &&
               facet_2_.lock() == other.facet_2_.lock()) ||
             (facet_1_.lock() == other.facet_2_.lock() &&

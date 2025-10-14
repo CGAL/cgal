@@ -167,7 +167,7 @@ public:
   bool operator==(const FlipVertexEvent& other) const
   {
     return (Base::getTime() == other.getTime()) &&
-            (*(getPoint()) == *(other.getPoint())) &&
+            (!point_ || !other.point_ || *point_ == *(other.point_)) &&
             ((facet_1_.lock() == other.facet_1_.lock() &&
               facet_2_.lock() == other.facet_2_.lock()) ||
             (facet_1_.lock() == other.facet_2_.lock() &&

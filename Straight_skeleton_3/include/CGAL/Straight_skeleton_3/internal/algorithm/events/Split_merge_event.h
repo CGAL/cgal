@@ -160,9 +160,11 @@ public:
     sstr << "SplitMergeEvent\n";
     sstr << "\t(ID=" << Base::getID() << ")\n";
     sstr << "\t(time=" << IO::StringFactory::fromDouble(CGAL::to_double(Base::getTime())) << ")\n";
-    sstr << "\t(point=<" + IO::StringFactory::fromDouble(CGAL::to_double(getPoint()->x())) + " "
-                         + IO::StringFactory::fromDouble(CGAL::to_double(getPoint()->y())) + " "
-                         + IO::StringFactory::fromDouble(CGAL::to_double(getPoint()->z())) + ">)";
+    if (point_) {
+      sstr << "\t(point=<" + IO::StringFactory::fromDouble(CGAL::to_double(point_->x())) + " "
+                           + IO::StringFactory::fromDouble(CGAL::to_double(point_->y())) + " "
+                           + IO::StringFactory::fromDouble(CGAL::to_double(point_->z())) + ">)";
+    }
     sstr << "\t(vertex1=" << vertex_1->toString() << ")\n";
     sstr << "\t(vertex2=" << vertex_2->toString() << ")\n";
     sstr << "\t(facet1=" << facet_1->getID() << ")\n";
@@ -173,7 +175,7 @@ public:
   bool operator==(const SplitMergeEvent& other) const
   {
     return (Base::getTime() == other.getTime()) &&
-            (*(getPoint()) == *(other.getPoint())) &&
+            (!point_ || !other.point_ || *point_ == *(other.point_)) &&
             ((facet_1_.lock() == other.facet_1_.lock() &&
               facet_2_.lock() == other.facet_2_.lock()) ||
             (facet_1_.lock() == other.facet_2_.lock() &&

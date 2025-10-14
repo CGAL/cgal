@@ -207,9 +207,11 @@ public:
     sstr << "DblEdgeMergeEvent\n";
     sstr << "\t(ID=" << Base::getID() << ")\n";
     sstr << "\t(time=" << IO::StringFactory::fromDouble(CGAL::to_double(Base::getTime())) << ")\n";
-    sstr << "\t(point=<" + IO::StringFactory::fromDouble(CGAL::to_double(getPoint()->x())) + " "
-                         + IO::StringFactory::fromDouble(CGAL::to_double(getPoint()->y())) + " "
-                         + IO::StringFactory::fromDouble(CGAL::to_double(getPoint()->z())) + ">)";
+    if (point_) {
+      sstr << "\t(point=<" + IO::StringFactory::fromDouble(CGAL::to_double(point_->x())) + " "
+                           + IO::StringFactory::fromDouble(CGAL::to_double(point_->y())) + " "
+                           + IO::StringFactory::fromDouble(CGAL::to_double(point_->z())) + ">)";
+    }
     for (unsigned int i = 0; i < 4; ++i) {
       sstr << "\n\t(" << vertices[i]->toString() << ")";
     }
@@ -223,7 +225,7 @@ public:
   bool operator==(const DblEdgeMergeEvent& other) const
   {
     return (Base::getTime() == other.getTime()) &&
-            (*(getPoint()) == *(other.getPoint())) &&
+            (!point_ || !other.point_ || *point_ == *(other.point_)) &&
             ((facet_1_.lock() == other.facet_1_.lock() &&
               edge_11_.lock() == other.edge_11_.lock() &&
               edge_12_.lock() == other.edge_12_.lock() &&
