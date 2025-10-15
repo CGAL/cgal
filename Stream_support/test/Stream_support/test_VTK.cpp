@@ -9,7 +9,7 @@
 template <typename Kernel>
 void test_VTK()
 {
-  typedef Kernel::Point_3                               Point;
+  typedef typename Kernel::Point_3                               Point;
   typedef std::vector<std::size_t>                      Face;
 
   const std::vector<Point> points = { Point(0,0,0), Point(1,0,0), Point(0,1,0), Point(0,0,1) };
@@ -35,7 +35,7 @@ void test_VTK()
 
 }
 
-int main(int argc, char** argv)
+int main()
 {
   test_VTK<CGAL::Simple_cartesian<double>>();
   test_VTK<CGAL::Simple_cartesian<CGAL::Exact_rational>>();
