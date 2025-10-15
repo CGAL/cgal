@@ -177,8 +177,7 @@ protected:
   }
 
   template <typename Visitor>
-  Constrained_polyline_id insert_constrained_edge_impl(Vertex_handle va, Vertex_handle vb,
-                                             Visitor&) {
+  Constrained_polyline_id insert_constrained_edge_impl(Vertex_handle va, Vertex_handle vb, Visitor&) {
     if(va != vb) {
       if(segment_vertex_epsilon != 0.) {
         auto [min_dist, min_vertex] = min_distance_and_vertex_between_constraint_and_encroaching_vertex(va, vb);
@@ -518,13 +517,14 @@ public:
                                               Vertex_handle vb,
                                               Vertex_handle min_vertex,
                                               double min_dist,
-                                              Check_distance option)
+                                              Check_distance distance_type)
   {
     if(!max_bbox_edge_length) {
       update_max_bbox_edge_length();
     }
-    if((option == Check_distance::NON_SQUARED_DISTANCE && min_dist < segment_vertex_epsilon * *max_bbox_edge_length) ||
-       (option == Check_distance::SQUARED_DISTANCE &&
+    if((distance_type == Check_distance::NON_SQUARED_DISTANCE &&
+        min_dist < segment_vertex_epsilon * *max_bbox_edge_length) ||
+       (distance_type == Check_distance::SQUARED_DISTANCE &&
         min_dist < CGAL::square(segment_vertex_epsilon * *max_bbox_edge_length)))
     {
       std::stringstream ss;

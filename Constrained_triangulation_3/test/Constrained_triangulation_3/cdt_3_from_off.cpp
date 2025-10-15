@@ -29,7 +29,6 @@
 #include <chrono>
 #include <exception>
 #include <fstream>
-#include <optional>
 #include <string_view>
 #include <string>
 #include <utility>
@@ -741,70 +740,6 @@ Borders_of_patches maybe_merge_facets(
   return patch_edges;
 }
 
-template <typename VdToVhPmap, typename BordersOfPatches, typename VertexPointPmap>
-void insert_patches_borders_as_constraints(CDT& cdt,
-                               BordersOfPatches patch_edges,
-                               VdToVhPmap mesh_descriptor_to_vertex_handle_pmap,
-                               VertexPointPmap vertex_point_pmap) {
-
-  for(auto& edges : patch_edges) {
-    if(edges.empty())
-      continue;
-    auto polylines = CGAL::segment_soup_to_polylines(edges);
-    while(true) {
-      const auto non_closed_polylines_begin =
-          std::partition(polylines.begin(), polylines.end(),
-                         [](const auto& polyline) { return polyline.front() == polyline.back(); });
-      if(non_closed_polylines_begin == polylines.end())
-        break;
-      edges.clear();
-      for(auto it = non_closed_polylines_begin; it != polylines.end(); ++it) {
-        auto& polyline = *it;
-        for(auto it = polyline.begin(), end = polyline.end() - 1; it != end; ++it) {
-          edges.emplace_back(*it, *(it + 1));
-        }
-      }
-      polylines.erase(non_closed_polylines_begin, polylines.end());
-      auto other_polylines = CGAL::segment_soup_to_polylines(edges);
-      polylines.insert(polylines.end(),
-                       std::make_move_iterator(other_polylines.begin()),
-                       std::make_move_iterator(other_polylines.end()));
-    }
-
-    if(polylines.size() > 1) {
-      double max_sq_length = 0;
-      auto longest_it = polylines.begin();
-      for(auto it = polylines.begin(); it != polylines.end(); ++it) {
-        auto& polyline = *it;
-        using CGAL::Bbox_3;
-        Bbox_3 bb;
-        for(auto v : polyline) {
-          bb = bb + Bbox_3(get(vertex_point_pmap, v).bbox());
-        }
-        double sq_diagonal_length = CGAL::square(bb.xmax() - bb.xmin()) +
-                                    CGAL::square(bb.ymax() - bb.ymin()) +
-                                    CGAL::square(bb.zmax() - bb.zmin());
-        if(sq_diagonal_length > max_sq_length) {
-          max_sq_length = sq_diagonal_length;
-          longest_it = it;
-        }
-      }
-      if(longest_it != polylines.begin()) {
-        std::iter_swap(longest_it, polylines.begin());
-      }
-    }
-
-    std::optional<int> face_index;
-    for(auto& polyline : polylines) {
-      CGAL_assertion(!polyline.empty() && polyline.front() == polyline.back());
-      polyline.pop_back();
-      auto range_of_vertices = CGAL::make_transform_range_from_property_map(polyline, mesh_descriptor_to_vertex_handle_pmap);
-      face_index = cdt.insert_constrained_face(range_of_vertices, false,
-                                               face_index ? *face_index : -1);
-    }
-  }
-}
-
 template<typename BordersOfPatches, typename MeshPropertyMaps>
 void dump_patches_borders(const BordersOfPatches& patch_edges,
                           const MeshPropertyMaps& pmaps,
@@ -930,8 +865,10 @@ int go(Mesh mesh, CDT_options options) {
   auto output_on_exit_scope_guard = CGAL::make_scope_exit(create_output_finalizer(cdt, options));
   start_time = std::chrono::high_resolution_clock::now();
   if(options.merge_facets) {
-    insert_patches_borders_as_constraints(cdt, std::move(patch_edges), mesh_descriptor_to_vertex_handle_pmap,
-                                          pmaps.mesh_vertex_point_map);
+    for(auto& edges: patch_edges) {
+      cdt.insert_constrained_face_defined_by_its_border_edges(std::move(edges), pmaps.mesh_vertex_point_map,
+                                                              mesh_descriptor_to_vertex_handle_pmap);
+    }
   } else {
     for(auto face_descriptor : faces(mesh)) {
       std::vector<Point_3> polygon;

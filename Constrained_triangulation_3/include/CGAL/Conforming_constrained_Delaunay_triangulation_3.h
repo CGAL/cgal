@@ -36,6 +36,7 @@
 #include <CGAL/Bbox_3.h>
 #include <CGAL/assertions.h>
 #include <CGAL/unordered_flat_map.h>
+#include <CGAL/type_traits.h>
 
 #include <CGAL/boost/graph/Dual.h>
 #include <CGAL/boost/graph/generators.h>
@@ -73,6 +74,7 @@
 #include <array>
 #include <cstddef>
 #include <exception>
+#include <functional>
 #include <iostream>
 #include <iterator>
 #include <optional>
@@ -700,62 +702,8 @@ public:
     cdt_impl.add_bbox_points_if_not_dimension_3();
 
     if constexpr(has_plc_face_id) {
-      for(int i = 0; i < number_of_patches; ++i) {
-        auto& edges = patch_edges[i];
-        if(edges.empty())
-          continue;
-        auto polylines = segment_soup_to_polylines(edges);
-        while(true) {
-          const auto non_closed_polylines_begin =
-              std::partition(polylines.begin(), polylines.end(),
-                             [](const auto& polyline) { return polyline.front() == polyline.back(); });
-          if(non_closed_polylines_begin == polylines.end())
-            break;
-          edges.clear();
-          for(auto it = non_closed_polylines_begin; it != polylines.end(); ++it) {
-            auto& polyline = *it;
-            for(auto it = polyline.begin(), end = polyline.end() - 1; it != end; ++it) {
-              edges.emplace_back(*it, *(it + 1));
-            }
-          }
-          polylines.erase(non_closed_polylines_begin, polylines.end());
-          auto other_polylines = segment_soup_to_polylines(edges);
-          polylines.insert(polylines.end(),
-                           std::make_move_iterator(other_polylines.begin()),
-                           std::make_move_iterator(other_polylines.end()));
-        }
-
-        if(polylines.size() > 1) {
-          double max_sq_length = 0;
-          auto longest_it = polylines.begin();
-          for(auto it = polylines.begin(); it != polylines.end(); ++it) {
-            auto& polyline = *it;
-            using CGAL::Bbox_3;
-            Bbox_3 bb;
-            for(auto v : polyline) {
-              bb = bb + Bbox_3(get(mesh_vp_map, v).bbox());
-            }
-            double sq_diagonal_length = CGAL::square(bb.xmax() - bb.xmin()) +
-                                        CGAL::square(bb.ymax() - bb.ymin()) +
-                                        CGAL::square(bb.zmax() - bb.zmin());
-            if(sq_diagonal_length > max_sq_length) {
-              max_sq_length = sq_diagonal_length;
-              longest_it = it;
-            }
-          }
-          if(longest_it != polylines.begin()) {
-            std::iter_swap(longest_it, polylines.begin());
-          }
-        }
-
-        std::optional<int> face_index;
-        for(auto& polyline : polylines) {
-          CGAL_assertion(!polyline.empty() && polyline.front() == polyline.back());
-          polyline.pop_back();
-          auto range_of_vertices = CGAL::make_transform_range_from_property_map(polyline, tr_vertex_pmap);
-          face_index = cdt_impl.insert_constrained_face(range_of_vertices, false,
-                                                        face_index ? *face_index : -1);
-        }
+      for(auto&& edges : patch_edges) {
+        cdt_impl.insert_constrained_face_defined_by_its_border_edges(edges, mesh_vp_map, tr_vertex_pmap);
       }
     } else {
       for(auto f : faces(mesh)) {
@@ -1403,6 +1351,90 @@ public:
 
   void restore_Delaunay() {
     Conforming_Dt::restore_Delaunay(insert_in_conflict_visitor);
+  }
+
+  /**
+   * Insert a constrained face defined by its border edges.
+   *
+   * This function takes a set of border edges (as a segment soup) describing
+   * the borders of a polygonal face in the input mesh. It reconstructs one or
+   * more closed polylines from these segments, prioritizes the longest loop
+   * when several exist, and inserts the corresponding face(s) as constrained
+   * face(s) in the triangulation.
+   *
+   * @tparam Edges A range whose value_type is pair-like (u, v) with u and v
+   *               being vertex descriptors of the PolygonMesh.
+   * @tparam VertexPointMap A readable property map from vertex descriptor to Point_3.
+   * @tparam VertexHandleMap A readable property map from vertex descriptor to Vertex_handle.
+   *
+   * @param edges The collection of border edges as a segment soup.
+   * @param mesh_vd_to_point_pmap Property map used to access point coordinates
+   *                              for bounding box computation (to identify the longest polyline).
+   * @param mesh_vd_to_vh_pmap Property map used to convert mesh vertex descriptors
+   *                           to triangulation Vertex_handle objects for insertion.
+   */
+  template <typename Edges, typename VertexPointMap, typename VertexHandleMap>
+  void insert_constrained_face_defined_by_its_border_edges(Edges edges,
+                                                           VertexPointMap mesh_vd_to_point_pmap,
+                                                           VertexHandleMap mesh_vd_to_vh_pmap)
+  {
+    if(edges.empty())
+      return;
+    auto polylines = segment_soup_to_polylines(std::move(edges));
+    while(true) {
+      const auto non_closed_polylines_begin =
+          std::partition(polylines.begin(), polylines.end(),
+                         [](const auto& polyline) { return polyline.front() == polyline.back(); });
+      if(non_closed_polylines_begin == polylines.end())
+        break;
+      Edges edges_copy;
+      for(auto it = non_closed_polylines_begin; it != polylines.end(); ++it) {
+        auto& polyline = *it;
+        for(auto pit = polyline.begin(), end = polyline.end() - 1; pit != end; ++pit) {
+          edges_copy.emplace_back(*pit, *(pit + 1));
+        }
+      }
+      polylines.erase(non_closed_polylines_begin, polylines.end());
+      auto other_polylines = segment_soup_to_polylines(std::move(edges_copy));
+      polylines.insert(polylines.end(),
+                       std::make_move_iterator(other_polylines.begin()),
+                       std::make_move_iterator(other_polylines.end()));
+    }
+
+    auto get_point_bbox = tr().geom_traits().construct_bbox_3_object();
+    auto get_bbox = [&](auto vd) { return get_point_bbox(get(mesh_vd_to_point_pmap, vd)); };
+    struct Fake_geom_traits {
+      using Construct_bbox_3 = std::reference_wrapper<const CGAL::cpp20::remove_cvref_t<decltype(get_bbox)>>;
+      Construct_bbox_3 get_bbox_ref;
+      Construct_bbox_3 construct_bbox_3_object() const { return get_bbox_ref; }
+    } fake_geom_traits{std::cref(get_bbox)};
+
+    if(polylines.size() > 1) {
+      double max_sq_length = 0;
+      auto longest_it = polylines.begin();
+      for(auto it = polylines.begin(); it != polylines.end(); ++it) {
+        auto& polyline = *it;
+        auto bb = CGAL::bbox_3(polyline.begin(), polyline.end(), fake_geom_traits);
+        double sq_diagonal_length = CGAL::square(bb.x_span()) +
+                                    CGAL::square(bb.y_span()) +
+                                    CGAL::square(bb.z_span());
+        if(sq_diagonal_length > max_sq_length) {
+          max_sq_length = sq_diagonal_length;
+          longest_it = it;
+        }
+      }
+      if(longest_it != polylines.begin()) {
+        std::iter_swap(longest_it, polylines.begin());
+      }
+    }
+
+    std::optional<int> face_index;
+    for(auto& polyline : polylines) {
+      CGAL_assertion(!polyline.empty() && polyline.front() == polyline.back());
+      polyline.pop_back();
+      auto range_of_vertices = CGAL::make_transform_range_from_property_map(polyline, mesh_vd_to_vh_pmap);
+      face_index = insert_constrained_face(range_of_vertices, false, face_index.value_or(-1));
+    }
   }
 
   bool is_facet_constrained(Facet f) const {
