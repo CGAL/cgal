@@ -318,7 +318,7 @@ bool write_OFF(std::ostream& os,
  *     \cgalParamDescription{a property map associating points to the elements of the range `points`}
  *     \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type
  *                    of the iterator of `PointRange` and value type is a model of the concept `Point_3`}
- *     \cgalParamDefault{`CGAL::Identity_property_map<geom_traits::Point_3>`}
+ *     \cgalParamDefault{`CGAL::Identity_property_map<std::iterator_traits<PointRange::iterator>::value_type>`}
  *   \cgalParamNEnd
  *   \cgalParamNBegin{stream_precision}
  *     \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
