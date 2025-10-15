@@ -1,4 +1,6 @@
+#define DOUBLE_2D_SNAP_VERBOSE
 #define BENCH_AND_VERBOSE_FLOAT_SNAP_ROUNDING_2
+#define COMPARE_WITH_INTEGER_SNAP_ROUNDING_2
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -91,9 +93,18 @@ void test(const std::vector<Segment_2> &segs){
   CGAL::compute_snapped_subcurves_2(segs.begin(), segs.end(), out);
 #ifdef BENCH_AND_VERBOSE_FLOAT_SNAP_ROUNDING_2
   t.stop();
-  std::cout << "Formal snap size: " << out.size() << " ,running time: " << t.time() << "\n" << std::endl;
+  std::cout << "Formal snap size: " << out.size() << " ,running time: " << t.time() << std::endl;
 #endif
   assert(!CGAL::do_curves_intersect(out.begin(), out.end()));
+#ifdef COMPARE_WITH_INTEGER_SNAP_ROUNDING_2
+  Polyline_range_2 output_list;
+  t.reset();
+  t.start();
+  CGAL::snap_rounding_2<SnapTraits>(segs.begin(), segs.end(), output_list, 1./maxDouble);
+  t.stop();
+  std::cout << "Running time with integer 2D snap (scaled at 10^15): " << t.time() << std::endl;
+#endif
+  std::cout << "\n";
 }
 
 void test_fully_random(CGAL::Random &r, size_t nb_segments){
@@ -103,13 +114,6 @@ void test_fully_random(CGAL::Random &r, size_t nb_segments){
     segs.emplace_back(random_point(r), random_point(r));
 
   test(segs);
-  // CGAL::Real_timer t;
-  // Polyline_range_2 output_list;
-  // t.start();
-  // CGAL::snap_rounding_2<SnapTraits>(segs.begin(), segs.end(), output_list, 1./maxFloat);
-  // t.stop();
-  // std::cout << "Running time with integer 2D snap: " << t.time() << "sec" << std::endl;
-  // t.reset();
 }
 
 void test_almost_indentical_segments(CGAL::Random &r, size_t nb_segments, Vector_2 source, Vector_2 target){
@@ -163,30 +167,30 @@ void test_iterative_square_intersection(CGAL::Random &r, size_t nb_iterations){
 
 }
 
-void test_iterative_square_intersection(CGAL::Random &r, size_t nb_iterations){
-  auto random_rotated_square=[&](){
-    double theta=r.get_double(0, CGAL_PI/2);
-    double cos_t = std::cos(theta);
-    double sin_t = std::sin(theta);
-    Polygon_2 P;
-    P.push_back( cos_t, sin_t);
-    P.push_back( sin_t,-cos_t);
-    P.push_back(-cos_t,-sin_t);
-    P.push_back(-sin_t, cos_t);
-    return P;
-  };
+// void test_iterative_square_intersection(CGAL::Random &r, size_t nb_iterations){
+//   auto random_rotated_square=[&](){
+//     double theta=r.get_double(0, CGAL_PI/2);
+//     double cos_t = std::cos(theta);
+//     double sin_t = std::sin(theta);
+//     Polygon_2 P;
+//     P.push_back( cos_t, sin_t);
+//     P.push_back( sin_t,-cos_t);
+//     P.push_back(-cos_t,-sin_t);
+//     P.push_back(-sin_t, cos_t);
+//     return P;
+//   };
 
-  Pwh_vec_2 scene, out_intersection;
+//   Pwh_vec_2 scene, out_intersection;
 
-  CGAL::intersection(random_rotated_square, random_rotated_square, scene);
+//   CGAL::intersection(random_rotated_square, random_rotated_square, scene);
 
-  for(size_t i=0; i<nb_iterations; ++i){
-    CGAL::intersection(random_rotated_square, random_rotated_square, out_intersection);
+//   for(size_t i=0; i<nb_iterations; ++i){
+//     CGAL::intersection(random_rotated_square, random_rotated_square, out_intersection);
 
-  }
+//   }
 
 
-}
+// }
 
 void test_multi_almost_indentical_segments(CGAL::Random &r, size_t nb_segments){
   for(double x1=-1; x1<=1; ++x1)
@@ -218,15 +222,26 @@ void fix_test(){
   test(segs);
 }
 
+void test_box_intersection(){
+  std::vector< Segment_2 > segs;
+  FT e(std::pow(2, -60));
+  segs.emplace_back(Point_2(0, 0), Point_2(1, 1));
+  segs.emplace_back(Point_2(0.5+e, 0.5), Point_2(1, -1));
+  segs.emplace_back(Point_2(0.5-e, 0.5), Point_2(-1, 3));
+
+  test(segs);
+}
+
 int main(int argc,char *argv[])
 {
   CGAL::Random rp;
   CGAL::Random r(argc==1?rp.get_seed():std::stoi(argv[1]));
   std::cout << "random seed = " << r.get_seed() << std::endl;
   std::cout << std::setprecision(17);
+  test_box_intersection();
   fix_test();
-  test_fully_random(r,1000);
-  test_multi_almost_indentical_segments(r,100);
-  test_iterative_square_intersection(r,500);
+  // test_fully_random(r,1000);
+  // test_multi_almost_indentical_segments(r,100);
+  // test_iterative_square_intersection(r,500);
   return(0);
 }
