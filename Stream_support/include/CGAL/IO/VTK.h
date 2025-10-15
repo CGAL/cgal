@@ -23,6 +23,8 @@
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/Simple_cartesian.h>
 
+#include <boost/range.hpp>
+
 #ifdef CGAL_USE_VTK
 #include <vtkSmartPointer.h>
 #include <vtkCommand.h>
