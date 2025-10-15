@@ -1,6 +1,8 @@
  S t r a i g h t S k e l
 =========================
 
+-!!- OBSOLETE: USE THE CODE IN /include, /examples, AND /test -!!-
+
 Implementation of Straight Skeleton and Mesh Offsetting in 3-dimensional space.
 
  Requirements
