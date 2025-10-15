@@ -4,53 +4,64 @@
 #include <set>
 #include <ostream>
 #include <cassert>
-#include <CGAL/HDVF/Simplex.h>
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/HDVF/Hdvf_traits_3.h>
+#include <CGAL/HDVF/Mesh_object_io.h>
+#include <CGAL/HDVF/Simplicial_chain_complex.h>
+#include <CGAL/HDVF/Geometric_chain_complex_tools.h>
+#include <CGAL/HDVF/Zp.h>
+#include <CGAL/HDVF/Z2.h>
+#include <CGAL/HDVF/Hdvf.h>
+#include <CGAL/OSM/OSM.h>
 
-namespace HDVF = CGAL::Homological_discrete_vector_field
+namespace HDVF = CGAL::Homological_discrete_vector_field;
 
-int main() {
-    HDVF::Simplex s1({1,2}), s2({1,2,3});
-    std::vector<HDVF::Simplex> bnd, bnd2 ;
+//typedef int Coefficient_ring;
+//typedef HDVF::Z2 Coefficient_ring;
+typedef HDVF::Zp<5, char, true> Coefficient_ring;
 
-    // Check s1
-    std::cerr << "Check dimension s1" << std::endl ;
-    assert(s1.dimension() == 1);
-    std::cerr << "Check boundary s1" << std::endl ;
-    bnd = s1.boundary() ;
-    bnd2.push_back(HDVF::Simplex({2})) ;
-    bnd2.push_back(HDVF::Simplex({1})) ;
-    assert(bnd.size() == bnd2.size());
-    for (int i=0; i<bnd.size(); ++i)
-        assert(bnd.at(i) == bnd2.at(i)) ;
+typedef CGAL::Simple_cartesian<double> Kernel;
+typedef HDVF::Hdvf_traits_3<Kernel> Traits;
 
-    // Check s2
-    std::cerr << "Check dimension s2" << std::endl ;
-    assert(s2.dimension() == 2);
-    std::cerr << "Check boundary s2" << std::endl ;
-    bnd = s2.boundary() ;
-    bnd2.clear();
-    bnd2.push_back(HDVF::Simplex({2,3})) ;
-    bnd2.push_back(HDVF::Simplex({1,3})) ;
-    bnd2.push_back(HDVF::Simplex({1,2})) ;
-    assert(bnd.size() == bnd2.size());
-    for (int i=0; i<bnd.size(); ++i)
-        assert(bnd.at(i) == bnd2.at(i)) ;
+using Complex = HDVF::Simplicial_chain_complex<Coefficient_ring,Traits> ;
+using HDVF_type = HDVF::Hdvf<Complex> ;
 
-    // Check Simplex() sort option
-    std::cerr << "Check Simplex() sort option" << std::endl;
-    HDVF::Simplex s3({3,2,1},true);
-    assert(s2 == s3);
-
-    // Check s1 < s2
-    std::cerr << "Check s1 < s2" << std::endl;
-    assert(s1 < s2);
-
-    // Test iterator
-    int i = 1 ;
-    std::cerr << "Check iterator" << std::endl;
-    for (HDVF::Simplex::const_iterator it = s2.cbegin(); it != s2.cend(); ++it)
-        assert(*it == i++);
-
+int main(int argc, char **argv) {
+    std::string filename;
+    if (argc > 2) {
+        std::cerr << "usage: test_hdvf_core [off_file]" << std::endl;
+    }
+    else if (argc == 1) filename = "data/three_triangles.off" ;
+    else filename = argv[1] ;
+    
+    // Load off into Mesh_object_io
+    HDVF::Mesh_object_io<Traits> mesh ;
+    mesh.read_off(filename);
+    
+    mesh.print_infos();
+    
+    // Build simplicial chain complex
+    Complex complex(mesh);
+    
+    std::cout << complex;
+    
+    // Build empty HDVF
+    HDVF_type hdvf(complex, HDVF::OPT_FULL) ;
+    
+    // Compute a perfect HDVF
+    hdvf.compute_perfect_hdvf();
+    //        hdvf.compute_rand_perfect_hdvf();
+    
+    // Output HDVF to console
+    hdvf.insert_matrices();
+    hdvf.insert_reduction();
+    
+    // Output HDVF to vtk
+    CGAL::IO::write_VTK(hdvf, complex, "res", true) ;
+    
+    // Save HDVF to .hdvf file
+    hdvf.write_hdvf_reduction("test.hdvf") ;
+    
     return 0;
 }
 

@@ -208,7 +208,7 @@ public:
     : dim(3), nvertices(8), ncells(12), nedges(0)
 {
     std::vector points = {BBmin, BBmax} ;
-    Iso_cuboid ic = bounding_box(points.begin(), points.end()) ;
+    Bbox ic = bounding_box(points.begin(), points.end()) ;
     nodes.resize(8) ;
     nodes[0] = ic[0] ;
     nodes[1] = ic[1] ;

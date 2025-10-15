@@ -39,8 +39,8 @@ public:
     using Vector = typename Traits::Vector;
     using Index=size_t ;
     using Lookup=std::map<std::pair<Index, Index>, Index>;
-    using Point = typename Traits::Point;
-    Icosphere_object_io(size_t subdivisions, const Point &c = Point({0, 0, 0}), double r=1.) : Mesh_object_io(2, vertices_ico, triangles_ico)
+//    using Point = typename Traits::Point;
+    Icosphere_object_io(size_t subdivisions, const Point &c = Point({0, 0, 0}), double r=1.) : Mesh_object_io<Traits>(2, vertices_ico, triangles_ico)
     {
         for (size_t i=0; i<subdivisions; ++i)
         {
@@ -77,7 +77,7 @@ public:
         if (key.first>key.second)
             std::swap(key.first, key.second);
 
-        auto inserted=lookup.insert({key, nodes.size()});
+        auto inserted=lookup.insert({key, this->nodes.size()});
         if (inserted.second)
         {
             Point& edge0(this->nodes[first]);
@@ -95,7 +95,7 @@ public:
         Lookup lookup;
         std::vector<Io_cell_type> result ;
 
-        for (Io_cell_type & each:cells)
+        for (Io_cell_type & each:this->cells)
         {
             std::array<Index, 3> mid;
             std::vector<size_t> each_vertex ;
@@ -111,17 +111,17 @@ public:
             result.push_back({each_vertex[2], mid[2], mid[1]});
             result.push_back({mid[0], mid[1], mid[2]});
         }
-        clear_cells() ;
+        this->clear_cells() ;
         for (Io_cell_type c : result)
-            add_cell(c) ;
+            this->add_cell(c) ;
     }
 
     void rigid_transformation(const Point &c, double r)
     {
-        for (size_t i=0; i<nvertices; ++i)
+        for (size_t i=0; i<this->nvertices; ++i)
         {
-            nodes[i] = ORIGIN + (r * (nodes[i] - ORIGIN)) ;
-            nodes[i] += (c - ORIGIN) ;
+            this->nodes[i] = ORIGIN + (r * (this->nodes[i] - ORIGIN)) ;
+            this->nodes[i] += (c - ORIGIN) ;
         }
     }
 };

@@ -25,6 +25,7 @@ int main(int argc, char **argv)
     using Complex = HDVF::Simplicial_chain_complex<Coefficient_ring,Traits> ;
     using HDVF_type = HDVF::Hdvf<Complex> ;
 
+<<<<<<< Updated upstream
     if (argc != 2)
     {
         std::cerr << "usage: example_hdvf_simplicial off_file" << std::endl;
@@ -59,6 +60,40 @@ int main(int argc, char **argv)
         // Save HDVF to .hdvf file
         hdvf.write_hdvf_reduction("test.hdvf") ;
     }
+=======
+    std::string filename ;
+    if (argc > 2) std::cerr << "usage: example_hdvf_simplicial off_file" << std::endl;
+    else if (argc == 1) filename  = "data/mesh_data/two_rings.off";
+    else filename = argv[1];
+    
+    // Load cub object
+    HDVF::Mesh_object_io<Traits> mesh ;
+    mesh.read_off(filename);
+    
+    mesh.print_infos();
+    
+    // Build simplicial chain complex
+    Complex complex(mesh);
+    
+    std::cout << complex;
+    
+    // Build empty HDVF
+    HDVF_type hdvf(complex, HDVF::OPT_FULL) ;
+    
+    // Compute a perfect HDVF
+    hdvf.compute_perfect_hdvf();
+    //        hdvf.compute_rand_perfect_hdvf();
+    
+    // Output HDVF to console
+    hdvf.insert_matrices();
+    hdvf.insert_reduction();
+    
+    // Output HDVF to vtk
+    CGAL::IO::write_VTK(hdvf, complex, "res", true) ;
+    
+    // Save HDVF to .hdvf file
+    hdvf.write_hdvf_reduction("test.hdvf") ;
+>>>>>>> Stashed changes
 #endif
     return 0;
 }

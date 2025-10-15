@@ -44,7 +44,8 @@ class Zp {
 public:
 
     /** \brief Constructor from a value */
-    Zp(_TSlot i=0) : _i( (i>=0)?(i % _TSlot(p)):((i % _TSlot(p)) + p) ) { }
+    Zp(_TSlot i=0) : _i( i % _TSlot(p) ) { }
+    Zp(int i) : _i( (i>=0)?(i % _TSlot(p)):((i % _TSlot(p)) + p) ) { }
 
     // Copy constructor
     Zp(const Zp& a) : _i(a._i) {}
@@ -64,7 +65,7 @@ public:
     /** \brief Unary operator-. */
     friend Zp     operator- (const Zp& a)
     {
-        return Zp<p, _TSlot>(- a._i) ;
+        return Zp<p, _TSlot>(_TSlot(p - a._i)) ;
     }
 
     /** \brief Operator+. */
@@ -74,9 +75,11 @@ public:
     }
 
     /** \brief Operator-. */
-    friend Zp     operator- (const Zp& a, const Zp& b)
-    {
-        return Zp<p, _TSlot, IsPrime>((a._i - b._i)) ;
+    friend Zp     operator- (const Zp& a, const Zp& b) {
+        if (a._i >= b._i)
+            return Zp<p, _TSlot, IsPrime>((a._i - b._i)) ;
+        else
+            return Zp<p, _TSlot, IsPrime>((p + a._i - b._i)) ;
     }
 
     /** \brief Operator*. */
@@ -108,13 +111,12 @@ public:
     /** \brief Operator-=. */
     Zp &     operator-= (const Zp& a)
     {
-        _i -= a._i ;
-        if (_i >= 0)
-            _i %= p ;
+        if (_i > a._i)
+            _i -= a._i ;
         else
         {
-            _i %= p ;
             _i += p ;
+            _i -= a._i ;
         }
         return *this ;
     }

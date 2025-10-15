@@ -406,8 +406,8 @@ public:
      *
      * Displays the number of cells in each dimension and the boundary matrix in each dimension.
      */
-    template <typename _CT, typename Traits>
-    friend std::ostream& operator<<(std::ostream& out, const Cubical_chain_complex<_CT,Traits>& complex) ;
+    template <typename _CT, typename _Traits>
+    friend std::ostream& operator<<(std::ostream& out, const Cubical_chain_complex<_CT,_Traits>& complex) ;
 
     /** \brief Gets (unique) object Id.
      * For comparison of constant references to the complex.

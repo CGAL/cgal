@@ -31,6 +31,10 @@ int main() {
     
     std::cout << "n1==0 : " << ATCoefs_field::Is_zero()(f1) << std::endl;
     
+    std::cout << "-1 : " << Coefficient_field(-1) << std::endl ;
+    std::cout << "-1 == -1 : " << (Coefficient_field(-1) == -1) << std::endl ;
+    std::cout << "4 == -1 : " << (Coefficient_field(4) == -1) << std::endl ;
+    
     return 0;
 }
 

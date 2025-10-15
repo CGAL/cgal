@@ -91,31 +91,31 @@ class Tet_object_io : public Mesh_object_io<Traits>
 public:
     Tet_object_io(const std::string & prefix) : Mesh_object_io<Traits>(), _prefix(prefix)
     {
-        dim = -3 ;
+        this->dim = -3 ;
         add_nodes() ;
         create_nodes() ;
         // If the user wished to keep tetgen indices, insert edges and faces below. Otherwise, they will be created by the Abstract_simplicial_chain_complex constructor
 //        add_edges() ;
 //        add_faces() ;
         add_tets() ;
-        ncells = cells.size() ;
+        this->ncells = this->cells.size() ;
     }
 
     void add_nodes()
     {
         const std::string file_node = fnodes_from_prefix(_prefix) ;
         std::cout << "file_node : " << file_node << std::endl ;
-        read_nodes_file(file_node) ;
+        this->read_nodes_file(file_node) ;
     }
 
     void create_nodes()
     {
-        for (size_t i=0; i<nvertices; ++i)
+        for (size_t i=0; i<this->nvertices; ++i)
         {
             Io_cell_type cell({i}) ;
-            cells.push_back(cell) ;
+            this->cells.push_back(cell) ;
         }
-        std::cout << "--- " << nvertices << "vert" << std::endl ;
+        std::cout << "--- " << this->nvertices << "vert" << std::endl ;
     }
 
     void add_edges()
@@ -154,7 +154,7 @@ public:
             is >> i ;
             is >> j ;
             Io_cell_type cell({i,j}) ;
-            add_cell(cell) ;
+            this->add_cell(cell) ;
         }
         input_file.close() ;
         std::cout << "--- " << f_nedges << " edges" << std::endl ;
@@ -197,7 +197,7 @@ public:
             is >> j ;
             is >> k ;
             Io_cell_type cell({i, j, k}) ;
-            add_cell(cell) ;
+            this->add_cell(cell) ;
         }
         input_file.close() ;
         std::cout << "--- " << f_nfaces << " faces" << std::endl ;
@@ -243,7 +243,7 @@ public:
             is >> k ;
             is >> l ;
             Io_cell_type tmp_cell({i, j, k, l});
-            add_cell(tmp_cell, true) ;
+            this->add_cell(tmp_cell, true) ;
         }
         input_file.close() ;
         std::cout << "--- " << f_ntets << " tets" << std::endl ;
