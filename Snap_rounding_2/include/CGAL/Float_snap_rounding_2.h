@@ -16,6 +16,7 @@
 #ifdef DOUBLE_2D_SNAP_VERBOSE
 #include <iostream>
 #endif
+
 #include <CGAL/intersection_2.h>
 #include <CGAL/Surface_sweep_2_algorithms.h>
 #include <CGAL/Arr_segment_traits_2.h>
@@ -28,37 +29,33 @@
 #include <set>
 #include <vector>
 
-using Epeck=CGAL::Exact_predicates_exact_constructions_kernel;
-
 #include  <CGAL/mutex.h>
 
 namespace CGAL {
 
-template<typename Input_Kernel, typename Exact_Kernel=Epeck>
-struct Float_snap_rounding_traits_2{
-  typedef Exact_Kernel Kernel;
+template<typename Input_Kernel, typename Exact_Kernel = Exact_predicates_exact_constructions_kernel>
+struct Float_snap_rounding_traits_2: Arr_segment_traits_2<Exact_Kernel>{
+  typedef Arr_segment_traits_2<Exact_Kernel> Base;
 
-  typedef Arr_segment_traits_2<Kernel> Traits_2;
+  typedef typename Base::FT           FT;
+  typedef typename Base::Point_2   Point_2;
+  typedef typename Base::Segment_2 Segment_2;
+  typedef typename Base::Vector_2  Vector_2;
+  typedef typename Base::Line_2    Line_2;
 
-  typedef typename Kernel::FT        FT;
-  typedef typename Kernel::Point_2   Point_2;
-  // typedef typename Kernel::Segment_2 Segment_2;
-  typedef typename Traits_2::Segment_2 Segment_2;
-  typedef typename Kernel::Vector_2  Vector_2;
-  typedef typename Kernel::Line_2    Line_2;
+  typedef typename Base::Less_x_2  Less_x_2;
+  typedef typename Base::Less_y_2  Less_y_2;
+  typedef typename Base::Less_xy_2 Less_xy_2;
+  typedef typename Base::Less_yx_2 Less_yx_2;
+  typedef typename Base::Equal_2   Equal_2;
 
-  typedef typename Kernel::Less_x_2  Less_x_2;
-  typedef typename Kernel::Less_y_2  Less_y_2;
-  typedef typename Kernel::Less_xy_2 Less_xy_2;
-  typedef typename Kernel::Less_yx_2 Less_yx_2;
-  typedef typename Kernel::Equal_2   Equal_2;
-
-  typedef typename Kernel::Construct_source_2 Construct_source_2;
-  typedef typename Kernel::Construct_target_2 Construct_target_2;
+  typedef typename Base::Construct_source_2 Construct_source_2;
+  typedef typename Base::Construct_target_2 Construct_target_2;
 
   typedef Cartesian_converter<Input_Kernel, Exact_Kernel> Converter_in;
   typedef Cartesian_converter<Exact_Kernel, Input_Kernel> Converter_out;
 
+  // Return an upperbound of the squared distance between a point and its rounded value
   struct Squared_round_bound_2{
     double operator()(const FT &x) const{
       double b=std::nextafter(to_interval(x).second - to_interval(x).first, std::numeric_limits<double>::infinity());
@@ -86,40 +83,18 @@ struct Float_snap_rounding_traits_2{
     return Converter_out();
   }
 
-  Construct_source_2 construct_source_2_object() const{
-    return Construct_source_2();
-  }
-
-  Construct_target_2 construct_target_2_object() const{
-    return Construct_target_2();
-  }
-
   Squared_round_bound_2 squared_round_bound_2_object() const{
     return Squared_round_bound_2();
   }
 
-  typedef typename Kernel::Compare_squared_distance_2  Compare_squared_distance_2;
-  Compare_squared_distance_2 compare_squared_distance_2_object() const{
-    return Kernel().compare_squared_distance_2_object();
+  Round_2 round_2_object() const{
+    return Round_2();
   }
-
-  // typedef typename Base_kernel::Segment_2                   Segment_2;
-  // typedef typename Base_kernel::Iso_rectangle_2             Iso_rectangle_2;
-  // typedef typename Base_kernel::Vector_2                    Vector_2;
-  // typedef typename Base_kernel::Line_2                      Line_2;
-  // typedef typename Base_kernel::Aff_transformation_2        Aff_transformation_2;
-  // typedef typename Base_kernel::Direction_2                 Direction_2;
-  // typedef typename Base_kernel::Construct_vertex_2          Construct_vertex_2 ;
-  // typedef typename Base_kernel::Construct_segment_2         Construct_segment_2 ;
-  // typedef typename Base_kernel::Construct_iso_rectangle_2   Construct_iso_rectangle_2;
-  // typedef typename Base_kernel::Compare_y_2                 Compare_y_2;
-
-
-
 };
 
 namespace Box_intersection_d {
 
+// Since we used only box_self_intersection_d, we may not have intersection of two distinct boxes with same index
 template<class NT_, int N>
 class Box_with_index_d: public Box_d< NT_, N, ID_EXPLICIT> {
 protected:
@@ -143,49 +118,48 @@ public:
 template <class Concurrency_tag=Sequential_tag, class Traits, class PointsRange , class PolylineRange>
 void double_snap_rounding_2_disjoint(PointsRange &pts, PolylineRange &polylines, const Traits &traits)
 {
-  using Kernel =    typename Traits::Kernel;
-  using Point_2 =   typename Traits::Point_2;
+  using Point_2   = typename Traits::Point_2;
   using Segment_2 = typename Traits::Segment_2;
   using Vector_2  = typename Traits::Vector_2;
-  using Line_2  = typename Traits::Line_2;
-
-  using Comparison_result = typename Kernel::Comparison_result;
+  using Line_2    = typename Traits::Line_2;
 
   using Polyline = std::remove_cv_t<typename std::iterator_traits<typename PolylineRange::iterator>::value_type>;
 
-  using PBox = CGAL::Box_intersection_d::Box_with_index_d<double,2>;
-  using SBox = CGAL::Box_intersection_d::Box_with_index_d<double,2>;
+  using PointsRangeIterator   = typename PointsRange::iterator;
+  using PolylineRangeIterator = typename PolylineRange::iterator;
 
-  using Less_x_2 = typename Traits::Less_x_2;
-  using Less_y_2 = typename Traits::Less_y_2;
+  using PBox = CGAL::Box_intersection_d::Box_with_info_d<double,2,size_t>;
+  using SBox = CGAL::Box_intersection_d::Box_with_handle_d<double,2,PolylineRangeIterator>;
+
+  using Less_x_2  = typename Traits::Less_x_2;
+  using Less_y_2  = typename Traits::Less_y_2;
   using Less_xy_2 = typename Traits::Less_xy_2;
   using Less_yx_2 = typename Traits::Less_yx_2;
-  using Equal_2 = typename Traits::Equal_2;
+  using Equal_2   = typename Traits::Equal_2;
+  using Round_2   = typename Traits::Round_2;
 
-  using Construct_source_2 = typename Traits::Construct_source_2;
-  using Construct_target_2 = typename Traits::Construct_target_2;
-
+  using Construct_source_2         = typename Traits::Construct_source_2;
+  using Construct_target_2         = typename Traits::Construct_target_2;
   using Compare_squared_distance_2 = typename Traits::Compare_squared_distance_2;
-  using Squared_round_bound_2 = typename Traits::Squared_round_bound_2;
-  using Round_2 = typename Traits::Round_2;
+  using Squared_round_bound_2      = typename Traits::Squared_round_bound_2;
 
   Compare_squared_distance_2 csq_dist_2 = traits.compare_squared_distance_2_object();
   Squared_round_bound_2 round_bound = traits.squared_round_bound_2_object();
   Construct_source_2 source = traits.construct_source_2_object();
   Construct_target_2 target = traits.construct_target_2_object();
-  Equal_2 equal;
-  Round_2 round;
+  Equal_2 equal = traits.equal_2_object();
+  Round_2 round = traits.round_2_object();
 
-  auto Less_indexes_x_2=[&](size_t i, size_t j){
+  auto Less_indexes_x_2=[&](std::size_t i, std::size_t j){
     return Less_x_2()(pts[i], pts[j]);
   };
-  auto Less_indexes_y_2=[&](size_t i, size_t j){
+  auto Less_indexes_y_2=[&](std::size_t i, std::size_t j){
     return Less_y_2()(pts[i], pts[j]);
   };
-  auto Less_indexes_xy_2=[&](size_t i, size_t j){
+  auto Less_indexes_xy_2=[&](std::size_t i, std::size_t j){
     return Less_xy_2()(pts[i], pts[j]);
   };
-  auto Less_indexes_yx_2=[&](size_t i, size_t j){
+  auto Less_indexes_yx_2=[&](std::size_t i, std::size_t j){
     return Less_yx_2()(pts[i], pts[j]);
   };
 
@@ -212,30 +186,34 @@ void double_snap_rounding_2_disjoint(PointsRange &pts, PolylineRange &polylines,
   const double global_bound=max_coordinate*std::pow(2, -20);
 
   //Prepare boxes for box_intersection_d
+  std::vector<Point_2> new_points;
   std::vector<PBox> points_boxes;
   std::vector<SBox> segs_boxes;
+
+  //We create that vector to avoid multiple computations
   std::vector<double> round_bound_pts;
+
   for(std::size_t i=0; i<pts.size(); ++i){
     points_boxes.emplace_back(pts[i].bbox(),i);
     round_bound_pts.emplace_back(round_bound(pts[i]));
   }
-  for(std::size_t i=0; i<polylines.size(); ++i)
-    segs_boxes.emplace_back(pts[polylines[i][0]].bbox()+pts[polylines[i][polylines[i].size()-1]].bbox(),i);
+  for(PolylineRangeIterator it=polylines.begin(); it!=polylines.end(); ++it)
+    segs_boxes.emplace_back(pts[(*it)[0]].bbox()+pts[(*it)[it->size()-1]].bbox(),it);
 
   CGAL_MUTEX mutex_callback;
   // Callback used for box_intersection_d
   auto callback=[&](PBox &bp, SBox &bseg){
-    std::size_t pi=bp.index();
-    std::size_t si=bseg.index();
+    std::size_t pi=bp.info();
 
-    Polyline& pl=polylines[bseg.index()];
+    Polyline& pl=*(bseg.handle());
     std::size_t si1=pl[0];
     std::size_t si2=pl[pl.size()-1];
 
+    //Check if p is one endpoint of the segment
     if((pi==si1) || (pi==si2))
       return;
 
-    Point_2& p= pts[bp.index()];
+    Point_2& p= pts[pi];
 
     // Early exit for better running time
     if(certainly(csq_dist_2(p, Line_2(pts[pl[0]], pts[pl[1]]), global_bound)==LARGER))
@@ -244,10 +222,8 @@ void double_snap_rounding_2_disjoint(PointsRange &pts, PolylineRange &polylines,
     Segment_2 seg(pts[pl[0]], pts[pl[1]]);
 
     // (A+B)^2 <= 4*max(A^2,B^2), we take some margin
-    // double bound = round_bound(pts[pi]);
     double bound=round_bound_pts[pi];
-    for(size_t i=0; i<pl.size(); ++i)
-      // bound = (std::max)(bound, round_bound(pts[pl[i]]));
+    for(std::size_t i=0; i<pl.size(); ++i)
       bound = (std::max)(bound, round_bound_pts[pl[i]]);
     bound*=16;
 
@@ -264,11 +240,12 @@ void double_snap_rounding_2_disjoint(PointsRange &pts, PolylineRange &polylines,
       } else {
         pts.pop_back(); // Remove the new point if it is already exist
       }
-      polylines[si].emplace_back(*pair.first); // Some duplicates maybe introduced, it will be removed later
+      pl.emplace_back(*pair.first); // Some duplicates maybe introduced, it will be removed later
     }
   };
 
 #ifdef DOUBLE_2D_SNAP_VERBOSE
+  int turn_nb=0;
   std::cout << "Exhibit pairs of possible intersections" << std::endl;
 #endif
 
@@ -277,14 +254,11 @@ void double_snap_rounding_2_disjoint(PointsRange &pts, PolylineRange &polylines,
     CGAL::box_intersection_d<Concurrency_tag>(points_boxes.begin(), points_boxes.end(), segs_boxes.begin(), segs_boxes.end(), callback);
     points_boxes.clear();
     points_boxes.reserve(pts.size()-size_before);
-    // The new vertices may intersect another segment when rounded, we repeat until they are not new vertices
 #ifdef DOUBLE_2D_SNAP_VERBOSE
-    std::cout << nb_calls << std::endl;
-    std::cout << nb_tests << std::endl;
-    std::cout << nb_execute << std::endl;
-    std::cout << nb_already_exists << std::endl;
-    std::cout << pts.size()-size_before << " subdivisions performed" << std::endl;
+    ++turn_nb;
+    std::cout << "Turn " << turn_nb << ": " << pts.size()-size_before << " subdivisions performed" << std::endl;
 #endif
+    // The new vertices may intersect another segment when rounded, we repeat until they are not new vertices
     for(std::size_t i=size_before; i<pts.size(); ++i)
       points_boxes.emplace_back(pts[i].bbox(),i);
   } while(points_boxes.size()!=0);
@@ -350,7 +324,7 @@ void double_snap_rounding_2_disjoint(PointsRange &pts, PolylineRange &polylines,
   // The algorithm prevents the a vertex that goes through a segment but a vertex may lie on an horizontal/vertical segments after rounding
   std::cout << "Subdivide horizontal and vertical segments with vertices on them" << std::endl;
 #endif
-  //The order may have changed (Example: (1,1)<(1,2)<(1+e,1)), we recompute it
+  //The order may have changed, we recompute it (Example: (1,1)<(1,2)<(1+e,1)) order changed if rounded)
   p_sort_by_x.clear();
   p_sort_by_y.clear();
   for(std::size_t i=0; i!=pts.size(); ++i)
