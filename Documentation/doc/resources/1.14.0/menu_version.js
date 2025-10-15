@@ -1,11 +1,11 @@
 (function() {
   'use strict';
 
-  var url_re =  /(cgal\.geometryfactory\.com\/CGAL\/doc\/|doc\.cgal\.org\/)(master|latest|(\d\.\d+|\d\.\d+\.\d+)(-beta\d)?)\//;
+  var url_re =  /(cgal\.geometryfactory\.com\/CGAL\/doc\/|doc\.cgal\.org\/)(main|latest|(\d\.\d+|\d\.\d+\.\d+)(-beta\d)?)\//;
   var url_local =  /.*\/doc_output\//;
-  var current_version_local = 'master'
+  var current_version_local = 'main'
   var all_versions = [
-    'master',
+    'main',
     '6.1',
     '6.0.2',
     'latest',
@@ -31,12 +31,12 @@
 ];
 
   function build_select(current_version) {
-    if( current_version == 'master') {
+    if( current_version == 'main') {
       let top_elt = document.getElementById("top");
 
       let first_element = top_elt.childNodes[0];
       let new_div = document.createElement("p");
-      new_div.innerHTML = '⚠️ This documentation corresponds to the <a style="font-familly: monospace;" href="https://github.com/CGAL/cgal/tree/master">master</a> development branch of CGAL. It might diverge from the official releases.';
+      new_div.innerHTML = '⚠️ This documentation corresponds to the <a style="font-familly: monospace;" href="https://github.com/CGAL/cgal/tree/main">main</a> development branch of CGAL. It might diverge from the official releases.';
       new_div.style.cssText = "background-color: #ff9800; margin: 1ex auto 1ex 1em; padding: 1ex; border-radius: 1ex; display: inline-block;"
       let OK = top_elt.insertBefore(new_div, first_element);
     }
