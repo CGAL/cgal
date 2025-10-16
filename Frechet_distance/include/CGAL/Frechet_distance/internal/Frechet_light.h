@@ -514,15 +514,24 @@ inline void FrechetLight<C>::continueQSimpleSearch(QSimpleInterval& qsimple,
         // TODO: uncritical for correctness or speed but unelegant coding style: stripping down information added by getInterval
         CInterval temp_interval = FrechetLight::getInterval<IndexType>(
             fixed_curve, fixed, curve, cur);
+            std::cout .precision(15);
+            std::cout << "cur = "  << cur << std::endl;
+            std::cout << temp_interval.begin.getPoint() << " "
+            <<  temp_interval.begin.getFraction().approx << std::endl;
+            std::cout << temp_interval.end.getPoint() << std::endl;
+
         Interval interval = Interval(temp_interval.begin.getPoint() == cur
                                          ? temp_interval.begin.getFraction()
                                          : 1,
                                      temp_interval.end.getPoint() == cur
                                          ? temp_interval.end.getFraction()
                                          : 1);
-
+        std::cout << "before is_zero(): " << interval.begin.approx << std::endl;
+// ssert(!certainly(temp_interval.begin.getFraction() <= 1)
+  //              || !certainly(temp_interval.begin.getFraction() > 1));
         // do previous check for fullness again, but now it is an exact decision
         if (is_zero(interval.begin) && is_one(interval.end)) {  // Uncertain (A)
+            std::cout << "after is_zero(): " << interval.begin.approx << std::endl;
             assert(current_free);
             ++cur;
             stepsize *= 2;
