@@ -1,6 +1,4 @@
-#define DOUBLE_2D_SNAP_VERBOSE
 #define BENCH_AND_VERBOSE_FLOAT_SNAP_ROUNDING_2
-#define COMPARE_WITH_INTEGER_SNAP_ROUNDING_2
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -129,68 +127,46 @@ void test_almost_indentical_segments(CGAL::Random &r, size_t nb_segments, Vector
 }
 
 void test_iterative_square_intersection(CGAL::Random &r, size_t nb_iterations){
-  auto add_random_rotated_square=[&](std::vector<Segment_2> &segs){
+  auto random_rotated_square=[&](){
     double theta=r.get_double(0, CGAL_PI/2);
-    double cos_t = std::cos(theta);
-    double sin_t = std::sin(theta);
-    Point_2 a( cos_t, sin_t);
-    Point_2 b( sin_t,-cos_t);
-    Point_2 c(-cos_t,-sin_t);
-    Point_2 d(-sin_t, cos_t);
-    segs.emplace_back(a,b);
-    segs.emplace_back(b,c);
-    segs.emplace_back(c,d);
-    segs.emplace_back(d,a);
+#ifdef BENCH_AND_VERBOSE_FLOAT_SNAP_ROUNDING_2
+    std::cout << "Angle: " << theta << std::endl;
+#endif
+    FT cos_t(std::cos(theta));
+    FT sin_t(std::sin(theta));
+    Polygon_2 P;
+    P.push_back(Point_2( cos_t, sin_t));
+    P.push_back(Point_2(-sin_t, cos_t));
+    P.push_back(Point_2(-cos_t,-sin_t));
+    P.push_back(Point_2( sin_t,-cos_t));
+    return P;
   };
 
-  std::vector<Segment_2> segs;
-  std::vector<Segment_2> out;
-  std::vector<Curve_2> arr_segs;
+  Polygon_2 scene=random_rotated_square();
+  Polygon_2 snap_scene;
+  Pwh_vec_2 out_intersection;
 
-  CGAL::Real_timer t;
   for(size_t i=0; i<nb_iterations; ++i){
-    std::cout << "Iterations " << i << std::endl;
-    out.clear();
-    arr_segs.clear();
-
-    for(int j=0; j<5; ++j)
-      add_random_rotated_square(segs);
-
-    test(segs);
-    CGAL::compute_snapped_subcurves_2(segs.begin(), segs.end(), out);
-    assert(!CGAL::do_curves_intersect(out.begin(), out.end()));
-
-    segs.clear();
-    segs.insert(segs.begin(), out.begin(), out.end());
+    out_intersection.clear();
+    CGAL::intersection(random_rotated_square(), scene, std::back_inserter(out_intersection));
+    assert(out_intersection.size()==1 && out_intersection[0].number_of_holes()==0);
+#ifdef BENCH_AND_VERBOSE_FLOAT_SNAP_ROUNDING_2
+    CGAL::Real_timer t;
+    t.start();
+#endif
+    snap_polygons_2(out_intersection[0].outer_boundary(), snap_scene);
+    // snap_scene=out_intersection[0].outer_boundary();
+#ifdef BENCH_AND_VERBOSE_FLOAT_SNAP_ROUNDING_2
+    t.stop();
+    std::cout << "Iteration " << i << std::endl;
+    std::cout << "Polygon size: " << out_intersection[0].outer_boundary().size()
+              << " , Snapped polygon size: " << snap_scene.size() << std::endl;
+    std::cout << "is convex: " << snap_scene.is_convex() << std::endl;
+    std::cout << "Running time: " << t.time() << std::endl;
+#endif
+    scene=snap_scene;
   }
-
-
 }
-
-// void test_iterative_square_intersection(CGAL::Random &r, size_t nb_iterations){
-//   auto random_rotated_square=[&](){
-//     double theta=r.get_double(0, CGAL_PI/2);
-//     double cos_t = std::cos(theta);
-//     double sin_t = std::sin(theta);
-//     Polygon_2 P;
-//     P.push_back( cos_t, sin_t);
-//     P.push_back( sin_t,-cos_t);
-//     P.push_back(-cos_t,-sin_t);
-//     P.push_back(-sin_t, cos_t);
-//     return P;
-//   };
-
-//   Pwh_vec_2 scene, out_intersection;
-
-//   CGAL::intersection(random_rotated_square, random_rotated_square, scene);
-
-//   for(size_t i=0; i<nb_iterations; ++i){
-//     CGAL::intersection(random_rotated_square, random_rotated_square, out_intersection);
-
-//   }
-
-
-// }
 
 void test_multi_almost_indentical_segments(CGAL::Random &r, size_t nb_segments){
   for(double x1=-1; x1<=1; ++x1)
@@ -222,26 +198,15 @@ void fix_test(){
   test(segs);
 }
 
-void test_box_intersection(){
-  std::vector< Segment_2 > segs;
-  FT e(std::pow(2, -60));
-  segs.emplace_back(Point_2(0, 0), Point_2(1, 1));
-  segs.emplace_back(Point_2(0.5+e, 0.5), Point_2(1, -1));
-  segs.emplace_back(Point_2(0.5-e, 0.5), Point_2(-1, 3));
-
-  test(segs);
-}
-
 int main(int argc,char *argv[])
 {
   CGAL::Random rp;
   CGAL::Random r(argc==1?rp.get_seed():std::stoi(argv[1]));
   std::cout << "random seed = " << r.get_seed() << std::endl;
   std::cout << std::setprecision(17);
-  test_box_intersection();
   fix_test();
   // test_fully_random(r,1000);
   // test_multi_almost_indentical_segments(r,100);
-  // test_iterative_square_intersection(r,500);
+  test_iterative_square_intersection(r,2000);
   return(0);
 }
