@@ -478,6 +478,10 @@ public:
           break;
         }
       }
+
+      // check that a node only has two incident arcs at most in the same sheet
+      std::unordered_map<NodeSPtr, int> arc_nodes;
+
       typename std::list<ArcSPtr>::const_iterator it_a = sheet->arcs().begin();
       while (it_a != sheet->arcs().end()) {
         ArcSPtr arc = *it_a++;
@@ -500,11 +504,18 @@ public:
           break;
         }
 
-        std::vector<NodeSPtr> arc_nodes = { arc->getNodeSrc() };
+        arc_nodes[arc->getNodeSrc()]++;
         if (arc->hasNodeDst()) {
-          arc_nodes.push_back(arc->getNodeDst());
+          arc_nodes[arc->getNodeDst()]++;
         }
-        for (NodeSPtr node : arc_nodes) {
+        for (auto [node, count] : arc_nodes) {
+          if (count > 2) {
+            CGAL_SS3_SKEL_DS_TRACE("Error: sheet has a node with more than two incident arcs in the sheet");
+            CGAL_SS3_SKEL_DS_TRACE(sheet->toString());
+            CGAL_SS3_SKEL_DS_TRACE(node->toString());
+            result = false;
+            break;
+          }
           CGAL_SS3_DEBUG_SPTR(node);
           std::list<NodeSPtr> nodes = sheet->nodes();
           if (nodes.end() == std::find(nodes.begin(), nodes.end(), node)) {
