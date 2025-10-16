@@ -40,6 +40,10 @@ bool parse_args(int argc, char** argv,
   }
 
   mesh_filename = argv[1];
+  if (!mesh_filename) {
+    std::cerr << "Error: null mesh filename" << std::endl;
+    return false;
+  }
 
   std::vector<std::string> time_strings;
 
