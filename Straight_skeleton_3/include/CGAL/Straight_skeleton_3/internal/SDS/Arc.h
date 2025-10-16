@@ -251,6 +251,30 @@ public:
     return this->sheets_;
   }
 
+  ArcSPtr next(const SheetSPtr& sheet, const NodeSPtr& node) const
+  {
+    CGAL_precondition(containsSheet(sheet));
+    CGAL_precondition(node == node_src_ || node == node_dst_);
+    ArcSPtr result = ArcSPtr();
+    // check the arcs incident to the node
+    std::list<ArcWPtr> warcs = node->arcs();
+    typename std::list<ArcWPtr>::const_iterator it = warcs.begin();
+    while (it != warcs.end()) {
+      ArcWPtr arc_wptr = *it++;
+      CGAL_SS3_DEBUG_WPTR(arc_wptr);
+      if (ArcSPtr arc = arc_wptr.lock()) {
+        if (arc == this->shared_from_this()) {
+          continue;
+        }
+        if (arc->containsSheet(sheet)) {
+          result = arc;
+          break;
+        }
+      }
+    }
+    return result;
+  }
+
   Line3SPtr line() const
   {
     Line3SPtr result = Line3SPtr();
