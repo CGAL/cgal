@@ -1,13 +1,12 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-// #include <CGAL/Float_snap_rounding_2.h>
+#include <CGAL/Float_snap_rounding_2.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Random.h>
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel       Kernel;
 typedef CGAL::Exact_predicates_inexact_constructions_kernel     Epick;
-typedef CGAL::Arr_segment_traits_2<Kernel>                      Traits_2;
-typedef Traits_2::Curve_2                                       Segment_2;
+typedef Kernel::Segment_2                                       Segment_2;
 typedef Kernel::Point_2                                         Point_2;
 typedef Kernel::FT                                              FT;
 typedef std::vector<Point_2 >                                   Polyline_2;
@@ -45,9 +44,8 @@ int main(int argc, char *argv[])
 
   std::cout << "Computes the intersections and snaps the segments" << std::endl;
   std::vector< Segment_2> out;
-  CGAL::Kernel_traits<std::remove_cv_t<std::iterator_traits<decltype(segs.begin())>::value_type>>::Kernel::toto toto;
-  // CGAL::compute_snapped_subcurves_2<CGAL::Parallel_if_available_tag>(segs.begin(), segs.end(), out);
-  // std::cout << "Does the output intersect: " << CGAL::do_curves_intersect(out.begin(), out.end()) << std::endl;
+  CGAL::compute_snapped_subcurves_2(segs.begin(), segs.end(), out);
+  std::cout << "Does the output intersect: " << CGAL::do_curves_intersect(out.begin(), out.end()) << std::endl;
   std::cout << "Size of the output: " << out.size() << std::endl;
 
   std::string out_path=(argc>2)?argv[2]:"out.segs";
