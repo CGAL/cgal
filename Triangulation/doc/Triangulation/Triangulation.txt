@@ -395,7 +395,7 @@ circumscribing ball whose interior does not contain
 any vertex of the triangulation.
 
 In case of degeneracies (co-spherical points) the triangulation is not
-uniquely defined. Note however that the CGAL implementation computes a
+uniquely defined. Note however that the %CGAL implementation computes a
 unique triangulation even in these cases.
 
 When a new point `p` is inserted into a Delaunay triangulation, the
@@ -488,7 +488,7 @@ than inserting the same points one by one.
 
 The class `CGAL::Regular_triangulation<RegularTriangulationTraits_, TriangulationDataStructure_>` derives from
 `CGAL::Triangulation<RegularTriangulationTraits_, TriangulationDataStructure_>`. It thus stores a model of
-the concept `TriangulationDataStructure_` which is instantiated with a vertex
+the concept `TriangulationDataStructure` which is instantiated with a vertex
 type that stores a weighted point and allows its retrieval.
 
 The template parameter `RegularTriangulationTraits_` must be a model of the concept
@@ -536,8 +536,8 @@ The program has been compiled with Microsoft Visual C++ 2013 in Release mode.
 <tr align=center><td align=right>Time (s)</td><td>0.003</td><td>0.007</td><td>0.03</td><td>0.14</td><td>0.56</td><td>2.7</td><td>11.3</td><td>45</td><td>185</td><td>686</td><td>2390</td></tr>
 <tr align=center><td align=right>Memory (MB)</td><td>< 1</td><td>< 1</td><td>< 1</td><td>1</td><td>3</td><td>13</td><td>53</td><td>182</td><td>662</td><td>2187</td><td>7156</td></tr>
 <tr align=center><td align=right>Number of maximal simplices</td><td>184</td><td>487</td><td>1,548</td><td>5,548</td><td>19,598</td><td>67,102</td><td>230,375</td><td>715,984</td><td>2,570,623</td><td>7,293,293</td><td>21,235,615</td></tr>
-<tr align=center><td align=right>Number of convex hull facets</td><td>14</td><td>66</td><td>308</td><td>1,164</td><td>4,410</td><td>16,974</td><td>57,589</td><td>238,406</td><td>670,545</td><td>2,574,326</td><td>8,603,589</td></tr></td><td>
-<tr><td ALIGN=LEFT NOWRAP COLSPAN=13><HR></td></tr>
+<tr align=center><td align=right>Number of convex hull facets</td><td>14</td><td>66</td><td>308</td><td>1,164</td><td>4,410</td><td>16,974</td><td>57,589</td><td>238,406</td><td>670,545</td><td>2,574,326</td><td>8,603,589</td></tr>
+<tr><td ALIGN=LEFT NOWRAP COLSPAN=12><HR></td></tr>
 </TABLE>
 </CENTER>
 \cgalFigureCaptionBegin{Triangulationfigbenchmarks100}
@@ -553,8 +553,8 @@ Performance of the insertion of 100 points in a Delaunay triangulation.
 <tr align=center><td align=right>Time (s)</td><td>0.01</td><td>0.05</td><td>0.5</td><td>3.4</td><td>24</td><td>183</td><td>1365</td></tr>
 <tr align=center><td align=right>Memory (MB)</td><td>< 1</td><td>< 1</td><td>2.7</td><td>14</td><td>81</td><td>483</td><td>2827</td></tr>
 <tr align=center><td align=right>Number of maximal simplices</td><td>1,979</td><td>6,315</td><td>25,845</td><td>122,116</td><td>596,927</td><td>3,133,318</td><td>16,403,337</td></tr>
-<tr align=center><td align=right>Number of convex hull facets</td><td>19</td><td>138</td><td>963</td><td>6,184</td><td>41,135</td><td>241,540</td><td>1,406,797</td></tr></td><td>
-<tr><td ALIGN=LEFT NOWRAP COLSPAN=9><HR></td></tr>
+<tr align=center><td align=right>Number of convex hull facets</td><td>19</td><td>138</td><td>963</td><td>6,184</td><td>41,135</td><td>241,540</td><td>1,406,797</td></tr>
+<tr><td ALIGN=LEFT NOWRAP COLSPAN=8><HR></td></tr>
 </TABLE>
 </CENTER>
 \cgalFigureCaptionBegin{Triangulationfigbenchmarks1000}

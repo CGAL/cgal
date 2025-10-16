@@ -1,4 +1,4 @@
-/// \defgroup PkgTDS2Ref 2D Triangulation Data Structure Reference
+/// \defgroup PkgTDS2Ref Reference Manual
 /// \defgroup PkgTDS2Concepts Concepts
 /// \ingroup PkgTDS2Ref
 /*!

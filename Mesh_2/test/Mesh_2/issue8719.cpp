@@ -183,6 +183,8 @@ int main()
   for (int i = 1; i <= 2; ++i)
   {
     CGAL_Remesh(vert_xyz_array, vert_count, criteria_a, criteria_b, iteration_number, newVertices, vCount, newFaces, fCount, i);
+    delete[] newVertices;
+    delete[] newFaces;
   }
 
 

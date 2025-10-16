@@ -8,8 +8,10 @@ The class `Projection_traits_yz_3` is an adapter to apply 2D algorithms to the p
 
 For a detailed description see `Projection_traits_xy_3`.
 
+\tparam Gt must be a model of `ProjectionTraitsGeometricTraits_3`
+
 */
-template< typename K >
+template< typename Gt >
 class Projection_traits_yz_3 {
 
 }; /* end Projection_traits_xy_3 */

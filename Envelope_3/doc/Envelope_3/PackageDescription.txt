@@ -1,4 +1,4 @@
-/// \defgroup PkgEnvelope3Ref 3D Envelopes Reference
+/// \defgroup PkgEnvelope3Ref Reference Manual
 /// \defgroup PkgEnvelope3Concepts Concepts
 /// \ingroup PkgEnvelope3Ref
 /*!
