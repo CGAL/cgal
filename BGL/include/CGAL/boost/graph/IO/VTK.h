@@ -29,6 +29,7 @@
 #include <vtkPointSet.h>
 #include <vtkPolyData.h>
 #include <vtkXMLUnstructuredGridReader.h>
+#include <vtkXMLUnstructuredGridWriter.h>
 #endif
 
 #if defined(CGAL_USE_VTK) || defined(DOXYGEN_RUNNING)
@@ -203,8 +204,8 @@ bool read_VTU(const std::string& fname,
               Graph& g,
               const CGAL_NP_CLASS& np = parameters::default_values())
 {
-  using parameters::get_parameter;
-  using parameters::choose_parameter;
+  using CGAL::parameters::get_parameter;
+  using CGAL::parameters::choose_parameter;
   bool verbose = choose_parameter(get_parameter(np, internal_np::verbose), false);
 
   std::ifstream test(fname);
@@ -593,6 +594,69 @@ bool write_VTP(const std::string& fname, const Graph& g, const CGAL_NP_CLASS& np
   return write_VTP(os, g, np);
 }
 
+template <typename Graph, typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool write_VTU(const std::string& fname, const Graph& g, const CGAL_NP_CLASS& np = parameters::default_values())
+{
+  const bool binary = CGAL::parameters::choose_parameter(CGAL::parameters::get_parameter(np, internal_np::use_binary_mode), true);
+  std::ofstream os;
+  if(binary)
+  {
+    os.open(fname, std::ios::binary);
+    CGAL::IO::set_mode(os, CGAL::IO::BINARY);
+  }
+  else
+    os.open(fname);
+
+  typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<Graph>::face_descriptor face_descriptor;
+  typedef typename boost::graph_traits<Graph>::halfedge_descriptor halfedge_descriptor;
+
+  typedef typename boost::property_map<Graph, CGAL::vertex_point_t>::const_type VPMap;
+  typedef typename boost::property_map_value<Graph, CGAL::vertex_point_t>::type Point_3;
+  VPMap vpmap = get(CGAL::vertex_point, g);
+
+  vtkPoints* const vtk_points = vtkPoints::New();
+  vtkCellArray* const vtk_cells = vtkCellArray::New();
+
+  vtk_points->Allocate(num_vertices(g));
+  vtk_cells->Allocate(num_faces(g));
+
+  std::map<vertex_descriptor, vtkIdType> Vids;
+  vtkIdType inum = 0;
+
+  for(vertex_descriptor v : vertices(g))
+  {
+    const Point_3& p = get(vpmap, v);
+    vtk_points->InsertNextPoint(CGAL::to_double(p.x()), CGAL::to_double(p.y()), CGAL::to_double(p.z()));
+    Vids[v] = inum++;
+  }
+  for(face_descriptor f : faces(g))
+  {
+    vtkIdList* cell = vtkIdList::New();
+    for(halfedge_descriptor h : halfedges_around_face(halfedge(f, g), g)) {
+      cell->InsertNextId(Vids[target(h, g)]);
+    }
+    vtk_cells->InsertNextCell(cell);
+    cell->Delete();
+  }
+
+  vtkSmartPointer<vtkUnstructuredGrid> usg = vtkSmartPointer<vtkUnstructuredGrid>::New();
+
+  usg->SetPoints(vtk_points);
+  vtk_points->Delete();
+
+  usg->SetCells(5, vtk_cells);
+  vtk_cells->Delete();
+
+  // Write the unstructured grid
+  vtkSmartPointer<vtkXMLUnstructuredGridWriter> writer
+    = vtkSmartPointer<vtkXMLUnstructuredGridWriter>::New();
+  writer->SetFileName(fname.data());
+  writer->SetInputData(usg);
+  writer->Write();
+
+  return true;
+}
 
 } // namespace IO
 

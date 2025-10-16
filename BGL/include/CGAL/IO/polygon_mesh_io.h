@@ -255,6 +255,8 @@ bool write_polygon_mesh(const std::string& fname,
 #ifdef CGAL_USE_VTK
   else if(ext == "vtp")
     return write_VTP(fname, g, np);
+  else if(ext == "vtu")
+    return write_VTU(fname, g, np);
 #endif
 
   if(verbose)
