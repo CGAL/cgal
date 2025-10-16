@@ -29,6 +29,8 @@
 #include <set>
 #include <vector>
 
+#include <CGAL/Named_function_parameters.h>
+
 #include  <CGAL/mutex.h>
 
 namespace CGAL {
@@ -386,15 +388,37 @@ void double_snap_rounding_2_disjoint(PointsRange &pts, PolylineRange &polylines,
 * @tparam InputIterator iterator over a range of `Segment_2`
 * @tparam OutputContainer inserter over a range of `Polyline`. `Polyline` must be a type that provides a `push_back(Point_2)` function.
 */
-template <class Concurrency_tag=Sequential_tag, class InputIterator , class OutputContainer>
+template <class InputIterator , class OutputContainer, class NamedParameters = parameters::Default_named_parameters>
 typename OutputContainer::iterator double_snap_rounding_2(InputIterator  	input_begin,
 		                                                      InputIterator  	input_end,
-		                                                      OutputContainer&  output)
+		                                                      OutputContainer&  output,
+                                                          const NamedParameters &np = parameters::default_values())
 {
-  using Segment_2 = std::remove_cv_t<typename std::iterator_traits<InputIterator>::value_type>;
+  using Concurrency_tag = typename internal_np::Lookup_named_param_def<internal_np::concurrency_tag_t,
+                                                              NamedParameters,
+                                                              Sequential_tag>::type;
+
+  using InputKernel = typename Kernel_traits<std::remove_cv_t<typename std::iterator_traits<InputIterator>::value_type>>::Kernel;
+  using DefaultTraits = Float_snap_rounding_traits_2<InputKernel>;
+  using Traits = typename internal_np::Lookup_named_param_def<internal_np::geom_traits_t,
+                                                              NamedParameters,
+                                                              DefaultTraits>::type;
+
+  using Point_2 = typename Traits::Point_2;
+  using Segment_2 = typename Traits::Segment_2;
+  using I2E = typename Traits::Converter_in;
+  using E2O = typename Traits::Converter_out;
+  using VectorIterator = typename std::vector<Segment_2>::iterator;
+
   using Polyline = std::remove_cv_t<typename std::iterator_traits<typename OutputContainer::iterator>::value_type>;
-  using Point_2 = typename Default_arr_traits<Segment_2>::Traits::Point_2;
-  using Kernel = typename Kernel_traits<Point_2>::Kernel;
+
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+
+  const Traits &traits = choose_parameter(get_parameter(np, internal_np::geom_traits), Traits());
+
+  I2E to_exact=traits.converter_to_exact_object();
+  E2O from_exact=traits.converter_from_exact_object();
 
   std::vector<Segment_2> segs(input_begin, input_end);
 #ifdef DOUBLE_2D_SNAP_VERBOSE
@@ -436,7 +460,7 @@ typename OutputContainer::iterator double_snap_rounding_2(InputIterator  	input_
   }
 
   // Main algorithm
-  double_snap_rounding_2_disjoint<Concurrency_tag, Float_snap_rounding_traits_2<Kernel> >(pts, polylines);
+  double_snap_rounding_2_disjoint<Concurrency_tag, Traits>(pts, polylines, traits);
 
 #ifdef DOUBLE_2D_SNAP_VERBOSE
   std::cout << "Build output" << std::endl;
@@ -465,17 +489,33 @@ typename OutputContainer::iterator double_snap_rounding_2(InputIterator  	input_
 * @tparam OutputContainer inserter of a segment range
 * @tparam The exact kernel needed for computation (Epeck by default)
 */
-template <class Concurrency_tag=Sequential_tag, class InputIterator , class OutputContainer, class Traits=Float_snap_rounding_traits_2<typename Kernel_traits<std::remove_cv_t<typename std::iterator_traits<InputIterator>::value_type>>::Kernel> >
+template <class InputIterator , class OutputContainer, class NamedParameters = parameters::Default_named_parameters>
 typename OutputContainer::iterator compute_snapped_subcurves_2(InputIterator  	 input_begin,
 		                                                           InputIterator  	 input_end,
 		                                                           OutputContainer&  output,
-                                                               const Traits& traits=Traits())
+                                                               const NamedParameters &np = parameters::default_values())
 {
+  using Concurrency_tag = typename internal_np::Lookup_named_param_def<internal_np::concurrency_tag_t,
+                                                              NamedParameters,
+                                                              Sequential_tag>::type;
+
+  using InputKernel = typename Kernel_traits<std::remove_cv_t<typename std::iterator_traits<InputIterator>::value_type>>::Kernel;
+  using DefaultTraits = Float_snap_rounding_traits_2<InputKernel>;
+  using Traits = typename internal_np::Lookup_named_param_def<internal_np::geom_traits_t,
+                                                              NamedParameters,
+                                                              DefaultTraits>::type;
+
   using Point_2 = typename Traits::Point_2;
   using Segment_2 = typename Traits::Segment_2;
   using I2E = typename Traits::Converter_in;
   using E2O = typename Traits::Converter_out;
   using VectorIterator = typename std::vector<Segment_2>::iterator;
+
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+
+  const Traits &traits = choose_parameter(get_parameter(np, internal_np::geom_traits), Traits());
+
   I2E to_exact=traits.converter_to_exact_object();
   E2O from_exact=traits.converter_from_exact_object();
 
@@ -547,28 +587,62 @@ typename OutputContainer::iterator compute_snapped_subcurves_2(InputIterator  	 
 /**
 * ingroup
 *
-* Given a Polygon_2, compute rounded segments that are pairwise disjoint in their interior, as induced by the input polygon.
-* The output is guarantee to be a Polygon but may present pinched section.
+* Given a range of Polygon_2, compute rounded segments that are pairwise disjoint in their interior, as induced by the input polygons.
+* Any polygon is guarantee to remain a Polygon in the output but may present pinched section and common vertices or segments with
+* other polygons.
 *
-* @tparam Concurrency_tag That template parameter enables to choose whether the algorithm is to be run in
-* parallel, if CGAL::Parallel_tag is specified and CGAL has been linked with the Intel TBB library, or sequentially, if CGAL::Sequential_tag - the default value - is specified.
-* @tparam InputIterator iterator of a segment range
-* @tparam OutputContainer inserter of a segment range
-* @tparam The exact kernel needed for computation (Epeck by default)
+* @tparam InputIterator iterator of a CGAL::Polygon_2 range
+* @tparam OutputContainer inserter of a CGAL::Polygon_2 range
+* @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+* \param begin,end the input polygon range
+* \param out the output inserter
+* \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+* \cgalNamedParamsBegin
+*   \cgalParamNBegin{concurrency_tag}
+*     \cgalParamDescription{That template parameter enables to choose whether the algorithm is to be run in parallel, if CGAL::Parallel_tag
+*                           is specified and CGAL has been linked with the Intel TBB library, or sequentially, otherwise.}
+*     \cgalParamType{CGAL::Concurrency_tag}
+*     \cgalParamDefault{CGAL::Sequential_tag}
+*   \cgalParamNEnd
 *
-* @warning The convex property is not necessarly preserved
+*   \cgalParamNBegin{geom_traits}
+*     \cgalParamDescription{TODO}
+*     \cgalParamType{double}
+*     \cgalParamDefault{100}
+*   \cgalParamNEnd
+* @warning The convex property of the polygons is not necessarly preserved
 */
-template <class Concurrency_tag=Sequential_tag, class Polygon_2, class Traits=Float_snap_rounding_traits_2<typename Kernel_traits<typename Polygon_2::Point_2>::Kernel> >
-void snap_polygons_2(const Polygon_2 &P,
-                           Polygon_2 &out,
-                     const Traits& traits=Traits(),
-                     bool check_duplicates = false)
+template <class InputIterator, class OutputContainer, class NamedParameters = parameters::Default_named_parameters>
+void snap_polygons_2(InputIterator begin,
+                     InputIterator end,
+                     OutputContainer out,
+                     const NamedParameters &np = parameters::default_values())
 {
+  using Concurrency_tag = typename internal_np::Lookup_named_param_def<internal_np::concurrency_tag_t,
+                                                              NamedParameters,
+                                                              Sequential_tag>::type;
+
+  using Polygon_2 = typename std::iterator_traits<InputIterator>::value_type;
+  using InputKernel = typename Kernel_traits<typename Polygon_2::Point_2>::Kernel;
+  using DefaultTraits = Float_snap_rounding_traits_2<InputKernel>;
+  using Traits = typename internal_np::Lookup_named_param_def<internal_np::geom_traits_t,
+                                                              NamedParameters,
+                                                              DefaultTraits>::type;
+
   using Point_2 = typename Traits::Point_2;
   using Segment_2 = typename Traits::Segment_2;
   using I2E = typename Traits::Converter_in;
   using E2O = typename Traits::Converter_out;
   using VectorIterator = typename std::vector<Segment_2>::iterator;
+
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+
+  Polygon_2 P=*begin;
+
+  const Traits &traits = choose_parameter(get_parameter(np, internal_np::geom_traits), Traits());
+  const bool compute_intersections = choose_parameter(get_parameter(np, internal_np::do_intersection_computation), false);
+
   I2E to_exact=traits.converter_to_exact_object();
   E2O from_exact=traits.converter_from_exact_object();
 
@@ -577,8 +651,9 @@ void snap_polygons_2(const Polygon_2 &P,
 #endif
   std::vector<Point_2> pts;
   std::vector< std::vector< std::size_t> > polylines;
+  std::vector<size_t> polygon_index;
 
-  if(check_duplicates){
+  if(compute_intersections){
     std::set<Point_2> unique_point_set;
     std::map<Point_2, int> point_to_index;
 
@@ -601,11 +676,19 @@ void snap_polygons_2(const Polygon_2 &P,
       polylines.push_back({index1, index2});
     }
   } else {
-    for(const typename Polygon_2::Point_2 &p: P.vertices())
-      pts.push_back(to_exact(p));
-    for(size_t i=0; i<P.size()-1; ++i)
-      polylines.push_back({i, i+1});
-    polylines.push_back({P.size()-1,0});
+    // Index of the segments that introduced a new polygon
+    polygon_index.reserve(std::distance(begin, end));
+    for(InputIterator it=begin; it!=end; ++it){
+      size_t index_start=polylines.size();
+      polygon_index.push_back(polylines.size());
+      for(const typename Polygon_2::Point_2 &p: it->vertices())
+        pts.push_back(to_exact(p));
+      for(size_t i=0; i<P.size()-1; ++i)
+        polylines.push_back({i, i+1});
+      polylines.push_back({pts.size()-1,index_start});
+      assert(pts.size()==polylines.size());
+    }
+    polygon_index.push_back(polylines.size());
   }
 
   // Main algorithm
@@ -616,10 +699,51 @@ void snap_polygons_2(const Polygon_2 &P,
 #endif
 
   // Output a range of segments while removing duplicate ones
-  out.clear();
-  for(auto &poly: polylines)
-    for(std::size_t i=1; i<poly.size(); ++i)
-      out.push_back(from_exact(pts[poly[i]]));
+  for(size_t input_ind=0; input_ind<std::distance(begin,end); ++input_ind){
+    for(size_t pl_ind=polygon_index[input_ind]; pl_ind<polygon_index[input_ind+1]; ++pl_ind){
+      std::vector<size_t> &poly = polylines[pl_ind];
+      Polygon_2 P;
+      for(std::size_t i=1; i<poly.size(); ++i)
+        P.push_back(from_exact(pts[poly[i]]));
+    }
+    *out++=P;
+  }
+}
+
+
+/**
+* ingroup
+*
+* Given a Polygon_2, compute rounded segments that are pairwise disjoint in their interior, as induced by the input polygon.
+* The output is guarantee to be a Polygon but may present pinched section.
+*
+* \tparam Polygon_2 model of CGAL::Polygon_2
+* \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+* \param P the input polygon
+* \param out the output polygon
+* \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+* \cgalNamedParamsBegin
+*   \cgalParamNBegin{concurrency_tag}
+*     \cgalParamDescription{That template parameter enables to choose whether the algorithm is to be run in parallel, if CGAL::Parallel_tag
+*                           is specified and CGAL has been linked with the Intel TBB library, or sequentially, otherwise.}
+*     \cgalParamType{CGAL::Concurrency_tag}
+*     \cgalParamDefault{CGAL::Sequential_tag}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{geom_traits}
+*     \cgalParamDescription{a multiplier of the error value for boundary edges to preserve the boundaries}
+*     \cgalParamType{double}
+*     \cgalParamDefault{100}
+*   \cgalParamNEnd
+* @warning The convex property is not necessarly preserved
+*/
+template <class Polygon_2, class NamedParameters = parameters::Default_named_parameters>
+void snap_polygon_2(const Polygon_2 &P, Polygon_2 &out, const NamedParameters &np = parameters::default_values())
+{
+  std::array<Polygon_2, 1> vec({P});
+  std::vector<Polygon_2> out_vec;
+  snap_polygons_2(vec.begin(), vec.end(), std::back_inserter(out_vec), np);
+  out = out_vec[0];
 }
 
 

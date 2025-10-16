@@ -1,3 +1,4 @@
+#define DOUBLE_2D_SNAP_VERBOSE
 #define BENCH_AND_VERBOSE_FLOAT_SNAP_ROUNDING_2
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
@@ -154,7 +155,7 @@ void test_iterative_square_intersection(CGAL::Random &r, size_t nb_iterations){
     CGAL::Real_timer t;
     t.start();
 #endif
-    snap_polygons_2(out_intersection[0].outer_boundary(), snap_scene);
+    snap_polygon_2(out_intersection[0].outer_boundary(), snap_scene);
     // snap_scene=out_intersection[0].outer_boundary();
 #ifdef BENCH_AND_VERBOSE_FLOAT_SNAP_ROUNDING_2
     t.stop();
@@ -198,6 +199,24 @@ void fix_test(){
   test(segs);
 }
 
+void test_float_snap_rounding(){
+  std::cout << "Fix tests" << std::endl;
+
+  std::vector< Segment_2 > segs;
+  std::vector< Polyline_2 > out;
+  FT e(std::pow(2, -60));
+  segs.emplace_back(Point_2(1-e, 1), Point_2(-1-e, -1+2*e));
+  segs.emplace_back(Point_2(e/2, e/2), Point_2(1, -1));
+  segs.emplace_back(Point_2(0, 2-e/2), Point_2(2, 0));
+  segs.emplace_back(Point_2(0, 2-e/2), Point_2(-2+e, -4));
+  segs.emplace_back(Point_2(-2, 2), Point_2(2, 2));
+  segs.emplace_back(Point_2(7, 7), Point_2(7+e, 7+e));
+  segs.emplace_back(Point_2(5, 7-e), Point_2(9, 7-e));
+
+  double_snap_rounding_2(segs.begin(), segs.end(), out);
+  assert(out.size()==segs.size());
+}
+
 int main(int argc,char *argv[])
 {
   CGAL::Random rp;
@@ -205,6 +224,7 @@ int main(int argc,char *argv[])
   std::cout << "random seed = " << r.get_seed() << std::endl;
   std::cout << std::setprecision(17);
   fix_test();
+  test_float_snap_rounding();
   // test_fully_random(r,1000);
   // test_multi_almost_indentical_segments(r,100);
   test_iterative_square_intersection(r,2000);
