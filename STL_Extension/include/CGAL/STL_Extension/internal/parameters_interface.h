@@ -379,3 +379,6 @@ CGAL_add_named_parameter_with_compatibility(bounding_object_param_t, bounding_ob
 //List of named parameters used in Straight_skeleton_2
 CGAL_add_named_parameter_with_compatibility_ref_only(angles_param_t, angles_param, angles)
 CGAL_add_named_parameter(maximum_height_t, maximum_height, maximum_height)
+
+//List of named parameters used in Snap_rounding_2
+CGAL_add_named_parameter(do_intersection_computation_t, do_intersection_computation, do_intersection_computation)
