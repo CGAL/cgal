@@ -18,7 +18,7 @@
 #define CGAL_STRAIGHT_SKELETON_3_INTERNAL_SDS_SHEET_H
 
 #include <CGAL/Straight_skeleton_3/IO/String_factory.h>
-
+#include <CGAL/Straight_skeleton_3/internal/weak_find.h>
 #include <CGAL/Straight_skeleton_3/internal/HDS/Polyhedron.h>
 
 #include <list>
@@ -56,7 +56,7 @@ private:
   using StraightSkeletonSPtr = std::shared_ptr<StraightSkeleton<Traits> >;
 
   using Polyhedron = HDS::Polyhedron<Traits>;
-  using EdgeSPtr = typename Polyhedron::EdgeSPtr;
+  using EdgeWPtr = typename Polyhedron::EdgeWPtr;
   using FacetSPtr = typename Polyhedron::FacetSPtr;
 
 public:
@@ -97,6 +97,15 @@ public:
   {
     CGAL_SS3_DEBUG_SPTR(facet_f);
     facet_f_ = facet_f;
+  }
+
+  void addEdge(const EdgeWPtr& edge) {
+    CGAL_precondition(STL_Extension::internal::weak_find(edges_.begin(), edges_.end(), edge) == edges_.end());
+    edges_.push_back(edge);
+  }
+
+  const std::list<EdgeWPtr>& edges() const {
+    return edges_;
   }
 
   StraightSkeletonSPtr getSkel() const
@@ -275,20 +284,24 @@ public:
   }
 
 protected:
+  // facets of the static polyhedron
   FacetSPtr facet_b_;
   FacetSPtr facet_f_;
 
   std::list<ArcSPtr> arcs_;
-  // Squatting the arc type, but these are not really arcs: they represent edges of the original
-  // polyhedron and are used to have a closed polygon (with holes) when drawing sheets.
+  // Squatting the arc type for contours, which are edges of the static polyhedron.
+  // Contours are needed to generate a closed polygon (with holes) when drawing sheets.
   std::list<ArcSPtr> contours_;
   std::list<NodeSPtr> nodes_;
   StraightSkeletonWPtr skel_;
 
   typename std::list<SheetSPtr>::iterator list_it_;
-  Plane3SPtr plane_;
+
+  // these are edges of the mutable polyhedron whose active movement traces the sheet
+  std::list<EdgeWPtr> edges_;
 
   int id_;
+  Plane3SPtr plane_;
 
 private:
   static int next_id_;

@@ -750,6 +750,7 @@ public:
     }
 
     result = Sheet::create();
+    result->addEdge(edge);
     result->setPlane(plane_sheet);
     result->setFacetB(facet_b);
     result->setFacetF(facet_f);
@@ -773,15 +774,25 @@ public:
   {
     CGAL_precondition(edge_into && edge_from);
     CGAL_precondition(edge_into != edge_from);
-    CGAL_precondition(HdsUtils::getSheet(edge_into) && HdsUtils::getSheet(edge_from));
 
-    if (HdsUtils::getSheet(edge_into) == HdsUtils::getSheet(edge_from)) {
+    SheetSPtr sheet_into = HdsUtils::getSheet(edge_into);
+    SheetSPtr sheet_from = HdsUtils::getSheet(edge_from);
+
+    if (sheet_into == sheet_from) {
       return;
     }
 
-    skel_result_->mergeSheets(HdsUtils::getSheet(edge_into), HdsUtils::getSheet(edge_from));
-    CGAL_assertion(bool(HdsUtils::getSheet(edge_into)));
-    HdsUtils::setSheet(edge_from, HdsUtils::getSheet(edge_into));
+    std::list<EdgeWPtr> edges_from = sheet_from->edges(); // intentional copy
+
+    skel_result_->mergeSheets(sheet_into, sheet_from);
+    CGAL_assertion(bool(sheet_into));
+
+    for (EdgeWPtr edge_wptr : edges_from) {
+      if (EdgeSPtr edge = edge_wptr.lock()) {
+        HdsUtils::setSheet(edge, sheet_into);
+        sheet_into->addEdge(edge);
+      }
+    }
   }
 
   /**
