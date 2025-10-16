@@ -646,25 +646,27 @@ public:
     // ----------------------------------
     using parameters::choose_parameter;
     using parameters::get_parameter;
+    namespace p = parameters;
 
-    auto mesh_vp_map = choose_parameter(get_parameter(np, internal_np::vertex_point), get(CGAL::vertex_point, mesh));
+    auto mesh_vp_map = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                                        get_const_property_map(vertex_point, mesh));
 
     using vertex_descriptor = typename boost::graph_traits<PolygonMesh>::vertex_descriptor;
     std::vector<std::vector<std::pair<vertex_descriptor, vertex_descriptor>>> patch_edges;
 
-    auto v_selected_map = get(CGAL::dynamic_vertex_property_t<bool>{}, mesh);
+    auto tr_vertex_pmap = get(CGAL::dynamic_vertex_property_t<Vertex_handle>(), mesh);
 
-    int number_of_patches = 0;
-    constexpr bool has_plc_face_id = !parameters::is_default_parameter<CGAL_NP_CLASS,  internal_np::plc_face_id_t>::value;
+    constexpr bool has_plc_face_id = !p::is_default_parameter<CGAL_NP_CLASS,  internal_np::plc_face_id_t>::value;
 
     if constexpr (has_plc_face_id) {
-      auto mesh_plc_face_id = parameters::get_parameter(np, internal_np::plc_face_id);
+      auto v_selected_map = get(CGAL::dynamic_vertex_property_t<bool>{}, mesh);
+      auto mesh_plc_face_id = get_parameter(np, internal_np::plc_face_id);
       using Patch_id_type = CGAL::cpp20::remove_cvref_t<decltype(get(mesh_plc_face_id, *faces(mesh).first))>;
       Patch_id_type max_patch_id{0};
       for(auto f : faces(mesh)) {
         max_patch_id = (std::max)(max_patch_id, get(mesh_plc_face_id, f));
       }
-      number_of_patches = static_cast<int>(max_patch_id + 1);
+      auto number_of_patches = max_patch_id + 1;
       patch_edges.resize(number_of_patches);
       for(auto h : halfedges(mesh)) {
         if(is_border(h, mesh))
@@ -680,38 +682,20 @@ public:
           put(v_selected_map, vb, true);
         }
       }
-    } else {
-      number_of_patches = num_faces(mesh);
-    }
 
-    using Vertex_handle = typename Triangulation::Vertex_handle;
-    using Cell_handle = typename Triangulation::Cell_handle;
-    auto tr_vertex_pmap = get(CGAL::dynamic_vertex_property_t<Vertex_handle>(), mesh);
-    Cell_handle hint_ch{};
-    for(auto v : vertices(mesh)) {
-      if constexpr(has_plc_face_id) {
-        if(false == get(v_selected_map, v)) continue;
-      }
-      auto p = get(mesh_vp_map, v);
-      auto vh = cdt_impl.insert(p, hint_ch, false);
-      vh->ccdt_3_data().set_vertex_type(CDT_3_vertex_type::CORNER);
-      hint_ch = vh->cell();
-      put(tr_vertex_pmap, v, vh);
-    }
-
-    cdt_impl.add_bbox_points_if_not_dimension_3();
-
-    if constexpr(has_plc_face_id) {
+      cdt_impl.insert_mesh_vertices(mesh, mesh_vp_map, tr_vertex_pmap, p::vertex_is_constrained_map(v_selected_map));
       for(auto&& edges : patch_edges) {
         cdt_impl.insert_constrained_face_defined_by_its_border_edges(edges, mesh_vp_map, tr_vertex_pmap);
       }
     } else {
+      cdt_impl.insert_mesh_vertices(mesh, mesh_vp_map, tr_vertex_pmap);
       for(auto f : faces(mesh)) {
         auto face_vertices = vertices_around_face(halfedge(f, mesh), mesh);
         auto range_of_vertices = CGAL::make_transform_range_from_property_map(face_vertices, tr_vertex_pmap);
         cdt_impl.insert_constrained_face(range_of_vertices, false);
       }
     }
+
     cdt_impl.restore_Delaunay();
     cdt_impl.restore_constrained_Delaunay();
     // std::cerr << cdt_3_format("cdt_impl: {} vertices, {} cells\n", cdt_impl.number_of_vertices(),
@@ -1351,6 +1335,49 @@ public:
 
   void restore_Delaunay() {
     Conforming_Dt::restore_Delaunay(insert_in_conflict_visitor);
+  }
+
+  /**
+   * Insert vertices from a polygon mesh into the triangulation.
+   *
+   * @tparam PolygonMesh A model of FaceGraph.
+   * @tparam VertexPointMap A readable property map from vertex descriptor to Point_3.
+   * @tparam VertexHandleMap A writable property map from vertex descriptor to Vertex_handle.
+   * @tparam NamedParameters A sequence of named parameters.
+   *
+   * @param mesh The polygon mesh.
+   * @param mesh_vp_map Property map to access vertex coordinates.
+   * @param tr_vertex_pmap Property map to store the mapping from mesh vertices to triangulation vertices.
+   * @param np Optional named parameters:
+   *   - `vertex_is_constrained_map`: A readable property map from vertex descriptor to bool.
+   *     If provided, only vertices where the map returns true will be inserted.
+   */
+  template <typename PolygonMesh, typename VertexPointMap, typename VertexHandleMap,
+            typename NamedParameters = parameters::Default_named_parameters>
+  void insert_mesh_vertices(const PolygonMesh& mesh,
+                            VertexPointMap mesh_vp_map,
+                            VertexHandleMap tr_vertex_pmap,
+                            const NamedParameters& np = parameters::default_values())
+  {
+    using parameters::get_parameter;
+    using parameters::is_default_parameter;
+
+    constexpr bool has_v_filter = !is_default_parameter<NamedParameters, internal_np::vertex_is_constrained_t>::value;
+    auto v_filter_map = get_parameter(np, internal_np::vertex_is_constrained);
+
+    Cell_handle hint_ch{};
+    for(auto v : vertices(mesh)) {
+      if constexpr(has_v_filter) {
+        if(false == get(v_filter_map, v)) continue;
+      }
+      auto p = get(mesh_vp_map, v);
+      auto vh = this->insert(p, hint_ch, false);
+      vh->ccdt_3_data().set_vertex_type(CDT_3_vertex_type::CORNER);
+      hint_ch = vh->cell();
+      put(tr_vertex_pmap, v, vh);
+    }
+
+    add_bbox_points_if_not_dimension_3();
   }
 
   /**
