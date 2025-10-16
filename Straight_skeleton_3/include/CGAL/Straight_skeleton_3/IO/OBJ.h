@@ -333,8 +333,8 @@ public:
     // Write vertices
     for (const NodeSPtr& node : skeleton->nodes()) {
       Point3SPtr point = node->getPoint();
-      std::cout << "  Node's #arcs " << node->degree() << std::endl;
-      std::cout << "  Node's #sheets " << node->sheets().size() << std::endl;
+      CGAL_SS3_IO_ENABLE_TRACE("Node's #arcs " << node->degree());
+      CGAL_SS3_IO_ENABLE_TRACE("Node's #sheets " << node->sheets().size());
 
       if (convert_to_double) {
         oss << "v " << CGAL::to_double(point->x()) << " "
@@ -355,8 +355,8 @@ public:
         continue;
       }
 
-      std::cout << "  Sheet #nodes " << nodes.size() << std::endl;
-      std::cout << "  Sheet #arcs " << sheet->arcs().size() << std::endl;
+      CGAL_SS3_IO_ENABLE_TRACE("  Sheet #nodes " << nodes.size());
+      CGAL_SS3_IO_ENABLE_TRACE("  Sheet #arcs " << sheet->arcs().size());
 
       if (nodes.size() == 3) {
         oss << "f ";
@@ -373,7 +373,7 @@ public:
 
         std::map<NodeSPtr, PCDT_VH> face_vhs;
         for (const NodeSPtr& node : nodes) {
-          std::cout << " CDT add node " << node->getID() << std::endl;
+          CGAL_SS3_IO_ENABLE_TRACE(" CDT add node " << node->getID());
           auto res = face_vhs.emplace(node, PCDT_VH());
           CGAL_warning_msg(res.second, "Node should not be found twice in the sheet's nodes");
           if (res.second) {
@@ -387,7 +387,7 @@ public:
         for (const ArcSPtr& arc : sheet->arcs()) {
           NodeSPtr node_src = arc->getNodeSrc();
           NodeSPtr node_dst = arc->getNodeDst();
-          std::cout << " CDT arc between " << node_src->getID() << " and " << node_dst->getID() << std::endl;
+          CGAL_SS3_IO_ENABLE_TRACE(" CDT arc between " << node_src->getID() << " and " << node_dst->getID());
           CGAL_SS3_DEBUG_SPTR(node_src);
           CGAL_SS3_DEBUG_SPTR(node_dst);
           PCDT_VH vh0 = face_vhs.at(node_src);

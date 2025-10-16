@@ -29,22 +29,24 @@
 // -------------------------------------------------------------------------------------------------
 // -------------------------------------------------------------------------------------------------
 
-#define CGAL_SS3_TRACE_STREAM std::cout
-
-/* just a helper for code location */
-#define CGAL_SS3_TRACE_LOC CGAL_SS3_TRACE_STREAM << "[DEBUG] " << __FILE__ << ":" << __LINE__ << ": ";
-
 namespace CGAL {
 namespace Straight_skeletons_3 {
 namespace internal {
 
-static unsigned int verbosity_level = 4;
+unsigned int verbosity_level = 4;
+std::ostream* trace_stream = &std::cout;
 
 void set_verbosity_level(const unsigned int l) { verbosity_level = l; }
+void set_log_stream(std::ostream& out) { trace_stream = &out; }
 
 } // namespace internal
 } // namespace Straight_skeletons_3
 } // namespace CGAL
+
+#define CGAL_SS3_TRACE_STREAM *(CGAL::Straight_skeletons_3::internal::trace_stream)
+
+/* just a helper for code location */
+#define CGAL_SS3_TRACE_LOC *(CGAL::Straight_skeletons_3::internal::trace_stream) << "[DEBUG] " << __FILE__ << ":" << __LINE__ << ": ";
 
 #define CGAL_SS3_ENABLE_TRACE // generic
 // #define CGAL_SS3_TRAITS_ENABLE_TRACE // traits & kernel

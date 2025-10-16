@@ -142,9 +142,9 @@ bool face_offset(const TriangleMeshIn& tmesh,
   std::string str_conf_file = parameters::choose_parameter(parameters::get_parameter(np_in, internal_np::config_file_path),
                                                            config->findDefaultFilename());
 
-  std::cout << "Seek config file @ " << str_conf_file << std::endl;
+  CGAL_SS3_TRACE_V(4, "Seek config file @ " << str_conf_file);
   if (!config->load(str_conf_file)) {
-    std::cerr << "Error: Config file '" << str_conf_file << "' not found." << std::endl;
+    CGAL_SS3_TRACE_V(1, "Error: Config file '" << str_conf_file << "' not found.");
     return false;
   }
 
@@ -161,10 +161,10 @@ bool face_offset(const TriangleMeshIn& tmesh,
   // check that all times are of the same sign (ignoring zeros)
   for (const FT& time : save_times) {
     if (CGAL::is_zero(time)) {
-      std::cerr << "Error: time should be non-zero" << std::endl;
+      CGAL_SS3_TRACE_V(1, "Error: time should be non-zero");
       return false;
     } else if (CGAL::is_positive(time) != outwards) {
-      std::cerr << "Error: times must all be positive or all negative." << std::endl;
+      CGAL_SS3_TRACE_V(1, "Error: times must all be positive or all negative.");
       return false;
     }
   }
@@ -239,12 +239,12 @@ bool face_offset(const TriangleMeshIn& tmesh,
   // main call
   bool success = skel_builder->run();
   if (!success) {
-    std::cerr << "Error: run() returned 'false'" << std::endl;
+    CGAL_SS3_TRACE_V(1, "Error: run() returned 'false'");
     return false;
   }
 
   if (results_p.size() != save_times.size()) {
-    std::cerr << "Error: expected " << save_times.size() << " polyhedra but only got " << results_p.size() << std::endl;
+    CGAL_SS3_TRACE_V(1, "Error: expected " << save_times.size() << " polyhedra but only got " << results_p.size());
     return false;
   }
 
@@ -271,7 +271,7 @@ bool face_offset(const TriangleMeshIn& tmesh,
     PolygonMeshOut result_t;
     bool success = IO::FaceGraphIO<Geom_traits>::save(result_p, result_t, np_out);
     if (!success) {
-      std::cerr << "Error: failed to convert back to Surface_mesh" << std::endl;
+      CGAL_SS3_TRACE_V(1, "Error: failed to convert back to Surface_mesh");
       return false;
     }
 

@@ -1339,7 +1339,6 @@ public:
 
     CGAL_assertion_code(for (const FacetSPtr& facet : polyhedron->facets()) {)
     CGAL_assertion_code(for (const VertexSPtr& v : facet->vertices()) {)
-    CGAL_assertion_code(std::cout << "check V" << v->getID() << " on F" << facet->getID() << std::endl;)
     CGAL_assertion(facet->getPlane()->has_on(*(v->getPoint())));
     CGAL_assertion_code(})
     CGAL_assertion_code(})

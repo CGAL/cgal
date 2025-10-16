@@ -839,7 +839,7 @@ public:
     for (const VertexSPtr& vertex : vertices_tosplit) {
       CGAL_SS3_SPLITTER_TRACE_V(8, "Generic split vertex:\n" << vertex->toString());
       if (vertex->degree() > 15) {
-        CGAL_SS3_SPLITTER_TRACE_V(1, "Warning: degree of vertex is so high that even a combinatorial split with eary exit will take forever.");
+        CGAL_SS3_SPLITTER_TRACE_V(1, "Warning: degree of vertex (" << vertex->degree() << ") is so high that even a combinatorial split with early exit will likely take forever.");
       }
       vertex_splitter->splitVertex(vertex);
     }
@@ -5021,6 +5021,7 @@ public:
     shiftToEventTime(polyhedron, current_time, event_time);
 
     EdgeSPtr edge = event->getEdge();
+    CGAL_SS3_CORE_TRACE_V(4,"Edge:\n" << edge->toString());
 
     VertexSPtr vertices[4];
     event->getVertices(vertices);
