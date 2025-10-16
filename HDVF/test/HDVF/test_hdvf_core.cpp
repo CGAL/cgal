@@ -53,14 +53,14 @@ int main(int argc, char **argv) {
     //        hdvf.compute_rand_perfect_hdvf();
     
     // Output HDVF to console
-    hdvf.insert_matrices();
-    hdvf.insert_reduction();
+    hdvf.write_matrices();
+    hdvf.write_reduction();
     
     // Output HDVF to vtk
-    CGAL::IO::write_VTK(hdvf, complex, "res", true) ;
+    CGAL::IO::write_VTK(hdvf, complex, "tmp/res", true) ;
     
     // Save HDVF to .hdvf file
-    hdvf.write_hdvf_reduction("test.hdvf") ;
+    hdvf.write_hdvf_reduction("tmp/test.hdvf") ;
     
     return 0;
 }

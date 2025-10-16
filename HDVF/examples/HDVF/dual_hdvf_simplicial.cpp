@@ -64,10 +64,10 @@ int main(int argc, char **argv)
 
         // Export K HDVF
         hdvf.set_mask_K();
-        CGAL::IO::write_VTK(hdvf, L, "res_complex_K", false) ;
+        CGAL::IO::write_VTK(hdvf, L, "tmp/res_complex_K", false) ;
         // Export L-K HDVF
         hdvf.set_mask_L_K();
-        CGAL::IO::write_VTK(hdvf, L, "res_cocomplex_L_K", false) ;
+        CGAL::IO::write_VTK(hdvf, L, "tmp/res_cocomplex_L_K", false) ;
         // Compute pairing
         std::vector<HDVF::Cell_pair> pairs = hdvf.compute_pairing_hdvf();
         // Output pairing

@@ -53,10 +53,10 @@ int main(int argc, char **argv)
     hdvf.write_reduction();
     
     // Output HDVF to vtk
-    CGAL::IO::write_VTK(hdvf, complex, "res", true) ;
+    CGAL::IO::write_VTK(hdvf, complex, "tmp/res", true) ;
     
     // Save HDVF to .hdvf file
-    hdvf.write_hdvf_reduction("test.hdvf") ;
+    hdvf.write_hdvf_reduction("tmp/test.hdvf") ;
 
 #endif
     return 0;

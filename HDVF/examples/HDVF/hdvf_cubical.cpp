@@ -23,43 +23,41 @@ int main(int argc, char **argv)
 {
     using Complex = HDVF::Cubical_chain_complex<Coefficient_ring, Traits> ;
     using HDVF_type = HDVF::Hdvf<Complex> ;
-
-    if (argc != 2)
-    {
-        std::cout << "usage: example_hdvf_cubical pgm_file" << std::endl;
-    }
-    else
-    {
-        // Choose between PRIMAL and DUAL construction
-        const Complex::Cubical_complex_primal_dual primal_dual = Complex::PRIMAL;
-        // Adapt pgm loading into Cub_complex accordingly
-        const bool khalimsky_coords = (primal_dual == Complex::PRIMAL) ? true : false ;
-
-        HDVF::Cub_object_io mesh ;
-
-        // Load pgm into cub object
-        mesh.read_pgm(argv[1], khalimsky_coords);
-        mesh.print_infos();
-
-        // Build simplicial chain complex
-        Complex complex(mesh, primal_dual);
-
-        std::cout << complex;
-
-        // Build empty HDVF
-        HDVF_type hdvf(complex, HDVF::OPT_FULL) ;
-
-        // Compute a perfect HDVF
-        hdvf.compute_perfect_hdvf();
-        //        hdvf.compute_rand_perfect_hdvf();
-
-        // Output HDVF to console
-        hdvf.write_matrices();
-        hdvf.write_reduction();
-
-        // Output HDVF to vtk
-        CGAL::IO::write_VTK(hdvf, complex, "res", true) ;
-    }
-
+    
+    std::string filename ;
+    if (argc > 2) std::cout << "usage: example_hdvf_cubical pgm_file" << std::endl;
+    else if (argc == 1) filename  = "data/cub_data/Eight_3D.pgm";
+    else filename = argv[1];
+    
+    // Choose between PRIMAL and DUAL construction
+    const Complex::Cubical_complex_primal_dual primal_dual = Complex::PRIMAL;
+    // Adapt pgm loading into Cub_complex accordingly
+    const bool khalimsky_coords = (primal_dual == Complex::PRIMAL) ? true : false ;
+    
+    HDVF::Cub_object_io mesh ;
+    
+    // Load pgm into cub object
+    mesh.read_pgm(filename, khalimsky_coords);
+    mesh.print_infos();
+    
+    // Build simplicial chain complex
+    Complex complex(mesh, primal_dual);
+    
+    std::cout << complex;
+    
+    // Build empty HDVF
+    HDVF_type hdvf(complex, HDVF::OPT_FULL) ;
+    
+    // Compute a perfect HDVF
+    hdvf.compute_perfect_hdvf();
+    //        hdvf.compute_rand_perfect_hdvf();
+    
+    // Output HDVF to console
+    hdvf.write_matrices();
+    hdvf.write_reduction();
+    
+    // Output HDVF to vtk
+    CGAL::IO::write_VTK(hdvf, complex, "tmp/res", true) ;
+    
     return 0;
 }

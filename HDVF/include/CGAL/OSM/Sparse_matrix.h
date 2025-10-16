@@ -930,10 +930,8 @@ public:
      *
      * \brief Gets a column from a COLUMN matrix.
      */
-
-
     template <typename _CT>
-    friend const Sparse_chain<_CT, COLUMN>& get_column(const Sparse_matrix<_CT, COLUMN> &matrix,  size_t index);
+    friend Sparse_chain<_CT, COLUMN> get_column(const Sparse_matrix<_CT, COLUMN> &matrix,  size_t index);
 
     /** \relates Sparse_matrix
      *
@@ -1678,7 +1676,7 @@ Sparse_matrix<_CT, ROW>& operator*=(Sparse_matrix<_CT, ROW> &matrix, const Spars
 
 // Get column (in COLUMN matrix)
 template <typename _CT>
-const Sparse_chain<_CT, COLUMN>& get_column(const Sparse_matrix<_CT, COLUMN> &matrix,  size_t index) {
+Sparse_chain<_CT, COLUMN> get_column(const Sparse_matrix<_CT, COLUMN> &matrix,  size_t index) {
     return matrix._chains[index];
 }
 
