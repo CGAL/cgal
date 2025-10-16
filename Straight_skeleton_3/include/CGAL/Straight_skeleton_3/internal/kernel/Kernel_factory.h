@@ -19,6 +19,8 @@
 
 #include <CGAL/Straight_skeleton_3/internal/debug.h>
 
+#include <CGAL/assertions.h>
+
 #include <memory>
 
 namespace CGAL {
