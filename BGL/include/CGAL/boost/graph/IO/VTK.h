@@ -203,18 +203,17 @@ bool read_VTU(const std::string& fname,
               Graph& g,
               const CGAL_NP_CLASS& np = parameters::default_values())
 {
+  using parameters::get_parameter;
+  using parameters::choose_parameter;
+  bool verbose = choose_parameter(get_parameter(np, internal_np::verbose), false);
+
   std::ifstream test(fname);
   if(!test.good())
   {
-    std::cerr<<"File doesn't exist."<<std::endl;
+    if(verbose) std::cerr<<"File doesn't exist."<<std::endl;
     return false;
   }
   test.close();
-
-  using parameters::get_parameter;
-  using parameters::choose_parameter;
-
-  bool verbose = choose_parameter(get_parameter(np, internal_np::verbose), false);
 
   vtkSmartPointer<vtkPointSet> data;
   vtkSmartPointer<CGAL::IO::internal::ErrorObserverVtk> obs =
