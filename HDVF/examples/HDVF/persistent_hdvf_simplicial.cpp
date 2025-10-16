@@ -32,7 +32,7 @@ int main(int argc, char **argv)
 {
     
     std::string filename;
-    if (argc > 2) std::cout << "usage: example_hdvf_simplicial off_file" << std::endl;
+    if (argc > 2) std::cout << "usage: persistent_hdvf_simplicial off_file" << std::endl;
     else if (argc == 1) filename  = "data/mesh_data/two_rings.off";
     else filename = argv[1];
     

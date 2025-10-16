@@ -10,6 +10,8 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/HDVF/Surface_mesh_io.h>
 
+namespace HDVF = CGAL::Homological_discrete_vector_field;
+
 typedef CGAL::Simple_cartesian<double> K;
 typedef CGAL::Surface_mesh<K::Point_3> SurfaceMesh;
 typedef HDVF::Hdvf_traits_3<K> Traits;

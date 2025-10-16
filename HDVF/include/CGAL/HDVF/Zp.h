@@ -70,7 +70,7 @@ public:
     /** \brief Unary operator-. */
     friend Zp operator- (const Zp& a)
     {
-        return Zp(_TSlot(p - a._i)) ;
+        return Zp(_TSlot(p) - a._i) ;
     }
 
     /** \brief Operator+. */
@@ -82,9 +82,9 @@ public:
     /** \brief Operator-. */
     friend Zp     operator- (const Zp& a, const Zp& b) {
         if (a._i >= b._i)
-            return Zp<p, _TSlot, IsPrime>((a._i - b._i)) ;
+            return Zp<p, _TSlot, IsPrime>(a._i - b._i) ;
         else
-            return Zp<p, _TSlot, IsPrime>(_TSlot(p - b._i) + a._i);
+            return Zp<p, _TSlot, IsPrime>((_TSlot(p) - b._i) + a._i);
     }
 
     /** \brief Operator*. */
@@ -103,18 +103,18 @@ public:
     Zp &     operator+= (const Zp& a)
     {
         _i += a._i;
-        _i %= p ;
+        _i %= _TSlot(p) ;
         return *this ;
     }
 
     /** \brief Operator-=. */
     Zp &     operator-= (const Zp& a)
     {
-        if (_i > a._i)
+        if (_i >= a._i)
             _i -= a._i ;
         else
         {
-            _i += (p - a._i) ;
+            _i += (_TSlot(p) - a._i) ;
         }
         return *this ;
     }
@@ -123,7 +123,7 @@ public:
     Zp &     operator*= (const Zp& a)
     {
         _i *= a._i ;
-        _i %= p ;
+        _i %= _TSlot(p) ;
         return *this ;
     }
 
@@ -131,7 +131,7 @@ public:
     Zp &     operator/= (const Zp& a)
     {
         _i /= a._i ;
-        _i %= p ;
+        _i %= _TSlot(p) ;
         return *this ;
     }
 

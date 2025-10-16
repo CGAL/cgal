@@ -62,7 +62,7 @@ public:
     /** \brief Constructor from atriangule mesh.
      *
      */
-    Surface_mesh_io(const TriangleMesh& mesh) : Mesh_object_io(2) {
+    Surface_mesh_io(const TriangleMesh& mesh) : Mesh_object_io<Traits>(2) {
         typedef typename Traits::Point Point;
 
         this->nvertices = num_vertices(mesh);

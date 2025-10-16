@@ -6,6 +6,7 @@
 #include <CGAL/HDVF/Surface_mesh_io.h>
 #include <CGAL/HDVF/Simplicial_chain_complex.h>
 #include <CGAL/HDVF/Geometric_chain_complex_tools.h>
+#include <CGAL/boost/graph/IO/polygon_mesh_io.h>
 #include <CGAL/HDVF/Zp.h>
 #include <CGAL/HDVF/Z2.h>
 #include <CGAL/HDVF/Hdvf.h>
@@ -27,41 +28,40 @@ int main(int argc, char **argv)
 #if 1
     using Complex = HDVF::Simplicial_chain_complex<Coefficient_ring,Traits> ;
     using HDVF_type = HDVF::Hdvf<Complex> ;
-
-    if (argc != 2)
-    {
-        std::cerr << "usage: example_hdvf_simplicial off_file" << std::endl;
-    }
-    else
-    {
-        // Load cub object
-        Surface_mesh sm;
-        HDVF::Surface_mesh_io<Surface_mesh,Traits> mesh(sm) ;
-
-        mesh.print_infos();
-
-        // Build simplicial chain complex
-        Complex complex(mesh);
-
-        std::cout << complex;
-
-        // Build empty HDVF
-        HDVF_type hdvf(complex, HDVF::OPT_FULL) ;
-
-        // Compute a perfect HDVF
-        hdvf.compute_perfect_hdvf();
-        //        hdvf.compute_rand_perfect_hdvf();
-
-        // Output HDVF to console
-        hdvf.write_matrices();
-        hdvf.write_reduction();
-
-        // Output HDVF to vtk
-        CGAL::IO::write_VTK(hdvf, complex, "tmp/res", true) ;
-
-        // Save HDVF to .hdvf file
-        hdvf.write_hdvf_reduction("tmp/test.hdvf") ;
-    }
+    
+    std::string filename ;
+    if (argc > 2) std::cerr << "usage: hdvf_surface_mesh_simplicial off_file" << std::endl;
+    else if (argc == 1) filename  = "data/mesh_data/two_rings.off";
+    else filename = argv[1];
+    
+    // Load simplicial object
+    Surface_mesh sm;
+    CGAL::IO::read_polygon_mesh(filename, sm);
+    HDVF::Surface_mesh_io<Surface_mesh,Traits> mesh(sm) ;
+    
+    mesh.print_infos();
+    
+    // Build simplicial chain complex
+    Complex complex(mesh);
+    
+    std::cout << complex;
+    
+    // Build empty HDVF
+    HDVF_type hdvf(complex, HDVF::OPT_FULL) ;
+    
+    // Compute a perfect HDVF
+    hdvf.compute_perfect_hdvf();
+    //        hdvf.compute_rand_perfect_hdvf();
+    
+    // Output HDVF to console
+    hdvf.write_matrices();
+    hdvf.write_reduction();
+    
+    // Output HDVF to vtk
+    CGAL::IO::write_VTK(hdvf, complex, "tmp/res", true) ;
+    
+    // Save HDVF to .hdvf file
+    hdvf.write_hdvf_reduction("tmp/test.hdvf") ;
 #endif
     return 0;
 }
