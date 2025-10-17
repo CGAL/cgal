@@ -19,6 +19,8 @@
 
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
+#include <CGAL/Cartesian_converter.h>
+#include <CGAL/Simple_cartesian.h>
 
 #include <iostream>
 #include <iterator>
@@ -51,11 +53,14 @@ public:
 
     set_stream_precision_from_NP(m_os, np);
 
+    typedef typename Kernel_traits<typename boost::property_traits<PointMap>::value_type>::type K;
+    typedef Simple_cartesian<double> SC;
+    Cartesian_converter<K,SC> conv;
     m_writer.write_header(m_os, points.size(), 0, polygons.size());
     for(std::size_t i=0, end=points.size(); i<end; ++i)
     {
-      const typename boost::property_traits<PointMap>::value_type& p = get(point_map, points[i]);
-      m_writer.write_vertex(to_double(p.x()), to_double(p.y()), to_double(p.z()));
+      typename SC::Point_3 p = conv(get(point_map, points[i]));
+      m_writer.write_vertex(p.x(), p.y(), p.z());
     }
 
     m_writer.write_facet_header();
