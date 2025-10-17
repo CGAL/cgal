@@ -3729,7 +3729,6 @@ public:
                            int expected)
       {
         auto value_returned = [this, v0, v1](bool b, bool not_visited) {
-          CGAL_USE(this);
           if constexpr (cdt_3_can_use_cxx20_format()) if(this->debug_regions()) {
               std::cerr << cdt_3_format("  test_edge {}   {}   return {} {}\n",
                                         IO::oformat(v0, with_point_and_info),
@@ -3737,6 +3736,7 @@ public:
                                         b,
                                         not_visited ? "(new)" : "(cached)");
           }
+          CGAL_USE(this, v0, v1, b, not_visited);
           return b;
         };
         auto [cached_value_it, not_visited] = new_edge(v0, v1, false);
