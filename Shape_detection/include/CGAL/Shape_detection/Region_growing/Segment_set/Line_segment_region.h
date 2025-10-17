@@ -39,8 +39,8 @@ namespace Segment_set {
   a descriptor representing a given segment. Must be a model of `Hashable`.
 
   \tparam SegmentMap
-  a model of `ReadablePropertyMap` whose key type is `Item`
-  and value type is `Kernel::Segment_2` or `Kernel::Segment_3`
+  a model of `ReadablePropertyMap` whose key type is `Item_`
+  and value type is `GeomTraits::Segment_2` or `GeomTraits::Segment_3`
 
   \cgalModels{RegionType}
 */

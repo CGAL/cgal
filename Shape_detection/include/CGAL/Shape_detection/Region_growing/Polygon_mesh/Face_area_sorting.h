@@ -36,8 +36,8 @@ namespace Polygon_mesh {
     a model of `FaceListGraph`
 
     \tparam VertexToPointMap
-    a model of `ReadablePropertyMap` whose key type is the vertex type of a polygon mesh and
-    value type is `Kernel::Point_3`
+    a model of `ReadablePropertyMap` whose key type is the vertex type of a polygon mesh (`boost::graph_traits<PolygonMesh>::vertex_descriptor`) and
+    value type is `GeomTraits::Point_3`
   */
   template<
   typename GeomTraits,
@@ -113,7 +113,7 @@ namespace Polygon_mesh {
 
     /*!
       \brief initializes all internal data structures.
-      3 Parameter constructor with dummy parameter provided for compatibility with other sorting types.
+      Three-parameter constructor with a dummy parameter provided for compatibility with other sorting types.
 
       \tparam Dummy
       Dummy parameter, not used.
@@ -224,7 +224,7 @@ namespace Polygon_mesh {
           pts.push_back( get(m_vpm, v) );
 
         if (pts.size()==3)
-          m_scores[idx++] = approximate_sqrt(squared_area(pts[0], pts[1], pts[2]));
+          m_scores[idx++] = squared_area(pts[0], pts[1], pts[2]);
         else
         {
           std::vector<typename GeomTraits::Triangle_3> triangles;

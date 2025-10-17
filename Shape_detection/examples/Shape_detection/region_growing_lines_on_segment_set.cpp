@@ -31,8 +31,6 @@ using LS_Line_sorting = CGAL::Shape_detection::Segment_set::Least_squares_line_f
 using Segment_Line_region = CGAL::Shape_detection::Segment_set::Line_segment_region<Kernel, Surface_mesh::Edge_index, Segment_map>;
 using Length_line_sorting = CGAL::Shape_detection::Segment_set::Segment_length_sorting<Kernel, Surface_mesh::Edge_index, Segment_map>;
 
-
-
 template<class RegionType, class Sorting_type>
 void detect(Polyline_graph& pgraph, const Segment_range& segment_range, Sorting_type &line_sorting, const std::string& out_filename) {
   using Region_growing = CGAL::Shape_detection::Region_growing<Polyline_graph, RegionType>;

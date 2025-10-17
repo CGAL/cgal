@@ -141,7 +141,7 @@ namespace Polygon_mesh {
           \cgalParamDescription{a property map associating normal vectors to the faces of `pmesh`.}
           \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%face_descriptor`
                          as key type and `GT::Vector_3` as value type, `GT` being the type of the parameter `geom_traits`.}
-          \cgalParamDefault{If this parameter is omitted, face normals will be estimated using crossproducts of vectors created
+          \cgalParamDefault{If this parameter is omitted, face normals will be estimated using cross products of vectors created
                             from consecutive vertices of the face.}
         \cgalParamNEnd
         \cgalParamNBegin{geom_traits}

@@ -156,9 +156,6 @@ Release date: July 2025
     This mesh domain re-integrates some optimizations for Poisson surface mesh generation that were lost
     when the package [3D Mesh Generation](https://doc.cgal.org/6.1/Manual/packages.html#PkgMesh3) had to be replaced instead of the deprecated package [3D Surface Mesh Generation](https://doc.cgal.org/latest/Manual/packages.html#PkgSurfaceMesher3).
 
-### Triangulations
--   All triangulations now offer the functions `point(Vertex_handle)` and `point(Simplex, int)`, which enables users to access the geometric position of a vertex and of the i-th vertex of a simplex of a triangulation.
-
 ### [3D Subdivision Methods](https://doc.cgal.org/6.1/Manual/packages.html#PkgSurfaceSubdivisionMethod3)
 
 -   Added a new named parameter for [`CGAL::Subdivision_method_3::Loop_subdivision()`](https://doc.cgal.org/6.1/Subdivision_method_3/group__PkgSurfaceSubdivisionMethod3Functions.html#gafa1e441c4e07eb06e1f6efecef7ff268)
