@@ -431,13 +431,14 @@ bool fill_simplex_specific_header(std::ostream& os,
 {
   using CGAL::parameters::choose_parameter;
   using CGAL::parameters::get_parameter;
+
   typedef Surface_mesh<Point>                                     SMesh;
   typedef typename SMesh::Vertex_index                            VIndex;
   typedef typename Kernel_traits<Point>::Kernel                   Kernel;
   typedef typename Kernel::FT                                     FT;
   typedef typename Kernel::Vector_3                               Vector;
 
-  typedef typename GetVertexPointMap<Surface_mesh<Point>, NamedParameter>::const_type Point_map;
+  typedef typename GetVertexPointMap<SMesh, NamedParameter>::const_type Point_map;
   typedef typename SMesh::template Property_map<VIndex, Vector>   Vector_map;
   typedef typename SMesh::template Property_map<VIndex, Color>    Vcolor_map;
 
@@ -510,7 +511,6 @@ bool fill_simplex_specific_header(std::ostream& os,
         auto fvnm = CGAL::make_cartesian_converter_property_map<Epick::Vector_3>(*pmap);
         printers.push_back(new Property_printer<VIndex, decltype(fvnm)>(fvnm));
       }
-      // printers.push_back(new Property_printer<VIndex, Vector_map>(*pmap));
       return true;
     }
   }
