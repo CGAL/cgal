@@ -35,6 +35,9 @@ target_link_libraries(off_to_nef_plugin PRIVATE scene_nef_polyhedron_item)
 cgal_lab_plugin(polylines_io_plugin Polylines_io_plugin KEYWORDS Viewer Mesh_3)
 target_link_libraries(polylines_io_plugin PRIVATE scene_polylines_item)
 
+cgal_lab_plugin(spheres_io_plugin Spheres_io_plugin KEYWORDS Viewer Mesh_3)
+target_link_libraries(spheres_io_plugin PRIVATE scene_basic_objects)
+
 cgal_lab_plugin(wkt_plugin WKT_io_plugin KEYWORDS Viewer PointSetProcessing Mesh_3)
 target_link_libraries(wkt_plugin PRIVATE scene_polylines_item)
 

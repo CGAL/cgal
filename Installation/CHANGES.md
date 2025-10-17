@@ -1,5 +1,16 @@
 # Release History
 
+## [Release 6.2](https://github.com/CGAL/cgal/releases/tag/v6.2)
+
+Release date: July 2026
+
+### [Linear Cell Complex](https://doc.cgal.org/6.2/Manual/packages.html#PkgLinearCellComplex)
+
+- **API Changes**: The following import functions have been deprecated and renamed for better naming clarity and consistency:
+  - `import_from_plane_graph()` → `read_plane_graph_in_lcc()`
+  - `import_from_polyhedron_3()` → `polyhedron_3_to_lcc()`
+  - `import_from_triangulation_3()` → `triangulation_3_to_lcc()`
+- The old function names are still available but marked as deprecated for backward compatibility.
 
 ### [Shape Detection](https://doc.cgal.org/6.2/Manual/packages.html#PkgShapeDetection) 
 
@@ -11,9 +22,9 @@
 - The [`CGAL::Shape_detection::Polygon_mesh::Plane_face_region`](https://doc.cgal.org/6.2/Shape_detection/class_c_g_a_l_1_1_shape__detection_1_1_polygon__mesh_1_1_plane__face__region.html) and [`CGAL::Shape_detection::Polygon_mesh::Face_area_sorting`](https://doc.cgal.org/6.2/Shape_detection/class_c_g_a_l_1_1_shape__detection_1_1_polygon__mesh_1_1_face__area__sorting.html) are now used as the default in [`CGAL::Polygon_mesh_processing::region_growing_of_planes_on_faces`](https://doc.cgal.org/6.2/Polygon_mesh_processing/group___pkg_polygon_mesh_processing_ref.html#ga50dcd2f6295f584d2e378b57290ae2af)
 
 
-Release date: July 2025
-
 ## [Release 6.1](https://github.com/CGAL/cgal/releases/tag/v6.1)
+
+Release date: Sept 2025
 
 ### General Changes
 

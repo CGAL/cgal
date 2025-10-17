@@ -555,6 +555,49 @@ void test()
     PMP::clip(tm1, K::Plane_3(0,0,-1,1), CGAL::parameters::use_compact_clipper(true).allow_self_intersections(true));
     assert(vertices(tm1).size()==176);
   }
+
+  // non-simply connected output faces
+  {
+    TriangleMesh tm1;
+
+    CGAL::make_hexahedron(CGAL::Bbox_3(-3.5,-0.5,-0.5, -2.5,0.5,0.5), tm1);
+    PMP::reverse_face_orientations(tm1);
+    CGAL::make_hexahedron(CGAL::Bbox_3(-4,-1,-1, -2,1,1), tm1);
+    CGAL::make_hexahedron(CGAL::Bbox_3(-1,-1,-1, 1,1,1), tm1);
+    CGAL::make_hexahedron(CGAL::Bbox_3(2,-1,-1, 4,1,1), tm1);
+    CGAL::make_hexahedron(CGAL::Bbox_3(5,-1,-1, 7,1,1), tm1);
+    CGAL::make_hexahedron(CGAL::Bbox_3(-1,2,-1, 1,4,1), tm1);
+    CGAL::make_hexahedron(CGAL::Bbox_3(2,2,-1, 4,4,1), tm1);
+    CGAL::make_hexahedron(CGAL::Bbox_3(5,2,-1, 7,4,1), tm1);
+    CGAL::make_hexahedron(CGAL::Bbox_3(-1,5,-1, 1,7,1), tm1);
+    CGAL::make_hexahedron(CGAL::Bbox_3(2,5,-1, 4,7,1), tm1);
+    CGAL::make_hexahedron(CGAL::Bbox_3(5,5,-1, 7,7,1), tm1);
+
+    PMP::clip(tm1, K::Plane_3(0,0,1,0), CGAL::parameters::do_not_triangulate_faces(true).clip_volume(true));
+
+    assert(vertices(tm1).size()==88);
+    assert(faces(tm1).size()==72);
+  }
+  {
+    TriangleMesh tm1;
+
+    CGAL::make_hexahedron(CGAL::Bbox_3(-1,-1,-1, 1,1,1), tm1);
+    CGAL::make_hexahedron(CGAL::Bbox_3(-3,-3,-3, 3,3,3), tm1);
+    CGAL::make_hexahedron(CGAL::Bbox_3(-5,-5,-5, 5,5,5), tm1);
+    CGAL::make_hexahedron(CGAL::Bbox_3(-7,-7,-7, 7,7,7), tm1);
+    PMP::reverse_face_orientations(tm1);
+    CGAL::make_hexahedron(CGAL::Bbox_3(-0.5,-0.5,-0.5, 0.5,0.5,0.5), tm1);
+    CGAL::make_hexahedron(CGAL::Bbox_3(-2,-2,-2, 2,2,2), tm1);
+    CGAL::make_hexahedron(CGAL::Bbox_3(-4,-4,-4, 4,4,4), tm1);
+    CGAL::make_hexahedron(CGAL::Bbox_3(-6,-6,-6, 6,6,6), tm1);
+    CGAL::make_hexahedron(CGAL::Bbox_3(-8,-8,-8, 8,8,8), tm1);
+
+    PMP::clip(tm1, K::Plane_3(0,0,1,0), CGAL::parameters::do_not_triangulate_faces(true).clip_volume(true));
+    assert(vertices(tm1).size()==72);
+    assert(faces(tm1).size()==79);
+  }
+
+
 }
 
 template <class Mesh>

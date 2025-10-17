@@ -39,6 +39,7 @@ if(ITK_FOUND)
   message(STATUS "ITK found")
   include(${ITK_USE_FILE})
   target_link_libraries(mesh_3_plugin PRIVATE CGAL::ITK_support)
+  target_compile_definitions(mesh_3_plugin PRIVATE ITK_LEGACY_FUTURE_REMOVE)
 endif(ITK_FOUND)
 
 find_package(VTK 9.0 QUIET COMPONENTS ImagingGeneral IOImage IOXML NO_MODULE)
@@ -48,8 +49,7 @@ else()
   message(STATUS "NOTICE: DICOM files (.dcm) require the VTK libraries, and will not be readable.")
 endif()
 
-find_package(Boost QUIET OPTIONAL_COMPONENTS filesystem system)
-if(Boost_FILESYSTEM_FOUND AND Boost_SYSTEM_FOUND)
+
   qt6_wrap_ui( imgUI_FILES Image_res_dialog.ui raw_image.ui)
   cgal_lab_plugin(io_image_plugin Io_image_plugin
     Volume_plane_intersection.cpp
@@ -62,11 +62,7 @@ if(Boost_FILESYSTEM_FOUND AND Boost_SYSTEM_FOUND)
     target_compile_definitions(io_image_plugin PRIVATE -DCGAL_USE_VTK -DNOMINMAX)
   endif()
 
-  target_link_libraries(io_image_plugin PRIVATE Boost::filesystem Boost::system)
 
-else()
-  message(STATUS "NOTICE: the Io_image_plugin requires boost-filesystem, and will not be compiled")
-endif()
 cgal_lab_plugin(
   mesh_3_optimization_plugin
   Optimization_plugin
