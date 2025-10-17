@@ -1,4 +1,4 @@
-// Copyright (c) 2020 GeometryFactory SARL (France).
+// Copyright (c) 2025 GeometryFactory SARL (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -8,11 +8,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     : Dmitry Anisimov
+// Author(s)     : Mael Rouxel-Labbé
 //
 
-#ifndef CGAL_SHAPE_DETECTION_REGION_GROWING_SEGMENT_SET_LEAST_SQUARES_LINE_FIT_SORTING_H
-#define CGAL_SHAPE_DETECTION_REGION_GROWING_SEGMENT_SET_LEAST_SQUARES_LINE_FIT_SORTING_H
+#ifndef CGAL_SHAPE_DETECTION_REGION_GROWING_SEGMENT_SET_SEGMENT_LENGTH_SORTING_H
+#define CGAL_SHAPE_DETECTION_REGION_GROWING_SEGMENT_SET_SEGMENT_LENGTH_SORTING_H
 
 #include <CGAL/license/Shape_detection.h>
 
@@ -26,16 +26,12 @@ namespace Segment_set {
 /*!
   \ingroup PkgShapeDetectionRGOnSegments
 
-  \brief Sorting of segments with respect to the local line fit quality.
+  \brief Sorting of segments with respect to their length.
 
-  Indices of input segments are sorted with respect to the quality of the
-  least squares line fit applied to the vertices of incident segments of each segment.
+  `Items` of segments are sorted in decreasing length.
 
   \tparam GeomTraits
   a model of `Kernel`
-
-  \tparam NeighborQuery
-  a model of `NeighborQuery`
 
   \tparam Item_
   a descriptor representing a given segment. Must be a model of `Hashable`.
@@ -46,25 +42,20 @@ namespace Segment_set {
 */
 template<typename GeomTraits,
          typename Item_,
-         typename NeighborQuery,
          typename SegmentMap>
-class Least_squares_line_fit_sorting {
+class Segment_length_sorting
+{
 public:
   /// \name Types
   /// @{
-
-  /// \cond SKIP_IN_MANUAL
-  using Neighbor_query = NeighborQuery;
   using Segment_map = SegmentMap;
   using Segment_type = typename boost::property_traits<Segment_map>::value_type;
-  /// \endcond
 
   /// Item type.
   using Item = Item_;
 
   /// Seed range.
   using Seed_range = std::vector<Item>;
-
   /// @}
 
 private:
@@ -73,7 +64,6 @@ private:
     std::is_same<typename GeomTraits::Segment_2, Segment_type>::value,
     internal::Region_growing_traits_2<GeomTraits>,
     internal::Region_growing_traits_3<GeomTraits> >::type;
-  using Compare_scores = internal::Compare_scores<FT>;
 
 public:
   /// \name Initialization
@@ -85,19 +75,15 @@ public:
     \tparam NamedParameters
     a sequence of \ref bgl_namedparameters "Named Parameters"
 
+    \tparam InputRange
+    a model of `ConstRange` whose iterator type is `InputIterator`
+
     \param input_range
     an instance of `InputRange` with 2D or 3D segments
-
-    \param neighbor_query
-    an instance of `NeighborQuery` that is used internally to
-    access vertex's neighbors
 
     \param np
     a sequence of \ref bgl_namedparameters "Named Parameters"
     among the ones listed below
-
-    \tparam InputRange
-    a model of `ConstRange` whose iterator type is `InputIterator`
 
     \cgalNamedParamsBegin
       \cgalParamNBegin{segment_map}
@@ -120,15 +106,12 @@ public:
   */
   template<typename InputRange,
            typename NamedParameters = parameters::Default_named_parameters>
-  Least_squares_line_fit_sorting(
-    const InputRange& input_range,
-    NeighborQuery& neighbor_query,
-    const NamedParameters& np = parameters::default_values())
-  : m_neighbor_query(neighbor_query)
-  , m_segment_map(parameters::choose_parameter<SegmentMap>(parameters::get_parameter(
-      np, internal_np::segment_map)))
-  , m_traits(parameters::choose_parameter<GeomTraits>(parameters::get_parameter(np, internal_np::geom_traits)))
-  , m_segment_set_traits(m_traits)
+  Segment_length_sorting(const InputRange& input_range,
+                         const NamedParameters& np = parameters::default_values())
+  : m_segment_map(parameters::choose_parameter<SegmentMap>(parameters::get_parameter(
+      np, internal_np::segment_map))),
+      m_traits(parameters::choose_parameter<GeomTraits>(parameters::get_parameter(np, internal_np::geom_traits))),
+      m_segment_set_traits(m_traits)
   {
     CGAL_precondition(input_range.size() > 0);
 
@@ -137,14 +120,11 @@ public:
     Item_map item_map = NP_helper::get(np);
 
     m_ordered.resize(input_range.size());
-
     std::size_t index = 0;
     for (auto it = input_range.begin(); it != input_range.end(); it++)
       m_ordered[index++] = get(item_map, it);
-
-    m_scores.resize(input_range.size());
+    m_scores.resize(input_range.size(), 0.);
   }
-
   /// @}
 
   /// \name Sorting
@@ -156,16 +136,17 @@ public:
   void sort() {
     compute_scores();
     CGAL_precondition(m_scores.size() > 0);
-    Compare_scores cmp(m_scores);
-
+    auto cmp = [this](const std::size_t i, const std::size_t j) {
+      CGAL_precondition(i < m_scores.size());
+      CGAL_precondition(j < m_scores.size());
+      return m_scores[i] > m_scores[j];
+    };
     std::vector<std::size_t> order(m_ordered.size());
     std::iota(order.begin(), order.end(), 0);
     std::sort(order.begin(), order.end(), cmp);
-
     std::vector<Item> tmp(m_ordered.size());
     for (std::size_t i = 0; i < m_ordered.size(); i++)
       tmp[i] = m_ordered[order[i]];
-
     m_ordered.swap(tmp);
   }
   /// @}
@@ -183,7 +164,6 @@ public:
   /// @}
 
 private:
-  Neighbor_query& m_neighbor_query;
   const Segment_map m_segment_map;
   GeomTraits m_traits;
   Segment_set_traits m_segment_set_traits;
@@ -191,22 +171,12 @@ private:
   std::vector<FT> m_scores;
 
   void compute_scores() {
-
-    std::vector<Item> neighbors;
+    auto segment_length = m_segment_set_traits.compute_squared_length_object();
     std::size_t idx = 0;
     for (const Item& item : m_ordered) {
-      neighbors.clear();
-      m_neighbor_query(item, neighbors);
-      neighbors.push_back(item);
-
       const auto& segment = get(m_segment_map, item);
-      const auto& source = segment.source();
-      const auto& target = segment.target();
-      if (source == target)
-        m_scores[idx++] = FT(0); // put it at the very back
-      else
-        m_scores[idx++] =
-          m_segment_set_traits.create_line(neighbors, m_segment_map).second;
+      FT len = segment_length(segment);
+      m_scores[idx++] = len;
     }
   }
 };
@@ -215,4 +185,4 @@ private:
 } // namespace Shape_detection
 } // namespace CGAL
 
-#endif // #define CGAL_SHAPE_DETECTION_REGION_GROWING_SEGMENT_SET_LEAST_SQUARES_LINE_FIT_SORTING_H
+#endif // CGAL_SHAPE_DETECTION_REGION_GROWING_SEGMENT_SET_SEGMENT_LENGTH_SORTING_H
