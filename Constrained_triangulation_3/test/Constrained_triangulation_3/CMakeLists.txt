@@ -98,6 +98,7 @@ CGAL_add_cdt3_from_off_test("mpi")
 CGAL_add_cdt3_from_off_test("3torus")
 CGAL_add_cdt3_from_off_test("cheese-selection")
 CGAL_add_cdt3_from_off_test("cheese-selection-2")
+CGAL_add_cdt3_from_off_test("non_manifold_face_graph")
 
 function(CGAL_add_cdt3_from_local_off_test data_name)
   CGAL_add_cdt3_from_off_test_aux(${data_name} ${CMAKE_CURRENT_SOURCE_DIR}/data)
