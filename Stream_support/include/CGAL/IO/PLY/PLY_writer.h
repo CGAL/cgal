@@ -12,6 +12,7 @@
 #define CGAL_IO_PLY_PLY_WRITER_H
 
 #include <CGAL/IO/io.h>
+#include <CGAL/number_utils.h>
 
 namespace CGAL {
 namespace IO {
