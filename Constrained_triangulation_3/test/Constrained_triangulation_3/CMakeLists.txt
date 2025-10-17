@@ -88,7 +88,7 @@ function(CGAL_add_cdt3_from_off_test_aux data_name data_dir)
 endfunction()
 
 function(CGAL_add_cdt3_from_off_test data_name)
-  CGAL_add_cdt3_from_off_test_aux(${data_name} ${CGAL_DATA_DIR}/meshes)
+  CGAL_add_cdt3_from_off_test_aux(${data_name} ${CGAL_DATA_DIR}/meshes ${ARGN})
 endfunction()
 
 CGAL_add_cdt3_from_off_test("cube")
@@ -101,7 +101,7 @@ CGAL_add_cdt3_from_off_test("cheese-selection-2")
 CGAL_add_cdt3_from_off_test("non_manifold_face_graph")
 
 function(CGAL_add_cdt3_from_local_off_test data_name)
-  CGAL_add_cdt3_from_off_test_aux(${data_name} ${CMAKE_CURRENT_SOURCE_DIR}/data)
+  CGAL_add_cdt3_from_off_test_aux(${data_name} ${CMAKE_CURRENT_SOURCE_DIR}/data ${ARGN})
 endfunction()
 
 CGAL_add_cdt3_from_local_off_test(cheese18)
@@ -134,6 +134,10 @@ if (CGAL_CDT_TEST_USE_THINGI)
   CGAL_add_cdt3_from_local_off_test(1514904-min8)
   CGAL_add_cdt3_from_local_off_test(1147177-min1)
   CGAL_add_cdt3_from_local_off_test(1452672-min1)
+  CGAL_add_cdt3_from_local_off_test(135777-min3)
+  CGAL_add_cdt3_from_local_off_test(196123-min3)
+  CGAL_add_cdt3_from_local_off_test(200695-min3)
+  CGAL_add_cdt3_from_local_off_test(285604-min8)
   CGAL_add_cdt3_from_local_off_test(error_mesh-p_not_equal_0-min2)
 
   include(./Thingi10k-CDT.cmake)
