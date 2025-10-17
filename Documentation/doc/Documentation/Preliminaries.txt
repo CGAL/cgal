@@ -65,9 +65,9 @@ or `CGAL::Polyhedron_3`, can be said to model the `FaceGraph` concept. This allo
 data structures to be used interchangeably as arguments to many mesh processing algorithms of \cgal.
 
 Concepts can also be <em>refined</em>. A refined concept builds upon an existing one by adding
-further requirements. For instance, a MutableFaceGraph concept would inherit all the requirements
-of FaceGraph but add new ones for operations that modify the graph structure, such as adding or
-removing faces. Any type that models MutableFaceGraph also models FaceGraph.
+further requirements. For instance, a `MutableFaceGraph` concept would inherit all the requirements
+of `FaceGraph` but add new ones for operations that modify the graph structure, such as adding or
+removing faces. Any type that models `MutableFaceGraph` also models `FaceGraph`.
 
 It is important to note that these concepts from the concept-model design pattern should not be
 confused with the <a href="https://en.cppreference.com/w/cpp/language/constraints.html">first-class concepts</a> language feature introduced in C++20.
