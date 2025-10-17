@@ -2,7 +2,7 @@
 #include <CGAL/Surface_mesh.h>
 
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_count_ratio_stop_predicate.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Bounded_normal_change_placement.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Bounded_normal_change_filter.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/GarlandHeckbert_policies.h>
 #include <CGAL/Surface_mesh_simplification/edge_collapse.h>
 
@@ -38,16 +38,17 @@ void collapse_gh(Surface_mesh& mesh,
 
   typedef typename GHPolicies::Get_cost                                        GH_cost;
   typedef typename GHPolicies::Get_placement                                   GH_placement;
-  typedef SMS::Bounded_normal_change_placement<GH_placement>                   Bounded_GH_placement;
+  typedef SMS::Bounded_normal_change_filter<>                                  Filter;
 
   GHPolicies gh_policies(mesh);
   const GH_cost& gh_cost = gh_policies.get_cost();
   const GH_placement& gh_placement = gh_policies.get_placement();
-  Bounded_GH_placement placement(gh_placement);
+  Filter filter;
 
   int r = SMS::edge_collapse(mesh, stop,
                              CGAL::parameters::get_cost(gh_cost)
-                                              .get_placement(placement));
+                                              .filter(filter)
+                                              .get_placement(gh_placement));
 
   std::chrono::steady_clock::time_point end_time = std::chrono::steady_clock::now();
 
