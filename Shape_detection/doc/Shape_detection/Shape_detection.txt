@@ -481,8 +481,8 @@ If one wants to detect planes on a polygon mesh, this \cgal component provides t
 In particular, it provides
 
 - `CGAL::Shape_detection::Polygon_mesh::One_ring_neighbor_query` - class that retrieves all edge-adjacent faces of a face, and
-- `CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_region` - class that fits a 3D plane to the vertices of all mesh faces, which have been added to the region so far, and controls the quality of this fit.
-- `CGAL::Shape_detection::Polygon_mesh::Plane_face_region` - is another `RegionType` that uses the 3D plane of the seed face and does not refit the plane to the region.
+- `CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_region` - class that fits a 3D plane to the vertices of all mesh faces of the region.
+- `CGAL::Shape_detection::Polygon_mesh::Plane_face_region` - is another `RegionType` that uses the 3D plane of the seed face without refitting.
 
 This component accepts any model of the concept `FaceListGraph` as a polygon mesh. \cgalFigureRef{Region_growing_on_surface_mesh}
 gives an \ref Shape_detection_RegionGrowingMesh_examples "example" of the region growing algorithm

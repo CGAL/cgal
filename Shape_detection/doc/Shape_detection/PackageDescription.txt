@@ -88,7 +88,9 @@ to simplify the definition and creation of the different classes. The naming con
 
 # Segment Set #
 - `CGAL::Shape_detection::Segment_set::Least_squares_line_fit_region<GeomTraits, Item, SegmentMap>`
+- `CGAL::Shape_detection::Segment_set::Line_segment_region<GeomTraits, Item, SegmentMap>`
 - `CGAL::Shape_detection::Segment_set::Least_squares_line_fit_sorting<GeomTraits, Item, %NeighborQuery, SegmentMap>`
+- `CGAL::Shape_detection::Segment_set::Segment_length_sorting<GeomTraits, Item, SegmentMap>`
 
 # Polygon Mesh #
 - `CGAL::Shape_detection::Polygon_mesh::One_ring_neighbor_query<PolygonMesh>`

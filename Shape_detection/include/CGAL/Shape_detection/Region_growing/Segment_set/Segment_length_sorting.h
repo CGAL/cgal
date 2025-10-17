@@ -38,7 +38,7 @@ namespace Segment_set {
 
   \tparam SegmentMap
   a model of `ReadablePropertyMap` whose key type is the value type of the input
-  range and value type is `Kernel::Segment_2` or `Kernel::Segment_3`
+  range and value type is `GeomTraits::Segment_2` or `GeomTraits::Segment_3`
 */
 template<typename GeomTraits,
          typename Item_,
@@ -68,7 +68,44 @@ private:
 public:
   /// \name Initialization
   /// @{
-  template<typename InputRange, typename NamedParameters = parameters::Default_named_parameters>
+
+  /*!
+    \brief initializes all internal data structures.
+
+    \tparam NamedParameters
+    a sequence of \ref bgl_namedparameters "Named Parameters"
+
+    \tparam InputRange
+    a model of `ConstRange` whose iterator type is `InputIterator`
+
+    \param input_range
+    an instance of `InputRange` with 2D or 3D segments
+
+    \param np
+    a sequence of \ref bgl_namedparameters "Named Parameters"
+    among the ones listed below
+
+    \cgalNamedParamsBegin
+      \cgalParamNBegin{segment_map}
+        \cgalParamDescription{an instance of `SegmentMap` that maps the `Item` of a segment
+        to `GeomTraits::Segment_2` or `GeomTraits::Segment_3`}
+        \cgalParamDefault{`SegmentMap()`}
+      \cgalParamNEnd
+      \cgalParamNBegin{item_map}
+        \cgalParamDescription{an instance of a model of `ReadablePropertyMap` with `InputRange::const_iterator`
+                              as key type and `Item` as value type.}
+        \cgalParamDefault{A default is provided when `Item` is `InputRange::const_iterator` or its value type.}
+      \cgalParamNEnd
+      \cgalParamNBegin{geom_traits}
+        \cgalParamDescription{an instance of `GeomTraits`}
+        \cgalParamDefault{`GeomTraits()`}
+      \cgalParamNEnd
+    \cgalNamedParamsEnd
+
+    \pre `input_range.size() > 0`
+  */
+  template<typename InputRange,
+           typename NamedParameters = parameters::Default_named_parameters>
   Segment_length_sorting(const InputRange& input_range,
                          const NamedParameters& np = parameters::default_values())
   : m_segment_map(parameters::choose_parameter<SegmentMap>(parameters::get_parameter(
@@ -92,6 +129,10 @@ public:
 
   /// \name Sorting
   /// @{
+
+  /*!
+    \brief sorts `Items` of input segments.
+  */
   void sort() {
     compute_scores();
     CGAL_precondition(m_scores.size() > 0);
@@ -112,6 +153,11 @@ public:
 
   /// \name Access
   /// @{
+
+  /*!
+    \brief returns an instance of `Seed_range` to access the ordered `Items`
+    of input segments.
+  */
   const Seed_range &ordered() {
     return m_ordered;
   }
@@ -119,8 +165,8 @@ public:
 
 private:
   const Segment_map m_segment_map;
-  const GeomTraits m_traits;
-  const Segment_set_traits m_segment_set_traits;
+  GeomTraits m_traits;
+  Segment_set_traits m_segment_set_traits;
   Seed_range m_ordered;
   std::vector<FT> m_scores;
 
@@ -130,7 +176,7 @@ private:
     for (const Item& item : m_ordered) {
       const auto& segment = get(m_segment_map, item);
       FT len = segment_length(segment);
-      m_scores[idx++] = CGAL::approximate_sqrt(len); // @todo no need to sqrt it?
+      m_scores[idx++] = len;
     }
   }
 };
