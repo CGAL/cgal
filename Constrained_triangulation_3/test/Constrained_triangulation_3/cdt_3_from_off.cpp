@@ -585,6 +585,11 @@ struct Mesh_property_maps {
   VertexPointMap mesh_vertex_point_map;
 };
 
+// CTAD deduction guide
+template<typename PatchIdMap, typename VertexSelectedMap, typename EdgeBorderMap, typename VertexPointMap>
+Mesh_property_maps(PatchIdMap, VertexSelectedMap, EdgeBorderMap, VertexPointMap)
+        -> Mesh_property_maps<PatchIdMap, VertexSelectedMap, EdgeBorderMap, VertexPointMap>;
+
 auto setup_mesh_property_maps(Mesh& mesh) {
   auto [patch_id_map, patch_id_map_ok] = mesh.add_property_map<face_descriptor, int>("f:patch_id", -2);
   assert(patch_id_map_ok); CGAL_USE(patch_id_map_ok);
