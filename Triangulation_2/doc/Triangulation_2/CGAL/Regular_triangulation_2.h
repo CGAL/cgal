@@ -436,12 +436,12 @@ const;
 /*!
 starts at an arbitrary unhidden vertex.
 */
-All_vertices_iterator all_vertices_end() const;
+All_vertices_iterator all_vertices_begin() const;
 
 /*!
 past the end iterator.
 */
-All_vertices_iterator all_vertices_begin() const;
+All_vertices_iterator all_vertices_end() const;
 
 /// @}
 
