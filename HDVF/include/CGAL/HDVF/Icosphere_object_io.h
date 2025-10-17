@@ -59,7 +59,7 @@ public:
     {
         Point(-X,N,Z), Point(X,N,Z), Point(-X,N,-Z), Point(X,N,-Z),
         Point(N,Z,X), Point(N,Z,-X), Point(N,-Z,X), Point(N,-Z,-X),
-        Point(Z,X,N), Point(-Z,X, N), Point(Z,-X,N), Point(Z,-X, N)
+        Point(Z,X,N), Point(-Z,X, N), Point(Z,-X,N), Point(-Z,-X, N)
      };
 
     inline static const std::vector<Io_cell_type> triangles_ico =
@@ -82,9 +82,9 @@ public:
         {
             Point& edge0(this->nodes[first]);
             Point& edge1(this->nodes[second]);
-            Vector v = edge1 - edge0;
+            Vector v = (edge1 - ORIGIN) + (edge0 - ORIGIN);
             v = v / std::sqrt(v.squared_length());
-            add_node(ORIGIN + v);
+            this->add_node(ORIGIN + v);
         }
 
         return inserted.first->second;

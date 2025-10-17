@@ -343,8 +343,9 @@ public:
      * \param[in] _K Simplicial chain complex (working mesh).
      * \param[in] BB_ratio Ratio of the "closing" icosphere diameter with respect to the diameter of the object's bounding box.
      * \param[in] out_file_prefix Prefix of tetgen intermediate files (default: "file_K_closed.off").
+     * \param[in] subdiv Subdivision level of the bounding icosphere.
      */
-    static Complex_duality_data simplicial_chain_complex_bb (const Chain_complex& _K, double BB_ratio=1.5, const std::string& out_file_prefix = "file_K_closed.off")
+    static Complex_duality_data simplicial_chain_complex_bb (const Chain_complex& _K, double BB_ratio=1.5, const std::string& out_file_prefix = "file_K_closed.off", unsigned int subdiv = 2)
     {
 
         std::cerr << "-- Starting simplicial_chain_complex_bb" << std::endl;
@@ -359,7 +360,7 @@ public:
         //  Compute a bounding icosphere
         Point center = mesh_L.centroid() ;
         double r = mesh_L.radius(center) ;
-        Icosphere_object_io<Traits> ico(2,center, BB_ratio*r) ;
+        Icosphere_object_io<Traits> ico(subdiv,center, BB_ratio*r) ;
         std::cerr << "Icosphere generated" << std::endl;
         ico.print_infos() ;
 

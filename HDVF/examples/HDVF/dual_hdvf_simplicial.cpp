@@ -27,54 +27,51 @@ typedef HDVF::Sub_chain_complex_mask<Complex> Sub_chain_complex;
 
 int main(int argc, char **argv)
 {
-
-
-    if (argc != 2)
-    {
-        std::cout << "usage: example_hdvf_simplicial off_file" << std::endl;
-    }
-    else
-    {
-        // Load cub object
-        HDVF::Mesh_object_io<Traits> mesh ;
-        mesh.read_off(argv[1]);
-
-        mesh.print_infos();
-
-        // Build simplicial chain complex
-        Complex* complex = new Complex(mesh);
-
-        std::cout << complex;
-
-        // Build K and L
-        typename Tools_type::Complex_duality_data t(Tools_type::simplicial_chain_complex_bb(*complex)) ;
-        delete complex ;
-        Complex& L(t.L) ;
-        Sub_chain_complex& K(t.K) ;
-
-        std::cout << "----> complex informations" << std::endl ;
-        std::cout << "------> complex L" << std::endl ;
-        std::cout << L;
-        std::cout << "------> subcomplex K" << std::endl ;
-        std::cout << K << std::endl ;
-
-        // Create and compute a perfect HDVF
-        HDVF_type hdvf(L, K, HDVF::OPT_FULL);
-        hdvf.compute_perfect_hdvf();
-
-        // Export K HDVF
-        hdvf.set_mask_K();
-        CGAL::IO::write_VTK(hdvf, L, "tmp/res_complex_K", false) ;
-        // Export L-K HDVF
-        hdvf.set_mask_L_K();
-        CGAL::IO::write_VTK(hdvf, L, "tmp/res_cocomplex_L_K", false) ;
-        // Compute pairing
-        std::vector<HDVF::Cell_pair> pairs = hdvf.compute_pairing_hdvf();
-        // Output pairing
-        for (const auto& pair : pairs) {
-            std::cout << "Sigma: " << pair.sigma << ", Tau: " << pair.tau << ", Dim: " << pair.dim << std::endl;
-        }
-
+    std::string filename ;
+    if (argc > 2) std::cout << "usage: dual_hdvf_simplicial off_file" << std::endl;
+    else if (argc == 1) filename  = "data/mesh_data/two_rings.off";
+    else filename = argv[1];
+    
+    // Load cub object
+    HDVF::Mesh_object_io<Traits> mesh ;
+    mesh.read_off(filename);
+    
+    mesh.print_infos();
+    
+    // Build simplicial chain complex
+    Complex* complex = new Complex(mesh);
+    
+    std::cout << complex;
+    
+    // Build K and L
+    typename Tools_type::Complex_duality_data t(Tools_type::simplicial_chain_complex_bb(*complex, 1.5, "tmp/file_K_closed.off", 1)) ;
+    delete complex ;
+    std::cout << "--- Triangulation built" << std::endl ;
+    Complex& L(t.L) ;
+    Sub_chain_complex& K(t.K) ;
+    std::cout << "--- K,L built" << std::endl ;
+    
+    std::cout << "----> complex informations" << std::endl ;
+    std::cout << "------> complex L" << std::endl ;
+    std::cout << L;
+    std::cout << "------> subcomplex K" << std::endl ;
+    std::cout << K << std::endl ;
+    
+    // Create and compute a perfect HDVF
+    HDVF_type hdvf(L, K, HDVF::OPT_FULL);
+    hdvf.compute_perfect_hdvf();
+    
+    // Export K HDVF
+    hdvf.set_mask_K();
+    CGAL::IO::write_VTK(hdvf, L, "tmp/res_complex_K", false) ;
+    // Export L-K HDVF
+    hdvf.set_mask_L_K();
+    CGAL::IO::write_VTK(hdvf, L, "tmp/res_cocomplex_L_K", false) ;
+    // Compute pairing
+    std::vector<HDVF::Cell_pair> pairs = hdvf.compute_pairing_hdvf();
+    // Output pairing
+    for (const auto& pair : pairs) {
+        std::cout << "Sigma: " << pair.sigma << ", Tau: " << pair.tau << ", Dim: " << pair.dim << std::endl;
     }
 
     return 0;
