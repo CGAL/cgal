@@ -391,10 +391,10 @@ public:
 
     // no intersection
     check_do_not_intersect(Cub(p(0,0,0), p(0,0,0)), Sph(p(1,0,0), 0));
+    check_do_not_intersect(Cub(p(0,0,0), p(0,0,0)), Sph(p(0,0,0), 1));
 
     // degenerate
     check_do_intersect(Cub(p(0,0,0), p(0,0,0)), Sph(p(0,0,0), 0));
-    check_do_intersect(Cub(p(0,0,0), p(0,0,0)), Sph(p(0,0,0), 1));
     check_do_intersect(Cub(p(0,0,0), p(1,1,1)), Sph(p(0,0,0), 0));
 
     // tangent
@@ -460,10 +460,19 @@ public:
       P mp = p(mx, my, mz), Mp = p(Mx, My, Mz);
       Cub cub(mp, Mp);
 
-      P c = p(this->r.get_int(mx, Mx), this->r.get_int(my, My), this->r.get_int(mz, Mz));
-      int ms = (std::min)((std::min)(Mx - mx, My - my), Mz - mz) + 1;
+      int x = this->r.get_int(mx, Mx);
+      int y = this->r.get_int(my, My);
+      int z = this->r.get_int(mz, Mz);
+      P c = p(x, y, z);
 
-      check_do_intersect(cub, Sph(c, CGAL::square(ms)));
+      int md = (std::min)(Mx - x, x - mx);
+      md = (std::min)((std::min)(My - y, y - my), md);
+      md = (std::min)((std::min)(Mz - z, z - mz), md);
+      int Md = (std::max)(Mx - x, x - mx);
+      Md = (std::max)((std::max)(My - y, y - my), Md);
+      Md = (std::max)((std::max)(Mz - z, z - mz), Md);
+
+      check_do_intersect(cub, Sph(c, CGAL::square(this->r.get_int(md, Md))));
     }
   }
 

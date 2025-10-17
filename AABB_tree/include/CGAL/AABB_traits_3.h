@@ -163,7 +163,7 @@ class AABB_tree;
 /// \sa `AABBPrimitiveWithSharedData`
 
 template<typename GeomTraits, typename AABBPrimitive, typename BboxMap = Default>
-class AABB_traits_3
+class AABB_traits_base_3
 #ifndef DOXYGEN_RUNNING
 : public internal::AABB_tree::AABB_traits_base<AABBPrimitive>,
   public internal::AABB_tree::AABB_traits_intersection_base_3<GeomTraits>,
@@ -174,7 +174,7 @@ class AABB_traits_3
 public:
   typedef GeomTraits Geom_traits;
 
-  typedef AABB_traits_3<GeomTraits, AABBPrimitive, BboxMap> AT;
+  typedef AABB_traits_base_3<GeomTraits, AABBPrimitive, BboxMap> AT;
   // AABBTraits concept types
   typedef typename GeomTraits::FT FT;
   typedef AABBPrimitive Primitive;
@@ -228,9 +228,9 @@ public:
   BboxMap bbm;
 
   /// Default constructor.
-  AABB_traits_3() { }
+  AABB_traits_base_3() { }
 
-  AABB_traits_3(BboxMap bbm)
+  AABB_traits_base_3(BboxMap bbm)
     : bbm(bbm)
   {}
 
@@ -253,10 +253,10 @@ public:
    */
   class Split_primitives
   {
-    typedef AABB_traits_3<GeomTraits,AABBPrimitive,BboxMap> Traits;
+    typedef AABB_traits_base_3<GeomTraits,AABBPrimitive,BboxMap> Traits;
     const Traits& m_traits;
   public:
-    Split_primitives(const AABB_traits_3<GeomTraits,AABBPrimitive,BboxMap>& traits)
+    Split_primitives(const AABB_traits_base_3<GeomTraits,AABBPrimitive,BboxMap>& traits)
       : m_traits(traits) {}
 
     typedef void result_type;
@@ -293,9 +293,9 @@ public:
    * @return the bounding box of the primitives of the iterator range
    */
   class Compute_bbox {
-    const AABB_traits_3<GeomTraits,AABBPrimitive, BboxMap>& m_traits;
+    const AABB_traits_base_3<GeomTraits,AABBPrimitive, BboxMap>& m_traits;
   public:
-    Compute_bbox(const AABB_traits_3<GeomTraits,AABBPrimitive, BboxMap>& traits)
+    Compute_bbox(const AABB_traits_base_3<GeomTraits,AABBPrimitive, BboxMap>& traits)
       :m_traits (traits) {}
 
     template<typename ConstPrimitiveIterator>
@@ -317,9 +317,9 @@ public:
   /// In the case the query is a `CGAL::AABB_tree`, the `do_intersect()`
   /// function of this tree is used.
   class Do_intersect {
-    const AABB_traits_3<GeomTraits,AABBPrimitive, BboxMap>& m_traits;
+    const AABB_traits_base_3<GeomTraits,AABBPrimitive, BboxMap>& m_traits;
   public:
-    Do_intersect(const AABB_traits_3<GeomTraits,AABBPrimitive, BboxMap>& traits)
+    Do_intersect(const AABB_traits_base_3<GeomTraits,AABBPrimitive, BboxMap>& traits)
       :m_traits(traits) {}
 
     template<typename Query>
@@ -352,9 +352,9 @@ public:
 
 
   class Intersection {
-    const AABB_traits_3<GeomTraits,AABBPrimitive,BboxMap>& m_traits;
+    const AABB_traits_base_3<GeomTraits,AABBPrimitive,BboxMap>& m_traits;
   public:
-    Intersection(const AABB_traits_3<GeomTraits,AABBPrimitive,BboxMap>& traits)
+    Intersection(const AABB_traits_base_3<GeomTraits,AABBPrimitive,BboxMap>& traits)
       :m_traits(traits) {}
     template<typename Query>
     std::optional< typename Intersection_and_primitive_id<Query>::Type >
@@ -373,9 +373,9 @@ public:
   class Closest_point {
       typedef typename AT::Point Point;
       typedef typename AT::Primitive Primitive;
-    const AABB_traits_3<GeomTraits,AABBPrimitive, BboxMap>& m_traits;
+    const AABB_traits_base_3<GeomTraits,AABBPrimitive, BboxMap>& m_traits;
   public:
-    Closest_point(const AABB_traits_3<GeomTraits,AABBPrimitive, BboxMap>& traits)
+    Closest_point(const AABB_traits_base_3<GeomTraits,AABBPrimitive, BboxMap>& traits)
       : m_traits(traits) {}
 
 
@@ -399,25 +399,12 @@ public:
       typedef typename AT::FT FT;
       typedef typename AT::Primitive Primitive;
   public:
-      CGAL::Comparison_result operator()(const Point& p, const Bounding_box& bb, const Point& bound, Tag_true) const
-      {
-          return GeomTraits().do_intersect_3_object()
-          (GeomTraits().construct_sphere_3_object()
-           (p, GeomTraits().compute_squared_distance_3_object()(p, bound)), bb,true)?
-          CGAL::SMALLER : CGAL::LARGER;
-      }
-
-      CGAL::Comparison_result operator()(const Point& p, const Bounding_box& bb, const Point& bound, Tag_false) const
-      {
-          return GeomTraits().do_intersect_3_object()
-          (GeomTraits().construct_sphere_3_object()
-           (p, GeomTraits().compute_squared_distance_3_object()(p, bound)), bb)?
-          CGAL::SMALLER : CGAL::LARGER;
-      }
-
       CGAL::Comparison_result operator()(const Point& p, const Bounding_box& bb, const Point& bound) const
       {
-        return (*this)(p, bb, bound, Boolean_tag<internal::Has_static_filters<GeomTraits>::value>());
+        return do_intersect_sphere_iso_cuboid_3
+          (GeomTraits().construct_sphere_3_object()
+            (p, GeomTraits().compute_squared_distance_3_object()(p, bound)), bb) ?
+          CGAL::SMALLER : CGAL::LARGER;
       }
 
       // The following functions seem unused...?
@@ -438,6 +425,89 @@ public:
            pr) ?
           CGAL::SMALLER :
           CGAL::LARGER;
+      }
+
+      typename GeomTraits::Boolean do_intersect_sphere_iso_cuboid_3(const typename GeomTraits::Sphere_3& sphere,
+        const typename GeomTraits::Iso_cuboid_3& box) const
+      {
+        typedef typename GeomTraits::FT       FT;
+        typedef typename GeomTraits::Point_3  Point;
+
+        const FT bxmin = box.xmin();
+        const FT bymin = box.ymin();
+        const FT bzmin = box.zmin();
+        const FT bxmax = box.xmax();
+        const FT bymax = box.ymax();
+        const FT bzmax = box.zmax();
+
+        // Check that the minimum distance to the box is smaller than the radius, otherwise there is
+        // no intersection. `distance` stays at 0 if the center is inside or on `rec`.
+
+        FT d = FT(0);
+        FT distance = FT(0);
+        const FT sr = sphere.squared_radius();
+
+        const Point& center = sphere.center();
+
+        if (center.x() < bxmin)
+        {
+          d = bxmin - center.x();
+          d = square(d);
+          if (d > sr)
+            return false;
+
+          distance = d;
+        }
+        else if (center.x() > bxmax)
+        {
+          d = center.x() - bxmax;
+          d = square(d);
+          if (d > sr)
+            return false;
+
+          distance = d;
+        }
+
+        if (center.y() < bymin)
+        {
+          d = bymin - center.y();
+          d = square(d);
+          if (d > sr)
+            return false;
+
+          distance += d;
+        }
+        else if (center.y() > bymax)
+        {
+          d = center.y() - bymax;
+          d = square(d);
+          if (d > sr)
+            return false;
+
+          distance += d;
+        }
+
+        if (center.z() < bzmin)
+        {
+          d = bzmin - center.z();
+          d = square(d);
+          if (d > sr)
+            return false;
+
+          distance += d;
+        }
+        else if (center.z() > bzmax)
+        {
+          d = center.z() - bzmax;
+          d = square(d);
+          if (d > sr)
+            return false;
+
+          distance += d;
+        }
+        // Note that with the way the distance above is computed, the distance is '0' if the box strictly
+        // contains the sphere. But since we use '>', we don't exit
+        return (distance <= sr);
       }
   };
 
@@ -468,31 +538,31 @@ private:
   }
 
   /// Comparison functions
-  static bool less_x(const Primitive& pr1, const Primitive& pr2,const AABB_traits_3<GeomTraits,AABBPrimitive, BboxMap>& traits)
+  static bool less_x(const Primitive& pr1, const Primitive& pr2,const AABB_traits_base_3<GeomTraits,AABBPrimitive, BboxMap>& traits)
   {
     return GeomTraits().less_x_3_object()( internal::Primitive_helper<AT>::get_reference_point(pr1,traits),
                                            internal::Primitive_helper<AT>::get_reference_point(pr2,traits) );
   }
-  static bool less_y(const Primitive& pr1, const Primitive& pr2,const AABB_traits_3<GeomTraits,AABBPrimitive, BboxMap>& traits)
+  static bool less_y(const Primitive& pr1, const Primitive& pr2,const AABB_traits_base_3<GeomTraits,AABBPrimitive, BboxMap>& traits)
   {
     return GeomTraits().less_y_3_object()( internal::Primitive_helper<AT>::get_reference_point(pr1,traits),
                                            internal::Primitive_helper<AT>::get_reference_point(pr2,traits) );
   }
-  static bool less_z(const Primitive& pr1, const Primitive& pr2,const AABB_traits_3<GeomTraits,AABBPrimitive, BboxMap>& traits)
+  static bool less_z(const Primitive& pr1, const Primitive& pr2,const AABB_traits_base_3<GeomTraits,AABBPrimitive, BboxMap>& traits)
   {
     return GeomTraits().less_z_3_object()( internal::Primitive_helper<AT>::get_reference_point(pr1,traits),
                                            internal::Primitive_helper<AT>::get_reference_point(pr2,traits) );
   }
 
-};  // end class AABB_traits_3
+};  // end class AABB_traits_base_3
 
 
 //-------------------------------------------------------
 // Private methods
 //-------------------------------------------------------
   template<typename GT, typename P, typename B>
-  typename AABB_traits_3<GT,P,B>::Axis
-  AABB_traits_3<GT,P,B>::longest_axis(const Bounding_box& bbox)
+  typename AABB_traits_base_3<GT,P,B>::Axis
+    AABB_traits_base_3<GT,P,B>::longest_axis(const Bounding_box& bbox)
 {
   const double dx = bbox.xmax() - bbox.xmin();
   const double dy = bbox.ymax() - bbox.ymin();
@@ -525,6 +595,36 @@ private:
 /// @}
 
 }  // end namespace CGAL
+
+//-------------------------------------------------------
+// Filtered traits
+//-------------------------------------------------------
+
+#include <CGAL/AABB_tree/internal/AABB_filtered_traits_3.h>
+
+namespace CGAL {
+template<typename GeomTraits, typename AABBPrimitive, typename BboxMap = Default, bool Has_filtered_predicates_ = internal::Has_filtered_predicates<GeomTraits>::value>
+class AABB_traits_3;
+
+template<typename GeomTraits, typename AABBPrimitive, typename BboxMap>
+class AABB_traits_3<GeomTraits, AABBPrimitive, BboxMap, false> : public AABB_traits_base_3<GeomTraits, AABBPrimitive, BboxMap> {
+  using Base = AABB_traits_base_3<GeomTraits, AABBPrimitive, BboxMap>;
+
+public:
+  AABB_traits_3() : Base() {}
+  AABB_traits_3(BboxMap bbm) : Base(bbm) {}
+};
+
+
+template<class GeomTraits, typename AABBPrimitive, typename BboxMap>
+class AABB_traits_3<GeomTraits, AABBPrimitive, BboxMap, true> : public AABB_filtered_traits_3<GeomTraits, AABBPrimitive, BboxMap> {
+  using Base = AABB_filtered_traits_3<GeomTraits, AABBPrimitive, BboxMap>;
+
+public:
+  AABB_traits_3() : Base() {}
+  AABB_traits_3(BboxMap bbm) : Base(bbm) {}
+};
+}
 
 #include <CGAL/enable_warnings.h>
 
