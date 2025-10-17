@@ -934,8 +934,6 @@ namespace CommonKernelFunctors {
     typedef typename K::Comparison_result  Comparison_result;
     typedef typename K::FT                 FT;
     typedef typename K::Point_3            Point_3;
-    typedef typename K::Plane_3            Plane_3;
-    typename K::Construct_plane_3 construct_plane;
   public:
 
   public:
@@ -953,10 +951,11 @@ namespace CommonKernelFunctors {
       return internal::compare_squared_distance(p, q, K(), internal::squared_distance(r, s, K()));
     }
 
-
     Needs_FT<Comparison_result>
     operator()(const Point_3& p, const Point_3& q, const Point_3& r, const Point_3& query, const FT& sqd) const
     {
+      typedef typename K::Plane_3 Plane_3;
+      typename K::Construct_plane_3 construct_plane;
       Plane_3 plane = construct_plane(p,q,r);
       return this->operator()(plane, query, sqd);
     }
