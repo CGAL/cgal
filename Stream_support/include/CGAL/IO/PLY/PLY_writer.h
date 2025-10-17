@@ -254,7 +254,6 @@ public:
   }
 };
 
-
 template <typename Index,
           typename PropertyMap,
           typename Type = typename boost::property_traits<PropertyMap>::value_type>
