@@ -80,7 +80,7 @@ struct Predicate_traits_d : public BoxTraits_1{
     template<bool b> struct Bool_t {};
 
     static int dimension(){
-        return std::min(BoxTraits_1::dimension(), BoxTraits_2::dimension());
+        return (std::min)(BoxTraits_1::dimension(), BoxTraits_2::dimension());
     }
 
     static bool hi_greater(NT hi, NT val, Bool_t<true> ) { return hi >= val;}
