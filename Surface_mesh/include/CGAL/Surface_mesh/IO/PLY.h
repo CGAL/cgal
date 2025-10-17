@@ -929,13 +929,13 @@ bool read_PLY(std::istream& is,
 
 /// \cond SKIP_IN_MANUAL
 
-#if 0
+#ifndef CGAL_NO_DEPRECATED_CODE
 // for backward compatibility
 template <typename P>
 bool read_PLY(std::istream& is,
               Surface_mesh<P>& sm,
               std::string& comments,
-              bool verbose = true)
+              bool verbose)
 {
   return read_PLY(is, sm, comments, CGAL::parameters::verbose(verbose));
 }
