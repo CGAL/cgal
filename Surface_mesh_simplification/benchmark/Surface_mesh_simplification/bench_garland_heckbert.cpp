@@ -28,8 +28,6 @@ typedef Kernel::Point_3                                         Point_3;
 typedef CGAL::Surface_mesh<Point_3>                             Surface_mesh;
 
 namespace SMS = CGAL::Surface_mesh_simplification;
-
-
 namespace PMP = CGAL::Polygon_mesh_processing;
 
 typedef SMS::GarlandHeckbert_plane_policies<Surface_mesh, Kernel>                  Classic_plane;
@@ -72,7 +70,6 @@ double collapse_gh(Surface_mesh& mesh,
   typedef typename GHPolicies::Get_placement                                   GH_placement;
   typedef SMS::Bounded_normal_change_filter<>                                  Filter;
 
-  // GHPolicies gh_policies(mesh);
   const GH_cost& gh_cost = gh_policies.get_cost();
   const GH_placement& gh_placement = gh_policies.get_placement();
 
@@ -83,9 +80,10 @@ double collapse_gh(Surface_mesh& mesh,
   return (std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time).count()) / 1000.;
 }
 
-std::string getFileNameWithoutExtension(const std::string& filePath) {
-    std::filesystem::path path(filePath);
-    return path.stem().string();  // 'stem' gets the filename without extension
+std::string getFileNameWithoutExtension(const std::string& filePath)
+{
+  std::filesystem::path path(filePath);
+  return path.stem().string();  // 'stem' gets the filename without extension
 }
 
 int main(int argc, char** argv)

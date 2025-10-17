@@ -5,7 +5,7 @@ namespace Surface_mesh_simplification {
 \ingroup PkgSurfaceMeshSimplificationRef
 
 This class is an alias for the current state-of-the-art Garland-Heckbert policies
-(Section \ref SurfaceMeshSimplificationGarlandHeckbertStrategy).
+(see Section \ref SurfaceMeshSimplificationGarlandHeckbertStrategy).
 It is currently an alias of `GarlandHeckbert_plane_and_line_policies`.
 
 \sa `GarlandHeckbert_plane_policies`

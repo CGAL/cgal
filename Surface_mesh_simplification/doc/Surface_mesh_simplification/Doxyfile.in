@@ -2,5 +2,5 @@
 
 PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - Triangulated Surface Mesh Simplification"
 
-HTML_EXTRA_FILES           =  ${CGAL_PACKAGE_DOC_DIR}/fig/sappho.png
-HTML_EXTRA_FILES           =  ${CGAL_PACKAGE_DOC_DIR}/fig/octocat.png
+HTML_EXTRA_FILES           =  ${CGAL_PACKAGE_DOC_DIR}/fig/sappho.png \
+                              ${CGAL_PACKAGE_DOC_DIR}/fig/octocat.png
