@@ -36,6 +36,7 @@
 #include <CGAL/Bbox_3.h>
 #include <CGAL/assertions.h>
 #include <CGAL/unordered_flat_map.h>
+#include <CGAL/type_traits.h>
 
 #include <CGAL/boost/graph/Dual.h>
 #include <CGAL/boost/graph/generators.h>
@@ -73,6 +74,7 @@
 #include <array>
 #include <cstddef>
 #include <exception>
+#include <functional>
 #include <iostream>
 #include <iterator>
 #include <optional>
@@ -644,25 +646,27 @@ public:
     // ----------------------------------
     using parameters::choose_parameter;
     using parameters::get_parameter;
+    namespace p = parameters;
 
-    auto mesh_vp_map = choose_parameter(get_parameter(np, internal_np::vertex_point), get(CGAL::vertex_point, mesh));
+    auto mesh_vp_map = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                                        get_const_property_map(vertex_point, mesh));
 
     using vertex_descriptor = typename boost::graph_traits<PolygonMesh>::vertex_descriptor;
     std::vector<std::vector<std::pair<vertex_descriptor, vertex_descriptor>>> patch_edges;
 
-    auto v_selected_map = get(CGAL::dynamic_vertex_property_t<bool>{}, mesh);
+    auto tr_vertex_pmap = get(CGAL::dynamic_vertex_property_t<Vertex_handle>(), mesh);
 
-    int number_of_patches = 0;
-    constexpr bool has_plc_face_id = !parameters::is_default_parameter<CGAL_NP_CLASS,  internal_np::plc_face_id_t>::value;
+    constexpr bool has_plc_face_id = !p::is_default_parameter<CGAL_NP_CLASS,  internal_np::plc_face_id_t>::value;
 
     if constexpr (has_plc_face_id) {
-      auto mesh_plc_face_id = parameters::get_parameter(np, internal_np::plc_face_id);
+      auto v_selected_map = get(CGAL::dynamic_vertex_property_t<bool>{}, mesh);
+      auto mesh_plc_face_id = get_parameter(np, internal_np::plc_face_id);
       using Patch_id_type = CGAL::cpp20::remove_cvref_t<decltype(get(mesh_plc_face_id, *faces(mesh).first))>;
       Patch_id_type max_patch_id{0};
       for(auto f : faces(mesh)) {
         max_patch_id = (std::max)(max_patch_id, get(mesh_plc_face_id, f));
       }
-      number_of_patches = static_cast<int>(max_patch_id + 1);
+      auto number_of_patches = max_patch_id + 1;
       patch_edges.resize(number_of_patches);
       for(auto h : halfedges(mesh)) {
         if(is_border(h, mesh))
@@ -678,77 +682,20 @@ public:
           put(v_selected_map, vb, true);
         }
       }
-    } else {
-      number_of_patches = num_faces(mesh);
-    }
 
-    using Vertex_handle = typename Triangulation::Vertex_handle;
-    using Cell_handle = typename Triangulation::Cell_handle;
-    auto tr_vertex_map = get(CGAL::dynamic_vertex_property_t<Vertex_handle>(), mesh);
-    Cell_handle hint_ch{};
-    for(auto v : vertices(mesh)) {
-      if constexpr(has_plc_face_id) {
-        if(false == get(v_selected_map, v)) continue;
-      }
-      auto p = get(mesh_vp_map, v);
-      auto vh = cdt_impl.insert(p, hint_ch, false);
-      vh->ccdt_3_data().set_vertex_type(CDT_3_vertex_type::CORNER);
-      hint_ch = vh->cell();
-      put(tr_vertex_map, v, vh);
-    }
-
-    cdt_impl.add_bbox_points_if_not_dimension_3();
-
-    struct {
-      decltype(tr_vertex_map)* vertex_map;
-      auto operator()(vertex_descriptor v) const { return get(*vertex_map, v); }
-    } tr_vertex_fct{&tr_vertex_map};
-
-    if constexpr(has_plc_face_id) {
-      for(int i = 0; i < number_of_patches; ++i) {
-        auto& edges = patch_edges[i];
-        if(edges.empty())
-          continue;
-        auto polylines = segment_soup_to_polylines(edges);
-        while(true) {
-          const auto non_closed_polylines_begin =
-              std::partition(polylines.begin(), polylines.end(),
-                             [](const auto& polyline) { return polyline.front() == polyline.back(); });
-          if(non_closed_polylines_begin == polylines.end())
-            break;
-          edges.clear();
-          for(auto it = non_closed_polylines_begin; it != polylines.end(); ++it) {
-            auto& polyline = *it;
-            for(auto it = polyline.begin(), end = polyline.end() - 1; it != end; ++it) {
-              edges.emplace_back(*it, *(it + 1));
-            }
-          }
-          polylines.erase(non_closed_polylines_begin, polylines.end());
-          auto other_polylines = segment_soup_to_polylines(edges);
-          polylines.insert(polylines.end(), std::make_move_iterator(other_polylines.begin()),
-                           std::make_move_iterator(other_polylines.end()));
-        }
-
-        std::optional<int> face_index;
-        for(auto& polyline : polylines) {
-          CGAL_assertion(polyline.front() == polyline.back());
-          polyline.pop_back();
-          auto begin = boost::make_transform_iterator(polyline.begin(), tr_vertex_fct);
-          auto end   = boost::make_transform_iterator(polyline.end(), tr_vertex_fct);
-          face_index = cdt_impl.insert_constrained_face(CGAL::make_range(begin, end), false,
-                                                        face_index ? *face_index : -1);
-        }
+      cdt_impl.insert_mesh_vertices(mesh, mesh_vp_map, tr_vertex_pmap, p::vertex_is_constrained_map(v_selected_map));
+      for(auto&& edges : patch_edges) {
+        cdt_impl.insert_constrained_face_defined_by_its_border_edges(edges, mesh_vp_map, tr_vertex_pmap);
       }
     } else {
+      cdt_impl.insert_mesh_vertices(mesh, mesh_vp_map, tr_vertex_pmap);
       for(auto f : faces(mesh)) {
         auto face_vertices = vertices_around_face(halfedge(f, mesh), mesh);
-
-        auto begin = boost::make_transform_iterator(face_vertices.begin(), tr_vertex_fct);
-        auto end = boost::make_transform_iterator(face_vertices.end(), tr_vertex_fct);
-
-        cdt_impl.insert_constrained_face(CGAL::make_range(begin, end), false);
+        auto range_of_vertices = CGAL::make_transform_range_from_property_map(face_vertices, tr_vertex_pmap);
+        cdt_impl.insert_constrained_face(range_of_vertices, false);
       }
     }
+
     cdt_impl.restore_Delaunay();
     cdt_impl.restore_constrained_Delaunay();
     // std::cerr << cdt_3_format("cdt_impl: {} vertices, {} cells\n", cdt_impl.number_of_vertices(),
@@ -1390,6 +1337,133 @@ public:
     Conforming_Dt::restore_Delaunay(insert_in_conflict_visitor);
   }
 
+  /**
+   * Insert vertices from a polygon mesh into the triangulation.
+   *
+   * @tparam PolygonMesh A model of FaceGraph.
+   * @tparam VertexPointMap A readable property map from vertex descriptor to Point_3.
+   * @tparam VertexHandleMap A writable property map from vertex descriptor to Vertex_handle.
+   * @tparam NamedParameters A sequence of named parameters.
+   *
+   * @param mesh The polygon mesh.
+   * @param mesh_vp_map Property map to access vertex coordinates.
+   * @param tr_vertex_pmap Property map to store the mapping from mesh vertices to triangulation vertices.
+   * @param np Optional named parameters:
+   *   - `vertex_is_constrained_map`: A readable property map from vertex descriptor to bool.
+   *     If provided, only vertices where the map returns true will be inserted.
+   */
+  template <typename PolygonMesh, typename VertexPointMap, typename VertexHandleMap,
+            typename NamedParameters = parameters::Default_named_parameters>
+  void insert_mesh_vertices(const PolygonMesh& mesh,
+                            VertexPointMap mesh_vp_map,
+                            VertexHandleMap tr_vertex_pmap,
+                            const NamedParameters& np = parameters::default_values())
+  {
+    using parameters::get_parameter;
+    using parameters::is_default_parameter;
+
+    constexpr bool has_v_filter = !is_default_parameter<NamedParameters, internal_np::vertex_is_constrained_t>::value;
+    auto v_filter_map = get_parameter(np, internal_np::vertex_is_constrained);
+
+    Cell_handle hint_ch{};
+    for(auto v : vertices(mesh)) {
+      if constexpr(has_v_filter) {
+        if(false == get(v_filter_map, v)) continue;
+      }
+      auto p = get(mesh_vp_map, v);
+      auto vh = this->insert(p, hint_ch, false);
+      vh->ccdt_3_data().set_vertex_type(CDT_3_vertex_type::CORNER);
+      hint_ch = vh->cell();
+      put(tr_vertex_pmap, v, vh);
+    }
+
+    add_bbox_points_if_not_dimension_3();
+  }
+
+  /**
+   * Insert a constrained face defined by its border edges.
+   *
+   * This function takes a set of border edges (as a segment soup) describing
+   * the borders of a polygonal face in the input mesh. It reconstructs one or
+   * more closed polylines from these segments, prioritizes the longest loop
+   * when several exist, and inserts the corresponding face(s) as constrained
+   * face(s) in the triangulation.
+   *
+   * @tparam Edges A range whose value_type is pair-like (u, v) with u and v
+   *               being vertex descriptors of the PolygonMesh.
+   * @tparam VertexPointMap A readable property map from vertex descriptor to Point_3.
+   * @tparam VertexHandleMap A readable property map from vertex descriptor to Vertex_handle.
+   *
+   * @param edges The collection of border edges as a segment soup.
+   * @param mesh_vd_to_point_pmap Property map used to access point coordinates
+   *                              for bounding box computation (to identify the longest polyline).
+   * @param mesh_vd_to_vh_pmap Property map used to convert mesh vertex descriptors
+   *                           to triangulation Vertex_handle objects for insertion.
+   */
+  template <typename Edges, typename VertexPointMap, typename VertexHandleMap>
+  void insert_constrained_face_defined_by_its_border_edges(Edges edges,
+                                                           VertexPointMap mesh_vd_to_point_pmap,
+                                                           VertexHandleMap mesh_vd_to_vh_pmap)
+  {
+    if(edges.empty())
+      return;
+    auto polylines = segment_soup_to_polylines(std::move(edges));
+    while(true) {
+      const auto non_closed_polylines_begin =
+          std::partition(polylines.begin(), polylines.end(),
+                         [](const auto& polyline) { return polyline.front() == polyline.back(); });
+      if(non_closed_polylines_begin == polylines.end())
+        break;
+      Edges edges_copy;
+      for(auto it = non_closed_polylines_begin; it != polylines.end(); ++it) {
+        auto& polyline = *it;
+        for(auto pit = polyline.begin(), end = polyline.end() - 1; pit != end; ++pit) {
+          edges_copy.emplace_back(*pit, *(pit + 1));
+        }
+      }
+      polylines.erase(non_closed_polylines_begin, polylines.end());
+      auto other_polylines = segment_soup_to_polylines(std::move(edges_copy));
+      polylines.insert(polylines.end(),
+                       std::make_move_iterator(other_polylines.begin()),
+                       std::make_move_iterator(other_polylines.end()));
+    }
+
+    auto get_point_bbox = tr().geom_traits().construct_bbox_3_object();
+    auto get_bbox = [&](auto vd) { return get_point_bbox(get(mesh_vd_to_point_pmap, vd)); };
+    struct Fake_geom_traits {
+      using Construct_bbox_3 = std::reference_wrapper<const CGAL::cpp20::remove_cvref_t<decltype(get_bbox)>>;
+      Construct_bbox_3 get_bbox_ref;
+      Construct_bbox_3 construct_bbox_3_object() const { return get_bbox_ref; }
+    } fake_geom_traits{std::cref(get_bbox)};
+
+    if(polylines.size() > 1) {
+      double max_sq_length = 0;
+      auto longest_it = polylines.begin();
+      for(auto it = polylines.begin(); it != polylines.end(); ++it) {
+        auto& polyline = *it;
+        auto bb = CGAL::bbox_3(polyline.begin(), polyline.end(), fake_geom_traits);
+        double sq_diagonal_length = CGAL::square(bb.x_span()) +
+                                    CGAL::square(bb.y_span()) +
+                                    CGAL::square(bb.z_span());
+        if(sq_diagonal_length > max_sq_length) {
+          max_sq_length = sq_diagonal_length;
+          longest_it = it;
+        }
+      }
+      if(longest_it != polylines.begin()) {
+        std::iter_swap(longest_it, polylines.begin());
+      }
+    }
+
+    std::optional<int> face_index;
+    for(auto& polyline : polylines) {
+      CGAL_assertion(!polyline.empty() && polyline.front() == polyline.back());
+      polyline.pop_back();
+      auto range_of_vertices = CGAL::make_transform_range_from_property_map(polyline, mesh_vd_to_vh_pmap);
+      face_index = insert_constrained_face(range_of_vertices, false, face_index.value_or(-1));
+    }
+  }
+
   bool is_facet_constrained(Facet f) const {
     return f.first->ccdt_3_data().is_facet_constrained(f.second);
   }
@@ -1498,6 +1572,18 @@ public:
       }
     } while(circ != circ_end);
 
+    if(this->debug_input_faces()) {
+      std::stringstream filename;
+      filename << "dump-input-face-" << polygon_contraint_id << "_polygon_" << borders.size() - 1 << ".polylines.txt";
+      std::ofstream os(filename.str());
+      os.precision(17);
+      os << vertex_handles.size() + 1 << "   ";
+      for(auto v : vertex_handles) {
+        os << this->point(v) << "  ";
+      }
+      os << this->point(*first_it) << std::endl;
+    }
+
     if(face_index < 0) {
       const auto accumulated_normal = std::invoke([&] {
         const auto last_it = std::next(first_it, size - 1);
@@ -1577,6 +1663,19 @@ public:
 private:
 
   void set_mark(Vertex_handle v, Vertex_marker m) {
+    if(this->debug_regions()) {
+      std::cerr << " set_mark(" << this->display_vert(v) << ", ";
+      switch(m) {
+        case Vertex_marker::CLEAR: std::cerr << "CLEAR"; break;
+        case Vertex_marker::REGION_BORDER: std::cerr << "REGION_BORDER"; break;
+        case Vertex_marker::REGION_INSIDE: std::cerr << "REGION_INSIDE"; break;
+        case Vertex_marker::CAVITY: std::cerr << "CAVITY"; break;
+        case Vertex_marker::CAVITY_ABOVE: std::cerr << "CAVITY_ABOVE"; break;
+        case Vertex_marker::CAVITY_BELOW: std::cerr << "CAVITY_BELOW"; break;
+        case Vertex_marker::nb_of_markers: CGAL_unreachable(); break;
+      }
+      std::cerr << ")\n";
+    }
     v->ccdt_3_data().set_mark(m);
   }
 
@@ -1805,9 +1904,9 @@ private:
           if(this->is_edge(vb_3d, vd_3d)) {
             // let's insert the diagonal [bd] in the CDT_2
             cdt_2.insert_constraint(vb, vd);
-#if CGAL_DEBUG_CDT_3 & 64
-            std::cerr << "NOTE: CDT_2 has 4 vertices. Flip the diagonal\n";
-#endif
+            if(this->debug_verbose_special_cases()) {
+              std::cerr << "NOTE: CDT_2 has 4 vertices. Flip the diagonal\n";
+            }
           }
         }
         break;
@@ -1902,14 +2001,14 @@ private:
   };
 
   template <typename Fh_region>
-  int does_edge_intersect_region(Cell_handle cell, int index_vc, int index_vd,
-                                 const CDT_2& cdt_2, const Fh_region& fh_region)
+  int does_edge_interior_intersect_region(Cell_handle cell, int index_vc, int index_vd,
+                                          const CDT_2& cdt_2, const Fh_region& fh_region)
   {
+    auto orientation = tr().geom_traits().orientation_3_object();
     const auto vc = cell->vertex(index_vd);
     const auto vd = cell->vertex(index_vc);
     const auto pc = this->point(vc);
     const auto pd = this->point(vd);
-    const typename Geom_traits::Segment_3 seg{pc, pd};
     for(const auto fh_2d : fh_region) {
       const auto v0 = fh_2d->vertex(0)->info().vertex_handle_3d;
       const auto v1 = fh_2d->vertex(1)->info().vertex_handle_3d;
@@ -1921,15 +2020,15 @@ private:
       const auto t1 = cdt_2.point(fh_2d->vertex(1));
       const auto t2 = cdt_2.point(fh_2d->vertex(2));
 
-      const auto opc = CGAL::orientation(t0, t1, t2, pc);
-      const auto opd = CGAL::orientation(t0, t1, t2, pd);
+      const auto opc = orientation(t0, t1, t2, pc);
+      const auto opd = orientation(t0, t1, t2, pd);
       if(opc == CGAL::COPLANAR || opd == CGAL::COPLANAR || opc == opd) {
         continue;
       } else {
-        // otherwise the segment intersects the plane of the triangle
-        if(CGAL::orientation(pc, pd, t0, t1) != opc &&
-           CGAL::orientation(pc, pd, t1, t2) != opc &&
-           CGAL::orientation(pc, pd, t2, t0) != opc)
+        // otherwise the segment interior intersects the plane of the triangle
+        if(orientation(pc, pd, t0, t1) != opc &&
+           orientation(pc, pd, t1, t2) != opc &&
+           orientation(pc, pd, t2, t0) != opc)
         {
           return static_cast<int>(opc);
         }
@@ -1975,7 +2074,7 @@ private:
         //write_segment(dump_edges_around, cell_circ->vertex(index_vc), cell_circ->vertex(index_vd));
         if(is_marked(cell_circ->vertex(index_vc), Vertex_marker::REGION_BORDER)) continue;
         if(is_marked(cell_circ->vertex(index_vd), Vertex_marker::REGION_BORDER)) continue;
-        int cd_intersects_region = does_edge_intersect_region(cell_circ, index_vc, index_vd, cdt_2, fh_region);
+        int cd_intersects_region = does_edge_interior_intersect_region(cell_circ, index_vc, index_vd, cdt_2, fh_region);
         if(cd_intersects_region == 1) {
           return Search_first_intersection_result_type{ Edge{cell_circ, index_vc, index_vd}, border_edge };
         }
@@ -2032,7 +2131,7 @@ private:
     std::set<std::pair<Vertex_handle, Vertex_handle>> non_intersecting_edges_set;
 
     if constexpr (cdt_3_can_use_cxx20_format()) if(this->debug_regions()) {
-      debug_dump_tetrahedra_intersect_region(face_index, region_index, cdt_2, fh_region);
+      expensive_debug_dump_tetrahedra_intersect_region(face_index, region_index, cdt_2, fh_region);
     }
 
     detect_edges_and_cells_intersecting_region(face_index, region_index, cdt_2, fh_region, region_border_vertices,
@@ -2073,7 +2172,9 @@ private:
         }
       }
 
-      // use edges of the border facets to unify sets
+      if(this->debug_regions()) {
+        std::cerr << "...use edges of the border facets to unify sets\n";
+      }
       for(auto facet: facets_of_border) {
         auto vertices = tr().vertices(facet);
         for(int i = 0; i < 3; ++i) {
@@ -2086,8 +2187,10 @@ private:
         }
       }
 
-      // use non-intersecting edges to unify sets, until we have at most 2 sets
       if(vertices_of_cavity_union_find.number_of_sets() > 2) {
+        if(this->debug_regions()) {
+          std::cerr << "...use non-intersecting edges to unify sets, until we have at most 2 sets\n";
+        }
         for(auto c : cr_intersecting_cells) {
 
           for(int i = 0; i < 4; ++i) {
@@ -2135,10 +2238,15 @@ private:
         return std::make_pair(Vertex_handle{}, Facet{});
       });
       CGAL_assume(vertex_above != Vertex_handle{});
-
+      if(this->debug_regions()) {
+        std::cerr << "The vertex above the region is " << IO::oformat(vertex_above, with_point_and_info) << "\n";
+      }
       // if there are still more than 2 sets, we need to propagate the information
       // using a DFS on the border facets
       if(vertices_of_cavity_union_find.number_of_sets() > 2) {
+        if(this->debug_regions()) {
+          std::cerr << "...propagate the information using a DFS on the border facets\n";
+        }
         const auto border_edges_set = std::invoke([&] {
           using Ordered_pair = std::pair<Vertex_handle, Vertex_handle>;
           using Hash = boost::hash<Ordered_pair>;
@@ -2515,8 +2623,12 @@ private:
       //   std::ofstream dump(std::string("dump_no_segment_found_") + std::to_string(face_index) + "_" +
       //                      std::to_string(region_index) + ".binary.cgal");
       //   CGAL::IO::save_binary_file(dump, *this);
-        dump_region(face_index, region_index, cdt_2);
       // }
+      if(this->debug_regions()) {
+        std::cerr << "ERROR: No first segment found intersecting region " << region_index
+                  << " of face #" << face_index << "\n";
+        dump_region(face_index, region_index, cdt_2);
+      }
       throw Next_region{"No segment found", fh_region[0]};
     }
     CGAL_assertion(found_edge_opt != std::nullopt);
@@ -2559,7 +2671,7 @@ private:
     };
 
     if constexpr (cdt_3_can_use_cxx20_format()) if(this->debug_regions()) {
-      std::cerr << cdt_3_format("Cavity has {} cells and {} edges, "
+      std::cerr << cdt_3_format("Cavity has {} piercing cells and {} piercing edges, "
                               "{} vertices in upper cavity and {} in lower, "
                               "{} facets in upper cavity and {} in lower\n",
                               original_intersecting_cells.size(),
@@ -2568,20 +2680,6 @@ private:
                               original_vertices_of_lower_cavity.size(),
                               original_facets_of_upper_cavity.size(),
                               original_facets_of_lower_cavity.size());
-      if(original_intersecting_cells.size() > 3 || intersecting_edges.size() > 1) {
-        std::cerr << "!! Interesting case !!\n";
-        // dump_region(face_index, region_index, cdt_2);
-        // {
-        //   std::ofstream out(std::string("dump_intersecting_edges_") + std::to_string(face_index) + "_" +
-        //                     std::to_string(region_index) + ".polylines.txt");
-        //   out.precision(17);
-        //   for(auto edge: intersecting_edges) {
-        //     write_segment(out, edge);
-        //   }
-        // }
-        // dump_facets_of_cavity(face_index, region_index, "lower", original_facets_of_lower_cavity);
-        // dump_facets_of_cavity(face_index, region_index, "upper", original_facets_of_upper_cavity);
-      }
     }
     auto register_internal_constrained_facet = [this](Facet f) { this->register_facet_to_be_constrained(f); };
 
@@ -2762,12 +2860,6 @@ private:
         add_pseudo_cells_to_outer_map(upper_cavity_triangulation, map_upper_cavity_vertices_to_ambient_vertices, true);
 
     {
-// #if CGAL_DEBUG_CDT_3 & 64
-//       std::ofstream out("dump_upper_outer_map.off");
-//       out.precision(17);
-//       write_facets(out, *this, std::ranges::views::values(outer_map));
-//       out.close();
-// #endif // CGAL_DEBUG_CDT_3
       const auto upper_inner_map = tr().create_triangulation_inner_map(
           upper_cavity_triangulation, map_upper_cavity_vertices_to_ambient_vertices, false);
 
@@ -2788,9 +2880,9 @@ private:
                                          upper_inner_map,
                                          this->new_cells_output_iterator());
     }
-#if CGAL_DEBUG_CDT_3 & 64
-    std::cerr << "# glu the lower triangulation of the cavity\n";
-#endif // CGAL_DEBUG_CDT_3
+    if(this->debug_copy_triangulation_into_hole()) {
+      std::cerr << "# glu the lower triangulation of the cavity\n";
+    }
 
     outer_map.clear();
     std::vector<std::pair<Facet, CDT_2_face_handle>> new_constrained_facets;
@@ -3083,10 +3175,10 @@ private:
   {
     const auto& cdt_2 = non_const_cdt_2;
     auto steiner_pt = CGAL::centroid(cdt_2.triangle(fh_2d));
-#if CGAL_DEBUG_CDT_3 & 64 && CGAL_CAN_USE_CXX20_FORMAT
-    std::cerr << cdt_3_format("Trying to insert Steiner (centroid) point {} in non-coplanar face {}.\n", IO::oformat(steiner_pt),
-                             IO::oformat(cdt_2.triangle(fh_2d)));
-#endif // CGAL_DEBUG_CDT_3
+    if constexpr (cdt_3_can_use_cxx20_format()) if(this->debug_verbose_special_cases()) {
+      std::cerr << cdt_3_format("Trying to insert Steiner (centroid) point {} in non-coplanar face {}.\n", IO::oformat(steiner_pt),
+                               IO::oformat(cdt_2.triangle(fh_2d)));
+    }
     auto encroached_edge_opt = return_encroached_constrained_edge(face_index, cdt_2, steiner_pt);
     if(encroached_edge_opt) {
       return encroached_edge_opt;
@@ -3190,22 +3282,22 @@ private:
                               IO::oformat(vb_3d, with_point_and_info));
     }
     auto&& contexts = this->constraint_hierarchy.contexts(va_3d, vb_3d);
-#if CGAL_DEBUG_CDT_3 & 64 && CGAL_CAN_USE_CXX20_FORMAT
-    if(std::next(contexts.begin()) != contexts.end()) {
-      std::cerr << "ERROR: Edge is constrained by more than one constraint\n";
-      for(const auto& c : contexts) {
-        std::cerr << cdt_3_format("  - {} with {} vertices\n", IO::oformat(c.id().vl_ptr()),
-                                                              c.number_of_vertices());
-        for(auto vh_it = c.vertices_begin(), end = c.vertices_end(), current = c.current();
-            vh_it != end; ++vh_it)
-        {
-          std::cerr << cdt_3_format("    {} {}\n",
-                                   (vh_it == current) ? '>' : '-',
-                                   IO::oformat(*vh_it, with_point_and_info));
+    if constexpr (cdt_3_can_use_cxx20_format()) if(this->debug_verbose_special_cases()) {
+      if(std::next(contexts.begin()) != contexts.end()) {
+        std::cerr << "ERROR: Edge is constrained by more than one constraint\n";
+        for(const auto& c : contexts) {
+          std::cerr << cdt_3_format("  - {} with {} vertices\n", IO::oformat(c.id().vl_ptr()),
+                                                                c.number_of_vertices());
+          for(auto vh_it = c.vertices_begin(), end = c.vertices_end(), current = c.current();
+              vh_it != end; ++vh_it)
+          {
+            std::cerr << cdt_3_format("    {} {}\n",
+                                     (vh_it == current) ? '>' : '-',
+                                     IO::oformat(*vh_it, with_point_and_info));
+          }
         }
       }
     }
-#endif // CGAL_DEBUG_CDT_3 & 64
     CGAL_assertion(std::next(contexts.begin()) == contexts.end());
     const auto& context = *contexts.begin();
     const auto constrained_polyline_id = context.id();
@@ -3228,20 +3320,21 @@ private:
   bool restore_face(CDT_3_signed_index face_index) {
     CDT_2& non_const_cdt_2 = face_cdt_2[face_index];
     const CDT_2& cdt_2 = non_const_cdt_2;
-    if constexpr (cdt_3_can_use_cxx20_format()) if(this->debug_copy_triangulation_into_hole()) {
-      std::cerr << cdt_3_format("restore_face({}): CDT_2 has {} vertices\n", face_index, cdt_2.number_of_vertices());
-    }
+    if constexpr (cdt_3_can_use_cxx20_format())
+      if(this->debug_copy_triangulation_into_hole() || this->debug_verbose_special_cases()) {
+        std::cerr << cdt_3_format("restore_face({}): CDT_2 has {} vertices\n", face_index, cdt_2.number_of_vertices());
+      }
     for(const auto& edge : cdt_2.finite_edges()) {
       const auto fh = edge.first;
       const auto i = edge.second;
       const auto va_3d = fh->vertex(cdt_2.cw(i))->info().vertex_handle_3d;
       const auto vb_3d = fh->vertex(cdt_2.ccw(i))->info().vertex_handle_3d;
       const bool is_3d = this->is_edge(va_3d, vb_3d);
-      if constexpr (cdt_3_can_use_cxx20_format()) if(this->debug_copy_triangulation_into_hole()) {
-        std::cerr << cdt_3_format("Edge is 3D: {:6}  ({} , {})\n",
-                                  is_3d,
-                                  IO::oformat(va_3d, with_point_and_info),
-                                  IO::oformat(vb_3d, with_point_and_info));
+      if constexpr(cdt_3_can_use_cxx20_format()) {
+        if(this->debug_copy_triangulation_into_hole() || this->debug_conforming_validation()) {
+          std::cerr << cdt_3_format("Edge is 3D: {:6}  ({} , {})\n", is_3d, IO::oformat(va_3d, with_point_and_info),
+                                    IO::oformat(vb_3d, with_point_and_info));
+        }
       }
       CGAL_assertion(is_3d || !cdt_2.is_constrained(edge));
       fh->info().is_edge_also_in_3d_triangulation[unsigned(i)] = is_3d;
@@ -3274,22 +3367,22 @@ private:
       processed_faces.insert(fh_region.begin(), fh_region.end());
 
       auto handle_error_with_region = [&](const char* what, CDT_2_face_handle fh_2d) {
-        if(this->debug_regions()) {
+        if(this->debug_regions() || this->debug_verbose_special_cases()) {
           std::cerr << "NOTE: " << what << " in sub-region " << (region_index - 1)
                     << " of face #F" << face_index << '\n';
         }
-#if CGAL_DEBUG_CDT_3 & 64 && CGAL_CAN_USE_CXX20_FORMAT
-        std::cerr << "  constrained edges are:\n";
-        for(auto [c, index]: cdt_2.constrained_edges()) {
-          const auto va = c->vertex(cdt_2.cw(index));
-          const auto vb = c->vertex(cdt_2.ccw(index));
-          const auto va_3d = va->info().vertex_handle_3d;
-          const auto vb_3d = vb->info().vertex_handle_3d;
-          std::cerr << cdt_3_format("    ({:.6} , {:.6})\n",
-                                    IO::oformat(va_3d, with_point_and_info),
-                                    IO::oformat(vb_3d, with_point_and_info));
+        if constexpr (cdt_3_can_use_cxx20_format()) if(this->debug_verbose_special_cases()) {
+          std::cerr << "  constrained edges are:\n";
+          for(auto [c, index]: cdt_2.constrained_edges()) {
+            const auto va = c->vertex(cdt_2.cw(index));
+            const auto vb = c->vertex(cdt_2.ccw(index));
+            const auto va_3d = va->info().vertex_handle_3d;
+            const auto vb_3d = vb->info().vertex_handle_3d;
+            std::cerr << cdt_3_format("    ({:.6} , {:.6})\n",
+                                      IO::oformat(va_3d, with_point_and_info),
+                                      IO::oformat(vb_3d, with_point_and_info));
+          }
         }
-#endif // CGAL_DEBUG_CDT_3
         const auto encroach_edge_opt =
             try_to_insert_circumcenter_in_face_or_return_encroached_edge(face_index, non_const_cdt_2, fh_2d);
         if(encroach_edge_opt) {
@@ -3472,7 +3565,7 @@ public:
         if(restore_face(static_cast <CDT_3_signed_index>(i))) {
           face_constraint_misses_subfaces_reset(i);
         } else {
-          if(this->debug_missing_region()) {
+          if(this->debug_missing_region() || this->debug_Steiner_points()) {
             std::cerr << "restore_face(" << i << ") incomplete, back to conforming...\n";
           }
           Conforming_Dt::restore_Delaunay(insert_in_conflict_visitor);
@@ -3484,7 +3577,9 @@ public:
         i = face_constraint_misses_subfaces_find_next(i);
         if(i == npos) {
           std::cerr << "ERROR: No more missing face to restore after a PLC error\n";
-          dump_region(e.face_index, e.region_index);
+          if(this->debug_regions() || this->debug_verbose_special_cases()) {
+            dump_region(e.face_index, e.region_index);
+          }
           throw;
         }
         std::cerr << "Next face is face #F " << i << '\n';
@@ -3619,9 +3714,6 @@ public:
       return visited_edges.emplace(CGAL::make_sorted_pair(v0, v1), does_intersect);
     };
 
-    // Alias for C++20 extension warning workaround
-    auto& intersecting_edges_ = intersecting_edges;
-
     intersecting_edges.push_back(first_intersecting_edge);
     const auto [v0, v1] = tr().vertices(first_intersecting_edge);
     (void)new_edge(v0, v1, true);
@@ -3634,24 +3726,25 @@ public:
       }
 
       auto test_edge = [&](Cell_handle cell, Vertex_handle v0, int index_v0, Vertex_handle v1, int index_v1,
-                           int expected) {
-        auto value_returned = [this](bool b) {
+                           int expected)
+      {
+        auto value_returned = [this, v0, v1](bool b, bool not_visited) {
           CGAL_USE(this);
           if constexpr (cdt_3_can_use_cxx20_format()) if(this->debug_regions()) {
-            std::cerr << cdt_3_format("   return {}\n", b);
+              std::cerr << cdt_3_format("  test_edge {}   {}   return {} {}\n",
+                                        IO::oformat(v0, with_point_and_info),
+                                        IO::oformat(v1, with_point_and_info),
+                                        b,
+                                        not_visited ? "(new)" : "(cached)");
           }
           return b;
         };
-        if constexpr (cdt_3_can_use_cxx20_format()) if(this->debug_regions()) {
-          std::cerr << cdt_3_format("  test_edge {}   {}  ", IO::oformat(v0, with_point_and_info),
-                                   IO::oformat(v1, with_point_and_info));
-        }
         auto [cached_value_it, not_visited] = new_edge(v0, v1, false);
-        if(!not_visited) return value_returned(cached_value_it->second);
-        int v0v1_intersects_region = (is_marked(v0, Vertex_marker::REGION_INSIDE) ||
-                                      is_marked(v1, Vertex_marker::REGION_INSIDE))
-                                         ? expected
-                                         : does_edge_intersect_region(cell, index_v0, index_v1, cdt_2, fh_region);
+        if(!not_visited) return value_returned(cached_value_it->second, not_visited);
+        int v0v1_intersects_region =
+            (is_marked(v0, Vertex_marker::REGION_INSIDE) || is_marked(v1, Vertex_marker::REGION_INSIDE))
+                ? expected
+                : does_edge_interior_intersect_region(cell, index_v0, index_v1, cdt_2, fh_region);
         if(v0v1_intersects_region != 0) {
           if(this->use_older_cavity_algorithm()) {
             if(v0v1_intersects_region != expected) {
@@ -3663,13 +3756,13 @@ public:
           if(v0v1_intersects_region < 0) {
             std::swap(index_v0, index_v1);
           }
-          intersecting_edges_.emplace_back(cell, index_v0, index_v1);
+          intersecting_edges.emplace_back(cell, index_v0, index_v1);
           cached_value_it->second = true;
-          return value_returned(true);
+          return value_returned(true, not_visited);
         } else {
           non_intersecting_edges_set.insert(make_sorted_pair(v0, v1));
           cached_value_it->second = false;
-          return value_returned(false);
+          return value_returned(false, not_visited);
         }
       };
 
@@ -3735,10 +3828,10 @@ public:
               {
                 intersecting_cells.insert(n_ch);
                 if(this->debug_regions()) {
-                  std::cerr << "tetrahedron #" << n_ch->time_stamp() << " intersects the region\n";
+                  std::cerr << "new tetrahedron #" << n_ch->time_stamp() << " intersects the region\n";
                 }
               } else if(this->debug_regions()) {
-                std::cerr << "NO, tetrahedron #" << n_ch->time_stamp() << " does not intersect the region\n";
+                std::cerr << "NO, new tetrahedron #" << n_ch->time_stamp() << " does not intersect the region\n";
               }
               for(int i = 0; i < 4; ++i) {
                 for(int j = i + 1; j < 4; ++j) {
@@ -3814,12 +3907,13 @@ public:
   {
     using EK = CGAL::Exact_predicates_exact_constructions_kernel;
     const auto to_exact = CGAL::Cartesian_converter<Geom_traits, EK>();
+    const auto& cdt_2 = this->face_cdt_2[face_index];
 
     std::cerr << cdt_3_format("restore_subface_region face index: {}, region #{}, intersecting edge #{}: ({}   {})\n",
                               face_index, region_index, edge_index,
                               IO::oformat(v_above, with_point_and_info),
                               IO::oformat(v_below, with_point_and_info));
-    dump_region(face_index, region_index, this->face_cdt_2[face_index]);
+    dump_region(face_index, region_index, cdt_2);
 
     const auto p_above = this->point(v_above);
     const auto p_below = this->point(v_below);
@@ -3845,30 +3939,17 @@ public:
     intersect_out.close();
 
     auto cells_around_intersecting_edge = Container_from_circulator{this->incident_cells(intersecting_edge)};
-    for(const auto& cell: cells_around_intersecting_edge) {
-      CGAL_assertion(!cell.has_vertex(tr().infinite_vertex()));
-      auto tetrahedron =
-          typename Geom_traits::Tetrahedron_3{tr().point(cell.vertex(0)), tr().point(cell.vertex(1)),
-                                              tr().point(cell.vertex(2)), tr().point(cell.vertex(3))};
-      for(auto fh: fh_region) {
-        auto v0 = fh->vertex(0)->info().vertex_handle_3d;
-        auto v1 = fh->vertex(1)->info().vertex_handle_3d;
-        auto v2 = fh->vertex(2)->info().vertex_handle_3d;
-        auto triangle = typename Geom_traits::Triangle_3{tr().point(v0), tr().point(v1), tr().point(v2)};
-        auto exact_triangle = to_exact(triangle);
-      }
-
+    for(const auto& ch: make_prevent_deref_range(cells_around_intersecting_edge)) {
+      CGAL_assertion(!ch->has_vertex(tr().infinite_vertex()));
+      auto tetrahedron = tr().tetrahedron(ch.current_circulator());
       std::cerr << cdt_3_format("Test tetrahedron (#{}):\n  {}\n  {}\n  {}\n  {}\n",
-                              cell.time_stamp(),
-                              IO::oformat(cell.vertex(0), with_point_and_info),
-                              IO::oformat(cell.vertex(1), with_point_and_info),
-                              IO::oformat(cell.vertex(2), with_point_and_info),
-                              IO::oformat(cell.vertex(3), with_point_and_info));
+                              ch->time_stamp(),
+                              IO::oformat(ch->vertex(0), with_point_and_info),
+                              IO::oformat(ch->vertex(1), with_point_and_info),
+                              IO::oformat(ch->vertex(2), with_point_and_info),
+                              IO::oformat(ch->vertex(3), with_point_and_info));
       if(!std::any_of(fh_region.begin(), fh_region.end(), [&](const auto fh) {
-          auto v0 = fh->vertex(0)->info().vertex_handle_3d;
-          auto v1 = fh->vertex(1)->info().vertex_handle_3d;
-          auto v2 = fh->vertex(2)->info().vertex_handle_3d;
-          auto triangle = typename Geom_traits::Triangle_3{tr().point(v0), tr().point(v1), tr().point(v2)};
+          auto triangle = cdt_2.triangle(fh);
           bool b = does_tetrahedron_intersect_triangle_interior(tetrahedron, triangle, tr().geom_traits());
           if(b) {
             std::cerr << "  intersects the region\n";
@@ -3878,18 +3959,18 @@ public:
       {
         std::cerr << cdt_3_format(
             "ERROR: The following tetrahedron (#{}) does not intersect the region:\n  {}\n  {}\n  {}\n  {}\n",
-            cell.time_stamp(),
-            IO::oformat(cell.vertex(0), with_point_and_info), IO::oformat(cell.vertex(1), with_point_and_info),
-            IO::oformat(cell.vertex(2), with_point_and_info), IO::oformat(cell.vertex(3), with_point_and_info));
+            ch->time_stamp(),
+            IO::oformat(ch->vertex(0), with_point_and_info), IO::oformat(ch->vertex(1), with_point_and_info),
+            IO::oformat(ch->vertex(2), with_point_and_info), IO::oformat(ch->vertex(3), with_point_and_info));
       }
     }
   }
 
   template <typename Fh_region>
-  void debug_dump_tetrahedra_intersect_region(CDT_3_signed_index face_index,
-                                              int region_index,
-                                              const CDT_2& cdt_2,
-                                              const Fh_region& fh_region)
+  void expensive_debug_dump_tetrahedra_intersect_region(CDT_3_signed_index face_index,
+                                                        int region_index,
+                                                        const CDT_2& cdt_2,
+                                                        const Fh_region& fh_region)
   {
     using Mesh = Surface_mesh<Point_3>;
     using Face_index = typename Mesh::Face_index;
@@ -3901,13 +3982,9 @@ public:
     auto [color_vpmap, _] = tets_intersect_region_mesh.template add_property_map<Face_index, int>("f:patch_id");
 
     for(auto ch : tr().finite_cell_handles()) {
-      auto tetrahedron = typename Geom_traits::Tetrahedron_3{tr().point(ch->vertex(0)), tr().point(ch->vertex(1)),
-                                                             tr().point(ch->vertex(2)), tr().point(ch->vertex(3))};
+      auto tetrahedron = tr().tetrahedron(ch);
       if(!std::any_of(fh_region.begin(), fh_region.end(), [&](auto fh) {
-          const auto v0 = fh->vertex(0)->info().vertex_handle_3d;
-          const auto v1 = fh->vertex(1)->info().vertex_handle_3d;
-          const auto v2 = fh->vertex(2)->info().vertex_handle_3d;
-          const auto triangle = typename Geom_traits::Triangle_3{tr().point(v0), tr().point(v1), tr().point(v2)};
+          const auto triangle = cdt_2.triangle(fh);
           return does_tetrahedron_intersect_triangle_interior(tetrahedron, triangle, tr().geom_traits());
         }))
       {
@@ -3916,7 +3993,7 @@ public:
       bool intersects = false;
       for(int i = 0; i < 4; ++i) {
         for(int j = i + 1; j < 4; ++j) {
-          int intersects_region = does_edge_intersect_region(ch, i, j, cdt_2, fh_region);
+          int intersects_region = does_edge_interior_intersect_region(ch, i, j, cdt_2, fh_region);
           if(intersects_region != 0) {
             intersects = true;
           }

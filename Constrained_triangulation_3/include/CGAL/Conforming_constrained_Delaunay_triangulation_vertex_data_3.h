@@ -91,6 +91,8 @@ public:
   }
 
   int number_of_incident_constraints() const {
+    if(vertex_type() == CDT_3_vertex_type::STEINER_IN_FACE)
+      return 0;
     CGAL_assertion(u.on_edge.nb_of_incident_constraints >= 0);
     return u.on_edge.nb_of_incident_constraints;
   }
