@@ -38,8 +38,8 @@ public:
       CGAL_BRANCH_PROFILER_3(std::string("semi-static failures/attempts/calls to   : ") +
         std::string(CGAL_PRETTY_FUNCTION), tmp);
 
-      internal::Static_filters_predicates::Get_approx<Point_3> get_approx; // Identity functor for all points
-      const Point_3& c = s.center();
+      internal::Static_filters_predicates::Get_approx<Point> get_approx; // Identity functor for all points
+      const Point& c = s.center();
 
       double scx, scy, scz, ssr;
       double bxmin = b.xmin(), bymin = b.ymin(), bzmin = b.zmin(),
