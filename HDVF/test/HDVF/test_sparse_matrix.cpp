@@ -26,11 +26,11 @@ int main(int argc, char **argv)
         CGAL::OSM::set_coefficient(MC_rw, 1, 0, 2) ;
         CGAL::OSM::set_coefficient(MC_rw, 1, 2, -2) ;
 
-        CGAL::OSM::write_matrix(MC_rw, "test_col_mat.osm");
+        CGAL::OSM::write_matrix(MC_rw, "tmp/test_col_mat.osm");
 
         Column_matrix MC_rw2 ;
 
-        CGAL::OSM::read_matrix(MC_rw2, "test_col_mat.osm");
+        CGAL::OSM::read_matrix(MC_rw2, "tmp/test_col_mat.osm");
 
         bool comp_col(MC_rw == MC_rw2) ;
         std::cerr << "saved and loaded matrices comparison: " << comp_col << std::endl ;
@@ -44,11 +44,11 @@ int main(int argc, char **argv)
         CGAL::OSM::set_coefficient(MR_rw, 1, 0, 2) ;
         CGAL::OSM::set_coefficient(MR_rw, 1, 2, -2) ;
 
-        write_matrix(MR_rw, "test_row_mat.osm");
+        write_matrix(MR_rw, "tmp/test_row_mat.osm");
 
         Row_matrix MR_rw2 ;
 
-        CGAL::OSM::read_matrix(MR_rw2, "test_row_mat.osm");
+        CGAL::OSM::read_matrix(MR_rw2, "tmp/test_row_mat.osm");
 
         bool comp_row(MR_rw == MR_rw2) ;
         std::cerr << "saved and loaded matrices comparison: " << comp_row << std::endl ;

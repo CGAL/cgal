@@ -14,6 +14,8 @@
 #include <CGAL/HDVF/Hdvf.h>
 #include <CGAL/OSM/OSM.h>
 
+//#define BUILD_TEST_DATA
+
 namespace HDVF = CGAL::Homological_discrete_vector_field;
 
 //typedef int Coefficient_ring;
@@ -38,7 +40,7 @@ int main(int argc, char **argv) {
     HDVF::Mesh_object_io<Traits> mesh ;
     mesh.read_off(filename);
     
-    mesh.print_infos();
+//    mesh.print_infos();
     
     // Build simplicial chain complex
     Complex complex(mesh);
@@ -51,16 +53,21 @@ int main(int argc, char **argv) {
     // Compute a perfect HDVF
     hdvf.compute_perfect_hdvf();
     //        hdvf.compute_rand_perfect_hdvf();
+    std::cerr << std::endl;
     
-    // Output HDVF to console
-    hdvf.write_matrices();
-    hdvf.write_reduction();
-    
-    // Output HDVF to vtk
-    CGAL::IO::write_VTK(hdvf, complex, "tmp/res", true) ;
-    
+#ifdef BUILD_TEST_DATA
     // Save HDVF to .hdvf file
-    hdvf.write_hdvf_reduction("tmp/test.hdvf") ;
+    hdvf.write_hdvf_reduction("data/test_hdvf/test_hdvf.hdvf") ;
+#endif
+    
+    // Read HDVF from .hdvf
+    HDVF_type hdvf2(complex, HDVF::OPT_FULL);
+    hdvf2.read_hdvf_reduction("data/test_hdvf/test_hdvf.hdvf");
+    
+    // Compare
+    bool test_true(hdvf.compare(hdvf2));
+    std::cerr << "-- Test HDVF built: " << test_true << std::endl;
+    assert(test_true);
     
     return 0;
 }
