@@ -9,11 +9,11 @@
 //
 // Author(s)     : Alexandra Bac <alexandra.bac@univ-amu.fr>
 
-#ifndef CGAL_HDVF_TRAITS_D_H
-#define CGAL_HDVF_TRAITS_D_H
+#ifndef CGAL_HDVF_TRAITS_2_H
+#define CGAL_HDVF_TRAITS_2_H
 
 #include <CGAL/license/HDVF.h>
-#include <CGAL/Bbox_d.h>
+#include <CGAL/Bbox_2.h>
 #include <CGAL/Dimension.h>
 
 namespace CGAL {
@@ -22,24 +22,25 @@ namespace Homological_discrete_vector_field {
   /*!
  \ingroup PkgHDVFAlgorithmClasses
 
- The class `Hdvf_traits_d` implements the `HDVFTraits` concept for dD data, using a geometric kernel `K`.
+ The class `Hdvf_traits_2` implements the `HDVFTraits` concept for 2D data, using a geometric kernel `K`.
 
- @tparam K a geometric traits class. Must be either `Epick_d` or `Epeck_d` with a fixed dimension.
+ @tparam K a geometric kernel model of the `Kernel` concept.
 
  \cgalModels{HDVFTraits}
 
  */
 
 template <typename K>
-struct Hdvf_traits_d {
-    using Dimension = Dimension_tag< K::Dimension::value >;
+struct Hdvf_traits_2 {
+    using Dimension = Dimension_tag< 2 >;
     typedef K Kernel;
-    typedef typename K::Point_d Point;
+    typedef typename K::Point_2 Point;
+    typedef typename K::Vector_2 Vector;
     typedef typename K::FT FT;
-    typedef CGAL::Bbox_d<Dimension> Bbox;
+    typedef CGAL::Bbox_2 Bbox;
 };
 
 } /* end namespace Homological_discrete_vector_field */
 } /* end namespace CGAL */
 
-#endif // CGAL_HDVF_TRAITS_D_H
+#endif // CGAL_HDVF_TRAITS_2_H

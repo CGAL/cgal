@@ -25,6 +25,21 @@
 namespace CGAL {
 namespace Homological_discrete_vector_field {
 
+//template <typename K>
+//K::Point_2 to_point(const std::vector<double>& coords) {
+//    return typename K::Point_2(coords[0], coords[1]);
+//}
+
+template <typename K>
+K::Point_3 to_point(const std::vector<double>& coords) {
+    return typename K::Point_3(coords[0], coords[1], coords[2]);
+}
+
+template <typename K>
+K::Point_d to_point(const std::vector<double>& coords) {
+    return typename K::Point_d(coords.begin(), coords.end());
+}
+
 /*!
  \ingroup PkgHDVFAlgorithmClasses
 
@@ -414,27 +429,44 @@ public:
      */
     size_t get_id () const { return _complex_id; }
 
-    /** \brief Gets the coordinates of the ith vertex */
-
-    Point point(size_t i) const
+protected:
+    /* Compute the point associated to the ith 0-cell */
+    Point compute_point(size_t i) const
     {
         const std::vector<size_t> coords(bindex_to_cell(_base2bool.at(0).at(i))) ;
         std::vector<double> res ;
         for (size_t c : coords)
             res.push_back(c/2. + .5) ;
-        if constexpr (Traits::Dimension::value==2){
-            res.push_back(0) ;
+        // If necessary "fill" with zeros
+        if (res.size() < Traits::Dimension::value){
+            for (int i=res.size(); i<Traits::Dimension::value; ++i)
+                res.push_back(0.) ;
         }
-        return Point(res[0], res[1], res[2]) ;
+        return to_point<typename Traits::Kernel>(res);
+    }
+    
+public:
+    /** \brief Gets the coordinates of the ith vertex */
+
+    Point point(size_t i) const
+    {
+        return _points.at(i);
     }
 
+protected:
+    /* Compute vertices coordinates */
+    void compute_points()
+    {
+        _points.clear();
+        for (size_t i=0; i<number_of_cells(0); ++i)
+            _points.push_back(compute_point(i)) ;
+    }
+
+public:
     /** \brief Gets the vector of vertex coordinates  */
     const std::vector<Point>& points() const
     {
-        std::vector<Point> res ;
-        for (size_t i=0; i<number_of_cells(0); ++i)
-            res.push_back(point(i)) ;
-        return res ;
+        return _points;
     }
 
     /// END Methods of the Cubical_chain_complex concept
@@ -716,6 +748,8 @@ protected:
     std::vector<std::map<size_t, size_t>> _bool2base;
     /* \brief Vector of boundary matrices in each dimension */
     std::vector<Column_matrix>  _d;
+    /* \brief Vector of points (vertices coordinates). */
+    std::vector<Point> _points;
 private:
     std::vector<bool> _visited_cells; // Internal flag
     /* \brief Static counter for objects ids.
@@ -828,6 +862,9 @@ Cubical_chain_complex<CoefficientRing, Traits>::Cubical_chain_complex(const Cub_
     for (int q = 0; q <= _dim; ++q) {
         calculate_d(q);
     }
+    
+    // Initialize _points
+    compute_points();
 }
 
 // initialize_cells implementation
