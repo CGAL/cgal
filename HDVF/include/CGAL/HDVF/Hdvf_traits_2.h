@@ -15,6 +15,7 @@
 #include <CGAL/license/HDVF.h>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Dimension.h>
+#include <vector>
 
 namespace CGAL {
 namespace Homological_discrete_vector_field {
@@ -38,6 +39,10 @@ struct Hdvf_traits_2 {
     typedef typename K::Vector_2 Vector;
     typedef typename K::FT FT;
     typedef CGAL::Bbox_2 Bbox;
+
+    Point to_point(const std::vector<FT>& coords) const {
+        return Point(coords[0], coords[1]);
+    }
 };
 
 } /* end namespace Homological_discrete_vector_field */
