@@ -53,6 +53,6 @@ int main(int argc, char* argv[]) {
   }
 */
   std::pair<double, double> res = CGAL::bounded_error_Frechet_distance(poly1, poly2, 0.000001);
-
-  return -1;
+ std::cout << "Frechet distance: [" << res.first << ", " << res.second << "]" << std::endl;
+  return 0;
 }
