@@ -39,10 +39,6 @@ struct Hdvf_traits_2 {
     typedef typename K::Vector_2 Vector;
     typedef typename K::FT FT;
     typedef CGAL::Bbox_2 Bbox;
-
-    Point to_point(const std::vector<FT>& coords) const {
-        return Point(coords[0], coords[1]);
-    }
 };
 
 } /* end namespace Homological_discrete_vector_field */

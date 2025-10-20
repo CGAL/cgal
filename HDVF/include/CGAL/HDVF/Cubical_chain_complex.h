@@ -25,21 +25,6 @@
 namespace CGAL {
 namespace Homological_discrete_vector_field {
 
-//template <typename K>
-//K::Point_2 to_point(const std::vector<double>& coords) {
-//    return typename K::Point_2(coords[0], coords[1]);
-//}
-
-template <typename K>
-K::Point_3 to_point(const std::vector<double>& coords) {
-    return typename K::Point_3(coords[0], coords[1], coords[2]);
-}
-
-template <typename K>
-K::Point_d to_point(const std::vector<double>& coords) {
-    return typename K::Point_d(coords.begin(), coords.end());
-}
-
 /*!
  \ingroup PkgHDVFAlgorithmClasses
 
@@ -442,7 +427,11 @@ protected:
             for (int i=res.size(); i<Traits::Dimension::value; ++i)
                 res.push_back(0.) ;
         }
-        return to_point<typename Traits::Kernel>(res);
+        if constexpr (Traits::Dimension::value == 2)
+            return typename Traits::Kernel::Point_2(res[0], res[1]);
+        else if constexpr (Traits::Dimension::value == 3)
+            return typename Traits::Kernel::Point_3(res[0], res[1], res[2]);
+        else return typename Traits::Kernel::Point_d(res.begin(), res.end());
     }
     
 public:
