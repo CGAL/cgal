@@ -29,50 +29,7 @@ namespace Homological_discrete_vector_field {
 
 // Tetgen related
 
-template <typename P>
-inline size_t read_nodes(const std::string &node_file, bool load_nodes, std::vector<P> *nodes)
-{
-    typedef P Point;
-    std::ifstream in_file (node_file) ;
-    if ( ! in_file . good () ) {
-        std::cerr << "SimplicialComplex::loadFromFile. Fatal Error:\n  " << node_file << " not found.\n";
-        throw std::runtime_error("File Parsing Error: File not found");
-    }
 
-    // First line is the number of nodes
-    size_t nnodes, nnodes_tmp ;
-    if ( ! in_file.eof())
-    {
-        std::string line;
-        getline( in_file, line );
-        check_sanity_line(line, node_file) ;
-        // First number is the number of nodes
-        std::istringstream is (line);
-        is >> nnodes ;
-    }
-    nnodes_tmp =  nnodes ;
-    while ( !(in_file.eof()) && (nnodes_tmp>0))
-    {
-        size_t trash ;
-        double x ;
-        std::vector<double> node ;
-        --nnodes_tmp ;
-        std::string line;
-        getline( in_file, line );
-        check_sanity_line(line, node_file) ;
-        std::istringstream is (line);
-        is >> trash ;
-        for (int i = 0; i<3; ++i)
-        {
-            is >> x ;
-            node.push_back(x) ;
-        }
-        if (load_nodes)
-            nodes->push_back(Point(node[0], node[1], node[2])) ;
-    }
-    in_file.close() ;
-    return nnodes;
-}
 template <typename Traits>
 inline bool Mesh_object_io<Traits>::read_nodes_file(const std::string &filename)
 {

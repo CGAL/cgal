@@ -70,6 +70,56 @@ inline bool get_next_uncommented_line(std::ifstream &infile, std::string &result
     return false;
 }
 
+template <typename Traits>
+inline size_t read_nodes(const std::string &node_file, bool load_nodes, std::vector<typename Traits::Point> *nodes)
+{
+    typedef typename Traits::Point Point;
+    std::ifstream in_file (node_file) ;
+    if ( ! in_file . good () ) {
+        std::cerr << "SimplicialComplex::loadFromFile. Fatal Error:\n  " << node_file << " not found.\n";
+        throw std::runtime_error("File Parsing Error: File not found");
+    }
+
+    // First line is the number of nodes
+    size_t nnodes, nnodes_tmp, nodes_dim ;
+    if ( ! in_file.eof())
+    {
+        std::string line;
+        getline( in_file, line );
+        check_sanity_line(line, node_file) ;
+        // First number is the number of nodes, then dimension of nodes
+        std::istringstream is (line);
+        is >> nnodes ;
+        is >> nodes_dim ;
+        if (nodes_dim != Traits::Dimension::value) {
+            std::cerr << "read_nodes error: dimension of nodes incompatible with Traits::Dimension" << std::endl;
+            throw("read_nodes error: dimension of nodes incompatible with Traits::Dimension");
+        }
+    }
+    nnodes_tmp =  nnodes ;
+    while ( !(in_file.eof()) && (nnodes_tmp>0))
+    {
+        size_t trash ;
+        double x ;
+        std::vector<double> node ;
+        --nnodes_tmp ;
+        std::string line;
+        getline( in_file, line );
+        check_sanity_line(line, node_file) ;
+        std::istringstream is (line);
+        is >> trash ;
+        for (int i = 0; i<3; ++i)
+        {
+            is >> x ;
+            node.push_back(x) ;
+        }
+        if (load_nodes)
+            nodes->push_back(Point(node[0], node[1], node[2])) ;
+    }
+    in_file.close() ;
+    return nnodes;
+}
+
 /*!
  \ingroup PkgHDVFAlgorithmClasses
 
