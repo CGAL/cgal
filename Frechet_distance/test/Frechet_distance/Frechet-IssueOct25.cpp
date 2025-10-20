@@ -24,34 +24,16 @@ bool load_polyline(const std::string &filename, std::vector<Point> &polyline) {
   return true;
 }
 
-int main(int argc, char* argv[]) {
+int main() {
 
   std::vector<Point> poly1, poly2;
 
-  //int N1 = std::atoi(argv[1]);
-  //int N2 = std::atoi(argv[2]);
   if (!load_polyline("poly1.txt", poly1) || !load_polyline("poly2.txt", poly2)) {
     std::cout << "input files could not be loaded" << std::endl;
-    return 0;
+    return -1;
   }
 
-/*
-  for(int i = N1; i < (int)poly1.size(); i++) {
-      poly1[i]  = poly1[0];
-  }
-  for(int i = N2; i < (int)poly2.size(); i++) {
-      poly2[i]  = poly2[0];
-  }
 
-  std::ofstream ofs("poly1_mod.txt");
-  for(const auto& p : poly1) {
-      ofs << p << std::endl;
-  }
-  std::ofstream ofs2("poly2_mod.txt");
-  for(const auto& p : poly2) {
-      ofs2 << p << std::endl;
-  }
-*/
   std::pair<double, double> res = CGAL::bounded_error_Frechet_distance(poly1, poly2, 0.000001);
  std::cout << "Frechet distance: [" << res.first << ", " << res.second << "]" << std::endl;
   return 0;
