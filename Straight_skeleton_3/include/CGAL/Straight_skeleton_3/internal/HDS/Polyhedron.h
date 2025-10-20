@@ -940,6 +940,11 @@ public:
       this->vertex_dst_list_it_ = list_it;
     }
 
+    bool hasVertex(const VertexSPtr& vertex)
+    {
+      return (this->vertex_src_ == vertex || this->vertex_dst_ == vertex);
+    }
+
     FacetSPtr getFacetL() const
     {
       return this->facet_l_.lock();
@@ -2753,8 +2758,13 @@ public:
           result = false;
           break;
         }
-        if (!facet->containsVertex(edge->getVertexSrc()) ||
-            !facet->containsVertex(edge->getVertexDst())) {
+        if (!facet->containsVertex(edge->getVertexSrc())) {
+          CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << facet->toString());
+          CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->toString());
+          result = false;
+          break;
+        }
+        if (!facet->containsVertex(edge->getVertexDst())) {
           CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << facet->toString());
           CGAL_SS3_HDS_TRACE("Inconsistency @ L" << __LINE__ << "\n" << edge->toString());
           result = false;

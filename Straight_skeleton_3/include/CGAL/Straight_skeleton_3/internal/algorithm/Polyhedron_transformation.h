@@ -384,7 +384,9 @@ public:
       }
     }
 
-    sanitize(polyhedron);
+    CGAL_postcondition(polyhedron->isConsistent());
+
+    sanitize(polyhedron); // remove degenerate vertices and facets
 
     polyhedron->initializeAllIDs();
 
@@ -416,10 +418,10 @@ public:
 
   static int removeVerticesDegLt3(const PolyhedronSPtr& polyhedron)
   {
-    CGAL_SS3_TRANSF_TRACE("Remove Vertices with degree < 3");
-    CGAL_SS3_TRANSF_TRACE("  initial vertex count: " << polyhedron->vertices().size());
+    CGAL_SS3_TRANSF_TRACE("Remove vertices with degree < 3");
 
     CGAL_SS3_DEBUG_SPTR(polyhedron);
+    CGAL_SS3_TRANSF_TRACE("  initial vertex count: " << polyhedron->vertices().size());
 
     int result = 0;
     std::list<VertexSPtr> vertices_toremove;
@@ -440,17 +442,11 @@ public:
       VertexSPtr vertex = *it_v++;
       CGAL_SS3_TRANSF_TRACE("Removing " << vertex->toString());
 
-      typename std::list<FacetWPtr>::iterator it_f = vertex->facets().begin();
-      while (it_f != vertex->facets().end()) {
-        FacetWPtr facet_wptr = *it_f++;
-        if (FacetSPtr facet = facet_wptr.lock()) {
-          facet->removeVertex(vertex);
-        }
-      }
-
       if (vertex->degree() == 2) {
         EdgeSPtr edge_src = vertex->firstEdge();
         EdgeSPtr edge_dst = edge_src->next(vertex);
+        CGAL_assertion(edge_src->hasVertex(vertex));
+        CGAL_assertion(edge_dst->hasVertex(vertex));
 
         VertexSPtr vertex_src = edge_src->getVertexSrc();
         if (vertex_src == vertex) {
@@ -465,69 +461,50 @@ public:
         FacetSPtr fR = edge_src->getFacetR();
         CGAL_assertion(fL != fR);
 
-        // if there is any facet with degree 3, put it in fL (both could be with degree 3,
-        // but then the swap does not change anything)
-        //
-        // It's "== 2" because we have already removed the vertex from its incident facets
-        CGAL_assertion(!fL->hasVertex(vertex));
-        CGAL_assertion(!fR->hasVertex(vertex));
-        if (fR->vertices().size() == 2) {
-          std::swap(fL, fR);
+        if (fL->vertices().size() == 3) {
+          CGAL_SS3_TRANSF_TRACE("Deg 2 vertex is the apex of a triangle facet (fL=" << fL->getID() << ")");
+          EdgeSPtr third_edge;
+          for (const EdgeSPtr& edge : fL->edges()) {
+            if (edge != edge_src && edge != edge_dst) {
+              third_edge = edge;
+              break;
+            }
+          }
+          CGAL_assertion(third_edge != nullptr);
+          mergeFacets(third_edge, polyhedron);
         }
 
-        if (fL->vertices().size() == 2) {
-          if (fR->vertices().size() == 2) {
-            CGAL_SS3_TRANSF_TRACE("Vertex is the apex of two facets of degree 3");
-            // both facets have degree 3, so remove everything (both facets, both edges,
-            // and one of the other edges + setting up incident facets properly)
-            VertexSPtr other_vertex = edge_src->other(vertex);
-            EdgeSPtr third_edge_1 = edge_src->next(other_vertex);
-            EdgeSPtr third_edge_2 = edge_src->prev(other_vertex);
-            CGAL_assertion(third_edge_1 != third_edge_2);
-            mergeFacets(third_edge_1, polyhedron);
-            mergeFacets(third_edge_2, polyhedron);
-
-            edge_dst->getFacetL()->removeEdge(edge_dst);
-            edge_dst->getFacetR()->removeEdge(edge_dst);
-            polyhedron->removeEdge(edge_dst);
-
-            if (edge_src->getVertexDst() == vertex) {
-              edge_src->replaceVertexDst(vertex_dst);
-            } else if (edge_src->getVertexSrc() == vertex) {
-              edge_src->replaceVertexSrc(vertex_dst);
-            }
-          } else {
-            CGAL_SS3_TRANSF_TRACE("Vertex is the apex of one facet of degree 3");
-            // one facet has degree 3, so remove the vertex, the two incident edges, and the facet.
-            EdgeSPtr third_edge;
-            for (const EdgeSPtr& edge : fR->edges()) {
-              if (edge != edge_src && edge != edge_dst) {
-                third_edge = edge;
-                break;
-              }
-            }
-            CGAL_assertion(third_edge != nullptr);
-
-            fR->removeVertex(vertex);
-            fR->removeEdge(edge_src);
-            fR->removeEdge(edge_dst);
-            fL->removeEdge(third_edge);
-            if (third_edge->getFacetL() == fL) {
-              third_edge->setFacetL(fR);
-            } else {
-              third_edge->setFacetR(fR);
+        if (fR->vertices().size() == 3) {
+          CGAL_SS3_TRANSF_TRACE("Deg 2 vertex is the apex of a triangle facet (fR=" << fR->getID() << ")");
+          EdgeSPtr third_edge;
+          for (const EdgeSPtr& edge : fR->edges()) {
+            if (edge != edge_src && edge != edge_dst) {
+              third_edge = edge;
+              break;
             }
           }
+          CGAL_assertion(third_edge != nullptr);
+          mergeFacets(third_edge, polyhedron);
+        }
+
+        typename std::list<FacetWPtr>::iterator it_f = vertex->facets().begin();
+        while (it_f != vertex->facets().end()) {
+          FacetWPtr facet_wptr = *it_f++;
+          if (FacetSPtr facet = facet_wptr.lock()) {
+            facet->removeVertex(vertex);
+          }
+        }
+
+        edge_dst->getFacetL()->removeEdge(edge_dst);
+        edge_dst->getFacetR()->removeEdge(edge_dst);
+        polyhedron->removeEdge(edge_dst);
+
+        if (edge_src->getVertexDst() == vertex) {
+          edge_src->replaceVertexDst(vertex_dst);
+        } else if (edge_src->getVertexSrc() == vertex) {
+          edge_src->replaceVertexSrc(vertex_dst);
         } else {
-          edge_dst->getFacetL()->removeEdge(edge_dst);
-          edge_dst->getFacetR()->removeEdge(edge_dst);
-          polyhedron->removeEdge(edge_dst);
-
-          if (edge_src->getVertexDst() == vertex) {
-            edge_src->replaceVertexDst(vertex_dst);
-          } else if (edge_src->getVertexSrc() == vertex) {
-            edge_src->replaceVertexSrc(vertex_dst);
-          }
+          CGAL_assertion(false);
         }
       }
 
@@ -537,13 +514,18 @@ public:
     }
 
     CGAL_SS3_TRANSF_TRACE("  final vertex count: " << polyhedron->vertices().size());
+    CGAL_postcondition(polyhedron->isConsistent());
 
     return result;
   }
 
   static int removeFacetsDegLt3(const PolyhedronSPtr& polyhedron)
   {
+    CGAL_SS3_TRANSF_TRACE("Remove facets with size < 3");
+
     CGAL_SS3_DEBUG_SPTR(polyhedron);
+    CGAL_SS3_TRANSF_TRACE("  initial facet count: " << polyhedron->facets().size());
+
     int result = 0;
     std::list<FacetSPtr> facets_tomerge;
     for (const FacetSPtr& facet : polyhedron->facets()) {
@@ -587,6 +569,10 @@ public:
       }
       ++result;
     }
+
+    CGAL_SS3_TRANSF_TRACE("  final facet count: " << polyhedron->vertices().size());
+    CGAL_postcondition(polyhedron->isConsistent());
+
     return result;
   }
 
