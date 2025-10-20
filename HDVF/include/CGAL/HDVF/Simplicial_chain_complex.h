@@ -44,6 +44,8 @@ public:
 
     /** \brief Type of vertex coordinates */
     typedef typename Traits::Point Point ;
+    /** \brief Type of vtk export vertex coordinates */
+    typedef typename Traits::Point3 Point3 ;
 
 protected:
     /** \brief Vector of vertex coordinates */
@@ -148,12 +150,8 @@ public:
         const std::vector<ChainComplex::Point>& coords(K.points()) ;
         for (size_t n = 0; n < nnodes; ++n)
         {
-            Point p(coords.at(n)) ;
-
-            out << p;
-            if constexpr (Traits::Dimension::value==2){
-                out << " 0" ;
-            }
+            Point3 p(Traits::to_point3(coords.at(n))) ;
+            out << p ;
             out << std::endl ;
         }
 
@@ -270,11 +268,8 @@ void Simplicial_chain_complex<CoefficientRing,Traits>::chain_to_vtk(const Simpli
     const std::vector<ChainComplex::Point>& coords(K.points()) ;
     for (size_t n = 0; n < nnodes; ++n)
     {
-        Point p(coords.at(n)) ;
+        Point3 p(Traits::to_point3(coords.at(n))) ;
         out << p ;
-        if constexpr (Traits::Dimension::value==2){
-            out << " 0" ;
-        }
         out << std::endl ;
     }
 

@@ -87,6 +87,8 @@ public:
 
     /** \brief Type of vertex coordinates */
     typedef typename Traits::Point Point ;
+    /** \brief Type of vtk export vertex coordinates */
+    typedef typename Traits::Point3 Point3 ;
 private:
     /* \brief Vector of VTK types associated to cells in each dimension
      e.g. {1, 3, 8, 11} */
@@ -116,7 +118,7 @@ public:
      * \param[in] cub A Cub_object_io containing a set of "cubical" cells.
      * \param[in] type Type of construction used (PRIMAL or DUAL).
      */
-    Cubical_chain_complex(const Cub_object_io& cub,Cubical_complex_primal_dual type);
+    Cubical_chain_complex(const Cub_object_io<Traits>& cub,Cubical_complex_primal_dual type);
 
 //    /** \brief Friend class `Duality_cubical_complex_tools` provides tools for Alexander duality. */
 //    friend Duality_cubical_complex_tools<CoefficientRing> ;
@@ -498,11 +500,8 @@ public:
         out << "POINTS " << nnodes << " double" << std::endl ;
         for (size_t n = 0; n < nnodes; ++n)
         {
-            Point p(K.point(n)) ;
+            Point3 p(Traits::to_point3(K.point(n))) ;
             out << p ;
-            if constexpr (Traits::Dimension::value==2){
-                out << " 0";
-            }
             out << std::endl ;
         }
 
@@ -751,7 +750,7 @@ private:
     // Protected methods
 protected:
     /* Initialize _cells, _base2bool and _bool2base */
-    void initialize_cells(const Cub_object_io& cub,Cubical_complex_primal_dual type);
+    void initialize_cells(const Cub_object_io<Traits>& cub,Cubical_complex_primal_dual type);
 
     /* \brief Calculate the dimension of a cell (given by its boolean index) */
     int dimension(size_t cell_index) const
@@ -822,7 +821,7 @@ size_t Cubical_chain_complex<CoefficientRing, Traits>::_id_generator(0) ;
 
 // Constructor implementation
 template<typename CoefficientRing, typename Traits>
-Cubical_chain_complex<CoefficientRing, Traits>::Cubical_chain_complex(const Cub_object_io& cub,Cubical_complex_primal_dual type) : _dim(cub.dim), _size_bb(_dim+1), _P(_dim+1,1), _base2bool(_dim+1), _bool2base(_dim+1), _complex_id(_id_generator++)
+Cubical_chain_complex<CoefficientRing, Traits>::Cubical_chain_complex(const Cub_object_io<Traits>& cub,Cubical_complex_primal_dual type) : _dim(cub.dim), _size_bb(_dim+1), _P(_dim+1,1), _base2bool(_dim+1), _bool2base(_dim+1), _complex_id(_id_generator++)
 
 {
     // Initialize _size_bb and _P
@@ -858,7 +857,7 @@ Cubical_chain_complex<CoefficientRing, Traits>::Cubical_chain_complex(const Cub_
 
 // initialize_cells implementation
 template<typename CoefficientRing, typename Traits>
-void Cubical_chain_complex<CoefficientRing, Traits>::initialize_cells(const Cub_object_io& cub, Cubical_complex_primal_dual type)
+void Cubical_chain_complex<CoefficientRing, Traits>::initialize_cells(const Cub_object_io<Traits>& cub, Cubical_complex_primal_dual type)
 {
     if (type == PRIMAL)
     {
@@ -1056,11 +1055,10 @@ void Cubical_chain_complex<CoefficientRing,Traits>::chain_to_vtk(const Cubical_c
     out << "POINTS " << nnodes << " double" << std::endl ;
     for (size_t n = 0; n < nnodes; ++n)
     {
-        Point p(K.point(n)) ;
-        out << p;
-        if constexpr (Traits::Dimension::value==2){
+        Point3 p(Traits::to_point3(K.point(n))) ;
+        out << p ;
+        for (int i = Traits::Dimension::value; i<3; ++i)
             out << " 0";
-        }
         out << std::endl ;
     }
 

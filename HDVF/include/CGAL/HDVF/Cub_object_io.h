@@ -38,6 +38,7 @@ typedef std::vector<IOCubCellType> IOCubChainType ;
 
  */
 
+template <typename Traits>
 class Cub_object_io
 {
 public:
@@ -126,6 +127,12 @@ public:
             std::cout << sizes.at(i) << " " ;
         std::cout << std::endl ;
         dim = sizes.size() ;
+        std::cout << "Traits dimension: " << Traits::Dimension::value << std::endl;
+        if (Traits::Dimension::value != dim) {
+            std::cerr << "read_pgm error: dimension of Cubical_complex and Traits differ" << std::endl;
+            throw "read_pgm error: dimension of Cubical_complex and Traits differ";
+        }
+            
         N = std::vector<size_t>(dim) ;
         for (size_t i=0; i<dim; ++i)
             N.at(i) = sizes.at(i) ;

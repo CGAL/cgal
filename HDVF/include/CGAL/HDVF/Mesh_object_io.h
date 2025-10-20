@@ -108,8 +108,10 @@ private:
         // Points
         size_t nnodes = nodes.size() ;
         out << "POINTS " << nnodes << " double" << std::endl ;
-        for (Point n : nodes)
-            out << n.at(0) << " " << n.at(1) << " " << n.at(2) << std::endl ;
+        for (Point n : nodes) {
+            out << Traits::to_point3(n);
+            out << std::endl ;
+        }
 
         // Cells
         // Number of cells : for each chain, each number of vertices for each cell

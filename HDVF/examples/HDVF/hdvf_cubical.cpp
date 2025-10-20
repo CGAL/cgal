@@ -2,6 +2,7 @@
 #include <fstream>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/HDVF/Hdvf_traits_3.h>
+#include <CGAL/HDVF/Hdvf_traits_2.h>
 #include <CGAL/HDVF/Cub_object_io.h>
 #include <CGAL/HDVF/Cubical_chain_complex.h>
 #include <CGAL/HDVF/Geometric_chain_complex_tools.h>
@@ -17,7 +18,8 @@ namespace HDVF = CGAL::Homological_discrete_vector_field;
 typedef HDVF::Zp<5, char, true> Coefficient_ring;
 
 typedef CGAL::Simple_cartesian<double> Kernel;
-typedef HDVF::Hdvf_traits_3<Kernel> Traits;
+//typedef HDVF::Hdvf_traits_3<Kernel> Traits;
+typedef HDVF::Hdvf_traits_2<Kernel> Traits;
 
 int main(int argc, char **argv)
 {
@@ -34,7 +36,7 @@ int main(int argc, char **argv)
     // Adapt pgm loading into Cub_complex accordingly
     const bool khalimsky_coords = (primal_dual == Complex::PRIMAL) ? true : false ;
     
-    HDVF::Cub_object_io mesh ;
+    HDVF::Cub_object_io<Traits> mesh ;
     
     // Load pgm into cub object
     mesh.read_pgm(filename, khalimsky_coords);

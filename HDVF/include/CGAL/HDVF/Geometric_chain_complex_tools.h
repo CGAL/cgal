@@ -464,7 +464,7 @@ public:
      */
     static std::pair<Chain_complex&, Sub_chain_complex&> cubical_chain_complex_bb (const Chain_complex& _K)
     {
-        Cub_object_io tmp_L ;
+        Cub_object_io<Traits> tmp_L ;
         tmp_L.dim = _K.dimension() ;
         tmp_L.N = _K.size_bb() ;
         tmp_L.ncubs.resize(tmp_L.dim+1) ;

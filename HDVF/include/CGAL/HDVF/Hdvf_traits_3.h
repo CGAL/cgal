@@ -39,6 +39,8 @@ struct Hdvf_traits_3 {
     typedef typename K::Vector_3 Vector;
     typedef typename K::FT FT;
     typedef CGAL::Bbox_3 Bbox;
+    typedef typename K::Point_3 Point3;
+    static Point3 to_point3(const Point& p) { return Point3(p[0], p[1], p[2]); }
 };
 
 } /* end namespace Homological_discrete_vector_field */
