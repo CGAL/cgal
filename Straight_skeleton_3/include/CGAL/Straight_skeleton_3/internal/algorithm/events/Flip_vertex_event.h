@@ -21,7 +21,7 @@
 #include <CGAL/Straight_skeleton_3/IO/String_factory.h>
 #include <CGAL/Straight_skeleton_3/internal/algorithm/events/Abstract_event.h>
 #include <CGAL/Straight_skeleton_3/internal/HDS/Polyhedron.h>
-#include <CGAL/Straight_skeleton_3/internal/SDS/Straight_skeleton.h>
+#include <CGAL/Straight_skeleton_3/Straight_skeleton_3.h>
 
 #include <memory>
 #include <string>
@@ -33,11 +33,11 @@ namespace internal {
 namespace algorithm {
 
 template <typename Traits>
-class FlipVertexEvent
-  : public AbstractEvent<Traits>
+class Flip_vertex_event
+  : public Abstract_event<Traits>
 {
-  using Base = AbstractEvent<Traits>;
-  using FlipVertexEventSPtr = std::shared_ptr<FlipVertexEvent<Traits> >;
+  using Base = Abstract_event<Traits>;
+  using Flip_vertex_event_sptr = std::shared_ptr<Flip_vertex_event<Traits> >;
 
 private:
   using Point_3 = typename Traits::Point_3;
@@ -50,123 +50,123 @@ private:
   using FacetSPtr = typename Polyhedron::FacetSPtr;
 
 private:
-  using VertexFacetNeighborhood = algorithm::VertexFacetNeighborhood<Traits>;
+  using Vertex_facet_neighborhood = algorithm::Vertex_facet_neighborhood<Traits>;
 
 public:
-  FlipVertexEvent()
+  Flip_vertex_event()
     : Base(Base::FLIP_VERTEX_EVENT)
   { }
 
-  virtual ~FlipVertexEvent()
+  virtual ~Flip_vertex_event()
   { }
 
-  static FlipVertexEventSPtr create()
+  static Flip_vertex_event_sptr create()
   {
-    return std::make_shared<FlipVertexEvent>();
+    return std::make_shared<Flip_vertex_event>();
   }
 
-  Point3SPtr getPoint() const
+  Point3SPtr point() const
   {
     CGAL_SS3_DEBUG_SPTR(point_);
     return point_;
   }
 
-  void setPoint(const Point3SPtr& point)
+  void set_point(const Point3SPtr& point)
   {
     this->point_ = point;
   }
 
-  VertexSPtr getVertex1() const
+  VertexSPtr get_vertex_1() const
   {
     CGAL_SS3_DEBUG_WPTR(vertex_1_);
     return vertex_1_.lock();
   }
 
-  void setVertex1(const VertexSPtr& vertex_1)
+  void set_vertex_1(const VertexSPtr& vertex_1)
   {
     CGAL_SS3_DEBUG_SPTR(vertex_1);
     this->vertex_1_ = vertex_1;
-    this->neighborhood_1_ = VertexFacetNeighborhood(vertex_1);
+    this->neighborhood_1_ = Vertex_facet_neighborhood(vertex_1);
   }
 
-  VertexSPtr getVertex2() const
+  VertexSPtr get_vertex_2() const
   {
     CGAL_SS3_DEBUG_WPTR(vertex_2_);
     return vertex_2_.lock();
   }
 
-  void setVertex2(const VertexSPtr& vertex_2)
+  void set_vertex_2(const VertexSPtr& vertex_2)
   {
     CGAL_SS3_DEBUG_SPTR(vertex_2);
     this->vertex_2_ = vertex_2;
-    this->neighborhood_2_ = VertexFacetNeighborhood(vertex_2);
+    this->neighborhood_2_ = Vertex_facet_neighborhood(vertex_2);
   }
 
-  FacetSPtr getFacet1() const
+  FacetSPtr get_facet_1() const
   {
     CGAL_SS3_DEBUG_WPTR(facet_1_);
     return facet_1_.lock();
   }
 
-  void setFacet1(const FacetSPtr& facet_1)
+  void set_facet_1(const FacetSPtr& facet_1)
   {
     CGAL_SS3_DEBUG_SPTR(facet_1);
     this->facet_1_ = facet_1;
   }
 
-  FacetSPtr getFacet2() const
+  FacetSPtr get_facet_2() const
   {
     CGAL_SS3_DEBUG_WPTR(facet_2_);
     return facet_2_.lock();
   }
 
-  void setFacet2(const FacetSPtr& facet_2)
+  void set_facet_2(const FacetSPtr& facet_2)
   {
     CGAL_SS3_DEBUG_SPTR(facet_2);
     this->facet_2_ = facet_2;
   }
 
-  bool isValid() const
+  bool is_valid() const
   {
     return (!vertex_1_.expired() && !vertex_2_.expired() &&
             !facet_1_.expired() && !facet_2_.expired());
   }
 
-  bool isObsolete() const
+  bool is_obsolete() const
   {
-    if (VertexSPtr vertex_1 = getVertex1()) {
-      if (!neighborhood_1_.checkNeighborhoodConsistency(vertex_1)) {
+    if (VertexSPtr vertex_1 = get_vertex_1()) {
+      if (!neighborhood_1_.check_neighborhood_consistency(vertex_1)) {
         return true;
       }
     }
-    if (VertexSPtr vertex_2 = getVertex2()) {
-      if (!neighborhood_2_.checkNeighborhoodConsistency(vertex_2)) {
+    if (VertexSPtr vertex_2 = get_vertex_2()) {
+      if (!neighborhood_2_.check_neighborhood_consistency(vertex_2)) {
         return true;
       }
     }
     return false;
   }
 
-  std::string toString() const
+  std::string to_string() const
   {
-    VertexSPtr vertex_1 = getVertex1();
-    VertexSPtr vertex_2 = getVertex2();
-    FacetSPtr facet_1 = getFacet1();
-    FacetSPtr facet_2 = getFacet2();
+    VertexSPtr vertex_1 = get_vertex_1();
+    VertexSPtr vertex_2 = get_vertex_2();
+    FacetSPtr facet_1 = get_facet_1();
+    FacetSPtr facet_2 = get_facet_2();
 
     std::stringstream sstr;
     sstr.precision(17);
-    sstr << "FlipVertexEvent\n";
-    sstr << "\t(ID=" << Base::getID() << ")\n";
-    sstr << "\t(time=" << IO::StringFactory::fromDouble(CGAL::to_double(Base::getTime())) << ")\n";
-    sstr << "\t(vertex A=" << vertex_1->toString() << "; vertex B=" << vertex_2->toString() << ")\n";
-    sstr << "\t(facet A=" << facet_1->getID() << "; facet B=" << facet_2->getID() << ")";
+    sstr << "Flip_vertex_event\n";
+    sstr << "\t(ID=" << Base::get_ID() << ")\n";
+    sstr << "\t(time=" << IO::String_factory::fromDouble(CGAL::to_double(Base::time())) << ")\n";
+    sstr << "\t(vertex A=" << vertex_1->to_string() << "; vertex B=" << vertex_2->to_string() << ")\n";
+    sstr << "\t(facet A=" << facet_1->get_ID() << "; facet B=" << facet_2->get_ID() << ")";
     return sstr.str();
   }
 
-  bool operator==(const FlipVertexEvent& other) const
+  bool operator==(const Flip_vertex_event& other) const
   {
-    return (Base::getTime() == other.getTime()) &&
+    return (Base::time() == other.time()) &&
             (!point_ || !other.point_ || *point_ == *(other.point_)) &&
             ((facet_1_.lock() == other.facet_1_.lock() &&
               facet_2_.lock() == other.facet_2_.lock()) ||
@@ -185,8 +185,8 @@ protected:
   FacetWPtr facet_1_;
   FacetWPtr facet_2_;
 
-  VertexFacetNeighborhood neighborhood_1_;
-  VertexFacetNeighborhood neighborhood_2_;
+  Vertex_facet_neighborhood neighborhood_1_;
+  Vertex_facet_neighborhood neighborhood_2_;
 };
 
 } // namespace algorithm

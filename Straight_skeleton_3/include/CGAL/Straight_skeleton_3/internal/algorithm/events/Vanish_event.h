@@ -15,7 +15,7 @@
 #include <CGAL/Straight_skeleton_3/IO/String_factory.h>
 #include <CGAL/Straight_skeleton_3/internal/algorithm/events/Abstract_event.h>
 #include <CGAL/Straight_skeleton_3/internal/HDS/Polyhedron.h>
-#include <CGAL/Straight_skeleton_3/internal/SDS/Straight_skeleton.h>
+#include <CGAL/Straight_skeleton_3/Straight_skeleton_3.h>
 
 #include <memory>
 #include <string>
@@ -27,11 +27,11 @@ namespace internal {
 namespace algorithm {
 
 template <typename Traits>
-class VanishEvent
-  : public AbstractEvent<Traits>
+class Vanish_event
+  : public Abstract_event<Traits>
 {
-  using Base = AbstractEvent<Traits>;
-  using VanishEventSPtr = std::shared_ptr<VanishEvent<Traits> >;
+  using Base = Abstract_event<Traits>;
+  using Vanish_event_sptr = std::shared_ptr<Vanish_event<Traits> >;
 
 private:
   using Point_3 = typename Traits::Point_3;
@@ -43,89 +43,89 @@ private:
   using EdgeSPtr = typename Polyhedron::EdgeSPtr;
 
 private:
-  using EdgeFacetNeighborhood = algorithm::EdgeFacetNeighborhood<Traits>;
+  using Edge_facet_neighborhood = algorithm::Edge_facet_neighborhood<Traits>;
 
 public:
-  VanishEvent()
+  Vanish_event()
     : Base(Base::VANISH_EVENT)
   { }
 
-  virtual ~VanishEvent()
+  virtual ~Vanish_event()
   { }
 
-  static VanishEventSPtr create()
+  static Vanish_event_sptr create()
   {
-    return std::make_shared<VanishEvent>();
+    return std::make_shared<Vanish_event>();
   }
 
-  Point3SPtr getPoint() const
+  Point3SPtr point() const
   {
     CGAL_SS3_DEBUG_SPTR(point_);
     return point_;
   }
 
-  void setPoint(const Point3SPtr& point)
+  void set_point(const Point3SPtr& point)
   {
     this->point_ = point;
   }
 
-  EdgeSPtr getEdge() const
+  EdgeSPtr get_edge() const
   {
     CGAL_SS3_DEBUG_WPTR(edge_);
     return edge_.lock();
   }
 
-  void setEdge(const EdgeSPtr& edge)
+  void set_edge(const EdgeSPtr& edge)
   {
     CGAL_SS3_DEBUG_SPTR(edge);
     this->edge_ = edge;
-    this->neighborhood_ = EdgeFacetNeighborhood(edge);
+    this->neighborhood_ = Edge_facet_neighborhood(edge);
   }
 
-  bool isValid() const
+  bool is_valid() const
   {
     return (!edge_.expired());
   }
 
-  bool isObsolete() const
+  bool is_obsolete() const
   {
-    if (EdgeSPtr edge = getEdge()) {
-      return ! neighborhood_.checkNeighborhoodConsistency(edge);
+    if (EdgeSPtr edge = get_edge()) {
+      return ! neighborhood_.check_neighborhood_consistency(edge);
     }
     return false;
   }
 
-  std::string toString() const
+  std::string to_string() const
   {
-    EdgeSPtr edge = getEdge();
+    EdgeSPtr edge = get_edge();
 
     std::stringstream sstr;
     sstr.precision(17);
-    sstr << "VanishEvent\n";
-    sstr << "\t(ID=" << Base::getID() << ")\n";
-    sstr << "\t(time=" << IO::StringFactory::fromDouble(CGAL::to_double(Base::getTime())) << ")\n";
+    sstr << "Vanish_event\n";
+    sstr << "\t(ID=" << Base::get_ID() << ")\n";
+    sstr << "\t(time=" << IO::String_factory::fromDouble(CGAL::to_double(Base::time())) << ")\n";
     if (point_) {
-      sstr << "\t(point=<" + IO::StringFactory::fromDouble(CGAL::to_double(point_->x())) + " "
-                           + IO::StringFactory::fromDouble(CGAL::to_double(point_->y())) + " "
-                           + IO::StringFactory::fromDouble(CGAL::to_double(point_->z())) + ">)";
+      sstr << "\t(point=<" + IO::String_factory::fromDouble(CGAL::to_double(point_->x())) + " "
+                           + IO::String_factory::fromDouble(CGAL::to_double(point_->y())) + " "
+                           + IO::String_factory::fromDouble(CGAL::to_double(point_->z())) + ">)";
     }
-    sstr << "\t(edgeA=" << edge->getID() << "\n\t\t[" << edge->getVertexSrc()->toString() << "\n\t\t "
-                                                      << edge->getVertexDst()->toString() << "])";
+    sstr << "\t(edgeA=" << edge->get_ID() << "\n\t\t[" << edge->getVertexSrc()->to_string() << "\n\t\t "
+                                                       << edge->getVertexDst()->to_string() << "])";
     return sstr.str();
   }
 
-  bool operator==(const VanishEvent& other) const
+  bool operator==(const Vanish_event& other) const
   {
-    return (Base::getTime() == other.getTime()) &&
+    return (Base::time() == other.time()) &&
             // && (edge_.lock() == other.edge_.lock()) // because of multiple reps...
-            (*(getPoint()) == *(other.getPoint()));
+            (*(point()) == *(other.point()));
   }
 
 protected:
   Point3SPtr point_;
   EdgeWPtr edge_;
 
-  EdgeFacetNeighborhood neighborhood_;
+  Edge_facet_neighborhood neighborhood_;
 };
 
 } // namespace algorithm

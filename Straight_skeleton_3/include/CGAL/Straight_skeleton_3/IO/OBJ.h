@@ -47,7 +47,7 @@ class Polyhedron;
 namespace SDS {
 
 template <typename Traits>
-class StraightSkeleton;
+class Straight_skeleton_3;
 
 } // namespace SDS
 } // namespace internal
@@ -80,7 +80,7 @@ public:
     using EdgeSPtr = typename Polyhedron::EdgeSPtr;
     using FacetSPtr = typename Polyhedron::FacetSPtr;
 
-    using KernelFactory = internal::kernel::KernelFactory<Traits>;
+    using Kernel_factory = internal::kernel::Kernel_factory<Traits>;
 
     bool result = true;
     CGAL_SS3_IO_TRACE("-- OBJ::Save(Polyhedron) to " << filename << " --");
@@ -88,7 +88,7 @@ public:
                       "   convert_to_double: " << convert_to_double);
     CGAL_SS3_IO_TRACE(polyhedron->vertices().size() << " NV, " << polyhedron->facets().size() << " NF");
 
-    // CGAL_SS3_IO_TRACE("Saving to OBJ:\n" << polyhedron->toString());
+    // CGAL_SS3_IO_TRACE("Saving to OBJ:\n" << polyhedron->to_string());
 
     // we can tolerate intersections for OBJ::save because it is only used for debugging
     // CGAL::Exact_intersections_tag
@@ -116,7 +116,7 @@ public:
 
     // Write vertices
     for (const VertexSPtr& vertex : polyhedron->vertices()) {
-      Point3SPtr pt = vertex->getPoint();
+      Point3SPtr pt = vertex->point();
       if (convert_to_double) {
         oss << "v " << CGAL::to_double(pt->x()) << " "
                     << CGAL::to_double(pt->y()) << " "
@@ -136,7 +136,7 @@ public:
       }
 
       if (do_triangulate_facet) {
-        Vector3SPtr n = KernelFactory::createVector3(facet->plane());
+        Vector3SPtr n = Kernel_factory::createVector3(facet->plane());
         CGAL_assertion(*n != CGAL::NULL_VECTOR);
 
         PK traits(*n);
@@ -147,7 +147,7 @@ public:
         for (const VertexSPtr& vertex : facet->vertices()) {
           auto res = face_vhs.emplace(vertex, PCDT_VH());
           if (res.second) { // first time seeing this point
-            PCDT_VH vh = pcdt.insert(*(vertex->getPoint()));
+            PCDT_VH vh = pcdt.insert(*(vertex->point()));
             vh->info() = vertex;
             res.first->second = vh;
           }
@@ -158,8 +158,8 @@ public:
           VertexSPtr v0 = edge->src(facet);
           VertexSPtr v1 = edge->dst(facet);
 
-          if (*(v0->getPoint()) == *(v1->getPoint())) {
-            CGAL_SS3_IO_TRACE("Degenerate edge @ " << *(v0->getPoint()));
+          if (*(v0->point()) == *(v1->point())) {
+            CGAL_SS3_IO_TRACE("Degenerate edge @ " << *(v0->point()));
 
             CGAL_assertion(v0->degree() != 1); // @todo handle that...
             VertexSPtr vm1 = edge->prev(facet)->src(facet);
@@ -181,8 +181,8 @@ public:
             catch(const typename PCDT::Intersection_of_constraints_exception&)
             {
               CGAL_SS3_IO_TRACE("Warning: Intersection of constraints");
-              CGAL_SS3_IO_TRACE("While inserting " << *(v0->getPoint()) << " || " << *(v1->getPoint()));
-              CGAL_SS3_IO_TRACE(facet->toString());
+              CGAL_SS3_IO_TRACE("While inserting " << *(v0->point()) << " || " << *(v1->point()));
+              CGAL_SS3_IO_TRACE(facet->to_string());
               CGAL_assertion_msg(false, "Intersections in CDT2 are not allowed");
               return false;
             }
@@ -192,12 +192,12 @@ public:
 
         if (pcdt.finite_vertex_handles().size() != facet->vertices().size()) {
           // CGAL_SS3_IO_TRACE("Warning: CDT #nv != facet #nv. Constraint intersection?");
-          // CGAL_SS3_IO_TRACE("Facet: " << facet->toString());
+          // CGAL_SS3_IO_TRACE("Facet: " << facet->to_string());
           // CGAL_SS3_IO_TRACE("CDT: " << pcdt.number_of_vertices() << " vertices, "
           //                           << pcdt.number_of_faces() << " faces");
           // CGAL_SS3_IO_TRACE("Vertices: ");
           // CGAL_SS3_IO_TRACE_CODE(for (PCDT_VH vh : pcdt.finite_vertex_handles()) {)
-          // CGAL_SS3_IO_TRACE("  " << vh->point() << " -> " << vh->info()->getID());
+          // CGAL_SS3_IO_TRACE("  " << vh->point() << " -> " << vh->info()->get_ID());
           // CGAL_SS3_IO_TRACE_CODE(})
         }
 
@@ -287,7 +287,7 @@ public:
 
   template <typename Traits>
   static bool save(const std::string& filename,
-                   std::shared_ptr<internal::SDS::StraightSkeleton<Traits> > skeleton,
+                   std::shared_ptr<Straight_skeleton_3<Traits> > skeleton,
                    bool convert_to_double = true)
   {
     using Point_3 = typename Traits::Point_3;
@@ -295,12 +295,12 @@ public:
     using Point3SPtr = std::shared_ptr<Point_3>;
     using Vector3SPtr = std::shared_ptr<Vector_3>;
 
-    using Skeleton = internal::SDS::StraightSkeleton<Traits>;
+    using Skeleton = Straight_skeleton_3<Traits>;
     using NodeSPtr = typename Skeleton::NodeSPtr;
     using ArcSPtr = typename Skeleton::ArcSPtr;
     using SheetSPtr = typename Skeleton::SheetSPtr;
 
-    using KernelFactory = internal::kernel::KernelFactory<Traits>;
+    using Kernel_factory = internal::kernel::Kernel_factory<Traits>;
 
     // For triangulation
     using Itag = CGAL::Exact_intersections_tag;
@@ -332,7 +332,7 @@ public:
 
     // Write vertices
     for (const NodeSPtr& node : skeleton->nodes()) {
-      Point3SPtr point = node->getPoint();
+      Point3SPtr point = node->point();
       CGAL_SS3_IO_ENABLE_TRACE("Node's #arcs " << node->degree());
       CGAL_SS3_IO_ENABLE_TRACE("Node's #sheets " << node->sheets().size());
 
@@ -365,7 +365,7 @@ public:
         }
         oss << "\n";
       } else {
-        Vector3SPtr n = KernelFactory::createVector3(sheet->getPlane());
+        Vector3SPtr n = Kernel_factory::createVector3(sheet->getPlane());
         CGAL_assertion(*n != CGAL::NULL_VECTOR);
 
         PK traits(*n);
@@ -373,11 +373,11 @@ public:
 
         std::map<NodeSPtr, PCDT_VH> face_vhs;
         for (const NodeSPtr& node : nodes) {
-          CGAL_SS3_IO_ENABLE_TRACE(" CDT add node " << node->getID());
+          CGAL_SS3_IO_ENABLE_TRACE(" CDT add node " << node->get_ID());
           auto res = face_vhs.emplace(node, PCDT_VH());
           CGAL_warning_msg(res.second, "Node should not be found twice in the sheet's nodes");
           if (res.second) {
-            PCDT_VH vh = pcdt.insert(*(node->getPoint()));
+            PCDT_VH vh = pcdt.insert(*(node->point()));
             vh->info() = node;
             res.first->second = vh;
           }
@@ -387,7 +387,7 @@ public:
         for (const ArcSPtr& arc : sheet->arcs()) {
           NodeSPtr node_src = arc->getNodeSrc();
           NodeSPtr node_dst = arc->getNodeDst();
-          CGAL_SS3_IO_ENABLE_TRACE(" CDT arc between " << node_src->getID() << " and " << node_dst->getID());
+          CGAL_SS3_IO_ENABLE_TRACE(" CDT arc between " << node_src->get_ID() << " and " << node_dst->get_ID());
           CGAL_SS3_DEBUG_SPTR(node_src);
           CGAL_SS3_DEBUG_SPTR(node_dst);
           PCDT_VH vh0 = face_vhs.at(node_src);
@@ -405,7 +405,7 @@ public:
           NodeSPtr v_src = contour->getNodeSrc();
           NodeSPtr v_dst = contour->getNodeDst();
           try {
-            pcdt.insert_constraint(*(v_src->getPoint()), *(v_dst->getPoint()));
+            pcdt.insert_constraint(*(v_src->point()), *(v_dst->point()));
           } catch(const typename PCDT::Intersection_of_constraints_exception&) {
             CGAL_SS3_IO_TRACE("Warning: Intersection of constraints in sheet triangulation");
             CGAL_assertion_msg(false, "Intersections in CDT2 are not allowed");

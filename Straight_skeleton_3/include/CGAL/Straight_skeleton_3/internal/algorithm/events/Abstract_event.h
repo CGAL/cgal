@@ -31,46 +31,46 @@ namespace internal {
 namespace algorithm {
 
 template <typename Traits>
-class AbstractEvent
+class Abstract_event
 {
-  using AbstractEventSPtr = std::shared_ptr<AbstractEvent<Traits> >;
+  using Abstract_event_sptr = std::shared_ptr<Abstract_event<Traits> >;
 
   using FT = typename Traits::FT;
 
 public:
-  AbstractEvent(int type = -2)
+  Abstract_event(int type = -2)
     : type_(type),
       id_(next_id_++)
   { }
 
-  virtual ~AbstractEvent() { /*intentionally does nothing*/ }
+  virtual ~Abstract_event() { /*intentionally does nothing*/ }
 
-  typename std::list<AbstractEventSPtr>::iterator getListIt() const
+  typename std::list<Abstract_event_sptr>::iterator getListIt() const
   {
     return this->list_it_;
   }
 
-  void setListIt(typename std::list<AbstractEventSPtr>::iterator list_it)
+  void setListIt(typename std::list<Abstract_event_sptr>::iterator list_it)
   {
     this->list_it_ = list_it;
   }
 
-  int getID() const
+  int get_ID() const
   {
     return this->id_;
   }
 
-  void setID(const int id)
+  void set_ID(const int id)
   {
     this->id_ = id;
   }
 
-  const FT& getTime() const
+  const FT& time() const
   {
     return time_;
   }
 
-  void setTime(const FT& time)
+  void set_time(const FT& time)
   {
     this->time_ = time;
   }
@@ -125,77 +125,77 @@ public:
     return this->type_;
   }
 
-  virtual bool isValid() const
+  virtual bool is_valid() const
   {
     return true;
   }
 
-  virtual bool isObsolete() const
+  virtual bool is_obsolete() const
   {
     return false;
   }
 
-  virtual std::string toString() const
+  virtual std::string to_string() const
   {
     std::stringstream sstr;
     switch (getType()) {
       case CONST_TIME_EVENT:
-        sstr << "ConstTimeEvent";
+        sstr << "Const_time_event";
         break;
       case SAVE_EVENT:
-        sstr << "SaveEvent";
+        sstr << "Save_event";
         break;
       case VANISH_EVENT:
-        sstr << "VanishEvent";
+        sstr << "Vanish_event";
         break;
       case EDGE_EVENT:
-        sstr << "EdgeEvent";
+        sstr << "Edge_event";
         break;
       case EDGE_MERGE_EVENT:
-        sstr << "EdgeMergeEvent";
+        sstr << "Edge_merge_event";
         break;
       case TRIANGLE_EVENT:
-        sstr << "TriangleEvent";
+        sstr << "Triangle_event";
         break;
       case DBL_EDGE_MERGE_EVENT:
-        sstr << "DblEdgeMergeEvent";
+        sstr << "Dbl_edge_merge_event";
         break;
       case DBL_TRIANGLE_EVENT:
-        sstr << "DblTriangleEvent";
+        sstr << "Dbl_triangle_event";
         break;
       case TETRAHEDRON_EVENT:
-        sstr << "TetrahedronEvent";
+        sstr << "Tetrahedron_event";
         break;
       case VERTEX_EVENT:
-        sstr << "VertexEvent";
+        sstr << "Vertex_event";
         break;
       case FLIP_VERTEX_EVENT:
-        sstr << "FlipVertexEvent";
+        sstr << "Flip_vertex_event";
         break;
       case SURFACE_EVENT:
-        sstr << "SurfaceEvent";
+        sstr << "Surface_event";
         break;
       case POLYHEDRON_SPLIT_EVENT:
-        sstr << "PolyhedronSplitEvent";
+        sstr << "Polyhedron_split_event";
         break;
       case SPLIT_MERGE_EVENT:
-        sstr << "SplitMergeEvent";
+        sstr << "Split_merge_event";
         break;
       case EDGE_SPLIT_EVENT:
-        sstr << "EdgeSplitEvent";
+        sstr << "Edge_split_event";
         break;
       case PIERCE_EVENT:
-        sstr << "PierceEvent";
+        sstr << "Pierce_event";
         break;
       default:
-        sstr << "AbstractEvent";
+        sstr << "Abstract_event";
     }
-    sstr << "(offset=" << IO::StringFactory::fromDouble(CGAL::to_double(getTime())) << ")";
+    sstr << "(offset=" << IO::String_factory::fromDouble(CGAL::to_double(time())) << ")";
     return sstr.str();
   }
 
 protected:
-  typename std::list<AbstractEventSPtr>::iterator list_it_;
+  typename std::list<Abstract_event_sptr>::iterator list_it_;
 
   int type_;
   int id_; // id of the event
@@ -206,27 +206,27 @@ private:
 };
 
 template <typename Traits>
-int AbstractEvent<Traits>::next_id_ = 0;
+int Abstract_event<Traits>::next_id_ = 0;
 
 template <typename Traits>
-class AbstractEventSPtrCompare
+class Abstract_event_compare
   : public CGAL::cpp98::binary_function<bool,
-                                        std::shared_ptr<AbstractEvent<Traits> >,
-                                        std::shared_ptr<AbstractEvent<Traits> > >
+                                        std::shared_ptr<Abstract_event<Traits> >,
+                                        std::shared_ptr<Abstract_event<Traits> > >
 {
 public:
-  bool operator()(const std::shared_ptr<AbstractEvent<Traits> >& eventA,
-                  const std::shared_ptr<AbstractEvent<Traits> >& eventB) const
+  bool operator()(const std::shared_ptr<Abstract_event<Traits> >& eventA,
+                  const std::shared_ptr<Abstract_event<Traits> >& eventB) const
   {
     CGAL_SS3_DEBUG_SPTR(eventA);
     CGAL_SS3_DEBUG_SPTR(eventB);
-    Comparison_result cmp = CGAL::compare(eventA->getTime(), eventB->getTime());
+    Comparison_result cmp = CGAL::compare(eventA->time(), eventB->time());
     if (cmp == CGAL::EQUAL) {
       if (eventA->getType() == eventB->getType()) { // @fixme get rid of that and IDs directly?
         // Give priority to newer (higher) IDs. The point is that if an event has been updated
         // to a different type and appears multiple (non-zombie) times, it will be processed
         // with the updated type.
-        return eventA->getID() < eventB->getID();
+        return eventA->get_ID() < eventB->get_ID();
       }
       return (eventA->getType() > eventB->getType());
     }
@@ -236,19 +236,19 @@ public:
 };
 
 template <typename Traits>
-struct VertexFacetNeighborhood
+struct Vertex_facet_neighborhood
 {
   using Polyhedron = HDS::Polyhedron<Traits>;
   using VertexSPtr = typename Polyhedron::VertexSPtr;
   using FacetWPtr = typename Polyhedron::FacetWPtr;
   using FacetSPtr = typename Polyhedron::FacetSPtr;
 
-  VertexFacetNeighborhood() {}
-  VertexFacetNeighborhood(const VertexSPtr& v)
-    : incident_facets_(VertexFacetNeighborhood::collectIncidentFacets(v))
+  Vertex_facet_neighborhood() {}
+  Vertex_facet_neighborhood(const VertexSPtr& v)
+    : incident_facets_(Vertex_facet_neighborhood::collect_incident_facets(v))
   { }
 
-  static std::array<int, 3> collectIncidentFacets(const VertexSPtr& vertex)
+  static std::array<int, 3> collect_incident_facets(const VertexSPtr& vertex)
   {
     CGAL_SS3_DEBUG_SPTR(vertex);
     std::array<int, 3> result;
@@ -257,7 +257,7 @@ struct VertexFacetNeighborhood
     typename std::list<FacetWPtr>::const_iterator it = ifs.begin();
     for (int i = 0; i < 3; ++i, ++it) {
       if (FacetSPtr f = it->lock()) {
-        result[i] = f->getID();
+        result[i] = f->get_ID();
       } else {
         CGAL_assertion(false);
         result[i] = -1;
@@ -266,10 +266,10 @@ struct VertexFacetNeighborhood
     return result;
   }
 
-  bool checkNeighborhoodConsistency(const VertexSPtr& other) const
+  bool check_neighborhood_consistency(const VertexSPtr& other) const
   {
     CGAL_SS3_DEBUG_SPTR(other);
-    const std::array<int, 3>& other_ifs = collectIncidentFacets(other);
+    const std::array<int, 3>& other_ifs = collect_incident_facets(other);
     const bool result = (incident_facets_ == other_ifs);
     // std::cout << "  Compare: " << incident_facets_[0] << " (old) " << other_ifs[0] << " (new)" << std::endl;
     // std::cout << "  Compare: " << incident_facets_[1] << " (old) " << other_ifs[1] << " (new)" << std::endl;
@@ -282,31 +282,31 @@ private:
 };
 
 template <typename Traits>
-struct EdgeFacetNeighborhood
+struct Edge_facet_neighborhood
 {
   using Polyhedron = HDS::Polyhedron<Traits>;
   using EdgeSPtr = typename Polyhedron::EdgeSPtr;
 
-  EdgeFacetNeighborhood() {}
-  EdgeFacetNeighborhood(const EdgeSPtr edge)
-    : incident_facets_(collectIncidentFacets(edge))
+  Edge_facet_neighborhood() {}
+  Edge_facet_neighborhood(const EdgeSPtr& e)
+    : incident_facets_(collect_incident_facets(e))
   { }
 
-  static std::array<int, 4> collectIncidentFacets(const EdgeSPtr& edge)
+  static std::array<int, 4> collect_incident_facets(const EdgeSPtr& e)
   {
-    CGAL_SS3_DEBUG_SPTR(edge);
-    std::array<int, 4> result = {{ edge->getFacetL()->getID(),
-                                   edge->getFacetR()->getID(),
-                                   edge->getFacetSrc()->getID(),
-                                   edge->getFacetDst()->getID() }};
+    CGAL_SS3_DEBUG_SPTR(e);
+    std::array<int, 4> result = {{ e->getFacetL()->get_ID(),
+                                   e->getFacetR()->get_ID(),
+                                   e->getFacetSrc()->get_ID(),
+                                   e->getFacetDst()->get_ID() }};
     return result;
   }
 
-  bool checkNeighborhoodConsistency(const EdgeSPtr& other) const
+  bool check_neighborhood_consistency(const EdgeSPtr& other) const
   {
     CGAL_SS3_DEBUG_SPTR(other);
 
-    const std::array<int, 4>& other_ifs = collectIncidentFacets(other);
+    const std::array<int, 4>& other_ifs = collect_incident_facets(other);
     const bool result = (incident_facets_ == other_ifs);
     // if (!result) {
     //   std::cout << "  Compare: " << incident_facets_[0] << " (old) " << other_ifs[0] << " (new)" << std::endl;

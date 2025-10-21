@@ -27,25 +27,25 @@ namespace internal {
 namespace algorithm {
 
 template <typename Traits>
-class SaveEvent
-  : public AbstractEvent<Traits>
+class Save_event
+  : public Abstract_event<Traits>
 {
-  using Base = AbstractEvent<Traits>;
-  using SaveEventSPtr = std::shared_ptr<SaveEvent<Traits> >;
+  using Base = Abstract_event<Traits>;
+  using Save_event_sptr = std::shared_ptr<Save_event<Traits> >;
 
 public:
-  SaveEvent()
-    : Base(AbstractEvent<Traits>::SAVE_EVENT)
+  Save_event()
+    : Base(Abstract_event<Traits>::SAVE_EVENT)
   { }
 
-  static SaveEventSPtr create()
+  static Save_event_sptr create()
   {
-    return std::make_shared<SaveEvent>();
+    return std::make_shared<Save_event>();
   }
 
-  bool operator==(const SaveEvent& other) const
+  bool operator==(const Save_event& other) const
   {
-    return (Base::getTime() == other.getTime());
+    return (Base::time() == other.time());
   }
 };
 

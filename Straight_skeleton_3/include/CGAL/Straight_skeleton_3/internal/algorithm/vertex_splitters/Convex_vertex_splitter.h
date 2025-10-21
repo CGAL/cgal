@@ -33,11 +33,11 @@ namespace internal {
 namespace algorithm {
 
 template <typename Traits>
-class ConvexVertexSplitter
-  : public CombiVertexSplitter<Traits>
+class Convex_vertex_splitter
+  : public Combi_vertex_splitter<Traits>
 {
-  using Base = CombiVertexSplitter<Traits>;
-  using ConvexVertexSplitterSPtr = std::shared_ptr<ConvexVertexSplitter>;
+  using Base = Combi_vertex_splitter<Traits>;
+  using Convex_vertex_splitter_sptr = std::shared_ptr<Convex_vertex_splitter>;
 
 private:
   using Polyhedron = HDS::Polyhedron<Traits>;
@@ -47,15 +47,15 @@ private:
   using EdgeSPtr = typename Polyhedron::EdgeSPtr;
 
 private:
-  using Transformation = algorithm::PolyhedronTransformation<Traits>;
-  using SelfIntersection = algorithm::SelfIntersection<Traits>;
+  using Transformation = algorithm::Polyhedron_transformation<Traits>;
+  using Self_intersection = algorithm::Self_intersection<Traits>;
 
 private:
   using vec2i = boost::shared_array<int>;
   using combi = std::vector<vec2i>;
 
 public:
-  ConvexVertexSplitter()
+  Convex_vertex_splitter()
   {
     this->type_ = Base::CONVEX_VERTEX_SPLITTER;
     optimization_ = -1;
@@ -70,35 +70,35 @@ public:
     }
   }
 
-  virtual ~ConvexVertexSplitter() { /*intentionally does nothing*/ }
+  virtual ~Convex_vertex_splitter() { /*intentionally does nothing*/ }
 
-  static ConvexVertexSplitterSPtr create()
+  static Convex_vertex_splitter_sptr create()
   {
-    return std::make_shared<ConvexVertexSplitter>();
+    return std::make_shared<Convex_vertex_splitter>();
   }
 
-  static int countConvexEdges(const PolyhedronSPtr& polyhedron)
+  static int count_convex_edges(const PolyhedronSPtr& polyhedron)
   {
     CGAL_SS3_DEBUG_SPTR(polyhedron);
     int result = 0;
     for (EdgeSPtr edge : polyhedron->edges()) {
-      if (!edge->isReflex()) {
+      if (!edge->is_reflex()) {
         result++;
       }
     }
     return result;
   }
 
-  virtual PolyhedronSPtr splitVertex(const VertexSPtr& vertex)
+  virtual PolyhedronSPtr split_vertex(const VertexSPtr& vertex)
   {
     CGAL_SS3_DEBUG_SPTR(vertex);
-    CGAL_SS3_SPLITTER_TRACE_V(16, "\n> Splitting " << vertex->toString());
-    PolyhedronSPtr polyhedron = vertex->getPolyhedron();
+    CGAL_SS3_SPLITTER_TRACE_V(16, "\n> Splitting " << vertex->to_string());
+    PolyhedronSPtr polyhedron = vertex->get_polyhedron();
     if (vertex->degree() <= 3) {
         return polyhedron;
     }
     vertex->sort();
-    std::list<combi> combinations = Base::generateAllCombinations(vertex->degree());
+    std::list<combi> combinations = Base::generate_all_combinations(vertex->degree());
     CGAL_SS3_SPLITTER_TRACE_V(16, combinations.size() << " combinations");
 
     combi combi_opt;
@@ -109,31 +109,31 @@ public:
     std::list<combi>::iterator it_combi = combinations.begin();
     while (it_combi != combinations.end()) {
       combi combination = *it_combi++;
-      CGAL_SS3_SPLITTER_TRACE_V(64, "-- Testing split-combination: " << Base::combiToString(combination));
+      CGAL_SS3_SPLITTER_TRACE_V(64, "-- Testing split-combination: " << Base::combi_to_string(combination));
 
       // don't take it out of the loop
-      PolyhedronSPtr poly_c = Base::copyVertex(vertex);
+      PolyhedronSPtr poly_c = Base::copy_vertex(vertex);
       CGAL_assertion(bool(poly_c));
       CGAL_assertion(poly_c->facets().size() == vertex->facets().size());
-      poly_c->initializeAllIDs();
+      poly_c->initialize_all_IDs();
 
       VertexSPtr vertex_c = poly_c->vertices().front();
-      Base::splitVertex(vertex_c, combination);
+      Base::split_vertex(vertex_c, combination);
 
-      PolyhedronSPtr poly_c_offset = Base::copyVertex(vertex);
-      bool okShift = Transformation::shiftFacetsDegree1(poly_c_offset, -1.0);
+      PolyhedronSPtr poly_c_offset = Base::copy_vertex(vertex);
+      bool okShift = Transformation::shift_facets_deg1(poly_c_offset, -1.0);
       if (!okShift) {
         CGAL_SS3_SPLITTER_TRACE("Warning: failed to create offset of corner");
         continue;
       }
 
-      auto updateOptimalCombination = [&](const combi& combination,
-                                          const PolyhedronSPtr& poly_c,
-                                          const PolyhedronSPtr& poly_c_offset,
-                                          int num_convex_edges)
+      auto update_optimal_combination = [&](const combi& combination,
+                                            const PolyhedronSPtr& poly_c,
+                                            const PolyhedronSPtr& poly_c_offset,
+                                            int num_convex_edges)
       {
-        if (!SelfIntersection::hasSelfIntersectingSurface(poly_c_offset)) {
-          CGAL_SS3_SPLITTER_TRACE("Valid split-combination found: " << Base::combiToString(combination));
+        if (!Self_intersection::has_self_intersecting_surface(poly_c_offset)) {
+          CGAL_SS3_SPLITTER_TRACE("Valid split-combination found: " << Base::combi_to_string(combination));
           combi_opt = combination;
           poly_opt = poly_c;
           poly_opt_offset = poly_c_offset;
@@ -141,32 +141,32 @@ public:
         }
       };
 
-      int num_convex_edges = countConvexEdges(poly_c_offset);
+      int num_convex_edges = count_convex_edges(poly_c_offset);
 
       if (!poly_opt) {
-        updateOptimalCombination(combination, poly_c, poly_c_offset, num_convex_edges);
+        update_optimal_combination(combination, poly_c, poly_c_offset, num_convex_edges);
         continue;
       }
 
       if (optimization_ < 0) {
         if (num_convex_edges > num_convex_edges_opt) {
-          updateOptimalCombination(combination, poly_c, poly_c_offset, num_convex_edges);
+          update_optimal_combination(combination, poly_c, poly_c_offset, num_convex_edges);
         }
       } else if (optimization_ > 0) {
         if (num_convex_edges < num_convex_edges_opt) {
-          updateOptimalCombination(combination, poly_c, poly_c_offset, num_convex_edges);
+          update_optimal_combination(combination, poly_c, poly_c_offset, num_convex_edges);
         }
       }
     }
     CGAL_assertion(combi_opt != combi());
-    CGAL_SS3_SPLITTER_TRACE("Selected split-combination: " << Base::combiToString(combi_opt));
-    CombiVertexSplitter<Traits>::apply(poly_opt, vertex);
+    CGAL_SS3_SPLITTER_TRACE("Selected split-combination: " << Base::combi_to_string(combi_opt));
+    Combi_vertex_splitter<Traits>::apply(poly_opt, vertex);
     return polyhedron;
   }
 
-  virtual std::string toString() const
+  virtual std::string to_string() const
   {
-    std::string result("ConvexVertexSplitter(");
+    std::string result("Convex_vertex_splitter(");
     if (optimization_ == -1) {
       result += "max";
     } else if (optimization_ == 1) {

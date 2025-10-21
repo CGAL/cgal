@@ -21,7 +21,9 @@
 #include <CGAL/Straight_skeleton_3/IO/String_factory.h>
 #include <CGAL/Straight_skeleton_3/internal/algorithm/events/Abstract_event.h>
 #include <CGAL/Straight_skeleton_3/internal/HDS/Polyhedron.h>
-#include <CGAL/Straight_skeleton_3/internal/SDS/Straight_skeleton.h>
+#include <CGAL/Straight_skeleton_3/Straight_skeleton_3.h>
+
+#include <CGAL/array.h>
 
 #include <memory>
 #include <string>
@@ -33,11 +35,11 @@ namespace internal {
 namespace algorithm {
 
 template <typename Traits>
-class DblTriangleEvent
-  : public AbstractEvent<Traits>
+class Dbl_triangle_event
+  : public Abstract_event<Traits>
 {
-  using Base = AbstractEvent<Traits>;
-  using DblTriangleEventSPtr = std::shared_ptr<DblTriangleEvent<Traits> >;
+  using Base = Abstract_event<Traits>;
+  using Dbl_triangle_event_sptr = std::shared_ptr<Dbl_triangle_event<Traits> >;
 
 private:
   using Point_3 = typename Traits::Point_3;
@@ -51,107 +53,97 @@ private:
   using FacetSPtr = typename Polyhedron::FacetSPtr;
 
 public:
-  DblTriangleEvent()
+  Dbl_triangle_event()
     : Base(Base::DBL_TRIANGLE_EVENT)
   { }
 
-  virtual ~DblTriangleEvent()
+  virtual ~Dbl_triangle_event()
   { }
 
-  static DblTriangleEventSPtr create()
+  static Dbl_triangle_event_sptr create()
   {
-    return std::make_shared<DblTriangleEvent>();
+    return std::make_shared<Dbl_triangle_event>();
   }
 
-  Point3SPtr getPoint() const
+  Point3SPtr point() const
   {
     CGAL_SS3_DEBUG_SPTR(point_);
     return point_;
   }
 
-  void setPoint(const Point3SPtr& point)
+  void set_point(const Point3SPtr& point)
   {
     this->point_ = point;
   }
 
-  EdgeSPtr getEdge() const
+  EdgeSPtr get_edge() const
   {
     CGAL_SS3_DEBUG_WPTR(edge_);
     return edge_.lock();
   }
 
-  void setEdge(const EdgeSPtr& edge)
+  void set_edge(const EdgeSPtr& edge)
   {
     CGAL_SS3_DEBUG_SPTR(edge);
     this->edge_ = edge;
   }
 
-  void getVertices(VertexSPtr out[4]) const
+  std::array<VertexSPtr, 4> get_vertices() const
   {
-    EdgeSPtr edge = getEdge();
-
-    for (unsigned int i = 0; i < 4; ++i) {
-      out[i] = VertexSPtr();
-    }
+    EdgeSPtr edge = get_edge();
     FacetSPtr facet_l = edge->getFacetL();
     FacetSPtr facet_r = edge->getFacetR();
-    out[0] = edge->getVertexSrc();
-    out[1] = edge->getVertexDst();
-    out[2] = edge->next(facet_l)->dst(facet_l);
-    out[3] = edge->next(facet_r)->dst(facet_r);
+    return CGAL::make_array(edge->getVertexSrc(),
+                            edge->getVertexDst(),
+                            edge->next(facet_l)->dst(facet_l),
+                            edge->next(facet_r)->dst(facet_r));
   }
 
-  void getEdges(EdgeSPtr out[5]) const
+  std::array<EdgeSPtr, 5> get_edges() const
   {
-    EdgeSPtr edge = getEdge();
-
-    for (unsigned int i = 0; i < 5; ++i) {
-      out[i] = EdgeSPtr();
-    }
+    EdgeSPtr edge = get_edge();
     FacetSPtr facet_l = edge->getFacetL();
     FacetSPtr facet_r = edge->getFacetR();
-    out[0] = edge;
-    out[1] = edge->next(facet_l);
-    out[2] = edge->prev(facet_l);
-    out[3] = edge->next(facet_r);
-    out[4] = edge->prev(facet_r);
+    return CGAL::make_array(edge,
+                            edge->next(facet_l),
+                            edge->prev(facet_l),
+                            edge->next(facet_r),
+                            edge->prev(facet_r));
   }
 
-  bool isValid() const
+  bool is_valid() const
   {
     return (!edge_.expired());
   }
 
-  bool isObsolete() const
+  bool is_obsolete() const
   {
     CGAL_warning_msg(false, "NYI");
     return false;
   }
 
-  std::string toString() const
+  std::string to_string() const
   {
-    EdgeSPtr edge = getEdge();
-
-    VertexSPtr vertices[4];
-    getVertices(vertices);
+    EdgeSPtr edge = get_edge();
+    std::array<VertexSPtr, 4> vertices = get_vertices();
 
     std::stringstream sstr;
     sstr.precision(17);
-    sstr << "DblTriangleEvent\n";
-    sstr << "\t(ID=" << Base::getID() << ")\n";
-    sstr << "\t(time=" << IO::StringFactory::fromDouble(CGAL::to_double(Base::getTime())) << ")\n";
+    sstr << "Dbl_triangle_event\n";
+    sstr << "\t(ID=" << Base::get_ID() << ")\n";
+    sstr << "\t(time=" << IO::String_factory::fromDouble(CGAL::to_double(Base::time())) << ")\n";
     if (point_) {
-      sstr << "\t(point=<" + IO::StringFactory::fromDouble(CGAL::to_double(point_->x())) + " "
-                           + IO::StringFactory::fromDouble(CGAL::to_double(point_->y())) + " "
-                           + IO::StringFactory::fromDouble(CGAL::to_double(point_->z())) + ">)";
+      sstr << "\t(point=<" + IO::String_factory::fromDouble(CGAL::to_double(point_->x())) + " "
+                           + IO::String_factory::fromDouble(CGAL::to_double(point_->y())) + " "
+                           + IO::String_factory::fromDouble(CGAL::to_double(point_->z())) + ">)";
     }
-    sstr << "\t(edge=" << edge->getID() << "\n\t\t[" << edge->getVertexSrc()->toString() << "\n\t\t "
-                                                     << edge->getVertexDst()->toString() << "])";
+    sstr << "\t(edge=" << edge->get_ID() << "\n\t\t[" << edge->getVertexSrc()->to_string() << "\n\t\t "
+                                                      << edge->getVertexDst()->to_string() << "])";
     return sstr.str();
   }
 
-  bool operator==(const DblTriangleEvent& other) const {
-    return (Base::getTime() == other.getTime()) &&
+  bool operator==(const Dbl_triangle_event& other) const {
+    return (Base::time() == other.time()) &&
             (!point_ || !other.point_ || *point_ == *(other.point_)) &&
             (edge_.lock() == other.edge_.lock());
   }

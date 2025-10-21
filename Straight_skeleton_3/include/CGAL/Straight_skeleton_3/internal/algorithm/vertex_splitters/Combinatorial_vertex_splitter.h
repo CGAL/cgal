@@ -18,7 +18,7 @@
 #define CGAL_STRAIGHT_SKELETON_3_INTERNAL_ALGORITHM_COMBINATORIAL_VERTEX_SPLITTER_H
 
 #include <CGAL/Straight_skeleton_3/internal/HDS/Polyhedron.h>
-#include <CGAL/Straight_skeleton_3/internal/SDS/Straight_skeleton.h>
+#include <CGAL/Straight_skeleton_3/Straight_skeleton_3.h>
 
 #include <boost/shared_array.hpp>
 
@@ -33,22 +33,22 @@ namespace internal {
 namespace algorithm {
 
 template <typename Traits>
-class CombiVertexSplitter
-  : public AbstractVertexSplitter<Traits>
+class Combi_vertex_splitter
+  : public Abstract_vertex_splitter<Traits>
 {
-  using Base = AbstractVertexSplitter<Traits>;
-  using CombiVertexSplitterSPtr = std::shared_ptr<CombiVertexSplitter>;
+  using Base = Abstract_vertex_splitter<Traits>;
+  using Combi_vertex_splitter_sptr = std::shared_ptr<Combi_vertex_splitter>;
 
 private:
   using Polyhedron = HDS::Polyhedron<Traits>;
   using PolyhedronSPtr = typename Polyhedron::PolyhedronSPtr;
 
-  using Vertex = typename Polyhedron::template Vertex<Traits>;
+  using Vertex = typename Polyhedron::Vertex;
   using VertexSPtr = typename Polyhedron::VertexSPtr;
-  using Edge = typename Polyhedron::template Edge<Traits>;
+  using Edge = typename Polyhedron::Edge;
   using EdgeWPtr = typename Polyhedron::EdgeWPtr;
   using EdgeSPtr = typename Polyhedron::EdgeSPtr;
-  using Facet = typename Polyhedron::template Facet<Traits>;
+  using Facet = typename Polyhedron::Facet;
   using FacetWPtr = typename Polyhedron::FacetWPtr;
   using FacetSPtr = typename Polyhedron::FacetSPtr;
 
@@ -58,17 +58,17 @@ private:
   using SkelFacetDataSPtr = typename Polyhedron::SkelFacetDataSPtr;
 
 private:
-  using StraightSkeleton = SDS::StraightSkeleton<Traits>;
+  using Straight_skeleton_3 = Straight_skeleton_3<Traits>;
 
-  using NodeWPtr = typename StraightSkeleton::NodeWPtr;
-  using NodeSPtr = typename StraightSkeleton::NodeSPtr;
+  using NodeWPtr = typename Straight_skeleton_3::NodeWPtr;
+  using NodeSPtr = typename Straight_skeleton_3::NodeSPtr;
 
 private:
   using vec2i = boost::shared_array<int>;
   using combi = std::vector<vec2i>;
 
 public:
-  CombiVertexSplitter()
+  Combi_vertex_splitter()
   {
     this->type_ = Base::COMBI_VERTEX_SPLITTER;
     selected_combi_ = 0;
@@ -78,14 +78,14 @@ public:
     }
   }
 
-  virtual ~CombiVertexSplitter() { /*intentionally does nothing*/ }
+  virtual ~Combi_vertex_splitter() { /*intentionally does nothing*/ }
 
-  static CombiVertexSplitterSPtr create()
+  static Combi_vertex_splitter_sptr create()
   {
-    return std::make_shared<CombiVertexSplitter>();
+    return std::make_shared<Combi_vertex_splitter>();
   }
 
-  static vec2i createSplit(int begin, int end)
+  static vec2i create_split(int begin, int end)
   {
     vec2i result(new int[2]);
     result[0] = begin;
@@ -93,7 +93,7 @@ public:
     return result;
   }
 
-  static int compareSplits(const vec2i& split1, const vec2i& split2)
+  static int compare_splits(const vec2i& split1, const vec2i& split2)
   {
     int result = 0;
     if (split1[0] < split2[0] || (split1[0] == split2[0] && split1[1] < split2[1])) {
@@ -104,7 +104,7 @@ public:
     return result;
   }
 
-  static std::vector<int> initLabels(unsigned int degree)
+  static std::vector<int> init_labels(unsigned int degree)
   {
     std::vector<int> result;
     for (unsigned int i = 0; i < degree; ++i) {
@@ -113,8 +113,8 @@ public:
     return result;
   }
 
-  static std::vector<int> splitLabels(std::vector<int>& labels,
-                                      const vec2i& split)
+  static std::vector<int> split_labels(std::vector<int>& labels,
+                                       const vec2i& split)
   {
     std::vector<int> result;
     int begin = split[0];
@@ -145,7 +145,7 @@ public:
     return result;
   }
 
-  static std::list<vec2i> createSingleSplitCombinations(const std::vector<int>& labels)
+  static std::list<vec2i> create_single_split_combiations(const std::vector<int>& labels)
   {
     std::list<vec2i> result;
     unsigned int degree = labels.size();
@@ -154,15 +154,15 @@ public:
         if (i == 0 && j == degree-1) {
           continue;
         }
-        vec2i split = createSplit(labels[i], labels[j]);
+        vec2i split = create_split(labels[i], labels[j]);
         result.push_back(split);
       }
     }
     return result;
   }
 
-  static std::list<combi> appendSplitCombinations(const combi& history,
-                                                  const std::list<vec2i>& splits)
+  static std::list<combi> append_split_combinations(const combi& history,
+                                                    const std::list<vec2i>& splits)
   {
     std::list<combi> result;
     if (history.size() == 0) {
@@ -178,7 +178,7 @@ public:
       std::list<vec2i>::const_iterator it_splits = splits.begin();
       while (it_splits != splits.end()) {
         vec2i split = *it_splits++;
-        if (compareSplits(last_split, split) > 0) {
+        if (compare_splits(last_split, split) > 0) {
           combi combination(history);
           combination.push_back(split);
           result.push_back(combination);
@@ -188,9 +188,9 @@ public:
     return result;
   }
 
-  static std::list<combi> mergeCombinations(const combi& history,
-                                            const std::list<combi>& combis1,
-                                            const std::list<combi>& combis2)
+  static std::list<combi> merge_combinations(const combi& history,
+                                             const std::list<combi>& combis1,
+                                             const std::list<combi>& combis2)
   {
     std::list<combi> result;
     unsigned int history_size = history.size();
@@ -218,7 +218,7 @@ public:
           }
           vec2i split1 = *it_combi1;
           vec2i split2 = *it_combi2;
-          if (compareSplits(split1, split2) > 0) {
+          if (compare_splits(split1, split2) > 0) {
             combi_merged.push_back(split1);
             it_combi1++;
           } else {
@@ -232,12 +232,12 @@ public:
     return result;
   }
 
-  static std::list<combi> generateCombinationsRec(const combi& history,
-                                                  const std::vector<int>& labels)
+  static std::list<combi> generate_combinations_rec(const combi& history,
+                                                    const std::vector<int>& labels)
   {
     std::list<combi> result;
-    std::list<vec2i> splits = createSingleSplitCombinations(labels);
-    std::list<combi> combis = appendSplitCombinations(history, splits);
+    std::list<vec2i> splits = create_single_split_combiations(labels);
+    std::list<combi> combis = append_split_combinations(history, splits);
     if (labels.size() <= 4) {
       result = combis;
     } else {
@@ -247,15 +247,15 @@ public:
         std::list<combi> combis_next;
         vec2i split = split_combi.back();
         std::vector<int> labels1(labels);
-        std::vector<int> labels2 = splitLabels(labels1, split);
+        std::vector<int> labels2 = split_labels(labels1, split);
         if (labels1.size() > 3 && labels2.size() > 3) {
-          std::list<combi> combis1 = generateCombinationsRec(split_combi, labels1);
-          std::list<combi> combis2 = generateCombinationsRec(split_combi, labels2);
-          combis_next = mergeCombinations(split_combi, combis1, combis2);
+          std::list<combi> combis1 = generate_combinations_rec(split_combi, labels1);
+          std::list<combi> combis2 = generate_combinations_rec(split_combi, labels2);
+          combis_next = merge_combinations(split_combi, combis1, combis2);
         } else if (labels1.size() > 3) {
-          combis_next = generateCombinationsRec(split_combi, labels1);
+          combis_next = generate_combinations_rec(split_combi, labels1);
         } else if (labels2.size() > 3) {
-          combis_next = generateCombinationsRec(split_combi, labels2);
+          combis_next = generate_combinations_rec(split_combi, labels2);
         }
         result.insert(result.end(), combis_next.begin(), combis_next.end());
       }
@@ -263,25 +263,25 @@ public:
     return result;
   }
 
-  static std::list<combi> generateAllCombinations(unsigned int degree)
+  static std::list<combi> generate_all_combinations(unsigned int degree)
   {
     combi history;
-    std::vector<int> labels = initLabels(degree);
-    std::list<combi> result = generateCombinationsRec(history, labels);
+    std::vector<int> labels = init_labels(degree);
+    std::list<combi> result = generate_combinations_rec(history, labels);
     // CGAL_SS3_SPLITTER_TRACE("degree = " << degree);
     // CGAL_SS3_SPLITTER_TRACE_CODE(for (const combi& combination : result))
-    // CGAL_SS3_SPLITTER_TRACE("  " << combiToString(combination));
+    // CGAL_SS3_SPLITTER_TRACE("  " << combi_to_string(combination));
     return result;
   }
 
-  static PolyhedronSPtr copyVertex(const VertexSPtr& vertex)
+  static PolyhedronSPtr copy_vertex(const VertexSPtr& vertex)
   {
     CGAL_SS3_DEBUG_SPTR(vertex);
     PolyhedronSPtr result = Polyhedron::create();
     VertexSPtr vertex_c = vertex->clone();
-    result->addVertex(vertex_c);
-    FacetSPtr facet = vertex->firstFacet();
-    EdgeSPtr edge_first = vertex->findEdge(facet);
+    result->add_vertex(vertex_c);
+    FacetSPtr facet = vertex->first_facet();
+    EdgeSPtr edge_first = vertex->find_edge(facet);
     EdgeSPtr edge;
     EdgeSPtr edge_prev;
     EdgeSPtr edge_prev_c;
@@ -300,25 +300,25 @@ public:
       } else if (edge->getVertexDst() == vertex) {
         vertex_dst_c = edge->getVertexSrc()->clone();
       }
-      result->addVertex(vertex_dst_c);
+      result->add_vertex(vertex_dst_c);
       edge_c = Edge::create(vertex_c, vertex_dst_c);
       if (edge == edge_first) {
         edge_first_c = edge_c;
       }
-      result->addEdge(edge_c);
+      result->add_edge(edge_c);
       if (edge_prev_c) {
         facet_c = Facet::create();
         facet_c->setPlane(facet->plane());
         edge_prev_c->setFacetL(facet_c);
-        facet_c->addEdge(edge_prev_c);
+        facet_c->add_edge(edge_prev_c);
         edge_c->setFacetR(facet_c);
-        facet_c->addEdge(edge_c);
+        facet_c->add_edge(edge_c);
         facet_c_data = SkelFacetData::create(facet_c);
         facet_c_data->setFacetOrigin(facet);
-        if (facet->hasData()) {
-          facet_c_data->setSpeed(std::dynamic_pointer_cast<SkelFacetData>(facet->getData())->getSpeed());
+        if (facet->has_data()) {
+          facet_c_data->set_speed(std::dynamic_pointer_cast<SkelFacetData>(facet->get_data())->get_speed());
         }
-        result->addFacet(facet_c);
+        result->add_facet(facet_c);
       }
       edge_prev_c = edge_c;
       edge_prev = edge;
@@ -329,31 +329,31 @@ public:
     facet_c = Facet::create();
     facet_c->setPlane(facet->plane());
     edge_prev_c->setFacetL(facet_c);
-    facet_c->addEdge(edge_prev_c);
+    facet_c->add_edge(edge_prev_c);
     edge_first_c->setFacetR(facet_c);
-    facet_c->addEdge(edge_first_c);
+    facet_c->add_edge(edge_first_c);
     facet_c_data = SkelFacetData::create(facet_c);
     facet_c_data->setFacetOrigin(facet);
-    if (facet->hasData()) {
-        facet_c_data->setSpeed(std::dynamic_pointer_cast<SkelFacetData>(facet->getData())->getSpeed());
+    if (facet->has_data()) {
+        facet_c_data->set_speed(std::dynamic_pointer_cast<SkelFacetData>(facet->get_data())->get_speed());
     }
-    result->addFacet(facet_c);
-    result->initializeAllIDs();
+    result->add_facet(facet_c);
+    result->initialize_all_IDs();
     return result;
   }
 
-  static PolyhedronSPtr splitVertex(const VertexSPtr& vertex,
-                                    const combi& combination)
+  static PolyhedronSPtr split_vertex(const VertexSPtr& vertex,
+                                     const combi& combination)
   {
     CGAL_SS3_DEBUG_SPTR(vertex);
     CGAL_precondition(vertex->degree() - 3 == combination.size());
-    PolyhedronSPtr polyhedron = vertex->getPolyhedron();
+    PolyhedronSPtr polyhedron = vertex->get_polyhedron();
     std::list<VertexSPtr> vertices_tosplit;
     vertices_tosplit.push_back(vertex);
 
     std::vector<FacetSPtr> facets;
-    FacetSPtr facet = vertex->firstFacet();
-    EdgeSPtr edge_first = vertex->findEdge(facet);
+    FacetSPtr facet = vertex->first_facet();
+    EdgeSPtr edge_first = vertex->find_edge(facet);
     EdgeSPtr edge;
     while (edge != edge_first) {
       if (!edge) {
@@ -373,16 +373,16 @@ public:
       while (it_v != vertices_tosplit.end()) {
         typename std::list<VertexSPtr>::iterator it_current = it_v;
         VertexSPtr vertex = *it_v++;
-        if (vertex->containsFacet(facet_right) &&
-            vertex->containsFacet(facet_left)) {
+        if (vertex->has_incident_facet(facet_right) &&
+            vertex->has_incident_facet(facet_left)) {
           vertices_tosplit.erase(it_current);
           VertexSPtr vertex2 = vertex->split(facet_left, facet_right);
           if (facet_left->getPlane() == facet_right->getPlane()) {
-            EdgeSPtr edge = vertex->findEdge(vertex2);
+            EdgeSPtr edge = vertex->find_edge(vertex2);
             edges_toremove.push_back(edge);
           }
-          if (vertex->hasData()) {
-            SkelVertexDataSPtr data = std::dynamic_pointer_cast<SkelVertexData>(vertex->getData());
+          if (vertex->has_data()) {
+            SkelVertexDataSPtr data = std::dynamic_pointer_cast<SkelVertexData>(vertex->get_data());
             SkelVertexDataSPtr data2 = SkelVertexData::create(vertex2);
             data2->setWNode(data->getWNode());
           }
@@ -404,12 +404,12 @@ public:
       VertexSPtr vertex_dst = edge->getVertexDst();
       FacetSPtr facet_l = edge->getFacetL();
       FacetSPtr facet_r = edge->getFacetR();
-      facet_l->removeEdge(edge);
-      facet_r->removeEdge(edge);
-      polyhedron->removeEdge(edge);
+      facet_l->remove_edge(edge);
+      facet_r->remove_edge(edge);
+      polyhedron->remove_edge(edge);
       if (facet_l != facet_r) {
         facet_l->merge(facet_r);
-        polyhedron->removeFacet(facet_r);
+        polyhedron->remove_facet(facet_r);
       }
 
       // remove vertices of degree 2
@@ -427,25 +427,25 @@ public:
         while (it_ew != vertex->edges().end()) {
           EdgeWPtr edge_wptr = *it_ew++;
           if (EdgeSPtr edge_toremove = edge_wptr.lock()) {
-            facet_l->removeEdge(edge_toremove);
-            facet_r->removeEdge(edge_toremove);
-            polyhedron->removeEdge(edge_toremove);
+            facet_l->remove_edge(edge_toremove);
+            facet_r->remove_edge(edge_toremove);
+            polyhedron->remove_edge(edge_toremove);
           }
         }
         typename std::list<FacetWPtr>::iterator it_fw = vertex->facets().begin();
         while (it_fw != vertex->facets().end()) {
           FacetWPtr facet_wptr = *it_fw++;
           if (FacetSPtr facet = facet_wptr.lock()) {
-            facet->removeVertex(vertex);
+            facet->remove_vertex(vertex);
           }
         }
-        polyhedron->removeVertex(vertex);
+        polyhedron->remove_vertex(vertex);
         EdgeSPtr edge_merged = Edge::create(vertex_merged_src, vertex_merged_dst);
         edge_merged->setFacetL(facet_l);
         edge_merged->setFacetR(facet_r);
-        facet_l->addEdge(edge_merged);
-        facet_r->addEdge(edge_merged);
-        polyhedron->addEdge(edge_merged);
+        facet_l->add_edge(edge_merged);
+        facet_r->add_edge(edge_merged);
+        polyhedron->add_edge(edge_merged);
       }
     }
     return polyhedron;
@@ -456,10 +456,10 @@ public:
   {
     CGAL_SS3_DEBUG_SPTR(poly_split);
     CGAL_SS3_DEBUG_SPTR(vertex);
-    PolyhedronSPtr polyhedron = vertex->getPolyhedron();
+    PolyhedronSPtr polyhedron = vertex->get_polyhedron();
     NodeWPtr node;
-    if (vertex->hasData()) {
-      SkelVertexDataSPtr data = std::dynamic_pointer_cast<SkelVertexData>(vertex->getData());
+    if (vertex->has_data()) {
+      SkelVertexDataSPtr data = std::dynamic_pointer_cast<SkelVertexData>(vertex->get_data());
       node = data->getWNode();
     }
     std::map<VertexSPtr, VertexSPtr> vertices;
@@ -467,9 +467,9 @@ public:
     while (it_v != poly_split->vertices().end()) {
       VertexSPtr vertex_ps = *it_v++;
       if (vertex_ps->degree() > 1) {
-        VertexSPtr vertex_vs = Vertex::create(vertex_ps->getPoint());
+        VertexSPtr vertex_vs = Vertex::create(vertex_ps->point());
         vertices[vertex_ps] = vertex_vs;
-        polyhedron->addVertex(vertex_vs);
+        polyhedron->add_vertex(vertex_vs);
         SkelVertexDataSPtr data = SkelVertexData::create(vertex_vs);
         data->setWNode(node);
       }
@@ -488,8 +488,8 @@ public:
         while (it_ve != vertex->edges().end()) {
           EdgeWPtr edge_wptr = *it_ve++;
           if (EdgeSPtr edge = edge_wptr.lock()) {
-            if (edge->getVertexSrc()->getPoint() == vertex_ps_dst->getPoint() ||
-                edge->getVertexDst()->getPoint() == vertex_ps_dst->getPoint()) {
+            if (edge->getVertexSrc()->point() == vertex_ps_dst->point() ||
+                edge->getVertexDst()->point() == vertex_ps_dst->point()) {
               edge_vs = edge;
               break;
             }
@@ -502,10 +502,10 @@ public:
           edge_vs->replaceVertexDst(vertex_vs);
         }
         if (!edge_vs->getFacetL()->containsVertex(vertex_vs)) {
-          edge_vs->getFacetL()->addVertex(vertex_vs);
+          edge_vs->getFacetL()->add_vertex(vertex_vs);
         }
         if (!edge_vs->getFacetR()->containsVertex(vertex_vs)) {
-          edge_vs->getFacetR()->addVertex(vertex_vs);
+          edge_vs->getFacetR()->add_vertex(vertex_vs);
         }
       } else if (vertex_ps_src->degree() == 1) {
         EdgeSPtr edge_vs;
@@ -513,8 +513,8 @@ public:
         while (it_ve != vertex->edges().end()) {
           EdgeWPtr edge_wptr = *it_ve++;
           if (EdgeSPtr edge = edge_wptr.lock()) {
-            if (edge->getVertexSrc()->getPoint() == vertex_ps_src->getPoint() ||
-                edge->getVertexDst()->getPoint() == vertex_ps_src->getPoint()) {
+            if (edge->getVertexSrc()->point() == vertex_ps_src->point() ||
+                edge->getVertexDst()->point() == vertex_ps_src->point()) {
               edge_vs = edge;
               break;
             }
@@ -527,22 +527,22 @@ public:
           edge_vs->replaceVertexDst(vertex_vs);
         }
         if (!edge_vs->getFacetL()->containsVertex(vertex_vs)) {
-          edge_vs->getFacetL()->addVertex(vertex_vs);
+          edge_vs->getFacetL()->add_vertex(vertex_vs);
         }
         if (!edge_vs->getFacetR()->containsVertex(vertex_vs)) {
-          edge_vs->getFacetR()->addVertex(vertex_vs);
+          edge_vs->getFacetR()->add_vertex(vertex_vs);
         }
       } else {
         EdgeSPtr edge_vs = Edge::create(vertices[vertex_ps_src], vertices[vertex_ps_dst]);
-        SkelFacetDataSPtr data_l = std::dynamic_pointer_cast<SkelFacetData>(facet_ps_l->getData());
-        SkelFacetDataSPtr data_r = std::dynamic_pointer_cast<SkelFacetData>(facet_ps_r->getData());
-        FacetSPtr facet_vs_l = data_l->getFacetOrigin();
-        FacetSPtr facet_vs_r = data_r->getFacetOrigin();
+        SkelFacetDataSPtr data_l = std::dynamic_pointer_cast<SkelFacetData>(facet_ps_l->get_data());
+        SkelFacetDataSPtr data_r = std::dynamic_pointer_cast<SkelFacetData>(facet_ps_r->get_data());
+        FacetSPtr facet_vs_l = data_l->get_facet_origin();
+        FacetSPtr facet_vs_r = data_r->get_facet_origin();
         edge_vs->setFacetL(facet_vs_l);
         edge_vs->setFacetR(facet_vs_r);
-        facet_vs_l->addEdge(edge_vs);
-        facet_vs_r->addEdge(edge_vs);
-        polyhedron->addEdge(edge_vs);
+        facet_vs_l->add_edge(edge_vs);
+        facet_vs_r->add_edge(edge_vs);
+        polyhedron->add_edge(edge_vs);
       }
     }
 
@@ -550,32 +550,32 @@ public:
     while (it_f != vertex->facets().end()) {
       FacetWPtr facet_wptr = *it_f++;
       if (FacetSPtr facet = facet_wptr.lock()) {
-        facet->removeVertex(vertex);
+        facet->remove_vertex(vertex);
       }
     }
-    polyhedron->removeVertex(vertex);
+    polyhedron->remove_vertex(vertex);
     return polyhedron;
   }
 
-  virtual PolyhedronSPtr splitVertex(const VertexSPtr& vertex)
+  virtual PolyhedronSPtr split_vertex(const VertexSPtr& vertex)
   {
     CGAL_SS3_DEBUG_SPTR(vertex);
-    PolyhedronSPtr polyhedron = vertex->getPolyhedron();
+    PolyhedronSPtr polyhedron = vertex->get_polyhedron();
     if (vertex->degree() <= 3) {
       return polyhedron;
     }
     vertex->sort();
-    std::list<combi> combinations = generateAllCombinations(vertex->degree());
+    std::list<combi> combinations = generate_all_combinations(vertex->degree());
     std::list<combi> combinations_valid;
     std::list<PolyhedronSPtr> polys_split;
     std::list<combi>::iterator it_combi = combinations.begin();
     while (it_combi != combinations.end()) {
       combi combination = *it_combi++;
-      PolyhedronSPtr poly_c = copyVertex(vertex);
+      PolyhedronSPtr poly_c = copy_vertex(vertex);
       VertexSPtr vertex_c = poly_c->vertices().front();
-      splitVertex(vertex_c, combination);
-      if (Base::checkSplitted(poly_c)) {
-        CGAL_SS3_SPLITTER_TRACE_V(16, "Valid split-combination found: " << combiToString(combination));
+      split_vertex(vertex_c, combination);
+      if (Base::check_splitted(poly_c)) {
+        CGAL_SS3_SPLITTER_TRACE_V(16, "Valid split-combination found: " << combi_to_string(combination));
         combinations_valid.push_back(combination);
         polys_split.push_back(poly_c);
         CGAL_SS3_SPLITTER_TRACE_V(16, "Found valid combination");
@@ -598,7 +598,7 @@ public:
       combi combination_valid = *it_combi++;
       PolyhedronSPtr poly_split = *it_p++;
       if (i == selected_combinatorial_split) {
-        CGAL_SS3_SPLITTER_TRACE_V(16, "Selected split-combination: " << combiToString(combination_valid));
+        CGAL_SS3_SPLITTER_TRACE_V(16, "Selected split-combination: " << combi_to_string(combination_valid));
         apply(poly_split, vertex);
         break;
       }
@@ -606,7 +606,7 @@ public:
     return polyhedron;
   }
 
-  static std::string combiToString(const combi& combination)
+  static std::string combi_to_string(const combi& combination)
   {
     std::stringstream sstr;
     sstr << "{ ";
@@ -621,10 +621,10 @@ public:
     return sstr.str();
   }
 
-  virtual std::string toString() const
+  virtual std::string to_string() const
   {
     std::stringstream sstr;
-    sstr << "CombiVertexSplitter(" << selected_combi_ << ")";
+    sstr << "Combi_vertex_splitter(" << selected_combi_ << ")";
     return sstr.str();
   }
 

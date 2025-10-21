@@ -73,11 +73,11 @@ using ConfigurationSPtr = std::shared_ptr<Configuration>;
  *
  * [Algorithm]
  * - `vertex_splitter`: String to choose the high-degree vertex splitting strategy. Available options:
- *                      `CombiVertexSplitter`, `ConvexVertexSplitter`.
+ *                      `Combi_vertex_splitter`, `Convex_vertex_splitter`.
  * - `selected_combinatorial_split`: Positive index of the valid combinatorial split combination
- *                                   to use, when `CombiVertexSplitter` is selected.
+ *                                   to use, when `Combi_vertex_splitter` is selected.
  * - `convex_split_optimization`: String (`min` or `max`) used to specify optimization strategy, when
- *                                `ConvexVertexSplitter` is selected. The measure being optimized
+ *                                `Convex_vertex_splitter` is selected. The measure being optimized
  *                                is the number of convex edges in the resulting split configuration.
  * - `stop_after_last_save_event`: Boolean to enable or disable stopping immediately as soon as the
  *                                 last save event has been reached.

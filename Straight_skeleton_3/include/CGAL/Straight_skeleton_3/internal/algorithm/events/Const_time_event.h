@@ -27,25 +27,25 @@ namespace internal {
 namespace algorithm {
 
 template <typename Traits>
-class ConstTimeEvent
-  : public AbstractEvent<Traits>
+class Const_time_event
+  : public Abstract_event<Traits>
 {
-  using Base = AbstractEvent<Traits>;
-  using ConstTimeEventSPtr = std::shared_ptr<ConstTimeEvent<Traits> >;
+  using Base = Abstract_event<Traits>;
+  using Const_time_event_sptr = std::shared_ptr<Const_time_event<Traits> >;
 
 public:
-  ConstTimeEvent()
+  Const_time_event()
     : Base(Base::CONST_TIME_EVENT)
   { }
 
-  static ConstTimeEventSPtr create()
+  static Const_time_event_sptr create()
   {
-    return std::make_shared<ConstTimeEvent>();
+    return std::make_shared<Const_time_event>();
   }
 
-  bool operator==(const ConstTimeEvent& other) const
+  bool operator==(const Const_time_event& other) const
   {
-    return (Base::getTime() == other.getTime());
+    return (Base::time() == other.time());
   }
 };
 

@@ -29,7 +29,7 @@ namespace internal {
 namespace kernel {
 
 template <typename K>
-class KernelFactory
+class Kernel_factory
 {
   using FT = typename K::FT;
   using Point_3 = typename K::Point_3;

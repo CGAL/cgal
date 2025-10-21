@@ -36,7 +36,7 @@ namespace internal {
 namespace algorithm {
 
 template <typename Traits>
-class PolyhedronPerturbation
+class Polyhedron_perturbation
 {
   using FT = typename Traits::FT;
   using Point_3 = typename Traits::Point_3;
@@ -52,20 +52,20 @@ private:
   using Polyhedron = HDS::Polyhedron<Traits>;
   using PolyhedronSPtr = typename Polyhedron::PolyhedronSPtr;
 
-  using Vertex = typename Polyhedron::template Vertex<Traits>;
+  using Vertex = typename Polyhedron::Vertex;
   using VertexSPtr = typename Polyhedron::VertexSPtr;
   using EdgeSPtr = typename Polyhedron::EdgeSPtr;
-  using Facet = typename Polyhedron::template Facet<Traits>;
+  using Facet = typename Polyhedron::Facet;
   using FacetWPtr = typename Polyhedron::FacetWPtr;
   using FacetSPtr = typename Polyhedron::FacetSPtr;
 
   using SkelFacetData = typename Polyhedron::SkelFacetData;
 
 private:
-  using KernelFactory = kernel::KernelFactory<Traits>;
-  using KernelWrapper = kernel::KernelWrapper<Traits>;
-  using Transformation = algorithm::PolyhedronTransformation<Traits>;
-  using HdsUtils = algorithm::HdsUtils<Traits>;
+  using Kernel_factory = kernel::Kernel_factory<Traits>;
+  using Kernel_wrapper = kernel::Kernel_wrapper<Traits>;
+  using Transformation = algorithm::Polyhedron_transformation<Traits>;
+  using Hds_utils = algorithm::Hds_utils<Traits>;
 
 private:
   struct Size_shenanigans
@@ -92,7 +92,7 @@ private:
   };
 
 private:
-  static std::array<double, 3> randVec(double min, double max)
+  static std::array<double, 3> rand_vec(double min, double max)
   {
     static std::random_device rd;
     unsigned int s = 0; // rd()
@@ -105,9 +105,9 @@ private:
 
 public:
   /**
-    * Checking for degeneracies
+    * checks for degeneracies: all pairs of planes should intersect in a non-degenerate line.
     */
-  static bool doAll2PlanesIntersect(const PolyhedronSPtr& polyhedron)
+  static bool do_all_plane_pairs_intersect(const PolyhedronSPtr& polyhedron)
   {
     CGAL_SS3_TRANSF_TRACE("Check all 2-combinations of planes");
     CGAL_SS3_DEBUG_SPTR(polyhedron);
@@ -120,10 +120,10 @@ public:
         FacetSPtr facet2 = *it_f2++;
 
         // Do not use CGAL::do_intersect: here we want to check that the result is a point
-        if (!KernelWrapper::intersection(facet1->plane(), facet2->plane())) {
+        if (!Kernel_wrapper::intersection(facet1->plane(), facet2->plane())) {
           CGAL_SS3_TRANSF_TRACE("Degenerate facet pair:");
-          CGAL_SS3_TRANSF_TRACE("  " << facet1->toString());
-          CGAL_SS3_TRANSF_TRACE("  " << facet2->toString());
+          CGAL_SS3_TRANSF_TRACE("  " << facet1->to_string());
+          CGAL_SS3_TRANSF_TRACE("  " << facet2->to_string());
           result = false;
           break;
         }
@@ -135,7 +135,10 @@ public:
     return result;
   }
 
-  static bool doAll3PlanesIntersect(const PolyhedronSPtr& polyhedron)
+  /**
+    * checks for degeneracies: all triplets of planes should intersect in a point.
+    */
+  static bool do_all_plane_triplets_intersect(const PolyhedronSPtr& polyhedron)
   {
     CGAL_SS3_TRANSF_TRACE("Check all 3-combinations of planes");
     CGAL_SS3_DEBUG_SPTR(polyhedron);
@@ -151,11 +154,11 @@ public:
           FacetSPtr facet3 = *it_f3++;
 
           // Do not use CGAL::do_intersect: here we want to check that the result is a point
-          if (!KernelWrapper::intersection(facet1->plane(), facet2->plane(), facet3->plane())) {
+          if (!Kernel_wrapper::intersection(facet1->plane(), facet2->plane(), facet3->plane())) {
             CGAL_SS3_TRANSF_TRACE("Degenerate facet triplet:");
-            CGAL_SS3_TRANSF_TRACE("  " << facet1->toString());
-            CGAL_SS3_TRANSF_TRACE("  " << facet2->toString());
-            CGAL_SS3_TRANSF_TRACE("  " << facet3->toString());
+            CGAL_SS3_TRANSF_TRACE("  " << facet1->to_string());
+            CGAL_SS3_TRANSF_TRACE("  " << facet2->to_string());
+            CGAL_SS3_TRANSF_TRACE("  " << facet3->to_string());
             result = false;
             break;
           }
@@ -171,13 +174,13 @@ public:
     return result;
   }
 
-  static bool areAllVerticesDegree3(const PolyhedronSPtr& polyhedron)
+  static bool are_all_vertices_degree_3(const PolyhedronSPtr& polyhedron)
   {
     CGAL_SS3_DEBUG_SPTR(polyhedron);
     bool result = true;
     for (const VertexSPtr& vertex : polyhedron->vertices()) {
       if (vertex->degree() != 3) {
-        CGAL_SS3_TRANSF_TRACE("High-degree vertex: " << vertex->toString());
+        CGAL_SS3_TRANSF_TRACE("High-degree vertex: " << vertex->to_string());
         result = false;
         break;
       }
@@ -186,14 +189,14 @@ public:
   }
 
   /**
-  * Nudge the plane coefficients by a random value in the range [low, high].
+  * nudges the plane coefficients by a random value in the range [low, high].
   */
   static void perturbPlaneCoefficientsNudge(const FacetSPtr& facet,
                                             const double range)
   {
-    CGAL_precondition(Transformation::hasNormalizedPlane(facet));
+    CGAL_precondition(Transformation::has_normalized_plane(facet));
 
-    CGAL_SS3_TRANSF_TRACE_V(16, "Nudging (Nudge) Facet " << facet->getID());
+    CGAL_SS3_TRANSF_TRACE_V(16, "Nudging (Nudge) Facet " << facet->get_ID());
     CGAL_SS3_TRANSF_TRACE_V(16, "  From coefficients [" << facet->plane()->a() << " " << facet->plane()->b() << " "
                                                         << facet->plane()->c() << " " << facet->plane()->d() << "]");
 
@@ -223,7 +226,7 @@ public:
 
     // below doesn't seem to matter? Probably need specific static filters...
 #if 0
-    facet->setPlane(KernelFactory::createPlane3(na/n, nb/n, nc/n, nd/n));
+    facet->setPlane(Kernel_factory::createPlane3(na/n, nb/n, nc/n, nd/n));
 #else
     // cast to_double() *after* the normalization to have double coordinates in the planes
     // the downside is that we won't have a^2 + b^2 + c^2 == 1,
@@ -232,17 +235,17 @@ public:
     const double b = CGAL::to_double(nb/n);
     const double c = CGAL::to_double(nc/n);
     const double d = CGAL::to_double(nd/n);
-    facet->setPlane(KernelFactory::createPlane3(a, b, c, d));
+    facet->setPlane(Kernel_factory::createPlane3(a, b, c, d));
 #endif
 
     CGAL_SS3_TRANSF_TRACE_V(16, "  To coefficients [" << facet->getPlane()->a() << " " << facet->getPlane()->b() << " "
                                                       << facet->getPlane()->c() << " " << facet->getPlane()->d() << "]");
 
-    CGAL_postcondition(Transformation::hasNormalizedPlane(facet));
+    CGAL_postcondition(Transformation::has_normalized_plane(facet));
   }
 
   /**
-  * Nudge the plane coefficients but ensure that the perturbed plane goes through 0, 1, or 2 fixed points.
+  * nudges the plane coefficients but ensure that the perturbed plane goes through 0, 1, or 2 fixed points.
   * If 0 points: nudge all coefficients independently.
   * If 1 point: nudge (a, b, c), recompute d so the plane passes through the point.
   * If 2 points: nudge (a, b, c) with the constraint that the new plane passes through both points.
@@ -251,10 +254,10 @@ public:
                                                   const double range,
                                                   const std::vector<Point3SPtr>& fixed_points)
   {
-    CGAL_precondition(Transformation::hasNormalizedPlane(facet));
+    CGAL_precondition(Transformation::has_normalized_plane(facet));
     CGAL_precondition(fixed_points.size() <= 2);
 
-    CGAL_SS3_TRANSF_TRACE_V(16, "Nudging Facet " << facet->getID());
+    CGAL_SS3_TRANSF_TRACE_V(16, "Nudging Facet " << facet->get_ID());
     CGAL_SS3_TRANSF_TRACE_V(16, "  From coefficients [" << facet->plane()->a() << " " << facet->plane()->b() << " "
                                                         << facet->plane()->c() << " " << facet->plane()->d() << "]");
     CGAL_SS3_TRANSF_TRACE_V(16, "  with " << fixed_points.size() << " fixed points");
@@ -303,7 +306,7 @@ public:
       double nc = nudge(facet->plane()->c());
       double nd = nudge(facet->plane()->d());
 #endif
-      facet->setPlane(KernelFactory::createPlane3(na, nb, nc, nd));
+      facet->setPlane(Kernel_factory::createPlane3(na, nb, nc, nd));
     } else if (fixed_points.size() == 1) {
       // 1 fixed point: nudge (a, b, c), recompute d so the plane passes through the point
       Point3SPtr p0 = fixed_points[0];
@@ -321,7 +324,7 @@ public:
       const FT& y0 = p0->y();
       const FT& z0 = p0->z();
       FT d = - (na * x0 + nb * y0 + nc * z0);
-      facet->setPlane(KernelFactory::createPlane3(na, nb, nc, d));
+      facet->setPlane(Kernel_factory::createPlane3(na, nb, nc, d));
       CGAL_postcondition(facet->getPlane()->has_on(*p0));
     } else if (fixed_points.size() == 2) {
       // 2 fixed points: construct a plane through both points, nudge the normal within the allowed family
@@ -371,7 +374,7 @@ public:
 
       // Compute 'd' such that the plane passes through 'p0'
       FT d1 = - (a1 * p0x + b1 * p0y + c1 * p0z);
-      facet->setPlane(KernelFactory::createPlane3(a1, b1, c1, d1));
+      facet->setPlane(Kernel_factory::createPlane3(a1, b1, c1, d1));
 
       CGAL_postcondition(facet->getPlane()->has_on(*p0));
       CGAL_postcondition(facet->getPlane()->has_on(*p1));
@@ -382,7 +385,7 @@ public:
     CGAL_SS3_TRANSF_TRACE_V(16, "  To coefficients [" << facet->getPlane()->a() << " " << facet->getPlane()->b() << " "
                                                       << facet->getPlane()->c() << " " << facet->getPlane()->d() << "]");
 
-    CGAL_postcondition(Transformation::hasNormalizedPlane(facet));
+    CGAL_postcondition(Transformation::has_normalized_plane(facet));
   }
 
   static void perturbPlaneCoefficientsHighDegrees(const FacetSPtr& facet,
@@ -391,24 +394,24 @@ public:
     std::vector<Point3SPtr> high_degree_points;
     for (const VertexSPtr& v : facet->vertices()) {
       if (v->degree() > 3) {
-        high_degree_points.push_back(v->getPoint());
+        high_degree_points.push_back(v->point());
       }
     }
     return perturbPlaneCoefficientsFixedPoints(facet, range, high_degree_points);
   }
 
   /**
-    * Check that all faces have at most two high-degree vertices: a facet with fewer than two high-degree
+    * checks that all faces have at most two high-degree vertices: a facet with fewer than two high-degree
     * vertices can be perturbed by nudging the high-degree vertices, and pivoting the facet randomly
     * around these fixed points.
     */
-  static bool isTiltCompatible(const PolyhedronSPtr& polyhedron)
+  static bool can_trivially_tilt_facets(const PolyhedronSPtr& polyhedron)
   {
     CGAL_SS3_DEBUG_SPTR(polyhedron);
     bool result = true;
     for (const FacetSPtr& facet : polyhedron->facets()) {
       if (facet->numHighDegreeVertices() > 2) {
-        CGAL_SS3_TRANSF_TRACE("facet " << facet->getID() << " has too many high-degree vertices "
+        CGAL_SS3_TRANSF_TRACE("facet " << facet->get_ID() << " has too many high-degree vertices "
                                         << "(" << facet->numHighDegreeVertices() << ")");
         result = false;
         break;
@@ -417,7 +420,7 @@ public:
     return result;
   }
 
-  static void randTiltPlanes(const PolyhedronSPtr& polyhedron)
+  static void apply_rand_plane_tilts(const PolyhedronSPtr& polyhedron)
   {
     CGAL_SS3_DEBUG_SPTR(polyhedron);
 
@@ -432,15 +435,15 @@ public:
     //
     // @todo could restrict to only high-degree vertices in facets that have 2 high-degree vertices
     for (VertexSPtr vertex : polyhedron->vertices()) {
-      Point3SPtr p = vertex->getPoint();
-      std::array<double, 3> v_r = randVec(-range, range);
+      Point3SPtr p = vertex->point();
+      std::array<double, 3> v_r = rand_vec(-range, range);
 
       double px = CGAL::to_double(p->x()) + v_r[0];
       double py = CGAL::to_double(p->y()) + v_r[1];
       double pz = CGAL::to_double(p->z()) + v_r[2];
 
-      Point3SPtr p_t = KernelFactory::createPoint3(px, py, pz);
-      vertex->setPoint(p_t);
+      Point3SPtr p_t = Kernel_factory::createPoint3(px, py, pz);
+      vertex->set_point(p_t);
     }
 
     for (FacetSPtr facet : polyhedron->facets()) {
@@ -448,7 +451,7 @@ public:
     }
   }
 
-  static void randTiltPlanesv3(const PolyhedronSPtr& polyhedron)
+  static void apply_rand_plane_tilts_V3(const PolyhedronSPtr& polyhedron)
   {
     CGAL_SS3_TRANSF_TRACE("Random Plane Tilt (v3)");
     CGAL_SS3_DEBUG_SPTR(polyhedron);
@@ -461,11 +464,11 @@ public:
 
     CGAL_SS3_TRANSF_TRACE("  perturbation_epsilon = " << range);
 
-    if (isTiltCompatible(polyhedron)) {
+    if (can_trivially_tilt_facets(polyhedron)) {
       CGAL_SS3_TRANSF_TRACE("Polyhedron can simply be tilted immediately");
-      randTiltPlanes(polyhedron);
+      apply_rand_plane_tilts(polyhedron);
       CGAL_assertion_code(bool success =)
-      Transformation::resetPoints(polyhedron);
+      Transformation::reset_points(polyhedron);
       CGAL_assertion(success);
       return;
     }
@@ -494,7 +497,7 @@ public:
     auto dump_facet = [](const std::string& filename, const FacetSPtr& f)
     {
       using CDT2_Tag = CGAL::No_constraint_intersection_tag; // CGAL::Exact_intersections_tag;
-      auto pcdt = Transformation::template constructFacetTriangulation<CDT2_Tag>(f);
+      auto pcdt = Transformation::template triangulate_facet<CDT2_Tag>(f);
 
       using PCDT = decltype(pcdt);
       using PCDT_VH = typename PCDT::Vertex_handle;
@@ -543,18 +546,18 @@ public:
 
     auto is_vertex_determined = [&](const VertexSPtr& v) -> bool
     {
-      CGAL_SS3_TRANSF_TRACE_V(16, "Checking if V" << v->getID() << " (deg: " << v->degree() << ") is fixed");
+      CGAL_SS3_TRANSF_TRACE_V(16, "Checking if V" << v->get_ID() << " (deg: " << v->degree() << ") is fixed");
       auto it = determining_facets.find(v);
       return (it != determining_facets.end() && it->second.size() == 3);
     };
 
     auto is_facet_fixed = [&](const FacetSPtr& f) -> bool
     {
-      CGAL_SS3_TRANSF_TRACE_V(16, "Checking if F" << f->getID() << " (" << f->vertices().size() << " nv) is fixed");
+      CGAL_SS3_TRANSF_TRACE_V(16, "Checking if F" << f->get_ID() << " (" << f->vertices().size() << " nv) is fixed");
       CGAL_SS3_TRANSF_TRACE_V(16, "  fixing_vertices size: " << fixing_vertices[f].size());
       CGAL_assertion(fixing_vertices[f].size() <= 3);
-      return (f->isTriangle() && fixing_vertices[f].size() == 3) ||
-              (!f->isTriangle() && fixing_vertices[f].size() == 2);
+      return (f->is_triangle() && fixing_vertices[f].size() == 3) ||
+              (!f->is_triangle() && fixing_vertices[f].size() == 2);
     };
 
 #ifdef CGAL_SS3_DUMP_FILES
@@ -593,8 +596,8 @@ public:
       unsigned int a_determined_n = get_determined_count(a);
       unsigned int b_determined_n = get_determined_count(b);
 
-      CGAL_SS3_TRANSF_TRACE_V(64, "F" << a->getID() << " has " << a_determined_n << " determined vertices");
-      CGAL_SS3_TRANSF_TRACE_V(64, "F" << b->getID() << " has " << b_determined_n << " determined vertices");
+      CGAL_SS3_TRANSF_TRACE_V(64, "F" << a->get_ID() << " has " << a_determined_n << " determined vertices");
+      CGAL_SS3_TRANSF_TRACE_V(64, "F" << b->get_ID() << " has " << b_determined_n << " determined vertices");
 
       if (a_determined_n != b_determined_n) {
         // Give priority to the one with the least determined vertices
@@ -605,8 +608,8 @@ public:
       unsigned int a_hdv_n = hdv_count(a);
       unsigned int b_hdv_n = hdv_count(b);
 
-      CGAL_SS3_TRANSF_TRACE_V(64, "F" << a->getID() << " has " << a_hdv_n << " high-degree vertices");
-      CGAL_SS3_TRANSF_TRACE_V(64, "F" << b->getID() << " has " << b_hdv_n << " high-degree vertices");
+      CGAL_SS3_TRANSF_TRACE_V(64, "F" << a->get_ID() << " has " << a_hdv_n << " high-degree vertices");
+      CGAL_SS3_TRANSF_TRACE_V(64, "F" << b->get_ID() << " has " << b_hdv_n << " high-degree vertices");
 
       if (a_hdv_n != b_hdv_n) {
         // Give priority to the one with the most high-degree vertices
@@ -629,7 +632,7 @@ public:
     // to the 'determining_facets' map.
     for (const FacetSPtr& facet : polyhedron->facets()) {
       if (!has_high_degree_vertices(facet)) {
-        CGAL_SS3_TRANSF_TRACE("Nudge and fix F" << facet->getID());
+        CGAL_SS3_TRANSF_TRACE("Nudge and fix F" << facet->get_ID());
         perturbPlaneCoefficientsNudge(facet, range);
 
 #ifdef CGAL_SS3_DUMP_FILES
@@ -649,7 +652,7 @@ public:
         // one (or two) facet with low degree vertices will appear in the determining facets
         for (const VertexSPtr& v : facet->vertices()) {
           determining_facets[v].insert(facet);
-          CGAL_SS3_TRANSF_TRACE("V" << v->getID() << " is determined by F" << facet->getID() << " (a)");
+          CGAL_SS3_TRANSF_TRACE("V" << v->get_ID() << " is determined by F" << facet->get_ID() << " (a)");
         }
       }
     }
@@ -657,7 +660,7 @@ public:
     // This is the main list of facets that we will process
     std::list<FacetSPtr> facets_to_process;
     for (const FacetSPtr& facet : polyhedron->facets()) {
-      if (facet->isTriangle() || !has_high_degree_vertices(facet)) {
+      if (facet->is_triangle() || !has_high_degree_vertices(facet)) {
         continue;
       }
 
@@ -714,12 +717,12 @@ public:
               // Mark for triangulation
               facets_to_exclude.push_back(fprime);
 
-              CGAL_SS3_TRANSF_TRACE("Facet F" << fprime->getID() << " needs triangulating due to missing high-degree edge between V" << sv->getID() << " and V" << tv->getID());
+              CGAL_SS3_TRANSF_TRACE("Facet F" << fprime->get_ID() << " needs triangulating due to missing high-degree edge between V" << sv->get_ID() << " and V" << tv->get_ID());
 
-              CGAL_SS3_TRANSF_TRACE("Triangulate F" << fprime->getID());
+              CGAL_SS3_TRANSF_TRACE("Triangulate F" << fprime->get_ID());
               CGAL_SS3_TRANSF_TRACE_CODE(++had_to_triangulate_n;)
 
-              Transformation::triangulateFacet(fprime, polyhedron);
+              Transformation::triangulate_facet(fprime, polyhedron);
 
               did_something = true;
               break;
@@ -755,13 +758,13 @@ public:
 
     auto nudge_constrained_vertex = [&](const VertexSPtr& v)
     {
-      CGAL_SS3_TRANSF_TRACE("  Nudging V" << v->getID() << " from " << *(v->getPoint()));
+      CGAL_SS3_TRANSF_TRACE("  Nudging V" << v->get_ID() << " from " << *(v->point()));
 
       std::vector<Plane3SPtr> constraining_planes;
       for (const FacetSPtr& df : determining_facets[v]) {
         if (is_facet_fixed(df)) {
           constraining_planes.push_back(df->getPlane());
-          CGAL_SS3_TRANSF_TRACE("    F" << df->getID() << " constrains the nudge");
+          CGAL_SS3_TRANSF_TRACE("    F" << df->get_ID() << " constrains the nudge");
         }
       }
 
@@ -769,12 +772,12 @@ public:
 
       const size_t n_fixed = constraining_planes.size();
       if (n_fixed == 3) {
-        Transformation::resetPoint(v, { constraining_planes[0], constraining_planes[1], constraining_planes[2] });
-        CGAL_SS3_TRANSF_TRACE("V" << v->getID() << " reset to " << *v->getPoint());
+        Transformation::reset_point(v, { constraining_planes[0], constraining_planes[1], constraining_planes[2] });
+        CGAL_SS3_TRANSF_TRACE("V" << v->get_ID() << " reset to " << *v->point());
         return;
       }
 
-      Point3SPtr p = v->getPoint();
+      Point3SPtr p = v->point();
 
 #ifdef CGAL_SS3_USE_SIMPLEST_RATIONAL_IN_INTERVAL
       This does not look quite ready yet: sometimes, the projections are way off
@@ -813,12 +816,12 @@ public:
       FT y = nudge_to_simplest_rational_in_interval(p->y());
       FT z = nudge_to_simplest_rational_in_interval(p->z());
 #else
-      std::array<double, 3> v_r = randVec(-range/2.0, range/2.0);
+      std::array<double, 3> v_r = rand_vec(-range/2.0, range/2.0);
       double x = CGAL::to_double(p->x()) + v_r[0];
       double y = CGAL::to_double(p->y()) + v_r[1];
       double z = CGAL::to_double(p->z()) + v_r[2];
 #endif
-      Point3SPtr p_nudged = KernelFactory::createPoint3(x, y, z);
+      Point3SPtr p_nudged = Kernel_factory::createPoint3(x, y, z);
       // CGAL_SS3_TRANSF_TRACE("base nudge: " << x << " " << y << " " << z);
 
       Point3SPtr p_new;
@@ -834,7 +837,7 @@ public:
         // 3. nudge l1 and l2 to l1' and l2' with a random interval around l1 and l2, and
         //    simplest_rational_in_interval
         // 4. recompute the point as pp = o + l1' * b1 + l2' * b2
-        Point3SPtr pp = KernelWrapper::projection(plane, p_nudged);
+        Point3SPtr pp = Kernel_wrapper::projection(plane, p_nudged);
         const Point_3& o = plane->point();
         const Vector_3& b1 = plane->base1();
         const Vector_3& b2 = plane->base2();
@@ -842,44 +845,44 @@ public:
         FT l2 = CGAL::scalar_product(*pp - o, b2);
         FT nl1 = nudge_to_simplest_rational_in_interval(l1);
         FT nl2 = nudge_to_simplest_rational_in_interval(l2);
-        p_new = KernelFactory::createPoint3(o.x() + nl1 * b1.x() + nl2 * b2.x(),
+        p_new = Kernel_factory::createPoint3(o.x() + nl1 * b1.x() + nl2 * b2.x(),
                                             o.y() + nl1 * b1.y() + nl2 * b2.y(),
                                             o.z() + nl1 * b1.z() + nl2 * b2.z());
 #else
-        p_new = KernelWrapper::projection(plane, p_nudged);
+        p_new = Kernel_wrapper::projection(plane, p_nudged);
 #endif
       } else if (n_fixed == 2) {
         Plane3SPtr plane1 = constraining_planes[0];
         Plane3SPtr plane2 = constraining_planes[1];
-        Line3SPtr line = KernelWrapper::intersection(plane1, plane2);
+        Line3SPtr line = Kernel_wrapper::intersection(plane1, plane2);
 #ifdef CGAL_SS3_USE_SIMPLEST_RATIONAL_IN_INTERVAL
         // something similar but a little more subtle:
         // 1. project the point onto the line
         // 2. express the point as a linear combination of the line's origin and basis: pp = o + l * v
         // 3. nudge l to l' with a random interval around l, and simplest_rational_in_interval
         // 4. recompute the point as pp = o + l' * v
-        Point3SPtr pp = KernelWrapper::projection(line, p_nudged);
+        Point3SPtr pp = Kernel_wrapper::projection(line, p_nudged);
         const Point_3& o = line->point();
         const Vector_3& d = line->to_vector();
         FT l = CGAL::scalar_product(*pp - o, d);
         FT nl = nudge_to_simplest_rational_in_interval(l);
-        p_new = KernelFactory::createPoint3(o.x() + nl * d.x(),
+        p_new = Kernel_factory::createPoint3(o.x() + nl * d.x(),
                                             o.y() + nl * d.y(),
                                             o.z() + nl * d.z());
 #else
-        p_new = KernelWrapper::projection(line, p_nudged);
+        p_new = Kernel_wrapper::projection(line, p_nudged);
 #endif
       }
 
-      CGAL_SS3_TRANSF_TRACE("  Nudged V" << v->getID() << " to " << *p_new);
+      CGAL_SS3_TRANSF_TRACE("  Nudged V" << v->get_ID() << " to " << *p_new);
 
-      v->setPoint(p_new);
+      v->set_point(p_new);
     };
 
     // sometimes we could fix as a polygon, but we need triangualte for other reasons
     auto should_triangulate_facet = [&](const FacetSPtr& f) -> bool
     {
-      if (f->isTriangle() || is_facet_fixed(f)) {
+      if (f->is_triangle() || is_facet_fixed(f)) {
         return false;
       }
 
@@ -895,11 +898,11 @@ public:
 
         // if the vertex is determined, it has been recomputed so we can check its length
         if (it->second.size() == 3) {
-          std::size_t l = Size_shenanigans::length(*(v->getPoint()));
+          std::size_t l = Size_shenanigans::length(*(v->point()));
           if (l > max_length) {
-            CGAL_SS3_TRANSF_TRACE("Vertex V" << v->getID() << " is too long");
-            CGAL_SS3_TRANSF_TRACE(CGAL::exact(*(v->getPoint())) << " (l=" << l << ")");
-            CGAL_SS3_TRANSF_TRACE("F" << f->getID() << " should be triangulated");
+            CGAL_SS3_TRANSF_TRACE("Vertex V" << v->get_ID() << " is too long");
+            CGAL_SS3_TRANSF_TRACE(CGAL::exact(*(v->point())) << " (l=" << l << ")");
+            CGAL_SS3_TRANSF_TRACE("F" << f->get_ID() << " should be triangulated");
             return true;
           }
         }
@@ -909,9 +912,9 @@ public:
           for (const FacetSPtr& of : determining_facets[v]) {
             std::size_t l = Size_shenanigans::length(*(of->getPlane()));
             if (l > max_length) {
-              CGAL_SS3_TRANSF_TRACE("Facet F" << of->getID() << " is too long");
+              CGAL_SS3_TRANSF_TRACE("Facet F" << of->get_ID() << " is too long");
               CGAL_SS3_TRANSF_TRACE(CGAL::exact(*(of->getPlane())) << " (l=" << l << ")");
-              CGAL_SS3_TRANSF_TRACE("F" << f->getID() << " should be triangulated");
+              CGAL_SS3_TRANSF_TRACE("F" << f->get_ID() << " should be triangulated");
               return true;
             }
           }
@@ -923,7 +926,7 @@ public:
 
     auto is_facet_overconstrained = [&](const FacetSPtr& f) -> bool
     {
-      if (f->isTriangle() || is_facet_fixed(f)) {
+      if (f->is_triangle() || is_facet_fixed(f)) {
         return false;
       }
 
@@ -954,13 +957,13 @@ public:
           if (is_high_degree(v)) {
             if (is_vertex_determined(v)) {
               ++constrain_n;
-            } else if (determining_facets[v].size() == 2 && ft->hasVertex(v)) {
+            } else if (determining_facets[v].size() == 2 && ft->has_vertex(v)) {
               ++constrain_n;
             }
           }
 
           if (constrain_n > 2) {
-            CGAL_SS3_TRANSF_TRACE("F" << ft->getID() << " would be over constrained by fixing of F" << f->getID());
+            CGAL_SS3_TRANSF_TRACE("F" << ft->get_ID() << " would be over constrained by fixing of F" << f->get_ID());
             return true;
           }
         }
@@ -971,7 +974,7 @@ public:
 
     auto triangulate_facet = [&](const FacetSPtr& facet_tt)
     {
-      CGAL_SS3_TRANSF_TRACE("Triangulate F" << facet_tt->getID());
+      CGAL_SS3_TRANSF_TRACE("Triangulate F" << facet_tt->get_ID());
 
       CGAL_assertion(!is_facet_fixed(facet_tt));
 
@@ -983,20 +986,20 @@ public:
 
       CGAL_SS3_TRANSF_TRACE_CODE(++had_to_triangulate_n;)
 
-      auto [local_vertices, new_facets] = Transformation::triangulateFacet(facet_tt, polyhedron);
+      auto [local_vertices, new_facets] = Transformation::triangulate_facet(facet_tt, polyhedron);
 
       for (const VertexSPtr& v : local_vertices) {
-        CGAL_SS3_TRANSF_TRACE("local vertex " << v->getID() << " (deg=" << v->degree() << "; " << determining_facets[v].size() << " determining facets)");
+        CGAL_SS3_TRANSF_TRACE("local vertex " << v->get_ID() << " (deg=" << v->degree() << "; " << determining_facets[v].size() << " determining facets)");
 
         if (is_vertex_determined(v)) {
-          CGAL_SS3_TRANSF_TRACE("V" << v->getID() << " is already determined, skipping");
+          CGAL_SS3_TRANSF_TRACE("V" << v->get_ID() << " is already determined, skipping");
           continue;
         }
 
         for (FacetWPtr wf : v->facets()) {
           if (FacetSPtr fptr = wf.lock()) {
             if (is_facet_fixed(fptr)) {
-              CGAL_SS3_TRANSF_TRACE("  V" << v->getID() << " is determined by F" << fptr->getID() << " (c)");
+              CGAL_SS3_TRANSF_TRACE("  V" << v->get_ID() << " is determined by F" << fptr->get_ID() << " (c)");
               determining_facets[v].insert(fptr);
 
               if (is_vertex_determined(v)) {
@@ -1010,11 +1013,11 @@ public:
 
       // already-determined vertices are fixed points for the new facets
       for (const FacetSPtr& nf : new_facets) {
-        CGAL_SS3_TRANSF_TRACE("spawned F" << nf->getID());
+        CGAL_SS3_TRANSF_TRACE("spawned F" << nf->get_ID());
 
         for (const VertexSPtr& iv : nf->vertices()) {
           if (is_vertex_determined(iv)) {
-            CGAL_SS3_TRANSF_TRACE("newborn F" << nf->getID() << " is constrained by V" << iv->getID());
+            CGAL_SS3_TRANSF_TRACE("newborn F" << nf->get_ID() << " is constrained by V" << iv->get_ID());
             fixing_vertices[nf].insert(iv);
           }
         }
@@ -1025,10 +1028,10 @@ public:
     {
       CGAL_precondition(fixing_vertices[f].size() <= 3);
 
-      CGAL_SS3_TRANSF_TRACE("  Fix F" << f->getID() << " with V" << v->getID());
+      CGAL_SS3_TRANSF_TRACE("  Fix F" << f->get_ID() << " with V" << v->get_ID());
 
       if (is_facet_fixed(f)) {
-        CGAL_SS3_TRANSF_TRACE("  F" << f->getID() << " is already fixed");
+        CGAL_SS3_TRANSF_TRACE("  F" << f->get_ID() << " is already fixed");
         return true;
       }
 
@@ -1043,18 +1046,18 @@ public:
       // So, fix it: compute its random perturbation, and add the facet ID to its vertices.
 
       CGAL_SS3_TRANSF_TRACE_CODE(std::stringstream ss;)
-      CGAL_SS3_TRANSF_TRACE_CODE(ss << "F" << f->getID() << " is now fixed by");
+      CGAL_SS3_TRANSF_TRACE_CODE(ss << "F" << f->get_ID() << " is now fixed by");
       CGAL_SS3_TRANSF_TRACE_CODE(for (const VertexSPtr& fv : fixing_vertices[f]))
-      CGAL_SS3_TRANSF_TRACE_CODE(ss << " V" << fv->getID() << " [measure=" << Size_shenanigans::length(*(fv->getPoint())) << "]");
+      CGAL_SS3_TRANSF_TRACE_CODE(ss << " V" << fv->get_ID() << " [measure=" << Size_shenanigans::length(*(fv->point())) << "]");
       CGAL_SS3_TRANSF_TRACE(ss.str());
 
-      if (f->isTriangle()) {
+      if (f->is_triangle()) {
         CGAL_assertion(fixing_vertices[f].size() == 3); // just to be clear
 
         // for triangles, all vertices are determined, and there is nothing to nudge
         // (note that vertices were themselves nudged so the facet is nudged).
         f->initPlane();
-        Transformation::normalizePlaneCoefficients(f);
+        Transformation::normalize_plane_coefficients(f);
 
 #ifdef CGAL_SS3_DUMP_FILES
         dump_facet("results/nudged_face_" + std::to_string(nudged_face_id++) + "_fixed_3.OFF", f);
@@ -1067,25 +1070,25 @@ public:
 
       std::vector<Point3SPtr> fixed_points;
       for (const VertexSPtr& fixed_v : fixing_vertices[f]) {
-        fixed_points.push_back(fixed_v->getPoint());
+        fixed_points.push_back(fixed_v->point());
       }
 
       perturbPlaneCoefficientsFixedPoints(f, range, fixed_points);
 
-      CGAL_SS3_TRANSF_TRACE("F" << f->getID() << " is now fixed at " << *(f->getPlane()) << " [measure=" << Size_shenanigans::length(*(f->getPlane())) << "]");
+      CGAL_SS3_TRANSF_TRACE("F" << f->get_ID() << " is now fixed at " << *(f->getPlane()) << " [measure=" << Size_shenanigans::length(*(f->getPlane())) << "]");
 
 #ifdef CGAL_SS3_DUMP_FILES
       dump_facet("results/nudged_face_" + std::to_string(nudged_face_id++) + "_fixed_" + std::to_string(fixed_points.size()) + ".OFF", f);
 #endif
 
-      CGAL_SS3_TRANSF_TRACE("Newly fixed facet F" << f->getID() << " determines its high-degree incident vertices...");
+      CGAL_SS3_TRANSF_TRACE("Newly fixed facet F" << f->get_ID() << " determines its high-degree incident vertices...");
 
       // Need to now tag the vertices of the facet
       for (const VertexSPtr& v : f->vertices()) {
-        CGAL_SS3_TRANSF_TRACE("incident: " << v->getID() << " (deg=" << v->degree() << "; " << determining_facets[v].size() << " determining facets)");
+        CGAL_SS3_TRANSF_TRACE("incident: " << v->get_ID() << " (deg=" << v->degree() << "; " << determining_facets[v].size() << " determining facets)");
         if (!is_vertex_determined(v)) {
           determining_facets[v].insert(f);
-          CGAL_SS3_TRANSF_TRACE("  V" << v->getID() << " is determined by F" << f->getID() << " (b)");
+          CGAL_SS3_TRANSF_TRACE("  V" << v->get_ID() << " is determined by F" << f->get_ID() << " (b)");
         }
       }
 
@@ -1098,15 +1101,15 @@ public:
       CGAL_precondition(is_vertex_determined(v));
 
       CGAL_SS3_TRANSF_TRACE_CODE(auto it = determining_facets[v].begin();)
-      CGAL_SS3_TRANSF_TRACE("V" << v->getID() << " is now fully determined by"
-                            << " F" << (*it)->getID() << " [measure=" << Size_shenanigans::length(*((*it)->getPlane()))
-                            << "] F" << (*std::next(it))->getID() << " [measure=" << Size_shenanigans::length(*((*std::next(it))->getPlane()))
-                            << "] F" << (*std::next(it, 2))->getID() << " [measure=" << Size_shenanigans::length(*((*std::next(it, 2))->getPlane())) << "]");
+      CGAL_SS3_TRANSF_TRACE("V" << v->get_ID() << " is now fully determined by"
+                            << " F" << (*it)->get_ID() << " [measure=" << Size_shenanigans::length(*((*it)->getPlane()))
+                            << "] F" << (*std::next(it))->get_ID() << " [measure=" << Size_shenanigans::length(*((*std::next(it))->getPlane()))
+                            << "] F" << (*std::next(it, 2))->get_ID() << " [measure=" << Size_shenanigans::length(*((*std::next(it, 2))->getPlane())) << "]");
 
       // set the nudged position for the vertex: a nudge constrained by already fixed incident facets
       nudge_constrained_vertex(v);
 
-      CGAL_SS3_TRANSF_TRACE("V" << v->getID() << " is now determined at " << *(v->getPoint()) << " [measure=" << Size_shenanigans::length(*(v->getPoint())) << "]");
+      CGAL_SS3_TRANSF_TRACE("V" << v->get_ID() << " is now determined at " << *(v->point()) << " [measure=" << Size_shenanigans::length(*(v->point())) << "]");
 
       // compute the plane coefficients of any incident facet that becomes fixed
       // by this vertex becoming determined
@@ -1124,15 +1127,15 @@ public:
       FacetSPtr facet = facets_to_process.front();
       facets_to_process.pop_front();
 
-      CGAL_SS3_TRANSF_TRACE("Pop F" << facet->getID());
+      CGAL_SS3_TRANSF_TRACE("Pop F" << facet->get_ID());
 
-      CGAL_assertion(!facet->isTriangle());
+      CGAL_assertion(!facet->is_triangle());
       CGAL_assertion(fixing_vertices[facet].size() <= 2);
 
       CGAL_SS3_TRANSF_TRACE_CODE(std::stringstream ss;)
       CGAL_SS3_TRANSF_TRACE_CODE(ss << "  Fixing vertices:";)
       CGAL_SS3_TRANSF_TRACE_CODE(for (const VertexSPtr& fv : fixing_vertices[facet]))
-      CGAL_SS3_TRANSF_TRACE_CODE(ss << " V" << fv->getID();)
+      CGAL_SS3_TRANSF_TRACE_CODE(ss << " V" << fv->get_ID();)
       CGAL_SS3_TRANSF_TRACE(ss.str());
 
 #ifdef CGAL_SS3_DUMP_FILES
@@ -1150,7 +1153,7 @@ public:
       for (const VertexSPtr& v : facet->vertices()) {
         if (!is_vertex_determined(v)) {
           determining_facets[v].insert(facet);
-          CGAL_SS3_TRANSF_TRACE("  V" << v->getID() << " is determined by F" << facet->getID() << " (d)");
+          CGAL_SS3_TRANSF_TRACE("  V" << v->get_ID() << " is determined by F" << facet->get_ID() << " (d)");
           if (is_high_degree(v) && is_vertex_determined(v)) {
             // When the vertex becomes fixed (its 3 determining facets become known), we need:
             // - to perturb the position of the vertex
@@ -1169,16 +1172,16 @@ public:
     CGAL_SS3_TRANSF_TRACE("== Deal with remaining facets with high degree vertices... ==");
 
     for (const FacetSPtr& f : polyhedron->facets()) {
-      if (f->isTriangle() || is_facet_fixed(f)) {
+      if (f->is_triangle() || is_facet_fixed(f)) {
         continue;
       }
 
-      CGAL_SS3_TRANSF_TRACE("Nudge and fix F" << f->getID() << " [remaining]");
+      CGAL_SS3_TRANSF_TRACE("Nudge and fix F" << f->get_ID() << " [remaining]");
 
       std::vector<Point3SPtr> fixed_points;
       for (const VertexSPtr& v : fixing_vertices[f]) {
-        CGAL_SS3_TRANSF_TRACE("  V" << v->getID() << " is a fixing vertex");
-        fixed_points.push_back(v->getPoint());
+        CGAL_SS3_TRANSF_TRACE("  V" << v->get_ID() << " is a fixing vertex");
+        fixed_points.push_back(v->point());
       }
 
       perturbPlaneCoefficientsFixedPoints(f, range, fixed_points);
@@ -1188,8 +1191,8 @@ public:
       // add random vertices to mark the facet as fixed
       static int dummy_id = -1;
       while (!is_facet_fixed(f)) {
-        VertexSPtr dummy_v = Vertex::create(KernelFactory::createPoint3(0,0,0));
-        dummy_v->setID(dummy_id--);
+        VertexSPtr dummy_v = Vertex::create(Kernel_factory::createPoint3(0,0,0));
+        dummy_v->set_ID(dummy_id--);
         fixing_vertices[f].insert(dummy_v);
       }
 
@@ -1202,7 +1205,7 @@ public:
 
     // At this point, everything that is not a high-degree triangular facet should be fixed
     for (const FacetSPtr& f : polyhedron->facets()) {
-      if (f->isTriangle() || !has_high_degree_vertices(f)) {
+      if (f->is_triangle() || !has_high_degree_vertices(f)) {
         continue;
       }
       CGAL_assertion(is_facet_fixed(f));
@@ -1213,7 +1216,7 @@ public:
 
     for (const VertexSPtr& v : polyhedron->vertices()) {
       if (is_high_degree(v) && !is_vertex_determined(v)) {
-        CGAL_SS3_TRANSF_TRACE("  V" << v->getID() << " is high degree and not fully determined, nudge it");
+        CGAL_SS3_TRANSF_TRACE("  V" << v->get_ID() << " is high degree and not fully determined, nudge it");
         nudge_constrained_vertex(v);
 
         // determine the vertex
@@ -1223,7 +1226,7 @@ public:
           if (FacetSPtr f = wf.lock()) {
             if (!is_facet_fixed(f)) {
               // the facet cannot be without high-degree vertices since v is high degree
-              CGAL_assertion(f->isTriangle());
+              CGAL_assertion(f->is_triangle());
               fixing_vertices[f].insert(v);
             }
           }
@@ -1233,7 +1236,7 @@ public:
         static int dummy_id = -1;
         while (!is_vertex_determined(v)) {
           FacetSPtr dummy_f = Facet::create();
-          dummy_f->setID(dummy_id--);
+          dummy_f->set_ID(dummy_id--);
           determining_facets[v].insert(dummy_f);
         }
 
@@ -1245,30 +1248,30 @@ public:
     CGAL_SS3_TRANSF_TRACE("== Deal with remaining triangles... ==");
 
     for (const FacetSPtr& f : polyhedron->facets()) {
-      if (!f->isTriangle() || !has_high_degree_vertices(f)) {
+      if (!f->is_triangle() || !has_high_degree_vertices(f)) {
         continue;
       }
 
       CGAL_SS3_TRANSF_TRACE_CODE(std::stringstream ss;)
-      CGAL_SS3_TRANSF_TRACE_CODE(ss << "Fix triangle F" << f->getID() << " [");
+      CGAL_SS3_TRANSF_TRACE_CODE(ss << "Fix triangle F" << f->get_ID() << " [");
       CGAL_SS3_TRANSF_TRACE_CODE(for (const VertexSPtr& v : f->vertices()) {)
-      CGAL_SS3_TRANSF_TRACE_CODE(ss << "V" << v->getID());
+      CGAL_SS3_TRANSF_TRACE_CODE(ss << "V" << v->get_ID());
       CGAL_SS3_TRANSF_TRACE_CODE(ss << " (" << v->degree() << ")");
       CGAL_SS3_TRANSF_TRACE_CODE(if (is_vertex_determined(v)) { ss << "*"; })
       CGAL_SS3_TRANSF_TRACE_CODE(ss << " "; } ss << "]";)
       CGAL_SS3_TRANSF_TRACE(ss.str());
 
-      CGAL_SS3_TRANSF_TRACE("Nudge and fix F" << f->getID() << " [triangle]");
+      CGAL_SS3_TRANSF_TRACE("Nudge and fix F" << f->get_ID() << " [triangle]");
 
       std::vector<Point3SPtr> fixed_points;
       for (const VertexSPtr& v : fixing_vertices[f]) {
-        CGAL_SS3_TRANSF_TRACE("  V" << v->getID() << " is a fixing vertex");
-        fixed_points.push_back(v->getPoint());
+        CGAL_SS3_TRANSF_TRACE("  V" << v->get_ID() << " is a fixing vertex");
+        fixed_points.push_back(v->point());
       }
 
       if (fixed_points.size() == 3) {
         f->initPlane();
-        Transformation::normalizePlaneCoefficients(f);
+        Transformation::normalize_plane_coefficients(f);
       } else {
         perturbPlaneCoefficientsFixedPoints(f, range, fixed_points);
       }
@@ -1282,7 +1285,7 @@ public:
       for (const VertexSPtr& v : f->vertices()) {
         if (!is_vertex_determined(v)) {
           determining_facets[v].insert(f);
-          CGAL_SS3_TRANSF_TRACE("  V" << v->getID() << " is determined by F" << f->getID() << " (f)");
+          CGAL_SS3_TRANSF_TRACE("  V" << v->get_ID() << " is determined by F" << f->get_ID() << " (f)");
           // no need to cascade here, we know only triangles are left
         }
       }
@@ -1305,7 +1308,7 @@ public:
     // Recompute all points which were not fixed (degree 3 vertices)
     for (const VertexSPtr& v : polyhedron->vertices()) {
       if (!is_high_degree(v)) {
-        Transformation::resetPoint(v);
+        Transformation::reset_point(v);
 
         // determine (without cascading)
         for (FacetWPtr wf : v->facets()) {
@@ -1339,23 +1342,23 @@ public:
 
     CGAL_assertion_code(for (const FacetSPtr& facet : polyhedron->facets()) {)
     CGAL_assertion_code(for (const VertexSPtr& v : facet->vertices()) {)
-    CGAL_assertion(facet->getPlane()->has_on(*(v->getPoint())));
+    CGAL_assertion(facet->getPlane()->has_on(*(v->point())));
     CGAL_assertion_code(})
     CGAL_assertion_code(})
 
     CGAL_SS3_TRANSF_TRACE("Had to triangulate " << had_to_triangulate_n << " facets");
 
     CGAL_SS3_TRANSF_TRACE_CODE(for (const VertexSPtr& v : polyhedron->vertices()))
-    CGAL_SS3_TRANSF_TRACE("V" << v->getID() << " has depth " << CGAL::depth(*(v->getPoint())));
+    CGAL_SS3_TRANSF_TRACE("V" << v->get_ID() << " has depth " << CGAL::depth(*(v->point())));
 
     CGAL_SS3_TRANSF_TRACE_CODE(for (const FacetSPtr& f : polyhedron->facets()) )
-    CGAL_SS3_TRANSF_TRACE("F" << f->getID() << " has depth " << CGAL::depth(*(f->getPlane())));
+    CGAL_SS3_TRANSF_TRACE("F" << f->get_ID() << " has depth " << CGAL::depth(*(f->getPlane())));
 
     CGAL_SS3_TRANSF_TRACE_CODE(for (const VertexSPtr& v : polyhedron->vertices()))
-    CGAL_SS3_TRANSF_TRACE("V" << v->getID() << " has length " << Size_shenanigans::length(*(v->getPoint())));
+    CGAL_SS3_TRANSF_TRACE("V" << v->get_ID() << " has length " << Size_shenanigans::length(*(v->point())));
 
     CGAL_SS3_TRANSF_TRACE_CODE(for (const FacetSPtr& f : polyhedron->facets()) )
-    CGAL_SS3_TRANSF_TRACE("F" << f->getID() << " has length " << Size_shenanigans::length(*(f->getPlane())));
+    CGAL_SS3_TRANSF_TRACE("F" << f->get_ID() << " has length " << Size_shenanigans::length(*(f->getPlane())));
   }
 };
 

@@ -21,7 +21,9 @@
 #include <CGAL/Straight_skeleton_3/IO/String_factory.h>
 #include <CGAL/Straight_skeleton_3/internal/algorithm/events/Abstract_event.h>
 #include <CGAL/Straight_skeleton_3/internal/HDS/Polyhedron.h>
-#include <CGAL/Straight_skeleton_3/internal/SDS/Straight_skeleton.h>
+#include <CGAL/Straight_skeleton_3/Straight_skeleton_3.h>
+
+#include <CGAL/array.h>
 
 #include <memory>
 #include <string>
@@ -33,11 +35,11 @@ namespace internal {
 namespace algorithm {
 
 template <typename Traits>
-class TetrahedronEvent
-  : public AbstractEvent<Traits>
+class Tetrahedron_event
+  : public Abstract_event<Traits>
 {
-  using Base = AbstractEvent<Traits>;
-  using TetrahedronEventSPtr = std::shared_ptr<TetrahedronEvent<Traits> >;
+  using Base = Abstract_event<Traits>;
+  using Tetrahedron_event_sptr = std::shared_ptr<Tetrahedron_event<Traits> >;
 
 private:
   using Point_3 = typename Traits::Point_3;
@@ -51,135 +53,118 @@ private:
   using FacetSPtr = typename Polyhedron::FacetSPtr;
 
 private:
-  using EdgeFacetNeighborhood = algorithm::EdgeFacetNeighborhood<Traits>;
+  using Edge_facet_neighborhood = algorithm::Edge_facet_neighborhood<Traits>;
 
 public:
-  TetrahedronEvent()
+  Tetrahedron_event()
     : Base(Base::TETRAHEDRON_EVENT)
   { }
 
-  virtual ~TetrahedronEvent()
+  virtual ~Tetrahedron_event()
   { }
 
-  static TetrahedronEventSPtr create()
+  static Tetrahedron_event_sptr create()
   {
-    return std::make_shared<TetrahedronEvent>();
+    return std::make_shared<Tetrahedron_event>();
   }
 
-  Point3SPtr getPoint() const
+  Point3SPtr point() const
   {
     CGAL_SS3_DEBUG_SPTR(point_);
     return point_;
   }
 
-  void setPoint(const Point3SPtr& point)
+  void set_point(const Point3SPtr& point)
   {
     this->point_ = point;
   }
 
-  EdgeSPtr getEdgeBegin() const
+  EdgeSPtr get_edge_begin() const
   {
     CGAL_SS3_DEBUG_WPTR(edge_begin_);
     return edge_begin_.lock();
   }
 
-  void setEdgeBegin(const EdgeSPtr& edge_begin)
+  void set_edge_begin(const EdgeSPtr& edge_begin)
   {
     CGAL_SS3_DEBUG_SPTR(edge_begin);
     this->edge_begin_ = edge_begin;
-    this->neighborhood_ = EdgeFacetNeighborhood(edge_begin);
+    this->neighborhood_ = Edge_facet_neighborhood(edge_begin);
   }
 
-  void getVertices(VertexSPtr out[4]) const
+  std::array<VertexSPtr, 4> get_vertices() const
   {
-    EdgeSPtr edge_begin = getEdgeBegin();
-
-    for (unsigned int i = 0; i < 4; ++i) {
-      out[i] = VertexSPtr();
-    }
-    out[0] = edge_begin->getVertexSrc();
-    out[1] = edge_begin->getVertexDst();
-    EdgeSPtr edge_l = edge_begin->next(edge_begin->getFacetL());
-    out[2] = edge_l->dst(edge_begin->getFacetL());
-    EdgeSPtr edge_r = edge_begin->next(edge_begin->getFacetR());
-    out[3] = edge_r->dst(edge_begin->getFacetR());
+    EdgeSPtr edge_begin = get_edge_begin();
+    return CGAL::make_array(edge_begin->getVertexSrc(),
+                            edge_begin->getVertexDst(),
+                            edge_begin->next(edge_begin->getFacetL())->dst(edge_begin->getFacetL()),
+                            edge_begin->next(edge_begin->getFacetR())->dst(edge_begin->getFacetR()));
   }
 
-  void getEdges(EdgeSPtr out[6]) const
+  std::array<EdgeSPtr, 6> get_edges() const
   {
-    EdgeSPtr edge_begin = getEdgeBegin();
-
-    for (unsigned int i = 0; i < 6; ++i) {
-      out[i] = EdgeSPtr();
-    }
-    out[0] = edge_begin;
-    out[1] = edge_begin->prev(edge_begin->getFacetL());
-    out[2] = edge_begin->next(edge_begin->getFacetL());
-    out[3] = edge_begin->prev(edge_begin->getFacetR());
-    out[4] = edge_begin->next(edge_begin->getFacetR());
-    FacetSPtr other = out[2]->other(edge_begin->getFacetL());
-    out[5] = out[2]->prev(other);
+    EdgeSPtr edge_begin = get_edge_begin();
+    EdgeSPtr e2 = edge_begin->next(edge_begin->getFacetL());
+    return CGAL::make_array(edge_begin,
+                            edge_begin->prev(edge_begin->getFacetL()),
+                            e2,
+                            edge_begin->prev(edge_begin->getFacetR()),
+                            edge_begin->next(edge_begin->getFacetR()),
+                            e2->prev(e2->other(edge_begin->getFacetL())));
   }
 
-  void getFacets(FacetSPtr out[4]) const
+  std::array<FacetSPtr, 4> get_facets() const
   {
-    EdgeSPtr edge_begin = getEdgeBegin();
-
-    for (unsigned int i = 0; i < 4; ++i) {
-      out[i] = FacetSPtr();
-    }
-    out[0] = edge_begin->getFacetL();
-    out[1] = edge_begin->getFacetR();
-    out[2] = out[0]->prev(edge_begin->getVertexDst());
-    out[3] = out[1]->prev(edge_begin->getVertexSrc());
+    EdgeSPtr edge_begin = get_edge_begin();
+    return CGAL::make_array(edge_begin->getFacetL(),
+                            edge_begin->getFacetR(),
+                            edge_begin->getFacetL()->prev(edge_begin->getVertexDst()),
+                            edge_begin->getFacetR()->prev(edge_begin->getVertexSrc()));
   }
 
-  bool isValid() const
+  bool is_valid() const
   {
     return (!edge_begin_.expired());
   }
 
-  bool isObsolete() const
+  bool is_obsolete() const
   {
-    if (EdgeSPtr edge = getEdgeBegin()) {
-      return ! neighborhood_.checkNeighborhoodConsistency(edge);
+    if (EdgeSPtr edge = get_edge_begin()) {
+      return ! neighborhood_.check_neighborhood_consistency(edge);
     }
 
     return false;
   }
 
-  std::string toString() const
+  std::string to_string() const
   {
-    VertexSPtr vertices[4];
-    getVertices(vertices);
-
-    EdgeSPtr edges[6];
-    getEdges(edges);
+    std::array<VertexSPtr, 4> vertices = get_vertices();
+    std::array<EdgeSPtr, 6> edges = get_edges();
 
     std::stringstream sstr;
     sstr.precision(17);
-    sstr << "TetrahedronEvent\n";
-    sstr << "\t(ID=" << Base::getID() << ")\n";
-    sstr << "\t(time=" << IO::StringFactory::fromDouble(CGAL::to_double(Base::getTime())) << ")\n";
+    sstr << "Tetrahedron_event\n";
+    sstr << "\t(ID=" << Base::get_ID() << ")\n";
+    sstr << "\t(time=" << IO::String_factory::fromDouble(CGAL::to_double(Base::time())) << ")\n";
     if (point_) {
-      sstr << "\t(point=<" + IO::StringFactory::fromDouble(CGAL::to_double(point_->x())) + " "
-                           + IO::StringFactory::fromDouble(CGAL::to_double(point_->y())) + " "
-                           + IO::StringFactory::fromDouble(CGAL::to_double(point_->z())) + ">)";
+      sstr << "\t(point=<" + IO::String_factory::fromDouble(CGAL::to_double(point_->x())) + " "
+                           + IO::String_factory::fromDouble(CGAL::to_double(point_->y())) + " "
+                           + IO::String_factory::fromDouble(CGAL::to_double(point_->z())) + ">)";
     }
     sstr << "\t(vertices";
     for (int i=0; i<4; ++i)
-      sstr << " " << vertices[i]->getID();
+      sstr << " " << vertices[i]->get_ID();
     sstr << ")\n";
     sstr << "\t(edges";
     for (int i=0; i<6; ++i)
-      sstr << " " << edges[i]->getID();
+      sstr << " " << edges[i]->get_ID();
     sstr << ")";
     return sstr.str();
   }
 
-  bool operator==(const TetrahedronEvent& other) const
+  bool operator==(const Tetrahedron_event& other) const
   {
-    return (Base::getTime() == other.getTime()) &&
+    return (Base::time() == other.time()) &&
             (!point_ || !other.point_ || *point_ == *(other.point_)) &&
             (edge_begin_.lock() == other.edge_begin_.lock());
   }
@@ -188,7 +173,7 @@ protected:
   Point3SPtr point_;
   EdgeWPtr edge_begin_;
 
-  EdgeFacetNeighborhood neighborhood_;
+  Edge_facet_neighborhood neighborhood_;
 };
 
 } // namespace algorithm

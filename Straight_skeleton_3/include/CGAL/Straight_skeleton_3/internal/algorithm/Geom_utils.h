@@ -30,7 +30,7 @@ namespace internal {
 namespace algorithm {
 
 template <typename K>
-class GeomUtils
+class Geom_utils
 {
   using FT = typename K::FT;
   using Point_3 = typename K::Point_3;
@@ -39,14 +39,14 @@ class GeomUtils
   using Point3SPtr = std::shared_ptr<Point_3>;
   using Plane3SPtr = std::shared_ptr<Plane_3>;
 
-  using KernelWrapper = kernel::KernelWrapper<K>;
-  using KernelFactory = kernel::KernelFactory<K>;
+  using Kernel_wrapper = kernel::Kernel_wrapper<K>;
+  using Kernel_factory = kernel::Kernel_factory<K>;
 
 public:
-  static Plane3SPtr offsetPlane(const Plane3SPtr& plane, const FT& shift)
+  static Plane3SPtr offset_plane(const Plane3SPtr& plane, const FT& shift)
   {
     CGAL_SS3_DEBUG_SPTR(plane);
-    CGAL_precondition(KernelWrapper::hasNormalizedPlane(plane));
+    CGAL_precondition(Kernel_wrapper::has_normalized_plane(plane));
 
     CGAL_SS3_TRAITS_TRACE("Plane offset from: " << *plane);
 
@@ -54,17 +54,17 @@ public:
     const FT& b = plane->b();
     const FT& c = plane->c();
     const FT& d = plane->d();
-    Plane3SPtr result = KernelFactory::createPlane3(a, b, c, d - shift);
+    Plane3SPtr result = Kernel_factory::createPlane3(a, b, c, d - shift);
     CGAL_SS3_TRAITS_TRACE("Plane offset to: " << *result);
     CGAL_SS3_DEBUG_SPTR(result);
 
     return result;
   }
 
-  static Point3SPtr intersectionPointOffsetPlanes(const Plane3SPtr& plane_0, const FT& w0,
-                                                  const Plane3SPtr& plane_1, const FT& w1,
-                                                  const Plane3SPtr& plane_2, const FT& w2,
-                                                  const Plane3SPtr& plane_3, const FT& w3)
+  static Point3SPtr intersection_point_offset_planes(const Plane3SPtr& plane_0, const FT& w0,
+                                                     const Plane3SPtr& plane_1, const FT& w1,
+                                                     const Plane3SPtr& plane_2, const FT& w2,
+                                                     const Plane3SPtr& plane_3, const FT& w3)
   {
     CGAL_SS3_DEBUG_SPTR(plane_0);
     CGAL_SS3_DEBUG_SPTR(plane_1);
@@ -99,10 +99,10 @@ public:
                                                             a2, b2, c2, d2,
                                                             a3, b3, c3, d3));
 
-    CGAL_assertion(KernelWrapper::hasNormalizedPlane(plane_0));
-    CGAL_assertion(KernelWrapper::hasNormalizedPlane(plane_1));
-    CGAL_assertion(KernelWrapper::hasNormalizedPlane(plane_2));
-    CGAL_assertion(KernelWrapper::hasNormalizedPlane(plane_3));
+    CGAL_assertion(Kernel_wrapper::has_normalized_plane(plane_0));
+    CGAL_assertion(Kernel_wrapper::has_normalized_plane(plane_1));
+    CGAL_assertion(Kernel_wrapper::has_normalized_plane(plane_2));
+    CGAL_assertion(Kernel_wrapper::has_normalized_plane(plane_3));
 
     FT den = (-a0*b1*c2*w3 + a0*b1*c3*w2 + a0*b2*c1*w3 - a0*b2*c3*w1 - a0*b3*c1*w2 + a0*b3*c2*w1 + a1*b0*c2*w3 - a1*b0*c3*w2 - a1*b2*c0*w3 + a1*b2*c3*w0 + a1*b3*c0*w2 - a1*b3*c2*w0 - a2*b0*c1*w3 + a2*b0*c3*w1 + a2*b1*c0*w3 - a2*b1*c3*w0 - a2*b3*c0*w1 + a2*b3*c1*w0 + a3*b0*c1*w2 - a3*b0*c2*w1 - a3*b1*c0*w2 + a3*b1*c2*w0 + a3*b2*c0*w1 - a3*b2*c1*w0);
 
@@ -113,15 +113,15 @@ public:
 
     FT z = (a0*b1*d2*w3 - a0*b1*d3*w2 - a0*b2*d1*w3 + a0*b2*d3*w1 + a0*b3*d1*w2 - a0*b3*d2*w1 - a1*b0*d2*w3 + a1*b0*d3*w2 + a1*b2*d0*w3 - a1*b2*d3*w0 - a1*b3*d0*w2 + a1*b3*d2*w0 + a2*b0*d1*w3 - a2*b0*d3*w1 - a2*b1*d0*w3 + a2*b1*d3*w0 + a2*b3*d0*w1 - a2*b3*d1*w0 - a3*b0*d1*w2 + a3*b0*d2*w1 + a3*b1*d0*w2 - a3*b1*d2*w0 - a3*b2*d0*w1 + a3*b2*d1*w0) / den;
 
-    Point3SPtr point = KernelFactory::createPoint3(x, y, z);
+    Point3SPtr point = Kernel_factory::createPoint3(x, y, z);
 
     return point;
   }
 
-  static FT intersectionTimeOffsetPlanes(const Plane3SPtr& plane_0, const FT& w0,
-                                         const Plane3SPtr& plane_1, const FT& w1,
-                                         const Plane3SPtr& plane_2, const FT& w2,
-                                         const Plane3SPtr& plane_3, const FT& w3)
+  static FT intersection_time_offset_planes(const Plane3SPtr& plane_0, const FT& w0,
+                                            const Plane3SPtr& plane_1, const FT& w1,
+                                            const Plane3SPtr& plane_2, const FT& w2,
+                                            const Plane3SPtr& plane_3, const FT& w3)
   {
     CGAL_SS3_DEBUG_SPTR(plane_0);
     CGAL_SS3_DEBUG_SPTR(plane_1);
@@ -156,10 +156,10 @@ public:
                                                             a2, b2, c2, d2,
                                                             a3, b3, c3, d3));
 
-    CGAL_assertion(KernelWrapper::hasNormalizedPlane(plane_0));
-    CGAL_assertion(KernelWrapper::hasNormalizedPlane(plane_1));
-    CGAL_assertion(KernelWrapper::hasNormalizedPlane(plane_2));
-    CGAL_assertion(KernelWrapper::hasNormalizedPlane(plane_3));
+    CGAL_assertion(Kernel_wrapper::has_normalized_plane(plane_0));
+    CGAL_assertion(Kernel_wrapper::has_normalized_plane(plane_1));
+    CGAL_assertion(Kernel_wrapper::has_normalized_plane(plane_2));
+    CGAL_assertion(Kernel_wrapper::has_normalized_plane(plane_3));
 
     FT den = (-a0*b1*c2*w3 + a0*b1*c3*w2 + a0*b2*c1*w3 - a0*b2*c3*w1 - a0*b3*c1*w2 + a0*b3*c2*w1 + a1*b0*c2*w3 - a1*b0*c3*w2 - a1*b2*c0*w3 + a1*b2*c3*w0 + a1*b3*c0*w2 - a1*b3*c2*w0 - a2*b0*c1*w3 + a2*b0*c3*w1 + a2*b1*c0*w3 - a2*b1*c3*w0 - a2*b3*c0*w1 + a2*b3*c1*w0 + a3*b0*c1*w2 - a3*b0*c2*w1 - a3*b1*c0*w2 + a3*b1*c2*w0 + a3*b2*c0*w1 - a3*b2*c1*w0);
 

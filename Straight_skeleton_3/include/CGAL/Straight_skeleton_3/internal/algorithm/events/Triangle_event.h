@@ -22,6 +22,8 @@
 #include <CGAL/Straight_skeleton_3/internal/algorithm/events/Abstract_event.h>
 #include <CGAL/Straight_skeleton_3/internal/HDS/Polyhedron.h>
 
+#include <CGAL/array.h>
+
 #include <memory>
 #include <string>
 #include <sstream>
@@ -32,11 +34,11 @@ namespace internal {
 namespace algorithm {
 
 template <typename Traits>
-class TriangleEvent
-  : public AbstractEvent<Traits>
+class Triangle_event
+  : public Abstract_event<Traits>
 {
-  using Base = AbstractEvent<Traits>;
-  using TriangleEventSPtr = std::shared_ptr<TriangleEvent<Traits> >;
+  using Base = Abstract_event<Traits>;
+  using Triangle_event_sptr = std::shared_ptr<Triangle_event<Traits> >;
 
 private:
   using Point_3 = typename Traits::Point_3;
@@ -51,116 +53,108 @@ private:
   using FacetSPtr = typename Polyhedron::FacetSPtr;
 
 private:
-  using EdgeFacetNeighborhood = algorithm::EdgeFacetNeighborhood<Traits>;
+  using Edge_facet_neighborhood = algorithm::Edge_facet_neighborhood<Traits>;
 
 public:
-  TriangleEvent()
+  Triangle_event()
     : Base(Base::TRIANGLE_EVENT)
   { }
 
-  virtual ~TriangleEvent()
+  virtual ~Triangle_event()
   { }
 
-  static TriangleEventSPtr create()
+  static Triangle_event_sptr create()
   {
-    return std::make_shared<TriangleEvent>();
+    return std::make_shared<Triangle_event>();
   }
 
-  Point3SPtr getPoint() const
+  Point3SPtr point() const
   {
     CGAL_SS3_DEBUG_SPTR(point_);
     return point_;
   }
 
-  void setPoint(const Point3SPtr& point)
+  void set_point(const Point3SPtr& point)
   {
     this->point_ = point;
   }
 
-  FacetSPtr getFacet() const
+  FacetSPtr get_facet() const
   {
     CGAL_SS3_DEBUG_WPTR(facet_);
     return facet_.lock();
   }
 
-  void setFacet(const FacetSPtr& facet)
+  void set_facet(const FacetSPtr& facet)
   {
     CGAL_SS3_DEBUG_SPTR(facet);
     this->facet_ = facet;
   }
 
-  EdgeSPtr getEdgeBegin() const
+  EdgeSPtr get_edge_begin() const
   {
     CGAL_SS3_DEBUG_WPTR(edge_begin_);
     return edge_begin_.lock();
   }
 
-  void setEdgeBegin(const EdgeSPtr& edge_begin) {
+  void set_edge_begin(const EdgeSPtr& edge_begin) {
     CGAL_SS3_DEBUG_SPTR(edge_begin);
     this->edge_begin_ = edge_begin;
-    this->neighborhood_ = EdgeFacetNeighborhood(edge_begin);
+    this->neighborhood_ = Edge_facet_neighborhood(edge_begin);
   }
 
-  void getVertices(VertexSPtr out[3]) const
+  std::array<VertexSPtr, 3> get_vertices() const
   {
-    FacetSPtr facet = getFacet();
-    EdgeSPtr edge_begin = getEdgeBegin();
-
-    for (unsigned int i = 0; i < 3; ++i) {
-      out[i] = VertexSPtr();
-    }
-    out[0] = edge_begin->src(facet);
-    out[1] = edge_begin->dst(facet);
-    out[2] = edge_begin->next(facet)->dst(facet);
+    EdgeSPtr edge_begin = get_edge_begin();
+    FacetSPtr facet = get_facet();
+    return CGAL::make_array(edge_begin->src(facet),
+                            edge_begin->dst(facet),
+                            edge_begin->next(facet)->dst(facet));
   }
 
-  void getEdges(EdgeSPtr out[3]) const
+  std::array<EdgeSPtr, 3> get_edges() const
   {
-    FacetSPtr facet = getFacet();
-    EdgeSPtr edge_begin = getEdgeBegin();
-
-    for (unsigned int i = 0; i < 3; ++i) {
-      out[i] = EdgeSPtr();
-    }
-    out[0] = edge_begin;
-    out[1] = edge_begin->next(facet);
-    out[2] = edge_begin->prev(facet);
+    FacetSPtr facet = get_facet();
+    EdgeSPtr edge_begin = get_edge_begin();
+    return CGAL::make_array(edge_begin,
+                            edge_begin->next(facet),
+                            edge_begin->prev(facet));
   }
 
-  bool isValid() const
+  bool is_valid() const
   {
     return (!facet_.expired() && !edge_begin_.expired());
   }
 
-  bool isObsolete() const
+  bool is_obsolete() const
   {
-    if (EdgeSPtr edge = getEdgeBegin()) {
-      return ! neighborhood_.checkNeighborhoodConsistency(edge);
+    if (EdgeSPtr edge = get_edge_begin()) {
+      return ! neighborhood_.check_neighborhood_consistency(edge);
     }
     return false;
   }
 
-  std::string toString() const
+  std::string to_string() const
   {
-    FacetSPtr facet = getFacet();
+    FacetSPtr facet = get_facet();
 
     std::stringstream sstr;
     sstr.precision(17);
-    sstr << "TriangleEvent\n";
-    sstr << "\t(ID=" << Base::getID() << ")\n";
-    sstr << "\t(time=" << IO::StringFactory::fromDouble(CGAL::to_double(Base::getTime())) << ")\n";
+    sstr << "Triangle_event\n";
+    sstr << "\t(ID=" << Base::get_ID() << ")\n";
+    sstr << "\t(time=" << IO::String_factory::fromDouble(CGAL::to_double(Base::time())) << ")\n";
     if (point_) {
-      sstr << "\t(point=<" + IO::StringFactory::fromDouble(CGAL::to_double(point_->x())) + " "
-                           + IO::StringFactory::fromDouble(CGAL::to_double(point_->y())) + " "
-                           + IO::StringFactory::fromDouble(CGAL::to_double(point_->z())) + ">)";
+      sstr << "\t(point=<" + IO::String_factory::fromDouble(CGAL::to_double(point_->x())) + " "
+                           + IO::String_factory::fromDouble(CGAL::to_double(point_->y())) + " "
+                           + IO::String_factory::fromDouble(CGAL::to_double(point_->z())) + ">)";
     }
-    sstr << "\t(facet=" << facet->getID() << ")";
+    sstr << "\t(facet=" << facet->get_ID() << ")";
     return sstr.str();
   }
 
-  bool operator==(const TriangleEvent& other) const
+  bool operator==(const Triangle_event& other) const
   {
-    return (Base::getTime() == other.getTime()) &&
+    return (Base::time() == other.time()) &&
             (!point_ || !other.point_ || *point_ == *(other.point_)) &&
             (facet_.lock() == other.facet_.lock()) &&
             (edge_begin_.lock() == other.edge_begin_.lock());
@@ -171,7 +165,7 @@ protected:
   FacetWPtr facet_; // @todo shouldn't be needed, edge_begin_->getFacetL is enough
   EdgeWPtr edge_begin_;
 
-  EdgeFacetNeighborhood neighborhood_; // this covers the four faces involved in the triangle event
+  Edge_facet_neighborhood neighborhood_; // this covers the four faces involved in the triangle event
 };
 
 } // namespace algorithm

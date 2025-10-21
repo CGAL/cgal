@@ -21,7 +21,7 @@
 #include <CGAL/Straight_skeleton_3/IO/String_factory.h>
 #include <CGAL/Straight_skeleton_3/internal/algorithm/events/Abstract_event.h>
 #include <CGAL/Straight_skeleton_3/internal/HDS/Polyhedron.h>
-#include <CGAL/Straight_skeleton_3/internal/SDS/Straight_skeleton.h>
+#include <CGAL/Straight_skeleton_3/Straight_skeleton_3.h>
 
 #include <memory>
 #include <string>
@@ -33,11 +33,11 @@ namespace internal {
 namespace algorithm {
 
 template <typename Traits>
-class PierceEvent
-  : public AbstractEvent<Traits>
+class Pierce_event
+  : public Abstract_event<Traits>
 {
-  using Base = AbstractEvent<Traits>;
-  using PierceEventSPtr = std::shared_ptr<PierceEvent<Traits> >;
+  using Base = Abstract_event<Traits>;
+  using Pierce_event_sptr = std::shared_ptr<Pierce_event<Traits> >;
 
 private:
   using Point_3 = typename Traits::Point_3;
@@ -51,93 +51,93 @@ private:
   using FacetSPtr = typename Polyhedron::FacetSPtr;
 
 private:
-  using VertexFacetNeighborhood = algorithm::VertexFacetNeighborhood<Traits>;
+  using Vertex_facet_neighborhood = algorithm::Vertex_facet_neighborhood<Traits>;
 
 public:
-  PierceEvent()
+  Pierce_event()
     : Base(Base::PIERCE_EVENT)
   { }
 
-  virtual ~PierceEvent()
+  virtual ~Pierce_event()
   { }
 
-  static PierceEventSPtr create()
+  static Pierce_event_sptr create()
   {
-    return std::make_shared<PierceEvent>();
+    return std::make_shared<Pierce_event>();
   }
 
-  Point3SPtr getPoint() const
+  Point3SPtr point() const
   {
     CGAL_SS3_DEBUG_SPTR(point_);
     return point_;
   }
 
-  void setPoint(const Point3SPtr& point)
+  void set_point(const Point3SPtr& point)
   {
     this->point_ = point;
   }
 
-  FacetSPtr getFacet() const
+  FacetSPtr get_facet() const
   {
     CGAL_SS3_DEBUG_WPTR(facet_);
     return facet_.lock();
   }
 
-  void setFacet(const FacetSPtr& facet)
+  void set_facet(const FacetSPtr& facet)
   {
     CGAL_SS3_DEBUG_SPTR(facet);
     this->facet_ = facet;
   }
 
-  VertexSPtr getVertex() const
+  VertexSPtr get_vertex() const
   {
     CGAL_SS3_DEBUG_WPTR(vertex_);
     return vertex_.lock();
   }
 
-  void setVertex(const VertexSPtr& vertex)
+  void set_vertex(const VertexSPtr& vertex)
   {
     CGAL_SS3_DEBUG_SPTR(vertex);
     this->vertex_ = vertex;
-    this->neighborhood_ = VertexFacetNeighborhood(vertex);
+    this->neighborhood_ = Vertex_facet_neighborhood(vertex);
   }
 
-  bool isValid() const
+  bool is_valid() const
   {
     return (!facet_.expired() && !vertex_.expired());
   }
 
-  bool isObsolete() const
+  bool is_obsolete() const
   {
-    if (VertexSPtr vertex = getVertex()) {
-      return ! neighborhood_.checkNeighborhoodConsistency(vertex);
+    if (VertexSPtr vertex = get_vertex()) {
+      return ! neighborhood_.check_neighborhood_consistency(vertex);
     }
     return false;
   }
 
-  std::string toString() const
+  std::string to_string() const
   {
-    FacetSPtr facet = getFacet();
-    VertexSPtr vertex = getVertex();
+    FacetSPtr facet = get_facet();
+    VertexSPtr vertex = get_vertex();
 
     std::stringstream sstr;
     sstr.precision(17);
-    sstr << "PierceEvent\n";
-    sstr << "\t(ID=" << Base::getID() << ")\n";
-    sstr << "\t(time=" << IO::StringFactory::fromDouble(CGAL::to_double(Base::getTime())) << ")\n";
+    sstr << "Pierce_event\n";
+    sstr << "\t(ID=" << Base::get_ID() << ")\n";
+    sstr << "\t(time=" << IO::String_factory::fromDouble(CGAL::to_double(Base::time())) << ")\n";
     if (point_) {
-      sstr << "\t(point=<" + IO::StringFactory::fromDouble(CGAL::to_double(point_->x())) + " "
-                           + IO::StringFactory::fromDouble(CGAL::to_double(point_->y())) + " "
-                           + IO::StringFactory::fromDouble(CGAL::to_double(point_->z())) + ">)";
+      sstr << "\t(point=<" + IO::String_factory::fromDouble(CGAL::to_double(point_->x())) + " "
+                           + IO::String_factory::fromDouble(CGAL::to_double(point_->y())) + " "
+                           + IO::String_factory::fromDouble(CGAL::to_double(point_->z())) + ">)";
     }
-    sstr << "\t(vertex=" << vertex->toString() << ")\n";
-    sstr << "\t(facet=" << facet->getID() << ")";
+    sstr << "\t(vertex=" << vertex->to_string() << ")\n";
+    sstr << "\t(facet=" << facet->get_ID() << ")";
     return sstr.str();
   }
 
-  bool operator==(const PierceEvent& other) const
+  bool operator==(const Pierce_event& other) const
   {
-    return (Base::getTime() == other.getTime()) &&
+    return (Base::time() == other.time()) &&
             (!point_ || !other.point_ || *point_ == *(other.point_)) &&
             (facet_.lock() == other.facet_.lock()) &&
             (vertex_.lock() == other.vertex_.lock());
@@ -148,7 +148,7 @@ protected:
   FacetWPtr facet_;
   VertexWPtr vertex_;
 
-  VertexFacetNeighborhood neighborhood_;
+  Vertex_facet_neighborhood neighborhood_;
 };
 
 } // namespace algorithm

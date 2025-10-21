@@ -26,7 +26,7 @@ namespace CGAL {
 namespace Straight_skeletons_3 {
 namespace IO {
 
-class StringFactory
+class String_factory
 {
 public:
   static std::string fromBoolean(bool value) {

@@ -32,11 +32,11 @@ namespace internal {
 namespace algorithm {
 
 template <typename Traits>
-class EdgeEvent
-  : public AbstractEvent<Traits>
+class Edge_event
+  : public Abstract_event<Traits>
 {
-  using Base = AbstractEvent<Traits>;
-  using EdgeEventSPtr = std::shared_ptr<EdgeEvent<Traits> >;
+  using Base = Abstract_event<Traits>;
+  using Edge_event_sptr = std::shared_ptr<Edge_event<Traits> >;
 
 private:
   using Point_3 = typename Traits::Point_3;
@@ -48,80 +48,80 @@ private:
   using EdgeSPtr = typename Polyhedron::EdgeSPtr;
 
 private:
-  using EdgeFacetNeighborhood = algorithm::EdgeFacetNeighborhood<Traits>;
+  using Edge_facet_neighborhood = algorithm::Edge_facet_neighborhood<Traits>;
 
 public:
-  EdgeEvent()
+  Edge_event()
     : Base(Base::EDGE_EVENT)
   { }
 
-  virtual ~EdgeEvent()
+  virtual ~Edge_event()
   { }
 
-  static EdgeEventSPtr create()
+  static Edge_event_sptr create()
   {
-    return std::make_shared<EdgeEvent>();
+    return std::make_shared<Edge_event>();
   }
 
-  Point3SPtr getPoint() const
+  Point3SPtr point() const
   {
     CGAL_SS3_DEBUG_SPTR(point_);
     return point_;
   }
 
-  void setPoint(const Point3SPtr& point)
+  void set_point(const Point3SPtr& point)
   {
     this->point_ = point;
   }
 
-  EdgeSPtr getEdge() const
+  EdgeSPtr get_edge() const
   {
     CGAL_SS3_DEBUG_WPTR(edge_);
     return edge_.lock();
   }
 
-  void setEdge(const EdgeSPtr& edge)
+  void set_edge(const EdgeSPtr& e)
   {
-    CGAL_SS3_DEBUG_SPTR(edge);
-    this->edge_ = edge;
-    this->neighborhood_ = EdgeFacetNeighborhood(edge);
+    CGAL_SS3_DEBUG_SPTR(e);
+    this->edge_ = e;
+    this->neighborhood_ = Edge_facet_neighborhood(e);
   }
 
-  bool isValid() const
+  bool is_valid() const
   {
     return (!edge_.expired());
   }
 
-  bool isObsolete() const
+  bool is_obsolete() const
   {
-    if (EdgeSPtr edge = getEdge()) {
-      return ! neighborhood_.checkNeighborhoodConsistency(edge);
+    if (EdgeSPtr edge = get_edge()) {
+      return ! neighborhood_.check_neighborhood_consistency(edge);
     }
     return false;
   }
 
-  std::string toString() const
+  std::string to_string() const
   {
-    EdgeSPtr edge = getEdge();
+    EdgeSPtr edge = get_edge();
 
     std::stringstream sstr;
     sstr.precision(17);
-    sstr << "EdgeEvent\n";
-    sstr << "\t(ID=" << Base::getID() << ")\n";
-    sstr << "\t(time=" << IO::StringFactory::fromDouble(CGAL::to_double(Base::getTime())) << ")\n";
+    sstr << "Edge_event\n";
+    sstr << "\t(ID=" << Base::get_ID() << ")\n";
+    sstr << "\t(time=" << IO::String_factory::fromDouble(CGAL::to_double(Base::time())) << ")\n";
     if (point_) {
-      sstr << "\t(point=<" + IO::StringFactory::fromDouble(CGAL::to_double(point_->x())) + " "
-                           + IO::StringFactory::fromDouble(CGAL::to_double(point_->y())) + " "
-                           + IO::StringFactory::fromDouble(CGAL::to_double(point_->z())) + ">)";
+      sstr << "\t(point=<" + IO::String_factory::fromDouble(CGAL::to_double(point_->x())) + " "
+                           + IO::String_factory::fromDouble(CGAL::to_double(point_->y())) + " "
+                           + IO::String_factory::fromDouble(CGAL::to_double(point_->z())) + ">)";
     }
-    sstr << "\t(edgeA=" << edge->getID() << "\n\t\t[" << edge->getVertexSrc()->toString() << "\n\t\t "
-                                                      << edge->getVertexDst()->toString() << "])";
+    sstr << "\t(edgeA=" << edge->get_ID() << "\n\t\t[" << edge->getVertexSrc()->to_string() << "\n\t\t "
+                                                       << edge->getVertexDst()->to_string() << "])";
     return sstr.str();
   }
 
-  bool operator==(const EdgeEvent& other) const
+  bool operator==(const Edge_event& other) const
   {
-    return (Base::getTime() == other.getTime()) &&
+    return (Base::time() == other.time()) &&
             (!point_ || !other.point_ || *point_ == *(other.point_)) &&
             (edge_.lock() == other.edge_.lock());
   }
@@ -130,7 +130,7 @@ protected:
   Point3SPtr point_;
   EdgeWPtr edge_;
 
-  EdgeFacetNeighborhood neighborhood_;
+  Edge_facet_neighborhood neighborhood_;
 };
 
 } // namespace algorithm

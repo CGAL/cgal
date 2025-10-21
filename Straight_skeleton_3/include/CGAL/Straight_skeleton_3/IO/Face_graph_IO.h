@@ -56,20 +56,20 @@ private:
   using Polyhedron = internal::HDS::Polyhedron<Traits>;
   using PolyhedronSPtr = typename Polyhedron::PolyhedronSPtr;
 
-  using Vertex = typename Polyhedron::template Vertex<Traits>;
+  using Vertex = typename Polyhedron::Vertex;
   using VertexSPtr = typename Polyhedron::VertexSPtr;
   using EdgeWPtr = typename Polyhedron::EdgeWPtr;
   using EdgeSPtr = typename Polyhedron::EdgeSPtr;
-  using Facet = typename Polyhedron::template Facet<Traits>;
+  using Facet = typename Polyhedron::Facet;
   using FacetSPtr = typename Polyhedron::FacetSPtr;
 
   using SkelFacetData = typename Polyhedron::SkelFacetData;
   using SkelFacetDataSPtr = typename Polyhedron::SkelFacetDataSPtr;
 
 private:
-  using KernelFactory = internal::kernel::KernelFactory<Traits>;
-  using Transformation = internal::algorithm::PolyhedronTransformation<Traits>;
-  using HdsUtils = internal::algorithm::HdsUtils<Traits>;
+  using Kernel_factory = internal::kernel::Kernel_factory<Traits>;
+  using Transformation = internal::algorithm::Polyhedron_transformation<Traits>;
+  using Hds_utils = internal::algorithm::Hds_utils<Traits>;
 
 public:
   template <typename TriangleMesh,
@@ -99,10 +99,10 @@ public:
 
     for (vertex_descriptor vi : vertices(tmesh)) {
       ++vertex_id_new;
-      Point3SPtr point = KernelFactory::createPoint3(get(vpm, vi));
+      Point3SPtr point = Kernel_factory::createPoint3(get(vpm, vi));
       VertexSPtr vertex = Vertex::create(point);
-      vertex->setID(vertex_id_new);
-      result->addVertex(vertex);
+      vertex->set_ID(vertex_id_new);
+      result->add_vertex(vertex);
     }
 
     std::vector<VertexSPtr> vertices(result->vertices().begin(), result->vertices().end());
@@ -129,8 +129,8 @@ public:
         unsigned int vertex_id = source(h, tmesh);
         if (vertex_id < vertices.size()) {
           poly_vertices[pos++] = vertices[vertex_id];
-          CGAL_SS3_IO_TRACE_V(32, "  V" << vertices[vertex_id]->getID() << "; "
-                                        << *(vertices[vertex_id]->getPoint()));
+          CGAL_SS3_IO_TRACE_V(32, "  V" << vertices[vertex_id]->get_ID() << "; "
+                                        << *(vertices[vertex_id]->point()));
         } else {
           std::stringstream whatstream;
           whatstream << "Vertex with id=" << vertex_id << " does not exist.";
@@ -143,7 +143,7 @@ public:
       }
 
       FacetSPtr facet = Facet::create(poly_vertices);
-      facet->setID(facet_id_new);
+      facet->set_ID(facet_id_new);
 
       // Correspondence between the edges of the input mesh and the new edges
       // in the polyhedron
@@ -156,34 +156,34 @@ public:
       }
 
       if (num_vertices == 3) {
-        Plane3SPtr plane = KernelFactory::createPlane3(poly_vertices[0]->getPoint(),
-                                                       poly_vertices[1]->getPoint(),
-                                                       poly_vertices[2]->getPoint());
+        Plane3SPtr plane = Kernel_factory::createPlane3(poly_vertices[0]->point(),
+                                                        poly_vertices[1]->point(),
+                                                        poly_vertices[2]->point());
         facet->setPlane(plane);
       } else {
         // @todo is there a point handling non triangulated inputs here and everywhere...?
         return { };
       }
-      result->addFacet(facet);
+      result->add_facet(facet);
 
       const FT weight = get(weight_pmap, fi);
       CGAL_assertion(weight > 0);
 
       SkelFacetDataSPtr data = SkelFacetData::create(facet);
-      data->setSpeed(weight);
+      data->set_speed(weight);
     }
 
     for (const EdgeSPtr& edge : result->edges()) {
       if (!(edge->getFacetL() && edge->getFacetR())) {
         CGAL_SS3_IO_TRACE_V(1, "Warning: Polyhedron has no closed boundary.");
-        CGAL_SS3_IO_TRACE_V(1, edge->toString());
+        CGAL_SS3_IO_TRACE_V(1, edge->to_string());
       }
     }
 
-    Transformation::removeVerticesDegLt3(result);
+    Transformation::remove_vertices_deg_lt3(result);
 
     CGAL_postcondition(bool(result));
-    CGAL_postcondition(result->isConsistent());
+    CGAL_postcondition(result->is_consistent());
 
     return result;
   }
@@ -221,8 +221,8 @@ public:
 
 #if 1
     PolyhedronSPtr polyhedron = IO::FaceGraphIO<Traits>::load(tmesh, np);
-    Transformation::truncatePrecision(polyhedron);
-    Transformation::mergeCoplanarFacets(polyhedron);
+    Transformation::truncate_precision(polyhedron);
+    Transformation::merge_coplanar_facets(polyhedron);
 #else
     namespace PMP = CGAL::Polygon_mesh_processing;
 
@@ -286,15 +286,15 @@ public:
           continue;
         }
 
-        CGAL_SS3_TRANSF_TRACE("Merging facets " << edge->getFacetL()->getID() << " and " << edge->getFacetR()->getID());
-        CGAL_assertion(sm.point(source(e, sm)) == *(edge->getVertexSrc()->getPoint()));
-        CGAL_assertion(sm.point(target(e, sm)) == *(edge->getVertexDst()->getPoint()));
+        CGAL_SS3_TRANSF_TRACE("Merging facets " << edge->getFacetL()->get_ID() << " and " << edge->getFacetR()->get_ID());
+        CGAL_assertion(sm.point(source(e, sm)) == *(edge->getVertexSrc()->point()));
+        CGAL_assertion(sm.point(target(e, sm)) == *(edge->getVertexDst()->point()));
 
         // @fixme it seems like intermediate states are somewhat unsound during edge merging
-        mergeFacets(edge, polyhedron);
+        merge_facets(edge, polyhedron);
     }
 
-    polyhedron->initializeAllIDs();
+    polyhedron->initialize_all_IDs();
 
     sanitize(polyhedron);
 #endif
@@ -342,7 +342,7 @@ public:
     std::unordered_map<VertexSPtr, vertex_descriptor> v_map;
     for (const VertexSPtr& vertex : polyhedron->vertices()) {
       vertex_descriptor vi = add_vertex(pmesh);
-      put(vpm, vi, *(vertex->getPoint()));
+      put(vpm, vi, *(vertex->point()));
       v_map[vertex] = vi;
     }
 
@@ -351,12 +351,12 @@ public:
                                         CGAL::Constant_property_map<std::size_t, double>(1.0));
 
     for (const FacetSPtr& facet : polyhedron->facets()) {
-      CGAL_assertion(facet->getID() != -1);
+      CGAL_assertion(facet->get_ID() != -1);
       CGAL_assertion(facet->edges().size() >= 3);
 
-      double speed = CGAL::to_double(HdsUtils::getSpeed(facet));
+      double speed = CGAL::to_double(Hds_utils::get_speed(facet));
 
-      Vector3SPtr n = KernelFactory::createVector3(facet->plane());
+      Vector3SPtr n = Kernel_factory::createVector3(facet->plane());
       CGAL_assertion(*n != CGAL::NULL_VECTOR);
 
       PK traits(*n);
@@ -367,7 +367,7 @@ public:
       for (const VertexSPtr& vertex : facet->vertices()) {
         auto res = face_vhs.emplace(vertex, PCDT_VH());
         if (res.second) { // first time seeing this point
-          PCDT_VH vh = pcdt.insert(*(vertex->getPoint()));
+          PCDT_VH vh = pcdt.insert(*(vertex->point()));
           res.first->second = vh;
           vh->info() = vertex;
         }
@@ -378,9 +378,9 @@ public:
         VertexSPtr v0 = edge->src(facet);
         VertexSPtr v1 = edge->dst(facet);
 
-        if(*(v0->getPoint()) == *(v1->getPoint()))
+        if(*(v0->point()) == *(v1->point()))
         {
-          CGAL_SS3_IO_TRACE("Warning: degenerate edge at " << *(v0->getPoint()));
+          CGAL_SS3_IO_TRACE("Warning: degenerate edge at " << *(v0->point()));
           break;
         }
         else
@@ -395,8 +395,8 @@ public:
           catch(const typename PCDT::Intersection_of_constraints_exception&)
           {
             CGAL_SS3_IO_TRACE("Error: Intersection of constraints");
-            CGAL_SS3_IO_TRACE("While inserting " << *(v0->getPoint()) << " || " << *(v1->getPoint()));
-            CGAL_SS3_IO_TRACE(facet->toString());
+            CGAL_SS3_IO_TRACE("While inserting " << *(v0->point()) << " || " << *(v1->point()));
+            CGAL_SS3_IO_TRACE(facet->to_string());
             CGAL_assertion_msg(false, "Intersections in CDT2 are not allowed");
             return false;
           }

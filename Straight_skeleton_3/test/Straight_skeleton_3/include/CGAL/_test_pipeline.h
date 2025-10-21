@@ -178,9 +178,9 @@ bool run(const Mesh& sm,
   CGAL::Real_timer timer;
   timer.start();
 
-  bool success = SS3::face_offset(sm, save_times,
-                                  results,
-                                  CGAL::parameters::face_weight_map(fwm));
+  bool success = CGAL::face_offset(sm, save_times,
+                                   results,
+                                   CGAL::parameters::face_weight_map(fwm));
 
   timer.stop();
   std::cout << "Elapsed: " << timer.time() << std::endl;

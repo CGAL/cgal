@@ -14,7 +14,7 @@
 #include <CGAL/Straight_skeleton_3/Configuration.h>
 #include <CGAL/Straight_skeleton_3/internal/HDS/Polyhedron.h>
 #include <CGAL/Straight_skeleton_3/IO/Face_graph_IO.h>
-#include <CGAL/Straight_skeleton_3/internal/algorithm/Straight_skeleton_builder.h>
+#include <CGAL/Straight_skeleton_3/internal/algorithm/Straight_skeleton_builder_3.h>
 #include <CGAL/Straight_skeleton_3/internal/algorithm/Polyhedron_perturbation.h>
 #include <CGAL/Straight_skeleton_3/internal/algorithm/Polyhedron_self_intersection.h>
 
@@ -120,7 +120,9 @@ bool face_offset(const TriangleMeshIn& tmesh,
                  const NamedParametersIn& np_in = parameters::default_values(),
                  const NamedParametersOut& np_out = parameters::default_values())
 {
-  namespace SS3i = CGAL::Straight_skeletons_3::internal;
+  namespace SS3 = CGAL::Straight_skeletons_3;
+  namespace SS3i = SS3::internal;
+  namespace SS3io = SS3::IO;
   namespace PMP = CGAL::Polygon_mesh_processing;
 
   using parameters::choose_parameter;
@@ -131,14 +133,14 @@ bool face_offset(const TriangleMeshIn& tmesh,
   using Polyhedron = SS3i::HDS::Polyhedron<Geom_traits>;
   using PolyhedronSPtr = typename Polyhedron::PolyhedronSPtr;
 
-  using Transformation = SS3i::algorithm::PolyhedronTransformation<Geom_traits>;
-  using Perturbation = SS3i::algorithm::PolyhedronPerturbation<Geom_traits>;
-  using SelfIntersection = SS3i::algorithm::SelfIntersection<Geom_traits>;
-  using SimpleStraightSkel = SS3i::algorithm::SimpleStraightSkel<Geom_traits>;
-  using FaceGraphIO = IO::FaceGraphIO<Geom_traits>;
+  using Transformation = SS3i::algorithm::Polyhedron_transformation<Geom_traits>;
+  using Perturbation = SS3i::algorithm::Polyhedron_perturbation<Geom_traits>;
+  using Self_intersection = SS3i::algorithm::Self_intersection<Geom_traits>;
+  using Straight_skeleton_builder_3 = SS3i::algorithm::Straight_skeleton_builder_3<Geom_traits>;
+  using FaceGraphIO = SS3io::FaceGraphIO<Geom_traits>;
 
   // Get config file path from named parameters if provided, else use default (working directory)
-  ConfigurationSPtr config = Configuration::getInstance();
+  SS3::ConfigurationSPtr config = SS3::Configuration::getInstance();
   std::string str_conf_file = parameters::choose_parameter(parameters::get_parameter(np_in, internal_np::config_file_path),
                                                            config->findDefaultFilename());
 
@@ -181,7 +183,7 @@ bool face_offset(const TriangleMeshIn& tmesh,
   // borders and disconnected facet connected components
   PolyhedronSPtr p = FaceGraphIO::convert(tmesh, np_in.outward_offsetting(outwards));
   CGAL_SS3_DEBUG_SPTR(p);
-  Transformation::normalizeFacetPlanes(p);
+  Transformation::normalize_facet_planes(p);
 
   CGAL_SS3_TRACE("Post conversion: " << p->vertices().size() << " NV " << p->facets().size() << " NF");
 
@@ -197,19 +199,19 @@ bool face_offset(const TriangleMeshIn& tmesh,
   PolyhedronSPtr p_mem = p->clone();
 
   // We always need to ensure that points are exactly on the planes of their incident facets
-  Perturbation::randTiltPlanesv3(p);
+  Perturbation::apply_rand_plane_tilts_V3(p);
 
   if (safe_mode) {
     for (;;) {
-      if (Perturbation::doAll2PlanesIntersect(p) &&
-          Perturbation::doAll3PlanesIntersect(p) &&
-          !SelfIntersection::hasSelfIntersectingSurface(p)) {
+      if (Perturbation::do_all_plane_pairs_intersect(p) &&
+          Perturbation::do_all_plane_triplets_intersect(p) &&
+          !Self_intersection::has_self_intersecting_surface(p)) {
         CGAL_SS3_TRACE("Found a good perturbation");
         break;
       }
 
       p = p_mem->clone();
-      Perturbation::randTiltPlanesv3(p);
+      Perturbation::apply_rand_plane_tilts_V3(p);
     }
   }
 
@@ -217,7 +219,7 @@ bool face_offset(const TriangleMeshIn& tmesh,
 
   // visitor to collect the results at save times
   struct Mesh_collector_visitor
-    : public internal::algorithm::Default_mesh_offset_visitor<Geom_traits>
+    : public SS3i::algorithm::Default_mesh_offset_visitor<Geom_traits>
   {
     Mesh_collector_visitor(std::vector<PolyhedronSPtr>& results) : results_(results) { }
 
@@ -230,7 +232,7 @@ bool face_offset(const TriangleMeshIn& tmesh,
     std::vector<PolyhedronSPtr>& results_;
   };
 
-  auto skel_builder = SimpleStraightSkel::create(p, save_times, save_path);
+  auto skel_builder = Straight_skeleton_builder_3::create(p, save_times, save_path);
 
   std::vector<PolyhedronSPtr> results_p;
   Mesh_collector_visitor visitor(results_p);
@@ -260,7 +262,7 @@ bool face_offset(const TriangleMeshIn& tmesh,
     CGAL_SS3_TRACE("Post processing of result @ " << save_time)
 
     PolyhedronSPtr result_p = results_p[i];
-    CGAL_assertion(result_p && result_p->isConsistent());
+    CGAL_assertion(result_p && result_p->is_consistent());
 
     CGAL_SS3_TRACE("At time: " << save_time << ", Polyhedron with " << result_p->vertices().size()
                      << " vertices and " << result_p->facets().size() << " faces");
@@ -269,7 +271,7 @@ bool face_offset(const TriangleMeshIn& tmesh,
     // This could be avoided if a polygonal output was prefered, but then we
     // need some specific conversion code.
     PolygonMeshOut result_t;
-    bool success = IO::FaceGraphIO<Geom_traits>::save(result_p, result_t, np_out);
+    bool success = FaceGraphIO::save(result_p, result_t, np_out);
     if (!success) {
       CGAL_SS3_TRACE_V(1, "Error: failed to convert back to Surface_mesh");
       return false;

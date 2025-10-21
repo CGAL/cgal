@@ -21,9 +21,10 @@
 #include <CGAL/Straight_skeleton_3/IO/String_factory.h>
 #include <CGAL/Straight_skeleton_3/internal/algorithm/events/Abstract_event.h>
 #include <CGAL/Straight_skeleton_3/internal/HDS/Polyhedron.h>
-#include <CGAL/Straight_skeleton_3/internal/SDS/Straight_skeleton.h>
+#include <CGAL/Straight_skeleton_3/Straight_skeleton_3.h>
 
-#include <array>
+#include <CGAL/array.h>
+
 #include <memory>
 #include <string>
 #include <sstream>
@@ -34,11 +35,11 @@ namespace internal {
 namespace algorithm {
 
 template <typename Traits>
-class DblEdgeMergeEvent
-  : public AbstractEvent<Traits>
+class Dbl_edge_merge_event
+  : public Abstract_event<Traits>
 {
-  using Base = AbstractEvent<Traits>;
-  using DblEdgeMergeEventSPtr = std::shared_ptr<DblEdgeMergeEvent<Traits> >;
+  using Base = Abstract_event<Traits>;
+  using Dbl_edge_merge_event_sptr = std::shared_ptr<Dbl_edge_merge_event<Traits> >;
 
 private:
   using Point_3 = typename Traits::Point_3;
@@ -53,178 +54,169 @@ private:
   using FacetSPtr = typename Polyhedron::FacetSPtr;
 
 public:
-  DblEdgeMergeEvent()
+  Dbl_edge_merge_event()
     : Base(Base::DBL_EDGE_MERGE_EVENT)
   { }
 
-  virtual ~DblEdgeMergeEvent()
+  virtual ~Dbl_edge_merge_event()
   { }
 
-  static DblEdgeMergeEventSPtr create()
+  static Dbl_edge_merge_event_sptr create()
   {
-    return std::make_shared<DblEdgeMergeEvent>();
+    return std::make_shared<Dbl_edge_merge_event>();
   }
 
-  Point3SPtr getPoint() const
+  Point3SPtr point() const
   {
     CGAL_SS3_DEBUG_SPTR(point_);
     return point_;
   }
 
-  void setPoint(const Point3SPtr& point)
+  void set_point(const Point3SPtr& point)
   {
     this->point_ = point;
   }
 
-  FacetSPtr getFacet1() const
+  FacetSPtr get_facet_1() const
   {
     CGAL_SS3_DEBUG_WPTR(facet_1_);
     return facet_1_.lock();
   }
 
-  void setFacet1(const FacetSPtr& facet_1)
+  void set_facet_1(const FacetSPtr& facet_1)
   {
     CGAL_SS3_DEBUG_SPTR(facet_1);
     this->facet_1_ = facet_1;
   }
 
-  EdgeSPtr getEdge11() const
+  EdgeSPtr get_edge_11() const
   {
     CGAL_SS3_DEBUG_WPTR(edge_11_);
     return edge_11_.lock();
   }
 
-  void setEdge11(const EdgeSPtr& edge_11)
+  void set_edge_11(const EdgeSPtr& edge_11)
   {
     CGAL_SS3_DEBUG_SPTR(edge_11);
     this->edge_11_ = edge_11;
   }
 
-  EdgeSPtr getEdge12() const
+  EdgeSPtr get_edge_12() const
   {
     CGAL_SS3_DEBUG_WPTR(edge_12_);
     return edge_12_.lock();
   }
 
-  void setEdge12(const EdgeSPtr& edge_12)
+  void set_edge_12(const EdgeSPtr& edge_12)
   {
     CGAL_SS3_DEBUG_SPTR(edge_12);
     this->edge_12_ = edge_12;
   }
 
-  FacetSPtr getFacet2() const
+  FacetSPtr get_facet_2() const
   {
     CGAL_SS3_DEBUG_WPTR(facet_2_);
     return facet_2_.lock();
   }
 
-  void setFacet2(const FacetSPtr& facet_2)
+  void set_facet_2(const FacetSPtr& facet_2)
   {
     CGAL_SS3_DEBUG_SPTR(facet_2);
     this->facet_2_ = facet_2;
   }
 
-  EdgeSPtr getEdge21() const
+  EdgeSPtr get_edge_21() const
   {
     CGAL_SS3_DEBUG_WPTR(edge_21_);
     return edge_21_.lock();
   }
 
-  void setEdge21(const EdgeSPtr& edge_21)
+  void set_edge_21(const EdgeSPtr& edge_21)
   {
     CGAL_SS3_DEBUG_SPTR(edge_21);
     this->edge_21_ = edge_21;
   }
 
-  EdgeSPtr getEdge22() const
+  EdgeSPtr get_edge_22() const
   {
     CGAL_SS3_DEBUG_WPTR(edge_22_);
     return edge_22_.lock();
   }
 
-  void setEdge22(const EdgeSPtr& edge_22)
+  void set_edge_22(const EdgeSPtr& edge_22)
   {
     CGAL_SS3_DEBUG_SPTR(edge_22);
     this->edge_22_ = edge_22;
   }
 
-  void getVertices(VertexSPtr out[4]) const
+  std::array<VertexSPtr, 4> get_vertices() const
   {
-    EdgeSPtr edge_11 = getEdge11();
-    EdgeSPtr edge_21 = getEdge21();
-    EdgeSPtr edge_12 = getEdge12();
-    EdgeSPtr edge_22 = getEdge22();
-    FacetSPtr facet_1 = getFacet1();
-    FacetSPtr facet_2 = getFacet2();
+    EdgeSPtr edge_11 = get_edge_11();
+    EdgeSPtr edge_21 = get_edge_21();
+    EdgeSPtr edge_12 = get_edge_12();
+    EdgeSPtr edge_22 = get_edge_22();
+    FacetSPtr facet_1 = get_facet_1();
+    FacetSPtr facet_2 = get_facet_2();
 
-    for (unsigned int i = 0; i < 4; ++i) {
-      out[i] = VertexSPtr();
-    }
-    out[0] = edge_11->dst(facet_1);
-    out[1] = edge_21->dst(facet_2);
-    out[2] = edge_12->src(facet_1);
-    out[3] = edge_22->src(facet_2);
+    return CGAL::make_array(edge_11->dst(facet_1),
+                            edge_21->dst(facet_2),
+                            edge_12->src(facet_1),
+                            edge_22->src(facet_2));
   }
 
-  void getEdges(EdgeSPtr out[4]) const
+  std::array<EdgeSPtr, 4> get_edges() const
   {
-    EdgeSPtr edge_11 = getEdge11();
-    EdgeSPtr edge_12 = getEdge12();
-    FacetSPtr facet_1 = getFacet1();
+    EdgeSPtr edge_11 = get_edge_11();
+    EdgeSPtr edge_12 = get_edge_11();
+    FacetSPtr facet_1 = get_facet_1();
+    FacetSPtr f_other = edge_11->other(facet_1);
 
-    for (unsigned int i = 0; i < 4; ++i) {
-      out[i] = EdgeSPtr();
-    }
-    out[0] = edge_11->next(facet_1);
-    out[1] = out[0]->next(facet_1);
-    FacetSPtr facet_other = edge_11->other(facet_1);
-    out[2] = edge_12->next(facet_other);
-    out[3] = out[2]->next(facet_other);
+    return CGAL::make_array(edge_11->next(facet_1),
+                            edge_11->next(facet_1)->next(facet_1),
+                            edge_12->next(f_other),
+                            edge_12->next(f_other)->next(f_other));
   }
 
-  bool isValid() const
+  bool is_valid() const
   {
     return (!facet_1_.expired() && !edge_11_.expired() && !edge_12_.expired() &&
             !facet_2_.expired() && !edge_21_.expired() && !edge_22_.expired());
   }
 
-  bool isObsolete() const
+  bool is_obsolete() const
   {
     CGAL_assertion_msg(false, "NYI");
     return false;
   }
 
-  std::string toString() const
+  std::string to_string() const
   {
-    VertexSPtr vertices[4];
-    getVertices(vertices);
-
-    EdgeSPtr edges[4];
-    getEdges(edges);
+    std::array<VertexSPtr, 4> vertices = get_vertices();
+    std::array<EdgeSPtr, 4> edges = get_edges();
 
     std::stringstream sstr;
     sstr.precision(17);
-    sstr << "DblEdgeMergeEvent\n";
-    sstr << "\t(ID=" << Base::getID() << ")\n";
-    sstr << "\t(time=" << IO::StringFactory::fromDouble(CGAL::to_double(Base::getTime())) << ")\n";
+    sstr << "Dbl_edge_merge_event\n";
+    sstr << "\t(ID=" << Base::get_ID() << ")\n";
+    sstr << "\t(time=" << IO::String_factory::fromDouble(CGAL::to_double(Base::time())) << ")\n";
     if (point_) {
-      sstr << "\t(point=<" + IO::StringFactory::fromDouble(CGAL::to_double(point_->x())) + " "
-                           + IO::StringFactory::fromDouble(CGAL::to_double(point_->y())) + " "
-                           + IO::StringFactory::fromDouble(CGAL::to_double(point_->z())) + ">)";
+      sstr << "\t(point=<" + IO::String_factory::fromDouble(CGAL::to_double(point_->x())) + " "
+                           + IO::String_factory::fromDouble(CGAL::to_double(point_->y())) + " "
+                           + IO::String_factory::fromDouble(CGAL::to_double(point_->z())) + ">)";
     }
     for (unsigned int i = 0; i < 4; ++i) {
-      sstr << "\n\t(" << vertices[i]->toString() << ")";
+      sstr << "\n\t(" << vertices[i]->to_string() << ")";
     }
     for (unsigned int i = 0; i < 4; ++i) {
-      sstr << "\n\t(edge " << edges[i]->getID() << ")";
+      sstr << "\n\t(edge " << edges[i]->get_ID() << ")";
     }
 
     return sstr.str();
   }
 
-  bool operator==(const DblEdgeMergeEvent& other) const
+  bool operator==(const Dbl_edge_merge_event& other) const
   {
-    return (Base::getTime() == other.getTime()) &&
+    return (Base::time() == other.time()) &&
             (!point_ || !other.point_ || *point_ == *(other.point_)) &&
             ((facet_1_.lock() == other.facet_1_.lock() &&
               edge_11_.lock() == other.edge_11_.lock() &&

@@ -32,11 +32,11 @@ namespace internal {
 namespace algorithm {
 
 template <typename Traits>
-class EdgeMergeEvent
-  : public AbstractEvent<Traits>
+class Edge_merge_event
+  : public Abstract_event<Traits>
 {
-  using Base = AbstractEvent<Traits>;
-  using EdgeMergeEventSPtr = std::shared_ptr<EdgeMergeEvent<Traits> >;
+  using Base = Abstract_event<Traits>;
+  using Edge_merge_event_sptr = std::shared_ptr<Edge_merge_event<Traits> >;
 
 private:
   using Point_3 = typename Traits::Point_3;
@@ -50,102 +50,102 @@ private:
   using FacetSPtr = typename Polyhedron::FacetSPtr;
 
 public:
-  EdgeMergeEvent()
+  Edge_merge_event()
     : Base(Base::EDGE_MERGE_EVENT)
   { }
 
-  virtual ~EdgeMergeEvent()
+  virtual ~Edge_merge_event()
   { }
 
-  static EdgeMergeEventSPtr create()
+  static Edge_merge_event_sptr create()
   {
-    return std::make_shared<EdgeMergeEvent>();
+    return std::make_shared<Edge_merge_event>();
   }
 
-  Point3SPtr getPoint() const
+  Point3SPtr point() const
   {
     CGAL_SS3_DEBUG_SPTR(point_);
     return point_;
   }
 
-  void setPoint(const Point3SPtr& point)
+  void set_point(const Point3SPtr& point)
   {
     this->point_ = point;
   }
 
-  FacetSPtr getFacet() const
+  FacetSPtr get_facet() const
   {
     CGAL_SS3_DEBUG_WPTR(facet_);
     return facet_.lock();
   }
 
-  void setFacet(const FacetSPtr& facet)
+  void set_facet(const FacetSPtr& facet)
   {
     CGAL_SS3_DEBUG_SPTR(facet);
     this->facet_ = facet;
   }
 
-  EdgeSPtr getEdge1() const
+  EdgeSPtr get_edge_1() const
   {
     CGAL_SS3_DEBUG_WPTR(edge1_);
     return edge1_.lock();
   }
 
-  void setEdge1(const EdgeSPtr& edge1)
+  void set_edge_1(const EdgeSPtr& edge1)
   {
     CGAL_SS3_DEBUG_SPTR(edge1);
     this->edge1_ = edge1;
   }
 
-  EdgeSPtr getEdge2() const
+  EdgeSPtr get_edge_2() const
   {
     CGAL_SS3_DEBUG_WPTR(edge2_);
     return edge2_.lock();
   }
 
-  void setEdge2(const EdgeSPtr& edge2)
+  void set_edge_2(const EdgeSPtr& edge2)
   {
     this->edge2_ = edge2;
   }
 
-  bool isValid() const
+  bool is_valid() const
   {
     return (!facet_.expired() && !edge1_.expired() && !edge2_.expired());
   }
 
-  bool isObsolete() const
+  bool is_obsolete() const
   {
     CGAL_warning_msg(false, "NYI");
     return false;
   }
 
-  std::string toString() const
+  std::string to_string() const
   {
-    FacetSPtr facet = getFacet();
-    EdgeSPtr edge1 = getEdge1();
-    EdgeSPtr edge2 = getEdge2();
+    FacetSPtr facet = get_facet();
+    EdgeSPtr edge1 = get_edge_1();
+    EdgeSPtr edge2 = get_edge_2();
 
     std::stringstream sstr;
     sstr.precision(17);
-    sstr << "EdgeMergeEvent\n";
-    sstr << "\t(ID=" << Base::getID() << ")\n";
-    sstr << "\t(time=" << IO::StringFactory::fromDouble(CGAL::to_double(Base::getTime())) << ")\n";
+    sstr << "Edge_merge_event\n";
+    sstr << "\t(ID=" << Base::get_ID() << ")\n";
+    sstr << "\t(time=" << IO::String_factory::fromDouble(CGAL::to_double(Base::time())) << ")\n";
     if (point_) {
-      sstr << "\t(point=<" + IO::StringFactory::fromDouble(CGAL::to_double(point_->x())) + " "
-                           + IO::StringFactory::fromDouble(CGAL::to_double(point_->y())) + " "
-                           + IO::StringFactory::fromDouble(CGAL::to_double(point_->z())) + ">)";
+      sstr << "\t(point=<" + IO::String_factory::fromDouble(CGAL::to_double(point_->x())) + " "
+                           + IO::String_factory::fromDouble(CGAL::to_double(point_->y())) + " "
+                           + IO::String_factory::fromDouble(CGAL::to_double(point_->z())) + ">)";
     }
-    sstr << "\t(facet=" << facet->getID() << ")\n";
-    sstr << "\t(edgeA=" << edge1->getID() << "\n\t\t[" << edge1->getVertexSrc()->toString() << "\n\t\t "
-                                                       << edge1->getVertexDst()->toString() << "])\n";
-    sstr << "\t(edgeB=" << edge2->getID() << "\n\t\t[" << edge2->getVertexSrc()->toString() << "\n\t\t "
-                                                       << edge2->getVertexDst()->toString() << "])";
+    sstr << "\t(facet=" << facet->get_ID() << ")\n";
+    sstr << "\t(edgeA=" << edge1->get_ID() << "\n\t\t[" << edge1->getVertexSrc()->to_string() << "\n\t\t "
+                                                       << edge1->getVertexDst()->to_string() << "])\n";
+    sstr << "\t(edgeB=" << edge2->get_ID() << "\n\t\t[" << edge2->getVertexSrc()->to_string() << "\n\t\t "
+                                                       << edge2->getVertexDst()->to_string() << "])";
     return sstr.str();
   }
 
-  bool operator==(const EdgeMergeEvent& other) const
+  bool operator==(const Edge_merge_event& other) const
   {
-    return (Base::getTime() == other.getTime()) &&
+    return (Base::time() == other.time()) &&
             (!point_ || !other.point_ || *point_ == *(other.point_)) &&
             (facet_.lock() == other.facet_.lock()) &&
             ((edge1_.lock() == other.edge1_.lock() &&

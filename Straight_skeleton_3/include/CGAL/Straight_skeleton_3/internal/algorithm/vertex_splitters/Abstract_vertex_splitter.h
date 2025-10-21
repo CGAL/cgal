@@ -29,7 +29,7 @@ namespace internal {
 namespace algorithm {
 
 template <typename Traits>
-class AbstractVertexSplitter
+class Abstract_vertex_splitter
 {
   using Polyhedron = HDS::Polyhedron<Traits>;
   using PolyhedronSPtr = typename Polyhedron::PolyhedronSPtr;
@@ -37,8 +37,8 @@ class AbstractVertexSplitter
   using VertexSPtr = typename Polyhedron::VertexSPtr;
 
 private:
-  using Transformation = algorithm::PolyhedronTransformation<Traits>;
-  using SelfIntersection = algorithm::SelfIntersection<Traits>;
+  using Transformation = algorithm::Polyhedron_transformation<Traits>;
+  using Self_intersection = algorithm::Self_intersection<Traits>;
 
 public:
   // static const int ANGLE_VERTEX_SPLITTER = -1;  // does not work
@@ -49,41 +49,41 @@ public:
   // static const int SPHERE_VERTEX_SPLITTER = 5;
 
 public:
-  AbstractVertexSplitter(int type = 0)
+  Abstract_vertex_splitter(int type = 0)
     : type_(type)
   { }
 
-  virtual ~AbstractVertexSplitter() { /*intentionally does nothing*/ }
+  virtual ~Abstract_vertex_splitter() { /*intentionally does nothing*/ }
 
-  virtual PolyhedronSPtr splitVertex(const VertexSPtr& vertex) = 0;  // abstract
+  virtual PolyhedronSPtr split_vertex(const VertexSPtr& vertex) = 0; // abstract
 
   virtual int getType() const
   {
     return type_;
   }
 
-  static bool checkSplitted(const PolyhedronSPtr& polyhedron)
+  static bool check_splitted(const PolyhedronSPtr& polyhedron)
   {
     CGAL_SS3_DEBUG_SPTR(polyhedron);
     bool result = false;
     PolyhedronSPtr polyhedron_cpy = polyhedron->clone();
-    result = Transformation::shiftFacetsDegree1(polyhedron_cpy, -1.0);
-    result = result && !SelfIntersection::hasSelfIntersectingSurface(polyhedron_cpy);
+    result = Transformation::shift_facets_deg1(polyhedron_cpy, -1.0);
+    result = result && !Self_intersection::has_self_intersecting_surface(polyhedron_cpy);
     return result;
   }
 
-  virtual std::string toString() const
+  virtual std::string to_string() const
   {
     std::string result;
     switch (getType()) {
       case COMBI_VERTEX_SPLITTER:
-        result = "CombiVertexSplitter";
+        result = "Combi_vertex_splitter";
         break;
       case CONVEX_VERTEX_SPLITTER:
-        result = "ConvexVertexSplitter";
+        result = "Convex_vertex_splitter";
         break;
       default:
-        result = "AbstractVertexSplitter";
+        result = "Abstract_vertex_splitter";
     }
     return result;
   }
