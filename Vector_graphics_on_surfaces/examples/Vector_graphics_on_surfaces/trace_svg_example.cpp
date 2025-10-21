@@ -124,7 +124,7 @@ int main(int argc, char** argv)
     }
 
     std::vector< std::vector<Face_location> > res =
-      VGoS::trace_bezier_curves<K>(center, directions, lengths, num_subdiv, mesh, solver);
+      VGoS::trace_Bezier_curves<K>(center, directions, lengths, num_subdiv, mesh, solver);
 
     // write result
     std::ofstream out("svg_option1.polylines.txt");
@@ -338,7 +338,7 @@ int main(int argc, char** argv)
 
 
         std::vector<Face_location> res =
-          VGoS::trace_polyline_of_bezier_curves<K>(poly_center_loc, directions, lengths,
+          VGoS::trace_polyline_of_Bezier_curves<K>(poly_center_loc, directions, lengths,
                                                    is_closed, // use [directions/lengths].front as last control point?
                                                    num_subdiv, mesh, solver);
         // write result

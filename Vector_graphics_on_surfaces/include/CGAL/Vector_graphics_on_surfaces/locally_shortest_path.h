@@ -2155,7 +2155,7 @@ struct Bezier_tracing_impl
 
   static
   std::pair<Bezier_segment<TriangleMesh, FT>,Bezier_segment<TriangleMesh,FT>>
-  subdivide_bezier_polygon(const TriangleMesh& mesh,
+  subdivide_Bezier_polygon(const TriangleMesh& mesh,
                            const Bezier_segment<TriangleMesh,FT>& polygon,
                            const FT& t
 #ifndef CGAL_BSURF_USE_DIJKSTRA_SP
@@ -3160,7 +3160,7 @@ recursive_de_Casteljau(const TriangleMesh& mesh,
     result.reserve(segments.size() * 2);
     for (std::size_t i = 0; i < segments.size(); ++i)
     {
-      auto [split0, split1] = Impl::subdivide_bezier_polygon(mesh, segments[i], 0.5, *solver_ptr);
+      auto [split0, split1] = Impl::subdivide_Bezier_polygon(mesh, segments[i], 0.5, *solver_ptr);
       result.push_back(split0);
       result.push_back(split1);
     }
@@ -3951,7 +3951,7 @@ trace_geodesic_label_along_curve(const std::vector<CGAL::Polygon_mesh_processing
  */
 template <class K, class TriangleMesh>
 std::vector< std::vector<CGAL::Polygon_mesh_processing::Face_location<TriangleMesh, typename K::FT>> >
-trace_bezier_curves(const CGAL::Polygon_mesh_processing::Face_location<TriangleMesh, typename K::FT> &center,
+trace_Bezier_curves(const CGAL::Polygon_mesh_processing::Face_location<TriangleMesh, typename K::FT> &center,
                     const std::vector<std::array<typename K::Vector_2, 4>>& directions,
                     const std::vector<std::array<typename K::FT, 4>>& lengths,
                     const int num_subdiv,
@@ -4057,7 +4057,7 @@ trace_bezier_curves(const CGAL::Polygon_mesh_processing::Face_location<TriangleM
 //TODO: make sure it is consistent with the rest to not duplicate the last point if closed
 template <class K, class TriangleMesh>
 std::vector<CGAL::Polygon_mesh_processing::Face_location<TriangleMesh, typename K::FT>>
-trace_polyline_of_bezier_curves(const CGAL::Polygon_mesh_processing::Face_location<TriangleMesh, typename K::FT> &center,
+trace_polyline_of_Bezier_curves(const CGAL::Polygon_mesh_processing::Face_location<TriangleMesh, typename K::FT> &center,
                                 const std::vector<typename K::Vector_2>& directions,
                                 const std::vector<typename K::FT>& lengths,
                                 bool is_closed, // use [directions/lengths].front as last control point?

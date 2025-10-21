@@ -101,7 +101,7 @@ get_supporting_curve(std::string svg_filename,
 
   // trace bezier curves
   std::vector< std::vector<Face_location> > resi =
-    VGoS::trace_bezier_curves<K>(center, directions, lengths, 6, mesh, solver);
+    VGoS::trace_Bezier_curves<K>(center, directions, lengths, 6, mesh, solver);
 
   //TODO: here we assume that curves are parameterized in the same order and are consecutives
   for (const std::vector<Face_location>& r : resi)

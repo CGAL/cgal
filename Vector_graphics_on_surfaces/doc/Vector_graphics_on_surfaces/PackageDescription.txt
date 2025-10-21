@@ -46,8 +46,8 @@
 - `CGAL::Vector_graphics_on_surfaces::trace_geodesic_polygons()`
 - `CGAL::Vector_graphics_on_surfaces::trace_geodesic_label()`
 - `CGAL::Vector_graphics_on_surfaces::trace_geodesic_label_along_curve`
-- `CGAL::Vector_graphics_on_surfaces::trace_bezier_curves()`
-- `CGAL::Vector_graphics_on_surfaces::trace_polyline_of_bezier_curves()`
+- `CGAL::Vector_graphics_on_surfaces::trace_Bezier_curves()`
+- `CGAL::Vector_graphics_on_surfaces::trace_polyline_of_Bezier_curves()`
 
 \cgalCRPSection{Utilities}
 - `CGAL::Vector_graphics_on_surfaces::path_length()`
