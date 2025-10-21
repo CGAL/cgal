@@ -461,7 +461,6 @@ int main(int argc, char** argv)
       for (Mesh::Vertex_index v : vertices(mesh))
       {
         bool skip=false;
-        Mesh::Halfedge_index h = halfedge(v, mesh);
         for (Mesh::Halfedge_index h : CGAL::halfedges_around_target(v, mesh))
         {
           if (is_border(h, mesh) || in_out[face(h, mesh)]==0)

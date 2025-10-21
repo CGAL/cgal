@@ -4032,13 +4032,13 @@ trace_Bezier_curves(const CGAL::Polygon_mesh_processing::Face_location<TriangleM
 
 /*!
  * \ingroup VGSFunctions
- * computes a path representing a Bézier polyline (a sequence of Bézier curves having an identical control points,
+ * computes a path representing a Bézier polyline (a sequence of Bézier curves having a common control points,
  * that is the fourth control point of the nth curve is the first control point of the (n+1)th curve).
  * Control points are defined by the endpoints of straightest geodesic curves starting from `center` along given directions and distances.
  * The iterative de Casteljau subdivision algorithm is applied to create more control points that are then connected with locally shortest paths.
  * The output path is such that for two consecutive face locations, there must exist a face in `tmesh` containing the two corresponding points.
- * The first portion of the curve is defined by the 4 first values in `directions` and `lengths`. The second portion is defined by the 4'th value
- * and the next 3, and so on until the end is reached. If `is_closed` is true, then the first value will be used with the last three to define the last portion.
+ * The first portion of the curve is defined by the four first values in `directions` and `lengths`. The second portion is defined by the fourth value
+ * and the next three, and so on until the end is reached. If `is_closed` is true, then the first value will be used with the last three to define the last portion.
  * \tparam TriangleMesh a model of `FaceListGraph` and `EdgeListGraph`
  * \tparam K a model of `Kernel` with `K::FT` being a floating point number type (float or double)
  * \param center the location on `tmesh` where straightest geodesic for the placement of control points starts. The y-axis used is `halfedge(center.first, tmesh)`.
