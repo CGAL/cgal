@@ -28,7 +28,7 @@ namespace CGAL {
 
 template <typename K>
 inline
-Angle
+typename K::Angle
 angle(const Vector_3<K> &u, const Vector_3<K> &v)
 {
   return internal::angle(u, v, K());
@@ -36,7 +36,7 @@ angle(const Vector_3<K> &u, const Vector_3<K> &v)
 
 template <typename K>
 inline
-Angle
+typename K::Angle
 angle(const Point_3<K> &p, const Point_3<K> &q, const Point_3<K> &r)
 {
   return internal::angle(p, q, r, K());
@@ -44,7 +44,7 @@ angle(const Point_3<K> &p, const Point_3<K> &q, const Point_3<K> &r)
 
 template <typename K>
 inline
-Angle
+typename K::Angle
 angle(const Point_3<K> &p, const Point_3<K> &q,
       const Point_3<K> &r, const Point_3<K> &s)
 {
@@ -53,7 +53,7 @@ angle(const Point_3<K> &p, const Point_3<K> &q,
 
 template <typename K>
 inline
-Angle
+typename K::Angle
 angle(const Point_3<K> &p, const Point_3<K> &q,
       const Point_3<K> &r, const Vector_3<K> &v)
 {
@@ -206,7 +206,7 @@ bisector(const Plane_3<K> &h1, const Plane_3<K> &h2)
 
 template < class K >
 inline
-Point_3<K>
+typename K::Point_3
 centroid(const Point_3<K> &p, const Point_3<K> &q,
          const Point_3<K> &r, const Point_3<K> &s)
 {
@@ -215,7 +215,7 @@ centroid(const Point_3<K> &p, const Point_3<K> &q,
 
 template < class K >
 inline
-Point_3<K>
+typename K::Point_3
 centroid(const Point_3<K> &p, const Point_3<K> &q, const Point_3<K> &r)
 {
   return internal::centroid(p, q, r, K());
@@ -223,7 +223,7 @@ centroid(const Point_3<K> &p, const Point_3<K> &q, const Point_3<K> &r)
 
 template < class K >
 inline
-Point_3<K>
+typename K::Point_3
 centroid(const Tetrahedron_3<K> &t)
 {
   return internal::centroid(t, K());
@@ -231,7 +231,7 @@ centroid(const Tetrahedron_3<K> &t)
 
 template < class K >
 inline
-Point_3<K>
+typename K::Point_3
 centroid(const Triangle_3<K> &t)
 {
   return internal::centroid(t, K());
@@ -321,6 +321,24 @@ compare_angle(const Point_3<K>& a, const Point_3<K>& b, const Point_3<K>& c,
 template < class K >
 inline
 typename K::Comparison_result
+compare_angle(const Point_3<K>& a1, const Point_3<K>& b1, const Point_3<K>& c1,
+              const Point_3<K>& a2, const Point_3<K>& b2, const Point_3<K>& c2)
+{
+  return internal::compare_angle(a1, b1, c1, a2, b2, c2, K());
+}
+
+template < class K >
+inline
+typename K::Comparison_result
+compare_angle(const Vector_3<K>& u1, const Vector_3<K>& v1,
+              const Vector_3<K>& u2, const Vector_3<K>& v2)
+{
+  return internal::compare_angle(u1, v1, u2, v2, K());
+}
+
+template < class K >
+inline
+typename K::Comparison_result
 compare_dihedral_angle(const Point_3<K>& a1, const Point_3<K>& b1,
                        const Point_3<K>& c1, const Point_3<K>& d1,
                        const Point_3<K>& a2, const Point_3<K>& b2,
@@ -392,16 +410,6 @@ compare_slope(const Point_3<K> &p,
                const Point_3<K> &s)
 {
   return internal::compare_slope(p, q, r, s, K());
-}
-
-template < class K >
-inline
-typename K::Comparison_result
-compare_squared_distance(const Point_3<K> &p,
-                         const Point_3<K> &q,
-                         const typename K::FT &d2)
-{
-  return internal::compare_squared_distance(p, q, d2, K());
 }
 
 template < class K >
@@ -799,8 +807,76 @@ operator==(const Point_3<K>& p, const Origin& o)
 template < class K >
 inline
 typename K::Boolean
+operator==(const Origin& o, const Point_3<K>& p)
+{ return p == o; }
+
+template < class K >
+inline
+typename K::Boolean
 operator!=(const Point_3<K>& p, const Origin& o)
 { return ! (p == o); }
+
+template < class K >
+inline
+typename K::Boolean
+operator!=(const Origin& o, const Point_3<K>& p)
+{ return ! (p == o); }
+
+template < class K >
+inline
+typename K::Boolean
+operator==(const Origin& o, const Weighted_point_3<K>& p)
+{ return p == o; }
+
+template < class K >
+inline
+typename K::Boolean
+operator!=(const Origin& o, const Weighted_point_3<K>& p)
+{ return p != o; }
+
+template < class K >
+inline
+typename K::Boolean
+operator==(const Point_3<K>& bp, const Weighted_point_3<K>& p)
+{ return bp == p.point(); }
+
+template < class K >
+inline
+typename K::Boolean
+operator!=(const Point_3<K>& bp, const Weighted_point_3<K>& p)
+{ return bp != p.point(); }
+
+template < class K >
+inline
+typename K::Boolean
+operator==(const Weighted_point_3<K>& p, const Point_3<K>& bp)
+{ return bp == p.point(); }
+
+template < class K >
+inline
+typename K::Boolean
+operator!=(const Weighted_point_3<K>& p, const Point_3<K>& bp)
+{ return bp != p.point(); }
+
+template < class K >
+inline
+typename K::Boolean
+operator==(const Weighted_point_3<K>& p, const Weighted_point_3<K>& p2)
+{ return p.point() == p2.point(); }
+
+template < class K >
+inline
+typename K::Boolean
+operator!=(const Weighted_point_3<K>& p, const Weighted_point_3<K>& p2)
+{ return p.point() != p2.point(); }
+
+template < class K >
+inline
+typename K::Boolean
+operator==(const Circle_3<K>& p, const Circle_3<K>& q)
+{
+  return K().equal_3_object()(p, q);
+}
 
 template < class K >
 inline
@@ -931,8 +1007,20 @@ operator==(const Vector_3<K>& p, const Null_vector& o)
 template < class K >
 inline
 typename K::Boolean
-operator!=(const Vector_3<K>& p, const Null_vector& o)
-{ return ! (p == o); }
+operator==(const Null_vector& o, const Vector_3<K>& v)
+{ return (v == o); }
+
+template < class K >
+inline
+typename K::Boolean
+operator!=(const Vector_3<K>& v, const Null_vector& o)
+{ return ! (v == o); }
+
+template < class K >
+inline
+typename K::Boolean
+operator!=(const Null_vector& o, const Vector_3<K>& v)
+{ return ! (v == o); }
 
 
 template < class K >
@@ -958,6 +1046,12 @@ inline
 typename K::Boolean
 operator>=(const Point_3<K>& p, const Point_3<K>& q)
 { return ! K().less_xyz_3_object()(p, q); }
+
+template < class K >
+inline
+typename K::Boolean
+operator<(const Weighted_point_3<K>& p, const Weighted_point_3<K>& q)
+{ return p.point() < q.point(); }
 
 template < class K >
 inline

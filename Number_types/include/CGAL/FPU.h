@@ -618,6 +618,7 @@ inline double IA_sqrt_toward_zero(double d) {
 #ifdef CGAL_ALWAYS_ROUND_TO_NEAREST
   return (d > 0.0) ? nextafter(std::sqrt(d), 0.) : 0.0;
 #else
+  CGAL_assertion(FPU_get_cw()==CGAL_FE_UPWARD);
   FPU_set_cw(CGAL_FE_DOWNWARD);
   double i = (d > 0.0) ? CGAL_IA_FORCE_TO_DOUBLE(CGAL_BUG_SQRT(CGAL_IA_STOP_CPROP(d))) : 0.0;
   FPU_set_cw(CGAL_FE_UPWARD);
@@ -628,7 +629,9 @@ inline double IA_sqrt_toward_zero(double d) {
 } //namespace CGAL
 
 #ifdef CGAL_HEADER_ONLY
+#ifndef CGAL_DISABLE_ROUNDING_MATH_CHECK
 #include <CGAL/test_FPU_rounding_mode_impl.h>
+#endif
 #endif // CGAL_HEADER_ONLY
 
 #endif // CGAL_FPU_H

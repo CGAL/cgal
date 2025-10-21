@@ -30,17 +30,16 @@ template < typename K_base >
 class Compare_distance_3
   : public K_base::Compare_distance_3
 {
-  typedef typename K_base::Point_3   Point_3;
-  typedef typename K_base::Vector_3  Vector_3;
+  typedef typename K_base::Comparison_result    Comparison_result;
+  typedef typename K_base::Point_3              Point_3;
+  typedef typename K_base::Vector_3             Vector_3;
+
   typedef typename K_base::Compare_distance_3   Base;
 
 public:
-
-  typedef typename Base::result_type  result_type;
-
   using Base::operator();
 
-  result_type operator()(const Point_3 &p, const Point_3& q, const Point_3& r) const
+  Comparison_result operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
   {
     CGAL_BRANCH_PROFILER(std::string("semi-static attempts/calls to   : ") +
                          std::string(CGAL_PRETTY_FUNCTION), tmp);

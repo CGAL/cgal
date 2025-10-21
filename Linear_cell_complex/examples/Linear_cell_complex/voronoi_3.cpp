@@ -134,7 +134,7 @@ int main(int narg, char** argv)
   std::map<Triangulation::Cell_handle,
            LCC_3::Dart_descriptor > vol_to_dart;
 
-  Dart_descriptor d=CGAL::import_from_triangulation_3<LCC_3, Triangulation>
+  Dart_descriptor d=CGAL::triangulation_3_to_lcc<LCC_3, Triangulation>
     (lcc, T, &vol_to_dart);
 
   std::cout<<"Delaunay triangulation :"<<std::endl<<"  ";

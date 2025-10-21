@@ -1,9 +1,7 @@
-cmake_minimum_required(VERSION 3.12...3.29)
+cmake_minimum_required(VERSION 3.12...3.31)
 project(Triangulation_3_Examples)
 
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
-
-include_directories(BEFORE "../../include")
 
 create_single_source_cgal_program("for_loop.cpp")
 create_single_source_cgal_program("adding_handles_3.cpp")
@@ -24,7 +22,7 @@ create_single_source_cgal_program("simplex.cpp")
 
 create_single_source_cgal_program("draw_triangulation_3.cpp")
 if(CGAL_Qt6_FOUND)
-  target_link_libraries(draw_triangulation_3 PUBLIC CGAL::CGAL_Basic_viewer)
+  target_link_libraries(draw_triangulation_3 PRIVATE CGAL::CGAL_Basic_viewer)
 else()
   message(STATUS "NOTICE: The example 'draw_triangulation_3' requires Qt6, and will not be compiled.")
 endif()
@@ -38,9 +36,9 @@ if(TARGET CGAL::TBB_support)
   create_single_source_cgal_program("parallel_insertion_and_removal_in_regular_3.cpp")
   create_single_source_cgal_program("parallel_insertion_in_delaunay_3.cpp")
   create_single_source_cgal_program("sequential_parallel.cpp")
-  target_link_libraries(parallel_insertion_and_removal_in_regular_3 PUBLIC CGAL::TBB_support)
-  target_link_libraries(parallel_insertion_in_delaunay_3 PUBLIC CGAL::TBB_support)
-  target_link_libraries(sequential_parallel PUBLIC CGAL::TBB_support)
+  target_link_libraries(parallel_insertion_and_removal_in_regular_3 PRIVATE CGAL::TBB_support)
+  target_link_libraries(parallel_insertion_in_delaunay_3 PRIVATE CGAL::TBB_support)
+  target_link_libraries(sequential_parallel PRIVATE CGAL::TBB_support)
 
   if(CGAL_ENABLE_TESTING)
     set_property(TEST

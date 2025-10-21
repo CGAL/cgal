@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.12...3.29)
+cmake_minimum_required(VERSION 3.12...3.31)
 project(Linear_cell_complex_Tests)
 
 find_package(CGAL REQUIRED)
@@ -18,21 +18,31 @@ create_single_source_cgal_program(LCC_3_incremental_builder_test.cpp ${hfiles})
 
 # Same targets, defining USE_COMPACT_CONTAINER_WITH_INDEX to test index version
 add_executable(Linear_cell_complex_2_test_index Linear_cell_complex_2_test.cpp ${hfiles})
-target_compile_definitions(Linear_cell_complex_2_test_index PUBLIC USE_COMPACT_CONTAINER_WITH_INDEX)
-target_link_libraries(Linear_cell_complex_2_test_index PUBLIC CGAL CGAL::Data)
+target_compile_definitions(Linear_cell_complex_2_test_index PRIVATE USE_COMPACT_CONTAINER_WITH_INDEX)
+target_link_libraries(Linear_cell_complex_2_test_index PRIVATE CGAL CGAL::Data)
 cgal_add_compilation_test(Linear_cell_complex_2_test_index)
 
 add_executable(Linear_cell_complex_3_test_index Linear_cell_complex_3_test.cpp ${hfiles})
-target_compile_definitions(Linear_cell_complex_3_test_index PUBLIC USE_COMPACT_CONTAINER_WITH_INDEX)
-target_link_libraries(Linear_cell_complex_3_test_index PUBLIC CGAL CGAL::Data)
+target_compile_definitions(Linear_cell_complex_3_test_index PRIVATE USE_COMPACT_CONTAINER_WITH_INDEX)
+target_link_libraries(Linear_cell_complex_3_test_index PRIVATE CGAL CGAL::Data)
 cgal_add_compilation_test(Linear_cell_complex_3_test_index)
 
 add_executable(Linear_cell_complex_4_test_index Linear_cell_complex_4_test.cpp ${hfiles})
-target_compile_definitions(Linear_cell_complex_4_test_index PUBLIC USE_COMPACT_CONTAINER_WITH_INDEX)
-target_link_libraries(Linear_cell_complex_4_test_index PUBLIC CGAL CGAL::Data)
+target_compile_definitions(Linear_cell_complex_4_test_index PRIVATE USE_COMPACT_CONTAINER_WITH_INDEX)
+target_link_libraries(Linear_cell_complex_4_test_index PRIVATE CGAL CGAL::Data)
 cgal_add_compilation_test(Linear_cell_complex_4_test_index)
 
 add_executable(Linear_cell_complex_copy_test_index Linear_cell_complex_copy_test.cpp ${hfiles})
-target_compile_definitions(Linear_cell_complex_copy_test_index PUBLIC USE_COMPACT_CONTAINER_WITH_INDEX)
-target_link_libraries(Linear_cell_complex_copy_test_index PUBLIC CGAL CGAL::Data)
+target_compile_definitions(Linear_cell_complex_copy_test_index PRIVATE USE_COMPACT_CONTAINER_WITH_INDEX)
+target_link_libraries(Linear_cell_complex_copy_test_index PRIVATE CGAL CGAL::Data)
 cgal_add_compilation_test(Linear_cell_complex_copy_test_index)
+
+# Alias tests (test old function names, with deprecated warnings disabled)
+create_single_source_cgal_program(test_triangulation_alias.cpp ${hfiles})
+target_compile_definitions(test_triangulation_alias PRIVATE CGAL_NO_DEPRECATION_WARNINGS)
+
+create_single_source_cgal_program(test_polyhedron_3_alias.cpp ${hfiles})
+target_compile_definitions(test_polyhedron_3_alias PRIVATE CGAL_NO_DEPRECATION_WARNINGS)
+
+create_single_source_cgal_program(test_plane_graph_alias.cpp ${hfiles})
+target_compile_definitions(test_plane_graph_alias PRIVATE CGAL_NO_DEPRECATION_WARNINGS)

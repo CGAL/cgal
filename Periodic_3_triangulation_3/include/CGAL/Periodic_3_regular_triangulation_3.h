@@ -544,7 +544,7 @@ public:
     typedef CGAL::Periodic_3_regular_triangulation_remove_traits_3< Gt > P3removeT;
     typedef CGAL::Regular_triangulation_3< P3removeT > Euclidean_triangulation;
     typedef Vertex_remover< Euclidean_triangulation > Remover;
-    P3removeT remove_traits(domain());
+    P3removeT remove_traits(geom_traits());
     Euclidean_triangulation tmp(remove_traits);
     Remover remover(this, tmp);
     Conflict_tester ct(this);
@@ -576,7 +576,7 @@ public:
     typedef CGAL::Regular_triangulation_3< P3removeT > Euclidean_triangulation;
     typedef Vertex_remover< Euclidean_triangulation > Remover;
 
-    P3removeT remove_traits(domain());
+    P3removeT remove_traits(geom_traits());
     Euclidean_triangulation tmp(remove_traits);
     Remover remover(this, tmp);
     Cover_manager cover_manager(*this);
@@ -765,20 +765,13 @@ public:
   }
 
   // same as the base construct_periodic_point(), but for weighted points
-  Periodic_weighted_point construct_periodic_weighted_point(const Weighted_point& p,
-                                                            bool& had_to_use_exact) const
+  Periodic_weighted_point construct_periodic_weighted_point(const Weighted_point& p) const
   {
     const Bare_point& bp = geom_traits().construct_point_3_object()(p);
-    const Periodic_bare_point pbp = Tr_Base::construct_periodic_point(bp, had_to_use_exact);
+    const Periodic_bare_point pbp = Tr_Base::construct_periodic_point(bp);
     return std::make_pair(geom_traits().construct_weighted_point_3_object()(
                             pbp.first, p.weight()),
                           pbp.second);
-  }
-
-  Periodic_weighted_point construct_periodic_weighted_point(const Weighted_point& p) const
-  {
-    bool useless = false;
-    return construct_periodic_weighted_point(p, useless);
   }
 
 public:
@@ -931,7 +924,7 @@ public:
 
         CGAL_assertion(this->int_to_off(offsets[i])[0] == 0 || this->int_to_off(offsets[i])[0] == 1);
         CGAL_assertion(this->int_to_off(offsets[i])[1] == 0 || this->int_to_off(offsets[i])[1] == 1);
-        CGAL_assertion(this->int_to_off(offsets[i])[1] == 0 || this->int_to_off(offsets[i])[1] == 1);
+        CGAL_assertion(this->int_to_off(offsets[i])[2] == 0 || this->int_to_off(offsets[i])[2] == 1);
       }
 
       c->set_offsets(offsets[0], offsets[1], offsets[2], offsets[3]);

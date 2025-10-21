@@ -12,10 +12,6 @@
 #ifndef CGAL_EULER_OPERATIONS_H
 #define CGAL_EULER_OPERATIONS_H
 
-#include <stdexcept>
-#include <algorithm>
-#include <vector>
-
 #include <boost/graph/graph_traits.hpp>
 #include <CGAL/boost/graph/properties.h>
 
@@ -26,6 +22,10 @@
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <boost/container/small_vector.hpp>
+
+#include <algorithm>
+#include <stdexcept>
+#include <vector>
 
 namespace CGAL {
 
@@ -136,7 +136,7 @@ join_vertex(typename boost::graph_traits<Graph>::halfedge_descriptor h,
   CGAL_assertion( halfedge(v_to_remove, v, g).first == h );
 
   halfedge_around_vertex_iterator ieb, iee;
-  for(boost::tie(ieb, iee) = halfedges_around_target(hop, g); ieb != iee; ++ieb) {
+  for(std::tie(ieb, iee) = halfedges_around_target(hop, g); ieb != iee; ++ieb) {
     CGAL_assertion( target(*ieb,g) == v_to_remove);
     set_target(*ieb ,v , g);
   }
@@ -585,8 +585,11 @@ add_edge(typename boost::graph_traits<Graph>::vertex_descriptor s,
 * checks whether a new face defined by a range of vertices (identified by their descriptors,
 * `boost::graph_traits<Graph>::%vertex_descriptor`) can be added.
 */
-template <typename VertexRange,typename PMesh>
-bool can_add_face(const VertexRange& vrange, const PMesh& sm)
+template <typename VertexRange,
+          typename PMesh>
+bool can_add_face(const VertexRange& vrange,
+                  const PMesh& sm,
+                  const bool verbose = false)
 {
   typedef typename boost::graph_traits<PMesh>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<PMesh>::halfedge_descriptor halfedge_descriptor;
@@ -603,10 +606,16 @@ bool can_add_face(const VertexRange& vrange, const PMesh& sm)
   typename std::vector<vertex_descriptor>::iterator it = std::unique(f2.begin(),f2.end());
 
   if((N > 0) && (it != f2.end())){
+    if (verbose){
+      std::cerr << "Cannot add face: face contains duplicate vertices." << std::endl;
+    }
     return false;
   }
 
   if(N < 3){
+    if (verbose){
+      std::cerr << "Cannot add face: face must contain at least 3 vertices." << std::endl;
+    }
     return false;
   }
 
@@ -615,8 +624,11 @@ bool can_add_face(const VertexRange& vrange, const PMesh& sm)
   for(std::size_t i=0; i < N; ++i){
     halfedge_descriptor hd;
     bool found;
-    boost::tie(hd,found) = halfedge(face[i],face[i+1],sm);
+    std::tie(hd,found) = halfedge(face[i],face[i+1],sm);
     if(found && (! is_border(hd,sm))){
+      if (verbose){
+        std::cerr << "Cannot add face: face contains an edge that is not a border halfedge." << std::endl;
+      }
       return false;
     }
   }
@@ -627,6 +639,9 @@ bool can_add_face(const VertexRange& vrange, const PMesh& sm)
     }
 
     if(! is_border(face[i],sm)){
+      if (verbose){
+        std::cerr << "Cannot add face: face contains a vertex that is not a border vertex." << std::endl;
+      }
       return false;
     }
   }
@@ -648,8 +663,9 @@ bool can_add_face(const VertexRange& vrange, const PMesh& sm)
 
     if ( halfedge_around_vertex == boost::graph_traits<PMesh>::null_halfedge() ||
          halfedge(previous_vertex,sm) == boost::graph_traits<PMesh>::null_halfedge()||
-         halfedge(next_vertex,sm) == boost::graph_traits<PMesh>::null_halfedge()
-         ) continue;
+         halfedge(next_vertex,sm) == boost::graph_traits<PMesh>::null_halfedge() ) {
+      continue;
+    }
 
     halfedge_descriptor start=halfedge_around_vertex;
     //halfedges pointing to/running out from vertex indices[i]
@@ -694,14 +710,18 @@ bool can_add_face(const VertexRange& vrange, const PMesh& sm)
         if ( is_border(opposite(halfedge_around_vertex,sm),sm) ) break;
       }
       while (halfedge_around_vertex != prev_hd);
-      if (halfedge_around_vertex == prev_hd) return false;
+      if (halfedge_around_vertex == prev_hd) {
+        if (verbose){
+          std::cerr << "Cannot add face: halfedge_around_vertex == prev_hd" << std::endl;
+        }
+        return false;
+      }
       start = halfedge_around_vertex;
     }
   }
 
   return true;
 }
-
 
 
 /**
@@ -1149,7 +1169,7 @@ void make_hole(typename boost::graph_traits<Graph>::halfedge_descriptor h,
 
   face_descriptor fd = face(h, g);
   halfedge_around_face_iterator hafib, hafie;
-  for(boost::tie(hafib, hafie) = halfedges_around_face(h, g);
+  for(std::tie(hafib, hafie) = halfedges_around_face(h, g);
       hafib != hafie;
       ++hafib){
     CGAL_assertion(! is_border(opposite(*hafib,g),g));
@@ -1361,7 +1381,7 @@ add_vertex_and_face_to_border(typename boost::graph_traits<Graph>::halfedge_desc
   internal::set_border(he2,g);
 
   CGAL::Halfedge_around_face_iterator<Graph> hafib,hafie;
-  for(boost::tie(hafib, hafie) = halfedges_around_face(ohe1, g);
+  for(std::tie(hafib, hafie) = halfedges_around_face(ohe1, g);
       hafib != hafie;
       ++hafib){
     set_face(*hafib, f, g);
@@ -1421,7 +1441,7 @@ add_face_to_border(typename boost::graph_traits<Graph>::halfedge_descriptor h1,
   internal::set_border(newhop, g);
 
   CGAL::Halfedge_around_face_iterator<Graph> hafib,hafie;
-  for(boost::tie(hafib, hafie) = halfedges_around_face(newh, g);
+  for(std::tie(hafib, hafie) = halfedges_around_face(newh, g);
       hafib != hafie;
       ++hafib){
     set_face(*hafib, f, g);
@@ -1458,7 +1478,7 @@ does_satisfy_link_condition(typename boost::graph_traits<Graph>::edge_descriptor
   // The following loop checks the link condition for v0_v1.
   // Specifically, that for every vertex 'k' adjacent to both 'p and 'q', 'pkq' is a face of the mesh.
   //
-  for ( boost::tie(eb1,ee1) = halfedges_around_source(v0,g) ;  eb1 != ee1 ; ++ eb1 )
+  for ( std::tie(eb1,ee1) = halfedges_around_source(v0,g) ;  eb1 != ee1 ; ++ eb1 )
   {
     halfedge_descriptor v0_k = *eb1;
 
@@ -1466,7 +1486,7 @@ does_satisfy_link_condition(typename boost::graph_traits<Graph>::edge_descriptor
     {
       vertex_descriptor k = target(v0_k,g);
 
-      for ( boost::tie(eb2,ee2) =  halfedges_around_source(k,g) ; eb2 != ee2 ; ++ eb2 )
+      for ( std::tie(eb2,ee2) =  halfedges_around_source(k,g) ; eb2 != ee2 ; ++ eb2 )
       {
         halfedge_descriptor k_v1 = *eb2;
 
@@ -1552,7 +1572,7 @@ does_satisfy_link_condition(typename boost::graph_traits<Graph>::edge_descriptor
  *
  * \returns vertex `v1`.
  * \pre g must be a triangulated graph
- * \pre `does_satisfy_link_condition(e,g) == true`.
+ * \pre \link CGAL::Euler::does_satisfy_link_condition `does_satisfy_link_condition`\endlink(e,g) == `true`.
  */
 template<typename Graph>
 typename boost::graph_traits<Graph>::vertex_descriptor
@@ -1670,7 +1690,7 @@ collapse_edge(typename boost::graph_traits<Graph>::edge_descriptor e,
  * \returns vertex `v1`.
  * \pre This function requires `g` to be an oriented 2-manifold with or without boundaries.
  *       Furthermore, the edge `v0v1` must satisfy the link condition, which guarantees that the surface mesh is also 2-manifold after the edge collapse.
- * \pre `get(edge_is_constrained_map, v0v1)==false`.
+ * \pre `get(edge_is_constrained_map, v0v1) == false`.
  * \pre  `v0` and `v1` are not both incident to a constrained edge.
  */
 
@@ -1866,10 +1886,95 @@ bool satisfies_link_condition(typename boost::graph_traits<Graph>::edge_descript
 }
 /// \endcond
 #endif
+
+/**
+ * removes the target vertex of `h`, merging its incident edges into a single edge linking
+ * the two vertices adjacent to the vertex being removed.
+ *
+ * \tparam Graph must be a model of `MutableFaceGraph`
+ *
+ * \param h halfedge descriptor
+ * \param g the graph
+ *
+ * \returns an halfedge linking the two vertices adjacent to the vertex being removed.
+ *
+ * \pre `degree(target(h, g), g) == 2`.
+ *
+ * \sa `remove_center_vertex()`
+ */
+
+template <typename Graph>
+typename boost::graph_traits<Graph>::halfedge_descriptor
+remove_degree_2_vertex(const typename boost::graph_traits<Graph>::halfedge_descriptor h,
+                       Graph& g)
+{
+  typedef boost::graph_traits<Graph> Traits;
+  typedef typename Traits::vertex_descriptor   vertex_descriptor;
+  typedef typename Traits::halfedge_descriptor halfedge_descriptor;
+  typedef typename Traits::face_descriptor face_descriptor;
+
+  CGAL_precondition(degree(target(h, g), g) == 2);
+
+  vertex_descriptor v = target(h, g);
+  halfedge_descriptor h1 = h;
+  halfedge_descriptor h2 = opposite(next(h1, g), g);
+
+  if(is_border(h1, g))
+    std::swap(h1, h2);
+
+  vertex_descriptor v1 = source(h1, g);
+  vertex_descriptor v2 = source(h2, g);
+
+  bool exists;
+  halfedge_descriptor huv;
+  std::tie(huv, exists) = halfedge(v1, v2, g);
+
+  if(is_border(h2, g))
+  {
+    CGAL_assertion(!is_border(h1, g));
+
+    if(exists)
+    {
+      Euler::remove_face(h1, g);
+      return huv;
+    }
+    else
+    {
+      halfedge_descriptor oh1 = opposite(h1, g);
+      halfedge_descriptor nnh1 = next(next(h1, g), g);
+      halfedge_descriptor ph2 = prev(h2, g);
+      face_descriptor f1 = face(h1, g);
+
+      set_target(h1, v2, g);
+      set_halfedge(v2, ph2, g);
+      set_next(h1, nnh1, g);
+      set_next(ph2, oh1, g);
+      set_halfedge(f1, h1, g); // in case it was nh1
+
+      remove_edge(edge(h2, g), g);
+      remove_vertex(v, g);
+
+      return h1;
+    }
+  }
+  else
+  {
+    CGAL_assertion(!is_border(h1, g) && !is_border(h2, g));
+
+    halfedge_descriptor ph1 = prev(h1, g);
+    halfedge_descriptor ph2 = prev(h2, g);
+    Euler::remove_center_vertex(h, g);
+
+    if(exists)
+      return huv;
+    else
+      return Euler::split_face(ph1, ph2, g);
+  }
+}
+
 /// @}
 
 } // namespace Euler
-
 } // namespace CGAL
 
 #endif /* CGAL_EULER_OPERATIONS_H */

@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script_with_options
 # This is the CMake script for compiling a set of CGAL applications.
 
-cmake_minimum_required(VERSION 3.12...3.29)
+cmake_minimum_required(VERSION 3.12...3.31)
 project(Triangulation_apps)
 
 # CGAL and its components
@@ -18,6 +18,6 @@ endif()
 include_directories(BEFORE include)
 
 create_single_source_cgal_program("points_to_RT_to_off.cpp")
-target_link_libraries(points_to_RT_to_off PUBLIC CGAL::Eigen3_support)
+target_link_libraries(points_to_RT_to_off PRIVATE CGAL::Eigen3_support)
 create_single_source_cgal_program("points_to_DT_to_off.cpp")
-target_link_libraries(points_to_DT_to_off PUBLIC CGAL::Eigen3_support)
+target_link_libraries(points_to_DT_to_off PRIVATE CGAL::Eigen3_support)

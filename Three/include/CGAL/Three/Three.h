@@ -31,18 +31,22 @@
 #  define THREE_EXPORT Q_DECL_IMPORT
 #endif
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-#define CGAL_QT_SKIP_EMPTY_PARTS QString::SkipEmptyParts
-#else
 #define CGAL_QT_SKIP_EMPTY_PARTS ::Qt::SkipEmptyParts
-#endif
 
 namespace CGAL{
 namespace Three{
-//define enum depending on Qt version
+
+struct OverrideCursorScopeGuard
+{
+  OverrideCursorScopeGuard(QCursor cursor) { QApplication::setOverrideCursor(cursor); }
+  ~OverrideCursorScopeGuard() { QApplication::restoreOverrideCursor(); }
+};
+
 class CGAL_Lab_plugin_interface;
 class THREE_EXPORT Three{
 public:
+
+  using CursorScopeGuard = CGAL::Three::OverrideCursorScopeGuard; // for compatibility
 
   Three();
   virtual ~Three(){}
@@ -126,19 +130,6 @@ protected:
   static QMutex* s_mutex;
   static QWaitCondition* s_wait_condition;
   static bool s_is_locked;
-
-public:
-  struct CursorScopeGuard
-  {
-    CursorScopeGuard(QCursor cursor)
-    {
-      QApplication::setOverrideCursor(cursor);
-    }
-    ~CursorScopeGuard()
-    {
-      QApplication::restoreOverrideCursor();
-    }
-  };
 };
 }
 }

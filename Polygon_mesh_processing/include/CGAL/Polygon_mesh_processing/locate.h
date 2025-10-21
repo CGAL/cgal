@@ -28,6 +28,7 @@
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Random.h>
 #include <CGAL/use.h>
+#include <CGAL/squared_distance_3.h>
 
 #include <boost/graph/graph_traits.hpp>
 #include <variant>
@@ -1760,7 +1761,7 @@ void build_AABB_tree(const TriangleMesh& tm,
                        >::value>* = 0)
 {
   typename boost::graph_traits<TriangleMesh>::face_iterator ffirst, fbeyond;
-  boost::tie(ffirst, fbeyond) = faces(tm);
+  std::tie(ffirst, fbeyond) = faces(tm);
   outTree.rebuild(ffirst, fbeyond, tm, wrapped_vpm);
   outTree.build();
 }

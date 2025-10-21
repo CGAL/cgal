@@ -34,8 +34,6 @@ class Functor_with_offset_points_adaptor_3
   typedef typename Kernel::Construct_point_3    Construct_point_3;
 
 public:
-  typedef typename Functor::result_type         result_type;
-
   Functor_with_offset_points_adaptor_3(const Functor& functor,
                                        const Construct_point_3& cp)
     : Functor_(functor), cp(cp)
@@ -44,24 +42,24 @@ public:
   // gives access to function calls without offset
   using Functor::operator();
 
-  result_type operator()(const Point& p0, const Point& p1,
-                         const Offset& o0, const Offset& o1) const {
+  decltype(auto) operator()(const Point& p0, const Point& p1,
+                            const Offset& o0, const Offset& o1) const {
     return operator()(cp(p0,o0), cp(p1,o1));
   }
-  result_type operator()(const Point& p0, const Point& p1, const Point& p2,
-                         const Offset& o0, const Offset& o1, const Offset& o2) const {
+  decltype(auto) operator()(const Point& p0, const Point& p1, const Point& p2,
+                            const Offset& o0, const Offset& o1, const Offset& o2) const {
     return operator()(cp(p0,o0), cp(p1,o1), cp(p2,o2));
   }
-  result_type operator()(const Point& p0, const Point& p1,
-                         const Point& p2, const Point& p3,
-                         const Offset& o0, const Offset& o1,
-                         const Offset& o2, const Offset& o3) const {
+  decltype(auto) operator()(const Point& p0, const Point& p1,
+                            const Point& p2, const Point& p3,
+                            const Offset& o0, const Offset& o1,
+                            const Offset& o2, const Offset& o3) const {
     return operator()(cp(p0,o0), cp(p1,o1), cp(p2,o2), cp(p3,o3));
   }
-  result_type operator()(const Point& p0, const Point& p1,
-                         const Point& p2, const Point& p3, const Point& p4,
-                         const Offset& o0, const Offset& o1, const Offset& o2,
-                         const Offset& o3, const Offset& o4) const {
+  decltype(auto) operator()(const Point& p0, const Point& p1,
+                            const Point& p2, const Point& p3, const Point& p4,
+                            const Offset& o0, const Offset& o1, const Offset& o2,
+                            const Offset& o3, const Offset& o4) const {
     return operator()(cp(p0,o0), cp(p1,o1), cp(p2,o2), cp(p3,o3), cp(p4,o4));
   }
 

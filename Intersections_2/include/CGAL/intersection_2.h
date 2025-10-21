@@ -19,10 +19,14 @@
 #ifndef CGAL_INTERSECTION_2_H
 #define CGAL_INTERSECTION_2_H
 
+#include <CGAL/Intersections_2/Bbox_2_Bbox_2.h>
 #include <CGAL/Intersections_2/Bbox_2_Circle_2.h>
+#include <CGAL/Intersections_2/Bbox_2_Iso_rectangle_2.h>
 #include <CGAL/Intersections_2/Bbox_2_Line_2.h>
 #include <CGAL/Intersections_2/Bbox_2_Point_2.h>
 #include <CGAL/Intersections_2/Bbox_2_Ray_2.h>
+#include <CGAL/Intersections_2/Bbox_2_Segment_2.h>
+#include <CGAL/Intersections_2/Bbox_2_Triangle_2.h>
 
 #include <CGAL/Intersections_2/Circle_2_Circle_2.h>
 #include <CGAL/Intersections_2/Circle_2_Iso_rectangle_2.h>

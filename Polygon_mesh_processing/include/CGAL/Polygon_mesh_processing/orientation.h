@@ -149,8 +149,8 @@ namespace internal{
  * The normal vector to each face is chosen pointing on the side of the face
  * where its sequence of vertices is seen counterclockwise.
  *
- * @pre `CGAL::is_closed(tm)`
- * @pre `CGAL::is_triangle_mesh(tm)`
+ * @pre \link CGAL::is_closed `CGAL::is_closed(tm)` \endlink
+ * @pre \link CGAL::is_triangle_mesh `CGAL::is_triangle_mesh(tm)` \endlink
  * @pre If `tm` contains several connected components, they are oriented consistently.
  *      In other words, the answer to this predicate would be the same for each
  *      isolated connected component.
@@ -374,7 +374,7 @@ void reverse_face_orientations(const FaceRange& face_range, PolygonMesh& pmesh)
 * @param tm a closed triangulated surface mesh
 * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
-* \pre `CGAL::is_closed(tm)`
+* @pre \link CGAL::is_closed `CGAL::is_closed(tm)` \endlink
 *
 * \cgalNamedParamsBegin
 *   \cgalParamNBegin{vertex_point_map}
@@ -700,7 +700,7 @@ void set_cc_intersecting_pairs(
  * @param volume_id_map the property map filled by this function with indices of volume components associated to the faces of `tm`
  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
- * @pre `CGAL::is_closed(tm)`
+ * @pre \link CGAL::is_closed `CGAL::is_closed(tm)` \endlink
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{vertex_point_map}
@@ -1244,7 +1244,7 @@ volume_connected_components(const TriangleMesh& tm,
  * @param tm a closed triangulated surface mesh
  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
- * @pre `CGAL::is_closed(tm)`
+ * @pre \link CGAL::is_closed `CGAL::is_closed(tm)` \endlink
  *
  * @attention if `tm` is self-intersecting the behavior of this function is undefined.
  *
@@ -1307,7 +1307,7 @@ bool does_bound_a_volume(const TriangleMesh& tm, const NamedParameters& np = par
  * @param tm a closed triangulated surface mesh
  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
- * @pre `CGAL::is_closed(tm)`
+ * @pre \link CGAL::is_closed `CGAL::is_closed(tm)` \endlink
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{outward_orientation}

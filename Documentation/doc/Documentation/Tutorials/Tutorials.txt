@@ -5,7 +5,7 @@
 \cgal provides a large number of data structures and algorithms dedicated to
 various applications. Most of these data structures and algorithms can be
 combined to achieve extensive and complex geometric tasks. The tutorials aim at
-providing help and ideas on how to use CGAL beyond the simple examples of the
+providing help and ideas on how to use \cgal beyond the simple examples of the
 User Manual.
 
 \section tuto_list List of Available Tutorials

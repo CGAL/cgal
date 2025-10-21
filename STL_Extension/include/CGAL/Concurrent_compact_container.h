@@ -80,6 +80,8 @@ namespace CCC_internal {
     template <typename Element>
     static void set_erase_counter(Element &, unsigned int) {}
     template <typename Element>
+    static void restore_erase_counter(Element*, unsigned int) {}
+    template <typename Element>
     static void increment_erase_counter(Element &) {}
   };
 
@@ -96,9 +98,21 @@ namespace CCC_internal {
     }
 
     template <typename Element>
+    static unsigned int erase_counter(Element* e)
+    {
+      return e->erase_counter();
+    }
+
+    template <typename Element>
     static void set_erase_counter(Element &e, unsigned int c)
     {
       e.set_erase_counter(c);
+    }
+
+    template <typename Element>
+    static void restore_erase_counter(Element* e, unsigned int c)
+    {
+      e->set_erase_counter(c);
     }
 
     template <typename Element>
@@ -201,6 +215,9 @@ class Concurrent_compact_container
   typedef typename Default::Get<Al, CGAL_ALLOCATOR(T) >::type       Allocator;
   typedef Concurrent_compact_container <T, Al>                      Self;
   typedef Concurrent_compact_container_traits <T>                   Traits;
+
+  template <typename U> using EraseCounterStrategy =
+      internal::Erase_counter_strategy<internal::has_increment_erase_counter<U>::value>;
 
 public:
   typedef CGAL::Time_stamper_impl<T>                Time_stamper;
@@ -344,28 +361,22 @@ public:
   // (just forward the arguments to the constructor, to optimize a copy).
   template < typename... Args >
   iterator
-  emplace(const Args&... args)
+  emplace(Args&&... args)
   {
-    typedef CCC_internal::Erase_counter_strategy<
-      CCC_internal::has_increment_erase_counter<T>::value> EraseCounterStrategy;
     FreeList * fl = get_free_list();
     pointer ret = init_insert(fl);
-    auto erase_counter = EraseCounterStrategy::erase_counter(*ret);;
-    new (ret) value_type(args...);
-    EraseCounterStrategy::set_erase_counter(*ret, erase_counter);
+    {
+      internal::Time_stamp_and_erase_counter_backup_and_restore_guard<T, Time_stamper>
+          guard(ret);
+      new (ret) value_type(std::forward<Args>(args)...);
+    }
     return finalize_insert(ret, fl);
   }
 
-  iterator insert(const T &t)
+  template <typename U>
+  iterator insert(U&& u)
   {
-    typedef CCC_internal::Erase_counter_strategy<
-      CCC_internal::has_increment_erase_counter<T>::value> EraseCounterStrategy;
-    FreeList * fl = get_free_list();
-    pointer ret = init_insert(fl);
-    auto erase_counter = EraseCounterStrategy::erase_counter(*ret);;
-    std::allocator_traits<allocator_type>::construct(m_alloc, ret, t);
-    EraseCounterStrategy::set_erase_counter(*ret, erase_counter);
-    return finalize_insert(ret, fl);
+    return emplace(std::forward<U>(u));
   }
 
   template < class InputIterator >
@@ -385,15 +396,18 @@ public:
 private:
   void erase(iterator x, FreeList * fl)
   {
-    typedef CCC_internal::Erase_counter_strategy<
-      CCC_internal::has_increment_erase_counter<T>::value> EraseCounterStrategy;
-
+    auto ptr = &*x;
     CGAL_precondition(type(x) == USED);
-    EraseCounterStrategy::increment_erase_counter(*x);
+    EraseCounterStrategy<T>::increment_erase_counter(*x);
+    {
+      internal::Time_stamp_and_erase_counter_backup_and_restore_guard<T, Time_stamper>
+          guard(ptr);
 
-    std::allocator_traits<allocator_type>::destroy(m_alloc, &*x);
+      std::allocator_traits<allocator_type>::destroy(m_alloc, ptr);
+    }
 
-    put_on_free_list(&*x, fl);
+
+    put_on_free_list(ptr, fl);
   }
 public:
 
@@ -778,9 +792,6 @@ template < class T, class Allocator >
 void Concurrent_compact_container<T, Allocator>::
   allocate_new_block(FreeList * fl)
 {
-  typedef CCC_internal::Erase_counter_strategy<
-    CCC_internal::has_increment_erase_counter<T>::value> EraseCounterStrategy;
-
   size_type old_block_size;
   pointer new_block;
 
@@ -818,7 +829,7 @@ void Concurrent_compact_container<T, Allocator>::
   // will correspond to the iterator order...
   for (size_type i = old_block_size; i >= 1; --i)
   {
-    EraseCounterStrategy::set_erase_counter(*(new_block + i), 0);
+    EraseCounterStrategy<T>::set_erase_counter(*(new_block + i), 0);
     Time_stamper::initialize_time_stamp(new_block + i);
     put_on_free_list(new_block + i, fl);
   }

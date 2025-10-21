@@ -278,6 +278,7 @@ template <typename PolygonMesh, typename FaceNormalVector, typename K>
 bool does_enclose_other_normals(const std::size_t i, const std::size_t j, const std::size_t k,
                                 const typename K::Vector_3& nb,
                                 const typename K::FT sp_bi,
+                                typename boost::graph_traits<PolygonMesh>::face_descriptor &not_enclose_normal,
                                 const std::vector<typename boost::graph_traits<PolygonMesh>::face_descriptor>& incident_faces,
                                 const FaceNormalVector& face_normals,
                                 const K& traits)
@@ -291,6 +292,7 @@ bool does_enclose_other_normals(const std::size_t i, const std::size_t j, const 
 
   // check that this min circle defined by the diameter contains the other points
   const std::size_t nif = incident_faces.size();
+  bool enclose_other_normals=true;
   for(std::size_t l=0; l<nif; ++l)
   {
     if(l == i || l == j || l == k)
@@ -311,11 +313,18 @@ bool does_enclose_other_normals(const std::size_t i, const std::size_t j, const 
     if(CGAL::abs(sp_bi - sp_bl) <= sp_diff_bound)
       continue;
 
-    if(sp_bl < sp_bi)
-      return false;
+    //Get the normal farthest from the center
+    if(sp_bl < sp_bi){
+      if(enclose_other_normals){
+        enclose_other_normals=false;
+        not_enclose_normal=incident_faces[l];
+      } else if(sp_bl < sp(nb, get(face_normals, not_enclose_normal))){
+        not_enclose_normal=incident_faces[l];
+      }
+    }
   }
 
-  return true;
+  return enclose_other_normals;
 }
 
 template <typename GT>
@@ -385,156 +394,160 @@ typename GT::Vector_3 compute_normals_bisector(const typename GT::Vector_3& ni,
   return nb;
 }
 
-template <typename PolygonMesh, typename FaceNormalVector, typename GT>
-typename GT::Vector_3
-compute_most_visible_normal_2_points(std::vector<typename boost::graph_traits<PolygonMesh>::face_descriptor>& incident_faces,
-                                     const FaceNormalVector& face_normals,
-                                     const GT& traits)
-{
-  typedef typename GT::FT                                                  FT;
-  typedef typename GT::Vector_3                                            Vector_3;
-  typedef typename boost::property_traits<FaceNormalVector>::reference     Vector_ref;
-
-  typename GT::Compute_scalar_product_3 sp_3 = traits.compute_scalar_product_3_object();
-  typename GT::Construct_vector_3 cv_3 = traits.construct_vector_3_object();
-
-#ifdef CGAL_PMP_COMPUTE_NORMAL_DEBUG_PP
-  std::cout << "Trying to find enclosing normal with 2 normals" << std::endl;
-#endif
-
-  FT min_sp = -1;
-  Vector_3 n = cv_3(CGAL::NULL_VECTOR);
-
-  const std::size_t nif = incident_faces.size();
-  for(std::size_t i=0; i<nif; ++i)
-  {
-    for(std::size_t j=i+1; j<nif; ++j)
-    {
-      const Vector_ref ni = get(face_normals, incident_faces[i]);
-      const Vector_ref nj = get(face_normals, incident_faces[j]);
-
-      const Vector_3 nb = compute_normals_bisector(ni, nj, traits);
-
-      // Degeneracies like ni == -nj or a numerical error in the construction of 'nb' can happen.
-      if(traits.equal_3_object()(nb, CGAL::NULL_VECTOR))
-        return CGAL::NULL_VECTOR;
-
-      FT sp_bi = sp_3(nb, ni);
-      sp_bi = (std::max)(FT(0), sp_bi);
-      if(sp_bi <= min_sp)
-        continue;
-
-      if(!does_enclose_other_normals<PolygonMesh>(i, j, -1 /*NA*/, nb, sp_bi, incident_faces, face_normals, traits))
-        continue;
-
-      min_sp = sp_bi;
-      n = nb;
-    }
-  }
-
-  return n;
-}
-
-template <typename PolygonMesh, typename FaceNormalVector, typename GT>
-typename GT::Vector_3
-compute_most_visible_normal_3_points(const std::vector<typename boost::graph_traits<PolygonMesh>::face_descriptor>& incident_faces,
-                                     const FaceNormalVector& face_normals,
-                                     const GT& traits)
-{
-  typedef typename GT::FT                                                  FT;
-  typedef typename GT::Vector_3                                            Vector_3;
-  typedef typename boost::property_traits<FaceNormalVector>::reference     Vector_ref;
-
-#ifdef CGAL_PMP_COMPUTE_NORMAL_DEBUG_PP
-  std::cout << "Trying to find enclosing normal with 3 normals" << std::endl;
-#endif
-
-  FT min_sp = -1;
-
-  Vector_3 n = traits.construct_vector_3_object()(CGAL::NULL_VECTOR);
-
-  const std::size_t nif = incident_faces.size();
-  for(std::size_t i=0; i<nif; ++i)
-  {
-    for(std::size_t j=i+1; j<nif; ++j)
-    {
-      for(std::size_t k=j+1; k<nif; ++k)
-      {
-        const Vector_ref ni = get(face_normals, incident_faces[i]);
-        const Vector_ref nj = get(face_normals, incident_faces[j]);
-        const Vector_ref nk = get(face_normals, incident_faces[k]);
-
-        if(ni == CGAL::NULL_VECTOR || nj == CGAL::NULL_VECTOR || nk == CGAL::NULL_VECTOR)
-          continue;
-
-        Vector_3 nb = compute_normals_bisector(ni, nj, nk, traits);
-        if(traits.equal_3_object()(nb, CGAL::NULL_VECTOR))
-          return nb;
-
-        FT sp_bi = traits.compute_scalar_product_3_object()(nb, ni);
-        if(sp_bi < FT(0))
-        {
-          nb = traits.construct_opposite_vector_3_object()(nb);
-          sp_bi = - sp_bi;
-        }
-
-        if(sp_bi <= min_sp)
-          continue;
-
-        if(!does_enclose_other_normals<PolygonMesh>(i, j, k, nb, sp_bi, incident_faces, face_normals, traits))
-          continue;
-
-        min_sp = sp_bi;
-        n = nb;
-      }
-    }
-  }
-
-#ifdef CGAL_PMP_COMPUTE_NORMAL_DEBUG_PP
-  std::cout << "Best normal from 3-normals-approach: " << n << std::endl;
-#endif
-
-  return n;
-}
-
 // Inspired by Aubry et al. On the most 'normal' normal
 template <typename PolygonMesh, typename FaceNormalVector, typename GT>
 typename GT::Vector_3
 compute_vertex_normal_most_visible_min_circle(typename boost::graph_traits<PolygonMesh>::vertex_descriptor v,
                                               const FaceNormalVector& face_normals,
                                               const PolygonMesh& pmesh,
-                                              const GT& traits)
-{
+                                              const GT& traits){
   typedef typename boost::graph_traits<PolygonMesh>::face_descriptor       face_descriptor;
 
+  typedef typename GT::FT                                                  FT;
   typedef typename GT::Vector_3                                            Vector_3;
+  typedef typename boost::property_traits<FaceNormalVector>::reference     Vector_ref;
+
+  typename GT::Compute_scalar_product_3 sp_3 = traits.compute_scalar_product_3_object();
+  typename GT::Construct_cross_product_vector_3 cp_3 = traits.construct_cross_product_vector_3_object();
 
   std::vector<face_descriptor> incident_faces;
   incident_faces.reserve(8);
   for(face_descriptor f : CGAL::faces_around_target(halfedge(v, pmesh), pmesh))
   {
-    if(f == boost::graph_traits<PolygonMesh>::null_face())
+    // Remove degenerate and redundant faces
+    if((f == boost::graph_traits<PolygonMesh>::null_face()) || (get(face_normals, f)==NULL_VECTOR) )
       continue;
 
+    if(! incident_faces.empty()){
+      if(get(face_normals, incident_faces.back()) == get(face_normals, f) )
+        continue;
+    }
     incident_faces.push_back(f);
   }
-
+  if(incident_faces.size() == 0)
+    return NULL_VECTOR;
   if(incident_faces.size() == 1)
     return get(face_normals, incident_faces.front());
 
-  Vector_3 res = compute_most_visible_normal_2_points<PolygonMesh>(incident_faces, face_normals, traits);
+  std::array<face_descriptor, 3> circum_points;
+  short int circum_points_size=2;
+  circum_points[0]=incident_faces[0];
+  circum_points[1]=incident_faces[1];
 
-  if(res != CGAL::NULL_VECTOR) // found a valid normal through 2 point min circle
-    return res;
+  // Get the farthest point from circum_points[0]
+  const Vector_ref n0 = get(face_normals, circum_points[0]);
+  const Vector_ref n1 = get(face_normals, circum_points[1]);
+  FT sp_min = sp_3(n0, n1);
+  for(size_t i=2; i<incident_faces.size(); ++i){
+    const Vector_ref ni = get(face_normals, incident_faces[i]);
+    FT sp = sp_3(n0, ni);
+    if(sp < sp_min){
+      sp_min=sp;
+      circum_points[1]=incident_faces[i];
+    }
+  }
 
-  // The vertex has only two incident faces with opposite normals (fold)...
-  // @todo devise something based on the directions of the 2/3/4 incident edges?
-  if(incident_faces.size() == 2 && res == CGAL::NULL_VECTOR)
-    return res;
+  // At each step, we get a vertex outside of the current circumcircle to define a larger circumcircle
+  while(true)
+  {
+    Vector_3 center;
+    FT radius; //Here, 'radius' refers to the negative scalar product between one circum_point and the center.
+    const Vector_ref ni = get(face_normals, circum_points[0]);
+    const Vector_ref nj = get(face_normals, circum_points[1]);
 
-  CGAL_assertion(incident_faces.size() >= 2);
+    if(circum_points_size==2){
+      center = compute_normals_bisector(ni, nj, traits);
+    } else {
+      CGAL_assertion(circum_points_size==3);
+      const Vector_ref nk = get(face_normals, circum_points[2]);
+      center = compute_normals_bisector(ni, nj, nk, traits);
+    }
 
-  return compute_most_visible_normal_3_points<PolygonMesh>(incident_faces, face_normals, traits);
+    if(center==NULL_VECTOR)
+      return NULL_VECTOR;
+
+    radius = -sp_3(ni, center);
+
+    if(is_positive(radius))
+      return NULL_VECTOR; // The circle is larger than a hemisphere, so no normal is visible to all
+
+    face_descriptor f_out;
+    if(does_enclose_other_normals<PolygonMesh>(-1,-2,-3, center, -radius, f_out, incident_faces, face_normals, traits))
+      return center;
+    const Vector_ref no = get(face_normals, f_out);
+
+    if(circum_points_size==2){
+      circum_points[2]=f_out;
+      circum_points_size=3;
+    } else {
+      if(is_negative(sp_3(center, no)))
+        return NULL_VECTOR; // The circle will become bigger than a hemisphere, no normal visible by all
+
+      const Vector_ref nk = get(face_normals, circum_points[2]);
+
+      // We need to remove one of the previous points
+      // We keep the farthest point from the new one
+      // Then we divide the sphere in two along the equator that passes through the first point and the center
+      // We remove the previous point that lies in the same hemisphere as the new one
+
+      // move the farthest point to f_out at the beginning of circum_points
+      FT sp_ni_no = sp_3(ni, no);
+      FT sp_nj_no = sp_3(nj, no);
+      FT sp_nk_no = sp_3(nk, no);
+
+      if(sp_nj_no < sp_nk_no){
+        if(sp_nj_no < sp_ni_no){
+          std::swap(circum_points[0], circum_points[1]);
+        }
+      } else {
+        if(sp_nk_no < sp_ni_no){
+          std::swap(circum_points[0], circum_points[2]);
+        }
+      }
+
+      // Get the new vectors
+      const Vector_ref n0 = get(face_normals, circum_points[0]);
+      const Vector_ref n1 = get(face_normals, circum_points[1]);
+      const Vector_ref n2 = get(face_normals, circum_points[2]);
+
+      // Search for the points that lie in the same hemisphere as f_out compared to ni
+      Vector_3 n_middle = cp_3(n0, center);
+      FT sp_no_nm = sp_3(no, n_middle);
+      FT sp_n1_nm = sp_3(n1, n_middle);
+      FT sp_n2_nm = sp_3(n2, n_middle);
+
+      //We use the same bound than above in does_enclose_other_normals
+      const FT nmn = CGAL::approximate_sqrt(traits.compute_squared_length_3_object()(n_middle));
+      const FT sp_diff_bound = nmn*0.00017453292431333;
+      CGAL_assertion((CGAL::sign(sp_n1_nm)!=CGAL::sign(sp_n2_nm)) || (abs(sp_n1_nm)<=sp_diff_bound) || (abs(sp_n2_nm)<=sp_diff_bound));
+      if((abs(sp_n1_nm)<=sp_diff_bound) || (abs(sp_n2_nm)<=sp_diff_bound))
+        return NULL_VECTOR; // The case is nearly degenerate and leads to geometric inconsistencies due to numerical errors
+
+      if( CGAL::sign(sp_no_nm) == CGAL::sign(sp_n1_nm)){
+        circum_points[1]=f_out;
+      } else {
+        circum_points[2]=f_out;
+      }
+    }
+
+    // Delete one vertex if it is included in the circumcircle of the other two
+    const Vector_ref ni2 = get(face_normals, circum_points[0]);
+    const Vector_ref nj2 = get(face_normals, circum_points[1]);
+    const Vector_ref nk2 = get(face_normals, circum_points[2]);
+    Vector_3 center_ni_nj = compute_normals_bisector(ni2, nj2, traits);
+    Vector_3 center_ni_nk = compute_normals_bisector(ni2, nk2, traits);
+    Vector_3 center_nj_nk = compute_normals_bisector(nj2, nk2, traits);
+
+    if(sp_3(center_ni_nj, nk2) > sp_3(center_ni_nj, ni2)){
+      circum_points_size=2;
+    } else if(sp_3(center_ni_nk, nj2) > sp_3(center_ni_nk, ni2)){
+      std::swap(circum_points[1],circum_points[2]);
+      circum_points_size=2;
+    } else if(sp_3(center_nj_nk, ni2) > sp_3(center_nj_nk, nj2)){
+      std::swap(circum_points[0],circum_points[2]);
+      circum_points_size=2;
+    }
+  }
 }
 
 template <typename PolygonMesh, typename FaceNormalVector, typename VertexPointMap, typename GT>
@@ -619,7 +632,7 @@ compute_vertex_normal_as_sum_of_weighted_normals(typename boost::graph_traits<Po
 * \brief computes the unit normal at vertex `v` as a function of the normals of incident faces.
 *
 * The implementation is inspired by Aubry et al. "On the most 'normal' normal" \cgalCite{cgal:al-otmnn-08},
-* which aims to compute a normal that maximises the visibility to the incident faces.
+* which aims to compute a normal that maximizes the visibility to the incident faces.
 * If such normal does not exist or if the optimization process fails to find it, a fallback normal is computed
 * as a sine-weighted sum of the normals of the incident faces.
 *
@@ -727,7 +740,6 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
       std::cout << "get normal at f " << face(h, pmesh) << " : " << get(face_normals, face(h, pmesh)) << std::endl;
   }
 #endif
-
   Vector_3 normal = internal::compute_vertex_normal_most_visible_min_circle(v, face_normals, pmesh, traits);
   if(traits.equal_3_object()(normal, CGAL::NULL_VECTOR)) // can't always find a most visible normal
   {
