@@ -459,7 +459,14 @@ public:
       return build_kd_tree(first,beyond);
     }
 
-    //TODO: add doc
+    /// constructs an internal KD-tree containing the specified point
+    /// set, to be used as the set of potential hints for accelerating
+    /// the distance queries. Note that the search tree built in
+    /// this function will not be invalidated by the insertion of a new
+    /// primitive, and an explicit call to `accelerate_distance_queries()`
+    /// is needed to update the search tree.
+    /// \tparam ConstPointIterator is an iterator with a value type being the key type of `PointMap`
+    /// \tparam PointMap a model of `ReadablePropertyMap` with the value type of `ConstPointIterator` as key type and `Point` as value type.
     template<typename ConstPointIterator, typename PointMap>
     bool accelerate_distance_queries(ConstPointIterator first, ConstPointIterator beyond, PointMap pmap)
     {
