@@ -399,7 +399,7 @@ public:
       typedef typename AT::FT FT;
       typedef typename AT::Primitive Primitive;
   public:
-      CGAL::Comparison_result operator()(const Point& p, const Iso_cuboid_3& bb, const Point& bound) const
+      CGAL::Comparison_result operator()(const Point& p, const Bounding_box& bb, const Point& bound) const
       {
         return do_intersect_sphere_iso_cuboid_3
           (GeomTraits().construct_sphere_3_object()
@@ -428,7 +428,7 @@ public:
       }
 
       CGAL::Comparison_result do_intersect_sphere_iso_cuboid_3(const typename GeomTraits::Sphere_3& sphere,
-        const typename GeomTraits::Iso_cuboid_3& box) const
+        const typename Bounding_box& box) const
       {
         typedef typename GeomTraits::FT       FT;
         typedef typename GeomTraits::Point_3  Point;
@@ -445,22 +445,24 @@ public:
 
         FT d = FT(0);
         FT distance = FT(0);
-        const FT sr = sphere.squared_radius();
+        const FT sr = typename GeomTraits::Compute_squared_radius_3()(sphere);
 
-        const Point& center = sphere.center();
+        const Point center = typename GeomTraits::Construct_center_3()(sphere);
+        using Construct_cartesian_const_iterator = typename GeomTraits::Construct_cartesian_const_iterator_3;
+        typename GeomTraits::Cartesian_const_iterator_3 cci = typename GeomTraits::Construct_cartesian_const_iterator_3()(center);
 
-        if (center.x() < bxmin)
+        if (*cci < bxmin)
         {
-          d = bxmin - center.x();
+          d = bxmin - *cci;
           d = square(d);
           if (d > sr)
             return CGAL::LARGER;
 
           distance = d;
         }
-        else if (center.x() > bxmax)
+        else if (*cci > bxmax)
         {
-          d = center.x() - bxmax;
+          d = *cci - bxmax;
           d = square(d);
           if (d > sr)
             return CGAL::LARGER;
@@ -468,18 +470,19 @@ public:
           distance = d;
         }
 
-        if (center.y() < bymin)
+        cci++;
+        if (*cci < bymin)
         {
-          d = bymin - center.y();
+          d = bymin - *cci;
           d = square(d);
           if (d > sr)
             return CGAL::LARGER;
 
           distance += d;
         }
-        else if (center.y() > bymax)
+        else if (*cci > bymax)
         {
-          d = center.y() - bymax;
+          d = *cci - bymax;
           d = square(d);
           if (d > sr)
             return CGAL::LARGER;
@@ -487,18 +490,19 @@ public:
           distance += d;
         }
 
-        if (center.z() < bzmin)
+        cci++;
+        if (*cci < bzmin)
         {
-          d = bzmin - center.z();
+          d = bzmin - *cci;
           d = square(d);
           if (d > sr)
             return CGAL::LARGER;
 
           distance += d;
         }
-        else if (center.z() > bzmax)
+        else if (*cci > bzmax)
         {
-          d = center.z() - bzmax;
+          d = *cci - bzmax;
           d = square(d);
           if (d > sr)
             return CGAL::LARGER;
