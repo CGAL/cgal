@@ -6,6 +6,12 @@ project(HDVF_Examples)
 
 find_package(CGAL REQUIRED)
 
+
+find_package(Eigen3 3.1.0 QUIET) #(requires 3.1.0 or greater)
+include(CGAL_Eigen3_support)
+
+
+
 # create a target per cppfile
 file(
   GLOB cppfiles
@@ -14,3 +20,7 @@ file(
 foreach(cppfile ${cppfiles})
   create_single_source_cgal_program("${cppfile}")
 endforeach()
+
+if(TARGET CGAL::Eigen3_support)
+target_link_libraries(hdvf_simplicial_4 PUBLIC CGAL::Eigen3_support)
+endif()

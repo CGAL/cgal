@@ -35,33 +35,33 @@ int main(int argc, char **argv)
         nodes_filename = argv[1];
         simp_filename = argv[2];
     }
-    
+
     // Load nodes + simplicial data
     HDVF::Mesh_object_io<Traits> mesh ;
-    mesh.read_nodes(nodes_filename);
+    mesh.read_nodes_file(nodes_filename);
     mesh.read_simp(simp_filename);
-    
+
     mesh.print_infos();
-    
+
     // Build simplicial chain complex
     Complex complex(mesh);
-    
+
     std::cout << complex;
-    
+
     // Build empty HDVF
     HDVF_type hdvf(complex, HDVF::OPT_FULL) ;
-    
+
     // Compute a perfect HDVF
     hdvf.compute_perfect_hdvf();
     //        hdvf.compute_rand_perfect_hdvf();
-    
+
     // Output HDVF to console
     hdvf.write_matrices();
     hdvf.write_reduction();
-    
+
     // Output HDVF to vtk
     CGAL::IO::write_VTK(hdvf, complex, "tmp/res", true) ;
-    
+
     // Save HDVF to .hdvf file
     hdvf.write_hdvf_reduction("tmp/test.hdvf") ;
 

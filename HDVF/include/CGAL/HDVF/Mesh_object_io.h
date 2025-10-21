@@ -113,8 +113,20 @@ inline size_t read_nodes(const std::string &node_file, bool load_nodes, std::vec
             is >> x ;
             node.push_back(x) ;
         }
-        if (load_nodes)
-            nodes->push_back(Point(node[0], node[1], node[2])) ;
+        if (load_nodes){
+            if constexpr (Traits::Dimension::value == 2){
+                nodes->push_back(Point(node[0], node[1])) ;   // ignore z coordinate
+            }if constexpr (Traits::Dimension::value == 3){
+                nodes->push_back(Point(node[0], node[1], node[2])) ;
+            }else{
+                std::vector<typename Traits::FT> res ;
+                res[0] = typename Traits::FT(node[0]) ;
+                res[1] = typename Traits::FT(node[1]) ;
+                for (int i=res.size(); i<Traits::Dimension::value; ++i){
+                    res.push_back(typename Traits::FT(0)) ;
+                }
+            }
+        }
     }
     in_file.close() ;
     return nnodes;

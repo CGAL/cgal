@@ -15,6 +15,7 @@
 #include <CGAL/license/HDVF.h>
 #include <CGAL/Bbox_d.h>
 #include <CGAL/Dimension.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 namespace CGAL {
 namespace Homological_discrete_vector_field {
@@ -37,9 +38,9 @@ struct Hdvf_traits_d {
     typedef typename K::Point_d Point;
     typedef typename K::FT FT;
     typedef CGAL::Bbox_d<Dimension> Bbox;
-    typedef typename K::Point_3 Point3;
+    typedef typename Exact_predicates_inexact_constructions_kernel::Point_3 Point3;
     static Point3 to_point3(const Point& p) { return Point3(p[0], p[1], p[2]); }
-    }
+
 };
 
 } /* end namespace Homological_discrete_vector_field */
