@@ -428,7 +428,7 @@ public:
       }
 
       CGAL::Comparison_result do_intersect_sphere_iso_cuboid_3(const typename GeomTraits::Sphere_3& sphere,
-        const typename Bounding_box& box) const
+        const Bounding_box& box) const
       {
         typedef typename GeomTraits::FT       FT;
         typedef typename GeomTraits::Point_3  Point;
