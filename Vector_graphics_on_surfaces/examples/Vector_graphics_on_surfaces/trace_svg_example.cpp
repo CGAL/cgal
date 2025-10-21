@@ -16,10 +16,10 @@
 namespace VGoS = CGAL::Vector_graphics_on_surfaces;
 namespace PMP = CGAL::Polygon_mesh_processing;
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel   K;
-typedef CGAL::Surface_mesh<K::Point_3>                        Mesh;
-typedef PMP::Face_location<Mesh, double>                      Face_location;
-typedef PMP::Edge_location<Mesh, double>                      Edge_location;
+using K = CGAL::Exact_predicates_inexact_constructions_kernel;
+using Mesh = CGAL::Surface_mesh<K::Point_3>;
+using Face_location = PMP::Face_location<Mesh, double>;
+using Edge_location = PMP::Edge_location<Mesh, double>;
 
 
 int main(int argc, char** argv)
@@ -150,9 +150,9 @@ int main(int argc, char** argv)
     CGAL::Real_timer time;
     time.start();
 
-    typedef boost::adjacency_list< boost::vecS, boost::vecS,
-                                   boost::undirectedS,
-                                   K::Point_2> Graph;
+    using Graph = boost::adjacency_list< boost::vecS, boost::vecS,
+                                         boost::undirectedS,
+                                         K::Point_2>;
     using Graph_vertex = Graph::vertex_descriptor;
 
     Graph graph;

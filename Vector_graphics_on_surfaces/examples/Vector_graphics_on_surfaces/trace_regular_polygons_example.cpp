@@ -13,10 +13,10 @@
 namespace VGoS = CGAL::Vector_graphics_on_surfaces;
 namespace PMP = CGAL::Polygon_mesh_processing;
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel   K;
-typedef CGAL::Surface_mesh<K::Point_3>                        Mesh;
-typedef PMP::Face_location<Mesh, double>                      Face_location;
-typedef PMP::Edge_location<Mesh, double>                      Edge_location;
+using K = CGAL::Exact_predicates_inexact_constructions_kernel;
+using Mesh = CGAL::Surface_mesh<K::Point_3>;
+using Face_location = PMP::Face_location<Mesh, double>;
+using Edge_location = PMP::Edge_location<Mesh, double>;
 
 
 int main(int argc, char** argv)
