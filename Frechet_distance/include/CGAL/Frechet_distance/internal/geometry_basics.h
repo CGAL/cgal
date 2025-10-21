@@ -114,7 +114,7 @@ struct Lambda<Curve<FilteredTraits,true>>
     bool update_exact() const
     {
         if (is_exact){
-            if (! exact){
+            if (!exact.has_value()){
                 exact = (is_one) ? std::make_optional(Exact(1)) : std::make_optional(Exact(0));
             }
             return true;
@@ -211,7 +211,7 @@ struct Lambda<Curve<FilteredTraits,true>>
         }
         update_exact();
         other.update_exact();
-        bool eres = *exact < *other.exact;
+        bool eres = exact.value() < other.exact.value();
         return eres;
     }
 };
