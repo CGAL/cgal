@@ -3190,7 +3190,8 @@ recursive_de_Casteljau(const TriangleMesh& mesh,
 
 /*!
  * \ingroup VGSMiscellaneous
- *  computes the approximate geodesic distances of `center` to all the vertices of the mesh (only one connected component is expected)
+ *  computes the approximate geodesic distances of `center` to all vertices of the mesh.
+ \pre `tmesh` must consist of a single connected component
  * and put the distance in `distance_map`
  */
 template <class FT, class TriangleMesh, class VertexDistanceMap>
