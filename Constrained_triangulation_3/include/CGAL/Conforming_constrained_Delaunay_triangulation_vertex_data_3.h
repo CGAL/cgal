@@ -16,6 +16,7 @@
 
 #include <CGAL/assertions.h>
 #include <CGAL/Constrained_triangulation_3/internal/config.h>
+#include <CGAL/Constrained_triangulation_3_types.h>
 
 #include <bitset>
 
