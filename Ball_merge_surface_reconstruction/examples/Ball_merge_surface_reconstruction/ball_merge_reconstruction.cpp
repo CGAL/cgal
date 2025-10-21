@@ -24,11 +24,11 @@ int main(int argc, char **argv)
     return 1;
   }
 
-  //vectors for storing output triangle indices
+  // vectors for storing output triangle indices
   std::vector<std::array<int,3>> meshFaceIndices1, meshFaceIndices2;
 
   double delta = argc > 2
-    // run the reconstruction with user passed delta parameter
+    // run the reconstruction with user-defined delta parameter
     ? CGAL::ball_merge_surface_reconstruction(points,
                                               meshFaceIndices1, meshFaceIndices2,
                                               params::delta(atof(argv[2]))
@@ -40,8 +40,8 @@ int main(int argc, char **argv)
                                               params::concurrency_tag(CGAL::Parallel_if_available_tag()));
 
   // write output triangle soups
-  CGAL::IO::write_polygon_soup("BMOut1.ply", points, meshFaceIndices1); //The first resulting mesh
-  CGAL::IO::write_polygon_soup("BMOut2.ply", points, meshFaceIndices2); //The second resulting mesh
+  CGAL::IO::write_polygon_soup("BMOut1.ply", points, meshFaceIndices1); // The first resulting mesh
+  CGAL::IO::write_polygon_soup("BMOut2.ply", points, meshFaceIndices2); // The second resulting mesh
 
   std::cout << "delta parameter used = " << delta << "\n";
 

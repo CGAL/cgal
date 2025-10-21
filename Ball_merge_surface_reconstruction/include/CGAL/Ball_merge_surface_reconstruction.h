@@ -67,8 +67,9 @@ namespace CGAL {
  *
  * \ingroup PkgBallMergeRef
  *
- * Class that can be used for running the ball merge surface reconstruction algorithms. Once input points are passed,
- * it is possible to run a reconstruction algorithm with different parameters without rebuilding the internal Delaunay triangulation.
+ * This class provides an interface for executing ball merge surface reconstruction algorithms.
+ * After the input point set has been provided, multiple reconstruction runs can be performed with varying
+ * parameters without recomputing the internal Delaunay triangulation.
  *
  * \tparam Traits a model of `DelaunayTriangulationTraits_3`, with default using the value type of `PointRange` plugged in `Kernel_traits`
  * \tparam ConcurrencyTag enables sequential versus parallel algorithm.
@@ -525,9 +526,9 @@ void ball_merge_surface_reconstruction_local(const PointRange& points,
 
 /*! \ingroup PkgBallMergeRef
  *
- * creates two watertight meshes approximating the surface, and puts the resulting triangle faces in `out_triangles1` and `out_triangles2`.
- * As this function creates two shells (outer and inner) the input point set shall only be sampled on a single connected component.
- * Output triangle faces are triple of indices refering to the position of the input points in `points`.
+ * generates two meshes approximating the input surface and stores the resulting triangle faces `in out_triangles1` and `out_triangles2`
+ * <p><b>Precondition</b></p> This function constructs two shells (outer and inner). Therefore, the input point set must sample a single connected component.
+ * <p><b>Output Format</b></p> Each triangle face is represented as a triplet of indices referring to the positions of the corresponding input points in `points`.
  *
  * \tparam PointRange a model of the concepts `RandomAccessContainer`
  * \tparam TripleIndexRange a model of `BackInsertionSequence` with `value_type`
