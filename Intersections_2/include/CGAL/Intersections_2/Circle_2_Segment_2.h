@@ -37,7 +37,6 @@ do_intersect(const typename K::Circle_2& circ,
   typedef typename K::FT FT;
 
   typename K::Construct_vector_2 vector = k.construct_vector_2_object();
-  typename K::Compute_squared_length_2 sq_length = k.compute_squared_length_2_object();
   typename K::Compute_squared_distance_2 sq_dist = k.compute_squared_distance_2_object();
 
   const Point_2 c = circ.center();
@@ -82,8 +81,8 @@ do_intersect(const typename K::Circle_2& circ,
   const Vector_2 diffsrc = vector(s.source(), c);
   const Vector_2 difftgt = vector(s.target(), c);
 
-  FT lsrc = CGAL::internal::wdot(diffsrc, diffsrc, k);
-  FT ltgt = CGAL::internal::wdot(difftgt, difftgt, k);
+  FT lsrc = sq_length(diffsrc);
+  FT ltgt = sq_length(difftgt);
 
   if (lsrc < sqrad) {
     if (ltgt < sqrad)
