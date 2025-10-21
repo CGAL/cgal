@@ -368,6 +368,8 @@ public:
 
       //safety check for degenerate faces
       halfedge_descriptor guard = prev(h, m_face_graph);
+      m_p = get(m_vpm, source(h, m_face_graph));
+      m_q = get(m_vpm, target(h, m_face_graph));
 
       do {
         h = next(h, m_face_graph);
