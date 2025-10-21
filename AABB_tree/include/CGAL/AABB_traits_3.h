@@ -399,7 +399,7 @@ public:
       typedef typename AT::FT FT;
       typedef typename AT::Primitive Primitive;
   public:
-      CGAL::Comparison_result operator()(const Point& p, const Bounding_box& bb, const Point& bound) const
+      CGAL::Comparison_result operator()(const Point& p, const Iso_cuboid_3& bb, const Point& bound) const
       {
         return do_intersect_sphere_iso_cuboid_3
           (GeomTraits().construct_sphere_3_object()
@@ -427,7 +427,7 @@ public:
           CGAL::LARGER;
       }
 
-      typename GeomTraits::Boolean do_intersect_sphere_iso_cuboid_3(const typename GeomTraits::Sphere_3& sphere,
+      CGAL::Comparison_result do_intersect_sphere_iso_cuboid_3(const typename GeomTraits::Sphere_3& sphere,
         const typename GeomTraits::Iso_cuboid_3& box) const
       {
         typedef typename GeomTraits::FT       FT;
@@ -454,7 +454,7 @@ public:
           d = bxmin - center.x();
           d = square(d);
           if (d > sr)
-            return false;
+            return CGAL::LARGER;
 
           distance = d;
         }
@@ -463,7 +463,7 @@ public:
           d = center.x() - bxmax;
           d = square(d);
           if (d > sr)
-            return false;
+            return CGAL::LARGER;
 
           distance = d;
         }
@@ -473,7 +473,7 @@ public:
           d = bymin - center.y();
           d = square(d);
           if (d > sr)
-            return false;
+            return CGAL::LARGER;
 
           distance += d;
         }
@@ -482,7 +482,7 @@ public:
           d = center.y() - bymax;
           d = square(d);
           if (d > sr)
-            return false;
+            return CGAL::LARGER;
 
           distance += d;
         }
@@ -492,7 +492,7 @@ public:
           d = bzmin - center.z();
           d = square(d);
           if (d > sr)
-            return false;
+            return CGAL::LARGER;
 
           distance += d;
         }
@@ -501,13 +501,13 @@ public:
           d = center.z() - bzmax;
           d = square(d);
           if (d > sr)
-            return false;
+            return CGAL::LARGER;
 
           distance += d;
         }
         // Note that with the way the distance above is computed, the distance is '0' if the box strictly
         // contains the sphere. But since we use '>', we don't exit
-        return (distance <= sr);
+        return (distance <= sr) ? CGAL::SMALLER : CGAL::LARGER;
       }
   };
 
