@@ -790,6 +790,60 @@ _is_to_right_impl(const Point_2& p, Halfedge_handle he,
   return (m_geom_traits->compare_xy_2_object()(p, v_right->point()) == LARGER);
 }
 
+//! checks whether an point lies to the left of another point.
+template <typename Arrangement, typename ZoneVisitor>
+bool Arrangement_zone_2<Arrangement, ZoneVisitor>::
+is_to_left_impl(const Point_2& p1, Arr_parameter_space ps1,
+                const Point_2& p2, Arr_parameter_space ps2,
+                Arr_all_sides_oblivious_tag) const {
+  auto cmp_xy = m_geom_traits->compare_xy_2_object();
+  return (cmp_xy(p2, p1) == SMALLER);
+}
+
+//! checks whether an point lies to the left of another point.
+template <typename Arrangement, typename ZoneVisitor>
+bool Arrangement_zone_2<Arrangement, ZoneVisitor>::
+is_to_left_impl(const Point_2& p1, Arr_parameter_space ps1,
+                const Point_2& p2, Arr_parameter_space ps2,
+                Arr_has_identified_side_tag) const {
+  auto is_on_y_ident = m_geom_traits->is_on_y_identification_2_object();
+  if (is_on_y_ident(p1)) {
+    if (is_on_y_ident(p2)) {
+      auto cmp_y_on_boundary = m_geom_traits->compare_y_on_boundary_2_object();
+      return (cmp_y_on_boundary(p2, p1) == SMALLER);
+    }
+    return false;
+  }
+  if (is_on_y_ident(p2)) return true;
+  std::cout << "XXXX p1: " << p1 << ", p2: " << p2 << std::endl;
+  auto cmp_xy = m_geom_traits->compare_xy_2_object();
+  return (cmp_xy(p2, p1) == SMALLER);
+}
+
+//! checks whether an point lies to the left of another point.
+template <typename Arrangement, typename ZoneVisitor>
+bool Arrangement_zone_2<Arrangement, ZoneVisitor>::
+is_to_left_impl(const Point_2& p1, Arr_parameter_space ps1,
+                const Point_2& p2, Arr_parameter_space ps2,
+                Arr_boundary_cond_tag) const {
+  if (ps1 == ARR_LEFT_BOUNDARY) {
+    if (ps2 == ARR_LEFT_BOUNDARY) {
+      auto cmp_y_on_boundary = m_geom_traits->compare_y_on_boundary_2_object();
+      return (cmp_y_on_boundary(p2, p1) == SMALLER);
+    }
+    return false;
+  }
+  if (ps1 == ARR_RIGHT_BOUNDARY) {
+    if (ps2 == ARR_RIGHT_BOUNDARY) {
+      auto cmp_y_on_boundary = m_geom_traits->compare_y_on_boundary_2_object();
+      return (cmp_y_on_boundary(p2, p1) == SMALLER);
+    }
+    return true;
+  }
+  auto cmp_xy = m_geom_traits->compare_xy_2_object();
+  return (cmp_xy(p2, p1) == SMALLER);
+}
+
 //-----------------------------------------------------------------------------
 // Compute the (lexicographically) leftmost intersection of the query
 // curve with a given halfedge on the boundary of a face in the arrangement.
@@ -866,11 +920,7 @@ _leftmost_intersection(Ccb_halfedge_circulator he_curr, bool on_boundary,
 
       // Found a simple intersection point. Check if it is the leftmost
       // intersection point so far.
-      if (! m_found_intersect ||
-          ((intersection_location != ARR_RIGHT_BOUNDARY) &&
-           ((leftmost_location == ARR_RIGHT_BOUNDARY) ||
-            compare_xy(ip, m_intersect_p) == SMALLER)))
-      {
+      if (! m_found_intersect || is_to_left(m_intersect_p, leftmost_location, ip, intersection_location)) {
         // Store the leftmost intersection point and the halfedge handle.
         m_intersect_p = ip;
         m_ip_multiplicity = int_p->second;
@@ -1034,9 +1084,14 @@ _zone_in_face(Face_handle face, bool on_boundary) {
 
     // Set m_cv to be the remaining portion.
     m_has_left_pt = true;
-    m_left_on_boundary = false;
     m_left_pt = m_intersect_p;
     m_cv = m_sub_cv2;
+
+    auto ps_in_x = m_geom_traits->parameter_space_in_x_2_object();
+    auto ps_in_y = m_geom_traits->parameter_space_in_y_2_object();
+    auto ps_x = ps_in_x(m_left_pt);
+    auto ps_y = ps_in_y(m_left_pt);
+    m_left_on_boundary = (ps_x != ARR_INTERIOR || ps_y != ARR_INTERIOR);
   }
 
   const X_monotone_curve_2* p_orig_curve = nullptr;
