@@ -35,8 +35,6 @@
 #include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_enums.h>
 #include <CGAL/use.h>
-#include "CGAL/Kernel/global_functions_3.h"
-#include "CGAL/enum.h"
 
 namespace CGAL {
 
@@ -364,11 +362,6 @@ public:
    */
   inline Comparison_result compare_x(const Direction_3& d1,
                                      const Direction_3& d2) const {
-    bool is_d1_on_boundary = Direction_3(CGAL::cross_product(d1.vector(), Direction_3(0, 0, 1).vector())) == identification_normal();
-    bool is_d2_on_boundary = Direction_3(CGAL::cross_product(d2.vector(), Direction_3(0, 0, 1).vector())) == identification_normal();
-    if(is_d1_on_boundary && is_d2_on_boundary) return EQUAL;
-    if(is_d1_on_boundary) return SMALLER;
-    if(is_d2_on_boundary) return LARGER;
     // Compare the projections onto the xy plane:
     Direction_2 d1_2 = project_xy(d1);
     Direction_2 d2_2 = project_xy(d2);
@@ -404,7 +397,8 @@ public:
                      const Point_2& point) const {
     using Traits = Arr_geodesic_arc_on_sphere_traits_2<Kernel, atan_x, atan_y>;
 
-    if(point.is_max_boundary() || point.is_min_boundary()) return true;
+    CGAL_precondition(!point.is_min_boundary());
+    CGAL_precondition(!point.is_max_boundary());
 
     Direction_2 p = project_xy(point);
     if (xcv.is_vertical()) {
@@ -509,7 +503,7 @@ public:
       Direction_3& d(p);
       d = Direction_3(x, y, z);
       init(p, std::integral_constant<bool, atan_y==0>());
-      return p; 
+      return p;
     }
 
     /*! constructs a point on the sphere from a (not necessarily normalized)
@@ -1041,6 +1035,9 @@ public:
      * \pre p2 does not lie on the boundary.
      */
     Comparison_result operator()(const Point_2& p1, const Point_2& p2) const {
+      CGAL_precondition(p1.is_no_boundary());
+      CGAL_precondition(p2.is_no_boundary());
+
       return m_traits.compare_x(p1, p2);
     }
   };
@@ -1096,6 +1093,9 @@ public:
      * \pre p2 does not lie on the boundary.
      */
     Comparison_result operator()(const Point_2& p1, const Point_2& p2) const {
+      CGAL_precondition(p1.is_no_boundary());
+      CGAL_precondition(p2.is_no_boundary());
+
       return m_traits.compare_xy(p1, p2);
     }
   };
@@ -1179,6 +1179,7 @@ public:
      */
     Comparison_result operator()(const Point_2& p,
                                  const X_monotone_curve_2& xc) const {
+      CGAL_precondition(!p.is_min_boundary() && !p.is_max_boundary());
       CGAL_precondition(m_traits.is_in_x_range(xc, p));
 
       if (xc.is_vertical()) {
@@ -1652,8 +1653,10 @@ public:
                                  const X_monotone_curve_2& xcv,
                                  Arr_curve_end CGAL_precondition_code(ce))
       const {
+      CGAL_precondition(point.is_no_boundary());
       CGAL_precondition_code
         (const Point_2& p2 = (ce == ARR_MIN_END) ? xcv.left() : xcv.right(););
+      CGAL_precondition(!p2.is_no_boundary());
       CGAL_precondition(xcv.is_vertical());
 
       CGAL_precondition(!m_traits.is_on_y_identification_2_object()(xcv));
