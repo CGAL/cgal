@@ -283,6 +283,9 @@ CDT_options::CDT_options(int argc, char* argv[]) {
 #  define CGAL_CDT_3_TASK_END(task_handle) \
   std::cerr << "-STOP " << #task_handle << '\n'; \
   __itt_task_end(cdt_3_domain);
+#  define CGAL_CDT_3_TASK_SCOPE(task_handle) \
+  CGAL_CDT_3_TASK_BEGIN(task_handle) \
+  auto scope_exit = CGAL::make_scope_exit([&]() { CGAL_CDT_3_TASK_END(task_handle); });
 
   auto cdt_3_domain = __itt_domain_create("org.cgal.CDT_3");
   auto read_input_task_handle = __itt_string_handle_create("CDT_3: read input file");
@@ -297,6 +300,7 @@ CDT_options::CDT_options(int argc, char* argv[]) {
 #else // no ITT
 #  define CGAL_CDT_3_TASK_BEGIN(task_handle)
 #  define CGAL_CDT_3_TASK_END(task_handle)
+#  define CGAL_CDT_3_TASK_SCOPE(task_handle)
 #endif // no ITT
 
 void configure_cdt_debug_options(CDT& cdt, const CDT_options& options) {
@@ -339,7 +343,7 @@ auto compute_bounding_box(const Mesh& mesh, const CDT_options& options) {
 
 std::function<void()> create_output_finalizer(const CDT& cdt, const CDT_options& options) {
   return [&cdt, &options]() {
-    CGAL_CDT_3_TASK_BEGIN(output_task_handle);
+    CGAL_CDT_3_TASK_SCOPE(output_task_handle);
     {
       auto dump_tets_to_medit = [](std::string fname,
                               const std::vector<K::Point_3> &points,
@@ -423,7 +427,6 @@ std::function<void()> create_output_finalizer(const CDT& cdt, const CDT_options&
 
 #endif
     }
-    CGAL_CDT_3_TASK_END(output_task_handle);
   };
 }
 
